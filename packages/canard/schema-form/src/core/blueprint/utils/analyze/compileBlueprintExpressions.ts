@@ -6,6 +6,8 @@ import { throwBlueprintError } from '../diagnostics/throwBlueprintError';
 import { createDynamicFunction } from '../expressions/createDynamicFunction';
 import { getPathManager } from '../expressions/getPathManager';
 import { registerBlueprintDependency } from './compileBlueprintExpressions/utils/registerBlueprintDependency';
+import { hasCompleteExpressionReads } from './compileBlueprintExpressions/utils/hasCompleteExpressionReads';
+import { CompleteExpressionReads } from './compileBlueprintExpressions/utils/CompleteExpressionReads';
 import { readSchemaObject } from './readSchemaObject';
 import type { AnalysisContext } from './type';
 
@@ -72,16 +74,17 @@ export const compileBlueprintExpressions = (
           const dependencies = Object.freeze([...manager.get()]);
           for (let path = 0; path < dependencies.length; path++)
             registerBlueprintDependency(context, dependencies[path], declaration, schemaPath);
-          expressions.push(
-            Object.freeze({
-              declarationId: declaration.id,
-              schemaPath,
-              hostPath: declaration.path,
-              key,
-              dependencies,
-              evaluate,
-            }),
-          );
+          const compiled = Object.freeze({
+            declarationId: declaration.id,
+            schemaPath,
+            hostPath: declaration.path,
+            key,
+            dependencies,
+            evaluate,
+          });
+          if (context.capabilities.hasDerive && hasCompleteExpressionReads(source))
+            CompleteExpressionReads.add(compiled);
+          expressions.push(compiled);
         }
       }
     }

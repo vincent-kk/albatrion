@@ -6,6 +6,8 @@ import { validateShape } from './utils/analyze/validateShape';
 import { collectBlueprintWarnings } from './utils/diagnostics/collectBlueprintWarnings';
 import { validateChildTargets } from './utils/diagnostics/validateChildTargets';
 import { StaticFirstLoadCapability } from './utils/features/StaticFirstLoadCapability';
+import { DeriveConvergenceTargets } from './utils/features/DeriveConvergenceTargets';
+import { collectDeriveConvergenceTargets } from './utils/analyze/collectDeriveConvergenceTargets';
 
 /** Feature-free graphs share frozen values only after independent absence proofs. */
 const EMPTY_EXPRESSIONS: Blueprint['expressions'] = Object.freeze([]);
@@ -98,6 +100,8 @@ export const blueprint = (
     expressions,
   });
   const capabilities = result.capabilities;
+  if (capabilities.hasDerive)
+    DeriveConvergenceTargets.set(result, collectDeriveConvergenceTargets(result));
   StaticFirstLoadCapability.set(result, context.staticFirstLoad && capabilities.branchless &&
     !capabilities.hasExpressions && !capabilities.hasDerive && !capabilities.hasWatch &&
     !capabilities.hasState && !capabilities.hasDependencies);

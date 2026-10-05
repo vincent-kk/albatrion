@@ -1,0 +1,215 @@
+{
+  "editorDecision": "98C-01",
+  "sourceHead": "403226d12",
+  "editorSource": "origin/1.0.0-beta:packages/canard/schema-form/architecture/reviews/round-98-closing.md (31ca2d7f0)",
+  "worktree": "/Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07",
+  "disposition": "채택",
+  "reason": "최종 동일 세션 짝 측정에서 derived 첫 갱신 -8.41%, 후속 갱신 -6.65%이며 세 회차 모두 개선했습니다. 마운트 및 p99의 증가를 숨기지 않고 기록합니다.",
+  "counting": {
+    "confirmationCountedByIterations": false,
+    "confirmationCountedByDeriveRounds": false,
+    "iterationsMeaning": "예산 초과에서 설정하는 한계 횟수입니다. 정상 정착은 undefined이며 파생 예산 초과는 25입니다.",
+    "evidence": "runDeriveRounds.ts:65 후보 0 반환, :77 쓰기 라운드 증가, :73 예산 초과 iterations 설정; commitSettlement.ts:56 진단 전달",
+    "emptyDevelopmentTraceSlotPreserved": true,
+    "countChanges": false
+  },
+  "design": {
+    "record": "src/core/settle/DETAIL.md:168",
+    "recordedBeforeProductCode": true,
+    "staticProof": "전체 청사진의 비활성 선언 포함 식·watch·injectTo 방출 원천·gate 읽기와 대상의 조상/자손 양방향 교차를 생성 때 판정합니다.",
+    "fallback": "미확정 발생 경로, recursive/homogeneous array templates, 불완전 식, 맥락/전체 호스트 식 읽기는 폼 전체 fallback입니다. 컨테이너/가상 대상은 보수적으로 제외하고 실패가 있는 라운드도 확인합니다.",
+    "transition": "생략은 파생 내부의 다음 확인에만 적용하며 전이 단계는 유지합니다. 전이 쓰기 뒤에는 파생 호출과 판정을 새로 시작합니다.",
+    "speedCost": "O(선언+읽기+대상×읽기) 생성 작업 및 표현식 스캔. 실행은 blueprint 약한 조회와 실제 승자마다 Set 조회를 기존 적용 루프에 합쳐 확인 평가의 읽기·방문·임시 그릇을 제거합니다.",
+    "memoryCost": "모듈당 WeakMap/WeakSet 하나씩, 청사진당 O(대상 수+완전성 식 수)의 약한 증명 참조와 생성 중 임시 Map/Set/배열. 값·노드·식 descriptor·SettlementContext shape 추가 없음.",
+    "heapBytesMeasured": false
+  },
+  "differential": {
+    "preImplementationSkipOff": "13건 통과",
+    "preImplementationSkipOn": "새 creation-time convergence proof 부재 때문에 예상한 13건 실패",
+    "finalConvergenceTests": 19,
+    "existingBranchlessTests": 5,
+    "modes": [
+      "skip off",
+      "test shadow on",
+      "development on (shadow 없음)"
+    ],
+    "sameAssertions": [
+      "값·raw·extras",
+      "형상·제어 상태",
+      "오류·진단",
+      "배달 payload·options·순서·개정",
+      "커밋",
+      "쓰기 라운드 수",
+      "iterations",
+      "개발 trace",
+      "identity 제외 규칙 기준"
+    ],
+    "shadow": "생략할 확인을 실제 evaluateDeriveRound로 실행하고 writes와 failures가 모두 0인지 단언했습니다. 거짓 증명을 주입한 음성 시험에서는 비어 있지 않은 후보를 찾아 거부했습니다.",
+    "counterexamples": [
+      "descendant derived → ancestor injectTo",
+      "gate reads target; disabled fragment rule/watch",
+      "watch-only edge",
+      "dependency chain",
+      "lost writes and consumed edges",
+      "transition fills → fresh derive",
+      "@, whole-host, incomplete expression, recursive/array fallback",
+      "virtual sibling writes",
+      "budget rollback iterations 25"
+    ],
+    "scopedVerification": "3파일 24건 통과; 기존 시험 단언은 수정하지 않았습니다."
+  },
+  "measurements": {
+    "tool": "architecture/verification/07-switch/tools/measure-round-90-baseline.mjs",
+    "arguments": "<fixture> <run> --paired <H|W> --round99 --round99-final",
+    "finalSummary": "round-99-derive-convergence-final-summary.json",
+    "intermediateSummary": "round-99-derive-convergence-summary.json",
+    "finalIntervalUTC": [
+      "2026-10-05T21:11:14.523Z",
+      "2026-10-05T21:13:44.341Z"
+    ],
+    "processes": 30,
+    "esbuildNaturalExits": 30,
+    "everyTimingProcessExit": 0,
+    "order": [
+      "H→W",
+      "W→H",
+      "H→W"
+    ],
+    "warmup": 20,
+    "samplesPerRun": 101,
+    "pooledSamplesPerSide": 303,
+    "instrumented": false,
+    "validation": "off",
+    "observations": "매 표본 및 H/W 사이의 값·형상·오류·상태·진단·개발 기록·배달 해시가 일치합니다.",
+    "finalMediansMicroseconds": {
+      "derivedMount": [
+        455.708,
+        470.542
+      ],
+      "derivedFirst": [
+        103.583,
+        94.875
+      ],
+      "derivedLater": [
+        69.542,
+        64.917
+      ],
+      "sample0Later": [
+        29.708,
+        29.708
+      ],
+      "flat500Mount": [
+        4382.875,
+        4324.833
+      ],
+      "flat500Later": [
+        16.042,
+        16.125
+      ],
+      "oneOf20Later": [
+        395.834,
+        380.042
+      ],
+      "nestedD5Mount": [
+        12744.667,
+        12989.833
+      ]
+    },
+    "limitations": "derived mount +3.26%, first/later p99 증가, nested-d5 mount +1.92%를 포함합니다. 작은 대조 변화는 인과를 확정하지 않으며 엄격한 무회귀를 주장하지 않습니다. OS·GUI·기존 상주 도구 서비스는 유지했습니다.",
+    "intermediateCorrection": "초기 readsComplete 필드가 강제 범용 capability와 다른 descriptor를 노출하여 기존 blueprint 차등 시험이 실패했습니다. 필드를 없애고 약한 완전성 등록으로 바꾼 뒤 모든 짝을 재측정했습니다. 최종 판정에는 최종본만 사용합니다."
+  },
+  "verification": {
+    "initialFull": {
+      "command": "npx vitest run --project unit --project render --project react18 --reporter=dot",
+      "exit": 1,
+      "signal": null,
+      "startedAt": "2026-10-05T21:06:22.431Z",
+      "endedAt": "2026-10-05T21:07:24.447Z",
+      "summary": [
+        " Test Files  3 failed | 417 passed (420)",
+        "      Tests  5 failed | 3167 passed | 1 todo (3173)",
+        "   Duration  60.39s (transform 7.25s, setup 0ms, collect 196.83s, tests 156.53s, environment 29.79s, prepare 19.99s)",
+        "⎯⎯⎯⎯⎯⎯⎯ Failed Tests 5 ⎯⎯⎯⎯⎯⎯⎯"
+      ],
+      "failures": [
+        " FAIL  |unit| src/core/__tests__/blueprint.branchless-differential.test.ts > branchless and generic observable equivalence > keeps every BF fixture tree, value, errors, state and settlement diagnostics identical",
+        " FAIL  |render| src/components/Form/__tests__/Form.effectFeedback.test.tsx > EVENT-070 cross-entry feedback > EVENT-070 React stops two fields writing back through useLayoutEffect",
+        " FAIL  |render| src/components/Form/__tests__/Form.effectFeedback.test.tsx > EVENT-070 cross-entry feedback > EVENT-070 React stops two fields writing back through useEffect",
+        " FAIL  |react18| src/components/Form/__tests__/Form.effectFeedback.test.tsx > EVENT-070 cross-entry feedback > EVENT-070 React stops two fields writing back through useLayoutEffect",
+        " FAIL  |react18| src/components/Form/__tests__/Form.effectFeedback.test.tsx > EVENT-070 cross-entry feedback > EVENT-070 React stops two fields writing back through useEffect"
+      ],
+      "errors": [
+        "Error: Uncaught [Error: render]",
+        "Error: Uncaught [Error: render]",
+        "Error: render",
+        "AssertionError: oneOf-5: expected { blueprint: { …(4) }, …(3) } to deeply equal { blueprint: { …(4) }, …(3) }",
+        "AssertionError: The watchdog is a failure, not React stopping the cycle: expected 201 to be less than 200",
+        "AssertionError: The watchdog is a failure, not React stopping the cycle: expected 201 to be less than 200",
+        "AssertionError: The watchdog is a failure, not React stopping the cycle: expected 201 to be less than 200",
+        "AssertionError: The watchdog is a failure, not React stopping the cycle: expected 201 to be less than 200"
+      ]
+    },
+    "finalFull": {
+      "command": "npx vitest run --project unit --project render --project react18 --reporter=dot",
+      "exit": 1,
+      "signal": null,
+      "startedAt": "2026-10-05T21:14:29.958Z",
+      "endedAt": "2026-10-05T21:15:32.609Z",
+      "summary": [
+        " Test Files  2 failed | 418 passed (420)",
+        "      Tests  4 failed | 3168 passed | 1 todo (3173)",
+        "   Duration  61.02s (transform 7.34s, setup 0ms, collect 201.76s, tests 158.56s, environment 29.09s, prepare 19.97s)"
+      ],
+      "failures": [
+        " FAIL  |render| src/components/Form/__tests__/Form.effectFeedback.test.tsx > EVENT-070 cross-entry feedback > EVENT-070 React stops two fields writing back through useLayoutEffect",
+        " FAIL  |render| src/components/Form/__tests__/Form.effectFeedback.test.tsx > EVENT-070 cross-entry feedback > EVENT-070 React stops two fields writing back through useEffect",
+        " FAIL  |react18| src/components/Form/__tests__/Form.effectFeedback.test.tsx > EVENT-070 cross-entry feedback > EVENT-070 React stops two fields writing back through useLayoutEffect",
+        " FAIL  |react18| src/components/Form/__tests__/Form.effectFeedback.test.tsx > EVENT-070 cross-entry feedback > EVENT-070 React stops two fields writing back through useEffect"
+      ],
+      "errors": [
+        "Error: Uncaught [Error: render]",
+        "Error: Uncaught [Error: render]",
+        "Error: render",
+        "AssertionError: The watchdog is a failure, not React stopping the cycle: expected 201 to be less than 200",
+        "AssertionError: The watchdog is a failure, not React stopping the cycle: expected 201 to be less than 200",
+        "AssertionError: The watchdog is a failure, not React stopping the cycle: expected 201 to be less than 200",
+        "AssertionError: The watchdog is a failure, not React stopping the cycle: expected 201 to be less than 200"
+      ]
+    },
+    "allowedFailuresOnly": true,
+    "typescript": {
+      "command": "npx tsc --noEmit --composite false --rootDir . -p tsconfig.json",
+      "exit": 0,
+      "note": "sidecar 수정 뒤 실행한 현재 제품/시험 코드의 유효한 결과"
+    },
+    "eslint": {
+      "command": "npx eslint \"src/**/*.{ts,tsx}\"",
+      "exit": 0,
+      "note": "sidecar 수정 뒤 실행한 현재 제품/시험 코드의 유효한 결과"
+    },
+    "isolation": {
+      "command": "node architecture/verification/07-switch/tools/check-legacy-isolation.mjs",
+      "exit": 0,
+      "result": "LEGACY_ISOLATED: 1613 files checked"
+    },
+    "finalCodeEditedAfterVerification": false
+  },
+  "artifacts": {
+    "timingFiles": 60,
+    "timingSamplesOnly": true,
+    "timingMaxBytes": 7645,
+    "measurementJsonFiles": 122,
+    "measurementMaxBytes": 54450,
+    "maxAllowedBytes": 5000000
+  },
+  "constraints": {
+    "gitWrites": false,
+    "installs": false,
+    "additionalAgents": false,
+    "commits": false,
+    "sequentialMeasurements": true,
+    "forcedProcessTermination": false,
+    "generatedRuntimeBuilds": false
+  },
+  "review": "독립 에이전트는 사용자 금지에 따라 실행하지 않았습니다. 최종 diff에서 전체 청사진 읽기·fallback·전이 재진입·순위·에지 소비·계수·객체 형태·새 공개 패키지 API 부재를 자체 확인했습니다."
+}

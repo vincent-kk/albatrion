@@ -1,4 +1,4 @@
-// Invoked by measure-round-90-baseline.mjs --round98; bundles remain in memory.
+// Invoked by measure-round-90-baseline.mjs --round98/--round99; bundles remain in memory.
 import assert from 'node:assert/strict';
 import childProcess from 'node:child_process';
 import { createHash } from 'node:crypto';
@@ -16,14 +16,16 @@ const require = createRequire(path.join(pkg, 'package.json'));
 const mountRecheck = process.argv.includes('--mount-recheck');
 const contextPreparation = process.argv.includes('--a2');
 const deriveDependencies = process.argv.includes('--a3');
+const deriveConvergence = process.argv.includes('--round99');
+const finalDeriveConvergence = process.argv.includes('--round99-final');
 const fusedDeriveDependencies = process.argv.includes('--a3-refined');
 const finalDeriveDependencies = process.argv.includes('--a3-final');
-const head = deriveDependencies ? 'f57132aa5' : mountRecheck ? '69cbe29c4' : contextPreparation ? '349b62057' :
+const head = deriveConvergence ? '403226d12' : deriveDependencies ? 'f57132aa5' : mountRecheck ? '69cbe29c4' : contextPreparation ? '349b62057' :
   '31717d1f7fad0ac94dd36ae9144dee3d1eb4b9d2';
 const workingRevision = mountRecheck ? '349b62057' : undefined;
-const prefix = finalDeriveDependencies ? 'round-98-a3-final' : fusedDeriveDependencies ? 'round-98-a3-refined' : deriveDependencies ? 'round-98-a3' : mountRecheck ? 'round-98-a1-mount-recheck' :
+const prefix = deriveConvergence ? `round-99-derive-convergence${finalDeriveConvergence ? '-final' : ''}` : finalDeriveDependencies ? 'round-98-a3-final' : fusedDeriveDependencies ? 'round-98-a3-refined' : deriveDependencies ? 'round-98-a3' : mountRecheck ? 'round-98-a1-mount-recheck' :
   contextPreparation ? 'round-98-a2' : 'round-98-a1';
-const fixtures = deriveDependencies ? ['computed-visible-derived', 'sample-0', 'flat-500', 'oneOf-20'] : mountRecheck ? ['flat-500', 'nested-d5-f4', 'array-1000',
+const fixtures = deriveConvergence ? ['computed-visible-derived', 'sample-0', 'flat-500', 'oneOf-20', 'nested-d5-f4'] : deriveDependencies ? ['computed-visible-derived', 'sample-0', 'flat-500', 'oneOf-20'] : mountRecheck ? ['flat-500', 'nested-d5-f4', 'array-1000',
   'sample-0', 'computed-visible-derived'] : ['sample-0', 'sample-1', 'sample-2', 'sample-3', 'nested-d3-f4',
   'nested-d5-f4', 'array-100', 'flat-500', 'computed-visible-derived', 'oneOf-20'];
 const phases = mountRecheck ? ['mount'] : ['mount', 'first', 'later'];
@@ -105,7 +107,10 @@ if (process.argv[2] === '--summarize-paired') {
       }
     }
     for (const phase of phases) {
-      if (deriveDependencies ? fixture !== 'computed-visible-derived' && phase !== 'later' :
+      if (deriveConvergence ? fixture === 'nested-d5-f4' ? phase !== 'mount' :
+        fixture !== 'computed-visible-derived' && phase !== 'later' &&
+          !(fixture === 'flat-500' && phase === 'mount') :
+        deriveDependencies ? fixture !== 'computed-visible-derived' && phase !== 'later' :
         !mountRecheck && phase === 'mount' && !['flat-500', 'nested-d5-f4'].includes(fixture)) continue;
       const before = metric(combined.H[phase]), after = metric(combined.W[phase]);
       const pairs = [];
@@ -118,7 +123,7 @@ if (process.argv[2] === '--summarize-paired') {
       rows.push({ fixture, phase, before, after, pairs,
         changePercent: (after.median / before.median - 1) * 100 });
     }
-    if (mountRecheck) continue;
+    if (mountRecheck || deriveConvergence) continue;
     const before = JSON.parse(fs.readFileSync(path.join(directory, `${prefix}-${fixture}-H-counts-summary.json`)));
     const after = JSON.parse(fs.readFileSync(path.join(directory, `${prefix}-${fixture}-W-counts-summary.json`)));
     assert.deepEqual(before.observations, after.observations);
@@ -126,9 +131,9 @@ if (process.argv[2] === '--summarize-paired') {
     counts.push({ fixture, before: before.counts, after: after.counts });
   }
   save(`${prefix}-summary.json`, { head, workingRevision, rows, runs, counts,
-    method: mountRecheck ? '69cbe29c4(H) 대 349b62057(W), 두 판 모두 git show 정본으로 메모리 번들. 마운트만 실행, 갱신 없음. 동일 세션·fixture별 새 프로세스. H→W, W→H, H→W. 예열20, 표본101×3. 무계측 동기 코어, validation off, 개발 모드, 빈 onChange, 리스너 없음. 각 측정 전에 esbuild stdin을 닫고 자발적 종료0을 확인. 303개 원표본의 nearest-rank median/p99와 회차별 중앙값을 보존.' :
+    method: deriveConvergence ? '403226d12(H) git show와 작업트리(W)의 무계측 메모리 번들. 동일 세션·fixture별 H→W, W→H, H→W, 각 판 새 프로세스·예열20·표본101×3. computed mount/first/later, sample-0·flat-500·oneOf-20 later, flat-500·nested-d5-f4 mount. validation off·빈 onChange·구독 없음, esbuild 자발 종료 후 측정. 값·형상·오류·배달·개발 기록·진단 관측 해시 일치.' : mountRecheck ? '69cbe29c4(H) 대 349b62057(W), 두 판 모두 git show 정본으로 메모리 번들. 마운트만 실행, 갱신 없음. 동일 세션·fixture별 새 프로세스. H→W, W→H, H→W. 예열20, 표본101×3. 무계측 동기 코어, validation off, 개발 모드, 빈 onChange, 리스너 없음. 각 측정 전에 esbuild stdin을 닫고 자발적 종료0을 확인. 303개 원표본의 nearest-rank median/p99와 회차별 중앙값을 보존.' :
       '동일 세션·fixture별 새 프로세스. H→W, W→H, H→W. 예열20, 표본101×3. 무계측 동기 코어, validation off, 개발 모드, 빈 onChange, 리스너 없음. 첫 쓰기 한 번과 BF 원 상호작용을 마친 뒤의 후속 쓰기 한 번을 분리. oneOf는 kind_0→kind_4. 각 측정 전에 esbuild stdin을 닫고 자발적 종료0을 확인. 계수는 별도 5개 새 트리의 동일 operation 결과.',
-    speedAndMemory: deriveDependencies ? '게이트·로드·형상 변경·예산 복구가 없는 파생 정착에서 경로별 역의존 결과를 호출별 Map 하나로 공유하고 계산을 마친 원본의 재등록을 생략. 누적 원본·원천 삽입 순서·규칙·마지막 수렴 라운드는 유지. 유일 변경 경로별 조회, 임시 O(변경 경로+소유자 참조) 메모리. context 고정 슬롯 하나, 새 영구 색인·scratch 컨테이너 없음. 최종 수정본은 식·감시 읽기를 한 튜플 배열에 합쳐 map/filter 임시 배열과 콜백을 제거하고 비공유 경로에는 캐시 조회·등록 분기를 넣지 않음. heap byte 미측정.' : mountRecheck ? '기존 빈 정착 단계 생략 변경의 마운트 재확인. 제품 변경 없음, heap byte 미측정.' :
+    speedAndMemory: deriveConvergence ? '청사진 생성에서 전체 선언·읽기 수집 및 대상×읽기 교차를 계산. 청사진당 O(정적 대상 수) 경로 참조와 O(컴파일 식 수)의 완전성 약한 등록을 보유. 실행은 승자 적용 루프의 Set 조회와 고정 분기로 확인 평가의 규칙 방문·의존 읽기·임시 Map/배열을 제거. 값·노드·식 descriptor shape·context 슬롯 추가 없음. 파생 없는 폼은 증명 수집/등록/할당 없음. 보수적 fallback과 전이 재진입 및 개발 빈 확인 기록 유지. test shadow는 시간 번들에서 제외. heap byte 미측정.' : deriveDependencies ? '게이트·로드·형상 변경·예산 복구가 없는 파생 정착에서 경로별 역의존 결과를 호출별 Map 하나로 공유하고 계산을 마친 원본의 재등록을 생략. 누적 원본·원천 삽입 순서·규칙·마지막 수렴 라운드는 유지. 유일 변경 경로별 조회, 임시 O(변경 경로+소유자 참조) 메모리. context 고정 슬롯 하나, 새 영구 색인·scratch 컨테이너 없음. 최종 수정본은 식·감시 읽기를 한 튜플 배열에 합쳐 map/filter 임시 배열과 콜백을 제거하고 비공유 경로에는 캐시 조회·등록 분기를 넣지 않음. heap byte 미측정.' : mountRecheck ? '기존 빈 정착 단계 생략 변경의 마운트 재확인. 제품 변경 없음, heap byte 미측정.' :
       contextPreparation ? '기능 부재 증명으로 호출별 게이트 상한과 가상 참조 색인 준비를 생략하고 비어 있는 scratch clear 및 배열 초기화를 제거. DirtyPathSet의 모드·부모 색인은 한 번 초기화. 고정 O(1) 검사 비용, 새 영구 메모리·색인·객체 필드 없음. 정적 첫 갱신의 null 참조 캐시 항목을 생성하지 않음. 호출별 문맥 객체 1개와 첫 scratch의 24개 컨테이너는 유지. 중첩·오류 정리·예산·라운드·commit·revision 유지. heap byte 미측정.' :
       '고정 수의 O(1) 입력 부재 검사로 빈 helper 호출과 내부 반복자·임시 그릇을 제거. 기존 scratch 생성·clear, context 준비, 실제 파생 의존 작업, 단계 순서·라운드·commit·revision은 유지. 새 영구 메모리·색인·object shape 없음. heap byte는 측정하지 않음.',
     allocationMethod: contextPreparation ? '별도 계수 번들에서 실제 context return과 scratch 신규 분기를 계수. scratch 신규 분기의 Map·Set·DirtyPathSet·배열 생성 site가 24개임을 소스로 검증. clear는 직접 호출과 DirtyPathSet 내부 부모 Map 호출을 포함하며 엔진 내부 backing-store 할당 수나 heap byte로 환산하지 않음. 5개 새 트리의 mount/first/later 계수와 무계측 관측 해시가 일치해야 요약 성공.' : undefined,
@@ -140,7 +145,7 @@ if (process.argv[2] === '--summarize-paired') {
   const counting = process.argv.includes('--counts');
   assert(fixtures.includes(fixtureName) && run >= 1 && run <= 3);
   assert(['H', 'W'].includes(variant) && globalThis.gc);
-  const expectedHead = deriveDependencies ? head : mountRecheck || contextPreparation ? '349b62057' : head;
+  const expectedHead = deriveConvergence || deriveDependencies ? head : mountRecheck || contextPreparation ? '349b62057' : head;
   assert(childProcess.execFileSync('git', ['rev-parse', 'HEAD'], { cwd: repo, encoding: 'utf8' }).trim().startsWith(expectedHead));
   let activeCounts;
   globalThis.__r98Enter = (name, amount = 1) => {

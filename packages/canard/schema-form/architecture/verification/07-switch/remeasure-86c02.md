@@ -1448,3 +1448,69 @@ sample-0·flat-500의 후속 update·mount도 미측정입니다. 절차 2를 �
 | `node architecture/verification/07-switch/tools/check-legacy-isolation.mjs` | 종료0; `LEGACY_ISOLATED: 1608 files checked` |
 
 상세 상태는 [round-98-gate-selection-summary.json](./round-98-gate-selection-summary.json)에 기록했습니다. 모든 작업은 지정 stage-07 안에서 이루어졌고 설치·git 쓰기·추가 에이전트·강제 프로세스 종료는 없었습니다. 각 검증 프로세스는 스스로 끝났습니다. 지정 필수 검증 뒤에는 문서·요약만 갱신했으며 제품 및 테스트 코드는 재변경하지 않았습니다.
+
+## 99라운드 파생 수렴 확인 생략
+
+**판정: 98C-01을 채택했습니다.** 최종 짝 측정의 computed-visible-derived 첫 갱신은 103.58→94.88 µs(−8.41%), 후속 갱신은 69.54→64.92 µs(−6.65%)이며 세 회차 모두 개선됐습니다. 같은 폼의 마운트는 +3.26%이고 갱신 p99는 증가했습니다. 아래에 불리한 행까지 보존하며 엄격한 무회귀를 주장하지 않습니다. 기준 HEAD는 `403226d12`, 작업 범위는 지정 stage-07뿐입니다.
+
+### 계수·설계와 적용 조건
+
+`origin/1.0.0-beta`의 `round-98-closing.md`(31ca2d7f0)와 SETTLE-004·017·043, CONTROLS-026·027·028, WRITE-029를 읽고 제품 코드 전에 [settle DETAIL](../../../src/core/settle/DETAIL.md)의 `settle-derive`에 조건·fallback·속도/메모리 비용을 기록했습니다. 원장은 변경하지 않았습니다.
+
+현재 `deriveRounds`는 변경 후보가 0이면 증가 전에 반환하므로 확인 평가를 세지 않습니다. `iterations`는 예산 초과에서만 설정하는 한계 횟수이며 확인 평가 횟수가 아닙니다. 외부 진단에는 `commitSettlement`가 예산 초과 때 전달합니다. 일반 정착의 `undefined`, 파생 예산 초과의 `25`, 실제 쓰기 라운드 수를 모두 보존했습니다. 개발용 `settlementTrace.rounds`에는 기존 빈 확인 슬롯이 관측되므로 생략 때도 `[]`를 남겼습니다. 그 배열의 길이를 쓰기 라운드 수로 바꾸지 않았습니다.
+
+[collectDeriveConvergenceTargets.ts](../../../src/core/blueprint/utils/analyze/collectDeriveConvergenceTargets.ts)는 생성된 전체 청사진의 정적 대상마다 읽기와 조상·자손 양방향 교차를 판정합니다. 비활성 선언/조각의 식·watch·injectTo 원천과 게이트도 포함합니다. injectTo의 원천 노드 방출을 경로로 포함하여 자손 쓰기→조상 방출 변화도 차단합니다. derived의 식 경로와 대상의 모든 watch를 포함하며 부모 children 규칙의 watch도 대상 기준으로 묶습니다. active 게이트는 식 경로를 호스트에 묶고 if/discriminator 게이트는 전체 호스트 읽기로 보수적으로 다룹니다. `/target`와 `/targetLong`처럼 문자열 prefix만 같은 경로는 교차가 아닙니다.
+
+`@` 또는 전체 호스트를 읽는 식, 읽기 완전성을 증명하지 못하는 식, 재귀/동종 배열 템플릿 등 발생 경로를 고정하지 못하는 청사진은 폼 전체 fallback입니다. 단순 리터럴·경로·연산자 식만 완전성을 인정하고 호출·블록·임의 식별자·동적 접근은 기존 평가를 유지합니다. 컨테이너·union·가상 대상은 보수적으로 제외합니다. 가상 노드의 실제 형제 분배를 가상 경로 하나로 증명하지 않았습니다. 라운드에 실패가 있으면 확인을 유지합니다.
+
+[runDeriveRounds.ts:104](../../../src/core/settle/utils/derivation/runDeriveRounds.ts)은 실제 적용하는 승자만 검사하고, 모두 증명된 대상이면 재계산 뒤 확인 평가를 생략합니다. 진 쓰기의 에지는 기존 첫 판정에서 그대로 소비합니다. 파생 내부에는 전이 쓰기 실행이 없으므로 이 생략은 바로 다음 확인만 다룹니다. 바깥 전이는 유지하며 채움 등 전이 쓰기 뒤의 새 파생 호출에는 생략 결정을 넘기지 않습니다. 순위·쓰기/실패 순서·원본 B 복구·커밋 순서와 계수 코드는 바꾸지 않았습니다.
+
+### 차등·shadow와 교정
+
+제품 변경 전에 skip off의 13개 차등 사례가 통과했습니다. skip on은 새 생성 시 증명 자료가 없어서 예상대로 실패했습니다. 최종 19개 관련 시험은 off, test shadow on, shadow 없는 development on을 새 독립 트리에서 비교합니다. 값/raw/extras·형상·제어 상태·오류·진단·배달 payload/options/순서·개정·커밋·쓰기 라운드 수·iterations·개발 기록·규칙 기준이 같습니다. 규칙 key의 발생 identity만 독립 트리 간 비교에서 제외합니다.
+
+테스트 모드의 shadow는 생략할 `evaluateDeriveRound`를 실제로 돌리고 후보와 실패가 모두 0인지 단언합니다. 개발 모드 시험에서는 실제 평가가 갱신당 2→1이며 빈 trace 슬롯은 유지됩니다. 잘못된 증명을 주입하면 shadow가 사슬의 남은 후보를 찾아 거부하는 음성 시험도 통과했습니다. 자손 derived→조상 injectTo, gate가 읽는 대상, 비활성 조각의 규칙/watch, watch-only 에지, A→B→C 사슬, 진 쓰기와 소비된 에지, 전이 채움 뒤 재진입, 재귀·맥락·전체 호스트·불완전 식·가상 쓰기 fallback, 파생 예산 25 복구를 포함합니다.
+
+초기 구현은 식 descriptor에 `readsComplete`를 넣었습니다. 전체 검증에서 기존 강제 범용 capability 시험이 이 필드의 차이를 발견했습니다(oneOf-5, false→true). 기존 시험 단언을 바꾸지 않고 필드를 삭제하여 완전성 증거를 WeakSet에 보관했습니다. 교정 뒤 기존 blueprint 차등 5개와 관련 19개, 총 24개가 통과했습니다. 초기 시간은 [중간 요약](./round-99-derive-convergence-summary.json)에 남겼고 최종 제품 코드로 모든 짝을 다시 측정했습니다. 최종 판정은 [최종 시간 요약](./round-99-derive-convergence-final-summary.json)만 사용합니다.
+
+### 최종 동일 세션 짝 측정
+
+PKG에서 다음 진입점을 사용했습니다.
+
+```bash
+node --expose-gc architecture/verification/07-switch/tools/measure-round-90-baseline.mjs <fixture> <run> --paired <H|W> --round99 --round99-final
+```
+
+H는 HEAD의 git show 정본, W는 작업트리 정본을 메모리에서 번들합니다. fixture마다 H→W, W→H, H→W이며 판·회차마다 새 프로세스, 예열 20·표본 101×3, 각 판 303개 원표본의 nearest-rank median/p99입니다. 무계측 development 동기 코어·validation off·빈 onChange·구독 없음입니다. 첫 갱신은 첫 BF 쓰기 한 번, 후속 갱신은 나머지 상호작용 뒤 같은 원천에 새 값 한 번이며 oneOf는 kind_0→kind_4입니다.
+
+최종 시간 프로세스 30개는 2026-10-06 **06:11:14–06:13:44 KST**에 순차 실행됐습니다. esbuild도 stdin을 닫은 뒤 자발적 종료 0을 30개 모두 확인했고, 각 시간 프로세스가 종료 0으로 끝난 후 다음 판을 시작했습니다. 측정 중 다른 명령·테스트·에이전트를 실행하지 않았습니다. 모든 표본의 mount/first/later 관측 해시와 H/W 해시가 일치합니다. OS·GUI·기존 상주 도구 서비스는 유지했습니다.
+
+아래 단위는 µs이며 회차 1·3은 H→W, 회차 2는 W→H입니다.
+
+| 폼 / 작업 | 중앙값 H→W | 변화 | p99 H→W | 회차1 H→W | 회차2 H→W | 회차3 H→W |
+|---|---:|---:|---:|---:|---:|---:|
+| computed-visible-derived / 마운트 | 455.71→470.54 | +3.26% | 588.92→579.33 | 460.08→469.79 | 453.17→464.29 | 448.08→475.04 |
+| computed-visible-derived / 첫 갱신 | 103.58→94.88 | −8.41% | 158.63→169.75 | 105.42→94.29 | 102.96→96.96 | 103.04→93.13 |
+| computed-visible-derived / 후속 갱신 | 69.54→64.92 | −6.65% | 114.79→121.33 | 69.54→64.04 | 69.83→65.88 | 68.17→64.96 |
+| sample-0 / 후속 갱신 | 29.71→29.71 | 0.00% | 45.42→47.88 | 28.87→30.04 | 29.71→29.42 | 30.54→29.79 |
+| flat-500 / 마운트 | 4382.88→4324.83 | −1.32% | 5060.67→4700.92 | 4708.00→4273.75 | 4317.87→4375.96 | 4314.58→4330.75 |
+| flat-500 / 후속 갱신 | 16.04→16.13 | +0.52% | 32.54→33.29 | 16.17→16.12 | 15.75→16.29 | 16.17→16.12 |
+| oneOf-20 / 후속 갱신 | 395.83→380.04 | −3.99% | 454.42→482.21 | 378.54→382.46 | 375.25→378.04 | 404.46→381.96 |
+| nested-d5-f4 / 마운트 | 12744.67→12989.83 | +1.92% | 14025.17→14968.88 | 12714.96→12800.00 | 12745.58→12796.12 | 12753.04→13525.37 |
+
+derived의 첫·후속 중앙값은 세 회차 모두 개선됐습니다. 생성 시 증명 비용을 내는 derived 마운트는 세 회차 모두 늘었고, 첫·후속 p99도 늘었습니다. sample-0·flat-500 후속은 회차별 방향이 섞이며 oneOf의 합친 감소는 세 회차 모두의 감소가 아닙니다. nested 마운트도 증가하므로 이 행들을 무회귀 또는 추가 이득으로 바꾸어 주장하지 않습니다. 초기 구현의 더 유리한 시간을 최종 판정에 섞지 않았습니다.
+
+### 속도·메모리 비용과 지정 검증
+
+생성은 O(선언+읽기+대상×읽기) 작업과 표현식 스캔이며 임시 Map/Set/배열을 사용합니다. 모듈당 WeakMap/WeakSet 하나씩, 청사진당 O(정적 대상 수+완전성 식 수)의 약한 증명 참조를 보유합니다. 파생 없는 폼은 증명 수집·등록·폼별 할당을 하지 않습니다. 런타임 값·노드·식 descriptor·SettlementContext의 객체 형태는 유지됩니다. 실행은 blueprint 약한 조회와 승자마다 Set 조회를 기존 적용 루프에 합치며, 후보 필터/승자 적용은 고전 for 루프입니다. 확인 라운드의 규칙 방문·의존 읽기와 임시 Map/배열을 없애지만 개발의 빈 trace 슬롯은 유지합니다. **heap byte는 측정하지 않았습니다.**
+
+| PKG 지정 명령 | 최종 결과 |
+|---|---|
+| `npx vitest run --project unit --project render --project react18 --reporter=dot` | 종료1; 418파일·3168건 통과, todo1; render/react18의 EVENT-070 useLayoutEffect/useEffect 각2건(총4건)만 실패; 61.02초 |
+| `npx tsc --noEmit --composite false --rootDir . -p tsconfig.json` | 종료0; sidecar 교정 뒤 현재 제품·시험 코드의 결과 |
+| `npx eslint "src/**/*.{ts,tsx}"` | 종료0; sidecar 교정 뒤 현재 제품·시험 코드의 결과 |
+| `node architecture/verification/07-switch/tools/check-legacy-isolation.mjs` | 종료0; `LEGACY_ISOLATED: 1613 files checked` |
+
+[검증·판정 요약](./round-99-derive-convergence-verification-summary.json)에 초기 실패와 교정, 최종 결과를 함께 기록했습니다. 초기/최종 시간 파일 60개에는 숫자 표본 배열만 있으며 최대 **7645바이트**입니다. 측정 JSON 122개는 최대 **54450바이트**로 모두 5MB 이하입니다. 추가 검증 요약도 5MB 이하이며 원표본·중간 자료를 덮어쓰지 않았습니다. 코드·테스트는 최종 검증 뒤 다시 바꾸지 않았습니다.
+
+시간 이득이 있어 제품 변경을 유지했습니다. 독립 에이전트 검토는 사용자 금지에 따라 실행하지 않았으며 최종 diff와 계약을 자체 확인했습니다. 설치·git 쓰기·커밋·추가 에이전트·강제 종료·생성 런타임 빌드 산출물은 없습니다. 모든 작업은 지정 워크트리 안에서 완료했습니다.
