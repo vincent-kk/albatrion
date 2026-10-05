@@ -4,6 +4,7 @@ import type { BlueprintSchema } from '../../blueprint';
 import { SetValueOption } from '../../types/value';
 import { loadSchemaNodeAtMount } from '../index';
 import type { SettlementContext } from '../type';
+import * as staticFirstLoad from '../utils/load/canLoadStaticFirstTree';
 import * as sourcePresence from '../utils/transition/isMissingRaw';
 import { DirtyPathSet } from '../utils/write/DirtyPathSet';
 import { registerRecalculation } from '../utils/write/registerRecalculation';
@@ -19,6 +20,7 @@ it.each([3, 5])('skips subtree source scans for default-free branches at depth %
     ) };
   const { root } = createTestTree(schema(depth));
   const missing = vi.spyOn(sourcePresence, 'isMissingRaw');
+  vi.spyOn(staticFirstLoad, 'canLoadStaticFirstTree').mockReturnValue(false);
   loadSchemaNodeAtMount(root, undefined, SetValueOption.Overwrite);
   expect(missing.mock.calls.filter(([node]) => node.behavior.strategy === 'branch')).toHaveLength(0);
   expect(missing.mock.calls).toHaveLength(4 ** depth);

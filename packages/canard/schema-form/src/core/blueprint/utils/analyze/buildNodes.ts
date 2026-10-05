@@ -37,6 +37,7 @@ export const buildNodes = (
   const boundKey = JSON.stringify([key, hostPaths]);
   const cached =
     context.templates.get(boundKey) ?? context.constructing.get(key);
+  if (context.constructing.has(key)) context.staticFirstLoad = false;
   if (cached) return cached;
   const declarations = [];
   for (let index = 0; index < inputs.length; index++) {

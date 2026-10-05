@@ -1,8 +1,10 @@
 import { isArray } from '@winglet/common-utils/filter';
+import { hasOwnProperty } from '@winglet/common-utils/lib';
 
 import type { BlueprintSchema } from '../../type';
 import { readSchemaObject } from './readSchemaObject';
 import type { AnalysisContext } from './type';
+import { isLiteralDefault } from './isLiteralDefault';
 
 /** Supported string controls, matching the expression compiler's closed vocabulary. */
 const EXPRESSION_KEYS = ['active', 'visible', 'readOnly', 'disabled',
@@ -20,6 +22,11 @@ export const collectSchemaCapabilities = (
 ): void => {
   const record = readSchemaObject(schema);
   const capabilities = context.capabilities;
+  if (context.staticFirstLoad) {
+    const fallback = Object.getOwnPropertyDescriptor(record, 'default');
+    if (fallback && (!('value' in fallback) || fallback.value !== undefined &&
+      !isLiteralDefault(fallback.value))) context.staticFirstLoad = false;
+  }
   if (record.oneOf !== undefined || record.anyOf !== undefined ||
     record.if !== undefined || record.then !== undefined || record.else !== undefined)
     capabilities.branchless = false;
@@ -31,6 +38,8 @@ export const collectSchemaCapabilities = (
   for (let index = -1; index < (isArray(children) ? children.length : 0); index++) {
     const group = index < 0 ? controls : children[index].controls;
     if (!group) continue;
+    if (hasOwnProperty(group, 'default') || group.unsetValue !== undefined ||
+      group.injectTo !== undefined) context.staticFirstLoad = false;
     if (group.active !== undefined) capabilities.branchless = false;
     if (group.watch !== undefined) capabilities.hasWatch = true;
     if (group.visible !== undefined || group.readOnly !== undefined || group.disabled !== undefined)

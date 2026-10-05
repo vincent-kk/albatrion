@@ -5,6 +5,7 @@ import type { AnalysisContext } from './utils/analyze/type';
 import { validateShape } from './utils/analyze/validateShape';
 import { collectBlueprintWarnings } from './utils/diagnostics/collectBlueprintWarnings';
 import { validateChildTargets } from './utils/diagnostics/validateChildTargets';
+import { StaticFirstLoadCapability } from './utils/features/StaticFirstLoadCapability';
 
 /** Feature-free graphs share frozen values only after independent absence proofs. */
 const EMPTY_EXPRESSIONS: Blueprint['expressions'] = Object.freeze([]);
@@ -36,6 +37,7 @@ export const blueprint = (
     return cached.blueprint;
   }
   const context: AnalysisContext = {
+    staticFirstLoad: true,
     capabilities: { branchless: true, hasExpressions: false, hasDerive: false,
       hasWatch: false, hasState: false, hasDependencies: false },
     schema,
@@ -70,6 +72,9 @@ export const blueprint = (
     ? compileBlueprintExpressions(context) : EMPTY_EXPRESSIONS;
   for (let index = 0; index < context.nodes.length; index++) {
     const node = context.nodes[index];
+    if (node.kind === 'virtual' || node.kind === 'union' ||
+      (node.kind === 'object' || node.kind === 'array') && node.strategy !== 'branch')
+      context.staticFirstLoad = false;
     Object.freeze(node.childEntries);
     Object.freeze(node);
   }
@@ -92,6 +97,10 @@ export const blueprint = (
     dependencies: context.dependencies ? Object.freeze(context.dependencies) : EMPTY_DEPENDENCIES,
     expressions,
   });
+  const capabilities = result.capabilities;
+  StaticFirstLoadCapability.set(result, context.staticFirstLoad && capabilities.branchless &&
+    !capabilities.hasExpressions && !capabilities.hasDerive && !capabilities.hasWatch &&
+    !capabilities.hasState && !capabilities.hasDependencies);
   collectBlueprintWarnings(result, options.collect);
   if (typeof schema === 'object' && options.cache) {
     const entry = {

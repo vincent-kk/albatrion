@@ -1,0 +1,613 @@
+{
+  "fixture": "oneOf-20",
+  "run": 1,
+  "variant": "H",
+  "environment": {
+    "startedAt": "2026-10-05T12:40:34.581Z",
+    "node": "v26.10.0",
+    "v8": "14.6.202.34-node.35",
+    "platform": "darwin",
+    "arch": "arm64",
+    "cpu": "Apple M1 Max",
+    "warmup": 20,
+    "samples": 101,
+    "validation": "off",
+    "mode": "production profiling React",
+    "explicitGc": true,
+    "trace": true,
+    "bundleSha256": "5bb938b9ff45057daaa53114b75961210cff00da31a3b21bf5c0a832c6ba1825",
+    "endedAt": "2026-10-05T12:40:37.068Z"
+  },
+  "mount": {
+    "median": 3.3589560000018537,
+    "p99": 3.7150349999956234,
+    "sampleCount": 101
+  },
+  "update": {
+    "median": 1.13811899999655,
+    "p99": 1.6780929999958971,
+    "sampleCount": 101
+  },
+  "details": {
+    "mount": {
+      "commits": {
+        "2": 101
+      },
+      "phases": {
+        "react-commit": {
+          "median": 0.30124899999827903,
+          "p99": 0.43208099999901606,
+          "sampleCount": 101
+        },
+        "analysis": {
+          "median": 0.6607500000000073,
+          "p99": 0.8162919999995211,
+          "sampleCount": 101
+        },
+        "creation": {
+          "median": 0.023959999999533466,
+          "p99": 0.043581999997513776,
+          "sampleCount": 101
+        },
+        "settlement": {
+          "median": 1.3103730000011637,
+          "p99": 1.5488700000005338,
+          "sampleCount": 101
+        },
+        "delivery": {
+          "median": 0.07079500000600092,
+          "p99": 0.09400499999355816,
+          "sampleCount": 101
+        },
+        "react-render": {
+          "median": 1.2902079999994385,
+          "p99": 1.4936250000000655,
+          "sampleCount": 101
+        },
+        "wait": {
+          "median": 1.4882900000020527,
+          "p99": 1.5569569999997839,
+          "sampleCount": 101
+        }
+      },
+      "sites": {
+        "/Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/node_modules/react-dom/cjs/react-dom-profiling.profiling.js:flushMutationEffects": {
+          "time": {
+            "median": 0.1312900000011723,
+            "p99": 0.1680850000002465,
+            "sampleCount": 101
+          },
+          "calls": {
+            "8": 101
+          }
+        },
+        "/Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/node_modules/react-dom/cjs/react-dom-profiling.profiling.js:flushLayoutEffects": {
+          "time": {
+            "median": 0.044873000000734464,
+            "p99": 0.10170899999866378,
+            "sampleCount": 101
+          },
+          "calls": {
+            "8": 101
+          }
+        },
+        "/Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/node_modules/react-dom/cjs/react-dom-profiling.profiling.js:flushPassiveEffects": {
+          "time": {
+            "median": 0.09091599999828759,
+            "p99": 0.17737399999805348,
+            "sampleCount": 101
+          },
+          "calls": {
+            "9": 101
+          }
+        },
+        "packages/canard/schema-form/src/core/blueprint/blueprint.ts:blueprint": {
+          "time": {
+            "median": 0.6607500000000073,
+            "p99": 0.8162919999995211,
+            "sampleCount": 101
+          },
+          "calls": {
+            "1": 101
+          }
+        },
+        "packages/canard/schema-form/src/core/SchemaNode/utils/schemaNodeFactory.ts:createSchemaNode": {
+          "time": {
+            "median": 0.023959999999533466,
+            "p99": 0.043581999997513776,
+            "sampleCount": 101
+          },
+          "calls": {
+            "6": 101
+          }
+        },
+        "packages/canard/schema-form/src/core/settle/derive/utils/rules/getDeriveRuleTable.ts:getDeriveRuleTable": {
+          "time": {
+            "median": 0.000376999999389227,
+            "p99": 0.0008739999993849779,
+            "sampleCount": 101
+          },
+          "calls": {
+            "5": 101
+          }
+        },
+        "packages/canard/schema-form/src/core/settle/utils/write/getDependencyIndex.ts:getDependencyIndex": {
+          "time": {
+            "median": 0.10620800000015151,
+            "p99": 0.1519590000007156,
+            "sampleCount": 101
+          },
+          "calls": {
+            "3": 101
+          }
+        },
+        "packages/canard/schema-form/src/core/settle/utils/write/registerRecalculation.ts:registerRecalculation": {
+          "time": {
+            "median": 0.08103999999912048,
+            "p99": 0.10658300000068266,
+            "sampleCount": 101
+          },
+          "calls": {
+            "3": 101
+          }
+        },
+        "packages/canard/schema-form/src/core/record/utils/captureSchemaNodeChange.ts:captureSchemaNodeChange": {
+          "time": {
+            "median": 0.010291000004144735,
+            "p99": 0.02461699999821576,
+            "sampleCount": 101
+          },
+          "calls": {
+            "98": 101
+          }
+        },
+        "packages/canard/schema-form/src/core/settle/utils/compute/updateOutput.ts:updateOutput": {
+          "time": {
+            "median": 0.046668000002682675,
+            "p99": 0.06770499999856838,
+            "sampleCount": 101
+          },
+          "calls": {
+            "20": 101
+          }
+        },
+        "packages/canard/schema-form/src/core/settle/utils/compute/computeNode.ts:computeNode": {
+          "time": {
+            "median": 0.24795799999992596,
+            "p99": 0.3562499999989086,
+            "sampleCount": 101
+          },
+          "calls": {
+            "13": 101
+          }
+        },
+        "packages/canard/schema-form/src/core/settle/utils/compute/selectChildren.ts:selectChildren": {
+          "time": {
+            "median": 0.6006649999999354,
+            "p99": 0.7632040000007692,
+            "sampleCount": 101
+          },
+          "calls": {
+            "5": 101
+          }
+        },
+        "packages/canard/schema-form/src/core/settle/utils/derivation/runDeriveRounds.ts:runDeriveRounds": {
+          "time": {
+            "median": 0.002124999999978172,
+            "p99": 0.0031229999995048274,
+            "sampleCount": 101
+          },
+          "calls": {
+            "3": 101
+          }
+        },
+        "packages/canard/schema-form/src/core/settle/utils/transition/isMissingRaw.ts:isMissingRaw": {
+          "time": {
+            "median": 0.0004180000014457619,
+            "p99": 0.0007500000001527951,
+            "sampleCount": 101
+          },
+          "calls": {
+            "5": 101
+          }
+        },
+        "packages/canard/schema-form/src/core/settle/utils/transition/transitionSettlement.ts:transitionSettlement": {
+          "time": {
+            "median": 0.047584999998434796,
+            "p99": 0.07137699999748293,
+            "sampleCount": 101
+          },
+          "calls": {
+            "1": 101
+          }
+        },
+        "packages/canard/schema-form/src/core/record/utils/markSchemaNodeEvent.ts:markSchemaNodeEvent": {
+          "time": {
+            "median": 0.0034169999989899225,
+            "p99": 0.015289999999367865,
+            "sampleCount": 101
+          },
+          "calls": {
+            "12": 101
+          }
+        },
+        "packages/canard/schema-form/src/core/settle/utils/commit/markCommitDeliveries.ts:markCommitDeliveries": {
+          "time": {
+            "median": 0.04308200000104989,
+            "p99": 0.0681670000003578,
+            "sampleCount": 101
+          },
+          "calls": {
+            "1": 101
+          }
+        },
+        "packages/canard/schema-form/src/core/settle/utils/commit/commitSettlement.ts:commitSettlement": {
+          "time": {
+            "median": 0.034791999999470136,
+            "p99": 0.05695899999955145,
+            "sampleCount": 101
+          },
+          "calls": {
+            "1": 101
+          }
+        },
+        "packages/canard/schema-form/src/core/settle/utils/write/writeSchemaNode.ts:writeSchemaNode": {
+          "time": {
+            "median": 0.1224179999981061,
+            "p99": 0.17137499999989814,
+            "sampleCount": 101
+          },
+          "calls": {
+            "1": 101
+          }
+        },
+        "packages/canard/schema-form/src/core/settle/utils/load/loadSchemaNodeAtMount.ts:loadSchemaNodeAtMount": {
+          "time": {
+            "median": 0.0029999999997016857,
+            "p99": 0.016291000000819622,
+            "sampleCount": 101
+          },
+          "calls": {
+            "1": 101
+          }
+        },
+        "packages/canard/schema-form/src/core/dispatch/utils/chain/deliverWave.ts:deliverWave": {
+          "time": {
+            "median": 0.0042929999999614665,
+            "p99": 0.0128340000001117,
+            "sampleCount": 101
+          },
+          "calls": {
+            "2": 101
+          }
+        },
+        "packages/canard/schema-form/src/core/dispatch/utils/chain/runDeliveryWaves.ts:runDeliveryWaves": {
+          "time": {
+            "median": 0.0022500000004583853,
+            "p99": 0.006207000000358676,
+            "sampleCount": 101
+          },
+          "calls": {
+            "2": 101
+          }
+        },
+        "packages/canard/schema-form/src/core/dispatch/utils/chain/flushQueuedEvents.ts:flushQueuedEvents": {
+          "time": {
+            "median": 0.004665999998906045,
+            "p99": 0.010959000001093955,
+            "sampleCount": 101
+          },
+          "calls": {
+            "2": 101
+          }
+        },
+        "/Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/node_modules/react-dom/cjs/react-dom-profiling.profiling.js:renderRootSync": {
+          "time": {
+            "median": 1.2902079999994385,
+            "p99": 1.4936250000000655,
+            "sampleCount": 101
+          },
+          "calls": {
+            "2": 101
+          }
+        },
+        "/Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/node_modules/react-dom/cjs/react-dom-profiling.profiling.js:commitRoot": {
+          "time": {
+            "median": 0.031121999999413674,
+            "p99": 0.05529000000205997,
+            "sampleCount": 101
+          },
+          "calls": {
+            "2": 101
+          }
+        }
+      }
+    },
+    "update": {
+      "commits": {
+        "2": 101
+      },
+      "phases": {
+        "settlement": {
+          "median": 1.4936250000018845,
+          "p99": 1.6957129999964309,
+          "sampleCount": 101
+        },
+        "delivery": {
+          "median": 0.12591800000063813,
+          "p99": 0.16857900000559312,
+          "sampleCount": 101
+        },
+        "creation": {
+          "median": 0.01037599999926897,
+          "p99": 0.021124999999301508,
+          "sampleCount": 101
+        },
+        "react-commit": {
+          "median": 0.6428750000013679,
+          "p99": 0.8468330000005153,
+          "sampleCount": 101
+        },
+        "react-render": {
+          "median": 1.1873749999995198,
+          "p99": 1.7254579999998896,
+          "sampleCount": 101
+        },
+        "other": {
+          "median": 0.04570699999931094,
+          "p99": 0.07450100000096427,
+          "sampleCount": 101
+        },
+        "wait": {
+          "median": 3.5720000000001164,
+          "p99": 3.7761250000012296,
+          "sampleCount": 101
+        }
+      },
+      "sites": {
+        "packages/canard/schema-form/src/core/settle/utils/write/getDependencyIndex.ts:getDependencyIndex": {
+          "time": {
+            "median": 0.0007509999995818362,
+            "p99": 0.001291000000492204,
+            "sampleCount": 101
+          },
+          "calls": {
+            "3": 101
+          }
+        },
+        "packages/canard/schema-form/src/core/settle/utils/write/registerRecalculation.ts:registerRecalculation": {
+          "time": {
+            "median": 0.13712500000019645,
+            "p99": 0.1922100000001592,
+            "sampleCount": 101
+          },
+          "calls": {
+            "3": 101
+          }
+        },
+        "packages/canard/schema-form/src/core/record/utils/captureSchemaNodeChange.ts:captureSchemaNodeChange": {
+          "time": {
+            "median": 0.012331999996604281,
+            "p99": 0.027165999998942425,
+            "sampleCount": 101
+          },
+          "calls": {
+            "125": 101
+          }
+        },
+        "packages/canard/schema-form/src/core/settle/utils/compute/updateOutput.ts:updateOutput": {
+          "time": {
+            "median": 0.06641700000000128,
+            "p99": 0.09187199999996665,
+            "sampleCount": 101
+          },
+          "calls": {
+            "25": 101
+          }
+        },
+        "packages/canard/schema-form/src/core/settle/utils/compute/computeNode.ts:computeNode": {
+          "time": {
+            "median": 0.300452999998015,
+            "p99": 0.3747930000017732,
+            "sampleCount": 101
+          },
+          "calls": {
+            "14": 101
+          }
+        },
+        "packages/canard/schema-form/src/core/SchemaNode/utils/schemaNodeFactory.ts:createSchemaNode": {
+          "time": {
+            "median": 0.01037599999926897,
+            "p99": 0.021124999999301508,
+            "sampleCount": 101
+          },
+          "calls": {
+            "6": 101
+          }
+        },
+        "packages/canard/schema-form/src/core/settle/utils/compute/selectChildren.ts:selectChildren": {
+          "time": {
+            "median": 0.6368789999960427,
+            "p99": 0.72436899999866,
+            "sampleCount": 101
+          },
+          "calls": {
+            "6": 101
+          }
+        },
+        "packages/canard/schema-form/src/core/settle/derive/utils/rules/getDeriveRuleTable.ts:getDeriveRuleTable": {
+          "time": {
+            "median": 0.00041599999985919567,
+            "p99": 0.0007080000013957033,
+            "sampleCount": 101
+          },
+          "calls": {
+            "5": 101
+          }
+        },
+        "packages/canard/schema-form/src/core/settle/utils/derivation/runDeriveRounds.ts:runDeriveRounds": {
+          "time": {
+            "median": 0.0035420000003796304,
+            "p99": 0.010332000000744301,
+            "sampleCount": 101
+          },
+          "calls": {
+            "3": 101
+          }
+        },
+        "packages/canard/schema-form/src/core/settle/utils/transition/isMissingRaw.ts:isMissingRaw": {
+          "time": {
+            "median": 0.000249999999141437,
+            "p99": 0.0005010000004403992,
+            "sampleCount": 101
+          },
+          "calls": {
+            "3": 101
+          }
+        },
+        "packages/canard/schema-form/src/core/settle/utils/transition/transitionSettlement.ts:transitionSettlement": {
+          "time": {
+            "median": 0.044833999999355,
+            "p99": 0.06803999999920052,
+            "sampleCount": 101
+          },
+          "calls": {
+            "2": 101
+          }
+        },
+        "packages/canard/schema-form/src/core/record/utils/markSchemaNodeEvent.ts:markSchemaNodeEvent": {
+          "time": {
+            "median": 0.009584000002178072,
+            "p99": 0.020916000000397617,
+            "sampleCount": 101
+          },
+          "calls": {
+            "22": 101
+          }
+        },
+        "packages/canard/schema-form/src/core/settle/utils/commit/markCommitDeliveries.ts:markCommitDeliveries": {
+          "time": {
+            "median": 0.06941599999754544,
+            "p99": 0.08962500000143336,
+            "sampleCount": 101
+          },
+          "calls": {
+            "2": 101
+          }
+        },
+        "packages/canard/schema-form/src/core/settle/utils/commit/commitSettlement.ts:commitSettlement": {
+          "time": {
+            "median": 0.08079200000156561,
+            "p99": 0.10941699999966659,
+            "sampleCount": 101
+          },
+          "calls": {
+            "2": 101
+          }
+        },
+        "packages/canard/schema-form/src/core/settle/utils/write/writeSchemaNode.ts:writeSchemaNode": {
+          "time": {
+            "median": 0.19728899999881833,
+            "p99": 0.26454000000012456,
+            "sampleCount": 101
+          },
+          "calls": {
+            "2": 101
+          }
+        },
+        "packages/canard/schema-form/src/core/dispatch/utils/chain/deliverWave.ts:deliverWave": {
+          "time": {
+            "median": 0.027665999999953783,
+            "p99": 0.04675099999894883,
+            "sampleCount": 101
+          },
+          "calls": {
+            "2": 101
+          }
+        },
+        "packages/canard/schema-form/src/core/dispatch/utils/chain/runDeliveryWaves.ts:runDeliveryWaves": {
+          "time": {
+            "median": 0.0032920000003286987,
+            "p99": 0.007458000000042375,
+            "sampleCount": 101
+          },
+          "calls": {
+            "2": 101
+          }
+        },
+        "packages/canard/schema-form/src/core/dispatch/utils/chain/flushQueuedEvents.ts:flushQueuedEvents": {
+          "time": {
+            "median": 0.0017920000000231084,
+            "p99": 0.0037079999992783996,
+            "sampleCount": 101
+          },
+          "calls": {
+            "2": 101
+          }
+        },
+        "/Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/node_modules/react-dom/cjs/react-dom-profiling.profiling.js:flushMutationEffects": {
+          "time": {
+            "median": 0.4148749999994834,
+            "p99": 0.5753750000003492,
+            "sampleCount": 101
+          },
+          "calls": {
+            "8": 101
+          }
+        },
+        "/Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/node_modules/react-dom/cjs/react-dom-profiling.profiling.js:flushLayoutEffects": {
+          "time": {
+            "median": 0.037956999999551044,
+            "p99": 0.05862699999943288,
+            "sampleCount": 101
+          },
+          "calls": {
+            "8": 101
+          }
+        },
+        "/Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/node_modules/react-dom/cjs/react-dom-profiling.profiling.js:flushPassiveEffects": {
+          "time": {
+            "median": 0.15370600000096601,
+            "p99": 0.19725300000027346,
+            "sampleCount": 101
+          },
+          "calls": {
+            "8": 101
+          }
+        },
+        "/Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/node_modules/react-dom/cjs/react-dom-profiling.profiling.js:renderRootSync": {
+          "time": {
+            "median": 1.1873749999995198,
+            "p99": 1.7254579999998896,
+            "sampleCount": 101
+          },
+          "calls": {
+            "2": 101
+          }
+        },
+        "/Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/node_modules/react-dom/cjs/react-dom-profiling.profiling.js:commitRoot": {
+          "time": {
+            "median": 0.03504200000043056,
+            "p99": 0.05504200000086712,
+            "sampleCount": 101
+          },
+          "calls": {
+            "2": 101
+          }
+        },
+        "harness:find-and-write": {
+          "time": {
+            "median": 0.04570699999931094,
+            "p99": 0.07450100000096427,
+            "sampleCount": 101
+          },
+          "calls": {
+            "2": 101
+          }
+        }
+      }
+    }
+  },
+  "observationsSha256": "47a723159c3fb53bcf0c17fe4ca3bb124824ad4d82c732874a5a7e4c9376bd0e",
+  "note": "65C-01 React 진단: production profiling의 renderRootSync/Concurrent·commitRoot·mutation/layout/passive와 core 경계를 메모리에서만 감싼 배타 phase입니다. 예열·표본·동작은 본 측정과 같습니다. 이 계측 Profiler 시간으로 85C-01을 재판정하지 않습니다."
+}

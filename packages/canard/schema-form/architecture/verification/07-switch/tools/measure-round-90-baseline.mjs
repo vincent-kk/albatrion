@@ -9,6 +9,14 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { instrumentRound93Structures } from './instrument-round-93-structures.mjs';
 
+if (process.argv.includes('--round93i') &&
+  (process.argv.includes('--react') || process.argv.includes('--phases') ||
+    process.argv.includes('--costs') || process.argv.includes('--react-phases') ||
+    process.argv[2] === '--summarize-paired')) {
+  await import('./measure-round-93i.mjs');
+  process.exit(0);
+}
+
 const verification = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const pkg = path.resolve(verification, '../../..');
 const repo = path.resolve(pkg, '../../..');
@@ -18,10 +26,11 @@ const warmup = 20;
 const samples = 101;
 const paired = process.argv.includes('--paired');
 const round93 = process.argv.includes('--round93');
+const round93i = process.argv.includes('--round93i');
 const structures = process.argv.includes('--structures');
 const variant = paired ? process.argv[5] : 'W';
-const revision = variant === 'H' ? (round93 ? 'fba01cbea' : 'afd8ade3d') : undefined;
-const pairedRound = round93 ? 93 : 92;
+const revision = variant === 'H' ? (round93i ? 'af1904cf9' : round93 ? 'fba01cbea' : 'afd8ade3d') : undefined;
+const pairedRound = round93i ? '93i' : round93 ? 93 : 92;
 
 /** Persist timing-only samples or one aggregate report, below the 5 MB ceiling. */
 function save(name, value) {

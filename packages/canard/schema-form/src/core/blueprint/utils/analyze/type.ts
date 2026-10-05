@@ -37,6 +37,8 @@ export interface SchemaInput {
 }
 /** State owned by one invocation, never process-global or reused across roots. */
 export interface AnalysisContext {
+  /** Literal/default and finite-shape evidence, independent of branchless evidence. */
+  staticFirstLoad: boolean;
   /** Monotonic feature evidence collected together with authored declarations. */
   capabilities: { -readonly [Key in keyof Blueprint['capabilities']]: boolean };
   schema: BlueprintSchema;

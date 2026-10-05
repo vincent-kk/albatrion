@@ -1,3 +1,4 @@
+import { StaticFirstLoadCapability } from '../../../blueprint';
 import type { Blueprint, BlueprintNode } from '../../../blueprint';
 import type { VirtualReferenceIndex } from '../../type';
 
@@ -14,6 +15,11 @@ export const getVirtualReferenceIndex = (
 ): VirtualReferenceIndex | null => {
   let index = REFERENCES.get(blueprint);
   if (index !== undefined) return index;
+  // Static first-load eligibility already proves the blueprint has no virtual node.
+  if (StaticFirstLoadCapability.has(blueprint)) {
+    REFERENCES.set(blueprint, null);
+    return null;
+  }
   let hosts: Map<BlueprintNode, Map<string, string[]>> | undefined;
   for (const host of blueprint.nodes) {
     let fields: Map<string, string[]> | undefined;

@@ -1,0 +1,61 @@
+{
+  "fixture": "flat-500",
+  "run": 3,
+  "variant": "W",
+  "environment": {
+    "startedAt": "2026-10-05T12:14:58.477Z",
+    "node": "v26.10.0",
+    "v8": "14.6.202.34-node.35",
+    "platform": "darwin",
+    "arch": "arm64",
+    "cpu": "Apple M1 Max",
+    "warmup": 20,
+    "samples": 101,
+    "validation": "off",
+    "mode": "production profiling React",
+    "explicitGc": true,
+    "trace": false,
+    "bundleSha256": "4b94dc5636ad716a80ad78e6acc81a8da536904901d0165275bbca6d05e494ce",
+    "endedAt": "2026-10-05T12:15:13.365Z"
+  },
+  "mount": {
+    "median": 57.89685999998346,
+    "p99": 62.14181100002497,
+    "sampleCount": 101
+  },
+  "update": {
+    "median": 1.7705400000395457,
+    "p99": 2.514346999967529,
+    "sampleCount": 101
+  },
+  "details": {
+    "mount": {
+      "commits": {
+        "2": 101
+      },
+      "phases": {
+        "wait": {
+          "median": 71.07908299999872,
+          "p99": 76.02712500000052,
+          "sampleCount": 101
+        }
+      },
+      "sites": {}
+    },
+    "update": {
+      "commits": {
+        "10": 101
+      },
+      "phases": {
+        "wait": {
+          "median": 17.876291000000492,
+          "p99": 19.789208999999573,
+          "sampleCount": 101
+        }
+      },
+      "sites": {}
+    }
+  },
+  "observationsSha256": "14deb024c795ff1e3268b939160e032d946051f2c5c635c2988a62ad929a8b4c",
+  "note": "86C-01: production react-dom/profiling + Profiler actualDuration의 모든 mount/update 커밋 합. 같은 BF 폼·상호작용·최종 값·렌더 경로 단언입니다."
+}

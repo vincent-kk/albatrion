@@ -2,6 +2,8 @@ import type { SchemaNodeRecord } from '../../../record';
 import type { SetValueOption } from '../../../types/value';
 import { writeSchemaNode } from '../write/writeSchemaNode';
 import { setLoadValue } from './setLoadValue';
+import { canLoadStaticFirstTree } from './canLoadStaticFirstTree';
+import { loadStaticFirstTree } from './loadStaticFirstTree';
 
 /**
  * Start a form's first load lifetime with a retained source snapshot.
@@ -16,7 +18,8 @@ export const loadSchemaNodeAtMount = <Self extends SchemaNodeRecord<Self>>(
   const nextSnapshot = setLoadValue(root.runtime.loadSnapshot, '', value);
   root.runtime.diagnostics = { status: 'stable' };
   try {
-    writeSchemaNode(root, value, 'load', option);
+    if (canLoadStaticFirstTree(root, value)) loadStaticFirstTree(root, option);
+    else writeSchemaNode(root, value, 'load', option);
   } finally {
     root.runtime.loadSnapshot = nextSnapshot;
   }

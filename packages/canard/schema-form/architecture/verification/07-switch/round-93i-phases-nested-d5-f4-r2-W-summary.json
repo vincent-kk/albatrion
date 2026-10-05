@@ -1,0 +1,383 @@
+{
+  "fixture": "nested-d5-f4",
+  "run": 2,
+  "variant": "W",
+  "environment": {
+    "startedAt": "2026-10-05T12:11:14.211Z",
+    "node": "v26.10.0",
+    "v8": "14.6.202.34-node.35",
+    "platform": "darwin",
+    "arch": "arm64",
+    "cpu": "Apple M1 Max",
+    "warmup": 20,
+    "samples": 101,
+    "validation": "off",
+    "mode": "development exclusive core",
+    "explicitGc": true,
+    "trace": true,
+    "bundleSha256": "f135e1f2358e1486ac2a98b6fb597571de5a7d9516f81701299a6f47342693b0",
+    "endedAt": "2026-10-05T12:11:18.858Z"
+  },
+  "mount": {
+    "median": 14.584915999999794,
+    "p99": 16.909083999999893,
+    "sampleCount": 101
+  },
+  "update": {
+    "median": 1.0503349999999045,
+    "p99": 2.5612510000005386,
+    "sampleCount": 101
+  },
+  "details": {
+    "mount": {
+      "commits": {
+        "0": 101
+      },
+      "phases": {
+        "analysis": {
+          "median": 7.6395000000002256,
+          "p99": 9.44812499999989,
+          "sampleCount": 101
+        },
+        "creation": {
+          "median": 2.8394040000084715,
+          "p99": 3.4759170000020276,
+          "sampleCount": 101
+        },
+        "settlement": {
+          "median": 1.974311999999145,
+          "p99": 2.3037180000228545,
+          "sampleCount": 101
+        },
+        "delivery": {
+          "median": 1.9991609999951834,
+          "p99": 2.337266000003183,
+          "sampleCount": 101
+        },
+        "other": {
+          "median": 0.028835999999955675,
+          "p99": 0.04258299999992232,
+          "sampleCount": 101
+        },
+        "wait": {
+          "median": 1.336001000000124,
+          "p99": 1.4672080000000278,
+          "sampleCount": 101
+        }
+      },
+      "sites": {
+        "packages/canard/schema-form/src/core/blueprint/blueprint.ts:blueprint": {
+          "time": {
+            "median": 7.6395000000002256,
+            "p99": 9.44812499999989,
+            "sampleCount": 101
+          },
+          "calls": {
+            "1": 101
+          }
+        },
+        "packages/canard/schema-form/src/core/SchemaNode/utils/schemaNodeFactory.ts:createSchemaNode": {
+          "time": {
+            "median": 2.8394040000084715,
+            "p99": 3.4759170000020276,
+            "sampleCount": 101
+          },
+          "calls": {
+            "1365": 101
+          }
+        },
+        "packages/canard/schema-form/src/core/settle/utils/load/isMissingStaticInput.ts:isMissingStaticInput": {
+          "time": {
+            "median": 0.0288709999990715,
+            "p99": 0.03907400001298811,
+            "sampleCount": 101
+          },
+          "calls": {
+            "1024": 101
+          }
+        },
+        "packages/canard/schema-form/src/core/settle/utils/load/assembleStaticFirstNode.ts:assembleStaticFirstNode": {
+          "time": {
+            "median": 0.8580060000049343,
+            "p99": 1.1209310000053847,
+            "sampleCount": 101
+          },
+          "calls": {
+            "1365": 101
+          }
+        },
+        "packages/canard/schema-form/src/core/settle/utils/load/commitStaticFirstNode.ts:commitStaticFirstNode": {
+          "time": {
+            "median": 1.8647029999954157,
+            "p99": 2.1259740000032252,
+            "sampleCount": 101
+          },
+          "calls": {
+            "1365": 101
+          }
+        },
+        "packages/canard/schema-form/src/core/settle/utils/load/finishStaticFirstLoad.ts:finishStaticFirstLoad": {
+          "time": {
+            "median": 0.012459000000035303,
+            "p99": 0.019000000000005457,
+            "sampleCount": 101
+          },
+          "calls": {
+            "1": 101
+          }
+        },
+        "packages/canard/schema-form/src/core/settle/utils/load/loadStaticFirstTree.ts:loadStaticFirstTree": {
+          "time": {
+            "median": 1.065432999987479,
+            "p99": 1.264959999986786,
+            "sampleCount": 101
+          },
+          "calls": {
+            "1": 101
+          }
+        },
+        "packages/canard/schema-form/src/core/settle/utils/load/loadSchemaNodeAtMount.ts:loadSchemaNodeAtMount": {
+          "time": {
+            "median": 0.005000999999992928,
+            "p99": 0.00841699999955381,
+            "sampleCount": 101
+          },
+          "calls": {
+            "1": 101
+          }
+        },
+        "packages/canard/schema-form/src/core/dispatch/utils/chain/deliverWave.ts:deliverWave": {
+          "time": {
+            "median": 0.0470829999999296,
+            "p99": 0.09845799999993687,
+            "sampleCount": 101
+          },
+          "calls": {
+            "1": 101
+          }
+        },
+        "packages/canard/schema-form/src/core/dispatch/utils/chain/runDeliveryWaves.ts:runDeliveryWaves": {
+          "time": {
+            "median": 0.07104200000003402,
+            "p99": 0.15120800000022427,
+            "sampleCount": 101
+          },
+          "calls": {
+            "1": 101
+          }
+        },
+        "packages/canard/schema-form/src/core/dispatch/utils/chain/flushQueuedEvents.ts:flushQueuedEvents": {
+          "time": {
+            "median": 0.00037500000007639755,
+            "p99": 0.0013750000000527507,
+            "sampleCount": 101
+          },
+          "calls": {
+            "1": 101
+          }
+        },
+        "packages/canard/schema-form/src/core/nodeFromJSONSchema.ts:nodeFromJSONSchema": {
+          "time": {
+            "median": 0.028835999999955675,
+            "p99": 0.04258299999992232,
+            "sampleCount": 101
+          },
+          "calls": {
+            "1": 101
+          }
+        }
+      }
+    },
+    "update": {
+      "commits": {
+        "0": 101
+      },
+      "phases": {
+        "settlement": {
+          "median": 0.7081689999968148,
+          "p99": 1.708171000002494,
+          "sampleCount": 101
+        },
+        "delivery": {
+          "median": 0.23191600000063772,
+          "p99": 0.512578000002577,
+          "sampleCount": 101
+        },
+        "other": {
+          "median": 0.09695700000156648,
+          "p99": 0.2665010000032453,
+          "sampleCount": 101
+        },
+        "wait": {
+          "median": 12.030584000000545,
+          "p99": 22.708583999999064,
+          "sampleCount": 101
+        }
+      },
+      "sites": {
+        "packages/canard/schema-form/src/core/settle/utils/write/getDependencyIndex.ts:getDependencyIndex": {
+          "time": {
+            "median": 0.0021239999996396364,
+            "p99": 0.014500999999654596,
+            "sampleCount": 101
+          },
+          "calls": {
+            "10": 101
+          }
+        },
+        "packages/canard/schema-form/src/core/settle/utils/write/registerRecalculation.ts:registerRecalculation": {
+          "time": {
+            "median": 0.06929200000013225,
+            "p99": 0.19346000000223285,
+            "sampleCount": 101
+          },
+          "calls": {
+            "10": 101
+          }
+        },
+        "packages/canard/schema-form/src/core/record/utils/captureSchemaNodeChange.ts:captureSchemaNodeChange": {
+          "time": {
+            "median": 0.012625000000753062,
+            "p99": 0.029037000002062996,
+            "sampleCount": 101
+          },
+          "calls": {
+            "120": 101
+          }
+        },
+        "packages/canard/schema-form/src/core/settle/utils/compute/updateOutput.ts:updateOutput": {
+          "time": {
+            "median": 0.11558499999682681,
+            "p99": 0.21588199999678181,
+            "sampleCount": 101
+          },
+          "calls": {
+            "60": 101
+          }
+        },
+        "packages/canard/schema-form/src/core/settle/utils/compute/computeNode.ts:computeNode": {
+          "time": {
+            "median": 0.09183200000188663,
+            "p99": 0.17200299999876734,
+            "sampleCount": 101
+          },
+          "calls": {
+            "60": 101
+          }
+        },
+        "packages/canard/schema-form/src/core/settle/derive/utils/rules/getDeriveRuleTable.ts:getDeriveRuleTable": {
+          "time": {
+            "median": 0.0011639999984254246,
+            "p99": 0.0030820000001767767,
+            "sampleCount": 101
+          },
+          "calls": {
+            "20": 101
+          }
+        },
+        "packages/canard/schema-form/src/core/settle/utils/derivation/runDeriveRounds.ts:runDeriveRounds": {
+          "time": {
+            "median": 0.00741699999980483,
+            "p99": 0.03387699999984761,
+            "sampleCount": 101
+          },
+          "calls": {
+            "10": 101
+          }
+        },
+        "packages/canard/schema-form/src/core/settle/utils/transition/transitionSettlement.ts:transitionSettlement": {
+          "time": {
+            "median": 0.009291000001212524,
+            "p99": 0.016960999998445914,
+            "sampleCount": 101
+          },
+          "calls": {
+            "10": 101
+          }
+        },
+        "packages/canard/schema-form/src/core/record/utils/markSchemaNodeEvent.ts:markSchemaNodeEvent": {
+          "time": {
+            "median": 0.029952999999522945,
+            "p99": 0.05779300000017429,
+            "sampleCount": 101
+          },
+          "calls": {
+            "70": 101
+          }
+        },
+        "packages/canard/schema-form/src/core/settle/utils/commit/markCommitDeliveries.ts:markCommitDeliveries": {
+          "time": {
+            "median": 0.1714559999963967,
+            "p99": 0.4187919999985752,
+            "sampleCount": 101
+          },
+          "calls": {
+            "10": 101
+          }
+        },
+        "packages/canard/schema-form/src/core/settle/utils/commit/commitSettlement.ts:commitSettlement": {
+          "time": {
+            "median": 0.07166699999879711,
+            "p99": 0.1343739999997524,
+            "sampleCount": 101
+          },
+          "calls": {
+            "10": 101
+          }
+        },
+        "packages/canard/schema-form/src/core/settle/utils/write/writeSchemaNode.ts:writeSchemaNode": {
+          "time": {
+            "median": 0.3340010000001712,
+            "p99": 0.7456670000001395,
+            "sampleCount": 101
+          },
+          "calls": {
+            "10": 101
+          }
+        },
+        "packages/canard/schema-form/src/core/dispatch/utils/chain/deliverWave.ts:deliverWave": {
+          "time": {
+            "median": 0.005331999998816173,
+            "p99": 0.022832999999536696,
+            "sampleCount": 101
+          },
+          "calls": {
+            "10": 101
+          }
+        },
+        "packages/canard/schema-form/src/core/dispatch/utils/chain/runDeliveryWaves.ts:runDeliveryWaves": {
+          "time": {
+            "median": 0.00728999999955704,
+            "p99": 0.02837500000032378,
+            "sampleCount": 101
+          },
+          "calls": {
+            "10": 101
+          }
+        },
+        "packages/canard/schema-form/src/core/dispatch/utils/chain/flushQueuedEvents.ts:flushQueuedEvents": {
+          "time": {
+            "median": 0.0012930000002597808,
+            "p99": 0.005583000000342508,
+            "sampleCount": 101
+          },
+          "calls": {
+            "10": 101
+          }
+        },
+        "harness:find-and-write": {
+          "time": {
+            "median": 0.09695700000156648,
+            "p99": 0.2665010000032453,
+            "sampleCount": 101
+          },
+          "calls": {
+            "10": 101
+          }
+        }
+      }
+    }
+  },
+  "observationsSha256": "b2e347bf535ef1f18d98b7d35d78acedb028043d5762ac786f45af3bf33c376f",
+  "note": "65C-01: 기존 경계의 배타 phase 합. 대기는 제외하고 동기/비동기 정착 완료를 배출합니다. 계측은 시간 판정의 plain 코어와 분리하며 raw에는 시간 배열만 저장합니다."
+}

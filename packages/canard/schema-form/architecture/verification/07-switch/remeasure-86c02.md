@@ -975,7 +975,7 @@ flat·nested 마운트는 세 회차 모두 감소했습니다. oneOf-20은 합�
 | computed-visible-derived | update | 0.039900 | 0.059850 | 5.681× | 미달 |
 | oneOf-20 (대조) | update | 0.026600 | 0.039900 | 44.530× | 미달; H 대비 중앙값 회귀 없음 |
 
-분기 없는 일곱 행 중 array 갱신·derived 마운트 두 행이 이 수치 조건을 충족합니다. (ii)만으로 나머지 목표를 달성했다고 주장하지 않으며 G26은 열어 둡니다. 승인 설계나 원장 항목을 바꿀 필요는 발견하지 않았습니다.
+**93C-01 정정:** 이 표는 무계측 동기 값과 다른 날·다른 Node(v24.20.0)에서 잰 옛 값의 대조이며 85C-01 판정의 방법(배타 단계 합 active 중앙값, 옛 판 비동기 정착 포함, 같은 세션·같은 Node에서 번갈아 잰 쌍)이 아닙니다. 이 표의 충족·미달은 게이트 판정이 아니며, 공식 판정은 93C-01의 방법으로 따로 만든 판정표가 대신합니다. 분기 없는 일곱 행 중 array 갱신·derived 마운트 두 행이 이 수치 조건을 충족합니다. (ii)만으로 나머지 목표를 달성했다고 주장하지 않으며 G26은 열어 둡니다. 승인 설계나 원장 항목을 바꿀 필요는 발견하지 않았습니다.
 
 ### 분석 구조 수와 속도·메모리 비용
 
@@ -1025,3 +1025,140 @@ flat·nested 마운트는 세 회차 모두 감소했습니다. oneOf-20은 합�
 | `node architecture/verification/07-switch/tools/check-legacy-isolation.mjs` | 종료 0; `LEGACY_ISOLATED: 1591 files checked` |
 
 청사진·정착·BF 차등 범위의 중간 실행은 136파일·1086건 통과했습니다. 최종 지정 전체 실행에도 새 10건이 모두 통과했습니다. 추가 검토 에이전트는 실행하지 않았습니다. 열린 설계 물음은 없고 성능 미달 행과 G26은 유지합니다.
+
+## 93라운드 (i) 정적 첫 로드
+
+승인된 (i)를 `af1904cf9`의 분기 없는 capability 위에 구현했습니다. 정착·청사진 DETAIL 계약을 먼저 고쳤습니다. entry에서 기존 배달 Set에 자리를 예약하고 자식 완료 후 assemble/project·payload·revision을 확정하며, 루트와 전역 상태가 완성된 뒤 기존 dispatcher가 예약 순서로 배달합니다. eligibility 통과 뒤에만 generic과 같은 커밋 번호 하나를 예약합니다. 동기 reporter 없이 mismatch·경고를 기록하므로 첫 리스너는 모든 노드의 최종 revision·전역 상태를 봅니다(89C-01, ERROR-019).
+
+첫 판은 게이트·식·파생·감시·상태 선언·latent가 없는 finite 객체/배열/스칼라와 literal default에 한정합니다. `DisableAutomaticWrites`는 동일 선택기의 플래그로 처리합니다. `controls.default`는 own `undefined`까지, virtual·재귀·union·whole-value·`unsetValue`·`injectTo`는 fallback입니다. caller가 제공한 첫 값도 보수적으로 fallback하며, default에서 분배된 자식 값만 정적 DFS로 해석합니다. eligibility는 기존 분석 순회에서 증명하여 첫 로드에 스키마를 재탐색하지 않습니다. fallback은 번호나 노드를 먼저 변경하지 않습니다(89C-02).
+
+### 짝 측정과 판정 범위
+
+같은 세션·같은 최종 제품 소스에서 H=`af1904cf9`, W=작업트리로 측정했습니다. 픽스처·층마다 H→W, W→H, H→W이며, 매 판 새 프로세스·예열 20·표본 101, validation off·명시 GC입니다. 중앙값은 각 판의 303개 원표본 전체에서 nearest-rank로 구했습니다. 생성 번들은 메모리에만 두고 esbuild를 측정 전에 종료했습니다. 측정 중 다른 테스트·명령·에이전트를 실행하지 않았습니다. OS·GUI·상주 도구 서비스는 유지되었습니다. old는 Node24.20.0/V8 13.6, 이번은 Node26.10.0/V8 14.6/Apple M1 Max이므로 환경·시점 차이와 작은 변동의 인과를 구별합니다.
+
+기존 `tools/measure-round-90-baseline.mjs --round93i`의 무계측 synchronous 코어를 보존했습니다. 공식 85C-01 코어 판정에는 설계 문서와 65C-01의 **배타 active**(비동기 정착 포함, 대기 제외) 짝을 별도 실행했습니다. 두 범위의 old 중앙값을 섞지 않습니다. React는 86C-01대로 production `react-dom/profiling`의 Profiler actualDuration 커밋 합이며, 벽 시간이나 phase 계측 시간으로 재판정하지 않습니다.
+
+derived의 `/trigger`를 off→on으로 두 번 쓰는 마지막 값 검사 오류로 해당 phase 회차가 예열 중 중단되었습니다. 표본 파일이 생기기 전에 검사만 고쳐 같은 조건으로 이어갔습니다. 완료 표본은 교체하지 않았습니다. 첫 flat phase/React 회차의 cwd는 worktree 루트, 이후는 PKG여서 esbuild 경로 주석의 raw SHA가 다릅니다. 두 cwd에서 H/W·두 층을 다시 번들한 뒤 주석을 제거한 실행 AST SHA가 같음을 확인했습니다. 제품 소스·실행 코드는 동일하고 이 회차도 모두 포함했습니다.
+
+### 무계측 코어 짝: synchronous 대조
+
+단위 ms. Δ는 W/H−1, 세 짝 Δ는 r1/r2/r3 순서입니다. 아래는 동일 동기 범위의 1.5배 수치 판정이며 공식 active 판정은 다음 표에 있습니다.
+
+| 픽스처 | 작업 | H | W | Δ | 세 짝 Δ | old 0.16.0 | W/old | ≤1.5배 |
+| --- | --- | ---: | ---: | ---: | --- | ---: | ---: | --- |
+| flat-500 | mount | 6.682375 | 4.528500 | -32.23% | -34.1% / -33.6% / -28.1% | 2.543400 | 1.780× | 미달 |
+| flat-500 | update | 0.242875 | 0.305791 | +25.90% | +22.0% / +21.2% / +32.0% | 0.111400 | 2.745× | 미달 |
+| nested-d5-f4 | mount | 20.079625 | 13.250166 | -34.01% | -37.9% / -32.9% / -31.7% | 4.958500 | 2.672× | 미달 |
+| array-1000 | mount | 22.319333 | 6.695375 | -70.00% | -69.9% / -70.3% / -69.5% | 12.101900 | 0.553× | 충족 |
+| array-1000 | update | 0.119416 | 0.137250 | +14.93% | +9.2% / +23.4% / +24.0% | 0.178100 | 0.771× | 충족 |
+| computed-visible-derived | mount | 0.480958 | 0.481917 | +0.20% | -5.5% / +4.3% / +0.5% | 0.305800 | 1.576× | 미달 |
+| computed-visible-derived | update | 0.241667 | 0.239208 | -1.02% | -6.3% / +5.7% / -2.4% | 0.039900 | 5.995× | 미달 |
+| oneOf-20 (대조) | update | 1.385208 | 1.307792 | -5.59% | +4.5% / -15.4% / -4.0% | 0.026600 | 49.165× | 미달 |
+
+flat 갱신의 상승은 세 짝 모두 같은 방향이며 실제 비용으로 보고합니다. W는 첫 로드에서 generic scratch를 만들지 않아 **첫 후속 갱신**에서 scratch·역경로 자료를 처음 만듭니다. 10개 입력의 계산·assembly·commit visitor는 H/W 모두 20회라 추가 재계산은 아닙니다. array 갱신도 계산/assembly 4→4회이며 첫 scratch 생성 비용이 이동합니다. 배열 갱신의 목표 충족과 +14.93% H/W 상승을 모두 보존합니다.
+
+### 85C-01 공식 코어: 배타 active
+
+| 픽스처 | 작업 | H | W | Δ | 세 짝 Δ | old active | W/old | ≤1.5배 |
+| --- | --- | ---: | ---: | ---: | --- | ---: | ---: | --- |
+| flat-500 | mount | 7.541542 | 4.897458 | -35.06% | -34.1% / -39.8% / -33.7% | 4.664300 | 1.050× | 충족 |
+| flat-500 | update | 0.578540 | 0.624455 | +7.94% | +12.8% / -29.0% / +27.6% | 2.381100 | 0.262× | 충족 |
+| nested-d5-f4 | mount | 23.622334 | 14.584000 | -38.26% | -38.0% / -35.1% / -40.8% | 11.394400 | 1.280× | 충족 |
+| array-1000 | mount | 26.864500 | 9.063375 | -66.26% | -66.2% / -66.1% / -66.7% | 29.827400 | 0.304× | 충족 |
+| array-1000 | update | 0.148208 | 0.177792 | +19.96% | +14.5% / +22.9% / +25.0% | 0.446500 | 0.398× | 충족 |
+| computed-visible-derived | mount | 0.610750 | 0.625375 | +2.39% | +2.9% / +0.3% / +4.5% | 0.329700 | 1.897× | 미달 |
+| computed-visible-derived | update | 0.404083 | 0.421333 | +4.27% | +15.2% / -1.2% / +3.4% | 0.111000 | 3.796× | 미달 |
+| oneOf-20 (대조) | update | 1.476124 | 1.454459 | -1.47% | -15.3% / -2.6% / +7.7% | 0.224700 | 6.473× | 미달 |
+
+분기 없는 일곱 행 중 공식 active는 다섯 행, synchronous 대조는 두 행이 상한을 충족합니다. derived는 분기 없는 청사진 분석을 재사용하지만 식이 있어 첫 로드는 generic입니다. oneOf 대조도 표에서 제외하지 않았습니다. 코어·React 전체 조건을 달성했다고 주장하지 않으며 G26을 열어 둡니다.
+
+### 86C-01 production profiling React
+
+동일 BF 폼·스키마·상호작용·렌더 경로와 최종 값을 사용했습니다. 모든 mount는 H/W 모두 Profiler 커밋 2회입니다. update는 flat 10회, array 1회, derived 3회, oneOf 2회로 H/W가 같습니다. 상한은 mount 1.2배, update 1.0배입니다.
+
+| 픽스처 | 작업 | H | W | Δ | 세 짝 Δ | old Profiler | W/old | 85C-01 |
+| --- | --- | ---: | ---: | ---: | --- | ---: | ---: | --- |
+| flat-500 | mount | 59.175259 | 57.251689 | -3.25% | -3.2% / -3.5% / -3.2% | 51.858800 | 1.104× | 충족 |
+| flat-500 | update | 1.487568 | 1.551964 | +4.33% | -2.4% / -4.2% / +20.5% | 1.506800 | 1.030× | 미달 |
+| nested-d5-f4 | mount | 151.740176 | 145.549582 | -4.08% | -2.3% / -4.1% / -5.8% | 143.426600 | 1.015× | 충족 |
+| array-1000 | mount | 458.603468 | 461.968028 | +0.73% | +1.2% / +1.2% / -0.7% | 497.311000 | 0.929× | 충족 |
+| array-1000 | update | 0.590886 | 0.644951 | +9.15% | +9.5% / +4.9% / +10.5% | 2.478500 | 0.260× | 충족 |
+| computed-visible-derived | mount | 1.667504 | 1.638574 | -1.73% | -3.5% / -5.3% / +3.6% | 1.491700 | 1.098× | 충족 |
+| computed-visible-derived | update | 0.635988 | 0.577584 | -9.18% | -16.2% / -14.5% / +6.7% | 0.472200 | 1.223× | 미달 |
+| oneOf-20 (대조) | update | 1.120748 | 1.072577 | -4.30% | -2.9% / -8.9% / -3.5% | 1.002000 | 1.070× | 미달 |
+
+요청한 네 mount는 모두 상한을 충족합니다. branchless update 세 행 중 array만 충족하며 oneOf 대조도 미달입니다. array mount의 +0.73%는 core의 큰 절감이 Profiler 렌더 전체의 절감으로 이어졌다는 근거가 되지 않습니다. flat update는 회차별 방향이 섞이고 세 번째 짝의 상승이 커서 원인을 정적 첫 로드 하나로 확정하지 않습니다.
+
+### 미달 행의 65C-01 phase 이유
+
+아래 숫자는 별도 계측에서 303개 원표본의 각 **배타 phase 중앙값**입니다. 중앙값은 가법적이지 않으며 코어 synchronous 또는 무계측 React Profiler에서 이 수를 빼서 다른 비용을 추정하지 않습니다. validation registration/run의 계측된 작업은 모든 off 행에서 0입니다. 대기는 raw에 따로 보존하고 active/Profiler 상한에 넣지 않습니다.
+
+| 미달 행 | phase 근거(ms, W) | 남은 작업과 원인 범위 |
+| --- | --- | --- |
+| core synchronous flat mount | analysis 2.820709, creation 0.728178, settlement 0.659170, delivery 0.629555 | authored 501노드의 정적 분석·효과 스키마/그래프는 유지됩니다. 501개 생성·assembly·payload/revision도 필요한 작업입니다. (i)는 analysis를 제거하지 않으므로 동기 old 상한에는 미달하며 공식 active는 충족합니다. |
+| core synchronous nested mount | analysis 7.928334, creation 2.726220, settlement 1.926951, delivery 1.947010 | 1,365개 authored 노드의 분석과 eager 생성, 각 객체의 자식 출력 결합이 남습니다. settlement·delivery 감소 후 분석이 가장 큽니다. 공식 active는 충족하지만 동기 old 상한은 넘습니다. |
+| core synchronous flat update | settlement 0.407835(H 0.353084), delivery 0.144836, other 0.068707 | 10번 입력의 generic 정착/부모 assembly·배달을 유지합니다. 첫 generic scratch 생성이 update로 이동하고 계산 수 20→20입니다. 배달 증가나 추가 노드 계산으로 돌리지 않습니다. |
+| core derived mount: synchronous·active | analysis 0.165375, creation 0.014375, settlement 0.356913, delivery 0.054128, other 0.023458 | eligibility에서 식을 배제하여 generic fill/형상·derive 평가를 유지합니다. W r2의 derive 2회, computeNode 15회, selectChildren 4회입니다. 노드 5개 대비 계산 15회로 정착이 주된 잔차입니다. |
+| core derived update: synchronous·active | settlement 0.326711, delivery 0.064212, other 0.030999 | source/trigger 세 입력의 derive 3회·계산/assembly 11회와 3회 커밋을 유지합니다. 첫 로드 최적화는 이 식·전이 비용을 줄이지 않습니다. |
+| core oneOf update: synchronous·active, 대조 | settlement 1.334495, delivery 0.089000, creation 0.008290, other 0.024085 | W r2의 selectChildren 6회(배타 중앙값 0.575338), computeNode 14회(0.251838), dirty 등록 3회와 assembly 25회입니다. 게이트·형상 재선택과 출입/후속 정착이 주된 잔차이며 (i)/(ii)의 분기 없는 조건 밖입니다. |
+| React flat update | react-render 2.242958, react-commit 1.078176, settlement 0.448832, delivery 0.241705, other 0.103085 | 10개 입력의 fiber 재조정·폼/필드 갱신 및 mutation/layout/passive를 유지합니다. primary Profiler는 10회 합 1.551964ms로 old보다 0.045164ms 높습니다. 커밋 수 증가는 없으며 phase 진단에서도 renderer 작업이 가장 큽니다. H/W 상승 원인을 특정 컴포넌트나 scratch로 확정하지 않습니다. |
+| React derived update | react-render 0.640458, react-commit 0.444083, settlement 0.357251, delivery 0.104666, other 0.046961 | 세 입력의 파생 값·visible 전이, 세 render commit 및 effect 작업을 유지합니다. primary 0.577584ms는 old보다 0.105384ms 높고, phase 진단에는 renderer·commit과 generic derive 비용이 함께 남습니다. |
+| React oneOf update, 대조 | settlement 1.455122, react-render 1.166208, react-commit 0.633959, delivery 0.126162, creation 0.010458, other 0.044621 | 두 입력의 게이트 전환·자식 교체와 두 render commit이 남습니다. primary 1.072577ms는 old보다 0.070577ms 높습니다. branch 전이·renderer의 잔차를 정적 로드 절감으로 상쇄했다고 주장하지 않습니다. |
+
+React 진단은 같은 H→W/W→H/H→W·예열20·101×3·production profiling 조건에서 별도 새 프로세스로 실행했습니다. 기존 65C-01처럼 React DOM의 `renderRootSync/Concurrent`, `commitRoot`, mutation/layout/passive와 core 경계를 **메모리에서만** 감쌌습니다. trace로 85C-01을 재판정하지 않았으며 renderer 내부의 특정 컴포넌트 원인은 미분해입니다. 이 진단까지 시간 프로세스 108개가 서로 겹치지 않음을 timestamp로 검사했습니다.
+
+### 89C-04 계산·필수 출력·메모리
+
+별도 비용 진단의 실제 core mount를 계수했습니다. 계산은 dirty 상태에서 실행한 generic compute와 static assembly 완료이며 단순 함수 진입 수와 구별합니다. assembly·노드 재계산과 dispatcher의 필수 출력 순회를 따로 표시합니다.
+
+| 픽스처 | N | 계산 H→W | 추가 재계산 H→W | assembly H→W | 필수 reservation drain / listener snapshot (양쪽) | generic commit visitor H→W |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: |
+| flat-500 | 501 | 501→501 | 0→0 | 501→501 | 501 / 501 | 501→0 |
+| nested-d5-f4 | 1365 | 1365→1365 | 0→0 | 1365→1365 | 1365 / 1365 | 1365→0 |
+| array-1000 | 4002 | 4004→4002 | 2→0 | 4004→4002 | 4002 / 4002 | 4002→0 |
+| computed-visible-derived (fallback) | 5 | 15→15 | 10→10 | 15→15 | 5 / 5 | 5→5 |
+| oneOf-20 (fallback) | 6 | 13→13 | 7→7 | 20→20 | 6 / 6 | 6→6 |
+
+oneOf의 추가 계산은 이번 mount의 최종 live N 대비 차이이며 새 노드 출입을 포함하는 generic 진단값입니다. 이를 동일 노드를 일곱 번 다시 계산했다는 의미로 해석하지 않습니다. 총계는 비용 summary, 함수별 호출 분포는 phase summary에 보존합니다.
+
+| 자료 | flat | nested | array |
+| --- | ---: | ---: | ---: |
+| selected-declaration peak H→W | 501→0 | 1365→0 | 4002→0 |
+| DirtyPathSet의 Map 생성 H→W | 502→0 | 1706→0 | 4003→0 |
+| release 후 scratch 보유 바이트 H→W | 3848→0 | 3848→0 | 3848→0 |
+| 새 order cell | 0 | 0 | 0 |
+| 기존 Set 객체 / backing store, 양쪽 동일 | 32 / 10280 B | 32 / 41000 B | 32 / 81960 B |
+| 기존 셀당 capacity 상각 바이트 | 20.279441 B | 29.948718 B | 20.449775 B |
+| W의 최대 live DFS frame | 2 | 6 | 4 |
+| W frame 객체 바이트 / 최대 합 | 96 / 192 B | 96 / 576 B | 96 / 384 B |
+
+Set 셀당 값은 실제 V8 heap의 table self_size에서 빈 Set table 120B를 뺀 뒤 N으로 나눈 값이며 capacity를 포함합니다. 노드·payload·스키마 바이트는 포함하지 않습니다. 순서 셀은 새로 만들지 않았으므로 이 바이트를 scratch 절감으로 더하지 않습니다. scratch 바이트는 release 후 직접 소유한 컨테이너/backing store이고 **peak byte 또는 RSS가 아닙니다**. DFS 수치는 frame 객체만이며 stack 배열의 capacity와 shared 캐시를 합산한 전체 peak byte가 아닙니다. heap 원본은 메모리에서 읽고 파일에 남기지 않았습니다. fallback 두 행은 scratch 3848B와 기존 배달 셀을 그대로 보유합니다.
+
+변경별 속도·메모리 비용은 다음과 같습니다. ms 절감은 최종 변경 하나의 짝 결과이며 아래 단위별 독립적인 인과 시간으로 나누지 않습니다.
+
+| 변경 | 속도 비용 | 메모리 비용 |
+| --- | --- | --- |
+| eligibility 증명 | 기존 capability 수집에 고정 검사 결합; 작성 literal 데이터 L의 descriptor/유한성 검사 O(L) 추가, 첫 load 조회 O(1); getter 실행 없음 | Blueprint 공개 shape 유지, 청사진당 weak-sidecar bool O(1); literal 검사의 active ancestry와 key 목록 임시 저장 |
+| entry 예약·후위 assemble/project | occurrence당 계산/assembly 1회, dirty·형상 재선택·initialOutputs 재조립 목록 제거; 고전 DFS while와 자식 인덱스 사용 | 기존 O(N) 배달 Set, 신규 order cell 0; live frame O(D), frame 총 생성 O(N); shared 정적 객체 entry cache O(S) |
+| 기본값 선택·required·부가 값 보존 | default가 있는 container의 missing 판정은 값 재계산 없는 source-only 검사; 후보 source span 합만큼 추가 읽기, 겹친 후보의 최악은 O(LD); required 길이 R·자식 C의 기존 배열 membership 비용 O(CR) 유지 | automatic/selected/dirty/exit/disposal 장부 없음; required용 새 Set 미생성, 필요한 raw/extras·자식 배열·출력 payload는 유지 |
+| batched payload/revision·진단 | 후위 한 번 확정, 루트 뒤 2N 필수 dispatcher visitor 유지; 실제 경고만 예약 번호로 정렬 O(W log W) | 필요한 revision/payload O(N); 실제 경고 cell O(W), 경고가 없으면 목록 미생성; 전역 상태 delta는 값이 있을 때만 생성 |
+| 첫 후속 generic update | 정착 의미와 계산 수 유지; 최초 scratch 생성의 고정 비용을 첫 update로 이동 | update 없는 root의 scratch 0, update 후에는 기존 generic scratch 보유 |
+
+값·find·children 반복 읽기는 같은 참조이며, 이후 동일 값·부분 쓰기·A→B→A 및 리스너 payload도 차등 검증했습니다. 공유 cache를 위해 노드의 공개 shape나 Blueprint 객체에 가변 필드를 덧붙이지 않았습니다.
+
+### 차등 매트릭스·지정 검증·산출물
+
+구현 전 확장 generic 매트릭스 22건을 통과시켰고, own `controls.default: undefined` fallback 사례를 더한 최종 매트릭스는 generic 강제 경로와 static 활성 경로 모두 **23/23**입니다. 같은 assertion으로 값·raw/extras·오류·diagnostics·경고·배달 순서·commit·revision·전역 상태·snapshot·listener payload·ref/allOf·배열 0/1/1000 및 fallback을 비교합니다. intermediate state가 동기 reporter로 관측되지 않는 characterization과 모든 revision이 첫 리스너 전에 확정되는 단언을 포함합니다. 정적 원가 테스트 2건은 eligibility, fallback 번호 비소비, occurrence당 assembly 1회와 generic scratch 부재를 검사합니다. 기존 sourcePresence 스케일링 검사는 generic oracle을 명시하여 기존 assertion을 보존했습니다.
+
+| PKG 지정 명령 | 결과 |
+| --- | --- |
+| `npx vitest run --project unit --project render --project react18 --reporter=dot` | 종료1; 412파일·3134건 통과, todo1; render/react18의 EVENT-070 useLayoutEffect/useEffect 두 건씩(총4건)만 실패; 65.90초 |
+| `npx tsc --noEmit --composite false --rootDir . -p tsconfig.json` | 종료0 |
+| `npx eslint "src/**/*.{ts,tsx}"` | 종료0 |
+| `node architecture/verification/07-switch/tools/check-legacy-isolation.mjs` | 종료0; `LEGACY_ISOLATED: 1602 files checked` |
+
+[round-93i-baseline-summary.json](./round-93i-baseline-summary.json)에 모든 중앙값·p99·회차별 짝·old 기준/판정·환경·bundle 증명·비용을, [round-93i-react-phase-diagnosis-summary.json](./round-93i-react-phase-diagnosis-summary.json)에 React phase 근거를 보존했습니다. 원표본 `round-93i-*-timings.json`에는 숫자 시간 배열만 있고, counter/trace/heap 원본은 없습니다. 모든 산출물은 파일당 5MB 이하입니다. 추가 제품 변경을 끼워 넣지 않고 최종 제품 변경 한 판을 측정했습니다. git 쓰기·설치·추가 에이전트 실행은 없습니다. 승인 설계나 원장을 바꿔야 할 문제·열린 물음은 없으며 성능 미달과 G26은 유지합니다.
+
+### 첫 갱신 회귀의 원인과 수정
+
+구현 직후의 쌍 측정에서 갱신이 느려졌습니다(core flat-500 0.243→0.306 ms, array-1000 0.119→0.137 ms). 독립 진단(Claude debugger, 같은 세션 번갈아 3회차)에서 회귀는 마운트 직후 첫 갱신에만 있고 둘째 갱신부터는 HEAD와 같았습니다(flat-500 둘째 이후 호출당 0.0168 대 0.0165 ms). 원인은 `getVirtualReferenceIndex.ts`의 청사진별 virtual 참조 색인 훑기입니다. 범용 로드는 정착 문맥을 만들며 마운트에서 이 값을 냈고, 정적 로드는 문맥을 만들지 않아 BF 표본마다 새 청사진의 첫 갱신이 O(노드+자식 항목) 훑기를 대신 냈습니다(CPU 프로파일에서 첫 갱신의 19%). 정적 자격이 virtual 노드의 부재를 이미 증명하므로 그 훑기의 결과는 언제나 null입니다. 정적 청사진이면 훑지 않고 null을 기억하도록 고쳐, 일을 옮기지 않고 없앴습니다(flat-500 첫 갱신 차이의 약 75% 제거, 메모리는 기존과 같은 청사진당 null 항목 하나). 남은 약 0.01–0.03 ms는 추가 일이 아니라 JIT 예열 차이로 진단되었습니다(첫 갱신의 함수 호출 192 대 193, 범용 마운트가 computeNode·updateOutput·selectChildren을 Maglev 단계로 올려 둔 몫). BF 갱신 수치는 앞으로 "마운트 직후 첫 갱신"과 "이후 갱신"을 나눠 적습니다.
