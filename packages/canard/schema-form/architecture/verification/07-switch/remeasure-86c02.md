@@ -1414,3 +1414,37 @@ map/filter의 각 반환 배열까지 포함한 튜플의 명시적 배열 생�
 ### 처분
 
 시간 이득을 입증하지 못해(derived 후속 갱신 69.75→70.67 µs, 첫 갱신 104.42→108.38 µs, 마운트 461.67→465.92 µs; 대조 행은 잡음 안) 제품 코드를 HEAD로 되돌렸습니다. 조회 6→2회·등록 2→1회의 계수 감소는 임시 Map 하나의 추가와 상쇄되었습니다. 계수를 단언하던 시험은 되돌린 코드에서 성립하지 않아 저장소에서 뺐습니다. 남은 몫의 중심은 갱신마다 도는 파생 평가 둘째 라운드(수렴 확인)이며, 이를 건너뛰는 것은 위 "원장 검토가 필요한 잔여"의 항목을 건드리므로 원장 관리자에게 물음으로 올립니다.
+
+## 98라운드 게이트 선택 표 (가)
+
+**판정: 설계 적용 선행조건에서 중단했습니다. 선택 표 제품 구현·결과 재사용·B2·B4·B5 연결은 없습니다.** HEAD `b2578f614`의 전수 평가에 승인 설계 §8의 무공표 shadow reader와 읽기 경로 전체 `pendingOutputs` 부재 단언을 적용했으나, oneOf-5의 mount에서 28자리, kind_0→kind_4 갱신에서 4자리(합계 32자리)가 실패했습니다. 최종 값·동일 emit 참조·stable 진단을 고정한 별도 단언은 통과했습니다. 따라서 절차 2의 “전수 평가에서 같은 단언을 먼저 초록”을 충족하지 못했으며, 절차 3–5는 실행하지 않았습니다.
+
+### 중단한 설계 지점과 코드 반례
+
+승인 설계 §4.2·5.1은 기존 공표 위치와 순서를 보존하고 §8·10은 shadow를 위해 읽기 경로 전체에 pending output이 없음을 단언합니다. 그런데 `readProjectedValue.ts:36-46`은 branch 호스트 raw가 `undefined`이고 직접 자식이 있으면 호스트를 flush하지 않고 그 자식의 emit을 읽습니다. `selectChildren.ts:291-292`는 앞선 자식의 즉시 계산 뒤 호스트를 pendingOutputs에 넣습니다. 따라서 /kind 자체는 이미 계산되어 올바른 값이어도 그 경로의 루트는 pending일 수 있습니다. `flushPendingGateReads.ts`도 이 경우 기존 직접 자식 읽기를 위해 루트를 공표하지 않습니다.
+
+실행 반례의 첫 자리는 `#/oneOf/0/controls/active`, owner `''`, read `/kind`, root raw `undefined`, pending `['<root>']`입니다. 테스트의 spy는 실제 evaluateGate를 먼저 한 번 호출하고 그 자리가 반환한 상태에서 독립 reader를 실행합니다. 독립 reader는 공표·locate·레지스트리 변경을 호출하지 않으며 changedNodes·pendingOutputs·gateThrowVersion 불변도 단언합니다. 최적화나 전수 평가의 상태를 고쳐 shadow를 통과시키지 않았습니다. 실패 단언은 `.fails`나 skip으로 바꾸지 않고 남겼습니다.
+
+이 부재 단언을 통과시키려 추가 flush를 하면 승인 설계가 보존하도록 한 공표 및 changedNodes/배달 순서에 손댑니다. 반대로 실제로 읽는 자식만 단언하도록 줄이면 “경로 전체” 조건을 바꿉니다. 둘 다 임의로 선택하지 않았습니다. shadow 선행조건을 현행 reader와 맞게 정정할 설계 판단이 필요합니다. 나머지 차등 행렬·네 모드·표 on 결과·위치별 표 동등성은 미검증이며 통과로 보고하지 않습니다.
+
+### 분기 수별 계수·짝 중앙값·메모리
+
+| 조각 수 B | 전환별 gate 함수 평가 H/W | 전환별 table lookup H/W | oneOf update·mount 짝 중앙값 H/W | 청사진 선택 표 메모리 |
+|---:|---|---|---|---|
+| 5 | 미측정 | 미측정 | 미측정 | 표 미구현, 추가 계획 없음 |
+| 10 | 미측정 | 미측정 | 미측정 | 표 미구현, 추가 계획 없음 |
+| 20 | 미측정 | 미측정 | 미측정 | 표 미구현, 추가 계획 없음 |
+| 40 | 미측정 | 미측정 | 미측정 | 표 미구현, 추가 계획 없음 |
+
+sample-0·flat-500의 후속 update·mount도 미측정입니다. 절차 2를 통과하지 않은 상태의 H/W 측정을 성능 결과로 제출하지 않았으며 시간 파일은 만들지 않았습니다. 91라운드 기준 (1), 계수 독립성·회귀 부재·속도 이득·heap byte를 주장하지 않습니다. 현재 런타임/청사진 구현은 HEAD와 같아 새 blueprint 필드·Map·bucket은 없습니다. DETAIL의 계획 공간 O(G+B+M+V)은 적용 계약이며 실제 구현·측정치가 아닙니다. 새 reader의 경로 분할·순회와 shadow 기록은 테스트 전용 임시 공간이며 제품 hot path에는 들어가지 않습니다.
+
+### 지정 검증
+
+| PKG 지정 명령 | 결과 |
+|---|---|
+| `npx vitest run --project unit --project render --project react18 --reporter=dot` | 종료1; 416파일·3150건 통과, todo1; 총5건 실패: 허용된 EVENT-070 render/react18 각2건(합계4) 및 신규 shadow 선행조건 1건. 62.82초. 허용 범위 밖 실패가 있어 완료 조건 미충족 |
+| `npx tsc --noEmit --composite false --rootDir . -p tsconfig.json` | 종료0 |
+| `npx eslint "src/**/*.{ts,tsx}"` | 종료0 |
+| `node architecture/verification/07-switch/tools/check-legacy-isolation.mjs` | 종료0; `LEGACY_ISOLATED: 1608 files checked` |
+
+상세 상태는 [round-98-gate-selection-summary.json](./round-98-gate-selection-summary.json)에 기록했습니다. 모든 작업은 지정 stage-07 안에서 이루어졌고 설치·git 쓰기·추가 에이전트·강제 프로세스 종료는 없었습니다. 각 검증 프로세스는 스스로 끝났습니다. 지정 필수 검증 뒤에는 문서·요약만 갱신했으며 제품 및 테스트 코드는 재변경하지 않았습니다.

@@ -1,0 +1,104 @@
+{
+  "round": 98,
+  "scope": "승인 설계 (가) 판별 선택 표",
+  "worktree": "/Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07",
+  "head": "b2578f614960fd41ace8f34dad7b095c0421a442",
+  "approvedDesignCommit": "69cbe29c4",
+  "editorDecisions": ["97C-01", "97C-02", "97C-03"],
+  "status": "설계 선행조건 불일치로 중단",
+  "procedure": {
+    "detailFirst": "blueprint와 settle의 적용 계약을 테스트 작성 전에 갱신",
+    "fullEvaluationFirst": "전환 값 단언은 통과, 경로 전체 pendingOutputs 부재 단언은 실패",
+    "tableImplementation": "미착수",
+    "remainingDifferentialMatrix": "미착수",
+    "tableOnAndFourModes": "미실행",
+    "counts": "미측정",
+    "pairedTiming": "미측정"
+  },
+  "stoppedPoint": {
+    "designSections": ["4.2", "5.1", "8", "10"],
+    "requirement": "원래 공표 위치를 유지하며 shadow 읽기 경로 전체의 pendingOutputs 부재를 단언",
+    "fixture": "BF와 같은 공통 키 둘 및 선택 payload 셋의 oneOf-5",
+    "readPath": "/kind",
+    "violations": { "mount": 28, "update": 4, "total": 32 },
+    "first": {
+      "gateSchemaPath": "#/oneOf/0/controls/active",
+      "ownerPath": "",
+      "edgeName": null,
+      "phase": "mount",
+      "rootRawState": "undefined",
+      "pendingOutputs": ["<root>"],
+      "message": "Pending output on shadow read path /kind: <root>"
+    },
+    "codeEvidence": {
+      "readProjectedValue": "src/core/settle/utils/gates/readProjectedValue.ts:36-46",
+      "pendingHost": "src/core/settle/utils/compute/selectChildren.ts:291-292",
+      "preservedPublication": "src/core/settle/utils/gates/flushPendingGateReads.ts:75-81"
+    },
+    "interpretation": "직접 자식 kind의 값은 계산되어 있으나 raw가 undefined인 루트의 pending output은 기준 읽기가 소비하지 않습니다. 경로 전체 부재 조건이 기준 평가에서부터 성립하지 않습니다.",
+    "noImprovisation": "추가 flush나 단언 범위 축소를 적용하지 않았습니다. 표 적용 전에 shadow 선행조건의 설계 정정이 필요합니다."
+  },
+  "shadow": {
+    "tableEnabled": false,
+    "result": "선행조건 실패",
+    "reader": "src/core/settle/__tests__/helpers/readProjectedValueWithoutPublication.ts",
+    "originalEvaluatorCalledOncePerSite": true,
+    "independentReaderPublishes": false,
+    "independentReaderLocates": false,
+    "assertedUnchanged": ["changedNodes 순서", "pendingOutputs 구성원·순서", "gateThrowVersion"],
+    "scopeLimit": "최초 root oneOf-5 선행조건 반례만 작성했습니다. 비루트 호스트 및 전체 검증자 차등 행렬은 중단 뒤 추가하지 않았습니다."
+  },
+  "branchAxisCounts": [
+    { "branches": 5, "gateEvaluations": null, "tableLookups": null },
+    { "branches": 10, "gateEvaluations": null, "tableLookups": null },
+    { "branches": 20, "gateEvaluations": null, "tableLookups": null },
+    { "branches": 40, "gateEvaluations": null, "tableLookups": null }
+  ],
+  "pairedMedians": null,
+  "timingSampleFiles": [],
+  "memory": {
+    "blueprintTableImplemented": false,
+    "additionalBlueprintPlan": "없음; 제품 소스가 HEAD와 같다는 코드 확인",
+    "heapBytes": null,
+    "testOnlyCost": "경로 깊이의 분할 배열·순회와 shadow 자리별 임시 기록; 누락 경로의 선언 이름 판정은 직접 엔트리 순회",
+    "runtimeSpeedClaim": "없음; 제품 hot path 변경 및 시간 측정 없음"
+  },
+  "verification": [
+    {
+      "command": "npx vitest run --project unit --project render --project react18 --reporter=dot",
+      "exit": 1,
+      "filesPassed": 416,
+      "filesFailed": 3,
+      "testsPassed": 3150,
+      "testsFailed": 5,
+      "todo": 1,
+      "durationSeconds": 62.82,
+      "allowedFailures": "EVENT-070의 useLayoutEffect/useEffect 두 건씩 render와 react18에서 실패(4건)",
+      "additionalFailure": "unit의 신규 shadow 선행조건 부재 단언 1건",
+      "completionCondition": "미충족"
+    },
+    { "command": "npx tsc --noEmit --composite false --rootDir . -p tsconfig.json", "exit": 0 },
+    { "command": "npx eslint \"src/**/*.{ts,tsx}\"", "exit": 0 },
+    {
+      "command": "node architecture/verification/07-switch/tools/check-legacy-isolation.mjs",
+      "exit": 0,
+      "output": "LEGACY_ISOLATED: 1608 files checked"
+    }
+  ],
+  "constraints": {
+    "gitWrites": false,
+    "installs": false,
+    "otherAgents": false,
+    "forcedTermination": false,
+    "processesEndedNaturally": true,
+    "partBOrB2B4B5Implemented": false
+  },
+  "changedFiles": [
+    "src/core/blueprint/DETAIL.md",
+    "src/core/settle/DETAIL.md",
+    "src/core/settle/__tests__/settle.gate-selection-order.test.ts",
+    "src/core/settle/__tests__/helpers/readProjectedValueWithoutPublication.ts",
+    "architecture/verification/07-switch/remeasure-86c02.md",
+    "architecture/verification/07-switch/round-98-gate-selection-summary.json"
+  ]
+}
