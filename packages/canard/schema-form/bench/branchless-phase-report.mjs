@@ -5,6 +5,26 @@ import { fileURLToPath } from 'node:url';
 
 const pkg = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const out = path.join(pkg, 'architecture/verification/07-switch');
+if (fs.existsSync(path.join(out, 'branchless-phase-core-traced-summary.json'))) {
+  const lines = ['# 단계별 측정 요약', '', '시간 원표본은 timing 파일에, 추적 단계·호출 수는 summary JSON에 보관합니다.', '',
+    '| 측정 | 픽스처 | 검증 | 엔진 | 작업 | active median/p99 ms | 단계 median/p99 ms · 호출 median/p99 |',
+    '| --- | --- | --- | --- | --- | --- | --- |'];
+  for (const name of ['core-traced', 'render-traced', 'core-plain', 'render-plain', 'render-components', 'render-components-fresh']) {
+    const file = path.join(out, `branchless-phase-${name}-summary.json`);
+    if (!fs.existsSync(file)) continue;
+    const data = JSON.parse(fs.readFileSync(file, 'utf8'));
+    for (const row of data.rows) {
+      const phaseText = Object.entries(row.phases).map(([phase, time]) => {
+        const calls = row.phaseCalls[phase];
+        return `${phase}: ${time.median.toFixed(4)}/${time.p99.toFixed(4)} · ${calls.median}/${calls.p99}`;
+      }).join('; ');
+      lines.push(`| ${name} | ${row.fixture} | ${row.validation ?? 'off'} | ${row.version} | ${row.mode ?? 'update'} | ${row.active ? `${row.active.median.toFixed(4)}/${row.active.p99.toFixed(4)}` : '—'} | ${phaseText} |`);
+    }
+  }
+  fs.writeFileSync(path.join(out, 'branchless-phase-diagnosis.md'), lines.join('\n') + '\n');
+  console.log('SUMMARY_REPORT_WRITTEN');
+  process.exit(0);
+}
 const read = name => JSON.parse(fs.readFileSync(path.join(out, `branchless-phase-${name}.json`), 'utf8'));
 const core = read('core-traced');
 const react = read('render-traced');

@@ -449,17 +449,17 @@ yarn node packages/canard/schema-form/bench/remeasure-86c02-report.mjs
 PHASE_SOURCE_REF=b44dc7ebf PHASE_CANDIDATES=i,ii PHASE_OUTPUT=86c02-replay-ii PHASE_FIXTURES=flat-500,nested-d5-f4,array-1000,computed-visible-derived yarn node --expose-gc packages/canard/schema-form/bench/branchless-phase-diagnosis.mjs
 ```
 
-원 표본: 아래 JSON은 환경·모든 개별 표본·배타 단계·함수별 시간/호출 수·Profiler·커밋 수를 포함합니다.
+측정 자료: 삭제된 원시 추적은 단계·함수별 시간/호출 수·환경 요약으로 연결합니다. 앞으로 원표본은 시간 값만, 추적 상세는 요약으로 분리합니다.
 
 - [86c02-final-core-plain](./86c02-final-core-plain.json)
-- [86c02-final-core-traced](./86c02-final-core-traced.json)
+- [86c02-final-core-traced](./86c02-final-core-traced-summary.json)
 - [86c02-final-render-plain-production](./86c02-final-render-plain-production.json)
 - [86c02-final-render-plain](./86c02-final-render-plain.json)
-- [86c02-final-render-traced-production](./86c02-final-render-traced-production.json)
-- [86c02-baseline-core-traced](./86c02-baseline-core-traced.json)
-- [86c02-i-core-traced](./86c02-i-core-traced.json)
-- [86c02-ii-core-traced](./86c02-ii-core-traced.json)
-- [86c02-iii-core-traced](./86c02-iii-core-traced.json)
+- [86c02-final-render-traced-production](./86c02-final-render-traced-production-summary.json)
+- [86c02-baseline-core-traced](./86c02-baseline-core-traced-summary.json)
+- [86c02-i-core-traced](./86c02-i-core-traced-summary.json)
+- [86c02-ii-core-traced](./86c02-ii-core-traced-summary.json)
+- [86c02-iii-core-traced](./86c02-iii-core-traced-summary.json)
 - [86c02-before-iv-render-plain-production](./86c02-before-iv-render-plain-production.json)
 - [86c02-iv-render-plain-production](./86c02-iv-render-plain-production.json)
 
@@ -557,3 +557,97 @@ node packages/canard/schema-form/bench/round-87-check.mjs
 ~~~
 
 측정 재현 시에도 reserved 파일은 그대로 읽습니다. 검증은 PKG에서 npx --no-install을 사용하여 설치 없이 요청한 vitest/tsc/eslint 인수를 실행합니다. 변경 중인 별도 작업의 영향을 이번 성능 개선으로 해석하지 않습니다.
+
+## 88라운드
+
+### 88C-02 측정 자료 정리
+
+2026-10-05, HEAD `b31125119`에서 중단된 실행의 잔여물을 독립 검증했습니다. 삭제된 추적 JSON 6개를 각각 `git show 0189c443b:<path>`로 다시 읽고, 총 200개 행의 원표본에서 단계별 median/p99, 단계·함수별 호출 수의 median/p99, 함수별 시간, 전체 시간·동기 시간·Profiler·커밋 수를 재계산했습니다. 기존 요약과 **불일치 0건, 요약 수치 수정 0건**입니다. 각 요약의 환경은 원본과 같고 `sourceCommit`은 `0189c443b`입니다. 원본에 이미 들어 있던 집계값을 비교 기준으로 재사용하지 않았습니다.
+
+| 삭제한 원본 | 원본 바이트 | 같은 D 디렉터리에 보존한 요약 |
+| --- | ---: | --- |
+| `86c02-baseline-core-traced.json` | 8,239,945 | [baseline 요약](./86c02-baseline-core-traced-summary.json) |
+| `86c02-final-core-traced.json` | 38,874,678 | [최종 core 요약](./86c02-final-core-traced-summary.json) |
+| `86c02-final-render-traced-production.json` | 47,238,531 | [최종 render 요약](./86c02-final-render-traced-production-summary.json) |
+| `86c02-i-core-traced.json` | 8,240,148 | [후보 i 요약](./86c02-i-core-traced-summary.json) |
+| `86c02-ii-core-traced.json` | 8,241,005 | [후보 ii 요약](./86c02-ii-core-traced-summary.json) |
+| `86c02-iii-core-traced.json` | 8,240,102 | [후보 iii 요약](./86c02-iii-core-traced-summary.json) |
+
+삭제 합계는 **119,074,409바이트(119.07 MB)**이며, 여섯 요약의 합계는 1,549,631바이트(1.55 MB)입니다. 원시 추적 파일은 가지 히스토리의 `0189c443b`에 남아 있습니다. 히스토리·index·참조에 대한 git 쓰기는 하지 않았습니다. [삭제 원장](./round-88-cleanup-summary.json)과 [독립 재계산·크기·출력 검증](./round-88-output-verification-summary.json)에 원본별 크기와 검증 범위를 남겼습니다.
+
+`b44dc7ebf` 이후 D와 BF/results에 추가된 파일 및 현재 untracked D 파일을 전수 확인했습니다. BF/results의 이번 untracked 출력도 포함했습니다. **5,000,000바이트 초과 예외는 없습니다.** 가장 큰 현존 검사 파일은 `86c02-final-render-plain-production.json`, 2,260,656바이트입니다. 새 원표본은 시간 숫자만 포함하며, 표본별 추적·호출 수·커밋 수는 summary JSON으로 분리됩니다. 공통 writer와 BF equivalent 출력은 쓰기 전에 5,000,000바이트 상한을 검사합니다.
+
+기본 출력 변경은 코드 열람만으로 끝내지 않고 모두 실제 실행했습니다. 10분 초과로 실행을 생략한 스크립트는 없습니다. 축소 실행은 출력 계약 검증용이며 성능 판정에는 사용하지 않았습니다.
+
+| 스크립트 | 실행한 최소 구성 | 확인 결과 |
+| --- | --- | --- |
+| `branchless-phase-diagnosis.mjs` | `--smoke`, `PHASE_FIXTURES=flat-50` | timing 원표본과 단계·호출 수 summary 분리; 정리 후 다시 실행 |
+| `branchless-render-component-probe.mjs` | 고정된 array-100/500/1000, 예열 12·표본 101 | timing 원표본과 추적 summary 분리; 기존 측정 파일은 실행 후 복원 |
+| `round-87-measure.mjs` | `ROUND87_VARIANTS=head,working`, `ROUND87_FIXTURES=array-100` | 원표본은 ms 숫자만, 노드 계수는 summary; 중단 실행 전용 변경 제거 후 HEAD와 동일 |
+| BF `src/benchmarks/canard/equivalent.ts` | `--equivalent --mode=core --fixture=flat-50`, 표본 100 | timing 표본과 통계 summary 분리; 커밋 수는 summary에만 보존 |
+| `branchless-phase-report.mjs` | 기존 원본에서 임시 summary 6개 생성 후 기본 실행 | summary 읽기 경로 성공; 임시 요약 삭제·기존 보고서 복원 |
+| `remeasure-86c02-report.mjs` | 기본 실행 | 성공; 생성 보고서의 삭제 원본 링크 6개를 summary 링크로 수정하고 재확인 |
+| `round-87-budgets.mjs` | `--table` | summary를 읽어 성공; 기존 측정 근거를 덮어쓰지 않음 |
+
+출력 검증 원표본·요약은 `round-88-default-final-core-traced-smoke*`, `round-88-default-check-render-components-*`, `round-88-default-check-round87-*` 및 BF/results의 `round-88-default-check*.json`에 있습니다. 개별 파일 목록·출력 키 검증은 위 검증 JSON에 기록했습니다. 공통 `bench/measurement-output.mjs`는 계속 사용합니다.
+
+보고서 참조가 없고 중단된 b3 실행에만 쓰인 측정 파일 43개(`round-88-allocation`, `round-88-before-array-*`, `round-88-final-array-*`, `round-88-final-core-traced*`, `round-88-final-render-plain-production*`, `round-88-isolated-*`)와 `round-88-cleanup.mjs`, `round-88-isolated.mjs`, `round-88-report.mjs`, `round-88-verify.mjs`를 제거했습니다. `round-87-measure.mjs`의 b3 계측·임시 엔진 export도 제거했습니다. 검증된 삭제 원장과 이번 측정 자료는 유지했습니다. 이번 작업에서 b3 구현·배달 변경·커밋 변경은 하지 않았습니다.
+
+### array 갱신 조용한 재측정
+
+89C-05의 선행 측정입니다. 비교 대상은 `0189c443b`와 현재 HEAD `b31125119`입니다. `git diff 3b2cbee8a HEAD -- packages/canard/schema-form/src`가 비어 있어 HEAD 제품 코드가 87라운드의 최종 구현과 같음을 확인했습니다. 중단 실행의 측정 숫자는 사용하지 않았습니다.
+
+두 버전의 `src`를 `git archive <commit> packages/canard/schema-form/src | tar -x -C <dir>`로 지정 scratchpad의 `round88-quiet/baseline`, `round88-quiet/head`에 각각 추출하고, 그 소스에서 번들을 미리 만들었습니다. git worktree 명령·git 쓰기·설치를 사용하지 않았습니다. 번들 SHA-256은 baseline `590347a921f70e63244bdda55586fbf9cea28416855ceaf95aa8ad6a97133e5a`, HEAD `a9d59e75d23321002d6eb2590d1d210689765264880ae453f535af7066142a50`입니다.
+
+환경은 Apple M1 Max, darwin/arm64, Node v26.10.0, V8 14.6.202.34-node.35입니다. BF의 같은 픽스처를 쓰고 엔진·픽스처·회차마다 새 프로세스를 실행했습니다. development 코어, validation OFF, 구독 없음, 새 스키마, mount 전 명시적 GC, mount/update 사이 timer 대기를 사용했습니다. mount는 `nodeFromJSONSchema`의 동기 실행 시간, update는 BF 상호작용 전체의 동기 실행 시간입니다. 예열 20·표본 101로 3회 반복했고, 1·3회는 baseline→HEAD, 2회는 HEAD→baseline 순서입니다. 모든 측정은 순차 실행했으며 그동안 다른 명령·테스트·에이전트를 실행하지 않았습니다. 검증 명령은 모든 성능 측정이 끝난 뒤 실행했습니다.
+
+아래 median/p99는 세 회차의 원표본 **303개를 합쳐** nearest-rank 방식으로 다시 산출했습니다. 회차별 중앙값을 평균하지 않았으며, 가장 좋은 실행을 고르지 않았습니다. 단위는 ms입니다.
+
+| 픽스처 | 작업 | 0189c443b median / p99 | HEAD median / p99 | median 변화 |
+| --- | --- | ---: | ---: | ---: |
+| array-100 | mount | 2.716167 / 3.033875 | 2.660916 / 2.946083 | −2.03% |
+| array-100 | update | 0.069667 / 0.117916 | 0.069625 / 0.114209 | −0.06% |
+| array-500 | mount | 11.740125 / 12.986708 | 11.655084 / 13.846334 | −0.72% |
+| array-500 | update | 0.080667 / 0.153208 | 0.081375 / 0.143250 | +0.88% |
+| array-1000 | mount | 21.971208 / 27.856750 | 21.255125 / 27.616375 | −3.26% |
+| array-1000 | update | 0.089750 / 0.175500 | 0.091667 / 0.171833 | +2.14% |
+
+| array-1000 update 회차 | 순서 | 0189c443b median / p99 | HEAD median / p99 | median 변화 |
+| --- | --- | ---: | ---: | ---: |
+| 1 | baseline→HEAD | 0.087959 / 0.152041 | 0.095459 / 0.171833 | +8.53% |
+| 2 | HEAD→baseline | 0.091000 / 0.187625 | 0.092708 / 0.172375 | +1.88% |
+| 3 | baseline→HEAD | 0.091042 / 0.171667 | 0.088167 / 0.141167 | −3.16% |
+
+**87라운드의 array-1000 update +14.9% 회귀는 재현되지 않았습니다.** 합친 표본의 +2.14% 잔차는 회차별 방향이 반전되고 p99도 증가하지 않아 지속적인 회귀로 확정할 근거가 부족합니다. 성능이 항상 같거나 더 빠르다고 주장하지 않습니다. 특정 `3b2cbee8a` 루프의 file:line 원인이나 수정 명세를 확정할 근거도 없어 단계별 원인 계측·제품 수정은 진행하지 않았습니다. 이전 동시 테스트가 원인이었다고 단정하지 않습니다. 87라운드의 Node v24.20.0 절대 시간과 이번 Node v26.10.0 숫자를 직접 비교하지 않습니다.
+
+다음 변경의 HEAD 기준선은 [round-88-quiet-baseline-summary.json](./round-88-quiet-baseline-summary.json)에 저장했습니다. 아래 행도 각 픽스처를 새 프로세스에서 예열 20·표본 101로 3회 실행한 303표본 값이며 validation OFF입니다. nested-d5는 BF의 `nested-d5-f4`를 뜻합니다.
+
+| HEAD 기준선 | 작업 | median ms | p99 ms |
+| --- | --- | ---: | ---: |
+| flat-500 | mount | 7.408083 | 8.637917 |
+| nested-d5-f4 | mount | 21.672875 | 24.971375 |
+| array-1000 | mount | 21.255125 | 27.616375 |
+| array-1000 | update | 0.091667 | 0.171833 |
+| oneOf-20 | update | 1.219250 | 1.495625 |
+
+전체 회차의 시간 원표본은 `round-88-quiet-<fixture>-<baseline|head>-r<1|2|3>-timings.json`, 환경·median/p99는 같은 이름의 `-summary.json`에 있습니다. 두 버전 비교 18개 실행과 HEAD 추가 기준선 9개 실행, 합계 27개의 새 프로세스 결과를 모두 보존했습니다. 원표본에는 mount/update 시간 배열만 있습니다. 집계 JSON의 `comparison`은 두 커밋 대조와 회차별 수치를, `baseline`은 요청한 다섯 HEAD 기준선을, `allHeadRows`는 나머지 HEAD 참고값을 담습니다.
+
+재현 도구는 지정 scratchpad의 `round88-quiet/build.mjs`, `measure.mjs`, `summarize.mjs`에 있습니다. 실행 중 다른 작업을 병행하지 않습니다.
+
+```sh
+# worktree 루트에서 실행; 소스는 지정 scratchpad에 이미 추출한 상태입니다.
+ROUND88_SCRATCH=/private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/round88-quiet
+node "$ROUND88_SCRATCH/build.mjs" baseline
+node "$ROUND88_SCRATCH/build.mjs" head
+node --expose-gc "$ROUND88_SCRATCH/measure.mjs" baseline array-1000 1
+node --expose-gc "$ROUND88_SCRATCH/measure.mjs" head array-1000 1
+# 모든 픽스처·회차를 위에 기록한 순서대로 순차 반복합니다.
+```
+
+[검증 결과](./round-88-verification-summary.json): PKG에서 아래 명령을 순차 실행했습니다. `--no-install`은 설치를 막기 위한 옵션입니다. Vitest는 402개 파일·3,067사례 통과, 1 todo, 실패 4건이며 render/react18 각각의 EVENT-070 useLayoutEffect/useEffect 두 사례뿐입니다. TypeScript·ESLint는 종료 코드 0입니다. 제품 `src`의 작업 트리 diff는 비어 있고, git 쓰기·설치·제품 수정은 없습니다.
+
+```sh
+npx --no-install vitest run --project unit --project render --project react18 --reporter=dot
+npx --no-install tsc --noEmit --composite false --rootDir . -p tsconfig.json
+npx --no-install eslint "src/**/*.{ts,tsx}"
+```

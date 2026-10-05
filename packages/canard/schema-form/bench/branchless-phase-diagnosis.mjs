@@ -6,6 +6,7 @@ import { createRequire } from 'node:module';
 import Module from 'node:module';
 import { fileURLToPath } from 'node:url';
 import { execFileSync } from 'node:child_process';
+import { writeMeasurement } from './measurement-output.mjs';
 
 const pkg = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const repo = path.resolve(pkg, '../../..');
@@ -343,7 +344,7 @@ for (const fixture of fixtures) {
 }
 const result = { environment: { date: new Date().toISOString(), head: execFileSync('git', ['rev-parse', 'HEAD'], { cwd: repo, encoding: 'utf8' }).trim(), sourceRef: sourceRef ?? 'working-tree', node: process.version, v8: process.versions.v8, platform: process.platform, arch: process.arch, cpu: os.cpus()[0].model, cpus: os.cpus().length, memory: os.totalmem(), react: bfReq('react/package.json').version, ajv: req('ajv/package.json').version, mode: production ? 'production-profiling' : 'development', warmup: smoke ? 1 : warmup, samples: smoke ? 2 : sampleCount }, hooks, rows };
 const destination = path.join(out, `${process.env.PHASE_OUTPUT ?? 'branchless-phase'}-${modeName}${production ? '-production' : ''}${smoke ? '-smoke' : ''}.json`);
-fs.writeFileSync(destination, JSON.stringify(result, null, 2));
+writeMeasurement(destination, result);
 console.log(`Saved ${path.relative(repo, destination)}`);
 }
 

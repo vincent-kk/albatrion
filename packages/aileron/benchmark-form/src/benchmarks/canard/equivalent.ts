@@ -164,7 +164,11 @@ export async function runEquivalentBenchmarks() {
           performance.clearMarks();
         }
       }
-      raw.push({ fixture: fixture.name, lane, samples });
+      raw.push({ fixture: fixture.name, lane, samples: Object.fromEntries(
+        Object.entries(samples).map(([version, values]) => [version, values.map(
+          sample => Object.fromEntries(Object.entries(sample).filter(([key]) => !key.startsWith('commits'))),
+        )]),
+      ) });
       for (const metric of Object.keys(samples.latest[0])) {
         const old = summarize(
           samples['0.16.0'].map((sample) => sample[metric]),
@@ -187,8 +191,8 @@ export async function runEquivalentBenchmarks() {
         rows.push({
           fixture: fixture.name,
           metric,
-          old,
-          new: current,
+          old: { median: old.median, p99: old.p99 },
+          new: { median: current.median, p99: current.p99 },
           ratio: current.median / old.median,
           p99Ratio: current.p99 / old.p99,
           throughputDrop: drop,
@@ -197,9 +201,7 @@ export async function runEquivalentBenchmarks() {
         });
       }
       fs.mkdirSync(path.dirname(output), { recursive: true });
-      fs.writeFileSync(
-        output,
-        JSON.stringify(
+      const summary = JSON.stringify(
           {
             timestamp,
             commit,
@@ -215,12 +217,15 @@ export async function runEquivalentBenchmarks() {
               workspace: cores.latest.digest,
             },
             rows,
-            raw,
           },
           null,
           2,
-        ),
-      );
+        );
+      const timings = JSON.stringify({ timestamp, commit, warmup, count, raw });
+      if (Buffer.byteLength(summary) > 5_000_000 || Buffer.byteLength(timings) > 5_000_000)
+        throw new Error('Measurement exceeds 5 MB');
+      fs.writeFileSync(output.replace(/\.json$/, '-summary.json'), summary);
+      fs.writeFileSync(output, timings);
       console.log(`${lane} ${fixture.name}: ${count} paired samples saved`);
     }
   }

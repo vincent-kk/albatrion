@@ -6,7 +6,7 @@ import { fileURLToPath } from 'node:url';
 
 const pkg = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const out = path.join(pkg, 'architecture/verification/07-switch');
-const read = name => JSON.parse(fs.readFileSync(path.join(out, `${name}.json`), 'utf8'));
+const read = name => JSON.parse(fs.readFileSync(path.join(out, fs.existsSync(path.join(out, `${name}-summary.json`)) ? `${name}-summary.json` : `${name}.json`), 'utf8'));
 const core = read('86c02-final-core-plain');
 const phases = read('86c02-final-core-traced');
 const react = read('86c02-final-render-plain-production');
@@ -21,13 +21,13 @@ const fmt = value => Number.isFinite(value) ? value.toFixed(4) : '—';
 const pair = (data, row, version = 'old') => data.rows.find(candidate =>
   candidate.fixture === row.fixture && candidate.mode === row.mode &&
   candidate.validation === row.validation && candidate.version === version);
-const phaseSum = (row, names) => median(row.samples.map(sample =>
+const phaseSum = (row, names) => row.creationSettlement?.median ?? median(row.samples.map(sample =>
   names.reduce((sum, name) => sum + (sample.phases[name] ?? 0), 0)));
-const ajv = row => median(row.samples.map(sample => Object.entries(sample.details)
+const ajv = row => row.ajv?.median ?? median(row.samples.map(sample => Object.entries(sample.details)
   .filter(([name]) => name.startsWith('AJV:')).reduce((sum, [, item]) => sum + item.ms, 0)));
-const calls = (row, name) => median(row.samples.map(sample => Object.entries(sample.details)
+const calls = (row, name) => row.functionCalls?.[name]?.median ?? median(row.samples.map(sample => Object.entries(sample.details)
   .filter(([site]) => site.endsWith(`:${name}`)).reduce((sum, [, item]) => sum + item.calls, 0)));
-const nonAjvPhase = (row, phase) => median(row.samples.map(sample => {
+const nonAjvPhase = (row, phase) => row.nonAjvPhases?.[phase]?.median ?? median(row.samples.map(sample => {
   const pure = Object.entries(sample.details).filter(([site]) =>
     phase === 'validation-registration' ? site.startsWith('AJV:compile') :
       phase === 'validation-run' && (site === 'AJV:validate' || site === 'AJV:guard'))
@@ -38,7 +38,7 @@ const nonAjvPhase = (row, phase) => median(row.samples.map(sample => {
 for (const data of datasets) {
   assert(data.environment.warmup >= 10 && data.environment.samples >= 100);
   for (const row of data.rows) {
-    assert(row.samples.length >= 100);
+    assert((row.sampleCount ?? row.samples.length) >= 100);
     assert(Number.isFinite(row.total.median));
   }
 }
@@ -182,9 +182,11 @@ text.push('', '## 검증·재현', '',
   '```sh', 'yarn node packages/canard/schema-form/bench/remeasure-86c02.mjs', 'yarn node packages/canard/schema-form/bench/remeasure-86c02.mjs iv', 'yarn node packages/canard/schema-form/bench/remeasure-86c02-report.mjs',
   '# 단계 ii 재현: HEAD 소스에 i,ii 파일만 메모리에서 대입; git/디스크 소스 변경 없음',
   'PHASE_SOURCE_REF=b44dc7ebf PHASE_CANDIDATES=i,ii PHASE_OUTPUT=86c02-replay-ii PHASE_FIXTURES=flat-500,nested-d5-f4,array-1000,computed-visible-derived yarn node --expose-gc packages/canard/schema-form/bench/branchless-phase-diagnosis.mjs', '```', '',
-  '원 표본: 아래 JSON은 환경·모든 개별 표본·배타 단계·함수별 시간/호출 수·Profiler·커밋 수를 포함합니다.', '');
-for (const name of ['86c02-final-core-plain','86c02-final-core-traced','86c02-final-render-plain-production','86c02-final-render-plain','86c02-final-render-traced-production','86c02-baseline-core-traced','86c02-i-core-traced','86c02-ii-core-traced','86c02-iii-core-traced','86c02-before-iv-render-plain-production','86c02-iv-render-plain-production'])
-  text.push(`- [${name}](./${name}.json)`);
+  '측정 자료: 삭제된 원시 추적은 단계·함수별 시간/호출 수·환경 요약으로 연결합니다. 앞으로 원표본은 시간 값만, 추적 상세는 요약으로 분리합니다.', '');
+for (const name of ['86c02-final-core-plain','86c02-final-core-traced','86c02-final-render-plain-production','86c02-final-render-plain','86c02-final-render-traced-production','86c02-baseline-core-traced','86c02-i-core-traced','86c02-ii-core-traced','86c02-iii-core-traced','86c02-before-iv-render-plain-production','86c02-iv-render-plain-production']) {
+  const summary = `${name}-summary.json`;
+  text.push(`- [${name}](./${fs.existsSync(path.join(out, summary)) ? summary : `${name}.json`})`);
+}
 if (process.argv.includes('--check')) {
   assert(fs.readFileSync(path.join(out, 'remeasure-86c02.md'), 'utf8').trim() === text.join('\n').trim());
   console.log(`MEASUREMENTS_OK: ${passed} met, ${missed} missed, ${residualMissed} non-AJV residual misses`);

@@ -1,5 +1,5 @@
 // Reuses mounted BF forms to identify the array update's component work; no engine edits.
-import fs from 'node:fs';
+import { writeMeasurement } from './measurement-output.mjs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -43,5 +43,5 @@ for (const name of ['array-100', 'array-500', 'array-1000']) {
 }
 const destination = path.resolve(path.dirname(fileURLToPath(import.meta.url)),
   '../architecture/verification/07-switch/branchless-phase-render-components.json');
-fs.writeFileSync(destination, JSON.stringify({ node: process.version, warmup: 12, sampleCount: 101, rows: samples }, null, 2));
+writeMeasurement(destination, { environment: { node: process.version, warmup: 12, samples: 101 }, rows: samples });
 console.log(`Saved ${path.basename(destination)}`);

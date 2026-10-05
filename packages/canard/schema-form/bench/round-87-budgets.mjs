@@ -9,7 +9,7 @@ const quantile = (values, q) => values.sort((a, b) => a - b)[Math.ceil(values.le
 const metric = values => ({ median: quantile([...values], .5), p99: quantile([...values], .99) });
 const rows = [];
 for (const layer of ['core', 'render']) {
-  const tracedName = `86c02-final-${layer}-traced${layer === 'render' ? '-production' : ''}.json`;
+  const tracedName = `86c02-final-${layer}-traced${layer === 'render' ? '-production' : ''}-summary.json`;
   const plainName = `86c02-final-${layer}-plain${layer === 'render' ? '-production' : ''}.json`;
   const traced = JSON.parse(fs.readFileSync(path.join(out, tracedName)));
   const plain = JSON.parse(fs.readFileSync(path.join(out, plainName)));
@@ -21,15 +21,8 @@ for (const layer of ['core', 'render']) {
     const after = gateData.rows.find(r => match(r) && r.version === 'new');
     const measurement = layer === 'core' ? 'active' : 'profiler';
     const target = layer === 'core' ? 1.5 : row.mode === 'mount' ? 1.2 : 1;
-    const phaseCalls = {};
-    for (const phase of Object.keys(row.phases))
-      phaseCalls[phase] = metric(row.samples.map(sample => sample.calls[phase] ?? 0));
-    const sites = {};
-    for (const sample of row.samples) for (const name of Object.keys(sample.details)) sites[name] = undefined;
-    for (const name of Object.keys(sites)) sites[name] = {
-      ms: metric(row.samples.map(sample => sample.details[name]?.ms ?? 0)),
-      calls: metric(row.samples.map(sample => sample.details[name]?.calls ?? 0)),
-    };
+    const phaseCalls = row.phaseCalls;
+    const sites = row.sites;
     const branchless = !/oneOf|if-then/.test(row.fixture);
     const initial = row.mode === 'mount' && branchless && row.fixture !== 'computed-visible-derived';
     rows.push({ layer, fixture: row.fixture, validation: row.validation, mode: row.mode,
@@ -37,12 +30,10 @@ for (const layer of ['core', 'render']) {
       gap: layer === 'core' && row.validation === 'on' ? null :
         Math.max(0, after[measurement].median - before[measurement].median * target),
       analysisCeiling: row.mode === 'mount' && branchless ? row.phases.analysis.median : 0,
-      firstLoadCeiling: initial ? metric(row.samples.map(sample =>
-        sample.phases.settlement + sample.phases.delivery)).median : 0,
+      firstLoadCeiling: initial ? row.firstLoad.median : 0,
       phases: row.phases, phaseCalls, sites });
   }
-  const ajv = row => metric(row.samples.map(sample => Object.entries(sample.details)
-    .reduce((sum, [name, site]) => sum + (name.startsWith('AJV:') ? site.ms : 0), 0))).median;
+  const ajv = row => row.ajv.median;
   for (const row of traced.rows) {
     if (row.version !== 'new' || row.validation !== 'on') continue;
     const residual = version => {
