@@ -1,0 +1,3466 @@
+{
+  "head": "c468f7e6f8cc84258ada1cc8cf76df92f3c7c73e",
+  "method": "동일 세션, 순차 새 프로세스, H→W/W→H/H→W, 예열20, 101×3, validation off, 무계측 시간. esbuild 자연 종료 후 측정.",
+  "runs": [
+    {
+      "fixture": "oneOf-5",
+      "variant": "H",
+      "run": 1,
+      "mode": "timing",
+      "observations": {
+        "mount": "2ec2ef0c266b77c12bfa8502227ed9b803a7264267076e82c2405b7bfaa5c771",
+        "update": "d36e28b88e4006d7d5e40d26bd16fc43322b4fa3443042579f7e434cd12561c1"
+      },
+      "metrics": {
+        "mount": {
+          "median": 0.8575829999999769,
+          "p99": 0.9840830000002825,
+          "samples": 101
+        },
+        "update": {
+          "median": 0.4369589999996606,
+          "p99": 0.5875419999997575,
+          "samples": 101
+        }
+      },
+      "environment": {
+        "startedAt": "2026-10-05T21:58:08.784Z",
+        "endedAt": "2026-10-05T21:58:09.568Z",
+        "node": "v26.10.0",
+        "v8": "14.6.202.34-node.35",
+        "cpu": "Apple M1 Max",
+        "instrumented": false,
+        "validation": "off",
+        "warmup": 20,
+        "samples": 101,
+        "naturalEsbuildExits": 1,
+        "bundleSha256": "b713a0d370a84fd7158063e6e1d23c8b4190a0933c6d70bc4636fe1bb1dadd91"
+      }
+    },
+    {
+      "fixture": "oneOf-5",
+      "variant": "W",
+      "run": 1,
+      "mode": "timing",
+      "observations": {
+        "mount": "2ec2ef0c266b77c12bfa8502227ed9b803a7264267076e82c2405b7bfaa5c771",
+        "update": "d36e28b88e4006d7d5e40d26bd16fc43322b4fa3443042579f7e434cd12561c1"
+      },
+      "metrics": {
+        "mount": {
+          "median": 0.79200000000003,
+          "p99": 1.043875000000014,
+          "samples": 101
+        },
+        "update": {
+          "median": 0.47604200000000674,
+          "p99": 0.542082999999991,
+          "samples": 101
+        }
+      },
+      "environment": {
+        "startedAt": "2026-10-05T21:58:09.737Z",
+        "endedAt": "2026-10-05T21:58:10.487Z",
+        "node": "v26.10.0",
+        "v8": "14.6.202.34-node.35",
+        "cpu": "Apple M1 Max",
+        "instrumented": false,
+        "validation": "off",
+        "warmup": 20,
+        "samples": 101,
+        "naturalEsbuildExits": 1,
+        "bundleSha256": "0f84a260fc1e2c9de1a8edaf53e0f9f98d54e38875c1e11f98d3e80747ab6683"
+      }
+    },
+    {
+      "fixture": "oneOf-5",
+      "variant": "W",
+      "run": 2,
+      "mode": "timing",
+      "observations": {
+        "mount": "2ec2ef0c266b77c12bfa8502227ed9b803a7264267076e82c2405b7bfaa5c771",
+        "update": "d36e28b88e4006d7d5e40d26bd16fc43322b4fa3443042579f7e434cd12561c1"
+      },
+      "metrics": {
+        "mount": {
+          "median": 0.8420839999999998,
+          "p99": 1.0112500000000182,
+          "samples": 101
+        },
+        "update": {
+          "median": 0.4562909999999647,
+          "p99": 0.57062499999995,
+          "samples": 101
+        }
+      },
+      "environment": {
+        "startedAt": "2026-10-05T21:58:10.651Z",
+        "endedAt": "2026-10-05T21:58:11.400Z",
+        "node": "v26.10.0",
+        "v8": "14.6.202.34-node.35",
+        "cpu": "Apple M1 Max",
+        "instrumented": false,
+        "validation": "off",
+        "warmup": 20,
+        "samples": 101,
+        "naturalEsbuildExits": 1,
+        "bundleSha256": "0f84a260fc1e2c9de1a8edaf53e0f9f98d54e38875c1e11f98d3e80747ab6683"
+      }
+    },
+    {
+      "fixture": "oneOf-5",
+      "variant": "H",
+      "run": 2,
+      "mode": "timing",
+      "observations": {
+        "mount": "2ec2ef0c266b77c12bfa8502227ed9b803a7264267076e82c2405b7bfaa5c771",
+        "update": "d36e28b88e4006d7d5e40d26bd16fc43322b4fa3443042579f7e434cd12561c1"
+      },
+      "metrics": {
+        "mount": {
+          "median": 0.8229590000000826,
+          "p99": 0.9969169999999394,
+          "samples": 101
+        },
+        "update": {
+          "median": 0.44791699999996126,
+          "p99": 0.5540000000000873,
+          "samples": 101
+        }
+      },
+      "environment": {
+        "startedAt": "2026-10-05T21:58:15.046Z",
+        "endedAt": "2026-10-05T21:58:15.799Z",
+        "node": "v26.10.0",
+        "v8": "14.6.202.34-node.35",
+        "cpu": "Apple M1 Max",
+        "instrumented": false,
+        "validation": "off",
+        "warmup": 20,
+        "samples": 101,
+        "naturalEsbuildExits": 1,
+        "bundleSha256": "b713a0d370a84fd7158063e6e1d23c8b4190a0933c6d70bc4636fe1bb1dadd91"
+      }
+    },
+    {
+      "fixture": "oneOf-5",
+      "variant": "H",
+      "run": 3,
+      "mode": "timing",
+      "observations": {
+        "mount": "2ec2ef0c266b77c12bfa8502227ed9b803a7264267076e82c2405b7bfaa5c771",
+        "update": "d36e28b88e4006d7d5e40d26bd16fc43322b4fa3443042579f7e434cd12561c1"
+      },
+      "metrics": {
+        "mount": {
+          "median": 0.804374999999709,
+          "p99": 0.9713329999999587,
+          "samples": 101
+        },
+        "update": {
+          "median": 0.4682090000005701,
+          "p99": 0.5567909999999756,
+          "samples": 101
+        }
+      },
+      "environment": {
+        "startedAt": "2026-10-05T21:58:19.432Z",
+        "endedAt": "2026-10-05T21:58:20.179Z",
+        "node": "v26.10.0",
+        "v8": "14.6.202.34-node.35",
+        "cpu": "Apple M1 Max",
+        "instrumented": false,
+        "validation": "off",
+        "warmup": 20,
+        "samples": 101,
+        "naturalEsbuildExits": 1,
+        "bundleSha256": "b713a0d370a84fd7158063e6e1d23c8b4190a0933c6d70bc4636fe1bb1dadd91"
+      }
+    },
+    {
+      "fixture": "oneOf-5",
+      "variant": "W",
+      "run": 3,
+      "mode": "timing",
+      "observations": {
+        "mount": "2ec2ef0c266b77c12bfa8502227ed9b803a7264267076e82c2405b7bfaa5c771",
+        "update": "d36e28b88e4006d7d5e40d26bd16fc43322b4fa3443042579f7e434cd12561c1"
+      },
+      "metrics": {
+        "mount": {
+          "median": 0.8523330000000442,
+          "p99": 1.0205419999999776,
+          "samples": 101
+        },
+        "update": {
+          "median": 0.4203330000000278,
+          "p99": 0.5638329999999883,
+          "samples": 101
+        }
+      },
+      "environment": {
+        "startedAt": "2026-10-05T21:58:20.352Z",
+        "endedAt": "2026-10-05T21:58:21.110Z",
+        "node": "v26.10.0",
+        "v8": "14.6.202.34-node.35",
+        "cpu": "Apple M1 Max",
+        "instrumented": false,
+        "validation": "off",
+        "warmup": 20,
+        "samples": 101,
+        "naturalEsbuildExits": 1,
+        "bundleSha256": "0f84a260fc1e2c9de1a8edaf53e0f9f98d54e38875c1e11f98d3e80747ab6683"
+      }
+    },
+    {
+      "fixture": "oneOf-10",
+      "variant": "H",
+      "run": 1,
+      "mode": "timing",
+      "observations": {
+        "mount": "250ad4f639e41ca2900a01cced501a5d5d8019e945e2b116554d2f797b2cbfc6",
+        "update": "200dd16861c7e41096159e8709b1cc5aa5c500c15e07bf2fe48e49e77a3c51c6"
+      },
+      "metrics": {
+        "mount": {
+          "median": 1.1637909999999465,
+          "p99": 1.3317090000000462,
+          "samples": 101
+        },
+        "update": {
+          "median": 0.5668749999999818,
+          "p99": 0.7207080000002861,
+          "samples": 101
+        }
+      },
+      "environment": {
+        "startedAt": "2026-10-05T21:58:24.733Z",
+        "endedAt": "2026-10-05T21:58:25.552Z",
+        "node": "v26.10.0",
+        "v8": "14.6.202.34-node.35",
+        "cpu": "Apple M1 Max",
+        "instrumented": false,
+        "validation": "off",
+        "warmup": 20,
+        "samples": 101,
+        "naturalEsbuildExits": 1,
+        "bundleSha256": "b713a0d370a84fd7158063e6e1d23c8b4190a0933c6d70bc4636fe1bb1dadd91"
+      }
+    },
+    {
+      "fixture": "oneOf-10",
+      "variant": "W",
+      "run": 1,
+      "mode": "timing",
+      "observations": {
+        "mount": "250ad4f639e41ca2900a01cced501a5d5d8019e945e2b116554d2f797b2cbfc6",
+        "update": "200dd16861c7e41096159e8709b1cc5aa5c500c15e07bf2fe48e49e77a3c51c6"
+      },
+      "metrics": {
+        "mount": {
+          "median": 1.1842080000000124,
+          "p99": 1.3677089999999907,
+          "samples": 101
+        },
+        "update": {
+          "median": 0.5735409999999774,
+          "p99": 0.7137079999999969,
+          "samples": 101
+        }
+      },
+      "environment": {
+        "startedAt": "2026-10-05T21:58:25.721Z",
+        "endedAt": "2026-10-05T21:58:26.529Z",
+        "node": "v26.10.0",
+        "v8": "14.6.202.34-node.35",
+        "cpu": "Apple M1 Max",
+        "instrumented": false,
+        "validation": "off",
+        "warmup": 20,
+        "samples": 101,
+        "naturalEsbuildExits": 1,
+        "bundleSha256": "0f84a260fc1e2c9de1a8edaf53e0f9f98d54e38875c1e11f98d3e80747ab6683"
+      }
+    },
+    {
+      "fixture": "oneOf-10",
+      "variant": "W",
+      "run": 2,
+      "mode": "timing",
+      "observations": {
+        "mount": "250ad4f639e41ca2900a01cced501a5d5d8019e945e2b116554d2f797b2cbfc6",
+        "update": "200dd16861c7e41096159e8709b1cc5aa5c500c15e07bf2fe48e49e77a3c51c6"
+      },
+      "metrics": {
+        "mount": {
+          "median": 1.1825000000000045,
+          "p99": 1.3800830000000133,
+          "samples": 101
+        },
+        "update": {
+          "median": 0.5726250000000164,
+          "p99": 0.7177500000000236,
+          "samples": 101
+        }
+      },
+      "environment": {
+        "startedAt": "2026-10-05T21:58:26.710Z",
+        "endedAt": "2026-10-05T21:58:27.528Z",
+        "node": "v26.10.0",
+        "v8": "14.6.202.34-node.35",
+        "cpu": "Apple M1 Max",
+        "instrumented": false,
+        "validation": "off",
+        "warmup": 20,
+        "samples": 101,
+        "naturalEsbuildExits": 1,
+        "bundleSha256": "0f84a260fc1e2c9de1a8edaf53e0f9f98d54e38875c1e11f98d3e80747ab6683"
+      }
+    },
+    {
+      "fixture": "oneOf-10",
+      "variant": "H",
+      "run": 2,
+      "mode": "timing",
+      "observations": {
+        "mount": "250ad4f639e41ca2900a01cced501a5d5d8019e945e2b116554d2f797b2cbfc6",
+        "update": "200dd16861c7e41096159e8709b1cc5aa5c500c15e07bf2fe48e49e77a3c51c6"
+      },
+      "metrics": {
+        "mount": {
+          "median": 1.155999999999949,
+          "p99": 1.3337080000001151,
+          "samples": 101
+        },
+        "update": {
+          "median": 0.5600420000000668,
+          "p99": 0.7368329999999332,
+          "samples": 101
+        }
+      },
+      "environment": {
+        "startedAt": "2026-10-05T21:58:31.144Z",
+        "endedAt": "2026-10-05T21:58:31.956Z",
+        "node": "v26.10.0",
+        "v8": "14.6.202.34-node.35",
+        "cpu": "Apple M1 Max",
+        "instrumented": false,
+        "validation": "off",
+        "warmup": 20,
+        "samples": 101,
+        "naturalEsbuildExits": 1,
+        "bundleSha256": "b713a0d370a84fd7158063e6e1d23c8b4190a0933c6d70bc4636fe1bb1dadd91"
+      }
+    },
+    {
+      "fixture": "oneOf-10",
+      "variant": "H",
+      "run": 3,
+      "mode": "timing",
+      "observations": {
+        "mount": "250ad4f639e41ca2900a01cced501a5d5d8019e945e2b116554d2f797b2cbfc6",
+        "update": "200dd16861c7e41096159e8709b1cc5aa5c500c15e07bf2fe48e49e77a3c51c6"
+      },
+      "metrics": {
+        "mount": {
+          "median": 1.2071249999999054,
+          "p99": 1.4022500000000946,
+          "samples": 101
+        },
+        "update": {
+          "median": 0.6414169999998194,
+          "p99": 0.7430419999996047,
+          "samples": 101
+        }
+      },
+      "environment": {
+        "startedAt": "2026-10-05T21:58:35.553Z",
+        "endedAt": "2026-10-05T21:58:36.391Z",
+        "node": "v26.10.0",
+        "v8": "14.6.202.34-node.35",
+        "cpu": "Apple M1 Max",
+        "instrumented": false,
+        "validation": "off",
+        "warmup": 20,
+        "samples": 101,
+        "naturalEsbuildExits": 1,
+        "bundleSha256": "b713a0d370a84fd7158063e6e1d23c8b4190a0933c6d70bc4636fe1bb1dadd91"
+      }
+    },
+    {
+      "fixture": "oneOf-10",
+      "variant": "W",
+      "run": 3,
+      "mode": "timing",
+      "observations": {
+        "mount": "250ad4f639e41ca2900a01cced501a5d5d8019e945e2b116554d2f797b2cbfc6",
+        "update": "200dd16861c7e41096159e8709b1cc5aa5c500c15e07bf2fe48e49e77a3c51c6"
+      },
+      "metrics": {
+        "mount": {
+          "median": 1.122792000000004,
+          "p99": 1.3324170000000208,
+          "samples": 101
+        },
+        "update": {
+          "median": 0.6021670000000086,
+          "p99": 0.7147500000000377,
+          "samples": 101
+        }
+      },
+      "environment": {
+        "startedAt": "2026-10-05T21:58:36.556Z",
+        "endedAt": "2026-10-05T21:58:37.364Z",
+        "node": "v26.10.0",
+        "v8": "14.6.202.34-node.35",
+        "cpu": "Apple M1 Max",
+        "instrumented": false,
+        "validation": "off",
+        "warmup": 20,
+        "samples": 101,
+        "naturalEsbuildExits": 1,
+        "bundleSha256": "0f84a260fc1e2c9de1a8edaf53e0f9f98d54e38875c1e11f98d3e80747ab6683"
+      }
+    },
+    {
+      "fixture": "oneOf-20",
+      "variant": "H",
+      "run": 1,
+      "mode": "timing",
+      "observations": {
+        "mount": "d4afa829509f71a88f1404658dc2864616cae7495e950e8ec34a120e4760e83e",
+        "update": "621d8774395a0324418aec9e94be1352e26f06184af35343b44492390daf8ef6"
+      },
+      "metrics": {
+        "mount": {
+          "median": 1.8170409999993353,
+          "p99": 2.119666000000052,
+          "samples": 101
+        },
+        "update": {
+          "median": 0.7923330000003261,
+          "p99": 1.0331670000000486,
+          "samples": 101
+        }
+      },
+      "environment": {
+        "startedAt": "2026-10-05T21:58:40.967Z",
+        "endedAt": "2026-10-05T21:58:41.909Z",
+        "node": "v26.10.0",
+        "v8": "14.6.202.34-node.35",
+        "cpu": "Apple M1 Max",
+        "instrumented": false,
+        "validation": "off",
+        "warmup": 20,
+        "samples": 101,
+        "naturalEsbuildExits": 1,
+        "bundleSha256": "b713a0d370a84fd7158063e6e1d23c8b4190a0933c6d70bc4636fe1bb1dadd91"
+      }
+    },
+    {
+      "fixture": "oneOf-20",
+      "variant": "W",
+      "run": 1,
+      "mode": "timing",
+      "observations": {
+        "mount": "d4afa829509f71a88f1404658dc2864616cae7495e950e8ec34a120e4760e83e",
+        "update": "621d8774395a0324418aec9e94be1352e26f06184af35343b44492390daf8ef6"
+      },
+      "metrics": {
+        "mount": {
+          "median": 1.8363329999999678,
+          "p99": 2.047208000000012,
+          "samples": 101
+        },
+        "update": {
+          "median": 0.7718340000000126,
+          "p99": 0.9482920000000377,
+          "samples": 101
+        }
+      },
+      "environment": {
+        "startedAt": "2026-10-05T21:58:42.074Z",
+        "endedAt": "2026-10-05T21:58:43.013Z",
+        "node": "v26.10.0",
+        "v8": "14.6.202.34-node.35",
+        "cpu": "Apple M1 Max",
+        "instrumented": false,
+        "validation": "off",
+        "warmup": 20,
+        "samples": 101,
+        "naturalEsbuildExits": 1,
+        "bundleSha256": "0f84a260fc1e2c9de1a8edaf53e0f9f98d54e38875c1e11f98d3e80747ab6683"
+      }
+    },
+    {
+      "fixture": "oneOf-20",
+      "variant": "W",
+      "run": 2,
+      "mode": "timing",
+      "observations": {
+        "mount": "d4afa829509f71a88f1404658dc2864616cae7495e950e8ec34a120e4760e83e",
+        "update": "621d8774395a0324418aec9e94be1352e26f06184af35343b44492390daf8ef6"
+      },
+      "metrics": {
+        "mount": {
+          "median": 1.8340829999999642,
+          "p99": 2.0606670000000236,
+          "samples": 101
+        },
+        "update": {
+          "median": 0.7789999999999964,
+          "p99": 0.9846670000000017,
+          "samples": 101
+        }
+      },
+      "environment": {
+        "startedAt": "2026-10-05T21:58:43.177Z",
+        "endedAt": "2026-10-05T21:58:44.128Z",
+        "node": "v26.10.0",
+        "v8": "14.6.202.34-node.35",
+        "cpu": "Apple M1 Max",
+        "instrumented": false,
+        "validation": "off",
+        "warmup": 20,
+        "samples": 101,
+        "naturalEsbuildExits": 1,
+        "bundleSha256": "0f84a260fc1e2c9de1a8edaf53e0f9f98d54e38875c1e11f98d3e80747ab6683"
+      }
+    },
+    {
+      "fixture": "oneOf-20",
+      "variant": "H",
+      "run": 2,
+      "mode": "timing",
+      "observations": {
+        "mount": "d4afa829509f71a88f1404658dc2864616cae7495e950e8ec34a120e4760e83e",
+        "update": "621d8774395a0324418aec9e94be1352e26f06184af35343b44492390daf8ef6"
+      },
+      "metrics": {
+        "mount": {
+          "median": 1.7857919999996739,
+          "p99": 1.9818749999999454,
+          "samples": 101
+        },
+        "update": {
+          "median": 0.8194999999996071,
+          "p99": 0.978708000000097,
+          "samples": 101
+        }
+      },
+      "environment": {
+        "startedAt": "2026-10-05T21:58:47.729Z",
+        "endedAt": "2026-10-05T21:58:48.664Z",
+        "node": "v26.10.0",
+        "v8": "14.6.202.34-node.35",
+        "cpu": "Apple M1 Max",
+        "instrumented": false,
+        "validation": "off",
+        "warmup": 20,
+        "samples": 101,
+        "naturalEsbuildExits": 1,
+        "bundleSha256": "b713a0d370a84fd7158063e6e1d23c8b4190a0933c6d70bc4636fe1bb1dadd91"
+      }
+    },
+    {
+      "fixture": "oneOf-20",
+      "variant": "H",
+      "run": 3,
+      "mode": "timing",
+      "observations": {
+        "mount": "d4afa829509f71a88f1404658dc2864616cae7495e950e8ec34a120e4760e83e",
+        "update": "621d8774395a0324418aec9e94be1352e26f06184af35343b44492390daf8ef6"
+      },
+      "metrics": {
+        "mount": {
+          "median": 1.9445839999998498,
+          "p99": 2.124583000000257,
+          "samples": 101
+        },
+        "update": {
+          "median": 0.855750000000171,
+          "p99": 1.0318749999996726,
+          "samples": 101
+        }
+      },
+      "environment": {
+        "startedAt": "2026-10-05T21:58:52.271Z",
+        "endedAt": "2026-10-05T21:58:53.231Z",
+        "node": "v26.10.0",
+        "v8": "14.6.202.34-node.35",
+        "cpu": "Apple M1 Max",
+        "instrumented": false,
+        "validation": "off",
+        "warmup": 20,
+        "samples": 101,
+        "naturalEsbuildExits": 1,
+        "bundleSha256": "b713a0d370a84fd7158063e6e1d23c8b4190a0933c6d70bc4636fe1bb1dadd91"
+      }
+    },
+    {
+      "fixture": "oneOf-20",
+      "variant": "W",
+      "run": 3,
+      "mode": "timing",
+      "observations": {
+        "mount": "d4afa829509f71a88f1404658dc2864616cae7495e950e8ec34a120e4760e83e",
+        "update": "621d8774395a0324418aec9e94be1352e26f06184af35343b44492390daf8ef6"
+      },
+      "metrics": {
+        "mount": {
+          "median": 1.8543339999999944,
+          "p99": 2.09862499999997,
+          "samples": 101
+        },
+        "update": {
+          "median": 0.7707920000000286,
+          "p99": 1.0031660000000215,
+          "samples": 101
+        }
+      },
+      "environment": {
+        "startedAt": "2026-10-05T21:58:53.395Z",
+        "endedAt": "2026-10-05T21:58:54.346Z",
+        "node": "v26.10.0",
+        "v8": "14.6.202.34-node.35",
+        "cpu": "Apple M1 Max",
+        "instrumented": false,
+        "validation": "off",
+        "warmup": 20,
+        "samples": 101,
+        "naturalEsbuildExits": 1,
+        "bundleSha256": "0f84a260fc1e2c9de1a8edaf53e0f9f98d54e38875c1e11f98d3e80747ab6683"
+      }
+    },
+    {
+      "fixture": "oneOf-40",
+      "variant": "H",
+      "run": 1,
+      "mode": "timing",
+      "observations": {
+        "mount": "f1de2008a6a8b95fae4d6e70501e6ba416af5a970934454bd3ca9d5711ca8710",
+        "update": "dce62403f46479fdfe764fc065552e5345f7327958f78d2fc9e50255dd54328a"
+      },
+      "metrics": {
+        "mount": {
+          "median": 3.071665999999823,
+          "p99": 3.4234580000002097,
+          "samples": 101
+        },
+        "update": {
+          "median": 1.3910839999998643,
+          "p99": 1.5473750000001019,
+          "samples": 101
+        }
+      },
+      "environment": {
+        "startedAt": "2026-10-05T21:58:57.946Z",
+        "endedAt": "2026-10-05T21:58:59.126Z",
+        "node": "v26.10.0",
+        "v8": "14.6.202.34-node.35",
+        "cpu": "Apple M1 Max",
+        "instrumented": false,
+        "validation": "off",
+        "warmup": 20,
+        "samples": 101,
+        "naturalEsbuildExits": 1,
+        "bundleSha256": "b713a0d370a84fd7158063e6e1d23c8b4190a0933c6d70bc4636fe1bb1dadd91"
+      }
+    },
+    {
+      "fixture": "oneOf-40",
+      "variant": "W",
+      "run": 1,
+      "mode": "timing",
+      "observations": {
+        "mount": "f1de2008a6a8b95fae4d6e70501e6ba416af5a970934454bd3ca9d5711ca8710",
+        "update": "dce62403f46479fdfe764fc065552e5345f7327958f78d2fc9e50255dd54328a"
+      },
+      "metrics": {
+        "mount": {
+          "median": 3.419332999999824,
+          "p99": 3.716082999999969,
+          "samples": 101
+        },
+        "update": {
+          "median": 1.3709589999999707,
+          "p99": 1.658625000000029,
+          "samples": 101
+        }
+      },
+      "environment": {
+        "startedAt": "2026-10-05T21:58:59.295Z",
+        "endedAt": "2026-10-05T21:59:00.537Z",
+        "node": "v26.10.0",
+        "v8": "14.6.202.34-node.35",
+        "cpu": "Apple M1 Max",
+        "instrumented": false,
+        "validation": "off",
+        "warmup": 20,
+        "samples": 101,
+        "naturalEsbuildExits": 1,
+        "bundleSha256": "0f84a260fc1e2c9de1a8edaf53e0f9f98d54e38875c1e11f98d3e80747ab6683"
+      }
+    },
+    {
+      "fixture": "oneOf-40",
+      "variant": "W",
+      "run": 2,
+      "mode": "timing",
+      "observations": {
+        "mount": "f1de2008a6a8b95fae4d6e70501e6ba416af5a970934454bd3ca9d5711ca8710",
+        "update": "dce62403f46479fdfe764fc065552e5345f7327958f78d2fc9e50255dd54328a"
+      },
+      "metrics": {
+        "mount": {
+          "median": 3.1172500000000127,
+          "p99": 3.3915000000000077,
+          "samples": 101
+        },
+        "update": {
+          "median": 1.3981659999999465,
+          "p99": 1.5912080000000515,
+          "samples": 101
+        }
+      },
+      "environment": {
+        "startedAt": "2026-10-05T21:59:00.703Z",
+        "endedAt": "2026-10-05T21:59:01.897Z",
+        "node": "v26.10.0",
+        "v8": "14.6.202.34-node.35",
+        "cpu": "Apple M1 Max",
+        "instrumented": false,
+        "validation": "off",
+        "warmup": 20,
+        "samples": 101,
+        "naturalEsbuildExits": 1,
+        "bundleSha256": "0f84a260fc1e2c9de1a8edaf53e0f9f98d54e38875c1e11f98d3e80747ab6683"
+      }
+    },
+    {
+      "fixture": "oneOf-40",
+      "variant": "H",
+      "run": 2,
+      "mode": "timing",
+      "observations": {
+        "mount": "f1de2008a6a8b95fae4d6e70501e6ba416af5a970934454bd3ca9d5711ca8710",
+        "update": "dce62403f46479fdfe764fc065552e5345f7327958f78d2fc9e50255dd54328a"
+      },
+      "metrics": {
+        "mount": {
+          "median": 3.056040999999823,
+          "p99": 3.2999580000000606,
+          "samples": 101
+        },
+        "update": {
+          "median": 1.4423329999999623,
+          "p99": 1.6674169999996593,
+          "samples": 101
+        }
+      },
+      "environment": {
+        "startedAt": "2026-10-05T21:59:05.500Z",
+        "endedAt": "2026-10-05T21:59:06.685Z",
+        "node": "v26.10.0",
+        "v8": "14.6.202.34-node.35",
+        "cpu": "Apple M1 Max",
+        "instrumented": false,
+        "validation": "off",
+        "warmup": 20,
+        "samples": 101,
+        "naturalEsbuildExits": 1,
+        "bundleSha256": "b713a0d370a84fd7158063e6e1d23c8b4190a0933c6d70bc4636fe1bb1dadd91"
+      }
+    },
+    {
+      "fixture": "oneOf-40",
+      "variant": "H",
+      "run": 3,
+      "mode": "timing",
+      "observations": {
+        "mount": "f1de2008a6a8b95fae4d6e70501e6ba416af5a970934454bd3ca9d5711ca8710",
+        "update": "dce62403f46479fdfe764fc065552e5345f7327958f78d2fc9e50255dd54328a"
+      },
+      "metrics": {
+        "mount": {
+          "median": 3.055000000000291,
+          "p99": 3.4087499999996,
+          "samples": 101
+        },
+        "update": {
+          "median": 1.4100829999997586,
+          "p99": 1.5447079999999005,
+          "samples": 101
+        }
+      },
+      "environment": {
+        "startedAt": "2026-10-05T21:59:10.339Z",
+        "endedAt": "2026-10-05T21:59:11.524Z",
+        "node": "v26.10.0",
+        "v8": "14.6.202.34-node.35",
+        "cpu": "Apple M1 Max",
+        "instrumented": false,
+        "validation": "off",
+        "warmup": 20,
+        "samples": 101,
+        "naturalEsbuildExits": 1,
+        "bundleSha256": "b713a0d370a84fd7158063e6e1d23c8b4190a0933c6d70bc4636fe1bb1dadd91"
+      }
+    },
+    {
+      "fixture": "oneOf-40",
+      "variant": "W",
+      "run": 3,
+      "mode": "timing",
+      "observations": {
+        "mount": "f1de2008a6a8b95fae4d6e70501e6ba416af5a970934454bd3ca9d5711ca8710",
+        "update": "dce62403f46479fdfe764fc065552e5345f7327958f78d2fc9e50255dd54328a"
+      },
+      "metrics": {
+        "mount": {
+          "median": 3.1200000000000045,
+          "p99": 3.349458000000027,
+          "samples": 101
+        },
+        "update": {
+          "median": 1.384708000000046,
+          "p99": 1.5338750000000232,
+          "samples": 101
+        }
+      },
+      "environment": {
+        "startedAt": "2026-10-05T21:59:11.693Z",
+        "endedAt": "2026-10-05T21:59:12.894Z",
+        "node": "v26.10.0",
+        "v8": "14.6.202.34-node.35",
+        "cpu": "Apple M1 Max",
+        "instrumented": false,
+        "validation": "off",
+        "warmup": 20,
+        "samples": 101,
+        "naturalEsbuildExits": 1,
+        "bundleSha256": "0f84a260fc1e2c9de1a8edaf53e0f9f98d54e38875c1e11f98d3e80747ab6683"
+      }
+    },
+    {
+      "fixture": "sample-0",
+      "variant": "H",
+      "run": 1,
+      "mode": "timing",
+      "observations": {
+        "mount": "3caa7a266978089b27b68d2dfaf8ac762f162b754e986dc113b894fffd70ebce",
+        "later": "1bedff3a41cd8f3e1ce4d012b531b0b83768fadd60f8e048321dd33593632aee"
+      },
+      "metrics": {
+        "mount": {
+          "median": 0.135291000000052,
+          "p99": 0.1783330000002934,
+          "samples": 101
+        },
+        "later": {
+          "median": 0.026374999999916326,
+          "p99": 0.042167000000063126,
+          "samples": 101
+        }
+      },
+      "environment": {
+        "startedAt": "2026-10-05T21:59:16.505Z",
+        "endedAt": "2026-10-05T21:59:17.237Z",
+        "node": "v26.10.0",
+        "v8": "14.6.202.34-node.35",
+        "cpu": "Apple M1 Max",
+        "instrumented": false,
+        "validation": "off",
+        "warmup": 20,
+        "samples": 101,
+        "naturalEsbuildExits": 1,
+        "bundleSha256": "b713a0d370a84fd7158063e6e1d23c8b4190a0933c6d70bc4636fe1bb1dadd91"
+      }
+    },
+    {
+      "fixture": "sample-0",
+      "variant": "W",
+      "run": 1,
+      "mode": "timing",
+      "observations": {
+        "mount": "3caa7a266978089b27b68d2dfaf8ac762f162b754e986dc113b894fffd70ebce",
+        "later": "1bedff3a41cd8f3e1ce4d012b531b0b83768fadd60f8e048321dd33593632aee"
+      },
+      "metrics": {
+        "mount": {
+          "median": 0.14016599999996515,
+          "p99": 0.18695800000000418,
+          "samples": 101
+        },
+        "later": {
+          "median": 0.026624999999967258,
+          "p99": 0.04312500000003183,
+          "samples": 101
+        }
+      },
+      "environment": {
+        "startedAt": "2026-10-05T21:59:17.415Z",
+        "endedAt": "2026-10-05T21:59:18.155Z",
+        "node": "v26.10.0",
+        "v8": "14.6.202.34-node.35",
+        "cpu": "Apple M1 Max",
+        "instrumented": false,
+        "validation": "off",
+        "warmup": 20,
+        "samples": 101,
+        "naturalEsbuildExits": 1,
+        "bundleSha256": "0f84a260fc1e2c9de1a8edaf53e0f9f98d54e38875c1e11f98d3e80747ab6683"
+      }
+    },
+    {
+      "fixture": "sample-0",
+      "variant": "W",
+      "run": 2,
+      "mode": "timing",
+      "observations": {
+        "mount": "3caa7a266978089b27b68d2dfaf8ac762f162b754e986dc113b894fffd70ebce",
+        "later": "1bedff3a41cd8f3e1ce4d012b531b0b83768fadd60f8e048321dd33593632aee"
+      },
+      "metrics": {
+        "mount": {
+          "median": 0.13833299999998871,
+          "p99": 0.18029200000000856,
+          "samples": 101
+        },
+        "later": {
+          "median": 0.026499999999998636,
+          "p99": 0.04229200000003175,
+          "samples": 101
+        }
+      },
+      "environment": {
+        "startedAt": "2026-10-05T21:59:18.333Z",
+        "endedAt": "2026-10-05T21:59:19.075Z",
+        "node": "v26.10.0",
+        "v8": "14.6.202.34-node.35",
+        "cpu": "Apple M1 Max",
+        "instrumented": false,
+        "validation": "off",
+        "warmup": 20,
+        "samples": 101,
+        "naturalEsbuildExits": 1,
+        "bundleSha256": "0f84a260fc1e2c9de1a8edaf53e0f9f98d54e38875c1e11f98d3e80747ab6683"
+      }
+    },
+    {
+      "fixture": "sample-0",
+      "variant": "H",
+      "run": 2,
+      "mode": "timing",
+      "observations": {
+        "mount": "3caa7a266978089b27b68d2dfaf8ac762f162b754e986dc113b894fffd70ebce",
+        "later": "1bedff3a41cd8f3e1ce4d012b531b0b83768fadd60f8e048321dd33593632aee"
+      },
+      "metrics": {
+        "mount": {
+          "median": 0.13249999999970896,
+          "p99": 0.19158400000014808,
+          "samples": 101
+        },
+        "later": {
+          "median": 0.02599999999983993,
+          "p99": 0.041040999999950145,
+          "samples": 101
+        }
+      },
+      "environment": {
+        "startedAt": "2026-10-05T21:59:22.700Z",
+        "endedAt": "2026-10-05T21:59:23.444Z",
+        "node": "v26.10.0",
+        "v8": "14.6.202.34-node.35",
+        "cpu": "Apple M1 Max",
+        "instrumented": false,
+        "validation": "off",
+        "warmup": 20,
+        "samples": 101,
+        "naturalEsbuildExits": 1,
+        "bundleSha256": "b713a0d370a84fd7158063e6e1d23c8b4190a0933c6d70bc4636fe1bb1dadd91"
+      }
+    },
+    {
+      "fixture": "sample-0",
+      "variant": "H",
+      "run": 3,
+      "mode": "timing",
+      "observations": {
+        "mount": "3caa7a266978089b27b68d2dfaf8ac762f162b754e986dc113b894fffd70ebce",
+        "later": "1bedff3a41cd8f3e1ce4d012b531b0b83768fadd60f8e048321dd33593632aee"
+      },
+      "metrics": {
+        "mount": {
+          "median": 0.13637500000004366,
+          "p99": 0.18204199999991033,
+          "samples": 101
+        },
+        "later": {
+          "median": 0.025667000000339613,
+          "p99": 0.0385839999999007,
+          "samples": 101
+        }
+      },
+      "environment": {
+        "startedAt": "2026-10-05T21:59:27.062Z",
+        "endedAt": "2026-10-05T21:59:27.815Z",
+        "node": "v26.10.0",
+        "v8": "14.6.202.34-node.35",
+        "cpu": "Apple M1 Max",
+        "instrumented": false,
+        "validation": "off",
+        "warmup": 20,
+        "samples": 101,
+        "naturalEsbuildExits": 1,
+        "bundleSha256": "b713a0d370a84fd7158063e6e1d23c8b4190a0933c6d70bc4636fe1bb1dadd91"
+      }
+    },
+    {
+      "fixture": "sample-0",
+      "variant": "W",
+      "run": 3,
+      "mode": "timing",
+      "observations": {
+        "mount": "3caa7a266978089b27b68d2dfaf8ac762f162b754e986dc113b894fffd70ebce",
+        "later": "1bedff3a41cd8f3e1ce4d012b531b0b83768fadd60f8e048321dd33593632aee"
+      },
+      "metrics": {
+        "mount": {
+          "median": 0.13783300000000054,
+          "p99": 0.17462499999999181,
+          "samples": 101
+        },
+        "later": {
+          "median": 0.02641700000003766,
+          "p99": 0.042832999999973254,
+          "samples": 101
+        }
+      },
+      "environment": {
+        "startedAt": "2026-10-05T21:59:28.003Z",
+        "endedAt": "2026-10-05T21:59:28.738Z",
+        "node": "v26.10.0",
+        "v8": "14.6.202.34-node.35",
+        "cpu": "Apple M1 Max",
+        "instrumented": false,
+        "validation": "off",
+        "warmup": 20,
+        "samples": 101,
+        "naturalEsbuildExits": 1,
+        "bundleSha256": "0f84a260fc1e2c9de1a8edaf53e0f9f98d54e38875c1e11f98d3e80747ab6683"
+      }
+    },
+    {
+      "fixture": "flat-500",
+      "variant": "H",
+      "run": 1,
+      "mode": "timing",
+      "observations": {
+        "mount": "9c374e9eb2f8d56bf3717f2e928c23be27252c99188aedd04b30b19b65b51a57",
+        "later": "aa04b586d5358e13f84bd263a1aa02c5e976ad7d8535de9d0cc38645a14eecb4"
+      },
+      "metrics": {
+        "mount": {
+          "median": 4.362333999999919,
+          "p99": 4.649707999999919,
+          "samples": 101
+        },
+        "later": {
+          "median": 0.014415999999982887,
+          "p99": 0.02366600000004837,
+          "samples": 101
+        }
+      },
+      "environment": {
+        "startedAt": "2026-10-05T21:59:32.373Z",
+        "endedAt": "2026-10-05T21:59:33.922Z",
+        "node": "v26.10.0",
+        "v8": "14.6.202.34-node.35",
+        "cpu": "Apple M1 Max",
+        "instrumented": false,
+        "validation": "off",
+        "warmup": 20,
+        "samples": 101,
+        "naturalEsbuildExits": 1,
+        "bundleSha256": "b713a0d370a84fd7158063e6e1d23c8b4190a0933c6d70bc4636fe1bb1dadd91"
+      }
+    },
+    {
+      "fixture": "flat-500",
+      "variant": "W",
+      "run": 1,
+      "mode": "timing",
+      "observations": {
+        "mount": "9c374e9eb2f8d56bf3717f2e928c23be27252c99188aedd04b30b19b65b51a57",
+        "later": "aa04b586d5358e13f84bd263a1aa02c5e976ad7d8535de9d0cc38645a14eecb4"
+      },
+      "metrics": {
+        "mount": {
+          "median": 4.262459000000035,
+          "p99": 4.64654100000007,
+          "samples": 101
+        },
+        "later": {
+          "median": 0.014415999999982887,
+          "p99": 0.022499999999979536,
+          "samples": 101
+        }
+      },
+      "environment": {
+        "startedAt": "2026-10-05T21:59:34.088Z",
+        "endedAt": "2026-10-05T21:59:35.643Z",
+        "node": "v26.10.0",
+        "v8": "14.6.202.34-node.35",
+        "cpu": "Apple M1 Max",
+        "instrumented": false,
+        "validation": "off",
+        "warmup": 20,
+        "samples": 101,
+        "naturalEsbuildExits": 1,
+        "bundleSha256": "0f84a260fc1e2c9de1a8edaf53e0f9f98d54e38875c1e11f98d3e80747ab6683"
+      }
+    },
+    {
+      "fixture": "flat-500",
+      "variant": "W",
+      "run": 2,
+      "mode": "timing",
+      "observations": {
+        "mount": "9c374e9eb2f8d56bf3717f2e928c23be27252c99188aedd04b30b19b65b51a57",
+        "later": "aa04b586d5358e13f84bd263a1aa02c5e976ad7d8535de9d0cc38645a14eecb4"
+      },
+      "metrics": {
+        "mount": {
+          "median": 4.2644579999999905,
+          "p99": 4.703458000000069,
+          "samples": 101
+        },
+        "later": {
+          "median": 0.014540999999780979,
+          "p99": 0.030209000000013475,
+          "samples": 101
+        }
+      },
+      "environment": {
+        "startedAt": "2026-10-05T21:59:35.808Z",
+        "endedAt": "2026-10-05T21:59:37.371Z",
+        "node": "v26.10.0",
+        "v8": "14.6.202.34-node.35",
+        "cpu": "Apple M1 Max",
+        "instrumented": false,
+        "validation": "off",
+        "warmup": 20,
+        "samples": 101,
+        "naturalEsbuildExits": 1,
+        "bundleSha256": "0f84a260fc1e2c9de1a8edaf53e0f9f98d54e38875c1e11f98d3e80747ab6683"
+      }
+    },
+    {
+      "fixture": "flat-500",
+      "variant": "H",
+      "run": 2,
+      "mode": "timing",
+      "observations": {
+        "mount": "9c374e9eb2f8d56bf3717f2e928c23be27252c99188aedd04b30b19b65b51a57",
+        "later": "aa04b586d5358e13f84bd263a1aa02c5e976ad7d8535de9d0cc38645a14eecb4"
+      },
+      "metrics": {
+        "mount": {
+          "median": 4.336457999999766,
+          "p99": 5.0173750000003565,
+          "samples": 101
+        },
+        "later": {
+          "median": 0.014666000000033819,
+          "p99": 0.03275000000030559,
+          "samples": 101
+        }
+      },
+      "environment": {
+        "startedAt": "2026-10-05T21:59:41.011Z",
+        "endedAt": "2026-10-05T21:59:42.579Z",
+        "node": "v26.10.0",
+        "v8": "14.6.202.34-node.35",
+        "cpu": "Apple M1 Max",
+        "instrumented": false,
+        "validation": "off",
+        "warmup": 20,
+        "samples": 101,
+        "naturalEsbuildExits": 1,
+        "bundleSha256": "b713a0d370a84fd7158063e6e1d23c8b4190a0933c6d70bc4636fe1bb1dadd91"
+      }
+    },
+    {
+      "fixture": "flat-500",
+      "variant": "H",
+      "run": 3,
+      "mode": "timing",
+      "observations": {
+        "mount": "9c374e9eb2f8d56bf3717f2e928c23be27252c99188aedd04b30b19b65b51a57",
+        "later": "aa04b586d5358e13f84bd263a1aa02c5e976ad7d8535de9d0cc38645a14eecb4"
+      },
+      "metrics": {
+        "mount": {
+          "median": 4.333290999999917,
+          "p99": 4.749665999999706,
+          "samples": 101
+        },
+        "later": {
+          "median": 0.014374999999745341,
+          "p99": 0.023624999999810825,
+          "samples": 101
+        }
+      },
+      "environment": {
+        "startedAt": "2026-10-05T21:59:46.193Z",
+        "endedAt": "2026-10-05T21:59:47.756Z",
+        "node": "v26.10.0",
+        "v8": "14.6.202.34-node.35",
+        "cpu": "Apple M1 Max",
+        "instrumented": false,
+        "validation": "off",
+        "warmup": 20,
+        "samples": 101,
+        "naturalEsbuildExits": 1,
+        "bundleSha256": "b713a0d370a84fd7158063e6e1d23c8b4190a0933c6d70bc4636fe1bb1dadd91"
+      }
+    },
+    {
+      "fixture": "flat-500",
+      "variant": "W",
+      "run": 3,
+      "mode": "timing",
+      "observations": {
+        "mount": "9c374e9eb2f8d56bf3717f2e928c23be27252c99188aedd04b30b19b65b51a57",
+        "later": "aa04b586d5358e13f84bd263a1aa02c5e976ad7d8535de9d0cc38645a14eecb4"
+      },
+      "metrics": {
+        "mount": {
+          "median": 4.314041999999972,
+          "p99": 4.829541000000006,
+          "samples": 101
+        },
+        "later": {
+          "median": 0.014792000000170447,
+          "p99": 0.03033400000003894,
+          "samples": 101
+        }
+      },
+      "environment": {
+        "startedAt": "2026-10-05T21:59:47.922Z",
+        "endedAt": "2026-10-05T21:59:49.486Z",
+        "node": "v26.10.0",
+        "v8": "14.6.202.34-node.35",
+        "cpu": "Apple M1 Max",
+        "instrumented": false,
+        "validation": "off",
+        "warmup": 20,
+        "samples": 101,
+        "naturalEsbuildExits": 1,
+        "bundleSha256": "0f84a260fc1e2c9de1a8edaf53e0f9f98d54e38875c1e11f98d3e80747ab6683"
+      }
+    }
+  ],
+  "rows": [
+    {
+      "fixture": "oneOf-5",
+      "phase": "mount",
+      "H": {
+        "median": 0.8277500000003783,
+        "p99": 0.9969169999999394,
+        "samples": 303
+      },
+      "W": {
+        "median": 0.8319999999999936,
+        "p99": 1.0205419999999776,
+        "samples": 303
+      },
+      "pairs": [
+        {
+          "run": 1,
+          "order": "H→W",
+          "H": {
+            "median": 0.8575829999999769,
+            "p99": 0.9840830000002825,
+            "samples": 101
+          },
+          "W": {
+            "median": 0.79200000000003,
+            "p99": 1.043875000000014,
+            "samples": 101
+          },
+          "changePercent": -7.647423048258728
+        },
+        {
+          "run": 2,
+          "order": "W→H",
+          "H": {
+            "median": 0.8229590000000826,
+            "p99": 0.9969169999999394,
+            "samples": 101
+          },
+          "W": {
+            "median": 0.8420839999999998,
+            "p99": 1.0112500000000182,
+            "samples": 101
+          },
+          "changePercent": 2.3239310828261583
+        },
+        {
+          "run": 3,
+          "order": "H→W",
+          "H": {
+            "median": 0.804374999999709,
+            "p99": 0.9713329999999587,
+            "samples": 101
+          },
+          "W": {
+            "median": 0.8523330000000442,
+            "p99": 1.0205419999999776,
+            "samples": 101
+          },
+          "changePercent": 5.962144522188351
+        }
+      ],
+      "changePercent": 0.5134400482770474
+    },
+    {
+      "fixture": "oneOf-5",
+      "phase": "update",
+      "H": {
+        "median": 0.45037499999943975,
+        "p99": 0.5729999999994106,
+        "samples": 303
+      },
+      "W": {
+        "median": 0.4593329999999014,
+        "p99": 0.5654170000000249,
+        "samples": 303
+      },
+      "pairs": [
+        {
+          "run": 1,
+          "order": "H→W",
+          "H": {
+            "median": 0.4369589999996606,
+            "p99": 0.5875419999997575,
+            "samples": 101
+          },
+          "W": {
+            "median": 0.47604200000000674,
+            "p99": 0.542082999999991,
+            "samples": 101
+          },
+          "changePercent": 8.944317430325622
+        },
+        {
+          "run": 2,
+          "order": "W→H",
+          "H": {
+            "median": 0.44791699999996126,
+            "p99": 0.5540000000000873,
+            "samples": 101
+          },
+          "W": {
+            "median": 0.4562909999999647,
+            "p99": 0.57062499999995,
+            "samples": 101
+          },
+          "changePercent": 1.869542794759771
+        },
+        {
+          "run": 3,
+          "order": "H→W",
+          "H": {
+            "median": 0.4682090000005701,
+            "p99": 0.5567909999999756,
+            "samples": 101
+          },
+          "W": {
+            "median": 0.4203330000000278,
+            "p99": 0.5638329999999883,
+            "samples": 101
+          },
+          "changePercent": -10.225348081836094
+        }
+      ],
+      "changePercent": 1.9890091591391101
+    },
+    {
+      "fixture": "oneOf-10",
+      "phase": "mount",
+      "H": {
+        "median": 1.1725420000002487,
+        "p99": 1.373833999999988,
+        "samples": 303
+      },
+      "W": {
+        "median": 1.1671250000000555,
+        "p99": 1.3677089999999907,
+        "samples": 303
+      },
+      "pairs": [
+        {
+          "run": 1,
+          "order": "H→W",
+          "H": {
+            "median": 1.1637909999999465,
+            "p99": 1.3317090000000462,
+            "samples": 101
+          },
+          "W": {
+            "median": 1.1842080000000124,
+            "p99": 1.3677089999999907,
+            "samples": 101
+          },
+          "changePercent": 1.7543528004656084
+        },
+        {
+          "run": 2,
+          "order": "W→H",
+          "H": {
+            "median": 1.155999999999949,
+            "p99": 1.3337080000001151,
+            "samples": 101
+          },
+          "W": {
+            "median": 1.1825000000000045,
+            "p99": 1.3800830000000133,
+            "samples": 101
+          },
+          "changePercent": 2.2923875432574903
+        },
+        {
+          "run": 3,
+          "order": "H→W",
+          "H": {
+            "median": 1.2071249999999054,
+            "p99": 1.4022500000000946,
+            "samples": 101
+          },
+          "W": {
+            "median": 1.122792000000004,
+            "p99": 1.3324170000000208,
+            "samples": 101
+          },
+          "changePercent": -6.986269027640713
+        }
+      ],
+      "changePercent": -0.4619877155950136
+    },
+    {
+      "fixture": "oneOf-10",
+      "phase": "update",
+      "H": {
+        "median": 0.5909590000001117,
+        "p99": 0.7405409999996664,
+        "samples": 303
+      },
+      "W": {
+        "median": 0.5926249999999982,
+        "p99": 0.7177500000000236,
+        "samples": 303
+      },
+      "pairs": [
+        {
+          "run": 1,
+          "order": "H→W",
+          "H": {
+            "median": 0.5668749999999818,
+            "p99": 0.7207080000002861,
+            "samples": 101
+          },
+          "W": {
+            "median": 0.5735409999999774,
+            "p99": 0.7137079999999969,
+            "samples": 101
+          },
+          "changePercent": 1.1759206174193348
+        },
+        {
+          "run": 2,
+          "order": "W→H",
+          "H": {
+            "median": 0.5600420000000668,
+            "p99": 0.7368329999999332,
+            "samples": 101
+          },
+          "W": {
+            "median": 0.5726250000000164,
+            "p99": 0.7177500000000236,
+            "samples": 101
+          },
+          "changePercent": 2.246795776021826
+        },
+        {
+          "run": 3,
+          "order": "H→W",
+          "H": {
+            "median": 0.6414169999998194,
+            "p99": 0.7430419999996047,
+            "samples": 101
+          },
+          "W": {
+            "median": 0.6021670000000086,
+            "p99": 0.7147500000000377,
+            "samples": 101
+          },
+          "changePercent": -6.119264066874108
+        }
+      ],
+      "changePercent": 0.2819146505740999
+    },
+    {
+      "fixture": "oneOf-20",
+      "phase": "mount",
+      "H": {
+        "median": 1.8537919999998849,
+        "p99": 2.1200840000001335,
+        "samples": 303
+      },
+      "W": {
+        "median": 1.8394999999999868,
+        "p99": 2.066000000000031,
+        "samples": 303
+      },
+      "pairs": [
+        {
+          "run": 1,
+          "order": "H→W",
+          "H": {
+            "median": 1.8170409999993353,
+            "p99": 2.119666000000052,
+            "samples": 101
+          },
+          "W": {
+            "median": 1.8363329999999678,
+            "p99": 2.047208000000012,
+            "samples": 101
+          },
+          "changePercent": 1.0617261801268985
+        },
+        {
+          "run": 2,
+          "order": "W→H",
+          "H": {
+            "median": 1.7857919999996739,
+            "p99": 1.9818749999999454,
+            "samples": 101
+          },
+          "W": {
+            "median": 1.8340829999999642,
+            "p99": 2.0606670000000236,
+            "samples": 101
+          },
+          "changePercent": 2.7041783141765086
+        },
+        {
+          "run": 3,
+          "order": "H→W",
+          "H": {
+            "median": 1.9445839999998498,
+            "p99": 2.124583000000257,
+            "samples": 101
+          },
+          "W": {
+            "median": 1.8543339999999944,
+            "p99": 2.09862499999997,
+            "samples": 101
+          },
+          "changePercent": -4.641095473369228
+        }
+      ],
+      "changePercent": -0.770960280328048
+    },
+    {
+      "fixture": "oneOf-20",
+      "phase": "update",
+      "H": {
+        "median": 0.8265419999997903,
+        "p99": 1.0318749999996726,
+        "samples": 303
+      },
+      "W": {
+        "median": 0.7762079999999969,
+        "p99": 0.9872080000000096,
+        "samples": 303
+      },
+      "pairs": [
+        {
+          "run": 1,
+          "order": "H→W",
+          "H": {
+            "median": 0.7923330000003261,
+            "p99": 1.0331670000000486,
+            "samples": 101
+          },
+          "W": {
+            "median": 0.7718340000000126,
+            "p99": 0.9482920000000377,
+            "samples": 101
+          },
+          "changePercent": -2.5871697884986666
+        },
+        {
+          "run": 2,
+          "order": "W→H",
+          "H": {
+            "median": 0.8194999999996071,
+            "p99": 0.978708000000097,
+            "samples": 101
+          },
+          "W": {
+            "median": 0.7789999999999964,
+            "p99": 0.9846670000000017,
+            "samples": 101
+          },
+          "changePercent": -4.942037827898737
+        },
+        {
+          "run": 3,
+          "order": "H→W",
+          "H": {
+            "median": 0.855750000000171,
+            "p99": 1.0318749999996726,
+            "samples": 101
+          },
+          "W": {
+            "median": 0.7707920000000286,
+            "p99": 1.0031660000000215,
+            "samples": 101
+          },
+          "changePercent": -9.927899503374283
+        }
+      ],
+      "changePercent": -6.0897086899160735
+    },
+    {
+      "fixture": "oneOf-40",
+      "phase": "mount",
+      "H": {
+        "median": 3.0616659999996045,
+        "p99": 3.4087499999996,
+        "samples": 303
+      },
+      "W": {
+        "median": 3.173958999999968,
+        "p99": 3.6582499999999527,
+        "samples": 303
+      },
+      "pairs": [
+        {
+          "run": 1,
+          "order": "H→W",
+          "H": {
+            "median": 3.071665999999823,
+            "p99": 3.4234580000002097,
+            "samples": 101
+          },
+          "W": {
+            "median": 3.419332999999824,
+            "p99": 3.716082999999969,
+            "samples": 101
+          },
+          "changePercent": 11.318515750085512
+        },
+        {
+          "run": 2,
+          "order": "W→H",
+          "H": {
+            "median": 3.056040999999823,
+            "p99": 3.2999580000000606,
+            "samples": 101
+          },
+          "W": {
+            "median": 3.1172500000000127,
+            "p99": 3.3915000000000077,
+            "samples": 101
+          },
+          "changePercent": 2.002885432498891
+        },
+        {
+          "run": 3,
+          "order": "H→W",
+          "H": {
+            "median": 3.055000000000291,
+            "p99": 3.4087499999996,
+            "samples": 101
+          },
+          "W": {
+            "median": 3.1200000000000045,
+            "p99": 3.349458000000027,
+            "samples": 101
+          },
+          "changePercent": 2.127659574458507
+        }
+      ],
+      "changePercent": 3.667709018566301
+    },
+    {
+      "fixture": "oneOf-40",
+      "phase": "update",
+      "H": {
+        "median": 1.414708000000246,
+        "p99": 1.568333000000166,
+        "samples": 303
+      },
+      "W": {
+        "median": 1.384708000000046,
+        "p99": 1.617917000000034,
+        "samples": 303
+      },
+      "pairs": [
+        {
+          "run": 1,
+          "order": "H→W",
+          "H": {
+            "median": 1.3910839999998643,
+            "p99": 1.5473750000001019,
+            "samples": 101
+          },
+          "W": {
+            "median": 1.3709589999999707,
+            "p99": 1.658625000000029,
+            "samples": 101
+          },
+          "changePercent": -1.4467134982427798
+        },
+        {
+          "run": 2,
+          "order": "W→H",
+          "H": {
+            "median": 1.4423329999999623,
+            "p99": 1.6674169999996593,
+            "samples": 101
+          },
+          "W": {
+            "median": 1.3981659999999465,
+            "p99": 1.5912080000000515,
+            "samples": 101
+          },
+          "changePercent": -3.0621916020792006
+        },
+        {
+          "run": 3,
+          "order": "H→W",
+          "H": {
+            "median": 1.4100829999997586,
+            "p99": 1.5447079999999005,
+            "samples": 101
+          },
+          "W": {
+            "median": 1.384708000000046,
+            "p99": 1.5338750000000232,
+            "samples": 101
+          },
+          "changePercent": -1.7995394597138614
+        }
+      ],
+      "changePercent": -2.1205789463405122
+    },
+    {
+      "fixture": "sample-0",
+      "phase": "mount",
+      "H": {
+        "median": 0.13504199999988487,
+        "p99": 0.19158400000014808,
+        "samples": 303
+      },
+      "W": {
+        "median": 0.13916600000004564,
+        "p99": 0.18029200000000856,
+        "samples": 303
+      },
+      "pairs": [
+        {
+          "run": 1,
+          "order": "H→W",
+          "H": {
+            "median": 0.135291000000052,
+            "p99": 0.1783330000002934,
+            "samples": 101
+          },
+          "W": {
+            "median": 0.14016599999996515,
+            "p99": 0.18695800000000418,
+            "samples": 101
+          },
+          "changePercent": 3.603343903076528
+        },
+        {
+          "run": 2,
+          "order": "W→H",
+          "H": {
+            "median": 0.13249999999970896,
+            "p99": 0.19158400000014808,
+            "samples": 101
+          },
+          "W": {
+            "median": 0.13833299999998871,
+            "p99": 0.18029200000000856,
+            "samples": 101
+          },
+          "changePercent": 4.4022641511642036
+        },
+        {
+          "run": 3,
+          "order": "H→W",
+          "H": {
+            "median": 0.13637500000004366,
+            "p99": 0.18204199999991033,
+            "samples": 101
+          },
+          "W": {
+            "median": 0.13783300000000054,
+            "p99": 0.17462499999999181,
+            "samples": 101
+          },
+          "changePercent": 1.069110907392412
+        }
+      ],
+      "changePercent": 3.053864723689137
+    },
+    {
+      "fixture": "sample-0",
+      "phase": "later",
+      "H": {
+        "median": 0.026041999999961263,
+        "p99": 0.041040999999950145,
+        "samples": 303
+      },
+      "W": {
+        "median": 0.026499999999941792,
+        "p99": 0.04312500000003183,
+        "samples": 303
+      },
+      "pairs": [
+        {
+          "run": 1,
+          "order": "H→W",
+          "H": {
+            "median": 0.026374999999916326,
+            "p99": 0.042167000000063126,
+            "samples": 101
+          },
+          "W": {
+            "median": 0.026624999999967258,
+            "p99": 0.04312500000003183,
+            "samples": 101
+          },
+          "changePercent": 0.9478672987743186
+        },
+        {
+          "run": 2,
+          "order": "W→H",
+          "H": {
+            "median": 0.02599999999983993,
+            "p99": 0.041040999999950145,
+            "samples": 101
+          },
+          "W": {
+            "median": 0.026499999999998636,
+            "p99": 0.04229200000003175,
+            "samples": 101
+          },
+          "changePercent": 1.923076923699174
+        },
+        {
+          "run": 3,
+          "order": "H→W",
+          "H": {
+            "median": 0.025667000000339613,
+            "p99": 0.0385839999999007,
+            "samples": 101
+          },
+          "W": {
+            "median": 0.02641700000003766,
+            "p99": 0.042832999999973254,
+            "samples": 101
+          },
+          "changePercent": 2.9220399722917456
+        }
+      ],
+      "changePercent": 1.7586974886000029
+    },
+    {
+      "fixture": "flat-500",
+      "phase": "mount",
+      "H": {
+        "median": 4.344541999999819,
+        "p99": 4.850999999999658,
+        "samples": 303
+      },
+      "W": {
+        "median": 4.279915999999957,
+        "p99": 4.788624999999968,
+        "samples": 303
+      },
+      "pairs": [
+        {
+          "run": 1,
+          "order": "H→W",
+          "H": {
+            "median": 4.362333999999919,
+            "p99": 4.649707999999919,
+            "samples": 101
+          },
+          "W": {
+            "median": 4.262459000000035,
+            "p99": 4.64654100000007,
+            "samples": 101
+          },
+          "changePercent": -2.2894853993271846
+        },
+        {
+          "run": 2,
+          "order": "W→H",
+          "H": {
+            "median": 4.336457999999766,
+            "p99": 5.0173750000003565,
+            "samples": 101
+          },
+          "W": {
+            "median": 4.2644579999999905,
+            "p99": 4.703458000000069,
+            "samples": 101
+          },
+          "changePercent": -1.6603412277895746
+        },
+        {
+          "run": 3,
+          "order": "H→W",
+          "H": {
+            "median": 4.333290999999917,
+            "p99": 4.749665999999706,
+            "samples": 101
+          },
+          "W": {
+            "median": 4.314041999999972,
+            "p99": 4.829541000000006,
+            "samples": 101
+          },
+          "changePercent": -0.4442120319162912
+        }
+      ],
+      "changePercent": -1.4875215845505663
+    },
+    {
+      "fixture": "flat-500",
+      "phase": "later",
+      "H": {
+        "median": 0.014458000000558968,
+        "p99": 0.02599999999983993,
+        "samples": 303
+      },
+      "W": {
+        "median": 0.014582999999902313,
+        "p99": 0.030209000000013475,
+        "samples": 303
+      },
+      "pairs": [
+        {
+          "run": 1,
+          "order": "H→W",
+          "H": {
+            "median": 0.014415999999982887,
+            "p99": 0.02366600000004837,
+            "samples": 101
+          },
+          "W": {
+            "median": 0.014415999999982887,
+            "p99": 0.022499999999979536,
+            "samples": 101
+          },
+          "changePercent": 0
+        },
+        {
+          "run": 2,
+          "order": "W→H",
+          "H": {
+            "median": 0.014666000000033819,
+            "p99": 0.03275000000030559,
+            "samples": 101
+          },
+          "W": {
+            "median": 0.014540999999780979,
+            "p99": 0.030209000000013475,
+            "samples": 101
+          },
+          "changePercent": -0.8523114704251378
+        },
+        {
+          "run": 3,
+          "order": "H→W",
+          "H": {
+            "median": 0.014374999999745341,
+            "p99": 0.023624999999810825,
+            "samples": 101
+          },
+          "W": {
+            "median": 0.014792000000170447,
+            "p99": 0.03033400000003894,
+            "samples": 101
+          },
+          "changePercent": 2.900869568226039
+        }
+      ],
+      "changePercent": 0.8645732420702101
+    }
+  ],
+  "counts": [
+    {
+      "fixture": "oneOf-5",
+      "H": {
+        "fixture": "oneOf-5",
+        "variant": "H",
+        "run": 0,
+        "mode": "counts",
+        "transitions": [
+          {
+            "value": "kind_4",
+            "counts": {
+              "getGateRegistry.loop6": 2,
+              "getGateRegistry.loop9": 11,
+              "getGateRegistry.loop7": 9,
+              "computeNode.loop3": 34,
+              "computeNode.loop4": 34,
+              "computeNode.loop5": 30,
+              "computeNode.loop6": 12,
+              "computeNode.loop7": 10,
+              "computeNode.loop9": 1,
+              "computeNode.loop10": 4,
+              "originalSites": 80,
+              "baselineReads": 80,
+              "conditionFunctions": 80,
+              "selectChildren.loop9": 68,
+              "selectChildren.loop10": 68,
+              "selectChildren.loop11": 60,
+              "getGateRegistry.loop1": 3,
+              "getGateRegistry.loop2": 3,
+              "flushPendingGateReads.loop11": 4,
+              "flushPendingGateReads.loop10": 4,
+              "flushPendingGateReads.loop8": 4,
+              "selectChildren.loop13": 20,
+              "selectChildren.loop14": 10,
+              "getGateRegistry.loop11": 3
+            },
+            "hash": "d36e28b88e4006d7d5e40d26bd16fc43322b4fa3443042579f7e434cd12561c1",
+            "liveWidth": 5,
+            "inputBytes": 17,
+            "outputBytes": 90,
+            "diagnostics": {
+              "status": "stable"
+            }
+          },
+          {
+            "value": "kind_0",
+            "counts": {
+              "getGateRegistry.loop6": 1,
+              "getGateRegistry.loop9": 4,
+              "getGateRegistry.loop7": 3,
+              "computeNode.loop3": 17,
+              "computeNode.loop4": 17,
+              "computeNode.loop5": 15,
+              "computeNode.loop6": 6,
+              "computeNode.loop7": 5,
+              "computeNode.loop9": 1,
+              "computeNode.loop10": 2,
+              "originalSites": 40,
+              "baselineReads": 40,
+              "conditionFunctions": 40,
+              "selectChildren.loop9": 34,
+              "selectChildren.loop10": 34,
+              "selectChildren.loop11": 30,
+              "getGateRegistry.loop1": 3,
+              "getGateRegistry.loop2": 3,
+              "flushPendingGateReads.loop11": 14,
+              "flushPendingGateReads.loop10": 14,
+              "flushPendingGateReads.loop8": 14,
+              "selectChildren.loop13": 10,
+              "selectChildren.loop14": 5,
+              "getGateRegistry.loop11": 3
+            },
+            "hash": "f38caa1b5456fc7c439d60e99f699c7554998de79f65c7d226d5aa35aa2bded1",
+            "liveWidth": 5,
+            "inputBytes": 17,
+            "outputBytes": 90,
+            "diagnostics": {
+              "status": "stable"
+            }
+          }
+        ],
+        "environment": {
+          "startedAt": "2026-10-05T21:59:53.216Z",
+          "endedAt": "2026-10-05T21:59:53.234Z",
+          "node": "v26.10.0",
+          "v8": "14.6.202.34-node.35",
+          "cpu": "Apple M1 Max",
+          "instrumented": true,
+          "validation": "off",
+          "warmup": 0,
+          "samples": 0,
+          "naturalEsbuildExits": 1,
+          "bundleSha256": "f4a53de449cabc25ac5227464a8877432b98cf6405a138cad0c1ec8b3684b42a"
+        }
+      },
+      "W": {
+        "fixture": "oneOf-5",
+        "variant": "W",
+        "run": 0,
+        "mode": "counts",
+        "transitions": [
+          {
+            "value": "kind_4",
+            "counts": {
+              "getGateRegistry.loop6": 2,
+              "getGateRegistry.loop9": 11,
+              "getGateRegistry.loop7": 9,
+              "computeNode.loop3": 34,
+              "computeNode.loop4": 34,
+              "computeNode.loop5": 30,
+              "computeNode.loop6": 12,
+              "computeNode.loop7": 10,
+              "computeNode.loop9": 1,
+              "computeNode.loop10": 4,
+              "originalSites": 80,
+              "baselineReads": 80,
+              "tableLookups": 1,
+              "tableMembership": 80,
+              "selectChildren.loop9": 68,
+              "selectChildren.loop10": 68,
+              "selectChildren.loop11": 60,
+              "getGateRegistry.loop1": 3,
+              "getGateRegistry.loop2": 3,
+              "flushPendingGateReads.loop11": 4,
+              "flushPendingGateReads.loop10": 4,
+              "flushPendingGateReads.loop8": 4,
+              "selectChildren.loop13": 20,
+              "selectChildren.loop14": 10,
+              "getGateRegistry.loop11": 3
+            },
+            "hash": "d36e28b88e4006d7d5e40d26bd16fc43322b4fa3443042579f7e434cd12561c1",
+            "liveWidth": 5,
+            "inputBytes": 17,
+            "outputBytes": 90,
+            "diagnostics": {
+              "status": "stable"
+            }
+          },
+          {
+            "value": "kind_0",
+            "counts": {
+              "getGateRegistry.loop6": 1,
+              "getGateRegistry.loop9": 4,
+              "getGateRegistry.loop7": 3,
+              "computeNode.loop3": 17,
+              "computeNode.loop4": 17,
+              "computeNode.loop5": 15,
+              "computeNode.loop6": 6,
+              "computeNode.loop7": 5,
+              "computeNode.loop9": 1,
+              "computeNode.loop10": 2,
+              "originalSites": 40,
+              "baselineReads": 40,
+              "tableLookups": 1,
+              "tableMembership": 40,
+              "selectChildren.loop9": 34,
+              "selectChildren.loop10": 34,
+              "selectChildren.loop11": 30,
+              "getGateRegistry.loop1": 3,
+              "getGateRegistry.loop2": 3,
+              "flushPendingGateReads.loop11": 14,
+              "flushPendingGateReads.loop10": 14,
+              "flushPendingGateReads.loop8": 14,
+              "selectChildren.loop13": 10,
+              "selectChildren.loop14": 5,
+              "getGateRegistry.loop11": 3
+            },
+            "hash": "f38caa1b5456fc7c439d60e99f699c7554998de79f65c7d226d5aa35aa2bded1",
+            "liveWidth": 5,
+            "inputBytes": 17,
+            "outputBytes": 90,
+            "diagnostics": {
+              "status": "stable"
+            }
+          }
+        ],
+        "environment": {
+          "startedAt": "2026-10-05T21:59:53.504Z",
+          "endedAt": "2026-10-05T21:59:53.520Z",
+          "node": "v26.10.0",
+          "v8": "14.6.202.34-node.35",
+          "cpu": "Apple M1 Max",
+          "instrumented": true,
+          "validation": "off",
+          "warmup": 0,
+          "samples": 0,
+          "naturalEsbuildExits": 1,
+          "bundleSha256": "d51d17bc0327423f2bdd3c07ffc4eb4024058c42ea15cf08cf8e0ed75469263d"
+        }
+      }
+    },
+    {
+      "fixture": "oneOf-10",
+      "H": {
+        "fixture": "oneOf-10",
+        "variant": "H",
+        "run": 0,
+        "mode": "counts",
+        "transitions": [
+          {
+            "value": "kind_4",
+            "counts": {
+              "getGateRegistry.loop6": 2,
+              "getGateRegistry.loop9": 11,
+              "getGateRegistry.loop7": 9,
+              "computeNode.loop3": 64,
+              "computeNode.loop4": 64,
+              "computeNode.loop5": 60,
+              "computeNode.loop6": 22,
+              "computeNode.loop7": 20,
+              "computeNode.loop9": 1,
+              "computeNode.loop10": 4,
+              "originalSites": 160,
+              "baselineReads": 160,
+              "conditionFunctions": 160,
+              "selectChildren.loop9": 128,
+              "selectChildren.loop10": 128,
+              "selectChildren.loop11": 120,
+              "getGateRegistry.loop1": 3,
+              "getGateRegistry.loop2": 3,
+              "flushPendingGateReads.loop11": 34,
+              "flushPendingGateReads.loop10": 34,
+              "flushPendingGateReads.loop8": 34,
+              "selectChildren.loop13": 20,
+              "selectChildren.loop14": 10,
+              "getGateRegistry.loop11": 3
+            },
+            "hash": "200dd16861c7e41096159e8709b1cc5aa5c500c15e07bf2fe48e49e77a3c51c6",
+            "liveWidth": 5,
+            "inputBytes": 17,
+            "outputBytes": 90,
+            "diagnostics": {
+              "status": "stable"
+            }
+          },
+          {
+            "value": "kind_0",
+            "counts": {
+              "getGateRegistry.loop6": 1,
+              "getGateRegistry.loop9": 4,
+              "getGateRegistry.loop7": 3,
+              "computeNode.loop3": 32,
+              "computeNode.loop4": 32,
+              "computeNode.loop5": 30,
+              "computeNode.loop6": 11,
+              "computeNode.loop7": 10,
+              "computeNode.loop9": 1,
+              "computeNode.loop10": 2,
+              "originalSites": 80,
+              "baselineReads": 80,
+              "conditionFunctions": 80,
+              "selectChildren.loop9": 64,
+              "selectChildren.loop10": 64,
+              "selectChildren.loop11": 60,
+              "getGateRegistry.loop1": 3,
+              "getGateRegistry.loop2": 3,
+              "flushPendingGateReads.loop11": 29,
+              "flushPendingGateReads.loop10": 29,
+              "flushPendingGateReads.loop8": 29,
+              "selectChildren.loop13": 10,
+              "selectChildren.loop14": 5,
+              "getGateRegistry.loop11": 3
+            },
+            "hash": "891bc58272b86b9c9c571dd195bb3aac3a6827dd2e8c4a81d66f8478ffd44324",
+            "liveWidth": 5,
+            "inputBytes": 17,
+            "outputBytes": 90,
+            "diagnostics": {
+              "status": "stable"
+            }
+          }
+        ],
+        "environment": {
+          "startedAt": "2026-10-05T22:00:01.143Z",
+          "endedAt": "2026-10-05T22:00:01.161Z",
+          "node": "v26.10.0",
+          "v8": "14.6.202.34-node.35",
+          "cpu": "Apple M1 Max",
+          "instrumented": true,
+          "validation": "off",
+          "warmup": 0,
+          "samples": 0,
+          "naturalEsbuildExits": 1,
+          "bundleSha256": "f4a53de449cabc25ac5227464a8877432b98cf6405a138cad0c1ec8b3684b42a"
+        }
+      },
+      "W": {
+        "fixture": "oneOf-10",
+        "variant": "W",
+        "run": 0,
+        "mode": "counts",
+        "transitions": [
+          {
+            "value": "kind_4",
+            "counts": {
+              "getGateRegistry.loop6": 2,
+              "getGateRegistry.loop9": 11,
+              "getGateRegistry.loop7": 9,
+              "computeNode.loop3": 64,
+              "computeNode.loop4": 64,
+              "computeNode.loop5": 60,
+              "computeNode.loop6": 22,
+              "computeNode.loop7": 20,
+              "computeNode.loop9": 1,
+              "computeNode.loop10": 4,
+              "originalSites": 160,
+              "baselineReads": 160,
+              "tableLookups": 1,
+              "tableMembership": 160,
+              "selectChildren.loop9": 128,
+              "selectChildren.loop10": 128,
+              "selectChildren.loop11": 120,
+              "getGateRegistry.loop1": 3,
+              "getGateRegistry.loop2": 3,
+              "flushPendingGateReads.loop11": 34,
+              "flushPendingGateReads.loop10": 34,
+              "flushPendingGateReads.loop8": 34,
+              "selectChildren.loop13": 20,
+              "selectChildren.loop14": 10,
+              "getGateRegistry.loop11": 3
+            },
+            "hash": "200dd16861c7e41096159e8709b1cc5aa5c500c15e07bf2fe48e49e77a3c51c6",
+            "liveWidth": 5,
+            "inputBytes": 17,
+            "outputBytes": 90,
+            "diagnostics": {
+              "status": "stable"
+            }
+          },
+          {
+            "value": "kind_0",
+            "counts": {
+              "getGateRegistry.loop6": 1,
+              "getGateRegistry.loop9": 4,
+              "getGateRegistry.loop7": 3,
+              "computeNode.loop3": 32,
+              "computeNode.loop4": 32,
+              "computeNode.loop5": 30,
+              "computeNode.loop6": 11,
+              "computeNode.loop7": 10,
+              "computeNode.loop9": 1,
+              "computeNode.loop10": 2,
+              "originalSites": 80,
+              "baselineReads": 80,
+              "tableLookups": 1,
+              "tableMembership": 80,
+              "selectChildren.loop9": 64,
+              "selectChildren.loop10": 64,
+              "selectChildren.loop11": 60,
+              "getGateRegistry.loop1": 3,
+              "getGateRegistry.loop2": 3,
+              "flushPendingGateReads.loop11": 29,
+              "flushPendingGateReads.loop10": 29,
+              "flushPendingGateReads.loop8": 29,
+              "selectChildren.loop13": 10,
+              "selectChildren.loop14": 5,
+              "getGateRegistry.loop11": 3
+            },
+            "hash": "891bc58272b86b9c9c571dd195bb3aac3a6827dd2e8c4a81d66f8478ffd44324",
+            "liveWidth": 5,
+            "inputBytes": 17,
+            "outputBytes": 90,
+            "diagnostics": {
+              "status": "stable"
+            }
+          }
+        ],
+        "environment": {
+          "startedAt": "2026-10-05T22:00:01.435Z",
+          "endedAt": "2026-10-05T22:00:01.453Z",
+          "node": "v26.10.0",
+          "v8": "14.6.202.34-node.35",
+          "cpu": "Apple M1 Max",
+          "instrumented": true,
+          "validation": "off",
+          "warmup": 0,
+          "samples": 0,
+          "naturalEsbuildExits": 1,
+          "bundleSha256": "d51d17bc0327423f2bdd3c07ffc4eb4024058c42ea15cf08cf8e0ed75469263d"
+        }
+      }
+    },
+    {
+      "fixture": "oneOf-20",
+      "H": {
+        "fixture": "oneOf-20",
+        "variant": "H",
+        "run": 0,
+        "mode": "counts",
+        "transitions": [
+          {
+            "value": "kind_4",
+            "counts": {
+              "getGateRegistry.loop6": 2,
+              "getGateRegistry.loop9": 11,
+              "getGateRegistry.loop7": 9,
+              "computeNode.loop3": 124,
+              "computeNode.loop4": 124,
+              "computeNode.loop5": 120,
+              "computeNode.loop6": 42,
+              "computeNode.loop7": 40,
+              "computeNode.loop9": 1,
+              "computeNode.loop10": 4,
+              "originalSites": 320,
+              "baselineReads": 320,
+              "conditionFunctions": 320,
+              "selectChildren.loop9": 248,
+              "selectChildren.loop10": 248,
+              "selectChildren.loop11": 240,
+              "getGateRegistry.loop1": 3,
+              "getGateRegistry.loop2": 3,
+              "flushPendingGateReads.loop11": 94,
+              "flushPendingGateReads.loop10": 94,
+              "flushPendingGateReads.loop8": 94,
+              "selectChildren.loop13": 20,
+              "selectChildren.loop14": 10,
+              "getGateRegistry.loop11": 3
+            },
+            "hash": "621d8774395a0324418aec9e94be1352e26f06184af35343b44492390daf8ef6",
+            "liveWidth": 5,
+            "inputBytes": 17,
+            "outputBytes": 90,
+            "diagnostics": {
+              "status": "stable"
+            }
+          },
+          {
+            "value": "kind_0",
+            "counts": {
+              "getGateRegistry.loop6": 1,
+              "getGateRegistry.loop9": 4,
+              "getGateRegistry.loop7": 3,
+              "computeNode.loop3": 62,
+              "computeNode.loop4": 62,
+              "computeNode.loop5": 60,
+              "computeNode.loop6": 21,
+              "computeNode.loop7": 20,
+              "computeNode.loop9": 1,
+              "computeNode.loop10": 2,
+              "originalSites": 160,
+              "baselineReads": 160,
+              "conditionFunctions": 160,
+              "selectChildren.loop9": 124,
+              "selectChildren.loop10": 124,
+              "selectChildren.loop11": 120,
+              "getGateRegistry.loop1": 3,
+              "getGateRegistry.loop2": 3,
+              "flushPendingGateReads.loop11": 59,
+              "flushPendingGateReads.loop10": 59,
+              "flushPendingGateReads.loop8": 59,
+              "selectChildren.loop13": 10,
+              "selectChildren.loop14": 5,
+              "getGateRegistry.loop11": 3
+            },
+            "hash": "c133953a7ab1b2340d399c148e706231ed583f55f0eca97a7f102f5c6ec22a70",
+            "liveWidth": 5,
+            "inputBytes": 17,
+            "outputBytes": 90,
+            "diagnostics": {
+              "status": "stable"
+            }
+          }
+        ],
+        "environment": {
+          "startedAt": "2026-10-05T22:00:09.101Z",
+          "endedAt": "2026-10-05T22:00:09.122Z",
+          "node": "v26.10.0",
+          "v8": "14.6.202.34-node.35",
+          "cpu": "Apple M1 Max",
+          "instrumented": true,
+          "validation": "off",
+          "warmup": 0,
+          "samples": 0,
+          "naturalEsbuildExits": 1,
+          "bundleSha256": "f4a53de449cabc25ac5227464a8877432b98cf6405a138cad0c1ec8b3684b42a"
+        }
+      },
+      "W": {
+        "fixture": "oneOf-20",
+        "variant": "W",
+        "run": 0,
+        "mode": "counts",
+        "transitions": [
+          {
+            "value": "kind_4",
+            "counts": {
+              "getGateRegistry.loop6": 2,
+              "getGateRegistry.loop9": 11,
+              "getGateRegistry.loop7": 9,
+              "computeNode.loop3": 124,
+              "computeNode.loop4": 124,
+              "computeNode.loop5": 120,
+              "computeNode.loop6": 42,
+              "computeNode.loop7": 40,
+              "computeNode.loop9": 1,
+              "computeNode.loop10": 4,
+              "originalSites": 320,
+              "baselineReads": 320,
+              "tableLookups": 1,
+              "tableMembership": 320,
+              "selectChildren.loop9": 248,
+              "selectChildren.loop10": 248,
+              "selectChildren.loop11": 240,
+              "getGateRegistry.loop1": 3,
+              "getGateRegistry.loop2": 3,
+              "flushPendingGateReads.loop11": 94,
+              "flushPendingGateReads.loop10": 94,
+              "flushPendingGateReads.loop8": 94,
+              "selectChildren.loop13": 20,
+              "selectChildren.loop14": 10,
+              "getGateRegistry.loop11": 3
+            },
+            "hash": "621d8774395a0324418aec9e94be1352e26f06184af35343b44492390daf8ef6",
+            "liveWidth": 5,
+            "inputBytes": 17,
+            "outputBytes": 90,
+            "diagnostics": {
+              "status": "stable"
+            }
+          },
+          {
+            "value": "kind_0",
+            "counts": {
+              "getGateRegistry.loop6": 1,
+              "getGateRegistry.loop9": 4,
+              "getGateRegistry.loop7": 3,
+              "computeNode.loop3": 62,
+              "computeNode.loop4": 62,
+              "computeNode.loop5": 60,
+              "computeNode.loop6": 21,
+              "computeNode.loop7": 20,
+              "computeNode.loop9": 1,
+              "computeNode.loop10": 2,
+              "originalSites": 160,
+              "baselineReads": 160,
+              "tableLookups": 1,
+              "tableMembership": 160,
+              "selectChildren.loop9": 124,
+              "selectChildren.loop10": 124,
+              "selectChildren.loop11": 120,
+              "getGateRegistry.loop1": 3,
+              "getGateRegistry.loop2": 3,
+              "flushPendingGateReads.loop11": 59,
+              "flushPendingGateReads.loop10": 59,
+              "flushPendingGateReads.loop8": 59,
+              "selectChildren.loop13": 10,
+              "selectChildren.loop14": 5,
+              "getGateRegistry.loop11": 3
+            },
+            "hash": "c133953a7ab1b2340d399c148e706231ed583f55f0eca97a7f102f5c6ec22a70",
+            "liveWidth": 5,
+            "inputBytes": 17,
+            "outputBytes": 90,
+            "diagnostics": {
+              "status": "stable"
+            }
+          }
+        ],
+        "environment": {
+          "startedAt": "2026-10-05T22:00:09.400Z",
+          "endedAt": "2026-10-05T22:00:09.421Z",
+          "node": "v26.10.0",
+          "v8": "14.6.202.34-node.35",
+          "cpu": "Apple M1 Max",
+          "instrumented": true,
+          "validation": "off",
+          "warmup": 0,
+          "samples": 0,
+          "naturalEsbuildExits": 1,
+          "bundleSha256": "d51d17bc0327423f2bdd3c07ffc4eb4024058c42ea15cf08cf8e0ed75469263d"
+        }
+      }
+    },
+    {
+      "fixture": "oneOf-40",
+      "H": {
+        "fixture": "oneOf-40",
+        "variant": "H",
+        "run": 0,
+        "mode": "counts",
+        "transitions": [
+          {
+            "value": "kind_4",
+            "counts": {
+              "getGateRegistry.loop6": 2,
+              "getGateRegistry.loop9": 11,
+              "getGateRegistry.loop7": 9,
+              "computeNode.loop3": 244,
+              "computeNode.loop4": 244,
+              "computeNode.loop5": 240,
+              "computeNode.loop6": 82,
+              "computeNode.loop7": 80,
+              "computeNode.loop9": 1,
+              "computeNode.loop10": 4,
+              "originalSites": 640,
+              "baselineReads": 640,
+              "conditionFunctions": 640,
+              "selectChildren.loop9": 488,
+              "selectChildren.loop10": 488,
+              "selectChildren.loop11": 480,
+              "getGateRegistry.loop1": 3,
+              "getGateRegistry.loop2": 3,
+              "flushPendingGateReads.loop11": 214,
+              "flushPendingGateReads.loop10": 214,
+              "flushPendingGateReads.loop8": 214,
+              "selectChildren.loop13": 20,
+              "selectChildren.loop14": 10,
+              "getGateRegistry.loop11": 3
+            },
+            "hash": "dce62403f46479fdfe764fc065552e5345f7327958f78d2fc9e50255dd54328a",
+            "liveWidth": 5,
+            "inputBytes": 17,
+            "outputBytes": 90,
+            "diagnostics": {
+              "status": "stable"
+            }
+          },
+          {
+            "value": "kind_0",
+            "counts": {
+              "getGateRegistry.loop6": 1,
+              "getGateRegistry.loop9": 4,
+              "getGateRegistry.loop7": 3,
+              "computeNode.loop3": 122,
+              "computeNode.loop4": 122,
+              "computeNode.loop5": 120,
+              "computeNode.loop6": 41,
+              "computeNode.loop7": 40,
+              "computeNode.loop9": 1,
+              "computeNode.loop10": 2,
+              "originalSites": 320,
+              "baselineReads": 320,
+              "conditionFunctions": 320,
+              "selectChildren.loop9": 244,
+              "selectChildren.loop10": 244,
+              "selectChildren.loop11": 240,
+              "getGateRegistry.loop1": 3,
+              "getGateRegistry.loop2": 3,
+              "flushPendingGateReads.loop11": 119,
+              "flushPendingGateReads.loop10": 119,
+              "flushPendingGateReads.loop8": 119,
+              "selectChildren.loop13": 10,
+              "selectChildren.loop14": 5,
+              "getGateRegistry.loop11": 3
+            },
+            "hash": "894cc9b82a06ff1aa495aab6f960d68c2f801b7790b5259ebdd5a7aaf4e07918",
+            "liveWidth": 5,
+            "inputBytes": 17,
+            "outputBytes": 90,
+            "diagnostics": {
+              "status": "stable"
+            }
+          }
+        ],
+        "environment": {
+          "startedAt": "2026-10-05T22:00:17.160Z",
+          "endedAt": "2026-10-05T22:00:17.181Z",
+          "node": "v26.10.0",
+          "v8": "14.6.202.34-node.35",
+          "cpu": "Apple M1 Max",
+          "instrumented": true,
+          "validation": "off",
+          "warmup": 0,
+          "samples": 0,
+          "naturalEsbuildExits": 1,
+          "bundleSha256": "f4a53de449cabc25ac5227464a8877432b98cf6405a138cad0c1ec8b3684b42a"
+        }
+      },
+      "W": {
+        "fixture": "oneOf-40",
+        "variant": "W",
+        "run": 0,
+        "mode": "counts",
+        "transitions": [
+          {
+            "value": "kind_4",
+            "counts": {
+              "getGateRegistry.loop6": 2,
+              "getGateRegistry.loop9": 11,
+              "getGateRegistry.loop7": 9,
+              "computeNode.loop3": 244,
+              "computeNode.loop4": 244,
+              "computeNode.loop5": 240,
+              "computeNode.loop6": 82,
+              "computeNode.loop7": 80,
+              "computeNode.loop9": 1,
+              "computeNode.loop10": 4,
+              "originalSites": 640,
+              "baselineReads": 640,
+              "tableLookups": 1,
+              "tableMembership": 640,
+              "selectChildren.loop9": 488,
+              "selectChildren.loop10": 488,
+              "selectChildren.loop11": 480,
+              "getGateRegistry.loop1": 3,
+              "getGateRegistry.loop2": 3,
+              "flushPendingGateReads.loop11": 214,
+              "flushPendingGateReads.loop10": 214,
+              "flushPendingGateReads.loop8": 214,
+              "selectChildren.loop13": 20,
+              "selectChildren.loop14": 10,
+              "getGateRegistry.loop11": 3
+            },
+            "hash": "dce62403f46479fdfe764fc065552e5345f7327958f78d2fc9e50255dd54328a",
+            "liveWidth": 5,
+            "inputBytes": 17,
+            "outputBytes": 90,
+            "diagnostics": {
+              "status": "stable"
+            }
+          },
+          {
+            "value": "kind_0",
+            "counts": {
+              "getGateRegistry.loop6": 1,
+              "getGateRegistry.loop9": 4,
+              "getGateRegistry.loop7": 3,
+              "computeNode.loop3": 122,
+              "computeNode.loop4": 122,
+              "computeNode.loop5": 120,
+              "computeNode.loop6": 41,
+              "computeNode.loop7": 40,
+              "computeNode.loop9": 1,
+              "computeNode.loop10": 2,
+              "originalSites": 320,
+              "baselineReads": 320,
+              "tableLookups": 1,
+              "tableMembership": 320,
+              "selectChildren.loop9": 244,
+              "selectChildren.loop10": 244,
+              "selectChildren.loop11": 240,
+              "getGateRegistry.loop1": 3,
+              "getGateRegistry.loop2": 3,
+              "flushPendingGateReads.loop11": 119,
+              "flushPendingGateReads.loop10": 119,
+              "flushPendingGateReads.loop8": 119,
+              "selectChildren.loop13": 10,
+              "selectChildren.loop14": 5,
+              "getGateRegistry.loop11": 3
+            },
+            "hash": "894cc9b82a06ff1aa495aab6f960d68c2f801b7790b5259ebdd5a7aaf4e07918",
+            "liveWidth": 5,
+            "inputBytes": 17,
+            "outputBytes": 90,
+            "diagnostics": {
+              "status": "stable"
+            }
+          }
+        ],
+        "environment": {
+          "startedAt": "2026-10-05T22:00:17.462Z",
+          "endedAt": "2026-10-05T22:00:17.485Z",
+          "node": "v26.10.0",
+          "v8": "14.6.202.34-node.35",
+          "cpu": "Apple M1 Max",
+          "instrumented": true,
+          "validation": "off",
+          "warmup": 0,
+          "samples": 0,
+          "naturalEsbuildExits": 1,
+          "bundleSha256": "d51d17bc0327423f2bdd3c07ffc4eb4024058c42ea15cf08cf8e0ed75469263d"
+        }
+      }
+    }
+  ],
+  "memory": [
+    {
+      "fixture": "oneOf-5",
+      "H": {
+        "fixture": "oneOf-5",
+        "variant": "H",
+        "run": 0,
+        "mode": "memory",
+        "retained": 128,
+        "heapBytesPerBlueprint": 42029.875,
+        "cells": {
+          "bindings": 0,
+          "groups": 0,
+          "valueBuckets": 0,
+          "membershipEdges": 0,
+          "maps": 0,
+          "bucketSets": 0
+        },
+        "environment": {
+          "startedAt": "2026-10-05T21:59:57.117Z",
+          "endedAt": "2026-10-05T21:59:57.149Z",
+          "node": "v26.10.0",
+          "v8": "14.6.202.34-node.35",
+          "cpu": "Apple M1 Max",
+          "instrumented": false,
+          "validation": "off",
+          "warmup": 0,
+          "samples": 0,
+          "naturalEsbuildExits": 1,
+          "bundleSha256": "b713a0d370a84fd7158063e6e1d23c8b4190a0933c6d70bc4636fe1bb1dadd91"
+        }
+      },
+      "W": {
+        "fixture": "oneOf-5",
+        "variant": "W",
+        "run": 0,
+        "mode": "memory",
+        "retained": 128,
+        "heapBytesPerBlueprint": 43843.9375,
+        "cells": {
+          "bindings": 5,
+          "groups": 1,
+          "valueBuckets": 5,
+          "membershipEdges": 5,
+          "maps": 2,
+          "bucketSets": 5
+        },
+        "environment": {
+          "startedAt": "2026-10-05T21:59:57.319Z",
+          "endedAt": "2026-10-05T21:59:57.355Z",
+          "node": "v26.10.0",
+          "v8": "14.6.202.34-node.35",
+          "cpu": "Apple M1 Max",
+          "instrumented": false,
+          "validation": "off",
+          "warmup": 0,
+          "samples": 0,
+          "naturalEsbuildExits": 1,
+          "bundleSha256": "0f84a260fc1e2c9de1a8edaf53e0f9f98d54e38875c1e11f98d3e80747ab6683"
+        }
+      },
+      "extraHeapBytesPerBlueprint": 1814.0625
+    },
+    {
+      "fixture": "oneOf-10",
+      "H": {
+        "fixture": "oneOf-10",
+        "variant": "H",
+        "run": 0,
+        "mode": "memory",
+        "retained": 128,
+        "heapBytesPerBlueprint": 73369.6875,
+        "cells": {
+          "bindings": 0,
+          "groups": 0,
+          "valueBuckets": 0,
+          "membershipEdges": 0,
+          "maps": 0,
+          "bucketSets": 0
+        },
+        "environment": {
+          "startedAt": "2026-10-05T22:00:05.067Z",
+          "endedAt": "2026-10-05T22:00:05.135Z",
+          "node": "v26.10.0",
+          "v8": "14.6.202.34-node.35",
+          "cpu": "Apple M1 Max",
+          "instrumented": false,
+          "validation": "off",
+          "warmup": 0,
+          "samples": 0,
+          "naturalEsbuildExits": 1,
+          "bundleSha256": "b713a0d370a84fd7158063e6e1d23c8b4190a0933c6d70bc4636fe1bb1dadd91"
+        }
+      },
+      "W": {
+        "fixture": "oneOf-10",
+        "variant": "W",
+        "run": 0,
+        "mode": "memory",
+        "retained": 128,
+        "heapBytesPerBlueprint": 75854.125,
+        "cells": {
+          "bindings": 10,
+          "groups": 1,
+          "valueBuckets": 10,
+          "membershipEdges": 10,
+          "maps": 2,
+          "bucketSets": 10
+        },
+        "environment": {
+          "startedAt": "2026-10-05T22:00:05.302Z",
+          "endedAt": "2026-10-05T22:00:05.353Z",
+          "node": "v26.10.0",
+          "v8": "14.6.202.34-node.35",
+          "cpu": "Apple M1 Max",
+          "instrumented": false,
+          "validation": "off",
+          "warmup": 0,
+          "samples": 0,
+          "naturalEsbuildExits": 1,
+          "bundleSha256": "0f84a260fc1e2c9de1a8edaf53e0f9f98d54e38875c1e11f98d3e80747ab6683"
+        }
+      },
+      "extraHeapBytesPerBlueprint": 2484.4375
+    },
+    {
+      "fixture": "oneOf-20",
+      "H": {
+        "fixture": "oneOf-20",
+        "variant": "H",
+        "run": 0,
+        "mode": "memory",
+        "retained": 128,
+        "heapBytesPerBlueprint": 137677.3125,
+        "cells": {
+          "bindings": 0,
+          "groups": 0,
+          "valueBuckets": 0,
+          "membershipEdges": 0,
+          "maps": 0,
+          "bucketSets": 0
+        },
+        "environment": {
+          "startedAt": "2026-10-05T22:00:13.097Z",
+          "endedAt": "2026-10-05T22:00:13.174Z",
+          "node": "v26.10.0",
+          "v8": "14.6.202.34-node.35",
+          "cpu": "Apple M1 Max",
+          "instrumented": false,
+          "validation": "off",
+          "warmup": 0,
+          "samples": 0,
+          "naturalEsbuildExits": 1,
+          "bundleSha256": "b713a0d370a84fd7158063e6e1d23c8b4190a0933c6d70bc4636fe1bb1dadd91"
+        }
+      },
+      "W": {
+        "fixture": "oneOf-20",
+        "variant": "W",
+        "run": 0,
+        "mode": "memory",
+        "retained": 128,
+        "heapBytesPerBlueprint": 141242,
+        "cells": {
+          "bindings": 20,
+          "groups": 1,
+          "valueBuckets": 20,
+          "membershipEdges": 20,
+          "maps": 2,
+          "bucketSets": 20
+        },
+        "environment": {
+          "startedAt": "2026-10-05T22:00:13.340Z",
+          "endedAt": "2026-10-05T22:00:13.426Z",
+          "node": "v26.10.0",
+          "v8": "14.6.202.34-node.35",
+          "cpu": "Apple M1 Max",
+          "instrumented": false,
+          "validation": "off",
+          "warmup": 0,
+          "samples": 0,
+          "naturalEsbuildExits": 1,
+          "bundleSha256": "0f84a260fc1e2c9de1a8edaf53e0f9f98d54e38875c1e11f98d3e80747ab6683"
+        }
+      },
+      "extraHeapBytesPerBlueprint": 3564.6875
+    },
+    {
+      "fixture": "oneOf-40",
+      "H": {
+        "fixture": "oneOf-40",
+        "variant": "H",
+        "run": 0,
+        "mode": "memory",
+        "retained": 128,
+        "heapBytesPerBlueprint": 264282.4375,
+        "cells": {
+          "bindings": 0,
+          "groups": 0,
+          "valueBuckets": 0,
+          "membershipEdges": 0,
+          "maps": 0,
+          "bucketSets": 0
+        },
+        "environment": {
+          "startedAt": "2026-10-05T22:00:21.081Z",
+          "endedAt": "2026-10-05T22:00:21.217Z",
+          "node": "v26.10.0",
+          "v8": "14.6.202.34-node.35",
+          "cpu": "Apple M1 Max",
+          "instrumented": false,
+          "validation": "off",
+          "warmup": 0,
+          "samples": 0,
+          "naturalEsbuildExits": 1,
+          "bundleSha256": "b713a0d370a84fd7158063e6e1d23c8b4190a0933c6d70bc4636fe1bb1dadd91"
+        }
+      },
+      "W": {
+        "fixture": "oneOf-40",
+        "variant": "W",
+        "run": 0,
+        "mode": "memory",
+        "retained": 128,
+        "heapBytesPerBlueprint": 270085.9375,
+        "cells": {
+          "bindings": 40,
+          "groups": 1,
+          "valueBuckets": 40,
+          "membershipEdges": 40,
+          "maps": 2,
+          "bucketSets": 40
+        },
+        "environment": {
+          "startedAt": "2026-10-05T22:00:21.384Z",
+          "endedAt": "2026-10-05T22:00:21.536Z",
+          "node": "v26.10.0",
+          "v8": "14.6.202.34-node.35",
+          "cpu": "Apple M1 Max",
+          "instrumented": false,
+          "validation": "off",
+          "warmup": 0,
+          "samples": 0,
+          "naturalEsbuildExits": 1,
+          "bundleSha256": "0f84a260fc1e2c9de1a8edaf53e0f9f98d54e38875c1e11f98d3e80747ab6683"
+        }
+      },
+      "extraHeapBytesPerBlueprint": 5803.5
+    }
+  ],
+  "unrelated": [
+    {
+      "fixture": "U19-5",
+      "H": {
+        "fixture": "U19-5",
+        "variant": "H",
+        "run": 0,
+        "mode": "counts",
+        "transitions": [
+          {
+            "value": "other_1",
+            "counts": {
+              "getGateRegistry.loop6": 10,
+              "getGateRegistry.loop9": 10,
+              "getGateRegistry.loop10": 10,
+              "computeNode.loop2": 1
+            },
+            "hash": "8b76dc22b23c2ff8394797f3fc930a7a4bb99513b973a88cd2cae5a9bd6e80d3",
+            "liveWidth": 3,
+            "inputBytes": 19,
+            "outputBytes": 44,
+            "diagnostics": {
+              "status": "stable"
+            }
+          },
+          {
+            "value": "other_0",
+            "counts": {
+              "getGateRegistry.loop6": 10,
+              "getGateRegistry.loop9": 10,
+              "getGateRegistry.loop10": 10,
+              "computeNode.loop2": 1
+            },
+            "hash": "2e56e62125fffc12877dbbb85ee78649f6b13ba9c61a8531c03191781cabe211",
+            "liveWidth": 3,
+            "inputBytes": 19,
+            "outputBytes": 44,
+            "diagnostics": {
+              "status": "stable"
+            }
+          }
+        ],
+        "environment": {
+          "startedAt": "2026-10-05T22:00:25.250Z",
+          "endedAt": "2026-10-05T22:00:25.264Z",
+          "node": "v26.10.0",
+          "v8": "14.6.202.34-node.35",
+          "cpu": "Apple M1 Max",
+          "instrumented": true,
+          "validation": "off",
+          "warmup": 0,
+          "samples": 0,
+          "naturalEsbuildExits": 1,
+          "bundleSha256": "f4a53de449cabc25ac5227464a8877432b98cf6405a138cad0c1ec8b3684b42a"
+        }
+      },
+      "W": {
+        "fixture": "U19-5",
+        "variant": "W",
+        "run": 0,
+        "mode": "counts",
+        "transitions": [
+          {
+            "value": "other_1",
+            "counts": {
+              "getGateRegistry.loop6": 10,
+              "getGateRegistry.loop9": 10,
+              "getGateRegistry.loop10": 10,
+              "computeNode.loop2": 1
+            },
+            "hash": "8b76dc22b23c2ff8394797f3fc930a7a4bb99513b973a88cd2cae5a9bd6e80d3",
+            "liveWidth": 3,
+            "inputBytes": 19,
+            "outputBytes": 44,
+            "diagnostics": {
+              "status": "stable"
+            }
+          },
+          {
+            "value": "other_0",
+            "counts": {
+              "getGateRegistry.loop6": 10,
+              "getGateRegistry.loop9": 10,
+              "getGateRegistry.loop10": 10,
+              "computeNode.loop2": 1
+            },
+            "hash": "2e56e62125fffc12877dbbb85ee78649f6b13ba9c61a8531c03191781cabe211",
+            "liveWidth": 3,
+            "inputBytes": 19,
+            "outputBytes": 44,
+            "diagnostics": {
+              "status": "stable"
+            }
+          }
+        ],
+        "environment": {
+          "startedAt": "2026-10-05T22:00:25.541Z",
+          "endedAt": "2026-10-05T22:00:25.556Z",
+          "node": "v26.10.0",
+          "v8": "14.6.202.34-node.35",
+          "cpu": "Apple M1 Max",
+          "instrumented": true,
+          "validation": "off",
+          "warmup": 0,
+          "samples": 0,
+          "naturalEsbuildExits": 1,
+          "bundleSha256": "d51d17bc0327423f2bdd3c07ffc4eb4024058c42ea15cf08cf8e0ed75469263d"
+        }
+      }
+    },
+    {
+      "fixture": "U19-10",
+      "H": {
+        "fixture": "U19-10",
+        "variant": "H",
+        "run": 0,
+        "mode": "counts",
+        "transitions": [
+          {
+            "value": "other_1",
+            "counts": {
+              "getGateRegistry.loop6": 20,
+              "getGateRegistry.loop9": 20,
+              "getGateRegistry.loop10": 20,
+              "computeNode.loop2": 1
+            },
+            "hash": "e2d6253431f64caf2aae9cb0e7f9d6ddbeefa450501bbe24a747690152af4c66",
+            "liveWidth": 3,
+            "inputBytes": 19,
+            "outputBytes": 44,
+            "diagnostics": {
+              "status": "stable"
+            }
+          },
+          {
+            "value": "other_0",
+            "counts": {
+              "getGateRegistry.loop6": 20,
+              "getGateRegistry.loop9": 20,
+              "getGateRegistry.loop10": 20,
+              "computeNode.loop2": 1
+            },
+            "hash": "54dd2a56424a61ae6677f799e151d780d9548035284b3a84ded0e3d7ffc1e947",
+            "liveWidth": 3,
+            "inputBytes": 19,
+            "outputBytes": 44,
+            "diagnostics": {
+              "status": "stable"
+            }
+          }
+        ],
+        "environment": {
+          "startedAt": "2026-10-05T22:00:29.269Z",
+          "endedAt": "2026-10-05T22:00:29.281Z",
+          "node": "v26.10.0",
+          "v8": "14.6.202.34-node.35",
+          "cpu": "Apple M1 Max",
+          "instrumented": true,
+          "validation": "off",
+          "warmup": 0,
+          "samples": 0,
+          "naturalEsbuildExits": 1,
+          "bundleSha256": "f4a53de449cabc25ac5227464a8877432b98cf6405a138cad0c1ec8b3684b42a"
+        }
+      },
+      "W": {
+        "fixture": "U19-10",
+        "variant": "W",
+        "run": 0,
+        "mode": "counts",
+        "transitions": [
+          {
+            "value": "other_1",
+            "counts": {
+              "getGateRegistry.loop6": 20,
+              "getGateRegistry.loop9": 20,
+              "getGateRegistry.loop10": 20,
+              "computeNode.loop2": 1
+            },
+            "hash": "e2d6253431f64caf2aae9cb0e7f9d6ddbeefa450501bbe24a747690152af4c66",
+            "liveWidth": 3,
+            "inputBytes": 19,
+            "outputBytes": 44,
+            "diagnostics": {
+              "status": "stable"
+            }
+          },
+          {
+            "value": "other_0",
+            "counts": {
+              "getGateRegistry.loop6": 20,
+              "getGateRegistry.loop9": 20,
+              "getGateRegistry.loop10": 20,
+              "computeNode.loop2": 1
+            },
+            "hash": "54dd2a56424a61ae6677f799e151d780d9548035284b3a84ded0e3d7ffc1e947",
+            "liveWidth": 3,
+            "inputBytes": 19,
+            "outputBytes": 44,
+            "diagnostics": {
+              "status": "stable"
+            }
+          }
+        ],
+        "environment": {
+          "startedAt": "2026-10-05T22:00:29.554Z",
+          "endedAt": "2026-10-05T22:00:29.569Z",
+          "node": "v26.10.0",
+          "v8": "14.6.202.34-node.35",
+          "cpu": "Apple M1 Max",
+          "instrumented": true,
+          "validation": "off",
+          "warmup": 0,
+          "samples": 0,
+          "naturalEsbuildExits": 1,
+          "bundleSha256": "d51d17bc0327423f2bdd3c07ffc4eb4024058c42ea15cf08cf8e0ed75469263d"
+        }
+      }
+    },
+    {
+      "fixture": "U19-20",
+      "H": {
+        "fixture": "U19-20",
+        "variant": "H",
+        "run": 0,
+        "mode": "counts",
+        "transitions": [
+          {
+            "value": "other_1",
+            "counts": {
+              "getGateRegistry.loop6": 40,
+              "getGateRegistry.loop9": 40,
+              "getGateRegistry.loop10": 40,
+              "computeNode.loop2": 1
+            },
+            "hash": "9b56c7e92a853ea553bbf1c717136358ca11d594133a18680bb78fe628553c53",
+            "liveWidth": 3,
+            "inputBytes": 19,
+            "outputBytes": 44,
+            "diagnostics": {
+              "status": "stable"
+            }
+          },
+          {
+            "value": "other_0",
+            "counts": {
+              "getGateRegistry.loop6": 40,
+              "getGateRegistry.loop9": 40,
+              "getGateRegistry.loop10": 40,
+              "computeNode.loop2": 1
+            },
+            "hash": "3ee4018e87c4d31c5890f3cf2c0a93660709a7aa2901abdbdf347ce2fce0481a",
+            "liveWidth": 3,
+            "inputBytes": 19,
+            "outputBytes": 44,
+            "diagnostics": {
+              "status": "stable"
+            }
+          }
+        ],
+        "environment": {
+          "startedAt": "2026-10-05T22:00:33.289Z",
+          "endedAt": "2026-10-05T22:00:33.302Z",
+          "node": "v26.10.0",
+          "v8": "14.6.202.34-node.35",
+          "cpu": "Apple M1 Max",
+          "instrumented": true,
+          "validation": "off",
+          "warmup": 0,
+          "samples": 0,
+          "naturalEsbuildExits": 1,
+          "bundleSha256": "f4a53de449cabc25ac5227464a8877432b98cf6405a138cad0c1ec8b3684b42a"
+        }
+      },
+      "W": {
+        "fixture": "U19-20",
+        "variant": "W",
+        "run": 0,
+        "mode": "counts",
+        "transitions": [
+          {
+            "value": "other_1",
+            "counts": {
+              "getGateRegistry.loop6": 40,
+              "getGateRegistry.loop9": 40,
+              "getGateRegistry.loop10": 40,
+              "computeNode.loop2": 1
+            },
+            "hash": "9b56c7e92a853ea553bbf1c717136358ca11d594133a18680bb78fe628553c53",
+            "liveWidth": 3,
+            "inputBytes": 19,
+            "outputBytes": 44,
+            "diagnostics": {
+              "status": "stable"
+            }
+          },
+          {
+            "value": "other_0",
+            "counts": {
+              "getGateRegistry.loop6": 40,
+              "getGateRegistry.loop9": 40,
+              "getGateRegistry.loop10": 40,
+              "computeNode.loop2": 1
+            },
+            "hash": "3ee4018e87c4d31c5890f3cf2c0a93660709a7aa2901abdbdf347ce2fce0481a",
+            "liveWidth": 3,
+            "inputBytes": 19,
+            "outputBytes": 44,
+            "diagnostics": {
+              "status": "stable"
+            }
+          }
+        ],
+        "environment": {
+          "startedAt": "2026-10-05T22:00:33.574Z",
+          "endedAt": "2026-10-05T22:00:33.588Z",
+          "node": "v26.10.0",
+          "v8": "14.6.202.34-node.35",
+          "cpu": "Apple M1 Max",
+          "instrumented": true,
+          "validation": "off",
+          "warmup": 0,
+          "samples": 0,
+          "naturalEsbuildExits": 1,
+          "bundleSha256": "d51d17bc0327423f2bdd3c07ffc4eb4024058c42ea15cf08cf8e0ed75469263d"
+        }
+      }
+    },
+    {
+      "fixture": "U19-40",
+      "H": {
+        "fixture": "U19-40",
+        "variant": "H",
+        "run": 0,
+        "mode": "counts",
+        "transitions": [
+          {
+            "value": "other_1",
+            "counts": {
+              "getGateRegistry.loop6": 80,
+              "getGateRegistry.loop9": 80,
+              "getGateRegistry.loop10": 80,
+              "computeNode.loop2": 1
+            },
+            "hash": "5e21069e01d60bd6934ee81135976e3a74df80638255a78794d5938caabfff4a",
+            "liveWidth": 3,
+            "inputBytes": 19,
+            "outputBytes": 44,
+            "diagnostics": {
+              "status": "stable"
+            }
+          },
+          {
+            "value": "other_0",
+            "counts": {
+              "getGateRegistry.loop6": 80,
+              "getGateRegistry.loop9": 80,
+              "getGateRegistry.loop10": 80,
+              "computeNode.loop2": 1
+            },
+            "hash": "48131098934c491b05e1ecde99fd463304034f35cf0256084b8743ed2b81c388",
+            "liveWidth": 3,
+            "inputBytes": 19,
+            "outputBytes": 44,
+            "diagnostics": {
+              "status": "stable"
+            }
+          }
+        ],
+        "environment": {
+          "startedAt": "2026-10-05T22:00:37.347Z",
+          "endedAt": "2026-10-05T22:00:37.368Z",
+          "node": "v26.10.0",
+          "v8": "14.6.202.34-node.35",
+          "cpu": "Apple M1 Max",
+          "instrumented": true,
+          "validation": "off",
+          "warmup": 0,
+          "samples": 0,
+          "naturalEsbuildExits": 1,
+          "bundleSha256": "f4a53de449cabc25ac5227464a8877432b98cf6405a138cad0c1ec8b3684b42a"
+        }
+      },
+      "W": {
+        "fixture": "U19-40",
+        "variant": "W",
+        "run": 0,
+        "mode": "counts",
+        "transitions": [
+          {
+            "value": "other_1",
+            "counts": {
+              "getGateRegistry.loop6": 80,
+              "getGateRegistry.loop9": 80,
+              "getGateRegistry.loop10": 80,
+              "computeNode.loop2": 1
+            },
+            "hash": "5e21069e01d60bd6934ee81135976e3a74df80638255a78794d5938caabfff4a",
+            "liveWidth": 3,
+            "inputBytes": 19,
+            "outputBytes": 44,
+            "diagnostics": {
+              "status": "stable"
+            }
+          },
+          {
+            "value": "other_0",
+            "counts": {
+              "getGateRegistry.loop6": 80,
+              "getGateRegistry.loop9": 80,
+              "getGateRegistry.loop10": 80,
+              "computeNode.loop2": 1
+            },
+            "hash": "48131098934c491b05e1ecde99fd463304034f35cf0256084b8743ed2b81c388",
+            "liveWidth": 3,
+            "inputBytes": 19,
+            "outputBytes": 44,
+            "diagnostics": {
+              "status": "stable"
+            }
+          }
+        ],
+        "environment": {
+          "startedAt": "2026-10-05T22:00:37.639Z",
+          "endedAt": "2026-10-05T22:00:37.656Z",
+          "node": "v26.10.0",
+          "v8": "14.6.202.34-node.35",
+          "cpu": "Apple M1 Max",
+          "instrumented": true,
+          "validation": "off",
+          "warmup": 0,
+          "samples": 0,
+          "naturalEsbuildExits": 1,
+          "bundleSha256": "d51d17bc0327423f2bdd3c07ffc4eb4024058c42ea15cf08cf8e0ed75469263d"
+        }
+      }
+    }
+  ]
+}

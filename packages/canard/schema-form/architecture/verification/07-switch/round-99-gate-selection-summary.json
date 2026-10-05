@@ -1,0 +1,1222 @@
+{
+  "round": "99라운드 게이트 선택 표 (가)",
+  "head": "c468f7e6f8cc84258ada1cc8cf76df92f3c7c73e",
+  "worktree": "/Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07",
+  "decision": {
+    "status": "reverted",
+    "description": "큰 분기 업데이트에는 이득이 있으나 작은 분기·oneOf-40 마운트·sample-0 회귀로 선택 표 후보를 미채택했습니다.",
+    "productFilesRestored": 14,
+    "finalExtraHeapBytesPerBlueprint": 0,
+    "finalProductSourceDiff": false
+  },
+  "correctedAssertion": {
+    "description": "그림자 시점에 기준 reader가 해당 읽기에서 실제 값을 읽거나 공표했을 노드만 pendingOutputs 부재를 단언하며 읽지도 공표하지도 않는 조상은 제외합니다.",
+    "baselineTableOff": "pass",
+    "observedViolations": 0,
+    "additionalFlushes": 0,
+    "publicationChangedNodesDeliveryOrder": "preserved"
+  },
+  "validation": {
+    "baselineBeforeProduct": {
+      "restoredTests": 2,
+      "verifierHistories": 14,
+      "result": "pass"
+    },
+    "candidate": {
+      "verifierHistories": 14,
+      "fullAndTableSameRunShadow": "pass",
+      "fourModesWithShadowOff": [
+        "00",
+        "10",
+        "01",
+        "11"
+      ],
+      "resultReuseBit": "무효; 커밋 결과 재사용 미구현",
+      "endStateComparison": "pass",
+      "bucketMutationDetected": true,
+      "compilerProofAndFallbackCases": 26,
+      "blueprintPlanCases": 3
+    },
+    "retainedHeadTests": {
+      "histories": 14,
+      "readAndOrder": 3,
+      "counts": 4,
+      "total": 21,
+      "result": "pass"
+    }
+  },
+  "designPointStopped": {
+    "section": "6.1",
+    "description": "8B 산술의 cold 첫 전환 적용을 중단했습니다. 실제 HEAD의 cold 0→4는 defaults 뒤 재계산으로 16B이고 return/준비된 전환은 8B입니다.",
+    "forcedWheelOrPublicationChanges": false
+  },
+  "counts": [
+    {
+      "branches": 5,
+      "liveWidth": 5,
+      "inputBytes": 17,
+      "outputBytes": 90,
+      "transitions": [
+        {
+          "to": "kind_4",
+          "H": {
+            "conditionFunctions": 80,
+            "baselineReads": 80
+          },
+          "W": {
+            "conditionFunctions": 0,
+            "tableLookups": 1,
+            "baselineReads": 80,
+            "tableMembership": 80
+          },
+          "sameObservedHash": true
+        },
+        {
+          "to": "kind_0",
+          "H": {
+            "conditionFunctions": 40,
+            "baselineReads": 40
+          },
+          "W": {
+            "conditionFunctions": 0,
+            "tableLookups": 1,
+            "baselineReads": 40,
+            "tableMembership": 40
+          },
+          "sameObservedHash": true
+        }
+      ]
+    },
+    {
+      "branches": 10,
+      "liveWidth": 5,
+      "inputBytes": 17,
+      "outputBytes": 90,
+      "transitions": [
+        {
+          "to": "kind_4",
+          "H": {
+            "conditionFunctions": 160,
+            "baselineReads": 160
+          },
+          "W": {
+            "conditionFunctions": 0,
+            "tableLookups": 1,
+            "baselineReads": 160,
+            "tableMembership": 160
+          },
+          "sameObservedHash": true
+        },
+        {
+          "to": "kind_0",
+          "H": {
+            "conditionFunctions": 80,
+            "baselineReads": 80
+          },
+          "W": {
+            "conditionFunctions": 0,
+            "tableLookups": 1,
+            "baselineReads": 80,
+            "tableMembership": 80
+          },
+          "sameObservedHash": true
+        }
+      ]
+    },
+    {
+      "branches": 20,
+      "liveWidth": 5,
+      "inputBytes": 17,
+      "outputBytes": 90,
+      "transitions": [
+        {
+          "to": "kind_4",
+          "H": {
+            "conditionFunctions": 320,
+            "baselineReads": 320
+          },
+          "W": {
+            "conditionFunctions": 0,
+            "tableLookups": 1,
+            "baselineReads": 320,
+            "tableMembership": 320
+          },
+          "sameObservedHash": true
+        },
+        {
+          "to": "kind_0",
+          "H": {
+            "conditionFunctions": 160,
+            "baselineReads": 160
+          },
+          "W": {
+            "conditionFunctions": 0,
+            "tableLookups": 1,
+            "baselineReads": 160,
+            "tableMembership": 160
+          },
+          "sameObservedHash": true
+        }
+      ]
+    },
+    {
+      "branches": 40,
+      "liveWidth": 5,
+      "inputBytes": 17,
+      "outputBytes": 90,
+      "transitions": [
+        {
+          "to": "kind_4",
+          "H": {
+            "conditionFunctions": 640,
+            "baselineReads": 640
+          },
+          "W": {
+            "conditionFunctions": 0,
+            "tableLookups": 1,
+            "baselineReads": 640,
+            "tableMembership": 640
+          },
+          "sameObservedHash": true
+        },
+        {
+          "to": "kind_0",
+          "H": {
+            "conditionFunctions": 320,
+            "baselineReads": 320
+          },
+          "W": {
+            "conditionFunctions": 0,
+            "tableLookups": 1,
+            "baselineReads": 320,
+            "tableMembership": 320
+          },
+          "sameObservedHash": true
+        }
+      ]
+    }
+  ],
+  "criterion91_1": {
+    "tableFunctionAndLookupBranchIndependent": true,
+    "wholeCriterion": "fail",
+    "reason": "기존 reader·소속 참조·후보 순회와 U19 registry 스캔은 분기 수에 비례합니다. B2·B4·B5를 연결하지 않았습니다."
+  },
+  "unrelated": [
+    {
+      "fragments": 5,
+      "liveWidth": 3,
+      "inputBytes": 19,
+      "outputBytes": 44,
+      "conditionFunctions": 0,
+      "tableLookups": 0,
+      "registryLoop6": 10,
+      "registryLoop9": 10,
+      "registryLoop10": 10,
+      "bothDirectionsSameCounts": true,
+      "headAndWorkingHashesMatch": true
+    },
+    {
+      "fragments": 10,
+      "liveWidth": 3,
+      "inputBytes": 19,
+      "outputBytes": 44,
+      "conditionFunctions": 0,
+      "tableLookups": 0,
+      "registryLoop6": 20,
+      "registryLoop9": 20,
+      "registryLoop10": 20,
+      "bothDirectionsSameCounts": true,
+      "headAndWorkingHashesMatch": true
+    },
+    {
+      "fragments": 20,
+      "liveWidth": 3,
+      "inputBytes": 19,
+      "outputBytes": 44,
+      "conditionFunctions": 0,
+      "tableLookups": 0,
+      "registryLoop6": 40,
+      "registryLoop9": 40,
+      "registryLoop10": 40,
+      "bothDirectionsSameCounts": true,
+      "headAndWorkingHashesMatch": true
+    },
+    {
+      "fragments": 40,
+      "liveWidth": 3,
+      "inputBytes": 19,
+      "outputBytes": 44,
+      "conditionFunctions": 0,
+      "tableLookups": 0,
+      "registryLoop6": 80,
+      "registryLoop9": 80,
+      "registryLoop10": 80,
+      "bothDirectionsSameCounts": true,
+      "headAndWorkingHashesMatch": true
+    }
+  ],
+  "measurement": {
+    "method": "동일 세션, 순차 새 프로세스, H→W/W→H/H→W, 예열20, 101×3, validation off, 무계측 시간. esbuild 자연 종료 후 측정.",
+    "fixtures": [
+      "oneOf-5",
+      "oneOf-10",
+      "oneOf-20",
+      "oneOf-40",
+      "sample-0",
+      "flat-500"
+    ],
+    "timingProcesses": 36,
+    "totalTimingCountMemoryProcesses": 60,
+    "warmup": 20,
+    "samplesPerProcess": 101,
+    "runs": 3,
+    "order": [
+      "H→W",
+      "W→H",
+      "H→W"
+    ],
+    "units": "ms",
+    "environment": {
+      "node": "v26.10.0",
+      "v8": "14.6.202.34-node.35",
+      "cpu": "Apple M1 Max"
+    },
+    "rows": [
+      {
+        "fixture": "oneOf-5",
+        "phase": "mount",
+        "H": {
+          "median": 0.8277500000003783,
+          "p99": 0.9969169999999394,
+          "samples": 303
+        },
+        "W": {
+          "median": 0.8319999999999936,
+          "p99": 1.0205419999999776,
+          "samples": 303
+        },
+        "pairs": [
+          {
+            "run": 1,
+            "order": "H→W",
+            "H": {
+              "median": 0.8575829999999769,
+              "p99": 0.9840830000002825,
+              "samples": 101
+            },
+            "W": {
+              "median": 0.79200000000003,
+              "p99": 1.043875000000014,
+              "samples": 101
+            },
+            "changePercent": -7.647423048258728
+          },
+          {
+            "run": 2,
+            "order": "W→H",
+            "H": {
+              "median": 0.8229590000000826,
+              "p99": 0.9969169999999394,
+              "samples": 101
+            },
+            "W": {
+              "median": 0.8420839999999998,
+              "p99": 1.0112500000000182,
+              "samples": 101
+            },
+            "changePercent": 2.3239310828261583
+          },
+          {
+            "run": 3,
+            "order": "H→W",
+            "H": {
+              "median": 0.804374999999709,
+              "p99": 0.9713329999999587,
+              "samples": 101
+            },
+            "W": {
+              "median": 0.8523330000000442,
+              "p99": 1.0205419999999776,
+              "samples": 101
+            },
+            "changePercent": 5.962144522188351
+          }
+        ],
+        "changePercent": 0.5134400482770474
+      },
+      {
+        "fixture": "oneOf-5",
+        "phase": "update",
+        "H": {
+          "median": 0.45037499999943975,
+          "p99": 0.5729999999994106,
+          "samples": 303
+        },
+        "W": {
+          "median": 0.4593329999999014,
+          "p99": 0.5654170000000249,
+          "samples": 303
+        },
+        "pairs": [
+          {
+            "run": 1,
+            "order": "H→W",
+            "H": {
+              "median": 0.4369589999996606,
+              "p99": 0.5875419999997575,
+              "samples": 101
+            },
+            "W": {
+              "median": 0.47604200000000674,
+              "p99": 0.542082999999991,
+              "samples": 101
+            },
+            "changePercent": 8.944317430325622
+          },
+          {
+            "run": 2,
+            "order": "W→H",
+            "H": {
+              "median": 0.44791699999996126,
+              "p99": 0.5540000000000873,
+              "samples": 101
+            },
+            "W": {
+              "median": 0.4562909999999647,
+              "p99": 0.57062499999995,
+              "samples": 101
+            },
+            "changePercent": 1.869542794759771
+          },
+          {
+            "run": 3,
+            "order": "H→W",
+            "H": {
+              "median": 0.4682090000005701,
+              "p99": 0.5567909999999756,
+              "samples": 101
+            },
+            "W": {
+              "median": 0.4203330000000278,
+              "p99": 0.5638329999999883,
+              "samples": 101
+            },
+            "changePercent": -10.225348081836094
+          }
+        ],
+        "changePercent": 1.9890091591391101
+      },
+      {
+        "fixture": "oneOf-10",
+        "phase": "mount",
+        "H": {
+          "median": 1.1725420000002487,
+          "p99": 1.373833999999988,
+          "samples": 303
+        },
+        "W": {
+          "median": 1.1671250000000555,
+          "p99": 1.3677089999999907,
+          "samples": 303
+        },
+        "pairs": [
+          {
+            "run": 1,
+            "order": "H→W",
+            "H": {
+              "median": 1.1637909999999465,
+              "p99": 1.3317090000000462,
+              "samples": 101
+            },
+            "W": {
+              "median": 1.1842080000000124,
+              "p99": 1.3677089999999907,
+              "samples": 101
+            },
+            "changePercent": 1.7543528004656084
+          },
+          {
+            "run": 2,
+            "order": "W→H",
+            "H": {
+              "median": 1.155999999999949,
+              "p99": 1.3337080000001151,
+              "samples": 101
+            },
+            "W": {
+              "median": 1.1825000000000045,
+              "p99": 1.3800830000000133,
+              "samples": 101
+            },
+            "changePercent": 2.2923875432574903
+          },
+          {
+            "run": 3,
+            "order": "H→W",
+            "H": {
+              "median": 1.2071249999999054,
+              "p99": 1.4022500000000946,
+              "samples": 101
+            },
+            "W": {
+              "median": 1.122792000000004,
+              "p99": 1.3324170000000208,
+              "samples": 101
+            },
+            "changePercent": -6.986269027640713
+          }
+        ],
+        "changePercent": -0.4619877155950136
+      },
+      {
+        "fixture": "oneOf-10",
+        "phase": "update",
+        "H": {
+          "median": 0.5909590000001117,
+          "p99": 0.7405409999996664,
+          "samples": 303
+        },
+        "W": {
+          "median": 0.5926249999999982,
+          "p99": 0.7177500000000236,
+          "samples": 303
+        },
+        "pairs": [
+          {
+            "run": 1,
+            "order": "H→W",
+            "H": {
+              "median": 0.5668749999999818,
+              "p99": 0.7207080000002861,
+              "samples": 101
+            },
+            "W": {
+              "median": 0.5735409999999774,
+              "p99": 0.7137079999999969,
+              "samples": 101
+            },
+            "changePercent": 1.1759206174193348
+          },
+          {
+            "run": 2,
+            "order": "W→H",
+            "H": {
+              "median": 0.5600420000000668,
+              "p99": 0.7368329999999332,
+              "samples": 101
+            },
+            "W": {
+              "median": 0.5726250000000164,
+              "p99": 0.7177500000000236,
+              "samples": 101
+            },
+            "changePercent": 2.246795776021826
+          },
+          {
+            "run": 3,
+            "order": "H→W",
+            "H": {
+              "median": 0.6414169999998194,
+              "p99": 0.7430419999996047,
+              "samples": 101
+            },
+            "W": {
+              "median": 0.6021670000000086,
+              "p99": 0.7147500000000377,
+              "samples": 101
+            },
+            "changePercent": -6.119264066874108
+          }
+        ],
+        "changePercent": 0.2819146505740999
+      },
+      {
+        "fixture": "oneOf-20",
+        "phase": "mount",
+        "H": {
+          "median": 1.8537919999998849,
+          "p99": 2.1200840000001335,
+          "samples": 303
+        },
+        "W": {
+          "median": 1.8394999999999868,
+          "p99": 2.066000000000031,
+          "samples": 303
+        },
+        "pairs": [
+          {
+            "run": 1,
+            "order": "H→W",
+            "H": {
+              "median": 1.8170409999993353,
+              "p99": 2.119666000000052,
+              "samples": 101
+            },
+            "W": {
+              "median": 1.8363329999999678,
+              "p99": 2.047208000000012,
+              "samples": 101
+            },
+            "changePercent": 1.0617261801268985
+          },
+          {
+            "run": 2,
+            "order": "W→H",
+            "H": {
+              "median": 1.7857919999996739,
+              "p99": 1.9818749999999454,
+              "samples": 101
+            },
+            "W": {
+              "median": 1.8340829999999642,
+              "p99": 2.0606670000000236,
+              "samples": 101
+            },
+            "changePercent": 2.7041783141765086
+          },
+          {
+            "run": 3,
+            "order": "H→W",
+            "H": {
+              "median": 1.9445839999998498,
+              "p99": 2.124583000000257,
+              "samples": 101
+            },
+            "W": {
+              "median": 1.8543339999999944,
+              "p99": 2.09862499999997,
+              "samples": 101
+            },
+            "changePercent": -4.641095473369228
+          }
+        ],
+        "changePercent": -0.770960280328048
+      },
+      {
+        "fixture": "oneOf-20",
+        "phase": "update",
+        "H": {
+          "median": 0.8265419999997903,
+          "p99": 1.0318749999996726,
+          "samples": 303
+        },
+        "W": {
+          "median": 0.7762079999999969,
+          "p99": 0.9872080000000096,
+          "samples": 303
+        },
+        "pairs": [
+          {
+            "run": 1,
+            "order": "H→W",
+            "H": {
+              "median": 0.7923330000003261,
+              "p99": 1.0331670000000486,
+              "samples": 101
+            },
+            "W": {
+              "median": 0.7718340000000126,
+              "p99": 0.9482920000000377,
+              "samples": 101
+            },
+            "changePercent": -2.5871697884986666
+          },
+          {
+            "run": 2,
+            "order": "W→H",
+            "H": {
+              "median": 0.8194999999996071,
+              "p99": 0.978708000000097,
+              "samples": 101
+            },
+            "W": {
+              "median": 0.7789999999999964,
+              "p99": 0.9846670000000017,
+              "samples": 101
+            },
+            "changePercent": -4.942037827898737
+          },
+          {
+            "run": 3,
+            "order": "H→W",
+            "H": {
+              "median": 0.855750000000171,
+              "p99": 1.0318749999996726,
+              "samples": 101
+            },
+            "W": {
+              "median": 0.7707920000000286,
+              "p99": 1.0031660000000215,
+              "samples": 101
+            },
+            "changePercent": -9.927899503374283
+          }
+        ],
+        "changePercent": -6.0897086899160735
+      },
+      {
+        "fixture": "oneOf-40",
+        "phase": "mount",
+        "H": {
+          "median": 3.0616659999996045,
+          "p99": 3.4087499999996,
+          "samples": 303
+        },
+        "W": {
+          "median": 3.173958999999968,
+          "p99": 3.6582499999999527,
+          "samples": 303
+        },
+        "pairs": [
+          {
+            "run": 1,
+            "order": "H→W",
+            "H": {
+              "median": 3.071665999999823,
+              "p99": 3.4234580000002097,
+              "samples": 101
+            },
+            "W": {
+              "median": 3.419332999999824,
+              "p99": 3.716082999999969,
+              "samples": 101
+            },
+            "changePercent": 11.318515750085512
+          },
+          {
+            "run": 2,
+            "order": "W→H",
+            "H": {
+              "median": 3.056040999999823,
+              "p99": 3.2999580000000606,
+              "samples": 101
+            },
+            "W": {
+              "median": 3.1172500000000127,
+              "p99": 3.3915000000000077,
+              "samples": 101
+            },
+            "changePercent": 2.002885432498891
+          },
+          {
+            "run": 3,
+            "order": "H→W",
+            "H": {
+              "median": 3.055000000000291,
+              "p99": 3.4087499999996,
+              "samples": 101
+            },
+            "W": {
+              "median": 3.1200000000000045,
+              "p99": 3.349458000000027,
+              "samples": 101
+            },
+            "changePercent": 2.127659574458507
+          }
+        ],
+        "changePercent": 3.667709018566301
+      },
+      {
+        "fixture": "oneOf-40",
+        "phase": "update",
+        "H": {
+          "median": 1.414708000000246,
+          "p99": 1.568333000000166,
+          "samples": 303
+        },
+        "W": {
+          "median": 1.384708000000046,
+          "p99": 1.617917000000034,
+          "samples": 303
+        },
+        "pairs": [
+          {
+            "run": 1,
+            "order": "H→W",
+            "H": {
+              "median": 1.3910839999998643,
+              "p99": 1.5473750000001019,
+              "samples": 101
+            },
+            "W": {
+              "median": 1.3709589999999707,
+              "p99": 1.658625000000029,
+              "samples": 101
+            },
+            "changePercent": -1.4467134982427798
+          },
+          {
+            "run": 2,
+            "order": "W→H",
+            "H": {
+              "median": 1.4423329999999623,
+              "p99": 1.6674169999996593,
+              "samples": 101
+            },
+            "W": {
+              "median": 1.3981659999999465,
+              "p99": 1.5912080000000515,
+              "samples": 101
+            },
+            "changePercent": -3.0621916020792006
+          },
+          {
+            "run": 3,
+            "order": "H→W",
+            "H": {
+              "median": 1.4100829999997586,
+              "p99": 1.5447079999999005,
+              "samples": 101
+            },
+            "W": {
+              "median": 1.384708000000046,
+              "p99": 1.5338750000000232,
+              "samples": 101
+            },
+            "changePercent": -1.7995394597138614
+          }
+        ],
+        "changePercent": -2.1205789463405122
+      },
+      {
+        "fixture": "sample-0",
+        "phase": "mount",
+        "H": {
+          "median": 0.13504199999988487,
+          "p99": 0.19158400000014808,
+          "samples": 303
+        },
+        "W": {
+          "median": 0.13916600000004564,
+          "p99": 0.18029200000000856,
+          "samples": 303
+        },
+        "pairs": [
+          {
+            "run": 1,
+            "order": "H→W",
+            "H": {
+              "median": 0.135291000000052,
+              "p99": 0.1783330000002934,
+              "samples": 101
+            },
+            "W": {
+              "median": 0.14016599999996515,
+              "p99": 0.18695800000000418,
+              "samples": 101
+            },
+            "changePercent": 3.603343903076528
+          },
+          {
+            "run": 2,
+            "order": "W→H",
+            "H": {
+              "median": 0.13249999999970896,
+              "p99": 0.19158400000014808,
+              "samples": 101
+            },
+            "W": {
+              "median": 0.13833299999998871,
+              "p99": 0.18029200000000856,
+              "samples": 101
+            },
+            "changePercent": 4.4022641511642036
+          },
+          {
+            "run": 3,
+            "order": "H→W",
+            "H": {
+              "median": 0.13637500000004366,
+              "p99": 0.18204199999991033,
+              "samples": 101
+            },
+            "W": {
+              "median": 0.13783300000000054,
+              "p99": 0.17462499999999181,
+              "samples": 101
+            },
+            "changePercent": 1.069110907392412
+          }
+        ],
+        "changePercent": 3.053864723689137
+      },
+      {
+        "fixture": "sample-0",
+        "phase": "later",
+        "H": {
+          "median": 0.026041999999961263,
+          "p99": 0.041040999999950145,
+          "samples": 303
+        },
+        "W": {
+          "median": 0.026499999999941792,
+          "p99": 0.04312500000003183,
+          "samples": 303
+        },
+        "pairs": [
+          {
+            "run": 1,
+            "order": "H→W",
+            "H": {
+              "median": 0.026374999999916326,
+              "p99": 0.042167000000063126,
+              "samples": 101
+            },
+            "W": {
+              "median": 0.026624999999967258,
+              "p99": 0.04312500000003183,
+              "samples": 101
+            },
+            "changePercent": 0.9478672987743186
+          },
+          {
+            "run": 2,
+            "order": "W→H",
+            "H": {
+              "median": 0.02599999999983993,
+              "p99": 0.041040999999950145,
+              "samples": 101
+            },
+            "W": {
+              "median": 0.026499999999998636,
+              "p99": 0.04229200000003175,
+              "samples": 101
+            },
+            "changePercent": 1.923076923699174
+          },
+          {
+            "run": 3,
+            "order": "H→W",
+            "H": {
+              "median": 0.025667000000339613,
+              "p99": 0.0385839999999007,
+              "samples": 101
+            },
+            "W": {
+              "median": 0.02641700000003766,
+              "p99": 0.042832999999973254,
+              "samples": 101
+            },
+            "changePercent": 2.9220399722917456
+          }
+        ],
+        "changePercent": 1.7586974886000029
+      },
+      {
+        "fixture": "flat-500",
+        "phase": "mount",
+        "H": {
+          "median": 4.344541999999819,
+          "p99": 4.850999999999658,
+          "samples": 303
+        },
+        "W": {
+          "median": 4.279915999999957,
+          "p99": 4.788624999999968,
+          "samples": 303
+        },
+        "pairs": [
+          {
+            "run": 1,
+            "order": "H→W",
+            "H": {
+              "median": 4.362333999999919,
+              "p99": 4.649707999999919,
+              "samples": 101
+            },
+            "W": {
+              "median": 4.262459000000035,
+              "p99": 4.64654100000007,
+              "samples": 101
+            },
+            "changePercent": -2.2894853993271846
+          },
+          {
+            "run": 2,
+            "order": "W→H",
+            "H": {
+              "median": 4.336457999999766,
+              "p99": 5.0173750000003565,
+              "samples": 101
+            },
+            "W": {
+              "median": 4.2644579999999905,
+              "p99": 4.703458000000069,
+              "samples": 101
+            },
+            "changePercent": -1.6603412277895746
+          },
+          {
+            "run": 3,
+            "order": "H→W",
+            "H": {
+              "median": 4.333290999999917,
+              "p99": 4.749665999999706,
+              "samples": 101
+            },
+            "W": {
+              "median": 4.314041999999972,
+              "p99": 4.829541000000006,
+              "samples": 101
+            },
+            "changePercent": -0.4442120319162912
+          }
+        ],
+        "changePercent": -1.4875215845505663
+      },
+      {
+        "fixture": "flat-500",
+        "phase": "later",
+        "H": {
+          "median": 0.014458000000558968,
+          "p99": 0.02599999999983993,
+          "samples": 303
+        },
+        "W": {
+          "median": 0.014582999999902313,
+          "p99": 0.030209000000013475,
+          "samples": 303
+        },
+        "pairs": [
+          {
+            "run": 1,
+            "order": "H→W",
+            "H": {
+              "median": 0.014415999999982887,
+              "p99": 0.02366600000004837,
+              "samples": 101
+            },
+            "W": {
+              "median": 0.014415999999982887,
+              "p99": 0.022499999999979536,
+              "samples": 101
+            },
+            "changePercent": 0
+          },
+          {
+            "run": 2,
+            "order": "W→H",
+            "H": {
+              "median": 0.014666000000033819,
+              "p99": 0.03275000000030559,
+              "samples": 101
+            },
+            "W": {
+              "median": 0.014540999999780979,
+              "p99": 0.030209000000013475,
+              "samples": 101
+            },
+            "changePercent": -0.8523114704251378
+          },
+          {
+            "run": 3,
+            "order": "H→W",
+            "H": {
+              "median": 0.014374999999745341,
+              "p99": 0.023624999999810825,
+              "samples": 101
+            },
+            "W": {
+              "median": 0.014792000000170447,
+              "p99": 0.03033400000003894,
+              "samples": 101
+            },
+            "changePercent": 2.900869568226039
+          }
+        ],
+        "changePercent": 0.8645732420702101
+      }
+    ],
+    "detailFile": "round-99-gate-selection-measurements-summary.json"
+  },
+  "memory": [
+    {
+      "branches": 5,
+      "retained": 128,
+      "HHeapBytesPerBlueprint": 42029.875,
+      "WHeapBytesPerBlueprint": 43843.9375,
+      "extraHeapBytesPerBlueprint": 1814.0625,
+      "tableCells": {
+        "bindings": 5,
+        "groups": 1,
+        "valueBuckets": 5,
+        "membershipEdges": 5,
+        "maps": 2,
+        "bucketSets": 5
+      },
+      "limitation": "별도 새 프로세스의 GC heap 차이 관측이며 보편적인 객체 byte 보증이 아닙니다."
+    },
+    {
+      "branches": 10,
+      "retained": 128,
+      "HHeapBytesPerBlueprint": 73369.6875,
+      "WHeapBytesPerBlueprint": 75854.125,
+      "extraHeapBytesPerBlueprint": 2484.4375,
+      "tableCells": {
+        "bindings": 10,
+        "groups": 1,
+        "valueBuckets": 10,
+        "membershipEdges": 10,
+        "maps": 2,
+        "bucketSets": 10
+      },
+      "limitation": "별도 새 프로세스의 GC heap 차이 관측이며 보편적인 객체 byte 보증이 아닙니다."
+    },
+    {
+      "branches": 20,
+      "retained": 128,
+      "HHeapBytesPerBlueprint": 137677.3125,
+      "WHeapBytesPerBlueprint": 141242,
+      "extraHeapBytesPerBlueprint": 3564.6875,
+      "tableCells": {
+        "bindings": 20,
+        "groups": 1,
+        "valueBuckets": 20,
+        "membershipEdges": 20,
+        "maps": 2,
+        "bucketSets": 20
+      },
+      "limitation": "별도 새 프로세스의 GC heap 차이 관측이며 보편적인 객체 byte 보증이 아닙니다."
+    },
+    {
+      "branches": 40,
+      "retained": 128,
+      "HHeapBytesPerBlueprint": 264282.4375,
+      "WHeapBytesPerBlueprint": 270085.9375,
+      "extraHeapBytesPerBlueprint": 5803.5,
+      "tableCells": {
+        "bindings": 40,
+        "groups": 1,
+        "valueBuckets": 40,
+        "membershipEdges": 40,
+        "maps": 2,
+        "bucketSets": 40
+      },
+      "limitation": "별도 새 프로세스의 GC heap 차이 관측이며 보편적인 객체 byte 보증이 아닙니다."
+    }
+  ],
+  "candidateVerification": {
+    "command": "npx vitest run --project unit --project render --project react18 --reporter=dot",
+    "exit": 1,
+    "seconds": 62.75,
+    "summary": [
+      " Test Files  2 failed | 424 passed (426)",
+      "      Tests  4 failed | 3219 passed | 1 todo (3224)",
+      "   Duration  61.07s (transform 7.48s, setup 0ms, collect 203.60s, tests 159.60s, environment 29.84s, prepare 20.38s)",
+      "Error: Uncaught [Error: render]",
+      "Error: Uncaught [Error: render]",
+      "Error: render",
+      "⎯⎯⎯⎯⎯⎯⎯ Failed Tests 4 ⎯⎯⎯⎯⎯⎯⎯",
+      " FAIL  |render| src/components/Form/__tests__/Form.effectFeedback.test.tsx > EVENT-070 cross-entry feedback > EVENT-070 React stops two fields writing back through useLayoutEffect",
+      "AssertionError: The watchdog is a failure, not React stopping the cycle: expected 201 to be less than 200",
+      " FAIL  |render| src/components/Form/__tests__/Form.effectFeedback.test.tsx > EVENT-070 cross-entry feedback > EVENT-070 React stops two fields writing back through useEffect",
+      "AssertionError: The watchdog is a failure, not React stopping the cycle: expected 201 to be less than 200",
+      " FAIL  |react18| src/components/Form/__tests__/Form.effectFeedback.test.tsx > EVENT-070 cross-entry feedback > EVENT-070 React stops two fields writing back through useLayoutEffect",
+      "AssertionError: The watchdog is a failure, not React stopping the cycle: expected 201 to be less than 200",
+      " FAIL  |react18| src/components/Form/__tests__/Form.effectFeedback.test.tsx > EVENT-070 cross-entry feedback > EVENT-070 React stops two fields writing back through useEffect",
+      "AssertionError: The watchdog is a failure, not React stopping the cycle: expected 201 to be less than 200"
+    ]
+  },
+  "finalVerification": {
+    "results": [
+      {
+        "command": "npx vitest run --project unit --project render --project react18 --reporter=dot",
+        "exit": 1,
+        "seconds": 62.614,
+        "summary": [
+          " Test Files  2 failed | 421 passed (423)",
+          "      Tests  4 failed | 3189 passed | 1 todo (3194)",
+          "   Duration  60.95s (transform 7.31s, setup 0ms, collect 199.05s, tests 158.43s, environment 28.86s, prepare 19.92s)",
+          "Error: Uncaught [Error: render]",
+          "Error: Uncaught [Error: render]",
+          "Error: render",
+          "⎯⎯⎯⎯⎯⎯⎯ Failed Tests 4 ⎯⎯⎯⎯⎯⎯⎯",
+          " FAIL  |render| src/components/Form/__tests__/Form.effectFeedback.test.tsx > EVENT-070 cross-entry feedback > EVENT-070 React stops two fields writing back through useLayoutEffect",
+          "AssertionError: The watchdog is a failure, not React stopping the cycle: expected 201 to be less than 200",
+          " FAIL  |render| src/components/Form/__tests__/Form.effectFeedback.test.tsx > EVENT-070 cross-entry feedback > EVENT-070 React stops two fields writing back through useEffect",
+          "AssertionError: The watchdog is a failure, not React stopping the cycle: expected 201 to be less than 200",
+          " FAIL  |react18| src/components/Form/__tests__/Form.effectFeedback.test.tsx > EVENT-070 cross-entry feedback > EVENT-070 React stops two fields writing back through useLayoutEffect",
+          "AssertionError: The watchdog is a failure, not React stopping the cycle: expected 201 to be less than 200",
+          " FAIL  |react18| src/components/Form/__tests__/Form.effectFeedback.test.tsx > EVENT-070 cross-entry feedback > EVENT-070 React stops two fields writing back through useEffect",
+          "AssertionError: The watchdog is a failure, not React stopping the cycle: expected 201 to be less than 200"
+        ]
+      },
+      {
+        "command": "npx tsc --noEmit --composite false --rootDir . -p tsconfig.json",
+        "exit": 0,
+        "seconds": 7.556,
+        "summary": ""
+      },
+      {
+        "command": "npx eslint src/**/*.{ts,tsx}",
+        "exit": 0,
+        "seconds": 5.453,
+        "summary": ""
+      },
+      {
+        "command": "node architecture/verification/07-switch/tools/check-legacy-isolation.mjs",
+        "exit": 0,
+        "seconds": 0.406,
+        "summary": "LEGACY_ISOLATED: 1620 files checked"
+      }
+    ]
+  },
+  "timingArtifacts": {
+    "files": 36,
+    "timingSamplesOnly": true,
+    "totalBytes": 176801,
+    "maxBytes": 5119,
+    "limitBytes": 5000000
+  },
+  "artifactVerification": {
+    "headUnchanged": true,
+    "productSourceDiffEmpty": true,
+    "addedProductFilesRemaining": 0,
+    "compilerDetailMatchesHead": true,
+    "committedRound98SummaryMatchesHead": true,
+    "reportHeadingOccurrences": 1,
+    "timingMedianMatchesRawSamples": true,
+    "gitDiffCheck": {
+      "exit": 0,
+      "signal": null,
+      "output": ""
+    },
+    "nodeSyntaxCheck": {
+      "exit": 0,
+      "signal": null,
+      "output": "",
+      "command": "node --check architecture/verification/07-switch/tools/measure-round-99-gate-selection.mjs"
+    },
+    "candidateProductPatchAppliesReadOnly": {
+      "exit": 0,
+      "signal": null,
+      "output": ""
+    },
+    "sourcePatchSha256": {
+      "productPatch": "531f8efa1f1169eae22ecea93838fc4796e911062936e4a1d36484f56b792ae3",
+      "validationPatch": "646bda349746745d5f55ef44f7d4903d61b4ec2e73bad5d6349c218c8c26c2b7"
+    }
+  },
+  "priorCommittedSummaryPreserved": true,
+  "sourceEvidence": {
+    "productPatch": ".seiri/tasks/round-99-gate-selection-a/candidate-product.patch",
+    "validationPatch": ".seiri/tasks/round-99-gate-selection-a/candidate-validation.patch",
+    "patchesGitignored": true,
+    "generatedRuntimeBundles": false
+  },
+  "scopeExclusions": [
+    "(나) 커밋 결과 재사용",
+    "B2",
+    "B4",
+    "B5",
+    "owner/dirty 축약"
+  ],
+  "constraints": {
+    "gitMetadataWrites": 0,
+    "commits": 0,
+    "installs": 0,
+    "otherAgentRuns": 0,
+    "forcedProcessTerminations": 0,
+    "measurementConcurrency": 1
+  }
+}
