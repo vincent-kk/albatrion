@@ -1,0 +1,49 @@
+{
+  "sourceCommit": "42113e6c9",
+  "status": "정적 경로 구현 중단: 배열 기본값의 제네릭 전이 상한 결정 필요",
+  "designIIImplemented": false,
+  "staticFirstLoadImplemented": false,
+  "genericMatrix": {
+    "productionSource": "HEAD, 수정 전",
+    "oracle": "writeSchemaNode load; hasIndependentLeafDefaults=false",
+    "initial": { "passed": 9, "failed": 2 },
+    "includingExceptionAndPostFailureState": { "passed": 11, "failed": 0 },
+    "blocker": {
+      "arrayLengths": [1, 1000],
+      "code": "SCHEMA_FORM_ERROR.BUDGET_EXCEEDED",
+      "diagnostics": { "status": "degraded", "exceededBudget": "transition", "iterations": 1, "commit": 1 },
+      "cause": "배열 default로 생성된 아이템의 누락 자식 default는 두 번째 전이 라운드에서 채워지나 게이트 없는 상한은 1",
+      "decision": "해당 입력 generic fallback 또는 제네릭 결함의 별도 선행 수정"
+    },
+    "remaining": ["실제 listener payload 실행", "전체 fallback 행렬", "validation ON/async", "정적 자격", "계산 및 메모리 복잡도"]
+  },
+  "error019": {
+    "before": { "failedTests": 2, "synchronousReporterCalls": 2, "synchronousConsoleWarnings": 1 },
+    "after": { "passedTests": 2 },
+    "change": "기존 pendingWarningRecords와 chainOccurrences로 보관",
+    "timeCost": "사슬 없는 고유 경고당 O(1) 등록; 경고 없는 새 순회 없음",
+    "memoryCost": "배달까지 O(W) 경고 보유; 새 노드 고정 칸 없음",
+    "timeAndHeapMeasured": false,
+    "scope": "settle 내부 reporter 및 console 경고; 노드 factory의 dialect 경고는 포함하지 않음"
+  },
+  "performance": {
+    "measured": false,
+    "assessedRows": 0,
+    "before": null,
+    "after": null,
+    "threshold85C01": { "coreMedianRatio": 1.5, "reactMountMedianRatio": 1.2, "reactUpdateMedianRatio": 1.0 },
+    "nodeRecomputations": null,
+    "requiredOutputTraversals": null,
+    "orderCellBytes": null,
+    "scratchReductionBytes": null,
+    "newOrderCellsImplemented": false,
+    "timingFiles": []
+  },
+  "verification": [
+    { "command": "npx vitest run --project unit --project render --project react18 --reporter=dot", "exitCode": 1, "passedFiles": 407, "failedFiles": 2, "passedTests": 3091, "failedTests": 4, "todoTests": 1, "durationSeconds": 69.27, "allowedFailuresOnly": true, "failures": ["render EVENT-070 useLayoutEffect", "render EVENT-070 useEffect", "react18 EVENT-070 useLayoutEffect", "react18 EVENT-070 useEffect"] },
+    { "command": "npx tsc --noEmit --composite false --rootDir . -p tsconfig.json", "exitCode": 0 },
+    { "command": "npx eslint \"src/**/*.{ts,tsx}\"", "exitCode": 0 },
+    { "command": "node architecture/verification/07-switch/tools/check-legacy-isolation.mjs", "exitCode": 0, "checkedFiles": 1579 }
+  ],
+  "constraints": { "gitWrites": false, "installs": false, "otherAgents": false, "sequentialCommands": true }
+}

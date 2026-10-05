@@ -81,13 +81,9 @@ export const evaluateGate = <Self extends SchemaNodeRecord<Self>>(
           const record = { level: 'warning' as const,
             code: `SCHEMA_FORM_WARNING.${VALIDATOR_MISSING}` as const,
             message: 'Validation is disabled because no validator was selected' };
-          if (runtime.entryDepth)
-            (runtime.pendingWarningRecords ??= new Map()).set(VALIDATOR_MISSING,
-              record);
-          if (runtime.entryDepth)
-            runtime.chainOccurrences?.push({ kind: 'record', record });
-          else if (runtime.errorReporter?.hasConsumer())
-            runtime.errorReporter.report(record);
+          (runtime.pendingWarningRecords ??= new Map()).set(VALIDATOR_MISSING,
+            record);
+          runtime.chainOccurrences?.push({ kind: 'record', record });
         }
         if (keys && !keys.has(CONDITIONAL_SCHEMA_WITHOUT_VALIDATOR)) {
           keys.add(CONDITIONAL_SCHEMA_WITHOUT_VALIDATOR);
@@ -95,13 +91,9 @@ export const evaluateGate = <Self extends SchemaNodeRecord<Self>>(
             code: `SCHEMA_FORM_WARNING.${CONDITIONAL_SCHEMA_WITHOUT_VALIDATOR}` as const,
             message: 'Conditional schema is inactive without a validator',
             schemaPath: gate.schemaPath };
-          if (runtime.entryDepth)
-            (runtime.pendingWarningRecords ??= new Map()).set(
-              CONDITIONAL_SCHEMA_WITHOUT_VALIDATOR, record);
-          if (runtime.entryDepth)
-            runtime.chainOccurrences?.push({ kind: 'record', record });
-          else if (runtime.errorReporter?.hasConsumer())
-            runtime.errorReporter.report(record);
+          (runtime.pendingWarningRecords ??= new Map()).set(
+            CONDITIONAL_SCHEMA_WITHOUT_VALIDATOR, record);
+          runtime.chainOccurrences?.push({ kind: 'record', record });
         }
         return false;
       }

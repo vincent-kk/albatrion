@@ -780,3 +780,51 @@ core는 미구독 development 생성/갱신입니다. subscribed는 같은 코�
 처음 전체 Vitest 실행은 도구의 60초 한도에 걸려 결과에서 제외했습니다. 한도를 늘린 재실행이 63.76초에 완료된 결과가 위 표입니다. 측정과 테스트를 겹쳐 실행하지 않았습니다.
 
 원표본 72개는 `round-88-b3-<core|subscribed|render>-<fixture>-<head|candidate>-r<1|2|3>-timings.json`이며 mount/update 숫자 배열만 보유합니다. 모든 표본·요약 파일은 5,000,000바이트 이하이고, 시간 표본과 측정 합산 summary 73개의 합계는 363,325바이트, 가장 큰 측정 summary는 90,159바이트입니다. 추적 세부·환경·결과 해시는 합산 summary에만 남겼습니다. 임시 소스 사본·실행기는 작업 트리 내부에서 사용한 뒤 제거했으며 생성 번들·빌드 산출물은 남기지 않았습니다.
+
+## 89라운드 (i) 정적 첫 로드
+
+상태: **제네릭 기준에서 설계 충돌을 발견하여 정적 경로 구현·측정 중단**. 작업 기준은 stage-07의 `42113e6c9`이며 (ii)는 구현하지 않았습니다. 승인 설계가 틀리거나 원장 판단이 필요하면 해당 부분을 중단하라는 작업 지시를 적용했습니다. 독립적으로 승인된 ERROR-019 결함만 수정했습니다. [검증 요약](./round-89-static-first-load-summary.json)에 명령과 증거 범위를 남깁니다.
+
+### 구현 전에 발견한 차단 사유
+
+`static-first-load-differential.test.ts`를 제품 소스 수정 전에 실행했습니다. 배열 default가 `{ value: 0 }`인 아이템을 만들고, 아이템 스키마가 누락된 `label`에 literal default를 제공하면 HEAD의 일반 경로가 `SCHEMA_FORM_ERROR.BUDGET_EXCEEDED`를 던집니다. 배열 1개와 1,000개 모두 재현됐고 0개는 정상 완료했습니다.
+
+`transitionSettlement`는 라운드 시작의 생김 집합을 깊이별로 고정합니다. 첫 라운드에서 배열 default를 쓴 뒤 `computeNode`가 아이템과 자식을 생성하므로, 새 자식의 default는 두 번째 라운드에서 쓰입니다. 게이트 없는 청사진의 상한은 1이어서 그 쓰기는 상한 초과와 원본 B 복구를 일으킵니다. 진단은 `{ status: 'degraded', exceededBudget: 'transition', iterations: 1, commit: 1 }`입니다.
+
+89C-02의 유한 배열·literal default 범위에 속하지만, 제안한 한 번의 생성/채움으로 정상 완료하면 제네릭 경로와 오류·진단·최종 상태가 달라집니다. 상한을 바꾸거나 이 입력만 임의로 제외하지 않았습니다. **질문: 이 입력 부류를 정적 자격에서 제외하여 제네릭 동작을 유지할지, 제네릭 결함을 별도 변경으로 먼저 해결할지 결정이 필요합니다.**
+
+### 제네릭 차등 기준과 한계
+
+처음에는 11건 중 9건 통과, 위 배열 2건이 상한 예외로 실패했습니다. 두 경로의 예외와 오류 후 상태도 비교하도록 행렬을 완성한 뒤, 제품 소스가 여전히 HEAD인 상태에서 11건 모두 통과했습니다. oracle은 `writeSchemaNode(..., 'load', ...)`이고 기존 후보 v의 `hasIndependentLeafDefaults`만 false로 고정했습니다. 비교 대상은 아직 HEAD의 `loadSchemaNodeAtMount`입니다.
+
+평면·정수/escaped 이름·required·후속 A→B→A·중첩 parent/child default·부분 입력·배열 0/1/1,000·자동쓰기 억제·정적 ref/allOf·null/undefined/wrong-kind·derived/controls.default·게이트 사례를 포함합니다. 값/raw/extras·pending payload/options·배달 삽입 순서·revision·커밋 번호·진단·전역 상태·경고·스냅숏과 일부 참조 보존을 비교했습니다. 오류 2건은 **현재 동작의 기록이며 바람직한 계약으로 승인한 것이 아닙니다**. 실제 리스너 실행, 전체 fallback 행렬, 검증 ON/async, 정적 자격 및 복잡도 증명은 미완료입니다.
+
+### ERROR-019 발견과 수정
+
+사슬 없는 내부 정착에서 `evaluateGate`가 검증기 부재 reporter를 두 번 직접 호출했고, `commitSettlement`가 non-JSON whole-value를 콘솔로 즉시 출력했습니다. 별도 회귀 2건은 HEAD에서 각각 reporter 2회·console.warn 1회로 실패했습니다. 기존 `pendingWarningRecords`와 `chainOccurrences`에 보관하도록 수정한 뒤 두 건이 통과했습니다. 기존 whole-value 테스트도 보관 기록의 코드·경로·innerPaths와 production 경고 부재를 검증합니다. 공개 사슬의 경고 전달을 포함한 기존 전체 테스트는 허용 실패 외 통과했습니다.
+
+속도 비용: 경고 없는 노드의 새 순회는 없고, 사슬 없는 경고 발생에서는 직접 출력 대신 고유 경고당 O(1) 저장이 생깁니다. 메모리 비용: 배달까지 O(W) 경고 기록을 유지하며 새 노드 고정 칸은 없습니다. 시간/heap byte 차이는 측정하지 않았습니다. 노드 생성 전 factory의 dialect 경고는 이 정착 수정 범위에 포함하지 않았습니다.
+
+### 전후 및 85C-01 판정
+
+| BF 행 | 코어 전/후 median·p99 | React production profiling 전/후 median·p99 | 85C-01 |
+| --- | --- | --- | --- |
+| flat-500 mount | 미측정 | 미측정 | 판정 보류 |
+| nested-d5 mount | 미측정 | 미측정 | 판정 보류 |
+| array-1000 mount | 미측정 | 미측정 | 판정 보류 |
+| array-1000 update | 미측정 | 미측정 | 판정 보류 |
+| derived | 미측정 | 미측정 | 판정 보류 |
+| oneOf-20 | 미측정 | 미측정 | 판정 보류 |
+
+판정한 행은 0개입니다. 통과/실패 개수를 만들지 않으며 G26은 열어 둡니다. 이전 baseline 숫자를 이번 before 측정으로 대체하지 않았습니다. 89C-04의 노드 재계산·필수 출력 순회·순서 셀 byte·scratch 감소 역시 미측정입니다. 새 정적 순서 셀은 구현하지 않았습니다. 시간 원표본 파일은 생성하지 않았습니다.
+
+### 지정 검증
+
+PKG에서 아래 명령을 순차 실행했습니다. npx는 offline 및 설치 확인 거부 설정으로 기존 로컬 도구만 사용했습니다. git 쓰기·설치·다른 에이전트 실행은 없었습니다.
+
+| 명령 | 결과 |
+| --- | --- |
+| `npx vitest run --project unit --project render --project react18 --reporter=dot` | 종료 1; 407파일·3,091건 통과, todo 1; render/react18의 EVENT-070 두 건씩만 실패 |
+| `npx tsc --noEmit --composite false --rootDir . -p tsconfig.json` | 종료 0 |
+| `npx eslint "src/**/*.{ts,tsx}"` | 종료 0 |
+| `node architecture/verification/07-switch/tools/check-legacy-isolation.mjs` | 종료 0; `LEGACY_ISOLATED: 1579 files checked` |

@@ -4,7 +4,6 @@ import { getCommittedDeclarationKey } from '../controls/getCommittedDeclarationK
 import type { SchemaNodeRecord, TypeMismatchRecord } from '../../../record';
 import { indexSchemaNodeWarning } from '../../../record';
 import { NON_JSON_WHOLE_VALUE, TYPE_MISMATCH } from '../../../../errors';
-import { warnDevelopmentIssue } from '../../../../helpers/warning';
 import type { SettlementContext } from '../../type';
 import { collectNonJsonPaths } from './collectNonJsonPaths';
 import { conversionCandidates } from './conversionCandidates';
@@ -116,23 +115,17 @@ export const commitSettlement = <Self extends SchemaNodeRecord<Self>>(
         typeof node.raw === 'object' && context.changedRaw.has(node.path)) {
         const innerPaths = collectNonJsonPaths(node.raw, node.path);
         if (innerPaths.length) {
-          if (!runtime.entryDepth)
-            warnDevelopmentIssue({ code: NON_JSON_WHOLE_VALUE,
+          const code = `SCHEMA_FORM_WARNING.${NON_JSON_WHOLE_VALUE}` as const;
+          const key = JSON.stringify([code, node.path]);
+          if (!runtime.warningKeys?.has(key)) {
+            (runtime.warningKeys ??= new Set()).add(key);
+            const record = {
+              level: 'warning', code, path: node.path,
               message: `Whole value at ${node.path} contains non-JSON data`,
-              details: { path: node.path, innerPaths } });
-          else {
-            const code = `SCHEMA_FORM_WARNING.${NON_JSON_WHOLE_VALUE}` as const;
-            const key = JSON.stringify([code, node.path]);
-            if (!runtime.warningKeys?.has(key)) {
-              (runtime.warningKeys ??= new Set()).add(key);
-              const record = {
-                level: 'warning', code, path: node.path,
-                message: `Whole value at ${node.path} contains non-JSON data`,
-                details: { path: node.path, innerPaths },
-              } as const;
-              indexSchemaNodeWarning(runtime, key, node.path, record);
-              runtime.chainOccurrences?.push({ kind: 'record', record });
-            }
+              details: { path: node.path, innerPaths },
+            } as const;
+            indexSchemaNodeWarning(runtime, key, node.path, record);
+            runtime.chainOccurrences?.push({ kind: 'record', record });
           }
         }
       }

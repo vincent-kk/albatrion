@@ -447,12 +447,17 @@ describe('settle commit', () => {
     const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
     const first = createTestTree({ type: 'object', options: { terminal: true } }).root;
     writeSchemaNode(first, { bad: undefined }, 'callerReplace', SetValueOption.Overwrite);
-    expect(warn.mock.calls.some((call) => String(call[0]).includes('NON_JSON_WHOLE_VALUE')))
-      .toBe(true);
+    expect(warn).not.toHaveBeenCalled();
+    expect([...first.runtime.pendingWarningRecords?.values() ?? []])
+      .toEqual([expect.objectContaining({
+        code: 'SCHEMA_FORM_WARNING.NON_JSON_WHOLE_VALUE',
+        details: { path: '', innerPaths: ['/bad'] },
+      })]);
     warn.mockClear();
     vi.stubEnv('NODE_ENV', 'production');
     const second = createTestTree({ type: 'object', options: { terminal: true } }).root;
     writeSchemaNode(second, { bad: undefined }, 'callerReplace', SetValueOption.Overwrite);
     expect(warn).not.toHaveBeenCalled();
+    expect(second.runtime.pendingWarningRecords?.size ?? 0).toBe(0);
   });
 });
