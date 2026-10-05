@@ -67,7 +67,9 @@ export const evaluateGate = <Self extends SchemaNodeRecord<Self>>(
         !('values' in condition) || !isArray(condition.values)) return false;
       const value = hasOwnProperty(input, condition.propertyName)
         ? input[condition.propertyName] : undefined;
-      return condition.values.some((candidate: unknown) => Object.is(candidate, value));
+      for (let index = 0; index < condition.values.length; index++)
+        if (condition.values[index] === value) return true;
+      return false;
     }
     if (gate.kind === 'if') {
       const runtime = context.root.runtime;
