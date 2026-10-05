@@ -1,6 +1,6 @@
 # 게이트 선택 표와 커밋 결과 재사용 설계
 
-2026-10-06. **97C-01의 조건 여섯을 반영한 구현 전 설계안**입니다. 작업 기준은 stage-07의 `12ad3e2ca`이며, 편집자 결정 97C-01·02·03은 로컬 `origin/1.0.0-beta`의 `f7a61531e`에서 읽었습니다. 독립 검증 보고서 전체(`architecture/reviews/raw-round97-gate-selection/verifier.md`)의 경로·행 근거와 반례를 아래 조건 및 시험에 반영합니다. 97C-02의 비교 결함 수정은 별도 파일 묶음이며, 이 문서 수정에는 (가)·(나)의 제품 구현이나 측정 결과가 없습니다.
+2026-10-06. **97C-01의 조건 여섯과 재확인의 잔여 넷·보충 둘을 반영한 구현 전 설계안**입니다. 이번 코드 대조 기준은 stage-07의 `31717d1f7`이며, 편집자 결정 97C-01·02·03과 재확인은 로컬 `origin/1.0.0-beta`의 `3570c2bb8`에서 읽었습니다. 독립 검증 원문 전체(`architecture/reviews/raw-round97-gate-selection/verifier.md:1-42`), 재확인 전체(`architecture/reviews/raw-round97-gate-selection/verifier-recheck.md:1-28`), 닫기 문서(`architecture/reviews/round-97-closing.md:1-26`)의 경로·행 근거를 현재 코드와 대조했습니다. 재확인의 가–라(20–23행)와 보충 둘(14·16행)은 모두 97C-01 안의 보완입니다. 97C-02의 비교 결함 수정은 별도 파일 묶음이며, 이 문서 수정에는 (가)·(나)의 제품 구현이나 측정 결과가 없습니다.
 
 ## 1. 근거와 승인 범위
 
@@ -19,7 +19,9 @@ BLUEPRINT-007의 남은 최적화 (a), BLUEPRINT-017의 변환, FRAGMENT-048의 
 
 ## 2. 현재 평가 구조와 제거할 중복
 
-`src/core/settle/utils/compute/computeNode.ts:74-135`는 직접 자식·호스트 선언·이동된 게이트를 모으고, 게이트가 있으면 `primeHost`를 실행합니다. `selectNodeSchema`는 루트에서만 호출됩니다(`computeNode.ts:47,58,119`). 루트가 아닌 호스트의 분기 게이트는 **부모의 `selectChildren`에서 owner가 부모인 채로** 평가되므로 표의 읽기 자리도 그곳입니다. 루트의 선언 선택 뒤 직접 에지를 처리하는 순서를 모든 호스트에 일반화하지 않습니다. `selectNodeSchema.ts:21`의 선언별 평가와 `selectChildren.ts:146,160`의 후보 에지 평가가 중복을 만들지만, 첫 거절·자식 계산·pending output 공표의 자리는 뒤의 투영 읽기와 배달 순서에 영향을 줍니다.
+`src/core/settle/utils/compute/computeNode.ts:74-135`는 직접 자식·호스트 선언·이동된 게이트를 모으고, 게이트가 있으면 `primeHost`를 실행합니다. `selectNodeSchema`는 루트에서만 호출됩니다(`src/core/settle/utils/compute/computeNode.ts:47,58,119`). 루트가 아닌 호스트의 같은 분기 게이트에는 **두 평가 자리**가 있습니다. 부모가 그 호스트를 고르는 `selectChildren`에서는 owner가 부모이고, 호스트 자신의 자식을 고르는 `selectChildren`에서는 owner가 호스트입니다(`src/core/settle/utils/compute/selectChildren.ts:156-167`). 레지스트리도 호스트의 자식 선언에 붙은 같은 게이트를 등록합니다(`src/core/settle/utils/gates/getGateRegistry.ts:61-73`). 게이트 identity나 읽는 호스트가 같아도 두 owner/edge 발생의 결합과 공표 자리를 합치지 않습니다.
+
+루트의 선언 선택 뒤 직접 에지를 처리하는 순서를 모든 호스트에 일반화하지 않습니다. 루트의 `src/core/settle/utils/compute/selectNodeSchema.ts:21-22`와 위 두 `selectChildren` 자리의 선언별 게이트 평가가 중복을 만들지만, 첫 거절·자식 계산·pending output 공표의 자리는 뒤의 투영 읽기와 배달 순서에 영향을 줍니다. `edgeName`은 선언 자신의 active 게이트일 때만 전달하는 현재 규칙도 유지합니다(`src/core/settle/utils/compute/selectChildren.ts:162-164`, `src/core/settle/utils/gates/getGateRegistry.ts:67-72`).
 
 진단 (나)의 B3는 이 평가 중복입니다. BF의 `fixtures/equivalent/branches.ts`에서 `/kind`는 본체에 선언되고 각 분기는 `./kind === 'kind_i'`를 사용합니다. 진단은 분기 수와 무관하게 `kind_0 → kind_4`를 쓰며, 공통 키 둘과 선택 분기의 payload 셋만 살아 있습니다. 이 사례는 (가)의 자격을 충족합니다.
 
@@ -49,11 +51,11 @@ BLUEPRINT-007의 남은 최적화 (a), BLUEPRINT-017의 변환, FRAGMENT-048의 
 
 이 OR는 목록 포함과 동등한 꼴을 컴파일러가 드러내는 경우입니다. 임의 논리식을 분배·재배열하여 이 꼴로 만들지 않습니다. `controls.discriminator`가 없는 스키마의 JSON Schema `const`·`enum`을 새로 읽어 판별식을 추측하지 않습니다.
 
-키는 해당 호스트 본체 또는 게이트 없는 정적 연언이 보장하는 직접 키이고, **호스트의 `childEntries`에서 그 이름의 엔트리가 정확히 하나**이어야 합니다. 같은 이름의 다른 종류 엔트리가 있으면 현재 한 종류만 활성이어도 표와 재사용 모두 자격을 주지 않습니다. 분기에만 선언된 명시 판별 키도 `populateNodeChildren.ts:90-100`이 만든 게이트 없는 사본이 이 보장을 충족하면 자격을 줍니다(BLUEPRINT-017·FRAGMENT-007). 사본의 선언 수와 엔트리 수는 구별하며, 임의의 조건부 분기 키를 끌어올리지 않습니다. 키 게이트·상위 조건부 존재·투영 제어를 발생 결합에서 증명하지 못하면 기존 평가를 사용합니다.
+키는 해당 호스트 본체 또는 게이트 없는 정적 연언이 보장하는 직접 키이고, **호스트의 `childEntries`에서 그 이름의 엔트리가 정확히 하나**이어야 합니다. 같은 이름의 다른 종류 엔트리가 있으면 현재 한 종류만 활성이어도 표와 재사용 모두 자격을 주지 않습니다. 분기에만 선언된 명시 판별 키도 `src/core/blueprint/utils/analyze/populateNodeChildren.ts:90-100`이 만든 게이트 없는 사본이 이 보장을 충족하면 자격을 줍니다(BLUEPRINT-017·FRAGMENT-007). 사본의 선언 수와 엔트리 수는 구별하며, 임의의 조건부 분기 키를 끌어올리지 않습니다. 키 게이트·상위 조건부 존재·투영 제어를 발생 결합에서 증명하지 못하면 기존 평가를 사용합니다.
 
-표에 넣는 **식의 `BlueprintExpression.dependencies`는 정확히 한 개**여야 합니다. 인식한 키 외의 의존성이 있으면 표를 만들지 않습니다. 경로 치환 정규식(`blueprint/utils/expressions/regex.ts:22`)은 `'a ./x'` 같은 문자열 리터럴의 경로 모양도 의존성으로 잡고 기준 평가기는 모두 읽습니다(`evaluateGate.ts:109-113`). 따라서 토큰 인식기가 키 하나로 보았다는 이유로 그 추가 읽기를 버리지 않습니다. 식이 없는 판별 기술은 `propertyName`의 단일 읽기와 위 엔트리 자격을 따로 확인합니다.
+표에 넣는 **식의 `BlueprintExpression.dependencies`는 정확히 한 개**여야 합니다. 인식한 키 외의 의존성이 있으면 표를 만들지 않습니다. 경로 치환 정규식(`src/core/blueprint/utils/expressions/regex.ts:22`)은 `'a ./x'` 같은 문자열 리터럴의 경로 모양도 의존성으로 잡고 기준 평가기는 모두 읽습니다(`src/core/settle/utils/gates/evaluateGate.ts:110-115`). 따라서 토큰 인식기가 키 하나로 보았다는 이유로 그 추가 읽기를 버리지 않습니다. 식이 없는 판별 기술은 `propertyName`의 단일 읽기와 위 엔트리 자격을 따로 확인합니다.
 
-명시 discriminator의 분기 자체 `controls.active`는 FRAGMENT-048대로 **앞 항과 뒤 항을 구별**합니다. 재귀 선언 수집의 `collectDeclarations.ts:47-60`이 같은 `gates` 목록에서 discriminator 뒤에 active를 넣습니다(154-163행은 `if` 추가 위치). 표는 앞 항만 제공합니다. 앞 항이 거짓이면 뒤 항을 호출하지 않고, 참이면 그 자리에서 뒤 항을 기존 식 평가기로 평가합니다. 뒤 항도 별도로 (나)의 자격을 얻었을 때만 결과를 재사용합니다. 작성자 식의 임의 AND를 앞 항·뒤 항으로 새로 분해하지 않습니다.
+명시 discriminator의 분기 자체 `controls.active`는 FRAGMENT-048대로 **앞 항과 뒤 항을 구별**합니다. 재귀 선언 수집의 `src/core/blueprint/utils/analyze/collectDeclarations.ts:47-60`이 같은 `gates` 목록에서 discriminator 뒤에 active를 넣습니다(154-163행은 `if` 추가 위치). 표는 앞 항만 제공합니다. 앞 항이 거짓이면 뒤 항을 호출하지 않고, 참이면 그 자리에서 뒤 항을 기존 식 평가기로 평가합니다. 뒤 항도 별도로 (나)의 자격을 얻었을 때만 결과를 재사용합니다. 작성자 식의 임의 AND를 앞 항·뒤 항으로 새로 분해하지 않습니다.
 
 ### 3.2 결과 재사용의 자격
 
@@ -87,9 +89,9 @@ BLUEPRINT-007의 남은 최적화 (a), BLUEPRINT-017의 변환, FRAGMENT-048의 
 
 값 bucket은 그 값에 해당하는 모든 분기 ID의 불변 순서 목록입니다. 한 값이 여러 목록에 속하면 모두 들어가며 첫 분기 하나를 반환하지 않습니다. bucket별 반복 회원 확인이 있으므로 한 번 만든 ID 색인을 재사용할 수 있습니다. 조회마다 `B`칸 결과 배열을 초기화하거나 Set을 새로 만들지 않습니다. 선택되지 않은 모든 표 게이트의 앞 항은 암묵적 `false`입니다.
 
-선언·직접 에지의 게이트 수집 순서, 무게이트 본체, 게이트 → 기여 선언/자식 에지, 순수 재사용 식 → 정확한 읽기 경로를 같은 분석에서 색인합니다. 재귀 참조는 템플릿 에지를 보유하고 런타임 발생을 청사진에서 펼치지 않습니다. 정적 계획은 `computeNode.ts:74-135`가 현재 만드는 **같은 gate identity 집합과 최초 수집 순서**를 내야 합니다. 매 바퀴 새로 발견되는 이동 게이트와 배열의 실제 엔트리도 같은 시점에 결합·추가하며, 정적 목록 하나로 고정하지 않습니다. `gates.length > 0`에 따른 `primeHost`·즉시 반영과 `getGateBudgetCap.ts:65-80`의 같은 바퀴 상한을 유지합니다.
+선언·직접 에지의 게이트 수집 순서, 무게이트 본체, 게이트 → 기여 선언/자식 에지, 순수 재사용 식 → 정확한 읽기 경로를 같은 분석에서 색인합니다. 재귀 참조는 템플릿 에지를 보유하고 런타임 발생을 청사진에서 펼치지 않습니다. 정적 계획은 `src/core/settle/utils/compute/computeNode.ts:74-135`가 현재 만드는 **같은 gate identity 집합과 최초 수집 순서**를 내야 합니다. 매 바퀴 새로 발견되는 이동 게이트와 배열의 실제 엔트리도 같은 시점에 결합·추가하며, 정적 목록 하나로 고정하지 않습니다. `gates.length > 0`에 따른 `primeHost`·즉시 반영과 `src/core/settle/utils/gates/getGateBudgetCap.ts:65-80`의 같은 바퀴 상한을 유지합니다.
 
-**잠복 owner 축약은 아직 적용하지 않습니다.** `getDependencyIndex.ts:69`의 페이로드 owner는 `stateDirtyNodes`·`dependencyOwnerPaths`를 거쳐 `publishStateKeys.ts:20-23`, `commitExitPolicyValues.ts:52-56` 및 배달 후보에 닿습니다. 축약 전후 이 셋의 구성원·값·관측 순서가 같다는 차등 증거를 먼저 제출해야 합니다. 증명되지 않은 축약으로 B2/B4/B5 계수나 기준 (1)을 통과시켰다고 보고하지 않습니다.
+**잠복 owner 축약은 아직 적용하지 않습니다.** `src/core/settle/utils/write/getDependencyIndex.ts:69`의 페이로드 owner는 `stateDirtyNodes`·`dependencyOwnerPaths`를 거쳐 `src/core/settle/utils/compute/publishStateKeys.ts:20-23`, `src/core/settle/utils/commit/commitExitPolicyValues.ts:52-56` 및 배달 후보에 닿습니다. 축약 전후 이 셋의 구성원·값·관측 순서가 같다는 차등 증거를 먼저 제출해야 합니다. 증명되지 않은 축약으로 B2/B4/B5 계수나 기준 (1)을 통과시켰다고 보고하지 않습니다.
 
 새 메타데이터는 내부 descriptor/계획으로 전달하고 `controls`나 공개 노드 멤버를 추가하지 않습니다. 소비자가 settle인 정보만 blueprint 진입점에 이름으로 내보냅니다. 정적 계획 안에 현재 값·활성 집합·커밋 결과를 넣지 않습니다.
 
@@ -97,11 +99,17 @@ BLUEPRINT-007의 남은 최적화 (a), BLUEPRINT-017의 변환, FRAGMENT-048의 
 
 결과 캐시의 단위는 `(runtime, occurrence identity, gate/group identity, bound host/edge, appearance generation)`입니다. `gate.hostPath`의 첫 템플릿 위치나 `schemaPath` 하나만을 키로 사용하지 않습니다. 기존 `getGateRegistry`의 `locate`/`resolveGateOccurrence`/`bindGateHostPath` 결합을 사용합니다. 공유 템플릿을 참조하는 두 호스트, 배열의 두 아이템, 재귀의 두 깊이는 각각 독립 결과를 가집니다.
 
+**표·재사용·암묵적 false 경로에서도 원래 평가 자리마다 `locate(owner, gate, edgeName)`를 유지합니다.** 현재 `src/core/settle/utils/gates/evaluateGate.ts:32-35`처럼 `appliesWhen`을 먼저 평가하고 거절되면 단락한 뒤, 실제 해당 게이트 자리에 도달했을 때 호출합니다. `src/core/settle/utils/gates/getGateRegistry.ts:86-100`의 `register`와 늦은 `add`는 관측 가능한 부작용입니다. 이때 갱신되는 발생 목록과 `byLocation`의 등록(같은 파일 142-152행)이 뒤의 `mayChangeAt` 결과를 바꾸므로, bucket을 찾았다는 이유로 생략하지 않습니다. §2의 두 owner 자리에서 각각 원래 인자로 호출하며, 후보 축약도 이 등록 효과를 누락해서는 안 됩니다. 늦은 추가가 없다는 증명은 이 설계에서 가정하지 않습니다.
+
 그룹 슬롯은 정적 계획 참조, 현재 읽기의 동일성 묶음, 현재 bucket, 마지막 실패 없는 커밋의 결과/증명 참조를 같은 객체 모양으로 보유합니다. 일시 평가와 커밋 결과를 분리합니다. 발생 수명을 구별하는 appearance identity는 읽기 유효성을 대신하는 세대 번호가 아닙니다. 수명 종료·노드 교체·load/reset/재대조·재인덱싱에서는 해제 또는 재결합합니다.
 
-표와 재사용의 유효성은 **원래 평가 자리마다 고정 개수의 참조/미계산 상태를 O(1)로 비교**하여 판정합니다. 판별 게이트는 기준과 같은 자리에서 먼저 `flushPendingOutput(host)`를 호출한 뒤 `host.emit`, `extras`, `projectedHost`의 참조를 견줍니다. 여기의 `projectedHost`는 기준 reader가 그 자리에서 노출하는 호스트 투영 값이며, `evaluateGate` 안의 extras 노출 여부 boolean과 구별합니다. 식 게이트의 각 자격 키는 현재 구조상의 노드 identity, 그 `emit` 참조, 미계산 구간을 견줍니다. 미계산은 `changedRaw`에 있는데 `changedNodes`에는 아직 없는 구간(`readProjectedValue.ts:13-17`)을 구별합니다. 하나라도 다르거나 투영 노출의 동일성을 증명하지 못하면 기존 reader로 **다시 읽고** 묶음을 갱신합니다. 여러 읽기의 순수 식은 키별 O(1) 검사이며 전체는 O(R)입니다. 불확실한 ancestor/발생에서는 기존 평가로 되돌립니다.
+판별 게이트의 동일성 묶음은 **현재 구조에서 다시 찾은 `hostNode`, 그 `emit`, 호스트 자체의 미계산 여부, `extras`, 호스트 투영 값 `projectedHostValue`, `extrasExposed` boolean**입니다. `hostNode`는 자리마다 `locate`가 준 `hostPath`를 루트부터 현재 `structure`를 따라 해석해 얻습니다(`src/core/settle/utils/gates/evaluateGate.ts:40-46`). 붙잡아 둔 옛 호스트 참조나 등록된 경로 하나를 현재 노드의 증거로 삼지 않습니다. 호스트가 있을 때 미계산은 `changedRaw.has(hostNode.path) && !changedNodes.has(hostNode)`이며, emit 자체가 undefined인 경우와 함께 기준 reader의 노출 의미를 따릅니다(`src/core/settle/utils/gates/readProjectedValue.ts:13-17`). `extrasExposed`는 기준 평가기의 `projectedHost`라는 boolean과 같은 뜻이고, `projectedHostValue`라는 값 참조와 구별합니다. 현재 호스트와 조상의 branch/raw 조건 및 루트 호스트 투영 값에 따른 노출 여부를 보존합니다(`src/core/settle/utils/gates/evaluateGate.ts:48-57`).
 
-같은 원본·같은 자식 노드라도 읽기 값이 달라지는 모든 경계를 덮어야 합니다: `primeHost.ts:50-58`의 기준 스키마 복원과 분기 overlay, `omitEmpty`에 따른 누락/노출, 루트 `selectNodeSchema`의 유효 스키마 변경, 미계산 구간 시작/끝, `readProjectedValue.ts:36-40`의 wrong-kind 조상, 같은 이름·다른 종류 엔트리의 선행 활성(`selectChildren.ts:197-209`). wrong-kind/누락을 통과해 옛 노드의 emit을 읽지 않으며 extras 노출도 재확인합니다. 이 의미를 고정 개수의 동일성 검사로 보장할 수 없는 읽기는 자격에서 제외합니다. 정적 read-path 색인이나 `changedRaw`만으로 투영 유효성을 대신하지 않습니다.
+**바퀴에 들어갈 때 결합한 읽기 경로별로 조상을 한 번 검증하고, 하나라도 wrong-kind·누락·불확실한 노출에 걸리면 그 읽기의 표·재사용을 끄고 기존 평가로 되돌립니다.** 기준 reader의 조상 검사와 필요한 공표는 `src/core/settle/utils/gates/readProjectedValue.ts:34-48`의 경로 순회이므로 O(1)이 아닙니다. 사전 검증은 값을 미리 읽거나 공표하지 않고 빠른 경로의 자격만 정하며, 실제 공표는 원래 평가 자리에 남깁니다. 바퀴 중 조상의 구조·종류·raw·유효 스키마·투영 노출이 바뀌지 않음을 증명하거나 해당 변경 경계에서 검증을 폐기할 수 있어야 합니다. 새 발생이나 조상 변경으로 그 증거가 없어지면 그 바퀴의 남은 해당 읽기도 기존 평가를 사용하고 다음 바퀴 진입에서 다시 검증합니다. 기존 평가가 조상 공표 후 읽지 않기로 하는 의미를 오래된 자식의 emit으로 대체하지 않습니다.
+
+자격을 통과한 판별 읽기는 기준과 같은 자리의 `flushPendingOutput` 뒤 위 묶음을 비교합니다. 하나라도 다르면 기존 reader로 **다시 읽고** 현재 노드·미계산·extras 노출을 포함한 묶음을 갱신합니다. 호스트 교체 후 조상 증명이나 읽기 의미를 보장할 수 없으면 묶음 갱신으로 계속 진행하지 않고 기존 평가로 되돌립니다. 식 게이트의 각 자격 키도 현재 구조에서 찾은 노드 identity·`emit`·미계산 구간을 비교하며 같은 조상 규칙을 적용합니다. 여러 읽기의 순수 식은 키별 묶음 비교가 O(1), R개 묶음 비교가 O(R)입니다. **이 복잡도는 묶음의 비교만을 뜻합니다.** 호스트 재탐색과 조상 검증은 경로 깊이 D에 비례하므로 별도 계수·비용이며, 전체 읽기나 전체 평가 자리가 O(1)이라고 주장하지 않습니다.
+
+같은 원본·같은 자식 노드라도 읽기 값이 달라지는 모든 경계를 덮어야 합니다: `src/core/settle/utils/compute/primeHost.ts:50-58`의 기준 스키마 복원과 분기 overlay, `omitEmpty`에 따른 누락/노출, 루트 `selectNodeSchema`의 유효 스키마 변경, 미계산 구간 시작/끝, `src/core/settle/utils/gates/readProjectedValue.ts:36-40`의 wrong-kind 조상, 같은 이름·다른 종류 엔트리의 선행 활성(`src/core/settle/utils/compute/selectChildren.ts:197-209`). 조상 자격과 현재 묶음으로 이 의미를 보장할 수 없는 읽기는 기존 평가를 사용합니다. 정적 read-path 색인이나 `changedRaw`만으로 투영 유효성을 대신하지 않습니다.
 
 read-path 색인은 형상 dirty 판정(§6.2)과 정착 중 읽기 접촉 기록을 각각 관리합니다. 두 목적의 의미를 합치지 않습니다. 실제 평가 자리에 도달하면 위 동일성 검사를 항상 수행하며, 단순한 `/other` 잎 입력처럼 기준도 바퀴를 열지 않는 경우에는 자리에 도달하지 않아 게이트별 검사도 0입니다. 슬롯별 dependencies를 매 입력에 전수 순회하지 않고 교차한 읽기·그룹만 접촉 표시하며, 영향을 받지 않은 커밋 descriptor는 공유합니다.
 
@@ -109,27 +117,29 @@ read-path 색인은 형상 dirty 판정(§6.2)과 정착 중 읽기 접촉 기�
 
 **결과 슬롯은 실패가 하나도 없는 커밋에서만 저장합니다.** 표현식/가드 실패·공유 충돌·예산 초과·`restoreSourceB` 복구·degraded 커밋에서는 성공한 다른 게이트의 일시 결과도 새 성공 슬롯으로 저장하지 않습니다. 마지막 평가 뒤 읽기가 건드려졌으면 해당 슬롯을 저장하지 않고, 다시 평가하여 이후 접촉이 없다는 증거가 있는 슬롯만 저장합니다. 커밋에서 변경된 자격 슬롯만 갱신하며 모든 B개 결과를 복사하지 않습니다.
 
+**슬롯의 예외 여부는 평가 전후의 `(context.gateThrowVersion ?? 0)`을 비교하여 판정합니다.** 값이 증가한 호출의 false는 예외 결과이며 성공한 false로 저장하지 않습니다. 현재 catch는 예외마다 version을 올리지만 반복 예외와 `mountingGuardPass`의 예외는 새 실패를 추가하지 않습니다(`src/core/settle/utils/gates/evaluateGate.ts:119-128,142-143`). `failures`의 길이나 증가 여부로 슬롯의 성공을 판정하지 않습니다. 정착 시작 시 version도 보유하여 커밋까지 증가했다면 실패 없는 커밋 자격을 거절하므로, 실패 목록에 새 항목이 없어도 그 정착의 다른 일시 결과를 저장하지 않습니다. 이후 호출이 성공해도 이미 발생한 예외를 지우지 않으며, version과 기존 throwing exit 처리는 그대로 유지합니다.
+
 ## 5. 바퀴의 실행과 전수 평가와의 동등성
 
 ### 5.1 같은 위치에서 읽고 같은 순서로 적용
 
-`primeHost`는 기존 무게이트 기준을 만듭니다. 초기 dirty 자식 계산 뒤 첫 표 게이트의 **원래 평가 위치**에서 키를 읽고 bucket을 찾습니다. 루트는 `selectNodeSchema`의 해당 선언 자리, 루트가 아닌 호스트는 부모의 `selectChildren`의 해당 선언 자리입니다. 그 자리의 결합된 host/edge/L과 공표를 유지하며, 모든 그룹을 바퀴 앞에서 미리 읽지 않습니다.
+`primeHost`는 기존 무게이트 기준을 만듭니다. 초기 dirty 자식 계산 뒤, §4.2의 조상 자격을 검증하고 첫 표 게이트의 **원래 평가 위치**에서 키를 읽고 bucket을 찾습니다. 루트는 `selectNodeSchema`의 해당 선언 자리이고, 비루트 호스트는 부모의 `selectChildren`에서 owner가 부모인 자리와 호스트 자신의 `selectChildren`에서 owner가 호스트인 자리를 모두 유지합니다. 각 자리의 기존 `appliesWhen` 단락 뒤 `locate`를 호출하고 그 결합의 host/edge/L·현재 호스트 재탐색·미계산·extras 노출·공표를 유지합니다. 모든 그룹을 바퀴 앞에서 미리 읽지 않습니다.
 
 active 식의 키는 기존 `resolveDependencyPath`와 `readProjectedValue`가 읽는 바로 그 투영에서 가져옵니다. discriminator 기술의 키는 기존 평가기가 만드는 host 입력과 projected extras 결합의 의미를 공유한 판별 키 reader에서 가져옵니다. `node.raw`, 최초 템플릿 값, 직전 emit으로 대체하지 않습니다. 정상적인 본체 키에서는 두 읽기가 같은 값이지만, null·wrong-kind host·extras·미공표 투영에서는 그 사실을 가정하지 않습니다. 같은 읽기 의미를 증명할 수 없는 발생은 표 경로를 사용하지 않습니다.
 
-루트의 호스트 선언 → 직접 에지 순서와 부모가 비루트 호스트를 선택하는 자리, 각 선언의 기존 `gates` 순서를 유지합니다. 앞선 gate의 거절, `appliesWhen`, 상속 gate, 분기 뒤 항의 short circuit도 그대로입니다. 자식의 진입/퇴장·계산과 pending output 공표를 기존 자리에서 수행하여 뒤 게이트가 앞의 즉시 반영을 읽게 합니다. 정적 bucket 순서는 값 입력 순서가 아니라 기존 declaration/entry 전순서입니다.
+루트의 호스트 선언 → 직접 에지 순서, 비루트 호스트의 부모 선택 자리와 호스트 자신의 자식 선택 자리, 각 선언의 기존 `gates` 순서를 유지합니다. 앞선 gate의 거절, `appliesWhen`, 상속 gate, 분기 뒤 항의 short circuit도 그대로입니다. 자식의 진입/퇴장·계산과 pending output 공표를 기존 자리에서 수행하여 뒤 게이트가 앞의 즉시 반영을 읽게 합니다. 정적 bucket 순서는 값 입력 순서가 아니라 기존 declaration/entry 전순서입니다.
 
 같은 바퀴와 후속 안정 확인 바퀴에서도 각 평가 자리의 동일성 검사를 거쳐 bucket/결과를 공유합니다. 참조나 미계산 구간이 달라지면 다시 읽으며, 그 값도 달라지면 bucket을 다시 조회합니다. 참조가 달라져도 다시 읽은 키 값이 같은 경우에는 그 값의 불변 bucket을 공유할 수 있습니다. §6.1의 lookup 1은 키 값이 한 번 바뀌는 고정 fixture의 목표이며, 기본값·derived·overlay가 키 값을 다시 바꾸는 실행의 조회를 숨기지 않습니다.
 
-B4는 bound-read 계획 자료를 공유할 수 있어도 **판별 게이트 위치마다의 flush 호출과 모든 기존 공표 위치를 유지**합니다(`flushPendingGateReads.ts:80,94`, `readProjectedValue.ts:61`). 공표를 앞당기거나 뒤로 미루거나 후속 자리의 호출을 합치지 않습니다. `updateOutput.ts:42-53`의 `changedNodes` 삽입 순서는 `commitGlobalState.ts:28`, `markCommitDeliveries.ts:101-103`, `markSchemaNodeEvent.ts:15-26`의 배달 방문으로 이어지므로 공표와 두 순서를 함께 비교합니다(EVENT-005). opaque guard와 recursive read plan도 기존 eager 공표를 사용합니다.
+B4는 bound-read 계획 자료를 공유할 수 있어도 **판별 게이트 위치마다의 flush 호출과 모든 기존 공표 위치를 유지**합니다(`src/core/settle/utils/gates/flushPendingGateReads.ts:80,94`, `src/core/settle/utils/gates/readProjectedValue.ts:61`). 공표를 앞당기거나 뒤로 미루거나 후속 자리의 호출을 합치지 않습니다. `src/core/settle/utils/compute/updateOutput.ts:42-53`의 `changedNodes` 삽입 순서는 `src/core/settle/utils/commit/commitGlobalState.ts:28`, `src/core/settle/utils/commit/markCommitDeliveries.ts:101-103`, `src/core/record/utils/markSchemaNodeEvent.ts:15-26`의 배달 방문으로 이어지므로 공표와 두 순서를 함께 비교합니다(EVENT-005). opaque guard와 recursive read plan도 기존 eager 공표를 사용합니다.
 
 ### 5.2 귀납 논증
 
 기준 실행 F는 표·재사용을 모두 끄고 기존 순서로 모든 필요한 게이트 함수를 평가하는 실행입니다. 최적화 실행 O도 같은 무게이트 출발점에서 시작합니다.
 
-각 원래 gate 평가 직전에 F와 O의 현재 투영·형상·pending 입력이 같다고 가정합니다. fallback은 같은 함수를 같은 입력으로 호출합니다. 표 앞 항은 그 자리의 flush와 동일성 검사 후 읽은 키를 `===`로 조회하므로 F의 비교 결과와 같습니다. 커밋 결과 재사용은 실패 없는 저장과 현재 동일성 검사 및 완전한 순수 읽기 증명으로 같은 boolean을 제공합니다. `appliesWhen`과 뒤 항은 이 앞 결과를 같은 순서로 소비합니다. 이후 같은 진입·퇴장·계산·퇴장 표시 정리를 즉시 적용하므로 다음 평가 직전의 상태도 같습니다. 원본이 그대로인 스키마/투영 변화도 다시 읽는 조건과 §6.2의 dirty 동치가 이 귀납 가정을 유지합니다.
+각 원래 gate 평가 직전에 F와 O의 현재 투영·형상·pending 입력이 같다고 가정합니다. 같은 `appliesWhen` 단락과 자리별 `locate`가 같은 발생 등록을 남깁니다. fallback은 같은 함수를 같은 입력으로 호출합니다. 표 앞 항은 조상 자격과 그 자리의 flush·현재 호스트를 포함한 동일성 검사 후 읽은 키를 `===`로 조회하므로 F의 비교 결과와 같습니다. 커밋 결과 재사용은 version 증가가 없는 실패 없는 저장과 현재 동일성 검사 및 완전한 순수 읽기 증명으로 같은 boolean을 제공합니다. 뒤 항은 이 앞 결과를 같은 순서로 소비합니다. 이후 같은 진입·퇴장·계산·퇴장 표시 정리를 즉시 적용하므로 다음 평가 직전의 상태도 같습니다. 원본이 그대로인 스키마/투영 변화도 다시 읽는 조건과 §6.2의 dirty 동치가 이 귀납 가정을 유지합니다.
 
-따라서 각 바퀴의 `schemaChanged/changed/outputChanged`가 같고 안정 확인, 호스트 예산, 파생·전이 라운드의 쓰기와 수렴도 같습니다. 커밋 결과·개정·배달·오류의 드러남 역시 같습니다. 표 lookup 횟수 감소를 이유로 바퀴나 안정 확인 자체를 삭제하지 않습니다. 예외 기록은 순수 성공 결과 캐시와 별개입니다. `EXPRESSION_THREW`가 생긴 평가 결과는 저장하지 않아 이후 호출의 `gateThrowVersion`과 throwing exit 처리가 유지됩니다.
+따라서 각 바퀴의 `schemaChanged/changed/outputChanged`가 같고 안정 확인, 호스트 예산, 파생·전이 라운드의 쓰기와 수렴도 같습니다. 커밋 결과·개정·배달·오류의 드러남 역시 같습니다. 표 lookup 횟수 감소를 이유로 바퀴나 안정 확인 자체를 삭제하지 않습니다. 예외 기록은 순수 성공 결과 캐시와 별개입니다. `gateThrowVersion`이 증가한 평가 결과는 새 실패 기록의 유무와 관계없이 저장하지 않아 이후 호출의 version과 throwing exit 처리가 유지됩니다.
 
 ### 5.3 여러 분기, 무일치, 공유 충돌
 
@@ -164,6 +174,8 @@ BF와 같은 본체 `/kind`, 분기별 payload 셋, 한 값에 분기 하나, �
 
 여러 호스트/그룹에서는 lookup 수가 `Σ(조회가 필요한 읽기 세대 수)`이고, 평가 수는 `fallback의 원래 호출 + 실제 매칭 분기의 비재사용 뒤 항 호출`입니다. 이것이 중첩 union·재귀 발생의 비용 모델입니다. 실제로 바뀐 호스트·깊이·매칭 수를 늘리는 시험을 “같은 전환”의 B 축과 섞지 않습니다.
 
+위 표의 키 값 읽기와 lookup은 §4.2의 자리별 `locate`·현재 호스트 재탐색·미계산/노출 검사·바퀴 진입의 조상 검증 횟수를 대신하지 않습니다. 묶음이 같아 키 값을 다시 읽지 않는 자리도 이 작업은 별도로 셉니다. 경로 깊이 D는 위 B 축 fixture에서 고정하고, 중첩/재귀 행에서는 D에 따른 비용도 기록합니다. 필요한 등록이나 경로 순회가 B에 비례해 남으면 lookup 목표를 달성해도 전체 기준 (1)은 미충족입니다.
+
 ### 6.2 U19의 고정된 무관한 키 입력
 
 97C-03의 **판정 행**은 조각 수 N만 5/10/20/40으로 늘립니다. U19는 N개의 활성 조각, 그 게이트가 읽는 무게이트 본체 키, 별도의 본체 `/other` 입력으로 구성하고 조각마다 같은 종류의 공유 필드·같은 overlay를 사용합니다. 실제 live 필드 폭과 입력·출력 크기는 네 행 모두 고정하며, 필드 수와 입력/출력 바이트 수를 행마다 함께 기록해 분모를 확인합니다. 같은 길이의 `/other` 값 전환을 사용합니다. 첫 로드의 N개 평가·색인 준비는 갱신 계수에서 제외하되 준비·메모리 비용에 포함합니다.
@@ -179,10 +191,10 @@ BF와 같은 본체 `/kind`, 분기별 payload 셋, 한 값에 분기 하나, �
 
 현재 `mayChangeAt`은 레지스트리 전체가 아니라 해당 위치의 발생 목록을 순회하고, `mayChangeOwnDeclarationAt`은 own 목록을 순회합니다. 그 목록도 분기 수에 선형일 수 있습니다. U19는 게이트 재평가·게이트별 재사용 검사·무관한 분기 기여 방문이 **모두 0**이어야 하며, registry 발생 확인·N개 결과 복사로 비용을 옮겨도 통과하지 않습니다. read-path 색인은 다음의 현재 `readsChanged` 의미를 정확히 보존해야 합니다.
 
-- `changedRaw`가 비어 있으면 현재처럼 거짓입니다. 비어 있지 않으면 루트 읽기 `''`는 항상 참이며 `'@'`는 무시합니다. 읽기와 changed 경로가 같거나 조상/자손으로 교차하면 양방향 모두 참입니다(`getGateRegistry.ts:172-186`).
+- `changedRaw`가 비어 있으면 현재처럼 거짓입니다. 비어 있지 않으면 루트 읽기 `''`는 항상 참이며 `'@'`는 무시합니다. 읽기와 changed 경로가 같거나 조상/자손으로 교차하면 양방향 모두 참입니다(`src/core/settle/utils/gates/getGateRegistry.ts:172-186`).
 - 판별 감시 경로는 호스트 전체가 아니라 `${hostPath}/${escapeSegment(propertyName)}`입니다(159-163행). opaque `if`·미인식 식을 포함해 현재 모든 발생의 감시 경로를 색인합니다. 표/재사용 자격만으로 dirty 대상을 줄이지 않습니다.
 - own 발생과 edge 발생 및 `evaluationHostPath`를 현재대로 구별합니다(121-126행). `locate`가 뒤늦게 추가한 발생도 즉시 현재 위치 조회에 포함하되 own 목록의 소속을 임의로 바꾸지 않습니다(89-100행). 제거·경로 이동·새 배열 발생도 같은 생명주기로 반영합니다.
-- **매 `registerRecalculation` 호출마다** 누적 `changedRaw`와 그때의 누적 `dirtyPaths`를 질의합니다(35-49행). dirty 경로의 `mayChangeAt`이 참이면 그 경로를, 비루트의 own 판정이 참이면 부모 경로를 `shapeDirtyPaths`에 더합니다. 전이의 반복 호출을 새 변화분만으로 처리하지 않습니다. `restoreSourceB.ts:37-38`의 집합 재설정도 따라갑니다.
+- **매 `registerRecalculation` 호출마다** 누적 `changedRaw`와 그때의 누적 `dirtyPaths`를 질의합니다(`src/core/settle/utils/write/registerRecalculation.ts:35-49`). dirty 경로의 `mayChangeAt`이 참이면 그 경로를, 비루트의 own 판정이 참이면 부모 경로를 `shapeDirtyPaths`에 더합니다. 전이의 반복 호출을 새 변화분만으로 처리하지 않습니다. `src/core/settle/utils/transition/restoreSourceB.ts:37-38`의 집합 재설정도 따라갑니다.
 
 시험은 모든 재계산 등록 직후, 같은 입력 이력의 전수 기준과 색인 경로의 **`shapeDirtyPaths` 집합을 그 자리에서 비교**합니다. 루트·조상/자손·`@`·판별 watch·own/edge·늦은 locate·누적 반복 호출·복구 후 재등록을 각각 덮습니다. 조금이라도 더 좁은 판정으로 기준 실행의 바퀴를 건너뛰면 SETTLE-044 위반으로 실패시킵니다. 이 dirty 판정은 §4.2의 투영 동일성 검사 및 마지막 평가 이후 접촉 기록과 별개의 계약입니다.
 
@@ -195,14 +207,14 @@ BF와 같은 본체 `/kind`, 분기별 payload 셋, 한 값에 분기 하나, �
 | 진단 항목 | 반드시 함께 제거할 선형 작업 | 보존할 순서/의미 |
 | --- | --- | --- |
 | B2 | selected IDs를 한 번 만들고 병합·커밋에 공유; controls 목적별 정적 기여 색인에서 실제 선택된 ID만 조회 | node/fragment/children 우선순위, 이탈의 committed fallback, 상대 host |
-| B4 | 같은 bound-read 계획의 자료를 공유하고 유효한 bucket을 재사용; 위치별 flush·O(1) 동일성 검사는 보존 | 모든 공표 위치, `changedNodes` 삽입·배달 방문 순서, recursive/opaque fallback |
+| B4 | 같은 bound-read 계획의 자료를 공유하고 유효한 bucket을 재사용; 자리별 locate·현재 호스트 재탐색·flush·묶음 비교와 바퀴 진입의 조상 검증을 보존 | 늦은 등록과 뒤의 mayChangeAt, 미계산·extras 노출, 모든 공표 위치, `changedNodes` 삽입·배달 방문 순서, 조상 자격 실패·recursive/opaque fallback |
 | B5 | 게이트 → root declaration/child contribution/무게이트 baseline 색인; bucket + prior/live/입력/latent + `pendingExits`·`throwingGateExits` + fallback 후보 | authored 에지 전순서, 경로와 종류, 없음/null/extras, 실제 퇴장·표시 정리, 공유 이름 충돌 |
 
 `computeNode`의 매번 `3B+2` 정적 후보 수집은 §4.1의 같은 게이트 집합·순서를 내는 계획 참조로 대체하고, 동적인 배열 엔트리·이동 게이트 발견과 상한 갱신을 유지합니다. `primeHost`는 같은 무게이트 기준을 만듭니다. `selectChildren`은 bucket 기여, 실제 prior/live 에지, 분배된 입력/latent 키, 같은 정착 앞 바퀴의 **`pendingExits` 키(경로·종류)**와 **`throwingGateExits` 구성원**, fallback 에지를 기존 순서로 합칩니다. 거짓 앞 항의 엔트리도 이 후보에 해당하면 퇴장 표시 정리를 실행합니다. generic 식/opaque if의 필요한 기존 순회도 유지합니다. 잠복 owner 축약은 §4.1의 상태 키·나감 정책·배달 후보 동치 증명 전에는 하지 않습니다.
 
 이 순서 합치기는 정적 ordinal을 가진 이미 정렬된 목록들의 cursor 병합으로 합니다. 갱신 때 전체 후보를 생성한 후 sort/filter하지 않습니다. fallback이 읽는 조건부 키의 즉시 변화가 있는 구간을 뛰어넘지 않으며, 실제 live·latent·입력·퇴장 대기·던짐 표시 후보를 빠짐없이 포함합니다. 무일치 전환에서도 앞 바퀴에 나간 노드의 퇴장 정책과 latent 보관을 처리합니다.
 
-검증 보고서 발견 1의 반례를 예정 시험으로 고정합니다. 페이로드의 게이트가 `[판별 앞 항, 던지는 일반 active]`일 때 첫 바퀴는 앞 항 참·뒤 항 예외로 노드를 퇴장시킵니다. 전이 라운드의 derived가 kind를 바꾸어 앞 항이 거짓이 되면 prior에는 노드가 없고 `pendingExits`에만 남습니다. 기준 `selectChildren.ts:172-180`은 거짓 엔트리에서도 `throwingGateExits` 표시를 지우므로 최적화도 지워야 합니다. 00·11을 포함한 네 모드에서 이 표시와 `finalizeExits.ts:73-78`의 퇴장 정책 결과를 비교합니다.
+검증 보고서 발견 1의 반례를 예정 시험으로 고정합니다. 페이로드의 게이트가 `[판별 앞 항, 던지는 일반 active]`일 때 첫 바퀴는 앞 항 참·뒤 항 예외로 노드를 퇴장시킵니다. 전이 라운드의 derived가 kind를 바꾸어 앞 항이 거짓이 되면 prior에는 노드가 없고 `pendingExits`에만 남습니다. 기준 `src/core/settle/utils/compute/selectChildren.ts:172-180`은 거짓 엔트리에서도 `throwingGateExits` 표시를 지우므로 최적화도 지워야 합니다. 00·11을 포함한 네 모드에서 이 표시와 `src/core/settle/utils/transition/finalizeExits.ts:73-78`의 퇴장 정책 결과를 비교합니다.
 
 진단의 control 선언 `3B+12`, parent 선언 `9B+9`, pending occurrence `3B−13`, dirtyChildren의 무관한 잠복 owner 등도 이전 방식으로 남아 있으면 전체 기준 (1)은 미충족입니다. 위 계수는 **승인 후 구현이 충족해야 할 산술 목표**이고, 현재 통과 보고가 아닙니다. 각 위치의 실제 loop counter와 전체 전환 시간으로 확인한 뒤에만 전체 판정합니다. 시간 계측은 현재 측정 중인 다른 작업과 겹치지 않는 후속 작업으로 남깁니다.
 
@@ -218,9 +230,9 @@ BF와 같은 본체 `/kind`, 분기별 payload 셋, 한 값에 분기 하나, �
 | `src/core/blueprint/utils/analyze/collectDeclarations.ts` / `collectDeclarations` | 변환 앞 항/자체 active 뒤 항의 대응과 static body 소유 정보를 전달 | 기존 키워드/분기 루프에 기록을 결합; 재귀 복제 없음 |
 | `src/core/blueprint/utils/analyze/buildGateSelectionPlan.ts` / `buildGateSelectionPlan` (신설) | 단일 비교 그룹/bucket, 교차 완료 values, 유일 엔트리·단일 의존성 증명, baseline, gate→기여·읽기→그룹 | 템플릿별 declaration/gate를 한 번 `for`; 리터럴 소속 에지마다 한 번 등록; 순서 cursor 병합 |
 | `src/core/blueprint/blueprint.ts`, `type.ts`, `index.ts` | 동결 전 계획 생성, 내부 descriptor 계약과 이름 export | 기능 없는 청사진은 공유 빈 계획; 생성 후 매 갱신 재작성 없음 |
-| `src/core/settle/utils/gates/getGateRegistry.ts` / `register`, `locate`, `mayChangeAt`, `mayChangeOwnDeclarationAt`, `remove` | 그룹의 발생 결합과 역읽기 색인; 수명/이동 무효화 | 최초 결합 한 번; 갱신은 changed path trie cursor만 `while`; actual affected 그룹만 `for...of` |
-| `src/core/settle/utils/gates/readGateSelection.ts` / `readGateSelection` (신설) | 원래 평가 자리의 flush·참조/미계산 동일성 검사, 차이 시 재읽기, bucket/커밋 descriptor 반환 | 키별 O(1) 검사·필요한 lookup; 매 호출 B 루프/배열 없음 |
-| `src/core/settle/utils/gates/evaluateGate.ts` / `evaluateGate` | 부모 적용 조건 후 같은 자리에 표/성공 결과 경로; fallback try/catch 유지 | 부모 gate는 인덱스 `for`와 첫 거절 `break`; 표 대상 1회 조회 공유; fallback reads 한 `for` |
+| `src/core/settle/utils/gates/getGateRegistry.ts` / `register`, `locate`, `mayChangeAt`, `mayChangeOwnDeclarationAt`, `remove` | 그룹의 발생 결합과 역읽기 색인; 자리별 locate·늦은 등록·수명/이동 무효화 | 원래 자리마다 locate 유지; 최초/늦은 결합 비용 별도 계수; dirty 질의는 changed path trie cursor `while`과 actual affected 그룹 `for...of` |
+| `src/core/settle/utils/gates/readGateSelection.ts` / `readGateSelection` (신설) | 현재 호스트 재탐색·미계산·extras 노출을 포함한 묶음과 기존 공표, 차이 시 재읽기; 조상 자격 실패 시 기존 평가 | 키별 묶음 비교 O(1); 호스트 재탐색 O(D)와 바퀴 진입의 경로별 조상 검증 별도; 필요한 lookup |
+| `src/core/settle/utils/gates/evaluateGate.ts` / `evaluateGate` | 부모 적용 조건·자리별 locate 후 같은 자리에 표/성공 결과 경로; fallback try/catch와 gateThrowVersion 유지 | 부모 gate는 인덱스 `for`와 첫 거절 `break`; 표 조회 공유 뒤에도 각 자리의 등록 유지; fallback reads 한 `for` |
 | `src/core/settle/utils/write/registerRecalculation.ts` / `registerRecalculation`, `getDependencyIndex.ts` / `affected` | 매 호출 누적 집합의 `readsChanged` 동치 질의와 접촉 기록; owner 축약은 세 결과의 동치 증명 후 별도 적용 | changed path/affected owner cursor; 단순 delta 처리 금지; owner 비용이 남으면 미충족 기록 |
 | `src/core/settle/utils/compute/computeNode.ts` / `computeNode` | 정적 gate 계획 참조와 동적 배열/이동 발견; 같은 gate 집합·순서·baseline·pass cap 유지 | 정적 후보 재수집 제거; round `for` 및 동적 추가·상한 재계산 유지 |
 | `src/core/settle/utils/compute/primeHost.ts` / `primeHost` | 정적 무게이트 baseline 목록 사용 | baseline 에지 하나당 한 인덱스 `for`; 전체 분기 후보 검사 없음 |
@@ -229,19 +241,24 @@ BF와 같은 본체 `/kind`, 분기별 payload 셋, 한 값에 분기 하나, �
 | `src/core/settle/utils/gates/flushPendingGateReads.ts` / `flushPendingGateReads` | 그룹 bound-read 계획 자료 공유; 공표 위치와 호출 순서 유지 | read의 인덱스 `for`; 판별 위치마다 flush 유지, recursive/opaque 기존 공표 |
 | `src/core/settle/utils/controls/getControlLayers.ts` / `getControlLayers` | B2의 control 목적별 contribution 색인을 소비 | selected contribution `for` 한 번; 같은 선언 배열을 두 번 map하지 않음 |
 | `src/core/settle/utils/compute/updateOutput.ts` 및 쓰기·복구·경로 변경 경계 | 원래 공표·changedNodes 순서 유지, 마지막 평가 이후 읽기 접촉 기록 | 기존 changed 노드/경로 방문에 결합; 세대 push·전체 결과 캐시 순회 없음 |
-| `src/core/settle/utils/commit/commitSettlement.ts` / `commitSettlement`, `src/core/record/type.ts`, `src/core/settle/type.ts` | 실패 없는 커밋에서 마지막 평가 이후 미접촉 슬롯만 저장; 발생 수명 계약 | 변경 자격 슬롯 `for...of`; 모든 B 결과 복사 없음; branchless 슬롯 할당 없음 |
+| `src/core/settle/utils/commit/commitSettlement.ts` / `commitSettlement`, `src/core/record/type.ts`, `src/core/settle/type.ts` | gateThrowVersion으로 평가별/정착 전체 예외를 판정하고 실패 없는 커밋의 미접촉 슬롯만 저장; 발생 수명 계약 | version은 평가 전후와 정착 시작/커밋의 고정 비교; 변경 자격 슬롯 `for...of`; 모든 B 결과 복사 없음; branchless 슬롯 할당 없음 |
 | `src/core/blueprint/__tests__/blueprint.gate-selection.test.ts`, `src/core/settle/__tests__/settle.gate-selection.test.ts`, `settle.gate-reuse.test.ts`, `settle.gate-selection-order.test.ts`, `settle.gate-selection-counts.test.ts` (신설) | 인식/정적 오류, 네 모드 차등, 무효화/수명, 즉시 순서/반례, B 축 계수를 owner별로 분리 | 작은 고정 fixture와 정적 parameter rows; 파일별 case 상한 유지; 시간 측정과 분리 |
+| `src/core/settle/__tests__/helpers/readProjectedValueWithoutPublication.ts` / `readProjectedValueWithoutPublication` (신설) | 그림자 전용 무공표 reader; 원래 읽기 경로의 pendingOutputs 부재 단언 후 투영 의미를 독립 재현 | 진단에서만 경로 순회; flush·locate·실제 상태 변경 없음; 그림자를 끈 네 모드 비교도 별도 실행 |
 | `src/core/blueprint/DETAIL.md`, `src/core/settle/DETAIL.md`, `src/core/record/DETAIL.md` | 인식/되돌림·비교 의미·발생 수명·비용·수용 기준 | 문서 변경; 원장 반영은 관리자 승인 절차 |
 
 신설 인식 보조는 해당 컴파일러 organ 아래, 계획 빌더는 analyze organ 아래, 발생 조회 보조는 settle gates organ 아래에 둡니다. 함수 하나당 내보내는 역할 하나를 지키고, 배열은 인덱스 `for/while`, Map/Set은 필요할 때 `for...of`를 사용합니다. bucket 회원 색인은 반복 조회를 재사용할 때만 만들며 단일 조회를 위해 Set을 만들지 않습니다. 기존 원자 판정·캐시 identity·서브트리 독립 경계를 유지합니다.
 
 ## 8. 차등 시험과 적용 전후 확인 계획
 
-실행하지 않은 계획입니다. 제품 공개 옵션을 추가하지 않고 내부 시험 장치에 `selectionTable`/`reuseCommittedResults` 두 스위치를 둡니다. **00이 기존 전수 평가 기준**이고 10·01·11을 각각 00과 비교합니다. 00은 bucket/group 결과를 읽지 않고 기존 평가 위치에서 원래 `evaluateGate`를 호출합니다. 계획 자체를 잘못 만든 공통 버그가 양쪽을 같이 통과시키지 않도록 00에는 기존 후보 열거 경로도 유지합니다.
+실행하지 않은 계획입니다. 제품 공개 옵션을 추가하지 않고 내부 시험 장치에 `selectionTable`/`reuseCommittedResults` 두 스위치를 둡니다. **00이 기존 전수 평가 기준**이고 10·01·11을 각각 00과 비교합니다. 00은 bucket/group 결과를 읽지 않고 기존 평가 위치에서 원래 `evaluateGate`를 호출합니다. 계획 자체를 잘못 만든 공통 버그가 양쪽을 같이 통과시키지 않도록 00에는 기존 후보 열거 경로도 유지합니다. **네 모드의 끝 상태·오류·공표/배달 순서 비교는 그림자 스위치를 끈 채로도 반드시 별도 실행합니다.** 그림자 켠 진단과 끈 차등 실행은 같은 초기 상태와 입력 이력에서 각각 시작하며, 그림자의 개입이 정착을 보정해 끝 상태 비교를 통과시키지 못하게 합니다.
 
 각 진입 직후와 배달 종료 후 다음을 비교합니다: 전순서 child path/kind/active/선택 선언/유효 schema/typeConflict, raw/latent/extras/local/emit 및 존재 여부, 변경 없는 노드·배열의 참조 재사용, 실패·경고의 코드/경로/schemaPath/순서/중복/원인/degraded/드러남 시점, 생김·퇴장·채움·재진입, revision 비트/수와 payload/리스너 호출 순서, 호스트·파생·전이·사슬 라운드와 예산. **함수 호출 수는 달라도 라운드 수와 각 바퀴의 cap은 같아야 합니다.** `changedNodes`의 삽입 순서와 배달 후보·실제 배달 방문 순서를 별도로 기록합니다.
 
-끝 상태 비교에 더해 **같은 실행 안에서 원래 평가 자리마다 그림자 평가**를 둡니다. 발생·host/edge/L·바퀴·선언/gate ordinal·단락 위치를 기록하고 그 순간의 기준 reader 입력으로 낸 전수 평가 값과 실제 표/재사용 값을 즉시 비교합니다. 후보 축약으로 암묵적 거짓을 제공한 원래 자리도 비교 대상입니다. 마지막 상태로부터 값을 역추정하지 않습니다. 그림자의 읽기·공표·오류 기록은 격리하여 실제 상태에 두 번 적용하거나 배달하지 않으며, 식의 부작용/opaque guard는 기존 단일 평가와 별도 기준 실행으로 검증합니다. 그림자 장치는 진단 전용이며 성능 계수·타이밍 행에서는 끕니다.
+끝 상태 비교에 더해 **같은 실행 안에서 원래 평가 자리마다 그림자 평가**를 둡니다. 발생·owner·host/edge/L·바퀴·선언/gate ordinal·단락 위치를 기록하고, 실제 실행이 그 자리의 기존 등록과 필요한 공표를 마친 시점의 전수 평가 값과 실제 표/재사용 값을 즉시 비교합니다. 후보 축약으로 암묵적 거짓을 제공한 원래 자리도 비교 대상입니다. 마지막 상태로부터 값을 역추정하지 않습니다.
+
+그림자는 **공표 없는 별도 reader**로 현재 루트와 경로를 따라 투영 값을 재현합니다. 최적화의 묶음·bucket·조상 자격 결과를 기준 입력으로 재사용하지 않으며, 실제 `readProjectedValue`나 `evaluateGate`를 그림자에서 호출하지 않습니다. 전자는 `src/core/settle/utils/gates/readProjectedValue.ts:30,36-48,61`에서 공표하고, 후자는 `src/core/settle/utils/gates/evaluateGate.ts:35`에서 레지스트리를 만집니다. 공표는 `src/core/settle/utils/compute/flushPendingOutput.ts:16-18`처럼 pending output을 제거하고 출력을 갱신하므로 복제 호출로 격리되지 않습니다. 실제 실행에서 결합된 위치 정보는 읽기 전용으로 전달하고, 그림자는 `locate`·등록·flush·오류/경고/배달 기록·`gateThrowVersion`을 변경하지 않습니다.
+
+**그림자를 읽기 직전에 읽기 경로의 모든 노드(루트·조상·현재 호스트/키 포함)가 `pendingOutputs`에 없음을 단언합니다.** 판별 기술의 호스트/extra 읽기와 식의 모든 의존 경로도 포함합니다. 단언이 실패하면 그림자 값은 기준 평가의 증거가 아니므로 진단을 실패시키며, 단언을 통과시키려고 추가 flush를 호출하거나 원래 공표 자리를 옮기지 않습니다. 대기 출력이 없다는 조건에서도 미계산 구간·wrong-kind·extras 노출을 무공표 reader가 기준 의미대로 처리하는지 별도로 확인합니다. 순수 식의 그림자 오류는 진단에만 기록하고, 부작용 식/opaque guard는 기존 단일 평가와 그림자를 끈 별도 기준 실행으로 검증합니다. 그림자 장치는 진단 전용이며 성능 계수·타이밍 행에서는 끕니다.
 
 | 시험 묶음 | 입력/반례 | 반드시 같은 결과 |
 | --- | --- | --- |
@@ -254,20 +271,20 @@ BF와 같은 본체 `/kind`, 분기별 payload 셋, 한 값에 분기 하나, �
 | FRAGMENT-048 | 앞 항 false이고 뒤 항이 던짐; 앞 항 true 뒤 항 true/false/throw | 거짓 앞 항에서는 뒤 항 0회; 참에서는 기존 예외/exit/뒤 항 평가 위치 동일 |
 | 퇴장 대기 반례 | §6.3: 판별 참·active 던짐으로 퇴장 → 전이의 derived가 kind 변경 → 판별 거짓 | pendingExits의 경로·종류 후보와 throwingGateExits 정리, 최종 나감 정책; 00·11 포함 전 모드 동일 |
 | 즉시 반영 | 앞선 entry/default/derived가 kind를 바꿈; 뒤 gate가 앞선 조건부 자식을 읽음 | 다음 gate 전에 재조회, eager 공표와 중간 형상·round 동일 |
-| 투영 동일성 | 원본 유지 중 `primeHost`의 base-schema 복원·overlay, omitEmpty 누락/노출, 루트 호스트 스키마 변경 | host.emit·extras·projectedHost 차이면 재읽기; 중간 그림자 값도 기준과 동일 |
-| 구조/미계산 | 읽는 노드의 변경 전/후 미계산 구간, wrong-kind 조상, 같은 이름의 다른 종류 엔트리 선행 활성 | 노드·emit·미계산 판정과 노출 의미 동일; 복수 이름 엔트리는 표/재사용 거절 |
-| dirty 색인 | 루트 `''`, 조상/자손 양방향, `'@'`, 판별 watch, own/edge, 늦은 locate, 누적 반복 등록·restoreSourceB | **모든 registerRecalculation 직후** shapeDirtyPaths가 기존 전수 발생 판정과 동일 |
+| 투영 동일성 | 원본 유지 중 `primeHost`의 base-schema 복원·overlay, omitEmpty 누락/노출, 루트 호스트 스키마 변경, extras 참조는 같고 노출 boolean만 바뀜 | 현재 hostNode·emit·호스트 미계산·extras·projectedHostValue·extrasExposed 차이면 재읽기/fallback; 중간 그림자 값도 기준과 동일 |
+| 구조/미계산 | 같은 경로의 호스트/키 노드 교체, 호스트 자체와 키의 미계산 시작/끝, wrong-kind 조상, 바퀴 중 조상 증명 폐기, 같은 이름의 다른 종류 엔트리 선행 활성 | 자리별 루트 재탐색과 바퀴 진입 조상 검증; 조상 자격 실패 후 기존 평가의 공표/읽지 않음 동일; 복수 이름 엔트리는 표/재사용 거절 |
+| dirty 색인 | 루트 `''`, 조상/자손 양방향, `'@'`, 판별 watch, own/edge, 표·재사용 자리에서의 늦은 locate, 누적 반복 등록·restoreSourceB | 자리별 등록 후 발생 목록과 뒤의 mayChangeAt 동일; **모든 registerRecalculation 직후** shapeDirtyPaths가 기존 전수 발생 판정과 동일 |
 | 재사용 | 성공 false/true 뒤 무관한 키; 읽는 키 변경·whole replace·load/reset | 안정 입력만 재사용, 모든 무효화 후 F와 동일 |
-| 예외/복구/저장 | 성공 후 예외·공유 충돌·예산 초과/rollback, 마지막 평가 뒤 읽기 접촉·후속 재평가 | 실패 있는 커밋과 마지막 평가 이후 접촉 슬롯은 저장 0; gateThrowVersion·throwingGateExits 동일 |
+| 예외/복구/저장 | 성공 후 예외·공유 충돌·예산 초과/rollback, 실패 목록이 늘지 않는 반복/마운트 예외, 마지막 평가 뒤 읽기 접촉·후속 재평가 | gateThrowVersion의 평가 전후 증가로 예외 false를 거절; 정착 시작 이후 증가/실패/복구 커밋과 마지막 평가 이후 접촉 슬롯은 저장 0; throwingGateExits 동일 |
 | 이력 독립 | SETTLE-044의 A/B/C 양의 순환을 서로 다른 이력으로 같은 입력에 도달 | 고정 출발 최소 고정점, A/B 잔류 금지 |
-| 발생 결합 | 비루트 호스트의 부모 selectChildren, 중첩 union, 동일 $ref 두 호스트, 배열 두 아이템/재인덱싱, 유한 재귀 | 실제 평가 자리·host/edge/L 독립, 라운드별 새 배열 엔트리·이동 게이트 집합/순서와 pass cap 동일 |
+| 발생 결합 | 비루트 호스트의 부모 selectChildren과 호스트 자신의 selectChildren, 중첩 union, 동일 $ref 두 호스트, 배열 두 아이템/재인덱싱, 유한 재귀 | 두 자리의 owner·edgeName·host/edge/L과 locate 효과 보존; 라운드별 새 배열 엔트리·이동 게이트 집합/순서와 pass cap 동일 |
 | 공표/배달/owner | 각 원래 flush 자리, changedNodes 삽입, 배달 방문; 잠복 owner 축약 전후 탐침 | 값뿐 아니라 두 순서 및 publishStateKeys·commitExitPolicyValues·배달 후보 동일; 증명 전 owner 축약 금지 |
-| 그림자 | 각 원래 자리의 전수 함수 값 대 표/재사용/암묵적 false; 같은 끝 상태를 내는 중간 오답도 구성 | 같은 실행의 각 위치에서 즉시 일치; 단락·순서·실패를 끝 상태로 숨기지 않음 |
+| 그림자 | 각 원래 자리의 전수 함수 값 대 표/재사용/암묵적 false; 같은 끝 상태를 내는 중간 오답, 읽기 경로의 대기 출력 잔류도 구성 | 무공표 reader와 경로 전체 pendingOutputs 부재 단언; 실제 상태/레지스트리/version 불변; 자리별 즉시 일치와 그림자를 끈 네 모드 끝 상태/순서 비교 모두 통과 |
 | 계수 | B=5/10/20/40 kind_0↔kind_4, 조각 수만 늘리고 live 폭·입력/출력 크기를 고정한 U19 | §6 계수; 무관한 행의 게이트 재평가·게이트별 재사용 검사·무관한 기여 방문 모두 0 |
 
 **DETAIL을 먼저 수정하고, 위 차등 시험의 독립 기대값을 전수 평가 00에서 초록으로 고정한 뒤 같은 단언을 10·01·11에 적용합니다.** 97C-02 비교 기준은 그보다 먼저 별도 red→green으로 고정합니다. 시험용 잘못된 comparator·동일성 누락·후보 누락·dirty 누락을 각각 넣었을 때 해당 반례가 실패해야 시험 장치가 수정된 복사본을 보고 있음을 증명합니다. 고정 fixture 외 작은 유한 생성 사례도 네 모드에 비교합니다. 시험은 owner 내부에 두고 안정된 acceptance group을 DETAIL에 기록하며 파일별 case 상한을 지킵니다. 기존 기대값·snapshot을 최적화에 맞춰 바꾸지 않습니다.
 
-계수는 expression/if 함수 진입, 실제 bucket `get`, 키 reader, 위치별 동일성/재사용 검사, reuse descriptor 조회, branch/declaration/entry/registry/flush/control cursor 방문을 **별도로** 기록합니다. 캐시 hit를 lookup으로 세거나 O(B) 거짓 확인·커밋 복사를 숨기지 않습니다. 생성 준비와 결과 보유 비용도 별도 기록합니다. (가), (나), 연결 몫 B2·B4·B5를 나누어 **변경 하나마다 같은 fixture를 한 번 재측정**합니다. 지정 패키지 검증과 동일 세션의 분기 축 시간·계수·잔여 순회 증거를 함께 제출하며, 증거가 없거나 무관한 B 축 비용이 남으면 91라운드 기준 (1) 미충족으로 보고합니다. live 필드가 실제로 N개 늘어나는 별도 행은 필수 조립/출력/배달 비용을 단계별로 기록하고 분기 최적화의 제거 효과로 합산하지 않습니다.
+계수는 expression/if 함수 진입, 실제 bucket `get`, 키 reader, 위치별 동일성/재사용 검사, reuse descriptor 조회, 자리별 locate와 최초/늦은 등록, 현재 호스트 재탐색의 경로 방문, 바퀴 진입의 조상 검증, branch/declaration/entry/registry/flush/control cursor 방문을 **별도로** 기록합니다. 캐시 hit를 lookup으로 세거나 O(B) 거짓 확인·등록·커밋 복사, O(D) 경로 순회를 숨기지 않습니다. 생성 준비와 결과 보유 비용도 별도 기록합니다. (가), (나), 연결 몫 B2·B4·B5를 나누어 **변경 하나마다 같은 fixture를 한 번 재측정**합니다. 지정 패키지 검증과 동일 세션의 분기 축 시간·계수·잔여 순회 증거를 함께 제출하며, 증거가 없거나 무관한 B 축 비용이 남으면 91라운드 기준 (1) 미충족으로 보고합니다. live 필드가 실제로 N개 늘어나는 별도 행은 필수 조립/출력/배달 비용을 단계별로 기록하고 분기 최적화의 제거 효과로 합산하지 않습니다.
 
 ## 9. 메모리와 준비 비용
 
@@ -276,6 +293,8 @@ BF와 같은 본체 `/kind`, 분기별 payload 셋, 한 값에 분기 하나, �
 단일 tag, payload 셋인 B=5/10/20/40 fixture는 G=1, V=M=B, branch 연결도 B, payload 기여 에지는 3B입니다. 같은 구조 자료를 공유하면 점근적 추가 공간은 O(B)이고, 값 bucket과 그룹/에지 자료의 실제 셀·배열 수를 보고합니다. bucket별 전체 유효 스키마를 청사진에서 미리 병합하지 않습니다. 실제 사용한 bucket/선택의 런타임 병합 메모는 기존 bounded-by-use 정책을 사용합니다.
 
 런타임 공간은 살아 있는 발생에 결합된 gate/group 및 읽기 에지 수에 비례하고, 정착 scratch는 접촉·조회·재평가한 슬롯 수와 실제 퇴장 대기 후보 수에 비례합니다. 키별 동일성 묶음은 고정 크기이며 직전의 실패 없는 커밋 결과 한 묶음만 보유하고 커밋 이력을 누적하지 않습니다. 재귀 깊이는 runtime 발생 공간에만 들어가고 청사진 메모리에 곱하지 않습니다. branchless 또는 자격 그룹이 없는 청사진은 공유 빈 계획/부재 슬롯으로 추가 Map/Set을 만들지 않습니다.
+
+바퀴별 조상 검증의 증거/폐기 상태는 실제 결합한 읽기 prefix에만 보유하며 같은 바퀴 안에서 공유합니다. 그 공간과 O(D) 경로 검증 비용을 고정 크기 묶음에 숨기지 않고 별도 기록합니다. 다음 바퀴에 옛 증거를 무조건 재사용하지 않습니다. 그림자 reader의 경로 기록과 단언은 진단 전용 비용입니다.
 
 준비 시간은 기존 분석에서 gate·리터럴 소속·기여·읽기 에지를 한 번 등록하는 O(B+M+P+C)입니다. 목록 순서 자료의 병합을 포함하되 모든 bucket에 모든 선언을 복사하는 준비는 하지 않습니다. heap byte는 엔진 자료구조별 차이가 있으므로 이 문서에서 수치를 추정하여 사실로 적지 않습니다. 승인 후 별도 세션에서 청사진 준비·보유 슬롯 수와 실제 heap을 기록합니다.
 
@@ -286,14 +305,16 @@ BF와 같은 본체 `/kind`, 분기별 payload 셋, 한 값에 분기 하나, �
 | 97C-01 조건 | 설계의 적용 위치 | 구현 전에 고정할 증거 |
 | --- | --- | --- |
 | 1. 퇴장 대기 후보 포함 | §6.3 B5, §7 selectChildren | pendingExits·throwingGateExits 및 검증 발견 1의 전이 반례 |
-| 2. 원래 자리의 O(1) 동일성 검사 | §4.2, §5.1 | overlay/omitEmpty·기준 스키마 복원·미계산·wrong-kind·루트 스키마·공표/배달 순서·그림자 값 |
+| 2. 원래 자리의 고정 크기 묶음 비교와 경로 자격 | §4.2, §5.1, §8 | 현재 호스트 재탐색·호스트 미계산·extras 노출, 바퀴 진입의 조상 검증/실패 fallback, 자리별 locate·늦은 등록, overlay/omitEmpty·공표/배달 순서, 무공표 그림자와 경로 전체 pendingOutputs 부재 |
 | 3. 이름의 엔트리 정확히 하나 | §3.1·3.2 | 같은 이름 다른 종류의 자격 거절, 분기 전용 판별 키의 무게이트 사본 자격 |
 | 4. readsChanged 동치의 누적 질의 | §6.2 | 매 registerRecalculation 직후 shapeDirtyPaths, own/edge·locate·복구·모든 watch 경계 |
 | 5. 같은 gate 집합·바퀴 상한, owner 축약 증명 | §4.1, §6.3, §7 | 매 바퀴 이동 게이트·배열 엔트리·cap, publishStateKeys·commitExitPolicyValues·배달 후보 |
-| 6. 실패 없는 미접촉 슬롯 저장 | §4.2, §8 | 실패/복구 커밋 저장 0, 마지막 평가 뒤 접촉 시 저장 0 |
+| 6. 실패 없는 미접촉 슬롯 저장 | §4.2, §8 | 평가 전후와 정착 시작/커밋의 gateThrowVersion, 반복/마운트 예외 포함 저장 0, 실패/복구 커밋 저장 0, 마지막 평가 뒤 접촉 시 저장 0 |
 
-적용 순서는 **97C-02 별도 수정 → 소유 DETAIL 계약/수용 기준 → 전수 평가에서 차등 단언 초록 → 같은 단언을 최적화에 적용 → 계수와 시간 측정**입니다(88C-01·89C, 97C-01). (가), (나), 연결 몫 B2·B4·B5를 나누고 변경 하나에 재측정 하나를 붙입니다. 네 모드의 끝 상태와 같은 실행의 위치별 그림자 평가를 모두 통과해야 합니다.
+재확인(`architecture/reviews/raw-round97-gate-selection/verifier-recheck.md:9-24`)이 확인한 조건 1·3·4·5·6과 세부 셋은 유지합니다. 잔여 가는 현재 호스트·미계산·extras 노출의 묶음, 나는 바퀴 진입 조상 검증과 실패 fallback, 다는 자리별 locate, 라는 무공표 그림자·대기 출력 부재 단언·그림자를 끈 네 모드 비교로 보완합니다. 보충 둘은 version에 따른 슬롯 예외 판정과 비루트 호스트의 두 평가 자리에 반영했습니다. 별도 결정을 여는 변경은 없습니다.
+
+적용 순서는 **97C-02 별도 수정 → 소유 DETAIL 계약/수용 기준 → 전수 평가에서 차등 단언 초록 → 같은 단언을 최적화에 적용 → 계수와 시간 측정**입니다(88C-01·89C, 97C-01). (가), (나), 연결 몫 B2·B4·B5를 나누고 변경 하나에 재측정 하나를 붙입니다. 그림자를 끈 네 모드의 끝 상태/순서 비교와 같은 실행의 무공표 위치별 그림자 평가를 모두 통과해야 합니다.
 
 91라운드 기준 (1)은 §6.1의 분기 전환과 §6.2의 폭·입력/출력 고정 행에서 전체 정착의 잔여 B 축까지 검증합니다. 게이트 호출만 일정하거나 per-gate reuse 검사·무관한 기여 방문·owner 확장·커밋 복사 중 하나라도 남으면 그 위치와 계수를 적고 미충족으로 보고합니다. 실제 live 필드 증가 행의 필수 출력 비용은 따로 기록합니다.
 
-이 문서는 최적화의 동치·계수·시간 통과를 주장하지 않습니다. owner 축약이나 상수 시간 자격, 같은 집합/상한/순서를 증명하지 못하면 해당 변경을 적용하지 않고 조건과 반례를 보고합니다. 확인되지 않은 동작이나 측정치를 추정해 채우지 않습니다.
+이 문서는 최적화의 동치·계수·시간 통과를 주장하지 않습니다. owner 축약, 조상 자격과 현재 묶음의 동일성, 같은 집합/상한/순서를 증명하지 못하면 해당 변경을 적용하지 않고 조건과 반례를 보고합니다. 확인되지 않은 동작이나 측정치를 추정해 채우지 않습니다.
