@@ -166,7 +166,8 @@ export const transitionSettlement = <Self extends SchemaNodeRecord<Self>>(
       context.inTransition = false;
       return;
     }
-    runDeriveRounds(context);
+    if (context.root.runtime.blueprint.capabilities.hasDerive)
+      runDeriveRounds(context);
     if (context.exceededBudget) {
       context.inTransition = false;
       return;

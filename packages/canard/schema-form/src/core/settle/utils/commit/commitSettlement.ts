@@ -32,11 +32,11 @@ export const commitSettlement = <Self extends SchemaNodeRecord<Self>>(
 ): void => {
   const runtime = context.root.runtime;
   const development = process.env.NODE_ENV !== 'production';
-  snapshotExitedPolicies(context);
-  commitDeriveRules(context);
-  commitExitPolicyValues(context);
+  if (context.exited.size > 0) snapshotExitedPolicies(context);
+  if (runtime.blueprint.capabilities.hasDerive) commitDeriveRules(context);
+  if (runtime.blueprint.capabilities.hasExpressions) commitExitPolicyValues(context);
   if (development) {
-    finalizeDeriveTrace(context);
+    if (context.traceRounds?.length) finalizeDeriveTrace(context);
     runtime.settlementTrace = { entry: { api: context.entryApi ?? context.kind,
       option: context.option },
       rounds: context.traceRounds ?? [],

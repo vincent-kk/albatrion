@@ -11,6 +11,7 @@ import { restoreSourceB } from '../transition/restoreSourceB';
 import { transitionSettlement } from '../transition/transitionSettlement';
 import { publishStateKeys } from '../compute/publishStateKeys';
 import { alignArraySnapshotSlots } from '../load/alignArraySnapshotSlots';
+import { effectiveType } from '../commit/effectiveType';
 
 /**
  * Complete derivation, transition, rollback, and one commit after calculation.
@@ -30,15 +31,25 @@ export const finishSettlement = <Self extends SchemaNodeRecord<Self>>(
     context.exceededBudget = 'hostWheel';
     context.iterations = context.hostWheelExceeded;
   }
-  if (!context.exceededBudget) runDeriveRounds(context);
-  if (!context.exceededBudget) transitionSettlement(context);
+  if (!context.exceededBudget && context.root.runtime.blueprint.capabilities.hasDerive)
+    runDeriveRounds(context);
+  if (!context.exceededBudget && (context.hasGates ||
+    context.entered.size > 0 || context.exited.size > 0 ||
+    context.writtenInputs.size > 1 || context.writtenInputs.size === 1 &&
+      (!context.writtenInputs.has(context.target) ||
+        effectiveType(context.target) !== context.target.schemaType)))
+    transitionSettlement(context);
   if (context.exceededBudget) {
     restoreSourceB(context, scratch.explicitRaw);
     captureDeriveBaseline(context);
   }
   publishStateKeys(context);
-  finalizeExits(context);
-  if (context.kind !== 'load') {
+  if (context.pendingExits.size > 0 || context.perished.size > 0 ||
+    context.entered.size > 0 || context.revived.size > 0 ||
+    context.exited.size > 0 || context.filledNodes.size > 0 ||
+    context.arrayCounts.size > 0)
+    finalizeExits(context);
+  if (context.kind !== 'load' && context.arrayCounts.size > 0) {
     const resized = [...context.arrayCounts].filter(([host, previousCount]) =>
       !host.detached && host.itemCount !== previousCount)
       .map(([host]) => host);

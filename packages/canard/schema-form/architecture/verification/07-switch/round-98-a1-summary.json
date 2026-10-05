@@ -1,0 +1,4331 @@
+{
+  "head": "31717d1f7fad0ac94dd36ae9144dee3d1eb4b9d2",
+  "verification": {
+    "beforeImplementation": "관측/실제 작업 단언 4건 통과; 빈 진입 단언만 [1,1,1,1,1,1,1,1] 대 [0,0,0,0,0,0,0,0]으로 실패",
+    "afterImplementation": "추가 검증 5건 통과; 측정 중 제품 소스 변경 없음",
+    "commands": [
+      { "command": "npx vitest run --project unit --project render --project react18 --reporter=dot", "exitCode": 1, "passedFiles": 415, "failedFiles": 2, "passedTests": 3144, "failedTests": 4, "todo": 1, "durationSeconds": 59.53, "failures": "render/react18 각각 EVENT-070 useLayoutEffect/useEffect 두 건만 실패" },
+      { "command": "npx tsc --noEmit --composite false --rootDir . -p tsconfig.json", "exitCode": 0 },
+      { "command": "npx eslint \"src/**/*.{ts,tsx}\"", "exitCode": 0 },
+      { "command": "node architecture/verification/07-switch/tools/check-legacy-isolation.mjs", "exitCode": 0, "result": "LEGACY_ISOLATED: 1605 files checked" }
+    ],
+    "constantTimeProof": "readAllowedTypes.ts가 중복·미지 type 이름을 거부하고 어휘는 7개입니다. 유효 schema의 effectiveType 확인은 최대 7항목으로 트리·규칙·쓰기 수와 무관한 O(1) 검사입니다. writtenInputs가 비었거나 원래 대상 한 개일 때만 전이 부재를 판정합니다.",
+    "sourceSha256": {
+      "src/core/settle/utils/settlement/finishSettlement.ts": "60f409c72d026e319b2ff3e0e1761f6af12c81305be6a9975cb7ece80d370921",
+      "src/core/settle/utils/commit/commitSettlement.ts": "4353a157333a65ed551719441575ba2e03a4c5f26c821fe7e454dc459df18bb5",
+      "src/core/settle/utils/transition/transitionSettlement.ts": "afe5788717234146f6c170bdc0d2e3108fd57f35dd7f0a25b25c9d8e0b9e83bf"
+    },
+    "externalChange": "시작 시 깨끗했으나 종료 점검에서 gate-selection-design.md의 별도 변경을 발견했습니다. 해당 파일을 쓰지 않았고 변경을 보존합니다. 추가 에이전트·병렬 측정·설치·git 쓰기는 실행하지 않았지만 다른 실행과 호스트 배타성은 보증할 수 없습니다.",
+    "mountConclusion": "flat-500 +1.29%, nested-d5-f4 +0.80%. 대상 helper 진입은 모두 0→0이고 회차별 변화 방향은 혼재합니다. 추가 mount 작업은 없으나 시간 회귀 없음은 이번 세 쌍만으로 확정하지 않습니다. 재측정을 반복하지 않았습니다."
+  },
+  "rows": [
+    {
+      "fixture": "sample-0",
+      "phase": "first",
+      "before": {
+        "median": 0.08004200000004857,
+        "p99": 0.12100000000009459,
+        "sampleCount": 303
+      },
+      "after": {
+        "median": 0.07345900000001393,
+        "p99": 0.1388329999999769,
+        "sampleCount": 303
+      },
+      "pairs": [
+        {
+          "run": 1,
+          "order": "H→W",
+          "before": {
+            "median": 0.08212499999990541,
+            "p99": 0.13179200000013225,
+            "sampleCount": 101
+          },
+          "after": {
+            "median": 0.0731670000000122,
+            "p99": 0.15174999999999272,
+            "sampleCount": 101
+          },
+          "changePercent": -10.907762556960165
+        },
+        {
+          "run": 2,
+          "order": "W→H",
+          "before": {
+            "median": 0.07854200000019773,
+            "p99": 0.12024999999994179,
+            "sampleCount": 101
+          },
+          "after": {
+            "median": 0.07358399999998255,
+            "p99": 0.094791999999984,
+            "sampleCount": 101
+          },
+          "changePercent": -6.312546153908349
+        },
+        {
+          "run": 3,
+          "order": "H→W",
+          "before": {
+            "median": 0.07908300000008239,
+            "p99": 0.11550000000033833,
+            "sampleCount": 101
+          },
+          "after": {
+            "median": 0.07349999999996726,
+            "p99": 0.1003329999999778,
+            "sampleCount": 101
+          },
+          "changePercent": -7.059671484528051
+        }
+      ],
+      "changePercent": -8.224432173147411
+    },
+    {
+      "fixture": "sample-0",
+      "phase": "later",
+      "before": {
+        "median": 0.03412500000013097,
+        "p99": 0.08908299999984592,
+        "sampleCount": 303
+      },
+      "after": {
+        "median": 0.030957999999998265,
+        "p99": 0.06345900000002302,
+        "sampleCount": 303
+      },
+      "pairs": [
+        {
+          "run": 1,
+          "order": "H→W",
+          "before": {
+            "median": 0.03545799999983501,
+            "p99": 0.10387500000024374,
+            "sampleCount": 101
+          },
+          "after": {
+            "median": 0.03291600000000017,
+            "p99": 0.06908300000009149,
+            "sampleCount": 101
+          },
+          "changePercent": -7.169045066971269
+        },
+        {
+          "run": 2,
+          "order": "W→H",
+          "before": {
+            "median": 0.033457999999882304,
+            "p99": 0.06662499999993088,
+            "sampleCount": 101
+          },
+          "after": {
+            "median": 0.030750000000011823,
+            "p99": 0.04908299999999599,
+            "sampleCount": 101
+          },
+          "changePercent": -8.093729451491438
+        },
+        {
+          "run": 3,
+          "order": "H→W",
+          "before": {
+            "median": 0.0338329999999587,
+            "p99": 0.0512919999996484,
+            "sampleCount": 101
+          },
+          "after": {
+            "median": 0.030666999999994005,
+            "p99": 0.05458299999997962,
+            "sampleCount": 101
+          },
+          "changePercent": -9.357727662248582
+        }
+      ],
+      "changePercent": -9.280586080939335
+    },
+    {
+      "fixture": "sample-1",
+      "phase": "first",
+      "before": {
+        "median": 0.08608400000002803,
+        "p99": 0.12395799999967494,
+        "sampleCount": 303
+      },
+      "after": {
+        "median": 0.07775000000003729,
+        "p99": 0.10545799999999872,
+        "sampleCount": 303
+      },
+      "pairs": [
+        {
+          "run": 1,
+          "order": "H→W",
+          "before": {
+            "median": 0.08687499999996362,
+            "p99": 0.11754100000007384,
+            "sampleCount": 101
+          },
+          "after": {
+            "median": 0.07766700000001947,
+            "p99": 0.09700000000009368,
+            "sampleCount": 101
+          },
+          "changePercent": -10.59913669058763
+        },
+        {
+          "run": 2,
+          "order": "W→H",
+          "before": {
+            "median": 0.08491599999979371,
+            "p99": 0.12037499999996726,
+            "sampleCount": 101
+          },
+          "after": {
+            "median": 0.07787500000006276,
+            "p99": 0.1027080000000069,
+            "sampleCount": 101
+          },
+          "changePercent": -8.29172358536443
+        },
+        {
+          "run": 3,
+          "order": "H→W",
+          "before": {
+            "median": 0.08654200000000856,
+            "p99": 0.12395799999967494,
+            "sampleCount": 101
+          },
+          "after": {
+            "median": 0.07775000000003729,
+            "p99": 0.10587500000002592,
+            "sampleCount": 101
+          },
+          "changePercent": -10.159229044822627
+        }
+      ],
+      "changePercent": -9.681241577979671
+    },
+    {
+      "fixture": "sample-1",
+      "phase": "later",
+      "before": {
+        "median": 0.03812500000003638,
+        "p99": 0.05820899999980611,
+        "sampleCount": 303
+      },
+      "after": {
+        "median": 0.03458299999999781,
+        "p99": 0.05000000000006821,
+        "sampleCount": 303
+      },
+      "pairs": [
+        {
+          "run": 1,
+          "order": "H→W",
+          "before": {
+            "median": 0.037458000000242464,
+            "p99": 0.05633299999999508,
+            "sampleCount": 101
+          },
+          "after": {
+            "median": 0.03454199999998764,
+            "p99": 0.0474999999999568,
+            "sampleCount": 101
+          },
+          "changePercent": -7.784718885781272
+        },
+        {
+          "run": 2,
+          "order": "W→H",
+          "before": {
+            "median": 0.03866599999992104,
+            "p99": 0.06008299999984956,
+            "sampleCount": 101
+          },
+          "after": {
+            "median": 0.03450000000009368,
+            "p99": 0.04858400000000529,
+            "sampleCount": 101
+          },
+          "changePercent": -10.774323694811649
+        },
+        {
+          "run": 3,
+          "order": "H→W",
+          "before": {
+            "median": 0.03820799999994051,
+            "p99": 0.055833999999777006,
+            "sampleCount": 101
+          },
+          "after": {
+            "median": 0.03462500000000546,
+            "p99": 0.05000000000006821,
+            "sampleCount": 101
+          },
+          "changePercent": -9.377617252775948
+        }
+      ],
+      "changePercent": -9.290491803370992
+    },
+    {
+      "fixture": "sample-2",
+      "phase": "first",
+      "before": {
+        "median": 0.08812500000021828,
+        "p99": 0.1172919999999067,
+        "sampleCount": 303
+      },
+      "after": {
+        "median": 0.07691599999998289,
+        "p99": 0.11112500000001546,
+        "sampleCount": 303
+      },
+      "pairs": [
+        {
+          "run": 1,
+          "order": "H→W",
+          "before": {
+            "median": 0.08674999999993815,
+            "p99": 0.11716599999999744,
+            "sampleCount": 101
+          },
+          "after": {
+            "median": 0.07595800000001418,
+            "p99": 0.10820799999999053,
+            "sampleCount": 101
+          },
+          "changePercent": -12.44034582124688
+        },
+        {
+          "run": 2,
+          "order": "W→H",
+          "before": {
+            "median": 0.08720799999991868,
+            "p99": 0.11549999999988358,
+            "sampleCount": 101
+          },
+          "after": {
+            "median": 0.07658300000002782,
+            "p99": 0.11120799999997644,
+            "sampleCount": 101
+          },
+          "changePercent": -12.183515273714296
+        },
+        {
+          "run": 3,
+          "order": "H→W",
+          "before": {
+            "median": 0.09183299999995143,
+            "p99": 0.12400000000025102,
+            "sampleCount": 101
+          },
+          "after": {
+            "median": 0.07854100000008657,
+            "p99": 0.11112500000001546,
+            "sampleCount": 101
+          },
+          "changePercent": -14.4740997243604
+        }
+      ],
+      "changePercent": -12.71943262434908
+    },
+    {
+      "fixture": "sample-2",
+      "phase": "later",
+      "before": {
+        "median": 0.03829200000018318,
+        "p99": 0.05645800000002055,
+        "sampleCount": 303
+      },
+      "after": {
+        "median": 0.034583999999995285,
+        "p99": 0.051124999999956344,
+        "sampleCount": 303
+      },
+      "pairs": [
+        {
+          "run": 1,
+          "order": "H→W",
+          "before": {
+            "median": 0.03758300000026793,
+            "p99": 0.05645800000002055,
+            "sampleCount": 101
+          },
+          "after": {
+            "median": 0.03416700000002493,
+            "p99": 0.04858400000000529,
+            "sampleCount": 101
+          },
+          "changePercent": -9.089215869458666
+        },
+        {
+          "run": 2,
+          "order": "W→H",
+          "before": {
+            "median": 0.038915999999517226,
+            "p99": 0.056040999999822816,
+            "sampleCount": 101
+          },
+          "after": {
+            "median": 0.03487500000005639,
+            "p99": 0.05904099999997925,
+            "sampleCount": 101
+          },
+          "changePercent": -10.383903791527826
+        },
+        {
+          "run": 3,
+          "order": "H→W",
+          "before": {
+            "median": 0.038082999999915046,
+            "p99": 0.055499999999938154,
+            "sampleCount": 101
+          },
+          "after": {
+            "median": 0.03462500000000546,
+            "p99": 0.04654199999998809,
+            "sampleCount": 101
+          },
+          "changePercent": -9.08016700343277
+        }
+      ],
+      "changePercent": -9.683484801447184
+    },
+    {
+      "fixture": "sample-3",
+      "phase": "first",
+      "before": {
+        "median": 0.09004200000026685,
+        "p99": 0.13058399999954418,
+        "sampleCount": 303
+      },
+      "after": {
+        "median": 0.08174999999999955,
+        "p99": 0.10891699999996263,
+        "sampleCount": 303
+      },
+      "pairs": [
+        {
+          "run": 1,
+          "order": "H→W",
+          "before": {
+            "median": 0.08758299999999508,
+            "p99": 0.11149999999997817,
+            "sampleCount": 101
+          },
+          "after": {
+            "median": 0.08266700000001492,
+            "p99": 0.1173750000000382,
+            "sampleCount": 101
+          },
+          "changePercent": -5.6129614194312065
+        },
+        {
+          "run": 2,
+          "order": "W→H",
+          "before": {
+            "median": 0.0909999999998945,
+            "p99": 0.11937499999976353,
+            "sampleCount": 101
+          },
+          "after": {
+            "median": 0.08095899999995027,
+            "p99": 0.10191700000007131,
+            "sampleCount": 101
+          },
+          "changePercent": -11.034065934017445
+        },
+        {
+          "run": 3,
+          "order": "H→W",
+          "before": {
+            "median": 0.09108400000013717,
+            "p99": 0.13520900000003166,
+            "sampleCount": 101
+          },
+          "after": {
+            "median": 0.0801249999999527,
+            "p99": 0.10499999999996135,
+            "sampleCount": 101
+          },
+          "changePercent": -12.03175091143116
+        }
+      ],
+      "changePercent": -9.209035783570707
+    },
+    {
+      "fixture": "sample-3",
+      "phase": "later",
+      "before": {
+        "median": 0.03758400000015172,
+        "p99": 0.06891700000005585,
+        "sampleCount": 303
+      },
+      "after": {
+        "median": 0.03433300000000372,
+        "p99": 0.07383299999992232,
+        "sampleCount": 303
+      },
+      "pairs": [
+        {
+          "run": 1,
+          "order": "H→W",
+          "before": {
+            "median": 0.03741700000000492,
+            "p99": 0.05620899999939866,
+            "sampleCount": 101
+          },
+          "after": {
+            "median": 0.03437500000001137,
+            "p99": 0.07383299999992232,
+            "sampleCount": 101
+          },
+          "changePercent": -8.129994387559536
+        },
+        {
+          "run": 2,
+          "order": "W→H",
+          "before": {
+            "median": 0.0374999999994543,
+            "p99": 0.051208999999744265,
+            "sampleCount": 101
+          },
+          "after": {
+            "median": 0.03433300000000372,
+            "p99": 0.046041000000059285,
+            "sampleCount": 101
+          },
+          "changePercent": -8.445333331991112
+        },
+        {
+          "run": 3,
+          "order": "H→W",
+          "before": {
+            "median": 0.03812500000003638,
+            "p99": 0.07508299999972223,
+            "sampleCount": 101
+          },
+          "after": {
+            "median": 0.03366700000003675,
+            "p99": 0.07416599999999107,
+            "sampleCount": 101
+          },
+          "changePercent": -11.693114754086231
+        }
+      ],
+      "changePercent": -8.649957429051913
+    },
+    {
+      "fixture": "nested-d3-f4",
+      "phase": "first",
+      "before": {
+        "median": 0.07741600000008475,
+        "p99": 0.10795800000005329,
+        "sampleCount": 303
+      },
+      "after": {
+        "median": 0.07208300000002055,
+        "p99": 0.100750000000005,
+        "sampleCount": 303
+      },
+      "pairs": [
+        {
+          "run": 1,
+          "order": "H→W",
+          "before": {
+            "median": 0.07762499999989814,
+            "p99": 0.10674999999991996,
+            "sampleCount": 101
+          },
+          "after": {
+            "median": 0.06925000000001091,
+            "p99": 0.100750000000005,
+            "sampleCount": 101
+          },
+          "changePercent": -10.789049919353577
+        },
+        {
+          "run": 2,
+          "order": "W→H",
+          "before": {
+            "median": 0.07820900000024267,
+            "p99": 0.1117500000000291,
+            "sampleCount": 101
+          },
+          "after": {
+            "median": 0.07545900000002348,
+            "p99": 0.0982089999999971,
+            "sampleCount": 101
+          },
+          "changePercent": -3.516219361212458
+        },
+        {
+          "run": 3,
+          "order": "H→W",
+          "before": {
+            "median": 0.07649999999966894,
+            "p99": 0.10325000000011642,
+            "sampleCount": 101
+          },
+          "after": {
+            "median": 0.07133399999997891,
+            "p99": 0.08695799999998144,
+            "sampleCount": 101
+          },
+          "changePercent": -6.752941176094618
+        }
+      ],
+      "changePercent": -6.888756846205391
+    },
+    {
+      "fixture": "nested-d3-f4",
+      "phase": "later",
+      "before": {
+        "median": 0.022665999999844644,
+        "p99": 0.04187499999989086,
+        "sampleCount": 303
+      },
+      "after": {
+        "median": 0.02137500000003456,
+        "p99": 0.046625000000062755,
+        "sampleCount": 303
+      },
+      "pairs": [
+        {
+          "run": 1,
+          "order": "H→W",
+          "before": {
+            "median": 0.02266700000018318,
+            "p99": 0.03829199999972843,
+            "sampleCount": 101
+          },
+          "after": {
+            "median": 0.02112499999998363,
+            "p99": 0.04662499999994907,
+            "sampleCount": 101
+          },
+          "changePercent": -6.802841135514582
+        },
+        {
+          "run": 2,
+          "order": "W→H",
+          "before": {
+            "median": 0.022290999999768246,
+            "p99": 0.10554100000081235,
+            "sampleCount": 101
+          },
+          "after": {
+            "median": 0.022000000000048203,
+            "p99": 0.050292000000013104,
+            "sampleCount": 101
+          },
+          "changePercent": -1.3054596012878172
+        },
+        {
+          "run": 3,
+          "order": "H→W",
+          "before": {
+            "median": 0.022915999999895575,
+            "p99": 0.032374999999774445,
+            "sampleCount": 101
+          },
+          "after": {
+            "median": 0.021416999999985364,
+            "p99": 0.03795800000000327,
+            "sampleCount": 101
+          },
+          "changePercent": -6.541281200545656
+        }
+      ],
+      "changePercent": -5.695755756723431
+    },
+    {
+      "fixture": "nested-d5-f4",
+      "phase": "mount",
+      "before": {
+        "median": 12.722375000000284,
+        "p99": 13.992459000000053,
+        "sampleCount": 303
+      },
+      "after": {
+        "median": 12.823750000000018,
+        "p99": 14.904500000000098,
+        "sampleCount": 303
+      },
+      "pairs": [
+        {
+          "run": 1,
+          "order": "H→W",
+          "before": {
+            "median": 12.794041999999536,
+            "p99": 13.89337499999965,
+            "sampleCount": 101
+          },
+          "after": {
+            "median": 12.681874999999991,
+            "p99": 13.975290999999743,
+            "sampleCount": 101
+          },
+          "changePercent": -0.8767127698935839
+        },
+        {
+          "run": 2,
+          "order": "W→H",
+          "before": {
+            "median": 12.71008299999994,
+            "p99": 13.803541999999652,
+            "sampleCount": 101
+          },
+          "after": {
+            "median": 13.337833000000046,
+            "p99": 14.957500000000095,
+            "sampleCount": 101
+          },
+          "changePercent": 4.938992137188314
+        },
+        {
+          "run": 3,
+          "order": "H→W",
+          "before": {
+            "median": 12.588042000000314,
+            "p99": 14.509541999999783,
+            "sampleCount": 101
+          },
+          "after": {
+            "median": 12.738875000000007,
+            "p99": 13.966082999999912,
+            "sampleCount": 101
+          },
+          "changePercent": 1.1982244736686631
+        }
+      ],
+      "changePercent": 0.7968244922802015
+    },
+    {
+      "fixture": "nested-d5-f4",
+      "phase": "first",
+      "before": {
+        "median": 0.11716599999999744,
+        "p99": 0.15925000000061118,
+        "sampleCount": 303
+      },
+      "after": {
+        "median": 0.1069999999999709,
+        "p99": 0.14495799999997416,
+        "sampleCount": 303
+      },
+      "pairs": [
+        {
+          "run": 1,
+          "order": "H→W",
+          "before": {
+            "median": 0.11583299999983865,
+            "p99": 0.14274999999997817,
+            "sampleCount": 101
+          },
+          "after": {
+            "median": 0.10750000000007276,
+            "p99": 0.14650000000006003,
+            "sampleCount": 101
+          },
+          "changePercent": -7.193977536433915
+        },
+        {
+          "run": 2,
+          "order": "W→H",
+          "before": {
+            "median": 0.11829200000011042,
+            "p99": 0.16195800000059535,
+            "sampleCount": 101
+          },
+          "after": {
+            "median": 0.10883399999988796,
+            "p99": 0.13579200000003766,
+            "sampleCount": 101
+          },
+          "changePercent": -7.995468840000697
+        },
+        {
+          "run": 3,
+          "order": "H→W",
+          "before": {
+            "median": 0.11833300000034797,
+            "p99": 0.15925000000061118,
+            "sampleCount": 101
+          },
+          "after": {
+            "median": 0.10337499999991451,
+            "p99": 0.13420799999994415,
+            "sampleCount": 101
+          },
+          "changePercent": -12.640598987931916
+        }
+      ],
+      "changePercent": -8.676578529630408
+    },
+    {
+      "fixture": "nested-d5-f4",
+      "phase": "later",
+      "before": {
+        "median": 0.029875000000174623,
+        "p99": 0.08829100000002654,
+        "sampleCount": 303
+      },
+      "after": {
+        "median": 0.029541999999764812,
+        "p99": 0.056457999999793174,
+        "sampleCount": 303
+      },
+      "pairs": [
+        {
+          "run": 1,
+          "order": "H→W",
+          "before": {
+            "median": 0.02974999999969441,
+            "p99": 0.045583000000078755,
+            "sampleCount": 101
+          },
+          "after": {
+            "median": 0.02837500000032378,
+            "p99": 0.055332999999791355,
+            "sampleCount": 101
+          },
+          "changePercent": -4.621848737427747
+        },
+        {
+          "run": 2,
+          "order": "W→H",
+          "before": {
+            "median": 0.030082999999649473,
+            "p99": 0.09637500000008004,
+            "sampleCount": 101
+          },
+          "after": {
+            "median": 0.030666999999994005,
+            "p99": 0.047041999999919426,
+            "sampleCount": 101
+          },
+          "changePercent": 1.9412957495972272
+        },
+        {
+          "run": 3,
+          "order": "H→W",
+          "before": {
+            "median": 0.029917000000750704,
+            "p99": 0.060833999999886146,
+            "sampleCount": 101
+          },
+          "after": {
+            "median": 0.028416999999990367,
+            "p99": 0.05779199999994944,
+            "sampleCount": 101
+          },
+          "changePercent": -5.013871714151474
+        }
+      ],
+      "changePercent": -1.1146443528296746
+    },
+    {
+      "fixture": "array-100",
+      "phase": "first",
+      "before": {
+        "median": 0.09599999999954889,
+        "p99": 0.129207999999835,
+        "sampleCount": 303
+      },
+      "after": {
+        "median": 0.0885000000000673,
+        "p99": 0.12491699999998218,
+        "sampleCount": 303
+      },
+      "pairs": [
+        {
+          "run": 1,
+          "order": "H→W",
+          "before": {
+            "median": 0.09970799999973678,
+            "p99": 0.13458400000035908,
+            "sampleCount": 101
+          },
+          "after": {
+            "median": 0.0881249999999909,
+            "p99": 0.10525000000001228,
+            "sampleCount": 101
+          },
+          "changePercent": -11.616921410294523
+        },
+        {
+          "run": 2,
+          "order": "W→H",
+          "before": {
+            "median": 0.09683300000006057,
+            "p99": 0.12233299999979863,
+            "sampleCount": 101
+          },
+          "after": {
+            "median": 0.09079099999996743,
+            "p99": 0.13241699999997536,
+            "sampleCount": 101
+          },
+          "changePercent": -6.239608398055784
+        },
+        {
+          "run": 3,
+          "order": "H→W",
+          "before": {
+            "median": 0.09141700000054698,
+            "p99": 0.12320899999986068,
+            "sampleCount": 101
+          },
+          "after": {
+            "median": 0.08687500000007731,
+            "p99": 0.11716699999999491,
+            "sampleCount": 101
+          },
+          "changePercent": -4.968441318838391
+        }
+      ],
+      "changePercent": -7.812499999496703
+    },
+    {
+      "fixture": "array-100",
+      "phase": "later",
+      "before": {
+        "median": 0.04045799999994415,
+        "p99": 0.06312499999967258,
+        "sampleCount": 303
+      },
+      "after": {
+        "median": 0.038000000000010914,
+        "p99": 0.06100000000003547,
+        "sampleCount": 303
+      },
+      "pairs": [
+        {
+          "run": 1,
+          "order": "H→W",
+          "before": {
+            "median": 0.04195799999979499,
+            "p99": 0.06708300000036616,
+            "sampleCount": 101
+          },
+          "after": {
+            "median": 0.038000000000010914,
+            "p99": 0.05316600000003291,
+            "sampleCount": 101
+          },
+          "changePercent": -9.433242766107576
+        },
+        {
+          "run": 2,
+          "order": "W→H",
+          "before": {
+            "median": 0.03991700000005949,
+            "p99": 0.05729199999996126,
+            "sampleCount": 101
+          },
+          "after": {
+            "median": 0.03912500000001273,
+            "p99": 0.0695419999999558,
+            "sampleCount": 101
+          },
+          "changePercent": -1.9841170429781174
+        },
+        {
+          "run": 3,
+          "order": "H→W",
+          "before": {
+            "median": 0.03920799999968949,
+            "p99": 0.05837500000052387,
+            "sampleCount": 101
+          },
+          "after": {
+            "median": 0.037249999999971806,
+            "p99": 0.057292000000018106,
+            "sampleCount": 101
+          },
+          "changePercent": -4.993878799564355
+        }
+      ],
+      "changePercent": -6.075436254724975
+    },
+    {
+      "fixture": "flat-500",
+      "phase": "mount",
+      "before": {
+        "median": 4.304208000000472,
+        "p99": 4.855125000000044,
+        "sampleCount": 303
+      },
+      "after": {
+        "median": 4.359625000000051,
+        "p99": 5.239291999999978,
+        "sampleCount": 303
+      },
+      "pairs": [
+        {
+          "run": 1,
+          "order": "H→W",
+          "before": {
+            "median": 4.279292000000169,
+            "p99": 4.703750000000127,
+            "sampleCount": 101
+          },
+          "after": {
+            "median": 4.265290999999934,
+            "p99": 4.603291000000013,
+            "sampleCount": 101
+          },
+          "changePercent": -0.32718029057691167
+        },
+        {
+          "run": 2,
+          "order": "W→H",
+          "before": {
+            "median": 4.251333000000159,
+            "p99": 4.649124999999913,
+            "sampleCount": 101
+          },
+          "after": {
+            "median": 4.6251250000000255,
+            "p99": 5.311374999999998,
+            "sampleCount": 101
+          },
+          "changePercent": 8.792348188200094
+        },
+        {
+          "run": 3,
+          "order": "H→W",
+          "before": {
+            "median": 4.392417000000023,
+            "p99": 4.949125000000095,
+            "sampleCount": 101
+          },
+          "after": {
+            "median": 4.311958000000004,
+            "p99": 4.8476660000001175,
+            "sampleCount": 101
+          },
+          "changePercent": -1.831770526341614
+        }
+      ],
+      "changePercent": 1.2875074810411835
+    },
+    {
+      "fixture": "flat-500",
+      "phase": "first",
+      "before": {
+        "median": 0.08287500000005821,
+        "p99": 0.12162499999976717,
+        "sampleCount": 303
+      },
+      "after": {
+        "median": 0.07349999999996726,
+        "p99": 0.0997920000000363,
+        "sampleCount": 303
+      },
+      "pairs": [
+        {
+          "run": 1,
+          "order": "H→W",
+          "before": {
+            "median": 0.0797919999995429,
+            "p99": 0.1088329999997768,
+            "sampleCount": 101
+          },
+          "after": {
+            "median": 0.0714580000000069,
+            "p99": 0.09566699999993489,
+            "sampleCount": 101
+          },
+          "changePercent": -10.44465610535359
+        },
+        {
+          "run": 2,
+          "order": "W→H",
+          "before": {
+            "median": 0.08216700000002675,
+            "p99": 0.1040419999999358,
+            "sampleCount": 101
+          },
+          "after": {
+            "median": 0.07308399999999438,
+            "p99": 0.09508400000004258,
+            "sampleCount": 101
+          },
+          "changePercent": -11.05431620970635
+        },
+        {
+          "run": 3,
+          "order": "H→W",
+          "before": {
+            "median": 0.08612500000072032,
+            "p99": 0.12824999999975262,
+            "sampleCount": 101
+          },
+          "after": {
+            "median": 0.0753749999998945,
+            "p99": 0.0997920000000363,
+            "sampleCount": 101
+          },
+          "changePercent": -12.481857765731096
+        }
+      ],
+      "changePercent": -11.312217194671936
+    },
+    {
+      "fixture": "flat-500",
+      "phase": "later",
+      "before": {
+        "median": 0.017790999999306223,
+        "p99": 0.06849999999940337,
+        "sampleCount": 303
+      },
+      "after": {
+        "median": 0.01654200000007222,
+        "p99": 0.03750000000002274,
+        "sampleCount": 303
+      },
+      "pairs": [
+        {
+          "run": 1,
+          "order": "H→W",
+          "before": {
+            "median": 0.016916999999921245,
+            "p99": 0.036124999999628926,
+            "sampleCount": 101
+          },
+          "after": {
+            "median": 0.016083999999864318,
+            "p99": 0.02291599999995242,
+            "sampleCount": 101
+          },
+          "changePercent": -4.92404090595735
+        },
+        {
+          "run": 2,
+          "order": "W→H",
+          "before": {
+            "median": 0.017541999999593827,
+            "p99": 0.026667000000088592,
+            "sampleCount": 101
+          },
+          "after": {
+            "median": 0.016624999999976353,
+            "p99": 0.025791000000026543,
+            "sampleCount": 101
+          },
+          "changePercent": -5.2274541080760795
+        },
+        {
+          "run": 3,
+          "order": "H→W",
+          "before": {
+            "median": 0.019957999999860476,
+            "p99": 0.08595900000000256,
+            "sampleCount": 101
+          },
+          "after": {
+            "median": 0.016875000000027285,
+            "p99": 0.039750000000026375,
+            "sampleCount": 101
+          },
+          "changePercent": -15.44743962248093
+        }
+      ],
+      "changePercent": -7.020403570809441
+    },
+    {
+      "fixture": "computed-visible-derived",
+      "phase": "first",
+      "before": {
+        "median": 0.10804099999995742,
+        "p99": 0.18366699999978664,
+        "sampleCount": 303
+      },
+      "after": {
+        "median": 0.10337499999997135,
+        "p99": 0.16020900000000893,
+        "sampleCount": 303
+      },
+      "pairs": [
+        {
+          "run": 1,
+          "order": "H→W",
+          "before": {
+            "median": 0.10845800000015515,
+            "p99": 0.18366699999978664,
+            "sampleCount": 101
+          },
+          "after": {
+            "median": 0.10366699999997309,
+            "p99": 0.15683400000000347,
+            "sampleCount": 101
+          },
+          "changePercent": -4.417378155760954
+        },
+        {
+          "run": 2,
+          "order": "W→H",
+          "before": {
+            "median": 0.10804099999995742,
+            "p99": 0.15670799999952578,
+            "sampleCount": 101
+          },
+          "after": {
+            "median": 0.10137500000001864,
+            "p99": 0.14470799999998007,
+            "sampleCount": 101
+          },
+          "changePercent": -6.169879952926582
+        },
+        {
+          "run": 3,
+          "order": "H→W",
+          "before": {
+            "median": 0.10712500000045111,
+            "p99": 0.1830830000003516,
+            "sampleCount": 101
+          },
+          "after": {
+            "median": 0.10562500000003183,
+            "p99": 0.162666999999999,
+            "sampleCount": 101
+          },
+          "changePercent": -1.4002333726142013
+        }
+      ],
+      "changePercent": -4.318730852165298
+    },
+    {
+      "fixture": "computed-visible-derived",
+      "phase": "later",
+      "before": {
+        "median": 0.07250000000021828,
+        "p99": 0.12550000000010186,
+        "sampleCount": 303
+      },
+      "after": {
+        "median": 0.06916599999999562,
+        "p99": 0.10370899999998073,
+        "sampleCount": 303
+      },
+      "pairs": [
+        {
+          "run": 1,
+          "order": "H→W",
+          "before": {
+            "median": 0.07120899999972607,
+            "p99": 0.12550000000010186,
+            "sampleCount": 101
+          },
+          "after": {
+            "median": 0.06858299999998962,
+            "p99": 0.10370899999998073,
+            "sampleCount": 101
+          },
+          "changePercent": -3.68773610041786
+        },
+        {
+          "run": 2,
+          "order": "W→H",
+          "before": {
+            "median": 0.07420899999988251,
+            "p99": 0.10729199999968841,
+            "sampleCount": 101
+          },
+          "after": {
+            "median": 0.06941700000004403,
+            "p99": 0.10062500000003638,
+            "sampleCount": 101
+          },
+          "changePercent": -6.457437776881603
+        },
+        {
+          "run": 3,
+          "order": "H→W",
+          "before": {
+            "median": 0.07104200000003402,
+            "p99": 0.125,
+            "sampleCount": 101
+          },
+          "after": {
+            "median": 0.06908300000009149,
+            "p99": 0.1043329999999969,
+            "sampleCount": 101
+          },
+          "changePercent": -2.7575237182815737
+        }
+      ],
+      "changePercent": -4.59862068994844
+    },
+    {
+      "fixture": "oneOf-20",
+      "phase": "first",
+      "before": {
+        "median": 0.7751670000002377,
+        "p99": 0.9998329999998532,
+        "sampleCount": 303
+      },
+      "after": {
+        "median": 0.7852920000000267,
+        "p99": 0.9969160000000556,
+        "sampleCount": 303
+      },
+      "pairs": [
+        {
+          "run": 1,
+          "order": "H→W",
+          "before": {
+            "median": 0.7762920000000122,
+            "p99": 0.9804159999998774,
+            "sampleCount": 101
+          },
+          "after": {
+            "median": 0.7873339999999871,
+            "p99": 0.98762499999998,
+            "sampleCount": 101
+          },
+          "changePercent": 1.422402910241849
+        },
+        {
+          "run": 2,
+          "order": "W→H",
+          "before": {
+            "median": 0.8070840000000317,
+            "p99": 0.9998329999998532,
+            "sampleCount": 101
+          },
+          "after": {
+            "median": 0.7897090000000162,
+            "p99": 0.9969160000000556,
+            "sampleCount": 101
+          },
+          "changePercent": -2.1528118510607097
+        },
+        {
+          "run": 3,
+          "order": "H→W",
+          "before": {
+            "median": 0.7632499999999709,
+            "p99": 0.9607079999996131,
+            "sampleCount": 101
+          },
+          "after": {
+            "median": 0.7729170000000067,
+            "p99": 0.9877500000000055,
+            "sampleCount": 101
+          },
+          "changePercent": 1.2665574844462846
+        }
+      ],
+      "changePercent": 1.3061701542746107
+    },
+    {
+      "fixture": "oneOf-20",
+      "phase": "later",
+      "before": {
+        "median": 0.3795409999997901,
+        "p99": 0.47074999999949796,
+        "sampleCount": 303
+      },
+      "after": {
+        "median": 0.37916600000005474,
+        "p99": 0.5274580000000242,
+        "sampleCount": 303
+      },
+      "pairs": [
+        {
+          "run": 1,
+          "order": "H→W",
+          "before": {
+            "median": 0.38012499999967986,
+            "p99": 0.44587500000034197,
+            "sampleCount": 101
+          },
+          "after": {
+            "median": 0.3761250000000018,
+            "p99": 0.5124999999999886,
+            "sampleCount": 101
+          },
+          "changePercent": -1.052285432339728
+        },
+        {
+          "run": 2,
+          "order": "W→H",
+          "before": {
+            "median": 0.3842080000003989,
+            "p99": 0.4830419999998412,
+            "sampleCount": 101
+          },
+          "after": {
+            "median": 0.38599999999996726,
+            "p99": 0.5274580000000242,
+            "sampleCount": 101
+          },
+          "changePercent": 0.46641402562324075
+        },
+        {
+          "run": 3,
+          "order": "H→W",
+          "before": {
+            "median": 0.37762500000008004,
+            "p99": 0.43708299999980227,
+            "sampleCount": 101
+          },
+          "after": {
+            "median": 0.37587500000017826,
+            "p99": 0.44762500000001637,
+            "sampleCount": 101
+          },
+          "changePercent": -0.4634227076865671
+        }
+      ],
+      "changePercent": -0.09880355475048175
+    }
+  ],
+  "runs": [
+    {
+      "fixture": "sample-0",
+      "variant": "H",
+      "run": 1,
+      "environment": {
+        "startedAt": "2026-10-05T19:18:18.094Z",
+        "endedAt": "2026-10-05T19:18:18.845Z",
+        "node": "v26.10.0",
+        "v8": "14.6.202.34-node.35",
+        "platform": "darwin",
+        "arch": "arm64",
+        "cpu": "Apple M1 Max",
+        "warmup": 20,
+        "samples": 101,
+        "validation": "off",
+        "mode": "development synchronous core",
+        "instrumented": false,
+        "explicitGc": true,
+        "esbuildNaturalExits": 1,
+        "bundleSha256": "f50e0a2f916ad9f4de26686228d69e186fd60dee40eaa193d391c805eaa31e8e"
+      },
+      "observations": {
+        "mount": "a04ba29639cd89fc876a6a00460a59d80b480f4e6fb808eb32a41207a83a770b",
+        "first": "c1022c50f34fb57948e8f7e9e2799a94eadeae8c1caaa1d07ac277e5877a6e1b",
+        "later": "d9cd6629816b3ddb8821f805c46ab93c3d3cdac188dc7a18bd08932bb3c98dc7"
+      },
+      "mount": {
+        "median": 0.1463340000000244,
+        "p99": 0.23791699999992488,
+        "sampleCount": 101
+      },
+      "first": {
+        "median": 0.08212499999990541,
+        "p99": 0.13179200000013225,
+        "sampleCount": 101
+      },
+      "later": {
+        "median": 0.03545799999983501,
+        "p99": 0.10387500000024374,
+        "sampleCount": 101
+      }
+    },
+    {
+      "fixture": "sample-0",
+      "variant": "W",
+      "run": 1,
+      "environment": {
+        "startedAt": "2026-10-05T19:18:19.030Z",
+        "endedAt": "2026-10-05T19:18:19.798Z",
+        "node": "v26.10.0",
+        "v8": "14.6.202.34-node.35",
+        "platform": "darwin",
+        "arch": "arm64",
+        "cpu": "Apple M1 Max",
+        "warmup": 20,
+        "samples": 101,
+        "validation": "off",
+        "mode": "development synchronous core",
+        "instrumented": false,
+        "explicitGc": true,
+        "esbuildNaturalExits": 1,
+        "bundleSha256": "edfe8e872a8f04e2718a004cc10152ea731214bf7a14c113da06c889018ab0e6"
+      },
+      "observations": {
+        "mount": "a04ba29639cd89fc876a6a00460a59d80b480f4e6fb808eb32a41207a83a770b",
+        "first": "c1022c50f34fb57948e8f7e9e2799a94eadeae8c1caaa1d07ac277e5877a6e1b",
+        "later": "d9cd6629816b3ddb8821f805c46ab93c3d3cdac188dc7a18bd08932bb3c98dc7"
+      },
+      "mount": {
+        "median": 0.1408329999999296,
+        "p99": 0.2845829999999978,
+        "sampleCount": 101
+      },
+      "first": {
+        "median": 0.0731670000000122,
+        "p99": 0.15174999999999272,
+        "sampleCount": 101
+      },
+      "later": {
+        "median": 0.03291600000000017,
+        "p99": 0.06908300000009149,
+        "sampleCount": 101
+      }
+    },
+    {
+      "fixture": "sample-0",
+      "variant": "W",
+      "run": 2,
+      "environment": {
+        "startedAt": "2026-10-05T19:18:19.975Z",
+        "endedAt": "2026-10-05T19:18:20.714Z",
+        "node": "v26.10.0",
+        "v8": "14.6.202.34-node.35",
+        "platform": "darwin",
+        "arch": "arm64",
+        "cpu": "Apple M1 Max",
+        "warmup": 20,
+        "samples": 101,
+        "validation": "off",
+        "mode": "development synchronous core",
+        "instrumented": false,
+        "explicitGc": true,
+        "esbuildNaturalExits": 1,
+        "bundleSha256": "edfe8e872a8f04e2718a004cc10152ea731214bf7a14c113da06c889018ab0e6"
+      },
+      "observations": {
+        "mount": "a04ba29639cd89fc876a6a00460a59d80b480f4e6fb808eb32a41207a83a770b",
+        "first": "c1022c50f34fb57948e8f7e9e2799a94eadeae8c1caaa1d07ac277e5877a6e1b",
+        "later": "d9cd6629816b3ddb8821f805c46ab93c3d3cdac188dc7a18bd08932bb3c98dc7"
+      },
+      "mount": {
+        "median": 0.1427080000000842,
+        "p99": 0.18399999999996908,
+        "sampleCount": 101
+      },
+      "first": {
+        "median": 0.07358399999998255,
+        "p99": 0.094791999999984,
+        "sampleCount": 101
+      },
+      "later": {
+        "median": 0.030750000000011823,
+        "p99": 0.04908299999999599,
+        "sampleCount": 101
+      }
+    },
+    {
+      "fixture": "sample-0",
+      "variant": "H",
+      "run": 2,
+      "environment": {
+        "startedAt": "2026-10-05T19:18:24.270Z",
+        "endedAt": "2026-10-05T19:18:25.017Z",
+        "node": "v26.10.0",
+        "v8": "14.6.202.34-node.35",
+        "platform": "darwin",
+        "arch": "arm64",
+        "cpu": "Apple M1 Max",
+        "warmup": 20,
+        "samples": 101,
+        "validation": "off",
+        "mode": "development synchronous core",
+        "instrumented": false,
+        "explicitGc": true,
+        "esbuildNaturalExits": 1,
+        "bundleSha256": "f50e0a2f916ad9f4de26686228d69e186fd60dee40eaa193d391c805eaa31e8e"
+      },
+      "observations": {
+        "mount": "a04ba29639cd89fc876a6a00460a59d80b480f4e6fb808eb32a41207a83a770b",
+        "first": "c1022c50f34fb57948e8f7e9e2799a94eadeae8c1caaa1d07ac277e5877a6e1b",
+        "later": "d9cd6629816b3ddb8821f805c46ab93c3d3cdac188dc7a18bd08932bb3c98dc7"
+      },
+      "mount": {
+        "median": 0.13770900000008623,
+        "p99": 0.18562500000007276,
+        "sampleCount": 101
+      },
+      "first": {
+        "median": 0.07854200000019773,
+        "p99": 0.12024999999994179,
+        "sampleCount": 101
+      },
+      "later": {
+        "median": 0.033457999999882304,
+        "p99": 0.06662499999993088,
+        "sampleCount": 101
+      }
+    },
+    {
+      "fixture": "sample-0",
+      "variant": "H",
+      "run": 3,
+      "environment": {
+        "startedAt": "2026-10-05T19:18:28.604Z",
+        "endedAt": "2026-10-05T19:18:29.346Z",
+        "node": "v26.10.0",
+        "v8": "14.6.202.34-node.35",
+        "platform": "darwin",
+        "arch": "arm64",
+        "cpu": "Apple M1 Max",
+        "warmup": 20,
+        "samples": 101,
+        "validation": "off",
+        "mode": "development synchronous core",
+        "instrumented": false,
+        "explicitGc": true,
+        "esbuildNaturalExits": 1,
+        "bundleSha256": "f50e0a2f916ad9f4de26686228d69e186fd60dee40eaa193d391c805eaa31e8e"
+      },
+      "observations": {
+        "mount": "a04ba29639cd89fc876a6a00460a59d80b480f4e6fb808eb32a41207a83a770b",
+        "first": "c1022c50f34fb57948e8f7e9e2799a94eadeae8c1caaa1d07ac277e5877a6e1b",
+        "later": "d9cd6629816b3ddb8821f805c46ab93c3d3cdac188dc7a18bd08932bb3c98dc7"
+      },
+      "mount": {
+        "median": 0.14087500000005093,
+        "p99": 0.1864580000001297,
+        "sampleCount": 101
+      },
+      "first": {
+        "median": 0.07908300000008239,
+        "p99": 0.11550000000033833,
+        "sampleCount": 101
+      },
+      "later": {
+        "median": 0.0338329999999587,
+        "p99": 0.0512919999996484,
+        "sampleCount": 101
+      }
+    },
+    {
+      "fixture": "sample-0",
+      "variant": "W",
+      "run": 3,
+      "environment": {
+        "startedAt": "2026-10-05T19:18:29.529Z",
+        "endedAt": "2026-10-05T19:18:30.271Z",
+        "node": "v26.10.0",
+        "v8": "14.6.202.34-node.35",
+        "platform": "darwin",
+        "arch": "arm64",
+        "cpu": "Apple M1 Max",
+        "warmup": 20,
+        "samples": 101,
+        "validation": "off",
+        "mode": "development synchronous core",
+        "instrumented": false,
+        "explicitGc": true,
+        "esbuildNaturalExits": 1,
+        "bundleSha256": "edfe8e872a8f04e2718a004cc10152ea731214bf7a14c113da06c889018ab0e6"
+      },
+      "observations": {
+        "mount": "a04ba29639cd89fc876a6a00460a59d80b480f4e6fb808eb32a41207a83a770b",
+        "first": "c1022c50f34fb57948e8f7e9e2799a94eadeae8c1caaa1d07ac277e5877a6e1b",
+        "later": "d9cd6629816b3ddb8821f805c46ab93c3d3cdac188dc7a18bd08932bb3c98dc7"
+      },
+      "mount": {
+        "median": 0.14341699999999946,
+        "p99": 0.17816599999997607,
+        "sampleCount": 101
+      },
+      "first": {
+        "median": 0.07349999999996726,
+        "p99": 0.1003329999999778,
+        "sampleCount": 101
+      },
+      "later": {
+        "median": 0.030666999999994005,
+        "p99": 0.05458299999997962,
+        "sampleCount": 101
+      }
+    },
+    {
+      "fixture": "sample-1",
+      "variant": "H",
+      "run": 1,
+      "environment": {
+        "startedAt": "2026-10-05T19:18:33.821Z",
+        "endedAt": "2026-10-05T19:18:34.586Z",
+        "node": "v26.10.0",
+        "v8": "14.6.202.34-node.35",
+        "platform": "darwin",
+        "arch": "arm64",
+        "cpu": "Apple M1 Max",
+        "warmup": 20,
+        "samples": 101,
+        "validation": "off",
+        "mode": "development synchronous core",
+        "instrumented": false,
+        "explicitGc": true,
+        "esbuildNaturalExits": 1,
+        "bundleSha256": "f50e0a2f916ad9f4de26686228d69e186fd60dee40eaa193d391c805eaa31e8e"
+      },
+      "observations": {
+        "mount": "e3dc4a42e9b1466554a87efeabc074136e26245f39dff6f7ac2c83e33ec5daa6",
+        "first": "5217ea24717603da7c142e3217f2ab611b0b146d6a2df6f6c4412f5b6a00edc2",
+        "later": "5419654e91da9909d2eb93be05012518e199e51de5036f96f8a46846c153489c"
+      },
+      "mount": {
+        "median": 0.2220000000006621,
+        "p99": 0.2767090000002099,
+        "sampleCount": 101
+      },
+      "first": {
+        "median": 0.08687499999996362,
+        "p99": 0.11754100000007384,
+        "sampleCount": 101
+      },
+      "later": {
+        "median": 0.037458000000242464,
+        "p99": 0.05633299999999508,
+        "sampleCount": 101
+      }
+    },
+    {
+      "fixture": "sample-1",
+      "variant": "W",
+      "run": 1,
+      "environment": {
+        "startedAt": "2026-10-05T19:18:34.760Z",
+        "endedAt": "2026-10-05T19:18:35.523Z",
+        "node": "v26.10.0",
+        "v8": "14.6.202.34-node.35",
+        "platform": "darwin",
+        "arch": "arm64",
+        "cpu": "Apple M1 Max",
+        "warmup": 20,
+        "samples": 101,
+        "validation": "off",
+        "mode": "development synchronous core",
+        "instrumented": false,
+        "explicitGc": true,
+        "esbuildNaturalExits": 1,
+        "bundleSha256": "edfe8e872a8f04e2718a004cc10152ea731214bf7a14c113da06c889018ab0e6"
+      },
+      "observations": {
+        "mount": "e3dc4a42e9b1466554a87efeabc074136e26245f39dff6f7ac2c83e33ec5daa6",
+        "first": "5217ea24717603da7c142e3217f2ab611b0b146d6a2df6f6c4412f5b6a00edc2",
+        "later": "5419654e91da9909d2eb93be05012518e199e51de5036f96f8a46846c153489c"
+      },
+      "mount": {
+        "median": 0.217583999999988,
+        "p99": 0.2692910000000097,
+        "sampleCount": 101
+      },
+      "first": {
+        "median": 0.07766700000001947,
+        "p99": 0.09700000000009368,
+        "sampleCount": 101
+      },
+      "later": {
+        "median": 0.03454199999998764,
+        "p99": 0.0474999999999568,
+        "sampleCount": 101
+      }
+    },
+    {
+      "fixture": "sample-1",
+      "variant": "W",
+      "run": 2,
+      "environment": {
+        "startedAt": "2026-10-05T19:18:35.703Z",
+        "endedAt": "2026-10-05T19:18:36.464Z",
+        "node": "v26.10.0",
+        "v8": "14.6.202.34-node.35",
+        "platform": "darwin",
+        "arch": "arm64",
+        "cpu": "Apple M1 Max",
+        "warmup": 20,
+        "samples": 101,
+        "validation": "off",
+        "mode": "development synchronous core",
+        "instrumented": false,
+        "explicitGc": true,
+        "esbuildNaturalExits": 1,
+        "bundleSha256": "edfe8e872a8f04e2718a004cc10152ea731214bf7a14c113da06c889018ab0e6"
+      },
+      "observations": {
+        "mount": "e3dc4a42e9b1466554a87efeabc074136e26245f39dff6f7ac2c83e33ec5daa6",
+        "first": "5217ea24717603da7c142e3217f2ab611b0b146d6a2df6f6c4412f5b6a00edc2",
+        "later": "5419654e91da9909d2eb93be05012518e199e51de5036f96f8a46846c153489c"
+      },
+      "mount": {
+        "median": 0.2211250000000291,
+        "p99": 0.27637500000003,
+        "sampleCount": 101
+      },
+      "first": {
+        "median": 0.07787500000006276,
+        "p99": 0.1027080000000069,
+        "sampleCount": 101
+      },
+      "later": {
+        "median": 0.03450000000009368,
+        "p99": 0.04858400000000529,
+        "sampleCount": 101
+      }
+    },
+    {
+      "fixture": "sample-1",
+      "variant": "H",
+      "run": 2,
+      "environment": {
+        "startedAt": "2026-10-05T19:18:39.997Z",
+        "endedAt": "2026-10-05T19:18:40.756Z",
+        "node": "v26.10.0",
+        "v8": "14.6.202.34-node.35",
+        "platform": "darwin",
+        "arch": "arm64",
+        "cpu": "Apple M1 Max",
+        "warmup": 20,
+        "samples": 101,
+        "validation": "off",
+        "mode": "development synchronous core",
+        "instrumented": false,
+        "explicitGc": true,
+        "esbuildNaturalExits": 1,
+        "bundleSha256": "f50e0a2f916ad9f4de26686228d69e186fd60dee40eaa193d391c805eaa31e8e"
+      },
+      "observations": {
+        "mount": "e3dc4a42e9b1466554a87efeabc074136e26245f39dff6f7ac2c83e33ec5daa6",
+        "first": "5217ea24717603da7c142e3217f2ab611b0b146d6a2df6f6c4412f5b6a00edc2",
+        "later": "5419654e91da9909d2eb93be05012518e199e51de5036f96f8a46846c153489c"
+      },
+      "mount": {
+        "median": 0.21720800000002782,
+        "p99": 0.2798750000001746,
+        "sampleCount": 101
+      },
+      "first": {
+        "median": 0.08491599999979371,
+        "p99": 0.12037499999996726,
+        "sampleCount": 101
+      },
+      "later": {
+        "median": 0.03866599999992104,
+        "p99": 0.06008299999984956,
+        "sampleCount": 101
+      }
+    },
+    {
+      "fixture": "sample-1",
+      "variant": "H",
+      "run": 3,
+      "environment": {
+        "startedAt": "2026-10-05T19:18:44.345Z",
+        "endedAt": "2026-10-05T19:18:45.092Z",
+        "node": "v26.10.0",
+        "v8": "14.6.202.34-node.35",
+        "platform": "darwin",
+        "arch": "arm64",
+        "cpu": "Apple M1 Max",
+        "warmup": 20,
+        "samples": 101,
+        "validation": "off",
+        "mode": "development synchronous core",
+        "instrumented": false,
+        "explicitGc": true,
+        "esbuildNaturalExits": 1,
+        "bundleSha256": "f50e0a2f916ad9f4de26686228d69e186fd60dee40eaa193d391c805eaa31e8e"
+      },
+      "observations": {
+        "mount": "e3dc4a42e9b1466554a87efeabc074136e26245f39dff6f7ac2c83e33ec5daa6",
+        "first": "5217ea24717603da7c142e3217f2ab611b0b146d6a2df6f6c4412f5b6a00edc2",
+        "later": "5419654e91da9909d2eb93be05012518e199e51de5036f96f8a46846c153489c"
+      },
+      "mount": {
+        "median": 0.21920799999998053,
+        "p99": 0.30333399999972244,
+        "sampleCount": 101
+      },
+      "first": {
+        "median": 0.08654200000000856,
+        "p99": 0.12395799999967494,
+        "sampleCount": 101
+      },
+      "later": {
+        "median": 0.03820799999994051,
+        "p99": 0.055833999999777006,
+        "sampleCount": 101
+      }
+    },
+    {
+      "fixture": "sample-1",
+      "variant": "W",
+      "run": 3,
+      "environment": {
+        "startedAt": "2026-10-05T19:18:45.276Z",
+        "endedAt": "2026-10-05T19:18:46.023Z",
+        "node": "v26.10.0",
+        "v8": "14.6.202.34-node.35",
+        "platform": "darwin",
+        "arch": "arm64",
+        "cpu": "Apple M1 Max",
+        "warmup": 20,
+        "samples": 101,
+        "validation": "off",
+        "mode": "development synchronous core",
+        "instrumented": false,
+        "explicitGc": true,
+        "esbuildNaturalExits": 1,
+        "bundleSha256": "edfe8e872a8f04e2718a004cc10152ea731214bf7a14c113da06c889018ab0e6"
+      },
+      "observations": {
+        "mount": "e3dc4a42e9b1466554a87efeabc074136e26245f39dff6f7ac2c83e33ec5daa6",
+        "first": "5217ea24717603da7c142e3217f2ab611b0b146d6a2df6f6c4412f5b6a00edc2",
+        "later": "5419654e91da9909d2eb93be05012518e199e51de5036f96f8a46846c153489c"
+      },
+      "mount": {
+        "median": 0.22075000000000955,
+        "p99": 0.29025000000001455,
+        "sampleCount": 101
+      },
+      "first": {
+        "median": 0.07775000000003729,
+        "p99": 0.10587500000002592,
+        "sampleCount": 101
+      },
+      "later": {
+        "median": 0.03462500000000546,
+        "p99": 0.05000000000006821,
+        "sampleCount": 101
+      }
+    },
+    {
+      "fixture": "sample-2",
+      "variant": "H",
+      "run": 1,
+      "environment": {
+        "startedAt": "2026-10-05T19:18:49.596Z",
+        "endedAt": "2026-10-05T19:18:50.360Z",
+        "node": "v26.10.0",
+        "v8": "14.6.202.34-node.35",
+        "platform": "darwin",
+        "arch": "arm64",
+        "cpu": "Apple M1 Max",
+        "warmup": 20,
+        "samples": 101,
+        "validation": "off",
+        "mode": "development synchronous core",
+        "instrumented": false,
+        "explicitGc": true,
+        "esbuildNaturalExits": 1,
+        "bundleSha256": "f50e0a2f916ad9f4de26686228d69e186fd60dee40eaa193d391c805eaa31e8e"
+      },
+      "observations": {
+        "mount": "a2b5f97553be37bf7eb775941d23fd60f5d76ce412d2403644807ef057388872",
+        "first": "97f320a42ad764fe3a0736bb393e548095c44d6ce919af56151d519b794ccb34",
+        "later": "b050f1bc5196af8257b746d8927282f9836ae4d372c6ac5fb288b4b4cc4fbad8"
+      },
+      "mount": {
+        "median": 0.2957080000001042,
+        "p99": 0.41820899999993344,
+        "sampleCount": 101
+      },
+      "first": {
+        "median": 0.08674999999993815,
+        "p99": 0.11716599999999744,
+        "sampleCount": 101
+      },
+      "later": {
+        "median": 0.03758300000026793,
+        "p99": 0.05645800000002055,
+        "sampleCount": 101
+      }
+    },
+    {
+      "fixture": "sample-2",
+      "variant": "W",
+      "run": 1,
+      "environment": {
+        "startedAt": "2026-10-05T19:18:50.531Z",
+        "endedAt": "2026-10-05T19:18:51.292Z",
+        "node": "v26.10.0",
+        "v8": "14.6.202.34-node.35",
+        "platform": "darwin",
+        "arch": "arm64",
+        "cpu": "Apple M1 Max",
+        "warmup": 20,
+        "samples": 101,
+        "validation": "off",
+        "mode": "development synchronous core",
+        "instrumented": false,
+        "explicitGc": true,
+        "esbuildNaturalExits": 1,
+        "bundleSha256": "edfe8e872a8f04e2718a004cc10152ea731214bf7a14c113da06c889018ab0e6"
+      },
+      "observations": {
+        "mount": "a2b5f97553be37bf7eb775941d23fd60f5d76ce412d2403644807ef057388872",
+        "first": "97f320a42ad764fe3a0736bb393e548095c44d6ce919af56151d519b794ccb34",
+        "later": "b050f1bc5196af8257b746d8927282f9836ae4d372c6ac5fb288b4b4cc4fbad8"
+      },
+      "mount": {
+        "median": 0.2927919999999631,
+        "p99": 0.3761250000000018,
+        "sampleCount": 101
+      },
+      "first": {
+        "median": 0.07595800000001418,
+        "p99": 0.10820799999999053,
+        "sampleCount": 101
+      },
+      "later": {
+        "median": 0.03416700000002493,
+        "p99": 0.04858400000000529,
+        "sampleCount": 101
+      }
+    },
+    {
+      "fixture": "sample-2",
+      "variant": "W",
+      "run": 2,
+      "environment": {
+        "startedAt": "2026-10-05T19:18:51.470Z",
+        "endedAt": "2026-10-05T19:18:52.234Z",
+        "node": "v26.10.0",
+        "v8": "14.6.202.34-node.35",
+        "platform": "darwin",
+        "arch": "arm64",
+        "cpu": "Apple M1 Max",
+        "warmup": 20,
+        "samples": 101,
+        "validation": "off",
+        "mode": "development synchronous core",
+        "instrumented": false,
+        "explicitGc": true,
+        "esbuildNaturalExits": 1,
+        "bundleSha256": "edfe8e872a8f04e2718a004cc10152ea731214bf7a14c113da06c889018ab0e6"
+      },
+      "observations": {
+        "mount": "a2b5f97553be37bf7eb775941d23fd60f5d76ce412d2403644807ef057388872",
+        "first": "97f320a42ad764fe3a0736bb393e548095c44d6ce919af56151d519b794ccb34",
+        "later": "b050f1bc5196af8257b746d8927282f9836ae4d372c6ac5fb288b4b4cc4fbad8"
+      },
+      "mount": {
+        "median": 0.2989159999999629,
+        "p99": 0.353917000000024,
+        "sampleCount": 101
+      },
+      "first": {
+        "median": 0.07658300000002782,
+        "p99": 0.11120799999997644,
+        "sampleCount": 101
+      },
+      "later": {
+        "median": 0.03487500000005639,
+        "p99": 0.05904099999997925,
+        "sampleCount": 101
+      }
+    },
+    {
+      "fixture": "sample-2",
+      "variant": "H",
+      "run": 2,
+      "environment": {
+        "startedAt": "2026-10-05T19:18:55.787Z",
+        "endedAt": "2026-10-05T19:18:56.559Z",
+        "node": "v26.10.0",
+        "v8": "14.6.202.34-node.35",
+        "platform": "darwin",
+        "arch": "arm64",
+        "cpu": "Apple M1 Max",
+        "warmup": 20,
+        "samples": 101,
+        "validation": "off",
+        "mode": "development synchronous core",
+        "instrumented": false,
+        "explicitGc": true,
+        "esbuildNaturalExits": 1,
+        "bundleSha256": "f50e0a2f916ad9f4de26686228d69e186fd60dee40eaa193d391c805eaa31e8e"
+      },
+      "observations": {
+        "mount": "a2b5f97553be37bf7eb775941d23fd60f5d76ce412d2403644807ef057388872",
+        "first": "97f320a42ad764fe3a0736bb393e548095c44d6ce919af56151d519b794ccb34",
+        "later": "b050f1bc5196af8257b746d8927282f9836ae4d372c6ac5fb288b4b4cc4fbad8"
+      },
+      "mount": {
+        "median": 0.2997499999996762,
+        "p99": 0.3697910000000775,
+        "sampleCount": 101
+      },
+      "first": {
+        "median": 0.08720799999991868,
+        "p99": 0.11549999999988358,
+        "sampleCount": 101
+      },
+      "later": {
+        "median": 0.038915999999517226,
+        "p99": 0.056040999999822816,
+        "sampleCount": 101
+      }
+    },
+    {
+      "fixture": "sample-2",
+      "variant": "H",
+      "run": 3,
+      "environment": {
+        "startedAt": "2026-10-05T19:19:00.107Z",
+        "endedAt": "2026-10-05T19:19:00.874Z",
+        "node": "v26.10.0",
+        "v8": "14.6.202.34-node.35",
+        "platform": "darwin",
+        "arch": "arm64",
+        "cpu": "Apple M1 Max",
+        "warmup": 20,
+        "samples": 101,
+        "validation": "off",
+        "mode": "development synchronous core",
+        "instrumented": false,
+        "explicitGc": true,
+        "esbuildNaturalExits": 1,
+        "bundleSha256": "f50e0a2f916ad9f4de26686228d69e186fd60dee40eaa193d391c805eaa31e8e"
+      },
+      "observations": {
+        "mount": "a2b5f97553be37bf7eb775941d23fd60f5d76ce412d2403644807ef057388872",
+        "first": "97f320a42ad764fe3a0736bb393e548095c44d6ce919af56151d519b794ccb34",
+        "later": "b050f1bc5196af8257b746d8927282f9836ae4d372c6ac5fb288b4b4cc4fbad8"
+      },
+      "mount": {
+        "median": 0.3010420000000522,
+        "p99": 0.37295799999992596,
+        "sampleCount": 101
+      },
+      "first": {
+        "median": 0.09183299999995143,
+        "p99": 0.12400000000025102,
+        "sampleCount": 101
+      },
+      "later": {
+        "median": 0.038082999999915046,
+        "p99": 0.055499999999938154,
+        "sampleCount": 101
+      }
+    },
+    {
+      "fixture": "sample-2",
+      "variant": "W",
+      "run": 3,
+      "environment": {
+        "startedAt": "2026-10-05T19:19:01.056Z",
+        "endedAt": "2026-10-05T19:19:01.827Z",
+        "node": "v26.10.0",
+        "v8": "14.6.202.34-node.35",
+        "platform": "darwin",
+        "arch": "arm64",
+        "cpu": "Apple M1 Max",
+        "warmup": 20,
+        "samples": 101,
+        "validation": "off",
+        "mode": "development synchronous core",
+        "instrumented": false,
+        "explicitGc": true,
+        "esbuildNaturalExits": 1,
+        "bundleSha256": "edfe8e872a8f04e2718a004cc10152ea731214bf7a14c113da06c889018ab0e6"
+      },
+      "observations": {
+        "mount": "a2b5f97553be37bf7eb775941d23fd60f5d76ce412d2403644807ef057388872",
+        "first": "97f320a42ad764fe3a0736bb393e548095c44d6ce919af56151d519b794ccb34",
+        "later": "b050f1bc5196af8257b746d8927282f9836ae4d372c6ac5fb288b4b4cc4fbad8"
+      },
+      "mount": {
+        "median": 0.29245800000001054,
+        "p99": 0.39954099999999926,
+        "sampleCount": 101
+      },
+      "first": {
+        "median": 0.07854100000008657,
+        "p99": 0.11112500000001546,
+        "sampleCount": 101
+      },
+      "later": {
+        "median": 0.03462500000000546,
+        "p99": 0.04654199999998809,
+        "sampleCount": 101
+      }
+    },
+    {
+      "fixture": "sample-3",
+      "variant": "H",
+      "run": 1,
+      "environment": {
+        "startedAt": "2026-10-05T19:19:05.396Z",
+        "endedAt": "2026-10-05T19:19:06.266Z",
+        "node": "v26.10.0",
+        "v8": "14.6.202.34-node.35",
+        "platform": "darwin",
+        "arch": "arm64",
+        "cpu": "Apple M1 Max",
+        "warmup": 20,
+        "samples": 101,
+        "validation": "off",
+        "mode": "development synchronous core",
+        "instrumented": false,
+        "explicitGc": true,
+        "esbuildNaturalExits": 1,
+        "bundleSha256": "f50e0a2f916ad9f4de26686228d69e186fd60dee40eaa193d391c805eaa31e8e"
+      },
+      "observations": {
+        "mount": "1434fd8c9e62b8f1d9d34b86fc548c3adea720e4525801e290a00193a69424b1",
+        "first": "d9a3ff9843e5258b9238ce456c441a912fe9167c3300135f96ebeff405d66b79",
+        "later": "1bcdac0ddcc3e443f090e812c0a4d0cd33545d975ca1db80adb6e6d1bbaeb99d"
+      },
+      "mount": {
+        "median": 0.7347079999999551,
+        "p99": 0.9899580000001151,
+        "sampleCount": 101
+      },
+      "first": {
+        "median": 0.08758299999999508,
+        "p99": 0.11149999999997817,
+        "sampleCount": 101
+      },
+      "later": {
+        "median": 0.03741700000000492,
+        "p99": 0.05620899999939866,
+        "sampleCount": 101
+      }
+    },
+    {
+      "fixture": "sample-3",
+      "variant": "W",
+      "run": 1,
+      "environment": {
+        "startedAt": "2026-10-05T19:19:06.441Z",
+        "endedAt": "2026-10-05T19:19:07.314Z",
+        "node": "v26.10.0",
+        "v8": "14.6.202.34-node.35",
+        "platform": "darwin",
+        "arch": "arm64",
+        "cpu": "Apple M1 Max",
+        "warmup": 20,
+        "samples": 101,
+        "validation": "off",
+        "mode": "development synchronous core",
+        "instrumented": false,
+        "explicitGc": true,
+        "esbuildNaturalExits": 1,
+        "bundleSha256": "edfe8e872a8f04e2718a004cc10152ea731214bf7a14c113da06c889018ab0e6"
+      },
+      "observations": {
+        "mount": "1434fd8c9e62b8f1d9d34b86fc548c3adea720e4525801e290a00193a69424b1",
+        "first": "d9a3ff9843e5258b9238ce456c441a912fe9167c3300135f96ebeff405d66b79",
+        "later": "1bcdac0ddcc3e443f090e812c0a4d0cd33545d975ca1db80adb6e6d1bbaeb99d"
+      },
+      "mount": {
+        "median": 0.7517920000000231,
+        "p99": 0.9366249999999923,
+        "sampleCount": 101
+      },
+      "first": {
+        "median": 0.08266700000001492,
+        "p99": 0.1173750000000382,
+        "sampleCount": 101
+      },
+      "later": {
+        "median": 0.03437500000001137,
+        "p99": 0.07383299999992232,
+        "sampleCount": 101
+      }
+    },
+    {
+      "fixture": "sample-3",
+      "variant": "W",
+      "run": 2,
+      "environment": {
+        "startedAt": "2026-10-05T19:19:07.486Z",
+        "endedAt": "2026-10-05T19:19:08.348Z",
+        "node": "v26.10.0",
+        "v8": "14.6.202.34-node.35",
+        "platform": "darwin",
+        "arch": "arm64",
+        "cpu": "Apple M1 Max",
+        "warmup": 20,
+        "samples": 101,
+        "validation": "off",
+        "mode": "development synchronous core",
+        "instrumented": false,
+        "explicitGc": true,
+        "esbuildNaturalExits": 1,
+        "bundleSha256": "edfe8e872a8f04e2718a004cc10152ea731214bf7a14c113da06c889018ab0e6"
+      },
+      "observations": {
+        "mount": "1434fd8c9e62b8f1d9d34b86fc548c3adea720e4525801e290a00193a69424b1",
+        "first": "d9a3ff9843e5258b9238ce456c441a912fe9167c3300135f96ebeff405d66b79",
+        "later": "1bcdac0ddcc3e443f090e812c0a4d0cd33545d975ca1db80adb6e6d1bbaeb99d"
+      },
+      "mount": {
+        "median": 0.7450830000000224,
+        "p99": 0.96875,
+        "sampleCount": 101
+      },
+      "first": {
+        "median": 0.08095899999995027,
+        "p99": 0.10191700000007131,
+        "sampleCount": 101
+      },
+      "later": {
+        "median": 0.03433300000000372,
+        "p99": 0.046041000000059285,
+        "sampleCount": 101
+      }
+    },
+    {
+      "fixture": "sample-3",
+      "variant": "H",
+      "run": 2,
+      "environment": {
+        "startedAt": "2026-10-05T19:19:11.938Z",
+        "endedAt": "2026-10-05T19:19:12.806Z",
+        "node": "v26.10.0",
+        "v8": "14.6.202.34-node.35",
+        "platform": "darwin",
+        "arch": "arm64",
+        "cpu": "Apple M1 Max",
+        "warmup": 20,
+        "samples": 101,
+        "validation": "off",
+        "mode": "development synchronous core",
+        "instrumented": false,
+        "explicitGc": true,
+        "esbuildNaturalExits": 1,
+        "bundleSha256": "f50e0a2f916ad9f4de26686228d69e186fd60dee40eaa193d391c805eaa31e8e"
+      },
+      "observations": {
+        "mount": "1434fd8c9e62b8f1d9d34b86fc548c3adea720e4525801e290a00193a69424b1",
+        "first": "d9a3ff9843e5258b9238ce456c441a912fe9167c3300135f96ebeff405d66b79",
+        "later": "1bcdac0ddcc3e443f090e812c0a4d0cd33545d975ca1db80adb6e6d1bbaeb99d"
+      },
+      "mount": {
+        "median": 0.73050000000012,
+        "p99": 0.9030410000000302,
+        "sampleCount": 101
+      },
+      "first": {
+        "median": 0.0909999999998945,
+        "p99": 0.11937499999976353,
+        "sampleCount": 101
+      },
+      "later": {
+        "median": 0.0374999999994543,
+        "p99": 0.051208999999744265,
+        "sampleCount": 101
+      }
+    },
+    {
+      "fixture": "sample-3",
+      "variant": "H",
+      "run": 3,
+      "environment": {
+        "startedAt": "2026-10-05T19:19:16.344Z",
+        "endedAt": "2026-10-05T19:19:17.211Z",
+        "node": "v26.10.0",
+        "v8": "14.6.202.34-node.35",
+        "platform": "darwin",
+        "arch": "arm64",
+        "cpu": "Apple M1 Max",
+        "warmup": 20,
+        "samples": 101,
+        "validation": "off",
+        "mode": "development synchronous core",
+        "instrumented": false,
+        "explicitGc": true,
+        "esbuildNaturalExits": 1,
+        "bundleSha256": "f50e0a2f916ad9f4de26686228d69e186fd60dee40eaa193d391c805eaa31e8e"
+      },
+      "observations": {
+        "mount": "1434fd8c9e62b8f1d9d34b86fc548c3adea720e4525801e290a00193a69424b1",
+        "first": "d9a3ff9843e5258b9238ce456c441a912fe9167c3300135f96ebeff405d66b79",
+        "later": "1bcdac0ddcc3e443f090e812c0a4d0cd33545d975ca1db80adb6e6d1bbaeb99d"
+      },
+      "mount": {
+        "median": 0.7066670000003796,
+        "p99": 0.9440829999998641,
+        "sampleCount": 101
+      },
+      "first": {
+        "median": 0.09108400000013717,
+        "p99": 0.13520900000003166,
+        "sampleCount": 101
+      },
+      "later": {
+        "median": 0.03812500000003638,
+        "p99": 0.07508299999972223,
+        "sampleCount": 101
+      }
+    },
+    {
+      "fixture": "sample-3",
+      "variant": "W",
+      "run": 3,
+      "environment": {
+        "startedAt": "2026-10-05T19:19:17.384Z",
+        "endedAt": "2026-10-05T19:19:18.241Z",
+        "node": "v26.10.0",
+        "v8": "14.6.202.34-node.35",
+        "platform": "darwin",
+        "arch": "arm64",
+        "cpu": "Apple M1 Max",
+        "warmup": 20,
+        "samples": 101,
+        "validation": "off",
+        "mode": "development synchronous core",
+        "instrumented": false,
+        "explicitGc": true,
+        "esbuildNaturalExits": 1,
+        "bundleSha256": "edfe8e872a8f04e2718a004cc10152ea731214bf7a14c113da06c889018ab0e6"
+      },
+      "observations": {
+        "mount": "1434fd8c9e62b8f1d9d34b86fc548c3adea720e4525801e290a00193a69424b1",
+        "first": "d9a3ff9843e5258b9238ce456c441a912fe9167c3300135f96ebeff405d66b79",
+        "later": "1bcdac0ddcc3e443f090e812c0a4d0cd33545d975ca1db80adb6e6d1bbaeb99d"
+      },
+      "mount": {
+        "median": 0.7302089999999453,
+        "p99": 0.9210830000000101,
+        "sampleCount": 101
+      },
+      "first": {
+        "median": 0.0801249999999527,
+        "p99": 0.10499999999996135,
+        "sampleCount": 101
+      },
+      "later": {
+        "median": 0.03366700000003675,
+        "p99": 0.07416599999999107,
+        "sampleCount": 101
+      }
+    },
+    {
+      "fixture": "nested-d3-f4",
+      "variant": "H",
+      "run": 1,
+      "environment": {
+        "startedAt": "2026-10-05T19:19:21.830Z",
+        "endedAt": "2026-10-05T19:19:22.763Z",
+        "node": "v26.10.0",
+        "v8": "14.6.202.34-node.35",
+        "platform": "darwin",
+        "arch": "arm64",
+        "cpu": "Apple M1 Max",
+        "warmup": 20,
+        "samples": 101,
+        "validation": "off",
+        "mode": "development synchronous core",
+        "instrumented": false,
+        "explicitGc": true,
+        "esbuildNaturalExits": 1,
+        "bundleSha256": "f50e0a2f916ad9f4de26686228d69e186fd60dee40eaa193d391c805eaa31e8e"
+      },
+      "observations": {
+        "mount": "2ac1e5a2b2c5861ea782f4dab0dba59db82d6fe739a3e2850333657a3fcddb6e",
+        "first": "67f0f63067e48fd170de18e1494a50dfeff89d2720cd374ce991279c89041899",
+        "later": "7c59d70e545d2b4d407025d9a34ae392ed9bdacc6f3b90860c0ef7ab11a12c98"
+      },
+      "mount": {
+        "median": 0.8875420000003942,
+        "p99": 1.1222500000003492,
+        "sampleCount": 101
+      },
+      "first": {
+        "median": 0.07762499999989814,
+        "p99": 0.10674999999991996,
+        "sampleCount": 101
+      },
+      "later": {
+        "median": 0.02266700000018318,
+        "p99": 0.03829199999972843,
+        "sampleCount": 101
+      }
+    },
+    {
+      "fixture": "nested-d3-f4",
+      "variant": "W",
+      "run": 1,
+      "environment": {
+        "startedAt": "2026-10-05T19:19:22.937Z",
+        "endedAt": "2026-10-05T19:19:23.863Z",
+        "node": "v26.10.0",
+        "v8": "14.6.202.34-node.35",
+        "platform": "darwin",
+        "arch": "arm64",
+        "cpu": "Apple M1 Max",
+        "warmup": 20,
+        "samples": 101,
+        "validation": "off",
+        "mode": "development synchronous core",
+        "instrumented": false,
+        "explicitGc": true,
+        "esbuildNaturalExits": 1,
+        "bundleSha256": "edfe8e872a8f04e2718a004cc10152ea731214bf7a14c113da06c889018ab0e6"
+      },
+      "observations": {
+        "mount": "2ac1e5a2b2c5861ea782f4dab0dba59db82d6fe739a3e2850333657a3fcddb6e",
+        "first": "67f0f63067e48fd170de18e1494a50dfeff89d2720cd374ce991279c89041899",
+        "later": "7c59d70e545d2b4d407025d9a34ae392ed9bdacc6f3b90860c0ef7ab11a12c98"
+      },
+      "mount": {
+        "median": 0.8659580000000346,
+        "p99": 1.1200410000000147,
+        "sampleCount": 101
+      },
+      "first": {
+        "median": 0.06925000000001091,
+        "p99": 0.100750000000005,
+        "sampleCount": 101
+      },
+      "later": {
+        "median": 0.02112499999998363,
+        "p99": 0.04662499999994907,
+        "sampleCount": 101
+      }
+    },
+    {
+      "fixture": "nested-d3-f4",
+      "variant": "W",
+      "run": 2,
+      "environment": {
+        "startedAt": "2026-10-05T19:19:24.038Z",
+        "endedAt": "2026-10-05T19:19:24.966Z",
+        "node": "v26.10.0",
+        "v8": "14.6.202.34-node.35",
+        "platform": "darwin",
+        "arch": "arm64",
+        "cpu": "Apple M1 Max",
+        "warmup": 20,
+        "samples": 101,
+        "validation": "off",
+        "mode": "development synchronous core",
+        "instrumented": false,
+        "explicitGc": true,
+        "esbuildNaturalExits": 1,
+        "bundleSha256": "edfe8e872a8f04e2718a004cc10152ea731214bf7a14c113da06c889018ab0e6"
+      },
+      "observations": {
+        "mount": "2ac1e5a2b2c5861ea782f4dab0dba59db82d6fe739a3e2850333657a3fcddb6e",
+        "first": "67f0f63067e48fd170de18e1494a50dfeff89d2720cd374ce991279c89041899",
+        "later": "7c59d70e545d2b4d407025d9a34ae392ed9bdacc6f3b90860c0ef7ab11a12c98"
+      },
+      "mount": {
+        "median": 0.9063750000000255,
+        "p99": 1.0500409999999647,
+        "sampleCount": 101
+      },
+      "first": {
+        "median": 0.07545900000002348,
+        "p99": 0.0982089999999971,
+        "sampleCount": 101
+      },
+      "later": {
+        "median": 0.022000000000048203,
+        "p99": 0.050292000000013104,
+        "sampleCount": 101
+      }
+    },
+    {
+      "fixture": "nested-d3-f4",
+      "variant": "H",
+      "run": 2,
+      "environment": {
+        "startedAt": "2026-10-05T19:19:28.513Z",
+        "endedAt": "2026-10-05T19:19:29.491Z",
+        "node": "v26.10.0",
+        "v8": "14.6.202.34-node.35",
+        "platform": "darwin",
+        "arch": "arm64",
+        "cpu": "Apple M1 Max",
+        "warmup": 20,
+        "samples": 101,
+        "validation": "off",
+        "mode": "development synchronous core",
+        "instrumented": false,
+        "explicitGc": true,
+        "esbuildNaturalExits": 1,
+        "bundleSha256": "f50e0a2f916ad9f4de26686228d69e186fd60dee40eaa193d391c805eaa31e8e"
+      },
+      "observations": {
+        "mount": "2ac1e5a2b2c5861ea782f4dab0dba59db82d6fe739a3e2850333657a3fcddb6e",
+        "first": "67f0f63067e48fd170de18e1494a50dfeff89d2720cd374ce991279c89041899",
+        "later": "7c59d70e545d2b4d407025d9a34ae392ed9bdacc6f3b90860c0ef7ab11a12c98"
+      },
+      "mount": {
+        "median": 0.8965829999997368,
+        "p99": 1.0844160000001466,
+        "sampleCount": 101
+      },
+      "first": {
+        "median": 0.07820900000024267,
+        "p99": 0.1117500000000291,
+        "sampleCount": 101
+      },
+      "later": {
+        "median": 0.022290999999768246,
+        "p99": 0.10554100000081235,
+        "sampleCount": 101
+      }
+    },
+    {
+      "fixture": "nested-d3-f4",
+      "variant": "H",
+      "run": 3,
+      "environment": {
+        "startedAt": "2026-10-05T19:19:33.072Z",
+        "endedAt": "2026-10-05T19:19:34.002Z",
+        "node": "v26.10.0",
+        "v8": "14.6.202.34-node.35",
+        "platform": "darwin",
+        "arch": "arm64",
+        "cpu": "Apple M1 Max",
+        "warmup": 20,
+        "samples": 101,
+        "validation": "off",
+        "mode": "development synchronous core",
+        "instrumented": false,
+        "explicitGc": true,
+        "esbuildNaturalExits": 1,
+        "bundleSha256": "f50e0a2f916ad9f4de26686228d69e186fd60dee40eaa193d391c805eaa31e8e"
+      },
+      "observations": {
+        "mount": "2ac1e5a2b2c5861ea782f4dab0dba59db82d6fe739a3e2850333657a3fcddb6e",
+        "first": "67f0f63067e48fd170de18e1494a50dfeff89d2720cd374ce991279c89041899",
+        "later": "7c59d70e545d2b4d407025d9a34ae392ed9bdacc6f3b90860c0ef7ab11a12c98"
+      },
+      "mount": {
+        "median": 0.8781250000001819,
+        "p99": 1.0989999999997053,
+        "sampleCount": 101
+      },
+      "first": {
+        "median": 0.07649999999966894,
+        "p99": 0.10325000000011642,
+        "sampleCount": 101
+      },
+      "later": {
+        "median": 0.022915999999895575,
+        "p99": 0.032374999999774445,
+        "sampleCount": 101
+      }
+    },
+    {
+      "fixture": "nested-d3-f4",
+      "variant": "W",
+      "run": 3,
+      "environment": {
+        "startedAt": "2026-10-05T19:19:34.175Z",
+        "endedAt": "2026-10-05T19:19:35.099Z",
+        "node": "v26.10.0",
+        "v8": "14.6.202.34-node.35",
+        "platform": "darwin",
+        "arch": "arm64",
+        "cpu": "Apple M1 Max",
+        "warmup": 20,
+        "samples": 101,
+        "validation": "off",
+        "mode": "development synchronous core",
+        "instrumented": false,
+        "explicitGc": true,
+        "esbuildNaturalExits": 1,
+        "bundleSha256": "edfe8e872a8f04e2718a004cc10152ea731214bf7a14c113da06c889018ab0e6"
+      },
+      "observations": {
+        "mount": "2ac1e5a2b2c5861ea782f4dab0dba59db82d6fe739a3e2850333657a3fcddb6e",
+        "first": "67f0f63067e48fd170de18e1494a50dfeff89d2720cd374ce991279c89041899",
+        "later": "7c59d70e545d2b4d407025d9a34ae392ed9bdacc6f3b90860c0ef7ab11a12c98"
+      },
+      "mount": {
+        "median": 0.8887500000000159,
+        "p99": 1.0930829999999787,
+        "sampleCount": 101
+      },
+      "first": {
+        "median": 0.07133399999997891,
+        "p99": 0.08695799999998144,
+        "sampleCount": 101
+      },
+      "later": {
+        "median": 0.021416999999985364,
+        "p99": 0.03795800000000327,
+        "sampleCount": 101
+      }
+    },
+    {
+      "fixture": "nested-d5-f4",
+      "variant": "H",
+      "run": 1,
+      "environment": {
+        "startedAt": "2026-10-05T19:19:38.646Z",
+        "endedAt": "2026-10-05T19:19:41.853Z",
+        "node": "v26.10.0",
+        "v8": "14.6.202.34-node.35",
+        "platform": "darwin",
+        "arch": "arm64",
+        "cpu": "Apple M1 Max",
+        "warmup": 20,
+        "samples": 101,
+        "validation": "off",
+        "mode": "development synchronous core",
+        "instrumented": false,
+        "explicitGc": true,
+        "esbuildNaturalExits": 1,
+        "bundleSha256": "f50e0a2f916ad9f4de26686228d69e186fd60dee40eaa193d391c805eaa31e8e"
+      },
+      "observations": {
+        "mount": "67ac737d4f58dd337e695b7837e6411f1bfc991019a72bee0a0679af63d254d9",
+        "first": "7b7cb2d3fb3509ea4e42e59a55d0a9f862dab377aa05b7b4d07a588400c8e265",
+        "later": "8d468dd8357daebb7f1d1221b84f43adfe473c4524525adf80388fa3152ba89e"
+      },
+      "mount": {
+        "median": 12.794041999999536,
+        "p99": 13.89337499999965,
+        "sampleCount": 101
+      },
+      "first": {
+        "median": 0.11583299999983865,
+        "p99": 0.14274999999997817,
+        "sampleCount": 101
+      },
+      "later": {
+        "median": 0.02974999999969441,
+        "p99": 0.045583000000078755,
+        "sampleCount": 101
+      }
+    },
+    {
+      "fixture": "nested-d5-f4",
+      "variant": "W",
+      "run": 1,
+      "environment": {
+        "startedAt": "2026-10-05T19:19:42.028Z",
+        "endedAt": "2026-10-05T19:19:45.242Z",
+        "node": "v26.10.0",
+        "v8": "14.6.202.34-node.35",
+        "platform": "darwin",
+        "arch": "arm64",
+        "cpu": "Apple M1 Max",
+        "warmup": 20,
+        "samples": 101,
+        "validation": "off",
+        "mode": "development synchronous core",
+        "instrumented": false,
+        "explicitGc": true,
+        "esbuildNaturalExits": 1,
+        "bundleSha256": "edfe8e872a8f04e2718a004cc10152ea731214bf7a14c113da06c889018ab0e6"
+      },
+      "observations": {
+        "mount": "67ac737d4f58dd337e695b7837e6411f1bfc991019a72bee0a0679af63d254d9",
+        "first": "7b7cb2d3fb3509ea4e42e59a55d0a9f862dab377aa05b7b4d07a588400c8e265",
+        "later": "8d468dd8357daebb7f1d1221b84f43adfe473c4524525adf80388fa3152ba89e"
+      },
+      "mount": {
+        "median": 12.681874999999991,
+        "p99": 13.975290999999743,
+        "sampleCount": 101
+      },
+      "first": {
+        "median": 0.10750000000007276,
+        "p99": 0.14650000000006003,
+        "sampleCount": 101
+      },
+      "later": {
+        "median": 0.02837500000032378,
+        "p99": 0.055332999999791355,
+        "sampleCount": 101
+      }
+    },
+    {
+      "fixture": "nested-d5-f4",
+      "variant": "W",
+      "run": 2,
+      "environment": {
+        "startedAt": "2026-10-05T19:19:45.414Z",
+        "endedAt": "2026-10-05T19:19:48.715Z",
+        "node": "v26.10.0",
+        "v8": "14.6.202.34-node.35",
+        "platform": "darwin",
+        "arch": "arm64",
+        "cpu": "Apple M1 Max",
+        "warmup": 20,
+        "samples": 101,
+        "validation": "off",
+        "mode": "development synchronous core",
+        "instrumented": false,
+        "explicitGc": true,
+        "esbuildNaturalExits": 1,
+        "bundleSha256": "edfe8e872a8f04e2718a004cc10152ea731214bf7a14c113da06c889018ab0e6"
+      },
+      "observations": {
+        "mount": "67ac737d4f58dd337e695b7837e6411f1bfc991019a72bee0a0679af63d254d9",
+        "first": "7b7cb2d3fb3509ea4e42e59a55d0a9f862dab377aa05b7b4d07a588400c8e265",
+        "later": "8d468dd8357daebb7f1d1221b84f43adfe473c4524525adf80388fa3152ba89e"
+      },
+      "mount": {
+        "median": 13.337833000000046,
+        "p99": 14.957500000000095,
+        "sampleCount": 101
+      },
+      "first": {
+        "median": 0.10883399999988796,
+        "p99": 0.13579200000003766,
+        "sampleCount": 101
+      },
+      "later": {
+        "median": 0.030666999999994005,
+        "p99": 0.047041999999919426,
+        "sampleCount": 101
+      }
+    },
+    {
+      "fixture": "nested-d5-f4",
+      "variant": "H",
+      "run": 2,
+      "environment": {
+        "startedAt": "2026-10-05T19:19:52.263Z",
+        "endedAt": "2026-10-05T19:19:55.489Z",
+        "node": "v26.10.0",
+        "v8": "14.6.202.34-node.35",
+        "platform": "darwin",
+        "arch": "arm64",
+        "cpu": "Apple M1 Max",
+        "warmup": 20,
+        "samples": 101,
+        "validation": "off",
+        "mode": "development synchronous core",
+        "instrumented": false,
+        "explicitGc": true,
+        "esbuildNaturalExits": 1,
+        "bundleSha256": "f50e0a2f916ad9f4de26686228d69e186fd60dee40eaa193d391c805eaa31e8e"
+      },
+      "observations": {
+        "mount": "67ac737d4f58dd337e695b7837e6411f1bfc991019a72bee0a0679af63d254d9",
+        "first": "7b7cb2d3fb3509ea4e42e59a55d0a9f862dab377aa05b7b4d07a588400c8e265",
+        "later": "8d468dd8357daebb7f1d1221b84f43adfe473c4524525adf80388fa3152ba89e"
+      },
+      "mount": {
+        "median": 12.71008299999994,
+        "p99": 13.803541999999652,
+        "sampleCount": 101
+      },
+      "first": {
+        "median": 0.11829200000011042,
+        "p99": 0.16195800000059535,
+        "sampleCount": 101
+      },
+      "later": {
+        "median": 0.030082999999649473,
+        "p99": 0.09637500000008004,
+        "sampleCount": 101
+      }
+    },
+    {
+      "fixture": "nested-d5-f4",
+      "variant": "H",
+      "run": 3,
+      "environment": {
+        "startedAt": "2026-10-05T19:19:59.043Z",
+        "endedAt": "2026-10-05T19:20:02.240Z",
+        "node": "v26.10.0",
+        "v8": "14.6.202.34-node.35",
+        "platform": "darwin",
+        "arch": "arm64",
+        "cpu": "Apple M1 Max",
+        "warmup": 20,
+        "samples": 101,
+        "validation": "off",
+        "mode": "development synchronous core",
+        "instrumented": false,
+        "explicitGc": true,
+        "esbuildNaturalExits": 1,
+        "bundleSha256": "f50e0a2f916ad9f4de26686228d69e186fd60dee40eaa193d391c805eaa31e8e"
+      },
+      "observations": {
+        "mount": "67ac737d4f58dd337e695b7837e6411f1bfc991019a72bee0a0679af63d254d9",
+        "first": "7b7cb2d3fb3509ea4e42e59a55d0a9f862dab377aa05b7b4d07a588400c8e265",
+        "later": "8d468dd8357daebb7f1d1221b84f43adfe473c4524525adf80388fa3152ba89e"
+      },
+      "mount": {
+        "median": 12.588042000000314,
+        "p99": 14.509541999999783,
+        "sampleCount": 101
+      },
+      "first": {
+        "median": 0.11833300000034797,
+        "p99": 0.15925000000061118,
+        "sampleCount": 101
+      },
+      "later": {
+        "median": 0.029917000000750704,
+        "p99": 0.060833999999886146,
+        "sampleCount": 101
+      }
+    },
+    {
+      "fixture": "nested-d5-f4",
+      "variant": "W",
+      "run": 3,
+      "environment": {
+        "startedAt": "2026-10-05T19:20:02.414Z",
+        "endedAt": "2026-10-05T19:20:05.609Z",
+        "node": "v26.10.0",
+        "v8": "14.6.202.34-node.35",
+        "platform": "darwin",
+        "arch": "arm64",
+        "cpu": "Apple M1 Max",
+        "warmup": 20,
+        "samples": 101,
+        "validation": "off",
+        "mode": "development synchronous core",
+        "instrumented": false,
+        "explicitGc": true,
+        "esbuildNaturalExits": 1,
+        "bundleSha256": "edfe8e872a8f04e2718a004cc10152ea731214bf7a14c113da06c889018ab0e6"
+      },
+      "observations": {
+        "mount": "67ac737d4f58dd337e695b7837e6411f1bfc991019a72bee0a0679af63d254d9",
+        "first": "7b7cb2d3fb3509ea4e42e59a55d0a9f862dab377aa05b7b4d07a588400c8e265",
+        "later": "8d468dd8357daebb7f1d1221b84f43adfe473c4524525adf80388fa3152ba89e"
+      },
+      "mount": {
+        "median": 12.738875000000007,
+        "p99": 13.966082999999912,
+        "sampleCount": 101
+      },
+      "first": {
+        "median": 0.10337499999991451,
+        "p99": 0.13420799999994415,
+        "sampleCount": 101
+      },
+      "later": {
+        "median": 0.028416999999990367,
+        "p99": 0.05779199999994944,
+        "sampleCount": 101
+      }
+    },
+    {
+      "fixture": "array-100",
+      "variant": "H",
+      "run": 1,
+      "environment": {
+        "startedAt": "2026-10-05T19:20:09.182Z",
+        "endedAt": "2026-10-05T19:20:10.216Z",
+        "node": "v26.10.0",
+        "v8": "14.6.202.34-node.35",
+        "platform": "darwin",
+        "arch": "arm64",
+        "cpu": "Apple M1 Max",
+        "warmup": 20,
+        "samples": 101,
+        "validation": "off",
+        "mode": "development synchronous core",
+        "instrumented": false,
+        "explicitGc": true,
+        "esbuildNaturalExits": 1,
+        "bundleSha256": "f50e0a2f916ad9f4de26686228d69e186fd60dee40eaa193d391c805eaa31e8e"
+      },
+      "observations": {
+        "mount": "d50cd9aca18f77f207b521cd22512a5b947cf801b220634cd602ffd4a211eedb",
+        "first": "e2ae829b8354805742de412b6cee7485cecb6287c4533c30bef6964ee7425538",
+        "later": "00629b1d9e09eaeb0a69e68a1774f5c5ba0795fec6db321214931eadece12841"
+      },
+      "mount": {
+        "median": 0.9304169999995793,
+        "p99": 1.0427920000001905,
+        "sampleCount": 101
+      },
+      "first": {
+        "median": 0.09970799999973678,
+        "p99": 0.13458400000035908,
+        "sampleCount": 101
+      },
+      "later": {
+        "median": 0.04195799999979499,
+        "p99": 0.06708300000036616,
+        "sampleCount": 101
+      }
+    },
+    {
+      "fixture": "array-100",
+      "variant": "W",
+      "run": 1,
+      "environment": {
+        "startedAt": "2026-10-05T19:20:10.392Z",
+        "endedAt": "2026-10-05T19:20:11.400Z",
+        "node": "v26.10.0",
+        "v8": "14.6.202.34-node.35",
+        "platform": "darwin",
+        "arch": "arm64",
+        "cpu": "Apple M1 Max",
+        "warmup": 20,
+        "samples": 101,
+        "validation": "off",
+        "mode": "development synchronous core",
+        "instrumented": false,
+        "explicitGc": true,
+        "esbuildNaturalExits": 1,
+        "bundleSha256": "edfe8e872a8f04e2718a004cc10152ea731214bf7a14c113da06c889018ab0e6"
+      },
+      "observations": {
+        "mount": "d50cd9aca18f77f207b521cd22512a5b947cf801b220634cd602ffd4a211eedb",
+        "first": "e2ae829b8354805742de412b6cee7485cecb6287c4533c30bef6964ee7425538",
+        "later": "00629b1d9e09eaeb0a69e68a1774f5c5ba0795fec6db321214931eadece12841"
+      },
+      "mount": {
+        "median": 0.9548750000000155,
+        "p99": 1.1151669999999285,
+        "sampleCount": 101
+      },
+      "first": {
+        "median": 0.0881249999999909,
+        "p99": 0.10525000000001228,
+        "sampleCount": 101
+      },
+      "later": {
+        "median": 0.038000000000010914,
+        "p99": 0.05316600000003291,
+        "sampleCount": 101
+      }
+    },
+    {
+      "fixture": "array-100",
+      "variant": "W",
+      "run": 2,
+      "environment": {
+        "startedAt": "2026-10-05T19:20:11.573Z",
+        "endedAt": "2026-10-05T19:20:12.590Z",
+        "node": "v26.10.0",
+        "v8": "14.6.202.34-node.35",
+        "platform": "darwin",
+        "arch": "arm64",
+        "cpu": "Apple M1 Max",
+        "warmup": 20,
+        "samples": 101,
+        "validation": "off",
+        "mode": "development synchronous core",
+        "instrumented": false,
+        "explicitGc": true,
+        "esbuildNaturalExits": 1,
+        "bundleSha256": "edfe8e872a8f04e2718a004cc10152ea731214bf7a14c113da06c889018ab0e6"
+      },
+      "observations": {
+        "mount": "d50cd9aca18f77f207b521cd22512a5b947cf801b220634cd602ffd4a211eedb",
+        "first": "e2ae829b8354805742de412b6cee7485cecb6287c4533c30bef6964ee7425538",
+        "later": "00629b1d9e09eaeb0a69e68a1774f5c5ba0795fec6db321214931eadece12841"
+      },
+      "mount": {
+        "median": 0.8982919999999694,
+        "p99": 1.0832080000000133,
+        "sampleCount": 101
+      },
+      "first": {
+        "median": 0.09079099999996743,
+        "p99": 0.13241699999997536,
+        "sampleCount": 101
+      },
+      "later": {
+        "median": 0.03912500000001273,
+        "p99": 0.0695419999999558,
+        "sampleCount": 101
+      }
+    },
+    {
+      "fixture": "array-100",
+      "variant": "H",
+      "run": 2,
+      "environment": {
+        "startedAt": "2026-10-05T19:20:16.125Z",
+        "endedAt": "2026-10-05T19:20:17.138Z",
+        "node": "v26.10.0",
+        "v8": "14.6.202.34-node.35",
+        "platform": "darwin",
+        "arch": "arm64",
+        "cpu": "Apple M1 Max",
+        "warmup": 20,
+        "samples": 101,
+        "validation": "off",
+        "mode": "development synchronous core",
+        "instrumented": false,
+        "explicitGc": true,
+        "esbuildNaturalExits": 1,
+        "bundleSha256": "f50e0a2f916ad9f4de26686228d69e186fd60dee40eaa193d391c805eaa31e8e"
+      },
+      "observations": {
+        "mount": "d50cd9aca18f77f207b521cd22512a5b947cf801b220634cd602ffd4a211eedb",
+        "first": "e2ae829b8354805742de412b6cee7485cecb6287c4533c30bef6964ee7425538",
+        "later": "00629b1d9e09eaeb0a69e68a1774f5c5ba0795fec6db321214931eadece12841"
+      },
+      "mount": {
+        "median": 0.9339159999999538,
+        "p99": 1.0493329999999332,
+        "sampleCount": 101
+      },
+      "first": {
+        "median": 0.09683300000006057,
+        "p99": 0.12233299999979863,
+        "sampleCount": 101
+      },
+      "later": {
+        "median": 0.03991700000005949,
+        "p99": 0.05729199999996126,
+        "sampleCount": 101
+      }
+    },
+    {
+      "fixture": "array-100",
+      "variant": "H",
+      "run": 3,
+      "environment": {
+        "startedAt": "2026-10-05T19:20:20.685Z",
+        "endedAt": "2026-10-05T19:20:21.706Z",
+        "node": "v26.10.0",
+        "v8": "14.6.202.34-node.35",
+        "platform": "darwin",
+        "arch": "arm64",
+        "cpu": "Apple M1 Max",
+        "warmup": 20,
+        "samples": 101,
+        "validation": "off",
+        "mode": "development synchronous core",
+        "instrumented": false,
+        "explicitGc": true,
+        "esbuildNaturalExits": 1,
+        "bundleSha256": "f50e0a2f916ad9f4de26686228d69e186fd60dee40eaa193d391c805eaa31e8e"
+      },
+      "observations": {
+        "mount": "d50cd9aca18f77f207b521cd22512a5b947cf801b220634cd602ffd4a211eedb",
+        "first": "e2ae829b8354805742de412b6cee7485cecb6287c4533c30bef6964ee7425538",
+        "later": "00629b1d9e09eaeb0a69e68a1774f5c5ba0795fec6db321214931eadece12841"
+      },
+      "mount": {
+        "median": 0.9059579999998277,
+        "p99": 1.1121250000001055,
+        "sampleCount": 101
+      },
+      "first": {
+        "median": 0.09141700000054698,
+        "p99": 0.12320899999986068,
+        "sampleCount": 101
+      },
+      "later": {
+        "median": 0.03920799999968949,
+        "p99": 0.05837500000052387,
+        "sampleCount": 101
+      }
+    },
+    {
+      "fixture": "array-100",
+      "variant": "W",
+      "run": 3,
+      "environment": {
+        "startedAt": "2026-10-05T19:20:21.880Z",
+        "endedAt": "2026-10-05T19:20:22.894Z",
+        "node": "v26.10.0",
+        "v8": "14.6.202.34-node.35",
+        "platform": "darwin",
+        "arch": "arm64",
+        "cpu": "Apple M1 Max",
+        "warmup": 20,
+        "samples": 101,
+        "validation": "off",
+        "mode": "development synchronous core",
+        "instrumented": false,
+        "explicitGc": true,
+        "esbuildNaturalExits": 1,
+        "bundleSha256": "edfe8e872a8f04e2718a004cc10152ea731214bf7a14c113da06c889018ab0e6"
+      },
+      "observations": {
+        "mount": "d50cd9aca18f77f207b521cd22512a5b947cf801b220634cd602ffd4a211eedb",
+        "first": "e2ae829b8354805742de412b6cee7485cecb6287c4533c30bef6964ee7425538",
+        "later": "00629b1d9e09eaeb0a69e68a1774f5c5ba0795fec6db321214931eadece12841"
+      },
+      "mount": {
+        "median": 0.8749579999999924,
+        "p99": 1.0116669999999885,
+        "sampleCount": 101
+      },
+      "first": {
+        "median": 0.08687500000007731,
+        "p99": 0.11716699999999491,
+        "sampleCount": 101
+      },
+      "later": {
+        "median": 0.037249999999971806,
+        "p99": 0.057292000000018106,
+        "sampleCount": 101
+      }
+    },
+    {
+      "fixture": "flat-500",
+      "variant": "H",
+      "run": 1,
+      "environment": {
+        "startedAt": "2026-10-05T19:20:26.490Z",
+        "endedAt": "2026-10-05T19:20:28.045Z",
+        "node": "v26.10.0",
+        "v8": "14.6.202.34-node.35",
+        "platform": "darwin",
+        "arch": "arm64",
+        "cpu": "Apple M1 Max",
+        "warmup": 20,
+        "samples": 101,
+        "validation": "off",
+        "mode": "development synchronous core",
+        "instrumented": false,
+        "explicitGc": true,
+        "esbuildNaturalExits": 1,
+        "bundleSha256": "f50e0a2f916ad9f4de26686228d69e186fd60dee40eaa193d391c805eaa31e8e"
+      },
+      "observations": {
+        "mount": "524778a5de3fed6e9f5335cbe6863e124d81a46c938bd89bd9befffd69ae5735",
+        "first": "1e31d4a28be2e5202d380aac364d549daacf534470b5c901aa07066aeb9830a6",
+        "later": "40f73844356ae6099f44dc3f572b735901d87f4bcd8c0f0d7a7221eaa31d6065"
+      },
+      "mount": {
+        "median": 4.279292000000169,
+        "p99": 4.703750000000127,
+        "sampleCount": 101
+      },
+      "first": {
+        "median": 0.0797919999995429,
+        "p99": 0.1088329999997768,
+        "sampleCount": 101
+      },
+      "later": {
+        "median": 0.016916999999921245,
+        "p99": 0.036124999999628926,
+        "sampleCount": 101
+      }
+    },
+    {
+      "fixture": "flat-500",
+      "variant": "W",
+      "run": 1,
+      "environment": {
+        "startedAt": "2026-10-05T19:20:28.223Z",
+        "endedAt": "2026-10-05T19:20:29.783Z",
+        "node": "v26.10.0",
+        "v8": "14.6.202.34-node.35",
+        "platform": "darwin",
+        "arch": "arm64",
+        "cpu": "Apple M1 Max",
+        "warmup": 20,
+        "samples": 101,
+        "validation": "off",
+        "mode": "development synchronous core",
+        "instrumented": false,
+        "explicitGc": true,
+        "esbuildNaturalExits": 1,
+        "bundleSha256": "edfe8e872a8f04e2718a004cc10152ea731214bf7a14c113da06c889018ab0e6"
+      },
+      "observations": {
+        "mount": "524778a5de3fed6e9f5335cbe6863e124d81a46c938bd89bd9befffd69ae5735",
+        "first": "1e31d4a28be2e5202d380aac364d549daacf534470b5c901aa07066aeb9830a6",
+        "later": "40f73844356ae6099f44dc3f572b735901d87f4bcd8c0f0d7a7221eaa31d6065"
+      },
+      "mount": {
+        "median": 4.265290999999934,
+        "p99": 4.603291000000013,
+        "sampleCount": 101
+      },
+      "first": {
+        "median": 0.0714580000000069,
+        "p99": 0.09566699999993489,
+        "sampleCount": 101
+      },
+      "later": {
+        "median": 0.016083999999864318,
+        "p99": 0.02291599999995242,
+        "sampleCount": 101
+      }
+    },
+    {
+      "fixture": "flat-500",
+      "variant": "W",
+      "run": 2,
+      "environment": {
+        "startedAt": "2026-10-05T19:20:29.954Z",
+        "endedAt": "2026-10-05T19:20:31.562Z",
+        "node": "v26.10.0",
+        "v8": "14.6.202.34-node.35",
+        "platform": "darwin",
+        "arch": "arm64",
+        "cpu": "Apple M1 Max",
+        "warmup": 20,
+        "samples": 101,
+        "validation": "off",
+        "mode": "development synchronous core",
+        "instrumented": false,
+        "explicitGc": true,
+        "esbuildNaturalExits": 1,
+        "bundleSha256": "edfe8e872a8f04e2718a004cc10152ea731214bf7a14c113da06c889018ab0e6"
+      },
+      "observations": {
+        "mount": "524778a5de3fed6e9f5335cbe6863e124d81a46c938bd89bd9befffd69ae5735",
+        "first": "1e31d4a28be2e5202d380aac364d549daacf534470b5c901aa07066aeb9830a6",
+        "later": "40f73844356ae6099f44dc3f572b735901d87f4bcd8c0f0d7a7221eaa31d6065"
+      },
+      "mount": {
+        "median": 4.6251250000000255,
+        "p99": 5.311374999999998,
+        "sampleCount": 101
+      },
+      "first": {
+        "median": 0.07308399999999438,
+        "p99": 0.09508400000004258,
+        "sampleCount": 101
+      },
+      "later": {
+        "median": 0.016624999999976353,
+        "p99": 0.025791000000026543,
+        "sampleCount": 101
+      }
+    },
+    {
+      "fixture": "flat-500",
+      "variant": "H",
+      "run": 2,
+      "environment": {
+        "startedAt": "2026-10-05T19:20:35.112Z",
+        "endedAt": "2026-10-05T19:20:36.684Z",
+        "node": "v26.10.0",
+        "v8": "14.6.202.34-node.35",
+        "platform": "darwin",
+        "arch": "arm64",
+        "cpu": "Apple M1 Max",
+        "warmup": 20,
+        "samples": 101,
+        "validation": "off",
+        "mode": "development synchronous core",
+        "instrumented": false,
+        "explicitGc": true,
+        "esbuildNaturalExits": 1,
+        "bundleSha256": "f50e0a2f916ad9f4de26686228d69e186fd60dee40eaa193d391c805eaa31e8e"
+      },
+      "observations": {
+        "mount": "524778a5de3fed6e9f5335cbe6863e124d81a46c938bd89bd9befffd69ae5735",
+        "first": "1e31d4a28be2e5202d380aac364d549daacf534470b5c901aa07066aeb9830a6",
+        "later": "40f73844356ae6099f44dc3f572b735901d87f4bcd8c0f0d7a7221eaa31d6065"
+      },
+      "mount": {
+        "median": 4.251333000000159,
+        "p99": 4.649124999999913,
+        "sampleCount": 101
+      },
+      "first": {
+        "median": 0.08216700000002675,
+        "p99": 0.1040419999999358,
+        "sampleCount": 101
+      },
+      "later": {
+        "median": 0.017541999999593827,
+        "p99": 0.026667000000088592,
+        "sampleCount": 101
+      }
+    },
+    {
+      "fixture": "flat-500",
+      "variant": "H",
+      "run": 3,
+      "environment": {
+        "startedAt": "2026-10-05T19:20:40.223Z",
+        "endedAt": "2026-10-05T19:20:41.830Z",
+        "node": "v26.10.0",
+        "v8": "14.6.202.34-node.35",
+        "platform": "darwin",
+        "arch": "arm64",
+        "cpu": "Apple M1 Max",
+        "warmup": 20,
+        "samples": 101,
+        "validation": "off",
+        "mode": "development synchronous core",
+        "instrumented": false,
+        "explicitGc": true,
+        "esbuildNaturalExits": 1,
+        "bundleSha256": "f50e0a2f916ad9f4de26686228d69e186fd60dee40eaa193d391c805eaa31e8e"
+      },
+      "observations": {
+        "mount": "524778a5de3fed6e9f5335cbe6863e124d81a46c938bd89bd9befffd69ae5735",
+        "first": "1e31d4a28be2e5202d380aac364d549daacf534470b5c901aa07066aeb9830a6",
+        "later": "40f73844356ae6099f44dc3f572b735901d87f4bcd8c0f0d7a7221eaa31d6065"
+      },
+      "mount": {
+        "median": 4.392417000000023,
+        "p99": 4.949125000000095,
+        "sampleCount": 101
+      },
+      "first": {
+        "median": 0.08612500000072032,
+        "p99": 0.12824999999975262,
+        "sampleCount": 101
+      },
+      "later": {
+        "median": 0.019957999999860476,
+        "p99": 0.08595900000000256,
+        "sampleCount": 101
+      }
+    },
+    {
+      "fixture": "flat-500",
+      "variant": "W",
+      "run": 3,
+      "environment": {
+        "startedAt": "2026-10-05T19:20:42.002Z",
+        "endedAt": "2026-10-05T19:20:43.567Z",
+        "node": "v26.10.0",
+        "v8": "14.6.202.34-node.35",
+        "platform": "darwin",
+        "arch": "arm64",
+        "cpu": "Apple M1 Max",
+        "warmup": 20,
+        "samples": 101,
+        "validation": "off",
+        "mode": "development synchronous core",
+        "instrumented": false,
+        "explicitGc": true,
+        "esbuildNaturalExits": 1,
+        "bundleSha256": "edfe8e872a8f04e2718a004cc10152ea731214bf7a14c113da06c889018ab0e6"
+      },
+      "observations": {
+        "mount": "524778a5de3fed6e9f5335cbe6863e124d81a46c938bd89bd9befffd69ae5735",
+        "first": "1e31d4a28be2e5202d380aac364d549daacf534470b5c901aa07066aeb9830a6",
+        "later": "40f73844356ae6099f44dc3f572b735901d87f4bcd8c0f0d7a7221eaa31d6065"
+      },
+      "mount": {
+        "median": 4.311958000000004,
+        "p99": 4.8476660000001175,
+        "sampleCount": 101
+      },
+      "first": {
+        "median": 0.0753749999998945,
+        "p99": 0.0997920000000363,
+        "sampleCount": 101
+      },
+      "later": {
+        "median": 0.016875000000027285,
+        "p99": 0.039750000000026375,
+        "sampleCount": 101
+      }
+    },
+    {
+      "fixture": "computed-visible-derived",
+      "variant": "H",
+      "run": 1,
+      "environment": {
+        "startedAt": "2026-10-05T19:20:47.130Z",
+        "endedAt": "2026-10-05T19:20:47.960Z",
+        "node": "v26.10.0",
+        "v8": "14.6.202.34-node.35",
+        "platform": "darwin",
+        "arch": "arm64",
+        "cpu": "Apple M1 Max",
+        "warmup": 20,
+        "samples": 101,
+        "validation": "off",
+        "mode": "development synchronous core",
+        "instrumented": false,
+        "explicitGc": true,
+        "esbuildNaturalExits": 1,
+        "bundleSha256": "f50e0a2f916ad9f4de26686228d69e186fd60dee40eaa193d391c805eaa31e8e"
+      },
+      "observations": {
+        "mount": "b2234f571c211456f1a1d1b5199210cf65b786b072ebebb422da6fc0245fa3de",
+        "first": "59219d6e354ee95b157d6364ef778baaabd2de5b2c315d575aacc11627b2dfa9",
+        "later": "e7f09823dfc5b17bcec85713d2a247998dc3cd954da2d691ab2cf911995f23de"
+      },
+      "mount": {
+        "median": 0.4727079999997841,
+        "p99": 0.6103339999999662,
+        "sampleCount": 101
+      },
+      "first": {
+        "median": 0.10845800000015515,
+        "p99": 0.18366699999978664,
+        "sampleCount": 101
+      },
+      "later": {
+        "median": 0.07120899999972607,
+        "p99": 0.12550000000010186,
+        "sampleCount": 101
+      }
+    },
+    {
+      "fixture": "computed-visible-derived",
+      "variant": "W",
+      "run": 1,
+      "environment": {
+        "startedAt": "2026-10-05T19:20:48.140Z",
+        "endedAt": "2026-10-05T19:20:48.977Z",
+        "node": "v26.10.0",
+        "v8": "14.6.202.34-node.35",
+        "platform": "darwin",
+        "arch": "arm64",
+        "cpu": "Apple M1 Max",
+        "warmup": 20,
+        "samples": 101,
+        "validation": "off",
+        "mode": "development synchronous core",
+        "instrumented": false,
+        "explicitGc": true,
+        "esbuildNaturalExits": 1,
+        "bundleSha256": "edfe8e872a8f04e2718a004cc10152ea731214bf7a14c113da06c889018ab0e6"
+      },
+      "observations": {
+        "mount": "b2234f571c211456f1a1d1b5199210cf65b786b072ebebb422da6fc0245fa3de",
+        "first": "59219d6e354ee95b157d6364ef778baaabd2de5b2c315d575aacc11627b2dfa9",
+        "later": "e7f09823dfc5b17bcec85713d2a247998dc3cd954da2d691ab2cf911995f23de"
+      },
+      "mount": {
+        "median": 0.462709000000018,
+        "p99": 0.5542090000000144,
+        "sampleCount": 101
+      },
+      "first": {
+        "median": 0.10366699999997309,
+        "p99": 0.15683400000000347,
+        "sampleCount": 101
+      },
+      "later": {
+        "median": 0.06858299999998962,
+        "p99": 0.10370899999998073,
+        "sampleCount": 101
+      }
+    },
+    {
+      "fixture": "computed-visible-derived",
+      "variant": "W",
+      "run": 2,
+      "environment": {
+        "startedAt": "2026-10-05T19:20:49.153Z",
+        "endedAt": "2026-10-05T19:20:49.972Z",
+        "node": "v26.10.0",
+        "v8": "14.6.202.34-node.35",
+        "platform": "darwin",
+        "arch": "arm64",
+        "cpu": "Apple M1 Max",
+        "warmup": 20,
+        "samples": 101,
+        "validation": "off",
+        "mode": "development synchronous core",
+        "instrumented": false,
+        "explicitGc": true,
+        "esbuildNaturalExits": 1,
+        "bundleSha256": "edfe8e872a8f04e2718a004cc10152ea731214bf7a14c113da06c889018ab0e6"
+      },
+      "observations": {
+        "mount": "b2234f571c211456f1a1d1b5199210cf65b786b072ebebb422da6fc0245fa3de",
+        "first": "59219d6e354ee95b157d6364ef778baaabd2de5b2c315d575aacc11627b2dfa9",
+        "later": "e7f09823dfc5b17bcec85713d2a247998dc3cd954da2d691ab2cf911995f23de"
+      },
+      "mount": {
+        "median": 0.46262500000000273,
+        "p99": 0.622916000000032,
+        "sampleCount": 101
+      },
+      "first": {
+        "median": 0.10137500000001864,
+        "p99": 0.14470799999998007,
+        "sampleCount": 101
+      },
+      "later": {
+        "median": 0.06941700000004403,
+        "p99": 0.10062500000003638,
+        "sampleCount": 101
+      }
+    },
+    {
+      "fixture": "computed-visible-derived",
+      "variant": "H",
+      "run": 2,
+      "environment": {
+        "startedAt": "2026-10-05T19:20:53.519Z",
+        "endedAt": "2026-10-05T19:20:54.356Z",
+        "node": "v26.10.0",
+        "v8": "14.6.202.34-node.35",
+        "platform": "darwin",
+        "arch": "arm64",
+        "cpu": "Apple M1 Max",
+        "warmup": 20,
+        "samples": 101,
+        "validation": "off",
+        "mode": "development synchronous core",
+        "instrumented": false,
+        "explicitGc": true,
+        "esbuildNaturalExits": 1,
+        "bundleSha256": "f50e0a2f916ad9f4de26686228d69e186fd60dee40eaa193d391c805eaa31e8e"
+      },
+      "observations": {
+        "mount": "b2234f571c211456f1a1d1b5199210cf65b786b072ebebb422da6fc0245fa3de",
+        "first": "59219d6e354ee95b157d6364ef778baaabd2de5b2c315d575aacc11627b2dfa9",
+        "later": "e7f09823dfc5b17bcec85713d2a247998dc3cd954da2d691ab2cf911995f23de"
+      },
+      "mount": {
+        "median": 0.45624999999972715,
+        "p99": 0.6488749999998618,
+        "sampleCount": 101
+      },
+      "first": {
+        "median": 0.10804099999995742,
+        "p99": 0.15670799999952578,
+        "sampleCount": 101
+      },
+      "later": {
+        "median": 0.07420899999988251,
+        "p99": 0.10729199999968841,
+        "sampleCount": 101
+      }
+    },
+    {
+      "fixture": "computed-visible-derived",
+      "variant": "H",
+      "run": 3,
+      "environment": {
+        "startedAt": "2026-10-05T19:20:57.905Z",
+        "endedAt": "2026-10-05T19:20:58.741Z",
+        "node": "v26.10.0",
+        "v8": "14.6.202.34-node.35",
+        "platform": "darwin",
+        "arch": "arm64",
+        "cpu": "Apple M1 Max",
+        "warmup": 20,
+        "samples": 101,
+        "validation": "off",
+        "mode": "development synchronous core",
+        "instrumented": false,
+        "explicitGc": true,
+        "esbuildNaturalExits": 1,
+        "bundleSha256": "f50e0a2f916ad9f4de26686228d69e186fd60dee40eaa193d391c805eaa31e8e"
+      },
+      "observations": {
+        "mount": "b2234f571c211456f1a1d1b5199210cf65b786b072ebebb422da6fc0245fa3de",
+        "first": "59219d6e354ee95b157d6364ef778baaabd2de5b2c315d575aacc11627b2dfa9",
+        "later": "e7f09823dfc5b17bcec85713d2a247998dc3cd954da2d691ab2cf911995f23de"
+      },
+      "mount": {
+        "median": 0.46624999999994543,
+        "p99": 0.5740420000001905,
+        "sampleCount": 101
+      },
+      "first": {
+        "median": 0.10712500000045111,
+        "p99": 0.1830830000003516,
+        "sampleCount": 101
+      },
+      "later": {
+        "median": 0.07104200000003402,
+        "p99": 0.125,
+        "sampleCount": 101
+      }
+    },
+    {
+      "fixture": "computed-visible-derived",
+      "variant": "W",
+      "run": 3,
+      "environment": {
+        "startedAt": "2026-10-05T19:20:58.917Z",
+        "endedAt": "2026-10-05T19:20:59.734Z",
+        "node": "v26.10.0",
+        "v8": "14.6.202.34-node.35",
+        "platform": "darwin",
+        "arch": "arm64",
+        "cpu": "Apple M1 Max",
+        "warmup": 20,
+        "samples": 101,
+        "validation": "off",
+        "mode": "development synchronous core",
+        "instrumented": false,
+        "explicitGc": true,
+        "esbuildNaturalExits": 1,
+        "bundleSha256": "edfe8e872a8f04e2718a004cc10152ea731214bf7a14c113da06c889018ab0e6"
+      },
+      "observations": {
+        "mount": "b2234f571c211456f1a1d1b5199210cf65b786b072ebebb422da6fc0245fa3de",
+        "first": "59219d6e354ee95b157d6364ef778baaabd2de5b2c315d575aacc11627b2dfa9",
+        "later": "e7f09823dfc5b17bcec85713d2a247998dc3cd954da2d691ab2cf911995f23de"
+      },
+      "mount": {
+        "median": 0.4552079999999705,
+        "p99": 0.579667000000029,
+        "sampleCount": 101
+      },
+      "first": {
+        "median": 0.10562500000003183,
+        "p99": 0.162666999999999,
+        "sampleCount": 101
+      },
+      "later": {
+        "median": 0.06908300000009149,
+        "p99": 0.1043329999999969,
+        "sampleCount": 101
+      }
+    },
+    {
+      "fixture": "oneOf-20",
+      "variant": "H",
+      "run": 1,
+      "environment": {
+        "startedAt": "2026-10-05T19:21:03.336Z",
+        "endedAt": "2026-10-05T19:21:04.527Z",
+        "node": "v26.10.0",
+        "v8": "14.6.202.34-node.35",
+        "platform": "darwin",
+        "arch": "arm64",
+        "cpu": "Apple M1 Max",
+        "warmup": 20,
+        "samples": 101,
+        "validation": "off",
+        "mode": "development synchronous core",
+        "instrumented": false,
+        "explicitGc": true,
+        "esbuildNaturalExits": 1,
+        "bundleSha256": "f50e0a2f916ad9f4de26686228d69e186fd60dee40eaa193d391c805eaa31e8e"
+      },
+      "observations": {
+        "mount": "a020c3fcdea6ed8c8b73b924b9fb628240cbf6f810cabf2b61f63e22d8c35b32",
+        "first": "ef00f7c39509794f0f11c04c644a7668c0f604c869df911ea7c11ce6ce60f837",
+        "later": "bbe04792dd858568bef474450bd717b16a61781318120f79e055278dbd864fcb"
+      },
+      "mount": {
+        "median": 1.7842500000001564,
+        "p99": 1.9459999999999127,
+        "sampleCount": 101
+      },
+      "first": {
+        "median": 0.7762920000000122,
+        "p99": 0.9804159999998774,
+        "sampleCount": 101
+      },
+      "later": {
+        "median": 0.38012499999967986,
+        "p99": 0.44587500000034197,
+        "sampleCount": 101
+      }
+    },
+    {
+      "fixture": "oneOf-20",
+      "variant": "W",
+      "run": 1,
+      "environment": {
+        "startedAt": "2026-10-05T19:21:04.697Z",
+        "endedAt": "2026-10-05T19:21:05.898Z",
+        "node": "v26.10.0",
+        "v8": "14.6.202.34-node.35",
+        "platform": "darwin",
+        "arch": "arm64",
+        "cpu": "Apple M1 Max",
+        "warmup": 20,
+        "samples": 101,
+        "validation": "off",
+        "mode": "development synchronous core",
+        "instrumented": false,
+        "explicitGc": true,
+        "esbuildNaturalExits": 1,
+        "bundleSha256": "edfe8e872a8f04e2718a004cc10152ea731214bf7a14c113da06c889018ab0e6"
+      },
+      "observations": {
+        "mount": "a020c3fcdea6ed8c8b73b924b9fb628240cbf6f810cabf2b61f63e22d8c35b32",
+        "first": "ef00f7c39509794f0f11c04c644a7668c0f604c869df911ea7c11ce6ce60f837",
+        "later": "bbe04792dd858568bef474450bd717b16a61781318120f79e055278dbd864fcb"
+      },
+      "mount": {
+        "median": 1.7892080000000306,
+        "p99": 1.9249579999999469,
+        "sampleCount": 101
+      },
+      "first": {
+        "median": 0.7873339999999871,
+        "p99": 0.98762499999998,
+        "sampleCount": 101
+      },
+      "later": {
+        "median": 0.3761250000000018,
+        "p99": 0.5124999999999886,
+        "sampleCount": 101
+      }
+    },
+    {
+      "fixture": "oneOf-20",
+      "variant": "W",
+      "run": 2,
+      "environment": {
+        "startedAt": "2026-10-05T19:21:06.068Z",
+        "endedAt": "2026-10-05T19:21:07.273Z",
+        "node": "v26.10.0",
+        "v8": "14.6.202.34-node.35",
+        "platform": "darwin",
+        "arch": "arm64",
+        "cpu": "Apple M1 Max",
+        "warmup": 20,
+        "samples": 101,
+        "validation": "off",
+        "mode": "development synchronous core",
+        "instrumented": false,
+        "explicitGc": true,
+        "esbuildNaturalExits": 1,
+        "bundleSha256": "edfe8e872a8f04e2718a004cc10152ea731214bf7a14c113da06c889018ab0e6"
+      },
+      "observations": {
+        "mount": "a020c3fcdea6ed8c8b73b924b9fb628240cbf6f810cabf2b61f63e22d8c35b32",
+        "first": "ef00f7c39509794f0f11c04c644a7668c0f604c869df911ea7c11ce6ce60f837",
+        "later": "bbe04792dd858568bef474450bd717b16a61781318120f79e055278dbd864fcb"
+      },
+      "mount": {
+        "median": 1.7944170000000668,
+        "p99": 2.0099579999999833,
+        "sampleCount": 101
+      },
+      "first": {
+        "median": 0.7897090000000162,
+        "p99": 0.9969160000000556,
+        "sampleCount": 101
+      },
+      "later": {
+        "median": 0.38599999999996726,
+        "p99": 0.5274580000000242,
+        "sampleCount": 101
+      }
+    },
+    {
+      "fixture": "oneOf-20",
+      "variant": "H",
+      "run": 2,
+      "environment": {
+        "startedAt": "2026-10-05T19:21:10.844Z",
+        "endedAt": "2026-10-05T19:21:12.053Z",
+        "node": "v26.10.0",
+        "v8": "14.6.202.34-node.35",
+        "platform": "darwin",
+        "arch": "arm64",
+        "cpu": "Apple M1 Max",
+        "warmup": 20,
+        "samples": 101,
+        "validation": "off",
+        "mode": "development synchronous core",
+        "instrumented": false,
+        "explicitGc": true,
+        "esbuildNaturalExits": 1,
+        "bundleSha256": "f50e0a2f916ad9f4de26686228d69e186fd60dee40eaa193d391c805eaa31e8e"
+      },
+      "observations": {
+        "mount": "a020c3fcdea6ed8c8b73b924b9fb628240cbf6f810cabf2b61f63e22d8c35b32",
+        "first": "ef00f7c39509794f0f11c04c644a7668c0f604c869df911ea7c11ce6ce60f837",
+        "later": "bbe04792dd858568bef474450bd717b16a61781318120f79e055278dbd864fcb"
+      },
+      "mount": {
+        "median": 1.7912089999999807,
+        "p99": 1.9373340000001917,
+        "sampleCount": 101
+      },
+      "first": {
+        "median": 0.8070840000000317,
+        "p99": 0.9998329999998532,
+        "sampleCount": 101
+      },
+      "later": {
+        "median": 0.3842080000003989,
+        "p99": 0.4830419999998412,
+        "sampleCount": 101
+      }
+    },
+    {
+      "fixture": "oneOf-20",
+      "variant": "H",
+      "run": 3,
+      "environment": {
+        "startedAt": "2026-10-05T19:21:15.599Z",
+        "endedAt": "2026-10-05T19:21:16.791Z",
+        "node": "v26.10.0",
+        "v8": "14.6.202.34-node.35",
+        "platform": "darwin",
+        "arch": "arm64",
+        "cpu": "Apple M1 Max",
+        "warmup": 20,
+        "samples": 101,
+        "validation": "off",
+        "mode": "development synchronous core",
+        "instrumented": false,
+        "explicitGc": true,
+        "esbuildNaturalExits": 1,
+        "bundleSha256": "f50e0a2f916ad9f4de26686228d69e186fd60dee40eaa193d391c805eaa31e8e"
+      },
+      "observations": {
+        "mount": "a020c3fcdea6ed8c8b73b924b9fb628240cbf6f810cabf2b61f63e22d8c35b32",
+        "first": "ef00f7c39509794f0f11c04c644a7668c0f604c869df911ea7c11ce6ce60f837",
+        "later": "bbe04792dd858568bef474450bd717b16a61781318120f79e055278dbd864fcb"
+      },
+      "mount": {
+        "median": 1.779500000000553,
+        "p99": 1.9565410000000156,
+        "sampleCount": 101
+      },
+      "first": {
+        "median": 0.7632499999999709,
+        "p99": 0.9607079999996131,
+        "sampleCount": 101
+      },
+      "later": {
+        "median": 0.37762500000008004,
+        "p99": 0.43708299999980227,
+        "sampleCount": 101
+      }
+    },
+    {
+      "fixture": "oneOf-20",
+      "variant": "W",
+      "run": 3,
+      "environment": {
+        "startedAt": "2026-10-05T19:21:16.962Z",
+        "endedAt": "2026-10-05T19:21:18.151Z",
+        "node": "v26.10.0",
+        "v8": "14.6.202.34-node.35",
+        "platform": "darwin",
+        "arch": "arm64",
+        "cpu": "Apple M1 Max",
+        "warmup": 20,
+        "samples": 101,
+        "validation": "off",
+        "mode": "development synchronous core",
+        "instrumented": false,
+        "explicitGc": true,
+        "esbuildNaturalExits": 1,
+        "bundleSha256": "edfe8e872a8f04e2718a004cc10152ea731214bf7a14c113da06c889018ab0e6"
+      },
+      "observations": {
+        "mount": "a020c3fcdea6ed8c8b73b924b9fb628240cbf6f810cabf2b61f63e22d8c35b32",
+        "first": "ef00f7c39509794f0f11c04c644a7668c0f604c869df911ea7c11ce6ce60f837",
+        "later": "bbe04792dd858568bef474450bd717b16a61781318120f79e055278dbd864fcb"
+      },
+      "mount": {
+        "median": 1.7816669999999704,
+        "p99": 1.9509160000000065,
+        "sampleCount": 101
+      },
+      "first": {
+        "median": 0.7729170000000067,
+        "p99": 0.9877500000000055,
+        "sampleCount": 101
+      },
+      "later": {
+        "median": 0.37587500000017826,
+        "p99": 0.44762500000001637,
+        "sampleCount": 101
+      }
+    }
+  ],
+  "counts": [
+    {
+      "fixture": "sample-0",
+      "before": {
+        "mount": {},
+        "first": {
+          "finishSettlement": 1,
+          "runDeriveRounds": 1,
+          "transitionSettlement": 1,
+          "finalizeExits": 1,
+          "alignArraySnapshotSlots": 1,
+          "snapshotExitedPolicies": 1,
+          "commitDeriveRules": 1,
+          "commitExitPolicyValues": 1,
+          "finalizeDeriveTrace": 1
+        },
+        "later": {
+          "finishSettlement": 1,
+          "runDeriveRounds": 1,
+          "transitionSettlement": 1,
+          "finalizeExits": 1,
+          "alignArraySnapshotSlots": 1,
+          "snapshotExitedPolicies": 1,
+          "commitDeriveRules": 1,
+          "commitExitPolicyValues": 1,
+          "finalizeDeriveTrace": 1
+        }
+      },
+      "after": {
+        "mount": {},
+        "first": {
+          "finishSettlement": 1
+        },
+        "later": {
+          "finishSettlement": 1
+        }
+      }
+    },
+    {
+      "fixture": "sample-1",
+      "before": {
+        "mount": {},
+        "first": {
+          "finishSettlement": 1,
+          "runDeriveRounds": 1,
+          "transitionSettlement": 1,
+          "finalizeExits": 1,
+          "alignArraySnapshotSlots": 1,
+          "snapshotExitedPolicies": 1,
+          "commitDeriveRules": 1,
+          "commitExitPolicyValues": 1,
+          "finalizeDeriveTrace": 1
+        },
+        "later": {
+          "finishSettlement": 1,
+          "runDeriveRounds": 1,
+          "transitionSettlement": 1,
+          "finalizeExits": 1,
+          "alignArraySnapshotSlots": 1,
+          "snapshotExitedPolicies": 1,
+          "commitDeriveRules": 1,
+          "commitExitPolicyValues": 1,
+          "finalizeDeriveTrace": 1
+        }
+      },
+      "after": {
+        "mount": {},
+        "first": {
+          "finishSettlement": 1
+        },
+        "later": {
+          "finishSettlement": 1
+        }
+      }
+    },
+    {
+      "fixture": "sample-2",
+      "before": {
+        "mount": {},
+        "first": {
+          "finishSettlement": 1,
+          "runDeriveRounds": 1,
+          "transitionSettlement": 1,
+          "finalizeExits": 1,
+          "alignArraySnapshotSlots": 1,
+          "snapshotExitedPolicies": 1,
+          "commitDeriveRules": 1,
+          "commitExitPolicyValues": 1,
+          "finalizeDeriveTrace": 1
+        },
+        "later": {
+          "finishSettlement": 1,
+          "runDeriveRounds": 1,
+          "transitionSettlement": 1,
+          "finalizeExits": 1,
+          "alignArraySnapshotSlots": 1,
+          "snapshotExitedPolicies": 1,
+          "commitDeriveRules": 1,
+          "commitExitPolicyValues": 1,
+          "finalizeDeriveTrace": 1
+        }
+      },
+      "after": {
+        "mount": {},
+        "first": {
+          "finishSettlement": 1
+        },
+        "later": {
+          "finishSettlement": 1
+        }
+      }
+    },
+    {
+      "fixture": "sample-3",
+      "before": {
+        "mount": {},
+        "first": {
+          "finishSettlement": 1,
+          "runDeriveRounds": 1,
+          "transitionSettlement": 1,
+          "finalizeExits": 1,
+          "alignArraySnapshotSlots": 1,
+          "snapshotExitedPolicies": 1,
+          "commitDeriveRules": 1,
+          "commitExitPolicyValues": 1,
+          "finalizeDeriveTrace": 1
+        },
+        "later": {
+          "finishSettlement": 1,
+          "runDeriveRounds": 1,
+          "transitionSettlement": 1,
+          "finalizeExits": 1,
+          "alignArraySnapshotSlots": 1,
+          "snapshotExitedPolicies": 1,
+          "commitDeriveRules": 1,
+          "commitExitPolicyValues": 1,
+          "finalizeDeriveTrace": 1
+        }
+      },
+      "after": {
+        "mount": {},
+        "first": {
+          "finishSettlement": 1
+        },
+        "later": {
+          "finishSettlement": 1
+        }
+      }
+    },
+    {
+      "fixture": "nested-d3-f4",
+      "before": {
+        "mount": {},
+        "first": {
+          "finishSettlement": 1,
+          "runDeriveRounds": 1,
+          "transitionSettlement": 1,
+          "finalizeExits": 1,
+          "alignArraySnapshotSlots": 1,
+          "snapshotExitedPolicies": 1,
+          "commitDeriveRules": 1,
+          "commitExitPolicyValues": 1,
+          "finalizeDeriveTrace": 1
+        },
+        "later": {
+          "finishSettlement": 1,
+          "runDeriveRounds": 1,
+          "transitionSettlement": 1,
+          "finalizeExits": 1,
+          "alignArraySnapshotSlots": 1,
+          "snapshotExitedPolicies": 1,
+          "commitDeriveRules": 1,
+          "commitExitPolicyValues": 1,
+          "finalizeDeriveTrace": 1
+        }
+      },
+      "after": {
+        "mount": {},
+        "first": {
+          "finishSettlement": 1
+        },
+        "later": {
+          "finishSettlement": 1
+        }
+      }
+    },
+    {
+      "fixture": "nested-d5-f4",
+      "before": {
+        "mount": {},
+        "first": {
+          "finishSettlement": 1,
+          "runDeriveRounds": 1,
+          "transitionSettlement": 1,
+          "finalizeExits": 1,
+          "alignArraySnapshotSlots": 1,
+          "snapshotExitedPolicies": 1,
+          "commitDeriveRules": 1,
+          "commitExitPolicyValues": 1,
+          "finalizeDeriveTrace": 1
+        },
+        "later": {
+          "finishSettlement": 1,
+          "runDeriveRounds": 1,
+          "transitionSettlement": 1,
+          "finalizeExits": 1,
+          "alignArraySnapshotSlots": 1,
+          "snapshotExitedPolicies": 1,
+          "commitDeriveRules": 1,
+          "commitExitPolicyValues": 1,
+          "finalizeDeriveTrace": 1
+        }
+      },
+      "after": {
+        "mount": {},
+        "first": {
+          "finishSettlement": 1
+        },
+        "later": {
+          "finishSettlement": 1
+        }
+      }
+    },
+    {
+      "fixture": "array-100",
+      "before": {
+        "mount": {},
+        "first": {
+          "finishSettlement": 1,
+          "runDeriveRounds": 1,
+          "transitionSettlement": 1,
+          "finalizeExits": 1,
+          "alignArraySnapshotSlots": 1,
+          "snapshotExitedPolicies": 1,
+          "commitDeriveRules": 1,
+          "commitExitPolicyValues": 1,
+          "finalizeDeriveTrace": 1
+        },
+        "later": {
+          "finishSettlement": 1,
+          "runDeriveRounds": 1,
+          "transitionSettlement": 1,
+          "finalizeExits": 1,
+          "alignArraySnapshotSlots": 1,
+          "snapshotExitedPolicies": 1,
+          "commitDeriveRules": 1,
+          "commitExitPolicyValues": 1,
+          "finalizeDeriveTrace": 1
+        }
+      },
+      "after": {
+        "mount": {},
+        "first": {
+          "finishSettlement": 1
+        },
+        "later": {
+          "finishSettlement": 1
+        }
+      }
+    },
+    {
+      "fixture": "flat-500",
+      "before": {
+        "mount": {},
+        "first": {
+          "finishSettlement": 1,
+          "runDeriveRounds": 1,
+          "transitionSettlement": 1,
+          "finalizeExits": 1,
+          "alignArraySnapshotSlots": 1,
+          "snapshotExitedPolicies": 1,
+          "commitDeriveRules": 1,
+          "commitExitPolicyValues": 1,
+          "finalizeDeriveTrace": 1
+        },
+        "later": {
+          "finishSettlement": 1,
+          "runDeriveRounds": 1,
+          "transitionSettlement": 1,
+          "finalizeExits": 1,
+          "alignArraySnapshotSlots": 1,
+          "snapshotExitedPolicies": 1,
+          "commitDeriveRules": 1,
+          "commitExitPolicyValues": 1,
+          "finalizeDeriveTrace": 1
+        }
+      },
+      "after": {
+        "mount": {},
+        "first": {
+          "finishSettlement": 1
+        },
+        "later": {
+          "finishSettlement": 1
+        }
+      }
+    },
+    {
+      "fixture": "computed-visible-derived",
+      "before": {
+        "mount": {
+          "finishSettlement": 1,
+          "runDeriveRounds": 2,
+          "transitionSettlement": 1,
+          "finalizeExits": 1,
+          "snapshotExitedPolicies": 1,
+          "commitDeriveRules": 1,
+          "commitExitPolicyValues": 1,
+          "finalizeDeriveTrace": 1
+        },
+        "first": {
+          "finishSettlement": 1,
+          "runDeriveRounds": 1,
+          "transitionSettlement": 1,
+          "finalizeExits": 1,
+          "alignArraySnapshotSlots": 1,
+          "snapshotExitedPolicies": 1,
+          "commitDeriveRules": 1,
+          "commitExitPolicyValues": 1,
+          "finalizeDeriveTrace": 1
+        },
+        "later": {
+          "finishSettlement": 1,
+          "runDeriveRounds": 1,
+          "transitionSettlement": 1,
+          "finalizeExits": 1,
+          "alignArraySnapshotSlots": 1,
+          "snapshotExitedPolicies": 1,
+          "commitDeriveRules": 1,
+          "commitExitPolicyValues": 1,
+          "finalizeDeriveTrace": 1
+        }
+      },
+      "after": {
+        "mount": {
+          "finishSettlement": 1,
+          "runDeriveRounds": 2,
+          "transitionSettlement": 1,
+          "finalizeExits": 1,
+          "commitDeriveRules": 1,
+          "commitExitPolicyValues": 1,
+          "finalizeDeriveTrace": 1
+        },
+        "first": {
+          "finishSettlement": 1,
+          "runDeriveRounds": 1,
+          "commitDeriveRules": 1,
+          "commitExitPolicyValues": 1,
+          "finalizeDeriveTrace": 1
+        },
+        "later": {
+          "finishSettlement": 1,
+          "runDeriveRounds": 1,
+          "commitDeriveRules": 1,
+          "commitExitPolicyValues": 1,
+          "finalizeDeriveTrace": 1
+        }
+      }
+    },
+    {
+      "fixture": "oneOf-20",
+      "before": {
+        "mount": {
+          "finishSettlement": 1,
+          "runDeriveRounds": 3,
+          "transitionSettlement": 1,
+          "finalizeExits": 1,
+          "snapshotExitedPolicies": 1,
+          "commitDeriveRules": 1,
+          "commitExitPolicyValues": 1,
+          "finalizeDeriveTrace": 1
+        },
+        "first": {
+          "finishSettlement": 1,
+          "runDeriveRounds": 2,
+          "transitionSettlement": 1,
+          "finalizeExits": 1,
+          "alignArraySnapshotSlots": 1,
+          "snapshotExitedPolicies": 1,
+          "commitDeriveRules": 1,
+          "commitExitPolicyValues": 1,
+          "finalizeDeriveTrace": 1
+        },
+        "later": {
+          "finishSettlement": 1,
+          "runDeriveRounds": 1,
+          "transitionSettlement": 1,
+          "finalizeExits": 1,
+          "alignArraySnapshotSlots": 1,
+          "snapshotExitedPolicies": 1,
+          "commitDeriveRules": 1,
+          "commitExitPolicyValues": 1,
+          "finalizeDeriveTrace": 1
+        }
+      },
+      "after": {
+        "mount": {
+          "finishSettlement": 1,
+          "transitionSettlement": 1,
+          "finalizeExits": 1,
+          "commitExitPolicyValues": 1
+        },
+        "first": {
+          "finishSettlement": 1,
+          "transitionSettlement": 1,
+          "finalizeExits": 1,
+          "snapshotExitedPolicies": 1,
+          "commitExitPolicyValues": 1
+        },
+        "later": {
+          "finishSettlement": 1,
+          "transitionSettlement": 1,
+          "finalizeExits": 1,
+          "snapshotExitedPolicies": 1,
+          "commitExitPolicyValues": 1
+        }
+      }
+    }
+  ],
+  "method": "동일 세션·fixture별 새 프로세스. H→W, W→H, H→W. 예열20, 표본101×3. 무계측 동기 코어, validation off, 개발 모드, 빈 onChange, 리스너 없음. 첫 쓰기 한 번과 BF 원 상호작용을 마친 뒤의 후속 쓰기 한 번을 분리. oneOf는 kind_0→kind_4. 각 측정 전에 esbuild stdin을 닫고 자발적 종료0을 확인. 계수는 별도 5개 새 트리의 동일 operation 결과.",
+  "speedAndMemory": "고정 수의 O(1) 입력 부재 검사로 빈 helper 호출과 내부 반복자·임시 그릇을 제거. 기존 scratch 생성·clear, context 준비, 실제 파생 의존 작업, 단계 순서·라운드·commit·revision은 유지. 새 영구 메모리·색인·object shape 없음. heap byte는 측정하지 않음.",
+  "limits": "실행한 측정·계수·테스트는 모두 순차이며 설치·git 쓰기·추가 에이전트 없음. 운영체제와 기존 상주 도구 서비스는 유지. 작은 시간 차이를 이 변경의 이득 또는 회귀로 단정하지 않음."
+}

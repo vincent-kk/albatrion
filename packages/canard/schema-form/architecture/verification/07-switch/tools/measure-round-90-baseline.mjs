@@ -17,6 +17,9 @@ if (process.argv.includes('--round93i') &&
   process.exit(0);
 }
 
+if (process.argv.includes('--round98')) {
+  await import('./measure-round-98-a1.mjs');
+} else {
 const verification = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const pkg = path.resolve(verification, '../../..');
 const repo = path.resolve(pkg, '../../..');
@@ -290,4 +293,5 @@ if (process.argv[2] === '--summarize-paired') {
     note: '같은 새 스키마·전체 BF 상호작용에서 모든 표본의 mount/update 값과 안정 진단을 확인했습니다. 시간 원표본에는 숫자 배열만 저장합니다.',
   });
   console.log(`${fixtureName} ${run}회차 ${variant} 완료: 예열 ${warmup}, 표본 ${samples}`);
+}
 }

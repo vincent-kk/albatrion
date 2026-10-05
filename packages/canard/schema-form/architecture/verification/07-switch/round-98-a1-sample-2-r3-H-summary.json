@@ -1,0 +1,42 @@
+{
+  "fixture": "sample-2",
+  "variant": "H",
+  "run": 3,
+  "environment": {
+    "startedAt": "2026-10-05T19:19:00.107Z",
+    "endedAt": "2026-10-05T19:19:00.874Z",
+    "node": "v26.10.0",
+    "v8": "14.6.202.34-node.35",
+    "platform": "darwin",
+    "arch": "arm64",
+    "cpu": "Apple M1 Max",
+    "warmup": 20,
+    "samples": 101,
+    "validation": "off",
+    "mode": "development synchronous core",
+    "instrumented": false,
+    "explicitGc": true,
+    "esbuildNaturalExits": 1,
+    "bundleSha256": "f50e0a2f916ad9f4de26686228d69e186fd60dee40eaa193d391c805eaa31e8e"
+  },
+  "observations": {
+    "mount": "a2b5f97553be37bf7eb775941d23fd60f5d76ce412d2403644807ef057388872",
+    "first": "97f320a42ad764fe3a0736bb393e548095c44d6ce919af56151d519b794ccb34",
+    "later": "b050f1bc5196af8257b746d8927282f9836ae4d372c6ac5fb288b4b4cc4fbad8"
+  },
+  "mount": {
+    "median": 0.3010420000000522,
+    "p99": 0.37295799999992596,
+    "sampleCount": 101
+  },
+  "first": {
+    "median": 0.09183299999995143,
+    "p99": 0.12400000000025102,
+    "sampleCount": 101
+  },
+  "later": {
+    "median": 0.038082999999915046,
+    "p99": 0.055499999999938154,
+    "sampleCount": 101
+  }
+}

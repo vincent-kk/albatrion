@@ -1162,3 +1162,86 @@ Set 셀당 값은 실제 V8 heap의 table self_size에서 빈 Set table 120B를 
 ### 첫 갱신 회귀의 원인과 수정
 
 구현 직후의 쌍 측정에서 갱신이 느려졌습니다(core flat-500 0.243→0.306 ms, array-1000 0.119→0.137 ms). 독립 진단(Claude debugger, 같은 세션 번갈아 3회차)에서 회귀는 마운트 직후 첫 갱신에만 있고 둘째 갱신부터는 HEAD와 같았습니다(flat-500 둘째 이후 호출당 0.0168 대 0.0165 ms). 원인은 `getVirtualReferenceIndex.ts`의 청사진별 virtual 참조 색인 훑기입니다. 범용 로드는 정착 문맥을 만들며 마운트에서 이 값을 냈고, 정적 로드는 문맥을 만들지 않아 BF 표본마다 새 청사진의 첫 갱신이 O(노드+자식 항목) 훑기를 대신 냈습니다(CPU 프로파일에서 첫 갱신의 19%). 정적 자격이 virtual 노드의 부재를 이미 증명하므로 그 훑기의 결과는 언제나 null입니다. 정적 청사진이면 훑지 않고 null을 기억하도록 고쳐, 일을 옮기지 않고 없앴습니다(flat-500 첫 갱신 차이의 약 75% 제거, 메모리는 기존과 같은 청사진당 null 항목 하나). 남은 약 0.01–0.03 ms는 추가 일이 아니라 JIT 예열 차이로 진단되었습니다(첫 갱신의 함수 호출 192 대 193, 범용 마운트가 computeNode·updateOutput·selectChildren을 Maglev 단계로 올려 둔 몫). BF 갱신 수치는 앞으로 "마운트 직후 첫 갱신"과 "이후 갱신"을 나눠 적습니다.
+
+## 98라운드 A1 빈 단계 진입
+
+96C-01의 코드 수준 항목 가운데 `diagnosis-94c03.md` (가)의 A1만 구현했습니다. 소유 `src/core/settle/DETAIL.md`를 먼저 갱신했고, 이 변경에 원장 수정은 필요하지 않았습니다. context 준비·scratch 생성/clear·derived 의존 처리·예산/라운드·배달 알고리즘은 유지합니다. 호출을 다른 단계나 후속 갱신으로 옮기지 않았습니다.
+
+### 생략 조건과 속도·메모리 비용
+
+| 위치 (PKG 기준) | O(1) 부재 증거와 생략 작업 | 속도·메모리 비용 |
+|---|---|---|
+| `src/core/settle/utils/settlement/finishSettlement.ts:34`, `src/core/settle/utils/transition/transitionSettlement.ts:169` | 불변 hasDerive가 거짓이면 최초·전이 재계산 뒤의 빈 runDeriveRounds 없음 | capability 읽기; 빈 규칙 조회·반복 진입 제거; 새 캐시/영구 칸 없음 |
+| `src/core/settle/utils/settlement/finishSettlement.ts:36` | 게이트·생김·이탈이 없고 writtenInputs가 비었거나 유효 타입이 정적 타입과 같은 원래 대상 하나뿐이면 전이 없음 | size·Map.has·타입 검사; 쓰기 목록 순회·새 저장소 없음 |
+| `src/core/settle/utils/settlement/finishSettlement.ts:47` | pending exit·perished·entered·revived·exited·filled·arrayCounts가 모두 비면 finalizeExits 없음 | 고정 수의 size 검사; 빈 반복자·정책 closure·affectedAncestors Set 제거 |
+| `src/core/settle/utils/settlement/finishSettlement.ts:52` | arrayCounts가 비면 비로드 배열 정렬 없음 | size 읽기; 빈 spread/filter/map 배열·helper 제거; 실제 배열 처리 유지 |
+| `src/core/settle/utils/commit/commitSettlement.ts:35` | exited가 비면 이탈 정책 스냅숏 없음; hasDerive가 거짓이면 규칙 기준 커밋 없음; hasExpressions가 거짓이면 이탈 식 커밋 없음; traceRounds가 비면 trace 마감 없음 | 고정 수의 기존 필드 검사; 빈 helper·캐시 조회 제거; commit 번호·trace 슬롯·revision·delivery 유지 |
+
+기존 `readAllowedTypes.ts`가 중복·미지 type 이름을 거부하고 어휘는 일곱 개뿐이므로 유효 schema의 `effectiveType` 확인도 최대 일곱 항목인 O(1) 검사입니다. 여러 쓰기·타입 변경·게이트가 있으면 기존 전이를 유지합니다. 관련 없는 식만 있어도 hasExpressions가 참이면 이탈 식 커밋을 보수적으로 유지합니다. 새 capability·영구 색인·object shape를 추가하지 않았고 실제 작업 경로의 시간·메모리 차수는 유지합니다. heap byte는 측정하지 않았습니다.
+
+### 동일 세션 무계측 짝 측정
+
+HEAD `31717d1f7fad0ac94dd36ae9144dee3d1eb4b9d2`와 작업트리를 `tools/measure-round-90-baseline.mjs <fixture> <run> --paired <H|W> --round98`로 비교했습니다. fixture마다 **H→W, W→H, H→W**, 각 판 새 프로세스, **예열20·표본101×3**으로 순차 실행했습니다. Node v26.10.0, V8 14.6.202.34-node.35, Apple M1 Max, darwin/arm64, 개발 모드, validation off, 빈 onChange, 리스너 없음입니다. 스키마 복제·명시적 GC·관측 해시는 시간 밖이며 esbuild는 stdin을 닫아 자발적 종료0을 확인한 뒤 측정했습니다. node도 강제 종료하지 않았습니다.
+
+첫 갱신은 mount 직후 BF 첫 set 한 번입니다. 후속 갱신은 원래 BF 상호작용을 마친 뒤 첫 대상에 문자열 `-later`·수 +1 등 실제 다른 값을 한 번 쓴 것입니다. oneOf-20은 첫 kind_0→kind_4, BF의 kind_0 복귀 뒤 후속 kind_0→kind_4입니다. update 합계로 첫·후속을 섞지 않았습니다. 중앙값은 각 판의 303 원표본을 합친 nearest-rank 값입니다. 회차 칸은 모두 **H값→W값**이며 r2의 실행 순서만 W→H입니다. 정확한 값·p99·환경·번들 해시는 summary JSON에 보존했습니다.
+
+| 폼 / 시점 | H→W 중앙값 µs | 변화 | r1 H→W | r2 W→H | r3 H→W |
+|---|---:|---:|---:|---:|---:|
+| sample-0 / 첫 갱신 | 80.04→73.46 | -8.22% | 82.12→73.17 | 78.54→73.58 | 79.08→73.50 |
+| sample-0 / 후속 갱신 | 34.13→30.96 | -9.28% | 35.46→32.92 | 33.46→30.75 | 33.83→30.67 |
+| sample-1 / 첫 갱신 | 86.08→77.75 | -9.68% | 86.87→77.67 | 84.92→77.88 | 86.54→77.75 |
+| sample-1 / 후속 갱신 | 38.13→34.58 | -9.29% | 37.46→34.54 | 38.67→34.50 | 38.21→34.63 |
+| sample-2 / 첫 갱신 | 88.13→76.92 | -12.72% | 86.75→75.96 | 87.21→76.58 | 91.83→78.54 |
+| sample-2 / 후속 갱신 | 38.29→34.58 | -9.68% | 37.58→34.17 | 38.92→34.88 | 38.08→34.63 |
+| sample-3 / 첫 갱신 | 90.04→81.75 | -9.21% | 87.58→82.67 | 91.00→80.96 | 91.08→80.12 |
+| sample-3 / 후속 갱신 | 37.58→34.33 | -8.65% | 37.42→34.38 | 37.50→34.33 | 38.13→33.67 |
+| nested-d3-f4 / 첫 갱신 | 77.42→72.08 | -6.89% | 77.62→69.25 | 78.21→75.46 | 76.50→71.33 |
+| nested-d3-f4 / 후속 갱신 | 22.67→21.38 | -5.70% | 22.67→21.12 | 22.29→22.00 | 22.92→21.42 |
+| nested-d5-f4 / mount | 12722.38→12823.75 | +0.80% | 12794.04→12681.87 | 12710.08→13337.83 | 12588.04→12738.88 |
+| nested-d5-f4 / 첫 갱신 | 117.17→107.00 | -8.68% | 115.83→107.50 | 118.29→108.83 | 118.33→103.37 |
+| nested-d5-f4 / 후속 갱신 | 29.88→29.54 | -1.11% | 29.75→28.38 | 30.08→30.67 | 29.92→28.42 |
+| array-100 / 첫 갱신 | 96.00→88.50 | -7.81% | 99.71→88.12 | 96.83→90.79 | 91.42→86.88 |
+| array-100 / 후속 갱신 | 40.46→38.00 | -6.08% | 41.96→38.00 | 39.92→39.13 | 39.21→37.25 |
+| flat-500 / mount | 4304.21→4359.63 | +1.29% | 4279.29→4265.29 | 4251.33→4625.13 | 4392.42→4311.96 |
+| flat-500 / 첫 갱신 | 82.88→73.50 | -11.31% | 79.79→71.46 | 82.17→73.08 | 86.13→75.37 |
+| flat-500 / 후속 갱신 | 17.79→16.54 | -7.02% | 16.92→16.08 | 17.54→16.62 | 19.96→16.88 |
+| computed-visible-derived / 첫 갱신 | 108.04→103.37 | -4.32% | 108.46→103.67 | 108.04→101.38 | 107.13→105.63 |
+| computed-visible-derived / 후속 갱신 | 72.50→69.17 | -4.60% | 71.21→68.58 | 74.21→69.42 | 71.04→69.08 |
+| oneOf-20 / 첫 갱신 | 775.17→785.29 | +1.31% | 776.29→787.33 | 807.08→789.71 | 763.25→772.92 |
+| oneOf-20 / 후속 갱신 | 379.54→379.17 | -0.10% | 380.12→376.13 | 384.21→386.00 | 377.63→375.88 |
+
+기능 없는 폼의 후속 갱신은 1.1–9.7% 감소했고 computed 후속은 4.6% 감소했습니다. oneOf 후속 -0.10%는 시간 이득을 입증하지 않습니다. mount는 flat-500 +1.29%, nested-d5 +0.80%이며 회차별 부호가 섞이고 W→H인 r2에서 가장 큰 증가가 관측됐습니다. 두 mount의 대상 helper 진입은 0→0이라 추가 정착 작업은 없지만 **시간 회귀 없음은 이번 세 쌍만으로 확정하지 않습니다.** 재측정 반복이나 다른 항목 구현은 하지 않았습니다.
+
+### 진입 계수와 동작 보존
+
+계수는 시간과 분리한 `--round98 --counts` 프로세스에서 5개 새 트리로 확인했습니다. 제품 소스에는 계측을 넣지 않고 메모리 번들의 함수 진입만 셌으며 다섯 결과가 정확히 같음을 단언했습니다. 벡터 순서는 `runDeriveRounds / transitionSettlement / finalizeExits / snapshotExitedPolicies / commitDeriveRules / commitExitPolicyValues / finalizeDeriveTrace / alignArraySnapshotSlots`입니다. finishSettlement 자체는 모든 갱신에서 **1→1**로 합계에서 제외했습니다.
+
+| 폼 | 첫 갱신 합계 H→W | 후속 합계 H→W | 후속 H 벡터 → W 벡터 | mount 합계 H→W |
+|---|---:|---:|---|---:|
+| sample-0 | 8→0 | 8→0 | 1/1/1/1/1/1/1/1 → 0/0/0/0/0/0/0/0 | 0→0 |
+| sample-1 | 8→0 | 8→0 | 1/1/1/1/1/1/1/1 → 0/0/0/0/0/0/0/0 | 0→0 |
+| sample-2 | 8→0 | 8→0 | 1/1/1/1/1/1/1/1 → 0/0/0/0/0/0/0/0 | 0→0 |
+| sample-3 | 8→0 | 8→0 | 1/1/1/1/1/1/1/1 → 0/0/0/0/0/0/0/0 | 0→0 |
+| nested-d3-f4 | 8→0 | 8→0 | 1/1/1/1/1/1/1/1 → 0/0/0/0/0/0/0/0 | 0→0 |
+| nested-d5-f4 | 8→0 | 8→0 | 1/1/1/1/1/1/1/1 → 0/0/0/0/0/0/0/0 | 0→0 |
+| array-100 | 8→0 | 8→0 | 1/1/1/1/1/1/1/1 → 0/0/0/0/0/0/0/0 | 0→0 |
+| flat-500 | 8→0 | 8→0 | 1/1/1/1/1/1/1/1 → 0/0/0/0/0/0/0/0 | 0→0 |
+| computed-visible-derived | 8→4 | 8→4 | 1/1/1/1/1/1/1/1 → 1/0/0/0/1/1/1/0 | 8→7 |
+| oneOf-20 | 9→4 | 8→4 | 1/1/1/1/1/1/1/1 → 0/1/1/1/0/1/0/0 | 9→3 |
+
+94C-03의 A-empty **17**은 일곱 helper의 자손 span까지 포함한 수입니다. 이번 **8**은 그 일곱 helper에 빈 배열 정렬을 더한 직접 진입 수이며 두 정의를 혼용하지 않습니다. computed는 실제 규칙 실행·커밋·trace를, oneOf는 전이·이탈·이탈 스냅숏을 유지합니다. O(1)로 입력 부재를 증명할 수 없는 helper는 보수적으로 유지합니다.
+
+구현 전 관측/실제 작업 단언 4건이 통과했고 빈 진입 단언만 모두 1회로 실패했습니다. 구현 후 추가 검증 **5/5**가 통과했습니다. 값·오류·배달 payload/순서·revision·commit·빈 라운드와 실제 파생 라운드·deferred expression 오류·생김 채움·배열 소멸·이탈 정책을 확인했습니다. 시간 60판과 계수 20판의 mount/first/later 노드 값·오류·상태·revision·진단·commit·라운드·배달 상태 해시는 H/W 및 계수/무계측 사이에 모두 일치합니다.
+
+### 지정 검증·산출물·환경 한계
+
+| PKG 지정 명령 | 결과 |
+|---|---|
+| `npx vitest run --project unit --project render --project react18 --reporter=dot` | 종료1; 415파일·3144건 통과, todo1; render/react18의 EVENT-070 useLayoutEffect/useEffect 두 건씩(총4건)만 실패; 59.53초 |
+| `npx tsc --noEmit --composite false --rootDir . -p tsconfig.json` | 종료0 |
+| `npx eslint "src/**/*.{ts,tsx}"` | 종료0 |
+| `node architecture/verification/07-switch/tools/check-legacy-isolation.mjs` | 종료0; `LEGACY_ISOLATED: 1605 files checked` |
+
+[round-98-a1-summary.json](./round-98-a1-summary.json)에 짝 중앙값·p99·환경·계수·관측/번들/제품 소스 해시·검증·비용을 보존했습니다. `round-98-a1-*-timings.json` 60개에는 mount/first/later 숫자 시간 배열만 있고 모든 JSON은 파일당 5MB 이하입니다. H 30판의 번들 해시는 하나, W 30판의 번들 해시도 하나로 측정 중 제품 소스가 동일함을 확인했습니다.
+
+작업은 지정 worktree 안에서만 수행했고 설치·git 쓰기·추가 에이전트·병렬 측정은 실행하지 않았습니다. 다만 시작 시 깨끗했던 `gate-selection-design.md`가 종료 점검에서 별도 수정된 것을 발견했습니다. 이 작업은 해당 파일을 쓰지 않았고 변경을 보존했습니다. 다른 실행과 호스트 배타성은 보증할 수 없으며 운영체제·기존 상주 도구 서비스도 중지하지 않았습니다. 이번 한 판의 수치와 한계를 함께 기록하며 조용한 환경이나 mount 무회귀를 충족했다고 단정하지 않습니다.
