@@ -1,0 +1,57 @@
+{
+  "fixture": "sample-2",
+  "variant": "W",
+  "environment": {
+    "startedAt": "2026-10-05T19:45:29.998Z",
+    "endedAt": "2026-10-05T19:45:30.040Z",
+    "node": "v26.10.0",
+    "v8": "14.6.202.34-node.35",
+    "platform": "darwin",
+    "arch": "arm64",
+    "cpu": "Apple M1 Max",
+    "warmup": 0,
+    "samples": 5,
+    "validation": "off",
+    "mode": "development synchronous core",
+    "instrumented": true,
+    "explicitGc": true,
+    "esbuildNaturalExits": 1,
+    "bundleSha256": "abe0a5293184213f926dad0210b36e189ff1e0276042976b464da75f3798ab1f"
+  },
+  "counts": {
+    "mount": {},
+    "first": {
+      "getSettlementScratch": 1,
+      "scratchObjectAllocations": 1,
+      "scratchContainerAllocations": 24,
+      "contextObjectAllocations": 1,
+      "finishSettlement": 1,
+      "scratchClear.writtenInputs": 1,
+      "scratchClear.dirtyPaths": 1,
+      "dirtyTraversalReset": 1,
+      "scratchClear.dirtyChildrenByParent": 1,
+      "scratchClear.changedRaw": 1,
+      "scratchClear.explicitRaw": 1,
+      "scratchClear.changedNodes": 1,
+      "scratchClear.stateDirtyNodes": 1
+    },
+    "later": {
+      "getSettlementScratch": 1,
+      "contextObjectAllocations": 1,
+      "finishSettlement": 1,
+      "scratchClear.writtenInputs": 1,
+      "scratchClear.dirtyPaths": 1,
+      "dirtyTraversalReset": 1,
+      "scratchClear.dirtyChildrenByParent": 1,
+      "scratchClear.changedRaw": 1,
+      "scratchClear.explicitRaw": 1,
+      "scratchClear.changedNodes": 1,
+      "scratchClear.stateDirtyNodes": 1
+    }
+  },
+  "observations": {
+    "mount": "a2b5f97553be37bf7eb775941d23fd60f5d76ce412d2403644807ef057388872",
+    "first": "97f320a42ad764fe3a0736bb393e548095c44d6ce919af56151d519b794ccb34",
+    "later": "b050f1bc5196af8257b746d8927282f9836ae4d372c6ac5fb288b4b4cc4fbad8"
+  }
+}

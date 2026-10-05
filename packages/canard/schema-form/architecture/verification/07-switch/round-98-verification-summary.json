@@ -1,0 +1,102 @@
+{
+  "worktree": "/Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07",
+  "head": "349b62057d3d3c5c06abfaa7342914103ba64250",
+  "date": "2026-10-06",
+  "part0": {
+    "before": "69cbe29c4",
+    "after": "349b62057",
+    "source": "두 판 모두 git show 정본 소스로 메모리 번들; 작업트리 제품 소스 제외",
+    "operations": "마운트만 실행; 갱신 없음",
+    "details": "round-98-a1-mount-recheck-summary.json",
+    "startKst": "2026-10-06 04:34:11",
+    "endKst": "2026-10-06 04:36:41",
+    "mountMedianUs": [
+      { "fixture": "flat-500", "before": 4325.00, "after": 4417.67, "changePercent": 2.143, "pairChangePercent": [0.602, 8.816, -0.068] },
+      { "fixture": "nested-d5-f4", "before": 12697.58, "after": 12721.46, "changePercent": 0.188, "pairChangePercent": [0.138, 0.271, -0.137] },
+      { "fixture": "array-1000", "before": 6982.58, "after": 6772.25, "changePercent": -3.012, "pairChangePercent": [0.615, -4.154, -3.754] },
+      { "fixture": "sample-0", "before": 126.87, "after": 127.25, "changePercent": 0.296, "pairChangePercent": [5.679, -2.543, -1.054] },
+      { "fixture": "computed-visible-derived", "before": 459.42, "after": 457.75, "changePercent": -0.363, "pairChangePercent": [-1.383, 1.947, -0.590] }
+    ],
+    "regressionFinding": {
+      "verdict": "회차 변동을 넘는 일관된 회귀 미확인; 마운트 무회귀 확정도 아님",
+      "basis": "flat-500 합산 +2.14%지만 r2 W가 4698.25µs로 달랐으며 r3는 H보다 빠름. nested-d5도 r3 부호 반전. 작은 차이는 변경에 귀속하지 않음.",
+      "causeFileLine": null,
+      "separateFix": null
+    }
+  },
+  "part1": {
+    "scope": "96C-01, diagnosis-94c03.md (가) A2 정착 문맥 준비만 변경",
+    "before": "349b62057",
+    "after": "미커밋 작업트리",
+    "detailUpdatedFirst": "src/core/settle/DETAIL.md",
+    "ledgerChanged": false,
+    "changes": [
+      { "file": "src/core/settle/utils/settlement/createSettlementContext.ts", "line": 33, "behavior": "branchless 부재 증명으로 전이 상한 준비를 생략하고 정적 첫 로드 자격의 가상 노드 부재 증명으로 참조 준비 생략", "speed": "고정 O(1) 기능 검사, 불필요한 helper·캐시 접근 제거; root·runtime·청사진 참조는 호출 안에서 한 번 읽음", "memory": "새 상주 메모리·색인·필드 없음; 정적 첫 갱신의 null 참조 캐시 항목 생성 제거; 호출별 문맥 객체 유지" },
+      { "file": "src/core/settle/utils/write/releaseSettlementScratch.ts", "line": 9, "behavior": "빈 작업군의 clear·배열 초기화 및 부모 Map의 중복 clear를 생략; DirtyPathSet 모드 초기화 유지", "speed": "고정 O(1) size·length 검사로 빈 clear 제거; 단형 호출 자리 유지", "memory": "기존 scratch·컨테이너 재사용; 추가 할당·필드 없음" }
+    ],
+    "notDeferred": "필요 없는 준비와 정리만 제거하고 다른 단계나 첫 갱신으로 옮기지 않음",
+    "details": "round-98-a2-summary.json",
+    "startKst": "2026-10-06 04:46:37",
+    "endKst": "2026-10-06 04:49:37",
+    "countsPerFirstAndLaterWrite": [
+      { "fixtures": ["sample-0", "sample-1", "sample-2", "sample-3", "nested-d3-f4", "nested-d5-f4", "array-100", "flat-500"], "prepareHelpers": [2, 0], "scratchClearCalls": [22, 7], "scratchArrayResets": [3, 0] },
+      { "fixtures": ["computed-visible-derived"], "prepareHelpers": [2, 1], "scratchClearCalls": [22, 11], "scratchArrayResets": [3, 1] },
+      { "fixtures": ["oneOf-20"], "prepareHelpers": [2, 2], "scratchClearCalls": { "first": [22, 15], "later": [22, 14] }, "scratchArrayResets": { "first": [3, 1], "later": [3, 0] } }
+    ],
+    "allocations": {
+      "laterScratchObjects": [0, 0],
+      "laterScratchContainers": [0, 0],
+      "contextObjectsPerWrite": [1, 1],
+      "staticFirstScratchObjects": [1, 1],
+      "staticFirstScratchContainers": [24, 24],
+      "staticFirstVirtualNullCacheEntries": [1, 0],
+      "method": "실제 context return·scratch 신규 분기·가상 참조 캐시 쓰기를 별도 메모리 번들에서 계수. scratch 신규 분기의 Map·Set·DirtyPathSet·배열 생성 site 24개를 소스로 검증. 재사용 Map·Set 생성자 계수도 테스트에서 0 확인.",
+      "limits": "heap byte와 native clear 내부 backing-store 할당 수는 미측정"
+    },
+    "behaviorEvidence": {
+      "test": "src/core/settle/__tests__/settle.context-preparation.test.ts",
+      "before": "계수 2건이 실제 helper 호출 [1,1]과 빈 clear 때문에 실패; 동작 보존 3건 통과",
+      "after": "5/5 통과",
+      "observations": "시간 60판과 계수 20판의 mount/first/later 값·오류·revision·상태·진단·commit·라운드·배달 해시가 H/W 및 계수/무계측 사이에 일치",
+      "preserved": "호출별 문맥, 중첩 scratch 독립성, DirtyPathSet 모드·부모 색인, 억제 옵션, 실제 게이트·파생·오류 후 재사용, 예산·revision·배달 계약"
+    },
+    "timingFinding": "후속 flat-500·array-100·sample-3·oneOf-20은 세 회차 모두 감소. nested-d5 후속 합산 +2.02%와 마운트 +1.60%는 회차 부호가 바뀌어 지속 회귀로 귀속하지 않음. 작은 차이는 개선 확정치로 해석하지 않음."
+  },
+  "measurementProtocol": {
+    "tool": "tools/measure-round-90-baseline.mjs",
+    "orders": ["H→W", "W→H", "H→W"],
+    "warmup": 20,
+    "samplesPerRun": 101,
+    "runs": 3,
+    "samplesPerVariant": 303,
+    "statistics": "nearest-rank 중앙값·p99; 원표본 삭제·필터 없음",
+    "environment": "Node v26.10.0, V8 14.6.202.34-node.35, Apple M1 Max, darwin/arm64, 개발 모드, validation off, 빈 onChange, 구독자 없음, 시간 밖 명시적 GC",
+    "freshTimingProcesses": 90,
+    "freshCountProcesses": 20,
+    "countTreesPerProcess": 5,
+    "execution": "모든 측정·계수·테스트 순차 실행. 측정 중 다른 작업 명령·에이전트 없음. 각 esbuild stdin을 닫아 자발적 종료0 확인; node 자연 종료. 측정 시간 구간 비중첩 확인.",
+    "hostLimit": "운영체제·GUI·기존 상주 도구 서비스는 유지"
+  },
+  "verification": [
+    { "command": "npx vitest run --project unit --project render --project react18 --reporter=dot", "cwd": "packages/canard/schema-form", "exit": 1, "passedFiles": 416, "failedFiles": 2, "passedTests": 3149, "failedTests": 4, "todoTests": 1, "durationSeconds": 60.62, "failures": "render와 react18에서 EVENT-070 useLayoutEffect/useEffect 두 사례씩만 실패; watchdog 201 < 200 단언", "reusedEvidence": "전체 실행 후 새 테스트의 형 단언·type import만 바로잡고 대상 5건 재통과. 제품 소스와 런타임 단언은 그대로 유지." },
+    { "command": "npx tsc --noEmit --composite false --rootDir . -p tsconfig.json", "cwd": "packages/canard/schema-form", "exit": 0, "result": "새 테스트의 구체 DirtyPathSet 형 단언 수정 후 통과" },
+    { "command": "npx eslint \"src/**/*.{ts,tsx}\"", "cwd": "packages/canard/schema-form", "exit": 0, "result": "type import 수정 후 통과" },
+    { "command": "node architecture/verification/07-switch/tools/check-legacy-isolation.mjs", "cwd": "packages/canard/schema-form", "exit": 0, "result": "LEGACY_ISOLATED: 1606 files checked" }
+  ],
+  "artifactChecks": {
+    "timingFiles": 90,
+    "timingSamplesOnly": true,
+    "samplesPerArray": 101,
+    "maxTimingFileBytes": 7628,
+    "jsonFileLimitBytes": 5000000,
+    "allNewJsonWithinLimit": true,
+    "measurementWindowsDoNotOverlap": true,
+    "report": "remeasure-86c02.md",
+    "reportSections": ["98라운드 A1 마운트 재확인", "98라운드 A2 정착 문맥 준비"],
+    "noInstalls": true,
+    "noGitWrites": true,
+    "noCommits": true,
+    "noAdditionalAgents": true,
+    "noGeneratedRuntimeBundles": true
+  }
+}

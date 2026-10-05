@@ -1,0 +1,30 @@
+{
+  "fixture": "computed-visible-derived",
+  "variant": "H",
+  "run": 1,
+  "environment": {
+    "startedAt": "2026-10-05T19:36:20.669Z",
+    "endedAt": "2026-10-05T19:36:21.139Z",
+    "node": "v26.10.0",
+    "v8": "14.6.202.34-node.35",
+    "platform": "darwin",
+    "arch": "arm64",
+    "cpu": "Apple M1 Max",
+    "warmup": 20,
+    "samples": 101,
+    "validation": "off",
+    "mode": "development synchronous core",
+    "instrumented": false,
+    "explicitGc": true,
+    "esbuildNaturalExits": 1,
+    "bundleSha256": "c373c37beaaf7f05ceac1d52ecdd182e8e87b4f53e29fc87ad05ebbd760f2b86"
+  },
+  "observations": {
+    "mount": "b2234f571c211456f1a1d1b5199210cf65b786b072ebebb422da6fc0245fa3de"
+  },
+  "mount": {
+    "median": 0.46099999999978536,
+    "p99": 0.5317079999999805,
+    "sampleCount": 101
+  }
+}
