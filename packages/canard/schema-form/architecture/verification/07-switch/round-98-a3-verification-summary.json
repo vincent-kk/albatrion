@@ -1,0 +1,67 @@
+{
+  "round": "98 A3",
+  "decision": "96C-01",
+  "head": "f57132aa501e6c446a5a4d21cf42cf4411590df2",
+  "worktree": "/Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07",
+  "scope": "파생 의존 조회 공유·소비된 원본 재등록 생략·의존 튜플 합성만 구현; 원장 변경 없음",
+  "verdict": "연산 감소와 동작 보존은 확인. 최종 derived 첫·후속 시간은 증가하여 시간 개선과 엄격한 무회귀는 입증하지 못함.",
+  "measurements": {
+    "final": "round-98-a3-final-summary.json",
+    "intermediate": ["round-98-a3-summary.json", "round-98-a3-refined-summary.json"],
+    "order": ["H→W", "W→H", "H→W"],
+    "warmup": 20,
+    "samplesPerProcess": 101,
+    "samplesPerSidePerPhase": 303,
+    "validation": "off",
+    "instrumentedTimings": false,
+    "freshProcessPerFixtureRunSide": true,
+    "sequential": true,
+    "naturalEsbuildExitCode": 0,
+    "finalTimingProcesses": 24,
+    "finalCountProcesses": 8,
+    "counterAuditProcessesAfterToolCleanup": 8,
+    "counterAuditResult": "네 fixture의 H/W 계수·관측 재확인 일치; 기존 산출물 덮어쓰기 없음",
+    "matchingObservations": "모든 fixture의 mount/first/later: H/W 및 계수/무계측 해시 일치",
+    "finalMedianMicroseconds": [
+      {"fixture": "computed-visible-derived", "phase": "mount", "before": 461.666, "after": 465.916, "changePercent": 0.9206},
+      {"fixture": "computed-visible-derived", "phase": "first", "before": 104.416, "after": 108.375, "changePercent": 3.7916},
+      {"fixture": "computed-visible-derived", "phase": "later", "before": 69.75, "after": 70.666, "changePercent": 1.3133},
+      {"fixture": "sample-0", "phase": "later", "before": 29.542, "after": 29.625, "changePercent": 0.2810},
+      {"fixture": "flat-500", "phase": "later", "before": 16.375, "after": 16.292, "changePercent": -0.5069},
+      {"fixture": "oneOf-20", "phase": "later", "before": 375.375, "after": 375.916, "changePercent": 0.1441}
+    ]
+  },
+  "operationCountsFirstAndLater": {
+    "affected": [6, 2],
+    "registerDependencyOwner": [2, 1],
+    "getDependencyIndex": [4, 2],
+    "affectedSetAllocations": [6, 2],
+    "affectedArrayLiteralAllocations": [22, 7],
+    "deriveTupleMapCalls": [4, 0],
+    "deriveTupleFilterCalls": [2, 0],
+    "deriveTupleFinalArrays": [2, 2],
+    "recalculationMapAllocations": [0, 1],
+    "evaluateDeriveRound": [2, 2],
+    "computeNode": [5, 5]
+  },
+  "memoryCost": "호출별 Map 1개와 O(변경 경로+소유자 참조)의 임시 보유, context 고정 슬롯1개; 영구 색인·scratch 컨테이너 추가 없음; heap byte 미측정",
+  "checks": [
+    {"command": "npx vitest run --project unit --project render --project react18 --reporter=dot", "exitCode": 1, "passedFiles": 417, "failedFiles": 2, "passedTests": 3151, "failedTests": 4, "todo": 1, "durationSeconds": 61.81, "failures": [
+      "react18: EVENT-070 React stops two fields writing back through useLayoutEffect",
+      "react18: EVENT-070 React stops two fields writing back through useEffect",
+      "render: EVENT-070 React stops two fields writing back through useLayoutEffect",
+      "render: EVENT-070 React stops two fields writing back through useEffect"
+    ], "failureReason": "기존 watchdog 단언: 201 writes가 200 미만이어야 한다는 검증 실패; 허용된 네 사례만 실패"},
+    {"command": "npx tsc --noEmit --composite false --rootDir . -p tsconfig.json", "exitCode": 0, "note": "TS7022를 target 타입 명시로 해결 후 최종 소스 재검증"},
+    {"command": "npx eslint \"src/**/*.{ts,tsx}\"", "exitCode": 0},
+    {"command": "node architecture/verification/07-switch/tools/check-legacy-isolation.mjs", "exitCode": 0, "output": "LEGACY_ISOLATED: 1607 files checked"}
+  ],
+  "failFirstEvidence": "변경 전 동작 보존1건 통과; 연산1건은 affected 조회6회여서 실패. 변경 후2건 통과. 관련27건 및 파생61건과 최종 전체 검사 확인.",
+  "structuralRemainder": [
+    {"part": "규칙·에지·순위·마지막 수렴 라운드 변경은 수행하지 않음", "ledger": ["SETTLE-004", "SETTLE-017", "SETTLE-043", "CONTROLS-026", "CONTROLS-027", "CONTROLS-028", "WRITE-029"]},
+    {"part": "target 선행 계산은 독자 부재 증명이 없어 유지; 출력 지연 구조안은 별도 원장 변경 대상", "ledger": ["SETTLE-003", "VALUE-002", "VALUE-013", "NODE-006"]}
+  ],
+  "artifactsBeforeVerificationSummary": {"jsonFiles": 171, "timingFiles": 72, "maximumTimingBytes": 7649, "maximumJsonBytes": 51731, "timingsContainOnlyNumericArrays": true, "allBelow5MB": true},
+  "constraints": {"noInstalls": true, "noGitWrites": true, "noCommits": true, "noOtherAgents": true, "noForcedProcessTermination": true, "inMemoryBundlesOnly": true},
+  "limits": "기존 OS·GUI·상주 도구 서비스를 중지하지 않음. 대조 폼 median 변화 -0.51~+0.28%이나 sample-0·flat-500 p99 증가. 계수 감소를 시간 이득으로 환산하지 않음. 현재 원장에는 DERIVE-* ID가 없어 현행 SETTLE/CONTROLS/WRITE 항목으로 기록."
+}

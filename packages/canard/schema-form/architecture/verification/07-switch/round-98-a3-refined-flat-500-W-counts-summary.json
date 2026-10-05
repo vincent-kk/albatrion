@@ -1,0 +1,43 @@
+{
+  "fixture": "flat-500",
+  "variant": "W",
+  "environment": {
+    "startedAt": "2026-10-05T20:16:33.404Z",
+    "endedAt": "2026-10-05T20:16:33.498Z",
+    "node": "v26.10.0",
+    "v8": "14.6.202.34-node.35",
+    "platform": "darwin",
+    "arch": "arm64",
+    "cpu": "Apple M1 Max",
+    "warmup": 0,
+    "samples": 5,
+    "validation": "off",
+    "mode": "development synchronous core",
+    "instrumented": true,
+    "explicitGc": true,
+    "esbuildNaturalExits": 1,
+    "bundleSha256": "c570da6bd3bb94035c5936738a40a48366df010855271546388802ef8baed57a"
+  },
+  "counts": {
+    "mount": {},
+    "first": {
+      "registerRecalculation": 1,
+      "getDependencyIndex": 1,
+      "affected": 1,
+      "computeNode": 2,
+      "finishSettlement": 1
+    },
+    "later": {
+      "registerRecalculation": 1,
+      "getDependencyIndex": 1,
+      "affected": 1,
+      "computeNode": 2,
+      "finishSettlement": 1
+    }
+  },
+  "observations": {
+    "mount": "524778a5de3fed6e9f5335cbe6863e124d81a46c938bd89bd9befffd69ae5735",
+    "first": "1e31d4a28be2e5202d380aac364d549daacf534470b5c901aa07066aeb9830a6",
+    "later": "40f73844356ae6099f44dc3f572b735901d87f4bcd8c0f0d7a7221eaa31d6065"
+  }
+}

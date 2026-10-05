@@ -1336,3 +1336,81 @@ HEAD `349b62057`(H, git show 소스)와 작업트리(W)를 `tools/measure-round-
 전체 테스트 이후 새 테스트의 Set 타입을 구체 DirtyPathSet으로 좁히는 형 단언과 type import만 수정하고 대상 5건·TypeScript·ESLint를 다시 확인했습니다. 제품 소스와 런타임 단언은 그대로여서 전체 테스트·시간·계수 증거를 재사용했습니다.
 
 [round-98-a2-summary.json](./round-98-a2-summary.json)에 정확한 22행 중앙값·p99·회차 값·환경·번들 해시·계수·관측·비용을, [round-98-verification-summary.json](./round-98-verification-summary.json)에 판정·검증 결과와 산출물 검사를 보존했습니다. A1 재확인 30개와 A2 60개의 시간 파일은 숫자 표본 배열만 담고 최대 **7628바이트**이며 모든 새 JSON은 5MB 이하입니다. 측정 90판의 시간 순서와 각 esbuild 자발적 종료0을 확인했습니다. 작업은 stage-07 안에서만 했으며 설치·git 쓰기·커밋·추가 에이전트 실행은 없었습니다.
+
+## 98라운드 A3 파생 의존 처리
+
+### 범위·진단과 구현
+
+편집자 결정 96C-01의 코드 수준 A3만 다뤘습니다. 기준 HEAD는 `f57132aa501e6c446a5a4d21cf42cf4411590df2`이며, 제품 수정 전에 settle과 derive의 소유 DETAIL을 각각 갱신했습니다. 원장은 수정하지 않았습니다.
+
+`diagnosis-94c03.md:113`의 computed-visible-derived 후속 갱신은 old 대비 보정 4.53배, `evaluateDeriveRound` 2회, `registerRecalculation` 2회, `collectDeriveSourcePaths` 2회, `getDependencyIndex` 4회, `affected` 6회입니다. 첫 라운드가 자동 쓰기를 만들고 둘째 라운드가 수렴을 확인합니다. derive 전체는 보정 61.28µs·33.9%, 의존성 묶음은 보정 22.27µs·11.9%이며 서로 겹칩니다. 두 비중을 더하지 않았습니다. 진단 당시 등록 원본 반복은 누적 source와 source+target으로 3회, dirty 반복은 5회, compute 호출은 root 2·source 1·target 2회였습니다.
+
+변경은 하나의 파생 의존 처리 최적화입니다. `registerRecalculation.ts:19`는 게이트·로드·배열 변경·생김·나감·소멸·이동·예산 복구가 없는 정착에서만 경로별 역의존 결과를 공유합니다. 이미 계산된 원본은 새 dirty 표시가 없으면 다시 소유자를 등록하지 않습니다. 같은 원본 경로가 새 자동 쓰기로 다시 dirty가 되면 재등록합니다. `collectDeriveSourcePaths.ts:17`은 형상이 바뀌면 공유 결과를 버리고, 같은 형상에서는 같은 조회 배열을 사용하되 원본별 소유자→자기 경로→조상의 삽입 순서를 유지합니다. 비공유 경로는 캐시 조회·등록 분기 없이 직접 조회합니다.
+
+`evaluateDeriveRound.ts:102`는 식 의존 경로 다음 감시 경로를 고전 for 루프로 최종 튜플 하나에 합칩니다. 같은 노드의 식에 이미 든 감시 경로만 기존대로 제외합니다. 읽기·규칙 평가·후보·오류의 순서, 값 동등, 에지 소비, 순위, 마지막 수렴 확인은 유지했습니다. `changedRaw`는 누적 기록 그대로입니다.
+
+속도 비용은 공유 가능한 정착의 고정 조건 확인과 경로별 Map 조회이며, 동일 경로의 역색인 조회와 소유자 재등록 및 튜플 map/filter 작업을 줄입니다. 메모리 비용은 호출별 Map 1개와 O(변경 경로+소유자 참조)의 임시 보유, context의 고정 슬롯 1개입니다. 새 영구 색인이나 scratch 컨테이너는 없고 heap byte는 측정하지 않았습니다. **연산 감소는 확인했으나 최종 시간 개선은 입증하지 못했습니다.**
+
+### 동일 세션 교차 측정
+
+`node --expose-gc architecture/verification/07-switch/tools/measure-round-90-baseline.mjs <fixture> <run> --paired <H|W> --round98 --a3 --a3-final`로 최종본을 측정했습니다. H는 git show 정본, W는 작업 트리 정본의 메모리 번들입니다. fixture마다 H→W, W→H, H→W이며 각 판은 새 프로세스, 예열20·표본101로 총303개를 합쳐 nearest-rank median/p99를 계산했습니다. 무계측 개발 모드 동기 코어·validation off·빈 onChange·리스너 없음입니다. 첫 갱신은 첫 BF 쓰기 한 번, 후속 갱신은 나머지 BF 상호작용 뒤 같은 원천의 새 값 한 번입니다. oneOf는 kind_0→kind_4입니다.
+
+최종 시간 프로세스 24개는 2026-10-06 05:18:47–05:19:56 KST에 순차 실행했습니다. 별도 계수 8판은 fixture·판마다 새 트리5개입니다. 시간·계수 실행 모두 esbuild stdin을 닫고 자발적 종료0을 확인한 뒤 시작했고, 다음 프로세스는 앞 프로세스가 끝난 뒤에만 실행했습니다. 다른 측정·테스트·에이전트와 동시에 실행하지 않았습니다. OS·GUI·기존 도구 서비스는 유지했습니다.
+
+아래 단위는 µs입니다. 회차1·3은 H→W, 회차2는 W→H 실행이며 각 칸은 H 중앙값→W 중앙값입니다.
+
+| 폼 / 작업 | 중앙값 H→W | 변화 | p99 H→W | 회차1 | 회차2 | 회차3 |
+|---|---:|---:|---:|---:|---:|---:|
+| computed-visible-derived / 마운트 | 461.67→465.92 | +0.92% | 599.50→623.58 | 458.33→464.54 | 457.96→460.50 | 467.75→472.96 |
+| computed-visible-derived / 첫 갱신 | 104.42→108.38 | +3.79% | 164.13→164.92 | 104.62→106.58 | 103.67→108.58 | 105.88→110.21 |
+| computed-visible-derived / 후속 갱신 | 69.75→70.67 | +1.31% | 108.87→117.58 | 69.00→70.08 | 70.33→70.92 | 70.37→71.75 |
+| sample-0 / 후속 갱신 | 29.54→29.63 | +0.28% | 51.54→68.00 | 29.29→29.25 | 30.50→29.58 | 28.79→30.29 |
+| flat-500 / 후속 갱신 | 16.38→16.29 | -0.51% | 39.50→60.71 | 16.83→16.62 | 15.79→15.92 | 15.96→16.29 |
+| oneOf-20 / 후속 갱신 | 375.37→375.92 | +0.14% | 451.71→445.54 | 374.29→377.58 | 375.46→375.00 | 376.33→373.54 |
+
+대조 폼의 합친 중앙값은 -0.51~+0.28%이고 회차별 방향은 섞입니다. 이 범위에서 지속적인 중앙값 회귀를 입증하지는 못했지만, sample-0·flat-500 p99가 올라 **엄격한 무회귀를 확정하지 않습니다**. derived는 최종 세 회차 모두 첫·후속 시간이 늘었고 마운트도 늘었습니다. 할당·조회 감소를 시간 개선으로 바꾸어 주장하지 않습니다.
+
+최초 조회 공유본 [round-98-a3-summary.json](./round-98-a3-summary.json)은 derived 첫 +5.14%·후속 -0.89%, 튜플 합성본 [round-98-a3-refined-summary.json](./round-98-a3-refined-summary.json)은 첫 +1.63%·후속 -1.53%였습니다. 첫 갱신 증가와 일반 경로의 분기 비용 우려 때문에 구현을 보완하고 다시 측정했습니다. 이 두 중간 결과도 보존했으며 최종 판정에는 현재 소스의 [round-98-a3-final-summary.json](./round-98-a3-final-summary.json)을 사용했습니다. 세 측정의 유리한 숫자를 골라 합치지 않았습니다.
+
+### 연산·할당과 동작 보존
+
+최종 computed-visible-derived의 첫·후속 한 쓰기 계수는 동일합니다. 별도 진단 번들의 AST 계수이며 무계측 시간에 섞지 않았습니다.
+
+전체 검증 뒤 계수 도구의 AST 방문을 반복 스택으로 정리하고, `--counts --check-counts`로 네 fixture의 H/W를 새 프로세스8개에서 재확인했습니다. 저장된 계수와 관측 해시는 모두 일치했고 기존 파일을 덮어쓰지 않았습니다. 제품 소스는 바꾸지 않아 최종 시간·전체 테스트 증거를 유지합니다.
+
+| 항목 | H→W |
+|---|---:|
+| registerRecalculation 진입 | 2→2 |
+| collectDeriveSourcePaths 진입 | 2→2 |
+| getDependencyIndex 진입 | 4→2 |
+| affected 조회 | 6→2 |
+| 의존 소유자 add | 2→1 |
+| affected 안 Set 생성 | 6→2 |
+| affected 안 배열 리터럴 생성 | 22→7 |
+| 의존 튜플 map / filter 호출 | 4→0 / 2→0 |
+| 최종 의존 튜플 배열 | 2→2 |
+| 공유 Map 생성 | 0→1 |
+| evaluateDeriveRound / computeNode | 2→2 / 5→5 |
+
+map/filter의 각 반환 배열까지 포함한 튜플의 명시적 배열 생성은 8→2입니다. affected의 배열 계수는 배열 리터럴 site만 세며 split/filter/flatMap 같은 native 메서드 내부의 생성과 V8 backing store는 포함하지 않습니다. 전체 heap 할당 수로 환산하지 않았습니다. 로드·게이트·형상 변경 경로는 공유 Map을 만들지 않습니다. sample-0·flat-500·oneOf-20의 후속 helper·조회·소유자 등록·compute 계수는 H/W가 같습니다.
+
+`settle.derive-dependencies.test.ts`의 동작 보존 사례는 변경 전 통과했고 연산 사례는 의존 조회가 6회여서 실패했습니다. 변경 후 두 사례는 통과했습니다. 값·파생 raw·동일 쓰기의 emit 참조, 오류 부재, payload·배달 경로 순서·개정·commit·진단, 평가2회와 쓰기 후보 [1,0]·기록 라운드2회를 고정했습니다. 최종 전체 스위트의 기존 표현식 실패·예산 복구·게이트·배열·재탄생·순위·watch 사례도 통과했습니다. 최종 24개 시간 판과 8개 계수 판의 mount/first/later 전체 관측 해시는 H/W와 무계측/계수 사이에 일치했습니다.
+
+### 원장 검토가 필요한 잔여
+
+둘째 평가 라운드 전체, 규칙별 에지 소비·순위·commit 기준 상태는 삭제하지 않았습니다. 규칙 자체의 실행이나 수렴·순위 기준을 바꾸는 부분은 **SETTLE-004·017·043, CONTROLS-026·027·028, WRITE-029** 검토 대상으로 멈췄습니다. target의 선행 output 계산도 다른 control/gate 독자가 없다는 증명이 없어 그대로입니다. 출력을 읽기 시점까지 미루는 구조안은 **SETTLE-003, VALUE-002·013, NODE-006**의 별도 변경 대상입니다. 이 공유·튜플 수정은 그 계약들을 바꾸지 않습니다. 현재 `architecture/ledger/*.md`에는 `DERIVE-*` ID가 없으므로 실제 현행 항목으로 기록했습니다. 94C-03의 11.9% 가운데 남은 시간을 이번 무계측 전체 시간으로 추정하거나, 겹치는 33.9%와 합산하지 않았습니다.
+
+### 지정 검증·산출물
+
+| PKG 지정 명령 | 결과 |
+|---|---|
+| `npx vitest run --project unit --project render --project react18 --reporter=dot` | 종료1; 417파일·3151건 통과, todo1; render/react18의 EVENT-070 useLayoutEffect/useEffect 두 건씩(총4건)만 실패; 61.81초 |
+| `npx tsc --noEmit --composite false --rootDir . -p tsconfig.json` | 종료0; 튜플 합성 뒤 드러난 TS7022 추론 오류는 target의 Self 타입을 명시해 해결 후 재검증 |
+| `npx eslint "src/**/*.{ts,tsx}"` | 종료0; 최종 소스 재검증 |
+| `node architecture/verification/07-switch/tools/check-legacy-isolation.mjs` | 종료0; `LEGACY_ISOLATED: 1607 files checked` |
+
+[round-98-a3-verification-summary.json](./round-98-a3-verification-summary.json)에 판정과 검증 결과를 기록했습니다. 세 구현 단계의 시간 파일72개는 숫자 표본 배열만 담고 최대 **7649바이트**이며, 시간·계수·요약 JSON171개는 모두5MB 이하(검증 요약을 추가하기 전 최대51731바이트)입니다. 기존 A1/A2 산출물은 덮어쓰지 않았습니다. stage-07 안에서만 작업했고 설치·git 쓰기·커밋·추가 에이전트·프로세스 강제 종료는 없었습니다. 메모리 번들 외의 빌드 산출물을 만들거나 stage하지 않았습니다.
+
+### 처분
+
+시간 이득을 입증하지 못해(derived 후속 갱신 69.75→70.67 µs, 첫 갱신 104.42→108.38 µs, 마운트 461.67→465.92 µs; 대조 행은 잡음 안) 제품 코드를 HEAD로 되돌렸습니다. 조회 6→2회·등록 2→1회의 계수 감소는 임시 Map 하나의 추가와 상쇄되었습니다. 계수를 단언하던 시험은 되돌린 코드에서 성립하지 않아 저장소에서 뺐습니다. 남은 몫의 중심은 갱신마다 도는 파생 평가 둘째 라운드(수렴 확인)이며, 이를 건너뛰는 것은 위 "원장 검토가 필요한 잔여"의 항목을 건드리므로 원장 관리자에게 물음으로 올립니다.

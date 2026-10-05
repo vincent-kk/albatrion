@@ -1,0 +1,69 @@
+{
+  "fixture": "oneOf-20",
+  "variant": "H",
+  "environment": {
+    "startedAt": "2026-10-05T20:13:29.199Z",
+    "endedAt": "2026-10-05T20:13:29.279Z",
+    "node": "v26.10.0",
+    "v8": "14.6.202.34-node.35",
+    "platform": "darwin",
+    "arch": "arm64",
+    "cpu": "Apple M1 Max",
+    "warmup": 0,
+    "samples": 5,
+    "validation": "off",
+    "mode": "development synchronous core",
+    "instrumented": true,
+    "explicitGc": true,
+    "esbuildNaturalExits": 1,
+    "bundleSha256": "74c509f0ad14c4abec2dd9dfa43f9aaf81645695b7f7f7fc52e780f8c49f2f8e"
+  },
+  "counts": {
+    "mount": {
+      "registerRecalculation": 3,
+      "getDependencyIndex": 3,
+      "computeNode": 13,
+      "finishSettlement": 1,
+      "transitionSettlement": 1,
+      "affected": 7,
+      "affected.allocations.Set": 7,
+      "affected.allocations.array": 23,
+      "registerDependencyOwner": 122,
+      "finalizeExits": 1,
+      "commitExitPolicyValues": 1
+    },
+    "first": {
+      "registerRecalculation": 2,
+      "getDependencyIndex": 2,
+      "affected": 5,
+      "affected.allocations.Set": 5,
+      "affected.allocations.array": 17,
+      "registerDependencyOwner": 122,
+      "computeNode": 9,
+      "finishSettlement": 1,
+      "transitionSettlement": 1,
+      "finalizeExits": 1,
+      "snapshotExitedPolicies": 1,
+      "commitExitPolicyValues": 1
+    },
+    "later": {
+      "registerRecalculation": 1,
+      "getDependencyIndex": 1,
+      "affected": 1,
+      "affected.allocations.Set": 1,
+      "affected.allocations.array": 4,
+      "registerDependencyOwner": 61,
+      "computeNode": 5,
+      "finishSettlement": 1,
+      "transitionSettlement": 1,
+      "finalizeExits": 1,
+      "snapshotExitedPolicies": 1,
+      "commitExitPolicyValues": 1
+    }
+  },
+  "observations": {
+    "mount": "a020c3fcdea6ed8c8b73b924b9fb628240cbf6f810cabf2b61f63e22d8c35b32",
+    "first": "ef00f7c39509794f0f11c04c644a7668c0f604c869df911ea7c11ce6ce60f837",
+    "later": "bbe04792dd858568bef474450bd717b16a61781318120f79e055278dbd864fcb"
+  }
+}

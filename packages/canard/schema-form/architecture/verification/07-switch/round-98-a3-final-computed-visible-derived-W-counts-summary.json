@@ -1,0 +1,82 @@
+{
+  "fixture": "computed-visible-derived",
+  "variant": "W",
+  "environment": {
+    "startedAt": "2026-10-05T20:20:00.608Z",
+    "endedAt": "2026-10-05T20:20:00.662Z",
+    "node": "v26.10.0",
+    "v8": "14.6.202.34-node.35",
+    "platform": "darwin",
+    "arch": "arm64",
+    "cpu": "Apple M1 Max",
+    "warmup": 0,
+    "samples": 5,
+    "validation": "off",
+    "mode": "development synchronous core",
+    "instrumented": true,
+    "explicitGc": true,
+    "esbuildNaturalExits": 1,
+    "bundleSha256": "c1fef808d1ecb275435963131b246655a9424b5c9c764f6bca336942735b009b"
+  },
+  "counts": {
+    "mount": {
+      "registerRecalculation": 4,
+      "getDependencyIndex": 4,
+      "computeNode": 15,
+      "finishSettlement": 1,
+      "runDeriveRounds": 2,
+      "evaluateDeriveRound": 4,
+      "deriveTuple.arrayLiteral": 4,
+      "affected": 7,
+      "affected.allocations.Set": 7,
+      "affected.allocations.array": 25,
+      "transitionSettlement": 1,
+      "registerDependencyOwner": 4,
+      "finalizeExits": 1,
+      "commitDeriveRules": 1,
+      "commitExitPolicyValues": 1,
+      "finalizeDeriveTrace": 1
+    },
+    "first": {
+      "registerRecalculation": 2,
+      "getDependencyIndex": 2,
+      "recalculationMapAllocations": 1,
+      "affected": 2,
+      "affected.allocations.Set": 2,
+      "affected.allocations.array": 7,
+      "registerDependencyOwner": 1,
+      "computeNode": 5,
+      "finishSettlement": 1,
+      "runDeriveRounds": 1,
+      "collectDeriveSourcePaths": 2,
+      "evaluateDeriveRound": 2,
+      "deriveTuple.arrayLiteral": 2,
+      "commitDeriveRules": 1,
+      "commitExitPolicyValues": 1,
+      "finalizeDeriveTrace": 1
+    },
+    "later": {
+      "registerRecalculation": 2,
+      "getDependencyIndex": 2,
+      "recalculationMapAllocations": 1,
+      "affected": 2,
+      "affected.allocations.Set": 2,
+      "affected.allocations.array": 7,
+      "registerDependencyOwner": 1,
+      "computeNode": 5,
+      "finishSettlement": 1,
+      "runDeriveRounds": 1,
+      "collectDeriveSourcePaths": 2,
+      "evaluateDeriveRound": 2,
+      "deriveTuple.arrayLiteral": 2,
+      "commitDeriveRules": 1,
+      "commitExitPolicyValues": 1,
+      "finalizeDeriveTrace": 1
+    }
+  },
+  "observations": {
+    "mount": "b2234f571c211456f1a1d1b5199210cf65b786b072ebebb422da6fc0245fa3de",
+    "first": "59219d6e354ee95b157d6364ef778baaabd2de5b2c315d575aacc11627b2dfa9",
+    "later": "e7f09823dfc5b17bcec85713d2a247998dc3cd954da2d691ab2cf911995f23de"
+  }
+}
