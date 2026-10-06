@@ -28,7 +28,7 @@ describe('SchemaNodeRevisionLedger initial previous reads', () => {
         SchemaNodeEventType.Initialized | SchemaNodeEventType.UpdateValue);
       expect(ledger.read(-1)).toBe(2);
     }
-    expect(reads.bits / nodes).toBe(17);
+    expect(reads.bits / nodes).toBe(0);
   });
 
   it('still reads all 17 bits from a distinct plain previous record', () => {

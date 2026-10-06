@@ -1,4 +1,5 @@
 import { SchemaNodeEventType } from '../SchemaNodeEventType';
+import { EMPTY_REVISION_LEDGER } from '../type';
 
 /** Known event bits occupy consecutive slots rather than sparse numeric elements. */
 const KNOWN_BITS = (SchemaNodeEventType.UpdateDiagnostics << 1) - 1;
@@ -16,8 +17,10 @@ export class SchemaNodeRevisionLedger {
    * @param mask - Delivery bits committed together before listener invocation
    */
   constructor(previous: Readonly<Record<number, number>>, mask: number) {
-    const counts = previous instanceof SchemaNodeRevisionLedger ? previous.counts.slice() :
-      Array.from({ length: 17 }, (_, index) => previous[1 << index]);
+    // The shared empty ledger has no counters, so a first delivery starts empty.
+    const counts: number[] = previous === EMPTY_REVISION_LEDGER ? [] :
+      previous instanceof SchemaNodeRevisionLedger ? previous.counts.slice() :
+        Array.from({ length: 17 }, (_, index) => previous[1 << index]);
     let remaining = mask & KNOWN_BITS;
     while (remaining) {
       const bit = remaining & -remaining;

@@ -2108,3 +2108,77 @@ round-99 canonical production builder/adapter를 메모리에서 재사용했습
 timing worker 96개(8연산×2열×대조/후보×3회차)의 실행 구간 겹침은 0, 최대 worker 4.665초입니다. 각 builder의 esbuild 서비스는 stdin EOF 뒤 자발 종료0을 확인했습니다. 모든 프로세스는 signal null·자연 종료였고 전체 검증을 포함한 단일 명령 최대는 62.727초로 8분 이내였습니다. 설치·git 쓰기·강제 종료·다른 worktree 작업·추가 에이전트는 없었습니다. 새 측정 JSON 최대는 3,135,964바이트로 각 파일 5,000,000바이트 이하이며 `profile-102-work/` 아래에만 저장했습니다. 번들/source map은 저장소 밖 지정 scratchpad의 `bundles/revision102-*.cjs{,.map}`에만 생성했습니다.
 
 최종 diff 점검에서 이번 작업이 작성하지 않은 `analysis-records-design.md`의 별도 변경이 발견됐습니다. 제품 원복 직후 점검에는 없던 변경이며, 해당 내용은 읽거나 수정·원복하지 않았습니다. 확인된 파일 수정 시각 08:13:10 UTC는 마지막 timing worker 종료 08:06:49 UTC 뒤입니다. 보고서와 새 테스트/계측 자료 외 이 변경의 작성 주체와 실행 상황은 확인하지 않았으므로 작업 트리 전체가 이번 산출물만 포함한다고 주장하지 않습니다.
+
+### 순서 균형 재측정
+
+**판정: 후보를 다시 원복했습니다.** 이번 기준은 stage-07 HEAD `926671834`입니다. 위의 `2333fd5af` 결과는 이전 측정 기록입니다. 먼저 shared-empty 횟수 기대값을 0으로 바꾸고 HEAD에서 실제 17 때문에 1건 실패함을 확인했습니다. 이어 `previous === EMPTY_REVISION_LEDGER`일 때만 `counts = []`로 시작하는 후보를 정확히 재적용하여 횟수 시험 2건이 통과했습니다. 기존 원장의 복사, 다른 plain record의 17비트 복사와 mask 갱신 루프는 유지했습니다. 아래 W는 이 후보의 번들이며 최종 제품은 HEAD 상태입니다.
+
+[재측정 진입점](profile-102-work/revision-initial-order.mjs)은 기존 `revision-initial-empty.mjs`를 메모리에서 재사용합니다. 기준 HEAD·산출물 접두사·3회차 묶음의 시작 번호·순서 기록만 바꾸고 canonical builder, fixture, drain과 clock은 유지했습니다. 빌드는 모두 production·source-only이며, 번들과 source map은 지정된 저장소 밖 `scratchpad/bundles/revision102-order-*.cjs{,.map}`에만 생성했습니다. H와 A/A의 두 번째 엔진은 독립 빌드했고 두 SHA-256이 모두 `609237476c63765d62711f35bcb337eb3a88427ae794b8d3f88b65bfdfdae6c2`로 같았습니다. 후보 SHA-256은 `d71f231fdd669d0ac9a6bb728deff52161da62b227d11389185549f81c9e660f`입니다.
+
+각 timing worker는 새 프로세스입니다. steady는 엔진별 예열 20회+본 표본 101회, 명시적 GC 없이 각각 121회 연속 mount를 실행합니다. oneOf-20 A/A와 후보는 각각 H-first/W-first/H-first/W-first/H-first/W-first의 6회차로 균형을 맞췄습니다. forced 후보도 6회차이며 기존 표본별 H/W 교대를 유지했습니다. nested-d5-f4·flat-500·sample-0 mount는 두 열 각각 3회차입니다. 앞뒤 empty/drain 각각 101회, 64 Promise checkpoint 뒤 단일 check sentinel 안에서 종단 clock, clone/강제 GC의 clock 밖 위치를 유지했습니다. steady 차이는 연속 block의 같은 순번 비교이며 인접 pair가 아닙니다.
+
+아래 H/W는 empty 중앙값을 양쪽에서 뺀 각 회차의 중앙값입니다. 이득은 H−W이며 음수가 후보 지연입니다. pooled는 보정된 원표본을 합친 최근접 순위 중앙값의 차이입니다. 회차 중앙값들의 중앙값으로 대체하지 않았습니다. 노이즈는 `max(0.001ms, 같은 열 A/A의 |회차 이득|·|순번 차이 중앙값| 최대, empty residual p95 + 기존 1,999회 bootstrap 99% 중앙값 오차 합)`입니다. pooled는 합친 보정 표본으로 bootstrap을 계산합니다. 새 A/A는 요청된 steady에만 있으므로 forced에는 bootstrap과 empty 기준을 사용했습니다. 같은 block 위치와 크기의 일치는 노이즈를 덧붙이지 않은 A/A 실제 최대 지연으로 판정했습니다.
+
+**A/A: 코드가 동일해도 먼저 측정한 block이 6회차 모두 느렸습니다.**
+
+| 회차 | block 순서 | H ms | A ms | H−A ms | 먼저 측정한 block의 지연 ms |
+|---|---|---:|---:|---:|---:|
+| 1 | H→A | 1.198208 | 1.087917 | +0.110291 | 0.110291 |
+| 2 | A→H | 1.124416 | 1.196500 | -0.072084 | 0.072084 |
+| 3 | H→A | 1.198000 | 1.154292 | +0.043708 | 0.043708 |
+| 4 | A→H | 1.098500 | 1.176375 | -0.077875 | 0.077875 |
+| 5 | H→A | 1.200709 | 1.082376 | +0.118333 | 0.118333 |
+| 6 | A→H | 1.088374 | 1.210500 | -0.122126 | 0.122126 |
+
+H-first의 순서 효과는 0.043708~0.118333ms, W-first와 같은 두 번째 엔진 우선 위치는 0.072084~0.122126ms였습니다. 순번 차이 중앙값의 절댓값 최대는 각각 0.074250·0.089417ms입니다. 먼저 측정한 block이 느려지는 효과는 확인됐지만 JIT와 heap의 개별 기여는 이 시험으로 분리하지 않았습니다.
+
+**oneOf-20 후보: 두 열의 회차별 결과입니다.**
+
+| 회차 | steady 순서 | steady H→W ms | steady 이득 ms | steady 노이즈 ms | forced H→W ms | forced 이득 ms | forced 노이즈 ms |
+|---|---|---:|---:|---:|---:|---:|---:|
+| 1 | H→W | 1.186833→1.088083 | +0.098750 | 0.167209 | 2.081292→2.089708 | -0.008416 | 0.054999 |
+| 2 | W→H | 1.089750→1.178292 | -0.088542 | 0.130208 | 2.077667→2.054501 | +0.023166 | 0.064958 |
+| 3 | H→W | 1.221584→1.080876 | +0.140708 | 0.149041 | 2.046874→2.049041 | -0.002167 | 0.062917 |
+| 4 | W→H | 1.089126→1.256000 | -0.166874 | 0.156833 | 2.080042→2.072001 | +0.008041 | 0.063749 |
+| 5 | H→W | 1.166917→1.084666 | +0.082251 | 0.147874 | 2.064250→2.055750 | +0.008500 | 0.056167 |
+| 6 | W→H | 1.098917→1.183667 | -0.084750 | 0.152792 | 2.051458→2.046417 | +0.005041 | 0.057000 |
+
+| oneOf-20 열 | pooled H→W ms（606표본） | pooled 중앙값 차이 H−W ms | pooled 순번 차이 중앙값 ms | pooled 노이즈 ms |
+|---|---:|---:|---:|---:|
+| forced | 2.069292→2.058500 | +0.010792 | +0.003457 | 0.033292 |
+| steady | 1.129250→1.136042 | -0.006792 | -0.008959 | 0.122126 |
+
+steady의 후보 지연은 W-first 회차 2·4·6에만 나타났습니다. 2·6회차의 0.088542·0.084750ms는 같은 위치 A/A 최대 0.122126ms 안에 들어옵니다. 그러나 4회차의 0.166874ms는 A/A 최대보다 **0.044748ms 크고**, 해당 회차 노이즈 0.156833ms도 **0.010041ms 넘습니다**. 그 회차의 순번 차이 중앙값은 -0.151584ms, [40,60] 중앙 구간은 [-0.180541, -0.084542]ms입니다. A/A의 같은 위치 순번 차이 절댓값 최대 0.089417ms로도 크기가 일치하지 않습니다. 두 열의 pooled 차이는 노이즈 밖 지연이 아니지만, ‘느린 회차는 같은 block 위치의 A/A가 크기를 재현해야 한다’는 조건은 충족하지 못했습니다.
+
+**nested/flat와 sample-0 mount를 두 열에서 재확인했습니다.**
+
+| fixture | forced pooled H→W ms（303표본） | forced 이득 ms | steady pooled H→W ms（303표본） | steady 이득 ms |
+|---|---:|---:|---:|---:|
+| nested-d5-f4 | 10.067292→8.956292 | +1.111000 | 8.244791→7.194751 | +1.050040 |
+| flat-500 | 3.695125→3.305000 | +0.390125 | 2.440416→2.011666 | +0.428750 |
+| sample-0 | 0.153959→0.149125 | +0.004834 | 0.049666→0.046917 | +0.002749 |
+
+nested-d5-f4의 회차별 이득은 forced +1.288917/+0.847500/+1.357958ms, steady +1.173000/+1.021083/+0.610459ms였습니다. flat-500은 forced +0.398834/+0.417458/+0.403626ms, steady +0.426791/+0.404500/+0.451834ms였습니다. 두 fixture 모두 두 열의 세 회차가 개선 방향입니다. nested forced와 flat 두 열은 회차마다 노이즈 밖 개선입니다. nested steady는 회차 노이즈가 1.177664~2.194335ms라서 세 회차 모두 노이즈 밖이라는 조건은 여전히 충족하지 못합니다. sample-0의 pooled 노이즈는 forced 0.015458ms·steady 0.018250ms이고, steady 2회차의 0.003208ms 지연도 해당 회차 노이즈 0.022041ms 안입니다.
+
+**결론은 원복 유지입니다.** 순서 효과가 실제로 존재하므로 이전 0.236375ms 지연을 곧바로 지속적인 코드 회귀로 해석할 수 없습니다. 이번 시험도 코드 자체의 회귀를 인과적으로 확정하지 않습니다. 다만 이번 steady 4회차의 크기는 균형 A/A가 재현한 같은 위치 효과를 넘었으므로 요청된 보존 조건은 실패했습니다. 추가 회차를 골라 재측정하지 않고 예정된 6회차로 판정했습니다. 제품 코드·`record/DETAIL.md`·횟수 기대값을 HEAD와 같게 원복했으며, 공유 빈 원장의 최종 읽기는 노드당 다시 17회입니다.
+
+[판정 및 회차 원본 요약](profile-102-work/revision102-order-verdict.json)에 pooled 값, 모든 회차 H/W·순번 차이·노이즈·GC·A/A 위치별 최대와 실패 조건을 보존했습니다. 원시 표본·clock 구간·의미 관찰은 `revision102-order-{control,working}-*.json`에 있습니다. timing worker 36개의 실행 구간 겹침은 0이고 최대 worker는 4.501초, 측정 묶음 명령 최대는 13.358초입니다. 각 엔진의 마지막 실제 트리에서 모든 revision getter·마스크 합·공개 값·커밋 번호가 일치했고 forced의 강제 GC는 clock 밖이었습니다. 성공한 builder/worker/묶음 프로세스는 모두 signal null·자연 종료였으며, 별도 진입점 치환 anchor 오류 3건도 측정 시작 전 자연 종료1했습니다. 새 측정 파일 최대는 2,099,895바이트입니다. 설치·git 쓰기·강제 종료·다른 worktree 작업은 없었으며 다른 에이전트의 `analysis-records-design.md`는 읽거나 수정하지 않았습니다.
+
+PKG에서 최종 원복 상태에 네 지정 명령을 순차 실행했습니다. npx는 `npm_config_offline=true`, `npm_config_yes=false`로 설치 없이 기존 실행 파일을 사용했습니다.
+
+| 명령 | 최종 결과 |
+|---|---|
+| `npx vitest run --project unit --project render --project react18 --reporter=dot` | 종료1, 61.025초; 427파일·3,214건 통과, todo1; render/react18 각각 EVENT-070 useLayoutEffect/useEffect 두 사례, 허용된 총 4건만 실패 |
+| `npx tsc --noEmit --composite false --rootDir . -p tsconfig.json` | 종료0, 7.703초; 출력 없음 |
+| `npx eslint "src/**/*.{ts,tsx}"` | 종료0, 5.506초; 출력 없음 |
+| `node architecture/verification/07-switch/tools/check-legacy-isolation.mjs` | 종료0, 0.419초; `LEGACY_ISOLATED: 1628 files checked` |
+
+[검증 진입점](profile-102-work/verify-revision-initial-order.mjs)과 `revision102-order-verify-{vitest,tsc,eslint,legacy}.{json,log}`에 명령·cwd·종료 상태·시간과 출력을 보존했습니다. 전체 검증을 포함한 단일 명령 최대는 61.025초이며 네 명령 모두 signal null·자연 종료였습니다. 최종 바이트 비교에서 제품 코드, `record/DETAIL.md`, 횟수 시험이 모두 HEAD와 같았습니다. 새 측정 자료의 각 파일은 5MB 이하이고 `profile-102-work/` 아래에만 있습니다.
+
+재현하려면 PKG에서 `node architecture/verification/07-switch/profile-102-work/revision-initial-order.mjs --build <head|control|working>`을 각각 실행한 뒤, `--pairs control oneOf-20 mount steady <1|4>`와 `--pairs working oneOf-20 mount <steady|forced> <1|4>`를 명령별로 순차 실행합니다. 각 시작 번호는 연속 3회차를 실행합니다. nested-d5-f4·flat-500·sample-0은 `--pairs working <fixture> mount <steady|forced> 1`입니다. 후보 빌드는 위 identity 분기를 재적용한 상태에서 만들어야 합니다. 최종 검증은 위 검증 진입점에 `<vitest|tsc|eslint|legacy>`를 각각 전달하며, 마지막 `node architecture/verification/07-switch/profile-102-work/summarize-revision-initial-order.mjs`는 저장한 표본과 검증 로그를 읽어 판정합니다. 기존 세 회차 자료는 덮어쓰지 않았습니다.
+
+### 처분 정정 — 채택
+
+순서 균형 재측정의 oneOf-20 정상 상태 열은 회차의 측정 순서에 따라 부호가 정확히 바뀝니다. 기준판을 먼저 잰 세 회차의 이득은 +0.098750, +0.140708, +0.082251 ms이고, 후보를 먼저 잰 세 회차는 −0.088542, −0.166874, −0.084750 ms입니다. 어느 판이든 나중에 잰 블록이 빠르며, 여섯 회차의 평균 이득은 약 −0.003 ms로 0과 구별되지 않습니다. 같은 판끼리의 대조(A/A)도 같은 방향의 순서 효과 0.044–0.122 ms를 보였습니다. 공식 판정 열(TEST-026의 강제 수집, 표본마다 순서 교대)은 이런 순서 효과가 없고, oneOf-20은 2.069292 → 2.058500 ms로 중립입니다. 정상 상태 열은 기록용이므로(101라운드 덧붙임), 한 회차의 순서 효과로 판정 열의 뚜렷한 이득을 버리지 않습니다.
+
+그래서 후보를 채택했습니다: `SchemaNodeRevisionLedger` 생성자는 `previous === EMPTY_REVISION_LEDGER`일 때 빈 슬롯에서 시작하고, 다른 원장과 plain 기록의 복사는 그대로입니다. 횟수 시험의 기대값은 노드당 0회입니다. 근거 수치(순서 균형 재측정의 pooled 이득, 판정 열/정상 상태 열): nested-d5-f4 마운트 +1.111/+1.050 ms, flat-500 마운트 +0.390/+0.429 ms, sample-0 마운트 +0.004834/+0.002749 ms, oneOf-20 판정 열 +0.010792 ms. 시험은 허용된 EVENT-070 네 건만 실패하고 3,214건이 통과합니다.

@@ -1,0 +1,22 @@
+{
+  "name": "tsc",
+  "command": [
+    "npx",
+    "tsc",
+    "--noEmit",
+    "--composite",
+    "false",
+    "--rootDir",
+    ".",
+    "-p",
+    "tsconfig.json"
+  ],
+  "cwd": "/Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/packages/canard/schema-form",
+  "started": 1791275039510,
+  "ended": 1791275047213,
+  "elapsedMs": 7703,
+  "status": 0,
+  "signal": null,
+  "naturalExit": true,
+  "bytes": 0
+}
