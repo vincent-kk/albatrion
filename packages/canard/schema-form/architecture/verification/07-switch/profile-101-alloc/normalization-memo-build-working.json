@@ -1,0 +1,9 @@
+{
+  "variant": "working",
+  "sha256": "24479d68cdb119bcf8efc24ff5770c1452fd5880ca3f3511d4ad5c0a6bb14f67",
+  "bytes": 525998,
+  "naturalServiceExits": 1,
+  "edits": [],
+  "head": "e39503af55963026769bc3d49ca4dec79feb8090",
+  "bundles": "/private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles"
+}

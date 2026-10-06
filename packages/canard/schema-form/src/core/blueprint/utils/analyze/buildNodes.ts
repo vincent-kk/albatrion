@@ -6,14 +6,18 @@ import type {
   BlueprintSchemaType,
   SchemaTypeName,
 } from '../../type';
-import { mergeEffectiveSchema } from '../effectiveSchema/mergeEffectiveSchema';
 import { DEFAULT_NO_ACTIVE } from '../effectiveSchema/utils/constant';
+import { mergeSchemaContributions } from '../effectiveSchema/utils/mergeSchemaContributions';
+import { selectEffectiveDeclarations } from '../effectiveSchema/utils/selectEffectiveDeclarations';
 import { resolveNodeStrategy } from '../types/resolveNodeStrategy';
 import { resolveNodeTypes } from '../types/resolveNodeTypes';
 import { collectDeclarations } from './collectDeclarations';
 import { getTemplateKey } from './getTemplateKey';
 import { populateNodeChildren } from './populateNodeChildren';
 import type { AnalysisContext, MutableNode, SchemaInput } from './type';
+
+/** Static construction has no active gated declaration IDs. */
+const NO_ACTIVE_DECLARATION_IDS: readonly number[] = [];
 
 /**
  * Construct schema templates once per authored declaration/gate combination.
@@ -85,12 +89,9 @@ export const buildNodes = (
       childEntries: [] as BlueprintChildEntry[],
     };
     context.nodes.push(node);
-    const effective = mergeEffectiveSchema(
-      {
-        ...node,
-        declarations: conjunctions,
-      },
-      [],
+    const effective = mergeSchemaContributions(
+      node,
+      selectEffectiveDeclarations(node, NO_ACTIVE_DECLARATION_IDS, conjunctions),
       {
         mode: 'static',
         isAtomic: context.options.isAtomic,

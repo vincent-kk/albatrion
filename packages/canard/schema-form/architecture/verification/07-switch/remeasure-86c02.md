@@ -1814,3 +1814,63 @@ populateNodeChildren.ts와 blueprint/DETAIL.md 두 파일을 git show HEAD의 �
 | `node architecture/verification/07-switch/tools/check-legacy-isolation.mjs` | 종료0; LEGACY_ISOLATED: 1625 files checked |
 
 [A·B 보고서](profile-100c01.md), [A·B summary JSON](profile-100c01-summary.json), [C 판정·차등·계수·검증 JSON](profile-100c01/verdict.summary.json)에 근거를 보관했습니다. 모든 per-run 자료는 profile-100c01/에 있고 파일마다 5MB 이하입니다. .cpuprofile은 지정 /private/tmp 위치에만 보관하며 생성 번들과 map은 정리합니다. 설치·git 쓰기·다른 에이전트·강제 종료 없이 측정 worker를 순차 실행했습니다.
+
+## 101라운드 할당 묶음 1 정규화 memo
+
+**유지했습니다.** 기준 HEAD는 `e39503af55963026769bc3d49ca4dec79feb8090`입니다. profile-101-alloc.md의 수정 사양 1만 구현했습니다. nested-d5-f4의 기존 제거 상한 1.8158ms/1.7899ms는 계산·검사까지 생략한 상한이며 이번 실제 개선량으로 쓰지 않았습니다. flat-500 강제 GC 마운트의 세 회차 모두 같은 조건의 잡음 0.204626ms를 넘었습니다. 네 마운트와 두 후속 쓰기의 두 열 모두 잡음 초과 회귀가 없습니다.
+
+### 변경과 속도·메모리 비용
+
+- blueprint/DETAIL.md를 먼저 갱신했습니다. buildNodes.ts:92의 일회성 정규화는 실제 노드와 선택한 연언을 mergeSchemaContributions에 직접 전달합니다. 임시 node spread, 옵션별 memo/Map, 선언 ID 배열·문자열 cache를 만들지 않습니다. 정적 선택은 기존 비교 함수를 재사용하여 게이트·validationOnly를 한 for 순회에서 제외하고 같은 전순서로 정렬합니다.
+- isAtomic/collect 전달, apply/finalize, 정적 type/const/pattern 오류·경고, 최종 schema/effective 필드·동결을 유지합니다. 실제 노드의 DEFAULT_NO_ACTIVE 등록과 일반 런타임/공개 mergeEffectiveSchema 메모는 그대로입니다. 공개 표면과 노드 shape를 추가하지 않았습니다.
+- 선택은 O(선언 수) 순회와 기존 O(선택 선언 수 log 선택 선언 수) 정렬입니다. 불필요한 필터 배열·memo 색인·문자열 생성 시간을 제거하며 정적 옵션 객체와 최종 결과는 유지합니다. 임시 선택 배열 하나와 모듈당 빈 ID 배열 하나를 사용합니다. 노드당 추가 보유 메모리는 없습니다. 일반 호출에는 정적 전용 인자 여부 확인 한 번이 더해지며, 후속 쓰기 비용은 아래 짝 측정에서 잡음 범위입니다.
+
+### nested-d5-f4 마운트당 객체와 노드당 객체
+
+각 진단은 별도 새 process에서 seed 한 마운트, 예열 20 후 한 마운트를 기존 measure.mjs의 allocation 함수로 관찰했습니다. 1-byte sampling, randomness 억제, 수거된 major/minor 할당 포함입니다. 아래 ‘객체’는 V8 allocation sample 수이며 정확한 JS 객체 수가 아닙니다. byte/평균 크기로 환산하지 않았습니다. 청사진 노드는 1,365개입니다.
+
+기본 JIT에서는 인라인된 메모·선택의 일부가 buildNodes owner로 귀속됩니다. 따라서 effective-merge 전체 source family의 전후 수를 보기 위해 **별도 `--no-turbo-inlining` 진단**을 추가했습니다. 이 진단은 성능 timer와 분리하며 기존 173.4개/node 집계에서 차감하지 않습니다.
+
+| 진단/범위 | HEAD 객체/mount | 변경 객체/mount | HEAD 객체/node | 변경 객체/node | 감소/mount |
+|---|---:|---:|---:|---:|---:|
+| 인라이닝 억제 / effective-merge source family | 45,922 | 17,745 | 33.6425 | 13.0000 | 28,177 |
+| 인라이닝 억제 / 청사진 전체 | 221,604 | 192,052 | 162.3473 | 140.6974 | 29,552 |
+| 기본 JIT / effective-merge 직접 owner | 16,380 | 13,650 | 12.0000 | 10.0000 | 2,730 |
+| 기본 JIT / 청사진 전체 | 191,223 | 169,871 | 140.0901 | 124.4476 | 21,352 |
+| 기본 JIT / 전체 제품·종단 driver | 239,331 | 216,614 | 175.3341 | 158.6916 | 22,717 |
+
+인라이닝 억제의 effective-merge 자기 할당 byte는 3,235,352→1,408,680입니다. 기본 JIT의 인라이닝·allocation folding/JIT 상태에 따른 귀속 차이는 위 별도 진단과 합산하지 않습니다. 실제 source family 감소와 청사진 전체 감소를 구분했습니다. [할당·짝 판정 JSON](profile-101-alloc/normalization-memo-verdict.json)에 원 집계와 회차별 근거가 있습니다.
+
+### 95C-01 짝 종단 측정의 두 열
+
+모든 fixture/연산/조건/회차는 새 Node process입니다. 엔진별 예열 20, 101쌍×3이며 run 최초 순서 H-W/W-H/H-W와 표본별 교대를 유지합니다. clone과 후속 쓰기 대상 조회는 clock 밖입니다. 강제 GC 열은 GC와 다음 check anchor도 밖이며 clock 안 GC 창은 모두 0입니다. steady 열은 강제 GC·GC anchor 없이 자연 GC를 포함합니다. 두 열 모두 64 Promise checkpoint 뒤 setImmediate sentinel **안**에서 종료 clock을 읽으며 앞·뒤 pooled 빈 종단 202개의 중앙값을 양쪽에 동일하게 뺐습니다. 생성 seed는 할당 진단에만 있고 timer에는 추가 마운트가 없습니다. 각 엔진 호출은 정확히 121회이며 출력 hash·값·폭이 일치하고 같은 값을 두 번 읽으면 같은 참조입니다.
+
+대표 H/W는 세 run 중앙값의 중앙값입니다. paired Δ는 각 쌍의 H−W 중앙값을 다시 세 run에서 중앙값으로 요약하므로 H/W 대표값의 차이와 구별합니다. N은 max(1µs, 같은 fixture/연산/조건 no-op의 abs bound 또는 abs paired 중앙값 최대, 빈 종단 residual p95 + 두 median의 ordinary bootstrap 99% 오차 합)입니다. 1,999회 deterministic bootstrap을 사용하며 연속 표본의 독립성이나 생산 환경의 유의성을 주장하지 않습니다. 채택과 회귀는 세 run 모두 N을 넘고 각 paired 중앙값의 순위 구간 [40,60]이 같은 부호일 때만 판정합니다. 표의 N은 변경 세 run의 최대입니다.
+
+| fixture/연산 | 강제 GC H→W ms | steady H→W ms | paired Δ 강제/steady ms | N 강제/steady ms | 판정 |
+|---|---:|---:|---:|---:|---|
+| nested-d5-f4/mount | 10.455626→9.662042 | 8.753375→7.967459 | 0.710625 / 0.847583 | 1.096667 / 1.398542 | 이득은 잡음 이내 |
+| flat-500/mount | 3.954917→3.710625 | 2.651333→2.487958 | 0.249417 / 0.153250 | 0.204626 / 1.040752 | 강제 GC만 잡음 초과 개선 |
+| oneOf-20/mount | 2.101209→2.065542 | 1.233375→1.219292 | 0.025708 / 0.003416 | 0.079918 / 0.158542 | 잡음 이내 |
+| sample-0/mount | 0.158708→0.155500 | 0.060917→0.058376 | 0.004667 / 0.006292 | 0.024584 / 0.030790 | 잡음 이내 |
+| sample-0/later | 0.091124→0.090583 | 0.022167→0.021417 | 0.000001 / −0.000125 | 0.021376 / 0.018457 | 회귀 없음 |
+| nested-d5-f4/later | 0.112042→0.110208 | 0.036249→0.035499 | 0.001292 / 0.001167 | 0.014084 / 0.013293 | 회귀 없음 |
+
+flat-500 강제 GC의 run별 H−W는 0.268167, 0.209584, 0.350625ms이며 세 회차 모두 N=0.204626ms 초과입니다. paired 중앙값 구간은 [0.200292,0.302499], [0.147375,0.245375], [0.317458,0.418042]ms로 모두 양수입니다. 그 밖의 11열은 이득을 채택 근거로 쓰지 않았습니다. 단일 회차의 N 초과 회귀도 없으며 특히 요청한 sample-0·nested 후속 쓰기를 보존했습니다.
+
+### 지정 검증과 재현
+
+기존 시험·59개 HEAD fixture·기대값을 수정하지 않았습니다. 수정 전/후 모두 cold-binding·89C-03 차등·unconditional-effective-schema 3파일 19건이 통과했습니다. 이는 동작을 보존하는 최적화의 characterization이며 할당 감소는 별도 profiler 근거로 확인했습니다. 지정 전체 검증 이후 제품·시험 코드는 바꾸지 않았습니다.
+
+| PKG 명령 | 결과 |
+|---|---|
+| `npx vitest run --project unit --project render --project react18 --reporter=dot` | 종료1, 62.772초; 425파일·3,207건 통과, todo1; render/react18의 EVENT-070 useLayoutEffect/useEffect 각 2건, 총 허용된 4건만 실패 |
+| `npx tsc --noEmit --composite false --rootDir . -p tsconfig.json` | 종료0, 7.673초; 출력 없음 |
+| `npx eslint "src/**/*.{ts,tsx}"` | 종료0, 5.600초; 출력 없음 |
+| `node architecture/verification/07-switch/tools/check-legacy-isolation.mjs` | 종료0; LEGACY_ISOLATED: 1625 files checked |
+
+[검증 요약](profile-101-alloc/normalization-memo-verification.summary.json)에 명령과 결과를 기록했습니다. npx는 offline·설치 비승인 환경으로 기존 실행 파일만 사용했습니다. 검증에서는 기존 module.register 폐기 경고와 의도한 오류 경계·SSR 진단 출력이 있었으며 허용된 네 실패 외 실패는 없습니다.
+
+재현 도구는 [normalization-memo.mjs](profile-101-alloc/normalization-memo.mjs)입니다. 루트에서 `node packages/canard/schema-form/architecture/verification/07-switch/profile-101-alloc/normalization-memo.mjs --build head control working`, `--objects head 1`, `--objects working 1`, `--objects-noinline head 2`, `--objects-noinline working 2`를 각각 순차 실행합니다. `--pairs <control|working> <fixture> <mount|later> <forced|steady>`는 세 fresh worker를 순차 실행합니다. 위 표의 각 연산과 두 조건을 모두 실행한 후 `--summarize`로 판정합니다. HEAD/control 번들 hash는 동일하며 모든 esbuild 서비스는 stdin EOF로 자연 종료했습니다.
+
+시간·계수·process·요약 JSON은 모두 profile-101-alloc/ 아래에 있으며 파일별 최대 145,232바이트로 5MB 이하입니다. 번들·source map은 지정 `/private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles`에만 생성했습니다. 측정은 순차 실행했고 모든 실제 command는 8분 이내에 스스로 종료했습니다. 설치·git 쓰기·다른 에이전트·타 worktree 작업은 없었습니다.

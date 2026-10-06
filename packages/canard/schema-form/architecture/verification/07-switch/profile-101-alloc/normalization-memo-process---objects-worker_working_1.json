@@ -1,0 +1,12 @@
+{
+  "args": [
+    "--objects-worker",
+    "working",
+    "1"
+  ],
+  "elapsedMs": 1267,
+  "status": 0,
+  "signal": null,
+  "naturalExit": true,
+  "driverSha256": "2c41f8c385f21e2ab61b12e8f161829a08b2336ef75773a38aa88dd8b6d30744"
+}

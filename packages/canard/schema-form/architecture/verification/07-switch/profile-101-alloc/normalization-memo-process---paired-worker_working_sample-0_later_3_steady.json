@@ -1,0 +1,18 @@
+{
+  "args": [
+    "--paired-worker",
+    "working",
+    "sample-0",
+    "later",
+    "3",
+    "steady"
+  ],
+  "execArgv": [
+    "--expose-gc"
+  ],
+  "elapsedMs": 173,
+  "status": 0,
+  "signal": null,
+  "naturalExit": true,
+  "driverSha256": "72e5484ccb23575f002a36e84e5aeb58d752f55db7a401e56a86e972d1cc72c7"
+}

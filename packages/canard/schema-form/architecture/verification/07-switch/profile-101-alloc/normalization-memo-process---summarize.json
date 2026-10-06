@@ -1,0 +1,11 @@
+{
+  "args": [
+    "--summarize"
+  ],
+  "execArgv": [],
+  "elapsedMs": 4486,
+  "status": 0,
+  "signal": null,
+  "naturalExit": true,
+  "driverSha256": "71568a9a25059ee29f9db62d792d441e025893b470e160a716c29c1cb85d4a11"
+}

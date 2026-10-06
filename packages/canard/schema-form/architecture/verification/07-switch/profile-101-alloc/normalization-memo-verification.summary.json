@@ -1,0 +1,50 @@
+{
+  "head": "e39503af55963026769bc3d49ca4dec79feb8090",
+  "decision": "유지: flat-500 강제 GC 마운트의 세 회차가 모두 잡음을 넘으며 다른 모든 열에서 잡음 초과 회귀가 없습니다.",
+  "characterizationBefore": { "exitCode": 0, "passed": 19, "files": 3 },
+  "characterizationAfter": { "exitCode": 0, "passed": 19, "files": 3 },
+  "characterizationScope": "59개 HEAD 스키마 스냅샷, 89C-03 차등, 기존 무조건 정규화·동결·참조·정책 메모 시험",
+  "vitest": {
+    "command": "npx vitest run --project unit --project render --project react18 --reporter=dot",
+    "exitCode": 1,
+    "signal": null,
+    "elapsedMs": 62772,
+    "passed": 3207,
+    "failed": 4,
+    "todo": 1,
+    "passedFiles": 425,
+    "failedFiles": 2,
+    "allowedFailures": [
+      "react18: EVENT-070 React stops two fields writing back through useLayoutEffect",
+      "react18: EVENT-070 React stops two fields writing back through useEffect",
+      "render: EVENT-070 React stops two fields writing back through useLayoutEffect",
+      "render: EVENT-070 React stops two fields writing back through useEffect"
+    ]
+  },
+  "tsc": {
+    "command": "npx tsc --noEmit --composite false --rootDir . -p tsconfig.json",
+    "exitCode": 0,
+    "signal": null,
+    "elapsedMs": 7673,
+    "output": ""
+  },
+  "eslint": {
+    "command": "npx eslint \"src/**/*.{ts,tsx}\"",
+    "exitCode": 0,
+    "signal": null,
+    "elapsedMs": 5600,
+    "output": ""
+  },
+  "isolation": {
+    "command": "node architecture/verification/07-switch/tools/check-legacy-isolation.mjs",
+    "exitCode": 0,
+    "output": "LEGACY_ISOLATED: 1625 files checked"
+  },
+  "execution": {
+    "sequential": true,
+    "installs": false,
+    "gitWrites": false,
+    "sourceOrTestChangesAfterVerification": false,
+    "bundleDirectory": "/private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles"
+  }
+}
