@@ -28,7 +28,8 @@ const DEVELOPMENT = process.env.NODE_ENV !== 'production';
  * @param path - Data host of this slot
  * @param visiting - Authored positions currently expanded within this slot
  * @param ownerId - Root contribution whose reference and fragment overlays are expanded
- * @returns Ordered declarations, with finite reference cycles cut at their re-entry
+ * @param result - Owner's ordered sink; omitted calls allocate their own array
+ * @returns The sink after expansion, with finite reference cycles cut at re-entry
  */
 export const collectDeclarations = (
   context: AnalysisContext,
@@ -36,8 +37,9 @@ export const collectDeclarations = (
   path: string,
   visiting: readonly string[] = [],
   ownerId?: number,
+  result: PropertyDeclaration[] = [],
 ): PropertyDeclaration[] => {
-  if (visiting.includes(input.schemaPath)) return [];
+  if (visiting.includes(input.schemaPath)) return result;
   const schema = readSchemaObject(input.schema);
   validateControlGroups(
     context,
@@ -106,7 +108,7 @@ export const collectDeclarations = (
     declaration.id,
   );
   if (input.inherited) fragment.inheritedOverlays.push(declaration.id);
-  const result = [declaration];
+  result.push(declaration);
   const owner = ownerId ?? declaration.id;
   if (!context.capabilities.branchless)
     (context.declarationOwners ??= new Map()).set(declaration.id, owner);
@@ -122,21 +124,20 @@ export const collectDeclarations = (
   const stack = [...visiting, input.schemaPath];
   if (typeof schema.$ref === 'string') {
     const target = resolveReference(context, schema.$ref, input.schemaPath);
-    result.push(
-      ...collectDeclarations(
-        context,
-        {
-          ...input,
-          ...target,
-          gates,
-          fragment,
-          role: 'overlay',
-          inherited: true,
-        },
-        path,
-        stack,
-        owner,
-      ),
+    collectDeclarations(
+      context,
+      {
+        ...input,
+        ...target,
+        gates,
+        fragment,
+        role: 'overlay',
+        inherited: true,
+      },
+      path,
+      stack,
+      owner,
+      result,
     );
   }
   for (
@@ -182,25 +183,24 @@ export const collectDeclarations = (
       const declarationOnly =
         input.context === 'declaration' ||
         (branch && active === undefined && discriminator === undefined);
-      result.push(
-        ...collectDeclarations(
-          context,
-          {
-            schema: child,
-            schemaPath: childPath,
-            role: 'overlay',
-            gates: nestedGates,
-            context: declarationOnly ? 'declaration' : 'conjunction',
-            order: [...input.order, rank, keyword === 'else' ? 1 : index],
-            inherited: input.inherited,
-            hostPath: path,
-            fragment,
-            isFragment: true,
-          },
-          path,
-          stack,
-          owner,
-        ),
+      collectDeclarations(
+        context,
+        {
+          schema: child,
+          schemaPath: childPath,
+          role: 'overlay',
+          gates: nestedGates,
+          context: declarationOnly ? 'declaration' : 'conjunction',
+          order: [...input.order, rank, keyword === 'else' ? 1 : index],
+          inherited: input.inherited,
+          hostPath: path,
+          fragment,
+          isFragment: true,
+        },
+        path,
+        stack,
+        owner,
+        result,
       );
     }
   }

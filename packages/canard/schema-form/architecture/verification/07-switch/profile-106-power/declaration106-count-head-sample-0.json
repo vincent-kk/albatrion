@@ -1,0 +1,19 @@
+{
+  "HEAD": "fb99a2d09012de744c3ab3e58e571d1fd8d87e4b",
+  "version": "head",
+  "name": "sample-0",
+  "mode": "production",
+  "nodes": 3,
+  "calls": 8,
+  "distinct": 8,
+  "repeatCalls": 0,
+  "primitives": 0,
+  "completed": 0,
+  "freezesPerNode": 2.6666666666666665,
+  "declarationCounts": {
+    "visits": 3,
+    "rootCalls": 3,
+    "arrays": 3,
+    "flattenPasses": 3
+  }
+}

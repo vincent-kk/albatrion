@@ -1,0 +1,14 @@
+{
+  "HEAD": "fb99a2d09012de744c3ab3e58e571d1fd8d87e4b",
+  "command": "count",
+  "args": [
+    "working",
+    "nested-d5-f4"
+  ],
+  "status": 0,
+  "signal": null,
+  "started": 1791308493073,
+  "ended": 1791308493186,
+  "elapsedMs": 113,
+  "driverSha256": "b4d8d5f823a77c01948c69da6c767f5c7b7f55511f9826a9682fa7d42c85e431"
+}

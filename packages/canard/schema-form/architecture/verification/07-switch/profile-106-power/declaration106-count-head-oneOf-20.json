@@ -1,0 +1,19 @@
+{
+  "HEAD": "fb99a2d09012de744c3ab3e58e571d1fd8d87e4b",
+  "version": "head",
+  "name": "oneOf-20",
+  "mode": "production",
+  "nodes": 63,
+  "calls": 116,
+  "distinct": 116,
+  "repeatCalls": 0,
+  "primitives": 0,
+  "completed": 0,
+  "freezesPerNode": 1.8412698412698412,
+  "declarationCounts": {
+    "visits": 83,
+    "rootCalls": 63,
+    "arrays": 83,
+    "flattenPasses": 83
+  }
+}

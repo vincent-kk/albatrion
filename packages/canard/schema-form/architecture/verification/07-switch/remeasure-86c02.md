@@ -2658,3 +2658,65 @@ sample-0 마운트는 바이트가 같은 두 HEAD 사이에서도 음수 구간
 [측정 adapter](profile-106-power/measure.mjs)는 기존 104 clock을 메모리에서 HEAD·번들·산출물 위치만 재배치합니다. [A/A 실행 시 adapter 사본](profile-106-power/measure-AA.mjs)의 SHA는 대조 process 기록과 일치합니다. 이후 adapter에는 P/C 시간 파일의 후보 접두사를 추가해 A/A 원표본을 보존했습니다. [집계·감사 도구](profile-106-power/summarize.mjs)와 [기계 요약](profile-106-power/summary.json)에 회차별 짝 중앙값·정확한 pooled 통계·A/A 통계·환경·빌드 및 소스 해시·감사를 기록했습니다. 원표본·GC·clock·process·build 자료는 모두 `profile-106-power/` 아래이며 각 파일은 5MB 이하입니다.
 
 런타임 bundle·source map·scratch 소스는 지정한 외부 `/private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles` 아래에만 두었습니다. 저장소 안 bundle·source map·cache, 설치, git 쓰기, 병렬 측정, 강제 종료를 추가하지 않았습니다.
+
+## 106라운드 선언 수집
+
+2026-10-07, HEAD `fb99a2d09012de744c3ab3e58e571d1fd8d87e4b`. `profile-105-rebound.md`의 선언 수집 명세만 적용했습니다. 0.7774 ms는 nested-d5-f4에서 선언 전체 작업을 제거한 실험의 상한이며, 이번 ordered sink의 기대 이득이나 측정 이득으로 쓰지 않았습니다. **105C-01에 따라 채택하여 제품 코드를 유지합니다.** flat-500 마운트의 pooled 이득 구간이 양수이고 중앙값이 A/A 통계를 넘으며, 어느 행의 pooled 구간도 전체가 음수가 아닙니다.
+
+### 변경과 속도·메모리 비용
+
+소유 Blueprint의 DETAIL 비용 문장을 먼저 갱신했습니다. `collectDeclarations`에 소유자별 ordered sink를 전달하고 재귀 반환 flatten을 제거했으며, `buildNodes`는 기존 노드 집계 배열에 직접 받습니다. `populateVirtualNodes.ts`는 수정하지 않았습니다. 인자가 생략된 가상 수집 호출은 호출마다 별도 반환 배열을 만들고 기존 그룹이 그 배열을 소유합니다. 최종 node·edge·virtual 소속 배열의 기록별 소유 복사는 그대로입니다.
+
+ID 예약·fragment 연결·게이트·capability·진단·정적 검사·DFS 순서는 기존 자리에 있습니다. 속도 비용은 수집 선언당 sink 추가 한 번이며 재귀 flatten과 build 입력별 복사 순회를 제거합니다. 메모리 비용은 기존 노드 집계 배열과 가상 반환 소유 배열을 유지하면서 일반 입력·재귀 반환용 중간 선언 배열만 제거합니다. visiting stack·gate/order 배열은 이번 제거 범위가 아닙니다. 새 보유 색인·캐시·노드 필드는 없습니다. 운영 번들은 538,138→538,011바이트(-127)이며 heap 바이트 감소량은 측정하지 않았습니다. 정착 설계와 공개 계약은 바꾸지 않았습니다.
+
+### 계수 검사 — HEAD와 후보
+
+시간과 분리된 계측 번들에서 collector 방문, 캐시 적중을 제외한 실제 노드 수집 입구, 반환 flatten/build 복사 순회와 중간 선언 결과 배열 생성을 셌습니다. 아래 네 fixture에는 가상 노드가 없으므로 수집 입구 수는 노드 수와 같습니다. collector 방문은 정적 분석 자체이고 flatten 순회와 구별합니다. 후보도 모든 선언을 방문하며 DFS 검사를 생략하지 않습니다.
+
+| fixture | 노드 수 | collector 방문 HEAD→후보 (노드당) | flatten 순회 HEAD→후보 (노드당) | 중간 선언 배열 HEAD→후보 (노드당) |
+| --- | ---: | --- | --- | --- |
+| nested-d5-f4 | 1365 | 1365→1365 (1→1) | 1365→0 (1→0) | 1365→0 (1→0) |
+| flat-500 | 501 | 501→501 (1→1) | 501→0 (1→0) | 501→0 (1→0) |
+| oneOf-20 | 63 | 83→83 (1.317460→1.317460) | 83→0 (1.317460→0) | 83→0 (1.317460→0) |
+| sample-0 | 3 | 3→3 (1→1) | 3→0 (1→0) | 3→0 (1→0) |
+
+운영 distinct 동결 수는 HEAD/후보 모두 3071/1003/116/8이고 재동결·primitive 호출은 0입니다. [계수 도구](profile-106-power/declaration106-measure.mjs)의 `count-build`·`count-check`는 선언 수와 계수 관계를 실제 mount 결과에 단언합니다. `declaration106-count-{head,working}-*.json`에 원시 계수가 있습니다. 계수 삽입은 시간 번들에 들어가지 않습니다.
+
+추가한 `blueprint.owned-inline-declaration-counts.test.ts`는 실제 collection 경계를 감싸 노드당 수집 입구·선언 수·중간 반환 배열 수를 확인합니다. `REQUIRE_DECLARATION_SINK=1`로 실행한 HEAD는 nested-d5-f4의 중간 배열 1365개 때문에 실패했고 후보는 통과했습니다. 기본 검사는 HEAD 계수도 검증하므로 기각 시 HEAD에서 통과하는 검사를 남길 수 있습니다. 후보 최종 검증에는 strict 계수 조건을 켰습니다.
+
+### 판정열 — 한 세션의 A/A 9회, 이어서 후보 대 HEAD 9회
+
+각 행·회차는 새 프로세스이며 H/W 순서를 표본마다 교대하고 회차 시작 순서도 교대합니다. 강제 GC는 시계 밖, 예열 20회, 본 표본 101쌍입니다. 시계는 기존 판정열의 64 microtask checkpoints와 한 check-queue sentinel까지이며 입력 복제·첫 업데이트의 mount·후속 업데이트의 선행 이력은 시계 밖입니다. 각 행의 9회 909개 **H−W 짝 차이**를 pooling했습니다. 표는 회차별 중앙값의 중앙값이 아닙니다. 원래 104 집계기의 seed 101·1999회 median bootstrap을 재사용하고 정렬 결과 9/1989 위치의 99% 구간을 썼습니다. 같은 세션의 A/A를 한 번만 재었으며 재측정으로 표본을 교체하지 않았습니다.
+
+| fixture / 작업 | A/A pooled 중앙값 ms | A/A 99% 구간 ms | 후보 pooled 중앙값 ms | 후보 99% 구간 ms | A/A 비교 통계 ms | 판정 |
+| --- | ---: | --- | ---: | --- | ---: | --- |
+| nested-d5-f4 마운트 | 0.011209 | [-0.065458, 0.091083] | 0.095209 | [-0.019083, 0.185417] | 0.011209 | 미입증 |
+| flat-500 마운트 | 0.003459 | [-0.009583, 0.014709] | 0.018751 | [0.007834, 0.033666] | 0.003459 | 개선 |
+| oneOf-20 마운트 | -0.005208 | [-0.013709, 0.001375] | -0.002167 | [-0.010167, 0.006876] | -0.005208 | 미입증 |
+| sample-0 마운트 | -0.000208 | [-0.001124, 0.000624] | 0.000376 | [-0.000458, 0.001625] | -0.000208 | 미입증 |
+| sample-0 첫 업데이트 | -0.000458 | [-0.000916, 0.000083] | 0.000000 | [-0.000625, 0.000833] | -0.000458 | 미입증 |
+| sample-0 후속 업데이트 | 0.000333 | [-0.000209, 0.001084] | 0.000666 | [-0.000042, 0.001208] | 0.000333 | 미입증 |
+| nested-d5-f4 첫 업데이트 | 0.046458 | [-0.070667, 0.070541] | 0.014001 | [-0.070333, 0.069251] | 0.046458 | 미입증 |
+| nested-d5-f4 후속 업데이트 | 0.000541 | [-0.000125, 0.001167] | 0.001208 | [0.000333, 0.001917] | 0.000541 | 개선 |
+| oneOf-40 첫 업데이트 | 0.002249 | [-0.001875, 0.005918] | 0.004167 | [-0.000291, 0.008458] | 0.002249 | 미입증 |
+| oneOf-40 후속 업데이트 | 0.010292 | [0.006459, 0.014250] | 0.013375 | [0.009166, 0.016376] | 0.010292 | 개선 |
+
+채택은 하나 이상의 행에서 후보 구간 하한 > 0 및 후보 중앙값 > 그 행의 부호 있는 A/A 중앙값이고, 회귀는 후보 구간 상한 < 0입니다. 개선 3행·회귀 0행입니다. nested-d5-f4 마운트의 개선은 이 측정으로 입증되지 않았습니다. 업데이트 행의 수치는 관측·판정 결과이며 선언 수집 제거가 그 이득의 원인이라는 별도 주장은 하지 않습니다.
+
+### 검증과 실행 감사
+
+| 패키지에서 실행한 검사 | 결과 |
+| --- | --- |
+| `npx vitest run --project unit --project render --project react18 --reporter=dot` | 종료 1; 437 파일 통과·2 파일 실패, 3245 테스트 통과·4 실패·1 todo. 실패는 EVENT-070의 useLayoutEffect/useEffect 두 사례가 render/react18에서 각각 실패한 것뿐입니다. |
+| `export NODE_ENV=production; npx vitest run --project production --reporter=dot` | 종료 0; 5 파일·15 테스트 통과. 59종 collect 끔/켬 차등·소유권 no-sharing·공개/내부 동결·계수·운영 렌더 포함. |
+| `npx tsc --noEmit --composite false --rootDir . -p tsconfig.json` | 종료 0. |
+| `npx eslint "src/**/*.{ts,tsx}"` | 종료 0; 기존 Node deprecation 안내만 있습니다. |
+| `node architecture/verification/07-switch/tools/check-legacy-isolation.mjs` | 종료 0; `LEGACY_ISOLATED: 1647 files checked`. |
+
+Vitest에는 저장소의 운영 script와 같은 `--configLoader runner --cache false` 및 한 worker·파일 순차 실행 옵션을 더했고, npx에는 설치 금지·offline 조건을 적용했습니다. 개발 모드의 차등·소유권·동결·계수 14개도 별도로 통과했습니다. 양 모드의 차등은 기존 `blueprint.owned-inline-differential.test.ts`와 원본 59종 baseline을 그대로 사용했습니다. 테스트 단언·baseline·EVENT-070 사례는 수정하지 않았습니다.
+
+시간 worker 180개(A/A 90→후보 90), 18,180쌍, 행 명령 20개를 순차 실행했습니다. 세션의 시간 번들 빌드 3개와 모든 시간 프로세스 timestamp가 겹치지 않았으며 status=0·signal=null입니다. 시간 worker 최대 3.449초, 행 명령 최대 31.314초, 시간 번들 빌드 최대 3.770초입니다. 계수 번들 2개도 별도로 자연 종료했고 모든 esbuild 서비스는 stdin EOF로 자연 종료했습니다. 가장 긴 검증 명령은 전체 Vitest 298.553초로, 단일 명령 모두 8분 이내입니다. 시계 안 GC는 모든 종류 0건이며 모든 H/W 및 A/A/후보 최종 값 해시가 일치합니다.
+
+HEAD와 독립 control 번들의 SHA-256은 모두 `4ef11848a9f2cb5d15e94a7302d820185f292811a652bf131da9ca993f8cec3b`이며 후보는 `6d1eb97abbaae305b70da77dc52c203b220537209a511fe1b4ff7069da504445`입니다. 입력 제품 소스 차이는 `buildNodes.ts`·`collectDeclarations.ts` 두 파일뿐입니다. [측정·계수 adapter](profile-106-power/declaration106-measure.mjs), [집계·감사](profile-106-power/declaration106-summarize.mjs), [기계 요약](profile-106-power/declaration106-summary.json), [검증 driver](profile-106-power/declaration106-check.mjs)와 `declaration106-*` 원표본·clock·GC·process·build·검증 로그를 이 폴더에 보존했습니다. 기존 다른 106라운드 자료는 덮어쓰지 않았으며 각 파일은 5MB 이하입니다.
+
+런타임 bundle·source map·optimizer cache는 지정 외부 bundles 아래에만 있습니다. 기존 패키지 `node_modules/.vite` 디렉터리를 외부 `declaration106-vitest-cache`로 이동하고 같은 위치를 symlink로 연결했으며 cacheDir은 설정하지 않았습니다. 설치·git 쓰기·병렬 실행·강제 종료는 없습니다. 제품 코드·비용 DETAIL·계수 검사를 유지합니다.

@@ -4,6 +4,7 @@ import type {
   BlueprintChildEntry,
   BlueprintNodeKind,
   BlueprintSchemaType,
+  PropertyDeclaration,
   SchemaTypeName,
 } from '../../type';
 import { DEFAULT_NO_ACTIVE } from '../effectiveSchema/utils/constant';
@@ -47,12 +48,16 @@ export const buildNodes = (
     context.templates.get(boundKey) ?? context.constructing.get(key);
   if (context.constructing.has(key)) context.staticFirstLoad = false;
   if (cached) return cached;
-  const declarations = [];
-  for (let index = 0; index < inputs.length; index++) {
-    const collected = collectDeclarations(context, inputs[index], path);
-    for (let item = 0; item < collected.length; item++)
-      declarations.push(collected[item]);
-  }
+  const declarations: PropertyDeclaration[] = [];
+  for (let index = 0; index < inputs.length; index++)
+    collectDeclarations(
+      context,
+      inputs[index],
+      path,
+      undefined,
+      undefined,
+      declarations,
+    );
   const groups = resolveNodeTypes(context, declarations);
   const nodes: MutableNode[] = [];
   for (let index = 0; index < groups.length; index++) {

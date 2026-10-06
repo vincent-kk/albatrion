@@ -1,0 +1,19 @@
+{
+  "HEAD": "fb99a2d09012de744c3ab3e58e571d1fd8d87e4b",
+  "version": "working",
+  "name": "nested-d5-f4",
+  "mode": "production",
+  "nodes": 1365,
+  "calls": 3071,
+  "distinct": 3071,
+  "repeatCalls": 0,
+  "primitives": 0,
+  "completed": 0,
+  "freezesPerNode": 2.24981684981685,
+  "declarationCounts": {
+    "visits": 1365,
+    "rootCalls": 1365,
+    "arrays": 0,
+    "flattenPasses": 0
+  }
+}

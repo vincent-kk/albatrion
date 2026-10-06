@@ -1,0 +1,19 @@
+{
+  "HEAD": "fb99a2d09012de744c3ab3e58e571d1fd8d87e4b",
+  "version": "head",
+  "name": "flat-500",
+  "mode": "production",
+  "nodes": 501,
+  "calls": 1003,
+  "distinct": 1003,
+  "repeatCalls": 0,
+  "primitives": 0,
+  "completed": 0,
+  "freezesPerNode": 2.0019960079840318,
+  "declarationCounts": {
+    "visits": 501,
+    "rootCalls": 501,
+    "arrays": 501,
+    "flattenPasses": 501
+  }
+}
