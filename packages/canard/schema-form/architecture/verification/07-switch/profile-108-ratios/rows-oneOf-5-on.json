@@ -1,0 +1,493 @@
+{
+  "fixture": "oneOf-5",
+  "validation": "on",
+  "rows": [
+    {
+      "fixture": "oneOf-5",
+      "validation": "on",
+      "mode": "update",
+      "callCount": 2,
+      "ratio": 9.32610826296743,
+      "runRatios": [
+        9.837335428361444,
+        9.334580091761419,
+        9.145181791867504
+      ],
+      "tie": false,
+      "target": 1.5,
+      "met": false,
+      "verdict": "미달",
+      "new": {
+        "fallback": false,
+        "column": "종단",
+        "metric": {
+          "median": 0.7422089999999999,
+          "p99": 0.979042,
+          "samples": 303
+        },
+        "sentinel": {
+          "median": 0.7422089999999999,
+          "p99": 0.979042,
+          "samples": 303
+        },
+        "microtask": {
+          "median": 0.735332,
+          "p99": 0.968249,
+          "samples": 303
+        },
+        "callback": {
+          "median": 0,
+          "p99": 0,
+          "samples": 303
+        },
+        "sum": {
+          "median": 0.735332,
+          "p99": 0.968249,
+          "samples": 303
+        },
+        "validation": {
+          "differenceMs": 0.006876999999999911,
+          "noiseMs": 0.04837600000000015,
+          "withinNoise": true,
+          "allRunsWithinNoise": true
+        },
+        "runs": [
+          {
+            "run": 1,
+            "differenceMs": 0.009416999999999898,
+            "noiseMs": 0.10933399999999999,
+            "withinNoise": true,
+            "metric": {
+              "median": 0.7763329999999999,
+              "p99": 0.9415829999999998,
+              "samples": 101
+            }
+          },
+          {
+            "run": 2,
+            "differenceMs": 0.008541999999999939,
+            "noiseMs": 0.08266699999999999,
+            "withinNoise": true,
+            "metric": {
+              "median": 0.7487079999999999,
+              "p99": 1.0211249999999998,
+              "samples": 101
+            }
+          },
+          {
+            "run": 3,
+            "differenceMs": 0.005500999999999978,
+            "noiseMs": 0.051834999999999916,
+            "withinNoise": true,
+            "metric": {
+              "median": 0.726667,
+              "p99": 0.9572909999999999,
+              "samples": 101
+            }
+          }
+        ]
+      },
+      "old": {
+        "fallback": false,
+        "column": "종단",
+        "metric": {
+          "median": 0.07958399999999999,
+          "p99": 0.186959,
+          "samples": 303
+        },
+        "sentinel": {
+          "median": 0.07958399999999999,
+          "p99": 0.186959,
+          "samples": 303
+        },
+        "microtask": {
+          "median": 0.055874,
+          "p99": 0.10099899999999999,
+          "samples": 303
+        },
+        "callback": {
+          "median": 0.014251,
+          "p99": 0.022004,
+          "samples": 303
+        },
+        "sum": {
+          "median": 0.070913,
+          "p99": 0.115628,
+          "samples": 303
+        },
+        "validation": {
+          "differenceMs": 0.008670999999999984,
+          "noiseMs": 0.014875999999999993,
+          "withinNoise": true,
+          "allRunsWithinNoise": true
+        },
+        "runs": [
+          {
+            "run": 1,
+            "differenceMs": 0.007625999999999994,
+            "noiseMs": 0.019629,
+            "withinNoise": true,
+            "metric": {
+              "median": 0.07891699999999999,
+              "p99": 0.1885,
+              "samples": 101
+            }
+          },
+          {
+            "run": 2,
+            "differenceMs": 0.009294999999999998,
+            "noiseMs": 0.018587,
+            "withinNoise": true,
+            "metric": {
+              "median": 0.080208,
+              "p99": 0.186959,
+              "samples": 101
+            }
+          },
+          {
+            "run": 3,
+            "differenceMs": 0.008878999999999998,
+            "noiseMs": 0.02108799999999999,
+            "withinNoise": true,
+            "metric": {
+              "median": 0.079459,
+              "p99": 0.148541,
+              "samples": 101
+            }
+          }
+        ]
+      },
+      "previous107": null,
+      "changeSince107": null,
+      "newlyFailsSince107": null,
+      "comparisonNote": "107라운드에 해당 행의 비교 표본이 없습니다."
+    },
+    {
+      "fixture": "oneOf-5",
+      "validation": "on",
+      "mode": "update-first",
+      "callCount": 1,
+      "ratio": 9.709454545454546,
+      "runRatios": [
+        10.223435630022227,
+        9.83949216408324,
+        9.519206434316354
+      ],
+      "tie": false,
+      "target": 1.5,
+      "met": false,
+      "verdict": "미달",
+      "new": {
+        "fallback": false,
+        "column": "종단",
+        "metric": {
+          "median": 0.453917,
+          "p99": 0.6585,
+          "samples": 303
+        },
+        "sentinel": {
+          "median": 0.453917,
+          "p99": 0.6585,
+          "samples": 303
+        },
+        "microtask": {
+          "median": 0.449874,
+          "p99": 0.649499,
+          "samples": 303
+        },
+        "callback": {
+          "median": 0,
+          "p99": 0,
+          "samples": 303
+        },
+        "sum": {
+          "median": 0.449874,
+          "p99": 0.649499,
+          "samples": 303
+        },
+        "validation": {
+          "differenceMs": 0.004043000000000019,
+          "noiseMs": 0.026583,
+          "withinNoise": true,
+          "allRunsWithinNoise": true
+        },
+        "runs": [
+          {
+            "run": 1,
+            "differenceMs": 0.007292999999999994,
+            "noiseMs": 0.1374589999999999,
+            "withinNoise": true,
+            "metric": {
+              "median": 0.478375,
+              "p99": 0.6361249999999999,
+              "samples": 101
+            }
+          },
+          {
+            "run": 2,
+            "differenceMs": 0.004416999999999949,
+            "noiseMs": 0.04291800000000004,
+            "withinNoise": true,
+            "metric": {
+              "median": 0.45958299999999996,
+              "p99": 0.6585,
+              "samples": 101
+            }
+          },
+          {
+            "run": 3,
+            "differenceMs": 0.0032510000000000594,
+            "noiseMs": 0.039292999999999995,
+            "withinNoise": true,
+            "metric": {
+              "median": 0.44383300000000003,
+              "p99": 0.641875,
+              "samples": 101
+            }
+          }
+        ]
+      },
+      "old": {
+        "fallback": false,
+        "column": "종단",
+        "metric": {
+          "median": 0.04675,
+          "p99": 0.105041,
+          "samples": 303
+        },
+        "sentinel": {
+          "median": 0.04675,
+          "p99": 0.105041,
+          "samples": 303
+        },
+        "microtask": {
+          "median": 0.03320699999999999,
+          "p99": 0.058457999999999996,
+          "samples": 303
+        },
+        "callback": {
+          "median": 0.008168,
+          "p99": 0.014539,
+          "samples": 303
+        },
+        "sum": {
+          "median": 0.041706999999999994,
+          "p99": 0.06829099999999999,
+          "samples": 303
+        },
+        "validation": {
+          "differenceMs": 0.005043000000000006,
+          "noiseMs": 0.0077489999999999885,
+          "withinNoise": true,
+          "allRunsWithinNoise": true
+        },
+        "runs": [
+          {
+            "run": 1,
+            "differenceMs": 0.004875000000000004,
+            "noiseMs": 0.009583999999999992,
+            "withinNoise": true,
+            "metric": {
+              "median": 0.046792,
+              "p99": 0.09862499999999999,
+              "samples": 101
+            }
+          },
+          {
+            "run": 2,
+            "differenceMs": 0.0050010000000000054,
+            "noiseMs": 0.010332999999999998,
+            "withinNoise": true,
+            "metric": {
+              "median": 0.046708,
+              "p99": 0.121,
+              "samples": 101
+            }
+          },
+          {
+            "run": 3,
+            "differenceMs": 0.005041000000000004,
+            "noiseMs": 0.008543999999999993,
+            "withinNoise": true,
+            "metric": {
+              "median": 0.046625,
+              "p99": 0.09970799999999999,
+              "samples": 101
+            }
+          }
+        ]
+      },
+      "previous107": null,
+      "changeSince107": null,
+      "newlyFailsSince107": null,
+      "comparisonNote": "107라운드에 해당 행의 비교 표본이 없습니다."
+    },
+    {
+      "fixture": "oneOf-5",
+      "validation": "on",
+      "mode": "update-later",
+      "callCount": 1,
+      "ratio": 8.240154554911578,
+      "runRatios": [
+        8.271157894736843,
+        8.235894270568586,
+        8.176697874869966
+      ],
+      "tie": false,
+      "target": 1.5,
+      "met": false,
+      "verdict": "미달",
+      "new": {
+        "fallback": false,
+        "column": "종단",
+        "metric": {
+          "median": 0.22179200000000002,
+          "p99": 0.29258399999999996,
+          "samples": 303
+        },
+        "sentinel": {
+          "median": 0.22179200000000002,
+          "p99": 0.29258399999999996,
+          "samples": 303
+        },
+        "microtask": {
+          "median": 0.220291,
+          "p99": 0.286458,
+          "samples": 303
+        },
+        "callback": {
+          "median": 0,
+          "p99": 0,
+          "samples": 303
+        },
+        "sum": {
+          "median": 0.220291,
+          "p99": 0.286458,
+          "samples": 303
+        },
+        "validation": {
+          "differenceMs": 0.00150100000000003,
+          "noiseMs": 0.010832999999999957,
+          "withinNoise": true,
+          "allRunsWithinNoise": true
+        },
+        "runs": [
+          {
+            "run": 1,
+            "differenceMs": 0.0012929999999999886,
+            "noiseMs": 0.017707999999999977,
+            "withinNoise": true,
+            "metric": {
+              "median": 0.216084,
+              "p99": 0.28116699999999994,
+              "samples": 101
+            }
+          },
+          {
+            "run": 2,
+            "differenceMs": 0.0012089999999999879,
+            "noiseMs": 0.016876000000000006,
+            "withinNoise": true,
+            "metric": {
+              "median": 0.22683299999999998,
+              "p99": 0.2825,
+              "samples": 101
+            }
+          },
+          {
+            "run": 3,
+            "differenceMs": 0.0013759999999999883,
+            "noiseMs": 0.01612500000000006,
+            "withinNoise": true,
+            "metric": {
+              "median": 0.22008399999999997,
+              "p99": 0.29425,
+              "samples": 101
+            }
+          }
+        ]
+      },
+      "old": {
+        "fallback": false,
+        "column": "종단",
+        "metric": {
+          "median": 0.026915999999999995,
+          "p99": 0.073625,
+          "samples": 303
+        },
+        "sentinel": {
+          "median": 0.026915999999999995,
+          "p99": 0.073625,
+          "samples": 303
+        },
+        "microtask": {
+          "median": 0.018875,
+          "p99": 0.045791,
+          "samples": 303
+        },
+        "callback": {
+          "median": 0.005461,
+          "p99": 0.009,
+          "samples": 303
+        },
+        "sum": {
+          "median": 0.024579999999999998,
+          "p99": 0.051167,
+          "samples": 303
+        },
+        "validation": {
+          "differenceMs": 0.002335999999999998,
+          "noiseMs": 0.0071229999999999835,
+          "withinNoise": true,
+          "allRunsWithinNoise": true
+        },
+        "runs": [
+          {
+            "run": 1,
+            "differenceMs": 0.001792999999999996,
+            "noiseMs": 0.008083999999999997,
+            "withinNoise": true,
+            "metric": {
+              "median": 0.026124999999999995,
+              "p99": 0.075542,
+              "samples": 101
+            }
+          },
+          {
+            "run": 2,
+            "differenceMs": 0.002747999999999997,
+            "noiseMs": 0.008085999999999996,
+            "withinNoise": true,
+            "metric": {
+              "median": 0.027541999999999997,
+              "p99": 0.0715,
+              "samples": 101
+            }
+          },
+          {
+            "run": 3,
+            "differenceMs": 0.002252999999999998,
+            "noiseMs": 0.008368999999999991,
+            "withinNoise": true,
+            "metric": {
+              "median": 0.026915999999999995,
+              "p99": 0.067542,
+              "samples": 101
+            }
+          }
+        ]
+      },
+      "previous107": null,
+      "changeSince107": null,
+      "newlyFailsSince107": null,
+      "comparisonNote": "107라운드에 해당 행의 비교 표본이 없습니다."
+    }
+  ],
+  "reportCommandElapsedMs": 902,
+  "commandExit": {
+    "code": 0,
+    "signal": null,
+    "natural": true,
+    "elapsedMs": 1174
+  }
+}

@@ -306,7 +306,7 @@ hint merge는 최상위 결과 객체와, 병합이 안쪽에 새로 만든 plai
 
 ### 현재 Object.freeze 지점의 전수 분류
 
-다음 표는 HEAD `73d2ecd12`의 `src/core/blueprint` 제품 코드에 있는 **51개 freeze 표현식**의 103C-01 분류입니다. ID는 검증자 기준의 F01~F49와 단일 정적 기여 경로의 F50·F51을 유지합니다. 분류는 **공개 값 4개(F15·F42·F44·F51), 공유 값 7개(F21·F22·F27·F28·F37·F38·F46), 개발 전용 40개**입니다. 공개 값과 공유 값은 HEAD의 표현식 자리에서 두 모드 모두 동결하고, 개발 전용 표현식은 `DEVELOPMENT` 판정 안으로 옮깁니다. 공개 schema 안의 새 배열·봉투와 소유 복사본은 표현식이 새로 생기는 대상이므로 앞의 공개 값 표와 소속 배열 목록에서 다룹니다.
+다음 표는 HEAD `73d2ecd12`의 `src/core/blueprint` 제품 코드에 있는 **51개 freeze 표현식**의 103C-01 분류입니다. ID는 검증자 기준의 F01~F49와 단일 정적 기여 경로의 F50·F51을 유지합니다. 분류는 **공개 값 4개(F15·F42·F44·F51), 공유 값 7개(F21·F22·F27·F28·F37·F38·F46), 개발 전용 40개**이며, 뒤에 들어온 `src/core/behaviors`의 공유 값 F52가 하나 더 있습니다. 공개 값과 공유 값은 HEAD의 표현식 자리에서 두 모드 모두 동결하고, 개발 전용 표현식은 `DEVELOPMENT` 판정 안으로 옮깁니다. 공개 schema 안의 새 배열·봉투와 소유 복사본은 표현식이 새로 생기는 대상이므로 앞의 공개 값 표와 소속 배열 목록에서 다룹니다.
 
 | ID | HEAD의 위치 | 103C-01의 분류와 동결 지점 |
 | --- | --- | --- |
@@ -332,6 +332,7 @@ hint merge는 최상위 결과 객체와, 병합이 안쪽에 새로 만든 plai
 | F46 | `packages/canard/schema-form/src/core/blueprint/utils/features/getFeatureNodeIndex/getFeatureNodeIndex.ts:9 @73d2ecd12` | 기능이 없는 청사진들이 빌리는 모듈 공통 index입니다. Blueprint 기록의 필드가 아니라 기능 index 조회가 돌려주는 공유 값이므로 모듈 초기화 때 두 모드 모두 동결합니다. |
 | F47~F49 | `packages/canard/schema-form/src/core/blueprint/utils/itemEntry/getItemEntry.ts:30 @73d2ecd12`, `packages/canard/schema-form/src/core/blueprint/utils/itemEntry/getItemEntry.ts:32 @73d2ecd12`, `packages/canard/schema-form/src/core/blueprint/utils/itemEntry/getItemEntry.ts:44 @73d2ecd12` | 완료 뒤 처음 요청한 slot의 목록, binding 복사본, entry입니다. 생성 시점에 개발 모드에서만 동결하며 binding은 order·gates 복사본을 소유합니다. 모듈 WeakMap의 slot 목록 자체는 동결하지 않습니다. |
 | F51 | `packages/canard/schema-form/src/core/blueprint/utils/effectiveSchema/utils/mergeSchemaContributions/utils/mergeSingleStaticContribution.ts:62 @73d2ecd12`의 안쪽 표현식 | 단일 정적 기여의 유효 schema입니다. 두 모드 모두 동결하며 이 경로가 만든 required·allOf·controls도 같은 자리에서 동결합니다. |
+| F52 | `packages/canard/schema-form/src/core/behaviors/utils/options/getStaticChoices.ts` @eeaeb12b3의 `DEFAULT_CHOICES` | (2) 공유 값, 두 모드 동결입니다. 선택지 옵션이 없는 노드들이 같은 참조로 빌리는 불변 기본 선택지이며 모듈 초기화 때 동결합니다. `src/core/blueprint` 밖이지만 표의 전수가 코드와 맞도록 적습니다. 105라운드 원장 답에 따라 101C-01 조건 (1)을 만족하는 공유입니다. |
 
 F37의 경고 전달은 `packages/canard/schema-form/src/core/blueprint/utils/diagnostics/collectBlueprintWarnings.ts:116 @73d2ecd12`의 propertyName뿐이지만 공유 값 판정은 경고가 아니라 공유 gate의 소유권에서 나옵니다.
 

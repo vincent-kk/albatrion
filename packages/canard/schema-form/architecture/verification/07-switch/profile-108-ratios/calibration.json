@@ -1,0 +1,78 @@
+{
+  "byValidation": {
+    "off": {
+      "C": 0.01725,
+      "M": 0.002958,
+      "wait": 0.014292000000000001,
+      "emptyNoise": 0.004083,
+      "emptyEndCi": {
+        "low": 0.01725,
+        "high": 0.017291,
+        "halfWidth": 0.00004099999999999937,
+        "resamples": 1000,
+        "seed": 9501
+      },
+      "emptyMicroCi": {
+        "low": 0.002958,
+        "high": 0.002959,
+        "halfWidth": 9.99999999999699e-7,
+        "resamples": 1000,
+        "seed": 9502
+      },
+      "emptyCalls": 16968
+    },
+    "on": {
+      "C": 0.033,
+      "M": 0.002834,
+      "wait": 0.030166000000000002,
+      "emptyNoise": 0.0051669999999999945,
+      "emptyEndCi": {
+        "low": 0.032917,
+        "high": 0.033042,
+        "halfWidth": 0.00008299999999999974,
+        "resamples": 1000,
+        "seed": 9501
+      },
+      "emptyMicroCi": {
+        "low": 0.002792,
+        "high": 0.002875,
+        "halfWidth": 0.00004199999999999994,
+        "resamples": 1000,
+        "seed": 9502
+      },
+      "emptyCalls": 6060
+    }
+  },
+  "workers": 138,
+  "node": "v26.10.0",
+  "v8": "14.6.202.34-node.35",
+  "cpu": "Apple M1 Max",
+  "started": "2026-10-06T21:16:11.270Z",
+  "ended": "2026-10-06T21:32:22.978Z",
+  "toolHash": "9aebf35795332ab523c82c0c97b088f78c39a6d84de718f431d0d1d797d4cc49",
+  "bundles": {
+    "new": [
+      "e046531bbfeaca55656c8353929f0d5d054322de6ad4c31d26c0b301bb6a6c9e"
+    ],
+    "old": [
+      "fa40320c805a345123bc0a37394d53fce0cbda5375ee9c5efef4a944306b742c"
+    ]
+  },
+  "maxWorkerMs": 8729,
+  "naturalMeasurementExits": true,
+  "overlap": false,
+  "unrelatedTrackedChanges": [
+    {
+      "file": "packages/canard/schema-form/architecture/verification/07-switch/analysis-records-design.md",
+      "mtime": "2026-10-06T21:12:42.693Z",
+      "sha256": "1f1119a7eb824be3040ab0b9465eca7df18b0fe81bac215eb946b377af867566"
+    }
+  ],
+  "reportCommandElapsedMs": 8131,
+  "commandExit": {
+    "code": 0,
+    "signal": null,
+    "natural": true,
+    "elapsedMs": 8401
+  }
+}
