@@ -1,0 +1,17 @@
+{
+  "HEAD": "a958b37cbf7d7cd897565a06278ee141fd402816",
+  "command": "--timer-worker",
+  "args": [
+    "gates-once",
+    "oneOf-20",
+    "1",
+    "forced"
+  ],
+  "status": 0,
+  "signal": null,
+  "started": "2026-10-06T15:17:05.567Z",
+  "ended": "2026-10-06T15:17:07.104Z",
+  "elapsedMs": 1536,
+  "pid": 10649,
+  "driverSha256": "769fe39e4d34f40a4e981fed5c47df57408f64402a14fe972e7a0387d8eb573e"
+}

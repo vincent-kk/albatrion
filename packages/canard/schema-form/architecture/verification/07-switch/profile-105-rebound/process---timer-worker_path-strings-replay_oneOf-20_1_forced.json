@@ -1,0 +1,17 @@
+{
+  "HEAD": "a958b37cbf7d7cd897565a06278ee141fd402816",
+  "command": "--timer-worker",
+  "args": [
+    "path-strings-replay",
+    "oneOf-20",
+    "1",
+    "forced"
+  ],
+  "status": 0,
+  "signal": null,
+  "started": "2026-10-06T15:22:42.084Z",
+  "ended": "2026-10-06T15:22:43.678Z",
+  "elapsedMs": 1594,
+  "pid": 15792,
+  "driverSha256": "c6f156608aad462fc9bf10a40d7aeaf662693dfaccd67320a89db07577b3210e"
+}

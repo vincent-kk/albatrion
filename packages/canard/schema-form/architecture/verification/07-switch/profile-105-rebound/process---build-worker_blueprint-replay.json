@@ -1,0 +1,14 @@
+{
+  "HEAD": "a958b37cbf7d7cd897565a06278ee141fd402816",
+  "command": "--build-worker",
+  "args": [
+    "blueprint-replay"
+  ],
+  "status": 0,
+  "signal": null,
+  "started": "2026-10-06T15:15:19.714Z",
+  "ended": "2026-10-06T15:15:19.800Z",
+  "elapsedMs": 86,
+  "pid": 9078,
+  "driverSha256": "bbc20075597511601a1067e804ee68536f5d4e7689f2c5093bdcbec9bc19b123"
+}

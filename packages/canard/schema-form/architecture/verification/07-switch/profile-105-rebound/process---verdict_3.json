@@ -1,0 +1,14 @@
+{
+  "HEAD": "a958b37cbf7d7cd897565a06278ee141fd402816",
+  "command": "--verdict",
+  "args": [
+    "3"
+  ],
+  "status": 0,
+  "signal": null,
+  "started": "2026-10-06T15:46:27.628Z",
+  "ended": "2026-10-06T15:46:38.682Z",
+  "elapsedMs": 11054,
+  "pid": 39240,
+  "driverSha256": "a399bee38c27c4a712d80ea785a4bde21eb5ec69f76c52ebadafe19897b58dab"
+}

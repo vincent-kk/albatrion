@@ -1,0 +1,17 @@
+{
+  "HEAD": "a958b37cbf7d7cd897565a06278ee141fd402816",
+  "command": "--timer-worker",
+  "args": [
+    "fragment-empty-fast",
+    "nested-d5-f4",
+    "1",
+    "forced"
+  ],
+  "status": 0,
+  "signal": null,
+  "started": "2026-10-06T15:44:18.441Z",
+  "ended": "2026-10-06T15:44:22.209Z",
+  "elapsedMs": 3768,
+  "pid": 36776,
+  "driverSha256": "a399bee38c27c4a712d80ea785a4bde21eb5ec69f76c52ebadafe19897b58dab"
+}

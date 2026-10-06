@@ -1,0 +1,17 @@
+{
+  "HEAD": "a958b37cbf7d7cd897565a06278ee141fd402816",
+  "command": "--timer-worker",
+  "args": [
+    "assembly-replay",
+    "sample-0",
+    "1",
+    "forced"
+  ],
+  "status": 0,
+  "signal": null,
+  "started": "2026-10-06T15:23:29.495Z",
+  "ended": "2026-10-06T15:23:30.535Z",
+  "elapsedMs": 1040,
+  "pid": 17049,
+  "driverSha256": "c6f156608aad462fc9bf10a40d7aeaf662693dfaccd67320a89db07577b3210e"
+}

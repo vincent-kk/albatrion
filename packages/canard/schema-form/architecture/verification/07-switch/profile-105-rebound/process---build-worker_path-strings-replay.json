@@ -1,0 +1,14 @@
+{
+  "HEAD": "a958b37cbf7d7cd897565a06278ee141fd402816",
+  "command": "--build-worker",
+  "args": [
+    "path-strings-replay"
+  ],
+  "status": 0,
+  "signal": null,
+  "started": "2026-10-06T15:15:18.376Z",
+  "ended": "2026-10-06T15:15:18.571Z",
+  "elapsedMs": 195,
+  "pid": 9038,
+  "driverSha256": "bbc20075597511601a1067e804ee68536f5d4e7689f2c5093bdcbec9bc19b123"
+}

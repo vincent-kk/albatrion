@@ -1,0 +1,17 @@
+{
+  "HEAD": "a958b37cbf7d7cd897565a06278ee141fd402816",
+  "command": "--timer-worker",
+  "args": [
+    "control",
+    "flat-500",
+    "1",
+    "forced"
+  ],
+  "status": 0,
+  "signal": null,
+  "started": "2026-10-06T15:21:41.155Z",
+  "ended": "2026-10-06T15:21:43.129Z",
+  "elapsedMs": 1974,
+  "pid": 14334,
+  "driverSha256": "c6f156608aad462fc9bf10a40d7aeaf662693dfaccd67320a89db07577b3210e"
+}

@@ -1,0 +1,16 @@
+{
+  "HEAD": "a958b37cbf7d7cd897565a06278ee141fd402816",
+  "command": "--cpu-worker",
+  "args": [
+    "head",
+    "nested-d5-f4",
+    "3"
+  ],
+  "status": 0,
+  "signal": null,
+  "started": "2026-10-06T15:27:22.413Z",
+  "ended": "2026-10-06T15:27:23.506Z",
+  "elapsedMs": 1093,
+  "pid": 20126,
+  "driverSha256": "796a2d45b422ae563a15955f789ec4ba8babed1163a4ceb835138c962c797e31"
+}

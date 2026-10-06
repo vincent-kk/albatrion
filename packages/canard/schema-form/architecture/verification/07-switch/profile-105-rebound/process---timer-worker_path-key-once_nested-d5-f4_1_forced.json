@@ -1,0 +1,17 @@
+{
+  "HEAD": "a958b37cbf7d7cd897565a06278ee141fd402816",
+  "command": "--timer-worker",
+  "args": [
+    "path-key-once",
+    "nested-d5-f4",
+    "1",
+    "forced"
+  ],
+  "status": 0,
+  "signal": null,
+  "started": "2026-10-06T15:25:19.541Z",
+  "ended": "2026-10-06T15:25:23.323Z",
+  "elapsedMs": 3782,
+  "pid": 18585,
+  "driverSha256": "b263c10ee8e5712dc03cdcf5938573bbe9357f2611b8d86528ac21f0120a837a"
+}

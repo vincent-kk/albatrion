@@ -1,0 +1,17 @@
+{
+  "HEAD": "a958b37cbf7d7cd897565a06278ee141fd402816",
+  "command": "--timer-worker",
+  "args": [
+    "dependency-paths-once",
+    "flat-500",
+    "2",
+    "forced"
+  ],
+  "status": 0,
+  "signal": null,
+  "started": "2026-10-06T15:32:34.705Z",
+  "ended": "2026-10-06T15:32:36.707Z",
+  "elapsedMs": 2002,
+  "pid": 25007,
+  "driverSha256": "994dcb3bd63b882b73ef09d90a84a44c2f46e53da9b8e8b2b5cf50e8bfeeef62"
+}

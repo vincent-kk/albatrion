@@ -1,0 +1,15 @@
+{
+  "HEAD": "a958b37cbf7d7cd897565a06278ee141fd402816",
+  "command": "--timers",
+  "args": [
+    "revision-dense-first",
+    "1"
+  ],
+  "status": 0,
+  "signal": null,
+  "started": "2026-10-06T15:29:43.430Z",
+  "ended": "2026-10-06T15:29:52.667Z",
+  "elapsedMs": 9237,
+  "pid": 21825,
+  "driverSha256": "994dcb3bd63b882b73ef09d90a84a44c2f46e53da9b8e8b2b5cf50e8bfeeef62"
+}

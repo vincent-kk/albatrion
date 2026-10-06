@@ -1,0 +1,15 @@
+{
+  "HEAD": "a958b37cbf7d7cd897565a06278ee141fd402816",
+  "command": "--verdict-worker",
+  "args": [
+    "nested-d5-f4",
+    "3"
+  ],
+  "status": 0,
+  "signal": null,
+  "started": "2026-10-06T15:46:27.812Z",
+  "ended": "2026-10-06T15:46:32.117Z",
+  "elapsedMs": 4305,
+  "pid": 39273,
+  "driverSha256": "a399bee38c27c4a712d80ea785a4bde21eb5ec69f76c52ebadafe19897b58dab"
+}

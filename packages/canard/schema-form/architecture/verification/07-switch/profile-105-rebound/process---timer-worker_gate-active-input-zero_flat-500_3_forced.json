@@ -1,0 +1,17 @@
+{
+  "HEAD": "a958b37cbf7d7cd897565a06278ee141fd402816",
+  "command": "--timer-worker",
+  "args": [
+    "gate-active-input-zero",
+    "flat-500",
+    "3",
+    "forced"
+  ],
+  "status": 0,
+  "signal": null,
+  "started": "2026-10-06T15:52:12.943Z",
+  "ended": "2026-10-06T15:52:14.901Z",
+  "elapsedMs": 1958,
+  "pid": 43593,
+  "driverSha256": "8bbfc5d48290e416107d656e98e928c46a121f2d1461badb94d33478095f49eb"
+}

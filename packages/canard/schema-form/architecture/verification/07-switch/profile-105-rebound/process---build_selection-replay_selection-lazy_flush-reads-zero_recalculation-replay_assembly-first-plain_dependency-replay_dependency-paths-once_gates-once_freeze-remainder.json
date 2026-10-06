@@ -1,0 +1,22 @@
+{
+  "HEAD": "a958b37cbf7d7cd897565a06278ee141fd402816",
+  "command": "--build",
+  "args": [
+    "selection-replay",
+    "selection-lazy",
+    "flush-reads-zero",
+    "recalculation-replay",
+    "assembly-first-plain",
+    "dependency-replay",
+    "dependency-paths-once",
+    "gates-once",
+    "freeze-remainder"
+  ],
+  "status": 0,
+  "signal": null,
+  "started": "2026-10-06T15:15:38.064Z",
+  "ended": "2026-10-06T15:15:40.298Z",
+  "elapsedMs": 2234,
+  "pid": 9301,
+  "driverSha256": "be498acd6d75cfe376b5456d2e3bd45dffbe9dfa3397f42ee38109f9733a59c8"
+}

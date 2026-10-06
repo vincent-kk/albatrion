@@ -1,0 +1,15 @@
+{
+  "HEAD": "a958b37cbf7d7cd897565a06278ee141fd402816",
+  "command": "--verdict-worker",
+  "args": [
+    "flat-500",
+    "3"
+  ],
+  "status": 0,
+  "signal": null,
+  "started": "2026-10-06T15:46:32.293Z",
+  "ended": "2026-10-06T15:46:34.806Z",
+  "elapsedMs": 2513,
+  "pid": 39323,
+  "driverSha256": "a399bee38c27c4a712d80ea785a4bde21eb5ec69f76c52ebadafe19897b58dab"
+}

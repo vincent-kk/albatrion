@@ -1,0 +1,8 @@
+{
+  "HEAD": "a958b37cbf7d7cd897565a06278ee141fd402816",
+  "variant": "assembly-replay",
+  "sha256": "931d7b96b37d911af2549d96ccb95c9a37248660f8711fab755d7bf5b1c4bbbe",
+  "bytes": 537197,
+  "naturalServiceExits": 1,
+  "edits": []
+}
