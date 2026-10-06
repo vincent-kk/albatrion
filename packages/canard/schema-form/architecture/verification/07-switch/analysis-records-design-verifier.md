@@ -80,3 +80,19 @@
 4. [낮음] default 대조 표에 검증 경로(`runSchemaNodeValidation.ts:17`, `evaluateGate.ts:102`; 안전성은 ajv 플러그인의 `assertBindableInstance`가 데이터를 바꾸는 옵션을 거부하는 데 달림), 새 객체에만 쓰는 경로(`readRawTree.ts:40-48`, `readLatentSlotSource.ts:39-47`), draft·복사본에만 쓰는 경로(`alignArraySnapshotSlots.ts:36,85,90`, `replaceAtPath.ts:27-32`, `markBatchArrayOperation.ts:30`, `arrangeSchemaNodeItems.ts:59-64`, `shallowPatch.ts:14`)를 더하고, 데이터를 바꾸는 소비자 validator는 계약 밖이라고 적습니다.
 5. [낮음] 운영 모드 시험이 React 개발 빌드로 돌 수 있습니다. React를 불러오기 전에 NODE_ENV=production을 정한 별도 프로젝트나 프로세스에서 실행하고 운영 빌드가 로드되었음을 단언합니다.
 6. [낮음] 분석 중에 버려지는 정적 schema를 완료 동결 대상에 올린 문장은 도달 가능성 기준과 맞지 않으므로 지우거나 근거를 적습니다.
+
+# 5차 대조 (owned-inline, 103C)
+
+판정: **조건부 승인**입니다. 근거는 HEAD 73d2ecd12이며 시험·빌드·Node는 실행하지 않았습니다.
+
+확인된 것: 공개 값의 생산자는 설계의 11종류와 일치합니다(공개 유효 스키마를 만드는 곳은 `mergeSingleStaticContribution.ts:39`, `mergeSchemaContributions.ts:42` 두 곳, EffectiveSchema 봉투는 세 곳, package.json `exports`는 `.` 하나). 소속 배열의 기록 간 alias는 27행 밖에서 찾지 못했습니다(`collectDeclarations.ts:119`의 입력 쪽 alias는 `:46`에서 복사되어 영향 없음). 계수 여덟 값과 대안 세 값이 산식으로 그대로 나오고 HEAD 운영 수가 `profile-103-freeze.md:240,246,252,258`과 일치합니다. 적용 순서의 2단계는 한 변경입니다. 열린 두 자리는 실재합니다(`mergeEffectiveSchema.test.ts:561-563`, `blueprint.branchless-proof.test.ts:98-100`); 이 기록들의 참조 공유를 단언하는 다른 시험은 없습니다.
+
+지적(심각도 순):
+
+1. [중간] hint merge가 안쪽에 새로 만드는 객체(`packages/winglet/common-utils/src/utils/object/merge/utils/mergeWithOptions.ts:31,48`)는 103C (1)의 "청사진이 공개 스키마 안에 만든 봉투"에 해당하는데 두 모드 모두 동결되지 않습니다. `SchemaNodeInput.tsx:133`, `SchemaNodeField.tsx:113`의 props spread로 공개 props에 나가고 청사진 캐시로 폼 사이에 공유됩니다(두 기여가 각각 `presentation.FormTypeInputProps.style`을 주면 새 style 객체가 생기고, 한 폼이 바꾸면 다른 폼으로 샙니다). 편집자 결정: (가) 병합 완료 자리에서 두 입력의 같은 키와 참조가 다른 plain object만 "생성됨"으로 보고 그것만 얕게 동결, (나) 명시적 면제.
+2. [중간] 59종 차등의 기준선이 없습니다. `coldBindingHead.json`(head `0fdb666`)에는 collect를 켠 graph와 진단만 있고 정규화 schema가 없습니다. 2단계 전에 73d2ecd12에서 59종 × collect 끔/켬의 정규화 schema, 필드 순서, 선언·조각·entry, 오류, 진단을 fixture로 만들어 커밋해야 합니다.
+3. [중간] 운영 모드 렌더 시험이 지금 도구로 돌지 않습니다. React 19.2.6 운영 빌드에는 `act`가 없는데 RTL과 `src/__tests__/renderForm.tsx:9`가 act를 쓰고, `react-jsx-dev-runtime.production.js`는 `jsxDEV = void 0`입니다. NODE_ENV=production을 vitest 설정이 로드되기 전에 package.json 스크립트로 넣고, 운영 프로젝트에 `esbuild: { jsxDev: false }`, 렌더는 `createRoot`·`flushSync`·마이크로태스크 대기를 씁니다.
+4. [낮음] 공유 없음 단언의 수집 대상에 gate와 compiled expression이 빠져 27행 중 11행(appliesWhen, `populateNodeChildren.ts:176`)과 24행(expression.dependencies)을 검사하지 못합니다.
+5. [낮음] 문서의 낡은 모순(571행의 "(2)로 유지", 시험 번호 563·572·573행)을 고칩니다.
+6. [낮음] 개발 모드 산식(344행)에 appliesWhen 복사본과 validationOnly·가상·lazy 복사본을 더하고, 기존의 개발 모드 동결 단언은 개발 모드 프로젝트에만 둡니다.
+7. [참고] Q106의 두 자리는 103C로 정해진 것이라 결정 대기가 아니라 시험 정정으로 적습니다.
