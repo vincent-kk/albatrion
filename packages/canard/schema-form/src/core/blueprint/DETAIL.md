@@ -2,6 +2,8 @@
 
 ## Requirements
 
+- 단일 무게이트 연언 object는 properties의 eager `Object.entries` 스냅샷을 기존 순서로 직접 자식 build에 전달합니다. children 제어 항목이 있거나 선언이 여러 개·선언 문맥·게이트 경로이면 기존 집계를 유지합니다. 기존 binding 생산·DFS·가상 자식 처리·정적 검사와 청사진의 모든 내용은 같습니다. 속도 비용은 노드당 O(1) 자격 검사와 O(자식 수) 한 순회이며 properties Map의 삽입·조회·두 번째 열거를 제거합니다. 메모리 비용은 기존 eager 스냅샷·자식 입력·binding 결과를 유지하고 적격 object당 properties Map 및 사용되지 않는 tuples Map을 만들지 않습니다. 새 보유 색인·캐시·노드 필드가 없으며 시간과 heap 바이트는 측정 대기입니다(105라운드 자식 열거).
+
 - 103C-01 owned-inline: 공개 유효 schema·schemaType와 생산자가 공개 schema 안에 만든 배열·controls·hint 봉투, 공유 gate·evaluationReads·discriminator·values·소유 appliesWhen은 생성·병합 완료 자리에서 두 모드 모두 얕게 동결합니다. 소비자가 작성한 root·중첩 값·default·React 값·함수에는 내려가지 않습니다. hint 병합이 만든 중첩 plain object는 두 입력의 같은 키와 참조가 다를 때만 병합 완료 자리에서 보호합니다(Q107).
 - 소속 배열 27행은 기록마다 소유하며 일반 기록·거짓 결과 봉투·빈 expressions·null-prototype dependencies와 함께 개발에서만 동결합니다(Q106). gate 원소·template·EMPTY_INDEX·동일 노드의 동일 활성 집합 메모 참조는 유지합니다. 운영 완료 구간은 staticFirstLoad 판정만 수행하며 동결 완료 순회가 없습니다.
 - 속도 비용: 공개 schema 완료는 고정 필드 7개와 생성 clause 수, hint 보호는 새 병합 객체의 키 수에 비례합니다. 소유 복사는 복사 원소 수에 비례하며 개발 모드에만 내부 동결 비용이 추가됩니다. 메모리 비용: 기록마다 새 소속 배열과 가상·지연 binding 복사본을 보유하고 공개 생성 값의 소유권은 약한 색인으로 추적합니다. 새 공개 옵션·캐시 키·노드 shape 변경은 없습니다. 운영 종단 시간은 HEAD와 fresh-process 판정으로 확인합니다.
@@ -167,4 +169,4 @@
 
 ## Last Updated
 
-2026-10-07. 계약 기준: REACT-003·004, 69C-04, 89C-03, 98C-01, 100라운드, 101라운드 묶음 1, 102라운드 단일 기여, 103C-01·Q106·Q107, 104라운드 owned-inline.
+2026-10-07. 계약 기준: REACT-003·004, 69C-04, 89C-03, 98C-01, 100라운드, 101라운드 묶음 1, 102라운드 단일 기여, 103C-01·Q106·Q107, 104라운드 owned-inline. 비용 기록: 105라운드 자식 열거.

@@ -1,0 +1,17 @@
+{
+  "HEAD": "5e8f34625b64b84dddd58239f31969afb71c862c",
+  "command": "pair",
+  "args": [
+    "forced",
+    "nested-d5-f4",
+    "mount",
+    "7",
+    "working"
+  ],
+  "status": 0,
+  "signal": null,
+  "started": 1791307187861,
+  "ended": 1791307191151,
+  "elapsedMs": 3290,
+  "driverSha256": "7a7b9646d25f7d31f96d4c79a2845ce9f669a5210619abb609aac1d9df302e06"
+}

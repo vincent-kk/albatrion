@@ -1,0 +1,10 @@
+{
+  "candidate": "P",
+  "name": "sample-0",
+  "mode": "mount",
+  "status": 0,
+  "signal": null,
+  "started": 1791307034224,
+  "ended": 1791307040537,
+  "elapsedMs": 6313
+}

@@ -2462,6 +2462,8 @@ HEAD/control production 번들 SHA-256은 `be285ab7c717c62148f3e659bff3195e48bf4
 
 ## 105라운드 경로 만들기
 
+**106라운드 재판정(105C-01): P 기각입니다.** HEAD `5e8f34625`의 scratch 사본에 보존 패치를 적용해 운영 번들을 만들고 9회 pooled로 다시 판단했습니다. nested·flat 마운트는 개선 조건을 충족했지만 oneOf-40 후속 업데이트의 짝 차이 중앙값 −0.003250ms, 99% 구간 [−0.005791, −0.000042]ms로 회귀 배제 조건을 충족하지 못했습니다. 후보를 제품에 적용하지 않았습니다. 행별 수치·같은 세션 A/A 통계는 아래 「106라운드 감도 판정 (105C-01)」에 기록했습니다.
+
 **제품 변경을 되돌렸습니다.** HEAD `e633fefefb1efcf81302ccf3efc0b51431fb2cee` 대비 잡음 밖 개선 0행·회귀 0행으로 유지 조건을 충족하지 못했습니다. `getTemplateKey.ts`, `buildNodes.ts`와 먼저 작성했던 Blueprint DETAIL 비용 문구는 HEAD와 바이트가 같습니다. [후보 패치](profile-105-rebound/path105-candidate-product.patch), [59종 차등·횟수 테스트](../../../src/core/blueprint/__tests__/blueprint.path-key-once.test.ts) 및 [기계 요약](profile-105-rebound/path105-summary.json)을 남겼습니다. 정착 설계·새 계약·공개 노드 shape 변경은 없습니다.
 
 ### 단일 변경과 속도·메모리 비용
@@ -2526,3 +2528,133 @@ nested 마운트의 r1/r2/r3 Δ/N은 0.429334/0.398125, −0.135209/0.385875, 0.
 이번 측정 자료는 `profile-105-rebound/`에만 두었고 각 파일은 5MB 이하입니다. 같은 이름이었던 기존 build-head/control 기록은 HEAD 원본으로 복원하고 새 기록은 `path105-build-*.json`으로 분리했습니다. 런타임 bundle/map은 지정한 `/private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles`에만 저장했고 저장소 안 bundle/map/cache 및 config cacheDir을 추가하지 않았습니다.
 
 재현 도구는 [측정 driver](profile-105-rebound/path-once-measure.mjs), [검증 driver](profile-105-rebound/path-once-check.mjs), [요약기](profile-105-rebound/path-once-summarize.mjs)입니다. 측정 driver는 committed 104 harness를 메모리에서 HEAD와 출력 위치만 재배치하며 esbuild 서비스는 stdin EOF로 자연 종료합니다. 후보 패치는 기록용으로 보존했습니다. 현재 작업트리에서 `build working`을 다시 실행하면 복구된 HEAD를 빌드하므로 기록된 후보 결과를 덮어쓰지 않아야 합니다.
+
+## 105라운드 자식 열거
+
+### 단일 변경과 속도·메모리 비용
+
+기준 HEAD는 `5e8f34625b64b84dddd58239f31969afb71c862c`입니다. [105 보고서의 자식 열거 명세](profile-105-rebound.md)는 nested-d5-f4 mount 작업 제거 상한 0.8440ms에 연결한 단일 변경이며, 이 수치를 이번 구현의 개선 시간으로 사용하지 않습니다.
+
+`populateNodeChildren`의 단일 conjunction·무게이트 object이며 children 제어 항목이 없는 경로만 properties의 eager `Object.entries` 스냅샷에서 곧바로 자식을 build합니다. 여러 기여·선언 문맥·게이트·children 제어·배열은 기존 집계를 유지합니다. binding 생산 코드를 내부 `appendChildEntries`로 옮겨 두 경로가 함께 호출하며 선언·게이트·소속 배열의 복사와 개발 동결, schemaPath 재결합, 자식 참조·순서·DFS·가상 자식·정적 검사를 유지합니다. 정착 설계·새 계약·공개 노드 shape·보유 캐시 변경은 없습니다. 비용 문구는 구현 전에 소유 Blueprint DETAIL에 기록했습니다.
+
+속도 비용은 object당 O(1) 자격 검사와 O(자식 수) classic for 순회입니다. 자식당 properties Map 삽입·조회와 두 번째 열거를 제거하며 binding 생산 함수의 직접 호출을 추가합니다. build와 binding 호출 대상은 고정이고 입력·binding shape는 기존과 같습니다. 메모리 비용은 기존 eager 스냅샷·입력 및 소속 배열·binding 결과를 유지하면서 적격 object당 properties Map 한 개와 사용되지 않는 tuples Map 한 개를 제거합니다. 가상 자식의 기존 groups Map은 유지합니다. 새 보유 색인은 없고 heap 바이트는 측정하지 않았습니다. 비축소 운영 번들은 524,039→525,573바이트(+1,534)입니다.
+
+### HEAD 차등과 노드당 계수
+
+기존 `ownedInlineHead.json` fixture를 갱신하지 않았습니다. 59개 스키마 × collect 끔/켬의 118개 관측은 구현 전 HEAD와 구현 후 작업트리의 개발·운영 모드에서 모두 통과했습니다. 정규화 schema·키/필드 순서·graph·오류·진단을 그대로 비교합니다. 기존 owned-inline mount 동결 계수도 두 모드에서 유지됩니다.
+
+[횟수 테스트](../../../src/core/blueprint/utils/analyze/__tests__/populateNodeChildren.counts.test.ts)는 실제 fixture의 object 템플릿마다 자식 준비를 실행하며 recursive build만 기록용 함수로 교체합니다. `Object.entries` 스냅샷 항목 방문, native Map iterator의 항목 방문과 Map 생성 수를 세고 원래 자식 경로·입력 수를 비교합니다. 전체 청사진 생성 비용이나 binding 객체 할당량을 이 계수에 포함하지 않습니다. 다중 기여·게이트·children 제어의 집계 유지와, 첫 build가 원본 properties를 변경해도 eager 스냅샷의 값·정수 키/escaped key 순서·own-key 경계가 유지됨을 별도로 검증합니다.
+
+| fixture | 전체 청사진 노드 | 적격 object | 자식 항목 방문 HEAD→작업트리 | properties Map | 미사용 tuples Map | 유지되는 virtual groups Map | 측정한 Map 전체 |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
+| nested-d5-f4 | 1,365 | 341 | 2,728→1,364 | 341→0 | 341→0 | 341→341 | 1,023→341 |
+| flat-500 | 501 | 1 | 1,000→500 | 1→0 | 1→0 | 1→1 | 3→1 |
+
+적격 object 노드당 중간 Map은 2→0개(properties 1→0, 미사용 tuples 1→0)이며 전체 Map은 3→1개입니다. 자식당 항목 방문은 2→1회로, nested object당 8→4회·flat object당 1,000→500회입니다. eager properties 스냅샷은 object당 1→1회이고 properties Map 재열거는 1→0회입니다. 기존 virtual groups의 빈 열거 1회는 남습니다. 범위 밖 경로의 계수는 기존대로입니다.
+
+구현 전 횟수 시험은 nested의 2,728과 flat의 1,000이 각각 기대값 1,364·500과 달라 실패했습니다. 같은 실행에서 59종 차등과 fallback 계수는 통과했습니다. 구현 후 두 모드의 관련 2파일 5개 시험이 모두 통과하며 각 object의 단일 스냅샷·중간 Map 부재·기존 virtual Map 하나를 개별 단언합니다.
+
+### 시간 측정
+
+**106라운드 105C-01 판정으로 C 채택입니다.** 기존 `child105-head.cjs`·`child105-working.cjs`의 모든 입력 제품 소스와 번들 해시가 현재 HEAD·작업트리와 일치해 재빌드 없이 사용했습니다. 각 행 새 프로세스 9회, 예열 20회·101쌍, 표본과 회차 시작의 H/W 순서 교대, clock 밖 강제 GC 및 기존 종단 끝점·empty drain 보정을 유지했습니다.
+
+909개 H−W 짝 차이 pooled 중앙값은 nested-d5-f4 마운트 0.487124ms(99% [0.406416, 0.560957]), flat-500 마운트 0.162833ms([0.148417, 0.174625])입니다. 같은 세션 A/A 중앙값 0.026791·0.002541ms보다 크고 두 구간 하한이 양수입니다. 마운트 4행과 nested 후속 업데이트가 개선 조건을 충족했으며, 10행 중 99% 구간 전체가 음수인 행은 0개입니다. 나머지 업데이트 5행은 채택 조건 미충족으로 기록합니다.
+
+행별 pooled 중앙값·99% 구간·A/A 통계는 아래 「106라운드 감도 판정 (105C-01)」의 C 표와 [기계 요약](profile-106-power/summary.json)에 있습니다. 이번 측정 세션에서는 제품·테스트·DETAIL을 수정하거나 git 쓰기를 하지 않았고 현재 자식 열거 작업트리 변경을 그대로 유지했습니다.
+
+### 지정 검증과 즉시 사용 가능한 번들
+
+모든 명령은 PKG에서 순차 실행했습니다. npx에는 `--no-install`과 offline 환경을 사용했고 Vitest에는 `--configLoader runner --cache false --maxWorkers=1 --no-file-parallelism`을 추가했습니다. production은 설정 로드 전에 `NODE_ENV=production`을 환경에 설정했습니다. 전체 검증의 도구 응답 대기는 300초 제한에 걸렸으나 실제 명령은 300.262초에 signal 없이 자연 종료했고 저장된 로그에서 결과를 확인했습니다. 전체 검증을 재실행하지 않았습니다.
+
+| 지정 명령 | 결과 |
+| --- | --- |
+| `npx vitest run --project unit --project render --project react18 --reporter=dot` | 3,244 passed / 4 failed / 1 todo. render·react18 각각 EVENT-070 useLayoutEffect·useEffect 두 사례만 실패 |
+| `NODE_ENV=production npx vitest run --project production --reporter=dot` | 4 files / 14 passed |
+| `npx tsc --noEmit --composite false --rootDir . -p tsconfig.json` | exit 0 |
+| `npx eslint "src/**/*.{ts,tsx}"` | exit 0 |
+| `node architecture/verification/07-switch/tools/check-legacy-isolation.mjs` | LEGACY_ISOLATED: 1,646 files checked |
+
+운영 번들·소스맵은 지정한 `/private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles` 아래 `child105-head.cjs`·`child105-working.cjs`와 각각의 `.map`입니다. canonical 104 production builder의 공개 export·외부 workspace 의존성·빌드 옵션을 그대로 사용하고 HEAD 소스는 git show, 작업트리 소스는 현재 파일에서 읽었습니다. HEAD SHA-256은 `129f917c8633f9e739dfed1b46b5f819d14380f4130f074897774a0ebd61bfda`, 작업트리는 `31a22a1c85463f0544f4837e220831a8cb5534d239fecba9cbb34e64bad1e0e9`입니다.
+
+[빌드 전용 adapter](profile-105-rebound/child-enumeration-build.mjs)는 `build head`·`build working`만 허용하며 시간 프로토콜을 실행하지 않습니다. [HEAD 소스 해시](profile-105-rebound/child105-build-head.json)와 [작업트리 소스 해시](profile-105-rebound/child105-build-working.json), 각 빌드의 process 기록을 보존했습니다. 두 esbuild 서비스는 stdin EOF로 status=0·signal=null 자연 종료했습니다. [검증 adapter](profile-105-rebound/child-enumeration-check.mjs)의 전체·운영·격리·최종 횟수·타입·lint 로그와 JSON은 같은 외부 bundles 디렉터리의 `child105-check-*`에 있습니다. 지정 검증과 두 빌드는 순차 실행했으며 모두 8분 안에 자연 종료했습니다. 저장소 안 bundle/map/cache나 config cacheDir, 설치·git 쓰기는 추가하지 않았습니다. 패키지의 기존 Vite 캐시는 검증 중 외부 경로로 분리한 뒤 원래 바이트를 복원했습니다.
+
+최종 소스 감사에서 binding 생산 루프는 기존 코드와 공백 및 입력 schemaPath 매개변수 치환 외에 동일하고, 작업트리 번들의 모든 소스 해시는 현재 제품 파일과 일치합니다. 원본 fixture 해시 확인 중 git show의 기본 출력 버퍼 초과가 한 번 발생하여 스트리밍 해시 비교로 보정했습니다. fixture의 HEAD 바이트 동일성을 확인했으며, 최종 소스·검증 결과에는 영향이 없습니다.
+
+## 106라운드 감도 판정 (105C-01)
+
+**독립 판정은 P 기각·C 채택입니다.** 편집자 결정 `105C-01`(`e34f59283`, `reviews/round-105-closing.md`)을 HEAD `5e8f34625b64b84dddd58239f31969afb71c862c`에서 적용했습니다. 기존 세 회차로 잡음 밖 개선이 확정되지 않은 후보를 대상으로 A/A → P → C를 같은 세션에서 순차 측정했습니다. 세 회차로 이미 잡음 밖인 변경의 기존 판정 기준이나 공식 판정표·TEST-026의 측정 조건은 변경하지 않았습니다.
+
+### 측정·통계·판정 설계
+
+각 후보·행·회차마다 새 프로세스를 사용했습니다. 운영 모드, 예열 20회·표본 101쌍 × 9회, 표본별 H/W 순서 교대와 회차 시작 순서 교대, 새 스키마·첫 갱신의 fresh root·후속 갱신의 기존 interaction 완료 retained root를 유지했습니다. 스키마 복제·mount 준비·강제 GC·GC 뒤 check anchor는 clock 밖입니다. clock은 operation부터 64 Promise checkpoint와 setImmediate sentinel 안까지이며, 전후 101회씩 empty drain의 공통 중앙값을 양쪽에서 뺐습니다. 짝 차이에서는 같은 보정값이 상쇄됩니다. validation off·빈 onChange·리스너 없음이며 시간 번들에는 계수 계측을 넣지 않았습니다.
+
+아래 중앙값은 **9회 909개 H−W 짝 차이를 모두 합친 pooled 중앙값**입니다. 회차 중앙값 9개의 중앙값이나 H/W pooled 중앙값끼리의 차이가 아닙니다. 양수는 후보가 빠른 쪽입니다. 기존 104/95C-01 요약기의 deterministic bootstrap(seed 101, 1,999회)을 그대로 재사용하고 99% percentile 끝점(정렬된 bootstrap 중앙값의 0-based 9·1989)을 보고합니다. 표시는 소수 6자리이며 판정은 반올림 전 값으로 수행했습니다. 회차를 제외하거나 유리한 표본만 선택하지 않았습니다.
+
+행별 개선 조건은 pooled 99% 하한 > 0 **그리고** 그 pooled 중앙값 > 같은 행 A/A pooled 중앙값입니다. A/A 통계는 부호를 포함한 같은 중앙값이며 절댓값·오차 한계로 바꾸거나 후보 중앙값에서 빼지 않았습니다. 회귀는 pooled 99% 상한 < 0, 즉 구간 전체가 음수인 경우입니다. 독립 후보의 채택에는 개선 행이 있고 회귀 행이 없어야 합니다. 0을 포함하는 구간은 해당 행의 개선 근거로 사용하지 않았습니다.
+
+Node v26.10.0, V8 14.6.202.34-node.35, darwin/arm64, Apple M1 Max에서 실행했습니다. 같은 세션 A/A는 아래 10행을 각각 9회 **한 번만** 측정했습니다. 제품 검증 명령을 추가로 실행하지 않았고 앞선 105라운드 검증 결과를 이번 측정의 새 테스트 실행으로 계산하지 않았습니다.
+
+### A/A 대조 — HEAD 대 HEAD
+
+운영 HEAD 번들을 독립적으로 두 번 빌드해 별도 module instance로 불러왔습니다. 두 번들의 입력 소스·실행 바이트는 동일하고 SHA-256은 모두 `6604d8746ea3b63f773432531e02b98241b5a1791a1fd6f6cacd6140dc0474f8`입니다. 각 행은 909쌍입니다.
+
+| fixture / 작업 | pooled 중앙값 ms | 99% 구간 ms | A/A 통계 ms |
+| --- | ---: | --- | ---: |
+| nested-d5-f4 마운트 | 0.026791 | [-0.036417, 0.108958] | 0.026791 |
+| flat-500 마운트 | 0.002541 | [-0.015042, 0.016458] | 0.002541 |
+| oneOf-20 마운트 | 0.003208 | [-0.002291, 0.009749] | 0.003208 |
+| sample-0 마운트 | -0.000958 | [-0.002209, -0.000042] | -0.000958 |
+| sample-0 첫 업데이트 | 0.000125 | [-0.000500, 0.000708] | 0.000125 |
+| sample-0 후속 업데이트 | 0.000624 | [-0.000084, 0.001250] | 0.000624 |
+| nested-d5-f4 첫 업데이트 | 0.014000 | [-0.069626, 0.068625] | 0.014000 |
+| nested-d5-f4 후속 업데이트 | 0.000333 | [-0.000541, 0.001292] | 0.000333 |
+| oneOf-40 첫 업데이트 | -0.001541 | [-0.006293, 0.003583] | -0.001541 |
+| oneOf-40 후속 업데이트 | -0.002291 | [-0.005875, 0.001583] | -0.002291 |
+
+sample-0 마운트는 바이트가 같은 두 HEAD 사이에서도 음수 구간입니다. 이는 이 세션 대조의 잔여 편향·잡음 관측이며 제품 회귀가 아닙니다. 해당 행의 A/A 통계를 숨기거나 0으로 치환하지 않았습니다. 편집자 조건에 따라 다른 행과 같은 부호 있는 통계로 비교했습니다.
+
+### P — 경로 키 구성
+
+보존된 [제품 패치](profile-105-rebound/path105-candidate-product.patch)를 지정 외부 bundles 디렉터리의 `path106-scratch` 아래 HEAD 사본에 적용했습니다. DETAIL도 scratch에만 적용했으며 작업트리 제품 파일은 건드리지 않았습니다. builder는 나머지 제품 파일을 모두 git show HEAD에서 읽어 자식 열거 변경이 P에 섞이지 않게 했습니다. HEAD와 후보의 빌드 입력 차이는 `buildNodes.ts`·`getTemplateKey.ts` 두 파일뿐입니다. 번들은 536,576→538,028바이트(+1,452), 후보 SHA-256은 `5ab993160c5dcaceb43f2d3c7a3d0939237bf440169499d0e8ca52389e876a33`입니다. 각 행은 909쌍입니다.
+
+| fixture / 작업 | pooled 중앙값 ms | 99% 구간 ms | A/A 통계 ms | 행 판정 |
+| --- | ---: | --- | ---: | --- |
+| nested-d5-f4 마운트 | 0.191917 | [0.116042, 0.264417] | 0.026791 | 개선 |
+| flat-500 마운트 | 0.077916 | [0.063791, 0.086959] | 0.002541 | 개선 |
+| oneOf-20 마운트 | 0.002792 | [-0.005167, 0.010626] | 0.003208 | 채택 조건 미충족 |
+| sample-0 마운트 | 0.002208 | [0.001042, 0.003250] | -0.000958 | 개선 |
+| sample-0 첫 업데이트 | 0.000083 | [-0.000625, 0.000667] | 0.000125 | 채택 조건 미충족 |
+| sample-0 후속 업데이트 | 0.000166 | [-0.000459, 0.000916] | 0.000624 | 채택 조건 미충족 |
+| nested-d5-f4 첫 업데이트 | 0.006917 | [-0.072291, 0.070251] | 0.014000 | 채택 조건 미충족 |
+| nested-d5-f4 후속 업데이트 | 0.001209 | [0.000458, 0.002250] | 0.000333 | 개선 |
+| oneOf-40 첫 업데이트 | 0.002834 | [-0.002000, 0.006667] | -0.001541 | 채택 조건 미충족 |
+| oneOf-40 후속 업데이트 | -0.003250 | [-0.005791, -0.000042] | -0.002291 | 회귀 |
+
+**P 기각:** 개선 4행·회귀 1행입니다. nested·flat의 개선이 성립하더라도 oneOf-40 후속 업데이트의 상한이 0 아래여서 회귀 없음으로 판정할 수 없습니다. 이 상한은 0에 가깝고 A/A 해당 행도 중앙값이 음수지만, 이를 이유로 요구된 회귀 조건을 완화하거나 후보를 다시 재어 결과를 대체하지 않았습니다. 제품에는 P를 적용하지 않았으며 보존 패치도 수정하지 않았습니다.
+
+### C — 자식 열거
+
+기존 `child105-working.cjs`·`child105-head.cjs`의 번들 해시와 모든 입력 제품 소스 해시를 현재 파일·HEAD에 대조해 일치를 확인했습니다. 재빌드는 하지 않았습니다. HEAD SHA-256은 `129f917c8633f9e739dfed1b46b5f819d14380f4130f074897774a0ebd61bfda`, C는 `31a22a1c85463f0544f4837e220831a8cb5534d239fecba9cbb34e64bad1e0e9`입니다. A/A의 새 HEAD와 기존 C 비교용 HEAD는 소스 트리 해시가 같고, 번들 SHA 차이는 빌드 실행 위치에 따른 주석 행뿐임을 확인했습니다. 주석 행을 제외한 실행 텍스트는 바이트가 같습니다. 각 행은 909쌍입니다.
+
+| fixture / 작업 | pooled 중앙값 ms | 99% 구간 ms | A/A 통계 ms | 행 판정 |
+| --- | ---: | --- | ---: | --- |
+| nested-d5-f4 마운트 | 0.487124 | [0.406416, 0.560957] | 0.026791 | 개선 |
+| flat-500 마운트 | 0.162833 | [0.148417, 0.174625] | 0.002541 | 개선 |
+| oneOf-20 마운트 | 0.006292 | [0.000625, 0.012333] | 0.003208 | 개선 |
+| sample-0 마운트 | 0.002541 | [0.001416, 0.003542] | -0.000958 | 개선 |
+| sample-0 첫 업데이트 | 0.000251 | [-0.000250, 0.000792] | 0.000125 | 채택 조건 미충족 |
+| sample-0 후속 업데이트 | 0.000750 | [-0.000083, 0.001416] | 0.000624 | 채택 조건 미충족 |
+| nested-d5-f4 첫 업데이트 | 0.006416 | [-0.069000, 0.070876] | 0.014000 | 채택 조건 미충족 |
+| nested-d5-f4 후속 업데이트 | 0.001291 | [0.000292, 0.002250] | 0.000333 | 개선 |
+| oneOf-40 첫 업데이트 | 0.002042 | [-0.002042, 0.005333] | -0.001541 | 채택 조건 미충족 |
+| oneOf-40 후속 업데이트 | 0.001042 | [-0.002459, 0.005625] | -0.002291 | 채택 조건 미충족 |
+
+**C 채택:** 개선 5행·회귀 0행입니다. nested·flat을 포함한 개선 행의 구간 하한은 양수이고 중앙값은 각각의 A/A 통계를 넘었습니다. 어느 행의 구간도 전체가 음수가 아니므로 이번 설계에서 회귀를 배제합니다. 현재 작업트리의 자식 열거 변경을 그대로 두었으며 제품·테스트·DETAIL에 추가 수정이나 git 쓰기를 하지 않았습니다.
+
+### 실행·산출물 감사
+
+시간 프로세스 270개(대조 90·P 90·C 90), 27,270쌍, 행별 driver 명령 30개를 순차 실행했습니다. 이번 세션의 빌드 4개와 시간 프로세스 전체의 timestamp 구간에 겹침이 없고 모두 status=0·signal=null로 자연 종료했습니다. esbuild 서비스 4개도 stdin EOF로 자연 종료했습니다. 최대 시간 worker 3.657초, 행별 명령 33.356초, 빌드 명령 3.628초, 집계·소스 감사 명령 27.819초로 모두 8분 이내입니다. 각 행 완료 진행 상황을 출력했습니다. 모든 표본의 순서·101쌍·empty 표본 수와 H/W 최종 값 해시를 검사했으며 같은 행의 A/A·P·C 관측 해시도 일치했습니다. clock 안에서 시작한 GC는 종류와 무관하게 0건입니다.
+
+[측정 adapter](profile-106-power/measure.mjs)는 기존 104 clock을 메모리에서 HEAD·번들·산출물 위치만 재배치합니다. [A/A 실행 시 adapter 사본](profile-106-power/measure-AA.mjs)의 SHA는 대조 process 기록과 일치합니다. 이후 adapter에는 P/C 시간 파일의 후보 접두사를 추가해 A/A 원표본을 보존했습니다. [집계·감사 도구](profile-106-power/summarize.mjs)와 [기계 요약](profile-106-power/summary.json)에 회차별 짝 중앙값·정확한 pooled 통계·A/A 통계·환경·빌드 및 소스 해시·감사를 기록했습니다. 원표본·GC·clock·process·build 자료는 모두 `profile-106-power/` 아래이며 각 파일은 5MB 이하입니다.
+
+런타임 bundle·source map·scratch 소스는 지정한 외부 `/private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles` 아래에만 두었습니다. 저장소 안 bundle·source map·cache, 설치, git 쓰기, 병렬 측정, 강제 종료를 추가하지 않았습니다.

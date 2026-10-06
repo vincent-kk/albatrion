@@ -1,10 +1,10 @@
 import { isArray } from '@winglet/common-utils/filter';
 import { escapeSegment } from '@winglet/json/pointer';
 
-import type { BlueprintChildEntry } from '../../type';
 import { BlueprintErrorCode } from '../diagnostics/constant';
 import { throwBlueprintError } from '../diagnostics/throwBlueprintError';
 import { createBlueprintGate } from './createBlueprintGate';
+import { appendChildEntries } from './populateNodeChildren/utils/appendChildEntries';
 import { populateVirtualNodes } from './populateVirtualNodes';
 import { readSchemaObject } from './readSchemaObject';
 import type { AnalysisContext, MutableNode, SchemaInput } from './type';
@@ -28,6 +28,47 @@ export const populateNodeChildren = (
     path: string,
   ) => MutableNode[],
 ): void => {
+  if (node.kind === 'object' && node.declarations.length === 1) {
+    const declaration = node.declarations[0];
+    const schema = readSchemaObject(declaration.schema);
+    if (
+      declaration.context === 'conjunction' &&
+      declaration.gates.length === 0 &&
+      !schema.controls?.children?.length &&
+      schema.properties &&
+      typeof schema.properties === 'object'
+    ) {
+      const base = {
+        context: declaration.context,
+        gates: declaration.gates,
+        inherited: declaration.inherited,
+        hostPath: node.path,
+        fragment: context.fragments[declaration.fragmentId],
+        role: 'declaration' as const,
+      };
+      const properties = Object.entries(schema.properties);
+      for (let index = 0; index < properties.length; index++) {
+        const [name, child] = properties[index];
+        const input: SchemaInput = {
+          ...base,
+          schema: child as SchemaInput['schema'],
+          schemaPath: `${declaration.schemaPath}/properties/${escapeSegment(name)}`,
+          order: [...declaration.order, 0, index],
+        };
+        input.gates = [];
+        const path = `${node.path}/${escapeSegment(name)}`;
+        appendChildEntries(
+          node,
+          name,
+          path,
+          input.schemaPath,
+          build(context, [input], path),
+        );
+      }
+      populateVirtualNodes(context, node);
+      return;
+    }
+  }
   const properties = new Map<string, SchemaInput[]>();
   const itemInputs: SchemaInput[] = [];
   const tuples = new Map<number, SchemaInput[]>();
@@ -159,59 +200,10 @@ export const populateNodeChildren = (
         order: [...declaration.order, 0, schema.items.length],
       });
   }
-  const entries = node.childEntries as BlueprintChildEntry[];
   for (const [name, inputs] of properties) {
     const path = `${node.path}/${escapeSegment(name)}`;
     const children = build(context, inputs, path);
-    for (let childIndex = 0; childIndex < children.length; childIndex++) {
-      const child = children[childIndex];
-      const declarations = [];
-      for (let index = 0; index < child.declarations.length; index++) {
-        const declaration = child.declarations[index];
-        const gates = [];
-        for (
-          let gateIndex = 0;
-          gateIndex < declaration.gates.length;
-          gateIndex++
-        ) {
-          const gate = declaration.gates[gateIndex];
-          gates.push(
-            gate.hostPath === child.path
-              ? createBlueprintGate({ ...gate, hostPath: path })
-              : gate,
-          );
-        }
-        const binding = {
-          ...declaration,
-          order: [...declaration.order],
-          name,
-          path,
-          hostPath: node.path,
-          schemaPath:
-            declaration.schemaPath === child.schemaPath
-              ? inputs[0].schemaPath
-              : declaration.schemaPath,
-          gates,
-        };
-        if (DEVELOPMENT) {
-          Object.freeze(binding.order);
-          Object.freeze(gates);
-          Object.freeze(binding);
-        }
-        declarations.push(binding);
-      }
-      const entry = {
-        name,
-        node: child,
-        hostPath: node.path,
-        declarations,
-      };
-      if (DEVELOPMENT) {
-        Object.freeze(declarations);
-        Object.freeze(entry);
-      }
-      entries.push(entry);
-    }
+    appendChildEntries(node, name, path, inputs[0].schemaPath, children);
   }
   if (itemInputs.length)
     node.item = build(context, itemInputs, `${node.path}/*`)[0];
