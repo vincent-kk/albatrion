@@ -17,11 +17,12 @@ import { effectiveType } from '../commit/effectiveType';
  * Complete derivation, transition, rollback, and one commit after calculation.
  * @param context - Calculated call with any host budget failure
  * @param scratch - This call's explicit raw baseline container
+ * @param scalarWrite - Caller-proven live scalar with unchanged type and no derive capability
  * @returns Nothing; committed records and runtime hold the result
  * @throws Deferred failures after commit when no dispatch chain owns them
  */
 export const finishSettlement = <Self extends SchemaNodeRecord<Self>>(
-  context: SettlementContext<Self>, scratch: SettlementScratch<Self>,
+  context: SettlementContext<Self>, scratch: SettlementScratch<Self>, scalarWrite = false,
 ): void => {
   for (const path of context.changedRaw) scratch.explicitRaw.add(path);
   if (context.hostWheelExceeded && !context.exceededBudget) {
@@ -31,13 +32,13 @@ export const finishSettlement = <Self extends SchemaNodeRecord<Self>>(
     context.exceededBudget = 'hostWheel';
     context.iterations = context.hostWheelExceeded;
   }
-  if (!context.exceededBudget && context.root.runtime.blueprint.capabilities.hasDerive)
+  if (!scalarWrite && !context.exceededBudget && context.root.runtime.blueprint.capabilities.hasDerive)
     runDeriveRounds(context);
   if (!context.exceededBudget && (context.hasGates ||
     context.entered.size > 0 || context.exited.size > 0 ||
     context.writtenInputs.size > 1 || context.writtenInputs.size === 1 &&
       (!context.writtenInputs.has(context.target) ||
-        effectiveType(context.target) !== context.target.schemaType)))
+        !scalarWrite && effectiveType(context.target) !== context.target.schemaType)))
     transitionSettlement(context);
   if (context.exceededBudget) {
     restoreSourceB(context, scratch.explicitRaw);

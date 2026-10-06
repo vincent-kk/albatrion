@@ -40,12 +40,27 @@ export const writeSchemaNode = <Self extends SchemaNodeRecord<Self>>(
   source: SchemaNodeWriteKind = kind,
   writeOrigins?: SettlementContext<Self>['writeOrigins'],
 ): void => {
-  if (source === 'input' && (node.disposed || node.rootNode.disposed)) return;
-  assertSchemaNodeWritable(node);
-  if (node.behavior.type === 'virtual' &&
-    kind !== 'load' && kind !== 'automatic')
-    assertVirtualWriteShape(node, input);
-  if (node.detached) {
+  const root = node.rootNode;
+  if (source === 'input' && (node.disposed || root.disposed)) return;
+  const schema = node.schema.schema;
+  const inputType = typeof input;
+  const scalarWrite = node.parent !== null && !node.detached &&
+    !node.disposed && !root.disposed &&
+    root.runtime.blueprint.capabilities.branchless &&
+    !root.runtime.blueprint.capabilities.hasDerive &&
+    root.runtime.latentRaw.size === 0 &&
+    (kind === 'input' || kind === 'callerReplace' || kind === 'callerPartial') &&
+    (inputType === 'string' || inputType === 'boolean' || inputType === 'number') &&
+    node.schemaType === inputType && typeof node.raw === inputType &&
+    (inputType !== 'number' || Number.isFinite(input) && Number.isFinite(node.raw)) &&
+    typeof schema === 'object' && schema !== null && schema.type === node.schemaType;
+  if (!scalarWrite) {
+    assertSchemaNodeWritable(node);
+    if (node.behavior.type === 'virtual' &&
+      kind !== 'load' && kind !== 'automatic')
+      assertVirtualWriteShape(node, input);
+  }
+  if (!scalarWrite && node.detached) {
     if (hasLivePathKind(node)) return;
     const whole = kind !== 'callerPartial' || !isPlain(input) ||
       node.behavior.strategy !== 'branch';
@@ -56,8 +71,8 @@ export const writeSchemaNode = <Self extends SchemaNodeRecord<Self>>(
       whole, node.parent?.blueprintNode.childEntries ?? []);
     return;
   }
-  const scratch = getSettlementScratch(node.rootNode.runtime);
-  const replaces = kind === 'callerReplace' ||
+  const scratch = getSettlementScratch(root.runtime);
+  const replaces = scalarWrite ? kind !== 'input' : kind === 'callerReplace' ||
     kind === 'input' && node.behavior.strategy === 'branch' ||
     (kind === 'callerPartial' && (input === null || typeof input !== 'object' ||
       isArray(input) || node.behavior.strategy !== 'branch'));
@@ -66,15 +81,16 @@ export const writeSchemaNode = <Self extends SchemaNodeRecord<Self>>(
   context.writeOrigins = writeOrigins;
   try {
     if (context.hasGates) getGateRegistry(context.root.runtime).register(context.root);
-    if (replaces || kind === 'load')
+    if (!scalarWrite && (replaces || kind === 'load'))
       pruneLatentRaw(node.runtime, node.path, undefined, context);
     markWrite(node, input, context);
     if (kind !== 'load' && kind !== 'automatic')
       markWrongKindAncestors(node, context);
     registerRecalculation(context);
     computeNode(context.root, context);
-    releaseWrongKindHosts(context);
-    finishSettlement(context, scratch);
+    if (!scalarWrite || context.wrongKindHosts.size > 0)
+      releaseWrongKindHosts(context);
+    finishSettlement(context, scratch, scalarWrite);
   } finally {
     releaseSettlementScratch(scratch);
   }
