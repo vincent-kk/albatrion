@@ -1,0 +1,13 @@
+{
+  "stage": "4-first-delivery",
+  "name": "oneOf-40",
+  "mode": "first",
+  "runs": 9,
+  "base": "base-4",
+  "candidate": "candidate-4",
+  "status": 0,
+  "signal": null,
+  "started": 1791311458473,
+  "ended": 1791311475858,
+  "elapsedMs": 17385
+}

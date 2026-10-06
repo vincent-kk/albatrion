@@ -1,0 +1,13 @@
+{
+  "stage": "2-selection",
+  "name": "flat-500",
+  "mode": "mount",
+  "runs": 9,
+  "base": "base-2",
+  "candidate": "candidate-2",
+  "status": 0,
+  "signal": null,
+  "started": 1791310650422,
+  "ended": 1791310664291,
+  "elapsedMs": 13869
+}

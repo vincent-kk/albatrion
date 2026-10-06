@@ -1,0 +1,13 @@
+{
+  "label": "final-lint",
+  "kind": "lint",
+  "command": "npx --no-install eslint src/**/*.{ts,tsx}",
+  "exitCode": 0,
+  "signal": null,
+  "started": 1791311903038,
+  "ended": 1791311908531,
+  "elapsedMs": 5493,
+  "summary": [
+    "(Use `node --trace-deprecation ...` to show where the warning was created)"
+  ]
+}

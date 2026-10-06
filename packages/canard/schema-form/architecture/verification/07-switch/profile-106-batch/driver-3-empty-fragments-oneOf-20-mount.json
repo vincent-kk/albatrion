@@ -1,0 +1,13 @@
+{
+  "stage": "3-empty-fragments",
+  "name": "oneOf-20",
+  "mode": "mount",
+  "runs": 9,
+  "base": "base-3",
+  "candidate": "candidate-3",
+  "status": 0,
+  "signal": null,
+  "started": 1791310972478,
+  "ended": 1791310983798,
+  "elapsedMs": 11320
+}

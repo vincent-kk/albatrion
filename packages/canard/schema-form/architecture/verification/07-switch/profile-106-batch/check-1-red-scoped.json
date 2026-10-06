@@ -1,0 +1,21 @@
+{
+  "label": "1-red-scoped",
+  "kind": "unit",
+  "command": "npx --no-install vitest run --reporter=dot --configLoader runner --cache false --maxWorkers=1 --no-file-parallelism --project unit src/core/settle/__tests__/settle.gate-read-counts.test.ts",
+  "exitCode": 1,
+  "signal": null,
+  "started": 1791310245401,
+  "ended": 1791310248428,
+  "elapsedMs": 3027,
+  "summary": [
+    "106COUNT gate-read map=12 projected=24 evaluate=12",
+    " Test Files  1 failed (1)",
+    "      Tests  1 failed (1)",
+    "   Duration  1.33s (transform 693ms, setup 0ms, collect 1.14s, tests 21ms, environment 0ms, prepare 37ms)",
+    "(Use `node --trace-deprecation ...` to show where the warning was created)",
+    "⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯",
+    " FAIL  |unit| src/core/settle/__tests__/settle.gate-read-counts.test.ts > gate dependency read work > reads every dependency in order without invoking its array map",
+    "AssertionError: expected 12 to be +0 // Object.is equality",
+    "     47|     console.log(`106COUNT gate-read map=${mapCalls} projected=${order.…"
+  ]
+}

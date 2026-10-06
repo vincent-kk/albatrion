@@ -1,0 +1,13 @@
+{
+  "stage": "AA",
+  "name": "sample-0",
+  "mode": "mount",
+  "runs": 9,
+  "base": "head",
+  "candidate": "control",
+  "status": 0,
+  "signal": null,
+  "started": 1791310023868,
+  "ended": 1791310030121,
+  "elapsedMs": 6253
+}

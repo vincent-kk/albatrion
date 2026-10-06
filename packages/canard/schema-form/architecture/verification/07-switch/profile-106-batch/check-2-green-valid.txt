@@ -1,0 +1,23 @@
+│ ┌────────────────────────────────────────────────────────────────────────────┐
+│ │  Info: Found a setup file with "setProjectAnnotations".                    │
+│ │  Skipping automatic provisioning of preview annotations to avoid           │
+│ │  conflicts. Since Storybook 10.3, "@storybook/addon-vitest" applies these  │
+│ │   automatically.                                                           │
+│ │  You can safely remove the "setProjectAnnotations" call from your setup    │
+│ │  file, or remove the file entirely if you don't have custom code there.    │
+│ └────────────────────────────────────────────────────────────────────────────┘
+
+ RUN  v3.2.6 /Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/packages/canard/schema-form
+
+·····································stdout | src/core/settle/__tests__/settle.single-selection-counts.test.ts > single declaration selection work > publishes one immutable ID list across successful gated selections
+106COUNT single-selection lists=1 publications=1 evaluate=8
+
+···············
+
+ Test Files  7 passed (7)
+      Tests  52 passed (52)
+   Start at  03:16:42
+   Duration  3.75s (transform 788ms, setup 0ms, collect 2.23s, tests 419ms, environment 1ms, prepare 243ms)
+
+(node:29730) [DEP0205] DeprecationWarning: `module.register()` is deprecated. Use `module.registerHooks()` instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)

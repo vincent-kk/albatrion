@@ -1,0 +1,23 @@
+│ ┌────────────────────────────────────────────────────────────────────────────┐
+│ │  Info: Found a setup file with "setProjectAnnotations".                    │
+│ │  Skipping automatic provisioning of preview annotations to avoid           │
+│ │  conflicts. Since Storybook 10.3, "@storybook/addon-vitest" applies these  │
+│ │   automatically.                                                           │
+│ │  You can safely remove the "setProjectAnnotations" call from your setup    │
+│ │  file, or remove the file entirely if you don't have custom code there.    │
+│ └────────────────────────────────────────────────────────────────────────────┘
+
+ RUN  v3.2.6 /Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/packages/canard/schema-form
+
+···············stdout | src/core/blueprint/__tests__/blueprint.owned-inline-fragment-work.test.ts > empty fragment work > keeps the plain declaration and fragment without checking keyword arrays
+106COUNT empty-fragment keyword-array-check=0
+
+·
+
+ Test Files  6 passed (6)
+      Tests  16 passed (16)
+   Start at  03:38:10
+   Duration  4.30s (transform 1.04s, setup 0ms, collect 2.24s, tests 218ms, environment 886ms, prepare 211ms)
+
+(node:44940) [DEP0205] DeprecationWarning: `module.register()` is deprecated. Use `module.registerHooks()` instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)

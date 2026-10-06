@@ -1,0 +1,21 @@
+{
+  "label": "3-red",
+  "kind": "unit",
+  "command": "npx --no-install vitest run --reporter=dot --configLoader runner --cache false --maxWorkers=1 --no-file-parallelism --project unit src/core/blueprint/__tests__/blueprint.owned-inline-fragment-work.test.ts",
+  "exitCode": 1,
+  "signal": null,
+  "started": 1791310872517,
+  "ended": 1791310874906,
+  "elapsedMs": 2389,
+  "summary": [
+    "106COUNT empty-fragment keyword-array-check=3",
+    " Test Files  1 failed (1)",
+    "      Tests  1 failed (1)",
+    "   Duration  685ms (transform 292ms, setup 0ms, collect 511ms, tests 8ms, environment 0ms, prepare 36ms)",
+    "(Use `node --trace-deprecation ...` to show where the warning was created)",
+    "⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯",
+    " FAIL  |unit| src/core/blueprint/__tests__/blueprint.owned-inline-fragment-work.test.ts > empty fragment work > keeps the plain declaration and fragment without checking keyword arrays",
+    "AssertionError: expected 3 to be +0 // Object.is equality",
+    "     30|     console.log(`106COUNT empty-fragment keyword-array-check=${work.ke…"
+  ]
+}

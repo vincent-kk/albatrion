@@ -1,0 +1,20 @@
+{
+  "label": "2-green",
+  "kind": "unit",
+  "command": "npx --no-install vitest run --reporter=dot --configLoader runner --cache false --maxWorkers=1 --no-file-parallelism --project unit src/core/settle/__tests__/settle.single-selection-counts.test.ts src/core/settle/__tests__/settle.gate-read-counts.test.ts src/core/settle/__tests__/settle.gate-selection.test.ts src/core/settle/__tests__/settle.gate-selection-order.test.ts src/core/settle/__tests__/settle.gate-selection-counts.test.ts src/core/settle/__tests__/settle.gate-failures.test.ts src/core/settle/__tests__/settle.gate-result-reuse.test.ts src/core/settle/__tests__/static-first-load-differential.test.ts",
+  "exitCode": 1,
+  "signal": null,
+  "started": 1791310567421,
+  "ended": 1791310573294,
+  "elapsedMs": 5873,
+  "summary": [
+    "106COUNT gate-read map=0 projected=24 evaluate=12",
+    " Test Files  1 failed | 7 passed (8)",
+    "      Tests  1 failed | 52 passed (53)",
+    "   Duration  4.18s (transform 827ms, setup 0ms, collect 2.47s, tests 439ms, environment 1ms, prepare 282ms)",
+    "(Use `node --trace-deprecation ...` to show where the warning was created)",
+    "⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯",
+    " FAIL  |unit| src/core/settle/__tests__/settle.single-selection-counts.test.ts > single declaration selection work > publishes one immutable ID list across successful gated selections",
+    "AssertionError: expected 1 to be greater than 1"
+  ]
+}

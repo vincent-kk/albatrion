@@ -1,0 +1,20 @@
+{
+  "label": "1-red",
+  "kind": "unit",
+  "command": "npx --no-install vitest run --reporter=dot --configLoader runner --cache false --maxWorkers=1 --no-file-parallelism --project unit src/core/settle/__tests__/settle.gate-read-counts.test.ts",
+  "exitCode": 1,
+  "signal": null,
+  "started": 1791310191997,
+  "ended": 1791310195055,
+  "elapsedMs": 3058,
+  "summary": [
+    " Test Files  1 failed (1)",
+    "      Tests  1 failed (1)",
+    "   Duration  1.34s (transform 703ms, setup 0ms, collect 1.16s, tests 9ms, environment 0ms, prepare 39ms)",
+    "(Use `node --trace-deprecation ...` to show where the warning was created)",
+    "⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯",
+    " FAIL  |unit| src/core/settle/__tests__/settle.gate-read-counts.test.ts > gate dependency read work > reads every dependency in order without invoking its array map",
+    "JSONSchemaError: CREATE_DYNAMIC_FUNCTION at #/anyOf/0/controls/active; check the authored schema",
+    "     20|   options?.collect?.({ code, level: 'error', schemaPath, details });"
+  ]
+}

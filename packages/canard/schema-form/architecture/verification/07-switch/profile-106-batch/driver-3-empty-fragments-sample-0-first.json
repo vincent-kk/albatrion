@@ -1,0 +1,13 @@
+{
+  "stage": "3-empty-fragments",
+  "name": "sample-0",
+  "mode": "first",
+  "runs": 9,
+  "base": "base-3",
+  "candidate": "candidate-3",
+  "status": 0,
+  "signal": null,
+  "started": 1791311042808,
+  "ended": 1791311049300,
+  "elapsedMs": 6492
+}

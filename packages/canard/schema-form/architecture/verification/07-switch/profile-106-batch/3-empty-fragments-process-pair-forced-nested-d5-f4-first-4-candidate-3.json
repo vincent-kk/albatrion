@@ -1,0 +1,17 @@
+{
+  "HEAD": "552a975abd8afa6ef914e218832bd8bfddf03d5b",
+  "command": "pair",
+  "args": [
+    "forced",
+    "nested-d5-f4",
+    "first",
+    "4",
+    "candidate-3"
+  ],
+  "status": 0,
+  "signal": null,
+  "started": 1791311066286,
+  "ended": 1791311069673,
+  "elapsedMs": 3387,
+  "driverSha256": "8159f57ca34c35d843c7fa7dc5710a9af10ff325e276a9d954129c8cb697b4f4"
+}

@@ -1,0 +1,45 @@
+│ ┌────────────────────────────────────────────────────────────────────────────┐
+│ │  Info: Found a setup file with "setProjectAnnotations".                    │
+│ │  Skipping automatic provisioning of preview annotations to avoid           │
+│ │  conflicts. Since Storybook 10.3, "@storybook/addon-vitest" applies these  │
+│ │   automatically.                                                           │
+│ │  You can safely remove the "setProjectAnnotations" call from your setup    │
+│ │  file, or remove the file entirely if you don't have custom code there.    │
+│ └────────────────────────────────────────────────────────────────────────────┘
+
+ RUN  v3.2.6 /Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/packages/canard/schema-form
+
+stdout | src/core/record/utils/__tests__/SchemaNodeRevisionLedger.first-value-counts.test.ts > first value delivery counter work > initializes private counters without per-bit index calculations
+106COUNT first-value bit-index=16 ledgers=8
+
+x
+
+ Test Files  1 failed (1)
+      Tests  1 failed (1)
+   Start at  03:26:29
+   Duration  188ms (transform 13ms, setup 0ms, collect 18ms, tests 7ms, environment 0ms, prepare 36ms)
+
+(node:37213) [DEP0205] DeprecationWarning: `module.register()` is deprecated. Use `module.registerHooks()` instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  |unit| src/core/record/utils/__tests__/SchemaNodeRevisionLedger.first-value-counts.test.ts > first value delivery counter work > initializes private counters without per-bit index calculations
+AssertionError: expected 16 to be +0 // Object.is equality
+
+- Expected
++ Received
+
+- 0
++ 16
+
+ ❯ src/core/record/utils/__tests__/SchemaNodeRevisionLedger.first-value-counts.test.ts:38:27
+     36|     expect(previous[SchemaNodeEventType.UpdateValue]).toBe(1);
+     37|     console.log(`106COUNT first-value bit-index=${calculations!} ledge…
+     38|     expect(calculations!).toBe(0);
+       |                           ^
+     39|   });
+     40| });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+

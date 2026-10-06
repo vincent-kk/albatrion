@@ -1,0 +1,215 @@
+{
+  "stage": "3-empty-fragments",
+  "adopted": true,
+  "improved": [
+    "nested-d5-f4/mount",
+    "flat-500/mount",
+    "oneOf-20/mount",
+    "sample-0/mount",
+    "sample-0/later",
+    "nested-d5-f4/later"
+  ],
+  "regressions": [],
+  "rows": [
+    {
+      "name": "nested-d5-f4",
+      "mode": "mount",
+      "pairs": 909,
+      "pooledMedianMs": 0.8827499999999873,
+      "ci99Ms": [
+        0.8380839999999807,
+        0.919083999999657
+      ],
+      "baseMedianMs": 7.47595900000033,
+      "candidateMedianMs": 6.5709589999999025,
+      "aaMedianMs": 0.059416000000055647,
+      "floorMs": 0.03737979500000165,
+      "regressionThresholdMs": 0.059416000000055647,
+      "improved": true,
+      "regression": false,
+      "verdict": "개선"
+    },
+    {
+      "name": "flat-500",
+      "mode": "mount",
+      "pairs": 909,
+      "pooledMedianMs": 0.24641700000006495,
+      "ci99Ms": [
+        0.23808299999996052,
+        0.25604199999997945
+      ],
+      "baseMedianMs": 2.5018319999999505,
+      "candidateMedianMs": 2.248623999999907,
+      "aaMedianMs": -0.002040999999962878,
+      "floorMs": 0.012509159999999754,
+      "regressionThresholdMs": 0.012509159999999754,
+      "improved": true,
+      "regression": false,
+      "verdict": "개선"
+    },
+    {
+      "name": "oneOf-20",
+      "mode": "mount",
+      "pairs": 909,
+      "pooledMedianMs": 0.05345800000009149,
+      "ci99Ms": [
+        0.04891699999996035,
+        0.059501000000068416
+      ],
+      "baseMedianMs": 1.9523329999998396,
+      "candidateMedianMs": 1.8982509999999024,
+      "aaMedianMs": -0.0016669999999976426,
+      "floorMs": 0.009761664999999198,
+      "regressionThresholdMs": 0.009761664999999198,
+      "improved": true,
+      "regression": false,
+      "verdict": "개선"
+    },
+    {
+      "name": "sample-0",
+      "mode": "mount",
+      "pairs": 909,
+      "pooledMedianMs": 0.003376000000002932,
+      "ci99Ms": [
+        0.002250000000003638,
+        0.004457999999999629
+      ],
+      "baseMedianMs": 0.10824999999995555,
+      "candidateMedianMs": 0.1051660000000112,
+      "aaMedianMs": -0.00033400000006622577,
+      "floorMs": 0.0005412499999997778,
+      "regressionThresholdMs": 0.0005412499999997778,
+      "improved": true,
+      "regression": false,
+      "verdict": "개선"
+    },
+    {
+      "name": "sample-0",
+      "mode": "first",
+      "pairs": 909,
+      "pooledMedianMs": -0.00008300000001781882,
+      "ci99Ms": [
+        -0.0007090000000005148,
+        0.0006240000000161672
+      ],
+      "baseMedianMs": 0.08349999999997237,
+      "candidateMedianMs": 0.08387499999989245,
+      "aaMedianMs": 0.00016700000003311288,
+      "floorMs": 0.0004174999999998619,
+      "regressionThresholdMs": 0.0004174999999998619,
+      "improved": false,
+      "regression": false,
+      "verdict": "조건 미충족"
+    },
+    {
+      "name": "sample-0",
+      "mode": "later",
+      "pairs": 909,
+      "pooledMedianMs": 0.0008329999999432403,
+      "ci99Ms": [
+        0.00016699999997626946,
+        0.0017920000000231084
+      ],
+      "baseMedianMs": 0.08029300000009698,
+      "candidateMedianMs": 0.07920899999999165,
+      "aaMedianMs": 0.00012499999996862243,
+      "floorMs": 0.0004014650000004849,
+      "regressionThresholdMs": 0.0004014650000004849,
+      "improved": true,
+      "regression": false,
+      "verdict": "개선"
+    },
+    {
+      "name": "nested-d5-f4",
+      "mode": "first",
+      "pairs": 909,
+      "pooledMedianMs": 0.0532500000000482,
+      "ci99Ms": [
+        -0.06962399999974878,
+        0.07470800000010058
+      ],
+      "baseMedianMs": 0.18791700000018352,
+      "candidateMedianMs": 0.17225000000011903,
+      "aaMedianMs": 0.02787399999988338,
+      "floorMs": 0.0009395850000009176,
+      "regressionThresholdMs": 0.02787399999988338,
+      "improved": false,
+      "regression": false,
+      "verdict": "조건 미충족"
+    },
+    {
+      "name": "nested-d5-f4",
+      "mode": "later",
+      "pairs": 909,
+      "pooledMedianMs": 0.0011680000000069413,
+      "ci99Ms": [
+        0.00020800000004328467,
+        0.0018329999999764368
+      ],
+      "baseMedianMs": 0.10820799999987685,
+      "candidateMedianMs": 0.10737500000016098,
+      "aaMedianMs": 0.001040999999986525,
+      "floorMs": 0.0005410399999993843,
+      "regressionThresholdMs": 0.001040999999986525,
+      "improved": true,
+      "regression": false,
+      "verdict": "개선"
+    },
+    {
+      "name": "oneOf-40",
+      "mode": "first",
+      "pairs": 909,
+      "pooledMedianMs": 0.0020839999997406267,
+      "ci99Ms": [
+        -0.0029159999999137654,
+        0.0061670000000049185
+      ],
+      "baseMedianMs": 1.4061249999999461,
+      "candidateMedianMs": 1.4047500000000213,
+      "aaMedianMs": 0.001040999999986525,
+      "floorMs": 0.007030624999999731,
+      "regressionThresholdMs": 0.007030624999999731,
+      "improved": false,
+      "regression": false,
+      "verdict": "조건 미충족"
+    },
+    {
+      "name": "oneOf-40",
+      "mode": "later",
+      "pairs": 909,
+      "pooledMedianMs": -0.0024160000000392756,
+      "ci99Ms": [
+        -0.005540999999993801,
+        0.0014169999999467109
+      ],
+      "baseMedianMs": 0.9091249999999036,
+      "candidateMedianMs": 0.9124590000000126,
+      "aaMedianMs": -0.005583000000001448,
+      "floorMs": 0.004545624999999518,
+      "regressionThresholdMs": 0.005583000000001448,
+      "improved": false,
+      "regression": false,
+      "verdict": "조건 미충족"
+    }
+  ],
+  "protocol": {
+    "runs": 9,
+    "warmup": 20,
+    "samples": 101,
+    "pairs": 909,
+    "bootstrapTrials": 1999,
+    "seed": 101,
+    "ci99Indices": [
+      9,
+      1989
+    ]
+  },
+  "audit": {
+    "workers": 90,
+    "sequential": true,
+    "naturalExit": true,
+    "maximumWorkerMs": 3526,
+    "started": 1791310929778,
+    "ended": 1791311129833
+  }
+}

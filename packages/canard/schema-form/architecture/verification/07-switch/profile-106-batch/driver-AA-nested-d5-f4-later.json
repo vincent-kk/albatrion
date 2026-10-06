@@ -1,0 +1,13 @@
+{
+  "stage": "AA",
+  "name": "nested-d5-f4",
+  "mode": "later",
+  "runs": 9,
+  "base": "head",
+  "candidate": "control",
+  "status": 0,
+  "signal": null,
+  "started": 1791310098110,
+  "ended": 1791310108156,
+  "elapsedMs": 10046
+}

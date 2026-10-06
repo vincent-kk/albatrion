@@ -1,0 +1,39 @@
+│ ┌────────────────────────────────────────────────────────────────────────────┐
+│ │  Info: Found a setup file with "setProjectAnnotations".                    │
+│ │  Skipping automatic provisioning of preview annotations to avoid           │
+│ │  conflicts. Since Storybook 10.3, "@storybook/addon-vitest" applies these  │
+│ │   automatically.                                                           │
+│ │  You can safely remove the "setProjectAnnotations" call from your setup    │
+│ │  file, or remove the file entirely if you don't have custom code there.    │
+│ └────────────────────────────────────────────────────────────────────────────┘
+
+ RUN  v3.2.6 /Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/packages/canard/schema-form
+
+x
+
+ Test Files  1 failed (1)
+      Tests  1 failed (1)
+   Start at  03:09:53
+   Duration  1.34s (transform 703ms, setup 0ms, collect 1.16s, tests 9ms, environment 0ms, prepare 39ms)
+
+(node:24449) [DEP0205] DeprecationWarning: `module.register()` is deprecated. Use `module.registerHooks()` instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  |unit| src/core/settle/__tests__/settle.gate-read-counts.test.ts > gate dependency read work > reads every dependency in order without invoking its array map
+JSONSchemaError: CREATE_DYNAMIC_FUNCTION at #/anyOf/0/controls/active; check the authored schema
+ ❯ throwBlueprintError src/core/blueprint/utils/diagnostics/throwBlueprintError.ts:21:9
+     19| ): never => {
+     20|   options?.collect?.({ code, level: 'error', schemaPath, details });
+     21|   throw new JSONSchemaError(
+       |         ^
+     22|     code,
+     23|     `${code} at ${schemaPath || '#'}; ${details.guidance ?? 'check the…
+ ❯ compileBlueprintExpressions src/core/blueprint/utils/analyze/compileBlueprintExpressions.ts:87:13
+ ❯ blueprint src/core/blueprint/blueprint.ts:77:9
+ ❯ createTestTree src/core/settle/__tests__/fixtures/createTestTree.ts:23:20
+ ❯ src/core/settle/__tests__/settle.gate-read-counts.test.ts:11:33
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+

@@ -1,0 +1,21 @@
+{
+  "label": "2-red-valid",
+  "kind": "unit",
+  "command": "npx --no-install vitest run --reporter=dot --configLoader runner --cache false --maxWorkers=1 --no-file-parallelism --project unit src/core/settle/__tests__/settle.single-selection-counts.test.ts",
+  "exitCode": 1,
+  "signal": null,
+  "started": 1791310538317,
+  "ended": 1791310541385,
+  "elapsedMs": 3068,
+  "summary": [
+    "106COUNT single-selection lists=4 publications=4 evaluate=8",
+    " Test Files  1 failed (1)",
+    "      Tests  1 failed (1)",
+    "   Duration  1.35s (transform 698ms, setup 0ms, collect 1.17s, tests 17ms, environment 0ms, prepare 35ms)",
+    "(Use `node --trace-deprecation ...` to show where the warning was created)",
+    "⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯",
+    " FAIL  |unit| src/core/settle/__tests__/settle.single-selection-counts.test.ts > single declaration selection work > publishes one immutable ID list across successful gated selections",
+    "AssertionError: expected [ [ 3 ], [ 3 ], [ 3 ], [ 3 ] ] to have a length of 1 but got 4",
+    "     41|     console.log(`106COUNT single-selection lists=${unique.length} publ…"
+  ]
+}

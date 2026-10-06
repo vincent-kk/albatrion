@@ -1,0 +1,17 @@
+{
+  "label": "4-green",
+  "kind": "unit",
+  "command": "npx --no-install vitest run --reporter=dot --configLoader runner --cache false --maxWorkers=1 --no-file-parallelism --project unit src/core/record/utils/__tests__/SchemaNodeRevisionLedger.first-value-counts.test.ts src/core/record/utils/__tests__/SchemaNodeRevisionLedger.test.ts src/core/record/utils/__tests__/SchemaNodeRevisionLedger.initial-reads.test.ts src/core/settle/__tests__/static-first-load-differential.test.ts src/core/settle/__tests__/settle.gate-selection.test.ts src/core/dispatch/__tests__",
+  "exitCode": 0,
+  "signal": null,
+  "started": 1791311240033,
+  "ended": 1791311251757,
+  "elapsedMs": 11724,
+  "summary": [
+    "106COUNT first-value bit-index=0 ledgers=8",
+    " Test Files  27 passed (27)",
+    "      Tests  209 passed (209)",
+    "   Duration  10.02s (transform 894ms, setup 0ms, collect 5.18s, tests 655ms, environment 2ms, prepare 944ms)",
+    "(Use `node --trace-deprecation ...` to show where the warning was created)"
+  ]
+}

@@ -1,0 +1,17 @@
+{
+  "HEAD": "552a975abd8afa6ef914e218832bd8bfddf03d5b",
+  "command": "pair",
+  "args": [
+    "forced",
+    "oneOf-40",
+    "later",
+    "4",
+    "candidate-3"
+  ],
+  "status": 0,
+  "signal": null,
+  "started": 1791311124039,
+  "ended": 1791311124945,
+  "elapsedMs": 906,
+  "driverSha256": "8159f57ca34c35d843c7fa7dc5710a9af10ff325e276a9d954129c8cb697b4f4"
+}

@@ -1,0 +1,11 @@
+{
+  "label": "final-typecheck",
+  "kind": "typecheck",
+  "command": "npx --no-install tsc --noEmit --composite false --rootDir . -p tsconfig.json",
+  "exitCode": 0,
+  "signal": null,
+  "started": 1791311894834,
+  "ended": 1791311902965,
+  "elapsedMs": 8131,
+  "summary": []
+}

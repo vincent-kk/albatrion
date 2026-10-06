@@ -1,0 +1,21 @@
+{
+  "label": "4-red",
+  "kind": "unit",
+  "command": "npx --no-install vitest run --reporter=dot --configLoader runner --cache false --maxWorkers=1 --no-file-parallelism --project unit src/core/record/utils/__tests__/SchemaNodeRevisionLedger.first-value-counts.test.ts",
+  "exitCode": 1,
+  "signal": null,
+  "started": 1791311187911,
+  "ended": 1791311189800,
+  "elapsedMs": 1889,
+  "summary": [
+    "106COUNT first-value bit-index=16 ledgers=8",
+    " Test Files  1 failed (1)",
+    "      Tests  1 failed (1)",
+    "   Duration  188ms (transform 13ms, setup 0ms, collect 18ms, tests 7ms, environment 0ms, prepare 36ms)",
+    "(Use `node --trace-deprecation ...` to show where the warning was created)",
+    "⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯",
+    " FAIL  |unit| src/core/record/utils/__tests__/SchemaNodeRevisionLedger.first-value-counts.test.ts > first value delivery counter work > initializes private counters without per-bit index calculations",
+    "AssertionError: expected 16 to be +0 // Object.is equality",
+    "     37|     console.log(`106COUNT first-value bit-index=${calculations!} ledge…"
+  ]
+}

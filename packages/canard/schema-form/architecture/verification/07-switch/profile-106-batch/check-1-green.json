@@ -1,0 +1,17 @@
+{
+  "label": "1-green",
+  "kind": "unit",
+  "command": "npx --no-install vitest run --reporter=dot --configLoader runner --cache false --maxWorkers=1 --no-file-parallelism --project unit src/core/settle/__tests__/settle.gate-read-counts.test.ts src/core/settle/__tests__/settle.gate-selection.test.ts src/core/settle/__tests__/settle.gate-selection-order.test.ts src/core/settle/__tests__/settle.gate-selection-counts.test.ts src/core/settle/__tests__/settle.gate-failures.test.ts src/core/settle/__tests__/settle.gate-result-reuse.test.ts src/core/settle/__tests__/static-first-load-differential.test.ts",
+  "exitCode": 0,
+  "signal": null,
+  "started": 1791310265324,
+  "ended": 1791310270846,
+  "elapsedMs": 5522,
+  "summary": [
+    "106COUNT gate-read map=0 projected=24 evaluate=12",
+    " Test Files  7 passed (7)",
+    "      Tests  52 passed (52)",
+    "   Duration  3.81s (transform 801ms, setup 0ms, collect 2.26s, tests 433ms, environment 1ms, prepare 251ms)",
+    "(Use `node --trace-deprecation ...` to show where the warning was created)"
+  ]
+}

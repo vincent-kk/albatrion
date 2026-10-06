@@ -1,0 +1,13 @@
+{
+  "stage": "AA",
+  "name": "oneOf-20",
+  "mode": "mount",
+  "runs": 9,
+  "base": "head",
+  "candidate": "control",
+  "status": 0,
+  "signal": null,
+  "started": 1791310012515,
+  "ended": 1791310023803,
+  "elapsedMs": 11288
+}

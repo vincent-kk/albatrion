@@ -1,0 +1,13 @@
+{
+  "stage": "4-first-delivery",
+  "name": "nested-d5-f4",
+  "mode": "later",
+  "runs": 9,
+  "base": "base-4",
+  "candidate": "candidate-4",
+  "status": 0,
+  "signal": null,
+  "started": 1791311440790,
+  "ended": 1791311450756,
+  "elapsedMs": 9966
+}

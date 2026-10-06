@@ -1,0 +1,45 @@
+│ ┌────────────────────────────────────────────────────────────────────────────┐
+│ │  Info: Found a setup file with "setProjectAnnotations".                    │
+│ │  Skipping automatic provisioning of preview annotations to avoid           │
+│ │  conflicts. Since Storybook 10.3, "@storybook/addon-vitest" applies these  │
+│ │   automatically.                                                           │
+│ │  You can safely remove the "setProjectAnnotations" call from your setup    │
+│ │  file, or remove the file entirely if you don't have custom code there.    │
+│ └────────────────────────────────────────────────────────────────────────────┘
+
+ RUN  v3.2.6 /Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/packages/canard/schema-form
+
+stdout | src/core/settle/__tests__/settle.gate-read-counts.test.ts > gate dependency read work > reads every dependency in order without invoking its array map
+106COUNT gate-read map=12 projected=24 evaluate=12
+
+x
+
+ Test Files  1 failed (1)
+      Tests  1 failed (1)
+   Start at  03:10:46
+   Duration  1.33s (transform 693ms, setup 0ms, collect 1.14s, tests 21ms, environment 0ms, prepare 37ms)
+
+(node:25134) [DEP0205] DeprecationWarning: `module.register()` is deprecated. Use `module.registerHooks()` instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  |unit| src/core/settle/__tests__/settle.gate-read-counts.test.ts > gate dependency read work > reads every dependency in order without invoking its array map
+AssertionError: expected 12 to be +0 // Object.is equality
+
+- Expected
++ Received
+
+- 0
++ 12
+
+ ❯ src/core/settle/__tests__/settle.gate-read-counts.test.ts:48:22
+     46|     expect(gate.mock.calls.length).toBeGreaterThan(1);
+     47|     console.log(`106COUNT gate-read map=${mapCalls} projected=${order.…
+     48|     expect(mapCalls).toBe(0);
+       |                      ^
+     49|   });
+     50| });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+

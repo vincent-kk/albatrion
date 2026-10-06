@@ -1,0 +1,13 @@
+{
+  "stage": "3-empty-fragments",
+  "name": "nested-d5-f4",
+  "mode": "first",
+  "runs": 9,
+  "base": "base-3",
+  "candidate": "candidate-3",
+  "status": 0,
+  "signal": null,
+  "started": 1791311055678,
+  "ended": 1791311086961,
+  "elapsedMs": 31283
+}

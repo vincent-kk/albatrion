@@ -121,6 +121,9 @@ export const collectDeclarations = (
     for (const branchPath of discriminators.keys())
       context.discriminatorBranches.add(branchPath);
   }
+  if (typeof schema.$ref !== 'string' && schema.allOf === undefined &&
+    schema.if === undefined && schema.oneOf === undefined && schema.anyOf === undefined)
+    return result;
   const stack = [...visiting, input.schemaPath];
   if (typeof schema.$ref === 'string') {
     const target = resolveReference(context, schema.$ref, input.schemaPath);
