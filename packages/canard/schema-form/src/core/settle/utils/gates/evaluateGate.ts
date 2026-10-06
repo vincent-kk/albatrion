@@ -108,11 +108,12 @@ export const evaluateGate = <Self extends SchemaNodeRecord<Self>>(
     const expression = blueprint ? getGateExpression(blueprint, gate.schemaPath) :
       undefined;
     if (expression) {
-      const dependencies = expression.dependencies.map((dependency) => {
-        const path = resolveDependencyPath(hostPath, dependency);
-        return path === '@' ? context.root.runtime.context ?? {} :
+      const dependencies = new Array<unknown>(expression.dependencies.length);
+      for (let index = 0; index < expression.dependencies.length; index++) {
+        const path = resolveDependencyPath(hostPath, expression.dependencies[index]);
+        dependencies[index] = path === '@' ? context.root.runtime.context ?? {} :
           readProjectedValue(context, path);
-      });
+      }
       return Boolean(expression.evaluate(dependencies));
     }
     return gate.condition === true;
