@@ -2,12 +2,16 @@ import { isArray } from '@winglet/common-utils/filter';
 import { escapeSegment } from '@winglet/json/pointer';
 
 import type { BlueprintChildEntry, PropertyDeclaration } from '../../type';
+import { copyBlueprintDeclarations } from '../declarations/copyBlueprintDeclarations';
 import { BlueprintErrorCode } from '../diagnostics/constant';
 import { throwBlueprintError } from '../diagnostics/throwBlueprintError';
 import { resolveNodeStrategy } from '../types/resolveNodeStrategy';
 import { collectDeclarations } from './collectDeclarations';
 import { readSchemaObject } from './readSchemaObject';
 import type { AnalysisContext, MutableNode } from './type';
+
+/** Virtual bindings own their containers; authored fields remain borrowed inputs. */
+const DEVELOPMENT = process.env.NODE_ENV !== 'production';
 
 /**
  * Bind virtual tuples to real sibling templates without rewriting schema keywords.
@@ -93,10 +97,25 @@ export const populateVirtualNodes = (
       );
       if (group) group.declarations.push(...declarations);
       else
-        groups.set(name, { fields: Object.freeze([...fields]), declarations });
+        groups.set(name, {
+          fields: DEVELOPMENT ? Object.freeze([...fields]) : [...fields],
+          declarations,
+        });
     }
   }
   for (const [name, group] of groups) {
+    const childEntries: BlueprintChildEntry[] = [];
+    for (let field = 0; field < group.fields.length; field++) {
+      for (let index = 0; index < host.childEntries.length; index++) {
+        const edge = host.childEntries[index];
+        if (edge.name !== group.fields[field]) continue;
+        const copy = {
+          ...edge,
+          declarations: copyBlueprintDeclarations(edge.declarations),
+        };
+        childEntries.push(DEVELOPMENT ? Object.freeze(copy) : copy);
+      }
+    }
     const node: MutableNode = {
       id: context.nodes.length,
       path: `${host.path}/${escapeSegment(name)}`,
@@ -105,20 +124,21 @@ export const populateVirtualNodes = (
       schemaType: 'virtual',
       nullable: false,
       strategy: resolveNodeStrategy(context, 'virtual', group.declarations),
-      declarations: Object.freeze(group.declarations),
-      childEntries: group.fields.flatMap((field) =>
-        host.childEntries.filter((edge) => edge.name === field),
-      ),
+      declarations: DEVELOPMENT
+        ? Object.freeze(group.declarations)
+        : group.declarations,
+      childEntries,
       fields: group.fields,
     };
     context.nodes.push(node);
+    const entry = {
+      name,
+      node,
+      declarations: copyBlueprintDeclarations(node.declarations),
+      hostPath: host.path,
+    };
     (host.childEntries as BlueprintChildEntry[]).push(
-      Object.freeze({
-        name,
-        node,
-        declarations: node.declarations,
-        hostPath: host.path,
-      }),
+      DEVELOPMENT ? Object.freeze(entry) : entry,
     );
   }
 };

@@ -9,6 +9,9 @@ import type {
 import { readSchemaObject } from '../analyze/readSchemaObject';
 import { BlueprintWarningCode } from './constant';
 
+/** Warning memberships follow the diagnostic envelope's development policy. */
+const DEVELOPMENT = process.env.NODE_ENV !== 'production';
+
 /**
  * Find ignored form groups below a terminal without following reference targets.
  * @param node - Terminal node whose authored contributions are inspected
@@ -109,8 +112,8 @@ export const collectInlineTerminalWarnings = (
       level: 'warning',
       schemaPath: node.schemaPath,
       details: {
-        keys: Object.freeze(keys.sort()),
-        paths: Object.freeze(paths.sort()),
+        keys: DEVELOPMENT ? Object.freeze(keys.sort()) : keys.sort(),
+        paths: DEVELOPMENT ? Object.freeze(paths.sort()) : paths.sort(),
       },
     });
 };

@@ -9,6 +9,9 @@ import { readSchemaObject } from '../analyze/readSchemaObject';
 import { collectInlineTerminalWarnings } from './collectInlineTerminalWarnings';
 import { BlueprintWarningCode } from './constant';
 
+/** Diagnostics are internal records protected only in development. */
+const DEVELOPMENT = process.env.NODE_ENV !== 'production';
+
 /**
  * Collect advisory records only when a consumer explicitly requests diagnostics.
  * @param blueprint - Completed immutable graph retaining original declarations
@@ -25,7 +28,7 @@ export const collectBlueprintWarnings = (
     const key = `${diagnostic.code}:${diagnostic.schemaPath}:${diagnostic.details.keyword ?? ''}`;
     if (seen.has(key)) return;
     seen.add(key);
-    collect(Object.freeze(diagnostic));
+    collect(DEVELOPMENT ? Object.freeze(diagnostic) : diagnostic);
   };
   for (const node of blueprint.nodes) {
     if (node.strategy === 'terminal') collectInlineTerminalWarnings(node, emit);

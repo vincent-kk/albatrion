@@ -8,9 +8,14 @@ import { collectGateEvaluationReads } from './collectGateEvaluationReads';
  */
 export const createBlueprintGate = (
   gate: Omit<BlueprintGate, 'evaluationReads'>,
-): BlueprintGate => Object.freeze({
-  ...gate,
-  evaluationReads: gate.kind === 'active'
-    ? collectGateEvaluationReads(gate.condition)
-    : Object.freeze([]),
-});
+): BlueprintGate =>
+  Object.freeze({
+    ...gate,
+    ...(gate.appliesWhen === undefined
+      ? {}
+      : { appliesWhen: Object.freeze([...gate.appliesWhen]) }),
+    evaluationReads:
+      gate.kind === 'active'
+        ? collectGateEvaluationReads(gate.condition)
+        : Object.freeze([]),
+  });

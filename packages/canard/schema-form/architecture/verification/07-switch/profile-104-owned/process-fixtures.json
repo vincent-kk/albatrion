@@ -1,0 +1,11 @@
+{
+  "HEAD": "baf4cacb647ad3de7dbff7c232efddf55b0bc546",
+  "command": "fixtures",
+  "args": [],
+  "status": 0,
+  "signal": null,
+  "started": 1791296023118,
+  "ended": 1791296023157,
+  "elapsedMs": 39,
+  "driverSha256": "c171bb79fefb3d02262c2cacac094ff9bcd52bb273ae5d3327f0850cf564cca6"
+}

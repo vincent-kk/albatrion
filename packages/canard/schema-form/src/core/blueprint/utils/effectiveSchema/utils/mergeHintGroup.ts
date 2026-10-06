@@ -1,6 +1,9 @@
 import { hasOwnProperty } from '@winglet/common-utils/lib';
 import { merge } from '@winglet/common-utils/object';
 
+import { OwnedSchemaValues } from './OwnedSchemaValues';
+import { freezeCreatedHintObjects } from './mergeHintGroup/utils/freezeCreatedHintObjects';
+
 /**
  * Merge a renderer hint group through shared immutable copy-on-write policies.
  * @param earlier - Earlier group or undefined.
@@ -24,6 +27,8 @@ export const mergeHintGroup = (
           Object.entries(later).filter(([key]) => key !== 'virtual'),
         )
       : later;
+  if (source !== later && source && typeof source === 'object')
+    OwnedSchemaValues.add(source);
   if (source === undefined) return earlier;
   if (earlier === undefined) return source;
   if (
@@ -33,10 +38,19 @@ export const mergeHintGroup = (
     typeof source !== 'object'
   )
     return source;
-  return merge(earlier, source, {
+  const result = merge(earlier, source, {
     immutable: true,
     preserveReferences: true,
     arrayStrategy: 'replace',
     isAtomic,
   });
+  if (result !== earlier && result !== source) {
+    freezeCreatedHintObjects(
+      result as Record<string, unknown>,
+      earlier as Record<string, unknown>,
+      source as Record<string, unknown>,
+    );
+    OwnedSchemaValues.add(result);
+  }
+  return result;
 };

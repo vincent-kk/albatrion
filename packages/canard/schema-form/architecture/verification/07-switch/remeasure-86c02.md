@@ -2377,3 +2377,85 @@ nested mount r2는 8.797749 → 9.427875ms, Δ −0.630126ms로 그 실행의 �
 새 측정 파일은 `profile-102-work/` 아래에 있고 최대 파일은 **2,100,384바이트**로 모두 5MB 이하입니다. 번들·소스맵·Vite 캐시는 지정 `/private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles`에만 생성했습니다. production HEAD/control SHA-256은 `4dc91cb793a96b44d1ab9916c2dcb6c2307b803846030f1609366eacca0da827`, 측정 후보는 `349e176e1d0779a15cfb9cbf8665c8a6569b9bec6657b7e4620bb6a2d9fce599`입니다.
 
 재현 도구는 [driver](profile-102-work/production-freeze.mjs), [요약기](profile-102-work/summarize-production-freeze.mjs), [검증기](profile-102-work/verify-production-freeze.mjs)입니다. `--pairs <control|working> <fixture> <mount|first|later> forced`는 3회, steady는 같은 명령의 `steady 1` 및 `steady 4`를 순차 실행하여 6회를 만듭니다. `--development`는 개발 번들·차등·계수를 별도 이름으로 기록하고, `--freeze-counts`는 타이밍 밖에서 동결을 셉니다. 현재 제품 소스는 HEAD로 복원되어 있습니다. 측정 당시 후보는 보존 패치와 외부 번들 SHA로 식별하며, 현재 소스로 `--build working`을 실행하면 HEAD 정책이 생성됩니다.
+
+## 104라운드 owned-inline
+
+**제품 변경을 유지했습니다.** HEAD `baf4cacb647ad3de7dbff7c232efddf55b0bc546`와 현재 제품 소스를 짝 비교한 판정 열에서 nested·flat 마운트와 oneOf-40 첫 업데이트가 세 회 모두 각 회차의 잡음을 넘었습니다. 어느 판정 회차에서도 잡음을 넘는 회귀는 없었습니다. STOP 지점은 없습니다. 앞 절의 복원 결론은 앞선 후보에 대한 기록이며, 이번 결과는 승인된 owned-inline 한 단계에 대한 별도 판정입니다.
+
+[설계](analysis-records-design.md)의 운영 동결 절·종류별 표·공개 값 11종·소속 배열 27행·시험·적용 순서, [검증 기록](analysis-records-design-verifier.md)의 passes 3–5, [103 측정](profile-103-freeze.md)의 owned-inline을 적용했습니다. 편집 결정 103C-01·Q106과 round-102-closing 부록의 Q107을 따랐습니다. [정확한 단계별 파일 목록](profile-104-owned/files.md)에서 1–2의 fixture/실행 환경과 3–4의 제품/정책 시험을 구분했습니다. git 쓰기·설치·버전 변경은 하지 않았습니다.
+
+### 기준 fixture와 정책 검증
+
+제품 변경 전에 59종 × collect 끔/켬의 118개 캡처를 생성하고 개발 및 운영 차등 시험이 HEAD에서 통과하는 것을 확인했습니다. 각 노드의 `mergeEffectiveSchema(node, [])`, 정규화 schema·own key/필드 순서, 선언·fragment·entry graph, root/capabilities, 오류·진단을 담았습니다. fixture의 SHA-256은 `c776022c70bbf36c3e60258108dfcf0b9df6d97b6b518772e47270899004799a`, 크기는 1,659,214바이트이며 구현 뒤에도 수정하지 않았습니다.
+
+production 프로젝트는 package.json의 `test:production` script가 Vitest 설정 로드 전에 NODE_ENV=production을 지정하며 `esbuild: { jsxDev: false }`를 사용합니다. `createRoot`·`flushSync`·microtask 대기로 렌더하고 `act`는 사용하지 않습니다. React element의 개발 `_store` 존재 여부로 실제 운영 React 로드를 단언합니다. lazy inline 입력과 렌더 중 만든 JSX label의 첫 렌더·갱신이 양쪽 모드에서 통과했습니다. 기존 개발 전용 동결 단언은 개발 프로젝트에 남겼습니다.
+
+운영에서는 공개 유효 schema, 생산자가 만든 required/allOf·pattern/exclusive clause·enum·controls·options/presentation 복사본, union/narrowed type 및 공유 gate 내부를 생성·병합 완료 지점에서 보호합니다. hint style 병합이 새로 만든 하위 plain object도 보호하고, 두 입력의 같은 키에서 빌린 객체·작성된 React element·함수는 그대로 둡니다. 일반 기록·거짓 결과 봉투·소속 배열·빈 expressions/dependencies는 개발에서만 동결합니다. EMPTY_INDEX는 공유를 유지합니다.
+
+27행 모두 기록별 소유로 맞췄습니다. 원본/validationOnly/host/item 바인딩의 order·gates, 가상 entry/node, gate.appliesWhen, fragment의 네 membership, expression.dependencies, Blueprint.expressions 원소와 역의존 사전의 ID 목록까지 개발 참조 유일성 시험에 포함했습니다. 59종 외에도 가상·$ref host 재바인딩·children-control·discriminator·지연 slot을 직접 구성했습니다. 같은 노드의 같은 활성 집합 메모 참조와 gate 원소 공유는 유지합니다. 거짓 결과는 노드마다 새 봉투를 만들고 동일 노드의 재조회는 기존 메모를 사용합니다.
+
+정책 시험은 HEAD에서 실패하는 것을 먼저 확인했으며 원인은 배열 별칭·미보호 공개 값·공유 appliesWhen·공유 false 봉투였습니다. 구현 뒤에는 개발/운영 차등·정책·계수·렌더 시험이 모두 통과했습니다. 기존 두 시험의 empty/false 공유 기대만 새 계약에 맞췄고 기존 corpus 기대값은 바꾸지 않았습니다.
+
+### 속도·메모리 비용
+
+| 변경 묶음 | 속도 비용 | 메모리 비용 |
+| --- | --- | --- |
+| 수집·validationOnly·host/virtual/item 바인딩의 소속 배열 | classic for/while로 복사 원소 수에 비례합니다. 개발에서만 새 소속 배열·기록의 동결 비용을 냅니다. | 기록마다 실제 배열을 소유합니다. 고정 폼의 membership 추가 생성 수는 nested 4,096개, flat 1,504개, oneOf-20 228개, sample-0 10개입니다. 가상·지연·appliesWhen의 추가 복사본은 해당 기록이 있을 때만 생깁니다. |
+| 공개 schema·배열·controls·hint 및 새 plain object | 고정 공개 필드 7개, 생산된 clause와 새 hint 객체의 키 수에 비례합니다. 작성된 그래프를 완료 후 순회하지 않습니다. | 새 공개 필드·노드 shape·메모 키를 추가하지 않습니다. 약한 소유권 색인 항목은 공개 값 동결 시 제거합니다. hint 병합 자체의 기존 쓰기 시 복사 결과를 보호합니다. |
+| 공유 gate와 내부 자료 | 생성 시 appliesWhen 복사와 내부의 얕은 동결 비용을 양쪽 모드에서 냅니다. | gate 원소는 빌리고 appliesWhen 목록은 gate마다 소유합니다. 평가 식과 authored condition을 복제하지 않습니다. |
+| ordinary record·diagnostic·false 봉투·빈 Blueprint 자료 | 운영의 내부 동결 및 완료 보호 순회를 제거합니다. false 봉투와 빈 자료 생성은 O(1)입니다. | false 결과마다 소유 봉투 하나, 기능 없는 Blueprint마다 빈 expressions 배열과 null-prototype dependencies 사전 하나를 보유합니다. diagnostic의 기존 배열 생성량은 그대로입니다. |
+
+위 생성 수는 설계의 JS 객체/배열 구조 계수이며 heap 바이트를 재측정한 값은 아닙니다. 새 scratch를 전체 공개 그래프에 보관하지 않습니다. 운영 번들은 HEAD 516,451 → 후보 524,039바이트로 7,588바이트 늘었습니다(외부 의존성·비축소 진단 번들). 종단 속도는 아래 판정 열로 판단했습니다.
+
+### 노드당 동결 계수
+
+module 초기화 상수를 제외한 core cold mount의 서로 다른 동결 대상을 셌습니다. 운영 완료 순회 동결 0개, 중복 동결·primitive 호출은 양쪽 모두 0개입니다.
+
+| fixture | 노드 | 운영 distinct / node | 개발 distinct / node |
+| --- | ---: | ---: | ---: |
+| nested-d5-f4 | 1,365 | 3,071 / **2.2498** | 30,372 / **22.2505** |
+| flat-500 | 501 | 1,003 / **2.0020** | 11,024 / **22.0040** |
+| oneOf-20 | 63 | 116 / **1.8413** | 1,569 / **24.9048** |
+| sample-0 | 3 | 8 / **2.6667** | 69 / **23.0000** |
+
+### 판정 열과 steady pooled
+
+95C-01 판정은 새 프로세스, 엔진별 warmup 20회, 표본 101쌍 × 3회이며 각 표본의 H/W 순서와 회차의 시작 순서를 교대했습니다. 입력 복사·mount 준비·강제 GC는 시계 밖입니다. operation에서 64 Promise checkpoint 뒤 setImmediate sentinel 안까지 재고 앞뒤 각 101회 empty drain을 합친 중앙값 C를 양쪽에서 뺐습니다. 강제 major GC가 시계 안에서 시작한 횟수는 0입니다. sample-0·nested·oneOf-40의 첫/후속 업데이트는 각각 별도 fresh-root/retained-root 조건으로 구성했습니다.
+
+steady는 강제 GC 없이 fresh process 6회, HEAD 먼저 3회·후보 먼저 3회입니다. 각 회차의 C를 뺀 엔진별 표본 606개 전부의 pooled 중앙값만 읽었습니다. steady는 유지 판정에 사용하지 않았습니다. 실제 시계 안 GC 개수·pause와 각 순서는 [기계 요약](profile-104-owned/summary.json)에 보존했습니다.
+
+아래 H/W는 각 회차 중앙값의 3회 중앙값입니다. Δ는 같은 프로세스에서 계산한 H−W의 3회 중앙값으로, 표의 H−W와 반드시 같지는 않습니다. 양수는 개선입니다. N은 `max(0.001ms, 전후 HEAD/HEAD 대조 6회의 최대 |gain|·|paired median|, empty residual p95 + 양쪽 중앙값 bootstrap 99% 오차)` 중 회차별 최댓값입니다. 개선은 **세 회 모두 Δr > Nr**, 회귀는 **한 회라도 Δr < −Nr**로 판정합니다. paired 구간은 303개 표본의 bootstrap 구간이며 프로세스 간 일반화 구간이 아닙니다.
+
+| fixture / 작업 | 판정 H → W ms | Δ ms | max N ms | 판정 | steady pooled H → W ms |
+| --- | ---: | ---: | ---: | --- | ---: |
+| nested-d5-f4 마운트 | 8.5436 → 8.0364 | 0.5086 | 0.3295 | 개선 | 7.0957 → 6.3924 |
+| flat-500 마운트 | 2.9912 → 2.7991 | 0.1611 | 0.1052 | 개선 | 2.0010 → 1.6911 |
+| oneOf-20 마운트 | 2.0013 → 1.9410 | 0.0619 | 0.0890 | 잡음 범위 | 1.2174 → 1.1520 |
+| sample-0 마운트 | 0.1225 → 0.1183 | 0.0038 | 0.0284 | 잡음 범위 | 0.0538 → 0.0528 |
+| sample-0 첫 업데이트 | 0.0892 → 0.0859 | 0.0001 | 0.0230 | 잡음 범위 | 0.0323 → 0.0322 |
+| sample-0 후속 업데이트 | 0.0826 → 0.0825 | −0.0012 | 0.0261 | 잡음 범위 | 0.0223 → 0.0225 |
+| nested-d5-f4 첫 업데이트 | 0.1916 → 0.1794 | 0.0122 | 0.1305 | 잡음 범위 | 0.1062 → 0.1007 |
+| nested-d5-f4 후속 업데이트 | 0.1154 → 0.1134 | 0.0020 | 0.0216 | 잡음 범위 | 0.0408 → 0.0391 |
+| oneOf-40 첫 업데이트 | 1.4625 → 1.4105 | 0.0555 | 0.0525 | 개선 | 0.9618 → 0.9206 |
+| oneOf-40 후속 업데이트 | 0.9650 → 0.9567 | 0.0098 | 0.0431 | 잡음 범위 | 0.6059 → 0.5898 |
+
+nested 첫 업데이트 r2는 Δ −0.039417ms였지만 자기 N 0.130542ms 안입니다. sample 후속·nested 후속의 음수 회차도 자기 잡음 안이므로 숨기지 않고 raw 결과와 요약에 남겼습니다. oneOf-40 첫 업데이트의 Δ/N은 r1 0.058000/0.052499, r2 0.048667/0.043751, r3 0.055458/0.052208ms로 세 회 모두 경계를 넘었습니다. 개선 3행·회귀 0행으로 유지 조건을 충족했습니다.
+
+### 지정 검증과 재현
+
+모두 PKG에서 순서대로 실행했으며 설치를 막기 위해 npx에 `--no-install`을 붙였습니다. Vitest는 `--configLoader runner --cache false --maxWorkers=1 --no-file-parallelism`을 추가해 저장소 안의 설정 임시 번들·새 캐시 및 병렬 시험 실행을 억제했습니다.
+
+| 명령 | 최종 결과 | 자연 종료 시간 |
+| --- | --- | ---: |
+| `npx vitest run --project unit --project render --project react18 --reporter=dot` | 3,238 passed / 4 failed / 1 todo. 실패는 React 18/19의 EVENT-070 useLayoutEffect·useEffect 두 사례씩뿐입니다. | 303.350초 |
+| 같은 개발 명령에 `src/core/blueprint/__tests__/blueprint.owned-inline` 필터 추가 | 5 files / 15 passed | 7.995초 |
+| `yarn test:production --maxWorkers=1 --no-file-parallelism` | 4 files / 14 passed | 5.852초 |
+| `npx tsc --noEmit --composite false --rootDir . -p tsconfig.json` | exit 0 | 8.744초 |
+| `npx eslint "src/**/*.{ts,tsx}"` | exit 0 | 5.837초 |
+| `node architecture/verification/07-switch/tools/check-legacy-isolation.mjs` | LEGACY_ISOLATED: 1,642 files checked | 0.434초 |
+
+마지막 제품 helper 분리 후 번들을 다시 만들고 계수를 재확인했으며, 그 제품 소스 그대로 위 전체 검증을 다시 마쳤습니다. 이후 시험 파일별 계약 표식을 서로 다른 acceptance group에 연결하고 계수 시험의 Set을 반복 중복 조회에 사용하도록 정리했습니다. 이 시험 파일 15개 사례와 운영 14개 사례·타입·린트·격리를 다시 확인한 것이 표의 최종 결과입니다. 측정 뒤 제품 파일의 SHA-256이 바뀌지 않았음을 요약기가 검증합니다. 측정 프로세스 150개·15,150쌍은 서로 겹치지 않았으며 최대 타이머 프로세스는 3.884초였습니다. 기록한 빌드/측정/계수/driver 203개 프로세스는 모두 status=0·signal=null, 최대 12.946초입니다. 최장 검증 명령도 8분 이내이며 모든 명령은 자연 종료했습니다.
+
+HEAD/control production 번들 SHA-256은 `be285ab7c717c62148f3e659bff3195e48bf4428e24c16552457c2796d106460`, 후보는 `129f917c8633f9e739dfed1b46b5f819d14380f4130f074897774a0ebd61bfda`입니다. 두 HEAD comparator는 바이트가 같고 별도 module instance로 로드했습니다. 측정 자료는 `profile-104-owned/`에만 저장하며 각 파일은 5MB 이하입니다. 번들·소스맵·새 Vite 캐시는 `/private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles`에만 생성했고 설정 파일에 cacheDir을 넣지 않았습니다. 패키지 안의 기존 `.vite` 자료는 이번 작업 전의 수정 시각을 유지합니다.
+
+재현 도구는 [fixture 생성기](profile-104-owned/export-head-fixture.mjs), [측정 driver](profile-104-owned/measure.mjs), [지정 검사 driver](profile-104-owned/check.mjs), [요약기](profile-104-owned/summarize.mjs)입니다. fixture 생성기는 제품을 수정한 현재 상태에서는 실행을 거부합니다. `measure.mjs build head`, `build control`, `build working` 뒤 각 행에 `batch noise-before`, `batch forced`, `batch steady`, `batch noise-after`를 차례로 실행합니다. 한 batch는 해당 행의 3회 또는 steady 6회를 순차 실행하며 중간마다 진행 결과를 출력합니다. count는 별도 비타이밍 프로세스로 실행합니다. [파일 분리 목록](profile-104-owned/files.md)과 raw JSON에서 시험 실행 환경·제품 변경·측정 증거를 각각 검토할 수 있습니다.

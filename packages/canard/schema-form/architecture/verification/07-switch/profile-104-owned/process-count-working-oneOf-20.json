@@ -1,0 +1,14 @@
+{
+  "HEAD": "baf4cacb647ad3de7dbff7c232efddf55b0bc546",
+  "command": "count",
+  "args": [
+    "working",
+    "oneOf-20"
+  ],
+  "status": 0,
+  "signal": null,
+  "started": 1791296976325,
+  "ended": 1791296976379,
+  "elapsedMs": 54,
+  "driverSha256": "09a7c7f58cfd49d33423f8e79c30e3443187eeec78171109f602c4affa7248d6"
+}

@@ -3,8 +3,8 @@ import { isArray } from '@winglet/common-utils/filter';
 import type { BlueprintGate, PropertyDeclaration } from '../../type';
 import { validateControlGroups } from '../diagnostics/validateControlGroups';
 import { readAllowedTypes } from '../types/readAllowedTypes';
-import { createBlueprintGate } from './createBlueprintGate';
 import { collectSchemaCapabilities } from './collectSchemaCapabilities';
+import { createBlueprintGate } from './createBlueprintGate';
 import { readDiscriminatorBranches } from './readDiscriminatorBranches';
 import { readSchemaObject } from './readSchemaObject';
 import { resolveReference } from './resolveReference';
@@ -12,8 +12,14 @@ import type { AnalysisContext, SchemaInput } from './type';
 
 /** Keyword ranks form the authored total order, independent of object insertion order. */
 const FRAGMENT_KEYWORDS = [
-  ['allOf', 1], ['then', 2], ['else', 2], ['oneOf', 3], ['anyOf', 4],
+  ['allOf', 1],
+  ['then', 2],
+  ['else', 2],
+  ['oneOf', 3],
+  ['anyOf', 4],
 ] as const;
+/** Only producer-owned internal records receive development protection. */
+const DEVELOPMENT = process.env.NODE_ENV !== 'production';
 
 /**
  * Expand one slot's fragments in keyword order without expanding child nodes.
@@ -64,8 +70,8 @@ export const collectDeclarations = (
     schemaPath: input.schemaPath,
     schema: input.schema,
     context: input.context,
-    order: Object.freeze([...input.order]),
-    gates: Object.freeze(gates),
+    order: [...input.order],
+    gates,
     declares: [] as number[],
     overlays: [] as number[],
     inheritedOverlays: [] as number[],
@@ -73,7 +79,7 @@ export const collectDeclarations = (
   };
   context.fragments.push(fragment);
   input.fragment?.children.push(fragment.id);
-  const declaration: PropertyDeclaration = Object.freeze({
+  const declaration: PropertyDeclaration = {
     id: context.declarationId++,
     name: path.slice(path.lastIndexOf('/') + 1),
     path,
@@ -84,11 +90,18 @@ export const collectDeclarations = (
     scope: input.isFragment ? 'fragment' : 'node',
     validationOnly: false,
     context: input.context,
-    gates: fragment.gates,
-    order: fragment.order,
+    gates: [...fragment.gates],
+    order: [...fragment.order],
     inherited: input.inherited,
     hostPath: input.hostPath,
-  });
+  };
+  if (DEVELOPMENT) {
+    Object.freeze(fragment.order);
+    Object.freeze(fragment.gates);
+    Object.freeze(declaration.order);
+    Object.freeze(declaration.gates);
+    Object.freeze(declaration);
+  }
   fragment[input.role === 'declaration' ? 'declares' : 'overlays'].push(
     declaration.id,
   );
@@ -97,11 +110,10 @@ export const collectDeclarations = (
   const owner = ownerId ?? declaration.id;
   if (!context.capabilities.branchless)
     (context.declarationOwners ??= new Map()).set(declaration.id, owner);
-  const discriminators = schema.controls?.discriminator === undefined ? undefined : readDiscriminatorBranches(
-    context,
-    input.schema,
-    input.schemaPath,
-  );
+  const discriminators =
+    schema.controls?.discriminator === undefined
+      ? undefined
+      : readDiscriminatorBranches(context, input.schema, input.schemaPath);
   if (discriminators?.size) {
     context.discriminatorBranches ??= new Set<string>();
     for (const branchPath of discriminators.keys())
@@ -127,7 +139,11 @@ export const collectDeclarations = (
       ),
     );
   }
-  for (let keywordIndex = 0; keywordIndex < FRAGMENT_KEYWORDS.length; keywordIndex++) {
+  for (
+    let keywordIndex = 0;
+    keywordIndex < FRAGMENT_KEYWORDS.length;
+    keywordIndex++
+  ) {
     const [keyword, rank] = FRAGMENT_KEYWORDS[keywordIndex];
     if ((keyword === 'then' || keyword === 'else') && schema.if === undefined)
       continue;

@@ -4,7 +4,9 @@ import type {
   EffectiveSchemaOptions,
   PropertyDeclaration,
 } from '../../../type';
+import { OwnedSchemaValues } from './OwnedSchemaValues';
 import { applyConstraintKeywords } from './applyConstraintKeywords';
+import { applyControlHints } from './applySchemaContribution/utils/applyControlHints';
 import { applyTypeContribution } from './applyTypeContribution';
 import { mergeHintGroup } from './mergeHintGroup';
 import type { EffectiveSchemaState } from './type';
@@ -72,33 +74,16 @@ export const applySchemaContribution = (
             !earlier.includes(entry) && value.indexOf(entry) === index,
         ),
       ];
+      OwnedSchemaValues.add(state.schema.required as object);
     } else if (key === 'pattern' && typeof value === 'string') {
       if (!state.patterns.includes(value)) state.patterns.push(value);
-    } else if (key === 'allOf' && isArray(value))
+    } else if (key === 'allOf' && isArray(value)) {
       state.schema.allOf = [
         ...(isArray(state.schema.allOf) ? state.schema.allOf : []),
         ...value,
       ];
-    else state.schema[key] = value;
+      OwnedSchemaValues.add(state.schema.allOf as object);
+    } else state.schema[key] = value;
   }
   applyConstraintKeywords(state, schema, declaration.schemaPath, options);
 };
-
-/**
- * Keep single-value hints while behavioral rules remain in raw declarations.
- * @param target - Fresh effective schema whose controls hint may be replaced.
- * @param source - Authored controls object; other values contribute no hint.
- * @returns Nothing; updates only a newly allocated controls hint object.
- */
-function applyControlHints(
-  target: Record<string, unknown>,
-  source: unknown,
-): void {
-  if (!source || typeof source !== 'object') return;
-  const previous = target.controls as Record<string, unknown> | undefined;
-  const controls = { ...previous };
-  for (const key of ['watch', 'default'])
-    if ((source as Record<string, unknown>)[key] !== undefined)
-      controls[key] = (source as Record<string, unknown>)[key];
-  if (Object.keys(controls).length) target.controls = controls;
-}

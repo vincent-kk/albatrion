@@ -9,6 +9,9 @@ import { populateVirtualNodes } from './populateVirtualNodes';
 import { readSchemaObject } from './readSchemaObject';
 import type { AnalysisContext, MutableNode, SchemaInput } from './type';
 
+/** Host binding memberships are owned even when their templates are shared. */
+const DEVELOPMENT = process.env.NODE_ENV !== 'production';
+
 /**
  * Bind object properties and array templates without allocating runtime nodes.
  * @param context - Root-local graph and declaration state
@@ -101,8 +104,7 @@ export const populateNodeChildren = (
       });
     if (node.kind !== 'array') continue;
     const tuple =
-      schema.prefixItems ??
-      (isArray(schema.items) ? schema.items : undefined);
+      schema.prefixItems ?? (isArray(schema.items) ? schema.items : undefined);
     if (schema.prefixItems !== undefined && !isArray(schema.prefixItems))
       throwBlueprintError(
         BlueprintErrorCode.UnexpectedArraySchema,
@@ -141,9 +143,10 @@ export const populateNodeChildren = (
         order: [...declaration.order, 0, 0],
       });
     }
-    const additionalItems = isArray(schema.items) && schema.prefixItems === undefined
-      ? schema.additionalItems
-      : undefined;
+    const additionalItems =
+      isArray(schema.items) && schema.prefixItems === undefined
+        ? schema.additionalItems
+        : undefined;
     if (
       additionalItems !== null &&
       typeof additionalItems === 'object' &&
@@ -159,10 +162,28 @@ export const populateNodeChildren = (
   const entries = node.childEntries as BlueprintChildEntry[];
   for (const [name, inputs] of properties) {
     const path = `${node.path}/${escapeSegment(name)}`;
-    for (const child of build(context, inputs, path)) {
-      const declarations = child.declarations.map((declaration) =>
-        Object.freeze({
+    const children = build(context, inputs, path);
+    for (let childIndex = 0; childIndex < children.length; childIndex++) {
+      const child = children[childIndex];
+      const declarations = [];
+      for (let index = 0; index < child.declarations.length; index++) {
+        const declaration = child.declarations[index];
+        const gates = [];
+        for (
+          let gateIndex = 0;
+          gateIndex < declaration.gates.length;
+          gateIndex++
+        ) {
+          const gate = declaration.gates[gateIndex];
+          gates.push(
+            gate.hostPath === child.path
+              ? createBlueprintGate({ ...gate, hostPath: path })
+              : gate,
+          );
+        }
+        const binding = {
           ...declaration,
+          order: [...declaration.order],
           name,
           path,
           hostPath: node.path,
@@ -170,35 +191,36 @@ export const populateNodeChildren = (
             declaration.schemaPath === child.schemaPath
               ? inputs[0].schemaPath
               : declaration.schemaPath,
-          gates: Object.freeze(
-            declaration.gates.map((gate) =>
-              gate.hostPath === child.path
-                ? createBlueprintGate({ ...gate, hostPath: path })
-                : gate,
-            ),
-          ),
-        }),
-      );
-      entries.push(
-        Object.freeze({
-          name,
-          node: child,
-          hostPath: node.path,
-          declarations: Object.freeze(declarations),
-        }),
-      );
+          gates,
+        };
+        if (DEVELOPMENT) {
+          Object.freeze(binding.order);
+          Object.freeze(gates);
+          Object.freeze(binding);
+        }
+        declarations.push(binding);
+      }
+      const entry = {
+        name,
+        node: child,
+        hostPath: node.path,
+        declarations,
+      };
+      if (DEVELOPMENT) {
+        Object.freeze(declarations);
+        Object.freeze(entry);
+      }
+      entries.push(entry);
     }
   }
   if (itemInputs.length)
     node.item = build(context, itemInputs, `${node.path}/*`)[0];
   if (tuples.size)
-    node.prefixItems = Object.freeze(
-      [...tuples]
-        .sort(([a], [b]) => a - b)
-        .map(
-          ([index, inputs]) =>
-            build(context, inputs, `${node.path}/${index}`)[0],
-        ),
-    );
+    node.prefixItems = [...tuples]
+      .sort(([a], [b]) => a - b)
+      .map(
+        ([index, inputs]) => build(context, inputs, `${node.path}/${index}`)[0],
+      );
+  if (DEVELOPMENT && node.prefixItems) Object.freeze(node.prefixItems);
   if (node.kind === 'object') populateVirtualNodes(context, node);
 };

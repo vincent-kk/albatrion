@@ -1,0 +1,15 @@
+{
+  "HEAD": "baf4cacb647ad3de7dbff7c232efddf55b0bc546",
+  "command": "batch",
+  "args": [
+    "forced",
+    "nested-d5-f4",
+    "first"
+  ],
+  "status": 0,
+  "signal": null,
+  "started": 1791297146155,
+  "ended": 1791297157690,
+  "elapsedMs": 11535,
+  "driverSha256": "09a7c7f58cfd49d33423f8e79c30e3443187eeec78171109f602c4affa7248d6"
+}

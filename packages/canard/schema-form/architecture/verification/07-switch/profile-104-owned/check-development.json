@@ -1,0 +1,30 @@
+{
+  "name": "development",
+  "command": "npx --no-install vitest run --project unit --project render --project react18 --reporter=dot --configLoader runner --cache false --maxWorkers=1 --no-file-parallelism",
+  "exitCode": 1,
+  "signal": null,
+  "elapsedMs": 303350,
+  "summary": [
+    " Test Files  2 failed | 434 passed (436)",
+    "      Tests  4 failed | 3238 passed | 1 todo (3243)",
+    "   Duration  301.71s (transform 4.83s, setup 0ms, collect 78.44s, tests 132.73s, environment 22.52s, prepare 15.43s)",
+    "stderr | src/__tests__/scenarios/refSchema-context-provider.render.test.tsx > context passed via Form context prop reaches FormTypeInput > clears props.context when the Form context prop is emptied",
+    "stderr | src/__tests__/scenarios/refSchema-context-provider.render.test.tsx > context passed via Form context prop reaches FormTypeInput > clears props.context when the Form context prop is emptied",
+    "Error: render",
+    "ErrorBoundary caught an error: Error: render",
+    "Error: Uncaught [Error: render]",
+    "    at performUnitOfWork (file:///Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/node_modules/react-dom18/cjs/react-dom.development.js:26599:12) Error: render",
+    "Error: Uncaught [Error: render]",
+    "    at performUnitOfWork (file:///Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/node_modules/react-dom18/cjs/react-dom.development.js:26599:12) Error: render",
+    "ErrorBoundary caught an error: Error: render",
+    "⎯⎯⎯⎯⎯⎯⎯ Failed Tests 4 ⎯⎯⎯⎯⎯⎯⎯",
+    " FAIL  |render| src/components/Form/__tests__/Form.effectFeedback.test.tsx > EVENT-070 cross-entry feedback > EVENT-070 React stops two fields writing back through useLayoutEffect",
+    "AssertionError: The watchdog is a failure, not React stopping the cycle: expected 201 to be less than 200",
+    " FAIL  |render| src/components/Form/__tests__/Form.effectFeedback.test.tsx > EVENT-070 cross-entry feedback > EVENT-070 React stops two fields writing back through useEffect",
+    "AssertionError: The watchdog is a failure, not React stopping the cycle: expected 201 to be less than 200",
+    " FAIL  |react18| src/components/Form/__tests__/Form.effectFeedback.test.tsx > EVENT-070 cross-entry feedback > EVENT-070 React stops two fields writing back through useLayoutEffect",
+    "AssertionError: The watchdog is a failure, not React stopping the cycle: expected 201 to be less than 200",
+    " FAIL  |react18| src/components/Form/__tests__/Form.effectFeedback.test.tsx > EVENT-070 cross-entry feedback > EVENT-070 React stops two fields writing back through useEffect",
+    "AssertionError: The watchdog is a failure, not React stopping the cycle: expected 201 to be less than 200"
+  ]
+}

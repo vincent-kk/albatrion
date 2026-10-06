@@ -1,0 +1,13 @@
+{
+  "HEAD": "baf4cacb647ad3de7dbff7c232efddf55b0bc546",
+  "version": "working",
+  "name": "sample-0",
+  "mode": "development",
+  "nodes": 3,
+  "calls": 69,
+  "distinct": 69,
+  "repeatCalls": 0,
+  "primitives": 0,
+  "completed": 27,
+  "freezesPerNode": 23
+}

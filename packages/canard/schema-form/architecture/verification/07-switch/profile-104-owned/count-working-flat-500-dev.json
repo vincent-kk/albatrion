@@ -1,0 +1,13 @@
+{
+  "HEAD": "baf4cacb647ad3de7dbff7c232efddf55b0bc546",
+  "version": "working",
+  "name": "flat-500",
+  "mode": "development",
+  "nodes": 501,
+  "calls": 11024,
+  "distinct": 11024,
+  "repeatCalls": 0,
+  "primitives": 0,
+  "completed": 3513,
+  "freezesPerNode": 22.003992015968063
+}

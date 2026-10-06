@@ -2,6 +2,10 @@
 
 ## Requirements
 
+- 103C-01 owned-inline: 공개 유효 schema·schemaType와 생산자가 공개 schema 안에 만든 배열·controls·hint 봉투, 공유 gate·evaluationReads·discriminator·values·소유 appliesWhen은 생성·병합 완료 자리에서 두 모드 모두 얕게 동결합니다. 소비자가 작성한 root·중첩 값·default·React 값·함수에는 내려가지 않습니다. hint 병합이 만든 중첩 plain object는 두 입력의 같은 키와 참조가 다를 때만 병합 완료 자리에서 보호합니다(Q107).
+- 소속 배열 27행은 기록마다 소유하며 일반 기록·거짓 결과 봉투·빈 expressions·null-prototype dependencies와 함께 개발에서만 동결합니다(Q106). gate 원소·template·EMPTY_INDEX·동일 노드의 동일 활성 집합 메모 참조는 유지합니다. 운영 완료 구간은 staticFirstLoad 판정만 수행하며 동결 완료 순회가 없습니다.
+- 속도 비용: 공개 schema 완료는 고정 필드 7개와 생성 clause 수, hint 보호는 새 병합 객체의 키 수에 비례합니다. 소유 복사는 복사 원소 수에 비례하며 개발 모드에만 내부 동결 비용이 추가됩니다. 메모리 비용: 기록마다 새 소속 배열과 가상·지연 binding 복사본을 보유하고 공개 생성 값의 소유권은 약한 색인으로 추적합니다. 새 공개 옵션·캐시 키·노드 shape 변경은 없습니다. 운영 종단 시간은 HEAD와 fresh-process 판정으로 확인합니다.
+
 - 일회성 정적 정규화는 무게이트·비검증 전용 연언을 기존 전순서로 선택하여 실제 노드의 형 정보를 병합기에 직접 전달합니다. 임시 노드·옵션별 메모/Map·선언 ID 문자열 키를 만들지 않습니다. 노드의 전체 선언과 선택된 기여가 같은 단일 노드 연언이고 검증된 비nullable 스칼라 형이며 nullable·pattern·options·제약 키 및 isAtomic·collect가 없을 때만 renderer hint를 직접 구성합니다. 키 존재·열거 순서·프로퍼티 참조·normalized type·동결 결과와 DEFAULT_NO_ACTIVE 등록 조건은 그대로입니다. 그 밖의 경로는 기존 apply/finalize와 검증·진단 순서를 유지하며 oneOf의 서로 다른 선택 결과를 합치지 않습니다. 선택은 O(선언 수) 필터와 기존 정렬, O(선택 선언 수) 임시 배열 하나입니다. 단일 기여 증명에는 O(1) 고정 검사, 직접 구성에는 O(키 수) 순회를 사용하며 범용 형 교차·제약 순회·최종 형 배열과 누적 상태·patterns 임시 할당을 제거합니다. 새 보유 색인·캐시·노드 필드는 없고 기존 결과 객체·힌트 복사만 보유합니다(BLUEPRINT-021, NODE-006, SETTLE-017, 101라운드 묶음 1, 102라운드 단일 기여).
 
 - 단일 무조건 노드 선언이며 nullable·형 배열·pattern·원자 판정·진단 수집기가 없는 경우, 기존 정적 교차 검사의 정규화 결과를 기본 런타임 메모에 미리 둡니다. 선언 선택과 병합의 의미는 유지하며 활성 ID 목록이 달라도 같은 무조건 집합은 같은 참조입니다. 그 밖의 선언·정책과 호출자 메모는 기존 병합을 사용합니다. 노드당 고정 자격 검사만 추가하고 기존 런타임 재병합 및 그 임시 배열·누적 상태를 제거합니다. 기존 약한 캐시가 정적 결과를 보유하므로 별도 색인이나 공개 노드 필드는 없으며, 조기 보유는 O(적격 노드 수)입니다(BLUEPRINT-021, NODE-006, SETTLE-017, 100라운드).
@@ -11,7 +15,7 @@
 - 정적 첫 로드 자격은 기존 branchless 증명을 재사용하고 선언 수집과 재귀 형상 분석에 추가 증거를 결합합니다. public Blueprint 형을 넓히지 않는 약한 sidecar에 boolean 하나를 보유합니다. `controls.default`·전이·식·가상·재귀·컨테이너 whole-value는 자격 밖입니다. 게이트 판정을 다시 만들거나 첫 로드 때 전체 스키마를 다시 훑지 않습니다. 수집마다 고정 검사와 청사진당 O(1) 보유 메모리를 더하며 정적 검증·경고는 유지합니다(89C-02·04).
 
 - 89C-03에 따라 분기 없음은 선언 수집이 실제 도달한 모든 작성 위치에서 `oneOf`·`anyOf`·`if`·discriminator·`controls.active`가 없다는 증명입니다. 참조 대상, 무게이트 allOf, items·prefixItems·옛 additionalItems, 인라인 자식 및 가상 선언을 같은 수집 과정에서 판정합니다. 터미널 아래 무시되는 데이터는 기존 경고 범위대로 유지합니다. BLUEPRINT-002의 선언·Fragment 그래프, BLUEPRINT-001·012·044·030의 정적 충돌·S0–S6·터미널 경고·재귀 판정·작성 순서·판정 함수 메모는 분기 유무와 무관하게 유지합니다.
-- 분기 없음과 식·watch·state·파생 규칙 없음은 각각 독립된 capability입니다. 기능이 없을 때만 불변 빈 결과를 공유하며, 기능이 있으면 식 컴파일·기능 색인·SETTLE-017 역의존 표를 유지합니다. 조건 평가용 자료·동적 선언 조합 자료·gate-host 색인·게이트 역의존 trie·빈 registry만 생략합니다. 생성 시 분석 완료, 청사진 캐시 키와 if 게이트의 작성 위치당 단일 컴파일은 유지합니다. 수집 중 capability 결합은 O(S) 순회에 고정 검사만 더하고 청사진당 O(1) 기록을 보유합니다. 기능 없는 경우 후속 O(S) 분석과 O(S) 색인 할당을 제거하며, 기능 있는 경우 기존 시간·메모리 차수는 유지합니다. 실제 시간과 구조 수는 93라운드 짝 측정으로 기록합니다.
+- 분기 없음과 식·watch·state·파생 규칙 없음은 각각 독립된 capability입니다. 기능이 없으면 expressions·dependencies는 청사진마다 소유하고 정적 색인 EMPTY_INDEX는 불변 공유하며, 기능이 있으면 식 컴파일·기능 색인·SETTLE-017 역의존 표를 유지합니다. 조건 평가용 자료·동적 선언 조합 자료·gate-host 색인·게이트 역의존 trie·빈 registry만 생략합니다. 생성 시 분석 완료, 청사진 캐시 키와 if 게이트의 작성 위치당 단일 컴파일은 유지합니다. 수집 중 capability 결합은 O(S) 순회에 고정 검사만 더하고 청사진당 O(1) 기록을 보유합니다. 기능 없는 경우 후속 O(S) 분석과 O(S) 색인 할당을 제거하며, 기능 있는 경우 기존 시간·메모리 차수는 유지합니다. 실제 시간과 구조 수는 93라운드 짝 측정으로 기록합니다.
 
 - 원장은 BLUEPRINT·FRAGMENT·SCHEMA 영역 및 관련 CONTROLS·ERROR 보충을 정본으로 삼습니다. 정적 분석은 노드 생성·값 판정·게이트 평가를 하지 않습니다.
 - 의존 방향은 `blueprint < record < {종류 동작, navigation} < settle < SchemaNode`입니다. 청사진은 뒤 fractal을 가져오지 않고 그들이 소비할 선언·식·평가 자리만 내며, 식 컴파일러 organ의 기존 경계 예외는 아래에 둡니다(NODE-016, SETTLE-045).
@@ -49,6 +53,26 @@
 - 터미널 하위 예약 키 경고는 터미널 노드의 schemaPath별 한 기록에 keys·paths를 모읍니다. 같은 코드와 schemaPath의 중복을 억제하며 인라인 하위만 조사하고 참조 대상은 따라가지 않습니다(BLUEPRINT-044).
 
 ## Acceptance Criteria
+
+### owned-inline-public — 생성 지점 공개·공유 값 보호
+
+- 정적·runtime 유효 schema, 공개 값 11종과 공유 gate 내부가 두 모드에서 동결되고 입력은 원래 참조와 동결 상태를 유지합니다. hint style 병합은 결과만 보호하며 작성된 React 값·함수의 참조와 상태를 유지합니다.
+
+### owned-inline-memberships — 기록별 소유와 개발 보호
+
+- 59종·가상·재바인딩·validationOnly·children-control·discriminator·compiled expression·지연 slot에서 두 기록이 소속 배열을 공유하지 않습니다. 내부 기록은 개발에서만 동결하고 appliesWhen은 두 모드에서 보호합니다. EMPTY_INDEX 공유와 node-local memo를 유지합니다.
+
+### owned-inline-differential — 구현 전 HEAD와 동결 계수
+
+- HEAD baf4cacb6의 59종 × collect 끔/켬에서 정규화 schema·키/필드 순서·graph·오류·진단이 같습니다.
+
+### owned-inline-counts — core mount 동결 계수
+
+- module 초기화 상수를 제외한 core mount distinct 동결 수(운영/개발)는 nested 3,071/30,372, flat 1,003/11,024, oneOf-20 116/1,569, sample-0 8/69이며 재동결·primitive 호출은 0입니다.
+
+### owned-inline-render — 렌더 중 작성된 React 값
+
+- NODE_ENV를 설정 로드 전에 지정한 운영 프로젝트는 운영 React를 단언하고 act 없이 렌더합니다. lazy inline 입력·렌더 중 JSX label이 양쪽 React 모드에서 해소·갱신되며 작성된 함수·props·style은 동결하지 않습니다.
 
 ### branchless-proof — 도달한 모든 선언의 분기 부재
 
@@ -102,7 +126,7 @@
 ### unconditional-effective-schema — 무조건 선언의 정규화 재사용
 
 - 빠른 경로는 기존 병합과 같은 유효 스키마·불변성과 참조를 보존합니다. 형 교차·nullable·pattern·원자 판정·수집기·선언 전순서가 필요한 경우는 기존 병합으로 처리하며 경고의 내용과 순서를 유지합니다.
-- 일회성 정적 정규화도 같은 선택 순서와 병합 정책을 사용하며, 59개 HEAD 스키마 및 89C-03 차등의 정적 오류·경고·필드와 동결 상태를 보존합니다.
+- 일회성 정적 정규화도 같은 선택 순서와 병합 정책을 사용하며, 59개 HEAD 스키마 및 89C-03 차등의 정적 오류·경고·필드와 공개 schema의 동결을 보존합니다.
 - 증명된 단일 정적 기여의 직접 구성은 모든 노드의 HEAD 유효 스키마와 키 순서가 같으며 범용 제약 순회 횟수만 줄입니다. invalid·multiple·gated·collect·isAtomic 경로의 검증·진단 및 기존 메모 참조 조건은 유지합니다.
 
 ### expressions — 컴파일과 의존
@@ -143,4 +167,4 @@
 
 ## Last Updated
 
-2026-10-06. 계약 기준: REACT-003·004, 69C-04, 89C-03, 98C-01, 100라운드, 101라운드 묶음 1, 102라운드 단일 기여.
+2026-10-07. 계약 기준: REACT-003·004, 69C-04, 89C-03, 98C-01, 100라운드, 101라운드 묶음 1, 102라운드 단일 기여, 103C-01·Q106·Q107, 104라운드 owned-inline.

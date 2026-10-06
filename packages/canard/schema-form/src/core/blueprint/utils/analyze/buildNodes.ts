@@ -18,6 +18,8 @@ import type { AnalysisContext, MutableNode, SchemaInput } from './type';
 
 /** Static construction has no active gated declaration IDs. */
 const NO_ACTIVE_DECLARATION_IDS: readonly number[] = [];
+/** Internal records are protected only in development. */
+const DEVELOPMENT = process.env.NODE_ENV !== 'production';
 
 /**
  * Construct schema templates once per authored declaration/gate combination.
@@ -36,7 +38,8 @@ export const buildNodes = (
   for (let index = 0; index < inputs.length; index++) {
     const gates = inputs[index].gates;
     const paths: string[] = [];
-    for (let gate = 0; gate < gates.length; gate++) paths.push(gates[gate].hostPath);
+    for (let gate = 0; gate < gates.length; gate++)
+      paths.push(gates[gate].hostPath);
     hostPaths.push(paths);
   }
   const boundKey = JSON.stringify([key, hostPaths]);
@@ -47,7 +50,8 @@ export const buildNodes = (
   const declarations = [];
   for (let index = 0; index < inputs.length; index++) {
     const collected = collectDeclarations(context, inputs[index], path);
-    for (let item = 0; item < collected.length; item++) declarations.push(collected[item]);
+    for (let item = 0; item < collected.length; item++)
+      declarations.push(collected[item]);
   }
   const groups = resolveNodeTypes(context, declarations);
   const nodes: MutableNode[] = [];
@@ -71,9 +75,23 @@ export const buildNodes = (
     const conjunctions = [];
     for (let item = 0; item < group.declarations.length; item++) {
       const declaration = group.declarations[item];
-      const owned = declaration.scope === 'fragment' &&
-        declaration.context === 'declaration' && kind !== 'object' && kind !== 'array'
-        ? Object.freeze({ ...declaration, validationOnly: true }) : declaration;
+      const owned =
+        declaration.scope === 'fragment' &&
+        declaration.context === 'declaration' &&
+        kind !== 'object' &&
+        kind !== 'array'
+          ? {
+              ...declaration,
+              gates: [...declaration.gates],
+              order: [...declaration.order],
+              validationOnly: true,
+            }
+          : declaration;
+      if (DEVELOPMENT && owned !== declaration) {
+        Object.freeze(owned.order);
+        Object.freeze(owned.gates);
+        Object.freeze(owned);
+      }
       ownedDeclarations.push(owned);
       if (owned.context === 'conjunction') conjunctions.push(owned);
     }
@@ -85,28 +103,44 @@ export const buildNodes = (
       schemaType,
       nullable,
       strategy: resolveNodeStrategy(context, kind, group.declarations),
-      declarations: Object.freeze(ownedDeclarations),
+      declarations: DEVELOPMENT
+        ? Object.freeze(ownedDeclarations)
+        : ownedDeclarations,
       childEntries: [] as BlueprintChildEntry[],
     };
     context.nodes.push(node);
     const effective = mergeSchemaContributions(
       node,
-      selectEffectiveDeclarations(node, NO_ACTIVE_DECLARATION_IDS, conjunctions),
+      selectEffectiveDeclarations(
+        node,
+        NO_ACTIVE_DECLARATION_IDS,
+        conjunctions,
+      ),
       {
         mode: 'static',
         isAtomic: context.options.isAtomic,
         collect: context.options.collect,
       },
     );
-    if (ownedDeclarations.length === 1 && ownedDeclarations[0].gates.length === 0 && !node.nullable &&
-      context.options.isAtomic === undefined && context.options.collect === undefined) {
+    if (
+      ownedDeclarations.length === 1 &&
+      ownedDeclarations[0].gates.length === 0 &&
+      !node.nullable &&
+      context.options.isAtomic === undefined &&
+      context.options.collect === undefined
+    ) {
       const declaration = ownedDeclarations[0];
       const schema = declaration.schema;
-      if (declaration.context === 'conjunction' &&
-        declaration.role === 'declaration' && declaration.scope === 'node' &&
-        !declaration.validationOnly && (typeof schema === 'boolean' ||
-          schema.nullable === undefined && schema.pattern === undefined &&
-          !isArray(schema.type)))
+      if (
+        declaration.context === 'conjunction' &&
+        declaration.role === 'declaration' &&
+        declaration.scope === 'node' &&
+        !declaration.validationOnly &&
+        (typeof schema === 'boolean' ||
+          (schema.nullable === undefined &&
+            schema.pattern === undefined &&
+            !isArray(schema.type)))
+      )
         DEFAULT_NO_ACTIVE.set(node, effective);
     }
     nodes.push(node);

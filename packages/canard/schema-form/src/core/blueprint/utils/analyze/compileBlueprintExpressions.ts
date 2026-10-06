@@ -5,20 +5,30 @@ import { BlueprintErrorCode } from '../diagnostics/constant';
 import { throwBlueprintError } from '../diagnostics/throwBlueprintError';
 import { createDynamicFunction } from '../expressions/createDynamicFunction';
 import { getPathManager } from '../expressions/getPathManager';
-import { registerBlueprintDependency } from './compileBlueprintExpressions/utils/registerBlueprintDependency';
-import { hasCompleteExpressionReads } from './compileBlueprintExpressions/utils/hasCompleteExpressionReads';
 import { CompleteExpressionReads } from './compileBlueprintExpressions/utils/CompleteExpressionReads';
+import { hasCompleteExpressionReads } from './compileBlueprintExpressions/utils/hasCompleteExpressionReads';
+import { registerBlueprintDependency } from './compileBlueprintExpressions/utils/registerBlueprintDependency';
 import { readSchemaObject } from './readSchemaObject';
 import type { AnalysisContext } from './type';
 
 /** The closed control vocabulary is shared across every declaration compilation. */
-const EXPRESSION_KEYS = ['active', 'visible', 'readOnly', 'disabled',
-  'unsetOnInactive', 'derived', 'unsetValue', 'resetInteraction'] as const;
+const EXPRESSION_KEYS = [
+  'active',
+  'visible',
+  'readOnly',
+  'disabled',
+  'unsetOnInactive',
+  'derived',
+  'unsetValue',
+  'resetInteraction',
+] as const;
+/** Compiled records and dependency memberships remain invocation-owned. */
+const DEVELOPMENT = process.env.NODE_ENV !== 'production';
 
 /**
  * Compile authored control expressions while preserving relative dependency paths.
  * @param context - Completed graph and invocation-owned dependency index
- * @returns Frozen compiled descriptors; no user expression is executed
+ * @returns Owned compiled descriptors, frozen in development; no expression is executed
  */
 export const compileBlueprintExpressions = (
   context: AnalysisContext,
@@ -27,18 +37,29 @@ export const compileBlueprintExpressions = (
   const visited = new Set<number>();
   for (let nodeIndex = 0; nodeIndex < context.nodes.length; nodeIndex++) {
     const declarations = context.nodes[nodeIndex].declarations;
-    for (let declarationIndex = 0; declarationIndex < declarations.length; declarationIndex++) {
+    for (
+      let declarationIndex = 0;
+      declarationIndex < declarations.length;
+      declarationIndex++
+    ) {
       const declaration = declarations[declarationIndex];
       if (visited.has(declaration.id) || declaration.validationOnly) continue;
       visited.add(declaration.id);
       const controls = readSchemaObject(declaration.schema).controls;
       if (!controls) continue;
       const children = controls.children;
-      for (let groupIndex = -1; groupIndex < (children?.length ?? 0); groupIndex++) {
-        const groupControls = groupIndex < 0 ? controls : children[groupIndex].controls;
+      for (
+        let groupIndex = -1;
+        groupIndex < (children?.length ?? 0);
+        groupIndex++
+      ) {
+        const groupControls =
+          groupIndex < 0 ? controls : children[groupIndex].controls;
         if (!groupControls) continue;
-        const groupPath = groupIndex < 0 ? `${declaration.schemaPath}/controls`
-          : `${declaration.schemaPath}/controls/children/${groupIndex}/controls`;
+        const groupPath =
+          groupIndex < 0
+            ? `${declaration.schemaPath}/controls`
+            : `${declaration.schemaPath}/controls/children/${groupIndex}/controls`;
         const watch = groupControls.watch;
         if (watch !== undefined) {
           const paths = isArray(watch) ? watch : [watch];
@@ -71,25 +92,37 @@ export const compileBlueprintExpressions = (
             );
           }
           if (!evaluate) continue;
-          const dependencies = Object.freeze([...manager.get()]);
+          const dependencies = [...manager.get()];
           for (let path = 0; path < dependencies.length; path++)
-            registerBlueprintDependency(context, dependencies[path], declaration, schemaPath);
-          const compiled = Object.freeze({
+            registerBlueprintDependency(
+              context,
+              dependencies[path],
+              declaration,
+              schemaPath,
+            );
+          const compiled = {
             declarationId: declaration.id,
             schemaPath,
             hostPath: declaration.path,
             key,
             dependencies,
             evaluate,
-          });
-          if (context.capabilities.hasDerive && hasCompleteExpressionReads(source))
+          };
+          if (DEVELOPMENT) {
+            Object.freeze(dependencies);
+            Object.freeze(compiled);
+          }
+          if (
+            context.capabilities.hasDerive &&
+            hasCompleteExpressionReads(source)
+          )
             CompleteExpressionReads.add(compiled);
           expressions.push(compiled);
         }
       }
     }
   }
-  if (context.dependencies)
+  if (DEVELOPMENT && context.dependencies)
     for (const ids of Object.values(context.dependencies)) Object.freeze(ids);
-  return Object.freeze(expressions);
+  return DEVELOPMENT ? Object.freeze(expressions) : expressions;
 };

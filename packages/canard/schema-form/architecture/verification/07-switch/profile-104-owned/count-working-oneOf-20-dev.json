@@ -1,0 +1,13 @@
+{
+  "HEAD": "baf4cacb647ad3de7dbff7c232efddf55b0bc546",
+  "version": "working",
+  "name": "oneOf-20",
+  "mode": "development",
+  "nodes": 63,
+  "calls": 1569,
+  "distinct": 1569,
+  "repeatCalls": 0,
+  "primitives": 0,
+  "completed": 546,
+  "freezesPerNode": 24.904761904761905
+}

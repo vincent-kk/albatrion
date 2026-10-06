@@ -13,6 +13,7 @@ import {
 import type { EffectiveSchemaOptions } from '../../../type';
 import { BlueprintErrorCode } from '../../diagnostics/constant';
 import { throwBlueprintError } from '../../diagnostics/throwBlueprintError';
+import { OwnedSchemaValues } from './OwnedSchemaValues';
 import type { EffectiveSchemaState } from './type';
 
 /** Paired monotone bounds; each pair is checked independently, never across keywords. */
@@ -49,10 +50,9 @@ export const applyConstraintKeywords = (
       [exclusive]: source[exclusive],
       ...(source[bound] === undefined ? {} : { [bound]: source[bound] }),
     };
-    target.allOf = [
-      ...(isArray(target.allOf) ? target.allOf : []),
-      clause,
-    ];
+    OwnedSchemaValues.add(clause);
+    target.allOf = [...(isArray(target.allOf) ? target.allOf : []), clause];
+    OwnedSchemaValues.add(target.allOf as object);
   }
   for (const [lower, upper] of RANGES) {
     const crossing =
@@ -100,7 +100,12 @@ export const applyConstraintKeywords = (
         options,
       );
     target.enum = [];
-  } else if (enumeration !== undefined) target.enum = enumeration;
+    OwnedSchemaValues.add(target.enum as object);
+  } else if (enumeration !== undefined) {
+    if (enumeration !== target.enum && enumeration !== source.enum)
+      OwnedSchemaValues.add(enumeration);
+    target.enum = enumeration;
+  }
   const constant = intersectConst(target.const, source.const);
   if (constant === EMPTY_INTERSECTION) {
     if (options.mode === 'static')
@@ -116,6 +121,7 @@ export const applyConstraintKeywords = (
   if (state.conflictingConst) {
     delete target.const;
     target.enum = [];
+    OwnedSchemaValues.add(target.enum as object);
   }
 };
 

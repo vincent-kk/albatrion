@@ -1,0 +1,17 @@
+{
+  "HEAD": "baf4cacb647ad3de7dbff7c232efddf55b0bc546",
+  "command": "pair",
+  "args": [
+    "steady",
+    "nested-d5-f4",
+    "first",
+    "1",
+    "working"
+  ],
+  "status": 0,
+  "signal": null,
+  "started": 1791297244509,
+  "ended": 1791297246510,
+  "elapsedMs": 2001,
+  "driverSha256": "09a7c7f58cfd49d33423f8e79c30e3443187eeec78171109f602c4affa7248d6"
+}

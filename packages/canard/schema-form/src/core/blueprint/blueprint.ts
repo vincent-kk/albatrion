@@ -7,10 +7,8 @@ import { collectBlueprintWarnings } from './utils/diagnostics/collectBlueprintWa
 import { validateChildTargets } from './utils/diagnostics/validateChildTargets';
 import { StaticFirstLoadCapability } from './utils/features/StaticFirstLoadCapability';
 
-/** Feature-free graphs share frozen values only after independent absence proofs. */
-const EMPTY_EXPRESSIONS: Blueprint['expressions'] = Object.freeze([]);
-/** Empty null-prototype dictionary preserves prototype-name dependency behavior. */
-const EMPTY_DEPENDENCIES: Blueprint['dependencies'] = Object.freeze(Object.create(null));
+/** Bundlers select internal protection once, before any blueprint is constructed. */
+const DEVELOPMENT = process.env.NODE_ENV !== 'production';
 
 /**
  * Analyze authored schema data into an immutable, finite declaration graph.
@@ -38,8 +36,14 @@ export const blueprint = (
   }
   const context: AnalysisContext = {
     staticFirstLoad: true,
-    capabilities: { branchless: true, hasExpressions: false, hasDerive: false,
-      hasWatch: false, hasState: false, hasDependencies: false },
+    capabilities: {
+      branchless: true,
+      hasExpressions: false,
+      hasDerive: false,
+      hasWatch: false,
+      hasState: false,
+      hasDependencies: false,
+    },
     schema,
     options,
     nodes: [],
@@ -68,39 +72,64 @@ export const blueprint = (
   );
   validateShape(context);
   validateChildTargets(context);
-  const expressions = context.capabilities.hasExpressions || context.capabilities.hasWatch
-    ? compileBlueprintExpressions(context) : EMPTY_EXPRESSIONS;
+  const expressions =
+    context.capabilities.hasExpressions || context.capabilities.hasWatch
+      ? compileBlueprintExpressions(context)
+      : [];
   for (let index = 0; index < context.nodes.length; index++) {
     const node = context.nodes[index];
-    if (node.kind === 'virtual' || node.kind === 'union' ||
-      (node.kind === 'object' || node.kind === 'array') && node.strategy !== 'branch')
+    if (
+      node.kind === 'virtual' ||
+      node.kind === 'union' ||
+      ((node.kind === 'object' || node.kind === 'array') &&
+        node.strategy !== 'branch')
+    )
       context.staticFirstLoad = false;
-    Object.freeze(node.childEntries);
-    Object.freeze(node);
+    if (DEVELOPMENT) {
+      Object.freeze(node.childEntries);
+      Object.freeze(node);
+    }
   }
-  for (let index = 0; index < context.fragments.length; index++) {
-    const fragment = context.fragments[index];
-    Object.freeze(fragment.declares);
-    Object.freeze(fragment.overlays);
-    Object.freeze(fragment.inheritedOverlays);
-    Object.freeze(fragment.children);
-    Object.freeze(fragment);
-  }
-  const result = Object.freeze({
-    capabilities: Object.freeze(context.capabilities),
+  if (DEVELOPMENT)
+    for (let index = 0; index < context.fragments.length; index++) {
+      const fragment = context.fragments[index];
+      Object.freeze(fragment.declares);
+      Object.freeze(fragment.overlays);
+      Object.freeze(fragment.inheritedOverlays);
+      Object.freeze(fragment.children);
+      Object.freeze(fragment);
+    }
+  const result: Blueprint = {
+    capabilities: context.capabilities,
     isAtomic: options.isAtomic,
     isTerminal: options.isTerminal,
     schema,
     root,
-    nodes: Object.freeze(context.nodes),
-    fragments: Object.freeze(context.fragments),
-    dependencies: context.dependencies ? Object.freeze(context.dependencies) : EMPTY_DEPENDENCIES,
+    nodes: context.nodes,
+    fragments: context.fragments,
+    dependencies: context.dependencies ?? Object.create(null),
     expressions,
-  });
+  };
+  if (DEVELOPMENT) {
+    Object.freeze(context.capabilities);
+    Object.freeze(context.nodes);
+    Object.freeze(context.fragments);
+    Object.freeze(result.dependencies);
+    if (!context.capabilities.hasExpressions && !context.capabilities.hasWatch)
+      Object.freeze(expressions);
+    Object.freeze(result);
+  }
   const capabilities = result.capabilities;
-  StaticFirstLoadCapability.set(result, context.staticFirstLoad && capabilities.branchless &&
-    !capabilities.hasExpressions && !capabilities.hasDerive && !capabilities.hasWatch &&
-    !capabilities.hasState && !capabilities.hasDependencies);
+  StaticFirstLoadCapability.set(
+    result,
+    context.staticFirstLoad &&
+      capabilities.branchless &&
+      !capabilities.hasExpressions &&
+      !capabilities.hasDerive &&
+      !capabilities.hasWatch &&
+      !capabilities.hasState &&
+      !capabilities.hasDependencies,
+  );
   collectBlueprintWarnings(result, options.collect);
   if (typeof schema === 'object' && options.cache) {
     const entry = {
