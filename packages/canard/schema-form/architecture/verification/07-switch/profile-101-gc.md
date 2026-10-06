@@ -223,4 +223,169 @@ warmup을 20→2000으로 바꾸어도 분석 비용이 내려가지 않았습�
 - per-run 파일 최대 1,791,021 bytes이며 raw/per-run 모든 파일은 decimal 5 MB 이하입니다. 생성 보고서도 같은 한도를 확인합니다.
 - 초기 heap pilot의 자연 exit 1은 본 결과에서 제외했고 마지막 sample nodeId 누락을 처리한 뒤 해당 전체 회차를 새 process로 다시 실행했습니다. 제품 source diff와 HEAD는 최종 검사에서 그대로였습니다.
 
+## 보강
+
+`cbb66e885f7b72c7dcc7e71d1f427f5d193626f1`에서 기존 보강 자료를 복구하고 기록용 mount 열을 추가했습니다. 기존 본문의 측정 HEAD와 현재 HEAD의 `packages/canard/schema-form/src` git tree는 모두 `e04227e4378968282541c7bc072edd7ddff6437c`이며, 재사용한 새/0.16.0 production bundle의 SHA-256도 기존 build 기록과 일치합니다. 제품 코드는 변경하지 않았습니다.
+
+완료된 `supp-timer-{default,ss64}` 18회, `cpu-supp-{default,ss64}` 18회, `objects-supp-default` 9회를 재사용했습니다. 표본·보정·분모·할당 합계가 일치하므로 이 자료를 재측정하지 않았습니다. `objects-supp-nofold`와 `trace-supp`는 보강 집계에서 제외했습니다. 아래 수치는 귀속 자료이며 공식 이득·퇴행 판정을 갱신하지 않습니다.
+
+### hot-loop 차이와 semi-space 상한
+
+mount 대표값은 회차별 보정 중앙값 3개의 중앙값이고, 새/구 배율은 두 대표값의 비율입니다. CPU 대표값은 회차별 101개 창의 평균 3개의 중앙값입니다. CPU 표본의 청사진 시간과 비계측 mount clock은 서로 다른 통계이므로 한 예산처럼 더하지 않습니다. 역사 hot-loop 수치는 기존 본문과 같은 비교 기준입니다.
+
+| fixture | hot 분석 ms | 본문의 default 차이 ms | 보강 default 분석 ms | hot 대비 차이 ms | 64 MB 분석 ms | hot 대비 차이 ms |
+|---|---:|---:|---:|---:|---:|---:|
+| nested-d5-f4 | 4.695 | +3.487 | 8.200 | +3.505 | 8.069 | +3.374 |
+| flat-500 | 1.450 | +1.559 | 2.943 | +1.493 | 2.972 | +1.522 |
+| oneOf-20 | 0.258 | +0.672 | 0.931 | +0.673 | 0.929 | +0.671 |
+
+| fixture | default 새 / 구 ms | 새/구 배율 | 64 MB 새 / 구 ms | 새/구 배율 | default 회차별 배율 범위 | 64 MB 회차별 배율 범위 |
+|---|---:|---:|---:|---:|---:|---:|
+| nested-d5-f4 | 11.936 / 3.097 | 3.854× | 11.250 / 2.816 | 3.995× | 3.578–4.233× | 3.701–3.995× |
+| flat-500 | 4.096 / 1.615 | 2.536× | 4.052 / 1.611 | 2.515× | 2.530–2.567× | 2.514–2.570× |
+| oneOf-20 | 2.291 / 0.357 | 6.425× | 2.456 / 0.368 | 6.674× | 6.346–6.442× | 6.335–6.953× |
+
+`--max-semi-space-size=64`는 semi-space의 **최대 크기** 설정입니다. 두 설정 모두 세 fixture의 각 엔진에서 clock 안 실제 collection은 **0 ms, 0/303 mount**였습니다. 상한을 늘려도 hot 분석과 동일-regime 분석의 차이 및 새/구 mount 격차는 남았습니다. 이 비교는 young-generation 크기나 창 안 GC pause가 누락 시간을 설명한다는 주장을 지지하지 않습니다. 본문의 강제 GC 뒤 JIT 무효화·반복 compilation 관측과 함께 해석할 수 있지만, 이 보강에서 allocator 비용과 compilation 시간을 각각 독립적으로 식별하지는 않았습니다.
+
+### mount당 할당 개수와 bytes
+
+1-byte sampling과 `--sampling-heap-profiler-suppress-randomness`를 사용한 **303개 창의 산술 평균**입니다. major/minor GC로 수거된 할당도 포함하고, clone·GC·inspector 준비 등 창 밖 할당은 제외했습니다. byte를 평균 객체 크기로 나눈 값이 아니라 sample 수를 직접 셌습니다. 기본 allocation folding을 유지하므로 여러 JavaScript 객체의 할당 블록이 한 sample로 나타날 수 있습니다. 아래 ‘개수’는 **V8 allocation sample 개수**이며 JavaScript 객체의 정확한 전수 개수로 확대하지 않습니다. heap profiler clock은 성능 표에 사용하지 않았습니다.
+
+| fixture / 엔진 | 총 개수/mount | 청사진 개수 | 그외 개수 | 총 byte/mount | 청사진 byte | 그외 byte |
+|---|---:|---:|---:|---:|---:|---:|
+| nested-d5-f4 / 새 | 274,559 | 236,708 | 37,850 | 19,537,403 | 15,793,367 | 3,744,036 |
+| nested-d5-f4 / 0.16.0 | 89,398 | 0 | 89,398 | 6,390,070 | 0 | 6,390,070 |
+| flat-500 / 새 | 102,562 | 88,422 | 14,139 | 7,298,750 | 5,546,157 | 1,752,593 |
+| flat-500 / 0.16.0 | 28,930 | 0 | 28,930 | 3,065,828 | 0 | 3,065,828 |
+| oneOf-20 / 새 | 48,011 | 18,179 | 29,832 | 2,567,309 | 1,118,291 | 1,449,019 |
+| oneOf-20 / 0.16.0 | 7,003 | 0 | 7,003 | 411,880 | 0 | 411,880 |
+
+각 칸은 독립적으로 반올림했습니다. 이 보강의 위치미상 개수·bytes는 두 엔진 모두 0이며, 소스 함수가 없는 clock 안 driver 할당은 그외에 보존했습니다. nested/flat은 새 엔진의 그외 할당 개수가 구 엔진보다 적어도 청사진 할당이 총량을 키웁니다. oneOf는 새 엔진의 그외 할당도 구 엔진보다 큽니다.
+
+### 개수 기준 상위 10개 할당 함수
+
+native `push`·`add` 등 leaf의 자기 할당을 가장 가까운 제품 소스 호출자에 귀속하고 `function|file:line`으로 합산했습니다. callee의 할당을 호출자에 중복 합산하지 않았습니다. 경로는 `packages/canard/schema-form/src/` 기준이고 line은 source map의 함수 진입 위치입니다. 함수명은 profile에 기록된 이름이며 번들의 `BranchStrategy2`도 그대로 보존했습니다.
+
+#### nested-d5-f4 — 새 엔진
+
+| 순위 | 함수 | 개수/mount | byte/mount | source file:line |
+|---:|---|---:|---:|---|
+| 1 | `collectDeclarations` | 43,060 | 2,516,906 | `core/blueprint/utils/analyze/collectDeclarations.ts:27` |
+| 2 | `buildNodes` | 31,959 | 3,066,567 | `core/blueprint/utils/analyze/buildNodes.ts:25` |
+| 3 | `(anonymous)` | 28,587 | 1,542,144 | `core/blueprint/utils/analyze/populateNodeChildren.ts:73` |
+| 4 | `mergeEffectiveSchema` | 26,715 | 1,912,998 | `core/blueprint/utils/effectiveSchema/mergeEffectiveSchema.ts:25` |
+| 5 | `readAllowedTypes` | 19,110 | 1,365,015 | `core/blueprint/utils/types/readAllowedTypes.ts:19` |
+| 6 | `loadStaticFirstTree` | 16,734 | 2,089,103 | `core/settle/utils/load/loadStaticFirstTree.ts:42` |
+| 7 | `populateNodeChildren` | 16,364 | 1,063,081 | `core/blueprint/utils/analyze/populateNodeChildren.ts:19` |
+| 8 | `resolveNodeStrategy` | 15,333 | 1,058,462 | `core/blueprint/utils/types/resolveNodeStrategy.ts:14` |
+| 9 | `(anonymous)` | 9,092 | 417,100 | `core/blueprint/utils/analyze/getTemplateKey.ts:16` |
+| 10 | `createSchemaNode` | 8,528 | 913,897 | `core/SchemaNode/utils/schemaNodeFactory.ts:29` |
+
+#### nested-d5-f4 — 0.16.0
+
+| 순위 | 함수 | 개수/mount | byte/mount | source file:line |
+|---:|---|---:|---:|---|
+| 1 | `getReferenceTable` | 15,036 | 657,263 | `__legacy__/helpers/jsonSchema/getResolveSchema/utils/getReferenceTable.ts:12` |
+| 2 | `publish` | 12,565 | 1,302,288 | `__legacy__/core/nodes/AbstractNode/AbstractNode.ts:891` |
+| 3 | `needsRealComputedManager` | 10,926 | 295,008 | `__legacy__/core/nodes/AbstractNode/utils/getComputedPropertiesManager/utils/needsRealComputedManager/needsRealComputedManager.ts:27` |
+| 4 | `AbstractNode` | 9,091 | 540,326 | `__legacy__/core/nodes/AbstractNode/AbstractNode.ts:1146` |
+| 5 | `EventCascadeManager` | 5,067 | 618,195 | `__legacy__/core/nodes/AbstractNode/utils/EventCascadeManager/EventCascadeManager.ts:257` |
+| 6 | `joinSegment` | 5,059 | 161,123 | `__legacy__/helpers/jsonPointer/utils/joinSegment.ts:10` |
+| 7 | `mergeEventEntries` | 4,095 | 764,401 | `__legacy__/core/nodes/AbstractNode/utils/EventCascadeManager/utils/mergeEventEntries.ts:13` |
+| 8 | `getChildNodeMap` | 3,564 | 285,964 | `__legacy__/core/nodes/ObjectNode/strategies/BranchStrategy/utils/getChildNodeMap/getChildNodeMap.ts:33` |
+| 9 | `BranchStrategy2` | 3,166 | 208,597 | `__legacy__/core/nodes/ObjectNode/strategies/BranchStrategy/BranchStrategy.ts:761` |
+| 10 | `handleChangeFactory` | 2,574 | 123,543 | `__legacy__/core/nodes/ObjectNode/strategies/BranchStrategy/BranchStrategy.ts:806` |
+
+#### flat-500 — 새 엔진
+
+| 순위 | 함수 | 개수/mount | byte/mount | source file:line |
+|---:|---|---:|---:|---|
+| 1 | `collectDeclarations` | 16,020 | 892,451 | `core/blueprint/utils/analyze/collectDeclarations.ts:27` |
+| 2 | `buildNodes` | 11,774 | 1,029,972 | `core/blueprint/utils/analyze/buildNodes.ts:25` |
+| 3 | `(anonymous)` | 10,000 | 513,699 | `core/blueprint/utils/analyze/populateNodeChildren.ts:73` |
+| 4 | `populateNodeChildren` | 7,713 | 382,354 | `core/blueprint/utils/analyze/populateNodeChildren.ts:19` |
+| 5 | `mergeEffectiveSchema` | 7,239 | 479,854 | `core/blueprint/utils/effectiveSchema/mergeEffectiveSchema.ts:25` |
+| 6 | `readAllowedTypes` | 7,014 | 501,023 | `core/blueprint/utils/types/readAllowedTypes.ts:19` |
+| 7 | `resolveNodeStrategy` | 5,015 | 349,043 | `core/blueprint/utils/types/resolveNodeStrategy.ts:14` |
+| 8 | `loadStaticFirstTree` | 4,226 | 650,957 | `core/settle/utils/load/loadStaticFirstTree.ts:42` |
+| 9 | `(anonymous)` | 3,427 | 157,115 | `core/blueprint/utils/analyze/getTemplateKey.ts:16` |
+| 10 | `resolveNodeTypes` | 3,012 | 164,515 | `core/blueprint/utils/types/resolveNodeTypes.ts:17` |
+
+#### flat-500 — 0.16.0
+
+| 순위 | 함수 | 개수/mount | byte/mount | source file:line |
+|---:|---|---:|---:|---|
+| 1 | `getReferenceTable` | 4,550 | 198,296 | `__legacy__/helpers/jsonSchema/getResolveSchema/utils/getReferenceTable.ts:12` |
+| 2 | `publish` | 4,020 | 390,997 | `__legacy__/core/nodes/AbstractNode/AbstractNode.ts:891` |
+| 3 | `needsRealComputedManager` | 4,014 | 108,384 | `__legacy__/core/nodes/AbstractNode/utils/getComputedPropertiesManager/utils/needsRealComputedManager/needsRealComputedManager.ts:27` |
+| 4 | `AbstractNode` | 3,113 | 180,731 | `__legacy__/core/nodes/AbstractNode/AbstractNode.ts:1146` |
+| 5 | `EventCascadeManager` | 1,959 | 238,997 | `__legacy__/core/nodes/AbstractNode/utils/EventCascadeManager/EventCascadeManager.ts:257` |
+| 6 | `getChildNodeMap` | 1,647 | 130,253 | `__legacy__/core/nodes/ObjectNode/strategies/BranchStrategy/utils/getChildNodeMap/getChildNodeMap.ts:33` |
+| 7 | `mergeEventEntries` | 1,503 | 280,561 | `__legacy__/core/nodes/AbstractNode/utils/EventCascadeManager/utils/mergeEventEntries.ts:13` |
+| 8 | `joinSegment` | 1,466 | 43,054 | `__legacy__/helpers/jsonPointer/utils/joinSegment.ts:10` |
+| 9 | `StringNode` | 1,000 | 159,465 | `__legacy__/core/nodes/StringNode/StringNode.ts:111` |
+| 10 | `__prepareUpdateDependencies__` | 926 | 78,529 | `__legacy__/core/nodes/AbstractNode/AbstractNode.ts:516` |
+
+#### oneOf-20 — 새 엔진
+
+| 순위 | 함수 | 개수/mount | byte/mount | source file:line |
+|---:|---|---:|---:|---|
+| 1 | `resolveDependencyPath` | 5,128 | 228,957 | `core/settle/utils/paths/resolveDependencyPath.ts:7` |
+| 2 | `readProjectedValue` | 3,202 | 128,165 | `core/settle/utils/gates/readProjectedValue.ts:25` |
+| 3 | `collectDeclarations` | 3,009 | 176,205 | `core/blueprint/utils/analyze/collectDeclarations.ts:27` |
+| 4 | `selectChildren` | 2,762 | 134,241 | `core/settle/utils/compute/selectChildren.ts:82` |
+| 5 | `evaluateGate` | 2,402 | 115,310 | `core/settle/utils/gates/evaluateGate.ts:26` |
+| 6 | `add` | 1,845 | 80,862 | `core/settle/utils/write/getDependencyIndex.ts:119` |
+| 7 | `buildNodes` | 1,542 | 149,072 | `core/blueprint/utils/analyze/buildNodes.ts:25` |
+| 8 | `(anonymous)` | 1,371 | 69,416 | `core/blueprint/utils/analyze/populateNodeChildren.ts:73` |
+| 9 | `flushPendingGateReads` | 1,258 | 72,579 | `core/settle/utils/gates/flushPendingGateReads.ts:30` |
+| 10 | `DependencyIndex` | 1,252 | 65,520 | `core/settle/utils/write/getDependencyIndex.ts:32` |
+
+#### oneOf-20 — 0.16.0
+
+| 순위 | 함수 | 개수/mount | byte/mount | source file:line |
+|---:|---|---:|---:|---|
+| 1 | `needsRealComputedManager` | 1,578 | 57,574 | `__legacy__/core/nodes/AbstractNode/utils/getComputedPropertiesManager/utils/needsRealComputedManager/needsRealComputedManager.ts:27` |
+| 2 | `getReferenceTable` | 841 | 39,970 | `__legacy__/helpers/jsonSchema/getResolveSchema/utils/getReferenceTable.ts:12` |
+| 3 | `__acquireBatch__` | 539 | 26,619 | `__legacy__/core/nodes/AbstractNode/utils/EventCascadeManager/EventCascadeManager.ts:90` |
+| 4 | `publish` | 492 | 40,165 | `__legacy__/core/nodes/AbstractNode/AbstractNode.ts:891` |
+| 5 | `AbstractNode` | 408 | 23,338 | `__legacy__/core/nodes/AbstractNode/AbstractNode.ts:1146` |
+| 6 | `getScopedSegment` | 362 | 10,384 | `__legacy__/core/nodes/AbstractNode/utils/getScopedSegment/getScopedSegment.ts:44` |
+| 7 | `EventCascadeManager` | 252 | 30,773 | `__legacy__/core/nodes/AbstractNode/utils/EventCascadeManager/EventCascadeManager.ts:257` |
+| 8 | `BranchStrategy2` | 211 | 11,872 | `__legacy__/core/nodes/ObjectNode/strategies/BranchStrategy/BranchStrategy.ts:761` |
+| 9 | `getCompositionNodeMapList` | 202 | 16,888 | `__legacy__/core/nodes/ObjectNode/strategies/BranchStrategy/utils/getCompositionNodeMapList/getCompositionNodeMapList.ts:42` |
+| 10 | `mergeEventEntries` | 193 | 35,920 | `__legacy__/core/nodes/AbstractNode/utils/EventCascadeManager/utils/mergeEventEntries.ts:13` |
+
+### 기록용 steady-state mount — sample 사이 강제 GC 생략
+
+추가 열은 profiler 없는 fresh paired process에서 각 엔진 warmup 20 뒤 **101개 연속 mount×3**으로 수집했습니다. 회차 첫 순서는 H–V / V–H / H–V이며 sample마다 순서를 교대합니다. steady의 warmup과 측정 sample 사이에는 명시적 GC가 없습니다. 95C-01 OFF와 같이 64 Promise 체크포인트 뒤 단일 `setImmediate` sentinel **콜백 내부의 clock**으로 종단을 기록하고, 전후 빈 호출 각 101개의 pooled 최근접 순위 중앙값 C를 두 엔진에 공통으로 뺐습니다. 음수 clipping은 하지 않았습니다.
+
+같은 sentinel·보정·GC 뒤 check anchor 조건의 강제 GC 대응열이 기존 자료에 없어 함께 3회씩 수집했습니다. clone과 강제 GC 및 그 뒤 check anchor는 clock 밖입니다. 따라서 아래 강제 GC 열은 앞의 `supp-timer` 열과 별도의 대응 측정이며, 이전 본문의 수치를 대체하지 않습니다.
+
+| fixture | 강제 GC 새 / 구 ms | GC 생략 새 / 구 ms | 차이 새 / 구 ms | 차이 / 강제 GC 새 / 구 |
+|---|---:|---:|---:|---:|
+| nested-d5-f4 | 11.019 / 3.229 | 8.667 / 2.107 | 2.352 / 1.122 | 21.3% / 34.7% |
+| flat-500 | 4.008 / 1.792 | 2.767 / 1.133 | 1.241 / 0.658 | 31.0% / 36.8% |
+| oneOf-20 | 2.275 / 0.365 | 1.227 / 0.186 | 1.048 / 0.179 | 46.1% / 49.0% |
+| sample-0 | 0.158 / 0.094 | 0.060 / 0.029 | 0.098 / 0.065 | 61.8% / 69.7% |
+
+차이는 **강제 GC 대표 mount−GC 생략 대표 mount**입니다. 편집상 ‘GC 뒤 재컴파일 몫’이라는 기록 열의 정의를 이 차이로 두되, 순수 compilation CPU 시간으로 동일시하지 않습니다. GC 생략은 JIT·heap 상태를 함께 바꾸고 자연 collection을 clock 안으로 가져옵니다. 평균 GC pause를 중앙값 mount 차이에 직접 더하거나 빼는 것도 하지 않습니다.
+
+| fixture | GC 생략 clock 안 실제 GC 새 / 구 평균 ms/mount | GC 포함 mount 새 / 구 |
+|---|---:|---:|
+| nested-d5-f4 | 1.234 / 1.264 | 172/303 / 127/303 |
+| flat-500 | 0.540 / 0.234 | 80/303 / 41/303 |
+| oneOf-20 | 0.096 / 0.003 | 44/303 / 2/303 |
+| sample-0 | 0.010 / 0.000 | 6/303 / 0/303 |
+
+대응 강제 GC 열의 창 안 실제 GC는 모든 fixture·엔진에서 0입니다. **공식 판정은 TEST-026의 강제 collection을 유지합니다.** steady 열과 위 차이는 기록용이며 공식 열의 성능 개선 또는 제품 수정의 효과로 쓰지 않습니다.
+
+### 보강 자료와 검사
+
+- 회차 자료와 측정·집계 artifact: [profile-101-gc/supplement/](profile-101-gc/supplement/). 기록용 driver는 `editor-mounts.mjs`, 읽기 전용 집계는 `summarize-resumed.mjs`이며 기존 측정 도구와 제품 소스는 수정하지 않았습니다.
+- 통합 JSON의 `supplement`에 모든 회차 참조, 원래/64 MB clock·CPU 분모, count/byte와 범위, 개수 상위 10개 source 함수, forced/steady 대응열과 차이를 보존했습니다. 기존 JSON 항목은 그대로 유지했습니다.
+- 성공한 process 69개(기존 45, 추가 24)와 13,938개 창의 길이·보정·phase 분모·개수/byte 보존 합계·관측 출력 hash를 검사했습니다. process 기록의 시작/종료 순서가 겹치지 않았고 모두 signal 없이 code 0으로 자체 종료했습니다. 가장 긴 process는 181.460초로 8분 이하입니다.
+- 초기 추가 driver의 중복 anchor assertion은 측정 시작 전 자연 exit 1로 끝났습니다. 줄 경계를 포함해 anchor를 한정한 뒤 해당 회차 전체를 실행했으며 성공한 자료만 집계했습니다.
+- 모든 검사는 지정 worktree 안에서 수행했습니다. git write·설치·제품 코드 변경은 없으며 per-run 파일은 모두 5,000,000 bytes 이하(최대 4,000,000 bytes)입니다. partial trace는 집계에서 제외하고 그대로 두었습니다.
+
 
