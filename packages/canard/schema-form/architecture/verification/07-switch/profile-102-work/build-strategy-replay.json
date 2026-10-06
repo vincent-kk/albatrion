@@ -1,0 +1,8 @@
+{
+  "HEAD": "268832c7cb6eea67475b56ab5a78408a55ec47a3",
+  "variant": "strategy-replay",
+  "sha256": "f904a3f112d1720b31feeb70898618eedf10d47b04e36d29e993893d57992c1b",
+  "bytes": 526601,
+  "naturalServiceExits": 1,
+  "edits": []
+}

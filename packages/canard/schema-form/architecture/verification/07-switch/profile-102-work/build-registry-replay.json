@@ -1,0 +1,8 @@
+{
+  "HEAD": "268832c7cb6eea67475b56ab5a78408a55ec47a3",
+  "variant": "registry-replay",
+  "sha256": "f55311b95bb1607e239f9b325987a2706bc425a951c60aeb3a5f387406efe28d",
+  "bytes": 526496,
+  "naturalServiceExits": 1,
+  "edits": []
+}

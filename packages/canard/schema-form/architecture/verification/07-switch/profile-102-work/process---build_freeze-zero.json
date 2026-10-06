@@ -1,0 +1,14 @@
+{
+  "HEAD": "268832c7cb6eea67475b56ab5a78408a55ec47a3",
+  "command": "--build",
+  "args": [
+    "freeze-zero"
+  ],
+  "status": 0,
+  "signal": null,
+  "started": "2026-10-06T06:49:45.167Z",
+  "ended": "2026-10-06T06:49:45.420Z",
+  "elapsedMs": 253,
+  "pid": 49327,
+  "driverSha256": "3237757010be22e0b321eb9e90fced59b57797ecb1b2bb1dedef3effff41630d"
+}

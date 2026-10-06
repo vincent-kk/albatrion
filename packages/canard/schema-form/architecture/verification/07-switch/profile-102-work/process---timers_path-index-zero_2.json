@@ -1,0 +1,15 @@
+{
+  "HEAD": "268832c7cb6eea67475b56ab5a78408a55ec47a3",
+  "command": "--timers",
+  "args": [
+    "path-index-zero",
+    "2"
+  ],
+  "status": 0,
+  "signal": null,
+  "started": "2026-10-06T07:14:42.018Z",
+  "ended": "2026-10-06T07:14:56.457Z",
+  "elapsedMs": 14439,
+  "pid": 69232,
+  "driverSha256": "b4adbc22b5130a1afc5e9aeaa5cd234b3cc0b5342feb1ccdaae7e8eccc5b1fc4"
+}

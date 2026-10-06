@@ -1,0 +1,17 @@
+{
+  "HEAD": "268832c7cb6eea67475b56ab5a78408a55ec47a3",
+  "command": "--timer-worker",
+  "args": [
+    "constraint-present",
+    "flat-500",
+    "1",
+    "steady"
+  ],
+  "status": 0,
+  "signal": null,
+  "started": "2026-10-06T06:46:01.576Z",
+  "ended": "2026-10-06T06:46:02.453Z",
+  "elapsedMs": 877,
+  "pid": 46201,
+  "driverSha256": "a09fb550c3263d10b03912c6788f1ab9597481ce1856a2da28cf8c7a641b00a7"
+}

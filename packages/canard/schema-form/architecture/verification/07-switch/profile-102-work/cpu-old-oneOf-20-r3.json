@@ -1,0 +1,2073 @@
+{
+  "HEAD": "268832c7cb6eea67475b56ab5a78408a55ec47a3",
+  "version": "old",
+  "name": "oneOf-20",
+  "run": 3,
+  "warmup": 20,
+  "samples": 101,
+  "forcedGC": false,
+  "freshProcess": true,
+  "counterInstrumentation": false,
+  "windows": [
+    {
+      "index": 0,
+      "beginUs": 85864271147,
+      "endUs": 85864271556,
+      "ms": 0.40591600000001904
+    },
+    {
+      "index": 1,
+      "beginUs": 85864272070,
+      "endUs": 85864272301,
+      "ms": 0.22987499999999272
+    },
+    {
+      "index": 2,
+      "beginUs": 85864272353,
+      "endUs": 85864272552,
+      "ms": 0.198332999999991
+    },
+    {
+      "index": 3,
+      "beginUs": 85864272608,
+      "endUs": 85864272859,
+      "ms": 0.2504999999999882
+    },
+    {
+      "index": 4,
+      "beginUs": 85864272954,
+      "endUs": 85864273233,
+      "ms": 0.27862500000000523
+    },
+    {
+      "index": 5,
+      "beginUs": 85864273281,
+      "endUs": 85864273483,
+      "ms": 0.2019159999999829
+    },
+    {
+      "index": 6,
+      "beginUs": 85864273724,
+      "endUs": 85864273901,
+      "ms": 0.17608300000000554
+    },
+    {
+      "index": 7,
+      "beginUs": 85864273957,
+      "endUs": 85864274127,
+      "ms": 0.16983399999998028
+    },
+    {
+      "index": 8,
+      "beginUs": 85864274175,
+      "endUs": 85864274343,
+      "ms": 0.16816599999998516
+    },
+    {
+      "index": 9,
+      "beginUs": 85864274391,
+      "endUs": 85864274581,
+      "ms": 0.1887919999999781
+    },
+    {
+      "index": 10,
+      "beginUs": 85864274630,
+      "endUs": 85864274803,
+      "ms": 0.17304099999998357
+    },
+    {
+      "index": 11,
+      "beginUs": 85864274856,
+      "endUs": 85864275084,
+      "ms": 0.22837499999999977
+    },
+    {
+      "index": 12,
+      "beginUs": 85864275132,
+      "endUs": 85864275323,
+      "ms": 0.18999999999999773
+    },
+    {
+      "index": 13,
+      "beginUs": 85864275390,
+      "endUs": 85864275643,
+      "ms": 0.2520419999999888
+    },
+    {
+      "index": 14,
+      "beginUs": 85864275706,
+      "endUs": 85864276179,
+      "ms": 0.4679169999999999
+    },
+    {
+      "index": 15,
+      "beginUs": 85864276231,
+      "endUs": 85864276412,
+      "ms": 0.18037499999999795
+    },
+    {
+      "index": 16,
+      "beginUs": 85864276462,
+      "endUs": 85864276628,
+      "ms": 0.16520900000000438
+    },
+    {
+      "index": 17,
+      "beginUs": 85864276674,
+      "endUs": 85864276837,
+      "ms": 0.16295800000000327
+    },
+    {
+      "index": 18,
+      "beginUs": 85864276883,
+      "endUs": 85864277047,
+      "ms": 0.16295800000000327
+    },
+    {
+      "index": 19,
+      "beginUs": 85864277093,
+      "endUs": 85864277252,
+      "ms": 0.15941599999999312
+    },
+    {
+      "index": 20,
+      "beginUs": 85864277297,
+      "endUs": 85864277457,
+      "ms": 0.1596659999999872
+    },
+    {
+      "index": 21,
+      "beginUs": 85864277506,
+      "endUs": 85864277664,
+      "ms": 0.15770899999998278
+    },
+    {
+      "index": 22,
+      "beginUs": 85864277710,
+      "endUs": 85864277869,
+      "ms": 0.15937500000001137
+    },
+    {
+      "index": 23,
+      "beginUs": 85864277914,
+      "endUs": 85864278092,
+      "ms": 0.17775000000000318
+    },
+    {
+      "index": 24,
+      "beginUs": 85864278141,
+      "endUs": 85864278302,
+      "ms": 0.160082999999986
+    },
+    {
+      "index": 25,
+      "beginUs": 85864278349,
+      "endUs": 85864278517,
+      "ms": 0.16754099999999994
+    },
+    {
+      "index": 26,
+      "beginUs": 85864278564,
+      "endUs": 85864278885,
+      "ms": 0.3211250000000234
+    },
+    {
+      "index": 27,
+      "beginUs": 85864278957,
+      "endUs": 85864279163,
+      "ms": 0.20495900000000233
+    },
+    {
+      "index": 28,
+      "beginUs": 85864279214,
+      "endUs": 85864279429,
+      "ms": 0.21412499999999568
+    },
+    {
+      "index": 29,
+      "beginUs": 85864279477,
+      "endUs": 85864279870,
+      "ms": 0.39237499999998704
+    },
+    {
+      "index": 30,
+      "beginUs": 85864279919,
+      "endUs": 85864280094,
+      "ms": 0.1744589999999846
+    },
+    {
+      "index": 31,
+      "beginUs": 85864280139,
+      "endUs": 85864280307,
+      "ms": 0.16708400000001689
+    },
+    {
+      "index": 32,
+      "beginUs": 85864280359,
+      "endUs": 85864280563,
+      "ms": 0.20362499999998818
+    },
+    {
+      "index": 33,
+      "beginUs": 85864280608,
+      "endUs": 85864280767,
+      "ms": 0.15874999999999773
+    },
+    {
+      "index": 34,
+      "beginUs": 85864280817,
+      "endUs": 85864280974,
+      "ms": 0.157291999999984
+    },
+    {
+      "index": 35,
+      "beginUs": 85864281020,
+      "endUs": 85864281180,
+      "ms": 0.15983399999998937
+    },
+    {
+      "index": 36,
+      "beginUs": 85864281224,
+      "endUs": 85864281421,
+      "ms": 0.19558299999999917
+    },
+    {
+      "index": 37,
+      "beginUs": 85864281491,
+      "endUs": 85864281800,
+      "ms": 0.3087080000000242
+    },
+    {
+      "index": 38,
+      "beginUs": 85864281855,
+      "endUs": 85864282031,
+      "ms": 0.17516599999999016
+    },
+    {
+      "index": 39,
+      "beginUs": 85864282083,
+      "endUs": 85864282251,
+      "ms": 0.16770800000000463
+    },
+    {
+      "index": 40,
+      "beginUs": 85864282299,
+      "endUs": 85864282460,
+      "ms": 0.16116700000000606
+    },
+    {
+      "index": 41,
+      "beginUs": 85864282509,
+      "endUs": 85864282672,
+      "ms": 0.16266700000002743
+    },
+    {
+      "index": 42,
+      "beginUs": 85864282720,
+      "endUs": 85864282878,
+      "ms": 0.1582080000000019
+    },
+    {
+      "index": 43,
+      "beginUs": 85864282925,
+      "endUs": 85864283087,
+      "ms": 0.16237499999999727
+    },
+    {
+      "index": 44,
+      "beginUs": 85864283139,
+      "endUs": 85864283513,
+      "ms": 0.3729160000000036
+    },
+    {
+      "index": 45,
+      "beginUs": 85864283572,
+      "endUs": 85864283751,
+      "ms": 0.17841599999999858
+    },
+    {
+      "index": 46,
+      "beginUs": 85864283802,
+      "endUs": 85864283979,
+      "ms": 0.17595900000000597
+    },
+    {
+      "index": 47,
+      "beginUs": 85864284038,
+      "endUs": 85864284257,
+      "ms": 0.21787499999999227
+    },
+    {
+      "index": 48,
+      "beginUs": 85864284308,
+      "endUs": 85864284490,
+      "ms": 0.18170799999998621
+    },
+    {
+      "index": 49,
+      "beginUs": 85864284540,
+      "endUs": 85864284706,
+      "ms": 0.1660840000000121
+    },
+    {
+      "index": 50,
+      "beginUs": 85864284755,
+      "endUs": 85864284918,
+      "ms": 0.162666999999999
+    },
+    {
+      "index": 51,
+      "beginUs": 85864284965,
+      "endUs": 85864285124,
+      "ms": 0.15916599999999903
+    },
+    {
+      "index": 52,
+      "beginUs": 85864285171,
+      "endUs": 85864285329,
+      "ms": 0.15787499999999
+    },
+    {
+      "index": 53,
+      "beginUs": 85864285379,
+      "endUs": 85864285545,
+      "ms": 0.1653750000000116
+    },
+    {
+      "index": 54,
+      "beginUs": 85864285591,
+      "endUs": 85864285748,
+      "ms": 0.15637499999999704
+    },
+    {
+      "index": 55,
+      "beginUs": 85864285797,
+      "endUs": 85864285955,
+      "ms": 0.15758399999998574
+    },
+    {
+      "index": 56,
+      "beginUs": 85864286003,
+      "endUs": 85864286159,
+      "ms": 0.15554099999999949
+    },
+    {
+      "index": 57,
+      "beginUs": 85864286205,
+      "endUs": 85864286364,
+      "ms": 0.15829199999998878
+    },
+    {
+      "index": 58,
+      "beginUs": 85864286413,
+      "endUs": 85864286574,
+      "ms": 0.16104100000001154
+    },
+    {
+      "index": 59,
+      "beginUs": 85864286622,
+      "endUs": 85864287083,
+      "ms": 0.4593749999999943
+    },
+    {
+      "index": 60,
+      "beginUs": 85864287152,
+      "endUs": 85864287366,
+      "ms": 0.21349999999998204
+    },
+    {
+      "index": 61,
+      "beginUs": 85864287414,
+      "endUs": 85864287585,
+      "ms": 0.17000000000001592
+    },
+    {
+      "index": 62,
+      "beginUs": 85864287633,
+      "endUs": 85864287798,
+      "ms": 0.16450000000000387
+    },
+    {
+      "index": 63,
+      "beginUs": 85864287846,
+      "endUs": 85864288047,
+      "ms": 0.2011669999999981
+    },
+    {
+      "index": 64,
+      "beginUs": 85864288104,
+      "endUs": 85864288297,
+      "ms": 0.1917500000000132
+    },
+    {
+      "index": 65,
+      "beginUs": 85864288345,
+      "endUs": 85864288524,
+      "ms": 0.17808299999998667
+    },
+    {
+      "index": 66,
+      "beginUs": 85864288584,
+      "endUs": 85864288752,
+      "ms": 0.16737499999999272
+    },
+    {
+      "index": 67,
+      "beginUs": 85864288801,
+      "endUs": 85864288962,
+      "ms": 0.16133300000001327
+    },
+    {
+      "index": 68,
+      "beginUs": 85864289208,
+      "endUs": 85864289374,
+      "ms": 0.16541700000001924
+    },
+    {
+      "index": 69,
+      "beginUs": 85864289421,
+      "endUs": 85864289607,
+      "ms": 0.18500000000000227
+    },
+    {
+      "index": 70,
+      "beginUs": 85864289654,
+      "endUs": 85864289822,
+      "ms": 0.16754199999999742
+    },
+    {
+      "index": 71,
+      "beginUs": 85864289870,
+      "endUs": 85864290029,
+      "ms": 0.15841699999998582
+    },
+    {
+      "index": 72,
+      "beginUs": 85864290238,
+      "endUs": 85864290399,
+      "ms": 0.16024999999999068
+    },
+    {
+      "index": 73,
+      "beginUs": 85864290447,
+      "endUs": 85864290605,
+      "ms": 0.15758400000001416
+    },
+    {
+      "index": 74,
+      "beginUs": 85864290653,
+      "endUs": 85864290961,
+      "ms": 0.307959000000011
+    },
+    {
+      "index": 75,
+      "beginUs": 85864291020,
+      "endUs": 85864291207,
+      "ms": 0.1861250000000041
+    },
+    {
+      "index": 76,
+      "beginUs": 85864291255,
+      "endUs": 85864291418,
+      "ms": 0.1629999999999825
+    },
+    {
+      "index": 77,
+      "beginUs": 85864291465,
+      "endUs": 85864291625,
+      "ms": 0.15970900000002075
+    },
+    {
+      "index": 78,
+      "beginUs": 85864291671,
+      "endUs": 85864291825,
+      "ms": 0.1531659999999988
+    },
+    {
+      "index": 79,
+      "beginUs": 85864291873,
+      "endUs": 85864292027,
+      "ms": 0.15350000000000819
+    },
+    {
+      "index": 80,
+      "beginUs": 85864292073,
+      "endUs": 85864292229,
+      "ms": 0.15575000000001182
+    },
+    {
+      "index": 81,
+      "beginUs": 85864292280,
+      "endUs": 85864292434,
+      "ms": 0.15287499999999454
+    },
+    {
+      "index": 82,
+      "beginUs": 85864292480,
+      "endUs": 85864292653,
+      "ms": 0.17304200000000947
+    },
+    {
+      "index": 83,
+      "beginUs": 85864292701,
+      "endUs": 85864292855,
+      "ms": 0.1533330000000035
+    },
+    {
+      "index": 84,
+      "beginUs": 85864292906,
+      "endUs": 85864293058,
+      "ms": 0.15241600000001654
+    },
+    {
+      "index": 85,
+      "beginUs": 85864293104,
+      "endUs": 85864293261,
+      "ms": 0.15654200000000174
+    },
+    {
+      "index": 86,
+      "beginUs": 85864293309,
+      "endUs": 85864293466,
+      "ms": 0.1570419999999899
+    },
+    {
+      "index": 87,
+      "beginUs": 85864293520,
+      "endUs": 85864293677,
+      "ms": 0.15637499999999704
+    },
+    {
+      "index": 88,
+      "beginUs": 85864293726,
+      "endUs": 85864293890,
+      "ms": 0.1642089999999996
+    },
+    {
+      "index": 89,
+      "beginUs": 85864293939,
+      "endUs": 85864294306,
+      "ms": 0.3668750000000216
+    },
+    {
+      "index": 90,
+      "beginUs": 85864294361,
+      "endUs": 85864294580,
+      "ms": 0.21774999999999523
+    },
+    {
+      "index": 91,
+      "beginUs": 85864294639,
+      "endUs": 85864294807,
+      "ms": 0.16716700000000628
+    },
+    {
+      "index": 92,
+      "beginUs": 85864294861,
+      "endUs": 85864295025,
+      "ms": 0.1633329999999944
+    },
+    {
+      "index": 93,
+      "beginUs": 85864295076,
+      "endUs": 85864295231,
+      "ms": 0.15437500000001592
+    },
+    {
+      "index": 94,
+      "beginUs": 85864295276,
+      "endUs": 85864295430,
+      "ms": 0.15324999999998568
+    },
+    {
+      "index": 95,
+      "beginUs": 85864295476,
+      "endUs": 85864295630,
+      "ms": 0.1536660000000154
+    },
+    {
+      "index": 96,
+      "beginUs": 85864295680,
+      "endUs": 85864295836,
+      "ms": 0.15629200000000765
+    },
+    {
+      "index": 97,
+      "beginUs": 85864295884,
+      "endUs": 85864296033,
+      "ms": 0.1494169999999997
+    },
+    {
+      "index": 98,
+      "beginUs": 85864296077,
+      "endUs": 85864296226,
+      "ms": 0.14804200000000378
+    },
+    {
+      "index": 99,
+      "beginUs": 85864296271,
+      "endUs": 85864296419,
+      "ms": 0.147625000000005
+    },
+    {
+      "index": 100,
+      "beginUs": 85864296468,
+      "endUs": 85864296646,
+      "ms": 0.17791700000000787
+    }
+  ],
+  "cpu": {
+    "mounts": 101,
+    "intervalUs": 100,
+    "samples": 159,
+    "denominatorUs": 19407,
+    "windowUs": 19419,
+    "functions": [
+      {
+        "function": "structuredClone",
+        "file": "node:internal/worker/js_transferable",
+        "line": 101,
+        "column": 24,
+        "selfUs": 3282,
+        "totalUs": 3414,
+        "selfSamples": 26,
+        "totalSamples": 27,
+        "selfPct": 16.911423713093214,
+        "totalPct": 17.591590663162776,
+        "selfUsPerMount": 32.495049504950494,
+        "totalUsPerMount": 33.801980198019805
+      },
+      {
+        "function": "needsRealComputedManager",
+        "file": "packages/canard/schema-form/src/__legacy__/core/nodes/AbstractNode/utils/getComputedPropertiesManager/utils/needsRealComputedManager/needsRealComputedManager.ts",
+        "line": 27,
+        "column": 40,
+        "selfUs": 2020,
+        "totalUs": 2020,
+        "selfSamples": 18,
+        "totalSamples": 18,
+        "selfPct": 10.408615448034213,
+        "totalPct": 10.408615448034213,
+        "selfUsPerMount": 20,
+        "totalUsPerMount": 20
+      },
+      {
+        "function": "(idle)",
+        "file": "(V8)",
+        "line": 0,
+        "column": -1,
+        "selfUs": 1514,
+        "totalUs": 1514,
+        "selfSamples": 10,
+        "totalSamples": 10,
+        "selfPct": 7.8013088061008915,
+        "totalPct": 7.8013088061008915,
+        "selfUsPerMount": 14.990099009900991,
+        "totalUsPerMount": 14.990099009900991
+      },
+      {
+        "function": "mergeEventEntries",
+        "file": "packages/canard/schema-form/src/__legacy__/core/nodes/AbstractNode/utils/EventCascadeManager/utils/mergeEventEntries.ts",
+        "line": 13,
+        "column": 33,
+        "selfUs": 1163,
+        "totalUs": 1163,
+        "selfSamples": 9,
+        "totalSamples": 9,
+        "selfPct": 5.992683052506828,
+        "totalPct": 5.992683052506828,
+        "selfUsPerMount": 11.514851485148515,
+        "totalUsPerMount": 11.514851485148515
+      },
+      {
+        "function": "(garbage collector)",
+        "file": "(V8)",
+        "line": 0,
+        "column": -1,
+        "selfUs": 1133,
+        "totalUs": 1133,
+        "selfSamples": 7,
+        "totalSamples": 7,
+        "selfPct": 5.838099654763745,
+        "totalPct": 5.838099654763745,
+        "selfUsPerMount": 11.217821782178218,
+        "totalUsPerMount": 11.217821782178218
+      },
+      {
+        "function": "(program)",
+        "file": "(V8)",
+        "line": 0,
+        "column": -1,
+        "selfUs": 775,
+        "totalUs": 775,
+        "selfSamples": 6,
+        "totalSamples": 6,
+        "selfPct": 3.993404441696295,
+        "totalPct": 3.993404441696295,
+        "selfUsPerMount": 7.673267326732673,
+        "totalUsPerMount": 7.673267326732673
+      },
+      {
+        "function": "runMicrotasks",
+        "file": "(V8)",
+        "line": 0,
+        "column": -1,
+        "selfUs": 628,
+        "totalUs": 628,
+        "selfSamples": 4,
+        "totalSamples": 4,
+        "selfPct": 3.2359457927551913,
+        "totalPct": 3.2359457927551913,
+        "selfUsPerMount": 6.217821782178218,
+        "totalUsPerMount": 6.217821782178218
+      },
+      {
+        "function": "BranchStrategy2",
+        "file": "packages/canard/schema-form/src/__legacy__/core/nodes/ObjectNode/strategies/BranchStrategy/BranchStrategy.ts",
+        "line": 761,
+        "column": 2,
+        "selfUs": 598,
+        "totalUs": 5784,
+        "selfSamples": 5,
+        "totalSamples": 53,
+        "selfPct": 3.081362395012109,
+        "totalPct": 29.803679084866285,
+        "selfUsPerMount": 5.920792079207921,
+        "totalUsPerMount": 57.26732673267327
+      },
+      {
+        "function": "AbstractNode",
+        "file": "packages/canard/schema-form/src/__legacy__/core/nodes/AbstractNode/AbstractNode.ts",
+        "line": 1146,
+        "column": 2,
+        "selfUs": 443,
+        "totalUs": 3999,
+        "selfSamples": 4,
+        "totalSamples": 38,
+        "selfPct": 2.28268150667285,
+        "totalPct": 20.60596691915288,
+        "selfUsPerMount": 4.3861386138613865,
+        "totalUsPerMount": 39.59405940594059
+      },
+      {
+        "function": "scannerFactory",
+        "file": "packages/winglet/json-schema/dist/utils/JSONSchemaScanner/utils/scannerFactory.cjs",
+        "line": 17,
+        "column": 24,
+        "selfUs": 430,
+        "totalUs": 838,
+        "selfSamples": 4,
+        "totalSamples": 8,
+        "selfPct": 2.2156953676508477,
+        "totalPct": 4.318029576956768,
+        "selfUsPerMount": 4.257425742574258,
+        "totalUsPerMount": 8.297029702970297
+      },
+      {
+        "function": "getEventCollection",
+        "file": "packages/canard/schema-form/src/__legacy__/core/nodes/AbstractNode/utils/EventCascadeManager/utils/getEventCollection.ts",
+        "line": 7,
+        "column": 34,
+        "selfUs": 403,
+        "totalUs": 403,
+        "selfSamples": 3,
+        "totalSamples": 3,
+        "selfPct": 2.0765703096820736,
+        "totalPct": 2.0765703096820736,
+        "selfUsPerMount": 3.99009900990099,
+        "totalUsPerMount": 3.99009900990099
+      },
+      {
+        "function": "__processChildren__",
+        "file": "packages/canard/schema-form/src/__legacy__/core/nodes/ObjectNode/strategies/BranchStrategy/BranchStrategy.ts",
+        "line": 596,
+        "column": 10,
+        "selfUs": 394,
+        "totalUs": 394,
+        "selfSamples": 3,
+        "totalSamples": 3,
+        "selfPct": 2.0301952903591487,
+        "totalPct": 2.0301952903591487,
+        "selfUsPerMount": 3.900990099009901,
+        "totalUsPerMount": 3.900990099009901
+      },
+      {
+        "function": "measured",
+        "file": "packages/canard/schema-form/architecture/verification/07-switch/profile-102-work/measure.mjs",
+        "line": 198,
+        "column": 23,
+        "selfUs": 321,
+        "totalUs": 8796,
+        "selfSamples": 3,
+        "totalSamples": 82,
+        "selfPct": 1.6540423558509816,
+        "totalPct": 45.32385221827176,
+        "selfUsPerMount": 3.1782178217821784,
+        "totalUsPerMount": 87.08910891089108
+      },
+      {
+        "function": "extractSchemaInfo",
+        "file": "packages/canard/schema-form/src/__legacy__/helpers/jsonSchema/extractSchemaInfo/extractSchemaInfo.ts",
+        "line": 13,
+        "column": 33,
+        "selfUs": 320,
+        "totalUs": 320,
+        "selfSamples": 3,
+        "totalSamples": 3,
+        "selfPct": 1.648889575926212,
+        "totalPct": 1.648889575926212,
+        "selfUsPerMount": 3.1683168316831685,
+        "totalUsPerMount": 3.1683168316831685
+      },
+      {
+        "function": "getCompositionNodeMapList",
+        "file": "packages/canard/schema-form/src/__legacy__/core/nodes/ObjectNode/strategies/BranchStrategy/utils/getCompositionNodeMapList/getCompositionNodeMapList.ts",
+        "line": 42,
+        "column": 41,
+        "selfUs": 318,
+        "totalUs": 4000,
+        "selfSamples": 3,
+        "totalSamples": 37,
+        "selfPct": 1.6385840160766731,
+        "totalPct": 20.61111969907765,
+        "selfUsPerMount": 3.1485148514851486,
+        "totalUsPerMount": 39.603960396039604
+      },
+      {
+        "function": "getSimpleEquality",
+        "file": "packages/canard/schema-form/src/__legacy__/core/nodes/AbstractNode/utils/getComputedPropertiesManager/ComputedPropertiesManager/utils/getConditionIndexFactory/utils/getSimpleEquality.ts",
+        "line": 31,
+        "column": 33,
+        "selfUs": 315,
+        "totalUs": 315,
+        "selfSamples": 3,
+        "totalSamples": 3,
+        "selfPct": 1.6231256763023652,
+        "totalPct": 1.6231256763023652,
+        "selfUsPerMount": 3.118811881188119,
+        "totalUsPerMount": 3.118811881188119
+      },
+      {
+        "function": "EventCascadeManager",
+        "file": "packages/canard/schema-form/src/__legacy__/core/nodes/AbstractNode/utils/EventCascadeManager/EventCascadeManager.ts",
+        "line": 257,
+        "column": 2,
+        "selfUs": 310,
+        "totalUs": 310,
+        "selfSamples": 3,
+        "totalSamples": 3,
+        "selfPct": 1.597361776678518,
+        "totalPct": 1.597361776678518,
+        "selfUsPerMount": 3.0693069306930694,
+        "totalUsPerMount": 3.0693069306930694
+      },
+      {
+        "function": "__acquireBatch__",
+        "file": "packages/canard/schema-form/src/__legacy__/core/nodes/AbstractNode/utils/EventCascadeManager/EventCascadeManager.ts",
+        "line": 90,
+        "column": 10,
+        "selfUs": 262,
+        "totalUs": 805,
+        "selfSamples": 2,
+        "totalSamples": 7,
+        "selfPct": 1.3500283402895863,
+        "totalPct": 4.147987839439377,
+        "selfUsPerMount": 2.594059405940594,
+        "totalUsPerMount": 7.97029702970297
+      },
+      {
+        "function": "Immediate",
+        "file": "node:internal/timers",
+        "line": 747,
+        "column": 13,
+        "selfUs": 228,
+        "totalUs": 228,
+        "selfSamples": 2,
+        "totalSamples": 2,
+        "selfPct": 1.1748338228474262,
+        "totalPct": 1.1748338228474262,
+        "selfUsPerMount": 2.257425742574257,
+        "totalUsPerMount": 2.257425742574257
+      },
+      {
+        "function": "ObjectNode",
+        "file": "packages/canard/schema-form/src/__legacy__/core/nodes/ObjectNode/ObjectNode.ts",
+        "line": 96,
+        "column": 2,
+        "selfUs": 216,
+        "totalUs": 7371,
+        "selfSamples": 2,
+        "totalSamples": 68,
+        "selfPct": 1.1130004637501931,
+        "totalPct": 37.98114082547534,
+        "selfUsPerMount": 2.1386138613861387,
+        "totalUsPerMount": 72.98019801980197
+      },
+      {
+        "function": "__run__",
+        "file": "packages/winglet/json-schema/dist/utils/JSONSchemaScanner/sync/JSONSchemaScanner.cjs",
+        "line": 47,
+        "column": 8,
+        "selfUs": 211,
+        "totalUs": 1049,
+        "selfSamples": 2,
+        "totalSamples": 10,
+        "selfPct": 1.0872365641263462,
+        "totalPct": 5.405266141083114,
+        "selfUsPerMount": 2.089108910891089,
+        "totalUsPerMount": 10.386138613861386
+      },
+      {
+        "function": "combineConditions",
+        "file": "packages/canard/schema-form/src/__legacy__/helpers/dynamicExpression/combineConditions/combineConditions.ts",
+        "line": 13,
+        "column": 33,
+        "selfUs": 207,
+        "totalUs": 207,
+        "selfSamples": 2,
+        "totalSamples": 2,
+        "selfPct": 1.0666254444272685,
+        "totalPct": 1.0666254444272685,
+        "selfUsPerMount": 2.0495049504950495,
+        "totalUsPerMount": 2.0495049504950495
+      },
+      {
+        "function": "getStackEntriesForNode",
+        "file": "packages/winglet/json-schema/dist/utils/JSONSchemaScanner/utils/getStackEntriesForNode.cjs",
+        "line": 74,
+        "column": 31,
+        "selfUs": 206,
+        "totalUs": 408,
+        "selfSamples": 2,
+        "totalSamples": 4,
+        "selfPct": 1.0614726645024992,
+        "totalPct": 2.1023342093059205,
+        "selfUsPerMount": 2.0396039603960396,
+        "totalUsPerMount": 4.03960396039604
+      },
+      {
+        "function": "getCompositionKeyInfo",
+        "file": "packages/canard/schema-form/src/__legacy__/core/nodes/ObjectNode/strategies/BranchStrategy/utils/getCompositionKeyInfo/getCompositionKeyInfo.ts",
+        "line": 16,
+        "column": 37,
+        "selfUs": 203,
+        "totalUs": 299,
+        "selfSamples": 2,
+        "totalSamples": 3,
+        "selfPct": 1.0460143247281908,
+        "totalPct": 1.5406811975060546,
+        "selfUsPerMount": 2.00990099009901,
+        "totalUsPerMount": 2.9603960396039604
+      },
+      {
+        "function": "escapeSegment",
+        "file": "packages/winglet/json/dist/JSONPointer/utils/escape/escapeSegment.cjs",
+        "line": 6,
+        "column": 22,
+        "selfUs": 182,
+        "totalUs": 182,
+        "selfSamples": 2,
+        "totalSamples": 2,
+        "selfPct": 0.9378059463080333,
+        "totalPct": 0.9378059463080333,
+        "selfUsPerMount": 1.801980198019802,
+        "totalUsPerMount": 1.801980198019802
+      },
+      {
+        "function": "(anonymous)",
+        "file": "packages/canard/schema-form/src/__legacy__/core/nodes/ObjectNode/strategies/BranchStrategy/BranchStrategy.ts",
+        "line": 447,
+        "column": 28,
+        "selfUs": 159,
+        "totalUs": 1421,
+        "selfSamples": 1,
+        "totalSamples": 10,
+        "selfPct": 0.8192920080383366,
+        "totalPct": 7.322100273097336,
+        "selfUsPerMount": 1.5742574257425743,
+        "totalUsPerMount": 14.069306930693068
+      },
+      {
+        "function": "dispatch",
+        "file": "packages/canard/schema-form/src/__legacy__/core/nodes/AbstractNode/utils/EventCascadeManager/EventCascadeManager.ts",
+        "line": 143,
+        "column": 9,
+        "selfUs": 154,
+        "totalUs": 557,
+        "selfSamples": 1,
+        "totalSamples": 4,
+        "selfPct": 0.7935281084144896,
+        "totalPct": 2.870098418096563,
+        "selfUsPerMount": 1.5247524752475248,
+        "totalUsPerMount": 5.514851485148514
+      },
+      {
+        "function": "(anonymous)",
+        "file": "packages/canard/schema-form/src/__legacy__/core/nodes/AbstractNode/utils/EventCascadeManager/EventCascadeManager.ts",
+        "line": 112,
+        "column": 28,
+        "selfUs": 154,
+        "totalUs": 154,
+        "selfSamples": 1,
+        "totalSamples": 1,
+        "selfPct": 0.7935281084144896,
+        "totalPct": 0.7935281084144896,
+        "selfUsPerMount": 1.5247524752475248,
+        "totalUsPerMount": 1.5247524752475248
+      },
+      {
+        "function": "emitAfterScript",
+        "file": "node:internal/async_hooks",
+        "line": 527,
+        "column": 24,
+        "selfUs": 151,
+        "totalUs": 151,
+        "selfSamples": 1,
+        "totalSamples": 1,
+        "selfPct": 0.7780697686401814,
+        "totalPct": 0.7780697686401814,
+        "selfUsPerMount": 1.495049504950495,
+        "totalUsPerMount": 1.495049504950495
+      },
+      {
+        "function": "equals",
+        "file": "packages/winglet/common-utils/dist/utils/object/equals/equals.cjs",
+        "line": 6,
+        "column": 15,
+        "selfUs": 151,
+        "totalUs": 151,
+        "selfSamples": 1,
+        "totalSamples": 1,
+        "selfPct": 0.7780697686401814,
+        "totalPct": 0.7780697686401814,
+        "selfUsPerMount": 1.495049504950495,
+        "totalUsPerMount": 1.495049504950495
+      },
+      {
+        "function": "__emitChange__",
+        "file": "packages/canard/schema-form/src/__legacy__/core/nodes/ObjectNode/strategies/BranchStrategy/BranchStrategy.ts",
+        "line": 137,
+        "column": 10,
+        "selfUs": 149,
+        "totalUs": 724,
+        "selfSamples": 1,
+        "totalSamples": 5,
+        "selfPct": 0.7677642087906426,
+        "totalPct": 3.7306126655330547,
+        "selfUsPerMount": 1.4752475247524752,
+        "totalUsPerMount": 7.1683168316831685
+      },
+      {
+        "function": "__reset__",
+        "file": "packages/canard/schema-form/src/__legacy__/core/nodes/AbstractNode/AbstractNode.ts",
+        "line": 1063,
+        "column": 9,
+        "selfUs": 147,
+        "totalUs": 550,
+        "selfSamples": 1,
+        "totalSamples": 4,
+        "selfPct": 0.7574586489411037,
+        "totalPct": 2.8340289586231773,
+        "selfUsPerMount": 1.4554455445544554,
+        "totalUsPerMount": 5.445544554455446
+      },
+      {
+        "function": "(anonymous)",
+        "file": "packages/canard/schema-form/src/__legacy__/core/nodes/AbstractNode/utils/afterMicrotask/afterMicrotask.ts",
+        "line": 24,
+        "column": 9,
+        "selfUs": 143,
+        "totalUs": 143,
+        "selfSamples": 1,
+        "totalSamples": 1,
+        "selfPct": 0.7368475292420261,
+        "totalPct": 0.7368475292420261,
+        "selfUsPerMount": 1.4158415841584158,
+        "totalUsPerMount": 1.4158415841584158
+      },
+      {
+        "function": "get value",
+        "file": "packages/canard/schema-form/src/__legacy__/core/nodes/NumberNode/NumberNode.ts",
+        "line": 51,
+        "column": 22,
+        "selfUs": 143,
+        "totalUs": 143,
+        "selfSamples": 1,
+        "totalSamples": 1,
+        "selfPct": 0.7368475292420261,
+        "totalPct": 0.7368475292420261,
+        "selfUsPerMount": 1.4158415841584158,
+        "totalUsPerMount": 1.4158415841584158
+      },
+      {
+        "function": "__handleEmitChange__",
+        "file": "packages/canard/schema-form/src/__legacy__/core/nodes/ObjectNode/strategies/BranchStrategy/BranchStrategy.ts",
+        "line": 155,
+        "column": 10,
+        "selfUs": 135,
+        "totalUs": 575,
+        "selfSamples": 1,
+        "totalSamples": 4,
+        "selfPct": 0.6956252898438707,
+        "totalPct": 2.9628484567424125,
+        "selfUsPerMount": 1.3366336633663367,
+        "totalUsPerMount": 5.693069306930693
+      },
+      {
+        "function": "structuredClone",
+        "file": "(V8)",
+        "line": 0,
+        "column": -1,
+        "selfUs": 132,
+        "totalUs": 132,
+        "selfSamples": 1,
+        "totalSamples": 1,
+        "selfPct": 0.6801669500695625,
+        "totalPct": 0.6801669500695625,
+        "selfUsPerMount": 1.306930693069307,
+        "totalUsPerMount": 1.306930693069307
+      },
+      {
+        "function": "getSegments",
+        "file": "packages/canard/schema-form/src/__legacy__/core/nodes/AbstractNode/utils/findNode/utils/getSegments.ts",
+        "line": 30,
+        "column": 27,
+        "selfUs": 113,
+        "totalUs": 113,
+        "selfSamples": 1,
+        "totalSamples": 1,
+        "selfPct": 0.5822641314989436,
+        "totalPct": 0.5822641314989436,
+        "selfUsPerMount": 1.118811881188119,
+        "totalUsPerMount": 1.118811881188119
+      },
+      {
+        "function": "BooleanNode",
+        "file": "packages/canard/schema-form/src/__legacy__/core/nodes/BooleanNode/BooleanNode.ts",
+        "line": 89,
+        "column": 2,
+        "selfUs": 112,
+        "totalUs": 1279,
+        "selfSamples": 1,
+        "totalSamples": 12,
+        "selfPct": 0.5771113515741743,
+        "totalPct": 6.590405523780079,
+        "selfUsPerMount": 1.108910891089109,
+        "totalUsPerMount": 12.663366336633663
+      },
+      {
+        "function": "__setDefaultValue__",
+        "file": "packages/canard/schema-form/src/__legacy__/core/nodes/AbstractNode/AbstractNode.ts",
+        "line": 303,
+        "column": 9,
+        "selfUs": 109,
+        "totalUs": 109,
+        "selfSamples": 1,
+        "totalSamples": 1,
+        "selfPct": 0.561653011799866,
+        "totalPct": 0.561653011799866,
+        "selfUsPerMount": 1.0792079207920793,
+        "totalUsPerMount": 1.0792079207920793
+      },
+      {
+        "function": "publish",
+        "file": "packages/canard/schema-form/src/__legacy__/core/nodes/AbstractNode/utils/EventCascadeManager/EventCascadeManager.ts",
+        "line": 134,
+        "column": 9,
+        "selfUs": 108,
+        "totalUs": 913,
+        "selfSamples": 1,
+        "totalSamples": 8,
+        "selfPct": 0.5565002318750966,
+        "totalPct": 4.704488071314474,
+        "selfUsPerMount": 1.0693069306930694,
+        "totalUsPerMount": 9.03960396039604
+      },
+      {
+        "function": "wrappedFn",
+        "file": "node:internal/errors",
+        "line": 542,
+        "column": 20,
+        "selfUs": 107,
+        "totalUs": 107,
+        "selfSamples": 1,
+        "totalSamples": 1,
+        "selfPct": 0.5513474519503272,
+        "totalPct": 0.5513474519503272,
+        "selfUsPerMount": 1.0594059405940595,
+        "totalUsPerMount": 1.0594059405940595
+      },
+      {
+        "function": "get initialized",
+        "file": "packages/canard/schema-form/src/__legacy__/core/nodes/AbstractNode/AbstractNode.ts",
+        "line": 1031,
+        "column": 13,
+        "selfUs": 107,
+        "totalUs": 107,
+        "selfSamples": 1,
+        "totalSamples": 1,
+        "selfPct": 0.5513474519503272,
+        "totalPct": 0.5513474519503272,
+        "selfUsPerMount": 1.0594059405940595,
+        "totalUsPerMount": 1.0594059405940595
+      },
+      {
+        "function": "sortWithReference",
+        "file": "packages/winglet/common-utils/dist/utils/array/sortWithReference.cjs",
+        "line": 5,
+        "column": 26,
+        "selfUs": 107,
+        "totalUs": 107,
+        "selfSamples": 1,
+        "totalSamples": 1,
+        "selfPct": 0.5513474519503272,
+        "totalPct": 0.5513474519503272,
+        "selfUsPerMount": 1.0594059405940595,
+        "totalUsPerMount": 1.0594059405940595
+      },
+      {
+        "function": "queueMicrotask",
+        "file": "node:internal/process/task_queues",
+        "line": 160,
+        "column": 23,
+        "selfUs": 105,
+        "totalUs": 208,
+        "selfSamples": 1,
+        "totalSamples": 2,
+        "selfPct": 0.5410418921007883,
+        "totalPct": 1.071778224352038,
+        "selfUsPerMount": 1.0396039603960396,
+        "totalUsPerMount": 2.0594059405940595
+      },
+      {
+        "function": "ValidationManager",
+        "file": "packages/canard/schema-form/src/__legacy__/core/nodes/AbstractNode/utils/ValidationManager/ValidationManager.ts",
+        "line": 188,
+        "column": 2,
+        "selfUs": 105,
+        "totalUs": 105,
+        "selfSamples": 1,
+        "totalSamples": 1,
+        "selfPct": 0.5410418921007883,
+        "totalPct": 0.5410418921007883,
+        "selfUsPerMount": 1.0396039603960396,
+        "totalUsPerMount": 1.0396039603960396
+      },
+      {
+        "function": "enqueueMicrotask",
+        "file": "(V8)",
+        "line": 0,
+        "column": -1,
+        "selfUs": 103,
+        "totalUs": 103,
+        "selfSamples": 1,
+        "totalSamples": 1,
+        "selfPct": 0.5307363322512496,
+        "totalPct": 0.5307363322512496,
+        "selfUsPerMount": 1.0198019801980198,
+        "totalUsPerMount": 1.0198019801980198
+      },
+      {
+        "function": "getComputedPropertiesManager",
+        "file": "packages/canard/schema-form/src/__legacy__/core/nodes/AbstractNode/utils/getComputedPropertiesManager/getComputedPropertiesManager.ts",
+        "line": 19,
+        "column": 44,
+        "selfUs": 99,
+        "totalUs": 2860,
+        "selfSamples": 1,
+        "totalSamples": 27,
+        "selfPct": 0.5101252125521718,
+        "totalPct": 14.736950584840521,
+        "selfUsPerMount": 0.9801980198019802,
+        "totalUsPerMount": 28.316831683168317
+      },
+      {
+        "function": "pushSchemaListChildren",
+        "file": "packages/winglet/json-schema/dist/utils/JSONSchemaScanner/utils/getStackEntriesForNode.cjs",
+        "line": 19,
+        "column": 31,
+        "selfUs": 97,
+        "totalUs": 97,
+        "selfSamples": 1,
+        "totalSamples": 1,
+        "selfPct": 0.49981965270263307,
+        "totalPct": 0.49981965270263307,
+        "selfUsPerMount": 0.9603960396039604,
+        "totalUsPerMount": 0.9603960396039604
+      },
+      {
+        "function": "__emitChange__",
+        "file": "packages/canard/schema-form/src/__legacy__/core/nodes/BooleanNode/BooleanNode.ts",
+        "line": 39,
+        "column": 10,
+        "selfUs": 95,
+        "totalUs": 713,
+        "selfSamples": 1,
+        "totalSamples": 6,
+        "selfPct": 0.4895140928530942,
+        "totalPct": 3.6739320863605913,
+        "selfUsPerMount": 0.9405940594059405,
+        "totalUsPerMount": 7.0594059405940595
+      },
+      {
+        "function": "joinSegment",
+        "file": "packages/canard/schema-form/src/__legacy__/helpers/jsonPointer/utils/joinSegment.ts",
+        "line": 10,
+        "column": 27,
+        "selfUs": 95,
+        "totalUs": 95,
+        "selfSamples": 1,
+        "totalSamples": 1,
+        "selfPct": 0.4895140928530942,
+        "totalPct": 0.4895140928530942,
+        "selfUsPerMount": 0.9405940594059405,
+        "totalUsPerMount": 0.9405940594059405
+      },
+      {
+        "function": "onChange",
+        "file": "packages/canard/schema-form/src/__legacy__/core/nodes/AbstractNode/AbstractNode.ts",
+        "line": 414,
+        "column": 12,
+        "selfUs": 86,
+        "totalUs": 229,
+        "selfSamples": 1,
+        "totalSamples": 2,
+        "selfPct": 0.44313907353016946,
+        "totalPct": 1.1799866027721957,
+        "selfUsPerMount": 0.8514851485148515,
+        "totalUsPerMount": 2.267326732673267
+      },
+      {
+        "function": "findIndex",
+        "file": "packages/canard/schema-form/src/__legacy__/core/blueprint/utils/expressions/getPathManager/getPathManager.ts",
+        "line": 27,
+        "column": 15,
+        "selfUs": 70,
+        "totalUs": 70,
+        "selfSamples": 1,
+        "totalSamples": 1,
+        "selfPct": 0.36069459473385895,
+        "totalPct": 0.36069459473385895,
+        "selfUsPerMount": 0.693069306930693,
+        "totalUsPerMount": 0.693069306930693
+      },
+      {
+        "function": "(anonymous)",
+        "file": "packages/canard/schema-form/architecture/verification/07-switch/profile-102-work/measure.mjs",
+        "line": 346,
+        "column": 34,
+        "selfUs": 55,
+        "totalUs": 8475,
+        "selfSamples": 1,
+        "totalSamples": 79,
+        "selfPct": 0.2834028958623177,
+        "totalPct": 43.66980986242078,
+        "selfUsPerMount": 0.5445544554455446,
+        "totalUsPerMount": 83.91089108910892
+      },
+      {
+        "function": "set",
+        "file": "packages/canard/schema-form/src/__legacy__/core/blueprint/utils/expressions/getPathManager/getPathManager.ts",
+        "line": 23,
+        "column": 9,
+        "selfUs": 34,
+        "totalUs": 34,
+        "selfSamples": 1,
+        "totalSamples": 1,
+        "selfPct": 0.17519451744216005,
+        "totalPct": 0.17519451744216005,
+        "selfUsPerMount": 0.33663366336633666,
+        "totalUsPerMount": 0.33663366336633666
+      },
+      {
+        "function": "cpu",
+        "file": "packages/canard/schema-form/architecture/verification/07-switch/profile-102-work/measure.mjs",
+        "line": 337,
+        "column": 18,
+        "selfUs": 0,
+        "totalUs": 12060,
+        "selfSamples": 0,
+        "totalSamples": 108,
+        "selfPct": 0,
+        "totalPct": 62.14252589271913,
+        "selfUsPerMount": 0,
+        "totalUsPerMount": 119.4059405940594
+      },
+      {
+        "function": "(root)",
+        "file": "(V8)",
+        "line": 0,
+        "column": -1,
+        "selfUs": 0,
+        "totalUs": 19407,
+        "selfSamples": 0,
+        "totalSamples": 159,
+        "selfPct": 0,
+        "totalPct": 100,
+        "selfUsPerMount": 0,
+        "totalUsPerMount": 192.14851485148515
+      },
+      {
+        "function": "StringNode",
+        "file": "packages/canard/schema-form/src/__legacy__/core/nodes/StringNode/StringNode.ts",
+        "line": 111,
+        "column": 2,
+        "selfUs": 0,
+        "totalUs": 1773,
+        "selfSamples": 0,
+        "totalSamples": 16,
+        "selfPct": 0,
+        "totalPct": 9.13587880661617,
+        "selfUsPerMount": 0,
+        "totalUsPerMount": 17.554455445544555
+      },
+      {
+        "function": "(anonymous)",
+        "file": "packages/canard/schema-form/src/__legacy__/core/nodes/schemaNodeFactory.ts",
+        "line": 75,
+        "column": 2,
+        "selfUs": 0,
+        "totalUs": 7371,
+        "selfSamples": 0,
+        "totalSamples": 68,
+        "selfPct": 0,
+        "totalPct": 37.98114082547534,
+        "selfUsPerMount": 0,
+        "totalUsPerMount": 72.98019801980197
+      },
+      {
+        "function": "nodeFromJSONSchema",
+        "file": "packages/canard/schema-form/src/__legacy__/core/nodeFromJSONSchema.ts",
+        "line": 34,
+        "column": 34,
+        "selfUs": 0,
+        "totalUs": 8420,
+        "selfSamples": 0,
+        "totalSamples": 78,
+        "selfPct": 0,
+        "totalPct": 43.38640696655846,
+        "selfUsPerMount": 0,
+        "totalUsPerMount": 83.36633663366337
+      },
+      {
+        "function": "create",
+        "file": "(round-99 canonical adapter)",
+        "line": 157,
+        "column": 15,
+        "selfUs": 0,
+        "totalUs": 8420,
+        "selfSamples": 0,
+        "totalSamples": 78,
+        "selfPct": 0,
+        "totalPct": 43.38640696655846,
+        "selfUsPerMount": 0,
+        "totalUsPerMount": 83.36633663366337
+      },
+      {
+        "function": "publish",
+        "file": "packages/canard/schema-form/src/__legacy__/core/nodes/AbstractNode/AbstractNode.ts",
+        "line": 891,
+        "column": 9,
+        "selfUs": 0,
+        "totalUs": 1470,
+        "selfSamples": 0,
+        "totalSamples": 12,
+        "selfPct": 0,
+        "totalPct": 7.574586489411038,
+        "selfUsPerMount": 0,
+        "totalUsPerMount": 14.554455445544555
+      },
+      {
+        "function": "applyValue",
+        "file": "packages/canard/schema-form/src/__legacy__/core/nodes/BooleanNode/BooleanNode.ts",
+        "line": 72,
+        "column": 21,
+        "selfUs": 0,
+        "totalUs": 403,
+        "selfSamples": 0,
+        "totalSamples": 3,
+        "selfPct": 0,
+        "totalPct": 2.0765703096820736,
+        "selfUsPerMount": 0,
+        "totalUsPerMount": 3.99009900990099
+      },
+      {
+        "function": "setValue",
+        "file": "packages/canard/schema-form/src/__legacy__/core/nodes/AbstractNode/AbstractNode.ts",
+        "line": 355,
+        "column": 9,
+        "selfUs": 0,
+        "totalUs": 557,
+        "selfSamples": 0,
+        "totalSamples": 4,
+        "selfPct": 0,
+        "totalPct": 2.870098418096563,
+        "selfUsPerMount": 0,
+        "totalUsPerMount": 5.514851485148514
+      },
+      {
+        "function": "__processOneOfChildren__",
+        "file": "packages/canard/schema-form/src/__legacy__/core/nodes/ObjectNode/strategies/BranchStrategy/BranchStrategy.ts",
+        "line": 465,
+        "column": 10,
+        "selfUs": 0,
+        "totalUs": 550,
+        "selfSamples": 0,
+        "totalSamples": 4,
+        "selfPct": 0,
+        "totalPct": 2.8340289586231773,
+        "selfUsPerMount": 0,
+        "totalUsPerMount": 5.445544554455446
+      },
+      {
+        "function": "__resolve__",
+        "file": "packages/canard/schema-form/src/__legacy__/core/nodes/AbstractNode/utils/EventCascadeManager/EventCascadeManager.ts",
+        "line": 207,
+        "column": 10,
+        "selfUs": 0,
+        "totalUs": 1421,
+        "selfSamples": 0,
+        "totalSamples": 10,
+        "selfPct": 0,
+        "totalPct": 7.322100273097336,
+        "selfUsPerMount": 0,
+        "totalUsPerMount": 14.069306930693068
+      },
+      {
+        "function": "(anonymous)",
+        "file": "packages/canard/schema-form/src/__legacy__/core/nodes/AbstractNode/utils/EventCascadeManager/EventCascadeManager.ts",
+        "line": 120,
+        "column": 22,
+        "selfUs": 0,
+        "totalUs": 2584,
+        "selfSamples": 0,
+        "totalSamples": 19,
+        "selfPct": 0,
+        "totalPct": 13.314783325604163,
+        "selfUsPerMount": 0,
+        "totalUsPerMount": 25.584158415841586
+      },
+      {
+        "function": "(anonymous)",
+        "file": "packages/canard/schema-form/src/__legacy__/core/nodes/AbstractNode/utils/getComputedPropertiesManager/ComputedPropertiesManager/utils/getConditionIndexFactory/utils/extractConditionInfo.ts",
+        "line": 63,
+        "column": 42,
+        "selfUs": 0,
+        "totalUs": 104,
+        "selfSamples": 0,
+        "totalSamples": 2,
+        "selfPct": 0,
+        "totalPct": 0.535889112176019,
+        "selfUsPerMount": 0,
+        "totalUsPerMount": 1.0297029702970297
+      },
+      {
+        "function": "extractConditionInfo",
+        "file": "packages/canard/schema-form/src/__legacy__/core/nodes/AbstractNode/utils/getComputedPropertiesManager/ComputedPropertiesManager/utils/getConditionIndexFactory/utils/extractConditionInfo.ts",
+        "line": 30,
+        "column": 36,
+        "selfUs": 0,
+        "totalUs": 426,
+        "selfSamples": 0,
+        "totalSamples": 5,
+        "selfPct": 0,
+        "totalPct": 2.1950842479517703,
+        "selfUsPerMount": 0,
+        "totalUsPerMount": 4.217821782178218
+      },
+      {
+        "function": "(anonymous)",
+        "file": "packages/canard/schema-form/src/__legacy__/core/nodes/AbstractNode/utils/getComputedPropertiesManager/ComputedPropertiesManager/utils/getConditionIndexFactory/getConditionIndexFactory.ts",
+        "line": 33,
+        "column": 2,
+        "selfUs": 0,
+        "totalUs": 741,
+        "selfSamples": 0,
+        "totalSamples": 8,
+        "selfPct": 0,
+        "totalPct": 3.8182099242541354,
+        "selfUsPerMount": 0,
+        "totalUsPerMount": 7.336633663366337
+      },
+      {
+        "function": "ComputedPropertiesManager",
+        "file": "packages/canard/schema-form/src/__legacy__/core/nodes/AbstractNode/utils/getComputedPropertiesManager/ComputedPropertiesManager/ComputedPropertiesManager.ts",
+        "line": 246,
+        "column": 2,
+        "selfUs": 0,
+        "totalUs": 741,
+        "selfSamples": 0,
+        "totalSamples": 8,
+        "selfPct": 0,
+        "totalPct": 3.8182099242541354,
+        "selfUsPerMount": 0,
+        "totalUsPerMount": 7.336633663366337
+      },
+      {
+        "function": "__initialize__",
+        "file": "packages/canard/schema-form/src/__legacy__/core/nodes/AbstractNode/AbstractNode.ts",
+        "line": 1041,
+        "column": 9,
+        "selfUs": 0,
+        "totalUs": 268,
+        "selfSamples": 0,
+        "totalSamples": 2,
+        "selfPct": 0,
+        "totalPct": 1.3809450198382027,
+        "selfUsPerMount": 0,
+        "totalUsPerMount": 2.6534653465346536
+      },
+      {
+        "function": "initialize",
+        "file": "packages/canard/schema-form/src/__legacy__/core/nodes/ObjectNode/strategies/BranchStrategy/BranchStrategy.ts",
+        "line": 717,
+        "column": 9,
+        "selfUs": 0,
+        "totalUs": 412,
+        "selfSamples": 0,
+        "totalSamples": 3,
+        "selfPct": 0,
+        "totalPct": 2.1229453290049984,
+        "selfUsPerMount": 0,
+        "totalUsPerMount": 4.079207920792079
+      },
+      {
+        "function": "__initialize__",
+        "file": "packages/canard/schema-form/src/__legacy__/core/nodes/ObjectNode/ObjectNode.ts",
+        "line": 72,
+        "column": 18,
+        "selfUs": 0,
+        "totalUs": 525,
+        "selfSamples": 0,
+        "totalSamples": 4,
+        "selfPct": 0,
+        "totalPct": 2.705209460503942,
+        "selfUsPerMount": 0,
+        "totalUsPerMount": 5.198019801980198
+      },
+      {
+        "function": "ObjectNode.handleChange",
+        "file": "packages/canard/schema-form/src/__legacy__/core/nodes/ObjectNode/ObjectNode.ts",
+        "line": 101,
+        "column": 10,
+        "selfUs": 0,
+        "totalUs": 143,
+        "selfSamples": 0,
+        "totalSamples": 1,
+        "selfPct": 0,
+        "totalPct": 0.7368475292420261,
+        "selfUsPerMount": 0,
+        "totalUsPerMount": 1.4158415841584158
+      },
+      {
+        "function": "__processCompositionValue__",
+        "file": "packages/canard/schema-form/src/__legacy__/core/nodes/ObjectNode/strategies/BranchStrategy/BranchStrategy.ts",
+        "line": 623,
+        "column": 10,
+        "selfUs": 0,
+        "totalUs": 575,
+        "selfSamples": 0,
+        "totalSamples": 4,
+        "selfPct": 0,
+        "totalPct": 2.9628484567424125,
+        "selfUsPerMount": 0,
+        "totalUsPerMount": 5.693069306930693
+      },
+      {
+        "function": "setImmediate",
+        "file": "node:timers",
+        "line": 215,
+        "column": 21,
+        "selfUs": 0,
+        "totalUs": 335,
+        "selfSamples": 0,
+        "totalSamples": 3,
+        "selfPct": 0,
+        "totalPct": 1.7261812747977536,
+        "selfUsPerMount": 0,
+        "totalUsPerMount": 3.3168316831683167
+      },
+      {
+        "function": "__emitChange__",
+        "file": "packages/canard/schema-form/src/__legacy__/core/nodes/NumberNode/NumberNode.ts",
+        "line": 64,
+        "column": 10,
+        "selfUs": 0,
+        "totalUs": 306,
+        "selfSamples": 0,
+        "totalSamples": 3,
+        "selfPct": 0,
+        "totalPct": 1.5767506569794403,
+        "selfUsPerMount": 0,
+        "totalUsPerMount": 3.0297029702970297
+      },
+      {
+        "function": "NumberNode",
+        "file": "packages/canard/schema-form/src/__legacy__/core/nodes/NumberNode/NumberNode.ts",
+        "line": 125,
+        "column": 2,
+        "selfUs": 0,
+        "totalUs": 1152,
+        "selfSamples": 0,
+        "totalSamples": 11,
+        "selfPct": 0,
+        "totalPct": 5.936002473334364,
+        "selfUsPerMount": 0,
+        "totalUsPerMount": 11.405940594059405
+      },
+      {
+        "function": "scan",
+        "file": "packages/winglet/json-schema/dist/utils/JSONSchemaScanner/sync/JSONSchemaScanner.cjs",
+        "line": 15,
+        "column": 5,
+        "selfUs": 0,
+        "totalUs": 1049,
+        "selfSamples": 0,
+        "totalSamples": 10,
+        "selfPct": 0,
+        "totalPct": 5.405266141083114,
+        "selfUsPerMount": 0,
+        "totalUsPerMount": 10.386138613861386
+      },
+      {
+        "function": "getReferenceTable",
+        "file": "packages/canard/schema-form/src/__legacy__/helpers/jsonSchema/getResolveSchema/utils/getReferenceTable.ts",
+        "line": 12,
+        "column": 33,
+        "selfUs": 0,
+        "totalUs": 1049,
+        "selfSamples": 0,
+        "totalSamples": 10,
+        "selfPct": 0,
+        "totalPct": 5.405266141083114,
+        "selfUsPerMount": 0,
+        "totalUsPerMount": 10.386138613861386
+      },
+      {
+        "function": "getResolveSchema",
+        "file": "packages/canard/schema-form/src/__legacy__/helpers/jsonSchema/getResolveSchema/getResolveSchema.ts",
+        "line": 18,
+        "column": 32,
+        "selfUs": 0,
+        "totalUs": 1049,
+        "selfSamples": 0,
+        "totalSamples": 10,
+        "selfPct": 0,
+        "totalPct": 5.405266141083114,
+        "selfUsPerMount": 0,
+        "totalUsPerMount": 10.386138613861386
+      },
+      {
+        "function": "__emitChange__",
+        "file": "packages/canard/schema-form/src/__legacy__/core/nodes/StringNode/StringNode.ts",
+        "line": 40,
+        "column": 10,
+        "selfUs": 0,
+        "totalUs": 477,
+        "selfSamples": 0,
+        "totalSamples": 4,
+        "selfPct": 0,
+        "totalPct": 2.45787602411501,
+        "selfUsPerMount": 0,
+        "totalUsPerMount": 4.7227722772277225
+      },
+      {
+        "function": "applyValue",
+        "file": "packages/canard/schema-form/src/__legacy__/core/nodes/StringNode/StringNode.ts",
+        "line": 91,
+        "column": 21,
+        "selfUs": 0,
+        "totalUs": 154,
+        "selfSamples": 0,
+        "totalSamples": 1,
+        "selfPct": 0,
+        "totalPct": 0.7935281084144896,
+        "selfUsPerMount": 0,
+        "totalUsPerMount": 1.5247524752475248
+      },
+      {
+        "function": "__propagate__",
+        "file": "packages/canard/schema-form/src/__legacy__/core/nodes/ObjectNode/strategies/BranchStrategy/BranchStrategy.ts",
+        "line": 263,
+        "column": 10,
+        "selfUs": 0,
+        "totalUs": 297,
+        "selfSamples": 0,
+        "totalSamples": 2,
+        "selfPct": 0,
+        "totalPct": 1.5303756376565159,
+        "selfUsPerMount": 0,
+        "totalUsPerMount": 2.9405940594059405
+      },
+      {
+        "function": "runNextTicks",
+        "file": "node:internal/process/task_queues",
+        "line": 63,
+        "column": 21,
+        "selfUs": 0,
+        "totalUs": 628,
+        "selfSamples": 0,
+        "totalSamples": 4,
+        "selfPct": 0,
+        "totalPct": 3.2359457927551913,
+        "selfUsPerMount": 0,
+        "totalUsPerMount": 6.217821782178218
+      },
+      {
+        "function": "processImmediate",
+        "file": "node:internal/timers",
+        "line": 525,
+        "column": 27,
+        "selfUs": 0,
+        "totalUs": 930,
+        "selfSamples": 0,
+        "totalSamples": 6,
+        "selfPct": 0,
+        "totalPct": 4.792085330035554,
+        "selfUsPerMount": 0,
+        "totalUsPerMount": 9.207920792079207
+      },
+      {
+        "function": "__onChangeWithOmitEmpty__",
+        "file": "packages/canard/schema-form/src/__legacy__/core/nodes/StringNode/StringNode.ts",
+        "line": 79,
+        "column": 10,
+        "selfUs": 0,
+        "totalUs": 86,
+        "selfSamples": 0,
+        "totalSamples": 1,
+        "selfPct": 0,
+        "totalPct": 0.44313907353016946,
+        "selfUsPerMount": 0,
+        "totalUsPerMount": 0.8514851485148515
+      },
+      {
+        "function": "getChildNodeMap",
+        "file": "packages/canard/schema-form/src/__legacy__/core/nodes/ObjectNode/strategies/BranchStrategy/utils/getChildNodeMap/getChildNodeMap.ts",
+        "line": 33,
+        "column": 31,
+        "selfUs": 0,
+        "totalUs": 631,
+        "selfSamples": 0,
+        "totalSamples": 6,
+        "selfPct": 0,
+        "totalPct": 3.2514041325295,
+        "selfUsPerMount": 0,
+        "totalUsPerMount": 6.247524752475248
+      },
+      {
+        "function": "resolveReferences",
+        "file": "packages/canard/schema-form/src/__legacy__/core/nodes/schemaNodeFactory.ts",
+        "line": 139,
+        "column": 26,
+        "selfUs": 0,
+        "totalUs": 109,
+        "selfSamples": 0,
+        "totalSamples": 1,
+        "selfPct": 0,
+        "totalPct": 0.561653011799866,
+        "selfUsPerMount": 0,
+        "totalUsPerMount": 1.0792079207920793
+      },
+      {
+        "function": "findNodes",
+        "file": "packages/canard/schema-form/src/__legacy__/core/nodes/AbstractNode/utils/findNode/findNodes.ts",
+        "line": 57,
+        "column": 25,
+        "selfUs": 0,
+        "totalUs": 113,
+        "selfSamples": 0,
+        "totalSamples": 1,
+        "selfPct": 0,
+        "totalPct": 0.5822641314989436,
+        "selfUsPerMount": 0,
+        "totalUsPerMount": 1.118811881188119
+      },
+      {
+        "function": "findAll",
+        "file": "packages/canard/schema-form/src/__legacy__/core/nodes/AbstractNode/AbstractNode.ts",
+        "line": 268,
+        "column": 9,
+        "selfUs": 0,
+        "totalUs": 113,
+        "selfSamples": 0,
+        "totalSamples": 1,
+        "selfPct": 0,
+        "totalPct": 0.5822641314989436,
+        "selfUsPerMount": 0,
+        "totalUsPerMount": 1.118811881188119
+      },
+      {
+        "function": "__prepareUpdateDependencies__",
+        "file": "packages/canard/schema-form/src/__legacy__/core/nodes/AbstractNode/AbstractNode.ts",
+        "line": 516,
+        "column": 10,
+        "selfUs": 0,
+        "totalUs": 113,
+        "selfSamples": 0,
+        "totalSamples": 1,
+        "selfPct": 0,
+        "totalPct": 0.5822641314989436,
+        "selfUsPerMount": 0,
+        "totalUsPerMount": 1.118811881188119
+      },
+      {
+        "function": "isNullBranch",
+        "file": "packages/canard/schema-form/src/__legacy__/helpers/jsonSchema/isNullBranch/isNullBranch.ts",
+        "line": 10,
+        "column": 28,
+        "selfUs": 0,
+        "totalUs": 211,
+        "selfSamples": 0,
+        "totalSamples": 2,
+        "selfPct": 0,
+        "totalPct": 1.0872365641263462,
+        "selfUsPerMount": 0,
+        "totalUsPerMount": 2.089108910891089
+      },
+      {
+        "function": "__equals__",
+        "file": "packages/canard/schema-form/src/__legacy__/core/nodes/ObjectNode/ObjectNode.ts",
+        "line": 46,
+        "column": 18,
+        "selfUs": 0,
+        "totalUs": 151,
+        "selfSamples": 0,
+        "totalSamples": 1,
+        "selfPct": 0,
+        "totalPct": 0.7780697686401814,
+        "selfUsPerMount": 0,
+        "totalUsPerMount": 1.495049504950495
+      },
+      {
+        "function": "__parseValue__",
+        "file": "packages/canard/schema-form/src/__legacy__/core/nodes/ObjectNode/strategies/BranchStrategy/BranchStrategy.ts",
+        "line": 220,
+        "column": 10,
+        "selfUs": 0,
+        "totalUs": 151,
+        "selfSamples": 0,
+        "totalSamples": 1,
+        "selfPct": 0,
+        "totalPct": 0.7780697686401814,
+        "selfUsPerMount": 0,
+        "totalUsPerMount": 1.495049504950495
+      },
+      {
+        "function": "get value",
+        "file": "packages/canard/schema-form/src/__legacy__/core/nodes/ObjectNode/strategies/BranchStrategy/BranchStrategy.ts",
+        "line": 304,
+        "column": 13,
+        "selfUs": 0,
+        "totalUs": 151,
+        "selfSamples": 0,
+        "totalSamples": 1,
+        "selfPct": 0,
+        "totalPct": 0.7780697686401814,
+        "selfUsPerMount": 0,
+        "totalUsPerMount": 1.495049504950495
+      },
+      {
+        "function": "get value",
+        "file": "packages/canard/schema-form/src/__legacy__/core/nodes/ObjectNode/ObjectNode.ts",
+        "line": 63,
+        "column": 22,
+        "selfUs": 0,
+        "totalUs": 151,
+        "selfSamples": 0,
+        "totalSamples": 1,
+        "selfPct": 0,
+        "totalPct": 0.7780697686401814,
+        "selfUsPerMount": 0,
+        "totalUsPerMount": 1.495049504950495
+      },
+      {
+        "function": "get normalizedValue",
+        "file": "packages/canard/schema-form/src/__legacy__/core/nodes/AbstractNode/AbstractNode.ts",
+        "line": 397,
+        "column": 13,
+        "selfUs": 0,
+        "totalUs": 151,
+        "selfSamples": 0,
+        "totalSamples": 1,
+        "selfPct": 0,
+        "totalPct": 0.7780697686401814,
+        "selfUsPerMount": 0,
+        "totalUsPerMount": 1.495049504950495
+      },
+      {
+        "function": "(anonymous)",
+        "file": "packages/canard/schema-form/src/__legacy__/core/nodes/AbstractNode/AbstractNode.ts",
+        "line": 1219,
+        "column": 45,
+        "selfUs": 0,
+        "totalUs": 151,
+        "selfSamples": 0,
+        "totalSamples": 1,
+        "selfPct": 0,
+        "totalPct": 0.7780697686401814,
+        "selfUsPerMount": 0,
+        "totalUsPerMount": 1.495049504950495
+      },
+      {
+        "function": "callback",
+        "file": "packages/canard/schema-form/src/__legacy__/core/nodes/AbstractNode/utils/afterMicrotask/afterMicrotask.ts",
+        "line": 20,
+        "column": 19,
+        "selfUs": 0,
+        "totalUs": 151,
+        "selfSamples": 0,
+        "totalSamples": 1,
+        "selfPct": 0,
+        "totalPct": 0.7780697686401814,
+        "selfUsPerMount": 0,
+        "totalUsPerMount": 1.495049504950495
+      },
+      {
+        "function": "pushMapChildren",
+        "file": "packages/winglet/json-schema/dist/utils/JSONSchemaScanner/utils/getStackEntriesForNode.cjs",
+        "line": 34,
+        "column": 24,
+        "selfUs": 0,
+        "totalUs": 105,
+        "selfSamples": 0,
+        "totalSamples": 1,
+        "selfPct": 0,
+        "totalPct": 0.5410418921007883,
+        "selfUsPerMount": 0,
+        "totalUsPerMount": 1.0396039603960396
+      }
+    ],
+    "selfConservation": 19407
+  },
+  "observed": {
+    "sha256": "0dab1516af88193530f8e44693db2dd2fb9d4c721b0de5c72fdb688315c07092",
+    "outputBytes": 90,
+    "liveWidth": 5,
+    "value": {
+      "common": "shared",
+      "kind": "kind_0",
+      "payload_0_a": "a_0",
+      "payload_0_b": 0,
+      "payload_0_c": true
+    }
+  },
+  "environment": {
+    "date": "2026-10-06T06:37:11.724Z",
+    "head": "268832c7cb6eea67475b56ab5a78408a55ec47a3",
+    "node": "v26.10.0",
+    "v8": "14.6.202.34-node.35",
+    "esbuild": "0.25.9",
+    "platform": "darwin",
+    "arch": "arm64",
+    "cpu": "Apple M1 Max",
+    "cpus": 10,
+    "memoryBytes": 68719476736,
+    "osRelease": "25.6.0",
+    "mode": "production",
+    "validation": "off",
+    "subscribers": 0
+  },
+  "elapsedMs": 137,
+  "attributionRevision": "all intersecting windows, weighted timeDeltas"
+}

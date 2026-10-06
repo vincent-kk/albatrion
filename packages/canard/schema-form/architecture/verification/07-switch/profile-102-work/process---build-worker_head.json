@@ -1,0 +1,14 @@
+{
+  "HEAD": "268832c7cb6eea67475b56ab5a78408a55ec47a3",
+  "command": "--build-worker",
+  "args": [
+    "head"
+  ],
+  "status": 0,
+  "signal": null,
+  "started": "2026-10-06T06:33:17.784Z",
+  "ended": "2026-10-06T06:33:17.862Z",
+  "elapsedMs": 78,
+  "pid": 26575,
+  "driverSha256": "26fee38e8aa1f60232b2bdc4c1e4b789112369b775c6c5c39992674a587fb097"
+}

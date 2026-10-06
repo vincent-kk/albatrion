@@ -1,0 +1,15 @@
+{
+  "HEAD": "268832c7cb6eea67475b56ab5a78408a55ec47a3",
+  "command": "--timers",
+  "args": [
+    "constraint-present",
+    "1"
+  ],
+  "status": 0,
+  "signal": null,
+  "started": "2026-10-06T06:45:51.598Z",
+  "ended": "2026-10-06T06:46:06.422Z",
+  "elapsedMs": 14824,
+  "pid": 46040,
+  "driverSha256": "a09fb550c3263d10b03912c6788f1ab9597481ce1856a2da28cf8c7a641b00a7"
+}

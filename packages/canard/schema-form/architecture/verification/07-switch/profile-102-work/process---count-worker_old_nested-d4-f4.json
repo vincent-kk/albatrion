@@ -1,0 +1,15 @@
+{
+  "HEAD": "268832c7cb6eea67475b56ab5a78408a55ec47a3",
+  "command": "--count-worker",
+  "args": [
+    "old",
+    "nested-d4-f4"
+  ],
+  "status": 0,
+  "signal": null,
+  "started": "2026-10-06T07:26:04.621Z",
+  "ended": "2026-10-06T07:26:04.731Z",
+  "elapsedMs": 110,
+  "pid": 81002,
+  "driverSha256": "c944abd076bb890e927d224f1a537e7cdeffbec4b9208508e24a870eb8679987"
+}

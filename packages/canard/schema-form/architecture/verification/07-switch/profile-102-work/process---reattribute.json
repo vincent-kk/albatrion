@@ -1,0 +1,12 @@
+{
+  "HEAD": "268832c7cb6eea67475b56ab5a78408a55ec47a3",
+  "command": "--reattribute",
+  "args": [],
+  "status": 0,
+  "signal": null,
+  "started": "2026-10-06T06:59:43.700Z",
+  "ended": "2026-10-06T06:59:44.032Z",
+  "elapsedMs": 331,
+  "pid": 57949,
+  "driverSha256": "b4adbc22b5130a1afc5e9aeaa5cd234b3cc0b5342feb1ccdaae7e8eccc5b1fc4"
+}

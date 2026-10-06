@@ -1,0 +1,1188 @@
+{
+  "HEAD": "268832c7cb6eea67475b56ab5a78408a55ec47a3",
+  "version": "head",
+  "name": "sample-0",
+  "run": 3,
+  "warmup": 20,
+  "samples": 101,
+  "forcedGC": false,
+  "freshProcess": true,
+  "counterInstrumentation": false,
+  "windows": [
+    {
+      "index": 0,
+      "beginUs": 85862390367,
+      "endUs": 85862390572,
+      "ms": 0.2015829999999994
+    },
+    {
+      "index": 1,
+      "beginUs": 85862390594,
+      "endUs": 85862390694,
+      "ms": 0.09929199999999128
+    },
+    {
+      "index": 2,
+      "beginUs": 85862390705,
+      "endUs": 85862390790,
+      "ms": 0.08412500000000023
+    },
+    {
+      "index": 3,
+      "beginUs": 85862390799,
+      "endUs": 85862390872,
+      "ms": 0.07229200000000446
+    },
+    {
+      "index": 4,
+      "beginUs": 85862390880,
+      "endUs": 85862390961,
+      "ms": 0.07995800000000486
+    },
+    {
+      "index": 5,
+      "beginUs": 85862390968,
+      "endUs": 85862391034,
+      "ms": 0.06570899999999824
+    },
+    {
+      "index": 6,
+      "beginUs": 85862391042,
+      "endUs": 85862391127,
+      "ms": 0.08462500000001683
+    },
+    {
+      "index": 7,
+      "beginUs": 85862391135,
+      "endUs": 85862391207,
+      "ms": 0.07158300000000395
+    },
+    {
+      "index": 8,
+      "beginUs": 85862391215,
+      "endUs": 85862391285,
+      "ms": 0.07033400000000256
+    },
+    {
+      "index": 9,
+      "beginUs": 85862391293,
+      "endUs": 85862391368,
+      "ms": 0.07445799999999281
+    },
+    {
+      "index": 10,
+      "beginUs": 85862391375,
+      "endUs": 85862391455,
+      "ms": 0.07912500000000477
+    },
+    {
+      "index": 11,
+      "beginUs": 85862391463,
+      "endUs": 85862391522,
+      "ms": 0.059291999999999234
+    },
+    {
+      "index": 12,
+      "beginUs": 85862391530,
+      "endUs": 85862391610,
+      "ms": 0.07849999999999113
+    },
+    {
+      "index": 13,
+      "beginUs": 85862391632,
+      "endUs": 85862391796,
+      "ms": 0.16300000000001091
+    },
+    {
+      "index": 14,
+      "beginUs": 85862391809,
+      "endUs": 85862391917,
+      "ms": 0.10758299999997689
+    },
+    {
+      "index": 15,
+      "beginUs": 85862391926,
+      "endUs": 85862392016,
+      "ms": 0.08450000000001978
+    },
+    {
+      "index": 16,
+      "beginUs": 85862392025,
+      "endUs": 85862392105,
+      "ms": 0.0800830000000019
+    },
+    {
+      "index": 17,
+      "beginUs": 85862392112,
+      "endUs": 85862392200,
+      "ms": 0.087333000000001
+    },
+    {
+      "index": 18,
+      "beginUs": 85862392206,
+      "endUs": 85862392273,
+      "ms": 0.06733400000001666
+    },
+    {
+      "index": 19,
+      "beginUs": 85862392279,
+      "endUs": 85862392375,
+      "ms": 0.09558400000000233
+    },
+    {
+      "index": 20,
+      "beginUs": 85862392381,
+      "endUs": 85862392451,
+      "ms": 0.06904099999999858
+    },
+    {
+      "index": 21,
+      "beginUs": 85862392458,
+      "endUs": 85862392522,
+      "ms": 0.06391700000000355
+    },
+    {
+      "index": 22,
+      "beginUs": 85862392528,
+      "endUs": 85862392594,
+      "ms": 0.0660829999999919
+    },
+    {
+      "index": 23,
+      "beginUs": 85862392600,
+      "endUs": 85862392693,
+      "ms": 0.0882090000000062
+    },
+    {
+      "index": 24,
+      "beginUs": 85862392698,
+      "endUs": 85862392761,
+      "ms": 0.06245899999998983
+    },
+    {
+      "index": 25,
+      "beginUs": 85862392769,
+      "endUs": 85862392839,
+      "ms": 0.06979200000000674
+    },
+    {
+      "index": 26,
+      "beginUs": 85862392845,
+      "endUs": 85862392928,
+      "ms": 0.08312499999999545
+    },
+    {
+      "index": 27,
+      "beginUs": 85862392934,
+      "endUs": 85862393000,
+      "ms": 0.06575000000000841
+    },
+    {
+      "index": 28,
+      "beginUs": 85862393006,
+      "endUs": 85862393068,
+      "ms": 0.06162500000002069
+    },
+    {
+      "index": 29,
+      "beginUs": 85862393074,
+      "endUs": 85862393152,
+      "ms": 0.07770800000000122
+    },
+    {
+      "index": 30,
+      "beginUs": 85862393159,
+      "endUs": 85862393244,
+      "ms": 0.084541999999999
+    },
+    {
+      "index": 31,
+      "beginUs": 85862393250,
+      "endUs": 85862393323,
+      "ms": 0.07220900000001507
+    },
+    {
+      "index": 32,
+      "beginUs": 85862393328,
+      "endUs": 85862393418,
+      "ms": 0.0893339999999796
+    },
+    {
+      "index": 33,
+      "beginUs": 85862393424,
+      "endUs": 85862393508,
+      "ms": 0.08295900000001666
+    },
+    {
+      "index": 34,
+      "beginUs": 85862393514,
+      "endUs": 85862393593,
+      "ms": 0.07954200000000355
+    },
+    {
+      "index": 35,
+      "beginUs": 85862393601,
+      "endUs": 85862393668,
+      "ms": 0.06645799999998303
+    },
+    {
+      "index": 36,
+      "beginUs": 85862393674,
+      "endUs": 85862393749,
+      "ms": 0.0746249999999975
+    },
+    {
+      "index": 37,
+      "beginUs": 85862393759,
+      "endUs": 85862393854,
+      "ms": 0.09520899999998278
+    },
+    {
+      "index": 38,
+      "beginUs": 85862393860,
+      "endUs": 85862393927,
+      "ms": 0.06654199999999832
+    },
+    {
+      "index": 39,
+      "beginUs": 85862393933,
+      "endUs": 85862393992,
+      "ms": 0.05808300000001054
+    },
+    {
+      "index": 40,
+      "beginUs": 85862393997,
+      "endUs": 85862394077,
+      "ms": 0.07916600000001495
+    },
+    {
+      "index": 41,
+      "beginUs": 85862394083,
+      "endUs": 85862394147,
+      "ms": 0.0639579999999853
+    },
+    {
+      "index": 42,
+      "beginUs": 85862394321,
+      "endUs": 85862394390,
+      "ms": 0.06841700000001083
+    },
+    {
+      "index": 43,
+      "beginUs": 85862394398,
+      "endUs": 85862394480,
+      "ms": 0.0816250000000025
+    },
+    {
+      "index": 44,
+      "beginUs": 85862394486,
+      "endUs": 85862394554,
+      "ms": 0.06687500000001023
+    },
+    {
+      "index": 45,
+      "beginUs": 85862394560,
+      "endUs": 85862394644,
+      "ms": 0.08395799999999554
+    },
+    {
+      "index": 46,
+      "beginUs": 85862394652,
+      "endUs": 85862394726,
+      "ms": 0.07333299999999099
+    },
+    {
+      "index": 47,
+      "beginUs": 85862394732,
+      "endUs": 85862394822,
+      "ms": 0.08966599999999403
+    },
+    {
+      "index": 48,
+      "beginUs": 85862394898,
+      "endUs": 85862394973,
+      "ms": 0.07450000000000045
+    },
+    {
+      "index": 49,
+      "beginUs": 85862394983,
+      "endUs": 85862395509,
+      "ms": 0.5253329999999892
+    },
+    {
+      "index": 50,
+      "beginUs": 85862395517,
+      "endUs": 85862395594,
+      "ms": 0.07562500000000227
+    },
+    {
+      "index": 51,
+      "beginUs": 85862395602,
+      "endUs": 85862395665,
+      "ms": 0.0625829999999894
+    },
+    {
+      "index": 52,
+      "beginUs": 85862395671,
+      "endUs": 85862395739,
+      "ms": 0.06725000000000136
+    },
+    {
+      "index": 53,
+      "beginUs": 85862395762,
+      "endUs": 85862395879,
+      "ms": 0.11625000000000796
+    },
+    {
+      "index": 54,
+      "beginUs": 85862395888,
+      "endUs": 85862395967,
+      "ms": 0.07912499999997635
+    },
+    {
+      "index": 55,
+      "beginUs": 85862395975,
+      "endUs": 85862396043,
+      "ms": 0.06783300000000736
+    },
+    {
+      "index": 56,
+      "beginUs": 85862396050,
+      "endUs": 85862396118,
+      "ms": 0.06795900000000188
+    },
+    {
+      "index": 57,
+      "beginUs": 85862396126,
+      "endUs": 85862396196,
+      "ms": 0.06954100000001517
+    },
+    {
+      "index": 58,
+      "beginUs": 85862396204,
+      "endUs": 85862396271,
+      "ms": 0.06641700000000128
+    },
+    {
+      "index": 59,
+      "beginUs": 85862396278,
+      "endUs": 85862396334,
+      "ms": 0.05629199999998491
+    },
+    {
+      "index": 60,
+      "beginUs": 85862396341,
+      "endUs": 85862396454,
+      "ms": 0.11275000000000546
+    },
+    {
+      "index": 61,
+      "beginUs": 85862396460,
+      "endUs": 85862396516,
+      "ms": 0.055749999999989086
+    },
+    {
+      "index": 62,
+      "beginUs": 85862396526,
+      "endUs": 85862396581,
+      "ms": 0.055124999999975444
+    },
+    {
+      "index": 63,
+      "beginUs": 85862396590,
+      "endUs": 85862396645,
+      "ms": 0.05529100000001108
+    },
+    {
+      "index": 64,
+      "beginUs": 85862396651,
+      "endUs": 85862396715,
+      "ms": 0.06387499999999591
+    },
+    {
+      "index": 65,
+      "beginUs": 85862396721,
+      "endUs": 85862396887,
+      "ms": 0.16558299999999804
+    },
+    {
+      "index": 66,
+      "beginUs": 85862396893,
+      "endUs": 85862396983,
+      "ms": 0.08899999999999864
+    },
+    {
+      "index": 67,
+      "beginUs": 85862396991,
+      "endUs": 85862397052,
+      "ms": 0.060915999999991755
+    },
+    {
+      "index": 68,
+      "beginUs": 85862397058,
+      "endUs": 85862397124,
+      "ms": 0.06554199999999355
+    },
+    {
+      "index": 69,
+      "beginUs": 85862397131,
+      "endUs": 85862397195,
+      "ms": 0.06370799999999122
+    },
+    {
+      "index": 70,
+      "beginUs": 85862397201,
+      "endUs": 85862397275,
+      "ms": 0.07399999999998386
+    },
+    {
+      "index": 71,
+      "beginUs": 85862397297,
+      "endUs": 85862397361,
+      "ms": 0.06266700000000469
+    },
+    {
+      "index": 72,
+      "beginUs": 85862397366,
+      "endUs": 85862397426,
+      "ms": 0.058625000000006366
+    },
+    {
+      "index": 73,
+      "beginUs": 85862397433,
+      "endUs": 85862397509,
+      "ms": 0.07533300000000054
+    },
+    {
+      "index": 74,
+      "beginUs": 85862397514,
+      "endUs": 85862397573,
+      "ms": 0.05858299999999872
+    },
+    {
+      "index": 75,
+      "beginUs": 85862397581,
+      "endUs": 85862397645,
+      "ms": 0.0640420000000006
+    },
+    {
+      "index": 76,
+      "beginUs": 85862397651,
+      "endUs": 85862397779,
+      "ms": 0.1279999999999859
+    },
+    {
+      "index": 77,
+      "beginUs": 85862397787,
+      "endUs": 85862397867,
+      "ms": 0.07916600000001495
+    },
+    {
+      "index": 78,
+      "beginUs": 85862397872,
+      "endUs": 85862397934,
+      "ms": 0.061790999999999485
+    },
+    {
+      "index": 79,
+      "beginUs": 85862397940,
+      "endUs": 85862397999,
+      "ms": 0.05724999999998204
+    },
+    {
+      "index": 80,
+      "beginUs": 85862398004,
+      "endUs": 85862398069,
+      "ms": 0.06358299999999417
+    },
+    {
+      "index": 81,
+      "beginUs": 85862398079,
+      "endUs": 85862398182,
+      "ms": 0.10254099999997379
+    },
+    {
+      "index": 82,
+      "beginUs": 85862398190,
+      "endUs": 85862398290,
+      "ms": 0.09987499999999727
+    },
+    {
+      "index": 83,
+      "beginUs": 85862398297,
+      "endUs": 85862398371,
+      "ms": 0.07304199999998673
+    },
+    {
+      "index": 84,
+      "beginUs": 85862398378,
+      "endUs": 85862398456,
+      "ms": 0.07741699999999696
+    },
+    {
+      "index": 85,
+      "beginUs": 85862398463,
+      "endUs": 85862398534,
+      "ms": 0.07041699999999196
+    },
+    {
+      "index": 86,
+      "beginUs": 85862398548,
+      "endUs": 85862398652,
+      "ms": 0.10354200000000446
+    },
+    {
+      "index": 87,
+      "beginUs": 85862398661,
+      "endUs": 85862398758,
+      "ms": 0.09687500000001137
+    },
+    {
+      "index": 88,
+      "beginUs": 85862398765,
+      "endUs": 85862398936,
+      "ms": 0.1704170000000147
+    },
+    {
+      "index": 89,
+      "beginUs": 85862398943,
+      "endUs": 85862399013,
+      "ms": 0.06920800000000327
+    },
+    {
+      "index": 90,
+      "beginUs": 85862399020,
+      "endUs": 85862399088,
+      "ms": 0.06775000000001796
+    },
+    {
+      "index": 91,
+      "beginUs": 85862399095,
+      "endUs": 85862399170,
+      "ms": 0.07479200000000219
+    },
+    {
+      "index": 92,
+      "beginUs": 85862399176,
+      "endUs": 85862399238,
+      "ms": 0.061332999999990534
+    },
+    {
+      "index": 93,
+      "beginUs": 85862399244,
+      "endUs": 85862399406,
+      "ms": 0.16166700000002265
+    },
+    {
+      "index": 94,
+      "beginUs": 85862399412,
+      "endUs": 85862399484,
+      "ms": 0.07116700000000264
+    },
+    {
+      "index": 95,
+      "beginUs": 85862399490,
+      "endUs": 85862399550,
+      "ms": 0.05983299999999758
+    },
+    {
+      "index": 96,
+      "beginUs": 85862399556,
+      "endUs": 85862399612,
+      "ms": 0.05566699999999969
+    },
+    {
+      "index": 97,
+      "beginUs": 85862399619,
+      "endUs": 85862399678,
+      "ms": 0.05845899999999915
+    },
+    {
+      "index": 98,
+      "beginUs": 85862399684,
+      "endUs": 85862399748,
+      "ms": 0.0634589999999946
+    },
+    {
+      "index": 99,
+      "beginUs": 85862399753,
+      "endUs": 85862399812,
+      "ms": 0.05833300000000463
+    },
+    {
+      "index": 100,
+      "beginUs": 85862399818,
+      "endUs": 85862399873,
+      "ms": 0.05404199999998127
+    }
+  ],
+  "cpu": {
+    "mounts": 101,
+    "intervalUs": 100,
+    "samples": 61,
+    "denominatorUs": 8425,
+    "windowUs": 8499,
+    "functions": [
+      {
+        "function": "(idle)",
+        "file": "(V8)",
+        "line": 0,
+        "column": -1,
+        "selfUs": 2205,
+        "totalUs": 2205,
+        "selfSamples": 15,
+        "totalSamples": 15,
+        "selfPct": 26.172106824925816,
+        "totalPct": 26.172106824925816,
+        "selfUsPerMount": 21.831683168316832,
+        "totalUsPerMount": 21.831683168316832
+      },
+      {
+        "function": "buildNodes",
+        "file": "packages/canard/schema-form/src/core/blueprint/utils/analyze/buildNodes.ts",
+        "line": 29,
+        "column": 26,
+        "selfUs": 917,
+        "totalUs": 2991,
+        "selfSamples": 7,
+        "totalSamples": 22,
+        "selfPct": 10.884272997032642,
+        "totalPct": 35.50148367952522,
+        "selfUsPerMount": 9.07920792079208,
+        "totalUsPerMount": 29.613861386138613
+      },
+      {
+        "function": "(garbage collector)",
+        "file": "(V8)",
+        "line": 0,
+        "column": -1,
+        "selfUs": 756,
+        "totalUs": 756,
+        "selfSamples": 5,
+        "totalSamples": 5,
+        "selfPct": 8.973293768545993,
+        "totalPct": 8.973293768545993,
+        "selfUsPerMount": 7.485148514851486,
+        "totalUsPerMount": 7.485148514851486
+      },
+      {
+        "function": "assembleObject",
+        "file": "packages/canard/schema-form/src/core/behaviors/objectBehavior/branch/utils/assembleObject.ts",
+        "line": 18,
+        "column": 52,
+        "selfUs": 434,
+        "totalUs": 434,
+        "selfSamples": 3,
+        "totalSamples": 3,
+        "selfPct": 5.1513353115727005,
+        "totalPct": 5.1513353115727005,
+        "selfUsPerMount": 4.297029702970297,
+        "totalUsPerMount": 4.297029702970297
+      },
+      {
+        "function": "applyConstraintKeywords",
+        "file": "packages/canard/schema-form/src/core/blueprint/utils/effectiveSchema/utils/applyConstraintKeywords.ts",
+        "line": 36,
+        "column": 39,
+        "selfUs": 422,
+        "totalUs": 422,
+        "selfSamples": 3,
+        "totalSamples": 3,
+        "selfPct": 5.008902077151335,
+        "totalPct": 5.008902077151335,
+        "selfUsPerMount": 4.178217821782178,
+        "totalUsPerMount": 4.178217821782178
+      },
+      {
+        "function": "applySchemaContribution",
+        "file": "packages/canard/schema-form/src/core/blueprint/utils/effectiveSchema/utils/applySchemaContribution.ts",
+        "line": 36,
+        "column": 39,
+        "selfUs": 419,
+        "totalUs": 979,
+        "selfSamples": 3,
+        "totalSamples": 7,
+        "selfPct": 4.973293768545995,
+        "totalPct": 11.620178041543026,
+        "selfUsPerMount": 4.148514851485149,
+        "totalUsPerMount": 9.693069306930694
+      },
+      {
+        "function": "populateNodeChildren",
+        "file": "packages/canard/schema-form/src/core/blueprint/utils/analyze/populateNodeChildren.ts",
+        "line": 19,
+        "column": 36,
+        "selfUs": 403,
+        "totalUs": 1905,
+        "selfSamples": 3,
+        "totalSamples": 14,
+        "selfPct": 4.783382789317507,
+        "totalPct": 22.61127596439169,
+        "selfUsPerMount": 3.99009900990099,
+        "totalUsPerMount": 18.861386138613863
+      },
+      {
+        "function": "createChildNode",
+        "file": "packages/canard/schema-form/src/core/settle/utils/compute/createChildNode.ts",
+        "line": 10,
+        "column": 31,
+        "selfUs": 286,
+        "totalUs": 286,
+        "selfSamples": 2,
+        "totalSamples": 2,
+        "selfPct": 3.394658753709199,
+        "totalPct": 3.394658753709199,
+        "selfUsPerMount": 2.8316831683168315,
+        "totalUsPerMount": 2.8316831683168315
+      },
+      {
+        "function": "loadStaticFirstTree",
+        "file": "packages/canard/schema-form/src/core/settle/utils/load/loadStaticFirstTree.ts",
+        "line": 42,
+        "column": 35,
+        "selfUs": 276,
+        "totalUs": 1130,
+        "selfSamples": 2,
+        "totalSamples": 8,
+        "selfPct": 3.2759643916913945,
+        "totalPct": 13.412462908011868,
+        "selfUsPerMount": 2.732673267326733,
+        "totalUsPerMount": 11.188118811881187
+      },
+      {
+        "function": "getTemplateKey",
+        "file": "packages/canard/schema-form/src/core/blueprint/utils/analyze/getTemplateKey.ts",
+        "line": 11,
+        "column": 30,
+        "selfUs": 274,
+        "totalUs": 274,
+        "selfSamples": 2,
+        "totalSamples": 2,
+        "selfPct": 3.2522255192878338,
+        "totalPct": 3.2522255192878338,
+        "selfUsPerMount": 2.712871287128713,
+        "totalUsPerMount": 2.712871287128713
+      },
+      {
+        "function": "cpu",
+        "file": "packages/canard/schema-form/architecture/verification/07-switch/profile-102-work/measure.mjs",
+        "line": 337,
+        "column": 18,
+        "selfUs": 143,
+        "totalUs": 5326,
+        "selfSamples": 1,
+        "totalSamples": 40,
+        "selfPct": 1.6973293768545994,
+        "totalPct": 63.21661721068249,
+        "selfUsPerMount": 1.4158415841584158,
+        "totalUsPerMount": 52.73267326732673
+      },
+      {
+        "function": "dispatchMount",
+        "file": "packages/canard/schema-form/src/core/dispatch/utils/entry/dispatchMount.ts",
+        "line": 21,
+        "column": 29,
+        "selfUs": 142,
+        "totalUs": 1272,
+        "selfSamples": 1,
+        "totalSamples": 9,
+        "selfPct": 1.685459940652819,
+        "totalPct": 15.097922848664687,
+        "selfUsPerMount": 1.4059405940594059,
+        "totalUsPerMount": 12.594059405940595
+      },
+      {
+        "function": "restoreAdoptedExternalErrors",
+        "file": "packages/canard/schema-form/src/core/dispatch/utils/chain/restoreAdoptedExternalErrors.ts",
+        "line": 12,
+        "column": 44,
+        "selfUs": 142,
+        "totalUs": 142,
+        "selfSamples": 1,
+        "totalSamples": 1,
+        "selfPct": 1.685459940652819,
+        "totalPct": 1.685459940652819,
+        "selfUsPerMount": 1.4059405940594059,
+        "totalUsPerMount": 1.4059405940594059
+      },
+      {
+        "function": "(anonymous)",
+        "file": "packages/canard/schema-form/src/core/blueprint/utils/types/resolveNodeStrategy.ts",
+        "line": 43,
+        "column": 19,
+        "selfUs": 142,
+        "totalUs": 142,
+        "selfSamples": 1,
+        "totalSamples": 1,
+        "selfPct": 1.685459940652819,
+        "totalPct": 1.685459940652819,
+        "selfUsPerMount": 1.4059405940594059,
+        "totalUsPerMount": 1.4059405940594059
+      },
+      {
+        "function": "(anonymous)",
+        "file": "packages/canard/schema-form/src/core/blueprint/utils/analyze/populateNodeChildren.ts",
+        "line": 73,
+        "column": 48,
+        "selfUs": 141,
+        "totalUs": 141,
+        "selfSamples": 1,
+        "totalSamples": 1,
+        "selfPct": 1.6735905044510386,
+        "totalPct": 1.6735905044510386,
+        "selfUsPerMount": 1.396039603960396,
+        "totalUsPerMount": 1.396039603960396
+      },
+      {
+        "function": "structuredClone",
+        "file": "node:internal/worker/js_transferable",
+        "line": 101,
+        "column": 24,
+        "selfUs": 139,
+        "totalUs": 272,
+        "selfSamples": 1,
+        "totalSamples": 2,
+        "selfPct": 1.6498516320474776,
+        "totalPct": 3.228486646884273,
+        "selfUsPerMount": 1.3762376237623761,
+        "totalUsPerMount": 2.6930693069306932
+      },
+      {
+        "function": "applyTypeContribution",
+        "file": "packages/canard/schema-form/src/core/blueprint/utils/effectiveSchema/utils/applyTypeContribution.ts",
+        "line": 16,
+        "column": 37,
+        "selfUs": 138,
+        "totalUs": 138,
+        "selfSamples": 1,
+        "totalSamples": 1,
+        "selfPct": 1.6379821958456973,
+        "totalPct": 1.6379821958456973,
+        "selfUsPerMount": 1.3663366336633664,
+        "totalUsPerMount": 1.3663366336633664
+      },
+      {
+        "function": "(program)",
+        "file": "(V8)",
+        "line": 0,
+        "column": -1,
+        "selfUs": 138,
+        "totalUs": 138,
+        "selfSamples": 1,
+        "totalSamples": 1,
+        "selfPct": 1.6379821958456973,
+        "totalPct": 1.6379821958456973,
+        "selfUsPerMount": 1.3663366336633664,
+        "totalUsPerMount": 1.3663366336633664
+      },
+      {
+        "function": "create",
+        "file": "(round-99 canonical adapter)",
+        "line": 157,
+        "column": 15,
+        "selfUs": 137,
+        "totalUs": 4644,
+        "selfSamples": 1,
+        "totalSamples": 34,
+        "selfPct": 1.6261127596439169,
+        "totalPct": 55.12166172106825,
+        "selfUsPerMount": 1.3564356435643565,
+        "totalUsPerMount": 45.98019801980198
+      },
+      {
+        "function": "now",
+        "file": "(V8)",
+        "line": 0,
+        "column": -1,
+        "selfUs": 136,
+        "totalUs": 136,
+        "selfSamples": 1,
+        "totalSamples": 1,
+        "selfPct": 1.6142433234421365,
+        "totalPct": 1.6142433234421365,
+        "selfUsPerMount": 1.3465346534653466,
+        "totalUsPerMount": 1.3465346534653466
+      },
+      {
+        "function": "collectDeclarations",
+        "file": "packages/canard/schema-form/src/core/blueprint/utils/analyze/collectDeclarations.ts",
+        "line": 27,
+        "column": 35,
+        "selfUs": 135,
+        "totalUs": 135,
+        "selfSamples": 1,
+        "totalSamples": 1,
+        "selfPct": 1.6023738872403561,
+        "totalPct": 1.6023738872403561,
+        "selfUsPerMount": 1.3366336633663367,
+        "totalUsPerMount": 1.3366336633663367
+      },
+      {
+        "function": "set",
+        "file": "packages/canard/schema-form/src/core/utils/pathIndex/PathKeyedMap.ts",
+        "line": 20,
+        "column": 11,
+        "selfUs": 134,
+        "totalUs": 134,
+        "selfSamples": 1,
+        "totalSamples": 1,
+        "selfPct": 1.5905044510385757,
+        "totalPct": 1.5905044510385757,
+        "selfUsPerMount": 1.3267326732673268,
+        "totalUsPerMount": 1.3267326732673268
+      },
+      {
+        "function": "(anonymous)",
+        "file": "node:internal/webidl",
+        "line": 756,
+        "column": 17,
+        "selfUs": 133,
+        "totalUs": 133,
+        "selfSamples": 1,
+        "totalSamples": 1,
+        "selfPct": 1.5786350148367951,
+        "totalPct": 1.5786350148367951,
+        "selfUsPerMount": 1.316831683168317,
+        "totalUsPerMount": 1.316831683168317
+      },
+      {
+        "function": "measured",
+        "file": "packages/canard/schema-form/architecture/verification/07-switch/profile-102-work/measure.mjs",
+        "line": 198,
+        "column": 23,
+        "selfUs": 131,
+        "totalUs": 4911,
+        "selfSamples": 2,
+        "totalSamples": 37,
+        "selfPct": 1.5548961424332344,
+        "totalPct": 58.29080118694362,
+        "selfUsPerMount": 1.297029702970297,
+        "totalUsPerMount": 48.62376237623762
+      },
+      {
+        "function": "visitShape",
+        "file": "packages/canard/schema-form/src/core/blueprint/utils/analyze/validateShape/utils/visitShape.ts",
+        "line": 14,
+        "column": 26,
+        "selfUs": 102,
+        "totalUs": 102,
+        "selfSamples": 1,
+        "totalSamples": 1,
+        "selfPct": 1.2106824925816024,
+        "totalPct": 1.2106824925816024,
+        "selfUsPerMount": 1.00990099009901,
+        "totalUsPerMount": 1.00990099009901
+      },
+      {
+        "function": "blueprint",
+        "file": "packages/canard/schema-form/src/core/blueprint/blueprint.ts",
+        "line": 21,
+        "column": 25,
+        "selfUs": 0,
+        "totalUs": 3093,
+        "selfSamples": 0,
+        "totalSamples": 23,
+        "selfPct": 0,
+        "totalPct": 36.712166172106826,
+        "selfUsPerMount": 0,
+        "totalUsPerMount": 30.623762376237625
+      },
+      {
+        "function": "buildSchemaNodeTree",
+        "file": "packages/canard/schema-form/src/core/SchemaNode/utils/binding/buildSchemaNodeTree.ts",
+        "line": 37,
+        "column": 16,
+        "selfUs": 0,
+        "totalUs": 3093,
+        "selfSamples": 0,
+        "totalSamples": 23,
+        "selfPct": 0,
+        "totalPct": 36.712166172106826,
+        "selfUsPerMount": 0,
+        "totalUsPerMount": 30.623762376237625
+      },
+      {
+        "function": "nodeFromJSONSchema",
+        "file": "packages/canard/schema-form/src/core/nodeFromJSONSchema.ts",
+        "line": 17,
+        "column": 16,
+        "selfUs": 0,
+        "totalUs": 4507,
+        "selfSamples": 0,
+        "totalSamples": 33,
+        "selfPct": 0,
+        "totalPct": 53.49554896142433,
+        "selfUsPerMount": 0,
+        "totalUsPerMount": 44.62376237623762
+      },
+      {
+        "function": "(anonymous)",
+        "file": "packages/canard/schema-form/architecture/verification/07-switch/profile-102-work/measure.mjs",
+        "line": 346,
+        "column": 34,
+        "selfUs": 0,
+        "totalUs": 4644,
+        "selfSamples": 0,
+        "totalSamples": 34,
+        "selfPct": 0,
+        "totalPct": 55.12166172106825,
+        "selfUsPerMount": 0,
+        "totalUsPerMount": 45.98019801980198
+      },
+      {
+        "function": "(root)",
+        "file": "(V8)",
+        "line": 0,
+        "column": -1,
+        "selfUs": 0,
+        "totalUs": 8425,
+        "selfSamples": 0,
+        "totalSamples": 61,
+        "selfPct": 0,
+        "totalPct": 100,
+        "selfUsPerMount": 0,
+        "totalUsPerMount": 83.41584158415841
+      },
+      {
+        "function": "mergeSchemaContributions",
+        "file": "packages/canard/schema-form/src/core/blueprint/utils/effectiveSchema/utils/mergeSchemaContributions.ts",
+        "line": 27,
+        "column": 40,
+        "selfUs": 0,
+        "totalUs": 979,
+        "selfSamples": 0,
+        "totalSamples": 7,
+        "selfPct": 0,
+        "totalPct": 11.620178041543026,
+        "selfUsPerMount": 0,
+        "totalUsPerMount": 9.693069306930694
+      },
+      {
+        "function": "loadSchemaNodeAtMount",
+        "file": "packages/canard/schema-form/src/core/settle/utils/load/loadSchemaNodeAtMount.ts",
+        "line": 15,
+        "column": 37,
+        "selfUs": 0,
+        "totalUs": 1130,
+        "selfSamples": 0,
+        "totalSamples": 8,
+        "selfPct": 0,
+        "totalPct": 13.412462908011868,
+        "selfUsPerMount": 0,
+        "totalUsPerMount": 11.188118811881187
+      },
+      {
+        "function": "mountSchemaNode",
+        "file": "packages/canard/schema-form/src/core/SchemaNode/utils/binding/mountSchemaNode.ts",
+        "line": 14,
+        "column": 31,
+        "selfUs": 0,
+        "totalUs": 1414,
+        "selfSamples": 0,
+        "totalSamples": 10,
+        "selfPct": 0,
+        "totalPct": 16.783382789317507,
+        "selfUsPerMount": 0,
+        "totalUsPerMount": 14
+      },
+      {
+        "function": "now",
+        "file": "node:internal/perf/performance",
+        "line": 137,
+        "column": 5,
+        "selfUs": 0,
+        "totalUs": 136,
+        "selfSamples": 0,
+        "totalSamples": 1,
+        "selfPct": 0,
+        "totalPct": 1.6142433234421365,
+        "selfUsPerMount": 0,
+        "totalUsPerMount": 1.3465346534653466
+      },
+      {
+        "function": "assembleStaticFirstNode",
+        "file": "packages/canard/schema-form/src/core/settle/utils/load/assembleStaticFirstNode.ts",
+        "line": 11,
+        "column": 39,
+        "selfUs": 0,
+        "totalUs": 434,
+        "selfSamples": 0,
+        "totalSamples": 3,
+        "selfPct": 0,
+        "totalPct": 5.1513353115727005,
+        "selfUsPerMount": 0,
+        "totalUsPerMount": 4.297029702970297
+      },
+      {
+        "function": "finishStaticFirstLoad",
+        "file": "packages/canard/schema-form/src/core/settle/utils/load/finishStaticFirstLoad.ts",
+        "line": 19,
+        "column": 37,
+        "selfUs": 0,
+        "totalUs": 134,
+        "selfSamples": 0,
+        "totalSamples": 1,
+        "selfPct": 0,
+        "totalPct": 1.5905044510385757,
+        "selfUsPerMount": 0,
+        "totalUsPerMount": 1.3267326732673268
+      },
+      {
+        "function": "validateShape",
+        "file": "packages/canard/schema-form/src/core/blueprint/utils/analyze/validateShape.ts",
+        "line": 10,
+        "column": 29,
+        "selfUs": 0,
+        "totalUs": 102,
+        "selfSamples": 0,
+        "totalSamples": 1,
+        "selfPct": 0,
+        "totalPct": 1.2106824925816024,
+        "selfUsPerMount": 0,
+        "totalUsPerMount": 1.00990099009901
+      },
+      {
+        "function": "resolveNodeStrategy",
+        "file": "packages/canard/schema-form/src/core/blueprint/utils/types/resolveNodeStrategy.ts",
+        "line": 14,
+        "column": 35,
+        "selfUs": 0,
+        "totalUs": 142,
+        "selfSamples": 0,
+        "totalSamples": 1,
+        "selfPct": 0,
+        "totalPct": 1.685459940652819,
+        "selfUsPerMount": 0,
+        "totalUsPerMount": 1.4059405940594059
+      }
+    ],
+    "selfConservation": 8425
+  },
+  "observed": {
+    "sha256": "72c43d9d80f43ae8fddcafd0cb1e33e0faddf95bd32459d24622dda3fbc7a8aa",
+    "outputBytes": 50,
+    "liveWidth": 2,
+    "value": {
+      "name": "John Doe",
+      "email": "john.doe@example.com"
+    }
+  },
+  "environment": {
+    "date": "2026-10-06T06:37:09.827Z",
+    "head": "268832c7cb6eea67475b56ab5a78408a55ec47a3",
+    "node": "v26.10.0",
+    "v8": "14.6.202.34-node.35",
+    "esbuild": "0.25.9",
+    "platform": "darwin",
+    "arch": "arm64",
+    "cpu": "Apple M1 Max",
+    "cpus": 10,
+    "memoryBytes": 68719476736,
+    "osRelease": "25.6.0",
+    "mode": "production",
+    "validation": "off",
+    "subscribers": 0
+  },
+  "elapsedMs": 109,
+  "attributionRevision": "all intersecting windows, weighted timeDeltas"
+}

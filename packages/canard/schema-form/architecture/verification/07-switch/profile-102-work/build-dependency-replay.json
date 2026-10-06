@@ -1,0 +1,8 @@
+{
+  "HEAD": "268832c7cb6eea67475b56ab5a78408a55ec47a3",
+  "variant": "dependency-replay",
+  "sha256": "ce3c6ea4d46af2be88d1b7ef0ccc6f4535092d3da7d41b67f944bad4e3445767",
+  "bytes": 526463,
+  "naturalServiceExits": 1,
+  "edits": []
+}

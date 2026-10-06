@@ -1,0 +1,17 @@
+{
+  "HEAD": "268832c7cb6eea67475b56ab5a78408a55ec47a3",
+  "command": "--timer-worker",
+  "args": [
+    "constraint-present",
+    "nested-d5-f4",
+    "1",
+    "steady"
+  ],
+  "status": 0,
+  "signal": null,
+  "started": "2026-10-06T06:45:56.264Z",
+  "ended": "2026-10-06T06:45:58.915Z",
+  "elapsedMs": 2651,
+  "pid": 46120,
+  "driverSha256": "a09fb550c3263d10b03912c6788f1ab9597481ce1856a2da28cf8c7a641b00a7"
+}

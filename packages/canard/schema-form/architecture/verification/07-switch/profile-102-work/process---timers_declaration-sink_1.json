@@ -1,0 +1,15 @@
+{
+  "HEAD": "268832c7cb6eea67475b56ab5a78408a55ec47a3",
+  "command": "--timers",
+  "args": [
+    "declaration-sink",
+    "1"
+  ],
+  "status": 0,
+  "signal": null,
+  "started": "2026-10-06T06:58:16.546Z",
+  "ended": "2026-10-06T06:58:31.128Z",
+  "elapsedMs": 14581,
+  "pid": 56564,
+  "driverSha256": "f3e210634219919ad0b59b660de4b92bcb8af88fff8ea44e76f9c3eb933e5a27"
+}

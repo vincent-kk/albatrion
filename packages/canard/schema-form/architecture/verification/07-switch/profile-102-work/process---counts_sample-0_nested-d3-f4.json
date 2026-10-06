@@ -1,0 +1,15 @@
+{
+  "HEAD": "268832c7cb6eea67475b56ab5a78408a55ec47a3",
+  "command": "--counts",
+  "args": [
+    "sample-0",
+    "nested-d3-f4"
+  ],
+  "status": 0,
+  "signal": null,
+  "started": "2026-10-06T06:33:34.568Z",
+  "ended": "2026-10-06T06:33:35.676Z",
+  "elapsedMs": 1108,
+  "pid": 27092,
+  "driverSha256": "1f6f49de304207452dc389c95c142e70bc5d1f975e166dfa749f3a000b5ab961"
+}

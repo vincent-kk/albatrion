@@ -1,0 +1,17 @@
+{
+  "HEAD": "268832c7cb6eea67475b56ab5a78408a55ec47a3",
+  "command": "--timer-worker",
+  "args": [
+    "merge-selection-once",
+    "sample-0",
+    "2",
+    "steady"
+  ],
+  "status": 0,
+  "signal": null,
+  "started": "2026-10-06T07:33:20.064Z",
+  "ended": "2026-10-06T07:33:20.155Z",
+  "elapsedMs": 91,
+  "pid": 86151,
+  "driverSha256": "feef8f46af5e2c3879776edd06aadf9600eea4cc4f6442738ac19089fd4c3e46"
+}

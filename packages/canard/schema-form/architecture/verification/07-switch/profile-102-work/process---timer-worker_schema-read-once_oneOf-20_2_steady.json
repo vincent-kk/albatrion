@@ -1,0 +1,17 @@
+{
+  "HEAD": "268832c7cb6eea67475b56ab5a78408a55ec47a3",
+  "command": "--timer-worker",
+  "args": [
+    "schema-read-once",
+    "oneOf-20",
+    "2",
+    "steady"
+  ],
+  "status": 0,
+  "signal": null,
+  "started": "2026-10-06T07:27:35.257Z",
+  "ended": "2026-10-06T07:27:35.679Z",
+  "elapsedMs": 422,
+  "pid": 82704,
+  "driverSha256": "c944abd076bb890e927d224f1a537e7cdeffbec4b9208508e24a870eb8679987"
+}

@@ -1,0 +1,24 @@
+{
+  "HEAD": "268832c7cb6eea67475b56ab5a78408a55ec47a3",
+  "command": "--counts",
+  "args": [
+    "nested-d3-f4",
+    "nested-d4-f4",
+    "nested-d5-f4",
+    "flat-100",
+    "flat-500",
+    "flat-1000",
+    "oneOf-5",
+    "oneOf-10",
+    "oneOf-20",
+    "oneOf-40",
+    "sample-0"
+  ],
+  "status": 0,
+  "signal": null,
+  "started": "2026-10-06T07:26:01.150Z",
+  "ended": "2026-10-06T07:26:07.161Z",
+  "elapsedMs": 6011,
+  "pid": 80656,
+  "driverSha256": "c944abd076bb890e927d224f1a537e7cdeffbec4b9208508e24a870eb8679987"
+}

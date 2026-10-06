@@ -1,0 +1,14 @@
+{
+  "HEAD": "268832c7cb6eea67475b56ab5a78408a55ec47a3",
+  "command": "--build",
+  "args": [
+    "merge-selection-once"
+  ],
+  "status": 0,
+  "signal": null,
+  "started": "2026-10-06T07:32:37.625Z",
+  "ended": "2026-10-06T07:32:37.882Z",
+  "elapsedMs": 257,
+  "pid": 85327,
+  "driverSha256": "feef8f46af5e2c3879776edd06aadf9600eea4cc4f6442738ac19089fd4c3e46"
+}

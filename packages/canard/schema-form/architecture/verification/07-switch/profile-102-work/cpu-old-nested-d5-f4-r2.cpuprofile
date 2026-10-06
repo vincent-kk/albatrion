@@ -1,0 +1,10367 @@
+{
+  "nodes": [
+    {
+      "id": 1,
+      "callFrame": {
+        "functionName": "(root)",
+        "scriptId": "0",
+        "url": "",
+        "lineNumber": -1,
+        "columnNumber": -1
+      },
+      "hitCount": 0,
+      "children": [
+        2,
+        47,
+        64,
+        66,
+        76,
+        121,
+        134,
+        149,
+        173,
+        222,
+        235
+      ]
+    },
+    {
+      "id": 2,
+      "callFrame": {
+        "functionName": "cpu",
+        "scriptId": "89",
+        "url": "file:///Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/packages/canard/schema-form/architecture/verification/07-switch/profile-102-work/measure.mjs",
+        "lineNumber": 336,
+        "columnNumber": 18
+      },
+      "hitCount": 6,
+      "children": [
+        3,
+        6,
+        7
+      ],
+      "positionTicks": [
+        {
+          "line": 344,
+          "ticks": 2
+        },
+        {
+          "line": 346,
+          "ticks": 1
+        },
+        {
+          "line": 345,
+          "ticks": 1
+        },
+        {
+          "line": 347,
+          "ticks": 2
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "callFrame": {
+        "functionName": "post",
+        "scriptId": "89",
+        "url": "file:///Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/packages/canard/schema-form/architecture/verification/07-switch/profile-102-work/measure.mjs",
+        "lineNumber": 340,
+        "columnNumber": 15
+      },
+      "hitCount": 0,
+      "children": [
+        4
+      ]
+    },
+    {
+      "id": 4,
+      "callFrame": {
+        "functionName": "",
+        "scriptId": "89",
+        "url": "file:///Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/packages/canard/schema-form/architecture/verification/07-switch/profile-102-work/measure.mjs",
+        "lineNumber": 340,
+        "columnNumber": 52
+      },
+      "hitCount": 0,
+      "children": [
+        5
+      ]
+    },
+    {
+      "id": 5,
+      "callFrame": {
+        "functionName": "post",
+        "scriptId": "167",
+        "url": "node:inspector",
+        "lineNumber": 114,
+        "columnNumber": 6
+      },
+      "hitCount": 0
+    },
+    {
+      "id": 6,
+      "callFrame": {
+        "functionName": "structuredClone",
+        "scriptId": "29",
+        "url": "node:internal/worker/js_transferable",
+        "lineNumber": 100,
+        "columnNumber": 24
+      },
+      "hitCount": 501,
+      "children": [
+        231
+      ],
+      "positionTicks": [
+        {
+          "line": 106,
+          "ticks": 1
+        },
+        {
+          "line": 115,
+          "ticks": 500
+        }
+      ]
+    },
+    {
+      "id": 231,
+      "callFrame": {
+        "functionName": "",
+        "scriptId": "30",
+        "url": "node:internal/webidl",
+        "lineNumber": 755,
+        "columnNumber": 17
+      },
+      "hitCount": 1,
+      "positionTicks": [
+        {
+          "line": 770,
+          "ticks": 1
+        }
+      ]
+    },
+    {
+      "id": 7,
+      "callFrame": {
+        "functionName": "measured",
+        "scriptId": "89",
+        "url": "file:///Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/packages/canard/schema-form/architecture/verification/07-switch/profile-102-work/measure.mjs",
+        "lineNumber": 197,
+        "columnNumber": 23
+      },
+      "hitCount": 9,
+      "children": [
+        8,
+        243,
+        260
+      ],
+      "positionTicks": [
+        {
+          "line": 203,
+          "ticks": 4
+        },
+        {
+          "line": 201,
+          "ticks": 2
+        },
+        {
+          "line": 199,
+          "ticks": 1
+        },
+        {
+          "line": 198,
+          "ticks": 2
+        }
+      ]
+    },
+    {
+      "id": 8,
+      "callFrame": {
+        "functionName": "",
+        "scriptId": "89",
+        "url": "file:///Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/packages/canard/schema-form/architecture/verification/07-switch/profile-102-work/measure.mjs",
+        "lineNumber": 345,
+        "columnNumber": 34
+      },
+      "hitCount": 1,
+      "children": [
+        9
+      ],
+      "positionTicks": [
+        {
+          "line": 346,
+          "ticks": 1
+        }
+      ]
+    },
+    {
+      "id": 9,
+      "callFrame": {
+        "functionName": "create",
+        "scriptId": "177",
+        "url": "data:text/javascript;base64,Ly8gQ0xJLW9ubHkgbWVhc3VyZW1lbnQgaGFybmVzczsgYnVuZGxlcyBhcmUgZGlzcG9zYWJsZSwgcHJvZHVjdCBzb3VyY2VzIHJlbWFpbiB1bmNoYW5nZWQuCmltcG9ydCBhc3NlcnQgZnJvbSAnbm9kZTphc3NlcnQvc3RyaWN0JzsKaW1wb3J0IHsgZXhlY0ZpbGVTeW5jLCBzcGF3blN5bmMgfSBmcm9tICdub2RlOmNoaWxkX3Byb2Nlc3MnOwppbXBvcnQgeyBjcmVhdGVIYXNoIH0gZnJvbSAnbm9kZTpjcnlwdG8nOwppbXBvcnQgZnMgZnJvbSAnbm9kZTpmcyc7CmltcG9ydCB7IGNyZWF0ZVJlcXVpcmUgfSBmcm9tICdub2RlOm1vZHVsZSc7CmltcG9ydCBvcyBmcm9tICdub2RlOm9zJzsKaW1wb3J0IHBhdGggZnJvbSAnbm9kZTpwYXRoJzsKaW1wb3J0IHsgZmlsZVVSTFRvUGF0aCB9IGZyb20gJ25vZGU6dXJsJzsKCmNvbnN0IHNjcmlwdCA9ICIvVXNlcnMvVmluY2VudC9Xb3Jrc3BhY2UvYWxiYXRyaW9uLy5jbGF1ZGUvd29ya3RyZWVzL3N0YWdlLTA3L3BhY2thZ2VzL2NhbmFyZC9zY2hlbWEtZm9ybS9hcmNoaXRlY3R1cmUvdmVyaWZpY2F0aW9uLzA3LXN3aXRjaC90b29scy9wcm9maWxlLTk5YzAxLm1qcyI7CmNvbnN0IG91dHB1dCA9IHBhdGgucmVzb2x2ZShwYXRoLmRpcm5hbWUoc2NyaXB0KSwgJy4uJyk7CmNvbnN0IHBrZyA9IHBhdGgucmVzb2x2ZShvdXRwdXQsICcuLi8uLi8uLicpOwpjb25zdCByZXBvID0gcGF0aC5yZXNvbHZlKHBrZywgJy4uLy4uLy4uJyk7CmNvbnN0IGJmID0gcGF0aC5qb2luKHJlcG8s",
+        "lineNumber": 156,
+        "columnNumber": 15
+      },
+      "hitCount": 2,
+      "children": [
+        10
+      ],
+      "positionTicks": [
+        {
+          "line": 160,
+          "ticks": 2
+        }
+      ]
+    },
+    {
+      "id": 10,
+      "callFrame": {
+        "functionName": "nodeFromJSONSchema",
+        "scriptId": "178",
+        "url": "file:///private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles/profile102-old.cjs",
+        "lineNumber": 6743,
+        "columnNumber": 25
+      },
+      "hitCount": 2,
+      "children": [
+        11,
+        16
+      ],
+      "positionTicks": [
+        {
+          "line": 6754,
+          "ticks": 1
+        },
+        {
+          "line": 6746,
+          "ticks": 1
+        }
+      ]
+    },
+    {
+      "id": 11,
+      "callFrame": {
+        "functionName": "getResolveSchema",
+        "scriptId": "178",
+        "url": "file:///private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles/profile102-old.cjs",
+        "lineNumber": 81,
+        "columnNumber": 23
+      },
+      "hitCount": 0,
+      "children": [
+        12
+      ]
+    },
+    {
+      "id": 12,
+      "callFrame": {
+        "functionName": "getReferenceTable",
+        "scriptId": "178",
+        "url": "file:///private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles/profile102-old.cjs",
+        "lineNumber": 49,
+        "columnNumber": 24
+      },
+      "hitCount": 1,
+      "children": [
+        13
+      ],
+      "positionTicks": [
+        {
+          "line": 59,
+          "ticks": 1
+        }
+      ]
+    },
+    {
+      "id": 13,
+      "callFrame": {
+        "functionName": "scan",
+        "scriptId": "227",
+        "url": "file:///Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/packages/winglet/json-schema/dist/utils/JSONSchemaScanner/sync/JSONSchemaScanner.cjs",
+        "lineNumber": 14,
+        "columnNumber": 5
+      },
+      "hitCount": 0,
+      "children": [
+        14
+      ]
+    },
+    {
+      "id": 14,
+      "callFrame": {
+        "functionName": "__run__",
+        "scriptId": "227",
+        "url": "file:///Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/packages/winglet/json-schema/dist/utils/JSONSchemaScanner/sync/JSONSchemaScanner.cjs",
+        "lineNumber": 46,
+        "columnNumber": 8
+      },
+      "hitCount": 7,
+      "children": [
+        15
+      ],
+      "positionTicks": [
+        {
+          "line": 88,
+          "ticks": 7
+        }
+      ]
+    },
+    {
+      "id": 15,
+      "callFrame": {
+        "functionName": "scannerFactory",
+        "scriptId": "228",
+        "url": "file:///Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/packages/winglet/json-schema/dist/utils/JSONSchemaScanner/utils/scannerFactory.cjs",
+        "lineNumber": 16,
+        "columnNumber": 24
+      },
+      "hitCount": 45,
+      "children": [
+        80,
+        253
+      ],
+      "positionTicks": [
+        {
+          "line": 46,
+          "ticks": 1
+        },
+        {
+          "line": 32,
+          "ticks": 1
+        },
+        {
+          "line": 39,
+          "ticks": 1
+        },
+        {
+          "line": 76,
+          "ticks": 1
+        },
+        {
+          "line": 42,
+          "ticks": 1
+        },
+        {
+          "line": 90,
+          "ticks": 1
+        },
+        {
+          "line": 75,
+          "ticks": 2
+        },
+        {
+          "line": 95,
+          "ticks": 1
+        },
+        {
+          "line": 89,
+          "ticks": 2
+        },
+        {
+          "line": 39,
+          "ticks": 1
+        },
+        {
+          "line": 76,
+          "ticks": 1
+        },
+        {
+          "line": 78,
+          "ticks": 21
+        },
+        {
+          "line": 17,
+          "ticks": 1
+        },
+        {
+          "line": 82,
+          "ticks": 2
+        },
+        {
+          "line": 39,
+          "ticks": 1
+        },
+        {
+          "line": 92,
+          "ticks": 5
+        },
+        {
+          "line": 81,
+          "ticks": 1
+        },
+        {
+          "line": 91,
+          "ticks": 1
+        }
+      ]
+    },
+    {
+      "id": 80,
+      "callFrame": {
+        "functionName": "getStackEntriesForNode",
+        "scriptId": "229",
+        "url": "file:///Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/packages/winglet/json-schema/dist/utils/JSONSchemaScanner/utils/getStackEntriesForNode.cjs",
+        "lineNumber": 73,
+        "columnNumber": 31
+      },
+      "hitCount": 16,
+      "children": [
+        93
+      ],
+      "positionTicks": [
+        {
+          "line": 75,
+          "ticks": 1
+        },
+        {
+          "line": 88,
+          "ticks": 1
+        },
+        {
+          "line": 87,
+          "ticks": 1
+        },
+        {
+          "line": 77,
+          "ticks": 1
+        },
+        {
+          "line": 82,
+          "ticks": 1
+        },
+        {
+          "line": 80,
+          "ticks": 1
+        },
+        {
+          "line": 81,
+          "ticks": 10
+        }
+      ]
+    },
+    {
+      "id": 93,
+      "callFrame": {
+        "functionName": "pushMapChildren",
+        "scriptId": "229",
+        "url": "file:///Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/packages/winglet/json-schema/dist/utils/JSONSchemaScanner/utils/getStackEntriesForNode.cjs",
+        "lineNumber": 33,
+        "columnNumber": 24
+      },
+      "hitCount": 14,
+      "children": [
+        128,
+        185
+      ],
+      "positionTicks": [
+        {
+          "line": 48,
+          "ticks": 1
+        },
+        {
+          "line": 43,
+          "ticks": 3
+        },
+        {
+          "line": 48,
+          "ticks": 1
+        },
+        {
+          "line": 45,
+          "ticks": 1
+        },
+        {
+          "line": 48,
+          "ticks": 1
+        },
+        {
+          "line": 38,
+          "ticks": 2
+        },
+        {
+          "line": 40,
+          "ticks": 5
+        }
+      ]
+    },
+    {
+      "id": 128,
+      "callFrame": {
+        "functionName": "escapeSegment",
+        "scriptId": "233",
+        "url": "file:///Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/packages/winglet/json/dist/JSONPointer/utils/escape/escapeSegment.cjs",
+        "lineNumber": 5,
+        "columnNumber": 22
+      },
+      "hitCount": 11,
+      "positionTicks": [
+        {
+          "line": 7,
+          "ticks": 5
+        },
+        {
+          "line": 7,
+          "ticks": 6
+        }
+      ]
+    },
+    {
+      "id": 185,
+      "callFrame": {
+        "functionName": "isObject",
+        "scriptId": "210",
+        "url": "file:///Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/packages/winglet/common-utils/dist/utils/filter/isObject.cjs",
+        "lineNumber": 4,
+        "columnNumber": 17
+      },
+      "hitCount": 4,
+      "positionTicks": [
+        {
+          "line": 5,
+          "ticks": 4
+        }
+      ]
+    },
+    {
+      "id": 253,
+      "callFrame": {
+        "functionName": "isObject",
+        "scriptId": "210",
+        "url": "file:///Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/packages/winglet/common-utils/dist/utils/filter/isObject.cjs",
+        "lineNumber": 4,
+        "columnNumber": 17
+      },
+      "hitCount": 1,
+      "positionTicks": [
+        {
+          "line": 5,
+          "ticks": 1
+        }
+      ]
+    },
+    {
+      "id": 16,
+      "callFrame": {
+        "functionName": "",
+        "scriptId": "178",
+        "url": "file:///private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles/profile102-old.cjs",
+        "lineNumber": 6674,
+        "columnNumber": 49
+      },
+      "hitCount": 0,
+      "children": [
+        17
+      ]
+    },
+    {
+      "id": 17,
+      "callFrame": {
+        "functionName": "ObjectNode",
+        "scriptId": "178",
+        "url": "file:///private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles/profile102-old.cjs",
+        "lineNumber": 6444,
+        "columnNumber": 13
+      },
+      "hitCount": 0,
+      "children": [
+        18,
+        53,
+        102,
+        112
+      ]
+    },
+    {
+      "id": 18,
+      "callFrame": {
+        "functionName": "BranchStrategy2",
+        "scriptId": "178",
+        "url": "file:///private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles/profile102-old.cjs",
+        "lineNumber": 5680,
+        "columnNumber": 13
+      },
+      "hitCount": 0,
+      "children": [
+        19
+      ]
+    },
+    {
+      "id": 19,
+      "callFrame": {
+        "functionName": "getChildNodeMap",
+        "scriptId": "178",
+        "url": "file:///private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles/profile102-old.cjs",
+        "lineNumber": 5163,
+        "columnNumber": 22
+      },
+      "hitCount": 0,
+      "children": [
+        20
+      ]
+    },
+    {
+      "id": 20,
+      "callFrame": {
+        "functionName": "",
+        "scriptId": "178",
+        "url": "file:///private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles/profile102-old.cjs",
+        "lineNumber": 6674,
+        "columnNumber": 49
+      },
+      "hitCount": 1,
+      "children": [
+        21
+      ],
+      "positionTicks": [
+        {
+          "line": 6707,
+          "ticks": 1
+        }
+      ]
+    },
+    {
+      "id": 21,
+      "callFrame": {
+        "functionName": "ObjectNode",
+        "scriptId": "178",
+        "url": "file:///private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles/profile102-old.cjs",
+        "lineNumber": 6444,
+        "columnNumber": 13
+      },
+      "hitCount": 1,
+      "children": [
+        22,
+        115
+      ],
+      "positionTicks": [
+        {
+          "line": 6450,
+          "ticks": 1
+        }
+      ]
+    },
+    {
+      "id": 22,
+      "callFrame": {
+        "functionName": "BranchStrategy2",
+        "scriptId": "178",
+        "url": "file:///private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles/profile102-old.cjs",
+        "lineNumber": 5680,
+        "columnNumber": 13
+      },
+      "hitCount": 0,
+      "children": [
+        23,
+        162
+      ]
+    },
+    {
+      "id": 23,
+      "callFrame": {
+        "functionName": "getChildNodeMap",
+        "scriptId": "178",
+        "url": "file:///private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles/profile102-old.cjs",
+        "lineNumber": 5163,
+        "columnNumber": 22
+      },
+      "hitCount": 1,
+      "children": [
+        24
+      ],
+      "positionTicks": [
+        {
+          "line": 5180,
+          "ticks": 1
+        }
+      ]
+    },
+    {
+      "id": 24,
+      "callFrame": {
+        "functionName": "",
+        "scriptId": "178",
+        "url": "file:///private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles/profile102-old.cjs",
+        "lineNumber": 6674,
+        "columnNumber": 49
+      },
+      "hitCount": 0,
+      "children": [
+        25
+      ]
+    },
+    {
+      "id": 25,
+      "callFrame": {
+        "functionName": "ObjectNode",
+        "scriptId": "178",
+        "url": "file:///private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles/profile102-old.cjs",
+        "lineNumber": 6444,
+        "columnNumber": 13
+      },
+      "hitCount": 1,
+      "children": [
+        26,
+        150
+      ],
+      "positionTicks": [
+        {
+          "line": 6445,
+          "ticks": 1
+        }
+      ]
+    },
+    {
+      "id": 26,
+      "callFrame": {
+        "functionName": "BranchStrategy2",
+        "scriptId": "178",
+        "url": "file:///private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles/profile102-old.cjs",
+        "lineNumber": 5680,
+        "columnNumber": 13
+      },
+      "hitCount": 6,
+      "children": [
+        27,
+        178,
+        263
+      ],
+      "positionTicks": [
+        {
+          "line": 5780,
+          "ticks": 2
+        },
+        {
+          "line": 5709,
+          "ticks": 1
+        },
+        {
+          "line": 5716,
+          "ticks": 1
+        },
+        {
+          "line": 5791,
+          "ticks": 2
+        }
+      ]
+    },
+    {
+      "id": 27,
+      "callFrame": {
+        "functionName": "getChildNodeMap",
+        "scriptId": "178",
+        "url": "file:///private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles/profile102-old.cjs",
+        "lineNumber": 5163,
+        "columnNumber": 22
+      },
+      "hitCount": 3,
+      "children": [
+        28
+      ],
+      "positionTicks": [
+        {
+          "line": 5169,
+          "ticks": 1
+        },
+        {
+          "line": 5171,
+          "ticks": 1
+        },
+        {
+          "line": 5180,
+          "ticks": 1
+        }
+      ]
+    },
+    {
+      "id": 28,
+      "callFrame": {
+        "functionName": "",
+        "scriptId": "178",
+        "url": "file:///private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles/profile102-old.cjs",
+        "lineNumber": 6674,
+        "columnNumber": 49
+      },
+      "hitCount": 1,
+      "children": [
+        29,
+        122
+      ],
+      "positionTicks": [
+        {
+          "line": 6677,
+          "ticks": 1
+        }
+      ]
+    },
+    {
+      "id": 29,
+      "callFrame": {
+        "functionName": "ObjectNode",
+        "scriptId": "178",
+        "url": "file:///private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles/profile102-old.cjs",
+        "lineNumber": 6444,
+        "columnNumber": 13
+      },
+      "hitCount": 2,
+      "children": [
+        30,
+        141
+      ],
+      "positionTicks": [
+        {
+          "line": 6446,
+          "ticks": 2
+        }
+      ]
+    },
+    {
+      "id": 30,
+      "callFrame": {
+        "functionName": "BranchStrategy2",
+        "scriptId": "178",
+        "url": "file:///private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles/profile102-old.cjs",
+        "lineNumber": 5680,
+        "columnNumber": 13
+      },
+      "hitCount": 10,
+      "children": [
+        31,
+        124,
+        204,
+        240
+      ],
+      "positionTicks": [
+        {
+          "line": 5791,
+          "ticks": 1
+        },
+        {
+          "line": 5780,
+          "ticks": 5
+        },
+        {
+          "line": 5681,
+          "ticks": 1
+        },
+        {
+          "line": 5715,
+          "ticks": 1
+        },
+        {
+          "line": 5724,
+          "ticks": 1
+        },
+        {
+          "line": 5719,
+          "ticks": 1
+        }
+      ]
+    },
+    {
+      "id": 31,
+      "callFrame": {
+        "functionName": "getChildNodeMap",
+        "scriptId": "178",
+        "url": "file:///private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles/profile102-old.cjs",
+        "lineNumber": 5163,
+        "columnNumber": 22
+      },
+      "hitCount": 2,
+      "children": [
+        32
+      ],
+      "positionTicks": [
+        {
+          "line": 5180,
+          "ticks": 2
+        }
+      ]
+    },
+    {
+      "id": 32,
+      "callFrame": {
+        "functionName": "",
+        "scriptId": "178",
+        "url": "file:///private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles/profile102-old.cjs",
+        "lineNumber": 6674,
+        "columnNumber": 49
+      },
+      "hitCount": 4,
+      "children": [
+        33,
+        248
+      ],
+      "positionTicks": [
+        {
+          "line": 6677,
+          "ticks": 1
+        },
+        {
+          "line": 6707,
+          "ticks": 3
+        }
+      ]
+    },
+    {
+      "id": 33,
+      "callFrame": {
+        "functionName": "ObjectNode",
+        "scriptId": "178",
+        "url": "file:///private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles/profile102-old.cjs",
+        "lineNumber": 6444,
+        "columnNumber": 13
+      },
+      "hitCount": 9,
+      "children": [
+        34,
+        48,
+        216,
+        238
+      ],
+      "positionTicks": [
+        {
+          "line": 6450,
+          "ticks": 3
+        },
+        {
+          "line": 6445,
+          "ticks": 1
+        },
+        {
+          "line": 6451,
+          "ticks": 1
+        },
+        {
+          "line": 6446,
+          "ticks": 4
+        }
+      ]
+    },
+    {
+      "id": 34,
+      "callFrame": {
+        "functionName": "BranchStrategy2",
+        "scriptId": "178",
+        "url": "file:///private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles/profile102-old.cjs",
+        "lineNumber": 5680,
+        "columnNumber": 13
+      },
+      "hitCount": 30,
+      "children": [
+        35,
+        37,
+        67,
+        103,
+        132,
+        154,
+        172,
+        174,
+        176,
+        184,
+        223,
+        251,
+        268
+      ],
+      "positionTicks": [
+        {
+          "line": 5713,
+          "ticks": 1
+        },
+        {
+          "line": 5811,
+          "ticks": 1
+        },
+        {
+          "line": 5826,
+          "ticks": 1
+        },
+        {
+          "line": 5739,
+          "ticks": 1
+        },
+        {
+          "line": 5689,
+          "ticks": 1
+        },
+        {
+          "line": 5800,
+          "ticks": 1
+        },
+        {
+          "line": 5715,
+          "ticks": 1
+        },
+        {
+          "line": 5780,
+          "ticks": 18
+        },
+        {
+          "line": 5791,
+          "ticks": 3
+        },
+        {
+          "line": 5777,
+          "ticks": 2
+        }
+      ]
+    },
+    {
+      "id": 35,
+      "callFrame": {
+        "functionName": "getFieldConditionMap",
+        "scriptId": "178",
+        "url": "file:///private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles/profile102-old.cjs",
+        "lineNumber": 5539,
+        "columnNumber": 27
+      },
+      "hitCount": 1,
+      "children": [
+        36
+      ],
+      "positionTicks": [
+        {
+          "line": 5542,
+          "ticks": 1
+        }
+      ]
+    },
+    {
+      "id": 36,
+      "callFrame": {
+        "functionName": "flattenConditions",
+        "scriptId": "178",
+        "url": "file:///private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles/profile102-old.cjs",
+        "lineNumber": 5466,
+        "columnNumber": 24
+      },
+      "hitCount": 2,
+      "children": [
+        96
+      ],
+      "positionTicks": [
+        {
+          "line": 5467,
+          "ticks": 1
+        },
+        {
+          "line": 5469,
+          "ticks": 1
+        }
+      ]
+    },
+    {
+      "id": 96,
+      "callFrame": {
+        "functionName": "flattenConditionsInto",
+        "scriptId": "178",
+        "url": "file:///private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles/profile102-old.cjs",
+        "lineNumber": 5471,
+        "columnNumber": 28
+      },
+      "hitCount": 0,
+      "children": [
+        97
+      ]
+    },
+    {
+      "id": 97,
+      "callFrame": {
+        "functionName": "getEmptyObject",
+        "scriptId": "264",
+        "url": "file:///Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/packages/winglet/common-utils/dist/utils/object/getEmptyObject.cjs",
+        "lineNumber": 4,
+        "columnNumber": 23
+      },
+      "hitCount": 1,
+      "positionTicks": [
+        {
+          "line": 5,
+          "ticks": 1
+        }
+      ]
+    },
+    {
+      "id": 37,
+      "callFrame": {
+        "functionName": "getChildNodeMap",
+        "scriptId": "178",
+        "url": "file:///private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles/profile102-old.cjs",
+        "lineNumber": 5163,
+        "columnNumber": 22
+      },
+      "hitCount": 23,
+      "children": [
+        38,
+        200
+      ],
+      "positionTicks": [
+        {
+          "line": 5188,
+          "ticks": 1
+        },
+        {
+          "line": 5172,
+          "ticks": 2
+        },
+        {
+          "line": 5171,
+          "ticks": 3
+        },
+        {
+          "line": 5182,
+          "ticks": 2
+        },
+        {
+          "line": 5180,
+          "ticks": 9
+        },
+        {
+          "line": 5180,
+          "ticks": 3
+        },
+        {
+          "line": 5169,
+          "ticks": 2
+        },
+        {
+          "line": 5187,
+          "ticks": 1
+        }
+      ]
+    },
+    {
+      "id": 38,
+      "callFrame": {
+        "functionName": "",
+        "scriptId": "178",
+        "url": "file:///private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles/profile102-old.cjs",
+        "lineNumber": 6674,
+        "columnNumber": 49
+      },
+      "hitCount": 6,
+      "children": [
+        39,
+        129,
+        225
+      ],
+      "positionTicks": [
+        {
+          "line": 6677,
+          "ticks": 3
+        },
+        {
+          "line": 6688,
+          "ticks": 3
+        }
+      ]
+    },
+    {
+      "id": 39,
+      "callFrame": {
+        "functionName": "StringNode",
+        "scriptId": "178",
+        "url": "file:///private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles/profile102-old.cjs",
+        "lineNumber": 6495,
+        "columnNumber": 13
+      },
+      "hitCount": 30,
+      "children": [
+        40,
+        43,
+        191
+      ],
+      "positionTicks": [
+        {
+          "line": 6500,
+          "ticks": 1
+        },
+        {
+          "line": 6501,
+          "ticks": 1
+        },
+        {
+          "line": 6508,
+          "ticks": 7
+        },
+        {
+          "line": 6496,
+          "ticks": 4
+        },
+        {
+          "line": 6497,
+          "ticks": 17
+        }
+      ]
+    },
+    {
+      "id": 40,
+      "callFrame": {
+        "functionName": "AbstractNode",
+        "scriptId": "178",
+        "url": "file:///private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles/profile102-old.cjs",
+        "lineNumber": 3159,
+        "columnNumber": 13
+      },
+      "hitCount": 54,
+      "children": [
+        41,
+        77,
+        106,
+        131,
+        136,
+        139,
+        147,
+        252
+      ],
+      "positionTicks": [
+        {
+          "line": 3211,
+          "ticks": 1
+        },
+        {
+          "line": 3224,
+          "ticks": 1
+        },
+        {
+          "line": 3219,
+          "ticks": 1
+        },
+        {
+          "line": 3223,
+          "ticks": 2
+        },
+        {
+          "line": 3162,
+          "ticks": 1
+        },
+        {
+          "line": 3220,
+          "ticks": 1
+        },
+        {
+          "line": 3215,
+          "ticks": 1
+        },
+        {
+          "line": 3176,
+          "ticks": 1
+        },
+        {
+          "line": 3212,
+          "ticks": 1
+        },
+        {
+          "line": 3169,
+          "ticks": 1
+        },
+        {
+          "line": 3216,
+          "ticks": 1
+        },
+        {
+          "line": 3210,
+          "ticks": 1
+        },
+        {
+          "line": 3236,
+          "ticks": 1
+        },
+        {
+          "line": 3216,
+          "ticks": 1
+        },
+        {
+          "line": 3217,
+          "ticks": 3
+        },
+        {
+          "line": 3184,
+          "ticks": 2
+        },
+        {
+          "line": 3241,
+          "ticks": 3
+        },
+        {
+          "line": 3217,
+          "ticks": 2
+        },
+        {
+          "line": 3226,
+          "ticks": 1
+        },
+        {
+          "line": 3224,
+          "ticks": 1
+        },
+        {
+          "line": 3244,
+          "ticks": 3
+        },
+        {
+          "line": 3218,
+          "ticks": 1
+        },
+        {
+          "line": 3237,
+          "ticks": 3
+        },
+        {
+          "line": 3204,
+          "ticks": 2
+        },
+        {
+          "line": 3260,
+          "ticks": 6
+        },
+        {
+          "line": 3170,
+          "ticks": 1
+        },
+        {
+          "line": 3246,
+          "ticks": 3
+        },
+        {
+          "line": 3204,
+          "ticks": 5
+        },
+        {
+          "line": 3225,
+          "ticks": 2
+        },
+        {
+          "line": 3198,
+          "ticks": 1
+        }
+      ]
+    },
+    {
+      "id": 41,
+      "callFrame": {
+        "functionName": "getComputedPropertiesManager",
+        "scriptId": "178",
+        "url": "file:///private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles/profile102-old.cjs",
+        "lineNumber": 3074,
+        "columnNumber": 35
+      },
+      "hitCount": 78,
+      "children": [
+        42
+      ],
+      "positionTicks": [
+        {
+          "line": 3075,
+          "ticks": 78
+        }
+      ]
+    },
+    {
+      "id": 42,
+      "callFrame": {
+        "functionName": "needsRealComputedManager",
+        "scriptId": "178",
+        "url": "file:///private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles/profile102-old.cjs",
+        "lineNumber": 3032,
+        "columnNumber": 31
+      },
+      "hitCount": 206,
+      "positionTicks": [
+        {
+          "line": 3045,
+          "ticks": 1
+        },
+        {
+          "line": 3034,
+          "ticks": 1
+        },
+        {
+          "line": 3041,
+          "ticks": 3
+        },
+        {
+          "line": 3039,
+          "ticks": 2
+        },
+        {
+          "line": 3040,
+          "ticks": 6
+        },
+        {
+          "line": 3039,
+          "ticks": 5
+        },
+        {
+          "line": 3043,
+          "ticks": 4
+        },
+        {
+          "line": 3044,
+          "ticks": 5
+        },
+        {
+          "line": 3044,
+          "ticks": 179
+        }
+      ]
+    },
+    {
+      "id": 77,
+      "callFrame": {
+        "functionName": "EventCascadeManager",
+        "scriptId": "178",
+        "url": "file:///private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles/profile102-old.cjs",
+        "lineNumber": 1883,
+        "columnNumber": 13
+      },
+      "hitCount": 66,
+      "positionTicks": [
+        {
+          "line": 1900,
+          "ticks": 48
+        },
+        {
+          "line": 1900,
+          "ticks": 12
+        },
+        {
+          "line": 1892,
+          "ticks": 6
+        }
+      ]
+    },
+    {
+      "id": 106,
+      "callFrame": {
+        "functionName": "joinSegment",
+        "scriptId": "178",
+        "url": "file:///private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles/profile102-old.cjs",
+        "lineNumber": 1797,
+        "columnNumber": 18
+      },
+      "hitCount": 3,
+      "positionTicks": [
+        {
+          "line": 1798,
+          "ticks": 1
+        },
+        {
+          "line": 1798,
+          "ticks": 2
+        }
+      ]
+    },
+    {
+      "id": 131,
+      "callFrame": {
+        "functionName": "ValidationErrorManager",
+        "scriptId": "178",
+        "url": "file:///private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles/profile102-old.cjs",
+        "lineNumber": 2081,
+        "columnNumber": 13
+      },
+      "hitCount": 3,
+      "positionTicks": [
+        {
+          "line": 2087,
+          "ticks": 3
+        }
+      ]
+    },
+    {
+      "id": 136,
+      "callFrame": {
+        "functionName": "getNodeGroup",
+        "scriptId": "178",
+        "url": "file:///private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles/profile102-old.cjs",
+        "lineNumber": 3079,
+        "columnNumber": 19
+      },
+      "hitCount": 0,
+      "children": [
+        137
+      ]
+    },
+    {
+      "id": 137,
+      "callFrame": {
+        "functionName": "isBranchType",
+        "scriptId": "178",
+        "url": "file:///private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles/profile102-old.cjs",
+        "lineNumber": 121,
+        "columnNumber": 19
+      },
+      "hitCount": 3,
+      "positionTicks": [
+        {
+          "line": 122,
+          "ticks": 1
+        },
+        {
+          "line": 122,
+          "ticks": 1
+        },
+        {
+          "line": 122,
+          "ticks": 1
+        }
+      ]
+    },
+    {
+      "id": 139,
+      "callFrame": {
+        "functionName": "__setDefaultValue__",
+        "scriptId": "178",
+        "url": "file:///private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles/profile102-old.cjs",
+        "lineNumber": 3404,
+        "columnNumber": 21
+      },
+      "hitCount": 6,
+      "positionTicks": [
+        {
+          "line": 3407,
+          "ticks": 1
+        },
+        {
+          "line": 3408,
+          "ticks": 1
+        },
+        {
+          "line": 3406,
+          "ticks": 3
+        },
+        {
+          "line": 3406,
+          "ticks": 1
+        }
+      ]
+    },
+    {
+      "id": 147,
+      "callFrame": {
+        "functionName": "escapeSegment",
+        "scriptId": "233",
+        "url": "file:///Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/packages/winglet/json/dist/JSONPointer/utils/escape/escapeSegment.cjs",
+        "lineNumber": 5,
+        "columnNumber": 22
+      },
+      "hitCount": 6,
+      "positionTicks": [
+        {
+          "line": 7,
+          "ticks": 5
+        },
+        {
+          "line": 7,
+          "ticks": 1
+        }
+      ]
+    },
+    {
+      "id": 252,
+      "callFrame": {
+        "functionName": "getScopedSegment",
+        "scriptId": "178",
+        "url": "file:///private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles/profile102-old.cjs",
+        "lineNumber": 3095,
+        "columnNumber": 23
+      },
+      "hitCount": 1,
+      "positionTicks": [
+        {
+          "line": 3110,
+          "ticks": 1
+        }
+      ]
+    },
+    {
+      "id": 43,
+      "callFrame": {
+        "functionName": "__emitChange__",
+        "scriptId": "178",
+        "url": "file:///private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles/profile102-old.cjs",
+        "lineNumber": 6523,
+        "columnNumber": 16
+      },
+      "hitCount": 8,
+      "children": [
+        44,
+        52,
+        71,
+        237,
+        242
+      ],
+      "positionTicks": [
+        {
+          "line": 6542,
+          "ticks": 7
+        },
+        {
+          "line": 6544,
+          "ticks": 1
+        }
+      ]
+    },
+    {
+      "id": 44,
+      "callFrame": {
+        "functionName": "__onChangeWithOmitEmpty__",
+        "scriptId": "178",
+        "url": "file:///private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles/profile102-old.cjs",
+        "lineNumber": 6554,
+        "columnNumber": 27
+      },
+      "hitCount": 0,
+      "children": [
+        45
+      ]
+    },
+    {
+      "id": 45,
+      "callFrame": {
+        "functionName": "onChange",
+        "scriptId": "178",
+        "url": "file:///private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles/profile102-old.cjs",
+        "lineNumber": 3465,
+        "columnNumber": 10
+      },
+      "hitCount": 17,
+      "children": [
+        46
+      ],
+      "positionTicks": [
+        {
+          "line": 3467,
+          "ticks": 1
+        },
+        {
+          "line": 3468,
+          "ticks": 16
+        }
+      ]
+    },
+    {
+      "id": 46,
+      "callFrame": {
+        "functionName": "",
+        "scriptId": "178",
+        "url": "file:///private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles/profile102-old.cjs",
+        "lineNumber": 5738,
+        "columnNumber": 46
+      },
+      "hitCount": 24,
+      "children": [
+        264
+      ],
+      "positionTicks": [
+        {
+          "line": 5740,
+          "ticks": 2
+        },
+        {
+          "line": 5750,
+          "ticks": 1
+        },
+        {
+          "line": 5756,
+          "ticks": 15
+        },
+        {
+          "line": 5739,
+          "ticks": 6
+        }
+      ]
+    },
+    {
+      "id": 264,
+      "callFrame": {
+        "functionName": "__emitChange__",
+        "scriptId": "178",
+        "url": "file:///private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles/profile102-old.cjs",
+        "lineNumber": 5865,
+        "columnNumber": 16
+      },
+      "hitCount": 1,
+      "positionTicks": [
+        {
+          "line": 5867,
+          "ticks": 1
+        }
+      ]
+    },
+    {
+      "id": 52,
+      "callFrame": {
+        "functionName": "__equals__",
+        "scriptId": "178",
+        "url": "file:///private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles/profile102-old.cjs",
+        "lineNumber": 3447,
+        "columnNumber": 12
+      },
+      "hitCount": 1,
+      "positionTicks": [
+        {
+          "line": 3449,
+          "ticks": 1
+        }
+      ]
+    },
+    {
+      "id": 71,
+      "callFrame": {
+        "functionName": "publish",
+        "scriptId": "178",
+        "url": "file:///private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles/profile102-old.cjs",
+        "lineNumber": 3838,
+        "columnNumber": 9
+      },
+      "hitCount": 6,
+      "children": [
+        72
+      ],
+      "positionTicks": [
+        {
+          "line": 3842,
+          "ticks": 6
+        }
+      ]
+    },
+    {
+      "id": 72,
+      "callFrame": {
+        "functionName": "publish",
+        "scriptId": "178",
+        "url": "file:///private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles/profile102-old.cjs",
+        "lineNumber": 1951,
+        "columnNumber": 9
+      },
+      "hitCount": 8,
+      "children": [
+        73
+      ],
+      "positionTicks": [
+        {
+          "line": 1953,
+          "ticks": 1
+        },
+        {
+          "line": 1953,
+          "ticks": 1
+        },
+        {
+          "line": 1953,
+          "ticks": 5
+        },
+        {
+          "line": 1953,
+          "ticks": 1
+        }
+      ]
+    },
+    {
+      "id": 73,
+      "callFrame": {
+        "functionName": "__acquireBatch__",
+        "scriptId": "178",
+        "url": "file:///private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles/profile102-old.cjs",
+        "lineNumber": 1913,
+        "columnNumber": 18
+      },
+      "hitCount": 12,
+      "children": [
+        74,
+        87
+      ],
+      "positionTicks": [
+        {
+          "line": 1930,
+          "ticks": 1
+        },
+        {
+          "line": 1937,
+          "ticks": 4
+        },
+        {
+          "line": 1938,
+          "ticks": 1
+        },
+        {
+          "line": 1917,
+          "ticks": 1
+        },
+        {
+          "line": 1939,
+          "ticks": 1
+        },
+        {
+          "line": 1932,
+          "ticks": 1
+        },
+        {
+          "line": 1914,
+          "ticks": 3
+        }
+      ]
+    },
+    {
+      "id": 74,
+      "callFrame": {
+        "functionName": "queueMicrotask",
+        "scriptId": "33",
+        "url": "node:internal/process/task_queues",
+        "lineNumber": 159,
+        "columnNumber": 23
+      },
+      "hitCount": 7,
+      "children": [
+        75,
+        120
+      ],
+      "positionTicks": [
+        {
+          "line": 173,
+          "ticks": 7
+        }
+      ]
+    },
+    {
+      "id": 75,
+      "callFrame": {
+        "functionName": "wrappedFn",
+        "scriptId": "7",
+        "url": "node:internal/errors",
+        "lineNumber": 541,
+        "columnNumber": 20
+      },
+      "hitCount": 1,
+      "positionTicks": [
+        {
+          "line": 544,
+          "ticks": 1
+        }
+      ]
+    },
+    {
+      "id": 120,
+      "callFrame": {
+        "functionName": "enqueueMicrotask",
+        "scriptId": "0",
+        "url": "",
+        "lineNumber": -1,
+        "columnNumber": -1
+      },
+      "hitCount": 11,
+      "positionTicks": [
+        {
+          "line": 173,
+          "ticks": 11
+        }
+      ]
+    },
+    {
+      "id": 87,
+      "callFrame": {
+        "functionName": "setImmediate",
+        "scriptId": "37",
+        "url": "node:timers",
+        "lineNumber": 214,
+        "columnNumber": 21
+      },
+      "hitCount": 0,
+      "children": [
+        88
+      ]
+    },
+    {
+      "id": 88,
+      "callFrame": {
+        "functionName": "Immediate",
+        "scriptId": "10",
+        "url": "node:internal/timers",
+        "lineNumber": 746,
+        "columnNumber": 13
+      },
+      "hitCount": 3,
+      "children": [
+        206
+      ],
+      "positionTicks": [
+        {
+          "line": 757,
+          "ticks": 1
+        },
+        {
+          "line": 755,
+          "ticks": 1
+        },
+        {
+          "line": 751,
+          "ticks": 1
+        }
+      ]
+    },
+    {
+      "id": 206,
+      "callFrame": {
+        "functionName": "initAsyncResource",
+        "scriptId": "10",
+        "url": "node:internal/timers",
+        "lineNumber": 202,
+        "columnNumber": 26
+      },
+      "hitCount": 3,
+      "children": [
+        256
+      ],
+      "positionTicks": [
+        {
+          "line": 207,
+          "ticks": 2
+        },
+        {
+          "line": 204,
+          "ticks": 1
+        }
+      ]
+    },
+    {
+      "id": 256,
+      "callFrame": {
+        "functionName": "newAsyncId",
+        "scriptId": "11",
+        "url": "node:internal/async_hooks",
+        "lineNumber": 426,
+        "columnNumber": 19
+      },
+      "hitCount": 1,
+      "positionTicks": [
+        {
+          "line": 428,
+          "ticks": 1
+        }
+      ]
+    },
+    {
+      "id": 237,
+      "callFrame": {
+        "functionName": "__parseValue__",
+        "scriptId": "178",
+        "url": "file:///private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles/profile102-old.cjs",
+        "lineNumber": 6513,
+        "columnNumber": 16
+      },
+      "hitCount": 1,
+      "positionTicks": [
+        {
+          "line": 6516,
+          "ticks": 1
+        }
+      ]
+    },
+    {
+      "id": 242,
+      "callFrame": {
+        "functionName": "initAsyncResource",
+        "scriptId": "10",
+        "url": "node:internal/timers",
+        "lineNumber": 202,
+        "columnNumber": 26
+      },
+      "hitCount": 1,
+      "positionTicks": [
+        {
+          "line": 203,
+          "ticks": 1
+        }
+      ]
+    },
+    {
+      "id": 191,
+      "callFrame": {
+        "functionName": "__initialize__",
+        "scriptId": "178",
+        "url": "file:///private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles/profile102-old.cjs",
+        "lineNumber": 3961,
+        "columnNumber": 16
+      },
+      "hitCount": 2,
+      "positionTicks": [
+        {
+          "line": 3963,
+          "ticks": 1
+        },
+        {
+          "line": 3963,
+          "ticks": 1
+        }
+      ]
+    },
+    {
+      "id": 129,
+      "callFrame": {
+        "functionName": "resolveReferences",
+        "scriptId": "178",
+        "url": "file:///private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles/profile102-old.cjs",
+        "lineNumber": 6733,
+        "columnNumber": 24
+      },
+      "hitCount": 5,
+      "children": [
+        130,
+        158
+      ],
+      "positionTicks": [
+        {
+          "line": 6738,
+          "ticks": 3
+        },
+        {
+          "line": 6739,
+          "ticks": 2
+        }
+      ]
+    },
+    {
+      "id": 130,
+      "callFrame": {
+        "functionName": "extractSchemaInfo",
+        "scriptId": "178",
+        "url": "file:///private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles/profile102-old.cjs",
+        "lineNumber": 28,
+        "columnNumber": 24
+      },
+      "hitCount": 4,
+      "positionTicks": [
+        {
+          "line": 31,
+          "ticks": 1
+        },
+        {
+          "line": 41,
+          "ticks": 1
+        },
+        {
+          "line": 33,
+          "ticks": 2
+        }
+      ]
+    },
+    {
+      "id": 158,
+      "callFrame": {
+        "functionName": "processSchema",
+        "scriptId": "178",
+        "url": "file:///private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles/profile102-old.cjs",
+        "lineNumber": 6729,
+        "columnNumber": 20
+      },
+      "hitCount": 0,
+      "children": [
+        159
+      ]
+    },
+    {
+      "id": 159,
+      "callFrame": {
+        "functionName": "processAllOfSchema",
+        "scriptId": "178",
+        "url": "file:///private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles/profile102-old.cjs",
+        "lineNumber": 1691,
+        "columnNumber": 25
+      },
+      "hitCount": 1,
+      "positionTicks": [
+        {
+          "line": 1693,
+          "ticks": 1
+        }
+      ]
+    },
+    {
+      "id": 225,
+      "callFrame": {
+        "functionName": "",
+        "scriptId": "178",
+        "url": "file:///private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles/profile102-old.cjs",
+        "lineNumber": 5738,
+        "columnNumber": 46
+      },
+      "hitCount": 1,
+      "positionTicks": [
+        {
+          "line": 5765,
+          "ticks": 1
+        }
+      ]
+    },
+    {
+      "id": 200,
+      "callFrame": {
+        "functionName": "handleChangeFactory",
+        "scriptId": "178",
+        "url": "file:///private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles/profile102-old.cjs",
+        "lineNumber": 5738,
+        "columnNumber": 32
+      },
+      "hitCount": 3,
+      "positionTicks": [
+        {
+          "line": 5739,
+          "ticks": 1
+        },
+        {
+          "line": 5739,
+          "ticks": 2
+        }
+      ]
+    },
+    {
+      "id": 67,
+      "callFrame": {
+        "functionName": "__emitChange__",
+        "scriptId": "178",
+        "url": "file:///private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles/profile102-old.cjs",
+        "lineNumber": 5865,
+        "columnNumber": 16
+      },
+      "hitCount": 9,
+      "children": [
+        68,
+        241
+      ],
+      "positionTicks": [
+        {
+          "line": 5872,
+          "ticks": 9
+        }
+      ]
+    },
+    {
+      "id": 68,
+      "callFrame": {
+        "functionName": "__handleEmitChange__",
+        "scriptId": "178",
+        "url": "file:///private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles/profile102-old.cjs",
+        "lineNumber": 5879,
+        "columnNumber": 22
+      },
+      "hitCount": 4,
+      "children": [
+        69,
+        84,
+        169
+      ],
+      "positionTicks": [
+        {
+          "line": 5889,
+          "ticks": 1
+        },
+        {
+          "line": 5902,
+          "ticks": 1
+        },
+        {
+          "line": 5916,
+          "ticks": 2
+        }
+      ]
+    },
+    {
+      "id": 69,
+      "callFrame": {
+        "functionName": "__parseValue__",
+        "scriptId": "178",
+        "url": "file:///private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles/profile102-old.cjs",
+        "lineNumber": 5932,
+        "columnNumber": 16
+      },
+      "hitCount": 14,
+      "children": [
+        70,
+        81,
+        94
+      ],
+      "positionTicks": [
+        {
+          "line": 5935,
+          "ticks": 1
+        },
+        {
+          "line": 5943,
+          "ticks": 13
+        }
+      ]
+    },
+    {
+      "id": 70,
+      "callFrame": {
+        "functionName": "isEmptyObject",
+        "scriptId": "199",
+        "url": "file:///Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/packages/winglet/common-utils/dist/utils/filter/isEmptyObject.cjs",
+        "lineNumber": 5,
+        "columnNumber": 22
+      },
+      "hitCount": 1,
+      "positionTicks": [
+        {
+          "line": 8,
+          "ticks": 1
+        }
+      ]
+    },
+    {
+      "id": 81,
+      "callFrame": {
+        "functionName": "__equals__",
+        "scriptId": "178",
+        "url": "file:///private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles/profile102-old.cjs",
+        "lineNumber": 6461,
+        "columnNumber": 12
+      },
+      "hitCount": 0,
+      "children": [
+        82
+      ]
+    },
+    {
+      "id": 82,
+      "callFrame": {
+        "functionName": "equals",
+        "scriptId": "258",
+        "url": "file:///Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/packages/winglet/common-utils/dist/utils/object/equals/equals.cjs",
+        "lineNumber": 5,
+        "columnNumber": 15
+      },
+      "hitCount": 2,
+      "children": [
+        83
+      ],
+      "positionTicks": [
+        {
+          "line": 7,
+          "ticks": 2
+        }
+      ]
+    },
+    {
+      "id": 83,
+      "callFrame": {
+        "functionName": "equalsRecursive",
+        "scriptId": "259",
+        "url": "file:///Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/packages/winglet/common-utils/dist/utils/object/equals/utils/equalsRecursive.cjs",
+        "lineNumber": 10,
+        "columnNumber": 24
+      },
+      "hitCount": 6,
+      "positionTicks": [
+        {
+          "line": 23,
+          "ticks": 2
+        },
+        {
+          "line": 23,
+          "ticks": 1
+        },
+        {
+          "line": 12,
+          "ticks": 1
+        },
+        {
+          "line": 32,
+          "ticks": 2
+        }
+      ]
+    },
+    {
+      "id": 94,
+      "callFrame": {
+        "functionName": "__processValue__",
+        "scriptId": "178",
+        "url": "file:///private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles/profile102-old.cjs",
+        "lineNumber": 5950,
+        "columnNumber": 18
+      },
+      "hitCount": 0,
+      "children": [
+        95
+      ]
+    },
+    {
+      "id": 95,
+      "callFrame": {
+        "functionName": "sortObjectKeys",
+        "scriptId": "298",
+        "url": "file:///Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/packages/winglet/common-utils/dist/utils/object/sortObjectKeys.cjs",
+        "lineNumber": 5,
+        "columnNumber": 23
+      },
+      "hitCount": 16,
+      "children": [
+        194
+      ],
+      "positionTicks": [
+        {
+          "line": 17,
+          "ticks": 1
+        },
+        {
+          "line": 17,
+          "ticks": 2
+        },
+        {
+          "line": 17,
+          "ticks": 1
+        },
+        {
+          "line": 12,
+          "ticks": 1
+        },
+        {
+          "line": 16,
+          "ticks": 1
+        },
+        {
+          "line": 13,
+          "ticks": 10
+        }
+      ]
+    },
+    {
+      "id": 194,
+      "callFrame": {
+        "functionName": "hasOwnProperty",
+        "scriptId": "197",
+        "url": "file:///Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/packages/winglet/common-utils/dist/libs/hasOwnProperty.cjs",
+        "lineNumber": 5,
+        "columnNumber": 23
+      },
+      "hitCount": 6,
+      "positionTicks": [
+        {
+          "line": 6,
+          "ticks": 6
+        }
+      ]
+    },
+    {
+      "id": 84,
+      "callFrame": {
+        "functionName": "publish",
+        "scriptId": "178",
+        "url": "file:///private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles/profile102-old.cjs",
+        "lineNumber": 3838,
+        "columnNumber": 9
+      },
+      "hitCount": 1,
+      "children": [
+        85
+      ],
+      "positionTicks": [
+        {
+          "line": 3842,
+          "ticks": 1
+        }
+      ]
+    },
+    {
+      "id": 85,
+      "callFrame": {
+        "functionName": "publish",
+        "scriptId": "178",
+        "url": "file:///private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles/profile102-old.cjs",
+        "lineNumber": 1951,
+        "columnNumber": 9
+      },
+      "hitCount": 0,
+      "children": [
+        86
+      ]
+    },
+    {
+      "id": 86,
+      "callFrame": {
+        "functionName": "__acquireBatch__",
+        "scriptId": "178",
+        "url": "file:///private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles/profile102-old.cjs",
+        "lineNumber": 1913,
+        "columnNumber": 18
+      },
+      "hitCount": 5,
+      "children": [
+        201,
+        207
+      ],
+      "positionTicks": [
+        {
+          "line": 1937,
+          "ticks": 1
+        },
+        {
+          "line": 1939,
+          "ticks": 2
+        },
+        {
+          "line": 1916,
+          "ticks": 1
+        },
+        {
+          "line": 1932,
+          "ticks": 1
+        }
+      ]
+    },
+    {
+      "id": 201,
+      "callFrame": {
+        "functionName": "setImmediate",
+        "scriptId": "37",
+        "url": "node:timers",
+        "lineNumber": 214,
+        "columnNumber": 21
+      },
+      "hitCount": 0,
+      "children": [
+        202
+      ]
+    },
+    {
+      "id": 202,
+      "callFrame": {
+        "functionName": "Immediate",
+        "scriptId": "10",
+        "url": "node:internal/timers",
+        "lineNumber": 746,
+        "columnNumber": 13
+      },
+      "hitCount": 0,
+      "children": [
+        203,
+        258
+      ]
+    },
+    {
+      "id": 203,
+      "callFrame": {
+        "functionName": "initAsyncResource",
+        "scriptId": "10",
+        "url": "node:internal/timers",
+        "lineNumber": 202,
+        "columnNumber": 26
+      },
+      "hitCount": 1,
+      "positionTicks": [
+        {
+          "line": 204,
+          "ticks": 1
+        }
+      ]
+    },
+    {
+      "id": 258,
+      "callFrame": {
+        "functionName": "append",
+        "scriptId": "10",
+        "url": "node:internal/timers",
+        "lineNumber": 335,
+        "columnNumber": 8
+      },
+      "hitCount": 1,
+      "positionTicks": [
+        {
+          "line": 339,
+          "ticks": 1
+        }
+      ]
+    },
+    {
+      "id": 207,
+      "callFrame": {
+        "functionName": "queueMicrotask",
+        "scriptId": "33",
+        "url": "node:internal/process/task_queues",
+        "lineNumber": 159,
+        "columnNumber": 23
+      },
+      "hitCount": 1,
+      "children": [
+        215
+      ],
+      "positionTicks": [
+        {
+          "line": 173,
+          "ticks": 1
+        }
+      ]
+    },
+    {
+      "id": 215,
+      "callFrame": {
+        "functionName": "enqueueMicrotask",
+        "scriptId": "0",
+        "url": "",
+        "lineNumber": -1,
+        "columnNumber": -1
+      },
+      "hitCount": 1,
+      "positionTicks": [
+        {
+          "line": 173,
+          "ticks": 1
+        }
+      ]
+    },
+    {
+      "id": 169,
+      "callFrame": {
+        "functionName": "ObjectNode.handleChange",
+        "scriptId": "178",
+        "url": "file:///private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles/profile102-old.cjs",
+        "lineNumber": 6447,
+        "columnNumber": 143
+      },
+      "hitCount": 0,
+      "children": [
+        170
+      ]
+    },
+    {
+      "id": 170,
+      "callFrame": {
+        "functionName": "onChange",
+        "scriptId": "178",
+        "url": "file:///private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles/profile102-old.cjs",
+        "lineNumber": 3465,
+        "columnNumber": 10
+      },
+      "hitCount": 4,
+      "children": [
+        183
+      ],
+      "positionTicks": [
+        {
+          "line": 3468,
+          "ticks": 4
+        }
+      ]
+    },
+    {
+      "id": 183,
+      "callFrame": {
+        "functionName": "",
+        "scriptId": "178",
+        "url": "file:///private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles/profile102-old.cjs",
+        "lineNumber": 5738,
+        "columnNumber": 46
+      },
+      "hitCount": 2,
+      "positionTicks": [
+        {
+          "line": 5756,
+          "ticks": 2
+        }
+      ]
+    },
+    {
+      "id": 241,
+      "callFrame": {
+        "functionName": "publish",
+        "scriptId": "178",
+        "url": "file:///private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles/profile102-old.cjs",
+        "lineNumber": 3838,
+        "columnNumber": 9
+      },
+      "hitCount": 1,
+      "positionTicks": [
+        {
+          "line": 3839,
+          "ticks": 1
+        }
+      ]
+    },
+    {
+      "id": 103,
+      "callFrame": {
+        "functionName": "subscribe",
+        "scriptId": "178",
+        "url": "file:///private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles/profile102-old.cjs",
+        "lineNumber": 3856,
+        "columnNumber": 11
+      },
+      "hitCount": 0,
+      "children": [
+        104
+      ]
+    },
+    {
+      "id": 104,
+      "callFrame": {
+        "functionName": "subscribe",
+        "scriptId": "178",
+        "url": "file:///private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles/profile102-old.cjs",
+        "lineNumber": 2001,
+        "columnNumber": 11
+      },
+      "hitCount": 4,
+      "positionTicks": [
+        {
+          "line": 2003,
+          "ticks": 4
+        }
+      ]
+    },
+    {
+      "id": 132,
+      "callFrame": {
+        "functionName": "getVirtualReferencesMap",
+        "scriptId": "178",
+        "url": "file:///private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles/profile102-old.cjs",
+        "lineNumber": 5560,
+        "columnNumber": 30
+      },
+      "hitCount": 2,
+      "positionTicks": [
+        {
+          "line": 5562,
+          "ticks": 1
+        },
+        {
+          "line": 5561,
+          "ticks": 1
+        }
+      ]
+    },
+    {
+      "id": 154,
+      "callFrame": {
+        "functionName": "getCompositionKeyInfo",
+        "scriptId": "178",
+        "url": "file:///private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles/profile102-old.cjs",
+        "lineNumber": 5262,
+        "columnNumber": 28
+      },
+      "hitCount": 1,
+      "positionTicks": [
+        {
+          "line": 5264,
+          "ticks": 1
+        }
+      ]
+    },
+    {
+      "id": 172,
+      "callFrame": {
+        "functionName": "get defaultValue",
+        "scriptId": "178",
+        "url": "file:///private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles/profile102-old.cjs",
+        "lineNumber": 3396,
+        "columnNumber": 18
+      },
+      "hitCount": 1,
+      "positionTicks": [
+        {
+          "line": 3397,
+          "ticks": 1
+        }
+      ]
+    },
+    {
+      "id": 174,
+      "callFrame": {
+        "functionName": "__setDefaultValue__",
+        "scriptId": "178",
+        "url": "file:///private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles/profile102-old.cjs",
+        "lineNumber": 3404,
+        "columnNumber": 21
+      },
+      "hitCount": 1,
+      "children": [
+        205
+      ],
+      "positionTicks": [
+        {
+          "line": 3405,
+          "ticks": 1
+        }
+      ]
+    },
+    {
+      "id": 205,
+      "callFrame": {
+        "functionName": "checkDefinedValue",
+        "scriptId": "178",
+        "url": "file:///private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles/profile102-old.cjs",
+        "lineNumber": 2368,
+        "columnNumber": 24
+      },
+      "hitCount": 1,
+      "positionTicks": [
+        {
+          "line": 2372,
+          "ticks": 1
+        }
+      ]
+    },
+    {
+      "id": 176,
+      "callFrame": {
+        "functionName": "sortWithReference",
+        "scriptId": "347",
+        "url": "file:///Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/packages/winglet/common-utils/dist/utils/array/sortWithReference.cjs",
+        "lineNumber": 4,
+        "columnNumber": 26
+      },
+      "hitCount": 4,
+      "positionTicks": [
+        {
+          "line": 6,
+          "ticks": 2
+        },
+        {
+          "line": 6,
+          "ticks": 2
+        }
+      ]
+    },
+    {
+      "id": 184,
+      "callFrame": {
+        "functionName": "getChildren",
+        "scriptId": "178",
+        "url": "file:///private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles/profile102-old.cjs",
+        "lineNumber": 5211,
+        "columnNumber": 18
+      },
+      "hitCount": 5,
+      "positionTicks": [
+        {
+          "line": 5216,
+          "ticks": 4
+        },
+        {
+          "line": 5246,
+          "ticks": 1
+        }
+      ]
+    },
+    {
+      "id": 223,
+      "callFrame": {
+        "functionName": "getObjectKeys",
+        "scriptId": "266",
+        "url": "file:///Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/packages/winglet/common-utils/dist/utils/object/getObjectKeys.cjs",
+        "lineNumber": 4,
+        "columnNumber": 22
+      },
+      "hitCount": 2,
+      "positionTicks": [
+        {
+          "line": 7,
+          "ticks": 2
+        }
+      ]
+    },
+    {
+      "id": 251,
+      "callFrame": {
+        "functionName": "getConditionsMap",
+        "scriptId": "178",
+        "url": "file:///private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles/profile102-old.cjs",
+        "lineNumber": 5447,
+        "columnNumber": 23
+      },
+      "hitCount": 1,
+      "positionTicks": [
+        {
+          "line": 5449,
+          "ticks": 1
+        }
+      ]
+    },
+    {
+      "id": 268,
+      "callFrame": {
+        "functionName": "getCompositionNodeMapList",
+        "scriptId": "178",
+        "url": "file:///private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles/profile102-old.cjs",
+        "lineNumber": 5376,
+        "columnNumber": 32
+      },
+      "hitCount": 1,
+      "positionTicks": [
+        {
+          "line": 5379,
+          "ticks": 1
+        }
+      ]
+    },
+    {
+      "id": 48,
+      "callFrame": {
+        "functionName": "AbstractNode",
+        "scriptId": "178",
+        "url": "file:///private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles/profile102-old.cjs",
+        "lineNumber": 3159,
+        "columnNumber": 13
+      },
+      "hitCount": 13,
+      "children": [
+        49,
+        51,
+        167,
+        177,
+        233,
+        262
+      ],
+      "positionTicks": [
+        {
+          "line": 3216,
+          "ticks": 1
+        },
+        {
+          "line": 3196,
+          "ticks": 1
+        },
+        {
+          "line": 3223,
+          "ticks": 1
+        },
+        {
+          "line": 3246,
+          "ticks": 1
+        },
+        {
+          "line": 3161,
+          "ticks": 1
+        },
+        {
+          "line": 3214,
+          "ticks": 1
+        },
+        {
+          "line": 3204,
+          "ticks": 1
+        },
+        {
+          "line": 3225,
+          "ticks": 1
+        },
+        {
+          "line": 3212,
+          "ticks": 1
+        },
+        {
+          "line": 3260,
+          "ticks": 1
+        },
+        {
+          "line": 3226,
+          "ticks": 2
+        },
+        {
+          "line": 3222,
+          "ticks": 1
+        }
+      ]
+    },
+    {
+      "id": 49,
+      "callFrame": {
+        "functionName": "getComputedPropertiesManager",
+        "scriptId": "178",
+        "url": "file:///private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles/profile102-old.cjs",
+        "lineNumber": 3074,
+        "columnNumber": 35
+      },
+      "hitCount": 25,
+      "children": [
+        50
+      ],
+      "positionTicks": [
+        {
+          "line": 3075,
+          "ticks": 25
+        }
+      ]
+    },
+    {
+      "id": 50,
+      "callFrame": {
+        "functionName": "needsRealComputedManager",
+        "scriptId": "178",
+        "url": "file:///private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles/profile102-old.cjs",
+        "lineNumber": 3032,
+        "columnNumber": 31
+      },
+      "hitCount": 61,
+      "positionTicks": [
+        {
+          "line": 3039,
+          "ticks": 1
+        },
+        {
+          "line": 3044,
+          "ticks": 2
+        },
+        {
+          "line": 3043,
+          "ticks": 1
+        },
+        {
+          "line": 3039,
+          "ticks": 1
+        },
+        {
+          "line": 3040,
+          "ticks": 2
+        },
+        {
+          "line": 3044,
+          "ticks": 54
+        }
+      ]
+    },
+    {
+      "id": 51,
+      "callFrame": {
+        "functionName": "getDefaultValue",
+        "scriptId": "178",
+        "url": "file:///private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles/profile102-old.cjs",
+        "lineNumber": 1815,
+        "columnNumber": 22
+      },
+      "hitCount": 1,
+      "children": [
+        140,
+        259
+      ],
+      "positionTicks": [
+        {
+          "line": 1818,
+          "ticks": 1
+        }
+      ]
+    },
+    {
+      "id": 140,
+      "callFrame": {
+        "functionName": "extractSchemaInfo",
+        "scriptId": "178",
+        "url": "file:///private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles/profile102-old.cjs",
+        "lineNumber": 28,
+        "columnNumber": 24
+      },
+      "hitCount": 2,
+      "positionTicks": [
+        {
+          "line": 43,
+          "ticks": 1
+        },
+        {
+          "line": 29,
+          "ticks": 1
+        }
+      ]
+    },
+    {
+      "id": 259,
+      "callFrame": {
+        "functionName": "getEmptyValue",
+        "scriptId": "178",
+        "url": "file:///private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles/profile102-old.cjs",
+        "lineNumber": 1808,
+        "columnNumber": 20
+      },
+      "hitCount": 1,
+      "positionTicks": [
+        {
+          "line": 1811,
+          "ticks": 1
+        }
+      ]
+    },
+    {
+      "id": 167,
+      "callFrame": {
+        "functionName": "EventCascadeManager",
+        "scriptId": "178",
+        "url": "file:///private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles/profile102-old.cjs",
+        "lineNumber": 1883,
+        "columnNumber": 13
+      },
+      "hitCount": 12,
+      "positionTicks": [
+        {
+          "line": 1892,
+          "ticks": 1
+        },
+        {
+          "line": 1900,
+          "ticks": 7
+        },
+        {
+          "line": 1892,
+          "ticks": 2
+        },
+        {
+          "line": 1900,
+          "ticks": 2
+        }
+      ]
+    },
+    {
+      "id": 177,
+      "callFrame": {
+        "functionName": "joinSegment",
+        "scriptId": "178",
+        "url": "file:///private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles/profile102-old.cjs",
+        "lineNumber": 1797,
+        "columnNumber": 18
+      },
+      "hitCount": 4,
+      "positionTicks": [
+        {
+          "line": 1798,
+          "ticks": 1
+        },
+        {
+          "line": 1798,
+          "ticks": 1
+        },
+        {
+          "line": 1798,
+          "ticks": 2
+        }
+      ]
+    },
+    {
+      "id": 233,
+      "callFrame": {
+        "functionName": "ValidationErrorManager",
+        "scriptId": "178",
+        "url": "file:///private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles/profile102-old.cjs",
+        "lineNumber": 2081,
+        "columnNumber": 13
+      },
+      "hitCount": 2,
+      "positionTicks": [
+        {
+          "line": 2098,
+          "ticks": 2
+        }
+      ]
+    },
+    {
+      "id": 262,
+      "callFrame": {
+        "functionName": "__setDefaultValue__",
+        "scriptId": "178",
+        "url": "file:///private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles/profile102-old.cjs",
+        "lineNumber": 3404,
+        "columnNumber": 21
+      },
+      "hitCount": 1,
+      "positionTicks": [
+        {
+          "line": 3408,
+          "ticks": 1
+        }
+      ]
+    },
+    {
+      "id": 216,
+      "callFrame": {
+        "functionName": "__initialize__",
+        "scriptId": "178",
+        "url": "file:///private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles/profile102-old.cjs",
+        "lineNumber": 6475,
+        "columnNumber": 16
+      },
+      "hitCount": 2,
+      "positionTicks": [
+        {
+          "line": 6477,
+          "ticks": 2
+        }
+      ]
+    },
+    {
+      "id": 238,
+      "callFrame": {
+        "functionName": "getFieldConditionMap",
+        "scriptId": "178",
+        "url": "file:///private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles/profile102-old.cjs",
+        "lineNumber": 5539,
+        "columnNumber": 27
+      },
+      "hitCount": 1,
+      "positionTicks": [
+        {
+          "line": 5540,
+          "ticks": 1
+        }
+      ]
+    },
+    {
+      "id": 248,
+      "callFrame": {
+        "functionName": "resolveReferences",
+        "scriptId": "178",
+        "url": "file:///private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles/profile102-old.cjs",
+        "lineNumber": 6733,
+        "columnNumber": 24
+      },
+      "hitCount": 1,
+      "children": [
+        249
+      ],
+      "positionTicks": [
+        {
+          "line": 6738,
+          "ticks": 1
+        }
+      ]
+    },
+    {
+      "id": 249,
+      "callFrame": {
+        "functionName": "processSchema",
+        "scriptId": "178",
+        "url": "file:///private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles/profile102-old.cjs",
+        "lineNumber": 6729,
+        "columnNumber": 20
+      },
+      "hitCount": 0,
+      "children": [
+        250
+      ]
+    },
+    {
+      "id": 250,
+      "callFrame": {
+        "functionName": "processAllOfSchema",
+        "scriptId": "178",
+        "url": "file:///private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles/profile102-old.cjs",
+        "lineNumber": 1691,
+        "columnNumber": 25
+      },
+      "hitCount": 1,
+      "positionTicks": [
+        {
+          "line": 1693,
+          "ticks": 1
+        }
+      ]
+    },
+    {
+      "id": 124,
+      "callFrame": {
+        "functionName": "__emitChange__",
+        "scriptId": "178",
+        "url": "file:///private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles/profile102-old.cjs",
+        "lineNumber": 5865,
+        "columnNumber": 16
+      },
+      "hitCount": 2,
+      "children": [
+        125
+      ],
+      "positionTicks": [
+        {
+          "line": 5872,
+          "ticks": 2
+        }
+      ]
+    },
+    {
+      "id": 125,
+      "callFrame": {
+        "functionName": "__handleEmitChange__",
+        "scriptId": "178",
+        "url": "file:///private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles/profile102-old.cjs",
+        "lineNumber": 5879,
+        "columnNumber": 22
+      },
+      "hitCount": 4,
+      "children": [
+        126,
+        155,
+        160,
+        239
+      ],
+      "positionTicks": [
+        {
+          "line": 5896,
+          "ticks": 1
+        },
+        {
+          "line": 5919,
+          "ticks": 1
+        },
+        {
+          "line": 5902,
+          "ticks": 1
+        },
+        {
+          "line": 5890,
+          "ticks": 1
+        }
+      ]
+    },
+    {
+      "id": 126,
+      "callFrame": {
+        "functionName": "__parseValue__",
+        "scriptId": "178",
+        "url": "file:///private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles/profile102-old.cjs",
+        "lineNumber": 5932,
+        "columnNumber": 16
+      },
+      "hitCount": 3,
+      "children": [
+        127,
+        244
+      ],
+      "positionTicks": [
+        {
+          "line": 5943,
+          "ticks": 3
+        }
+      ]
+    },
+    {
+      "id": 127,
+      "callFrame": {
+        "functionName": "__processValue__",
+        "scriptId": "178",
+        "url": "file:///private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles/profile102-old.cjs",
+        "lineNumber": 5950,
+        "columnNumber": 18
+      },
+      "hitCount": 1,
+      "children": [
+        133
+      ],
+      "positionTicks": [
+        {
+          "line": 5952,
+          "ticks": 1
+        }
+      ]
+    },
+    {
+      "id": 133,
+      "callFrame": {
+        "functionName": "sortObjectKeys",
+        "scriptId": "298",
+        "url": "file:///Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/packages/winglet/common-utils/dist/utils/object/sortObjectKeys.cjs",
+        "lineNumber": 5,
+        "columnNumber": 23
+      },
+      "hitCount": 8,
+      "children": [
+        175
+      ],
+      "positionTicks": [
+        {
+          "line": 13,
+          "ticks": 8
+        }
+      ]
+    },
+    {
+      "id": 175,
+      "callFrame": {
+        "functionName": "hasOwnProperty",
+        "scriptId": "197",
+        "url": "file:///Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/packages/winglet/common-utils/dist/libs/hasOwnProperty.cjs",
+        "lineNumber": 5,
+        "columnNumber": 23
+      },
+      "hitCount": 2,
+      "positionTicks": [
+        {
+          "line": 6,
+          "ticks": 2
+        }
+      ]
+    },
+    {
+      "id": 244,
+      "callFrame": {
+        "functionName": "__equals__",
+        "scriptId": "178",
+        "url": "file:///private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles/profile102-old.cjs",
+        "lineNumber": 6461,
+        "columnNumber": 12
+      },
+      "hitCount": 0,
+      "children": [
+        245
+      ]
+    },
+    {
+      "id": 245,
+      "callFrame": {
+        "functionName": "equals",
+        "scriptId": "258",
+        "url": "file:///Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/packages/winglet/common-utils/dist/utils/object/equals/equals.cjs",
+        "lineNumber": 5,
+        "columnNumber": 15
+      },
+      "hitCount": 0,
+      "children": [
+        246
+      ]
+    },
+    {
+      "id": 246,
+      "callFrame": {
+        "functionName": "equalsRecursive",
+        "scriptId": "259",
+        "url": "file:///Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/packages/winglet/common-utils/dist/utils/object/equals/utils/equalsRecursive.cjs",
+        "lineNumber": 10,
+        "columnNumber": 24
+      },
+      "hitCount": 2,
+      "positionTicks": [
+        {
+          "line": 23,
+          "ticks": 2
+        }
+      ]
+    },
+    {
+      "id": 155,
+      "callFrame": {
+        "functionName": "ObjectNode.handleChange",
+        "scriptId": "178",
+        "url": "file:///private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles/profile102-old.cjs",
+        "lineNumber": 6447,
+        "columnNumber": 143
+      },
+      "hitCount": 0,
+      "children": [
+        156
+      ]
+    },
+    {
+      "id": 156,
+      "callFrame": {
+        "functionName": "onChange",
+        "scriptId": "178",
+        "url": "file:///private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles/profile102-old.cjs",
+        "lineNumber": 3465,
+        "columnNumber": 10
+      },
+      "hitCount": 0,
+      "children": [
+        157
+      ]
+    },
+    {
+      "id": 157,
+      "callFrame": {
+        "functionName": "",
+        "scriptId": "178",
+        "url": "file:///private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles/profile102-old.cjs",
+        "lineNumber": 5738,
+        "columnNumber": 46
+      },
+      "hitCount": 2,
+      "positionTicks": [
+        {
+          "line": 5756,
+          "ticks": 2
+        }
+      ]
+    },
+    {
+      "id": 160,
+      "callFrame": {
+        "functionName": "initAsyncResource",
+        "scriptId": "10",
+        "url": "node:internal/timers",
+        "lineNumber": 202,
+        "columnNumber": 26
+      },
+      "hitCount": 1,
+      "positionTicks": [
+        {
+          "line": 210,
+          "ticks": 1
+        }
+      ]
+    },
+    {
+      "id": 239,
+      "callFrame": {
+        "functionName": "publish",
+        "scriptId": "178",
+        "url": "file:///private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles/profile102-old.cjs",
+        "lineNumber": 3838,
+        "columnNumber": 9
+      },
+      "hitCount": 1,
+      "positionTicks": [
+        {
+          "line": 3842,
+          "ticks": 1
+        }
+      ]
+    },
+    {
+      "id": 204,
+      "callFrame": {
+        "functionName": "getVirtualReferencesMap",
+        "scriptId": "178",
+        "url": "file:///private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles/profile102-old.cjs",
+        "lineNumber": 5560,
+        "columnNumber": 30
+      },
+      "hitCount": 1,
+      "positionTicks": [
+        {
+          "line": 5563,
+          "ticks": 1
+        }
+      ]
+    },
+    {
+      "id": 240,
+      "callFrame": {
+        "functionName": "sortWithReference",
+        "scriptId": "347",
+        "url": "file:///Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/packages/winglet/common-utils/dist/utils/array/sortWithReference.cjs",
+        "lineNumber": 4,
+        "columnNumber": 26
+      },
+      "hitCount": 1,
+      "positionTicks": [
+        {
+          "line": 6,
+          "ticks": 1
+        }
+      ]
+    },
+    {
+      "id": 141,
+      "callFrame": {
+        "functionName": "AbstractNode",
+        "scriptId": "178",
+        "url": "file:///private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles/profile102-old.cjs",
+        "lineNumber": 3159,
+        "columnNumber": 13
+      },
+      "hitCount": 3,
+      "children": [
+        142,
+        211,
+        232,
+        234,
+        236,
+        257
+      ],
+      "positionTicks": [
+        {
+          "line": 3260,
+          "ticks": 1
+        },
+        {
+          "line": 3246,
+          "ticks": 1
+        },
+        {
+          "line": 3221,
+          "ticks": 1
+        }
+      ]
+    },
+    {
+      "id": 142,
+      "callFrame": {
+        "functionName": "getComputedPropertiesManager",
+        "scriptId": "178",
+        "url": "file:///private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles/profile102-old.cjs",
+        "lineNumber": 3074,
+        "columnNumber": 35
+      },
+      "hitCount": 6,
+      "children": [
+        143
+      ],
+      "positionTicks": [
+        {
+          "line": 3075,
+          "ticks": 6
+        }
+      ]
+    },
+    {
+      "id": 143,
+      "callFrame": {
+        "functionName": "needsRealComputedManager",
+        "scriptId": "178",
+        "url": "file:///private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles/profile102-old.cjs",
+        "lineNumber": 3032,
+        "columnNumber": 31
+      },
+      "hitCount": 6,
+      "positionTicks": [
+        {
+          "line": 3043,
+          "ticks": 1
+        },
+        {
+          "line": 3044,
+          "ticks": 5
+        }
+      ]
+    },
+    {
+      "id": 211,
+      "callFrame": {
+        "functionName": "getNodeGroup",
+        "scriptId": "178",
+        "url": "file:///private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles/profile102-old.cjs",
+        "lineNumber": 3079,
+        "columnNumber": 19
+      },
+      "hitCount": 0,
+      "children": [
+        212
+      ]
+    },
+    {
+      "id": 212,
+      "callFrame": {
+        "functionName": "isBranchType",
+        "scriptId": "178",
+        "url": "file:///private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles/profile102-old.cjs",
+        "lineNumber": 121,
+        "columnNumber": 19
+      },
+      "hitCount": 1,
+      "positionTicks": [
+        {
+          "line": 122,
+          "ticks": 1
+        }
+      ]
+    },
+    {
+      "id": 232,
+      "callFrame": {
+        "functionName": "EventCascadeManager",
+        "scriptId": "178",
+        "url": "file:///private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles/profile102-old.cjs",
+        "lineNumber": 1883,
+        "columnNumber": 13
+      },
+      "hitCount": 1,
+      "positionTicks": [
+        {
+          "line": 1900,
+          "ticks": 1
+        }
+      ]
+    },
+    {
+      "id": 234,
+      "callFrame": {
+        "functionName": "__setDefaultValue__",
+        "scriptId": "178",
+        "url": "file:///private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles/profile102-old.cjs",
+        "lineNumber": 3404,
+        "columnNumber": 21
+      },
+      "hitCount": 1,
+      "positionTicks": [
+        {
+          "line": 3408,
+          "ticks": 1
+        }
+      ]
+    },
+    {
+      "id": 236,
+      "callFrame": {
+        "functionName": "joinSegment",
+        "scriptId": "178",
+        "url": "file:///private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles/profile102-old.cjs",
+        "lineNumber": 1797,
+        "columnNumber": 18
+      },
+      "hitCount": 1,
+      "positionTicks": [
+        {
+          "line": 1798,
+          "ticks": 1
+        }
+      ]
+    },
+    {
+      "id": 257,
+      "callFrame": {
+        "functionName": "ValidationErrorManager",
+        "scriptId": "178",
+        "url": "file:///private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles/profile102-old.cjs",
+        "lineNumber": 2081,
+        "columnNumber": 13
+      },
+      "hitCount": 1,
+      "positionTicks": [
+        {
+          "line": 2098,
+          "ticks": 1
+        }
+      ]
+    },
+    {
+      "id": 122,
+      "callFrame": {
+        "functionName": "resolveReferences",
+        "scriptId": "178",
+        "url": "file:///private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles/profile102-old.cjs",
+        "lineNumber": 6733,
+        "columnNumber": 24
+      },
+      "hitCount": 1,
+      "children": [
+        123
+      ],
+      "positionTicks": [
+        {
+          "line": 6738,
+          "ticks": 1
+        }
+      ]
+    },
+    {
+      "id": 123,
+      "callFrame": {
+        "functionName": "extractSchemaInfo",
+        "scriptId": "178",
+        "url": "file:///private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles/profile102-old.cjs",
+        "lineNumber": 28,
+        "columnNumber": 24
+      },
+      "hitCount": 1,
+      "positionTicks": [
+        {
+          "line": 33,
+          "ticks": 1
+        }
+      ]
+    },
+    {
+      "id": 178,
+      "callFrame": {
+        "functionName": "__emitChange__",
+        "scriptId": "178",
+        "url": "file:///private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles/profile102-old.cjs",
+        "lineNumber": 5865,
+        "columnNumber": 16
+      },
+      "hitCount": 0,
+      "children": [
+        179
+      ]
+    },
+    {
+      "id": 179,
+      "callFrame": {
+        "functionName": "__handleEmitChange__",
+        "scriptId": "178",
+        "url": "file:///private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles/profile102-old.cjs",
+        "lineNumber": 5879,
+        "columnNumber": 22
+      },
+      "hitCount": 0,
+      "children": [
+        180,
+        217
+      ]
+    },
+    {
+      "id": 180,
+      "callFrame": {
+        "functionName": "__parseValue__",
+        "scriptId": "178",
+        "url": "file:///private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles/profile102-old.cjs",
+        "lineNumber": 5932,
+        "columnNumber": 16
+      },
+      "hitCount": 0,
+      "children": [
+        181
+      ]
+    },
+    {
+      "id": 181,
+      "callFrame": {
+        "functionName": "__processValue__",
+        "scriptId": "178",
+        "url": "file:///private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles/profile102-old.cjs",
+        "lineNumber": 5950,
+        "columnNumber": 18
+      },
+      "hitCount": 0,
+      "children": [
+        182
+      ]
+    },
+    {
+      "id": 182,
+      "callFrame": {
+        "functionName": "sortObjectKeys",
+        "scriptId": "298",
+        "url": "file:///Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/packages/winglet/common-utils/dist/utils/object/sortObjectKeys.cjs",
+        "lineNumber": 5,
+        "columnNumber": 23
+      },
+      "hitCount": 1,
+      "children": [
+        224
+      ],
+      "positionTicks": [
+        {
+          "line": 11,
+          "ticks": 1
+        }
+      ]
+    },
+    {
+      "id": 224,
+      "callFrame": {
+        "functionName": "hasOwnProperty",
+        "scriptId": "197",
+        "url": "file:///Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/packages/winglet/common-utils/dist/libs/hasOwnProperty.cjs",
+        "lineNumber": 5,
+        "columnNumber": 23
+      },
+      "hitCount": 2,
+      "positionTicks": [
+        {
+          "line": 6,
+          "ticks": 2
+        }
+      ]
+    },
+    {
+      "id": 217,
+      "callFrame": {
+        "functionName": "publish",
+        "scriptId": "178",
+        "url": "file:///private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles/profile102-old.cjs",
+        "lineNumber": 3838,
+        "columnNumber": 9
+      },
+      "hitCount": 0,
+      "children": [
+        218
+      ]
+    },
+    {
+      "id": 218,
+      "callFrame": {
+        "functionName": "publish",
+        "scriptId": "178",
+        "url": "file:///private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles/profile102-old.cjs",
+        "lineNumber": 1951,
+        "columnNumber": 9
+      },
+      "hitCount": 0,
+      "children": [
+        219
+      ]
+    },
+    {
+      "id": 219,
+      "callFrame": {
+        "functionName": "__acquireBatch__",
+        "scriptId": "178",
+        "url": "file:///private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles/profile102-old.cjs",
+        "lineNumber": 1913,
+        "columnNumber": 18
+      },
+      "hitCount": 0,
+      "children": [
+        220
+      ]
+    },
+    {
+      "id": 220,
+      "callFrame": {
+        "functionName": "queueMicrotask",
+        "scriptId": "33",
+        "url": "node:internal/process/task_queues",
+        "lineNumber": 159,
+        "columnNumber": 23
+      },
+      "hitCount": 0,
+      "children": [
+        221
+      ]
+    },
+    {
+      "id": 221,
+      "callFrame": {
+        "functionName": "enqueueMicrotask",
+        "scriptId": "0",
+        "url": "",
+        "lineNumber": -1,
+        "columnNumber": -1
+      },
+      "hitCount": 1,
+      "positionTicks": [
+        {
+          "line": 173,
+          "ticks": 1
+        }
+      ]
+    },
+    {
+      "id": 263,
+      "callFrame": {
+        "functionName": "getCompositionNodeMapList",
+        "scriptId": "178",
+        "url": "file:///private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles/profile102-old.cjs",
+        "lineNumber": 5376,
+        "columnNumber": 32
+      },
+      "hitCount": 1,
+      "positionTicks": [
+        {
+          "line": 5378,
+          "ticks": 1
+        }
+      ]
+    },
+    {
+      "id": 150,
+      "callFrame": {
+        "functionName": "AbstractNode",
+        "scriptId": "178",
+        "url": "file:///private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles/profile102-old.cjs",
+        "lineNumber": 3159,
+        "columnNumber": 13
+      },
+      "hitCount": 1,
+      "children": [
+        151
+      ],
+      "positionTicks": [
+        {
+          "line": 3196,
+          "ticks": 1
+        }
+      ]
+    },
+    {
+      "id": 151,
+      "callFrame": {
+        "functionName": "getComputedPropertiesManager",
+        "scriptId": "178",
+        "url": "file:///private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles/profile102-old.cjs",
+        "lineNumber": 3074,
+        "columnNumber": 35
+      },
+      "hitCount": 3,
+      "children": [
+        193
+      ],
+      "positionTicks": [
+        {
+          "line": 3075,
+          "ticks": 3
+        }
+      ]
+    },
+    {
+      "id": 193,
+      "callFrame": {
+        "functionName": "needsRealComputedManager",
+        "scriptId": "178",
+        "url": "file:///private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles/profile102-old.cjs",
+        "lineNumber": 3032,
+        "columnNumber": 31
+      },
+      "hitCount": 5,
+      "positionTicks": [
+        {
+          "line": 3044,
+          "ticks": 5
+        }
+      ]
+    },
+    {
+      "id": 162,
+      "callFrame": {
+        "functionName": "__emitChange__",
+        "scriptId": "178",
+        "url": "file:///private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles/profile102-old.cjs",
+        "lineNumber": 5865,
+        "columnNumber": 16
+      },
+      "hitCount": 0,
+      "children": [
+        163
+      ]
+    },
+    {
+      "id": 163,
+      "callFrame": {
+        "functionName": "__handleEmitChange__",
+        "scriptId": "178",
+        "url": "file:///private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles/profile102-old.cjs",
+        "lineNumber": 5879,
+        "columnNumber": 22
+      },
+      "hitCount": 0,
+      "children": [
+        164
+      ]
+    },
+    {
+      "id": 164,
+      "callFrame": {
+        "functionName": "ObjectNode.handleChange",
+        "scriptId": "178",
+        "url": "file:///private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles/profile102-old.cjs",
+        "lineNumber": 6447,
+        "columnNumber": 143
+      },
+      "hitCount": 0,
+      "children": [
+        165
+      ]
+    },
+    {
+      "id": 165,
+      "callFrame": {
+        "functionName": "onChange",
+        "scriptId": "178",
+        "url": "file:///private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles/profile102-old.cjs",
+        "lineNumber": 3465,
+        "columnNumber": 10
+      },
+      "hitCount": 0,
+      "children": [
+        166
+      ]
+    },
+    {
+      "id": 166,
+      "callFrame": {
+        "functionName": "",
+        "scriptId": "178",
+        "url": "file:///private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles/profile102-old.cjs",
+        "lineNumber": 5738,
+        "columnNumber": 46
+      },
+      "hitCount": 1,
+      "positionTicks": [
+        {
+          "line": 5756,
+          "ticks": 1
+        }
+      ]
+    },
+    {
+      "id": 115,
+      "callFrame": {
+        "functionName": "AbstractNode",
+        "scriptId": "178",
+        "url": "file:///private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles/profile102-old.cjs",
+        "lineNumber": 3159,
+        "columnNumber": 13
+      },
+      "hitCount": 0,
+      "children": [
+        116
+      ]
+    },
+    {
+      "id": 116,
+      "callFrame": {
+        "functionName": "getComputedPropertiesManager",
+        "scriptId": "178",
+        "url": "file:///private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles/profile102-old.cjs",
+        "lineNumber": 3074,
+        "columnNumber": 35
+      },
+      "hitCount": 1,
+      "positionTicks": [
+        {
+          "line": 3075,
+          "ticks": 1
+        }
+      ]
+    },
+    {
+      "id": 53,
+      "callFrame": {
+        "functionName": "__initialize__",
+        "scriptId": "178",
+        "url": "file:///private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles/profile102-old.cjs",
+        "lineNumber": 6475,
+        "columnNumber": 16
+      },
+      "hitCount": 0,
+      "children": [
+        54
+      ]
+    },
+    {
+      "id": 54,
+      "callFrame": {
+        "functionName": "initialize",
+        "scriptId": "178",
+        "url": "file:///private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles/profile102-old.cjs",
+        "lineNumber": 6298,
+        "columnNumber": 12
+      },
+      "hitCount": 0,
+      "children": [
+        55
+      ]
+    },
+    {
+      "id": 55,
+      "callFrame": {
+        "functionName": "__initialize__",
+        "scriptId": "178",
+        "url": "file:///private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles/profile102-old.cjs",
+        "lineNumber": 6475,
+        "columnNumber": 16
+      },
+      "hitCount": 0,
+      "children": [
+        56
+      ]
+    },
+    {
+      "id": 56,
+      "callFrame": {
+        "functionName": "initialize",
+        "scriptId": "178",
+        "url": "file:///private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles/profile102-old.cjs",
+        "lineNumber": 6298,
+        "columnNumber": 12
+      },
+      "hitCount": 0,
+      "children": [
+        57
+      ]
+    },
+    {
+      "id": 57,
+      "callFrame": {
+        "functionName": "__initialize__",
+        "scriptId": "178",
+        "url": "file:///private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles/profile102-old.cjs",
+        "lineNumber": 6475,
+        "columnNumber": 16
+      },
+      "hitCount": 0,
+      "children": [
+        58,
+        195
+      ]
+    },
+    {
+      "id": 58,
+      "callFrame": {
+        "functionName": "initialize",
+        "scriptId": "178",
+        "url": "file:///private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles/profile102-old.cjs",
+        "lineNumber": 6298,
+        "columnNumber": 12
+      },
+      "hitCount": 0,
+      "children": [
+        59,
+        117
+      ]
+    },
+    {
+      "id": 59,
+      "callFrame": {
+        "functionName": "__initialize__",
+        "scriptId": "178",
+        "url": "file:///private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles/profile102-old.cjs",
+        "lineNumber": 6475,
+        "columnNumber": 16
+      },
+      "hitCount": 0,
+      "children": [
+        60,
+        186
+      ]
+    },
+    {
+      "id": 60,
+      "callFrame": {
+        "functionName": "initialize",
+        "scriptId": "178",
+        "url": "file:///private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles/profile102-old.cjs",
+        "lineNumber": 6298,
+        "columnNumber": 12
+      },
+      "hitCount": 3,
+      "children": [
+        61,
+        247
+      ],
+      "positionTicks": [
+        {
+          "line": 6301,
+          "ticks": 1
+        },
+        {
+          "line": 6301,
+          "ticks": 1
+        },
+        {
+          "line": 6303,
+          "ticks": 1
+        }
+      ]
+    },
+    {
+      "id": 61,
+      "callFrame": {
+        "functionName": "__initialize__",
+        "scriptId": "178",
+        "url": "file:///private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles/profile102-old.cjs",
+        "lineNumber": 6475,
+        "columnNumber": 16
+      },
+      "hitCount": 0,
+      "children": [
+        62,
+        89
+      ]
+    },
+    {
+      "id": 62,
+      "callFrame": {
+        "functionName": "__initialize__",
+        "scriptId": "178",
+        "url": "file:///private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles/profile102-old.cjs",
+        "lineNumber": 3961,
+        "columnNumber": 16
+      },
+      "hitCount": 4,
+      "children": [
+        63,
+        98
+      ],
+      "positionTicks": [
+        {
+          "line": 3963,
+          "ticks": 1
+        },
+        {
+          "line": 3965,
+          "ticks": 1
+        },
+        {
+          "line": 3967,
+          "ticks": 2
+        }
+      ]
+    },
+    {
+      "id": 63,
+      "callFrame": {
+        "functionName": "__prepareUpdateDependencies__",
+        "scriptId": "178",
+        "url": "file:///private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles/profile102-old.cjs",
+        "lineNumber": 3539,
+        "columnNumber": 31
+      },
+      "hitCount": 3,
+      "children": [
+        78
+      ],
+      "positionTicks": [
+        {
+          "line": 3540,
+          "ticks": 2
+        },
+        {
+          "line": 3580,
+          "ticks": 1
+        }
+      ]
+    },
+    {
+      "id": 78,
+      "callFrame": {
+        "functionName": "__updateComputedProperties__",
+        "scriptId": "178",
+        "url": "file:///private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles/profile102-old.cjs",
+        "lineNumber": 3586,
+        "columnNumber": 30
+      },
+      "hitCount": 0,
+      "children": [
+        79
+      ]
+    },
+    {
+      "id": 79,
+      "callFrame": {
+        "functionName": "publish",
+        "scriptId": "178",
+        "url": "file:///private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles/profile102-old.cjs",
+        "lineNumber": 3838,
+        "columnNumber": 9
+      },
+      "hitCount": 1,
+      "children": [
+        161
+      ],
+      "positionTicks": [
+        {
+          "line": 3839,
+          "ticks": 1
+        }
+      ]
+    },
+    {
+      "id": 161,
+      "callFrame": {
+        "functionName": "publish",
+        "scriptId": "178",
+        "url": "file:///private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles/profile102-old.cjs",
+        "lineNumber": 1951,
+        "columnNumber": 9
+      },
+      "hitCount": 2,
+      "positionTicks": [
+        {
+          "line": 1953,
+          "ticks": 1
+        },
+        {
+          "line": 1953,
+          "ticks": 1
+        }
+      ]
+    },
+    {
+      "id": 98,
+      "callFrame": {
+        "functionName": "publish",
+        "scriptId": "178",
+        "url": "file:///private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles/profile102-old.cjs",
+        "lineNumber": 3838,
+        "columnNumber": 9
+      },
+      "hitCount": 0,
+      "children": [
+        99
+      ]
+    },
+    {
+      "id": 99,
+      "callFrame": {
+        "functionName": "publish",
+        "scriptId": "178",
+        "url": "file:///private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles/profile102-old.cjs",
+        "lineNumber": 1951,
+        "columnNumber": 9
+      },
+      "hitCount": 3,
+      "children": [
+        100
+      ],
+      "positionTicks": [
+        {
+          "line": 1953,
+          "ticks": 1
+        },
+        {
+          "line": 1953,
+          "ticks": 1
+        },
+        {
+          "line": 1953,
+          "ticks": 1
+        }
+      ]
+    },
+    {
+      "id": 100,
+      "callFrame": {
+        "functionName": "__acquireBatch__",
+        "scriptId": "178",
+        "url": "file:///private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles/profile102-old.cjs",
+        "lineNumber": 1913,
+        "columnNumber": 18
+      },
+      "hitCount": 1,
+      "positionTicks": [
+        {
+          "line": 1914,
+          "ticks": 1
+        }
+      ]
+    },
+    {
+      "id": 89,
+      "callFrame": {
+        "functionName": "initialize",
+        "scriptId": "178",
+        "url": "file:///private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles/profile102-old.cjs",
+        "lineNumber": 6298,
+        "columnNumber": 12
+      },
+      "hitCount": 8,
+      "children": [
+        90,
+        213
+      ],
+      "positionTicks": [
+        {
+          "line": 6302,
+          "ticks": 1
+        },
+        {
+          "line": 6301,
+          "ticks": 1
+        },
+        {
+          "line": 6301,
+          "ticks": 2
+        },
+        {
+          "line": 6302,
+          "ticks": 1
+        },
+        {
+          "line": 6304,
+          "ticks": 1
+        },
+        {
+          "line": 6303,
+          "ticks": 1
+        },
+        {
+          "line": 6302,
+          "ticks": 1
+        }
+      ]
+    },
+    {
+      "id": 90,
+      "callFrame": {
+        "functionName": "__initialize__",
+        "scriptId": "178",
+        "url": "file:///private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles/profile102-old.cjs",
+        "lineNumber": 3961,
+        "columnNumber": 16
+      },
+      "hitCount": 9,
+      "children": [
+        91,
+        148
+      ],
+      "positionTicks": [
+        {
+          "line": 3963,
+          "ticks": 1
+        },
+        {
+          "line": 3963,
+          "ticks": 1
+        },
+        {
+          "line": 3966,
+          "ticks": 2
+        },
+        {
+          "line": 3967,
+          "ticks": 1
+        },
+        {
+          "line": 3965,
+          "ticks": 2
+        },
+        {
+          "line": 3968,
+          "ticks": 2
+        }
+      ]
+    },
+    {
+      "id": 91,
+      "callFrame": {
+        "functionName": "__prepareUpdateDependencies__",
+        "scriptId": "178",
+        "url": "file:///private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles/profile102-old.cjs",
+        "lineNumber": 3539,
+        "columnNumber": 31
+      },
+      "hitCount": 8,
+      "children": [
+        92
+      ],
+      "positionTicks": [
+        {
+          "line": 3545,
+          "ticks": 1
+        },
+        {
+          "line": 3541,
+          "ticks": 2
+        },
+        {
+          "line": 3540,
+          "ticks": 5
+        }
+      ]
+    },
+    {
+      "id": 92,
+      "callFrame": {
+        "functionName": "__updateComputedProperties__",
+        "scriptId": "178",
+        "url": "file:///private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles/profile102-old.cjs",
+        "lineNumber": 3586,
+        "columnNumber": 30
+      },
+      "hitCount": 2,
+      "children": [
+        109
+      ],
+      "positionTicks": [
+        {
+          "line": 3593,
+          "ticks": 2
+        }
+      ]
+    },
+    {
+      "id": 109,
+      "callFrame": {
+        "functionName": "publish",
+        "scriptId": "178",
+        "url": "file:///private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles/profile102-old.cjs",
+        "lineNumber": 3838,
+        "columnNumber": 9
+      },
+      "hitCount": 10,
+      "children": [
+        110
+      ],
+      "positionTicks": [
+        {
+          "line": 3840,
+          "ticks": 3
+        },
+        {
+          "line": 3842,
+          "ticks": 1
+        },
+        {
+          "line": 3839,
+          "ticks": 3
+        },
+        {
+          "line": 3841,
+          "ticks": 2
+        },
+        {
+          "line": 3841,
+          "ticks": 1
+        }
+      ]
+    },
+    {
+      "id": 110,
+      "callFrame": {
+        "functionName": "publish",
+        "scriptId": "178",
+        "url": "file:///private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles/profile102-old.cjs",
+        "lineNumber": 1951,
+        "columnNumber": 9
+      },
+      "hitCount": 6,
+      "children": [
+        138
+      ],
+      "positionTicks": [
+        {
+          "line": 1953,
+          "ticks": 1
+        },
+        {
+          "line": 1953,
+          "ticks": 1
+        },
+        {
+          "line": 1953,
+          "ticks": 3
+        },
+        {
+          "line": 1953,
+          "ticks": 1
+        }
+      ]
+    },
+    {
+      "id": 138,
+      "callFrame": {
+        "functionName": "__acquireBatch__",
+        "scriptId": "178",
+        "url": "file:///private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles/profile102-old.cjs",
+        "lineNumber": 1913,
+        "columnNumber": 18
+      },
+      "hitCount": 4,
+      "positionTicks": [
+        {
+          "line": 1916,
+          "ticks": 3
+        },
+        {
+          "line": 1914,
+          "ticks": 1
+        }
+      ]
+    },
+    {
+      "id": 148,
+      "callFrame": {
+        "functionName": "publish",
+        "scriptId": "178",
+        "url": "file:///private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles/profile102-old.cjs",
+        "lineNumber": 3838,
+        "columnNumber": 9
+      },
+      "hitCount": 1,
+      "children": [
+        168
+      ],
+      "positionTicks": [
+        {
+          "line": 3840,
+          "ticks": 1
+        }
+      ]
+    },
+    {
+      "id": 168,
+      "callFrame": {
+        "functionName": "publish",
+        "scriptId": "178",
+        "url": "file:///private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles/profile102-old.cjs",
+        "lineNumber": 1951,
+        "columnNumber": 9
+      },
+      "hitCount": 3,
+      "children": [
+        171
+      ],
+      "positionTicks": [
+        {
+          "line": 1953,
+          "ticks": 2
+        },
+        {
+          "line": 1953,
+          "ticks": 1
+        }
+      ]
+    },
+    {
+      "id": 171,
+      "callFrame": {
+        "functionName": "__acquireBatch__",
+        "scriptId": "178",
+        "url": "file:///private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles/profile102-old.cjs",
+        "lineNumber": 1913,
+        "columnNumber": 18
+      },
+      "hitCount": 2,
+      "positionTicks": [
+        {
+          "line": 1916,
+          "ticks": 2
+        }
+      ]
+    },
+    {
+      "id": 213,
+      "callFrame": {
+        "functionName": "__processChildren__",
+        "scriptId": "178",
+        "url": "file:///private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles/profile102-old.cjs",
+        "lineNumber": 6191,
+        "columnNumber": 21
+      },
+      "hitCount": 0,
+      "children": [
+        214
+      ]
+    },
+    {
+      "id": 214,
+      "callFrame": {
+        "functionName": "__publishChildrenChange__",
+        "scriptId": "178",
+        "url": "file:///private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles/profile102-old.cjs",
+        "lineNumber": 6055,
+        "columnNumber": 27
+      },
+      "hitCount": 1,
+      "positionTicks": [
+        {
+          "line": 6058,
+          "ticks": 1
+        }
+      ]
+    },
+    {
+      "id": 247,
+      "callFrame": {
+        "functionName": "__primeInitialBranch__",
+        "scriptId": "178",
+        "url": "file:///private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles/profile102-old.cjs",
+        "lineNumber": 6315,
+        "columnNumber": 24
+      },
+      "hitCount": 1,
+      "positionTicks": [
+        {
+          "line": 6322,
+          "ticks": 1
+        }
+      ]
+    },
+    {
+      "id": 186,
+      "callFrame": {
+        "functionName": "__initialize__",
+        "scriptId": "178",
+        "url": "file:///private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles/profile102-old.cjs",
+        "lineNumber": 3961,
+        "columnNumber": 16
+      },
+      "hitCount": 0,
+      "children": [
+        187,
+        208,
+        226
+      ]
+    },
+    {
+      "id": 187,
+      "callFrame": {
+        "functionName": "__prepareInjectHandler__",
+        "scriptId": "178",
+        "url": "file:///private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles/profile102-old.cjs",
+        "lineNumber": 3894,
+        "columnNumber": 26
+      },
+      "hitCount": 1,
+      "positionTicks": [
+        {
+          "line": 3896,
+          "ticks": 1
+        }
+      ]
+    },
+    {
+      "id": 208,
+      "callFrame": {
+        "functionName": "publish",
+        "scriptId": "178",
+        "url": "file:///private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles/profile102-old.cjs",
+        "lineNumber": 3838,
+        "columnNumber": 9
+      },
+      "hitCount": 0,
+      "children": [
+        209
+      ]
+    },
+    {
+      "id": 209,
+      "callFrame": {
+        "functionName": "publish",
+        "scriptId": "178",
+        "url": "file:///private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles/profile102-old.cjs",
+        "lineNumber": 1951,
+        "columnNumber": 9
+      },
+      "hitCount": 0,
+      "children": [
+        210
+      ]
+    },
+    {
+      "id": 210,
+      "callFrame": {
+        "functionName": "__acquireBatch__",
+        "scriptId": "178",
+        "url": "file:///private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles/profile102-old.cjs",
+        "lineNumber": 1913,
+        "columnNumber": 18
+      },
+      "hitCount": 1,
+      "positionTicks": [
+        {
+          "line": 1916,
+          "ticks": 1
+        }
+      ]
+    },
+    {
+      "id": 226,
+      "callFrame": {
+        "functionName": "__prepareUpdateDependencies__",
+        "scriptId": "178",
+        "url": "file:///private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles/profile102-old.cjs",
+        "lineNumber": 3539,
+        "columnNumber": 31
+      },
+      "hitCount": 0,
+      "children": [
+        227
+      ]
+    },
+    {
+      "id": 227,
+      "callFrame": {
+        "functionName": "__updateComputedProperties__",
+        "scriptId": "178",
+        "url": "file:///private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles/profile102-old.cjs",
+        "lineNumber": 3586,
+        "columnNumber": 30
+      },
+      "hitCount": 0,
+      "children": [
+        228
+      ]
+    },
+    {
+      "id": 228,
+      "callFrame": {
+        "functionName": "publish",
+        "scriptId": "178",
+        "url": "file:///private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles/profile102-old.cjs",
+        "lineNumber": 3838,
+        "columnNumber": 9
+      },
+      "hitCount": 1,
+      "children": [
+        229
+      ],
+      "positionTicks": [
+        {
+          "line": 3839,
+          "ticks": 1
+        }
+      ]
+    },
+    {
+      "id": 229,
+      "callFrame": {
+        "functionName": "publish",
+        "scriptId": "178",
+        "url": "file:///private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles/profile102-old.cjs",
+        "lineNumber": 1951,
+        "columnNumber": 9
+      },
+      "hitCount": 0,
+      "children": [
+        230
+      ]
+    },
+    {
+      "id": 230,
+      "callFrame": {
+        "functionName": "__acquireBatch__",
+        "scriptId": "178",
+        "url": "file:///private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles/profile102-old.cjs",
+        "lineNumber": 1913,
+        "columnNumber": 18
+      },
+      "hitCount": 1,
+      "positionTicks": [
+        {
+          "line": 1916,
+          "ticks": 1
+        }
+      ]
+    },
+    {
+      "id": 117,
+      "callFrame": {
+        "functionName": "publish",
+        "scriptId": "178",
+        "url": "file:///private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles/profile102-old.cjs",
+        "lineNumber": 3838,
+        "columnNumber": 9
+      },
+      "hitCount": 1,
+      "positionTicks": [
+        {
+          "line": 3842,
+          "ticks": 1
+        }
+      ]
+    },
+    {
+      "id": 195,
+      "callFrame": {
+        "functionName": "__initialize__",
+        "scriptId": "178",
+        "url": "file:///private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles/profile102-old.cjs",
+        "lineNumber": 3961,
+        "columnNumber": 16
+      },
+      "hitCount": 0,
+      "children": [
+        196
+      ]
+    },
+    {
+      "id": 196,
+      "callFrame": {
+        "functionName": "__prepareUpdateDependencies__",
+        "scriptId": "178",
+        "url": "file:///private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles/profile102-old.cjs",
+        "lineNumber": 3539,
+        "columnNumber": 31
+      },
+      "hitCount": 0,
+      "children": [
+        197
+      ]
+    },
+    {
+      "id": 197,
+      "callFrame": {
+        "functionName": "__updateComputedProperties__",
+        "scriptId": "178",
+        "url": "file:///private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles/profile102-old.cjs",
+        "lineNumber": 3586,
+        "columnNumber": 30
+      },
+      "hitCount": 0,
+      "children": [
+        198
+      ]
+    },
+    {
+      "id": 198,
+      "callFrame": {
+        "functionName": "publish",
+        "scriptId": "178",
+        "url": "file:///private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles/profile102-old.cjs",
+        "lineNumber": 3838,
+        "columnNumber": 9
+      },
+      "hitCount": 1,
+      "positionTicks": [
+        {
+          "line": 3840,
+          "ticks": 1
+        }
+      ]
+    },
+    {
+      "id": 102,
+      "callFrame": {
+        "functionName": "getFieldConditionMap",
+        "scriptId": "178",
+        "url": "file:///private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles/profile102-old.cjs",
+        "lineNumber": 5539,
+        "columnNumber": 27
+      },
+      "hitCount": 1,
+      "positionTicks": [
+        {
+          "line": 5541,
+          "ticks": 1
+        }
+      ]
+    },
+    {
+      "id": 112,
+      "callFrame": {
+        "functionName": "AbstractNode",
+        "scriptId": "178",
+        "url": "file:///private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles/profile102-old.cjs",
+        "lineNumber": 3159,
+        "columnNumber": 13
+      },
+      "hitCount": 1,
+      "children": [
+        113,
+        119,
+        255
+      ],
+      "positionTicks": [
+        {
+          "line": 3210,
+          "ticks": 1
+        }
+      ]
+    },
+    {
+      "id": 113,
+      "callFrame": {
+        "functionName": "getComputedPropertiesManager",
+        "scriptId": "178",
+        "url": "file:///private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles/profile102-old.cjs",
+        "lineNumber": 3074,
+        "columnNumber": 35
+      },
+      "hitCount": 0,
+      "children": [
+        114
+      ]
+    },
+    {
+      "id": 114,
+      "callFrame": {
+        "functionName": "needsRealComputedManager",
+        "scriptId": "178",
+        "url": "file:///private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles/profile102-old.cjs",
+        "lineNumber": 3032,
+        "columnNumber": 31
+      },
+      "hitCount": 1,
+      "positionTicks": [
+        {
+          "line": 3041,
+          "ticks": 1
+        }
+      ]
+    },
+    {
+      "id": 119,
+      "callFrame": {
+        "functionName": "EventCascadeManager",
+        "scriptId": "178",
+        "url": "file:///private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles/profile102-old.cjs",
+        "lineNumber": 1883,
+        "columnNumber": 13
+      },
+      "hitCount": 2,
+      "positionTicks": [
+        {
+          "line": 1900,
+          "ticks": 2
+        }
+      ]
+    },
+    {
+      "id": 255,
+      "callFrame": {
+        "functionName": "getDefaultValue",
+        "scriptId": "178",
+        "url": "file:///private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles/profile102-old.cjs",
+        "lineNumber": 1815,
+        "columnNumber": 22
+      },
+      "hitCount": 1,
+      "positionTicks": [
+        {
+          "line": 1818,
+          "ticks": 1
+        }
+      ]
+    },
+    {
+      "id": 243,
+      "callFrame": {
+        "functionName": "get",
+        "scriptId": "9",
+        "url": "node:internal/bootstrap/node",
+        "lineNumber": 441,
+        "columnNumber": 7
+      },
+      "hitCount": 1,
+      "positionTicks": [
+        {
+          "line": 443,
+          "ticks": 1
+        }
+      ]
+    },
+    {
+      "id": 260,
+      "callFrame": {
+        "functionName": "now",
+        "scriptId": "162",
+        "url": "node:internal/perf/performance",
+        "lineNumber": 136,
+        "columnNumber": 5
+      },
+      "hitCount": 0,
+      "children": [
+        261
+      ]
+    },
+    {
+      "id": 261,
+      "callFrame": {
+        "functionName": "now",
+        "scriptId": "0",
+        "url": "",
+        "lineNumber": -1,
+        "columnNumber": -1
+      },
+      "hitCount": 1,
+      "positionTicks": [
+        {
+          "line": 139,
+          "ticks": 1
+        }
+      ]
+    },
+    {
+      "id": 47,
+      "callFrame": {
+        "functionName": "(program)",
+        "scriptId": "0",
+        "url": "",
+        "lineNumber": -1,
+        "columnNumber": -1
+      },
+      "hitCount": 35
+    },
+    {
+      "id": 64,
+      "callFrame": {
+        "functionName": "",
+        "scriptId": "178",
+        "url": "file:///private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles/profile102-old.cjs",
+        "lineNumber": 1938,
+        "columnNumber": 44
+      },
+      "hitCount": 19,
+      "children": [
+        65,
+        152
+      ],
+      "positionTicks": [
+        {
+          "line": 1941,
+          "ticks": 1
+        },
+        {
+          "line": 1939,
+          "ticks": 3
+        },
+        {
+          "line": 1941,
+          "ticks": 2
+        },
+        {
+          "line": 1940,
+          "ticks": 5
+        },
+        {
+          "line": 1942,
+          "ticks": 1
+        },
+        {
+          "line": 1940,
+          "ticks": 7
+        }
+      ]
+    },
+    {
+      "id": 65,
+      "callFrame": {
+        "functionName": "mergeEventEntries",
+        "scriptId": "178",
+        "url": "file:///private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles/profile102-old.cjs",
+        "lineNumber": 1858,
+        "columnNumber": 24
+      },
+      "hitCount": 159,
+      "positionTicks": [
+        {
+          "line": 1870,
+          "ticks": 1
+        },
+        {
+          "line": 1867,
+          "ticks": 2
+        },
+        {
+          "line": 1865,
+          "ticks": 4
+        },
+        {
+          "line": 1869,
+          "ticks": 73
+        },
+        {
+          "line": 1860,
+          "ticks": 6
+        },
+        {
+          "line": 1871,
+          "ticks": 71
+        },
+        {
+          "line": 1868,
+          "ticks": 2
+        }
+      ]
+    },
+    {
+      "id": 152,
+      "callFrame": {
+        "functionName": "__resolve__",
+        "scriptId": "178",
+        "url": "file:///private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles/profile102-old.cjs",
+        "lineNumber": 1992,
+        "columnNumber": 13
+      },
+      "hitCount": 2,
+      "children": [
+        153
+      ],
+      "positionTicks": [
+        {
+          "line": 1994,
+          "ticks": 1
+        },
+        {
+          "line": 1995,
+          "ticks": 1
+        }
+      ]
+    },
+    {
+      "id": 153,
+      "callFrame": {
+        "functionName": "__recordDelivery__",
+        "scriptId": "178",
+        "url": "file:///private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles/profile102-old.cjs",
+        "lineNumber": 1961,
+        "columnNumber": 20
+      },
+      "hitCount": 4,
+      "positionTicks": [
+        {
+          "line": 1964,
+          "ticks": 1
+        },
+        {
+          "line": 1966,
+          "ticks": 2
+        },
+        {
+          "line": 1967,
+          "ticks": 1
+        }
+      ]
+    },
+    {
+      "id": 66,
+      "callFrame": {
+        "functionName": "processImmediate",
+        "scriptId": "10",
+        "url": "node:internal/timers",
+        "lineNumber": 524,
+        "columnNumber": 27
+      },
+      "hitCount": 9,
+      "children": [
+        101,
+        105,
+        107,
+        118,
+        144,
+        188,
+        265
+      ],
+      "positionTicks": [
+        {
+          "line": 567,
+          "ticks": 1
+        },
+        {
+          "line": 548,
+          "ticks": 3
+        },
+        {
+          "line": 558,
+          "ticks": 1
+        },
+        {
+          "line": 539,
+          "ticks": 4
+        }
+      ]
+    },
+    {
+      "id": 101,
+      "callFrame": {
+        "functionName": "emitBeforeScript",
+        "scriptId": "11",
+        "url": "node:internal/async_hooks",
+        "lineNumber": 518,
+        "columnNumber": 25
+      },
+      "hitCount": 1,
+      "children": [
+        135
+      ],
+      "positionTicks": [
+        {
+          "line": 524,
+          "ticks": 1
+        }
+      ]
+    },
+    {
+      "id": 135,
+      "callFrame": {
+        "functionName": "pushAsyncContext",
+        "scriptId": "11",
+        "url": "node:internal/async_hooks",
+        "lineNumber": 548,
+        "columnNumber": 25
+      },
+      "hitCount": 3,
+      "positionTicks": [
+        {
+          "line": 553,
+          "ticks": 2
+        },
+        {
+          "line": 551,
+          "ticks": 1
+        }
+      ]
+    },
+    {
+      "id": 105,
+      "callFrame": {
+        "functionName": "emitAfterScript",
+        "scriptId": "11",
+        "url": "node:internal/async_hooks",
+        "lineNumber": 526,
+        "columnNumber": 24
+      },
+      "hitCount": 2,
+      "children": [
+        111
+      ],
+      "positionTicks": [
+        {
+          "line": 527,
+          "ticks": 2
+        }
+      ]
+    },
+    {
+      "id": 111,
+      "callFrame": {
+        "functionName": "popAsyncContext",
+        "scriptId": "11",
+        "url": "node:internal/async_hooks",
+        "lineNumber": 562,
+        "columnNumber": 24
+      },
+      "hitCount": 1,
+      "positionTicks": [
+        {
+          "line": 573,
+          "ticks": 1
+        }
+      ]
+    },
+    {
+      "id": 107,
+      "callFrame": {
+        "functionName": "runNextTicks",
+        "scriptId": "33",
+        "url": "node:internal/process/task_queues",
+        "lineNumber": 62,
+        "columnNumber": 21
+      },
+      "hitCount": 14,
+      "children": [
+        108,
+        192,
+        199
+      ],
+      "positionTicks": [
+        {
+          "line": 65,
+          "ticks": 14
+        }
+      ]
+    },
+    {
+      "id": 108,
+      "callFrame": {
+        "functionName": "runMicrotasks",
+        "scriptId": "0",
+        "url": "",
+        "lineNumber": -1,
+        "columnNumber": -1
+      },
+      "hitCount": 19,
+      "positionTicks": [
+        {
+          "line": 65,
+          "ticks": 19
+        }
+      ]
+    },
+    {
+      "id": 192,
+      "callFrame": {
+        "functionName": "hasTickScheduled",
+        "scriptId": "33",
+        "url": "node:internal/process/task_queues",
+        "lineNumber": 51,
+        "columnNumber": 25
+      },
+      "hitCount": 1,
+      "positionTicks": [
+        {
+          "line": 53,
+          "ticks": 1
+        }
+      ]
+    },
+    {
+      "id": 199,
+      "callFrame": {
+        "functionName": "hasRejectionToWarn",
+        "scriptId": "34",
+        "url": "node:internal/process/promises",
+        "lineNumber": 138,
+        "columnNumber": 27
+      },
+      "hitCount": 1,
+      "positionTicks": [
+        {
+          "line": 140,
+          "ticks": 1
+        }
+      ]
+    },
+    {
+      "id": 118,
+      "callFrame": {
+        "functionName": "",
+        "scriptId": "178",
+        "url": "file:///private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles/profile102-old.cjs",
+        "lineNumber": 1931,
+        "columnNumber": 50
+      },
+      "hitCount": 5,
+      "positionTicks": [
+        {
+          "line": 1933,
+          "ticks": 2
+        },
+        {
+          "line": 1933,
+          "ticks": 1
+        },
+        {
+          "line": 1932,
+          "ticks": 2
+        }
+      ]
+    },
+    {
+      "id": 144,
+      "callFrame": {
+        "functionName": "",
+        "scriptId": "89",
+        "url": "file:///Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/packages/canard/schema-form/architecture/verification/07-switch/profile-102-work/measure.mjs",
+        "lineNumber": 201,
+        "columnNumber": 59
+      },
+      "hitCount": 0,
+      "children": [
+        145,
+        254
+      ]
+    },
+    {
+      "id": 145,
+      "callFrame": {
+        "functionName": "now",
+        "scriptId": "162",
+        "url": "node:internal/perf/performance",
+        "lineNumber": 136,
+        "columnNumber": 5
+      },
+      "hitCount": 0,
+      "children": [
+        146
+      ]
+    },
+    {
+      "id": 146,
+      "callFrame": {
+        "functionName": "wrappedFn",
+        "scriptId": "7",
+        "url": "node:internal/errors",
+        "lineNumber": 541,
+        "columnNumber": 20
+      },
+      "hitCount": 1,
+      "positionTicks": [
+        {
+          "line": 542,
+          "ticks": 1
+        }
+      ]
+    },
+    {
+      "id": 254,
+      "callFrame": {
+        "functionName": "hrtimeBigInt",
+        "scriptId": "31",
+        "url": "node:internal/process/per_thread",
+        "lineNumber": 98,
+        "columnNumber": 21
+      },
+      "hitCount": 1,
+      "positionTicks": [
+        {
+          "line": 101,
+          "ticks": 1
+        }
+      ]
+    },
+    {
+      "id": 188,
+      "callFrame": {
+        "functionName": "cleanImmediate",
+        "scriptId": "10",
+        "url": "node:internal/timers",
+        "lineNumber": 149,
+        "columnNumber": 23
+      },
+      "hitCount": 0,
+      "children": [
+        189
+      ]
+    },
+    {
+      "id": 189,
+      "callFrame": {
+        "functionName": "removeStoresFromResource",
+        "scriptId": "10",
+        "url": "node:internal/timers",
+        "lineNumber": 133,
+        "columnNumber": 33
+      },
+      "hitCount": 0,
+      "children": [
+        190
+      ]
+    },
+    {
+      "id": 190,
+      "callFrame": {
+        "functionName": "get enabled",
+        "scriptId": "22",
+        "url": "node:internal/async_context_frame",
+        "lineNumber": 30,
+        "columnNumber": 20
+      },
+      "hitCount": 2,
+      "positionTicks": [
+        {
+          "line": 32,
+          "ticks": 2
+        }
+      ]
+    },
+    {
+      "id": 265,
+      "callFrame": {
+        "functionName": "callback",
+        "scriptId": "178",
+        "url": "file:///private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles/profile102-old.cjs",
+        "lineNumber": 2331,
+        "columnNumber": 19
+      },
+      "hitCount": 0,
+      "children": [
+        266
+      ]
+    },
+    {
+      "id": 266,
+      "callFrame": {
+        "functionName": "",
+        "scriptId": "178",
+        "url": "file:///private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles/profile102-old.cjs",
+        "lineNumber": 3254,
+        "columnNumber": 45
+      },
+      "hitCount": 0,
+      "children": [
+        267
+      ]
+    },
+    {
+      "id": 267,
+      "callFrame": {
+        "functionName": "get normalizedValue",
+        "scriptId": "178",
+        "url": "file:///private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles/profile102-old.cjs",
+        "lineNumber": 3455,
+        "columnNumber": 21
+      },
+      "hitCount": 1,
+      "positionTicks": [
+        {
+          "line": 3457,
+          "ticks": 1
+        }
+      ]
+    },
+    {
+      "id": 76,
+      "callFrame": {
+        "functionName": "(garbage collector)",
+        "scriptId": "0",
+        "url": "",
+        "lineNumber": -1,
+        "columnNumber": -1
+      },
+      "hitCount": 368
+    },
+    {
+      "id": 121,
+      "callFrame": {
+        "functionName": "publish",
+        "scriptId": "178",
+        "url": "file:///private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles/profile102-old.cjs",
+        "lineNumber": 3838,
+        "columnNumber": 9
+      },
+      "hitCount": 1,
+      "positionTicks": [
+        {
+          "line": 3842,
+          "ticks": 1
+        }
+      ]
+    },
+    {
+      "id": 134,
+      "callFrame": {
+        "functionName": "getStackEntriesForNode",
+        "scriptId": "229",
+        "url": "file:///Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/packages/winglet/json-schema/dist/utils/JSONSchemaScanner/utils/getStackEntriesForNode.cjs",
+        "lineNumber": 73,
+        "columnNumber": 31
+      },
+      "hitCount": 1,
+      "positionTicks": [
+        {
+          "line": 77,
+          "ticks": 1
+        }
+      ]
+    },
+    {
+      "id": 149,
+      "callFrame": {
+        "functionName": "(idle)",
+        "scriptId": "0",
+        "url": "",
+        "lineNumber": -1,
+        "columnNumber": -1
+      },
+      "hitCount": 17
+    },
+    {
+      "id": 173,
+      "callFrame": {
+        "functionName": "measured",
+        "scriptId": "89",
+        "url": "file:///Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/packages/canard/schema-form/architecture/verification/07-switch/profile-102-work/measure.mjs",
+        "lineNumber": 197,
+        "columnNumber": 23
+      },
+      "hitCount": 4,
+      "positionTicks": [
+        {
+          "line": 202,
+          "ticks": 1
+        },
+        {
+          "line": 201,
+          "ticks": 1
+        },
+        {
+          "line": 203,
+          "ticks": 2
+        }
+      ]
+    },
+    {
+      "id": 222,
+      "callFrame": {
+        "functionName": "getScopedSegment",
+        "scriptId": "178",
+        "url": "file:///private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles/profile102-old.cjs",
+        "lineNumber": 3095,
+        "columnNumber": 23
+      },
+      "hitCount": 2,
+      "positionTicks": [
+        {
+          "line": 3109,
+          "ticks": 2
+        }
+      ]
+    },
+    {
+      "id": 235,
+      "callFrame": {
+        "functionName": "",
+        "scriptId": "178",
+        "url": "file:///private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles/profile102-old.cjs",
+        "lineNumber": 5738,
+        "columnNumber": 46
+      },
+      "hitCount": 1,
+      "positionTicks": [
+        {
+          "line": 5765,
+          "ticks": 1
+        }
+      ]
+    }
+  ],
+  "startTime": 85815601391,
+  "endTime": 85816165044,
+  "samples": [
+    5,
+    6,
+    6,
+    6,
+    6,
+    6,
+    15,
+    36,
+    42,
+    42,
+    46,
+    47,
+    41,
+    50,
+    51,
+    52,
+    42,
+    41,
+    42,
+    50,
+    63,
+    65,
+    65,
+    66,
+    66,
+    6,
+    6,
+    6,
+    6,
+    6,
+    7,
+    15,
+    42,
+    70,
+    42,
+    49,
+    75,
+    42,
+    76,
+    42,
+    74,
+    77,
+    79,
+    65,
+    65,
+    66,
+    6,
+    6,
+    6,
+    6,
+    6,
+    80,
+    42,
+    41,
+    83,
+    36,
+    86,
+    77,
+    88,
+    40,
+    42,
+    41,
+    92,
+    65,
+    65,
+    6,
+    6,
+    6,
+    6,
+    6,
+    93,
+    49,
+    76,
+    40,
+    42,
+    41,
+    74,
+    49,
+    77,
+    95,
+    97,
+    42,
+    100,
+    65,
+    65,
+    47,
+    76,
+    76,
+    76,
+    76,
+    76,
+    76,
+    76,
+    76,
+    76,
+    76,
+    76,
+    76,
+    76,
+    76,
+    76,
+    76,
+    76,
+    101,
+    6,
+    6,
+    6,
+    6,
+    6,
+    80,
+    102,
+    95,
+    42,
+    42,
+    72,
+    42,
+    46,
+    46,
+    77,
+    48,
+    77,
+    104,
+    39,
+    7,
+    65,
+    105,
+    6,
+    6,
+    6,
+    6,
+    6,
+    80,
+    50,
+    95,
+    46,
+    76,
+    45,
+    69,
+    47,
+    42,
+    50,
+    106,
+    65,
+    65,
+    108,
+    6,
+    6,
+    6,
+    6,
+    6,
+    93,
+    49,
+    46,
+    76,
+    42,
+    43,
+    45,
+    50,
+    42,
+    69,
+    110,
+    65,
+    65,
+    111,
+    6,
+    6,
+    6,
+    6,
+    6,
+    114,
+    77,
+    76,
+    104,
+    74,
+    116,
+    42,
+    43,
+    34,
+    47,
+    117,
+    65,
+    65,
+    76,
+    76,
+    76,
+    76,
+    76,
+    76,
+    76,
+    76,
+    76,
+    76,
+    76,
+    76,
+    76,
+    76,
+    76,
+    76,
+    76,
+    76,
+    76,
+    118,
+    2,
+    6,
+    6,
+    6,
+    6,
+    9,
+    119,
+    37,
+    73,
+    50,
+    120,
+    73,
+    46,
+    35,
+    41,
+    50,
+    121,
+    65,
+    47,
+    105,
+    6,
+    6,
+    6,
+    6,
+    80,
+    39,
+    34,
+    29,
+    42,
+    48,
+    42,
+    71,
+    41,
+    42,
+    123,
+    110,
+    65,
+    47,
+    6,
+    6,
+    6,
+    6,
+    6,
+    7,
+    93,
+    42,
+    45,
+    77,
+    42,
+    41,
+    49,
+    127,
+    77,
+    76,
+    91,
+    65,
+    65,
+    66,
+    6,
+    6,
+    6,
+    6,
+    128,
+    39,
+    42,
+    42,
+    130,
+    42,
+    50,
+    131,
+    132,
+    42,
+    133,
+    133,
+    65,
+    64,
+    76,
+    76,
+    76,
+    76,
+    76,
+    76,
+    76,
+    76,
+    76,
+    76,
+    76,
+    76,
+    76,
+    76,
+    76,
+    76,
+    108,
+    6,
+    6,
+    6,
+    6,
+    6,
+    134,
+    41,
+    42,
+    38,
+    49,
+    41,
+    42,
+    40,
+    34,
+    41,
+    42,
+    90,
+    65,
+    65,
+    76,
+    135,
+    6,
+    6,
+    6,
+    6,
+    6,
+    6,
+    15,
+    80,
+    76,
+    42,
+    131,
+    76,
+    42,
+    37,
+    41,
+    42,
+    71,
+    50,
+    76,
+    72,
+    41,
+    50,
+    130,
+    48,
+    40,
+    84,
+    47,
+    137,
+    37,
+    90,
+    138,
+    65,
+    65,
+    65,
+    47,
+    76,
+    76,
+    76,
+    76,
+    76,
+    76,
+    76,
+    76,
+    76,
+    76,
+    76,
+    108,
+    107,
+    6,
+    6,
+    6,
+    6,
+    47,
+    15,
+    41,
+    26,
+    139,
+    41,
+    68,
+    38,
+    50,
+    34,
+    41,
+    89,
+    65,
+    65,
+    2,
+    6,
+    6,
+    6,
+    6,
+    6,
+    15,
+    77,
+    41,
+    40,
+    76,
+    95,
+    95,
+    49,
+    50,
+    140,
+    143,
+    90,
+    64,
+    65,
+    108,
+    6,
+    6,
+    6,
+    6,
+    15,
+    133,
+    42,
+    42,
+    72,
+    42,
+    41,
+    133,
+    130,
+    46,
+    110,
+    64,
+    65,
+    6,
+    6,
+    6,
+    6,
+    6,
+    128,
+    40,
+    77,
+    42,
+    33,
+    42,
+    38,
+    141,
+    41,
+    50,
+    64,
+    64,
+    146,
+    6,
+    6,
+    6,
+    6,
+    15,
+    147,
+    45,
+    42,
+    42,
+    42,
+    42,
+    41,
+    50,
+    39,
+    148,
+    65,
+    149,
+    6,
+    6,
+    6,
+    6,
+    6,
+    15,
+    40,
+    71,
+    120,
+    34,
+    30,
+    68,
+    34,
+    83,
+    62,
+    65,
+    64,
+    76,
+    76,
+    76,
+    76,
+    76,
+    76,
+    76,
+    76,
+    76,
+    76,
+    76,
+    108,
+    6,
+    6,
+    6,
+    6,
+    6,
+    2,
+    14,
+    69,
+    50,
+    42,
+    133,
+    37,
+    49,
+    37,
+    151,
+    42,
+    65,
+    153,
+    118,
+    6,
+    6,
+    6,
+    6,
+    15,
+    77,
+    34,
+    42,
+    42,
+    41,
+    69,
+    42,
+    48,
+    41,
+    90,
+    65,
+    108,
+    6,
+    6,
+    6,
+    6,
+    6,
+    39,
+    42,
+    42,
+    50,
+    72,
+    77,
+    77,
+    34,
+    39,
+    41,
+    65,
+    65,
+    76,
+    76,
+    76,
+    76,
+    76,
+    76,
+    76,
+    76,
+    76,
+    76,
+    76,
+    76,
+    76,
+    76,
+    76,
+    76,
+    76,
+    76,
+    66,
+    6,
+    6,
+    6,
+    6,
+    6,
+    128,
+    42,
+    154,
+    86,
+    95,
+    26,
+    30,
+    157,
+    95,
+    77,
+    62,
+    91,
+    65,
+    65,
+    47,
+    6,
+    6,
+    6,
+    6,
+    6,
+    7,
+    80,
+    142,
+    95,
+    142,
+    77,
+    45,
+    41,
+    41,
+    45,
+    77,
+    47,
+    65,
+    108,
+    6,
+    6,
+    6,
+    6,
+    80,
+    159,
+    42,
+    30,
+    42,
+    40,
+    41,
+    42,
+    42,
+    43,
+    65,
+    65,
+    108,
+    6,
+    6,
+    6,
+    6,
+    14,
+    39,
+    50,
+    41,
+    160,
+    77,
+    42,
+    30,
+    34,
+    40,
+    161,
+    47,
+    65,
+    76,
+    76,
+    76,
+    76,
+    76,
+    76,
+    76,
+    76,
+    76,
+    76,
+    76,
+    76,
+    107,
+    6,
+    6,
+    6,
+    6,
+    6,
+    14,
+    49,
+    48,
+    166,
+    41,
+    76,
+    30,
+    41,
+    120,
+    42,
+    89,
+    65,
+    149,
+    6,
+    6,
+    6,
+    6,
+    128,
+    45,
+    167,
+    39,
+    139,
+    50,
+    39,
+    34,
+    48,
+    37,
+    168,
+    65,
+    65,
+    6,
+    6,
+    6,
+    6,
+    6,
+    15,
+    43,
+    167,
+    126,
+    170,
+    39,
+    167,
+    32,
+    42,
+    147,
+    171,
+    65,
+    65,
+    6,
+    6,
+    6,
+    6,
+    6,
+    15,
+    95,
+    40,
+    125,
+    69,
+    42,
+    73,
+    46,
+    46,
+    172,
+    50,
+    42,
+    109,
+    65,
+    65,
+    76,
+    76,
+    76,
+    76,
+    76,
+    76,
+    76,
+    76,
+    76,
+    76,
+    76,
+    76,
+    76,
+    76,
+    76,
+    76,
+    76,
+    76,
+    76,
+    76,
+    76,
+    76,
+    76,
+    76,
+    76,
+    76,
+    76,
+    76,
+    76,
+    76,
+    173,
+    6,
+    6,
+    6,
+    6,
+    6,
+    7,
+    7,
+    7,
+    15,
+    174,
+    40,
+    41,
+    42,
+    32,
+    41,
+    175,
+    42,
+    88,
+    167,
+    91,
+    65,
+    64,
+    6,
+    6,
+    6,
+    6,
+    6,
+    15,
+    42,
+    77,
+    176,
+    42,
+    177,
+    46,
+    40,
+    142,
+    139,
+    89,
+    65,
+    173,
+    6,
+    6,
+    6,
+    6,
+    6,
+    80,
+    39,
+    43,
+    69,
+    50,
+    77,
+    167,
+    67,
+    182,
+    40,
+    64,
+    65,
+    6,
+    6,
+    6,
+    6,
+    6,
+    15,
+    106,
+    139,
+    183,
+    73,
+    184,
+    74,
+    27,
+    42,
+    69,
+    65,
+    47,
+    76,
+    76,
+    76,
+    76,
+    76,
+    76,
+    76,
+    76,
+    76,
+    76,
+    76,
+    76,
+    76,
+    76,
+    76,
+    118,
+    6,
+    6,
+    6,
+    6,
+    6,
+    15,
+    42,
+    50,
+    50,
+    50,
+    39,
+    30,
+    40,
+    46,
+    47,
+    65,
+    65,
+    6,
+    6,
+    6,
+    6,
+    6,
+    185,
+    106,
+    141,
+    76,
+    125,
+    77,
+    41,
+    77,
+    42,
+    62,
+    153,
+    65,
+    6,
+    6,
+    6,
+    6,
+    6,
+    128,
+    50,
+    42,
+    47,
+    46,
+    47,
+    39,
+    42,
+    46,
+    187,
+    65,
+    65,
+    190,
+    6,
+    6,
+    6,
+    6,
+    6,
+    15,
+    42,
+    42,
+    77,
+    191,
+    46,
+    42,
+    37,
+    26,
+    41,
+    90,
+    65,
+    65,
+    76,
+    76,
+    76,
+    76,
+    76,
+    76,
+    76,
+    76,
+    76,
+    76,
+    76,
+    76,
+    76,
+    76,
+    192,
+    6,
+    6,
+    6,
+    6,
+    8,
+    119,
+    41,
+    77,
+    129,
+    73,
+    42,
+    50,
+    76,
+    176,
+    77,
+    42,
+    65,
+    65,
+    108,
+    6,
+    6,
+    6,
+    6,
+    6,
+    128,
+    46,
+    72,
+    193,
+    49,
+    42,
+    42,
+    77,
+    40,
+    71,
+    30,
+    90,
+    65,
+    65,
+    6,
+    6,
+    6,
+    6,
+    6,
+    15,
+    77,
+    31,
+    48,
+    194,
+    72,
+    83,
+    42,
+    50,
+    42,
+    76,
+    65,
+    65,
+    47,
+    6,
+    6,
+    6,
+    6,
+    15,
+    76,
+    73,
+    50,
+    50,
+    42,
+    42,
+    77,
+    73,
+    50,
+    198,
+    65,
+    65,
+    76,
+    76,
+    76,
+    76,
+    76,
+    76,
+    76,
+    76,
+    76,
+    76,
+    76,
+    76,
+    76,
+    76,
+    76,
+    199,
+    6,
+    6,
+    6,
+    6,
+    6,
+    15,
+    42,
+    200,
+    41,
+    34,
+    42,
+    42,
+    42,
+    41,
+    30,
+    42,
+    65,
+    65,
+    76,
+    76,
+    2,
+    6,
+    6,
+    6,
+    6,
+    6,
+    6,
+    15,
+    15,
+    76,
+    203,
+    46,
+    40,
+    133,
+    50,
+    77,
+    40,
+    204,
+    77,
+    176,
+    132,
+    33,
+    141,
+    42,
+    205,
+    77,
+    40,
+    206,
+    40,
+    26,
+    110,
+    99,
+    64,
+    65,
+    65,
+    76,
+    76,
+    76,
+    76,
+    76,
+    76,
+    76,
+    76,
+    76,
+    76,
+    76,
+    76,
+    107,
+    6,
+    6,
+    6,
+    6,
+    9,
+    76,
+    42,
+    69,
+    207,
+    37,
+    42,
+    77,
+    40,
+    45,
+    42,
+    210,
+    65,
+    65,
+    6,
+    6,
+    6,
+    6,
+    6,
+    14,
+    42,
+    41,
+    42,
+    34,
+    212,
+    40,
+    42,
+    137,
+    77,
+    91,
+    91,
+    89,
+    65,
+    65,
+    6,
+    6,
+    6,
+    6,
+    6,
+    15,
+    42,
+    48,
+    50,
+    49,
+    50,
+    42,
+    77,
+    151,
+    42,
+    168,
+    65,
+    65,
+    6,
+    6,
+    6,
+    6,
+    6,
+    128,
+    31,
+    50,
+    42,
+    40,
+    45,
+    170,
+    29,
+    42,
+    73,
+    65,
+    65,
+    6,
+    6,
+    6,
+    6,
+    6,
+    93,
+    82,
+    83,
+    40,
+    41,
+    88,
+    37,
+    167,
+    42,
+    46,
+    214,
+    64,
+    149,
+    6,
+    6,
+    6,
+    6,
+    6,
+    80,
+    215,
+    49,
+    77,
+    69,
+    67,
+    216,
+    50,
+    167,
+    110,
+    65,
+    65,
+    76,
+    76,
+    76,
+    76,
+    76,
+    76,
+    76,
+    76,
+    76,
+    76,
+    76,
+    76,
+    47,
+    6,
+    6,
+    6,
+    6,
+    6,
+    80,
+    67,
+    34,
+    221,
+    41,
+    222,
+    39,
+    33,
+    77,
+    38,
+    65,
+    65,
+    107,
+    6,
+    6,
+    6,
+    6,
+    15,
+    34,
+    95,
+    120,
+    42,
+    223,
+    42,
+    37,
+    95,
+    50,
+    65,
+    65,
+    108,
+    6,
+    6,
+    6,
+    6,
+    93,
+    34,
+    69,
+    167,
+    67,
+    34,
+    69,
+    41,
+    49,
+    191,
+    109,
+    65,
+    76,
+    76,
+    76,
+    76,
+    76,
+    76,
+    76,
+    76,
+    76,
+    76,
+    76,
+    76,
+    76,
+    76,
+    76,
+    76,
+    76,
+    76,
+    107,
+    6,
+    6,
+    6,
+    6,
+    6,
+    15,
+    42,
+    224,
+    50,
+    77,
+    50,
+    167,
+    67,
+    69,
+    77,
+    153,
+    65,
+    173,
+    6,
+    6,
+    6,
+    6,
+    15,
+    42,
+    33,
+    69,
+    206,
+    42,
+    77,
+    77,
+    40,
+    42,
+    65,
+    64,
+    47,
+    6,
+    6,
+    6,
+    6,
+    15,
+    41,
+    193,
+    42,
+    133,
+    40,
+    42,
+    39,
+    27,
+    40,
+    109,
+    47,
+    190,
+    6,
+    6,
+    6,
+    6,
+    6,
+    193,
+    41,
+    225,
+    137,
+    42,
+    42,
+    41,
+    73,
+    41,
+    230,
+    65,
+    173,
+    76,
+    76,
+    76,
+    76,
+    76,
+    76,
+    76,
+    76,
+    76,
+    76,
+    76,
+    76,
+    108,
+    6,
+    6,
+    6,
+    6,
+    6,
+    80,
+    200,
+    40,
+    41,
+    120,
+    40,
+    40,
+    40,
+    143,
+    76,
+    65,
+    65,
+    231,
+    6,
+    6,
+    6,
+    6,
+    15,
+    34,
+    34,
+    40,
+    157,
+    37,
+    42,
+    32,
+    41,
+    147,
+    76,
+    65,
+    149,
+    6,
+    6,
+    6,
+    6,
+    6,
+    80,
+    37,
+    39,
+    42,
+    42,
+    177,
+    194,
+    39,
+    42,
+    89,
+    65,
+    65,
+    6,
+    6,
+    6,
+    6,
+    6,
+    15,
+    50,
+    77,
+    34,
+    42,
+    120,
+    42,
+    42,
+    41,
+    37,
+    63,
+    65,
+    149,
+    76,
+    76,
+    76,
+    76,
+    76,
+    76,
+    76,
+    76,
+    76,
+    76,
+    76,
+    76,
+    76,
+    107,
+    6,
+    6,
+    6,
+    6,
+    6,
+    185,
+    232,
+    40,
+    120,
+    40,
+    82,
+    131,
+    42,
+    48,
+    161,
+    65,
+    65,
+    47,
+    6,
+    6,
+    6,
+    6,
+    93,
+    34,
+    233,
+    177,
+    41,
+    42,
+    42,
+    42,
+    68,
+    41,
+    91,
+    65,
+    65,
+    6,
+    6,
+    6,
+    6,
+    6,
+    15,
+    50,
+    46,
+    42,
+    77,
+    42,
+    139,
+    42,
+    95,
+    175,
+    64,
+    65,
+    6,
+    6,
+    6,
+    6,
+    6,
+    128,
+    40,
+    42,
+    126,
+    42,
+    42,
+    50,
+    42,
+    77,
+    124,
+    65,
+    65,
+    76,
+    76,
+    76,
+    76,
+    76,
+    76,
+    76,
+    76,
+    76,
+    76,
+    76,
+    76,
+    76,
+    76,
+    76,
+    107,
+    6,
+    6,
+    6,
+    6,
+    6,
+    80,
+    33,
+    86,
+    125,
+    42,
+    77,
+    234,
+    37,
+    120,
+    193,
+    109,
+    65,
+    149,
+    6,
+    6,
+    6,
+    6,
+    6,
+    149,
+    107,
+    47,
+    6,
+    6,
+    6,
+    6,
+    67,
+    68,
+    47,
+    50,
+    42,
+    42,
+    184,
+    65,
+    65,
+    6,
+    6,
+    6,
+    6,
+    6,
+    6,
+    6,
+    80,
+    93,
+    48,
+    142,
+    72,
+    133,
+    41,
+    37,
+    67,
+    37,
+    41,
+    48,
+    77,
+    39,
+    42,
+    77,
+    50,
+    39,
+    42,
+    194,
+    235,
+    40,
+    77,
+    77,
+    109,
+    109,
+    65,
+    64,
+    65,
+    65,
+    65,
+    76,
+    76,
+    76,
+    107,
+    6,
+    6,
+    6,
+    6,
+    93,
+    42,
+    42,
+    25,
+    50,
+    40,
+    42,
+    42,
+    65,
+    149,
+    66,
+    135,
+    135,
+    118,
+    6,
+    6,
+    6,
+    6,
+    6,
+    6,
+    6,
+    6,
+    6,
+    6,
+    6,
+    6,
+    6,
+    6,
+    7,
+    15,
+    93,
+    14,
+    39,
+    34,
+    42,
+    77,
+    42,
+    77,
+    42,
+    49,
+    77,
+    236,
+    126,
+    42,
+    77,
+    42,
+    46,
+    41,
+    45,
+    48,
+    50,
+    140,
+    74,
+    200,
+    73,
+    237,
+    130,
+    147,
+    104,
+    38,
+    30,
+    120,
+    41,
+    147,
+    42,
+    42,
+    171,
+    89,
+    60,
+    65,
+    65,
+    65,
+    47,
+    65,
+    149,
+    47,
+    6,
+    6,
+    6,
+    6,
+    6,
+    6,
+    6,
+    6,
+    6,
+    6,
+    93,
+    80,
+    238,
+    43,
+    40,
+    42,
+    77,
+    41,
+    42,
+    34,
+    41,
+    147,
+    50,
+    41,
+    42,
+    239,
+    224,
+    73,
+    240,
+    42,
+    42,
+    77,
+    42,
+    193,
+    43,
+    241,
+    167,
+    42,
+    60,
+    110,
+    65,
+    47,
+    64,
+    65,
+    65,
+    149,
+    66,
+    66,
+    6,
+    6,
+    6,
+    6,
+    6,
+    6,
+    6,
+    6,
+    6,
+    6,
+    128,
+    15,
+    71,
+    46,
+    41,
+    40,
+    50,
+    49,
+    77,
+    242,
+    41,
+    40,
+    41,
+    39,
+    32,
+    50,
+    49,
+    40,
+    42,
+    42,
+    77,
+    42,
+    194,
+    50,
+    168,
+    60,
+    65,
+    65,
+    152,
+    153,
+    65,
+    149,
+    76,
+    76,
+    76,
+    76,
+    76,
+    76,
+    107,
+    6,
+    6,
+    6,
+    6,
+    243,
+    112,
+    42,
+    48,
+    34,
+    246,
+    46,
+    42,
+    142,
+    247,
+    65,
+    76,
+    76,
+    76,
+    76,
+    76,
+    76,
+    76,
+    76,
+    76,
+    76,
+    76,
+    76,
+    76,
+    108,
+    6,
+    6,
+    6,
+    6,
+    128,
+    34,
+    194,
+    41,
+    40,
+    45,
+    83,
+    143,
+    109,
+    65,
+    65,
+    6,
+    6,
+    6,
+    6,
+    14,
+    167,
+    50,
+    42,
+    42,
+    33,
+    104,
+    49,
+    99,
+    63,
+    65,
+    149,
+    6,
+    6,
+    6,
+    6,
+    128,
+    139,
+    41,
+    42,
+    143,
+    250,
+    42,
+    47,
+    49,
+    42,
+    65,
+    149,
+    66,
+    118,
+    108,
+    2,
+    6,
+    6,
+    6,
+    6,
+    6,
+    6,
+    6,
+    6,
+    6,
+    15,
+    15,
+    14,
+    177,
+    50,
+    83,
+    40,
+    42,
+    42,
+    40,
+    46,
+    45,
+    77,
+    40,
+    39,
+    37,
+    42,
+    41,
+    40,
+    33,
+    41,
+    77,
+    40,
+    71,
+    49,
+    41,
+    92,
+    65,
+    65,
+    149,
+    6,
+    6,
+    6,
+    6,
+    185,
+    170,
+    167,
+    40,
+    176,
+    184,
+    124,
+    50,
+    65,
+    149,
+    108,
+    6,
+    6,
+    6,
+    15,
+    42,
+    251,
+    42,
+    252,
+    37,
+    49,
+    40,
+    109,
+    64,
+    65,
+    76,
+    107,
+    6,
+    6,
+    6,
+    6,
+    6,
+    10,
+    15,
+    184,
+    37,
+    42,
+    183,
+    86,
+    42,
+    49,
+    42,
+    7,
+    65,
+    149,
+    6,
+    6,
+    6,
+    6,
+    6,
+    15,
+    47,
+    42,
+    42,
+    122,
+    42,
+    34,
+    50,
+    143,
+    138,
+    65,
+    65,
+    6,
+    6,
+    6,
+    6,
+    6,
+    253,
+    46,
+    34,
+    40,
+    41,
+    42,
+    42,
+    42,
+    39,
+    90,
+    65,
+    65,
+    76,
+    76,
+    76,
+    76,
+    76,
+    254,
+    6,
+    6,
+    6,
+    6,
+    12,
+    255,
+    42,
+    49,
+    77,
+    45,
+    222,
+    120,
+    42,
+    41,
+    50,
+    65,
+    152,
+    107,
+    6,
+    6,
+    6,
+    6,
+    93,
+    170,
+    34,
+    39,
+    50,
+    47,
+    50,
+    39,
+    151,
+    256,
+    62,
+    47,
+    65,
+    6,
+    6,
+    6,
+    6,
+    6,
+    93,
+    77,
+    42,
+    42,
+    43,
+    257,
+    34,
+    23,
+    184,
+    42,
+    65,
+    65,
+    107,
+    6,
+    6,
+    6,
+    6,
+    6,
+    15,
+    248,
+    42,
+    41,
+    216,
+    95,
+    129,
+    77,
+    233,
+    20,
+    65,
+    64,
+    76,
+    76,
+    76,
+    76,
+    76,
+    76,
+    76,
+    76,
+    76,
+    76,
+    76,
+    76,
+    76,
+    107,
+    6,
+    6,
+    6,
+    6,
+    6,
+    47,
+    42,
+    258,
+    42,
+    74,
+    33,
+    37,
+    40,
+    77,
+    45,
+    91,
+    65,
+    65,
+    6,
+    6,
+    6,
+    6,
+    6,
+    15,
+    50,
+    41,
+    21,
+    50,
+    37,
+    39,
+    42,
+    259,
+    246,
+    89,
+    65,
+    65,
+    6,
+    6,
+    6,
+    6,
+    6,
+    15,
+    28,
+    40,
+    45,
+    42,
+    42,
+    41,
+    39,
+    27,
+    50,
+    109,
+    64,
+    65,
+    2,
+    6,
+    6,
+    6,
+    6,
+    93,
+    42,
+    150,
+    194,
+    42,
+    42,
+    26,
+    26,
+    95,
+    40,
+    89,
+    65,
+    65,
+    76,
+    76,
+    76,
+    76,
+    76,
+    76,
+    76,
+    76,
+    76,
+    76,
+    76,
+    76,
+    76,
+    76,
+    76,
+    47,
+    6,
+    6,
+    6,
+    6,
+    6,
+    261,
+    15,
+    262,
+    38,
+    42,
+    42,
+    206,
+    42,
+    42,
+    263,
+    41,
+    47,
+    65,
+    108,
+    6,
+    6,
+    6,
+    6,
+    6,
+    15,
+    95,
+    41,
+    33,
+    264,
+    49,
+    45,
+    42,
+    39,
+    91,
+    65,
+    65,
+    108,
+    6,
+    6,
+    6,
+    6,
+    6,
+    93,
+    42,
+    37,
+    47,
+    142,
+    41,
+    42,
+    39,
+    45,
+    228,
+    65,
+    65,
+    108,
+    6,
+    6,
+    6,
+    6,
+    185,
+    129,
+    77,
+    95,
+    39,
+    41,
+    34,
+    129,
+    42,
+    42,
+    109,
+    138,
+    65,
+    65,
+    76,
+    76,
+    76,
+    76,
+    76,
+    76,
+    76,
+    76,
+    76,
+    76,
+    76,
+    76,
+    76,
+    76,
+    76,
+    267,
+    6,
+    6,
+    6,
+    6,
+    6,
+    6,
+    15,
+    10,
+    42,
+    42,
+    42,
+    34,
+    74,
+    42,
+    69,
+    41,
+    42,
+    90,
+    65,
+    149,
+    6,
+    6,
+    6,
+    6,
+    6,
+    15,
+    73,
+    67,
+    143,
+    46,
+    42,
+    42,
+    49,
+    77,
+    90,
+    64,
+    65,
+    6,
+    6,
+    6,
+    6,
+    6,
+    15,
+    42,
+    77,
+    67,
+    50,
+    41,
+    49,
+    268,
+    129,
+    41,
+    99,
+    65,
+    64,
+    6,
+    6,
+    6,
+    6,
+    6,
+    15,
+    41,
+    223,
+    72,
+    77,
+    30,
+    120,
+    42,
+    41,
+    86,
+    65,
+    65,
+    76,
+    76,
+    76,
+    76,
+    76,
+    76,
+    76,
+    76,
+    76,
+    76,
+    76,
+    76,
+    76,
+    76,
+    76,
+    108,
+    6,
+    6,
+    6,
+    6,
+    6,
+    80,
+    37,
+    47,
+    77,
+    40,
+    40,
+    50,
+    125,
+    50,
+    42,
+    138,
+    65,
+    108
+  ],
+  "timeDeltas": [
+    56447,
+    340,
+    149,
+    152,
+    155,
+    155,
+    160,
+    174,
+    120,
+    155,
+    150,
+    154,
+    148,
+    154,
+    156,
+    152,
+    151,
+    157,
+    151,
+    156,
+    152,
+    154,
+    144,
+    158,
+    183,
+    154,
+    154,
+    156,
+    154,
+    153,
+    154,
+    154,
+    153,
+    152,
+    154,
+    151,
+    156,
+    151,
+    143,
+    156,
+    153,
+    152,
+    154,
+    151,
+    154,
+    155,
+    153,
+    154,
+    157,
+    153,
+    157,
+    154,
+    154,
+    151,
+    155,
+    149,
+    154,
+    148,
+    151,
+    151,
+    155,
+    153,
+    155,
+    152,
+    154,
+    154,
+    154,
+    152,
+    153,
+    154,
+    155,
+    154,
+    155,
+    150,
+    154,
+    150,
+    157,
+    154,
+    157,
+    151,
+    152,
+    153,
+    148,
+    153,
+    151,
+    154,
+    219,
+    155,
+    157,
+    155,
+    156,
+    159,
+    154,
+    155,
+    155,
+    157,
+    157,
+    157,
+    156,
+    154,
+    158,
+    152,
+    157,
+    191,
+    149,
+    156,
+    153,
+    155,
+    154,
+    156,
+    153,
+    150,
+    154,
+    149,
+    154,
+    154,
+    156,
+    151,
+    155,
+    157,
+    153,
+    155,
+    148,
+    151,
+    154,
+    153,
+    152,
+    155,
+    153,
+    155,
+    154,
+    159,
+    191,
+    161,
+    168,
+    181,
+    151,
+    154,
+    150,
+    153,
+    155,
+    149,
+    173,
+    147,
+    156,
+    151,
+    142,
+    156,
+    180,
+    153,
+    158,
+    154,
+    149,
+    153,
+    153,
+    155,
+    151,
+    152,
+    151,
+    155,
+    155,
+    149,
+    155,
+    153,
+    153,
+    149,
+    155,
+    152,
+    154,
+    154,
+    156,
+    148,
+    157,
+    151,
+    149,
+    160,
+    151,
+    154,
+    150,
+    168,
+    158,
+    151,
+    160,
+    164,
+    157,
+    153,
+    156,
+    155,
+    154,
+    156,
+    158,
+    155,
+    156,
+    171,
+    157,
+    155,
+    158,
+    159,
+    155,
+    155,
+    180,
+    161,
+    152,
+    143,
+    158,
+    155,
+    154,
+    153,
+    154,
+    152,
+    155,
+    149,
+    151,
+    155,
+    151,
+    160,
+    154,
+    155,
+    155,
+    154,
+    154,
+    152,
+    158,
+    149,
+    152,
+    154,
+    155,
+    155,
+    149,
+    155,
+    151,
+    154,
+    154,
+    155,
+    152,
+    157,
+    151,
+    155,
+    149,
+    154,
+    190,
+    155,
+    155,
+    161,
+    155,
+    184,
+    153,
+    156,
+    153,
+    156,
+    150,
+    154,
+    154,
+    154,
+    150,
+    155,
+    151,
+    178,
+    150,
+    159,
+    155,
+    152,
+    154,
+    157,
+    155,
+    155,
+    140,
+    155,
+    151,
+    155,
+    150,
+    155,
+    151,
+    156,
+    151,
+    154,
+    151,
+    157,
+    154,
+    187,
+    157,
+    157,
+    157,
+    155,
+    156,
+    156,
+    155,
+    160,
+    156,
+    157,
+    157,
+    158,
+    152,
+    158,
+    193,
+    153,
+    150,
+    154,
+    156,
+    154,
+    152,
+    180,
+    155,
+    166,
+    155,
+    156,
+    154,
+    152,
+    158,
+    155,
+    153,
+    151,
+    156,
+    149,
+    154,
+    186,
+    156,
+    157,
+    156,
+    154,
+    154,
+    155,
+    158,
+    156,
+    156,
+    185,
+    156,
+    154,
+    156,
+    162,
+    153,
+    154,
+    152,
+    160,
+    151,
+    156,
+    157,
+    154,
+    156,
+    154,
+    156,
+    152,
+    155,
+    159,
+    169,
+    151,
+    153,
+    138,
+    154,
+    154,
+    157,
+    183,
+    184,
+    162,
+    146,
+    153,
+    154,
+    160,
+    158,
+    152,
+    156,
+    164,
+    172,
+    150,
+    152,
+    154,
+    153,
+    154,
+    203,
+    161,
+    154,
+    154,
+    155,
+    150,
+    155,
+    151,
+    157,
+    149,
+    151,
+    154,
+    176,
+    158,
+    161,
+    153,
+    154,
+    155,
+    154,
+    154,
+    155,
+    159,
+    151,
+    154,
+    150,
+    155,
+    154,
+    150,
+    156,
+    155,
+    155,
+    154,
+    154,
+    151,
+    156,
+    154,
+    154,
+    154,
+    154,
+    159,
+    154,
+    151,
+    154,
+    159,
+    145,
+    152,
+    155,
+    151,
+    154,
+    149,
+    156,
+    148,
+    156,
+    154,
+    155,
+    155,
+    156,
+    153,
+    154,
+    152,
+    158,
+    151,
+    154,
+    152,
+    156,
+    150,
+    158,
+    152,
+    151,
+    155,
+    151,
+    150,
+    158,
+    151,
+    156,
+    157,
+    149,
+    155,
+    154,
+    154,
+    139,
+    154,
+    154,
+    155,
+    151,
+    154,
+    155,
+    156,
+    156,
+    153,
+    154,
+    152,
+    155,
+    155,
+    152,
+    150,
+    154,
+    152,
+    154,
+    151,
+    154,
+    153,
+    154,
+    158,
+    227,
+    156,
+    154,
+    155,
+    154,
+    155,
+    154,
+    154,
+    155,
+    155,
+    156,
+    199,
+    178,
+    150,
+    155,
+    158,
+    154,
+    153,
+    156,
+    152,
+    154,
+    148,
+    154,
+    150,
+    154,
+    152,
+    159,
+    152,
+    154,
+    150,
+    155,
+    151,
+    156,
+    150,
+    159,
+    155,
+    155,
+    152,
+    155,
+    152,
+    156,
+    151,
+    154,
+    151,
+    155,
+    150,
+    154,
+    152,
+    157,
+    153,
+    154,
+    154,
+    154,
+    167,
+    143,
+    154,
+    155,
+    152,
+    155,
+    150,
+    154,
+    151,
+    155,
+    151,
+    155,
+    166,
+    159,
+    155,
+    155,
+    165,
+    145,
+    155,
+    154,
+    155,
+    161,
+    150,
+    144,
+    156,
+    154,
+    155,
+    156,
+    157,
+    193,
+    176,
+    154,
+    152,
+    153,
+    155,
+    154,
+    155,
+    154,
+    146,
+    155,
+    150,
+    154,
+    149,
+    157,
+    154,
+    150,
+    154,
+    149,
+    154,
+    152,
+    155,
+    156,
+    154,
+    152,
+    154,
+    154,
+    153,
+    153,
+    156,
+    153,
+    154,
+    155,
+    154,
+    149,
+    158,
+    148,
+    152,
+    154,
+    152,
+    154,
+    154,
+    151,
+    155,
+    157,
+    152,
+    154,
+    151,
+    154,
+    152,
+    157,
+    152,
+    154,
+    151,
+    154,
+    151,
+    155,
+    153,
+    155,
+    154,
+    154,
+    154,
+    154,
+    154,
+    151,
+    158,
+    152,
+    154,
+    151,
+    157,
+    153,
+    155,
+    152,
+    149,
+    154,
+    190,
+    156,
+    155,
+    156,
+    152,
+    155,
+    156,
+    158,
+    155,
+    155,
+    156,
+    157,
+    201,
+    147,
+    153,
+    151,
+    154,
+    153,
+    154,
+    139,
+    154,
+    150,
+    155,
+    150,
+    157,
+    152,
+    157,
+    154,
+    149,
+    154,
+    154,
+    177,
+    150,
+    153,
+    153,
+    155,
+    154,
+    150,
+    154,
+    152,
+    158,
+    151,
+    156,
+    150,
+    179,
+    157,
+    171,
+    158,
+    157,
+    152,
+    155,
+    155,
+    152,
+    155,
+    157,
+    152,
+    154,
+    151,
+    154,
+    151,
+    155,
+    154,
+    155,
+    153,
+    153,
+    134,
+    155,
+    154,
+    152,
+    158,
+    155,
+    155,
+    154,
+    150,
+    158,
+    151,
+    154,
+    152,
+    155,
+    151,
+    157,
+    173,
+    160,
+    150,
+    155,
+    153,
+    166,
+    154,
+    159,
+    154,
+    157,
+    156,
+    153,
+    154,
+    154,
+    154,
+    155,
+    157,
+    156,
+    153,
+    154,
+    157,
+    153,
+    154,
+    154,
+    154,
+    153,
+    154,
+    154,
+    154,
+    153,
+    162,
+    152,
+    155,
+    156,
+    161,
+    166,
+    165,
+    153,
+    153,
+    153,
+    154,
+    155,
+    152,
+    155,
+    157,
+    156,
+    148,
+    154,
+    154,
+    157,
+    150,
+    153,
+    154,
+    150,
+    154,
+    149,
+    154,
+    152,
+    161,
+    151,
+    152,
+    154,
+    154,
+    157,
+    152,
+    151,
+    150,
+    155,
+    154,
+    154,
+    152,
+    152,
+    151,
+    157,
+    149,
+    155,
+    155,
+    151,
+    154,
+    153,
+    154,
+    152,
+    158,
+    140,
+    154,
+    150,
+    157,
+    156,
+    154,
+    150,
+    155,
+    150,
+    156,
+    153,
+    153,
+    153,
+    154,
+    152,
+    154,
+    155,
+    151,
+    156,
+    153,
+    154,
+    150,
+    154,
+    151,
+    155,
+    150,
+    155,
+    153,
+    188,
+    155,
+    156,
+    153,
+    156,
+    158,
+    155,
+    155,
+    157,
+    160,
+    155,
+    155,
+    155,
+    173,
+    150,
+    156,
+    151,
+    152,
+    156,
+    153,
+    154,
+    154,
+    148,
+    157,
+    150,
+    151,
+    154,
+    150,
+    153,
+    151,
+    155,
+    152,
+    156,
+    153,
+    154,
+    154,
+    154,
+    153,
+    156,
+    153,
+    154,
+    153,
+    157,
+    150,
+    156,
+    154,
+    154,
+    158,
+    152,
+    154,
+    154,
+    153,
+    154,
+    154,
+    152,
+    156,
+    180,
+    153,
+    155,
+    154,
+    153,
+    159,
+    155,
+    155,
+    143,
+    154,
+    159,
+    151,
+    155,
+    155,
+    154,
+    162,
+    165,
+    156,
+    145,
+    155,
+    153,
+    156,
+    153,
+    154,
+    149,
+    155,
+    152,
+    154,
+    151,
+    213,
+    151,
+    161,
+    152,
+    155,
+    154,
+    156,
+    157,
+    159,
+    157,
+    156,
+    155,
+    161,
+    165,
+    184,
+    152,
+    152,
+    165,
+    173,
+    165,
+    168,
+    155,
+    163,
+    149,
+    152,
+    151,
+    156,
+    152,
+    156,
+    163,
+    159,
+    158,
+    166,
+    165,
+    159,
+    154,
+    160,
+    162,
+    161,
+    156,
+    159,
+    151,
+    157,
+    157,
+    166,
+    161,
+    161,
+    154,
+    155,
+    155,
+    154,
+    156,
+    157,
+    153,
+    156,
+    154,
+    164,
+    160,
+    172,
+    167,
+    177,
+    155,
+    151,
+    156,
+    147,
+    154,
+    153,
+    152,
+    153,
+    152,
+    152,
+    153,
+    154,
+    159,
+    153,
+    153,
+    154,
+    157,
+    151,
+    153,
+    142,
+    154,
+    152,
+    155,
+    151,
+    157,
+    151,
+    156,
+    151,
+    184,
+    158,
+    157,
+    159,
+    157,
+    157,
+    165,
+    155,
+    156,
+    157,
+    155,
+    156,
+    157,
+    173,
+    143,
+    195,
+    151,
+    150,
+    153,
+    169,
+    178,
+    157,
+    154,
+    147,
+    155,
+    151,
+    160,
+    151,
+    154,
+    155,
+    154,
+    150,
+    154,
+    152,
+    157,
+    154,
+    184,
+    155,
+    168,
+    144,
+    156,
+    163,
+    155,
+    183,
+    158,
+    156,
+    169,
+    181,
+    149,
+    156,
+    151,
+    157,
+    155,
+    157,
+    143,
+    158,
+    151,
+    157,
+    153,
+    153,
+    155,
+    153,
+    156,
+    165,
+    156,
+    159,
+    190,
+    149,
+    125,
+    157,
+    172,
+    163,
+    182,
+    184,
+    180,
+    146,
+    156,
+    155,
+    178,
+    168,
+    154,
+    172,
+    161,
+    165,
+    161,
+    155,
+    155,
+    185,
+    161,
+    156,
+    178,
+    156,
+    147,
+    154,
+    153,
+    155,
+    150,
+    155,
+    150,
+    154,
+    158,
+    154,
+    155,
+    155,
+    154,
+    154,
+    154,
+    154,
+    156,
+    151,
+    154,
+    151,
+    157,
+    151,
+    151,
+    154,
+    150,
+    154,
+    154,
+    154,
+    156,
+    155,
+    157,
+    156,
+    157,
+    154,
+    154,
+    156,
+    154,
+    150,
+    155,
+    152,
+    154,
+    155,
+    152,
+    151,
+    155,
+    154,
+    154,
+    155,
+    155,
+    152,
+    154,
+    156,
+    155,
+    154,
+    153,
+    151,
+    154,
+    150,
+    154,
+    151,
+    156,
+    152,
+    156,
+    141,
+    153,
+    153,
+    153,
+    153,
+    154,
+    153,
+    153,
+    156,
+    154,
+    166,
+    164,
+    156,
+    154,
+    153,
+    159,
+    155,
+    155,
+    149,
+    160,
+    161,
+    158,
+    154,
+    153,
+    153,
+    156,
+    156,
+    149,
+    155,
+    151,
+    154,
+    161,
+    159,
+    155,
+    154,
+    152,
+    159,
+    186,
+    158,
+    159,
+    155,
+    160,
+    160,
+    153,
+    155,
+    156,
+    159,
+    156,
+    160,
+    203,
+    167,
+    154,
+    151,
+    157,
+    155,
+    154,
+    154,
+    148,
+    157,
+    151,
+    154,
+    142,
+    154,
+    152,
+    159,
+    148,
+    149,
+    153,
+    157,
+    154,
+    154,
+    155,
+    157,
+    152,
+    152,
+    157,
+    149,
+    156,
+    160,
+    154,
+    152,
+    156,
+    152,
+    154,
+    156,
+    159,
+    152,
+    153,
+    158,
+    156,
+    156,
+    152,
+    154,
+    154,
+    155,
+    154,
+    156,
+    158,
+    153,
+    158,
+    151,
+    155,
+    183,
+    155,
+    159,
+    153,
+    158,
+    155,
+    156,
+    158,
+    160,
+    158,
+    155,
+    155,
+    155,
+    156,
+    156,
+    155,
+    204,
+    157,
+    154,
+    153,
+    154,
+    152,
+    161,
+    155,
+    154,
+    148,
+    159,
+    150,
+    154,
+    151,
+    154,
+    151,
+    154,
+    151,
+    154,
+    152,
+    155,
+    156,
+    154,
+    153,
+    154,
+    154,
+    152,
+    151,
+    156,
+    151,
+    154,
+    152,
+    153,
+    151,
+    153,
+    154,
+    155,
+    154,
+    154,
+    152,
+    154,
+    154,
+    153,
+    142,
+    158,
+    151,
+    155,
+    151,
+    155,
+    155,
+    155,
+    151,
+    156,
+    150,
+    155,
+    153,
+    152,
+    154,
+    154,
+    154,
+    156,
+    152,
+    155,
+    156,
+    155,
+    152,
+    154,
+    150,
+    157,
+    150,
+    157,
+    187,
+    154,
+    158,
+    157,
+    152,
+    156,
+    158,
+    157,
+    156,
+    158,
+    155,
+    154,
+    200,
+    153,
+    151,
+    153,
+    157,
+    154,
+    155,
+    154,
+    154,
+    154,
+    151,
+    154,
+    153,
+    153,
+    151,
+    155,
+    151,
+    154,
+    154,
+    153,
+    153,
+    154,
+    154,
+    158,
+    153,
+    154,
+    156,
+    152,
+    155,
+    151,
+    154,
+    151,
+    154,
+    153,
+    153,
+    156,
+    154,
+    155,
+    152,
+    154,
+    153,
+    156,
+    154,
+    151,
+    154,
+    154,
+    154,
+    151,
+    154,
+    152,
+    153,
+    153,
+    155,
+    158,
+    152,
+    153,
+    153,
+    153,
+    154,
+    154,
+    140,
+    154,
+    150,
+    154,
+    150,
+    163,
+    151,
+    154,
+    152,
+    157,
+    153,
+    184,
+    163,
+    153,
+    156,
+    156,
+    154,
+    156,
+    157,
+    156,
+    156,
+    156,
+    157,
+    162,
+    194,
+    156,
+    155,
+    156,
+    154,
+    155,
+    156,
+    154,
+    148,
+    154,
+    153,
+    155,
+    150,
+    155,
+    151,
+    154,
+    150,
+    152,
+    153,
+    157,
+    153,
+    154,
+    154,
+    154,
+    158,
+    154,
+    153,
+    152,
+    154,
+    150,
+    154,
+    151,
+    153,
+    150,
+    157,
+    150,
+    156,
+    151,
+    159,
+    152,
+    174,
+    179,
+    158,
+    150,
+    155,
+    151,
+    155,
+    152,
+    154,
+    152,
+    157,
+    152,
+    156,
+    160,
+    151,
+    153,
+    154,
+    154,
+    154,
+    155,
+    150,
+    154,
+    151,
+    157,
+    149,
+    153,
+    155,
+    152,
+    155,
+    152,
+    155,
+    185,
+    157,
+    156,
+    154,
+    156,
+    155,
+    147,
+    155,
+    156,
+    155,
+    155,
+    155,
+    156,
+    156,
+    191,
+    155,
+    155,
+    152,
+    153,
+    154,
+    155,
+    156,
+    149,
+    154,
+    153,
+    157,
+    150,
+    154,
+    151,
+    154,
+    152,
+    154,
+    155,
+    176,
+    155,
+    156,
+    150,
+    155,
+    30290,
+    11,
+    222,
+    177,
+    172,
+    214,
+    184,
+    208,
+    264,
+    198,
+    212,
+    208,
+    160,
+    209,
+    203,
+    163,
+    1523,
+    189,
+    209,
+    204,
+    205,
+    208,
+    167,
+    208,
+    206,
+    202,
+    165,
+    200,
+    206,
+    153,
+    207,
+    202,
+    206,
+    207,
+    202,
+    208,
+    231,
+    200,
+    208,
+    205,
+    203,
+    205,
+    204,
+    203,
+    213,
+    166,
+    203,
+    206,
+    202,
+    210,
+    202,
+    208,
+    180,
+    207,
+    224,
+    6012,
+    26459,
+    102,
+    202,
+    211,
+    188,
+    208,
+    175,
+    211,
+    193,
+    224,
+    205,
+    210,
+    185,
+    214,
+    197,
+    247,
+    143,
+    152,
+    158,
+    152,
+    168,
+    185,
+    138,
+    154,
+    156,
+    157,
+    158,
+    152,
+    156,
+    156,
+    155,
+    156,
+    251,
+    156,
+    159,
+    156,
+    160,
+    149,
+    157,
+    199,
+    147,
+    156,
+    153,
+    176,
+    152,
+    154,
+    154,
+    160,
+    153,
+    156,
+    152,
+    152,
+    153,
+    156,
+    151,
+    207,
+    157,
+    155,
+    155,
+    156,
+    150,
+    156,
+    156,
+    157,
+    155,
+    151,
+    152,
+    181,
+    164,
+    148,
+    154,
+    156,
+    152,
+    155,
+    204,
+    206,
+    205,
+    208,
+    206,
+    296,
+    229,
+    190,
+    208,
+    206,
+    214,
+    203,
+    203,
+    207,
+    170,
+    205,
+    211,
+    201,
+    210,
+    207,
+    158,
+    280,
+    145,
+    151,
+    211,
+    202,
+    172,
+    166,
+    197,
+    204,
+    197,
+    199,
+    204,
+    172,
+    200,
+    223,
+    193,
+    188,
+    200,
+    171,
+    203,
+    201,
+    207,
+    197,
+    193,
+    201,
+    209,
+    198,
+    206,
+    203,
+    206,
+    209,
+    202,
+    210,
+    151,
+    158,
+    205,
+    200,
+    211,
+    167,
+    207,
+    207,
+    205,
+    206,
+    209,
+    220,
+    196,
+    206,
+    194,
+    208,
+    163,
+    208,
+    151,
+    207,
+    170,
+    207,
+    200,
+    206,
+    205,
+    196,
+    201,
+    198,
+    205,
+    193,
+    205,
+    202,
+    208,
+    201,
+    207,
+    200,
+    205,
+    203,
+    183,
+    195,
+    208,
+    207,
+    211,
+    207,
+    6729,
+    314,
+    676,
+    161,
+    145,
+    171,
+    164,
+    153,
+    201,
+    153,
+    203,
+    152,
+    171,
+    150,
+    205,
+    147,
+    156,
+    162,
+    204,
+    200,
+    205,
+    201,
+    193,
+    407,
+    2856,
+    7,
+    158,
+    149,
+    196,
+    588,
+    201,
+    204,
+    251,
+    64,
+    846,
+    172,
+    200,
+    202,
+    202,
+    174,
+    195,
+    204,
+    157,
+    207,
+    166,
+    177,
+    200,
+    200,
+    178,
+    160,
+    203,
+    203,
+    201,
+    155,
+    205,
+    205,
+    203,
+    154,
+    161,
+    203,
+    200,
+    203,
+    155,
+    156,
+    181,
+    200,
+    196,
+    183,
+    155,
+    162,
+    159,
+    188,
+    161,
+    147,
+    162,
+    154,
+    161,
+    155,
+    177,
+    158,
+    181,
+    205,
+    232,
+    190,
+    160,
+    156,
+    157,
+    223,
+    183,
+    207,
+    206,
+    206,
+    209,
+    207,
+    206,
+    207,
+    207,
+    208,
+    171,
+    204,
+    205,
+    197,
+    223,
+    190,
+    200,
+    207,
+    201,
+    163,
+    277,
+    188,
+    194,
+    195,
+    205,
+    207,
+    201,
+    207,
+    172,
+    172,
+    201,
+    183,
+    276,
+    97,
+    203,
+    168,
+    216,
+    43135,
+    209,
+    206,
+    209,
+    208,
+    165,
+    159,
+    197,
+    209,
+    205,
+    209,
+    203,
+    209,
+    205,
+    1760,
+    69,
+    209,
+    207,
+    211,
+    165,
+    211,
+    202,
+    211,
+    191,
+    177,
+    156,
+    163,
+    152,
+    160,
+    191,
+    4277,
+    162,
+    199,
+    164,
+    156,
+    177,
+    165,
+    174,
+    162,
+    355,
+    140,
+    165,
+    161,
+    146,
+    162,
+    153,
+    161,
+    156,
+    161,
+    164,
+    166,
+    160,
+    159,
+    161,
+    162,
+    161,
+    161,
+    190,
+    163,
+    155,
+    162,
+    154,
+    162,
+    158,
+    166,
+    156,
+    162,
+    161,
+    176,
+    165,
+    160,
+    162,
+    159,
+    162,
+    152,
+    162,
+    155,
+    160,
+    160,
+    162,
+    156,
+    162,
+    155,
+    161,
+    370,
+    4981,
+    371,
+    173,
+    149,
+    156,
+    152,
+    150,
+    154,
+    154,
+    155,
+    152,
+    150,
+    157,
+    162,
+    145,
+    151,
+    156,
+    154,
+    150,
+    155,
+    152,
+    154,
+    154,
+    154,
+    159,
+    152,
+    154,
+    155,
+    154,
+    140,
+    154,
+    151,
+    155,
+    153,
+    155,
+    152,
+    152,
+    154,
+    148,
+    156,
+    157,
+    148,
+    154,
+    154,
+    154,
+    154,
+    155,
+    160,
+    154,
+    151,
+    155,
+    155,
+    154,
+    152,
+    155,
+    150,
+    155,
+    153,
+    156,
+    154,
+    154,
+    158,
+    154,
+    155,
+    155,
+    149,
+    155,
+    152,
+    157,
+    151,
+    154,
+    150,
+    154,
+    152,
+    154,
+    157,
+    167,
+    161,
+    155,
+    155,
+    157,
+    157,
+    155,
+    155,
+    157,
+    155,
+    155,
+    156,
+    180,
+    159,
+    151,
+    152,
+    162,
+    154,
+    156,
+    156,
+    153,
+    148,
+    155,
+    155,
+    154,
+    152,
+    155,
+    151,
+    159,
+    149,
+    155,
+    153,
+    155,
+    155,
+    154,
+    153,
+    155,
+    154,
+    148,
+    154,
+    152,
+    155,
+    155,
+    154,
+    153,
+    155,
+    155,
+    157,
+    161,
+    156,
+    151,
+    154,
+    152,
+    154,
+    145,
+    155,
+    153,
+    154,
+    151,
+    154,
+    151,
+    155,
+    152,
+    154,
+    151,
+    154,
+    152,
+    158,
+    153,
+    134,
+    193,
+    154,
+    165,
+    154,
+    146,
+    157,
+    149,
+    155,
+    151,
+    155,
+    151,
+    155,
+    150,
+    154,
+    153,
+    158,
+    171,
+    155,
+    161,
+    156,
+    158,
+    154,
+    158,
+    156,
+    155,
+    156,
+    155,
+    158,
+    157,
+    170,
+    160,
+    153,
+    153,
+    152,
+    154,
+    154,
+    154,
+    154,
+    151,
+    153,
+    149,
+    154,
+    153,
+    153,
+    151,
+    154,
+    152,
+    158,
+    152,
+    157,
+    153,
+    151,
+    153,
+    154,
+    154,
+    155,
+    154,
+    155,
+    154,
+    152,
+    155,
+    167,
+    139,
+    149,
+    149,
+    156,
+    152,
+    155,
+    153,
+    152,
+    151,
+    158,
+    154,
+    153,
+    155,
+    151,
+    150,
+    156,
+    154,
+    150,
+    153,
+    150,
+    154,
+    140,
+    156,
+    154,
+    156,
+    154,
+    153,
+    157,
+    157,
+    153,
+    153,
+    155,
+    150,
+    154,
+    149,
+    155,
+    151,
+    156,
+    155,
+    217,
+    93,
+    156,
+    157,
+    172,
+    153,
+    156,
+    155,
+    156,
+    196,
+    153,
+    171,
+    170,
+    164,
+    155,
+    156,
+    154,
+    175,
+    146,
+    162,
+    148,
+    165,
+    146,
+    163,
+    169,
+    166,
+    151,
+    165,
+    141,
+    149,
+    154,
+    151,
+    154,
+    150,
+    154,
+    150,
+    154,
+    150,
+    157,
+    154,
+    154,
+    157,
+    154,
+    154,
+    155,
+    154,
+    150,
+    158,
+    152,
+    152,
+    154,
+    151,
+    155,
+    151,
+    155,
+    157,
+    155,
+    153,
+    154,
+    157,
+    154,
+    154,
+    154,
+    151,
+    155,
+    152,
+    154,
+    150,
+    176,
+    163,
+    154,
+    152,
+    153,
+    151,
+    156,
+    159,
+    159,
+    158,
+    158,
+    154,
+    155,
+    149,
+    155,
+    137,
+    158,
+    163,
+    164,
+    162,
+    163,
+    152,
+    157,
+    154,
+    169,
+    160,
+    156,
+    154,
+    156,
+    157,
+    158,
+    155,
+    155,
+    156,
+    157,
+    155,
+    155,
+    156,
+    168,
+    151,
+    152,
+    159,
+    153,
+    157,
+    159,
+    154,
+    146,
+    159,
+    153,
+    150,
+    167,
+    164,
+    151,
+    155,
+    152,
+    155,
+    151
+  ]
+}

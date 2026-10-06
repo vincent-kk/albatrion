@@ -1,0 +1,928 @@
+{
+  "HEAD": "268832c7cb6eea67475b56ab5a78408a55ec47a3",
+  "version": "old",
+  "name": "nested-d4-f4",
+  "countingOnly": true,
+  "dimensions": {
+    "liveNodes": 341,
+    "schemaObjects": 341,
+    "schemaDepthSum": 1252,
+    "runtimeKeys": [],
+    "constructedNodes": 341
+  },
+  "counts": {
+    "function|packages/canard/schema-form/src/__legacy__/core/nodeFromJSONSchema.ts:34|nodeFromJSONSchema": 1,
+    "function|packages/canard/schema-form/src/__legacy__/helpers/jsonSchema/getResolveSchema/getResolveSchema.ts:18|getResolveSchema": 1,
+    "function|packages/canard/schema-form/src/__legacy__/helpers/jsonSchema/getResolveSchema/utils/getReferenceTable.ts:12|getReferenceTable": 1,
+    "function|packages/winglet/json-schema/dist/utils/JSONSchemaScanner/sync/JSONSchemaScanner.cjs:10|class.constructor": 1,
+    "function|packages/winglet/json-schema/dist/utils/JSONSchemaScanner/sync/JSONSchemaScanner.cjs:15|scan": 1,
+    "function|packages/winglet/json-schema/dist/utils/JSONSchemaScanner/sync/JSONSchemaScanner.cjs:47|__run__": 1,
+    "function|packages/winglet/json-schema/dist/utils/JSONSchemaScanner/utils/scannerFactory.cjs:17|scannerFactory": 1,
+    "loop|packages/winglet/json-schema/dist/utils/JSONSchemaScanner/utils/scannerFactory.cjs:39|scannerFactory": 426,
+    "function|packages/winglet/common-utils/dist/utils/filter/isObject.cjs:5|isObject": 766,
+    "function|packages/winglet/json-schema/dist/utils/JSONSchemaScanner/utils/getStackEntriesForNode.cjs:74|getStackEntriesForNode": 341,
+    "loop|packages/winglet/json-schema/dist/utils/JSONSchemaScanner/utils/getStackEntriesForNode.cjs:80|getStackEntriesForNode": 682,
+    "function|packages/winglet/common-utils/dist/libs/hasOwnProperty.cjs:6|hasOwnProperty": 1105,
+    "loop|packages/winglet/json-schema/dist/utils/JSONSchemaScanner/utils/getStackEntriesForNode.cjs:87|getStackEntriesForNode": 85,
+    "function|packages/winglet/json-schema/dist/utils/JSONSchemaScanner/utils/getStackEntriesForNode.cjs:34|pushMapChildren": 85,
+    "loop|packages/winglet/json-schema/dist/utils/JSONSchemaScanner/utils/getStackEntriesForNode.cjs:38|pushMapChildren": 340,
+    "function|packages/winglet/json/dist/JSONPointer/utils/escape/escapeSegment.cjs:6|escapeSegment": 681,
+    "loop|packages/winglet/json-schema/dist/utils/JSONSchemaScanner/utils/scannerFactory.cjs:82|scannerFactory": 340,
+    "loop|packages/winglet/json-schema/dist/utils/JSONSchemaScanner/sync/JSONSchemaScanner.cjs:66|__run__": 341,
+    "function|packages/canard/schema-form/src/__legacy__/helpers/jsonSchema/getResolveSchema/utils/getReferenceTable.ts:16|exit": 341,
+    "function|packages/canard/schema-form/src/__legacy__/core/nodes/schemaNodeFactory.ts:72|createSchemaNodeFactory": 1,
+    "function|packages/canard/schema-form/src/__legacy__/core/nodes/schemaNodeFactory.ts:75|createSchemaNodeFactory.callback": 341,
+    "function|packages/canard/schema-form/src/__legacy__/core/nodes/schemaNodeFactory.ts:139|resolveReferences": 341,
+    "function|packages/canard/schema-form/src/__legacy__/core/nodes/schemaNodeFactory.ts:131|processSchema": 341,
+    "function|packages/canard/schema-form/src/__legacy__/helpers/jsonSchema/processAllOfSchema/processAllOfSchema.ts:29|processAllOfSchema": 341,
+    "function|packages/canard/schema-form/src/__legacy__/helpers/jsonSchema/extractSchemaInfo/extractSchemaInfo.ts:13|extractSchemaInfo": 426,
+    "function|packages/canard/schema-form/src/__legacy__/core/nodes/ObjectNode/ObjectNode.ts:96|ObjectNode.constructor": 85,
+    "function|packages/canard/schema-form/src/__legacy__/core/nodes/AbstractNode/utils/EventCascadeManager/EventCascadeManager.ts:257|EventCascadeManager.constructor": 341,
+    "function|packages/canard/schema-form/src/__legacy__/core/nodes/AbstractNode/AbstractNode.ts:1146|AbstractNode.constructor": 341,
+    "function|packages/canard/schema-form/src/__legacy__/core/nodes/AbstractNode/utils/getNodeGroup/getNodeGroup.ts:16|getNodeGroup": 341,
+    "function|packages/canard/schema-form/src/__legacy__/helpers/jsonSchema/filter.ts:20|isBranchType": 341,
+    "function|packages/canard/schema-form/src/__legacy__/core/nodes/AbstractNode/utils/getNodeGroup/getNodeGroup.ts:27|isTerminalFormTypeInput": 85,
+    "function|packages/canard/schema-form/src/__legacy__/helpers/jsonPointer/utils/joinSegment.ts:10|joinSegment": 682,
+    "path-string|packages/canard/schema-form/src/__legacy__/core/nodes/AbstractNode/AbstractNode.ts:1176|AbstractNode.constructor": 341,
+    "path-string|packages/canard/schema-form/src/__legacy__/core/nodes/AbstractNode/AbstractNode.ts:1187|AbstractNode.constructor": 1,
+    "function|packages/canard/schema-form/src/__legacy__/core/nodes/AbstractNode/AbstractNode.ts:599|AbstractNode.__updateScoped__": 341,
+    "function|packages/canard/schema-form/src/__legacy__/helpers/defaultValue/getDefaultValue/getDefaultValue.ts:11|getDefaultValue": 85,
+    "function|packages/canard/schema-form/src/__legacy__/helpers/defaultValue/getEmptyValue/getEmptyValue.ts:8|getEmptyValue": 85,
+    "function|packages/canard/schema-form/src/__legacy__/core/nodes/AbstractNode/AbstractNode.ts:303|AbstractNode.__setDefaultValue__": 426,
+    "function|packages/canard/schema-form/src/__legacy__/core/nodes/AbstractNode/utils/checkDefinedValue/checkDefinedValue.ts:25|checkDefinedValue": 426,
+    "function|packages/canard/schema-form/src/__legacy__/core/nodes/AbstractNode/utils/getComputedPropertiesManager/getComputedPropertiesManager.ts:19|getComputedPropertiesManager": 341,
+    "function|packages/canard/schema-form/src/__legacy__/core/nodes/AbstractNode/utils/getComputedPropertiesManager/utils/needsRealComputedManager/needsRealComputedManager.ts:27|needsRealComputedManager": 341,
+    "loop|packages/canard/schema-form/src/__legacy__/core/nodes/AbstractNode/utils/getComputedPropertiesManager/utils/needsRealComputedManager/needsRealComputedManager.ts:38|needsRealComputedManager": 1705,
+    "loop|packages/canard/schema-form/src/__legacy__/core/nodes/AbstractNode/utils/getComputedPropertiesManager/utils/needsRealComputedManager/needsRealComputedManager.ts:46|needsRealComputedManager": 2728,
+    "function|packages/canard/schema-form/src/__legacy__/core/nodes/AbstractNode/utils/ValidationManager/ValidationManager.ts:188|ValidationManager.constructor": 1,
+    "function|packages/canard/schema-form/src/__legacy__/core/nodes/AbstractNode/utils/afterMicrotask/afterMicrotask.ts:18|afterMicrotask": 1,
+    "function|packages/canard/schema-form/src/__legacy__/core/nodes/ObjectNode/strategies/BranchStrategy/BranchStrategy.ts:761|BranchStrategy.constructor": 85,
+    "function|packages/canard/schema-form/src/__legacy__/core/nodes/AbstractNode/AbstractNode.ts:294|AbstractNode.defaultValue.get": 937,
+    "function|packages/winglet/common-utils/dist/utils/object/getObjectKeys.cjs:5|getObjectKeys": 85,
+    "function|packages/winglet/common-utils/dist/utils/array/sortWithReference.cjs:5|sortWithReference": 85,
+    "function|packages/canard/schema-form/src/__legacy__/core/nodes/ObjectNode/strategies/BranchStrategy/utils/getCompositionKeyInfo/getCompositionKeyInfo.ts:16|getCompositionKeyInfo": 170,
+    "function|packages/canard/schema-form/src/__legacy__/core/nodes/AbstractNode/AbstractNode.ts:916|AbstractNode.subscribe": 85,
+    "function|packages/canard/schema-form/src/__legacy__/core/nodes/AbstractNode/utils/EventCascadeManager/EventCascadeManager.ts:220|EventCascadeManager.subscribe": 85,
+    "function|packages/canard/schema-form/src/__legacy__/core/nodes/AbstractNode/AbstractNode.ts:154|AbstractNode.name.get": 85,
+    "function|packages/canard/schema-form/src/__legacy__/core/nodes/ObjectNode/strategies/BranchStrategy/utils/getVirtualReferencesMap/getVirtualReferencesMap.ts:24|getVirtualReferencesMap": 85,
+    "function|packages/canard/schema-form/src/__legacy__/core/nodes/ObjectNode/strategies/BranchStrategy/utils/getFieldConditionMap/getFieldConditionMap.ts:21|getFieldConditionMap": 85,
+    "function|packages/canard/schema-form/src/__legacy__/core/nodes/ObjectNode/strategies/BranchStrategy/utils/getFieldConditionMap/utils/flattenConditions.ts:23|flattenConditions": 85,
+    "function|packages/winglet/common-utils/dist/utils/object/getEmptyObject.cjs:5|getEmptyObject": 85,
+    "function|packages/canard/schema-form/src/__legacy__/core/nodes/ObjectNode/strategies/BranchStrategy/utils/getFieldConditionMap/utils/flattenConditions.ts:37|flattenConditionsInto": 85,
+    "function|packages/canard/schema-form/src/__legacy__/core/nodes/ObjectNode/strategies/BranchStrategy/utils/getConditionsMap/getConditionsMap.ts:12|getConditionsMap": 85,
+    "function|packages/canard/schema-form/src/__legacy__/core/nodes/ObjectNode/strategies/BranchStrategy/utils/getChildNodeMap/getChildNodeMap.ts:33|getChildNodeMap": 85,
+    "loop|packages/canard/schema-form/src/__legacy__/core/nodes/ObjectNode/strategies/BranchStrategy/utils/getChildNodeMap/getChildNodeMap.ts:48|getChildNodeMap": 340,
+    "function|packages/canard/schema-form/src/__legacy__/core/nodes/ObjectNode/strategies/BranchStrategy/utils/getChildNodeMap/getChildNodeMap.ts:81|getVirtualReferenceConditions": 340,
+    "function|packages/canard/schema-form/src/__legacy__/core/nodes/ObjectNode/strategies/BranchStrategy/utils/mergeShowConditions/mergeShowConditions.ts:12|mergeShowConditions": 340,
+    "function|packages/canard/schema-form/src/__legacy__/core/nodes/ObjectNode/strategies/BranchStrategy/BranchStrategy.ts:806|handleChangeFactory": 340,
+    "function|packages/canard/schema-form/src/__legacy__/core/nodes/AbstractNode/AbstractNode.ts:191|AbstractNode.path.get": 340,
+    "function|packages/canard/schema-form/src/__legacy__/core/nodes/AbstractNode/AbstractNode.ts:203|AbstractNode.schemaPath.get": 340,
+    "function|packages/canard/schema-form/src/__legacy__/core/nodes/AbstractNode/utils/getScopedSegment/getScopedSegment.ts:44|getScopedSegment": 340,
+    "path-string|packages/canard/schema-form/src/__legacy__/core/nodes/AbstractNode/AbstractNode.ts:1178|AbstractNode.constructor": 340,
+    "function|packages/canard/schema-form/src/__legacy__/core/nodes/StringNode/StringNode.ts:111|StringNode.constructor": 256,
+    "function|packages/canard/schema-form/src/__legacy__/core/nodes/StringNode/StringNode.ts:40|StringNode.__emitChange__": 256,
+    "function|packages/canard/schema-form/src/__legacy__/core/nodes/StringNode/StringNode.ts:29|StringNode.__parseValue__": 256,
+    "function|packages/canard/schema-form/src/__legacy__/core/parsers/parseString.ts:34|parseString": 256,
+    "function|packages/canard/schema-form/src/__legacy__/core/nodes/AbstractNode/AbstractNode.ts:384|AbstractNode.__equals__": 256,
+    "function|packages/canard/schema-form/src/__legacy__/core/nodes/AbstractNode/AbstractNode.ts:373|AbstractNode.__markIntendedWrite__": 341,
+    "function|packages/canard/schema-form/src/__legacy__/core/nodes/StringNode/StringNode.ts:79|StringNode.__onChangeWithOmitEmpty__": 256,
+    "function|packages/canard/schema-form/src/__legacy__/core/nodes/AbstractNode/AbstractNode.ts:414|AbstractNode.onChange": 341,
+    "function|packages/canard/schema-form/src/__legacy__/core/nodes/ObjectNode/strategies/BranchStrategy/BranchStrategy.ts:807|handleChangeFactory.callback": 340,
+    "function|packages/canard/schema-form/src/__legacy__/core/nodes/ObjectNode/strategies/BranchStrategy/BranchStrategy.ts:121|BranchStrategy.__isNull__.get": 340,
+    "function|packages/canard/schema-form/src/__legacy__/core/nodes/ObjectNode/strategies/BranchStrategy/BranchStrategy.ts:137|BranchStrategy.__emitChange__": 425,
+    "function|packages/canard/schema-form/src/__legacy__/core/nodes/AbstractNode/AbstractNode.ts:1031|AbstractNode.initialized.get": 341,
+    "function|packages/canard/schema-form/src/__legacy__/core/nodes/AbstractNode/AbstractNode.ts:891|AbstractNode.publish": 1108,
+    "function|packages/canard/schema-form/src/__legacy__/core/nodes/AbstractNode/utils/EventCascadeManager/EventCascadeManager.ts:134|EventCascadeManager.publish": 1108,
+    "function|packages/canard/schema-form/src/__legacy__/core/nodes/AbstractNode/utils/EventCascadeManager/EventCascadeManager.ts:90|EventCascadeManager.__acquireBatch__": 1108,
+    "function|packages/canard/schema-form/src/__legacy__/core/nodes/AbstractNode/AbstractNode.ts:1041|AbstractNode.__initialize__": 681,
+    "function|packages/canard/schema-form/src/__legacy__/core/nodes/ObjectNode/strategies/BranchStrategy/utils/getChildren/getChildren.ts:31|getChildren": 85,
+    "loop|packages/canard/schema-form/src/__legacy__/core/nodes/ObjectNode/strategies/BranchStrategy/utils/getChildren/getChildren.ts:44|getChildren": 340,
+    "function|packages/canard/schema-form/src/__legacy__/core/nodes/ObjectNode/strategies/BranchStrategy/utils/getCompositionNodeMapList/getCompositionNodeMapList.ts:42|getCompositionNodeMapList": 170,
+    "array-spread|packages/canard/schema-form/src/__legacy__/core/nodes/ObjectNode/strategies/BranchStrategy/BranchStrategy.ts:906|BranchStrategy.constructor": 85,
+    "function|packages/canard/schema-form/src/__legacy__/core/nodes/ObjectNode/strategies/BranchStrategy/BranchStrategy.ts:155|BranchStrategy.__handleEmitChange__": 85,
+    "function|packages/canard/schema-form/src/__legacy__/core/nodes/ObjectNode/strategies/BranchStrategy/BranchStrategy.ts:220|BranchStrategy.__parseValue__": 85,
+    "function|packages/winglet/common-utils/dist/utils/filter/isEmptyObject.cjs:6|isEmptyObject": 170,
+    "loop|packages/winglet/common-utils/dist/utils/filter/isEmptyObject.cjs:9|isEmptyObject": 170,
+    "function|packages/canard/schema-form/src/__legacy__/core/nodes/ObjectNode/ObjectNode.ts:46|ObjectNode.__equals__": 85,
+    "function|packages/winglet/common-utils/dist/utils/object/equals/equals.cjs:6|equals": 85,
+    "function|packages/winglet/common-utils/dist/utils/object/equals/utils/equalsRecursive.cjs:11|equalsRecursive": 85,
+    "function|packages/canard/schema-form/src/__legacy__/core/nodes/ObjectNode/strategies/BranchStrategy/BranchStrategy.ts:245|BranchStrategy.__processValue__": 85,
+    "function|packages/winglet/common-utils/dist/utils/object/sortObjectKeys.cjs:6|sortObjectKeys": 85,
+    "loop|packages/winglet/common-utils/dist/utils/object/sortObjectKeys.cjs:11|sortObjectKeys": 340,
+    "loop|packages/winglet/common-utils/dist/utils/object/sortObjectKeys.cjs:17|sortObjectKeys": 340,
+    "function|packages/canard/schema-form/src/__legacy__/core/nodes/ObjectNode/ObjectNode.ts:101|ObjectNode.constructor.callback": 85,
+    "function|packages/canard/schema-form/src/__legacy__/core/nodes/ObjectNode/utils/omitEmptyObject/omitEmptyObject.ts:7|omitEmptyObject": 85,
+    "loop|packages/canard/schema-form/src/__legacy__/core/nodes/AbstractNode/utils/checkDefinedValue/checkDefinedValue.ts:28|checkDefinedValue": 85,
+    "function|packages/canard/schema-form/src/__legacy__/core/nodes/ObjectNode/strategies/BranchStrategy/BranchStrategy.ts:444|BranchStrategy.__prepareCompositionChildren__": 85,
+    "function|packages/canard/schema-form/src/__legacy__/core/nodes/ObjectNode/strategies/BranchStrategy/BranchStrategy.ts:433|BranchStrategy.__isPristine__.get": 85,
+    "function|packages/canard/schema-form/src/__legacy__/core/nodes/ObjectNode/ObjectNode.ts:72|ObjectNode.__initialize__": 169,
+    "function|packages/canard/schema-form/src/__legacy__/core/nodes/AbstractNode/utils/afterMicrotask/afterMicrotask.ts:24|afterMicrotask.callback": 1,
+    "function|packages/canard/schema-form/src/__legacy__/core/nodes/AbstractNode/AbstractNode.ts:516|AbstractNode.__prepareUpdateDependencies__": 341,
+    "function|packages/canard/schema-form/src/__legacy__/core/nodes/AbstractNode/AbstractNode.ts:564|AbstractNode.__updateComputedProperties__": 341,
+    "function|packages/winglet/common-utils/dist/constant/function.cjs:5|anonymous.callback": 341,
+    "function|packages/canard/schema-form/src/__legacy__/core/nodes/AbstractNode/AbstractNode.ts:967|AbstractNode.__prepareInjectHandler__": 341,
+    "function|packages/canard/schema-form/src/__legacy__/core/nodes/ObjectNode/strategies/BranchStrategy/BranchStrategy.ts:717|BranchStrategy.initialize": 85,
+    "loop|packages/canard/schema-form/src/__legacy__/core/nodes/ObjectNode/strategies/BranchStrategy/BranchStrategy.ts:719|BranchStrategy.initialize": 340,
+    "function|packages/canard/schema-form/src/__legacy__/core/nodes/ObjectNode/strategies/BranchStrategy/BranchStrategy.ts:735|BranchStrategy.__primeInitialBranch__": 85,
+    "function|packages/canard/schema-form/src/__legacy__/core/nodes/ObjectNode/strategies/BranchStrategy/BranchStrategy.ts:596|BranchStrategy.__processChildren__": 85,
+    "function|packages/canard/schema-form/src/__legacy__/core/nodes/ObjectNode/strategies/BranchStrategy/BranchStrategy.ts:378|BranchStrategy.__publishChildrenChange__": 85,
+    "function|packages/canard/schema-form/src/__legacy__/core/nodes/AbstractNode/utils/EventCascadeManager/EventCascadeManager.ts:120|EventCascadeManager.__acquireBatch__.callback": 341,
+    "function|packages/canard/schema-form/src/__legacy__/core/nodes/AbstractNode/utils/EventCascadeManager/utils/mergeEventEntries.ts:13|mergeEventEntries": 341,
+    "loop|packages/canard/schema-form/src/__legacy__/core/nodes/AbstractNode/utils/EventCascadeManager/utils/mergeEventEntries.ts:21|mergeEventEntries": 1108,
+    "function|packages/canard/schema-form/src/__legacy__/core/nodes/AbstractNode/utils/EventCascadeManager/EventCascadeManager.ts:207|EventCascadeManager.__resolve__": 341,
+    "function|packages/canard/schema-form/src/__legacy__/core/nodes/AbstractNode/utils/EventCascadeManager/EventCascadeManager.ts:171|EventCascadeManager.__recordDelivery__": 341,
+    "loop|packages/canard/schema-form/src/__legacy__/core/nodes/AbstractNode/utils/EventCascadeManager/EventCascadeManager.ts:176|EventCascadeManager.__recordDelivery__": 1108,
+    "loop|packages/canard/schema-form/src/__legacy__/core/nodes/AbstractNode/utils/EventCascadeManager/EventCascadeManager.ts:212|EventCascadeManager.__resolve__": 85,
+    "function|packages/canard/schema-form/src/__legacy__/core/nodes/ObjectNode/strategies/BranchStrategy/BranchStrategy.ts:839|BranchStrategy.constructor.callback": 85,
+    "function|packages/canard/schema-form/src/__legacy__/core/nodes/AbstractNode/utils/EventCascadeManager/EventCascadeManager.ts:112|EventCascadeManager.__acquireBatch__.callback": 341,
+    "function|packages/canard/schema-form/src/__legacy__/core/nodes/AbstractNode/utils/afterMicrotask/afterMicrotask.ts:20|callback": 1,
+    "function|packages/canard/schema-form/src/__legacy__/core/nodes/AbstractNode/AbstractNode.ts:1219|AbstractNode.constructor.callback": 1,
+    "function|packages/canard/schema-form/src/__legacy__/core/nodes/AbstractNode/AbstractNode.ts:397|AbstractNode.normalizedValue.get": 1,
+    "function|packages/canard/schema-form/src/__legacy__/core/nodes/ObjectNode/ObjectNode.ts:63|ObjectNode.value.get": 1,
+    "function|packages/canard/schema-form/src/__legacy__/core/nodes/ObjectNode/strategies/BranchStrategy/BranchStrategy.ts:304|BranchStrategy.value.get": 1,
+    "function|packages/canard/schema-form/src/__legacy__/core/nodes/AbstractNode/utils/getSafeEmptyValue/getSafeEmptyValue.ts:9|getSafeEmptyValue": 1
+  },
+  "stringCharacters": {
+    "path-string|packages/canard/schema-form/src/__legacy__/core/nodes/AbstractNode/AbstractNode.ts:1176|AbstractNode.constructor": 3756,
+    "path-string|packages/canard/schema-form/src/__legacy__/core/nodes/AbstractNode/AbstractNode.ts:1187|AbstractNode.constructor": 1,
+    "path-string|packages/canard/schema-form/src/__legacy__/core/nodes/AbstractNode/AbstractNode.ts:1178|AbstractNode.constructor": 17868,
+    "array-spread|packages/canard/schema-form/src/__legacy__/core/nodes/ObjectNode/strategies/BranchStrategy/BranchStrategy.ts:906|BranchStrategy.constructor": 340
+  },
+  "schemaIdentities": {
+    "extractSchemaInfo|0|": 2,
+    "extractSchemaInfo|1|": 2,
+    "extractSchemaInfo|2|": 2,
+    "extractSchemaInfo|3|": 2,
+    "extractSchemaInfo|4|": 1,
+    "extractSchemaInfo|5|": 1,
+    "extractSchemaInfo|6|": 1,
+    "extractSchemaInfo|7|": 1,
+    "extractSchemaInfo|8|": 2,
+    "extractSchemaInfo|9|": 1,
+    "extractSchemaInfo|10|": 1,
+    "extractSchemaInfo|11|": 1,
+    "extractSchemaInfo|12|": 1,
+    "extractSchemaInfo|13|": 2,
+    "extractSchemaInfo|14|": 1,
+    "extractSchemaInfo|15|": 1,
+    "extractSchemaInfo|16|": 1,
+    "extractSchemaInfo|17|": 1,
+    "extractSchemaInfo|18|": 2,
+    "extractSchemaInfo|19|": 1,
+    "extractSchemaInfo|20|": 1,
+    "extractSchemaInfo|21|": 1,
+    "extractSchemaInfo|22|": 1,
+    "extractSchemaInfo|23|": 2,
+    "extractSchemaInfo|24|": 2,
+    "extractSchemaInfo|25|": 1,
+    "extractSchemaInfo|26|": 1,
+    "extractSchemaInfo|27|": 1,
+    "extractSchemaInfo|28|": 1,
+    "extractSchemaInfo|29|": 2,
+    "extractSchemaInfo|30|": 1,
+    "extractSchemaInfo|31|": 1,
+    "extractSchemaInfo|32|": 1,
+    "extractSchemaInfo|33|": 1,
+    "extractSchemaInfo|34|": 2,
+    "extractSchemaInfo|35|": 1,
+    "extractSchemaInfo|36|": 1,
+    "extractSchemaInfo|37|": 1,
+    "extractSchemaInfo|38|": 1,
+    "extractSchemaInfo|39|": 2,
+    "extractSchemaInfo|40|": 1,
+    "extractSchemaInfo|41|": 1,
+    "extractSchemaInfo|42|": 1,
+    "extractSchemaInfo|43|": 1,
+    "extractSchemaInfo|44|": 2,
+    "extractSchemaInfo|45|": 2,
+    "extractSchemaInfo|46|": 1,
+    "extractSchemaInfo|47|": 1,
+    "extractSchemaInfo|48|": 1,
+    "extractSchemaInfo|49|": 1,
+    "extractSchemaInfo|50|": 2,
+    "extractSchemaInfo|51|": 1,
+    "extractSchemaInfo|52|": 1,
+    "extractSchemaInfo|53|": 1,
+    "extractSchemaInfo|54|": 1,
+    "extractSchemaInfo|55|": 2,
+    "extractSchemaInfo|56|": 1,
+    "extractSchemaInfo|57|": 1,
+    "extractSchemaInfo|58|": 1,
+    "extractSchemaInfo|59|": 1,
+    "extractSchemaInfo|60|": 2,
+    "extractSchemaInfo|61|": 1,
+    "extractSchemaInfo|62|": 1,
+    "extractSchemaInfo|63|": 1,
+    "extractSchemaInfo|64|": 1,
+    "extractSchemaInfo|65|": 2,
+    "extractSchemaInfo|66|": 2,
+    "extractSchemaInfo|67|": 1,
+    "extractSchemaInfo|68|": 1,
+    "extractSchemaInfo|69|": 1,
+    "extractSchemaInfo|70|": 1,
+    "extractSchemaInfo|71|": 2,
+    "extractSchemaInfo|72|": 1,
+    "extractSchemaInfo|73|": 1,
+    "extractSchemaInfo|74|": 1,
+    "extractSchemaInfo|75|": 1,
+    "extractSchemaInfo|76|": 2,
+    "extractSchemaInfo|77|": 1,
+    "extractSchemaInfo|78|": 1,
+    "extractSchemaInfo|79|": 1,
+    "extractSchemaInfo|80|": 1,
+    "extractSchemaInfo|81|": 2,
+    "extractSchemaInfo|82|": 1,
+    "extractSchemaInfo|83|": 1,
+    "extractSchemaInfo|84|": 1,
+    "extractSchemaInfo|85|": 1,
+    "extractSchemaInfo|86|": 2,
+    "extractSchemaInfo|87|": 2,
+    "extractSchemaInfo|88|": 2,
+    "extractSchemaInfo|89|": 1,
+    "extractSchemaInfo|90|": 1,
+    "extractSchemaInfo|91|": 1,
+    "extractSchemaInfo|92|": 1,
+    "extractSchemaInfo|93|": 2,
+    "extractSchemaInfo|94|": 1,
+    "extractSchemaInfo|95|": 1,
+    "extractSchemaInfo|96|": 1,
+    "extractSchemaInfo|97|": 1,
+    "extractSchemaInfo|98|": 2,
+    "extractSchemaInfo|99|": 1,
+    "extractSchemaInfo|100|": 1,
+    "extractSchemaInfo|101|": 1,
+    "extractSchemaInfo|102|": 1,
+    "extractSchemaInfo|103|": 2,
+    "extractSchemaInfo|104|": 1,
+    "extractSchemaInfo|105|": 1,
+    "extractSchemaInfo|106|": 1,
+    "extractSchemaInfo|107|": 1,
+    "extractSchemaInfo|108|": 2,
+    "extractSchemaInfo|109|": 2,
+    "extractSchemaInfo|110|": 1,
+    "extractSchemaInfo|111|": 1,
+    "extractSchemaInfo|112|": 1,
+    "extractSchemaInfo|113|": 1,
+    "extractSchemaInfo|114|": 2,
+    "extractSchemaInfo|115|": 1,
+    "extractSchemaInfo|116|": 1,
+    "extractSchemaInfo|117|": 1,
+    "extractSchemaInfo|118|": 1,
+    "extractSchemaInfo|119|": 2,
+    "extractSchemaInfo|120|": 1,
+    "extractSchemaInfo|121|": 1,
+    "extractSchemaInfo|122|": 1,
+    "extractSchemaInfo|123|": 1,
+    "extractSchemaInfo|124|": 2,
+    "extractSchemaInfo|125|": 1,
+    "extractSchemaInfo|126|": 1,
+    "extractSchemaInfo|127|": 1,
+    "extractSchemaInfo|128|": 1,
+    "extractSchemaInfo|129|": 2,
+    "extractSchemaInfo|130|": 2,
+    "extractSchemaInfo|131|": 1,
+    "extractSchemaInfo|132|": 1,
+    "extractSchemaInfo|133|": 1,
+    "extractSchemaInfo|134|": 1,
+    "extractSchemaInfo|135|": 2,
+    "extractSchemaInfo|136|": 1,
+    "extractSchemaInfo|137|": 1,
+    "extractSchemaInfo|138|": 1,
+    "extractSchemaInfo|139|": 1,
+    "extractSchemaInfo|140|": 2,
+    "extractSchemaInfo|141|": 1,
+    "extractSchemaInfo|142|": 1,
+    "extractSchemaInfo|143|": 1,
+    "extractSchemaInfo|144|": 1,
+    "extractSchemaInfo|145|": 2,
+    "extractSchemaInfo|146|": 1,
+    "extractSchemaInfo|147|": 1,
+    "extractSchemaInfo|148|": 1,
+    "extractSchemaInfo|149|": 1,
+    "extractSchemaInfo|150|": 2,
+    "extractSchemaInfo|151|": 2,
+    "extractSchemaInfo|152|": 1,
+    "extractSchemaInfo|153|": 1,
+    "extractSchemaInfo|154|": 1,
+    "extractSchemaInfo|155|": 1,
+    "extractSchemaInfo|156|": 2,
+    "extractSchemaInfo|157|": 1,
+    "extractSchemaInfo|158|": 1,
+    "extractSchemaInfo|159|": 1,
+    "extractSchemaInfo|160|": 1,
+    "extractSchemaInfo|161|": 2,
+    "extractSchemaInfo|162|": 1,
+    "extractSchemaInfo|163|": 1,
+    "extractSchemaInfo|164|": 1,
+    "extractSchemaInfo|165|": 1,
+    "extractSchemaInfo|166|": 2,
+    "extractSchemaInfo|167|": 1,
+    "extractSchemaInfo|168|": 1,
+    "extractSchemaInfo|169|": 1,
+    "extractSchemaInfo|170|": 1,
+    "extractSchemaInfo|171|": 2,
+    "extractSchemaInfo|172|": 2,
+    "extractSchemaInfo|173|": 2,
+    "extractSchemaInfo|174|": 1,
+    "extractSchemaInfo|175|": 1,
+    "extractSchemaInfo|176|": 1,
+    "extractSchemaInfo|177|": 1,
+    "extractSchemaInfo|178|": 2,
+    "extractSchemaInfo|179|": 1,
+    "extractSchemaInfo|180|": 1,
+    "extractSchemaInfo|181|": 1,
+    "extractSchemaInfo|182|": 1,
+    "extractSchemaInfo|183|": 2,
+    "extractSchemaInfo|184|": 1,
+    "extractSchemaInfo|185|": 1,
+    "extractSchemaInfo|186|": 1,
+    "extractSchemaInfo|187|": 1,
+    "extractSchemaInfo|188|": 2,
+    "extractSchemaInfo|189|": 1,
+    "extractSchemaInfo|190|": 1,
+    "extractSchemaInfo|191|": 1,
+    "extractSchemaInfo|192|": 1,
+    "extractSchemaInfo|193|": 2,
+    "extractSchemaInfo|194|": 2,
+    "extractSchemaInfo|195|": 1,
+    "extractSchemaInfo|196|": 1,
+    "extractSchemaInfo|197|": 1,
+    "extractSchemaInfo|198|": 1,
+    "extractSchemaInfo|199|": 2,
+    "extractSchemaInfo|200|": 1,
+    "extractSchemaInfo|201|": 1,
+    "extractSchemaInfo|202|": 1,
+    "extractSchemaInfo|203|": 1,
+    "extractSchemaInfo|204|": 2,
+    "extractSchemaInfo|205|": 1,
+    "extractSchemaInfo|206|": 1,
+    "extractSchemaInfo|207|": 1,
+    "extractSchemaInfo|208|": 1,
+    "extractSchemaInfo|209|": 2,
+    "extractSchemaInfo|210|": 1,
+    "extractSchemaInfo|211|": 1,
+    "extractSchemaInfo|212|": 1,
+    "extractSchemaInfo|213|": 1,
+    "extractSchemaInfo|214|": 2,
+    "extractSchemaInfo|215|": 2,
+    "extractSchemaInfo|216|": 1,
+    "extractSchemaInfo|217|": 1,
+    "extractSchemaInfo|218|": 1,
+    "extractSchemaInfo|219|": 1,
+    "extractSchemaInfo|220|": 2,
+    "extractSchemaInfo|221|": 1,
+    "extractSchemaInfo|222|": 1,
+    "extractSchemaInfo|223|": 1,
+    "extractSchemaInfo|224|": 1,
+    "extractSchemaInfo|225|": 2,
+    "extractSchemaInfo|226|": 1,
+    "extractSchemaInfo|227|": 1,
+    "extractSchemaInfo|228|": 1,
+    "extractSchemaInfo|229|": 1,
+    "extractSchemaInfo|230|": 2,
+    "extractSchemaInfo|231|": 1,
+    "extractSchemaInfo|232|": 1,
+    "extractSchemaInfo|233|": 1,
+    "extractSchemaInfo|234|": 1,
+    "extractSchemaInfo|235|": 2,
+    "extractSchemaInfo|236|": 2,
+    "extractSchemaInfo|237|": 1,
+    "extractSchemaInfo|238|": 1,
+    "extractSchemaInfo|239|": 1,
+    "extractSchemaInfo|240|": 1,
+    "extractSchemaInfo|241|": 2,
+    "extractSchemaInfo|242|": 1,
+    "extractSchemaInfo|243|": 1,
+    "extractSchemaInfo|244|": 1,
+    "extractSchemaInfo|245|": 1,
+    "extractSchemaInfo|246|": 2,
+    "extractSchemaInfo|247|": 1,
+    "extractSchemaInfo|248|": 1,
+    "extractSchemaInfo|249|": 1,
+    "extractSchemaInfo|250|": 1,
+    "extractSchemaInfo|251|": 2,
+    "extractSchemaInfo|252|": 1,
+    "extractSchemaInfo|253|": 1,
+    "extractSchemaInfo|254|": 1,
+    "extractSchemaInfo|255|": 1,
+    "extractSchemaInfo|256|": 2,
+    "extractSchemaInfo|257|": 2,
+    "extractSchemaInfo|258|": 2,
+    "extractSchemaInfo|259|": 1,
+    "extractSchemaInfo|260|": 1,
+    "extractSchemaInfo|261|": 1,
+    "extractSchemaInfo|262|": 1,
+    "extractSchemaInfo|263|": 2,
+    "extractSchemaInfo|264|": 1,
+    "extractSchemaInfo|265|": 1,
+    "extractSchemaInfo|266|": 1,
+    "extractSchemaInfo|267|": 1,
+    "extractSchemaInfo|268|": 2,
+    "extractSchemaInfo|269|": 1,
+    "extractSchemaInfo|270|": 1,
+    "extractSchemaInfo|271|": 1,
+    "extractSchemaInfo|272|": 1,
+    "extractSchemaInfo|273|": 2,
+    "extractSchemaInfo|274|": 1,
+    "extractSchemaInfo|275|": 1,
+    "extractSchemaInfo|276|": 1,
+    "extractSchemaInfo|277|": 1,
+    "extractSchemaInfo|278|": 2,
+    "extractSchemaInfo|279|": 2,
+    "extractSchemaInfo|280|": 1,
+    "extractSchemaInfo|281|": 1,
+    "extractSchemaInfo|282|": 1,
+    "extractSchemaInfo|283|": 1,
+    "extractSchemaInfo|284|": 2,
+    "extractSchemaInfo|285|": 1,
+    "extractSchemaInfo|286|": 1,
+    "extractSchemaInfo|287|": 1,
+    "extractSchemaInfo|288|": 1,
+    "extractSchemaInfo|289|": 2,
+    "extractSchemaInfo|290|": 1,
+    "extractSchemaInfo|291|": 1,
+    "extractSchemaInfo|292|": 1,
+    "extractSchemaInfo|293|": 1,
+    "extractSchemaInfo|294|": 2,
+    "extractSchemaInfo|295|": 1,
+    "extractSchemaInfo|296|": 1,
+    "extractSchemaInfo|297|": 1,
+    "extractSchemaInfo|298|": 1,
+    "extractSchemaInfo|299|": 2,
+    "extractSchemaInfo|300|": 2,
+    "extractSchemaInfo|301|": 1,
+    "extractSchemaInfo|302|": 1,
+    "extractSchemaInfo|303|": 1,
+    "extractSchemaInfo|304|": 1,
+    "extractSchemaInfo|305|": 2,
+    "extractSchemaInfo|306|": 1,
+    "extractSchemaInfo|307|": 1,
+    "extractSchemaInfo|308|": 1,
+    "extractSchemaInfo|309|": 1,
+    "extractSchemaInfo|310|": 2,
+    "extractSchemaInfo|311|": 1,
+    "extractSchemaInfo|312|": 1,
+    "extractSchemaInfo|313|": 1,
+    "extractSchemaInfo|314|": 1,
+    "extractSchemaInfo|315|": 2,
+    "extractSchemaInfo|316|": 1,
+    "extractSchemaInfo|317|": 1,
+    "extractSchemaInfo|318|": 1,
+    "extractSchemaInfo|319|": 1,
+    "extractSchemaInfo|320|": 2,
+    "extractSchemaInfo|321|": 2,
+    "extractSchemaInfo|322|": 1,
+    "extractSchemaInfo|323|": 1,
+    "extractSchemaInfo|324|": 1,
+    "extractSchemaInfo|325|": 1,
+    "extractSchemaInfo|326|": 2,
+    "extractSchemaInfo|327|": 1,
+    "extractSchemaInfo|328|": 1,
+    "extractSchemaInfo|329|": 1,
+    "extractSchemaInfo|330|": 1,
+    "extractSchemaInfo|331|": 2,
+    "extractSchemaInfo|332|": 1,
+    "extractSchemaInfo|333|": 1,
+    "extractSchemaInfo|334|": 1,
+    "extractSchemaInfo|335|": 1,
+    "extractSchemaInfo|336|": 2,
+    "extractSchemaInfo|337|": 1,
+    "extractSchemaInfo|338|": 1,
+    "extractSchemaInfo|339|": 1,
+    "extractSchemaInfo|340|": 1
+  },
+  "uniqueSchemas": {
+    "extractSchemaInfo": 341
+  },
+  "observed": {
+    "sha256": "6964c79af3fe0737f33c24c800121ba5ac1e17f55949eba4f7c382bff421a0fa",
+    "outputBytes": 3661,
+    "liveWidth": 4,
+    "value": {
+      "n0": {
+        "n0": {
+          "n0": {
+            "n0": "leaf",
+            "n1": "leaf",
+            "n2": "leaf",
+            "n3": "leaf"
+          },
+          "n1": {
+            "n0": "leaf",
+            "n1": "leaf",
+            "n2": "leaf",
+            "n3": "leaf"
+          },
+          "n2": {
+            "n0": "leaf",
+            "n1": "leaf",
+            "n2": "leaf",
+            "n3": "leaf"
+          },
+          "n3": {
+            "n0": "leaf",
+            "n1": "leaf",
+            "n2": "leaf",
+            "n3": "leaf"
+          }
+        },
+        "n1": {
+          "n0": {
+            "n0": "leaf",
+            "n1": "leaf",
+            "n2": "leaf",
+            "n3": "leaf"
+          },
+          "n1": {
+            "n0": "leaf",
+            "n1": "leaf",
+            "n2": "leaf",
+            "n3": "leaf"
+          },
+          "n2": {
+            "n0": "leaf",
+            "n1": "leaf",
+            "n2": "leaf",
+            "n3": "leaf"
+          },
+          "n3": {
+            "n0": "leaf",
+            "n1": "leaf",
+            "n2": "leaf",
+            "n3": "leaf"
+          }
+        },
+        "n2": {
+          "n0": {
+            "n0": "leaf",
+            "n1": "leaf",
+            "n2": "leaf",
+            "n3": "leaf"
+          },
+          "n1": {
+            "n0": "leaf",
+            "n1": "leaf",
+            "n2": "leaf",
+            "n3": "leaf"
+          },
+          "n2": {
+            "n0": "leaf",
+            "n1": "leaf",
+            "n2": "leaf",
+            "n3": "leaf"
+          },
+          "n3": {
+            "n0": "leaf",
+            "n1": "leaf",
+            "n2": "leaf",
+            "n3": "leaf"
+          }
+        },
+        "n3": {
+          "n0": {
+            "n0": "leaf",
+            "n1": "leaf",
+            "n2": "leaf",
+            "n3": "leaf"
+          },
+          "n1": {
+            "n0": "leaf",
+            "n1": "leaf",
+            "n2": "leaf",
+            "n3": "leaf"
+          },
+          "n2": {
+            "n0": "leaf",
+            "n1": "leaf",
+            "n2": "leaf",
+            "n3": "leaf"
+          },
+          "n3": {
+            "n0": "leaf",
+            "n1": "leaf",
+            "n2": "leaf",
+            "n3": "leaf"
+          }
+        }
+      },
+      "n1": {
+        "n0": {
+          "n0": {
+            "n0": "leaf",
+            "n1": "leaf",
+            "n2": "leaf",
+            "n3": "leaf"
+          },
+          "n1": {
+            "n0": "leaf",
+            "n1": "leaf",
+            "n2": "leaf",
+            "n3": "leaf"
+          },
+          "n2": {
+            "n0": "leaf",
+            "n1": "leaf",
+            "n2": "leaf",
+            "n3": "leaf"
+          },
+          "n3": {
+            "n0": "leaf",
+            "n1": "leaf",
+            "n2": "leaf",
+            "n3": "leaf"
+          }
+        },
+        "n1": {
+          "n0": {
+            "n0": "leaf",
+            "n1": "leaf",
+            "n2": "leaf",
+            "n3": "leaf"
+          },
+          "n1": {
+            "n0": "leaf",
+            "n1": "leaf",
+            "n2": "leaf",
+            "n3": "leaf"
+          },
+          "n2": {
+            "n0": "leaf",
+            "n1": "leaf",
+            "n2": "leaf",
+            "n3": "leaf"
+          },
+          "n3": {
+            "n0": "leaf",
+            "n1": "leaf",
+            "n2": "leaf",
+            "n3": "leaf"
+          }
+        },
+        "n2": {
+          "n0": {
+            "n0": "leaf",
+            "n1": "leaf",
+            "n2": "leaf",
+            "n3": "leaf"
+          },
+          "n1": {
+            "n0": "leaf",
+            "n1": "leaf",
+            "n2": "leaf",
+            "n3": "leaf"
+          },
+          "n2": {
+            "n0": "leaf",
+            "n1": "leaf",
+            "n2": "leaf",
+            "n3": "leaf"
+          },
+          "n3": {
+            "n0": "leaf",
+            "n1": "leaf",
+            "n2": "leaf",
+            "n3": "leaf"
+          }
+        },
+        "n3": {
+          "n0": {
+            "n0": "leaf",
+            "n1": "leaf",
+            "n2": "leaf",
+            "n3": "leaf"
+          },
+          "n1": {
+            "n0": "leaf",
+            "n1": "leaf",
+            "n2": "leaf",
+            "n3": "leaf"
+          },
+          "n2": {
+            "n0": "leaf",
+            "n1": "leaf",
+            "n2": "leaf",
+            "n3": "leaf"
+          },
+          "n3": {
+            "n0": "leaf",
+            "n1": "leaf",
+            "n2": "leaf",
+            "n3": "leaf"
+          }
+        }
+      },
+      "n2": {
+        "n0": {
+          "n0": {
+            "n0": "leaf",
+            "n1": "leaf",
+            "n2": "leaf",
+            "n3": "leaf"
+          },
+          "n1": {
+            "n0": "leaf",
+            "n1": "leaf",
+            "n2": "leaf",
+            "n3": "leaf"
+          },
+          "n2": {
+            "n0": "leaf",
+            "n1": "leaf",
+            "n2": "leaf",
+            "n3": "leaf"
+          },
+          "n3": {
+            "n0": "leaf",
+            "n1": "leaf",
+            "n2": "leaf",
+            "n3": "leaf"
+          }
+        },
+        "n1": {
+          "n0": {
+            "n0": "leaf",
+            "n1": "leaf",
+            "n2": "leaf",
+            "n3": "leaf"
+          },
+          "n1": {
+            "n0": "leaf",
+            "n1": "leaf",
+            "n2": "leaf",
+            "n3": "leaf"
+          },
+          "n2": {
+            "n0": "leaf",
+            "n1": "leaf",
+            "n2": "leaf",
+            "n3": "leaf"
+          },
+          "n3": {
+            "n0": "leaf",
+            "n1": "leaf",
+            "n2": "leaf",
+            "n3": "leaf"
+          }
+        },
+        "n2": {
+          "n0": {
+            "n0": "leaf",
+            "n1": "leaf",
+            "n2": "leaf",
+            "n3": "leaf"
+          },
+          "n1": {
+            "n0": "leaf",
+            "n1": "leaf",
+            "n2": "leaf",
+            "n3": "leaf"
+          },
+          "n2": {
+            "n0": "leaf",
+            "n1": "leaf",
+            "n2": "leaf",
+            "n3": "leaf"
+          },
+          "n3": {
+            "n0": "leaf",
+            "n1": "leaf",
+            "n2": "leaf",
+            "n3": "leaf"
+          }
+        },
+        "n3": {
+          "n0": {
+            "n0": "leaf",
+            "n1": "leaf",
+            "n2": "leaf",
+            "n3": "leaf"
+          },
+          "n1": {
+            "n0": "leaf",
+            "n1": "leaf",
+            "n2": "leaf",
+            "n3": "leaf"
+          },
+          "n2": {
+            "n0": "leaf",
+            "n1": "leaf",
+            "n2": "leaf",
+            "n3": "leaf"
+          },
+          "n3": {
+            "n0": "leaf",
+            "n1": "leaf",
+            "n2": "leaf",
+            "n3": "leaf"
+          }
+        }
+      },
+      "n3": {
+        "n0": {
+          "n0": {
+            "n0": "leaf",
+            "n1": "leaf",
+            "n2": "leaf",
+            "n3": "leaf"
+          },
+          "n1": {
+            "n0": "leaf",
+            "n1": "leaf",
+            "n2": "leaf",
+            "n3": "leaf"
+          },
+          "n2": {
+            "n0": "leaf",
+            "n1": "leaf",
+            "n2": "leaf",
+            "n3": "leaf"
+          },
+          "n3": {
+            "n0": "leaf",
+            "n1": "leaf",
+            "n2": "leaf",
+            "n3": "leaf"
+          }
+        },
+        "n1": {
+          "n0": {
+            "n0": "leaf",
+            "n1": "leaf",
+            "n2": "leaf",
+            "n3": "leaf"
+          },
+          "n1": {
+            "n0": "leaf",
+            "n1": "leaf",
+            "n2": "leaf",
+            "n3": "leaf"
+          },
+          "n2": {
+            "n0": "leaf",
+            "n1": "leaf",
+            "n2": "leaf",
+            "n3": "leaf"
+          },
+          "n3": {
+            "n0": "leaf",
+            "n1": "leaf",
+            "n2": "leaf",
+            "n3": "leaf"
+          }
+        },
+        "n2": {
+          "n0": {
+            "n0": "leaf",
+            "n1": "leaf",
+            "n2": "leaf",
+            "n3": "leaf"
+          },
+          "n1": {
+            "n0": "leaf",
+            "n1": "leaf",
+            "n2": "leaf",
+            "n3": "leaf"
+          },
+          "n2": {
+            "n0": "leaf",
+            "n1": "leaf",
+            "n2": "leaf",
+            "n3": "leaf"
+          },
+          "n3": {
+            "n0": "leaf",
+            "n1": "leaf",
+            "n2": "leaf",
+            "n3": "leaf"
+          }
+        },
+        "n3": {
+          "n0": {
+            "n0": "leaf",
+            "n1": "leaf",
+            "n2": "leaf",
+            "n3": "leaf"
+          },
+          "n1": {
+            "n0": "leaf",
+            "n1": "leaf",
+            "n2": "leaf",
+            "n3": "leaf"
+          },
+          "n2": {
+            "n0": "leaf",
+            "n1": "leaf",
+            "n2": "leaf",
+            "n3": "leaf"
+          },
+          "n3": {
+            "n0": "leaf",
+            "n1": "leaf",
+            "n2": "leaf",
+            "n3": "leaf"
+          }
+        }
+      }
+    }
+  }
+}

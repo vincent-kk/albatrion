@@ -1,0 +1,19 @@
+{
+  "HEAD": "268832c7cb6eea67475b56ab5a78408a55ec47a3",
+  "command": "--counts",
+  "args": [
+    "fragment-chain-10",
+    "fragment-chain-20",
+    "fragment-chain-40",
+    "fragment-flat-10",
+    "fragment-flat-20",
+    "fragment-flat-40"
+  ],
+  "status": 0,
+  "signal": null,
+  "started": "2026-10-06T07:26:33.158Z",
+  "ended": "2026-10-06T07:26:36.310Z",
+  "elapsedMs": 3152,
+  "pid": 81469,
+  "driverSha256": "c944abd076bb890e927d224f1a537e7cdeffbec4b9208508e24a870eb8679987"
+}

@@ -1,0 +1,19 @@
+{
+  "head": "268832c7cb6eea67475b56ab5a78408a55ec47a3",
+  "serialMeasurementWorkers": 706,
+  "overlappingWorkers": 0,
+  "allWorkersNatural": true,
+  "maxWorkerMs": 4842,
+  "verifiedBuilds": 30,
+  "uninstrumentedCpuBundles": true,
+  "oldAliasConfirmed": true,
+  "sourceStatusEmpty": true,
+  "allFilesWithin5MB": true,
+  "reportBytes": 67097,
+  "summaryBytes": 1045781,
+  "maximumFileBytes": 1045781,
+  "noiseVariantsCovered": 14,
+  "reportLanguage": "한국어",
+  "reportSha256": "f84bc77fa13e3e915280984d96fe2940371ede8d707d73212e90d99b7713420a",
+  "summarySha256": "3dd6ff1978401ee2210daf29d41e5c11312d93c6272845cc163bb4ecd18fbca3"
+}

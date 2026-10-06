@@ -1,0 +1,1426 @@
+{
+  "HEAD": "268832c7cb6eea67475b56ab5a78408a55ec47a3",
+  "version": "old",
+  "name": "sample-0",
+  "run": 2,
+  "warmup": 20,
+  "samples": 101,
+  "forcedGC": false,
+  "freshProcess": true,
+  "counterInstrumentation": false,
+  "windows": [
+    {
+      "index": 0,
+      "beginUs": 85817370200,
+      "endUs": 85817370407,
+      "ms": 0.1974999999999909
+    },
+    {
+      "index": 1,
+      "beginUs": 85817370437,
+      "endUs": 85817370517,
+      "ms": 0.07974999999999
+    },
+    {
+      "index": 2,
+      "beginUs": 85817370526,
+      "endUs": 85817370584,
+      "ms": 0.05674999999999386
+    },
+    {
+      "index": 3,
+      "beginUs": 85817370592,
+      "endUs": 85817370639,
+      "ms": 0.046875
+    },
+    {
+      "index": 4,
+      "beginUs": 85817370647,
+      "endUs": 85817370698,
+      "ms": 0.05058400000001484
+    },
+    {
+      "index": 5,
+      "beginUs": 85817370709,
+      "endUs": 85817370776,
+      "ms": 0.06575000000000841
+    },
+    {
+      "index": 6,
+      "beginUs": 85817370785,
+      "endUs": 85817370829,
+      "ms": 0.04354200000000219
+    },
+    {
+      "index": 7,
+      "beginUs": 85817370836,
+      "endUs": 85817370894,
+      "ms": 0.05816599999999994
+    },
+    {
+      "index": 8,
+      "beginUs": 85817370902,
+      "endUs": 85817370948,
+      "ms": 0.04562500000000114
+    },
+    {
+      "index": 9,
+      "beginUs": 85817370955,
+      "endUs": 85817370999,
+      "ms": 0.0438750000000141
+    },
+    {
+      "index": 10,
+      "beginUs": 85817371005,
+      "endUs": 85817371068,
+      "ms": 0.06233299999999531
+    },
+    {
+      "index": 11,
+      "beginUs": 85817371075,
+      "endUs": 85817371119,
+      "ms": 0.04312500000000341
+    },
+    {
+      "index": 12,
+      "beginUs": 85817371125,
+      "endUs": 85817371180,
+      "ms": 0.054000000000002046
+    },
+    {
+      "index": 13,
+      "beginUs": 85817371192,
+      "endUs": 85817371237,
+      "ms": 0.044125000000008185
+    },
+    {
+      "index": 14,
+      "beginUs": 85817371246,
+      "endUs": 85817371291,
+      "ms": 0.04375000000001705
+    },
+    {
+      "index": 15,
+      "beginUs": 85817371331,
+      "endUs": 85817371379,
+      "ms": 0.04762500000001069
+    },
+    {
+      "index": 16,
+      "beginUs": 85817371387,
+      "endUs": 85817371429,
+      "ms": 0.0418329999999969
+    },
+    {
+      "index": 17,
+      "beginUs": 85817371435,
+      "endUs": 85817371491,
+      "ms": 0.05554199999997422
+    },
+    {
+      "index": 18,
+      "beginUs": 85817371497,
+      "endUs": 85817371558,
+      "ms": 0.05458400000000552
+    },
+    {
+      "index": 19,
+      "beginUs": 85817371564,
+      "endUs": 85817371607,
+      "ms": 0.04262499999998681
+    },
+    {
+      "index": 20,
+      "beginUs": 85817371612,
+      "endUs": 85817371659,
+      "ms": 0.04591700000000287
+    },
+    {
+      "index": 21,
+      "beginUs": 85817371664,
+      "endUs": 85817371705,
+      "ms": 0.04066699999998491
+    },
+    {
+      "index": 22,
+      "beginUs": 85817371711,
+      "endUs": 85817371781,
+      "ms": 0.070083000000011
+    },
+    {
+      "index": 23,
+      "beginUs": 85817371791,
+      "endUs": 85817371869,
+      "ms": 0.07724999999999227
+    },
+    {
+      "index": 24,
+      "beginUs": 85817371876,
+      "endUs": 85817371934,
+      "ms": 0.0569590000000062
+    },
+    {
+      "index": 25,
+      "beginUs": 85817371940,
+      "endUs": 85817371988,
+      "ms": 0.04766699999998991
+    },
+    {
+      "index": 26,
+      "beginUs": 85817371995,
+      "endUs": 85817372037,
+      "ms": 0.04091599999998152
+    },
+    {
+      "index": 27,
+      "beginUs": 85817372057,
+      "endUs": 85817372132,
+      "ms": 0.07445799999999281
+    },
+    {
+      "index": 28,
+      "beginUs": 85817372139,
+      "endUs": 85817372184,
+      "ms": 0.04479100000000358
+    },
+    {
+      "index": 29,
+      "beginUs": 85817372189,
+      "endUs": 85817372237,
+      "ms": 0.04683299999999235
+    },
+    {
+      "index": 30,
+      "beginUs": 85817372242,
+      "endUs": 85817372300,
+      "ms": 0.05754199999998377
+    },
+    {
+      "index": 31,
+      "beginUs": 85817372310,
+      "endUs": 85817372375,
+      "ms": 0.06412500000001842
+    },
+    {
+      "index": 32,
+      "beginUs": 85817372388,
+      "endUs": 85817372585,
+      "ms": 0.19608299999998735
+    },
+    {
+      "index": 33,
+      "beginUs": 85817372592,
+      "endUs": 85817372649,
+      "ms": 0.05679200000000151
+    },
+    {
+      "index": 34,
+      "beginUs": 85817372655,
+      "endUs": 85817372702,
+      "ms": 0.046875
+    },
+    {
+      "index": 35,
+      "beginUs": 85817372708,
+      "endUs": 85817372764,
+      "ms": 0.05579199999999673
+    },
+    {
+      "index": 36,
+      "beginUs": 85817372770,
+      "endUs": 85817372826,
+      "ms": 0.055749999999989086
+    },
+    {
+      "index": 37,
+      "beginUs": 85817372838,
+      "endUs": 85817372907,
+      "ms": 0.06833299999999554
+    },
+    {
+      "index": 38,
+      "beginUs": 85817372918,
+      "endUs": 85817372971,
+      "ms": 0.05237499999998363
+    },
+    {
+      "index": 39,
+      "beginUs": 85817372977,
+      "endUs": 85817373018,
+      "ms": 0.04108399999998369
+    },
+    {
+      "index": 40,
+      "beginUs": 85817373023,
+      "endUs": 85817373063,
+      "ms": 0.03954200000001151
+    },
+    {
+      "index": 41,
+      "beginUs": 85817373072,
+      "endUs": 85817373112,
+      "ms": 0.03987500000002342
+    },
+    {
+      "index": 42,
+      "beginUs": 85817373118,
+      "endUs": 85817373160,
+      "ms": 0.041957999999993945
+    },
+    {
+      "index": 43,
+      "beginUs": 85817373165,
+      "endUs": 85817373231,
+      "ms": 0.06570800000000077
+    },
+    {
+      "index": 44,
+      "beginUs": 85817373237,
+      "endUs": 85817373286,
+      "ms": 0.04775000000000773
+    },
+    {
+      "index": 45,
+      "beginUs": 85817373305,
+      "endUs": 85817373349,
+      "ms": 0.043666999999999234
+    },
+    {
+      "index": 46,
+      "beginUs": 85817373354,
+      "endUs": 85817373404,
+      "ms": 0.04800000000000182
+    },
+    {
+      "index": 47,
+      "beginUs": 85817373410,
+      "endUs": 85817373450,
+      "ms": 0.03958299999999326
+    },
+    {
+      "index": 48,
+      "beginUs": 85817373455,
+      "endUs": 85817373507,
+      "ms": 0.05124999999998181
+    },
+    {
+      "index": 49,
+      "beginUs": 85817373512,
+      "endUs": 85817373557,
+      "ms": 0.04487499999999045
+    },
+    {
+      "index": 50,
+      "beginUs": 85817373563,
+      "endUs": 85817373603,
+      "ms": 0.03983299999998735
+    },
+    {
+      "index": 51,
+      "beginUs": 85817373608,
+      "endUs": 85817373648,
+      "ms": 0.039249999999981355
+    },
+    {
+      "index": 52,
+      "beginUs": 85817373653,
+      "endUs": 85817373707,
+      "ms": 0.054082999999991443
+    },
+    {
+      "index": 53,
+      "beginUs": 85817373713,
+      "endUs": 85817373781,
+      "ms": 0.06754199999997468
+    },
+    {
+      "index": 54,
+      "beginUs": 85817373791,
+      "endUs": 85817373846,
+      "ms": 0.054666999999994914
+    },
+    {
+      "index": 55,
+      "beginUs": 85817373852,
+      "endUs": 85817373894,
+      "ms": 0.04116700000000151
+    },
+    {
+      "index": 56,
+      "beginUs": 85817373899,
+      "endUs": 85817373939,
+      "ms": 0.03891699999999787
+    },
+    {
+      "index": 57,
+      "beginUs": 85817373944,
+      "endUs": 85817373984,
+      "ms": 0.039332999999999174
+    },
+    {
+      "index": 58,
+      "beginUs": 85817373989,
+      "endUs": 85817374029,
+      "ms": 0.03945799999999622
+    },
+    {
+      "index": 59,
+      "beginUs": 85817374034,
+      "endUs": 85817374073,
+      "ms": 0.03841700000000969
+    },
+    {
+      "index": 60,
+      "beginUs": 85817374078,
+      "endUs": 85817374127,
+      "ms": 0.048458999999979824
+    },
+    {
+      "index": 61,
+      "beginUs": 85817374136,
+      "endUs": 85817374174,
+      "ms": 0.037916999999993095
+    },
+    {
+      "index": 62,
+      "beginUs": 85817374181,
+      "endUs": 85817374268,
+      "ms": 0.08595799999997666
+    },
+    {
+      "index": 63,
+      "beginUs": 85817374275,
+      "endUs": 85817374370,
+      "ms": 0.09233299999999645
+    },
+    {
+      "index": 64,
+      "beginUs": 85817374376,
+      "endUs": 85817374419,
+      "ms": 0.042999999999977945
+    },
+    {
+      "index": 65,
+      "beginUs": 85817374425,
+      "endUs": 85817374480,
+      "ms": 0.055125000000003865
+    },
+    {
+      "index": 66,
+      "beginUs": 85817374488,
+      "endUs": 85817374561,
+      "ms": 0.07337499999999864
+    },
+    {
+      "index": 67,
+      "beginUs": 85817374568,
+      "endUs": 85817374613,
+      "ms": 0.0438750000000141
+    },
+    {
+      "index": 68,
+      "beginUs": 85817374618,
+      "endUs": 85817374665,
+      "ms": 0.046750000000002956
+    },
+    {
+      "index": 69,
+      "beginUs": 85817374670,
+      "endUs": 85817374727,
+      "ms": 0.05620800000002646
+    },
+    {
+      "index": 70,
+      "beginUs": 85817374733,
+      "endUs": 85817374770,
+      "ms": 0.037042000000013786
+    },
+    {
+      "index": 71,
+      "beginUs": 85817374777,
+      "endUs": 85817374819,
+      "ms": 0.04129100000000108
+    },
+    {
+      "index": 72,
+      "beginUs": 85817374824,
+      "endUs": 85817374861,
+      "ms": 0.03691699999998832
+    },
+    {
+      "index": 73,
+      "beginUs": 85817374866,
+      "endUs": 85817374905,
+      "ms": 0.03904099999999744
+    },
+    {
+      "index": 74,
+      "beginUs": 85817374910,
+      "endUs": 85817374952,
+      "ms": 0.04162499999998204
+    },
+    {
+      "index": 75,
+      "beginUs": 85817374957,
+      "endUs": 85817374995,
+      "ms": 0.03725000000000023
+    },
+    {
+      "index": 76,
+      "beginUs": 85817374999,
+      "endUs": 85817375037,
+      "ms": 0.03683300000000145
+    },
+    {
+      "index": 77,
+      "beginUs": 85817375042,
+      "endUs": 85817375096,
+      "ms": 0.054082999999991443
+    },
+    {
+      "index": 78,
+      "beginUs": 85817375102,
+      "endUs": 85817375138,
+      "ms": 0.03562500000001023
+    },
+    {
+      "index": 79,
+      "beginUs": 85817375144,
+      "endUs": 85817375179,
+      "ms": 0.03491700000000719
+    },
+    {
+      "index": 80,
+      "beginUs": 85817375184,
+      "endUs": 85817375226,
+      "ms": 0.04116700000000151
+    },
+    {
+      "index": 81,
+      "beginUs": 85817375231,
+      "endUs": 85817375275,
+      "ms": 0.04433300000002305
+    },
+    {
+      "index": 82,
+      "beginUs": 85817375298,
+      "endUs": 85817375368,
+      "ms": 0.06937500000000796
+    },
+    {
+      "index": 83,
+      "beginUs": 85817375375,
+      "endUs": 85817375426,
+      "ms": 0.050667000000004236
+    },
+    {
+      "index": 84,
+      "beginUs": 85817375432,
+      "endUs": 85817375475,
+      "ms": 0.04316700000001106
+    },
+    {
+      "index": 85,
+      "beginUs": 85817375481,
+      "endUs": 85817375520,
+      "ms": 0.039041999999994914
+    },
+    {
+      "index": 86,
+      "beginUs": 85817375526,
+      "endUs": 85817375901,
+      "ms": 0.37487500000000296
+    },
+    {
+      "index": 87,
+      "beginUs": 85817375907,
+      "endUs": 85817375948,
+      "ms": 0.040541999999987866
+    },
+    {
+      "index": 88,
+      "beginUs": 85817375954,
+      "endUs": 85817375996,
+      "ms": 0.04241700000000037
+    },
+    {
+      "index": 89,
+      "beginUs": 85817376002,
+      "endUs": 85817376037,
+      "ms": 0.0348329999999919
+    },
+    {
+      "index": 90,
+      "beginUs": 85817376046,
+      "endUs": 85817376085,
+      "ms": 0.038624999999996135
+    },
+    {
+      "index": 91,
+      "beginUs": 85817376090,
+      "endUs": 85817376130,
+      "ms": 0.04024999999998613
+    },
+    {
+      "index": 92,
+      "beginUs": 85817376135,
+      "endUs": 85817376178,
+      "ms": 0.041874999999976126
+    },
+    {
+      "index": 93,
+      "beginUs": 85817376183,
+      "endUs": 85817376226,
+      "ms": 0.0432920000000081
+    },
+    {
+      "index": 94,
+      "beginUs": 85817376232,
+      "endUs": 85817376280,
+      "ms": 0.0484170000000006
+    },
+    {
+      "index": 95,
+      "beginUs": 85817376285,
+      "endUs": 85817376320,
+      "ms": 0.03366599999998243
+    },
+    {
+      "index": 96,
+      "beginUs": 85817376326,
+      "endUs": 85817376360,
+      "ms": 0.032708000000013726
+    },
+    {
+      "index": 97,
+      "beginUs": 85817376365,
+      "endUs": 85817376400,
+      "ms": 0.034958000000017364
+    },
+    {
+      "index": 98,
+      "beginUs": 85817376405,
+      "endUs": 85817376440,
+      "ms": 0.03462500000000546
+    },
+    {
+      "index": 99,
+      "beginUs": 85817376445,
+      "endUs": 85817376595,
+      "ms": 0.14979100000002177
+    },
+    {
+      "index": 100,
+      "beginUs": 85817376603,
+      "endUs": 85817376653,
+      "ms": 0.0503750000000025
+    }
+  ],
+  "cpu": {
+    "mounts": 101,
+    "intervalUs": 100,
+    "samples": 42,
+    "denominatorUs": 5702,
+    "windowUs": 5702,
+    "functions": [
+      {
+        "function": "(idle)",
+        "file": "(V8)",
+        "line": 0,
+        "column": -1,
+        "selfUs": 956,
+        "totalUs": 956,
+        "selfSamples": 7,
+        "totalSamples": 7,
+        "selfPct": 16.76604700105226,
+        "totalPct": 16.76604700105226,
+        "selfUsPerMount": 9.465346534653465,
+        "totalUsPerMount": 9.465346534653465
+      },
+      {
+        "function": "(program)",
+        "file": "(V8)",
+        "line": 0,
+        "column": -1,
+        "selfUs": 538,
+        "totalUs": 538,
+        "selfSamples": 4,
+        "totalSamples": 4,
+        "selfPct": 9.43528586460891,
+        "totalPct": 9.43528586460891,
+        "selfUsPerMount": 5.326732673267327,
+        "totalUsPerMount": 5.326732673267327
+      },
+      {
+        "function": "measured",
+        "file": "packages/canard/schema-form/architecture/verification/07-switch/profile-102-work/measure.mjs",
+        "line": 198,
+        "column": 23,
+        "selfUs": 421,
+        "totalUs": 2478,
+        "selfSamples": 3,
+        "totalSamples": 19,
+        "selfPct": 7.383374254647491,
+        "totalPct": 43.45843563661873,
+        "selfUsPerMount": 4.1683168316831685,
+        "totalUsPerMount": 24.534653465346533
+      },
+      {
+        "function": "(garbage collector)",
+        "file": "(V8)",
+        "line": 0,
+        "column": -1,
+        "selfUs": 412,
+        "totalUs": 412,
+        "selfSamples": 3,
+        "totalSamples": 3,
+        "selfPct": 7.2255349000350755,
+        "totalPct": 7.2255349000350755,
+        "selfUsPerMount": 4.079207920792079,
+        "totalUsPerMount": 4.079207920792079
+      },
+      {
+        "function": "processImmediate",
+        "file": "node:internal/timers",
+        "line": 525,
+        "column": 27,
+        "selfUs": 303,
+        "totalUs": 912,
+        "selfSamples": 2,
+        "totalSamples": 6,
+        "selfPct": 5.313924938618029,
+        "totalPct": 15.994387934058224,
+        "selfUsPerMount": 3,
+        "totalUsPerMount": 9.029702970297029
+      },
+      {
+        "function": "runNextTicks",
+        "file": "node:internal/process/task_queues",
+        "line": 63,
+        "column": 21,
+        "selfUs": 299,
+        "totalUs": 299,
+        "selfSamples": 2,
+        "totalSamples": 2,
+        "selfPct": 5.243774114345843,
+        "totalPct": 5.243774114345843,
+        "selfUsPerMount": 2.9603960396039604,
+        "totalUsPerMount": 2.9603960396039604
+      },
+      {
+        "function": "needsRealComputedManager",
+        "file": "packages/canard/schema-form/src/__legacy__/core/nodes/AbstractNode/utils/getComputedPropertiesManager/utils/needsRealComputedManager/needsRealComputedManager.ts",
+        "line": 27,
+        "column": 40,
+        "selfUs": 274,
+        "totalUs": 274,
+        "selfSamples": 2,
+        "totalSamples": 2,
+        "selfPct": 4.805331462644686,
+        "totalPct": 4.805331462644686,
+        "selfUsPerMount": 2.712871287128713,
+        "totalUsPerMount": 2.712871287128713
+      },
+      {
+        "function": "AbstractNode",
+        "file": "packages/canard/schema-form/src/__legacy__/core/nodes/AbstractNode/AbstractNode.ts",
+        "line": 1146,
+        "column": 2,
+        "selfUs": 269,
+        "totalUs": 700,
+        "selfSamples": 2,
+        "totalSamples": 5,
+        "selfPct": 4.717642932304455,
+        "totalPct": 12.276394247632409,
+        "selfUsPerMount": 2.6633663366336635,
+        "totalUsPerMount": 6.930693069306931
+      },
+      {
+        "function": "scannerFactory",
+        "file": "packages/winglet/json-schema/dist/utils/JSONSchemaScanner/utils/scannerFactory.cjs",
+        "line": 17,
+        "column": 24,
+        "selfUs": 266,
+        "totalUs": 266,
+        "selfSamples": 2,
+        "totalSamples": 2,
+        "selfPct": 4.665029814100316,
+        "totalPct": 4.665029814100316,
+        "selfUsPerMount": 2.633663366336634,
+        "totalUsPerMount": 2.633663366336634
+      },
+      {
+        "function": "pushAsyncContext",
+        "file": "node:internal/async_hooks",
+        "line": 549,
+        "column": 25,
+        "selfUs": 162,
+        "totalUs": 162,
+        "selfSamples": 1,
+        "totalSamples": 1,
+        "selfPct": 2.8411083830235007,
+        "totalPct": 2.8411083830235007,
+        "selfUsPerMount": 1.603960396039604,
+        "totalUsPerMount": 1.603960396039604
+      },
+      {
+        "function": "afterMicrotask",
+        "file": "packages/canard/schema-form/src/__legacy__/core/nodes/AbstractNode/utils/afterMicrotask/afterMicrotask.ts",
+        "line": 18,
+        "column": 30,
+        "selfUs": 157,
+        "totalUs": 157,
+        "selfSamples": 1,
+        "totalSamples": 1,
+        "selfPct": 2.753419852683269,
+        "totalPct": 2.753419852683269,
+        "selfUsPerMount": 1.5544554455445545,
+        "totalUsPerMount": 1.5544554455445545
+      },
+      {
+        "function": "getReferenceTable",
+        "file": "packages/canard/schema-form/src/__legacy__/helpers/jsonSchema/getResolveSchema/utils/getReferenceTable.ts",
+        "line": 12,
+        "column": 33,
+        "selfUs": 153,
+        "totalUs": 419,
+        "selfSamples": 1,
+        "totalSamples": 3,
+        "selfPct": 2.683269028411084,
+        "totalPct": 7.3482988425114,
+        "selfUsPerMount": 1.5148514851485149,
+        "totalUsPerMount": 4.148514851485149
+      },
+      {
+        "function": "now",
+        "file": "(V8)",
+        "line": 0,
+        "column": -1,
+        "selfUs": 148,
+        "totalUs": 148,
+        "selfSamples": 1,
+        "totalSamples": 1,
+        "selfPct": 2.5955804980708526,
+        "totalPct": 2.5955804980708526,
+        "selfUsPerMount": 1.4653465346534653,
+        "totalUsPerMount": 1.4653465346534653
+      },
+      {
+        "function": "mergeEventEntries",
+        "file": "packages/canard/schema-form/src/__legacy__/core/nodes/AbstractNode/utils/EventCascadeManager/utils/mergeEventEntries.ts",
+        "line": 13,
+        "column": 33,
+        "selfUs": 139,
+        "totalUs": 139,
+        "selfSamples": 1,
+        "totalSamples": 1,
+        "selfPct": 2.4377411434584357,
+        "totalPct": 2.4377411434584357,
+        "selfUsPerMount": 1.3762376237623761,
+        "totalUsPerMount": 1.3762376237623761
+      },
+      {
+        "function": "equalsRecursive",
+        "file": "packages/winglet/common-utils/dist/utils/object/equals/utils/equalsRecursive.cjs",
+        "line": 11,
+        "column": 24,
+        "selfUs": 138,
+        "totalUs": 138,
+        "selfSamples": 1,
+        "totalSamples": 1,
+        "selfPct": 2.4202034373903896,
+        "totalPct": 2.4202034373903896,
+        "selfUsPerMount": 1.3663366336633664,
+        "totalUsPerMount": 1.3663366336633664
+      },
+      {
+        "function": "post",
+        "file": "node:inspector",
+        "line": 115,
+        "column": 6,
+        "selfUs": 135,
+        "totalUs": 135,
+        "selfSamples": 1,
+        "totalSamples": 1,
+        "selfPct": 2.36759031918625,
+        "totalPct": 2.36759031918625,
+        "selfUsPerMount": 1.3366336633663367,
+        "totalUsPerMount": 1.3366336633663367
+      },
+      {
+        "function": "getCompositionNodeMapList",
+        "file": "packages/canard/schema-form/src/__legacy__/core/nodes/ObjectNode/strategies/BranchStrategy/utils/getCompositionNodeMapList/getCompositionNodeMapList.ts",
+        "line": 42,
+        "column": 41,
+        "selfUs": 134,
+        "totalUs": 134,
+        "selfSamples": 1,
+        "totalSamples": 1,
+        "selfPct": 2.350052613118204,
+        "totalPct": 2.350052613118204,
+        "selfUsPerMount": 1.3267326732673268,
+        "totalUsPerMount": 1.3267326732673268
+      },
+      {
+        "function": "Immediate",
+        "file": "node:internal/timers",
+        "line": 747,
+        "column": 13,
+        "selfUs": 133,
+        "totalUs": 133,
+        "selfSamples": 1,
+        "totalSamples": 1,
+        "selfPct": 2.332514907050158,
+        "totalPct": 2.332514907050158,
+        "selfUsPerMount": 1.316831683168317,
+        "totalUsPerMount": 1.316831683168317
+      },
+      {
+        "function": "structuredClone",
+        "file": "node:internal/worker/js_transferable",
+        "line": 101,
+        "column": 24,
+        "selfUs": 132,
+        "totalUs": 132,
+        "selfSamples": 1,
+        "totalSamples": 1,
+        "selfPct": 2.3149772009821117,
+        "totalPct": 2.3149772009821117,
+        "selfUsPerMount": 1.306930693069307,
+        "totalUsPerMount": 1.306930693069307
+      },
+      {
+        "function": "ObjectNode",
+        "file": "packages/canard/schema-form/src/__legacy__/core/nodes/ObjectNode/ObjectNode.ts",
+        "line": 96,
+        "column": 2,
+        "selfUs": 127,
+        "totalUs": 1579,
+        "selfSamples": 1,
+        "totalSamples": 12,
+        "selfPct": 2.22728867064188,
+        "totalPct": 27.69203788144511,
+        "selfUsPerMount": 1.2574257425742574,
+        "totalUsPerMount": 15.633663366336634
+      },
+      {
+        "function": "__acquireBatch__",
+        "file": "packages/canard/schema-form/src/__legacy__/core/nodes/AbstractNode/utils/EventCascadeManager/EventCascadeManager.ts",
+        "line": 90,
+        "column": 10,
+        "selfUs": 123,
+        "totalUs": 123,
+        "selfSamples": 1,
+        "totalSamples": 1,
+        "selfPct": 2.157137846369695,
+        "totalPct": 2.157137846369695,
+        "selfUsPerMount": 1.2178217821782178,
+        "totalUsPerMount": 1.2178217821782178
+      },
+      {
+        "function": "initialize",
+        "file": "packages/canard/schema-form/src/__legacy__/core/nodes/ObjectNode/strategies/BranchStrategy/BranchStrategy.ts",
+        "line": 717,
+        "column": 9,
+        "selfUs": 121,
+        "totalUs": 121,
+        "selfSamples": 1,
+        "totalSamples": 1,
+        "selfPct": 2.122062434233602,
+        "totalPct": 2.122062434233602,
+        "selfUsPerMount": 1.198019801980198,
+        "totalUsPerMount": 1.198019801980198
+      },
+      {
+        "function": "publish",
+        "file": "packages/canard/schema-form/src/__legacy__/core/nodes/AbstractNode/utils/EventCascadeManager/EventCascadeManager.ts",
+        "line": 134,
+        "column": 9,
+        "selfUs": 103,
+        "totalUs": 226,
+        "selfSamples": 1,
+        "totalSamples": 2,
+        "selfPct": 1.8063837250087689,
+        "totalPct": 3.9635215713784637,
+        "selfUsPerMount": 1.0198019801980198,
+        "totalUsPerMount": 2.237623762376238
+      },
+      {
+        "function": "get",
+        "file": "file:///private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles/profile102-old.cjs",
+        "line": 13,
+        "column": 34,
+        "selfUs": 59,
+        "totalUs": 59,
+        "selfSamples": 1,
+        "totalSamples": 1,
+        "selfPct": 1.0347246580147316,
+        "totalPct": 1.0347246580147316,
+        "selfUsPerMount": 0.5841584158415841,
+        "totalUsPerMount": 0.5841584158415841
+      },
+      {
+        "function": "create",
+        "file": "(round-99 canonical adapter)",
+        "line": 157,
+        "column": 15,
+        "selfUs": 0,
+        "totalUs": 2057,
+        "selfSamples": 0,
+        "totalSamples": 16,
+        "selfPct": 0,
+        "totalPct": 36.07506138197124,
+        "selfUsPerMount": 0,
+        "totalUsPerMount": 20.366336633663366
+      },
+      {
+        "function": "(anonymous)",
+        "file": "packages/canard/schema-form/architecture/verification/07-switch/profile-102-work/measure.mjs",
+        "line": 346,
+        "column": 34,
+        "selfUs": 0,
+        "totalUs": 2057,
+        "selfSamples": 0,
+        "totalSamples": 16,
+        "selfPct": 0,
+        "totalPct": 36.07506138197124,
+        "selfUsPerMount": 0,
+        "totalUsPerMount": 20.366336633663366
+      },
+      {
+        "function": "cpu",
+        "file": "packages/canard/schema-form/architecture/verification/07-switch/profile-102-work/measure.mjs",
+        "line": 337,
+        "column": 18,
+        "selfUs": 0,
+        "totalUs": 2434,
+        "selfSamples": 0,
+        "totalSamples": 19,
+        "selfPct": 0,
+        "totalPct": 42.68677656962469,
+        "selfUsPerMount": 0,
+        "totalUsPerMount": 24.099009900990097
+      },
+      {
+        "function": "(root)",
+        "file": "(V8)",
+        "line": 0,
+        "column": -1,
+        "selfUs": 0,
+        "totalUs": 5702,
+        "selfSamples": 0,
+        "totalSamples": 42,
+        "selfPct": 0,
+        "totalPct": 100,
+        "selfUsPerMount": 0,
+        "totalUsPerMount": 56.45544554455446
+      },
+      {
+        "function": "now",
+        "file": "node:internal/perf/performance",
+        "line": 137,
+        "column": 5,
+        "selfUs": 0,
+        "totalUs": 148,
+        "selfSamples": 0,
+        "totalSamples": 1,
+        "selfPct": 0,
+        "totalPct": 2.5955804980708526,
+        "selfUsPerMount": 0,
+        "totalUsPerMount": 1.4653465346534653
+      },
+      {
+        "function": "(anonymous)",
+        "file": "packages/canard/schema-form/architecture/verification/07-switch/profile-102-work/measure.mjs",
+        "line": 202,
+        "column": 59,
+        "selfUs": 0,
+        "totalUs": 148,
+        "selfSamples": 0,
+        "totalSamples": 1,
+        "selfPct": 0,
+        "totalPct": 2.5955804980708526,
+        "selfUsPerMount": 0,
+        "totalUsPerMount": 1.4653465346534653
+      },
+      {
+        "function": "publish",
+        "file": "packages/canard/schema-form/src/__legacy__/core/nodes/AbstractNode/AbstractNode.ts",
+        "line": 891,
+        "column": 9,
+        "selfUs": 0,
+        "totalUs": 226,
+        "selfSamples": 0,
+        "totalSamples": 2,
+        "selfPct": 0,
+        "totalPct": 3.9635215713784637,
+        "selfUsPerMount": 0,
+        "totalUsPerMount": 2.237623762376238
+      },
+      {
+        "function": "__emitChange__",
+        "file": "packages/canard/schema-form/src/__legacy__/core/nodes/StringNode/StringNode.ts",
+        "line": 40,
+        "column": 10,
+        "selfUs": 0,
+        "totalUs": 226,
+        "selfSamples": 0,
+        "totalSamples": 2,
+        "selfPct": 0,
+        "totalPct": 3.9635215713784637,
+        "selfUsPerMount": 0,
+        "totalUsPerMount": 2.237623762376238
+      },
+      {
+        "function": "StringNode",
+        "file": "packages/canard/schema-form/src/__legacy__/core/nodes/StringNode/StringNode.ts",
+        "line": 111,
+        "column": 2,
+        "selfUs": 0,
+        "totalUs": 633,
+        "selfSamples": 0,
+        "totalSamples": 5,
+        "selfPct": 0,
+        "totalPct": 11.101367941073308,
+        "selfUsPerMount": 0,
+        "totalUsPerMount": 6.267326732673268
+      },
+      {
+        "function": "(anonymous)",
+        "file": "packages/canard/schema-form/src/__legacy__/core/nodes/schemaNodeFactory.ts",
+        "line": 75,
+        "column": 2,
+        "selfUs": 0,
+        "totalUs": 1579,
+        "selfSamples": 0,
+        "totalSamples": 12,
+        "selfPct": 0,
+        "totalPct": 27.69203788144511,
+        "selfUsPerMount": 0,
+        "totalUsPerMount": 15.633663366336634
+      },
+      {
+        "function": "getChildNodeMap",
+        "file": "packages/canard/schema-form/src/__legacy__/core/nodes/ObjectNode/strategies/BranchStrategy/utils/getChildNodeMap/getChildNodeMap.ts",
+        "line": 33,
+        "column": 31,
+        "selfUs": 0,
+        "totalUs": 633,
+        "selfSamples": 0,
+        "totalSamples": 5,
+        "selfPct": 0,
+        "totalPct": 11.101367941073308,
+        "selfUsPerMount": 0,
+        "totalUsPerMount": 6.267326732673268
+      },
+      {
+        "function": "BranchStrategy2",
+        "file": "packages/canard/schema-form/src/__legacy__/core/nodes/ObjectNode/strategies/BranchStrategy/BranchStrategy.ts",
+        "line": 761,
+        "column": 2,
+        "selfUs": 0,
+        "totalUs": 1038,
+        "selfSamples": 0,
+        "totalSamples": 8,
+        "selfPct": 0,
+        "totalPct": 18.204138898632056,
+        "selfUsPerMount": 0,
+        "totalUsPerMount": 10.277227722772277
+      },
+      {
+        "function": "nodeFromJSONSchema",
+        "file": "packages/canard/schema-form/src/__legacy__/core/nodeFromJSONSchema.ts",
+        "line": 34,
+        "column": 34,
+        "selfUs": 0,
+        "totalUs": 1998,
+        "selfSamples": 0,
+        "totalSamples": 15,
+        "selfPct": 0,
+        "totalPct": 35.04033672395651,
+        "selfUsPerMount": 0,
+        "totalUsPerMount": 19.782178217821784
+      },
+      {
+        "function": "setImmediate",
+        "file": "node:timers",
+        "line": 215,
+        "column": 21,
+        "selfUs": 0,
+        "totalUs": 133,
+        "selfSamples": 0,
+        "totalSamples": 1,
+        "selfPct": 0,
+        "totalPct": 2.332514907050158,
+        "selfUsPerMount": 0,
+        "totalUsPerMount": 1.316831683168317
+      },
+      {
+        "function": "(anonymous)",
+        "file": "packages/canard/schema-form/src/__legacy__/core/nodes/AbstractNode/utils/afterMicrotask/afterMicrotask.ts",
+        "line": 24,
+        "column": 9,
+        "selfUs": 0,
+        "totalUs": 133,
+        "selfSamples": 0,
+        "totalSamples": 1,
+        "selfPct": 0,
+        "totalPct": 2.332514907050158,
+        "selfUsPerMount": 0,
+        "totalUsPerMount": 1.316831683168317
+      },
+      {
+        "function": "onChange",
+        "file": "packages/canard/schema-form/src/__legacy__/core/nodes/AbstractNode/AbstractNode.ts",
+        "line": 414,
+        "column": 12,
+        "selfUs": 0,
+        "totalUs": 133,
+        "selfSamples": 0,
+        "totalSamples": 1,
+        "selfPct": 0,
+        "totalPct": 2.332514907050158,
+        "selfUsPerMount": 0,
+        "totalUsPerMount": 1.316831683168317
+      },
+      {
+        "function": "ObjectNode.handleChange",
+        "file": "packages/canard/schema-form/src/__legacy__/core/nodes/ObjectNode/ObjectNode.ts",
+        "line": 101,
+        "column": 10,
+        "selfUs": 0,
+        "totalUs": 133,
+        "selfSamples": 0,
+        "totalSamples": 1,
+        "selfPct": 0,
+        "totalPct": 2.332514907050158,
+        "selfUsPerMount": 0,
+        "totalUsPerMount": 1.316831683168317
+      },
+      {
+        "function": "__handleEmitChange__",
+        "file": "packages/canard/schema-form/src/__legacy__/core/nodes/ObjectNode/strategies/BranchStrategy/BranchStrategy.ts",
+        "line": 155,
+        "column": 10,
+        "selfUs": 0,
+        "totalUs": 271,
+        "selfSamples": 0,
+        "totalSamples": 2,
+        "selfPct": 0,
+        "totalPct": 4.752718344440547,
+        "selfUsPerMount": 0,
+        "totalUsPerMount": 2.6831683168316833
+      },
+      {
+        "function": "__emitChange__",
+        "file": "packages/canard/schema-form/src/__legacy__/core/nodes/ObjectNode/strategies/BranchStrategy/BranchStrategy.ts",
+        "line": 137,
+        "column": 10,
+        "selfUs": 0,
+        "totalUs": 271,
+        "selfSamples": 0,
+        "totalSamples": 2,
+        "selfPct": 0,
+        "totalPct": 4.752718344440547,
+        "selfUsPerMount": 0,
+        "totalUsPerMount": 2.6831683168316833
+      },
+      {
+        "function": "__run__",
+        "file": "packages/winglet/json-schema/dist/utils/JSONSchemaScanner/sync/JSONSchemaScanner.cjs",
+        "line": 47,
+        "column": 8,
+        "selfUs": 0,
+        "totalUs": 266,
+        "selfSamples": 0,
+        "totalSamples": 2,
+        "selfPct": 0,
+        "totalPct": 4.665029814100316,
+        "selfUsPerMount": 0,
+        "totalUsPerMount": 2.633663366336634
+      },
+      {
+        "function": "scan",
+        "file": "packages/winglet/json-schema/dist/utils/JSONSchemaScanner/sync/JSONSchemaScanner.cjs",
+        "line": 15,
+        "column": 5,
+        "selfUs": 0,
+        "totalUs": 266,
+        "selfSamples": 0,
+        "totalSamples": 2,
+        "selfPct": 0,
+        "totalPct": 4.665029814100316,
+        "selfUsPerMount": 0,
+        "totalUsPerMount": 2.633663366336634
+      },
+      {
+        "function": "getResolveSchema",
+        "file": "packages/canard/schema-form/src/__legacy__/helpers/jsonSchema/getResolveSchema/getResolveSchema.ts",
+        "line": 18,
+        "column": 32,
+        "selfUs": 0,
+        "totalUs": 419,
+        "selfSamples": 0,
+        "totalSamples": 3,
+        "selfPct": 0,
+        "totalPct": 7.3482988425114,
+        "selfUsPerMount": 0,
+        "totalUsPerMount": 4.148514851485149
+      },
+      {
+        "function": "__initialize__",
+        "file": "packages/canard/schema-form/src/__legacy__/core/nodes/ObjectNode/ObjectNode.ts",
+        "line": 72,
+        "column": 18,
+        "selfUs": 0,
+        "totalUs": 121,
+        "selfSamples": 0,
+        "totalSamples": 1,
+        "selfPct": 0,
+        "totalPct": 2.122062434233602,
+        "selfUsPerMount": 0,
+        "totalUsPerMount": 1.198019801980198
+      },
+      {
+        "function": "getComputedPropertiesManager",
+        "file": "packages/canard/schema-form/src/__legacy__/core/nodes/AbstractNode/utils/getComputedPropertiesManager/getComputedPropertiesManager.ts",
+        "line": 19,
+        "column": 44,
+        "selfUs": 0,
+        "totalUs": 274,
+        "selfSamples": 0,
+        "totalSamples": 2,
+        "selfPct": 0,
+        "totalPct": 4.805331462644686,
+        "selfUsPerMount": 0,
+        "totalUsPerMount": 2.712871287128713
+      },
+      {
+        "function": "(anonymous)",
+        "file": "packages/canard/schema-form/src/__legacy__/core/nodes/AbstractNode/utils/EventCascadeManager/EventCascadeManager.ts",
+        "line": 120,
+        "column": 22,
+        "selfUs": 0,
+        "totalUs": 139,
+        "selfSamples": 0,
+        "totalSamples": 1,
+        "selfPct": 0,
+        "totalPct": 2.4377411434584357,
+        "selfUsPerMount": 0,
+        "totalUsPerMount": 1.3762376237623761
+      },
+      {
+        "function": "emitBeforeScript",
+        "file": "node:internal/async_hooks",
+        "line": 519,
+        "column": 25,
+        "selfUs": 0,
+        "totalUs": 162,
+        "selfSamples": 0,
+        "totalSamples": 1,
+        "selfPct": 0,
+        "totalPct": 2.8411083830235007,
+        "selfUsPerMount": 0,
+        "totalUsPerMount": 1.603960396039604
+      },
+      {
+        "function": "equals",
+        "file": "packages/winglet/common-utils/dist/utils/object/equals/equals.cjs",
+        "line": 6,
+        "column": 15,
+        "selfUs": 0,
+        "totalUs": 138,
+        "selfSamples": 0,
+        "totalSamples": 1,
+        "selfPct": 0,
+        "totalPct": 2.4202034373903896,
+        "selfUsPerMount": 0,
+        "totalUsPerMount": 1.3663366336633664
+      },
+      {
+        "function": "__equals__",
+        "file": "packages/canard/schema-form/src/__legacy__/core/nodes/ObjectNode/ObjectNode.ts",
+        "line": 46,
+        "column": 18,
+        "selfUs": 0,
+        "totalUs": 138,
+        "selfSamples": 0,
+        "totalSamples": 1,
+        "selfPct": 0,
+        "totalPct": 2.4202034373903896,
+        "selfUsPerMount": 0,
+        "totalUsPerMount": 1.3663366336633664
+      },
+      {
+        "function": "__parseValue__",
+        "file": "packages/canard/schema-form/src/__legacy__/core/nodes/ObjectNode/strategies/BranchStrategy/BranchStrategy.ts",
+        "line": 220,
+        "column": 10,
+        "selfUs": 0,
+        "totalUs": 138,
+        "selfSamples": 0,
+        "totalSamples": 1,
+        "selfPct": 0,
+        "totalPct": 2.4202034373903896,
+        "selfUsPerMount": 0,
+        "totalUsPerMount": 1.3663366336633664
+      },
+      {
+        "function": "(anonymous)",
+        "file": "packages/canard/schema-form/architecture/verification/07-switch/profile-102-work/measure.mjs",
+        "line": 341,
+        "column": 52,
+        "selfUs": 0,
+        "totalUs": 135,
+        "selfSamples": 0,
+        "totalSamples": 1,
+        "selfPct": 0,
+        "totalPct": 2.36759031918625,
+        "selfUsPerMount": 0,
+        "totalUsPerMount": 1.3366336633663367
+      },
+      {
+        "function": "post",
+        "file": "packages/canard/schema-form/architecture/verification/07-switch/profile-102-work/measure.mjs",
+        "line": 341,
+        "column": 15,
+        "selfUs": 0,
+        "totalUs": 135,
+        "selfSamples": 0,
+        "totalSamples": 1,
+        "selfPct": 0,
+        "totalPct": 2.36759031918625,
+        "selfUsPerMount": 0,
+        "totalUsPerMount": 1.3366336633663367
+      }
+    ],
+    "selfConservation": 5702
+  },
+  "observed": {
+    "sha256": "72c43d9d80f43ae8fddcafd0cb1e33e0faddf95bd32459d24622dda3fbc7a8aa",
+    "outputBytes": 50,
+    "liveWidth": 2,
+    "value": {
+      "name": "John Doe",
+      "email": "john.doe@example.com"
+    }
+  },
+  "environment": {
+    "date": "2026-10-06T06:36:24.799Z",
+    "head": "268832c7cb6eea67475b56ab5a78408a55ec47a3",
+    "node": "v26.10.0",
+    "v8": "14.6.202.34-node.35",
+    "esbuild": "0.25.9",
+    "platform": "darwin",
+    "arch": "arm64",
+    "cpu": "Apple M1 Max",
+    "cpus": 10,
+    "memoryBytes": 68719476736,
+    "osRelease": "25.6.0",
+    "mode": "production",
+    "validation": "off",
+    "subscribers": 0
+  },
+  "elapsedMs": 104,
+  "attributionRevision": "all intersecting windows, weighted timeDeltas"
+}

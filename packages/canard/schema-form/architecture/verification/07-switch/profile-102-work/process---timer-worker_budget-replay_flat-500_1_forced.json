@@ -1,0 +1,17 @@
+{
+  "HEAD": "268832c7cb6eea67475b56ab5a78408a55ec47a3",
+  "command": "--timer-worker",
+  "args": [
+    "budget-replay",
+    "flat-500",
+    "1",
+    "forced"
+  ],
+  "status": 0,
+  "signal": null,
+  "started": "2026-10-06T06:55:22.047Z",
+  "ended": "2026-10-06T06:55:24.221Z",
+  "elapsedMs": 2173,
+  "pid": 54430,
+  "driverSha256": "b6ec53f6af26b6c4f32712ea2c066c2fc17ee3f8eb9670335028cf8f88925da7"
+}

@@ -1,0 +1,19 @@
+{
+  "HEAD": "268832c7cb6eea67475b56ab5a78408a55ec47a3",
+  "command": "--build",
+  "args": [
+    "head-count",
+    "old-count",
+    "registry-replay",
+    "budget-replay",
+    "path-index-zero",
+    "revision-initial-empty"
+  ],
+  "status": 1,
+  "signal": null,
+  "started": "2026-10-06T06:43:33.959Z",
+  "ended": "2026-10-06T06:43:34.909Z",
+  "elapsedMs": 950,
+  "pid": 42932,
+  "driverSha256": "b9383cdd571e61105dda1c50276d5aecf7a078c7e462502b2ce704d83dbb6396"
+}

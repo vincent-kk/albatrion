@@ -1,0 +1,15 @@
+{
+  "HEAD": "268832c7cb6eea67475b56ab5a78408a55ec47a3",
+  "command": "--timers",
+  "args": [
+    "types-replay",
+    "1"
+  ],
+  "status": 0,
+  "signal": null,
+  "started": "2026-10-06T06:44:05.490Z",
+  "ended": "2026-10-06T06:44:20.261Z",
+  "elapsedMs": 14771,
+  "pid": 43937,
+  "driverSha256": "b9383cdd571e61105dda1c50276d5aecf7a078c7e462502b2ce704d83dbb6396"
+}

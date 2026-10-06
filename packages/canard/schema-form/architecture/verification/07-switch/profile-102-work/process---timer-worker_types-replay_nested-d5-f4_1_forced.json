@@ -1,0 +1,17 @@
+{
+  "HEAD": "268832c7cb6eea67475b56ab5a78408a55ec47a3",
+  "command": "--timer-worker",
+  "args": [
+    "types-replay",
+    "nested-d5-f4",
+    "1",
+    "forced"
+  ],
+  "status": 0,
+  "signal": null,
+  "started": "2026-10-06T06:44:05.676Z",
+  "ended": "2026-10-06T06:44:10.087Z",
+  "elapsedMs": 4411,
+  "pid": 43962,
+  "driverSha256": "b9383cdd571e61105dda1c50276d5aecf7a078c7e462502b2ce704d83dbb6396"
+}
