@@ -1,9 +1,31 @@
 import { describe, expect, it } from 'vitest';
 
 import { SchemaNodeEventType } from '../../SchemaNodeEventType';
+import { EMPTY_REVISION_LEDGER } from '../../type';
 import { SchemaNodeRevisionLedger } from '../SchemaNodeRevisionLedger';
 
 describe('SchemaNodeRevisionLedger counters', () => {
+  it('keeps shared-empty and plain-record bit reads, sums and snapshots identical', () => {
+    let shared = new SchemaNodeRevisionLedger(EMPTY_REVISION_LEDGER, 0);
+    let plain = new SchemaNodeRevisionLedger({}, 0);
+    for (let index = 0; index < 17; index++) {
+      const before = shared;
+      const saved = Array.from({ length: 17 }, (_, bit) => before[1 << bit]);
+      const mask = (1 << index) | SchemaNodeEventType.Initialized;
+      shared = new SchemaNodeRevisionLedger(shared, mask);
+      plain = new SchemaNodeRevisionLedger(plain, mask);
+      for (let bit = 0; bit < 17; bit++) {
+        expect(shared[1 << bit]).toBe(plain[1 << bit]);
+        expect(shared.read((1 << bit) | mask)).toBe(plain.read((1 << bit) | mask));
+        expect(before[1 << bit]).toBe(saved[bit]);
+      }
+      expect(shared.read(-1)).toBe(plain.read(-1));
+      expect(shared.read(0)).toBe(0);
+    }
+    expect(Object.isFrozen(EMPTY_REVISION_LEDGER)).toBe(true);
+    expect(Object.keys(EMPTY_REVISION_LEDGER)).toHaveLength(0);
+  });
+
   it('maps all 17 event bits to independent counters and bit getters', () => {
     let ledger = new SchemaNodeRevisionLedger({}, 0);
     for (let index = 0; index < 17; index++) {

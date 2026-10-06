@@ -1,0 +1,921 @@
+{
+  "head": "2333fd5af",
+  "adopted": false,
+  "noiseRule": "max(1us, same-column no-op absolute median gain/paired median, empty residual p95 + 1999 bootstrap 99% median-error sum); gain requires all three runs; regression veto applies to any signed run",
+  "rows": [
+    {
+      "name": "nested-d5-f4",
+      "mode": "mount",
+      "regime": "forced",
+      "headMs": 9.771543000000293,
+      "workingMs": 8.796082999999697,
+      "gainMs": 0.9995839999996861,
+      "pairedMedianMs": 1.1970829999995658,
+      "noOpNoiseMs": 0.568416999999954,
+      "pooledHeadMs": 9.910417000000024,
+      "pooledWorkingMs": 8.813876000000107,
+      "pooledPairedMedianMs": 0.9785000000001673,
+      "maxNoiseMs": 0.6476240000002065,
+      "aboveNoise": true,
+      "regressionAboveNoise": false,
+      "measurements": [
+        {
+          "run": 1,
+          "headMs": 10.258582999999788,
+          "workingMs": 8.796082999999697,
+          "gainMs": 1.462500000000091,
+          "pairedMedianMs": 1.378458000000137,
+          "noiseMs": 0.568416999999954,
+          "pairedMedianInterval": [
+            0.8226660000002539,
+            1.9834169999999176
+          ],
+          "gcInside": 0
+        },
+        {
+          "run": 2,
+          "headMs": 9.771543000000293,
+          "workingMs": 8.771959000000606,
+          "gainMs": 0.9995839999996861,
+          "pairedMedianMs": 1.1970829999995658,
+          "noiseMs": 0.6476240000002065,
+          "pairedMedianInterval": [
+            0.27079200000002857,
+            1.4050419999998667
+          ],
+          "gcInside": 0
+        },
+        {
+          "run": 3,
+          "headMs": 9.551000999999985,
+          "workingMs": 8.823043000000041,
+          "gainMs": 0.7279579999999441,
+          "pairedMedianMs": 0.7040419999993901,
+          "noiseMs": 0.568416999999954,
+          "pairedMedianInterval": [
+            0.31120899999996254,
+            1.2130419999998594
+          ],
+          "gcInside": 0
+        }
+      ]
+    },
+    {
+      "name": "nested-d5-f4",
+      "mode": "mount",
+      "regime": "steady",
+      "headMs": 8.114707999999922,
+      "workingMs": 7.0142089999997665,
+      "gainMs": 1.2976659999999356,
+      "pairedMedianMs": 1.1942079999998896,
+      "noOpNoiseMs": 0.5038340000000971,
+      "pooledHeadMs": 8.134791000000035,
+      "pooledWorkingMs": 6.941208000000046,
+      "pooledPairedMedianMs": 1.1507919999997966,
+      "maxNoiseMs": 1.8651679999996418,
+      "aboveNoise": false,
+      "regressionAboveNoise": false,
+      "measurements": [
+        {
+          "run": 1,
+          "headMs": 8.114707999999922,
+          "workingMs": 6.8170419999999865,
+          "gainMs": 1.2976659999999356,
+          "pairedMedianMs": 1.1942079999998896,
+          "noiseMs": 1.8646239999997647,
+          "pairedMedianInterval": [
+            1.0531670000000304,
+            1.4105000000001837
+          ],
+          "gcInside": 115
+        },
+        {
+          "run": 2,
+          "headMs": 7.998708000000306,
+          "workingMs": 7.020916000000398,
+          "gainMs": 0.9777919999999085,
+          "pairedMedianMs": 0.7647499999995944,
+          "noiseMs": 1.563916000000063,
+          "pairedMedianInterval": [
+            0.4765410000001111,
+            1.0825830000001133
+          ],
+          "gcInside": 117
+        },
+        {
+          "run": 3,
+          "headMs": 8.345916999999929,
+          "workingMs": 7.0142089999997665,
+          "gainMs": 1.3317080000001624,
+          "pairedMedianMs": 1.4801669999999376,
+          "noiseMs": 1.8651679999996418,
+          "pairedMedianInterval": [
+            1.1153339999999616,
+            1.7040829999999687
+          ],
+          "gcInside": 115
+        }
+      ]
+    },
+    {
+      "name": "flat-500",
+      "mode": "mount",
+      "regime": "forced",
+      "headMs": 3.7008750000000816,
+      "workingMs": 3.264749999999907,
+      "gainMs": 0.42991699999993216,
+      "pairedMedianMs": 0.4241239999998925,
+      "noOpNoiseMs": 0.10674999999991996,
+      "pooledHeadMs": 3.6965000000001,
+      "pooledWorkingMs": 3.2939580000000603,
+      "pooledPairedMedianMs": 0.3947920000002796,
+      "maxNoiseMs": 0.1839589999998168,
+      "aboveNoise": true,
+      "regressionAboveNoise": false,
+      "measurements": [
+        {
+          "run": 1,
+          "headMs": 3.7008750000000816,
+          "workingMs": 3.264749999999907,
+          "gainMs": 0.4361250000001746,
+          "pairedMedianMs": 0.4241239999998925,
+          "noiseMs": 0.1839589999998168,
+          "pairedMedianInterval": [
+            0.3843749999998636,
+            0.4699999999999136
+          ],
+          "gcInside": 0
+        },
+        {
+          "run": 2,
+          "headMs": 3.723583999999903,
+          "workingMs": 3.3740419999999745,
+          "gainMs": 0.3495419999999285,
+          "pairedMedianMs": 0.3218329999999696,
+          "noiseMs": 0.11750199999988808,
+          "pairedMedianInterval": [
+            0.3064999999999145,
+            0.38341700000000856
+          ],
+          "gcInside": 0
+        },
+        {
+          "run": 3,
+          "headMs": 3.6825829999998803,
+          "workingMs": 3.252665999999948,
+          "gainMs": 0.42991699999993216,
+          "pairedMedianMs": 0.42683400000009897,
+          "noiseMs": 0.10674999999991996,
+          "pairedMedianInterval": [
+            0.3913760000000366,
+            0.445165999999972
+          ],
+          "gcInside": 0
+        }
+      ]
+    },
+    {
+      "name": "flat-500",
+      "mode": "mount",
+      "regime": "steady",
+      "headMs": 2.470416000000057,
+      "workingMs": 2.061290999999983,
+      "gainMs": 0.39291599999995697,
+      "pairedMedianMs": 0.4123750000000541,
+      "noOpNoiseMs": 0.10333399999996118,
+      "pooledHeadMs": 2.4529170000000136,
+      "pooledWorkingMs": 2.0477500000000646,
+      "pooledPairedMedianMs": 0.40495800000007875,
+      "maxNoiseMs": 0.27549900000005323,
+      "aboveNoise": true,
+      "regressionAboveNoise": false,
+      "measurements": [
+        {
+          "run": 1,
+          "headMs": 2.470416000000057,
+          "workingMs": 2.0117500000000064,
+          "gainMs": 0.45866600000005064,
+          "pairedMedianMs": 0.4123750000000541,
+          "noiseMs": 0.20433299999987753,
+          "pairedMedianInterval": [
+            0.3598329999999237,
+            0.4746249999998895
+          ],
+          "gcInside": 49
+        },
+        {
+          "run": 2,
+          "headMs": 2.3721239999999852,
+          "workingMs": 2.061290999999983,
+          "gainMs": 0.31083300000000236,
+          "pairedMedianMs": 0.3367919999999458,
+          "noiseMs": 0.27549900000005323,
+          "pairedMedianInterval": [
+            0.27616699999998673,
+            0.4103740000000471
+          ],
+          "gcInside": 48
+        },
+        {
+          "run": 3,
+          "headMs": 2.4889160000000743,
+          "workingMs": 2.0960000000001173,
+          "gainMs": 0.39291599999995697,
+          "pairedMedianMs": 0.4735409999999547,
+          "noiseMs": 0.24970900000025154,
+          "pairedMedianInterval": [
+            0.39266699999996035,
+            0.5196670000000267
+          ],
+          "gcInside": 49
+        }
+      ]
+    },
+    {
+      "name": "oneOf-20",
+      "mode": "mount",
+      "regime": "forced",
+      "headMs": 2.0992489999998725,
+      "workingMs": 2.0997500000000855,
+      "gainMs": 0.012083000000075117,
+      "pairedMedianMs": 0.010250999999925625,
+      "noOpNoiseMs": 0.009332999999969616,
+      "pooledHeadMs": 2.1343329999997422,
+      "pooledWorkingMs": 2.126207999999906,
+      "pooledPairedMedianMs": 0.012709000000086235,
+      "maxNoiseMs": 0.06616599999986761,
+      "aboveNoise": false,
+      "regressionAboveNoise": false,
+      "measurements": [
+        {
+          "run": 1,
+          "headMs": 2.2590419999999085,
+          "workingMs": 2.2469589999998334,
+          "gainMs": 0.012083000000075117,
+          "pairedMedianMs": 0.010250999999925625,
+          "noiseMs": 0.05258399999956964,
+          "pairedMedianInterval": [
+            -0.008332999999879576,
+            0.02570800000012241
+          ],
+          "gcInside": 0
+        },
+        {
+          "run": 2,
+          "headMs": 2.095081999999934,
+          "workingMs": 2.080207999999857,
+          "gainMs": 0.014874000000077103,
+          "pairedMedianMs": 0.028334000000086235,
+          "noiseMs": 0.06616599999986761,
+          "pairedMedianInterval": [
+            0.008750000000077307,
+            0.036831999999890286
+          ],
+          "gcInside": 0
+        },
+        {
+          "run": 3,
+          "headMs": 2.0992489999998725,
+          "workingMs": 2.0997500000000855,
+          "gainMs": -0.0005010000002130255,
+          "pairedMedianMs": 0.0021669999998721323,
+          "noiseMs": 0.0597510000003183,
+          "pairedMedianInterval": [
+            -0.02299900000002708,
+            0.01629200000002129
+          ],
+          "gcInside": 0
+        }
+      ]
+    },
+    {
+      "name": "oneOf-20",
+      "mode": "mount",
+      "regime": "steady",
+      "headMs": 1.1889159999999492,
+      "workingMs": 1.0730409999999893,
+      "gainMs": 0.11587499999995998,
+      "pairedMedianMs": 0.09162499999996498,
+      "noOpNoiseMs": 0.1721249999999941,
+      "pooledHeadMs": 1.1679579999999419,
+      "pooledWorkingMs": 1.125916000000018,
+      "pooledPairedMedianMs": 0.06808300000005829,
+      "maxNoiseMs": 0.1721249999999941,
+      "aboveNoise": false,
+      "regressionAboveNoise": true,
+      "measurements": [
+        {
+          "run": 1,
+          "headMs": 1.3149999999999409,
+          "workingMs": 1.0702089999999203,
+          "gainMs": 0.24479100000002063,
+          "pairedMedianMs": 0.1769159999999772,
+          "noiseMs": 0.1721249999999941,
+          "pairedMedianInterval": [
+            0.12999999999999545,
+            0.2560420000000363
+          ],
+          "gcInside": 23
+        },
+        {
+          "run": 2,
+          "headMs": 1.0940410000000043,
+          "workingMs": 1.330415999999957,
+          "gainMs": -0.2363749999999527,
+          "pairedMedianMs": -0.22149999999993497,
+          "noiseMs": 0.1721249999999941,
+          "pairedMedianInterval": [
+            -0.29583399999998505,
+            -0.13716700000003357
+          ],
+          "gcInside": 23
+        },
+        {
+          "run": 3,
+          "headMs": 1.1889159999999492,
+          "workingMs": 1.0730409999999893,
+          "gainMs": 0.11587499999995998,
+          "pairedMedianMs": 0.09162499999996498,
+          "noiseMs": 0.1721249999999941,
+          "pairedMedianInterval": [
+            0.07316599999990103,
+            0.13433400000002393
+          ],
+          "gcInside": 23
+        }
+      ]
+    },
+    {
+      "name": "sample-0",
+      "mode": "mount",
+      "regime": "forced",
+      "headMs": 0.16929100000004382,
+      "workingMs": 0.16508299999998144,
+      "gainMs": 0.004208000000062384,
+      "pairedMedianMs": 0.005832999999938693,
+      "noOpNoiseMs": 0.003040999999939231,
+      "pooledHeadMs": 0.1697919999999158,
+      "pooledWorkingMs": 0.16533299999991868,
+      "pooledPairedMedianMs": 0.004625000000032742,
+      "maxNoiseMs": 0.030124000000114393,
+      "aboveNoise": false,
+      "regressionAboveNoise": false,
+      "measurements": [
+        {
+          "run": 1,
+          "headMs": 0.16783300000000168,
+          "workingMs": 0.16420800000005897,
+          "gainMs": 0.003624999999942702,
+          "pairedMedianMs": 0.0060409999999819775,
+          "noiseMs": 0.020333999999849084,
+          "pairedMedianInterval": [
+            0.0013330000000451037,
+            0.008166999999957625
+          ],
+          "gcInside": 0
+        },
+        {
+          "run": 2,
+          "headMs": 0.16929100000004382,
+          "workingMs": 0.16508299999998144,
+          "gainMs": 0.004208000000062384,
+          "pairedMedianMs": 0.0020840000000248438,
+          "noiseMs": 0.023748999999952503,
+          "pairedMedianInterval": [
+            -0.001416000000006079,
+            0.008916999999996733
+          ],
+          "gcInside": 0
+        },
+        {
+          "run": 3,
+          "headMs": 0.17441699999994853,
+          "workingMs": 0.16966599999989285,
+          "gainMs": 0.004751000000055683,
+          "pairedMedianMs": 0.005832999999938693,
+          "noiseMs": 0.030124000000114393,
+          "pairedMedianInterval": [
+            -0.0018340000000307555,
+            0.00941699999998491
+          ],
+          "gcInside": 0
+        }
+      ]
+    },
+    {
+      "name": "sample-0",
+      "mode": "mount",
+      "regime": "steady",
+      "headMs": 0.05129199999998946,
+      "workingMs": 0.046582999999998265,
+      "gainMs": 0.0002499999999940883,
+      "pairedMedianMs": 0.0012070000000221626,
+      "noOpNoiseMs": 0.004417000000017879,
+      "pooledHeadMs": 0.05049899999997365,
+      "pooledWorkingMs": 0.047667000000018334,
+      "pooledPairedMedianMs": 0.003208000000000766,
+      "maxNoiseMs": 0.021042999999991707,
+      "aboveNoise": false,
+      "regressionAboveNoise": false,
+      "measurements": [
+        {
+          "run": 1,
+          "headMs": 0.05129199999998946,
+          "workingMs": 0.05183399999998528,
+          "gainMs": -0.0005419999999958236,
+          "pairedMedianMs": -0.0008330000000000837,
+          "noiseMs": 0.021042999999991707,
+          "pairedMedianInterval": [
+            -0.003458000000023276,
+            0.0018750000000125056
+          ],
+          "gcInside": 1
+        },
+        {
+          "run": 2,
+          "headMs": 0.04683299999999235,
+          "workingMs": 0.046582999999998265,
+          "gainMs": 0.0002499999999940883,
+          "pairedMedianMs": 0.0012070000000221626,
+          "noiseMs": 0.015874999999965667,
+          "pairedMedianInterval": [
+            -0.0012080000000196378,
+            0.0038749999999936335
+          ],
+          "gcInside": 3
+        },
+        {
+          "run": 3,
+          "headMs": 0.05649999999999977,
+          "workingMs": 0.043707999999980984,
+          "gainMs": 0.012792000000018788,
+          "pairedMedianMs": 0.01062399999997865,
+          "noiseMs": 0.020876000000015438,
+          "pairedMedianInterval": [
+            0.006916999999987183,
+            0.016250999999982696
+          ],
+          "gcInside": 3
+        }
+      ]
+    },
+    {
+      "name": "sample-0",
+      "mode": "first",
+      "regime": "forced",
+      "headMs": 0.09445800000003146,
+      "workingMs": 0.09350000000017644,
+      "gainMs": -0.0002919999999448919,
+      "pairedMedianMs": -0.0007919999999899119,
+      "noOpNoiseMs": 0.0012910000000374566,
+      "pooledHeadMs": 0.094333000000006,
+      "pooledWorkingMs": 0.0942510000000425,
+      "pooledPairedMedianMs": -0.00016700000003311288,
+      "maxNoiseMs": 0.016582999999997128,
+      "aboveNoise": false,
+      "regressionAboveNoise": false,
+      "measurements": [
+        {
+          "run": 1,
+          "headMs": 0.09633400000001302,
+          "workingMs": 0.09662599999995791,
+          "gainMs": -0.0002919999999448919,
+          "pairedMedianMs": -0.0009580000000255495,
+          "noiseMs": 0.016582999999997128,
+          "pairedMedianInterval": [
+            -0.0027500000001055014,
+            0.0011250000002291927
+          ],
+          "gcInside": 0
+        },
+        {
+          "run": 2,
+          "headMs": 0.09445800000003146,
+          "workingMs": 0.09287499999993543,
+          "gainMs": 0.0015830000000960354,
+          "pairedMedianMs": 0.0013330000000451037,
+          "noiseMs": 0.012039999999871043,
+          "pairedMedianInterval": [
+            -0.0006670000000212895,
+            0.003375000000005457
+          ],
+          "gcInside": 0
+        },
+        {
+          "run": 3,
+          "headMs": 0.09254200000020774,
+          "workingMs": 0.09350000000017644,
+          "gainMs": -0.0009579999999687061,
+          "pairedMedianMs": -0.0007919999999899119,
+          "noiseMs": 0.011918000000093798,
+          "pairedMedianInterval": [
+            -0.0018749999999272404,
+            0.00008300000013150566
+          ],
+          "gcInside": 0
+        }
+      ]
+    },
+    {
+      "name": "sample-0",
+      "mode": "first",
+      "regime": "steady",
+      "headMs": 0.0262079999999969,
+      "workingMs": 0.025374999999996817,
+      "gainMs": 0.0009579999999971278,
+      "pairedMedianMs": 0.0008340000000259806,
+      "noOpNoiseMs": 0.002375000000000682,
+      "pooledHeadMs": 0.027208000000001675,
+      "pooledWorkingMs": 0.02591699999999264,
+      "pooledPairedMedianMs": 0.0007500000000106866,
+      "maxNoiseMs": 0.02787599999999202,
+      "aboveNoise": false,
+      "regressionAboveNoise": false,
+      "measurements": [
+        {
+          "run": 1,
+          "headMs": 0.029541999999992186,
+          "workingMs": 0.027165999999994028,
+          "gainMs": 0.0023759999999981574,
+          "pairedMedianMs": 0.0015009999999904267,
+          "noiseMs": 0.02787599999999202,
+          "pairedMedianInterval": [
+            0.0002920000000017353,
+            0.003084000000001197
+          ],
+          "gcInside": 1
+        },
+        {
+          "run": 2,
+          "headMs": 0.0262079999999969,
+          "workingMs": 0.025374999999996817,
+          "gainMs": 0.0008330000000000837,
+          "pairedMedianMs": 0.0008340000000259806,
+          "noiseMs": 0.01725099999995905,
+          "pairedMedianInterval": [
+            -0.00041699999997035775,
+            0.0024579999999900792
+          ],
+          "gcInside": 1
+        },
+        {
+          "run": 3,
+          "headMs": 0.0262079999999969,
+          "workingMs": 0.025249999999999773,
+          "gainMs": 0.0009579999999971278,
+          "pairedMedianMs": 0.0005419999999958236,
+          "noiseMs": 0.01591599999997584,
+          "pairedMedianInterval": [
+            -0.00041699999999877946,
+            0.0017499999999870397
+          ],
+          "gcInside": 1
+        }
+      ]
+    },
+    {
+      "name": "sample-0",
+      "mode": "later",
+      "regime": "forced",
+      "headMs": 0.0890000000000839,
+      "workingMs": 0.09054199999999923,
+      "gainMs": -0.00041699999997035775,
+      "pairedMedianMs": -0.0014579999999568827,
+      "noOpNoiseMs": 0.0017910000000256332,
+      "pooledHeadMs": 0.08862499999997908,
+      "pooledWorkingMs": 0.08941700000002584,
+      "pooledPairedMedianMs": -0.0011259999999992942,
+      "maxNoiseMs": 0.016624999999976353,
+      "aboveNoise": false,
+      "regressionAboveNoise": false,
+      "measurements": [
+        {
+          "run": 1,
+          "headMs": 0.08570799999995415,
+          "workingMs": 0.08608300000003055,
+          "gainMs": -0.00037500000007639755,
+          "pairedMedianMs": 0.0003329999999550637,
+          "noiseMs": 0.015042000000022426,
+          "pairedMedianInterval": [
+            -0.001082999999994172,
+            0.0015829999999823485
+          ],
+          "gcInside": 0
+        },
+        {
+          "run": 2,
+          "headMs": 0.09070800000000645,
+          "workingMs": 0.09112499999997681,
+          "gainMs": -0.00041699999997035775,
+          "pairedMedianMs": -0.0014579999999568827,
+          "noiseMs": 0.016624999999976353,
+          "pairedMedianInterval": [
+            -0.0028739999999061183,
+            0.0005830000000059954
+          ],
+          "gcInside": 0
+        },
+        {
+          "run": 3,
+          "headMs": 0.0890000000000839,
+          "workingMs": 0.09054199999999923,
+          "gainMs": -0.0015419999999153333,
+          "pairedMedianMs": -0.0017490000000179862,
+          "noiseMs": 0.015000999999983833,
+          "pairedMedianInterval": [
+            -0.0030839999999443535,
+            -0.0009579999998550193
+          ],
+          "gcInside": 0
+        }
+      ]
+    },
+    {
+      "name": "sample-0",
+      "mode": "later",
+      "regime": "steady",
+      "headMs": 0.018915999999990163,
+      "workingMs": 0.015416000000016084,
+      "gainMs": 0.0034999999999740794,
+      "pairedMedianMs": 0.0034160000000156288,
+      "noOpNoiseMs": 0.005541999999991276,
+      "pooledHeadMs": 0.018125000000026148,
+      "pooledWorkingMs": 0.016958000000016682,
+      "pooledPairedMedianMs": 0.002375000000000682,
+      "maxNoiseMs": 0.018041000000010854,
+      "aboveNoise": false,
+      "regressionAboveNoise": false,
+      "measurements": [
+        {
+          "run": 1,
+          "headMs": 0.019373999999999114,
+          "workingMs": 0.014999999999986358,
+          "gainMs": 0.004374000000012757,
+          "pairedMedianMs": 0.003791000000006761,
+          "noiseMs": 0.01591600000000426,
+          "pairedMedianInterval": [
+            0.0031250000000113687,
+            0.00487500000002683
+          ],
+          "gcInside": 0
+        },
+        {
+          "run": 2,
+          "headMs": 0.015957999999983485,
+          "workingMs": 0.019207999999963477,
+          "gainMs": -0.003249999999979991,
+          "pairedMedianMs": -0.0030830000000037217,
+          "noiseMs": 0.018041000000010854,
+          "pairedMedianInterval": [
+            -0.003916999999972859,
+            -0.0018749999999840838
+          ],
+          "gcInside": 0
+        },
+        {
+          "run": 3,
+          "headMs": 0.018915999999990163,
+          "workingMs": 0.015416000000016084,
+          "gainMs": 0.0034999999999740794,
+          "pairedMedianMs": 0.0034160000000156288,
+          "noiseMs": 0.012042000000036523,
+          "pairedMedianInterval": [
+            0.0027910000000019863,
+            0.003958000000011452
+          ],
+          "gcInside": 0
+        }
+      ]
+    },
+    {
+      "name": "nested-d5-f4",
+      "mode": "first",
+      "regime": "forced",
+      "headMs": 0.19458300000007966,
+      "workingMs": 0.1528320000001031,
+      "gainMs": 0.04175099999997656,
+      "pairedMedianMs": 0.060416999999688414,
+      "noOpNoiseMs": 0.05720800000017334,
+      "pooledHeadMs": 0.19458300000007966,
+      "pooledWorkingMs": 0.1734999999998763,
+      "pooledPairedMedianMs": 0.051375999999891064,
+      "maxNoiseMs": 0.13287500000015484,
+      "aboveNoise": false,
+      "regressionAboveNoise": false,
+      "measurements": [
+        {
+          "run": 1,
+          "headMs": 0.2020420000003469,
+          "workingMs": 0.15233300000045347,
+          "gainMs": 0.04970899999989342,
+          "pairedMedianMs": 0.06654200000002675,
+          "noiseMs": 0.13004100000051722,
+          "pairedMedianInterval": [
+            -0.07566600000063772,
+            0.07979100000000017
+          ],
+          "gcInside": 0
+        },
+        {
+          "run": 2,
+          "headMs": 0.16954200000009223,
+          "workingMs": 0.20504299999993236,
+          "gainMs": -0.03550099999984013,
+          "pairedMedianMs": -0.061082999999825915,
+          "noiseMs": 0.12412699999961774,
+          "pairedMedianInterval": [
+            -0.08666700000003402,
+            0.07991600000013932
+          ],
+          "gcInside": 0
+        },
+        {
+          "run": 3,
+          "headMs": 0.19458300000007966,
+          "workingMs": 0.1528320000001031,
+          "gainMs": 0.04175099999997656,
+          "pairedMedianMs": 0.060416999999688414,
+          "noiseMs": 0.13287500000015484,
+          "pairedMedianInterval": [
+            -0.07312500000034561,
+            0.08529200000020865
+          ],
+          "gcInside": 0
+        }
+      ]
+    },
+    {
+      "name": "nested-d5-f4",
+      "mode": "first",
+      "regime": "steady",
+      "headMs": 0.08266700000010019,
+      "workingMs": 0.08483300000011695,
+      "gainMs": -0.004582999999911408,
+      "pairedMedianMs": -0.007416000000148415,
+      "noOpNoiseMs": 0.011042000000088592,
+      "pooledHeadMs": 0.08233300000006238,
+      "pooledWorkingMs": 0.08741699999995944,
+      "pooledPairedMedianMs": -0.004249999999728971,
+      "maxNoiseMs": 0.03300100000038242,
+      "aboveNoise": false,
+      "regressionAboveNoise": false,
+      "measurements": [
+        {
+          "run": 1,
+          "headMs": 0.08266700000010019,
+          "workingMs": 0.09529199999994376,
+          "gainMs": -0.012624999999843567,
+          "pairedMedianMs": -0.007957999999916865,
+          "noiseMs": 0.03300100000038242,
+          "pairedMedianInterval": [
+            -0.017500000000040927,
+            -0.0017080000000078144
+          ],
+          "gcInside": 0
+        },
+        {
+          "run": 2,
+          "headMs": 0.08329100000014478,
+          "workingMs": 0.08058300000004692,
+          "gainMs": 0.0027080000000978544,
+          "pairedMedianMs": 0.004916000000093845,
+          "noiseMs": 0.03158300000043823,
+          "pairedMedianInterval": [
+            -0.0022079999996549304,
+            0.011833000000024185
+          ],
+          "gcInside": 1
+        },
+        {
+          "run": 3,
+          "headMs": 0.08025000000020555,
+          "workingMs": 0.08483300000011695,
+          "gainMs": -0.004582999999911408,
+          "pairedMedianMs": -0.007416000000148415,
+          "noiseMs": 0.03271000000006552,
+          "pairedMedianInterval": [
+            -0.015748999999914304,
+            -0.002124999999978172
+          ],
+          "gcInside": 0
+        }
+      ]
+    },
+    {
+      "name": "nested-d5-f4",
+      "mode": "later",
+      "regime": "forced",
+      "headMs": 0.112666000000047,
+      "workingMs": 0.11270799999991254,
+      "gainMs": 0.0001260000000229411,
+      "pairedMedianMs": 0.0005009999999856518,
+      "noOpNoiseMs": 0.0007490000002690067,
+      "pooledHeadMs": 0.11349999999998772,
+      "pooledWorkingMs": 0.11270799999996939,
+      "pooledPairedMedianMs": 0.00020800000004328467,
+      "maxNoiseMs": 0.01533200000000079,
+      "aboveNoise": false,
+      "regressionAboveNoise": false,
+      "measurements": [
+        {
+          "run": 1,
+          "headMs": 0.112666000000047,
+          "workingMs": 0.11379099999982145,
+          "gainMs": -0.0011249999997744453,
+          "pairedMedianMs": -0.0017499999999017746,
+          "noiseMs": 0.010623999999722855,
+          "pairedMedianInterval": [
+            -0.003291999999987638,
+            0.0007500000001527951
+          ],
+          "gcInside": 0
+        },
+        {
+          "run": 2,
+          "headMs": 0.11395799999993983,
+          "workingMs": 0.11270799999991254,
+          "gainMs": 0.0012500000000272848,
+          "pairedMedianMs": 0.0005009999999856518,
+          "noiseMs": 0.010333000000059656,
+          "pairedMedianInterval": [
+            -0.0016249999998763087,
+            0.0018759999999247157
+          ],
+          "gcInside": 0
+        },
+        {
+          "run": 3,
+          "headMs": 0.11241700000002197,
+          "workingMs": 0.11229099999999903,
+          "gainMs": 0.0001260000000229411,
+          "pairedMedianMs": 0.001209000000017113,
+          "noiseMs": 0.01533200000000079,
+          "pairedMedianInterval": [
+            -0.0009580000000823929,
+            0.0030839999999443535
+          ],
+          "gcInside": 0
+        }
+      ]
+    },
+    {
+      "name": "nested-d5-f4",
+      "mode": "later",
+      "regime": "steady",
+      "headMs": 0.03233299999999417,
+      "workingMs": 0.03162400000002208,
+      "gainMs": 0.0014579999999853044,
+      "pairedMedianMs": 0.0012920000000065102,
+      "noOpNoiseMs": 0.0040410000000008495,
+      "pooledHeadMs": 0.03233299999999417,
+      "pooledWorkingMs": 0.03149999999999409,
+      "pooledPairedMedianMs": 0.0004590000000348482,
+      "maxNoiseMs": 0.044456999999994196,
+      "aboveNoise": false,
+      "regressionAboveNoise": false,
+      "measurements": [
+        {
+          "run": 1,
+          "headMs": 0.03179100000002677,
+          "workingMs": 0.03162400000002208,
+          "gainMs": 0.00016700000000469117,
+          "pairedMedianMs": -0.00025100000001998524,
+          "noiseMs": 0.012000999999969508,
+          "pairedMedianInterval": [
+            -0.0018750000000125056,
+            0.0002910000000042601
+          ],
+          "gcInside": 1
+        },
+        {
+          "run": 2,
+          "headMs": 0.03233299999999417,
+          "workingMs": 0.030292000000002872,
+          "gainMs": 0.0020409999999912998,
+          "pairedMedianMs": 0.0012920000000065102,
+          "noiseMs": 0.013041000000072245,
+          "pairedMedianInterval": [
+            0.0003330000000119071,
+            0.0025839999999845986
+          ],
+          "gcInside": 1
+        },
+        {
+          "run": 3,
+          "headMs": 0.03366599999998243,
+          "workingMs": 0.03220799999999713,
+          "gainMs": 0.0014579999999853044,
+          "pairedMedianMs": 0.0014170000000035543,
+          "noiseMs": 0.044456999999994196,
+          "pairedMedianInterval": [
+            0.0004590000000348482,
+            0.002125000000006594
+          ],
+          "gcInside": 0
+        }
+      ]
+    }
+  ],
+  "workers": 96,
+  "maxWorkerMs": 4665
+}

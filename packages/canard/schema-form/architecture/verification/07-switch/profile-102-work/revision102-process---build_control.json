@@ -1,0 +1,13 @@
+{
+  "args": [
+    "--build",
+    "control"
+  ],
+  "started": 1791273768784,
+  "ended": 1791273772465,
+  "elapsedMs": 3681,
+  "naturalExit": true,
+  "status": 0,
+  "signal": null,
+  "driverSha256": "89cb58d476ae288c83ae79bd14427411c4a2c60497928af671b97e1a0f86bac9"
+}

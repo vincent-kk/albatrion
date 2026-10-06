@@ -1,0 +1,12 @@
+{
+  "args": [
+    "--summarize"
+  ],
+  "started": 1791274225445,
+  "ended": 1791274228636,
+  "elapsedMs": 3191,
+  "naturalExit": true,
+  "status": 0,
+  "signal": null,
+  "driverSha256": "7b5dffd54c35089cb766acf7e588a646ed6987edbe42e519c019c760d0309691"
+}

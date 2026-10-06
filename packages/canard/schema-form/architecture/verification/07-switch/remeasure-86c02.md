@@ -2019,3 +2019,92 @@ PKG에서 `PROFILE_101_HEAD=da734b40da7a35186646bef42c9f65cee3178892 PROFILE_101
 당시 후보에서 `node architecture/verification/07-switch/profile-101-alloc/gate-workspaces.mjs --build gate-workspaces` 후 `--pairs <gate-workspaces|control> <fixture> <mount|first|later> <forced|steady>`를 각 연산·열별로 실행했습니다. `--summarize`는 보존된 표본만 판정합니다. 최종 제품은 원복했으므로 지금 working source를 새로 빌드하면 HEAD 제품을 측정하게 됩니다. 측정 당시 후보 번들·map은 지정 tmp 경로에 남아 있습니다.
 
 120개 timing worker의 기록상 겹침은 0, 최대 worker 시간은 4.638초, 최대 계측 명령은 14.201초입니다. 모두 status 0·signal null·자연 종료입니다. 지정 전체 검증을 포함해 단일 명령은 8분 미만이었고, 강제 종료·설치·git 쓰기·추가 에이전트·다른 worktree 작업은 없었습니다. 새 계측 JSON의 최대 크기는 145,323바이트로 각각 5,000,000바이트 이하입니다. 모든 계측 파일은 `profile-101-alloc/` 아래이고 번들/source map은 저장소 밖의 지정 tmp bundles 경로에만 생성했습니다. 보호된 `analysis-records-design.md`는 읽거나 수정하지 않았습니다. 제품·DETAIL·97라운드 검사·ledger의 diff 부재를 확인했습니다.
+
+## 102라운드 초기 revision 읽기
+
+### 결과와 변경 범위
+
+**제품 변경은 원복했습니다.** 기준은 stage-07의 HEAD `2333fd5af`입니다. `profile-102-work.md`의 단일 변경 명세 1만 구현하여 `SchemaNodeRevisionLedger` 생성자에서 `previous === EMPTY_REVISION_LEDGER`일 때만 `counts = []`로 시작했습니다. 기존 원장의 `counts.slice()`, 다른 plain record의 17비트 복사, 그 뒤 mask 갱신 루프는 유지했습니다. 모든 plain previous를 빈 값으로 취급했던 상한 측정 변형과 구별됩니다.
+
+forced mount의 nested-d5-f4와 flat-500, steady mount의 flat-500은 세 회차 모두 소음 밖 개선이었습니다. 그러나 oneOf-20 steady의 2회차는 HEAD 1.094041→후보 1.330416ms로 **0.236375ms 지연**했고, 같은 열의 소음 기준 0.172125ms를 넘었습니다. 해당 순서별 차이 중앙 구간도 [-0.295834, -0.137167]ms로 음수였습니다. 회차별 소음 밖 회귀를 하나라도 발견하면 보존하지 않는 보수적 판정을 적용했습니다. 101라운드의 ‘세 회차 모두 회귀’ 기준보다 엄격하며, 세 회차 집계 자체는 oneOf-20의 개선 방향입니다. 따라서 지속적인 코드 회귀의 인과관계가 입증됐다는 뜻은 아닙니다. 순서 효과가 있는 기록에서도 다른 열의 소음 밖 지연을 배제할 수 없으므로 보존 조건을 충족했다고 주장하지 않았습니다.
+
+소유 `record/DETAIL.md`에 먼저 초기 읽기 생략 및 비용을 적은 뒤 테스트와 구현을 적용했습니다. 최종 제품 코드와 DETAIL은 HEAD와 바이트 단위로 같으며, 보고서·계측 자료·HEAD에서 통과하는 특성화/횟수 테스트만 남깁니다. ledger EVENT-005·007·024, SETTLE-006 문서는 수정하지 않았습니다.
+
+속도·메모리 비용: 후보는 생성당 identity 비교 하나로 첫 원장의 17개 previous 비트 조회와 `Array.from` 콜백 17회를 없앴습니다. 표시 비트 갱신은 그대로 O(표시 비트 수), 기존 원장/plain 복사도 그대로입니다. 원장당 배열 하나와 고정 객체 필드 수를 유지하되 초기 배열은 가장 높은 표시 비트까지 확장하며, 기존의 17칸 초기 채움을 생략합니다. heap byte 절감은 측정하지 않았습니다. 원복된 최종 제품의 속도·메모리 비용은 HEAD와 같습니다.
+
+### 첫 로드 계수와 의미 보존
+
+계수 전용 번들은 공유 빈 객체의 numeric property 읽기만 Proxy로 셌습니다. 제품 후보의 분기는 이 공유 객체의 identity에 한정됩니다. 이 번들은 시간 측정에 사용하지 않았습니다. 살아 있는 노드 수는 첫 mount 뒤 실제 트리에서 세었습니다.
+
+| fixture | live 노드 | HEAD previous 비트 읽기 | 후보 읽기 | 노드당 HEAD→후보 |
+|---|---:|---:|---:|---:|
+| nested-d5-f4 | 1,365 | 23,205 | 0 | 17→0 |
+| flat-500 | 501 | 8,517 | 0 | 17→0 |
+| oneOf-20 | 6 | 102 | 0 | 17→0 |
+| sample-0 | 3 | 51 | 0 | 17→0 |
+
+[계수 원본](profile-102-work/revision102-counts.json)은 HEAD/후보의 모든 노드 비트 값·`revision(mask)`·값 해시가 같음을 단언합니다. 원복 후의 실제 제품 계수는 다시 노드당 17회입니다.
+
+기존 revision 테스트에 공유 빈 previous와 다른 plain previous의 17비트 getter, 단일/혼합/전체/0 마스크 합, 여러 증가 뒤 이전 원장 스냅숏 불변성을 비교하는 특성화를 추가했습니다. 별도 횟수 테스트는 shared-empty 첫 원장의 노드당 조회와 다른 plain record의 17회 조회·증가 값·입력 불변성을 확인합니다. 먼저 기대값 0으로 실행하여 HEAD에서 **실제 17 대 기대 0** 때문에 한 건 실패하는 것을 보았고, 후보에서는 통과했습니다. 원복 뒤 횟수 기대값을 HEAD의 17로 맞춰 남겼습니다.
+
+제품 변경 전 revision/배달 경계 검증은 14건 통과하고 새 0회 기대값 한 건만 실패했습니다. 후보에서는 동일 15건이 통과했고, `useSchemaNodeSubscribe`를 render/react18에서 함께 실행한 **5파일 19건**도 통과했습니다. 기존 늦은 구독 catch-up은 이전 배달을 재생하지 않고 현재 값만 읽으며 이후 사건을 한 번 전달하는 단언을 유지했습니다. 배달 경계 시험은 여러 커밋의 개정, 전체 파동의 동시 확정, 피드백/재구독 순서와 이전 payload 참조를 그대로 검증했습니다. 최종 HEAD 전체 검증에서도 이 테스트들은 통과했습니다. 59-schema corpus 대신 요청에서 허용한 기존 revision/구독 시험을 사용했습니다.
+
+### 종단 mount — 두 열의 303표본 중앙값
+
+round-99 canonical production builder/adapter를 메모리에서 재사용했습니다. H는 `git show 2333fd5af:<source>`로, W는 구현 당시 실제 작업 트리 소스로 빌드했습니다. control은 H와 같은 소스이며 H/control 번들 해시도 같습니다. validation off·빈 onChange·구독 0으로 `nodeFromJSONSchema`를 호출하고, 64 Promise checkpoint 뒤 단일 `setImmediate` sentinel **콜백 안에서 종단 clock**을 기록했습니다. React 렌더 시간이 아닙니다.
+
+각 fixture·연산·열·대조/후보에 새 프로세스 3개, 엔진당 예열 20회와 본 표본 101회입니다. forced는 표본마다 H/W 순서를 교대하고 회차 1·3은 H 시작, 2는 W 시작입니다. schema clone, 강제 GC와 그 뒤 check sentinel은 clock 밖입니다. steady는 `profile-102-work.md`에 기록된 열을 그대로 재현하여 명시적 GC 없이 H/W 각각 121회 연속 block을 실행하고, block 순서는 H→W / W→H / H→W입니다. steady의 H/W 차이는 같은 순번의 표본 비교이며 교대 pair로 해석하지 않습니다.
+
+각 회차의 전후 empty/drain 101회씩을 pooled 최근접 순위 중앙값 C로 합쳐 양쪽에서 같은 C를 뺐습니다. clipping은 하지 않았습니다. 아래 H/W는 보정된 **101×3=303개 표본의 pooled 중앙값**, Δ는 303개 H−W 차이의 pooled 중앙값이며 양수가 개선입니다. 회차 중앙값 세 개의 중앙값도 판정 JSON에 별도로 보존합니다.
+
+| fixture | forced H→W ms | forced Δ ms | steady H→W ms | steady Δ ms |
+|---|---:|---:|---:|---:|
+| nested-d5-f4 | 9.910417→8.813876 | +0.978500 | 8.134791→6.941208 | +1.150792 |
+| flat-500 | 3.696500→3.293958 | +0.394792 | 2.452917→2.047750 | +0.404958 |
+| oneOf-20 | 2.134333→2.126208 | +0.012709 | 1.167958→1.125916 | +0.068083 |
+| sample-0 | 0.169792→0.165333 | +0.004625 | 0.050499→0.047667 | +0.003208 |
+
+상한 기록 nested-d5의 1.41ms forced / 1.11ms steady는 모든 plain previous를 비운 측정 변형의 상한입니다. identity만 좁힌 이번 후보의 paired 값이나 인과적 회수량으로 대체하지 않았습니다.
+
+### 첫·후속 갱신과 소음 판정
+
+첫 갱신은 매 표본 새로 mount한 트리에서 fixture의 첫 authored interaction을 실제로 한 번 수행합니다. mount/drain과 대상 찾기는 clock 밖입니다. 후속 갱신은 fixture의 recorded interaction history를 미리 적용한 유지 트리에서 서로 다른 두 값을 교대합니다. 같은 값을 다시 써 조기 반환하는 측정은 없습니다. 두 fixture의 네 갱신 연산 모두 두 열에서 소음 밖 회귀가 없었습니다.
+
+| fixture·연산 | forced H→W ms | forced Δ ms | steady H→W ms | steady Δ ms |
+|---|---:|---:|---:|---:|
+| sample-0 첫 갱신 | 0.094333→0.094251 | -0.000167 | 0.027208→0.025917 | +0.000750 |
+| sample-0 후속 갱신 | 0.088625→0.089417 | -0.001126 | 0.018125→0.016958 | +0.002375 |
+| nested-d5-f4 첫 갱신 | 0.194583→0.173500 | +0.051376 | 0.082333→0.087417 | -0.004250 |
+| nested-d5-f4 후속 갱신 | 0.113500→0.112708 | +0.000208 | 0.032333→0.031500 | +0.000459 |
+
+소음 기준은 회차마다 `max(0.001ms, 같은 fixture·연산·열 H/control의 |중앙값 이득| 또는 |paired 중앙값| 최대, empty residual p95 + 1,999회 deterministic bootstrap 99% 중앙값 오차 합)`입니다. 개선은 세 회차 모두 이득이 소음을 넘고 정렬된 101개 차이의 [40,60] 구간이 양수여야 합니다. 회귀 배제는 각 회차의 음수 구간과 소음 밖 지연을 확인합니다. steady의 [40,60]은 인접 시점 pair의 신뢰구간이 아니라 연속 block의 순번 차이 중앙 구간입니다.
+
+| fixture·연산 | forced 최대 소음 ms | steady 최대 소음 ms | 판정 |
+|---|---:|---:|---|
+| nested-d5-f4 mount | 0.647624 | 1.865168 | forced 개선, steady는 세 회차 개선 조건 미충족 |
+| flat-500 mount | 0.183959 | 0.275499 | 두 열 개선 |
+| oneOf-20 mount | 0.066166 | 0.172125 | steady 2회차 소음 밖 지연 → 원복 |
+| sample-0 mount | 0.030124 | 0.021043 | 소음 밖 회귀 없음 |
+| sample-0 첫 갱신 | 0.016583 | 0.027876 | 소음 밖 회귀 없음 |
+| sample-0 후속 갱신 | 0.016625 | 0.018041 | 소음 밖 회귀 없음 |
+| nested-d5-f4 첫 갱신 | 0.132875 | 0.033001 | 소음 밖 회귀 없음 |
+| nested-d5-f4 후속 갱신 | 0.015332 | 0.044457 | 소음 밖 회귀 없음 |
+
+[판정 JSON](profile-102-work/revision102-verdict.json)에 회차별 H/W 중앙값·차이 구간·소음·clock 안 GC와 pooled 값을 보존했습니다. 모든 timing worker에서 마지막 실제 트리의 17비트 getter 및 `revision(mask)` 값, 커밋 번호, 공개 값과 두 번 읽은 참조가 일치했습니다. forced의 강제 GC는 모든 clock 밖이며 steady의 자연 GC는 결과에 포함했습니다.
+
+### 최종 지정 검증과 재현
+
+원복된 제품 + 새 테스트에서 PKG를 cwd로 지정 명령을 순차 실행했습니다. npx는 `npm_config_offline=true`, `npm_config_yes=false`로 기존 설치만 사용했습니다.
+
+| 명령 | 최종 결과 |
+|---|---|
+| `npx vitest run --project unit --project render --project react18 --reporter=dot` | 종료1, 62.727초; 427파일·3,214건 통과, todo1; render/react18의 EVENT-070 useLayoutEffect/useEffect 각 2건, 허용된 총 4건만 실패 |
+| `npx tsc --noEmit --composite false --rootDir . -p tsconfig.json` | 종료0, 7.771초; 출력 없음 |
+| `npx eslint "src/**/*.{ts,tsx}"` | 종료0, 5.680초; 출력 없음 |
+| `node architecture/verification/07-switch/tools/check-legacy-isolation.mjs` | 종료0, 0.426초; `LEGACY_ISOLATED: 1628 files checked` |
+
+계측 진입점은 [revision-initial-empty.mjs](profile-102-work/revision-initial-empty.mjs)입니다. PKG에서 `node architecture/verification/07-switch/profile-102-work/revision-initial-empty.mjs --build <head|control|working|head-count|working-count>`를 각각 실행합니다. 이어 `--counts`, 연산·열별 `--pairs <control|working> <fixture> <mount|first|later> <forced|steady>`, 마지막 `--summarize`를 순차 실행합니다. 최종 제품은 원복했으므로 후보 재측정에는 위 identity 분기를 다시 적용해야 합니다. 측정 당시 후보의 build hash와 번들은 남아 있고 기존 자료를 다시 요약하는 데 재빌드는 필요 없습니다. 마지막 요약 편집은 기존 표본의 pooled 중앙값 출력만 추가했으며 clock·계측 프로토콜은 바꾸지 않았습니다.
+
+timing worker 96개(8연산×2열×대조/후보×3회차)의 실행 구간 겹침은 0, 최대 worker 4.665초입니다. 각 builder의 esbuild 서비스는 stdin EOF 뒤 자발 종료0을 확인했습니다. 모든 프로세스는 signal null·자연 종료였고 전체 검증을 포함한 단일 명령 최대는 62.727초로 8분 이내였습니다. 설치·git 쓰기·강제 종료·다른 worktree 작업·추가 에이전트는 없었습니다. 새 측정 JSON 최대는 3,135,964바이트로 각 파일 5,000,000바이트 이하이며 `profile-102-work/` 아래에만 저장했습니다. 번들/source map은 저장소 밖 지정 scratchpad의 `bundles/revision102-*.cjs{,.map}`에만 생성했습니다.
+
+최종 diff 점검에서 이번 작업이 작성하지 않은 `analysis-records-design.md`의 별도 변경이 발견됐습니다. 제품 원복 직후 점검에는 없던 변경이며, 해당 내용은 읽거나 수정·원복하지 않았습니다. 확인된 파일 수정 시각 08:13:10 UTC는 마지막 timing worker 종료 08:06:49 UTC 뒤입니다. 보고서와 새 테스트/계측 자료 외 이 변경의 작성 주체와 실행 상황은 확인하지 않았으므로 작업 트리 전체가 이번 산출물만 포함한다고 주장하지 않습니다.

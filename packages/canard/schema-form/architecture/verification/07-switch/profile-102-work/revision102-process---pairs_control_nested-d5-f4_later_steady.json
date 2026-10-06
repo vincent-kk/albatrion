@@ -1,0 +1,16 @@
+{
+  "args": [
+    "--pairs",
+    "control",
+    "nested-d5-f4",
+    "later",
+    "steady"
+  ],
+  "started": 1791274007059,
+  "ended": 1791274008102,
+  "elapsedMs": 1043,
+  "naturalExit": true,
+  "status": 0,
+  "signal": null,
+  "driverSha256": "89cb58d476ae288c83ae79bd14427411c4a2c60497928af671b97e1a0f86bac9"
+}
