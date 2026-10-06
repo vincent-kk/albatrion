@@ -1,0 +1,17 @@
+{
+  "args": [
+    "--pairs",
+    "working",
+    "nested-d5-f4",
+    "mount",
+    "forced"
+  ],
+  "started": 1791280135271,
+  "ended": 1791280147399,
+  "elapsedMs": 12128,
+  "naturalExit": true,
+  "status": 0,
+  "signal": null,
+  "sourceDriverSha256": "7b5dffd54c35089cb766acf7e588a646ed6987edbe42e519c019c760d0309691",
+  "driverSha256": "753bb5e1cafa63e0a99453f4128e5a58613d52eb32ea04010daa912811d2e60a"
+}

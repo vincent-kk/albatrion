@@ -1,0 +1,800 @@
+diff --git a/packages/canard/schema-form/src/core/settle/DETAIL.md b/packages/canard/schema-form/src/core/settle/DETAIL.md
+index 12f3b77fc..27ba6c5a2 100644
+--- a/packages/canard/schema-form/src/core/settle/DETAIL.md
++++ b/packages/canard/schema-form/src/core/settle/DETAIL.md
+@@ -2,6 +2,10 @@
+ 
+ ## Requirements
+ 
++- 순수 게이트의 성공한 boolean은 발생별로 의존 투영이 같은 동안 재사용합니다. 첫 자격은 단일 직접 키와 원시 리터럴의 `===`/`!==`이며, 호스트의 해당 이름에 엔트리가 하나이고 무게이트 선언이 있어야 합니다. 가드·콜백·호스트 전체·extras·wildcard·동적 배열 읽기·미인식 식은 기존 평가를 유지합니다. 호출별 일시 결과와 실패 없는 커밋 결과를 구별하고, 예외 version 증가·실패·복구·예산 초과 뒤에는 새 결과를 커밋하지 않습니다(96C-01의 둘째 범위, 97C-01, 102라운드 보충).
++- 재사용에서도 원래 자리의 부모 게이트 단락·`locate`·공표·결과 적용·changedNodes·배달 방문을 유지합니다. 바퀴 진입에서 조상을 한 번 검증하고 wrong-kind·불확실한 읽기는 기존 경로로 되돌립니다. 자리마다 현재 호스트와 직접 키를 다시 찾고 노드 identity·emit·미계산 구간·유효 스키마·extras 노출을 견줍니다. 읽기 변경, 구조/수명 교체, rekey, 재계산 등록 및 실제 flush 뒤에는 다시 증명합니다. 테스트 모드에서는 매 재사용 평가 자리의 무공표 독립 reader로 신선한 함수값을 구하여 비교하고, 기준 reader가 읽거나 공표하는 노드만 pending 부재를 단언합니다.
++- 게이트 집합·발견 순서·고정 출발점·바퀴 상한은 유지합니다. 상한은 함수 평가 횟수가 아닌 바퀴 수를 셉니다. 속도 비용은 자리마다 O(읽기 깊이)의 현재 호스트 탐색과 고정 필드 비교, 바퀴 진입의 O(조상 깊이) 검증이며 동일 투영의 함수 실행·입력 배열·범용 준비를 제거합니다. 메모리는 방문한 발생의 약한 자격 계획, 자격 발생의 커밋 슬롯과 호출별 일시 슬롯입니다. 분기 없는 청사진에는 새 슬롯이나 문맥 필드를 추가하지 않습니다. 순수 비교 문법 후보가 없음을 기존 gate 참조의 한 번 순회로 증명한 청사진은 공유 빈 메모를 사용하여 호출별 컨테이너와 조상 검증을 만들지 않습니다. 이 부재 증명의 시간은 기존 노드·선언·gate 참조 수에 비례하며 새 색인이나 배열은 없습니다. 문법 후보가 있더라도 실제 읽기 자격은 매 원래 자리의 기존 증명을 통과해야 합니다. 실측 시간·계수·메모리 한계는 103라운드 보고서에 기록합니다.
++
+ - 빈 단계는 입력 부재가 기존 불변 capability 또는 이번 작업 집합의 크기·단일 대상 확인으로 O(1)에 증명될 때만 호출을 생략합니다. 파생 규칙이 없으면 파생 실행·기준 커밋을, 식이 없으면 이탈 식 커밋을, 이탈·소멸·생김·되살림·채움·배열 작업이 모두 없으면 이탈 마감을 생략합니다. 게이트·생김·이탈이 없고 쓰기 입력이 비었거나 유효 타입이 정적 타입과 같은 원래 대상 하나뿐이면 전이를 생략합니다. 빈 이탈 스냅숏·trace 마감·배열 정렬도 진입하지 않습니다. 값·오류·배달·revision·커밋 번호·논리 단계 순서와 실제 적용 라운드는 유지하며 일을 다른 단계나 다음 호출로 옮기지 않습니다. 속도 비용은 고정 수의 O(1) 부재 검사이며 빈 helper의 호출·반복자·임시 그릇을 제거합니다. 새 영구 메모리·노드/문맥 shape·색인은 없고 실제 작업이 있는 경로의 시간·메모리 차수는 유지합니다(96C-01, 98라운드 A1).
+ 
+ - 89C-03의 분기 부재 capability가 확정된 청사진은 게이트 예산·호스트 registry·게이트 식 색인을 만들지 않고 불변 빈 조회를 공유합니다. 역의존 trie·기능 색인은 분기 부재와 별도로 증명된 식/watch/state 부재에서만 생략하며, derive·watch·state가 있으면 기존 색인·역의존 표와 정착을 유지합니다. 정착 순서·커밋·if 작성 위치별 컴파일은 유지합니다. 기능 없는 청사진에서는 O(S) 색인 순회와 할당을 제거하고 O(1) capability 조회를 더합니다. 기능 있는 청사진의 시간·메모리 차수는 유지하며 실제 수치는 93라운드 짝 측정에 기록합니다.
+@@ -38,7 +42,7 @@
+ 
+ - BLUEPRINT-030의 원본은 호출자가 로드 V·쓰기·입력으로 준 값입니다. 이번 정착의 호스트 채움 D가 분배한 값과 그 값으로 생긴 노드는 원본 없는 사슬에 속합니다. 형상 확장과 기본값 채움은 같은 판정으로, 동일 청사진 위치가 호출자 원본 없는 조상에서 반복되고 거리가 청사진 전체의 최대 상대 게이트 읽기 범위 이상이면 `RECURSIVE_SHAPE_DIVERGED`, `cause: 'budget'`, `exceededBudget: 'recursion'`으로 끊습니다. 채움은 유효 스키마도 같은 경우에 판정합니다. 현재 발생에 명시 분배된 배열(빈 `[]` 포함)은 없음이 아니므로 자신의 D로 다시 채우지 않으며, 호출자 값이 이끄는 유한 배열 확장은 허용합니다. 상대 범위는 두 경로가 공유하는 WeakMap에 청사진당 한 번 계산해 숫자 하나를 보관합니다. 정상 비순환 경로는 O(1)로 제외하고, 순환 후보는 조상 깊이와 실제 원본 탐색 비용을 사용합니다(92C-01·02, 78C-02).
+ 
+-- 역의존 owner와 호스트 게이트의 반복 중복 확인은 삽입 순서를 유지하는 Set으로 처리합니다. 등록·수집 시간은 선언/게이트 수에 선형이며 추가 메모리는 유일 owner/게이트 수에 비례합니다. 게이트의 평가 순서·횟수·고정 출발점은 바꾸지 않습니다(SETTLE-017·020·044·050, 82C-01).
++- 역의존 owner와 호스트 게이트의 반복 중복 확인은 삽입 순서를 유지하는 Set으로 처리합니다. 등록·수집 시간은 선언/게이트 수에 선형이며 추가 메모리는 유일 owner/게이트 수에 비례합니다. 게이트의 평가 자리·적용 순서·고정 출발점은 유지하고 순수 함수 실행만 동일 투영에서 재사용합니다(SETTLE-017·020·044·050, 82C-01, 97C-01).
+ - 전이 채움은 생김 집합의 깊이별 bucket으로 부모 우선·같은 깊이 삽입 순서를 유지합니다. 호스트 채움 D의 쓰기로 생긴 자손은 같은 라운드의 뒤 차례에서 없음인 경우 `controls.default` > `default`를 받으며 D가 명시한 값은 보존합니다. 같은 생김 묶음에서 처음 계산된 branch의 자손과 현재 D가 처음 만든 배열 자리만 이어 채웁니다. 이미 평가된 게이트를 자손의 채움이 뒤집어 노드를 내거나 내보내면 새 가지 아래에서도 다음 전이 라운드로 셉니다. 노드마다 채움은 한 번이고 상한은 게이트 가진 조각 수 + 노드 게이트 수 + 1 그대로입니다. 새 생김 커서만 읽으므로 기존 노드를 전수 재방문하지 않습니다. 시간은 각 묶음의 O(N+D) bucket 작업과 기존 재계산이며, 호스트 Set·생김/채움 전 길이 Map 및 임시 O(N+D) 참조를 사용합니다. 게이트가 있을 때만 묶음의 첫 평가 branch Set과 이번 채움이 배열 자리를 늘린 호스트 Set을 두며 O(B+A) 등록·참조를 더합니다. 배열 길이 기록 수집은 기존 자동 배열 로그 순회에 합칩니다. 노드 shape·영구 메모리는 늘리지 않습니다(WRITE-082·088, SETTLE-004·005·017, 82C-01, 90C-01, 92C-03).
+ 
+ - 커밋에서 변경된 객체 호스트의 유효 `required` 목록을 직접 자식의 필수 표시에 반영합니다. 필수 여부가 바뀐 자식은 값 변경 없이 `UpdateComputedProperties`를 받아 입력 선택과 DOM 표시를 갱신합니다. 형상을 고르는 데 `required`를 쓰지는 않습니다(LANDING-027·132, FRAGMENT-026). 검사는 변경된 호스트의 직접 자식에 한정되며 별도 영구 색인을 만들지 않습니다.
+@@ -123,9 +127,16 @@
+ 
+ ### settle-gate-selection-counts — 고정 live 폭의 분기 축
+ 
+-- B=5/10/20/40에서 `active` 식 평가 횟수를 계수합니다. kind_0에서 kind_4로 가는 첫 전환은 16·B회, 이후 세 전환은 각 8·B회입니다.
++- B=5/10/20/40에서 그림자와 구별하여 실제 `active` 식 평가 횟수를 계수합니다. 명시 kind 입력의 시험 마운트는 2·B, 첫 전환은 2·B, 후속 전환은 B회입니다. 운영 adapter의 입력 없는 마운트는 undefined→기본 kind 투영을 포함하여 20·B→3·B, 첫 전환은 16·B→2·B, 후속 전환은 8·B→B회입니다. 원래 자리 방문과 바퀴 상한 조회는 유지합니다(103라운드).
+ - 각 전환 뒤 자식 5개, 안정 진단, emit 90바이트를 단언합니다.
+ 
++### settle-gate-result-reuse — 순수 결과의 원래 자리 동치
++
++- 전수 평가를 강제한 실행과 재사용 실행에서 같은 입력 이력의 결과·형상·오류·revision·changedNodes 및 배달 방문 순서가 같습니다. 기존 차등·shadow 단언은 유지합니다.
++- 성공 true/false의 반복 실행을 줄이고, 값·스키마/구조·미계산·extras·host·rekey·load 및 flush 변경을 거절합니다. 콜백·예외는 매번 기존 평가를 하며 실패 커밋은 슬롯을 저장하지 않습니다.
++- 다른 직접 키가 바퀴를 열면 읽기가 같은 게이트의 실패 없는 커밋 결과를 실행 없이 재사용하고, 콜백 예외 뒤의 바퀴에서는 기존 성공 슬롯도 다시 평가함을 계수로 확인합니다.
++- 한 바퀴의 평가 생략이 바퀴 수나 예산 상한을 바꾸지 않습니다. B축의 남은 자리별 검사·기여 방문 비용은 별도로 보고합니다.
++
+ ### settle-static-first-load
+ 
+ - 동일 행렬에서 범용 oracle과 정적 첫 로드의 최종 값·오류·진단·순서·revision·commit·전역 상태·리스너 payload·경고가 같습니다. 자격 밖 경로는 커밋 번호를 소비하지 않고 범용 경로로 갑니다.
+diff --git a/packages/canard/schema-form/src/core/settle/__tests__/settle.gate-selection-counts.test.ts b/packages/canard/schema-form/src/core/settle/__tests__/settle.gate-selection-counts.test.ts
+index f4a552b7d..69b3f2eaf 100644
+--- a/packages/canard/schema-form/src/core/settle/__tests__/settle.gate-selection-counts.test.ts
++++ b/packages/canard/schema-form/src/core/settle/__tests__/settle.gate-selection-counts.test.ts
+@@ -2,22 +2,13 @@ import { describe, expect, it, vi } from 'vitest';
+ 
+ import { SetValueOption } from '../../types/value';
+ import { loadSchemaNodeAtMount, writeSchemaNode } from '../index';
+-import * as compiler from '../../blueprint/utils/expressions/createDynamicFunction';
++import * as pureEvaluation from '../utils/gates/getGateResultMemo/utils/evaluatePureGate';
+ import { createTestTree } from './fixtures/createTestTree';
+ 
+ // filid:contract settle-gate-selection-counts
+-describe('baseline fixed-width branch-axis characterization', () => {
++describe('reused fixed-width branch-axis characterization', () => {
+   it.each([5, 10, 20, 40])('B=%i distinguishes first payload fill from prepared transitions', count => {
+-    let evaluations = 0;
+-    const compile = compiler.createDynamicFunction;
+-    const compiling = vi.spyOn(compiler, 'createDynamicFunction').mockImplementation((manager, key, source, boolean) => {
+-      const evaluate = boolean ? compile(manager, key, source, true) : compile(manager, key, source, false);
+-      if (!evaluate) return;
+-      return (dependencies: unknown[]) => {
+-        if (key === 'active') evaluations++;
+-        return evaluate(dependencies);
+-      };
+-    });
++    const evaluations = vi.spyOn(pureEvaluation, 'evaluatePureGate');
+     try {
+       const schema = { type: 'object', properties: { common: { type: 'string', default: 'shared' },
+         kind: { type: 'string', default: 'kind_0' } }, oneOf: Array.from({ length: count }, (_, index) => ({
+@@ -29,20 +20,21 @@ describe('baseline fixed-width branch-axis characterization', () => {
+       })) } as const;
+       const { root } = createTestTree(schema);
+       loadSchemaNodeAtMount(root, { kind: 'kind_0' }, SetValueOption.Overwrite);
++      expect(evaluations.mock.calls.length).toBe(2 * count);
+       const transitions = [
+-        { kind: 'kind_4', calls: 16 * count },
+-        { kind: 'kind_0', calls: 8 * count },
+-        { kind: 'kind_4', calls: 8 * count },
+-        { kind: 'kind_0', calls: 8 * count },
++        { kind: 'kind_4', calls: 2 * count },
++        { kind: 'kind_0', calls: count },
++        { kind: 'kind_4', calls: count },
++        { kind: 'kind_0', calls: count },
+       ];
+       for (const transition of transitions) {
+-        evaluations = 0;
++        evaluations.mockClear();
+         writeSchemaNode(root.structure!.kind, transition.kind, 'input', SetValueOption.Overwrite);
+-        expect(evaluations).toBe(transition.calls);
++        expect(evaluations.mock.calls.length).toBe(transition.calls);
+         expect(root.children).toHaveLength(5);
+         expect(root.runtime.diagnostics.status).toBe('stable');
+         expect(Buffer.byteLength(JSON.stringify(root.emit))).toBe(90);
+       }
+-    } finally { compiling.mockRestore(); }
++    } finally { evaluations.mockRestore(); }
+   });
+ });
+diff --git a/packages/canard/schema-form/src/core/settle/utils/commit/commitSettlement.ts b/packages/canard/schema-form/src/core/settle/utils/commit/commitSettlement.ts
+index 48fd97df3..e14c08128 100644
+--- a/packages/canard/schema-form/src/core/settle/utils/commit/commitSettlement.ts
++++ b/packages/canard/schema-form/src/core/settle/utils/commit/commitSettlement.ts
+@@ -16,6 +16,7 @@ import { commitExitPolicyValues } from './commitExitPolicyValues';
+ import { snapshotExitedPolicies } from './snapshotExitedPolicies';
+ import { finalizeDeriveTrace } from './finalizeDeriveTrace';
+ import { markCommitDeliveries } from './markCommitDeliveries';
++import { getGateResultMemo } from '../gates/getGateResultMemo';
+ 
+ /** Shared frozen empty list for inactive and mismatch projections. */
+ const EMPTY_PATHS: readonly string[] = Object.freeze([]);
+@@ -164,4 +165,5 @@ export const commitSettlement = <Self extends SchemaNodeRecord<Self>>(
+     (context.entered.size > 0 || context.exited.size > 0))
+     runtime.latentRawDirty = true;
+   updateInactiveValuesMemo(context.root);
++  if (context.hasGates) getGateResultMemo(runtime).commit(context);
+ };
+diff --git a/packages/canard/schema-form/src/core/settle/utils/compute/computeNode.ts b/packages/canard/schema-form/src/core/settle/utils/compute/computeNode.ts
+index ef1055a26..43e705937 100644
+--- a/packages/canard/schema-form/src/core/settle/utils/compute/computeNode.ts
++++ b/packages/canard/schema-form/src/core/settle/utils/compute/computeNode.ts
+@@ -10,6 +10,7 @@ import { relocatedGates } from './relocatedGates';
+ import { scheduleRelocatedGates } from './scheduleRelocatedGates';
+ import { updateOutput } from './updateOutput';
+ import { getHostWheelBudgetCap } from '../gates/getGateBudgetCap';
++import { getGateResultMemo } from '../gates/getGateResultMemo';
+ import { hasIndependentLeafDefaults } from './utils/hasIndependentLeafDefaults';
+ 
+ /**
+@@ -116,6 +117,7 @@ export const computeNode = <Self extends SchemaNodeRecord<Self>>(
+     scheduleRelocatedGates(relocatedGates(node), context);
+   let cap = getHostWheelBudgetCap(node, node.runtime.blueprint, gates);
+   for (let round = 0; round < cap; round++) {
++    if (context.hasGates) getGateResultMemo(node.runtime).beginPass(node, context);
+     const schemaChanged = node.parent === null && selectNodeSchema(node, context);
+     const changed = selectChildren(node, context, prior,
+       (child) => computeNode(child, context), gates.length > 0);
+diff --git a/packages/canard/schema-form/src/core/settle/utils/gates/evaluateGate.ts b/packages/canard/schema-form/src/core/settle/utils/gates/evaluateGate.ts
+index f81c59fb7..824c40ac7 100644
+--- a/packages/canard/schema-form/src/core/settle/utils/gates/evaluateGate.ts
++++ b/packages/canard/schema-form/src/core/settle/utils/gates/evaluateGate.ts
+@@ -12,6 +12,7 @@ import { readProjectedValue } from './readProjectedValue';
+ import { EXPRESSION_THREW, GUARD_FAILED } from '../errors/settleErrorCode';
+ import { getGateRegistry } from './getGateRegistry';
+ import { getGateExpression } from './getGateExpression';
++import { getGateResultMemo } from './getGateResultMemo';
+ import { readSchemaNodeGuard } from '../../../validation';
+ import { ValidationMode } from '../../../types/state';
+ 
+@@ -29,10 +30,11 @@ export const evaluateGate = <Self extends SchemaNodeRecord<Self>>(
+   owner: Self,
+   edgeName?: string,
+ ): boolean => {
+-  if (gate.appliesWhen?.some((parentGate) =>
+-    !evaluateGate(parentGate, context, owner)))
+-    return false;
+-  const hostPath = getGateRegistry(owner.runtime).locate(owner, gate, edgeName).hostPath;
++  const parents = gate.appliesWhen;
++  for (let index = 0; index < (parents?.length ?? 0); index++)
++    if (!evaluateGate(parents![index], context, owner)) return false;
++  const occurrence = getGateRegistry(owner.runtime).locate(owner, gate, edgeName);
++  const hostPath = occurrence.hostPath;
+   const raw = gate.kind === 'active' ? undefined : readProjectedValue(context, hostPath);
+   const host = raw !== null && typeof raw === 'object' && !isArray(raw)
+     ? raw : {};
+@@ -59,6 +61,10 @@ export const evaluateGate = <Self extends SchemaNodeRecord<Self>>(
+     !isArray(projectedExtra))
+     input = { ...input, ...projectedExtra };
+   try {
++    if (gate.kind === 'active') {
++      const reused = getGateResultMemo(owner.runtime).evaluate(occurrence, context);
++      if (reused !== undefined) return reused;
++    }
+     if (gate.kind === 'discriminator') {
+       const condition = gate.condition;
+       if (condition === null || typeof condition !== 'object' ||
+diff --git a/packages/canard/schema-form/src/core/settle/utils/write/registerRecalculation.ts b/packages/canard/schema-form/src/core/settle/utils/write/registerRecalculation.ts
+index 33194ce0a..ac9377653 100644
+--- a/packages/canard/schema-form/src/core/settle/utils/write/registerRecalculation.ts
++++ b/packages/canard/schema-form/src/core/settle/utils/write/registerRecalculation.ts
+@@ -1,6 +1,7 @@
+ import type { SchemaNodeRecord } from '../../../record';
+ import type { SettlementContext } from '../../type';
+ import { getGateRegistry } from '../gates/getGateRegistry';
++import { getGateResultMemo } from '../gates/getGateResultMemo';
+ import { getDependencyIndex } from './getDependencyIndex';
+ import { DirtyPathSet } from './DirtyPathSet';
+ 
+@@ -12,6 +13,7 @@ import { DirtyPathSet } from './DirtyPathSet';
+ export const registerRecalculation = <Self extends SchemaNodeRecord<Self>>(
+   context: SettlementContext<Self>,
+ ): void => {
++  if (context.hasGates) getGateResultMemo(context.root.runtime).touch(context);
+   if (!context.hasGates && context.dirtyPaths instanceof DirtyPathSet)
+     context.dirtyPaths.beginPostOrder();
+   const blueprint = context.root.runtime.blueprint;
+diff --git a/packages/canard/schema-form/src/core/settle/utils/gates/getGateResultMemo.ts b/packages/canard/schema-form/src/core/settle/utils/gates/getGateResultMemo.ts
+new file mode 100644
+--- /dev/null
++++ b/packages/canard/schema-form/src/core/settle/utils/gates/getGateResultMemo.ts
+@@ -0,0 +1,218 @@
++import { hasOwnProperty } from '@winglet/common-utils/lib';
++import { unescapeSegment } from '@winglet/json/pointer';
++
++import type { Blueprint } from '../../../blueprint';
++import type { SchemaNodeRecord } from '../../../record';
++import type { SettlementContext } from '../../type';
++import { flushPendingOutput } from '../compute/flushPendingOutput';
++import { getGateExpression } from './getGateExpression';
++import { readProjectedValue } from './readProjectedValue';
++import type { GateOccurrence } from './type';
++import type { GateResultPlan, GateResultSlot, GateResultWork } from './getGateResultMemo/type';
++import { readPureGateKey } from './getGateResultMemo/utils/readPureGateKey';
++import { evaluatePureGate } from './getGateResultMemo/utils/evaluatePureGate';
++import { readGateResultShadow } from './getGateResultMemo/utils/readGateResultShadow';
++import { hasPureGateCandidates } from './getGateResultMemo/utils/hasPureGateCandidates';
++
++/** Root hosts need no decoded path allocation. */
++const ROOT_SEGMENTS: readonly string[] = Object.freeze([]);
++
++/** Runtime-owned provisional and committed pure function results. */
++class GateResultMemo {
++  /** Eligibility is tied to the real registry occurrence's lifetime. */
++  private readonly plans: WeakMap<GateOccurrence, GateResultPlan | null> | undefined;
++  /** A failed commit discards committed proofs without visiting other occurrences. */
++  private committed: WeakMap<GateOccurrence, GateResultSlot> | undefined;
++  /** Settlement work is weakly held and explicitly released on commit. */
++  private readonly works: WeakMap<object, GateResultWork> | undefined;
++
++  /**
++   * Bind an immutable analysis without running any gate.
++   * @param blueprint - Compiler descriptors, or absence for the shared empty memo
++   */
++  constructor(private readonly blueprint?: Blueprint) {
++    this.plans = blueprint ? new WeakMap() : undefined;
++    this.committed = blueprint ? new WeakMap() : undefined;
++    this.works = blueprint ? new WeakMap() : undefined;
++  }
++
++  /**
++   * Invalidate provisional proofs after marking, including rollback and rekey.
++   * @param context - Marked call whose existing work crosses a write boundary
++   * @returns Nothing; current-read comparisons remain mandatory
++   */
++  touch<Self extends SchemaNodeRecord<Self>>(context: SettlementContext<Self>): void {
++    const work = this.works?.get(context);
++    if (work) work.version++;
++  }
++
++  /**
++   * Verify current host ancestors once on entry to each original wheel pass.
++   * @param node - Host about to evaluate its original ordered gate set
++   * @param context - Call with current marked inputs and structure
++   * @returns Nothing; unsafe ancestors force baseline reads for this pass
++   */
++  beginPass<Self extends SchemaNodeRecord<Self>>(node: Self,
++    context: SettlementContext<Self>): void {
++    if (!this.blueprint) return;
++    const work = this.work(context);
++    let safe = true;
++    let touched = false;
++    for (let ancestor: Self | null = node; ancestor; ancestor = ancestor.parent) {
++      if (ancestor.behavior.strategy === 'branch' && ancestor.raw !== undefined)
++        safe = false;
++      if (context.changedRaw.has(ancestor.path)) touched = true;
++    }
++    work.passes.set(node, { safe, touched, version: work.version });
++  }
++
++  /**
++   * Evaluate or reuse one success only after the original-site read proof.
++   * @param occurrence - Actual locate result, including edge and appearance binding
++   * @param context - Original-site projection, pending publication and marked paths
++   * @returns Successful boolean, or undefined to retain the full evaluator
++   */
++  evaluate<Self extends SchemaNodeRecord<Self>>(
++    occurrence: GateOccurrence, context: SettlementContext<Self>,
++  ): boolean | undefined {
++    if (!this.blueprint) return;
++    let plan = this.plans!.get(occurrence);
++    if (plan === null) return;
++    let segments = plan?.segments ?? ROOT_SEGMENTS;
++    if (!plan && occurrence.hostPath) {
++      const decoded = occurrence.hostPath.slice(1).split('/');
++      for (let index = 0; index < decoded.length; index++)
++        decoded[index] = unescapeSegment(decoded[index]);
++      segments = decoded;
++    }
++    let host: Self | undefined = context.root;
++    for (let index = 0; index < segments.length; index++) {
++      const structure: Record<string, Self> | null | undefined = host?.structure;
++      host = structure && hasOwnProperty(structure, segments[index])
++        ? structure[segments[index]] : undefined;
++    }
++    if (!host) return;
++    if (!plan) {
++      const expression = getGateExpression(this.blueprint, occurrence.gate.schemaPath);
++      const name = expression && readPureGateKey(occurrence.gate, expression, host.blueprintNode);
++      if (name === undefined || !expression) {
++        this.plans!.set(occurrence, null);
++        return;
++      }
++      plan = { template: host.blueprintNode, expression, segments, name,
++        path: `${occurrence.hostPath}/${expression.dependencies[0].slice(2)}` };
++      this.plans!.set(occurrence, plan);
++    }
++    const work = this.work(context);
++    const pass = work.passes.get(host);
++    if (!pass?.safe || pass.version !== work.version || host.raw !== undefined ||
++      plan.template !== host.blueprintNode || host.detached) return;
++    const child = host.structure && hasOwnProperty(host.structure, plan.name)
++      ? host.structure[plan.name] : undefined;
++    if (!child || child.detached || child.parent !== host ||
++      child.behavior.strategy !== 'terminal') return;
++    const flushed = flushPendingOutput(child, context);
++    const hostUncomputed = context.changedRaw.has(host.path) && !context.changedNodes.has(host);
++    const childUncomputed = context.changedRaw.has(child.path) && !context.changedNodes.has(child);
++    const extrasExposed = pass.safe && host.raw === undefined;
++    let slot = work.slots.get(occurrence);
++    const local = slot !== undefined;
++    if (!slot && context.kind !== 'load' && context.pathChanges.length === 0 &&
++      !pass.touched && !context.changedRaw.has(child.path) &&
++      !context.entered.has(host) && !context.entered.has(child))
++      slot = this.committed!.get(occurrence);
++    let result: boolean;
++    if (!flushed && slot && (!local || slot.version === work.version) &&
++      slot.host === host && slot.hostExtras === host.extras &&
++      slot.hostUncomputed === hostUncomputed && slot.extrasExposed === extrasExposed &&
++      slot.child === child && slot.childEmit === child.emit &&
++      slot.childSchema === child.schema && slot.childUncomputed === childUncomputed) {
++      result = slot.result;
++      if (!local) work.slots.set(occurrence, { ...slot, version: work.version });
++    } else {
++      const version = context.gateThrowVersion ?? 0;
++      result = evaluatePureGate(plan.expression, readProjectedValue(context, plan.path));
++      if ((context.gateThrowVersion ?? 0) !== version) return result;
++      work.slots.set(occurrence, { host, hostExtras: host.extras, hostUncomputed,
++        extrasExposed, child, childEmit: child.emit, childSchema: child.schema,
++        childUncomputed, result, version: work.version });
++    }
++    if (process.env.NODE_ENV === 'test') {
++      const fresh = Boolean(plan.expression.evaluate([readGateResultShadow(context, plan.path)]));
++      if (result !== fresh) throw new Error(`Gate result shadow mismatch at ${occurrence.gate.schemaPath}`);
++    }
++    return result;
++  }
++
++  /**
++   * Publish only successful slots with no contact after their last evaluation.
++   * @param context - Completed call after ordinary commit publication
++   * @returns Nothing; failures discard committed proof and call-local containers
++   */
++  commit<Self extends SchemaNodeRecord<Self>>(context: SettlementContext<Self>): void {
++    const work = this.works?.get(context);
++    if (!work) return;
++    if (context.failures?.length || context.gateThrowVersion || context.exceededBudget ||
++      context.root.runtime.diagnostics.status === 'degraded') {
++      this.committed = new WeakMap();
++      this.works!.delete(context);
++      return;
++    }
++    for (const [occurrence, slot] of work.slots) {
++      const plan = this.plans!.get(occurrence);
++      if (!plan || slot.version !== work.version) continue;
++      let host: Self | undefined = context.root;
++      for (let index = 0; index < plan.segments.length; index++) {
++        const structure: Record<string, Self> | null | undefined = host?.structure;
++        host = structure && hasOwnProperty(structure, plan.segments[index])
++          ? structure[plan.segments[index]] : undefined;
++      }
++      const child = host?.structure && hasOwnProperty(host.structure, plan.name)
++        ? host.structure[plan.name] : undefined;
++      if (host && child && host === slot.host && child === slot.child &&
++        !host.detached && !child.detached && host.raw === undefined &&
++        host.extras === slot.hostExtras && child.emit === slot.childEmit &&
++        child.schema === slot.childSchema && !context.pendingOutputs?.has(child) &&
++        (context.changedRaw.has(host.path) && !context.changedNodes.has(host)) === slot.hostUncomputed &&
++        (context.changedRaw.has(child.path) && !context.changedNodes.has(child)) === slot.childUncomputed)
++        this.committed!.set(occurrence, slot);
++      else this.committed!.delete(occurrence);
++    }
++    this.works!.delete(context);
++  }
++
++  /**
++   * Allocate one stable work shape lazily, leaving branchless contexts unchanged.
++   * @param context - Settlement identity weakly retained during evaluation
++   * @returns Stable provisional slot and pass-proof containers
++   */
++  private work(context: object): GateResultWork {
++    let work = this.works!.get(context);
++    if (!work) {
++      work = { slots: new Map(), passes: new WeakMap(), version: 0 };
++      this.works!.set(context, work);
++    }
++    return work;
++  }
++}
++
++/** Registry and result memo share the runtime's lifetime without retaining roots globally. */
++const MEMOS = new WeakMap<object, GateResultMemo>();
++
++/** Syntax absence needs no runtime, blueprint, pass proof or mutable container. */
++const EMPTY_MEMO = new GateResultMemo();
++
++/**
++ * Get the occurrence result store for a gate-bearing runtime.
++ * @param runtime - Shared runtime identity and immutable analyzed blueprint
++ * @returns Stable result store, or the shared empty memo after syntax-absence proof
++ */
++export const getGateResultMemo = (runtime: { blueprint: Blueprint }): GateResultMemo => {
++  let memo = MEMOS.get(runtime);
++  if (!memo) {
++    memo = hasPureGateCandidates(runtime.blueprint)
++      ? new GateResultMemo(runtime.blueprint) : EMPTY_MEMO;
++    MEMOS.set(runtime, memo);
++  }
++  return memo;
++};
+diff --git a/packages/canard/schema-form/src/core/settle/utils/gates/getGateResultMemo/type.ts b/packages/canard/schema-form/src/core/settle/utils/gates/getGateResultMemo/type.ts
+new file mode 100644
+--- /dev/null
++++ b/packages/canard/schema-form/src/core/settle/utils/gates/getGateResultMemo/type.ts
+@@ -0,0 +1,43 @@
++import type { BlueprintExpression, BlueprintNode } from '../../../../blueprint';
++import type { GateOccurrence } from '../type';
++
++/** Proven single-key expression and occurrence-relative host address. */
++export interface GateResultPlan {
++  /** Current template whose unique ungated key proved eligibility. */
++  template: BlueprintNode;
++  /** Compiled function retained without recompilation or substitution. */
++  expression: BlueprintExpression;
++  /** Decoded host segments; current structure is followed at every site. */
++  segments: readonly string[];
++  /** Unique direct key consumed by the expression. */
++  name: string;
++  /** Bound baseline-reader address. */
++  path: string;
++}
++
++/** Stable-shape successful result, independent of a settlement's work containers. */
++export interface GateResultSlot {
++  /** Identity and projection fields compared at every original site. */
++  host: object;
++  hostExtras: unknown;
++  hostUncomputed: boolean;
++  extrasExposed: boolean;
++  child: object;
++  childEmit: unknown;
++  childSchema: object;
++  childUncomputed: boolean;
++  /** Successful false remains distinct from an absent or thrown result. */
++  result: boolean;
++  /** Last evaluation's recalculation-registration boundary. */
++  version: number;
++}
++
++/** Call-local provisional slots and pass-entry ancestor evidence. */
++export interface GateResultWork {
++  /** Provisional results never become committed during evaluation. */
++  slots: Map<GateOccurrence, GateResultSlot>;
++  /** Safe host ancestors at a particular recalculation boundary. */
++  passes: WeakMap<object, { safe: boolean; touched: boolean; version: number }>;
++  /** Supplemental invalidation; never replaces current-read comparisons. */
++  version: number;
++}
+diff --git a/packages/canard/schema-form/src/core/settle/utils/gates/getGateResultMemo/utils/readPureGateKey.ts b/packages/canard/schema-form/src/core/settle/utils/gates/getGateResultMemo/utils/readPureGateKey.ts
+new file mode 100644
+--- /dev/null
++++ b/packages/canard/schema-form/src/core/settle/utils/gates/getGateResultMemo/utils/readPureGateKey.ts
+@@ -0,0 +1,34 @@
++import { unescapeSegment } from '@winglet/json/pointer';
++
++import type { BlueprintExpression, BlueprintGate, BlueprintNode } from '../../../../../blueprint';
++
++import { hasPureGateCondition } from './hasPureGateCondition';
++
++/**
++ * Prove a complete pure read of a unique, unconditionally declared direct key.
++ * @param gate - Authored active condition, never executed by this proof
++ * @param expression - Original compiler descriptor with its entire dependency list
++ * @param template - Current host template, including all alternative entry kinds
++ * @returns Decoded key, or undefined for callbacks, ambiguity and dynamic reads
++ */
++export const readPureGateKey = (
++  gate: BlueprintGate, expression: BlueprintExpression, template: BlueprintNode,
++): string | undefined => {
++  if (!hasPureGateCondition(gate) || expression.dependencies.length !== 1 ||
++    template.kind !== 'object') return;
++  const dependency = expression.dependencies[0];
++  if (!dependency.startsWith('./') || dependency.slice(2).includes('/') ||
++    dependency.includes('*')) return;
++  const name = unescapeSegment(dependency.slice(2));
++  let matches = 0;
++  let unconditional = false;
++  const entries = template.childEntries;
++  for (let index = 0; index < entries.length; index++) {
++    const entry = entries[index];
++    if (entry.name !== name) continue;
++    if (++matches > 1) return;
++    for (let declaration = 0; declaration < entry.declarations.length; declaration++)
++      if (entry.declarations[declaration].gates.length === 0) unconditional = true;
++  }
++  return matches === 1 && unconditional ? name : undefined;
++};
+diff --git a/packages/canard/schema-form/src/core/settle/utils/gates/getGateResultMemo/utils/evaluatePureGate.ts b/packages/canard/schema-form/src/core/settle/utils/gates/getGateResultMemo/utils/evaluatePureGate.ts
+new file mode 100644
+--- /dev/null
++++ b/packages/canard/schema-form/src/core/settle/utils/gates/getGateResultMemo/utils/evaluatePureGate.ts
+@@ -0,0 +1,11 @@
++import type { BlueprintExpression } from '../../../../../blueprint';
++
++/**
++ * Execute the original compiled function only after a proven read changes.
++ * @param expression - Pure, complete, single-key compiler descriptor
++ * @param value - Baseline projected value at the original evaluation site
++ * @returns Successful boolean result; exceptions remain the caller's gate failure
++ */
++export const evaluatePureGate = (
++  expression: BlueprintExpression, value: unknown,
++): boolean => Boolean(expression.evaluate([value]));
+diff --git a/packages/canard/schema-form/src/core/settle/utils/gates/getGateResultMemo/utils/readGateResultShadow.ts b/packages/canard/schema-form/src/core/settle/utils/gates/getGateResultMemo/utils/readGateResultShadow.ts
+new file mode 100644
+--- /dev/null
++++ b/packages/canard/schema-form/src/core/settle/utils/gates/getGateResultMemo/utils/readGateResultShadow.ts
+@@ -0,0 +1,60 @@
++import { hasOwnProperty } from '@winglet/common-utils/lib';
++
++import type { SchemaNodeRecord } from '../../../../../record';
++import type { SettlementContext } from '../../../../type';
++
++/**
++ * Independently read a projected path without publication or registry effects.
++ * @param context - Actual original-site state, never mutated by this reader
++ * @param path - Bound read whose consumed or baseline-published nodes must be ready
++ * @returns Baseline projected value with the corrected pending-output assertion
++ * @throws Error if a consumed or baseline-published node has a pending output
++ */
++export const readGateResultShadow = <Self extends SchemaNodeRecord<Self>>(
++  context: SettlementContext<Self>, path: string,
++): unknown => {
++  let node = context.root;
++  const emission = (record: Self): unknown => record.emit === undefined ||
++    (context.changedRaw.has(record.path) && !context.changedNodes.has(record))
++    ? undefined : record.emit;
++  const assertPublished = (record: Self): void => {
++    if (context.pendingOutputs?.has(record))
++      throw new Error(`Pending output consumed or published on shadow read ${path}: ${record.path || '<root>'}`);
++  };
++  if (!path) assertPublished(node);
++  let value = emission(node);
++  if (!path) return value;
++  let atNode = true;
++  const encoded = path.slice(1).split('/');
++  for (let index = 0; index < encoded.length; index++) {
++    const name = encoded[index].replace(/~1/g, '/').replace(/~0/g, '~');
++    if (node.behavior.strategy === 'branch' && node.raw !== undefined)
++      assertPublished(node);
++    if (node.behavior.strategy === 'branch' && node.raw !== undefined &&
++      (node.parent !== null || value === null || typeof value !== 'object' ||
++        !hasOwnProperty(value, name))) return undefined;
++    const child = node.structure && hasOwnProperty(node.structure, name)
++      ? node.structure[name] : undefined;
++    if (child) {
++      node = child;
++      atNode = true;
++      value = emission(node);
++      continue;
++    }
++    assertPublished(node);
++    atNode = false;
++    if (value !== null && typeof value === 'object' && hasOwnProperty(value, name))
++      value = Reflect.get(value, name);
++    else {
++      const entries = node.blueprintNode.childEntries;
++      let declared = false;
++      for (let entry = 0; entry < entries.length; entry++)
++        if (entries[entry].name === name) { declared = true; break; }
++      if (!declared && node.extras !== null && typeof node.extras === 'object' &&
++        hasOwnProperty(node.extras, name)) value = Reflect.get(node.extras, name);
++      else return undefined;
++    }
++  }
++  if (atNode) assertPublished(node);
++  return value;
++};
+diff --git a/packages/canard/schema-form/src/core/settle/utils/gates/getGateResultMemo/utils/hasPureGateCondition.ts b/packages/canard/schema-form/src/core/settle/utils/gates/getGateResultMemo/utils/hasPureGateCondition.ts
+new file mode 100644
+--- /dev/null
++++ b/packages/canard/schema-form/src/core/settle/utils/gates/getGateResultMemo/utils/hasPureGateCondition.ts
+@@ -0,0 +1,13 @@
++import type { BlueprintGate } from '../../../../../blueprint';
++
++/** Complete direct-path strict comparisons cannot invoke callbacks or coercions. */
++const PURE_COMPARISON = /^\s*\.\/[^\s()=!<>;&|]+\s*(?:===|!==)\s*(?:"(?:[^"\\]|\\.)*"|'(?:[^'\\]|\\.)*'|-?(?:\d+(?:\.\d*)?|\.\d+)(?:[eE][+-]?\d+)?|true|false|null|undefined)\s*;?\s*$/;
++
++/**
++ * Recognize a necessary pure syntax condition without executing authored code.
++ * @param gate - Immutable gate whose complete condition is inspected
++ * @returns Whether dependency and live-host proof may qualify this condition
++ */
++export const hasPureGateCondition = (gate: BlueprintGate): boolean =>
++  gate.kind === 'active' && typeof gate.condition === 'string' &&
++  PURE_COMPARISON.test(gate.condition);
+diff --git a/packages/canard/schema-form/src/core/settle/utils/gates/getGateResultMemo/utils/hasPureGateCandidates.ts b/packages/canard/schema-form/src/core/settle/utils/gates/getGateResultMemo/utils/hasPureGateCandidates.ts
+new file mode 100644
+--- /dev/null
++++ b/packages/canard/schema-form/src/core/settle/utils/gates/getGateResultMemo/utils/hasPureGateCandidates.ts
+@@ -0,0 +1,48 @@
++import type { Blueprint, BlueprintGate, PropertyDeclaration } from '../../../../../blueprint';
++
++import { hasPureGateCondition } from './hasPureGateCondition';
++
++/**
++ * Inspect a gate and its short-circuit parents without evaluating expressions.
++ * @param gate - Existing own or edge gate with its immutable parent chain
++ * @returns Whether any original evaluation site may contain pure syntax
++ */
++const chainHasCandidate = (gate: BlueprintGate): boolean => {
++  if (hasPureGateCondition(gate)) return true;
++  const parents = gate.appliesWhen;
++  for (let index = 0; index < (parents?.length ?? 0); index++)
++    if (chainHasCandidate(parents![index])) return true;
++  return false;
++};
++
++/**
++ * Inspect existing declaration references without allocating a gate index.
++ * @param declarations - Existing ordered own or edge contributions
++ * @returns Whether one referenced gate has a necessary pure syntax condition
++ */
++const declarationsHaveCandidate = (declarations: readonly PropertyDeclaration[]): boolean => {
++  for (let index = 0; index < declarations.length; index++) {
++    const gates = declarations[index].gates;
++    for (let gate = 0; gate < gates.length; gate++)
++      if (chainHasCandidate(gates[gate])) return true;
++  }
++  return false;
++};
++
++/**
++ * Prove syntax absence across all finite templates without choosing a compiled expression.
++ * @param blueprint - Immutable own/edge declarations, including recursive templates
++ * @returns False only when no gate can satisfy the original-site pure proof
++ */
++export const hasPureGateCandidates = (blueprint: Blueprint): boolean => {
++  if (blueprint.capabilities.branchless) return false;
++  const nodes = blueprint.nodes;
++  for (let index = 0; index < nodes.length; index++) {
++    const node = nodes[index];
++    if (declarationsHaveCandidate(node.declarations)) return true;
++    const entries = node.childEntries;
++    for (let entry = 0; entry < entries.length; entry++)
++      if (declarationsHaveCandidate(entries[entry].declarations)) return true;
++  }
++  return false;
++};
+diff --git a/packages/canard/schema-form/src/core/settle/__tests__/settle.gate-result-reuse.test.ts b/packages/canard/schema-form/src/core/settle/__tests__/settle.gate-result-reuse.test.ts
+new file mode 100644
+--- /dev/null
++++ b/packages/canard/schema-form/src/core/settle/__tests__/settle.gate-result-reuse.test.ts
+@@ -0,0 +1,99 @@
++import { describe, expect, it, vi } from 'vitest';
++
++import { SetValueOption } from '../../types/value';
++import { loadSchemaNodeAtMount, writeSchemaNode } from '../index';
++import { getGateResultMemo } from '../utils/gates/getGateResultMemo';
++import * as evaluations from '../utils/gates/getGateResultMemo/utils/evaluatePureGate';
++import { createTestTree } from './fixtures/createTestTree';
++
++describe('pure gate result reuse lifetime', () => {
++  it('shares an empty memo and skips ancestor reads when pure syntax is absent', () => {
++    const schema = { type: 'object', properties: { kind: { type: 'string' } },
++      anyOf: [{ controls: { active: '@.gate()' }, properties: { payload: { type: 'string' } } }] };
++    const first = createTestTree(schema).root;
++    const second = createTestTree(schema).root;
++    const memo = getGateResultMemo(first.runtime);
++    expect(memo).toBe(getGateResultMemo(second.runtime));
++    const host = new Proxy(first, { get(target, key, receiver) {
++      if (key === 'parent') throw new Error('An empty memo must not read ancestors');
++      return Reflect.get(target, key, receiver);
++    } });
++    expect(() => memo.beginPass(host, {} as never)).not.toThrow();
++  });
++
++  it('evaluates successful true and false once per unchanged read, including mount', () => {
++    const evaluate = vi.spyOn(evaluations, 'evaluatePureGate');
++    try {
++      const { root } = createTestTree({ type: 'object', properties: {
++        kind: { type: 'string', default: 'a' },
++      }, anyOf: ['a', 'b'].map(kind => ({ controls: { active: `./kind === '${kind}'` },
++        properties: { [kind]: { type: 'string', default: kind } } })) });
++      loadSchemaNodeAtMount(root, { kind: 'a' }, SetValueOption.Overwrite);
++      expect(root.emit).toEqual({ kind: 'a', a: 'a' });
++      expect(evaluate.mock.calls.length).toBeGreaterThan(0);
++      expect(evaluate.mock.calls.length).toBeLessThan(16);
++      evaluate.mockClear();
++      writeSchemaNode(root.structure!.kind, 'b', 'input', SetValueOption.Overwrite);
++      expect(root.emit).toEqual({ kind: 'b', b: 'b' });
++      expect(evaluate.mock.calls.length).toBeGreaterThan(0);
++      expect(evaluate.mock.calls.length).toBeLessThan(16);
++    } finally { evaluate.mockRestore(); }
++  });
++
++  it('keeps user callbacks and repeated throws on the full evaluation path', () => {
++    const evaluate = vi.spyOn(evaluations, 'evaluatePureGate');
++    const callback = vi.fn(() => true);
++    try {
++      const { root } = createTestTree({ type: 'object', properties: { kind: { type: 'string' } },
++        anyOf: [{ controls: { active: '@.gate()' }, properties: { payload: { type: 'string', default: 'P' } } }] });
++      root.runtime.context = { gate: callback };
++      loadSchemaNodeAtMount(root, { kind: 'a' }, SetValueOption.Overwrite);
++      expect(callback.mock.calls.length).toBeGreaterThan(1);
++      expect(evaluate).not.toHaveBeenCalled();
++      const throwing = vi.fn(() => { throw new Error('gate'); });
++      root.runtime.context = { gate: throwing };
++      expect(() => writeSchemaNode(root, { kind: 'b' }, 'callerReplace', SetValueOption.Overwrite)).toThrow();
++      expect(throwing.mock.calls.length).toBeGreaterThan(1);
++      expect(evaluate).not.toHaveBeenCalled();
++    } finally { evaluate.mockRestore(); }
++  });
++
++  it('uses committed results when another key opens a fresh wheel', () => {
++    const evaluate = vi.spyOn(evaluations, 'evaluatePureGate');
++    try {
++      const { root } = createTestTree({ type: 'object', properties: {
++        kind: { type: 'string' }, toggle: { type: 'boolean' },
++      }, anyOf: [
++        { controls: { active: "./kind === 'a'" }, properties: { payload: { type: 'string', default: 'P' } } },
++        { controls: { active: './toggle === true' }, properties: { toggled: { type: 'string' } } },
++      ] });
++      loadSchemaNodeAtMount(root, { kind: 'a', toggle: false }, SetValueOption.Overwrite);
++      evaluate.mockClear();
++      writeSchemaNode(root.structure!.toggle, true, 'input', SetValueOption.Overwrite);
++      expect(root.emit).toEqual({ kind: 'a', toggle: true, payload: 'P' });
++      expect(evaluate.mock.calls.filter(([expression]) => expression.dependencies[0] === './kind')).toHaveLength(0);
++      expect(evaluate.mock.calls.filter(([expression]) => expression.dependencies[0] === './toggle')).toHaveLength(1);
++    } finally { evaluate.mockRestore(); }
++  });
++
++  it('discards committed successes when another gate throws in a failed settlement', () => {
++    const evaluate = vi.spyOn(evaluations, 'evaluatePureGate');
++    try {
++      const { root } = createTestTree({ type: 'object', properties: {
++        kind: { type: 'string' }, toggle: { type: 'boolean' },
++      }, anyOf: [
++        { controls: { active: "./kind === 'a'" }, properties: { payload: { type: 'string', default: 'P' } } },
++        { controls: { active: '@.gate() && ./toggle' }, properties: { toggled: { type: 'string' } } },
++      ] });
++      root.runtime.context = { gate: () => true };
++      loadSchemaNodeAtMount(root, { kind: 'a', toggle: false }, SetValueOption.Overwrite);
++      root.runtime.context = { gate: () => { throw new Error('failed settlement'); } };
++      expect(() => writeSchemaNode(root.structure!.toggle, true, 'input', SetValueOption.Overwrite)).toThrow();
++      root.runtime.context = { gate: () => true };
++      evaluate.mockClear();
++      writeSchemaNode(root.structure!.toggle, false, 'input', SetValueOption.Overwrite);
++      expect(root.emit).toEqual({ kind: 'a', toggle: false, payload: 'P' });
++      expect(evaluate.mock.calls.filter(([expression]) => expression.dependencies[0] === './kind').length).toBeGreaterThan(0);
++    } finally { evaluate.mockRestore(); }
++  });
++});
+diff --git a/packages/canard/schema-form/src/core/settle/__tests__/settle.gate-result-reuse-differential.test.ts b/packages/canard/schema-form/src/core/settle/__tests__/settle.gate-result-reuse-differential.test.ts
+new file mode 100644
+--- /dev/null
++++ b/packages/canard/schema-form/src/core/settle/__tests__/settle.gate-result-reuse-differential.test.ts
+@@ -0,0 +1,31 @@
++import { describe, expect, it, vi } from 'vitest';
++
++import * as results from '../utils/gates/getGateResultMemo';
++import { gateSelectionCases } from './fixtures/gateSelectionCases';
++import { installGateSelectionShadow } from './helpers/installGateSelectionShadow';
++import { runGateSelectionCase } from './helpers/runGateSelectionCase';
++
++// filid:contract settle-gate-result-reuse
++describe('pure gate results against full evaluation at original sites', () => {
++  it.each(gateSelectionCases)('$name', fixture => {
++    const original = results.getGateResultMemo;
++    const disabled = new WeakSet<object>();
++    vi.spyOn(results, 'getGateResultMemo').mockImplementation(runtime => {
++      const memo = original(runtime);
++      if (!disabled.has(memo)) {
++        disabled.add(memo);
++        vi.spyOn(memo, 'evaluate').mockReturnValue(undefined);
++      }
++      return memo;
++    });
++    let expected: ReturnType<typeof runGateSelectionCase>;
++    try { expected = runGateSelectionCase(fixture); }
++    finally { vi.restoreAllMocks(); }
++    const shadow = installGateSelectionShadow();
++    try {
++      expect(runGateSelectionCase(fixture)).toEqual(expected);
++      expect(shadow.violations).toEqual([]);
++      expect(shadow.count).toBeGreaterThan(0);
++    } finally { shadow.restore(); }
++  });
++});

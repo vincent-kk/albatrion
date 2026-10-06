@@ -1,0 +1,16 @@
+{
+  "name": "eslint",
+  "command": [
+    "npx",
+    "eslint",
+    "src/**/*.{ts,tsx}"
+  ],
+  "cwd": "/Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/packages/canard/schema-form",
+  "started": 1791280602385,
+  "ended": 1791280608003,
+  "elapsedMs": 5618,
+  "status": 0,
+  "signal": null,
+  "naturalExit": true,
+  "bytes": 0
+}

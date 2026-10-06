@@ -1,0 +1,18 @@
+{
+  "args": [
+    "--worker",
+    "working",
+    "oneOf-40",
+    "first",
+    "4",
+    "steady"
+  ],
+  "started": 1791280232192,
+  "ended": 1791280233161,
+  "elapsedMs": 969,
+  "naturalExit": true,
+  "status": 0,
+  "signal": null,
+  "sourceDriverSha256": "7b5dffd54c35089cb766acf7e588a646ed6987edbe42e519c019c760d0309691",
+  "driverSha256": "753bb5e1cafa63e0a99453f4128e5a58613d52eb32ea04010daa912811d2e60a"
+}

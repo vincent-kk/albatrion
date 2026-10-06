@@ -1,0 +1,23 @@
+{
+  "name": "vitest",
+  "command": [
+    "npx",
+    "vitest",
+    "run",
+    "--project",
+    "unit",
+    "--project",
+    "render",
+    "--project",
+    "react18",
+    "--reporter=dot"
+  ],
+  "cwd": "/Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/packages/canard/schema-form",
+  "started": 1791280608946,
+  "ended": 1791280673690,
+  "elapsedMs": 64744,
+  "status": 1,
+  "signal": null,
+  "naturalExit": true,
+  "bytes": 76398
+}

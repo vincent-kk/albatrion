@@ -2243,3 +2243,67 @@ oneOf-20 steady의 H-first 이득은 +0.118583/+0.026375/+0.093458이며 W-first
 [검증 진입점](profile-102-work/verify-single-contribution.mjs)과 `profile-102-work/merge102-verify-{vitest,tsc,eslint,legacy}.{json,log}`에 명령·cwd·종료 상태·시간·출력을 보존했습니다. 타이머 worker 96개는 겹치지 않았으며 최대 4.453초였습니다. 모든 명령 중 최대는 전체 검증의 63.502초로 8분 미만입니다. esbuild 서비스는 stdin EOF로 자연 종료했고 번들·소스맵은 지정 `/private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles`에만 썼습니다. 새 측정 자료는 모두 `profile-102-work/` 아래 파일당 5MB 이하입니다. git 쓰기·설치 없이 작업했고 다른 에이전트의 `analysis-records-design.md`는 수정하지 않았습니다.
 
 재현은 PKG에서 `node architecture/verification/07-switch/profile-102-work/single-contribution.mjs --build <head|working|control|head-count|working-count>`를 판별로 순차 실행합니다. `--verify`는 59-schema 직접 차등, `--counts`는 별도 계수입니다. 판정 열은 `--pairs <working|control> <fixture> <mount|first|later> forced 1`, steady는 `--pairs working <fixture> <mount|first|later> steady <1|4>`입니다. first/later는 sample-0·nested-d5-f4만 실행하고 각 시작 번호는 연속 3회차를 실행합니다. 지정 검증 진입점에 `<vitest|tsc|eslint|legacy>`를 각각 전달한 뒤 [요약기](profile-102-work/summarize-single-contribution.mjs)를 실행하면 강제 GC 판정과 순서 균형 pooled 값을 재구성합니다. 타이머는 비계수 번들만 사용하며 계수기와 경고 집계의 후속 정리는 측정 clock·제품 코드·시간 번들을 바꾸지 않았습니다.
+
+## 103라운드 게이트 결과 재사용
+
+**제품 코드를 되돌렸습니다.** 순수 게이트 결과를 의존 투영이 같은 동안 재사용하는 후보는 oneOf-40 마운트에서 소음 밖 개선을 보였지만, oneOf-40 후속 kind 전환의 3회차에서 소음 밖 퇴보가 발생했습니다. 판정 열에서 다른 행의 퇴보가 없다는 채택 조건을 충족하지 못했습니다. steady의 개선으로 이 판정을 바꾸지 않습니다. 현재 제품 코드·소유 DETAIL·기존 계수 기대값은 HEAD `e60490572564b07eba939424031f5c4a924cfe26`와 같습니다. [후보 패치](profile-102-work/gates103-candidate.patch), [측정 요약](profile-102-work/gates103-summary.json), 원시 자료와 HEAD에서 통과하는 결과 시험을 남겼습니다.
+
+이번 범위는 [102라운드 단일 변경 명세](profile-102-work.md)의 명세 2뿐입니다. 로컬 `origin/1.0.0-beta`의 round-102-closing 보충과 round-97-closing, raw-round97-gate-selection의 verifier·verifier-recheck, [게이트 선택 설계](gate-selection-design.md)의 (나) 및 정정된 shadow 단언을 읽었습니다. 96C-01의 커밋 결과 재사용 둘째 범위를 97C-01 조건 안에서 구현했으며, 바퀴 상한 의미를 바꾸는 STOP 자리는 발견하지 않았습니다.
+
+소유 DETAIL을 먼저 수정했습니다. 후보의 `evaluateGate.ts:65`는 매 원래 `locate` 뒤에 재사용 증명을 호출하고, `computeNode.ts:120`은 매 원래 바퀴 진입에서 wrong-kind 조상을 검증했습니다. `registerRecalculation`은 호출 안의 증명 version을 무효화하고, `commitSettlement`는 실패 없는 성공 슬롯만 저장했습니다. 순수 자격은 단일 직접 키와 원시 리터럴의 엄격 비교로 제한했습니다. 가드·사용자 콜백·던지는 식·미인식 읽기는 기존 평가를 유지했습니다. 매 자리의 현재 호스트 재탐색, 호스트 자신의 미계산 구간, extras 노출, 자식 identity·emit·schema·미계산 구간을 비교했고 원래 flush 자리를 보존했습니다. 값·extras·구조·wildcard·rekey·flush·host 변경은 재증명 또는 기존 평가로 이어집니다. 테스트 모드의 독립 무공표 shadow는 매 재사용 자리에서 신선한 함수값을 비교하며, 기준 reader가 실제 읽거나 공표할 노드만 pending 부재를 단언했습니다. 결과·공표 자리·changedNodes·배달 방문 순서의 기존 차등/shadow 단언은 수정하지 않았습니다.
+
+읽기 전용 검토에서 순수 자격이 없는 콜백/가드 트리에도 준비 비용이 발생하는 경로가 발견되었습니다. 이를 수정하여 모든 템플릿의 own/edge gate 및 `appliesWhen`에서 순수 문법 후보의 부재를 한 번 증명하면 컨테이너 없는 공유 빈 메모를 사용했습니다. 같은 클래스·메서드·객체 shape를 유지하며 빈 메모는 blueprint·runtime·context를 보유하지 않습니다. 문법 후보가 있으면 기존 자리의 완전한 의존성·호스트 자격 증명을 그대로 적용합니다. 이 수정은 기존 구현에서 공유 메모 단언이 실패하고 수정 뒤 통과했으며, 검토자는 추가 의미적 결함을 찾지 못했습니다. 수정 전 후보의 시간은 최종 채택 판단에서 제외했습니다.
+
+운영 adapter의 별도 계수는 아래와 같습니다. 화살표는 HEAD→최종 후보이며, 이후 제품 복원으로 현재 실행은 왼쪽 횟수를 사용합니다. 마운트는 입력 없이 undefined→기본 kind 투영을 포함하고, 첫 전환은 kind_0→kind_4, 후속 전환은 kind_4↔kind_0입니다. 테스트 모드의 신선한 shadow 평가를 운영 식 계수에 섞지 않았습니다.
+
+| B | 마운트 식 평가 | 첫 kind 전환 | 후속 kind 전환 |
+| --- | ---: | ---: | ---: |
+| 5 | 100→15 | 80→10 | 40→5 |
+| 10 | 200→30 | 160→20 | 80→10 |
+| 20 | 400→60 | 320→40 | 160→20 |
+| 40 | 800→120 | 640→80 | 320→40 |
+
+식 평가가 20B→3B, 16B→2B, 8B→B로 줄어도 원래 평가 자리 방문은 각각 20B·16B·8B로 동일합니다. `getHostWheelBudgetCap` 조회는 모든 B에서 마운트 8회, 첫 전환 6회, 후속 전환 3회로 같습니다. 게이트 집합·상한 함수·바퀴 루프는 바꾸지 않았습니다. 후보의 pass 검증 진입은 5·4·2회입니다. 계수 파일에서 HEAD의 pass 칸 0은 새 helper가 없다는 뜻이며 바퀴가 0회라는 뜻이 아닙니다. 계수용 번들만 계기를 넣었고 타이머에는 비계수 번들만 사용했습니다. [계수 자료](profile-102-work/gates103-counts.json)의 결과 관측도 HEAD와 후보가 같습니다.
+
+2026-10-06 Apple M1 Max arm64, Node 26.10.0 / V8 14.6.202.34-node.35 / esbuild 0.25.9, production·검증 꺼짐·구독자 0인 기존 adapter를 사용했습니다. 판정은 각 행마다 새 프로세스 3회, 준비 20개·표본 101개, 표본마다 H/W 순서를 교대하고 강제 GC를 clock 밖에서 실행한 95C-01 설계입니다. 바이트가 같은 HEAD/HEAD의 회차별 중앙값 차이와 paired 중앙값의 절댓값 최대를 행별 소음 폭으로 둡니다. 각 후보 회차의 소음 한계는 `max(0.001 ms, HEAD/HEAD 소음 폭, 빈 구간 잔차 p95 + 각 엔진 중앙값 bootstrap 99% 오차)`입니다. bootstrap은 1,999회입니다. 개선은 세 회차 모두 양의 개선이 각 소음 한계를 넘고 paired 중앙값 구간 하한이 양수여야 합니다. 어느 회차든 음의 개선이 소음 한계를 넘고 paired 구간 상한이 음수이면 되돌립니다. 이 규칙을 측정 후 완화하거나 퇴보한 회차를 재선택하지 않았습니다.
+
+다음 값은 모두 ms입니다. 판정 H/W는 각 엔진의 회차 중앙값 3개의 중앙값이며, ‘회차 개선 중앙값’은 각 회차 H−W 세 값의 중앙값입니다. 두 계산은 같지 않을 수 있습니다. ‘소음 최대’는 회차별 한계의 최대이며 판정은 각 회차의 실제 한계로 합니다. steady는 H 우선 3회·W 우선 3회, 엔진당 606개 표본에서 각 회차의 빈 구간 중앙값을 뺀 뒤 통합한 중앙값만 읽습니다.
+
+| fixture / 작업 | 판정 H | 판정 W | 회차 개선 중앙값 | 소음 최대 | 판정 | steady 통합 H | steady 통합 W |
+| --- | ---: | ---: | ---: | ---: | --- | ---: | ---: |
+| oneOf-5 / mount | 0.957874 | 0.942084 | +0.021918 | 0.042625 | 소음 안 | 0.477416 | 0.451209 |
+| oneOf-5 / first | 0.556667 | 0.565916 | −0.011416 | 0.041708 | 소음 안 | 0.269250 | 0.240750 |
+| oneOf-5 / later | 0.462958 | 0.463708 | −0.001916 | 0.027084 | 소음 안 | 0.198917 | 0.193167 |
+| oneOf-20 / mount | 2.089709 | 1.997501 | +0.092208 | 0.086708 | 세 회차 개선 조건 미달 | 1.130750 | 1.034500 |
+| oneOf-20 / first | 0.965249 | 0.972917 | −0.008501 | 0.041167 | 소음 안 | 0.551541 | 0.464417 |
+| oneOf-20 / later | 0.669958 | 0.680208 | −0.012125 | 0.033209 | 소음 안 | 0.349334 | 0.300875 |
+| oneOf-40 / mount | 3.446499 | 3.265791 | +0.176291 | 0.127876 | 소음 밖 개선 | 2.011416 | 1.838624 |
+| oneOf-40 / first | 1.474750 | 1.465375 | +0.009375 | 0.044623 | 소음 안 | 0.919584 | 0.738375 |
+| oneOf-40 / later | 0.984208 | 0.977125 | −0.024166 | 0.034459 | 소음 밖 퇴보: 3회차 | 0.561041 | 0.453749 |
+| nested-d5-f4 / mount | 8.266374 | 8.075083 | +0.191291 | 0.588876 | 소음 안 | 6.166501 | 6.189750 |
+| flat-500 / mount | 3.059167 | 3.056917 | −0.005417 | 0.110875 | 소음 안 | 1.867709 | 1.859291 |
+| sample-0 / mount | 0.135291 | 0.136167 | +0.001541 | 0.018457 | 소음 안 | 0.040000 | 0.039709 |
+| sample-0 / later | 0.091084 | 0.091000 | −0.000208 | 0.018125 | 소음 안 | 0.017167 | 0.017583 |
+
+oneOf-40 마운트의 회차 개선은 0.176291 / 0.180708 / 0.167959이며 소음 한계는 0.127876 / 0.119124 / 0.102792입니다. 그러나 후속 전환의 3회차는 **H 1.032375→W 1.079208, 개선 −0.046833**, 해당 소음 한계 0.029626, paired 중앙값 구간 [−0.047791, −0.034708]로 되돌림 조건을 충족합니다. oneOf-20 마운트의 3회차 개선 0.065458은 한계 0.073541을 넘지 못했습니다. 이 행의 개선 중앙값 0.092208 및 steady 통합 차이 0.096250은 명세 상한 0.80 / 0.53의 일부일 뿐이며, 상한 전체를 실현했다고 보고하지 않습니다.
+
+후보의 속도 비용은 매 원래 자리의 O(호스트 깊이) 재탐색과 고정 필드 비교, 매 바퀴의 O(조상 깊이) 검증, 커밋의 자격 슬롯 재검사입니다. 같은 투영의 함수 실행·입력 배열·범용 준비를 제거했습니다. 준비에는 발생별 unique/무게이트 선언 증명을 위한 childEntries 순회가 남아 있어 B개 gate와 E개 엔트리에서 O(B·E)입니다. 문법 후보 부재 증명은 기존 노드·선언·gate 참조의 한 번 순회이며 새 색인이 없습니다. 원래 gate 자리의 O(B) 방문도 남습니다. 따라서 식 계수 감소와 별개로 **91라운드 기준 (1)의 무관한 B 축 상수 비용은 충족하지 못했습니다.**
+
+후보의 추가 메모리는 방문 발생에 결합된 약한 자격 계획, 자격 발생당 직전 실패 없는 커밋 슬롯, 호출 중 실제 평가 슬롯 및 pass 증명입니다. 같은 gate 결과의 커밋 이력을 누적하지 않습니다. oneOf 고정 폭 fixture에서는 보유량이 O(B)이며, 호출별 슬롯·호스트 proof 역시 실제 방문 수에 비례합니다. 문법 후보가 없는 runtime에는 공유 빈 객체의 전역 1개와 기존 전역 약한 조회의 부재 결합만 남고, 새 runtime/call Map·WeakMap·노드/문맥 필드가 없습니다. heap byte는 측정하지 않았습니다. 비계수 CJS 크기는 HEAD 516,370→후보 528,018바이트(+11,648)이며 heap 크기와 구별합니다. 제품 복원 뒤 이 후보의 시간·상주 메모리 비용은 제품에 남지 않습니다.
+
+차등/shadow는 HEAD에서 먼저 통과한 뒤 후보에서도 기존 단언을 그대로 통과했습니다. 최종 후보는 5파일 40개 집중 시험을 통과했고 지정 전체 검증은 3,238개 통과·EVENT-070 4개 실패·todo 1개였습니다. 되돌림 뒤 재사용 전용 계수와 내부 helper 시험은 제거하고, [남긴 결과 시험](../../../src/core/settle/__tests__/settle.gate-result-reuse.test.ts)의 true/false 전환·같은 쓰기의 emit 참조·반복 콜백/예외·무관한 키·실패 뒤 회복 네 사례를 HEAD 구현에서 확인했습니다. 기존 count 기대값은 HEAD로 복원했고 기존 결과 차등·shadow 단언은 그대로입니다. 복원 뒤 집중 검증은 4파일 25개 통과했습니다.
+
+PKG에서 지정 명령을 다시 실행한 최종 결과는 다음과 같습니다. 후보 검증 자료는 `profile-102-work/gates103-verify-*`, 복원 뒤 자료는 `profile-102-work/gates103-head-verify-*`에 구별해 남겼습니다.
+
+| 명령 | 복원 뒤 결과 | 자연 종료 시간 |
+| --- | --- | ---: |
+| `npx vitest run --project unit --project render --project react18 --reporter=dot` | 3,223 통과, 허용 EVENT-070만 4실패(render·react18 각각 useLayoutEffect/useEffect), todo 1, exit 1 | 64.744초 |
+| `npx tsc --noEmit --composite false --rootDir . -p tsconfig.json` | exit 0 | 7.445초 |
+| `npx eslint "src/**/*.{ts,tsx}"` | exit 0 | 5.618초 |
+| `node architecture/verification/07-switch/tools/check-legacy-isolation.mjs` | 1,631파일 격리 통과, exit 0 | 0.422초 |
+
+최종 후보의 강제 GC 비교 78개와 균형 steady 비교 78개, 총 156개 worker를 수정 후 순차 실행했습니다. 바이트 동일 HEAD/HEAD steady 부가 검사 78개는 앞서 얻은 유효 자료를 재사용했으며 최종 후보의 pooled 값이나 소음 판정에는 섞지 않았습니다. 요약기의 전체 감사 대상 worker 234개는 서로 겹치지 않고 최대 3.942초이며, 기록된 측정 프로세스 292개는 모두 자연 종료했습니다. 측정 명령 최대는 14.522초, 복원 뒤 지정 전체 검증은 64.744초로 8분 미만입니다. esbuild는 stdin EOF로 자연 종료했습니다. **초기 전체 테스트 수집기 한 번이 60초 timeout으로 종료되어 자연 종료 조건을 지키지 못한 예외가 있었고, 그 결과는 제외했습니다.** 측정과 겹치지 않았으며 이후 지정 전체 테스트는 native 감시로 끝까지 자연 종료시켰습니다.
+
+새 측정 자료는 모두 `profile-102-work/` 아래에 있으며 최대 파일은 2,099,856바이트로 파일당 5MB 이하입니다. 번들·소스맵은 지정 `/private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles`에만 썼습니다. HEAD/control 비계수 SHA-256은 모두 `65098d72628706498ede33be3c15dccba32482597e7998bae92f9716b77f4300`, 판정 후보는 `e48d59fe2c61c589f1cd1fac1d580bfd42f2869ff08388a605a191c742a3d4e9`입니다. git 쓰기 명령·설치를 실행하지 않았으며 다른 에이전트의 `analysis-records-design.md`와 `analysis-records-design-verifier.md`는 수정하지 않았습니다.
+
+측정 재현은 [driver](profile-102-work/gate-results.mjs)에서 `--build <head|control|working|head-count|working-count>`, `--counts`, `--pairs <control|working> <fixture> <mount|first|later> forced`, `--pairs working <fixture> <mount|first|later> steady`를 **명령마다 순차** 실행하고 [요약기](profile-102-work/summarize-gate-results.mjs)를 실행하는 방식입니다. forced는 3회, steady는 6회를 한 명령이 자연 종료하도록 실행합니다. 현재 제품은 복원되었으므로 `--build working`만 실행하면 HEAD를 다시 측정하게 됩니다. 최종 후보를 재현하려면 보존한 패치를 HEAD 소스의 별도 scratch 복사본에 적용하여 같은 candidate SHA를 먼저 확인해야 합니다. 번들 출력 위치를 저장소 안으로 바꾸지 않습니다. 지정 검증 진입점은 `node architecture/verification/07-switch/profile-102-work/verify-gate-results.mjs <vitest|tsc|eslint|legacy>`이며 `GATES103_VERIFY_HEAD=1`로 복원 뒤 기록을 구분합니다.
