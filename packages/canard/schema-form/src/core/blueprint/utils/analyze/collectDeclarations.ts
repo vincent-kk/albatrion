@@ -51,7 +51,7 @@ export const collectDeclarations = (
   collectSchemaCapabilities(context, input.schema);
   if (input.gates.length || input.context === 'declaration')
     context.capabilities.branchless = false;
-  const gates: BlueprintGate[] = [...input.gates];
+  const gates: BlueprintGate[] = input.gates.slice();
   if (
     schema.controls?.active !== undefined &&
     !gates.some(
@@ -72,7 +72,7 @@ export const collectDeclarations = (
     schemaPath: input.schemaPath,
     schema: input.schema,
     context: input.context,
-    order: [...input.order],
+    order: input.order.slice(),
     gates,
     declares: [] as number[],
     overlays: [] as number[],
@@ -92,8 +92,8 @@ export const collectDeclarations = (
     scope: input.isFragment ? 'fragment' : 'node',
     validationOnly: false,
     context: input.context,
-    gates: [...fragment.gates],
-    order: [...fragment.order],
+    gates: fragment.gates.slice(),
+    order: fragment.order.slice(),
     inherited: input.inherited,
     hostPath: input.hostPath,
   };
