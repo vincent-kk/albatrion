@@ -1,0 +1,16 @@
+{
+  "HEAD": "5c530e05414df1c7a09e0b5307b04910a0864c90",
+  "command": "--cpu-worker",
+  "args": [
+    "head",
+    "flat-500",
+    "3"
+  ],
+  "status": 0,
+  "signal": null,
+  "started": "2026-10-06T18:52:42.918Z",
+  "ended": "2026-10-06T18:52:43.354Z",
+  "elapsedMs": 435,
+  "pid": 54407,
+  "driverSha256": "a3bd107bea90b78ec470e0d347c3d9485ae0d00ac041d02c4f4234f805054e34"
+}

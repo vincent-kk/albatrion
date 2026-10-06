@@ -1,0 +1,27 @@
+{
+  "HEAD": "5c530e05414df1c7a09e0b5307b04910a0864c90",
+  "command": "--batch",
+  "args": [
+    "2",
+    "nested-d5-f4",
+    "control",
+    "control-after",
+    "control-final",
+    "blueprint-replay",
+    "build-own-replay",
+    "membership-once",
+    "declarations-replay",
+    "template-replay",
+    "encode-native",
+    "key-single-json",
+    "path-strings-replay",
+    "child-own-replay"
+  ],
+  "status": 0,
+  "signal": null,
+  "started": "2026-10-06T19:05:28.020Z",
+  "ended": "2026-10-06T19:06:09.839Z",
+  "elapsedMs": 41819,
+  "pid": 86666,
+  "driverSha256": "6a14fc859208d355c429c2b10e9c088cbac25cf497b6ffea7f889dae6e46d3cb"
+}

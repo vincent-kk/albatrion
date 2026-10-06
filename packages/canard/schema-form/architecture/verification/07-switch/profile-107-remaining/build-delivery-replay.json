@@ -1,0 +1,8 @@
+{
+  "HEAD": "5c530e05414df1c7a09e0b5307b04910a0864c90",
+  "variant": "delivery-replay",
+  "sha256": "35c6a93c2c4b2f78d82ebde23e71c3884db92eb78cdf23ae1c764deae4771b8d",
+  "bytes": 540234,
+  "naturalServiceExits": 1,
+  "edits": []
+}

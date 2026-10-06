@@ -1,0 +1,3814 @@
+{
+  "HEAD": "5c530e05414df1c7a09e0b5307b04910a0864c90",
+  "version": "head",
+  "name": "nested-d5-f4",
+  "run": 2,
+  "warmup": 20,
+  "samples": 101,
+  "forcedGC": false,
+  "freshProcess": true,
+  "counterInstrumentation": false,
+  "clonePreparation": "101 schemas before Profiler.start",
+  "windows": [
+    {
+      "index": 0,
+      "beginUs": 129990121012,
+      "endUs": 129990129473,
+      "ms": 8.454084000000023
+    },
+    {
+      "index": 1,
+      "beginUs": 129990129519,
+      "endUs": 129990136716,
+      "ms": 7.1954580000000306
+    },
+    {
+      "index": 2,
+      "beginUs": 129990136743,
+      "endUs": 129990141354,
+      "ms": 4.610208
+    },
+    {
+      "index": 3,
+      "beginUs": 129990141363,
+      "endUs": 129990147462,
+      "ms": 6.097041999999988
+    },
+    {
+      "index": 4,
+      "beginUs": 129990147490,
+      "endUs": 129990152334,
+      "ms": 4.8417499999999905
+    },
+    {
+      "index": 5,
+      "beginUs": 129990152346,
+      "endUs": 129990159405,
+      "ms": 7.056916000000001
+    },
+    {
+      "index": 6,
+      "beginUs": 129990159428,
+      "endUs": 129990164125,
+      "ms": 4.695917000000009
+    },
+    {
+      "index": 7,
+      "beginUs": 129990164135,
+      "endUs": 129990170264,
+      "ms": 6.126792000000023
+    },
+    {
+      "index": 8,
+      "beginUs": 129990170293,
+      "endUs": 129990174991,
+      "ms": 4.697041000000013
+    },
+    {
+      "index": 9,
+      "beginUs": 129990175001,
+      "endUs": 129990181042,
+      "ms": 6.0378749999999854
+    },
+    {
+      "index": 10,
+      "beginUs": 129990181060,
+      "endUs": 129990185591,
+      "ms": 4.529916999999955
+    },
+    {
+      "index": 11,
+      "beginUs": 129990185601,
+      "endUs": 129990191643,
+      "ms": 6.040916999999922
+    },
+    {
+      "index": 12,
+      "beginUs": 129990191662,
+      "endUs": 129990202033,
+      "ms": 10.369207999999958
+    },
+    {
+      "index": 13,
+      "beginUs": 129990202052,
+      "endUs": 129990239329,
+      "ms": 37.27350000000001
+    },
+    {
+      "index": 14,
+      "beginUs": 129990239356,
+      "endUs": 129990247884,
+      "ms": 8.519457999999986
+    },
+    {
+      "index": 15,
+      "beginUs": 129990247905,
+      "endUs": 129990252521,
+      "ms": 4.614708000000064
+    },
+    {
+      "index": 16,
+      "beginUs": 129990252536,
+      "endUs": 129990258819,
+      "ms": 6.281292000000008
+    },
+    {
+      "index": 17,
+      "beginUs": 129990258830,
+      "endUs": 129990262944,
+      "ms": 4.11262499999998
+    },
+    {
+      "index": 18,
+      "beginUs": 129990262949,
+      "endUs": 129990269649,
+      "ms": 6.698374999999942
+    },
+    {
+      "index": 19,
+      "beginUs": 129990269660,
+      "endUs": 129990273880,
+      "ms": 4.217792000000031
+    },
+    {
+      "index": 20,
+      "beginUs": 129990273885,
+      "endUs": 129990279708,
+      "ms": 5.818250000000035
+    },
+    {
+      "index": 21,
+      "beginUs": 129990279723,
+      "endUs": 129990283990,
+      "ms": 4.265458999999964
+    },
+    {
+      "index": 22,
+      "beginUs": 129990283996,
+      "endUs": 129990289669,
+      "ms": 5.670792000000006
+    },
+    {
+      "index": 23,
+      "beginUs": 129990289687,
+      "endUs": 129990294099,
+      "ms": 4.411166999999978
+    },
+    {
+      "index": 24,
+      "beginUs": 129990294105,
+      "endUs": 129990299893,
+      "ms": 5.775541999999973
+    },
+    {
+      "index": 25,
+      "beginUs": 129990299906,
+      "endUs": 129990304180,
+      "ms": 4.272584000000052
+    },
+    {
+      "index": 26,
+      "beginUs": 129990304185,
+      "endUs": 129990309882,
+      "ms": 5.692666000000031
+    },
+    {
+      "index": 27,
+      "beginUs": 129990309892,
+      "endUs": 129990314382,
+      "ms": 4.487833000000023
+    },
+    {
+      "index": 28,
+      "beginUs": 129990314391,
+      "endUs": 129990320749,
+      "ms": 6.353749999999991
+    },
+    {
+      "index": 29,
+      "beginUs": 129990320766,
+      "endUs": 129990325236,
+      "ms": 4.46916699999997
+    },
+    {
+      "index": 30,
+      "beginUs": 129990325242,
+      "endUs": 129990331036,
+      "ms": 5.790000000000077
+    },
+    {
+      "index": 31,
+      "beginUs": 129990331058,
+      "endUs": 129990335100,
+      "ms": 4.040832999999907
+    },
+    {
+      "index": 32,
+      "beginUs": 129990335106,
+      "endUs": 129990340619,
+      "ms": 5.510916999999949
+    },
+    {
+      "index": 33,
+      "beginUs": 129990340630,
+      "endUs": 129990344802,
+      "ms": 4.1707079999999905
+    },
+    {
+      "index": 34,
+      "beginUs": 129990344806,
+      "endUs": 129990350462,
+      "ms": 5.652958000000012
+    },
+    {
+      "index": 35,
+      "beginUs": 129990350471,
+      "endUs": 129990354727,
+      "ms": 4.25483399999996
+    },
+    {
+      "index": 36,
+      "beginUs": 129990354732,
+      "endUs": 129990360474,
+      "ms": 5.738624999999956
+    },
+    {
+      "index": 37,
+      "beginUs": 129990360490,
+      "endUs": 129990364636,
+      "ms": 4.14429199999995
+    },
+    {
+      "index": 38,
+      "beginUs": 129990364641,
+      "endUs": 129990370269,
+      "ms": 5.626415999999949
+    },
+    {
+      "index": 39,
+      "beginUs": 129990370280,
+      "endUs": 129990374409,
+      "ms": 4.127416000000039
+    },
+    {
+      "index": 40,
+      "beginUs": 129990374414,
+      "endUs": 129990380070,
+      "ms": 5.653999999999996
+    },
+    {
+      "index": 41,
+      "beginUs": 129990380083,
+      "endUs": 129990384241,
+      "ms": 4.156499999999937
+    },
+    {
+      "index": 42,
+      "beginUs": 129990384246,
+      "endUs": 129990389919,
+      "ms": 5.671000000000049
+    },
+    {
+      "index": 43,
+      "beginUs": 129990389937,
+      "endUs": 129990394056,
+      "ms": 4.117040999999972
+    },
+    {
+      "index": 44,
+      "beginUs": 129990394065,
+      "endUs": 129990400177,
+      "ms": 6.108541999999943
+    },
+    {
+      "index": 45,
+      "beginUs": 129990400194,
+      "endUs": 129990404795,
+      "ms": 4.599124999999958
+    },
+    {
+      "index": 46,
+      "beginUs": 129990404800,
+      "endUs": 129990410938,
+      "ms": 6.134500000000003
+    },
+    {
+      "index": 47,
+      "beginUs": 129990410952,
+      "endUs": 129990415360,
+      "ms": 4.406334000000015
+    },
+    {
+      "index": 48,
+      "beginUs": 129990415365,
+      "endUs": 129990421423,
+      "ms": 6.055207999999993
+    },
+    {
+      "index": 49,
+      "beginUs": 129990421441,
+      "endUs": 129990425762,
+      "ms": 4.320459000000028
+    },
+    {
+      "index": 50,
+      "beginUs": 129990425767,
+      "endUs": 129990431699,
+      "ms": 5.928874999999948
+    },
+    {
+      "index": 51,
+      "beginUs": 129990431711,
+      "endUs": 129990436579,
+      "ms": 4.8664589999999635
+    },
+    {
+      "index": 52,
+      "beginUs": 129990436584,
+      "endUs": 129990442920,
+      "ms": 6.333000000000084
+    },
+    {
+      "index": 53,
+      "beginUs": 129990442940,
+      "endUs": 129990447645,
+      "ms": 4.704666999999972
+    },
+    {
+      "index": 54,
+      "beginUs": 129990447652,
+      "endUs": 129990496750,
+      "ms": 49.09366699999998
+    },
+    {
+      "index": 55,
+      "beginUs": 129990496768,
+      "endUs": 129990505637,
+      "ms": 8.866999999999962
+    },
+    {
+      "index": 56,
+      "beginUs": 129990505644,
+      "endUs": 129990509322,
+      "ms": 3.6763750000000073
+    },
+    {
+      "index": 57,
+      "beginUs": 129990509326,
+      "endUs": 129990514906,
+      "ms": 5.577583000000004
+    },
+    {
+      "index": 58,
+      "beginUs": 129990514918,
+      "endUs": 129990518937,
+      "ms": 4.017083000000071
+    },
+    {
+      "index": 59,
+      "beginUs": 129990518942,
+      "endUs": 129990524981,
+      "ms": 6.036416000000031
+    },
+    {
+      "index": 60,
+      "beginUs": 129990524991,
+      "endUs": 129990529464,
+      "ms": 4.472290999999927
+    },
+    {
+      "index": 61,
+      "beginUs": 129990529470,
+      "endUs": 129990535367,
+      "ms": 5.893832999999972
+    },
+    {
+      "index": 62,
+      "beginUs": 129990535378,
+      "endUs": 129990539479,
+      "ms": 4.099624999999946
+    },
+    {
+      "index": 63,
+      "beginUs": 129990539484,
+      "endUs": 129990544895,
+      "ms": 5.407790999999975
+    },
+    {
+      "index": 64,
+      "beginUs": 129990544909,
+      "endUs": 129990549042,
+      "ms": 4.131166000000007
+    },
+    {
+      "index": 65,
+      "beginUs": 129990549047,
+      "endUs": 129990554669,
+      "ms": 5.619208999999955
+    },
+    {
+      "index": 66,
+      "beginUs": 129990554681,
+      "endUs": 129990558664,
+      "ms": 3.981207999999924
+    },
+    {
+      "index": 67,
+      "beginUs": 129990558668,
+      "endUs": 129990564113,
+      "ms": 5.44358299999999
+    },
+    {
+      "index": 68,
+      "beginUs": 129990564126,
+      "endUs": 129990568155,
+      "ms": 4.027417000000014
+    },
+    {
+      "index": 69,
+      "beginUs": 129990568159,
+      "endUs": 129990573967,
+      "ms": 5.80179099999998
+    },
+    {
+      "index": 70,
+      "beginUs": 129990573977,
+      "endUs": 129990577953,
+      "ms": 3.9746659999999565
+    },
+    {
+      "index": 71,
+      "beginUs": 129990577962,
+      "endUs": 129990583458,
+      "ms": 5.494707999999946
+    },
+    {
+      "index": 72,
+      "beginUs": 129990583467,
+      "endUs": 129990587521,
+      "ms": 4.052458999999999
+    },
+    {
+      "index": 73,
+      "beginUs": 129990587525,
+      "endUs": 129990593010,
+      "ms": 5.482709
+    },
+    {
+      "index": 74,
+      "beginUs": 129990593019,
+      "endUs": 129990597263,
+      "ms": 4.242917000000034
+    },
+    {
+      "index": 75,
+      "beginUs": 129990597267,
+      "endUs": 129990602915,
+      "ms": 5.642916999999898
+    },
+    {
+      "index": 76,
+      "beginUs": 129990602925,
+      "endUs": 129990607221,
+      "ms": 4.294582999999989
+    },
+    {
+      "index": 77,
+      "beginUs": 129990607225,
+      "endUs": 129990612888,
+      "ms": 5.661624999999958
+    },
+    {
+      "index": 78,
+      "beginUs": 129990612905,
+      "endUs": 129990616949,
+      "ms": 4.043000000000006
+    },
+    {
+      "index": 79,
+      "beginUs": 129990616954,
+      "endUs": 129990622429,
+      "ms": 5.4727080000000115
+    },
+    {
+      "index": 80,
+      "beginUs": 129990622438,
+      "endUs": 129990626457,
+      "ms": 4.017334000000005
+    },
+    {
+      "index": 81,
+      "beginUs": 129990626461,
+      "endUs": 129990631911,
+      "ms": 5.447625000000016
+    },
+    {
+      "index": 82,
+      "beginUs": 129990631921,
+      "endUs": 129990636414,
+      "ms": 4.4912910000000466
+    },
+    {
+      "index": 83,
+      "beginUs": 129990636419,
+      "endUs": 129990642415,
+      "ms": 5.993416000000025
+    },
+    {
+      "index": 84,
+      "beginUs": 129990642427,
+      "endUs": 129990646709,
+      "ms": 4.2806659999999965
+    },
+    {
+      "index": 85,
+      "beginUs": 129990646715,
+      "endUs": 129990652551,
+      "ms": 5.833290999999917
+    },
+    {
+      "index": 86,
+      "beginUs": 129990652569,
+      "endUs": 129990656880,
+      "ms": 4.309832999999912
+    },
+    {
+      "index": 87,
+      "beginUs": 129990656885,
+      "endUs": 129990662799,
+      "ms": 5.911707999999862
+    },
+    {
+      "index": 88,
+      "beginUs": 129990662810,
+      "endUs": 129990667086,
+      "ms": 4.270624999999882
+    },
+    {
+      "index": 89,
+      "beginUs": 129990667091,
+      "endUs": 129990672692,
+      "ms": 5.596625000000131
+    },
+    {
+      "index": 90,
+      "beginUs": 129990672702,
+      "endUs": 129990676822,
+      "ms": 4.118499999999813
+    },
+    {
+      "index": 91,
+      "beginUs": 129990676828,
+      "endUs": 129990682509,
+      "ms": 5.6767090000000735
+    },
+    {
+      "index": 92,
+      "beginUs": 129990682520,
+      "endUs": 129990686617,
+      "ms": 4.09579100000019
+    },
+    {
+      "index": 93,
+      "beginUs": 129990686622,
+      "endUs": 129990692284,
+      "ms": 5.660416999999825
+    },
+    {
+      "index": 94,
+      "beginUs": 129990692294,
+      "endUs": 129990696818,
+      "ms": 4.5225829999999405
+    },
+    {
+      "index": 95,
+      "beginUs": 129990696824,
+      "endUs": 129990745385,
+      "ms": 48.55766599999993
+    },
+    {
+      "index": 96,
+      "beginUs": 129990745403,
+      "endUs": 129990754669,
+      "ms": 9.263208000000077
+    },
+    {
+      "index": 97,
+      "beginUs": 129990754680,
+      "endUs": 129990758783,
+      "ms": 4.1013329999998405
+    },
+    {
+      "index": 98,
+      "beginUs": 129990758787,
+      "endUs": 129990764165,
+      "ms": 5.3751250000000255
+    },
+    {
+      "index": 99,
+      "beginUs": 129990764186,
+      "endUs": 129990768223,
+      "ms": 4.035333999999921
+    },
+    {
+      "index": 100,
+      "beginUs": 129990768227,
+      "endUs": 129990774309,
+      "ms": 6.079959000000144
+    }
+  ],
+  "cpu": {
+    "mounts": 101,
+    "intervalUs": 100,
+    "samples": 4225,
+    "denominatorUs": 652188,
+    "windowUs": 652188,
+    "functions": [
+      {
+        "function": "(garbage collector)",
+        "file": "(V8)",
+        "line": 0,
+        "column": -1,
+        "selfUs": 202667,
+        "totalUs": 202667,
+        "selfSamples": 1289,
+        "totalSamples": 1289,
+        "selfPct": 31.074935448060987,
+        "totalPct": 31.074935448060987,
+        "selfUsPerMount": 2006.6039603960396,
+        "totalUsPerMount": 2006.6039603960396
+      },
+      {
+        "function": "buildNodes",
+        "file": "packages/canard/schema-form/src/core/blueprint/utils/analyze/buildNodes.ts",
+        "line": 32,
+        "column": 26,
+        "selfUs": 112284,
+        "totalUs": 253086,
+        "selfSamples": 735,
+        "totalSamples": 1656,
+        "selfPct": 17.216508123424536,
+        "totalPct": 38.80568179727318,
+        "selfUsPerMount": 1111.7227722772277,
+        "totalUsPerMount": 2505.80198019802
+      },
+      {
+        "function": "encodeLeaf",
+        "file": "packages/canard/schema-form/src/core/blueprint/utils/analyze/getTemplateKey.ts",
+        "line": 14,
+        "column": 19,
+        "selfUs": 37800,
+        "totalUs": 37800,
+        "selfSamples": 247,
+        "totalSamples": 247,
+        "selfPct": 5.795874809104124,
+        "totalPct": 5.795874809104124,
+        "selfUsPerMount": 374.25742574257424,
+        "totalUsPerMount": 374.25742574257424
+      },
+      {
+        "function": "commitStaticFirstNode",
+        "file": "packages/canard/schema-form/src/core/settle/utils/load/commitStaticFirstNode.ts",
+        "line": 13,
+        "column": 37,
+        "selfUs": 34283,
+        "totalUs": 35206,
+        "selfSamples": 224,
+        "totalSamples": 230,
+        "selfPct": 5.256613123823192,
+        "totalPct": 5.3981367335798875,
+        "selfUsPerMount": 339.43564356435644,
+        "totalUsPerMount": 348.5742574257426
+      },
+      {
+        "function": "collectDeclarations",
+        "file": "packages/canard/schema-form/src/core/blueprint/utils/analyze/collectDeclarations.ts",
+        "line": 34,
+        "column": 35,
+        "selfUs": 29172,
+        "totalUs": 36898,
+        "selfSamples": 191,
+        "totalSamples": 242,
+        "selfPct": 4.472943384422896,
+        "totalPct": 5.6575711297969296,
+        "selfUsPerMount": 288.83168316831683,
+        "totalUsPerMount": 365.3267326732673
+      },
+      {
+        "function": "getStaticObjectEntries",
+        "file": "packages/canard/schema-form/src/core/settle/utils/load/getStaticObjectEntries.ts",
+        "line": 11,
+        "column": 38,
+        "selfUs": 24114,
+        "totalUs": 24114,
+        "selfSamples": 157,
+        "totalSamples": 157,
+        "selfPct": 3.6974001361570594,
+        "totalPct": 3.6974001361570594,
+        "selfUsPerMount": 238.75247524752476,
+        "totalUsPerMount": 238.75247524752476
+      },
+      {
+        "function": "assembleObject",
+        "file": "packages/canard/schema-form/src/core/behaviors/objectBehavior/branch/utils/assembleObject.ts",
+        "line": 18,
+        "column": 52,
+        "selfUs": 22977,
+        "totalUs": 27574,
+        "selfSamples": 149,
+        "totalSamples": 179,
+        "selfPct": 3.5230639018197207,
+        "totalPct": 4.227922010217912,
+        "selfUsPerMount": 227.4950495049505,
+        "totalUsPerMount": 273.009900990099
+      },
+      {
+        "function": "populateNodeChildren",
+        "file": "packages/canard/schema-form/src/core/blueprint/utils/analyze/populateNodeChildren.ts",
+        "line": 22,
+        "column": 36,
+        "selfUs": 20498,
+        "totalUs": 247127,
+        "selfSamples": 134,
+        "totalSamples": 1617,
+        "selfPct": 3.1429587787570457,
+        "totalPct": 37.89198819972155,
+        "selfUsPerMount": 202.95049504950495,
+        "totalUsPerMount": 2446.80198019802
+      },
+      {
+        "function": "getStaticChoices",
+        "file": "packages/canard/schema-form/src/core/behaviors/utils/options/getStaticChoices.ts",
+        "line": 23,
+        "column": 32,
+        "selfUs": 18832,
+        "totalUs": 18832,
+        "selfSamples": 123,
+        "totalSamples": 123,
+        "selfPct": 2.8875109630965303,
+        "totalPct": 2.8875109630965303,
+        "selfUsPerMount": 186.45544554455446,
+        "totalUsPerMount": 186.45544554455446
+      },
+      {
+        "function": "loadStaticFirstTree",
+        "file": "packages/canard/schema-form/src/core/settle/utils/load/loadStaticFirstTree.ts",
+        "line": 42,
+        "column": 35,
+        "selfUs": 17351,
+        "totalUs": 157490,
+        "selfSamples": 113,
+        "totalSamples": 1027,
+        "selfPct": 2.6604292013959165,
+        "totalPct": 24.14794507105313,
+        "selfUsPerMount": 171.79207920792078,
+        "totalUsPerMount": 1559.3069306930693
+      },
+      {
+        "function": "createSchemaNode",
+        "file": "packages/canard/schema-form/src/core/SchemaNode/utils/schemaNodeFactory.ts",
+        "line": 29,
+        "column": 25,
+        "selfUs": 13508,
+        "totalUs": 19799,
+        "selfSamples": 88,
+        "totalSamples": 129,
+        "selfPct": 2.0711819291369973,
+        "totalPct": 3.0357810937950407,
+        "selfUsPerMount": 133.74257425742573,
+        "totalUsPerMount": 196.02970297029702
+      },
+      {
+        "function": "appendChildEntries",
+        "file": "packages/canard/schema-form/src/core/blueprint/utils/analyze/populateNodeChildren/utils/appendChildEntries.ts",
+        "line": 17,
+        "column": 34,
+        "selfUs": 11282,
+        "totalUs": 11282,
+        "selfSamples": 74,
+        "totalSamples": 74,
+        "selfPct": 1.7298693014897546,
+        "totalPct": 1.7298693014897546,
+        "selfUsPerMount": 111.70297029702971,
+        "totalUsPerMount": 111.70297029702971
+      },
+      {
+        "function": "(program)",
+        "file": "(V8)",
+        "line": 0,
+        "column": -1,
+        "selfUs": 9407,
+        "totalUs": 9407,
+        "selfSamples": 62,
+        "totalSamples": 62,
+        "selfPct": 1.4423755113556214,
+        "totalPct": 1.4423755113556214,
+        "selfUsPerMount": 93.13861386138613,
+        "totalUsPerMount": 93.13861386138613
+      },
+      {
+        "function": "visitShape",
+        "file": "packages/canard/schema-form/src/core/blueprint/utils/analyze/validateShape/utils/visitShape.ts",
+        "line": 14,
+        "column": 26,
+        "selfUs": 7956,
+        "totalUs": 8575,
+        "selfSamples": 52,
+        "totalSamples": 56,
+        "selfPct": 1.2198936502971536,
+        "totalPct": 1.3148049335467686,
+        "selfUsPerMount": 78.77227722772277,
+        "totalUsPerMount": 84.9009900990099
+      },
+      {
+        "function": "mergeSingleStaticContribution",
+        "file": "packages/canard/schema-form/src/core/blueprint/utils/effectiveSchema/utils/mergeSchemaContributions/utils/mergeSingleStaticContribution.ts",
+        "line": 19,
+        "column": 45,
+        "selfUs": 7664,
+        "totalUs": 12861,
+        "selfSamples": 50,
+        "totalSamples": 84,
+        "selfPct": 1.1751212840469312,
+        "totalPct": 1.9719774052880459,
+        "selfUsPerMount": 75.88118811881188,
+        "totalUsPerMount": 127.33663366336634
+      },
+      {
+        "function": "readAllowedTypes",
+        "file": "packages/canard/schema-form/src/core/blueprint/utils/types/readAllowedTypes.ts",
+        "line": 19,
+        "column": 32,
+        "selfUs": 5354,
+        "totalUs": 9605,
+        "selfSamples": 35,
+        "totalSamples": 63,
+        "selfPct": 0.8209289346016793,
+        "totalPct": 1.4727348555937858,
+        "selfUsPerMount": 53.00990099009901,
+        "totalUsPerMount": 95.0990099009901
+      },
+      {
+        "function": "createChildNode",
+        "file": "packages/canard/schema-form/src/core/settle/utils/compute/createChildNode.ts",
+        "line": 10,
+        "column": 31,
+        "selfUs": 5344,
+        "totalUs": 24989,
+        "selfSamples": 35,
+        "totalSamples": 163,
+        "selfPct": 0.8193956343876306,
+        "totalPct": 3.831563904886321,
+        "selfUsPerMount": 52.91089108910891,
+        "totalUsPerMount": 247.41584158415841
+      },
+      {
+        "function": "freezeEffectiveSchema",
+        "file": "packages/canard/schema-form/src/core/blueprint/utils/effectiveSchema/utils/freezeEffectiveSchema.ts",
+        "line": 14,
+        "column": 37,
+        "selfUs": 5197,
+        "totalUs": 5197,
+        "selfSamples": 34,
+        "totalSamples": 34,
+        "selfPct": 0.7968561212411145,
+        "totalPct": 0.7968561212411145,
+        "selfUsPerMount": 51.45544554455446,
+        "totalUsPerMount": 51.45544554455446
+      },
+      {
+        "function": "runDeliveryWaves",
+        "file": "packages/canard/schema-form/src/core/dispatch/utils/chain/runDeliveryWaves.ts",
+        "line": 9,
+        "column": 32,
+        "selfUs": 3991,
+        "totalUs": 5830,
+        "selfSamples": 26,
+        "totalSamples": 38,
+        "selfPct": 0.6119401154268401,
+        "totalPct": 0.8939140247903978,
+        "selfUsPerMount": 39.51485148514851,
+        "totalUsPerMount": 57.722772277227726
+      },
+      {
+        "function": "resolveNodeTypes",
+        "file": "packages/canard/schema-form/src/core/blueprint/utils/types/resolveNodeTypes.ts",
+        "line": 17,
+        "column": 32,
+        "selfUs": 3511,
+        "totalUs": 9023,
+        "selfSamples": 23,
+        "totalSamples": 59,
+        "selfPct": 0.538341705152502,
+        "totalPct": 1.3834967831361509,
+        "selfUsPerMount": 34.76237623762376,
+        "totalUsPerMount": 89.33663366336634
+      },
+      {
+        "function": "loadSchemaNodeAtMount",
+        "file": "packages/canard/schema-form/src/core/settle/utils/load/loadSchemaNodeAtMount.ts",
+        "line": 15,
+        "column": 37,
+        "selfUs": 3224,
+        "totalUs": 161019,
+        "selfSamples": 21,
+        "totalSamples": 1050,
+        "selfPct": 0.49433598900930403,
+        "totalPct": 24.68904671659092,
+        "selfUsPerMount": 31.92079207920792,
+        "totalUsPerMount": 1594.2475247524753
+      },
+      {
+        "function": "mergeEffectiveSchema",
+        "file": "packages/canard/schema-form/src/core/blueprint/utils/effectiveSchema/mergeEffectiveSchema.ts",
+        "line": 25,
+        "column": 36,
+        "selfUs": 3216,
+        "totalUs": 3216,
+        "selfSamples": 21,
+        "totalSamples": 21,
+        "selfPct": 0.4931093488380651,
+        "totalPct": 0.4931093488380651,
+        "selfUsPerMount": 31.84158415841584,
+        "totalUsPerMount": 31.84158415841584
+      },
+      {
+        "function": "assembleStaticFirstNode",
+        "file": "packages/canard/schema-form/src/core/settle/utils/load/assembleStaticFirstNode.ts",
+        "line": 11,
+        "column": 39,
+        "selfUs": 3191,
+        "totalUs": 48079,
+        "selfSamples": 21,
+        "totalSamples": 313,
+        "selfPct": 0.48927609830294333,
+        "totalPct": 7.371954099124792,
+        "selfUsPerMount": 31.594059405940595,
+        "totalUsPerMount": 476.029702970297
+      },
+      {
+        "function": "SchemaNode",
+        "file": "packages/canard/schema-form/src/core/SchemaNode/SchemaNode.ts",
+        "line": 71,
+        "column": 2,
+        "selfUs": 3075,
+        "totalUs": 3075,
+        "selfSamples": 20,
+        "totalSamples": 20,
+        "selfPct": 0.4714898158199783,
+        "totalPct": 0.4714898158199783,
+        "selfUsPerMount": 30.445544554455445,
+        "totalUsPerMount": 30.445544554455445
+      },
+      {
+        "function": "unionAllowedTypes",
+        "file": "packages/canard/schema-form/src/core/blueprint/utils/types/unionAllowedTypes.ts",
+        "line": 8,
+        "column": 33,
+        "selfUs": 3038,
+        "totalUs": 3038,
+        "selfSamples": 20,
+        "totalSamples": 20,
+        "selfPct": 0.4658166050279981,
+        "totalPct": 0.4658166050279981,
+        "selfUsPerMount": 30.07920792079208,
+        "totalUsPerMount": 30.07920792079208
+      },
+      {
+        "function": "escapeSegment",
+        "file": "packages/winglet/json/dist/JSONPointer/utils/escape/escapeSegment.cjs",
+        "line": 6,
+        "column": 22,
+        "selfUs": 2906,
+        "totalUs": 2906,
+        "selfSamples": 19,
+        "totalSamples": 19,
+        "selfPct": 0.4455770422025551,
+        "totalPct": 0.4455770422025551,
+        "selfUsPerMount": 28.77227722772277,
+        "totalUsPerMount": 28.77227722772277
+      },
+      {
+        "function": "getTemplateKey",
+        "file": "packages/canard/schema-form/src/core/blueprint/utils/analyze/getTemplateKey.ts",
+        "line": 35,
+        "column": 30,
+        "selfUs": 2440,
+        "totalUs": 40240,
+        "selfSamples": 16,
+        "totalSamples": 263,
+        "selfPct": 0.37412525222788523,
+        "totalPct": 6.170000061332009,
+        "selfUsPerMount": 24.15841584158416,
+        "totalUsPerMount": 398.41584158415844
+      },
+      {
+        "function": "resolveNodeStrategy",
+        "file": "packages/canard/schema-form/src/core/blueprint/utils/types/resolveNodeStrategy.ts",
+        "line": 14,
+        "column": 35,
+        "selfUs": 2183,
+        "totalUs": 3090,
+        "selfSamples": 14,
+        "totalSamples": 20,
+        "selfPct": 0.33471943672683335,
+        "totalPct": 0.47378976614105134,
+        "selfUsPerMount": 21.613861386138613,
+        "totalUsPerMount": 30.594059405940595
+      },
+      {
+        "function": "collectSchemaCapabilities",
+        "file": "packages/canard/schema-form/src/core/blueprint/utils/analyze/collectSchemaCapabilities.ts",
+        "line": 19,
+        "column": 41,
+        "selfUs": 2119,
+        "totalUs": 2119,
+        "selfSamples": 14,
+        "totalSamples": 14,
+        "selfPct": 0.3249063153569216,
+        "totalPct": 0.3249063153569216,
+        "selfUsPerMount": 20.980198019801982,
+        "totalUsPerMount": 20.980198019801982
+      },
+      {
+        "function": "writeObjectKey",
+        "file": "packages/canard/schema-form/src/core/behaviors/objectBehavior/utils/keys/writeObjectKey.ts",
+        "line": 2,
+        "column": 30,
+        "selfUs": 1998,
+        "totalUs": 1998,
+        "selfSamples": 13,
+        "totalSamples": 13,
+        "selfPct": 0.30635338276693225,
+        "totalPct": 0.30635338276693225,
+        "selfUsPerMount": 19.782178217821784,
+        "totalUsPerMount": 19.782178217821784
+      },
+      {
+        "function": "mergeSchemaContributions",
+        "file": "packages/canard/schema-form/src/core/blueprint/utils/effectiveSchema/utils/mergeSchemaContributions.ts",
+        "line": 23,
+        "column": 40,
+        "selfUs": 1985,
+        "totalUs": 14846,
+        "selfSamples": 13,
+        "totalSamples": 97,
+        "selfPct": 0.3043600924886689,
+        "totalPct": 2.276337497776715,
+        "selfUsPerMount": 19.653465346534652,
+        "totalUsPerMount": 146.990099009901
+      },
+      {
+        "function": "selectEffectiveDeclarations",
+        "file": "packages/canard/schema-form/src/core/blueprint/utils/effectiveSchema/utils/selectEffectiveDeclarations.ts",
+        "line": 10,
+        "column": 43,
+        "selfUs": 1695,
+        "totalUs": 1695,
+        "selfSamples": 11,
+        "totalSamples": 11,
+        "selfPct": 0.25989438628125633,
+        "totalPct": 0.25989438628125633,
+        "selfUsPerMount": 16.782178217821784,
+        "totalUsPerMount": 16.782178217821784
+      },
+      {
+        "function": "effectiveType",
+        "file": "packages/canard/schema-form/src/core/settle/utils/commit/effectiveType.ts",
+        "line": 11,
+        "column": 29,
+        "selfUs": 1516,
+        "totalUs": 1669,
+        "selfSamples": 10,
+        "totalSamples": 11,
+        "selfPct": 0.23244831244978442,
+        "totalPct": 0.2559078057247297,
+        "selfUsPerMount": 15.009900990099009,
+        "totalUsPerMount": 16.524752475247524
+      },
+      {
+        "function": "blueprint",
+        "file": "packages/canard/schema-form/src/core/blueprint/blueprint.ts",
+        "line": 19,
+        "column": 25,
+        "selfUs": 1398,
+        "totalUs": 264607,
+        "selfSamples": 9,
+        "totalSamples": 1731,
+        "selfPct": 0.21435536992400964,
+        "totalPct": 40.5721969738787,
+        "selfUsPerMount": 13.841584158415841,
+        "totalUsPerMount": 2619.871287128713
+      },
+      {
+        "function": "isWaveNode",
+        "file": "packages/canard/schema-form/src/core/dispatch/utils/chain/deliverWave.ts",
+        "line": 11,
+        "column": 19,
+        "selfUs": 1381,
+        "totalUs": 1381,
+        "selfSamples": 9,
+        "totalSamples": 9,
+        "selfPct": 0.21174875956012684,
+        "totalPct": 0.21174875956012684,
+        "selfUsPerMount": 13.673267326732674,
+        "totalUsPerMount": 13.673267326732674
+      },
+      {
+        "function": "hasOwnProperty",
+        "file": "packages/winglet/common-utils/dist/libs/hasOwnProperty.cjs",
+        "line": 6,
+        "column": 23,
+        "selfUs": 1365,
+        "totalUs": 1365,
+        "selfSamples": 9,
+        "totalSamples": 9,
+        "selfPct": 0.2092954792176489,
+        "totalPct": 0.2092954792176489,
+        "selfUsPerMount": 13.514851485148515,
+        "totalUsPerMount": 13.514851485148515
+      },
+      {
+        "function": "validateControlGroups",
+        "file": "packages/canard/schema-form/src/core/blueprint/utils/diagnostics/validateControlGroups.ts",
+        "line": 17,
+        "column": 37,
+        "selfUs": 1213,
+        "totalUs": 1213,
+        "selfSamples": 8,
+        "totalSamples": 8,
+        "selfPct": 0.1859893159641085,
+        "totalPct": 0.1859893159641085,
+        "selfUsPerMount": 12.009900990099009,
+        "totalUsPerMount": 12.009900990099009
+      },
+      {
+        "function": "(anonymous)",
+        "file": "packages/canard/schema-form/src/core/blueprint/utils/types/readAllowedTypes.ts",
+        "line": 30,
+        "column": 6,
+        "selfUs": 1213,
+        "totalUs": 1213,
+        "selfSamples": 8,
+        "totalSamples": 8,
+        "selfPct": 0.1859893159641085,
+        "totalPct": 0.1859893159641085,
+        "selfUsPerMount": 12.009900990099009,
+        "totalUsPerMount": 12.009900990099009
+      },
+      {
+        "function": "validateChildTargets",
+        "file": "packages/canard/schema-form/src/core/blueprint/utils/diagnostics/validateChildTargets.ts",
+        "line": 11,
+        "column": 36,
+        "selfUs": 1074,
+        "totalUs": 1074,
+        "selfSamples": 7,
+        "totalSamples": 7,
+        "selfPct": 0.16467644298883144,
+        "totalPct": 0.16467644298883144,
+        "selfUsPerMount": 10.633663366336634,
+        "totalUsPerMount": 10.633663366336634
+      },
+      {
+        "function": "populateVirtualNodes",
+        "file": "packages/canard/schema-form/src/core/blueprint/utils/analyze/populateVirtualNodes.ts",
+        "line": 22,
+        "column": 36,
+        "selfUs": 952,
+        "totalUs": 952,
+        "selfSamples": 6,
+        "totalSamples": 6,
+        "selfPct": 0.14597018037743717,
+        "totalPct": 0.14597018037743717,
+        "selfUsPerMount": 9.425742574257425,
+        "totalUsPerMount": 9.425742574257425
+      },
+      {
+        "function": "(idle)",
+        "file": "(V8)",
+        "line": 0,
+        "column": -1,
+        "selfUs": 940,
+        "totalUs": 940,
+        "selfSamples": 6,
+        "totalSamples": 6,
+        "selfPct": 0.14413022012057872,
+        "totalPct": 0.14413022012057872,
+        "selfUsPerMount": 9.306930693069306,
+        "totalUsPerMount": 9.306930693069306
+      },
+      {
+        "function": "_SchemaNodeRevisionLedger",
+        "file": "packages/canard/schema-form/src/core/record/utils/SchemaNodeRevisionLedger.ts",
+        "line": 19,
+        "column": 2,
+        "selfUs": 923,
+        "totalUs": 923,
+        "selfSamples": 6,
+        "totalSamples": 6,
+        "selfPct": 0.14152360975669592,
+        "totalPct": 0.14152360975669592,
+        "selfUsPerMount": 9.138613861386139,
+        "totalUsPerMount": 9.138613861386139
+      },
+      {
+        "function": "staticSpec",
+        "file": "packages/canard/schema-form/src/core/settle/utils/write/staticSpec.ts",
+        "line": 16,
+        "column": 26,
+        "selfUs": 919,
+        "totalUs": 919,
+        "selfSamples": 6,
+        "totalSamples": 6,
+        "selfPct": 0.14091028967107644,
+        "totalPct": 0.14091028967107644,
+        "selfUsPerMount": 9.099009900990099,
+        "totalUsPerMount": 9.099009900990099
+      },
+      {
+        "function": "exitSchemaNodeChain",
+        "file": "packages/canard/schema-form/src/core/dispatch/utils/chain/exitSchemaNodeChain.ts",
+        "line": 24,
+        "column": 35,
+        "selfUs": 798,
+        "totalUs": 6781,
+        "selfSamples": 5,
+        "totalSamples": 44,
+        "selfPct": 0.12235735708108705,
+        "totalPct": 1.03973087514643,
+        "selfUsPerMount": 7.900990099009901,
+        "totalUsPerMount": 67.13861386138613
+      },
+      {
+        "function": "measured",
+        "file": "(round-99 canonical adapter)",
+        "line": 326,
+        "column": 23,
+        "selfUs": 792,
+        "totalUs": 435788,
+        "selfSamples": 5,
+        "totalSamples": 2847,
+        "selfPct": 0.12143737695265783,
+        "totalPct": 66.81938336798592,
+        "selfUsPerMount": 7.841584158415841,
+        "totalUsPerMount": 4314.732673267326
+      },
+      {
+        "function": "interpret",
+        "file": "packages/canard/schema-form/src/core/behaviors/utils/parse/interpret.ts",
+        "line": 6,
+        "column": 25,
+        "selfUs": 777,
+        "totalUs": 929,
+        "selfSamples": 5,
+        "totalSamples": 6,
+        "selfPct": 0.11913742663158476,
+        "totalPct": 0.14244358988512515,
+        "selfUsPerMount": 7.693069306930693,
+        "totalUsPerMount": 9.198019801980198
+      },
+      {
+        "function": "buildSchemaNodeTree",
+        "file": "packages/canard/schema-form/src/core/SchemaNode/utils/binding/buildSchemaNodeTree.ts",
+        "line": 37,
+        "column": 16,
+        "selfUs": 772,
+        "totalUs": 265838,
+        "selfSamples": 5,
+        "totalSamples": 1739,
+        "selfPct": 0.1183707765245604,
+        "totalPct": 40.76094623022809,
+        "selfUsPerMount": 7.643564356435643,
+        "totalUsPerMount": 2632.059405940594
+      },
+      {
+        "function": "isTypeMismatch",
+        "file": "packages/canard/schema-form/src/core/settle/utils/commit/isTypeMismatch.ts",
+        "line": 12,
+        "column": 30,
+        "selfUs": 765,
+        "totalUs": 1065,
+        "selfSamples": 5,
+        "totalSamples": 7,
+        "selfPct": 0.11729746637472631,
+        "totalPct": 0.16329647279618761,
+        "selfUsPerMount": 7.574257425742574,
+        "totalUsPerMount": 10.544554455445544
+      },
+      {
+        "function": "omitEmptyObject",
+        "file": "packages/canard/schema-form/src/core/behaviors/objectBehavior/utils/omitEmptyObject.ts",
+        "line": 5,
+        "column": 31,
+        "selfUs": 619,
+        "totalUs": 619,
+        "selfSamples": 4,
+        "totalSamples": 4,
+        "selfPct": 0.09491128324961515,
+        "totalPct": 0.09491128324961515,
+        "selfUsPerMount": 6.128712871287129,
+        "totalUsPerMount": 6.128712871287129
+      },
+      {
+        "function": "(anonymous)",
+        "file": "packages/canard/schema-form/src/core/blueprint/utils/analyze/validateShape/utils/visitShape.ts",
+        "line": 37,
+        "column": 8,
+        "selfUs": 619,
+        "totalUs": 619,
+        "selfSamples": 4,
+        "totalSamples": 4,
+        "selfPct": 0.09491128324961515,
+        "totalPct": 0.09491128324961515,
+        "selfUsPerMount": 6.128712871287129,
+        "totalUsPerMount": 6.128712871287129
+      },
+      {
+        "function": "readStaticFirstWarning",
+        "file": "packages/canard/schema-form/src/core/settle/utils/load/readStaticFirstWarning.ts",
+        "line": 14,
+        "column": 38,
+        "selfUs": 612,
+        "totalUs": 2887,
+        "selfSamples": 4,
+        "totalSamples": 19,
+        "selfPct": 0.09383797309978105,
+        "totalPct": 0.4426637717958625,
+        "selfUsPerMount": 6.0594059405940595,
+        "totalUsPerMount": 28.584158415841586
+      },
+      {
+        "function": "validateShape",
+        "file": "packages/canard/schema-form/src/core/blueprint/utils/analyze/validateShape.ts",
+        "line": 10,
+        "column": 29,
+        "selfUs": 609,
+        "totalUs": 9184,
+        "selfSamples": 4,
+        "totalSamples": 60,
+        "selfPct": 0.09337798303556644,
+        "totalPct": 1.4081829165823352,
+        "selfUsPerMount": 6.02970297029703,
+        "totalUsPerMount": 90.93069306930693
+      },
+      {
+        "function": "(anonymous)",
+        "file": "packages/canard/schema-form/src/core/utils/pathIndex/utils/PathStoreIndex.ts",
+        "line": 36,
+        "column": 26,
+        "selfUs": 462,
+        "totalUs": 575,
+        "selfSamples": 3,
+        "totalSamples": 4,
+        "selfPct": 0.0708384698890504,
+        "totalPct": 0.08816476230780082,
+        "selfUsPerMount": 4.574257425742574,
+        "totalUsPerMount": 5.693069306930693
+      },
+      {
+        "function": "deliverWave",
+        "file": "packages/canard/schema-form/src/core/dispatch/utils/chain/deliverWave.ts",
+        "line": 22,
+        "column": 27,
+        "selfUs": 458,
+        "totalUs": 1839,
+        "selfSamples": 3,
+        "totalSamples": 12,
+        "selfPct": 0.0702251498034309,
+        "totalPct": 0.28197390936355776,
+        "selfUsPerMount": 4.534653465346534,
+        "totalUsPerMount": 18.207920792079207
+      },
+      {
+        "function": "processImmediate",
+        "file": "node:internal/timers",
+        "line": 525,
+        "column": 27,
+        "selfUs": 368,
+        "totalUs": 1257,
+        "selfSamples": 2,
+        "totalSamples": 7,
+        "selfPct": 0.056425447876992524,
+        "totalPct": 0.19273583690592283,
+        "selfUsPerMount": 3.6435643564356437,
+        "totalUsPerMount": 12.445544554455445
+      },
+      {
+        "function": "set",
+        "file": "packages/canard/schema-form/src/core/utils/pathIndex/PathKeyedMap.ts",
+        "line": 20,
+        "column": 11,
+        "selfUs": 312,
+        "totalUs": 887,
+        "selfSamples": 2,
+        "totalSamples": 6,
+        "selfPct": 0.047838966678319744,
+        "totalPct": 0.13600372898612056,
+        "selfUsPerMount": 3.089108910891089,
+        "totalUsPerMount": 8.782178217821782
+      },
+      {
+        "function": "emitAfterScript",
+        "file": "node:internal/async_hooks",
+        "line": 527,
+        "column": 24,
+        "selfUs": 312,
+        "totalUs": 312,
+        "selfSamples": 2,
+        "totalSamples": 2,
+        "selfPct": 0.047838966678319744,
+        "totalPct": 0.047838966678319744,
+        "selfUsPerMount": 3.089108910891089,
+        "totalUsPerMount": 3.089108910891089
+      },
+      {
+        "function": "projectEmpty",
+        "file": "packages/canard/schema-form/src/core/behaviors/utils/slots/projectEmpty.ts",
+        "line": 6,
+        "column": 49,
+        "selfUs": 306,
+        "totalUs": 15178,
+        "selfSamples": 2,
+        "totalSamples": 99,
+        "selfPct": 0.046918986549890525,
+        "totalPct": 2.327243064883132,
+        "selfUsPerMount": 3.0297029702970297,
+        "totalUsPerMount": 150.27722772277227
+      },
+      {
+        "function": "PathStoreIndex",
+        "file": "packages/canard/schema-form/src/core/utils/pathIndex/utils/PathStoreIndex.ts",
+        "line": 21,
+        "column": 7,
+        "selfUs": 306,
+        "totalUs": 306,
+        "selfSamples": 2,
+        "totalSamples": 2,
+        "selfPct": 0.046918986549890525,
+        "totalPct": 0.046918986549890525,
+        "selfUsPerMount": 3.0297029702970297,
+        "totalUsPerMount": 3.0297029702970297
+      },
+      {
+        "function": "isMember",
+        "file": "packages/canard/schema-form/src/core/behaviors/utils/parse/isMember.ts",
+        "line": 6,
+        "column": 24,
+        "selfUs": 304,
+        "totalUs": 304,
+        "selfSamples": 2,
+        "totalSamples": 2,
+        "selfPct": 0.046612326507080776,
+        "totalPct": 0.046612326507080776,
+        "selfUsPerMount": 3.00990099009901,
+        "totalUsPerMount": 3.00990099009901
+      },
+      {
+        "function": "readSchemaObject",
+        "file": "packages/canard/schema-form/src/core/blueprint/utils/analyze/readSchemaObject.ts",
+        "line": 8,
+        "column": 32,
+        "selfUs": 304,
+        "totalUs": 304,
+        "selfSamples": 2,
+        "totalSamples": 2,
+        "selfPct": 0.046612326507080776,
+        "totalPct": 0.046612326507080776,
+        "selfUsPerMount": 3.00990099009901,
+        "totalUsPerMount": 3.00990099009901
+      },
+      {
+        "function": "(anonymous)",
+        "file": "packages/canard/schema-form/src/core/blueprint/utils/types/resolveNodeStrategy.ts",
+        "line": 43,
+        "column": 19,
+        "selfUs": 302,
+        "totalUs": 302,
+        "selfSamples": 2,
+        "totalSamples": 2,
+        "selfPct": 0.04630566646427104,
+        "totalPct": 0.04630566646427104,
+        "selfUsPerMount": 2.99009900990099,
+        "totalUsPerMount": 2.99009900990099
+      },
+      {
+        "function": "intersectAllowedTypes",
+        "file": "packages/canard/schema-form/src/core/blueprint/utils/types/intersectAllowedTypes.ts",
+        "line": 9,
+        "column": 37,
+        "selfUs": 302,
+        "totalUs": 302,
+        "selfSamples": 2,
+        "totalSamples": 2,
+        "selfPct": 0.04630566646427104,
+        "totalPct": 0.04630566646427104,
+        "selfUsPerMount": 2.99009900990099,
+        "totalUsPerMount": 2.99009900990099
+      },
+      {
+        "function": "(anonymous)",
+        "file": "packages/canard/schema-form/src/core/blueprint/utils/types/resolveNodeStrategy.ts",
+        "line": 23,
+        "column": 4,
+        "selfUs": 301,
+        "totalUs": 301,
+        "selfSamples": 2,
+        "totalSamples": 2,
+        "selfPct": 0.04615233644286616,
+        "totalPct": 0.04615233644286616,
+        "selfUsPerMount": 2.98019801980198,
+        "totalUsPerMount": 2.98019801980198
+      },
+      {
+        "function": "(anonymous)",
+        "file": "packages/canard/schema-form/src/core/settle/utils/commit/isTypeMismatch.ts",
+        "line": 20,
+        "column": 21,
+        "selfUs": 300,
+        "totalUs": 300,
+        "selfSamples": 2,
+        "totalSamples": 2,
+        "selfPct": 0.0459990064214613,
+        "totalPct": 0.0459990064214613,
+        "selfUsPerMount": 2.9702970297029703,
+        "totalUsPerMount": 2.9702970297029703
+      },
+      {
+        "function": "create",
+        "file": "(round-99 canonical adapter)",
+        "line": 157,
+        "column": 15,
+        "selfUs": 276,
+        "totalUs": 434552,
+        "selfSamples": 2,
+        "totalSamples": 2839,
+        "selfPct": 0.04231908590774439,
+        "totalPct": 66.6298674615295,
+        "selfUsPerMount": 2.732673267326733,
+        "totalUsPerMount": 4302.495049504951
+      },
+      {
+        "function": "now",
+        "file": "(V8)",
+        "line": 0,
+        "column": -1,
+        "selfUs": 194,
+        "totalUs": 194,
+        "selfSamples": 1,
+        "totalSamples": 1,
+        "selfPct": 0.02974602415254497,
+        "totalPct": 0.02974602415254497,
+        "selfUsPerMount": 1.9207920792079207,
+        "totalUsPerMount": 1.9207920792079207
+      },
+      {
+        "function": "wrappedFn",
+        "file": "node:internal/errors",
+        "line": 542,
+        "column": 20,
+        "selfUs": 193,
+        "totalUs": 193,
+        "selfSamples": 1,
+        "totalSamples": 1,
+        "selfPct": 0.0295926941311401,
+        "totalPct": 0.0295926941311401,
+        "selfUsPerMount": 1.9108910891089108,
+        "totalUsPerMount": 1.9108910891089108
+      },
+      {
+        "function": "get",
+        "file": "file:///private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles/profile107-head.cjs",
+        "line": 13,
+        "column": 34,
+        "selfUs": 182,
+        "totalUs": 182,
+        "selfSamples": 1,
+        "totalSamples": 1,
+        "selfPct": 0.02790606389568652,
+        "totalPct": 0.02790606389568652,
+        "selfUsPerMount": 1.801980198019802,
+        "totalUsPerMount": 1.801980198019802
+      },
+      {
+        "function": "(anonymous)",
+        "file": "(round-99 canonical adapter)",
+        "line": 330,
+        "column": 59,
+        "selfUs": 180,
+        "totalUs": 567,
+        "selfSamples": 1,
+        "totalSamples": 3,
+        "selfPct": 0.02759940385287678,
+        "totalPct": 0.08693812213656185,
+        "selfUsPerMount": 1.7821782178217822,
+        "totalUsPerMount": 5.6138613861386135
+      },
+      {
+        "function": "cpu",
+        "file": "(round-99 canonical adapter)",
+        "line": 474,
+        "column": 18,
+        "selfUs": 174,
+        "totalUs": 434972,
+        "selfSamples": 1,
+        "totalSamples": 2842,
+        "selfPct": 0.02667942372444755,
+        "totalPct": 66.69426607051955,
+        "selfUsPerMount": 1.7227722772277227,
+        "totalUsPerMount": 4306.653465346535
+      },
+      {
+        "function": "emitBeforeScript",
+        "file": "node:internal/async_hooks",
+        "line": 519,
+        "column": 25,
+        "selfUs": 172,
+        "totalUs": 172,
+        "selfSamples": 1,
+        "totalSamples": 1,
+        "selfPct": 0.026372763681637813,
+        "totalPct": 0.026372763681637813,
+        "selfUsPerMount": 1.702970297029703,
+        "totalUsPerMount": 1.702970297029703
+      },
+      {
+        "function": "projectObject",
+        "file": "packages/canard/schema-form/src/core/behaviors/objectBehavior/utils/projectObject.ts",
+        "line": 8,
+        "column": 50,
+        "selfUs": 155,
+        "totalUs": 2135,
+        "selfSamples": 1,
+        "totalSamples": 14,
+        "selfPct": 0.023766153317755005,
+        "totalPct": 0.32735959569939954,
+        "selfUsPerMount": 1.5346534653465347,
+        "totalUsPerMount": 21.138613861386137
+      },
+      {
+        "function": "toggleImmediateRef",
+        "file": "(V8)",
+        "line": 0,
+        "column": -1,
+        "selfUs": 155,
+        "totalUs": 155,
+        "selfSamples": 1,
+        "totalSamples": 1,
+        "selfPct": 0.023766153317755005,
+        "totalPct": 0.023766153317755005,
+        "selfUsPerMount": 1.5346534653465347,
+        "totalUsPerMount": 1.5346534653465347
+      },
+      {
+        "function": "get children",
+        "file": "packages/canard/schema-form/src/core/SchemaNode/SchemaNode.ts",
+        "line": 157,
+        "column": 6,
+        "selfUs": 155,
+        "totalUs": 155,
+        "selfSamples": 1,
+        "totalSamples": 1,
+        "selfPct": 0.023766153317755005,
+        "totalPct": 0.023766153317755005,
+        "selfUsPerMount": 1.5346534653465347,
+        "totalUsPerMount": 1.5346534653465347
+      },
+      {
+        "function": "initAsyncResource",
+        "file": "node:internal/timers",
+        "line": 203,
+        "column": 26,
+        "selfUs": 154,
+        "totalUs": 154,
+        "selfSamples": 1,
+        "totalSamples": 1,
+        "selfPct": 0.023612823296350133,
+        "totalPct": 0.023612823296350133,
+        "selfUsPerMount": 1.5247524752475248,
+        "totalUsPerMount": 1.5247524752475248
+      },
+      {
+        "function": "assertSchemaNodeWritable",
+        "file": "packages/canard/schema-form/src/core/settle/utils/dispose/assertSchemaNodeWritable.ts",
+        "line": 10,
+        "column": 40,
+        "selfUs": 154,
+        "totalUs": 154,
+        "selfSamples": 1,
+        "totalSamples": 1,
+        "selfPct": 0.023612823296350133,
+        "totalPct": 0.023612823296350133,
+        "selfUsPerMount": 1.5247524752475248,
+        "totalUsPerMount": 1.5247524752475248
+      },
+      {
+        "function": "PathKeyedMap",
+        "file": "packages/canard/schema-form/src/core/utils/pathIndex/PathKeyedMap.ts",
+        "line": 11,
+        "column": 2,
+        "selfUs": 154,
+        "totalUs": 460,
+        "selfSamples": 1,
+        "totalSamples": 3,
+        "selfPct": 0.023612823296350133,
+        "totalPct": 0.07053180984624066,
+        "selfUsPerMount": 1.5247524752475248,
+        "totalUsPerMount": 4.554455445544554
+      },
+      {
+        "function": "(anonymous)",
+        "file": "packages/canard/schema-form/src/core/blueprint/utils/types/resolveNodeTypes.ts",
+        "line": 29,
+        "column": 4,
+        "selfUs": 154,
+        "totalUs": 154,
+        "selfSamples": 1,
+        "totalSamples": 1,
+        "selfPct": 0.023612823296350133,
+        "totalPct": 0.023612823296350133,
+        "selfUsPerMount": 1.5247524752475248,
+        "totalUsPerMount": 1.5247524752475248
+      },
+      {
+        "function": "collectChainRecords",
+        "file": "packages/canard/schema-form/src/core/dispatch/utils/report/collectChainRecords.ts",
+        "line": 16,
+        "column": 35,
+        "selfUs": 153,
+        "totalUs": 153,
+        "selfSamples": 1,
+        "totalSamples": 1,
+        "selfPct": 0.023459493274945262,
+        "totalPct": 0.023459493274945262,
+        "selfUsPerMount": 1.5148514851485149,
+        "totalUsPerMount": 1.5148514851485149
+      },
+      {
+        "function": "canLoadStaticFirstTree",
+        "file": "packages/canard/schema-form/src/core/settle/utils/load/canLoadStaticFirstTree.ts",
+        "line": 10,
+        "column": 38,
+        "selfUs": 153,
+        "totalUs": 305,
+        "selfSamples": 1,
+        "totalSamples": 2,
+        "selfPct": 0.023459493274945262,
+        "totalPct": 0.046765656528485654,
+        "selfUsPerMount": 1.5148514851485149,
+        "totalUsPerMount": 3.01980198019802
+      },
+      {
+        "function": "set raw",
+        "file": "packages/canard/schema-form/src/core/SchemaNode/SchemaNode.ts",
+        "line": 161,
+        "column": 6,
+        "selfUs": 153,
+        "totalUs": 153,
+        "selfSamples": 1,
+        "totalSamples": 1,
+        "selfPct": 0.023459493274945262,
+        "totalPct": 0.023459493274945262,
+        "selfUsPerMount": 1.5148514851485149,
+        "totalUsPerMount": 1.5148514851485149
+      },
+      {
+        "function": "isTypeName",
+        "file": "packages/canard/schema-form/src/core/settle/utils/commit/effectiveType.ts",
+        "line": 24,
+        "column": 9,
+        "selfUs": 153,
+        "totalUs": 153,
+        "selfSamples": 1,
+        "totalSamples": 1,
+        "selfPct": 0.023459493274945262,
+        "totalPct": 0.023459493274945262,
+        "selfUsPerMount": 1.5148514851485149,
+        "totalUsPerMount": 1.5148514851485149
+      },
+      {
+        "function": "isMissingStaticInput",
+        "file": "packages/canard/schema-form/src/core/settle/utils/load/isMissingStaticInput.ts",
+        "line": 15,
+        "column": 36,
+        "selfUs": 153,
+        "totalUs": 153,
+        "selfSamples": 1,
+        "totalSamples": 1,
+        "selfPct": 0.023459493274945262,
+        "totalPct": 0.023459493274945262,
+        "selfUsPerMount": 1.5148514851485149,
+        "totalUsPerMount": 1.5148514851485149
+      },
+      {
+        "function": "finishStaticFirstLoad",
+        "file": "packages/canard/schema-form/src/core/settle/utils/load/finishStaticFirstLoad.ts",
+        "line": 19,
+        "column": 37,
+        "selfUs": 152,
+        "totalUs": 1193,
+        "selfSamples": 1,
+        "totalSamples": 8,
+        "selfPct": 0.023306163253540388,
+        "totalPct": 0.18292271553601108,
+        "selfUsPerMount": 1.504950495049505,
+        "totalUsPerMount": 11.811881188118813
+      },
+      {
+        "function": "enterSchemaNodeChain",
+        "file": "packages/canard/schema-form/src/core/dispatch/utils/chain/enterSchemaNodeChain.ts",
+        "line": 11,
+        "column": 36,
+        "selfUs": 152,
+        "totalUs": 152,
+        "selfSamples": 1,
+        "totalSamples": 1,
+        "selfPct": 0.023306163253540388,
+        "totalPct": 0.023306163253540388,
+        "selfUsPerMount": 1.504950495049505,
+        "totalUsPerMount": 1.504950495049505
+      },
+      {
+        "function": "has",
+        "file": "packages/canard/schema-form/src/core/blueprint/utils/features/StaticFirstLoadCapability.ts",
+        "line": 13,
+        "column": 9,
+        "selfUs": 152,
+        "totalUs": 152,
+        "selfSamples": 1,
+        "totalSamples": 1,
+        "selfPct": 0.023306163253540388,
+        "totalPct": 0.023306163253540388,
+        "selfUsPerMount": 1.504950495049505,
+        "totalUsPerMount": 1.504950495049505
+      },
+      {
+        "function": "mountSchemaNode",
+        "file": "packages/canard/schema-form/src/core/SchemaNode/utils/binding/mountSchemaNode.ts",
+        "line": 14,
+        "column": 31,
+        "selfUs": 150,
+        "totalUs": 168256,
+        "selfSamples": 1,
+        "totalSamples": 1097,
+        "selfPct": 0.02299950321073065,
+        "totalPct": 25.798696081497972,
+        "selfUsPerMount": 1.4851485148514851,
+        "totalUsPerMount": 1665.90099009901
+      },
+      {
+        "function": "removeStoresFromResource",
+        "file": "node:internal/timers",
+        "line": 134,
+        "column": 33,
+        "selfUs": 150,
+        "totalUs": 150,
+        "selfSamples": 1,
+        "totalSamples": 1,
+        "selfPct": 0.02299950321073065,
+        "totalPct": 0.02299950321073065,
+        "selfUsPerMount": 1.4851485148514851,
+        "totalUsPerMount": 1.4851485148514851
+      },
+      {
+        "function": "(anonymous)",
+        "file": "(round-99 canonical adapter)",
+        "line": 484,
+        "column": 34,
+        "selfUs": 135,
+        "totalUs": 434687,
+        "selfSamples": 1,
+        "totalSamples": 2840,
+        "selfPct": 0.020699552889657583,
+        "totalPct": 66.65056701441915,
+        "selfUsPerMount": 1.3366336633663367,
+        "totalUsPerMount": 4303.831683168317
+      },
+      {
+        "function": "getPrefix",
+        "file": "packages/canard/schema-form/src/core/utils/pathIndex/utils/PathStoreIndex.ts",
+        "line": 109,
+        "column": 10,
+        "selfUs": 113,
+        "totalUs": 113,
+        "selfSamples": 1,
+        "totalSamples": 1,
+        "selfPct": 0.01732629241875042,
+        "totalPct": 0.01732629241875042,
+        "selfUsPerMount": 1.118811881188119,
+        "totalUsPerMount": 1.118811881188119
+      },
+      {
+        "function": "post",
+        "file": "node:inspector",
+        "line": 115,
+        "column": 6,
+        "selfUs": 111,
+        "totalUs": 111,
+        "selfSamples": 1,
+        "totalSamples": 1,
+        "selfPct": 0.01701963237594068,
+        "totalPct": 0.01701963237594068,
+        "selfUsPerMount": 1.099009900990099,
+        "totalUsPerMount": 1.099009900990099
+      },
+      {
+        "function": "nodeFromJSONSchema",
+        "file": "packages/canard/schema-form/src/core/nodeFromJSONSchema.ts",
+        "line": 17,
+        "column": 16,
+        "selfUs": 0,
+        "totalUs": 434094,
+        "selfSamples": 0,
+        "totalSamples": 2836,
+        "selfPct": 0,
+        "totalPct": 66.55964231172607,
+        "selfUsPerMount": 0,
+        "totalUsPerMount": 4297.960396039604
+      },
+      {
+        "function": "(root)",
+        "file": "(V8)",
+        "line": 0,
+        "column": -1,
+        "selfUs": 0,
+        "totalUs": 652188,
+        "selfSamples": 0,
+        "totalSamples": 4225,
+        "selfPct": 0,
+        "totalPct": 100,
+        "selfUsPerMount": 0,
+        "totalUsPerMount": 6457.306930693069
+      },
+      {
+        "function": "dispatchMount",
+        "file": "packages/canard/schema-form/src/core/dispatch/utils/entry/dispatchMount.ts",
+        "line": 21,
+        "column": 29,
+        "selfUs": 0,
+        "totalUs": 168106,
+        "selfSamples": 0,
+        "totalSamples": 1096,
+        "selfPct": 0,
+        "totalPct": 25.775696578287246,
+        "selfUsPerMount": 0,
+        "totalUsPerMount": 1664.4158415841584
+      },
+      {
+        "function": "Immediate",
+        "file": "node:internal/timers",
+        "line": 747,
+        "column": 13,
+        "selfUs": 0,
+        "totalUs": 309,
+        "selfSamples": 0,
+        "totalSamples": 2,
+        "selfPct": 0,
+        "totalPct": 0.04737897661410513,
+        "selfUsPerMount": 0,
+        "totalUsPerMount": 3.0594059405940595
+      },
+      {
+        "function": "setImmediate",
+        "file": "node:timers",
+        "line": 215,
+        "column": 21,
+        "selfUs": 0,
+        "totalUs": 309,
+        "selfSamples": 0,
+        "totalSamples": 2,
+        "selfPct": 0,
+        "totalPct": 0.04737897661410513,
+        "selfUsPerMount": 0,
+        "totalUsPerMount": 3.0594059405940595
+      },
+      {
+        "function": "ending",
+        "file": "(round-99 canonical adapter)",
+        "line": 330,
+        "column": 35,
+        "selfUs": 0,
+        "totalUs": 309,
+        "selfSamples": 0,
+        "totalSamples": 2,
+        "selfPct": 0,
+        "totalPct": 0.04737897661410513,
+        "selfUsPerMount": 0,
+        "totalUsPerMount": 3.0594059405940595
+      },
+      {
+        "function": "add",
+        "file": "packages/canard/schema-form/src/core/utils/pathIndex/utils/PathStoreIndex.ts",
+        "line": 34,
+        "column": 2,
+        "selfUs": 0,
+        "totalUs": 575,
+        "selfSamples": 0,
+        "totalSamples": 4,
+        "selfPct": 0,
+        "totalPct": 0.08816476230780082,
+        "selfUsPerMount": 0,
+        "totalUsPerMount": 5.693069306930693
+      },
+      {
+        "function": "now",
+        "file": "node:internal/perf/performance",
+        "line": 137,
+        "column": 5,
+        "selfUs": 0,
+        "totalUs": 387,
+        "selfSamples": 0,
+        "totalSamples": 2,
+        "selfPct": 0,
+        "totalPct": 0.059338718283685074,
+        "selfUsPerMount": 0,
+        "totalUsPerMount": 3.8316831683168315
+      },
+      {
+        "function": "schemaNodeFactory",
+        "file": "packages/canard/schema-form/src/core/SchemaNode/utils/schemaNodeFactory.ts",
+        "line": 60,
+        "column": 16,
+        "selfUs": 0,
+        "totalUs": 306,
+        "selfSamples": 0,
+        "totalSamples": 2,
+        "selfPct": 0,
+        "totalPct": 0.046918986549890525,
+        "selfUsPerMount": 0,
+        "totalUsPerMount": 3.0297029702970297
+      },
+      {
+        "function": "ref",
+        "file": "node:internal/timers",
+        "line": 763,
+        "column": 5,
+        "selfUs": 0,
+        "totalUs": 155,
+        "selfSamples": 0,
+        "totalSamples": 1,
+        "selfPct": 0,
+        "totalPct": 0.023766153317755005,
+        "selfUsPerMount": 0,
+        "totalUsPerMount": 1.5346534653465347
+      },
+      {
+        "function": "(anonymous)",
+        "file": "(round-99 canonical adapter)",
+        "line": 479,
+        "column": 52,
+        "selfUs": 0,
+        "totalUs": 111,
+        "selfSamples": 0,
+        "totalSamples": 1,
+        "selfPct": 0,
+        "totalPct": 0.01701963237594068,
+        "selfUsPerMount": 0,
+        "totalUsPerMount": 1.099009900990099
+      },
+      {
+        "function": "post",
+        "file": "(round-99 canonical adapter)",
+        "line": 479,
+        "column": 15,
+        "selfUs": 0,
+        "totalUs": 111,
+        "selfSamples": 0,
+        "totalSamples": 1,
+        "selfPct": 0,
+        "totalPct": 0.01701963237594068,
+        "selfUsPerMount": 0,
+        "totalUsPerMount": 1.099009900990099
+      }
+    ],
+    "selfConservation": 652188
+  },
+  "observed": {
+    "sha256": "264faa6616a1c88ca4566f0ba761ba1a6c7fbe9b115da26c62c53f8d433350a5",
+    "outputBytes": 14669,
+    "liveWidth": 4,
+    "value": {
+      "n0": {
+        "n0": {
+          "n0": {
+            "n0": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n1": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n2": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n3": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            }
+          },
+          "n1": {
+            "n0": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n1": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n2": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n3": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            }
+          },
+          "n2": {
+            "n0": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n1": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n2": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n3": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            }
+          },
+          "n3": {
+            "n0": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n1": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n2": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n3": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            }
+          }
+        },
+        "n1": {
+          "n0": {
+            "n0": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n1": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n2": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n3": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            }
+          },
+          "n1": {
+            "n0": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n1": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n2": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n3": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            }
+          },
+          "n2": {
+            "n0": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n1": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n2": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n3": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            }
+          },
+          "n3": {
+            "n0": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n1": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n2": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n3": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            }
+          }
+        },
+        "n2": {
+          "n0": {
+            "n0": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n1": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n2": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n3": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            }
+          },
+          "n1": {
+            "n0": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n1": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n2": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n3": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            }
+          },
+          "n2": {
+            "n0": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n1": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n2": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n3": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            }
+          },
+          "n3": {
+            "n0": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n1": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n2": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n3": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            }
+          }
+        },
+        "n3": {
+          "n0": {
+            "n0": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n1": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n2": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n3": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            }
+          },
+          "n1": {
+            "n0": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n1": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n2": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n3": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            }
+          },
+          "n2": {
+            "n0": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n1": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n2": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n3": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            }
+          },
+          "n3": {
+            "n0": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n1": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n2": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n3": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            }
+          }
+        }
+      },
+      "n1": {
+        "n0": {
+          "n0": {
+            "n0": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n1": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n2": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n3": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            }
+          },
+          "n1": {
+            "n0": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n1": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n2": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n3": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            }
+          },
+          "n2": {
+            "n0": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n1": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n2": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n3": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            }
+          },
+          "n3": {
+            "n0": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n1": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n2": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n3": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            }
+          }
+        },
+        "n1": {
+          "n0": {
+            "n0": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n1": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n2": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n3": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            }
+          },
+          "n1": {
+            "n0": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n1": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n2": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n3": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            }
+          },
+          "n2": {
+            "n0": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n1": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n2": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n3": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            }
+          },
+          "n3": {
+            "n0": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n1": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n2": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n3": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            }
+          }
+        },
+        "n2": {
+          "n0": {
+            "n0": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n1": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n2": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n3": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            }
+          },
+          "n1": {
+            "n0": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n1": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n2": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n3": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            }
+          },
+          "n2": {
+            "n0": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n1": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n2": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n3": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            }
+          },
+          "n3": {
+            "n0": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n1": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n2": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n3": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            }
+          }
+        },
+        "n3": {
+          "n0": {
+            "n0": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n1": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n2": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n3": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            }
+          },
+          "n1": {
+            "n0": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n1": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n2": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n3": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            }
+          },
+          "n2": {
+            "n0": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n1": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n2": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n3": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            }
+          },
+          "n3": {
+            "n0": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n1": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n2": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n3": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            }
+          }
+        }
+      },
+      "n2": {
+        "n0": {
+          "n0": {
+            "n0": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n1": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n2": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n3": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            }
+          },
+          "n1": {
+            "n0": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n1": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n2": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n3": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            }
+          },
+          "n2": {
+            "n0": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n1": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n2": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n3": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            }
+          },
+          "n3": {
+            "n0": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n1": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n2": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n3": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            }
+          }
+        },
+        "n1": {
+          "n0": {
+            "n0": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n1": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n2": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n3": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            }
+          },
+          "n1": {
+            "n0": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n1": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n2": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n3": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            }
+          },
+          "n2": {
+            "n0": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n1": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n2": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n3": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            }
+          },
+          "n3": {
+            "n0": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n1": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n2": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n3": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            }
+          }
+        },
+        "n2": {
+          "n0": {
+            "n0": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n1": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n2": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n3": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            }
+          },
+          "n1": {
+            "n0": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n1": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n2": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n3": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            }
+          },
+          "n2": {
+            "n0": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n1": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n2": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n3": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            }
+          },
+          "n3": {
+            "n0": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n1": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n2": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n3": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            }
+          }
+        },
+        "n3": {
+          "n0": {
+            "n0": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n1": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n2": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n3": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            }
+          },
+          "n1": {
+            "n0": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n1": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n2": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n3": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            }
+          },
+          "n2": {
+            "n0": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n1": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n2": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n3": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            }
+          },
+          "n3": {
+            "n0": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n1": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n2": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n3": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            }
+          }
+        }
+      },
+      "n3": {
+        "n0": {
+          "n0": {
+            "n0": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n1": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n2": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n3": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            }
+          },
+          "n1": {
+            "n0": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n1": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n2": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n3": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            }
+          },
+          "n2": {
+            "n0": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n1": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n2": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n3": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            }
+          },
+          "n3": {
+            "n0": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n1": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n2": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n3": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            }
+          }
+        },
+        "n1": {
+          "n0": {
+            "n0": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n1": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n2": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n3": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            }
+          },
+          "n1": {
+            "n0": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n1": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n2": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n3": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            }
+          },
+          "n2": {
+            "n0": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n1": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n2": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n3": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            }
+          },
+          "n3": {
+            "n0": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n1": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n2": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n3": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            }
+          }
+        },
+        "n2": {
+          "n0": {
+            "n0": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n1": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n2": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n3": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            }
+          },
+          "n1": {
+            "n0": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n1": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n2": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n3": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            }
+          },
+          "n2": {
+            "n0": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n1": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n2": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n3": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            }
+          },
+          "n3": {
+            "n0": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n1": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n2": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n3": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            }
+          }
+        },
+        "n3": {
+          "n0": {
+            "n0": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n1": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n2": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n3": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            }
+          },
+          "n1": {
+            "n0": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n1": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n2": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n3": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            }
+          },
+          "n2": {
+            "n0": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n1": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n2": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n3": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            }
+          },
+          "n3": {
+            "n0": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n1": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n2": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n3": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            }
+          }
+        }
+      }
+    }
+  },
+  "environment": {
+    "date": "2026-10-06T18:52:40.307Z",
+    "head": "5c530e05414df1c7a09e0b5307b04910a0864c90",
+    "node": "v26.10.0",
+    "v8": "14.6.202.34-node.35",
+    "esbuild": "0.25.9",
+    "platform": "darwin",
+    "arch": "arm64",
+    "cpu": "Apple M1 Max",
+    "cpus": 10,
+    "memoryBytes": 68719476736,
+    "osRelease": "25.6.0",
+    "mode": "production",
+    "validation": "off",
+    "subscribers": 0
+  },
+  "elapsedMs": 1052
+}

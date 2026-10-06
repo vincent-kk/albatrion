@@ -1,0 +1,8 @@
+{
+  "HEAD": "5c530e05414df1c7a09e0b5307b04910a0864c90",
+  "variant": "child-own-replay",
+  "sha256": "9f761598efbc3337b15c7e8733b2eb0186e81a1c0a959d7ccdeb7ee382d44da1",
+  "bytes": 540946,
+  "naturalServiceExits": 1,
+  "edits": []
+}

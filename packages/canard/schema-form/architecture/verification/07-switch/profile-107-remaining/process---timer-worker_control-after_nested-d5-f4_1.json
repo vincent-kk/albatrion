@@ -1,0 +1,16 @@
+{
+  "HEAD": "5c530e05414df1c7a09e0b5307b04910a0864c90",
+  "command": "--timer-worker",
+  "args": [
+    "control-after",
+    "nested-d5-f4",
+    "1"
+  ],
+  "status": 0,
+  "signal": null,
+  "started": "2026-10-06T19:00:03.464Z",
+  "ended": "2026-10-06T19:00:07.076Z",
+  "elapsedMs": 3612,
+  "pid": 38493,
+  "driverSha256": "82d93e14efeb8f27b5f7882625b557af55886878db8e2a79b4205323b39075d5"
+}

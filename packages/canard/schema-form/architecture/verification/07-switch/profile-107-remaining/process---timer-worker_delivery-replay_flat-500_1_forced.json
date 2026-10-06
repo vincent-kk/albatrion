@@ -1,0 +1,17 @@
+{
+  "HEAD": "5c530e05414df1c7a09e0b5307b04910a0864c90",
+  "command": "--timer-worker",
+  "args": [
+    "delivery-replay",
+    "flat-500",
+    "1",
+    "forced"
+  ],
+  "status": 0,
+  "signal": null,
+  "started": "2026-10-06T19:17:07.730Z",
+  "ended": "2026-10-06T19:17:09.524Z",
+  "elapsedMs": 1794,
+  "pid": 28198,
+  "driverSha256": "6a14fc859208d355c429c2b10e9c088cbac25cf497b6ffea7f889dae6e46d3cb"
+}

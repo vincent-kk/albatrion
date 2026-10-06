@@ -1,0 +1,27 @@
+{
+  "HEAD": "5c530e05414df1c7a09e0b5307b04910a0864c90",
+  "command": "--batch",
+  "args": [
+    "3",
+    "nested-d5-f4",
+    "assembly-replay",
+    "assembly-first-empty-hints",
+    "choices-replay",
+    "choices-default",
+    "entries-replay",
+    "delivery-replay",
+    "revision-dense-first",
+    "flush-reads-zero",
+    "recalculation-replay",
+    "dependency-replay",
+    "dependency-paths-once",
+    "watched-tokens"
+  ],
+  "status": 0,
+  "signal": null,
+  "started": "2026-10-06T19:11:11.763Z",
+  "ended": "2026-10-06T19:11:55.656Z",
+  "elapsedMs": 43893,
+  "pid": 24824,
+  "driverSha256": "6a14fc859208d355c429c2b10e9c088cbac25cf497b6ffea7f889dae6e46d3cb"
+}

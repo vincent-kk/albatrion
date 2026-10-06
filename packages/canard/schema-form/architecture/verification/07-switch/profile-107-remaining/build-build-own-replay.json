@@ -1,0 +1,8 @@
+{
+  "HEAD": "5c530e05414df1c7a09e0b5307b04910a0864c90",
+  "variant": "build-own-replay",
+  "sha256": "5ba4af0c469e11107cd1a9b05fde5994f45c72cdfabf5cd1d706df874116dc12",
+  "bytes": 541471,
+  "naturalServiceExits": 1,
+  "edits": []
+}

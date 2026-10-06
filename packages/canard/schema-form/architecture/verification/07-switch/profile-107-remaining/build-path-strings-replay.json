@@ -1,0 +1,8 @@
+{
+  "HEAD": "5c530e05414df1c7a09e0b5307b04910a0864c90",
+  "variant": "path-strings-replay",
+  "sha256": "6877dc1089bd579f45393b69ece08219d85ef1e76cf3f5411f40ddf7b11e9ef4",
+  "bytes": 580813,
+  "naturalServiceExits": 1,
+  "edits": []
+}

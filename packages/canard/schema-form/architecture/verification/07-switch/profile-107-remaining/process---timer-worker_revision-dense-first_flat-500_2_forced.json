@@ -1,0 +1,17 @@
+{
+  "HEAD": "5c530e05414df1c7a09e0b5307b04910a0864c90",
+  "command": "--timer-worker",
+  "args": [
+    "revision-dense-first",
+    "flat-500",
+    "2",
+    "forced"
+  ],
+  "status": 0,
+  "signal": null,
+  "started": "2026-10-06T19:18:36.043Z",
+  "ended": "2026-10-06T19:18:37.846Z",
+  "elapsedMs": 1803,
+  "pid": 29583,
+  "driverSha256": "6a14fc859208d355c429c2b10e9c088cbac25cf497b6ffea7f889dae6e46d3cb"
+}

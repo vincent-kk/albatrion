@@ -1,0 +1,28 @@
+{
+  "HEAD": "5c530e05414df1c7a09e0b5307b04910a0864c90",
+  "command": "--batch",
+  "args": [
+    "1",
+    "flat-500",
+    "control",
+    "control-after",
+    "control-final",
+    "blueprint-replay",
+    "build-own-replay",
+    "membership-once",
+    "declarations-replay",
+    "template-replay",
+    "encode-native",
+    "key-single-json",
+    "path-strings-replay",
+    "child-own-replay",
+    "child-input-literal"
+  ],
+  "status": 0,
+  "signal": null,
+  "started": "2026-10-06T19:16:06.177Z",
+  "ended": "2026-10-06T19:16:31.538Z",
+  "elapsedMs": 25361,
+  "pid": 27241,
+  "driverSha256": "6a14fc859208d355c429c2b10e9c088cbac25cf497b6ffea7f889dae6e46d3cb"
+}

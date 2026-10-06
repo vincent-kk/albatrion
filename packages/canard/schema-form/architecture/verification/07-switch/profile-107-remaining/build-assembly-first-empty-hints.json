@@ -1,0 +1,8 @@
+{
+  "HEAD": "5c530e05414df1c7a09e0b5307b04910a0864c90",
+  "variant": "assembly-first-empty-hints",
+  "sha256": "d27c52a5257d864f05b1dec78636844392e367f6bcc3bacc4f03f35baa270703",
+  "bytes": 540735,
+  "naturalServiceExits": 1,
+  "edits": []
+}

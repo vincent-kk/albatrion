@@ -1,0 +1,8 @@
+{
+  "HEAD": "5c530e05414df1c7a09e0b5307b04910a0864c90",
+  "variant": "flush-reads-zero",
+  "sha256": "5e646abc3e971afe7be81b0be9ede29f7001df889a6eed0515c84eda41e1bc56",
+  "bytes": 536348,
+  "naturalServiceExits": 1,
+  "edits": []
+}

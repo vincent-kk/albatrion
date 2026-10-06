@@ -1,0 +1,8 @@
+{
+  "HEAD": "5c530e05414df1c7a09e0b5307b04910a0864c90",
+  "variant": "blueprint-replay",
+  "sha256": "d309036f51dc88a5f7dea15056798d5a47338293e4c607fc4d27b4af7fa61561",
+  "bytes": 540316,
+  "naturalServiceExits": 1,
+  "edits": []
+}
