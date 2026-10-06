@@ -136,10 +136,16 @@ export const commitSettlement = <Self extends SchemaNodeRecord<Self>>(
   runtime.typeMismatchRecords = warnings ? Object.freeze(warnings) : EMPTY_WARNINGS;
   const mismatchMemo = runtime.typeMismatchesMemo ??
     new PathKeyedMap<{ commit: number; paths: readonly string[] }>('path');
-  mismatchMemo.clear();
-  if (runtime.typeMismatchPaths.size === 0)
-    mismatchMemo.set('', { commit, paths: EMPTY_PATHS });
-  else {
+  if (runtime.typeMismatchPaths.size === 0) {
+    const empty = mismatchMemo.get('');
+    if (mismatchMemo.size === 1 && empty?.paths.length === 0)
+      empty.commit = commit;
+    else {
+      mismatchMemo.clear();
+      mismatchMemo.set('', { commit, paths: EMPTY_PATHS });
+    }
+  } else {
+    mismatchMemo.clear();
     const allPaths = [...runtime.typeMismatchPaths].sort();
     mismatchMemo.set('', { commit, paths: Object.freeze(allPaths) });
     const byAncestor = new Map<string, string[]>();
