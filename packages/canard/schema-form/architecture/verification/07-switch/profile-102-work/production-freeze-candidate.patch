@@ -1,0 +1,1291 @@
+diff --git a/packages/canard/schema-form/src/core/blueprint/DETAIL.md b/packages/canard/schema-form/src/core/blueprint/DETAIL.md
+index 9a8f1e6d2..09829ebe4 100644
+--- a/packages/canard/schema-form/src/core/blueprint/DETAIL.md
++++ b/packages/canard/schema-form/src/core/blueprint/DETAIL.md
+@@ -2,6 +2,8 @@
+ 
+ ## Requirements
+ 
++- 102C-01의 동결 정책은 청사진 완료에서 소유 값만 얕게 보호합니다. 공개 유효 schema·schemaType 및 그 안에 새로 생성한 required/allOf/enum 배열·controls 봉투·pattern/exclusive clause·hint 최상위 복사본과 기록 간 공유 order/gates·gate 내부 값·공통 빈 값은 두 모드에서 동결합니다. 나머지 내부 기록은 모듈 상수 `process.env.NODE_ENV !== 'production'`일 때만 동결하며, 지연 item entry는 생성 시 같은 정책을 적용합니다. 소비자 작성 값과 hint merge가 만든 중첩 값은 순회하거나 동결하지 않습니다. 완료 순회는 O(보유 기록과 생성 clause 수)이며 alias 중복 호출을 방지하는 약한 색인과 새 schema 값의 소유권 색인은 O(살아 있는 대상 수) 메모리를 사용합니다. 읽기 참조와 캐시 키는 유지합니다.
++
+ - 일회성 정적 정규화는 무게이트·비검증 전용 연언을 기존 전순서로 선택하여 실제 노드의 형 정보를 병합기에 직접 전달합니다. 임시 노드·옵션별 메모/Map·선언 ID 문자열 키를 만들지 않습니다. 노드의 전체 선언과 선택된 기여가 같은 단일 노드 연언이고 검증된 비nullable 스칼라 형이며 nullable·pattern·options·제약 키 및 isAtomic·collect가 없을 때만 renderer hint를 직접 구성합니다. 키 존재·열거 순서·프로퍼티 참조·normalized type·동결 결과와 DEFAULT_NO_ACTIVE 등록 조건은 그대로입니다. 그 밖의 경로는 기존 apply/finalize와 검증·진단 순서를 유지하며 oneOf의 서로 다른 선택 결과를 합치지 않습니다. 선택은 O(선언 수) 필터와 기존 정렬, O(선택 선언 수) 임시 배열 하나입니다. 단일 기여 증명에는 O(1) 고정 검사, 직접 구성에는 O(키 수) 순회를 사용하며 범용 형 교차·제약 순회·최종 형 배열과 누적 상태·patterns 임시 할당을 제거합니다. 새 보유 색인·캐시·노드 필드는 없고 기존 결과 객체·힌트 복사만 보유합니다(BLUEPRINT-021, NODE-006, SETTLE-017, 101라운드 묶음 1, 102라운드 단일 기여).
+ 
+ - 단일 무조건 노드 선언이며 nullable·형 배열·pattern·원자 판정·진단 수집기가 없는 경우, 기존 정적 교차 검사의 정규화 결과를 기본 런타임 메모에 미리 둡니다. 선언 선택과 병합의 의미는 유지하며 활성 ID 목록이 달라도 같은 무조건 집합은 같은 참조입니다. 그 밖의 선언·정책과 호출자 메모는 기존 병합을 사용합니다. 노드당 고정 자격 검사만 추가하고 기존 런타임 재병합 및 그 임시 배열·누적 상태를 제거합니다. 기존 약한 캐시가 정적 결과를 보유하므로 별도 색인이나 공개 노드 필드는 없으며, 조기 보유는 O(적격 노드 수)입니다(BLUEPRINT-021, NODE-006, SETTLE-017, 100라운드).
+@@ -50,6 +52,10 @@
+ 
+ ## Acceptance Criteria
+ 
++### production-freeze — 모드별 소유권과 얕은 보호
++
++- 개발 모드의 59개 스키마 차등은 유지하고 실제 운영 React 빌드에서 공개·공유 값의 동결 및 개발 전용 기록의 비동결을 검증합니다. 두 모드에서 lazy inline 입력·렌더 중 JSX label·mount 이후 새 배열 slot과 동일 slot의 참조 재사용을 검증합니다. 동결 호출과 distinct 수를 별도로 계수하고 소비자 그래프 순회 및 alias 추가 freeze 호출은 0입니다.
++
+ ### branchless-proof — 도달한 모든 선언의 분기 부재
+ 
+ - 참조 대상·allOf·items·prefixItems·옛 additionalItems·인라인 자식·가상 선언 및 children 제어에 숨은 분기를 모두 보수적으로 판정합니다. 미사용 정의와 터미널 아래는 기존 선언 수집 및 경고 정책을 따릅니다.
+diff --git a/packages/canard/schema-form/src/core/blueprint/blueprint.ts b/packages/canard/schema-form/src/core/blueprint/blueprint.ts
+index 39da28c18..8233f8986 100644
+--- a/packages/canard/schema-form/src/core/blueprint/blueprint.ts
++++ b/packages/canard/schema-form/src/core/blueprint/blueprint.ts
+@@ -6,11 +6,13 @@ import { validateShape } from './utils/analyze/validateShape';
+ import { collectBlueprintWarnings } from './utils/diagnostics/collectBlueprintWarnings';
+ import { validateChildTargets } from './utils/diagnostics/validateChildTargets';
+ import { StaticFirstLoadCapability } from './utils/features/StaticFirstLoadCapability';
++import { freezeBlueprintValues } from './utils/freezeBlueprintValues/freezeBlueprintValues';
++import { freezeBlueprintValue } from './utils/freezeBlueprintValues/utils/freezeBlueprintValue';
+ 
+ /** Feature-free graphs share frozen values only after independent absence proofs. */
+-const EMPTY_EXPRESSIONS: Blueprint['expressions'] = Object.freeze([]);
++const EMPTY_EXPRESSIONS: Blueprint['expressions'] = freezeBlueprintValue([]);
+ /** Empty null-prototype dictionary preserves prototype-name dependency behavior. */
+-const EMPTY_DEPENDENCIES: Blueprint['dependencies'] = Object.freeze(Object.create(null));
++const EMPTY_DEPENDENCIES: Blueprint['dependencies'] = freezeBlueprintValue(Object.create(null));
+ 
+ /**
+  * Analyze authored schema data into an immutable, finite declaration graph.
+@@ -45,6 +47,7 @@ export const blueprint = (
+     nodes: [],
+     fragments: [],
+     declarationId: 0,
++    declarations: [],
+     declarationOwners: undefined,
+     templates: new Map(),
+     constructing: new Map(),
+@@ -75,28 +78,19 @@ export const blueprint = (
+     if (node.kind === 'virtual' || node.kind === 'union' ||
+       (node.kind === 'object' || node.kind === 'array') && node.strategy !== 'branch')
+       context.staticFirstLoad = false;
+-    Object.freeze(node.childEntries);
+-    Object.freeze(node);
+   }
+-  for (let index = 0; index < context.fragments.length; index++) {
+-    const fragment = context.fragments[index];
+-    Object.freeze(fragment.declares);
+-    Object.freeze(fragment.overlays);
+-    Object.freeze(fragment.inheritedOverlays);
+-    Object.freeze(fragment.children);
+-    Object.freeze(fragment);
+-  }
+-  const result = Object.freeze({
+-    capabilities: Object.freeze(context.capabilities),
++  const result = {
++    capabilities: context.capabilities,
+     isAtomic: options.isAtomic,
+     isTerminal: options.isTerminal,
+     schema,
+     root,
+-    nodes: Object.freeze(context.nodes),
+-    fragments: Object.freeze(context.fragments),
+-    dependencies: context.dependencies ? Object.freeze(context.dependencies) : EMPTY_DEPENDENCIES,
++    nodes: context.nodes,
++    fragments: context.fragments,
++    dependencies: context.dependencies ?? EMPTY_DEPENDENCIES,
+     expressions,
+-  });
++  };
++  freezeBlueprintValues(context, result);
+   const capabilities = result.capabilities;
+   StaticFirstLoadCapability.set(result, context.staticFirstLoad && capabilities.branchless &&
+     !capabilities.hasExpressions && !capabilities.hasDerive && !capabilities.hasWatch &&
+diff --git a/packages/canard/schema-form/src/core/blueprint/utils/analyze/buildNodes.ts b/packages/canard/schema-form/src/core/blueprint/utils/analyze/buildNodes.ts
+index 5c8b7022a..cf8742fc8 100644
+--- a/packages/canard/schema-form/src/core/blueprint/utils/analyze/buildNodes.ts
++++ b/packages/canard/schema-form/src/core/blueprint/utils/analyze/buildNodes.ts
+@@ -61,7 +61,7 @@ export const buildNodes = (
+       else nonNull.push(allowed);
+     }
+     const schemaType: BlueprintSchemaType =
+-      nonNull.length > 1 ? Object.freeze(nonNull) : (nonNull[0] ?? 'null');
++      nonNull.length > 1 ? nonNull : (nonNull[0] ?? 'null');
+     const kind: BlueprintNodeKind = isArray(schemaType)
+       ? 'union'
+       : schemaType === 'integer'
+@@ -73,7 +73,7 @@ export const buildNodes = (
+       const declaration = group.declarations[item];
+       const owned = declaration.scope === 'fragment' &&
+         declaration.context === 'declaration' && kind !== 'object' && kind !== 'array'
+-        ? Object.freeze({ ...declaration, validationOnly: true }) : declaration;
++        ? { ...declaration, validationOnly: true } : declaration;
+       ownedDeclarations.push(owned);
+       if (owned.context === 'conjunction') conjunctions.push(owned);
+     }
+@@ -85,7 +85,7 @@ export const buildNodes = (
+       schemaType,
+       nullable,
+       strategy: resolveNodeStrategy(context, kind, group.declarations),
+-      declarations: Object.freeze(ownedDeclarations),
++      declarations: ownedDeclarations,
+       childEntries: [] as BlueprintChildEntry[],
+     };
+     context.nodes.push(node);
+@@ -97,6 +97,7 @@ export const buildNodes = (
+         isAtomic: context.options.isAtomic,
+         collect: context.options.collect,
+       },
++      true,
+     );
+     if (ownedDeclarations.length === 1 && ownedDeclarations[0].gates.length === 0 && !node.nullable &&
+       context.options.isAtomic === undefined && context.options.collect === undefined) {
+diff --git a/packages/canard/schema-form/src/core/blueprint/utils/analyze/collectDeclarations.ts b/packages/canard/schema-form/src/core/blueprint/utils/analyze/collectDeclarations.ts
+index 5ea995928..1ed93064f 100644
+--- a/packages/canard/schema-form/src/core/blueprint/utils/analyze/collectDeclarations.ts
++++ b/packages/canard/schema-form/src/core/blueprint/utils/analyze/collectDeclarations.ts
+@@ -64,8 +64,8 @@ export const collectDeclarations = (
+     schemaPath: input.schemaPath,
+     schema: input.schema,
+     context: input.context,
+-    order: Object.freeze([...input.order]),
+-    gates: Object.freeze(gates),
++    order: [...input.order],
++    gates,
+     declares: [] as number[],
+     overlays: [] as number[],
+     inheritedOverlays: [] as number[],
+@@ -73,7 +73,7 @@ export const collectDeclarations = (
+   };
+   context.fragments.push(fragment);
+   input.fragment?.children.push(fragment.id);
+-  const declaration: PropertyDeclaration = Object.freeze({
++  const declaration: PropertyDeclaration = {
+     id: context.declarationId++,
+     name: path.slice(path.lastIndexOf('/') + 1),
+     path,
+@@ -88,7 +88,8 @@ export const collectDeclarations = (
+     order: fragment.order,
+     inherited: input.inherited,
+     hostPath: input.hostPath,
+-  });
++  };
++  context.declarations.push(declaration);
+   fragment[input.role === 'declaration' ? 'declares' : 'overlays'].push(
+     declaration.id,
+   );
+diff --git a/packages/canard/schema-form/src/core/blueprint/utils/analyze/collectGateEvaluationReads.ts b/packages/canard/schema-form/src/core/blueprint/utils/analyze/collectGateEvaluationReads.ts
+index 25fac6433..85f6bc6fa 100644
+--- a/packages/canard/schema-form/src/core/blueprint/utils/analyze/collectGateEvaluationReads.ts
++++ b/packages/canard/schema-form/src/core/blueprint/utils/analyze/collectGateEvaluationReads.ts
+@@ -8,7 +8,7 @@ import { JSON_POINTER_PATH_REGEX } from '../expressions/regex';
+ export const collectGateEvaluationReads = (
+   condition: unknown,
+ ): readonly (string | number)[] => {
+-  if (typeof condition !== 'string') return Object.freeze([]);
++  if (typeof condition !== 'string') return [];
+   const reads: (string | number)[] = [];
+   for (const match of condition.matchAll(JSON_POINTER_PATH_REGEX)) {
+     const path = match[0];
+@@ -26,5 +26,5 @@ export const collectGateEvaluationReads = (
+       reads.push(levels);
+     }
+   }
+-  return Object.freeze(reads);
++  return reads;
+ };
+diff --git a/packages/canard/schema-form/src/core/blueprint/utils/analyze/compileBlueprintExpressions.ts b/packages/canard/schema-form/src/core/blueprint/utils/analyze/compileBlueprintExpressions.ts
+index 0f4b4b7c8..2065af8b8 100644
+--- a/packages/canard/schema-form/src/core/blueprint/utils/analyze/compileBlueprintExpressions.ts
++++ b/packages/canard/schema-form/src/core/blueprint/utils/analyze/compileBlueprintExpressions.ts
+@@ -71,17 +71,17 @@ export const compileBlueprintExpressions = (
+             );
+           }
+           if (!evaluate) continue;
+-          const dependencies = Object.freeze([...manager.get()]);
++          const dependencies = [...manager.get()];
+           for (let path = 0; path < dependencies.length; path++)
+             registerBlueprintDependency(context, dependencies[path], declaration, schemaPath);
+-          const compiled = Object.freeze({
++          const compiled = {
+             declarationId: declaration.id,
+             schemaPath,
+             hostPath: declaration.path,
+             key,
+             dependencies,
+             evaluate,
+-          });
++          };
+           if (context.capabilities.hasDerive && hasCompleteExpressionReads(source))
+             CompleteExpressionReads.add(compiled);
+           expressions.push(compiled);
+@@ -89,7 +89,5 @@ export const compileBlueprintExpressions = (
+       }
+     }
+   }
+-  if (context.dependencies)
+-    for (const ids of Object.values(context.dependencies)) Object.freeze(ids);
+-  return Object.freeze(expressions);
++  return expressions;
+ };
+diff --git a/packages/canard/schema-form/src/core/blueprint/utils/analyze/createBlueprintGate.ts b/packages/canard/schema-form/src/core/blueprint/utils/analyze/createBlueprintGate.ts
+index 3c6dce542..ea619083a 100644
+--- a/packages/canard/schema-form/src/core/blueprint/utils/analyze/createBlueprintGate.ts
++++ b/packages/canard/schema-form/src/core/blueprint/utils/analyze/createBlueprintGate.ts
+@@ -4,13 +4,13 @@ import { collectGateEvaluationReads } from './collectGateEvaluationReads';
+ /**
+  * Capture location-independent expression reads on a reusable gate.
+  * @param gate - Authored gate fields with their first template host
+- * @returns Frozen gate with location-independent expression read metadata
++ * @returns Gate whose shared metadata is frozen at blueprint completion
+  */
+ export const createBlueprintGate = (
+   gate: Omit<BlueprintGate, 'evaluationReads'>,
+-): BlueprintGate => Object.freeze({
++): BlueprintGate => ({
+   ...gate,
+   evaluationReads: gate.kind === 'active'
+     ? collectGateEvaluationReads(gate.condition)
+-    : Object.freeze([]),
++    : [],
+ });
+diff --git a/packages/canard/schema-form/src/core/blueprint/utils/analyze/populateNodeChildren.ts b/packages/canard/schema-form/src/core/blueprint/utils/analyze/populateNodeChildren.ts
+index 81fc39b13..c8b434f2a 100644
+--- a/packages/canard/schema-form/src/core/blueprint/utils/analyze/populateNodeChildren.ts
++++ b/packages/canard/schema-form/src/core/blueprint/utils/analyze/populateNodeChildren.ts
+@@ -161,7 +161,7 @@ export const populateNodeChildren = (
+     const path = `${node.path}/${escapeSegment(name)}`;
+     for (const child of build(context, inputs, path)) {
+       const declarations = child.declarations.map((declaration) =>
+-        Object.freeze({
++        ({
+           ...declaration,
+           name,
+           path,
+@@ -170,35 +170,32 @@ export const populateNodeChildren = (
+             declaration.schemaPath === child.schemaPath
+               ? inputs[0].schemaPath
+               : declaration.schemaPath,
+-          gates: Object.freeze(
+-            declaration.gates.map((gate) =>
++          gates: declaration.gates.map((gate) =>
+               gate.hostPath === child.path
+                 ? createBlueprintGate({ ...gate, hostPath: path })
+                 : gate,
+             ),
+-          ),
+         }),
+       );
+       entries.push(
+-        Object.freeze({
++        {
+           name,
+           node: child,
+           hostPath: node.path,
+-          declarations: Object.freeze(declarations),
+-        }),
++          declarations,
++        },
+       );
+     }
+   }
+   if (itemInputs.length)
+     node.item = build(context, itemInputs, `${node.path}/*`)[0];
+   if (tuples.size)
+-    node.prefixItems = Object.freeze(
++    node.prefixItems =
+       [...tuples]
+         .sort(([a], [b]) => a - b)
+         .map(
+           ([index, inputs]) =>
+             build(context, inputs, `${node.path}/${index}`)[0],
+-        ),
+-    );
++        );
+   if (node.kind === 'object') populateVirtualNodes(context, node);
+ };
+diff --git a/packages/canard/schema-form/src/core/blueprint/utils/analyze/populateVirtualNodes.ts b/packages/canard/schema-form/src/core/blueprint/utils/analyze/populateVirtualNodes.ts
+index 059d2c1f2..8be920bbb 100644
+--- a/packages/canard/schema-form/src/core/blueprint/utils/analyze/populateVirtualNodes.ts
++++ b/packages/canard/schema-form/src/core/blueprint/utils/analyze/populateVirtualNodes.ts
+@@ -93,7 +93,7 @@ export const populateVirtualNodes = (
+       );
+       if (group) group.declarations.push(...declarations);
+       else
+-        groups.set(name, { fields: Object.freeze([...fields]), declarations });
++        groups.set(name, { fields: [...fields], declarations });
+     }
+   }
+   for (const [name, group] of groups) {
+@@ -105,7 +105,7 @@ export const populateVirtualNodes = (
+       schemaType: 'virtual',
+       nullable: false,
+       strategy: resolveNodeStrategy(context, 'virtual', group.declarations),
+-      declarations: Object.freeze(group.declarations),
++      declarations: group.declarations,
+       childEntries: group.fields.flatMap((field) =>
+         host.childEntries.filter((edge) => edge.name === field),
+       ),
+@@ -113,12 +113,12 @@ export const populateVirtualNodes = (
+     };
+     context.nodes.push(node);
+     (host.childEntries as BlueprintChildEntry[]).push(
+-      Object.freeze({
++      {
+         name,
+         node,
+         declarations: node.declarations,
+         hostPath: host.path,
+-      }),
++      },
+     );
+   }
+ };
+diff --git a/packages/canard/schema-form/src/core/blueprint/utils/analyze/readDiscriminatorBranches.ts b/packages/canard/schema-form/src/core/blueprint/utils/analyze/readDiscriminatorBranches.ts
+index df3447628..0c0f538e5 100644
+--- a/packages/canard/schema-form/src/core/blueprint/utils/analyze/readDiscriminatorBranches.ts
++++ b/packages/canard/schema-form/src/core/blueprint/utils/analyze/readDiscriminatorBranches.ts
+@@ -126,7 +126,7 @@ export const readDiscriminatorBranches = (
+       previousValues.push(...values);
+       result.set(
+         branchPath,
+-        Object.freeze({ propertyName, values: Object.freeze([...values]) }),
++        { propertyName, values: [...values] },
+       );
+     }
+   }
+diff --git a/packages/canard/schema-form/src/core/blueprint/utils/analyze/type.ts b/packages/canard/schema-form/src/core/blueprint/utils/analyze/type.ts
+index 88c966c92..a9adcda59 100644
+--- a/packages/canard/schema-form/src/core/blueprint/utils/analyze/type.ts
++++ b/packages/canard/schema-form/src/core/blueprint/utils/analyze/type.ts
+@@ -46,6 +46,8 @@ export interface AnalysisContext {
+   nodes: MutableNode[];
+   fragments: MutableFragment[];
+   declarationId: number;
++  /** Original records retained only until completion, including validation-only replacements. */
++  declarations: PropertyDeclaration[];
+   declarationOwners: Map<number, number> | undefined;
+   templates: Map<string, MutableNode[]>;
+   constructing: Map<string, MutableNode[]>;
+diff --git a/packages/canard/schema-form/src/core/blueprint/utils/diagnostics/collectBlueprintWarnings.ts b/packages/canard/schema-form/src/core/blueprint/utils/diagnostics/collectBlueprintWarnings.ts
+index 128c37773..1aeedacaa 100644
+--- a/packages/canard/schema-form/src/core/blueprint/utils/diagnostics/collectBlueprintWarnings.ts
++++ b/packages/canard/schema-form/src/core/blueprint/utils/diagnostics/collectBlueprintWarnings.ts
+@@ -8,6 +8,8 @@ import type {
+ import { readSchemaObject } from '../analyze/readSchemaObject';
+ import { collectInlineTerminalWarnings } from './collectInlineTerminalWarnings';
+ import { BlueprintWarningCode } from './constant';
++/** Diagnostics use the same module-time development predicate as commit payloads. */
++const DEVELOPMENT = process.env.NODE_ENV !== 'production';
+ 
+ /**
+  * Collect advisory records only when a consumer explicitly requests diagnostics.
+@@ -25,7 +27,7 @@ export const collectBlueprintWarnings = (
+     const key = `${diagnostic.code}:${diagnostic.schemaPath}:${diagnostic.details.keyword ?? ''}`;
+     if (seen.has(key)) return;
+     seen.add(key);
+-    collect(Object.freeze(diagnostic));
++    collect(DEVELOPMENT ? Object.freeze(diagnostic) : diagnostic);
+   };
+   for (const node of blueprint.nodes) {
+     if (node.strategy === 'terminal') collectInlineTerminalWarnings(node, emit);
+diff --git a/packages/canard/schema-form/src/core/blueprint/utils/diagnostics/collectInlineTerminalWarnings.ts b/packages/canard/schema-form/src/core/blueprint/utils/diagnostics/collectInlineTerminalWarnings.ts
+index 09adfc4ac..1f22ea044 100644
+--- a/packages/canard/schema-form/src/core/blueprint/utils/diagnostics/collectInlineTerminalWarnings.ts
++++ b/packages/canard/schema-form/src/core/blueprint/utils/diagnostics/collectInlineTerminalWarnings.ts
+@@ -9,6 +9,9 @@ import type {
+ import { readSchemaObject } from '../analyze/readSchemaObject';
+ import { BlueprintWarningCode } from './constant';
+ 
++/** Warning metadata uses the commit delivery module-time development predicate. */
++const DEVELOPMENT = process.env.NODE_ENV !== 'production';
++
+ /**
+  * Find ignored form groups below a terminal without following reference targets.
+  * @param node - Terminal node whose authored contributions are inspected
+@@ -109,8 +112,8 @@ export const collectInlineTerminalWarnings = (
+       level: 'warning',
+       schemaPath: node.schemaPath,
+       details: {
+-        keys: Object.freeze(keys.sort()),
+-        paths: Object.freeze(paths.sort()),
++        keys: DEVELOPMENT ? Object.freeze(keys.sort()) : keys.sort(),
++        paths: DEVELOPMENT ? Object.freeze(paths.sort()) : paths.sort(),
+       },
+     });
+ };
+diff --git a/packages/canard/schema-form/src/core/blueprint/utils/effectiveSchema/utils/applyConstraintKeywords.ts b/packages/canard/schema-form/src/core/blueprint/utils/effectiveSchema/utils/applyConstraintKeywords.ts
+index 41e4727f5..7c31b54a0 100644
+--- a/packages/canard/schema-form/src/core/blueprint/utils/effectiveSchema/utils/applyConstraintKeywords.ts
++++ b/packages/canard/schema-form/src/core/blueprint/utils/effectiveSchema/utils/applyConstraintKeywords.ts
+@@ -14,6 +14,7 @@ import type { EffectiveSchemaOptions } from '../../../type';
+ import { BlueprintErrorCode } from '../../diagnostics/constant';
+ import { throwBlueprintError } from '../../diagnostics/throwBlueprintError';
+ import type { EffectiveSchemaState } from './type';
++import { OwnedSchemaValues } from './OwnedSchemaValues';
+ 
+ /** Paired monotone bounds; each pair is checked independently, never across keywords. */
+ const RANGES = [
+@@ -53,6 +54,8 @@ export const applyConstraintKeywords = (
+       ...(isArray(target.allOf) ? target.allOf : []),
+       clause,
+     ];
++    OwnedSchemaValues.add(clause);
++    OwnedSchemaValues.add(target.allOf as object);
+   }
+   for (const [lower, upper] of RANGES) {
+     const crossing =
+@@ -100,7 +103,12 @@ export const applyConstraintKeywords = (
+         options,
+       );
+     target.enum = [];
+-  } else if (enumeration !== undefined) target.enum = enumeration;
++    OwnedSchemaValues.add(target.enum as object);
++  } else if (enumeration !== undefined) {
++    if (enumeration !== target.enum && enumeration !== source.enum)
++      OwnedSchemaValues.add(enumeration);
++    target.enum = enumeration;
++  }
+   const constant = intersectConst(target.const, source.const);
+   if (constant === EMPTY_INTERSECTION) {
+     if (options.mode === 'static')
+@@ -116,6 +124,7 @@ export const applyConstraintKeywords = (
+   if (state.conflictingConst) {
+     delete target.const;
+     target.enum = [];
++    OwnedSchemaValues.add(target.enum as object);
+   }
+ };
+ 
+diff --git a/packages/canard/schema-form/src/core/blueprint/utils/effectiveSchema/utils/applySchemaContribution.ts b/packages/canard/schema-form/src/core/blueprint/utils/effectiveSchema/utils/applySchemaContribution.ts
+index e105b49ad..c539c90b2 100644
+--- a/packages/canard/schema-form/src/core/blueprint/utils/effectiveSchema/utils/applySchemaContribution.ts
++++ b/packages/canard/schema-form/src/core/blueprint/utils/effectiveSchema/utils/applySchemaContribution.ts
+@@ -7,6 +7,7 @@ import type {
+ import { applyConstraintKeywords } from './applyConstraintKeywords';
+ import { applyTypeContribution } from './applyTypeContribution';
+ import { mergeHintGroup } from './mergeHintGroup';
++import { OwnedSchemaValues } from './OwnedSchemaValues';
+ import type { EffectiveSchemaState } from './type';
+ 
+ /** Constraint names owned by keyword-specific intersection policies. */
+@@ -72,13 +73,16 @@ export const applySchemaContribution = (
+             !earlier.includes(entry) && value.indexOf(entry) === index,
+         ),
+       ];
++      OwnedSchemaValues.add(state.schema.required as object);
+     } else if (key === 'pattern' && typeof value === 'string') {
+       if (!state.patterns.includes(value)) state.patterns.push(value);
+-    } else if (key === 'allOf' && isArray(value))
++    } else if (key === 'allOf' && isArray(value)) {
+       state.schema.allOf = [
+         ...(isArray(state.schema.allOf) ? state.schema.allOf : []),
+         ...value,
+       ];
++      OwnedSchemaValues.add(state.schema.allOf as object);
++    }
+     else state.schema[key] = value;
+   }
+   applyConstraintKeywords(state, schema, declaration.schemaPath, options);
+@@ -100,5 +104,8 @@ function applyControlHints(
+   for (const key of ['watch', 'default'])
+     if ((source as Record<string, unknown>)[key] !== undefined)
+       controls[key] = (source as Record<string, unknown>)[key];
+-  if (Object.keys(controls).length) target.controls = controls;
++  if (Object.keys(controls).length) {
++    target.controls = controls;
++    OwnedSchemaValues.add(controls);
++  }
+ }
+diff --git a/packages/canard/schema-form/src/core/blueprint/utils/effectiveSchema/utils/finalizeEffectiveSchema.ts b/packages/canard/schema-form/src/core/blueprint/utils/effectiveSchema/utils/finalizeEffectiveSchema.ts
+index e0deb3e41..ed03886ba 100644
+--- a/packages/canard/schema-form/src/core/blueprint/utils/effectiveSchema/utils/finalizeEffectiveSchema.ts
++++ b/packages/canard/schema-form/src/core/blueprint/utils/effectiveSchema/utils/finalizeEffectiveSchema.ts
+@@ -1,6 +1,8 @@
+ import { isArray } from '@winglet/common-utils/filter';
+ 
+ import type { BlueprintNode, EffectiveSchema } from '../../../type';
++import { freezeEffectiveSchema } from './freezeEffectiveSchema';
++import { OwnedSchemaValues } from './OwnedSchemaValues';
+ import type { EffectiveSchemaState } from './type';
+ 
+ /**
+@@ -13,15 +15,21 @@ import type { EffectiveSchemaState } from './type';
+ export const finalizeEffectiveSchema = (
+   state: EffectiveSchemaState,
+   node: BlueprintNode,
++  deferFreeze = false,
+ ): EffectiveSchema => {
+   const schema = state.schema;
+   if (state.patterns.length) {
+     schema.pattern = state.patterns[0];
+-    if (state.patterns.length > 1)
+-      schema.allOf = [
+-        ...(isArray(schema.allOf) ? schema.allOf : []),
+-        ...state.patterns.slice(1).map((pattern) => ({ pattern })),
+-      ];
++    if (state.patterns.length > 1) {
++      const clauses = isArray(schema.allOf) ? [...schema.allOf] : [];
++      for (let index = 1; index < state.patterns.length; index++) {
++        const clause = { pattern: state.patterns[index] };
++        OwnedSchemaValues.add(clause);
++        clauses.push(clause);
++      }
++      schema.allOf = clauses;
++      OwnedSchemaValues.add(clauses);
++    }
+   }
+   const types = state.allowedTypes?.filter((type) => type !== 'null');
+   const staticTypes = isArray(node.schemaType)
+@@ -35,14 +43,19 @@ export const finalizeEffectiveSchema = (
+       ? node.schemaType
+       : types?.length === 0
+         ? 'null'
+-        : Object.freeze(types);
++        : types;
++  if (schema.type === types && types) OwnedSchemaValues.add(types);
+   if (state.conflictingType) {
+     if (node.nullable) schema.nullable = true;
+   } else if (node.nullable || state.allowedTypes?.includes('null'))
+     schema.nullable = state.allowedTypes?.includes('null') ?? node.nullable;
+-  if (state.conflictingConst) schema.enum = [];
+-  return Object.freeze({
+-    schema: Object.freeze(schema),
++  if (state.conflictingConst) {
++    schema.enum = [];
++    OwnedSchemaValues.add(schema.enum as object);
++  }
++  const result = {
++    schema,
+     typeConflict: state.conflictingType,
+-  });
++  };
++  return deferFreeze ? result : freezeEffectiveSchema(result);
+ };
+diff --git a/packages/canard/schema-form/src/core/blueprint/utils/effectiveSchema/utils/mergeHintGroup.ts b/packages/canard/schema-form/src/core/blueprint/utils/effectiveSchema/utils/mergeHintGroup.ts
+index 519ca49db..47c356929 100644
+--- a/packages/canard/schema-form/src/core/blueprint/utils/effectiveSchema/utils/mergeHintGroup.ts
++++ b/packages/canard/schema-form/src/core/blueprint/utils/effectiveSchema/utils/mergeHintGroup.ts
+@@ -1,5 +1,6 @@
+ import { hasOwnProperty } from '@winglet/common-utils/lib';
+ import { merge } from '@winglet/common-utils/object';
++import { OwnedSchemaValues } from './OwnedSchemaValues';
+ 
+ /**
+  * Merge a renderer hint group through shared immutable copy-on-write policies.
+@@ -24,6 +25,8 @@ export const mergeHintGroup = (
+           Object.entries(later).filter(([key]) => key !== 'virtual'),
+         )
+       : later;
++  if (source !== later && source && typeof source === 'object')
++    OwnedSchemaValues.add(source);
+   if (source === undefined) return earlier;
+   if (earlier === undefined) return source;
+   if (
+@@ -33,10 +36,12 @@ export const mergeHintGroup = (
+     typeof source !== 'object'
+   )
+     return source;
+-  return merge(earlier, source, {
++  const result = merge(earlier, source, {
+     immutable: true,
+     preserveReferences: true,
+     arrayStrategy: 'replace',
+     isAtomic,
+   });
++  if (result !== earlier && result !== source) OwnedSchemaValues.add(result);
++  return result;
+ };
+diff --git a/packages/canard/schema-form/src/core/blueprint/utils/effectiveSchema/utils/mergeSchemaContributions.ts b/packages/canard/schema-form/src/core/blueprint/utils/effectiveSchema/utils/mergeSchemaContributions.ts
+index 001684172..128f95f9e 100644
+--- a/packages/canard/schema-form/src/core/blueprint/utils/effectiveSchema/utils/mergeSchemaContributions.ts
++++ b/packages/canard/schema-form/src/core/blueprint/utils/effectiveSchema/utils/mergeSchemaContributions.ts
+@@ -9,11 +9,12 @@ import type {
+ } from '../../../type';
+ import { applySchemaContribution } from './applySchemaContribution';
+ import { finalizeEffectiveSchema } from './finalizeEffectiveSchema';
++import { freezeBlueprintValue } from '../../freezeBlueprintValues/utils/freezeBlueprintValue';
+ import { mergeSingleStaticContribution } from './mergeSchemaContributions/utils/mergeSingleStaticContribution';
+ import type { EffectiveSchemaState } from './type';
+ 
+ /** Shared result of a contributing `false` schema, so the early return allocates nothing. */
+-const FALSE_EFFECTIVE_SCHEMA: EffectiveSchema = Object.freeze({
++const FALSE_EFFECTIVE_SCHEMA: EffectiveSchema = freezeBlueprintValue({
+   schema: false,
+   typeConflict: false,
+ });
+@@ -29,8 +30,9 @@ export const mergeSchemaContributions = (
+   node: BlueprintNode,
+   declarations: readonly PropertyDeclaration[],
+   options: EffectiveSchemaOptions,
++  deferFreeze = false,
+ ): EffectiveSchema => {
+-  const single = mergeSingleStaticContribution(node, declarations, options);
++  const single = mergeSingleStaticContribution(node, declarations, options, deferFreeze);
+   if (single !== undefined) return single;
+   const staticTypes =
+     node.schemaType === 'virtual'
+@@ -53,5 +55,5 @@ export const mergeSchemaContributions = (
+     if (declaration.schema === true) continue;
+     applySchemaContribution(state, declaration, options);
+   }
+-  return finalizeEffectiveSchema(state, node);
++  return finalizeEffectiveSchema(state, node, deferFreeze);
+ };
+diff --git a/packages/canard/schema-form/src/core/blueprint/utils/effectiveSchema/utils/mergeSchemaContributions/utils/mergeSingleStaticContribution.ts b/packages/canard/schema-form/src/core/blueprint/utils/effectiveSchema/utils/mergeSchemaContributions/utils/mergeSingleStaticContribution.ts
+index 550303d42..6555a4730 100644
+--- a/packages/canard/schema-form/src/core/blueprint/utils/effectiveSchema/utils/mergeSchemaContributions/utils/mergeSingleStaticContribution.ts
++++ b/packages/canard/schema-form/src/core/blueprint/utils/effectiveSchema/utils/mergeSchemaContributions/utils/mergeSingleStaticContribution.ts
+@@ -6,6 +6,8 @@ import type {
+   EffectiveSchemaOptions,
+   PropertyDeclaration,
+ } from '../../../../../type';
++import { freezeEffectiveSchema } from '../../freezeEffectiveSchema';
++import { OwnedSchemaValues } from '../../OwnedSchemaValues';
+ 
+ /**
+  * Build hints only after a sole static contribution proves intersection unnecessary.
+@@ -18,6 +20,7 @@ export const mergeSingleStaticContribution = (
+   node: BlueprintNode,
+   declarations: readonly PropertyDeclaration[],
+   options: EffectiveSchemaOptions,
++  deferFreeze = false,
+ ): EffectiveSchema | undefined => {
+   if (options.mode !== 'static' || options.isAtomic !== undefined ||
+     options.collect !== undefined || node.nullable || node.kind === 'virtual' ||
+@@ -48,16 +51,24 @@ export const mergeSingleStaticContribution = (
+       const controls: Record<string, unknown> = {};
+       if (sourceControls.watch !== undefined) controls.watch = sourceControls.watch;
+       if (sourceControls.default !== undefined) controls.default = sourceControls.default;
+-      if (Object.keys(controls).length) schema.controls = controls;
++      if (Object.keys(controls).length) {
++        schema.controls = controls;
++        OwnedSchemaValues.add(controls);
++      }
+     } else if (key === 'readOnly') schema.readOnly = value === true;
+     else if (key === 'required' && isArray(value)) {
+       const required: unknown[] = [];
+       for (let item = 0; item < value.length; item++)
+         if (item in value && value.indexOf(value[item]) === item) required.push(value[item]);
+       schema.required = required;
+-    } else if (key === 'allOf' && isArray(value)) schema.allOf = [...value];
++      OwnedSchemaValues.add(required);
++    } else if (key === 'allOf' && isArray(value)) {
++      schema.allOf = [...value];
++      OwnedSchemaValues.add(schema.allOf as object);
++    }
+     else schema[key] = value;
+   }
+   schema.type = node.schemaType;
+-  return Object.freeze({ schema: Object.freeze(schema), typeConflict: false });
++  const result = { schema, typeConflict: false };
++  return deferFreeze ? result : freezeEffectiveSchema(result);
+ };
+diff --git a/packages/canard/schema-form/src/core/blueprint/utils/itemEntry/getItemEntry.ts b/packages/canard/schema-form/src/core/blueprint/utils/itemEntry/getItemEntry.ts
+index 80ea23d8f..ccab9ab7a 100644
+--- a/packages/canard/schema-form/src/core/blueprint/utils/itemEntry/getItemEntry.ts
++++ b/packages/canard/schema-form/src/core/blueprint/utils/itemEntry/getItemEntry.ts
+@@ -3,6 +3,8 @@ import { getItemSchemaPath } from './getItemEntry/utils/getItemSchemaPath';
+ 
+ /** Entries belong to immutable templates and are allocated only for requested slots. */
+ const ENTRIES = new WeakMap<BlueprintNode, (BlueprintChildEntry | undefined)[]>();
++/** Lazy entries apply the module-time commit protection policy when first requested. */
++const DEVELOPMENT = process.env.NODE_ENV !== 'production';
+ 
+ /**
+  * Bind an array slot to its reusable item template without creating a runtime node.
+@@ -27,9 +29,10 @@ export const getItemEntry = (
+   }
+   const name = String(index);
+   const schemaPath = getItemSchemaPath(template, index, node);
+-  const declarations = Object.freeze(
+-    node.declarations.map((declaration) =>
+-      Object.freeze({
++  const declarations = [];
++  for (let index = 0; index < node.declarations.length; index++) {
++    const declaration = node.declarations[index];
++    const binding = {
+         ...declaration,
+         name,
+         path: node.path,
+@@ -38,15 +41,18 @@ export const getItemEntry = (
+           declaration.schemaPath === node.schemaPath
+             ? schemaPath
+             : declaration.schemaPath,
+-      }),
+-    ),
+-  );
+-  const entry = Object.freeze({
++      };
++    if (DEVELOPMENT) Object.freeze(binding);
++    declarations.push(binding);
++  }
++  if (DEVELOPMENT) Object.freeze(declarations);
++  const entry = {
+     name,
+     node,
+     hostPath: template.path,
+     declarations,
+-  });
++  };
++  if (DEVELOPMENT) Object.freeze(entry);
+   entries[index] = entry;
+   return entry;
+ };
+diff --git a/packages/canard/schema-form/vite.config.ts b/packages/canard/schema-form/vite.config.ts
+index a2593e389..cce75e885 100644
+--- a/packages/canard/schema-form/vite.config.ts
++++ b/packages/canard/schema-form/vite.config.ts
+@@ -25,6 +25,7 @@ const react18Aliases = [
+ }));
+ 
+ export default defineConfig({
++  cacheDir: '/private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles/vite103',
+   resolve: {
+     alias: {
+       '@/schema-form': resolve(__dirname, './src'),
+@@ -94,6 +95,18 @@ export default defineConfig({
+           },
+         },
+       },
++      {
++        extends: true,
++        test: {
++          name: 'production',
++          environment: 'jsdom',
++          env: { NODE_ENV: 'production' },
++          include: [
++            'src/core/blueprint/__tests__/productionFreeze.test.ts',
++            'src/__tests__/e2e/production-freeze.test.tsx',
++          ],
++        },
++      },
+       {
+         extends: true,
+         plugins: [storybookTest({ configDir: resolve(__dirname, '.storybook') })],
+diff --git a/packages/canard/schema-form/src/core/blueprint/utils/freezeBlueprintValues/utils/freezeBlueprintValue.ts b/packages/canard/schema-form/src/core/blueprint/utils/freezeBlueprintValues/utils/freezeBlueprintValue.ts
+new file mode 100644
+--- /dev/null
++++ b/packages/canard/schema-form/src/core/blueprint/utils/freezeBlueprintValues/utils/freezeBlueprintValue.ts
+@@ -0,0 +1,14 @@
++import { FrozenBlueprintValues } from './FrozenBlueprintValues';
++
++/**
++ * Shallowly freeze one producer-owned value once across all completed aliases.
++ * @param value - A new analysis value, never an authored consumer object.
++ * @returns The identical value with its own properties protected.
++ */
++export const freezeBlueprintValue = <Value extends object>(value: Value): Value => {
++  if (!FrozenBlueprintValues.has(value)) {
++    FrozenBlueprintValues.add(value);
++    Object.freeze(value);
++  }
++  return value;
++};
+diff --git a/packages/canard/schema-form/src/core/blueprint/utils/freezeBlueprintValues/utils/FrozenBlueprintValues.ts b/packages/canard/schema-form/src/core/blueprint/utils/freezeBlueprintValues/utils/FrozenBlueprintValues.ts
+new file mode 100644
+--- /dev/null
++++ b/packages/canard/schema-form/src/core/blueprint/utils/freezeBlueprintValues/utils/FrozenBlueprintValues.ts
+@@ -0,0 +1,2 @@
++/** Weak completion index stops at aliases without retaining their ownership graphs. */
++export const FrozenBlueprintValues = new WeakSet<object>();
+diff --git a/packages/canard/schema-form/src/core/blueprint/utils/freezeBlueprintValues/utils/freezeBlueprintGate.ts b/packages/canard/schema-form/src/core/blueprint/utils/freezeBlueprintValues/utils/freezeBlueprintGate.ts
+new file mode 100644
+--- /dev/null
++++ b/packages/canard/schema-form/src/core/blueprint/utils/freezeBlueprintValues/utils/freezeBlueprintGate.ts
+@@ -0,0 +1,19 @@
++import type { BlueprintGate } from '../../../type';
++import { freezeBlueprintValue } from './freezeBlueprintValue';
++import { FrozenBlueprintValues } from './FrozenBlueprintValues';
++
++/**
++ * Complete shared gate metadata without entering its authored condition graph.
++ * @param gate - Producer-owned gate with generated evaluation reads.
++ * @returns Nothing; freezes only the gate and its generated discriminator metadata.
++ */
++export const freezeBlueprintGate = (gate: BlueprintGate): void => {
++  if (FrozenBlueprintValues.has(gate)) return;
++  freezeBlueprintValue(gate.evaluationReads);
++  if (gate.kind === 'discriminator') {
++    const condition = gate.condition as { values: readonly unknown[] };
++    freezeBlueprintValue(condition.values);
++    freezeBlueprintValue(condition);
++  }
++  freezeBlueprintValue(gate);
++};
+diff --git a/packages/canard/schema-form/src/core/blueprint/utils/freezeBlueprintValues/utils/freezeBlueprintDeclarations.ts b/packages/canard/schema-form/src/core/blueprint/utils/freezeBlueprintValues/utils/freezeBlueprintDeclarations.ts
+new file mode 100644
+--- /dev/null
++++ b/packages/canard/schema-form/src/core/blueprint/utils/freezeBlueprintValues/utils/freezeBlueprintDeclarations.ts
+@@ -0,0 +1,24 @@
++import type { PropertyDeclaration } from '../../../type';
++import { freezeBlueprintGate } from './freezeBlueprintGate';
++import { freezeBlueprintValue } from './freezeBlueprintValue';
++
++/** Bundlers remove owned-record protection only for the production build. */
++const DEVELOPMENT = process.env.NODE_ENV !== 'production';
++
++/**
++ * Finish one owned declaration list while retaining shared gate protections.
++ * @param declarations - Node-owned or binding-owned records with authored schema references.
++ * @returns Nothing; never freezes schemas, conditions or other authored children.
++ */
++export const freezeBlueprintDeclarations = (declarations: readonly PropertyDeclaration[]): void => {
++  for (let index = 0; index < declarations.length; index++) {
++    const declaration = declarations[index];
++    const gates = declaration.gates;
++    for (let gate = 0; gate < gates.length; gate++) freezeBlueprintGate(gates[gate]);
++    if (DEVELOPMENT) {
++      freezeBlueprintValue(gates);
++      freezeBlueprintValue(declaration);
++    }
++  }
++  if (DEVELOPMENT) freezeBlueprintValue(declarations);
++};
+diff --git a/packages/canard/schema-form/src/core/blueprint/utils/freezeBlueprintValues/freezeBlueprintValues.ts b/packages/canard/schema-form/src/core/blueprint/utils/freezeBlueprintValues/freezeBlueprintValues.ts
+new file mode 100644
+--- /dev/null
++++ b/packages/canard/schema-form/src/core/blueprint/utils/freezeBlueprintValues/freezeBlueprintValues.ts
+@@ -0,0 +1,72 @@
++import { isArray } from '@winglet/common-utils/filter';
++
++import type { Blueprint } from '../../type';
++import type { AnalysisContext } from '../analyze/type';
++import { DEFAULT_NO_ACTIVE } from '../effectiveSchema/utils/constant';
++import { freezeEffectiveSchema } from '../effectiveSchema/utils/freezeEffectiveSchema';
++import { freezeBlueprintDeclarations } from './utils/freezeBlueprintDeclarations';
++import { freezeBlueprintGate } from './utils/freezeBlueprintGate';
++import { freezeBlueprintValue } from './utils/freezeBlueprintValue';
++
++/** Module-time environment selection is identical to the commit delivery mechanism. */
++const DEVELOPMENT = process.env.NODE_ENV !== 'production';
++
++/**
++ * Publish all completed analysis records with shallow, ownership-specific protection.
++ * @param context - Finished invocation graph; transient schema folds are not retained targets.
++ * @param result - Stable blueprint assembled from this context without copying fields.
++ * @returns Nothing; preserves every reference and never traverses authored values.
++ */
++export const freezeBlueprintValues = (context: AnalysisContext, result: Blueprint): void => {
++  for (let index = 0; index < context.fragments.length; index++) {
++    const fragment = context.fragments[index];
++    freezeBlueprintValue(fragment.order);
++    freezeBlueprintValue(fragment.gates);
++    for (let gate = 0; gate < fragment.gates.length; gate++)
++      freezeBlueprintGate(fragment.gates[gate]);
++    if (DEVELOPMENT) {
++      freezeBlueprintValue(fragment.declares);
++      freezeBlueprintValue(fragment.overlays);
++      freezeBlueprintValue(fragment.inheritedOverlays);
++      freezeBlueprintValue(fragment.children);
++      freezeBlueprintValue(fragment);
++    }
++  }
++  for (let index = 0; index < context.nodes.length; index++) {
++    const node = context.nodes[index];
++    if (isArray(node.schemaType)) freezeBlueprintValue(node.schemaType);
++    const effective = DEFAULT_NO_ACTIVE.get(node);
++    if (effective) freezeEffectiveSchema(effective);
++    freezeBlueprintDeclarations(node.declarations);
++    if (node.kind === 'virtual') freezeBlueprintValue(node.declarations);
++    const entries = node.childEntries;
++    for (let entry = 0; entry < entries.length; entry++) {
++      const child = entries[entry];
++      freezeBlueprintDeclarations(child.declarations);
++      if (DEVELOPMENT || node.kind === 'virtual') freezeBlueprintValue(child);
++    }
++    if (DEVELOPMENT) {
++      if (node.fields) freezeBlueprintValue(node.fields);
++      if (node.prefixItems) freezeBlueprintValue(node.prefixItems);
++      freezeBlueprintValue(entries);
++      freezeBlueprintValue(node);
++    }
++  }
++  if (DEVELOPMENT) {
++    for (let index = 0; index < context.declarations.length; index++)
++      freezeBlueprintValue(context.declarations[index]);
++    for (let index = 0; index < result.expressions.length; index++) {
++      const expression = result.expressions[index];
++      freezeBlueprintValue(expression.dependencies);
++      freezeBlueprintValue(expression);
++    }
++    const ids = Object.values(result.dependencies);
++    for (let index = 0; index < ids.length; index++) freezeBlueprintValue(ids[index]);
++    freezeBlueprintValue(result.expressions);
++    freezeBlueprintValue(result.dependencies);
++    freezeBlueprintValue(context.capabilities);
++    freezeBlueprintValue(context.nodes);
++    freezeBlueprintValue(context.fragments);
++    freezeBlueprintValue(result);
++  }
++};
+diff --git a/packages/canard/schema-form/src/core/blueprint/utils/effectiveSchema/utils/OwnedSchemaValues.ts b/packages/canard/schema-form/src/core/blueprint/utils/effectiveSchema/utils/OwnedSchemaValues.ts
+new file mode 100644
+--- /dev/null
++++ b/packages/canard/schema-form/src/core/blueprint/utils/effectiveSchema/utils/OwnedSchemaValues.ts
+@@ -0,0 +1,2 @@
++/** Only producer-created public containers and clause/hint copies enter this weak index. */
++export const OwnedSchemaValues = new WeakSet<object>();
+diff --git a/packages/canard/schema-form/src/core/blueprint/utils/effectiveSchema/utils/freezeEffectiveSchema.ts b/packages/canard/schema-form/src/core/blueprint/utils/effectiveSchema/utils/freezeEffectiveSchema.ts
+new file mode 100644
+--- /dev/null
++++ b/packages/canard/schema-form/src/core/blueprint/utils/effectiveSchema/utils/freezeEffectiveSchema.ts
+@@ -0,0 +1,36 @@
++import { isArray } from '@winglet/common-utils/filter';
++
++import type { EffectiveSchema } from '../../../type';
++import { freezeBlueprintValue } from '../../freezeBlueprintValues/utils/freezeBlueprintValue';
++import { OwnedSchemaValues } from './OwnedSchemaValues';
++
++/** Bundlers replace this module-time predicate, matching commit payload protection. */
++const DEVELOPMENT = process.env.NODE_ENV !== 'production';
++/** The public container vocabulary is fixed; authored graphs are never traversed. */
++const OWNED_KEYS = ['required', 'allOf', 'enum', 'controls', 'options', 'presentation', 'type'];
++
++/**
++ * Complete a retained static or newly created runtime result without deep freezing.
++ * @param result - Finished result whose producer has registered its new containers.
++ * @returns The identical result, with public owned values protected in either mode.
++ */
++export const freezeEffectiveSchema = (result: EffectiveSchema): EffectiveSchema => {
++  const schema = result.schema;
++  if (typeof schema === 'object') {
++    for (let index = 0; index < OWNED_KEYS.length; index++) {
++      const value = schema[OWNED_KEYS[index]];
++      if (value && typeof value === 'object' && OwnedSchemaValues.has(value))
++        freezeBlueprintValue(value);
++    }
++    const clauses = schema.allOf;
++    if (isArray(clauses))
++      for (let index = 0; index < clauses.length; index++) {
++        const clause = clauses[index];
++        if (clause && typeof clause === 'object' && OwnedSchemaValues.has(clause))
++          freezeBlueprintValue(clause);
++      }
++    freezeBlueprintValue(schema);
++  }
++  if (DEVELOPMENT) freezeBlueprintValue(result);
++  return result;
++};
+diff --git a/packages/canard/schema-form/src/core/blueprint/__tests__/productionFreeze.test.ts b/packages/canard/schema-form/src/core/blueprint/__tests__/productionFreeze.test.ts
+new file mode 100644
+--- /dev/null
++++ b/packages/canard/schema-form/src/core/blueprint/__tests__/productionFreeze.test.ts
+@@ -0,0 +1,218 @@
++import { createElement } from 'react';
++import { describe, expect, it, vi } from 'vitest';
++
++import { blueprint } from '../blueprint';
++import type { BlueprintSchema } from '../type';
++import { mergeEffectiveSchema } from '../utils/effectiveSchema/mergeEffectiveSchema';
++import { mergeSchemaContributions } from '../utils/effectiveSchema/utils/mergeSchemaContributions';
++import { getFeatureNodeIndex } from '../utils/features/getFeatureNodeIndex/getFeatureNodeIndex';
++import { getItemEntry } from '../utils/itemEntry/getItemEntry';
++
++const DEVELOPMENT = process.env.NODE_ENV !== 'production';
++
++describe('102C-01 shallow blueprint ownership', () => {
++  it('loads the React build selected before importing React', () => {
++    expect('_store' in createElement('span')).toBe(DEVELOPMENT);
++  });
++
++  it('protects new public containers without freezing authored values', () => {
++    const authoredClause = { description: 'authored' };
++    const authoredEnum = [{ value: 1 }, { value: 2 }];
++    const nested = { retained: { a: 1 } };
++    const defaults = { value: 1 };
++    const schema = {
++      type: 'object', required: ['a'], allOf: [authoredClause],
++      controls: { default: defaults, watch: ['/a'] },
++      options: { omitEmpty: true, virtual: {} }, presentation: { nested },
++      properties: { a: { type: 'string', enum: authoredEnum, pattern: 'a' } },
++    } as unknown as BlueprintSchema;
++    const graph = blueprint(schema);
++    const value = mergeEffectiveSchema(graph.root, []);
++    const effective = value.schema as Record<string, unknown>;
++    expect(Object.isFrozen(effective)).toBe(true);
++    for (const key of ['required', 'allOf', 'controls', 'options'])
++      expect(Object.isFrozen(effective[key]), key).toBe(true);
++    expect(mergeEffectiveSchema(graph.root, [])).toBe(value);
++    for (const authored of [schema, authoredClause, authoredEnum, ...authoredEnum, nested, nested.retained, defaults])
++      expect(Object.isFrozen(authored)).toBe(false);
++    const child = mergeEffectiveSchema(graph.nodes.find(node => node.path === '/a')!, []);
++    expect((child.schema as Record<string, unknown>).enum).toBe(authoredEnum);
++    expect(Object.isFrozen(value)).toBe(DEVELOPMENT);
++  });
++
++  it('freezes only new intersection enum and pattern or exclusive clauses', () => {
++    const schema = {
++      type: 'string', enum: ['a', 'b'], pattern: 'a',
++      allOf: [{ enum: ['b', 'c'], pattern: 'b', minimum: 1, exclusiveMinimum: true }],
++    } as unknown as BlueprintSchema;
++    const node = blueprint(schema).root;
++    const effective = mergeEffectiveSchema(node, []).schema as Record<string, unknown>;
++    expect(Object.isFrozen(effective.enum)).toBe(true);
++    expect(Object.isFrozen(effective.allOf)).toBe(true);
++    const clauses = effective.allOf as Record<string, unknown>[];
++    expect(clauses.slice(1).filter(clause => clause.pattern === 'b' || clause.exclusiveMinimum === true)).toHaveLength(2);
++    expect(clauses.slice(1).filter(clause => clause.pattern === 'b' || clause.exclusiveMinimum === true)
++      .every(clause => Object.isFrozen(clause))).toBe(true);
++    expect(Object.isFrozen((schema as Record<string, unknown>).enum)).toBe(false);
++    expect(Object.isFrozen(clauses[0])).toBe(false);
++  });
++
++  it('freezes newly narrowed type and runtime empty enum arrays', () => {
++    const graph = blueprint({ type: ['string', 'number'], oneOf: [
++      { type: 'string', const: 'a', controls: { active: true } },
++      { type: 'string', const: 'b', controls: { active: true } },
++    ] } as BlueprintSchema);
++    const ids = graph.root.declarations.filter(value => value.gates.length).map(value => value.id);
++    const effective = mergeEffectiveSchema(graph.root, ids).schema as Record<string, unknown>;
++    expect(Object.isFrozen(graph.root.schemaType)).toBe(true);
++    expect(effective.type).toEqual(['string']);
++    expect(effective.enum).toEqual([]);
++    expect(Object.isFrozen(effective.type)).toBe(true);
++    expect(Object.isFrozen(effective.enum)).toBe(true);
++  });
++
++  it('protects shared order, gates and their evaluation metadata', () => {
++    const graph = blueprint({ type: 'object', properties: {
++      text: { type: 'string', controls: { active: '../enabled === true' } },
++      enabled: { type: 'boolean', controls: { active: true } },
++    } } as BlueprintSchema);
++    for (const fragment of graph.fragments) {
++      expect(Object.isFrozen(fragment.order)).toBe(true);
++      expect(Object.isFrozen(fragment.gates)).toBe(true);
++      for (const gate of fragment.gates) {
++        expect(Object.isFrozen(gate)).toBe(true);
++        expect(Object.isFrozen(gate.evaluationReads)).toBe(true);
++      }
++    }
++    expect(Object.isFrozen(graph.expressions)).toBe(DEVELOPMENT);
++    for (const expression of graph.expressions) {
++      expect(Object.isFrozen(expression)).toBe(DEVELOPMENT);
++      expect(Object.isFrozen(expression.dependencies)).toBe(DEVELOPMENT);
++    }
++    expect(Object.isFrozen(graph.dependencies)).toBe(DEVELOPMENT);
++    for (const ids of Object.values(graph.dependencies))
++      expect(Object.isFrozen(ids)).toBe(DEVELOPMENT);
++  });
++
++  it('protects discriminator descriptors while retaining authored object enum elements', () => {
++    const first = { tag: 1 }, second = { tag: 2 };
++    const graph = blueprint({ type: 'object', controls: { discriminator: 'kind' }, oneOf: [
++      { properties: { kind: { type: 'object', enum: [first] } } },
++      { properties: { kind: { type: 'object', enum: [second] } } },
++    ] } as unknown as BlueprintSchema);
++    for (const fragment of graph.fragments) for (const gate of fragment.gates) {
++      if (gate.kind !== 'discriminator') continue;
++      expect(Object.isFrozen(gate)).toBe(true);
++      expect(gate.evaluationReads).toEqual([]);
++      expect(Object.isFrozen(gate.evaluationReads)).toBe(true);
++      const descriptor = gate.condition as { values: unknown[] };
++      expect(Object.isFrozen(descriptor)).toBe(true);
++      expect(Object.isFrozen(descriptor.values)).toBe(true);
++    }
++    expect(Object.isFrozen(first)).toBe(false);
++    expect(Object.isFrozen(second)).toBe(false);
++  });
++
++  it('distinguishes shared virtual entries from singly owned internal records', () => {
++    const graph = blueprint({ type: 'object', properties: { a: { type: 'string' } },
++      options: { virtual: { group: { fields: ['a'] } } },
++    } as BlueprintSchema);
++    const virtual = graph.nodes.find(node => node.kind === 'virtual')!;
++    expect(Object.isFrozen(virtual.fields)).toBe(DEVELOPMENT);
++    expect(Object.isFrozen(virtual.declarations)).toBe(true);
++    expect(Object.isFrozen(virtual.childEntries[0])).toBe(true);
++    expect(virtual.childEntries[0]).toBe(graph.root.childEntries[0]);
++    expect(Object.isFrozen(virtual.childEntries[0].declarations)).toBe(DEVELOPMENT);
++    expect(Object.isFrozen(graph)).toBe(DEVELOPMENT);
++    expect(Object.isFrozen(graph.capabilities)).toBe(DEVELOPMENT);
++    expect(Object.isFrozen(graph.nodes)).toBe(DEVELOPMENT);
++    expect(Object.isFrozen(graph.fragments)).toBe(DEVELOPMENT);
++    for (const node of graph.nodes) {
++      expect(Object.isFrozen(node)).toBe(DEVELOPMENT);
++      expect(Object.isFrozen(node.declarations)).toBe(node.kind === 'virtual' ? true : DEVELOPMENT);
++      expect(Object.isFrozen(node.childEntries)).toBe(DEVELOPMENT);
++      for (const declaration of node.declarations)
++        expect(Object.isFrozen(declaration)).toBe(DEVELOPMENT);
++    }
++    for (const fragment of graph.fragments) {
++      expect(Object.isFrozen(fragment)).toBe(DEVELOPMENT);
++      for (const list of [fragment.declares, fragment.overlays, fragment.inheritedOverlays, fragment.children])
++        expect(Object.isFrozen(list)).toBe(DEVELOPMENT);
++    }
++  });
++
++  it('keeps shared empty values and false-schema envelopes frozen', () => {
++    const graph = blueprint({ type: 'string' });
++    expect(Object.isFrozen(graph.expressions)).toBe(true);
++    expect(Object.isFrozen(graph.dependencies)).toBe(true);
++    expect(Object.isFrozen(getFeatureNodeIndex(graph))).toBe(true);
++    expect(Object.isFrozen(mergeSchemaContributions(graph.root,
++      [{ ...graph.root.declarations[0], schema: false }], {}))).toBe(true);
++  });
++
++  it('freezes lazy slot records only in development without freezing borrowed arrays again', () => {
++    const graph = blueprint({ type: 'array', items: { type: 'string' } });
++    const calls = vi.spyOn(Object, 'freeze');
++    try {
++      const entry = getItemEntry(graph.root, 7)!;
++      expect(Object.isFrozen(entry)).toBe(DEVELOPMENT);
++      expect(Object.isFrozen(entry.declarations)).toBe(DEVELOPMENT);
++      expect(Object.isFrozen(entry.declarations[0])).toBe(DEVELOPMENT);
++      expect(Object.isFrozen(entry.declarations[0].order)).toBe(true);
++      expect(Object.isFrozen(entry.declarations[0].gates)).toBe(true);
++      expect(getItemEntry(graph.root, 7)).toBe(entry);
++      expect(calls.mock.calls.length).toBe(DEVELOPMENT ? 3 : 0);
++    } finally { calls.mockRestore(); }
++  });
++
++  it('counts one freeze per completion target and three public/shared values per flat node in production', () => {
++    const calls = vi.spyOn(Object, 'freeze');
++    try {
++      const graph = blueprint({ type: 'object', properties: { a: { type: 'string' } } });
++      const values = calls.mock.calls.map(call => call[0]);
++      expect(values.every((value, index) => values.indexOf(value) === index)).toBe(true);
++      expect(values.length / graph.nodes.length).toBe(DEVELOPMENT ? 17 : 3);
++    } finally { calls.mockRestore(); }
++  });
++
++  it('protects a merged hint root while leaving its new nested copies mutable', () => {
++    const left = { first: { value: 1 } }, right = { second: { value: 2 } };
++    const graph = blueprint({ type: 'string', presentation: { nested: left },
++      allOf: [{ presentation: { nested: right } }],
++    } as BlueprintSchema);
++    const schema = mergeEffectiveSchema(graph.root, []).schema as Record<string, unknown>;
++    const hints = schema.presentation as { nested: object };
++    expect(Object.isFrozen(hints)).toBe(true);
++    expect(Object.isFrozen(hints.nested)).toBe(false);
++    expect(Object.isFrozen(left)).toBe(false);
++    expect(Object.isFrozen(right)).toBe(false);
++  });
++
++  it('protects only shared internals within ordinary bindings and tuple records', () => {
++    const graph = blueprint({ type: 'array', prefixItems: [
++      { type: 'object', properties: { child: { type: 'string', oneOf: [{ type: 'string' }] } } },
++    ] });
++    expect(Object.isFrozen(graph.root.prefixItems)).toBe(DEVELOPMENT);
++    const child = graph.nodes.find(node => node.kind === 'object')!.childEntries[0];
++    expect(child.node.declarations.some(value => value.validationOnly)).toBe(true);
++    for (const declaration of child.node.declarations)
++      expect(Object.isFrozen(declaration)).toBe(DEVELOPMENT);
++    expect(Object.isFrozen(child)).toBe(DEVELOPMENT);
++    expect(Object.isFrozen(child.declarations)).toBe(DEVELOPMENT);
++    expect(Object.isFrozen(child.declarations[0])).toBe(DEVELOPMENT);
++    expect(Object.isFrozen(child.declarations[0].gates)).toBe(DEVELOPMENT);
++    expect(Object.isFrozen(child.declarations[0].order)).toBe(true);
++  });
++
++  it('freezes warning envelopes and generated terminal keys or paths only in development', () => {
++    const diagnostics: { details: Readonly<Record<string, unknown>> }[] = [];
++    blueprint({ type: 'object', properties: { child: {
++      type: 'string', controls: { visible: true },
++    } } }, { isTerminal: () => true, collect: value => diagnostics.push(value) });
++    const terminal = diagnostics.find(value => value.details.keys)!;
++    expect(terminal).toBeDefined();
++    expect(Object.isFrozen(terminal)).toBe(DEVELOPMENT);
++    expect(Object.isFrozen(terminal.details.keys)).toBe(DEVELOPMENT);
++    expect(Object.isFrozen(terminal.details.paths)).toBe(DEVELOPMENT);
++  });
++});
+diff --git a/packages/canard/schema-form/src/__tests__/e2e/production-freeze.test.tsx b/packages/canard/schema-form/src/__tests__/e2e/production-freeze.test.tsx
+new file mode 100644
+--- /dev/null
++++ b/packages/canard/schema-form/src/__tests__/e2e/production-freeze.test.tsx
+@@ -0,0 +1,109 @@
++import { Suspense, createElement, createRef, lazy, useState } from 'react';
++import { flushSync } from 'react-dom';
++import { createRoot } from 'react-dom/client';
++import { describe, expect, it } from 'vitest';
++
++import { Form, type FormHandle, type FormTypeInputProps, type FormTypeRendererProps, type JSONSchema } from '@/schema-form';
++import { schemaNodeFactory, mountSchemaNode } from '@/schema-form/core';
++import { blueprint, getItemEntry } from '@/schema-form/core/blueprint';
++import type { BlueprintNode } from '@/schema-form/core/blueprint';
++
++const DEVELOPMENT = process.env.NODE_ENV !== 'production';
++/** Render the authored label through the public renderer-props contract. */
++const Label = ({ label }: FormTypeRendererProps) => <>{label}</>;
++
++describe('102C-01 consumer render values', () => {
++  it('renders an inline lazy input without freezing its mutable React payload', async () => {
++    expect('_store' in createElement('span')).toBe(DEVELOPMENT);
++    const Input = lazy(async () => ({ default: ({ value }: FormTypeInputProps) =>
++      <input data-lazy value={value ?? ''} readOnly /> }));
++    const schema: JSONSchema = { type: 'string', presentation: { FormTypeInput: Input } };
++    const container = document.createElement('div');
++    document.body.append(container);
++    const root = createRoot(container);
++    try {
++      flushSync(() => root.render(<Suspense fallback={<span>loading</span>}>
++        <Form jsonSchema={schema} defaultValue="loaded" />
++      </Suspense>));
++      for (let index = 0; index < 60 && !container.querySelector('[data-lazy]'); index++)
++        await new Promise(resolve => setTimeout(resolve, 10));
++      expect(container.querySelector<HTMLInputElement>('[data-lazy]')?.value).toBe('loaded');
++      expect(Object.isFrozen(Input)).toBe(false);
++      expect(Object.isFrozen((Input as unknown as { _payload: object })._payload)).toBe(false);
++    } finally { flushSync(() => root.unmount()); container.remove(); }
++  });
++
++  it('renders a JSX label created during render and supports a later React update', async () => {
++    let update: ((value: number) => void) | undefined;
++    const labels: unknown[] = [];
++    const Consumer = () => {
++      const [value, setValue] = useState(0);
++      update = setValue;
++      const label = <span data-label>label-{value}</span>;
++      labels.push(label);
++      return <Form key={value} FormTypeLabelRenderer={Label} jsonSchema={{ type: 'string', presentation: { FormTypeRendererProps: { label } } }}>
++        <Form.Label path="" /><Form.Input path="" />
++      </Form>;
++    };
++    const container = document.createElement('div');
++    document.body.append(container);
++    const root = createRoot(container);
++    try {
++      flushSync(() => root.render(<Consumer />));
++      expect(container.querySelector('[data-label]')?.textContent).toBe('label-0');
++      flushSync(() => update!(1));
++      await new Promise(resolve => setTimeout(resolve, 0));
++      expect(container.querySelector('[data-label]')?.textContent).toBe('label-1');
++      for (const label of labels) {
++        const element = label as { _store?: object };
++        if (element._store) expect(Object.isFrozen(element._store)).toBe(false);
++      }
++    } finally { flushSync(() => root.unmount()); container.remove(); }
++  });
++
++  it('creates a new array slot after mount and reuses its completed entry', async () => {
++    const schema: JSONSchema = { type: 'array', items: { type: 'string' } };
++    const first = createRef<FormHandle>(), second = createRef<FormHandle>();
++    const container = document.createElement('div');
++    document.body.append(container);
++    const root = createRoot(container);
++    try {
++      flushSync(() => root.render(<><Form ref={first} jsonSchema={schema} defaultValue={[]} />
++        <Form ref={second} jsonSchema={schema} defaultValue={[]} /></>));
++      first.current!.setValue(['new']);
++      await new Promise(resolve => setTimeout(resolve, 0));
++      const node = first.current!.findNode('')!;
++      const template = (node as unknown as { blueprintNode: BlueprintNode }).blueprintNode;
++      const entry = getItemEntry(template, 0)!;
++      expect(first.current!.getValue()).toEqual(['new']);
++      expect(Object.isFrozen(entry)).toBe(DEVELOPMENT);
++      expect(Object.isFrozen(entry.declarations)).toBe(DEVELOPMENT);
++      expect(Object.isFrozen(entry.declarations[0])).toBe(DEVELOPMENT);
++      expect(Object.isFrozen(entry.declarations[0].order)).toBe(true);
++      expect(Object.isFrozen(entry.declarations[0].gates)).toBe(true);
++      second.current!.setValue(['other']);
++      await new Promise(resolve => setTimeout(resolve, 0));
++      const other = second.current!.findNode('')!;
++      const otherTemplate = (other as unknown as { blueprintNode: BlueprintNode }).blueprintNode;
++      const otherEntry = getItemEntry(otherTemplate, 0)!;
++      expect(Object.isFrozen(otherEntry)).toBe(DEVELOPMENT);
++      expect(getItemEntry(otherTemplate, 0)).toBe(otherEntry);
++      expect(getItemEntry(template, 0)).toBe(entry);
++    } finally { flushSync(() => root.unmount()); container.remove(); }
++  });
++
++  it('reuses a post-mount slot when two mounted hosts share the same blueprint', () => {
++    const graph = blueprint({ type: 'array', items: { type: 'string' } });
++    const first = schemaNodeFactory(graph, { loadSnapshot: [], diagnostics: { status: 'stable' } });
++    const second = schemaNodeFactory(graph, { loadSnapshot: [], diagnostics: { status: 'stable' } });
++    mountSchemaNode(first);
++    mountSchemaNode(second);
++    first.setValue(['first']);
++    const entry = getItemEntry(graph.root, 0)!;
++    second.setValue(['second']);
++    expect(getItemEntry((second as unknown as { blueprintNode: BlueprintNode }).blueprintNode, 0)).toBe(entry);
++    expect(Object.isFrozen(entry)).toBe(DEVELOPMENT);
++    expect(first.value).toEqual(['first']);
++    expect(second.value).toEqual(['second']);
++  });
++});

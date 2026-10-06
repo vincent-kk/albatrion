@@ -1,0 +1,1455 @@
+{
+  "developmentCounts": [
+    {
+      "head": "a21a8003f",
+      "variant": "head",
+      "name": "nested-d5-f4",
+      "development": true,
+      "nodes": 1365,
+      "calls": 26276,
+      "distinct": 26276,
+      "freezesPerNode": 19.24981684981685,
+      "phases": {
+        "analysis": 23205,
+        "completion": 0,
+        "runtime": 3071
+      },
+      "aliasCalls": 0,
+      "primitiveCalls": 0
+    },
+    {
+      "head": "a21a8003f",
+      "variant": "head",
+      "name": "flat-500",
+      "development": true,
+      "nodes": 501,
+      "calls": 9520,
+      "distinct": 9520,
+      "freezesPerNode": 19.001996007984033,
+      "phases": {
+        "analysis": 8517,
+        "completion": 0,
+        "runtime": 1003
+      },
+      "aliasCalls": 0,
+      "primitiveCalls": 0
+    },
+    {
+      "head": "a21a8003f",
+      "variant": "head",
+      "name": "oneOf-20",
+      "development": true,
+      "nodes": 63,
+      "calls": 1341,
+      "distinct": 1341,
+      "freezesPerNode": 21.285714285714285,
+      "phases": {
+        "analysis": 1314,
+        "completion": 0,
+        "runtime": 27
+      },
+      "aliasCalls": 0,
+      "primitiveCalls": 0
+    },
+    {
+      "head": "a21a8003f",
+      "variant": "head",
+      "name": "sample-0",
+      "development": true,
+      "nodes": 3,
+      "calls": 58,
+      "distinct": 58,
+      "freezesPerNode": 19.333333333333332,
+      "phases": {
+        "analysis": 51,
+        "completion": 0,
+        "runtime": 7
+      },
+      "aliasCalls": 0,
+      "primitiveCalls": 0
+    },
+    {
+      "head": "a21a8003f",
+      "variant": "working",
+      "name": "nested-d5-f4",
+      "development": true,
+      "nodes": 1365,
+      "calls": 26276,
+      "distinct": 26276,
+      "freezesPerNode": 19.24981684981685,
+      "phases": {
+        "analysis": 0,
+        "completion": 23205,
+        "runtime": 3071
+      },
+      "aliasCalls": 0,
+      "primitiveCalls": 0
+    },
+    {
+      "head": "a21a8003f",
+      "variant": "working",
+      "name": "flat-500",
+      "development": true,
+      "nodes": 501,
+      "calls": 9520,
+      "distinct": 9520,
+      "freezesPerNode": 19.001996007984033,
+      "phases": {
+        "analysis": 0,
+        "completion": 8517,
+        "runtime": 1003
+      },
+      "aliasCalls": 0,
+      "primitiveCalls": 0
+    },
+    {
+      "head": "a21a8003f",
+      "variant": "working",
+      "name": "oneOf-20",
+      "development": true,
+      "nodes": 63,
+      "calls": 1219,
+      "distinct": 1219,
+      "freezesPerNode": 19.349206349206348,
+      "phases": {
+        "analysis": 0,
+        "completion": 1192,
+        "runtime": 27
+      },
+      "aliasCalls": 0,
+      "primitiveCalls": 0
+    },
+    {
+      "head": "a21a8003f",
+      "variant": "working",
+      "name": "sample-0",
+      "development": true,
+      "nodes": 3,
+      "calls": 59,
+      "distinct": 59,
+      "freezesPerNode": 19.666666666666668,
+      "phases": {
+        "analysis": 0,
+        "completion": 52,
+        "runtime": 7
+      },
+      "aliasCalls": 0,
+      "primitiveCalls": 0
+    }
+  ],
+  "productReverted": true,
+  "verificationScope": "복원된 HEAD와 보존한 호환성 시험",
+  "stopPoint": "oneOf-20 예상 282개에는 버려지는 정적 schema 61개가 포함됩니다. 운영 실측은 221개입니다.",
+  "head": "a21a8003f",
+  "adopted": false,
+  "noiseRule": "max(1us, forced no-op absolute median gain/paired median, empty residual p95 + 1999 bootstrap 99% median-error sum); improvement in all three forced runs; any forced run can veto; steady is record-only",
+  "rows": [
+    {
+      "name": "nested-d5-f4",
+      "mode": "mount",
+      "headMs": 8.797749000000294,
+      "workingMs": 9.427875000000313,
+      "gainMs": -0.48895800000036616,
+      "pairedMedianMs": -0.6744989999997415,
+      "noOpNoiseMs": 0.3448339999997643,
+      "maxNoiseMs": 0.6635019999999372,
+      "aboveNoise": false,
+      "regressionAboveNoise": true,
+      "measurements": [
+        {
+          "run": 1,
+          "headMs": 8.788999999999703,
+          "workingMs": 9.27795800000007,
+          "gainMs": -0.48895800000036616,
+          "pairedMedianMs": -0.6744989999997415,
+          "noiseMs": 0.5920419999992816,
+          "pairedMedianInterval": [
+            -0.9568749999998545,
+            -0.49375000000009095
+          ],
+          "gcInside": 0
+        },
+        {
+          "run": 2,
+          "headMs": 8.797749000000294,
+          "workingMs": 9.427875000000313,
+          "gainMs": -0.6301260000000184,
+          "pairedMedianMs": -0.8010839999999462,
+          "noiseMs": 0.6117060000001402,
+          "pairedMedianInterval": [
+            -0.9528749999994943,
+            -0.6238749999997708
+          ],
+          "gcInside": 0
+        },
+        {
+          "run": 3,
+          "headMs": 9.762001000000168,
+          "workingMs": 10.163834000000065,
+          "gainMs": -0.40183299999989686,
+          "pairedMedianMs": -0.5837080000001151,
+          "noiseMs": 0.6635019999999372,
+          "pairedMedianInterval": [
+            -0.8928329999998823,
+            -0.4466659999998228
+          ],
+          "gcInside": 0
+        }
+      ],
+      "steady": {
+        "runs": 6,
+        "samplesPerVersion": 606,
+        "baselineFirst": 3,
+        "candidateFirst": 3,
+        "pooledHeadMs": 6.2465429999998605,
+        "pooledWorkingMs": 6.527291999999903,
+        "pooledGainMs": -0.28074900000004277,
+        "runsDetail": [
+          {
+            "run": 1,
+            "blockOrder": "H-first",
+            "headMs": 6.282916000000029,
+            "workingMs": 6.475499999999926,
+            "gainMs": -0.19258399999989706
+          },
+          {
+            "run": 2,
+            "blockOrder": "W-first",
+            "headMs": 6.27129200000013,
+            "workingMs": 7.387875000000008,
+            "gainMs": -1.1165829999998778
+          },
+          {
+            "run": 3,
+            "blockOrder": "H-first",
+            "headMs": 6.589625000000041,
+            "workingMs": 6.497001000000154,
+            "gainMs": 0.09262399999988702
+          },
+          {
+            "run": 4,
+            "blockOrder": "W-first",
+            "headMs": 6.169083999999998,
+            "workingMs": 6.484874999999988,
+            "gainMs": -0.31579099999999016
+          },
+          {
+            "run": 5,
+            "blockOrder": "H-first",
+            "headMs": 6.452209000000153,
+            "workingMs": 6.575542000000269,
+            "gainMs": -0.12333300000011604
+          },
+          {
+            "run": 6,
+            "blockOrder": "W-first",
+            "headMs": 6.323249999999604,
+            "workingMs": 7.310291000000035,
+            "gainMs": -0.9870410000004313
+          }
+        ]
+      }
+    },
+    {
+      "name": "flat-500",
+      "mode": "mount",
+      "headMs": 3.1330830000001697,
+      "workingMs": 3.234501000000023,
+      "gainMs": -0.1221250000000964,
+      "pairedMedianMs": -0.12079099999994014,
+      "noOpNoiseMs": 0.03325000000018008,
+      "maxNoiseMs": 0.09016699999972388,
+      "aboveNoise": false,
+      "regressionAboveNoise": true,
+      "measurements": [
+        {
+          "run": 1,
+          "headMs": 3.4240000000002055,
+          "workingMs": 3.569250000000011,
+          "gainMs": -0.14524999999980537,
+          "pairedMedianMs": -0.14099999999984902,
+          "noiseMs": 0.060666000000651366,
+          "pairedMedianInterval": [
+            -0.16904100000010658,
+            -0.1145010000000184
+          ],
+          "gcInside": 0
+        },
+        {
+          "run": 2,
+          "headMs": 3.1330830000001697,
+          "workingMs": 3.203875000000153,
+          "gainMs": -0.07079199999998309,
+          "pairedMedianMs": -0.06245800000010604,
+          "noiseMs": 0.09016699999972388,
+          "pairedMedianInterval": [
+            -0.08741699999995944,
+            -0.0437090000000353
+          ],
+          "gcInside": 0
+        },
+        {
+          "run": 3,
+          "headMs": 3.1123759999999265,
+          "workingMs": 3.234501000000023,
+          "gainMs": -0.1221250000000964,
+          "pairedMedianMs": -0.12079099999994014,
+          "noiseMs": 0.06775100000004386,
+          "pairedMedianInterval": [
+            -0.13508200000001125,
+            -0.08541600000012295
+          ],
+          "gcInside": 0
+        }
+      ],
+      "steady": {
+        "runs": 6,
+        "samplesPerVersion": 606,
+        "baselineFirst": 3,
+        "candidateFirst": 3,
+        "pooledHeadMs": 1.835958000000005,
+        "pooledWorkingMs": 1.9257919999999729,
+        "pooledGainMs": -0.08983399999996777,
+        "runsDetail": [
+          {
+            "run": 1,
+            "blockOrder": "H-first",
+            "headMs": 1.8756250000000705,
+            "workingMs": 1.863834000000054,
+            "gainMs": 0.011791000000016538
+          },
+          {
+            "run": 2,
+            "blockOrder": "W-first",
+            "headMs": 1.8002500000001191,
+            "workingMs": 1.928625000000011,
+            "gainMs": -0.12837499999989177
+          },
+          {
+            "run": 3,
+            "blockOrder": "H-first",
+            "headMs": 1.885124999999988,
+            "workingMs": 1.8684590000000014,
+            "gainMs": 0.016665999999986525
+          },
+          {
+            "run": 4,
+            "blockOrder": "W-first",
+            "headMs": 1.7889170000000263,
+            "workingMs": 1.965291000000036,
+            "gainMs": -0.1763740000000098
+          },
+          {
+            "run": 5,
+            "blockOrder": "H-first",
+            "headMs": 1.8399169999999856,
+            "workingMs": 1.8797920000000943,
+            "gainMs": -0.039875000000108685
+          },
+          {
+            "run": 6,
+            "blockOrder": "W-first",
+            "headMs": 1.8342910000000074,
+            "workingMs": 1.9995419999999626,
+            "gainMs": -0.16525099999995518
+          }
+        ]
+      }
+    },
+    {
+      "name": "oneOf-20",
+      "mode": "mount",
+      "headMs": 2.0903749999999945,
+      "workingMs": 2.0717509999999493,
+      "gainMs": 0.003040999999939231,
+      "pairedMedianMs": 0.005125000000020918,
+      "noOpNoiseMs": 0.0211659999999938,
+      "maxNoiseMs": 0.0827510000001439,
+      "aboveNoise": false,
+      "regressionAboveNoise": false,
+      "measurements": [
+        {
+          "run": 1,
+          "headMs": 2.052249999999958,
+          "workingMs": 2.049209000000019,
+          "gainMs": 0.003040999999939231,
+          "pairedMedianMs": 0.005125000000020918,
+          "noiseMs": 0.05308199999979024,
+          "pairedMedianInterval": [
+            -0.013499999999908141,
+            0.03370800000004692
+          ],
+          "gcInside": 0
+        },
+        {
+          "run": 2,
+          "headMs": 2.0903749999999945,
+          "workingMs": 2.0717509999999493,
+          "gainMs": 0.01862400000004527,
+          "pairedMedianMs": 0.015208000000029642,
+          "noiseMs": 0.0827510000001439,
+          "pairedMedianInterval": [
+            -0.0013330000000451037,
+            0.056582999999932326
+          ],
+          "gcInside": 0
+        },
+        {
+          "run": 3,
+          "headMs": 2.284166000000141,
+          "workingMs": 2.2991669999998976,
+          "gainMs": -0.01500099999975646,
+          "pairedMedianMs": -0.007624999999961801,
+          "noiseMs": 0.06250099999996905,
+          "pairedMedianInterval": [
+            -0.03308199999992212,
+            0.020834000000036212
+          ],
+          "gcInside": 0
+        }
+      ],
+      "steady": {
+        "runs": 6,
+        "samplesPerVersion": 606,
+        "baselineFirst": 3,
+        "candidateFirst": 3,
+        "pooledHeadMs": 1.147958000000017,
+        "pooledWorkingMs": 1.1422910000000002,
+        "pooledGainMs": 0.005667000000016742,
+        "runsDetail": [
+          {
+            "run": 1,
+            "blockOrder": "H-first",
+            "headMs": 1.1822500000000105,
+            "workingMs": 1.107249999999965,
+            "gainMs": 0.07500000000004547
+          },
+          {
+            "run": 2,
+            "blockOrder": "W-first",
+            "headMs": 1.0979990000000157,
+            "workingMs": 1.2162910000000124,
+            "gainMs": -0.11829199999999673
+          },
+          {
+            "run": 3,
+            "blockOrder": "H-first",
+            "headMs": 1.2196249999999793,
+            "workingMs": 1.0652920000000279,
+            "gainMs": 0.15433299999995143
+          },
+          {
+            "run": 4,
+            "blockOrder": "W-first",
+            "headMs": 1.1071670000000609,
+            "workingMs": 1.1856670000000236,
+            "gainMs": -0.07849999999996271
+          },
+          {
+            "run": 5,
+            "blockOrder": "H-first",
+            "headMs": 1.2220410000000186,
+            "workingMs": 1.0758750000000248,
+            "gainMs": 0.1461659999999938
+          },
+          {
+            "run": 6,
+            "blockOrder": "W-first",
+            "headMs": 1.0685840000000155,
+            "workingMs": 1.1976250000000448,
+            "gainMs": -0.12904100000002927
+          }
+        ]
+      }
+    },
+    {
+      "name": "sample-0",
+      "mode": "mount",
+      "headMs": 0.13429099999996197,
+      "workingMs": 0.13770800000008876,
+      "gainMs": -0.0017090000000052896,
+      "pairedMedianMs": -0.0025830000000723885,
+      "noOpNoiseMs": 0.001458999999954358,
+      "maxNoiseMs": 0.021416999999814834,
+      "aboveNoise": false,
+      "regressionAboveNoise": false,
+      "measurements": [
+        {
+          "run": 1,
+          "headMs": 0.14041600000001608,
+          "workingMs": 0.14212500000002137,
+          "gainMs": -0.0017090000000052896,
+          "pairedMedianMs": -0.000873999999953412,
+          "noiseMs": 0.021248999999983198,
+          "pairedMedianInterval": [
+            -0.004499000000009801,
+            0.0008339999999407155
+          ],
+          "gcInside": 0
+        },
+        {
+          "run": 2,
+          "headMs": 0.13429099999996197,
+          "workingMs": 0.13770800000008876,
+          "gainMs": -0.003417000000126791,
+          "pairedMedianMs": -0.0025830000000723885,
+          "noiseMs": 0.020331000000084032,
+          "pairedMedianInterval": [
+            -0.004459000000224478,
+            -5.684341886080802e-14
+          ],
+          "gcInside": 0
+        },
+        {
+          "run": 3,
+          "headMs": 0.13312499999994998,
+          "workingMs": 0.13400000000001455,
+          "gainMs": -0.0008750000000645741,
+          "pairedMedianMs": -0.0026669999999739957,
+          "noiseMs": 0.021416999999814834,
+          "pairedMedianInterval": [
+            -0.0033740000000079817,
+            -0.0008330000000569271
+          ],
+          "gcInside": 0
+        }
+      ],
+      "steady": {
+        "runs": 6,
+        "samplesPerVersion": 606,
+        "baselineFirst": 3,
+        "candidateFirst": 3,
+        "pooledHeadMs": 0.03841799999997875,
+        "pooledWorkingMs": 0.039625999999998385,
+        "pooledGainMs": -0.0012080000000196378,
+        "runsDetail": [
+          {
+            "run": 1,
+            "blockOrder": "H-first",
+            "headMs": 0.03970899999998778,
+            "workingMs": 0.03691699999998832,
+            "gainMs": 0.0027919999999994616
+          },
+          {
+            "run": 2,
+            "blockOrder": "W-first",
+            "headMs": 0.03495900000001484,
+            "workingMs": 0.04179200000001515,
+            "gainMs": -0.006833000000000311
+          },
+          {
+            "run": 3,
+            "blockOrder": "H-first",
+            "headMs": 0.043000000000006366,
+            "workingMs": 0.039125000000041155,
+            "gainMs": 0.003874999999965212
+          },
+          {
+            "run": 4,
+            "blockOrder": "W-first",
+            "headMs": 0.03399899999999434,
+            "workingMs": 0.04216699999997786,
+            "gainMs": -0.008167999999983522
+          },
+          {
+            "run": 5,
+            "blockOrder": "H-first",
+            "headMs": 0.03945800000002464,
+            "workingMs": 0.036875000000009095,
+            "gainMs": 0.002583000000015545
+          },
+          {
+            "run": 6,
+            "blockOrder": "W-first",
+            "headMs": 0.03799999999998249,
+            "workingMs": 0.043250000000000455,
+            "gainMs": -0.0052500000000179625
+          }
+        ]
+      }
+    },
+    {
+      "name": "sample-0",
+      "mode": "first",
+      "headMs": 0.09187500000007276,
+      "workingMs": 0.09350000000006276,
+      "gainMs": -0.0016249999999899956,
+      "pairedMedianMs": -0.0006250000000136424,
+      "noOpNoiseMs": 0.0007070000001476728,
+      "maxNoiseMs": 0.018583000000006678,
+      "aboveNoise": false,
+      "regressionAboveNoise": false,
+      "measurements": [
+        {
+          "run": 1,
+          "headMs": 0.09187500000007276,
+          "workingMs": 0.09350000000006276,
+          "gainMs": -0.0016249999999899956,
+          "pairedMedianMs": -0.0011670000000663094,
+          "noiseMs": 0.01645799999991482,
+          "pairedMedianInterval": [
+            -0.0019170000000485743,
+            0.00029200000005857873
+          ],
+          "gcInside": 0
+        },
+        {
+          "run": 2,
+          "headMs": 0.09254300000009152,
+          "workingMs": 0.0938340000000153,
+          "gainMs": -0.0012909999999237698,
+          "pairedMedianMs": -0.0006250000000136424,
+          "noiseMs": 0.01412700000003042,
+          "pairedMedianInterval": [
+            -0.0029579999999214124,
+            0.0005830000000059954
+          ],
+          "gcInside": 0
+        },
+        {
+          "run": 3,
+          "headMs": 0.08912499999999568,
+          "workingMs": 0.09137499999999932,
+          "gainMs": -0.002250000000003638,
+          "pairedMedianMs": 0.00016699999997626946,
+          "noiseMs": 0.018583000000006678,
+          "pairedMedianInterval": [
+            -0.0019579999999450592,
+            0.0017089999998916028
+          ],
+          "gcInside": 0
+        }
+      ],
+      "steady": {
+        "runs": 6,
+        "samplesPerVersion": 606,
+        "baselineFirst": 3,
+        "candidateFirst": 3,
+        "pooledHeadMs": 0.026249999999976126,
+        "pooledWorkingMs": 0.02595799999997439,
+        "pooledGainMs": 0.0002920000000017353,
+        "runsDetail": [
+          {
+            "run": 1,
+            "blockOrder": "H-first",
+            "headMs": 0.025708000000008724,
+            "workingMs": 0.025666999999998552,
+            "gainMs": 0.00004100000001017179
+          },
+          {
+            "run": 2,
+            "blockOrder": "W-first",
+            "headMs": 0.025207999999992126,
+            "workingMs": 0.02549999999999386,
+            "gainMs": -0.0002920000000017353
+          },
+          {
+            "run": 3,
+            "blockOrder": "H-first",
+            "headMs": 0.026332999999993945,
+            "workingMs": 0.025417000000004464,
+            "gainMs": 0.0009159999999894808
+          },
+          {
+            "run": 4,
+            "blockOrder": "W-first",
+            "headMs": 0.025457999999986214,
+            "workingMs": 0.02683299999998212,
+            "gainMs": -0.0013749999999959073
+          },
+          {
+            "run": 5,
+            "blockOrder": "H-first",
+            "headMs": 0.026750000000021146,
+            "workingMs": 0.025543000000027405,
+            "gainMs": 0.0012069999999937409
+          },
+          {
+            "run": 6,
+            "blockOrder": "W-first",
+            "headMs": 0.02808400000000688,
+            "workingMs": 0.027457999999995764,
+            "gainMs": 0.0006260000000111177
+          }
+        ]
+      }
+    },
+    {
+      "name": "sample-0",
+      "mode": "later",
+      "headMs": 0.08616600000016206,
+      "workingMs": 0.08562400000005255,
+      "gainMs": -0.00016699999991942605,
+      "pairedMedianMs": -5.684341886080802e-14,
+      "noOpNoiseMs": 0.0013749999999390639,
+      "maxNoiseMs": 0.016667000000040844,
+      "aboveNoise": false,
+      "regressionAboveNoise": false,
+      "measurements": [
+        {
+          "run": 1,
+          "headMs": 0.08754199999987122,
+          "workingMs": 0.08820899999989251,
+          "gainMs": -0.0006670000000212895,
+          "pairedMedianMs": 0.00008300000013150566,
+          "noiseMs": 0.014416000000096574,
+          "pairedMedianInterval": [
+            -0.0013739999999415886,
+            0.0013330000000451037
+          ],
+          "gcInside": 0
+        },
+        {
+          "run": 2,
+          "headMs": 0.08533299999999144,
+          "workingMs": 0.08549999999991087,
+          "gainMs": -0.00016699999991942605,
+          "pairedMedianMs": -0.00004200000006449045,
+          "noiseMs": 0.014292999999668154,
+          "pairedMedianInterval": [
+            -0.0018749999999840838,
+            0.0013750000000527507
+          ],
+          "gcInside": 0
+        },
+        {
+          "run": 3,
+          "headMs": 0.08616600000016206,
+          "workingMs": 0.08562400000005255,
+          "gainMs": 0.0005420000001095104,
+          "pairedMedianMs": -5.684341886080802e-14,
+          "noiseMs": 0.016667000000040844,
+          "pairedMedianInterval": [
+            -0.0019579999999450592,
+            0.002250000000003638
+          ],
+          "gcInside": 0
+        }
+      ],
+      "steady": {
+        "runs": 6,
+        "samplesPerVersion": 606,
+        "baselineFirst": 3,
+        "candidateFirst": 3,
+        "pooledHeadMs": 0.017749999999978172,
+        "pooledWorkingMs": 0.017916999999982863,
+        "pooledGainMs": -0.00016700000000469117,
+        "runsDetail": [
+          {
+            "run": 1,
+            "blockOrder": "H-first",
+            "headMs": 0.01729100000002859,
+            "workingMs": 0.01791600000001381,
+            "gainMs": -0.0006249999999852207
+          },
+          {
+            "run": 2,
+            "blockOrder": "W-first",
+            "headMs": 0.017292999999995118,
+            "workingMs": 0.016708999999991647,
+            "gainMs": 0.0005840000000034706
+          },
+          {
+            "run": 3,
+            "blockOrder": "H-first",
+            "headMs": 0.017917000000011285,
+            "workingMs": 0.017500000000012506,
+            "gainMs": 0.00041699999999877946
+          },
+          {
+            "run": 4,
+            "blockOrder": "W-first",
+            "headMs": 0.018832999999972344,
+            "workingMs": 0.016416999999989912,
+            "gainMs": 0.002415999999982432
+          },
+          {
+            "run": 5,
+            "blockOrder": "H-first",
+            "headMs": 0.016625000000004775,
+            "workingMs": 0.0196250000000191,
+            "gainMs": -0.0030000000000143245
+          },
+          {
+            "run": 6,
+            "blockOrder": "W-first",
+            "headMs": 0.01841699999999946,
+            "workingMs": 0.018958999999966863,
+            "gainMs": -0.0005419999999674019
+          }
+        ]
+      }
+    },
+    {
+      "name": "oneOf-40",
+      "mode": "first",
+      "headMs": 1.4692909999998847,
+      "workingMs": 1.5136249999997062,
+      "gainMs": -0.047416999999995824,
+      "pairedMedianMs": -0.03766700000005585,
+      "noOpNoiseMs": 0.005458000000089669,
+      "maxNoiseMs": 0.08091699999968682,
+      "aboveNoise": false,
+      "regressionAboveNoise": false,
+      "measurements": [
+        {
+          "run": 1,
+          "headMs": 1.4737079999998741,
+          "workingMs": 1.4959159999999656,
+          "gainMs": -0.022208000000091488,
+          "pairedMedianMs": -0.029167000000143162,
+          "noiseMs": 0.05754199999995535,
+          "pairedMedianInterval": [
+            -0.04879099999993741,
+            0.002832999999554886
+          ],
+          "gcInside": 0
+        },
+        {
+          "run": 2,
+          "headMs": 1.4692909999998847,
+          "workingMs": 1.5167079999998805,
+          "gainMs": -0.047416999999995824,
+          "pairedMedianMs": -0.03766700000005585,
+          "noiseMs": 0.07154100000010999,
+          "pairedMedianInterval": [
+            -0.058500999999978376,
+            0.0031249999999545253
+          ],
+          "gcInside": 0
+        },
+        {
+          "run": 3,
+          "headMs": 1.4661249999996926,
+          "workingMs": 1.5136249999997062,
+          "gainMs": -0.04750000000001364,
+          "pairedMedianMs": -0.04349999999999454,
+          "noiseMs": 0.08091699999968682,
+          "pairedMedianInterval": [
+            -0.05908300000010058,
+            -0.010751000000027489
+          ],
+          "gcInside": 0
+        }
+      ],
+      "steady": {
+        "runs": 6,
+        "samplesPerVersion": 606,
+        "baselineFirst": 3,
+        "candidateFirst": 3,
+        "pooledHeadMs": 0.9357909999999663,
+        "pooledWorkingMs": 0.8858340000000169,
+        "pooledGainMs": 0.0499569999999494,
+        "runsDetail": [
+          {
+            "run": 1,
+            "blockOrder": "H-first",
+            "headMs": 0.9427089999999794,
+            "workingMs": 0.8883339999999862,
+            "gainMs": 0.05437499999999318
+          },
+          {
+            "run": 2,
+            "blockOrder": "W-first",
+            "headMs": 0.9402089999999816,
+            "workingMs": 0.8867089999999962,
+            "gainMs": 0.05349999999998545
+          },
+          {
+            "run": 3,
+            "blockOrder": "H-first",
+            "headMs": 0.9317079999999862,
+            "workingMs": 0.8834590000000446,
+            "gainMs": 0.04824899999994159
+          },
+          {
+            "run": 4,
+            "blockOrder": "W-first",
+            "headMs": 0.9530409999999563,
+            "workingMs": 0.8907079999999894,
+            "gainMs": 0.06233299999996689
+          },
+          {
+            "run": 5,
+            "blockOrder": "H-first",
+            "headMs": 0.9166670000000465,
+            "workingMs": 0.8872919999999738,
+            "gainMs": 0.02937500000007276
+          },
+          {
+            "run": 6,
+            "blockOrder": "W-first",
+            "headMs": 0.9400420000000622,
+            "workingMs": 0.8831250000000637,
+            "gainMs": 0.05691699999999855
+          }
+        ]
+      }
+    },
+    {
+      "name": "oneOf-40",
+      "mode": "later",
+      "headMs": 0.4551250000000664,
+      "workingMs": 0.44883400000000506,
+      "gainMs": 0.006250000000022737,
+      "pairedMedianMs": 0.008124999999949978,
+      "noOpNoiseMs": 0.004375000000095497,
+      "maxNoiseMs": 0.027250000000265118,
+      "aboveNoise": false,
+      "regressionAboveNoise": false,
+      "measurements": [
+        {
+          "run": 1,
+          "headMs": 0.45887500000003456,
+          "workingMs": 0.44583300000010695,
+          "gainMs": 0.013041999999927611,
+          "pairedMedianMs": 0.010207999999920503,
+          "noiseMs": 0.027250000000265118,
+          "pairedMedianInterval": [
+            0.004707999999936874,
+            0.01375000000007276
+          ],
+          "gcInside": 0
+        },
+        {
+          "run": 2,
+          "headMs": 0.4550839999999141,
+          "workingMs": 0.44883400000000506,
+          "gainMs": 0.0062499999999090505,
+          "pairedMedianMs": 0.008124999999949978,
+          "noiseMs": 0.02662600000007842,
+          "pairedMedianInterval": [
+            0.0035000000001446097,
+            0.01133399999980611
+          ],
+          "gcInside": 0
+        },
+        {
+          "run": 3,
+          "headMs": 0.4551250000000664,
+          "workingMs": 0.44887500000004366,
+          "gainMs": 0.006250000000022737,
+          "pairedMedianMs": 0.0062499999999090505,
+          "noiseMs": 0.022499999999809006,
+          "pairedMedianInterval": [
+            0.0027079999999841675,
+            0.010541999999986729
+          ],
+          "gcInside": 0
+        }
+      ],
+      "steady": {
+        "runs": 6,
+        "samplesPerVersion": 606,
+        "baselineFirst": 3,
+        "candidateFirst": 3,
+        "pooledHeadMs": 0.23912399999997547,
+        "pooledWorkingMs": 0.23308300000005033,
+        "pooledGainMs": 0.006040999999925134,
+        "runsDetail": [
+          {
+            "run": 1,
+            "blockOrder": "H-first",
+            "headMs": 0.24212499999998727,
+            "workingMs": 0.23399900000003981,
+            "gainMs": 0.008125999999947453
+          },
+          {
+            "run": 2,
+            "blockOrder": "W-first",
+            "headMs": 0.24237499999998136,
+            "workingMs": 0.2317499999999768,
+            "gainMs": 0.010625000000004547
+          },
+          {
+            "run": 3,
+            "blockOrder": "H-first",
+            "headMs": 0.24087500000001683,
+            "workingMs": 0.2290840000000287,
+            "gainMs": 0.011790999999988117
+          },
+          {
+            "run": 4,
+            "blockOrder": "W-first",
+            "headMs": 0.2346239999999966,
+            "workingMs": 0.23516599999999244,
+            "gainMs": -0.0005419999999958236
+          },
+          {
+            "run": 5,
+            "blockOrder": "H-first",
+            "headMs": 0.23912399999997547,
+            "workingMs": 0.23029099999999403,
+            "gainMs": 0.008832999999981439
+          },
+          {
+            "run": 6,
+            "blockOrder": "W-first",
+            "headMs": 0.23891599999998903,
+            "workingMs": 0.2445419999999956,
+            "gainMs": -0.00562600000000657
+          }
+        ]
+      }
+    },
+    {
+      "name": "nested-d5-f4",
+      "mode": "first",
+      "headMs": 0.19199999999946726,
+      "workingMs": 0.17295900000036113,
+      "gainMs": 0.019040999999106134,
+      "pairedMedianMs": 0.04645799999980227,
+      "noOpNoiseMs": 0.06554200000027777,
+      "maxNoiseMs": 0.1316250000009802,
+      "aboveNoise": false,
+      "regressionAboveNoise": false,
+      "measurements": [
+        {
+          "run": 1,
+          "headMs": 0.19433400000033885,
+          "workingMs": 0.1570430000000158,
+          "gainMs": 0.03729100000032304,
+          "pairedMedianMs": 0.06454200000007404,
+          "noiseMs": 0.1316250000009802,
+          "pairedMedianInterval": [
+            -0.0820419999997739,
+            0.08000000000015461
+          ],
+          "gcInside": 0
+        },
+        {
+          "run": 2,
+          "headMs": 0.1721250000000225,
+          "workingMs": 0.2019580000000758,
+          "gainMs": -0.02983300000005329,
+          "pairedMedianMs": -0.05087500000036016,
+          "noiseMs": 0.11899900000008756,
+          "pairedMedianInterval": [
+            -0.08074999999985266,
+            0.0805000000000291
+          ],
+          "gcInside": 0
+        },
+        {
+          "run": 3,
+          "headMs": 0.19199999999946726,
+          "workingMs": 0.17295900000036113,
+          "gainMs": 0.019040999999106134,
+          "pairedMedianMs": 0.04645799999980227,
+          "noiseMs": 0.11308199999908197,
+          "pairedMedianInterval": [
+            -0.08779200000026322,
+            0.08204200000000128
+          ],
+          "gcInside": 0
+        }
+      ],
+      "steady": {
+        "runs": 6,
+        "samplesPerVersion": 606,
+        "baselineFirst": 3,
+        "candidateFirst": 3,
+        "pooledHeadMs": 0.08479099999991035,
+        "pooledWorkingMs": 0.0927489999999409,
+        "pooledGainMs": -0.007958000000030552,
+        "runsDetail": [
+          {
+            "run": 1,
+            "blockOrder": "H-first",
+            "headMs": 0.07833299999995802,
+            "workingMs": 0.08691600000000221,
+            "gainMs": -0.008583000000044194
+          },
+          {
+            "run": 2,
+            "blockOrder": "W-first",
+            "headMs": 0.09145800000024451,
+            "workingMs": 0.0936670000000106,
+            "gainMs": -0.0022089999997660925
+          },
+          {
+            "run": 3,
+            "blockOrder": "H-first",
+            "headMs": 0.09191699999973935,
+            "workingMs": 0.09287499999982174,
+            "gainMs": -0.0009580000000823929
+          },
+          {
+            "run": 4,
+            "blockOrder": "W-first",
+            "headMs": 0.0834580000000642,
+            "workingMs": 0.09266599999972414,
+            "gainMs": -0.009207999999659933
+          },
+          {
+            "run": 5,
+            "blockOrder": "H-first",
+            "headMs": 0.0800410000000511,
+            "workingMs": 0.09374999999988631,
+            "gainMs": -0.013708999999835214
+          },
+          {
+            "run": 6,
+            "blockOrder": "W-first",
+            "headMs": 0.08112499999990064,
+            "workingMs": 0.09974899999994591,
+            "gainMs": -0.01862400000004527
+          }
+        ]
+      }
+    },
+    {
+      "name": "nested-d5-f4",
+      "mode": "later",
+      "headMs": 0.11133300000005875,
+      "workingMs": 0.10962500000016462,
+      "gainMs": 0.001248999999802436,
+      "pairedMedianMs": 0.0022499999997762643,
+      "noOpNoiseMs": 0.001374999999825377,
+      "maxNoiseMs": 0.01604199999985667,
+      "aboveNoise": false,
+      "regressionAboveNoise": false,
+      "measurements": [
+        {
+          "run": 1,
+          "headMs": 0.11016699999993307,
+          "workingMs": 0.1092919999998685,
+          "gainMs": 0.0008750000000645741,
+          "pairedMedianMs": 0.0011240000000043437,
+          "noiseMs": 0.01604199999985667,
+          "pairedMedianInterval": [
+            -0.0006249999998999556,
+            0.0030420000000503933
+          ],
+          "gcInside": 0
+        },
+        {
+          "run": 2,
+          "headMs": 0.11349999999998772,
+          "workingMs": 0.11225100000018529,
+          "gainMs": 0.001248999999802436,
+          "pairedMedianMs": 0.0028339999998934218,
+          "noiseMs": 0.013042999999782978,
+          "pairedMedianInterval": [
+            0.0005419999999958236,
+            0.0042089999999461725
+          ],
+          "gcInside": 0
+        },
+        {
+          "run": 3,
+          "headMs": 0.11133300000005875,
+          "workingMs": 0.10962500000016462,
+          "gainMs": 0.0017079999998941275,
+          "pairedMedianMs": 0.0022499999997762643,
+          "noiseMs": 0.012583000000063294,
+          "pairedMedianInterval": [
+            0,
+            0.0035830000000487416
+          ],
+          "gcInside": 0
+        }
+      ],
+      "steady": {
+        "runs": 6,
+        "samplesPerVersion": 606,
+        "baselineFirst": 3,
+        "candidateFirst": 3,
+        "pooledHeadMs": 0.03408400000000711,
+        "pooledWorkingMs": 0.03308299999997644,
+        "pooledGainMs": 0.0010010000000306718,
+        "runsDetail": [
+          {
+            "run": 1,
+            "blockOrder": "H-first",
+            "headMs": 0.03295799999997939,
+            "workingMs": 0.03254099999998061,
+            "gainMs": 0.00041699999999877946
+          },
+          {
+            "run": 2,
+            "blockOrder": "W-first",
+            "headMs": 0.034166999999996506,
+            "workingMs": 0.035333000000008496,
+            "gainMs": -0.0011660000000119908
+          },
+          {
+            "run": 3,
+            "blockOrder": "H-first",
+            "headMs": 0.035415999999997894,
+            "workingMs": 0.03308299999997644,
+            "gainMs": 0.002333000000021457
+          },
+          {
+            "run": 4,
+            "blockOrder": "W-first",
+            "headMs": 0.03350000000000364,
+            "workingMs": 0.031542000000001735,
+            "gainMs": 0.0019580000000019027
+          },
+          {
+            "run": 5,
+            "blockOrder": "H-first",
+            "headMs": 0.03374899999997183,
+            "workingMs": 0.031415999999978794,
+            "gainMs": 0.002332999999993035
+          },
+          {
+            "run": 6,
+            "blockOrder": "W-first",
+            "headMs": 0.035206999999985555,
+            "workingMs": 0.03395800000001259,
+            "gainMs": 0.0012489999999729662
+          }
+        ]
+      }
+    }
+  ],
+  "timerWorkers": 120,
+  "recordedProcesses": 164,
+  "maxWorkerMs": 4401,
+  "maxProcessMs": 63532,
+  "processesSequential": true,
+  "counts": [
+    {
+      "head": "a21a8003f",
+      "variant": "head",
+      "name": "nested-d5-f4",
+      "development": false,
+      "nodes": 1365,
+      "calls": 24911,
+      "distinct": 24911,
+      "freezesPerNode": 18.24981684981685,
+      "phases": {
+        "analysis": 23205,
+        "completion": 0,
+        "runtime": 1706
+      },
+      "aliasCalls": 0,
+      "primitiveCalls": 0
+    },
+    {
+      "head": "a21a8003f",
+      "variant": "head",
+      "name": "flat-500",
+      "development": false,
+      "nodes": 501,
+      "calls": 9019,
+      "distinct": 9019,
+      "freezesPerNode": 18.001996007984033,
+      "phases": {
+        "analysis": 8517,
+        "completion": 0,
+        "runtime": 502
+      },
+      "aliasCalls": 0,
+      "primitiveCalls": 0
+    },
+    {
+      "head": "a21a8003f",
+      "variant": "head",
+      "name": "oneOf-20",
+      "development": false,
+      "nodes": 63,
+      "calls": 1335,
+      "distinct": 1335,
+      "freezesPerNode": 21.19047619047619,
+      "phases": {
+        "analysis": 1314,
+        "completion": 0,
+        "runtime": 21
+      },
+      "aliasCalls": 0,
+      "primitiveCalls": 0
+    },
+    {
+      "head": "a21a8003f",
+      "variant": "head",
+      "name": "sample-0",
+      "development": false,
+      "nodes": 3,
+      "calls": 55,
+      "distinct": 55,
+      "freezesPerNode": 18.333333333333332,
+      "phases": {
+        "analysis": 51,
+        "completion": 0,
+        "runtime": 4
+      },
+      "aliasCalls": 0,
+      "primitiveCalls": 0
+    },
+    {
+      "head": "a21a8003f",
+      "variant": "working",
+      "name": "nested-d5-f4",
+      "development": false,
+      "nodes": 1365,
+      "calls": 5801,
+      "distinct": 5801,
+      "freezesPerNode": 4.24981684981685,
+      "phases": {
+        "analysis": 0,
+        "completion": 4095,
+        "runtime": 1706
+      },
+      "aliasCalls": 0,
+      "primitiveCalls": 0
+    },
+    {
+      "head": "a21a8003f",
+      "variant": "working",
+      "name": "flat-500",
+      "development": false,
+      "nodes": 501,
+      "calls": 2005,
+      "distinct": 2005,
+      "freezesPerNode": 4.001996007984032,
+      "phases": {
+        "analysis": 0,
+        "completion": 1503,
+        "runtime": 502
+      },
+      "aliasCalls": 0,
+      "primitiveCalls": 0
+    },
+    {
+      "head": "a21a8003f",
+      "variant": "working",
+      "name": "oneOf-20",
+      "development": false,
+      "nodes": 63,
+      "calls": 221,
+      "distinct": 221,
+      "freezesPerNode": 3.507936507936508,
+      "phases": {
+        "analysis": 0,
+        "completion": 208,
+        "runtime": 13
+      },
+      "aliasCalls": 0,
+      "primitiveCalls": 0
+    },
+    {
+      "head": "a21a8003f",
+      "variant": "working",
+      "name": "sample-0",
+      "development": false,
+      "nodes": 3,
+      "calls": 14,
+      "distinct": 14,
+      "freezesPerNode": 4.666666666666667,
+      "phases": {
+        "analysis": 0,
+        "completion": 10,
+        "runtime": 4
+      },
+      "aliasCalls": 0,
+      "primitiveCalls": 0
+    }
+  ],
+  "verification": [
+    {
+      "name": "vitest",
+      "command": [
+        "npx",
+        "vitest",
+        "run",
+        "--project",
+        "unit",
+        "--project",
+        "render",
+        "--project",
+        "react18",
+        "--reporter=dot"
+      ],
+      "cwd": "/Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/packages/canard/schema-form",
+      "started": 1791284250768,
+      "ended": 1791284314300,
+      "elapsedMs": 63532,
+      "status": 1,
+      "signal": null,
+      "naturalExit": true,
+      "bytes": 79983
+    },
+    {
+      "name": "production",
+      "command": [
+        "npx",
+        "vitest",
+        "run",
+        "--project",
+        "production",
+        "--reporter=dot"
+      ],
+      "cwd": "/Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/packages/canard/schema-form",
+      "started": 1791284326776,
+      "ended": 1791284330631,
+      "elapsedMs": 3855,
+      "status": 0,
+      "signal": null,
+      "naturalExit": true,
+      "bytes": 1518
+    },
+    {
+      "name": "tsc",
+      "command": [
+        "npx",
+        "tsc",
+        "--noEmit",
+        "--composite",
+        "false",
+        "--rootDir",
+        ".",
+        "-p",
+        "tsconfig.json"
+      ],
+      "cwd": "/Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/packages/canard/schema-form",
+      "started": 1791284330648,
+      "ended": 1791284338624,
+      "elapsedMs": 7976,
+      "status": 0,
+      "signal": null,
+      "naturalExit": true,
+      "bytes": 0
+    },
+    {
+      "name": "eslint",
+      "command": [
+        "npx",
+        "eslint",
+        "src/**/*.{ts,tsx}"
+      ],
+      "cwd": "/Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/packages/canard/schema-form",
+      "started": 1791284338640,
+      "ended": 1791284344116,
+      "elapsedMs": 5476,
+      "status": 0,
+      "signal": null,
+      "naturalExit": true,
+      "bytes": 0
+    },
+    {
+      "name": "legacy",
+      "command": [
+        "node",
+        "architecture/verification/07-switch/tools/check-legacy-isolation.mjs"
+      ],
+      "cwd": "/Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/packages/canard/schema-form",
+      "started": 1791284344142,
+      "ended": 1791284344557,
+      "elapsedMs": 415,
+      "status": 0,
+      "signal": null,
+      "naturalExit": true,
+      "bytes": 36
+    }
+  ],
+  "equivalence": {
+    "schemas": 59,
+    "captures": 118,
+    "nodes": 103,
+    "errors": 24,
+    "warningCases": 6
+  }
+}

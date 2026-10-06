@@ -1,0 +1,141 @@
+{
+  "head": "a21a8003f",
+  "rows": [
+    {
+      "head": "a21a8003f",
+      "variant": "head",
+      "name": "nested-d5-f4",
+      "development": true,
+      "nodes": 1365,
+      "calls": 26276,
+      "distinct": 26276,
+      "freezesPerNode": 19.24981684981685,
+      "phases": {
+        "analysis": 23205,
+        "completion": 0,
+        "runtime": 3071
+      },
+      "aliasCalls": 0,
+      "primitiveCalls": 0
+    },
+    {
+      "head": "a21a8003f",
+      "variant": "head",
+      "name": "flat-500",
+      "development": true,
+      "nodes": 501,
+      "calls": 9520,
+      "distinct": 9520,
+      "freezesPerNode": 19.001996007984033,
+      "phases": {
+        "analysis": 8517,
+        "completion": 0,
+        "runtime": 1003
+      },
+      "aliasCalls": 0,
+      "primitiveCalls": 0
+    },
+    {
+      "head": "a21a8003f",
+      "variant": "head",
+      "name": "oneOf-20",
+      "development": true,
+      "nodes": 63,
+      "calls": 1341,
+      "distinct": 1341,
+      "freezesPerNode": 21.285714285714285,
+      "phases": {
+        "analysis": 1314,
+        "completion": 0,
+        "runtime": 27
+      },
+      "aliasCalls": 0,
+      "primitiveCalls": 0
+    },
+    {
+      "head": "a21a8003f",
+      "variant": "head",
+      "name": "sample-0",
+      "development": true,
+      "nodes": 3,
+      "calls": 58,
+      "distinct": 58,
+      "freezesPerNode": 19.333333333333332,
+      "phases": {
+        "analysis": 51,
+        "completion": 0,
+        "runtime": 7
+      },
+      "aliasCalls": 0,
+      "primitiveCalls": 0
+    },
+    {
+      "head": "a21a8003f",
+      "variant": "working",
+      "name": "nested-d5-f4",
+      "development": true,
+      "nodes": 1365,
+      "calls": 26276,
+      "distinct": 26276,
+      "freezesPerNode": 19.24981684981685,
+      "phases": {
+        "analysis": 0,
+        "completion": 23205,
+        "runtime": 3071
+      },
+      "aliasCalls": 0,
+      "primitiveCalls": 0
+    },
+    {
+      "head": "a21a8003f",
+      "variant": "working",
+      "name": "flat-500",
+      "development": true,
+      "nodes": 501,
+      "calls": 9520,
+      "distinct": 9520,
+      "freezesPerNode": 19.001996007984033,
+      "phases": {
+        "analysis": 0,
+        "completion": 8517,
+        "runtime": 1003
+      },
+      "aliasCalls": 0,
+      "primitiveCalls": 0
+    },
+    {
+      "head": "a21a8003f",
+      "variant": "working",
+      "name": "oneOf-20",
+      "development": true,
+      "nodes": 63,
+      "calls": 1219,
+      "distinct": 1219,
+      "freezesPerNode": 19.349206349206348,
+      "phases": {
+        "analysis": 0,
+        "completion": 1192,
+        "runtime": 27
+      },
+      "aliasCalls": 0,
+      "primitiveCalls": 0
+    },
+    {
+      "head": "a21a8003f",
+      "variant": "working",
+      "name": "sample-0",
+      "development": true,
+      "nodes": 3,
+      "calls": 59,
+      "distinct": 59,
+      "freezesPerNode": 19.666666666666668,
+      "phases": {
+        "analysis": 0,
+        "completion": 52,
+        "runtime": 7
+      },
+      "aliasCalls": 0,
+      "primitiveCalls": 0
+    }
+  ]
+}

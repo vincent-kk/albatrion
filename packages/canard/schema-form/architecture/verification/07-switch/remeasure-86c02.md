@@ -2307,3 +2307,73 @@ PKG에서 지정 명령을 다시 실행한 최종 결과는 다음과 같습니
 새 측정 자료는 모두 `profile-102-work/` 아래에 있으며 최대 파일은 2,099,856바이트로 파일당 5MB 이하입니다. 번들·소스맵은 지정 `/private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles`에만 썼습니다. HEAD/control 비계수 SHA-256은 모두 `65098d72628706498ede33be3c15dccba32482597e7998bae92f9716b77f4300`, 판정 후보는 `e48d59fe2c61c589f1cd1fac1d580bfd42f2869ff08388a605a191c742a3d4e9`입니다. git 쓰기 명령·설치를 실행하지 않았으며 다른 에이전트의 `analysis-records-design.md`와 `analysis-records-design-verifier.md`는 수정하지 않았습니다.
 
 측정 재현은 [driver](profile-102-work/gate-results.mjs)에서 `--build <head|control|working|head-count|working-count>`, `--counts`, `--pairs <control|working> <fixture> <mount|first|later> forced`, `--pairs working <fixture> <mount|first|later> steady`를 **명령마다 순차** 실행하고 [요약기](profile-102-work/summarize-gate-results.mjs)를 실행하는 방식입니다. forced는 3회, steady는 6회를 한 명령이 자연 종료하도록 실행합니다. 현재 제품은 복원되었으므로 `--build working`만 실행하면 HEAD를 다시 측정하게 됩니다. 최종 후보를 재현하려면 보존한 패치를 HEAD 소스의 별도 scratch 복사본에 적용하여 같은 candidate SHA를 먼저 확인해야 합니다. 번들 출력 위치를 저장소 안으로 바꾸지 않습니다. 지정 검증 진입점은 `node architecture/verification/07-switch/profile-102-work/verify-gate-results.mjs <vitest|tsc|eslint|legacy>`이며 `GATES103_VERIFY_HEAD=1`로 복원 뒤 기록을 구분합니다.
+
+## 103라운드 운영 모드 동결 축소
+
+결정은 **제품 코드 복원**입니다. HEAD `a21a8003f`에 승인 설계 102C-01의 동결 단계 하나를 적용하여 측정했지만, verdict에서 잡음을 넘은 개선 행은 없었고 nested·flat mount가 회귀했습니다. steady는 순서 균형을 맞춘 pooled 값만 기록했으며 채택에는 사용하지 않았습니다. 제품 소스와 `blueprint/DETAIL.md`는 HEAD와 바이트가 같고, 후보 구현 및 당시의 정책 시험은 [후보 패치](profile-102-work/production-freeze-candidate.patch)에 보존했습니다. 남긴 실행 시험은 복원된 HEAD의 얕은 동결 계약을 검증합니다.
+
+### 적용한 정책과 비용
+
+기존 51개 표현식의 (1) 4개·(2) 13개·개발 전용 34개 분류를 적용했습니다. 공개 유효 schema·schemaType, 생성한 required/allOf/교차 enum·빈 enum 배열, controls 봉투, pattern/exclusive clause, hint 최상위 복사본과 공유 order/gates·gate/evaluationReads·discriminator descriptor/values·공통 빈 값은 양쪽 모드에서 얕게 보호했습니다. 소비자 작성 enum/const 원소·default·options/presentation의 빌린 값·함수·React lazy·JSX 및 merge가 만든 hint의 하위 복사본은 동결하지 않았습니다. 일반 내부 기록은 모듈 상수 `process.env.NODE_ENV !== 'production'`으로 분기했습니다. 가상 그룹이 빌린 일반 entry와 가상 선언 목록의 공유 예외를 유지했고, F47–F49는 mount 이후 첫 slot 생성 시 개발에서만 보호했습니다. 기록 동결은 청사진 완료로 모았으며, 보유되지 않는 정적 schema 결과는 완료 대상에서 제외했습니다. runtime 결과는 생성 완료에 같은 정책을 적용했습니다.
+
+시간 비용은 완료 기록 순회 O(보유 기록 수 + 생성 clause 수), 완료 값·소유 값의 WeakSet 조회입니다. 추가 메모리는 완료까지 원본 선언을 보관하는 임시 배열 O(선언 수), 소유권·alias 정지를 위한 모듈 WeakSet O(살아 있는 대상 수)입니다. 노드 필드·공개 옵션·읽기 시 할당은 추가하지 않았고 반환 참조·기존 캐시 키는 유지했습니다. 동결 호출 감소가 종단 속도 개선으로 이어지지 않았으므로 이 비용도 제품에서 제거했습니다. 메모리 바이트 절감은 측정하지 않았습니다.
+
+### 동결 수: HEAD → 측정 후보와 복원 결과
+
+분모는 청사진 노드 수입니다. 모듈 로드 때 이미 만들어진 공유 상수는 mount 계수에서 제외하고, blueprint 밖의 기존 동결 및 개발 모드 EVENT-024 payload는 포함했습니다. 모든 행에서 호출 수와 서로 다른 동결 대상 수가 같았으며 alias 추가 호출과 primitive 호출은 0개입니다.
+
+| 폼 | 모드 | 노드 수 | 동결 대상 수 HEAD → 후보 | freeze/node HEAD → 후보 | 최종 HEAD freeze/node |
+| --- | --- | ---: | ---: | ---: | ---: |
+| nested-d5-f4 | 개발 | 1365 | 26276 → 26276 | 19.2498 → 19.2498 | 19.2498 |
+| nested-d5-f4 | 운영 | 1365 | 24911 → 5801 | 18.2498 → 4.2498 | 18.2498 |
+| flat-500 | 개발 | 501 | 9520 → 9520 | 19.0020 → 19.0020 | 19.0020 |
+| flat-500 | 운영 | 501 | 9019 → 2005 | 18.0020 → 4.0020 | 18.0020 |
+| oneOf-20 | 개발 | 63 | 1341 → 1219 | 21.2857 → 19.3492 | 21.2857 |
+| oneOf-20 | 운영 | 63 | 1335 → 221 | 21.1905 → 3.5079 | 21.1905 |
+| sample-0 | 개발 | 3 | 58 → 59 | 19.3333 → 19.6667 | 19.3333 |
+| sample-0 | 운영 | 3 | 55 → 14 | 18.3333 → 4.6667 | 18.3333 |
+
+운영 모드 완료 대상은 nested 4,095개, flat 1,503개, oneOf 208개, sample 10개입니다. blueprint 밖 또는 후속 runtime 동결은 각각 1,706·502·13·4개입니다. 작은 2노드 flat 청사진의 실행 계수 시험은 HEAD에서 양쪽 모드 17개/node, 후보에서 개발 17개/node·운영 3개/node였습니다. 지연 slot의 F47–F49 추가 호출은 후보에서 개발 3개·운영 0개이며, 같은 entry 재조회 및 같은 청사진을 쓰는 다른 mounted host의 재조회에는 추가 생성·동결이 없었습니다. [운영 계수](profile-102-work/freeze103-freeze-counts.json), [개발 계수](profile-102-work/freeze103-dev-freeze-counts.json)에 원시 수와 단계를 보존했습니다.
+
+**STOP — oneOf-20의 예상 계수 282개:** 설계의 ‘버려지는 정적 schema는 완료 대상에서 제외’ 규칙과 예상 계수 표가 충돌합니다. 실제로 보유되지 않는 정적 schema 61개가 예측의 71개 schema에 포함되어 있습니다. 코드의 보유 경로를 따라 완료할 경우 공유 order/gates 166개 + gate/evaluationReads 40개 + 보유 정적 schema 2개 + 후속 runtime schema 8개 + blueprint 밖 5개 = **221개**입니다. 공개되지 않는 61개를 동결하여 282에 맞추는 작업은 중단했습니다. 개발에서도 해당 schema와 봉투 122개가 완료 대상에서 빠져 1,341 → 1,219개가 됩니다. 설계·검증자 문서는 수정하지 않았습니다.
+
+### 종단 paired 측정
+
+모든 번들은 production이며 타이머에 계수 instrumentation을 넣지 않았습니다. 각 verdict 실행은 새 프로세스에서 warmup 20회 뒤 101쌍을 측정했고 H/W 선행 순서를 sample마다 교대했습니다. 강제 GC와 입력 복사는 시계 밖입니다. 각 행은 verdict 3회, 같은 HEAD 두 벌의 control 3회, steady 6회로 **120개 타이머 프로세스**를 순차 실행했습니다. steady는 HEAD 먼저 3회·후보 먼저 3회이고 버전당 606개의 보정 sample을 한 번 pooling했습니다.
+
+표의 verdict H/W는 실행별 보정 중앙값 세 개의 중앙값이고, Δ는 각 실행의 H−W 세 개의 중앙값이므로 표시 H/W의 단순 차와 다를 수 있습니다. 잡음은 max(1µs, control의 절대 중앙값 차/paired 중앙값, no-op 잔차 p95 + 1,999회 bootstrap 99% 중앙값 오차 합)입니다. 세 실행 모두 잡음을 넘고 paired 중앙값 구간의 하한이 양수여야 개선이며, 어느 실행이든 반대 조건이면 회귀입니다. 표의 잡음은 실행별 경계의 최대치이고 판정은 각 실행의 자기 경계로 했습니다.
+
+| 행 | verdict 중앙값 ms, H → W | 실행 Δ 중앙값 ms | 잡음 최대 ms | verdict 판정 | steady pooled ms, H → W |
+| --- | ---: | ---: | ---: | --- | ---: |
+| nested-d5-f4 mount | 8.7977 → 9.4279 | -0.4890 | 0.6635 | 회귀 | 6.2465 → 6.5273 |
+| flat-500 mount | 3.1331 → 3.2345 | -0.1221 | 0.0902 | 회귀 | 1.8360 → 1.9258 |
+| oneOf-20 mount | 2.0904 → 2.0718 | 0.0030 | 0.0828 | 잡음 범위 | 1.1480 → 1.1423 |
+| sample-0 mount | 0.1343 → 0.1377 | -0.0017 | 0.0214 | 잡음 범위 | 0.0384 → 0.0396 |
+| sample-0 첫 업데이트 | 0.0919 → 0.0935 | -0.0016 | 0.0186 | 잡음 범위 | 0.0262 → 0.0260 |
+| sample-0 후속 업데이트 | 0.0862 → 0.0856 | -0.0002 | 0.0167 | 잡음 범위 | 0.0177 → 0.0179 |
+| nested-d5-f4 첫 업데이트 | 0.1920 → 0.1730 | 0.0190 | 0.1316 | 잡음 범위 | 0.0848 → 0.0927 |
+| nested-d5-f4 후속 업데이트 | 0.1113 → 0.1096 | 0.0012 | 0.0160 | 잡음 범위 | 0.0341 → 0.0331 |
+| oneOf-40 첫 업데이트 | 1.4693 → 1.5136 | -0.0474 | 0.0809 | 잡음 범위 | 0.9358 → 0.8858 |
+| oneOf-40 후속 업데이트 | 0.4551 → 0.4488 | 0.0063 | 0.0273 | 잡음 범위 | 0.2391 → 0.2331 |
+
+nested mount r2는 8.797749 → 9.427875ms, Δ −0.630126ms로 그 실행의 잡음 0.611706ms를 넘었고 paired 구간은 [−0.952875, −0.623875]ms였습니다. flat mount r1·r3도 각각 Δ −0.145250/−0.122125ms가 자기 잡음 0.060666/0.067751ms를 넘었습니다. 따라서 개선 행 0개·회귀 행 2개로 복원했습니다. [기계 판정과 각 실행](profile-102-work/freeze103-verdict.json)에 구간·control·GC·순서 정보를 보존했습니다.
+
+### 시험과 지정 검증
+
+후보의 개발 모드 차등은 기존 59개 스키마·118개 캡처·103개 정상 노드·오류 24개·경고 사례 6개가 HEAD와 같았습니다. 기존 캡처·기대값은 바꾸지 않았습니다. 새 정책 시험은 실제 운영 React element에 `_store`가 없음을 단언했고, lazy inline 입력과 render 중 JSX label, mount 이후 새 slot 및 공유 청사진 host의 entry 동일성을 양쪽 모드에서 확인했습니다. 보유된 (1)·(2)와 개발 전용 기록, hint 최상위/하위 소유권, 경고 봉투·keys/paths의 모드별 상태를 확인했습니다. 복원 후에는 후보의 엄격한 정책 시험을 패치에 보존하고 실행 시험의 기대값을 HEAD의 기존 계약에 맞췄습니다.
+
+`vite.config.ts`의 변경은 별도 production 프로젝트와 외부 `cacheDir`입니다. production 검증은 React 로딩 전 NODE_ENV=production인 별도 worker/프로세스에서 실행합니다. React 18/19 개발 프로젝트는 기존 구성을 유지합니다.
+
+| PKG에서 실행한 명령 | 최종 HEAD 결과 |
+| --- | --- |
+| `npx vitest run --project unit --project render --project react18 --reporter=dot` | 3,244 passed, 4 failed, 1 todo. 실패는 React 18/19 각각 EVENT-070 useEffect·useLayoutEffect뿐입니다. |
+| `NODE_ENV=production npx vitest run --project production --reporter=dot` | 17 passed |
+| `npx tsc --noEmit --composite false --rootDir . -p tsconfig.json` | exit 0 |
+| `npx eslint "src/**/*.{ts,tsx}"` | exit 0 |
+| `node architecture/verification/07-switch/tools/check-legacy-isolation.mjs` | LEGACY_ISOLATED: 1,633 files checked |
+
+[개발 차등](profile-102-work/freeze103-dev-equivalence.json)과 `freeze103-head-verify-*.json/.log`에 결과를 보존했습니다. 정식 로그의 최대 타이머 프로세스는 4.401초, 최종 지정 검증의 최대 기록 명령은 63.532초였으며 모두 signal=null로 자연 종료했습니다. 초기 후보 전체 검증도 79.71초로 8분 미만이었습니다. git 쓰기·설치·병렬 측정은 실행하지 않았습니다.
+
+새 측정 파일은 `profile-102-work/` 아래에 있고 최대 파일은 **2,100,384바이트**로 모두 5MB 이하입니다. 번들·소스맵·Vite 캐시는 지정 `/private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles`에만 생성했습니다. production HEAD/control SHA-256은 `4dc91cb793a96b44d1ab9916c2dcb6c2307b803846030f1609366eacca0da827`, 측정 후보는 `349e176e1d0779a15cfb9cbf8665c8a6569b9bec6657b7e4620bb6a2d9fce599`입니다.
+
+재현 도구는 [driver](profile-102-work/production-freeze.mjs), [요약기](profile-102-work/summarize-production-freeze.mjs), [검증기](profile-102-work/verify-production-freeze.mjs)입니다. `--pairs <control|working> <fixture> <mount|first|later> forced`는 3회, steady는 같은 명령의 `steady 1` 및 `steady 4`를 순차 실행하여 6회를 만듭니다. `--development`는 개발 번들·차등·계수를 별도 이름으로 기록하고, `--freeze-counts`는 타이밍 밖에서 동결을 셉니다. 현재 제품 소스는 HEAD로 복원되어 있습니다. 측정 당시 후보는 보존 패치와 외부 번들 SHA로 식별하며, 현재 소스로 `--build working`을 실행하면 HEAD 정책이 생성됩니다.

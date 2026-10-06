@@ -1,0 +1,19 @@
+{
+  "name": "production",
+  "command": [
+    "npx",
+    "vitest",
+    "run",
+    "--project",
+    "production",
+    "--reporter=dot"
+  ],
+  "cwd": "/Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/packages/canard/schema-form",
+  "started": 1791284326776,
+  "ended": 1791284330631,
+  "elapsedMs": 3855,
+  "status": 0,
+  "signal": null,
+  "naturalExit": true,
+  "bytes": 1518
+}
