@@ -1,0 +1,17 @@
+{
+  "variant": "combined-analysis",
+  "sha256": "535fefdcdb10855e9ad07a03aa9d295a38a10c1fb8138efe772a34314039ec30",
+  "bytes": 537177,
+  "naturalServiceExits": 1,
+  "edits": [],
+  "changedFiles": [
+    "core/blueprint/utils/effectiveSchema/mergeEffectiveSchema.ts",
+    "core/blueprint/utils/analyze/buildNodes.ts",
+    "core/blueprint/utils/analyze/buildNodes.ts",
+    "core/blueprint/utils/types/resolveNodeStrategy.ts",
+    "core/blueprint/utils/types/resolveNodeTypes.ts",
+    "core/blueprint/utils/analyze/collectDeclarations.ts",
+    "core/blueprint/utils/analyze/populateNodeChildren.ts",
+    "core/blueprint/utils/types/readAllowedTypes.ts"
+  ]
+}

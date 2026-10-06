@@ -1,0 +1,10 @@
+{
+  "variant": "declarations",
+  "sha256": "c7efa45dd8dfee9d5ef71b3463e3678a1b6b1b503dea48201b470039229a022d",
+  "bytes": 532497,
+  "naturalServiceExits": 1,
+  "edits": [],
+  "changedFiles": [
+    "core/blueprint/utils/analyze/collectDeclarations.ts"
+  ]
+}

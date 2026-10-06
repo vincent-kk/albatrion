@@ -1,0 +1,10 @@
+{
+  "variant": "child-bindings",
+  "sha256": "b8a6c1b1af435fb0db58f2d8cc9400a472166857aa94cabf330018884cac0b30",
+  "bytes": 526964,
+  "naturalServiceExits": 1,
+  "edits": [],
+  "changedFiles": [
+    "core/blueprint/utils/analyze/populateNodeChildren.ts"
+  ]
+}

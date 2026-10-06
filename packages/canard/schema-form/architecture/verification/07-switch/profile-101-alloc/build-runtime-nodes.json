@@ -1,0 +1,10 @@
+{
+  "variant": "runtime-nodes",
+  "sha256": "e960c0481e4dca03a9c821848ad460797c70c64a6c3fd99433049669e1460c0f",
+  "bytes": 526197,
+  "naturalServiceExits": 1,
+  "edits": [],
+  "changedFiles": [
+    "core/SchemaNode/utils/schemaNodeFactory.ts"
+  ]
+}

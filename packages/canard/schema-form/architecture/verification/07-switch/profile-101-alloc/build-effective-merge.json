@@ -1,0 +1,10 @@
+{
+  "variant": "effective-merge",
+  "sha256": "de7d94dbd0e4a460afd6b2ea8053855ec151bfd7241887e4e5a0a6e7d4ee906f",
+  "bytes": 526195,
+  "naturalServiceExits": 1,
+  "edits": [],
+  "changedFiles": [
+    "core/blueprint/utils/effectiveSchema/mergeEffectiveSchema.ts"
+  ]
+}

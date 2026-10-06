@@ -1,0 +1,10 @@
+{
+  "variant": "template-keys",
+  "sha256": "64fbb7fdf2ebb1fb3b13bdd34acec513c8a78b2a85ffb4a4ee903bbc4fca75d5",
+  "bytes": 526207,
+  "naturalServiceExits": 1,
+  "edits": [],
+  "changedFiles": [
+    "core/blueprint/utils/analyze/buildNodes.ts"
+  ]
+}

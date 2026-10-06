@@ -1,0 +1,11 @@
+{
+  "variant": "node-staging",
+  "sha256": "ddf659cb7e94150a34f6a68f2c6cb1626f0a8c1f9a94f29ef794f856f36b5515",
+  "bytes": 526776,
+  "naturalServiceExits": 1,
+  "edits": [],
+  "changedFiles": [
+    "core/blueprint/utils/analyze/buildNodes.ts",
+    "core/blueprint/utils/types/resolveNodeTypes.ts"
+  ]
+}

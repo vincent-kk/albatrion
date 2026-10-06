@@ -1,0 +1,11 @@
+{
+  "variant": "gate-workspaces",
+  "sha256": "3e22dfb6d1cf5e842e747454d8f68fc5ccb1ef12249f9b46f28529ab283df14d",
+  "bytes": 523044,
+  "naturalServiceExits": 1,
+  "edits": [],
+  "changedFiles": [
+    "core/settle/utils/gates/evaluateGate.ts",
+    "core/settle/utils/gates/flushPendingGateReads.ts"
+  ]
+}

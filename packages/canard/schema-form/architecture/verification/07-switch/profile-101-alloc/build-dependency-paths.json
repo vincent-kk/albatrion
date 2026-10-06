@@ -1,0 +1,10 @@
+{
+  "variant": "dependency-paths",
+  "sha256": "927360da0e48915e38069560573589ca8609d429ef5e5f5fa8136fbeba0109fe",
+  "bytes": 526181,
+  "naturalServiceExits": 1,
+  "edits": [],
+  "changedFiles": [
+    "core/settle/utils/paths/resolveDependencyPath.ts"
+  ]
+}

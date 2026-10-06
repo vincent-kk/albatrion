@@ -1,0 +1,10 @@
+{
+  "variant": "first-load-frames",
+  "sha256": "1c0ccdeb21e2c88874df153a0f2c3ca96d9738e46b7c6cc915324c7cb4782a39",
+  "bytes": 525956,
+  "naturalServiceExits": 1,
+  "edits": [],
+  "changedFiles": [
+    "core/settle/utils/load/loadStaticFirstTree.ts"
+  ]
+}

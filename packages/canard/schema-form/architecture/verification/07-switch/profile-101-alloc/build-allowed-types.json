@@ -1,0 +1,10 @@
+{
+  "variant": "allowed-types",
+  "sha256": "be6a9754ce857a4a4cfbf9f3c2fdd03bab621828fa7d9a32dcd1081169b8f5fc",
+  "bytes": 526185,
+  "naturalServiceExits": 1,
+  "edits": [],
+  "changedFiles": [
+    "core/blueprint/utils/types/readAllowedTypes.ts"
+  ]
+}

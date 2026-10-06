@@ -1,0 +1,10 @@
+{
+  "variant": "strategy-cases",
+  "sha256": "736f4cdda5c1054d6acf425fae5536dd7c4758ce39bbd60e8340eda8c4aaa28f",
+  "bytes": 526289,
+  "naturalServiceExits": 1,
+  "edits": [],
+  "changedFiles": [
+    "core/blueprint/utils/types/resolveNodeStrategy.ts"
+  ]
+}

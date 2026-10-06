@@ -1,0 +1,10 @@
+{
+  "variant": "dependency-index",
+  "sha256": "cb87d5a545b7f5e9b50e3760fe82fa126e2a4803e48bb1aeb8ee630664cdf76a",
+  "bytes": 526165,
+  "naturalServiceExits": 1,
+  "edits": [],
+  "changedFiles": [
+    "core/settle/utils/write/getDependencyIndex.ts"
+  ]
+}

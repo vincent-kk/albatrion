@@ -1,0 +1,10 @@
+{
+  "variant": "object-assembly",
+  "sha256": "c7395fe0c962d1d453d4527e8e78b39ff0408208bb9335e6b3af6b512f9e23fd",
+  "bytes": 526393,
+  "naturalServiceExits": 1,
+  "edits": [],
+  "changedFiles": [
+    "core/behaviors/objectBehavior/branch/utils/assembleObject.ts"
+  ]
+}

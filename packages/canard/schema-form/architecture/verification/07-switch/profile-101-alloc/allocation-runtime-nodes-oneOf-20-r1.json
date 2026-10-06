@@ -1,0 +1,1327 @@
+{
+  "head": "619798ddc6d6c70f27e1a7058421b94a4a6713b1",
+  "variant": "runtime-nodes",
+  "name": "oneOf-20",
+  "run": 1,
+  "warmup": 20,
+  "samplingIntervalBytes": 1,
+  "allocationFolding": true,
+  "includeCollected": true,
+  "objects": 41109,
+  "bytes": 2185976,
+  "blueprintObjects": 18103,
+  "blueprintBytes": 1072256,
+  "unknown": 0,
+  "rows": [
+    {
+      "owner": {
+        "name": "resolveDependencyPath",
+        "file": "packages/canard/schema-form/src/core/settle/utils/paths/resolveDependencyPath.ts",
+        "line": 7
+      },
+      "objects": 4793,
+      "bytes": 221144,
+      "blueprint": false
+    },
+    {
+      "owner": {
+        "name": "readProjectedValue",
+        "file": "packages/canard/schema-form/src/core/settle/utils/gates/readProjectedValue.ts",
+        "line": 25
+      },
+      "objects": 3840,
+      "bytes": 153600,
+      "blueprint": false
+    },
+    {
+      "owner": {
+        "name": "evaluateGate",
+        "file": "packages/canard/schema-form/src/core/settle/utils/gates/evaluateGate.ts",
+        "line": 26
+      },
+      "objects": 2880,
+      "bytes": 138240,
+      "blueprint": false
+    },
+    {
+      "owner": {
+        "name": "selectChildren",
+        "file": "packages/canard/schema-form/src/core/settle/utils/compute/selectChildren.ts",
+        "line": 82
+      },
+      "objects": 2696,
+      "bytes": 148176,
+      "blueprint": false
+    },
+    {
+      "owner": {
+        "name": "collectDeclarations",
+        "file": "packages/canard/schema-form/src/core/blueprint/utils/analyze/collectDeclarations.ts",
+        "line": 27
+      },
+      "objects": 2659,
+      "bytes": 166656,
+      "blueprint": true
+    },
+    {
+      "owner": {
+        "name": "buildNodes",
+        "file": "packages/canard/schema-form/src/core/blueprint/utils/analyze/buildNodes.ts",
+        "line": 25
+      },
+      "objects": 1722,
+      "bytes": 160064,
+      "blueprint": true
+    },
+    {
+      "owner": {
+        "name": "(anonymous)",
+        "file": "packages/canard/schema-form/src/core/blueprint/utils/analyze/populateNodeChildren.ts",
+        "line": 73
+      },
+      "objects": 1364,
+      "bytes": 68336,
+      "blueprint": true
+    },
+    {
+      "owner": {
+        "name": "resolveNodeTypes",
+        "file": "packages/canard/schema-form/src/core/blueprint/utils/types/resolveNodeTypes.ts",
+        "line": 17
+      },
+      "objects": 1202,
+      "bytes": 67832,
+      "blueprint": true
+    },
+    {
+      "owner": {
+        "name": "populateNodeChildren",
+        "file": "packages/canard/schema-form/src/core/blueprint/utils/analyze/populateNodeChildren.ts",
+        "line": 19
+      },
+      "objects": 1193,
+      "bytes": 55408,
+      "blueprint": true
+    },
+    {
+      "owner": {
+        "name": "unionAllowedTypes",
+        "file": "packages/canard/schema-form/src/core/blueprint/utils/types/unionAllowedTypes.ts",
+        "line": 8
+      },
+      "objects": 1032,
+      "bytes": 56760,
+      "blueprint": true
+    },
+    {
+      "owner": {
+        "name": "flushPendingGateReads",
+        "file": "packages/canard/schema-form/src/core/settle/utils/gates/flushPendingGateReads.ts",
+        "line": 30
+      },
+      "objects": 962,
+      "bytes": 55104,
+      "blueprint": false
+    },
+    {
+      "owner": {
+        "name": "inferAllowedTypes",
+        "file": "packages/canard/schema-form/src/core/blueprint/utils/types/inferAllowedTypes.ts",
+        "line": 27
+      },
+      "objects": 960,
+      "bytes": 45664,
+      "blueprint": true
+    },
+    {
+      "owner": {
+        "name": "assembleObject",
+        "file": "packages/canard/schema-form/src/core/behaviors/objectBehavior/branch/utils/assembleObject.ts",
+        "line": 18
+      },
+      "objects": 951,
+      "bytes": 43552,
+      "blueprint": false
+    },
+    {
+      "owner": {
+        "name": "flushRead",
+        "file": "packages/canard/schema-form/src/core/settle/utils/gates/flushPendingGateReads.ts",
+        "line": 74
+      },
+      "objects": 826,
+      "bytes": 27376,
+      "blueprint": false
+    },
+    {
+      "owner": {
+        "name": "readAllowedTypes",
+        "file": "packages/canard/schema-form/src/core/blueprint/utils/types/readAllowedTypes.ts",
+        "line": 19
+      },
+      "objects": 794,
+      "bytes": 34856,
+      "blueprint": true
+    },
+    {
+      "owner": {
+        "name": "selectEffectiveDeclarations",
+        "file": "packages/canard/schema-form/src/core/blueprint/utils/effectiveSchema/utils/selectEffectiveDeclarations.ts",
+        "line": 9
+      },
+      "objects": 771,
+      "bytes": 52576,
+      "blueprint": false
+    },
+    {
+      "owner": {
+        "name": "flushGate",
+        "file": "packages/canard/schema-form/src/core/settle/utils/gates/flushPendingGateReads.ts",
+        "line": 89
+      },
+      "objects": 709,
+      "bytes": 32304,
+      "blueprint": false
+    },
+    {
+      "owner": {
+        "name": "resolveNodeStrategy",
+        "file": "packages/canard/schema-form/src/core/blueprint/utils/types/resolveNodeStrategy.ts",
+        "line": 14
+      },
+      "objects": 697,
+      "bytes": 47448,
+      "blueprint": true
+    },
+    {
+      "owner": {
+        "name": "registerRecalculation",
+        "file": "packages/canard/schema-form/src/core/settle/utils/write/registerRecalculation.ts",
+        "line": 12
+      },
+      "objects": 669,
+      "bytes": 36912,
+      "blueprint": false
+    },
+    {
+      "owner": {
+        "name": "dirtyChildren",
+        "file": "packages/canard/schema-form/src/core/settle/utils/compute/dirtyChildren.ts",
+        "line": 12
+      },
+      "objects": 579,
+      "bytes": 23960,
+      "blueprint": false
+    },
+    {
+      "owner": {
+        "name": "(anonymous)",
+        "file": "packages/canard/schema-form/src/core/blueprint/utils/analyze/getTemplateKey.ts",
+        "line": 16
+      },
+      "objects": 561,
+      "bytes": 30720,
+      "blueprint": true
+    },
+    {
+      "owner": {
+        "name": "mayChangeAt",
+        "file": "packages/canard/schema-form/src/core/settle/utils/gates/getGateRegistry.ts",
+        "line": 113
+      },
+      "objects": 558,
+      "bytes": 22320,
+      "blueprint": false
+    },
+    {
+      "owner": {
+        "name": "mayChangeOwnDeclarationAt",
+        "file": "packages/canard/schema-form/src/core/settle/utils/gates/getGateRegistry.ts",
+        "line": 121
+      },
+      "objects": 539,
+      "bytes": 21664,
+      "blueprint": false
+    },
+    {
+      "owner": {
+        "name": "ensureEffectiveSchemaCache",
+        "file": "packages/canard/schema-form/src/core/blueprint/utils/effectiveSchema/utils/ensureEffectiveSchemaCache.ts",
+        "line": 15
+      },
+      "objects": 501,
+      "bytes": 35880,
+      "blueprint": false
+    },
+    {
+      "owner": {
+        "name": "validateControlGroups",
+        "file": "packages/canard/schema-form/src/core/blueprint/utils/diagnostics/validateControlGroups.ts",
+        "line": 17
+      },
+      "objects": 495,
+      "bytes": 24264,
+      "blueprint": true
+    },
+    {
+      "owner": {
+        "name": "finalizeEffectiveSchema",
+        "file": "packages/canard/schema-form/src/core/blueprint/utils/effectiveSchema/utils/finalizeEffectiveSchema.ts",
+        "line": 13
+      },
+      "objects": 441,
+      "bytes": 28224,
+      "blueprint": true
+    },
+    {
+      "owner": {
+        "name": "validateChildTargets",
+        "file": "packages/canard/schema-form/src/core/blueprint/utils/diagnostics/validateChildTargets.ts",
+        "line": 11
+      },
+      "objects": 421,
+      "bytes": 17352,
+      "blueprint": true
+    },
+    {
+      "owner": {
+        "name": "createDynamicFunction",
+        "file": "packages/canard/schema-form/src/core/blueprint/utils/expressions/createDynamicFunction/createDynamicFunction.ts",
+        "line": 18
+      },
+      "objects": 420,
+      "bytes": 22240,
+      "blueprint": true
+    },
+    {
+      "owner": {
+        "name": "primeHost",
+        "file": "packages/canard/schema-form/src/core/settle/utils/compute/primeHost.ts",
+        "line": 19
+      },
+      "objects": 416,
+      "bytes": 20144,
+      "blueprint": false
+    },
+    {
+      "owner": {
+        "name": "(anonymous)",
+        "file": "packages/canard/schema-form/src/core/blueprint/utils/analyze/getTemplateKey.ts",
+        "line": 23
+      },
+      "objects": 300,
+      "bytes": 9120,
+      "blueprint": true
+    },
+    {
+      "owner": {
+        "name": "(anonymous)",
+        "file": "packages/canard/schema-form/src/core/blueprint/utils/types/resolveNodeTypes.ts",
+        "line": 111
+      },
+      "objects": 300,
+      "bytes": 20160,
+      "blueprint": true
+    },
+    {
+      "owner": {
+        "name": "collectStaticSchemas",
+        "file": "packages/canard/schema-form/src/core/blueprint/utils/analyze/collectStaticSchemas.ts",
+        "line": 16
+      },
+      "objects": 300,
+      "bytes": 23040,
+      "blueprint": true
+    },
+    {
+      "owner": {
+        "name": "affected",
+        "file": "packages/canard/schema-form/src/core/settle/utils/write/getDependencyIndex.ts",
+        "line": 75
+      },
+      "objects": 275,
+      "bytes": 16160,
+      "blueprint": false
+    },
+    {
+      "owner": {
+        "name": "mergeEffectiveSchema",
+        "file": "packages/canard/schema-form/src/core/blueprint/utils/effectiveSchema/mergeEffectiveSchema.ts",
+        "line": 25
+      },
+      "objects": 256,
+      "bytes": 10192,
+      "blueprint": false
+    },
+    {
+      "owner": {
+        "name": "mergeSchemaContributions",
+        "file": "packages/canard/schema-form/src/core/blueprint/utils/effectiveSchema/utils/mergeSchemaContributions.ts",
+        "line": 27
+      },
+      "objects": 255,
+      "bytes": 18768,
+      "blueprint": true
+    },
+    {
+      "owner": {
+        "name": "(anonymous)",
+        "file": "packages/canard/schema-form/src/core/blueprint/utils/analyze/populateNodeChildren.ts",
+        "line": 163
+      },
+      "objects": 246,
+      "bytes": 15328,
+      "blueprint": true
+    },
+    {
+      "owner": {
+        "name": "(anonymous)",
+        "file": "packages/canard/schema-form/src/core/blueprint/utils/types/resolveNodeStrategy.ts",
+        "line": 43
+      },
+      "objects": 246,
+      "bytes": 15416,
+      "blueprint": true
+    },
+    {
+      "owner": {
+        "name": "collect",
+        "file": "packages/canard/schema-form/src/core/settle/utils/write/getDependencyIndex.ts",
+        "line": 83
+      },
+      "objects": 231,
+      "bytes": 16584,
+      "blueprint": false
+    },
+    {
+      "owner": {
+        "name": "compileBlueprintExpressions",
+        "file": "packages/canard/schema-form/src/core/blueprint/utils/analyze/compileBlueprintExpressions.ts",
+        "line": 23
+      },
+      "objects": 217,
+      "bytes": 17624,
+      "blueprint": true
+    },
+    {
+      "owner": {
+        "name": "transitionSettlement",
+        "file": "packages/canard/schema-form/src/core/settle/utils/transition/transitionSettlement.ts",
+        "line": 28
+      },
+      "objects": 203,
+      "bytes": 10968,
+      "blueprint": false
+    },
+    {
+      "owner": {
+        "name": "collectGateEvaluationReads",
+        "file": "packages/canard/schema-form/src/core/blueprint/utils/analyze/collectGateEvaluationReads.ts",
+        "line": 8
+      },
+      "objects": 195,
+      "bytes": 17048,
+      "blueprint": true
+    },
+    {
+      "owner": {
+        "name": "foldAllowedTypes",
+        "file": "packages/canard/schema-form/src/core/blueprint/utils/types/foldAllowedTypes.ts",
+        "line": 8
+      },
+      "objects": 189,
+      "bytes": 8064,
+      "blueprint": true
+    },
+    {
+      "owner": {
+        "name": "visitShape",
+        "file": "packages/canard/schema-form/src/core/blueprint/utils/analyze/validateShape/utils/visitShape.ts",
+        "line": 14
+      },
+      "objects": 127,
+      "bytes": 6160,
+      "blueprint": true
+    },
+    {
+      "owner": {
+        "name": "(anonymous)",
+        "file": "packages/canard/schema-form/src/core/settle/utils/compute/selectNodeSchema.ts",
+        "line": 21
+      },
+      "objects": 126,
+      "bytes": 7056,
+      "blueprint": false
+    },
+    {
+      "owner": {
+        "name": "collectSchemaCapabilities",
+        "file": "packages/canard/schema-form/src/core/blueprint/utils/analyze/collectSchemaCapabilities.ts",
+        "line": 19
+      },
+      "objects": 124,
+      "bytes": 5952,
+      "blueprint": true
+    },
+    {
+      "owner": {
+        "name": "bindGateHostPath",
+        "file": "packages/canard/schema-form/src/core/settle/utils/gates/bindGateHostPath.ts",
+        "line": 12
+      },
+      "objects": 118,
+      "bytes": 3776,
+      "blueprint": false
+    },
+    {
+      "owner": {
+        "name": "applyConstraintKeywords",
+        "file": "packages/canard/schema-form/src/core/blueprint/utils/effectiveSchema/utils/applyConstraintKeywords.ts",
+        "line": 36
+      },
+      "objects": 108,
+      "bytes": 4584,
+      "blueprint": true
+    },
+    {
+      "owner": {
+        "name": "(anonymous)",
+        "file": "packages/canard/schema-form/src/core/blueprint/utils/analyze/populateNodeChildren.ts",
+        "line": 31
+      },
+      "objects": 84,
+      "bytes": 3696,
+      "blueprint": true
+    },
+    {
+      "objects": 81,
+      "bytes": 4048,
+      "blueprint": false
+    },
+    {
+      "owner": {
+        "name": "markCommitDeliveries",
+        "file": "packages/canard/schema-form/src/core/settle/utils/commit/markCommitDeliveries.ts",
+        "line": 25
+      },
+      "objects": 81,
+      "bytes": 4224,
+      "blueprint": false
+    },
+    {
+      "owner": {
+        "name": "add",
+        "file": "packages/canard/schema-form/src/core/settle/utils/write/DirtyPathSet.ts",
+        "line": 45
+      },
+      "objects": 79,
+      "bytes": 14600,
+      "blueprint": false
+    },
+    {
+      "owner": {
+        "name": "selectNodeSchema",
+        "file": "packages/canard/schema-form/src/core/settle/utils/compute/selectNodeSchema.ts",
+        "line": 17
+      },
+      "objects": 72,
+      "bytes": 3808,
+      "blueprint": false
+    },
+    {
+      "owner": {
+        "name": "validateShape",
+        "file": "packages/canard/schema-form/src/core/blueprint/utils/analyze/validateShape.ts",
+        "line": 10
+      },
+      "objects": 69,
+      "bytes": 2912,
+      "blueprint": true
+    },
+    {
+      "owner": {
+        "name": "registerBlueprintDependency",
+        "file": "packages/canard/schema-form/src/core/blueprint/utils/analyze/compileBlueprintExpressions/utils/registerBlueprintDependency.ts",
+        "line": 14
+      },
+      "objects": 67,
+      "bytes": 2560,
+      "blueprint": true
+    },
+    {
+      "owner": {
+        "name": "commitGlobalState",
+        "file": "packages/canard/schema-form/src/core/settle/utils/commit/commitGlobalState.ts",
+        "line": 11
+      },
+      "objects": 66,
+      "bytes": 3568,
+      "blueprint": false
+    },
+    {
+      "objects": 64,
+      "bytes": 3072,
+      "blueprint": false
+    },
+    {
+      "owner": {
+        "name": "(anonymous)",
+        "file": "packages/canard/schema-form/src/core/blueprint/utils/types/resolveNodeTypes.ts",
+        "line": 114
+      },
+      "objects": 60,
+      "bytes": 2400,
+      "blueprint": true
+    },
+    {
+      "owner": {
+        "name": "computeNode",
+        "file": "packages/canard/schema-form/src/core/settle/utils/compute/computeNode.ts",
+        "line": 21
+      },
+      "objects": 58,
+      "bytes": 7960,
+      "blueprint": false
+    },
+    {
+      "owner": {
+        "name": "relocated",
+        "file": "packages/canard/schema-form/src/core/settle/utils/gates/getGateRegistry.ts",
+        "line": 107
+      },
+      "objects": 44,
+      "bytes": 4136,
+      "blueprint": false
+    },
+    {
+      "owner": {
+        "name": "createBlueprintGate",
+        "file": "packages/canard/schema-form/src/core/blueprint/utils/analyze/createBlueprintGate.ts",
+        "line": 9
+      },
+      "objects": 40,
+      "bytes": 1920,
+      "blueprint": true
+    },
+    {
+      "owner": {
+        "name": "(anonymous)",
+        "file": "packages/canard/schema-form/src/core/blueprint/utils/expressions/createDynamicFunction/createDynamicFunction.ts",
+        "line": 27
+      },
+      "objects": 40,
+      "bytes": 1280,
+      "blueprint": true
+    },
+    {
+      "owner": {
+        "name": "getFunctionBody",
+        "file": "packages/canard/schema-form/src/core/blueprint/utils/expressions/createDynamicFunction/utils/getFunctionBody.ts",
+        "line": 9
+      },
+      "objects": 40,
+      "bytes": 1280,
+      "blueprint": true
+    },
+    {
+      "owner": {
+        "name": "commitSettlement",
+        "file": "packages/canard/schema-form/src/core/settle/utils/commit/commitSettlement.ts",
+        "line": 30
+      },
+      "objects": 37,
+      "bytes": 2064,
+      "blueprint": false
+    },
+    {
+      "owner": {
+        "name": "accumulateGlobalStateDeltas",
+        "file": "packages/canard/schema-form/src/core/record/utils/accumulateGlobalStateDeltas.ts",
+        "line": 5
+      },
+      "objects": 36,
+      "bytes": 1440,
+      "blueprint": false
+    },
+    {
+      "owner": {
+        "name": "deliverWave",
+        "file": "packages/canard/schema-form/src/core/dispatch/utils/chain/deliverWave.ts",
+        "line": 22
+      },
+      "objects": 33,
+      "bytes": 1512,
+      "blueprint": false
+    },
+    {
+      "owner": {
+        "name": "getControlLayers",
+        "file": "packages/canard/schema-form/src/core/settle/utils/controls/getControlLayers.ts",
+        "line": 56
+      },
+      "objects": 33,
+      "bytes": 1728,
+      "blueprint": false
+    },
+    {
+      "owner": {
+        "name": "updateOutput",
+        "file": "packages/canard/schema-form/src/core/settle/utils/compute/updateOutput.ts",
+        "line": 13
+      },
+      "objects": 31,
+      "bytes": 1488,
+      "blueprint": false
+    },
+    {
+      "owner": {
+        "name": "readDefault",
+        "file": "packages/canard/schema-form/src/core/settle/utils/transition/readDefault.ts",
+        "line": 14
+      },
+      "objects": 30,
+      "bytes": 1248,
+      "blueprint": false
+    },
+    {
+      "owner": {
+        "name": "populateVirtualNodes",
+        "file": "packages/canard/schema-form/src/core/blueprint/utils/analyze/populateVirtualNodes.ts",
+        "line": 18
+      },
+      "objects": 28,
+      "bytes": 1232,
+      "blueprint": true
+    },
+    {
+      "owner": {
+        "name": "runDeliveryWaves",
+        "file": "packages/canard/schema-form/src/core/dispatch/utils/chain/runDeliveryWaves.ts",
+        "line": 9
+      },
+      "objects": 24,
+      "bytes": 1152,
+      "blueprint": false
+    },
+    {
+      "owner": {
+        "name": "readsChanged",
+        "file": "packages/canard/schema-form/src/core/settle/utils/gates/getGateRegistry.ts",
+        "line": 172
+      },
+      "objects": 24,
+      "bytes": 1056,
+      "blueprint": false
+    },
+    {
+      "owner": {
+        "name": "PathStoreIndex",
+        "file": "packages/canard/schema-form/src/core/utils/pathIndex/utils/PathStoreIndex.ts",
+        "line": 21
+      },
+      "objects": 24,
+      "bytes": 2112,
+      "blueprint": false
+    },
+    {
+      "owner": {
+        "name": "applySchemaContribution",
+        "file": "packages/canard/schema-form/src/core/blueprint/utils/effectiveSchema/utils/applySchemaContribution.ts",
+        "line": 36
+      },
+      "objects": 23,
+      "bytes": 1024,
+      "blueprint": true
+    },
+    {
+      "owner": {
+        "name": "isTypeMismatch",
+        "file": "packages/canard/schema-form/src/core/settle/utils/commit/isTypeMismatch.ts",
+        "line": 12
+      },
+      "objects": 21,
+      "bytes": 880,
+      "blueprint": false
+    },
+    {
+      "owner": {
+        "name": "markWrite",
+        "file": "packages/canard/schema-form/src/core/settle/utils/write/markWrite.ts",
+        "line": 23
+      },
+      "objects": 19,
+      "bytes": 1816,
+      "blueprint": false
+    },
+    {
+      "owner": {
+        "name": "_SchemaNodeRevisionLedger",
+        "file": "packages/canard/schema-form/src/core/record/utils/SchemaNodeRevisionLedger.ts",
+        "line": 18
+      },
+      "objects": 18,
+      "bytes": 1344,
+      "blueprint": false
+    },
+    {
+      "owner": {
+        "name": "sameValue",
+        "file": "packages/canard/schema-form/src/core/settle/utils/compute/sameValue.ts",
+        "line": 9
+      },
+      "objects": 18,
+      "bytes": 1104,
+      "blueprint": false
+    },
+    {
+      "owner": {
+        "name": "getHostWheelBudgetCap",
+        "file": "packages/canard/schema-form/src/core/settle/utils/gates/getGateBudgetCap.ts",
+        "line": 65
+      },
+      "objects": 18,
+      "bytes": 864,
+      "blueprint": false
+    },
+    {
+      "owner": {
+        "name": "blueprint",
+        "file": "packages/canard/schema-form/src/core/blueprint/blueprint.ts",
+        "line": 21
+      },
+      "objects": 18,
+      "bytes": 1264,
+      "blueprint": true
+    },
+    {
+      "owner": {
+        "name": "getTemplateKey",
+        "file": "packages/canard/schema-form/src/core/blueprint/utils/analyze/getTemplateKey.ts",
+        "line": 11
+      },
+      "objects": 17,
+      "bytes": 696,
+      "blueprint": true
+    },
+    {
+      "owner": {
+        "name": "finalizeExits",
+        "file": "packages/canard/schema-form/src/core/settle/utils/transition/finalizeExits.ts",
+        "line": 20
+      },
+      "objects": 15,
+      "bytes": 736,
+      "blueprint": false
+    },
+    {
+      "owner": {
+        "name": "intersectAllowedTypes",
+        "file": "packages/canard/schema-form/src/core/blueprint/utils/types/intersectAllowedTypes.ts",
+        "line": 9
+      },
+      "objects": 15,
+      "bytes": 984,
+      "blueprint": true
+    },
+    {
+      "owner": {
+        "name": "withdrawDetachedFills",
+        "file": "packages/canard/schema-form/src/core/settle/utils/transition/withdrawDetachedFills.ts",
+        "line": 13
+      },
+      "objects": 14,
+      "bytes": 560,
+      "blueprint": false
+    },
+    {
+      "owner": {
+        "name": "preserveReferences",
+        "file": "packages/canard/schema-form/src/core/settle/utils/compute/preserveReferences.ts",
+        "line": 23
+      },
+      "objects": 14,
+      "bytes": 576,
+      "blueprint": false
+    },
+    {
+      "owner": {
+        "name": "releaseSettlementScratch",
+        "file": "packages/canard/schema-form/src/core/settle/utils/write/releaseSettlementScratch.ts",
+        "line": 8
+      },
+      "objects": 13,
+      "bytes": 1688,
+      "blueprint": false
+    },
+    {
+      "owner": {
+        "name": "markSchemaNodeEvent",
+        "file": "packages/canard/schema-form/src/core/record/utils/markSchemaNodeEvent.ts",
+        "line": 12
+      },
+      "objects": 12,
+      "bytes": 1296,
+      "blueprint": false
+    },
+    {
+      "owner": {
+        "name": "schemaNodeFactory",
+        "file": "packages/canard/schema-form/src/core/SchemaNode/utils/schemaNodeFactory.ts",
+        "line": 64
+      },
+      "objects": 11,
+      "bytes": 888,
+      "blueprint": false
+    },
+    {
+      "owner": {
+        "name": "finishSettlement",
+        "file": "packages/canard/schema-form/src/core/settle/utils/settlement/finishSettlement.ts",
+        "line": 23
+      },
+      "objects": 10,
+      "bytes": 560,
+      "blueprint": false
+    },
+    {
+      "owner": {
+        "name": "pruneLatentRaw",
+        "file": "packages/canard/schema-form/src/core/settle/utils/write/pruneLatentRaw.ts",
+        "line": 16
+      },
+      "objects": 10,
+      "bytes": 408,
+      "blueprint": false
+    },
+    {
+      "owner": {
+        "name": "getPrefix",
+        "file": "packages/canard/schema-form/src/core/utils/pathIndex/utils/PathStoreIndex.ts",
+        "line": 109
+      },
+      "objects": 7,
+      "bytes": 592,
+      "blueprint": false
+    },
+    {
+      "owner": {
+        "name": "add",
+        "file": "packages/canard/schema-form/src/core/utils/pathIndex/utils/PathStoreIndex.ts",
+        "line": 34
+      },
+      "objects": 7,
+      "bytes": 280,
+      "blueprint": false
+    },
+    {
+      "owner": {
+        "name": "finalizePerished",
+        "file": "packages/canard/schema-form/src/core/settle/utils/transition/finalizePerished.ts",
+        "line": 15
+      },
+      "objects": 7,
+      "bytes": 384,
+      "blueprint": false
+    },
+    {
+      "owner": {
+        "name": "(anonymous)",
+        "file": "packages/canard/schema-form/src/core/settle/utils/write/getDependencyIndex.ts",
+        "line": 108
+      },
+      "objects": 6,
+      "bytes": 216,
+      "blueprint": false
+    },
+    {
+      "owner": {
+        "name": "(anonymous)",
+        "file": "packages/canard/schema-form/src/core/settle/utils/commit/commitSettlement.ts",
+        "line": 71
+      },
+      "objects": 6,
+      "bytes": 384,
+      "blueprint": false
+    },
+    {
+      "owner": {
+        "name": "PathKeyedMap",
+        "file": "packages/canard/schema-form/src/core/utils/pathIndex/PathKeyedMap.ts",
+        "line": 11
+      },
+      "objects": 6,
+      "bytes": 528,
+      "blueprint": false
+    },
+    {
+      "objects": 6,
+      "bytes": 456,
+      "blueprint": false
+    },
+    {
+      "owner": {
+        "name": "collectChainRecords",
+        "file": "packages/canard/schema-form/src/core/dispatch/utils/report/collectChainRecords.ts",
+        "line": 16
+      },
+      "objects": 5,
+      "bytes": 280,
+      "blueprint": false
+    },
+    {
+      "owner": {
+        "name": "isMissingRaw",
+        "file": "packages/canard/schema-form/src/core/settle/utils/transition/isMissingRaw.ts",
+        "line": 11
+      },
+      "objects": 5,
+      "bytes": 200,
+      "blueprint": false
+    },
+    {
+      "objects": 4,
+      "bytes": 136,
+      "blueprint": false
+    },
+    {
+      "owner": {
+        "name": "clear",
+        "file": "packages/canard/schema-form/src/core/utils/pathIndex/utils/PathStoreIndex.ts",
+        "line": 79
+      },
+      "objects": 4,
+      "bytes": 576,
+      "blueprint": false
+    },
+    {
+      "owner": {
+        "name": "scheduleRelocatedGates",
+        "file": "packages/canard/schema-form/src/core/settle/utils/compute/scheduleRelocatedGates.ts",
+        "line": 11
+      },
+      "objects": 4,
+      "bytes": 176,
+      "blueprint": false
+    },
+    {
+      "owner": {
+        "name": "releaseWrongKindHosts",
+        "file": "packages/canard/schema-form/src/core/settle/utils/write/releaseWrongKindHosts.ts",
+        "line": 12
+      },
+      "objects": 4,
+      "bytes": 176,
+      "blueprint": false
+    },
+    {
+      "owner": {
+        "name": "getLatentPathIndex",
+        "file": "packages/canard/schema-form/src/core/settle/utils/latent/getLatentPathIndex.ts",
+        "line": 12
+      },
+      "objects": 4,
+      "bytes": 264,
+      "blueprint": false
+    },
+    {
+      "owner": {
+        "name": "deliverChainRecords",
+        "file": "packages/canard/schema-form/src/core/dispatch/utils/report/deliverChainRecords.ts",
+        "line": 14
+      },
+      "objects": 3,
+      "bytes": 136,
+      "blueprint": false
+    },
+    {
+      "owner": {
+        "name": "restoreAdoptedExternalErrors",
+        "file": "packages/canard/schema-form/src/core/dispatch/utils/chain/restoreAdoptedExternalErrors.ts",
+        "line": 12
+      },
+      "objects": 3,
+      "bytes": 136,
+      "blueprint": false
+    },
+    {
+      "owner": {
+        "name": "clearWarningKeys",
+        "file": "packages/canard/schema-form/src/core/dispatch/utils/report/clearWarningKeys.ts",
+        "line": 12
+      },
+      "objects": 3,
+      "bytes": 136,
+      "blueprint": false
+    },
+    {
+      "owner": {
+        "name": "PathKeyedSet",
+        "file": "packages/canard/schema-form/src/core/utils/pathIndex/PathKeyedSet.ts",
+        "line": 9
+      },
+      "objects": 3,
+      "bytes": 224,
+      "blueprint": false
+    },
+    {
+      "objects": 2,
+      "bytes": 32,
+      "blueprint": false
+    },
+    {
+      "objects": 2,
+      "bytes": 32,
+      "blueprint": false
+    },
+    {
+      "objects": 2,
+      "bytes": 32,
+      "blueprint": false
+    },
+    {
+      "objects": 2,
+      "bytes": 128,
+      "blueprint": false
+    },
+    {
+      "objects": 2,
+      "bytes": 96,
+      "blueprint": false
+    },
+    {
+      "objects": 2,
+      "bytes": 208,
+      "blueprint": false
+    },
+    {
+      "owner": {
+        "name": "exitSchemaNodeChain",
+        "file": "packages/canard/schema-form/src/core/dispatch/utils/chain/exitSchemaNodeChain.ts",
+        "line": 24
+      },
+      "objects": 2,
+      "bytes": 96,
+      "blueprint": false
+    },
+    {
+      "owner": {
+        "name": "getStoreKeyPaths",
+        "file": "packages/canard/schema-form/src/core/utils/pathIndex/utils/getStoreKeyPaths.ts",
+        "line": 9
+      },
+      "objects": 2,
+      "bytes": 72,
+      "blueprint": false
+    },
+    {
+      "owner": {
+        "name": "publishGlobalStateDeltas",
+        "file": "packages/canard/schema-form/src/core/record/utils/publishGlobalStateDeltas.ts",
+        "line": 5
+      },
+      "objects": 2,
+      "bytes": 80,
+      "blueprint": false
+    },
+    {
+      "owner": {
+        "name": "applyExitClearing",
+        "file": "packages/canard/schema-form/src/core/settle/utils/transition/applyExitClearing.ts",
+        "line": 15
+      },
+      "objects": 2,
+      "bytes": 80,
+      "blueprint": false
+    },
+    {
+      "owner": {
+        "name": "getIndex",
+        "file": "packages/canard/schema-form/src/core/settle/utils/gates/getGateBudgetCap.ts",
+        "line": 22
+      },
+      "objects": 2,
+      "bytes": 112,
+      "blueprint": false
+    },
+    {
+      "owner": {
+        "name": "enterSchemaNodeChain",
+        "file": "packages/canard/schema-form/src/core/dispatch/utils/chain/enterSchemaNodeChain.ts",
+        "line": 11
+      },
+      "objects": 2,
+      "bytes": 96,
+      "blueprint": false
+    },
+    {
+      "owner": {
+        "name": "dispatchMount",
+        "file": "packages/canard/schema-form/src/core/dispatch/utils/entry/dispatchMount.ts",
+        "line": 21
+      },
+      "objects": 2,
+      "bytes": 152,
+      "blueprint": false
+    },
+    {
+      "owner": {
+        "name": "buildSchemaNodeTree",
+        "file": "packages/canard/schema-form/src/core/SchemaNode/utils/binding/buildSchemaNodeTree.ts",
+        "line": 37
+      },
+      "objects": 2,
+      "bytes": 160,
+      "blueprint": false
+    },
+    {
+      "owner": {
+        "name": "captureSchemaNodeChange",
+        "file": "packages/canard/schema-form/src/core/record/utils/captureSchemaNodeChange.ts",
+        "line": 25
+      },
+      "objects": 2,
+      "bytes": 64,
+      "blueprint": false
+    },
+    {
+      "owner": {
+        "name": "clear",
+        "file": "packages/canard/schema-form/src/core/settle/utils/write/DirtyPathSet.ts",
+        "line": 107
+      },
+      "objects": 2,
+      "bytes": 272,
+      "blueprint": false
+    },
+    {
+      "owner": {
+        "name": "clear",
+        "file": "packages/canard/schema-form/src/core/utils/pathIndex/PathKeyedMap.ts",
+        "line": 32
+      },
+      "objects": 1,
+      "bytes": 152,
+      "blueprint": false
+    },
+    {
+      "owner": {
+        "name": "commitExitPolicyValues",
+        "file": "packages/canard/schema-form/src/core/settle/utils/commit/commitExitPolicyValues.ts",
+        "line": 40
+      },
+      "objects": 1,
+      "bytes": 48,
+      "blueprint": false
+    },
+    {
+      "owner": {
+        "name": "publishStateKeys",
+        "file": "packages/canard/schema-form/src/core/settle/utils/compute/publishStateKeys.ts",
+        "line": 15
+      },
+      "objects": 1,
+      "bytes": 40,
+      "blueprint": false
+    },
+    {
+      "owner": {
+        "name": "writeObjectKey",
+        "file": "packages/canard/schema-form/src/core/behaviors/objectBehavior/utils/keys/writeObjectKey.ts",
+        "line": 2
+      },
+      "objects": 1,
+      "bytes": 40,
+      "blueprint": false
+    },
+    {
+      "owner": {
+        "name": "writeSchemaNode",
+        "file": "packages/canard/schema-form/src/core/settle/utils/write/writeSchemaNode.ts",
+        "line": 35
+      },
+      "objects": 1,
+      "bytes": 40,
+      "blueprint": false
+    },
+    {
+      "owner": {
+        "name": "loadSchemaNodeAtMount",
+        "file": "packages/canard/schema-form/src/core/settle/utils/load/loadSchemaNodeAtMount.ts",
+        "line": 15
+      },
+      "objects": 1,
+      "bytes": 48,
+      "blueprint": false
+    },
+    {
+      "owner": {
+        "name": "nodeFromJSONSchema",
+        "file": "packages/canard/schema-form/src/core/nodeFromJSONSchema.ts",
+        "line": 17
+      },
+      "objects": 1,
+      "bytes": 48,
+      "blueprint": false
+    },
+    {
+      "owner": {
+        "name": "createSchemaNode",
+        "file": "packages/canard/schema-form/src/core/SchemaNode/utils/schemaNodeFactory.ts",
+        "line": 29
+      },
+      "objects": 1,
+      "bytes": 56,
+      "blueprint": false
+    },
+    {
+      "owner": {
+        "name": "collectBlueprintWarnings",
+        "file": "packages/canard/schema-form/src/core/blueprint/utils/diagnostics/collectBlueprintWarnings.ts",
+        "line": 18
+      },
+      "objects": 1,
+      "bytes": 56,
+      "blueprint": true
+    },
+    {
+      "owner": {
+        "name": "createSettlementContext",
+        "file": "packages/canard/schema-form/src/core/settle/utils/settlement/createSettlementContext.ts",
+        "line": 17
+      },
+      "objects": 1,
+      "bytes": 336,
+      "blueprint": false
+    },
+    {
+      "owner": {
+        "name": "(anonymous)",
+        "file": "packages/canard/schema-form/src/core/blueprint/utils/types/resolveNodeTypes.ts",
+        "line": 87
+      },
+      "objects": 1,
+      "bytes": 144,
+      "blueprint": true
+    },
+    {
+      "objects": 1,
+      "bytes": 16,
+      "blueprint": false
+    }
+  ],
+  "observation": {
+    "sha256": "0dab1516af88193530f8e44693db2dd2fb9d4c721b0de5c72fdb688315c07092",
+    "outputBytes": 90,
+    "liveWidth": 5,
+    "value": {
+      "common": "shared",
+      "kind": "kind_0",
+      "payload_0_a": "a_0",
+      "payload_0_b": 0,
+      "payload_0_c": true
+    }
+  },
+  "tapeLengths": {
+    "createSchemaNode": 6
+  }
+}

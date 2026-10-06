@@ -1,0 +1,10 @@
+{
+  "variant": "selection-workspaces",
+  "sha256": "4238302341d1189d55c0a43e40bc21a9fde1fa5475935977106083bdabafb8ba",
+  "bytes": 526738,
+  "naturalServiceExits": 1,
+  "edits": [],
+  "changedFiles": [
+    "core/settle/utils/compute/selectChildren.ts"
+  ]
+}

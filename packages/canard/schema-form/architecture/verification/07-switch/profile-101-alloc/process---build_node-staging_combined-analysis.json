@@ -1,0 +1,16 @@
+{
+  "args": [
+    "/Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/packages/canard/schema-form/architecture/verification/07-switch/profile-101-alloc/measure.mjs",
+    "--build",
+    "node-staging",
+    "combined-analysis"
+  ],
+  "started": "2026-10-06T04:34:50.956Z",
+  "ended": "2026-10-06T04:34:51.459Z",
+  "elapsedMs": 503,
+  "status": 1,
+  "signal": null,
+  "pid": 64693,
+  "freshProcess": true,
+  "driverSha256": "5620a4b6aaed8ecf3856b91e3c126c8ce31910c5a8f75b5b44b5cf0933010aae"
+}
