@@ -1,0 +1,19 @@
+{
+  "name": "pre-3",
+  "mode": "development",
+  "command": "npx --no-install vitest run --reporter=dot --configLoader runner --cache false --maxWorkers=1 --no-file-parallelism --project unit src/core/behaviors/objectBehavior/branch/utils/__tests__/assembleObject.first-work.test.ts",
+  "exitCode": 1,
+  "signal": null,
+  "natural": true,
+  "started": 1791319353700,
+  "ended": 1791319355567,
+  "elapsedMs": 1867,
+  "summary": [
+    "⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯",
+    " FAIL  |unit| src/core/behaviors/objectBehavior/branch/utils/__tests__/assembleObject.first-work.test.ts > assembles aligned first children without Map or Set allocation and preserves omitted/prototype keys",
+    "TypeError: Class constructors cannot be invoked without 'new'",
+    " Test Files  1 failed (1)",
+    "      Tests  1 failed | 1 passed (2)",
+    "   Duration  216ms (transform 41ms, setup 0ms, collect 77ms, tests 4ms, environment 0ms, prepare 34ms)"
+  ]
+}

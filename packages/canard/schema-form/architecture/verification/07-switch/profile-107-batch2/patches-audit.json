@@ -1,0 +1,12 @@
+{
+  "adopted": [
+    "2-declaration-slice",
+    "3-object-assembly",
+    "4-default-choices"
+  ],
+  "patchChainMatchesFinal": true,
+  "rejectedFullyRestored": true,
+  "typeOnlyMockCorrectionJsIdentical": true,
+  "checkedFiles": 10,
+  "typescript": "5.9.2"
+}

@@ -1,0 +1,16 @@
+{
+  "name": "post-2",
+  "mode": "development",
+  "command": "npx --no-install vitest run --reporter=dot --configLoader runner --cache false --maxWorkers=1 --no-file-parallelism --project unit src/core/blueprint/__tests__/blueprint.owned-inline src/core/blueprint/__tests__/blueprint.path-key",
+  "exitCode": 0,
+  "signal": null,
+  "natural": true,
+  "started": 1791319128640,
+  "ended": 1791319133861,
+  "elapsedMs": 5221,
+  "summary": [
+    " Test Files  9 passed (9)",
+    "      Tests  21 passed (21)",
+    "   Duration  3.59s (transform 907ms, setup 0ms, collect 2.23s, tests 283ms, environment 1ms, prepare 309ms)"
+  ]
+}

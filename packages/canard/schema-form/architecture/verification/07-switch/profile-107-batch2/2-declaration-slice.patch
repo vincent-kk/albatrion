@@ -1,0 +1,93 @@
+diff --git a/packages/canard/schema-form/src/core/blueprint/DETAIL.md b/packages/canard/schema-form/src/core/blueprint/DETAIL.md
+--- a/packages/canard/schema-form/src/core/blueprint/DETAIL.md
++++ b/packages/canard/schema-form/src/core/blueprint/DETAIL.md
+@@ -1,6 +1,8 @@
+ # Blueprint contract
+ 
+ ## Requirements
++
++- 선언 수집의 packed gates/order 복사는 native slice를 사용합니다. fragment와 declaration의 배열은 계속 각각 소유하며 값·순서·ID·DFS·진단·capability는 같습니다. 속도 비용은 같은 원소 수에 비례하는 native 복사이며 입력과 fragment의 iterator 순회를 제거합니다. 메모리 비용은 호출마다 기존 네 배열과 원소 참조 수를 그대로 유지하며 추가 보유 자료는 없습니다(batch2 2-declaration-slice).
+ 
+ - 자식 이름의 escapeSegment는 이름별 한 번 생산한 값을 schemaPath와 data path에 재사용합니다. 무게이트 경로는 지역 문자열 하나를 사용하고 일반 집계는 기존 properties Map의 값에 escapedName·path·inputs를 같은 필드 순서로 보관합니다. 공개 두 경로·template key 바이트·자식/기여/게이트 순서는 같습니다. 속도 비용은 이름 길이에 비례하는 escape 한 번이며 반복 기여와 뒤 build 순회의 재 escape를 제거합니다. 메모리 비용은 빠른 경로의 지역 문자열 하나, 일반 경로의 이름별 일시 기록 하나와 문자열 참조입니다. 소속 배열의 소유·동결은 유지하며 새 보유 색인·캐시·공개 필드는 없습니다(107라운드 3-path-strings).
+ 
+diff --git a/packages/canard/schema-form/src/core/blueprint/utils/analyze/collectDeclarations.ts b/packages/canard/schema-form/src/core/blueprint/utils/analyze/collectDeclarations.ts
+--- a/packages/canard/schema-form/src/core/blueprint/utils/analyze/collectDeclarations.ts
++++ b/packages/canard/schema-form/src/core/blueprint/utils/analyze/collectDeclarations.ts
+@@ -51,7 +51,7 @@
+   collectSchemaCapabilities(context, input.schema);
+   if (input.gates.length || input.context === 'declaration')
+     context.capabilities.branchless = false;
+-  const gates: BlueprintGate[] = [...input.gates];
++  const gates: BlueprintGate[] = input.gates.slice();
+   if (
+     schema.controls?.active !== undefined &&
+     !gates.some(
+@@ -72,7 +72,7 @@
+     schemaPath: input.schemaPath,
+     schema: input.schema,
+     context: input.context,
+-    order: [...input.order],
++    order: input.order.slice(),
+     gates,
+     declares: [] as number[],
+     overlays: [] as number[],
+@@ -92,8 +92,8 @@
+     scope: input.isFragment ? 'fragment' : 'node',
+     validationOnly: false,
+     context: input.context,
+-    gates: [...fragment.gates],
+-    order: [...fragment.order],
++    gates: fragment.gates.slice(),
++    order: fragment.order.slice(),
+     inherited: input.inherited,
+     hostPath: input.hostPath,
+   };
+diff --git a/packages/canard/schema-form/src/core/blueprint/__tests__/blueprint.owned-inline-declaration-copies.test.ts b/packages/canard/schema-form/src/core/blueprint/__tests__/blueprint.owned-inline-declaration-copies.test.ts
+new file mode 100644
+--- /dev/null
++++ b/packages/canard/schema-form/src/core/blueprint/__tests__/blueprint.owned-inline-declaration-copies.test.ts
+@@ -0,0 +1,44 @@
++import { expect, it, vi } from 'vitest';
++
++import { blueprint } from '../blueprint';
++
++/** The existing collection boundary identifies invocation-owned input arrays. */
++const work = vi.hoisted(() => ({ inputs: new WeakSet<object>(), iterations: 0 }));
++
++vi.mock('../utils/analyze/collectDeclarations', async (importOriginal) => {
++  const original = await importOriginal<typeof import('../utils/analyze/collectDeclarations')>();
++  return {
++    collectDeclarations: (...args: Parameters<typeof original.collectDeclarations>) => {
++      work.inputs.add(args[1].gates);
++      work.inputs.add(args[1].order);
++      return original.collectDeclarations(...args);
++    },
++  };
++});
++
++it('copies packed input memberships without invoking their iterators', () => {
++  work.inputs = new WeakSet();
++  work.iterations = 0;
++  const iterator = Array.prototype[Symbol.iterator];
++  Array.prototype[Symbol.iterator] = function () {
++    if (work.inputs.has(this)) work.iterations++;
++    return iterator.call(this);
++  };
++  let result;
++  try {
++    result = blueprint({ type: 'object', properties: { first: { type: 'string' }, second: { type: 'number' } } });
++  } finally {
++    Array.prototype[Symbol.iterator] = iterator;
++  }
++  expect(work.iterations).toBe(0);
++  expect(result.fragments).toHaveLength(3);
++  for (const node of result.nodes) {
++    const declaration = node.declarations[0];
++    const fragment = result.fragments[declaration.fragmentId];
++    expect(declaration.gates).not.toBe(fragment.gates);
++    expect(declaration.order).not.toBe(fragment.order);
++    expect(declaration.gates).toEqual(fragment.gates);
++    expect(declaration.order).toEqual(fragment.order);
++    expect(Object.isFrozen(declaration.gates)).toBe(process.env.NODE_ENV !== 'production');
++  }
++});

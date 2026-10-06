@@ -1,0 +1,16 @@
+{
+  "name": "post-1-production",
+  "mode": "production",
+  "command": "npx --no-install vitest run --reporter=dot --configLoader runner --cache false --maxWorkers=1 --no-file-parallelism --project unit src/core/blueprint/__tests__/blueprint.owned-inline-differential.test.ts src/core/blueprint/__tests__/blueprint.owned-inline-policy.test.ts src/core/blueprint/__tests__/blueprint.path-key-once.test.ts src/core/blueprint/__tests__/blueprint.owned-inline-binding-order.test.ts",
+  "exitCode": 0,
+  "signal": null,
+  "natural": true,
+  "started": 1791318907780,
+  "ended": 1791318911838,
+  "elapsedMs": 4058,
+  "summary": [
+    " Test Files  4 passed (4)",
+    "      Tests  12 passed (12)",
+    "   Duration  2.43s (transform 913ms, setup 0ms, collect 1.73s, tests 189ms, environment 0ms, prepare 139ms)"
+  ]
+}

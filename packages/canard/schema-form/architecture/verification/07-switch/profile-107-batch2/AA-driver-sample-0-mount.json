@@ -1,0 +1,11 @@
+{
+  "phase": "AA",
+  "name": "sample-0",
+  "mode": "mount",
+  "status": 0,
+  "signal": null,
+  "natural": true,
+  "started": 1791318710674,
+  "ended": 1791318716853,
+  "elapsedMs": 6179
+}

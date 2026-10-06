@@ -1,0 +1,11 @@
+{
+  "phase": "1-binding-literal",
+  "name": "nested-d5-f4",
+  "mode": "first",
+  "status": 0,
+  "signal": null,
+  "natural": true,
+  "started": 1791318993695,
+  "ended": 1791319020168,
+  "elapsedMs": 26473
+}

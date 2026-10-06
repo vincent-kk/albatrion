@@ -1,0 +1,16 @@
+{
+  "name": "post-3-production",
+  "mode": "production",
+  "command": "npx --no-install vitest run --reporter=dot --configLoader runner --cache false --maxWorkers=1 --no-file-parallelism --project unit src/core/blueprint/__tests__/blueprint.owned-inline src/core/blueprint/__tests__/blueprint.path-key src/core/behaviors/objectBehavior/branch/utils/__tests__/assembleObject.first-work.test.ts",
+  "exitCode": 0,
+  "signal": null,
+  "natural": true,
+  "started": 1791319461942,
+  "ended": 1791319467263,
+  "elapsedMs": 5321,
+  "summary": [
+    " Test Files  10 passed (10)",
+    "      Tests  23 passed (23)",
+    "   Duration  3.70s (transform 904ms, setup 0ms, collect 2.26s, tests 267ms, environment 1ms, prepare 335ms)"
+  ]
+}

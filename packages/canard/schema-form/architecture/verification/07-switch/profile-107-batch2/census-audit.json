@@ -1,0 +1,21 @@
+{
+  "sites": 468,
+  "flagged": 294,
+  "spreads": 48,
+  "rests": 2,
+  "assigns": 0,
+  "selected": [
+    {
+      "id": 30,
+      "file": "src/core/blueprint/utils/analyze/populateNodeChildren/utils/appendChildEntries.ts",
+      "line": 39,
+      "counts": {
+        "nested-d5-f4": 1364,
+        "flat-500": 500,
+        "sample-0": 2
+      }
+    }
+  ],
+  "externalInstrumentedCopy": "/private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles/batch2-step-a-copy",
+  "helperWritesObserved": true
+}

@@ -1,0 +1,11 @@
+{
+  "phase": "3-object-assembly",
+  "name": "sample-0",
+  "mode": "later",
+  "status": 0,
+  "signal": null,
+  "natural": true,
+  "started": 1791319537489,
+  "ended": 1791319543649,
+  "elapsedMs": 6160
+}

@@ -1,0 +1,11 @@
+{
+  "phase": "4-default-choices",
+  "name": "sample-0",
+  "mode": "mount",
+  "status": 0,
+  "signal": null,
+  "natural": true,
+  "started": 1791319811640,
+  "ended": 1791319817860,
+  "elapsedMs": 6220
+}

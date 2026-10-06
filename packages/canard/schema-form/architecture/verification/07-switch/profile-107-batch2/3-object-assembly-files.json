@@ -1,0 +1,20 @@
+{
+  "phase": "3-object-assembly",
+  "measuredBase": "3-object-assembly-build-head.json",
+  "patch": "3-object-assembly.patch",
+  "files": [
+    {
+      "file": "packages/canard/schema-form/src/core/behaviors/objectBehavior/DETAIL.md",
+      "detailLines": [
+        5,
+        32
+      ]
+    },
+    {
+      "file": "packages/canard/schema-form/src/core/behaviors/objectBehavior/branch/utils/assembleObject.ts"
+    },
+    {
+      "file": "packages/canard/schema-form/src/core/behaviors/objectBehavior/branch/utils/__tests__/assembleObject.first-work.test.ts"
+    }
+  ]
+}

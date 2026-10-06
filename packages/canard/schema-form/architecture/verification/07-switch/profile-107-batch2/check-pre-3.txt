@@ -1,0 +1,36 @@
+npm notice run albatrion@0.0.0 npx
+npm notice run 'vitest' run --reporter=dot --configLoader runner --cache false --maxWorkers=1 --no-file-parallelism --project unit src/core/behaviors/objectBehavior/branch/utils/__tests__/assembleObject.first-work.test.ts
+│ ┌────────────────────────────────────────────────────────────────────────────┐
+│ │  Info: Found a setup file with "setProjectAnnotations".                    │
+│ │  Skipping automatic provisioning of preview annotations to avoid           │
+│ │  conflicts. Since Storybook 10.3, "@storybook/addon-vitest" applies these  │
+│ │   automatically.                                                           │
+│ │  You can safely remove the "setProjectAnnotations" call from your setup    │
+│ │  file, or remove the file entirely if you don't have custom code there.    │
+│ └────────────────────────────────────────────────────────────────────────────┘
+
+ RUN  v3.2.6 /Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/packages/canard/schema-form
+
+x·
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  |unit| src/core/behaviors/objectBehavior/branch/utils/__tests__/assembleObject.first-work.test.ts > assembles aligned first children without Map or Set allocation and preserves omitted/prototype keys
+TypeError: Class constructors cannot be invoked without 'new'
+ ❯ assembleObject src/core/behaviors/objectBehavior/branch/utils/assembleObject.ts:85:23
+     83|     }
+     84|   }
+     85|   const childValues = new Map<string, unknown>();
+       |                       ^
+     86|   for (const child of children)
+     87|     if (child !== null && typeof child === 'object' &&
+ ❯ src/core/behaviors/objectBehavior/branch/utils/__tests__/assembleObject.first-work.test.ts:19:14
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 1 passed (2)
+   Start at  05:42:35
+   Duration  216ms (transform 41ms, setup 0ms, collect 77ms, tests 4ms, environment 0ms, prepare 34ms)
+

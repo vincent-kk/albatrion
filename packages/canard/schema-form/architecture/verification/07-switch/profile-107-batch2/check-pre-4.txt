@@ -1,0 +1,42 @@
+npm notice run albatrion@0.0.0 npx
+npm notice run 'vitest' run --reporter=dot --configLoader runner --cache false --maxWorkers=1 --no-file-parallelism --project unit src/core/behaviors/utils/options/__tests__/getStaticChoices.default-work.test.ts
+│ ┌────────────────────────────────────────────────────────────────────────────┐
+│ │  Info: Found a setup file with "setProjectAnnotations".                    │
+│ │  Skipping automatic provisioning of preview annotations to avoid           │
+│ │  conflicts. Since Storybook 10.3, "@storybook/addon-vitest" applies these  │
+│ │   automatically.                                                           │
+│ │  You can safely remove the "setProjectAnnotations" call from your setup    │
+│ │  file, or remove the file entirely if you don't have custom code there.    │
+│ └────────────────────────────────────────────────────────────────────────────┘
+
+ RUN  v3.2.6 /Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/packages/canard/schema-form
+
+x·
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  |unit| src/core/behaviors/utils/options/__tests__/getStaticChoices.default-work.test.ts > links optionless effective schemas to one frozen default while keeping each memo lookup
+AssertionError: expected 2 to be +0 // Object.is equality
+
+- Expected
++ Received
+
+- 0
++ 2
+
+ ❯ src/core/behaviors/utils/options/__tests__/getStaticChoices.default-work.test.ts:19:17
+     17|     freeze.mockRestore();
+     18|   }
+     19|   expect(calls).toBe(0);
+       |                 ^
+     20|   expect(left).toBe(right);
+     21|   expect(repeated).toBe(left);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 1 passed (2)
+   Start at  05:47:23
+   Duration  202ms (transform 32ms, setup 0ms, collect 61ms, tests 6ms, environment 0ms, prepare 34ms)
+

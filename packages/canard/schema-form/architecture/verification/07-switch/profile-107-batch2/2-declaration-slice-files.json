@@ -1,0 +1,19 @@
+{
+  "phase": "2-declaration-slice",
+  "measuredBase": "2-declaration-slice-build-head.json",
+  "patch": "2-declaration-slice.patch",
+  "files": [
+    {
+      "file": "packages/canard/schema-form/src/core/blueprint/DETAIL.md",
+      "detailLines": [
+        5
+      ]
+    },
+    {
+      "file": "packages/canard/schema-form/src/core/blueprint/utils/analyze/collectDeclarations.ts"
+    },
+    {
+      "file": "packages/canard/schema-form/src/core/blueprint/__tests__/blueprint.owned-inline-declaration-copies.test.ts"
+    }
+  ]
+}

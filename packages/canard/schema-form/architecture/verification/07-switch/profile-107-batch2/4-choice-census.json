@@ -1,0 +1,26 @@
+[
+  {
+    "name": "nested-d5-f4",
+    "oldChoiceObjects": 1365,
+    "oldFreezes": 3071,
+    "newFreezes": 1706
+  },
+  {
+    "name": "flat-500",
+    "oldChoiceObjects": 501,
+    "oldFreezes": 1003,
+    "newFreezes": 502
+  },
+  {
+    "name": "oneOf-20",
+    "oldChoiceObjects": 5,
+    "oldFreezes": 116,
+    "newFreezes": 111
+  },
+  {
+    "name": "sample-0",
+    "oldChoiceObjects": 3,
+    "oldFreezes": 8,
+    "newFreezes": 5
+  }
+]

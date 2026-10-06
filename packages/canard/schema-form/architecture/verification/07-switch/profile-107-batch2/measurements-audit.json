@@ -1,0 +1,19 @@
+{
+  "timerWorkers": 450,
+  "buildWorkers": 10,
+  "rowCommands": 50,
+  "pairedSamples": 45450,
+  "sequential": true,
+  "natural": true,
+  "aaFirst": true,
+  "finalSourceTreeSha256": "d4aacce404d06fcb00e700807f5cc999c1284d604f4fd6f1fceae6d9ca624a86",
+  "maximumWorkerMs": 3939,
+  "maximumRowMs": 26473,
+  "started": 1791318635914,
+  "ended": 1791319894237,
+  "changed": [
+    "packages/canard/schema-form/src/core/behaviors/objectBehavior/branch/utils/assembleObject.ts",
+    "packages/canard/schema-form/src/core/behaviors/utils/options/getStaticChoices.ts",
+    "packages/canard/schema-form/src/core/blueprint/utils/analyze/collectDeclarations.ts"
+  ]
+}

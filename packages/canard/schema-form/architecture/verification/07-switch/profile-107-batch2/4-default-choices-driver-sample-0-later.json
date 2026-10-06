@@ -1,0 +1,11 @@
+{
+  "phase": "4-default-choices",
+  "name": "sample-0",
+  "mode": "later",
+  "status": 0,
+  "signal": null,
+  "natural": true,
+  "started": 1791319824809,
+  "ended": 1791319830999,
+  "elapsedMs": 6190
+}

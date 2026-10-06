@@ -1,0 +1,29 @@
+{
+  "phase": "4-default-choices",
+  "measuredBase": "4-default-choices-build-head.json",
+  "patch": "4-default-choices.patch",
+  "files": [
+    {
+      "file": "packages/canard/schema-form/src/core/behaviors/DETAIL.md",
+      "detailLines": [
+        5,
+        37
+      ]
+    },
+    {
+      "file": "packages/canard/schema-form/src/core/behaviors/utils/options/getStaticChoices.ts"
+    },
+    {
+      "file": "packages/canard/schema-form/src/core/blueprint/DETAIL.md",
+      "detailLines": [
+        85
+      ]
+    },
+    {
+      "file": "packages/canard/schema-form/src/core/blueprint/__tests__/blueprint.owned-inline-counts.test.ts"
+    },
+    {
+      "file": "packages/canard/schema-form/src/core/behaviors/utils/options/__tests__/getStaticChoices.default-work.test.ts"
+    }
+  ]
+}

@@ -1,0 +1,11 @@
+{
+  "phase": "1-binding-literal",
+  "name": "oneOf-20",
+  "mode": "mount",
+  "status": 0,
+  "signal": null,
+  "natural": true,
+  "started": 1791318961823,
+  "ended": 1791318973536,
+  "elapsedMs": 11713
+}

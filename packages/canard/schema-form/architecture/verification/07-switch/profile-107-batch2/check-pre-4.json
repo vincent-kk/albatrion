@@ -1,0 +1,19 @@
+{
+  "name": "pre-4",
+  "mode": "development",
+  "command": "npx --no-install vitest run --reporter=dot --configLoader runner --cache false --maxWorkers=1 --no-file-parallelism --project unit src/core/behaviors/utils/options/__tests__/getStaticChoices.default-work.test.ts",
+  "exitCode": 1,
+  "signal": null,
+  "natural": true,
+  "started": 1791319641560,
+  "ended": 1791319643448,
+  "elapsedMs": 1888,
+  "summary": [
+    "⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯",
+    " FAIL  |unit| src/core/behaviors/utils/options/__tests__/getStaticChoices.default-work.test.ts > links optionless effective schemas to one frozen default while keeping each memo lookup",
+    "AssertionError: expected 2 to be +0 // Object.is equality",
+    " Test Files  1 failed (1)",
+    "      Tests  1 failed | 1 passed (2)",
+    "   Duration  202ms (transform 32ms, setup 0ms, collect 61ms, tests 6ms, environment 0ms, prepare 34ms)"
+  ]
+}

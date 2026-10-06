@@ -1,0 +1,19 @@
+{
+  "name": "pre-2",
+  "mode": "development",
+  "command": "npx --no-install vitest run --reporter=dot --configLoader runner --cache false --maxWorkers=1 --no-file-parallelism --project unit src/core/blueprint/__tests__/blueprint.owned-inline-declaration-copies.test.ts",
+  "exitCode": 1,
+  "signal": null,
+  "natural": true,
+  "started": 1791319097820,
+  "ended": 1791319100128,
+  "elapsedMs": 2308,
+  "summary": [
+    "⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯",
+    " FAIL  |unit| src/core/blueprint/__tests__/blueprint.owned-inline-declaration-copies.test.ts > copies packed input memberships without invoking their iterators",
+    "AssertionError: expected 6 to be +0 // Object.is equality",
+    " Test Files  1 failed (1)",
+    "      Tests  1 failed (1)",
+    "   Duration  688ms (transform 314ms, setup 0ms, collect 550ms, tests 6ms, environment 0ms, prepare 34ms)"
+  ]
+}

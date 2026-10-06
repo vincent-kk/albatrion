@@ -1,0 +1,16 @@
+{
+  "name": "post-4-production",
+  "mode": "production",
+  "command": "npx --no-install vitest run --reporter=dot --configLoader runner --cache false --maxWorkers=1 --no-file-parallelism --project unit src/core/blueprint/__tests__/blueprint.owned-inline src/core/blueprint/__tests__/blueprint.path-key src/core/behaviors/objectBehavior/branch/utils/__tests__/assembleObject.first-work.test.ts src/core/behaviors/utils/options/__tests__/getStaticChoices.default-work.test.ts",
+  "exitCode": 0,
+  "signal": null,
+  "natural": true,
+  "started": 1791319749295,
+  "ended": 1791319754823,
+  "elapsedMs": 5528,
+  "summary": [
+    " Test Files  11 passed (11)",
+    "      Tests  25 passed (25)",
+    "   Duration  3.87s (transform 907ms, setup 0ms, collect 2.28s, tests 273ms, environment 1ms, prepare 397ms)"
+  ]
+}
