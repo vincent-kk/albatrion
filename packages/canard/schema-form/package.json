@@ -60,6 +60,7 @@
     "start": "yarn build && yarn storybook",
     "storybook": "storybook dev -p 6006",
     "test": "vitest",
+    "test:production": "NODE_ENV=production vitest run --project production --reporter=dot --configLoader runner --cache false",
     "typecheck": "tsc --noEmit --composite false --rootDir . -p tsconfig.json",
     "version:major": "yarn version major",
     "version:minor": "yarn version minor",

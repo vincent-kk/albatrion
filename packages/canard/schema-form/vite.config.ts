@@ -1,8 +1,11 @@
-import { resolve } from 'path';
+import { dirname, resolve } from 'path';
 import { createRequire } from 'node:module';
+import { fileURLToPath } from 'node:url';
 
 import { storybookTest } from '@storybook/addon-vitest/vitest-plugin';
 import { defineConfig } from 'vitest/config';
+
+const __dirname = dirname(fileURLToPath(import.meta.url));
 
 /** DOM-backed product tests run in the render project. */
 const renderTests = [
@@ -92,6 +95,17 @@ export default defineConfig({
               },
             },
           },
+        },
+      },
+      {
+        extends: true,
+        esbuild: { jsxDev: false },
+        test: {
+          name: 'production',
+          environment: 'jsdom',
+          transformMode: { ssr: [/\.ts$/], web: [/\.tsx$/] },
+          include: ['src/core/blueprint/__tests__/*.owned-inline*.test.{ts,tsx}'],
+          provide: { reactMajor: '19' },
         },
       },
       {
