@@ -1,0 +1,53 @@
+(node:97996) [DEP0205] DeprecationWarning: `module.register()` is deprecated. Use `module.registerHooks()` instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+│ ┌────────────────────────────────────────────────────────────────────────────┐
+│ │  Info: Found a setup file with "setProjectAnnotations".                    │
+│ │  Skipping automatic provisioning of preview annotations to avoid           │
+│ │  conflicts. Since Storybook 10.3, "@storybook/addon-vitest" applies these  │
+│ │   automatically.                                                           │
+│ │  You can safely remove the "setProjectAnnotations" call from your setup    │
+│ │  file, or remove the file entirely if you don't have custom code there.    │
+│ └────────────────────────────────────────────────────────────────────────────┘
+
+ RUN  v3.2.6 /Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/packages/canard/schema-form
+
+x··
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  |unit| src/core/settle/__tests__/settle.stable-compute-work.test.ts > keeps dirty work and child post-order without per-node shape or appearance membership checks
+AssertionError: expected "has" to not be called at all, but actually been called 2 times
+
+Received: 
+
+  1st has call:
+
+    Array [
+      "",
+    ]
+
+  2nd has call:
+
+    Array [
+      "/value",
+    ]
+
+
+Number of calls: 2
+
+ ❯ src/core/settle/__tests__/settle.stable-compute-work.test.ts:33:23
+     31|     visits.length = 0;
+     32|     computeNode(root, context);
+     33|     expect(shape).not.toHaveBeenCalled();
+       |                       ^
+     34|     expect(entered).not.toHaveBeenCalled();
+     35|     expect(visits).toEqual(['/value', '']);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 2 passed (3)
+   Start at  08:26:52
+   Duration  1.38s (transform 735ms, setup 0ms, collect 1.19s, tests 19ms, environment 0ms, prepare 37ms)
+

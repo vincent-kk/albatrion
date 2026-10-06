@@ -1,0 +1,22 @@
+{
+  "phase": "4-r1-single-path",
+  "adopted": false,
+  "measuredBase": "4-r1-single-path-build-head.json",
+  "baseBundleSha256": "c7e5feb8d4c4e5348694a3c41d55aba695990a05b1053d52fbb0540b6163901b",
+  "candidateBundleSha256": "d5c26ddf100ee319bdf893ebdb5a99d3fd60b7e7213149ceff5bd7ba88b171ad",
+  "patch": "4-r1-single-path-rejected.patch",
+  "files": [
+    {
+      "file": "packages/canard/schema-form/src/core/settle/utils/write/registerRecalculation.ts"
+    },
+    {
+      "file": "packages/canard/schema-form/src/core/settle/DETAIL.md",
+      "detailLines": [
+        5
+      ]
+    },
+    {
+      "file": "packages/canard/schema-form/src/core/settle/__tests__/settle.recalculation-work.test.ts"
+    }
+  ]
+}

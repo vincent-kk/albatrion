@@ -1,0 +1,17 @@
+{
+  "name": "c1-counts",
+  "mode": "test",
+  "command": "npx --no-install vitest run --reporter=dot --configLoader runner --cache false --maxWorkers=1 --no-file-parallelism --project unit src/core/settle/__tests__/settle.commit-memo-work.test.ts",
+  "exitCode": 0,
+  "signal": null,
+  "natural": true,
+  "started": 1791327807719,
+  "ended": 1791327810740,
+  "elapsedMs": 3021,
+  "summary": [
+    "(Use `node --trace-deprecation ...` to show where the warning was created)",
+    " Test Files  1 passed (1)",
+    "      Tests  3 passed (3)",
+    "   Duration  1.41s (transform 744ms, setup 0ms, collect 1.23s, tests 13ms, environment 0ms, prepare 37ms)"
+  ]
+}

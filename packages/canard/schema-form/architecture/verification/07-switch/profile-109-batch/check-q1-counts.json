@@ -1,0 +1,17 @@
+{
+  "name": "q1-counts",
+  "mode": "test",
+  "command": "npx --no-install vitest run --reporter=dot --configLoader runner --cache false --maxWorkers=1 --no-file-parallelism --project unit src/core/settle/__tests__/settle.stable-compute-work.test.ts",
+  "exitCode": 0,
+  "signal": null,
+  "natural": true,
+  "started": 1791329249929,
+  "ended": 1791329252948,
+  "elapsedMs": 3019,
+  "summary": [
+    "(Use `node --trace-deprecation ...` to show where the warning was created)",
+    " Test Files  1 passed (1)",
+    "      Tests  3 passed (3)",
+    "   Duration  1.39s (transform 740ms, setup 0ms, collect 1.20s, tests 18ms, environment 0ms, prepare 35ms)"
+  ]
+}

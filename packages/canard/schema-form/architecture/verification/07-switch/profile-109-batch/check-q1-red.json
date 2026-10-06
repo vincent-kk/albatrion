@@ -1,0 +1,20 @@
+{
+  "name": "q1-red",
+  "mode": "test",
+  "command": "npx --no-install vitest run --reporter=dot --configLoader runner --cache false --maxWorkers=1 --no-file-parallelism --project unit src/core/settle/__tests__/settle.stable-compute-work.test.ts",
+  "exitCode": 1,
+  "signal": null,
+  "natural": true,
+  "started": 1791329210526,
+  "ended": 1791329213523,
+  "elapsedMs": 2997,
+  "summary": [
+    "(Use `node --trace-deprecation ...` to show where the warning was created)",
+    "⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯",
+    " FAIL  |unit| src/core/settle/__tests__/settle.stable-compute-work.test.ts > keeps dirty work and child post-order without per-node shape or appearance membership checks",
+    "AssertionError: expected \"has\" to not be called at all, but actually been called 2 times",
+    " Test Files  1 failed (1)",
+    "      Tests  1 failed | 2 passed (3)",
+    "   Duration  1.38s (transform 735ms, setup 0ms, collect 1.19s, tests 19ms, environment 0ms, prepare 37ms)"
+  ]
+}

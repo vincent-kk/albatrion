@@ -1,0 +1,22 @@
+{
+  "phase": "3-s1-empty-scratch",
+  "adopted": false,
+  "measuredBase": "3-s1-empty-scratch-build-head.json",
+  "baseBundleSha256": "c7e5feb8d4c4e5348694a3c41d55aba695990a05b1053d52fbb0540b6163901b",
+  "candidateBundleSha256": "aa7f0e3227db4dbf82ba34117ea6b66884790b015823260dabee5ba7179c5a4a",
+  "patch": "3-s1-empty-scratch-rejected.patch",
+  "files": [
+    {
+      "file": "packages/canard/schema-form/src/core/settle/utils/write/DirtyPathSet.ts"
+    },
+    {
+      "file": "packages/canard/schema-form/src/core/settle/DETAIL.md",
+      "detailLines": [
+        5
+      ]
+    },
+    {
+      "file": "packages/canard/schema-form/src/core/settle/__tests__/settle.scratch-release-work.test.ts"
+    }
+  ]
+}

@@ -1,0 +1,20 @@
+{
+  "name": "c1-red",
+  "mode": "test",
+  "command": "npx --no-install vitest run --reporter=dot --configLoader runner --cache false --maxWorkers=1 --no-file-parallelism --project unit src/core/settle/__tests__/settle.commit-memo-work.test.ts",
+  "exitCode": 1,
+  "signal": null,
+  "natural": true,
+  "started": 1791327628752,
+  "ended": 1791327631755,
+  "elapsedMs": 3003,
+  "summary": [
+    "(Use `node --trace-deprecation ...` to show where the warning was created)",
+    "⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯",
+    " FAIL  |unit| src/core/settle/__tests__/settle.commit-memo-work.test.ts > updates a still-empty mismatch row without clearing or reinserting the memo",
+    "AssertionError: expected \"clear\" to not be called at all, but actually been called 2 times",
+    " Test Files  1 failed (1)",
+    "      Tests  1 failed | 1 passed (2)",
+    "   Duration  1.38s (transform 734ms, setup 0ms, collect 1.19s, tests 15ms, environment 0ms, prepare 35ms)"
+  ]
+}

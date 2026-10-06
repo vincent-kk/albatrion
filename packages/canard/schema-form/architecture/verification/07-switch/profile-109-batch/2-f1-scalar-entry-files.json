@@ -1,0 +1,25 @@
+{
+  "phase": "2-f1-scalar-entry",
+  "adopted": true,
+  "measuredBase": "2-f1-scalar-entry-build-head.json",
+  "baseBundleSha256": "fffaab7f5d9f50dd1634572bae6bc47b70f22dc1fb9f48d81cd196ce82896822",
+  "candidateBundleSha256": "c7e5feb8d4c4e5348694a3c41d55aba695990a05b1053d52fbb0540b6163901b",
+  "patch": "2-f1-scalar-entry.patch",
+  "files": [
+    {
+      "file": "packages/canard/schema-form/src/core/settle/utils/write/writeSchemaNode.ts"
+    },
+    {
+      "file": "packages/canard/schema-form/src/core/settle/utils/settlement/finishSettlement.ts"
+    },
+    {
+      "file": "packages/canard/schema-form/src/core/settle/DETAIL.md",
+      "detailLines": [
+        5
+      ]
+    },
+    {
+      "file": "packages/canard/schema-form/src/core/settle/__tests__/settle.scalar-entry-work.test.ts"
+    }
+  ]
+}

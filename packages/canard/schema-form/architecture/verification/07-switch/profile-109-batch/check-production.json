@@ -1,0 +1,17 @@
+{
+  "name": "production",
+  "mode": "production",
+  "command": "npx --no-install vitest run --reporter=dot --configLoader runner --cache false --maxWorkers=1 --no-file-parallelism --project production",
+  "exitCode": 0,
+  "signal": null,
+  "natural": true,
+  "started": 1791330026029,
+  "ended": 1791330033123,
+  "elapsedMs": 7094,
+  "summary": [
+    "(Use `node --trace-deprecation ...` to show where the warning was created)",
+    " Test Files  9 passed (9)",
+    "      Tests  20 passed (20)",
+    "   Duration  5.44s (transform 1.08s, setup 0ms, collect 2.47s, tests 232ms, environment 1.34s, prepare 307ms)"
+  ]
+}

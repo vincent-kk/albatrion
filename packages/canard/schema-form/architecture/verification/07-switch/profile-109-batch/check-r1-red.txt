@@ -1,0 +1,42 @@
+(node:92756) [DEP0205] DeprecationWarning: `module.register()` is deprecated. Use `module.registerHooks()` instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+│ ┌────────────────────────────────────────────────────────────────────────────┐
+│ │  Info: Found a setup file with "setProjectAnnotations".                    │
+│ │  Skipping automatic provisioning of preview annotations to avoid           │
+│ │  conflicts. Since Storybook 10.3, "@storybook/addon-vitest" applies these  │
+│ │   automatically.                                                           │
+│ │  You can safely remove the "setProjectAnnotations" call from your setup    │
+│ │  file, or remove the file entirely if you don't have custom code there.    │
+│ └────────────────────────────────────────────────────────────────────────────┘
+
+ RUN  v3.2.6 /Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/packages/canard/schema-form
+
+x··
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  |unit| src/core/settle/__tests__/settle.recalculation-work.test.ts > keeps dependency expansion and ancestor order without allocating a duplicate expansion Set
+AssertionError: expected 2 to be 1 // Object.is equality
+
+- Expected
++ Received
+
+- 1
++ 2
+
+ ❯ src/core/settle/__tests__/settle.recalculation-work.test.ts:34:21
+     32|   vi.stubGlobal('Set', CountedSet);
+     33|   try { registerRecalculation(context); } finally { vi.unstubAllGlobal…
+     34|   expect(allocated).toBe(1);
+       |                     ^
+     35|   expect(query).toHaveBeenCalledTimes(1);
+     36|   expect([...context.dirtyPaths]).toEqual(['/group/value', '/group', '…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 2 passed (3)
+   Start at  08:21:10
+   Duration  1.39s (transform 746ms, setup 0ms, collect 1.20s, tests 16ms, environment 0ms, prepare 35ms)
+

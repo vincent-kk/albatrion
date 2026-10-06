@@ -1,0 +1,11 @@
+{
+  "phase": "2-f1-scalar-entry",
+  "name": "flat-500",
+  "mode": "mount",
+  "status": 0,
+  "signal": null,
+  "natural": true,
+  "started": 1791328244650,
+  "ended": 1791328256387,
+  "elapsedMs": 11737
+}

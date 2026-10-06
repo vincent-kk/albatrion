@@ -1,0 +1,11 @@
+{
+  "phase": "1-c1-empty-memo",
+  "name": "sample-0",
+  "mode": "first",
+  "status": 0,
+  "signal": null,
+  "natural": true,
+  "started": 1791327868678,
+  "ended": 1791327875233,
+  "elapsedMs": 6555
+}

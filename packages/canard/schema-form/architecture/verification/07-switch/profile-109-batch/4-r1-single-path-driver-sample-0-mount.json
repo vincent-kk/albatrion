@@ -1,0 +1,11 @@
+{
+  "phase": "4-r1-single-path",
+  "name": "sample-0",
+  "mode": "mount",
+  "status": 0,
+  "signal": null,
+  "natural": true,
+  "started": 1791329005463,
+  "ended": 1791329011752,
+  "elapsedMs": 6289
+}

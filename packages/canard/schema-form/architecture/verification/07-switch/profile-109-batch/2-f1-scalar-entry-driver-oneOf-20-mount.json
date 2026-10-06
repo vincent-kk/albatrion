@@ -1,0 +1,11 @@
+{
+  "phase": "2-f1-scalar-entry",
+  "name": "oneOf-20",
+  "mode": "mount",
+  "status": 0,
+  "signal": null,
+  "natural": true,
+  "started": 1791328257236,
+  "ended": 1791328268601,
+  "elapsedMs": 11365
+}

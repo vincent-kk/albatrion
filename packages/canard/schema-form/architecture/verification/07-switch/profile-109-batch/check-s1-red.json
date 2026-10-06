@@ -1,0 +1,20 @@
+{
+  "name": "s1-red",
+  "mode": "test",
+  "command": "npx --no-install vitest run --reporter=dot --configLoader runner --cache false --maxWorkers=1 --no-file-parallelism --project unit src/core/settle/__tests__/settle.scratch-release-work.test.ts",
+  "exitCode": 1,
+  "signal": null,
+  "natural": true,
+  "started": 1791328454147,
+  "ended": 1791328456673,
+  "elapsedMs": 2526,
+  "summary": [
+    "(Use `node --trace-deprecation ...` to show where the warning was created)",
+    "⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯",
+    " FAIL  |unit| src/core/settle/__tests__/settle.scratch-release-work.test.ts > skips empty native clears while resetting the consumed post-order traversal for reuse",
+    "AssertionError: expected [ Set{} ] to have a length of +0 but got 1",
+    " Test Files  1 failed (1)",
+    "      Tests  1 failed | 1 passed (2)",
+    "   Duration  900ms (transform 429ms, setup 0ms, collect 724ms, tests 10ms, environment 0ms, prepare 37ms)"
+  ]
+}

@@ -1,0 +1,11 @@
+{
+  "phase": "2-f1-scalar-entry",
+  "name": "nested-d5-f4",
+  "mode": "later",
+  "status": 0,
+  "signal": null,
+  "natural": true,
+  "started": 1791328356240,
+  "ended": 1791328366287,
+  "elapsedMs": 10047
+}

@@ -1,0 +1,26 @@
+(node:87256) [DEP0205] DeprecationWarning: `module.register()` is deprecated. Use `module.registerHooks()` instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+│ ┌────────────────────────────────────────────────────────────────────────────┐
+│ │  Info: Found a setup file with "setProjectAnnotations".                    │
+│ │  Skipping automatic provisioning of preview annotations to avoid           │
+│ │  conflicts. Since Storybook 10.3, "@storybook/addon-vitest" applies these  │
+│ │   automatically.                                                           │
+│ │  You can safely remove the "setProjectAnnotations" call from your setup    │
+│ │  file, or remove the file entirely if you don't have custom code there.    │
+│ └────────────────────────────────────────────────────────────────────────────┘
+
+ RUN  v3.2.6 /Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/packages/canard/schema-form
+
+·······························································································································································································································································································································································································································································································································································································································stdout | src/core/__tests__/schema-merge.mount.test.ts > removes runtime remerges per cold mount while retaining every static check
+SCHEMA_MERGE_COUNTS {"before":{"runtime":4,"static":4},"after":{"runtime":0,"static":4}}
+
+······························································································································································stdout | src/core/settle/__tests__/settle.gate-read-counts.test.ts > gate dependency read work > reads every dependency in order without invoking its array map
+106COUNT gate-read map=0 projected=24 evaluate=12
+
+···································································································································································
+
+ Test Files  136 passed (136)
+      Tests  928 passed (928)
+   Start at  08:14:42
+   Duration  52.00s (transform 1.38s, setup 0ms, collect 23.15s, tests 8.22s, environment 12ms, prepare 4.67s)
+

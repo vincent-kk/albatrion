@@ -1,0 +1,11 @@
+{
+  "phase": "1-c1-empty-memo",
+  "name": "sample-0",
+  "mode": "mount",
+  "status": 0,
+  "signal": null,
+  "natural": true,
+  "started": 1791327861539,
+  "ended": 1791327867830,
+  "elapsedMs": 6291
+}

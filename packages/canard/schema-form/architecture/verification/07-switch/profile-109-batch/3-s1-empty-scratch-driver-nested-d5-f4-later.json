@@ -1,0 +1,11 @@
+{
+  "phase": "3-s1-empty-scratch",
+  "name": "nested-d5-f4",
+  "mode": "later",
+  "status": 0,
+  "signal": null,
+  "natural": true,
+  "started": 1791328689399,
+  "ended": 1791328699409,
+  "elapsedMs": 10010
+}

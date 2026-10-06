@@ -1,0 +1,11 @@
+{
+  "phase": "3-s1-empty-scratch",
+  "name": "flat-100",
+  "mode": "later",
+  "status": 0,
+  "signal": null,
+  "natural": true,
+  "started": 1791328633347,
+  "ended": 1791328639960,
+  "elapsedMs": 6613
+}

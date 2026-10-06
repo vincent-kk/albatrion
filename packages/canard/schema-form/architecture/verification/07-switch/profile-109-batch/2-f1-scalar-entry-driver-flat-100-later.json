@@ -1,0 +1,11 @@
+{
+  "phase": "2-f1-scalar-entry",
+  "name": "flat-100",
+  "mode": "later",
+  "status": 0,
+  "signal": null,
+  "natural": true,
+  "started": 1791328300309,
+  "ended": 1791328306918,
+  "elapsedMs": 6609
+}

@@ -1,0 +1,22 @@
+{
+  "phase": "1-c1-empty-memo",
+  "adopted": true,
+  "measuredBase": "1-c1-empty-memo-build-head.json",
+  "baseBundleSha256": "7903a733a22e9ad3717667166805f0c27a6cd4a4f329a484eb80468e135da675",
+  "candidateBundleSha256": "fffaab7f5d9f50dd1634572bae6bc47b70f22dc1fb9f48d81cd196ce82896822",
+  "patch": "1-c1-empty-memo.patch",
+  "files": [
+    {
+      "file": "packages/canard/schema-form/src/core/settle/utils/commit/commitSettlement.ts"
+    },
+    {
+      "file": "packages/canard/schema-form/src/core/settle/DETAIL.md",
+      "detailLines": [
+        5
+      ]
+    },
+    {
+      "file": "packages/canard/schema-form/src/core/settle/__tests__/settle.commit-memo-work.test.ts"
+    }
+  ]
+}

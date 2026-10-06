@@ -1,0 +1,11 @@
+{
+  "phase": "4-r1-single-path",
+  "name": "nested-d5-f4",
+  "mode": "mount",
+  "status": 0,
+  "signal": null,
+  "natural": true,
+  "started": 1791328955865,
+  "ended": 1791328979865,
+  "elapsedMs": 24000
+}

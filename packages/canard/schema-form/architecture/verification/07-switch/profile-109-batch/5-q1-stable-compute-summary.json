@@ -1,0 +1,318 @@
+{
+  "HEAD": "35af3faecd473598d439638806db9d3f39e88a29",
+  "phase": "5-q1-stable-compute",
+  "design": {
+    "runs": 9,
+    "warmup": 20,
+    "samples": 101,
+    "bootstrapTrials": 1999,
+    "bootstrapSeed": 101,
+    "canonicalSha256": "ef3772630d5238550f2cc48697d940ece4c3a28ab5a77580bab85472f23ba270",
+    "mode": "production",
+    "difference": "H−W"
+  },
+  "builds": {
+    "head": {
+      "HEAD": "35af3faecd473598d439638806db9d3f39e88a29",
+      "version": "head",
+      "development": false,
+      "sourceTreeSha256": "9db414c4bddb88d7b1cf56b3884d6b22552dd0a4517f8c27e48d0f599d9b03df",
+      "bundleSha256": "c7e5feb8d4c4e5348694a3c41d55aba695990a05b1053d52fbb0540b6163901b",
+      "bytes": 542368,
+      "naturalBuildServices": 1,
+      "sourceRecords": "5-q1-stable-compute-build-head.json"
+    },
+    "working": {
+      "HEAD": "35af3faecd473598d439638806db9d3f39e88a29",
+      "version": "working",
+      "development": false,
+      "sourceTreeSha256": "6591c849446a1deb09c3eb1141e2122abfda74decb275adc4fdd13ec1f8df4a5",
+      "bundleSha256": "d170ef6aa68ab6f8899b8ad19e5ed0879864591bd0e3c345bf1fe984df6b3758",
+      "bytes": 543214,
+      "naturalBuildServices": 1,
+      "sourceRecords": "5-q1-stable-compute-build-working.json"
+    }
+  },
+  "rows": [
+    {
+      "name": "nested-d5-f4",
+      "mode": "mount",
+      "pairs": 909,
+      "pooledMedianMs": 0.026291999999557447,
+      "ci99Ms": [
+        -0.02391699999998309,
+        0.06945900000005167
+      ],
+      "aaStatisticMs": 0.03708299999971132,
+      "baseMedianMs": 4.980374999999896,
+      "floorMs": 0.03708299999971132,
+      "minimumSizeMs": 0.02490187499999948,
+      "workingMedianMs": 4.983958999999942,
+      "improved": false,
+      "regression": false,
+      "verdict": "채택 조건 미충족"
+    },
+    {
+      "name": "flat-500",
+      "mode": "mount",
+      "pairs": 909,
+      "pooledMedianMs": -0.0011240000001180306,
+      "ci99Ms": [
+        -0.008207999999967797,
+        0.004124999999930878
+      ],
+      "aaStatisticMs": -0.000416000000313943,
+      "baseMedianMs": 1.5454169999999294,
+      "floorMs": 0.007727084999999648,
+      "minimumSizeMs": 0.007727084999999648,
+      "workingMedianMs": 1.5464170000000195,
+      "improved": false,
+      "regression": false,
+      "verdict": "채택 조건 미충족"
+    },
+    {
+      "name": "oneOf-20",
+      "mode": "mount",
+      "pairs": 909,
+      "pooledMedianMs": -0.0027919999998857747,
+      "ci99Ms": [
+        -0.00804100000004837,
+        0.002166999999985819
+      ],
+      "aaStatisticMs": -9.999999974752427e-7,
+      "baseMedianMs": 1.8756660000001375,
+      "floorMs": 0.009378330000000688,
+      "minimumSizeMs": 0.009378330000000688,
+      "workingMedianMs": 1.879124000000047,
+      "improved": false,
+      "regression": false,
+      "verdict": "채택 조건 미충족"
+    },
+    {
+      "name": "sample-0",
+      "mode": "mount",
+      "pairs": 909,
+      "pooledMedianMs": -0.0002919999999448919,
+      "ci99Ms": [
+        -0.0012500000000272848,
+        0.0006670000000212895
+      ],
+      "aaStatisticMs": 0.00016700000000469117,
+      "baseMedianMs": 0.09654199999997104,
+      "floorMs": 0.0004827099999998552,
+      "minimumSizeMs": 0.0004827099999998552,
+      "workingMedianMs": 0.09620800000000429,
+      "improved": false,
+      "regression": false,
+      "verdict": "채택 조건 미충족"
+    },
+    {
+      "name": "sample-0",
+      "mode": "first",
+      "pairs": 909,
+      "pooledMedianMs": 0.0006250000000136424,
+      "ci99Ms": [
+        0.00012499999999704414,
+        0.0011240000000327655
+      ],
+      "aaStatisticMs": 0.00020799999998644125,
+      "baseMedianMs": 0.07945799999998826,
+      "floorMs": 0.0003972899999999413,
+      "minimumSizeMs": 0.0003972899999999413,
+      "workingMedianMs": 0.07883299999998883,
+      "improved": true,
+      "regression": false,
+      "verdict": "개선"
+    },
+    {
+      "name": "sample-0",
+      "mode": "later",
+      "pairs": 909,
+      "pooledMedianMs": -0.00004100000001017179,
+      "ci99Ms": [
+        -0.0005830000000059954,
+        0.0005830000000344171
+      ],
+      "aaStatisticMs": 0.0007500000000391083,
+      "baseMedianMs": 0.07345800000005909,
+      "floorMs": 0.0007500000000391083,
+      "minimumSizeMs": 0.00036729000000029543,
+      "workingMedianMs": 0.07329200000002345,
+      "improved": false,
+      "regression": false,
+      "verdict": "채택 조건 미충족"
+    },
+    {
+      "name": "flat-100",
+      "mode": "first",
+      "pairs": 909,
+      "pooledMedianMs": 0.00020799999992959783,
+      "ci99Ms": [
+        -0.0006250000000136424,
+        0.0009169999999585343
+      ],
+      "aaStatisticMs": 0.0002499999999940883,
+      "baseMedianMs": 0.08329099999997425,
+      "floorMs": 0.00041645499999987123,
+      "minimumSizeMs": 0.00041645499999987123,
+      "workingMedianMs": 0.08354200000000844,
+      "improved": false,
+      "regression": false,
+      "verdict": "채택 조건 미충족"
+    },
+    {
+      "name": "flat-100",
+      "mode": "later",
+      "pairs": 909,
+      "pooledMedianMs": 0.00008300000001781882,
+      "ci99Ms": [
+        -0.0004580000000942164,
+        0.0007919999999330685
+      ],
+      "aaStatisticMs": -0.00041700000002720117,
+      "baseMedianMs": 0.07383299999992232,
+      "floorMs": 0.00041700000002720117,
+      "minimumSizeMs": 0.0003691649999996116,
+      "workingMedianMs": 0.07374900000002071,
+      "improved": false,
+      "regression": false,
+      "verdict": "채택 조건 미충족"
+    },
+    {
+      "name": "flat-500",
+      "mode": "first",
+      "pairs": 909,
+      "pooledMedianMs": 0.00004200000000764703,
+      "ci99Ms": [
+        -0.0004159999999728825,
+        0.0007080000000314612
+      ],
+      "aaStatisticMs": -0.0004999999998744897,
+      "baseMedianMs": 0.0922499999998081,
+      "floorMs": 0.0004999999998744897,
+      "minimumSizeMs": 0.0004612499999990405,
+      "workingMedianMs": 0.09229099999996038,
+      "improved": false,
+      "regression": false,
+      "verdict": "채택 조건 미충족"
+    },
+    {
+      "name": "flat-500",
+      "mode": "later",
+      "pairs": 909,
+      "pooledMedianMs": 0.0008340000000544023,
+      "ci99Ms": [
+        0.00008300000001781882,
+        0.0015830000000107702
+      ],
+      "aaStatisticMs": -0.00004100000001017179,
+      "baseMedianMs": 0.07774899999998297,
+      "floorMs": 0.00038874499999991486,
+      "minimumSizeMs": 0.00038874499999991486,
+      "workingMedianMs": 0.07708399999995663,
+      "improved": true,
+      "regression": false,
+      "verdict": "개선"
+    },
+    {
+      "name": "nested-d5-f4",
+      "mode": "first",
+      "pairs": 909,
+      "pooledMedianMs": 0.03912399999990157,
+      "ci99Ms": [
+        -0.07125000000007731,
+        0.07016600000042672
+      ],
+      "aaStatisticMs": 0.03229200000009769,
+      "baseMedianMs": 0.18170899999950052,
+      "floorMs": 0.03229200000009769,
+      "minimumSizeMs": 0.0009085449999975026,
+      "workingMedianMs": 0.17812600000033285,
+      "improved": false,
+      "regression": false,
+      "verdict": "채택 조건 미충족"
+    },
+    {
+      "name": "nested-d5-f4",
+      "mode": "later",
+      "pairs": 909,
+      "pooledMedianMs": 0.00012500000002546585,
+      "ci99Ms": [
+        -0.0005840000000034706,
+        0.0009160000000747459
+      ],
+      "aaStatisticMs": 0.0012500000000272848,
+      "baseMedianMs": 0.10350000000005366,
+      "floorMs": 0.0012500000000272848,
+      "minimumSizeMs": 0.0005175000000002683,
+      "workingMedianMs": 0.10345799999993233,
+      "improved": false,
+      "regression": false,
+      "verdict": "채택 조건 미충족"
+    },
+    {
+      "name": "oneOf-40",
+      "mode": "first",
+      "pairs": 909,
+      "pooledMedianMs": -0.0025410000000647415,
+      "ci99Ms": [
+        -0.0072909999998955755,
+        0.0017500000001291482
+      ],
+      "aaStatisticMs": -0.003541999999924883,
+      "baseMedianMs": 1.3885420000001432,
+      "floorMs": 0.006942710000000716,
+      "minimumSizeMs": 0.006942710000000716,
+      "workingMedianMs": 1.3915829999999403,
+      "improved": false,
+      "regression": false,
+      "verdict": "채택 조건 미충족"
+    },
+    {
+      "name": "oneOf-40",
+      "mode": "later",
+      "pairs": 909,
+      "pooledMedianMs": -0.001833000000146967,
+      "ci99Ms": [
+        -0.0049999999999954525,
+        0.002040999999962878
+      ],
+      "aaStatisticMs": 0.0009999999999195097,
+      "baseMedianMs": 0.9177490000000006,
+      "floorMs": 0.0045887450000000034,
+      "minimumSizeMs": 0.0045887450000000034,
+      "workingMedianMs": 0.9200009999999992,
+      "improved": false,
+      "regression": false,
+      "verdict": "채택 조건 미충족"
+    }
+  ],
+  "adopted": true,
+  "processes": {
+    "pairs": 126,
+    "records": "5-q1-stable-compute-process-*.json",
+    "sequential": true,
+    "natural": true
+  },
+  "maxWorkerMs": 2802,
+  "name": "Q1",
+  "mode": "flat-500/later",
+  "pooledMedianMs": 0.0008340000000544023,
+  "ci99Ms": [
+    0.00008300000001781882,
+    0.0015830000000107702
+  ],
+  "aaStatisticMs": -0.00004100000001017179,
+  "baseMedianMs": 0.07774899999998297,
+  "floorMs": 0.00038874499999991486,
+  "verdict": "채택",
+  "bestProvedUpdateRow": {
+    "name": "flat-500",
+    "mode": "later"
+  },
+  "speedAndMemoryCost": "계산 진입에서 branchless·gate 부재·빈 shapeDirty/entered를 한 번 증명한 경우만 동일 helper로 직접 재귀합니다. dirty 확인·stateDirty·자식 post-order·동일 updateOutput 인자·dirty 삭제·터미널 루트 schema 선택은 유지합니다. O(1) 부재 검사와 O(방문 노드) 작업은 남고 노드마다 반복하던 shell 검사를 줄입니다. 기존 dirtyChildren 배열·깊이 D의 재귀 stack을 유지하며 새 heap container·노드/문맥 필드·보유 cache·폼 간 공유는 없습니다.",
+  "regressionRows": [],
+  "patch": "5-q1-stable-compute.patch",
+  "fileManifest": "5-q1-stable-compute-files.json",
+  "measuredAgainst": "HEAD+C1+F1"
+}

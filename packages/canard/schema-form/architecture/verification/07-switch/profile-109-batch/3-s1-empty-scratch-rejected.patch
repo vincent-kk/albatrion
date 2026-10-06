@@ -1,0 +1,86 @@
+diff --git a/packages/canard/schema-form/src/core/settle/utils/write/DirtyPathSet.ts b/packages/canard/schema-form/src/core/settle/utils/write/DirtyPathSet.ts
+--- a/packages/canard/schema-form/src/core/settle/utils/write/DirtyPathSet.ts
++++ b/packages/canard/schema-form/src/core/settle/utils/write/DirtyPathSet.ts
+@@ -105,8 +105,8 @@
+   }
+ 
+   override clear(): void {
+-    super.clear();
+-    this.childrenByParent.clear();
++    if (this.size) super.clear();
++    if (this.childrenByParent.size) this.childrenByParent.clear();
+     this.postOrder = false;
+   }
+ }
+diff --git a/packages/canard/schema-form/src/core/settle/DETAIL.md b/packages/canard/schema-form/src/core/settle/DETAIL.md
+--- a/packages/canard/schema-form/src/core/settle/DETAIL.md
++++ b/packages/canard/schema-form/src/core/settle/DETAIL.md
+@@ -1,6 +1,8 @@
+ # settle 계약
+ 
+ ## Requirements
++
++- scratch 해제는 이미 비어 있는 dirty 경로의 native Set clear와 부모 색인의 native Map clear도 생략합니다. DirtyPathSet의 재사용 모드 초기화와 inUse 해제는 크기와 무관하게 유지하고, 채워진 모든 컨테이너와 미해결 경로 색인은 그대로 정리합니다. 속도 비용은 O(1) size 검사 두 번이며 빈 native clear 두 번을 제거합니다. 메모리 비용은 빈 clear의 backing-store 교체를 줄이며 새 컨테이너·필드·캐시는 없습니다. 게이트·중첩 쓰기·이후 일반 add/delete의 관측과 순서는 같습니다(109 갱신 S1).
+ 
+ - 분기·파생·잠복 원본이 없고 살아 있는 비루트 scalar의 현재 원본·입력·유효 타입이 같은 경우만 쓰기 진입을 특화합니다. dispose·가상·detach·잠복 검사와 빈 wrong-kind release의 호출을 생략하되 조상 표시와 실제 wrong-kind 처리, 표시·계산·전이 조건·상태 키·커밋·배달 순서는 유지합니다. 이 증명은 빈 derive 검사와 대상 유효 타입 재해석에만 전달하며 실제 생김·이탈·배열·오류 처리는 기존 마감입니다. 속도 비용은 고정 수의 O(1) 타입·capability·size 검사이며 빈 helper·배열·sort callback 및 중복 유효 타입 해석을 제거합니다. 메모리 비용은 호출별 boolean/local만 추가하고 빈 release 임시 배열·closure를 줄이며 새 상주 메모리·문맥 필드·폼 간 공유는 없습니다(109 갱신 F1).
+ 
+diff --git a/packages/canard/schema-form/src/core/settle/__tests__/settle.scratch-release-work.test.ts b/packages/canard/schema-form/src/core/settle/__tests__/settle.scratch-release-work.test.ts
+new file mode 100644
+--- /dev/null
++++ b/packages/canard/schema-form/src/core/settle/__tests__/settle.scratch-release-work.test.ts
+@@ -0,0 +1,55 @@
++import { afterEach, expect, it, vi } from 'vitest';
++
++import { getSettlementScratch } from '../utils/write/getSettlementScratch';
++import { DirtyPathSet } from '../utils/write/DirtyPathSet';
++import { releaseSettlementScratch } from '../utils/write/releaseSettlementScratch';
++import { createTestTree } from './fixtures/createTestTree';
++
++afterEach(() => vi.restoreAllMocks());
++
++it('skips empty native clears while resetting the consumed post-order traversal for reuse', () => {
++  const { root } = createTestTree({ type: 'object', properties: { value: { type: 'string' } } });
++  const scratch = getSettlementScratch(root.runtime);
++  if (!(scratch.dirtyPaths instanceof DirtyPathSet)) throw new Error('Expected indexed scratch');
++  scratch.dirtyPaths.add('/branch/value');
++  scratch.dirtyPaths.beginPostOrder();
++  for (const path of ['/branch/value', '/branch', '']) scratch.dirtyPaths.delete(path);
++  expect(scratch.dirtyPaths.size).toBe(0);
++  expect(scratch.dirtyChildrenByParent.size).toBe(0);
++  const clearSet = vi.spyOn(Set.prototype, 'clear');
++  const clearMap = vi.spyOn(Map.prototype, 'clear');
++  releaseSettlementScratch(scratch);
++  expect(clearSet.mock.contexts.filter(value => value === scratch.dirtyPaths)).toHaveLength(0);
++  expect(clearMap.mock.contexts.filter(value => value === scratch.dirtyChildrenByParent)).toHaveLength(0);
++  expect(scratch.inUse).toBe(false);
++  expect(getSettlementScratch(root.runtime)).toBe(scratch);
++  scratch.dirtyPaths.add('/other/value');
++  expect([...scratch.dirtyPaths]).toEqual(['/other/value']);
++  releaseSettlementScratch(scratch);
++});
++
++it('clears every populated container and isolates a nested reservation', () => {
++  const { root } = createTestTree({ type: 'object', properties: { value: { type: 'string' } } });
++  const scratch = getSettlementScratch(root.runtime);
++  scratch.entered.add(root);
++  scratch.writtenInputs.set(root, 'before');
++  scratch.changedRaw.add('/value');
++  scratch.dirtyPaths.add('/value');
++  const nested = getSettlementScratch(root.runtime);
++  expect(nested).not.toBe(scratch);
++  nested.dirtyPaths.add('/nested');
++  const clearSet = vi.spyOn(Set.prototype, 'clear');
++  const clearMap = vi.spyOn(Map.prototype, 'clear');
++  releaseSettlementScratch(scratch);
++  expect(clearSet.mock.contexts.filter(value => value === scratch.dirtyPaths)).toHaveLength(1);
++  expect(clearMap.mock.contexts.filter(value => value === scratch.dirtyChildrenByParent)).toHaveLength(1);
++  expect(scratch.entered.size).toBe(0);
++  expect(scratch.writtenInputs.size).toBe(0);
++  expect(scratch.changedRaw.size).toBe(0);
++  expect(scratch.dirtyPaths.size).toBe(0);
++  expect(scratch.dirtyChildrenByParent.size).toBe(0);
++  expect(scratch.inUse).toBe(false);
++  expect([...nested.dirtyPaths]).toEqual(['/nested']);
++  expect(nested.inUse).toBe(true);
++  releaseSettlementScratch(nested);
++});

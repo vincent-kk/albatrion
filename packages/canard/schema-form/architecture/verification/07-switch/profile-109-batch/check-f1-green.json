@@ -1,0 +1,17 @@
+{
+  "name": "f1-green",
+  "mode": "test",
+  "command": "npx --no-install vitest run --reporter=dot --configLoader runner --cache false --maxWorkers=1 --no-file-parallelism --project unit src/core/settle src/core/record src/core/__tests__",
+  "exitCode": 0,
+  "signal": null,
+  "natural": true,
+  "started": 1791328126110,
+  "ended": 1791328179559,
+  "elapsedMs": 53449,
+  "summary": [
+    "(Use `node --trace-deprecation ...` to show where the warning was created)",
+    " Test Files  135 passed (135)",
+    "      Tests  926 passed (926)",
+    "   Duration  51.80s (transform 1.38s, setup 0ms, collect 23.11s, tests 8.20s, environment 12ms, prepare 4.65s)"
+  ]
+}

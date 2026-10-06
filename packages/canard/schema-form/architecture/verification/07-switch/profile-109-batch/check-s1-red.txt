@@ -1,0 +1,42 @@
+(node:86810) [DEP0205] DeprecationWarning: `module.register()` is deprecated. Use `module.registerHooks()` instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+│ ┌────────────────────────────────────────────────────────────────────────────┐
+│ │  Info: Found a setup file with "setProjectAnnotations".                    │
+│ │  Skipping automatic provisioning of preview annotations to avoid           │
+│ │  conflicts. Since Storybook 10.3, "@storybook/addon-vitest" applies these  │
+│ │   automatically.                                                           │
+│ │  You can safely remove the "setProjectAnnotations" call from your setup    │
+│ │  file, or remove the file entirely if you don't have custom code there.    │
+│ └────────────────────────────────────────────────────────────────────────────┘
+
+ RUN  v3.2.6 /Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/packages/canard/schema-form
+
+x·
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  |unit| src/core/settle/__tests__/settle.scratch-release-work.test.ts > skips empty native clears while resetting the consumed post-order traversal for reuse
+AssertionError: expected [ Set{} ] to have a length of +0 but got 1
+
+- Expected
++ Received
+
+- 0
++ 1
+
+ ❯ src/core/settle/__tests__/settle.scratch-release-work.test.ts:20:80
+     18|   const clearMap = vi.spyOn(Map.prototype, 'clear');
+     19|   releaseSettlementScratch(scratch);
+     20|   expect(clearSet.mock.contexts.filter(value => value === scratch.dirt…
+       |                                                                                ^
+     21|   expect(clearMap.mock.contexts.filter(value => value === scratch.dirt…
+     22|   expect(scratch.inUse).toBe(false);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 1 passed (2)
+   Start at  08:14:15
+   Duration  900ms (transform 429ms, setup 0ms, collect 724ms, tests 10ms, environment 0ms, prepare 37ms)
+

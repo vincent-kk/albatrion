@@ -1,0 +1,49 @@
+(node:75140) [DEP0205] DeprecationWarning: `module.register()` is deprecated. Use `module.registerHooks()` instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+│ ┌────────────────────────────────────────────────────────────────────────────┐
+│ │  Info: Found a setup file with "setProjectAnnotations".                    │
+│ │  Skipping automatic provisioning of preview annotations to avoid           │
+│ │  conflicts. Since Storybook 10.3, "@storybook/addon-vitest" applies these  │
+│ │   automatically.                                                           │
+│ │  You can safely remove the "setProjectAnnotations" call from your setup    │
+│ │  file, or remove the file entirely if you don't have custom code there.    │
+│ └────────────────────────────────────────────────────────────────────────────┘
+
+ RUN  v3.2.6 /Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/packages/canard/schema-form
+
+x·
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  |unit| src/core/settle/__tests__/settle.commit-memo-work.test.ts > updates a still-empty mismatch row without clearing or reinserting the memo
+AssertionError: expected "clear" to not be called at all, but actually been called 2 times
+
+Received: 
+
+  1st clear call:
+
+    Array []
+
+  2nd clear call:
+
+    Array []
+
+
+Number of calls: 2
+
+ ❯ src/core/settle/__tests__/settle.commit-memo-work.test.ts:27:21
+     25|     expect(root.runtime.diagnostics.status).toBe('stable');
+     26|   }
+     27|   expect(clear).not.toHaveBeenCalled();
+       |                     ^
+     28|   expect(set).not.toHaveBeenCalled();
+     29| });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 1 passed (2)
+   Start at  08:00:30
+   Duration  1.38s (transform 734ms, setup 0ms, collect 1.19s, tests 15ms, environment 0ms, prepare 35ms)
+

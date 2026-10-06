@@ -1,0 +1,8 @@
+{
+  "phase": "4-r1-single-path",
+  "verdict": "rejected",
+  "sourceAndDetailByteEqualToMeasuredBase": true,
+  "candidateTestsRemoved": true,
+  "baseBundleSha256": "c7e5feb8d4c4e5348694a3c41d55aba695990a05b1053d52fbb0540b6163901b",
+  "verification": "R1_FULLY_RESTORED"
+}

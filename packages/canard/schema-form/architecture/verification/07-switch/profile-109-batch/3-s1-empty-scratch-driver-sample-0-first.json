@@ -1,0 +1,11 @@
+{
+  "phase": "3-s1-empty-scratch",
+  "name": "sample-0",
+  "mode": "first",
+  "status": 0,
+  "signal": null,
+  "natural": true,
+  "started": 1791328609898,
+  "ended": 1791328616468,
+  "elapsedMs": 6570
+}

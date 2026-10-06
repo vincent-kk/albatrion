@@ -1,0 +1,25 @@
+{
+  "phase": "5-q1-stable-compute",
+  "adopted": true,
+  "measuredBase": "5-q1-stable-compute-build-head.json",
+  "baseBundleSha256": "c7e5feb8d4c4e5348694a3c41d55aba695990a05b1053d52fbb0540b6163901b",
+  "candidateBundleSha256": "d170ef6aa68ab6f8899b8ad19e5ed0879864591bd0e3c345bf1fe984df6b3758",
+  "patch": "5-q1-stable-compute.patch",
+  "files": [
+    {
+      "file": "packages/canard/schema-form/src/core/settle/utils/compute/computeNode.ts"
+    },
+    {
+      "file": "packages/canard/schema-form/src/core/settle/DETAIL.md",
+      "detailLines": [
+        5
+      ]
+    },
+    {
+      "file": "packages/canard/schema-form/src/core/settle/utils/compute/utils/computeStableNode.ts"
+    },
+    {
+      "file": "packages/canard/schema-form/src/core/settle/__tests__/settle.stable-compute-work.test.ts"
+    }
+  ]
+}
