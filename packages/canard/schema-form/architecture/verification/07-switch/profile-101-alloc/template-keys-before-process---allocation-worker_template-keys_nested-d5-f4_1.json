@@ -1,0 +1,20 @@
+{
+  "args": [
+    "--expose-gc",
+    "--sampling-heap-profiler-suppress-randomness",
+    "--no-turbo-inlining",
+    "/Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/packages/canard/schema-form/architecture/verification/07-switch/profile-101-alloc/measure.mjs",
+    "--allocation-worker",
+    "template-keys",
+    "nested-d5-f4",
+    "1"
+  ],
+  "started": "2026-10-06T05:51:42.049Z",
+  "ended": "2026-10-06T05:51:43.382Z",
+  "elapsedMs": 1333,
+  "status": 0,
+  "signal": null,
+  "pid": 72382,
+  "freshProcess": true,
+  "driverSha256": "1bcfd66950bc3570b767e9002ef6cde4142dfecf4eece21761731be46f5a0689"
+}

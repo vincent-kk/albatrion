@@ -1874,3 +1874,75 @@ flat-500 강제 GC의 run별 H−W는 0.268167, 0.209584, 0.350625ms이며 세 �
 재현 도구는 [normalization-memo.mjs](profile-101-alloc/normalization-memo.mjs)입니다. 루트에서 `node packages/canard/schema-form/architecture/verification/07-switch/profile-101-alloc/normalization-memo.mjs --build head control working`, `--objects head 1`, `--objects working 1`, `--objects-noinline head 2`, `--objects-noinline working 2`를 각각 순차 실행합니다. `--pairs <control|working> <fixture> <mount|later> <forced|steady>`는 세 fresh worker를 순차 실행합니다. 위 표의 각 연산과 두 조건을 모두 실행한 후 `--summarize`로 판정합니다. HEAD/control 번들 hash는 동일하며 모든 esbuild 서비스는 stdin EOF로 자연 종료했습니다.
 
 시간·계수·process·요약 JSON은 모두 profile-101-alloc/ 아래에 있으며 파일별 최대 145,232바이트로 5MB 이하입니다. 번들·source map은 지정 `/private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles`에만 생성했습니다. 측정은 순차 실행했고 모든 실제 command는 8분 이내에 스스로 종료했습니다. 설치·git 쓰기·다른 에이전트·타 worktree 작업은 없었습니다.
+
+## 101라운드 할당 묶음 2 템플릿 키
+
+### 판정과 변경 범위
+
+HEAD `5f50768e561fbb5b3655e4bf6cef9d4b9c227de6`와 streaming template-key 후보를 비교했습니다. **제품 후보는 미채택하고 `getTemplateKey.ts`, `buildNodes.ts` 및 소유 blueprint DETAIL을 HEAD로 원복했습니다.** 12개 시간 열 모두 잡음 초과 개선 조건을 충족하지 못했습니다. 잡음 초과 회귀와 단일 회차의 잡음 초과 회귀도 없었으나, 유지에 필요한 개선 증거가 없습니다. 최종 제품의 추가 시간·보유 메모리는 0입니다.
+
+사양 3의 key tuple·gate·hostPaths 배열과 전체 키의 이중 JSON 인코딩만 제거하는 후보를 구현했습니다. 입력 한 번의 순회에서 constructing의 미바인딩 문자열과 templates의 호스트 바인딩 문자열을 함께 작성했습니다. 단일 무게이트·escape 없는 위치에는 고정 접미사를 적용했습니다. 실제 Map 조회 순서와 lookup·삽입·재귀 절단은 유지했습니다. 참조 전용 canonical 위치, 연언/선언 문맥, gate kind/path/negated/appliesWhen의 작성 순서와 중복 제거, 모든 hostPath 및 JSON escape를 보존했습니다.
+
+비용 계약을 DETAIL에 먼저 기록했습니다. 후보의 시간 비용은 입력·문자열 길이에 비례하며, 게이트와 적용 소유자의 중복 제거는 기존처럼 최악 이차 비교입니다. 임시 배열을 없애는 대신 호출마다 고정 모양 `{ key, boundKey }` 기록 하나와 최종 문자열 두 개를 반환하며, 일반 게이트 경로의 문자열 연결도 임시 할당을 발생시킵니다. 추가 캐시·노드 필드·공개 청사진 필드는 없습니다. 초기 일반 streaming 구현은 임시 문자열 객체가 늘어 진단만 수행했고, 아래 종단 측정에는 단일 입력 경로까지 반영한 최종 후보만 사용했습니다.
+
+후보 차이는 [candidate 기록](profile-101-alloc/template-keys-candidate.json)에 보존했습니다. 최종 후보 소스의 해시는 [판정 JSON](profile-101-alloc/template-keys-verdict.json)의 `sources`에 있습니다. HEAD/control 번들 SHA-256은 둘 다 `24479d68cdb119bcf8efc24ff5770c1452fd5880ca3f3511d4ad5c0a6bb14f67`, 후보는 `9731c3b1e5fbc8ba5c1310b94176c3b511aa14161fd5c2d979311becdda5bde0`입니다. 코드 크기는 525,998→528,087바이트이며 후보 차이는 2,089바이트입니다.
+
+### nested-d5-f4 마운트당 객체와 노드당 비용
+
+기존 [measure.mjs](profile-101-alloc/measure.mjs)의 `--allocations template-keys nested-d5-f4`를 HEAD/작업 트리 소스로 각각 실행했습니다. 일회성 실제 마운트 앞에 20회 예열하며, 계수 전용 실행에서 `samplingInterval=1`, 수거 객체 포함, 샘플링 임의성 억제 및 `--no-turbo-inlining`을 사용했습니다. 청사진 노드 수는 양쪽 모두 **1,365개**입니다. 프로파일러 실행은 종단 시간 근거에 포함하지 않습니다.
+
+| 계수 범위 | HEAD 객체 | 후보 객체 | HEAD 객체/node | 후보 객체/node |
+|---|---:|---:|---:|---:|
+| template-keys 함수 source owner | **16,379** | **9,554** | **11.999267** | **6.999267** |
+| 청사진 전체 | 181,827 | 169,520 | 133.206593 | 124.190476 |
+| 전체 source-attributed 마운트 | 235,053 | 222,746 | 172.200000 | 163.183883 |
+
+키 함수 source owner는 **6,825개, 정확히 5개/node 감소**했습니다. 해당 바이트는 892,784→468,720입니다. 청사진 전체는 12,307개, 9.016117개/node 감소했습니다. 사양의 예산 10–16개/node를 달성했다고 판정하지 않습니다.
+
+사양의 원표와 같은 source 귀속 규칙을 사용하므로 HEAD `buildNodes`에서 생성한 hostPaths·boundKey 배열/문자열은 첫 행에 포함되지 않고 청사진 전체에 포함됩니다. 중첩 표본의 입력마다 key용 배열 4개와 호스트/바인딩용 배열 3개, 합계 9,555개 중간 배열을 제거하고 결과 기록 1,365개를 추가한 것은 코드에서 별도로 확인했습니다. 이 배열 산술을 profiler 전체 객체 감소와 같다고 취급하지 않습니다.
+
+[변경 전 계수](profile-101-alloc/template-keys-before-allocation-template-keys-nested-d5-f4-r1.json)와 [변경 후 계수](profile-101-alloc/template-keys-after-allocation-template-keys-nested-d5-f4-r1.json)에 모든 source owner·bytes·옵저버블을 보존했습니다. 별도 어댑터의 no-inline 진단은 16,400→9,554개로 같은 12→7개/node 경향이며, 작은 계수 차이는 실행·V8 할당 귀속 차이입니다. 일반 인라이닝 진단의 청사진 전체는 166,950→162,872개입니다. 이 조건에서 HEAD 키 함수의 owner가 호출자에 접혀 별도 행이 사라졌으므로 묶음 수는 `indeterminate-inlined-owner`로 남겼으며 0개로 해석하지 않습니다.
+
+### 95C-01 두 열의 순차 종단 짝 측정
+
+[template-keys.mjs](profile-101-alloc/template-keys.mjs)는 기존 allocator와 95C-01 paired sentinel을 메모리에서 재사용합니다. H/control은 지정 HEAD의 패키지 소스를 git show로, W는 작업 트리 소스를 읽어 source-only production 번들을 만들었습니다. esbuild 서비스는 stdin EOF로 종료코드 0을 확인하고 측정 전에 끝났습니다. 설치와 git 쓰기는 없습니다.
+
+Apple M1 Max, 10 logical CPU, 64GiB, darwin arm64 25.6.0, Node v24.20.0, V8 13.6.233.17-node.53, esbuild 0.25.9입니다. 검증 off, 외부 구독자 0, onChange noop입니다. 각 열은 fresh process 3개, 예열 20쌍, 101쌍×3회입니다. 회차 첫 순서는 H→W, W→H, H→W이며 표본마다 교대합니다. control도 같은 12열을 별도 3회 측정하여 총 **72개 worker**를 모두 순차 실행했습니다. 가장 긴 worker는 4.252초였으며 모든 worker는 자연 종료했습니다.
+
+매 마운트의 스키마 복제와 강제 GC는 시계 밖입니다. 측정은 동기 호출부터 64 Promise checkpoint 뒤 setImmediate sentinel 안의 종료 시각까지이며, 앞뒤 빈 sentinel 중앙값을 뺍니다. 후속 쓰기는 픽스처의 실제 이력을 먼저 준비한 폼에서 다른 두 값을 번갈아 씁니다. 강제 GC 열의 시계 안 GC는 0건이며, 강제 GC 없는 steady 열에는 자연 GC 697건이 기록되었습니다. 양쪽 최종 값·관측 hash·크기·live 폭과 반복 값 읽기의 참조 동일성을 모두 확인했습니다.
+
+아래 H/W는 회차별 중앙값 3개의 중앙값이고, 짝 Δ는 각 회차의 동일 표본 H−W 중앙값 3개의 중앙값입니다. H/W를 직접 빼서 짝 Δ로 해석하지 않습니다. 양의 Δ가 개선이며 단위는 ms입니다.
+
+| 연산 | 강제 GC H→W | 짝 Δ | 최대 잡음 N | steady H→W | 짝 Δ | 최대 잡음 N |
+|---|---:|---:|---:|---:|---:|---:|
+| nested-d5-f4 mount | 9.534833→9.760001 | -0.291001 | 1.260584 | 6.906708→6.756375 | +0.151042 | 4.265791 |
+| flat-500 mount | 3.781750→3.722459 | +0.046666 | 0.189249 | 2.331584→2.292208 | +0.033875 | 0.212208 |
+| oneOf-20 mount | 2.276000→2.340500 | -0.039334 | 0.148124 | 1.226042→1.259167 | -0.020208 | 0.159626 |
+| sample-0 mount | 0.155959→0.156292 | +0.001792 | 0.065334 | 0.061958→0.060417 | +0.001917 | 0.071000 |
+| sample-0 later | 0.091458→0.092667 | -0.000959 | 0.017626 | 0.022125→0.021708 | +0.000375 | 0.015833 |
+| nested-d5-f4 later | 0.113583→0.112500 | +0.000792 | 0.015458 | 0.038125→0.036167 | +0.001291 | 0.014376 |
+
+잡음 규칙은 앞 묶음의 같은 기준을 재사용했습니다. 각 회차 N은 `max(0.001ms, 같은 열의 no-op |중앙값 차이|/|짝 중앙값| 상한, 빈 sentinel residual p95 + 일반 bootstrap 99% 중앙값 오차 합)`입니다. 개선/회귀는 3회 모두 N을 넘고 짝 차이 중앙값 구간의 부호가 일치해야 합니다. 표는 세 회차 중 최대 N을 보여 줍니다. 사양의 nested 강제 수거 제거 상한 1.3245ms는 이번 의미 보존 후보의 실제 개선값으로 사용하지 않았습니다.
+
+### HEAD 동등성 시험과 최종 검증
+
+`blueprint.cold-binding.test.ts`에 두 회귀 시험을 추가했습니다. 실제 `templates.get`과 `constructing.get`에 전달하는 문자열 및 후보가 산출한 두 문자열을 고정 HEAD 인코더와 비교합니다. 59개 기존 스키마 전부, 공유 참조의 두 호스트·overlay·유한 재귀와 escaped 이름을 포함합니다. 별도 입력은 gate/owner 중복·순서·구분자 충돌·negated·빈 owner·모든 JSON 제어 문자·lone surrogate를 검증합니다. 기존 HEAD 스냅숏 fixture와 기존 assertion은 변경하지 않았습니다.
+
+제품 변경 전에 cold-binding 및 89C-03 차등 9건이 통과했고, 최종 후보에서 새 escape 시험을 포함한 10건이 통과했습니다. 원복 뒤에는 아래 전체 실행에서 같은 10건과 모든 기존 시험이 허용된 EVENT-070 실패 외 통과했습니다. 실제 lookup과 출력 의미를 보존하는 characterization이며, 객체 수 개선은 별도 계수 실행으로 판정했습니다. 시험용 HEAD 배열 인코더는 제품 번들에 포함하지 않습니다.
+
+| PKG 명령 | 원복 후 결과 |
+|---|---|
+| `npx vitest run --project unit --project render --project react18 --reporter=dot` | 종료1, 69.023초; 425파일·3,209건 통과, todo1; render/react18의 EVENT-070 useLayoutEffect/useEffect 각 2건, 총 허용된 4건만 실패 |
+| `npx tsc --noEmit --composite false --rootDir . -p tsconfig.json` | 종료0, 7.846초; 출력 없음 |
+| `npx eslint "src/**/*.{ts,tsx}"` | 종료0, 5.685초; 출력 없음 |
+| `node architecture/verification/07-switch/tools/check-legacy-isolation.mjs` | 종료0, 0.414초; LEGACY_ISOLATED: 1626 files checked |
+
+[Vitest 원표](profile-101-alloc/template-keys-verification-vitest.json), [타입 검사](profile-101-alloc/template-keys-verification-tsc.json), [ESLint](profile-101-alloc/template-keys-verification-eslint.json), [격리 검사](profile-101-alloc/template-keys-verification-isolation.json)에 실제 PKG cwd·명령·stdout/stderr·종료·경과 시간을 기록했습니다. npx는 offline·설치 비승인 설정으로 기존 로컬 실행 파일만 사용했습니다.
+
+### 재현과 보존
+
+루트에서 `PROFILE_101_PRODUCT=head PROFILE_101_TAG=template-keys-before- node D/profile-101-alloc/measure.mjs --build template-keys`를 먼저 실행하고, 같은 환경에 `NODE_PATH="$PWD/node_modules" NODE_ENV=production node --no-turbo-inlining D/profile-101-alloc/measure.mjs --allocations template-keys nested-d5-f4`를 실행합니다. 후보 소스에는 product를 `working`, tag를 `template-keys-after-`로 바꾸어 각각 순차 실행합니다. D는 이 절의 검증 디렉터리 경로를 뜻합니다. prefix는 기존 측정 파일을 덮어쓰지 않게 합니다.
+
+종단은 `node D/profile-101-alloc/template-keys.mjs --build <head|control|working>`를 각각 실행한 뒤 `NODE_PATH="$PWD/node_modules" NODE_ENV=production node D/profile-101-alloc/template-keys.mjs --pairs <control|working> <fixture> <mount|later> <forced|steady>`로 표의 각 열을 측정합니다. 후보가 있는 상태에서만 `--summarize`를 실행해야 `sources`가 측정 후보의 해시를 기록합니다. 최종 제품은 원복했으므로 현재 working 소스의 재측정은 HEAD 재측정이며, 후보 재현에는 보존한 candidate patch가 필요합니다.
+
+계수·시간·process·검증·후보 JSON은 `profile-101-alloc/` 아래에만 두고 각각 5,000,000바이트 상한을 검사했습니다. 번들과 source map은 지정 `/private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles`에만 생성했습니다. 보호된 `analysis-records-design.md`는 변경하지 않았고, 다른 worktree·설치·git 쓰기·백그라운드 측정·강제 종료는 없습니다. 최종 제품 및 DETAIL이 지정 HEAD와 같은 것은 별도 diff로 확인했습니다.

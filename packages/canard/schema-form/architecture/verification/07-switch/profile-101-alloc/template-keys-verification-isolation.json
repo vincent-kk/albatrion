@@ -1,0 +1,15 @@
+{
+  "head": "5f50768e561fbb5b3655e4bf6cef9d4b9c227de6",
+  "cwd": "/Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/packages/canard/schema-form",
+  "command": [
+    "node",
+    "architecture/verification/07-switch/tools/check-legacy-isolation.mjs"
+  ],
+  "elapsedMs": 414,
+  "status": 0,
+  "signal": null,
+  "naturalExit": true,
+  "stdout": "LEGACY_ISOLATED: 1626 files checked\n",
+  "stderr": "",
+  "driverSha256": "04584da2a417221ab291249a7eb6e0a8af14143fd02b324e3a92b493439d9bb3"
+}

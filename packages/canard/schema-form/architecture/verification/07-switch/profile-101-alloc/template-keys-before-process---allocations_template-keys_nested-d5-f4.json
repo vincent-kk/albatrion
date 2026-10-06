@@ -1,0 +1,17 @@
+{
+  "args": [
+    "--no-turbo-inlining",
+    "/Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/packages/canard/schema-form/architecture/verification/07-switch/profile-101-alloc/measure.mjs",
+    "--allocations",
+    "template-keys",
+    "nested-d5-f4"
+  ],
+  "started": "2026-10-06T05:51:41.898Z",
+  "ended": "2026-10-06T05:51:43.391Z",
+  "elapsedMs": 1493,
+  "status": 0,
+  "signal": null,
+  "pid": 72355,
+  "freshProcess": true,
+  "driverSha256": "1bcfd66950bc3570b767e9002ef6cde4142dfecf4eece21761731be46f5a0689"
+}

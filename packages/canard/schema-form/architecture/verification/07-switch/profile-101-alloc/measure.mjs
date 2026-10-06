@@ -14,10 +14,14 @@ const artifacts = path.dirname(script);
 const directory = path.dirname(artifacts);
 const pkg = path.resolve(directory, '../../..');
 const repo = path.resolve(pkg, '../../..');
-const head = '619798ddc6d6c70f27e1a7058421b94a4a6713b1';
+const head = '5f50768e561fbb5b3655e4bf6cef9d4b9c227de6';
 const require = createRequire(path.join(repo, 'package.json'));
 const ts = require('typescript');
-const bundles = path.join(artifacts, 'bundles');
+const bundles = '/private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles';
+const product = process.env.PROFILE_101_PRODUCT;
+const prefix = process.env.PROFILE_101_TAG ?? '';
+assert(!product || product === 'head' || product === 'working');
+assert(/^[a-z0-9-]*$/.test(prefix));
 const fixtures = ['nested-d5-f4', 'flat-500', 'oneOf-20', 'sample-0'];
 const variants = ['control', 'declarations', 'node-staging', 'child-bindings', 'effective-merge',
   'allowed-types', 'strategy-cases', 'template-keys', 'first-load-frames', 'runtime-nodes',
@@ -30,6 +34,7 @@ assert.equal(execFileSync('git', ['--no-optional-locks', 'rev-parse', 'HEAD'],
 /** Save bounded artifacts only inside the requested directory. */
 function save(file, value) {
   assert(path.resolve(file).startsWith(artifacts + path.sep));
+  if (prefix) file = path.join(path.dirname(file), prefix + path.basename(file));
   const text = JSON.stringify(value, null, 2) + '\n';
   assert(Buffer.byteLength(text) <= 5_000_000, file);
   fs.mkdirSync(path.dirname(file), { recursive: true });
@@ -121,6 +126,9 @@ function taped(source, file, name, site = name, semanticKey) {
 
 /** Create one disposal-only variant, never writing transformed TypeScript to src. */
 function transform(file, source, variant, appendHelpers = true, combined = false) {
+  if (product) return product === 'head'
+    ? execFileSync('git', ['--no-optional-locks', 'show', head + ':' + path.relative(repo, file)],
+      { cwd: repo, encoding: 'utf8', maxBuffer: 5_000_000 }) : source;
   if (variant === 'combined-analysis') {
     let result = source;
     for (const item of ['declarations', 'node-staging', 'child-bindings', 'effective-merge',
@@ -416,6 +424,7 @@ async function allocation(variant, name, run) {
   save(path.join(artifacts, `allocation-${variant}-${name}-r${run}.json`), {
     head, variant, name, run, warmup: 20, samplingIntervalBytes: 1,
     allocationFolding: true, includeCollected: true, objects, bytes, blueprintObjects, blueprintBytes, unknown,
+    nodes: sample.root.runtime.blueprint.nodes.length, execArgv: process.execArgv,
     rows: [...rows.values()].toSorted((a, b) => b.objects - a.objects), observation: api.observe(sample.root),
     tapeLengths: Object.fromEntries(Object.entries(globalThis.__allocState.tapes).map(([k, v]) => [k, v.length])) });
   console.log(JSON.stringify({ variant, name, run, allocationObjects: objects, blueprintObjects,
@@ -432,7 +441,7 @@ if (command === '--build-worker') {
   const variant = args[0]; assert(variant === 'head' || variant === 'combined-analysis' || variants.includes(variant));
   globalThis.__allocChanged = []; globalThis.__allocTransform = transform;
   const record = await api.buildAsync(variant);
-  if (variant !== 'head' && variant !== 'control') assert(globalThis.__allocChanged.length > 0, variant);
+  if (!product && variant !== 'head' && variant !== 'control') assert(globalThis.__allocChanged.length > 0, variant);
   record.changedFiles = globalThis.__allocChanged;
   save(path.join(artifacts, 'build-' + variant + '.json'), record);
   console.log(JSON.stringify({ variant, changedFiles: record.changedFiles, bytes: record.bytes,
@@ -453,7 +462,8 @@ if (command === '--build-worker') {
   await allocation(args[0], args[1], Number(args[2] ?? 1));
 } else if (command === '--allocations') {
   for (const name of args.length > 1 ? args.slice(1) : fixtures.slice(0, 3))
-    child(['--expose-gc', '--sampling-heap-profiler-suppress-randomness', script,
+    child(['--expose-gc', '--sampling-heap-profiler-suppress-randomness',
+      ...(process.execArgv.includes('--no-turbo-inlining') ? ['--no-turbo-inlining'] : []), script,
       '--allocation-worker', args[0], name, '1']);
 } else if (command === '--smokes') {
   for (const variant of args.length ? args : variants)

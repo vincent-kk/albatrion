@@ -1,0 +1,16 @@
+{
+  "head": "5f50768e561fbb5b3655e4bf6cef9d4b9c227de6",
+  "cwd": "/Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/packages/canard/schema-form",
+  "command": [
+    "npx",
+    "eslint",
+    "src/**/*.{ts,tsx}"
+  ],
+  "elapsedMs": 5685,
+  "status": 0,
+  "signal": null,
+  "naturalExit": true,
+  "stdout": "",
+  "stderr": "npm notice run albatrion@0.0.0 npx\nnpm notice run 'eslint' src/**/*.{ts,tsx}\n",
+  "driverSha256": "04584da2a417221ab291249a7eb6e0a8af14143fd02b324e3a92b493439d9bb3"
+}

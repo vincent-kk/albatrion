@@ -1,0 +1,19 @@
+{
+  "args": [
+    "--paired-worker",
+    "control",
+    "flat-500",
+    "mount",
+    "1",
+    "forced"
+  ],
+  "execArgv": [
+    "--expose-gc"
+  ],
+  "head": "5f50768e561fbb5b3655e4bf6cef9d4b9c227de6",
+  "elapsedMs": 2199,
+  "status": 0,
+  "signal": null,
+  "naturalExit": true,
+  "driverSha256": "0441eb97cee0749cb9f7b4bf31633222d76639954b8191feb249d8ae63599d81"
+}

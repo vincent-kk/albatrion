@@ -1,0 +1,18 @@
+{
+  "args": [
+    "--allocations",
+    "template-keys",
+    "head",
+    "1"
+  ],
+  "execArgv": [
+    "--expose-gc",
+    "--sampling-heap-profiler-suppress-randomness"
+  ],
+  "head": "5f50768e561fbb5b3655e4bf6cef9d4b9c227de6",
+  "elapsedMs": 1180,
+  "status": 0,
+  "signal": null,
+  "naturalExit": true,
+  "driverSha256": "e79b1287034379184c9f7dceb188b96e0df6e14294728c844ffbd16a4117c731"
+}

@@ -1,0 +1,1344 @@
+{
+  "head": "5f50768e561fbb5b3655e4bf6cef9d4b9c227de6",
+  "adopted": false,
+  "method": "95C-01 sentinel; 20 warmups + 101 alternating pairs x 3 fresh sequential processes per column",
+  "noiseRule": "max(0.001ms, same fixture/regime no-op abs median bound or paired median, empty residual p95 + ordinary bootstrap 99% median error sum); improvement/regression requires all 3 runs and signed paired median intervals",
+  "rows": [
+    {
+      "name": "nested-d5-f4",
+      "mode": "mount",
+      "regime": "forced",
+      "headMs": 9.534832999999708,
+      "workingMs": 9.76000100000033,
+      "gainMs": -0.09104200000001583,
+      "pairedMedianMs": -0.29100100000005114,
+      "noOpNoiseMs": 1.032748999999967,
+      "maxNoiseMs": 1.2605839999984028,
+      "aboveNoise": false,
+      "regressionAboveNoise": false,
+      "singleRunRegressions": [],
+      "measurements": [
+        {
+          "variant": "control",
+          "run": 1,
+          "headMs": 9.287125999999262,
+          "workingMs": 9.992958999999246,
+          "gainMs": -0.7058329999999842,
+          "pairedMedianMs": -1.032748999999967,
+          "noiseMs": 1.3858319999991124,
+          "medianErrorMs": 1.3302899999998772,
+          "pairedMedianInterval": [
+            -1.2836249999995744,
+            0.6538739999996324
+          ],
+          "gcInside": 0
+        },
+        {
+          "variant": "control",
+          "run": 2,
+          "headMs": 9.94716599999947,
+          "workingMs": 9.767624999999498,
+          "gainMs": 0.17954099999997197,
+          "pairedMedianMs": 0.6404159999997319,
+          "noiseMs": 1.1906259999997815,
+          "medianErrorMs": 1.1140840000002754,
+          "pairedMedianInterval": [
+            -0.7655410000002121,
+            0.9856669999999212
+          ],
+          "gcInside": 0
+        },
+        {
+          "variant": "control",
+          "run": 3,
+          "headMs": 9.246582999999987,
+          "workingMs": 9.994166999999834,
+          "gainMs": -0.747583999999847,
+          "pairedMedianMs": -0.893207999999504,
+          "noiseMs": 1.3277080000000865,
+          "medianErrorMs": 1.2788750000000846,
+          "pairedMedianInterval": [
+            -1.3007920000000013,
+            0.4716670000002523
+          ],
+          "gcInside": 0
+        },
+        {
+          "variant": "working",
+          "run": 1,
+          "headMs": 9.70633300000054,
+          "workingMs": 9.797375000000557,
+          "gainMs": -0.09104200000001583,
+          "pairedMedianMs": -0.29100100000005114,
+          "noiseMs": 1.0768750000005411,
+          "medianErrorMs": 1.0200420000001031,
+          "pairedMedianInterval": [
+            -0.8894590000004428,
+            1.0467919999996411
+          ],
+          "gcInside": 0
+        },
+        {
+          "variant": "working",
+          "run": 2,
+          "headMs": 9.534832999999708,
+          "workingMs": 9.56474999999864,
+          "gainMs": -0.029916999998931715,
+          "pairedMedianMs": -0.2641249999999218,
+          "noiseMs": 1.2605839999984028,
+          "medianErrorMs": 1.2092929999989792,
+          "pairedMedianInterval": [
+            -0.7430829999998423,
+            0.9981250000000728
+          ],
+          "gcInside": 0
+        },
+        {
+          "variant": "working",
+          "run": 3,
+          "headMs": 9.329792000000452,
+          "workingMs": 9.76000100000033,
+          "gainMs": -0.43020899999987705,
+          "pairedMedianMs": -0.5826250000000073,
+          "noiseMs": 1.2329579999998543,
+          "medianErrorMs": 1.1632909999996173,
+          "pairedMedianInterval": [
+            -1.1134589999996933,
+            0.7991660000000138
+          ],
+          "gcInside": 0
+        }
+      ]
+    },
+    {
+      "name": "nested-d5-f4",
+      "mode": "mount",
+      "regime": "steady",
+      "headMs": 6.9067079999999805,
+      "workingMs": 6.756375000000105,
+      "gainMs": 0.22716600000012477,
+      "pairedMedianMs": 0.15104200000018864,
+      "noOpNoiseMs": 0.13299899999992704,
+      "maxNoiseMs": 4.265791000000206,
+      "aboveNoise": false,
+      "regressionAboveNoise": false,
+      "singleRunRegressions": [],
+      "measurements": [
+        {
+          "variant": "control",
+          "run": 1,
+          "headMs": 6.90854200000004,
+          "workingMs": 7.041540999999967,
+          "gainMs": -0.13299899999992704,
+          "pairedMedianMs": -0.033875000000080036,
+          "noiseMs": 3.7626669999996807,
+          "medianErrorMs": 3.7077919999996993,
+          "pairedMedianInterval": [
+            -0.11425000000008367,
+            0.10237599999982194
+          ],
+          "gcInside": 71
+        },
+        {
+          "variant": "control",
+          "run": 2,
+          "headMs": 6.991582999999991,
+          "workingMs": 6.930041999999958,
+          "gainMs": 0.06154100000003382,
+          "pairedMedianMs": 0.06250100000011116,
+          "noiseMs": 4.290291000000025,
+          "medianErrorMs": 4.2277500000000146,
+          "pairedMedianInterval": [
+            -0.0079590000002554,
+            0.1821669999999358
+          ],
+          "gcInside": 71
+        },
+        {
+          "variant": "control",
+          "run": 3,
+          "headMs": 6.9898750000000405,
+          "workingMs": 7.114874999999927,
+          "gainMs": -0.12499999999988631,
+          "pairedMedianMs": -0.030834000000140804,
+          "noiseMs": 4.32475000000008,
+          "medianErrorMs": 4.271583000000078,
+          "pairedMedianInterval": [
+            -0.16641700000036508,
+            0.17250000000012733
+          ],
+          "gcInside": 71
+        },
+        {
+          "variant": "working",
+          "run": 1,
+          "headMs": 7.056208999999797,
+          "workingMs": 6.756375000000105,
+          "gainMs": 0.2998339999996915,
+          "pairedMedianMs": 0.128832999999986,
+          "noiseMs": 2.46970900000008,
+          "medianErrorMs": 2.4200420000000804,
+          "pairedMedianInterval": [
+            0.016124999999988177,
+            0.28691600000001927
+          ],
+          "gcInside": 70
+        },
+        {
+          "variant": "working",
+          "run": 2,
+          "headMs": 6.9067079999999805,
+          "workingMs": 6.679541999999856,
+          "gainMs": 0.22716600000012477,
+          "pairedMedianMs": 0.2777499999999691,
+          "noiseMs": 4.265791000000206,
+          "medianErrorMs": 4.21591600000022,
+          "pairedMedianInterval": [
+            0.11558400000012625,
+            0.3513329999996131
+          ],
+          "gcInside": 71
+        },
+        {
+          "variant": "working",
+          "run": 3,
+          "headMs": 6.842957999999953,
+          "workingMs": 6.762749999999869,
+          "gainMs": 0.08020800000008421,
+          "pairedMedianMs": 0.15104200000018864,
+          "noiseMs": 2.9209569999998166,
+          "medianErrorMs": 2.875206999999932,
+          "pairedMedianInterval": [
+            0.029208000000039647,
+            0.29558399999996254
+          ],
+          "gcInside": 70
+        }
+      ]
+    },
+    {
+      "name": "flat-500",
+      "mode": "mount",
+      "regime": "forced",
+      "headMs": 3.781749999999761,
+      "workingMs": 3.722459000000299,
+      "gainMs": 0.0655419999999367,
+      "pairedMedianMs": 0.046666000000186614,
+      "noOpNoiseMs": 0.07062500000006366,
+      "maxNoiseMs": 0.18924899999981903,
+      "aboveNoise": false,
+      "regressionAboveNoise": false,
+      "singleRunRegressions": [],
+      "measurements": [
+        {
+          "variant": "control",
+          "run": 1,
+          "headMs": 3.786625000000413,
+          "workingMs": 3.7881670000001577,
+          "gainMs": -0.001541999999744803,
+          "pairedMedianMs": -0.020207999999911408,
+          "noiseMs": 0.18408400000052438,
+          "medianErrorMs": 0.13304100000027574,
+          "pairedMedianInterval": [
+            -0.07466700000009041,
+            0.033125000000154614
+          ],
+          "gcInside": 0
+        },
+        {
+          "variant": "control",
+          "run": 2,
+          "headMs": 3.785125000000079,
+          "workingMs": 3.787374999999969,
+          "gainMs": -0.002249999999889951,
+          "pairedMedianMs": -0.04862500000001546,
+          "noiseMs": 0.18262499999977422,
+          "medianErrorMs": 0.12425000000007458,
+          "pairedMedianInterval": [
+            -0.08812399999987974,
+            0.04454200000009223
+          ],
+          "gcInside": 0
+        },
+        {
+          "variant": "control",
+          "run": 3,
+          "headMs": 3.8226669999999103,
+          "workingMs": 3.7520419999998467,
+          "gainMs": 0.07062500000006366,
+          "pairedMedianMs": 0.05341599999974278,
+          "noiseMs": 0.17733199999995009,
+          "medianErrorMs": 0.10279100000013841,
+          "pairedMedianInterval": [
+            -0.010124999999788997,
+            0.11008399999991525
+          ],
+          "gcInside": 0
+        },
+        {
+          "variant": "working",
+          "run": 1,
+          "headMs": 3.8245829999999614,
+          "workingMs": 3.7512919999999212,
+          "gainMs": 0.07329100000004019,
+          "pairedMedianMs": 0.06979199999989305,
+          "noiseMs": 0.18924899999981903,
+          "medianErrorMs": 0.13270799999986593,
+          "pairedMedianInterval": [
+            -0.03104199999984303,
+            0.1518750000000182
+          ],
+          "gcInside": 0
+        },
+        {
+          "variant": "working",
+          "run": 2,
+          "headMs": 3.7219170000003032,
+          "workingMs": 3.722459000000299,
+          "gainMs": -0.0005419999999958236,
+          "pairedMedianMs": 0.004917000000205007,
+          "noiseMs": 0.1626690000003066,
+          "medianErrorMs": 0.11241800000016156,
+          "pairedMedianInterval": [
+            -0.1081250000000864,
+            0.06904200000008132
+          ],
+          "gcInside": 0
+        },
+        {
+          "variant": "working",
+          "run": 3,
+          "headMs": 3.781749999999761,
+          "workingMs": 3.716207999999824,
+          "gainMs": 0.0655419999999367,
+          "pairedMedianMs": 0.046666000000186614,
+          "noiseMs": 0.1583749999996371,
+          "medianErrorMs": 0.10066699999981665,
+          "pairedMedianInterval": [
+            -0.003416999999899417,
+            0.12879199999997581
+          ],
+          "gcInside": 0
+        }
+      ]
+    },
+    {
+      "name": "flat-500",
+      "mode": "mount",
+      "regime": "steady",
+      "headMs": 2.331583999999964,
+      "workingMs": 2.2922080000000733,
+      "gainMs": 0.04525000000012369,
+      "pairedMedianMs": 0.03387499999996635,
+      "noOpNoiseMs": 0.041249999999990905,
+      "maxNoiseMs": 0.2122079999999471,
+      "aboveNoise": false,
+      "regressionAboveNoise": false,
+      "singleRunRegressions": [],
+      "measurements": [
+        {
+          "variant": "control",
+          "run": 1,
+          "headMs": 2.3085419999999885,
+          "workingMs": 2.3026249999999777,
+          "gainMs": 0.00591700000001083,
+          "pairedMedianMs": 0.014666999999917607,
+          "noiseMs": 0.16504200000005653,
+          "medianErrorMs": 0.10820800000004738,
+          "pairedMedianInterval": [
+            -0.003458000000023276,
+            0.033249999999952706
+          ],
+          "gcInside": 25
+        },
+        {
+          "variant": "control",
+          "run": 2,
+          "headMs": 2.3875419999999963,
+          "workingMs": 2.3462920000000054,
+          "gainMs": 0.041249999999990905,
+          "pairedMedianMs": -0.010667000000012195,
+          "noiseMs": 0.17025099999997906,
+          "medianErrorMs": 0.11983299999997143,
+          "pairedMedianInterval": [
+            -0.033625000000029104,
+            0.008291000000099302
+          ],
+          "gcInside": 25
+        },
+        {
+          "variant": "control",
+          "run": 3,
+          "headMs": 2.321707999999944,
+          "workingMs": 2.344665999999961,
+          "gainMs": -0.02295800000001691,
+          "pairedMedianMs": -0.025959000000000287,
+          "noiseMs": 0.22954199999986713,
+          "medianErrorMs": 0.18095899999991616,
+          "pairedMedianInterval": [
+            -0.0510829999999487,
+            -0.005583999999998923
+          ],
+          "gcInside": 25
+        },
+        {
+          "variant": "working",
+          "run": 1,
+          "headMs": 2.341792000000055,
+          "workingMs": 2.2922080000000733,
+          "gainMs": 0.04958399999998164,
+          "pairedMedianMs": 0.03387499999996635,
+          "noiseMs": 0.18775000000010778,
+          "medianErrorMs": 0.13133400000003803,
+          "pairedMedianInterval": [
+            0.015166999999905784,
+            0.04949999999996635
+          ],
+          "gcInside": 24
+        },
+        {
+          "variant": "working",
+          "run": 2,
+          "headMs": 2.331583999999964,
+          "workingMs": 2.3013339999999403,
+          "gainMs": 0.030250000000023647,
+          "pairedMedianMs": 0.05362499999989723,
+          "noiseMs": 0.16850100000004886,
+          "medianErrorMs": 0.10795800000005329,
+          "pairedMedianInterval": [
+            0.011250999999901978,
+            0.07641599999999471
+          ],
+          "gcInside": 24
+        },
+        {
+          "variant": "working",
+          "run": 3,
+          "headMs": 2.301708000000076,
+          "workingMs": 2.2564579999999523,
+          "gainMs": 0.04525000000012369,
+          "pairedMedianMs": 0.022084000000063497,
+          "noiseMs": 0.2122079999999471,
+          "medianErrorMs": 0.16099999999994452,
+          "pairedMedianInterval": [
+            -0.0018739999999297652,
+            0.05495799999994233
+          ],
+          "gcInside": 24
+        }
+      ]
+    },
+    {
+      "name": "oneOf-20",
+      "mode": "mount",
+      "regime": "forced",
+      "headMs": 2.2760000000000673,
+      "workingMs": 2.34050000000002,
+      "gainMs": -0.025624999999990905,
+      "pairedMedianMs": -0.03933400000005349,
+      "noOpNoiseMs": 0.044290999999930136,
+      "maxNoiseMs": 0.14812399999993886,
+      "aboveNoise": false,
+      "regressionAboveNoise": false,
+      "singleRunRegressions": [],
+      "measurements": [
+        {
+          "variant": "control",
+          "run": 1,
+          "headMs": 2.288334000000077,
+          "workingMs": 2.296208999999976,
+          "gainMs": -0.007874999999899046,
+          "pairedMedianMs": -0.012375000000020009,
+          "noiseMs": 0.10633500000020035,
+          "medianErrorMs": 0.05591700000024957,
+          "pairedMedianInterval": [
+            -0.029250000000047294,
+            0.010375000000067303
+          ],
+          "gcInside": 0
+        },
+        {
+          "variant": "control",
+          "run": 2,
+          "headMs": 2.283915999999863,
+          "workingMs": 2.2396249999999327,
+          "gainMs": 0.044290999999930136,
+          "pairedMedianMs": 0.032748999999967054,
+          "noiseMs": 0.11541599999983987,
+          "medianErrorMs": 0.061082999999825915,
+          "pairedMedianInterval": [
+            0.0014570000000730943,
+            0.049165999999786436
+          ],
+          "gcInside": 0
+        },
+        {
+          "variant": "control",
+          "run": 3,
+          "headMs": 2.2541660000001684,
+          "workingMs": 2.27699900000016,
+          "gainMs": -0.022832999999991443,
+          "pairedMedianMs": -0.02920799999992596,
+          "noiseMs": 0.15583300000025702,
+          "medianErrorMs": 0.1002090000000635,
+          "pairedMedianInterval": [
+            -0.04737499999998818,
+            -0.010167999999907806
+          ],
+          "gcInside": 0
+        },
+        {
+          "variant": "working",
+          "run": 1,
+          "headMs": 2.314875000000029,
+          "workingMs": 2.34050000000002,
+          "gainMs": -0.025624999999990905,
+          "pairedMedianMs": -0.03933400000005349,
+          "noiseMs": 0.14812399999993886,
+          "medianErrorMs": 0.09049899999990885,
+          "pairedMedianInterval": [
+            -0.06454099999996288,
+            -0.010667000000012195
+          ],
+          "gcInside": 0
+        },
+        {
+          "variant": "working",
+          "run": 2,
+          "headMs": 2.2760000000000673,
+          "workingMs": 2.278584000000137,
+          "gainMs": -0.0025840000000698637,
+          "pairedMedianMs": -0.005999999999858119,
+          "noiseMs": 0.13291800000010312,
+          "medianErrorMs": 0.07833400000004076,
+          "pairedMedianInterval": [
+            -0.032207999999968706,
+            0.02166700000009314
+          ],
+          "gcInside": 0
+        },
+        {
+          "variant": "working",
+          "run": 3,
+          "headMs": 2.2442080000000715,
+          "workingMs": 2.3510420000000067,
+          "gainMs": -0.10683399999993526,
+          "pairedMedianMs": -0.08295799999996234,
+          "noiseMs": 0.13929299999995237,
+          "medianErrorMs": 0.08837599999992563,
+          "pairedMedianInterval": [
+            -0.1172919999999067,
+            -0.04787399999986519
+          ],
+          "gcInside": 0
+        }
+      ]
+    },
+    {
+      "name": "oneOf-20",
+      "mode": "mount",
+      "regime": "steady",
+      "headMs": 1.22604199999995,
+      "workingMs": 1.2591669999999908,
+      "gainMs": -0.026165999999989253,
+      "pairedMedianMs": -0.020208000000025095,
+      "noOpNoiseMs": 0.023458000000005086,
+      "maxNoiseMs": 0.15962600000005978,
+      "aboveNoise": false,
+      "regressionAboveNoise": false,
+      "singleRunRegressions": [],
+      "measurements": [
+        {
+          "variant": "control",
+          "run": 1,
+          "headMs": 1.2466679999999428,
+          "workingMs": 1.2360009999999875,
+          "gainMs": 0.010666999999955351,
+          "pairedMedianMs": 0.022917000000006738,
+          "noiseMs": 0.13233499999989817,
+          "medianErrorMs": 0.07470899999992753,
+          "pairedMedianInterval": [
+            -0.0025420000000622167,
+            0.03433300000000372
+          ],
+          "gcInside": 17
+        },
+        {
+          "variant": "control",
+          "run": 2,
+          "headMs": 1.2005419999999845,
+          "workingMs": 1.2142920000000004,
+          "gainMs": -0.013750000000015916,
+          "pairedMedianMs": -0.015709000000072137,
+          "noiseMs": 0.14833400000006236,
+          "medianErrorMs": 0.08541700000006358,
+          "pairedMedianInterval": [
+            -0.03270899999995436,
+            0.00687500000003638
+          ],
+          "gcInside": 17
+        },
+        {
+          "variant": "control",
+          "run": 3,
+          "headMs": 1.2283329999999069,
+          "workingMs": 1.2160839999999666,
+          "gainMs": 0.012248999999940224,
+          "pairedMedianMs": 0.023458000000005086,
+          "noiseMs": 0.15204300000010562,
+          "medianErrorMs": 0.09812600000014982,
+          "pairedMedianInterval": [
+            0.004500000000007276,
+            0.03908400000000256
+          ],
+          "gcInside": 17
+        },
+        {
+          "variant": "working",
+          "run": 1,
+          "headMs": 1.2452090000000453,
+          "workingMs": 1.2713750000000346,
+          "gainMs": -0.026165999999989253,
+          "pairedMedianMs": -0.018124999999997726,
+          "noiseMs": 0.15237400000006573,
+          "medianErrorMs": 0.1018320000000017,
+          "pairedMedianInterval": [
+            -0.047624999999982265,
+            0.0065839999998615895
+          ],
+          "gcInside": 17
+        },
+        {
+          "variant": "working",
+          "run": 2,
+          "headMs": 1.2205409999999688,
+          "workingMs": 1.2400420000000167,
+          "gainMs": -0.019501000000047952,
+          "pairedMedianMs": -0.02075000000002092,
+          "noiseMs": 0.148918000000009,
+          "medianErrorMs": 0.09391800000003059,
+          "pairedMedianInterval": [
+            -0.04879300000004605,
+            0.007499999999993179
+          ],
+          "gcInside": 17
+        },
+        {
+          "variant": "working",
+          "run": 3,
+          "headMs": 1.22604199999995,
+          "workingMs": 1.2591669999999908,
+          "gainMs": -0.03312500000004093,
+          "pairedMedianMs": -0.020208000000025095,
+          "noiseMs": 0.15962600000005978,
+          "medianErrorMs": 0.09137500000008458,
+          "pairedMedianInterval": [
+            -0.04562599999997019,
+            0.014998999999988882
+          ],
+          "gcInside": 17
+        }
+      ]
+    },
+    {
+      "name": "sample-0",
+      "mode": "mount",
+      "regime": "forced",
+      "headMs": 0.1559589999999389,
+      "workingMs": 0.15629199999989396,
+      "gainMs": 0.001167000000009466,
+      "pairedMedianMs": 0.0017920000001367953,
+      "noOpNoiseMs": 0.001833000000146967,
+      "maxNoiseMs": 0.06533400000014922,
+      "aboveNoise": false,
+      "regressionAboveNoise": false,
+      "singleRunRegressions": [],
+      "measurements": [
+        {
+          "variant": "control",
+          "run": 1,
+          "headMs": 0.155083999999988,
+          "workingMs": 0.15637600000002294,
+          "gainMs": -0.0012920000000349319,
+          "pairedMedianMs": 0.0006259999998974308,
+          "noiseMs": 0.05933400000012057,
+          "medianErrorMs": 0.007125000000200998,
+          "pairedMedianInterval": [
+            -0.003249999999979991,
+            0.002165999999988344
+          ],
+          "gcInside": 0
+        },
+        {
+          "variant": "control",
+          "run": 2,
+          "headMs": 0.15266699999995126,
+          "workingMs": 0.15450000000009823,
+          "gainMs": -0.001833000000146967,
+          "pairedMedianMs": -0.001791999999966265,
+          "noiseMs": 0.06737500000002683,
+          "medianErrorMs": 0.007375000000024556,
+          "pairedMedianInterval": [
+            -0.0033330000000546534,
+            -0.0006250000000136424
+          ],
+          "gcInside": 0
+        },
+        {
+          "variant": "control",
+          "run": 3,
+          "headMs": 0.15387599999985468,
+          "workingMs": 0.1553759999999329,
+          "gainMs": -0.0015000000000782165,
+          "pairedMedianMs": -0.00020799999992959783,
+          "noiseMs": 0.07187299999981178,
+          "medianErrorMs": 0.007997999999929561,
+          "pairedMedianInterval": [
+            -0.0019990000002962915,
+            0.002292000000011285
+          ],
+          "gcInside": 0
+        },
+        {
+          "variant": "working",
+          "run": 1,
+          "headMs": 0.15787499999999,
+          "workingMs": 0.15629199999989396,
+          "gainMs": 0.0015830000000960354,
+          "pairedMedianMs": 0.002083000000084212,
+          "noiseMs": 0.06533400000014922,
+          "medianErrorMs": 0.009750000000167347,
+          "pairedMedianInterval": [
+            0.0003329999999550637,
+            0.004000000000132786
+          ],
+          "gcInside": 0
+        },
+        {
+          "variant": "working",
+          "run": 2,
+          "headMs": 0.1559589999999389,
+          "workingMs": 0.15637600000002294,
+          "gainMs": -0.0004170000000840446,
+          "pairedMedianMs": 0.0017909999999119464,
+          "noiseMs": 0.06529200000028368,
+          "medianErrorMs": 0.01025000000026921,
+          "pairedMedianInterval": [
+            -0.0006670000000212895,
+            0.0032929999999851134
+          ],
+          "gcInside": 0
+        },
+        {
+          "variant": "working",
+          "run": 3,
+          "headMs": 0.15266599999995378,
+          "workingMs": 0.15149899999994432,
+          "gainMs": 0.001167000000009466,
+          "pairedMedianMs": 0.0017920000001367953,
+          "noiseMs": 0.06258299999996098,
+          "medianErrorMs": 0.007040999999958331,
+          "pairedMedianInterval": [
+            -0.0006240000002435409,
+            0.0037920000000895016
+          ],
+          "gcInside": 0
+        }
+      ]
+    },
+    {
+      "name": "sample-0",
+      "mode": "mount",
+      "regime": "steady",
+      "headMs": 0.061958000000004176,
+      "workingMs": 0.060417000000029475,
+      "gainMs": 0.0023329999999646134,
+      "pairedMedianMs": 0.0019169999999917309,
+      "noOpNoiseMs": 0.002125000000006594,
+      "maxNoiseMs": 0.07099999999999795,
+      "aboveNoise": false,
+      "regressionAboveNoise": false,
+      "singleRunRegressions": [],
+      "measurements": [
+        {
+          "variant": "control",
+          "run": 1,
+          "headMs": 0.06129100000001131,
+          "workingMs": 0.06312500000001364,
+          "gainMs": -0.0018340000000023338,
+          "pairedMedianMs": 0.0008330000000000837,
+          "noiseMs": 0.06404199999997218,
+          "medianErrorMs": 0.012208999999984371,
+          "pairedMedianInterval": [
+            -0.0047919999999805896,
+            0.004207999999977119
+          ],
+          "gcInside": 2
+        },
+        {
+          "variant": "control",
+          "run": 2,
+          "headMs": 0.06091699999998923,
+          "workingMs": 0.06070900000000279,
+          "gainMs": 0.00020799999998644125,
+          "pairedMedianMs": -0.0003330000000119071,
+          "noiseMs": 0.0669589999999971,
+          "medianErrorMs": 0.011083999999982552,
+          "pairedMedianInterval": [
+            -0.004667000000011967,
+            0.0035829999999634765
+          ],
+          "gcInside": 2
+        },
+        {
+          "variant": "control",
+          "run": 3,
+          "headMs": 0.059042000000005146,
+          "workingMs": 0.059042000000005146,
+          "gainMs": 0,
+          "pairedMedianMs": 0.002125000000006594,
+          "noiseMs": 0.07333299999999099,
+          "medianErrorMs": 0.011625000000009322,
+          "pairedMedianInterval": [
+            -0.0038339999999834617,
+            0.005709000000024389
+          ],
+          "gcInside": 2
+        },
+        {
+          "variant": "working",
+          "run": 1,
+          "headMs": 0.06087499999998158,
+          "workingMs": 0.05854200000001697,
+          "gainMs": 0.0023329999999646134,
+          "pairedMedianMs": 0.0019169999999917309,
+          "noiseMs": 0.07099999999999795,
+          "medianErrorMs": 0.01170799999999872,
+          "pairedMedianInterval": [
+            -0.003457999999994854,
+            0.006083000000018046
+          ],
+          "gcInside": 2
+        },
+        {
+          "variant": "working",
+          "run": 2,
+          "headMs": 0.061958000000004176,
+          "workingMs": 0.060417000000029475,
+          "gainMs": 0.0015409999999747015,
+          "pairedMedianMs": 0.0015420000000290202,
+          "noiseMs": 0.061626000000018166,
+          "medianErrorMs": 0.011084000000010974,
+          "pairedMedianInterval": [
+            -0.0024999999999693046,
+            0.005624999999980673
+          ],
+          "gcInside": 2
+        },
+        {
+          "variant": "working",
+          "run": 3,
+          "headMs": 0.0665000000000191,
+          "workingMs": 0.061958000000004176,
+          "gainMs": 0.004542000000014923,
+          "pairedMedianMs": 0.0038749999999936335,
+          "noiseMs": 0.06508400000004144,
+          "medianErrorMs": 0.010626000000030444,
+          "pairedMedianInterval": [
+            -0.001750999999984515,
+            0.008166999999986047
+          ],
+          "gcInside": 2
+        }
+      ]
+    },
+    {
+      "name": "sample-0",
+      "mode": "later",
+      "regime": "forced",
+      "headMs": 0.0914580000001024,
+      "workingMs": 0.09266700000000583,
+      "gainMs": -0.0012500000000272848,
+      "pairedMedianMs": -0.0009589999999661813,
+      "noOpNoiseMs": 0.00233299999990777,
+      "maxNoiseMs": 0.01762600000006387,
+      "aboveNoise": false,
+      "regressionAboveNoise": false,
+      "singleRunRegressions": [],
+      "measurements": [
+        {
+          "variant": "control",
+          "run": 1,
+          "headMs": 0.09058299999969677,
+          "workingMs": 0.08962499999995543,
+          "gainMs": 0.0009579999997413324,
+          "pairedMedianMs": 0.00033399999995253893,
+          "noiseMs": 0.012665999999995847,
+          "medianErrorMs": 0.004958000000101492,
+          "pairedMedianInterval": [
+            -0.0008339999999975589,
+            0.0012490000001434964
+          ],
+          "gcInside": 0
+        },
+        {
+          "variant": "control",
+          "run": 2,
+          "headMs": 0.08787599999982376,
+          "workingMs": 0.08983399999988251,
+          "gainMs": -0.001958000000058746,
+          "pairedMedianMs": -0.0011240000000043437,
+          "noiseMs": 0.022333000000173797,
+          "medianErrorMs": 0.0052080000002092675,
+          "pairedMedianInterval": [
+            -0.002874000000019805,
+            0.0002919999999448919
+          ],
+          "gcInside": 0
+        },
+        {
+          "variant": "control",
+          "run": 3,
+          "headMs": 0.08866699999998673,
+          "workingMs": 0.0901670000000081,
+          "gainMs": -0.0015000000000213731,
+          "pairedMedianMs": -0.00233299999990777,
+          "noiseMs": 0.012001000000054773,
+          "medianErrorMs": 0.004209000000003016,
+          "pairedMedianInterval": [
+            -0.0037919999999758147,
+            -0.0005830000000059954
+          ],
+          "gcInside": 0
+        },
+        {
+          "variant": "working",
+          "run": 1,
+          "headMs": 0.0914580000001024,
+          "workingMs": 0.09116600000015751,
+          "gainMs": 0.0002919999999448919,
+          "pairedMedianMs": -0.0004999999999881766,
+          "noiseMs": 0.014333000000021912,
+          "medianErrorMs": 0.003916999999944437,
+          "pairedMedianInterval": [
+            -0.0024160000001529625,
+            0.001959000000169908
+          ],
+          "gcInside": 0
+        },
+        {
+          "variant": "working",
+          "run": 2,
+          "headMs": 0.08970799999997325,
+          "workingMs": 0.09266700000000583,
+          "gainMs": -0.0029590000000325745,
+          "pairedMedianMs": -0.0031670000000190157,
+          "noiseMs": 0.01762600000006387,
+          "medianErrorMs": 0.005167000000028565,
+          "pairedMedianInterval": [
+            -0.004292000000077678,
+            -0.002208000000109678
+          ],
+          "gcInside": 0
+        },
+        {
+          "variant": "working",
+          "run": 3,
+          "headMs": 0.09220799999997098,
+          "workingMs": 0.09345799999999826,
+          "gainMs": -0.0012500000000272848,
+          "pairedMedianMs": -0.0009589999999661813,
+          "noiseMs": 0.014166000000102486,
+          "medianErrorMs": 0.004541000000131135,
+          "pairedMedianInterval": [
+            -0.0020419999998466665,
+            0.000624999999956799
+          ],
+          "gcInside": 0
+        }
+      ]
+    },
+    {
+      "name": "sample-0",
+      "mode": "later",
+      "regime": "steady",
+      "headMs": 0.022125000000016826,
+      "workingMs": 0.021707999999989624,
+      "gainMs": 0.00045800000000895125,
+      "pairedMedianMs": 0.0003749999999911324,
+      "noOpNoiseMs": 0.0006250000000136424,
+      "maxNoiseMs": 0.01583299999995802,
+      "aboveNoise": false,
+      "regressionAboveNoise": false,
+      "singleRunRegressions": [],
+      "measurements": [
+        {
+          "variant": "control",
+          "run": 1,
+          "headMs": 0.022334000000000742,
+          "workingMs": 0.02200000000001978,
+          "gainMs": 0.00033399999998096064,
+          "pairedMedianMs": -0.00008400000001529406,
+          "noiseMs": 0.011540999999994028,
+          "medianErrorMs": 0.0029989999999884276,
+          "pairedMedianInterval": [
+            -0.0017080000000078144,
+            0.0013339999999857355
+          ],
+          "gcInside": 1
+        },
+        {
+          "variant": "control",
+          "run": 2,
+          "headMs": 0.021916000000004487,
+          "workingMs": 0.02187399999999684,
+          "gainMs": 0.00004200000000764703,
+          "pairedMedianMs": 0.0006250000000136424,
+          "noiseMs": 0.014043000000015127,
+          "medianErrorMs": 0.0024190000000317013,
+          "pairedMedianInterval": [
+            -0.0007500000000106866,
+            0.0013749999999959073
+          ],
+          "gcInside": 1
+        },
+        {
+          "variant": "control",
+          "run": 3,
+          "headMs": 0.021625000000000227,
+          "workingMs": 0.02141599999998789,
+          "gainMs": 0.0002090000000123382,
+          "pairedMedianMs": -0.0002089999999839165,
+          "noiseMs": 0.01553999999998723,
+          "medianErrorMs": 0.003248999999982516,
+          "pairedMedianInterval": [
+            -0.0012089999999602696,
+            0.0014999999999929514
+          ],
+          "gcInside": 1
+        },
+        {
+          "variant": "working",
+          "run": 1,
+          "headMs": 0.021916000000004487,
+          "workingMs": 0.02170900000001552,
+          "gainMs": 0.000206999999988966,
+          "pairedMedianMs": 0.0006250000000420641,
+          "noiseMs": 0.013376000000022259,
+          "medianErrorMs": 0.0027510000000177115,
+          "pairedMedianInterval": [
+            -0.0013749999999959073,
+            0.001333000000016682
+          ],
+          "gcInside": 1
+        },
+        {
+          "variant": "working",
+          "run": 2,
+          "headMs": 0.022165999999998576,
+          "workingMs": 0.021707999999989624,
+          "gainMs": 0.00045800000000895125,
+          "pairedMedianMs": 0.0003749999999911324,
+          "noiseMs": 0.01583299999995802,
+          "medianErrorMs": 0.0037499999999681677,
+          "pairedMedianInterval": [
+            -0.0007509999999797401,
+            0.0016250000000184173
+          ],
+          "gcInside": 1
+        },
+        {
+          "variant": "working",
+          "run": 3,
+          "headMs": 0.022125000000016826,
+          "workingMs": 0.02154199999998241,
+          "gainMs": 0.0005830000000344171,
+          "pairedMedianMs": -0.0005830000000059954,
+          "noiseMs": 0.012875000000008185,
+          "medianErrorMs": 0.003666000000009717,
+          "pairedMedianInterval": [
+            -0.0012499999999988631,
+            0.0007500000000106866
+          ],
+          "gcInside": 1
+        }
+      ]
+    },
+    {
+      "name": "nested-d5-f4",
+      "mode": "later",
+      "regime": "forced",
+      "headMs": 0.11358299999983501,
+      "workingMs": 0.11250000000006821,
+      "gainMs": 0.0010829999997667983,
+      "pairedMedianMs": 0.000792000000274129,
+      "noOpNoiseMs": 0.0032919999998739513,
+      "maxNoiseMs": 0.015457999999796357,
+      "aboveNoise": false,
+      "regressionAboveNoise": false,
+      "singleRunRegressions": [],
+      "measurements": [
+        {
+          "variant": "control",
+          "run": 1,
+          "headMs": 0.11483299999997598,
+          "workingMs": 0.11462400000004891,
+          "gainMs": 0.00020899999992707308,
+          "pairedMedianMs": 0.0020419999999603533,
+          "noiseMs": 0.011916000000383065,
+          "medianErrorMs": 0.007333000000244283,
+          "pairedMedianInterval": [
+            -0.0006659999999101274,
+            0.003416999999899417
+          ],
+          "gcInside": 0
+        },
+        {
+          "variant": "control",
+          "run": 2,
+          "headMs": 0.11316700000000424,
+          "workingMs": 0.11458400000006463,
+          "gainMs": -0.0014170000000603977,
+          "pairedMedianMs": -0.0015829999999823485,
+          "noiseMs": 0.012333999999952994,
+          "medianErrorMs": 0.007083999999963453,
+          "pairedMedianInterval": [
+            -0.002625000000023192,
+            -0.00016700000014679972
+          ],
+          "gcInside": 0
+        },
+        {
+          "variant": "control",
+          "run": 3,
+          "headMs": 0.11345900000011966,
+          "workingMs": 0.1102089999999123,
+          "gainMs": 0.003250000000207365,
+          "pairedMedianMs": 0.0032919999998739513,
+          "noiseMs": 0.01124999999984766,
+          "medianErrorMs": 0.005998999999860644,
+          "pairedMedianInterval": [
+            0.0016249999998763087,
+            0.0047910000000683794
+          ],
+          "gcInside": 0
+        },
+        {
+          "variant": "working",
+          "run": 1,
+          "headMs": 0.11358299999983501,
+          "workingMs": 0.11250000000006821,
+          "gainMs": 0.0010829999997667983,
+          "pairedMedianMs": 0.000792000000274129,
+          "noiseMs": 0.009791000000291206,
+          "medianErrorMs": 0.005875000000401087,
+          "pairedMedianInterval": [
+            -0.0008340000000544023,
+            0.0027489999999943393
+          ],
+          "gcInside": 0
+        },
+        {
+          "variant": "working",
+          "run": 2,
+          "headMs": 0.11208299999992732,
+          "workingMs": 0.11362500000001319,
+          "gainMs": -0.0015420000000858636,
+          "pairedMedianMs": -0.002292000000124972,
+          "noiseMs": 0.015457999999796357,
+          "medianErrorMs": 0.00866599999983464,
+          "pairedMedianInterval": [
+            -0.004624999999975898,
+            -0.0006670000000212895
+          ],
+          "gcInside": 0
+        },
+        {
+          "variant": "working",
+          "run": 3,
+          "headMs": 0.11408300000002214,
+          "workingMs": 0.11216599999997356,
+          "gainMs": 0.0019170000000485743,
+          "pairedMedianMs": 0.001374999999825377,
+          "noiseMs": 0.012665999999939004,
+          "medianErrorMs": 0.006791000000021086,
+          "pairedMedianInterval": [
+            0.00024999999982355803,
+            0.0021659999997609702
+          ],
+          "gcInside": 0
+        }
+      ]
+    },
+    {
+      "name": "nested-d5-f4",
+      "mode": "later",
+      "regime": "steady",
+      "headMs": 0.03812500000003638,
+      "workingMs": 0.03616700000003448,
+      "gainMs": 0.0013749999999959073,
+      "pairedMedianMs": 0.001291000000009035,
+      "noOpNoiseMs": 0.002583999999956177,
+      "maxNoiseMs": 0.014375999999913347,
+      "aboveNoise": false,
+      "regressionAboveNoise": false,
+      "singleRunRegressions": [],
+      "measurements": [
+        {
+          "variant": "control",
+          "run": 1,
+          "headMs": 0.04112499999999386,
+          "workingMs": 0.04058399999999551,
+          "gainMs": 0.0005409999999983484,
+          "pairedMedianMs": 0.0007499999999822649,
+          "noiseMs": 0.012834999999967067,
+          "medianErrorMs": 0.007167999999978747,
+          "pairedMedianInterval": [
+            -0.0006250000000136424,
+            0.001999999999981128
+          ],
+          "gcInside": 1
+        },
+        {
+          "variant": "control",
+          "run": 2,
+          "headMs": 0.03812500000000796,
+          "workingMs": 0.035707000000002154,
+          "gainMs": 0.0024180000000058044,
+          "pairedMedianMs": 0.0023339999999905103,
+          "noiseMs": 0.011247999999966396,
+          "medianErrorMs": 0.004456999999973732,
+          "pairedMedianInterval": [
+            0.0009170000000153777,
+            0.003291999999987638
+          ],
+          "gcInside": 1
+        },
+        {
+          "variant": "control",
+          "run": 3,
+          "headMs": 0.04095899999995822,
+          "workingMs": 0.038375000000002046,
+          "gainMs": 0.002583999999956177,
+          "pairedMedianMs": 0.002167000000014241,
+          "noiseMs": 0.012208999999984371,
+          "medianErrorMs": 0.006875000000007958,
+          "pairedMedianInterval": [
+            0.0013329999999882602,
+            0.002958999999975731
+          ],
+          "gcInside": 1
+        },
+        {
+          "variant": "working",
+          "run": 1,
+          "headMs": 0.036167000000006055,
+          "workingMs": 0.03616700000003448,
+          "gainMs": -2.842170943040401e-14,
+          "pairedMedianMs": 0.001291000000009035,
+          "noiseMs": 0.013001000000002705,
+          "medianErrorMs": 0.005625000000037517,
+          "pairedMedianInterval": [
+            -0.00012499999999704414,
+            0.0019170000000201526
+          ],
+          "gcInside": 1
+        },
+        {
+          "variant": "working",
+          "run": 2,
+          "headMs": 0.03812500000003638,
+          "workingMs": 0.03412600000004318,
+          "gainMs": 0.0039989999999932024,
+          "pairedMedianMs": 0.0030829999999468782,
+          "noiseMs": 0.010374000000041406,
+          "medianErrorMs": 0.00520700000001284,
+          "pairedMedianInterval": [
+            0.002166999999985819,
+            0.00433400000000006
+          ],
+          "gcInside": 1
+        },
+        {
+          "variant": "working",
+          "run": 3,
+          "headMs": 0.03858300000001691,
+          "workingMs": 0.037208000000021,
+          "gainMs": 0.0013749999999959073,
+          "pairedMedianMs": 0.0009999999999763531,
+          "noiseMs": 0.014375999999913347,
+          "medianErrorMs": 0.0074169999999185166,
+          "pairedMedianInterval": [
+            -0.0006250000000136424,
+            0.0026669999999739957
+          ],
+          "gcInside": 1
+        }
+      ]
+    }
+  ],
+  "allocations": [
+    {
+      "variant": "head",
+      "run": 1,
+      "noInlining": false,
+      "nodes": 1365,
+      "bundleObjects": null,
+      "bundleObjectsPerNode": null,
+      "bundleBytes": null,
+      "sourceAttribution": "indeterminate-inlined-owner",
+      "allObjects": 216081,
+      "blueprintObjects": 166950,
+      "blueprintObjectsPerNode": 122.3076923076923
+    },
+    {
+      "variant": "working",
+      "run": 1,
+      "noInlining": false,
+      "nodes": 1365,
+      "bundleObjects": 9554,
+      "bundleObjectsPerNode": 6.999267399267399,
+      "bundleBytes": 468720,
+      "sourceAttribution": "resolved",
+      "allObjects": 212003,
+      "blueprintObjects": 162872,
+      "blueprintObjectsPerNode": 119.32014652014652
+    },
+    {
+      "variant": "head",
+      "run": 2,
+      "noInlining": true,
+      "nodes": 1365,
+      "bundleObjects": 16400,
+      "bundleObjectsPerNode": 12.014652014652015,
+      "bundleBytes": 913384,
+      "sourceAttribution": "resolved",
+      "allObjects": 236282,
+      "blueprintObjects": 183056,
+      "blueprintObjectsPerNode": 134.1069597069597
+    },
+    {
+      "variant": "working",
+      "run": 2,
+      "noInlining": true,
+      "nodes": 1365,
+      "bundleObjects": 9554,
+      "bundleObjectsPerNode": 6.999267399267399,
+      "bundleBytes": 468720,
+      "sourceAttribution": "resolved",
+      "allObjects": 223980,
+      "blueprintObjects": 170754,
+      "blueprintObjectsPerNode": 125.0945054945055
+    }
+  ],
+  "sources": [
+    {
+      "file": "src/core/blueprint/utils/analyze/buildNodes.ts",
+      "sha256": "26e9c09a81bcee193ed83b22b555c990ae04411a5a22ba21b08e4eb04f68a264"
+    },
+    {
+      "file": "src/core/blueprint/utils/analyze/getTemplateKey.ts",
+      "sha256": "1631f59d0e3516c8b0ec4be2e4294a082bc49095c1d914a9470bcdea1544bafa"
+    }
+  ]
+}
