@@ -1,0 +1,17 @@
+{
+  "args": [
+    "--pairs",
+    "control",
+    "oneOf-5",
+    "first",
+    "steady"
+  ],
+  "execArgv": [],
+  "started": 1791267337527,
+  "ended": 1791267339046,
+  "elapsedMs": 1519,
+  "status": 0,
+  "signal": null,
+  "naturalExit": true,
+  "driverSha256": "6a1216ce2013ff475c842db4ca3a3c8c53221e38e52349f596f1ea856a260604"
+}

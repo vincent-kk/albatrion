@@ -1,0 +1,20 @@
+{
+  "args": [
+    "--paired-worker",
+    "gate-workspaces",
+    "oneOf-40",
+    "first",
+    "1",
+    "steady"
+  ],
+  "execArgv": [
+    "--expose-gc"
+  ],
+  "started": 1791267391259,
+  "ended": 1791267392171,
+  "elapsedMs": 912,
+  "status": 0,
+  "signal": null,
+  "naturalExit": true,
+  "driverSha256": "6a1216ce2013ff475c842db4ca3a3c8c53221e38e52349f596f1ea856a260604"
+}

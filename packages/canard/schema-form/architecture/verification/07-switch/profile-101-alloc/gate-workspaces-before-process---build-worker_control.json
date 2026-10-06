@@ -1,0 +1,15 @@
+{
+  "args": [
+    "/Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/packages/canard/schema-form/architecture/verification/07-switch/profile-101-alloc/measure.mjs",
+    "--build-worker",
+    "control"
+  ],
+  "started": "2026-10-06T06:07:57.156Z",
+  "ended": "2026-10-06T06:08:00.646Z",
+  "elapsedMs": 3490,
+  "status": 0,
+  "signal": null,
+  "pid": 92450,
+  "freshProcess": true,
+  "driverSha256": "d646f3027865b645259e65e21b40f3592a8d61bbb972c7a0daa6e93f6f60a7e3"
+}

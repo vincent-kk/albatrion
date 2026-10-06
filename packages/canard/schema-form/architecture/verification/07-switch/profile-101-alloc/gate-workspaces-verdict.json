@@ -1,0 +1,1967 @@
+{
+  "head": "da734b40da7a35186646bef42c9f65cee3178892",
+  "adopted": false,
+  "noiseRule": "max(1us, same-column no-op abs bound/paired median, empty residual p95 + 1999 bootstrap 99% median-error sum); all three runs and signed paired intervals [40,60]",
+  "rows": [
+    {
+      "name": "oneOf-20",
+      "mode": "mount",
+      "regime": "forced",
+      "headMs": 2.0840840000000185,
+      "workingMs": 2.024791999999991,
+      "pairedMedianMs": 0.059959000000048945,
+      "maxNoiseMs": 0.05837400000012849,
+      "aboveNoise": false,
+      "regressionAboveNoise": false,
+      "singleRunRegressions": [],
+      "measurements": [
+        {
+          "variant": "control",
+          "run": 1,
+          "headMs": 2.0663760000002185,
+          "workingMs": 2.0805840000002718,
+          "gainMs": -0.014208000000053289,
+          "pairedMedianMs": -0.0043759999998655985,
+          "noiseMs": 0.08249999999975444,
+          "pairedMedianInterval": [
+            -0.029623999999785156,
+            0.014958000000092397
+          ],
+          "gcInside": 0
+        },
+        {
+          "variant": "control",
+          "run": 2,
+          "headMs": 2.283292000000074,
+          "workingMs": 2.2863760000000184,
+          "gainMs": -0.0030839999999443535,
+          "pairedMedianMs": -0.005167000000028565,
+          "noiseMs": 0.066666999999768,
+          "pairedMedianInterval": [
+            -0.01908400000002075,
+            0.011500000000069122
+          ],
+          "gcInside": 0
+        },
+        {
+          "variant": "control",
+          "run": 3,
+          "headMs": 2.0949160000002394,
+          "workingMs": 2.086917000000085,
+          "gainMs": 0.00799900000015441,
+          "pairedMedianMs": 0.002417000000036751,
+          "noiseMs": 0.0633730000004391,
+          "pairedMedianInterval": [
+            -0.012708000000202446,
+            0.018415999999660926
+          ],
+          "gcInside": 0
+        },
+        {
+          "variant": "gate-workspaces",
+          "run": 1,
+          "headMs": 2.252707999999984,
+          "workingMs": 2.2297920000000886,
+          "gainMs": 0.022915999999895575,
+          "pairedMedianMs": 0.013249999999970896,
+          "noiseMs": 0.05837400000012849,
+          "pairedMedianInterval": [
+            0.002499999999827196,
+            0.036542000000281405
+          ],
+          "gcInside": 0
+        },
+        {
+          "variant": "gate-workspaces",
+          "run": 2,
+          "headMs": 2.0840840000000185,
+          "workingMs": 2.024791999999991,
+          "gainMs": 0.059292000000027656,
+          "pairedMedianMs": 0.06095800000002782,
+          "noiseMs": 0.05645899999993276,
+          "pairedMedianInterval": [
+            0.04708400000004076,
+            0.07220799999993233
+          ],
+          "gcInside": 0
+        },
+        {
+          "variant": "gate-workspaces",
+          "run": 3,
+          "headMs": 2.066001000000142,
+          "workingMs": 2.0145420000001195,
+          "gainMs": 0.05145900000002257,
+          "pairedMedianMs": 0.059959000000048945,
+          "noiseMs": 0.05708399999980429,
+          "pairedMedianInterval": [
+            0.02754200000003948,
+            0.08324999999990723
+          ],
+          "gcInside": 0
+        }
+      ]
+    },
+    {
+      "name": "oneOf-20",
+      "mode": "mount",
+      "regime": "steady",
+      "headMs": 1.2221659999999588,
+      "workingMs": 1.202416999999997,
+      "pairedMedianMs": 0.03604199999995217,
+      "maxNoiseMs": 0.1518320000000415,
+      "aboveNoise": false,
+      "regressionAboveNoise": false,
+      "singleRunRegressions": [],
+      "measurements": [
+        {
+          "variant": "control",
+          "run": 1,
+          "headMs": 1.2704160000000115,
+          "workingMs": 1.2652909999999906,
+          "gainMs": 0.005125000000020918,
+          "pairedMedianMs": 0.03866700000014589,
+          "noiseMs": 5.0850410000000466,
+          "pairedMedianInterval": [
+            -0.005875000000060027,
+            0.057583000000022366
+          ],
+          "gcInside": 21
+        },
+        {
+          "variant": "control",
+          "run": 2,
+          "headMs": 1.2155419999999992,
+          "workingMs": 1.2397500000000434,
+          "gainMs": -0.024208000000044194,
+          "pairedMedianMs": -0.023707999999999174,
+          "noiseMs": 0.09554199999999469,
+          "pairedMedianInterval": [
+            -0.040832999999963704,
+            0.009917000000086773
+          ],
+          "gcInside": 21
+        },
+        {
+          "variant": "control",
+          "run": 3,
+          "headMs": 1.2360419999999408,
+          "workingMs": 1.2075419999999895,
+          "gainMs": 0.028499999999951342,
+          "pairedMedianMs": 0.026749999999992724,
+          "noiseMs": 0.13066499999996495,
+          "pairedMedianInterval": [
+            0.0032920000000444816,
+            0.0593340000000353
+          ],
+          "gcInside": 22
+        },
+        {
+          "variant": "gate-workspaces",
+          "run": 1,
+          "headMs": 1.2221659999999588,
+          "workingMs": 1.1875409999999533,
+          "gainMs": 0.03462500000000546,
+          "pairedMedianMs": 0.05141600000001745,
+          "noiseMs": 0.09912699999998154,
+          "pairedMedianInterval": [
+            0.018124999999940883,
+            0.07945899999998574
+          ],
+          "gcInside": 21
+        },
+        {
+          "variant": "gate-workspaces",
+          "run": 2,
+          "headMs": 1.2044170000000065,
+          "workingMs": 1.202416999999997,
+          "gainMs": 0.0020000000000095497,
+          "pairedMedianMs": -0.016584000000023025,
+          "noiseMs": 0.08579200000002629,
+          "pairedMedianInterval": [
+            -0.03870899999998301,
+            0.01250100000004295
+          ],
+          "gcInside": 21
+        },
+        {
+          "variant": "gate-workspaces",
+          "run": 3,
+          "headMs": 1.3067499999999654,
+          "workingMs": 1.2598749999999654,
+          "gainMs": 0.046875,
+          "pairedMedianMs": 0.03604199999995217,
+          "noiseMs": 0.1518320000000415,
+          "pairedMedianInterval": [
+            -0.013166000000012446,
+            0.06312500000001364
+          ],
+          "gcInside": 21
+        }
+      ]
+    },
+    {
+      "name": "nested-d5-f4",
+      "mode": "mount",
+      "regime": "forced",
+      "headMs": 10.158625000000143,
+      "workingMs": 9.917167000000092,
+      "pairedMedianMs": 0.08416600000009566,
+      "maxNoiseMs": 0.7906659999997032,
+      "aboveNoise": false,
+      "regressionAboveNoise": false,
+      "singleRunRegressions": [],
+      "measurements": [
+        {
+          "variant": "control",
+          "run": 1,
+          "headMs": 10.821125999999822,
+          "workingMs": 10.52616799999987,
+          "gainMs": 0.2949579999999514,
+          "pairedMedianMs": 0.1443330000001879,
+          "noiseMs": 0.9923340000005112,
+          "pairedMedianInterval": [
+            -0.38649999999984175,
+            0.7482490000002144
+          ],
+          "gcInside": 0
+        },
+        {
+          "variant": "control",
+          "run": 2,
+          "headMs": 9.78887499999965,
+          "workingMs": 10.15008299999991,
+          "gainMs": -0.36120800000026065,
+          "pairedMedianMs": -0.23070800000004965,
+          "noiseMs": 0.6723770000002389,
+          "pairedMedianInterval": [
+            -0.9602489999999761,
+            0.24095799999986411
+          ],
+          "gcInside": 0
+        },
+        {
+          "variant": "control",
+          "run": 3,
+          "headMs": 10.233623999999963,
+          "workingMs": 10.034832999999708,
+          "gainMs": 0.19879100000025574,
+          "pairedMedianMs": 0.15912499999967622,
+          "noiseMs": 0.8088330000000212,
+          "pairedMedianInterval": [
+            -0.2860830000001897,
+            0.6105830000005881
+          ],
+          "gcInside": 0
+        },
+        {
+          "variant": "gate-workspaces",
+          "run": 1,
+          "headMs": 10.158625000000143,
+          "workingMs": 9.829459000000156,
+          "gainMs": 0.3291659999999865,
+          "pairedMedianMs": 0.16683300000022427,
+          "noiseMs": 0.6405410000004395,
+          "pairedMedianInterval": [
+            -0.18349999999963984,
+            0.4376669999999194
+          ],
+          "gcInside": 0
+        },
+        {
+          "variant": "gate-workspaces",
+          "run": 2,
+          "headMs": 9.914458000000678,
+          "workingMs": 9.917167000000092,
+          "gainMs": -0.0027089999994132086,
+          "pairedMedianMs": 0.08416600000009566,
+          "noiseMs": 0.7906659999997032,
+          "pairedMedianInterval": [
+            -0.48250099999995655,
+            0.4287080000003698
+          ],
+          "gcInside": 0
+        },
+        {
+          "variant": "gate-workspaces",
+          "run": 3,
+          "headMs": 10.203499999999934,
+          "workingMs": 9.997582999999935,
+          "gainMs": 0.20591699999999946,
+          "pairedMedianMs": -0.0027500000005602487,
+          "noiseMs": 0.7695410000001175,
+          "pairedMedianInterval": [
+            -0.31362499999977445,
+            0.9362080000005335
+          ],
+          "gcInside": 0
+        }
+      ]
+    },
+    {
+      "name": "nested-d5-f4",
+      "mode": "mount",
+      "regime": "steady",
+      "headMs": 8.343334000000226,
+      "workingMs": 8.290541999999817,
+      "pairedMedianMs": -0.09029099999997925,
+      "maxNoiseMs": 1.9497920000000875,
+      "aboveNoise": false,
+      "regressionAboveNoise": false,
+      "singleRunRegressions": [],
+      "measurements": [
+        {
+          "variant": "control",
+          "run": 1,
+          "headMs": 8.216166999999842,
+          "workingMs": 8.36608400000003,
+          "gainMs": -0.14991700000018682,
+          "pairedMedianMs": -0.44266600000037215,
+          "noiseMs": 1.6610009999997999,
+          "pairedMedianInterval": [
+            -1.4263339999997697,
+            0.7013750000000982
+          ],
+          "gcInside": 117
+        },
+        {
+          "variant": "control",
+          "run": 2,
+          "headMs": 8.388708999999636,
+          "workingMs": 8.34849999999986,
+          "gainMs": 0.040208999999777006,
+          "pairedMedianMs": 0.31054100000028484,
+          "noiseMs": 1.6428749999998047,
+          "pairedMedianInterval": [
+            -0.6568749999999,
+            1.4587920000000167
+          ],
+          "gcInside": 117
+        },
+        {
+          "variant": "control",
+          "run": 3,
+          "headMs": 8.554667000000109,
+          "workingMs": 8.566667000000166,
+          "gainMs": -0.012000000000057298,
+          "pairedMedianMs": 0.010250000000041837,
+          "noiseMs": 1.6019590000001358,
+          "pairedMedianInterval": [
+            -1.3340420000000677,
+            0.9738750000001346
+          ],
+          "gcInside": 117
+        },
+        {
+          "variant": "gate-workspaces",
+          "run": 1,
+          "headMs": 8.343334000000226,
+          "workingMs": 8.290541999999817,
+          "gainMs": 0.052792000000408734,
+          "pairedMedianMs": 0.021666999999979453,
+          "noiseMs": 1.9497920000000875,
+          "pairedMedianInterval": [
+            -1.2012079999999514,
+            1.5159159999998337
+          ],
+          "gcInside": 115
+        },
+        {
+          "variant": "gate-workspaces",
+          "run": 2,
+          "headMs": 8.573041000000046,
+          "workingMs": 8.476333000000125,
+          "gainMs": 0.09670799999992141,
+          "pairedMedianMs": -0.09029099999997925,
+          "noiseMs": 1.473833000000269,
+          "pairedMedianInterval": [
+            -0.8697500000000673,
+            1.451457999999775
+          ],
+          "gcInside": 117
+        },
+        {
+          "variant": "gate-workspaces",
+          "run": 3,
+          "headMs": 8.078584000000092,
+          "workingMs": 8.119084000000157,
+          "gainMs": -0.040500000000065484,
+          "pairedMedianMs": -0.09720800000013696,
+          "noiseMs": 1.4493750000002024,
+          "pairedMedianInterval": [
+            -1.119457999999895,
+            1.1801660000000993
+          ],
+          "gcInside": 118
+        }
+      ]
+    },
+    {
+      "name": "flat-500",
+      "mode": "mount",
+      "regime": "forced",
+      "headMs": 3.689875000000484,
+      "workingMs": 3.702292000000398,
+      "pairedMedianMs": 0.010667000000012195,
+      "maxNoiseMs": 0.13891799999984755,
+      "aboveNoise": false,
+      "regressionAboveNoise": false,
+      "singleRunRegressions": [],
+      "measurements": [
+        {
+          "variant": "control",
+          "run": 1,
+          "headMs": 3.7626250000001846,
+          "workingMs": 3.7110830000000306,
+          "gainMs": 0.051542000000154076,
+          "pairedMedianMs": 0.02141600000015842,
+          "noiseMs": 0.12600000000011846,
+          "pairedMedianInterval": [
+            -0.015041999999994005,
+            0.06470899999976609
+          ],
+          "gcInside": 0
+        },
+        {
+          "variant": "control",
+          "run": 2,
+          "headMs": 3.7817499999999598,
+          "workingMs": 3.7280420000000447,
+          "gainMs": 0.053707999999915046,
+          "pairedMedianMs": 0.055874999999900865,
+          "noiseMs": 0.13962599999956637,
+          "pairedMedianInterval": [
+            -0.0016239999999925203,
+            0.10654199999999037
+          ],
+          "gcInside": 0
+        },
+        {
+          "variant": "control",
+          "run": 3,
+          "headMs": 3.778332000000148,
+          "workingMs": 3.754250000000013,
+          "gainMs": 0.02408200000013494,
+          "pairedMedianMs": 0.015333999999938897,
+          "noiseMs": 0.09616500000001338,
+          "pairedMedianInterval": [
+            -0.020749999999679858,
+            0.05004100000019207
+          ],
+          "gcInside": 0
+        },
+        {
+          "variant": "gate-workspaces",
+          "run": 1,
+          "headMs": 3.7331259999997997,
+          "workingMs": 3.7217919999999935,
+          "gainMs": 0.01133399999980611,
+          "pairedMedianMs": 0.010667000000012195,
+          "noiseMs": 0.13891799999984755,
+          "pairedMedianInterval": [
+            -0.03516700000000128,
+            0.07162500000004002
+          ],
+          "gcInside": 0
+        },
+        {
+          "variant": "gate-workspaces",
+          "run": 2,
+          "headMs": 3.638125000000173,
+          "workingMs": 3.702292000000398,
+          "gainMs": -0.06416700000022502,
+          "pairedMedianMs": -0.07633400000008805,
+          "noiseMs": 0.10654099999919708,
+          "pairedMedianInterval": [
+            -0.11491700000033234,
+            -0.00841699999955381
+          ],
+          "gcInside": 0
+        },
+        {
+          "variant": "gate-workspaces",
+          "run": 3,
+          "headMs": 3.689875000000484,
+          "workingMs": 3.688751000000252,
+          "gainMs": 0.0011240000002317174,
+          "pairedMedianMs": 0.01358299999992596,
+          "noiseMs": 0.1253340000005494,
+          "pairedMedianInterval": [
+            -0.07483400000012352,
+            0.07158400000002985
+          ],
+          "gcInside": 0
+        }
+      ]
+    },
+    {
+      "name": "flat-500",
+      "mode": "mount",
+      "regime": "steady",
+      "headMs": 2.59783299999998,
+      "workingMs": 2.600832999999966,
+      "pairedMedianMs": -0.04425000000003365,
+      "maxNoiseMs": 1.0516680000001202,
+      "aboveNoise": false,
+      "regressionAboveNoise": false,
+      "singleRunRegressions": [],
+      "measurements": [
+        {
+          "variant": "control",
+          "run": 1,
+          "headMs": 2.6059169999999767,
+          "workingMs": 2.69074999999998,
+          "gainMs": -0.08483300000000327,
+          "pairedMedianMs": -0.10362500000007913,
+          "noiseMs": 0.6972089999999298,
+          "pairedMedianInterval": [
+            -0.3564169999999649,
+            -0.009750999999937449
+          ],
+          "gcInside": 49
+        },
+        {
+          "variant": "control",
+          "run": 2,
+          "headMs": 2.563709000000017,
+          "workingMs": 2.4729169999999385,
+          "gainMs": 0.09079200000007859,
+          "pairedMedianMs": 0.10770900000011352,
+          "noiseMs": 0.595249999999993,
+          "pairedMedianInterval": [
+            0.04812600000002476,
+            0.2062090000000012
+          ],
+          "gcInside": 49
+        },
+        {
+          "variant": "control",
+          "run": 3,
+          "headMs": 2.536248999999998,
+          "workingMs": 2.418124999999975,
+          "gainMs": 0.11812400000002299,
+          "pairedMedianMs": 0.004375000000095497,
+          "noiseMs": 0.3207500000000323,
+          "pairedMedianInterval": [
+            -0.03441699999996217,
+            0.07483300000012605
+          ],
+          "gcInside": 49
+        },
+        {
+          "variant": "gate-workspaces",
+          "run": 1,
+          "headMs": 2.59783299999998,
+          "workingMs": 2.6326250000000186,
+          "gainMs": -0.03479200000003857,
+          "pairedMedianMs": -0.04425000000003365,
+          "noiseMs": 1.0516680000001202,
+          "pairedMedianInterval": [
+            -0.11849899999992886,
+            -0.009834000000068954
+          ],
+          "gcInside": 50
+        },
+        {
+          "variant": "gate-workspaces",
+          "run": 2,
+          "headMs": 2.5982500000000357,
+          "workingMs": 2.578917000000075,
+          "gainMs": 0.01933299999996052,
+          "pairedMedianMs": 0.10112499999996771,
+          "noiseMs": 0.7423760000001778,
+          "pairedMedianInterval": [
+            0.022123999999962507,
+            0.23937499999988177
+          ],
+          "gcInside": 50
+        },
+        {
+          "variant": "gate-workspaces",
+          "run": 3,
+          "headMs": 2.521082999999976,
+          "workingMs": 2.600832999999966,
+          "gainMs": -0.07974999999999,
+          "pairedMedianMs": -0.06162400000005164,
+          "noiseMs": 0.4816660000000752,
+          "pairedMedianInterval": [
+            -0.15099899999995614,
+            0.009458000000051925
+          ],
+          "gcInside": 50
+        }
+      ]
+    },
+    {
+      "name": "sample-0",
+      "mode": "mount",
+      "regime": "forced",
+      "headMs": 0.15441699999996672,
+      "workingMs": 0.15345800000000054,
+      "pairedMedianMs": -0.002625999999963824,
+      "maxNoiseMs": 0.021583000000021002,
+      "aboveNoise": false,
+      "regressionAboveNoise": false,
+      "singleRunRegressions": [],
+      "measurements": [
+        {
+          "variant": "control",
+          "run": 1,
+          "headMs": 0.1573340000000485,
+          "workingMs": 0.15654200000000174,
+          "gainMs": 0.0007920000000467553,
+          "pairedMedianMs": -0.0002919999999448919,
+          "noiseMs": 0.020414999999900374,
+          "pairedMedianInterval": [
+            -0.004541999999901236,
+            0.0026249999999663487
+          ],
+          "gcInside": 0
+        },
+        {
+          "variant": "control",
+          "run": 2,
+          "headMs": 0.1701240000000439,
+          "workingMs": 0.16829100000001063,
+          "gainMs": 0.0018330000000332802,
+          "pairedMedianMs": -0.0023329999996803963,
+          "noiseMs": 0.02524800000011851,
+          "pairedMedianInterval": [
+            -0.0048750000000836735,
+            0.003417000000126791
+          ],
+          "gcInside": 0
+        },
+        {
+          "variant": "control",
+          "run": 3,
+          "headMs": 0.1565819999999576,
+          "workingMs": 0.15641599999992195,
+          "gainMs": 0.00016600000003563764,
+          "pairedMedianMs": 0.001583000000039192,
+          "noiseMs": 0.021582000000023527,
+          "pairedMedianInterval": [
+            -0.0013330000000451037,
+            0.004416999999989457
+          ],
+          "gcInside": 0
+        },
+        {
+          "variant": "gate-workspaces",
+          "run": 1,
+          "headMs": 0.15441699999996672,
+          "workingMs": 0.1569170000000213,
+          "gainMs": -0.0025000000000545697,
+          "pairedMedianMs": -0.002625999999963824,
+          "noiseMs": 0.018293000000170423,
+          "pairedMedianInterval": [
+            -0.004541999999901236,
+            0.0003760000000170294
+          ],
+          "gcInside": 0
+        },
+        {
+          "variant": "gate-workspaces",
+          "run": 2,
+          "headMs": 0.15445900000005963,
+          "workingMs": 0.15291699999997377,
+          "gainMs": 0.0015420000000858636,
+          "pairedMedianMs": 0.0017920000000231084,
+          "noiseMs": 0.021583000000021002,
+          "pairedMedianInterval": [
+            -0.0002920000000017353,
+            0.003500000000030923
+          ],
+          "gcInside": 0
+        },
+        {
+          "variant": "gate-workspaces",
+          "run": 3,
+          "headMs": 0.15220799999997325,
+          "workingMs": 0.15345800000000054,
+          "gainMs": -0.0012500000000272848,
+          "pairedMedianMs": -0.003583999999818843,
+          "noiseMs": 0.0203340000001333,
+          "pairedMedianInterval": [
+            -0.005749999999920874,
+            0.0006659999999101274
+          ],
+          "gcInside": 0
+        }
+      ]
+    },
+    {
+      "name": "sample-0",
+      "mode": "mount",
+      "regime": "steady",
+      "headMs": 0.058541000000019494,
+      "workingMs": 0.05979200000001583,
+      "pairedMedianMs": -0.0009579999999971278,
+      "maxNoiseMs": 0.026249000000007072,
+      "aboveNoise": false,
+      "regressionAboveNoise": false,
+      "singleRunRegressions": [],
+      "measurements": [
+        {
+          "variant": "control",
+          "run": 1,
+          "headMs": 0.05987599999997428,
+          "workingMs": 0.06187599999998383,
+          "gainMs": -0.0020000000000095497,
+          "pairedMedianMs": -0.001082999999994172,
+          "noiseMs": 0.027082000000007156,
+          "pairedMedianInterval": [
+            -0.006249999999965894,
+            0.004583000000025095
+          ],
+          "gcInside": 3
+        },
+        {
+          "variant": "control",
+          "run": 2,
+          "headMs": 0.061041999999986274,
+          "workingMs": 0.059750000000008185,
+          "gainMs": 0.0012919999999780885,
+          "pairedMedianMs": 0.003290999999990163,
+          "noiseMs": 0.02545700000001716,
+          "pairedMedianInterval": [
+            -0.0018340000000023338,
+            0.007000000000005002
+          ],
+          "gcInside": 3
+        },
+        {
+          "variant": "control",
+          "run": 3,
+          "headMs": 0.058416999999991504,
+          "workingMs": 0.06008299999999167,
+          "gainMs": -0.0016660000000001673,
+          "pairedMedianMs": -0.0003749999999911324,
+          "noiseMs": 0.024749999999983174,
+          "pairedMedianInterval": [
+            -0.0051660000000026685,
+            0.005915999999984933
+          ],
+          "gcInside": 3
+        },
+        {
+          "variant": "gate-workspaces",
+          "run": 1,
+          "headMs": 0.058541000000019494,
+          "workingMs": 0.05979200000001583,
+          "gainMs": -0.0012509999999963384,
+          "pairedMedianMs": -0.0009579999999971278,
+          "noiseMs": 0.022125000000045247,
+          "pairedMedianInterval": [
+            -0.00662500000001387,
+            0.005500000000012051
+          ],
+          "gcInside": 2
+        },
+        {
+          "variant": "gate-workspaces",
+          "run": 2,
+          "headMs": 0.06162499999999227,
+          "workingMs": 0.06016599999998107,
+          "gainMs": 0.0014590000000112013,
+          "pairedMedianMs": 0.0010009999999738284,
+          "noiseMs": 0.026249000000007072,
+          "pairedMedianInterval": [
+            -0.0037079999999889424,
+            0.006957999999997355
+          ],
+          "gcInside": 3
+        },
+        {
+          "variant": "gate-workspaces",
+          "run": 3,
+          "headMs": 0.05770799999996257,
+          "workingMs": 0.05887499999997203,
+          "gainMs": -0.001167000000009466,
+          "pairedMedianMs": -0.003459000000020751,
+          "noiseMs": 0.01999999999998181,
+          "pairedMedianInterval": [
+            -0.006916999999987183,
+            0.005749999999977717
+          ],
+          "gcInside": 3
+        }
+      ]
+    },
+    {
+      "name": "oneOf-5",
+      "mode": "first",
+      "regime": "forced",
+      "headMs": 0.5668749999999818,
+      "workingMs": 0.5650420000000622,
+      "pairedMedianMs": -0.003375000000119144,
+      "maxNoiseMs": 0.034875999999883334,
+      "aboveNoise": false,
+      "regressionAboveNoise": false,
+      "singleRunRegressions": [],
+      "measurements": [
+        {
+          "variant": "control",
+          "run": 1,
+          "headMs": 0.5629169999999704,
+          "workingMs": 0.5655409999999392,
+          "gainMs": -0.0026239999999688735,
+          "pairedMedianMs": 0.0035009999999147112,
+          "noiseMs": 0.03566599999982145,
+          "pairedMedianInterval": [
+            -0.01845699999989847,
+            0.016291999999907603
+          ],
+          "gcInside": 0
+        },
+        {
+          "variant": "control",
+          "run": 2,
+          "headMs": 0.5740419999997926,
+          "workingMs": 0.5693750000000932,
+          "gainMs": 0.004666999999699328,
+          "pairedMedianMs": 0.005666999999903055,
+          "noiseMs": 0.036834999999939555,
+          "pairedMedianInterval": [
+            -0.010459000000082597,
+            0.01424999999994725
+          ],
+          "gcInside": 0
+        },
+        {
+          "variant": "control",
+          "run": 3,
+          "headMs": 0.5640000000000782,
+          "workingMs": 0.5739169999999376,
+          "gainMs": -0.0099169999998594,
+          "pairedMedianMs": -0.0060839999999871,
+          "noiseMs": 0.034915999999952874,
+          "pairedMedianInterval": [
+            -0.016665999999986525,
+            0.0024170000001504377
+          ],
+          "gcInside": 0
+        },
+        {
+          "variant": "gate-workspaces",
+          "run": 1,
+          "headMs": 0.5668749999999818,
+          "workingMs": 0.5675830000000133,
+          "gainMs": -0.0007080000000314612,
+          "pairedMedianMs": -0.005708999999910702,
+          "noiseMs": 0.028583999999824528,
+          "pairedMedianInterval": [
+            -0.010333000000059656,
+            0.004707999999823187
+          ],
+          "gcInside": 0
+        },
+        {
+          "variant": "gate-workspaces",
+          "run": 2,
+          "headMs": 0.5643329999998059,
+          "workingMs": 0.5640419999998585,
+          "gainMs": 0.00029099999994741665,
+          "pairedMedianMs": -0.003375000000119144,
+          "noiseMs": 0.034875999999883334,
+          "pairedMedianInterval": [
+            -0.018958999999995285,
+            0.010749000000032538
+          ],
+          "gcInside": 0
+        },
+        {
+          "variant": "gate-workspaces",
+          "run": 3,
+          "headMs": 0.5694590000000517,
+          "workingMs": 0.5650420000000622,
+          "gainMs": 0.004416999999989457,
+          "pairedMedianMs": 0.0037500000000818545,
+          "noiseMs": 0.031832999999835465,
+          "pairedMedianInterval": [
+            -0.013834000000088054,
+            0.02125000000023647
+          ],
+          "gcInside": 0
+        }
+      ]
+    },
+    {
+      "name": "oneOf-5",
+      "mode": "first",
+      "regime": "steady",
+      "headMs": 0.281833000000006,
+      "workingMs": 0.27020900000002257,
+      "pairedMedianMs": 0.007165999999926953,
+      "maxNoiseMs": 0.04524999999998158,
+      "aboveNoise": false,
+      "regressionAboveNoise": false,
+      "singleRunRegressions": [],
+      "measurements": [
+        {
+          "variant": "control",
+          "run": 1,
+          "headMs": 0.2762499999999477,
+          "workingMs": 0.2782500000000141,
+          "gainMs": -0.002000000000066393,
+          "pairedMedianMs": -0.004209000000003016,
+          "noiseMs": 0.03096000000005006,
+          "pairedMedianInterval": [
+            -0.006957999999940512,
+            0.0014990000000238979
+          ],
+          "gcInside": 6
+        },
+        {
+          "variant": "control",
+          "run": 2,
+          "headMs": 0.2797090000000253,
+          "workingMs": 0.2841250000000173,
+          "gainMs": -0.004415999999991982,
+          "pairedMedianMs": -0.000749000000041633,
+          "noiseMs": 0.03774999999995998,
+          "pairedMedianInterval": [
+            -0.00866600000000517,
+            0.0038329999999859865
+          ],
+          "gcInside": 6
+        },
+        {
+          "variant": "control",
+          "run": 3,
+          "headMs": 0.2782499999999857,
+          "workingMs": 0.26779200000001424,
+          "gainMs": 0.010457999999971435,
+          "pairedMedianMs": 0.004583999999965727,
+          "noiseMs": 0.042832999999973254,
+          "pairedMedianInterval": [
+            -0.0003330000000119071,
+            0.0075839999999516294
+          ],
+          "gcInside": 6
+        },
+        {
+          "variant": "gate-workspaces",
+          "run": 1,
+          "headMs": 0.2870409999999879,
+          "workingMs": 0.26641599999999244,
+          "gainMs": 0.020624999999995453,
+          "pairedMedianMs": 0.0122499999999377,
+          "noiseMs": 0.04524999999998158,
+          "pairedMedianInterval": [
+            0.005208999999979369,
+            0.017790999999988344
+          ],
+          "gcInside": 3
+        },
+        {
+          "variant": "gate-workspaces",
+          "run": 2,
+          "headMs": 0.281833000000006,
+          "workingMs": 0.2780840000000353,
+          "gainMs": 0.0037489999999706924,
+          "pairedMedianMs": 0.005667000000016742,
+          "noiseMs": 0.033540000000016335,
+          "pairedMedianInterval": [
+            -0.00208199999997305,
+            0.009290999999961969
+          ],
+          "gcInside": 3
+        },
+        {
+          "variant": "gate-workspaces",
+          "run": 3,
+          "headMs": 0.27808399999997846,
+          "workingMs": 0.27020900000002257,
+          "gainMs": 0.00787499999995589,
+          "pairedMedianMs": 0.007165999999926953,
+          "noiseMs": 0.041540999999995165,
+          "pairedMedianInterval": [
+            0.0006250000000704858,
+            0.014791999999999916
+          ],
+          "gcInside": 2
+        }
+      ]
+    },
+    {
+      "name": "oneOf-5",
+      "mode": "later",
+      "regime": "forced",
+      "headMs": 0.46479200000010223,
+      "workingMs": 0.46441700000002584,
+      "pairedMedianMs": 0.0011660000000119908,
+      "maxNoiseMs": 0.04287399999984132,
+      "aboveNoise": false,
+      "regressionAboveNoise": false,
+      "singleRunRegressions": [],
+      "measurements": [
+        {
+          "variant": "control",
+          "run": 1,
+          "headMs": 0.459124000000088,
+          "workingMs": 0.462458000000197,
+          "gainMs": -0.003334000000108972,
+          "pairedMedianMs": -0.008874999999989086,
+          "noiseMs": 0.04137399999993363,
+          "pairedMedianInterval": [
+            -0.01320799999996325,
+            -0.00037500000007639755
+          ],
+          "gcInside": 0
+        },
+        {
+          "variant": "control",
+          "run": 2,
+          "headMs": 0.46020899999996345,
+          "workingMs": 0.45308299999999235,
+          "gainMs": 0.0071259999999711,
+          "pairedMedianMs": 0.0049579999999878055,
+          "noiseMs": 0.02716900000007172,
+          "pairedMedianInterval": [
+            0.0013329999997040431,
+            0.008707999999955973
+          ],
+          "gcInside": 0
+        },
+        {
+          "variant": "control",
+          "run": 3,
+          "headMs": 0.47145899999986796,
+          "workingMs": 0.4734999999999445,
+          "gainMs": -0.002041000000076565,
+          "pairedMedianMs": -0.0007499999999254214,
+          "noiseMs": 0.032500999999797386,
+          "pairedMedianInterval": [
+            -0.0052510000000438595,
+            0.0024589999999875545
+          ],
+          "gcInside": 0
+        },
+        {
+          "variant": "gate-workspaces",
+          "run": 1,
+          "headMs": 0.46054100000003473,
+          "workingMs": 0.46079199999996945,
+          "gainMs": -0.0002509999999347201,
+          "pairedMedianMs": 0.003249999999979991,
+          "noiseMs": 0.024749000000042543,
+          "pairedMedianInterval": [
+            -0.0027919999999994616,
+            0.0071250000000873115
+          ],
+          "gcInside": 0
+        },
+        {
+          "variant": "gate-workspaces",
+          "run": 2,
+          "headMs": 0.4651249999999436,
+          "workingMs": 0.46441700000002584,
+          "gainMs": 0.0007079999999177744,
+          "pairedMedianMs": 0.0009169999999585343,
+          "noiseMs": 0.02066700000003152,
+          "pairedMedianInterval": [
+            -0.006415999999944688,
+            0.007540999999946507
+          ],
+          "gcInside": 0
+        },
+        {
+          "variant": "gate-workspaces",
+          "run": 3,
+          "headMs": 0.46479200000010223,
+          "workingMs": 0.4720829999999978,
+          "gainMs": -0.0072909999998955755,
+          "pairedMedianMs": 0.0011660000000119908,
+          "noiseMs": 0.04287399999984132,
+          "pairedMedianInterval": [
+            -0.007124999999859938,
+            0.007333000000016909
+          ],
+          "gcInside": 0
+        }
+      ]
+    },
+    {
+      "name": "oneOf-5",
+      "mode": "later",
+      "regime": "steady",
+      "headMs": 0.21495799999999576,
+      "workingMs": 0.2146669999999915,
+      "pairedMedianMs": -0.001458000000013726,
+      "maxNoiseMs": 0.044625999999965416,
+      "aboveNoise": false,
+      "regressionAboveNoise": false,
+      "singleRunRegressions": [],
+      "measurements": [
+        {
+          "variant": "control",
+          "run": 1,
+          "headMs": 0.22024999999996453,
+          "workingMs": 0.21924999999998818,
+          "gainMs": 0.0009999999999763531,
+          "pairedMedianMs": 0.002500000000026148,
+          "noiseMs": 0.04562500000000114,
+          "pairedMedianInterval": [
+            -0.003500000000002501,
+            0.007708000000008042
+          ],
+          "gcInside": 7
+        },
+        {
+          "variant": "control",
+          "run": 2,
+          "headMs": 0.2124159999999904,
+          "workingMs": 0.21220800000000395,
+          "gainMs": 0.00020799999998644125,
+          "pairedMedianMs": 0.0020000000000095497,
+          "noiseMs": 0.03829099999995833,
+          "pairedMedianInterval": [
+            -0.003916999999972859,
+            0.007541000000003351
+          ],
+          "gcInside": 7
+        },
+        {
+          "variant": "control",
+          "run": 3,
+          "headMs": 0.2135420000000181,
+          "workingMs": 0.21708300000003078,
+          "gainMs": -0.003541000000012673,
+          "pairedMedianMs": -0.0025410000000647415,
+          "noiseMs": 0.03525099999998815,
+          "pairedMedianInterval": [
+            -0.0064170000000274285,
+            0.004082999999980075
+          ],
+          "gcInside": 7
+        },
+        {
+          "variant": "gate-workspaces",
+          "run": 1,
+          "headMs": 0.21495799999999576,
+          "workingMs": 0.2146669999999915,
+          "gainMs": 0.0002910000000042601,
+          "pairedMedianMs": 0.0007089999999720931,
+          "noiseMs": 0.04108399999995527,
+          "pairedMedianInterval": [
+            -0.006125000000025693,
+            0.007459000000011429
+          ],
+          "gcInside": 7
+        },
+        {
+          "variant": "gate-workspaces",
+          "run": 2,
+          "headMs": 0.21454199999999446,
+          "workingMs": 0.2124989999999798,
+          "gainMs": 0.002043000000014672,
+          "pairedMedianMs": -0.001458000000013726,
+          "noiseMs": 0.04129300000002445,
+          "pairedMedianInterval": [
+            -0.004916999999977634,
+            0.005000000000023874
+          ],
+          "gcInside": 6
+        },
+        {
+          "variant": "gate-workspaces",
+          "run": 3,
+          "headMs": 0.21691699999996672,
+          "workingMs": 0.21875099999996905,
+          "gainMs": -0.0018340000000023338,
+          "pairedMedianMs": -0.0024990000000570944,
+          "noiseMs": 0.044625999999965416,
+          "pairedMedianInterval": [
+            -0.006332999999983713,
+            0.0047499999999729425
+          ],
+          "gcInside": 7
+        }
+      ]
+    },
+    {
+      "name": "oneOf-40",
+      "mode": "first",
+      "regime": "forced",
+      "headMs": 1.4834160000000622,
+      "workingMs": 1.4564170000000445,
+      "pairedMedianMs": 0.028375000000096406,
+      "maxNoiseMs": 0.04133400000034726,
+      "aboveNoise": false,
+      "regressionAboveNoise": false,
+      "singleRunRegressions": [],
+      "measurements": [
+        {
+          "variant": "control",
+          "run": 1,
+          "headMs": 1.5684169999997266,
+          "workingMs": 1.5772089999995842,
+          "gainMs": -0.00879199999985758,
+          "pairedMedianMs": -0.0050420000000030996,
+          "noiseMs": 0.041957999999482354,
+          "pairedMedianInterval": [
+            -0.014083999999911612,
+            -0.00045799999998052954
+          ],
+          "gcInside": 0
+        },
+        {
+          "variant": "control",
+          "run": 2,
+          "headMs": 1.4876660000000754,
+          "workingMs": 1.5018750000000125,
+          "gainMs": -0.014208999999937078,
+          "pairedMedianMs": -0.00008300000001781882,
+          "noiseMs": 0.04604200000017045,
+          "pairedMedianInterval": [
+            -0.016458000000056927,
+            0.006125000000110958
+          ],
+          "gcInside": 0
+        },
+        {
+          "variant": "control",
+          "run": 3,
+          "headMs": 1.4737089999999853,
+          "workingMs": 1.460083999999938,
+          "gainMs": 0.013625000000047294,
+          "pairedMedianMs": 0.018582999999921412,
+          "noiseMs": 0.04421000000030517,
+          "pairedMedianInterval": [
+            0.001625000000331056,
+            0.03474999999980355
+          ],
+          "gcInside": 0
+        },
+        {
+          "variant": "gate-workspaces",
+          "run": 1,
+          "headMs": 1.4704169999999408,
+          "workingMs": 1.4564170000000445,
+          "gainMs": 0.013999999999896318,
+          "pairedMedianMs": 0.017374999999901775,
+          "noiseMs": 0.04133400000034726,
+          "pairedMedianInterval": [
+            0.01108299999987139,
+            0.029124999999794454
+          ],
+          "gcInside": 0
+        },
+        {
+          "variant": "gate-workspaces",
+          "run": 2,
+          "headMs": 1.4834160000000622,
+          "workingMs": 1.4550409999999658,
+          "gainMs": 0.028375000000096406,
+          "pairedMedianMs": 0.029459000000315427,
+          "noiseMs": 0.034958000000017364,
+          "pairedMedianInterval": [
+            0.0232499999999618,
+            0.03749999999990905
+          ],
+          "gcInside": 0
+        },
+        {
+          "variant": "gate-workspaces",
+          "run": 3,
+          "headMs": 1.5906669999999679,
+          "workingMs": 1.5663749999999084,
+          "gainMs": 0.024292000000059488,
+          "pairedMedianMs": 0.028375000000096406,
+          "noiseMs": 0.038958999999977095,
+          "pairedMedianInterval": [
+            0.016458999999940715,
+            0.03525100000024395
+          ],
+          "gcInside": 0
+        }
+      ]
+    },
+    {
+      "name": "oneOf-40",
+      "mode": "first",
+      "regime": "steady",
+      "headMs": 0.9420419999999865,
+      "workingMs": 0.9110829999999908,
+      "pairedMedianMs": 0.03550000000007003,
+      "maxNoiseMs": 0.09087500000018167,
+      "aboveNoise": false,
+      "regressionAboveNoise": false,
+      "singleRunRegressions": [],
+      "measurements": [
+        {
+          "variant": "control",
+          "run": 1,
+          "headMs": 0.9584579999999789,
+          "workingMs": 0.9507079999999917,
+          "gainMs": 0.007749999999987267,
+          "pairedMedianMs": 0.01358299999992596,
+          "noiseMs": 0.07120799999995597,
+          "pairedMedianInterval": [
+            0.0013749999999390639,
+            0.026957999999922322
+          ],
+          "gcInside": 1
+        },
+        {
+          "variant": "control",
+          "run": 2,
+          "headMs": 0.9398749999999723,
+          "workingMs": 0.9413750000000505,
+          "gainMs": -0.0015000000000782165,
+          "pairedMedianMs": 0.0049579999999878055,
+          "noiseMs": 0.12179199999985713,
+          "pairedMedianInterval": [
+            -0.01020800000003419,
+            0.013166999999953077
+          ],
+          "gcInside": 1
+        },
+        {
+          "variant": "control",
+          "run": 3,
+          "headMs": 0.9294590000000369,
+          "workingMs": 0.9411670000000356,
+          "gainMs": -0.01170799999999872,
+          "pairedMedianMs": 0.001040999999872838,
+          "noiseMs": 0.07275000000004184,
+          "pairedMedianInterval": [
+            -0.009709000000043488,
+            0.011958000000049651
+          ],
+          "gcInside": 2
+        },
+        {
+          "variant": "gate-workspaces",
+          "run": 1,
+          "headMs": 0.9408329999999694,
+          "workingMs": 0.9110829999999908,
+          "gainMs": 0.029749999999978627,
+          "pairedMedianMs": 0.03550000000007003,
+          "noiseMs": 0.07833300000001486,
+          "pairedMedianInterval": [
+            0.016250000000013642,
+            0.05274900000006255
+          ],
+          "gcInside": 20
+        },
+        {
+          "variant": "gate-workspaces",
+          "run": 2,
+          "headMs": 0.950623999999948,
+          "workingMs": 0.9235409999998865,
+          "gainMs": 0.027083000000061475,
+          "pairedMedianMs": 0.028874999999970896,
+          "noiseMs": 0.09087500000018167,
+          "pairedMedianInterval": [
+            0.015124000000014348,
+            0.05104200000005221
+          ],
+          "gcInside": 14
+        },
+        {
+          "variant": "gate-workspaces",
+          "run": 3,
+          "headMs": 0.9420419999999865,
+          "workingMs": 0.9032500000000425,
+          "gainMs": 0.03879199999994398,
+          "pairedMedianMs": 0.04062499999997726,
+          "noiseMs": 0.09020799999993301,
+          "pairedMedianInterval": [
+            0.023584000000028027,
+            0.05154200000004039
+          ],
+          "gcInside": 20
+        }
+      ]
+    },
+    {
+      "name": "oneOf-40",
+      "mode": "later",
+      "regime": "forced",
+      "headMs": 0.9736249999999416,
+      "workingMs": 0.9559589999998934,
+      "pairedMedianMs": 0.02533400000004349,
+      "maxNoiseMs": 0.048666999999881,
+      "aboveNoise": false,
+      "regressionAboveNoise": false,
+      "singleRunRegressions": [],
+      "measurements": [
+        {
+          "variant": "control",
+          "run": 1,
+          "headMs": 0.9728759999999852,
+          "workingMs": 0.9682500000000687,
+          "gainMs": 0.00462599999991653,
+          "pairedMedianMs": 0.008750999999961095,
+          "noiseMs": 0.037832999999864114,
+          "pairedMedianInterval": [
+            0.00012499999979809218,
+            0.013042000000041298
+          ],
+          "gcInside": 0
+        },
+        {
+          "variant": "control",
+          "run": 2,
+          "headMs": 0.9810410000000331,
+          "workingMs": 0.9824999999998738,
+          "gainMs": -0.001458999999840671,
+          "pairedMedianMs": 0.0012500000000272848,
+          "noiseMs": 0.03433399999977382,
+          "pairedMedianInterval": [
+            -0.0067089999997733685,
+            0.007582999999954154
+          ],
+          "gcInside": 0
+        },
+        {
+          "variant": "control",
+          "run": 3,
+          "headMs": 0.9802910000000793,
+          "workingMs": 0.9701659999999492,
+          "gainMs": 0.010125000000130058,
+          "pairedMedianMs": 0.01599999999996271,
+          "noiseMs": 0.03545800000000554,
+          "pairedMedianInterval": [
+            0.0012500000000272848,
+            0.025165999999899213
+          ],
+          "gcInside": 0
+        },
+        {
+          "variant": "gate-workspaces",
+          "run": 1,
+          "headMs": 0.9736249999999416,
+          "workingMs": 0.966249999999917,
+          "gainMs": 0.007375000000024556,
+          "pairedMedianMs": 0.00908299999969131,
+          "noiseMs": 0.048666999999881,
+          "pairedMedianInterval": [
+            -0.005292000000054031,
+            0.015125999999781925
+          ],
+          "gcInside": 0
+        },
+        {
+          "variant": "gate-workspaces",
+          "run": 2,
+          "headMs": 0.9969179999999369,
+          "workingMs": 0.9559589999998934,
+          "gainMs": 0.04095900000004349,
+          "pairedMedianMs": 0.04495900000006259,
+          "noiseMs": 0.037291999999865766,
+          "pairedMedianInterval": [
+            0.03304100000002563,
+            0.05141699999967386
+          ],
+          "gcInside": 0
+        },
+        {
+          "variant": "gate-workspaces",
+          "run": 3,
+          "headMs": 0.962624999999889,
+          "workingMs": 0.9379179999998541,
+          "gainMs": 0.024707000000034895,
+          "pairedMedianMs": 0.02533400000004349,
+          "noiseMs": 0.03045999999986293,
+          "pairedMedianInterval": [
+            0.021499999999832653,
+            0.03379199999994853
+          ],
+          "gcInside": 0
+        }
+      ]
+    },
+    {
+      "name": "oneOf-40",
+      "mode": "later",
+      "regime": "steady",
+      "headMs": 0.5524580000000583,
+      "workingMs": 0.53612499999997,
+      "pairedMedianMs": 0.02237400000001344,
+      "maxNoiseMs": 0.06120799999996507,
+      "aboveNoise": false,
+      "regressionAboveNoise": false,
+      "singleRunRegressions": [],
+      "measurements": [
+        {
+          "variant": "control",
+          "run": 1,
+          "headMs": 0.5839999999999748,
+          "workingMs": 0.562833999999981,
+          "gainMs": 0.0211659999999938,
+          "pairedMedianMs": 0.013374999999996362,
+          "noiseMs": 0.057625999999970645,
+          "pairedMedianInterval": [
+            0.004000000000019099,
+            0.023751000000004296
+          ],
+          "gcInside": 22
+        },
+        {
+          "variant": "control",
+          "run": 2,
+          "headMs": 0.5743340000000501,
+          "workingMs": 0.5743329999999958,
+          "gainMs": 0.0000010000000543186616,
+          "pairedMedianMs": -0.009542000000010376,
+          "noiseMs": 0.0551259999999445,
+          "pairedMedianInterval": [
+            -0.02400000000000091,
+            0.005457999999975982
+          ],
+          "gcInside": 22
+        },
+        {
+          "variant": "control",
+          "run": 3,
+          "headMs": 0.5771239999999977,
+          "workingMs": 0.5792080000000226,
+          "gainMs": -0.0020840000000248438,
+          "pairedMedianMs": -0.001167000000009466,
+          "noiseMs": 0.047500000000042064,
+          "pairedMedianInterval": [
+            -0.011749999999949523,
+            0.01345800000001418
+          ],
+          "gcInside": 22
+        },
+        {
+          "variant": "gate-workspaces",
+          "run": 1,
+          "headMs": 0.5405419999999594,
+          "workingMs": 0.5257080000000087,
+          "gainMs": 0.01483399999995072,
+          "pairedMedianMs": 0.022666999999955806,
+          "noiseMs": 0.03262599999996496,
+          "pairedMedianInterval": [
+            0.017750000000035016,
+            0.03141699999997627
+          ],
+          "gcInside": 10
+        },
+        {
+          "variant": "gate-workspaces",
+          "run": 2,
+          "headMs": 0.5918340000000057,
+          "workingMs": 0.5676670000000286,
+          "gainMs": 0.02416699999997718,
+          "pairedMedianMs": 0.02237400000001344,
+          "noiseMs": 0.06120799999996507,
+          "pairedMedianInterval": [
+            0.01179199999995717,
+            0.04404199999999037
+          ],
+          "gcInside": 20
+        },
+        {
+          "variant": "gate-workspaces",
+          "run": 3,
+          "headMs": 0.5524580000000583,
+          "workingMs": 0.53612499999997,
+          "gainMs": 0.016333000000088305,
+          "pairedMedianMs": 0.022168000000021948,
+          "noiseMs": 0.04075099999988652,
+          "pairedMedianInterval": [
+            0.008873999999934767,
+            0.027666000000010627
+          ],
+          "gcInside": 10
+        }
+      ]
+    },
+    {
+      "name": "sample-0",
+      "mode": "first",
+      "regime": "forced",
+      "headMs": 0.09504199999997809,
+      "workingMs": 0.09454100000002086,
+      "pairedMedianMs": 0.0003329999999550637,
+      "maxNoiseMs": 0.013833999999945945,
+      "aboveNoise": false,
+      "regressionAboveNoise": false,
+      "singleRunRegressions": [],
+      "measurements": [
+        {
+          "variant": "control",
+          "run": 1,
+          "headMs": 0.09654100000000199,
+          "workingMs": 0.09479100000010021,
+          "gainMs": 0.0017499999999017746,
+          "pairedMedianMs": 0.0012920000001486187,
+          "noiseMs": 0.018499999999932015,
+          "pairedMedianInterval": [
+            -0.0018339999999170686,
+            0.0031249999999545253
+          ],
+          "gcInside": 0
+        },
+        {
+          "variant": "control",
+          "run": 2,
+          "headMs": 0.09833400000002257,
+          "workingMs": 0.09783399999997755,
+          "gainMs": 0.00050000000004502,
+          "pairedMedianMs": -0.0006250000000136424,
+          "noiseMs": 0.01703999999995176,
+          "pairedMedianInterval": [
+            -0.0025840000000698637,
+            0.0031249999999545253
+          ],
+          "gcInside": 0
+        },
+        {
+          "variant": "control",
+          "run": 3,
+          "headMs": 0.10075000000006185,
+          "workingMs": 0.1010839999999007,
+          "gainMs": -0.0003339999998388521,
+          "pairedMedianMs": 0.00020899999981338624,
+          "noiseMs": 0.03599800000029063,
+          "pairedMedianInterval": [
+            -0.0019179999999323627,
+            0.0009170000000722212
+          ],
+          "gcInside": 0
+        },
+        {
+          "variant": "gate-workspaces",
+          "run": 1,
+          "headMs": 0.09504199999997809,
+          "workingMs": 0.0971670000000131,
+          "gainMs": -0.0021250000000350155,
+          "pairedMedianMs": -0.0015419999999721767,
+          "noiseMs": 0.013001000000031127,
+          "pairedMedianInterval": [
+            -0.003083000000060565,
+            0.00045799999998052954
+          ],
+          "gcInside": 0
+        },
+        {
+          "variant": "gate-workspaces",
+          "run": 2,
+          "headMs": 0.09500100000005318,
+          "workingMs": 0.09320900000003007,
+          "gainMs": 0.0017920000000231084,
+          "pairedMedianMs": 0.0003329999999550637,
+          "noiseMs": 0.01308399999996368,
+          "pairedMedianInterval": [
+            -0.0009170000000722212,
+            0.0019170000000485743
+          ],
+          "gcInside": 0
+        },
+        {
+          "variant": "gate-workspaces",
+          "run": 3,
+          "headMs": 0.09537499999996157,
+          "workingMs": 0.09454100000002086,
+          "gainMs": 0.0008339999999407155,
+          "pairedMedianMs": 0.0005000000001018634,
+          "noiseMs": 0.013833999999945945,
+          "pairedMedianInterval": [
+            -0.0013740000000552754,
+            0.002292000000124972
+          ],
+          "gcInside": 0
+        }
+      ]
+    },
+    {
+      "name": "sample-0",
+      "mode": "first",
+      "regime": "steady",
+      "headMs": 0.030166999999977406,
+      "workingMs": 0.030250000000023647,
+      "pairedMedianMs": -0.0002499999999940883,
+      "maxNoiseMs": 0.01683399999998869,
+      "aboveNoise": false,
+      "regressionAboveNoise": false,
+      "singleRunRegressions": [],
+      "measurements": [
+        {
+          "variant": "control",
+          "run": 1,
+          "headMs": 0.030416999999999916,
+          "workingMs": 0.03145799999998644,
+          "gainMs": -0.001040999999986525,
+          "pairedMedianMs": -0.0006659999999953925,
+          "noiseMs": 0.011417000000022881,
+          "pairedMedianInterval": [
+            -0.0025409999999794763,
+            0.0022490000000061627
+          ],
+          "gcInside": 1
+        },
+        {
+          "variant": "control",
+          "run": 2,
+          "headMs": 0.030250000000023647,
+          "workingMs": 0.03154100000003268,
+          "gainMs": -0.001291000000009035,
+          "pairedMedianMs": -0.0017909999999972115,
+          "noiseMs": 0.01408400000005372,
+          "pairedMedianInterval": [
+            -0.0036670000000071923,
+            0.001207999999991216
+          ],
+          "gcInside": 1
+        },
+        {
+          "variant": "control",
+          "run": 3,
+          "headMs": 0.029124999999993406,
+          "workingMs": 0.029333999999977323,
+          "gainMs": -0.0002089999999839165,
+          "pairedMedianMs": -0.0010839999999916472,
+          "noiseMs": 0.014666000000005397,
+          "pairedMedianInterval": [
+            -0.002124999999978172,
+            0.0002919999999733136
+          ],
+          "gcInside": 1
+        },
+        {
+          "variant": "gate-workspaces",
+          "run": 1,
+          "headMs": 0.028791000000012446,
+          "workingMs": 0.030250000000023647,
+          "gainMs": -0.0014590000000112013,
+          "pairedMedianMs": -0.0005000000000165983,
+          "noiseMs": 0.011667999999986023,
+          "pairedMedianInterval": [
+            -0.0030410000000244963,
+            0.001375000000024329
+          ],
+          "gcInside": 2
+        },
+        {
+          "variant": "gate-workspaces",
+          "run": 2,
+          "headMs": 0.030166999999977406,
+          "workingMs": 0.02975000000000705,
+          "gainMs": 0.00041699999997035775,
+          "pairedMedianMs": -0.0002499999999940883,
+          "noiseMs": 0.01683399999998869,
+          "pairedMedianInterval": [
+            -0.001375000000024329,
+            0.0018340000000023338
+          ],
+          "gcInside": 1
+        },
+        {
+          "variant": "gate-workspaces",
+          "run": 3,
+          "headMs": 0.030916999999988093,
+          "workingMs": 0.031542000000001735,
+          "gainMs": -0.0006250000000136424,
+          "pairedMedianMs": -0.00016700000000469117,
+          "noiseMs": 0.011124999999964302,
+          "pairedMedianInterval": [
+            -0.0018750000000125056,
+            0.001999000000040496
+          ],
+          "gcInside": 1
+        }
+      ]
+    },
+    {
+      "name": "sample-0",
+      "mode": "later",
+      "regime": "forced",
+      "headMs": 0.0913749999999709,
+      "workingMs": 0.09050000000002001,
+      "pairedMedianMs": 0.0003749999999627107,
+      "maxNoiseMs": 0.017914999999874226,
+      "aboveNoise": false,
+      "regressionAboveNoise": false,
+      "singleRunRegressions": [],
+      "measurements": [
+        {
+          "variant": "control",
+          "run": 1,
+          "headMs": 0.09029199999991988,
+          "workingMs": 0.0897080000000301,
+          "gainMs": 0.0005839999998897838,
+          "pairedMedianMs": -0.0008330000000569271,
+          "noiseMs": 0.017750000000148702,
+          "pairedMedianInterval": [
+            -0.0025410000000647415,
+            0.0014990000000238979
+          ],
+          "gcInside": 0
+        },
+        {
+          "variant": "control",
+          "run": 2,
+          "headMs": 0.09304099999994264,
+          "workingMs": 0.09120800000013674,
+          "gainMs": 0.0018329999998059066,
+          "pairedMedianMs": 0.0006250000001273293,
+          "noiseMs": 0.012166999999863037,
+          "pairedMedianInterval": [
+            -0.001167000000009466,
+            0.0024589999999875545
+          ],
+          "gcInside": 0
+        },
+        {
+          "variant": "control",
+          "run": 3,
+          "headMs": 0.09020800000007512,
+          "workingMs": 0.08987600000000384,
+          "gainMs": 0.0003320000000712753,
+          "pairedMedianMs": -0.0005830000000059954,
+          "noiseMs": 0.017500999999924716,
+          "pairedMedianInterval": [
+            -0.0024999999999977263,
+            0.0020410000000197215
+          ],
+          "gcInside": 0
+        },
+        {
+          "variant": "gate-workspaces",
+          "run": 1,
+          "headMs": 0.09066700000016681,
+          "workingMs": 0.09020800000007512,
+          "gainMs": 0.0004590000000916916,
+          "pairedMedianMs": 0.0006659999999669708,
+          "noiseMs": 0.017914999999874226,
+          "pairedMedianInterval": [
+            -0.0014999999999645297,
+            0.00283299999995279
+          ],
+          "gcInside": 0
+        },
+        {
+          "variant": "gate-workspaces",
+          "run": 2,
+          "headMs": 0.09245799999996507,
+          "workingMs": 0.09170899999992344,
+          "gainMs": 0.000749000000041633,
+          "pairedMedianMs": 0.0003749999999627107,
+          "noiseMs": 0.01616699999991056,
+          "pairedMedianInterval": [
+            -0.0037079999999605207,
+            0.003207999999972344
+          ],
+          "gcInside": 0
+        },
+        {
+          "variant": "gate-workspaces",
+          "run": 3,
+          "headMs": 0.0913749999999709,
+          "workingMs": 0.09050000000002001,
+          "gainMs": 0.0008749999999508873,
+          "pairedMedianMs": 0.00016600000003563764,
+          "noiseMs": 0.016167000000166354,
+          "pairedMedianInterval": [
+            -0.0007490000002690067,
+            0.002709000000038486
+          ],
+          "gcInside": 0
+        }
+      ]
+    },
+    {
+      "name": "sample-0",
+      "mode": "later",
+      "regime": "steady",
+      "headMs": 0.022208000000006223,
+      "workingMs": 0.022416000000021086,
+      "pairedMedianMs": 0.00012499999999704414,
+      "maxNoiseMs": 0.02508299999999508,
+      "aboveNoise": false,
+      "regressionAboveNoise": false,
+      "singleRunRegressions": [],
+      "measurements": [
+        {
+          "variant": "control",
+          "run": 1,
+          "headMs": 0.0231250000000216,
+          "workingMs": 0.022249000000016395,
+          "gainMs": 0.000876000000005206,
+          "pairedMedianMs": 0.0016670000000260643,
+          "noiseMs": 0.016748999999975922,
+          "pairedMedianInterval": [
+            -0.00012500000002546585,
+            0.0034169999999846823
+          ],
+          "gcInside": 1
+        },
+        {
+          "variant": "control",
+          "run": 2,
+          "headMs": 0.022334000000029164,
+          "workingMs": 0.02204100000000153,
+          "gainMs": 0.00029300000002763227,
+          "pairedMedianMs": -0.0002910000000042601,
+          "noiseMs": 0.015707999999989397,
+          "pairedMedianInterval": [
+            -0.0012490000000013879,
+            0.0014569999999878291
+          ],
+          "gcInside": 1
+        },
+        {
+          "variant": "control",
+          "run": 3,
+          "headMs": 0.023082999999985532,
+          "workingMs": 0.021457999999967114,
+          "gainMs": 0.0016250000000184173,
+          "pairedMedianMs": -0.00025000000002251,
+          "noiseMs": 0.014833999999979142,
+          "pairedMedianInterval": [
+            -0.0015840000000366672,
+            0.0019169999999917309
+          ],
+          "gcInside": 1
+        },
+        {
+          "variant": "gate-workspaces",
+          "run": 1,
+          "headMs": 0.021667000000007874,
+          "workingMs": 0.021457999999995536,
+          "gainMs": 0.0002090000000123382,
+          "pairedMedianMs": 0.00012499999999704414,
+          "noiseMs": 0.02508299999999508,
+          "pairedMedianInterval": [
+            -0.0015420000000005984,
+            0.0013749999999959073
+          ],
+          "gcInside": 1
+        },
+        {
+          "variant": "gate-workspaces",
+          "run": 2,
+          "headMs": 0.022208000000006223,
+          "workingMs": 0.022416000000021086,
+          "gainMs": -0.00020800000001486296,
+          "pairedMedianMs": -0.0004989999999622796,
+          "noiseMs": 0.015748000000030515,
+          "pairedMedianInterval": [
+            -0.0016249999999899956,
+            0.0005830000000059954
+          ],
+          "gcInside": 1
+        },
+        {
+          "variant": "gate-workspaces",
+          "run": 3,
+          "headMs": 0.023291000000000395,
+          "workingMs": 0.0227079999999944,
+          "gainMs": 0.0005830000000059954,
+          "pairedMedianMs": 0.0007909999999924366,
+          "noiseMs": 0.013124999999973852,
+          "pairedMedianInterval": [
+            -0.001167000000009466,
+            0.002083999999996422
+          ],
+          "gcInside": 1
+        }
+      ]
+    }
+  ]
+}

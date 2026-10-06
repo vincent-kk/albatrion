@@ -1946,3 +1946,76 @@ Apple M1 Max, 10 logical CPU, 64GiB, darwin arm64 25.6.0, Node v24.20.0, V8 13.6
 종단은 `node D/profile-101-alloc/template-keys.mjs --build <head|control|working>`를 각각 실행한 뒤 `NODE_PATH="$PWD/node_modules" NODE_ENV=production node D/profile-101-alloc/template-keys.mjs --pairs <control|working> <fixture> <mount|later> <forced|steady>`로 표의 각 열을 측정합니다. 후보가 있는 상태에서만 `--summarize`를 실행해야 `sources`가 측정 후보의 해시를 기록합니다. 최종 제품은 원복했으므로 현재 working 소스의 재측정은 HEAD 재측정이며, 후보 재현에는 보존한 candidate patch가 필요합니다.
 
 계수·시간·process·검증·후보 JSON은 `profile-101-alloc/` 아래에만 두고 각각 5,000,000바이트 상한을 검사했습니다. 번들과 source map은 지정 `/private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles`에만 생성했습니다. 보호된 `analysis-records-design.md`는 변경하지 않았고, 다른 worktree·설치·git 쓰기·백그라운드 측정·강제 종료는 없습니다. 최종 제품 및 DETAIL이 지정 HEAD와 같은 것은 별도 diff로 확인했습니다.
+
+## 101라운드 할당 묶음 게이트 작업 공간
+
+**제품 후보를 되돌렸습니다.** 지정 HEAD는 `da734b40da7a35186646bef42c9f65cee3178892`입니다. `profile-101-alloc.md`의 gate-workspaces 한 묶음만 수정·측정했습니다. 할당 표본은 감소했지만 요청한 20개 종단 열 중 세 회차 모두 잡음을 넘는 개선은 없었습니다. 잡음 초과 회귀도 없으며, 할당 감소 자체를 속도 채택 근거로 삼지 않았습니다. 최종 제품 코드와 소유 `src/core/settle/DETAIL.md`는 HEAD와 같고, 보고서·계측 도구·HEAD에서 통과하는 특성화 검사만 남겼습니다.
+
+### 후보의 범위와 동일 계약
+
+소유 DETAIL의 비용·수명 문장을 먼저 갱신한 뒤 구현했습니다. `evaluateGate.ts:26`의 compiled active 경로는 정착 문맥·호스트 경로·공유 projected reader를 인자로 넘겨 빈 host/input 복사본과 dependency map callback을 생략했습니다. 내부 projected evaluator는 정착 identity별 WeakMap의 고정 shape 작업 공간과 동기 중첩 깊이별 의존 벡터를 재사용했습니다. 모든 의존 값을 기존 순서대로 먼저 읽고 기존 compiled callable을 그대로 실행했으며, 성공·예외 모두 finally에서 값 참조를 비웠습니다. 깊이가 겹치는 projected publication에는 서로 다른 슬롯을 사용했습니다.
+
+`readProjectedValue.ts:25`는 JSON Pointer를 segment 배열 없이 cursor로 읽었습니다. `flushPendingGateReads.ts:30`의 평가별 flushRead/flushGate closure는 공유 함수의 명시적 인자로 대체했고, 읽기의 첫 segment도 split 배열 없이 해석했습니다. 부모 gate·read plan occurrence·의존 읽기의 순서와 flushPendingOutput의 호출 조건은 유지했습니다. 적용 조건의 첫 거절도 고전 인덱스 루프로 같은 자리에서 처리했습니다.
+
+registry의 occurrence/host binding, READ_PLANS의 occurrence 배열 및 재귀 처리, gate boolean의 평가 자리·횟수·고정 출발점, 공표·changedNodes·배달 순서·pendingOutputs는 삭제하거나 재배치하지 않았습니다. authored function·discriminator·validator-if의 입력 생성 방식, boolean 검사, 예외 포착, warning/error 코드·경로·횟수도 유지했습니다. 다음 정착·마운트에 projected 값이나 gate boolean을 공유하지 않았습니다. Blueprint 및 노드·정착 문맥의 공개 shape는 변경하지 않았으며 ledger 수정이 필요한 변경은 없었습니다. NODE-006, SETTLE-017·020·044·050 및 97라운드 그림자 단언을 유지했습니다.
+
+비용은 기존 O(의존 수 + 경로 길이 + flush 작업)의 상수를 줄이는 대신 평가마다 WeakMap/슬롯 조회, helper 호출, O(의존 수) 참조 비움을 더합니다. 정착별 작업 공간은 최대 동기 중첩 깊이에서 동시에 필요한 의존 벡터만 보유하고, 평가가 끝나면 값 참조를 남기지 않습니다. 새 영구 노드 필드나 blueprint 기록은 없습니다. 아래 ms는 이 후보 한 판 전체의 짝 측정이며, 위 세 내부 조정의 개별 효과로 나누거나 제거 상한과 합산하지 않습니다.
+
+### 객체 수와 bytes: 마운트·첫 전환
+
+기존 `measure.mjs --allocations gate-workspaces`를 사용했습니다. `PROFILE_101_HEAD`로 지정 HEAD를 고정하고 `PROFILE_101_PRODUCT=head|working`으로 ablation 없는 제품을 선택했습니다. 첫 전환은 `PROFILE_101_MODE=first`이며, 실제 mount와 `/kind` 대상 조회를 profiler 밖에서 완료한 뒤 kind_0→kind_4 한 쓰기를 계수하도록 계측 도구만 확장했습니다. 각 버전·연산은 별도 자연 종료 프로세스입니다. seed 1 mount 및 예열 20 뒤 1-byte sampling, randomness 억제, 수거된 major/minor 할당을 포함했습니다. 강제 GC는 profiler/clock 밖입니다.
+
+아래 객체는 **V8 allocation sample 수**입니다. 정확한 JavaScript 객체 수나 peak/RSS로 해석하지 않으며, allocation folding과 JIT 인라이닝의 영향을 포함합니다. gate 묶음은 source-map owner가 `settle/utils/gates` 아래이거나 `collectGateEvaluationReads.ts`인 표본으로 동일하게 집계했습니다. 기존 303창 평균이나 173.4개/node 예산에서 이 진단의 감소를 빼지 않습니다.
+
+| 연산 | 묶음 객체 HEAD→후보 | 묶음 bytes HEAD→후보 | 전체 제품·종단 객체 HEAD→후보 | 청사진 객체 HEAD→후보 |
+|---|---:|---:|---:|---:|
+| oneOf-20/mount | 13,114→7,274 (−5,840) | 612,400→357,880 | 46,236→40,396 | 17,131→17,131 |
+| oneOf-40/first transition | 15,021→5,517 (−9,504) | 656,232→241,168 | 34,111→24,603 | 0→0 |
+
+oneOf-20의 직접 owner는 evaluateGate 2,400→400, readProjectedValue 3,200→1,200, flushPendingGateReads 1,195→295입니다. 새 evaluator의 작업 공간 표본은 4개입니다. registry register 863→863, read-plan visit 885→885로 영속 기록을 유지했습니다. oneOf-40 첫 전환의 새 evaluator는 중첩 슬롯 포함 6개 표본이며, 최초 payload 채움을 포함하는 전환입니다. 이후 전환의 객체 수를 이 행으로 대신 주장하지 않습니다.
+
+[마운트 전](profile-101-alloc/gate-workspaces-before-allocation-gate-workspaces-oneOf-20-r1.json), [마운트 후](profile-101-alloc/gate-workspaces-after-allocation-gate-workspaces-oneOf-20-r1.json), [첫 전환 전](profile-101-alloc/gate-workspaces-before-transition-allocation-gate-workspaces-oneOf-40-r1.json), [첫 전환 후](profile-101-alloc/gate-workspaces-after-transition-allocation-gate-workspaces-oneOf-40-r1.json)에 owner별 수와 bytes를 보존했습니다. 후보는 원복했으므로 ‘후’는 최종 작업 트리가 아닌 측정 당시 후보입니다.
+
+### 95C-01 종단 짝 측정의 두 열
+
+[gate-workspaces.mjs](profile-101-alloc/gate-workspaces.mjs)는 기존 measure의 production builder와 normalization-memo의 paired sentinel·잡음 계산을 재사용합니다. H/control은 지정 HEAD의 PKG source를 git show로, 후보는 당시 작업 트리 source를 읽었습니다. 번들은 ablation·계수·trace 없는 source-only production 빌드이며 esbuild 서비스는 stdin EOF·종료0으로 측정 전에 끝났습니다. [후보 빌드](profile-101-alloc/gate-workspaces-build-gate-workspaces.json)의 SHA-256은 `34cb4f37e18810984a43f5dcd5c8111c850e2435737b6dd7f422b45c73c9c46a`입니다.
+
+10개 연산×강제/steady×3회차×후보/동일 HEAD 대조의 **120개 새 프로세스**를 겹치지 않게 순차 실행했습니다. 각 엔진은 예열 20, 본 표본 101로 정확히 121회 호출했습니다. 회차의 최초 H-W/W-H/H-W와 표본별 순서 교대를 유지했습니다. 마운트 clone, 첫 갱신의 새 mount·대상 조회, 후속 갱신의 authored history 준비·대상 조회는 clock 밖입니다. oneOf 후속 값은 kind_4/kind_0을 번갈아 써 실제 전환을 유지했습니다. forced는 GC와 다음 check anchor도 밖이고 모든 forced clock 안 GC는 0입니다. steady에는 강제 GC·GC anchor 없이 자연 GC를 포함했습니다. 두 열 모두 64 Promise checkpoint 뒤 setImmediate sentinel 안에서 종료 clock을 읽으며, 앞뒤 빈 종단 202개의 pooled median을 양쪽에서 똑같이 뺐습니다. 추가 timing seed mount는 없습니다.
+
+모든 쌍의 최종 값·hash·live 폭과 반복 읽기 참조가 같았습니다. 대표 H/W는 세 run 중앙값의 중앙값이며 paired Δ는 각 쌍의 H−후보 중앙값을 세 run에서 다시 요약합니다. N은 max(1µs, 동일 연산·열의 no-op abs bound/paired median 최대, 빈 종단 residual p95 + ordinary bootstrap 99% median 오차 합)입니다. bootstrap은 deterministic 1,999회이며 표본 독립성을 주장하지 않습니다. 개선·회귀 모두 **세 run 각각 N 초과 + paired 순위 구간 [40,60]의 같은 부호**가 필요합니다. 표의 N은 후보 세 run의 최대입니다.
+
+| fixture/연산 | 강제 GC H→후보 ms | steady H→후보 ms | paired Δ 강제/steady ms | N 강제/steady ms |
+|---|---:|---:|---:|---:|
+| oneOf-20/mount | 2.084084→2.024792 | 1.222166→1.202417 | 0.059959 / 0.036042 | 0.058374 / 0.151832 |
+| nested-d5-f4/mount | 10.158625→9.917167 | 8.343334→8.290542 | 0.084166 / −0.090291 | 0.790666 / 1.949792 |
+| flat-500/mount | 3.689875→3.702292 | 2.597833→2.600833 | 0.010667 / −0.044250 | 0.138918 / 1.051668 |
+| sample-0/mount | 0.154417→0.153458 | 0.058541→0.059792 | −0.002626 / −0.000958 | 0.021583 / 0.026249 |
+| oneOf-5/first | 0.566875→0.565042 | 0.281833→0.270209 | −0.003375 / 0.007166 | 0.034876 / 0.045250 |
+| oneOf-5/later | 0.464792→0.464417 | 0.214958→0.214667 | 0.001166 / −0.001458 | 0.042874 / 0.044626 |
+| oneOf-40/first | 1.483416→1.456417 | 0.942042→0.911083 | 0.028375 / 0.035500 | 0.041334 / 0.090875 |
+| oneOf-40/later | 0.973625→0.955959 | 0.552458→0.536125 | 0.025334 / 0.022374 | 0.048667 / 0.061208 |
+| sample-0/first | 0.095042→0.094541 | 0.030167→0.030250 | 0.000333 / −0.000250 | 0.013834 / 0.016834 |
+| sample-0/later | 0.091375→0.090500 | 0.022208→0.022416 | 0.000375 / 0.000125 | 0.017915 / 0.025083 |
+
+**20열 모두 채택 기준 미달이며 단일 회차의 N 초과 회귀도 없습니다.** oneOf-20/forced의 대표 paired Δ가 최대 N보다 약간 크더라도 첫 run의 H−후보는 0.022916ms이고 해당 N은 0.058374ms여서 세 회차 조건을 충족하지 않습니다. 사양의 0.5031ms forced / 0.2745ms steady는 evaluate/flush까지 생략한 상한이고, 실제 할당 제거 한 판의 이득으로 대체하지 않았습니다. [짝 판정 JSON](profile-101-alloc/gate-workspaces-verdict.json)에 각 회차의 중앙값·N·paired 구간·GC를 보존했습니다.
+
+### 차등·그림자·횟수 검사와 최종 검증
+
+97라운드 `settle.gate-selection*.test.ts`의 기존 단언은 수정하지 않았습니다. 별도 `settle.gate-workspaces.test.ts`는 의존 읽기 중 같은 정착의 다른 gate가 중첩 평가되는 경우와 그 뒤 outer read가 던지는 경우를 특성화합니다. outer 의존 값·읽기 순서·throw version·changedNodes·pendingOutputs와 예외 뒤 다음 평가를 확인합니다. 제품 변경 전 HEAD 및 후보에서 같은 4파일 **23건 모두 통과**했으며 후보 TypeScript도 통과했습니다. count 검사의 B=5/10/20/40, 첫 전환 16·B 및 후속 8·B, live 폭 5·emit 90B·stable 단언은 그대로입니다.
+
+원복한 최종 HEAD 제품 + 새 특성화 검사에 대해 PKG에서 지정 전체 명령을 실행했습니다. npx에는 `npm_config_offline=true`를 적용해 기존 설치만 사용했습니다.
+
+| 명령 | 최종 결과 |
+|---|---|
+| `npx vitest run --project unit --project render --project react18 --reporter=dot` | 종료1, 64.209초; 426파일·3,211건 통과, todo1; render/react18의 EVENT-070 useLayoutEffect/useEffect 각 2건, 허용된 총 4건만 실패 |
+| `npx tsc --noEmit --composite false --rootDir . -p tsconfig.json` | 종료0, 7.592초; 출력 없음 |
+| `npx eslint "src/**/*.{ts,tsx}"` | 종료0, 5.396초; 출력 없음 |
+| `node architecture/verification/07-switch/tools/check-legacy-isolation.mjs` | 종료0, 0.428초; `LEGACY_ISOLATED: 1627 files checked` |
+
+### 재현·범위·자연 종료
+
+PKG에서 `PROFILE_101_HEAD=da734b40da7a35186646bef42c9f65cee3178892 PROFILE_101_PRODUCT=head PROFILE_101_TAG=gate-workspaces-before- node architecture/verification/07-switch/profile-101-alloc/measure.mjs --build head control gate-workspaces`로 기준 빌드를 만들었습니다. 같은 환경에 `NODE_PATH=/Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/node_modules`를 넣고 `--allocations gate-workspaces oneOf-20`을 실행합니다. 첫 전환은 `PROFILE_101_MODE=first`, tag `gate-workspaces-before-transition-`, fixture `oneOf-40`입니다. 후보의 할당 실행은 product를 `working`, tag를 각각 `gate-workspaces-after-` 및 `gate-workspaces-after-transition-`으로 바꿉니다.
+
+당시 후보에서 `node architecture/verification/07-switch/profile-101-alloc/gate-workspaces.mjs --build gate-workspaces` 후 `--pairs <gate-workspaces|control> <fixture> <mount|first|later> <forced|steady>`를 각 연산·열별로 실행했습니다. `--summarize`는 보존된 표본만 판정합니다. 최종 제품은 원복했으므로 지금 working source를 새로 빌드하면 HEAD 제품을 측정하게 됩니다. 측정 당시 후보 번들·map은 지정 tmp 경로에 남아 있습니다.
+
+120개 timing worker의 기록상 겹침은 0, 최대 worker 시간은 4.638초, 최대 계측 명령은 14.201초입니다. 모두 status 0·signal null·자연 종료입니다. 지정 전체 검증을 포함해 단일 명령은 8분 미만이었고, 강제 종료·설치·git 쓰기·추가 에이전트·다른 worktree 작업은 없었습니다. 새 계측 JSON의 최대 크기는 145,323바이트로 각각 5,000,000바이트 이하입니다. 모든 계측 파일은 `profile-101-alloc/` 아래이고 번들/source map은 저장소 밖의 지정 tmp bundles 경로에만 생성했습니다. 보호된 `analysis-records-design.md`는 읽거나 수정하지 않았습니다. 제품·DETAIL·97라운드 검사·ledger의 diff 부재를 확인했습니다.

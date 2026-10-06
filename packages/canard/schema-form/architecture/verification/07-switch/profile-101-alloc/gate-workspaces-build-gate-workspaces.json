@@ -1,0 +1,8 @@
+{
+  "variant": "gate-workspaces",
+  "sha256": "34cb4f37e18810984a43f5dcd5c8111c850e2435737b6dd7f422b45c73c9c46a",
+  "bytes": 515782,
+  "naturalServiceExits": 1,
+  "edits": [],
+  "head": "da734b40da7a35186646bef42c9f65cee3178892"
+}

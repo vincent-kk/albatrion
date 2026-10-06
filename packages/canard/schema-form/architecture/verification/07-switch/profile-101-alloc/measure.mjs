@@ -14,7 +14,7 @@ const artifacts = path.dirname(script);
 const directory = path.dirname(artifacts);
 const pkg = path.resolve(directory, '../../..');
 const repo = path.resolve(pkg, '../../..');
-const head = '5f50768e561fbb5b3655e4bf6cef9d4b9c227de6';
+const head = process.env.PROFILE_101_HEAD ?? '5f50768e561fbb5b3655e4bf6cef9d4b9c227de6';
 const require = createRequire(path.join(repo, 'package.json'));
 const ts = require('typescript');
 const bundles = '/private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles';
@@ -384,6 +384,10 @@ async function allocation(variant, name, run) {
   }
   const schema = structuredClone(fixture.workspace);
   globalThis.__allocState.cursors = {};
+  const transition = process.env.PROFILE_101_MODE === 'first';
+  const root = transition ? (await measured(() => api.create(engines.variant, fixture, variant, schema))).root : undefined;
+  const target = root?.find(fixture.interactions[0].path);
+  if (transition) assert(target, fixture.interactions[0].path);
   globalThis.gc(); await new Promise(resolve => setImmediate(resolve));
   const session = new inspector.Session(); session.connect();
   const post = (method, params = {}) => new Promise((resolve, reject) => session.post(method, params,
@@ -391,7 +395,11 @@ async function allocation(variant, name, run) {
   await post('HeapProfiler.enable');
   await post('HeapProfiler.startSampling', { samplingInterval: 1,
     includeObjectsCollectedByMajorGC: true, includeObjectsCollectedByMinorGC: true });
-  const sample = await measured(() => api.create(engines.variant, fixture, variant, schema));
+  const sample = await measured(() => {
+    if (!transition) return api.create(engines.variant, fixture, variant, schema);
+    target.setValue(fixture.interactions[0].value);
+    return root;
+  });
   const { profile } = await post('HeapProfiler.stopSampling'); session.disconnect();
   const { TraceMap, originalPositionFor } = require('@jridgewell/trace-mapping');
   const sourceMap = new TraceMap(JSON.parse(fs.readFileSync(path.join(bundles, variant + '.cjs.map'), 'utf8')));
@@ -422,7 +430,7 @@ async function allocation(variant, name, run) {
     row.objects++; row.bytes += s.size; rows.set(key, row);
   }
   save(path.join(artifacts, `allocation-${variant}-${name}-r${run}.json`), {
-    head, variant, name, run, warmup: 20, samplingIntervalBytes: 1,
+    head, variant, name, run, mode: transition ? 'first' : 'mount', warmup: 20, samplingIntervalBytes: 1,
     allocationFolding: true, includeCollected: true, objects, bytes, blueprintObjects, blueprintBytes, unknown,
     nodes: sample.root.runtime.blueprint.nodes.length, execArgv: process.execArgv,
     rows: [...rows.values()].toSorted((a, b) => b.objects - a.objects), observation: api.observe(sample.root),

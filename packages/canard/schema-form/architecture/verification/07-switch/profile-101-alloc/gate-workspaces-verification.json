@@ -1,0 +1,21 @@
+{
+  "head": "da734b40da7a35186646bef42c9f65cee3178892",
+  "productDecision": "reverted",
+  "cwd": "/Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/packages/canard/schema-form",
+  "npmConfigOffline": true,
+  "gateSelectionAndWorkspaceBefore": { "filesPassed": 4, "testsPassed": 23, "exit": 0 },
+  "gateSelectionAndWorkspaceCandidate": { "filesPassed": 4, "testsPassed": 23, "exit": 0 },
+  "candidateTypecheck": { "exit": 0 },
+  "final": [
+    { "command": "npx vitest run --project unit --project render --project react18 --reporter=dot", "exit": 1, "signal": null, "seconds": 64.209, "filesPassed": 426, "filesFailed": 2, "testsPassed": 3211, "testsFailed": 4, "testsTodo": 1, "failures": [
+      { "project": "render", "file": "src/components/Form/__tests__/Form.effectFeedback.test.tsx", "test": "EVENT-070 React stops two fields writing back through useLayoutEffect" },
+      { "project": "render", "file": "src/components/Form/__tests__/Form.effectFeedback.test.tsx", "test": "EVENT-070 React stops two fields writing back through useEffect" },
+      { "project": "react18", "file": "src/components/Form/__tests__/Form.effectFeedback.test.tsx", "test": "EVENT-070 React stops two fields writing back through useLayoutEffect" },
+      { "project": "react18", "file": "src/components/Form/__tests__/Form.effectFeedback.test.tsx", "test": "EVENT-070 React stops two fields writing back through useEffect" }
+    ] },
+    { "command": "npx tsc --noEmit --composite false --rootDir . -p tsconfig.json", "exit": 0, "signal": null, "seconds": 7.592 },
+    { "command": "npx eslint \"src/**/*.{ts,tsx}\"", "exit": 0, "signal": null, "seconds": 5.396 },
+    { "command": "node architecture/verification/07-switch/tools/check-legacy-isolation.mjs", "exit": 0, "signal": null, "seconds": 0.428, "output": "LEGACY_ISOLATED: 1627 files checked" }
+  ],
+  "timingAudit": { "freshWorkers": 120, "overlappingWorkers": 0, "maxWorkerSeconds": 4.638, "maxMeasurementCommandSeconds": 14.201, "allNaturalExit": true, "forcedGcInsideClocks": 0 }
+}
