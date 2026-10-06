@@ -1,0 +1,10 @@
+{
+  "name": "lint",
+  "command": "npx --no-install eslint src/**/*.{ts,tsx}",
+  "exitCode": 0,
+  "signal": null,
+  "started": 1791304776821,
+  "ended": 1791304782381,
+  "elapsedMs": 5560,
+  "summary": []
+}

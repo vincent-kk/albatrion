@@ -1,0 +1,2701 @@
+{
+  "HEAD": "e633fefefb1efcf81302ccf3efc0b51431fb2cee",
+  "created": "2026-10-06T16:41:56.965Z",
+  "kept": false,
+  "improvements": [],
+  "regressions": [],
+  "stopPoints": [],
+  "protocol": {
+    "name": "95C-01",
+    "warmup": 20,
+    "samples": 101,
+    "forcedRuns": 3,
+    "freshProcess": true,
+    "alternatingEachPair": true,
+    "forcedGCOutsideClock": true,
+    "checkpointCount": 64,
+    "endpoint": "setImmediate sentinel 안",
+    "calibratedBy": "앞뒤 각 101 empty drain의 합친 중앙값",
+    "noise": "max(0.001 ms, 전후 HEAD/HEAD 대조 6회의 최대 |gain| 및 |paired median|, empty residual p95 + 양쪽 중앙값 bootstrap 99% 오차)",
+    "improvement": "3회 모두 gain > 자기 noise",
+    "regression": "한 회라도 gain < -자기 noise",
+    "pairedCi95": "303 paired delta의 표본 bootstrap 구간; 프로세스 간 일반화 구간이 아님",
+    "steady": "6회, HEAD 먼저 3회 및 후보 먼저 3회, 엔진별 보정 표본 606개를 전부 합친 중앙값; 유지 판정에 사용하지 않음"
+  },
+  "bundles": {
+    "head": {
+      "HEAD": "e633fefefb1efcf81302ccf3efc0b51431fb2cee",
+      "version": "head",
+      "development": false,
+      "sourceTreeSha256": "f5b6f43a85c4b52dce5fdbdd5f174964240ce3e8690f0a852ad920f8114d8ddb",
+      "bundleSha256": "129f917c8633f9e739dfed1b46b5f819d14380f4130f074897774a0ebd61bfda",
+      "bytes": 524039,
+      "naturalBuildServices": 1
+    },
+    "control": {
+      "HEAD": "e633fefefb1efcf81302ccf3efc0b51431fb2cee",
+      "version": "control",
+      "development": false,
+      "sourceTreeSha256": "f5b6f43a85c4b52dce5fdbdd5f174964240ce3e8690f0a852ad920f8114d8ddb",
+      "bundleSha256": "129f917c8633f9e739dfed1b46b5f819d14380f4130f074897774a0ebd61bfda",
+      "bytes": 524039,
+      "naturalBuildServices": 1
+    },
+    "working": {
+      "HEAD": "e633fefefb1efcf81302ccf3efc0b51431fb2cee",
+      "version": "working",
+      "development": false,
+      "sourceTreeSha256": "b61291f8f5acfc46c2233562eb99d6439ae38f768fe83973a0473f4d222c7d6d",
+      "bundleSha256": "9797788b37af1710f9dfb481580aa6985e479ed66066acb915cebb1a6906bd1f",
+      "bytes": 525491,
+      "naturalBuildServices": 1
+    }
+  },
+  "fixture": {
+    "file": "src/core/blueprint/__tests__/fixtures/ownedInlineHead.json",
+    "bytes": 1659214,
+    "sha256": "c776022c70bbf36c3e60258108dfcf0b9df6d97b6b518772e47270899004799a",
+    "captures": 118,
+    "schemas": 59
+  },
+  "timing": [
+    {
+      "name": "nested-d5-f4",
+      "mode": "mount",
+      "headMs": 8.054375999999806,
+      "workingMs": 7.682499999999891,
+      "gainMs": 0.41166699999962475,
+      "gainRunRangeMs": [
+        -0.13520900000003166,
+        0.42933399999992616
+      ],
+      "pairedMedianMs": 0.2868339999999989,
+      "pooledPairedCi95": [
+        0.18879199999992125,
+        0.37866699999995035
+      ],
+      "noOpNoiseMs": 0.3858749999999418,
+      "maxNoiseMs": 0.39812500000006423,
+      "aboveNoise": false,
+      "regressionBeyondNoise": false,
+      "runs": [
+        {
+          "run": 1,
+          "headMs": 8.054375999999806,
+          "workingMs": 7.62504199999988,
+          "gainMs": 0.42933399999992616,
+          "pairedMedianMs": 0.49429200000031415,
+          "pairedCi95": [
+            0.36937600000010207,
+            0.6117500000000291
+          ],
+          "noiseMs": 0.39812500000006423,
+          "emptyMs": 0.014957999999992921,
+          "headError99Ms": 0.1810000000002674,
+          "workingError99Ms": 0.20604199999979755,
+          "improvementBeyondNoise": true,
+          "regressionBeyondNoise": false,
+          "gcInside": 0,
+          "file": "forced-nested-d5-f4-mount-r1.json"
+        },
+        {
+          "run": 2,
+          "headMs": 7.752999999999929,
+          "workingMs": 7.888208999999961,
+          "gainMs": -0.13520900000003166,
+          "pairedMedianMs": -0.228874999999789,
+          "pairedCi95": [
+            -0.29658199999994395,
+            -0.10104200000000674
+          ],
+          "noiseMs": 0.3858749999999418,
+          "emptyMs": 0.015083000000004176,
+          "headError99Ms": 0.1614169999998012,
+          "workingError99Ms": 0.14100099999996019,
+          "improvementBeyondNoise": false,
+          "regressionBeyondNoise": false,
+          "gcInside": 0,
+          "file": "forced-nested-d5-f4-mount-r2.json"
+        },
+        {
+          "run": 3,
+          "headMs": 8.094166999999516,
+          "workingMs": 7.682499999999891,
+          "gainMs": 0.41166699999962475,
+          "pairedMedianMs": 0.4437500000003638,
+          "pairedCi95": [
+            0.2868339999999989,
+            0.5460829999999532
+          ],
+          "noiseMs": 0.3858749999999418,
+          "emptyMs": 0.015000000000327418,
+          "headError99Ms": 0.08066600000006474,
+          "workingError99Ms": 0.12416599999960454,
+          "improvementBeyondNoise": true,
+          "regressionBeyondNoise": false,
+          "gcInside": 0,
+          "file": "forced-nested-d5-f4-mount-r3.json"
+        }
+      ],
+      "controls": [
+        {
+          "regime": "noise-before",
+          "run": 1,
+          "headMs": 8.866833000000057,
+          "workingMs": 8.547540999999924,
+          "gainMs": 0.31929200000013225,
+          "pairedMedianMs": 0.29733299999998053,
+          "file": "noise-before-nested-d5-f4-mount-r1.json"
+        },
+        {
+          "regime": "noise-before",
+          "run": 2,
+          "headMs": 7.757374999999996,
+          "workingMs": 7.8974590000001115,
+          "gainMs": -0.14008400000011534,
+          "pairedMedianMs": -0.3139579999999569,
+          "file": "noise-before-nested-d5-f4-mount-r2.json"
+        },
+        {
+          "regime": "noise-before",
+          "run": 3,
+          "headMs": 7.966457999999989,
+          "workingMs": 7.768083000000047,
+          "gainMs": 0.1983749999999418,
+          "pairedMedianMs": 0.28379199999972116,
+          "file": "noise-before-nested-d5-f4-mount-r3.json"
+        },
+        {
+          "regime": "noise-after",
+          "run": 1,
+          "headMs": 8.732667000000447,
+          "workingMs": 8.529584000000341,
+          "gainMs": 0.20308300000010604,
+          "pairedMedianMs": 0.2958340000004682,
+          "file": "noise-after-nested-d5-f4-mount-r1.json"
+        },
+        {
+          "regime": "noise-after",
+          "run": 2,
+          "headMs": 8.607166999999919,
+          "workingMs": 8.79774999999998,
+          "gainMs": -0.19058300000006057,
+          "pairedMedianMs": -0.3858749999999418,
+          "file": "noise-after-nested-d5-f4-mount-r2.json"
+        },
+        {
+          "regime": "noise-after",
+          "run": 3,
+          "headMs": 8.056249999999935,
+          "workingMs": 7.787916999999837,
+          "gainMs": 0.26833300000009785,
+          "pairedMedianMs": 0.363207999999986,
+          "file": "noise-after-nested-d5-f4-mount-r3.json"
+        }
+      ],
+      "steady": {
+        "samplesPerEngine": 606,
+        "headMs": 6.365750000000062,
+        "workingMs": 6.211249999999993,
+        "gainMs": 0.1545000000000698,
+        "runs": [
+          {
+            "run": 1,
+            "firstOrder": "head",
+            "headMs": 5.894458999999969,
+            "workingMs": 6.325083000000049,
+            "emptyMs": 0.015000000000000568,
+            "gcInside": {
+              "head": 52,
+              "working": 62
+            },
+            "gcPauseInsideMs": {
+              "head": 212.48108303546906,
+              "working": 198.87771007418633
+            },
+            "file": "steady-nested-d5-f4-mount-r1.json"
+          },
+          {
+            "run": 2,
+            "firstOrder": "working",
+            "headMs": 6.497042999999962,
+            "workingMs": 6.015084000000002,
+            "emptyMs": 0.01616599999999835,
+            "gcInside": {
+              "head": 61,
+              "working": 53
+            },
+            "gcPauseInsideMs": {
+              "head": 235.4083390235901,
+              "working": 151.73979306221008
+            },
+            "file": "steady-nested-d5-f4-mount-r2.json"
+          },
+          {
+            "run": 3,
+            "firstOrder": "head",
+            "headMs": 6.462792000000164,
+            "workingMs": 5.822125000000042,
+            "emptyMs": 0.015124999999997613,
+            "gcInside": {
+              "head": 66,
+              "working": 47
+            },
+            "gcPauseInsideMs": {
+              "head": 258.364662989974,
+              "working": 135.85570606589317
+            },
+            "file": "steady-nested-d5-f4-mount-r3.json"
+          },
+          {
+            "run": 4,
+            "firstOrder": "working",
+            "headMs": 6.330208999999968,
+            "workingMs": 6.091167000000041,
+            "emptyMs": 0.015208000000029642,
+            "gcInside": {
+              "head": 64,
+              "working": 51
+            },
+            "gcPauseInsideMs": {
+              "head": 234.03924496471882,
+              "working": 167.72378899157047
+            },
+            "file": "steady-nested-d5-f4-mount-r4.json"
+          },
+          {
+            "run": 5,
+            "firstOrder": "head",
+            "headMs": 5.921374000000057,
+            "workingMs": 6.460665999999989,
+            "emptyMs": 0.015292000000002304,
+            "gcInside": {
+              "head": 50,
+              "working": 62
+            },
+            "gcPauseInsideMs": {
+              "head": 243.89346104860306,
+              "working": 183.95953702926636
+            },
+            "file": "steady-nested-d5-f4-mount-r5.json"
+          },
+          {
+            "run": 6,
+            "firstOrder": "working",
+            "headMs": 6.350206999999841,
+            "workingMs": 6.128374999999778,
+            "emptyMs": 0.016334000000142623,
+            "gcInside": {
+              "head": 62,
+              "working": 51
+            },
+            "gcPauseInsideMs": {
+              "head": 233.31124998629093,
+              "working": 151.98404198884964
+            },
+            "file": "steady-nested-d5-f4-mount-r6.json"
+          }
+        ]
+      }
+    },
+    {
+      "name": "flat-500",
+      "mode": "mount",
+      "headMs": 2.7443329999998696,
+      "workingMs": 2.6823759999999766,
+      "gainMs": 0.0641659999997728,
+      "gainRunRangeMs": [
+        0.06041699999991579,
+        0.09387400000002799
+      ],
+      "pairedMedianMs": 0.06733299999996234,
+      "pooledPairedCi95": [
+        0.04820900000004258,
+        0.08620799999994233
+      ],
+      "noOpNoiseMs": 0.06020800000004556,
+      "maxNoiseMs": 0.0942900000000435,
+      "aboveNoise": false,
+      "regressionBeyondNoise": false,
+      "runs": [
+        {
+          "run": 1,
+          "headMs": 2.7443329999998696,
+          "workingMs": 2.6801670000000968,
+          "gainMs": 0.0641659999997728,
+          "pairedMedianMs": 0.05904199999986304,
+          "pairedCi95": [
+            0.02320800000006784,
+            0.09275000000013733
+          ],
+          "noiseMs": 0.0942900000000435,
+          "emptyMs": 0.015041999999994005,
+          "headError99Ms": 0.04966700000011315,
+          "workingError99Ms": 0.029748999999924308,
+          "improvementBeyondNoise": false,
+          "regressionBeyondNoise": false,
+          "gcInside": 0,
+          "file": "forced-flat-500-mount-r1.json"
+        },
+        {
+          "run": 2,
+          "headMs": 2.7434999999999974,
+          "workingMs": 2.6830830000000816,
+          "gainMs": 0.06041699999991579,
+          "pairedMedianMs": 0.04170899999985522,
+          "pairedCi95": [
+            0.013748999999961597,
+            0.07491699999991397
+          ],
+          "noiseMs": 0.07875000000002785,
+          "emptyMs": 0.014875000000003524,
+          "headError99Ms": 0.028875000000084583,
+          "workingError99Ms": 0.03824999999994816,
+          "improvementBeyondNoise": false,
+          "regressionBeyondNoise": false,
+          "gcInside": 0,
+          "file": "forced-flat-500-mount-r2.json"
+        },
+        {
+          "run": 3,
+          "headMs": 2.7762500000000045,
+          "workingMs": 2.6823759999999766,
+          "gainMs": 0.09387400000002799,
+          "pairedMedianMs": 0.09862500000008367,
+          "pairedCi95": [
+            0.07412599999997838,
+            0.13825099999996837
+          ],
+          "noiseMs": 0.07491600000011545,
+          "emptyMs": 0.015083000000004176,
+          "headError99Ms": 0.02970800000014151,
+          "workingError99Ms": 0.02387399999997797,
+          "improvementBeyondNoise": true,
+          "regressionBeyondNoise": false,
+          "gcInside": 0,
+          "file": "forced-flat-500-mount-r3.json"
+        }
+      ],
+      "controls": [
+        {
+          "regime": "noise-before",
+          "run": 1,
+          "headMs": 2.786792000000034,
+          "workingMs": 2.7739999999999867,
+          "gainMs": 0.01279200000004721,
+          "pairedMedianMs": 0.003333999999995285,
+          "file": "noise-before-flat-500-mount-r1.json"
+        },
+        {
+          "regime": "noise-before",
+          "run": 2,
+          "headMs": 2.7735000000001264,
+          "workingMs": 2.77183400000024,
+          "gainMs": 0.0016659999998864805,
+          "pairedMedianMs": -0.0049579999999878055,
+          "file": "noise-before-flat-500-mount-r2.json"
+        },
+        {
+          "regime": "noise-before",
+          "run": 3,
+          "headMs": 2.7367080000000072,
+          "workingMs": 2.737000000000066,
+          "gainMs": -0.00029200000005857873,
+          "pairedMedianMs": -0.0030419999999367064,
+          "file": "noise-before-flat-500-mount-r3.json"
+        },
+        {
+          "regime": "noise-after",
+          "run": 1,
+          "headMs": 2.792416000000017,
+          "workingMs": 2.7322079999999715,
+          "gainMs": 0.06020800000004556,
+          "pairedMedianMs": 0.056833000000096945,
+          "file": "noise-after-flat-500-mount-r1.json"
+        },
+        {
+          "regime": "noise-after",
+          "run": 2,
+          "headMs": 2.7211250000000575,
+          "workingMs": 2.770042000000018,
+          "gainMs": -0.04891699999996035,
+          "pairedMedianMs": -0.05004200000007586,
+          "file": "noise-after-flat-500-mount-r2.json"
+        },
+        {
+          "regime": "noise-after",
+          "run": 3,
+          "headMs": 2.7890420000000518,
+          "workingMs": 2.7875829999999837,
+          "gainMs": 0.0014590000000680448,
+          "pairedMedianMs": -0.004625000000032742,
+          "file": "noise-after-flat-500-mount-r3.json"
+        }
+      ],
+      "steady": {
+        "samplesPerEngine": 606,
+        "headMs": 1.6251250000000255,
+        "workingMs": 1.5566249999999968,
+        "gainMs": 0.06850000000002865,
+        "runs": [
+          {
+            "run": 1,
+            "firstOrder": "head",
+            "headMs": 1.6237919999999946,
+            "workingMs": 1.5760419999999868,
+            "emptyMs": 0.01516700000000526,
+            "gcInside": {
+              "head": 23,
+              "working": 28
+            },
+            "gcPauseInsideMs": {
+              "head": 61.230413019657135,
+              "working": 58.713456973433495
+            },
+            "file": "steady-flat-500-mount-r1.json"
+          },
+          {
+            "run": 2,
+            "firstOrder": "working",
+            "headMs": 1.677833000000021,
+            "workingMs": 1.5566249999999968,
+            "emptyMs": 0.01495799999997871,
+            "gcInside": {
+              "head": 35,
+              "working": 15
+            },
+            "gcPauseInsideMs": {
+              "head": 76.37879295647144,
+              "working": 48.32162396609783
+            },
+            "file": "steady-flat-500-mount-r2.json"
+          },
+          {
+            "run": 3,
+            "firstOrder": "head",
+            "headMs": 1.575917000000004,
+            "workingMs": 1.5364169999999717,
+            "emptyMs": 0.014999999999986358,
+            "gcInside": {
+              "head": 23,
+              "working": 28
+            },
+            "gcPauseInsideMs": {
+              "head": 59.16304199397564,
+              "working": 57.21587693691254
+            },
+            "file": "steady-flat-500-mount-r3.json"
+          },
+          {
+            "run": 4,
+            "firstOrder": "working",
+            "headMs": 1.6511669999999867,
+            "workingMs": 1.5561250000000086,
+            "emptyMs": 0.015499999999974534,
+            "gcInside": {
+              "head": 28,
+              "working": 23
+            },
+            "gcPauseInsideMs": {
+              "head": 57.16474901139736,
+              "working": 60.81895896792412
+            },
+            "file": "steady-flat-500-mount-r4.json"
+          },
+          {
+            "run": 5,
+            "firstOrder": "head",
+            "headMs": 1.6873750000000314,
+            "workingMs": 1.5594579999999496,
+            "emptyMs": 0.015041999999994005,
+            "gcInside": {
+              "head": 26,
+              "working": 24
+            },
+            "gcPauseInsideMs": {
+              "head": 51.75553998351097,
+              "working": 63.94970799982548
+            },
+            "file": "steady-flat-500-mount-r5.json"
+          },
+          {
+            "run": 6,
+            "firstOrder": "working",
+            "headMs": 1.5886659999999893,
+            "workingMs": 1.5450820000000363,
+            "emptyMs": 0.014834000000007563,
+            "gcInside": {
+              "head": 26,
+              "working": 24
+            },
+            "gcPauseInsideMs": {
+              "head": 73.14679197967052,
+              "working": 50.07162103056908
+            },
+            "file": "steady-flat-500-mount-r6.json"
+          }
+        ]
+      }
+    },
+    {
+      "name": "oneOf-20",
+      "mode": "mount",
+      "headMs": 1.9386259999999709,
+      "workingMs": 1.9463750000002165,
+      "gainMs": -0.0017499999999017746,
+      "gainRunRangeMs": [
+        -0.014998999999988882,
+        0.007166999999753898
+      ],
+      "pairedMedianMs": -0.009500000000116415,
+      "pooledPairedCi95": [
+        -0.0167489999999475,
+        0.0030420000000503933
+      ],
+      "noOpNoiseMs": 0.026083000000028278,
+      "maxNoiseMs": 0.07996000000004244,
+      "aboveNoise": false,
+      "regressionBeyondNoise": false,
+      "runs": [
+        {
+          "run": 1,
+          "headMs": 1.9386259999999709,
+          "workingMs": 1.9536249999999598,
+          "gainMs": -0.014998999999988882,
+          "pairedMedianMs": -0.022165999999970154,
+          "pairedCi95": [
+            -0.028915999999981068,
+            -0.00825000000008913
+          ],
+          "noiseMs": 0.07996000000004244,
+          "emptyMs": 0.01608300000000895,
+          "headError99Ms": 0.028125000000045475,
+          "workingError99Ms": 0.03800100000000839,
+          "improvementBeyondNoise": false,
+          "regressionBeyondNoise": false,
+          "gcInside": 0,
+          "file": "forced-oneOf-20-mount-r1.json"
+        },
+        {
+          "run": 2,
+          "headMs": 1.9379169999999704,
+          "workingMs": 1.9396669999998721,
+          "gainMs": -0.0017499999999017746,
+          "pairedMedianMs": -0.005957999999964159,
+          "pairedCi95": [
+            -0.021999999999934516,
+            0.015375999999946544
+          ],
+          "noiseMs": 0.06229099999984555,
+          "emptyMs": 0.015458000000080574,
+          "headError99Ms": 0.026250000000004547,
+          "workingError99Ms": 0.021666000000095664,
+          "improvementBeyondNoise": false,
+          "regressionBeyondNoise": false,
+          "gcInside": 0,
+          "file": "forced-oneOf-20-mount-r2.json"
+        },
+        {
+          "run": 3,
+          "headMs": 1.9535419999999704,
+          "workingMs": 1.9463750000002165,
+          "gainMs": 0.007166999999753898,
+          "pairedMedianMs": 0.005124000000023443,
+          "pairedCi95": [
+            -0.010374999999953616,
+            0.02520800000024792
+          ],
+          "noiseMs": 0.059916999999984455,
+          "emptyMs": 0.0154579999998532,
+          "headError99Ms": 0.027124999999841748,
+          "workingError99Ms": 0.01841699999999946,
+          "improvementBeyondNoise": false,
+          "regressionBeyondNoise": false,
+          "gcInside": 0,
+          "file": "forced-oneOf-20-mount-r3.json"
+        }
+      ],
+      "controls": [
+        {
+          "regime": "noise-before",
+          "run": 1,
+          "headMs": 1.9293339999999262,
+          "workingMs": 1.9266679999999496,
+          "gainMs": 0.0026659999999765205,
+          "pairedMedianMs": 0.0033330000001114968,
+          "file": "noise-before-oneOf-20-mount-r1.json"
+        },
+        {
+          "regime": "noise-before",
+          "run": 2,
+          "headMs": 1.9387090000000171,
+          "workingMs": 1.928625000000011,
+          "gainMs": 0.010084000000006199,
+          "pairedMedianMs": 0.016957999999931417,
+          "file": "noise-before-oneOf-20-mount-r2.json"
+        },
+        {
+          "regime": "noise-before",
+          "run": 3,
+          "headMs": 1.9537500000001842,
+          "workingMs": 1.927667000000156,
+          "gainMs": 0.026083000000028278,
+          "pairedMedianMs": 0.013250999999968371,
+          "file": "noise-before-oneOf-20-mount-r3.json"
+        },
+        {
+          "regime": "noise-after",
+          "run": 1,
+          "headMs": 1.9512909999998556,
+          "workingMs": 1.953416999999945,
+          "gainMs": -0.002126000000089334,
+          "pairedMedianMs": 0.0003329999999550637,
+          "file": "noise-after-oneOf-20-mount-r1.json"
+        },
+        {
+          "regime": "noise-after",
+          "run": 2,
+          "headMs": 1.9400419999998348,
+          "workingMs": 1.9374589999999898,
+          "gainMs": 0.002582999999845015,
+          "pairedMedianMs": -0.0025829999999587017,
+          "file": "noise-after-oneOf-20-mount-r2.json"
+        },
+        {
+          "regime": "noise-after",
+          "run": 3,
+          "headMs": 1.9334160000000793,
+          "workingMs": 1.9271250000001032,
+          "gainMs": 0.006290999999976066,
+          "pairedMedianMs": -0.0014989999999670545,
+          "file": "noise-after-oneOf-20-mount-r3.json"
+        }
+      ],
+      "steady": {
+        "samplesPerEngine": 606,
+        "headMs": 1.172291999999942,
+        "workingMs": 1.16674900000001,
+        "gainMs": 0.005542999999931908,
+        "runs": [
+          {
+            "run": 1,
+            "firstOrder": "head",
+            "headMs": 1.1955819999999733,
+            "workingMs": 1.154291000000029,
+            "emptyMs": 0.015208999999998696,
+            "gcInside": {
+              "head": 10,
+              "working": 11
+            },
+            "gcPauseInsideMs": {
+              "head": 8.984790965914726,
+              "working": 9.23895700275898
+            },
+            "file": "steady-oneOf-20-mount-r1.json"
+          },
+          {
+            "run": 2,
+            "firstOrder": "working",
+            "headMs": 1.1789160000000152,
+            "workingMs": 1.16674900000001,
+            "emptyMs": 0.014834000000007563,
+            "gcInside": {
+              "head": 11,
+              "working": 10
+            },
+            "gcPauseInsideMs": {
+              "head": 9.115793988108635,
+              "working": 9.24925097823143
+            },
+            "file": "steady-oneOf-20-mount-r2.json"
+          },
+          {
+            "run": 3,
+            "firstOrder": "head",
+            "headMs": 1.1666250000000105,
+            "workingMs": 1.1548759999999447,
+            "emptyMs": 0.01633300000003146,
+            "gcInside": {
+              "head": 10,
+              "working": 11
+            },
+            "gcPauseInsideMs": {
+              "head": 9.11821100115776,
+              "working": 8.52166597545147
+            },
+            "file": "steady-oneOf-20-mount-r3.json"
+          },
+          {
+            "run": 4,
+            "firstOrder": "working",
+            "headMs": 1.1765419999999693,
+            "workingMs": 1.179042000000024,
+            "emptyMs": 0.015000000000000568,
+            "gcInside": {
+              "head": 11,
+              "working": 10
+            },
+            "gcPauseInsideMs": {
+              "head": 8.81983394920826,
+              "working": 9.57045802474022
+            },
+            "file": "steady-oneOf-20-mount-r4.json"
+          },
+          {
+            "run": 5,
+            "firstOrder": "head",
+            "headMs": 1.179791999999992,
+            "workingMs": 1.1621249999999748,
+            "emptyMs": 0.01520800000000122,
+            "gcInside": {
+              "head": 10,
+              "working": 11
+            },
+            "gcPauseInsideMs": {
+              "head": 9.211373001337051,
+              "working": 9.134041979908943
+            },
+            "file": "steady-oneOf-20-mount-r5.json"
+          },
+          {
+            "run": 6,
+            "firstOrder": "working",
+            "headMs": 1.153790999999984,
+            "workingMs": 1.1827919999999779,
+            "emptyMs": 0.015250000000008868,
+            "gcInside": {
+              "head": 11,
+              "working": 10
+            },
+            "gcPauseInsideMs": {
+              "head": 9.412874057888985,
+              "working": 9.33812503516674
+            },
+            "file": "steady-oneOf-20-mount-r6.json"
+          }
+        ]
+      }
+    },
+    {
+      "name": "sample-0",
+      "mode": "mount",
+      "headMs": 0.1180419999999458,
+      "workingMs": 0.11729099999996606,
+      "gainMs": 0.0009580000000255495,
+      "gainRunRangeMs": [
+        0.00041699999997035775,
+        0.0021670000000426626
+      ],
+      "pairedMedianMs": 0.000582999999949152,
+      "pooledPairedCi95": [
+        -0.0006250000000136424,
+        0.0025420000000053733
+      ],
+      "noOpNoiseMs": 0.003290999999990163,
+      "maxNoiseMs": 0.024375000000006253,
+      "aboveNoise": false,
+      "regressionBeyondNoise": false,
+      "runs": [
+        {
+          "run": 1,
+          "headMs": 0.11595800000002043,
+          "workingMs": 0.11499999999999488,
+          "gainMs": 0.0009580000000255495,
+          "pairedMedianMs": -0.0003330000000119071,
+          "pairedCi95": [
+            -0.0036249999999995453,
+            0.0024580000000469227
+          ],
+          "noiseMs": 0.024375000000006253,
+          "emptyMs": 0.015000000000000568,
+          "headError99Ms": 0.00383300000004283,
+          "workingError99Ms": 0.004000000000019099,
+          "improvementBeyondNoise": false,
+          "regressionBeyondNoise": false,
+          "gcInside": 0,
+          "file": "forced-sample-0-mount-r1.json"
+        },
+        {
+          "run": 2,
+          "headMs": 0.11945800000000872,
+          "workingMs": 0.11729099999996606,
+          "gainMs": 0.0021670000000426626,
+          "pairedMedianMs": 0.0032910000000185846,
+          "pairedCi95": [
+            0.0003330000000119071,
+            0.004583000000025095
+          ],
+          "noiseMs": 0.018916000000004374,
+          "emptyMs": 0.015084000000001652,
+          "headError99Ms": 0.003249999999979991,
+          "workingError99Ms": 0.0032080000000291875,
+          "improvementBeyondNoise": false,
+          "regressionBeyondNoise": false,
+          "gcInside": 0,
+          "file": "forced-sample-0-mount-r2.json"
+        },
+        {
+          "run": 3,
+          "headMs": 0.1180419999999458,
+          "workingMs": 0.11762499999997544,
+          "gainMs": 0.00041699999997035775,
+          "pairedMedianMs": 0.0004589999999780048,
+          "pairedCi95": [
+            -0.0017500000000154614,
+            0.0027919999999994616
+          ],
+          "noiseMs": 0.015667000000007647,
+          "emptyMs": 0.01525000000003729,
+          "headError99Ms": 0.0036670000000071923,
+          "workingError99Ms": 0.0034999999999740794,
+          "improvementBeyondNoise": false,
+          "regressionBeyondNoise": false,
+          "gcInside": 0,
+          "file": "forced-sample-0-mount-r3.json"
+        }
+      ],
+      "controls": [
+        {
+          "regime": "noise-before",
+          "run": 1,
+          "headMs": 0.11970900000004292,
+          "workingMs": 0.12087499999999807,
+          "gainMs": -0.0011659999999551474,
+          "pairedMedianMs": -0.0002910000000611035,
+          "file": "noise-before-sample-0-mount-r1.json"
+        },
+        {
+          "regime": "noise-before",
+          "run": 2,
+          "headMs": 0.11991599999998925,
+          "workingMs": 0.11816599999994537,
+          "gainMs": 0.0017500000000438831,
+          "pairedMedianMs": 0.0030000000000143245,
+          "file": "noise-before-sample-0-mount-r2.json"
+        },
+        {
+          "regime": "noise-before",
+          "run": 3,
+          "headMs": 0.11650100000002794,
+          "workingMs": 0.11891699999995353,
+          "gainMs": -0.0024159999999255888,
+          "pairedMedianMs": 0.00025099999999156353,
+          "file": "noise-before-sample-0-mount-r3.json"
+        },
+        {
+          "regime": "noise-after",
+          "run": 1,
+          "headMs": 0.1250000000000142,
+          "workingMs": 0.12491600000002734,
+          "gainMs": 0.00008399999998687235,
+          "pairedMedianMs": -0.0006669999999928677,
+          "file": "noise-after-sample-0-mount-r1.json"
+        },
+        {
+          "regime": "noise-after",
+          "run": 2,
+          "headMs": 0.11875099999994632,
+          "workingMs": 0.11916700000003289,
+          "gainMs": -0.00041600000008656934,
+          "pairedMedianMs": -0.0020409999999912998,
+          "file": "noise-after-sample-0-mount-r2.json"
+        },
+        {
+          "regime": "noise-after",
+          "run": 3,
+          "headMs": 0.11766699999996888,
+          "workingMs": 0.11562500000000853,
+          "gainMs": 0.0020419999999603533,
+          "pairedMedianMs": 0.003290999999990163,
+          "file": "noise-after-sample-0-mount-r3.json"
+        }
+      ],
+      "steady": {
+        "samplesPerEngine": 606,
+        "headMs": 0.051706999999993286,
+        "workingMs": 0.0511240000000015,
+        "gainMs": 0.0005829999999917845,
+        "runs": [
+          {
+            "run": 1,
+            "firstOrder": "head",
+            "headMs": 0.051374999999993065,
+            "workingMs": 0.051374999999993065,
+            "emptyMs": 0.015625,
+            "gcInside": {
+              "head": 2,
+              "working": 0
+            },
+            "gcPauseInsideMs": {
+              "head": 1.0443329960107803,
+              "working": 0
+            },
+            "file": "steady-sample-0-mount-r1.json"
+          },
+          {
+            "run": 2,
+            "firstOrder": "working",
+            "headMs": 0.05129200000000367,
+            "workingMs": 0.05087499999999068,
+            "emptyMs": 0.015500000000002956,
+            "gcInside": {
+              "head": 0,
+              "working": 2
+            },
+            "gcPauseInsideMs": {
+              "head": 0,
+              "working": 1.124875009059906
+            },
+            "file": "steady-sample-0-mount-r2.json"
+          },
+          {
+            "run": 3,
+            "firstOrder": "head",
+            "headMs": 0.05404100000001222,
+            "workingMs": 0.04987400000001685,
+            "emptyMs": 0.015583999999989828,
+            "gcInside": {
+              "head": 1,
+              "working": 1
+            },
+            "gcPauseInsideMs": {
+              "head": 0.6894589960575104,
+              "working": 0.4760829955339432
+            },
+            "file": "steady-sample-0-mount-r3.json"
+          },
+          {
+            "run": 4,
+            "firstOrder": "working",
+            "headMs": 0.05087400000000741,
+            "workingMs": 0.0524170000000197,
+            "emptyMs": 0.015166999999991049,
+            "gcInside": {
+              "head": 1,
+              "working": 1
+            },
+            "gcPauseInsideMs": {
+              "head": 0.7053340077400208,
+              "working": 0.4082919955253601
+            },
+            "file": "steady-sample-0-mount-r4.json"
+          },
+          {
+            "run": 5,
+            "firstOrder": "head",
+            "headMs": 0.05266599999998789,
+            "workingMs": 0.04887499999999534,
+            "emptyMs": 0.01533400000000995,
+            "gcInside": {
+              "head": 1,
+              "working": 1
+            },
+            "gcPauseInsideMs": {
+              "head": 0.5384159982204437,
+              "working": 0.40595799684524536
+            },
+            "file": "steady-sample-0-mount-r5.json"
+          },
+          {
+            "run": 6,
+            "firstOrder": "working",
+            "headMs": 0.05133199999998794,
+            "workingMs": 0.053873999999993316,
+            "emptyMs": 0.015084000000001652,
+            "gcInside": {
+              "head": 2,
+              "working": 0
+            },
+            "gcPauseInsideMs": {
+              "head": 1.0481659919023514,
+              "working": 0
+            },
+            "file": "steady-sample-0-mount-r6.json"
+          }
+        ]
+      }
+    },
+    {
+      "name": "sample-0",
+      "mode": "first",
+      "headMs": 0.08691599999994537,
+      "workingMs": 0.08670800000000156,
+      "gainMs": -0.0017920000000231084,
+      "gainRunRangeMs": [
+        -0.0018750000000125056,
+        0.0013329999999314168
+      ],
+      "pairedMedianMs": -0.001125000000001819,
+      "pooledPairedCi95": [
+        -0.0022090000000503096,
+        0.00012499999991177901
+      ],
+      "noOpNoiseMs": 0.0029580000000350992,
+      "maxNoiseMs": 0.021874000000039473,
+      "aboveNoise": false,
+      "regressionBeyondNoise": false,
+      "runs": [
+        {
+          "run": 1,
+          "headMs": 0.08483299999998906,
+          "workingMs": 0.08670800000000156,
+          "gainMs": -0.0018750000000125056,
+          "pairedMedianMs": -0.001125000000001819,
+          "pairedCi95": [
+            -0.0034990000000334476,
+            0.0005419999999958236
+          ],
+          "noiseMs": 0.013249999999985107,
+          "emptyMs": 0.015042000000008215,
+          "headError99Ms": 0.002082999999970525,
+          "workingError99Ms": 0.002459000000015976,
+          "improvementBeyondNoise": false,
+          "regressionBeyondNoise": false,
+          "gcInside": 0,
+          "file": "forced-sample-0-first-r1.json"
+        },
+        {
+          "run": 2,
+          "headMs": 0.09562500000004093,
+          "workingMs": 0.09741700000006404,
+          "gainMs": -0.0017920000000231084,
+          "pairedMedianMs": -0.0022090000000503096,
+          "pairedCi95": [
+            -0.004040999999915584,
+            0.0008339999999975589
+          ],
+          "noiseMs": 0.021874000000039473,
+          "emptyMs": 0.014874999999960892,
+          "headError99Ms": 0.003208000000000766,
+          "workingError99Ms": 0.0033740000000079817,
+          "improvementBeyondNoise": false,
+          "regressionBeyondNoise": false,
+          "gcInside": 0,
+          "file": "forced-sample-0-first-r2.json"
+        },
+        {
+          "run": 3,
+          "headMs": 0.08691599999994537,
+          "workingMs": 0.08558300000001395,
+          "gainMs": 0.0013329999999314168,
+          "pairedMedianMs": -0.00008400000001529406,
+          "pairedCi95": [
+            -0.002333000000021457,
+            0.0025829999999587017
+          ],
+          "noiseMs": 0.014165999999946166,
+          "emptyMs": 0.01491699999999696,
+          "headError99Ms": 0.0025829999999587017,
+          "workingError99Ms": 0.004332999999974163,
+          "improvementBeyondNoise": false,
+          "regressionBeyondNoise": false,
+          "gcInside": 0,
+          "file": "forced-sample-0-first-r3.json"
+        }
+      ],
+      "controls": [
+        {
+          "regime": "noise-before",
+          "run": 1,
+          "headMs": 0.0856259999999196,
+          "workingMs": 0.08679200000004528,
+          "gainMs": -0.0011660000001256776,
+          "pairedMedianMs": -0.0012079999999627944,
+          "file": "noise-before-sample-0-first-r1.json"
+        },
+        {
+          "regime": "noise-before",
+          "run": 2,
+          "headMs": 0.08737500000000864,
+          "workingMs": 0.08641699999998309,
+          "gainMs": 0.0009580000000255495,
+          "pairedMedianMs": 0.00033400000000938235,
+          "file": "noise-before-sample-0-first-r2.json"
+        },
+        {
+          "regime": "noise-before",
+          "run": 3,
+          "headMs": 0.08645799999996484,
+          "workingMs": 0.08654099999998266,
+          "gainMs": -0.00008300000001781882,
+          "pairedMedianMs": 0.000624999999956799,
+          "file": "noise-before-sample-0-first-r3.json"
+        },
+        {
+          "regime": "noise-after",
+          "run": 1,
+          "headMs": 0.08649899999998922,
+          "workingMs": 0.08733200000004615,
+          "gainMs": -0.0008330000000569271,
+          "pairedMedianMs": 0.0008320000000026084,
+          "file": "noise-after-sample-0-first-r1.json"
+        },
+        {
+          "regime": "noise-after",
+          "run": 2,
+          "headMs": 0.08837399999998752,
+          "workingMs": 0.08683299999995597,
+          "gainMs": 0.001541000000031545,
+          "pairedMedianMs": 0.002834000000063952,
+          "file": "noise-after-sample-0-first-r2.json"
+        },
+        {
+          "regime": "noise-after",
+          "run": 3,
+          "headMs": 0.08787600000005114,
+          "workingMs": 0.08508399999999483,
+          "gainMs": 0.002792000000056305,
+          "pairedMedianMs": 0.0029580000000350992,
+          "file": "noise-after-sample-0-first-r3.json"
+        }
+      ],
+      "steady": {
+        "samplesPerEngine": 606,
+        "headMs": 0.032583999999999946,
+        "workingMs": 0.032875000000004206,
+        "gainMs": -0.0002910000000042601,
+        "runs": [
+          {
+            "run": 1,
+            "firstOrder": "head",
+            "headMs": 0.03287400000002094,
+            "workingMs": 0.032083000000014295,
+            "emptyMs": 0.014958999999990397,
+            "gcInside": {
+              "head": 1,
+              "working": 0
+            },
+            "gcPauseInsideMs": {
+              "head": 0.581042006611824,
+              "working": 0
+            },
+            "file": "steady-sample-0-first-r1.json"
+          },
+          {
+            "run": 2,
+            "firstOrder": "working",
+            "headMs": 0.03266599999999187,
+            "workingMs": 0.033582999999993035,
+            "emptyMs": 0.015042000000008215,
+            "gcInside": {
+              "head": 0,
+              "working": 0
+            },
+            "gcPauseInsideMs": {
+              "head": 0,
+              "working": 0
+            },
+            "file": "steady-sample-0-first-r2.json"
+          },
+          {
+            "run": 3,
+            "firstOrder": "head",
+            "headMs": 0.03216700000000117,
+            "workingMs": 0.03249999999998465,
+            "emptyMs": 0.01475000000000648,
+            "gcInside": {
+              "head": 0,
+              "working": 0
+            },
+            "gcPauseInsideMs": {
+              "head": 0,
+              "working": 0
+            },
+            "file": "steady-sample-0-first-r3.json"
+          },
+          {
+            "run": 4,
+            "firstOrder": "working",
+            "headMs": 0.031999999999996476,
+            "workingMs": 0.03204199999998991,
+            "emptyMs": 0.01516700000000526,
+            "gcInside": {
+              "head": 0,
+              "working": 0
+            },
+            "gcPauseInsideMs": {
+              "head": 0,
+              "working": 0
+            },
+            "file": "steady-sample-0-first-r4.json"
+          },
+          {
+            "run": 5,
+            "firstOrder": "head",
+            "headMs": 0.032583999999999946,
+            "workingMs": 0.032209000000008814,
+            "emptyMs": 0.014915999999999485,
+            "gcInside": {
+              "head": 0,
+              "working": 1
+            },
+            "gcPauseInsideMs": {
+              "head": 0,
+              "working": 0.6544589996337891
+            },
+            "file": "steady-sample-0-first-r5.json"
+          },
+          {
+            "run": 6,
+            "firstOrder": "working",
+            "headMs": 0.033749999999997726,
+            "workingMs": 0.0338339999999846,
+            "emptyMs": 0.015250000000008868,
+            "gcInside": {
+              "head": 0,
+              "working": 0
+            },
+            "gcPauseInsideMs": {
+              "head": 0,
+              "working": 0
+            },
+            "file": "steady-sample-0-first-r6.json"
+          }
+        ]
+      }
+    },
+    {
+      "name": "sample-0",
+      "mode": "later",
+      "headMs": 0.08024999999999238,
+      "workingMs": 0.08175000000004218,
+      "gainMs": -0.0008329999999432403,
+      "gainRunRangeMs": [
+        -0.0016240000000493637,
+        0.0002499999999940883
+      ],
+      "pairedMedianMs": -0.0003329999999550637,
+      "pooledPairedCi95": [
+        -0.0018340000000023338,
+        0.0006659999999669708
+      ],
+      "noOpNoiseMs": 0.0022069999999985157,
+      "maxNoiseMs": 0.016708999999991647,
+      "aboveNoise": false,
+      "regressionBeyondNoise": false,
+      "runs": [
+        {
+          "run": 1,
+          "headMs": 0.08024999999999238,
+          "workingMs": 0.0799999999999983,
+          "gainMs": 0.0002499999999940883,
+          "pairedMedianMs": -0.0008329999999432403,
+          "pairedCi95": [
+            -0.0025830000000723885,
+            0.000998999999978878
+          ],
+          "noiseMs": 0.015540999999970495,
+          "emptyMs": 0.015124999999997613,
+          "headError99Ms": 0.002874999999960437,
+          "workingError99Ms": 0.0019159999999942556,
+          "improvementBeyondNoise": false,
+          "regressionBeyondNoise": false,
+          "gcInside": 0,
+          "file": "forced-sample-0-later-r1.json"
+        },
+        {
+          "run": 2,
+          "headMs": 0.08012599999999281,
+          "workingMs": 0.08175000000004218,
+          "gainMs": -0.0016240000000493637,
+          "pairedMedianMs": 0.0006250000001273293,
+          "pairedCi95": [
+            -0.0009159999999894808,
+            0.0023320000000239816
+          ],
+          "noiseMs": 0.016708999999991647,
+          "emptyMs": 0.014957999999992921,
+          "headError99Ms": 0.002208999999993466,
+          "workingError99Ms": 0.0035829999999918982,
+          "improvementBeyondNoise": false,
+          "regressionBeyondNoise": false,
+          "gcInside": 0,
+          "file": "forced-sample-0-later-r2.json"
+        },
+        {
+          "run": 3,
+          "headMs": 0.08191599999997834,
+          "workingMs": 0.08274899999992158,
+          "gainMs": -0.0008329999999432403,
+          "pairedMedianMs": -0.0016669999999407992,
+          "pairedCi95": [
+            -0.0033740000000079817,
+            0.0010839999999916472
+          ],
+          "noiseMs": 0.016083000000122638,
+          "emptyMs": 0.015084000000001652,
+          "headError99Ms": 0.0026249999999663487,
+          "workingError99Ms": 0.00304200000016408,
+          "improvementBeyondNoise": false,
+          "regressionBeyondNoise": false,
+          "gcInside": 0,
+          "file": "forced-sample-0-later-r3.json"
+        }
+      ],
+      "controls": [
+        {
+          "regime": "noise-before",
+          "run": 1,
+          "headMs": 0.07929100000001199,
+          "workingMs": 0.07912499999997635,
+          "gainMs": 0.00016600000003563764,
+          "pairedMedianMs": 0.00020899999992707308,
+          "file": "noise-before-sample-0-later-r1.json"
+        },
+        {
+          "regime": "noise-before",
+          "run": 2,
+          "headMs": 0.08175000000004218,
+          "workingMs": 0.08070899999999881,
+          "gainMs": 0.0010410000000433683,
+          "pairedMedianMs": 0.0022069999999985157,
+          "file": "noise-before-sample-0-later-r2.json"
+        },
+        {
+          "regime": "noise-before",
+          "run": 3,
+          "headMs": 0.0799170000000089,
+          "workingMs": 0.07941700000002072,
+          "gainMs": 0.0004999999999881766,
+          "pairedMedianMs": -0.0004169999998566709,
+          "file": "noise-before-sample-0-later-r3.json"
+        },
+        {
+          "regime": "noise-after",
+          "run": 1,
+          "headMs": 0.08300000000002683,
+          "workingMs": 0.08125000000001137,
+          "gainMs": 0.0017500000000154614,
+          "pairedMedianMs": 0.0017080000001215012,
+          "file": "noise-after-sample-0-later-r1.json"
+        },
+        {
+          "regime": "noise-after",
+          "run": 2,
+          "headMs": 0.08100000000003149,
+          "workingMs": 0.08066600000002211,
+          "gainMs": 0.00033400000000938235,
+          "pairedMedianMs": -0.000876000000005206,
+          "file": "noise-after-sample-0-later-r2.json"
+        },
+        {
+          "regime": "noise-after",
+          "run": 3,
+          "headMs": 0.08158400000000654,
+          "workingMs": 0.08079199999995978,
+          "gainMs": 0.0007920000000467553,
+          "pairedMedianMs": 0.00037500000007639755,
+          "file": "noise-after-sample-0-later-r3.json"
+        }
+      ],
+      "steady": {
+        "samplesPerEngine": 606,
+        "headMs": 0.021666999999993664,
+        "workingMs": 0.021625000000014438,
+        "gainMs": 0.00004199999997922532,
+        "runs": [
+          {
+            "run": 1,
+            "firstOrder": "head",
+            "headMs": 0.021374999999991928,
+            "workingMs": 0.022082999999994968,
+            "emptyMs": 0.015957999999997696,
+            "gcInside": {
+              "head": 2,
+              "working": 0
+            },
+            "gcPauseInsideMs": {
+              "head": 0.8570829927921295,
+              "working": 0
+            },
+            "file": "steady-sample-0-later-r1.json"
+          },
+          {
+            "run": 2,
+            "firstOrder": "working",
+            "headMs": 0.022333000000003267,
+            "workingMs": 0.0214160000000021,
+            "emptyMs": 0.01595899999999517,
+            "gcInside": {
+              "head": 0,
+              "working": 1
+            },
+            "gcPauseInsideMs": {
+              "head": 0,
+              "working": 0.8577919900417328
+            },
+            "file": "steady-sample-0-later-r2.json"
+          },
+          {
+            "run": 3,
+            "firstOrder": "head",
+            "headMs": 0.022623999999993316,
+            "workingMs": 0.02187399999999684,
+            "emptyMs": 0.01579200000000469,
+            "gcInside": {
+              "head": 0,
+              "working": 1
+            },
+            "gcPauseInsideMs": {
+              "head": 0,
+              "working": 0.7787910103797913
+            },
+            "file": "steady-sample-0-later-r3.json"
+          },
+          {
+            "run": 4,
+            "firstOrder": "working",
+            "headMs": 0.02187399999998263,
+            "workingMs": 0.021290999999990845,
+            "emptyMs": 0.016084000000006426,
+            "gcInside": {
+              "head": 1,
+              "working": 0
+            },
+            "gcPauseInsideMs": {
+              "head": 0.8194160014390945,
+              "working": 0
+            },
+            "file": "steady-sample-0-later-r4.json"
+          },
+          {
+            "run": 5,
+            "firstOrder": "head",
+            "headMs": 0.019540999999989594,
+            "workingMs": 0.020042000000003668,
+            "emptyMs": 0.016000000000005343,
+            "gcInside": {
+              "head": 0,
+              "working": 1
+            },
+            "gcPauseInsideMs": {
+              "head": 0,
+              "working": 0.765625
+            },
+            "file": "steady-sample-0-later-r5.json"
+          },
+          {
+            "run": 6,
+            "firstOrder": "working",
+            "headMs": 0.02304200000000378,
+            "workingMs": 0.02266699999999844,
+            "emptyMs": 0.015833000000000652,
+            "gcInside": {
+              "head": 0,
+              "working": 1
+            },
+            "gcPauseInsideMs": {
+              "head": 0,
+              "working": 0.774833008646965
+            },
+            "file": "steady-sample-0-later-r6.json"
+          }
+        ]
+      }
+    },
+    {
+      "name": "nested-d5-f4",
+      "mode": "first",
+      "headMs": 0.19558299999994233,
+      "workingMs": 0.1875840000000153,
+      "gainMs": 0.0003329999999550637,
+      "gainRunRangeMs": [
+        -0.005625999999892883,
+        0.007998999999927037
+      ],
+      "pairedMedianMs": 0.02533400000038455,
+      "pooledPairedCi95": [
+        -0.06820900000047914,
+        0.07383399999980611
+      ],
+      "noOpNoiseMs": 0.04533199999991666,
+      "maxNoiseMs": 0.12970900000016172,
+      "aboveNoise": false,
+      "regressionBeyondNoise": false,
+      "runs": [
+        {
+          "run": 1,
+          "headMs": 0.19974999999998033,
+          "workingMs": 0.19941700000002527,
+          "gainMs": 0.0003329999999550637,
+          "pairedMedianMs": 0.031957999999917774,
+          "pairedCi95": [
+            -0.07770799999980227,
+            0.07650000000057844
+          ],
+          "noiseMs": 0.12970900000016172,
+          "emptyMs": 0.014957999999992921,
+          "headError99Ms": 0.059500000000298314,
+          "workingError99Ms": 0.05904199999986304,
+          "improvementBeyondNoise": false,
+          "regressionBeyondNoise": false,
+          "gcInside": 0,
+          "file": "forced-nested-d5-f4-first-r1.json"
+        },
+        {
+          "run": 2,
+          "headMs": 0.18095800000001816,
+          "workingMs": 0.18658399999991104,
+          "gainMs": -0.005625999999892883,
+          "pairedMedianMs": -0.01925000000005639,
+          "pairedCi95": [
+            -0.07195799999999508,
+            0.08462500000018736
+          ],
+          "noiseMs": 0.09850100000004147,
+          "emptyMs": 0.015000000000000568,
+          "headError99Ms": 0.041917000000012195,
+          "workingError99Ms": 0.04375099999992926,
+          "improvementBeyondNoise": false,
+          "regressionBeyondNoise": false,
+          "gcInside": 0,
+          "file": "forced-nested-d5-f4-first-r2.json"
+        },
+        {
+          "run": 3,
+          "headMs": 0.19558299999994233,
+          "workingMs": 0.1875840000000153,
+          "gainMs": 0.007998999999927037,
+          "pairedMedianMs": 0.03762400000005073,
+          "pairedCi95": [
+            -0.07683399999996254,
+            0.08020799999985684
+          ],
+          "noiseMs": 0.10754199999985303,
+          "emptyMs": 0.015083000000004176,
+          "headError99Ms": 0.050165999999876476,
+          "workingError99Ms": 0.04404199999999037,
+          "improvementBeyondNoise": false,
+          "regressionBeyondNoise": false,
+          "gcInside": 0,
+          "file": "forced-nested-d5-f4-first-r3.json"
+        }
+      ],
+      "controls": [
+        {
+          "regime": "noise-before",
+          "run": 1,
+          "headMs": 0.19379199999997354,
+          "workingMs": 0.17129100000005337,
+          "gainMs": 0.022500999999920168,
+          "pairedMedianMs": 0.04533199999991666,
+          "file": "noise-before-nested-d5-f4-first-r1.json"
+        },
+        {
+          "regime": "noise-before",
+          "run": 2,
+          "headMs": 0.2077499999999617,
+          "workingMs": 0.1992080000003824,
+          "gainMs": 0.008541999999579275,
+          "pairedMedianMs": 0.00004200000012133387,
+          "file": "noise-before-nested-d5-f4-first-r2.json"
+        },
+        {
+          "regime": "noise-before",
+          "run": 3,
+          "headMs": 0.1956669999997871,
+          "workingMs": 0.1813339999999357,
+          "gainMs": 0.014332999999851381,
+          "pairedMedianMs": 0.030166000000008353,
+          "file": "noise-before-nested-d5-f4-first-r3.json"
+        },
+        {
+          "regime": "noise-after",
+          "run": 1,
+          "headMs": 0.19799900000003845,
+          "workingMs": 0.20591599999994514,
+          "gainMs": -0.007916999999906693,
+          "pairedMedianMs": -0.025749999999788997,
+          "file": "noise-after-nested-d5-f4-first-r1.json"
+        },
+        {
+          "regime": "noise-after",
+          "run": 2,
+          "headMs": 0.20433299999967858,
+          "workingMs": 0.19116699999995035,
+          "gainMs": 0.013165999999728228,
+          "pairedMedianMs": 0.015624000000116212,
+          "file": "noise-after-nested-d5-f4-first-r2.json"
+        },
+        {
+          "regime": "noise-after",
+          "run": 3,
+          "headMs": 0.1983329999998915,
+          "workingMs": 0.17866699999997593,
+          "gainMs": 0.019665999999915584,
+          "pairedMedianMs": 0.03216600000018843,
+          "file": "noise-after-nested-d5-f4-first-r3.json"
+        }
+      ],
+      "steady": {
+        "samplesPerEngine": 606,
+        "headMs": 0.10462499999998442,
+        "workingMs": 0.09962600000004329,
+        "gainMs": 0.004998999999941134,
+        "runs": [
+          {
+            "run": 1,
+            "firstOrder": "head",
+            "headMs": 0.11062499999998465,
+            "workingMs": 0.09466599999991843,
+            "emptyMs": 0.014917000000011171,
+            "gcInside": {
+              "head": 2,
+              "working": 4
+            },
+            "gcPauseInsideMs": {
+              "head": 1.8965010046958923,
+              "working": 0.7761249989271164
+            },
+            "file": "steady-nested-d5-f4-first-r1.json"
+          },
+          {
+            "run": 2,
+            "firstOrder": "working",
+            "headMs": 0.10237499999992394,
+            "workingMs": 0.09829200000000071,
+            "emptyMs": 0.014957999999992921,
+            "gcInside": {
+              "head": 0,
+              "working": 1
+            },
+            "gcPauseInsideMs": {
+              "head": 0,
+              "working": 0.2025419920682907
+            },
+            "file": "steady-nested-d5-f4-first-r2.json"
+          },
+          {
+            "run": 3,
+            "firstOrder": "head",
+            "headMs": 0.10458299999997678,
+            "workingMs": 0.1015000000000299,
+            "emptyMs": 0.01475000000000648,
+            "gcInside": {
+              "head": 0,
+              "working": 1
+            },
+            "gcPauseInsideMs": {
+              "head": 0,
+              "working": 2.9647500067949295
+            },
+            "file": "steady-nested-d5-f4-first-r3.json"
+          },
+          {
+            "run": 4,
+            "firstOrder": "working",
+            "headMs": 0.09695800000012866,
+            "workingMs": 0.09612500000007174,
+            "emptyMs": 0.01475000000000648,
+            "gcInside": {
+              "head": 0,
+              "working": 2
+            },
+            "gcPauseInsideMs": {
+              "head": 0,
+              "working": 2.0159169882535934
+            },
+            "file": "steady-nested-d5-f4-first-r4.json"
+          },
+          {
+            "run": 5,
+            "firstOrder": "head",
+            "headMs": 0.11149899999989543,
+            "workingMs": 0.09583300000011263,
+            "emptyMs": 0.015166999999991049,
+            "gcInside": {
+              "head": 2,
+              "working": 2
+            },
+            "gcPauseInsideMs": {
+              "head": 1.9676669985055923,
+              "working": 0.3769170045852661
+            },
+            "file": "steady-nested-d5-f4-first-r5.json"
+          },
+          {
+            "run": 6,
+            "firstOrder": "working",
+            "headMs": 0.10079099999995833,
+            "workingMs": 0.10574999999994361,
+            "emptyMs": 0.015084000000001652,
+            "gcInside": {
+              "head": 1,
+              "working": 0
+            },
+            "gcPauseInsideMs": {
+              "head": 2.030000001192093,
+              "working": 0
+            },
+            "file": "steady-nested-d5-f4-first-r6.json"
+          }
+        ]
+      }
+    },
+    {
+      "name": "nested-d5-f4",
+      "mode": "later",
+      "headMs": 0.11412399999994705,
+      "workingMs": 0.1105409999998983,
+      "gainMs": 0.0029589999999188876,
+      "gainRunRangeMs": [
+        0.0007080000000314612,
+        0.0035830000000487416
+      ],
+      "pairedMedianMs": 0.0024159999999255888,
+      "pooledPairedCi95": [
+        0.000624999999956799,
+        0.00408399999997755
+      ],
+      "noOpNoiseMs": 0.004165999999997894,
+      "maxNoiseMs": 0.018873000000070306,
+      "aboveNoise": false,
+      "regressionBeyondNoise": false,
+      "runs": [
+        {
+          "run": 1,
+          "headMs": 0.11412399999994705,
+          "workingMs": 0.1105409999998983,
+          "gainMs": 0.0035830000000487416,
+          "pairedMedianMs": 0.0038339999999834617,
+          "pairedCi95": [
+            0.0002919999999448919,
+            0.005790999999987889
+          ],
+          "noiseMs": 0.01129099999999994,
+          "emptyMs": 0.014959000000089873,
+          "headError99Ms": 0.003167000000075859,
+          "workingError99Ms": 0.0028330000000096334,
+          "improvementBeyondNoise": false,
+          "regressionBeyondNoise": false,
+          "gcInside": 0,
+          "file": "forced-nested-d5-f4-later-r1.json"
+        },
+        {
+          "run": 2,
+          "headMs": 0.11479199999993739,
+          "workingMs": 0.1118330000000185,
+          "gainMs": 0.0029589999999188876,
+          "pairedMedianMs": 0.0030000000000427463,
+          "pairedCi95": [
+            0.0002920000000017353,
+            0.00541699999996581
+          ],
+          "noiseMs": 0.018873000000070306,
+          "emptyMs": 0.014874999999989313,
+          "headError99Ms": 0.002916000000027452,
+          "workingError99Ms": 0.0024990000000570944,
+          "improvementBeyondNoise": false,
+          "regressionBeyondNoise": false,
+          "gcInside": 0,
+          "file": "forced-nested-d5-f4-later-r2.json"
+        },
+        {
+          "run": 3,
+          "headMs": 0.11054199999999526,
+          "workingMs": 0.1098339999999638,
+          "gainMs": 0.0007080000000314612,
+          "pairedMedianMs": 0.001040999999986525,
+          "pairedCi95": [
+            -0.0036250000000563887,
+            0.0034999999999740794
+          ],
+          "noiseMs": 0.013499000000024353,
+          "emptyMs": 0.015249999999994657,
+          "headError99Ms": 0.004082999999980075,
+          "workingError99Ms": 0.0035830000000487416,
+          "improvementBeyondNoise": false,
+          "regressionBeyondNoise": false,
+          "gcInside": 0,
+          "file": "forced-nested-d5-f4-later-r3.json"
+        }
+      ],
+      "controls": [
+        {
+          "regime": "noise-before",
+          "run": 1,
+          "headMs": 0.1162909999999755,
+          "workingMs": 0.1121249999999776,
+          "gainMs": 0.004165999999997894,
+          "pairedMedianMs": 0.0019170000000485743,
+          "file": "noise-before-nested-d5-f4-later-r1.json"
+        },
+        {
+          "regime": "noise-before",
+          "run": 2,
+          "headMs": 0.11562599999992074,
+          "workingMs": 0.1160420000000073,
+          "gainMs": -0.00041600000008656934,
+          "pairedMedianMs": 0.0007500000000391083,
+          "file": "noise-before-nested-d5-f4-later-r2.json"
+        },
+        {
+          "regime": "noise-before",
+          "run": 3,
+          "headMs": 0.11075100000005023,
+          "workingMs": 0.11062600000002476,
+          "gainMs": 0.00012500000002546585,
+          "pairedMedianMs": 0.001667000000054486,
+          "file": "noise-before-nested-d5-f4-later-r3.json"
+        },
+        {
+          "regime": "noise-after",
+          "run": 1,
+          "headMs": 0.11412499999993031,
+          "workingMs": 0.11216699999998525,
+          "gainMs": 0.0019579999999450592,
+          "pairedMedianMs": 0.0019170000000485743,
+          "file": "noise-after-nested-d5-f4-later-r1.json"
+        },
+        {
+          "regime": "noise-after",
+          "run": 2,
+          "headMs": 0.11349999999994509,
+          "workingMs": 0.11054200000002368,
+          "gainMs": 0.0029579999999214124,
+          "pairedMedianMs": 0.0036670000000071923,
+          "file": "noise-after-nested-d5-f4-later-r2.json"
+        },
+        {
+          "regime": "noise-after",
+          "run": 3,
+          "headMs": 0.10987500000000239,
+          "workingMs": 0.10870799999999292,
+          "gainMs": 0.001167000000009466,
+          "pairedMedianMs": 0.001541000000031545,
+          "file": "noise-after-nested-d5-f4-later-r3.json"
+        }
+      ],
+      "steady": {
+        "samplesPerEngine": 606,
+        "headMs": 0.042665999999996984,
+        "workingMs": 0.04050000000000864,
+        "gainMs": 0.002165999999988344,
+        "runs": [
+          {
+            "run": 1,
+            "firstOrder": "head",
+            "headMs": 0.043082999999995764,
+            "workingMs": 0.03904100000002586,
+            "emptyMs": 0.01587499999999409,
+            "gcInside": {
+              "head": 0,
+              "working": 1
+            },
+            "gcPauseInsideMs": {
+              "head": 0,
+              "working": 0.9151670038700104
+            },
+            "file": "steady-nested-d5-f4-later-r1.json"
+          },
+          {
+            "run": 2,
+            "firstOrder": "working",
+            "headMs": 0.040751000000000204,
+            "workingMs": 0.039874999999995,
+            "emptyMs": 0.015083000000004176,
+            "gcInside": {
+              "head": 1,
+              "working": 0
+            },
+            "gcPauseInsideMs": {
+              "head": 0.8409160077571869,
+              "working": 0
+            },
+            "file": "steady-nested-d5-f4-later-r2.json"
+          },
+          {
+            "run": 3,
+            "firstOrder": "head",
+            "headMs": 0.043707999999980984,
+            "workingMs": 0.04045799999997257,
+            "emptyMs": 0.01500000000001478,
+            "gcInside": {
+              "head": 1,
+              "working": 0
+            },
+            "gcPauseInsideMs": {
+              "head": 0.8497089892625809,
+              "working": 0
+            },
+            "file": "steady-nested-d5-f4-later-r3.json"
+          },
+          {
+            "run": 4,
+            "firstOrder": "working",
+            "headMs": 0.045833999999999264,
+            "workingMs": 0.04391700000000753,
+            "emptyMs": 0.0153749999999917,
+            "gcInside": {
+              "head": 0,
+              "working": 1
+            },
+            "gcPauseInsideMs": {
+              "head": 0,
+              "working": 1.0869589895009995
+            },
+            "file": "steady-nested-d5-f4-later-r4.json"
+          },
+          {
+            "run": 5,
+            "firstOrder": "head",
+            "headMs": 0.04083400000001802,
+            "workingMs": 0.03970800000001873,
+            "emptyMs": 0.015124999999983402,
+            "gcInside": {
+              "head": 0,
+              "working": 1
+            },
+            "gcPauseInsideMs": {
+              "head": 0,
+              "working": 0.8658749908208847
+            },
+            "file": "steady-nested-d5-f4-later-r5.json"
+          },
+          {
+            "run": 6,
+            "firstOrder": "working",
+            "headMs": 0.04316600000001358,
+            "workingMs": 0.04316600000001358,
+            "emptyMs": 0.015208999999998696,
+            "gcInside": {
+              "head": 0,
+              "working": 1
+            },
+            "gcPauseInsideMs": {
+              "head": 0,
+              "working": 0.9297500103712082
+            },
+            "file": "steady-nested-d5-f4-later-r6.json"
+          }
+        ]
+      }
+    },
+    {
+      "name": "oneOf-40",
+      "mode": "first",
+      "headMs": 1.4132509999999456,
+      "workingMs": 1.4148749999999382,
+      "gainMs": -0.0016239999999925203,
+      "gainRunRangeMs": [
+        -0.0025830000001860753,
+        0.0006250000000136424
+      ],
+      "pairedMedianMs": -0.004834000000073502,
+      "pooledPairedCi95": [
+        -0.00933399999996709,
+        0.0010829999998804851
+      ],
+      "noOpNoiseMs": 0.009958000000096945,
+      "maxNoiseMs": 0.049498999999840976,
+      "aboveNoise": false,
+      "regressionBeyondNoise": false,
+      "runs": [
+        {
+          "run": 1,
+          "headMs": 1.4132509999999456,
+          "workingMs": 1.4148749999999382,
+          "gainMs": -0.0016239999999925203,
+          "pairedMedianMs": -0.0024169999999799074,
+          "pairedCi95": [
+            -0.00933399999996709,
+            0.010167000000137705
+          ],
+          "noiseMs": 0.04079200000008143,
+          "emptyMs": 0.01495799999997871,
+          "headError99Ms": 0.015625,
+          "workingError99Ms": 0.013167000000066764,
+          "improvementBeyondNoise": false,
+          "regressionBeyondNoise": false,
+          "gcInside": 0,
+          "file": "forced-oneOf-40-first-r1.json"
+        },
+        {
+          "run": 2,
+          "headMs": 1.4263739999999814,
+          "workingMs": 1.4257489999999677,
+          "gainMs": 0.0006250000000136424,
+          "pairedMedianMs": -0.010416999999961263,
+          "pairedCi95": [
+            -0.016833999999903426,
+            0.0014590000000680448
+          ],
+          "noiseMs": 0.049498999999840976,
+          "emptyMs": 0.014959000000004608,
+          "headError99Ms": 0.01908299999990959,
+          "workingError99Ms": 0.015332999999941421,
+          "improvementBeyondNoise": false,
+          "regressionBeyondNoise": false,
+          "gcInside": 0,
+          "file": "forced-oneOf-40-first-r2.json"
+        },
+        {
+          "run": 3,
+          "headMs": 1.4103329999998095,
+          "workingMs": 1.4129159999999956,
+          "gainMs": -0.0025830000001860753,
+          "pairedMedianMs": -0.00408400000014808,
+          "pairedCi95": [
+            -0.012917000000015832,
+            0.006457999999952335
+          ],
+          "noiseMs": 0.04141599999967127,
+          "emptyMs": 0.014959000000089873,
+          "headError99Ms": 0.01379199999996672,
+          "workingError99Ms": 0.013499999999794454,
+          "improvementBeyondNoise": false,
+          "regressionBeyondNoise": false,
+          "gcInside": 0,
+          "file": "forced-oneOf-40-first-r3.json"
+        }
+      ],
+      "controls": [
+        {
+          "regime": "noise-before",
+          "run": 1,
+          "headMs": 1.4017509999998765,
+          "workingMs": 1.4034589999998843,
+          "gainMs": -0.0017080000000078144,
+          "pairedMedianMs": -0.0020829999998568383,
+          "file": "noise-before-oneOf-40-first-r1.json"
+        },
+        {
+          "regime": "noise-before",
+          "run": 2,
+          "headMs": 1.4087919999999485,
+          "workingMs": 1.4063340000000153,
+          "gainMs": 0.002457999999933236,
+          "pairedMedianMs": -0.003459000000020751,
+          "file": "noise-before-oneOf-40-first-r2.json"
+        },
+        {
+          "regime": "noise-before",
+          "run": 3,
+          "headMs": 1.5055409999999796,
+          "workingMs": 1.5108330000000336,
+          "gainMs": -0.005292000000054031,
+          "pairedMedianMs": -0.009165999999822816,
+          "file": "noise-before-oneOf-40-first-r3.json"
+        },
+        {
+          "regime": "noise-after",
+          "run": 1,
+          "headMs": 1.411458000000124,
+          "workingMs": 1.401500000000027,
+          "gainMs": 0.009958000000096945,
+          "pairedMedianMs": 0.006791000000021086,
+          "file": "noise-after-oneOf-40-first-r1.json"
+        },
+        {
+          "regime": "noise-after",
+          "run": 2,
+          "headMs": 1.4152489999999887,
+          "workingMs": 1.4082920000000456,
+          "gainMs": 0.0069569999999430365,
+          "pairedMedianMs": 0.003249999999979991,
+          "file": "noise-after-oneOf-40-first-r2.json"
+        },
+        {
+          "regime": "noise-after",
+          "run": 3,
+          "headMs": 1.5253340000000577,
+          "workingMs": 1.5261249999999933,
+          "gainMs": -0.0007909999999355932,
+          "pairedMedianMs": -0.002708999999867956,
+          "file": "noise-after-oneOf-40-first-r3.json"
+        }
+      ],
+      "steady": {
+        "samplesPerEngine": 606,
+        "headMs": 0.9247910000000275,
+        "workingMs": 0.9180409999999881,
+        "gainMs": 0.006750000000039336,
+        "runs": [
+          {
+            "run": 1,
+            "firstOrder": "head",
+            "headMs": 0.941249999999954,
+            "workingMs": 0.9397909999999996,
+            "emptyMs": 0.015000000000000568,
+            "gcInside": {
+              "head": 2,
+              "working": 1
+            },
+            "gcPauseInsideMs": {
+              "head": 0.8396250009536743,
+              "working": 4.878375008702278
+            },
+            "file": "steady-oneOf-40-first-r1.json"
+          },
+          {
+            "run": 2,
+            "firstOrder": "working",
+            "headMs": 0.9107080000001133,
+            "workingMs": 0.9160830000000715,
+            "emptyMs": 0.01520899999991343,
+            "gcInside": {
+              "head": 7,
+              "working": 8
+            },
+            "gcPauseInsideMs": {
+              "head": 4.874875009059906,
+              "working": 4.916211009025574
+            },
+            "file": "steady-oneOf-40-first-r2.json"
+          },
+          {
+            "run": 3,
+            "firstOrder": "head",
+            "headMs": 0.9239170000000456,
+            "workingMs": 0.9110010000000273,
+            "emptyMs": 0.014915999999999485,
+            "gcInside": {
+              "head": 8,
+              "working": 7
+            },
+            "gcPauseInsideMs": {
+              "head": 4.966748997569084,
+              "working": 4.766999989748001
+            },
+            "file": "steady-oneOf-40-first-r3.json"
+          },
+          {
+            "run": 4,
+            "firstOrder": "working",
+            "headMs": 0.9351239999999734,
+            "workingMs": 0.9178330000000301,
+            "emptyMs": 0.015084000000001652,
+            "gcInside": {
+              "head": 7,
+              "working": 8
+            },
+            "gcPauseInsideMs": {
+              "head": 4.73470900952816,
+              "working": 4.558707013726234
+            },
+            "file": "steady-oneOf-40-first-r4.json"
+          },
+          {
+            "run": 5,
+            "firstOrder": "head",
+            "headMs": 0.9267919999999634,
+            "workingMs": 0.9201259999999678,
+            "emptyMs": 0.014957999999992921,
+            "gcInside": {
+              "head": 8,
+              "working": 7
+            },
+            "gcPauseInsideMs": {
+              "head": 4.588749974966049,
+              "working": 4.8341250121593475
+            },
+            "file": "steady-oneOf-40-first-r5.json"
+          },
+          {
+            "run": 6,
+            "firstOrder": "working",
+            "headMs": 0.8997500000000116,
+            "workingMs": 0.9105840000000569,
+            "emptyMs": 0.014874999999989313,
+            "gcInside": {
+              "head": 7,
+              "working": 8
+            },
+            "gcPauseInsideMs": {
+              "head": 4.646292015910149,
+              "working": 4.823499992489815
+            },
+            "file": "steady-oneOf-40-first-r6.json"
+          }
+        ]
+      }
+    },
+    {
+      "name": "oneOf-40",
+      "mode": "later",
+      "headMs": 1.0072500000000133,
+      "workingMs": 1.0151249999999123,
+      "gainMs": -0.007874999999899046,
+      "gainRunRangeMs": [
+        -0.010333999999943444,
+        -0.0042910000000233595
+      ],
+      "pairedMedianMs": -0.008667000000002645,
+      "pooledPairedCi95": [
+        -0.01250100000004295,
+        0.0009160000000747459
+      ],
+      "noOpNoiseMs": 0.016666999999870313,
+      "maxNoiseMs": 0.04308500000006177,
+      "aboveNoise": false,
+      "regressionBeyondNoise": false,
+      "runs": [
+        {
+          "run": 1,
+          "headMs": 1.0072500000000133,
+          "workingMs": 1.0151249999999123,
+          "gainMs": -0.007874999999899046,
+          "pairedMedianMs": -0.009875000000079126,
+          "pairedCi95": [
+            -0.018832999999972344,
+            0.005291999999997188
+          ],
+          "noiseMs": 0.04070800000012298,
+          "emptyMs": 0.015124999999997613,
+          "headError99Ms": 0.017958000000021457,
+          "workingError99Ms": 0.011834000000135347,
+          "improvementBeyondNoise": false,
+          "regressionBeyondNoise": false,
+          "gcInside": 0,
+          "file": "forced-oneOf-40-later-r1.json"
+        },
+        {
+          "run": 2,
+          "headMs": 1.0122500000000514,
+          "workingMs": 1.0225839999999948,
+          "gainMs": -0.010333999999943444,
+          "pairedMedianMs": -0.00687500000003638,
+          "pairedCi95": [
+            -0.021250000000009095,
+            0.005624999999895408
+          ],
+          "noiseMs": 0.04308500000006177,
+          "emptyMs": 0.015290999999990618,
+          "headError99Ms": 0.015333000000055108,
+          "workingError99Ms": 0.021208999999998923,
+          "improvementBeyondNoise": false,
+          "regressionBeyondNoise": false,
+          "gcInside": 0,
+          "file": "forced-oneOf-40-later-r2.json"
+        },
+        {
+          "run": 3,
+          "headMs": 0.9378339999999525,
+          "workingMs": 0.9421249999999759,
+          "gainMs": -0.0042910000000233595,
+          "pairedMedianMs": -0.007582000000013522,
+          "pairedCi95": [
+            -0.015876000000048407,
+            0.005916999999953987
+          ],
+          "noiseMs": 0.040667000000070175,
+          "emptyMs": 0.015083000000004176,
+          "headError99Ms": 0.020167000000071766,
+          "workingError99Ms": 0.014833000000010088,
+          "improvementBeyondNoise": false,
+          "regressionBeyondNoise": false,
+          "gcInside": 0,
+          "file": "forced-oneOf-40-later-r3.json"
+        }
+      ],
+      "controls": [
+        {
+          "regime": "noise-before",
+          "run": 1,
+          "headMs": 0.9385840000000343,
+          "workingMs": 0.9360839999999797,
+          "gainMs": 0.0025000000000545697,
+          "pairedMedianMs": 0.0009169999999585343,
+          "file": "noise-before-oneOf-40-later-r1.json"
+        },
+        {
+          "regime": "noise-before",
+          "run": 2,
+          "headMs": 0.9205000000000467,
+          "workingMs": 0.937166999999917,
+          "gainMs": -0.016666999999870313,
+          "pairedMedianMs": -0.01574999999991178,
+          "file": "noise-before-oneOf-40-later-r2.json"
+        },
+        {
+          "regime": "noise-before",
+          "run": 3,
+          "headMs": 0.9303739999999863,
+          "workingMs": 0.9393329999999906,
+          "gainMs": -0.00895900000000438,
+          "pairedMedianMs": -0.011874999999974989,
+          "file": "noise-before-oneOf-40-later-r3.json"
+        },
+        {
+          "regime": "noise-after",
+          "run": 1,
+          "headMs": 0.9296249999999873,
+          "workingMs": 0.9361240000000066,
+          "gainMs": -0.00649900000001935,
+          "pairedMedianMs": -0.008667000000002645,
+          "file": "noise-after-oneOf-40-later-r1.json"
+        },
+        {
+          "regime": "noise-after",
+          "run": 2,
+          "headMs": 0.9412079999999747,
+          "workingMs": 0.9452910000000116,
+          "gainMs": -0.004083000000036918,
+          "pairedMedianMs": -0.0011669999998957792,
+          "file": "noise-after-oneOf-40-later-r2.json"
+        },
+        {
+          "regime": "noise-after",
+          "run": 3,
+          "headMs": 0.9314589999999043,
+          "workingMs": 0.9422089999999343,
+          "gainMs": -0.010750000000030013,
+          "pairedMedianMs": -0.012166999999976724,
+          "file": "noise-after-oneOf-40-later-r3.json"
+        }
+      ],
+      "steady": {
+        "samplesPerEngine": 606,
+        "headMs": 0.5739580000000046,
+        "workingMs": 0.5765830000000136,
+        "gainMs": -0.0026250000000089813,
+        "runs": [
+          {
+            "run": 1,
+            "firstOrder": "head",
+            "headMs": 0.5982089999999971,
+            "workingMs": 0.5787500000000136,
+            "emptyMs": 0.015332999999998265,
+            "gcInside": {
+              "head": 12,
+              "working": 11
+            },
+            "gcPauseInsideMs": {
+              "head": 1.9934569895267487,
+              "working": 1.7914170026779175
+            },
+            "file": "steady-oneOf-40-later-r1.json"
+          },
+          {
+            "run": 2,
+            "firstOrder": "working",
+            "headMs": 0.5690830000000346,
+            "workingMs": 0.5733340000000169,
+            "emptyMs": 0.015499999999974534,
+            "gcInside": {
+              "head": 11,
+              "working": 12
+            },
+            "gcPauseInsideMs": {
+              "head": 1.7956259846687317,
+              "working": 1.9302490055561066
+            },
+            "file": "steady-oneOf-40-later-r2.json"
+          },
+          {
+            "run": 3,
+            "firstOrder": "head",
+            "headMs": 0.5658750000000055,
+            "workingMs": 0.5754159999999899,
+            "emptyMs": 0.015041999999994005,
+            "gcInside": {
+              "head": 12,
+              "working": 11
+            },
+            "gcPauseInsideMs": {
+              "head": 1.917043000459671,
+              "working": 1.815875992178917
+            },
+            "file": "steady-oneOf-40-later-r3.json"
+          },
+          {
+            "run": 4,
+            "firstOrder": "working",
+            "headMs": 0.5632910000000066,
+            "workingMs": 0.5687910000000187,
+            "emptyMs": 0.014958999999990397,
+            "gcInside": {
+              "head": 11,
+              "working": 12
+            },
+            "gcPauseInsideMs": {
+              "head": 1.8677060157060623,
+              "working": 2.0028330087661743
+            },
+            "file": "steady-oneOf-40-later-r4.json"
+          },
+          {
+            "run": 5,
+            "firstOrder": "head",
+            "headMs": 0.5664579999999972,
+            "workingMs": 0.5795000000000101,
+            "emptyMs": 0.015292000000002304,
+            "gcInside": {
+              "head": 12,
+              "working": 11
+            },
+            "gcPauseInsideMs": {
+              "head": 2.0409180223941803,
+              "working": 1.8072520047426224
+            },
+            "file": "steady-oneOf-40-later-r5.json"
+          },
+          {
+            "run": 6,
+            "firstOrder": "working",
+            "headMs": 0.5832920000000001,
+            "workingMs": 0.6000829999999837,
+            "emptyMs": 0.015332999999998265,
+            "gcInside": {
+              "head": 11,
+              "working": 12
+            },
+            "gcPauseInsideMs": {
+              "head": 1.8970849812030792,
+              "working": 2.050124019384384
+            },
+            "file": "steady-oneOf-40-later-r6.json"
+          }
+        ]
+      }
+    }
+  ],
+  "freezeCounts": [],
+  "checks": {
+    "development": {
+      "name": "development",
+      "command": "npx --no-install vitest run --reporter=dot --configLoader runner --cache false --maxWorkers=1 --no-file-parallelism --project unit --project render --project react18",
+      "exitCode": 1,
+      "signal": null,
+      "started": 1791304449850,
+      "ended": 1791304751545,
+      "elapsedMs": 301695,
+      "summary": [
+        "PATH105 {\"fixture\":\"nested-d5-f4\",\"nodes\":1365,\"tupleTraversalsBefore\":1365,\"tupleTraversalsAfter\":1365,\"wholeKeyEncodingsBefore\":2730,\"wholeKeyEncodingsAfter\":2730,\"hostKeyReencodingsBefore\":1365,\"hostKeyReencodingsAfter\":1365,\"producedKeysBefore\":2730,\"producedKeysAfter\":2730}",
+        "PATH105 {\"fixture\":\"flat-500\",\"nodes\":501,\"tupleTraversalsBefore\":501,\"tupleTraversalsAfter\":501,\"wholeKeyEncodingsBefore\":1002,\"wholeKeyEncodingsAfter\":1002,\"hostKeyReencodingsBefore\":501,\"hostKeyReencodingsAfter\":501,\"producedKeysBefore\":1002,\"producedKeysAfter\":1002}",
+        "PATH105 {\"fixture\":\"oneOf-20\",\"nodes\":63,\"tupleTraversalsBefore\":63,\"tupleTraversalsAfter\":63,\"wholeKeyEncodingsBefore\":126,\"wholeKeyEncodingsAfter\":126,\"hostKeyReencodingsBefore\":63,\"hostKeyReencodingsAfter\":63,\"producedKeysBefore\":126,\"producedKeysAfter\":126}",
+        "PATH105 {\"fixture\":\"sample-0\",\"nodes\":3,\"tupleTraversalsBefore\":3,\"tupleTraversalsAfter\":3,\"wholeKeyEncodingsBefore\":6,\"wholeKeyEncodingsAfter\":6,\"hostKeyReencodingsBefore\":3,\"hostKeyReencodingsAfter\":3,\"producedKeysBefore\":6,\"producedKeysAfter\":6}",
+        " Test Files  2 failed | 435 passed (437)",
+        "      Tests  4 failed | 3240 passed | 1 todo (3245)",
+        "   Duration  300.04s (transform 4.78s, setup 0ms, collect 77.75s, tests 132.47s, environment 22.29s, prepare 15.45s)",
+        "stderr | src/__tests__/scenarios/refSchema-context-provider.render.test.tsx > context passed via Form context prop reaches FormTypeInput > clears props.context when the Form context prop is emptied",
+        "stderr | src/__tests__/scenarios/refSchema-context-provider.render.test.tsx > context passed via Form context prop reaches FormTypeInput > clears props.context when the Form context prop is emptied",
+        "Error: render",
+        "ErrorBoundary caught an error: Error: render",
+        "Error: Uncaught [Error: render]",
+        "    at performUnitOfWork (file:///Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/node_modules/react-dom18/cjs/react-dom.development.js:26599:12) Error: render",
+        "Error: Uncaught [Error: render]",
+        "    at performUnitOfWork (file:///Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/node_modules/react-dom18/cjs/react-dom.development.js:26599:12) Error: render",
+        "ErrorBoundary caught an error: Error: render",
+        "⎯⎯⎯⎯⎯⎯⎯ Failed Tests 4 ⎯⎯⎯⎯⎯⎯⎯",
+        " FAIL  |render| src/components/Form/__tests__/Form.effectFeedback.test.tsx > EVENT-070 cross-entry feedback > EVENT-070 React stops two fields writing back through useLayoutEffect",
+        "AssertionError: The watchdog is a failure, not React stopping the cycle: expected 201 to be less than 200",
+        " FAIL  |render| src/components/Form/__tests__/Form.effectFeedback.test.tsx > EVENT-070 cross-entry feedback > EVENT-070 React stops two fields writing back through useEffect",
+        "AssertionError: The watchdog is a failure, not React stopping the cycle: expected 201 to be less than 200",
+        " FAIL  |react18| src/components/Form/__tests__/Form.effectFeedback.test.tsx > EVENT-070 cross-entry feedback > EVENT-070 React stops two fields writing back through useLayoutEffect",
+        "AssertionError: The watchdog is a failure, not React stopping the cycle: expected 201 to be less than 200",
+        " FAIL  |react18| src/components/Form/__tests__/Form.effectFeedback.test.tsx > EVENT-070 cross-entry feedback > EVENT-070 React stops two fields writing back through useEffect",
+        "AssertionError: The watchdog is a failure, not React stopping the cycle: expected 201 to be less than 200"
+      ]
+    },
+    "targeted": {
+      "name": "targeted",
+      "command": "npx --no-install vitest run --reporter=dot --configLoader runner --cache false --maxWorkers=1 --no-file-parallelism --project unit src/core/blueprint/__tests__/blueprint.path-key-once.test.ts src/core/blueprint/__tests__/blueprint.cold-binding.test.ts src/core/blueprint/__tests__/blueprint.owned-inline-differential.test.ts",
+      "exitCode": 0,
+      "signal": null,
+      "started": 1791304064627,
+      "ended": 1791304067617,
+      "elapsedMs": 2990,
+      "summary": [
+        "PATH105 {\"fixture\":\"nested-d5-f4\",\"nodes\":1365,\"tupleTraversalsBefore\":1365,\"tupleTraversalsAfter\":1365,\"wholeKeyEncodingsBefore\":2730,\"wholeKeyEncodingsAfter\":0,\"hostKeyReencodingsBefore\":1365,\"hostKeyReencodingsAfter\":0,\"producedKeysBefore\":2730,\"producedKeysAfter\":2730}",
+        "PATH105 {\"fixture\":\"flat-500\",\"nodes\":501,\"tupleTraversalsBefore\":501,\"tupleTraversalsAfter\":501,\"wholeKeyEncodingsBefore\":1002,\"wholeKeyEncodingsAfter\":0,\"hostKeyReencodingsBefore\":501,\"hostKeyReencodingsAfter\":0,\"producedKeysBefore\":1002,\"producedKeysAfter\":1002}",
+        "PATH105 {\"fixture\":\"oneOf-20\",\"nodes\":63,\"tupleTraversalsBefore\":63,\"tupleTraversalsAfter\":63,\"wholeKeyEncodingsBefore\":126,\"wholeKeyEncodingsAfter\":0,\"hostKeyReencodingsBefore\":63,\"hostKeyReencodingsAfter\":0,\"producedKeysBefore\":126,\"producedKeysAfter\":126}",
+        "PATH105 {\"fixture\":\"sample-0\",\"nodes\":3,\"tupleTraversalsBefore\":3,\"tupleTraversalsAfter\":3,\"wholeKeyEncodingsBefore\":6,\"wholeKeyEncodingsAfter\":0,\"hostKeyReencodingsBefore\":3,\"hostKeyReencodingsAfter\":0,\"producedKeysBefore\":6,\"producedKeysAfter\":6}",
+        " Test Files  3 passed (3)",
+        "      Tests  8 passed (8)",
+        "   Duration  1.38s (transform 333ms, setup 0ms, collect 723ms, tests 187ms, environment 0ms, prepare 105ms)"
+      ]
+    },
+    "targeted-head": {
+      "name": "targeted-head",
+      "command": "npx --no-install vitest run --reporter=dot --configLoader runner --cache false --maxWorkers=1 --no-file-parallelism --project unit src/core/blueprint/__tests__/blueprint.path-key-once.test.ts src/core/blueprint/__tests__/blueprint.cold-binding.test.ts src/core/blueprint/__tests__/blueprint.owned-inline-differential.test.ts",
+      "exitCode": 0,
+      "signal": null,
+      "started": 1791304444749,
+      "ended": 1791304447723,
+      "elapsedMs": 2974,
+      "summary": [
+        "PATH105 {\"fixture\":\"nested-d5-f4\",\"nodes\":1365,\"tupleTraversalsBefore\":1365,\"tupleTraversalsAfter\":1365,\"wholeKeyEncodingsBefore\":2730,\"wholeKeyEncodingsAfter\":2730,\"hostKeyReencodingsBefore\":1365,\"hostKeyReencodingsAfter\":1365,\"producedKeysBefore\":2730,\"producedKeysAfter\":2730}",
+        "PATH105 {\"fixture\":\"flat-500\",\"nodes\":501,\"tupleTraversalsBefore\":501,\"tupleTraversalsAfter\":501,\"wholeKeyEncodingsBefore\":1002,\"wholeKeyEncodingsAfter\":1002,\"hostKeyReencodingsBefore\":501,\"hostKeyReencodingsAfter\":501,\"producedKeysBefore\":1002,\"producedKeysAfter\":1002}",
+        "PATH105 {\"fixture\":\"oneOf-20\",\"nodes\":63,\"tupleTraversalsBefore\":63,\"tupleTraversalsAfter\":63,\"wholeKeyEncodingsBefore\":126,\"wholeKeyEncodingsAfter\":126,\"hostKeyReencodingsBefore\":63,\"hostKeyReencodingsAfter\":63,\"producedKeysBefore\":126,\"producedKeysAfter\":126}",
+        "PATH105 {\"fixture\":\"sample-0\",\"nodes\":3,\"tupleTraversalsBefore\":3,\"tupleTraversalsAfter\":3,\"wholeKeyEncodingsBefore\":6,\"wholeKeyEncodingsAfter\":6,\"hostKeyReencodingsBefore\":3,\"hostKeyReencodingsAfter\":3,\"producedKeysBefore\":6,\"producedKeysAfter\":6}",
+        " Test Files  3 passed (3)",
+        "      Tests  8 passed (8)",
+        "   Duration  1.36s (transform 334ms, setup 0ms, collect 720ms, tests 173ms, environment 0ms, prepare 108ms)"
+      ]
+    },
+    "production": {
+      "name": "production",
+      "command": "npx --no-install vitest run --reporter=dot --configLoader runner --cache false --maxWorkers=1 --no-file-parallelism --project production",
+      "exitCode": 0,
+      "signal": null,
+      "started": 1791304757759,
+      "ended": 1791304762958,
+      "elapsedMs": 5199,
+      "summary": [
+        " Test Files  4 passed (4)",
+        "      Tests  14 passed (14)",
+        "   Duration  3.59s (transform 1.08s, setup 0ms, collect 2.15s, tests 192ms, environment 615ms, prepare 140ms)"
+      ]
+    },
+    "typecheck": {
+      "name": "typecheck",
+      "command": "npx --no-install tsc --noEmit --composite false --rootDir . -p tsconfig.json",
+      "exitCode": 0,
+      "signal": null,
+      "started": 1791304768456,
+      "ended": 1791304776557,
+      "elapsedMs": 8101,
+      "summary": []
+    },
+    "lint": {
+      "name": "lint",
+      "command": "npx --no-install eslint src/**/*.{ts,tsx}",
+      "exitCode": 0,
+      "signal": null,
+      "started": 1791304776821,
+      "ended": 1791304782381,
+      "elapsedMs": 5560,
+      "summary": []
+    },
+    "legacy": {
+      "name": "legacy",
+      "command": "node architecture/verification/07-switch/tools/check-legacy-isolation.mjs",
+      "exitCode": 0,
+      "signal": null,
+      "started": 1791304783078,
+      "ended": 1791304783510,
+      "elapsedMs": 433,
+      "summary": []
+    }
+  },
+  "pathCounts": {
+    "candidate": [
+      {
+        "fixture": "nested-d5-f4",
+        "nodes": 1365,
+        "tupleTraversalsBefore": 1365,
+        "tupleTraversalsAfter": 1365,
+        "wholeKeyEncodingsBefore": 2730,
+        "wholeKeyEncodingsAfter": 0,
+        "hostKeyReencodingsBefore": 1365,
+        "hostKeyReencodingsAfter": 0,
+        "producedKeysBefore": 2730,
+        "producedKeysAfter": 2730
+      },
+      {
+        "fixture": "flat-500",
+        "nodes": 501,
+        "tupleTraversalsBefore": 501,
+        "tupleTraversalsAfter": 501,
+        "wholeKeyEncodingsBefore": 1002,
+        "wholeKeyEncodingsAfter": 0,
+        "hostKeyReencodingsBefore": 501,
+        "hostKeyReencodingsAfter": 0,
+        "producedKeysBefore": 1002,
+        "producedKeysAfter": 1002
+      },
+      {
+        "fixture": "oneOf-20",
+        "nodes": 63,
+        "tupleTraversalsBefore": 63,
+        "tupleTraversalsAfter": 63,
+        "wholeKeyEncodingsBefore": 126,
+        "wholeKeyEncodingsAfter": 0,
+        "hostKeyReencodingsBefore": 63,
+        "hostKeyReencodingsAfter": 0,
+        "producedKeysBefore": 126,
+        "producedKeysAfter": 126
+      },
+      {
+        "fixture": "sample-0",
+        "nodes": 3,
+        "tupleTraversalsBefore": 3,
+        "tupleTraversalsAfter": 3,
+        "wholeKeyEncodingsBefore": 6,
+        "wholeKeyEncodingsAfter": 0,
+        "hostKeyReencodingsBefore": 3,
+        "hostKeyReencodingsAfter": 0,
+        "producedKeysBefore": 6,
+        "producedKeysAfter": 6
+      }
+    ],
+    "restoredHead": [
+      {
+        "fixture": "nested-d5-f4",
+        "nodes": 1365,
+        "tupleTraversalsBefore": 1365,
+        "tupleTraversalsAfter": 1365,
+        "wholeKeyEncodingsBefore": 2730,
+        "wholeKeyEncodingsAfter": 2730,
+        "hostKeyReencodingsBefore": 1365,
+        "hostKeyReencodingsAfter": 1365,
+        "producedKeysBefore": 2730,
+        "producedKeysAfter": 2730
+      },
+      {
+        "fixture": "flat-500",
+        "nodes": 501,
+        "tupleTraversalsBefore": 501,
+        "tupleTraversalsAfter": 501,
+        "wholeKeyEncodingsBefore": 1002,
+        "wholeKeyEncodingsAfter": 1002,
+        "hostKeyReencodingsBefore": 501,
+        "hostKeyReencodingsAfter": 501,
+        "producedKeysBefore": 1002,
+        "producedKeysAfter": 1002
+      },
+      {
+        "fixture": "oneOf-20",
+        "nodes": 63,
+        "tupleTraversalsBefore": 63,
+        "tupleTraversalsAfter": 63,
+        "wholeKeyEncodingsBefore": 126,
+        "wholeKeyEncodingsAfter": 126,
+        "hostKeyReencodingsBefore": 63,
+        "hostKeyReencodingsAfter": 63,
+        "producedKeysBefore": 126,
+        "producedKeysAfter": 126
+      },
+      {
+        "fixture": "sample-0",
+        "nodes": 3,
+        "tupleTraversalsBefore": 3,
+        "tupleTraversalsAfter": 3,
+        "wholeKeyEncodingsBefore": 6,
+        "wholeKeyEncodingsAfter": 6,
+        "hostKeyReencodingsBefore": 3,
+        "hostKeyReencodingsAfter": 3,
+        "producedKeysBefore": 6,
+        "producedKeysAfter": 6
+      }
+    ],
+    "unit": "node당 tuple 순회·전체 키 JSON 인코딩·host key 재인코딩·생산 키 문자열 수; 일반 공개 path 할당 총량은 아님"
+  },
+  "disposition": {
+    "product": "HEAD로 복구",
+    "reason": "95C-01 잡음 밖 개선 0행; 모든 행의 판정 회귀도 잡음 안",
+    "candidatePatch": "path105-candidate-product.patch",
+    "candidatePatchSha256": "0c9425b707bdfe0532f9fe87eaf2330af10a035fd55acd6e64b9fdc4c0711d24",
+    "originalFixtureUnchanged": true
+  },
+  "validation": {
+    "timerProcesses": 150,
+    "measuredPairs": 15150,
+    "maxTimerProcessElapsedMs": 3814,
+    "processRecords": 153,
+    "maxRecordedProcessElapsedMs": 3815,
+    "maxCheckElapsedMs": 301695,
+    "signals": 0,
+    "sequentialTimers": true,
+    "forcedMajorGcInsideClocks": 0,
+    "headControlByteIdentical": true,
+    "measuredSourcesUnchanged": false,
+    "productRestoredToHead": true,
+    "timerDriverSha256": "785183bcc2864df8f779d78c3660a49ea3bc648c5a67910fe0ca016898abbc51",
+    "largestArtifact": {
+      "file": "counts-head-nested-d5-f4.json",
+      "bytes": 519104
+    }
+  }
+}

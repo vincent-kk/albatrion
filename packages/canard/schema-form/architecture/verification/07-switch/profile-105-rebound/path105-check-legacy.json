@@ -1,0 +1,10 @@
+{
+  "name": "legacy",
+  "command": "node architecture/verification/07-switch/tools/check-legacy-isolation.mjs",
+  "exitCode": 0,
+  "signal": null,
+  "started": 1791304783078,
+  "ended": 1791304783510,
+  "elapsedMs": 433,
+  "summary": []
+}

@@ -1,0 +1,17 @@
+{
+  "HEAD": "e633fefefb1efcf81302ccf3efc0b51431fb2cee",
+  "command": "pair",
+  "args": [
+    "steady",
+    "sample-0",
+    "later",
+    "1",
+    "working"
+  ],
+  "status": 0,
+  "signal": null,
+  "started": 1791304218777,
+  "ended": 1791304218856,
+  "elapsedMs": 79,
+  "driverSha256": "785183bcc2864df8f779d78c3660a49ea3bc648c5a67910fe0ca016898abbc51"
+}

@@ -1,0 +1,17 @@
+{
+  "HEAD": "e633fefefb1efcf81302ccf3efc0b51431fb2cee",
+  "command": "pair",
+  "args": [
+    "noise-after",
+    "nested-d5-f4",
+    "later",
+    "3",
+    "control"
+  ],
+  "status": 0,
+  "signal": null,
+  "started": 1791304280837,
+  "ended": 1791304281918,
+  "elapsedMs": 1081,
+  "driverSha256": "785183bcc2864df8f779d78c3660a49ea3bc648c5a67910fe0ca016898abbc51"
+}
