@@ -2,6 +2,8 @@
 
 ## Requirements
 
+- 계산 진입에서 branchless와 빈 shapeDirty·entered를 증명한 경우만 안정 계산 몸통으로 직접 재귀합니다. 각 노드의 dirty 확인·stateDirty 표시·자식 post-order·동일 updateOutput 인자·dirty 삭제와 터미널 루트의 schema 선택은 유지합니다. 게이트·생김·형상 변경은 기존 계산을 사용합니다. 속도 비용은 진입의 O(1) 부재 확인과 기존 O(방문 노드) 작업이며 노드마다 반복하던 gate/appearance/shape 검사·일반 shell을 제거합니다. 메모리 비용은 기존 dirtyChildren 배열과 깊이 D의 재귀 stack을 유지하고 새 heap container·노드/문맥 필드·보유 cache·폼 간 공유는 없습니다(109 갱신 Q1).
+
 - 분기·파생·잠복 원본이 없고 살아 있는 비루트 scalar의 현재 원본·입력·유효 타입이 같은 경우만 쓰기 진입을 특화합니다. dispose·가상·detach·잠복 검사와 빈 wrong-kind release의 호출을 생략하되 조상 표시와 실제 wrong-kind 처리, 표시·계산·전이 조건·상태 키·커밋·배달 순서는 유지합니다. 이 증명은 빈 derive 검사와 대상 유효 타입 재해석에만 전달하며 실제 생김·이탈·배열·오류 처리는 기존 마감입니다. 속도 비용은 고정 수의 O(1) 타입·capability·size 검사이며 빈 helper·배열·sort callback 및 중복 유효 타입 해석을 제거합니다. 메모리 비용은 호출별 boolean/local만 추가하고 빈 release 임시 배열·closure를 줄이며 새 상주 메모리·문맥 필드·폼 간 공유는 없습니다(109 갱신 F1).
 
 - 불일치 경로가 계속 비었고 메모가 루트 빈 경로 row 하나이면 커밋 번호만 갱신합니다. 최초 row와 불일치→빈 전이 및 다른 row가 있는 경우는 기존 초기화를 유지합니다. 현재 커밋 검사·경고·진단·방문·배달 순서는 같습니다. 속도 비용은 O(1) row/size 확인이며 빈 경로의 clear·색인 재생성·set을 제거합니다. 메모리 비용은 기존 폼 소유 row를 재사용하여 커밋별 row/색인 할당을 줄이고 새 보유 메모리·필드·폼 간 공유는 없습니다(109 갱신 C1).

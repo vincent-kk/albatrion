@@ -11,6 +11,7 @@ import { scheduleRelocatedGates } from './scheduleRelocatedGates';
 import { updateOutput } from './updateOutput';
 import { getHostWheelBudgetCap } from '../gates/getGateBudgetCap';
 import { hasIndependentLeafDefaults } from './utils/hasIndependentLeafDefaults';
+import { computeStableNode } from './utils/computeStableNode';
 
 /**
  * Finish a dirty subtree with one descent and a bounded host gate wheel.
@@ -22,6 +23,11 @@ export const computeNode = <Self extends SchemaNodeRecord<Self>>(
   node: Self,
   context: SettlementContext<Self>,
 ): void => {
+  if (!context.hasGates && context.root.runtime.blueprint.capabilities.branchless &&
+    context.shapeDirtyPaths.size === 0 && context.entered.size === 0) {
+    computeStableNode(node, context);
+    return;
+  }
   if (!context.dirtyPaths.has(node.path)) return;
   if (node === context.root && context.kind === 'load' &&
     node.behavior.type === 'object' && node.behavior.strategy === 'branch' &&
