@@ -1,0 +1,4810 @@
+{
+  "head": "4ae9dced58bcbc05c05ff5907fca463af024c7b6",
+  "variant": "old",
+  "name": "nested-d5-f4",
+  "mode": "mount",
+  "beginUs": 58984780748,
+  "endUs": 58988283177,
+  "operations": 1002,
+  "synchronousMs": 0,
+  "elapsedMs": 3502.429,
+  "targetMs": 3500,
+  "intervalUs": 100,
+  "warmup": 20,
+  "environment": {
+    "date": "2026-10-05T23:09:17.590Z",
+    "head": "4ae9dced58bcbc05c05ff5907fca463af024c7b6",
+    "node": "v26.10.0",
+    "v8": "14.6.202.34-node.35",
+    "esbuild": "0.25.9",
+    "platform": "darwin",
+    "arch": "arm64",
+    "cpu": "Apple M1 Max",
+    "cpus": 10,
+    "memoryBytes": 68719476736,
+    "osRelease": "25.6.0",
+    "mode": "production",
+    "validation": "off",
+    "subscribers": 0
+  },
+  "evidence": {
+    "sha256": "264faa6616a1c88ca4566f0ba761ba1a6c7fbe9b115da26c62c53f8d433350a5",
+    "outputBytes": 14669,
+    "liveWidth": 4,
+    "value": {
+      "n0": {
+        "n0": {
+          "n0": {
+            "n0": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n1": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n2": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n3": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            }
+          },
+          "n1": {
+            "n0": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n1": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n2": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n3": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            }
+          },
+          "n2": {
+            "n0": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n1": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n2": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n3": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            }
+          },
+          "n3": {
+            "n0": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n1": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n2": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n3": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            }
+          }
+        },
+        "n1": {
+          "n0": {
+            "n0": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n1": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n2": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n3": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            }
+          },
+          "n1": {
+            "n0": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n1": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n2": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n3": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            }
+          },
+          "n2": {
+            "n0": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n1": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n2": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n3": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            }
+          },
+          "n3": {
+            "n0": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n1": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n2": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n3": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            }
+          }
+        },
+        "n2": {
+          "n0": {
+            "n0": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n1": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n2": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n3": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            }
+          },
+          "n1": {
+            "n0": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n1": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n2": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n3": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            }
+          },
+          "n2": {
+            "n0": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n1": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n2": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n3": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            }
+          },
+          "n3": {
+            "n0": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n1": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n2": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n3": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            }
+          }
+        },
+        "n3": {
+          "n0": {
+            "n0": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n1": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n2": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n3": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            }
+          },
+          "n1": {
+            "n0": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n1": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n2": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n3": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            }
+          },
+          "n2": {
+            "n0": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n1": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n2": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n3": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            }
+          },
+          "n3": {
+            "n0": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n1": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n2": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n3": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            }
+          }
+        }
+      },
+      "n1": {
+        "n0": {
+          "n0": {
+            "n0": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n1": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n2": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n3": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            }
+          },
+          "n1": {
+            "n0": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n1": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n2": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n3": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            }
+          },
+          "n2": {
+            "n0": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n1": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n2": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n3": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            }
+          },
+          "n3": {
+            "n0": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n1": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n2": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n3": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            }
+          }
+        },
+        "n1": {
+          "n0": {
+            "n0": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n1": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n2": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n3": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            }
+          },
+          "n1": {
+            "n0": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n1": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n2": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n3": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            }
+          },
+          "n2": {
+            "n0": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n1": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n2": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n3": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            }
+          },
+          "n3": {
+            "n0": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n1": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n2": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n3": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            }
+          }
+        },
+        "n2": {
+          "n0": {
+            "n0": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n1": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n2": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n3": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            }
+          },
+          "n1": {
+            "n0": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n1": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n2": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n3": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            }
+          },
+          "n2": {
+            "n0": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n1": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n2": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n3": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            }
+          },
+          "n3": {
+            "n0": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n1": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n2": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n3": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            }
+          }
+        },
+        "n3": {
+          "n0": {
+            "n0": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n1": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n2": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n3": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            }
+          },
+          "n1": {
+            "n0": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n1": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n2": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n3": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            }
+          },
+          "n2": {
+            "n0": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n1": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n2": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n3": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            }
+          },
+          "n3": {
+            "n0": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n1": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n2": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n3": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            }
+          }
+        }
+      },
+      "n2": {
+        "n0": {
+          "n0": {
+            "n0": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n1": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n2": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n3": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            }
+          },
+          "n1": {
+            "n0": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n1": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n2": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n3": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            }
+          },
+          "n2": {
+            "n0": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n1": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n2": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n3": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            }
+          },
+          "n3": {
+            "n0": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n1": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n2": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n3": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            }
+          }
+        },
+        "n1": {
+          "n0": {
+            "n0": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n1": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n2": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n3": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            }
+          },
+          "n1": {
+            "n0": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n1": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n2": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n3": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            }
+          },
+          "n2": {
+            "n0": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n1": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n2": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n3": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            }
+          },
+          "n3": {
+            "n0": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n1": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n2": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n3": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            }
+          }
+        },
+        "n2": {
+          "n0": {
+            "n0": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n1": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n2": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n3": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            }
+          },
+          "n1": {
+            "n0": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n1": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n2": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n3": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            }
+          },
+          "n2": {
+            "n0": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n1": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n2": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n3": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            }
+          },
+          "n3": {
+            "n0": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n1": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n2": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n3": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            }
+          }
+        },
+        "n3": {
+          "n0": {
+            "n0": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n1": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n2": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n3": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            }
+          },
+          "n1": {
+            "n0": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n1": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n2": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n3": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            }
+          },
+          "n2": {
+            "n0": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n1": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n2": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n3": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            }
+          },
+          "n3": {
+            "n0": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n1": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n2": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n3": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            }
+          }
+        }
+      },
+      "n3": {
+        "n0": {
+          "n0": {
+            "n0": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n1": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n2": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n3": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            }
+          },
+          "n1": {
+            "n0": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n1": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n2": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n3": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            }
+          },
+          "n2": {
+            "n0": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n1": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n2": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n3": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            }
+          },
+          "n3": {
+            "n0": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n1": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n2": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n3": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            }
+          }
+        },
+        "n1": {
+          "n0": {
+            "n0": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n1": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n2": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n3": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            }
+          },
+          "n1": {
+            "n0": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n1": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n2": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n3": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            }
+          },
+          "n2": {
+            "n0": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n1": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n2": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n3": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            }
+          },
+          "n3": {
+            "n0": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n1": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n2": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n3": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            }
+          }
+        },
+        "n2": {
+          "n0": {
+            "n0": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n1": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n2": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n3": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            }
+          },
+          "n1": {
+            "n0": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n1": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n2": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n3": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            }
+          },
+          "n2": {
+            "n0": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n1": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n2": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n3": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            }
+          },
+          "n3": {
+            "n0": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n1": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n2": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n3": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            }
+          }
+        },
+        "n3": {
+          "n0": {
+            "n0": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n1": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n2": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n3": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            }
+          },
+          "n1": {
+            "n0": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n1": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n2": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n3": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            }
+          },
+          "n2": {
+            "n0": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n1": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n2": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n3": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            }
+          },
+          "n3": {
+            "n0": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n1": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n2": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            },
+            "n3": {
+              "n0": "leaf",
+              "n1": "leaf",
+              "n2": "leaf",
+              "n3": "leaf"
+            }
+          }
+        }
+      }
+    }
+  },
+  "rawProfile": "/private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/prof/old-nested-d5-f4-mount.cpuprofile",
+  "rawBytes": 682393,
+  "denominator": "workload non-idle samples; first updates restricted to profileFirstUpdate descendants",
+  "selectedMs": 3492.333,
+  "selectedSamples": 22523,
+  "idleMs": 10.096,
+  "cpuUsPerOperation": 3485.3622754491016,
+  "functions": [
+    {
+      "function": "structuredClone",
+      "file": "node:internal/worker/js_transferable",
+      "line": 101,
+      "column": 24,
+      "selfUs": 735246,
+      "totalUs": 737737,
+      "selfSamples": 4756,
+      "totalSamples": 4772,
+      "selfMs": 735.246,
+      "totalMs": 737.737,
+      "selfPercent": 21.053146993714517,
+      "totalPercent": 21.124474670657122,
+      "selfUsPerOperation": 733.7784431137725,
+      "totalUsPerOperation": 736.2644710578842
+    },
+    {
+      "function": "(garbage collector)",
+      "file": "(V8)",
+      "line": 0,
+      "column": -1,
+      "selfUs": 639251,
+      "totalUs": 639251,
+      "selfSamples": 4029,
+      "totalSamples": 4029,
+      "selfMs": 639.251,
+      "totalMs": 639.251,
+      "selfPercent": 18.304411406357872,
+      "totalPercent": 18.304411406357872,
+      "selfUsPerOperation": 637.9750499001996,
+      "totalUsPerOperation": 637.9750499001996
+    },
+    {
+      "function": "needsRealComputedManager",
+      "file": "packages/canard/schema-form/src/__legacy__/core/nodes/AbstractNode/utils/getComputedPropertiesManager/utils/needsRealComputedManager/needsRealComputedManager.ts",
+      "line": 27,
+      "column": 40,
+      "selfUs": 435260,
+      "totalUs": 435260,
+      "selfSamples": 2837,
+      "totalSamples": 2837,
+      "selfMs": 435.26,
+      "totalMs": 435.26,
+      "selfPercent": 12.463301752725183,
+      "totalPercent": 12.463301752725183,
+      "selfUsPerOperation": 434.39121756487026,
+      "totalUsPerOperation": 434.39121756487026
+    },
+    {
+      "function": "mergeEventEntries",
+      "file": "packages/canard/schema-form/src/__legacy__/core/nodes/AbstractNode/utils/EventCascadeManager/utils/mergeEventEntries.ts",
+      "line": 13,
+      "column": 33,
+      "selfUs": 227554,
+      "totalUs": 227554,
+      "selfSamples": 1481,
+      "totalSamples": 1481,
+      "selfMs": 227.554,
+      "totalMs": 227.554,
+      "selfPercent": 6.515816217983794,
+      "totalPercent": 6.515816217983794,
+      "selfUsPerOperation": 227.0998003992016,
+      "totalUsPerOperation": 227.0998003992016
+    },
+    {
+      "function": "getComputedPropertiesManager",
+      "file": "packages/canard/schema-form/src/__legacy__/core/nodes/AbstractNode/utils/getComputedPropertiesManager/getComputedPropertiesManager.ts",
+      "line": 19,
+      "column": 44,
+      "selfUs": 175623,
+      "totalUs": 610121,
+      "selfSamples": 1145,
+      "totalSamples": 3977,
+      "selfMs": 175.623,
+      "totalMs": 610.121,
+      "selfPercent": 5.028815980606661,
+      "totalPercent": 17.470298508189224,
+      "selfUsPerOperation": 175.27245508982037,
+      "totalUsPerOperation": 608.9031936127744
+    },
+    {
+      "function": "EventCascadeManager",
+      "file": "packages/canard/schema-form/src/__legacy__/core/nodes/AbstractNode/utils/EventCascadeManager/EventCascadeManager.ts",
+      "line": 257,
+      "column": 2,
+      "selfUs": 114991,
+      "totalUs": 114991,
+      "selfSamples": 749,
+      "totalSamples": 749,
+      "selfMs": 114.991,
+      "totalMs": 114.991,
+      "selfPercent": 3.29266997162069,
+      "totalPercent": 3.29266997162069,
+      "selfUsPerOperation": 114.76147704590818,
+      "totalUsPerOperation": 114.76147704590818
+    },
+    {
+      "function": "AbstractNode",
+      "file": "packages/canard/schema-form/src/__legacy__/core/nodes/AbstractNode/AbstractNode.ts",
+      "line": 1146,
+      "column": 2,
+      "selfUs": 109749,
+      "totalUs": 888938,
+      "selfSamples": 712,
+      "totalSamples": 5790,
+      "selfMs": 109.749,
+      "totalMs": 888.938,
+      "selfPercent": 3.142569737765557,
+      "totalPercent": 25.4539873488582,
+      "selfUsPerOperation": 109.52994011976048,
+      "totalUsPerOperation": 887.1636726546906
+    },
+    {
+      "function": "scannerFactory",
+      "file": "packages/winglet/json-schema/dist/utils/JSONSchemaScanner/utils/scannerFactory.cjs",
+      "line": 17,
+      "column": 24,
+      "selfUs": 87363,
+      "totalUs": 159887,
+      "selfSamples": 563,
+      "totalSamples": 1031,
+      "selfMs": 87.363,
+      "totalMs": 159.887,
+      "selfPercent": 2.5015655723552137,
+      "totalPercent": 4.5782289375039555,
+      "selfUsPerOperation": 87.18862275449102,
+      "totalUsPerOperation": 159.5678642714571
+    },
+    {
+      "function": "(program)",
+      "file": "(V8)",
+      "line": 0,
+      "column": -1,
+      "selfUs": 64748,
+      "totalUs": 64748,
+      "selfSamples": 418,
+      "totalSamples": 418,
+      "selfMs": 64.748,
+      "totalMs": 64.748,
+      "selfPercent": 1.8540041857405924,
+      "totalPercent": 1.8540041857405924,
+      "selfUsPerOperation": 64.6187624750499,
+      "totalUsPerOperation": 64.6187624750499
+    },
+    {
+      "function": "BranchStrategy2",
+      "file": "packages/canard/schema-form/src/__legacy__/core/nodes/ObjectNode/strategies/BranchStrategy/BranchStrategy.ts",
+      "line": 761,
+      "column": 2,
+      "selfUs": 60969,
+      "totalUs": 1435921,
+      "selfSamples": 397,
+      "totalSamples": 9350,
+      "selfMs": 60.969,
+      "totalMs": 1435.921,
+      "selfPercent": 1.7457957187931392,
+      "totalPercent": 41.11638265881289,
+      "selfUsPerOperation": 60.84730538922156,
+      "totalUsPerOperation": 1433.0548902195608
+    },
+    {
+      "function": "getChildNodeMap",
+      "file": "packages/canard/schema-form/src/__legacy__/core/nodes/ObjectNode/strategies/BranchStrategy/utils/getChildNodeMap/getChildNodeMap.ts",
+      "line": 33,
+      "column": 31,
+      "selfUs": 53634,
+      "totalUs": 1433882,
+      "selfSamples": 349,
+      "totalSamples": 9337,
+      "selfMs": 53.634,
+      "totalMs": 1433.882,
+      "selfPercent": 1.535764201180128,
+      "totalPercent": 41.057997619356456,
+      "selfUsPerOperation": 53.52694610778443,
+      "totalUsPerOperation": 1431.0199600798403
+    },
+    {
+      "function": "StringNode",
+      "file": "packages/canard/schema-form/src/__legacy__/core/nodes/StringNode/StringNode.ts",
+      "line": 111,
+      "column": 2,
+      "selfUs": 43160,
+      "totalUs": 828244,
+      "selfSamples": 280,
+      "totalSamples": 5394,
+      "selfMs": 43.16,
+      "totalMs": 828.244,
+      "selfPercent": 1.2358500750071657,
+      "totalPercent": 23.71606602234094,
+      "selfUsPerOperation": 43.07385229540918,
+      "totalUsPerOperation": 826.5908183632735
+    },
+    {
+      "function": "sortObjectKeys",
+      "file": "packages/winglet/common-utils/dist/utils/object/sortObjectKeys.cjs",
+      "line": 6,
+      "column": 23,
+      "selfUs": 34463,
+      "totalUs": 45980,
+      "selfSamples": 225,
+      "totalSamples": 300,
+      "selfMs": 34.463,
+      "totalMs": 45.98,
+      "selfPercent": 0.9868188400132519,
+      "totalPercent": 1.3165983885270964,
+      "selfUsPerOperation": 34.39421157684631,
+      "totalUsPerOperation": 45.88822355289421
+    },
+    {
+      "function": "escapeSegment",
+      "file": "packages/winglet/json/dist/JSONPointer/utils/escape/escapeSegment.cjs",
+      "line": 6,
+      "column": 22,
+      "selfUs": 30810,
+      "totalUs": 30810,
+      "selfSamples": 200,
+      "totalSamples": 200,
+      "selfMs": 30.81,
+      "totalMs": 30.81,
+      "selfPercent": 0.8822182764358382,
+      "totalPercent": 0.8822182764358382,
+      "selfUsPerOperation": 30.748502994011975,
+      "totalUsPerOperation": 30.748502994011975
+    },
+    {
+      "function": "pushMapChildren",
+      "file": "packages/winglet/json-schema/dist/utils/JSONSchemaScanner/utils/getStackEntriesForNode.cjs",
+      "line": 34,
+      "column": 24,
+      "selfUs": 30243,
+      "totalUs": 48013,
+      "selfSamples": 195,
+      "totalSamples": 310,
+      "selfMs": 30.243,
+      "totalMs": 48.013,
+      "selfPercent": 0.8659827112706606,
+      "totalPercent": 1.3748116230611456,
+      "selfUsPerOperation": 30.182634730538922,
+      "totalUsPerOperation": 47.917165668662676
+    },
+    {
+      "function": "onChange",
+      "file": "packages/canard/schema-form/src/__legacy__/core/nodes/AbstractNode/AbstractNode.ts",
+      "line": 414,
+      "column": 12,
+      "selfUs": 30098,
+      "totalUs": 57076,
+      "selfSamples": 196,
+      "totalSamples": 371,
+      "selfMs": 30.098,
+      "totalMs": 57.076,
+      "selfPercent": 0.8618307589797422,
+      "totalPercent": 1.6343229583204122,
+      "selfUsPerOperation": 30.037924151696608,
+      "totalUsPerOperation": 56.96207584830339
+    },
+    {
+      "function": "ObjectNode",
+      "file": "packages/canard/schema-form/src/__legacy__/core/nodes/ObjectNode/ObjectNode.ts",
+      "line": 96,
+      "column": 2,
+      "selfUs": 28893,
+      "totalUs": 1518204,
+      "selfSamples": 188,
+      "totalSamples": 9886,
+      "selfMs": 28.893,
+      "totalMs": 1518.204,
+      "selfPercent": 0.8273266037345236,
+      "totalPercent": 43.472486730217305,
+      "selfUsPerOperation": 28.835329341317365,
+      "totalUsPerOperation": 1515.1736526946108
+    },
+    {
+      "function": "runNextTicks",
+      "file": "node:internal/process/task_queues",
+      "line": 63,
+      "column": 21,
+      "selfUs": 28701,
+      "totalUs": 56455,
+      "selfSamples": 171,
+      "totalSamples": 342,
+      "selfMs": 28.701,
+      "totalMs": 56.455,
+      "selfPercent": 0.821828846218273,
+      "totalPercent": 1.616541148853789,
+      "selfUsPerOperation": 28.643712574850298,
+      "totalUsPerOperation": 56.34231536926148
+    },
+    {
+      "function": "(anonymous)",
+      "file": "packages/canard/schema-form/src/__legacy__/core/nodes/ObjectNode/strategies/BranchStrategy/BranchStrategy.ts",
+      "line": 807,
+      "column": 6,
+      "selfUs": 28477,
+      "totalUs": 28791,
+      "selfSamples": 185,
+      "totalSamples": 187,
+      "selfMs": 28.477,
+      "totalMs": 28.791,
+      "selfPercent": 0.8154147957826473,
+      "totalPercent": 0.8244059200540156,
+      "selfUsPerOperation": 28.420159680638722,
+      "totalUsPerOperation": 28.733532934131738
+    },
+    {
+      "function": "__acquireBatch__",
+      "file": "packages/canard/schema-form/src/__legacy__/core/nodes/AbstractNode/utils/EventCascadeManager/EventCascadeManager.ts",
+      "line": 90,
+      "column": 10,
+      "selfUs": 27983,
+      "totalUs": 87388,
+      "selfSamples": 182,
+      "totalSamples": 569,
+      "selfMs": 27.983,
+      "totalMs": 87.388,
+      "selfPercent": 0.8012695238397942,
+      "totalPercent": 2.5022814261984756,
+      "selfUsPerOperation": 27.927145708582835,
+      "totalUsPerOperation": 87.21357285429141
+    },
+    {
+      "function": "runMicrotasks",
+      "file": "(V8)",
+      "line": 0,
+      "column": -1,
+      "selfUs": 25493,
+      "totalUs": 25493,
+      "selfSamples": 157,
+      "totalSamples": 157,
+      "selfMs": 25.493,
+      "totalMs": 25.493,
+      "selfPercent": 0.7299704810509192,
+      "totalPercent": 0.7299704810509192,
+      "selfUsPerOperation": 25.442115768463072,
+      "totalUsPerOperation": 25.442115768463072
+    },
+    {
+      "function": "getStackEntriesForNode",
+      "file": "packages/winglet/json-schema/dist/utils/JSONSchemaScanner/utils/getStackEntriesForNode.cjs",
+      "line": 74,
+      "column": 31,
+      "selfUs": 24818,
+      "totalUs": 72991,
+      "selfSamples": 160,
+      "totalSamples": 471,
+      "selfMs": 24.818,
+      "totalMs": 72.991,
+      "selfPercent": 0.7106424272828508,
+      "totalPercent": 2.090035514940872,
+      "selfUsPerOperation": 24.768463073852296,
+      "totalUsPerOperation": 72.84530938123753
+    },
+    {
+      "function": "publish",
+      "file": "packages/canard/schema-form/src/__legacy__/core/nodes/AbstractNode/utils/EventCascadeManager/EventCascadeManager.ts",
+      "line": 134,
+      "column": 9,
+      "selfUs": 22879,
+      "totalUs": 110267,
+      "selfSamples": 149,
+      "totalSamples": 718,
+      "selfMs": 22.879,
+      "totalMs": 110.267,
+      "selfPercent": 0.6551208031994658,
+      "totalPercent": 3.157402229397941,
+      "selfUsPerOperation": 22.833333333333332,
+      "totalUsPerOperation": 110.04690618762476
+    },
+    {
+      "function": "__parseValue__",
+      "file": "packages/canard/schema-form/src/__legacy__/core/nodes/ObjectNode/strategies/BranchStrategy/BranchStrategy.ts",
+      "line": 220,
+      "column": 10,
+      "selfUs": 21909,
+      "totalUs": 84160,
+      "selfSamples": 143,
+      "totalSamples": 549,
+      "selfMs": 21.909,
+      "totalMs": 84.16,
+      "selfPercent": 0.6273456740809081,
+      "totalPercent": 2.409850377956512,
+      "selfUsPerOperation": 21.865269461077844,
+      "totalUsPerOperation": 83.99201596806387
+    },
+    {
+      "function": "enqueueMicrotask",
+      "file": "(V8)",
+      "line": 0,
+      "column": -1,
+      "selfUs": 21174,
+      "totalUs": 21174,
+      "selfSamples": 138,
+      "totalSamples": 138,
+      "selfMs": 21.174,
+      "totalMs": 21.174,
+      "selfPercent": 0.6062995710890113,
+      "totalPercent": 0.6062995710890113,
+      "selfUsPerOperation": 21.131736526946106,
+      "totalUsPerOperation": 21.131736526946106
+    },
+    {
+      "function": "publish",
+      "file": "packages/canard/schema-form/src/__legacy__/core/nodes/AbstractNode/AbstractNode.ts",
+      "line": 891,
+      "column": 9,
+      "selfUs": 20165,
+      "totalUs": 130432,
+      "selfSamples": 131,
+      "totalSamples": 849,
+      "selfMs": 20.165,
+      "totalMs": 130.432,
+      "selfPercent": 0.5774077099749652,
+      "totalPercent": 3.7348099393729064,
+      "selfUsPerOperation": 20.124750499001998,
+      "totalUsPerOperation": 130.17165668662673
+    },
+    {
+      "function": "(anonymous)",
+      "file": "packages/canard/schema-form/src/__legacy__/core/nodes/AbstractNode/utils/EventCascadeManager/EventCascadeManager.ts",
+      "line": 120,
+      "column": 22,
+      "selfUs": 18886,
+      "totalUs": 254015,
+      "selfSamples": 122,
+      "totalSamples": 1652,
+      "selfMs": 18.886,
+      "totalMs": 254.015,
+      "selfPercent": 0.5407846273536916,
+      "totalPercent": 7.2735045598458115,
+      "selfUsPerOperation": 18.848303393213573,
+      "totalUsPerOperation": 253.50798403193613
+    },
+    {
+      "function": "__emitChange__",
+      "file": "packages/canard/schema-form/src/__legacy__/core/nodes/StringNode/StringNode.ts",
+      "line": 40,
+      "column": 10,
+      "selfUs": 17899,
+      "totalUs": 130371,
+      "selfSamples": 117,
+      "totalSamples": 849,
+      "selfMs": 17.899,
+      "totalMs": 130.371,
+      "selfPercent": 0.512522717621716,
+      "totalPercent": 3.7330632559953476,
+      "selfUsPerOperation": 17.86327345309381,
+      "totalUsPerOperation": 130.11077844311376
+    },
+    {
+      "function": "__emitChange__",
+      "file": "packages/canard/schema-form/src/__legacy__/core/nodes/ObjectNode/strategies/BranchStrategy/BranchStrategy.ts",
+      "line": 137,
+      "column": 10,
+      "selfUs": 17861,
+      "totalUs": 151387,
+      "selfSamples": 116,
+      "totalSamples": 986,
+      "selfMs": 17.861,
+      "totalMs": 151.387,
+      "selfPercent": 0.511434619779958,
+      "totalPercent": 4.334838630794944,
+      "selfUsPerOperation": 17.825349301397207,
+      "totalUsPerOperation": 151.08483033932137
+    },
+    {
+      "function": "__initialize__",
+      "file": "packages/canard/schema-form/src/__legacy__/core/nodes/AbstractNode/AbstractNode.ts",
+      "line": 1041,
+      "column": 9,
+      "selfUs": 17134,
+      "totalUs": 62265,
+      "selfSamples": 112,
+      "totalSamples": 406,
+      "selfMs": 17.134,
+      "totalMs": 62.265,
+      "selfPercent": 0.4906175900179049,
+      "totalPercent": 1.7829055820278308,
+      "selfUsPerOperation": 17.099800399201598,
+      "totalUsPerOperation": 62.14071856287425
+    },
+    {
+      "function": "(anonymous)",
+      "file": "packages/canard/schema-form/src/__legacy__/core/nodes/schemaNodeFactory.ts",
+      "line": 75,
+      "column": 2,
+      "selfUs": 13815,
+      "totalUs": 1519013,
+      "selfSamples": 90,
+      "totalSamples": 9891,
+      "selfMs": 13.815,
+      "totalMs": 1519.013,
+      "selfPercent": 0.39558083378646886,
+      "totalPercent": 43.49565176058526,
+      "selfUsPerOperation": 13.7874251497006,
+      "totalUsPerOperation": 1515.9810379241517
+    },
+    {
+      "function": "hasOwnProperty",
+      "file": "packages/winglet/common-utils/dist/libs/hasOwnProperty.cjs",
+      "line": 6,
+      "column": 23,
+      "selfUs": 13652,
+      "totalUs": 13652,
+      "selfSamples": 89,
+      "totalSamples": 89,
+      "selfMs": 13.652,
+      "totalMs": 13.652,
+      "selfPercent": 0.3909134667284019,
+      "totalPercent": 0.3909134667284019,
+      "selfUsPerOperation": 13.624750499001996,
+      "totalUsPerOperation": 13.624750499001996
+    },
+    {
+      "function": "equalsRecursive",
+      "file": "packages/winglet/common-utils/dist/utils/object/equals/utils/equalsRecursive.cjs",
+      "line": 11,
+      "column": 24,
+      "selfUs": 13383,
+      "totalUs": 13383,
+      "selfSamples": 87,
+      "totalSamples": 87,
+      "selfMs": 13.383,
+      "totalMs": 13.383,
+      "selfPercent": 0.383210879374905,
+      "totalPercent": 0.383210879374905,
+      "selfUsPerOperation": 13.3562874251497,
+      "totalUsPerOperation": 13.3562874251497
+    },
+    {
+      "function": "getChildren",
+      "file": "packages/canard/schema-form/src/__legacy__/core/nodes/ObjectNode/strategies/BranchStrategy/utils/getChildren/getChildren.ts",
+      "line": 31,
+      "column": 27,
+      "selfUs": 12863,
+      "totalUs": 12863,
+      "selfSamples": 84,
+      "totalSamples": 84,
+      "selfMs": 12.863,
+      "totalMs": 12.863,
+      "selfPercent": 0.3683211194350596,
+      "totalPercent": 0.3683211194350596,
+      "selfUsPerOperation": 12.837325349301397,
+      "totalUsPerOperation": 12.837325349301397
+    },
+    {
+      "function": "getScopedSegment",
+      "file": "packages/canard/schema-form/src/__legacy__/core/nodes/AbstractNode/utils/getScopedSegment/getScopedSegment.ts",
+      "line": 44,
+      "column": 32,
+      "selfUs": 12374,
+      "totalUs": 12374,
+      "selfSamples": 81,
+      "totalSamples": 81,
+      "selfMs": 12.374,
+      "totalMs": 12.374,
+      "selfPercent": 0.3543190182608589,
+      "totalPercent": 0.3543190182608589,
+      "selfUsPerOperation": 12.349301397205588,
+      "totalUsPerOperation": 12.349301397205588
+    },
+    {
+      "function": "queueMicrotask",
+      "file": "node:internal/process/task_queues",
+      "line": 160,
+      "column": 23,
+      "selfUs": 12265,
+      "totalUs": 33748,
+      "selfSamples": 80,
+      "totalSamples": 220,
+      "selfMs": 12.265,
+      "totalMs": 33.748,
+      "selfPercent": 0.35119789550423747,
+      "totalPercent": 0.9663454200959645,
+      "selfUsPerOperation": 12.240518962075848,
+      "totalUsPerOperation": 33.68063872255489
+    },
+    {
+      "function": "extractSchemaInfo",
+      "file": "packages/canard/schema-form/src/__legacy__/helpers/jsonSchema/extractSchemaInfo/extractSchemaInfo.ts",
+      "line": 13,
+      "column": 33,
+      "selfUs": 12165,
+      "totalUs": 12165,
+      "selfSamples": 79,
+      "totalSamples": 79,
+      "selfMs": 12.165,
+      "totalMs": 12.165,
+      "selfPercent": 0.3483344801311902,
+      "totalPercent": 0.3483344801311902,
+      "selfUsPerOperation": 12.140718562874252,
+      "totalUsPerOperation": 12.140718562874252
+    },
+    {
+      "function": "__handleEmitChange__",
+      "file": "packages/canard/schema-form/src/__legacy__/core/nodes/ObjectNode/strategies/BranchStrategy/BranchStrategy.ts",
+      "line": 155,
+      "column": 10,
+      "selfUs": 11065,
+      "totalUs": 133396,
+      "selfSamples": 72,
+      "totalSamples": 869,
+      "selfMs": 11.065,
+      "totalMs": 133.396,
+      "selfPercent": 0.31683691102767114,
+      "totalPercent": 3.819681571030025,
+      "selfUsPerOperation": 11.042914171656687,
+      "totalUsPerOperation": 133.12974051896208
+    },
+    {
+      "function": "initialize",
+      "file": "packages/canard/schema-form/src/__legacy__/core/nodes/ObjectNode/strategies/BranchStrategy/BranchStrategy.ts",
+      "line": 717,
+      "column": 9,
+      "selfUs": 9791,
+      "totalUs": 76521,
+      "selfSamples": 64,
+      "totalSamples": 499,
+      "selfMs": 9.791,
+      "totalMs": 76.521,
+      "selfPercent": 0.28035699917505,
+      "totalPercent": 2.1911140776094373,
+      "selfUsPerOperation": 9.771457085828343,
+      "totalUsPerOperation": 76.36826347305389
+    },
+    {
+      "function": "ref",
+      "file": "node:internal/timers",
+      "line": 763,
+      "column": 5,
+      "selfUs": 9281,
+      "totalUs": 9438,
+      "selfSamples": 60,
+      "totalSamples": 61,
+      "selfMs": 9.281,
+      "totalMs": 9.438,
+      "selfPercent": 0.2657535807725094,
+      "totalPercent": 0.27024914290819346,
+      "selfUsPerOperation": 9.2624750499002,
+      "totalUsPerOperation": 9.419161676646707
+    },
+    {
+      "function": "__setDefaultValue__",
+      "file": "packages/canard/schema-form/src/__legacy__/core/nodes/AbstractNode/AbstractNode.ts",
+      "line": 303,
+      "column": 9,
+      "selfUs": 9230,
+      "totalUs": 13696,
+      "selfSamples": 60,
+      "totalSamples": 89,
+      "selfMs": 9.23,
+      "totalMs": 13.696,
+      "selfPercent": 0.2642932389322553,
+      "totalPercent": 0.39217336949254267,
+      "selfUsPerOperation": 9.211576846307386,
+      "totalUsPerOperation": 13.6686626746507
+    },
+    {
+      "function": "__run__",
+      "file": "packages/winglet/json-schema/dist/utils/JSONSchemaScanner/sync/JSONSchemaScanner.cjs",
+      "line": 47,
+      "column": 8,
+      "selfUs": 8356,
+      "totalUs": 168378,
+      "selfSamples": 54,
+      "totalSamples": 1086,
+      "selfMs": 8.356,
+      "totalMs": 168.378,
+      "selfPercent": 0.23926698857182288,
+      "totalPercent": 4.821361536829392,
+      "selfUsPerOperation": 8.33932135728543,
+      "totalUsPerOperation": 168.04191616766468
+    },
+    {
+      "function": "ValidationErrorManager",
+      "file": "packages/canard/schema-form/src/__legacy__/core/nodes/AbstractNode/utils/ValidationErrorManager/ValidationErrorManager.ts",
+      "line": 35,
+      "column": 7,
+      "selfUs": 7692,
+      "totalUs": 7692,
+      "selfSamples": 50,
+      "totalSamples": 50,
+      "selfMs": 7.692,
+      "totalMs": 7.692,
+      "selfPercent": 0.22025391049478957,
+      "totalPercent": 0.22025391049478957,
+      "selfUsPerOperation": 7.676646706586826,
+      "totalUsPerOperation": 7.676646706586826
+    },
+    {
+      "function": "setImmediate",
+      "file": "node:timers",
+      "line": 215,
+      "column": 21,
+      "selfUs": 7637,
+      "totalUs": 27024,
+      "selfSamples": 50,
+      "totalSamples": 176,
+      "selfMs": 7.637,
+      "totalMs": 27.024,
+      "selfPercent": 0.21867903203961364,
+      "totalPercent": 0.7738093704122716,
+      "selfUsPerOperation": 7.621756487025948,
+      "totalUsPerOperation": 26.97005988023952
+    },
+    {
+      "function": "processImmediate",
+      "file": "node:internal/timers",
+      "line": 525,
+      "column": 27,
+      "selfUs": 6393,
+      "totalUs": 84558,
+      "selfSamples": 39,
+      "totalSamples": 516,
+      "selfMs": 6.393,
+      "totalMs": 84.558,
+      "selfPercent": 0.18305814479890664,
+      "totalPercent": 2.4212467711412398,
+      "selfUsPerOperation": 6.380239520958084,
+      "totalUsPerOperation": 84.38922155688623
+    },
+    {
+      "function": "get enabled",
+      "file": "node:internal/async_context_frame",
+      "line": 31,
+      "column": 20,
+      "selfUs": 6100,
+      "totalUs": 6100,
+      "selfSamples": 37,
+      "totalSamples": 37,
+      "selfMs": 6.1,
+      "totalMs": 6.1,
+      "selfPercent": 0.17466833775587837,
+      "totalPercent": 0.17466833775587837,
+      "selfUsPerOperation": 6.087824351297405,
+      "totalUsPerOperation": 6.087824351297405
+    },
+    {
+      "function": "subscribe",
+      "file": "packages/canard/schema-form/src/__legacy__/core/nodes/AbstractNode/utils/EventCascadeManager/EventCascadeManager.ts",
+      "line": 220,
+      "column": 9,
+      "selfUs": 6068,
+      "totalUs": 6068,
+      "selfSamples": 39,
+      "totalSamples": 39,
+      "selfMs": 6.068,
+      "totalMs": 6.068,
+      "selfPercent": 0.17375204483650328,
+      "totalPercent": 0.17375204483650328,
+      "selfUsPerOperation": 6.055888223552894,
+      "totalUsPerOperation": 6.055888223552894
+    },
+    {
+      "function": "__prepareUpdateDependencies__",
+      "file": "packages/canard/schema-form/src/__legacy__/core/nodes/AbstractNode/AbstractNode.ts",
+      "line": 516,
+      "column": 10,
+      "selfUs": 5975,
+      "totalUs": 25299,
+      "selfSamples": 39,
+      "totalSamples": 165,
+      "selfMs": 5.975,
+      "totalMs": 25.299,
+      "selfPercent": 0.1710890685395694,
+      "totalPercent": 0.7244154552272077,
+      "selfUsPerOperation": 5.963073852295409,
+      "totalUsPerOperation": 25.248502994011975
+    },
+    {
+      "function": "sortWithReference",
+      "file": "packages/winglet/common-utils/dist/utils/array/sortWithReference.cjs",
+      "line": 5,
+      "column": 26,
+      "selfUs": 5588,
+      "totalUs": 5588,
+      "selfSamples": 36,
+      "totalSamples": 36,
+      "selfMs": 5.588,
+      "totalMs": 5.588,
+      "selfPercent": 0.16000765104587678,
+      "totalPercent": 0.16000765104587678,
+      "selfUsPerOperation": 5.57684630738523,
+      "totalUsPerOperation": 5.57684630738523
+    },
+    {
+      "function": "pushAsyncContext",
+      "file": "node:internal/async_hooks",
+      "line": 549,
+      "column": 25,
+      "selfUs": 5537,
+      "totalUs": 5537,
+      "selfSamples": 35,
+      "totalSamples": 35,
+      "selfMs": 5.537,
+      "totalMs": 5.537,
+      "selfPercent": 0.1585473092056227,
+      "totalPercent": 0.1585473092056227,
+      "selfUsPerOperation": 5.525948103792415,
+      "totalUsPerOperation": 5.525948103792415
+    },
+    {
+      "function": "resolveReferences",
+      "file": "packages/canard/schema-form/src/__legacy__/core/nodes/schemaNodeFactory.ts",
+      "line": 139,
+      "column": 26,
+      "selfUs": 5037,
+      "totalUs": 19713,
+      "selfSamples": 33,
+      "totalSamples": 128,
+      "selfMs": 5.037,
+      "totalMs": 19.713,
+      "selfPercent": 0.1442302323403868,
+      "totalPercent": 0.5644650724887919,
+      "selfUsPerOperation": 5.026946107784431,
+      "totalUsPerOperation": 19.67365269461078
+    },
+    {
+      "function": "popAsyncContext",
+      "file": "node:internal/async_hooks",
+      "line": 563,
+      "column": 24,
+      "selfUs": 4864,
+      "totalUs": 4864,
+      "selfSamples": 30,
+      "totalSamples": 30,
+      "selfMs": 4.864,
+      "totalMs": 4.864,
+      "selfPercent": 0.13927652374501515,
+      "totalPercent": 0.13927652374501515,
+      "selfUsPerOperation": 4.854291417165669,
+      "totalUsPerOperation": 4.854291417165669
+    },
+    {
+      "function": "__recordDelivery__",
+      "file": "packages/canard/schema-form/src/__legacy__/core/nodes/AbstractNode/utils/EventCascadeManager/EventCascadeManager.ts",
+      "line": 171,
+      "column": 10,
+      "selfUs": 4666,
+      "totalUs": 4666,
+      "selfSamples": 30,
+      "totalSamples": 30,
+      "selfMs": 4.666,
+      "totalMs": 4.666,
+      "selfPercent": 0.13360696130638172,
+      "totalPercent": 0.13360696130638172,
+      "selfUsPerOperation": 4.656686626746507,
+      "totalUsPerOperation": 4.656686626746507
+    },
+    {
+      "function": "joinSegment",
+      "file": "packages/canard/schema-form/src/__legacy__/helpers/jsonPointer/utils/joinSegment.ts",
+      "line": 10,
+      "column": 27,
+      "selfUs": 4493,
+      "totalUs": 4493,
+      "selfSamples": 29,
+      "totalSamples": 29,
+      "selfMs": 4.493,
+      "totalMs": 4.493,
+      "selfPercent": 0.1286532527110101,
+      "totalPercent": 0.1286532527110101,
+      "selfUsPerOperation": 4.484031936127744,
+      "totalUsPerOperation": 4.484031936127744
+    },
+    {
+      "function": "checkDefinedValue",
+      "file": "packages/canard/schema-form/src/__legacy__/core/nodes/AbstractNode/utils/checkDefinedValue/checkDefinedValue.ts",
+      "line": 25,
+      "column": 33,
+      "selfUs": 4315,
+      "totalUs": 4466,
+      "selfSamples": 28,
+      "totalSamples": 29,
+      "selfMs": 4.315,
+      "totalMs": 4.466,
+      "selfPercent": 0.12355637334698609,
+      "totalPercent": 0.12788013056028735,
+      "selfUsPerOperation": 4.306387225548902,
+      "totalUsPerOperation": 4.457085828343313
+    },
+    {
+      "function": "processAllOfSchema",
+      "file": "packages/canard/schema-form/src/__legacy__/helpers/jsonSchema/processAllOfSchema/processAllOfSchema.ts",
+      "line": 29,
+      "column": 34,
+      "selfUs": 3671,
+      "totalUs": 3671,
+      "selfSamples": 24,
+      "totalSamples": 24,
+      "selfMs": 3.671,
+      "totalMs": 3.671,
+      "selfPercent": 0.10511597834456222,
+      "totalPercent": 0.10511597834456222,
+      "selfUsPerOperation": 3.6636726546906186,
+      "totalUsPerOperation": 3.6636726546906186
+    },
+    {
+      "function": "Immediate",
+      "file": "node:internal/timers",
+      "line": 747,
+      "column": 13,
+      "selfUs": 3409,
+      "totalUs": 18472,
+      "selfSamples": 22,
+      "totalSamples": 120,
+      "selfMs": 3.409,
+      "totalMs": 18.472,
+      "selfPercent": 0.09761383006717858,
+      "totalPercent": 0.5289300877092763,
+      "selfUsPerOperation": 3.402195608782435,
+      "totalUsPerOperation": 18.435129740518963
+    },
+    {
+      "function": "isBranchType",
+      "file": "packages/canard/schema-form/src/__legacy__/helpers/jsonSchema/filter.ts",
+      "line": 20,
+      "column": 28,
+      "selfUs": 3362,
+      "totalUs": 3362,
+      "selfSamples": 22,
+      "totalSamples": 22,
+      "selfMs": 3.362,
+      "totalMs": 3.362,
+      "selfPercent": 0.0962680248418464,
+      "totalPercent": 0.0962680248418464,
+      "selfUsPerOperation": 3.3552894211576847,
+      "totalUsPerOperation": 3.3552894211576847
+    },
+    {
+      "function": "getCompositionNodeMapList",
+      "file": "packages/canard/schema-form/src/__legacy__/core/nodes/ObjectNode/strategies/BranchStrategy/utils/getCompositionNodeMapList/getCompositionNodeMapList.ts",
+      "line": 42,
+      "column": 41,
+      "selfUs": 3077,
+      "totalUs": 3077,
+      "selfSamples": 20,
+      "totalSamples": 20,
+      "selfMs": 3.077,
+      "totalMs": 3.077,
+      "selfPercent": 0.08810729102866192,
+      "totalPercent": 0.08810729102866192,
+      "selfUsPerOperation": 3.0708582834331337,
+      "totalUsPerOperation": 3.0708582834331337
+    },
+    {
+      "function": "isObject",
+      "file": "packages/winglet/common-utils/dist/utils/filter/isObject.cjs",
+      "line": 5,
+      "column": 17,
+      "selfUs": 3068,
+      "totalUs": 3068,
+      "selfSamples": 20,
+      "totalSamples": 20,
+      "selfMs": 3.068,
+      "totalMs": 3.068,
+      "selfPercent": 0.08784958364508769,
+      "totalPercent": 0.08784958364508769,
+      "selfUsPerOperation": 3.06187624750499,
+      "totalUsPerOperation": 3.06187624750499
+    },
+    {
+      "function": "flattenConditions",
+      "file": "packages/canard/schema-form/src/__legacy__/core/nodes/ObjectNode/strategies/BranchStrategy/utils/getFieldConditionMap/utils/flattenConditions.ts",
+      "line": 23,
+      "column": 33,
+      "selfUs": 2819,
+      "totalUs": 5893,
+      "selfSamples": 18,
+      "totalSamples": 38,
+      "selfMs": 2.819,
+      "totalMs": 5.893,
+      "selfPercent": 0.08071967936620018,
+      "totalPercent": 0.1687410679336707,
+      "selfUsPerOperation": 2.813373253493014,
+      "totalUsPerOperation": 5.8812375249501
+    },
+    {
+      "function": "getEmptyObject",
+      "file": "packages/winglet/common-utils/dist/utils/object/getEmptyObject.cjs",
+      "line": 5,
+      "column": 23,
+      "selfUs": 2616,
+      "totalUs": 2616,
+      "selfSamples": 17,
+      "totalSamples": 17,
+      "selfMs": 2.616,
+      "totalMs": 2.616,
+      "selfPercent": 0.0749069461589144,
+      "totalPercent": 0.0749069461589144,
+      "selfUsPerOperation": 2.6107784431137726,
+      "totalUsPerOperation": 2.6107784431137726
+    },
+    {
+      "function": "append",
+      "file": "node:internal/timers",
+      "line": 336,
+      "column": 8,
+      "selfUs": 2567,
+      "totalUs": 2567,
+      "selfSamples": 17,
+      "totalSamples": 17,
+      "selfMs": 2.567,
+      "totalMs": 2.567,
+      "selfPercent": 0.07350387262612128,
+      "totalPercent": 0.07350387262612128,
+      "selfUsPerOperation": 2.56187624750499,
+      "totalUsPerOperation": 2.56187624750499
+    },
+    {
+      "function": "__resolve__",
+      "file": "packages/canard/schema-form/src/__legacy__/core/nodes/AbstractNode/utils/EventCascadeManager/EventCascadeManager.ts",
+      "line": 207,
+      "column": 10,
+      "selfUs": 2454,
+      "totalUs": 7575,
+      "selfSamples": 16,
+      "totalSamples": 49,
+      "selfMs": 2.454,
+      "totalMs": 7.575,
+      "selfPercent": 0.07026821325457795,
+      "totalPercent": 0.2169037145083244,
+      "selfUsPerOperation": 2.4491017964071857,
+      "totalUsPerOperation": 7.559880239520958
+    },
+    {
+      "function": "structuredClone",
+      "file": "(V8)",
+      "line": 0,
+      "column": -1,
+      "selfUs": 2334,
+      "totalUs": 2334,
+      "selfSamples": 15,
+      "totalSamples": 15,
+      "selfMs": 2.334,
+      "totalMs": 2.334,
+      "selfPercent": 0.06683211480692133,
+      "totalPercent": 0.06683211480692133,
+      "selfUsPerOperation": 2.3293413173652695,
+      "totalUsPerOperation": 2.3293413173652695
+    },
+    {
+      "function": "create",
+      "file": "packages/canard/schema-form/architecture/verification/07-switch/tools/profile-99c01.mjs",
+      "line": 150,
+      "column": 15,
+      "selfUs": 2308,
+      "totalUs": 1692007,
+      "selfSamples": 15,
+      "totalSamples": 11007,
+      "selfMs": 2.308,
+      "totalMs": 1692.007,
+      "selfPercent": 0.06608762680992906,
+      "totalPercent": 48.44918855103451,
+      "selfUsPerOperation": 2.3033932135728543,
+      "totalUsPerOperation": 1688.629740518962
+    },
+    {
+      "function": "(anonymous)",
+      "file": "packages/canard/schema-form/src/__legacy__/core/nodes/AbstractNode/utils/EventCascadeManager/EventCascadeManager.ts",
+      "line": 112,
+      "column": 28,
+      "selfUs": 2302,
+      "totalUs": 2302,
+      "selfSamples": 13,
+      "totalSamples": 13,
+      "selfMs": 2.302,
+      "totalMs": 2.302,
+      "selfPercent": 0.06591582188754623,
+      "totalPercent": 0.06591582188754623,
+      "selfUsPerOperation": 2.2974051896207586,
+      "totalUsPerOperation": 2.2974051896207586
+    },
+    {
+      "function": "getCompositionKeyInfo",
+      "file": "packages/canard/schema-form/src/__legacy__/core/nodes/ObjectNode/strategies/BranchStrategy/utils/getCompositionKeyInfo/getCompositionKeyInfo.ts",
+      "line": 16,
+      "column": 37,
+      "selfUs": 2300,
+      "totalUs": 2300,
+      "selfSamples": 15,
+      "totalSamples": 15,
+      "selfMs": 2.3,
+      "totalMs": 2.3,
+      "selfPercent": 0.06585855358008529,
+      "totalPercent": 0.06585855358008529,
+      "selfUsPerOperation": 2.2954091816367264,
+      "totalUsPerOperation": 2.2954091816367264
+    },
+    {
+      "function": "hasTickScheduled",
+      "file": "node:internal/process/task_queues",
+      "line": 52,
+      "column": 25,
+      "selfUs": 2261,
+      "totalUs": 2261,
+      "selfSamples": 14,
+      "totalSamples": 14,
+      "selfMs": 2.261,
+      "totalMs": 2.261,
+      "selfPercent": 0.06474182158459689,
+      "totalPercent": 0.06474182158459689,
+      "selfUsPerOperation": 2.2564870259481036,
+      "totalUsPerOperation": 2.2564870259481036
+    },
+    {
+      "function": "getObjectKeys",
+      "file": "packages/winglet/common-utils/dist/utils/object/getObjectKeys.cjs",
+      "line": 5,
+      "column": 22,
+      "selfUs": 2148,
+      "totalUs": 2148,
+      "selfSamples": 14,
+      "totalSamples": 14,
+      "selfMs": 2.148,
+      "totalMs": 2.148,
+      "selfPercent": 0.061506162213053564,
+      "totalPercent": 0.061506162213053564,
+      "selfUsPerOperation": 2.143712574850299,
+      "totalUsPerOperation": 2.143712574850299
+    },
+    {
+      "function": "__primeInitialBranch__",
+      "file": "packages/canard/schema-form/src/__legacy__/core/nodes/ObjectNode/strategies/BranchStrategy/BranchStrategy.ts",
+      "line": 735,
+      "column": 10,
+      "selfUs": 2136,
+      "totalUs": 2136,
+      "selfSamples": 14,
+      "totalSamples": 14,
+      "selfMs": 2.136,
+      "totalMs": 2.136,
+      "selfPercent": 0.0611625523682879,
+      "totalPercent": 0.0611625523682879,
+      "selfUsPerOperation": 2.1317365269461077,
+      "totalUsPerOperation": 2.1317365269461077
+    },
+    {
+      "function": "profileWorker",
+      "file": "packages/canard/schema-form/architecture/verification/07-switch/tools/profile-99c01.mjs",
+      "line": 204,
+      "column": 28,
+      "selfUs": 2037,
+      "totalUs": 2432721,
+      "selfSamples": 13,
+      "totalSamples": 15798,
+      "selfMs": 2.037,
+      "totalMs": 2432.721,
+      "selfPercent": 0.05832777114897118,
+      "totalPercent": 69.65890709734724,
+      "selfUsPerOperation": 2.032934131736527,
+      "totalUsPerOperation": 2427.865269461078
+    },
+    {
+      "function": "getVirtualReferencesMap",
+      "file": "packages/canard/schema-form/src/__legacy__/core/nodes/ObjectNode/strategies/BranchStrategy/utils/getVirtualReferencesMap/getVirtualReferencesMap.ts",
+      "line": 24,
+      "column": 39,
+      "selfUs": 1853,
+      "totalUs": 1853,
+      "selfSamples": 12,
+      "totalSamples": 12,
+      "selfMs": 1.853,
+      "totalMs": 1.853,
+      "selfPercent": 0.05305908686256437,
+      "totalPercent": 0.05305908686256437,
+      "selfUsPerOperation": 1.8493013972055887,
+      "totalUsPerOperation": 1.8493013972055887
+    },
+    {
+      "function": "initAsyncResource",
+      "file": "node:internal/timers",
+      "line": 203,
+      "column": 26,
+      "selfUs": 1682,
+      "totalUs": 3057,
+      "selfSamples": 11,
+      "totalSamples": 20,
+      "selfMs": 1.682,
+      "totalMs": 3.057,
+      "selfPercent": 0.04816264657465368,
+      "totalPercent": 0.08753460795405249,
+      "selfUsPerOperation": 1.6786427145708582,
+      "totalUsPerOperation": 3.0508982035928143
+    },
+    {
+      "function": "processSchema",
+      "file": "packages/canard/schema-form/src/__legacy__/core/nodes/schemaNodeFactory.ts",
+      "line": 131,
+      "column": 22,
+      "selfUs": 1592,
+      "totalUs": 4208,
+      "selfSamples": 10,
+      "totalSamples": 27,
+      "selfMs": 1.592,
+      "totalMs": 4.208,
+      "selfPercent": 0.04558557273891121,
+      "totalPercent": 0.12049251889782561,
+      "selfUsPerOperation": 1.5888223552894212,
+      "totalUsPerOperation": 4.199600798403194
+    },
+    {
+      "function": "drain",
+      "file": "packages/canard/schema-form/architecture/verification/07-switch/tools/profile-99c01.mjs",
+      "line": 144,
+      "column": 20,
+      "selfUs": 1538,
+      "totalUs": 1844,
+      "selfSamples": 10,
+      "totalSamples": 12,
+      "selfMs": 1.538,
+      "totalMs": 1.844,
+      "selfPercent": 0.04403932843746573,
+      "totalPercent": 0.05280137947899012,
+      "selfUsPerOperation": 1.5349301397205588,
+      "totalUsPerOperation": 1.840319361277445
+    },
+    {
+      "function": "__updateComputedProperties__",
+      "file": "packages/canard/schema-form/src/__legacy__/core/nodes/AbstractNode/AbstractNode.ts",
+      "line": 564,
+      "column": 9,
+      "selfUs": 1531,
+      "totalUs": 19324,
+      "selfSamples": 10,
+      "totalSamples": 126,
+      "selfMs": 1.531,
+      "totalMs": 19.324,
+      "selfPercent": 0.043838889361352426,
+      "totalPercent": 0.5533263866876383,
+      "selfUsPerOperation": 1.5279441117764472,
+      "totalUsPerOperation": 19.285429141716566
+    },
+    {
+      "function": "isEmptyObject",
+      "file": "packages/winglet/common-utils/dist/utils/filter/isEmptyObject.cjs",
+      "line": 6,
+      "column": 22,
+      "selfUs": 1519,
+      "totalUs": 1670,
+      "selfSamples": 10,
+      "totalSamples": 11,
+      "selfMs": 1.519,
+      "totalMs": 1.67,
+      "selfPercent": 0.043495279516586764,
+      "totalPercent": 0.04781903672988801,
+      "selfUsPerOperation": 1.5159680638722555,
+      "totalUsPerOperation": 1.6666666666666667
+    },
+    {
+      "function": "hasHooks",
+      "file": "node:internal/async_hooks",
+      "line": 480,
+      "column": 17,
+      "selfUs": 1374,
+      "totalUs": 1374,
+      "selfSamples": 9,
+      "totalSamples": 9,
+      "selfMs": 1.374,
+      "totalMs": 1.374,
+      "selfPercent": 0.03934332722566834,
+      "totalPercent": 0.03934332722566834,
+      "selfUsPerOperation": 1.3712574850299402,
+      "totalUsPerOperation": 1.3712574850299402
+    },
+    {
+      "function": "getFieldConditionMap",
+      "file": "packages/canard/schema-form/src/__legacy__/core/nodes/ObjectNode/strategies/BranchStrategy/utils/getFieldConditionMap/getFieldConditionMap.ts",
+      "line": 21,
+      "column": 36,
+      "selfUs": 1365,
+      "totalUs": 7258,
+      "selfSamples": 9,
+      "totalSamples": 47,
+      "selfMs": 1.365,
+      "totalMs": 7.258,
+      "selfPercent": 0.0390856198420941,
+      "totalPercent": 0.2078266877757648,
+      "selfUsPerOperation": 1.3622754491017963,
+      "totalUsPerOperation": 7.243512974051896
+    },
+    {
+      "function": "handleChangeFactory",
+      "file": "packages/canard/schema-form/src/__legacy__/core/nodes/ObjectNode/strategies/BranchStrategy/BranchStrategy.ts",
+      "line": 806,
+      "column": 6,
+      "selfUs": 1227,
+      "totalUs": 1227,
+      "selfSamples": 8,
+      "totalSamples": 8,
+      "selfMs": 1.227,
+      "totalMs": 1.227,
+      "selfPercent": 0.035134106627288976,
+      "totalPercent": 0.035134106627288976,
+      "selfUsPerOperation": 1.2245508982035929,
+      "totalUsPerOperation": 1.2245508982035929
+    },
+    {
+      "function": "__initialize__",
+      "file": "packages/canard/schema-form/src/__legacy__/core/nodes/ObjectNode/ObjectNode.ts",
+      "line": 72,
+      "column": 18,
+      "selfUs": 1221,
+      "totalUs": 77893,
+      "selfSamples": 8,
+      "totalSamples": 508,
+      "selfMs": 1.221,
+      "totalMs": 77.893,
+      "selfPercent": 0.03496230170490615,
+      "totalPercent": 2.2304001365276447,
+      "selfUsPerOperation": 1.218562874251497,
+      "totalUsPerOperation": 77.7375249500998
+    },
+    {
+      "function": "__processValue__",
+      "file": "packages/canard/schema-form/src/__legacy__/core/nodes/ObjectNode/strategies/BranchStrategy/BranchStrategy.ts",
+      "line": 245,
+      "column": 10,
+      "selfUs": 1219,
+      "totalUs": 47199,
+      "selfSamples": 8,
+      "totalSamples": 308,
+      "selfMs": 1.219,
+      "totalMs": 47.199,
+      "selfPercent": 0.034905033397445204,
+      "totalPercent": 1.3515034219245416,
+      "selfUsPerOperation": 1.2165668662674651,
+      "totalUsPerOperation": 47.104790419161674
+    },
+    {
+      "function": "emitBeforeScript",
+      "file": "node:internal/async_hooks",
+      "line": 519,
+      "column": 25,
+      "selfUs": 1071,
+      "totalUs": 6918,
+      "selfSamples": 7,
+      "totalSamples": 44,
+      "selfMs": 1.071,
+      "totalMs": 6.918,
+      "selfPercent": 0.03066717864533537,
+      "totalPercent": 0.19809107550740435,
+      "selfUsPerOperation": 1.0688622754491017,
+      "totalUsPerOperation": 6.904191616766467
+    },
+    {
+      "function": "__prepareInjectHandler__",
+      "file": "packages/canard/schema-form/src/__legacy__/core/nodes/AbstractNode/AbstractNode.ts",
+      "line": 967,
+      "column": 10,
+      "selfUs": 1064,
+      "totalUs": 1064,
+      "selfSamples": 7,
+      "totalSamples": 7,
+      "selfMs": 1.064,
+      "totalMs": 1.064,
+      "selfPercent": 0.030466739569222065,
+      "totalPercent": 0.030466739569222065,
+      "selfUsPerOperation": 1.06187624750499,
+      "totalUsPerOperation": 1.06187624750499
+    },
+    {
+      "function": "__processChildren__",
+      "file": "packages/canard/schema-form/src/__legacy__/core/nodes/ObjectNode/strategies/BranchStrategy/BranchStrategy.ts",
+      "line": 596,
+      "column": 10,
+      "selfUs": 926,
+      "totalUs": 3704,
+      "selfSamples": 6,
+      "totalSamples": 24,
+      "selfMs": 0.926,
+      "totalMs": 3.704,
+      "selfPercent": 0.026515226354416947,
+      "totalPercent": 0.10606090541766779,
+      "selfUsPerOperation": 0.9241516966067864,
+      "totalUsPerOperation": 3.6966067864271457
+    },
+    {
+      "function": "equals",
+      "file": "packages/winglet/common-utils/dist/utils/object/equals/equals.cjs",
+      "line": 6,
+      "column": 15,
+      "selfUs": 924,
+      "totalUs": 14307,
+      "selfSamples": 6,
+      "totalSamples": 93,
+      "selfMs": 0.924,
+      "totalMs": 14.307,
+      "selfPercent": 0.026457958046956005,
+      "totalPercent": 0.40966883742186094,
+      "selfUsPerOperation": 0.9221556886227545,
+      "totalUsPerOperation": 14.278443113772456
+    },
+    {
+      "function": "scan",
+      "file": "packages/winglet/json-schema/dist/utils/JSONSchemaScanner/sync/JSONSchemaScanner.cjs",
+      "line": 15,
+      "column": 5,
+      "selfUs": 923,
+      "totalUs": 169301,
+      "selfSamples": 6,
+      "totalSamples": 1092,
+      "selfMs": 0.923,
+      "totalMs": 169.301,
+      "selfPercent": 0.02642932389322553,
+      "totalPercent": 4.8477908607226174,
+      "selfUsPerOperation": 0.9211576846307385,
+      "totalUsPerOperation": 168.96307385229542
+    },
+    {
+      "function": "__parseValue__",
+      "file": "packages/canard/schema-form/src/__legacy__/core/nodes/StringNode/StringNode.ts",
+      "line": 29,
+      "column": 10,
+      "selfUs": 920,
+      "totalUs": 1385,
+      "selfSamples": 6,
+      "totalSamples": 9,
+      "selfMs": 0.92,
+      "totalMs": 1.385,
+      "selfPercent": 0.026343421432034116,
+      "totalPercent": 0.03965830291670353,
+      "selfUsPerOperation": 0.9181636726546906,
+      "totalUsPerOperation": 1.3822355289421158
+    },
+    {
+      "function": "getConditionsMap",
+      "file": "packages/canard/schema-form/src/__legacy__/core/nodes/ObjectNode/strategies/BranchStrategy/utils/getConditionsMap/getConditionsMap.ts",
+      "line": 12,
+      "column": 32,
+      "selfUs": 914,
+      "totalUs": 914,
+      "selfSamples": 6,
+      "totalSamples": 6,
+      "selfMs": 0.914,
+      "totalMs": 0.914,
+      "selfPercent": 0.026171616509651285,
+      "totalPercent": 0.026171616509651285,
+      "selfUsPerOperation": 0.9121756487025948,
+      "totalUsPerOperation": 0.9121756487025948
+    },
+    {
+      "function": "flattenConditionsInto",
+      "file": "packages/canard/schema-form/src/__legacy__/core/nodes/ObjectNode/strategies/BranchStrategy/utils/getFieldConditionMap/utils/flattenConditions.ts",
+      "line": 37,
+      "column": 30,
+      "selfUs": 907,
+      "totalUs": 3523,
+      "selfSamples": 6,
+      "totalSamples": 23,
+      "selfMs": 0.907,
+      "totalMs": 3.523,
+      "selfPercent": 0.02597117743353798,
+      "totalPercent": 0.10087812359245239,
+      "selfUsPerOperation": 0.9051896207584831,
+      "totalUsPerOperation": 3.5159680638722555
+    },
+    {
+      "function": "getNodeGroup",
+      "file": "packages/canard/schema-form/src/__legacy__/core/nodes/AbstractNode/utils/getNodeGroup/getNodeGroup.ts",
+      "line": 16,
+      "column": 28,
+      "selfUs": 776,
+      "totalUs": 5811,
+      "selfSamples": 5,
+      "totalSamples": 38,
+      "selfMs": 0.776,
+      "totalMs": 5.811,
+      "selfPercent": 0.022220103294846166,
+      "totalPercent": 0.166393067327772,
+      "selfUsPerOperation": 0.7744510978043913,
+      "totalUsPerOperation": 5.799401197604791
+    },
+    {
+      "function": "getReferenceTable",
+      "file": "packages/canard/schema-form/src/__legacy__/helpers/jsonSchema/getResolveSchema/utils/getReferenceTable.ts",
+      "line": 12,
+      "column": 33,
+      "selfUs": 768,
+      "totalUs": 170069,
+      "selfSamples": 5,
+      "totalSamples": 1097,
+      "selfMs": 0.768,
+      "totalMs": 170.069,
+      "selfPercent": 0.02199103006500239,
+      "totalPercent": 4.869781890787619,
+      "selfUsPerOperation": 0.7664670658682635,
+      "totalUsPerOperation": 169.72954091816368
+    },
+    {
+      "function": "__markIntendedWrite__",
+      "file": "packages/canard/schema-form/src/__legacy__/core/nodes/AbstractNode/AbstractNode.ts",
+      "line": 373,
+      "column": 9,
+      "selfUs": 768,
+      "totalUs": 768,
+      "selfSamples": 5,
+      "totalSamples": 5,
+      "selfMs": 0.768,
+      "totalMs": 0.768,
+      "selfPercent": 0.02199103006500239,
+      "totalPercent": 0.02199103006500239,
+      "selfUsPerOperation": 0.7664670658682635,
+      "totalUsPerOperation": 0.7664670658682635
+    },
+    {
+      "function": "getEmptyValue",
+      "file": "packages/canard/schema-form/src/__legacy__/helpers/defaultValue/getEmptyValue/getEmptyValue.ts",
+      "line": 8,
+      "column": 29,
+      "selfUs": 768,
+      "totalUs": 768,
+      "selfSamples": 5,
+      "totalSamples": 5,
+      "selfMs": 0.768,
+      "totalMs": 0.768,
+      "selfPercent": 0.02199103006500239,
+      "totalPercent": 0.02199103006500239,
+      "selfUsPerOperation": 0.7664670658682635,
+      "totalUsPerOperation": 0.7664670658682635
+    },
+    {
+      "function": "(anonymous)",
+      "file": "node:internal/validators",
+      "line": 471,
+      "column": 41,
+      "selfUs": 765,
+      "totalUs": 765,
+      "selfSamples": 5,
+      "totalSamples": 5,
+      "selfMs": 0.765,
+      "totalMs": 0.765,
+      "selfPercent": 0.021905127603810977,
+      "totalPercent": 0.021905127603810977,
+      "selfUsPerOperation": 0.7634730538922155,
+      "totalUsPerOperation": 0.7634730538922155
+    },
+    {
+      "function": "getDefaultValue",
+      "file": "packages/canard/schema-form/src/__legacy__/helpers/defaultValue/getDefaultValue/getDefaultValue.ts",
+      "line": 11,
+      "column": 31,
+      "selfUs": 764,
+      "totalUs": 3077,
+      "selfSamples": 5,
+      "totalSamples": 20,
+      "selfMs": 0.764,
+      "totalMs": 3.077,
+      "selfPercent": 0.021876493450080504,
+      "totalPercent": 0.08810729102866192,
+      "selfUsPerOperation": 0.7624750499001997,
+      "totalUsPerOperation": 3.0708582834331337
+    },
+    {
+      "function": "microseconds",
+      "file": "packages/canard/schema-form/architecture/verification/07-switch/tools/profile-99c01.mjs",
+      "line": 141,
+      "column": 21,
+      "selfUs": 636,
+      "totalUs": 790,
+      "selfSamples": 4,
+      "totalSamples": 5,
+      "selfMs": 0.636,
+      "totalMs": 0.79,
+      "selfPercent": 0.018211321772580107,
+      "totalPercent": 0.022620981447072773,
+      "selfUsPerOperation": 0.6347305389221557,
+      "totalUsPerOperation": 0.7884231536926147
+    },
+    {
+      "function": "__prepareCompositionChildren__",
+      "file": "packages/canard/schema-form/src/__legacy__/core/nodes/ObjectNode/strategies/BranchStrategy/BranchStrategy.ts",
+      "line": 444,
+      "column": 10,
+      "selfUs": 634,
+      "totalUs": 634,
+      "selfSamples": 4,
+      "totalSamples": 4,
+      "selfMs": 0.634,
+      "totalMs": 0.634,
+      "selfPercent": 0.018154053465119162,
+      "totalPercent": 0.018154053465119162,
+      "selfUsPerOperation": 0.6327345309381237,
+      "totalUsPerOperation": 0.6327345309381237
+    },
+    {
+      "function": "activeExchange",
+      "file": "node:internal/async_context_frame",
+      "line": 20,
+      "column": 23,
+      "selfUs": 628,
+      "totalUs": 628,
+      "selfSamples": 4,
+      "totalSamples": 4,
+      "selfMs": 0.628,
+      "totalMs": 0.628,
+      "selfPercent": 0.01798224854273633,
+      "totalPercent": 0.01798224854273633,
+      "selfUsPerOperation": 0.626746506986028,
+      "totalUsPerOperation": 0.626746506986028
+    },
+    {
+      "function": "ValidationManager",
+      "file": "packages/canard/schema-form/src/__legacy__/core/nodes/AbstractNode/utils/ValidationManager/ValidationManager.ts",
+      "line": 188,
+      "column": 2,
+      "selfUs": 621,
+      "totalUs": 621,
+      "selfSamples": 4,
+      "totalSamples": 4,
+      "selfMs": 0.621,
+      "totalMs": 0.621,
+      "selfPercent": 0.017781809466623028,
+      "totalPercent": 0.017781809466623028,
+      "selfUsPerOperation": 0.6197604790419161,
+      "totalUsPerOperation": 0.6197604790419161
+    },
+    {
+      "function": "omitEmptyObject",
+      "file": "packages/canard/schema-form/src/__legacy__/core/nodes/ObjectNode/utils/omitEmptyObject/omitEmptyObject.ts",
+      "line": 7,
+      "column": 31,
+      "selfUs": 614,
+      "totalUs": 1539,
+      "selfSamples": 4,
+      "totalSamples": 10,
+      "selfMs": 0.614,
+      "totalMs": 1.539,
+      "selfPercent": 0.017581370390509724,
+      "totalPercent": 0.0440679625911962,
+      "selfUsPerOperation": 0.6127744510978044,
+      "totalUsPerOperation": 1.535928143712575
+    },
+    {
+      "function": "__onChangeWithOmitEmpty__",
+      "file": "packages/canard/schema-form/src/__legacy__/core/nodes/StringNode/StringNode.ts",
+      "line": 79,
+      "column": 10,
+      "selfUs": 610,
+      "totalUs": 41041,
+      "selfSamples": 4,
+      "totalSamples": 267,
+      "selfMs": 0.61,
+      "totalMs": 41.041,
+      "selfPercent": 0.017466833775587838,
+      "totalPercent": 1.1751743032522959,
+      "selfUsPerOperation": 0.6087824351297405,
+      "totalUsPerOperation": 40.95908183632734
+    },
+    {
+      "function": "get value",
+      "file": "packages/canard/schema-form/src/__legacy__/core/nodes/ObjectNode/ObjectNode.ts",
+      "line": 63,
+      "column": 22,
+      "selfUs": 499,
+      "totalUs": 656,
+      "selfSamples": 3,
+      "totalSamples": 4,
+      "selfMs": 0.499,
+      "totalMs": 0.656,
+      "selfPercent": 0.01428844271150546,
+      "totalPercent": 0.018784004847189544,
+      "selfUsPerOperation": 0.49800399201596807,
+      "totalUsPerOperation": 0.654690618762475
+    },
+    {
+      "function": "get defaultValue",
+      "file": "packages/canard/schema-form/src/__legacy__/core/nodes/AbstractNode/AbstractNode.ts",
+      "line": 294,
+      "column": 13,
+      "selfUs": 484,
+      "totalUs": 484,
+      "selfSamples": 3,
+      "totalSamples": 3,
+      "selfMs": 0.484,
+      "totalMs": 0.484,
+      "selfPercent": 0.013858930405548383,
+      "totalPercent": 0.013858930405548383,
+      "selfUsPerOperation": 0.48303393213572854,
+      "totalUsPerOperation": 0.48303393213572854
+    },
+    {
+      "function": "parseString",
+      "file": "packages/canard/schema-form/src/__legacy__/core/parsers/parseString.ts",
+      "line": 34,
+      "column": 27,
+      "selfUs": 465,
+      "totalUs": 465,
+      "selfSamples": 3,
+      "totalSamples": 3,
+      "selfMs": 0.465,
+      "totalMs": 0.465,
+      "selfPercent": 0.013314881484669416,
+      "totalPercent": 0.013314881484669416,
+      "selfUsPerOperation": 0.46407185628742514,
+      "totalUsPerOperation": 0.46407185628742514
+    },
+    {
+      "function": "nodeFromJSONSchema",
+      "file": "packages/canard/schema-form/src/__legacy__/core/nodeFromJSONSchema.ts",
+      "line": 34,
+      "column": 34,
+      "selfUs": 461,
+      "totalUs": 1689542,
+      "selfSamples": 3,
+      "totalSamples": 10991,
+      "selfMs": 0.461,
+      "totalMs": 1689.542,
+      "selfPercent": 0.01320034486974753,
+      "totalPercent": 48.3786053620889,
+      "selfUsPerOperation": 0.4600798403193613,
+      "totalUsPerOperation": 1686.1696606786427
+    },
+    {
+      "function": "removeStoresFromResource",
+      "file": "node:internal/timers",
+      "line": 134,
+      "column": 33,
+      "selfUs": 460,
+      "totalUs": 6560,
+      "selfSamples": 3,
+      "totalSamples": 40,
+      "selfMs": 0.46,
+      "totalMs": 6.56,
+      "selfPercent": 0.013171710716017058,
+      "totalPercent": 0.18784004847189542,
+      "selfUsPerOperation": 0.4590818363273453,
+      "totalUsPerOperation": 6.54690618762475
+    },
+    {
+      "function": "(anonymous)",
+      "file": "packages/canard/schema-form/src/__legacy__/core/nodes/ObjectNode/strategies/BranchStrategy/BranchStrategy.ts",
+      "line": 839,
+      "column": 19,
+      "selfUs": 455,
+      "totalUs": 455,
+      "selfSamples": 3,
+      "totalSamples": 3,
+      "selfMs": 0.455,
+      "totalMs": 0.455,
+      "selfPercent": 0.013028539947364698,
+      "totalPercent": 0.013028539947364698,
+      "selfUsPerOperation": 0.4540918163672655,
+      "totalUsPerOperation": 0.4540918163672655
+    },
+    {
+      "function": "emitDestroyScript",
+      "file": "node:internal/async_hooks",
+      "line": 535,
+      "column": 26,
+      "selfUs": 335,
+      "totalUs": 335,
+      "selfSamples": 2,
+      "totalSamples": 2,
+      "selfMs": 0.335,
+      "totalMs": 0.335,
+      "selfPercent": 0.009592441499708075,
+      "totalPercent": 0.009592441499708075,
+      "selfUsPerOperation": 0.3343313373253493,
+      "totalUsPerOperation": 0.3343313373253493
+    },
+    {
+      "function": "__equals__",
+      "file": "packages/canard/schema-form/src/__legacy__/core/nodes/AbstractNode/AbstractNode.ts",
+      "line": 384,
+      "column": 9,
+      "selfUs": 312,
+      "totalUs": 312,
+      "selfSamples": 2,
+      "totalSamples": 2,
+      "selfMs": 0.312,
+      "totalMs": 0.312,
+      "selfPercent": 0.008933855963907222,
+      "totalPercent": 0.008933855963907222,
+      "selfUsPerOperation": 0.31137724550898205,
+      "totalUsPerOperation": 0.31137724550898205
+    },
+    {
+      "function": "enabledHooksExist",
+      "file": "node:internal/async_hooks",
+      "line": 484,
+      "column": 26,
+      "selfUs": 309,
+      "totalUs": 309,
+      "selfSamples": 2,
+      "totalSamples": 2,
+      "selfMs": 0.309,
+      "totalMs": 0.309,
+      "selfPercent": 0.008847953502715807,
+      "totalPercent": 0.008847953502715807,
+      "selfUsPerOperation": 0.3083832335329341,
+      "totalUsPerOperation": 0.3083832335329341
+    },
+    {
+      "function": "exit",
+      "file": "packages/canard/schema-form/src/__legacy__/helpers/jsonSchema/getResolveSchema/utils/getReferenceTable.ts",
+      "line": 16,
+      "column": 12,
+      "selfUs": 308,
+      "totalUs": 308,
+      "selfSamples": 2,
+      "totalSamples": 2,
+      "selfMs": 0.308,
+      "totalMs": 0.308,
+      "selfPercent": 0.008819319348985334,
+      "totalPercent": 0.008819319348985334,
+      "selfUsPerOperation": 0.3073852295409182,
+      "totalUsPerOperation": 0.3073852295409182
+    },
+    {
+      "function": "newAsyncId",
+      "file": "node:internal/async_hooks",
+      "line": 427,
+      "column": 19,
+      "selfUs": 307,
+      "totalUs": 307,
+      "selfSamples": 2,
+      "totalSamples": 2,
+      "selfMs": 0.307,
+      "totalMs": 0.307,
+      "selfPercent": 0.008790685195254862,
+      "totalPercent": 0.008790685195254862,
+      "selfUsPerOperation": 0.3063872255489022,
+      "totalUsPerOperation": 0.3063872255489022
+    },
+    {
+      "function": "(anonymous)",
+      "file": "packages/canard/schema-form/architecture/verification/07-switch/tools/profile-99c01.mjs",
+      "line": 146,
+      "column": 20,
+      "selfUs": 306,
+      "totalUs": 306,
+      "selfSamples": 2,
+      "totalSamples": 2,
+      "selfMs": 0.306,
+      "totalMs": 0.306,
+      "selfPercent": 0.00876205104152439,
+      "totalPercent": 0.00876205104152439,
+      "selfUsPerOperation": 0.30538922155688625,
+      "totalUsPerOperation": 0.30538922155688625
+    },
+    {
+      "function": "get normalizedValue",
+      "file": "packages/canard/schema-form/src/__legacy__/core/nodes/AbstractNode/AbstractNode.ts",
+      "line": 397,
+      "column": 13,
+      "selfUs": 305,
+      "totalUs": 806,
+      "selfSamples": 2,
+      "totalSamples": 5,
+      "selfMs": 0.305,
+      "totalMs": 0.806,
+      "selfPercent": 0.008733416887793919,
+      "totalPercent": 0.02307912790676032,
+      "selfUsPerOperation": 0.30439121756487025,
+      "totalUsPerOperation": 0.8043912175648703
+    },
+    {
+      "function": "__publishChildrenChange__",
+      "file": "packages/canard/schema-form/src/__legacy__/core/nodes/ObjectNode/strategies/BranchStrategy/BranchStrategy.ts",
+      "line": 378,
+      "column": 10,
+      "selfUs": 300,
+      "totalUs": 2778,
+      "selfSamples": 2,
+      "totalSamples": 18,
+      "selfMs": 0.3,
+      "totalMs": 2.778,
+      "selfPercent": 0.00859024611914156,
+      "totalPercent": 0.07954567906325084,
+      "selfUsPerOperation": 0.2994011976047904,
+      "totalUsPerOperation": 2.7724550898203595
+    },
+    {
+      "function": "ObjectNode.handleChange",
+      "file": "packages/canard/schema-form/src/__legacy__/core/nodes/ObjectNode/ObjectNode.ts",
+      "line": 101,
+      "column": 10,
+      "selfUs": 299,
+      "totalUs": 18483,
+      "selfSamples": 2,
+      "totalSamples": 120,
+      "selfMs": 0.299,
+      "totalMs": 18.483,
+      "selfPercent": 0.008561611965411088,
+      "totalPercent": 0.5292450634003114,
+      "selfUsPerOperation": 0.29840319361277445,
+      "totalUsPerOperation": 18.44610778443114
+    },
+    {
+      "function": "get value",
+      "file": "packages/canard/schema-form/src/__legacy__/core/nodes/ObjectNode/strategies/BranchStrategy/BranchStrategy.ts",
+      "line": 304,
+      "column": 13,
+      "selfUs": 157,
+      "totalUs": 157,
+      "selfSamples": 1,
+      "totalSamples": 1,
+      "selfMs": 0.157,
+      "totalMs": 0.157,
+      "selfPercent": 0.004495562135684083,
+      "totalPercent": 0.004495562135684083,
+      "selfUsPerOperation": 0.156686626746507,
+      "totalUsPerOperation": 0.156686626746507
+    },
+    {
+      "function": "toggleImmediateRef",
+      "file": "(V8)",
+      "line": 0,
+      "column": -1,
+      "selfUs": 157,
+      "totalUs": 157,
+      "selfSamples": 1,
+      "totalSamples": 1,
+      "selfMs": 0.157,
+      "totalMs": 0.157,
+      "selfPercent": 0.004495562135684083,
+      "totalPercent": 0.004495562135684083,
+      "selfUsPerOperation": 0.156686626746507,
+      "totalUsPerOperation": 0.156686626746507
+    },
+    {
+      "function": "activeCurrent",
+      "file": "node:internal/async_context_frame",
+      "line": 12,
+      "column": 22,
+      "selfUs": 157,
+      "totalUs": 157,
+      "selfSamples": 1,
+      "totalSamples": 1,
+      "selfMs": 0.157,
+      "totalMs": 0.157,
+      "selfPercent": 0.004495562135684083,
+      "totalPercent": 0.004495562135684083,
+      "selfUsPerOperation": 0.156686626746507,
+      "totalUsPerOperation": 0.156686626746507
+    },
+    {
+      "function": "get",
+      "file": "file:///Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/packages/canard/schema-form/architecture/verification/07-switch/.profile-99c01-work/old.cjs",
+      "line": 13,
+      "column": 34,
+      "selfUs": 157,
+      "totalUs": 157,
+      "selfSamples": 1,
+      "totalSamples": 1,
+      "selfMs": 0.157,
+      "totalMs": 0.157,
+      "selfPercent": 0.004495562135684083,
+      "totalPercent": 0.004495562135684083,
+      "selfUsPerOperation": 0.156686626746507,
+      "totalUsPerOperation": 0.156686626746507
+    },
+    {
+      "function": "(anonymous)",
+      "file": "node:internal/webidl",
+      "line": 756,
+      "column": 17,
+      "selfUs": 157,
+      "totalUs": 157,
+      "selfSamples": 1,
+      "totalSamples": 1,
+      "selfMs": 0.157,
+      "totalMs": 0.157,
+      "selfPercent": 0.004495562135684083,
+      "totalPercent": 0.004495562135684083,
+      "selfUsPerOperation": 0.156686626746507,
+      "totalUsPerOperation": 0.156686626746507
+    },
+    {
+      "function": "hrtimeBigInt",
+      "file": "(V8)",
+      "line": 0,
+      "column": -1,
+      "selfUs": 154,
+      "totalUs": 154,
+      "selfSamples": 1,
+      "totalSamples": 1,
+      "selfMs": 0.154,
+      "totalMs": 0.154,
+      "selfPercent": 0.004409659674492667,
+      "totalPercent": 0.004409659674492667,
+      "selfUsPerOperation": 0.1536926147704591,
+      "totalUsPerOperation": 0.1536926147704591
+    },
+    {
+      "function": "cleanImmediate",
+      "file": "node:internal/timers",
+      "line": 150,
+      "column": 23,
+      "selfUs": 153,
+      "totalUs": 6713,
+      "selfSamples": 1,
+      "totalSamples": 41,
+      "selfMs": 0.153,
+      "totalMs": 6.713,
+      "selfPercent": 0.004381025520762195,
+      "totalPercent": 0.19222107399265764,
+      "selfUsPerOperation": 0.15269461077844312,
+      "totalUsPerOperation": 6.699600798403194
+    },
+    {
+      "function": "getResolveSchema",
+      "file": "packages/canard/schema-form/src/__legacy__/helpers/jsonSchema/getResolveSchema/getResolveSchema.ts",
+      "line": 18,
+      "column": 32,
+      "selfUs": 152,
+      "totalUs": 170221,
+      "selfSamples": 1,
+      "totalSamples": 1098,
+      "selfMs": 0.152,
+      "totalMs": 170.221,
+      "selfPercent": 0.004352391367031723,
+      "totalPercent": 4.874134282154651,
+      "selfUsPerOperation": 0.15169660678642716,
+      "totalUsPerOperation": 169.8812375249501
+    },
+    {
+      "function": "__updateScoped__",
+      "file": "packages/canard/schema-form/src/__legacy__/core/nodes/AbstractNode/AbstractNode.ts",
+      "line": 599,
+      "column": 10,
+      "selfUs": 152,
+      "totalUs": 152,
+      "selfSamples": 1,
+      "totalSamples": 1,
+      "selfMs": 0.152,
+      "totalMs": 0.152,
+      "selfPercent": 0.004352391367031723,
+      "totalPercent": 0.004352391367031723,
+      "selfUsPerOperation": 0.15169660678642716,
+      "totalUsPerOperation": 0.15169660678642716
+    },
+    {
+      "function": "emitAfterScript",
+      "file": "node:internal/async_hooks",
+      "line": 527,
+      "column": 24,
+      "selfUs": 151,
+      "totalUs": 5168,
+      "selfSamples": 1,
+      "totalSamples": 32,
+      "selfMs": 0.151,
+      "totalMs": 5.168,
+      "selfPercent": 0.004323757213301252,
+      "totalPercent": 0.1479813064790786,
+      "selfUsPerOperation": 0.1506986027944112,
+      "totalUsPerOperation": 5.157684630738523
+    },
+    {
+      "function": "getDefaultTriggerAsyncId",
+      "file": "node:internal/async_hooks",
+      "line": 443,
+      "column": 33,
+      "selfUs": 151,
+      "totalUs": 151,
+      "selfSamples": 1,
+      "totalSamples": 1,
+      "selfMs": 0.151,
+      "totalMs": 0.151,
+      "selfPercent": 0.004323757213301252,
+      "totalPercent": 0.004323757213301252,
+      "selfUsPerOperation": 0.1506986027944112,
+      "totalUsPerOperation": 0.1506986027944112
+    },
+    {
+      "function": "(root)",
+      "file": "(V8)",
+      "line": 0,
+      "column": -1,
+      "selfUs": 0,
+      "totalUs": 3492333,
+      "selfSamples": 0,
+      "totalSamples": 22523,
+      "selfMs": 0,
+      "totalMs": 3492.333,
+      "selfPercent": 0,
+      "totalPercent": 100,
+      "selfUsPerOperation": 0,
+      "totalUsPerOperation": 3485.3622754491016
+    },
+    {
+      "function": "__equals__",
+      "file": "packages/canard/schema-form/src/__legacy__/core/nodes/ObjectNode/ObjectNode.ts",
+      "line": 46,
+      "column": 18,
+      "selfUs": 0,
+      "totalUs": 14307,
+      "selfSamples": 0,
+      "totalSamples": 93,
+      "selfMs": 0,
+      "totalMs": 14.307,
+      "selfPercent": 0,
+      "totalPercent": 0.40966883742186094,
+      "selfUsPerOperation": 0,
+      "totalUsPerOperation": 14.278443113772456
+    },
+    {
+      "function": "subscribe",
+      "file": "packages/canard/schema-form/src/__legacy__/core/nodes/AbstractNode/AbstractNode.ts",
+      "line": 916,
+      "column": 9,
+      "selfUs": 0,
+      "totalUs": 6068,
+      "selfSamples": 0,
+      "totalSamples": 39,
+      "selfMs": 0,
+      "totalMs": 6.068,
+      "selfPercent": 0,
+      "totalPercent": 0.17375204483650328,
+      "selfUsPerOperation": 0,
+      "totalUsPerOperation": 6.055888223552894
+    },
+    {
+      "function": "callback",
+      "file": "packages/canard/schema-form/src/__legacy__/core/nodes/AbstractNode/utils/afterMicrotask/afterMicrotask.ts",
+      "line": 20,
+      "column": 19,
+      "selfUs": 0,
+      "totalUs": 961,
+      "selfSamples": 0,
+      "totalSamples": 6,
+      "selfMs": 0,
+      "totalMs": 0.961,
+      "selfPercent": 0,
+      "totalPercent": 0.027517421734983463,
+      "selfUsPerOperation": 0,
+      "totalUsPerOperation": 0.9590818363273453
+    },
+    {
+      "function": "(anonymous)",
+      "file": "packages/canard/schema-form/src/__legacy__/core/nodes/AbstractNode/AbstractNode.ts",
+      "line": 1219,
+      "column": 45,
+      "selfUs": 0,
+      "totalUs": 961,
+      "selfSamples": 0,
+      "totalSamples": 6,
+      "selfMs": 0,
+      "totalMs": 0.961,
+      "selfPercent": 0,
+      "totalPercent": 0.027517421734983463,
+      "selfUsPerOperation": 0,
+      "totalUsPerOperation": 0.9590818363273453
+    },
+    {
+      "function": "initHooksExist",
+      "file": "node:internal/async_hooks",
+      "line": 488,
+      "column": 23,
+      "selfUs": 0,
+      "totalUs": 911,
+      "selfSamples": 0,
+      "totalSamples": 6,
+      "selfMs": 0,
+      "totalMs": 0.911,
+      "selfPercent": 0,
+      "totalPercent": 0.02608571404845987,
+      "selfUsPerOperation": 0,
+      "totalUsPerOperation": 0.909181636726547
+    },
+    {
+      "function": "wrappedFn",
+      "file": "node:internal/errors",
+      "line": 542,
+      "column": 20,
+      "selfUs": 0,
+      "totalUs": 765,
+      "selfSamples": 0,
+      "totalSamples": 5,
+      "selfMs": 0,
+      "totalMs": 0.765,
+      "selfPercent": 0,
+      "totalPercent": 0.021905127603810977,
+      "selfUsPerOperation": 0,
+      "totalUsPerOperation": 0.7634730538922155
+    },
+    {
+      "function": "isTerminalFormTypeInput",
+      "file": "packages/canard/schema-form/src/__legacy__/core/nodes/AbstractNode/utils/getNodeGroup/getNodeGroup.ts",
+      "line": 27,
+      "column": 32,
+      "selfUs": 0,
+      "totalUs": 1673,
+      "selfSamples": 0,
+      "totalSamples": 11,
+      "selfMs": 0,
+      "totalMs": 1.673,
+      "selfPercent": 0,
+      "totalPercent": 0.04790493919107943,
+      "selfUsPerOperation": 0,
+      "totalUsPerOperation": 1.6696606786427146
+    },
+    {
+      "function": "hrtimeBigInt",
+      "file": "node:internal/process/per_thread",
+      "line": 99,
+      "column": 21,
+      "selfUs": 0,
+      "totalUs": 154,
+      "selfSamples": 0,
+      "totalSamples": 1,
+      "selfMs": 0,
+      "totalMs": 0.154,
+      "selfPercent": 0,
+      "totalPercent": 0.004409659674492667,
+      "selfUsPerOperation": 0,
+      "totalUsPerOperation": 0.1536926147704591
+    }
+  ],
+  "top25AndAtLeast2Percent": [
+    {
+      "function": "structuredClone",
+      "file": "node:internal/worker/js_transferable",
+      "line": 101,
+      "column": 24,
+      "selfUs": 735246,
+      "totalUs": 737737,
+      "selfSamples": 4756,
+      "totalSamples": 4772,
+      "selfMs": 735.246,
+      "totalMs": 737.737,
+      "selfPercent": 21.053146993714517,
+      "totalPercent": 21.124474670657122,
+      "selfUsPerOperation": 733.7784431137725,
+      "totalUsPerOperation": 736.2644710578842
+    },
+    {
+      "function": "(garbage collector)",
+      "file": "(V8)",
+      "line": 0,
+      "column": -1,
+      "selfUs": 639251,
+      "totalUs": 639251,
+      "selfSamples": 4029,
+      "totalSamples": 4029,
+      "selfMs": 639.251,
+      "totalMs": 639.251,
+      "selfPercent": 18.304411406357872,
+      "totalPercent": 18.304411406357872,
+      "selfUsPerOperation": 637.9750499001996,
+      "totalUsPerOperation": 637.9750499001996
+    },
+    {
+      "function": "needsRealComputedManager",
+      "file": "packages/canard/schema-form/src/__legacy__/core/nodes/AbstractNode/utils/getComputedPropertiesManager/utils/needsRealComputedManager/needsRealComputedManager.ts",
+      "line": 27,
+      "column": 40,
+      "selfUs": 435260,
+      "totalUs": 435260,
+      "selfSamples": 2837,
+      "totalSamples": 2837,
+      "selfMs": 435.26,
+      "totalMs": 435.26,
+      "selfPercent": 12.463301752725183,
+      "totalPercent": 12.463301752725183,
+      "selfUsPerOperation": 434.39121756487026,
+      "totalUsPerOperation": 434.39121756487026
+    },
+    {
+      "function": "mergeEventEntries",
+      "file": "packages/canard/schema-form/src/__legacy__/core/nodes/AbstractNode/utils/EventCascadeManager/utils/mergeEventEntries.ts",
+      "line": 13,
+      "column": 33,
+      "selfUs": 227554,
+      "totalUs": 227554,
+      "selfSamples": 1481,
+      "totalSamples": 1481,
+      "selfMs": 227.554,
+      "totalMs": 227.554,
+      "selfPercent": 6.515816217983794,
+      "totalPercent": 6.515816217983794,
+      "selfUsPerOperation": 227.0998003992016,
+      "totalUsPerOperation": 227.0998003992016
+    },
+    {
+      "function": "getComputedPropertiesManager",
+      "file": "packages/canard/schema-form/src/__legacy__/core/nodes/AbstractNode/utils/getComputedPropertiesManager/getComputedPropertiesManager.ts",
+      "line": 19,
+      "column": 44,
+      "selfUs": 175623,
+      "totalUs": 610121,
+      "selfSamples": 1145,
+      "totalSamples": 3977,
+      "selfMs": 175.623,
+      "totalMs": 610.121,
+      "selfPercent": 5.028815980606661,
+      "totalPercent": 17.470298508189224,
+      "selfUsPerOperation": 175.27245508982037,
+      "totalUsPerOperation": 608.9031936127744
+    },
+    {
+      "function": "EventCascadeManager",
+      "file": "packages/canard/schema-form/src/__legacy__/core/nodes/AbstractNode/utils/EventCascadeManager/EventCascadeManager.ts",
+      "line": 257,
+      "column": 2,
+      "selfUs": 114991,
+      "totalUs": 114991,
+      "selfSamples": 749,
+      "totalSamples": 749,
+      "selfMs": 114.991,
+      "totalMs": 114.991,
+      "selfPercent": 3.29266997162069,
+      "totalPercent": 3.29266997162069,
+      "selfUsPerOperation": 114.76147704590818,
+      "totalUsPerOperation": 114.76147704590818
+    },
+    {
+      "function": "AbstractNode",
+      "file": "packages/canard/schema-form/src/__legacy__/core/nodes/AbstractNode/AbstractNode.ts",
+      "line": 1146,
+      "column": 2,
+      "selfUs": 109749,
+      "totalUs": 888938,
+      "selfSamples": 712,
+      "totalSamples": 5790,
+      "selfMs": 109.749,
+      "totalMs": 888.938,
+      "selfPercent": 3.142569737765557,
+      "totalPercent": 25.4539873488582,
+      "selfUsPerOperation": 109.52994011976048,
+      "totalUsPerOperation": 887.1636726546906
+    },
+    {
+      "function": "scannerFactory",
+      "file": "packages/winglet/json-schema/dist/utils/JSONSchemaScanner/utils/scannerFactory.cjs",
+      "line": 17,
+      "column": 24,
+      "selfUs": 87363,
+      "totalUs": 159887,
+      "selfSamples": 563,
+      "totalSamples": 1031,
+      "selfMs": 87.363,
+      "totalMs": 159.887,
+      "selfPercent": 2.5015655723552137,
+      "totalPercent": 4.5782289375039555,
+      "selfUsPerOperation": 87.18862275449102,
+      "totalUsPerOperation": 159.5678642714571
+    },
+    {
+      "function": "(program)",
+      "file": "(V8)",
+      "line": 0,
+      "column": -1,
+      "selfUs": 64748,
+      "totalUs": 64748,
+      "selfSamples": 418,
+      "totalSamples": 418,
+      "selfMs": 64.748,
+      "totalMs": 64.748,
+      "selfPercent": 1.8540041857405924,
+      "totalPercent": 1.8540041857405924,
+      "selfUsPerOperation": 64.6187624750499,
+      "totalUsPerOperation": 64.6187624750499
+    },
+    {
+      "function": "BranchStrategy2",
+      "file": "packages/canard/schema-form/src/__legacy__/core/nodes/ObjectNode/strategies/BranchStrategy/BranchStrategy.ts",
+      "line": 761,
+      "column": 2,
+      "selfUs": 60969,
+      "totalUs": 1435921,
+      "selfSamples": 397,
+      "totalSamples": 9350,
+      "selfMs": 60.969,
+      "totalMs": 1435.921,
+      "selfPercent": 1.7457957187931392,
+      "totalPercent": 41.11638265881289,
+      "selfUsPerOperation": 60.84730538922156,
+      "totalUsPerOperation": 1433.0548902195608
+    },
+    {
+      "function": "getChildNodeMap",
+      "file": "packages/canard/schema-form/src/__legacy__/core/nodes/ObjectNode/strategies/BranchStrategy/utils/getChildNodeMap/getChildNodeMap.ts",
+      "line": 33,
+      "column": 31,
+      "selfUs": 53634,
+      "totalUs": 1433882,
+      "selfSamples": 349,
+      "totalSamples": 9337,
+      "selfMs": 53.634,
+      "totalMs": 1433.882,
+      "selfPercent": 1.535764201180128,
+      "totalPercent": 41.057997619356456,
+      "selfUsPerOperation": 53.52694610778443,
+      "totalUsPerOperation": 1431.0199600798403
+    },
+    {
+      "function": "StringNode",
+      "file": "packages/canard/schema-form/src/__legacy__/core/nodes/StringNode/StringNode.ts",
+      "line": 111,
+      "column": 2,
+      "selfUs": 43160,
+      "totalUs": 828244,
+      "selfSamples": 280,
+      "totalSamples": 5394,
+      "selfMs": 43.16,
+      "totalMs": 828.244,
+      "selfPercent": 1.2358500750071657,
+      "totalPercent": 23.71606602234094,
+      "selfUsPerOperation": 43.07385229540918,
+      "totalUsPerOperation": 826.5908183632735
+    },
+    {
+      "function": "sortObjectKeys",
+      "file": "packages/winglet/common-utils/dist/utils/object/sortObjectKeys.cjs",
+      "line": 6,
+      "column": 23,
+      "selfUs": 34463,
+      "totalUs": 45980,
+      "selfSamples": 225,
+      "totalSamples": 300,
+      "selfMs": 34.463,
+      "totalMs": 45.98,
+      "selfPercent": 0.9868188400132519,
+      "totalPercent": 1.3165983885270964,
+      "selfUsPerOperation": 34.39421157684631,
+      "totalUsPerOperation": 45.88822355289421
+    },
+    {
+      "function": "escapeSegment",
+      "file": "packages/winglet/json/dist/JSONPointer/utils/escape/escapeSegment.cjs",
+      "line": 6,
+      "column": 22,
+      "selfUs": 30810,
+      "totalUs": 30810,
+      "selfSamples": 200,
+      "totalSamples": 200,
+      "selfMs": 30.81,
+      "totalMs": 30.81,
+      "selfPercent": 0.8822182764358382,
+      "totalPercent": 0.8822182764358382,
+      "selfUsPerOperation": 30.748502994011975,
+      "totalUsPerOperation": 30.748502994011975
+    },
+    {
+      "function": "pushMapChildren",
+      "file": "packages/winglet/json-schema/dist/utils/JSONSchemaScanner/utils/getStackEntriesForNode.cjs",
+      "line": 34,
+      "column": 24,
+      "selfUs": 30243,
+      "totalUs": 48013,
+      "selfSamples": 195,
+      "totalSamples": 310,
+      "selfMs": 30.243,
+      "totalMs": 48.013,
+      "selfPercent": 0.8659827112706606,
+      "totalPercent": 1.3748116230611456,
+      "selfUsPerOperation": 30.182634730538922,
+      "totalUsPerOperation": 47.917165668662676
+    },
+    {
+      "function": "onChange",
+      "file": "packages/canard/schema-form/src/__legacy__/core/nodes/AbstractNode/AbstractNode.ts",
+      "line": 414,
+      "column": 12,
+      "selfUs": 30098,
+      "totalUs": 57076,
+      "selfSamples": 196,
+      "totalSamples": 371,
+      "selfMs": 30.098,
+      "totalMs": 57.076,
+      "selfPercent": 0.8618307589797422,
+      "totalPercent": 1.6343229583204122,
+      "selfUsPerOperation": 30.037924151696608,
+      "totalUsPerOperation": 56.96207584830339
+    },
+    {
+      "function": "ObjectNode",
+      "file": "packages/canard/schema-form/src/__legacy__/core/nodes/ObjectNode/ObjectNode.ts",
+      "line": 96,
+      "column": 2,
+      "selfUs": 28893,
+      "totalUs": 1518204,
+      "selfSamples": 188,
+      "totalSamples": 9886,
+      "selfMs": 28.893,
+      "totalMs": 1518.204,
+      "selfPercent": 0.8273266037345236,
+      "totalPercent": 43.472486730217305,
+      "selfUsPerOperation": 28.835329341317365,
+      "totalUsPerOperation": 1515.1736526946108
+    },
+    {
+      "function": "runNextTicks",
+      "file": "node:internal/process/task_queues",
+      "line": 63,
+      "column": 21,
+      "selfUs": 28701,
+      "totalUs": 56455,
+      "selfSamples": 171,
+      "totalSamples": 342,
+      "selfMs": 28.701,
+      "totalMs": 56.455,
+      "selfPercent": 0.821828846218273,
+      "totalPercent": 1.616541148853789,
+      "selfUsPerOperation": 28.643712574850298,
+      "totalUsPerOperation": 56.34231536926148
+    },
+    {
+      "function": "(anonymous)",
+      "file": "packages/canard/schema-form/src/__legacy__/core/nodes/ObjectNode/strategies/BranchStrategy/BranchStrategy.ts",
+      "line": 807,
+      "column": 6,
+      "selfUs": 28477,
+      "totalUs": 28791,
+      "selfSamples": 185,
+      "totalSamples": 187,
+      "selfMs": 28.477,
+      "totalMs": 28.791,
+      "selfPercent": 0.8154147957826473,
+      "totalPercent": 0.8244059200540156,
+      "selfUsPerOperation": 28.420159680638722,
+      "totalUsPerOperation": 28.733532934131738
+    },
+    {
+      "function": "__acquireBatch__",
+      "file": "packages/canard/schema-form/src/__legacy__/core/nodes/AbstractNode/utils/EventCascadeManager/EventCascadeManager.ts",
+      "line": 90,
+      "column": 10,
+      "selfUs": 27983,
+      "totalUs": 87388,
+      "selfSamples": 182,
+      "totalSamples": 569,
+      "selfMs": 27.983,
+      "totalMs": 87.388,
+      "selfPercent": 0.8012695238397942,
+      "totalPercent": 2.5022814261984756,
+      "selfUsPerOperation": 27.927145708582835,
+      "totalUsPerOperation": 87.21357285429141
+    },
+    {
+      "function": "runMicrotasks",
+      "file": "(V8)",
+      "line": 0,
+      "column": -1,
+      "selfUs": 25493,
+      "totalUs": 25493,
+      "selfSamples": 157,
+      "totalSamples": 157,
+      "selfMs": 25.493,
+      "totalMs": 25.493,
+      "selfPercent": 0.7299704810509192,
+      "totalPercent": 0.7299704810509192,
+      "selfUsPerOperation": 25.442115768463072,
+      "totalUsPerOperation": 25.442115768463072
+    },
+    {
+      "function": "getStackEntriesForNode",
+      "file": "packages/winglet/json-schema/dist/utils/JSONSchemaScanner/utils/getStackEntriesForNode.cjs",
+      "line": 74,
+      "column": 31,
+      "selfUs": 24818,
+      "totalUs": 72991,
+      "selfSamples": 160,
+      "totalSamples": 471,
+      "selfMs": 24.818,
+      "totalMs": 72.991,
+      "selfPercent": 0.7106424272828508,
+      "totalPercent": 2.090035514940872,
+      "selfUsPerOperation": 24.768463073852296,
+      "totalUsPerOperation": 72.84530938123753
+    },
+    {
+      "function": "publish",
+      "file": "packages/canard/schema-form/src/__legacy__/core/nodes/AbstractNode/utils/EventCascadeManager/EventCascadeManager.ts",
+      "line": 134,
+      "column": 9,
+      "selfUs": 22879,
+      "totalUs": 110267,
+      "selfSamples": 149,
+      "totalSamples": 718,
+      "selfMs": 22.879,
+      "totalMs": 110.267,
+      "selfPercent": 0.6551208031994658,
+      "totalPercent": 3.157402229397941,
+      "selfUsPerOperation": 22.833333333333332,
+      "totalUsPerOperation": 110.04690618762476
+    },
+    {
+      "function": "__parseValue__",
+      "file": "packages/canard/schema-form/src/__legacy__/core/nodes/ObjectNode/strategies/BranchStrategy/BranchStrategy.ts",
+      "line": 220,
+      "column": 10,
+      "selfUs": 21909,
+      "totalUs": 84160,
+      "selfSamples": 143,
+      "totalSamples": 549,
+      "selfMs": 21.909,
+      "totalMs": 84.16,
+      "selfPercent": 0.6273456740809081,
+      "totalPercent": 2.409850377956512,
+      "selfUsPerOperation": 21.865269461077844,
+      "totalUsPerOperation": 83.99201596806387
+    },
+    {
+      "function": "enqueueMicrotask",
+      "file": "(V8)",
+      "line": 0,
+      "column": -1,
+      "selfUs": 21174,
+      "totalUs": 21174,
+      "selfSamples": 138,
+      "totalSamples": 138,
+      "selfMs": 21.174,
+      "totalMs": 21.174,
+      "selfPercent": 0.6062995710890113,
+      "totalPercent": 0.6062995710890113,
+      "selfUsPerOperation": 21.131736526946106,
+      "totalUsPerOperation": 21.131736526946106
+    },
+    {
+      "function": "publish",
+      "file": "packages/canard/schema-form/src/__legacy__/core/nodes/AbstractNode/AbstractNode.ts",
+      "line": 891,
+      "column": 9,
+      "selfUs": 20165,
+      "totalUs": 130432,
+      "selfSamples": 131,
+      "totalSamples": 849,
+      "selfMs": 20.165,
+      "totalMs": 130.432,
+      "selfPercent": 0.5774077099749652,
+      "totalPercent": 3.7348099393729064,
+      "selfUsPerOperation": 20.124750499001998,
+      "totalUsPerOperation": 130.17165668662673
+    },
+    {
+      "function": "(anonymous)",
+      "file": "packages/canard/schema-form/src/__legacy__/core/nodes/AbstractNode/utils/EventCascadeManager/EventCascadeManager.ts",
+      "line": 120,
+      "column": 22,
+      "selfUs": 18886,
+      "totalUs": 254015,
+      "selfSamples": 122,
+      "totalSamples": 1652,
+      "selfMs": 18.886,
+      "totalMs": 254.015,
+      "selfPercent": 0.5407846273536916,
+      "totalPercent": 7.2735045598458115,
+      "selfUsPerOperation": 18.848303393213573,
+      "totalUsPerOperation": 253.50798403193613
+    },
+    {
+      "function": "__emitChange__",
+      "file": "packages/canard/schema-form/src/__legacy__/core/nodes/StringNode/StringNode.ts",
+      "line": 40,
+      "column": 10,
+      "selfUs": 17899,
+      "totalUs": 130371,
+      "selfSamples": 117,
+      "totalSamples": 849,
+      "selfMs": 17.899,
+      "totalMs": 130.371,
+      "selfPercent": 0.512522717621716,
+      "totalPercent": 3.7330632559953476,
+      "selfUsPerOperation": 17.86327345309381,
+      "totalUsPerOperation": 130.11077844311376
+    },
+    {
+      "function": "__emitChange__",
+      "file": "packages/canard/schema-form/src/__legacy__/core/nodes/ObjectNode/strategies/BranchStrategy/BranchStrategy.ts",
+      "line": 137,
+      "column": 10,
+      "selfUs": 17861,
+      "totalUs": 151387,
+      "selfSamples": 116,
+      "totalSamples": 986,
+      "selfMs": 17.861,
+      "totalMs": 151.387,
+      "selfPercent": 0.511434619779958,
+      "totalPercent": 4.334838630794944,
+      "selfUsPerOperation": 17.825349301397207,
+      "totalUsPerOperation": 151.08483033932137
+    },
+    {
+      "function": "(anonymous)",
+      "file": "packages/canard/schema-form/src/__legacy__/core/nodes/schemaNodeFactory.ts",
+      "line": 75,
+      "column": 2,
+      "selfUs": 13815,
+      "totalUs": 1519013,
+      "selfSamples": 90,
+      "totalSamples": 9891,
+      "selfMs": 13.815,
+      "totalMs": 1519.013,
+      "selfPercent": 0.39558083378646886,
+      "totalPercent": 43.49565176058526,
+      "selfUsPerOperation": 13.7874251497006,
+      "totalUsPerOperation": 1515.9810379241517
+    },
+    {
+      "function": "__handleEmitChange__",
+      "file": "packages/canard/schema-form/src/__legacy__/core/nodes/ObjectNode/strategies/BranchStrategy/BranchStrategy.ts",
+      "line": 155,
+      "column": 10,
+      "selfUs": 11065,
+      "totalUs": 133396,
+      "selfSamples": 72,
+      "totalSamples": 869,
+      "selfMs": 11.065,
+      "totalMs": 133.396,
+      "selfPercent": 0.31683691102767114,
+      "totalPercent": 3.819681571030025,
+      "selfUsPerOperation": 11.042914171656687,
+      "totalUsPerOperation": 133.12974051896208
+    },
+    {
+      "function": "initialize",
+      "file": "packages/canard/schema-form/src/__legacy__/core/nodes/ObjectNode/strategies/BranchStrategy/BranchStrategy.ts",
+      "line": 717,
+      "column": 9,
+      "selfUs": 9791,
+      "totalUs": 76521,
+      "selfSamples": 64,
+      "totalSamples": 499,
+      "selfMs": 9.791,
+      "totalMs": 76.521,
+      "selfPercent": 0.28035699917505,
+      "totalPercent": 2.1911140776094373,
+      "selfUsPerOperation": 9.771457085828343,
+      "totalUsPerOperation": 76.36826347305389
+    },
+    {
+      "function": "__run__",
+      "file": "packages/winglet/json-schema/dist/utils/JSONSchemaScanner/sync/JSONSchemaScanner.cjs",
+      "line": 47,
+      "column": 8,
+      "selfUs": 8356,
+      "totalUs": 168378,
+      "selfSamples": 54,
+      "totalSamples": 1086,
+      "selfMs": 8.356,
+      "totalMs": 168.378,
+      "selfPercent": 0.23926698857182288,
+      "totalPercent": 4.821361536829392,
+      "selfUsPerOperation": 8.33932135728543,
+      "totalUsPerOperation": 168.04191616766468
+    },
+    {
+      "function": "processImmediate",
+      "file": "node:internal/timers",
+      "line": 525,
+      "column": 27,
+      "selfUs": 6393,
+      "totalUs": 84558,
+      "selfSamples": 39,
+      "totalSamples": 516,
+      "selfMs": 6.393,
+      "totalMs": 84.558,
+      "selfPercent": 0.18305814479890664,
+      "totalPercent": 2.4212467711412398,
+      "selfUsPerOperation": 6.380239520958084,
+      "totalUsPerOperation": 84.38922155688623
+    },
+    {
+      "function": "create",
+      "file": "packages/canard/schema-form/architecture/verification/07-switch/tools/profile-99c01.mjs",
+      "line": 150,
+      "column": 15,
+      "selfUs": 2308,
+      "totalUs": 1692007,
+      "selfSamples": 15,
+      "totalSamples": 11007,
+      "selfMs": 2.308,
+      "totalMs": 1692.007,
+      "selfPercent": 0.06608762680992906,
+      "totalPercent": 48.44918855103451,
+      "selfUsPerOperation": 2.3033932135728543,
+      "totalUsPerOperation": 1688.629740518962
+    },
+    {
+      "function": "profileWorker",
+      "file": "packages/canard/schema-form/architecture/verification/07-switch/tools/profile-99c01.mjs",
+      "line": 204,
+      "column": 28,
+      "selfUs": 2037,
+      "totalUs": 2432721,
+      "selfSamples": 13,
+      "totalSamples": 15798,
+      "selfMs": 2.037,
+      "totalMs": 2432.721,
+      "selfPercent": 0.05832777114897118,
+      "totalPercent": 69.65890709734724,
+      "selfUsPerOperation": 2.032934131736527,
+      "totalUsPerOperation": 2427.865269461078
+    },
+    {
+      "function": "__initialize__",
+      "file": "packages/canard/schema-form/src/__legacy__/core/nodes/ObjectNode/ObjectNode.ts",
+      "line": 72,
+      "column": 18,
+      "selfUs": 1221,
+      "totalUs": 77893,
+      "selfSamples": 8,
+      "totalSamples": 508,
+      "selfMs": 1.221,
+      "totalMs": 77.893,
+      "selfPercent": 0.03496230170490615,
+      "totalPercent": 2.2304001365276447,
+      "selfUsPerOperation": 1.218562874251497,
+      "totalUsPerOperation": 77.7375249500998
+    },
+    {
+      "function": "scan",
+      "file": "packages/winglet/json-schema/dist/utils/JSONSchemaScanner/sync/JSONSchemaScanner.cjs",
+      "line": 15,
+      "column": 5,
+      "selfUs": 923,
+      "totalUs": 169301,
+      "selfSamples": 6,
+      "totalSamples": 1092,
+      "selfMs": 0.923,
+      "totalMs": 169.301,
+      "selfPercent": 0.02642932389322553,
+      "totalPercent": 4.8477908607226174,
+      "selfUsPerOperation": 0.9211576846307385,
+      "totalUsPerOperation": 168.96307385229542
+    },
+    {
+      "function": "getReferenceTable",
+      "file": "packages/canard/schema-form/src/__legacy__/helpers/jsonSchema/getResolveSchema/utils/getReferenceTable.ts",
+      "line": 12,
+      "column": 33,
+      "selfUs": 768,
+      "totalUs": 170069,
+      "selfSamples": 5,
+      "totalSamples": 1097,
+      "selfMs": 0.768,
+      "totalMs": 170.069,
+      "selfPercent": 0.02199103006500239,
+      "totalPercent": 4.869781890787619,
+      "selfUsPerOperation": 0.7664670658682635,
+      "totalUsPerOperation": 169.72954091816368
+    },
+    {
+      "function": "nodeFromJSONSchema",
+      "file": "packages/canard/schema-form/src/__legacy__/core/nodeFromJSONSchema.ts",
+      "line": 34,
+      "column": 34,
+      "selfUs": 461,
+      "totalUs": 1689542,
+      "selfSamples": 3,
+      "totalSamples": 10991,
+      "selfMs": 0.461,
+      "totalMs": 1689.542,
+      "selfPercent": 0.01320034486974753,
+      "totalPercent": 48.3786053620889,
+      "selfUsPerOperation": 0.4600798403193613,
+      "totalUsPerOperation": 1686.1696606786427
+    },
+    {
+      "function": "getResolveSchema",
+      "file": "packages/canard/schema-form/src/__legacy__/helpers/jsonSchema/getResolveSchema/getResolveSchema.ts",
+      "line": 18,
+      "column": 32,
+      "selfUs": 152,
+      "totalUs": 170221,
+      "selfSamples": 1,
+      "totalSamples": 1098,
+      "selfMs": 0.152,
+      "totalMs": 170.221,
+      "selfPercent": 0.004352391367031723,
+      "totalPercent": 4.874134282154651,
+      "selfUsPerOperation": 0.15169660678642716,
+      "totalUsPerOperation": 169.8812375249501
+    },
+    {
+      "function": "(root)",
+      "file": "(V8)",
+      "line": 0,
+      "column": -1,
+      "selfUs": 0,
+      "totalUs": 3492333,
+      "selfSamples": 0,
+      "totalSamples": 22523,
+      "selfMs": 0,
+      "totalMs": 3492.333,
+      "selfPercent": 0,
+      "totalPercent": 100,
+      "selfUsPerOperation": 0,
+      "totalUsPerOperation": 3485.3622754491016
+    }
+  ],
+  "ablationCandidates": [
+    {
+      "function": "needsRealComputedManager",
+      "file": "packages/canard/schema-form/src/__legacy__/core/nodes/AbstractNode/utils/getComputedPropertiesManager/utils/needsRealComputedManager/needsRealComputedManager.ts",
+      "line": 27,
+      "column": 40,
+      "selfUs": 435260,
+      "totalUs": 435260,
+      "selfSamples": 2837,
+      "totalSamples": 2837,
+      "selfMs": 435.26,
+      "totalMs": 435.26,
+      "selfPercent": 12.463301752725183,
+      "totalPercent": 12.463301752725183,
+      "selfUsPerOperation": 434.39121756487026,
+      "totalUsPerOperation": 434.39121756487026
+    },
+    {
+      "function": "mergeEventEntries",
+      "file": "packages/canard/schema-form/src/__legacy__/core/nodes/AbstractNode/utils/EventCascadeManager/utils/mergeEventEntries.ts",
+      "line": 13,
+      "column": 33,
+      "selfUs": 227554,
+      "totalUs": 227554,
+      "selfSamples": 1481,
+      "totalSamples": 1481,
+      "selfMs": 227.554,
+      "totalMs": 227.554,
+      "selfPercent": 6.515816217983794,
+      "totalPercent": 6.515816217983794,
+      "selfUsPerOperation": 227.0998003992016,
+      "totalUsPerOperation": 227.0998003992016
+    },
+    {
+      "function": "getComputedPropertiesManager",
+      "file": "packages/canard/schema-form/src/__legacy__/core/nodes/AbstractNode/utils/getComputedPropertiesManager/getComputedPropertiesManager.ts",
+      "line": 19,
+      "column": 44,
+      "selfUs": 175623,
+      "totalUs": 610121,
+      "selfSamples": 1145,
+      "totalSamples": 3977,
+      "selfMs": 175.623,
+      "totalMs": 610.121,
+      "selfPercent": 5.028815980606661,
+      "totalPercent": 17.470298508189224,
+      "selfUsPerOperation": 175.27245508982037,
+      "totalUsPerOperation": 608.9031936127744
+    },
+    {
+      "function": "AbstractNode",
+      "file": "packages/canard/schema-form/src/__legacy__/core/nodes/AbstractNode/AbstractNode.ts",
+      "line": 1146,
+      "column": 2,
+      "selfUs": 109749,
+      "totalUs": 888938,
+      "selfSamples": 712,
+      "totalSamples": 5790,
+      "selfMs": 109.749,
+      "totalMs": 888.938,
+      "selfPercent": 3.142569737765557,
+      "totalPercent": 25.4539873488582,
+      "selfUsPerOperation": 109.52994011976048,
+      "totalUsPerOperation": 887.1636726546906
+    },
+    {
+      "function": "BranchStrategy2",
+      "file": "packages/canard/schema-form/src/__legacy__/core/nodes/ObjectNode/strategies/BranchStrategy/BranchStrategy.ts",
+      "line": 761,
+      "column": 2,
+      "selfUs": 60969,
+      "totalUs": 1435921,
+      "selfSamples": 397,
+      "totalSamples": 9350,
+      "selfMs": 60.969,
+      "totalMs": 1435.921,
+      "selfPercent": 1.7457957187931392,
+      "totalPercent": 41.11638265881289,
+      "selfUsPerOperation": 60.84730538922156,
+      "totalUsPerOperation": 1433.0548902195608
+    },
+    {
+      "function": "getChildNodeMap",
+      "file": "packages/canard/schema-form/src/__legacy__/core/nodes/ObjectNode/strategies/BranchStrategy/utils/getChildNodeMap/getChildNodeMap.ts",
+      "line": 33,
+      "column": 31,
+      "selfUs": 53634,
+      "totalUs": 1433882,
+      "selfSamples": 349,
+      "totalSamples": 9337,
+      "selfMs": 53.634,
+      "totalMs": 1433.882,
+      "selfPercent": 1.535764201180128,
+      "totalPercent": 41.057997619356456,
+      "selfUsPerOperation": 53.52694610778443,
+      "totalUsPerOperation": 1431.0199600798403
+    },
+    {
+      "function": "StringNode",
+      "file": "packages/canard/schema-form/src/__legacy__/core/nodes/StringNode/StringNode.ts",
+      "line": 111,
+      "column": 2,
+      "selfUs": 43160,
+      "totalUs": 828244,
+      "selfSamples": 280,
+      "totalSamples": 5394,
+      "selfMs": 43.16,
+      "totalMs": 828.244,
+      "selfPercent": 1.2358500750071657,
+      "totalPercent": 23.71606602234094,
+      "selfUsPerOperation": 43.07385229540918,
+      "totalUsPerOperation": 826.5908183632735
+    },
+    {
+      "function": "ObjectNode",
+      "file": "packages/canard/schema-form/src/__legacy__/core/nodes/ObjectNode/ObjectNode.ts",
+      "line": 96,
+      "column": 2,
+      "selfUs": 28893,
+      "totalUs": 1518204,
+      "selfSamples": 188,
+      "totalSamples": 9886,
+      "selfMs": 28.893,
+      "totalMs": 1518.204,
+      "selfPercent": 0.8273266037345236,
+      "totalPercent": 43.472486730217305,
+      "selfUsPerOperation": 28.835329341317365,
+      "totalUsPerOperation": 1515.1736526946108
+    },
+    {
+      "function": "(anonymous)",
+      "file": "packages/canard/schema-form/src/__legacy__/core/nodes/AbstractNode/utils/EventCascadeManager/EventCascadeManager.ts",
+      "line": 120,
+      "column": 22,
+      "selfUs": 18886,
+      "totalUs": 254015,
+      "selfSamples": 122,
+      "totalSamples": 1652,
+      "selfMs": 18.886,
+      "totalMs": 254.015,
+      "selfPercent": 0.5407846273536916,
+      "totalPercent": 7.2735045598458115,
+      "selfUsPerOperation": 18.848303393213573,
+      "totalUsPerOperation": 253.50798403193613
+    },
+    {
+      "function": "(anonymous)",
+      "file": "packages/canard/schema-form/src/__legacy__/core/nodes/schemaNodeFactory.ts",
+      "line": 75,
+      "column": 2,
+      "selfUs": 13815,
+      "totalUs": 1519013,
+      "selfSamples": 90,
+      "totalSamples": 9891,
+      "selfMs": 13.815,
+      "totalMs": 1519.013,
+      "selfPercent": 0.39558083378646886,
+      "totalPercent": 43.49565176058526,
+      "selfUsPerOperation": 13.7874251497006,
+      "totalUsPerOperation": 1515.9810379241517
+    },
+    {
+      "function": "nodeFromJSONSchema",
+      "file": "packages/canard/schema-form/src/__legacy__/core/nodeFromJSONSchema.ts",
+      "line": 34,
+      "column": 34,
+      "selfUs": 461,
+      "totalUs": 1689542,
+      "selfSamples": 3,
+      "totalSamples": 10991,
+      "selfMs": 0.461,
+      "totalMs": 1689.542,
+      "selfPercent": 0.01320034486974753,
+      "totalPercent": 48.3786053620889,
+      "selfUsPerOperation": 0.4600798403193613,
+      "totalUsPerOperation": 1686.1696606786427
+    }
+  ]
+}
