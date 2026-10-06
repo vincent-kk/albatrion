@@ -1,0 +1,17 @@
+{
+  "HEAD": "ee97495c93349edb42b726cccae8b1fb020542ef",
+  "command": "pair",
+  "args": [
+    "uniform-gates",
+    "sample-0",
+    "later",
+    "1"
+  ],
+  "status": 0,
+  "signal": null,
+  "started": 1791286039148,
+  "ended": 1791286040206,
+  "elapsedMs": 1058,
+  "pid": 5770,
+  "driverSha256": "3607ee717ab0c097be966faae61d17345dbb1742f9045a36cd4c73cc49fdc5cd"
+}

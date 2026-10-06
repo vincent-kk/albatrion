@@ -1,0 +1,1597 @@
+{
+  "HEAD": "ee97495c93349edb42b726cccae8b1fb020542ef",
+  "variant": "head",
+  "name": "nested-d5-f4",
+  "warmup": 20,
+  "samples": 101,
+  "intervalUs": 100,
+  "forcedGC": true,
+  "diagnosticOnly": true,
+  "totalUs": 954964,
+  "cpuSamples": 6279,
+  "windows": [
+    {
+      "beginUs": 103923582473,
+      "endUs": 103923594993
+    },
+    {
+      "beginUs": 103923601318,
+      "endUs": 103923612253
+    },
+    {
+      "beginUs": 103923618164,
+      "endUs": 103923628473
+    },
+    {
+      "beginUs": 103923635354,
+      "endUs": 103923646660
+    },
+    {
+      "beginUs": 103923652816,
+      "endUs": 103923663701
+    },
+    {
+      "beginUs": 103923670918,
+      "endUs": 103923681606
+    },
+    {
+      "beginUs": 103923687153,
+      "endUs": 103923698707
+    },
+    {
+      "beginUs": 103923705464,
+      "endUs": 103923716321
+    },
+    {
+      "beginUs": 103923722017,
+      "endUs": 103923732202
+    },
+    {
+      "beginUs": 103923738464,
+      "endUs": 103923747929
+    },
+    {
+      "beginUs": 103923753741,
+      "endUs": 103923763301
+    },
+    {
+      "beginUs": 103923768857,
+      "endUs": 103923779118
+    },
+    {
+      "beginUs": 103923785974,
+      "endUs": 103923796354
+    },
+    {
+      "beginUs": 103923802268,
+      "endUs": 103923812992
+    },
+    {
+      "beginUs": 103923820437,
+      "endUs": 103923830361
+    },
+    {
+      "beginUs": 103923836120,
+      "endUs": 103923846218
+    },
+    {
+      "beginUs": 103923852279,
+      "endUs": 103923861798
+    },
+    {
+      "beginUs": 103923868271,
+      "endUs": 103923877792
+    },
+    {
+      "beginUs": 103923885070,
+      "endUs": 103923894882
+    },
+    {
+      "beginUs": 103923900587,
+      "endUs": 103923910867
+    },
+    {
+      "beginUs": 103923916507,
+      "endUs": 103923926457
+    },
+    {
+      "beginUs": 103923932275,
+      "endUs": 103923942207
+    },
+    {
+      "beginUs": 103923948113,
+      "endUs": 103923957597
+    },
+    {
+      "beginUs": 103923963996,
+      "endUs": 103923973240
+    },
+    {
+      "beginUs": 103923980751,
+      "endUs": 103923990108
+    },
+    {
+      "beginUs": 103923996269,
+      "endUs": 103924005799
+    },
+    {
+      "beginUs": 103924012343,
+      "endUs": 103924022816
+    },
+    {
+      "beginUs": 103924029093,
+      "endUs": 103924039092
+    },
+    {
+      "beginUs": 103924047034,
+      "endUs": 103924055573
+    },
+    {
+      "beginUs": 103924061888,
+      "endUs": 103924070673
+    },
+    {
+      "beginUs": 103924076463,
+      "endUs": 103924085881
+    },
+    {
+      "beginUs": 103924092325,
+      "endUs": 103924101495
+    },
+    {
+      "beginUs": 103924107055,
+      "endUs": 103924115989
+    },
+    {
+      "beginUs": 103924121727,
+      "endUs": 103924131118
+    },
+    {
+      "beginUs": 103924136813,
+      "endUs": 103924146040
+    },
+    {
+      "beginUs": 103924152243,
+      "endUs": 103924161583
+    },
+    {
+      "beginUs": 103924167262,
+      "endUs": 103924177038
+    },
+    {
+      "beginUs": 103924183720,
+      "endUs": 103924193762
+    },
+    {
+      "beginUs": 103924200092,
+      "endUs": 103924209512
+    },
+    {
+      "beginUs": 103924215913,
+      "endUs": 103924224386
+    },
+    {
+      "beginUs": 103924231620,
+      "endUs": 103924241091
+    },
+    {
+      "beginUs": 103924246780,
+      "endUs": 103924256456
+    },
+    {
+      "beginUs": 103924263005,
+      "endUs": 103924272522
+    },
+    {
+      "beginUs": 103924278327,
+      "endUs": 103924287527
+    },
+    {
+      "beginUs": 103924294935,
+      "endUs": 103924304212
+    },
+    {
+      "beginUs": 103924311840,
+      "endUs": 103924320438
+    },
+    {
+      "beginUs": 103924326346,
+      "endUs": 103924336041
+    },
+    {
+      "beginUs": 103924341934,
+      "endUs": 103924351539
+    },
+    {
+      "beginUs": 103924357986,
+      "endUs": 103924367474
+    },
+    {
+      "beginUs": 103924373129,
+      "endUs": 103924382297
+    },
+    {
+      "beginUs": 103924389259,
+      "endUs": 103924398062
+    },
+    {
+      "beginUs": 103924405627,
+      "endUs": 103924413795
+    },
+    {
+      "beginUs": 103924421033,
+      "endUs": 103924430168
+    },
+    {
+      "beginUs": 103924436335,
+      "endUs": 103924446005
+    },
+    {
+      "beginUs": 103924452408,
+      "endUs": 103924462118
+    },
+    {
+      "beginUs": 103924468492,
+      "endUs": 103924477836
+    },
+    {
+      "beginUs": 103924483253,
+      "endUs": 103924491527
+    },
+    {
+      "beginUs": 103924497870,
+      "endUs": 103924507399
+    },
+    {
+      "beginUs": 103924513922,
+      "endUs": 103924523437
+    },
+    {
+      "beginUs": 103924529030,
+      "endUs": 103924538436
+    },
+    {
+      "beginUs": 103924544847,
+      "endUs": 103924554093
+    },
+    {
+      "beginUs": 103924559751,
+      "endUs": 103924568626
+    },
+    {
+      "beginUs": 103924574082,
+      "endUs": 103924583106
+    },
+    {
+      "beginUs": 103924590475,
+      "endUs": 103924599971
+    },
+    {
+      "beginUs": 103924607407,
+      "endUs": 103924616733
+    },
+    {
+      "beginUs": 103924622979,
+      "endUs": 103924632217
+    },
+    {
+      "beginUs": 103924638442,
+      "endUs": 103924647307
+    },
+    {
+      "beginUs": 103924653982,
+      "endUs": 103924662986
+    },
+    {
+      "beginUs": 103924669336,
+      "endUs": 103924678783
+    },
+    {
+      "beginUs": 103924685054,
+      "endUs": 103924694390
+    },
+    {
+      "beginUs": 103924700858,
+      "endUs": 103924709252
+    },
+    {
+      "beginUs": 103924716700,
+      "endUs": 103924725908
+    },
+    {
+      "beginUs": 103924733110,
+      "endUs": 103924741898
+    },
+    {
+      "beginUs": 103924748175,
+      "endUs": 103924757194
+    },
+    {
+      "beginUs": 103924763088,
+      "endUs": 103924771929
+    },
+    {
+      "beginUs": 103924778169,
+      "endUs": 103924787175
+    },
+    {
+      "beginUs": 103924794488,
+      "endUs": 103924803389
+    },
+    {
+      "beginUs": 103924809515,
+      "endUs": 103924818749
+    },
+    {
+      "beginUs": 103924824989,
+      "endUs": 103924834553
+    },
+    {
+      "beginUs": 103924840835,
+      "endUs": 103924849996
+    },
+    {
+      "beginUs": 103924855748,
+      "endUs": 103924864110
+    },
+    {
+      "beginUs": 103924871428,
+      "endUs": 103924879725
+    },
+    {
+      "beginUs": 103924886019,
+      "endUs": 103924895159
+    },
+    {
+      "beginUs": 103924901272,
+      "endUs": 103924910735
+    },
+    {
+      "beginUs": 103924917040,
+      "endUs": 103924926604
+    },
+    {
+      "beginUs": 103924932448,
+      "endUs": 103924940759
+    },
+    {
+      "beginUs": 103924947011,
+      "endUs": 103924955850
+    },
+    {
+      "beginUs": 103924962271,
+      "endUs": 103924971524
+    },
+    {
+      "beginUs": 103924977872,
+      "endUs": 103924986774
+    },
+    {
+      "beginUs": 103924994090,
+      "endUs": 103925003315
+    },
+    {
+      "beginUs": 103925010089,
+      "endUs": 103925019132
+    },
+    {
+      "beginUs": 103925025703,
+      "endUs": 103925034510
+    },
+    {
+      "beginUs": 103925040983,
+      "endUs": 103925049910
+    },
+    {
+      "beginUs": 103925057462,
+      "endUs": 103925067117
+    },
+    {
+      "beginUs": 103925073880,
+      "endUs": 103925083182
+    },
+    {
+      "beginUs": 103925089761,
+      "endUs": 103925098641
+    },
+    {
+      "beginUs": 103925104193,
+      "endUs": 103925112509
+    },
+    {
+      "beginUs": 103925118787,
+      "endUs": 103925128247
+    },
+    {
+      "beginUs": 103925134677,
+      "endUs": 103925144421
+    },
+    {
+      "beginUs": 103925150715,
+      "endUs": 103925160213
+    },
+    {
+      "beginUs": 103925166557,
+      "endUs": 103925176044
+    }
+  ],
+  "functions": [
+    {
+      "function": "buildNodes",
+      "file": "packages/canard/schema-form/src/core/blueprint/utils/analyze/buildNodes.ts",
+      "line": 29,
+      "column": 26,
+      "selfUs": 251206,
+      "totalUs": 605036,
+      "selfMsPerMount": 2.4871881188118814,
+      "totalMsPerMount": 5.990455445544555,
+      "selfPct": 26.30528480654768
+    },
+    {
+      "function": "populateNodeChildren",
+      "file": "packages/canard/schema-form/src/core/blueprint/utils/analyze/populateNodeChildren.ts",
+      "line": 19,
+      "column": 36,
+      "selfUs": 105711,
+      "totalUs": 583168,
+      "selfMsPerMount": 1.0466435643564356,
+      "totalMsPerMount": 5.773940594059406,
+      "selfPct": 11.06963194424083
+    },
+    {
+      "function": "collectDeclarations",
+      "file": "packages/canard/schema-form/src/core/blueprint/utils/analyze/collectDeclarations.ts",
+      "line": 27,
+      "column": 35,
+      "selfUs": 79316,
+      "totalUs": 88243,
+      "selfMsPerMount": 0.7853069306930693,
+      "totalMsPerMount": 0.8736930693069307,
+      "selfPct": 8.305653406829995
+    },
+    {
+      "function": "getTemplateKey",
+      "file": "packages/canard/schema-form/src/core/blueprint/utils/analyze/getTemplateKey.ts",
+      "line": 11,
+      "column": 30,
+      "selfUs": 49325,
+      "totalUs": 55135,
+      "selfMsPerMount": 0.48836633663366336,
+      "totalMsPerMount": 0.5458910891089109,
+      "selfPct": 5.165116171918522
+    },
+    {
+      "function": "commitStaticFirstNode",
+      "file": "packages/canard/schema-form/src/core/settle/utils/load/commitStaticFirstNode.ts",
+      "line": 13,
+      "column": 37,
+      "selfUs": 36951,
+      "totalUs": 40014,
+      "selfMsPerMount": 0.36585148514851484,
+      "totalMsPerMount": 0.3961782178217822,
+      "selfPct": 3.86936052039658
+    },
+    {
+      "function": "blueprint",
+      "file": "packages/canard/schema-form/src/core/blueprint/blueprint.ts",
+      "line": 21,
+      "column": 25,
+      "selfUs": 32467,
+      "totalUs": 665311,
+      "selfMsPerMount": 0.32145544554455446,
+      "totalMsPerMount": 6.587237623762376,
+      "selfPct": 3.399814024403014
+    },
+    {
+      "function": "getStaticChoices",
+      "file": "packages/canard/schema-form/src/core/behaviors/utils/options/getStaticChoices.ts",
+      "line": 23,
+      "column": 32,
+      "selfUs": 32039,
+      "totalUs": 32039,
+      "selfMsPerMount": 0.3172178217821782,
+      "totalMsPerMount": 0.3172178217821782,
+      "selfPct": 3.3549955809852516
+    },
+    {
+      "function": "assembleObject",
+      "file": "packages/canard/schema-form/src/core/behaviors/objectBehavior/branch/utils/assembleObject.ts",
+      "line": 18,
+      "column": 52,
+      "selfUs": 28680,
+      "totalUs": 33927,
+      "selfMsPerMount": 0.28396039603960394,
+      "totalMsPerMount": 0.33591089108910893,
+      "selfPct": 3.0032545729472524
+    },
+    {
+      "function": "(garbage collector)",
+      "file": "",
+      "line": 0,
+      "column": -1,
+      "selfUs": 27132,
+      "totalUs": 27132,
+      "selfMsPerMount": 0.26863366336633665,
+      "totalMsPerMount": 0.26863366336633665,
+      "selfPct": 2.8411542215203927
+    },
+    {
+      "function": "getStaticObjectEntries",
+      "file": "packages/canard/schema-form/src/core/settle/utils/load/getStaticObjectEntries.ts",
+      "line": 11,
+      "column": 38,
+      "selfUs": 26455,
+      "totalUs": 26455,
+      "selfMsPerMount": 0.26193069306930694,
+      "totalMsPerMount": 0.26193069306930694,
+      "selfPct": 2.7702614967684647
+    },
+    {
+      "function": "(anonymous)",
+      "file": "packages/canard/schema-form/src/core/blueprint/utils/analyze/populateNodeChildren.ts",
+      "line": 73,
+      "column": 48,
+      "selfUs": 24785,
+      "totalUs": 26168,
+      "selfMsPerMount": 0.2453960396039604,
+      "totalMsPerMount": 0.2590891089108911,
+      "selfPct": 2.5953857946477563
+    },
+    {
+      "function": "resolveNodeStrategy",
+      "file": "packages/canard/schema-form/src/core/blueprint/utils/types/resolveNodeStrategy.ts",
+      "line": 14,
+      "column": 35,
+      "selfUs": 22506,
+      "totalUs": 24059,
+      "selfMsPerMount": 0.22283168316831684,
+      "totalMsPerMount": 0.2382079207920792,
+      "selfPct": 2.356738055047101
+    },
+    {
+      "function": "loadStaticFirstTree",
+      "file": "packages/canard/schema-form/src/core/settle/utils/load/loadStaticFirstTree.ts",
+      "line": 42,
+      "column": 35,
+      "selfUs": 20741,
+      "totalUs": 202807,
+      "selfMsPerMount": 0.20535643564356434,
+      "totalMsPerMount": 2.007990099009901,
+      "selfPct": 2.1719143339434788
+    },
+    {
+      "function": "(program)",
+      "file": "",
+      "line": 0,
+      "column": -1,
+      "selfUs": 18943,
+      "totalUs": 18943,
+      "selfMsPerMount": 0.18755445544554455,
+      "totalMsPerMount": 0.18755445544554455,
+      "selfPct": 1.9836349851931592
+    },
+    {
+      "function": "visitShape",
+      "file": "packages/canard/schema-form/src/core/blueprint/utils/analyze/validateShape/utils/visitShape.ts",
+      "line": 14,
+      "column": 26,
+      "selfUs": 18573,
+      "totalUs": 19495,
+      "selfMsPerMount": 0.1838910891089109,
+      "totalMsPerMount": 0.19301980198019802,
+      "selfPct": 1.9448900691544393
+    },
+    {
+      "function": "createSchemaNode",
+      "file": "packages/canard/schema-form/src/core/SchemaNode/utils/schemaNodeFactory.ts",
+      "line": 29,
+      "column": 25,
+      "selfUs": 16753,
+      "totalUs": 29840,
+      "selfMsPerMount": 0.16587128712871288,
+      "totalMsPerMount": 0.29544554455445543,
+      "selfPct": 1.7543069686396555
+    },
+    {
+      "function": "(anonymous)",
+      "file": "packages/canard/schema-form/src/core/blueprint/utils/analyze/populateNodeChildren.ts",
+      "line": 163,
+      "column": 50,
+      "selfUs": 16444,
+      "totalUs": 16444,
+      "selfMsPerMount": 0.16281188118811882,
+      "totalMsPerMount": 0.16281188118811882,
+      "selfPct": 1.7219497279478597
+    },
+    {
+      "function": "mergeSingleStaticContribution",
+      "file": "packages/canard/schema-form/src/core/blueprint/utils/effectiveSchema/utils/mergeSchemaContributions/utils/mergeSingleStaticContribution.ts",
+      "line": 17,
+      "column": 45,
+      "selfUs": 15424,
+      "totalUs": 15424,
+      "selfMsPerMount": 0.1527128712871287,
+      "totalMsPerMount": 0.1527128712871287,
+      "selfPct": 1.6151394188681458
+    },
+    {
+      "function": "buildSchemaNodeTree",
+      "file": "packages/canard/schema-form/src/core/SchemaNode/utils/binding/buildSchemaNodeTree.ts",
+      "line": 37,
+      "column": 16,
+      "selfUs": 11063,
+      "totalUs": 676837,
+      "selfMsPerMount": 0.10953465346534653,
+      "totalMsPerMount": 6.701356435643564,
+      "selfPct": 1.1584729895577215
+    },
+    {
+      "function": "SchemaNode",
+      "file": "packages/canard/schema-form/src/core/SchemaNode/SchemaNode.ts",
+      "line": 71,
+      "column": 2,
+      "selfUs": 8040,
+      "totalUs": 8040,
+      "selfMsPerMount": 0.0796039603960396,
+      "totalMsPerMount": 0.0796039603960396,
+      "selfPct": 0.8419165539224515
+    },
+    {
+      "function": "validateChildTargets",
+      "file": "packages/canard/schema-form/src/core/blueprint/utils/diagnostics/validateChildTargets.ts",
+      "line": 11,
+      "column": 36,
+      "selfUs": 7391,
+      "totalUs": 7391,
+      "selfMsPerMount": 0.07317821782178217,
+      "totalMsPerMount": 0.07317821782178217,
+      "selfPct": 0.7739558768707512
+    },
+    {
+      "function": "structuredClone",
+      "file": "node:internal/worker/js_transferable",
+      "line": 101,
+      "column": 24,
+      "selfUs": 7031,
+      "totalUs": 7168,
+      "selfMsPerMount": 0.06961386138613862,
+      "totalMsPerMount": 0.07097029702970296,
+      "selfPct": 0.7362581207249698
+    },
+    {
+      "function": "resolveNodeTypes",
+      "file": "packages/canard/schema-form/src/core/blueprint/utils/types/resolveNodeTypes.ts",
+      "line": 17,
+      "column": 32,
+      "selfUs": 6738,
+      "totalUs": 11838,
+      "selfMsPerMount": 0.06671287128712872,
+      "totalMsPerMount": 0.1172079207920792,
+      "selfPct": 0.7055763358618754
+    },
+    {
+      "function": "(anonymous)",
+      "file": "packages/canard/schema-form/src/core/blueprint/utils/analyze/getTemplateKey.ts",
+      "line": 16,
+      "column": 15,
+      "selfUs": 5249,
+      "totalUs": 5653,
+      "selfMsPerMount": 0.05197029702970297,
+      "totalMsPerMount": 0.05597029702970297,
+      "selfPct": 0.5496542278033517
+    },
+    {
+      "function": "mergeEffectiveSchema",
+      "file": "packages/canard/schema-form/src/core/blueprint/utils/effectiveSchema/mergeEffectiveSchema.ts",
+      "line": 25,
+      "column": 36,
+      "selfUs": 5047,
+      "totalUs": 5047,
+      "selfMsPerMount": 0.04997029702970297,
+      "totalMsPerMount": 0.04997029702970297,
+      "selfPct": 0.5285015979659966
+    },
+    {
+      "function": "assembleStaticFirstNode",
+      "file": "packages/canard/schema-form/src/core/settle/utils/load/assembleStaticFirstNode.ts",
+      "line": 11,
+      "column": 39,
+      "selfUs": 5008,
+      "totalUs": 69108,
+      "selfMsPerMount": 0.04958415841584159,
+      "totalMsPerMount": 0.6842376237623763,
+      "selfPct": 0.5244176743835369
+    },
+    {
+      "function": "readAllowedTypes",
+      "file": "packages/canard/schema-form/src/core/blueprint/utils/types/readAllowedTypes.ts",
+      "line": 19,
+      "column": 32,
+      "selfUs": 4738,
+      "totalUs": 7821,
+      "selfMsPerMount": 0.04691089108910891,
+      "totalMsPerMount": 0.07743564356435644,
+      "selfPct": 0.4961443572742009
+    },
+    {
+      "function": "runDeliveryWaves",
+      "file": "packages/canard/schema-form/src/core/dispatch/utils/chain/runDeliveryWaves.ts",
+      "line": 9,
+      "column": 32,
+      "selfUs": 4356,
+      "totalUs": 7431,
+      "selfMsPerMount": 0.043128712871287125,
+      "totalMsPerMount": 0.07357425742574257,
+      "selfPct": 0.45614284936395505
+    },
+    {
+      "function": "loadSchemaNodeAtMount",
+      "file": "packages/canard/schema-form/src/core/settle/utils/load/loadSchemaNodeAtMount.ts",
+      "line": 15,
+      "column": 37,
+      "selfUs": 4145,
+      "totalUs": 207564,
+      "selfMsPerMount": 0.04103960396039604,
+      "totalMsPerMount": 2.055089108910891,
+      "selfPct": 0.43404777562295543
+    },
+    {
+      "function": "hasOwnProperty",
+      "file": "file:///Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/packages/winglet/common-utils/dist/libs/hasOwnProperty.cjs",
+      "line": 6,
+      "column": 23,
+      "selfUs": 4003,
+      "totalUs": 4003,
+      "selfMsPerMount": 0.039633663366336634,
+      "totalMsPerMount": 0.039633663366336634,
+      "selfPct": 0.4191781051432305
+    },
+    {
+      "function": "collectSchemaCapabilities",
+      "file": "packages/canard/schema-form/src/core/blueprint/utils/analyze/collectSchemaCapabilities.ts",
+      "line": 19,
+      "column": 41,
+      "selfUs": 3864,
+      "totalUs": 4170,
+      "selfMsPerMount": 0.03825742574257426,
+      "totalMsPerMount": 0.04128712871287129,
+      "selfPct": 0.4046225826313871
+    },
+    {
+      "function": "createChildNode",
+      "file": "packages/canard/schema-form/src/core/settle/utils/compute/createChildNode.ts",
+      "line": 10,
+      "column": 31,
+      "selfUs": 3408,
+      "totalUs": 32938,
+      "selfMsPerMount": 0.033742574257425745,
+      "totalMsPerMount": 0.32611881188118813,
+      "selfPct": 0.3568720915133973
+    },
+    {
+      "function": "selectEffectiveDeclarations",
+      "file": "packages/canard/schema-form/src/core/blueprint/utils/effectiveSchema/utils/selectEffectiveDeclarations.ts",
+      "line": 10,
+      "column": 43,
+      "selfUs": 3127,
+      "totalUs": 3127,
+      "selfMsPerMount": 0.03096039603960396,
+      "totalMsPerMount": 0.03096039603960396,
+      "selfPct": 0.3274468985218291
+    },
+    {
+      "function": "_SchemaNodeRevisionLedger",
+      "file": "packages/canard/schema-form/src/core/record/utils/SchemaNodeRevisionLedger.ts",
+      "line": 19,
+      "column": 2,
+      "selfUs": 3063,
+      "totalUs": 3063,
+      "selfMsPerMount": 0.030326732673267326,
+      "totalMsPerMount": 0.030326732673267326,
+      "selfPct": 0.3207450752070235
+    },
+    {
+      "function": "escapeSegment",
+      "file": "file:///Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/packages/winglet/json/dist/JSONPointer/utils/escape/escapeSegment.cjs",
+      "line": 6,
+      "column": 22,
+      "selfUs": 2940,
+      "totalUs": 2940,
+      "selfMsPerMount": 0.02910891089108911,
+      "totalMsPerMount": 0.02910891089108911,
+      "selfPct": 0.30786500852388154
+    },
+    {
+      "function": "isMember",
+      "file": "packages/canard/schema-form/src/core/behaviors/utils/parse/isMember.ts",
+      "line": 6,
+      "column": 24,
+      "selfUs": 2751,
+      "totalUs": 2751,
+      "selfMsPerMount": 0.027237623762376238,
+      "totalMsPerMount": 0.027237623762376238,
+      "selfPct": 0.2880736865473463
+    },
+    {
+      "function": "mergeSchemaContributions",
+      "file": "packages/canard/schema-form/src/core/blueprint/utils/effectiveSchema/utils/mergeSchemaContributions.ts",
+      "line": 28,
+      "column": 40,
+      "selfUs": 2451,
+      "totalUs": 17875,
+      "selfMsPerMount": 0.024267326732673268,
+      "totalMsPerMount": 0.17698019801980197,
+      "selfPct": 0.2566588897591951
+    },
+    {
+      "function": "unionAllowedTypes",
+      "file": "packages/canard/schema-form/src/core/blueprint/utils/types/unionAllowedTypes.ts",
+      "line": 8,
+      "column": 33,
+      "selfUs": 2321,
+      "totalUs": 2321,
+      "selfMsPerMount": 0.02298019801980198,
+      "totalMsPerMount": 0.02298019801980198,
+      "selfPct": 0.24304581115099627
+    },
+    {
+      "function": "validateControlGroups",
+      "file": "packages/canard/schema-form/src/core/blueprint/utils/diagnostics/validateControlGroups.ts",
+      "line": 17,
+      "column": 37,
+      "selfUs": 2319,
+      "totalUs": 2471,
+      "selfMsPerMount": 0.02296039603960396,
+      "totalMsPerMount": 0.024465346534653466,
+      "selfPct": 0.24283637917240858
+    },
+    {
+      "function": "deliverWave",
+      "file": "packages/canard/schema-form/src/core/dispatch/utils/chain/deliverWave.ts",
+      "line": 22,
+      "column": 27,
+      "selfUs": 2305,
+      "totalUs": 3075,
+      "selfMsPerMount": 0.02282178217821782,
+      "totalMsPerMount": 0.030445544554455445,
+      "selfPct": 0.2413703553222949
+    },
+    {
+      "function": "(idle)",
+      "file": "",
+      "line": 0,
+      "column": -1,
+      "selfUs": 2073,
+      "totalUs": 2073,
+      "selfMsPerMount": 0.020524752475247526,
+      "totalMsPerMount": 0.020524752475247526,
+      "selfPct": 0.2170762458061246
+    },
+    {
+      "function": "writeObjectKey",
+      "file": "packages/canard/schema-form/src/core/behaviors/objectBehavior/utils/keys/writeObjectKey.ts",
+      "line": 2,
+      "column": 30,
+      "selfUs": 1839,
+      "totalUs": 1839,
+      "selfMsPerMount": 0.018207920792079207,
+      "totalMsPerMount": 0.018207920792079207,
+      "selfPct": 0.1925727043113667
+    },
+    {
+      "function": "exitSchemaNodeChain",
+      "file": "packages/canard/schema-form/src/core/dispatch/utils/chain/exitSchemaNodeChain.ts",
+      "line": 24,
+      "column": 35,
+      "selfUs": 1684,
+      "totalUs": 9259,
+      "selfMsPerMount": 0.016673267326732674,
+      "totalMsPerMount": 0.09167326732673267,
+      "selfPct": 0.17634172597082193
+    },
+    {
+      "function": "populateVirtualNodes",
+      "file": "packages/canard/schema-form/src/core/blueprint/utils/analyze/populateVirtualNodes.ts",
+      "line": 18,
+      "column": 36,
+      "selfUs": 1557,
+      "totalUs": 1557,
+      "selfMsPerMount": 0.015415841584158416,
+      "totalMsPerMount": 0.015415841584158416,
+      "selfPct": 0.16304279533050461
+    },
+    {
+      "function": "isTypeMismatch",
+      "file": "packages/canard/schema-form/src/core/settle/utils/commit/isTypeMismatch.ts",
+      "line": 12,
+      "column": 30,
+      "selfUs": 1541,
+      "totalUs": 1541,
+      "selfMsPerMount": 0.015257425742574257,
+      "totalMsPerMount": 0.015257425742574257,
+      "selfPct": 0.1613673395018032
+    },
+    {
+      "function": "readSchemaObject",
+      "file": "packages/canard/schema-form/src/core/blueprint/utils/analyze/readSchemaObject.ts",
+      "line": 8,
+      "column": 32,
+      "selfUs": 1322,
+      "totalUs": 1322,
+      "selfMsPerMount": 0.013089108910891089,
+      "totalMsPerMount": 0.013089108910891089,
+      "selfPct": 0.13843453784645285
+    },
+    {
+      "function": "intersectAllowedTypes",
+      "file": "packages/canard/schema-form/src/core/blueprint/utils/types/intersectAllowedTypes.ts",
+      "line": 9,
+      "column": 37,
+      "selfUs": 1226,
+      "totalUs": 1226,
+      "selfMsPerMount": 0.012138613861386139,
+      "totalMsPerMount": 0.012138613861386139,
+      "selfPct": 0.12838180287424447
+    },
+    {
+      "function": "staticSpec",
+      "file": "packages/canard/schema-form/src/core/settle/utils/write/staticSpec.ts",
+      "line": 16,
+      "column": 26,
+      "selfUs": 1223,
+      "totalUs": 1223,
+      "selfMsPerMount": 0.01210891089108911,
+      "totalMsPerMount": 0.01210891089108911,
+      "selfPct": 0.12806765490636296
+    },
+    {
+      "function": "interpret",
+      "file": "packages/canard/schema-form/src/core/behaviors/utils/parse/interpret.ts",
+      "line": 6,
+      "column": 25,
+      "selfUs": 1219,
+      "totalUs": 3970,
+      "selfMsPerMount": 0.01206930693069307,
+      "totalMsPerMount": 0.03930693069306931,
+      "selfPct": 0.1276487909491876
+    },
+    {
+      "function": "(anonymous)",
+      "file": "packages/canard/schema-form/src/core/blueprint/utils/types/resolveNodeStrategy.ts",
+      "line": 43,
+      "column": 19,
+      "selfUs": 1088,
+      "totalUs": 1088,
+      "selfMsPerMount": 0.010772277227722771,
+      "totalMsPerMount": 0.010772277227722771,
+      "selfPct": 0.11393099635169494
+    },
+    {
+      "function": "readStaticFirstWarning",
+      "file": "packages/canard/schema-form/src/core/settle/utils/load/readStaticFirstWarning.ts",
+      "line": 14,
+      "column": 38,
+      "selfUs": 1079,
+      "totalUs": 2971,
+      "selfMsPerMount": 0.010683168316831684,
+      "totalMsPerMount": 0.029415841584158414,
+      "selfPct": 0.1129885524480504
+    },
+    {
+      "function": "(anonymous)",
+      "file": "packages/canard/schema-form/src/core/blueprint/utils/analyze/validateShape/utils/visitShape.ts",
+      "line": 37,
+      "column": 8,
+      "selfUs": 922,
+      "totalUs": 922,
+      "selfMsPerMount": 0.009128712871287128,
+      "totalMsPerMount": 0.009128712871287128,
+      "selfPct": 0.09654814212891795
+    },
+    {
+      "function": "(anonymous)",
+      "file": "packages/canard/schema-form/src/core/blueprint/utils/analyze/populateNodeChildren.ts",
+      "line": 31,
+      "column": 53,
+      "selfUs": 914,
+      "totalUs": 914,
+      "selfMsPerMount": 0.009049504950495049,
+      "totalMsPerMount": 0.009049504950495049,
+      "selfPct": 0.09571041421456725
+    },
+    {
+      "function": "validateShape",
+      "file": "packages/canard/schema-form/src/core/blueprint/utils/analyze/validateShape.ts",
+      "line": 10,
+      "column": 29,
+      "selfUs": 771,
+      "totalUs": 20266,
+      "selfMsPerMount": 0.0076336633663366335,
+      "totalMsPerMount": 0.20065346534653467,
+      "selfPct": 0.08073602774554853
+    },
+    {
+      "function": "isWaveNode",
+      "file": "packages/canard/schema-form/src/core/dispatch/utils/chain/deliverWave.ts",
+      "line": 11,
+      "column": 19,
+      "selfUs": 770,
+      "totalUs": 770,
+      "selfMsPerMount": 0.007623762376237624,
+      "totalMsPerMount": 0.007623762376237624,
+      "selfPct": 0.08063131175625468
+    },
+    {
+      "function": "(anonymous)",
+      "file": "packages/canard/schema-form/src/core/blueprint/utils/types/readAllowedTypes.ts",
+      "line": 30,
+      "column": 6,
+      "selfUs": 762,
+      "totalUs": 762,
+      "selfMsPerMount": 0.007544554455445544,
+      "totalMsPerMount": 0.007544554455445544,
+      "selfPct": 0.07979358384190399
+    },
+    {
+      "function": "isTypeName",
+      "file": "packages/canard/schema-form/src/core/settle/utils/commit/effectiveType.ts",
+      "line": 24,
+      "column": 9,
+      "selfUs": 638,
+      "totalUs": 638,
+      "selfMsPerMount": 0.006316831683168317,
+      "totalMsPerMount": 0.006316831683168317,
+      "selfPct": 0.06680880116946816
+    },
+    {
+      "function": "finishStaticFirstLoad",
+      "file": "packages/canard/schema-form/src/core/settle/utils/load/finishStaticFirstLoad.ts",
+      "line": 19,
+      "column": 37,
+      "selfUs": 618,
+      "totalUs": 1235,
+      "selfMsPerMount": 0.006118811881188119,
+      "totalMsPerMount": 0.012227722772277228,
+      "selfPct": 0.06471448138359143
+    },
+    {
+      "function": "(anonymous)",
+      "file": "packages/canard/schema-form/src/core/blueprint/utils/types/resolveNodeTypes.ts",
+      "line": 29,
+      "column": 4,
+      "selfUs": 489,
+      "totalUs": 489,
+      "selfMsPerMount": 0.0048415841584158415,
+      "totalMsPerMount": 0.0048415841584158415,
+      "selfPct": 0.05120611876468641
+    },
+    {
+      "function": "effectiveType",
+      "file": "packages/canard/schema-form/src/core/settle/utils/commit/effectiveType.ts",
+      "line": 11,
+      "column": 29,
+      "selfUs": 488,
+      "totalUs": 1126,
+      "selfMsPerMount": 0.004831683168316832,
+      "totalMsPerMount": 0.011148514851485148,
+      "selfPct": 0.05110140277539259
+    },
+    {
+      "function": "projectEmpty",
+      "file": "packages/canard/schema-form/src/core/behaviors/utils/slots/projectEmpty.ts",
+      "line": 6,
+      "column": 49,
+      "selfUs": 472,
+      "totalUs": 28483,
+      "selfMsPerMount": 0.004673267326732673,
+      "totalMsPerMount": 0.282009900990099,
+      "selfPct": 0.04942594694669119
+    },
+    {
+      "function": "get extras",
+      "file": "packages/canard/schema-form/src/core/SchemaNode/SchemaNode.ts",
+      "line": 163,
+      "column": 6,
+      "selfUs": 459,
+      "totalUs": 459,
+      "selfMsPerMount": 0.004544554455445544,
+      "totalMsPerMount": 0.004544554455445544,
+      "selfPct": 0.0480646390858713
+    },
+    {
+      "function": "omitEmptyObject",
+      "file": "packages/canard/schema-form/src/core/behaviors/objectBehavior/utils/omitEmptyObject.ts",
+      "line": 5,
+      "column": 31,
+      "selfUs": 457,
+      "totalUs": 457,
+      "selfMsPerMount": 0.0045247524752475244,
+      "totalMsPerMount": 0.0045247524752475244,
+      "selfPct": 0.04785520710728362
+    },
+    {
+      "function": "measured",
+      "file": "file:///Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/packages/canard/schema-form/architecture/verification/07-switch/profile-103-freeze/measure.mjs",
+      "line": 242,
+      "column": 23,
+      "selfUs": 310,
+      "totalUs": 895519,
+      "selfMsPerMount": 0.0030693069306930694,
+      "totalMsPerMount": 8.866524752475248,
+      "selfPct": 0.032461956681089546
+    },
+    {
+      "function": "(anonymous)",
+      "file": "packages/canard/schema-form/src/core/blueprint/utils/types/resolveNodeStrategy.ts",
+      "line": 23,
+      "column": 4,
+      "selfUs": 308,
+      "totalUs": 308,
+      "selfMsPerMount": 0.0030495049504950496,
+      "totalMsPerMount": 0.0030495049504950496,
+      "selfPct": 0.032252524702501874
+    },
+    {
+      "function": "PathKeyedMap",
+      "file": "packages/canard/schema-form/src/core/utils/pathIndex/PathKeyedMap.ts",
+      "line": 11,
+      "column": 2,
+      "selfUs": 308,
+      "totalUs": 308,
+      "selfMsPerMount": 0.0030495049504950496,
+      "totalMsPerMount": 0.0030495049504950496,
+      "selfPct": 0.032252524702501874
+    },
+    {
+      "function": "add",
+      "file": "packages/canard/schema-form/src/core/utils/pathIndex/utils/PathStoreIndex.ts",
+      "line": 34,
+      "column": 2,
+      "selfUs": 308,
+      "totalUs": 463,
+      "selfMsPerMount": 0.0030495049504950496,
+      "totalMsPerMount": 0.004584158415841584,
+      "selfPct": 0.032252524702501874
+    },
+    {
+      "function": "assembleRaw",
+      "file": "packages/canard/schema-form/src/core/behaviors/utils/slots/assembleRaw.ts",
+      "line": 4,
+      "column": 49,
+      "selfUs": 307,
+      "totalUs": 307,
+      "selfMsPerMount": 0.0030396039603960397,
+      "totalMsPerMount": 0.0030396039603960397,
+      "selfPct": 0.032147808713208034
+    },
+    {
+      "function": "dispatchMount",
+      "file": "packages/canard/schema-form/src/core/dispatch/utils/entry/dispatchMount.ts",
+      "line": 21,
+      "column": 29,
+      "selfUs": 306,
+      "totalUs": 217589,
+      "selfMsPerMount": 0.00302970297029703,
+      "totalMsPerMount": 2.1543465346534654,
+      "selfPct": 0.0320430927239142
+    },
+    {
+      "function": "isMissingStaticInput",
+      "file": "packages/canard/schema-form/src/core/settle/utils/load/isMissingStaticInput.ts",
+      "line": 15,
+      "column": 36,
+      "selfUs": 305,
+      "totalUs": 305,
+      "selfMsPerMount": 0.00301980198019802,
+      "totalMsPerMount": 0.00301980198019802,
+      "selfPct": 0.03193837673462036
+    },
+    {
+      "function": "set",
+      "file": "packages/canard/schema-form/src/core/blueprint/utils/features/StaticFirstLoadCapability.ts",
+      "line": 8,
+      "column": 9,
+      "selfUs": 304,
+      "totalUs": 304,
+      "selfMsPerMount": 0.00300990099009901,
+      "totalMsPerMount": 0.00300990099009901,
+      "selfPct": 0.03183366074532653
+    },
+    {
+      "function": "cpu",
+      "file": "file:///Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/packages/canard/schema-form/architecture/verification/07-switch/profile-103-freeze/measure.mjs",
+      "line": 404,
+      "column": 18,
+      "selfUs": 301,
+      "totalUs": 902468,
+      "selfMsPerMount": 0.0029801980198019802,
+      "totalMsPerMount": 8.935326732673268,
+      "selfPct": 0.03151951277744501
+    },
+    {
+      "function": "Immediate",
+      "file": "node:internal/timers",
+      "line": 747,
+      "column": 13,
+      "selfUs": 179,
+      "totalUs": 334,
+      "selfMsPerMount": 0.0017722772277227723,
+      "totalMsPerMount": 0.003306930693069307,
+      "selfPct": 0.018744162083596867
+    },
+    {
+      "function": "(anonymous)",
+      "file": "packages/canard/schema-form/src/core/blueprint/utils/types/resolveNodeStrategy.ts",
+      "line": 20,
+      "column": 4,
+      "selfUs": 159,
+      "totalUs": 159,
+      "selfMsPerMount": 0.0015742574257425744,
+      "totalMsPerMount": 0.0015742574257425744,
+      "selfPct": 0.016649842297720124
+    },
+    {
+      "function": "emitAfterScript",
+      "file": "node:internal/async_hooks",
+      "line": 527,
+      "column": 24,
+      "selfUs": 155,
+      "totalUs": 155,
+      "selfMsPerMount": 0.0015346534653465347,
+      "totalMsPerMount": 0.0015346534653465347,
+      "selfPct": 0.016230978340544773
+    },
+    {
+      "function": "ref",
+      "file": "node:internal/timers",
+      "line": 763,
+      "column": 5,
+      "selfUs": 155,
+      "totalUs": 155,
+      "selfMsPerMount": 0.0015346534653465347,
+      "totalMsPerMount": 0.0015346534653465347,
+      "selfPct": 0.016230978340544773
+    },
+    {
+      "function": "(anonymous)",
+      "file": "packages/canard/schema-form/src/core/utils/pathIndex/utils/PathStoreIndex.ts",
+      "line": 36,
+      "column": 26,
+      "selfUs": 155,
+      "totalUs": 155,
+      "selfMsPerMount": 0.0015346534653465347,
+      "totalMsPerMount": 0.0015346534653465347,
+      "selfPct": 0.016230978340544773
+    },
+    {
+      "function": "clear",
+      "file": "packages/canard/schema-form/src/core/utils/pathIndex/PathKeyedMap.ts",
+      "line": 32,
+      "column": 11,
+      "selfUs": 154,
+      "totalUs": 154,
+      "selfMsPerMount": 0.0015247524752475248,
+      "totalMsPerMount": 0.0015247524752475248,
+      "selfPct": 0.016126262351250937
+    },
+    {
+      "function": "emitBeforeScript",
+      "file": "node:internal/async_hooks",
+      "line": 519,
+      "column": 25,
+      "selfUs": 154,
+      "totalUs": 154,
+      "selfMsPerMount": 0.0015247524752475248,
+      "totalMsPerMount": 0.0015247524752475248,
+      "selfPct": 0.016126262351250937
+    },
+    {
+      "function": "assertSchemaNodeWritable",
+      "file": "packages/canard/schema-form/src/core/settle/utils/dispose/assertSchemaNodeWritable.ts",
+      "line": 10,
+      "column": 40,
+      "selfUs": 154,
+      "totalUs": 154,
+      "selfMsPerMount": 0.0015247524752475248,
+      "totalMsPerMount": 0.0015247524752475248,
+      "selfPct": 0.016126262351250937
+    },
+    {
+      "function": "canLoadStaticFirstTree",
+      "file": "packages/canard/schema-form/src/core/settle/utils/load/canLoadStaticFirstTree.ts",
+      "line": 10,
+      "column": 38,
+      "selfUs": 154,
+      "totalUs": 154,
+      "selfMsPerMount": 0.0015247524752475248,
+      "totalMsPerMount": 0.0015247524752475248,
+      "selfPct": 0.016126262351250937
+    },
+    {
+      "function": "set raw",
+      "file": "packages/canard/schema-form/src/core/SchemaNode/SchemaNode.ts",
+      "line": 161,
+      "column": 6,
+      "selfUs": 153,
+      "totalUs": 153,
+      "selfMsPerMount": 0.001514851485148515,
+      "totalMsPerMount": 0.001514851485148515,
+      "selfPct": 0.0160215463619571
+    },
+    {
+      "function": "processImmediate",
+      "file": "node:internal/timers",
+      "line": 525,
+      "column": 27,
+      "selfUs": 153,
+      "totalUs": 462,
+      "selfMsPerMount": 0.001514851485148515,
+      "totalMsPerMount": 0.004574257425742574,
+      "selfPct": 0.0160215463619571
+    },
+    {
+      "function": "set",
+      "file": "packages/canard/schema-form/src/core/utils/pathIndex/PathKeyedMap.ts",
+      "line": 20,
+      "column": 11,
+      "selfUs": 153,
+      "totalUs": 616,
+      "selfMsPerMount": 0.001514851485148515,
+      "totalMsPerMount": 0.006099009900990099,
+      "selfPct": 0.0160215463619571
+    },
+    {
+      "function": "hrtimeBigInt",
+      "file": "",
+      "line": 0,
+      "column": -1,
+      "selfUs": 153,
+      "totalUs": 153,
+      "selfMsPerMount": 0.001514851485148515,
+      "totalMsPerMount": 0.001514851485148515,
+      "selfPct": 0.0160215463619571
+    },
+    {
+      "function": "requireRuntimeSchemaNode",
+      "file": "packages/canard/schema-form/src/core/SchemaNode/utils/requireRuntimeSchemaNode.ts",
+      "line": 11,
+      "column": 40,
+      "selfUs": 153,
+      "totalUs": 153,
+      "selfMsPerMount": 0.001514851485148515,
+      "totalMsPerMount": 0.001514851485148515,
+      "selfPct": 0.0160215463619571
+    },
+    {
+      "function": "setImmediate",
+      "file": "node:timers",
+      "line": 215,
+      "column": 21,
+      "selfUs": 152,
+      "totalUs": 486,
+      "selfMsPerMount": 0.001504950495049505,
+      "totalMsPerMount": 0.004811881188118812,
+      "selfPct": 0.015916830372663265
+    },
+    {
+      "function": "interpretIdentity",
+      "file": "packages/canard/schema-form/src/core/behaviors/utils/slots/interpretIdentity.ts",
+      "line": 4,
+      "column": 56,
+      "selfUs": 152,
+      "totalUs": 152,
+      "selfMsPerMount": 0.001504950495049505,
+      "totalMsPerMount": 0.001504950495049505,
+      "selfPct": 0.015916830372663265
+    },
+    {
+      "function": "restoreAdoptedExternalErrors",
+      "file": "packages/canard/schema-form/src/core/dispatch/utils/chain/restoreAdoptedExternalErrors.ts",
+      "line": 12,
+      "column": 44,
+      "selfUs": 152,
+      "totalUs": 152,
+      "selfMsPerMount": 0.001504950495049505,
+      "totalMsPerMount": 0.001504950495049505,
+      "selfPct": 0.015916830372663265
+    },
+    {
+      "function": "schemaNodeFactory",
+      "file": "packages/canard/schema-form/src/core/SchemaNode/utils/schemaNodeFactory.ts",
+      "line": 60,
+      "column": 16,
+      "selfUs": 151,
+      "totalUs": 463,
+      "selfMsPerMount": 0.001495049504950495,
+      "totalMsPerMount": 0.004584158415841584,
+      "selfPct": 0.015812114383369425
+    },
+    {
+      "function": "get name",
+      "file": "packages/canard/schema-form/src/core/SchemaNode/SchemaNode.ts",
+      "line": 148,
+      "column": 6,
+      "selfUs": 151,
+      "totalUs": 151,
+      "selfMsPerMount": 0.001495049504950495,
+      "totalMsPerMount": 0.001495049504950495,
+      "selfPct": 0.015812114383369425
+    },
+    {
+      "function": "isLiteralDefault",
+      "file": "packages/canard/schema-form/src/core/blueprint/utils/analyze/isLiteralDefault.ts",
+      "line": 9,
+      "column": 32,
+      "selfUs": 150,
+      "totalUs": 150,
+      "selfMsPerMount": 0.0014851485148514852,
+      "totalMsPerMount": 0.0014851485148514852,
+      "selfPct": 0.01570739839407559
+    },
+    {
+      "function": "get nullable",
+      "file": "packages/canard/schema-form/src/core/SchemaNode/SchemaNode.ts",
+      "line": 137,
+      "column": 6,
+      "selfUs": 147,
+      "totalUs": 147,
+      "selfMsPerMount": 0.0014554455445544554,
+      "totalMsPerMount": 0.0014554455445544554,
+      "selfPct": 0.015393250426194076
+    },
+    {
+      "function": "mountSchemaNode",
+      "file": "packages/canard/schema-form/src/core/SchemaNode/utils/binding/mountSchemaNode.ts",
+      "line": 14,
+      "column": 31,
+      "selfUs": 144,
+      "totalUs": 217733,
+      "selfMsPerMount": 0.0014257425742574257,
+      "totalMsPerMount": 2.155772277227723,
+      "selfPct": 0.015079102458312565
+    },
+    {
+      "function": "flushQueuedEvents",
+      "file": "packages/canard/schema-form/src/core/dispatch/utils/chain/flushQueuedEvents.ts",
+      "line": 27,
+      "column": 33,
+      "selfUs": 144,
+      "totalUs": 144,
+      "selfMsPerMount": 0.0014257425742574257,
+      "totalMsPerMount": 0.0014257425742574257,
+      "selfPct": 0.015079102458312565
+    },
+    {
+      "function": "structuredClone",
+      "file": "",
+      "line": 0,
+      "column": -1,
+      "selfUs": 137,
+      "totalUs": 137,
+      "selfMsPerMount": 0.0013564356435643563,
+      "totalMsPerMount": 0.0013564356435643563,
+      "selfPct": 0.014346090533255704
+    },
+    {
+      "function": "dispatch",
+      "file": "",
+      "line": 0,
+      "column": -1,
+      "selfUs": 123,
+      "totalUs": 123,
+      "selfMsPerMount": 0.0012178217821782178,
+      "totalMsPerMount": 0.0012178217821782178,
+      "selfPct": 0.012880066683141983
+    },
+    {
+      "function": "nodeFromJSONSchema",
+      "file": "packages/canard/schema-form/src/core/nodeFromJSONSchema.ts",
+      "line": 17,
+      "column": 16,
+      "selfUs": 0,
+      "totalUs": 894723,
+      "selfMsPerMount": 0,
+      "totalMsPerMount": 8.858643564356436,
+      "selfPct": 0
+    },
+    {
+      "function": "create",
+      "file": "(canonical adapter)",
+      "line": 164,
+      "column": 15,
+      "selfUs": 0,
+      "totalUs": 894723,
+      "selfMsPerMount": 0,
+      "totalMsPerMount": 8.858643564356436,
+      "selfPct": 0
+    },
+    {
+      "function": "(anonymous)",
+      "file": "file:///Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/packages/canard/schema-form/architecture/verification/07-switch/profile-103-freeze/measure.mjs",
+      "line": 416,
+      "column": 71,
+      "selfUs": 0,
+      "totalUs": 894723,
+      "selfMsPerMount": 0,
+      "totalMsPerMount": 8.858643564356436,
+      "selfPct": 0
+    },
+    {
+      "function": "(root)",
+      "file": "",
+      "line": 0,
+      "column": -1,
+      "selfUs": 0,
+      "totalUs": 954964,
+      "selfMsPerMount": 0,
+      "totalMsPerMount": 9.455089108910892,
+      "selfPct": 0
+    },
+    {
+      "function": "end",
+      "file": "file:///Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/packages/canard/schema-form/architecture/verification/07-switch/profile-103-freeze/measure.mjs",
+      "line": 245,
+      "column": 32,
+      "selfUs": 0,
+      "totalUs": 486,
+      "selfMsPerMount": 0,
+      "totalMsPerMount": 0.004811881188118812,
+      "selfPct": 0
+    },
+    {
+      "function": "projectObject",
+      "file": "packages/canard/schema-form/src/core/behaviors/objectBehavior/utils/projectObject.ts",
+      "line": 8,
+      "column": 50,
+      "selfUs": 0,
+      "totalUs": 1533,
+      "selfMsPerMount": 0,
+      "totalMsPerMount": 0.015178217821782178,
+      "selfPct": 0
+    },
+    {
+      "function": "hrtimeBigInt",
+      "file": "node:internal/process/per_thread",
+      "line": 99,
+      "column": 21,
+      "selfUs": 0,
+      "totalUs": 153,
+      "selfMsPerMount": 0,
+      "totalMsPerMount": 0.001514851485148515,
+      "selfPct": 0
+    },
+    {
+      "function": "post",
+      "file": "node:inspector",
+      "line": 115,
+      "column": 6,
+      "selfUs": 0,
+      "totalUs": 123,
+      "selfMsPerMount": 0,
+      "totalMsPerMount": 0.0012178217821782178,
+      "selfPct": 0
+    },
+    {
+      "function": "(anonymous)",
+      "file": "file:///Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/packages/canard/schema-form/architecture/verification/07-switch/profile-103-freeze/measure.mjs",
+      "line": 412,
+      "column": 45,
+      "selfUs": 0,
+      "totalUs": 123,
+      "selfMsPerMount": 0,
+      "totalMsPerMount": 0.0012178217821782178,
+      "selfPct": 0
+    },
+    {
+      "function": "post",
+      "file": "file:///Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/packages/canard/schema-form/architecture/verification/07-switch/profile-103-freeze/measure.mjs",
+      "line": 412,
+      "column": 13,
+      "selfUs": 0,
+      "totalUs": 123,
+      "selfMsPerMount": 0,
+      "totalMsPerMount": 0.0012178217821782178,
+      "selfPct": 0
+    }
+  ]
+}

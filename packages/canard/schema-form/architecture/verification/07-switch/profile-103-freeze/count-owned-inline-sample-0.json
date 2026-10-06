@@ -1,0 +1,30 @@
+{
+  "HEAD": "ee97495c93349edb42b726cccae8b1fb020542ef",
+  "variant": "owned-inline",
+  "name": "sample-0",
+  "mode": "production",
+  "nodes": 3,
+  "calls": 8,
+  "distinct": 8,
+  "aliasCalls": 0,
+  "primitiveCalls": 0,
+  "freezesPerNode": 2.6666666666666665,
+  "sites": {
+    "at freezeEffectiveSchema (/private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles/shape103-owned-inline.cjs:559:93)": {
+      "distinct": 1,
+      "calls": 1
+    },
+    "at freezeEffectiveSchema (/private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles/shape103-owned-inline.cjs:570:12)": {
+      "distinct": 3,
+      "calls": 3
+    },
+    "at getStaticObjectEntries (/private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles/shape103-owned-inline.cjs:10717:25)": {
+      "distinct": 1,
+      "calls": 1
+    },
+    "at getStaticChoices (/private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles/shape103-owned-inline.cjs:5141:26)": {
+      "distinct": 3,
+      "calls": 3
+    }
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "HEAD": "ee97495c93349edb42b726cccae8b1fb020542ef",
+  "command": "pair",
+  "args": [
+    "owned-inline",
+    "oneOf-20",
+    "mount",
+    "2"
+  ],
+  "status": 0,
+  "signal": null,
+  "started": 1791286982667,
+  "ended": 1791286984214,
+  "elapsedMs": 1547,
+  "pid": 20806,
+  "driverSha256": "9bfe2e8ed89360269d54063acc6c6b19f3c85329a0a34924ec362f434862a113"
+}

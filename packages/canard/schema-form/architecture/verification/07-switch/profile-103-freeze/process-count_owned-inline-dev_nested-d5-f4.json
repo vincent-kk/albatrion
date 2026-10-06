@@ -1,0 +1,15 @@
+{
+  "HEAD": "ee97495c93349edb42b726cccae8b1fb020542ef",
+  "command": "count",
+  "args": [
+    "owned-inline-dev",
+    "nested-d5-f4"
+  ],
+  "status": 0,
+  "signal": null,
+  "started": 1791287047031,
+  "ended": 1791287047802,
+  "elapsedMs": 771,
+  "pid": 22068,
+  "driverSha256": "9bfe2e8ed89360269d54063acc6c6b19f3c85329a0a34924ec362f434862a113"
+}

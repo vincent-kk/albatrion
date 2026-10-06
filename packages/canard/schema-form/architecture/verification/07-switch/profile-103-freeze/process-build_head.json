@@ -1,0 +1,14 @@
+{
+  "HEAD": "ee97495c93349edb42b726cccae8b1fb020542ef",
+  "command": "build",
+  "args": [
+    "head"
+  ],
+  "status": 0,
+  "signal": null,
+  "started": 1791284880579,
+  "ended": 1791284880682,
+  "elapsedMs": 103,
+  "pid": 87586,
+  "driverSha256": "edbe980d724da04b855482dfeee9b6cdc2f170f2c99d632e48d37d49c585106e"
+}

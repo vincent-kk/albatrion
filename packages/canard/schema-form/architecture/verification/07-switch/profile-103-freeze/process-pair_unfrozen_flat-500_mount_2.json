@@ -1,0 +1,17 @@
+{
+  "HEAD": "ee97495c93349edb42b726cccae8b1fb020542ef",
+  "command": "pair",
+  "args": [
+    "unfrozen",
+    "flat-500",
+    "mount",
+    "2"
+  ],
+  "status": 0,
+  "signal": null,
+  "started": 1791285876806,
+  "ended": 1791285878738,
+  "elapsedMs": 1932,
+  "pid": 2370,
+  "driverSha256": "cedb62c6ae70185637096b3c7115e44a9f8f4b7efec9c78a597ed49ba32e9196"
+}

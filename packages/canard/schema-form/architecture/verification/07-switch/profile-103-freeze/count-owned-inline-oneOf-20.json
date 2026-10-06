@@ -1,0 +1,30 @@
+{
+  "HEAD": "ee97495c93349edb42b726cccae8b1fb020542ef",
+  "variant": "owned-inline",
+  "name": "oneOf-20",
+  "mode": "production",
+  "nodes": 63,
+  "calls": 116,
+  "distinct": 116,
+  "aliasCalls": 0,
+  "primitiveCalls": 0,
+  "freezesPerNode": 1.8412698412698412,
+  "sites": {
+    "at collectGateEvaluationReads (/private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles/shape103-owned-inline.cjs:1305:17)": {
+      "distinct": 20,
+      "calls": 20
+    },
+    "at createBlueprintGate (/private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles/shape103-owned-inline.cjs:1309:44)": {
+      "distinct": 20,
+      "calls": 20
+    },
+    "at freezeEffectiveSchema (/private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles/shape103-owned-inline.cjs:570:12)": {
+      "distinct": 71,
+      "calls": 71
+    },
+    "at getStaticChoices (/private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles/shape103-owned-inline.cjs:5141:26)": {
+      "distinct": 5,
+      "calls": 5
+    }
+  }
+}

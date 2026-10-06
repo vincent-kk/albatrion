@@ -1,0 +1,14 @@
+{
+  "HEAD": "ee97495c93349edb42b726cccae8b1fb020542ef",
+  "command": "verify",
+  "args": [
+    "uniform-arrays"
+  ],
+  "status": 0,
+  "signal": null,
+  "started": 1791285678634,
+  "ended": 1791285678742,
+  "elapsedMs": 108,
+  "pid": 98594,
+  "driverSha256": "cedb62c6ae70185637096b3c7115e44a9f8f4b7efec9c78a597ed49ba32e9196"
+}

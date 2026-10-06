@@ -1,0 +1,26 @@
+{
+  "HEAD": "ee97495c93349edb42b726cccae8b1fb020542ef",
+  "variant": "uniform-arrays",
+  "name": "sample-0",
+  "mode": "production",
+  "nodes": 3,
+  "calls": 38,
+  "distinct": 38,
+  "aliasCalls": 0,
+  "primitiveCalls": 0,
+  "freezesPerNode": 12.666666666666666,
+  "sites": {
+    "at freezeBlueprintValue (/private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles/shape103-uniform-arrays.cjs:562:12)": {
+      "distinct": 34,
+      "calls": 34
+    },
+    "at getStaticObjectEntries (/private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles/shape103-uniform-arrays.cjs:10807:25)": {
+      "distinct": 1,
+      "calls": 1
+    },
+    "at getStaticChoices (/private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles/shape103-uniform-arrays.cjs:5231:26)": {
+      "distinct": 3,
+      "calls": 3
+    }
+  }
+}

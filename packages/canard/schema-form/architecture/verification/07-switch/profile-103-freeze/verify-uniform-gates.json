@@ -1,0 +1,1140 @@
+{
+  "HEAD": "ee97495c93349edb42b726cccae8b1fb020542ef",
+  "variant": "uniform-gates",
+  "schemas": 59,
+  "captures": 118,
+  "records": [
+    {
+      "label": "pydantic-2.9 discriminated Literal",
+      "collect": false,
+      "error": false,
+      "nodes": 5
+    },
+    {
+      "label": "pydantic-2.9 discriminated Literal",
+      "collect": true,
+      "error": false,
+      "nodes": 5
+    },
+    {
+      "label": "pydantic-2.9 Optional[Union[Cat,Dog]]",
+      "collect": false,
+      "error": false,
+      "nodes": 5
+    },
+    {
+      "label": "pydantic-2.9 Optional[Union[Cat,Dog]]",
+      "collect": true,
+      "error": false,
+      "nodes": 5
+    },
+    {
+      "label": "pydantic-2.9 Optional[discriminated]",
+      "collect": false,
+      "error": false,
+      "nodes": 5
+    },
+    {
+      "label": "pydantic-2.9 Optional[discriminated]",
+      "collect": true,
+      "error": false,
+      "nodes": 5
+    },
+    {
+      "label": "pydantic-2.x const+enum (추론)",
+      "collect": false,
+      "error": false,
+      "nodes": 5
+    },
+    {
+      "label": "pydantic-2.x const+enum (추론)",
+      "collect": true,
+      "error": false,
+      "nodes": 5
+    },
+    {
+      "label": "OpenAPI-3.0 petstore mapping-only",
+      "collect": false,
+      "error": false,
+      "nodes": 6
+    },
+    {
+      "label": "OpenAPI-3.0 petstore mapping-only",
+      "collect": true,
+      "error": false,
+      "nodes": 6
+    },
+    {
+      "label": "OpenAPI-3.0 nullable branch",
+      "collect": false,
+      "error": false,
+      "nodes": 5
+    },
+    {
+      "label": "OpenAPI-3.0 nullable branch",
+      "collect": true,
+      "error": false,
+      "nodes": 5
+    },
+    {
+      "label": "OpenAPI-3.1 two-level allOf inheritance (TypeSpec style, 추론)",
+      "collect": false,
+      "error": false,
+      "nodes": 6
+    },
+    {
+      "label": "OpenAPI-3.1 two-level allOf inheritance (TypeSpec style, 추론)",
+      "collect": true,
+      "error": false,
+      "nodes": 6
+    },
+    {
+      "label": "OpenAPI-3.1 type:[object,null] branch",
+      "collect": false,
+      "error": false,
+      "nodes": 5
+    },
+    {
+      "label": "OpenAPI-3.1 type:[object,null] branch",
+      "collect": true,
+      "error": false,
+      "nodes": 5
+    },
+    {
+      "label": "zod-to-json-schema-3.23 discriminatedUnion",
+      "collect": false,
+      "error": false,
+      "nodes": 5
+    },
+    {
+      "label": "zod-to-json-schema-3.23 discriminatedUnion",
+      "collect": true,
+      "error": false,
+      "nodes": 5
+    },
+    {
+      "label": "zod-to-json-schema-3.23 discriminatedUnion with z.enum tag",
+      "collect": false,
+      "error": false,
+      "nodes": 5
+    },
+    {
+      "label": "zod-to-json-schema-3.23 discriminatedUnion with z.enum tag",
+      "collect": true,
+      "error": false,
+      "nodes": 5
+    },
+    {
+      "label": "TypeBox-0.32 Union of Object+Literal",
+      "collect": false,
+      "error": false,
+      "nodes": 5
+    },
+    {
+      "label": "TypeBox-0.32 Union of Object+Literal",
+      "collect": true,
+      "error": false,
+      "nodes": 5
+    },
+    {
+      "label": "typescript-json-schema-0.64 two literal keys per member",
+      "collect": false,
+      "error": false,
+      "nodes": 6
+    },
+    {
+      "label": "typescript-json-schema-0.64 two literal keys per member",
+      "collect": true,
+      "error": false,
+      "nodes": 6
+    },
+    {
+      "label": "hand anyOf overlapping tag values",
+      "collect": false,
+      "error": false,
+      "nodes": 6
+    },
+    {
+      "label": "hand anyOf overlapping tag values",
+      "collect": true,
+      "error": false,
+      "nodes": 6
+    },
+    {
+      "label": "pydantic-2.9 recursive tree union",
+      "collect": false,
+      "error": false,
+      "nodes": 5
+    },
+    {
+      "label": "pydantic-2.9 recursive tree union",
+      "collect": true,
+      "error": false,
+      "nodes": 5
+    },
+    {
+      "label": "89C-03-edge-0",
+      "collect": false,
+      "error": true,
+      "nodes": 0
+    },
+    {
+      "label": "89C-03-edge-0",
+      "collect": true,
+      "error": true,
+      "nodes": 0
+    },
+    {
+      "label": "89C-03-edge-1",
+      "collect": false,
+      "error": true,
+      "nodes": 0
+    },
+    {
+      "label": "89C-03-edge-1",
+      "collect": true,
+      "error": true,
+      "nodes": 0
+    },
+    {
+      "label": "89C-03-edge-2",
+      "collect": false,
+      "error": true,
+      "nodes": 0
+    },
+    {
+      "label": "89C-03-edge-2",
+      "collect": true,
+      "error": true,
+      "nodes": 0
+    },
+    {
+      "label": "89C-03-edge-3",
+      "collect": false,
+      "error": false,
+      "nodes": 1
+    },
+    {
+      "label": "89C-03-edge-3",
+      "collect": true,
+      "error": false,
+      "nodes": 1
+    },
+    {
+      "label": "89C-03-edge-4",
+      "collect": false,
+      "error": false,
+      "nodes": 1
+    },
+    {
+      "label": "89C-03-edge-4",
+      "collect": true,
+      "error": false,
+      "nodes": 1
+    },
+    {
+      "label": "89C-03-edge-5",
+      "collect": false,
+      "error": false,
+      "nodes": 1
+    },
+    {
+      "label": "89C-03-edge-5",
+      "collect": true,
+      "error": false,
+      "nodes": 1
+    },
+    {
+      "label": "89C-03-edge-6",
+      "collect": false,
+      "error": false,
+      "nodes": 1
+    },
+    {
+      "label": "89C-03-edge-6",
+      "collect": true,
+      "error": false,
+      "nodes": 1
+    },
+    {
+      "label": "89C-03-edge-7",
+      "collect": false,
+      "error": false,
+      "nodes": 1
+    },
+    {
+      "label": "89C-03-edge-7",
+      "collect": true,
+      "error": false,
+      "nodes": 1
+    },
+    {
+      "label": "89C-03-edge-8",
+      "collect": false,
+      "error": false,
+      "nodes": 1
+    },
+    {
+      "label": "89C-03-edge-8",
+      "collect": true,
+      "error": false,
+      "nodes": 1
+    },
+    {
+      "label": "89C-03-edge-9",
+      "collect": false,
+      "error": false,
+      "nodes": 1
+    },
+    {
+      "label": "89C-03-edge-9",
+      "collect": true,
+      "error": false,
+      "nodes": 1
+    },
+    {
+      "label": "89C-03-edge-10",
+      "collect": false,
+      "error": false,
+      "nodes": 2
+    },
+    {
+      "label": "89C-03-edge-10",
+      "collect": true,
+      "error": false,
+      "nodes": 2
+    },
+    {
+      "label": "89C-03-edge-11",
+      "collect": false,
+      "error": false,
+      "nodes": 2
+    },
+    {
+      "label": "89C-03-edge-11",
+      "collect": true,
+      "error": false,
+      "nodes": 2
+    },
+    {
+      "label": "89C-03-edge-12",
+      "collect": false,
+      "error": true,
+      "nodes": 0
+    },
+    {
+      "label": "89C-03-edge-12",
+      "collect": true,
+      "error": true,
+      "nodes": 0
+    },
+    {
+      "label": "89C-03-edge-13",
+      "collect": false,
+      "error": true,
+      "nodes": 0
+    },
+    {
+      "label": "89C-03-edge-13",
+      "collect": true,
+      "error": true,
+      "nodes": 0
+    },
+    {
+      "label": "89C-03-edge-14",
+      "collect": false,
+      "error": false,
+      "nodes": 1
+    },
+    {
+      "label": "89C-03-edge-14",
+      "collect": true,
+      "error": false,
+      "nodes": 1
+    },
+    {
+      "label": "89C-03-edge-15",
+      "collect": false,
+      "error": false,
+      "nodes": 1
+    },
+    {
+      "label": "89C-03-edge-15",
+      "collect": true,
+      "error": false,
+      "nodes": 1
+    },
+    {
+      "label": "89C-03-edge-16",
+      "collect": false,
+      "error": false,
+      "nodes": 2
+    },
+    {
+      "label": "89C-03-edge-16",
+      "collect": true,
+      "error": false,
+      "nodes": 2
+    },
+    {
+      "label": "89C-03-edge-17",
+      "collect": false,
+      "error": false,
+      "nodes": 1
+    },
+    {
+      "label": "89C-03-edge-17",
+      "collect": true,
+      "error": false,
+      "nodes": 1
+    },
+    {
+      "label": "89C-03-edge-18",
+      "collect": false,
+      "error": false,
+      "nodes": 2
+    },
+    {
+      "label": "89C-03-edge-18",
+      "collect": true,
+      "error": false,
+      "nodes": 2
+    },
+    {
+      "label": "89C-03-edge-19",
+      "collect": false,
+      "error": false,
+      "nodes": 1
+    },
+    {
+      "label": "89C-03-edge-19",
+      "collect": true,
+      "error": false,
+      "nodes": 1
+    },
+    {
+      "label": "89C-03-edge-20",
+      "collect": false,
+      "error": true,
+      "nodes": 0
+    },
+    {
+      "label": "89C-03-edge-20",
+      "collect": true,
+      "error": true,
+      "nodes": 0
+    },
+    {
+      "label": "89C-03-edge-21",
+      "collect": false,
+      "error": true,
+      "nodes": 0
+    },
+    {
+      "label": "89C-03-edge-21",
+      "collect": true,
+      "error": true,
+      "nodes": 0
+    },
+    {
+      "label": "89C-03-edge-22",
+      "collect": false,
+      "error": true,
+      "nodes": 0
+    },
+    {
+      "label": "89C-03-edge-22",
+      "collect": true,
+      "error": true,
+      "nodes": 0
+    },
+    {
+      "label": "89C-03-edge-23",
+      "collect": false,
+      "error": true,
+      "nodes": 0
+    },
+    {
+      "label": "89C-03-edge-23",
+      "collect": true,
+      "error": true,
+      "nodes": 0
+    },
+    {
+      "label": "89C-03-edge-24",
+      "collect": false,
+      "error": true,
+      "nodes": 0
+    },
+    {
+      "label": "89C-03-edge-24",
+      "collect": true,
+      "error": true,
+      "nodes": 0
+    },
+    {
+      "label": "89C-03-edge-25",
+      "collect": false,
+      "error": false,
+      "nodes": 2
+    },
+    {
+      "label": "89C-03-edge-25",
+      "collect": true,
+      "error": false,
+      "nodes": 2
+    },
+    {
+      "label": "89C-03-edge-26",
+      "collect": false,
+      "error": true,
+      "nodes": 0
+    },
+    {
+      "label": "89C-03-edge-26",
+      "collect": true,
+      "error": true,
+      "nodes": 0
+    },
+    {
+      "label": "89C-03-edge-27",
+      "collect": false,
+      "error": true,
+      "nodes": 0
+    },
+    {
+      "label": "89C-03-edge-27",
+      "collect": true,
+      "error": true,
+      "nodes": 0
+    },
+    {
+      "label": "89C-03-edge-28",
+      "collect": false,
+      "error": true,
+      "nodes": 0
+    },
+    {
+      "label": "89C-03-edge-28",
+      "collect": true,
+      "error": true,
+      "nodes": 0
+    },
+    {
+      "label": "89C-03-edge-29",
+      "collect": false,
+      "error": true,
+      "nodes": 0
+    },
+    {
+      "label": "89C-03-edge-29",
+      "collect": true,
+      "error": true,
+      "nodes": 0
+    },
+    {
+      "label": "89C-03-edge-30",
+      "collect": false,
+      "error": true,
+      "nodes": 0
+    },
+    {
+      "label": "89C-03-edge-30",
+      "collect": true,
+      "error": true,
+      "nodes": 0
+    },
+    {
+      "label": "89C-03-edge-31",
+      "collect": false,
+      "error": true,
+      "nodes": 0
+    },
+    {
+      "label": "89C-03-edge-31",
+      "collect": true,
+      "error": true,
+      "nodes": 0
+    },
+    {
+      "label": "89C-03-edge-32",
+      "collect": false,
+      "error": true,
+      "nodes": 0
+    },
+    {
+      "label": "89C-03-edge-32",
+      "collect": true,
+      "error": true,
+      "nodes": 0
+    },
+    {
+      "label": "89C-03-edge-33",
+      "collect": false,
+      "error": true,
+      "nodes": 0
+    },
+    {
+      "label": "89C-03-edge-33",
+      "collect": true,
+      "error": true,
+      "nodes": 0
+    },
+    {
+      "label": "89C-03-edge-34",
+      "collect": false,
+      "error": true,
+      "nodes": 0
+    },
+    {
+      "label": "89C-03-edge-34",
+      "collect": true,
+      "error": true,
+      "nodes": 0
+    },
+    {
+      "label": "89C-03-edge-35",
+      "collect": false,
+      "error": true,
+      "nodes": 0
+    },
+    {
+      "label": "89C-03-edge-35",
+      "collect": true,
+      "error": true,
+      "nodes": 0
+    },
+    {
+      "label": "89C-03-edge-36",
+      "collect": false,
+      "error": true,
+      "nodes": 0
+    },
+    {
+      "label": "89C-03-edge-36",
+      "collect": true,
+      "error": true,
+      "nodes": 0
+    },
+    {
+      "label": "89C-03-edge-37",
+      "collect": false,
+      "error": true,
+      "nodes": 0
+    },
+    {
+      "label": "89C-03-edge-37",
+      "collect": true,
+      "error": true,
+      "nodes": 0
+    },
+    {
+      "label": "89C-03-edge-38",
+      "collect": false,
+      "error": true,
+      "nodes": 0
+    },
+    {
+      "label": "89C-03-edge-38",
+      "collect": true,
+      "error": true,
+      "nodes": 0
+    },
+    {
+      "label": "89C-03-edge-39",
+      "collect": false,
+      "error": false,
+      "nodes": 1
+    },
+    {
+      "label": "89C-03-edge-39",
+      "collect": true,
+      "error": false,
+      "nodes": 1
+    },
+    {
+      "label": "89C-03-edge-40",
+      "collect": false,
+      "error": false,
+      "nodes": 1
+    },
+    {
+      "label": "89C-03-edge-40",
+      "collect": true,
+      "error": false,
+      "nodes": 1
+    },
+    {
+      "label": "89C-03-edge-41",
+      "collect": false,
+      "error": false,
+      "nodes": 2
+    },
+    {
+      "label": "89C-03-edge-41",
+      "collect": true,
+      "error": false,
+      "nodes": 2
+    },
+    {
+      "label": "89C-03-edge-42",
+      "collect": false,
+      "error": false,
+      "nodes": 2
+    },
+    {
+      "label": "89C-03-edge-42",
+      "collect": true,
+      "error": false,
+      "nodes": 2
+    },
+    {
+      "label": "89C-03-edge-43",
+      "collect": false,
+      "error": false,
+      "nodes": 2
+    },
+    {
+      "label": "89C-03-edge-43",
+      "collect": true,
+      "error": false,
+      "nodes": 2
+    },
+    {
+      "label": "89C-03-edge-44",
+      "collect": false,
+      "error": true,
+      "nodes": 0
+    },
+    {
+      "label": "89C-03-edge-44",
+      "collect": true,
+      "error": true,
+      "nodes": 0
+    }
+  ],
+  "safety": [
+    {
+      "collect": false,
+      "nodes": 5,
+      "sharedMemberships": 20,
+      "issues": []
+    },
+    {
+      "collect": true,
+      "nodes": 5,
+      "sharedMemberships": 20,
+      "issues": []
+    },
+    {
+      "collect": false,
+      "nodes": 5,
+      "sharedMemberships": 22,
+      "issues": []
+    },
+    {
+      "collect": true,
+      "nodes": 5,
+      "sharedMemberships": 22,
+      "issues": []
+    },
+    {
+      "collect": false,
+      "nodes": 5,
+      "sharedMemberships": 24,
+      "issues": []
+    },
+    {
+      "collect": true,
+      "nodes": 5,
+      "sharedMemberships": 24,
+      "issues": []
+    },
+    {
+      "collect": false,
+      "nodes": 5,
+      "sharedMemberships": 20,
+      "issues": []
+    },
+    {
+      "collect": true,
+      "nodes": 5,
+      "sharedMemberships": 20,
+      "issues": []
+    },
+    {
+      "collect": false,
+      "nodes": 6,
+      "sharedMemberships": 36,
+      "issues": []
+    },
+    {
+      "collect": true,
+      "nodes": 6,
+      "sharedMemberships": 36,
+      "issues": []
+    },
+    {
+      "collect": false,
+      "nodes": 5,
+      "sharedMemberships": 20,
+      "issues": []
+    },
+    {
+      "collect": true,
+      "nodes": 5,
+      "sharedMemberships": 20,
+      "issues": []
+    },
+    {
+      "collect": false,
+      "nodes": 6,
+      "sharedMemberships": 46,
+      "issues": []
+    },
+    {
+      "collect": true,
+      "nodes": 6,
+      "sharedMemberships": 46,
+      "issues": []
+    },
+    {
+      "collect": false,
+      "nodes": 5,
+      "sharedMemberships": 20,
+      "issues": []
+    },
+    {
+      "collect": true,
+      "nodes": 5,
+      "sharedMemberships": 20,
+      "issues": []
+    },
+    {
+      "collect": false,
+      "nodes": 5,
+      "sharedMemberships": 16,
+      "issues": []
+    },
+    {
+      "collect": true,
+      "nodes": 5,
+      "sharedMemberships": 16,
+      "issues": []
+    },
+    {
+      "collect": false,
+      "nodes": 5,
+      "sharedMemberships": 16,
+      "issues": []
+    },
+    {
+      "collect": true,
+      "nodes": 5,
+      "sharedMemberships": 16,
+      "issues": []
+    },
+    {
+      "collect": false,
+      "nodes": 5,
+      "sharedMemberships": 16,
+      "issues": []
+    },
+    {
+      "collect": true,
+      "nodes": 5,
+      "sharedMemberships": 16,
+      "issues": []
+    },
+    {
+      "collect": false,
+      "nodes": 6,
+      "sharedMemberships": 20,
+      "issues": []
+    },
+    {
+      "collect": true,
+      "nodes": 6,
+      "sharedMemberships": 20,
+      "issues": []
+    },
+    {
+      "collect": false,
+      "nodes": 6,
+      "sharedMemberships": 24,
+      "issues": []
+    },
+    {
+      "collect": true,
+      "nodes": 6,
+      "sharedMemberships": 24,
+      "issues": []
+    },
+    {
+      "collect": false,
+      "nodes": 5,
+      "sharedMemberships": 28,
+      "issues": []
+    },
+    {
+      "collect": true,
+      "nodes": 5,
+      "sharedMemberships": 28,
+      "issues": []
+    },
+    {
+      "collect": false,
+      "nodes": 1,
+      "sharedMemberships": 2,
+      "issues": []
+    },
+    {
+      "collect": true,
+      "nodes": 1,
+      "sharedMemberships": 2,
+      "issues": []
+    },
+    {
+      "collect": false,
+      "nodes": 1,
+      "sharedMemberships": 4,
+      "issues": []
+    },
+    {
+      "collect": true,
+      "nodes": 1,
+      "sharedMemberships": 4,
+      "issues": []
+    },
+    {
+      "collect": false,
+      "nodes": 1,
+      "sharedMemberships": 4,
+      "issues": []
+    },
+    {
+      "collect": true,
+      "nodes": 1,
+      "sharedMemberships": 4,
+      "issues": []
+    },
+    {
+      "collect": false,
+      "nodes": 1,
+      "sharedMemberships": 6,
+      "issues": []
+    },
+    {
+      "collect": true,
+      "nodes": 1,
+      "sharedMemberships": 6,
+      "issues": []
+    },
+    {
+      "collect": false,
+      "nodes": 1,
+      "sharedMemberships": 6,
+      "issues": []
+    },
+    {
+      "collect": true,
+      "nodes": 1,
+      "sharedMemberships": 6,
+      "issues": []
+    },
+    {
+      "collect": false,
+      "nodes": 1,
+      "sharedMemberships": 2,
+      "issues": []
+    },
+    {
+      "collect": true,
+      "nodes": 1,
+      "sharedMemberships": 2,
+      "issues": []
+    },
+    {
+      "collect": false,
+      "nodes": 1,
+      "sharedMemberships": 2,
+      "issues": []
+    },
+    {
+      "collect": true,
+      "nodes": 1,
+      "sharedMemberships": 2,
+      "issues": []
+    },
+    {
+      "collect": false,
+      "nodes": 2,
+      "sharedMemberships": 8,
+      "issues": []
+    },
+    {
+      "collect": true,
+      "nodes": 2,
+      "sharedMemberships": 8,
+      "issues": []
+    },
+    {
+      "collect": false,
+      "nodes": 2,
+      "sharedMemberships": 6,
+      "issues": []
+    },
+    {
+      "collect": true,
+      "nodes": 2,
+      "sharedMemberships": 6,
+      "issues": []
+    },
+    {
+      "collect": false,
+      "nodes": 1,
+      "sharedMemberships": 6,
+      "issues": []
+    },
+    {
+      "collect": true,
+      "nodes": 1,
+      "sharedMemberships": 6,
+      "issues": []
+    },
+    {
+      "collect": false,
+      "nodes": 1,
+      "sharedMemberships": 4,
+      "issues": []
+    },
+    {
+      "collect": true,
+      "nodes": 1,
+      "sharedMemberships": 4,
+      "issues": []
+    },
+    {
+      "collect": false,
+      "nodes": 2,
+      "sharedMemberships": 8,
+      "issues": []
+    },
+    {
+      "collect": true,
+      "nodes": 2,
+      "sharedMemberships": 8,
+      "issues": []
+    },
+    {
+      "collect": false,
+      "nodes": 1,
+      "sharedMemberships": 2,
+      "issues": []
+    },
+    {
+      "collect": true,
+      "nodes": 1,
+      "sharedMemberships": 2,
+      "issues": []
+    },
+    {
+      "collect": false,
+      "nodes": 2,
+      "sharedMemberships": 4,
+      "issues": []
+    },
+    {
+      "collect": true,
+      "nodes": 2,
+      "sharedMemberships": 4,
+      "issues": []
+    },
+    {
+      "collect": false,
+      "nodes": 1,
+      "sharedMemberships": 2,
+      "issues": []
+    },
+    {
+      "collect": true,
+      "nodes": 1,
+      "sharedMemberships": 2,
+      "issues": []
+    },
+    {
+      "collect": false,
+      "nodes": 2,
+      "sharedMemberships": 4,
+      "issues": []
+    },
+    {
+      "collect": true,
+      "nodes": 2,
+      "sharedMemberships": 4,
+      "issues": []
+    },
+    {
+      "collect": false,
+      "nodes": 1,
+      "sharedMemberships": 2,
+      "issues": []
+    },
+    {
+      "collect": true,
+      "nodes": 1,
+      "sharedMemberships": 2,
+      "issues": []
+    },
+    {
+      "collect": false,
+      "nodes": 1,
+      "sharedMemberships": 2,
+      "issues": []
+    },
+    {
+      "collect": true,
+      "nodes": 1,
+      "sharedMemberships": 2,
+      "issues": []
+    },
+    {
+      "collect": false,
+      "nodes": 2,
+      "sharedMemberships": 8,
+      "issues": []
+    },
+    {
+      "collect": true,
+      "nodes": 2,
+      "sharedMemberships": 8,
+      "issues": []
+    },
+    {
+      "collect": false,
+      "nodes": 2,
+      "sharedMemberships": 4,
+      "issues": []
+    },
+    {
+      "collect": true,
+      "nodes": 2,
+      "sharedMemberships": 4,
+      "issues": []
+    },
+    {
+      "collect": false,
+      "nodes": 2,
+      "sharedMemberships": 6,
+      "issues": []
+    },
+    {
+      "collect": true,
+      "nodes": 2,
+      "sharedMemberships": 6,
+      "issues": []
+    }
+  ],
+  "equal": true,
+  "measurementOnly": true
+}

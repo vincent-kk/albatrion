@@ -1,0 +1,17 @@
+{
+  "HEAD": "ee97495c93349edb42b726cccae8b1fb020542ef",
+  "command": "pair",
+  "args": [
+    "candidate",
+    "oneOf-40",
+    "later",
+    "1"
+  ],
+  "status": 0,
+  "signal": null,
+  "started": 1791286074274,
+  "ended": 1791286075575,
+  "elapsedMs": 1301,
+  "pid": 6689,
+  "driverSha256": "3607ee717ab0c097be966faae61d17345dbb1742f9045a36cd4c73cc49fdc5cd"
+}

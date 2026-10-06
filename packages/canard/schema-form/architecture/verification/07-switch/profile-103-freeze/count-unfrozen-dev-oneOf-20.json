@@ -1,0 +1,22 @@
+{
+  "HEAD": "ee97495c93349edb42b726cccae8b1fb020542ef",
+  "variant": "unfrozen-dev",
+  "name": "oneOf-20",
+  "mode": "development",
+  "nodes": 63,
+  "calls": 11,
+  "distinct": 11,
+  "aliasCalls": 0,
+  "primitiveCalls": 0,
+  "freezesPerNode": 0.1746031746031746,
+  "sites": {
+    "at getStaticChoices (/private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles/shape103-unfrozen-dev.cjs:5098:26)": {
+      "distinct": 5,
+      "calls": 5
+    },
+    "at markCommitDeliveries (/private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles/shape103-unfrozen-dev.cjs:8712:30)": {
+      "distinct": 6,
+      "calls": 6
+    }
+  }
+}

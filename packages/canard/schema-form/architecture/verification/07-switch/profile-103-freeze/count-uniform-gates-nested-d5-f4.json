@@ -1,0 +1,26 @@
+{
+  "HEAD": "ee97495c93349edb42b726cccae8b1fb020542ef",
+  "variant": "uniform-gates",
+  "name": "nested-d5-f4",
+  "mode": "production",
+  "nodes": 1365,
+  "calls": 7165,
+  "distinct": 7165,
+  "aliasCalls": 0,
+  "primitiveCalls": 0,
+  "freezesPerNode": 5.249084249084249,
+  "sites": {
+    "at freezeBlueprintValue (/private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles/shape103-uniform-gates.cjs:562:12)": {
+      "distinct": 5459,
+      "calls": 5459
+    },
+    "at getStaticObjectEntries (/private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles/shape103-uniform-gates.cjs:10812:25)": {
+      "distinct": 341,
+      "calls": 341
+    },
+    "at getStaticChoices (/private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles/shape103-uniform-gates.cjs:5236:26)": {
+      "distinct": 1365,
+      "calls": 1365
+    }
+  }
+}

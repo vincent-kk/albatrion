@@ -1,0 +1,14 @@
+{
+  "HEAD": "ee97495c93349edb42b726cccae8b1fb020542ef",
+  "command": "build",
+  "args": [
+    "uniform-arrays"
+  ],
+  "status": 0,
+  "signal": null,
+  "started": 1791285522136,
+  "ended": 1791285522246,
+  "elapsedMs": 110,
+  "pid": 96568,
+  "driverSha256": "5c30dcca109c7058e2a150089de0ca90835d2d1429626c36f710dc74a6922686"
+}

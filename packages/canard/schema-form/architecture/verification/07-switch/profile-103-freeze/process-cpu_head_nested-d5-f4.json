@@ -1,0 +1,15 @@
+{
+  "HEAD": "ee97495c93349edb42b726cccae8b1fb020542ef",
+  "command": "cpu",
+  "args": [
+    "head",
+    "nested-d5-f4"
+  ],
+  "status": 0,
+  "signal": null,
+  "started": 1791286690653,
+  "ended": 1791286692895,
+  "elapsedMs": 2242,
+  "pid": 16710,
+  "driverSha256": "b676a8150b7585da9ed88c5a0bbbfe1cde92ad50bf49cd22b2ef1a87abcca860"
+}

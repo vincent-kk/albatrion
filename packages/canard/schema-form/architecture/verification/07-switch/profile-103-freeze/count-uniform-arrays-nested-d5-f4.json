@@ -1,0 +1,26 @@
+{
+  "HEAD": "ee97495c93349edb42b726cccae8b1fb020542ef",
+  "variant": "uniform-arrays",
+  "name": "nested-d5-f4",
+  "mode": "production",
+  "nodes": 1365,
+  "calls": 16721,
+  "distinct": 16721,
+  "aliasCalls": 0,
+  "primitiveCalls": 0,
+  "freezesPerNode": 12.249816849816849,
+  "sites": {
+    "at freezeBlueprintValue (/private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles/shape103-uniform-arrays.cjs:562:12)": {
+      "distinct": 15015,
+      "calls": 15015
+    },
+    "at getStaticObjectEntries (/private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles/shape103-uniform-arrays.cjs:10807:25)": {
+      "distinct": 341,
+      "calls": 341
+    },
+    "at getStaticChoices (/private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles/shape103-uniform-arrays.cjs:5231:26)": {
+      "distinct": 1365,
+      "calls": 1365
+    }
+  }
+}

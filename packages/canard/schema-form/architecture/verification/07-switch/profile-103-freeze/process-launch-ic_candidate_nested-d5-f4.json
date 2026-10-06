@@ -1,0 +1,15 @@
+{
+  "HEAD": "ee97495c93349edb42b726cccae8b1fb020542ef",
+  "command": "launch-ic",
+  "args": [
+    "candidate",
+    "nested-d5-f4"
+  ],
+  "status": 0,
+  "signal": null,
+  "started": 1791284956550,
+  "ended": 1791284969029,
+  "elapsedMs": 12479,
+  "pid": 88898,
+  "driverSha256": "37f064257dc77741a33fdb824a3f5b1216f4ab9433be9b34517452c125def0cc"
+}

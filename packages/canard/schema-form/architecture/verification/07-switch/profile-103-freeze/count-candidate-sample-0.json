@@ -1,0 +1,26 @@
+{
+  "HEAD": "ee97495c93349edb42b726cccae8b1fb020542ef",
+  "variant": "candidate",
+  "name": "sample-0",
+  "mode": "production",
+  "nodes": 3,
+  "calls": 14,
+  "distinct": 14,
+  "aliasCalls": 0,
+  "primitiveCalls": 0,
+  "freezesPerNode": 4.666666666666667,
+  "sites": {
+    "at freezeBlueprintValue (/private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles/shape103-candidate.cjs:562:12)": {
+      "distinct": 10,
+      "calls": 10
+    },
+    "at getStaticObjectEntries (/private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles/shape103-candidate.cjs:10812:25)": {
+      "distinct": 1,
+      "calls": 1
+    },
+    "at getStaticChoices (/private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles/shape103-candidate.cjs:5236:26)": {
+      "distinct": 3,
+      "calls": 3
+    }
+  }
+}

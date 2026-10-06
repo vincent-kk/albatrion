@@ -1,0 +1,17 @@
+{
+  "HEAD": "ee97495c93349edb42b726cccae8b1fb020542ef",
+  "command": "pair",
+  "args": [
+    "owned-inline",
+    "sample-0",
+    "later",
+    "2"
+  ],
+  "status": 0,
+  "signal": null,
+  "started": 1791286985627,
+  "ended": 1791286986684,
+  "elapsedMs": 1057,
+  "pid": 20876,
+  "driverSha256": "9bfe2e8ed89360269d54063acc6c6b19f3c85329a0a34924ec362f434862a113"
+}

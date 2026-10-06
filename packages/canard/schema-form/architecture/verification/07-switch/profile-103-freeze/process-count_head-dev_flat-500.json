@@ -1,0 +1,15 @@
+{
+  "HEAD": "ee97495c93349edb42b726cccae8b1fb020542ef",
+  "command": "count",
+  "args": [
+    "head-dev",
+    "flat-500"
+  ],
+  "status": 0,
+  "signal": null,
+  "started": 1791286398739,
+  "ended": 1791286399024,
+  "elapsedMs": 285,
+  "pid": 12379,
+  "driverSha256": "1f0cee94027f3876c18710684aca1347b413766b65eab00a79a8dd00f59b0340"
+}

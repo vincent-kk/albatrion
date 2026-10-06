@@ -1,0 +1,17 @@
+{
+  "HEAD": "ee97495c93349edb42b726cccae8b1fb020542ef",
+  "command": "pair",
+  "args": [
+    "control",
+    "oneOf-20",
+    "mount",
+    "3"
+  ],
+  "status": 0,
+  "signal": null,
+  "started": 1791285982582,
+  "ended": 1791285984174,
+  "elapsedMs": 1592,
+  "pid": 4308,
+  "driverSha256": "3607ee717ab0c097be966faae61d17345dbb1742f9045a36cd4c73cc49fdc5cd"
+}

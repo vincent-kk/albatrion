@@ -1,0 +1,8 @@
+{
+  "HEAD": "ee97495c93349edb42b726cccae8b1fb020542ef",
+  "variant": "candidate-probe",
+  "sha256": "6bcd1d1abbba1abb07389e69c24f993db98ac90e480513daac7a73b09e19074d",
+  "bytes": 535137,
+  "naturalServiceExits": 1,
+  "edits": []
+}

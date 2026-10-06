@@ -1,0 +1,14 @@
+{
+  "HEAD": "ee97495c93349edb42b726cccae8b1fb020542ef",
+  "command": "build",
+  "args": [
+    "head-probe"
+  ],
+  "status": 0,
+  "signal": null,
+  "started": 1791286936864,
+  "ended": 1791286936958,
+  "elapsedMs": 94,
+  "pid": 19868,
+  "driverSha256": "72747cf92edd84d87c33234eaa5e4b72d9d096133db5c7a74e0b626beffbb5de"
+}

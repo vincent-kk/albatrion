@@ -1,0 +1,42 @@
+{
+  "HEAD": "ee97495c93349edb42b726cccae8b1fb020542ef",
+  "variant": "owned-inline-dev",
+  "name": "sample-0",
+  "mode": "development",
+  "nodes": 3,
+  "calls": 69,
+  "distinct": 69,
+  "aliasCalls": 0,
+  "primitiveCalls": 0,
+  "freezesPerNode": 23,
+  "sites": {
+    "at freezeEffectiveSchema (/private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles/shape103-owned-inline-dev.cjs:560:46)": {
+      "distinct": 1,
+      "calls": 1
+    },
+    "at freezeEffectiveSchema (/private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles/shape103-owned-inline-dev.cjs:586:42)": {
+      "distinct": 3,
+      "calls": 3
+    },
+    "at freezeEffectiveSchema (/private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles/shape103-owned-inline-dev.cjs:589:42)": {
+      "distinct": 3,
+      "calls": 3
+    },
+    "at freezeBlueprintValue (/private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles/shape103-owned-inline-dev.cjs:2478:41)": {
+      "distinct": 55,
+      "calls": 55
+    },
+    "at getStaticObjectEntries (/private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles/shape103-owned-inline-dev.cjs:10855:25)": {
+      "distinct": 1,
+      "calls": 1
+    },
+    "at getStaticChoices (/private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles/shape103-owned-inline-dev.cjs:5279:26)": {
+      "distinct": 3,
+      "calls": 3
+    },
+    "at commitStaticFirstNode (/private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles/shape103-owned-inline-dev.cjs:10839:61)": {
+      "distinct": 3,
+      "calls": 3
+    }
+  }
+}

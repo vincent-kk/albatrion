@@ -1,0 +1,22 @@
+{
+  "HEAD": "ee97495c93349edb42b726cccae8b1fb020542ef",
+  "variant": "uniform-gates",
+  "name": "oneOf-20",
+  "mode": "production",
+  "nodes": 63,
+  "calls": 283,
+  "distinct": 283,
+  "aliasCalls": 0,
+  "primitiveCalls": 0,
+  "freezesPerNode": 4.492063492063492,
+  "sites": {
+    "at freezeBlueprintValue (/private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles/shape103-uniform-gates.cjs:562:12)": {
+      "distinct": 278,
+      "calls": 278
+    },
+    "at getStaticChoices (/private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles/shape103-uniform-gates.cjs:5236:26)": {
+      "distinct": 5,
+      "calls": 5
+    }
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "HEAD": "ee97495c93349edb42b726cccae8b1fb020542ef",
+  "command": "probe",
+  "args": [
+    "candidate",
+    "nested-d5-f4"
+  ],
+  "status": 0,
+  "signal": null,
+  "started": 1791286281091,
+  "ended": 1791286283962,
+  "elapsedMs": 2871,
+  "pid": 10001,
+  "driverSha256": "1f0cee94027f3876c18710684aca1347b413766b65eab00a79a8dd00f59b0340"
+}
