@@ -1,0 +1,45 @@
+(node:61978) [DEP0205] DeprecationWarning: `module.register()` is deprecated. Use `module.registerHooks()` instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+│ ┌────────────────────────────────────────────────────────────────────────────┐
+│ │  Info: Found a setup file with "setProjectAnnotations".                    │
+│ │  Skipping automatic provisioning of preview annotations to avoid           │
+│ │  conflicts. Since Storybook 10.3, "@storybook/addon-vitest" applies these  │
+│ │   automatically.                                                           │
+│ │  You can safely remove the "setProjectAnnotations" call from your setup    │
+│ │  file, or remove the file entirely if you don't have custom code there.    │
+│ └────────────────────────────────────────────────────────────────────────────┘
+
+ RUN  v3.2.6 /Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/packages/canard/schema-form
+
+stdout | src/core/blueprint/__tests__/blueprint.owned-inline-build-own-work.test.ts > copies two separate single-conjunction memberships without membership push work
+107COUNT build-own slices=0 membership-pushes=2
+
+x
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  |unit| src/core/blueprint/__tests__/blueprint.owned-inline-build-own-work.test.ts > copies two separate single-conjunction memberships without membership push work
+AssertionError: expected +0 to be 2 // Object.is equality
+
+- Expected
++ Received
+
+- 2
++ 0
+
+ ❯ src/core/blueprint/__tests__/blueprint.owned-inline-build-own-work.test.ts:48:18
+     46|   }
+     47|   console.log(`107COUNT build-own slices=${slices} membership-pushes=$…
+     48|   expect(slices).toBe(2);
+       |                  ^
+     49|   expect(pushes).toBe(0);
+     50| });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed (1)
+   Start at  04:40:07
+   Duration  671ms (transform 282ms, setup 0ms, collect 493ms, tests 8ms, environment 0ms, prepare 36ms)
+

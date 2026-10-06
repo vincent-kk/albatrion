@@ -1,0 +1,20 @@
+{
+  "HEAD": "9d1ea600a1916e66b0389318d81e1c3ee23ad0d3",
+  "timerWorkers": 450,
+  "buildWorkers": 10,
+  "rowCommands": 50,
+  "pairedSamples": 45450,
+  "natural": true,
+  "sequential": true,
+  "aaFirst": true,
+  "measuredSourceMatchesFinal": true,
+  "patchChainMatchesFinal": true,
+  "maximumWorkerMs": 3800,
+  "maximumRowMs": 30887,
+  "started": 1791315169612,
+  "ended": 1791316944318,
+  "gc": {
+    "totalInside": 0,
+    "majorInside": 0
+  }
+}

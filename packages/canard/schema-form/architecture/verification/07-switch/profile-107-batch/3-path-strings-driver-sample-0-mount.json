@@ -1,0 +1,11 @@
+{
+  "phase": "3-path-strings",
+  "name": "sample-0",
+  "mode": "mount",
+  "status": 0,
+  "signal": null,
+  "natural": true,
+  "started": 1791316387612,
+  "ended": 1791316393923,
+  "elapsedMs": 6311
+}

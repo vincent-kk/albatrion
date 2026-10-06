@@ -1,0 +1,13 @@
+{
+  "name": "legacy",
+  "command": "node architecture/verification/07-switch/tools/check-legacy-isolation.mjs",
+  "exitCode": 0,
+  "signal": null,
+  "natural": true,
+  "started": 1791317119003,
+  "ended": 1791317119433,
+  "elapsedMs": 430,
+  "summary": [
+    "LEGACY_ISOLATED: 1651 files checked"
+  ]
+}

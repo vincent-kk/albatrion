@@ -1,0 +1,17 @@
+{
+  "name": "1-after-production",
+  "mode": "production",
+  "command": "npx --no-install vitest run --reporter=dot --configLoader runner --cache false --maxWorkers=1 --no-file-parallelism --project unit src/core/blueprint/__tests__/blueprint.owned-inline-build-own-work.test.ts src/core/blueprint/__tests__/blueprint.owned-inline-differential.test.ts src/core/blueprint/__tests__/blueprint.owned-inline-policy.test.ts src/core/blueprint/__tests__/blueprint.owned-inline-counts.test.ts src/core/blueprint/__tests__/blueprint.path-key-once.test.ts",
+  "exitCode": 0,
+  "signal": null,
+  "natural": true,
+  "started": 1791315583879,
+  "ended": 1791315588354,
+  "elapsedMs": 4475,
+  "summary": [
+    "(Use `node --trace-deprecation ...` to show where the warning was created)",
+    " Test Files  5 passed (5)",
+    "      Tests  16 passed (16)",
+    "   Duration  2.77s (transform 824ms, setup 0ms, collect 1.76s, tests 229ms, environment 0ms, prepare 174ms)"
+  ]
+}

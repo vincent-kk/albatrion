@@ -1,0 +1,11 @@
+{
+  "phase": "4-template-key",
+  "name": "sample-0",
+  "mode": "mount",
+  "status": 0,
+  "signal": null,
+  "natural": true,
+  "started": 1791316740355,
+  "ended": 1791316746631,
+  "elapsedMs": 6276
+}

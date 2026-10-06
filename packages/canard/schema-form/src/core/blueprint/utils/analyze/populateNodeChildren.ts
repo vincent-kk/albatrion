@@ -49,6 +49,7 @@ export const populateNodeChildren = (
       const properties = Object.entries(schema.properties);
       for (let index = 0; index < properties.length; index++) {
         const [name, child] = properties[index];
+        const escapedName = escapeSegment(name);
         const input: SchemaInput = {
           context: base.context,
           gates: base.gates,
@@ -57,11 +58,11 @@ export const populateNodeChildren = (
           fragment: base.fragment,
           role: base.role,
           schema: child as SchemaInput['schema'],
-          schemaPath: `${declaration.schemaPath}/properties/${escapeSegment(name)}`,
+          schemaPath: `${declaration.schemaPath}/properties/${escapedName}`,
           order: [...declaration.order, 0, index],
         };
         input.gates = [];
-        const path = `${node.path}/${escapeSegment(name)}`;
+        const path = `${node.path}/${escapedName}`;
         appendChildEntries(
           node,
           name,
@@ -74,7 +75,10 @@ export const populateNodeChildren = (
       return;
     }
   }
-  const properties = new Map<string, SchemaInput[]>();
+  const properties = new Map<
+    string,
+    { escapedName: string; path: string; inputs: SchemaInput[] }
+  >();
   const itemInputs: SchemaInput[] = [];
   const tuples = new Map<number, SchemaInput[]>();
   const childrenControls = node.declarations.flatMap((owner) =>
@@ -120,10 +124,12 @@ export const populateNodeChildren = (
       typeof schema.properties === 'object'
     )
       Object.entries(schema.properties).forEach(([name, child], index) => {
+        const existing = properties.get(name);
+        const escapedName = existing ? existing.escapedName : escapeSegment(name);
         const input: SchemaInput = {
           ...base,
           schema: child as SchemaInput['schema'],
-          schemaPath: `${declaration.schemaPath}/properties/${escapeSegment(name)}`,
+          schemaPath: `${declaration.schemaPath}/properties/${escapedName}`,
           order: [...declaration.order, 0, index],
         };
         const entryGates = childrenControls
@@ -133,16 +139,19 @@ export const populateNodeChildren = (
           )
           .map(({ gate }) => gate!);
         input.gates = [...input.gates, ...entryGates];
-        const existing = properties.get(name);
-        if (existing) existing.push(input);
-        else properties.set(name, [input]);
+        if (existing) existing.inputs.push(input);
+        else properties.set(name, {
+          escapedName,
+          path: `${node.path}/${escapedName}`,
+          inputs: [input],
+        });
         const discriminatorIndex = input.gates.findIndex(
           (gate) =>
             gate.kind === 'discriminator' &&
             (gate.condition as { propertyName?: string }).propertyName === name,
         );
         if (discriminatorIndex >= 0)
-          properties.get(name)!.push({
+          properties.get(name)!.inputs.push({
             ...input,
             gates: input.gates.slice(0, discriminatorIndex),
             context: 'declaration',
@@ -205,8 +214,8 @@ export const populateNodeChildren = (
         order: [...declaration.order, 0, schema.items.length],
       });
   }
-  for (const [name, inputs] of properties) {
-    const path = `${node.path}/${escapeSegment(name)}`;
+  for (const [name, entry] of properties) {
+    const { inputs, path } = entry;
     const children = build(context, inputs, path);
     appendChildEntries(node, name, path, inputs[0].schemaPath, children);
   }

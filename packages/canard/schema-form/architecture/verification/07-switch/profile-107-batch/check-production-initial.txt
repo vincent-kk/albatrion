@@ -1,0 +1,46 @@
+(node:88529) [DEP0205] DeprecationWarning: `module.register()` is deprecated. Use `module.registerHooks()` instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+│ ┌────────────────────────────────────────────────────────────────────────────┐
+│ │  Info: Found a setup file with "setProjectAnnotations".                    │
+│ │  Skipping automatic provisioning of preview annotations to avoid           │
+│ │  conflicts. Since Storybook 10.3, "@storybook/addon-vitest" applies these  │
+│ │   automatically.                                                           │
+│ │  You can safely remove the "setProjectAnnotations" call from your setup    │
+│ │  file, or remove the file entirely if you don't have custom code there.    │
+│ └────────────────────────────────────────────────────────────────────────────┘
+
+ RUN  v3.2.6 /Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/packages/canard/schema-form
+
+·········5:05:16 AM [vite] (client) warning: Module "node:fs" has been externalized for browser compatibility, imported by "/Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/packages/canard/schema-form/src/core/blueprint/__tests__/blueprint.owned-inline-child-input-work.test.ts". See https://vite.dev/guide/troubleshooting.html#module-externalized-for-browser-compatibility for more details.
+  Plugin: vite:resolve
+xstdout | src/core/blueprint/__tests__/blueprint.owned-inline-path-work.test.ts > escapes each ungated name once while producing both public paths
+107COUNT path-strings fast escaping=2 names=2
+
+stdout | src/core/blueprint/__tests__/blueprint.owned-inline-path-work.test.ts > reuses one escaped segment across contributions to the same general-path name
+107COUNT path-strings general escaping=2 names=2
+
+········stdout | src/core/blueprint/__tests__/blueprint.owned-inline-fragment-work.test.ts > empty fragment work > keeps the plain declaration and fragment without checking keyword arrays
+106COUNT empty-fragment keyword-array-check=0
+
+·
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  |production| src/core/blueprint/__tests__/blueprint.owned-inline-child-input-work.test.ts > counts zero base spreads for each real ungated child input in the original field order
+TypeError: readFileSync is not a function
+ ❯ src/core/blueprint/__tests__/blueprint.owned-inline-child-input-work.test.ts:41:18
+     39|     'schema', 'schemaPath', 'order',
+     40|   ]);
+     41|   const source = readFileSync(new URL('../utils/analyze/populateNodeCh…
+       |                  ^
+     42|   const tree = ts.createSourceFile('populateNodeChildren.ts', source, …
+     43|   let input: ts.ObjectLiteralExpression | undefined;
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed | 7 passed (8)
+      Tests  1 failed | 18 passed (19)
+   Start at  05:05:13
+   Duration  5.30s (transform 1.04s, setup 0ms, collect 2.56s, tests 231ms, environment 1.26s, prepare 281ms)
+

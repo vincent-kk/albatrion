@@ -1,0 +1,150 @@
+diff --git a/packages/canard/schema-form/src/core/blueprint/DETAIL.md b/packages/canard/schema-form/src/core/blueprint/DETAIL.md
+--- a/packages/canard/schema-form/src/core/blueprint/DETAIL.md
++++ b/packages/canard/schema-form/src/core/blueprint/DETAIL.md
+@@ -1,6 +1,8 @@
+ # Blueprint contract
+ 
+ ## Requirements
++
++- 자식 이름의 escapeSegment는 이름별 한 번 생산한 값을 schemaPath와 data path에 재사용합니다. 무게이트 경로는 지역 문자열 하나를 사용하고 일반 집계는 기존 properties Map의 값에 escapedName·path·inputs를 같은 필드 순서로 보관합니다. 공개 두 경로·template key 바이트·자식/기여/게이트 순서는 같습니다. 속도 비용은 이름 길이에 비례하는 escape 한 번이며 반복 기여와 뒤 build 순회의 재 escape를 제거합니다. 메모리 비용은 빠른 경로의 지역 문자열 하나, 일반 경로의 이름별 일시 기록 하나와 문자열 참조입니다. 소속 배열의 소유·동결은 유지하며 새 보유 색인·캐시·공개 필드는 없습니다(107라운드 3-path-strings).
+ 
+ - 무게이트 자식 빠른 경로의 입력은 기존 context·gates·inherited·hostPath·fragment·role·schema·schemaPath·order 순서의 literal로 만듭니다. 실제 자식 build·binding·독립 소속 배열 생산은 그대로입니다. 속도 비용은 고정 필드 직접 읽기·쓰기이며 자식마다 base spread의 범용 키 복사를 제거합니다. 메모리 비용은 기존 부모별 base와 자식별 입력·배열·두 공개 경로를 유지하며 새 보유 자료는 없습니다(107라운드 2-child-input-literal).
+ 
+diff --git a/packages/canard/schema-form/src/core/blueprint/utils/analyze/populateNodeChildren.ts b/packages/canard/schema-form/src/core/blueprint/utils/analyze/populateNodeChildren.ts
+--- a/packages/canard/schema-form/src/core/blueprint/utils/analyze/populateNodeChildren.ts
++++ b/packages/canard/schema-form/src/core/blueprint/utils/analyze/populateNodeChildren.ts
+@@ -49,6 +49,7 @@
+       const properties = Object.entries(schema.properties);
+       for (let index = 0; index < properties.length; index++) {
+         const [name, child] = properties[index];
++        const escapedName = escapeSegment(name);
+         const input: SchemaInput = {
+           context: base.context,
+           gates: base.gates,
+@@ -57,11 +58,11 @@
+           fragment: base.fragment,
+           role: base.role,
+           schema: child as SchemaInput['schema'],
+-          schemaPath: `${declaration.schemaPath}/properties/${escapeSegment(name)}`,
++          schemaPath: `${declaration.schemaPath}/properties/${escapedName}`,
+           order: [...declaration.order, 0, index],
+         };
+         input.gates = [];
+-        const path = `${node.path}/${escapeSegment(name)}`;
++        const path = `${node.path}/${escapedName}`;
+         appendChildEntries(
+           node,
+           name,
+@@ -74,7 +75,10 @@
+       return;
+     }
+   }
+-  const properties = new Map<string, SchemaInput[]>();
++  const properties = new Map<
++    string,
++    { escapedName: string; path: string; inputs: SchemaInput[] }
++  >();
+   const itemInputs: SchemaInput[] = [];
+   const tuples = new Map<number, SchemaInput[]>();
+   const childrenControls = node.declarations.flatMap((owner) =>
+@@ -120,10 +124,12 @@
+       typeof schema.properties === 'object'
+     )
+       Object.entries(schema.properties).forEach(([name, child], index) => {
++        const existing = properties.get(name);
++        const escapedName = existing ? existing.escapedName : escapeSegment(name);
+         const input: SchemaInput = {
+           ...base,
+           schema: child as SchemaInput['schema'],
+-          schemaPath: `${declaration.schemaPath}/properties/${escapeSegment(name)}`,
++          schemaPath: `${declaration.schemaPath}/properties/${escapedName}`,
+           order: [...declaration.order, 0, index],
+         };
+         const entryGates = childrenControls
+@@ -133,16 +139,19 @@
+           )
+           .map(({ gate }) => gate!);
+         input.gates = [...input.gates, ...entryGates];
+-        const existing = properties.get(name);
+-        if (existing) existing.push(input);
+-        else properties.set(name, [input]);
++        if (existing) existing.inputs.push(input);
++        else properties.set(name, {
++          escapedName,
++          path: `${node.path}/${escapedName}`,
++          inputs: [input],
++        });
+         const discriminatorIndex = input.gates.findIndex(
+           (gate) =>
+             gate.kind === 'discriminator' &&
+             (gate.condition as { propertyName?: string }).propertyName === name,
+         );
+         if (discriminatorIndex >= 0)
+-          properties.get(name)!.push({
++          properties.get(name)!.inputs.push({
+             ...input,
+             gates: input.gates.slice(0, discriminatorIndex),
+             context: 'declaration',
+@@ -205,8 +214,8 @@
+         order: [...declaration.order, 0, schema.items.length],
+       });
+   }
+-  for (const [name, inputs] of properties) {
+-    const path = `${node.path}/${escapeSegment(name)}`;
++  for (const [name, entry] of properties) {
++    const { inputs, path } = entry;
+     const children = build(context, inputs, path);
+     appendChildEntries(node, name, path, inputs[0].schemaPath, children);
+   }
+diff --git a/packages/canard/schema-form/src/core/blueprint/__tests__/blueprint.owned-inline-path-work.test.ts b/packages/canard/schema-form/src/core/blueprint/__tests__/blueprint.owned-inline-path-work.test.ts
+new file mode 100644
+--- /dev/null
++++ b/packages/canard/schema-form/src/core/blueprint/__tests__/blueprint.owned-inline-path-work.test.ts
+@@ -0,0 +1,47 @@
++import { afterEach, expect, it, vi } from 'vitest';
++
++import { blueprint } from '../blueprint';
++
++/** Count only the child producer's segment escaping, outside unrelated pointer work. */
++const work = vi.hoisted(() => ({ names: [] as string[] }));
++
++vi.mock('@winglet/json/pointer', async (importOriginal) => {
++  const original = await importOriginal<typeof import('@winglet/json/pointer')>();
++  return {
++    ...original,
++    escapeSegment: (name: string) => {
++      if (new Error().stack?.split('\n')[2]?.includes('populateNodeChildren.ts'))
++        work.names.push(name);
++      return original.escapeSegment(name);
++    },
++  };
++});
++
++afterEach(() => { work.names = []; });
++
++it('escapes each ungated name once while producing both public paths', () => {
++  const result = blueprint({
++    type: 'object',
++    properties: { 'a/~': { type: 'string' }, 'q"\\\n': { type: 'number' } },
++  });
++  expect(result.root.childEntries.map(entry => [entry.name, entry.declarations[0].path, entry.declarations[0].schemaPath]))
++    .toEqual([
++      ['a/~', '/a~1~0', '#/properties/a~1~0'],
++      ['q"\\\n', '/q"\\\n', '#/properties/q"\\\n'],
++    ]);
++  console.log(`107COUNT path-strings fast escaping=${work.names.length} names=2`);
++  expect(work.names).toEqual(['a/~', 'q"\\\n']);
++});
++
++it('reuses one escaped segment across contributions to the same general-path name', () => {
++  const result = blueprint({
++    type: 'object',
++    properties: { 'a/~': { type: 'string' } },
++    allOf: [{ properties: { 'a/~': { minLength: 1 }, second: { type: 'number' } } }],
++  });
++  expect(result.root.childEntries.map(entry => entry.name)).toEqual(['a/~', 'second']);
++  expect(result.root.childEntries[0].declarations[0].path).toBe('/a~1~0');
++  expect(result.root.childEntries[0].declarations[0].schemaPath).toBe('#/properties/a~1~0');
++  console.log(`107COUNT path-strings general escaping=${work.names.length} names=2`);
++  expect(work.names).toEqual(['a/~', 'second']);
++});

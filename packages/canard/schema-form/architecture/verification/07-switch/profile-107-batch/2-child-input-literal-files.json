@@ -1,0 +1,22 @@
+{
+  "phase": "2-child-input-literal",
+  "measuredBase": "2-child-input-literal-build-head.json",
+  "patch": "2-child-input-literal.patch",
+  "files": [
+    {
+      "file": "packages/canard/schema-form/src/core/blueprint/DETAIL.md",
+      "detailAddedLines": [
+        5
+      ],
+      "finalDetailAddedLines": [
+        7
+      ]
+    },
+    {
+      "file": "packages/canard/schema-form/src/core/blueprint/utils/analyze/populateNodeChildren.ts"
+    },
+    {
+      "file": "packages/canard/schema-form/src/core/blueprint/__tests__/blueprint.owned-inline-child-input-work.test.ts"
+    }
+  ]
+}

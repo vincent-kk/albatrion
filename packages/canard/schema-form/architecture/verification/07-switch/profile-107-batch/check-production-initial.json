@@ -1,0 +1,20 @@
+{
+  "name": "production",
+  "command": "npx --no-install vitest run --reporter=dot --configLoader runner --cache false --maxWorkers=1 --no-file-parallelism --project production",
+  "exitCode": 1,
+  "signal": null,
+  "natural": true,
+  "started": 1791317111750,
+  "ended": 1791317118799,
+  "elapsedMs": 7049,
+  "summary": [
+    "(Use `node --trace-deprecation ...` to show where the warning was created)",
+    "·········5:05:16 AM [vite] (client) warning: Module \"node:fs\" has been externalized for browser compatibility, imported by \"/Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/packages/canard/schema-form/src/core/blueprint/__tests__/blueprint.owned-inline-child-input-work.test.ts\". See https://vite.dev/guide/troubleshooting.html#module-externalized-for-browser-compatibility for more details.",
+    "⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯",
+    " FAIL  |production| src/core/blueprint/__tests__/blueprint.owned-inline-child-input-work.test.ts > counts zero base spreads for each real ungated child input in the original field order",
+    "TypeError: readFileSync is not a function",
+    " Test Files  1 failed | 7 passed (8)",
+    "      Tests  1 failed | 18 passed (19)",
+    "   Duration  5.30s (transform 1.04s, setup 0ms, collect 2.56s, tests 231ms, environment 1.26s, prepare 281ms)"
+  ]
+}

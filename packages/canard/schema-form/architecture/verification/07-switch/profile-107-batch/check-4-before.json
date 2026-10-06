@@ -1,0 +1,20 @@
+{
+  "name": "4-before",
+  "mode": "development",
+  "command": "npx --no-install vitest run --reporter=dot --configLoader runner --cache false --maxWorkers=1 --no-file-parallelism --project unit src/core/blueprint/__tests__/blueprint.owned-inline-template-scan.test.ts src/core/blueprint/__tests__/blueprint.owned-inline-differential.test.ts src/core/blueprint/__tests__/blueprint.owned-inline-policy.test.ts src/core/blueprint/__tests__/blueprint.owned-inline-counts.test.ts src/core/blueprint/__tests__/blueprint.path-key-once.test.ts",
+  "exitCode": 1,
+  "signal": null,
+  "natural": true,
+  "started": 1791316626357,
+  "ended": 1791316630979,
+  "elapsedMs": 4622,
+  "summary": [
+    "(Use `node --trace-deprecation ...` to show where the warning was created)",
+    "⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯",
+    " FAIL  |unit| src/core/blueprint/__tests__/blueprint.owned-inline-template-scan.test.ts > produces identical escaped lookup bytes with zero JavaScript quote/backslash scan steps",
+    "AssertionError: expected 88 to be +0 // Object.is equality",
+    " Test Files  1 failed | 4 passed (5)",
+    "      Tests  1 failed | 15 passed (16)",
+    "   Duration  2.90s (transform 831ms, setup 0ms, collect 1.77s, tests 321ms, environment 0ms, prepare 179ms)"
+  ]
+}

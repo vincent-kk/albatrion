@@ -1,0 +1,11 @@
+{
+  "phase": "2-child-input-literal",
+  "name": "sample-0",
+  "mode": "later",
+  "status": 0,
+  "signal": null,
+  "natural": true,
+  "started": 1791315986919,
+  "ended": 1791315993165,
+  "elapsedMs": 6246
+}

@@ -1,0 +1,16 @@
+(node:95344) DeprecationWarning: The 'argument' property is deprecated on TSImportType nodes. Use source instead. See https://tseslint.com/key-property-deprecated.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+(node:95344) DeprecationWarning: The 'argument' property is deprecated on TSImportType nodes. Use source instead. See https://tseslint.com/key-property-deprecated.
+(node:95344) DeprecationWarning: The 'argument' property is deprecated on TSImportType nodes. Use source instead. See https://tseslint.com/key-property-deprecated.
+(node:95344) DeprecationWarning: The 'argument' property is deprecated on TSImportType nodes. Use source instead. See https://tseslint.com/key-property-deprecated.
+(node:95344) DeprecationWarning: The 'argument' property is deprecated on TSImportType nodes. Use source instead. See https://tseslint.com/key-property-deprecated.
+(node:95344) DeprecationWarning: The 'argument' property is deprecated on TSImportType nodes. Use source instead. See https://tseslint.com/key-property-deprecated.
+(node:95344) DeprecationWarning: The 'argument' property is deprecated on TSImportType nodes. Use source instead. See https://tseslint.com/key-property-deprecated.
+(node:95344) DeprecationWarning: The 'argument' property is deprecated on TSImportType nodes. Use source instead. See https://tseslint.com/key-property-deprecated.
+(node:95344) DeprecationWarning: The 'argument' property is deprecated on TSImportType nodes. Use source instead. See https://tseslint.com/key-property-deprecated.
+(node:95344) DeprecationWarning: The 'argument' property is deprecated on TSImportType nodes. Use source instead. See https://tseslint.com/key-property-deprecated.
+(node:95344) DeprecationWarning: The 'argument' property is deprecated on TSImportType nodes. Use source instead. See https://tseslint.com/key-property-deprecated.
+(node:95344) DeprecationWarning: The 'argument' property is deprecated on TSImportType nodes. Use source instead. See https://tseslint.com/key-property-deprecated.
+(node:95344) DeprecationWarning: The 'argument' property is deprecated on TSImportType nodes. Use source instead. See https://tseslint.com/key-property-deprecated.
+(node:95344) DeprecationWarning: The 'argument' property is deprecated on TSImportType nodes. Use source instead. See https://tseslint.com/key-property-deprecated.
+(node:95344) DeprecationWarning: The 'argument' property is deprecated on TSImportType nodes. Use source instead. See https://tseslint.com/key-property-deprecated.

@@ -1,0 +1,22 @@
+{
+  "phase": "3-path-strings",
+  "measuredBase": "3-path-strings-build-head.json",
+  "patch": "3-path-strings.patch",
+  "files": [
+    {
+      "file": "packages/canard/schema-form/src/core/blueprint/DETAIL.md",
+      "detailAddedLines": [
+        5
+      ],
+      "finalDetailAddedLines": [
+        5
+      ]
+    },
+    {
+      "file": "packages/canard/schema-form/src/core/blueprint/utils/analyze/populateNodeChildren.ts"
+    },
+    {
+      "file": "packages/canard/schema-form/src/core/blueprint/__tests__/blueprint.owned-inline-path-work.test.ts"
+    }
+  ]
+}

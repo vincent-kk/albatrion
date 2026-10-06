@@ -2,6 +2,8 @@
 
 ## Requirements
 
+- 자식 이름의 escapeSegment는 이름별 한 번 생산한 값을 schemaPath와 data path에 재사용합니다. 무게이트 경로는 지역 문자열 하나를 사용하고 일반 집계는 기존 properties Map의 값에 escapedName·path·inputs를 같은 필드 순서로 보관합니다. 공개 두 경로·template key 바이트·자식/기여/게이트 순서는 같습니다. 속도 비용은 이름 길이에 비례하는 escape 한 번이며 반복 기여와 뒤 build 순회의 재 escape를 제거합니다. 메모리 비용은 빠른 경로의 지역 문자열 하나, 일반 경로의 이름별 일시 기록 하나와 문자열 참조입니다. 소속 배열의 소유·동결은 유지하며 새 보유 색인·캐시·공개 필드는 없습니다(107라운드 3-path-strings).
+
 - 무게이트 자식 빠른 경로의 입력은 기존 context·gates·inherited·hostPath·fragment·role·schema·schemaPath·order 순서의 literal로 만듭니다. 실제 자식 build·binding·독립 소속 배열 생산은 그대로입니다. 속도 비용은 고정 필드 직접 읽기·쓰기이며 자식마다 base spread의 범용 키 복사를 제거합니다. 메모리 비용은 기존 부모별 base와 자식별 입력·배열·두 공개 경로를 유지하며 새 보유 자료는 없습니다(107라운드 2-child-input-literal).
 
 - 조각 확장 키가 없는 선언은 기존 control·type 검사, capability·ID·fragment·소유자·discriminator 기록을 완료한 뒤 반환합니다. `$ref`가 문자열이 아니고 allOf·if·oneOf·anyOf가 모두 undefined인 경우에만 visiting stack 복사와 고정 fragment keyword loop를 생략하며 공개 청사진·진단·DFS 순서는 같습니다. 속도 비용은 O(1) 고정 검사로 5개 keyword 반복과 배열 모양 검사 3회를 제거합니다. 메모리 비용은 적격 호출의 visiting 복사 배열을 제거하고 기존 declaration·fragment·소속 배열은 유지하며 새 보유 색인·캐시는 없습니다. 두 모드의 59-schema differential과 105C-01 최소 크기 판정으로 확인합니다(106라운드 빈 조각).
