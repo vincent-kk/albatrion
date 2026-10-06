@@ -34,16 +34,7 @@ export const buildNodes = (
   inputs: readonly SchemaInput[],
   path: string,
 ): MutableNode[] => {
-  const key = getTemplateKey(context, inputs);
-  const hostPaths: string[][] = [];
-  for (let index = 0; index < inputs.length; index++) {
-    const gates = inputs[index].gates;
-    const paths: string[] = [];
-    for (let gate = 0; gate < gates.length; gate++)
-      paths.push(gates[gate].hostPath);
-    hostPaths.push(paths);
-  }
-  const boundKey = JSON.stringify([key, hostPaths]);
+  const { key, boundKey } = getTemplateKey(context, inputs);
   const cached =
     context.templates.get(boundKey) ?? context.constructing.get(key);
   if (context.constructing.has(key)) context.staticFirstLoad = false;
