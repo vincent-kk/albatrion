@@ -9,6 +9,7 @@ import type {
 } from '../../../type';
 import { applySchemaContribution } from './applySchemaContribution';
 import { finalizeEffectiveSchema } from './finalizeEffectiveSchema';
+import { mergeSingleStaticContribution } from './mergeSchemaContributions/utils/mergeSingleStaticContribution';
 import type { EffectiveSchemaState } from './type';
 
 /** Shared result of a contributing `false` schema, so the early return allocates nothing. */
@@ -29,6 +30,8 @@ export const mergeSchemaContributions = (
   declarations: readonly PropertyDeclaration[],
   options: EffectiveSchemaOptions,
 ): EffectiveSchema => {
+  const single = mergeSingleStaticContribution(node, declarations, options);
+  if (single !== undefined) return single;
   const staticTypes =
     node.schemaType === 'virtual'
       ? undefined

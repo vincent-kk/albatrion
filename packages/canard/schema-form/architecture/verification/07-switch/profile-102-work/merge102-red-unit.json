@@ -1,0 +1,15 @@
+{
+  "head": "23767892757b1726ef60c4d24c1be685596bc7e7",
+  "phase": "제품 구현 전 새 회귀 시험",
+  "command": ["npx", "--no-install", "vitest", "run", "--project", "unit", "src/core/blueprint/__tests__/blueprint.single-static-contribution.test.ts", "src/core/blueprint/__tests__/blueprint.cold-binding.test.ts", "src/core/__tests__/blueprint.branchless-differential.test.ts", "--reporter=dot"],
+  "status": 1,
+  "signal": null,
+  "filesPassed": 2,
+  "filesFailed": 1,
+  "testsPassed": 14,
+  "testsFailed": 1,
+  "durationSeconds": 2.53,
+  "failure": "expected applyConstraintKeywords to be called 0 times, but got 26 times",
+  "nodes": 26,
+  "note": "도구 실행 결과에서 관측한 fail-first 증거를 기록했습니다. 기존 fixture와 assertion은 변경하지 않았습니다."
+}

@@ -2182,3 +2182,64 @@ PKG에서 최종 원복 상태에 네 지정 명령을 순차 실행했습니다
 순서 균형 재측정의 oneOf-20 정상 상태 열은 회차의 측정 순서에 따라 부호가 정확히 바뀝니다. 기준판을 먼저 잰 세 회차의 이득은 +0.098750, +0.140708, +0.082251 ms이고, 후보를 먼저 잰 세 회차는 −0.088542, −0.166874, −0.084750 ms입니다. 어느 판이든 나중에 잰 블록이 빠르며, 여섯 회차의 평균 이득은 약 −0.003 ms로 0과 구별되지 않습니다. 같은 판끼리의 대조(A/A)도 같은 방향의 순서 효과 0.044–0.122 ms를 보였습니다. 공식 판정 열(TEST-026의 강제 수집, 표본마다 순서 교대)은 이런 순서 효과가 없고, oneOf-20은 2.069292 → 2.058500 ms로 중립입니다. 정상 상태 열은 기록용이므로(101라운드 덧붙임), 한 회차의 순서 효과로 판정 열의 뚜렷한 이득을 버리지 않습니다.
 
 그래서 후보를 채택했습니다: `SchemaNodeRevisionLedger` 생성자는 `previous === EMPTY_REVISION_LEDGER`일 때 빈 슬롯에서 시작하고, 다른 원장과 plain 기록의 복사는 그대로입니다. 횟수 시험의 기대값은 노드당 0회입니다. 근거 수치(순서 균형 재측정의 pooled 이득, 판정 열/정상 상태 열): nested-d5-f4 마운트 +1.111/+1.050 ms, flat-500 마운트 +0.390/+0.429 ms, sample-0 마운트 +0.004834/+0.002749 ms, oneOf-20 판정 열 +0.010792 ms. 시험은 허용된 EVENT-070 네 건만 실패하고 3,214건이 통과합니다.
+
+## 102라운드 단일 기여 병합
+
+### 변경과 처분
+
+HEAD `23767892757b1726ef60c4d24c1be685596bc7e7` 대비 [명세 4](profile-102-work.md)의 단일 정적 기여 최적화를 **유지**했습니다. `mergeSchemaContributions.ts:33`에서 새 내부 보조 `mergeSchemaContributions/utils/mergeSingleStaticContribution.ts:17`을 호출합니다. 전체 노드 선언과 선택 기여가 같은 단일 무게이트·노드 범위 연언이고, 앞선 분석에서 검증된 비nullable 스칼라 형과 작성 type이 같으며 nullable·pattern·options·13개 제약 키가 없는 경우에만 직접 구성합니다. `collect`·`isAtomic`이 있거나 다른 조건을 증명하지 못하면 기존 ordered fold를 그대로 실행합니다. 키 존재는 값이 undefined인 경우까지 보수적으로 판정합니다.
+
+직접 구성도 원본 Object.keys 순서로 힌트를 쓰고 마지막에 normalized type을 붙입니다. `required` 중복 제거와 새 배열, `allOf` 새 배열, `readOnly` boolean 정규화, `controls.watch/default`의 새 힌트 객체 및 비어 있는 controls 생략을 기존 정책대로 유지합니다. 그 밖의 프로퍼티·presentation 참조는 그대로입니다. 결과 기록과 스키마를 동결하고, 기존 DEFAULT_NO_ACTIVE 등록·정적/런타임 모드·판정 함수·수집기·별도 메모 조건은 바꾸지 않습니다. 서로 다른 oneOf 선택은 별도 결과로 남습니다(BLUEPRINT-021, NODE-006, SETTLE-017).
+
+소유 `blueprint/DETAIL.md`의 현행 계약과 비용을 제품 코드보다 먼저 갱신했습니다. 속도 비용은 병합당 O(1) 자격 검사와 적격 기여의 O(키 수) 직접 구성입니다. 범용 형 교차·13개 제약 순회·최종 형 정규화 및 관련 임시 배열·누적 상태를 제거합니다. 일반 경로에는 고정 증명 검사만 추가되고 시간·메모리 차수는 같습니다. 새 보유 캐시·색인·공개 필드는 없으며 결과 객체와 required/allOf/controls 복사 정책도 같습니다. 비계수 작업 번들은 526,344→528,991바이트(+2,647)입니다. 제품 hot path는 classic for loop와 동일한 인자 형태를 사용합니다.
+
+### HEAD 동등성과 제약 순회 횟수
+
+제품 변경 전에 새 회귀 시험과 cold-binding·89C-03 차등을 실행했습니다. 59-schema 의미·키 순서 시험을 포함한 14건이 통과했고 횟수 시험 하나만 실패했습니다: 26개 노드에서 범용 제약 순회가 26회였으며 기대값은 0회였습니다. 구현 후 unconditional-effective-schema까지 포함한 4파일 26건이 통과했습니다. 기존 시험·59개 fixture·기존 기대값은 수정하지 않았습니다.
+
+별도 HEAD/작업 번들의 직접 차등은 59개 스키마를 collect 유무로 각각 실행한 118개 결과를 비교했습니다. 구성된 103개 청사진 노드에서 정적 기여와 기본·전체 게이트·개별 게이트 선택의 유효 스키마를 deep-equal 및 재귀 Object.keys 순서로 비교했습니다. 24개 스키마의 오류 name/message/data와 6개 스키마의 경고 내용·순서도 같습니다. stack 주소만 정규화했습니다. 원본 불변성·동결·같은 선택의 반복 참조도 확인했습니다. [직접 비교 자료](profile-102-work/merge102-equivalence.json)는 1,390,533바이트입니다. 새 단위 시험은 options·nullable·pattern·형 배열·모든 제약 키의 undefined 존재·수집기·원자 판정·다중 연언·oneOf 선택·별도 메모를 확인합니다.
+
+[비계수 시간 번들과 분리한 횟수 측정](profile-102-work/merge102-counts.json)입니다. 정적 작업의 분모는 live node 수가 아닌 청사진 노드 수입니다.
+
+| 픽스처 | 청사진 / live 노드 | 정적 제약 순회 HEAD→후보 | 런타임 순회 HEAD→후보 | 합계 HEAD→후보 | 청사진 노드당 합계 HEAD→후보 |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| nested-d5-f4 | 1365 / 1365 | 1365→0 | 0→0 | 1365→0 | 1→0 |
+| flat-500 | 501 / 501 | 501→0 | 0→0 | 501→0 | 1→0 |
+| oneOf-20 | 63 / 6 | 3→1 | 6→6 | 9→7 | 0.142857→0.111111 |
+| sample-0 | 3 / 3 | 3→0 | 0→0 | 3→0 | 1→0 |
+
+### 판정 열과 순서 균형 steady 열
+
+모든 측정은 순차 실행했습니다. 판정 열은 각 행·회차마다 새 프로세스, 각 판 warmup 20회, 101표본×3회, 표본마다 H/W 순서 교대, clock 밖 강제 GC입니다. steady 열은 강제 GC 없이 각 행 6개 새 프로세스에서 연속 블록을 측정했으며 H-first 3회·W-first 3회입니다. 각 판의 606표본을 empty-clock 중앙값으로 회차별 보정한 뒤 합쳐 pooled 중앙값을 계산했습니다. clock은 64개 Promise checkpoint 뒤 check-queue sentinel 안에서 끝납니다. 첫 업데이트의 fresh mount와 후속 업데이트의 트리 준비는 clock 밖입니다. 두 판의 최종 값·노드 관측·revision·commit 결과는 매 회차 같습니다.
+
+아래 단위는 ms입니다. 판정 H/W는 각각 3개 회차 중앙값의 중앙값이고, Δ는 회차별 H−W 이득의 중앙값이므로 H/W 열을 뺀 값과 다를 수 있습니다. 소음은 회차별 한계 중 최댓값입니다. steady는 판정에 사용하지 않습니다.
+
+| 행 | 판정 HEAD | 판정 후보 | 판정 Δ | 최대 소음 | steady pooled HEAD | steady pooled 후보 | steady pooled Δ |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
+| nested-d5-f4 마운트 | 8.933875 | 8.299792 | +0.629667 | 0.821624 | 7.037458 | 6.193375 | +0.844083 |
+| flat-500 마운트 | 3.310541 | 3.103583 | +0.206958 | 0.120792 | 2.081417 | 1.876250 | +0.205167 |
+| oneOf-20 마운트 | 2.066083 | 2.077833 | −0.004541 | 0.076541 | 1.138292 | 1.157376 | −0.019084 |
+| sample-0 마운트 | 0.148625 | 0.134209 | +0.014166 | 0.018874 | 0.045416 | 0.041042 | +0.004374 |
+| sample-0 첫 업데이트 | 0.093417 | 0.095542 | −0.002584 | 0.014500 | 0.026792 | 0.026750 | +0.000042 |
+| sample-0 후속 업데이트 | 0.090125 | 0.090875 | +0.000166 | 0.016666 | 0.017416 | 0.016791 | +0.000625 |
+| nested-d5-f4 첫 업데이트 | 0.185499 | 0.199542 | +0.001833 | 0.145334 | 0.081458 | 0.082416 | −0.000958 |
+| nested-d5-f4 후속 업데이트 | 0.113124 | 0.112417 | +0.001250 | 0.013793 | 0.034666 | 0.034041 | +0.000625 |
+
+소음 규칙은 기존 round-102 paired driver와 같습니다: `max(1µs, 같은 판정 열의 HEAD/HEAD 대조군 절대 이득·paired 중앙값, empty residual p95 + 1999회 bootstrap 99% 중앙값 오차 합)`. 개선은 3회차 모두 각 한계와 양수 paired 구간을 넘어야 하며, 어느 판정 회차든 소음 밖 회귀가 있으면 거부합니다. flat-500의 회차별 이득은 +0.206958/+0.227708/+0.144250, 한계는 0.091499/0.091916/0.120792로 모두 개선입니다. 다른 7행에는 판정 열의 소음 밖 회귀가 없습니다. nested와 sample의 관측 이득은 세 회차 모두의 소음 밖 개선으로 주장하지 않습니다. [최종 판정과 회차별 근거](profile-102-work/merge102-verdict.json)의 adopted는 true입니다.
+
+oneOf-20 steady의 H-first 이득은 +0.118583/+0.026375/+0.093458이며 W-first는 −0.087917/−0.074875/−0.183250입니다. 블록 순서에 따른 부호 반전이고 pooled 이득은 −0.019084입니다. sample-0 업데이트에도 같은 순서 효과가 보입니다. 기록용 steady 회차의 부호를 제품 회귀로 판정하지 않았습니다.
+
+### 지정 검증과 재현
+
+아래 네 명령은 PKG에서 실행했고 설치 없이 모두 자연 종료했습니다. 초기 타입 검사에서 새 시험의 boolean 포함 타입 단언 오류 3개를 수정한 뒤 지정 타입 검사가 통과했습니다. 최종 전체 검증 뒤에는 제품·시험 코드를 바꾸지 않았습니다.
+
+| 명령 | 결과 |
+| --- | --- |
+| `npx vitest run --project unit --project render --project react18 --reporter=dot` | 종료 1, 63.502초; 3,219 통과·todo 1·허용된 EVENT-070 4건만 실패(render/react18의 useEffect·useLayoutEffect 각 1건) |
+| `npx tsc --noEmit --composite false --rootDir . -p tsconfig.json` | 종료 0, 7.702초 |
+| `npx eslint "src/**/*.{ts,tsx}"` | 종료 0, 5.359초 |
+| `node architecture/verification/07-switch/tools/check-legacy-isolation.mjs` | 종료 0, 0.414초; `LEGACY_ISOLATED: 1630 files checked` |
+
+[검증 진입점](profile-102-work/verify-single-contribution.mjs)과 `profile-102-work/merge102-verify-{vitest,tsc,eslint,legacy}.{json,log}`에 명령·cwd·종료 상태·시간·출력을 보존했습니다. 타이머 worker 96개는 겹치지 않았으며 최대 4.453초였습니다. 모든 명령 중 최대는 전체 검증의 63.502초로 8분 미만입니다. esbuild 서비스는 stdin EOF로 자연 종료했고 번들·소스맵은 지정 `/private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles`에만 썼습니다. 새 측정 자료는 모두 `profile-102-work/` 아래 파일당 5MB 이하입니다. git 쓰기·설치 없이 작업했고 다른 에이전트의 `analysis-records-design.md`는 수정하지 않았습니다.
+
+재현은 PKG에서 `node architecture/verification/07-switch/profile-102-work/single-contribution.mjs --build <head|working|control|head-count|working-count>`를 판별로 순차 실행합니다. `--verify`는 59-schema 직접 차등, `--counts`는 별도 계수입니다. 판정 열은 `--pairs <working|control> <fixture> <mount|first|later> forced 1`, steady는 `--pairs working <fixture> <mount|first|later> steady <1|4>`입니다. first/later는 sample-0·nested-d5-f4만 실행하고 각 시작 번호는 연속 3회차를 실행합니다. 지정 검증 진입점에 `<vitest|tsc|eslint|legacy>`를 각각 전달한 뒤 [요약기](profile-102-work/summarize-single-contribution.mjs)를 실행하면 강제 GC 판정과 순서 균형 pooled 값을 재구성합니다. 타이머는 비계수 번들만 사용하며 계수기와 경고 집계의 후속 정리는 측정 clock·제품 코드·시간 번들을 바꾸지 않았습니다.
