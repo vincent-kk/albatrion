@@ -1,0 +1,13 @@
+{
+  "variant": "dynamic-function",
+  "sha256": "33c1127c2eb01058b604c9cb5d01c29a1223600438d508d510aa512a2aecfd01",
+  "bytes": 527062,
+  "naturalServiceExits": 1,
+  "edits": [
+    {
+      "file": "packages/canard/schema-form/src/core/blueprint/utils/expressions/createDynamicFunction/createDynamicFunction.ts",
+      "name": "createDynamicFunction",
+      "body": "const all=globalThis.__dynamicRecords??=[]; const cursors=globalThis.__profile99SequenceCursors; const i=cursors.dynamic??0; cursors.dynamic=i+1; const held=all[i]; if(held){for(let j=0;j<held.paths.length;j++)pathManager.set(held.paths[j]);return held.evaluate;}const evaluate=(()=>__ORIGINAL_BODY__)();all[i]={evaluate,paths:[...pathManager.get()]};return evaluate;"
+    }
+  ]
+}

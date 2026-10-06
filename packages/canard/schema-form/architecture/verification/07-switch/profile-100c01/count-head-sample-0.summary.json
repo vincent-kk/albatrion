@@ -1,0 +1,10 @@
+{
+  "head": "0fdb6660ba07b94bafe3ff20e95b0025154ca490",
+  "variant": "head",
+  "name": "sample-0",
+  "nodes": 3,
+  "declarationRecords": 5,
+  "freezeCalls": 51,
+  "reusedEntryArrays": 0,
+  "scope": "separate count-only worker, never used for CPU sampling or timing"
+}

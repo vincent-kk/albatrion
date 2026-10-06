@@ -1,0 +1,92 @@
+{
+  "head": "0fdb6660ba07b94bafe3ff20e95b0025154ca490",
+  "variant": "compile-expressions",
+  "name": "oneOf-20",
+  "mode": "mount",
+  "run": 3,
+  "warmup": 20,
+  "samples": 101,
+  "started": "2026-10-06T01:17:37.554Z",
+  "ended": "2026-10-06T01:17:39.198Z",
+  "environment": {
+    "date": "2026-10-06T01:17:39.198Z",
+    "head": "0fdb6660ba07b94bafe3ff20e95b0025154ca490",
+    "node": "v24.20.0",
+    "v8": "13.6.233.17-node.53",
+    "esbuild": "0.25.9",
+    "platform": "darwin",
+    "arch": "arm64",
+    "cpu": "Apple M1 Max",
+    "cpus": 10,
+    "memoryBytes": 68719476736,
+    "osRelease": "25.6.0",
+    "mode": "production",
+    "validation": "off",
+    "subscribers": 0
+  },
+  "emptyBefore": {
+    "median": 0.016874999999998863,
+    "p10": 0.009457999999995081,
+    "p90": 0.07241700000000151,
+    "p99": 0.7603329999999744,
+    "n": 101
+  },
+  "emptyAfter": {
+    "median": 0.017333999999891603,
+    "p10": 0.016125000000101863,
+    "p90": 0.02112499999998363,
+    "p99": 0.04841699999997218,
+    "n": 101
+  },
+  "subtractedEmptyMs": 0.017104499999945233,
+  "metrics": {
+    "head": {
+      "median": 2.399186500000056,
+      "p10": 2.21172849999995,
+      "p90": 2.5508535000001444,
+      "p99": 2.7033535000000626,
+      "n": 101
+    },
+    "compile-expressions": {
+      "median": 2.297187500000078,
+      "p10": 2.1224785000000708,
+      "p90": 2.446687500000067,
+      "p99": 2.620228500000067,
+      "n": 101
+    }
+  },
+  "boundMs": 0.10199899999997797,
+  "pairedDelta": {
+    "median": 0.10358299999995779,
+    "p10": -0.013707999999951426,
+    "p90": 0.24358300000005784,
+    "p99": 0.40574999999989814,
+    "n": 101
+  },
+  "observations": {
+    "head": {
+      "sha256": "0dab1516af88193530f8e44693db2dd2fb9d4c721b0de5c72fdb688315c07092",
+      "outputBytes": 90,
+      "liveWidth": 5,
+      "value": {
+        "common": "shared",
+        "kind": "kind_0",
+        "payload_0_a": "a_0",
+        "payload_0_b": 0,
+        "payload_0_c": true
+      }
+    },
+    "compile-expressions": {
+      "sha256": "0dab1516af88193530f8e44693db2dd2fb9d4c721b0de5c72fdb688315c07092",
+      "outputBytes": 90,
+      "liveWidth": 5,
+      "value": {
+        "common": "shared",
+        "kind": "kind_0",
+        "payload_0_a": "a_0",
+        "payload_0_b": 0,
+        "payload_0_c": true
+      }
+    }
+  }
+}

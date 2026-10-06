@@ -1,0 +1,92 @@
+{
+  "head": "0fdb6660ba07b94bafe3ff20e95b0025154ca490",
+  "variant": "blueprint",
+  "name": "oneOf-20",
+  "mode": "mount",
+  "run": 2,
+  "warmup": 20,
+  "samples": 101,
+  "started": "2026-10-06T01:11:18.119Z",
+  "ended": "2026-10-06T01:11:19.640Z",
+  "environment": {
+    "date": "2026-10-06T01:11:19.640Z",
+    "head": "0fdb6660ba07b94bafe3ff20e95b0025154ca490",
+    "node": "v24.20.0",
+    "v8": "13.6.233.17-node.53",
+    "esbuild": "0.25.9",
+    "platform": "darwin",
+    "arch": "arm64",
+    "cpu": "Apple M1 Max",
+    "cpus": 10,
+    "memoryBytes": 68719476736,
+    "osRelease": "25.6.0",
+    "mode": "production",
+    "validation": "off",
+    "subscribers": 0
+  },
+  "emptyBefore": {
+    "median": 0.017291000000000167,
+    "p10": 0.011291999999997415,
+    "p90": 0.06833299999999554,
+    "p99": 0.7633750000000248,
+    "n": 101
+  },
+  "emptyAfter": {
+    "median": 0.01650000000017826,
+    "p10": 0.015957999999955064,
+    "p90": 0.01925000000005639,
+    "p99": 0.040500000000065484,
+    "n": 101
+  },
+  "subtractedEmptyMs": 0.016895500000089214,
+  "metrics": {
+    "head": {
+      "median": 2.5392714999998702,
+      "p10": 2.26835449999993,
+      "p90": 2.9444374999999923,
+      "p99": 3.0316464999999084,
+      "n": 101
+    },
+    "blueprint": {
+      "median": 1.3994375000000332,
+      "p10": 1.2475634999998988,
+      "p90": 1.4836874999999168,
+      "p99": 1.5353964999998766,
+      "n": 101
+    }
+  },
+  "boundMs": 1.139833999999837,
+  "pairedDelta": {
+    "median": 1.2710419999998521,
+    "p10": 0.8322080000000369,
+    "p90": 1.5880420000000868,
+    "p99": 1.711917000000085,
+    "n": 101
+  },
+  "observations": {
+    "head": {
+      "sha256": "0dab1516af88193530f8e44693db2dd2fb9d4c721b0de5c72fdb688315c07092",
+      "outputBytes": 90,
+      "liveWidth": 5,
+      "value": {
+        "common": "shared",
+        "kind": "kind_0",
+        "payload_0_a": "a_0",
+        "payload_0_b": 0,
+        "payload_0_c": true
+      }
+    },
+    "blueprint": {
+      "sha256": "0dab1516af88193530f8e44693db2dd2fb9d4c721b0de5c72fdb688315c07092",
+      "outputBytes": 90,
+      "liveWidth": 5,
+      "value": {
+        "common": "shared",
+        "kind": "kind_0",
+        "payload_0_a": "a_0",
+        "payload_0_b": 0,
+        "payload_0_c": true
+      }
+    }
+  }
+}

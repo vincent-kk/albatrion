@@ -1,0 +1,13 @@
+{
+  "variant": "declarations",
+  "sha256": "19d6177ea7cafb100e3c589f08bb743cb8240ad88a4c4a4519eb323a76e8080d",
+  "bytes": 538635,
+  "naturalServiceExits": 1,
+  "edits": [
+    {
+      "file": "packages/canard/schema-form/src/core/blueprint/utils/analyze/collectDeclarations.ts",
+      "name": "collectDeclarations",
+      "body": "if(globalThis.__collectDepth) return (()=>__ORIGINAL_BODY__)(); const records=globalThis.__collectRecords??=[]; const cursors=globalThis.__profile99SequenceCursors; const i=cursors.collect??0; cursors.collect=i+1; const held=records[i]; if(held){ for(let j=0;j<held.fragments.length;j++){const f=held.fragments[j];context.fragments.push({...f,declares:f.declares.slice(),overlays:f.overlays.slice(),inheritedOverlays:f.inheritedOverlays.slice(),children:f.children.slice()});} input.fragment?.children.push(held.fragments[0].id); context.declarationId+=held.count; Object.assign(context.capabilities,held.capabilities); if(held.owners) context.declarationOwners=new Map(held.owners); if(held.discriminators) context.discriminatorBranches=new Set(held.discriminators); return held.result; } const start=context.fragments.length, count=context.declarationId; globalThis.__collectDepth=1; try{const result=(()=>__ORIGINAL_BODY__)(); records[i]={result,count:context.declarationId-count,capabilities:{...context.capabilities},owners:context.declarationOwners?[...context.declarationOwners]:undefined,discriminators:context.discriminatorBranches?[...context.discriminatorBranches]:undefined,fragments:context.fragments.slice(start).map(f=>({...f,declares:f.declares.slice(),overlays:f.overlays.slice(),inheritedOverlays:f.inheritedOverlays.slice(),children:f.children.slice()}))}; return result;} finally{globalThis.__collectDepth=0;}"
+    }
+  ]
+}

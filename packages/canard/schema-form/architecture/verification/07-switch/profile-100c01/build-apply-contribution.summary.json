@@ -1,0 +1,14 @@
+{
+  "variant": "apply-contribution",
+  "sha256": "c2f2f67038a32f91fa2315b32fac3e9e49fd81c6497688f3800d784a8b0b5605",
+  "bytes": 525898,
+  "naturalServiceExits": 1,
+  "edits": [
+    {
+      "file": "packages/canard/schema-form/src/core/blueprint/utils/effectiveSchema/utils/applySchemaContribution.ts",
+      "name": "applySchemaContribution",
+      "when": "options.mode === 'static'",
+      "body": "return;"
+    }
+  ]
+}

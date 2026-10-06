@@ -1,0 +1,83 @@
+{
+  "head": "0fdb6660ba07b94bafe3ff20e95b0025154ca490",
+  "variant": "apply-contribution",
+  "name": "sample-0",
+  "mode": "mount",
+  "run": 2,
+  "warmup": 20,
+  "samples": 101,
+  "started": "2026-10-06T01:14:07.860Z",
+  "ended": "2026-10-06T01:14:08.911Z",
+  "environment": {
+    "date": "2026-10-06T01:14:08.911Z",
+    "head": "0fdb6660ba07b94bafe3ff20e95b0025154ca490",
+    "node": "v24.20.0",
+    "v8": "13.6.233.17-node.53",
+    "esbuild": "0.25.9",
+    "platform": "darwin",
+    "arch": "arm64",
+    "cpu": "Apple M1 Max",
+    "cpus": 10,
+    "memoryBytes": 68719476736,
+    "osRelease": "25.6.0",
+    "mode": "production",
+    "validation": "off",
+    "subscribers": 0
+  },
+  "emptyBefore": {
+    "median": 0.017583000000001903,
+    "p10": 0.012708000000003494,
+    "p90": 0.07133300000000986,
+    "p99": 0.2342079999999953,
+    "n": 101
+  },
+  "emptyAfter": {
+    "median": 0.016792000000123153,
+    "p10": 0.016125000000101863,
+    "p90": 0.01950000000010732,
+    "p99": 0.0470420000001468,
+    "n": 101
+  },
+  "subtractedEmptyMs": 0.017187500000062528,
+  "metrics": {
+    "head": {
+      "median": 0.19193749999996612,
+      "p10": 0.17110449999975685,
+      "p90": 0.2159374999999102,
+      "p99": 0.23810349999999403,
+      "n": 101
+    },
+    "apply-contribution": {
+      "median": 0.17118750000000205,
+      "p10": 0.15802049999993528,
+      "p90": 0.1941044999998951,
+      "p99": 0.21527150000000006,
+      "n": 101
+    }
+  },
+  "boundMs": 0.020749999999964075,
+  "pairedDelta": {
+    "median": 0.019042000000013104,
+    "p10": -0.002207999999995991,
+    "p90": 0.04208400000004531,
+    "p99": 0.06545699999998078,
+    "n": 101
+  },
+  "observations": {
+    "head": {
+      "sha256": "72c43d9d80f43ae8fddcafd0cb1e33e0faddf95bd32459d24622dda3fbc7a8aa",
+      "outputBytes": 50,
+      "liveWidth": 2,
+      "value": {
+        "name": "John Doe",
+        "email": "john.doe@example.com"
+      }
+    },
+    "apply-contribution": {
+      "sha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+      "outputBytes": 2,
+      "liveWidth": 2,
+      "value": {}
+    }
+  }
+}

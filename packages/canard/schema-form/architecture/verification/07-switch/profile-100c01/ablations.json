@@ -1,0 +1,424 @@
+[
+  {
+    "id": "control",
+    "classification": "control",
+    "spec": "동일 HEAD의 잡음 대조군",
+    "edits": [],
+    "coverage": [],
+    "fixtures": [
+      "nested-d5-f4",
+      "flat-500",
+      "oneOf-20",
+      "sample-0"
+    ]
+  },
+  {
+    "id": "blueprint",
+    "classification": "contract-touching",
+    "spec": "PROFILE-100C01-S01: 완성 청사진의 폼 간 공유는 BLUEPRINT-001·021·022, GOAL-070의 키·수명·옵션·독립 계약 결정이 필요합니다.",
+    "edits": [
+      {
+        "file": "packages/canard/schema-form/src/core/blueprint/blueprint.ts",
+        "name": "blueprint",
+        "body": "return globalThis.__analysisSeed;"
+      }
+    ],
+    "coverage": [
+      "blueprint orchestration / inlined freezing",
+      "blueprint"
+    ],
+    "fixtures": [
+      "nested-d5-f4",
+      "flat-500",
+      "oneOf-20",
+      "sample-0"
+    ]
+  },
+  {
+    "id": "build-nodes",
+    "classification": "contract-touching",
+    "spec": "PROFILE-100C01-S01: 완성 노드/조각 그래프 재사용으로 전체 구축을 제거한 겹친 천장입니다. 공개 내용과 폼별 소유권을 새로 정해야 합니다.",
+    "edits": [
+      {
+        "file": "packages/canard/schema-form/src/core/blueprint/utils/analyze/buildNodes.ts",
+        "name": "buildNodes",
+        "body": "const seed=globalThis.__analysisSeed; context.nodes=seed.nodes.slice(); context.fragments=seed.fragments.slice(); Object.assign(context.capabilities,seed.capabilities); context.declarationId=seed.fragments.length; return [seed.root];"
+      }
+    ],
+    "coverage": [
+      "buildNodes other",
+      "buildNodes"
+    ],
+    "fixtures": [
+      "nested-d5-f4",
+      "flat-500",
+      "oneOf-20",
+      "sample-0"
+    ]
+  },
+  {
+    "id": "static-normalization",
+    "classification": "code-level",
+    "spec": "일회 정적 정규화는 메모 조회·partition·활성 ID 키와 spread 임시 노드를 거치지 않고 기존 contribution fold를 원래 노드와 이미 수집한 conjunctions에 직접 적용합니다. 정적 오류·경고·result와 DEFAULT_NO_ACTIVE는 유지합니다.",
+    "edits": [
+      {
+        "file": "packages/canard/schema-form/src/core/blueprint/utils/analyze/buildNodes.ts",
+        "replace": {
+          "before": "const effective = mergeEffectiveSchema(\n      {\n        ...node,\n        declarations: conjunctions,\n      },\n      [],\n      {\n        mode: 'static',\n        isAtomic: context.options.isAtomic,\n        collect: context.options.collect,\n      },\n    );",
+          "after": "const effective = globalThis.__profile99Ablating ? globalThis.__analysisEffective[node.id] : mergeEffectiveSchema(\n      {\n        ...node,\n        declarations: conjunctions,\n      },\n      [],\n      {\n        mode: 'static',\n        isAtomic: context.options.isAtomic,\n        collect: context.options.collect,\n      },\n    );"
+        }
+      }
+    ],
+    "coverage": [
+      "static schema merge",
+      "buildNodes own static normalization"
+    ],
+    "fixtures": [
+      "nested-d5-f4",
+      "flat-500",
+      "oneOf-20",
+      "sample-0"
+    ]
+  },
+  {
+    "id": "merge-effective",
+    "classification": "code-level",
+    "spec": "같은 정적 결과를 유지하며 일회 분석의 선택·캐시·키 계산을 직접 fold로 우회합니다.",
+    "edits": [
+      {
+        "file": "packages/canard/schema-form/src/core/blueprint/utils/effectiveSchema/mergeEffectiveSchema.ts",
+        "name": "mergeEffectiveSchema",
+        "memoSequence": "mergeEffectiveSchema",
+        "when": "options.mode === 'static'"
+      }
+    ],
+    "coverage": [
+      "mergeEffectiveSchema"
+    ],
+    "fixtures": [
+      "nested-d5-f4",
+      "flat-500",
+      "oneOf-20",
+      "sample-0"
+    ]
+  },
+  {
+    "id": "merge-contributions",
+    "classification": "code-level",
+    "spec": "기여·제약·형 병합을 융합하고 필요하지 않은 임시 상태를 생략하되 정적 충돌·shape·불변성을 유지하는 사양입니다.",
+    "edits": [
+      {
+        "file": "packages/canard/schema-form/src/core/blueprint/utils/effectiveSchema/utils/mergeSchemaContributions.ts",
+        "name": "mergeSchemaContributions",
+        "memoSequence": "mergeSchemaContributions",
+        "when": "options.mode === 'static'"
+      }
+    ],
+    "coverage": [
+      "mergeSchemaContributions"
+    ],
+    "fixtures": [
+      "nested-d5-f4",
+      "flat-500",
+      "oneOf-20",
+      "sample-0"
+    ]
+  },
+  {
+    "id": "apply-contribution",
+    "classification": "code-level",
+    "spec": "키 판정과 제약 병합을 한 순회로 결합하고 고정 키 할당·반복 검사만 제거합니다. 결과와 진단은 같아야 합니다.",
+    "edits": [
+      {
+        "file": "packages/canard/schema-form/src/core/blueprint/utils/effectiveSchema/utils/applySchemaContribution.ts",
+        "name": "applySchemaContribution",
+        "when": "options.mode === 'static'",
+        "body": "return;"
+      }
+    ],
+    "coverage": [
+      "applySchemaContribution"
+    ],
+    "fixtures": [
+      "nested-d5-f4",
+      "flat-500",
+      "oneOf-20",
+      "sample-0"
+    ]
+  },
+  {
+    "id": "static-cache",
+    "classification": "code-level",
+    "spec": "재사용되지 않는 일회 정적 node view의 약한 메모·partition을 만들지 않습니다. 런타임 및 호출자 메모는 유지합니다.",
+    "edits": [
+      {
+        "file": "packages/canard/schema-form/src/core/blueprint/utils/effectiveSchema/utils/ensureEffectiveSchemaCache.ts",
+        "name": "ensureEffectiveSchemaCache",
+        "memoSequence": "staticCache",
+        "when": "options.mode === 'static'",
+        "replay": "held[index].clear();"
+      }
+    ],
+    "coverage": [
+      "ensureEffectiveSchemaCache"
+    ],
+    "fixtures": [
+      "nested-d5-f4",
+      "flat-500",
+      "oneOf-20",
+      "sample-0"
+    ]
+  },
+  {
+    "id": "declarations",
+    "classification": "code-level",
+    "spec": "단일 수집 순회의 선언·조각 레코드를 안정된 shape로 만들고 경로/ID 계산과 불필요한 배열 복사를 줄입니다. 도달한 모든 선언의 검증·순서·진단은 유지합니다.",
+    "edits": [
+      {
+        "file": "packages/canard/schema-form/src/core/blueprint/utils/analyze/collectDeclarations.ts",
+        "name": "collectDeclarations",
+        "body": "if(globalThis.__collectDepth) return (()=>__ORIGINAL_BODY__)(); const records=globalThis.__collectRecords??=[]; const cursors=globalThis.__profile99SequenceCursors; const i=cursors.collect??0; cursors.collect=i+1; const held=records[i]; if(held){ for(let j=0;j<held.fragments.length;j++){const f=held.fragments[j];context.fragments.push({...f,declares:f.declares.slice(),overlays:f.overlays.slice(),inheritedOverlays:f.inheritedOverlays.slice(),children:f.children.slice()});} input.fragment?.children.push(held.fragments[0].id); context.declarationId+=held.count; Object.assign(context.capabilities,held.capabilities); if(held.owners) context.declarationOwners=new Map(held.owners); if(held.discriminators) context.discriminatorBranches=new Set(held.discriminators); return held.result; } const start=context.fragments.length, count=context.declarationId; globalThis.__collectDepth=1; try{const result=(()=>__ORIGINAL_BODY__)(); records[i]={result,count:context.declarationId-count,capabilities:{...context.capabilities},owners:context.declarationOwners?[...context.declarationOwners]:undefined,discriminators:context.discriminatorBranches?[...context.discriminatorBranches]:undefined,fragments:context.fragments.slice(start).map(f=>({...f,declares:f.declares.slice(),overlays:f.overlays.slice(),inheritedOverlays:f.inheritedOverlays.slice(),children:f.children.slice()}))}; return result;} finally{globalThis.__collectDepth=0;}"
+      }
+    ],
+    "coverage": [
+      "declaration collection",
+      "collectDeclarations"
+    ],
+    "fixtures": [
+      "nested-d5-f4",
+      "flat-500",
+      "oneOf-20",
+      "sample-0"
+    ]
+  },
+  {
+    "id": "children",
+    "classification": "code-level",
+    "spec": "자식 입력 수집·게이트 결합을 고전 루프로 융합하고 동일 호스트 선언의 불필요한 spread·복사를 줄입니다. build 호출·새 graph·호스트별 차이는 유지합니다.",
+    "edits": [
+      {
+        "file": "packages/canard/schema-form/src/core/blueprint/utils/analyze/populateNodeChildren.ts",
+        "name": "populateNodeChildren",
+        "body": "const ref=globalThis.__analysisSeed.nodes[node.id]; for(let i=0;i<ref.childEntries.length;i++){const edge=ref.childEntries[i]; const inputs=edge.declarations.filter(d=>d.role==='declaration').map(d=>({schema:d.schema,schemaPath:d.schemaPath,context:d.context,role:d.role,gates:d.gates,order:d.order,inherited:d.inherited,hostPath:d.hostPath,isFragment:false})); const children=build(context,inputs,edge.node.path); for(let j=0;j<children.length;j++) node.childEntries.push(Object.freeze({...edge,node:children[j]}));} if(ref.item) node.item=build(context,ref.item.declarations.map(d=>({schema:d.schema,schemaPath:d.schemaPath,context:d.context,role:d.role,gates:d.gates,order:d.order,inherited:d.inherited,hostPath:d.hostPath})),ref.item.path)[0];"
+      }
+    ],
+    "coverage": [
+      "child binding",
+      "populateNodeChildren"
+    ],
+    "fixtures": [
+      "nested-d5-f4",
+      "flat-500",
+      "oneOf-20",
+      "sample-0"
+    ]
+  },
+  {
+    "id": "template-key",
+    "classification": "code-level",
+    "spec": "무게이트 단일 입력의 키 생성에 불필요한 중간 배열·map·filter를 만들지 않고 참조 절단과 키 분리는 유지합니다.",
+    "edits": [
+      {
+        "file": "packages/canard/schema-form/src/core/blueprint/utils/analyze/getTemplateKey.ts",
+        "name": "getTemplateKey",
+        "memoSequence": "getTemplateKey"
+      }
+    ],
+    "coverage": [
+      "indexes",
+      "getTemplateKey"
+    ],
+    "fixtures": [
+      "nested-d5-f4",
+      "flat-500",
+      "oneOf-20",
+      "sample-0"
+    ]
+  },
+  {
+    "id": "node-types",
+    "classification": "code-level",
+    "spec": "단일 명시 형에서 반복 필터/교집합 순회를 융합합니다. 추론·게이트·정적 형 오류는 기존 경로를 유지합니다.",
+    "edits": [
+      {
+        "file": "packages/canard/schema-form/src/core/blueprint/utils/types/resolveNodeTypes.ts",
+        "name": "resolveNodeTypes",
+        "memoSequence": "resolveNodeTypes"
+      }
+    ],
+    "coverage": [
+      "resolveNodeTypes"
+    ],
+    "fixtures": [
+      "nested-d5-f4",
+      "flat-500",
+      "oneOf-20",
+      "sample-0"
+    ]
+  },
+  {
+    "id": "compile-expressions",
+    "classification": "code-level",
+    "spec": "선언 식과 게이트 경로의 중복 분석을 청사진 호출 안에서 재사용하고 컴파일 시점·schemaPath·의존·함수 본문을 보존합니다.",
+    "edits": [
+      {
+        "file": "packages/canard/schema-form/src/core/blueprint/utils/analyze/compileBlueprintExpressions.ts",
+        "name": "compileBlueprintExpressions",
+        "body": "context.dependencies=globalThis.__analysisSeed.dependencies; return globalThis.__analysisSeed.expressions;"
+      }
+    ],
+    "coverage": [
+      "expression compilation",
+      "compileBlueprintExpressions"
+    ],
+    "fixtures": [
+      "nested-d5-f4",
+      "flat-500",
+      "oneOf-20",
+      "sample-0"
+    ]
+  },
+  {
+    "id": "dynamic-function",
+    "classification": "code-level",
+    "spec": "식 경로 변환/본문 생성의 중복 계산을 줄이되 manager 등록·동일 함수 본문·컴파일 실패 시점과 위치를 유지합니다.",
+    "edits": [
+      {
+        "file": "packages/canard/schema-form/src/core/blueprint/utils/expressions/createDynamicFunction/createDynamicFunction.ts",
+        "name": "createDynamicFunction",
+        "body": "const all=globalThis.__dynamicRecords??=[]; const cursors=globalThis.__profile99SequenceCursors; const i=cursors.dynamic??0; cursors.dynamic=i+1; const held=all[i]; if(held){for(let j=0;j<held.paths.length;j++)pathManager.set(held.paths[j]);return held.evaluate;}const evaluate=(()=>__ORIGINAL_BODY__)();all[i]={evaluate,paths:[...pathManager.get()]};return evaluate;"
+      }
+    ],
+    "coverage": [
+      "createDynamicFunction"
+    ],
+    "fixtures": [
+      "nested-d5-f4",
+      "flat-500",
+      "oneOf-20",
+      "sample-0"
+    ]
+  },
+  {
+    "id": "gate-reads",
+    "classification": "code-level",
+    "spec": "같은 게이트 조건의 정적 읽기 목록을 호출 안에서 한 번 파싱하여 공유합니다. 읽기 순서·위치·불변성을 유지합니다.",
+    "edits": [
+      {
+        "file": "packages/canard/schema-form/src/core/blueprint/utils/analyze/collectGateEvaluationReads.ts",
+        "name": "collectGateEvaluationReads",
+        "memoSequence": "collectGateEvaluationReads"
+      }
+    ],
+    "coverage": [
+      "collectGateEvaluationReads",
+      "gate read analysis"
+    ],
+    "fixtures": [
+      "nested-d5-f4",
+      "flat-500",
+      "oneOf-20",
+      "sample-0"
+    ]
+  },
+  {
+    "id": "create-gate",
+    "classification": "code-level",
+    "spec": "게이트 필드 결합과 정적 읽기 계산의 반복을 제거하되 호스트·appliesWhen·immutable shape는 유지합니다.",
+    "edits": [
+      {
+        "file": "packages/canard/schema-form/src/core/blueprint/utils/analyze/createBlueprintGate.ts",
+        "name": "createBlueprintGate",
+        "memoSequence": "createBlueprintGate"
+      }
+    ],
+    "coverage": [
+      "createBlueprintGate"
+    ],
+    "fixtures": [
+      "nested-d5-f4",
+      "flat-500",
+      "oneOf-20",
+      "sample-0"
+    ]
+  },
+  {
+    "id": "freezing",
+    "classification": "contract-touching",
+    "spec": "PROFILE-100C01-S02: BLUEPRINT-002·021의 불변 노드/조각/식/유효 스키마 계약을 제거한 천장입니다. 동결 생략 자체는 제품 후보가 아닙니다.",
+    "edits": [],
+    "coverage": [
+      "freezing",
+      "inlined freezing (inseparable)"
+    ],
+    "fixtures": [
+      "nested-d5-f4",
+      "flat-500",
+      "oneOf-20",
+      "sample-0"
+    ]
+  },
+  {
+    "id": "shape",
+    "classification": "contract-touching",
+    "spec": "PROFILE-100C01-S03: BLUEPRINT-012·030·044의 정적 재귀/직접 자식 오류를 드러내지 않는 천장입니다. 지연/생략은 계약 결정이 필요합니다.",
+    "edits": [
+      {
+        "file": "packages/canard/schema-form/src/core/blueprint/utils/analyze/validateShape.ts",
+        "name": "validateShape",
+        "body": "return;"
+      },
+      {
+        "file": "packages/canard/schema-form/src/core/blueprint/utils/diagnostics/validateChildTargets.ts",
+        "name": "validateChildTargets",
+        "body": "return;"
+      }
+    ],
+    "coverage": [
+      "shape validation"
+    ],
+    "fixtures": [
+      "nested-d5-f4",
+      "flat-500",
+      "oneOf-20",
+      "sample-0"
+    ]
+  },
+  {
+    "id": "type-strategy",
+    "classification": "code-level",
+    "spec": "형 파싱·종류 그룹·전략 판정의 전체 단계 천장입니다. 중복 읽기와 필터/교집합 순회를 융합하고 같은 정적 오류·옵션 판정·그룹을 유지하는 코드 사양입니다.",
+    "coverage": [
+      "type and strategy"
+    ],
+    "fixtures": [
+      "nested-d5-f4",
+      "flat-500",
+      "oneOf-20",
+      "sample-0"
+    ],
+    "edits": [
+      {
+        "file": "packages/canard/schema-form/src/core/blueprint/blueprint.ts",
+        "name": "blueprint",
+        "body": "const previous=globalThis.__insideColdAnalysis;globalThis.__insideColdAnalysis=true;try{return (()=>__ORIGINAL_BODY__)();}finally{globalThis.__insideColdAnalysis=previous;}"
+      },
+      {
+        "file": "packages/canard/schema-form/src/core/blueprint/utils/types/readAllowedTypes.ts",
+        "name": "readAllowedTypes",
+        "when": "globalThis.__insideColdAnalysis",
+        "body": "const held=(globalThis.__100Types??=new Map()); const key=\"read:\"+(schemaPath); if(held.has(key))return held.get(key);const result=(()=>__ORIGINAL_BODY__)();held.set(key,result);return result;"
+      },
+      {
+        "file": "packages/canard/schema-form/src/core/blueprint/utils/types/resolveNodeTypes.ts",
+        "name": "resolveNodeTypes",
+        "body": "const held=(globalThis.__100Types??=new Map()); const key=\"groups:\"+(declarations.map(d=>d.id).join(',')); if(held.has(key))return held.get(key);const result=(()=>__ORIGINAL_BODY__)();held.set(key,result);return result;"
+      },
+      {
+        "file": "packages/canard/schema-form/src/core/blueprint/utils/types/resolveNodeStrategy.ts",
+        "name": "resolveNodeStrategy",
+        "body": "const held=(globalThis.__100Types??=new Map()); const key=\"strategy:\"+(kind+':'+declarations.map(d=>d.id).join(',')); if(held.has(key))return held.get(key);const result=(()=>__ORIGINAL_BODY__)();held.set(key,result);return result;"
+      }
+    ]
+  }
+]

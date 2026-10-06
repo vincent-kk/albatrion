@@ -1,0 +1,13 @@
+{
+  "variant": "compile-expressions",
+  "sha256": "21857369b8217b788d81026a61b01f11581e510f5554c0ed1052dd8deccd5ba8",
+  "bytes": 526027,
+  "naturalServiceExits": 1,
+  "edits": [
+    {
+      "file": "packages/canard/schema-form/src/core/blueprint/utils/analyze/compileBlueprintExpressions.ts",
+      "name": "compileBlueprintExpressions",
+      "body": "context.dependencies=globalThis.__analysisSeed.dependencies; return globalThis.__analysisSeed.expressions;"
+    }
+  ]
+}

@@ -1,0 +1,15 @@
+{
+  "variant": "static-normalization",
+  "sha256": "ae2483fefe9417b91f05e16da42a6c7bf695a8d797f7e8ca45457cddc6d65863",
+  "bytes": 525796,
+  "naturalServiceExits": 1,
+  "edits": [
+    {
+      "file": "packages/canard/schema-form/src/core/blueprint/utils/analyze/buildNodes.ts",
+      "replace": {
+        "before": "const effective = mergeEffectiveSchema(\n      {\n        ...node,\n        declarations: conjunctions,\n      },\n      [],\n      {\n        mode: 'static',\n        isAtomic: context.options.isAtomic,\n        collect: context.options.collect,\n      },\n    );",
+        "after": "const effective = globalThis.__profile99Ablating ? globalThis.__analysisEffective[node.id] : mergeEffectiveSchema(\n      {\n        ...node,\n        declarations: conjunctions,\n      },\n      [],\n      {\n        mode: 'static',\n        isAtomic: context.options.isAtomic,\n        collect: context.options.collect,\n      },\n    );"
+      }
+    }
+  ]
+}

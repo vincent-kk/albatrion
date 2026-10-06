@@ -1,0 +1,10 @@
+{
+  "head": "0fdb6660ba07b94bafe3ff20e95b0025154ca490",
+  "variant": "working",
+  "name": "oneOf-20",
+  "nodes": 63,
+  "declarationRecords": 83,
+  "freezeCalls": 1128,
+  "reusedEntryArrays": 62,
+  "scope": "separate count-only worker, never used for CPU sampling or timing"
+}

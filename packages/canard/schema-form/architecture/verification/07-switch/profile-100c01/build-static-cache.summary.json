@@ -1,0 +1,15 @@
+{
+  "variant": "static-cache",
+  "sha256": "81497b5d6e8aa51faf67f173d85578e6f571e3413217af3835ad553fd667ada6",
+  "bytes": 526610,
+  "naturalServiceExits": 1,
+  "edits": [
+    {
+      "file": "packages/canard/schema-form/src/core/blueprint/utils/effectiveSchema/utils/ensureEffectiveSchemaCache.ts",
+      "name": "ensureEffectiveSchemaCache",
+      "memoSequence": "staticCache",
+      "when": "options.mode === 'static'",
+      "replay": "held[index].clear();"
+    }
+  ]
+}

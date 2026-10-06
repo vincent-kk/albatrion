@@ -1,0 +1,92 @@
+{
+  "head": "0fdb6660ba07b94bafe3ff20e95b0025154ca490",
+  "variant": "blueprint",
+  "name": "oneOf-20",
+  "mode": "mount",
+  "run": 1,
+  "warmup": 20,
+  "samples": 101,
+  "started": "2026-10-06T01:11:16.429Z",
+  "ended": "2026-10-06T01:11:17.916Z",
+  "environment": {
+    "date": "2026-10-06T01:11:17.916Z",
+    "head": "0fdb6660ba07b94bafe3ff20e95b0025154ca490",
+    "node": "v24.20.0",
+    "v8": "13.6.233.17-node.53",
+    "esbuild": "0.25.9",
+    "platform": "darwin",
+    "arch": "arm64",
+    "cpu": "Apple M1 Max",
+    "cpus": 10,
+    "memoryBytes": 68719476736,
+    "osRelease": "25.6.0",
+    "mode": "production",
+    "validation": "off",
+    "subscribers": 0
+  },
+  "emptyBefore": {
+    "median": 0.019292000000007192,
+    "p10": 0.011375000000015234,
+    "p90": 0.07416699999998855,
+    "p99": 0.8008330000000115,
+    "n": 101
+  },
+  "emptyAfter": {
+    "median": 0.016166999999995824,
+    "p10": 0.015916999999944892,
+    "p90": 0.019667000000026746,
+    "p99": 0.0466670000000704,
+    "n": 101
+  },
+  "subtractedEmptyMs": 0.017729500000001508,
+  "metrics": {
+    "head": {
+      "median": 2.4871454999999685,
+      "p10": 2.225978500000082,
+      "p90": 2.92672950000005,
+      "p99": 3.044312500000018,
+      "n": 101
+    },
+    "blueprint": {
+      "median": 1.4066454999998257,
+      "p10": 1.2380625000001544,
+      "p90": 1.473854500000101,
+      "p99": 1.527062500000028,
+      "n": 101
+    }
+  },
+  "boundMs": 1.0805000000001428,
+  "pairedDelta": {
+    "median": 1.062375000000202,
+    "p10": 0.8173330000001897,
+    "p90": 1.5335829999999078,
+    "p99": 1.6724169999999958,
+    "n": 101
+  },
+  "observations": {
+    "head": {
+      "sha256": "0dab1516af88193530f8e44693db2dd2fb9d4c721b0de5c72fdb688315c07092",
+      "outputBytes": 90,
+      "liveWidth": 5,
+      "value": {
+        "common": "shared",
+        "kind": "kind_0",
+        "payload_0_a": "a_0",
+        "payload_0_b": 0,
+        "payload_0_c": true
+      }
+    },
+    "blueprint": {
+      "sha256": "0dab1516af88193530f8e44693db2dd2fb9d4c721b0de5c72fdb688315c07092",
+      "outputBytes": 90,
+      "liveWidth": 5,
+      "value": {
+        "common": "shared",
+        "kind": "kind_0",
+        "payload_0_a": "a_0",
+        "payload_0_b": 0,
+        "payload_0_c": true
+      }
+    }
+  }
+}

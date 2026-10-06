@@ -1,0 +1,83 @@
+{
+  "head": "0fdb6660ba07b94bafe3ff20e95b0025154ca490",
+  "variant": "apply-contribution",
+  "name": "sample-0",
+  "mode": "mount",
+  "run": 1,
+  "warmup": 20,
+  "samples": 101,
+  "started": "2026-10-06T01:14:06.638Z",
+  "ended": "2026-10-06T01:14:07.653Z",
+  "environment": {
+    "date": "2026-10-06T01:14:07.653Z",
+    "head": "0fdb6660ba07b94bafe3ff20e95b0025154ca490",
+    "node": "v24.20.0",
+    "v8": "13.6.233.17-node.53",
+    "esbuild": "0.25.9",
+    "platform": "darwin",
+    "arch": "arm64",
+    "cpu": "Apple M1 Max",
+    "cpus": 10,
+    "memoryBytes": 68719476736,
+    "osRelease": "25.6.0",
+    "mode": "production",
+    "validation": "off",
+    "subscribers": 0
+  },
+  "emptyBefore": {
+    "median": 0.013540999999975156,
+    "p10": 0.0060840000000155214,
+    "p90": 0.07187500000000568,
+    "p99": 0.2435000000000116,
+    "n": 101
+  },
+  "emptyAfter": {
+    "median": 0.01637499999992542,
+    "p10": 0.015958999999838852,
+    "p90": 0.020958000000064203,
+    "p99": 0.0565839999999298,
+    "n": 101
+  },
+  "subtractedEmptyMs": 0.014957999999950289,
+  "metrics": {
+    "head": {
+      "median": 0.18954200000004562,
+      "p10": 0.1792090000000428,
+      "p90": 0.20995900000005463,
+      "p99": 0.236875000000083,
+      "n": 101
+    },
+    "apply-contribution": {
+      "median": 0.1708340000000419,
+      "p10": 0.16100000000008663,
+      "p90": 0.1880830000002618,
+      "p99": 0.21041700000003516,
+      "n": 101
+    }
+  },
+  "boundMs": 0.01870800000000372,
+  "pairedDelta": {
+    "median": 0.017917000000124972,
+    "p10": 0.0020839999999680003,
+    "p90": 0.037583000000040556,
+    "p99": 0.06825100000003204,
+    "n": 101
+  },
+  "observations": {
+    "head": {
+      "sha256": "72c43d9d80f43ae8fddcafd0cb1e33e0faddf95bd32459d24622dda3fbc7a8aa",
+      "outputBytes": 50,
+      "liveWidth": 2,
+      "value": {
+        "name": "John Doe",
+        "email": "john.doe@example.com"
+      }
+    },
+    "apply-contribution": {
+      "sha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+      "outputBytes": 2,
+      "liveWidth": 2,
+      "value": {}
+    }
+  }
+}

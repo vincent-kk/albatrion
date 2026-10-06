@@ -1,0 +1,10 @@
+{
+  "head": "0fdb6660ba07b94bafe3ff20e95b0025154ca490",
+  "variant": "head",
+  "name": "nested-d5-f4",
+  "nodes": 1365,
+  "declarationRecords": 2729,
+  "freezeCalls": 23205,
+  "reusedEntryArrays": 0,
+  "scope": "separate count-only worker, never used for CPU sampling or timing"
+}

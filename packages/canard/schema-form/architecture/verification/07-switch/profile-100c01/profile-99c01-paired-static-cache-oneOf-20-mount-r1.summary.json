@@ -1,0 +1,92 @@
+{
+  "head": "0fdb6660ba07b94bafe3ff20e95b0025154ca490",
+  "variant": "static-cache",
+  "name": "oneOf-20",
+  "mode": "mount",
+  "run": 1,
+  "warmup": 20,
+  "samples": 101,
+  "started": "2026-10-06T01:14:36.663Z",
+  "ended": "2026-10-06T01:14:38.379Z",
+  "environment": {
+    "date": "2026-10-06T01:14:38.379Z",
+    "head": "0fdb6660ba07b94bafe3ff20e95b0025154ca490",
+    "node": "v24.20.0",
+    "v8": "13.6.233.17-node.53",
+    "esbuild": "0.25.9",
+    "platform": "darwin",
+    "arch": "arm64",
+    "cpu": "Apple M1 Max",
+    "cpus": 10,
+    "memoryBytes": 68719476736,
+    "osRelease": "25.6.0",
+    "mode": "production",
+    "validation": "off",
+    "subscribers": 0
+  },
+  "emptyBefore": {
+    "median": 0.016999999999995907,
+    "p10": 0.0105829999999969,
+    "p90": 0.09558300000000486,
+    "p99": 0.8575830000000053,
+    "n": 101
+  },
+  "emptyAfter": {
+    "median": 0.016208000000005995,
+    "p10": 0.015916999999944892,
+    "p90": 0.02408300000001873,
+    "p99": 0.06024999999999636,
+    "n": 101
+  },
+  "subtractedEmptyMs": 0.01660400000000095,
+  "metrics": {
+    "head": {
+      "median": 2.4259790000000123,
+      "p10": 2.2474380000000167,
+      "p90": 2.6142290000000514,
+      "p99": 2.808438000000166,
+      "n": 101
+    },
+    "static-cache": {
+      "median": 2.3933129999999494,
+      "p10": 2.235145999999901,
+      "p90": 2.576813000000044,
+      "p99": 3.0507289999999614,
+      "n": 101
+    }
+  },
+  "boundMs": 0.03266600000006292,
+  "pairedDelta": {
+    "median": 0.003500000000030923,
+    "p10": -0.153583000000026,
+    "p90": 0.2675840000001699,
+    "p99": 0.4192910000001575,
+    "n": 101
+  },
+  "observations": {
+    "head": {
+      "sha256": "0dab1516af88193530f8e44693db2dd2fb9d4c721b0de5c72fdb688315c07092",
+      "outputBytes": 90,
+      "liveWidth": 5,
+      "value": {
+        "common": "shared",
+        "kind": "kind_0",
+        "payload_0_a": "a_0",
+        "payload_0_b": 0,
+        "payload_0_c": true
+      }
+    },
+    "static-cache": {
+      "sha256": "0dab1516af88193530f8e44693db2dd2fb9d4c721b0de5c72fdb688315c07092",
+      "outputBytes": 90,
+      "liveWidth": 5,
+      "value": {
+        "common": "shared",
+        "kind": "kind_0",
+        "payload_0_a": "a_0",
+        "payload_0_b": 0,
+        "payload_0_c": true
+      }
+    }
+  }
+}

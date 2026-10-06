@@ -1,0 +1,10 @@
+{
+  "head": "0fdb6660ba07b94bafe3ff20e95b0025154ca490",
+  "variant": "working",
+  "name": "flat-500",
+  "nodes": 501,
+  "declarationRecords": 501,
+  "freezeCalls": 7017,
+  "reusedEntryArrays": 500,
+  "scope": "separate count-only worker, never used for CPU sampling or timing"
+}

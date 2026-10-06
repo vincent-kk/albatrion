@@ -1,0 +1,13 @@
+{
+  "variant": "blueprint",
+  "sha256": "163918a8b8a2717ab7fc304d43f4f9c1035862d8382d0d6d0b7d709996ea2801",
+  "bytes": 526000,
+  "naturalServiceExits": 1,
+  "edits": [
+    {
+      "file": "packages/canard/schema-form/src/core/blueprint/blueprint.ts",
+      "name": "blueprint",
+      "body": "return globalThis.__analysisSeed;"
+    }
+  ]
+}

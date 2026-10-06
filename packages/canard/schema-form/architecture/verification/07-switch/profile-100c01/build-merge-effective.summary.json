@@ -1,0 +1,14 @@
+{
+  "variant": "merge-effective",
+  "sha256": "80ad7e0957585df686cdc9330e067da263e0a8564e3cf0523257fc5fe16a0bd0",
+  "bytes": 527465,
+  "naturalServiceExits": 1,
+  "edits": [
+    {
+      "file": "packages/canard/schema-form/src/core/blueprint/utils/effectiveSchema/mergeEffectiveSchema.ts",
+      "name": "mergeEffectiveSchema",
+      "memoSequence": "mergeEffectiveSchema",
+      "when": "options.mode === 'static'"
+    }
+  ]
+}

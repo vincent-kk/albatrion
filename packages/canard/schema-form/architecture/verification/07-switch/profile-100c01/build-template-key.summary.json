@@ -1,0 +1,13 @@
+{
+  "variant": "template-key",
+  "sha256": "fc5145079402a7d4364f31bda8a600d6cbd239e7aa735bc8f9cd9142ab1153ad",
+  "bytes": 526929,
+  "naturalServiceExits": 1,
+  "edits": [
+    {
+      "file": "packages/canard/schema-form/src/core/blueprint/utils/analyze/getTemplateKey.ts",
+      "name": "getTemplateKey",
+      "memoSequence": "getTemplateKey"
+    }
+  ]
+}

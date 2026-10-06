@@ -1,0 +1,13 @@
+{
+  "variant": "gate-reads",
+  "sha256": "22b9ca668f61a06a4e62c2ac38c05c0be1f5af98d4c4983b2a0957713c8e46e5",
+  "bytes": 526840,
+  "naturalServiceExits": 1,
+  "edits": [
+    {
+      "file": "packages/canard/schema-form/src/core/blueprint/utils/analyze/collectGateEvaluationReads.ts",
+      "name": "collectGateEvaluationReads",
+      "memoSequence": "collectGateEvaluationReads"
+    }
+  ]
+}

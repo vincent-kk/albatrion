@@ -1,0 +1,29 @@
+{
+  "variant": "type-strategy",
+  "sha256": "8731e0263f5443958637d89ec68d337d3c99074e097b18dc64ff449b68d8bfff",
+  "bytes": 537593,
+  "naturalServiceExits": 1,
+  "edits": [
+    {
+      "file": "packages/canard/schema-form/src/core/blueprint/blueprint.ts",
+      "name": "blueprint",
+      "body": "const previous=globalThis.__insideColdAnalysis;globalThis.__insideColdAnalysis=true;try{return (()=>__ORIGINAL_BODY__)();}finally{globalThis.__insideColdAnalysis=previous;}"
+    },
+    {
+      "file": "packages/canard/schema-form/src/core/blueprint/utils/types/readAllowedTypes.ts",
+      "name": "readAllowedTypes",
+      "when": "globalThis.__insideColdAnalysis",
+      "body": "const held=(globalThis.__100Types??=new Map()); const key=\"read:\"+(schemaPath); if(held.has(key))return held.get(key);const result=(()=>__ORIGINAL_BODY__)();held.set(key,result);return result;"
+    },
+    {
+      "file": "packages/canard/schema-form/src/core/blueprint/utils/types/resolveNodeTypes.ts",
+      "name": "resolveNodeTypes",
+      "body": "const held=(globalThis.__100Types??=new Map()); const key=\"groups:\"+(declarations.map(d=>d.id).join(',')); if(held.has(key))return held.get(key);const result=(()=>__ORIGINAL_BODY__)();held.set(key,result);return result;"
+    },
+    {
+      "file": "packages/canard/schema-form/src/core/blueprint/utils/types/resolveNodeStrategy.ts",
+      "name": "resolveNodeStrategy",
+      "body": "const held=(globalThis.__100Types??=new Map()); const key=\"strategy:\"+(kind+':'+declarations.map(d=>d.id).join(',')); if(held.has(key))return held.get(key);const result=(()=>__ORIGINAL_BODY__)();held.set(key,result);return result;"
+    }
+  ]
+}

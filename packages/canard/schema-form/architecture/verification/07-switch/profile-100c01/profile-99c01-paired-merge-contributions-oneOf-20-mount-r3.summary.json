@@ -1,0 +1,92 @@
+{
+  "head": "0fdb6660ba07b94bafe3ff20e95b0025154ca490",
+  "variant": "merge-contributions",
+  "name": "oneOf-20",
+  "mode": "mount",
+  "run": 3,
+  "warmup": 20,
+  "samples": 101,
+  "started": "2026-10-06T01:13:30.763Z",
+  "ended": "2026-10-06T01:13:32.381Z",
+  "environment": {
+    "date": "2026-10-06T01:13:32.381Z",
+    "head": "0fdb6660ba07b94bafe3ff20e95b0025154ca490",
+    "node": "v24.20.0",
+    "v8": "13.6.233.17-node.53",
+    "esbuild": "0.25.9",
+    "platform": "darwin",
+    "arch": "arm64",
+    "cpu": "Apple M1 Max",
+    "cpus": 10,
+    "memoryBytes": 68719476736,
+    "osRelease": "25.6.0",
+    "mode": "production",
+    "validation": "off",
+    "subscribers": 0
+  },
+  "emptyBefore": {
+    "median": 0.013458999999983234,
+    "p10": 0.008917000000025155,
+    "p90": 0.08050000000000068,
+    "p99": 0.735416000000015,
+    "n": 101
+  },
+  "emptyAfter": {
+    "median": 0.01675000000000182,
+    "p10": 0.01608400000009169,
+    "p90": 0.019583000000011452,
+    "p99": 0.04600000000004911,
+    "n": 101
+  },
+  "subtractedEmptyMs": 0.015104499999992527,
+  "metrics": {
+    "head": {
+      "median": 2.378229500000103,
+      "p10": 2.1938955000000107,
+      "p90": 2.50410449999994,
+      "p99": 2.5582704999999493,
+      "n": 101
+    },
+    "merge-contributions": {
+      "median": 2.3968115000000267,
+      "p10": 2.189479499999848,
+      "p90": 2.4951455000000493,
+      "p99": 2.5669375000000088,
+      "n": 101
+    }
+  },
+  "boundMs": -0.018581999999923937,
+  "pairedDelta": {
+    "median": 0.022915999999895575,
+    "p10": -0.19645900000000438,
+    "p90": 0.19408399999997528,
+    "p99": 0.31579099999999016,
+    "n": 101
+  },
+  "observations": {
+    "head": {
+      "sha256": "0dab1516af88193530f8e44693db2dd2fb9d4c721b0de5c72fdb688315c07092",
+      "outputBytes": 90,
+      "liveWidth": 5,
+      "value": {
+        "common": "shared",
+        "kind": "kind_0",
+        "payload_0_a": "a_0",
+        "payload_0_b": 0,
+        "payload_0_c": true
+      }
+    },
+    "merge-contributions": {
+      "sha256": "0dab1516af88193530f8e44693db2dd2fb9d4c721b0de5c72fdb688315c07092",
+      "outputBytes": 90,
+      "liveWidth": 5,
+      "value": {
+        "common": "shared",
+        "kind": "kind_0",
+        "payload_0_a": "a_0",
+        "payload_0_b": 0,
+        "payload_0_c": true
+      }
+    }
+  }
+}

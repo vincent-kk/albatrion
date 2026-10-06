@@ -1,0 +1,14 @@
+{
+  "variant": "merge-contributions",
+  "sha256": "4dea87f318c7fc6bd1eef1144d9fc4e2d862e7550b762c089fe8e974da1bbeb5",
+  "bytes": 526886,
+  "naturalServiceExits": 1,
+  "edits": [
+    {
+      "file": "packages/canard/schema-form/src/core/blueprint/utils/effectiveSchema/utils/mergeSchemaContributions.ts",
+      "name": "mergeSchemaContributions",
+      "memoSequence": "mergeSchemaContributions",
+      "when": "options.mode === 'static'"
+    }
+  ]
+}

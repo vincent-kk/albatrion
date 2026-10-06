@@ -1,0 +1,86 @@
+{
+  "head": "0fdb6660ba07b94bafe3ff20e95b0025154ca490",
+  "variant": "apply-contribution",
+  "name": "oneOf-20",
+  "mode": "mount",
+  "run": 2,
+  "warmup": 20,
+  "samples": 101,
+  "started": "2026-10-06T01:14:03.289Z",
+  "ended": "2026-10-06T01:14:04.736Z",
+  "environment": {
+    "date": "2026-10-06T01:14:04.736Z",
+    "head": "0fdb6660ba07b94bafe3ff20e95b0025154ca490",
+    "node": "v24.20.0",
+    "v8": "13.6.233.17-node.53",
+    "esbuild": "0.25.9",
+    "platform": "darwin",
+    "arch": "arm64",
+    "cpu": "Apple M1 Max",
+    "cpus": 10,
+    "memoryBytes": 68719476736,
+    "osRelease": "25.6.0",
+    "mode": "production",
+    "validation": "off",
+    "subscribers": 0
+  },
+  "emptyBefore": {
+    "median": 0.016834000000017113,
+    "p10": 0.009458999999992557,
+    "p90": 0.06841700000001083,
+    "p99": 0.7747919999999908,
+    "n": 101
+  },
+  "emptyAfter": {
+    "median": 0.017833000000109678,
+    "p10": 0.016249999999899956,
+    "p90": 0.021999999999934516,
+    "p99": 0.03674999999998363,
+    "n": 101
+  },
+  "subtractedEmptyMs": 0.017333500000063395,
+  "metrics": {
+    "head": {
+      "median": 2.3346244999999044,
+      "p10": 2.1287914999999202,
+      "p90": 2.4339164999998957,
+      "p99": 2.508416499999953,
+      "n": 101
+    },
+    "apply-contribution": {
+      "median": 1.2789584999999306,
+      "p10": 1.2081244999998262,
+      "p90": 1.3367914999997765,
+      "p99": 1.3989164999999275,
+      "n": 101
+    }
+  },
+  "boundMs": 1.0556659999999738,
+  "pairedDelta": {
+    "median": 1.053833999999938,
+    "p10": 0.8542500000000928,
+    "p90": 1.1494169999999713,
+    "p99": 1.2195839999999407,
+    "n": 101
+  },
+  "observations": {
+    "head": {
+      "sha256": "0dab1516af88193530f8e44693db2dd2fb9d4c721b0de5c72fdb688315c07092",
+      "outputBytes": 90,
+      "liveWidth": 5,
+      "value": {
+        "common": "shared",
+        "kind": "kind_0",
+        "payload_0_a": "a_0",
+        "payload_0_b": 0,
+        "payload_0_c": true
+      }
+    },
+    "apply-contribution": {
+      "sha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+      "outputBytes": 2,
+      "liveWidth": 2,
+      "value": {}
+    }
+  }
+}

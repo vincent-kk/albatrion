@@ -1,0 +1,18 @@
+{
+  "variant": "shape",
+  "sha256": "a651d9e6f7f00c33e8882d345b20f8edc188ef2afd14f11bdb08518a3970888c",
+  "bytes": 525937,
+  "naturalServiceExits": 1,
+  "edits": [
+    {
+      "file": "packages/canard/schema-form/src/core/blueprint/utils/analyze/validateShape.ts",
+      "name": "validateShape",
+      "body": "return;"
+    },
+    {
+      "file": "packages/canard/schema-form/src/core/blueprint/utils/diagnostics/validateChildTargets.ts",
+      "name": "validateChildTargets",
+      "body": "return;"
+    }
+  ]
+}

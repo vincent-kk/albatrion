@@ -1,0 +1,92 @@
+{
+  "head": "0fdb6660ba07b94bafe3ff20e95b0025154ca490",
+  "variant": "freezing",
+  "name": "oneOf-20",
+  "mode": "mount",
+  "run": 2,
+  "warmup": 20,
+  "samples": 101,
+  "started": "2026-10-06T01:19:58.026Z",
+  "ended": "2026-10-06T01:19:59.683Z",
+  "environment": {
+    "date": "2026-10-06T01:19:59.683Z",
+    "head": "0fdb6660ba07b94bafe3ff20e95b0025154ca490",
+    "node": "v24.20.0",
+    "v8": "13.6.233.17-node.53",
+    "esbuild": "0.25.9",
+    "platform": "darwin",
+    "arch": "arm64",
+    "cpu": "Apple M1 Max",
+    "cpus": 10,
+    "memoryBytes": 68719476736,
+    "osRelease": "25.6.0",
+    "mode": "production",
+    "validation": "off",
+    "subscribers": 0
+  },
+  "emptyBefore": {
+    "median": 0.01712499999999295,
+    "p10": 0.012374999999991587,
+    "p90": 0.08987499999997794,
+    "p99": 0.8181670000000167,
+    "n": 101
+  },
+  "emptyAfter": {
+    "median": 0.017083000000184256,
+    "p10": 0.016041999999970358,
+    "p90": 0.028915999999981068,
+    "p99": 0.04920799999990777,
+    "n": 101
+  },
+  "subtractedEmptyMs": 0.017104000000088604,
+  "metrics": {
+    "head": {
+      "median": 2.3662289999999047,
+      "p10": 2.17618799999984,
+      "p90": 2.5119379999998017,
+      "p99": 2.5989789999999147,
+      "n": 101
+    },
+    "freezing": {
+      "median": 2.3300629999999245,
+      "p10": 2.1514790000000374,
+      "p90": 2.4433960000000496,
+      "p99": 2.6502289999998965,
+      "n": 101
+    }
+  },
+  "boundMs": 0.03616599999998016,
+  "pairedDelta": {
+    "median": 0.037500000000136424,
+    "p10": -0.1722500000000764,
+    "p90": 0.23204199999986486,
+    "p99": 0.3849160000000893,
+    "n": 101
+  },
+  "observations": {
+    "head": {
+      "sha256": "0dab1516af88193530f8e44693db2dd2fb9d4c721b0de5c72fdb688315c07092",
+      "outputBytes": 90,
+      "liveWidth": 5,
+      "value": {
+        "common": "shared",
+        "kind": "kind_0",
+        "payload_0_a": "a_0",
+        "payload_0_b": 0,
+        "payload_0_c": true
+      }
+    },
+    "freezing": {
+      "sha256": "0dab1516af88193530f8e44693db2dd2fb9d4c721b0de5c72fdb688315c07092",
+      "outputBytes": 90,
+      "liveWidth": 5,
+      "value": {
+        "common": "shared",
+        "kind": "kind_0",
+        "payload_0_a": "a_0",
+        "payload_0_b": 0,
+        "payload_0_c": true
+      }
+    }
+  }
+}

@@ -1,0 +1,92 @@
+{
+  "head": "0fdb6660ba07b94bafe3ff20e95b0025154ca490",
+  "variant": "children",
+  "name": "oneOf-20",
+  "mode": "mount",
+  "run": 2,
+  "warmup": 20,
+  "samples": 101,
+  "started": "2026-10-06T01:15:48.761Z",
+  "ended": "2026-10-06T01:15:50.412Z",
+  "environment": {
+    "date": "2026-10-06T01:15:50.412Z",
+    "head": "0fdb6660ba07b94bafe3ff20e95b0025154ca490",
+    "node": "v24.20.0",
+    "v8": "13.6.233.17-node.53",
+    "esbuild": "0.25.9",
+    "platform": "darwin",
+    "arch": "arm64",
+    "cpu": "Apple M1 Max",
+    "cpus": 10,
+    "memoryBytes": 68719476736,
+    "osRelease": "25.6.0",
+    "mode": "production",
+    "validation": "off",
+    "subscribers": 0
+  },
+  "emptyBefore": {
+    "median": 0.016999999999995907,
+    "p10": 0.011249999999989768,
+    "p90": 0.10020900000000665,
+    "p99": 0.7635410000000036,
+    "n": 101
+  },
+  "emptyAfter": {
+    "median": 0.01695900000004258,
+    "p10": 0.01625000000012733,
+    "p90": 0.02825000000007094,
+    "p99": 0.04595900000003894,
+    "n": 101
+  },
+  "subtractedEmptyMs": 0.016979500000019243,
+  "metrics": {
+    "head": {
+      "median": 2.374312500000002,
+      "p10": 2.2118124999998656,
+      "p90": 2.5327705000001117,
+      "p99": 2.634353500000003,
+      "n": 101
+    },
+    "children": {
+      "median": 2.2926044999998396,
+      "p10": 2.0960615000000473,
+      "p90": 2.500187499999953,
+      "p99": 2.6023954999999717,
+      "n": 101
+    }
+  },
+  "boundMs": 0.08170800000016243,
+  "pairedDelta": {
+    "median": 0.07375000000001819,
+    "p10": -0.14404100000001563,
+    "p90": 0.2914570000000367,
+    "p99": 0.37904200000002675,
+    "n": 101
+  },
+  "observations": {
+    "head": {
+      "sha256": "0dab1516af88193530f8e44693db2dd2fb9d4c721b0de5c72fdb688315c07092",
+      "outputBytes": 90,
+      "liveWidth": 5,
+      "value": {
+        "common": "shared",
+        "kind": "kind_0",
+        "payload_0_a": "a_0",
+        "payload_0_b": 0,
+        "payload_0_c": true
+      }
+    },
+    "children": {
+      "sha256": "0dab1516af88193530f8e44693db2dd2fb9d4c721b0de5c72fdb688315c07092",
+      "outputBytes": 90,
+      "liveWidth": 5,
+      "value": {
+        "common": "shared",
+        "kind": "kind_0",
+        "payload_0_a": "a_0",
+        "payload_0_b": 0,
+        "payload_0_c": true
+      }
+    }
+  }
+}

@@ -1,0 +1,92 @@
+{
+  "head": "0fdb6660ba07b94bafe3ff20e95b0025154ca490",
+  "variant": "working",
+  "name": "oneOf-20",
+  "mode": "mount",
+  "run": 2,
+  "warmup": 20,
+  "samples": 101,
+  "started": "2026-10-06T01:26:53.098Z",
+  "ended": "2026-10-06T01:26:54.710Z",
+  "environment": {
+    "date": "2026-10-06T01:26:54.710Z",
+    "head": "0fdb6660ba07b94bafe3ff20e95b0025154ca490",
+    "node": "v24.20.0",
+    "v8": "13.6.233.17-node.53",
+    "esbuild": "0.25.9",
+    "platform": "darwin",
+    "arch": "arm64",
+    "cpu": "Apple M1 Max",
+    "cpus": 10,
+    "memoryBytes": 68719476736,
+    "osRelease": "25.6.0",
+    "mode": "production",
+    "validation": "off",
+    "subscribers": 0
+  },
+  "emptyBefore": {
+    "median": 0.016875000000027285,
+    "p10": 0.01216600000000767,
+    "p90": 0.07312500000000455,
+    "p99": 0.2277920000000222,
+    "n": 101
+  },
+  "emptyAfter": {
+    "median": 0.017333999999891603,
+    "p10": 0.016083999999864318,
+    "p90": 0.021625000000085493,
+    "p99": 0.05529100000012477,
+    "n": 101
+  },
+  "subtractedEmptyMs": 0.017104499999959444,
+  "metrics": {
+    "head": {
+      "median": 2.35118650000004,
+      "p10": 2.185270500000115,
+      "p90": 2.473895500000026,
+      "p99": 2.554770500000018,
+      "n": 101
+    },
+    "working": {
+      "median": 2.344312500000001,
+      "p10": 2.2103125000001,
+      "p90": 2.453186500000129,
+      "p99": 2.5346455000000105,
+      "n": 101
+    }
+  },
+  "boundMs": 0.0068740000000389045,
+  "pairedDelta": {
+    "median": 0.01099900000008347,
+    "p10": -0.1009590000001026,
+    "p90": 0.09908399999994799,
+    "p99": 0.2272499999999127,
+    "n": 101
+  },
+  "observations": {
+    "head": {
+      "sha256": "0dab1516af88193530f8e44693db2dd2fb9d4c721b0de5c72fdb688315c07092",
+      "outputBytes": 90,
+      "liveWidth": 5,
+      "value": {
+        "common": "shared",
+        "kind": "kind_0",
+        "payload_0_a": "a_0",
+        "payload_0_b": 0,
+        "payload_0_c": true
+      }
+    },
+    "working": {
+      "sha256": "0dab1516af88193530f8e44693db2dd2fb9d4c721b0de5c72fdb688315c07092",
+      "outputBytes": 90,
+      "liveWidth": 5,
+      "value": {
+        "common": "shared",
+        "kind": "kind_0",
+        "payload_0_a": "a_0",
+        "payload_0_b": 0,
+        "payload_0_c": true
+      }
+    }
+  }
+}

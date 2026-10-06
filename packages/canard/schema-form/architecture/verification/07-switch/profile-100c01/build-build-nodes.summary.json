@@ -1,0 +1,13 @@
+{
+  "variant": "build-nodes",
+  "sha256": "3cf9e845c7fd7c3bd11569abe1c58d607c1de49550f0a2cbf33683d75491f078",
+  "bytes": 526197,
+  "naturalServiceExits": 1,
+  "edits": [
+    {
+      "file": "packages/canard/schema-form/src/core/blueprint/utils/analyze/buildNodes.ts",
+      "name": "buildNodes",
+      "body": "const seed=globalThis.__analysisSeed; context.nodes=seed.nodes.slice(); context.fragments=seed.fragments.slice(); Object.assign(context.capabilities,seed.capabilities); context.declarationId=seed.fragments.length; return [seed.root];"
+    }
+  ]
+}

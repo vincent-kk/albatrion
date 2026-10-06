@@ -1,0 +1,14 @@
+{
+  "head": "0fdb6660ba07b94bafe3ff20e95b0025154ca490",
+  "name": "sample-0",
+  "beginUs": 65965880737,
+  "endUs": 65969380776,
+  "operations": 255250,
+  "targetMs": 3500,
+  "warmup": 20,
+  "intervalUs": 100,
+  "nodes": 3,
+  "fragments": 3,
+  "freshSchemaEachIteration": true,
+  "cacheProvided": false
+}

@@ -1,0 +1,13 @@
+{
+  "variant": "children",
+  "sha256": "63b5fe17f9193b3562c9f9188df872d6073ec5297929b41d660420350ad6fd34",
+  "bytes": 526914,
+  "naturalServiceExits": 1,
+  "edits": [
+    {
+      "file": "packages/canard/schema-form/src/core/blueprint/utils/analyze/populateNodeChildren.ts",
+      "name": "populateNodeChildren",
+      "body": "const ref=globalThis.__analysisSeed.nodes[node.id]; for(let i=0;i<ref.childEntries.length;i++){const edge=ref.childEntries[i]; const inputs=edge.declarations.filter(d=>d.role==='declaration').map(d=>({schema:d.schema,schemaPath:d.schemaPath,context:d.context,role:d.role,gates:d.gates,order:d.order,inherited:d.inherited,hostPath:d.hostPath,isFragment:false})); const children=build(context,inputs,edge.node.path); for(let j=0;j<children.length;j++) node.childEntries.push(Object.freeze({...edge,node:children[j]}));} if(ref.item) node.item=build(context,ref.item.declarations.map(d=>({schema:d.schema,schemaPath:d.schemaPath,context:d.context,role:d.role,gates:d.gates,order:d.order,inherited:d.inherited,hostPath:d.hostPath})),ref.item.path)[0];"
+    }
+  ]
+}

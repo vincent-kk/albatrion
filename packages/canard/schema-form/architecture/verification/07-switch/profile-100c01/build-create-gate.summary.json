@@ -1,0 +1,13 @@
+{
+  "variant": "create-gate",
+  "sha256": "71e8548407cae736e857778f348485cb79e92f3dd2b67ab507177c7eb6eba5ee",
+  "bytes": 526331,
+  "naturalServiceExits": 1,
+  "edits": [
+    {
+      "file": "packages/canard/schema-form/src/core/blueprint/utils/analyze/createBlueprintGate.ts",
+      "name": "createBlueprintGate",
+      "memoSequence": "createBlueprintGate"
+    }
+  ]
+}

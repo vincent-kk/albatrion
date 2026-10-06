@@ -1,0 +1,13 @@
+{
+  "variant": "node-types",
+  "sha256": "3840604b8e73eda010dff2042c4d68aa032e9032bbce2a2fa02874b63b42ebcf",
+  "bytes": 529400,
+  "naturalServiceExits": 1,
+  "edits": [
+    {
+      "file": "packages/canard/schema-form/src/core/blueprint/utils/types/resolveNodeTypes.ts",
+      "name": "resolveNodeTypes",
+      "memoSequence": "resolveNodeTypes"
+    }
+  ]
+}

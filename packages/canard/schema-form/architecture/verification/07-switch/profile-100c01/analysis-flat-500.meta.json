@@ -1,0 +1,14 @@
+{
+  "head": "0fdb6660ba07b94bafe3ff20e95b0025154ca490",
+  "name": "flat-500",
+  "beginUs": 65958363224,
+  "endUs": 65961865464,
+  "operations": 1886,
+  "targetMs": 3500,
+  "warmup": 20,
+  "intervalUs": 100,
+  "nodes": 501,
+  "fragments": 501,
+  "freshSchemaEachIteration": true,
+  "cacheProvided": false
+}
