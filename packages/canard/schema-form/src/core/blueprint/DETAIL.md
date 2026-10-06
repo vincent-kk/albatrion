@@ -82,7 +82,7 @@
 
 ### owned-inline-counts — core mount 동결 계수
 
-- module 초기화 상수를 제외한 core mount distinct 동결 수(운영/개발)는 nested 3,071/30,372, flat 1,003/11,024, oneOf-20 116/1,569, sample-0 8/69이며 재동결·primitive 호출은 0입니다.
+- module 초기화 상수를 제외한 core mount distinct 동결 수(운영/개발)는 nested 1,706/29,007, flat 502/10,523, oneOf-20 111/1,564, sample-0 5/66이며 재동결·primitive 호출은 0입니다. options 없는 choices의 생성 지점 동결을 모듈 상수로 옮겨 제거되는 호출은 각각 1,365·501·5·3이고 기록별 소속 배열의 보호는 같습니다(batch2 4-default-choices).
 
 ### owned-inline-render — 렌더 중 작성된 React 값
 

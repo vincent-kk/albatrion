@@ -2,6 +2,8 @@
 
 ## Requirements
 
+- options가 없는 effective의 선택은 생성 때 동결한 기본 choices 한 객체에 연결합니다. effective별 WeakMap 조회·등록과 options/propertyKeys의 해석·독립 동결 배열은 유지하며 schema 결과를 공유하지 않습니다. 속도 비용은 기본 분기의 WeakMap 등록과 상수 반환으로 effective별 네 필드 객체 생산·freeze를 제거합니다. 메모리 비용은 기존 WeakMap 항목 수를 유지하고 적격 effective별 choices 객체를 모듈 상수 하나로 대체합니다(batch2 4-default-choices).
+
 - `record < 종류 fractal < behaviors 뿌리 < settle < SchemaNode`이며 종류 fractal과 `navigation`은 서로 의존하지 않습니다. `settle`은 살아 있는 노드의 행을 `node.behavior`로 호출하고 형상 밖 노드의 정적 해석과 빈 값 판정에는 이 fractal의 진입점을 소비합니다(NODE-016, WRITE-082·098).
 - `utils/parse/`는 독립 공개 계약이 아니라 행과 기본 union 입력의 내부 변환입니다. 그 문서 계약은 이 fractal의 DETAIL이 소유합니다(LANDING-150, NODE-056).
 - 이 fractal의 organ은 외부에서 직접 가져오지 않으며, 바인딩 전용 초안 해석은 이름 붙은 진입점의 순수 해석·멤버 판정을 재사용합니다(NODE-016, REACT-033).
@@ -32,4 +34,4 @@
 
 ## Last Updated
 
-2026-10-01
+2026-10-07

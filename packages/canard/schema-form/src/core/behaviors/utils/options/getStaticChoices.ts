@@ -18,6 +18,13 @@ export interface StaticChoices {
 const CHOICES = new WeakMap<EffectiveSchema, StaticChoices>();
 /** Shared empty order for schemas without a propertyKeys hint. */
 const NO_KEYS: readonly string[] = Object.freeze([]);
+/** Optionless schemas link to this producer-frozen default selection. */
+const DEFAULT_CHOICES: StaticChoices = Object.freeze({
+  omitEmpty: true,
+  omitTrailing: false,
+  trim: false,
+  propertyKeys: NO_KEYS,
+});
 
 /** Read static options once for the lifetime of a merged effective schema. */
 export const getStaticChoices = (effective: EffectiveSchema): StaticChoices => {
@@ -25,6 +32,10 @@ export const getStaticChoices = (effective: EffectiveSchema): StaticChoices => {
   if (cached) return cached;
   const schema = effective.schema;
   const options = typeof schema === 'object' && schema !== null ? schema.options : undefined;
+  if (options === undefined) {
+    CHOICES.set(effective, DEFAULT_CHOICES);
+    return DEFAULT_CHOICES;
+  }
   const hints = typeof options === 'object' && options !== null && !isArray(options)
     ? options
     : undefined;

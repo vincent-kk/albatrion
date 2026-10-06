@@ -8,10 +8,10 @@ afterEach(() => vi.restoreAllMocks());
 
 /** Expected distinct mount freezes exclude module initialization and include settlement. */
 const expectations = [
-  { name: 'nested-d5-f4', nodes: 1365, production: 3071, development: 30372 },
-  { name: 'flat-500', nodes: 501, production: 1003, development: 11024 },
-  { name: 'oneOf-20', nodes: 63, production: 116, development: 1569 },
-  { name: 'sample-0', nodes: 3, production: 8, development: 69 },
+  { name: 'nested-d5-f4', nodes: 1365, production: 1706, development: 29007 },
+  { name: 'flat-500', nodes: 501, production: 502, development: 10523 },
+  { name: 'oneOf-20', nodes: 63, production: 111, development: 1564 },
+  { name: 'sample-0', nodes: 3, production: 5, development: 66 },
 ];
 
 it.each(expectations)(
