@@ -2,6 +2,8 @@
 
 ## Requirements
 
+- 무게이트 자식 빠른 경로의 입력은 기존 context·gates·inherited·hostPath·fragment·role·schema·schemaPath·order 순서의 literal로 만듭니다. 실제 자식 build·binding·독립 소속 배열 생산은 그대로입니다. 속도 비용은 고정 필드 직접 읽기·쓰기이며 자식마다 base spread의 범용 키 복사를 제거합니다. 메모리 비용은 기존 부모별 base와 자식별 입력·배열·두 공개 경로를 유지하며 새 보유 자료는 없습니다(107라운드 2-child-input-literal).
+
 - 조각 확장 키가 없는 선언은 기존 control·type 검사, capability·ID·fragment·소유자·discriminator 기록을 완료한 뒤 반환합니다. `$ref`가 문자열이 아니고 allOf·if·oneOf·anyOf가 모두 undefined인 경우에만 visiting stack 복사와 고정 fragment keyword loop를 생략하며 공개 청사진·진단·DFS 순서는 같습니다. 속도 비용은 O(1) 고정 검사로 5개 keyword 반복과 배열 모양 검사 3회를 제거합니다. 메모리 비용은 적격 호출의 visiting 복사 배열을 제거하고 기존 declaration·fragment·소속 배열은 유지하며 새 보유 색인·캐시는 없습니다. 두 모드의 59-schema differential과 105C-01 최소 크기 판정으로 확인합니다(106라운드 빈 조각).
 
 - 선언 수집은 소유자별 ordered sink에 기존 DFS 순서로 한 번씩 추가합니다. ID 예약·fragment 연결·capability·게이트·정적 검사는 기존 방문 위치를 유지하며 가상 노드는 수집 함수가 반환한 별도 배열을 소유합니다. 속도 비용은 O(선언 수) 추가이며 재귀 반환 flatten과 build 입력별 재복사를 제거합니다. 메모리 비용은 노드별 기존 집계 배열과 가상 소유 배열을 유지하고 재귀·일반 입력별 중간 결과 배열만 제거합니다. 기록 간 소속 배열 공유·새 보유 색인·캐시·노드 필드는 없고 실제 종단 시간은 105C-01 판정으로 확인합니다(106라운드 선언 수집).

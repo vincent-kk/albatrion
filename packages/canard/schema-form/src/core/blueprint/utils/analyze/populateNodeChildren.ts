@@ -50,7 +50,12 @@ export const populateNodeChildren = (
       for (let index = 0; index < properties.length; index++) {
         const [name, child] = properties[index];
         const input: SchemaInput = {
-          ...base,
+          context: base.context,
+          gates: base.gates,
+          inherited: base.inherited,
+          hostPath: base.hostPath,
+          fragment: base.fragment,
+          role: base.role,
           schema: child as SchemaInput['schema'],
           schemaPath: `${declaration.schemaPath}/properties/${escapeSegment(name)}`,
           order: [...declaration.order, 0, index],
