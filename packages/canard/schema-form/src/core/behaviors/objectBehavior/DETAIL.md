@@ -2,6 +2,8 @@
 
 ## Requirements
 
+- local/extras가 없고 propertyKeys가 비었으며 entries와 children의 길이·순서·이름이 같은 최초 합성은 classic loop 한 번에서 값 객체·names·stable shape·키 수를 생산합니다. 불일치는 기존 순서 합성으로 처리하고 undefined 방출·예약 키의 의미와 같은 값의 참조 재사용을 보존합니다. 속도 비용은 자식 수에 비례하는 직접 검사·쓰기이며 적격 호출의 Map/Set 구축과 중복 조회를 제거합니다. 메모리 비용은 기존 결과·names·stable shape를 유지하고 일시 Map/Set 두 객체와 그 원소 저장을 제거합니다. 불일치 도중 만들어진 일시 결과·names는 보유하지 않습니다(batch2 3-object-assembly).
+
 - 의존 방향은 `blueprint·record·behaviors 공유 보조 < objectBehavior < behaviors 뿌리 < SchemaNode`입니다. `branch/`와 `terminal/`은 내부 organ입니다. 모두 이 종류 안에서 소비하므로 경계 예외가 없습니다(NODE-009·016).
 - 두 전략은 청사진이 정한 고정 선택입니다. 렌더 입력을 이 행에서 검사하지 않습니다(NODE-028·042).
 
@@ -27,4 +29,4 @@
 
 ## Last Updated
 
-2026-10-03
+2026-10-07

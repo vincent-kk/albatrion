@@ -82,6 +82,33 @@ export const assembleObject: Behavior['assemble'] = (node, children, recalculate
       return patch ?? previous;
     }
   }
+  const preferred = getStaticChoices(node.schema).propertyKeys;
+  const entries = node.blueprintNode.childEntries;
+  if (previous === undefined && node.extras === undefined &&
+    preferred.length === 0 && entries.length === children.length) {
+    const result: Record<string, unknown> = {};
+    const names: string[] = [];
+    let aligned = true;
+    for (let index = 0; index < children.length; index++) {
+      const child = children[index];
+      if (child === null || typeof child !== 'object' ||
+        !('name' in child) || typeof child.name !== 'string' || !('emit' in child) ||
+        entries[index].name !== child.name) {
+        aligned = false;
+        break;
+      }
+      if (child.emit !== undefined) {
+        names.push(child.name);
+        writeObjectKey(result, child.name, child.emit);
+      }
+    }
+    if (aligned) {
+      STABLE_SHAPES.set(node, { children, schema: node.schema, extras: node.extras,
+        names });
+      objectKeyCounts.set(result, names.length);
+      return result;
+    }
+  }
   const childValues = new Map<string, unknown>();
   for (const child of children)
     if (child !== null && typeof child === 'object' &&
@@ -93,7 +120,6 @@ export const assembleObject: Behavior['assemble'] = (node, children, recalculate
     : undefined;
   const names: string[] = [];
   const seen = new Set<string>();
-  const preferred = getStaticChoices(node.schema).propertyKeys;
 
   for (const name of preferred) {
     if (childValues.has(name)) {
