@@ -2,6 +2,8 @@
 
 ## Requirements
 
+- 청사진에서 정규화한 무조건 선언을 재사용해도 마운트와 후속 쓰기의 값·유효 스키마·노드 순서·상태·경고·리비전·통지가 같아야 합니다. 런타임 실제 병합 수는 마운트 단위로 검증하며 정적 검사 수는 줄이지 않습니다(BLUEPRINT-021, NODE-006, SETTLE-017, 100라운드).
+
 - 청사진·정착·파생이 공유하는 기능 부재 결과는 core가 소유한 불변 빈 Map/Set 조회 객체를 씁니다. 변경 메서드를 제공하지 않으며 기능 부재가 각각 증명된 경우에만 공유합니다. 영구 저장은 전체 프로세스에서 O(1)이며 청사진별 빈 Map/Set 할당을 제거합니다(89C-03).
 
 - 경로 키 저장소 보조는 record의 런타임 형 선언과 생성·정착의 쓰기가 함께 소비하므로 공통 소유자인 core에 둡니다. PathKeyedMap·PathKeyedSet은 빈 색인을 생성할 때 소유하고 native Map·Set의 열거·instanceof를 유지하며 인스턴스 adoption이나 메서드 패치를 하지 않습니다. K개 항목·깊이 D에서 O(KD) 색인 키 참조와 유일 prefix 및 숫자 radix 저장량을 추가합니다(NODE-045, SETTLE-017·047, GOAL-011).
@@ -72,6 +74,10 @@ nodeFromJSONSchema<Schema extends JSONSchema>(props: {
 공개 `InferSchemaNode`는 NODE-059에 따라 형 없는 `oneOf`·`anyOf`의 모든 분기가 인라인 객체 또는 인라인 배열 스키마일 때만 각각 `ObjectNode`·`ArrayNode`로 좁힙니다. `$ref`, 게이트 분기, 두 키워드의 동시 사용, 본체 `allOf`는 넓은 `SchemaNode`를 유지합니다. 형 없는 분기 없는 `const`·`enum` 칸은 리터럴의 JSON 종류에 맞는 원시 노드로 좁힙니다.
 
 ## Acceptance Criteria
+
+### schema-merge-mount — 정규화 재사용의 노드 관측과 병합 수
+
+- 기존 런타임 병합을 강제한 대조군과 마운트·후속 쓰기의 트리·값·유효 스키마·리비전·경고·통지를 비교합니다. 마운트마다 실제 정적/런타임 병합을 별도로 세고 적격 선언의 런타임 재병합 제거를 확인합니다.
 
 ### branchless-observables — 분기 없는 청사진의 코어 관측 동등성
 
@@ -171,4 +177,4 @@ nodeFromJSONSchema<Schema extends JSONSchema>(props: {
 
 ## Last Updated
 
-계약 기준: LANDING-067·087·205, CONTROLS-075, 69C-01–05, 70C-01.
+계약 기준: LANDING-067·087·205, CONTROLS-075, 69C-01–05, 70C-01, 100라운드.

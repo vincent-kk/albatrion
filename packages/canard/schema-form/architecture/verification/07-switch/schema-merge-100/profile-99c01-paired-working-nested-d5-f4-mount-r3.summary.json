@@ -1,0 +1,3490 @@
+{
+  "head": "371dcaa45818eb326367cb2be84640d5fbaecca1",
+  "variant": "working",
+  "name": "nested-d5-f4",
+  "mode": "mount",
+  "run": 3,
+  "warmup": 20,
+  "samples": 101,
+  "started": "2026-10-06T00:50:18.160Z",
+  "ended": "2026-10-06T00:50:23.033Z",
+  "environment": {
+    "date": "2026-10-06T00:50:23.033Z",
+    "head": "371dcaa45818eb326367cb2be84640d5fbaecca1",
+    "node": "v26.10.0",
+    "v8": "14.6.202.34-node.35",
+    "esbuild": "0.25.9",
+    "platform": "darwin",
+    "arch": "arm64",
+    "cpu": "Apple M1 Max",
+    "cpus": 10,
+    "memoryBytes": 68719476736,
+    "osRelease": "25.6.0",
+    "mode": "production",
+    "validation": "off",
+    "subscribers": 0
+  },
+  "emptyBefore": {
+    "median": 0.01733400000000529,
+    "p10": 0.015540999999984706,
+    "p90": 0.02433399999998187,
+    "p99": 0.04020799999997848,
+    "n": 101
+  },
+  "emptyAfter": {
+    "median": 0.015542000000095868,
+    "p10": 0.015292000000044936,
+    "p90": 0.01883300000008603,
+    "p99": 0.05395799999951123,
+    "n": 101
+  },
+  "subtractedEmptyMs": 0.01643800000005058,
+  "metrics": {
+    "head": {
+      "median": 12.994811999999968,
+      "p10": 12.206936999999982,
+      "p90": 13.771436999999935,
+      "p99": 14.424894999999935,
+      "n": 101
+    },
+    "working": {
+      "median": 10.669521000000088,
+      "p10": 9.852604000000213,
+      "p90": 11.784729000000027,
+      "p99": 12.260229000000038,
+      "n": 101
+    }
+  },
+  "boundMs": 2.325290999999879,
+  "pairedDelta": {
+    "median": 2.3108329999995476,
+    "p10": 0.6926659999999174,
+    "p90": 3.640541000000212,
+    "p99": 4.783040999999912,
+    "n": 101
+  },
+  "observations": {
+    "head": {
+      "sha256": "264faa6616a1c88ca4566f0ba761ba1a6c7fbe9b115da26c62c53f8d433350a5",
+      "outputBytes": 14669,
+      "liveWidth": 4,
+      "value": {
+        "n0": {
+          "n0": {
+            "n0": {
+              "n0": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n1": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n2": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n3": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              }
+            },
+            "n1": {
+              "n0": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n1": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n2": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n3": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              }
+            },
+            "n2": {
+              "n0": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n1": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n2": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n3": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              }
+            },
+            "n3": {
+              "n0": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n1": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n2": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n3": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              }
+            }
+          },
+          "n1": {
+            "n0": {
+              "n0": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n1": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n2": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n3": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              }
+            },
+            "n1": {
+              "n0": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n1": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n2": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n3": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              }
+            },
+            "n2": {
+              "n0": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n1": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n2": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n3": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              }
+            },
+            "n3": {
+              "n0": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n1": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n2": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n3": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              }
+            }
+          },
+          "n2": {
+            "n0": {
+              "n0": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n1": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n2": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n3": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              }
+            },
+            "n1": {
+              "n0": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n1": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n2": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n3": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              }
+            },
+            "n2": {
+              "n0": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n1": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n2": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n3": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              }
+            },
+            "n3": {
+              "n0": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n1": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n2": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n3": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              }
+            }
+          },
+          "n3": {
+            "n0": {
+              "n0": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n1": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n2": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n3": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              }
+            },
+            "n1": {
+              "n0": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n1": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n2": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n3": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              }
+            },
+            "n2": {
+              "n0": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n1": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n2": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n3": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              }
+            },
+            "n3": {
+              "n0": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n1": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n2": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n3": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              }
+            }
+          }
+        },
+        "n1": {
+          "n0": {
+            "n0": {
+              "n0": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n1": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n2": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n3": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              }
+            },
+            "n1": {
+              "n0": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n1": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n2": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n3": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              }
+            },
+            "n2": {
+              "n0": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n1": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n2": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n3": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              }
+            },
+            "n3": {
+              "n0": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n1": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n2": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n3": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              }
+            }
+          },
+          "n1": {
+            "n0": {
+              "n0": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n1": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n2": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n3": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              }
+            },
+            "n1": {
+              "n0": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n1": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n2": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n3": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              }
+            },
+            "n2": {
+              "n0": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n1": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n2": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n3": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              }
+            },
+            "n3": {
+              "n0": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n1": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n2": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n3": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              }
+            }
+          },
+          "n2": {
+            "n0": {
+              "n0": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n1": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n2": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n3": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              }
+            },
+            "n1": {
+              "n0": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n1": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n2": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n3": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              }
+            },
+            "n2": {
+              "n0": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n1": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n2": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n3": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              }
+            },
+            "n3": {
+              "n0": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n1": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n2": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n3": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              }
+            }
+          },
+          "n3": {
+            "n0": {
+              "n0": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n1": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n2": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n3": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              }
+            },
+            "n1": {
+              "n0": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n1": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n2": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n3": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              }
+            },
+            "n2": {
+              "n0": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n1": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n2": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n3": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              }
+            },
+            "n3": {
+              "n0": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n1": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n2": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n3": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              }
+            }
+          }
+        },
+        "n2": {
+          "n0": {
+            "n0": {
+              "n0": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n1": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n2": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n3": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              }
+            },
+            "n1": {
+              "n0": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n1": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n2": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n3": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              }
+            },
+            "n2": {
+              "n0": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n1": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n2": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n3": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              }
+            },
+            "n3": {
+              "n0": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n1": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n2": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n3": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              }
+            }
+          },
+          "n1": {
+            "n0": {
+              "n0": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n1": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n2": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n3": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              }
+            },
+            "n1": {
+              "n0": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n1": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n2": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n3": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              }
+            },
+            "n2": {
+              "n0": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n1": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n2": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n3": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              }
+            },
+            "n3": {
+              "n0": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n1": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n2": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n3": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              }
+            }
+          },
+          "n2": {
+            "n0": {
+              "n0": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n1": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n2": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n3": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              }
+            },
+            "n1": {
+              "n0": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n1": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n2": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n3": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              }
+            },
+            "n2": {
+              "n0": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n1": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n2": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n3": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              }
+            },
+            "n3": {
+              "n0": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n1": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n2": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n3": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              }
+            }
+          },
+          "n3": {
+            "n0": {
+              "n0": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n1": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n2": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n3": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              }
+            },
+            "n1": {
+              "n0": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n1": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n2": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n3": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              }
+            },
+            "n2": {
+              "n0": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n1": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n2": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n3": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              }
+            },
+            "n3": {
+              "n0": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n1": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n2": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n3": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              }
+            }
+          }
+        },
+        "n3": {
+          "n0": {
+            "n0": {
+              "n0": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n1": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n2": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n3": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              }
+            },
+            "n1": {
+              "n0": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n1": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n2": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n3": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              }
+            },
+            "n2": {
+              "n0": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n1": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n2": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n3": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              }
+            },
+            "n3": {
+              "n0": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n1": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n2": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n3": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              }
+            }
+          },
+          "n1": {
+            "n0": {
+              "n0": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n1": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n2": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n3": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              }
+            },
+            "n1": {
+              "n0": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n1": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n2": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n3": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              }
+            },
+            "n2": {
+              "n0": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n1": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n2": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n3": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              }
+            },
+            "n3": {
+              "n0": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n1": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n2": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n3": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              }
+            }
+          },
+          "n2": {
+            "n0": {
+              "n0": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n1": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n2": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n3": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              }
+            },
+            "n1": {
+              "n0": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n1": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n2": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n3": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              }
+            },
+            "n2": {
+              "n0": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n1": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n2": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n3": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              }
+            },
+            "n3": {
+              "n0": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n1": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n2": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n3": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              }
+            }
+          },
+          "n3": {
+            "n0": {
+              "n0": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n1": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n2": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n3": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              }
+            },
+            "n1": {
+              "n0": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n1": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n2": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n3": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              }
+            },
+            "n2": {
+              "n0": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n1": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n2": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n3": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              }
+            },
+            "n3": {
+              "n0": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n1": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n2": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n3": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              }
+            }
+          }
+        }
+      }
+    },
+    "working": {
+      "sha256": "264faa6616a1c88ca4566f0ba761ba1a6c7fbe9b115da26c62c53f8d433350a5",
+      "outputBytes": 14669,
+      "liveWidth": 4,
+      "value": {
+        "n0": {
+          "n0": {
+            "n0": {
+              "n0": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n1": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n2": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n3": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              }
+            },
+            "n1": {
+              "n0": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n1": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n2": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n3": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              }
+            },
+            "n2": {
+              "n0": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n1": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n2": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n3": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              }
+            },
+            "n3": {
+              "n0": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n1": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n2": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n3": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              }
+            }
+          },
+          "n1": {
+            "n0": {
+              "n0": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n1": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n2": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n3": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              }
+            },
+            "n1": {
+              "n0": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n1": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n2": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n3": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              }
+            },
+            "n2": {
+              "n0": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n1": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n2": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n3": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              }
+            },
+            "n3": {
+              "n0": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n1": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n2": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n3": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              }
+            }
+          },
+          "n2": {
+            "n0": {
+              "n0": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n1": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n2": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n3": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              }
+            },
+            "n1": {
+              "n0": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n1": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n2": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n3": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              }
+            },
+            "n2": {
+              "n0": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n1": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n2": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n3": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              }
+            },
+            "n3": {
+              "n0": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n1": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n2": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n3": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              }
+            }
+          },
+          "n3": {
+            "n0": {
+              "n0": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n1": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n2": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n3": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              }
+            },
+            "n1": {
+              "n0": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n1": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n2": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n3": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              }
+            },
+            "n2": {
+              "n0": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n1": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n2": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n3": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              }
+            },
+            "n3": {
+              "n0": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n1": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n2": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n3": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              }
+            }
+          }
+        },
+        "n1": {
+          "n0": {
+            "n0": {
+              "n0": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n1": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n2": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n3": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              }
+            },
+            "n1": {
+              "n0": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n1": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n2": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n3": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              }
+            },
+            "n2": {
+              "n0": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n1": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n2": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n3": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              }
+            },
+            "n3": {
+              "n0": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n1": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n2": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n3": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              }
+            }
+          },
+          "n1": {
+            "n0": {
+              "n0": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n1": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n2": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n3": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              }
+            },
+            "n1": {
+              "n0": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n1": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n2": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n3": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              }
+            },
+            "n2": {
+              "n0": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n1": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n2": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n3": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              }
+            },
+            "n3": {
+              "n0": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n1": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n2": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n3": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              }
+            }
+          },
+          "n2": {
+            "n0": {
+              "n0": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n1": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n2": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n3": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              }
+            },
+            "n1": {
+              "n0": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n1": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n2": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n3": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              }
+            },
+            "n2": {
+              "n0": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n1": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n2": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n3": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              }
+            },
+            "n3": {
+              "n0": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n1": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n2": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n3": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              }
+            }
+          },
+          "n3": {
+            "n0": {
+              "n0": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n1": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n2": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n3": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              }
+            },
+            "n1": {
+              "n0": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n1": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n2": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n3": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              }
+            },
+            "n2": {
+              "n0": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n1": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n2": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n3": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              }
+            },
+            "n3": {
+              "n0": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n1": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n2": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n3": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              }
+            }
+          }
+        },
+        "n2": {
+          "n0": {
+            "n0": {
+              "n0": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n1": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n2": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n3": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              }
+            },
+            "n1": {
+              "n0": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n1": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n2": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n3": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              }
+            },
+            "n2": {
+              "n0": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n1": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n2": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n3": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              }
+            },
+            "n3": {
+              "n0": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n1": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n2": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n3": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              }
+            }
+          },
+          "n1": {
+            "n0": {
+              "n0": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n1": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n2": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n3": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              }
+            },
+            "n1": {
+              "n0": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n1": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n2": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n3": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              }
+            },
+            "n2": {
+              "n0": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n1": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n2": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n3": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              }
+            },
+            "n3": {
+              "n0": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n1": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n2": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n3": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              }
+            }
+          },
+          "n2": {
+            "n0": {
+              "n0": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n1": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n2": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n3": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              }
+            },
+            "n1": {
+              "n0": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n1": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n2": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n3": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              }
+            },
+            "n2": {
+              "n0": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n1": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n2": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n3": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              }
+            },
+            "n3": {
+              "n0": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n1": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n2": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n3": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              }
+            }
+          },
+          "n3": {
+            "n0": {
+              "n0": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n1": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n2": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n3": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              }
+            },
+            "n1": {
+              "n0": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n1": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n2": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n3": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              }
+            },
+            "n2": {
+              "n0": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n1": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n2": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n3": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              }
+            },
+            "n3": {
+              "n0": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n1": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n2": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n3": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              }
+            }
+          }
+        },
+        "n3": {
+          "n0": {
+            "n0": {
+              "n0": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n1": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n2": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n3": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              }
+            },
+            "n1": {
+              "n0": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n1": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n2": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n3": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              }
+            },
+            "n2": {
+              "n0": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n1": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n2": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n3": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              }
+            },
+            "n3": {
+              "n0": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n1": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n2": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n3": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              }
+            }
+          },
+          "n1": {
+            "n0": {
+              "n0": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n1": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n2": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n3": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              }
+            },
+            "n1": {
+              "n0": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n1": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n2": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n3": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              }
+            },
+            "n2": {
+              "n0": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n1": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n2": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n3": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              }
+            },
+            "n3": {
+              "n0": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n1": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n2": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n3": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              }
+            }
+          },
+          "n2": {
+            "n0": {
+              "n0": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n1": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n2": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n3": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              }
+            },
+            "n1": {
+              "n0": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n1": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n2": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n3": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              }
+            },
+            "n2": {
+              "n0": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n1": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n2": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n3": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              }
+            },
+            "n3": {
+              "n0": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n1": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n2": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n3": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              }
+            }
+          },
+          "n3": {
+            "n0": {
+              "n0": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n1": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n2": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n3": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              }
+            },
+            "n1": {
+              "n0": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n1": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n2": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n3": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              }
+            },
+            "n2": {
+              "n0": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n1": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n2": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n3": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              }
+            },
+            "n3": {
+              "n0": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n1": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n2": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              },
+              "n3": {
+                "n0": "leaf",
+                "n1": "leaf",
+                "n2": "leaf",
+                "n3": "leaf"
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

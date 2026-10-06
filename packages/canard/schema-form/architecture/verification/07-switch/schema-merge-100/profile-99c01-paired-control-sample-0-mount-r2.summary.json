@@ -1,0 +1,86 @@
+{
+  "head": "371dcaa45818eb326367cb2be84640d5fbaecca1",
+  "variant": "control",
+  "name": "sample-0",
+  "mode": "mount",
+  "run": 2,
+  "warmup": 20,
+  "samples": 101,
+  "started": "2026-10-06T00:50:51.705Z",
+  "ended": "2026-10-06T00:50:52.743Z",
+  "environment": {
+    "date": "2026-10-06T00:50:52.743Z",
+    "head": "371dcaa45818eb326367cb2be84640d5fbaecca1",
+    "node": "v26.10.0",
+    "v8": "14.6.202.34-node.35",
+    "esbuild": "0.25.9",
+    "platform": "darwin",
+    "arch": "arm64",
+    "cpu": "Apple M1 Max",
+    "cpus": 10,
+    "memoryBytes": 68719476736,
+    "osRelease": "25.6.0",
+    "mode": "production",
+    "validation": "off",
+    "subscribers": 0
+  },
+  "emptyBefore": {
+    "median": 0.02316600000000335,
+    "p10": 0.016874999999998863,
+    "p90": 0.03854200000000674,
+    "p99": 0.06433300000000486,
+    "n": 101
+  },
+  "emptyAfter": {
+    "median": 0.016000000000076398,
+    "p10": 0.01516700000001947,
+    "p90": 0.020332999999936874,
+    "p99": 0.04441699999983939,
+    "n": 101
+  },
+  "subtractedEmptyMs": 0.019583000000039874,
+  "metrics": {
+    "head": {
+      "median": 0.2109169999999665,
+      "p10": 0.1750000000000398,
+      "p90": 0.2465419999999483,
+      "p99": 0.28533399999994913,
+      "n": 101
+    },
+    "control": {
+      "median": 0.21112600000000725,
+      "p10": 0.17179200000006745,
+      "p90": 0.25012499999999704,
+      "p99": 0.27816699999996786,
+      "n": 101
+    }
+  },
+  "boundMs": -0.00020900000004075991,
+  "pairedDelta": {
+    "median": -0.0014160000000629225,
+    "p10": -0.037790999999970154,
+    "p90": 0.03304100000002563,
+    "p99": 0.07383400000003348,
+    "n": 101
+  },
+  "observations": {
+    "head": {
+      "sha256": "72c43d9d80f43ae8fddcafd0cb1e33e0faddf95bd32459d24622dda3fbc7a8aa",
+      "outputBytes": 50,
+      "liveWidth": 2,
+      "value": {
+        "name": "John Doe",
+        "email": "john.doe@example.com"
+      }
+    },
+    "control": {
+      "sha256": "72c43d9d80f43ae8fddcafd0cb1e33e0faddf95bd32459d24622dda3fbc7a8aa",
+      "outputBytes": 50,
+      "liveWidth": 2,
+      "value": {
+        "name": "John Doe",
+        "email": "john.doe@example.com"
+      }
+    }
+  }
+}

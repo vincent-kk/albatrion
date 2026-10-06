@@ -7,6 +7,7 @@ import type {
   SchemaTypeName,
 } from '../../type';
 import { mergeEffectiveSchema } from '../effectiveSchema/mergeEffectiveSchema';
+import { DEFAULT_NO_ACTIVE } from '../effectiveSchema/utils/constant';
 import { resolveNodeStrategy } from '../types/resolveNodeStrategy';
 import { resolveNodeTypes } from '../types/resolveNodeTypes';
 import { collectDeclarations } from './collectDeclarations';
@@ -84,7 +85,7 @@ export const buildNodes = (
       childEntries: [] as BlueprintChildEntry[],
     };
     context.nodes.push(node);
-    mergeEffectiveSchema(
+    const effective = mergeEffectiveSchema(
       {
         ...node,
         declarations: conjunctions,
@@ -96,6 +97,17 @@ export const buildNodes = (
         collect: context.options.collect,
       },
     );
+    if (ownedDeclarations.length === 1 && ownedDeclarations[0].gates.length === 0 && !node.nullable &&
+      context.options.isAtomic === undefined && context.options.collect === undefined) {
+      const declaration = ownedDeclarations[0];
+      const schema = declaration.schema;
+      if (declaration.context === 'conjunction' &&
+        declaration.role === 'declaration' && declaration.scope === 'node' &&
+        !declaration.validationOnly && (typeof schema === 'boolean' ||
+          schema.nullable === undefined && schema.pattern === undefined &&
+          !isArray(schema.type)))
+        DEFAULT_NO_ACTIVE.set(node, effective);
+    }
     nodes.push(node);
   }
   context.templates.set(boundKey, nodes);

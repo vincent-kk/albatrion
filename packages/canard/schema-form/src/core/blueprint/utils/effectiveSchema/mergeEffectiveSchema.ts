@@ -4,14 +4,13 @@ import type {
   EffectiveSchemaMemo,
   EffectiveSchemaOptions,
 } from '../../type';
+import { DEFAULT_NO_ACTIVE } from './utils/constant';
 import { ensureEffectiveSchemaCache } from './utils/ensureEffectiveSchemaCache';
 import { mergeSchemaContributions } from './utils/mergeSchemaContributions';
 import { selectEffectiveDeclarations } from './utils/selectEffectiveDeclarations';
 
 /** Default memo is weak by node lifetime; callers can isolate a separate memo. */
 const DEFAULT_MEMO: EffectiveSchemaMemo = new WeakMap();
-/** Default runtime merge with no selected gated declarations. */
-const DEFAULT_NO_ACTIVE = new WeakMap<BlueprintNode, EffectiveSchema>();
 
 /**
  * Derive immutable rendering hints from selected declarations without evaluating gates.
@@ -42,6 +41,15 @@ export const mergeEffectiveSchema = (
   const key = declarations.map((declaration) => declaration.id).join(',');
   const cached = schemas.get(key);
   if (cached !== undefined) return cached;
+  if (memo === DEFAULT_MEMO && options.collect === undefined &&
+    options.isAtomic === undefined && (options.mode === undefined || options.mode === 'runtime') &&
+    node.declarations.length === 1 && node.declarations[0].gates.length === 0) {
+    const normalized = DEFAULT_NO_ACTIVE.get(node);
+    if (normalized !== undefined) {
+      schemas.set(key, normalized);
+      return normalized;
+    }
+  }
   const effective = mergeSchemaContributions(node, declarations, options);
   schemas.set(key, effective);
   if (defaultNoActive) DEFAULT_NO_ACTIVE.set(node, effective);

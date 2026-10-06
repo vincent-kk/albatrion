@@ -1,0 +1,18 @@
+{
+  "variant": "count-working",
+  "name": "sample-0",
+  "counts": {
+    "static": 3,
+    "runtime": 0
+  },
+  "nodes": 3,
+  "observation": {
+    "sha256": "72c43d9d80f43ae8fddcafd0cb1e33e0faddf95bd32459d24622dda3fbc7a8aa",
+    "outputBytes": 50,
+    "liveWidth": 2,
+    "value": {
+      "name": "John Doe",
+      "email": "john.doe@example.com"
+    }
+  }
+}
