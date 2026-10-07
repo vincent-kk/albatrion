@@ -98,9 +98,19 @@ export const markCommitDeliveries = <Self extends SchemaNodeRecord<Self>>(
     mark(context.root, SchemaNodeEventType.UpdateDiagnostics);
   runtime.deliveredDiagnostics = runtime.diagnostics;
   const globalState = commitGlobalState(context);
-  const ordered = new Set<unknown>(globalState.nodes);
-  for (const node of candidates) ordered.add(node);
-  for (const candidate of ordered) {
+  const globalNodes: ReadonlySet<unknown> = globalState.nodes;
+  let iterator: Iterator<unknown> = globalState.nodes.values();
+  let additional = false;
+  while (true) {
+    const next = iterator.next();
+    if (next.done) {
+      if (additional) break;
+      additional = true;
+      iterator = candidates.values();
+      continue;
+    }
+    const candidate = next.value;
+    if (additional && globalNodes.has(candidate)) continue;
     if (!isTreeNode(candidate)) continue;
     const node = candidate;
     visit?.(node);
