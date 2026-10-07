@@ -405,7 +405,9 @@ React 공식·층 진단은 validator를 주입하지 않는 validation OFF이�
 | 비축소 ESM raw | 577,590 | — | — | 564.053 KiB |
 | 비축소 CJS raw | 596,261 | — | — | 582.286 KiB |
 
-현재 ESM raw는 577,590 B로 [PKG/CLAUDE.md](../../../CLAUDE.md)의 약 240 kB 설명과 일치하지 않습니다. **src/__legacy__는 배포 번들에 포함되지 않습니다.** ESM·CJS 각각 528개 입력 모듈의 출력 그래프에서 src/__legacy__ 모듈은 0개입니다. 따라서 크기 증가를 레거시 동봉으로 설명할 수 없으며, 큰 현재 구현 기여는 아래 settle·blueprint 등에서 확인됩니다.
+**src/__legacy__는 배포 번들에 포함되지 않습니다.** ESM·CJS 각각 528개 입력 모듈의 출력 그래프에서 src/__legacy__ 모듈은 0개이므로, 크기 증가를 레거시 동봉으로 설명할 수 없습니다. 늘어난 까닭의 모듈별 분해와 새 기능 몫·구현 차이 몫·줄일 자리의 상한은 [bundle-115.md](bundle-115.md)에 있습니다.
+
+**TEST-075 판정: 기록과 소유자 확인(115라운드), 처분은 개선 단계.** 소유자는 minify gzip 2.171배가 7단계의 병합을 막지 않는다고 보았습니다. 이것은 크기의 최종 수용이 아니며, 처분은 개선 단계 목록에 있습니다.
 
 기여 크기는 비축소 ESM에서 각 소스 모듈에 귀속된 UTF-8 출력 영역의 바이트입니다. 모듈별 gzip은 가산적이지 않으므로 압축 크기 기여라고 해석하지 않습니다. 출력 wrapper·구분자 2,726 B를 포함하면 전체 ESM raw 크기와 일치합니다.
 
@@ -506,10 +508,11 @@ benchmark-form(BF)의 코어 BF 갱신은 위 공식 코어 표에, React 19 fix
 - 파일 배치와 코드 정리는 개선 단계에서 다룹니다. [112 단계 귀속](profile-112-branch.md)이 현재 구현을 추적하는 근거입니다.
 - rjsf 비교는 108라운드의 개선 항목으로 남기며, 이번 G26 측정은 HEAD와 0.16.0 비교입니다. [108 수용 범위](profile-108-ratios.md)를 함께 참조합니다.
 - flat-50·flat-100 첫 갱신의 1회 비용은 소유자 수용(110라운드) 범위로 남기고 개선 단계에서 다룹니다. [111 첫 갱신 표](profile-111-final.md)가 근거입니다.
-- 도우미 테스트 네 파일의 test-record 32사례 상한 초과는 112라운드 개선 항목입니다. 대상은 [formatErrorMessage](../../../src/helpers/error/__tests__/formatErrorMessage.test.ts), [formTypeInputMap](../../../src/helpers/formTypeInputDefinition/__tests__/formTypeInputMap.test.ts), [formTypeInputDefinitions](../../../src/helpers/formTypeInputDefinition/__tests__/formTypeInputDefinitions.test.ts), [extractSchemaInfo](../../../src/helpers/jsonSchema/__tests__/extractSchemaInfo.test.ts)이며 검증 범위를 버리지 않고 정리합니다.
+- 도우미 테스트 네 파일의 test-record 32사례 상한 초과는 112라운드 개선 항목입니다. 대상은 [formatErrorMessage](../../../src/helpers/error/__tests__/formatErrorMessage.test.ts) 58사례, [getAbsolutePointer](../../../src/helpers/jsonPointer/utils/__tests__/getAbsolutePointer.test.ts) 58사례, [extractSchemaInfo](../../../src/helpers/jsonSchema/__tests__/extractSchemaInfo.test.ts) 44사례, [stripSchemaExtensions](../../../src/helpers/jsonSchema/__tests__/stripSchemaExtensions.test.ts) 33사례입니다.
 - array-100 OFF BF·첫 갱신의 독립 짝 꼬리 jitter는 112라운드 개선 항목으로 남깁니다. 104라운드 성능 수용과 `(가)` 실패를 함께 기록하며, [113 독립 짝 검증](profile-113-paired.md)이 근거입니다.
 - 다섯 진입점의 wildcard re-export는 개선 단계에서 명시적 재수출로 정리합니다. 대상은 [dynamicExpression](../../../src/helpers/dynamicExpression/index.ts), [helper error](../../../src/helpers/error/index.ts), [jsonPointer](../../../src/helpers/jsonPointer/index.ts), [defaultValue](../../../src/helpers/defaultValue/index.ts), [errors](../../../src/errors/index.ts)입니다.
-- oneOf의 분기별 장부는 소유자 답에 따라 수정 범위와 시기를 정하는 개선 항목입니다. [112 분기 장부 진단](profile-112-branch.md)의 반복 방문과 실제 식 계산을 구분하며 기준 ② 충족을 선언하지 않습니다.
+- oneOf 전환의 분기별 장부는 개선 단계가 아니라 7단계에서 코드 수준으로 없앱니다(소유자 113라운드). 함수 그룹별로 한 번에 하나씩 고치고, 105C-01 아홉 회차로 판정합니다. 끝나면 분기 축을 다시 재어 이 보고서의 분기 절을 고칩니다. [112 분기 장부 진단](profile-112-branch.md)이 대상 목록입니다.
+- 번들 크기의 처분은 개선 단계에서 다룹니다(소유자 115라운드). 두 가지를 다룹니다. 첫째, 속도와 진단을 잃지 않는 작은 정리(약 600 B)입니다. 둘째, 일반화할 수 있는 로직(스키마 경로와 포인터, 식 컴파일, 값 동등, 개정 원장 같은 범용 후보)을 winglet 류의 별도 패키지로 나누는 길을 검토합니다. 의존성을 밖에 두고 재는 TEST-075에서는 이 분리가 측정값만 줄이고 소비자가 받는 총량은 그대로이므로, 개선 단계에서는 의존성을 포함한 총량도 함께 적어 판단합니다. [번들 분해](bundle-115.md)가 근거입니다.
 
 ## G26 CHECK의 의미
 
