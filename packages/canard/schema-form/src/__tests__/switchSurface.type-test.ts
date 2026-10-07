@@ -1,8 +1,8 @@
 // NODE-058, SURFACE-059, REACT-032, GOAL-088: checked by the package tsc command.
 import { expectTypeOf } from 'vitest';
 
-import type { JSONSchema as CoreJSONSchema, Validator } from '../../core';
-import { SchemaNodeEventType, ValidationMode, isUnionNode } from '../../index';
+import type { JSONSchema as CoreJSONSchema, Validator } from '../core';
+import { SchemaNodeEventType, ValidationMode, isUnionNode } from '../index';
 import type {
   FormTypeInputProps,
   Hint,
@@ -12,8 +12,8 @@ import type {
   SchemaNode,
   UnionNode,
   ValidatorFactory,
-} from '../../index';
-import type { SchemaPresentation } from '../jsonSchema';
+} from '../index';
+import type { SchemaPresentation } from '../types/jsonSchema';
 
 expectTypeOf<
   InferSchemaNode<{ type: readonly ['string', 'number'] }>
@@ -88,7 +88,7 @@ const invalidNestedPresentation: JSONSchema = {
     },
   },
 };
-const invalidStringPresentation: import('../../index').StringSchema = {
+const invalidStringPresentation: import('../index').StringSchema = {
   type: 'string',
   presentation: {
     // @ts-expect-error Per-kind public aliases retain the same presentation shape.
@@ -101,12 +101,12 @@ void invalidStringPresentation;
 
 // I12: the removed legacy error name must not return to the package entry.
 // @ts-expect-error JSONSchemaError is preserved only for legacy implementation consumers.
-type RemovedError = import('../../index').JSONSchemaError;
+type RemovedError = import('../index').JSONSchemaError;
 // 70C-01: host and binding channels stay outside the package's consumer surface.
 // @ts-expect-error nodeFromJSONSchema is a core-only host entry.
-type RemovedHostEntry = typeof import('../../index').nodeFromJSONSchema;
+type RemovedHostEntry = typeof import('../index').nodeFromJSONSchema;
 // @ts-expect-error buildSchemaNodeTree is binding-only.
-type RemovedBindingEntry = typeof import('../../index').buildSchemaNodeTree;
+type RemovedBindingEntry = typeof import('../index').buildSchemaNodeTree;
 expectTypeOf<RemovedError>().toBeAny();
 expectTypeOf<RemovedHostEntry>().toBeAny();
 expectTypeOf<RemovedBindingEntry>().toBeAny();

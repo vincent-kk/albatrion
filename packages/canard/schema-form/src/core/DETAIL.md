@@ -169,6 +169,12 @@ nodeFromJSONSchema<Schema extends JSONSchema>(props: {
 
 ## Boundary Exemptions
 
+### `types` — 렌더 바인딩의 제네릭 스키마 타입 적용
+
+- **Consumers**: `**/packages/canard/schema-form/src/types/jsonSchema.ts`
+- **Direct import**: `allowed`
+- **Reason**: 렌더러와 무관한 제네릭 JSONSchema는 core의 계약 구현이며, 바인딩은 이 타입에 불투명한 presentation 형만 주입합니다. core 진입점은 SchemaNode·blueprint·식 컴파일에서 오류 도우미를 거쳐 바인딩 타입 배럴에 도달하므로, 이 별칭이 core 진입점을 가져오면 타입 의존 순환이 생깁니다. core 내부의 다수 소비자와 소유권을 유지하고 이 바인딩 별칭의 JSONSchema 참조만 허용합니다. filid의 organ 판정은 개별 파일이 아닌 구획을 대상으로 하므로 구획 경로를 선언하고 소비자는 한 파일로 제한합니다.
+
 ### `__tests__/makeSchemaNodeTree.ts` — 공유 시험 트리 생성
 
 - **Consumers**: `behaviors/unionBehavior/__tests__/**`

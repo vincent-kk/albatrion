@@ -83,6 +83,14 @@ NODE-059의 형 없는 인라인 객체·배열 oneOf·anyOf는 분기 값 형�
 
 - LANDING-207·208의 형 없는 객체 분기, 게이트 없는 자기 순환, 리터럴 전용 프로퍼티에서 공개 `<Form>`의 수용·오류 코드와 실제 화면이 새 엔진 계약에 일치합니다.
 
+## Boundary Exemptions
+
+### `index.ts` — 공개 패키지 표면의 컴파일 전용 검증
+
+- **Consumers**: `**/packages/canard/schema-form/src/__tests__/switchSurface.type-test.ts`
+- **Direct import**: `allowed`
+- **Reason**: 이 검증은 패키지 공개 표면의 타입·가드·열거와 비공개 심볼의 부재를 확인하므로 패키지 진입점 자체를 소비해야 합니다. 소유 경계의 검증 구획에 두고 패키지 tsc의 src 포함으로 검사합니다. 이름을 유지한 컴파일 전용 .type-test.ts는 filid adapter의 검증 파일 분류와 Vitest 런타임 시험 glob에 포함되지 않으므로, 이 파일의 공개 진입점 참조에만 예외를 선언합니다.
+
 ## Last Updated
 
 계약 기준: LANDING-067·170·205·207·208, WRITE-083, VALUE-027·034.

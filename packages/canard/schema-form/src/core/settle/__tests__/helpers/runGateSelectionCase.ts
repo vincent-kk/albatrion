@@ -1,6 +1,7 @@
 import type { Blueprint } from '../../../blueprint';
 import { SetValueOption } from '../../../types/value';
-import { loadSchemaNodeAtMount, writeSchemaNode } from '../../index';
+import { loadSchemaNodeAtMount } from '../../utils/load/loadSchemaNodeAtMount';
+import { writeSchemaNode } from '../../utils/write/writeSchemaNode';
 import type { gateSelectionCases } from '../fixtures/gateSelectionCases';
 import { createTestTree } from '../fixtures/createTestTree';
 import type { PlainNode } from '../fixtures/createPlainNode';
