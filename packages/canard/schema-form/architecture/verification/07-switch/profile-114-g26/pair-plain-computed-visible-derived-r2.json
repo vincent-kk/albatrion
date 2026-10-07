@@ -1,0 +1,26 @@
+{
+  "head": "af3cd579b892393de3693f737afe68cfce3993f8",
+  "fixture": "computed-visible-derived",
+  "run": 2,
+  "lane": "plain",
+  "order": [
+    "HEAD",
+    "0.16.0"
+  ],
+  "workers": [
+    {
+      "version": "HEAD",
+      "seconds": 2.9335692079999998,
+      "exit": 0,
+      "signal": null
+    },
+    {
+      "version": "0.16.0",
+      "seconds": 2.668065958,
+      "exit": 0,
+      "signal": null
+    }
+  ],
+  "seconds": 5.602708292,
+  "equivalent": true
+}

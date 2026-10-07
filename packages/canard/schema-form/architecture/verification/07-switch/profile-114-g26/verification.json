@@ -1,0 +1,41 @@
+{
+  "head": "af3cd579b892393de3693f737afe68cfce3993f8",
+  "reportBytes": 60682,
+  "relativeLinks": 38,
+  "fileCount": 205,
+  "maxFile": [
+    "summary.json",
+    178554
+  ],
+  "checks": {
+    "head": true,
+    "reportAssembly": true,
+    "relativeLinks": true,
+    "filesUnder5MB": true,
+    "noGeneratedBundlesOrCaches": true,
+    "changeScope": true,
+    "forbiddenStringAbsent": true
+  },
+  "counts": {
+    "core": 108,
+    "react": 114,
+    "ownerReact": 26,
+    "packageBench": 44
+  },
+  "reportSha256": "20028385dee59091b3fd0848df2c6c83b0dd01d1b57a809e6e6f51dbec19b74e",
+  "missing": [],
+  "generated": [],
+  "g26Check": {
+    "command": "(f=packages/canard/schema-form/architecture/verification/07-switch/performance.md; grep -q '37,023' $f && grep -q '51,632' $f && grep -q 'typecheck' $f && grep -q 'benchmark-form' $f && ! grep -q '수용 대기' $f) && echo PERFORMANCE_REPORTED",
+    "cwd": "/Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07",
+    "exitCode": 0,
+    "stdout": "PERFORMANCE_REPORTED",
+    "seconds": 0.000002292
+  },
+  "g26Ledger": {
+    "state": "unmet",
+    "evidence": "pending",
+    "updated": false
+  },
+  "scope": "성능 보고와 지정 CHECK를 검증합니다. React 26행의 소유자 판단과 분기 기준 ①·②의 판단은 남습니다."
+}

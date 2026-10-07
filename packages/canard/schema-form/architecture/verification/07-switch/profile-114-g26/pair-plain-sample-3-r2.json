@@ -1,0 +1,26 @@
+{
+  "head": "af3cd579b892393de3693f737afe68cfce3993f8",
+  "fixture": "sample-3",
+  "run": 2,
+  "lane": "plain",
+  "order": [
+    "HEAD",
+    "0.16.0"
+  ],
+  "workers": [
+    {
+      "version": "HEAD",
+      "seconds": 3.173365584,
+      "exit": 0,
+      "signal": null
+    },
+    {
+      "version": "0.16.0",
+      "seconds": 3.042479291,
+      "exit": 0,
+      "signal": null
+    }
+  ],
+  "seconds": 6.216882291999999,
+  "equivalent": true
+}

@@ -1,0 +1,26 @@
+{
+  "head": "af3cd579b892393de3693f737afe68cfce3993f8",
+  "fixture": "nested-d5-f4",
+  "run": 3,
+  "lane": "plain",
+  "order": [
+    "0.16.0",
+    "HEAD"
+  ],
+  "workers": [
+    {
+      "version": "0.16.0",
+      "seconds": 38.413197666,
+      "exit": 0,
+      "signal": null
+    },
+    {
+      "version": "HEAD",
+      "seconds": 37.798580875000006,
+      "exit": 0,
+      "signal": null
+    }
+  ],
+  "seconds": 76.212882084,
+  "equivalent": true
+}

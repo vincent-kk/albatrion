@@ -1,0 +1,26 @@
+{
+  "command": "npx --no-install tsc --noEmit --composite false --rootDir . -p tsconfig.json",
+  "cwd": "packages/canard/schema-form",
+  "clock": "execution-tool monotonic command waiting wall clock",
+  "runs": [
+    {
+      "run": 1,
+      "seconds": 8.020091709,
+      "exit": 0,
+      "stdout": ""
+    },
+    {
+      "run": 2,
+      "seconds": 7.997364417,
+      "exit": 0,
+      "stdout": ""
+    },
+    {
+      "run": 3,
+      "seconds": 8.045504042,
+      "exit": 0,
+      "stdout": ""
+    }
+  ],
+  "medianSeconds": 8.020091709
+}

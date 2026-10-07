@@ -1,0 +1,2159 @@
+{
+  "esm": {
+    "rawBytes": 577590,
+    "moduleCount": 528,
+    "legacyModules": [],
+    "sha256": "2877b1221fced37620ef441d50efed6b0094835e37e4f43b5e5a66f4613c72d1"
+  },
+  "cjs": {
+    "rawBytes": 596261,
+    "moduleCount": 528,
+    "legacyModules": [],
+    "sha256": "fadd24dc845d8e6ae700e45eecd04d342e41d7e8aa946e578206ea8d1dce781b"
+  },
+  "esbuildExit": {
+    "code": 0,
+    "signal": null
+  },
+  "minifyGzip": {
+    "bytes": 80390,
+    "baseline": 37023,
+    "ratio": 2.171352942765308,
+    "difference": 43367,
+    "exit": 0,
+    "signal": null
+  },
+  "plainGzip": {
+    "bytes": 117063,
+    "baseline": 51632,
+    "ratio": 2.267256740006198,
+    "difference": 65431,
+    "exit": 0,
+    "signal": null
+  },
+  "minifiedRawBytes": 264898,
+  "breakdown": {
+    "basis": "unminified ESM emitted region bytes",
+    "modules": [
+      {
+        "source": "packages/canard/schema-form/src/core/settle/utils/compute/selectChildren.ts",
+        "bytes": 11551
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/settle/utils/commit/markCommitDeliveries.ts",
+        "bytes": 9015
+      },
+      {
+        "source": "packages/canard/schema-form/src/errors/formErrorCode.ts",
+        "bytes": 7218
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/settle/utils/commit/commitSettlement.ts",
+        "bytes": 6412
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/settle/utils/transition/transitionSettlement.ts",
+        "bytes": 6198
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/blueprint/utils/analyze/populateNodeChildren.ts",
+        "bytes": 5873
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/settle/utils/gates/getGateRegistry.ts",
+        "bytes": 5750
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/settle/derive/utils/evaluate/evaluateDeriveRound.ts",
+        "bytes": 5553
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/settle/utils/gates/evaluateGate.ts",
+        "bytes": 5484
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/SchemaNode/SchemaNode.ts",
+        "bytes": 5472
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/behaviors/objectBehavior/branch/utils/assembleObject.ts",
+        "bytes": 5454
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/settle/utils/compute/computeNode.ts",
+        "bytes": 5432
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/blueprint/utils/analyze/collectDeriveConvergenceTargets.ts",
+        "bytes": 5118
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/blueprint/utils/analyze/collectDeclarations.ts",
+        "bytes": 5006
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/settle/utils/write/getDependencyIndex.ts",
+        "bytes": 4649
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/dispatch/utils/chain/exitSchemaNodeChain.ts",
+        "bytes": 4221
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/settle/utils/write/markWrite.ts",
+        "bytes": 4219
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/settle/utils/structure/applyArraySlots.ts",
+        "bytes": 4095
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/settle/derive/utils/rules/getDeriveRuleTable.ts",
+        "bytes": 4048
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/settle/utils/commit/commitExitPolicyValues.ts",
+        "bytes": 4039
+      },
+      {
+        "source": "packages/canard/schema-form/src/providers/RootNodeContext/RootNodeContextProvider.tsx",
+        "bytes": 3932
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/settle/utils/commit/updateInactiveValuesMemo.ts",
+        "bytes": 3819
+      },
+      {
+        "source": "packages/canard/schema-form/src/components/SchemaNode/SchemaNodeInput/SchemaNodeInput.tsx",
+        "bytes": 3777
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/settle/utils/load/loadStaticFirstTree.ts",
+        "bytes": 3655
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/settle/utils/derivation/runDeriveRounds.ts",
+        "bytes": 3627
+      },
+      {
+        "source": "packages/canard/schema-form/src/components/Form/components/FormContents.tsx",
+        "bytes": 3389
+      },
+      {
+        "source": "packages/canard/schema-form/src/helpers/virtualization/VirtualizationManager/VirtualizationManager.ts",
+        "bytes": 3290
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/settle/utils/controls/getControlLayers.ts",
+        "bytes": 3283
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/settle/utils/structure/arrangeSchemaNodeItems.ts",
+        "bytes": 3265
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/blueprint/utils/analyze/buildNodes.ts",
+        "bytes": 3256
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/settle/utils/structure/rekeyArrayRuntimePaths.ts",
+        "bytes": 3227
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/blueprint/utils/analyze/populateVirtualNodes.ts",
+        "bytes": 3175
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/blueprint/blueprint.ts",
+        "bytes": 3142
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/utils/pathIndex/utils/PathStoreIndex.ts",
+        "bytes": 3106
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/settle/utils/transition/finalizeExits.ts",
+        "bytes": 3105
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/blueprint/utils/analyze/readDiscriminatorBranches.ts",
+        "bytes": 3099
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/settle/utils/controls/calculateStateKeys.ts",
+        "bytes": 3015
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/dispatch/utils/chain/adoptSchemaNodeChain.ts",
+        "bytes": 2993
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/record/utils/SchemaNodeRevisionLedger.ts",
+        "bytes": 2987
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/settle/utils/gates/flushPendingGateReads.ts",
+        "bytes": 2986
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/blueprint/utils/analyze/compileBlueprintExpressions.ts",
+        "bytes": 2919
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/validation/utils/route/routeValidationIssues.ts",
+        "bytes": 2892
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/blueprint/utils/features/getFeatureNodeIndex/utils/buildFeatureNodeIndex.ts",
+        "bytes": 2872
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/SchemaNode/utils/schemaNodeFactory.ts",
+        "bytes": 2823
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/blueprint/utils/effectiveSchema/utils/applyConstraintKeywords.ts",
+        "bytes": 2792
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/settle/utils/load/finishStaticFirstLoad.ts",
+        "bytes": 2778
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/settle/utils/commit/utils/createWatchDeliveryIndex.ts",
+        "bytes": 2770
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/blueprint/utils/diagnostics/collectBlueprintWarnings.ts",
+        "bytes": 2761
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/blueprint/utils/types/resolveNodeStrategy.ts",
+        "bytes": 2743
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/settle/utils/write/DirtyPathSet.ts",
+        "bytes": 2722
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/settle/utils/write/writeSchemaNode.ts",
+        "bytes": 2674
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/settle/utils/load/alignArraySnapshotSlots.ts",
+        "bytes": 2664
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/blueprint/utils/types/inferAllowedTypes.ts",
+        "bytes": 2661
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/settle/utils/compute/hasRecursiveExpansion.ts",
+        "bytes": 2624
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/blueprint/utils/types/resolveNodeTypes.ts",
+        "bytes": 2600
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/settle/utils/latent/distributeLatentValue.ts",
+        "bytes": 2600
+      },
+      {
+        "source": "packages/canard/schema-form/src/formTypeDefinitions/FormTypeInputUnion.tsx",
+        "bytes": 2584
+      },
+      {
+        "source": "packages/canard/schema-form/src/formTypeDefinitions/FormTypeInputArray.tsx",
+        "bytes": 2518
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/blueprint/utils/effectiveSchema/utils/mergeSchemaContributions/utils/mergeSingleStaticContribution.ts",
+        "bytes": 2496
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/blueprint/utils/diagnostics/collectInlineTerminalWarnings.ts",
+        "bytes": 2465
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/blueprint/utils/analyze/getTemplateKey.ts",
+        "bytes": 2433
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/blueprint/utils/diagnostics/validateControlGroups.ts",
+        "bytes": 2373
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/settle/utils/compute/selectNodeSchema.ts",
+        "bytes": 2361
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/dispatch/utils/chain/flushQueuedEvents.ts",
+        "bytes": 2353
+      },
+      {
+        "source": "packages/canard/schema-form/src/components/SchemaNode/SchemaNodeProxy/components/SchemaNodeField.tsx",
+        "bytes": 2338
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/behaviors/arrayBehavior/utils/value/assembleArray.ts",
+        "bytes": 2334
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/settle/derive/utils/evaluate/evaluateResetInteraction.ts",
+        "bytes": 2279
+      },
+      {
+        "source": "packages/canard/schema-form/src/components/SchemaNode/SchemaNodeInput/hooks/useChildNodeComponents.tsx",
+        "bytes": 2269
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/settle/utils/commit/commitGlobalState.ts",
+        "bytes": 2239
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/settle/utils/settlement/finishSettlement.ts",
+        "bytes": 2221
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/settle/utils/gates/getGateBudgetCap.ts",
+        "bytes": 2213
+      },
+      {
+        "source": "packages/canard/schema-form/src/app/plugin/PluginManager.ts",
+        "bytes": 2174
+      },
+      {
+        "source": "packages/canard/schema-form/src/providers/FormTypeRendererContext/FormTypeRendererProvider.tsx",
+        "bytes": 2131
+      },
+      {
+        "source": "packages/canard/schema-form/src/components/SchemaNode/DeferrableNodeProxy/DeferrableNodeProxy.tsx",
+        "bytes": 2082
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/blueprint/utils/analyze/collectSchemaCapabilities.ts",
+        "bytes": 1981
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/settle/utils/transition/captureLatentDescendants.ts",
+        "bytes": 1977
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/validation/utils/copy/createValidatorCopy.ts",
+        "bytes": 1961
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/settle/utils/settlement/createSettlementContext.ts",
+        "bytes": 1936
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/settle/utils/compute/primeHost.ts",
+        "bytes": 1929
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/dispatch/utils/entry/dispatchValidate.ts",
+        "bytes": 1920
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/blueprint/utils/expressions/regex.ts",
+        "bytes": 1899
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/validation/utils/route/isOffUnionBranchIssue.ts",
+        "bytes": 1881
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/blueprint/utils/effectiveSchema/utils/applySchemaContribution.ts",
+        "bytes": 1858
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/settle/utils/compute/updateOutput.ts",
+        "bytes": 1834
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/utils/pathIndex/utils/utils/NumericPathIndex.ts",
+        "bytes": 1797
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/validation/utils/run/requestSchemaNodeValidation.ts",
+        "bytes": 1783
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/dispatch/utils/report/readReferenceOnlySchemaPaths.ts",
+        "bytes": 1777
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/dispatch/utils/report/collectChainRecords.ts",
+        "bytes": 1760
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/settle/utils/gates/readProjectedValue.ts",
+        "bytes": 1693
+      },
+      {
+        "source": "packages/canard/schema-form/src/providers/FormErrorContext/utils/createFormErrorService.ts",
+        "bytes": 1671
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/settle/utils/write/interpretSchemaNodeInput.ts",
+        "bytes": 1651
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/dispatch/utils/entry/dispatchMount.ts",
+        "bytes": 1649
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/record/SchemaNodeEventType.ts",
+        "bytes": 1637
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/settle/utils/write/registerRecalculation.ts",
+        "bytes": 1637
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/blueprint/utils/diagnostics/constant.ts",
+        "bytes": 1636
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/settle/utils/write/releaseSettlementScratch.ts",
+        "bytes": 1630
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/settle/utils/commit/updateCommittedRuleValue.ts",
+        "bytes": 1629
+      },
+      {
+        "source": "packages/canard/schema-form/src/hooks/useChildNodeErrors.ts",
+        "bytes": 1602
+      },
+      {
+        "source": "packages/canard/schema-form/src/helpers/error/formatErrorMessage/formatRegisterPluginError.ts",
+        "bytes": 1591
+      },
+      {
+        "source": "packages/canard/schema-form/src/providers/RootNodeContext/utils/resetRootLoad.ts",
+        "bytes": 1569
+      },
+      {
+        "source": "packages/canard/schema-form/src/formTypeDefinitions/FormTypeInputStringCheckbox.tsx",
+        "bytes": 1548
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/settle/derive/utils/evaluate/utils/evaluateInjectTo.ts",
+        "bytes": 1546
+      },
+      {
+        "source": "packages/canard/schema-form/src/components/SchemaNode/SchemaNodeInput/hooks/useFormTypeInputControl.ts",
+        "bytes": 1544
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/settle/utils/transition/collectFillDescendants.ts",
+        "bytes": 1543
+      },
+      {
+        "source": "packages/canard/schema-form/src/helpers/jsonPointer/utils/getAbsolutePointer.ts",
+        "bytes": 1536
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/blueprint/utils/effectiveSchema/utils/freezeEffectiveSchema.ts",
+        "bytes": 1535
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/settle/utils/compute/utils/hasIndependentLeafDefaults.ts",
+        "bytes": 1523
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/blueprint/utils/effectiveSchema/utils/finalizeEffectiveSchema.ts",
+        "bytes": 1512
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/settle/utils/transition/finalizePerished.ts",
+        "bytes": 1492
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/dispatch/utils/chain/flushBatchWrites.ts",
+        "bytes": 1491
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/settle/utils/commit/commitDeriveRules.ts",
+        "bytes": 1488
+      },
+      {
+        "source": "packages/canard/schema-form/src/helpers/formTypeInputDefinition/formTypeInputDefinitions.ts",
+        "bytes": 1486
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/dispatch/utils/chain/markBatchArrayOperation.ts",
+        "bytes": 1485
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/blueprint/utils/types/inferLiteralTypes.ts",
+        "bytes": 1477
+      },
+      {
+        "source": "packages/canard/schema-form/src/components/SchemaNode/SchemaNodeInput/hooks/useFormTypeInput.ts",
+        "bytes": 1477
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/settle/utils/transition/restoreArrayStructure.ts",
+        "bytes": 1452
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/settle/utils/write/getSettlementScratch.ts",
+        "bytes": 1449
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/settle/utils/latent/readLatentSlotSource.ts",
+        "bytes": 1442
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/blueprint/utils/effectiveSchema/mergeEffectiveSchema.ts",
+        "bytes": 1434
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/settle/utils/latent/setLatentRaw.ts",
+        "bytes": 1427
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/settle/utils/commit/collectNonJsonPaths.ts",
+        "bytes": 1422
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/settle/utils/latent/readRawTree.ts",
+        "bytes": 1382
+      },
+      {
+        "source": "packages/canard/schema-form/src/formTypeDefinitions/FormTypeInputStringEnum.tsx",
+        "bytes": 1366
+      },
+      {
+        "source": "packages/canard/schema-form/src/components/FallbackComponents/FormGroupRenderer.tsx",
+        "bytes": 1364
+      },
+      {
+        "source": "packages/canard/schema-form/src/formTypeDefinitions/FormTypeInputStringRadio.tsx",
+        "bytes": 1353
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/record/utils/captureSchemaNodeChange.ts",
+        "bytes": 1341
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/settle/utils/transition/captureExitedRaw.ts",
+        "bytes": 1308
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/blueprint/utils/analyze/populateNodeChildren/utils/appendChildEntries.ts",
+        "bytes": 1296
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/validation/utils/cache/readValidationEntry.ts",
+        "bytes": 1291
+      },
+      {
+        "source": "packages/canard/schema-form/src/providers/ExternalFormContext/ExternalFormContextProvider.tsx",
+        "bytes": 1281
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/blueprint/utils/itemEntry/getItemEntry.ts",
+        "bytes": 1275
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/behaviors/utils/options/getStaticChoices.ts",
+        "bytes": 1260
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/blueprint/utils/effectiveSchema/utils/selectEffectiveDeclarations.ts",
+        "bytes": 1258
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/settle/utils/paths/expandTemplatePaths.ts",
+        "bytes": 1250
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/behaviors/arrayBehavior/utils/plan/arrangeTerminalArray.ts",
+        "bytes": 1245
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/settle/utils/context/changeSchemaNodeContext.ts",
+        "bytes": 1235
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/settle/utils/transition/restoreSourceB.ts",
+        "bytes": 1230
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/dispatch/utils/entry/dispatchClearSubtreeState.ts",
+        "bytes": 1227
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/settle/utils/transition/withdrawDetachedFills.ts",
+        "bytes": 1213
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/settle/utils/compute/publishStateKeys.ts",
+        "bytes": 1198
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/settle/utils/load/assembleStaticFirstNode.ts",
+        "bytes": 1189
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/dispatch/utils/entry/dispatchSetValue.ts",
+        "bytes": 1181
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/behaviors/arrayBehavior/utils/plan/arrangeBranchArray.ts",
+        "bytes": 1153
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/dispatch/utils/chain/deliverWave.ts",
+        "bytes": 1142
+      },
+      {
+        "source": "packages/canard/schema-form/src/components/SchemaNode/SchemaNodeInput/SchemaNodeInputWrapper.tsx",
+        "bytes": 1128
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/settle/utils/structure/utils/rekeyCommittedRules.ts",
+        "bytes": 1123
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/settle/utils/compute/sameValue.ts",
+        "bytes": 1117
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/dispatch/utils/entry/dispatchSetSubtreeState.ts",
+        "bytes": 1111
+      },
+      {
+        "source": "packages/canard/schema-form/src/providers/RootNodeContext/utils/createRootLoad.ts",
+        "bytes": 1110
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/settle/derive/utils/evaluate/utils/getInjectTarget.ts",
+        "bytes": 1107
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/settle/utils/controls/readSchemaNodeWatchValues.ts",
+        "bytes": 1107
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/dispatch/utils/report/createFormErrorRecord.ts",
+        "bytes": 1104
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/settle/utils/paths/bindTemplatePath.ts",
+        "bytes": 1095
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/record/utils/publishGlobalStateDeltas.ts",
+        "bytes": 1094
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/navigation/utils/query/findNodes.ts",
+        "bytes": 1086
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/validation/utils/run/assertValidationRootReady.ts",
+        "bytes": 1084
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/validation/utils/read/readSchemaNodeErrors.ts",
+        "bytes": 1082
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/behaviors/arrayBehavior/utils/projection/omitTrailingArray.ts",
+        "bytes": 1066
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/dispatch/utils/entry/dispatchFinishInput.ts",
+        "bytes": 1062
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/blueprint/utils/analyze/resolveReference.ts",
+        "bytes": 1054
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/blueprint/utils/diagnostics/validateChildTargets.ts",
+        "bytes": 1054
+      },
+      {
+        "source": "packages/canard/schema-form/src/helpers/error/formatErrorMessage/formatFormTypeInputMapError.ts",
+        "bytes": 1046
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/settle/utils/derivation/collectDeriveSourcePaths.ts",
+        "bytes": 1046
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/settle/utils/compute/enterSchemaNode.ts",
+        "bytes": 1044
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/blueprint/utils/itemEntry/getItemEntry/utils/getItemSchemaPath.ts",
+        "bytes": 1040
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/dispatch/utils/chain/utils/compareDocumentOrder.ts",
+        "bytes": 1031
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/settle/utils/transition/prunePerishedPaths.ts",
+        "bytes": 1030
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/blueprint/utils/effectiveSchema/utils/mergeSchemaContributions.ts",
+        "bytes": 1029
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/dispatch/utils/entry/utils/clearSchemaNodeFormErrors.ts",
+        "bytes": 1028
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/settle/utils/transition/pruneArrayTailPaths.ts",
+        "bytes": 1017
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/settle/utils/load/isMissingStaticInput.ts",
+        "bytes": 1010
+      },
+      {
+        "source": "packages/canard/schema-form/src/helpers/error/formatErrorMessage/formatDynamicFunctionError.ts",
+        "bytes": 1005
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/record/utils/indexSchemaNodeWarning.ts",
+        "bytes": 987
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/settle/utils/derivation/getDeriveState.ts",
+        "bytes": 978
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/settle/utils/write/staticSpec.ts",
+        "bytes": 977
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/settle/derive/utils/evaluate/utils/chooseDeriveWrite.ts",
+        "bytes": 970
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/settle/utils/compute/utils/getRecursiveRelativeSpan.ts",
+        "bytes": 967
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/settle/utils/write/pruneLatentRaw.ts",
+        "bytes": 959
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/settle/utils/compute/preserveReferences.ts",
+        "bytes": 959
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/dispatch/utils/chain/utils/replaceAtPath.ts",
+        "bytes": 953
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/utils/pathIndex/PathKeyedMap.ts",
+        "bytes": 950
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/blueprint/utils/effectiveSchema/utils/mergeHintGroup.ts",
+        "bytes": 940
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/settle/utils/context/getContextOwners.ts",
+        "bytes": 938
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/settle/utils/compute/getVirtualReferenceIndex.ts",
+        "bytes": 932
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/settle/utils/commit/finalizeDeriveTrace.ts",
+        "bytes": 926
+      },
+      {
+        "source": "packages/canard/schema-form/src/providers/RootNodeContext/utils/applyFormErrors.ts",
+        "bytes": 924
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/record/utils/markSchemaNodeEvent.ts",
+        "bytes": 922
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/settle/utils/latent/hasLatentUnder.ts",
+        "bytes": 921
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/blueprint/utils/analyze/isLiteralDefault.ts",
+        "bytes": 916
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/blueprint/utils/analyze/collectStaticSchemas.ts",
+        "bytes": 914
+      },
+      {
+        "source": "packages/canard/schema-form/src/formTypeDefinitions/FormTypeInputString.tsx",
+        "bytes": 913
+      },
+      {
+        "source": "packages/canard/schema-form/src/formTypeDefinitions/FormTypeInputNumber.tsx",
+        "bytes": 912
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/settle/utils/structure/utils/rekeyPairedPathStore.ts",
+        "bytes": 903
+      },
+      {
+        "source": "packages/canard/schema-form/src/app/plugin/registerPlugin.ts",
+        "bytes": 898
+      },
+      {
+        "source": "packages/canard/schema-form/src/components/SchemaNode/SchemaNodeInput/hooks/useTerminalChildren.ts",
+        "bytes": 898
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/settle/utils/transition/readDepartingAncestorPolicy.ts",
+        "bytes": 895
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/settle/utils/detached/captureDetachedSchemaNodeReads.ts",
+        "bytes": 880
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/blueprint/utils/expressions/createDynamicFunction/createDynamicFunction.ts",
+        "bytes": 879
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/utils/pathIndex/PathKeyedSet.ts",
+        "bytes": 873
+      },
+      {
+        "source": "packages/canard/schema-form/src/formTypeDefinitions/FormTypeInputDateFormat.tsx",
+        "bytes": 871
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/dispatch/utils/chain/enterSchemaNodeChain.ts",
+        "bytes": 866
+      },
+      {
+        "source": "packages/canard/schema-form/src/providers/FormTypeRendererContext/useFormTypeRendererContext.ts",
+        "bytes": 865
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/validation/utils/guard/compileEntryGuards.ts",
+        "bytes": 864
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/dispatch/utils/entry/dispatchSetState.ts",
+        "bytes": 861
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/blueprint/utils/types/readAllowedTypes.ts",
+        "bytes": 859
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/settle/utils/commit/snapshotExitedPolicies.ts",
+        "bytes": 850
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/settle/utils/gates/resolveGateOccurrence.ts",
+        "bytes": 848
+      },
+      {
+        "source": "packages/canard/schema-form/src/helpers/error/formatErrorMessage/formatVirtualizationDisabledWarning.ts",
+        "bytes": 834
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/settle/utils/load/setLoadValue.ts",
+        "bytes": 832
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/settle/utils/derivation/utils/applyDeriveWrite.ts",
+        "bytes": 818
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/settle/utils/latent/getLatentOrder.ts",
+        "bytes": 808
+      },
+      {
+        "source": "packages/canard/schema-form/src/helpers/schemaIdentity/isSameSchema.ts",
+        "bytes": 798
+      },
+      {
+        "source": "packages/canard/schema-form/src/helpers/virtualization/resolveVirtualizationOptions/resolveVirtualizationOptions.ts",
+        "bytes": 796
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/settle/utils/commit/isTypeMismatch.ts",
+        "bytes": 795
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/settle/derive/utils/rank/getDeriveChildEntry.ts",
+        "bytes": 789
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/settle/utils/write/releaseWrongKindHosts.ts",
+        "bytes": 784
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/settle/utils/pathIndex/getRuntimePathStores.ts",
+        "bytes": 782
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/SchemaNode/utils/binding/interpretSchemaNodeDraft.ts",
+        "bytes": 774
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/settle/utils/errors/recordSettlementFailure.ts",
+        "bytes": 772
+      },
+      {
+        "source": "packages/canard/schema-form/src/helpers/warning/warningCode.ts",
+        "bytes": 771
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/validation/utils/guard/readSchemaNodeGuard.ts",
+        "bytes": 769
+      },
+      {
+        "source": "packages/canard/schema-form/src/formTypeDefinitions/FormTypeInputBoolean.tsx",
+        "bytes": 766
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/behaviors/utils/parse/interpret.ts",
+        "bytes": 766
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/dispatch/utils/report/deliverChainRecords.ts",
+        "bytes": 764
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/dispatch/utils/report/reportValidationFailure.ts",
+        "bytes": 764
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/settle/utils/write/nextExtras.ts",
+        "bytes": 760
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/settle/derive/utils/rules/utils/getWatchPaths.ts",
+        "bytes": 750
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/settle/utils/latent/restoreLatentState.ts",
+        "bytes": 749
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/dispatch/utils/report/finishQueuedErrors.ts",
+        "bytes": 748
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/blueprint/utils/analyze/collectGateEvaluationReads.ts",
+        "bytes": 742
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/settle/utils/controls/readExitLayerPolicy.ts",
+        "bytes": 736
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/blueprint/utils/analyze/compileBlueprintExpressions/utils/registerBlueprintDependency.ts",
+        "bytes": 734
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/navigation/utils/query/utils/getSchemaNodePath.ts",
+        "bytes": 734
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/dispatch/utils/entry/dispatchResetForm.ts",
+        "bytes": 732
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/validation/utils/lifetime/evictValidationRoot.ts",
+        "bytes": 724
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/record/utils/accumulateGlobalStateDeltas.ts",
+        "bytes": 722
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/settle/utils/compute/hasSharedConflict.ts",
+        "bytes": 720
+      },
+      {
+        "source": "packages/canard/schema-form/src/helpers/formTypeInputDefinition/formTypeInputMap.ts",
+        "bytes": 719
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/settle/utils/dispose/disposeSchemaNodeTree.ts",
+        "bytes": 717
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/settle/utils/paths/resolveDependencyPath.ts",
+        "bytes": 715
+      },
+      {
+        "source": "packages/canard/schema-form/src/components/Form/utils/submitForm.ts",
+        "bytes": 714
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/settle/utils/commit/utils/readSettlementSource.ts",
+        "bytes": 710
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/settle/utils/load/readStaticFirstWarning.ts",
+        "bytes": 710
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/settle/utils/transition/readDefault.ts",
+        "bytes": 707
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/settle/derive/utils/evaluate/utils/evaluateScopedExpression.ts",
+        "bytes": 698
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/settle/utils/latent/captureArrayLatent.ts",
+        "bytes": 693
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/behaviors/arrayBehavior/branch/utils/declareArrayChildren.ts",
+        "bytes": 687
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/settle/derive/utils/rank/compareDeriveWrites.ts",
+        "bytes": 684
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/behaviors/utils/parse/convert.ts",
+        "bytes": 678
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/blueprint/utils/analyze/validateShape/utils/visitShape.ts",
+        "bytes": 673
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/dispatch/utils/entry/dispatchResetSubtree.ts",
+        "bytes": 671
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/settle/utils/gates/getGateExpression.ts",
+        "bytes": 670
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/settle/derive/utils/evaluate/utils/getDeriveSourceNodes.ts",
+        "bytes": 669
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/dispatch/utils/entry/dispatchSetExternalErrors.ts",
+        "bytes": 658
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/SchemaNode/utils/guards.ts",
+        "bytes": 655
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/dispatch/utils/entry/dispatchBatch.ts",
+        "bytes": 649
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/dispatch/utils/chain/restoreAdoptedExternalErrors.ts",
+        "bytes": 646
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/settle/utils/controls/readStateDependency.ts",
+        "bytes": 639
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/settle/utils/compute/utils/computeStableNode.ts",
+        "bytes": 638
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/settle/utils/controls/getControlExpression.ts",
+        "bytes": 638
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/types/state.ts",
+        "bytes": 634
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/settle/utils/commit/pruneCommittedRuleKeys.ts",
+        "bytes": 632
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/blueprint/utils/features/DeriveConvergenceTargets.ts",
+        "bytes": 627
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/settle/utils/commit/effectiveType.ts",
+        "bytes": 627
+      },
+      {
+        "source": "packages/canard/schema-form/src/helpers/formTypeInputDefinition/utils/formTypeTestFnFactory.ts",
+        "bytes": 627
+      },
+      {
+        "source": "packages/canard/schema-form/src/providers/FormTypeInputsContext/FormTypeInputsContextProvider.tsx",
+        "bytes": 626
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/settle/utils/load/commitStaticFirstNode.ts",
+        "bytes": 623
+      },
+      {
+        "source": "packages/canard/schema-form/src/formTypeDefinitions/FormTypeInputUnion/utils/readUnionDisplay.ts",
+        "bytes": 623
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/blueprint/utils/features/getFeatureNodeIndex/getFeatureNodeIndex.ts",
+        "bytes": 616
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/blueprint/utils/effectiveSchema/utils/applyTypeContribution.ts",
+        "bytes": 615
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/behaviors/arrayBehavior/utils/value/holeValue.ts",
+        "bytes": 615
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/behaviors/utils/parse/isMember.ts",
+        "bytes": 610
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/blueprint/utils/effectiveSchema/utils/mergeHintGroup/utils/freezeCreatedHintObjects.ts",
+        "bytes": 608
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/dispatch/utils/chain/refuseListenerFeedback.ts",
+        "bytes": 605
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/dispatch/utils/read/subscribeSchemaNode.ts",
+        "bytes": 603
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/record/utils/clearSchemaNodeChanges.ts",
+        "bytes": 600
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/settle/utils/transition/hasWrongKindBranchAncestor.ts",
+        "bytes": 598
+      },
+      {
+        "source": "packages/canard/schema-form/src/components/Form/components/FormChildrenRenderer.tsx",
+        "bytes": 597
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/dispatch/utils/entry/dispatchRequest.ts",
+        "bytes": 593
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/settle/utils/commit/conversionCandidates.ts",
+        "bytes": 592
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/settle/utils/latent/indexLatentDescendant.ts",
+        "bytes": 591
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/behaviors/virtualBehavior/utils/tuple/assembleVirtualTuple.ts",
+        "bytes": 590
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/settle/utils/load/canLoadStaticFirstTree.ts",
+        "bytes": 587
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/settle/derive/utils/evaluate/utils/readDeriveDependency.ts",
+        "bytes": 585
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/types/value.ts",
+        "bytes": 584
+      },
+      {
+        "source": "packages/canard/schema-form/src/hooks/useFormSubmit.ts",
+        "bytes": 582
+      },
+      {
+        "source": "packages/canard/schema-form/src/providers/WorkspaceContext/WorkspaceContextProvider.tsx",
+        "bytes": 580
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/settle/derive/utils/evaluate/utils/getRuleTargets.ts",
+        "bytes": 579
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/settle/utils/transition/isReplacedLivePath.ts",
+        "bytes": 577
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/SchemaNode/utils/binding/buildSchemaNodeTree.ts",
+        "bytes": 574
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/record/utils/shallowPatch.ts",
+        "bytes": 567
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/dispatch/utils/entry/dispatchUpdate.ts",
+        "bytes": 564
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/blueprint/utils/effectiveSchema/utils/ensureEffectiveSchemaCache.ts",
+        "bytes": 563
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/dispatch/utils/chain/queueNonSettleEvent.ts",
+        "bytes": 563
+      },
+      {
+        "source": "packages/canard/schema-form/src/helpers/formTypeInputDefinition/utils/pathExactMatchFnFactory.ts",
+        "bytes": 552
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/dispatch/utils/entry/dispatchClearExternalErrors.ts",
+        "bytes": 550
+      },
+      {
+        "source": "packages/canard/schema-form/src/providers/RootNodeContext/utils/flushRootLoad.ts",
+        "bytes": 550
+      },
+      {
+        "source": "packages/canard/schema-form/src/helpers/error/formatValidationError/utils/getErrorMessage.ts",
+        "bytes": 548
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/behaviors/utils/options/isOmittedEmpty.ts",
+        "bytes": 548
+      },
+      {
+        "source": "packages/canard/schema-form/src/providers/VirtualizationContext/VirtualizationContextProvider.tsx",
+        "bytes": 548
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/settle/utils/load/getStaticObjectEntries.ts",
+        "bytes": 547
+      },
+      {
+        "source": "packages/canard/schema-form/src/components/Form/components/FormGroup.tsx",
+        "bytes": 546
+      },
+      {
+        "source": "packages/canard/schema-form/src/components/Form/components/FormRender.tsx",
+        "bytes": 545
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/settle/utils/compute/dirtyChildren.ts",
+        "bytes": 544
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/blueprint/utils/effectiveSchema/utils/applySchemaContribution/utils/applyControlHints.ts",
+        "bytes": 542
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/settle/utils/commit/utils/getWatchDeliveryPaths.ts",
+        "bytes": 540
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/settle/utils/transition/applyExitClearing.ts",
+        "bytes": 538
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/dispatch/utils/entry/dispatchRemove.ts",
+        "bytes": 537
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/settle/derive/utils/edges/getDeriveRuleKey.ts",
+        "bytes": 535
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/dispatch/utils/chain/runDeliveryWaves.ts",
+        "bytes": 535
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/dispatch/utils/chain/deliverValidationWave.ts",
+        "bytes": 534
+      },
+      {
+        "source": "packages/canard/schema-form/src/providers/FormErrorContext/reportErrorToHost.ts",
+        "bytes": 534
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/settle/utils/load/clearSubtreeState.ts",
+        "bytes": 532
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/dispatch/utils/entry/dispatchPush.ts",
+        "bytes": 529
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/blueprint/utils/declarations/copyBlueprintDeclarations.ts",
+        "bytes": 525
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/blueprint/utils/types/intersectAllowedTypes.ts",
+        "bytes": 522
+      },
+      {
+        "source": "packages/canard/schema-form/src/formTypeDefinitions/FormTypeInputObject.tsx",
+        "bytes": 519
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/settle/utils/latent/getLatentPathIndex.ts",
+        "bytes": 519
+      },
+      {
+        "source": "packages/canard/schema-form/src/hooks/useSchemaNodeTracker.ts",
+        "bytes": 519
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/settle/utils/latent/captureOwnLatent.ts",
+        "bytes": 513
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/record/SchemaNodeRequestType.ts",
+        "bytes": 511
+      },
+      {
+        "source": "packages/canard/schema-form/src/components/SchemaNode/SchemaNodeProxy/SchemaNodeProxy.tsx",
+        "bytes": 510
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/blueprint/utils/analyze/compileBlueprintExpressions/utils/hasCompleteExpressionReads.ts",
+        "bytes": 504
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/settle/derive/utils/evaluate/utils/getInjectToContext.ts",
+        "bytes": 499
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/settle/utils/commit/receivedType.ts",
+        "bytes": 499
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/settle/derive/utils/rank/getDeriveSourceOrder.ts",
+        "bytes": 498
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/dispatch/utils/entry/dispatchClear.ts",
+        "bytes": 496
+      },
+      {
+        "source": "packages/canard/schema-form/src/components/Form/components/FormInput.tsx",
+        "bytes": 494
+      },
+      {
+        "source": "packages/canard/schema-form/src/helpers/error/formatValidationError/utils/replacePattern.ts",
+        "bytes": 493
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/dispatch/utils/report/reportOwnerlessError.ts",
+        "bytes": 493
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/validation/utils/route/updateSchemaNodeGlobalErrors.ts",
+        "bytes": 491
+      },
+      {
+        "source": "packages/canard/schema-form/src/helpers/error/formatValidationError/formatValidationError.ts",
+        "bytes": 490
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/dispatch/utils/chain/readBatchValue.ts",
+        "bytes": 490
+      },
+      {
+        "source": "packages/canard/schema-form/src/formTypeDefinitions/index.tsx",
+        "bytes": 490
+      },
+      {
+        "source": "packages/canard/schema-form/src/helpers/warning/warnDevelopmentIssue.ts",
+        "bytes": 489
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/behaviors/behaviors.ts",
+        "bytes": 488
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/dispatch/utils/entry/dispatchPop.ts",
+        "bytes": 488
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/blueprint/utils/expressions/createDynamicFunction/utils/getFunctionBody.ts",
+        "bytes": 486
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/settle/utils/load/loadSchemaNodeAtMount.ts",
+        "bytes": 485
+      },
+      {
+        "source": "packages/canard/schema-form/src/providers/FormErrorContext/FormErrorContextProvider.tsx",
+        "bytes": 485
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/settle/derive/utils/evaluate/utils/getVirtualWriteFailure.ts",
+        "bytes": 481
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/validation/utils/lifetime/releaseValidationRoot.ts",
+        "bytes": 477
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/blueprint/utils/expressions/getPathManager/getPathManager.ts",
+        "bytes": 475
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/settle/utils/controls/getCommittedDeclarationKey.ts",
+        "bytes": 474
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/blueprint/utils/types/unionAllowedTypes.ts",
+        "bytes": 471
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/behaviors/arrayBehavior/utils/projection/projectBranchArray.ts",
+        "bytes": 471
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/dispatch/utils/read/readSchemaNodeRevision.ts",
+        "bytes": 471
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/behaviors/arrayBehavior/utils/projection/projectTerminalArray.ts",
+        "bytes": 469
+      },
+      {
+        "source": "packages/canard/schema-form/src/formTypeDefinitions/FormTypeInputVirtual.tsx",
+        "bytes": 465
+      },
+      {
+        "source": "packages/canard/schema-form/src/hooks/useSchemaNodeSubscribe.ts",
+        "bytes": 465
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/settle/utils/structure/utils/rekeyLatentMetadata.ts",
+        "bytes": 462
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/settle/utils/gates/bindGateHostPath.ts",
+        "bytes": 461
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/settle/utils/write/assertVirtualWriteShape.ts",
+        "bytes": 460
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/dispatch/utils/report/clearWarningKeys.ts",
+        "bytes": 459
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/settle/utils/latent/getEnteredLatentKeys.ts",
+        "bytes": 458
+      },
+      {
+        "source": "packages/canard/schema-form/src/components/Form/components/FormLabel.tsx",
+        "bytes": 457
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/utils/pathIndex/utils/utils/isCanonicalArraySlot.ts",
+        "bytes": 451
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/dispatch/utils/entry/dispatchWriteInput.ts",
+        "bytes": 451
+      },
+      {
+        "source": "packages/canard/schema-form/src/hooks/useChildNodeComponentMap.ts",
+        "bytes": 449
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/behaviors/utils/parse/utils/number/parseNumber.ts",
+        "bytes": 448
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/settle/utils/walkOwnedSchemaNodes.ts",
+        "bytes": 447
+      },
+      {
+        "source": "packages/canard/schema-form/src/helpers/virtualization/VirtualizationManager/scheduleIdle.ts",
+        "bytes": 447
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/record/utils/updateSchemaNodeNameAndPath.ts",
+        "bytes": 445
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/settle/derive/utils/evaluate/utils/getInjectEntries.ts",
+        "bytes": 444
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/validation/utils/run/runSchemaNodeValidation.ts",
+        "bytes": 443
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/settle/utils/detached/hasLivePathKind.ts",
+        "bytes": 441
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/settle/utils/load/resetSchemaNodeSubtree.ts",
+        "bytes": 439
+      },
+      {
+        "source": "packages/canard/schema-form/src/components/Form/components/FormError.tsx",
+        "bytes": 439
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/settle/utils/controls/readLatentExitPolicy.ts",
+        "bytes": 438
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/validation/utils/lifetime/retainValidationRoot.ts",
+        "bytes": 435
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/settle/utils/write/hasDistributedChildInput.ts",
+        "bytes": 428
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/dispatch/utils/chain/composeBatchValue.ts",
+        "bytes": 427
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/settle/utils/load/resetSchemaNodeForm.ts",
+        "bytes": 424
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/dispatch/utils/chain/resolveSchemaNodeChainRoot.ts",
+        "bytes": 424
+      },
+      {
+        "source": "packages/canard/schema-form/src/helpers/schemaIntersection/utils/intersectMultipleOf.ts",
+        "bytes": 423
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/blueprint/utils/diagnostics/throwBlueprintError.ts",
+        "bytes": 420
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/utils/emptyReadonlyMap.ts",
+        "bytes": 420
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/settle/derive/utils/evaluate/utils/addActiveRuleKey.ts",
+        "bytes": 416
+      },
+      {
+        "source": "packages/canard/schema-form/src/providers/FormErrorContext/useBoundaryReporter.ts",
+        "bytes": 414
+      },
+      {
+        "source": "packages/canard/schema-form/src/helpers/schemaIntersection/utils/intersectEnum.ts",
+        "bytes": 409
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/settle/utils/compute/scheduleRelocatedGates.ts",
+        "bytes": 404
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/settle/utils/write/markWrongKindAncestors.ts",
+        "bytes": 401
+      },
+      {
+        "source": "packages/canard/schema-form/src/types/error.ts",
+        "bytes": 401
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/settle/utils/transition/isMissingRaw.ts",
+        "bytes": 399
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/utils/pathIndex/utils/getStoreKeyPaths.ts",
+        "bytes": 398
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/settle/utils/latent/indexEnteredLatentKey.ts",
+        "bytes": 398
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/settle/utils/declarations/getDeclaredChildNames.ts",
+        "bytes": 398
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/behaviors/arrayBehavior/terminal/arrayTerminalBehavior.ts",
+        "bytes": 391
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/blueprint/utils/features/StaticFirstLoadCapability.ts",
+        "bytes": 390
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/utils/emptyReadonlySet.ts",
+        "bytes": 390
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/behaviors/objectBehavior/branch/objectBranchBehavior.ts",
+        "bytes": 390
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/behaviors/objectBehavior/terminal/objectTerminalBehavior.ts",
+        "bytes": 388
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/dispatch/utils/report/dedupeWarningRecord.ts",
+        "bytes": 387
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/behaviors/arrayBehavior/branch/arrayBranchBehavior.ts",
+        "bytes": 384
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/settle/utils/load/getLoadValue.ts",
+        "bytes": 383
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/SchemaNode/utils/binding/observeSchemaNodeReports.ts",
+        "bytes": 383
+      },
+      {
+        "source": "packages/canard/schema-form/src/helpers/formTypeInputDefinition/utils/withFormTypeInputErrorBoundary.tsx",
+        "bytes": 383
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/behaviors/utils/slots/projectEmpty.ts",
+        "bytes": 381
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/behaviors/virtualBehavior/virtualBehavior.ts",
+        "bytes": 381
+      },
+      {
+        "source": "packages/canard/schema-form/src/providers/RootNodeContext/utils/subscribeRootLoad.ts",
+        "bytes": 380
+      },
+      {
+        "source": "packages/canard/schema-form/src/components/Form/Form.tsx",
+        "bytes": 378
+      },
+      {
+        "source": "packages/canard/schema-form/src/providers/RootNodeContext/useLiveNode.ts",
+        "bytes": 377
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/settle/utils/derivation/captureDeriveBaseline.ts",
+        "bytes": 376
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/blueprint/utils/analyze/createBlueprintGate.ts",
+        "bytes": 375
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/blueprint/utils/expressions/createDynamicFunction/utils/wrapReturnStatements.ts",
+        "bytes": 374
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/blueprint/utils/types/foldAllowedTypes.ts",
+        "bytes": 370
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/settle/derive/utils/evaluate/utils/getSelectedDeclarationIds.ts",
+        "bytes": 366
+      },
+      {
+        "source": "packages/canard/schema-form/src/providers/InputControlContext/InputControlContextProvider.tsx",
+        "bytes": 364
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/validation/utils/lifetime/recentReleaseList.ts",
+        "bytes": 361
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/dispatch/utils/report/readFormErrorCode.ts",
+        "bytes": 360
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/behaviors/nullBehavior/nullBehavior.ts",
+        "bytes": 357
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/dispatch/utils/entry/dispatchContextChange.ts",
+        "bytes": 357
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/SchemaNode/utils/requireRuntimeSchemaNode.ts",
+        "bytes": 356
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/settle/utils/compute/flushPendingOutput.ts",
+        "bytes": 353
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/behaviors/objectBehavior/utils/projectObject.ts",
+        "bytes": 353
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/behaviors/booleanBehavior/booleanBehavior.ts",
+        "bytes": 350
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/behaviors/stringBehavior/stringBehavior.ts",
+        "bytes": 347
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/behaviors/numberBehavior/numberBehavior.ts",
+        "bytes": 346
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/behaviors/unionBehavior/unionBehavior.ts",
+        "bytes": 343
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/settle/utils/write/arrayExtras.ts",
+        "bytes": 341
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/settle/utils/compute/createChildNode.ts",
+        "bytes": 341
+      },
+      {
+        "source": "packages/canard/schema-form/src/errors/JSONSchemaError.ts",
+        "bytes": 337
+      },
+      {
+        "source": "packages/canard/schema-form/src/errors/SchemaFormError.ts",
+        "bytes": 337
+      },
+      {
+        "source": "packages/canard/schema-form/src/errors/ValidationError.ts",
+        "bytes": 336
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/validation/utils/guard/isValidator.ts",
+        "bytes": 334
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/behaviors/objectBehavior/utils/keys/writeObjectKey.ts",
+        "bytes": 333
+      },
+      {
+        "source": "packages/canard/schema-form/src/errors/UnhandledError.ts",
+        "bytes": 330
+      },
+      {
+        "source": "packages/canard/schema-form/src/helpers/error/formatErrorMessage/utils/formatBulletList.ts",
+        "bytes": 330
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/behaviors/objectBehavior/utils/omitEmptyObject.ts",
+        "bytes": 330
+      },
+      {
+        "source": "packages/canard/schema-form/src/helpers/schemaIntersection/utils/intersectConst.ts",
+        "bytes": 329
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/behaviors/utils/slots/rejectArrayOperation.ts",
+        "bytes": 325
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/settle/utils/detached/readSchemaNodeTypeMismatches.ts",
+        "bytes": 323
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/SchemaNode/type.ts",
+        "bytes": 323
+      },
+      {
+        "source": "packages/canard/schema-form/src/helpers/formTypeInputDefinition/regex.ts",
+        "bytes": 321
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/settle/utils/transition/writeLatentRaw.ts",
+        "bytes": 319
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/settle/utils/dispose/assertSchemaNodeWritable.ts",
+        "bytes": 318
+      },
+      {
+        "source": "packages/canard/schema-form/src/helpers/virtualization/resolveVirtualizationOptions/type.ts",
+        "bytes": 318
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/behaviors/utils/slots/finishStringInput.ts",
+        "bytes": 316
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/settle/utils/detached/readSchemaNodeInactiveValues.ts",
+        "bytes": 313
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/blueprint/utils/analyze/validateShape.ts",
+        "bytes": 309
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/behaviors/arrayBehavior/utils/plan/copyArraySlots.ts",
+        "bytes": 307
+      },
+      {
+        "source": "packages/canard/schema-form/src/components/Form/util.ts",
+        "bytes": 307
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/dispatch/utils/chain/captureChainError.ts",
+        "bytes": 294
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/dispatch/utils/report/assertNotInDelivery.ts",
+        "bytes": 291
+      },
+      {
+        "source": "packages/canard/schema-form/src/helpers/schemaIntersection/utils/intersectMaximum.ts",
+        "bytes": 285
+      },
+      {
+        "source": "packages/canard/schema-form/src/helpers/schemaIntersection/utils/intersectMinimum.ts",
+        "bytes": 285
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/settle/utils/detached/readSchemaNodeTypeMismatch.ts",
+        "bytes": 283
+      },
+      {
+        "source": "packages/canard/schema-form/src/hooks/useSchemaNode.ts",
+        "bytes": 281
+      },
+      {
+        "source": "packages/canard/schema-form/src/helpers/jsonPointer/enum.ts",
+        "bytes": 280
+      },
+      {
+        "source": "packages/canard/schema-form/src/helpers/jsonPointer/utils/stripFragment.ts",
+        "bytes": 279
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/settle/utils/controls/getExitPolicyKey.ts",
+        "bytes": 279
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/settle/utils/load/readSchemaNodeDefaultValue.ts",
+        "bytes": 275
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/SchemaNode/utils/binding/adoptSchemaNodeTree.ts",
+        "bytes": 274
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/settle/utils/transition/hasRecursiveFill.ts",
+        "bytes": 272
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/record/utils/patchSchemaNodeInteractionState.ts",
+        "bytes": 267
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/settle/utils/transition/readUnsetPolicy.ts",
+        "bytes": 265
+      },
+      {
+        "source": "packages/canard/schema-form/src/components/Form/components/FormRootProxy.tsx",
+        "bytes": 265
+      },
+      {
+        "source": "packages/canard/schema-form/src/helpers/jsonPointer/utils/isAbsolutePath.ts",
+        "bytes": 252
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/dispatch/utils/report/bundleChainErrors.ts",
+        "bytes": 251
+      },
+      {
+        "source": "packages/canard/schema-form/src/helpers/schemaIdentity/isRenderTerminal.ts",
+        "bytes": 245
+      },
+      {
+        "source": "packages/canard/schema-form/src/helpers/schemaIdentity/isRenderAtomic.ts",
+        "bytes": 243
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/behaviors/virtualBehavior/utils/tuple/readVirtualValue.ts",
+        "bytes": 242
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/SchemaNode/utils/binding/mountSchemaNode.ts",
+        "bytes": 241
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/SchemaNode/utils/binding/reloadSchemaNodeForm.ts",
+        "bytes": 235
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/SchemaNode/utils/binding/readSchemaNodeInteractionReset.ts",
+        "bytes": 234
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/settle/utils/commit/utils/isSameDeliveryValue.ts",
+        "bytes": 233
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/settle/utils/paths/isCanonicalArrayIndex.ts",
+        "bytes": 232
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/SchemaNode/utils/binding/writeSchemaNodeInput.ts",
+        "bytes": 230
+      },
+      {
+        "source": "packages/canard/schema-form/src/helpers/error/formatErrorMessage/utils/getErrorMessage.ts",
+        "bytes": 225
+      },
+      {
+        "source": "packages/canard/schema-form/src/helpers/schemaIntersection/utils/validateRange.ts",
+        "bytes": 218
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/settle/utils/latent/HostLatent.ts",
+        "bytes": 218
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/behaviors/arrayBehavior/utils/plan/isValidArrayIndex.ts",
+        "bytes": 218
+      },
+      {
+        "source": "packages/canard/schema-form/src/components/Form/index.ts",
+        "bytes": 217
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/behaviors/objectBehavior/objectBehavior.ts",
+        "bytes": 211
+      },
+      {
+        "source": "packages/canard/schema-form/src/components/FallbackComponents/FormErrorRenderer.tsx",
+        "bytes": 210
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/blueprint/utils/analyze/compileBlueprintExpressions/utils/CompleteExpressionReads.ts",
+        "bytes": 208
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/behaviors/arrayBehavior/arrayBehavior.ts",
+        "bytes": 206
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/SchemaNode/utils/binding/finishSchemaNodeInput.ts",
+        "bytes": 203
+      },
+      {
+        "source": "packages/canard/schema-form/src/helpers/error/formatErrorMessage/utils/formatMultiLine.ts",
+        "bytes": 200
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/SchemaNode/utils/setContext.ts",
+        "bytes": 199
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/settle/utils/transition/getTransitionCap.ts",
+        "bytes": 192
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/behaviors/utils/slots/declareNoChildren.ts",
+        "bytes": 191
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/behaviors/arrayBehavior/utils/projection/omitEmptyArray.ts",
+        "bytes": 190
+      },
+      {
+        "source": "packages/canard/schema-form/src/providers/FormTypeInputsContext/useFormTypeInputsContext.ts",
+        "bytes": 189
+      },
+      {
+        "source": "packages/canard/schema-form/src/providers/VirtualizationContext/useVirtualizationContext.ts",
+        "bytes": 189
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/validation/utils/route/normalizeIssueDataPath.ts",
+        "bytes": 188
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/dispatch/utils/read/readSchemaNodeInteractionReset.ts",
+        "bytes": 188
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/behaviors/utils/slots/declareBlueprintChildren.ts",
+        "bytes": 186
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/settle/utils/detached/emptyDetachedReads.ts",
+        "bytes": 185
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/blueprint/utils/analyze/readSchemaObject.ts",
+        "bytes": 184
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/settle/utils/compute/relocatedGates.ts",
+        "bytes": 184
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/settle/utils/write/isPlain.ts",
+        "bytes": 181
+      },
+      {
+        "source": "packages/canard/schema-form/src/providers/ExternalFormContext/useExternalFormContext.ts",
+        "bytes": 181
+      },
+      {
+        "source": "packages/canard/schema-form/src/providers/InputControlContext/useInputControlContext.ts",
+        "bytes": 181
+      },
+      {
+        "source": "packages/canard/schema-form/src/components/FallbackComponents/FormInputRenderer.tsx",
+        "bytes": 180
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/blueprint/utils/effectiveSchema/utils/OwnedSchemaValues.ts",
+        "bytes": 176
+      },
+      {
+        "source": "packages/canard/schema-form/src/providers/VirtualizationContext/VirtualizationContext.ts",
+        "bytes": 176
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/settle/derive/utils/rank/kindRank.ts",
+        "bytes": 172
+      },
+      {
+        "source": "packages/canard/schema-form/src/helpers/error/formatErrorMessage/utils/createDivider.ts",
+        "bytes": 170
+      },
+      {
+        "source": "packages/canard/schema-form/src/providers/FormErrorContext/useFormErrorContext.ts",
+        "bytes": 169
+      },
+      {
+        "source": "packages/canard/schema-form/src/providers/WorkspaceContext/useWorkspaceContext.ts",
+        "bytes": 169
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/blueprint/utils/effectiveSchema/utils/constant.ts",
+        "bytes": 167
+      },
+      {
+        "source": "packages/canard/schema-form/src/providers/FormTypeRendererContext/FormTypeRendererContext.ts",
+        "bytes": 167
+      },
+      {
+        "source": "packages/canard/schema-form/src/components/SchemaNode/SchemaNodeInput/type.ts",
+        "bytes": 167
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/behaviors/objectBehavior/utils/objectKeyCounts.ts",
+        "bytes": 165
+      },
+      {
+        "source": "packages/canard/schema-form/src/providers/RootNodeContext/useRootNodeContext.ts",
+        "bytes": 165
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/navigation/utils/query/find.ts",
+        "bytes": 164
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/validation/utils/cache/validationEntries.ts",
+        "bytes": 161
+      },
+      {
+        "source": "packages/canard/schema-form/src/providers/FormTypeInputsContext/FormTypeInputsContext.ts",
+        "bytes": 161
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/settle/derive/utils/rank/layerRank.ts",
+        "bytes": 159
+      },
+      {
+        "source": "packages/canard/schema-form/src/providers/FormErrorContext/FormErrorPathContext.ts",
+        "bytes": 158
+      },
+      {
+        "source": "packages/canard/schema-form/src/helpers/schemaIntersection/utils/constant.ts",
+        "bytes": 157
+      },
+      {
+        "source": "packages/canard/schema-form/src/providers/ExternalFormContext/ExternalFormContext.ts",
+        "bytes": 155
+      },
+      {
+        "source": "packages/canard/schema-form/src/providers/InputControlContext/InputControlContext.ts",
+        "bytes": 155
+      },
+      {
+        "source": "packages/canard/schema-form/src/app/constants/style.ts",
+        "bytes": 153
+      },
+      {
+        "source": "packages/canard/schema-form/src/components/FallbackComponents/FormLabelRenderer.tsx",
+        "bytes": 153
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/behaviors/virtualBehavior/utils/value/projectNoEmit.ts",
+        "bytes": 151
+      },
+      {
+        "source": "packages/canard/schema-form/src/providers/RootNodeContext/RootBindingContext.ts",
+        "bytes": 151
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/behaviors/utils/slots/projectIdentity.ts",
+        "bytes": 150
+      },
+      {
+        "source": "packages/canard/schema-form/src/providers/FormErrorContext/FormErrorContext.ts",
+        "bytes": 150
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/behaviors/utils/slots/interpretIdentity.ts",
+        "bytes": 147
+      },
+      {
+        "source": "packages/canard/schema-form/src/providers/WorkspaceContext/WorkspaceContext.ts",
+        "bytes": 146
+      },
+      {
+        "source": "packages/canard/schema-form/src/helpers/error/formatErrorMessage/utils/constants.ts",
+        "bytes": 144
+      },
+      {
+        "source": "packages/canard/schema-form/src/providers/RootNodeContext/RootNodeContext.ts",
+        "bytes": 143
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/behaviors/utils/slots/assembleRaw.ts",
+        "bytes": 137
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/behaviors/utils/slots/finishNoInput.ts",
+        "bytes": 135
+      },
+      {
+        "source": "packages/canard/schema-form/src/core/record/type.ts",
+        "bytes": 124
+      }
+    ],
+    "wrapperAndSeparatorsBytes": 2726
+  },
+  "toolVersions": {
+    "rolldown": "1.2.0",
+    "esbuild": "0.25.9"
+  },
+  "paths": {
+    "scratch": "/private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles",
+    "esm": "index.mjs",
+    "cjs": "index.cjs",
+    "minified": "index.min.mjs"
+  }
+}
