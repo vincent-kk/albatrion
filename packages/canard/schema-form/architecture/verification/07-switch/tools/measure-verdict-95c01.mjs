@@ -10,14 +10,19 @@ import path from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 
 const directory = path.dirname(fileURLToPath(import.meta.url));
+const { endpointDifference95c01 } = await import(pathToFileURL(path.join(directory, 'endpointDifference95c01.mjs')));
 const output = path.resolve(directory, '..');
 const pkg = path.resolve(output, '../../..');
 const repo = path.resolve(pkg, '../../..');
 const expectedHead = '4d2e54533dc8feaccb4742be9dd322e46d20be58';
+const measurementHead = process.argv.find(value => value.startsWith('--head='))?.slice(7) ?? expectedHead;
+assert.match(measurementHead, /^[a-f0-9]{40}$/);
 assert.equal(fs.realpathSync(repo), '/Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07');
 const immediate = globalThis.setImmediate;
 const clock = () => performance.now();
 const warmup = 12, sampleCount = 101;
+const measurementWarmup = Number(process.argv.find(value => value.startsWith('--warmup='))?.slice(9) ?? warmup);
+assert(Number.isInteger(measurementWarmup) && measurementWarmup >= 10);
 // Validation's deferred error events schedule one further check-queue generation.
 const sentinelPasses = process.argv[3] === 'on' || process.argv.includes('--nested-callback') ? 2 : 1;
 const hash = value => createHash('sha256').update(value).digest('hex');
@@ -75,7 +80,7 @@ if (process.argv.includes('--self-check')) {
   }
   console.log('END_TO_END_95C01_OK');
 } else {
-  assert.equal(execFileSync('git', ['rev-parse', 'HEAD'], { cwd: repo, encoding: 'utf8' }).trim(), expectedHead);
+  assert.equal(execFileSync('git', ['rev-parse', 'HEAD'], { cwd: repo, encoding: 'utf8' }).trim(), measurementHead);
   const [fixtureName, validation, runText, version] = process.argv.slice(2);
   assert(/^(sample-[0-3]|flat-(50|100|500)|nested-d[35]-f4|array-(100|500|1000)|computed-visible-derived|oneOf-(5|10|20|40)|if-then)$/.test(fixtureName));
   assert(['off', 'on'].includes(validation) && ['old', 'new'].includes(version));
@@ -163,7 +168,7 @@ if (process.argv.includes('--self-check')) {
   };
   const addTimes = records => records.reduce((total, record) => total.map((value, index) => round(value + record.timing[index])), [0, 0]);
   const controls = async name => {
-    for (let index = -warmup; index < sampleCount; index++) {
+    for (let index = -measurementWarmup; index < sampleCount; index++) {
       globalThis.gc();
       await new Promise(resolve => immediate(resolve));
       const observed = await measure(noop);
@@ -172,7 +177,7 @@ if (process.argv.includes('--self-check')) {
   };
   await new Promise(resolve => immediate(resolve));
   await controls('empty-before');
-  for (let index = -warmup; index < sampleCount; index++) {
+  for (let index = -measurementWarmup; index < sampleCount; index++) {
     globalThis.gc();
     const props = createProps();
     await new Promise(resolve => immediate(resolve));
@@ -257,7 +262,7 @@ if (process.argv.includes('--self-check')) {
     ordering[mode].push(Object.fromEntries(['scheduled', 'executed', 'cancelled', 'pendingAtMicrotasks',
       'pendingAtFirstSentinel', 'pendingAtSentinel', 'tailScheduled', 'tailExecuted'].map(key => [key, records.reduce((sum, record) => sum + record[key], 0)])));
   };
-  for (let index = -warmup; index < sampleCount; index++) {
+  for (let index = -measurementWarmup; index < sampleCount; index++) {
     globalThis.gc();
     const props = createProps();
     await new Promise(resolve => immediate(resolve));
@@ -286,14 +291,17 @@ if (process.argv.includes('--self-check')) {
   }
   scheduler.scheduleMacrotaskSafe = originalSchedule;
   scheduler.cancelMacrotaskSafe = originalCancel;
-  assert.equal(execFileSync('git', ['rev-parse', 'HEAD'], { cwd: repo, encoding: 'utf8' }).trim(), expectedHead, 'HEAD changed during measurement');
+  assert.equal(execFileSync('git', ['rev-parse', 'HEAD'], { cwd: repo, encoding: 'utf8' }).trim(), measurementHead, 'HEAD changed during measurement');
   assert.equal(pending.size, 0);
   assert.equal(process.getActiveResourcesInfo().filter(name => ['Timeout', 'Immediate', 'MessagePort', 'PROCESSWRAP'].includes(name)).length, 0);
   const summary = { fixture: fixtureName, validation, run, version, interactionCount: fixture.interactions.length,
-    environment: { head: expectedHead, node: process.version, v8: process.versions.v8, cpu: os.cpus()[0].model,
+    environment: { head: measurementHead, node: process.version, v8: process.versions.v8, cpu: os.cpus()[0].model,
       platform: process.platform, arch: process.arch, ajv: api.req('ajv/package.json').version,
       started, officialEnded, ended: new Date().toISOString(), pid: process.pid },
-    warmup, sampleCount, sentinelPasses, explicitGc: true, externalSubscribers: 0, onChange: 'noop',
+    warmup: measurementWarmup, sampleCount, sentinelPasses, explicitGc: true, externalSubscribers: 0, onChange: 'noop',
+    endpointTailStatistic: 'median of same-call sentinelEndToEndMs - microtaskMs; before C/M correction',
+    endpointTailMs: Object.fromEntries(Object.entries(timings).map(([mode, rows]) => [mode,
+      endpointDifference95c01(rows.map(row => row[1]), rows.map(row => row[0]))])),
     officialEngineInstrumentation: false, boundaryWrapperInstalledAfterOfficialSamples: true,
     boundary: '@winglet/common-utils/scheduler CJS scheduleMacrotaskSafe (cancel bookkeeping at same boundary)',
     schedulerModule: path.relative(repo, api.req.resolve('@winglet/common-utils/scheduler')),
