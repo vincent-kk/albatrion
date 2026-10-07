@@ -10,6 +10,7 @@ import { sameValue } from '../compute/sameValue';
 import { BUDGET_EXCEEDED, EXPRESSION_THREW, INJECT_TARGET_MISSING } from '../errors/settleErrorCode';
 import { registerRecalculation } from '../write/registerRecalculation';
 import { collectDeriveSourcePaths } from './collectDeriveSourcePaths';
+import { deriveShadowEvaluation } from './deriveShadowEvaluation';
 import { getDeriveState } from './getDeriveState';
 import { applyDeriveWrite } from './utils/applyDeriveWrite';
 
@@ -25,6 +26,8 @@ const ERROR_LABELS = { expression: 'Derive expression failed',
  * Apply bounded automatic candidates and recalculate before the next decision.
  * @param context - Current write and its reversible automatic log
  * @returns Nothing; failures and applied-round count stay in the settlement
+ * Package Vitest setup owns the module-local shadow switch; passing it through
+ * SettlementContext would expose test-only verification in runtime contracts.
  */
 export const runDeriveRounds = <Self extends SchemaNodeRecord<Self>>(
   context: SettlementContext<Self>,
@@ -102,8 +105,7 @@ export const runDeriveRounds = <Self extends SchemaNodeRecord<Self>>(
       }
       if (context.exceededBudget) return;
       if (skipConfirmation) {
-        // NODE_ENV is injected by the test harness; development timing omits shadow.
-        if (process.env.NODE_ENV === 'test') {
+        if (deriveShadowEvaluation.enabled) {
           state.sourcePaths = context.loadScope ? undefined : collectDeriveSourcePaths(context);
           const confirmation = evaluateDeriveRound(context.root, state);
           if (confirmation.writes.length !== 0 || confirmation.failures.length !== 0)

@@ -9,6 +9,7 @@ import * as settlementApi from '../../utils/settlement/createSettlementContext';
 import { SetValueOption } from '../../../types/value';
 import { createTestTree } from './createTestTree';
 import type { PlainNode } from './createPlainNode';
+import { deriveShadowEvaluation } from '../../utils/derivation/deriveShadowEvaluation';
 
 /** Compiler sidecar is optional until the optimization's fail-first check. */
 interface ConvergenceTargets {
@@ -33,12 +34,16 @@ export const runDeriveConvergenceCase = (
     ConvergenceTargets | undefined;
   const enabled = process.env.ROUND99_SKIP !== 'off';
   const environment = process.env.NODE_ENV;
+  const shadowEnabled = deriveShadowEvaluation.enabled;
   const variants = enabled && environment === 'test' ? 3 : 2;
   if (enabled) expect(sidecar, 'first-write convergence proof').toBeDefined();
   const observations: string[][] = [];
   let result;
   for (let variant = 0; variant < variants; variant++) {
-    if (variant === 2) vi.stubEnv('NODE_ENV', 'development');
+    if (variant === 2) {
+      vi.stubEnv('NODE_ENV', 'development');
+      deriveShadowEvaluation.enabled = false;
+    }
     const { root, blueprint } = createTestTree(schema);
     if (variant === 0 || !enabled) sidecar?.set(blueprint, undefined);
     const snapshots: string[] = [];
@@ -101,7 +106,10 @@ export const runDeriveConvergenceCase = (
     } finally {
       contextSpy.mockRestore();
       decisionSpy.mockRestore();
-      if (variant === 2) vi.stubEnv('NODE_ENV', environment);
+      if (variant === 2) {
+        deriveShadowEvaluation.enabled = shadowEnabled;
+        vi.stubEnv('NODE_ENV', environment);
+      }
     }
     observations.push(snapshots);
     if (variant < 2) result = { root, proof: sidecar?.get(blueprint), decisions, contexts, snapshots };

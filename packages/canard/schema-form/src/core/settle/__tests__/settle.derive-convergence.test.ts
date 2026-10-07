@@ -5,8 +5,15 @@ import { createTestTree } from './fixtures/createTestTree';
 import { DeriveConvergenceTargets } from '../../blueprint';
 import { SetValueOption } from '../../types/value';
 import { loadSchemaNodeAtMount, writeSchemaNode } from '../index';
+import { deriveShadowEvaluation } from '../utils/derivation/deriveShadowEvaluation';
 
-afterEach(() => vi.unstubAllEnvs());
+/** Each counterexample restores the switch installed by package setup. */
+const setupEnabled = deriveShadowEvaluation.enabled;
+
+afterEach(() => {
+  deriveShadowEvaluation.enabled = setupEnabled;
+  vi.unstubAllEnvs();
+});
 
 it('preserves values, shape, errors, deliveries, write rounds and iterations for terminal writes', () => {
   const result = runDeriveConvergenceCase({ type: 'object', properties: {
@@ -149,6 +156,7 @@ it('preserves derive budget rollback and iterations exactly', () => {
 });
 
 it('skips the confirmation evaluation in development while preserving its empty trace slot', () => {
+  deriveShadowEvaluation.enabled = false;
   vi.stubEnv('NODE_ENV', 'development');
   vi.stubEnv('ROUND99_SKIP', 'on');
   const result = runDeriveConvergenceCase({ type: 'object', properties: {

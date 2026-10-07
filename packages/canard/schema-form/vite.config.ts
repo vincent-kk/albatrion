@@ -40,6 +40,7 @@ export default defineConfig({
         extends: true,
         test: {
           name: 'unit',
+          setupFiles: ['src/core/settle/__tests__/setupDeriveShadowEvaluation.ts'],
           environment: 'node',
           include: ['src/**/*.{spec,test}.ts'],
           exclude: [...renderTests, 'src/__legacy__/**'],
@@ -49,6 +50,7 @@ export default defineConfig({
         extends: true,
         test: {
           name: 'render',
+          setupFiles: ['src/core/settle/__tests__/setupDeriveShadowEvaluation.ts'],
           environment: 'jsdom',
           include: renderTests,
           exclude: ['src/__legacy__/**'],
@@ -75,6 +77,7 @@ export default defineConfig({
         },
         test: {
           name: 'react18',
+          setupFiles: ['src/core/settle/__tests__/setupDeriveShadowEvaluation.ts'],
           environment: 'jsdom',
           include: renderTests,
           exclude: ['src/__legacy__/**'],
