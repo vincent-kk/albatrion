@@ -161,38 +161,49 @@ for (const setting of settings) {
         const callback = samples[`${mode}-callback`];
         const sum = microtask.map((value, index) => value + callback[index]);
         const expected = version === 'new' ? microtask : sum;
-        const calibrationEnd = samples[mode].map(row => (row[2] ?? row[0]) - emptyMicro.median * callCount);
+        assert.equal(record.timingColumns[2], 'pairedEmptyTailMs', 'Paired empty tail requires fresh samples');
+        assert(samples[mode].every(row => row.length === 3 && Number.isFinite(row[2])));
+        const pairedSentinel = sentinel.map((value, index) =>
+          value - (samples[mode][index][2] - callCount * (emptyEnd.median - emptyMicro.median)));
+        const order = record.ordering[mode];
+        const zeroEngineMacrotasks = version !== 'new' || ['scheduled', 'executed', 'pendingAtMicrotasks',
+          'pendingAtSentinel', 'tailScheduled', 'tailExecuted'].every(key => order[key].p99 === 0);
         const sentinelCi = bootstrap(sentinel, run * 100 + 95), expectedCi = bootstrap(expected, run * 100 + 96);
         const noise = Math.max(.001, callCount * emptyNoise + sentinelCi.halfWidth + expectedCi.halfWidth +
           callCount * (emptyEndCi.halfWidth + emptyMicroCi.halfWidth));
-        const difference = version === 'new' ? endpointDifference95c01(calibrationEnd, expected) :
+        const difference = version === 'new' ? endpointDifference95c01(pairedSentinel, expected) :
           metric(sentinel).median - metric(expected).median;
         runs.push({ run, sentinel: metric(sentinel), microtask: metric(microtask), callback: metric(callback), sum: metric(sum),
           sumOfMediansMs: metric(microtask).median + metric(callback).median,
           differenceMs: difference, noiseMs: noise, withinNoise: Math.abs(difference) <= noise,
+          zeroEngineMacrotasks,
           bootstrap99: { sentinel: sentinelCi, expected: expectedCi },
-          values: { sentinel, microtask, callback, sum, calibrationEnd } });
+          values: { sentinel, microtask, callback, sum, pairedSentinel } });
       }
-      const pooled = Object.fromEntries(['sentinel', 'microtask', 'callback', 'sum', 'calibrationEnd'].map(key => [key, runs.flatMap(run => run.values[key])]));
+      const pooled = Object.fromEntries(['sentinel', 'microtask', 'callback', 'sum', 'pairedSentinel'].map(key => [key, runs.flatMap(run => run.values[key])]));
       const expectedKey = version === 'new' ? 'microtask' : 'sum';
       const sentinelCi = bootstrap(pooled.sentinel, 9593), expectedCi = bootstrap(pooled[expectedKey], 9594);
       const noise = Math.max(.001, callCount * emptyNoise + sentinelCi.halfWidth + expectedCi.halfWidth +
         callCount * (emptyEndCi.halfWidth + emptyMicroCi.halfWidth));
-      const difference = version === 'new' ? endpointDifference95c01(pooled.calibrationEnd, pooled[expectedKey]) :
+      const difference = version === 'new' ? endpointDifference95c01(pooled.pairedSentinel, pooled[expectedKey]) :
         metric(pooled.sentinel).median - metric(pooled[expectedKey]).median;
       const withinNoise = Math.abs(difference) <= noise;
       const fallback = version === 'old' && (!withinNoise || runs.some(run => !run.withinNoise));
       const selected = fallback ? 'sum' : 'sentinel';
       versions[version] = { metric: metric(pooled[selected]), sentinel: metric(pooled.sentinel),
+        pairedSentinel: metric(pooled.pairedSentinel),
         microtask: metric(pooled.microtask), callback: metric(pooled.callback), sum: metric(pooled.sum),
         sumOfMediansMs: metric(pooled.microtask).median + metric(pooled.callback).median,
         source: selected, fallback, validation: { withinNoise, allRunsWithinNoise: runs.every(run => run.withinNoise),
+          zeroEngineMacrotasks: runs.every(run => run.zeroEngineMacrotasks),
+          passed: withinNoise && runs.every(run => run.withinNoise && run.zeroEngineMacrotasks),
           differenceMs: difference, noiseMs: noise, bootstrap99: { sentinel: sentinelCi, expected: expectedCi } },
         runs: runs.map(run => ({ ...run, values: undefined, metric: run[selected] })) };
     }
     const validation = { fixture: setting.fixture, validation: setting.validation, sentinelPasses: setting.sentinelPasses, mode, callCount,
       a: versions.new.validation, b: versions.old.validation, oldFallback: versions.old.fallback,
       newSentinel: versions.new.sentinel, newMicrotask: versions.new.microtask,
+      newPairedSentinel: versions.new.pairedSentinel,
       oldSentinel: versions.old.sentinel, oldMicrotask: versions.old.microtask,
       oldCallback: versions.old.callback, oldSum: versions.old.sum };
     validationRows.push(validation);
@@ -227,7 +238,7 @@ const flips = (rows, older) => rows.filter(row => row.target !== null).flatMap(r
   return wasMet === nowMet ? [] : [{ fixture: row.fixture, mode: row.mode, group: row.group,
     before: before.tie && wasMet ? '동률·충족' : before.correctedVerdict, after: row.verdict, beforeRatio: before.correctedRatio, afterRatio: row.ratio, runRatios: row.runRatios }];
 });
-const aFailures = validationRows.filter(row => !row.a.withinNoise || !row.a.allRunsWithinNoise);
+const aFailures = validationRows.filter(row => !row.a.passed);
 const bFallbacks = validationRows.filter(row => row.oldFallback);
 const releaseSourceSets = { ...(manifest.releaseSourceSets ?? {}) };
 const compactRecords = records.map(record => {
@@ -251,7 +262,7 @@ const summary = { title: '95C-01 공식 코어 종단 판정표', status: aFailu
     callbackPairing: 'separate diagnostic samples combined by ordinal within the same fixture/run; median of sample sums, plus sum of medians recorded',
     noise: 'predeclared max(1us, empty-wait p95 absolute deviation per call + independent median bootstrap 99% half-widths + calibration median uncertainty); conservative noise comparison, not a significance/equivalence test',
     bootstrap: '1000 deterministic seeded resamples; intervals and tolerance per row/run',
-    calibrationAStatistic: 'median of same-call pre-sentinel endpoint - microtask; zero engine macrotasks independently verified; per run and pooled',
+    calibrationAStatistic: 'median of per-sample corrected sentinel minus corrected microtask; independently paired preceding empty tail replaces fixed waiting delay; zero engine macrotasks additionally required; per run and pooled',
     tie: '94C-02: any run <= target and any run > target => tie/met; otherwise pooled median ratio; core target 1.5',
     negativeClipping: false, officialEngineInstrumentation: false, reactRemeasured: false },
   calibration, validation: { a: { rows: validationRows.length, matched: validationRows.length - aFailures.length,
@@ -282,14 +293,13 @@ const modeLabel = { mount: '마운트', update: 'BF 갱신 열', 'update-first':
 const table = rows => ['| 픽스처 | 검증 | 작업 | 구 median / p99 ms | 새 median / p99 ms | 배율 | 회차 1 / 2 / 3 | 구 값 | 판정 |',
   '| --- | --- | --- | ---: | ---: | ---: | --- | --- | --- |',
   ...rows.map(row => `| ${row.fixture} | ${row.validation} | ${modeLabel[row.mode]} | ${f(row.old.metric.median)} / ${f(row.old.metric.p99)} | ${f(row.new.metric.median)} / ${f(row.new.metric.p99)} | ${f(row.ratio)}× | ${row.runRatios.map(value => f(value) + '×').join(' / ')} | ${row.old.fallback ? '(나) 합' : '종단'} | ${row.verdict} |`)].join('\n');
-const validations = validationRows.map(row => `| ${row.fixture} | ${row.validation} | ${modeLabel[row.mode] ?? row.mode} | ${f(row.newSentinel.median * 1000)} / ${f(row.newMicrotask.median * 1000)} | ${f(row.a.differenceMs * 1000)} / ${f(row.a.noiseMs * 1000)} | ${f(row.oldSentinel.median * 1000)} / ${f(row.oldSum.median * 1000)} | ${f(row.b.differenceMs * 1000)} / ${f(row.b.noiseMs * 1000)} | ${row.oldFallback ? '(나) 합 사용' : '종단 사용'} |`);
+const validations = validationRows.map(row => `| ${row.fixture} | ${row.validation} | ${modeLabel[row.mode] ?? row.mode} | ${f(row.newPairedSentinel.median * 1000)} / ${f(row.newMicrotask.median * 1000)} | ${f(row.a.differenceMs * 1000)} / ${f(row.a.noiseMs * 1000)} | ${f(row.oldSentinel.median * 1000)} / ${f(row.oldSum.median * 1000)} | ${f(row.b.differenceMs * 1000)} / ${f(row.b.noiseMs * 1000)} | ${row.oldFallback ? '(나) 합 사용' : '종단 사용'} |`);
 const flipLines = summary.flipsVs93Corrected.map(row => `- ${row.fixture}/${row.mode}: ${row.before} → ${row.after} (${f(row.beforeRatio)}× → ${f(row.afterRatio)}×)`);
 const markdown = `# 95C-01 공식 코어 종단 판정표\n\n${summary.status === 'official' ? '95C-01의 종단 정의와 검증 (가)/(나)를 적용한 공식 코어 표입니다. 93C-01의 코어 표는 공식 용도에서 대체된 단계별 진단 자료입니다.' : '검증 (가)가 실패하여 공식 판정이 성립하지 않았습니다. 93 표는 대체하지 않습니다.'}\n\n대상 ${summary.environment.targetHead}, 구 판 0.16.0, ${summary.environment.cpu}, Node **${summary.environment.node}**, V8 **${summary.environment.v8}**. ${summary.environment.started}–${summary.environment.ended}. 프로세스 ${records.length}개, 동시 측정 1개, 회차별 old→new / new→old / old→new, 각 예열 12·표본 101·판마다 303, 명시적 GC, 최근접 순위 median/p99입니다. 제품 엔진 내부 계측이 없습니다.\n\n## 종단·대기 보정과 FIFO 근거\n\n호출이 반환된 뒤 64 Promise 체크포인트를 거친 다음 sentinel setImmediate를 예약합니다. 검증 OFF는 첫 check 큐에서 끝나며, ON은 검증 이후 오류 이벤트가 배치 초기화를 다음 check 큐에 예약하므로 추가 64 체크포인트 뒤 두 번째 sentinel까지 잽니다. 마지막 엔진 콜백 뒤에 예약된 마지막 sentinel이 같은 check 큐에서 FIFO로 실행되는 것이 종단입니다. 마운트가 동기로 예약한 배치 초기화와 그 호출의 microtask에서 예약한 onChange는 모두 sentinel보다 먼저 예약됩니다. 갱신도 완전히 정착한 마운트/이전 쓰기 뒤에 시작하고 같은 순서를 따릅니다. check 단계 중 예약된 콜백은 다음 check 큐에 들어가더라도 엔진→sentinel FIFO 순서를 유지합니다. Node는 각 콜백 뒤의 microtask도 다음 콜백 전에 배출하므로 마지막 엔진 콜백의 microtask 뒤에 sentinel이 돕니다.\n\n스케줄링 검증은 공식 표본 수집 후 단일 scheduleMacrotaskSafe 경계만 감쌌습니다. 모든 마운트·갱신에서 최종 sentinel 시점 pending=0, 이후 128 체크포인트와 다음 sentinel까지 추가 예약/실행=0입니다. 새 판 예약=0이고 구 판의 microtask 경계에는 콜백이 남습니다. 합성 마운트·갱신 및 콜백→microtask→다음 check 큐의 중첩 콜백 검증도 통과했으며 조기 sentinel은 FIFO assertion에서 실패했습니다. esbuild는 stdin EOF 후 code 0, 측정 worker는 signal 없이 code 0으로 자연 종료했습니다.\n\n같은 세션의 빈 호출을 OFF의 1-pass와 ON의 2-pass 각각 같은 방법으로 재었습니다. 각 경로의 보정 상수는 두 판에 동일하게 적용합니다. GC 뒤의 별도 check 앵커는 시간 구간 밖에서 GC 후속 처리를 완료합니다. 표의 고정 보정값 C는 해당 경로의 빈 호출 전체 종단 중앙값이며 두 판에서 호출마다 동일하게 뺍니다. microtask 검증에는 빈 microtask 중앙값 M을 빼므로 순수 대기 보정은 C−M입니다. BF 열은 쓰기마다 측정한 시간의 합이며 C/M도 쓰기 수만큼 뺍니다. 음수 clipping을 하지 않습니다.\n\n| 상수/분산 (µs) | 값 | p5–p95 | p99 | 표본 |\n| --- | ---: | ---: | ---: | ---: |\n| C: OFF 빈 종단, 두 판 공통 | ${f(emptyEnd.median * 1000)} | ${f(calibration.emptyEndToEndSpread.p5 * 1000)}–${f(calibration.emptyEndToEndSpread.p95 * 1000)} | ${f(emptyEnd.p99 * 1000)} | ${controls.length} |\n| M: OFF 빈 microtask | ${f(emptyMicro.median * 1000)} | — | ${f(emptyMicro.p99 * 1000)} | ${controls.length} |\n| OFF 순수 루프 대기 C−M | ${f(calibration.waitConstantMs * 1000)} | ${f(calibration.wait.p5 * 1000)}–${f(calibration.wait.p95 * 1000)} | ${f(calibration.wait.p99 * 1000)} | ${controls.length} |\n| C: ON 빈 종단, 두 판 공통 | ${f(twoEnd.median * 1000)} | ${f(calibration.bySentinelPasses[2].emptyEndToEndSpread.p5 * 1000)}–${f(calibration.bySentinelPasses[2].emptyEndToEndSpread.p95 * 1000)} | ${f(twoEnd.p99 * 1000)} | ${twoPassControls.length} |\n| M: ON 빈 microtask | ${f(twoMicro.median * 1000)} | — | ${f(twoMicro.p99 * 1000)} | ${twoPassControls.length} |\n| ON 순수 루프 대기 C−M | ${f(calibration.bySentinelPasses[2].waitConstantMs * 1000)} | ${f(calibration.bySentinelPasses[2].wait.p5 * 1000)}–${f(calibration.bySentinelPasses[2].wait.p95 * 1000)} | ${f(calibration.bySentinelPasses[2].wait.p99 * 1000)} | ${twoPassControls.length} |\n\n## 검증 (가)/(나)\n\n(가) 새 엔진의 보정 종단과 보정 microtask 값은 ${summary.validation.a.matched}/${validationRows.length}행에서 잡음 범위 안입니다. (나) 구 엔진은 ${summary.validation.b.matchedWithoutFallback}/${validationRows.length}행에서 모든 회차가 일치하며 ${bFallbacks.length}행은 합으로 대체했습니다. 콜백 실행은 별도 후속 실행에서 callback 전후 두 clock으로 잰 실제 실행 합입니다. 공식 microtask 표본과 별도 콜백 표본을 회차 내 순번별로 합쳐 중앙값/p99를 구합니다. 내부 함수 span이나 async_hooks는 없습니다. 대체가 필요한 행은 종단과 (나) 합의 차이가 미리 정한 잡음 폭을 넘었기 때문이며, 한 회차라도 실패하면 그 행의 세 회차 구 값 전체를 (나) 합으로 통일합니다.\n\n잡음 폭은 측정 전에 정한 빈 대기 잔차 p95 절대 편차와 각 중앙값의 bootstrap 99% 오차를 더한 보수적 범위입니다(하한 1µs). 쌍의 상관을 이용한 유의성/등가 검정은 아닙니다. 각 회차의 차이·범위·결과는 summary JSON에 있습니다.\n\n| 픽스처 | 검증 | 작업 | 새 종단 / micro µs | (가) 차이 / 잡음 µs | 구 종단 / (나) 합 µs | (나) 차이 / 잡음 µs | 구 공식 선택 |\n| --- | --- | --- | ---: | ---: | ---: | ---: | --- |\n${validations.join('\n')}\n\n## 공식 코어 표 — 85C-01 / 94C-02\n\n분기 없음과 식 전용의 목표는 마운트·갱신 모두 <=1.5×입니다. 목표선 양쪽에 회차가 있으면 동률·충족이며, 한쪽이면 전체 표본 중앙값 비로 판단합니다. 분기 행에는 1.5× 게이트를 적용하지 않고 91라운드의 건드리지 않은 분기 증가·단계 중복 기준으로 남깁니다.\n\n${table(officialRows)}\n\n| 그룹 | 충족 / 전체 | 미달 | 동률 포함 |\n| --- | ---: | ---: | ---: |\n| 코어 분기 없음 | ${groupCounts['core-branchless'].met}/24 | ${groupCounts['core-branchless'].missed} | ${groupCounts['core-branchless'].ties} |\n| 코어 식 전용 | ${groupCounts['core-expression'].met}/2 | ${groupCounts['core-expression'].missed} | ${groupCounts['core-expression'].ties} |\n| 분기 OFF | 기록 ${summary.branched.offRows}행 | 91 기준 | — |\n| 분기 ON | 기록 ${summary.branched.onRows}행 | 검증 포함 기록 | — |\n\n## BF 첫 갱신과 이후 갱신\n\n첫 갱신은 마운트가 sentinel까지 정착한 직후의 첫 BF interaction입니다. 이후 갱신은 BF 전체 열이 정착한 뒤 첫 interaction을 실제 값 변경으로 반복합니다. oneOf/if는 동일한 왕복 전환입니다. 아래 split 수는 공식 mount/BF 열 그룹 수와 별도입니다. 분기 없음 ${updateSplitGroupCounts['core-branchless'].met}/24, 식 전용 ${updateSplitGroupCounts['core-expression'].met}/2입니다.\n\n${table(updateSplitRows)}\n\n## 분기 수 축 — 91라운드 기록\n\n건드리는 두 분기를 kind_0→kind_4→kind_0으로 고정했습니다. branch 수 5/10/20/40, 건드리지 않은 수 3/8/18/38입니다. 배율을 기록하며 이 표로 91 기준 충족을 선언하지 않습니다.\n\n${table(branchAxisRows)}\n\n## 93C-01 정정 표와 판정이 바뀐 행\n\n공식 mount/BF 열의 뒤집힘은 ${summary.flipsVs93Corrected.length}행입니다. 93의 보정 배율과 동률 정정을 적용한 correctedVerdict와 비교했습니다. 두 표의 측정 방법이 다르므로 이 차이를 제품 변경의 효과로 해석하지 않습니다.\n\n${flipLines.length ? flipLines.join('\n') : '없습니다.'}\n\nBF split 뒤집힘 ${summary.splitFlipsVs93Corrected.length}행은 summary JSON에 있습니다.\n\n## React — 기존 정정 Profiler 결과 재사용\n\nReact는 이번 종단 측정에 포함하지 않았습니다. 93C-01의 production Profiler 값과 94C-02를 재사용하여 분기 없음 **22/24**, 식 전용 **2/2**입니다. 첫/이후 갱신 split은 분기 없음 **20/24**, 식 전용 **2/2**입니다. 분기 React 행은 기존 91 기준 판단을 유지합니다.\n\n## 재현과 검증\n\n\`yarn node packages/canard/schema-form/architecture/verification/07-switch/tools/measure-verdict-95c01.mjs --self-check\`\n\n\`/opt/homebrew/opt/node/bin/node --expose-gc packages/canard/schema-form/architecture/verification/07-switch/tools/measure-verdict-95c01.mjs sample-0 off 1 old\`\n\n\`yarn node packages/canard/schema-form/architecture/verification/07-switch/tools/run-verdict-95c01.mjs\` 는 138개 자연 종료 프로세스를 순차 실행하여 stdout JSONL을 냅니다. timings만 시간 JSON으로 저장하고 summary 세부는 중앙 JSON에 합칩니다. 이 세션에서는 각 worker가 자연 종료한 뒤 native apply_patch로 저장했습니다. 도구가 파일이나 git을 쓰지 않습니다.\n\n\`yarn node packages/canard/schema-form/architecture/verification/07-switch/tools/report-verdict-95c01.mjs --check\`\n\n시간 파일 ${artifacts.length}개, 최대 ${Math.max(...artifacts.map(item => item.bytes))}바이트입니다. 시간 숫자만 있고 모두 5MB 이내입니다. 입력/번들/도구/결정 문서 해시와 프로세스 상세는 summary JSON에 있습니다. 제품 소스·설치·git 쓰기를 수행하지 않았습니다. 모든 worker의 시작·종료 HEAD는 4d2e54533이며 외부 HEAD 변경은 없었습니다. 이전 세션 53개 및 이번 수정 전 84개 부분 표본을 모두 폐기했으며, 검증 ON 재현 실행의 표본도 공식 수치에 포함하지 않았습니다.\n`;
 
-const calibrationMethodParagraph = '검증 (가)의 끝점 꼬리 통계량을 `median(보정 종단) − median(보정 microtask)`에서 같은 호출의 표본별 차를 먼저 구한 `medianᵢ[(종단ᵢ − kC) − (microtaskᵢ − kM)]`로 변경하며 각 회차와 세 회차 pooled 표본에 똑같이 적용합니다(k는 BF 쓰기 수, 그 외에는 1). 주변 중앙값은 서로 다른 표본을 선택하고 가산적이지 않아 실제 꼬리 대기와 무관한 차이를 만들 수 있으므로 이 비가산 합성 결함을 제거합니다. C/M, 잡음 폭과 seeded bootstrap 오차, (나)의 합·대체 규칙 및 공식 배율·동률 판정은 유지합니다. 재측정은 fresh process, old→new / new→old / old→new 세 회차, 예열 20·표본 101, clock 밖 강제 GC와 check anchor, 기존 FIFO sentinel 종단을 유지하며 기존 표의 수치는 당시 기록으로 보존하고 재계산 영향과 HEAD 재측정은 `profile-110-calibration.md`에 기록합니다.';
-const sentinelMethodParagraph = '110라운드 측정기 sentinel 정정(112라운드 재검증): 새 엔진의 예약·실행·후속 macrotask가 0회임을 별도 경계 검증으로 먼저 확인한 경우에만 (가)의 종단에서 측정기 전용 FIFO 대기와 그 C−M을 제외합니다. 세 번째 원시 열 `preSentinelCalibrationMs`는 64 Promise 체크포인트 뒤의 microtask clock과 같으며 (가)는 이 열에서 kM을 뺀 값과 보정 microtask를 비교합니다. 독립된 두 clock의 일치를 입증하는 검사는 아닙니다. 기존 두 열·공식 배율·C/M·잡음·bootstrap·(나)·FIFO와 예열/표본/GC 조건은 유지합니다. 111 원자료는 모든 새 엔진 예약 및 후속 실행이 0회이므로 같은 끝점을 복원할 수 있습니다. 104행 재계산 중 수치가 바뀌는 103행과 배열 12행 재검증은 `profile-112-branch.md`와 `profile-112-branch-summary.json`에 있습니다.';
+const sentinelMethodParagraph = "각 실제 호출 표본 바로 앞에서 같은 프로세스의 빈 호출을 별도로 재며, 빈 호출은 엔진 작업 없이 같은 64 Promise 체크포인트와 OFF 1-pass/ON 2-pass FIFO sentinel을 사용합니다. 세 번째 원시 열 `pairedEmptyTailMs`는 이 짝 빈 호출의 종단−microtask 꼬리이며 BF 열은 실제 쓰기별 짝 꼬리를 합합니다. (가)는 고정 빈 호출 지연을 차감하던 자리에서 `보정 종단ᵢ = (종단ᵢ−kC)−[짝 빈 꼬리ᵢ−k(C−M)]`를 구하고, 별도의 `보정 microtaskᵢ = microtaskᵢ−kM`과 비교한 표본별 차이의 중앙값을 각 회차 및 세 회차 pooled 표본에 적용합니다(k는 BF 쓰기 수, 축 왕복은 2, 그 외는 1). 두 clock은 각각 유지되며 표본의 실제 sentinel 꼬리를 자기 자신에서 빼지 않습니다. 기존 빈 대기 잔차 p95·seeded bootstrap 99% 오차·하한 1µs의 잡음 폭을 유지하고, 모든 회차와 pooled 차이가 잡음 안이며 공식 표본 후의 별도 경계 검증에서 두 끝점 사이 엔진 macrotask 및 후속 예약·실행이 모두 0회일 때만 행이 통과합니다. fresh process, old→new / new→old / old→new 세 회차, 예열 20·101표본, clock 밖 강제 GC·schema clone·check anchor, 공식 성능 C/M·배율·동률·(나)와 수용 표시는 유지합니다. 짝 꼬리가 없는 원자료에서는 이를 복원하지 않고 재측정하며 결과는 `profile-113-paired.md`와 `profile-113-paired/summary.json`에 기록합니다.";
 const markdownWithMethod = markdown.replace('## 검증 (가)/(나)\n\n',
-  `## 검증 (가)/(나)\n\n${sentinelMethodParagraph}\n\n${calibrationMethodParagraph}\n\n`);
+  `## 검증 (가)/(나)\n\n${sentinelMethodParagraph}\n\n`);
 
 if (process.argv.includes('--check')) {
   assert.equal(manifest.status, 'official');

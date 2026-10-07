@@ -20,7 +20,7 @@ assert.match(measurementHead, /^[a-f0-9]{40}$/);
 assert.equal(fs.realpathSync(repo), '/Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07');
 const immediate = globalThis.setImmediate;
 const clock = () => performance.now();
-const warmup = 12, sampleCount = 101;
+const warmup = 20, sampleCount = 101;
 const measurementWarmup = Number(process.argv.find(value => value.startsWith('--warmup='))?.slice(9) ?? warmup);
 assert(Number.isInteger(measurementWarmup) && measurementWarmup >= 10);
 // Validation's deferred error events schedule one further check-queue generation.
@@ -40,20 +40,26 @@ async function flushMicrotasks(turns = 64) {
 }
 
 /** Time a call through the same-queue sentinel, recording the earlier microtask boundary too. */
-async function measure(operation, earlySentinel = false) {
+async function measureCall(operation, earlySentinel = false) {
   const start = clock();
   const result = operation();
   const early = earlySentinel ? new Promise(resolve => immediate(() => resolve(clock()))) : null;
   await flushMicrotasks();
   const micro = clock() - start;
-  // Check (a) uses this pre-sentinel endpoint only after proving zero engine macrotasks.
-  const calibrationEnd = micro;
   let end;
   for (let pass = 0; pass < (earlySentinel ? 1 : sentinelPasses); pass++) {
     end = await (early ?? new Promise(resolve => immediate(() => resolve(clock()))));
     if (pass + 1 < sentinelPasses) await flushMicrotasks();
   }
-  return { result, timing: [round(micro), round(end - start), round(calibrationEnd)] };
+  return { result, timing: [round(micro), round(end - start)] };
+}
+
+/** Pair each operation with an immediately preceding empty call using identical sentinels. */
+async function measure(operation, earlySentinel = false) {
+  const empty = await measureCall(() => {}, earlySentinel);
+  const observed = await measureCall(operation, earlySentinel);
+  observed.timing.push(round(empty.timing[1] - empty.timing[0]));
+  return observed;
 }
 
 if (process.argv.includes('--self-check')) {
@@ -302,6 +308,7 @@ if (process.argv.includes('--self-check')) {
       started, officialEnded, ended: new Date().toISOString(), pid: process.pid },
     warmup: measurementWarmup, sampleCount, sentinelPasses, explicitGc: true, externalSubscribers: 0, onChange: 'noop',
     endpointTailStatistic: 'median of same-call sentinelEndToEndMs - microtaskMs; before C/M correction',
+    pairedEmptyPosition: 'immediately before every timed call; same process, checkpoints and sentinel passes; no engine work',
     endpointTailMs: Object.fromEntries(Object.entries(timings).map(([mode, rows]) => [mode,
       endpointDifference95c01(rows.map(row => row[1]), rows.map(row => row[0]))])),
     officialEngineInstrumentation: false, boundaryWrapperInstalledAfterOfficialSamples: true,
@@ -311,8 +318,8 @@ if (process.argv.includes('--self-check')) {
     bundleEvidence: api.bundleEvidence, releaseSources: Object.fromEntries([...api.virtualSources].map(([name, text]) => [name, hash(text)])),
     serviceExits, checks, ordering: Object.fromEntries(Object.entries(ordering).map(([mode, rows]) => [mode,
       Object.fromEntries(Object.keys(rows[0]).map(key => [key, metric(rows.map(row => row[key]))]))])),
-    timingColumns: ['microtaskMs', 'sentinelEndToEndMs', 'preSentinelCalibrationMs'],
-    emptyColumns: ['microtaskMs', 'sentinelEndToEndMs', 'preSentinelCalibrationMs'],
+    timingColumns: ['microtaskMs', 'sentinelEndToEndMs', 'pairedEmptyTailMs'],
+    emptyColumns: ['microtaskMs', 'sentinelEndToEndMs', 'pairedEmptyTailMs'],
     callbackColumns: 'executionMs; separate diagnostic stage; harness callbacks bypass wrapper',
     negativeClipping: false };
   const stem = `verdict-95c01-${fixtureName}-${validation}-r${run}-${version}`;
