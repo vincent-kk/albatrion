@@ -3,6 +3,8 @@ import { buildSchemaNodeTree, mountSchemaNode } from '../../../../SchemaNode';
 import { ValidationMode } from '../../../../types/state';
 import type { ChildSelectionRuntimeNode } from './ChildSelectionRuntimeNode';
 import { normalizeSelectionObservation } from './normalizeSelectionObservation';
+import { createTestValidator } from '../../../../__tests__/fixtures/createTestValidator';
+import type { TestGuardMode } from '../../../../__tests__/fixtures/createTestValidator';
 
 /** Authored mount and input history shared by the HEAD and candidate runtimes. */
 export interface ChildSelectionHistory {
@@ -16,6 +18,10 @@ export interface ChildSelectionHistory {
   writes: readonly { path: string; value: unknown }[];
   /** Attach listeners to every occurrence, including ones created during a write. */
   allListeners?: boolean;
+  /** Select a real or deliberately failing if validator; omission keeps it absent. */
+  guardMode?: TestGuardMode;
+  /** Public form option used to compare automatic fills on and off. */
+  disableAutomaticWrites?: boolean;
 }
 
 /**
@@ -61,6 +67,8 @@ export const runChildSelectionHistory = (fixture: ChildSelectionHistory): unknow
   try {
     root = buildSchemaNodeTree({ jsonSchema: fixture.schema,
       defaultValue: fixture.input, validationMode: ValidationMode.None,
+      validator: fixture.guardMode ? createTestValidator(fixture.guardMode) : undefined,
+      disableAutomaticWrites: fixture.disableAutomaticWrites,
       onChange: value => changes.push(normalizeSelectionObservation(value)) }) as unknown as typeof root;
   } catch (failure) { return [normalizeSelectionObservation({ failure })]; }
   occurrences.push(root);

@@ -16,7 +16,7 @@ import { fileURLToPath } from 'node:url';
  */
 export async function prepareBranch1Bundles(packageRoot, outputRoot) {
   const worktree = resolve(packageRoot, '../../..');
-  const head = '3a637c4cd';
+  const head = 'bd1807be20784467dc25933d605738bba0c0acdb';
   const selectionFiles = [
     'src/core/settle/utils/compute/primeHost.ts',
     'src/core/settle/utils/compute/selectChildren.ts',
@@ -59,9 +59,11 @@ export async function prepareBranch1Bundles(packageRoot, outputRoot) {
           builder.onLoad({ filter: /\.(ts|tsx)$/ }, args => {
             const path = relative(worktree, args.path);
             if (!path.startsWith('packages/') || path.includes('node_modules')) return;
-            const contents = workingFiles.includes(path) ? readFileSync(args.path, 'utf8') :
+            let contents = workingFiles.includes(path) ? readFileSync(args.path, 'utf8') :
               childProcess.execFileSync('git', ['show', `${head}:${path}`],
                 { cwd: worktree, encoding: 'utf8', timeout: 10000 });
+            if (path === 'packages/aileron/benchmark-form/fixtures/equivalent/branches.ts')
+              contents = contents.replace('[5, 10, 20].map', '[5, 10, 20, 40].map');
             return { contents, loader: args.path.endsWith('.tsx') ? 'tsx' : 'ts' };
           });
         } }] });
@@ -93,4 +95,6 @@ export async function prepareBranch1Bundles(packageRoot, outputRoot) {
 
 const packageRoot = resolve(dirname(fileURLToPath(import.meta.url)), '../../../..');
 const scratch = '/private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles';
-console.log(JSON.stringify(await prepareBranch1Bundles(packageRoot, scratch), null, 2));
+const results = await prepareBranch1Bundles(packageRoot, scratch);
+writeFileSync(resolve(dirname(fileURLToPath(import.meta.url)), 'bundles.json'), JSON.stringify({ head: 'bd1807be20784467dc25933d605738bba0c0acdb', fixtureExtension: 'oneOf-40', results }, null, 2) + '\n');
+console.log('4 production bundles prepared; services exited naturally');

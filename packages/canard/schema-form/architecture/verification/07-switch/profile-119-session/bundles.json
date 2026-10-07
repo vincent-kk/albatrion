@@ -1,0 +1,46 @@
+{
+  "head": "bd1807be20784467dc25933d605738bba0c0acdb",
+  "fixtureExtension": "oneOf-40",
+  "results": [
+    {
+      "file": "/private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles/b-head.cjs",
+      "revision": "bd1807be20784467dc25933d605738bba0c0acdb",
+      "variant": "head",
+      "NODE_ENV": "production",
+      "instrumented": false,
+      "sha256": "acd4c57073f92f7553f7b4e7a8e512a4aaea789534c3c58af2c53a5a5abddde8",
+      "bytes": 543666,
+      "naturalBuildServiceExits": 1
+    },
+    {
+      "file": "/private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles/b-1b.cjs",
+      "revision": "bd1807be20784467dc25933d605738bba0c0acdb",
+      "variant": "1b",
+      "NODE_ENV": "production",
+      "instrumented": false,
+      "sha256": "edc83a35ba407ebe16faf4d0bdb01d79a2041b25837d449f75d68120fb961b15",
+      "bytes": 546867,
+      "naturalBuildServiceExits": 1
+    },
+    {
+      "file": "/private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles/b-2.cjs",
+      "revision": "bd1807be20784467dc25933d605738bba0c0acdb",
+      "variant": "2",
+      "NODE_ENV": "production",
+      "instrumented": false,
+      "sha256": "6b6ac5c2aa555fd570cc48cc8c36d669b03146c9619578e58d393976c3daf54a",
+      "bytes": 545174,
+      "naturalBuildServiceExits": 1
+    },
+    {
+      "file": "/private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles/b-1b2.cjs",
+      "revision": "bd1807be20784467dc25933d605738bba0c0acdb",
+      "variant": "1b2",
+      "NODE_ENV": "production",
+      "instrumented": false,
+      "sha256": "df5d65a178e4dbe354cda71cbff820aa03d2fc60536dd6c9fece35fe7ed93fdb",
+      "bytes": 548375,
+      "naturalBuildServiceExits": 1
+    }
+  ]
+}

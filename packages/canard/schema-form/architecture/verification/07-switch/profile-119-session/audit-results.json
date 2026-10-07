@@ -1,0 +1,64 @@
+{
+  "HEAD": "bd1807be20784467dc25933d605738bba0c0acdb",
+  "time": "2026-10-07T15:40:15.616Z",
+  "passed": true,
+  "coreRecords": 621,
+  "reactWorkers": 228,
+  "rawFiles": 968,
+  "medianChecks": 312,
+  "independentIntervalChecks": 29,
+  "axisSumChecks": 21816,
+  "slopesChecked": 6,
+  "overlapCount": 0,
+  "overlapMethod": "Execution-log order and monotonic durations; timestamp boundaries adjusted only for documented wall-clock discontinuity",
+  "executionOrderChecks": 849,
+  "clockAdjustments": [
+    {
+      "file": "2/sample-2/off/3",
+      "started": "2026-10-07T15:03:08.042Z",
+      "ended": "2026-10-07T15:03:06.017Z",
+      "monotonicSeconds": 2.056794667,
+      "clockDifferenceMs": -4081.794667
+    }
+  ],
+  "manifestChecks": 968,
+  "bundleHashChecks": 5,
+  "completeTableCounts": {
+    "2": 104,
+    "AA": 104,
+    "1b": 104,
+    "React": 114
+  },
+  "maxWorkerSeconds": 115.50337329199999,
+  "start": "2026-10-07T12:57:19.115Z",
+  "end": "2026-10-07T15:20:07.039Z",
+  "sourceHashes": {
+    "analyze-react.mjs": "258661aff25f30a353060bffe9ca94c09157971f22438911bb5aaf486a931224",
+    "analyze-row.mjs": "4e736c007850fa6e08330d8dbeefaea74aa1bae93ab7259d3e810e82c293fd7d",
+    "audit-inputs.mjs": "e9e5adffaddb06e810a54a430f28e286f305a39ab790cbbcb172885a03c3ac9e",
+    "calibrate.mjs": "3daae513f177511b0d1c6c82c784fc9b8d628feba70a80d25e69182fd548779c",
+    "core.mjs": "54c4375b8af41a6c7bb673e0d0225de9c5f804193c50f3a4a473a7871e5013fe",
+    "diagnose-endpoints.mjs": "e517fdd9868d83c8d0c783309c6997aa87cbdbb23a0d58ceb72783e52d3e6d32",
+    "measure-react.mjs": "d20cef61a2bd0e86d64a537714c14609b4582fc93c2403ffef306bfa303b5964",
+    "prepare-bundles.mjs": "6d58ae79ff5a19f2b48f1a17dea4eb7ad70738ad2faad4a6637e5613759d8b56",
+    "render-report.mjs": "391a3eb1d5398d031e5007e906a2bb747f0eef361a1622b3bb7a05924507da90",
+    "runtime.mjs": "4b93576c06764a40d476f17a81b9bdcbebccaab6bf41f7c22069a6f26f59c90f",
+    "verdict.mjs": "e556ccd997cf95b5020f15ffc81932e6ac320732664b8d5195135f4ab07e3f5c",
+    "verify-results.mjs": "dac31f166e17fe1f5185f4c8dbc97995b22ee0faa3aab23c8751742bf4a14b67"
+  },
+  "artifactLimitBytes": 5000000,
+  "endpointExcluded": [
+    "AA/flat-50/off/mount",
+    "AA/sample-0/off/mount",
+    "AA/sample-1/off/mount",
+    "AA/sample-2/off/mount",
+    "1b/flat-50/off/mount",
+    "1b/sample-0/off/mount",
+    "1b/sample-1/off/mount",
+    "1b/sample-2/off/mount",
+    "2/flat-50/off/mount",
+    "2/sample-0/off/mount",
+    "2/sample-1/off/mount",
+    "2/sample-2/off/mount"
+  ]
+}

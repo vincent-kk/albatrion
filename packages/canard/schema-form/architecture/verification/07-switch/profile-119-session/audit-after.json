@@ -1,0 +1,18 @@
+{
+  "phase": "after",
+  "time": "2026-10-07T15:27:31.125Z",
+  "HEAD": "bd1807be20784467dc25933d605738bba0c0acdb",
+  "sourceFileCount": 1941,
+  "sourceSha256": "db0ea992af9d9cdf5db30c7429204bcdc4764ec5b1444563f0c43644c6988712",
+  "sourceDiffSha256": "3059f382433d383ceffde4256b9c6bf61d2653fbe4a30b3021acfdd40e02c213",
+  "implementationChecks": [],
+  "environment": {
+    "node": "v26.10.0",
+    "executable": "/opt/homebrew/Cellar/node/26.10.0_2/bin/node",
+    "v8": "14.6.202.34-node.35"
+  },
+  "patchHashes": {
+    "branch1b.patch": "a3fa208048a1e25a8d921a14f725964e8d29a8ade81dc87baa9643c28038fede",
+    "branch2.patch": "2bedd61f48a3493da0a0bf4722ca8db85eafcb30ee76e7b7e61e7b17ed0eff91"
+  }
+}

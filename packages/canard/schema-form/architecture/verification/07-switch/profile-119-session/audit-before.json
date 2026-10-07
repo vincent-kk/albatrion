@@ -1,0 +1,61 @@
+{
+  "phase": "before",
+  "time": "2026-10-07T12:51:36.506Z",
+  "HEAD": "bd1807be20784467dc25933d605738bba0c0acdb",
+  "sourceFileCount": 1941,
+  "sourceSha256": "db0ea992af9d9cdf5db30c7429204bcdc4764ec5b1444563f0c43644c6988712",
+  "sourceDiffSha256": "3059f382433d383ceffde4256b9c6bf61d2653fbe4a30b3021acfdd40e02c213",
+  "implementationChecks": [
+    {
+      "patchName": "branch1b.patch",
+      "file": "packages/canard/schema-form/src/core/settle/utils/compute/primeHost.ts",
+      "sha256": "14b3457d76088cfe631538346c8b7cf2d6a3f54a226553365def8059b0e246db",
+      "matches": true
+    },
+    {
+      "patchName": "branch1b.patch",
+      "file": "packages/canard/schema-form/src/core/settle/utils/compute/selectChildren.ts",
+      "sha256": "9c1a019c2c0b8403923d0827693e5e44fd1732ff989307d89108b2b4c4d81380",
+      "matches": true
+    },
+    {
+      "patchName": "branch1b.patch",
+      "file": "packages/canard/schema-form/src/core/settle/utils/compute/selectChildren/utils/getDirectChildSelectionPlan.ts",
+      "sha256": "9086914a8b621ce51664542376b9972f26b3de46f7c8b156e5c218fb04eb45a0",
+      "matches": true
+    },
+    {
+      "patchName": "branch2.patch",
+      "file": "packages/canard/schema-form/src/core/settle/utils/gates/evaluateGate.ts",
+      "sha256": "0355d3226fb56da2f5d0ddf74234c040e85af13fbb3a50db8b7cd444387d4621",
+      "matches": true
+    },
+    {
+      "patchName": "branch2.patch",
+      "file": "packages/canard/schema-form/src/core/settle/utils/gates/getGateRegistry.ts",
+      "sha256": "c05183fad430becd7b56d8d90f022dc5ff36df28d3b9216edbb201bce3021e6c",
+      "matches": true
+    },
+    {
+      "patchName": "branch2.patch",
+      "file": "packages/canard/schema-form/src/core/settle/utils/gates/flushPendingGateReads.ts",
+      "sha256": "3e719630bfd023f612a7208527de058a747460352694b08d9e5f54655cd338de",
+      "matches": true
+    },
+    {
+      "patchName": "branch2.patch",
+      "file": "packages/canard/schema-form/src/core/settle/utils/gates/readProjectedValue.ts",
+      "sha256": "eecd1a9bb85d0c6f894384ce3a332c1c89e151d43d60d5468f7f24d4cea4b091",
+      "matches": true
+    }
+  ],
+  "environment": {
+    "node": "v26.10.0",
+    "executable": "/opt/homebrew/Cellar/node/26.10.0_2/bin/node",
+    "v8": "14.6.202.34-node.35"
+  },
+  "patchHashes": {
+    "branch1b.patch": "a3fa208048a1e25a8d921a14f725964e8d29a8ade81dc87baa9643c28038fede",
+    "branch2.patch": "2bedd61f48a3493da0a0bf4722ca8db85eafcb30ee76e7b7e61e7b17ed0eff91"
+  }
+}
