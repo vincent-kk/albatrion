@@ -3,7 +3,10 @@
  *   node <이 파일> --smoke /지정/bundles/core-121-smoke.json
  *   node <이 파일> --input-dir=/원자료/디렉터리 --transport
  *   node <이 파일> --input-dir=/원자료/디렉터리 --check
+ *   node <이 파일> --pair /지정/f4/pair-AA.json
  * --smoke 입력은 measure-verdict-121의 stdout JSON 객체 또는 객체 배열입니다.
+ * --pair 입력은 measure-verdict-121 --pair의 stdout 객체 또는 배열이며, 행마다 새 A/A 크기를
+ * 119 세션의 같은 번들 A/A 크기 옆에 적습니다. gc 없는 첫 쓰기 열은 기록 전용입니다.
  * 소량 표본은 공식 성능 판정을 내리지 않으며 (가)의 수치·경계 결과를 표시합니다.
  * 공식 입력은 verdict-121-summary.json 및 timingFile 파일, 세 회차·101표본입니다.
  * 결과는 stdout으로만 내보냅니다. 이전 93 판정 자료는 verification 디렉터리에서 읽습니다.
@@ -34,6 +37,61 @@ export function validationA121(pairedSentinel, microtask, noiseMs, orders) {
     'pendingAtSentinel', 'tailScheduled', 'tailExecuted'].every(key => order[key].p99 === 0));
   const withinNoise = Math.abs(differenceMs) <= noiseMs;
   return { differenceMs, noiseMs, withinNoise, zeroEngineMacrotasks, passed: withinNoise && zeroEngineMacrotasks };
+}
+
+/** Session 119's pooled paired-median bootstrap (xorshift, 1999 trials), kept so both A/A magnitudes share one statistic. */
+function pairedBootstrap(values, seed = 101, trials = 1999) {
+  let state = seed >>> 0;
+  const medians = [];
+  for (let repeat = 0; repeat < trials; repeat++) {
+    const sample = [];
+    for (let index = 0; index < values.length; index++) {
+      state ^= state << 13; state ^= state >>> 17; state ^= state << 5;
+      sample.push(values[(state >>> 0) % values.length]);
+    }
+    medians.push(percentile(sample, .5));
+  }
+  const center = percentile(values, .5), low = percentile(medians, .005), high = percentile(medians, .995);
+  return { median: center, low, high, halfWidth: Math.max(center - low, high - center), trials, seed };
+}
+
+/**
+ * Pool paired base-minus-candidate end-to-end differences per row and set them beside session 119's A/A.
+ * The fixed empty-call constant is the same for both members of a pair, so it cancels in each difference.
+ * @param workers - measure-verdict-121 --pair outputs of one stage, any number of runs
+ * @param verification - 07-switch directory holding profile-119-session/analysis-AA-*.json
+ * @returns One row per fixture/validation/mode, verdict columns and no-GC record columns alike
+ */
+export function pairRows121(workers, verification) {
+  assert(workers.length > 0 && workers.every(worker => worker.summary.stage === workers[0].summary.stage));
+  const groups = new Map();
+  for (const worker of workers) {
+    const { summary, timings } = worker;
+    assert.equal(summary.postGcDiscardedPairs, 1);
+    assert.equal(summary.sameCompiledSource, false, 'A pair must compare byte-different sources');
+    for (const mode of [...summary.verdictColumns, ...summary.recordColumns]) {
+      const key = `${summary.fixture}/${summary.validation}/${mode}`;
+      const group = groups.get(key) ?? { fixture: summary.fixture, validation: summary.validation, mode,
+        record: summary.recordColumns.includes(mode), deltas: [], runs: [] };
+      const base = timings.base[mode], candidate = timings.candidate[mode];
+      assert(base.length === candidate.length && base.length === summary.sampleCount);
+      const deltas = base.map((row, index) => row[1] - candidate[index][1]);
+      group.deltas.push(...deltas);
+      group.runs.push({ run: summary.run, median: percentile(deltas, .5), samples: deltas.length });
+      groups.set(key, group);
+    }
+  }
+  return [...groups.values()].map(group => {
+    const paired = pairedBootstrap(group.deltas);
+    const source = path.join(verification, `profile-119-session/analysis-AA-${group.fixture}-${group.validation}.json`);
+    const sameBundle = !group.record && fs.existsSync(source)
+      ? JSON.parse(fs.readFileSync(source, 'utf8')).rows.find(row => row.mode === group.mode)?.paired : undefined;
+    return { fixture: group.fixture, validation: group.validation, mode: group.mode,
+      column: group.record ? 'record (no forced gc)' : 'verdict (forced gc)', samples: group.deltas.length,
+      newAAms: Math.abs(paired.median), newPaired: paired, runs: group.runs,
+      sameBundleAAms: sameBundle ? Math.abs(sameBundle.median) : null,
+      sameBundleSource: sameBundle ? path.relative(verification, source) : null };
+  });
 }
 
 /** Seeded resampling estimates the median's 99% interval without external packages. */
@@ -94,6 +152,17 @@ if (process.argv.includes('--smoke')) {
   assert(rows.length > 0, 'Smoke input must include a new-engine worker');
   console.log(JSON.stringify({ smoke: true, officialVerdict: false, rows }));
   console.log(`SMOKE_REPORT_121_OK: ${workers.length} workers; (ga) ${rows.filter(row => row.passed).length}/${rows.length}; boundary ${rows.filter(row => row.zeroEngineMacrotasks).length}/${rows.length}`);
+} else if (process.argv.includes('--pair')) {
+  const input = JSON.parse(fs.readFileSync(process.argv[process.argv.indexOf('--pair') + 1], 'utf8'));
+  const workers = Array.isArray(input) ? input : [input];
+  const rows = pairRows121(workers, verification);
+  const us = value => value === null ? '—' : (value * 1000).toFixed(3);
+  const lines = rows.map(row => `| ${row.fixture} | ${row.validation} | ${row.mode} | ${row.column} | ${us(row.newAAms)} [${us(row.newPaired.low)}, ${us(row.newPaired.high)}] | ${us(row.sameBundleAAms)} |`);
+  const smoke = workers.some(worker => worker.summary.sampleCount < 100);
+  console.log(JSON.stringify({ pair: true, stage: workers[0].summary.stage, smoke, officialVerdict: false, rows,
+    markdown: ['| 픽스처 | 검증 | 작업 | 열 | 새 A/A 크기 µs [99% 구간] | 119 같은 번들 A/A 크기 µs |',
+      '| --- | --- | --- | --- | ---: | ---: |', ...lines].join('\n') }));
+  console.log(`PAIR_REPORT_121_OK: ${workers.length} workers; ${rows.length} rows; ${rows.filter(row => row.sameBundleAAms !== null).length} with a session-119 same-bundle A/A`);
 } else {
 const manifest = JSON.parse(fs.readFileSync(path.join(output, 'verdict-121-summary.json'), 'utf8'));
 const previous = JSON.parse(fs.readFileSync(path.join(verification, 'verdict-93c01-summary.json'), 'utf8'));
