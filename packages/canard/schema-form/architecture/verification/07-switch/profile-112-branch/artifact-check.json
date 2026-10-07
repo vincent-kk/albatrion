@@ -1,0 +1,17 @@
+{
+  "source": "verify-artifacts.mjs의 종료 0 stdout, 최종 게시된 보고서·summary 대상",
+  "result": "PROFILE_112_ARTIFACTS_OK",
+  "head": "bef81f4d747d028b05082d594138148520e4d992",
+  "rawRows": 104,
+  "changedRows": 103,
+  "otherChangedRows": 91,
+  "tableRows": 108,
+  "arrayRows": 12,
+  "functionFrames": 262,
+  "visitSites": 52,
+  "maxEvidenceFile": { "file": "cpu-derived-records.json", "bytes": 2253143 },
+  "productSourceDiff": 0,
+  "cpuSlopeUsPerBranch": { "bf": 30.764277993016698, "later": 9.060840866695367 },
+  "sentinelRegression": "SENTINEL_PLACEMENT_OK",
+  "rowEndToEnd": "CANONICAL_ROW_END_TO_END_OK"
+}

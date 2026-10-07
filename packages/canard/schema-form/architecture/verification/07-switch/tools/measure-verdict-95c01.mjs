@@ -46,12 +46,14 @@ async function measure(operation, earlySentinel = false) {
   const early = earlySentinel ? new Promise(resolve => immediate(() => resolve(clock()))) : null;
   await flushMicrotasks();
   const micro = clock() - start;
+  // Check (a) uses this pre-sentinel endpoint only after proving zero engine macrotasks.
+  const calibrationEnd = micro;
   let end;
   for (let pass = 0; pass < (earlySentinel ? 1 : sentinelPasses); pass++) {
     end = await (early ?? new Promise(resolve => immediate(() => resolve(clock()))));
     if (pass + 1 < sentinelPasses) await flushMicrotasks();
   }
-  return { result, timing: [round(micro), round(end - start)] };
+  return { result, timing: [round(micro), round(end - start), round(calibrationEnd)] };
 }
 
 if (process.argv.includes('--self-check')) {
@@ -166,7 +168,7 @@ if (process.argv.includes('--self-check')) {
     assert(node, `Missing ${fixtureName} ${interaction.path}`);
     node.setValue(interaction.value);
   };
-  const addTimes = records => records.reduce((total, record) => total.map((value, index) => round(value + record.timing[index])), [0, 0]);
+  const addTimes = records => records.reduce((total, record) => total.map((value, index) => round(value + record.timing[index])), [0, 0, 0]);
   const controls = async name => {
     for (let index = -measurementWarmup; index < sampleCount; index++) {
       globalThis.gc();
@@ -309,7 +311,8 @@ if (process.argv.includes('--self-check')) {
     bundleEvidence: api.bundleEvidence, releaseSources: Object.fromEntries([...api.virtualSources].map(([name, text]) => [name, hash(text)])),
     serviceExits, checks, ordering: Object.fromEntries(Object.entries(ordering).map(([mode, rows]) => [mode,
       Object.fromEntries(Object.keys(rows[0]).map(key => [key, metric(rows.map(row => row[key]))]))])),
-    timingColumns: ['microtaskMs', 'sentinelEndToEndMs'], emptyColumns: ['microtaskMs', 'sentinelEndToEndMs'],
+    timingColumns: ['microtaskMs', 'sentinelEndToEndMs', 'preSentinelCalibrationMs'],
+    emptyColumns: ['microtaskMs', 'sentinelEndToEndMs', 'preSentinelCalibrationMs'],
     callbackColumns: 'executionMs; separate diagnostic stage; harness callbacks bypass wrapper',
     negativeClipping: false };
   const stem = `verdict-95c01-${fixtureName}-${validation}-r${run}-${version}`;

@@ -1,0 +1,793 @@
+{
+  "head": "bef81f4d747d028b05082d594138148520e4d992",
+  "node": "v26.10.0",
+  "v8": "14.6.202.34-node.35",
+  "cpu": "Apple M1 Max",
+  "measuredProcesses": 58,
+  "sequential": true,
+  "sourceFilesHashVerified": 498,
+  "productSourceDiff": [],
+  "maxWorkerMs": 8937,
+  "allNaturalExits": true,
+  "maxEvidenceFileBeforePublication": {
+    "file": "cpu-derived-records.json",
+    "bytes": 2253143
+  },
+  "measured": [
+    {
+      "file": "profile-112-branch/verdict-95c01-array-100-off-r1-old-timings.json",
+      "started": "2026-10-07T02:40:52.652Z",
+      "ended": "2026-10-07T02:40:55.087Z",
+      "elapsedMs": 5455,
+      "exit": {
+        "code": 0,
+        "signal": null,
+        "natural": true,
+        "elapsedMs": 5455
+      },
+      "mode": "array"
+    },
+    {
+      "file": "profile-112-branch/verdict-95c01-array-100-off-r1-new-timings.json",
+      "started": "2026-10-07T02:40:55.747Z",
+      "ended": "2026-10-07T02:40:58.012Z",
+      "elapsedMs": 2926,
+      "exit": {
+        "code": 0,
+        "signal": null,
+        "natural": true,
+        "elapsedMs": 2926
+      },
+      "mode": "array"
+    },
+    {
+      "file": "profile-112-branch/verdict-95c01-array-100-off-r2-new-timings.json",
+      "started": "2026-10-07T02:40:58.675Z",
+      "ended": "2026-10-07T02:41:00.919Z",
+      "elapsedMs": 2904,
+      "exit": {
+        "code": 0,
+        "signal": null,
+        "natural": true,
+        "elapsedMs": 2904
+      },
+      "mode": "array"
+    },
+    {
+      "file": "profile-112-branch/verdict-95c01-array-100-off-r2-old-timings.json",
+      "started": "2026-10-07T02:41:03.925Z",
+      "ended": "2026-10-07T02:41:06.368Z",
+      "elapsedMs": 5449,
+      "exit": {
+        "code": 0,
+        "signal": null,
+        "natural": true,
+        "elapsedMs": 5449
+      },
+      "mode": "array"
+    },
+    {
+      "file": "profile-112-branch/verdict-95c01-array-100-off-r3-old-timings.json",
+      "started": "2026-10-07T02:41:09.362Z",
+      "ended": "2026-10-07T02:41:11.851Z",
+      "elapsedMs": 5483,
+      "exit": {
+        "code": 0,
+        "signal": null,
+        "natural": true,
+        "elapsedMs": 5483
+      },
+      "mode": "array"
+    },
+    {
+      "file": "profile-112-branch/verdict-95c01-array-100-off-r3-new-timings.json",
+      "started": "2026-10-07T02:41:12.513Z",
+      "ended": "2026-10-07T02:41:14.768Z",
+      "elapsedMs": 2917,
+      "exit": {
+        "code": 0,
+        "signal": null,
+        "natural": true,
+        "elapsedMs": 2917
+      },
+      "mode": "array"
+    },
+    {
+      "file": "profile-112-branch/verdict-95c01-array-500-off-r1-old-timings.json",
+      "started": "2026-10-07T02:41:44.768Z",
+      "ended": "2026-10-07T02:41:48.603Z",
+      "elapsedMs": 6832,
+      "exit": {
+        "code": 0,
+        "signal": null,
+        "natural": true,
+        "elapsedMs": 6832
+      },
+      "mode": "array"
+    },
+    {
+      "file": "profile-112-branch/verdict-95c01-array-500-off-r1-new-timings.json",
+      "started": "2026-10-07T02:41:49.265Z",
+      "ended": "2026-10-07T02:41:52.185Z",
+      "elapsedMs": 3574,
+      "exit": {
+        "code": 0,
+        "signal": null,
+        "natural": true,
+        "elapsedMs": 3574
+      },
+      "mode": "array"
+    },
+    {
+      "file": "profile-112-branch/verdict-95c01-array-500-off-r2-new-timings.json",
+      "started": "2026-10-07T02:41:52.839Z",
+      "ended": "2026-10-07T02:41:55.756Z",
+      "elapsedMs": 3574,
+      "exit": {
+        "code": 0,
+        "signal": null,
+        "natural": true,
+        "elapsedMs": 3574
+      },
+      "mode": "array"
+    },
+    {
+      "file": "profile-112-branch/verdict-95c01-array-500-off-r2-old-timings.json",
+      "started": "2026-10-07T02:41:58.753Z",
+      "ended": "2026-10-07T02:42:02.639Z",
+      "elapsedMs": 6883,
+      "exit": {
+        "code": 0,
+        "signal": null,
+        "natural": true,
+        "elapsedMs": 6883
+      },
+      "mode": "array"
+    },
+    {
+      "file": "profile-112-branch/verdict-95c01-array-500-off-r3-old-timings.json",
+      "started": "2026-10-07T02:42:05.628Z",
+      "ended": "2026-10-07T02:42:09.467Z",
+      "elapsedMs": 6824,
+      "exit": {
+        "code": 0,
+        "signal": null,
+        "natural": true,
+        "elapsedMs": 6824
+      },
+      "mode": "array"
+    },
+    {
+      "file": "profile-112-branch/verdict-95c01-array-500-off-r3-new-timings.json",
+      "started": "2026-10-07T02:42:10.146Z",
+      "ended": "2026-10-07T02:42:13.029Z",
+      "elapsedMs": 3561,
+      "exit": {
+        "code": 0,
+        "signal": null,
+        "natural": true,
+        "elapsedMs": 3561
+      },
+      "mode": "array"
+    },
+    {
+      "file": "profile-112-branch/verdict-95c01-array-1000-off-r1-old-timings.json",
+      "started": "2026-10-07T02:42:16.024Z",
+      "ended": "2026-10-07T02:42:21.811Z",
+      "elapsedMs": 8785,
+      "exit": {
+        "code": 0,
+        "signal": null,
+        "natural": true,
+        "elapsedMs": 8785
+      },
+      "mode": "array"
+    },
+    {
+      "file": "profile-112-branch/verdict-95c01-array-1000-off-r1-new-timings.json",
+      "started": "2026-10-07T02:42:22.476Z",
+      "ended": "2026-10-07T02:42:26.482Z",
+      "elapsedMs": 4663,
+      "exit": {
+        "code": 0,
+        "signal": null,
+        "natural": true,
+        "elapsedMs": 4663
+      },
+      "mode": "array"
+    },
+    {
+      "file": "profile-112-branch/verdict-95c01-array-1000-off-r2-new-timings.json",
+      "started": "2026-10-07T02:42:27.139Z",
+      "ended": "2026-10-07T02:42:31.083Z",
+      "elapsedMs": 4605,
+      "exit": {
+        "code": 0,
+        "signal": null,
+        "natural": true,
+        "elapsedMs": 4605
+      },
+      "mode": "array"
+    },
+    {
+      "file": "profile-112-branch/verdict-95c01-array-1000-off-r2-old-timings.json",
+      "started": "2026-10-07T02:42:34.079Z",
+      "ended": "2026-10-07T02:42:40.022Z",
+      "elapsedMs": 8937,
+      "exit": {
+        "code": 0,
+        "signal": null,
+        "natural": true,
+        "elapsedMs": 8937
+      },
+      "mode": "array"
+    },
+    {
+      "file": "profile-112-branch/verdict-95c01-array-1000-off-r3-old-timings.json",
+      "started": "2026-10-07T02:42:43.019Z",
+      "ended": "2026-10-07T02:42:48.801Z",
+      "elapsedMs": 8784,
+      "exit": {
+        "code": 0,
+        "signal": null,
+        "natural": true,
+        "elapsedMs": 8784
+      },
+      "mode": "array"
+    },
+    {
+      "file": "profile-112-branch/verdict-95c01-array-1000-off-r3-new-timings.json",
+      "started": "2026-10-07T02:42:49.466Z",
+      "ended": "2026-10-07T02:42:53.431Z",
+      "elapsedMs": 4622,
+      "exit": {
+        "code": 0,
+        "signal": null,
+        "natural": true,
+        "elapsedMs": 4622
+      },
+      "mode": "array"
+    },
+    {
+      "file": "profile-112-branch/cpu-oneOf-5-r1.json",
+      "started": "2026-10-07T02:46:16.345Z",
+      "ended": "2026-10-07T02:46:16.827Z",
+      "elapsedMs": 481.30495899999994,
+      "exit": {
+        "code": 0,
+        "signal": null,
+        "natural": true,
+        "evidence": "exec_command의 종료 0 응답과 worker 마지막 active resources 단언"
+      },
+      "mode": "cpu"
+    },
+    {
+      "file": "profile-112-branch/cpu-oneOf-10-r1.json",
+      "started": "2026-10-07T02:47:20.455Z",
+      "ended": "2026-10-07T02:47:21.014Z",
+      "elapsedMs": 558.436667,
+      "exit": {
+        "code": 0,
+        "signal": null,
+        "natural": true,
+        "evidence": "exec_command의 종료 0 응답과 worker 마지막 active resources 단언"
+      },
+      "mode": "cpu"
+    },
+    {
+      "file": "profile-112-branch/cpu-oneOf-20-r1.json",
+      "started": "2026-10-07T02:47:21.301Z",
+      "ended": "2026-10-07T02:47:22.008Z",
+      "elapsedMs": 706.851958,
+      "exit": {
+        "code": 0,
+        "signal": null,
+        "natural": true,
+        "evidence": "exec_command의 종료 0 응답과 worker 마지막 active resources 단언"
+      },
+      "mode": "cpu"
+    },
+    {
+      "file": "profile-112-branch/cpu-oneOf-40-r1.json",
+      "started": "2026-10-07T02:47:22.300Z",
+      "ended": "2026-10-07T02:47:23.254Z",
+      "elapsedMs": 953.593916,
+      "exit": {
+        "code": 0,
+        "signal": null,
+        "natural": true,
+        "evidence": "exec_command의 종료 0 응답과 worker 마지막 active resources 단언"
+      },
+      "mode": "cpu"
+    },
+    {
+      "file": "profile-112-branch/cpu-oneOf-5-r2.json",
+      "started": "2026-10-07T02:47:23.544Z",
+      "ended": "2026-10-07T02:47:24.021Z",
+      "elapsedMs": 476.39233299999995,
+      "exit": {
+        "code": 0,
+        "signal": null,
+        "natural": true,
+        "evidence": "exec_command의 종료 0 응답과 worker 마지막 active resources 단언"
+      },
+      "mode": "cpu"
+    },
+    {
+      "file": "profile-112-branch/cpu-oneOf-10-r2.json",
+      "started": "2026-10-07T02:47:24.310Z",
+      "ended": "2026-10-07T02:47:24.882Z",
+      "elapsedMs": 572.6792919999999,
+      "exit": {
+        "code": 0,
+        "signal": null,
+        "natural": true,
+        "evidence": "exec_command의 종료 0 응답과 worker 마지막 active resources 단언"
+      },
+      "mode": "cpu"
+    },
+    {
+      "file": "profile-112-branch/cpu-oneOf-20-r2.json",
+      "started": "2026-10-07T02:47:25.174Z",
+      "ended": "2026-10-07T02:47:25.888Z",
+      "elapsedMs": 713.4475829999999,
+      "exit": {
+        "code": 0,
+        "signal": null,
+        "natural": true,
+        "evidence": "exec_command의 종료 0 응답과 worker 마지막 active resources 단언"
+      },
+      "mode": "cpu"
+    },
+    {
+      "file": "profile-112-branch/cpu-oneOf-40-r2.json",
+      "started": "2026-10-07T02:47:26.181Z",
+      "ended": "2026-10-07T02:47:27.131Z",
+      "elapsedMs": 950.182958,
+      "exit": {
+        "code": 0,
+        "signal": null,
+        "natural": true,
+        "evidence": "exec_command의 종료 0 응답과 worker 마지막 active resources 단언"
+      },
+      "mode": "cpu"
+    },
+    {
+      "file": "profile-112-branch/cpu-oneOf-5-r3.json",
+      "started": "2026-10-07T02:47:27.419Z",
+      "ended": "2026-10-07T02:47:27.915Z",
+      "elapsedMs": 495.315834,
+      "exit": {
+        "code": 0,
+        "signal": null,
+        "natural": true,
+        "evidence": "exec_command의 종료 0 응답과 worker 마지막 active resources 단언"
+      },
+      "mode": "cpu"
+    },
+    {
+      "file": "profile-112-branch/cpu-oneOf-10-r3.json",
+      "started": "2026-10-07T02:47:28.208Z",
+      "ended": "2026-10-07T02:47:28.776Z",
+      "elapsedMs": 568.919458,
+      "exit": {
+        "code": 0,
+        "signal": null,
+        "natural": true,
+        "evidence": "exec_command의 종료 0 응답과 worker 마지막 active resources 단언"
+      },
+      "mode": "cpu"
+    },
+    {
+      "file": "profile-112-branch/cpu-oneOf-20-r3.json",
+      "started": "2026-10-07T02:47:29.072Z",
+      "ended": "2026-10-07T02:47:29.771Z",
+      "elapsedMs": 699.089916,
+      "exit": {
+        "code": 0,
+        "signal": null,
+        "natural": true,
+        "evidence": "exec_command의 종료 0 응답과 worker 마지막 active resources 단언"
+      },
+      "mode": "cpu"
+    },
+    {
+      "file": "profile-112-branch/cpu-oneOf-40-r3.json",
+      "started": "2026-10-07T02:47:30.062Z",
+      "ended": "2026-10-07T02:47:31.022Z",
+      "elapsedMs": 960.227958,
+      "exit": {
+        "code": 0,
+        "signal": null,
+        "natural": true,
+        "evidence": "exec_command의 종료 0 응답과 worker 마지막 active resources 단언"
+      },
+      "mode": "cpu"
+    },
+    {
+      "file": "profile-112-branch/cpu-oneOf-5-r4.json",
+      "started": "2026-10-07T02:47:31.313Z",
+      "ended": "2026-10-07T02:47:31.806Z",
+      "elapsedMs": 492.393584,
+      "exit": {
+        "code": 0,
+        "signal": null,
+        "natural": true,
+        "evidence": "exec_command의 종료 0 응답과 worker 마지막 active resources 단언"
+      },
+      "mode": "cpu"
+    },
+    {
+      "file": "profile-112-branch/cpu-oneOf-10-r4.json",
+      "started": "2026-10-07T02:47:32.093Z",
+      "ended": "2026-10-07T02:47:32.652Z",
+      "elapsedMs": 558.530625,
+      "exit": {
+        "code": 0,
+        "signal": null,
+        "natural": true,
+        "evidence": "exec_command의 종료 0 응답과 worker 마지막 active resources 단언"
+      },
+      "mode": "cpu"
+    },
+    {
+      "file": "profile-112-branch/cpu-oneOf-20-r4.json",
+      "started": "2026-10-07T02:47:32.949Z",
+      "ended": "2026-10-07T02:47:33.647Z",
+      "elapsedMs": 697.527375,
+      "exit": {
+        "code": 0,
+        "signal": null,
+        "natural": true,
+        "evidence": "exec_command의 종료 0 응답과 worker 마지막 active resources 단언"
+      },
+      "mode": "cpu"
+    },
+    {
+      "file": "profile-112-branch/cpu-oneOf-40-r4.json",
+      "started": "2026-10-07T02:47:33.939Z",
+      "ended": "2026-10-07T02:47:34.887Z",
+      "elapsedMs": 947.744666,
+      "exit": {
+        "code": 0,
+        "signal": null,
+        "natural": true,
+        "evidence": "exec_command의 종료 0 응답과 worker 마지막 active resources 단언"
+      },
+      "mode": "cpu"
+    },
+    {
+      "file": "profile-112-branch/cpu-oneOf-5-r5.json",
+      "started": "2026-10-07T02:47:35.185Z",
+      "ended": "2026-10-07T02:47:35.669Z",
+      "elapsedMs": 484.60125,
+      "exit": {
+        "code": 0,
+        "signal": null,
+        "natural": true,
+        "evidence": "exec_command의 종료 0 응답과 worker 마지막 active resources 단언"
+      },
+      "mode": "cpu"
+    },
+    {
+      "file": "profile-112-branch/cpu-oneOf-10-r5.json",
+      "started": "2026-10-07T02:47:35.960Z",
+      "ended": "2026-10-07T02:47:36.514Z",
+      "elapsedMs": 553.4014579999999,
+      "exit": {
+        "code": 0,
+        "signal": null,
+        "natural": true,
+        "evidence": "exec_command의 종료 0 응답과 worker 마지막 active resources 단언"
+      },
+      "mode": "cpu"
+    },
+    {
+      "file": "profile-112-branch/cpu-oneOf-20-r5.json",
+      "started": "2026-10-07T02:47:36.806Z",
+      "ended": "2026-10-07T02:47:37.514Z",
+      "elapsedMs": 707.816792,
+      "exit": {
+        "code": 0,
+        "signal": null,
+        "natural": true,
+        "evidence": "exec_command의 종료 0 응답과 worker 마지막 active resources 단언"
+      },
+      "mode": "cpu"
+    },
+    {
+      "file": "profile-112-branch/cpu-oneOf-40-r5.json",
+      "started": "2026-10-07T02:47:37.803Z",
+      "ended": "2026-10-07T02:47:38.781Z",
+      "elapsedMs": 978.795417,
+      "exit": {
+        "code": 0,
+        "signal": null,
+        "natural": true,
+        "evidence": "exec_command의 종료 0 응답과 worker 마지막 active resources 단언"
+      },
+      "mode": "cpu"
+    },
+    {
+      "file": "profile-112-branch/cpu-oneOf-5-r6.json",
+      "started": "2026-10-07T02:47:39.076Z",
+      "ended": "2026-10-07T02:47:39.567Z",
+      "elapsedMs": 491.25399999999996,
+      "exit": {
+        "code": 0,
+        "signal": null,
+        "natural": true,
+        "evidence": "exec_command의 종료 0 응답과 worker 마지막 active resources 단언"
+      },
+      "mode": "cpu"
+    },
+    {
+      "file": "profile-112-branch/cpu-oneOf-10-r6.json",
+      "started": "2026-10-07T02:47:39.859Z",
+      "ended": "2026-10-07T02:47:40.425Z",
+      "elapsedMs": 566.1645000000001,
+      "exit": {
+        "code": 0,
+        "signal": null,
+        "natural": true,
+        "evidence": "exec_command의 종료 0 응답과 worker 마지막 active resources 단언"
+      },
+      "mode": "cpu"
+    },
+    {
+      "file": "profile-112-branch/cpu-oneOf-20-r6.json",
+      "started": "2026-10-07T02:47:40.717Z",
+      "ended": "2026-10-07T02:47:41.417Z",
+      "elapsedMs": 700.0924160000001,
+      "exit": {
+        "code": 0,
+        "signal": null,
+        "natural": true,
+        "evidence": "exec_command의 종료 0 응답과 worker 마지막 active resources 단언"
+      },
+      "mode": "cpu"
+    },
+    {
+      "file": "profile-112-branch/cpu-oneOf-40-r6.json",
+      "started": "2026-10-07T02:47:41.705Z",
+      "ended": "2026-10-07T02:47:42.661Z",
+      "elapsedMs": 956.159042,
+      "exit": {
+        "code": 0,
+        "signal": null,
+        "natural": true,
+        "evidence": "exec_command의 종료 0 응답과 worker 마지막 active resources 단언"
+      },
+      "mode": "cpu"
+    },
+    {
+      "file": "profile-112-branch/cpu-oneOf-5-r7.json",
+      "started": "2026-10-07T02:47:42.956Z",
+      "ended": "2026-10-07T02:47:43.434Z",
+      "elapsedMs": 478.085708,
+      "exit": {
+        "code": 0,
+        "signal": null,
+        "natural": true,
+        "evidence": "exec_command의 종료 0 응답과 worker 마지막 active resources 단언"
+      },
+      "mode": "cpu"
+    },
+    {
+      "file": "profile-112-branch/cpu-oneOf-10-r7.json",
+      "started": "2026-10-07T02:47:43.722Z",
+      "ended": "2026-10-07T02:47:44.283Z",
+      "elapsedMs": 560.50275,
+      "exit": {
+        "code": 0,
+        "signal": null,
+        "natural": true,
+        "evidence": "exec_command의 종료 0 응답과 worker 마지막 active resources 단언"
+      },
+      "mode": "cpu"
+    },
+    {
+      "file": "profile-112-branch/cpu-oneOf-20-r7.json",
+      "started": "2026-10-07T02:47:44.572Z",
+      "ended": "2026-10-07T02:47:45.277Z",
+      "elapsedMs": 704.723708,
+      "exit": {
+        "code": 0,
+        "signal": null,
+        "natural": true,
+        "evidence": "exec_command의 종료 0 응답과 worker 마지막 active resources 단언"
+      },
+      "mode": "cpu"
+    },
+    {
+      "file": "profile-112-branch/cpu-oneOf-40-r7.json",
+      "started": "2026-10-07T02:47:45.568Z",
+      "ended": "2026-10-07T02:47:46.528Z",
+      "elapsedMs": 959.737333,
+      "exit": {
+        "code": 0,
+        "signal": null,
+        "natural": true,
+        "evidence": "exec_command의 종료 0 응답과 worker 마지막 active resources 단언"
+      },
+      "mode": "cpu"
+    },
+    {
+      "file": "profile-112-branch/cpu-oneOf-5-r8.json",
+      "started": "2026-10-07T02:47:46.819Z",
+      "ended": "2026-10-07T02:47:47.302Z",
+      "elapsedMs": 483.24300000000005,
+      "exit": {
+        "code": 0,
+        "signal": null,
+        "natural": true,
+        "evidence": "exec_command의 종료 0 응답과 worker 마지막 active resources 단언"
+      },
+      "mode": "cpu"
+    },
+    {
+      "file": "profile-112-branch/cpu-oneOf-10-r8.json",
+      "started": "2026-10-07T02:47:47.593Z",
+      "ended": "2026-10-07T02:47:48.152Z",
+      "elapsedMs": 558.952792,
+      "exit": {
+        "code": 0,
+        "signal": null,
+        "natural": true,
+        "evidence": "exec_command의 종료 0 응답과 worker 마지막 active resources 단언"
+      },
+      "mode": "cpu"
+    },
+    {
+      "file": "profile-112-branch/cpu-oneOf-20-r8.json",
+      "started": "2026-10-07T02:47:48.442Z",
+      "ended": "2026-10-07T02:47:49.144Z",
+      "elapsedMs": 702.3887500000001,
+      "exit": {
+        "code": 0,
+        "signal": null,
+        "natural": true,
+        "evidence": "exec_command의 종료 0 응답과 worker 마지막 active resources 단언"
+      },
+      "mode": "cpu"
+    },
+    {
+      "file": "profile-112-branch/cpu-oneOf-40-r8.json",
+      "started": "2026-10-07T02:47:49.436Z",
+      "ended": "2026-10-07T02:47:50.392Z",
+      "elapsedMs": 955.6140839999999,
+      "exit": {
+        "code": 0,
+        "signal": null,
+        "natural": true,
+        "evidence": "exec_command의 종료 0 응답과 worker 마지막 active resources 단언"
+      },
+      "mode": "cpu"
+    },
+    {
+      "file": "profile-112-branch/cpu-oneOf-5-r9.json",
+      "started": "2026-10-07T02:47:50.678Z",
+      "ended": "2026-10-07T02:47:51.160Z",
+      "elapsedMs": 481.862333,
+      "exit": {
+        "code": 0,
+        "signal": null,
+        "natural": true,
+        "evidence": "exec_command의 종료 0 응답과 worker 마지막 active resources 단언"
+      },
+      "mode": "cpu"
+    },
+    {
+      "file": "profile-112-branch/cpu-oneOf-10-r9.json",
+      "started": "2026-10-07T02:47:51.444Z",
+      "ended": "2026-10-07T02:47:52.001Z",
+      "elapsedMs": 556.289833,
+      "exit": {
+        "code": 0,
+        "signal": null,
+        "natural": true,
+        "evidence": "exec_command의 종료 0 응답과 worker 마지막 active resources 단언"
+      },
+      "mode": "cpu"
+    },
+    {
+      "file": "profile-112-branch/cpu-oneOf-20-r9.json",
+      "started": "2026-10-07T02:47:52.293Z",
+      "ended": "2026-10-07T02:47:52.998Z",
+      "elapsedMs": 705.16,
+      "exit": {
+        "code": 0,
+        "signal": null,
+        "natural": true,
+        "evidence": "exec_command의 종료 0 응답과 worker 마지막 active resources 단언"
+      },
+      "mode": "cpu"
+    },
+    {
+      "file": "profile-112-branch/cpu-oneOf-40-r9.json",
+      "started": "2026-10-07T02:47:53.287Z",
+      "ended": "2026-10-07T02:47:54.244Z",
+      "elapsedMs": 957.134542,
+      "exit": {
+        "code": 0,
+        "signal": null,
+        "natural": true,
+        "evidence": "exec_command의 종료 0 응답과 worker 마지막 active resources 단언"
+      },
+      "mode": "cpu"
+    },
+    {
+      "file": "profile-112-branch/counts-oneOf-5-r1.json",
+      "started": "2026-10-07T03:09:30.363Z",
+      "ended": "2026-10-07T03:09:30.947Z",
+      "elapsedMs": 583.815584,
+      "exit": {
+        "code": 0,
+        "signal": null,
+        "natural": true,
+        "evidence": "exec_command의 종료 0 응답과 worker 마지막 active resources 단언"
+      },
+      "mode": "counts"
+    },
+    {
+      "file": "profile-112-branch/counts-oneOf-10-r1.json",
+      "started": "2026-10-07T03:09:31.457Z",
+      "ended": "2026-10-07T03:09:32.077Z",
+      "elapsedMs": 620.596,
+      "exit": {
+        "code": 0,
+        "signal": null,
+        "natural": true,
+        "evidence": "exec_command의 종료 0 응답과 worker 마지막 active resources 단언"
+      },
+      "mode": "counts"
+    },
+    {
+      "file": "profile-112-branch/counts-oneOf-20-r1.json",
+      "started": "2026-10-07T03:09:32.589Z",
+      "ended": "2026-10-07T03:09:33.314Z",
+      "elapsedMs": 724.939292,
+      "exit": {
+        "code": 0,
+        "signal": null,
+        "natural": true,
+        "evidence": "exec_command의 종료 0 응답과 worker 마지막 active resources 단언"
+      },
+      "mode": "counts"
+    },
+    {
+      "file": "profile-112-branch/counts-oneOf-40-r1.json",
+      "started": "2026-10-07T03:09:33.826Z",
+      "ended": "2026-10-07T03:09:34.756Z",
+      "elapsedMs": 930.319042,
+      "exit": {
+        "code": 0,
+        "signal": null,
+        "natural": true,
+        "evidence": "exec_command의 종료 0 응답과 worker 마지막 active resources 단언"
+      },
+      "mode": "counts"
+    }
+  ],
+  "excluded": [
+    {
+      "stage": "계수 변환의 최초 빌드",
+      "reason": "빈 함수 본문 삽입 위치 충돌; 변환 정정 뒤 다시 실행, 실패 실행은 측정에 포함하지 않음"
+    },
+    {
+      "stage": "후처리 검증의 두 실행",
+      "reason": "report-row 확인의 종료 응답 전에 analyze를 시작하여 겹침; 둘 다 원표본을 읽는 계산이며 원 측정은 겹치지 않음; 두 계산을 제외하고 종료 확인 후 순차 재실행"
+    }
+  ],
+  "reconstructionProof": {
+    "historicalToolSha256": "956d8674d4d81fe52d3165cf30d94cc27d32a03c7afa3550729e6f4363f87473",
+    "allHistoricalToolHashesMatch": true,
+    "everyDiagnosticObservationAssertsNewScheduledZero": true,
+    "everyDiagnosticObservationAssertsTailZero": true,
+    "allHistoricalWorkersNaturallyExitedZero": true,
+    "diagnosticSummarySamples": 101,
+    "diagnosticSummaryP99IsMax": false,
+    "basis": "p99 요약만이 아니라 같은 SHA의 원 도구가 모든 진단 호출에서 예약·후속 작업 0을 직접 단언한 뒤 종료 0인 사실"
+  },
+  "constraint": "58개는 최종 채택 원자료의 worker 수입니다. 계수의 중간 성공 실행과 초기 실패 및 겹친 후처리 계산은 포함하지 않습니다."
+}

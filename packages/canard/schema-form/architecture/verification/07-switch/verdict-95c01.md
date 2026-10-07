@@ -23,6 +23,8 @@
 
 ## 검증 (가)/(나)
 
+110라운드 측정기 sentinel 정정(112라운드 재검증): 새 엔진의 예약·실행·후속 macrotask가 0회임을 공식 표본 뒤의 경계 검증으로 먼저 확인한 경우에만 (가)의 종단 끝점을 64 Promise 체크포인트가 끝난 microtask clock과 같은 시점으로 두고, FIFO sentinel은 그 끝점 뒤에서 계속 배출합니다. 측정 도구는 이를 세 번째 원시 열 `preSentinelCalibrationMs`로 보존하며 reporter의 (가)만 이 열에서 kM을 뺀 값과 보정 microtask를 비교합니다. 이는 같은 호출의 `[(sentinel−kC)−(micro−kM)]`에서 측정기 전용 꼬리 `[(sentinel−preSentinel)−k(C−M)]`를 정확히 제외하는 것과 같고, 별도의 두 clock이 일치함을 증명하는 검사는 아닙니다. 기존 두 원시 열, 공식 median/p99·배율의 공통 C/M, 빈 대기 잡음·seeded bootstrap·(나) 합과 대체·동률 규칙, OFF 1-pass/ON 2-pass FIFO, fresh process 세 회차·예열 20·101표본·clock 밖 GC와 check anchor는 유지합니다. 세 번째 열이 없는 111 원자료도 각 행·회차의 새 엔진 예약 및 후속 실행 0회가 확인되므로 같은 clock 끝점을 정확히 재구성할 수 있습니다. 이 전제가 없으면 재측정이 필요합니다. 결과·104행 재계산 중 수치 변경 103행 목록·배열 12행 재검증은 [112라운드 보고](profile-112-branch.md)와 [원자료·계산](profile-112-branch-summary.json)에 있습니다.
+
 검증 (가)의 끝점 꼬리 통계량을 `median(보정 종단) − median(보정 microtask)`에서 같은 호출의 표본별 차를 먼저 구한 `medianᵢ[(종단ᵢ − kC) − (microtaskᵢ − kM)]`로 변경하며 각 회차와 세 회차 pooled 표본에 똑같이 적용합니다(k는 BF 쓰기 수, 그 외에는 1). 주변 중앙값은 서로 다른 표본을 선택하고 가산적이지 않아 실제 꼬리 대기와 무관한 차이를 만들 수 있으므로 이 비가산 합성 결함을 제거합니다. C/M, 잡음 폭과 seeded bootstrap 오차, (나)의 합·대체 규칙 및 공식 배율·동률 판정은 유지합니다. 재측정은 fresh process, old→new / new→old / old→new 세 회차, 예열 20·표본 101, clock 밖 강제 GC와 check anchor, 기존 FIFO sentinel 종단을 유지하며 기존 표의 수치는 당시 기록으로 보존하고 재계산 영향과 HEAD 재측정은 `profile-110-calibration.md`에 기록합니다.
 
 (가) 새 엔진의 보정 종단과 보정 microtask 값은 104/104행에서 잡음 범위 안입니다. (나) 구 엔진은 94/104행에서 모든 회차가 일치하며 10행은 합으로 대체했습니다. 콜백 실행은 별도 후속 실행에서 callback 전후 두 clock으로 잰 실제 실행 합입니다. 공식 microtask 표본과 별도 콜백 표본을 회차 내 순번별로 합쳐 중앙값/p99를 구합니다. 내부 함수 span이나 async_hooks는 없습니다. 대체가 필요한 행은 종단과 (나) 합의 차이가 미리 정한 잡음 폭을 넘었기 때문이며, 한 회차라도 실패하면 그 행의 세 회차 구 값 전체를 (나) 합으로 통일합니다.

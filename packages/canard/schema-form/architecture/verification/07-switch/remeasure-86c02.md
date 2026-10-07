@@ -3959,3 +3959,13 @@ O1 전용 테스트 4개와 A1 전용 테스트 7개는 정상 후보에서 통�
 
 
 커밋할 때 두 실험의 시험 가운데 HEAD에서 통과하는 여섯 개를 지금 동작의 고정 시험으로 남겼습니다. `assembleObject.key-identity.test.ts`는 숫자·문자 키 순서, writeObjectKey 특수 키, 바뀌지 않은 자식 참조, 같은 값의 이전 참조 복원, 자식·schema·extras가 바뀔 때의 기존 경로를 단언합니다. `updateOutput.hint-exposure.test.ts`는 조립 힌트가 방출 값과 배달 payload에서 닿지 않음을 단언합니다. 기각된 구현의 작업 횟수와 힌트 재사용을 단언하던 다섯 개는 HEAD에서 실패하므로 남기지 않았습니다.
+
+## 110라운드 측정기 sentinel 정정
+
+2026-10-07, HEAD `bef81f4d747d028b05082d594138148520e4d992`. 109C-01의 지시에 따라 `tools/measure-verdict-95c01.mjs`의 측정기 전용 FIFO sentinel 꼬리와 그 C−M을 (가)에서 제외했습니다. 엔진 예약·실행·후속 macrotask 0회라는 별도 경계 검증이 성립할 때에만 64 Promise 체크포인트 뒤의 microtask clock을 `preSentinelCalibrationMs`로 보존하고 (가)에 사용합니다. 같은 clock에서 얻는 0µs는 독립된 두 시계의 일치 증명이 아닙니다. 원래 두 원시 열, 공식 성능 값·배율·C/M·잡음·bootstrap·(나)·FIFO·fresh 세 회차·예열 20·101표본·clock 밖 GC·check anchor를 유지했습니다. 방법 변경은 [공식 검증 설명](verdict-95c01.md#검증-가나) 옆의 한 문단에 기록했습니다.
+
+array-100/500/1000 OFF를 old→new / new→old / old→new 각 fresh 세 회차로 다시 실행했습니다. BF·첫·이후·마운트 12행 모두 (가) pooled·세 회차 통과이고 차이는 0µs입니다. BF·첫의 pooled 차이/잡음은 각각 **0.000/9.750**, **0.000/7.375**, **0.000/8.001µs**입니다. array-100 BF·첫의 보류를 기존 3.080× 성능 **미달**로 바꾸고 **소유자 수용(104라운드)**은 유지했습니다. array-500 BF·첫 1.323×와 array-1000 BF·첫 0.809×는 충족이며 기존 수용 표시도 유지합니다. array-100 이후 4.107× 미달·수용, array-500 이후 1.237× 충족·수용, array-1000 이후 0.726× 충족도 그대로입니다. 새로운 잡음은 fresh 재검증 값이며 기존 성능 값은 111 공식 기록입니다.
+
+111 raw의 104개 고유 행·312회차는 새 엔진 예약 및 sentinel 뒤 후속 작업이 모두 0회이므로 세 번째 열 없이도 같은 pre-sentinel 끝점을 정확히 복원할 수 있습니다. 재측정이 필요한 행은 없습니다. 수치가 바뀌는 행은 **103개(배열 이외 91개)**이고 `sample-3/off/update-later`의 기존 0µs만 그대로입니다. 통과 여부는 array-100 BF·첫 두 행만 바뀌며 나머지 102행은 통과를 유지합니다. 표시 행 108개 중 축 마운트 네 행은 일반 표와 공유합니다. 원자료 JSON은 보존하고 [111 최종 표](profile-111-final.md)의 (가) 차이 열을 0µs로 정정했습니다.
+
+수정한 도구의 array-100/off/update 여섯 worker 원자료를 canonical reporter의 실제 validation loop로 확인하여 `CANONICAL_ROW_END_TO_END_OK`를 얻었습니다. (가) pooled·세 회차 통과, old/new digest 일치, 공식 source=sentinel 유지, 모든 worker/esbuild 자연 종료를 확인했습니다. 지연 sentinel 회귀 확인은 정정 전 세 번째 열 부재로 실패하고 정정 뒤 `SENTINEL_PLACEMENT_OK`입니다. 전체 변경 행, fresh 12행과 회차별 수치·분기 귀속은 [112 보고](profile-112-branch.md), [summary](profile-112-branch-summary.json), [원자료·감사](profile-112-branch/audit.json)에 있습니다. 제품 소스 변경·git 쓰기·설치는 하지 않았습니다.
