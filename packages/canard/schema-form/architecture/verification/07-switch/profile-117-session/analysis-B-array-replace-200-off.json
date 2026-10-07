@@ -1,0 +1,1474 @@
+{
+  "HEAD": "02026967958e29d1735848c39e79f76b94fe61e3",
+  "stage": "B",
+  "fixture": "array-replace-200",
+  "validation": "off",
+  "count": 3,
+  "rows": [
+    {
+      "fixture": "array-replace-200",
+      "validation": "off",
+      "mode": "mount",
+      "callCount": 1,
+      "versions": {
+        "HEAD": {
+          "metric": {
+            "median": 0.25875000000000004,
+            "p99": 0.325042,
+            "samples": 303
+          },
+          "selected": "sentinel",
+          "fallback": false,
+          "sentinel": {
+            "median": 0.25875000000000004,
+            "p99": 0.325042,
+            "samples": 303
+          },
+          "micro": {
+            "median": 0.256417,
+            "p99": 0.31675,
+            "samples": 303
+          },
+          "sum": {
+            "median": 0.256417,
+            "p99": 0.31675,
+            "samples": 303
+          },
+          "endpointCheck": {
+            "difference": -0.009417000000000009,
+            "noise": 0.025498999999999994,
+            "withinNoise": true,
+            "passed": true,
+            "zeroEngineMacrotasks": true,
+            "runs": [
+              {
+                "run": 1,
+                "difference": -0.009791999999999995,
+                "noise": 0.061623999999999984,
+                "withinNoise": true,
+                "zeroEngineMacrotasks": true,
+                "boundary": {
+                  "scheduled": {
+                    "median": 0,
+                    "max": 0
+                  },
+                  "executed": {
+                    "median": 0,
+                    "max": 0
+                  },
+                  "cancelled": {
+                    "median": 0,
+                    "max": 0
+                  },
+                  "pendingAtMicrotasks": {
+                    "median": 0,
+                    "max": 0
+                  },
+                  "pendingAtFirstSentinel": {
+                    "median": 0,
+                    "max": 0
+                  },
+                  "pendingAtSentinel": {
+                    "median": 0,
+                    "max": 0
+                  },
+                  "tailScheduled": {
+                    "median": 0,
+                    "max": 0
+                  },
+                  "tailExecuted": {
+                    "median": 0,
+                    "max": 0
+                  }
+                },
+                "metric": {
+                  "median": 0.23020800000000002,
+                  "p99": 0.307792,
+                  "samples": 101
+                }
+              },
+              {
+                "run": 2,
+                "difference": -0.009167000000000008,
+                "noise": 0.027251000000000025,
+                "withinNoise": true,
+                "zeroEngineMacrotasks": true,
+                "boundary": {
+                  "scheduled": {
+                    "median": 0,
+                    "max": 0
+                  },
+                  "executed": {
+                    "median": 0,
+                    "max": 0
+                  },
+                  "cancelled": {
+                    "median": 0,
+                    "max": 0
+                  },
+                  "pendingAtMicrotasks": {
+                    "median": 0,
+                    "max": 0
+                  },
+                  "pendingAtFirstSentinel": {
+                    "median": 0,
+                    "max": 0
+                  },
+                  "pendingAtSentinel": {
+                    "median": 0,
+                    "max": 0
+                  },
+                  "tailScheduled": {
+                    "median": 0,
+                    "max": 0
+                  },
+                  "tailExecuted": {
+                    "median": 0,
+                    "max": 0
+                  }
+                },
+                "metric": {
+                  "median": 0.261334,
+                  "p99": 0.33375,
+                  "samples": 101
+                }
+              },
+              {
+                "run": 3,
+                "difference": -0.009167000000000036,
+                "noise": 0.03762399999999996,
+                "withinNoise": true,
+                "zeroEngineMacrotasks": true,
+                "boundary": {
+                  "scheduled": {
+                    "median": 0,
+                    "max": 0
+                  },
+                  "executed": {
+                    "median": 0,
+                    "max": 0
+                  },
+                  "cancelled": {
+                    "median": 0,
+                    "max": 0
+                  },
+                  "pendingAtMicrotasks": {
+                    "median": 0,
+                    "max": 0
+                  },
+                  "pendingAtFirstSentinel": {
+                    "median": 0,
+                    "max": 0
+                  },
+                  "pendingAtSentinel": {
+                    "median": 0,
+                    "max": 0
+                  },
+                  "tailScheduled": {
+                    "median": 0,
+                    "max": 0
+                  },
+                  "tailExecuted": {
+                    "median": 0,
+                    "max": 0
+                  }
+                },
+                "metric": {
+                  "median": 0.259208,
+                  "p99": 0.320083,
+                  "samples": 101
+                }
+              }
+            ]
+          }
+        },
+        "0.16.0": {
+          "metric": {
+            "median": 0.194625,
+            "p99": 0.235375,
+            "samples": 303
+          },
+          "selected": "sentinel",
+          "fallback": false,
+          "sentinel": {
+            "median": 0.194625,
+            "p99": 0.235375,
+            "samples": 303
+          },
+          "micro": {
+            "median": 0.191625,
+            "p99": 0.218916,
+            "samples": 303
+          },
+          "sum": {
+            "median": 0.1927080000009724,
+            "p99": 0.2199579999998703,
+            "samples": 303
+          },
+          "endpointCheck": {
+            "difference": 0.0019169999990275854,
+            "noise": 0.004707000002011604,
+            "withinNoise": true,
+            "passed": true,
+            "zeroEngineMacrotasks": true,
+            "runs": [
+              {
+                "run": 1,
+                "difference": 0.0013340000000787444,
+                "noise": 0.006706999999237325,
+                "withinNoise": true,
+                "zeroEngineMacrotasks": true,
+                "boundary": {
+                  "scheduled": {
+                    "median": 2,
+                    "max": 2
+                  },
+                  "executed": {
+                    "median": 2,
+                    "max": 2
+                  },
+                  "cancelled": {
+                    "median": 0,
+                    "max": 0
+                  },
+                  "pendingAtMicrotasks": {
+                    "median": 2,
+                    "max": 2
+                  },
+                  "pendingAtFirstSentinel": {
+                    "median": 0,
+                    "max": 0
+                  },
+                  "pendingAtSentinel": {
+                    "median": 0,
+                    "max": 0
+                  },
+                  "tailScheduled": {
+                    "median": 0,
+                    "max": 0
+                  },
+                  "tailExecuted": {
+                    "median": 0,
+                    "max": 0
+                  }
+                },
+                "metric": {
+                  "median": 0.194042,
+                  "p99": 0.24029100000000003,
+                  "samples": 101
+                }
+              },
+              {
+                "run": 2,
+                "difference": 0.0017910000003672488,
+                "noise": 0.005625999998993743,
+                "withinNoise": true,
+                "zeroEngineMacrotasks": true,
+                "boundary": {
+                  "scheduled": {
+                    "median": 2,
+                    "max": 2
+                  },
+                  "executed": {
+                    "median": 2,
+                    "max": 2
+                  },
+                  "cancelled": {
+                    "median": 0,
+                    "max": 0
+                  },
+                  "pendingAtMicrotasks": {
+                    "median": 2,
+                    "max": 2
+                  },
+                  "pendingAtFirstSentinel": {
+                    "median": 0,
+                    "max": 0
+                  },
+                  "pendingAtSentinel": {
+                    "median": 0,
+                    "max": 0
+                  },
+                  "tailScheduled": {
+                    "median": 0,
+                    "max": 0
+                  },
+                  "tailExecuted": {
+                    "median": 0,
+                    "max": 0
+                  }
+                },
+                "metric": {
+                  "median": 0.193,
+                  "p99": 0.232792,
+                  "samples": 101
+                }
+              },
+              {
+                "run": 3,
+                "difference": 0.001959000000603922,
+                "noise": 0.006206999998954828,
+                "withinNoise": true,
+                "zeroEngineMacrotasks": true,
+                "boundary": {
+                  "scheduled": {
+                    "median": 2,
+                    "max": 2
+                  },
+                  "executed": {
+                    "median": 2,
+                    "max": 2
+                  },
+                  "cancelled": {
+                    "median": 0,
+                    "max": 0
+                  },
+                  "pendingAtMicrotasks": {
+                    "median": 2,
+                    "max": 2
+                  },
+                  "pendingAtFirstSentinel": {
+                    "median": 0,
+                    "max": 0
+                  },
+                  "pendingAtSentinel": {
+                    "median": 0,
+                    "max": 0
+                  },
+                  "tailScheduled": {
+                    "median": 0,
+                    "max": 0
+                  },
+                  "tailExecuted": {
+                    "median": 0,
+                    "max": 0
+                  }
+                },
+                "metric": {
+                  "median": 0.19679200000000002,
+                  "p99": 0.234292,
+                  "samples": 101
+                }
+              }
+            ]
+          }
+        }
+      },
+      "paired": {
+        "median": 0.06279099999999999,
+        "low": 0.04687599999999997,
+        "high": 0.0675,
+        "halfWidth": 0.015915000000000012,
+        "trials": 1999,
+        "seed": 101
+      },
+      "runPairedMedians": [
+        0.03708299999999998,
+        0.06483300000000003,
+        0.06312500000000004
+      ]
+    },
+    {
+      "fixture": "array-replace-200",
+      "validation": "off",
+      "mode": "update",
+      "callCount": 1,
+      "versions": {
+        "HEAD": {
+          "metric": {
+            "median": 4.821709,
+            "p99": 5.386958,
+            "samples": 303
+          },
+          "selected": "sentinel",
+          "fallback": false,
+          "sentinel": {
+            "median": 4.821709,
+            "p99": 5.386958,
+            "samples": 303
+          },
+          "micro": {
+            "median": 4.812957999999999,
+            "p99": 5.378915999999999,
+            "samples": 303
+          },
+          "sum": {
+            "median": 4.812957999999999,
+            "p99": 5.378915999999999,
+            "samples": 303
+          },
+          "endpointCheck": {
+            "difference": 0.005166000000000892,
+            "noise": 0.042124000000000106,
+            "withinNoise": true,
+            "passed": true,
+            "zeroEngineMacrotasks": true,
+            "runs": [
+              {
+                "run": 1,
+                "difference": 0.005875000000000519,
+                "noise": 0.061874999999999514,
+                "withinNoise": true,
+                "zeroEngineMacrotasks": true,
+                "boundary": {
+                  "scheduled": {
+                    "median": 0,
+                    "max": 0
+                  },
+                  "executed": {
+                    "median": 0,
+                    "max": 0
+                  },
+                  "cancelled": {
+                    "median": 0,
+                    "max": 0
+                  },
+                  "pendingAtMicrotasks": {
+                    "median": 0,
+                    "max": 0
+                  },
+                  "pendingAtFirstSentinel": {
+                    "median": 0,
+                    "max": 0
+                  },
+                  "pendingAtSentinel": {
+                    "median": 0,
+                    "max": 0
+                  },
+                  "tailScheduled": {
+                    "median": 0,
+                    "max": 0
+                  },
+                  "tailExecuted": {
+                    "median": 0,
+                    "max": 0
+                  }
+                },
+                "metric": {
+                  "median": 4.800625,
+                  "p99": 5.1525,
+                  "samples": 101
+                }
+              },
+              {
+                "run": 2,
+                "difference": 0.004999999999999893,
+                "noise": 0.07358400000000015,
+                "withinNoise": true,
+                "zeroEngineMacrotasks": true,
+                "boundary": {
+                  "scheduled": {
+                    "median": 0,
+                    "max": 0
+                  },
+                  "executed": {
+                    "median": 0,
+                    "max": 0
+                  },
+                  "cancelled": {
+                    "median": 0,
+                    "max": 0
+                  },
+                  "pendingAtMicrotasks": {
+                    "median": 0,
+                    "max": 0
+                  },
+                  "pendingAtFirstSentinel": {
+                    "median": 0,
+                    "max": 0
+                  },
+                  "pendingAtSentinel": {
+                    "median": 0,
+                    "max": 0
+                  },
+                  "tailScheduled": {
+                    "median": 0,
+                    "max": 0
+                  },
+                  "tailExecuted": {
+                    "median": 0,
+                    "max": 0
+                  }
+                },
+                "metric": {
+                  "median": 4.811959,
+                  "p99": 5.231666000000001,
+                  "samples": 101
+                }
+              },
+              {
+                "run": 3,
+                "difference": 0.004750000000000476,
+                "noise": 0.11141499999999988,
+                "withinNoise": true,
+                "zeroEngineMacrotasks": true,
+                "boundary": {
+                  "scheduled": {
+                    "median": 0,
+                    "max": 0
+                  },
+                  "executed": {
+                    "median": 0,
+                    "max": 0
+                  },
+                  "cancelled": {
+                    "median": 0,
+                    "max": 0
+                  },
+                  "pendingAtMicrotasks": {
+                    "median": 0,
+                    "max": 0
+                  },
+                  "pendingAtFirstSentinel": {
+                    "median": 0,
+                    "max": 0
+                  },
+                  "pendingAtSentinel": {
+                    "median": 0,
+                    "max": 0
+                  },
+                  "tailScheduled": {
+                    "median": 0,
+                    "max": 0
+                  },
+                  "tailExecuted": {
+                    "median": 0,
+                    "max": 0
+                  }
+                },
+                "metric": {
+                  "median": 4.855917000000001,
+                  "p99": 5.5655,
+                  "samples": 101
+                }
+              }
+            ]
+          }
+        },
+        "0.16.0": {
+          "metric": {
+            "median": 3.016332000009061,
+            "p99": 3.3082820000038193,
+            "samples": 303
+          },
+          "selected": "sum",
+          "fallback": true,
+          "sentinel": {
+            "median": 3.1178749999999997,
+            "p99": 3.424625,
+            "samples": 303
+          },
+          "micro": {
+            "median": 2.964167,
+            "p99": 3.2519590000000003,
+            "samples": 303
+          },
+          "sum": {
+            "median": 3.016332000009061,
+            "p99": 3.3082820000038193,
+            "samples": 303
+          },
+          "endpointCheck": {
+            "difference": 0.10154299999093874,
+            "noise": 0.044661999988466594,
+            "withinNoise": false,
+            "passed": false,
+            "zeroEngineMacrotasks": true,
+            "runs": [
+              {
+                "run": 1,
+                "difference": 0.11015900000873691,
+                "noise": 0.07815299999992159,
+                "withinNoise": false,
+                "zeroEngineMacrotasks": true,
+                "boundary": {
+                  "scheduled": {
+                    "median": 803,
+                    "max": 803
+                  },
+                  "executed": {
+                    "median": 803,
+                    "max": 803
+                  },
+                  "cancelled": {
+                    "median": 0,
+                    "max": 0
+                  },
+                  "pendingAtMicrotasks": {
+                    "median": 803,
+                    "max": 803
+                  },
+                  "pendingAtFirstSentinel": {
+                    "median": 0,
+                    "max": 0
+                  },
+                  "pendingAtSentinel": {
+                    "median": 0,
+                    "max": 0
+                  },
+                  "tailScheduled": {
+                    "median": 0,
+                    "max": 0
+                  },
+                  "tailExecuted": {
+                    "median": 0,
+                    "max": 0
+                  }
+                },
+                "metric": {
+                  "median": 2.999298999991263,
+                  "p99": 3.247536000019524,
+                  "samples": 101
+                }
+              },
+              {
+                "run": 2,
+                "difference": 0.10067800001022587,
+                "noise": 0.06246600001368946,
+                "withinNoise": false,
+                "zeroEngineMacrotasks": true,
+                "boundary": {
+                  "scheduled": {
+                    "median": 803,
+                    "max": 803
+                  },
+                  "executed": {
+                    "median": 803,
+                    "max": 803
+                  },
+                  "cancelled": {
+                    "median": 0,
+                    "max": 0
+                  },
+                  "pendingAtMicrotasks": {
+                    "median": 803,
+                    "max": 803
+                  },
+                  "pendingAtFirstSentinel": {
+                    "median": 0,
+                    "max": 0
+                  },
+                  "pendingAtSentinel": {
+                    "median": 0,
+                    "max": 0
+                  },
+                  "tailScheduled": {
+                    "median": 0,
+                    "max": 0
+                  },
+                  "tailExecuted": {
+                    "median": 0,
+                    "max": 0
+                  }
+                },
+                "metric": {
+                  "median": 3.026155999989774,
+                  "p99": 3.2948350000005653,
+                  "samples": 101
+                }
+              },
+              {
+                "run": 3,
+                "difference": 0.10540500000695552,
+                "noise": 0.06998500001032887,
+                "withinNoise": false,
+                "zeroEngineMacrotasks": true,
+                "boundary": {
+                  "scheduled": {
+                    "median": 803,
+                    "max": 803
+                  },
+                  "executed": {
+                    "median": 803,
+                    "max": 803
+                  },
+                  "cancelled": {
+                    "median": 0,
+                    "max": 0
+                  },
+                  "pendingAtMicrotasks": {
+                    "median": 803,
+                    "max": 803
+                  },
+                  "pendingAtFirstSentinel": {
+                    "median": 0,
+                    "max": 0
+                  },
+                  "pendingAtSentinel": {
+                    "median": 0,
+                    "max": 0
+                  },
+                  "tailScheduled": {
+                    "median": 0,
+                    "max": 0
+                  },
+                  "tailExecuted": {
+                    "median": 0,
+                    "max": 0
+                  }
+                },
+                "metric": {
+                  "median": 3.012469999993044,
+                  "p99": 3.3082820000038193,
+                  "samples": 101
+                }
+              }
+            ]
+          }
+        }
+      },
+      "paired": {
+        "median": 1.8069229999972336,
+        "low": 1.7882119999937744,
+        "high": 1.8267529999935253,
+        "halfWidth": 0.019829999996291647,
+        "trials": 1999,
+        "seed": 101
+      },
+      "runPairedMedians": [
+        1.791377000017003,
+        1.7882470000011241,
+        1.8569649999970719
+      ]
+    },
+    {
+      "fixture": "array-replace-200",
+      "validation": "off",
+      "mode": "update-first",
+      "callCount": 1,
+      "versions": {
+        "HEAD": {
+          "metric": {
+            "median": 4.821709,
+            "p99": 5.386958,
+            "samples": 303
+          },
+          "selected": "sentinel",
+          "fallback": false,
+          "sentinel": {
+            "median": 4.821709,
+            "p99": 5.386958,
+            "samples": 303
+          },
+          "micro": {
+            "median": 4.812957999999999,
+            "p99": 5.378915999999999,
+            "samples": 303
+          },
+          "sum": {
+            "median": 4.812957999999999,
+            "p99": 5.378915999999999,
+            "samples": 303
+          },
+          "endpointCheck": {
+            "difference": 0.005166000000000892,
+            "noise": 0.042124000000000106,
+            "withinNoise": true,
+            "passed": true,
+            "zeroEngineMacrotasks": true,
+            "runs": [
+              {
+                "run": 1,
+                "difference": 0.005875000000000519,
+                "noise": 0.061874999999999514,
+                "withinNoise": true,
+                "zeroEngineMacrotasks": true,
+                "boundary": {
+                  "scheduled": {
+                    "median": 0,
+                    "max": 0
+                  },
+                  "executed": {
+                    "median": 0,
+                    "max": 0
+                  },
+                  "cancelled": {
+                    "median": 0,
+                    "max": 0
+                  },
+                  "pendingAtMicrotasks": {
+                    "median": 0,
+                    "max": 0
+                  },
+                  "pendingAtFirstSentinel": {
+                    "median": 0,
+                    "max": 0
+                  },
+                  "pendingAtSentinel": {
+                    "median": 0,
+                    "max": 0
+                  },
+                  "tailScheduled": {
+                    "median": 0,
+                    "max": 0
+                  },
+                  "tailExecuted": {
+                    "median": 0,
+                    "max": 0
+                  }
+                },
+                "metric": {
+                  "median": 4.800625,
+                  "p99": 5.1525,
+                  "samples": 101
+                }
+              },
+              {
+                "run": 2,
+                "difference": 0.004999999999999893,
+                "noise": 0.07358400000000015,
+                "withinNoise": true,
+                "zeroEngineMacrotasks": true,
+                "boundary": {
+                  "scheduled": {
+                    "median": 0,
+                    "max": 0
+                  },
+                  "executed": {
+                    "median": 0,
+                    "max": 0
+                  },
+                  "cancelled": {
+                    "median": 0,
+                    "max": 0
+                  },
+                  "pendingAtMicrotasks": {
+                    "median": 0,
+                    "max": 0
+                  },
+                  "pendingAtFirstSentinel": {
+                    "median": 0,
+                    "max": 0
+                  },
+                  "pendingAtSentinel": {
+                    "median": 0,
+                    "max": 0
+                  },
+                  "tailScheduled": {
+                    "median": 0,
+                    "max": 0
+                  },
+                  "tailExecuted": {
+                    "median": 0,
+                    "max": 0
+                  }
+                },
+                "metric": {
+                  "median": 4.811959,
+                  "p99": 5.231666000000001,
+                  "samples": 101
+                }
+              },
+              {
+                "run": 3,
+                "difference": 0.004750000000000476,
+                "noise": 0.11141499999999988,
+                "withinNoise": true,
+                "zeroEngineMacrotasks": true,
+                "boundary": {
+                  "scheduled": {
+                    "median": 0,
+                    "max": 0
+                  },
+                  "executed": {
+                    "median": 0,
+                    "max": 0
+                  },
+                  "cancelled": {
+                    "median": 0,
+                    "max": 0
+                  },
+                  "pendingAtMicrotasks": {
+                    "median": 0,
+                    "max": 0
+                  },
+                  "pendingAtFirstSentinel": {
+                    "median": 0,
+                    "max": 0
+                  },
+                  "pendingAtSentinel": {
+                    "median": 0,
+                    "max": 0
+                  },
+                  "tailScheduled": {
+                    "median": 0,
+                    "max": 0
+                  },
+                  "tailExecuted": {
+                    "median": 0,
+                    "max": 0
+                  }
+                },
+                "metric": {
+                  "median": 4.855917000000001,
+                  "p99": 5.5655,
+                  "samples": 101
+                }
+              }
+            ]
+          }
+        },
+        "0.16.0": {
+          "metric": {
+            "median": 3.016332000009061,
+            "p99": 3.3082820000038193,
+            "samples": 303
+          },
+          "selected": "sum",
+          "fallback": true,
+          "sentinel": {
+            "median": 3.1178749999999997,
+            "p99": 3.424625,
+            "samples": 303
+          },
+          "micro": {
+            "median": 2.964167,
+            "p99": 3.2519590000000003,
+            "samples": 303
+          },
+          "sum": {
+            "median": 3.016332000009061,
+            "p99": 3.3082820000038193,
+            "samples": 303
+          },
+          "endpointCheck": {
+            "difference": 0.10154299999093874,
+            "noise": 0.044661999988466594,
+            "withinNoise": false,
+            "passed": false,
+            "zeroEngineMacrotasks": true,
+            "runs": [
+              {
+                "run": 1,
+                "difference": 0.11015900000873691,
+                "noise": 0.07815299999992159,
+                "withinNoise": false,
+                "zeroEngineMacrotasks": true,
+                "boundary": {
+                  "scheduled": {
+                    "median": 803,
+                    "max": 803
+                  },
+                  "executed": {
+                    "median": 803,
+                    "max": 803
+                  },
+                  "cancelled": {
+                    "median": 0,
+                    "max": 0
+                  },
+                  "pendingAtMicrotasks": {
+                    "median": 803,
+                    "max": 803
+                  },
+                  "pendingAtFirstSentinel": {
+                    "median": 0,
+                    "max": 0
+                  },
+                  "pendingAtSentinel": {
+                    "median": 0,
+                    "max": 0
+                  },
+                  "tailScheduled": {
+                    "median": 0,
+                    "max": 0
+                  },
+                  "tailExecuted": {
+                    "median": 0,
+                    "max": 0
+                  }
+                },
+                "metric": {
+                  "median": 2.999298999991263,
+                  "p99": 3.247536000019524,
+                  "samples": 101
+                }
+              },
+              {
+                "run": 2,
+                "difference": 0.10067800001022587,
+                "noise": 0.06246600001368946,
+                "withinNoise": false,
+                "zeroEngineMacrotasks": true,
+                "boundary": {
+                  "scheduled": {
+                    "median": 803,
+                    "max": 803
+                  },
+                  "executed": {
+                    "median": 803,
+                    "max": 803
+                  },
+                  "cancelled": {
+                    "median": 0,
+                    "max": 0
+                  },
+                  "pendingAtMicrotasks": {
+                    "median": 803,
+                    "max": 803
+                  },
+                  "pendingAtFirstSentinel": {
+                    "median": 0,
+                    "max": 0
+                  },
+                  "pendingAtSentinel": {
+                    "median": 0,
+                    "max": 0
+                  },
+                  "tailScheduled": {
+                    "median": 0,
+                    "max": 0
+                  },
+                  "tailExecuted": {
+                    "median": 0,
+                    "max": 0
+                  }
+                },
+                "metric": {
+                  "median": 3.026155999989774,
+                  "p99": 3.2948350000005653,
+                  "samples": 101
+                }
+              },
+              {
+                "run": 3,
+                "difference": 0.10540500000695552,
+                "noise": 0.06998500001032887,
+                "withinNoise": false,
+                "zeroEngineMacrotasks": true,
+                "boundary": {
+                  "scheduled": {
+                    "median": 803,
+                    "max": 803
+                  },
+                  "executed": {
+                    "median": 803,
+                    "max": 803
+                  },
+                  "cancelled": {
+                    "median": 0,
+                    "max": 0
+                  },
+                  "pendingAtMicrotasks": {
+                    "median": 803,
+                    "max": 803
+                  },
+                  "pendingAtFirstSentinel": {
+                    "median": 0,
+                    "max": 0
+                  },
+                  "pendingAtSentinel": {
+                    "median": 0,
+                    "max": 0
+                  },
+                  "tailScheduled": {
+                    "median": 0,
+                    "max": 0
+                  },
+                  "tailExecuted": {
+                    "median": 0,
+                    "max": 0
+                  }
+                },
+                "metric": {
+                  "median": 3.012469999993044,
+                  "p99": 3.3082820000038193,
+                  "samples": 101
+                }
+              }
+            ]
+          }
+        }
+      },
+      "paired": {
+        "median": 1.8069229999972336,
+        "low": 1.7882119999937744,
+        "high": 1.8267529999935253,
+        "halfWidth": 0.019829999996291647,
+        "trials": 1999,
+        "seed": 101
+      },
+      "runPairedMedians": [
+        1.791377000017003,
+        1.7882470000011241,
+        1.8569649999970719
+      ]
+    },
+    {
+      "fixture": "array-replace-200",
+      "validation": "off",
+      "mode": "update-later",
+      "callCount": 1,
+      "versions": {
+        "HEAD": {
+          "metric": {
+            "median": 2.784583,
+            "p99": 3.1426659999999997,
+            "samples": 303
+          },
+          "selected": "sentinel",
+          "fallback": false,
+          "sentinel": {
+            "median": 2.784583,
+            "p99": 3.1426659999999997,
+            "samples": 303
+          },
+          "micro": {
+            "median": 2.781875,
+            "p99": 3.139416,
+            "samples": 303
+          },
+          "sum": {
+            "median": 2.781875,
+            "p99": 3.139416,
+            "samples": 303
+          },
+          "endpointCheck": {
+            "difference": 0.0012919999999994047,
+            "noise": 0.04245700000000002,
+            "withinNoise": true,
+            "passed": true,
+            "zeroEngineMacrotasks": true,
+            "runs": [
+              {
+                "run": 1,
+                "difference": 0.0012499999999997513,
+                "noise": 0.10741600000000001,
+                "withinNoise": true,
+                "zeroEngineMacrotasks": true,
+                "boundary": {
+                  "scheduled": {
+                    "median": 0,
+                    "max": 0
+                  },
+                  "executed": {
+                    "median": 0,
+                    "max": 0
+                  },
+                  "cancelled": {
+                    "median": 0,
+                    "max": 0
+                  },
+                  "pendingAtMicrotasks": {
+                    "median": 0,
+                    "max": 0
+                  },
+                  "pendingAtFirstSentinel": {
+                    "median": 0,
+                    "max": 0
+                  },
+                  "pendingAtSentinel": {
+                    "median": 0,
+                    "max": 0
+                  },
+                  "tailScheduled": {
+                    "median": 0,
+                    "max": 0
+                  },
+                  "tailExecuted": {
+                    "median": 0,
+                    "max": 0
+                  }
+                },
+                "metric": {
+                  "median": 2.828708,
+                  "p99": 3.160166,
+                  "samples": 101
+                }
+              },
+              {
+                "run": 2,
+                "difference": 0.001374999999999904,
+                "noise": 0.0807069999999997,
+                "withinNoise": true,
+                "zeroEngineMacrotasks": true,
+                "boundary": {
+                  "scheduled": {
+                    "median": 0,
+                    "max": 0
+                  },
+                  "executed": {
+                    "median": 0,
+                    "max": 0
+                  },
+                  "cancelled": {
+                    "median": 0,
+                    "max": 0
+                  },
+                  "pendingAtMicrotasks": {
+                    "median": 0,
+                    "max": 0
+                  },
+                  "pendingAtFirstSentinel": {
+                    "median": 0,
+                    "max": 0
+                  },
+                  "pendingAtSentinel": {
+                    "median": 0,
+                    "max": 0
+                  },
+                  "tailScheduled": {
+                    "median": 0,
+                    "max": 0
+                  },
+                  "tailExecuted": {
+                    "median": 0,
+                    "max": 0
+                  }
+                },
+                "metric": {
+                  "median": 2.7672079999999997,
+                  "p99": 3.1211659999999997,
+                  "samples": 101
+                }
+              },
+              {
+                "run": 3,
+                "difference": 0.001290999999999265,
+                "noise": 0.049000999999999906,
+                "withinNoise": true,
+                "zeroEngineMacrotasks": true,
+                "boundary": {
+                  "scheduled": {
+                    "median": 0,
+                    "max": 0
+                  },
+                  "executed": {
+                    "median": 0,
+                    "max": 0
+                  },
+                  "cancelled": {
+                    "median": 0,
+                    "max": 0
+                  },
+                  "pendingAtMicrotasks": {
+                    "median": 0,
+                    "max": 0
+                  },
+                  "pendingAtFirstSentinel": {
+                    "median": 0,
+                    "max": 0
+                  },
+                  "pendingAtSentinel": {
+                    "median": 0,
+                    "max": 0
+                  },
+                  "tailScheduled": {
+                    "median": 0,
+                    "max": 0
+                  },
+                  "tailExecuted": {
+                    "median": 0,
+                    "max": 0
+                  }
+                },
+                "metric": {
+                  "median": 2.783791,
+                  "p99": 3.1360409999999996,
+                  "samples": 101
+                }
+              }
+            ]
+          }
+        },
+        "0.16.0": {
+          "metric": {
+            "median": 2.7614499999953694,
+            "p99": 3.1245540000069365,
+            "samples": 303
+          },
+          "selected": "sum",
+          "fallback": true,
+          "sentinel": {
+            "median": 2.8539999999999996,
+            "p99": 3.233125,
+            "samples": 303
+          },
+          "micro": {
+            "median": 2.710583,
+            "p99": 3.081417,
+            "samples": 303
+          },
+          "sum": {
+            "median": 2.7614499999953694,
+            "p99": 3.1245540000069365,
+            "samples": 303
+          },
+          "endpointCheck": {
+            "difference": 0.0925500000046302,
+            "noise": 0.05032399999670939,
+            "withinNoise": false,
+            "passed": false,
+            "zeroEngineMacrotasks": true,
+            "runs": [
+              {
+                "run": 1,
+                "difference": 0.09608899999940457,
+                "noise": 0.06331899999635732,
+                "withinNoise": false,
+                "zeroEngineMacrotasks": true,
+                "boundary": {
+                  "scheduled": {
+                    "median": 803,
+                    "max": 803
+                  },
+                  "executed": {
+                    "median": 803,
+                    "max": 803
+                  },
+                  "cancelled": {
+                    "median": 0,
+                    "max": 0
+                  },
+                  "pendingAtMicrotasks": {
+                    "median": 803,
+                    "max": 803
+                  },
+                  "pendingAtFirstSentinel": {
+                    "median": 0,
+                    "max": 0
+                  },
+                  "pendingAtSentinel": {
+                    "median": 0,
+                    "max": 0
+                  },
+                  "tailScheduled": {
+                    "median": 0,
+                    "max": 0
+                  },
+                  "tailExecuted": {
+                    "median": 0,
+                    "max": 0
+                  }
+                },
+                "metric": {
+                  "median": 2.7654940000005954,
+                  "p99": 3.046795000003076,
+                  "samples": 101
+                }
+              },
+              {
+                "run": 2,
+                "difference": 0.09916599999425069,
+                "noise": 0.10203900002164873,
+                "withinNoise": true,
+                "zeroEngineMacrotasks": true,
+                "boundary": {
+                  "scheduled": {
+                    "median": 803,
+                    "max": 803
+                  },
+                  "executed": {
+                    "median": 803,
+                    "max": 803
+                  },
+                  "cancelled": {
+                    "median": 0,
+                    "max": 0
+                  },
+                  "pendingAtMicrotasks": {
+                    "median": 803,
+                    "max": 803
+                  },
+                  "pendingAtFirstSentinel": {
+                    "median": 0,
+                    "max": 0
+                  },
+                  "pendingAtSentinel": {
+                    "median": 0,
+                    "max": 0
+                  },
+                  "tailScheduled": {
+                    "median": 0,
+                    "max": 0
+                  },
+                  "tailExecuted": {
+                    "median": 0,
+                    "max": 0
+                  }
+                },
+                "metric": {
+                  "median": 2.774959000005749,
+                  "p99": 3.1543630000056364,
+                  "samples": 101
+                }
+              },
+              {
+                "run": 3,
+                "difference": 0.08675000000134014,
+                "noise": 0.09249799999159941,
+                "withinNoise": true,
+                "zeroEngineMacrotasks": true,
+                "boundary": {
+                  "scheduled": {
+                    "median": 803,
+                    "max": 803
+                  },
+                  "executed": {
+                    "median": 803,
+                    "max": 803
+                  },
+                  "cancelled": {
+                    "median": 0,
+                    "max": 0
+                  },
+                  "pendingAtMicrotasks": {
+                    "median": 803,
+                    "max": 803
+                  },
+                  "pendingAtFirstSentinel": {
+                    "median": 0,
+                    "max": 0
+                  },
+                  "pendingAtSentinel": {
+                    "median": 0,
+                    "max": 0
+                  },
+                  "tailScheduled": {
+                    "median": 0,
+                    "max": 0
+                  },
+                  "tailExecuted": {
+                    "median": 0,
+                    "max": 0
+                  }
+                },
+                "metric": {
+                  "median": 2.73449999999866,
+                  "p99": 3.1245540000069365,
+                  "samples": 101
+                }
+              }
+            ]
+          }
+        }
+      },
+      "paired": {
+        "median": 0.047667999998859845,
+        "low": 0.01812800000913395,
+        "high": 0.07391800000387594,
+        "halfWidth": 0.029539999989725896,
+        "trials": 1999,
+        "seed": 101
+      },
+      "runPairedMedians": [
+        0.07804900000330228,
+        -0.018923000009498203,
+        0.07658599999456017
+      ]
+    }
+  ],
+  "calibration": "calibration-B.json",
+  "raw": [
+    "B-core-array-replace-200-off-r1.json",
+    "B-core-array-replace-200-off-r2.json",
+    "B-core-array-replace-200-off-r3.json"
+  ],
+  "workerExit": {
+    "code": 0,
+    "signal": null,
+    "natural": true,
+    "command": "/opt/homebrew/opt/node/bin/node --expose-gc packages/canard/schema-form/architecture/verification/07-switch/profile-117-session/analyze-row.mjs B array-replace-200 off"
+  }
+}
+

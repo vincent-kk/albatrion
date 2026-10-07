@@ -1,0 +1,19 @@
+{
+  "head": "02026967958e29d1735848c39e79f76b94fe61e3",
+  "file": "/private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles/react-117-plain.cjs",
+  "bytes": 888715,
+  "sha256": "e015577d3057702cd45056af81c37547827dfc8d57b834787847fd7a067ea18b",
+  "serviceExit": {
+    "code": 0,
+    "signal": null
+  },
+  "startedAt": "2026-10-07T09:47:56.544Z",
+  "endedAt": "2026-10-07T09:48:01.384Z",
+  "workerExit": {
+    "code": 0,
+    "signal": null,
+    "natural": true,
+    "command": "/opt/homebrew/opt/node/bin/node --expose-gc packages/canard/schema-form/architecture/verification/07-switch/profile-117-session/react.mjs B sample-0 1 HEAD --prepare"
+  }
+}
+

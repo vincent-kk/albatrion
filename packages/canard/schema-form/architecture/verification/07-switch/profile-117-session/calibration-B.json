@@ -1,0 +1,76 @@
+{
+  "HEAD": "02026967958e29d1735848c39e79f76b94fe61e3",
+  "stage": "B",
+  "files": [
+    "B-core-array-replace-200-off-r1.json",
+    "B-core-array-replace-200-off-r2.json",
+    "B-core-array-replace-200-off-r3.json",
+    "B-core-computed-visible-derived-off-r1.json",
+    "B-core-computed-visible-derived-off-r2.json",
+    "B-core-computed-visible-derived-off-r3.json",
+    "B-core-flat-100-off-r1.json",
+    "B-core-flat-100-off-r2.json",
+    "B-core-flat-100-off-r3.json",
+    "B-core-flat-50-off-r1.json",
+    "B-core-flat-50-off-r2.json",
+    "B-core-flat-50-off-r3.json",
+    "B-core-flat-500-off-r1.json",
+    "B-core-flat-500-off-r2.json",
+    "B-core-flat-500-off-r3.json",
+    "B-core-nested-d3-f4-off-r1.json",
+    "B-core-nested-d3-f4-off-r2.json",
+    "B-core-nested-d3-f4-off-r3.json",
+    "B-core-nested-d5-f4-off-r1.json",
+    "B-core-nested-d5-f4-off-r2.json",
+    "B-core-nested-d5-f4-off-r3.json",
+    "B-core-sample-0-off-r1.json",
+    "B-core-sample-0-off-r2.json",
+    "B-core-sample-0-off-r3.json",
+    "B-core-sample-1-off-r1.json",
+    "B-core-sample-1-off-r2.json",
+    "B-core-sample-1-off-r3.json",
+    "B-core-sample-2-off-r1.json",
+    "B-core-sample-2-off-r2.json",
+    "B-core-sample-2-off-r3.json",
+    "B-core-sample-3-off-r1.json",
+    "B-core-sample-3-off-r2.json",
+    "B-core-sample-3-off-r3.json"
+  ],
+  "byPasses": {
+    "1": {
+      "passes": 1,
+      "calls": 6666,
+      "records": 33,
+      "C": 0.01575,
+      "M": 0.0025,
+      "waitMedian": 0.013167,
+      "waitP5": 0.012625,
+      "waitP95": 0.014666000000000002,
+      "p95AbsoluteDeviationMs": 0.001499000000000002,
+      "endBootstrap99": {
+        "median": 0.01575,
+        "low": 0.015708,
+        "high": 0.015792,
+        "halfWidth": 0.00004200000000000037,
+        "trials": 1000,
+        "seed": 9501
+      },
+      "microBootstrap99": {
+        "median": 0.0025,
+        "low": 0.002375,
+        "high": 0.002542,
+        "halfWidth": 0.0001250000000000001,
+        "trials": 1000,
+        "seed": 9502
+      },
+      "sameConstantForBothVersions": true
+    }
+  },
+  "workerExit": {
+    "code": 0,
+    "signal": null,
+    "natural": true,
+    "command": "/opt/homebrew/opt/node/bin/node --expose-gc packages/canard/schema-form/architecture/verification/07-switch/profile-117-session/calibrate.mjs B"
+  }
+}
+

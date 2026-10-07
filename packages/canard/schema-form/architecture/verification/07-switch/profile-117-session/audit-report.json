@@ -1,0 +1,30 @@
+{
+  "HEAD": "02026967958e29d1735848c39e79f76b94fe61e3",
+  "checked": "2026-10-07T11:18:00.186Z",
+  "passed": true,
+  "report": "../profile-117-session.md",
+  "reportSha256": "8187c28c28fe0f9957296dcb4f727b23d281aff54101ed0b74a2faf3306e98eb",
+  "rawEvidenceSha256": "97c87beff88be8f5a2f3869de5bfcdd54b047da2052246566115a29777b71f54",
+  "independentlyMatchedVerdictTableRows": 104,
+  "existingEvidenceLinks": 810,
+  "selfAuditLinksResolvedByThisNativeWrite": 1,
+  "sourcePreserved": true,
+  "verdict": "REJECT",
+  "regressionRows": [
+    "flat-500/off/update-first",
+    "if-then/off/mount",
+    "if-then/on/update",
+    "if-then/on/update-first"
+  ],
+  "largestFile": {
+    "file": "profile-117-session/analysis-C-oneOf-5-off.json",
+    "bytes": 196149
+  },
+  "workerExit": {
+    "code": 0,
+    "signal": null,
+    "natural": true,
+    "command": "/opt/homebrew/opt/node/bin/node packages/canard/schema-form/architecture/verification/07-switch/profile-117-session/verify-report.mjs"
+  }
+}
+

@@ -1,0 +1,5599 @@
+{
+  "HEAD": "02026967958e29d1735848c39e79f76b94fe61e3",
+  "method": "React wall minus independently measured 95C-01 core; paired empty tails validate endpoints only; residual includes BF drainTicks(2) waits",
+  "countMethod": "three separate instrumented samples; actual component/listener/root-compute calls; old engine has no settle pipeline",
+  "A": [
+    {
+      "fixture": "array-push-100",
+      "stage": "A",
+      "interactions": 100,
+      "versions": {
+        "0.16.0": {
+          "wall": 236.5139999999992,
+          "core": 2.979875,
+          "layer": 233.53412499999922,
+          "corePercent": 1.2599148464784367,
+          "profiler": 61.889589999649615,
+          "commits": 200,
+          "first": 0.15720600000010873,
+          "later": 0.034541,
+          "work": {
+            "renders": {
+              "median": 11050,
+              "min": 11050,
+              "max": 11050
+            },
+            "listenerDeliveries": {
+              "median": 3300,
+              "min": 3300,
+              "max": 3300
+            },
+            "settlePasses": {
+              "median": 0,
+              "min": 0,
+              "max": 0
+            },
+            "commits": {
+              "median": 200,
+              "min": 200,
+              "max": 200
+            }
+          },
+          "coreWork": [
+            {
+              "renders": 0,
+              "commits": 0,
+              "listenerDeliveries": 600,
+              "settlePasses": 0
+            },
+            {
+              "renders": 0,
+              "commits": 0,
+              "listenerDeliveries": 600,
+              "settlePasses": 0
+            },
+            {
+              "renders": 0,
+              "commits": 0,
+              "listenerDeliveries": 600,
+              "settlePasses": 0
+            }
+          ],
+          "coreSource": "sentinel"
+        },
+        "HEAD": {
+          "wall": 391.4330000000009,
+          "core": 17.676249000000002,
+          "layer": 373.7567510000009,
+          "corePercent": 4.515778945566665,
+          "profiler": 78.01336700004322,
+          "commits": 100,
+          "first": 0.30462500000000003,
+          "later": 0.273625,
+          "work": {
+            "renders": {
+              "median": 12850,
+              "min": 12850,
+              "max": 12850
+            },
+            "listenerDeliveries": {
+              "median": 1300,
+              "min": 1300,
+              "max": 1300
+            },
+            "settlePasses": {
+              "median": 100,
+              "min": 100,
+              "max": 100
+            },
+            "commits": {
+              "median": 100,
+              "min": 100,
+              "max": 100
+            }
+          },
+          "coreWork": [
+            {
+              "renders": 0,
+              "commits": 0,
+              "listenerDeliveries": 0,
+              "settlePasses": 100
+            },
+            {
+              "renders": 0,
+              "commits": 0,
+              "listenerDeliveries": 0,
+              "settlePasses": 100
+            },
+            {
+              "renders": 0,
+              "commits": 0,
+              "listenerDeliveries": 0,
+              "settlePasses": 100
+            }
+          ],
+          "coreSource": "sentinel",
+          "ga": {
+            "difference": 0.16358400000000017,
+            "noise": 0.452210999999997,
+            "withinNoise": true,
+            "passed": true,
+            "zeroEngineMacrotasks": true,
+            "runs": [
+              {
+                "run": 1,
+                "difference": 0.15512899999999874,
+                "noise": 0.5466079999999978,
+                "withinNoise": true,
+                "zeroEngineMacrotasks": true,
+                "boundary": {
+                  "scheduled": {
+                    "median": 0,
+                    "max": 0
+                  },
+                  "executed": {
+                    "median": 0,
+                    "max": 0
+                  },
+                  "cancelled": {
+                    "median": 0,
+                    "max": 0
+                  },
+                  "pendingAtMicrotasks": {
+                    "median": 0,
+                    "max": 0
+                  },
+                  "pendingAtFirstSentinel": {
+                    "median": 0,
+                    "max": 0
+                  },
+                  "pendingAtSentinel": {
+                    "median": 0,
+                    "max": 0
+                  },
+                  "tailScheduled": {
+                    "median": 0,
+                    "max": 0
+                  },
+                  "tailExecuted": {
+                    "median": 0,
+                    "max": 0
+                  }
+                },
+                "metric": {
+                  "median": 17.746926000000002,
+                  "p99": 18.957677,
+                  "samples": 101
+                }
+              },
+              {
+                "run": 2,
+                "difference": 0.16387100000000032,
+                "noise": 0.9594560000000016,
+                "withinNoise": true,
+                "zeroEngineMacrotasks": true,
+                "boundary": {
+                  "scheduled": {
+                    "median": 0,
+                    "max": 0
+                  },
+                  "executed": {
+                    "median": 0,
+                    "max": 0
+                  },
+                  "cancelled": {
+                    "median": 0,
+                    "max": 0
+                  },
+                  "pendingAtMicrotasks": {
+                    "median": 0,
+                    "max": 0
+                  },
+                  "pendingAtFirstSentinel": {
+                    "median": 0,
+                    "max": 0
+                  },
+                  "pendingAtSentinel": {
+                    "median": 0,
+                    "max": 0
+                  },
+                  "tailScheduled": {
+                    "median": 0,
+                    "max": 0
+                  },
+                  "tailExecuted": {
+                    "median": 0,
+                    "max": 0
+                  }
+                },
+                "metric": {
+                  "median": 17.645373,
+                  "p99": 19.333506,
+                  "samples": 101
+                }
+              },
+              {
+                "run": 3,
+                "difference": 0.16078699999999913,
+                "noise": 0.5573699999999975,
+                "withinNoise": true,
+                "zeroEngineMacrotasks": true,
+                "boundary": {
+                  "scheduled": {
+                    "median": 0,
+                    "max": 0
+                  },
+                  "executed": {
+                    "median": 0,
+                    "max": 0
+                  },
+                  "cancelled": {
+                    "median": 0,
+                    "max": 0
+                  },
+                  "pendingAtMicrotasks": {
+                    "median": 0,
+                    "max": 0
+                  },
+                  "pendingAtFirstSentinel": {
+                    "median": 0,
+                    "max": 0
+                  },
+                  "pendingAtSentinel": {
+                    "median": 0,
+                    "max": 0
+                  },
+                  "tailScheduled": {
+                    "median": 0,
+                    "max": 0
+                  },
+                  "tailExecuted": {
+                    "median": 0,
+                    "max": 0
+                  }
+                },
+                "metric": {
+                  "median": 17.654041,
+                  "p99": 19.279288,
+                  "samples": 101
+                }
+              }
+            ]
+          }
+        }
+      },
+      "gaps": {
+        "wall": 154.9190000000017,
+        "core": 14.696374000000002,
+        "layer": 140.2226260000017,
+        "first": 0.1474189999998913,
+        "later": 0.23908400000000002
+      },
+      "coreDominates": false,
+      "cause": "104·110라운드에서 수용한 동일 행과 같은 규모가 아닙니다. 기존 수용으로 포함하지 않습니다.",
+      "matches104Row": false,
+      "matches110Row": false,
+      "positiveLayerGapCodeTarget": true,
+      "ownerRows": [
+        {
+          "fixture": "array-push-100",
+          "metric": "render-update-wall",
+          "target": 1,
+          "ratios": [
+            1.6398712671286575,
+            1.6605276926177535,
+            1.6509559824635214
+          ],
+          "remains": true,
+          "tie": false,
+          "oldRunMedians": [
+            237.39670899999965,
+            237.2367090000007,
+            237.47637499999837
+          ],
+          "headRunMedians": [
+            389.3000420000026,
+            393.9381250000006,
+            392.06304199999795
+          ]
+        },
+        {
+          "fixture": "array-push-100",
+          "metric": "profiler-update",
+          "target": 1,
+          "ratios": [
+            1.2255263023847975,
+            1.2564391771542587,
+            1.2090452606188726
+          ],
+          "remains": true,
+          "tie": false,
+          "oldRunMedians": [
+            62.77242099984505,
+            63.0777799999596,
+            63.388554999866756
+          ],
+          "headRunMedians": [
+            76.92925299968192,
+            79.2533939998666,
+            76.63963200006765
+          ]
+        }
+      ],
+      "raw": {
+        "core": [
+          "A-core-array-push-100-off-r1.json",
+          "A-core-array-push-100-off-r2.json",
+          "A-core-array-push-100-off-r3.json"
+        ],
+        "react": [
+          "A-react-plain-array-push-100-r1-0.16.0.json",
+          "A-react-plain-array-push-100-r2-0.16.0.json",
+          "A-react-plain-array-push-100-r3-0.16.0.json",
+          "A-react-plain-array-push-100-r1-HEAD.json",
+          "A-react-plain-array-push-100-r2-HEAD.json",
+          "A-react-plain-array-push-100-r3-HEAD.json"
+        ],
+        "counts": [
+          "A-react-counts-array-push-100-r1-0.16.0.json",
+          "A-react-counts-array-push-100-r1-HEAD.json"
+        ]
+      }
+    },
+    {
+      "fixture": "array-push-remove-100",
+      "stage": "A",
+      "interactions": 200,
+      "versions": {
+        "0.16.0": {
+          "wall": 504.7559169999986,
+          "core": 4.535461,
+          "layer": 500.2204559999986,
+          "corePercent": 0.8985453854521159,
+          "profiler": 99.79495299965129,
+          "commits": 400,
+          "first": 0.15920999999777996,
+          "later": 0.03975,
+          "work": {
+            "renders": {
+              "median": 18000,
+              "min": 18000,
+              "max": 18000
+            },
+            "listenerDeliveries": {
+              "median": 6500,
+              "min": 6500,
+              "max": 6500
+            },
+            "settlePasses": {
+              "median": 0,
+              "min": 0,
+              "max": 0
+            },
+            "commits": {
+              "median": 400,
+              "min": 400,
+              "max": 400
+            }
+          },
+          "coreWork": [
+            {
+              "renders": 0,
+              "commits": 0,
+              "listenerDeliveries": 1100,
+              "settlePasses": 0
+            },
+            {
+              "renders": 0,
+              "commits": 0,
+              "listenerDeliveries": 1100,
+              "settlePasses": 0
+            },
+            {
+              "renders": 0,
+              "commits": 0,
+              "listenerDeliveries": 1100,
+              "settlePasses": 0
+            }
+          ],
+          "coreSource": "sentinel"
+        },
+        "HEAD": {
+          "wall": 765.1529589999991,
+          "core": 29.678126,
+          "layer": 735.4748329999991,
+          "corePercent": 3.8787180590384454,
+          "profiler": 113.97036900003877,
+          "commits": 200,
+          "first": 0.320666,
+          "later": 0.097959,
+          "work": {
+            "renders": {
+              "median": 20000,
+              "min": 20000,
+              "max": 20000
+            },
+            "listenerDeliveries": {
+              "median": 2600,
+              "min": 2600,
+              "max": 2600
+            },
+            "settlePasses": {
+              "median": 200,
+              "min": 200,
+              "max": 200
+            },
+            "commits": {
+              "median": 200,
+              "min": 200,
+              "max": 200
+            }
+          },
+          "coreWork": [
+            {
+              "renders": 0,
+              "commits": 0,
+              "listenerDeliveries": 0,
+              "settlePasses": 200
+            },
+            {
+              "renders": 0,
+              "commits": 0,
+              "listenerDeliveries": 0,
+              "settlePasses": 200
+            },
+            {
+              "renders": 0,
+              "commits": 0,
+              "listenerDeliveries": 0,
+              "settlePasses": 200
+            }
+          ],
+          "coreSource": "sentinel",
+          "ga": {
+            "difference": 0.5609480000000069,
+            "noise": 1.237999000000003,
+            "withinNoise": true,
+            "passed": true,
+            "zeroEngineMacrotasks": true,
+            "runs": [
+              {
+                "run": 1,
+                "difference": 0.5712930000000007,
+                "noise": 1.5274270000000039,
+                "withinNoise": true,
+                "zeroEngineMacrotasks": true,
+                "boundary": {
+                  "scheduled": {
+                    "median": 0,
+                    "max": 0
+                  },
+                  "executed": {
+                    "median": 0,
+                    "max": 0
+                  },
+                  "cancelled": {
+                    "median": 0,
+                    "max": 0
+                  },
+                  "pendingAtMicrotasks": {
+                    "median": 0,
+                    "max": 0
+                  },
+                  "pendingAtFirstSentinel": {
+                    "median": 0,
+                    "max": 0
+                  },
+                  "pendingAtSentinel": {
+                    "median": 0,
+                    "max": 0
+                  },
+                  "tailScheduled": {
+                    "median": 0,
+                    "max": 0
+                  },
+                  "tailExecuted": {
+                    "median": 0,
+                    "max": 0
+                  }
+                },
+                "metric": {
+                  "median": 29.474581,
+                  "p99": 32.126994,
+                  "samples": 101
+                }
+              },
+              {
+                "run": 2,
+                "difference": 0.5543359999999993,
+                "noise": 1.5743930000000015,
+                "withinNoise": true,
+                "zeroEngineMacrotasks": true,
+                "boundary": {
+                  "scheduled": {
+                    "median": 0,
+                    "max": 0
+                  },
+                  "executed": {
+                    "median": 0,
+                    "max": 0
+                  },
+                  "cancelled": {
+                    "median": 0,
+                    "max": 0
+                  },
+                  "pendingAtMicrotasks": {
+                    "median": 0,
+                    "max": 0
+                  },
+                  "pendingAtFirstSentinel": {
+                    "median": 0,
+                    "max": 0
+                  },
+                  "pendingAtSentinel": {
+                    "median": 0,
+                    "max": 0
+                  },
+                  "tailScheduled": {
+                    "median": 0,
+                    "max": 0
+                  },
+                  "tailExecuted": {
+                    "median": 0,
+                    "max": 0
+                  }
+                },
+                "metric": {
+                  "median": 30.410496000000002,
+                  "p99": 34.585165,
+                  "samples": 101
+                }
+              },
+              {
+                "run": 3,
+                "difference": 0.5559369999999966,
+                "noise": 1.5195810000000032,
+                "withinNoise": true,
+                "zeroEngineMacrotasks": true,
+                "boundary": {
+                  "scheduled": {
+                    "median": 0,
+                    "max": 0
+                  },
+                  "executed": {
+                    "median": 0,
+                    "max": 0
+                  },
+                  "cancelled": {
+                    "median": 0,
+                    "max": 0
+                  },
+                  "pendingAtMicrotasks": {
+                    "median": 0,
+                    "max": 0
+                  },
+                  "pendingAtFirstSentinel": {
+                    "median": 0,
+                    "max": 0
+                  },
+                  "pendingAtSentinel": {
+                    "median": 0,
+                    "max": 0
+                  },
+                  "tailScheduled": {
+                    "median": 0,
+                    "max": 0
+                  },
+                  "tailExecuted": {
+                    "median": 0,
+                    "max": 0
+                  }
+                },
+                "metric": {
+                  "median": 29.168879000000004,
+                  "p99": 32.073757,
+                  "samples": 101
+                }
+              }
+            ]
+          }
+        }
+      },
+      "gaps": {
+        "wall": 260.3970420000005,
+        "core": 25.142665,
+        "layer": 235.2543770000005,
+        "first": 0.16145600000222005,
+        "later": 0.058209000000000004
+      },
+      "coreDominates": false,
+      "cause": "104·110라운드에서 수용한 동일 행과 같은 규모가 아닙니다. 기존 수용으로 포함하지 않습니다.",
+      "matches104Row": false,
+      "matches110Row": false,
+      "positiveLayerGapCodeTarget": true,
+      "ownerRows": [
+        {
+          "fixture": "array-push-remove-100",
+          "metric": "render-update-wall",
+          "target": 1,
+          "ratios": [
+            1.5069419437011866,
+            1.5266038421894126,
+            1.5281527912583368
+          ],
+          "remains": true,
+          "tie": false,
+          "oldRunMedians": [
+            505.6191250000011,
+            500.1485840000023,
+            499.046875
+          ],
+          "headRunMedians": [
+            761.9386669999949,
+            763.5287499999977,
+            762.6198750000003
+          ]
+        },
+        {
+          "fixture": "array-push-remove-100",
+          "metric": "profiler-update",
+          "target": 1,
+          "ratios": [
+            1.1393200339047709,
+            1.054650249558692,
+            1.1208701912875085
+          ],
+          "remains": true,
+          "tie": false,
+          "oldRunMedians": [
+            99.93092600040836,
+            105.26974800053722,
+            101.43590300031792
+          ],
+          "headRunMedians": [
+            113.8533059989204,
+            111.02276599974721,
+            113.69647999938752
+          ]
+        }
+      ],
+      "raw": {
+        "core": [
+          "A-core-array-push-remove-100-off-r1.json",
+          "A-core-array-push-remove-100-off-r2.json",
+          "A-core-array-push-remove-100-off-r3.json"
+        ],
+        "react": [
+          "A-react-plain-array-push-remove-100-r1-0.16.0.json",
+          "A-react-plain-array-push-remove-100-r2-0.16.0.json",
+          "A-react-plain-array-push-remove-100-r3-0.16.0.json",
+          "A-react-plain-array-push-remove-100-r1-HEAD.json",
+          "A-react-plain-array-push-remove-100-r2-HEAD.json",
+          "A-react-plain-array-push-remove-100-r3-HEAD.json"
+        ],
+        "counts": [
+          "A-react-counts-array-push-remove-100-r1-0.16.0.json",
+          "A-react-counts-array-push-remove-100-r1-HEAD.json"
+        ]
+      }
+    },
+    {
+      "fixture": "array-100",
+      "stage": "A",
+      "interactions": 1,
+      "versions": {
+        "0.16.0": {
+          "wall": 2.393000000000029,
+          "core": 0.068167,
+          "layer": 2.3248330000000292,
+          "corePercent": 2.8486000835770655,
+          "profiler": 0.3616230000152427,
+          "commits": 2,
+          "first": 0.068167,
+          "later": 0.02225,
+          "work": {
+            "renders": {
+              "median": 141,
+              "min": 141,
+              "max": 141
+            },
+            "listenerDeliveries": {
+              "median": 35,
+              "min": 35,
+              "max": 35
+            },
+            "settlePasses": {
+              "median": 0,
+              "min": 0,
+              "max": 0
+            },
+            "commits": {
+              "median": 2,
+              "min": 2,
+              "max": 2
+            }
+          },
+          "coreWork": [
+            {
+              "renders": 0,
+              "commits": 0,
+              "listenerDeliveries": 4,
+              "settlePasses": 0
+            },
+            {
+              "renders": 0,
+              "commits": 0,
+              "listenerDeliveries": 4,
+              "settlePasses": 0
+            },
+            {
+              "renders": 0,
+              "commits": 0,
+              "listenerDeliveries": 4,
+              "settlePasses": 0
+            }
+          ],
+          "coreSource": "sentinel"
+        },
+        "HEAD": {
+          "wall": 3.230375000001004,
+          "core": 0.154125,
+          "layer": 3.076250000001004,
+          "corePercent": 4.771117904266598,
+          "profiler": 0.20928299998377042,
+          "commits": 1,
+          "first": 0.154125,
+          "later": 0.049583,
+          "work": {
+            "renders": {
+              "median": 40,
+              "min": 40,
+              "max": 40
+            },
+            "listenerDeliveries": {
+              "median": 25,
+              "min": 25,
+              "max": 25
+            },
+            "settlePasses": {
+              "median": 1,
+              "min": 1,
+              "max": 1
+            },
+            "commits": {
+              "median": 1,
+              "min": 1,
+              "max": 1
+            }
+          },
+          "coreWork": [
+            {
+              "renders": 0,
+              "commits": 0,
+              "listenerDeliveries": 0,
+              "settlePasses": 1
+            },
+            {
+              "renders": 0,
+              "commits": 0,
+              "listenerDeliveries": 0,
+              "settlePasses": 1
+            },
+            {
+              "renders": 0,
+              "commits": 0,
+              "listenerDeliveries": 0,
+              "settlePasses": 1
+            }
+          ],
+          "coreSource": "sentinel",
+          "ga": {
+            "difference": 0.00020799999999998597,
+            "noise": 0.006709000000000005,
+            "withinNoise": true,
+            "passed": true,
+            "zeroEngineMacrotasks": true,
+            "runs": [
+              {
+                "run": 1,
+                "difference": 0.00012499999999998623,
+                "noise": 0.009127000000000008,
+                "withinNoise": true,
+                "zeroEngineMacrotasks": true,
+                "boundary": {
+                  "scheduled": {
+                    "median": 0,
+                    "max": 0
+                  },
+                  "executed": {
+                    "median": 0,
+                    "max": 0
+                  },
+                  "cancelled": {
+                    "median": 0,
+                    "max": 0
+                  },
+                  "pendingAtMicrotasks": {
+                    "median": 0,
+                    "max": 0
+                  },
+                  "pendingAtFirstSentinel": {
+                    "median": 0,
+                    "max": 0
+                  },
+                  "pendingAtSentinel": {
+                    "median": 0,
+                    "max": 0
+                  },
+                  "tailScheduled": {
+                    "median": 0,
+                    "max": 0
+                  },
+                  "tailExecuted": {
+                    "median": 0,
+                    "max": 0
+                  }
+                },
+                "metric": {
+                  "median": 0.152333,
+                  "p99": 0.20487499999999997,
+                  "samples": 101
+                }
+              },
+              {
+                "run": 2,
+                "difference": 0.00016699999999997273,
+                "noise": 0.010626000000000009,
+                "withinNoise": true,
+                "zeroEngineMacrotasks": true,
+                "boundary": {
+                  "scheduled": {
+                    "median": 0,
+                    "max": 0
+                  },
+                  "executed": {
+                    "median": 0,
+                    "max": 0
+                  },
+                  "cancelled": {
+                    "median": 0,
+                    "max": 0
+                  },
+                  "pendingAtMicrotasks": {
+                    "median": 0,
+                    "max": 0
+                  },
+                  "pendingAtFirstSentinel": {
+                    "median": 0,
+                    "max": 0
+                  },
+                  "pendingAtSentinel": {
+                    "median": 0,
+                    "max": 0
+                  },
+                  "tailScheduled": {
+                    "median": 0,
+                    "max": 0
+                  },
+                  "tailExecuted": {
+                    "median": 0,
+                    "max": 0
+                  }
+                },
+                "metric": {
+                  "median": 0.15575,
+                  "p99": 0.186958,
+                  "samples": 101
+                }
+              },
+              {
+                "run": 3,
+                "difference": 0.00029200000000001447,
+                "noise": 0.010709999999999982,
+                "withinNoise": true,
+                "zeroEngineMacrotasks": true,
+                "boundary": {
+                  "scheduled": {
+                    "median": 0,
+                    "max": 0
+                  },
+                  "executed": {
+                    "median": 0,
+                    "max": 0
+                  },
+                  "cancelled": {
+                    "median": 0,
+                    "max": 0
+                  },
+                  "pendingAtMicrotasks": {
+                    "median": 0,
+                    "max": 0
+                  },
+                  "pendingAtFirstSentinel": {
+                    "median": 0,
+                    "max": 0
+                  },
+                  "pendingAtSentinel": {
+                    "median": 0,
+                    "max": 0
+                  },
+                  "tailScheduled": {
+                    "median": 0,
+                    "max": 0
+                  },
+                  "tailExecuted": {
+                    "median": 0,
+                    "max": 0
+                  }
+                },
+                "metric": {
+                  "median": 0.15525,
+                  "p99": 0.18475000000000003,
+                  "samples": 101
+                }
+              }
+            ]
+          }
+        }
+      },
+      "gaps": {
+        "wall": 0.837375000000975,
+        "core": 0.085958,
+        "layer": 0.7514170000009748,
+        "first": 0.085958,
+        "later": 0.027333000000000003
+      },
+      "coreDominates": false,
+      "cause": "이후 갱신 차이는 104라운드의 동일 행에 남은 쓰기당 고정비와 같은 규모입니다. 첫 갱신 차이는 그 기록의 약 0.06 ms보다 크므로 동일 크기로 확대하지 않습니다.",
+      "matches104Row": true,
+      "matches110Row": false,
+      "positiveLayerGapCodeTarget": true,
+      "ownerRows": [
+        {
+          "fixture": "array-100",
+          "metric": "render-update-wall",
+          "target": 1,
+          "ratios": [
+            1.354643489187794,
+            1.349573154443007,
+            1.3556695633969917
+          ],
+          "remains": true,
+          "tie": false,
+          "oldRunMedians": [
+            2.3873750000002474,
+            2.392083000000639,
+            2.387749999999869
+          ],
+          "headRunMedians": [
+            3.234042000000045,
+            3.228291000000354,
+            3.2370000000009895
+          ]
+        }
+      ],
+      "raw": {
+        "core": [
+          "A-core-array-100-off-r1.json",
+          "A-core-array-100-off-r2.json",
+          "A-core-array-100-off-r3.json"
+        ],
+        "react": [
+          "A-react-plain-array-100-r1-0.16.0.json",
+          "A-react-plain-array-100-r2-0.16.0.json",
+          "A-react-plain-array-100-r3-0.16.0.json",
+          "A-react-plain-array-100-r1-HEAD.json",
+          "A-react-plain-array-100-r2-HEAD.json",
+          "A-react-plain-array-100-r3-HEAD.json"
+        ],
+        "counts": [
+          "A-react-counts-array-100-r1-0.16.0.json",
+          "A-react-counts-array-100-r1-HEAD.json"
+        ]
+      }
+    }
+  ],
+  "B": {
+    "tie": "tie-B.json",
+    "remainingWall": 14,
+    "remainingProfiler": 8,
+    "rows": [
+      {
+        "fixture": "array-push-100",
+        "stage": "A",
+        "interactions": 100,
+        "versions": {
+          "0.16.0": {
+            "wall": 236.5139999999992,
+            "core": 2.979875,
+            "layer": 233.53412499999922,
+            "corePercent": 1.2599148464784367,
+            "profiler": 61.889589999649615,
+            "commits": 200,
+            "first": 0.15720600000010873,
+            "later": 0.034541,
+            "work": {
+              "renders": {
+                "median": 11050,
+                "min": 11050,
+                "max": 11050
+              },
+              "listenerDeliveries": {
+                "median": 3300,
+                "min": 3300,
+                "max": 3300
+              },
+              "settlePasses": {
+                "median": 0,
+                "min": 0,
+                "max": 0
+              },
+              "commits": {
+                "median": 200,
+                "min": 200,
+                "max": 200
+              }
+            },
+            "coreWork": [
+              {
+                "renders": 0,
+                "commits": 0,
+                "listenerDeliveries": 600,
+                "settlePasses": 0
+              },
+              {
+                "renders": 0,
+                "commits": 0,
+                "listenerDeliveries": 600,
+                "settlePasses": 0
+              },
+              {
+                "renders": 0,
+                "commits": 0,
+                "listenerDeliveries": 600,
+                "settlePasses": 0
+              }
+            ],
+            "coreSource": "sentinel"
+          },
+          "HEAD": {
+            "wall": 391.4330000000009,
+            "core": 17.676249000000002,
+            "layer": 373.7567510000009,
+            "corePercent": 4.515778945566665,
+            "profiler": 78.01336700004322,
+            "commits": 100,
+            "first": 0.30462500000000003,
+            "later": 0.273625,
+            "work": {
+              "renders": {
+                "median": 12850,
+                "min": 12850,
+                "max": 12850
+              },
+              "listenerDeliveries": {
+                "median": 1300,
+                "min": 1300,
+                "max": 1300
+              },
+              "settlePasses": {
+                "median": 100,
+                "min": 100,
+                "max": 100
+              },
+              "commits": {
+                "median": 100,
+                "min": 100,
+                "max": 100
+              }
+            },
+            "coreWork": [
+              {
+                "renders": 0,
+                "commits": 0,
+                "listenerDeliveries": 0,
+                "settlePasses": 100
+              },
+              {
+                "renders": 0,
+                "commits": 0,
+                "listenerDeliveries": 0,
+                "settlePasses": 100
+              },
+              {
+                "renders": 0,
+                "commits": 0,
+                "listenerDeliveries": 0,
+                "settlePasses": 100
+              }
+            ],
+            "coreSource": "sentinel",
+            "ga": {
+              "difference": 0.16358400000000017,
+              "noise": 0.452210999999997,
+              "withinNoise": true,
+              "passed": true,
+              "zeroEngineMacrotasks": true,
+              "runs": [
+                {
+                  "run": 1,
+                  "difference": 0.15512899999999874,
+                  "noise": 0.5466079999999978,
+                  "withinNoise": true,
+                  "zeroEngineMacrotasks": true,
+                  "boundary": {
+                    "scheduled": {
+                      "median": 0,
+                      "max": 0
+                    },
+                    "executed": {
+                      "median": 0,
+                      "max": 0
+                    },
+                    "cancelled": {
+                      "median": 0,
+                      "max": 0
+                    },
+                    "pendingAtMicrotasks": {
+                      "median": 0,
+                      "max": 0
+                    },
+                    "pendingAtFirstSentinel": {
+                      "median": 0,
+                      "max": 0
+                    },
+                    "pendingAtSentinel": {
+                      "median": 0,
+                      "max": 0
+                    },
+                    "tailScheduled": {
+                      "median": 0,
+                      "max": 0
+                    },
+                    "tailExecuted": {
+                      "median": 0,
+                      "max": 0
+                    }
+                  },
+                  "metric": {
+                    "median": 17.746926000000002,
+                    "p99": 18.957677,
+                    "samples": 101
+                  }
+                },
+                {
+                  "run": 2,
+                  "difference": 0.16387100000000032,
+                  "noise": 0.9594560000000016,
+                  "withinNoise": true,
+                  "zeroEngineMacrotasks": true,
+                  "boundary": {
+                    "scheduled": {
+                      "median": 0,
+                      "max": 0
+                    },
+                    "executed": {
+                      "median": 0,
+                      "max": 0
+                    },
+                    "cancelled": {
+                      "median": 0,
+                      "max": 0
+                    },
+                    "pendingAtMicrotasks": {
+                      "median": 0,
+                      "max": 0
+                    },
+                    "pendingAtFirstSentinel": {
+                      "median": 0,
+                      "max": 0
+                    },
+                    "pendingAtSentinel": {
+                      "median": 0,
+                      "max": 0
+                    },
+                    "tailScheduled": {
+                      "median": 0,
+                      "max": 0
+                    },
+                    "tailExecuted": {
+                      "median": 0,
+                      "max": 0
+                    }
+                  },
+                  "metric": {
+                    "median": 17.645373,
+                    "p99": 19.333506,
+                    "samples": 101
+                  }
+                },
+                {
+                  "run": 3,
+                  "difference": 0.16078699999999913,
+                  "noise": 0.5573699999999975,
+                  "withinNoise": true,
+                  "zeroEngineMacrotasks": true,
+                  "boundary": {
+                    "scheduled": {
+                      "median": 0,
+                      "max": 0
+                    },
+                    "executed": {
+                      "median": 0,
+                      "max": 0
+                    },
+                    "cancelled": {
+                      "median": 0,
+                      "max": 0
+                    },
+                    "pendingAtMicrotasks": {
+                      "median": 0,
+                      "max": 0
+                    },
+                    "pendingAtFirstSentinel": {
+                      "median": 0,
+                      "max": 0
+                    },
+                    "pendingAtSentinel": {
+                      "median": 0,
+                      "max": 0
+                    },
+                    "tailScheduled": {
+                      "median": 0,
+                      "max": 0
+                    },
+                    "tailExecuted": {
+                      "median": 0,
+                      "max": 0
+                    }
+                  },
+                  "metric": {
+                    "median": 17.654041,
+                    "p99": 19.279288,
+                    "samples": 101
+                  }
+                }
+              ]
+            }
+          }
+        },
+        "gaps": {
+          "wall": 154.9190000000017,
+          "core": 14.696374000000002,
+          "layer": 140.2226260000017,
+          "first": 0.1474189999998913,
+          "later": 0.23908400000000002
+        },
+        "coreDominates": false,
+        "cause": "104·110라운드에서 수용한 동일 행과 같은 규모가 아닙니다. 기존 수용으로 포함하지 않습니다.",
+        "matches104Row": false,
+        "matches110Row": false,
+        "positiveLayerGapCodeTarget": true,
+        "ownerRows": [
+          {
+            "fixture": "array-push-100",
+            "metric": "render-update-wall",
+            "target": 1,
+            "ratios": [
+              1.6398712671286575,
+              1.6605276926177535,
+              1.6509559824635214
+            ],
+            "remains": true,
+            "tie": false,
+            "oldRunMedians": [
+              237.39670899999965,
+              237.2367090000007,
+              237.47637499999837
+            ],
+            "headRunMedians": [
+              389.3000420000026,
+              393.9381250000006,
+              392.06304199999795
+            ]
+          },
+          {
+            "fixture": "array-push-100",
+            "metric": "profiler-update",
+            "target": 1,
+            "ratios": [
+              1.2255263023847975,
+              1.2564391771542587,
+              1.2090452606188726
+            ],
+            "remains": true,
+            "tie": false,
+            "oldRunMedians": [
+              62.77242099984505,
+              63.0777799999596,
+              63.388554999866756
+            ],
+            "headRunMedians": [
+              76.92925299968192,
+              79.2533939998666,
+              76.63963200006765
+            ]
+          }
+        ],
+        "raw": {
+          "core": [
+            "A-core-array-push-100-off-r1.json",
+            "A-core-array-push-100-off-r2.json",
+            "A-core-array-push-100-off-r3.json"
+          ],
+          "react": [
+            "A-react-plain-array-push-100-r1-0.16.0.json",
+            "A-react-plain-array-push-100-r2-0.16.0.json",
+            "A-react-plain-array-push-100-r3-0.16.0.json",
+            "A-react-plain-array-push-100-r1-HEAD.json",
+            "A-react-plain-array-push-100-r2-HEAD.json",
+            "A-react-plain-array-push-100-r3-HEAD.json"
+          ],
+          "counts": [
+            "A-react-counts-array-push-100-r1-0.16.0.json",
+            "A-react-counts-array-push-100-r1-HEAD.json"
+          ]
+        }
+      },
+      {
+        "fixture": "array-push-remove-100",
+        "stage": "A",
+        "interactions": 200,
+        "versions": {
+          "0.16.0": {
+            "wall": 504.7559169999986,
+            "core": 4.535461,
+            "layer": 500.2204559999986,
+            "corePercent": 0.8985453854521159,
+            "profiler": 99.79495299965129,
+            "commits": 400,
+            "first": 0.15920999999777996,
+            "later": 0.03975,
+            "work": {
+              "renders": {
+                "median": 18000,
+                "min": 18000,
+                "max": 18000
+              },
+              "listenerDeliveries": {
+                "median": 6500,
+                "min": 6500,
+                "max": 6500
+              },
+              "settlePasses": {
+                "median": 0,
+                "min": 0,
+                "max": 0
+              },
+              "commits": {
+                "median": 400,
+                "min": 400,
+                "max": 400
+              }
+            },
+            "coreWork": [
+              {
+                "renders": 0,
+                "commits": 0,
+                "listenerDeliveries": 1100,
+                "settlePasses": 0
+              },
+              {
+                "renders": 0,
+                "commits": 0,
+                "listenerDeliveries": 1100,
+                "settlePasses": 0
+              },
+              {
+                "renders": 0,
+                "commits": 0,
+                "listenerDeliveries": 1100,
+                "settlePasses": 0
+              }
+            ],
+            "coreSource": "sentinel"
+          },
+          "HEAD": {
+            "wall": 765.1529589999991,
+            "core": 29.678126,
+            "layer": 735.4748329999991,
+            "corePercent": 3.8787180590384454,
+            "profiler": 113.97036900003877,
+            "commits": 200,
+            "first": 0.320666,
+            "later": 0.097959,
+            "work": {
+              "renders": {
+                "median": 20000,
+                "min": 20000,
+                "max": 20000
+              },
+              "listenerDeliveries": {
+                "median": 2600,
+                "min": 2600,
+                "max": 2600
+              },
+              "settlePasses": {
+                "median": 200,
+                "min": 200,
+                "max": 200
+              },
+              "commits": {
+                "median": 200,
+                "min": 200,
+                "max": 200
+              }
+            },
+            "coreWork": [
+              {
+                "renders": 0,
+                "commits": 0,
+                "listenerDeliveries": 0,
+                "settlePasses": 200
+              },
+              {
+                "renders": 0,
+                "commits": 0,
+                "listenerDeliveries": 0,
+                "settlePasses": 200
+              },
+              {
+                "renders": 0,
+                "commits": 0,
+                "listenerDeliveries": 0,
+                "settlePasses": 200
+              }
+            ],
+            "coreSource": "sentinel",
+            "ga": {
+              "difference": 0.5609480000000069,
+              "noise": 1.237999000000003,
+              "withinNoise": true,
+              "passed": true,
+              "zeroEngineMacrotasks": true,
+              "runs": [
+                {
+                  "run": 1,
+                  "difference": 0.5712930000000007,
+                  "noise": 1.5274270000000039,
+                  "withinNoise": true,
+                  "zeroEngineMacrotasks": true,
+                  "boundary": {
+                    "scheduled": {
+                      "median": 0,
+                      "max": 0
+                    },
+                    "executed": {
+                      "median": 0,
+                      "max": 0
+                    },
+                    "cancelled": {
+                      "median": 0,
+                      "max": 0
+                    },
+                    "pendingAtMicrotasks": {
+                      "median": 0,
+                      "max": 0
+                    },
+                    "pendingAtFirstSentinel": {
+                      "median": 0,
+                      "max": 0
+                    },
+                    "pendingAtSentinel": {
+                      "median": 0,
+                      "max": 0
+                    },
+                    "tailScheduled": {
+                      "median": 0,
+                      "max": 0
+                    },
+                    "tailExecuted": {
+                      "median": 0,
+                      "max": 0
+                    }
+                  },
+                  "metric": {
+                    "median": 29.474581,
+                    "p99": 32.126994,
+                    "samples": 101
+                  }
+                },
+                {
+                  "run": 2,
+                  "difference": 0.5543359999999993,
+                  "noise": 1.5743930000000015,
+                  "withinNoise": true,
+                  "zeroEngineMacrotasks": true,
+                  "boundary": {
+                    "scheduled": {
+                      "median": 0,
+                      "max": 0
+                    },
+                    "executed": {
+                      "median": 0,
+                      "max": 0
+                    },
+                    "cancelled": {
+                      "median": 0,
+                      "max": 0
+                    },
+                    "pendingAtMicrotasks": {
+                      "median": 0,
+                      "max": 0
+                    },
+                    "pendingAtFirstSentinel": {
+                      "median": 0,
+                      "max": 0
+                    },
+                    "pendingAtSentinel": {
+                      "median": 0,
+                      "max": 0
+                    },
+                    "tailScheduled": {
+                      "median": 0,
+                      "max": 0
+                    },
+                    "tailExecuted": {
+                      "median": 0,
+                      "max": 0
+                    }
+                  },
+                  "metric": {
+                    "median": 30.410496000000002,
+                    "p99": 34.585165,
+                    "samples": 101
+                  }
+                },
+                {
+                  "run": 3,
+                  "difference": 0.5559369999999966,
+                  "noise": 1.5195810000000032,
+                  "withinNoise": true,
+                  "zeroEngineMacrotasks": true,
+                  "boundary": {
+                    "scheduled": {
+                      "median": 0,
+                      "max": 0
+                    },
+                    "executed": {
+                      "median": 0,
+                      "max": 0
+                    },
+                    "cancelled": {
+                      "median": 0,
+                      "max": 0
+                    },
+                    "pendingAtMicrotasks": {
+                      "median": 0,
+                      "max": 0
+                    },
+                    "pendingAtFirstSentinel": {
+                      "median": 0,
+                      "max": 0
+                    },
+                    "pendingAtSentinel": {
+                      "median": 0,
+                      "max": 0
+                    },
+                    "tailScheduled": {
+                      "median": 0,
+                      "max": 0
+                    },
+                    "tailExecuted": {
+                      "median": 0,
+                      "max": 0
+                    }
+                  },
+                  "metric": {
+                    "median": 29.168879000000004,
+                    "p99": 32.073757,
+                    "samples": 101
+                  }
+                }
+              ]
+            }
+          }
+        },
+        "gaps": {
+          "wall": 260.3970420000005,
+          "core": 25.142665,
+          "layer": 235.2543770000005,
+          "first": 0.16145600000222005,
+          "later": 0.058209000000000004
+        },
+        "coreDominates": false,
+        "cause": "104·110라운드에서 수용한 동일 행과 같은 규모가 아닙니다. 기존 수용으로 포함하지 않습니다.",
+        "matches104Row": false,
+        "matches110Row": false,
+        "positiveLayerGapCodeTarget": true,
+        "ownerRows": [
+          {
+            "fixture": "array-push-remove-100",
+            "metric": "render-update-wall",
+            "target": 1,
+            "ratios": [
+              1.5069419437011866,
+              1.5266038421894126,
+              1.5281527912583368
+            ],
+            "remains": true,
+            "tie": false,
+            "oldRunMedians": [
+              505.6191250000011,
+              500.1485840000023,
+              499.046875
+            ],
+            "headRunMedians": [
+              761.9386669999949,
+              763.5287499999977,
+              762.6198750000003
+            ]
+          },
+          {
+            "fixture": "array-push-remove-100",
+            "metric": "profiler-update",
+            "target": 1,
+            "ratios": [
+              1.1393200339047709,
+              1.054650249558692,
+              1.1208701912875085
+            ],
+            "remains": true,
+            "tie": false,
+            "oldRunMedians": [
+              99.93092600040836,
+              105.26974800053722,
+              101.43590300031792
+            ],
+            "headRunMedians": [
+              113.8533059989204,
+              111.02276599974721,
+              113.69647999938752
+            ]
+          }
+        ],
+        "raw": {
+          "core": [
+            "A-core-array-push-remove-100-off-r1.json",
+            "A-core-array-push-remove-100-off-r2.json",
+            "A-core-array-push-remove-100-off-r3.json"
+          ],
+          "react": [
+            "A-react-plain-array-push-remove-100-r1-0.16.0.json",
+            "A-react-plain-array-push-remove-100-r2-0.16.0.json",
+            "A-react-plain-array-push-remove-100-r3-0.16.0.json",
+            "A-react-plain-array-push-remove-100-r1-HEAD.json",
+            "A-react-plain-array-push-remove-100-r2-HEAD.json",
+            "A-react-plain-array-push-remove-100-r3-HEAD.json"
+          ],
+          "counts": [
+            "A-react-counts-array-push-remove-100-r1-0.16.0.json",
+            "A-react-counts-array-push-remove-100-r1-HEAD.json"
+          ]
+        }
+      },
+      {
+        "fixture": "array-100",
+        "stage": "A",
+        "interactions": 1,
+        "versions": {
+          "0.16.0": {
+            "wall": 2.393000000000029,
+            "core": 0.068167,
+            "layer": 2.3248330000000292,
+            "corePercent": 2.8486000835770655,
+            "profiler": 0.3616230000152427,
+            "commits": 2,
+            "first": 0.068167,
+            "later": 0.02225,
+            "work": {
+              "renders": {
+                "median": 141,
+                "min": 141,
+                "max": 141
+              },
+              "listenerDeliveries": {
+                "median": 35,
+                "min": 35,
+                "max": 35
+              },
+              "settlePasses": {
+                "median": 0,
+                "min": 0,
+                "max": 0
+              },
+              "commits": {
+                "median": 2,
+                "min": 2,
+                "max": 2
+              }
+            },
+            "coreWork": [
+              {
+                "renders": 0,
+                "commits": 0,
+                "listenerDeliveries": 4,
+                "settlePasses": 0
+              },
+              {
+                "renders": 0,
+                "commits": 0,
+                "listenerDeliveries": 4,
+                "settlePasses": 0
+              },
+              {
+                "renders": 0,
+                "commits": 0,
+                "listenerDeliveries": 4,
+                "settlePasses": 0
+              }
+            ],
+            "coreSource": "sentinel"
+          },
+          "HEAD": {
+            "wall": 3.230375000001004,
+            "core": 0.154125,
+            "layer": 3.076250000001004,
+            "corePercent": 4.771117904266598,
+            "profiler": 0.20928299998377042,
+            "commits": 1,
+            "first": 0.154125,
+            "later": 0.049583,
+            "work": {
+              "renders": {
+                "median": 40,
+                "min": 40,
+                "max": 40
+              },
+              "listenerDeliveries": {
+                "median": 25,
+                "min": 25,
+                "max": 25
+              },
+              "settlePasses": {
+                "median": 1,
+                "min": 1,
+                "max": 1
+              },
+              "commits": {
+                "median": 1,
+                "min": 1,
+                "max": 1
+              }
+            },
+            "coreWork": [
+              {
+                "renders": 0,
+                "commits": 0,
+                "listenerDeliveries": 0,
+                "settlePasses": 1
+              },
+              {
+                "renders": 0,
+                "commits": 0,
+                "listenerDeliveries": 0,
+                "settlePasses": 1
+              },
+              {
+                "renders": 0,
+                "commits": 0,
+                "listenerDeliveries": 0,
+                "settlePasses": 1
+              }
+            ],
+            "coreSource": "sentinel",
+            "ga": {
+              "difference": 0.00020799999999998597,
+              "noise": 0.006709000000000005,
+              "withinNoise": true,
+              "passed": true,
+              "zeroEngineMacrotasks": true,
+              "runs": [
+                {
+                  "run": 1,
+                  "difference": 0.00012499999999998623,
+                  "noise": 0.009127000000000008,
+                  "withinNoise": true,
+                  "zeroEngineMacrotasks": true,
+                  "boundary": {
+                    "scheduled": {
+                      "median": 0,
+                      "max": 0
+                    },
+                    "executed": {
+                      "median": 0,
+                      "max": 0
+                    },
+                    "cancelled": {
+                      "median": 0,
+                      "max": 0
+                    },
+                    "pendingAtMicrotasks": {
+                      "median": 0,
+                      "max": 0
+                    },
+                    "pendingAtFirstSentinel": {
+                      "median": 0,
+                      "max": 0
+                    },
+                    "pendingAtSentinel": {
+                      "median": 0,
+                      "max": 0
+                    },
+                    "tailScheduled": {
+                      "median": 0,
+                      "max": 0
+                    },
+                    "tailExecuted": {
+                      "median": 0,
+                      "max": 0
+                    }
+                  },
+                  "metric": {
+                    "median": 0.152333,
+                    "p99": 0.20487499999999997,
+                    "samples": 101
+                  }
+                },
+                {
+                  "run": 2,
+                  "difference": 0.00016699999999997273,
+                  "noise": 0.010626000000000009,
+                  "withinNoise": true,
+                  "zeroEngineMacrotasks": true,
+                  "boundary": {
+                    "scheduled": {
+                      "median": 0,
+                      "max": 0
+                    },
+                    "executed": {
+                      "median": 0,
+                      "max": 0
+                    },
+                    "cancelled": {
+                      "median": 0,
+                      "max": 0
+                    },
+                    "pendingAtMicrotasks": {
+                      "median": 0,
+                      "max": 0
+                    },
+                    "pendingAtFirstSentinel": {
+                      "median": 0,
+                      "max": 0
+                    },
+                    "pendingAtSentinel": {
+                      "median": 0,
+                      "max": 0
+                    },
+                    "tailScheduled": {
+                      "median": 0,
+                      "max": 0
+                    },
+                    "tailExecuted": {
+                      "median": 0,
+                      "max": 0
+                    }
+                  },
+                  "metric": {
+                    "median": 0.15575,
+                    "p99": 0.186958,
+                    "samples": 101
+                  }
+                },
+                {
+                  "run": 3,
+                  "difference": 0.00029200000000001447,
+                  "noise": 0.010709999999999982,
+                  "withinNoise": true,
+                  "zeroEngineMacrotasks": true,
+                  "boundary": {
+                    "scheduled": {
+                      "median": 0,
+                      "max": 0
+                    },
+                    "executed": {
+                      "median": 0,
+                      "max": 0
+                    },
+                    "cancelled": {
+                      "median": 0,
+                      "max": 0
+                    },
+                    "pendingAtMicrotasks": {
+                      "median": 0,
+                      "max": 0
+                    },
+                    "pendingAtFirstSentinel": {
+                      "median": 0,
+                      "max": 0
+                    },
+                    "pendingAtSentinel": {
+                      "median": 0,
+                      "max": 0
+                    },
+                    "tailScheduled": {
+                      "median": 0,
+                      "max": 0
+                    },
+                    "tailExecuted": {
+                      "median": 0,
+                      "max": 0
+                    }
+                  },
+                  "metric": {
+                    "median": 0.15525,
+                    "p99": 0.18475000000000003,
+                    "samples": 101
+                  }
+                }
+              ]
+            }
+          }
+        },
+        "gaps": {
+          "wall": 0.837375000000975,
+          "core": 0.085958,
+          "layer": 0.7514170000009748,
+          "first": 0.085958,
+          "later": 0.027333000000000003
+        },
+        "coreDominates": false,
+        "cause": "이후 갱신 차이는 104라운드의 동일 행에 남은 쓰기당 고정비와 같은 규모입니다. 첫 갱신 차이는 그 기록의 약 0.06 ms보다 크므로 동일 크기로 확대하지 않습니다.",
+        "matches104Row": true,
+        "matches110Row": false,
+        "positiveLayerGapCodeTarget": true,
+        "ownerRows": [
+          {
+            "fixture": "array-100",
+            "metric": "render-update-wall",
+            "target": 1,
+            "ratios": [
+              1.354643489187794,
+              1.349573154443007,
+              1.3556695633969917
+            ],
+            "remains": true,
+            "tie": false,
+            "oldRunMedians": [
+              2.3873750000002474,
+              2.392083000000639,
+              2.387749999999869
+            ],
+            "headRunMedians": [
+              3.234042000000045,
+              3.228291000000354,
+              3.2370000000009895
+            ]
+          }
+        ],
+        "raw": {
+          "core": [
+            "A-core-array-100-off-r1.json",
+            "A-core-array-100-off-r2.json",
+            "A-core-array-100-off-r3.json"
+          ],
+          "react": [
+            "A-react-plain-array-100-r1-0.16.0.json",
+            "A-react-plain-array-100-r2-0.16.0.json",
+            "A-react-plain-array-100-r3-0.16.0.json",
+            "A-react-plain-array-100-r1-HEAD.json",
+            "A-react-plain-array-100-r2-HEAD.json",
+            "A-react-plain-array-100-r3-HEAD.json"
+          ],
+          "counts": [
+            "A-react-counts-array-100-r1-0.16.0.json",
+            "A-react-counts-array-100-r1-HEAD.json"
+          ]
+        }
+      },
+      {
+        "fixture": "sample-0",
+        "stage": "B",
+        "interactions": 1,
+        "versions": {
+          "0.16.0": {
+            "wall": 2.886209000000008,
+            "core": 0.0215,
+            "layer": 2.864709000000008,
+            "corePercent": 0.7449217988025101,
+            "profiler": 0.11596399999939422,
+            "commits": 2,
+            "first": 0.0215,
+            "later": 0.009083999999999998,
+            "work": {
+              "renders": {
+                "median": 22,
+                "min": 22,
+                "max": 22
+              },
+              "listenerDeliveries": {
+                "median": 24,
+                "min": 24,
+                "max": 24
+              },
+              "settlePasses": {
+                "median": 0,
+                "min": 0,
+                "max": 0
+              },
+              "commits": {
+                "median": 2,
+                "min": 2,
+                "max": 2
+              }
+            },
+            "coreWork": [
+              {
+                "renders": 0,
+                "commits": 0,
+                "listenerDeliveries": 2,
+                "settlePasses": 0
+              },
+              {
+                "renders": 0,
+                "commits": 0,
+                "listenerDeliveries": 2,
+                "settlePasses": 0
+              },
+              {
+                "renders": 0,
+                "commits": 0,
+                "listenerDeliveries": 2,
+                "settlePasses": 0
+              }
+            ],
+            "coreSource": "sentinel"
+          },
+          "HEAD": {
+            "wall": 2.9217499999999745,
+            "core": 0.124375,
+            "layer": 2.7973749999999744,
+            "corePercent": 4.256866603918922,
+            "profiler": 0.11262099999976272,
+            "commits": 1,
+            "first": 0.124375,
+            "later": 0.041459,
+            "work": {
+              "renders": {
+                "median": 20,
+                "min": 20,
+                "max": 20
+              },
+              "listenerDeliveries": {
+                "median": 13,
+                "min": 13,
+                "max": 13
+              },
+              "settlePasses": {
+                "median": 1,
+                "min": 1,
+                "max": 1
+              },
+              "commits": {
+                "median": 1,
+                "min": 1,
+                "max": 1
+              }
+            },
+            "coreWork": [
+              {
+                "renders": 0,
+                "commits": 0,
+                "listenerDeliveries": 0,
+                "settlePasses": 1
+              },
+              {
+                "renders": 0,
+                "commits": 0,
+                "listenerDeliveries": 0,
+                "settlePasses": 1
+              },
+              {
+                "renders": 0,
+                "commits": 0,
+                "listenerDeliveries": 0,
+                "settlePasses": 1
+              }
+            ],
+            "coreSource": "sentinel",
+            "ga": {
+              "difference": 0.0024170000000000025,
+              "noise": 0.005083999999999993,
+              "withinNoise": true,
+              "passed": true,
+              "zeroEngineMacrotasks": true,
+              "runs": [
+                {
+                  "run": 1,
+                  "difference": 0.0010000000000000009,
+                  "noise": 0.006747999999999992,
+                  "withinNoise": true,
+                  "zeroEngineMacrotasks": true,
+                  "boundary": {
+                    "scheduled": {
+                      "median": 0,
+                      "max": 0
+                    },
+                    "executed": {
+                      "median": 0,
+                      "max": 0
+                    },
+                    "cancelled": {
+                      "median": 0,
+                      "max": 0
+                    },
+                    "pendingAtMicrotasks": {
+                      "median": 0,
+                      "max": 0
+                    },
+                    "pendingAtFirstSentinel": {
+                      "median": 0,
+                      "max": 0
+                    },
+                    "pendingAtSentinel": {
+                      "median": 0,
+                      "max": 0
+                    },
+                    "tailScheduled": {
+                      "median": 0,
+                      "max": 0
+                    },
+                    "tailExecuted": {
+                      "median": 0,
+                      "max": 0
+                    }
+                  },
+                  "metric": {
+                    "median": 0.12266700000000001,
+                    "p99": 0.18512499999999998,
+                    "samples": 101
+                  }
+                },
+                {
+                  "run": 2,
+                  "difference": 0.002917000000000003,
+                  "noise": 0.006790000000000006,
+                  "withinNoise": true,
+                  "zeroEngineMacrotasks": true,
+                  "boundary": {
+                    "scheduled": {
+                      "median": 0,
+                      "max": 0
+                    },
+                    "executed": {
+                      "median": 0,
+                      "max": 0
+                    },
+                    "cancelled": {
+                      "median": 0,
+                      "max": 0
+                    },
+                    "pendingAtMicrotasks": {
+                      "median": 0,
+                      "max": 0
+                    },
+                    "pendingAtFirstSentinel": {
+                      "median": 0,
+                      "max": 0
+                    },
+                    "pendingAtSentinel": {
+                      "median": 0,
+                      "max": 0
+                    },
+                    "tailScheduled": {
+                      "median": 0,
+                      "max": 0
+                    },
+                    "tailExecuted": {
+                      "median": 0,
+                      "max": 0
+                    }
+                  },
+                  "metric": {
+                    "median": 0.12583299999999997,
+                    "p99": 0.161375,
+                    "samples": 101
+                  }
+                },
+                {
+                  "run": 3,
+                  "difference": 0.002375000000000016,
+                  "noise": 0.009041000000000009,
+                  "withinNoise": true,
+                  "zeroEngineMacrotasks": true,
+                  "boundary": {
+                    "scheduled": {
+                      "median": 0,
+                      "max": 0
+                    },
+                    "executed": {
+                      "median": 0,
+                      "max": 0
+                    },
+                    "cancelled": {
+                      "median": 0,
+                      "max": 0
+                    },
+                    "pendingAtMicrotasks": {
+                      "median": 0,
+                      "max": 0
+                    },
+                    "pendingAtFirstSentinel": {
+                      "median": 0,
+                      "max": 0
+                    },
+                    "pendingAtSentinel": {
+                      "median": 0,
+                      "max": 0
+                    },
+                    "tailScheduled": {
+                      "median": 0,
+                      "max": 0
+                    },
+                    "tailExecuted": {
+                      "median": 0,
+                      "max": 0
+                    }
+                  },
+                  "metric": {
+                    "median": 0.123875,
+                    "p99": 0.175166,
+                    "samples": 101
+                  }
+                }
+              ]
+            }
+          }
+        },
+        "gaps": {
+          "wall": 0.035540999999966516,
+          "core": 0.102875,
+          "layer": -0.06733400000003353,
+          "first": 0.102875,
+          "later": 0.032375
+        },
+        "coreDominates": false,
+        "cause": "이후 갱신 차이는 104라운드의 동일 행에 남은 쓰기당 고정비와 같은 규모입니다. 첫 갱신 차이는 그 기록의 약 0.06 ms보다 크므로 동일 크기로 확대하지 않습니다.",
+        "matches104Row": true,
+        "matches110Row": false,
+        "positiveLayerGapCodeTarget": false,
+        "ownerRows": [
+          {
+            "fixture": "sample-0",
+            "metric": "render-update-wall",
+            "target": 1,
+            "ratios": [
+              1.0089957674088228,
+              1.0092981403718715,
+              1.0053427677193778
+            ],
+            "remains": true,
+            "tie": false,
+            "oldRunMedians": [
+              2.8949170000000777,
+              2.9172499999999673,
+              2.908792000000062
+            ],
+            "headRunMedians": [
+              2.9209589999999253,
+              2.944374999999809,
+              2.924333000000047
+            ]
+          }
+        ],
+        "raw": {
+          "core": [
+            "B-core-sample-0-off-r1.json",
+            "B-core-sample-0-off-r2.json",
+            "B-core-sample-0-off-r3.json"
+          ],
+          "react": [
+            "B-react-plain-sample-0-r1-0.16.0.json",
+            "B-react-plain-sample-0-r2-0.16.0.json",
+            "B-react-plain-sample-0-r3-0.16.0.json",
+            "B-react-plain-sample-0-r1-HEAD.json",
+            "B-react-plain-sample-0-r2-HEAD.json",
+            "B-react-plain-sample-0-r3-HEAD.json"
+          ],
+          "counts": [
+            "B-react-counts-sample-0-r1-0.16.0.json",
+            "B-react-counts-sample-0-r1-HEAD.json"
+          ]
+        }
+      },
+      {
+        "fixture": "sample-1",
+        "stage": "B",
+        "interactions": 1,
+        "versions": {
+          "0.16.0": {
+            "wall": 2.8411670000000413,
+            "core": 0.025833000000000002,
+            "layer": 2.8153340000000413,
+            "corePercent": 0.9092390556415595,
+            "profiler": 0.12583299999971587,
+            "commits": 2,
+            "first": 0.025833000000000002,
+            "later": 0.009500000000000001,
+            "work": {
+              "renders": {
+                "median": 31,
+                "min": 31,
+                "max": 31
+              },
+              "listenerDeliveries": {
+                "median": 29,
+                "min": 29,
+                "max": 29
+              },
+              "settlePasses": {
+                "median": 0,
+                "min": 0,
+                "max": 0
+              },
+              "commits": {
+                "median": 2,
+                "min": 2,
+                "max": 2
+              }
+            },
+            "coreWork": [
+              {
+                "renders": 0,
+                "commits": 0,
+                "listenerDeliveries": 3,
+                "settlePasses": 0
+              },
+              {
+                "renders": 0,
+                "commits": 0,
+                "listenerDeliveries": 3,
+                "settlePasses": 0
+              },
+              {
+                "renders": 0,
+                "commits": 0,
+                "listenerDeliveries": 3,
+                "settlePasses": 0
+              }
+            ],
+            "coreSource": "sentinel"
+          },
+          "HEAD": {
+            "wall": 2.9837499999999864,
+            "core": 0.13883299999999998,
+            "layer": 2.8449169999999864,
+            "corePercent": 4.652970255550922,
+            "profiler": 0.1333300000002282,
+            "commits": 1,
+            "first": 0.13883299999999998,
+            "later": 0.046458,
+            "work": {
+              "renders": {
+                "median": 30,
+                "min": 30,
+                "max": 30
+              },
+              "listenerDeliveries": {
+                "median": 19,
+                "min": 19,
+                "max": 19
+              },
+              "settlePasses": {
+                "median": 1,
+                "min": 1,
+                "max": 1
+              },
+              "commits": {
+                "median": 1,
+                "min": 1,
+                "max": 1
+              }
+            },
+            "coreWork": [
+              {
+                "renders": 0,
+                "commits": 0,
+                "listenerDeliveries": 0,
+                "settlePasses": 1
+              },
+              {
+                "renders": 0,
+                "commits": 0,
+                "listenerDeliveries": 0,
+                "settlePasses": 1
+              },
+              {
+                "renders": 0,
+                "commits": 0,
+                "listenerDeliveries": 0,
+                "settlePasses": 1
+              }
+            ],
+            "coreSource": "sentinel",
+            "ga": {
+              "difference": -0.00012499999999998623,
+              "noise": 0.006873999999999965,
+              "withinNoise": true,
+              "passed": true,
+              "zeroEngineMacrotasks": true,
+              "runs": [
+                {
+                  "run": 1,
+                  "difference": -0.00020899999999998697,
+                  "noise": 0.011330999999999982,
+                  "withinNoise": true,
+                  "zeroEngineMacrotasks": true,
+                  "boundary": {
+                    "scheduled": {
+                      "median": 0,
+                      "max": 0
+                    },
+                    "executed": {
+                      "median": 0,
+                      "max": 0
+                    },
+                    "cancelled": {
+                      "median": 0,
+                      "max": 0
+                    },
+                    "pendingAtMicrotasks": {
+                      "median": 0,
+                      "max": 0
+                    },
+                    "pendingAtFirstSentinel": {
+                      "median": 0,
+                      "max": 0
+                    },
+                    "pendingAtSentinel": {
+                      "median": 0,
+                      "max": 0
+                    },
+                    "tailScheduled": {
+                      "median": 0,
+                      "max": 0
+                    },
+                    "tailExecuted": {
+                      "median": 0,
+                      "max": 0
+                    }
+                  },
+                  "metric": {
+                    "median": 0.14091700000000001,
+                    "p99": 0.177875,
+                    "samples": 101
+                  }
+                },
+                {
+                  "run": 2,
+                  "difference": -2.7755575615628914e-17,
+                  "noise": 0.009875000000000024,
+                  "withinNoise": true,
+                  "zeroEngineMacrotasks": true,
+                  "boundary": {
+                    "scheduled": {
+                      "median": 0,
+                      "max": 0
+                    },
+                    "executed": {
+                      "median": 0,
+                      "max": 0
+                    },
+                    "cancelled": {
+                      "median": 0,
+                      "max": 0
+                    },
+                    "pendingAtMicrotasks": {
+                      "median": 0,
+                      "max": 0
+                    },
+                    "pendingAtFirstSentinel": {
+                      "median": 0,
+                      "max": 0
+                    },
+                    "pendingAtSentinel": {
+                      "median": 0,
+                      "max": 0
+                    },
+                    "tailScheduled": {
+                      "median": 0,
+                      "max": 0
+                    },
+                    "tailExecuted": {
+                      "median": 0,
+                      "max": 0
+                    }
+                  },
+                  "metric": {
+                    "median": 0.136125,
+                    "p99": 0.17120800000000003,
+                    "samples": 101
+                  }
+                },
+                {
+                  "run": 3,
+                  "difference": -0.00012499999999998623,
+                  "noise": 0.00858199999999998,
+                  "withinNoise": true,
+                  "zeroEngineMacrotasks": true,
+                  "boundary": {
+                    "scheduled": {
+                      "median": 0,
+                      "max": 0
+                    },
+                    "executed": {
+                      "median": 0,
+                      "max": 0
+                    },
+                    "cancelled": {
+                      "median": 0,
+                      "max": 0
+                    },
+                    "pendingAtMicrotasks": {
+                      "median": 0,
+                      "max": 0
+                    },
+                    "pendingAtFirstSentinel": {
+                      "median": 0,
+                      "max": 0
+                    },
+                    "pendingAtSentinel": {
+                      "median": 0,
+                      "max": 0
+                    },
+                    "tailScheduled": {
+                      "median": 0,
+                      "max": 0
+                    },
+                    "tailExecuted": {
+                      "median": 0,
+                      "max": 0
+                    }
+                  },
+                  "metric": {
+                    "median": 0.13941599999999998,
+                    "p99": 0.193542,
+                    "samples": 101
+                  }
+                }
+              ]
+            }
+          }
+        },
+        "gaps": {
+          "wall": 0.14258299999994506,
+          "core": 0.11299999999999999,
+          "layer": 0.02958299999994507,
+          "first": 0.11299999999999999,
+          "later": 0.036958
+        },
+        "coreDominates": false,
+        "cause": "이후 갱신 차이는 104라운드의 동일 행에 남은 쓰기당 고정비와 같은 규모입니다. 첫 갱신 차이는 그 기록의 약 0.06 ms보다 크므로 동일 크기로 확대하지 않습니다.",
+        "matches104Row": true,
+        "matches110Row": false,
+        "positiveLayerGapCodeTarget": true,
+        "ownerRows": [
+          {
+            "fixture": "sample-1",
+            "metric": "render-update-wall",
+            "target": 1,
+            "ratios": [
+              1.0425798801336859,
+              1.0500519651228966,
+              1.0310844533951717
+            ],
+            "remains": true,
+            "tie": false,
+            "oldRunMedians": [
+              2.8436669999998685,
+              2.85287500000004,
+              2.8551250000000437
+            ],
+            "headRunMedians": [
+              2.964749999999981,
+              2.995667000000026,
+              2.9438749999999345
+            ]
+          }
+        ],
+        "raw": {
+          "core": [
+            "B-core-sample-1-off-r1.json",
+            "B-core-sample-1-off-r2.json",
+            "B-core-sample-1-off-r3.json"
+          ],
+          "react": [
+            "B-react-plain-sample-1-r1-0.16.0.json",
+            "B-react-plain-sample-1-r2-0.16.0.json",
+            "B-react-plain-sample-1-r3-0.16.0.json",
+            "B-react-plain-sample-1-r1-HEAD.json",
+            "B-react-plain-sample-1-r2-HEAD.json",
+            "B-react-plain-sample-1-r3-HEAD.json"
+          ],
+          "counts": [
+            "B-react-counts-sample-1-r1-0.16.0.json",
+            "B-react-counts-sample-1-r1-HEAD.json"
+          ]
+        }
+      },
+      {
+        "fixture": "sample-2",
+        "stage": "B",
+        "interactions": 1,
+        "versions": {
+          "0.16.0": {
+            "wall": 2.9262089999999716,
+            "core": 0.028707999999999997,
+            "layer": 2.8975009999999717,
+            "corePercent": 0.9810645787775334,
+            "profiler": 0.1485030000014831,
+            "commits": 2,
+            "first": 0.028707999999999997,
+            "later": 0.010166999999999999,
+            "work": {
+              "renders": {
+                "median": 31,
+                "min": 31,
+                "max": 31
+              },
+              "listenerDeliveries": {
+                "median": 29,
+                "min": 29,
+                "max": 29
+              },
+              "settlePasses": {
+                "median": 0,
+                "min": 0,
+                "max": 0
+              },
+              "commits": {
+                "median": 2,
+                "min": 2,
+                "max": 2
+              }
+            },
+            "coreWork": [
+              {
+                "renders": 0,
+                "commits": 0,
+                "listenerDeliveries": 3,
+                "settlePasses": 0
+              },
+              {
+                "renders": 0,
+                "commits": 0,
+                "listenerDeliveries": 3,
+                "settlePasses": 0
+              },
+              {
+                "renders": 0,
+                "commits": 0,
+                "listenerDeliveries": 3,
+                "settlePasses": 0
+              }
+            ],
+            "coreSource": "sentinel"
+          },
+          "HEAD": {
+            "wall": 2.981999999999971,
+            "core": 0.13987500000000003,
+            "layer": 2.842124999999971,
+            "corePercent": 4.690643863179121,
+            "profiler": 0.13866400000074464,
+            "commits": 1,
+            "first": 0.13987500000000003,
+            "later": 0.044458,
+            "work": {
+              "renders": {
+                "median": 30,
+                "min": 30,
+                "max": 30
+              },
+              "listenerDeliveries": {
+                "median": 19,
+                "min": 19,
+                "max": 19
+              },
+              "settlePasses": {
+                "median": 1,
+                "min": 1,
+                "max": 1
+              },
+              "commits": {
+                "median": 1,
+                "min": 1,
+                "max": 1
+              }
+            },
+            "coreWork": [
+              {
+                "renders": 0,
+                "commits": 0,
+                "listenerDeliveries": 0,
+                "settlePasses": 1
+              },
+              {
+                "renders": 0,
+                "commits": 0,
+                "listenerDeliveries": 0,
+                "settlePasses": 1
+              },
+              {
+                "renders": 0,
+                "commits": 0,
+                "listenerDeliveries": 0,
+                "settlePasses": 1
+              }
+            ],
+            "coreSource": "sentinel",
+            "ga": {
+              "difference": 0.00012499999999998623,
+              "noise": 0.0047489999999999494,
+              "withinNoise": true,
+              "passed": true,
+              "zeroEngineMacrotasks": true,
+              "runs": [
+                {
+                  "run": 1,
+                  "difference": 0.0000840000000000285,
+                  "noise": 0.008209000000000024,
+                  "withinNoise": true,
+                  "zeroEngineMacrotasks": true,
+                  "boundary": {
+                    "scheduled": {
+                      "median": 0,
+                      "max": 0
+                    },
+                    "executed": {
+                      "median": 0,
+                      "max": 0
+                    },
+                    "cancelled": {
+                      "median": 0,
+                      "max": 0
+                    },
+                    "pendingAtMicrotasks": {
+                      "median": 0,
+                      "max": 0
+                    },
+                    "pendingAtFirstSentinel": {
+                      "median": 0,
+                      "max": 0
+                    },
+                    "pendingAtSentinel": {
+                      "median": 0,
+                      "max": 0
+                    },
+                    "tailScheduled": {
+                      "median": 0,
+                      "max": 0
+                    },
+                    "tailExecuted": {
+                      "median": 0,
+                      "max": 0
+                    }
+                  },
+                  "metric": {
+                    "median": 0.140583,
+                    "p99": 0.173666,
+                    "samples": 101
+                  }
+                },
+                {
+                  "run": 2,
+                  "difference": 0.00020799999999998597,
+                  "noise": 0.007290999999999994,
+                  "withinNoise": true,
+                  "zeroEngineMacrotasks": true,
+                  "boundary": {
+                    "scheduled": {
+                      "median": 0,
+                      "max": 0
+                    },
+                    "executed": {
+                      "median": 0,
+                      "max": 0
+                    },
+                    "cancelled": {
+                      "median": 0,
+                      "max": 0
+                    },
+                    "pendingAtMicrotasks": {
+                      "median": 0,
+                      "max": 0
+                    },
+                    "pendingAtFirstSentinel": {
+                      "median": 0,
+                      "max": 0
+                    },
+                    "pendingAtSentinel": {
+                      "median": 0,
+                      "max": 0
+                    },
+                    "tailScheduled": {
+                      "median": 0,
+                      "max": 0
+                    },
+                    "tailExecuted": {
+                      "median": 0,
+                      "max": 0
+                    }
+                  },
+                  "metric": {
+                    "median": 0.1395,
+                    "p99": 0.17770799999999998,
+                    "samples": 101
+                  }
+                },
+                {
+                  "run": 3,
+                  "difference": 0,
+                  "noise": 0.007666000000000036,
+                  "withinNoise": true,
+                  "zeroEngineMacrotasks": true,
+                  "boundary": {
+                    "scheduled": {
+                      "median": 0,
+                      "max": 0
+                    },
+                    "executed": {
+                      "median": 0,
+                      "max": 0
+                    },
+                    "cancelled": {
+                      "median": 0,
+                      "max": 0
+                    },
+                    "pendingAtMicrotasks": {
+                      "median": 0,
+                      "max": 0
+                    },
+                    "pendingAtFirstSentinel": {
+                      "median": 0,
+                      "max": 0
+                    },
+                    "pendingAtSentinel": {
+                      "median": 0,
+                      "max": 0
+                    },
+                    "tailScheduled": {
+                      "median": 0,
+                      "max": 0
+                    },
+                    "tailExecuted": {
+                      "median": 0,
+                      "max": 0
+                    }
+                  },
+                  "metric": {
+                    "median": 0.13987500000000003,
+                    "p99": 0.18412499999999998,
+                    "samples": 101
+                  }
+                }
+              ]
+            }
+          }
+        },
+        "gaps": {
+          "wall": 0.05579099999999926,
+          "core": 0.11116700000000003,
+          "layer": -0.05537600000000076,
+          "first": 0.11116700000000003,
+          "later": 0.034291
+        },
+        "coreDominates": false,
+        "cause": "이후 갱신 차이는 104라운드의 동일 행에 남은 쓰기당 고정비와 같은 규모입니다. 첫 갱신 차이는 그 기록의 약 0.06 ms보다 크므로 동일 크기로 확대하지 않습니다.",
+        "matches104Row": true,
+        "matches110Row": false,
+        "positiveLayerGapCodeTarget": false,
+        "ownerRows": [
+          {
+            "fixture": "sample-2",
+            "metric": "render-update-wall",
+            "target": 1,
+            "ratios": [
+              1.0240396667669116,
+              1.0341027942182037,
+              1.011215367049659
+            ],
+            "remains": true,
+            "tie": false,
+            "oldRunMedians": [
+              2.923958999999968,
+              2.9372079999998277,
+              2.9497919999998885
+            ],
+            "headRunMedians": [
+              2.994250000000079,
+              3.0373749999998836,
+              2.9828750000000355
+            ]
+          }
+        ],
+        "raw": {
+          "core": [
+            "B-core-sample-2-off-r1.json",
+            "B-core-sample-2-off-r2.json",
+            "B-core-sample-2-off-r3.json"
+          ],
+          "react": [
+            "B-react-plain-sample-2-r1-0.16.0.json",
+            "B-react-plain-sample-2-r2-0.16.0.json",
+            "B-react-plain-sample-2-r3-0.16.0.json",
+            "B-react-plain-sample-2-r1-HEAD.json",
+            "B-react-plain-sample-2-r2-HEAD.json",
+            "B-react-plain-sample-2-r3-HEAD.json"
+          ],
+          "counts": [
+            "B-react-counts-sample-2-r1-0.16.0.json",
+            "B-react-counts-sample-2-r1-HEAD.json"
+          ]
+        }
+      },
+      {
+        "fixture": "sample-3",
+        "stage": "B",
+        "interactions": 1,
+        "versions": {
+          "0.16.0": {
+            "wall": 2.8994580000003225,
+            "core": 0.029042,
+            "layer": 2.8704160000003225,
+            "corePercent": 1.001635478078895,
+            "profiler": 0.113711999999623,
+            "commits": 2,
+            "first": 0.029042,
+            "later": 0.009291,
+            "work": {
+              "renders": {
+                "median": 31,
+                "min": 31,
+                "max": 31
+              },
+              "listenerDeliveries": {
+                "median": 29,
+                "min": 29,
+                "max": 29
+              },
+              "settlePasses": {
+                "median": 0,
+                "min": 0,
+                "max": 0
+              },
+              "commits": {
+                "median": 2,
+                "min": 2,
+                "max": 2
+              }
+            },
+            "coreWork": [
+              {
+                "renders": 0,
+                "commits": 0,
+                "listenerDeliveries": 3,
+                "settlePasses": 0
+              },
+              {
+                "renders": 0,
+                "commits": 0,
+                "listenerDeliveries": 3,
+                "settlePasses": 0
+              },
+              {
+                "renders": 0,
+                "commits": 0,
+                "listenerDeliveries": 3,
+                "settlePasses": 0
+              }
+            ],
+            "coreSource": "sentinel"
+          },
+          "HEAD": {
+            "wall": 2.9375,
+            "core": 0.13691599999999998,
+            "layer": 2.800584,
+            "corePercent": 4.660970212765957,
+            "profiler": 0.11712199999988115,
+            "commits": 1,
+            "first": 0.13691599999999998,
+            "later": 0.045375,
+            "work": {
+              "renders": {
+                "median": 30,
+                "min": 30,
+                "max": 30
+              },
+              "listenerDeliveries": {
+                "median": 19,
+                "min": 19,
+                "max": 19
+              },
+              "settlePasses": {
+                "median": 1,
+                "min": 1,
+                "max": 1
+              },
+              "commits": {
+                "median": 1,
+                "min": 1,
+                "max": 1
+              }
+            },
+            "coreWork": [
+              {
+                "renders": 0,
+                "commits": 0,
+                "listenerDeliveries": 0,
+                "settlePasses": 1
+              },
+              {
+                "renders": 0,
+                "commits": 0,
+                "listenerDeliveries": 0,
+                "settlePasses": 1
+              },
+              {
+                "renders": 0,
+                "commits": 0,
+                "listenerDeliveries": 0,
+                "settlePasses": 1
+              }
+            ],
+            "coreSource": "sentinel",
+            "ga": {
+              "difference": 0.00012499999999995848,
+              "noise": 0.006082000000000061,
+              "withinNoise": true,
+              "passed": true,
+              "zeroEngineMacrotasks": true,
+              "runs": [
+                {
+                  "run": 1,
+                  "difference": 0.00016700000000000048,
+                  "noise": 0.012581999999999956,
+                  "withinNoise": true,
+                  "zeroEngineMacrotasks": true,
+                  "boundary": {
+                    "scheduled": {
+                      "median": 0,
+                      "max": 0
+                    },
+                    "executed": {
+                      "median": 0,
+                      "max": 0
+                    },
+                    "cancelled": {
+                      "median": 0,
+                      "max": 0
+                    },
+                    "pendingAtMicrotasks": {
+                      "median": 0,
+                      "max": 0
+                    },
+                    "pendingAtFirstSentinel": {
+                      "median": 0,
+                      "max": 0
+                    },
+                    "pendingAtSentinel": {
+                      "median": 0,
+                      "max": 0
+                    },
+                    "tailScheduled": {
+                      "median": 0,
+                      "max": 0
+                    },
+                    "tailExecuted": {
+                      "median": 0,
+                      "max": 0
+                    }
+                  },
+                  "metric": {
+                    "median": 0.136417,
+                    "p99": 0.17058299999999998,
+                    "samples": 101
+                  }
+                },
+                {
+                  "run": 2,
+                  "difference": 0.00004099999999998549,
+                  "noise": 0.010833999999999957,
+                  "withinNoise": true,
+                  "zeroEngineMacrotasks": true,
+                  "boundary": {
+                    "scheduled": {
+                      "median": 0,
+                      "max": 0
+                    },
+                    "executed": {
+                      "median": 0,
+                      "max": 0
+                    },
+                    "cancelled": {
+                      "median": 0,
+                      "max": 0
+                    },
+                    "pendingAtMicrotasks": {
+                      "median": 0,
+                      "max": 0
+                    },
+                    "pendingAtFirstSentinel": {
+                      "median": 0,
+                      "max": 0
+                    },
+                    "pendingAtSentinel": {
+                      "median": 0,
+                      "max": 0
+                    },
+                    "tailScheduled": {
+                      "median": 0,
+                      "max": 0
+                    },
+                    "tailExecuted": {
+                      "median": 0,
+                      "max": 0
+                    }
+                  },
+                  "metric": {
+                    "median": 0.13895800000000003,
+                    "p99": 0.168333,
+                    "samples": 101
+                  }
+                },
+                {
+                  "run": 3,
+                  "difference": 0.000125000000000014,
+                  "noise": 0.007456999999999993,
+                  "withinNoise": true,
+                  "zeroEngineMacrotasks": true,
+                  "boundary": {
+                    "scheduled": {
+                      "median": 0,
+                      "max": 0
+                    },
+                    "executed": {
+                      "median": 0,
+                      "max": 0
+                    },
+                    "cancelled": {
+                      "median": 0,
+                      "max": 0
+                    },
+                    "pendingAtMicrotasks": {
+                      "median": 0,
+                      "max": 0
+                    },
+                    "pendingAtFirstSentinel": {
+                      "median": 0,
+                      "max": 0
+                    },
+                    "pendingAtSentinel": {
+                      "median": 0,
+                      "max": 0
+                    },
+                    "tailScheduled": {
+                      "median": 0,
+                      "max": 0
+                    },
+                    "tailExecuted": {
+                      "median": 0,
+                      "max": 0
+                    }
+                  },
+                  "metric": {
+                    "median": 0.13674999999999998,
+                    "p99": 0.167333,
+                    "samples": 101
+                  }
+                }
+              ]
+            }
+          }
+        },
+        "gaps": {
+          "wall": 0.0380419999996775,
+          "core": 0.10787399999999998,
+          "layer": -0.0698320000003223,
+          "first": 0.10787399999999998,
+          "later": 0.036084
+        },
+        "coreDominates": false,
+        "cause": "이후 갱신 차이는 104라운드의 동일 행에 남은 쓰기당 고정비와 같은 규모입니다. 첫 갱신 차이는 그 기록의 약 0.06 ms보다 크므로 동일 크기로 확대하지 않습니다.",
+        "matches104Row": true,
+        "matches110Row": false,
+        "positiveLayerGapCodeTarget": false,
+        "ownerRows": [
+          {
+            "fixture": "sample-3",
+            "metric": "render-update-wall",
+            "target": 1,
+            "ratios": [
+              1.0119124692476948,
+              1.010379561479615,
+              1.0192457399878783
+            ],
+            "remains": true,
+            "tie": false,
+            "oldRunMedians": [
+              2.8961249999999836,
+              2.898292000000083,
+              2.8902499999999236
+            ],
+            "headRunMedians": [
+              2.9306249999999636,
+              2.92837499999996,
+              2.9458749999998872
+            ]
+          }
+        ],
+        "raw": {
+          "core": [
+            "B-core-sample-3-off-r1.json",
+            "B-core-sample-3-off-r2.json",
+            "B-core-sample-3-off-r3.json"
+          ],
+          "react": [
+            "B-react-plain-sample-3-r1-0.16.0.json",
+            "B-react-plain-sample-3-r2-0.16.0.json",
+            "B-react-plain-sample-3-r3-0.16.0.json",
+            "B-react-plain-sample-3-r1-HEAD.json",
+            "B-react-plain-sample-3-r2-HEAD.json",
+            "B-react-plain-sample-3-r3-HEAD.json"
+          ],
+          "counts": [
+            "B-react-counts-sample-3-r1-0.16.0.json",
+            "B-react-counts-sample-3-r1-HEAD.json"
+          ]
+        }
+      },
+      {
+        "fixture": "flat-50",
+        "stage": "B",
+        "interactions": 10,
+        "versions": {
+          "0.16.0": {
+            "wall": 25.344708000000082,
+            "core": 0.160834,
+            "layer": 25.18387400000008,
+            "corePercent": 0.6345861234621424,
+            "profiler": 0.7369580000013229,
+            "commits": 20,
+            "first": 0.033333,
+            "later": 0.011209,
+            "work": {
+              "renders": {
+                "median": 220,
+                "min": 220,
+                "max": 220
+              },
+              "listenerDeliveries": {
+                "median": 240,
+                "min": 240,
+                "max": 240
+              },
+              "settlePasses": {
+                "median": 0,
+                "min": 0,
+                "max": 0
+              },
+              "commits": {
+                "median": 20,
+                "min": 20,
+                "max": 20
+              }
+            },
+            "coreWork": [
+              {
+                "renders": 0,
+                "commits": 0,
+                "listenerDeliveries": 20,
+                "settlePasses": 0
+              },
+              {
+                "renders": 0,
+                "commits": 0,
+                "listenerDeliveries": 20,
+                "settlePasses": 0
+              },
+              {
+                "renders": 0,
+                "commits": 0,
+                "listenerDeliveries": 20,
+                "settlePasses": 0
+              }
+            ],
+            "coreSource": "sentinel"
+          },
+          "HEAD": {
+            "wall": 27.41150000000016,
+            "core": 0.30504200000000004,
+            "layer": 27.10645800000016,
+            "corePercent": 1.112824909253409,
+            "profiler": 0.7739279999996143,
+            "commits": 10,
+            "first": 0.12408300000000001,
+            "later": 0.015625,
+            "work": {
+              "renders": {
+                "median": 200,
+                "min": 200,
+                "max": 200
+              },
+              "listenerDeliveries": {
+                "median": 130,
+                "min": 130,
+                "max": 130
+              },
+              "settlePasses": {
+                "median": 10,
+                "min": 10,
+                "max": 10
+              },
+              "commits": {
+                "median": 10,
+                "min": 10,
+                "max": 10
+              }
+            },
+            "coreWork": [
+              {
+                "renders": 0,
+                "commits": 0,
+                "listenerDeliveries": 0,
+                "settlePasses": 10
+              },
+              {
+                "renders": 0,
+                "commits": 0,
+                "listenerDeliveries": 0,
+                "settlePasses": 10
+              },
+              {
+                "renders": 0,
+                "commits": 0,
+                "listenerDeliveries": 0,
+                "settlePasses": 10
+              }
+            ],
+            "coreSource": "sentinel",
+            "ga": {
+              "difference": 0.007210000000000105,
+              "noise": 0.02461899999999991,
+              "withinNoise": true,
+              "passed": true,
+              "zeroEngineMacrotasks": true,
+              "runs": [
+                {
+                  "run": 1,
+                  "difference": 0.007459999999999967,
+                  "noise": 0.03007500000000009,
+                  "withinNoise": true,
+                  "zeroEngineMacrotasks": true,
+                  "boundary": {
+                    "scheduled": {
+                      "median": 0,
+                      "max": 0
+                    },
+                    "executed": {
+                      "median": 0,
+                      "max": 0
+                    },
+                    "cancelled": {
+                      "median": 0,
+                      "max": 0
+                    },
+                    "pendingAtMicrotasks": {
+                      "median": 0,
+                      "max": 0
+                    },
+                    "pendingAtFirstSentinel": {
+                      "median": 0,
+                      "max": 0
+                    },
+                    "pendingAtSentinel": {
+                      "median": 0,
+                      "max": 0
+                    },
+                    "tailScheduled": {
+                      "median": 0,
+                      "max": 0
+                    },
+                    "tailExecuted": {
+                      "median": 0,
+                      "max": 0
+                    }
+                  },
+                  "metric": {
+                    "median": 0.302833,
+                    "p99": 0.406875,
+                    "samples": 101
+                  }
+                },
+                {
+                  "run": 2,
+                  "difference": 0.006960000000000077,
+                  "noise": 0.026910000000000062,
+                  "withinNoise": true,
+                  "zeroEngineMacrotasks": true,
+                  "boundary": {
+                    "scheduled": {
+                      "median": 0,
+                      "max": 0
+                    },
+                    "executed": {
+                      "median": 0,
+                      "max": 0
+                    },
+                    "cancelled": {
+                      "median": 0,
+                      "max": 0
+                    },
+                    "pendingAtMicrotasks": {
+                      "median": 0,
+                      "max": 0
+                    },
+                    "pendingAtFirstSentinel": {
+                      "median": 0,
+                      "max": 0
+                    },
+                    "pendingAtSentinel": {
+                      "median": 0,
+                      "max": 0
+                    },
+                    "tailScheduled": {
+                      "median": 0,
+                      "max": 0
+                    },
+                    "tailExecuted": {
+                      "median": 0,
+                      "max": 0
+                    }
+                  },
+                  "metric": {
+                    "median": 0.312794,
+                    "p99": 0.426377,
+                    "samples": 101
+                  }
+                },
+                {
+                  "run": 3,
+                  "difference": 0.00695800000000002,
+                  "noise": 0.03132200000000003,
+                  "withinNoise": true,
+                  "zeroEngineMacrotasks": true,
+                  "boundary": {
+                    "scheduled": {
+                      "median": 0,
+                      "max": 0
+                    },
+                    "executed": {
+                      "median": 0,
+                      "max": 0
+                    },
+                    "cancelled": {
+                      "median": 0,
+                      "max": 0
+                    },
+                    "pendingAtMicrotasks": {
+                      "median": 0,
+                      "max": 0
+                    },
+                    "pendingAtFirstSentinel": {
+                      "median": 0,
+                      "max": 0
+                    },
+                    "pendingAtSentinel": {
+                      "median": 0,
+                      "max": 0
+                    },
+                    "tailScheduled": {
+                      "median": 0,
+                      "max": 0
+                    },
+                    "tailExecuted": {
+                      "median": 0,
+                      "max": 0
+                    }
+                  },
+                  "metric": {
+                    "median": 0.29758399999999996,
+                    "p99": 0.416084,
+                    "samples": 101
+                  }
+                }
+              ]
+            }
+          }
+        },
+        "gaps": {
+          "wall": 2.0667920000000777,
+          "core": 0.14420800000000003,
+          "layer": 1.9225840000000787,
+          "first": 0.09075000000000001,
+          "later": 0.004416
+        },
+        "coreDominates": false,
+        "cause": "첫 갱신 차이는 110라운드의 동일 두 행에서 수용한 0.07–0.1 ms 규모와 맞습니다. 양의 React 잔여 차이는 별도 7단계 코드 수준 대상입니다.",
+        "matches104Row": false,
+        "matches110Row": true,
+        "positiveLayerGapCodeTarget": true,
+        "ownerRows": [
+          {
+            "fixture": "flat-50",
+            "metric": "render-update-wall",
+            "target": 1,
+            "ratios": [
+              1.0848761137924592,
+              1.0856708726714233,
+              1.0589667727982328
+            ],
+            "remains": true,
+            "tie": false,
+            "oldRunMedians": [
+              25.24954200000002,
+              25.255083000000013,
+              25.8810840000001
+            ],
+            "headRunMedians": [
+              27.392624999999498,
+              27.418707999999242,
+              27.407208000000082
+            ]
+          },
+          {
+            "fixture": "flat-50",
+            "metric": "profiler-update",
+            "target": 1,
+            "ratios": [
+              1.0338299269761067,
+              1.0376289317010887,
+              1.0423358284821342
+            ],
+            "remains": true,
+            "tie": false,
+            "oldRunMedians": [
+              0.7342019999741751,
+              0.7293590000049335,
+              0.7291460000064944
+            ],
+            "headRunMedians": [
+              0.759040000019013,
+              0.7568040000016936,
+              0.7600150000012036
+            ]
+          }
+        ],
+        "raw": {
+          "core": [
+            "B-core-flat-50-off-r1.json",
+            "B-core-flat-50-off-r2.json",
+            "B-core-flat-50-off-r3.json"
+          ],
+          "react": [
+            "B-react-plain-flat-50-r1-0.16.0.json",
+            "B-react-plain-flat-50-r2-0.16.0.json",
+            "B-react-plain-flat-50-r3-0.16.0.json",
+            "B-react-plain-flat-50-r1-HEAD.json",
+            "B-react-plain-flat-50-r2-HEAD.json",
+            "B-react-plain-flat-50-r3-HEAD.json"
+          ],
+          "counts": [
+            "B-react-counts-flat-50-r1-0.16.0.json",
+            "B-react-counts-flat-50-r1-HEAD.json"
+          ]
+        }
+      },
+      {
+        "fixture": "flat-100",
+        "stage": "B",
+        "interactions": 10,
+        "versions": {
+          "0.16.0": {
+            "wall": 25.350666000000274,
+            "core": 0.254124,
+            "layer": 25.096542000000273,
+            "corePercent": 1.0024352022940828,
+            "profiler": 0.7574869999998555,
+            "commits": 20,
+            "first": 0.04975,
+            "later": 0.018084000000000003,
+            "work": {
+              "renders": {
+                "median": 220,
+                "min": 220,
+                "max": 220
+              },
+              "listenerDeliveries": {
+                "median": 240,
+                "min": 240,
+                "max": 240
+              },
+              "settlePasses": {
+                "median": 0,
+                "min": 0,
+                "max": 0
+              },
+              "commits": {
+                "median": 20,
+                "min": 20,
+                "max": 20
+              }
+            },
+            "coreWork": [
+              {
+                "renders": 0,
+                "commits": 0,
+                "listenerDeliveries": 20,
+                "settlePasses": 0
+              },
+              {
+                "renders": 0,
+                "commits": 0,
+                "listenerDeliveries": 20,
+                "settlePasses": 0
+              },
+              {
+                "renders": 0,
+                "commits": 0,
+                "listenerDeliveries": 20,
+                "settlePasses": 0
+              }
+            ],
+            "coreSource": "sentinel"
+          },
+          "HEAD": {
+            "wall": 27.509042000000136,
+            "core": 0.30354099999999995,
+            "layer": 27.205501000000137,
+            "corePercent": 1.103422649178399,
+            "profiler": 0.7785239999989244,
+            "commits": 10,
+            "first": 0.12308300000000001,
+            "later": 0.015667,
+            "work": {
+              "renders": {
+                "median": 200,
+                "min": 200,
+                "max": 200
+              },
+              "listenerDeliveries": {
+                "median": 130,
+                "min": 130,
+                "max": 130
+              },
+              "settlePasses": {
+                "median": 10,
+                "min": 10,
+                "max": 10
+              },
+              "commits": {
+                "median": 10,
+                "min": 10,
+                "max": 10
+              }
+            },
+            "coreWork": [
+              {
+                "renders": 0,
+                "commits": 0,
+                "listenerDeliveries": 0,
+                "settlePasses": 10
+              },
+              {
+                "renders": 0,
+                "commits": 0,
+                "listenerDeliveries": 0,
+                "settlePasses": 10
+              },
+              {
+                "renders": 0,
+                "commits": 0,
+                "listenerDeliveries": 0,
+                "settlePasses": 10
+              }
+            ],
+            "coreSource": "sentinel",
+            "ga": {
+              "difference": 0.006791000000000047,
+              "noise": 0.027911000000000092,
+              "withinNoise": true,
+              "passed": true,
+              "zeroEngineMacrotasks": true,
+              "runs": [
+                {
+                  "run": 1,
+                  "difference": 0.00716700000000009,
+                  "noise": 0.031865000000000046,
+                  "withinNoise": true,
+                  "zeroEngineMacrotasks": true,
+                  "boundary": {
+                    "scheduled": {
+                      "median": 0,
+                      "max": 0
+                    },
+                    "executed": {
+                      "median": 0,
+                      "max": 0
+                    },
+                    "cancelled": {
+                      "median": 0,
+                      "max": 0
+                    },
+                    "pendingAtMicrotasks": {
+                      "median": 0,
+                      "max": 0
+                    },
+                    "pendingAtFirstSentinel": {
+                      "median": 0,
+                      "max": 0
+                    },
+                    "pendingAtSentinel": {
+                      "median": 0,
+                      "max": 0
+                    },
+                    "tailScheduled": {
+                      "median": 0,
+                      "max": 0
+                    },
+                    "tailExecuted": {
+                      "median": 0,
+                      "max": 0
+                    }
+                  },
+                  "metric": {
+                    "median": 0.31479199999999996,
+                    "p99": 0.46745900000000007,
+                    "samples": 101
+                  }
+                },
+                {
+                  "run": 2,
+                  "difference": 0.0067889999999999895,
+                  "noise": 0.030199999999999966,
+                  "withinNoise": true,
+                  "zeroEngineMacrotasks": true,
+                  "boundary": {
+                    "scheduled": {
+                      "median": 0,
+                      "max": 0
+                    },
+                    "executed": {
+                      "median": 0,
+                      "max": 0
+                    },
+                    "cancelled": {
+                      "median": 0,
+                      "max": 0
+                    },
+                    "pendingAtMicrotasks": {
+                      "median": 0,
+                      "max": 0
+                    },
+                    "pendingAtFirstSentinel": {
+                      "median": 0,
+                      "max": 0
+                    },
+                    "pendingAtSentinel": {
+                      "median": 0,
+                      "max": 0
+                    },
+                    "tailScheduled": {
+                      "median": 0,
+                      "max": 0
+                    },
+                    "tailExecuted": {
+                      "median": 0,
+                      "max": 0
+                    }
+                  },
+                  "metric": {
+                    "median": 0.29795799999999995,
+                    "p99": 0.387374,
+                    "samples": 101
+                  }
+                },
+                {
+                  "run": 3,
+                  "difference": 0.006459000000000048,
+                  "noise": 0.03190899999999998,
+                  "withinNoise": true,
+                  "zeroEngineMacrotasks": true,
+                  "boundary": {
+                    "scheduled": {
+                      "median": 0,
+                      "max": 0
+                    },
+                    "executed": {
+                      "median": 0,
+                      "max": 0
+                    },
+                    "cancelled": {
+                      "median": 0,
+                      "max": 0
+                    },
+                    "pendingAtMicrotasks": {
+                      "median": 0,
+                      "max": 0
+                    },
+                    "pendingAtFirstSentinel": {
+                      "median": 0,
+                      "max": 0
+                    },
+                    "pendingAtSentinel": {
+                      "median": 0,
+                      "max": 0
+                    },
+                    "tailScheduled": {
+                      "median": 0,
+                      "max": 0
+                    },
+                    "tailExecuted": {
+                      "median": 0,
+                      "max": 0
+                    }
+                  },
+                  "metric": {
+                    "median": 0.300751,
+                    "p99": 0.38991700000000007,
+                    "samples": 101
+                  }
+                }
+              ]
+            }
+          }
+        },
+        "gaps": {
+          "wall": 2.158375999999862,
+          "core": 0.04941699999999993,
+          "layer": 2.1089589999998637,
+          "first": 0.07333300000000001,
+          "later": -0.0024170000000000025
+        },
+        "coreDominates": false,
+        "cause": "첫 갱신 차이는 110라운드의 동일 두 행에서 수용한 0.07–0.1 ms 규모와 맞습니다. 양의 React 잔여 차이는 별도 7단계 코드 수준 대상입니다.",
+        "matches104Row": false,
+        "matches110Row": true,
+        "positiveLayerGapCodeTarget": true,
+        "ownerRows": [
+          {
+            "fixture": "flat-100",
+            "metric": "render-update-wall",
+            "target": 1,
+            "ratios": [
+              1.0786879123468278,
+              1.0818146489885057,
+              1.0788059710394673
+            ],
+            "remains": true,
+            "tie": false,
+            "oldRunMedians": [
+              25.463999999999942,
+              25.42129100000011,
+              25.48454099999981
+            ],
+            "headRunMedians": [
+              27.46770899999956,
+              27.501124999999774,
+              27.492874999999913
+            ]
+          },
+          {
+            "fixture": "flat-100",
+            "metric": "profiler-update",
+            "target": 1,
+            "ratios": [
+              1.0075850455806974,
+              1.0270200000359113,
+              1.0237887856294583
+            ],
+            "remains": true,
+            "tie": false,
+            "oldRunMedians": [
+              0.7381629999999859,
+              0.7576980000035292,
+              0.7508579999994254
+            ],
+            "headRunMedians": [
+              0.7437620000009701,
+              0.7781709999908344,
+              0.7687199999995755
+            ]
+          }
+        ],
+        "raw": {
+          "core": [
+            "B-core-flat-100-off-r1.json",
+            "B-core-flat-100-off-r2.json",
+            "B-core-flat-100-off-r3.json"
+          ],
+          "react": [
+            "B-react-plain-flat-100-r1-0.16.0.json",
+            "B-react-plain-flat-100-r2-0.16.0.json",
+            "B-react-plain-flat-100-r3-0.16.0.json",
+            "B-react-plain-flat-100-r1-HEAD.json",
+            "B-react-plain-flat-100-r2-HEAD.json",
+            "B-react-plain-flat-100-r3-HEAD.json"
+          ],
+          "counts": [
+            "B-react-counts-flat-100-r1-0.16.0.json",
+            "B-react-counts-flat-100-r1-HEAD.json"
+          ]
+        }
+      },
+      {
+        "fixture": "flat-500",
+        "stage": "B",
+        "interactions": 10,
+        "versions": {
+          "0.16.0": {
+            "wall": 25.807333999999173,
+            "core": 2.199833,
+            "layer": 23.607500999999175,
+            "corePercent": 8.524061416030305,
+            "profiler": 1.4607239999841113,
+            "commits": 20,
+            "first": 0.260875,
+            "later": 0.208042,
+            "work": {
+              "renders": {
+                "median": 220,
+                "min": 220,
+                "max": 220
+              },
+              "listenerDeliveries": {
+                "median": 240,
+                "min": 240,
+                "max": 240
+              },
+              "settlePasses": {
+                "median": 0,
+                "min": 0,
+                "max": 0
+              },
+              "commits": {
+                "median": 20,
+                "min": 20,
+                "max": 20
+              }
+            },
+            "coreWork": [
+              {
+                "renders": 0,
+                "commits": 0,
+                "listenerDeliveries": 20,
+                "settlePasses": 0
+              },
+              {
+                "renders": 0,
+                "commits": 0,
+                "listenerDeliveries": 20,
+                "settlePasses": 0
+              },
+              {
+                "renders": 0,
+                "commits": 0,
+                "listenerDeliveries": 20,
+                "settlePasses": 0
+              }
+            ],
+            "coreSource": "sentinel"
+          },
+          "HEAD": {
+            "wall": 30.40400000000045,
+            "core": 0.33050100000000004,
+            "layer": 30.07349900000045,
+            "corePercent": 1.0870313116695012,
+            "profiler": 1.3499729999957708,
+            "commits": 10,
+            "first": 0.144708,
+            "later": 0.016958,
+            "work": {
+              "renders": {
+                "median": 200,
+                "min": 200,
+                "max": 200
+              },
+              "listenerDeliveries": {
+                "median": 130,
+                "min": 130,
+                "max": 130
+              },
+              "settlePasses": {
+                "median": 10,
+                "min": 10,
+                "max": 10
+              },
+              "commits": {
+                "median": 10,
+                "min": 10,
+                "max": 10
+              }
+            },
+            "coreWork": [
+              {
+                "renders": 0,
+                "commits": 0,
+                "listenerDeliveries": 0,
+                "settlePasses": 10
+              },
+              {
+                "renders": 0,
+                "commits": 0,
+                "listenerDeliveries": 0,
+                "settlePasses": 10
+              },
+              {
+                "renders": 0,
+                "commits": 0,
+                "listenerDeliveries": 0,
+                "settlePasses": 10
+              }
+            ],
+            "coreSource": "sentinel",
+            "ga": {
+              "difference": 0.006874000000000047,
+              "noise": 0.027077000000000035,
+              "withinNoise": true,
+              "passed": true,
+              "zeroEngineMacrotasks": true,
+              "runs": [
+                {
+                  "run": 1,
+                  "difference": 0.007082000000000088,
+                  "noise": 0.034532999999999994,
+                  "withinNoise": true,
+                  "zeroEngineMacrotasks": true,
+                  "boundary": {
+                    "scheduled": {
+                      "median": 0,
+                      "max": 0
+                    },
+                    "executed": {
+                      "median": 0,
+                      "max": 0
+                    },
+                    "cancelled": {
+                      "median": 0,
+                      "max": 0
+                    },
+                    "pendingAtMicrotasks": {
+                      "median": 0,
+                      "max": 0
+                    },
+                    "pendingAtFirstSentinel": {
+                      "median": 0,
+                      "max": 0
+                    },
+                    "pendingAtSentinel": {
+                      "median": 0,
+                      "max": 0
+                    },
+                    "tailScheduled": {
+                      "median": 0,
+                      "max": 0
+                    },
+                    "tailExecuted": {
+                      "median": 0,
+                      "max": 0
+                    }
+                  },
+                  "metric": {
+                    "median": 0.32837399999999994,
+                    "p99": 0.423457,
+                    "samples": 101
+                  }
+                },
+                {
+                  "run": 2,
+                  "difference": 0.0067930000000001045,
+                  "noise": 0.03636700000000005,
+                  "withinNoise": true,
+                  "zeroEngineMacrotasks": true,
+                  "boundary": {
+                    "scheduled": {
+                      "median": 0,
+                      "max": 0
+                    },
+                    "executed": {
+                      "median": 0,
+                      "max": 0
+                    },
+                    "cancelled": {
+                      "median": 0,
+                      "max": 0
+                    },
+                    "pendingAtMicrotasks": {
+                      "median": 0,
+                      "max": 0
+                    },
+                    "pendingAtFirstSentinel": {
+                      "median": 0,
+                      "max": 0
+                    },
+                    "pendingAtSentinel": {
+                      "median": 0,
+                      "max": 0
+                    },
+                    "tailScheduled": {
+                      "median": 0,
+                      "max": 0
+                    },
+                    "tailExecuted": {
+                      "median": 0,
+                      "max": 0
+                    }
+                  },
+                  "metric": {
+                    "median": 0.335627,
+                    "p99": 0.41683500000000007,
+                    "samples": 101
+                  }
+                },
+                {
+                  "run": 3,
+                  "difference": 0.006170000000000009,
+                  "noise": 0.03149100000000006,
+                  "withinNoise": true,
+                  "zeroEngineMacrotasks": true,
+                  "boundary": {
+                    "scheduled": {
+                      "median": 0,
+                      "max": 0
+                    },
+                    "executed": {
+                      "median": 0,
+                      "max": 0
+                    },
+                    "cancelled": {
+                      "median": 0,
+                      "max": 0
+                    },
+                    "pendingAtMicrotasks": {
+                      "median": 0,
+                      "max": 0
+                    },
+                    "pendingAtFirstSentinel": {
+                      "median": 0,
+                      "max": 0
+                    },
+                    "pendingAtSentinel": {
+                      "median": 0,
+                      "max": 0
+                    },
+                    "tailScheduled": {
+                      "median": 0,
+                      "max": 0
+                    },
+                    "tailExecuted": {
+                      "median": 0,
+                      "max": 0
+                    }
+                  },
+                  "metric": {
+                    "median": 0.332167,
+                    "p99": 0.450751,
+                    "samples": 101
+                  }
+                }
+              ]
+            }
+          }
+        },
+        "gaps": {
+          "wall": 4.596666000001278,
+          "core": -1.869332,
+          "layer": 6.4659980000012744,
+          "first": -0.11616700000000002,
+          "later": -0.191084
+        },
+        "coreDominates": false,
+        "cause": "코어는 구 판보다 빠릅니다. 양의 wall 차이는 코어 수용 원인으로 설명되지 않으며 React 잔여 몫이 증가했습니다.",
+        "matches104Row": false,
+        "matches110Row": false,
+        "positiveLayerGapCodeTarget": true,
+        "ownerRows": [
+          {
+            "fixture": "flat-500",
+            "metric": "render-update-wall",
+            "target": 1,
+            "ratios": [
+              1.2053424112910662,
+              1.2013644764520734,
+              1.1930184407160207
+            ],
+            "remains": true,
+            "tie": false,
+            "oldRunMedians": [
+              25.152500000000146,
+              25.254375000000437,
+              25.501667000000452
+            ],
+            "headRunMedians": [
+              30.31737499999872,
+              30.339708999999857,
+              30.42395899999974
+            ]
+          }
+        ],
+        "raw": {
+          "core": [
+            "B-core-flat-500-off-r1.json",
+            "B-core-flat-500-off-r2.json",
+            "B-core-flat-500-off-r3.json"
+          ],
+          "react": [
+            "B-react-plain-flat-500-r1-0.16.0.json",
+            "B-react-plain-flat-500-r2-0.16.0.json",
+            "B-react-plain-flat-500-r3-0.16.0.json",
+            "B-react-plain-flat-500-r1-HEAD.json",
+            "B-react-plain-flat-500-r2-HEAD.json",
+            "B-react-plain-flat-500-r3-HEAD.json"
+          ],
+          "counts": [
+            "B-react-counts-flat-500-r1-0.16.0.json",
+            "B-react-counts-flat-500-r1-HEAD.json"
+          ]
+        }
+      },
+      {
+        "fixture": "nested-d3-f4",
+        "stage": "B",
+        "interactions": 10,
+        "versions": {
+          "0.16.0": {
+            "wall": 25.2175000000002,
+            "core": 0.101542,
+            "layer": 25.1159580000002,
+            "corePercent": 0.4026648160999274,
+            "profiler": 0.9218239999854632,
+            "commits": 20,
+            "first": 0.023875,
+            "later": 0.007916,
+            "work": {
+              "renders": {
+                "median": 400,
+                "min": 400,
+                "max": 400
+              },
+              "listenerDeliveries": {
+                "median": 350,
+                "min": 350,
+                "max": 350
+              },
+              "settlePasses": {
+                "median": 0,
+                "min": 0,
+                "max": 0
+              },
+              "commits": {
+                "median": 20,
+                "min": 20,
+                "max": 20
+              }
+            },
+            "coreWork": [
+              {
+                "renders": 0,
+                "commits": 0,
+                "listenerDeliveries": 40,
+                "settlePasses": 0
+              },
+              {
+                "renders": 0,
+                "commits": 0,
+                "listenerDeliveries": 40,
+                "settlePasses": 0
+              },
+              {
+                "renders": 0,
+                "commits": 0,
+                "listenerDeliveries": 40,
+                "settlePasses": 0
+              }
+            ],
+            "coreSource": "sentinel"
+          },
+          "HEAD": {
+            "wall": 27.755833000000166,
+            "core": 0.38345700000000005,
+            "layer": 27.372376000000166,
+            "corePercent": 1.3815366305165395,
+            "profiler": 0.9485120000067582,
+            "commits": 10,
+            "first": 0.137,
+            "later": 0.022667,
+            "work": {
+              "renders": {
+                "median": 400,
+                "min": 400,
+                "max": 400
+              },
+              "listenerDeliveries": {
+                "median": 250,
+                "min": 250,
+                "max": 250
+              },
+              "settlePasses": {
+                "median": 10,
+                "min": 10,
+                "max": 10
+              },
+              "commits": {
+                "median": 10,
+                "min": 10,
+                "max": 10
+              }
+            },
+            "coreWork": [
+              {
+                "renders": 0,
+                "commits": 0,
+                "listenerDeliveries": 0,
+                "settlePasses": 10
+              },
+              {
+                "renders": 0,
+                "commits": 0,
+                "listenerDeliveries": 0,
+                "settlePasses": 10
+              },
+              {
+                "renders": 0,
+                "commits": 0,
+                "listenerDeliveries": 0,
+                "settlePasses": 10
+              }
+            ],
+            "coreSource": "sentinel",
+            "ga": {
+              "difference": 0.008251000000000008,
+              "noise": 0.025532000000000072,
+              "withinNoise": true,
+              "passed": true,
+              "zeroEngineMacrotasks": true,
+              "runs": [
+                {
+                  "run": 1,
+                  "difference": 0.008251000000000064,
+                  "noise": 0.030034000000000022,
+                  "withinNoise": true,
+                  "zeroEngineMacrotasks": true,
+                  "boundary": {
+                    "scheduled": {
+                      "median": 0,
+                      "max": 0
+                    },
+                    "executed": {
+                      "median": 0,
+                      "max": 0
+                    },
+                    "cancelled": {
+                      "median": 0,
+                      "max": 0
+                    },
+                    "pendingAtMicrotasks": {
+                      "median": 0,
+                      "max": 0
+                    },
+                    "pendingAtFirstSentinel": {
+                      "median": 0,
+                      "max": 0
+                    },
+                    "pendingAtSentinel": {
+                      "median": 0,
+                      "max": 0
+                    },
+                    "tailScheduled": {
+                      "median": 0,
+                      "max": 0
+                    },
+                    "tailExecuted": {
+                      "median": 0,
+                      "max": 0
+                    }
+                  },
+                  "metric": {
+                    "median": 0.38108300000000006,
+                    "p99": 0.47,
+                    "samples": 101
+                  }
+                },
+                {
+                  "run": 2,
+                  "difference": 0.007999000000000034,
+                  "noise": 0.02916100000000001,
+                  "withinNoise": true,
+                  "zeroEngineMacrotasks": true,
+                  "boundary": {
+                    "scheduled": {
+                      "median": 0,
+                      "max": 0
+                    },
+                    "executed": {
+                      "median": 0,
+                      "max": 0
+                    },
+                    "cancelled": {
+                      "median": 0,
+                      "max": 0
+                    },
+                    "pendingAtMicrotasks": {
+                      "median": 0,
+                      "max": 0
+                    },
+                    "pendingAtFirstSentinel": {
+                      "median": 0,
+                      "max": 0
+                    },
+                    "pendingAtSentinel": {
+                      "median": 0,
+                      "max": 0
+                    },
+                    "tailScheduled": {
+                      "median": 0,
+                      "max": 0
+                    },
+                    "tailExecuted": {
+                      "median": 0,
+                      "max": 0
+                    }
+                  },
+                  "metric": {
+                    "median": 0.38375100000000006,
+                    "p99": 0.477707,
+                    "samples": 101
+                  }
+                },
+                {
+                  "run": 3,
+                  "difference": 0.008458000000000077,
+                  "noise": 0.036577000000000096,
+                  "withinNoise": true,
+                  "zeroEngineMacrotasks": true,
+                  "boundary": {
+                    "scheduled": {
+                      "median": 0,
+                      "max": 0
+                    },
+                    "executed": {
+                      "median": 0,
+                      "max": 0
+                    },
+                    "cancelled": {
+                      "median": 0,
+                      "max": 0
+                    },
+                    "pendingAtMicrotasks": {
+                      "median": 0,
+                      "max": 0
+                    },
+                    "pendingAtFirstSentinel": {
+                      "median": 0,
+                      "max": 0
+                    },
+                    "pendingAtSentinel": {
+                      "median": 0,
+                      "max": 0
+                    },
+                    "tailScheduled": {
+                      "median": 0,
+                      "max": 0
+                    },
+                    "tailExecuted": {
+                      "median": 0,
+                      "max": 0
+                    }
+                  },
+                  "metric": {
+                    "median": 0.3859600000000001,
+                    "p99": 0.469333,
+                    "samples": 101
+                  }
+                }
+              ]
+            }
+          }
+        },
+        "gaps": {
+          "wall": 2.538332999999966,
+          "core": 0.281915,
+          "layer": 2.2564179999999645,
+          "first": 0.113125,
+          "later": 0.014751
+        },
+        "coreDominates": false,
+        "cause": "이후 갱신 차이는 104라운드의 동일 행에 남은 쓰기당 고정비와 같은 규모입니다. 첫 갱신 차이는 그 기록의 약 0.06 ms보다 크므로 동일 크기로 확대하지 않습니다.",
+        "matches104Row": true,
+        "matches110Row": false,
+        "positiveLayerGapCodeTarget": true,
+        "ownerRows": [
+          {
+            "fixture": "nested-d3-f4",
+            "metric": "render-update-wall",
+            "target": 1,
+            "ratios": [
+              1.1451676235505293,
+              1.100274779139315,
+              1.0981888718848527
+            ],
+            "remains": true,
+            "tie": false,
+            "oldRunMedians": [
+              24.239792000000307,
+              25.24645799999962,
+              25.282916000000114
+            ],
+            "headRunMedians": [
+              27.758624999999483,
+              27.778040999999575,
+              27.765416999999616
+            ]
+          },
+          {
+            "fixture": "nested-d3-f4",
+            "metric": "profiler-update",
+            "target": 1,
+            "ratios": [
+              1.0460999323810538,
+              1.0322401249053723,
+              1.046530932543021
+            ],
+            "remains": true,
+            "tie": false,
+            "oldRunMedians": [
+              0.9008690000068782,
+              0.9116589999775897,
+              0.9047100000079809
+            ],
+            "headRunMedians": [
+              0.9423989999913829,
+              0.9410510000079739,
+              0.9468069999893487
+            ]
+          }
+        ],
+        "raw": {
+          "core": [
+            "B-core-nested-d3-f4-off-r1.json",
+            "B-core-nested-d3-f4-off-r2.json",
+            "B-core-nested-d3-f4-off-r3.json"
+          ],
+          "react": [
+            "B-react-plain-nested-d3-f4-r1-0.16.0.json",
+            "B-react-plain-nested-d3-f4-r2-0.16.0.json",
+            "B-react-plain-nested-d3-f4-r3-0.16.0.json",
+            "B-react-plain-nested-d3-f4-r1-HEAD.json",
+            "B-react-plain-nested-d3-f4-r2-HEAD.json",
+            "B-react-plain-nested-d3-f4-r3-HEAD.json"
+          ],
+          "counts": [
+            "B-react-counts-nested-d3-f4-r1-0.16.0.json",
+            "B-react-counts-nested-d3-f4-r1-HEAD.json"
+          ]
+        }
+      },
+      {
+        "fixture": "nested-d5-f4",
+        "stage": "B",
+        "interactions": 10,
+        "versions": {
+          "0.16.0": {
+            "wall": 26.071332999999868,
+            "core": 0.15441600000000003,
+            "layer": 25.916916999999867,
+            "corePercent": 0.5922827191076144,
+            "profiler": 1.2328809999944497,
+            "commits": 20,
+            "first": 0.050709000000000004,
+            "later": 0.009916000000000001,
+            "work": {
+              "renders": {
+                "median": 580,
+                "min": 580,
+                "max": 580
+              },
+              "listenerDeliveries": {
+                "median": 470,
+                "min": 470,
+                "max": 470
+              },
+              "settlePasses": {
+                "median": 0,
+                "min": 0,
+                "max": 0
+              },
+              "commits": {
+                "median": 20,
+                "min": 20,
+                "max": 20
+              }
+            },
+            "coreWork": [
+              {
+                "renders": 0,
+                "commits": 0,
+                "listenerDeliveries": 60,
+                "settlePasses": 0
+              },
+              {
+                "renders": 0,
+                "commits": 0,
+                "listenerDeliveries": 60,
+                "settlePasses": 0
+              },
+              {
+                "renders": 0,
+                "commits": 0,
+                "listenerDeliveries": 60,
+                "settlePasses": 0
+              }
+            ],
+            "coreSource": "sentinel"
+          },
+          "HEAD": {
+            "wall": 28.619042000002082,
+            "core": 0.510001,
+            "layer": 28.109041000002083,
+            "corePercent": 1.782033794142945,
+            "profiler": 1.3269690000015544,
+            "commits": 10,
+            "first": 0.182041,
+            "later": 0.031291,
+            "work": {
+              "renders": {
+                "median": 600,
+                "min": 600,
+                "max": 600
+              },
+              "listenerDeliveries": {
+                "median": 370,
+                "min": 370,
+                "max": 370
+              },
+              "settlePasses": {
+                "median": 10,
+                "min": 10,
+                "max": 10
+              },
+              "commits": {
+                "median": 10,
+                "min": 10,
+                "max": 10
+              }
+            },
+            "coreWork": [
+              {
+                "renders": 0,
+                "commits": 0,
+                "listenerDeliveries": 0,
+                "settlePasses": 10
+              },
+              {
+                "renders": 0,
+                "commits": 0,
+                "listenerDeliveries": 0,
+                "settlePasses": 10
+              },
+              {
+                "renders": 0,
+                "commits": 0,
+                "listenerDeliveries": 0,
+                "settlePasses": 10
+              }
+            ],
+            "coreSource": "sentinel",
+            "ga": {
+              "difference": 0.006960000000000022,
+              "noise": 0.02969900000000016,
+              "withinNoise": true,
+              "passed": true,
+              "zeroEngineMacrotasks": true,
+              "runs": [
+                {
+                  "run": 1,
+                  "difference": 0.007330000000000059,
+                  "noise": 0.037246000000000015,
+                  "withinNoise": true,
+                  "zeroEngineMacrotasks": true,
+                  "boundary": {
+                    "scheduled": {
+                      "median": 0,
+                      "max": 0
+                    },
+                    "executed": {
+                      "median": 0,
+                      "max": 0
+                    },
+                    "cancelled": {
+                      "median": 0,
+                      "max": 0
+                    },
+                    "pendingAtMicrotasks": {
+                      "median": 0,
+                      "max": 0
+                    },
+                    "pendingAtFirstSentinel": {
+                      "median": 0,
+                      "max": 0
+                    },
+                    "pendingAtSentinel": {
+                      "median": 0,
+                      "max": 0
+                    },
+                    "tailScheduled": {
+                      "median": 0,
+                      "max": 0
+                    },
+                    "tailExecuted": {
+                      "median": 0,
+                      "max": 0
+                    }
+                  },
+                  "metric": {
+                    "median": 0.507959,
+                    "p99": 0.851666,
+                    "samples": 101
+                  }
+                },
+                {
+                  "run": 2,
+                  "difference": 0.006126000000000131,
+                  "noise": 0.040328000000000044,
+                  "withinNoise": true,
+                  "zeroEngineMacrotasks": true,
+                  "boundary": {
+                    "scheduled": {
+                      "median": 0,
+                      "max": 0
+                    },
+                    "executed": {
+                      "median": 0,
+                      "max": 0
+                    },
+                    "cancelled": {
+                      "median": 0,
+                      "max": 0
+                    },
+                    "pendingAtMicrotasks": {
+                      "median": 0,
+                      "max": 0
+                    },
+                    "pendingAtFirstSentinel": {
+                      "median": 0,
+                      "max": 0
+                    },
+                    "pendingAtSentinel": {
+                      "median": 0,
+                      "max": 0
+                    },
+                    "tailScheduled": {
+                      "median": 0,
+                      "max": 0
+                    },
+                    "tailExecuted": {
+                      "median": 0,
+                      "max": 0
+                    }
+                  },
+                  "metric": {
+                    "median": 0.508873,
+                    "p99": 0.641332,
+                    "samples": 101
+                  }
+                },
+                {
+                  "run": 3,
+                  "difference": 0.00721000000000005,
+                  "noise": 0.03365699999999995,
+                  "withinNoise": true,
+                  "zeroEngineMacrotasks": true,
+                  "boundary": {
+                    "scheduled": {
+                      "median": 0,
+                      "max": 0
+                    },
+                    "executed": {
+                      "median": 0,
+                      "max": 0
+                    },
+                    "cancelled": {
+                      "median": 0,
+                      "max": 0
+                    },
+                    "pendingAtMicrotasks": {
+                      "median": 0,
+                      "max": 0
+                    },
+                    "pendingAtFirstSentinel": {
+                      "median": 0,
+                      "max": 0
+                    },
+                    "pendingAtSentinel": {
+                      "median": 0,
+                      "max": 0
+                    },
+                    "tailScheduled": {
+                      "median": 0,
+                      "max": 0
+                    },
+                    "tailExecuted": {
+                      "median": 0,
+                      "max": 0
+                    }
+                  },
+                  "metric": {
+                    "median": 0.514791,
+                    "p99": 0.6827500000000001,
+                    "samples": 101
+                  }
+                }
+              ]
+            }
+          }
+        },
+        "gaps": {
+          "wall": 2.5477090000022145,
+          "core": 0.35558500000000004,
+          "layer": 2.1921240000022166,
+          "first": 0.131332,
+          "later": 0.021374999999999998
+        },
+        "coreDominates": false,
+        "cause": "이후 갱신 차이는 104라운드의 동일 행에 남은 쓰기당 고정비와 같은 규모입니다. 첫 갱신 차이는 그 기록의 약 0.06 ms보다 크므로 동일 크기로 확대하지 않습니다.",
+        "matches104Row": true,
+        "matches110Row": false,
+        "positiveLayerGapCodeTarget": true,
+        "ownerRows": [
+          {
+            "fixture": "nested-d5-f4",
+            "metric": "render-update-wall",
+            "target": 1,
+            "ratios": [
+              1.099744644021835,
+              1.0979380066251163,
+              1.0960235096465227
+            ],
+            "remains": true,
+            "tie": false,
+            "oldRunMedians": [
+              26.056957999997394,
+              26.05304199999955,
+              26.073041999999987
+            ],
+            "headRunMedians": [
+              28.65599999999904,
+              28.604624999999942,
+              28.57666700000118
+            ]
+          },
+          {
+            "fixture": "nested-d5-f4",
+            "metric": "profiler-update",
+            "target": 1,
+            "ratios": [
+              1.0745786457109638,
+              1.0887736264428063,
+              1.0816905400594794
+            ],
+            "remains": true,
+            "tie": false,
+            "oldRunMedians": [
+              1.2291320000076666,
+              1.2144259999186033,
+              1.2279389999675914
+            ],
+            "headRunMedians": [
+              1.3207989999682468,
+              1.322234999977809,
+              1.328250000035041
+            ]
+          }
+        ],
+        "raw": {
+          "core": [
+            "B-core-nested-d5-f4-off-r1.json",
+            "B-core-nested-d5-f4-off-r2.json",
+            "B-core-nested-d5-f4-off-r3.json"
+          ],
+          "react": [
+            "B-react-plain-nested-d5-f4-r1-0.16.0.json",
+            "B-react-plain-nested-d5-f4-r2-0.16.0.json",
+            "B-react-plain-nested-d5-f4-r3-0.16.0.json",
+            "B-react-plain-nested-d5-f4-r1-HEAD.json",
+            "B-react-plain-nested-d5-f4-r2-HEAD.json",
+            "B-react-plain-nested-d5-f4-r3-HEAD.json"
+          ],
+          "counts": [
+            "B-react-counts-nested-d5-f4-r1-0.16.0.json",
+            "B-react-counts-nested-d5-f4-r1-HEAD.json"
+          ]
+        }
+      },
+      {
+        "fixture": "array-replace-200",
+        "stage": "B",
+        "interactions": 1,
+        "versions": {
+          "0.16.0": {
+            "wall": 105.75916700000016,
+            "core": 3.016332000009061,
+            "layer": 102.7428349999911,
+            "corePercent": 2.8520761703891413,
+            "profiler": 81.05586399996173,
+            "commits": 1,
+            "first": 3.016332000009061,
+            "later": 2.7614499999953694,
+            "work": {
+              "renders": {
+                "median": 8219,
+                "min": 8219,
+                "max": 8219
+              },
+              "listenerDeliveries": {
+                "median": 220,
+                "min": 220,
+                "max": 220
+              },
+              "settlePasses": {
+                "median": 0,
+                "min": 0,
+                "max": 0
+              },
+              "commits": {
+                "median": 1,
+                "min": 1,
+                "max": 1
+              }
+            },
+            "coreWork": [
+              {
+                "renders": 0,
+                "commits": 0,
+                "listenerDeliveries": 203,
+                "settlePasses": 0
+              },
+              {
+                "renders": 0,
+                "commits": 0,
+                "listenerDeliveries": 203,
+                "settlePasses": 0
+              },
+              {
+                "renders": 0,
+                "commits": 0,
+                "listenerDeliveries": 203,
+                "settlePasses": 0
+              }
+            ],
+            "coreSource": "sum"
+          },
+          "HEAD": {
+            "wall": 113.76995899999929,
+            "core": 4.821709,
+            "layer": 108.94824999999929,
+            "corePercent": 4.2381214183262825,
+            "profiler": 86.44385699988925,
+            "commits": 1,
+            "first": 4.821709,
+            "later": 2.784583,
+            "work": {
+              "renders": {
+                "median": 11422,
+                "min": 11422,
+                "max": 11422
+              },
+              "listenerDeliveries": {
+                "median": 13,
+                "min": 13,
+                "max": 13
+              },
+              "settlePasses": {
+                "median": 1,
+                "min": 1,
+                "max": 1
+              },
+              "commits": {
+                "median": 1,
+                "min": 1,
+                "max": 1
+              }
+            },
+            "coreWork": [
+              {
+                "renders": 0,
+                "commits": 0,
+                "listenerDeliveries": 0,
+                "settlePasses": 1
+              },
+              {
+                "renders": 0,
+                "commits": 0,
+                "listenerDeliveries": 0,
+                "settlePasses": 1
+              },
+              {
+                "renders": 0,
+                "commits": 0,
+                "listenerDeliveries": 0,
+                "settlePasses": 1
+              }
+            ],
+            "coreSource": "sentinel",
+            "ga": {
+              "difference": 0.005166000000000892,
+              "noise": 0.042124000000000106,
+              "withinNoise": true,
+              "passed": true,
+              "zeroEngineMacrotasks": true,
+              "runs": [
+                {
+                  "run": 1,
+                  "difference": 0.005875000000000519,
+                  "noise": 0.061874999999999514,
+                  "withinNoise": true,
+                  "zeroEngineMacrotasks": true,
+                  "boundary": {
+                    "scheduled": {
+                      "median": 0,
+                      "max": 0
+                    },
+                    "executed": {
+                      "median": 0,
+                      "max": 0
+                    },
+                    "cancelled": {
+                      "median": 0,
+                      "max": 0
+                    },
+                    "pendingAtMicrotasks": {
+                      "median": 0,
+                      "max": 0
+                    },
+                    "pendingAtFirstSentinel": {
+                      "median": 0,
+                      "max": 0
+                    },
+                    "pendingAtSentinel": {
+                      "median": 0,
+                      "max": 0
+                    },
+                    "tailScheduled": {
+                      "median": 0,
+                      "max": 0
+                    },
+                    "tailExecuted": {
+                      "median": 0,
+                      "max": 0
+                    }
+                  },
+                  "metric": {
+                    "median": 4.800625,
+                    "p99": 5.1525,
+                    "samples": 101
+                  }
+                },
+                {
+                  "run": 2,
+                  "difference": 0.004999999999999893,
+                  "noise": 0.07358400000000015,
+                  "withinNoise": true,
+                  "zeroEngineMacrotasks": true,
+                  "boundary": {
+                    "scheduled": {
+                      "median": 0,
+                      "max": 0
+                    },
+                    "executed": {
+                      "median": 0,
+                      "max": 0
+                    },
+                    "cancelled": {
+                      "median": 0,
+                      "max": 0
+                    },
+                    "pendingAtMicrotasks": {
+                      "median": 0,
+                      "max": 0
+                    },
+                    "pendingAtFirstSentinel": {
+                      "median": 0,
+                      "max": 0
+                    },
+                    "pendingAtSentinel": {
+                      "median": 0,
+                      "max": 0
+                    },
+                    "tailScheduled": {
+                      "median": 0,
+                      "max": 0
+                    },
+                    "tailExecuted": {
+                      "median": 0,
+                      "max": 0
+                    }
+                  },
+                  "metric": {
+                    "median": 4.811959,
+                    "p99": 5.231666000000001,
+                    "samples": 101
+                  }
+                },
+                {
+                  "run": 3,
+                  "difference": 0.004750000000000476,
+                  "noise": 0.11141499999999988,
+                  "withinNoise": true,
+                  "zeroEngineMacrotasks": true,
+                  "boundary": {
+                    "scheduled": {
+                      "median": 0,
+                      "max": 0
+                    },
+                    "executed": {
+                      "median": 0,
+                      "max": 0
+                    },
+                    "cancelled": {
+                      "median": 0,
+                      "max": 0
+                    },
+                    "pendingAtMicrotasks": {
+                      "median": 0,
+                      "max": 0
+                    },
+                    "pendingAtFirstSentinel": {
+                      "median": 0,
+                      "max": 0
+                    },
+                    "pendingAtSentinel": {
+                      "median": 0,
+                      "max": 0
+                    },
+                    "tailScheduled": {
+                      "median": 0,
+                      "max": 0
+                    },
+                    "tailExecuted": {
+                      "median": 0,
+                      "max": 0
+                    }
+                  },
+                  "metric": {
+                    "median": 4.855917000000001,
+                    "p99": 5.5655,
+                    "samples": 101
+                  }
+                }
+              ]
+            }
+          }
+        },
+        "gaps": {
+          "wall": 8.010791999999128,
+          "core": 1.8053769999909393,
+          "layer": 6.205415000008188,
+          "first": 1.8053769999909393,
+          "later": 0.02313300000463059
+        },
+        "coreDominates": false,
+        "cause": "104·110라운드에서 수용한 동일 행과 같은 규모가 아닙니다. 기존 수용으로 포함하지 않습니다.",
+        "matches104Row": false,
+        "matches110Row": false,
+        "positiveLayerGapCodeTarget": true,
+        "ownerRows": [
+          {
+            "fixture": "array-replace-200",
+            "metric": "render-update-wall",
+            "target": 1,
+            "ratios": [
+              1.056829913097133,
+              1.0835921151925751,
+              1.086756049014192
+            ],
+            "remains": true,
+            "tie": false,
+            "oldRunMedians": [
+              108.34670800000004,
+              105.31295899999986,
+              105.69387499999993
+            ],
+            "headRunMedians": [
+              114.50404200000048,
+              114.1162919999988,
+              114.86345799999981
+            ]
+          },
+          {
+            "fixture": "array-replace-200",
+            "metric": "profiler-update",
+            "target": 1,
+            "ratios": [
+              1.046655588205978,
+              1.0744999858546265,
+              1.083121748585452
+            ],
+            "remains": true,
+            "tie": false,
+            "oldRunMedians": [
+              83.16197799998918,
+              80.52502199999981,
+              80.58118499973898
+            ],
+            "headRunMedians": [
+              87.04194899995127,
+              86.52413499994327,
+              87.27923400000509
+            ]
+          }
+        ],
+        "raw": {
+          "core": [
+            "B-core-array-replace-200-off-r1.json",
+            "B-core-array-replace-200-off-r2.json",
+            "B-core-array-replace-200-off-r3.json"
+          ],
+          "react": [
+            "B-react-plain-array-replace-200-r1-0.16.0.json",
+            "B-react-plain-array-replace-200-r2-0.16.0.json",
+            "B-react-plain-array-replace-200-r3-0.16.0.json",
+            "B-react-plain-array-replace-200-r1-HEAD.json",
+            "B-react-plain-array-replace-200-r2-HEAD.json",
+            "B-react-plain-array-replace-200-r3-HEAD.json"
+          ],
+          "counts": [
+            "B-react-counts-array-replace-200-r1-0.16.0.json",
+            "B-react-counts-array-replace-200-r1-HEAD.json"
+          ]
+        }
+      },
+      {
+        "fixture": "computed-visible-derived",
+        "stage": "B",
+        "interactions": 3,
+        "versions": {
+          "0.16.0": {
+            "wall": 7.6928329999999505,
+            "core": 0.043625,
+            "layer": 7.649207999999951,
+            "corePercent": 0.5670862736783742,
+            "profiler": 0.4537249999987125,
+            "commits": 7,
+            "first": 0.021917,
+            "later": 0.012209000000000001,
+            "work": {
+              "renders": {
+                "median": 89,
+                "min": 89,
+                "max": 89
+              },
+              "listenerDeliveries": {
+                "median": 117,
+                "min": 117,
+                "max": 117
+              },
+              "settlePasses": {
+                "median": 0,
+                "min": 0,
+                "max": 0
+              },
+              "commits": {
+                "median": 7,
+                "min": 7,
+                "max": 7
+              }
+            },
+            "coreWork": [
+              {
+                "renders": 0,
+                "commits": 0,
+                "listenerDeliveries": 25,
+                "settlePasses": 0
+              },
+              {
+                "renders": 0,
+                "commits": 0,
+                "listenerDeliveries": 25,
+                "settlePasses": 0
+              },
+              {
+                "renders": 0,
+                "commits": 0,
+                "listenerDeliveries": 25,
+                "settlePasses": 0
+              }
+            ],
+            "coreSource": "sentinel"
+          },
+          "HEAD": {
+            "wall": 8.98379100000011,
+            "core": 0.280708,
+            "layer": 8.70308300000011,
+            "corePercent": 3.1246051917280417,
+            "profiler": 0.4912870000048315,
+            "commits": 3,
+            "first": 0.136291,
+            "later": 0.06975,
+            "work": {
+              "renders": {
+                "median": 81,
+                "min": 81,
+                "max": 81
+              },
+              "listenerDeliveries": {
+                "median": 53,
+                "min": 53,
+                "max": 53
+              },
+              "settlePasses": {
+                "median": 4,
+                "min": 4,
+                "max": 4
+              },
+              "commits": {
+                "median": 3,
+                "min": 3,
+                "max": 3
+              }
+            },
+            "coreWork": [
+              {
+                "renders": 0,
+                "commits": 0,
+                "listenerDeliveries": 0,
+                "settlePasses": 4
+              },
+              {
+                "renders": 0,
+                "commits": 0,
+                "listenerDeliveries": 0,
+                "settlePasses": 4
+              },
+              {
+                "renders": 0,
+                "commits": 0,
+                "listenerDeliveries": 0,
+                "settlePasses": 4
+              }
+            ],
+            "coreSource": "sentinel",
+            "ga": {
+              "difference": 0.001917000000000002,
+              "noise": 0.015123000000000003,
+              "withinNoise": true,
+              "passed": true,
+              "zeroEngineMacrotasks": true,
+              "runs": [
+                {
+                  "run": 1,
+                  "difference": 0.0018320000000000003,
+                  "noise": 0.026455999999999986,
+                  "withinNoise": true,
+                  "zeroEngineMacrotasks": true,
+                  "boundary": {
+                    "scheduled": {
+                      "median": 0,
+                      "max": 0
+                    },
+                    "executed": {
+                      "median": 0,
+                      "max": 0
+                    },
+                    "cancelled": {
+                      "median": 0,
+                      "max": 0
+                    },
+                    "pendingAtMicrotasks": {
+                      "median": 0,
+                      "max": 0
+                    },
+                    "pendingAtFirstSentinel": {
+                      "median": 0,
+                      "max": 0
+                    },
+                    "pendingAtSentinel": {
+                      "median": 0,
+                      "max": 0
+                    },
+                    "tailScheduled": {
+                      "median": 0,
+                      "max": 0
+                    },
+                    "tailExecuted": {
+                      "median": 0,
+                      "max": 0
+                    }
+                  },
+                  "metric": {
+                    "median": 0.280709,
+                    "p99": 0.3565,
+                    "samples": 101
+                  }
+                },
+                {
+                  "run": 2,
+                  "difference": 0.0020409999999999595,
+                  "noise": 0.019123000000000008,
+                  "withinNoise": true,
+                  "zeroEngineMacrotasks": true,
+                  "boundary": {
+                    "scheduled": {
+                      "median": 0,
+                      "max": 0
+                    },
+                    "executed": {
+                      "median": 0,
+                      "max": 0
+                    },
+                    "cancelled": {
+                      "median": 0,
+                      "max": 0
+                    },
+                    "pendingAtMicrotasks": {
+                      "median": 0,
+                      "max": 0
+                    },
+                    "pendingAtFirstSentinel": {
+                      "median": 0,
+                      "max": 0
+                    },
+                    "pendingAtSentinel": {
+                      "median": 0,
+                      "max": 0
+                    },
+                    "tailScheduled": {
+                      "median": 0,
+                      "max": 0
+                    },
+                    "tailExecuted": {
+                      "median": 0,
+                      "max": 0
+                    }
+                  },
+                  "metric": {
+                    "median": 0.278167,
+                    "p99": 0.37116699999999997,
+                    "samples": 101
+                  }
+                },
+                {
+                  "run": 3,
+                  "difference": 0.0019990000000000285,
+                  "noise": 0.021167,
+                  "withinNoise": true,
+                  "zeroEngineMacrotasks": true,
+                  "boundary": {
+                    "scheduled": {
+                      "median": 0,
+                      "max": 0
+                    },
+                    "executed": {
+                      "median": 0,
+                      "max": 0
+                    },
+                    "cancelled": {
+                      "median": 0,
+                      "max": 0
+                    },
+                    "pendingAtMicrotasks": {
+                      "median": 0,
+                      "max": 0
+                    },
+                    "pendingAtFirstSentinel": {
+                      "median": 0,
+                      "max": 0
+                    },
+                    "pendingAtSentinel": {
+                      "median": 0,
+                      "max": 0
+                    },
+                    "tailScheduled": {
+                      "median": 0,
+                      "max": 0
+                    },
+                    "tailExecuted": {
+                      "median": 0,
+                      "max": 0
+                    }
+                  },
+                  "metric": {
+                    "median": 0.283417,
+                    "p99": 0.366707,
+                    "samples": 101
+                  }
+                }
+              ]
+            }
+          }
+        },
+        "gaps": {
+          "wall": 1.2909580000001597,
+          "core": 0.23708300000000002,
+          "layer": 1.0538750000001587,
+          "first": 0.114374,
+          "later": 0.05754100000000001
+        },
+        "coreDominates": false,
+        "cause": "이후 갱신 차이는 104라운드의 동일 행에 남은 쓰기당 고정비와 같은 규모입니다. 첫 갱신 차이는 그 기록의 약 0.06 ms보다 크므로 동일 크기로 확대하지 않습니다.",
+        "matches104Row": true,
+        "matches110Row": false,
+        "positiveLayerGapCodeTarget": true,
+        "ownerRows": [
+          {
+            "fixture": "computed-visible-derived",
+            "metric": "render-update-wall",
+            "target": 1,
+            "ratios": [
+              1.182276058003419,
+              1.1762568589259157,
+              1.178949310610447
+            ],
+            "remains": true,
+            "tie": false,
+            "oldRunMedians": [
+              7.61162499999989,
+              7.612707999999884,
+              7.593166999999994
+            ],
+            "headRunMedians": [
+              8.999042000000145,
+              8.954500000000053,
+              8.951958999999988
+            ]
+          },
+          {
+            "fixture": "computed-visible-derived",
+            "metric": "profiler-update",
+            "target": 1,
+            "ratios": [
+              1.0804563382903805,
+              1.067196989742037,
+              1.0649017649815662
+            ],
+            "remains": true,
+            "tie": false,
+            "oldRunMedians": [
+              0.445459000001847,
+              0.4496630000021469,
+              0.4516209999999319
+            ],
+            "headRunMedians": [
+              0.4812990000004902,
+              0.47987900000066475,
+              0.48093200000266734
+            ]
+          }
+        ],
+        "raw": {
+          "core": [
+            "B-core-computed-visible-derived-off-r1.json",
+            "B-core-computed-visible-derived-off-r2.json",
+            "B-core-computed-visible-derived-off-r3.json"
+          ],
+          "react": [
+            "B-react-plain-computed-visible-derived-r1-0.16.0.json",
+            "B-react-plain-computed-visible-derived-r2-0.16.0.json",
+            "B-react-plain-computed-visible-derived-r3-0.16.0.json",
+            "B-react-plain-computed-visible-derived-r1-HEAD.json",
+            "B-react-plain-computed-visible-derived-r2-HEAD.json",
+            "B-react-plain-computed-visible-derived-r3-HEAD.json"
+          ],
+          "counts": [
+            "B-react-counts-computed-visible-derived-r1-0.16.0.json",
+            "B-react-counts-computed-visible-derived-r1-HEAD.json"
+          ]
+        }
+      }
+    ]
+  },
+  "acceptanceWidened": false,
+  "profilerScope": "actualDuration measures React render; core setValue occurs before that clock, so wall shares are shown for the same fixture instead of subtracting a non-overlapping core clock from Profiler",
+  "addCoreRows": [],
+  "workerExit": {
+    "code": 0,
+    "signal": null,
+    "natural": true,
+    "command": "/opt/homebrew/opt/node/bin/node packages/canard/schema-form/architecture/verification/07-switch/profile-117-session/split.mjs"
+  }
+}
+

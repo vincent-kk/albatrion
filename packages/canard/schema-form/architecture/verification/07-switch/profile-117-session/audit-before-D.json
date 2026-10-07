@@ -1,0 +1,42 @@
+{
+  "HEAD": "02026967958e29d1735848c39e79f76b94fe61e3",
+  "checked": "2026-10-07T10:39:29.645Z",
+  "sourceFiles": 1939,
+  "sourceTreeSha256": "0b93511fe5cfb7719047d522d4bc6ce861ab2c164a2cd753b2a5fc1205583d16",
+  "srcDiffSha256": "b49089f2b0d835e1b43ac848327646ea5598f214e81ebe515fc041638d3bfb58",
+  "sourceTreeMatchesBaseline": true,
+  "existingSrcChangesPreserved": true,
+  "bundles": [
+    {
+      "file": "/private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles/branch1-head.cjs",
+      "bytes": 543666,
+      "sha256": "acd4c57073f92f7553f7b4e7a8e512a4aaea789534c3c58af2c53a5a5abddde8",
+      "matchesPrepared": true
+    },
+    {
+      "file": "/private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles/branch1-working.cjs",
+      "bytes": 546437,
+      "sha256": "c2f4555841301494d576680e684571cdd9c96acbe3434c4dae33a69a0ef704a8",
+      "matchesPrepared": true
+    },
+    {
+      "file": "/private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles/split-old.cjs",
+      "bytes": 301797,
+      "sha256": "9477b24f9e32a8d2a0009451933bdedbcb6e8521cbab8518c5884a6764881110",
+      "matchesPrepared": true
+    }
+  ],
+  "bundleRebuildRequired": false,
+  "artifactFiles": 419,
+  "largestArtifact": {
+    "file": "analysis-C-oneOf-5-off.json",
+    "bytes": 196149
+  },
+  "workerExit": {
+    "code": 0,
+    "signal": null,
+    "natural": true,
+    "command": "/opt/homebrew/opt/node/bin/node packages/canard/schema-form/architecture/verification/07-switch/profile-117-session/check-inputs.mjs before-D"
+  }
+}
+

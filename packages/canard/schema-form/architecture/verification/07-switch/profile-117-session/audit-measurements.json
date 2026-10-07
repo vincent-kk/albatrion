@@ -1,0 +1,41 @@
+{
+  "HEAD": "02026967958e29d1735848c39e79f76b94fe61e3",
+  "checked": "2026-10-07T11:12:19.706Z",
+  "passed": true,
+  "coreWorkers": 456,
+  "reactWorkers": 112,
+  "totalMeasuredWorkers": 568,
+  "firstStarted": "2026-10-07T09:23:51.743Z",
+  "lastEnded": "2026-10-07T10:58:26.664Z",
+  "overlappingWorkers": 0,
+  "allWorkerExitCodesZero": true,
+  "allWorkersNaturallyEnded": true,
+  "largestWorker": {
+    "file": "A-react-plain-array-push-remove-100-r3-HEAD.json",
+    "seconds": 100.76027975
+  },
+  "coreVersionModeChecks": 4080,
+  "zeroNewEngineBoundaryRows": 3912,
+  "pairedRowsIndependentlyAggregated": 208,
+  "independentlyBootstrappedDRows": 16,
+  "independentlyVerifiedBranchSlopes": 6,
+  "regressionRows": [
+    "flat-500/off/update-first",
+    "if-then/off/mount",
+    "if-then/on/update",
+    "if-then/on/update-first"
+  ],
+  "largestFile": {
+    "file": "analysis-C-oneOf-5-off.json",
+    "bytes": 196149
+  },
+  "endpointValidationFailuresPreserved": 15,
+  "scope": "Worker records, same-call endpoint checks, medians, selected intervals, split arithmetic, and verdict thresholds were verified; (ga) failures are findings, not converted to passes.",
+  "workerExit": {
+    "code": 0,
+    "signal": null,
+    "natural": true,
+    "command": "/opt/homebrew/opt/node/bin/node packages/canard/schema-form/architecture/verification/07-switch/profile-117-session/audit.mjs"
+  }
+}
+

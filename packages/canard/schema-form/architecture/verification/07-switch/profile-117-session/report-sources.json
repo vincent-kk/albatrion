@@ -1,0 +1,108 @@
+{
+  "HEAD": "02026967958e29d1735848c39e79f76b94fe61e3",
+  "generated": "2026-10-07T11:17:40.802Z",
+  "rules": [
+    {
+      "round": "94",
+      "ref": "origin/1.0.0-beta:packages/canard/schema-form/architecture/reviews/round-94-closing.md",
+      "sha256": "9c43548e6088eca971a6a276da11c187a3299bd817d46d5705bcf831c1f92495"
+    },
+    {
+      "round": "95",
+      "ref": "origin/1.0.0-beta:packages/canard/schema-form/architecture/reviews/round-95-closing.md",
+      "sha256": "323d34e7789b077c5481d3432ea1226b948d3bc11c0f2678b7d319eb49fbb8e1"
+    },
+    {
+      "round": "104",
+      "ref": "origin/1.0.0-beta:packages/canard/schema-form/architecture/reviews/round-104-owner-answers.md",
+      "sha256": "193459c620ea7ec43a968f0b319ea10b7d00ac2c7b23b0ac6bbb5da3fd7b7f6e"
+    },
+    {
+      "round": "105",
+      "ref": "origin/1.0.0-beta:packages/canard/schema-form/architecture/reviews/round-105-closing.md",
+      "sha256": "5536940e9baa5ffa099c32cf7c8bbe8bc44ec5a55a91c1d67862e26e59f3fa58"
+    },
+    {
+      "round": "110",
+      "ref": "origin/1.0.0-beta:packages/canard/schema-form/architecture/reviews/round-110-owner-answers.md",
+      "sha256": "18d3219f9df6d1a3e737f33d26be03070aebfa6ef4ca737a6a53c2c48e383992"
+    },
+    {
+      "round": "113",
+      "ref": "origin/1.0.0-beta:packages/canard/schema-form/architecture/reviews/round-113-owner-answers.md",
+      "sha256": "466d953e65dbe5fa8600986e6e16b07ac976199ca2ecba699b64c881219ebb4e"
+    },
+    {
+      "round": "114",
+      "ref": "origin/1.0.0-beta:packages/canard/schema-form/architecture/reviews/round-114-closing.md",
+      "sha256": "2ada568960b735c6bc2b6c305f1c6344edf251a519758bd8c95bcd3fb7cf2472"
+    }
+  ],
+  "localSources": [
+    {
+      "file": "../tools/measure-verdict-95c01.mjs",
+      "sha256": "826e919574e71359fadaaef7fa17186ad1de2eca60117d8c883d8bcb56d5af9a"
+    },
+    {
+      "file": "../tools/report-verdict-95c01.mjs",
+      "sha256": "ad772caf00e8cffc650f075cdd8c68b1a699899694ec7d740bc4cec80154aa6b"
+    },
+    {
+      "file": "../tools/endpointDifference95c01.mjs",
+      "sha256": "25d11780f9f01813255ac79694c4dbd5195154a69039929af283a315647bd4c1"
+    },
+    {
+      "file": "../tools/prepare-branch1-bundles.mjs",
+      "sha256": "b122b58d2bb0cdb9a4b91bfd47cd65cbb245e80dca188a37998931022c3979f1"
+    },
+    {
+      "file": "../profile-111-final.md",
+      "sha256": "7c42b7f4ad560e252acc0aff43913d9714be16e6fbde8c6bae2536d919308bcc"
+    },
+    {
+      "file": "../profile-112-branch.md",
+      "sha256": "8988a3fab6be591a68304148f198f5789f303e53c2114ae57c3e4ba4571d62ce"
+    },
+    {
+      "file": "../profile-113-paired.md",
+      "sha256": "b23a64910512bbf12f01973f6c45d4a75b57b46afb4e9b4f915c897f22f1b5e1"
+    },
+    {
+      "file": "../profile-114-g26/measure-react.mjs",
+      "sha256": "4a0f96cf35c328ffdabe74b9f2d4236af11e5d1ff0daf488387c4f544e3fda9f"
+    },
+    {
+      "file": "../profile-114-g26/summary.json",
+      "sha256": "134e2f0a7463ba2a2b257784386e585aded8b5d782d3b2016fe09e16312cd024"
+    },
+    {
+      "file": "../performance.md",
+      "sha256": "f0b32be1db01030568b92c2a581132093f762b72b692fdd8ac4e8dad15ca97b8"
+    },
+    {
+      "file": "../branch1-child-selection.md",
+      "sha256": "5ede1888e6b9ea040f19f464e2df2d5943308650ef068c6a5f69a977e55f037f"
+    }
+  ],
+  "reportSha256": "8187c28c28fe0f9957296dcb4f727b23d281aff54101ed0b74a2faf3306e98eb",
+  "rawEvidenceSha256": "97c87beff88be8f5a2f3869de5bfcdd54b047da2052246566115a29777b71f54",
+  "currentMeasurementInterval": [
+    "2026-10-07T09:23:51.743Z",
+    "2026-10-07T10:58:26.664Z"
+  ],
+  "sourcePreservationAudit": "audit-final.json",
+  "rawWorkers": 568,
+  "verdict": "REJECT",
+  "regressionRows": [
+    "flat-500/off/update-first",
+    "if-then/off/mount",
+    "if-then/on/update",
+    "if-then/on/update-first"
+  ],
+  "workerExit": {
+    "code": 0,
+    "signal": null,
+    "natural": true,
+    "command": "/opt/homebrew/opt/node/bin/node packages/canard/schema-form/architecture/verification/07-switch/profile-117-session/write-report.mjs"
+  }
+}

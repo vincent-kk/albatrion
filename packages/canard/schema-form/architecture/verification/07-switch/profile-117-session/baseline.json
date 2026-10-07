@@ -1,0 +1,16 @@
+{
+  "HEAD": "02026967958e29d1735848c39e79f76b94fe61e3",
+  "started": "2026-10-07T09:14:49.476Z",
+  "sourceFiles": 1939,
+  "changedSources": {
+    "packages/canard/schema-form/src/core/settle/DETAIL.md": "51611e3d79dbe05bb22ed1fda95d1a39302a3d3d48c2e560c7425cd7e49ea77f",
+    "packages/canard/schema-form/src/core/settle/utils/compute/primeHost.ts": "8ad7ae74acfd54ae5534e901f67c849a917fc34947e2e9d7a07e1ef2c02f02ef",
+    "packages/canard/schema-form/src/core/settle/utils/compute/selectChildren.ts": "ff98b36f6215b0a35a4a1e73be09e14e6518507468151684d6b80a00718b0d10",
+    "packages/canard/schema-form/src/core/settle/__tests__/selectChildren.head-differential.test.ts": "ea7d2e63f7fb330a07131e177f1dd263fd644089332e94fa61d11bf5407e3bf7",
+    "packages/canard/schema-form/src/core/settle/__tests__/selectChildren.metadata-counts.test.ts": "d068d613a617f0400b11c2a45c7aea464ccbfb7e35c06fc7a7591f1b0d65e78b"
+  },
+  "sourceTreeSha256": "0b93511fe5cfb7719047d522d4bc6ce861ab2c164a2cd753b2a5fc1205583d16",
+  "srcDiffSha256": "b49089f2b0d835e1b43ac848327646ea5598f214e81ebe515fc041638d3bfb58",
+  "status": " M packages/canard/schema-form/src/core/settle/DETAIL.md\n M packages/canard/schema-form/src/core/settle/utils/compute/primeHost.ts\n M packages/canard/schema-form/src/core/settle/utils/compute/selectChildren.ts\n?? packages/canard/schema-form/architecture/verification/07-switch/branch1-child-selection.md\n?? packages/canard/schema-form/architecture/verification/07-switch/profile-117-session/\n?? packages/canard/schema-form/architecture/verification/07-switch/tools/prepare-branch1-bundles.mjs\n?? packages/canard/schema-form/src/core/settle/__tests__/helpers/childSelection/\n?? packages/canard/schema-form/src/core/settle/__tests__/selectChildren.head-differential.test.ts\n?? packages/canard/schema-form/src/core/settle/__tests__/selectChildren.metadata-counts.test.ts\n?? packages/canard/schema-form/src/core/settle/utils/compute/selectChildren/\n"
+}
+

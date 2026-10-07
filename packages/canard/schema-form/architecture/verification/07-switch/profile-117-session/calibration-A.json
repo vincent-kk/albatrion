@@ -1,0 +1,52 @@
+{
+  "HEAD": "02026967958e29d1735848c39e79f76b94fe61e3",
+  "stage": "A",
+  "files": [
+    "A-core-array-100-off-r1.json",
+    "A-core-array-100-off-r2.json",
+    "A-core-array-100-off-r3.json",
+    "A-core-array-push-100-off-r1.json",
+    "A-core-array-push-100-off-r2.json",
+    "A-core-array-push-100-off-r3.json",
+    "A-core-array-push-remove-100-off-r1.json",
+    "A-core-array-push-remove-100-off-r2.json",
+    "A-core-array-push-remove-100-off-r3.json"
+  ],
+  "byPasses": {
+    "1": {
+      "passes": 1,
+      "calls": 1818,
+      "records": 9,
+      "C": 0.01575,
+      "M": 0.0025,
+      "waitMedian": 0.013166,
+      "waitP5": 0.012582999999999999,
+      "waitP95": 0.014792000000000001,
+      "p95AbsoluteDeviationMs": 0.0016260000000000007,
+      "endBootstrap99": {
+        "median": 0.01575,
+        "low": 0.015583,
+        "high": 0.015833,
+        "halfWidth": 0.00016700000000000048,
+        "trials": 1000,
+        "seed": 9501
+      },
+      "microBootstrap99": {
+        "median": 0.0025,
+        "low": 0.002333,
+        "high": 0.002542,
+        "halfWidth": 0.00016700000000000005,
+        "trials": 1000,
+        "seed": 9502
+      },
+      "sameConstantForBothVersions": true
+    }
+  },
+  "workerExit": {
+    "code": 0,
+    "signal": null,
+    "natural": true,
+    "command": "/opt/homebrew/opt/node/bin/node --expose-gc packages/canard/schema-form/architecture/verification/07-switch/profile-117-session/calibrate.mjs A"
+  }
+}
+

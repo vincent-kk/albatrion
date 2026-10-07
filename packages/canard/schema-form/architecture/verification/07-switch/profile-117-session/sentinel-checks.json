@@ -1,0 +1,19 @@
+{
+  "checks": [
+    {
+      "args": [
+        "--self-check"
+      ],
+      "code": 0,
+      "output": "END_TO_END_95C01_OK"
+    },
+    {
+      "args": [
+        "--self-check",
+        "--nested-callback"
+      ],
+      "code": 0,
+      "output": "END_TO_END_95C01_OK"
+    }
+  ]
+}
