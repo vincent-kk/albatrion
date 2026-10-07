@@ -11,7 +11,7 @@
 - 자동 Refresh는 EVENT-042·071이 정한 쓰기에만 나갑니다.
 - 배열 연산에서 기존 항목의 렌더와 리마운트는 0입니다.
 
-전역 문맥 변화(showError, context, readOnly)에 모든 필드가 렌더되는 것은 두 판이 같습니다. 이것은 옛 판에서 벗어난 자리가 아니라 두 판 모두 원칙을 채우지 못한 자리입니다.
+전역 문맥 변화(showError, context, readOnly)에 폼 전체가 한 번 렌더되는 것은 정상 동작입니다(소유자 122라운드). 폼 전체가 바뀌는 일이기 때문입니다. 이 경우의 단언은 "렌더는 필드당 한 번이며 리마운트는 없음"이고, 두 판 모두 리마운트는 0입니다.
 
 ## 한 필드의 경로
 
@@ -56,7 +56,7 @@
 단언 다섯의 결과입니다.
 
 1. **쓰기 하나는 그 필드의 사슬만 렌더합니다.** 값이 함께 바뀐 조상의 사슬은 함께 렌더됩니다. 두 판 모두 그렇고, 제어·비제어 입력의 수치가 같습니다. 새 판의 자기 필드 렌더 10회는 SchemaNodeField, memo(EB.fn), ErrorBoundary 둘, FormGroupRenderer, InputWrapperFn, SchemaNodeInput, EB.fn, Input, 입력입니다.
-2. **형제 쓰기와 부모 쓰기에서 다른 필드의 렌더는 새 판에서 0입니다.** 전역 문맥 변화는 두 판 모두 모든 필드를 렌더하므로 목표인 0을 채우지 못합니다.
+2. **형제 쓰기와 부모 쓰기에서 다른 필드의 렌더는 새 판에서 0입니다.** 전역 문맥 변화의 단언은 "렌더는 필드당 한 번이며 리마운트는 없음"입니다(소유자 122라운드). 리마운트는 두 판 모두 0입니다. 필드당 렌더 10·10·5회가 필드 사슬의 컴포넌트마다 한 번씩인지는 F-A·F-B 판정과 함께 컴포넌트 수로 나누어 확인합니다.
 3. **자동 Refresh는 EVENT-042·071, REACT-019와 맞습니다.** 입력 쓰기 0, 바뀐 리프 1, 같은 값 0입니다. 부모 쓰기와 전체 setValue는 바뀐 노드만 리프레시하고, reset은 리프 전부(컨테이너 0)입니다. 배열의 push·remove·항목 하나 더한 replace는 0이고, 모든 값을 바꾼 replace는 4입니다.
 4. **배열 연산의 새 fiber는 추가된 항목에만 생깁니다.** push 한 번에 새 판 26개, 옛 판 21개이고, 기존 항목의 렌더와 리마운트는 두 판 모두 0입니다. remove(0)은 새 판에서 리마운트 0이고, 자리가 당겨진 항목 넷이 UpdatePath로 10회씩 렌더됩니다. 옛 판은 넷을 리마운트합니다(fiber 84개).
 5. **118 진단의 Button 재렌더는 배열 템플릿에서 나옵니다.** 벤치마크 쪽 구성 요소가 아닙니다. `src/formTypeDefinitions/FormTypeInputArray.tsx:44-45`의 `onClick={() => handleRemoveClick(index)}`가 렌더마다 새 참조이고, `:78`의 Button은 memo가 아닙니다. 그래서 push 한 번에 기존 항목의 삭제 버튼과 추가 버튼이 모두 렌더됩니다. 옛 판도 같은 코드입니다(`FormTypeInputArray.tsx:35-40`). BF는 자기 구성 요소를 주지 않습니다(`mountEquivalentForm.tsx`).
@@ -76,7 +76,7 @@
 - **F-F(6번).** `useTerminalChildren`이 terminal 전략일 때만 일하고 effect에 의존성 배열을 줍니다. 기대 효과는 쓰기 하나의 layout effect 2회에서 0회입니다. 마운트 뒤에야 ChildNodeComponents를 처음 읽는 터미널 입력의 경고를 놓치지 않는지 확인해야 합니다(ERROR-202).
 - **F-E(4번).** SchemaNodeInput의 uSES 트래커 셋을 마스크를 합친 하나로 묶고, generation은 렌더 때 `node.revision(RequestRefresh)`로 읽습니다. 셋의 자리는 `SchemaNodeInput.tsx:116`, `useChildNodeComponents.tsx:51`, `useFormTypeInputControl.ts:51`입니다. 포커스·선택 구독은 layout 단계에 남깁니다. `DeferrableNodeProxy.tsx:56-61`이 자식의 layout 구독을 전제로 다시 발행하기 때문입니다. 기대 효과는 필드당 리스너 6개에서 4개이고, 렌더 수는 그대로입니다.
 - **5번은 유지합니다.** REACT-028이 정한 일이고, 비용은 자식이 마운트될 때 1회뿐입니다.
-- **9번(전역 문맥)은 소유자 결정이 필요합니다.** 필드마다 selector 스냅샷을 두거나 노드 이벤트로 넘기면 렌더를 0으로 만들 수 있습니다. 그러나 context는 모든 입력이 받는 속성이라 계약을 바꿔야 합니다.
+- **9번(전역 문맥)은 고치지 않습니다.** 폼 전체 단위의 변화에 전체가 한 번 렌더되는 것은 정상 동작이고 성능 목표의 대상이 아닙니다(소유자 122라운드). selector 스냅샷이나 문맥의 노드 이벤트화는 열지 않습니다.
 
 ## 확인하지 못한 것
 
