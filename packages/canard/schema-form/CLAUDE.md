@@ -144,4 +144,4 @@ Identity → Tree Structure → Value Management → Computed Properties → Sta
 
 ## Build Output
 
-`dist/index.cjs` + `dist/index.mjs` + `dist/index.d.ts` — raw 약 240KB / gzip 약 44KB. 비압축 배포는 의도된 선택(최종 minify 는 소비자 번들러에 위임)
+`dist/index.cjs` + `dist/index.mjs` + `dist/index.d.ts` — ESM raw 577,590 B / minify gzip 80,390 B (측정: `architecture/verification/07-switch/performance.md`). 비압축 배포는 의도된 선택(최종 minify 는 소비자 번들러에 위임)
