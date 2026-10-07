@@ -467,3 +467,15 @@ stories 후속 수정은 각 플러그인 9줄씩 총 36줄입니다. src와 sto
 
 - SURFACE-056·060, LANDING-157의 `SchemaNodeState` 이름이 새 엔진에서 빠져 있음을 확인했습니다. 비트와 동작을 유지하고 내부 소비자·core·패키지 경계를 같은 이름으로 연결합니다. 상태 렌더 시험은 이름·렌더러 속성·presentation만 바꾸며 기대값은 유지합니다.
 - 77C-01(A)로 중단한 파일은 그대로 두고, 재귀 `$ref`의 형상 실패는 표면 실패와 분리하여 보고합니다.
+
+
+### G29 증거 — 플러그인 넷의 단독 빌드(HEAD `d04dbbdc3`)
+
+플러그인은 `@canard/schema-form`의 `dist` 타입을 읽으므로 먼저 `yarn workspace @canard/schema-form build`를 단독 호출로 실행했습니다(그 전의 `dist`는 10월 3일 산출물이며 `index.d.ts`가 없어, 첫 antd5 빌드가 `strategy`·`schemaType`·`FormTypeGroupRenderer`를 찾지 못했습니다). 그 뒤 각 플러그인을 단독 호출로 빌드했고 넷 모두 종료 코드 0입니다.
+
+| 명령 | 결과 |
+| --- | --- |
+| `yarn workspace @canard/schema-form-antd5-plugin build` | 종료 0, index.mjs 26.18 kB |
+| `yarn workspace @canard/schema-form-antd6-plugin build` | 종료 0, index.mjs 26.18 kB |
+| `yarn workspace @canard/schema-form-antd-mobile-plugin build` | 종료 0, index.mjs 12.79 kB |
+| `yarn workspace @canard/schema-form-mui-plugin build` | 종료 0, index.mjs 30.18 kB |
