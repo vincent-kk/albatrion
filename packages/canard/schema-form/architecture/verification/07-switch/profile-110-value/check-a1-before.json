@@ -1,0 +1,22 @@
+{
+  "name": "assembly",
+  "label": "a1-before",
+  "command": "npx --no-install vitest run --reporter=dot --configLoader runner --cache false --maxWorkers=1 --no-file-parallelism --project unit src/core/behaviors/objectBehavior/branch/utils/__tests__/assembleObject.stable-copy.test.ts",
+  "exitCode": 1,
+  "signal": null,
+  "started": 1791336062814,
+  "ended": 1791336065205,
+  "elapsedMs": 2391,
+  "summary": [
+    " Test Files  1 failed (1)",
+    "      Tests  3 failed | 3 passed (6)",
+    "   Duration  220ms (transform 43ms, setup 0ms, collect 79ms, tests 8ms, environment 0ms, prepare 34ms)",
+    "⎯⎯⎯⎯⎯⎯⎯ Failed Tests 3 ⎯⎯⎯⎯⎯⎯⎯",
+    " FAIL  |unit| src/core/behaviors/objectBehavior/branch/utils/__tests__/assembleObject.stable-copy.test.ts > copies the first incremental patch without own-key enumeration or descriptor reads",
+    "AssertionError: expected 3 to be +0 // Object.is equality",
+    " FAIL  |unit| src/core/behaviors/objectBehavior/branch/utils/__tests__/assembleObject.stable-copy.test.ts > also preserves the proven full-child patch and equal-value reference",
+    "AssertionError: expected { '2': 2, '10': 10, …(4) } to be { '2': 2, '10': 10, …(4) } // Object.is equality",
+    " FAIL  |unit| src/core/behaviors/objectBehavior/branch/utils/__tests__/assembleObject.stable-copy.test.ts > rebuilds authored key order when schema identity changes",
+    "AssertionError: expected [ '2', '10', 'constructor', …(3) ] to deeply equal [ '2', '10', 'group', '01', …(2) ]"
+  ]
+}

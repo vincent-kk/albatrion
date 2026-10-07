@@ -1,0 +1,15 @@
+{
+  "name": "production",
+  "label": "final-production",
+  "command": "npx --no-install vitest run --reporter=dot --configLoader runner --cache false --maxWorkers=1 --no-file-parallelism --project production",
+  "exitCode": 0,
+  "signal": null,
+  "started": 1791337165947,
+  "ended": 1791337173454,
+  "elapsedMs": 7507,
+  "summary": [
+    " Test Files  9 passed (9)",
+    "      Tests  20 passed (20)",
+    "   Duration  5.38s (transform 1.12s, setup 0ms, collect 2.62s, tests 234ms, environment 1.44s, prepare 304ms)"
+  ]
+}

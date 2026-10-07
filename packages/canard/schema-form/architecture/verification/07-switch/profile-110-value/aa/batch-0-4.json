@@ -1,0 +1,335 @@
+{
+  "phase": "aa",
+  "from": 0,
+  "to": 4,
+  "base": "head",
+  "candidate": "control",
+  "started": 1791335209978,
+  "ended": 1791335263506,
+  "workers": [
+    {
+      "name": "nested-d5-f4",
+      "mode": "mount",
+      "run": 1,
+      "started": 1791335209978,
+      "ended": 1791335212620,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "name": "nested-d5-f4",
+      "mode": "mount",
+      "run": 2,
+      "started": 1791335212620,
+      "ended": 1791335215325,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "name": "nested-d5-f4",
+      "mode": "mount",
+      "run": 3,
+      "started": 1791335215325,
+      "ended": 1791335218049,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "name": "nested-d5-f4",
+      "mode": "mount",
+      "run": 4,
+      "started": 1791335218049,
+      "ended": 1791335220704,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "name": "nested-d5-f4",
+      "mode": "mount",
+      "run": 5,
+      "started": 1791335220704,
+      "ended": 1791335223410,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "name": "nested-d5-f4",
+      "mode": "mount",
+      "run": 6,
+      "started": 1791335223410,
+      "ended": 1791335226069,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "name": "nested-d5-f4",
+      "mode": "mount",
+      "run": 7,
+      "started": 1791335226069,
+      "ended": 1791335228732,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "name": "nested-d5-f4",
+      "mode": "mount",
+      "run": 8,
+      "started": 1791335228732,
+      "ended": 1791335231414,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "name": "nested-d5-f4",
+      "mode": "mount",
+      "run": 9,
+      "started": 1791335231414,
+      "ended": 1791335234111,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "name": "flat-500",
+      "mode": "mount",
+      "run": 1,
+      "started": 1791335234111,
+      "ended": 1791335235412,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "name": "flat-500",
+      "mode": "mount",
+      "run": 2,
+      "started": 1791335235412,
+      "ended": 1791335236734,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "name": "flat-500",
+      "mode": "mount",
+      "run": 3,
+      "started": 1791335236734,
+      "ended": 1791335238054,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "name": "flat-500",
+      "mode": "mount",
+      "run": 4,
+      "started": 1791335238054,
+      "ended": 1791335239363,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "name": "flat-500",
+      "mode": "mount",
+      "run": 5,
+      "started": 1791335239363,
+      "ended": 1791335240672,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "name": "flat-500",
+      "mode": "mount",
+      "run": 6,
+      "started": 1791335240672,
+      "ended": 1791335241992,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "name": "flat-500",
+      "mode": "mount",
+      "run": 7,
+      "started": 1791335241992,
+      "ended": 1791335243297,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "name": "flat-500",
+      "mode": "mount",
+      "run": 8,
+      "started": 1791335243297,
+      "ended": 1791335244605,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "name": "flat-500",
+      "mode": "mount",
+      "run": 9,
+      "started": 1791335244605,
+      "ended": 1791335245940,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "name": "oneOf-20",
+      "mode": "mount",
+      "run": 1,
+      "started": 1791335245940,
+      "ended": 1791335247187,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "name": "oneOf-20",
+      "mode": "mount",
+      "run": 2,
+      "started": 1791335247187,
+      "ended": 1791335248439,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "name": "oneOf-20",
+      "mode": "mount",
+      "run": 3,
+      "started": 1791335248439,
+      "ended": 1791335249679,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "name": "oneOf-20",
+      "mode": "mount",
+      "run": 4,
+      "started": 1791335249679,
+      "ended": 1791335250924,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "name": "oneOf-20",
+      "mode": "mount",
+      "run": 5,
+      "started": 1791335250924,
+      "ended": 1791335252170,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "name": "oneOf-20",
+      "mode": "mount",
+      "run": 6,
+      "started": 1791335252170,
+      "ended": 1791335253418,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "name": "oneOf-20",
+      "mode": "mount",
+      "run": 7,
+      "started": 1791335253418,
+      "ended": 1791335254670,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "name": "oneOf-20",
+      "mode": "mount",
+      "run": 8,
+      "started": 1791335254670,
+      "ended": 1791335255920,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "name": "oneOf-20",
+      "mode": "mount",
+      "run": 9,
+      "started": 1791335255920,
+      "ended": 1791335257170,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "name": "sample-0",
+      "mode": "mount",
+      "run": 1,
+      "started": 1791335257170,
+      "ended": 1791335257887,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "name": "sample-0",
+      "mode": "mount",
+      "run": 2,
+      "started": 1791335257887,
+      "ended": 1791335258582,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "name": "sample-0",
+      "mode": "mount",
+      "run": 3,
+      "started": 1791335258582,
+      "ended": 1791335259287,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "name": "sample-0",
+      "mode": "mount",
+      "run": 4,
+      "started": 1791335259287,
+      "ended": 1791335260001,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "name": "sample-0",
+      "mode": "mount",
+      "run": 5,
+      "started": 1791335260001,
+      "ended": 1791335260693,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "name": "sample-0",
+      "mode": "mount",
+      "run": 6,
+      "started": 1791335260693,
+      "ended": 1791335261396,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "name": "sample-0",
+      "mode": "mount",
+      "run": 7,
+      "started": 1791335261396,
+      "ended": 1791335262098,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "name": "sample-0",
+      "mode": "mount",
+      "run": 8,
+      "started": 1791335262098,
+      "ended": 1791335262804,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "name": "sample-0",
+      "mode": "mount",
+      "run": 9,
+      "started": 1791335262804,
+      "ended": 1791335263506,
+      "status": 0,
+      "signal": null
+    }
+  ]
+}

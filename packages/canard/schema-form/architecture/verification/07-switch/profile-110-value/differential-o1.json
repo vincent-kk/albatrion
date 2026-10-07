@@ -1,0 +1,18 @@
+{
+  "candidate": "o1",
+  "HEAD": "ba2571b86",
+  "schemas": 59,
+  "rejectedSchemas": 24,
+  "authoredFixtures": 19,
+  "operations": 880,
+  "captures": 1980,
+  "keyLists": 1825938,
+  "childReferences": 151552,
+  "equalRestorations": 994,
+  "specialKeys": 10,
+  "sourceTextRead": false,
+  "started": 1791336515578,
+  "ended": 1791336517485,
+  "elapsedMs": 1907,
+  "verdict": "통과"
+}

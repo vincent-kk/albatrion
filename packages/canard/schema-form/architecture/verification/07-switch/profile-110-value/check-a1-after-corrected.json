@@ -1,0 +1,15 @@
+{
+  "name": "assembly",
+  "label": "a1-after-corrected",
+  "command": "npx --no-install vitest run --reporter=dot --configLoader runner --cache false --maxWorkers=1 --no-file-parallelism --project unit src/core/behaviors/objectBehavior/branch/utils/__tests__/assembleObject.stable-copy.test.ts",
+  "exitCode": 0,
+  "signal": null,
+  "started": 1791336158001,
+  "ended": 1791336160080,
+  "elapsedMs": 2079,
+  "summary": [
+    " Test Files  1 passed (1)",
+    "      Tests  6 passed (6)",
+    "   Duration  214ms (transform 44ms, setup 0ms, collect 80ms, tests 3ms, environment 0ms, prepare 34ms)"
+  ]
+}

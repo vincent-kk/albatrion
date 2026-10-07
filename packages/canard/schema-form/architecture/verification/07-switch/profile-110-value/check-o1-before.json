@@ -1,0 +1,22 @@
+{
+  "name": "hint",
+  "label": "o1-before",
+  "command": "npx --no-install vitest run --reporter=dot --configLoader runner --cache false --maxWorkers=1 --no-file-parallelism --project unit src/core/settle/utils/compute/__tests__/updateOutput.hint.test.ts",
+  "exitCode": 1,
+  "signal": null,
+  "started": 1791335538993,
+  "ended": 1791335542891,
+  "elapsedMs": 3898,
+  "summary": [
+    " Test Files  1 failed (1)",
+    "      Tests  3 failed | 1 passed (4)",
+    "   Duration  1.55s (transform 849ms, setup 0ms, collect 1.38s, tests 19ms, environment 0ms, prepare 43ms)",
+    "⎯⎯⎯⎯⎯⎯⎯ Failed Tests 3 ⎯⎯⎯⎯⎯⎯⎯",
+    " FAIL  |unit| src/core/settle/utils/compute/__tests__/updateOutput.hint.test.ts > reuses one hint across assemblies in one call and isolates other calls",
+    "AssertionError: expected { incremental: false } to be { incremental: false } // Object.is equality",
+    " FAIL  |unit| src/core/settle/utils/compute/__tests__/updateOutput.hint.test.ts > resets every hint field before eligible and ineligible assemblies",
+    "AssertionError: expected { incremental: true } to deeply equal { incremental: false }",
+    " FAIL  |unit| src/core/settle/utils/compute/__tests__/updateOutput.hint.test.ts > resets the retained hint before virtual-node re-entry",
+    "AssertionError: expected \"assemble\" to be called 1 times, but got 0 times"
+  ]
+}

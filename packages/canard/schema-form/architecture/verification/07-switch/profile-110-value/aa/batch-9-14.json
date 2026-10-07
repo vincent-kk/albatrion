@@ -1,0 +1,416 @@
+{
+  "phase": "aa",
+  "from": 9,
+  "to": 14,
+  "base": "head",
+  "candidate": "control",
+  "started": 1791335326962,
+  "ended": 1791335397058,
+  "workers": [
+    {
+      "name": "flat-500",
+      "mode": "later",
+      "run": 1,
+      "started": 1791335326962,
+      "ended": 1791335327796,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "name": "flat-500",
+      "mode": "later",
+      "run": 2,
+      "started": 1791335327797,
+      "ended": 1791335328622,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "name": "flat-500",
+      "mode": "later",
+      "run": 3,
+      "started": 1791335328622,
+      "ended": 1791335329453,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "name": "flat-500",
+      "mode": "later",
+      "run": 4,
+      "started": 1791335329453,
+      "ended": 1791335330285,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "name": "flat-500",
+      "mode": "later",
+      "run": 5,
+      "started": 1791335330285,
+      "ended": 1791335331117,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "name": "flat-500",
+      "mode": "later",
+      "run": 6,
+      "started": 1791335331117,
+      "ended": 1791335331941,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "name": "flat-500",
+      "mode": "later",
+      "run": 7,
+      "started": 1791335331941,
+      "ended": 1791335332780,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "name": "flat-500",
+      "mode": "later",
+      "run": 8,
+      "started": 1791335332780,
+      "ended": 1791335333608,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "name": "flat-500",
+      "mode": "later",
+      "run": 9,
+      "started": 1791335333608,
+      "ended": 1791335334444,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "name": "nested-d5-f4",
+      "mode": "first",
+      "run": 1,
+      "started": 1791335334445,
+      "ended": 1791335337292,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "name": "nested-d5-f4",
+      "mode": "first",
+      "run": 2,
+      "started": 1791335337292,
+      "ended": 1791335340131,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "name": "nested-d5-f4",
+      "mode": "first",
+      "run": 3,
+      "started": 1791335340131,
+      "ended": 1791335342969,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "name": "nested-d5-f4",
+      "mode": "first",
+      "run": 4,
+      "started": 1791335342969,
+      "ended": 1791335345819,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "name": "nested-d5-f4",
+      "mode": "first",
+      "run": 5,
+      "started": 1791335345819,
+      "ended": 1791335348668,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "name": "nested-d5-f4",
+      "mode": "first",
+      "run": 6,
+      "started": 1791335348668,
+      "ended": 1791335351589,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "name": "nested-d5-f4",
+      "mode": "first",
+      "run": 7,
+      "started": 1791335351589,
+      "ended": 1791335354452,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "name": "nested-d5-f4",
+      "mode": "first",
+      "run": 8,
+      "started": 1791335354452,
+      "ended": 1791335357364,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "name": "nested-d5-f4",
+      "mode": "first",
+      "run": 9,
+      "started": 1791335357364,
+      "ended": 1791335360222,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "name": "nested-d5-f4",
+      "mode": "later",
+      "run": 1,
+      "started": 1791335360222,
+      "ended": 1791335361331,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "name": "nested-d5-f4",
+      "mode": "later",
+      "run": 2,
+      "started": 1791335361331,
+      "ended": 1791335362419,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "name": "nested-d5-f4",
+      "mode": "later",
+      "run": 3,
+      "started": 1791335362419,
+      "ended": 1791335363526,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "name": "nested-d5-f4",
+      "mode": "later",
+      "run": 4,
+      "started": 1791335363526,
+      "ended": 1791335364647,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "name": "nested-d5-f4",
+      "mode": "later",
+      "run": 5,
+      "started": 1791335364647,
+      "ended": 1791335365769,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "name": "nested-d5-f4",
+      "mode": "later",
+      "run": 6,
+      "started": 1791335365769,
+      "ended": 1791335366875,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "name": "nested-d5-f4",
+      "mode": "later",
+      "run": 7,
+      "started": 1791335366875,
+      "ended": 1791335367982,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "name": "nested-d5-f4",
+      "mode": "later",
+      "run": 8,
+      "started": 1791335367982,
+      "ended": 1791335369122,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "name": "nested-d5-f4",
+      "mode": "later",
+      "run": 9,
+      "started": 1791335369122,
+      "ended": 1791335370249,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "name": "oneOf-40",
+      "mode": "first",
+      "run": 1,
+      "started": 1791335370249,
+      "ended": 1791335372188,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "name": "oneOf-40",
+      "mode": "first",
+      "run": 2,
+      "started": 1791335372188,
+      "ended": 1791335374118,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "name": "oneOf-40",
+      "mode": "first",
+      "run": 3,
+      "started": 1791335374118,
+      "ended": 1791335376046,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "name": "oneOf-40",
+      "mode": "first",
+      "run": 4,
+      "started": 1791335376046,
+      "ended": 1791335377980,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "name": "oneOf-40",
+      "mode": "first",
+      "run": 5,
+      "started": 1791335377980,
+      "ended": 1791335379906,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "name": "oneOf-40",
+      "mode": "first",
+      "run": 6,
+      "started": 1791335379906,
+      "ended": 1791335381836,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "name": "oneOf-40",
+      "mode": "first",
+      "run": 7,
+      "started": 1791335381836,
+      "ended": 1791335383983,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "name": "oneOf-40",
+      "mode": "first",
+      "run": 8,
+      "started": 1791335383983,
+      "ended": 1791335385953,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "name": "oneOf-40",
+      "mode": "first",
+      "run": 9,
+      "started": 1791335385953,
+      "ended": 1791335387887,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "name": "oneOf-40",
+      "mode": "later",
+      "run": 1,
+      "started": 1791335387887,
+      "ended": 1791335388901,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "name": "oneOf-40",
+      "mode": "later",
+      "run": 2,
+      "started": 1791335388901,
+      "ended": 1791335389919,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "name": "oneOf-40",
+      "mode": "later",
+      "run": 3,
+      "started": 1791335389919,
+      "ended": 1791335390963,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "name": "oneOf-40",
+      "mode": "later",
+      "run": 4,
+      "started": 1791335390963,
+      "ended": 1791335391978,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "name": "oneOf-40",
+      "mode": "later",
+      "run": 5,
+      "started": 1791335391978,
+      "ended": 1791335392979,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "name": "oneOf-40",
+      "mode": "later",
+      "run": 6,
+      "started": 1791335392979,
+      "ended": 1791335393987,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "name": "oneOf-40",
+      "mode": "later",
+      "run": 7,
+      "started": 1791335393987,
+      "ended": 1791335395021,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "name": "oneOf-40",
+      "mode": "later",
+      "run": 8,
+      "started": 1791335395021,
+      "ended": 1791335396042,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "name": "oneOf-40",
+      "mode": "later",
+      "run": 9,
+      "started": 1791335396042,
+      "ended": 1791335397058,
+      "status": 0,
+      "signal": null
+    }
+  ]
+}

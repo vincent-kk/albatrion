@@ -1,0 +1,17 @@
+{
+  "HEAD": "ba2571b86",
+  "command": "pair",
+  "args": [
+    "forced",
+    "flat-500",
+    "first",
+    "9",
+    "control"
+  ],
+  "status": 0,
+  "signal": null,
+  "started": 1791335312212,
+  "ended": 1791335313504,
+  "elapsedMs": 1292,
+  "driverSha256": "942f48710cef7174c8de568ff16d2e0359861c08d6255c649cc9e30de6254ce8"
+}

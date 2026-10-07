@@ -1,0 +1,20 @@
+{
+  "name": "assembly",
+  "label": "a1-broken-special-keys",
+  "command": "npx --no-install vitest run --reporter=dot --configLoader runner --cache false --maxWorkers=1 --no-file-parallelism --project unit src/core/behaviors/objectBehavior/branch/utils/__tests__/assembleObject.stable-copy.test.ts",
+  "exitCode": 1,
+  "signal": null,
+  "started": 1791336199283,
+  "ended": 1791336201471,
+  "elapsedMs": 2188,
+  "summary": [
+    " Test Files  1 failed (1)",
+    "      Tests  2 failed | 5 passed (7)",
+    "   Duration  241ms (transform 52ms, setup 0ms, collect 99ms, tests 7ms, environment 0ms, prepare 37ms)",
+    "⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯",
+    " FAIL  |unit| src/core/behaviors/objectBehavior/branch/utils/__tests__/assembleObject.stable-copy.test.ts > preserves numeric/string order, special data keys and unchanged child identities",
+    "AssertionError: expected [ Array(5) ] to deeply equal [ '2', '10', 'constructor', …(3) ]",
+    " FAIL  |unit| src/core/behaviors/objectBehavior/branch/utils/__tests__/assembleObject.stable-copy.test.ts > also preserves the proven full-child patch and equal-value reference",
+    "AssertionError: expected [ 'constructor', 'group' ] to deeply equal [ 'constructor', '__proto__', 'group' ]"
+  ]
+}

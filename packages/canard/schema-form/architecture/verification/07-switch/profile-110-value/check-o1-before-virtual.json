@@ -1,0 +1,18 @@
+{
+  "name": "hint",
+  "label": "o1-before-virtual",
+  "command": "npx --no-install vitest run --reporter=dot --configLoader runner --cache false --maxWorkers=1 --no-file-parallelism --project unit src/core/settle/utils/compute/__tests__/updateOutput.hint.test.ts -t virtual-node",
+  "exitCode": 1,
+  "signal": null,
+  "started": 1791335555925,
+  "ended": 1791335559286,
+  "elapsedMs": 3361,
+  "summary": [
+    " Test Files  1 failed (1)",
+    "      Tests  1 failed | 3 skipped (4)",
+    "   Duration  1.52s (transform 838ms, setup 0ms, collect 1.37s, tests 14ms, environment 0ms, prepare 36ms)",
+    "⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯",
+    " FAIL  |unit| src/core/settle/utils/compute/__tests__/updateOutput.hint.test.ts > resets the retained hint before virtual-node re-entry",
+    "AssertionError: expected { incremental: true } to deeply equal { incremental: false }"
+  ]
+}

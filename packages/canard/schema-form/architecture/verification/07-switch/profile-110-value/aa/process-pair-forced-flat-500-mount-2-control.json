@@ -1,0 +1,17 @@
+{
+  "HEAD": "ba2571b86",
+  "command": "pair",
+  "args": [
+    "forced",
+    "flat-500",
+    "mount",
+    "2",
+    "control"
+  ],
+  "status": 0,
+  "signal": null,
+  "started": 1791335235491,
+  "ended": 1791335236731,
+  "elapsedMs": 1240,
+  "driverSha256": "942f48710cef7174c8de568ff16d2e0359861c08d6255c649cc9e30de6254ce8"
+}

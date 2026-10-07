@@ -1,0 +1,252 @@
+{
+  "name": "O1",
+  "mode": "mount",
+  "bestRowName": "nested-d5-f4",
+  "pooledMedianMs": 0.07208399999990434,
+  "ci99Ms": [0.01920799999970768, 0.11208399999998164],
+  "aaStatisticMs": 0.04100000000016735,
+  "baseMedianMs": 4.977583000000195,
+  "floorMs": 0.04100000000016735,
+  "measurementBase": "ba2571b86",
+  "adoptedPatch": null,
+  "rejectedExperimentPatch": "o1-rejected-experiment.patch",
+  "files": [
+    "packages/canard/schema-form/src/core/settle/DETAIL.md",
+    "packages/canard/schema-form/src/core/settle/utils/compute/updateOutput.ts",
+    "packages/canard/schema-form/src/core/settle/utils/compute/__tests__/updateOutput.hint.test.ts"
+  ],
+  "restoredFully": true,
+  "HEAD": "ba2571b86",
+  "protocol": "105C-01 + 최소 크기 부록",
+  "runs": 9,
+  "samplesPerRun": 101,
+  "bootstrapResamples": 10000,
+  "seed": "11000 + row index",
+  "rows": [
+    {
+      "name": "nested-d5-f4",
+      "mode": "mount",
+      "pooledMedianMs": 0.07208399999990434,
+      "ci99Ms": [
+        0.01920799999970768,
+        0.11208399999998164
+      ],
+      "aaStatisticMs": 0.04100000000016735,
+      "baseMedianMs": 4.977583000000195,
+      "floorMs": 0.04100000000016735,
+      "verdict": "이득",
+      "improvement": true,
+      "regression": false,
+      "pairedSamples": 909
+    },
+    {
+      "name": "flat-500",
+      "mode": "mount",
+      "pooledMedianMs": -0.001040999999986525,
+      "ci99Ms": [
+        -0.005832999999938693,
+        0.004709000000048036
+      ],
+      "aaStatisticMs": -0.000998999999865191,
+      "baseMedianMs": 1.5502919999999563,
+      "floorMs": 0.007751459999999781,
+      "verdict": "잡음 범위",
+      "improvement": false,
+      "regression": false,
+      "pairedSamples": 909
+    },
+    {
+      "name": "oneOf-20",
+      "mode": "mount",
+      "pooledMedianMs": -0.006916000000046552,
+      "ci99Ms": [
+        -0.013291999999864856,
+        -0.0012910000001511435
+      ],
+      "aaStatisticMs": 0.002040999999962878,
+      "baseMedianMs": 1.887459000000149,
+      "floorMs": 0.009437295000000746,
+      "verdict": "바닥 이하 감소",
+      "improvement": false,
+      "regression": false,
+      "pairedSamples": 909
+    },
+    {
+      "name": "sample-0",
+      "mode": "mount",
+      "pooledMedianMs": -0.0002919999999448919,
+      "ci99Ms": [
+        -0.0012080000000196378,
+        0.0007499999999254214
+      ],
+      "aaStatisticMs": 0.0005420000000242453,
+      "baseMedianMs": 0.095833999999968,
+      "floorMs": 0.0005420000000242453,
+      "verdict": "잡음 범위",
+      "improvement": false,
+      "regression": false,
+      "pairedSamples": 909
+    },
+    {
+      "name": "sample-0",
+      "mode": "first",
+      "pooledMedianMs": -0.0008339999999975589,
+      "ci99Ms": [
+        -0.0013329999999882602,
+        -0.00029099999994741665
+      ],
+      "aaStatisticMs": -0.0003749999999627107,
+      "baseMedianMs": 0.0789579999998864,
+      "floorMs": 0.000394789999999432,
+      "verdict": "회귀",
+      "improvement": false,
+      "regression": true,
+      "pairedSamples": 909
+    },
+    {
+      "name": "sample-0",
+      "mode": "later",
+      "pooledMedianMs": -0.0002919999999448919,
+      "ci99Ms": [
+        -0.0010419999999840002,
+        0.0002499999999940883
+      ],
+      "aaStatisticMs": -0.00025100000001998524,
+      "baseMedianMs": 0.07366700000000037,
+      "floorMs": 0.00036833500000000186,
+      "verdict": "잡음 범위",
+      "improvement": false,
+      "regression": false,
+      "pairedSamples": 909
+    },
+    {
+      "name": "flat-100",
+      "mode": "first",
+      "pooledMedianMs": -0.0010830000001078588,
+      "ci99Ms": [
+        -0.0017920000000231084,
+        -0.00024999999993724487
+      ],
+      "aaStatisticMs": -0.0002090000000123382,
+      "baseMedianMs": 0.08304100000007963,
+      "floorMs": 0.0004152050000003982,
+      "verdict": "회귀",
+      "improvement": false,
+      "regression": true,
+      "pairedSamples": 909
+    },
+    {
+      "name": "flat-100",
+      "mode": "later",
+      "pooledMedianMs": -0.0009999999999763531,
+      "ci99Ms": [
+        -0.0015419999999721767,
+        -0.0002499999999940883
+      ],
+      "aaStatisticMs": -0.0004580000000942164,
+      "baseMedianMs": 0.07458299999997564,
+      "floorMs": 0.0004580000000942164,
+      "verdict": "회귀",
+      "improvement": false,
+      "regression": true,
+      "pairedSamples": 909
+    },
+    {
+      "name": "flat-500",
+      "mode": "first",
+      "pooledMedianMs": -0.0007499999999254214,
+      "ci99Ms": [
+        -0.001373999999998432,
+        0.00004100000001017179
+      ],
+      "aaStatisticMs": 0.0002919999999448919,
+      "baseMedianMs": 0.09225000000014916,
+      "floorMs": 0.0004612500000007458,
+      "verdict": "잡음 범위",
+      "improvement": false,
+      "regression": false,
+      "pairedSamples": 909
+    },
+    {
+      "name": "flat-500",
+      "mode": "later",
+      "pooledMedianMs": -0.00004099999989648495,
+      "ci99Ms": [
+        -0.0007500000000391083,
+        0.0005839999998897838
+      ],
+      "aaStatisticMs": 0.0007500000000391083,
+      "baseMedianMs": 0.07704099999997993,
+      "floorMs": 0.0007500000000391083,
+      "verdict": "잡음 범위",
+      "improvement": false,
+      "regression": false,
+      "pairedSamples": 909
+    },
+    {
+      "name": "nested-d5-f4",
+      "mode": "first",
+      "pooledMedianMs": 0.006374999999934516,
+      "ci99Ms": [
+        -0.07316599999967366,
+        0.06950099999994563
+      ],
+      "aaStatisticMs": 0.027624999999716238,
+      "baseMedianMs": 0.1828339999998434,
+      "floorMs": 0.027624999999716238,
+      "verdict": "잡음 범위",
+      "improvement": false,
+      "regression": false,
+      "pairedSamples": 909
+    },
+    {
+      "name": "nested-d5-f4",
+      "mode": "later",
+      "pooledMedianMs": -0.0002919999999448919,
+      "ci99Ms": [
+        -0.0010829999996531114,
+        0.0004590000000916916
+      ],
+      "aaStatisticMs": 0.0013330000000451037,
+      "baseMedianMs": 0.10454099999989808,
+      "floorMs": 0.0013330000000451037,
+      "verdict": "잡음 범위",
+      "improvement": false,
+      "regression": false,
+      "pairedSamples": 909
+    },
+    {
+      "name": "oneOf-40",
+      "mode": "first",
+      "pooledMedianMs": 0.007083000000193351,
+      "ci99Ms": [
+        0.003292000000101325,
+        0.011249000000134401
+      ],
+      "aaStatisticMs": -0.0013759999999933825,
+      "baseMedianMs": 1.4142499999999245,
+      "floorMs": 0.007071249999999623,
+      "verdict": "이득",
+      "improvement": true,
+      "regression": false,
+      "pairedSamples": 909
+    },
+    {
+      "name": "oneOf-40",
+      "mode": "later",
+      "pooledMedianMs": -0.004540999999903761,
+      "ci99Ms": [
+        -0.0076259999999592765,
+        -0.0016249999999899956
+      ],
+      "aaStatisticMs": -0.0008330000000000837,
+      "baseMedianMs": 0.9215830000000125,
+      "floorMs": 0.004607915000000062,
+      "verdict": "바닥 이하 감소",
+      "improvement": false,
+      "regression": false,
+      "pairedSamples": 909
+    }
+  ],
+  "verdict": "기각"
+}

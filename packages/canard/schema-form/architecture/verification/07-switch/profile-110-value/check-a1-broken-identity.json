@@ -1,0 +1,20 @@
+{
+  "name": "assembly",
+  "label": "a1-broken-identity",
+  "command": "npx --no-install vitest run --reporter=dot --configLoader runner --cache false --maxWorkers=1 --no-file-parallelism --project unit src/core/behaviors/objectBehavior/branch/utils/__tests__/assembleObject.stable-copy.test.ts",
+  "exitCode": 1,
+  "signal": null,
+  "started": 1791336237847,
+  "ended": 1791336239919,
+  "elapsedMs": 2072,
+  "summary": [
+    " Test Files  1 failed (1)",
+    "      Tests  2 failed | 5 passed (7)",
+    "   Duration  226ms (transform 48ms, setup 0ms, collect 93ms, tests 7ms, environment 0ms, prepare 34ms)",
+    "⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯",
+    " FAIL  |unit| src/core/behaviors/objectBehavior/branch/utils/__tests__/assembleObject.stable-copy.test.ts > preserves numeric/string order, special data keys and unchanged child identities",
+    "AssertionError: expected { nested: 1 } to be { nested: 1 } // Object.is equality",
+    " FAIL  |unit| src/core/behaviors/objectBehavior/branch/utils/__tests__/assembleObject.stable-copy.test.ts > also preserves the proven full-child patch and equal-value reference",
+    "AssertionError: expected { nested: 1 } to be { nested: 1 } // Object.is equality"
+  ]
+}

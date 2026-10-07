@@ -1,0 +1,192 @@
+diff --git a/packages/canard/schema-form/src/core/behaviors/objectBehavior/DETAIL.md b/packages/canard/schema-form/src/core/behaviors/objectBehavior/DETAIL.md
+index c61079d95..1cdd4c72d 100644
+--- a/packages/canard/schema-form/src/core/behaviors/objectBehavior/DETAIL.md
++++ b/packages/canard/schema-form/src/core/behaviors/objectBehavior/DETAIL.md
+@@ -9,7 +9,7 @@
+ 
+ ## API Contracts
+ 
+-- 형상·스키마·extras가 같은 객체의 값 갱신은 재계산 직계 자식만 검사하고 같은 키 집합이면 얕은 사본 한 번에 패치합니다. 사본 이외 시간은 O(재계산 자식 수), 사본 시간·메모리는 O(객체 키 수)이며 같은 값은 기존 참조를 반환합니다. 합성 결과의 키 수를 약한 캐시에 두어 빈 객체 투영은 O(1)로 판정합니다. 키가 생기거나 사라지면 기존 전순서 재구성을 사용합니다(SETTLE-042, 63C-03, 65C-04, 82C-01).
++- 형상·스키마·extras가 같은 객체의 값 갱신은 재계산 직계 자식만 검사하고 같은 키 집합이면 얕은 사본 한 번에 패치합니다. STABLE_SHAPES가 같은 children·schema·extras·키 집합을 증명한 두 경로의 첫 사본만 기존 names의 classic loop로 만들고 writeObjectKey로 특수 키의 데이터 속성·숫자형 키와 문자열 키 순서·자식 emit 참조를 보존합니다. 메타데이터 불일치나 키 삽입·삭제는 기존 합성과 spread를 유지합니다. 사본 이외 시간은 O(재계산 자식 수), 사본 시간·메모리는 O(객체 키 수)이며 같은 값은 기존 참조를 반환합니다. 속도 비용은 키당 직접 조회·안전한 쓰기이고 적격 사본에서 spread의 키 열거·속성 descriptor 조회를 제거합니다. 메모리 비용은 기존 새 객체 하나와 기존 names를 그대로 사용하며 새 배열·색인·보유 메타데이터·필드는 없습니다. 합성 결과의 키 수를 약한 캐시에 두어 빈 객체 투영은 O(1)로 판정합니다. 키가 생기거나 사라지면 기존 전순서 재구성을 사용합니다(SETTLE-042, 63C-03, 65C-04, 82C-01, 107C-01 (c), 110 A1).
+ 
+ - 진입점은 `objectBehavior: { branch: Behavior; terminal: Behavior }`를 이름으로 내보냅니다. 두 행은 공통 여덟 칸 순서(`arrange`는 공유 거부 칸, 36C-01)이며 `type: 'object'`, 전략만 각각 `'branch'`·`'terminal'`입니다. 행 파일은 전략별 행 객체만 정의하고 길어진 칸과 전략별 보조는 해당 organ에 둡니다.
+ - branch의 `interpret`는 평범한 객체 값을 자식과 `extras`로 분배할 입력으로 두며 호스트 `raw`에는 저장하지 않습니다. 잘못된 종류의 `null`·수 등은 호스트 `raw`로 보존합니다. `declareChildren`은 청사진이 선언한 자식 목록(정적·게이트 선언 모두)을 돌려주고 생성하지 않습니다. 게이트로 활성 자식을 거르는 일은 `settle`의 호스트 바퀴가 합니다(NODE-006, LANDING-062). `assemble`은 활성 자식 `emit`과 선언 밖 `extras`를 합쳐 `local`을 만들며 자식이 없으면 `{}`입니다(VALUE-002·034, NODE-043).
+diff --git a/packages/canard/schema-form/src/core/behaviors/objectBehavior/branch/utils/assembleObject.ts b/packages/canard/schema-form/src/core/behaviors/objectBehavior/branch/utils/assembleObject.ts
+index 15194e628..976671eb0 100644
+--- a/packages/canard/schema-form/src/core/behaviors/objectBehavior/branch/utils/assembleObject.ts
++++ b/packages/canard/schema-form/src/core/behaviors/objectBehavior/branch/utils/assembleObject.ts
+@@ -36,7 +36,13 @@ export const assembleObject: Behavior['assemble'] = (node, children, recalculate
+         break;
+       }
+       if (oldHasKey && !Object.is(child.emit, Reflect.get(previous, child.name))) {
+-        if (!patch) patch = { ...previous };
++        if (!patch) {
++          patch = {};
++          for (let index = 0; index < stable.names.length; index++) {
++            const name = stable.names[index];
++            writeObjectKey(patch, name, Reflect.get(previous, name));
++          }
++        }
+         writeObjectKey(patch, child.name, child.emit);
+       }
+     }
+@@ -72,7 +78,13 @@ export const assembleObject: Behavior['assemble'] = (node, children, recalculate
+           break;
+         }
+         if (oldHasKey && !Object.is(child.emit, Reflect.get(previous, child.name))) {
+-          if (!patch) patch = { ...previous };
++          if (!patch) {
++            patch = {};
++            for (let index = 0; index < stable.names.length; index++) {
++              const name = stable.names[index];
++              writeObjectKey(patch, name, Reflect.get(previous, name));
++            }
++          }
+           writeObjectKey(patch, child.name, child.emit);
+         }
+       }
+diff --git a/packages/canard/schema-form/src/core/behaviors/objectBehavior/branch/utils/__tests__/assembleObject.stable-copy.test.ts b/packages/canard/schema-form/src/core/behaviors/objectBehavior/branch/utils/__tests__/assembleObject.stable-copy.test.ts
+new file mode 100644
+index 000000000..bc0f6fedb
+--- /dev/null
++++ b/packages/canard/schema-form/src/core/behaviors/objectBehavior/branch/utils/__tests__/assembleObject.stable-copy.test.ts
+@@ -0,0 +1,138 @@
++import { afterEach, expect, it, vi } from 'vitest';
++import { hasOwnProperty } from '@winglet/common-utils/lib';
++
++import type { SchemaNodeRecord } from '../../../../../record';
++import { objectKeyCounts } from '../../../utils/objectKeyCounts';
++import { assembleObject } from '../assembleObject';
++
++afterEach(() => vi.restoreAllMocks());
++
++/** Produce a stable shape through the real assembler before measuring runtime work. */
++const fixture = (numeric = true) => {
++  const nested = { nested: 1 };
++  const children = [
++    { name: 'constructor', emit: 'ctor' }, { name: '__proto__', emit: nested },
++    ...(numeric ? [{ name: '10', emit: 10 }, { name: '2', emit: 2 }, { name: '01', emit: 1 }] : []),
++    { name: 'group', emit: nested },
++  ];
++  const node = { local: undefined, extras: undefined, schema: { schema: { type: 'object' } },
++    blueprintNode: { childEntries: children.map(child => ({ name: child.name })) },
++  } as unknown as SchemaNodeRecord<unknown>;
++  const first = assembleObject(node, children) as Record<string, unknown>;
++  node.local = first;
++  return { node, children, first, nested };
++};
++
++it('copies the first incremental patch without own-key enumeration or descriptor reads', () => {
++  const { node, children, first } = fixture();
++  let enumerations = 0;
++  let descriptors = 0;
++  const previous = new Proxy(first, {
++    ownKeys(target) { enumerations++; return Reflect.ownKeys(target); },
++    getOwnPropertyDescriptor(target, name) { descriptors++; return Reflect.getOwnPropertyDescriptor(target, name); },
++  });
++  objectKeyCounts.set(previous, Object.keys(first).length);
++  node.local = previous;
++  children[0].emit = 'changed';
++  const hint = { incremental: false };
++  const result = assembleObject(node, children, [children[0]], hint);
++  const work = { enumerations, descriptors };
++  expect(work.enumerations).toBe(0);
++  expect(work.descriptors).toBe(1);
++  expect(result).not.toBe(previous);
++  expect(hint.incremental).toBe(true);
++});
++
++it('preserves numeric/string order, special data keys and unchanged child identities', () => {
++  const { node, children, first, nested } = fixture();
++  children[0].emit = 'changed';
++  const result = assembleObject(node, children, [children[0]], { incremental: false }) as Record<string, unknown>;
++  expect(Object.keys(result)).toEqual(Object.keys(first));
++  expect(Object.keys(result)).toEqual(['2', '10', 'constructor', '__proto__', '01', 'group']);
++  expect(Object.getPrototypeOf(result)).toBe(Object.prototype);
++  expect(Object.getOwnPropertyDescriptor(result, '__proto__')).toEqual({
++    value: nested, enumerable: true, configurable: true, writable: true,
++  });
++  expect(result.constructor).toBe('changed');
++  expect(result.group).toBe(children[5].emit);
++  expect(result.__proto__).toBe(children[1].emit);
++  expect(first.constructor).toBe('ctor');
++  node.local = result;
++  expect(assembleObject(node, children, [children[0]], { incremental: false })).toBe(result);
++});
++
++it('also preserves the proven full-child patch and equal-value reference', () => {
++  const { node, children, first } = fixture(false);
++  children[0].emit = 'changed';
++  const result = assembleObject(node, children) as Record<string, unknown>;
++  expect(result).not.toBe(first);
++  expect(Object.keys(result)).toEqual(Object.keys(first));
++  expect(result.__proto__).toBe(children[1].emit);
++  expect(result.group).toBe(children[2].emit);
++  node.local = result;
++  expect(assembleObject(node, children)).toBe(result);
++});
++
++it('copies the proven full-child patch with only the existing key-set enumeration', () => {
++  const { node, children, first } = fixture(false);
++  let enumerations = 0;
++  let descriptors = 0;
++  node.local = new Proxy(first, {
++    ownKeys(target) { enumerations++; return Reflect.ownKeys(target); },
++    getOwnPropertyDescriptor(target, name) { descriptors++; return Reflect.getOwnPropertyDescriptor(target, name); },
++  });
++  children[0].emit = 'changed';
++  const result = assembleObject(node, children);
++  const work = { enumerations, descriptors };
++  expect(work.enumerations).toBe(1);
++  expect(work.descriptors).toBe(6);
++  expect(result).not.toBe(node.local);
++});
++
++it('keeps the existing fallback when children identity changes', () => {
++  const { node, children, first } = fixture();
++  let enumerations = 0;
++  const previous = new Proxy(first, { ownKeys(target) { enumerations++; return Reflect.ownKeys(target); } });
++  node.local = previous;
++  objectKeyCounts.set(previous, Object.keys(first).length);
++  children[0].emit = 'changed';
++  const hint = { incremental: false };
++  const result = assembleObject(node, children.slice(), [children[0]], hint) as Record<string, unknown>;
++  expect(hint.incremental).toBe(false);
++  expect(enumerations).toBeGreaterThan(0);
++  expect(result.constructor).toBe('changed');
++  expect(Object.keys(result)).toEqual(Object.keys(first));
++});
++
++it('rebuilds authored key order when schema identity changes', () => {
++  const { node, children } = fixture();
++  node.schema = { schema: { type: 'object', options: { propertyKeys: ['group', '01', '__proto__', 'constructor'] } } } as typeof node.schema;
++  children[0].emit = 'changed';
++  const hint = { incremental: false };
++  const result = assembleObject(node, children, [children[0]], hint) as Record<string, unknown>;
++  expect(hint.incremental).toBe(false);
++  expect(Object.keys(result)).toEqual(['2', '10', 'group', '01', '__proto__', 'constructor']);
++  expect(result.group).toBe(children[5].emit);
++});
++
++it('rebuilds extras and key insertion/deletion through the existing path', () => {
++  const { node, children } = fixture();
++  node.extras = { extra: { retained: true } };
++  children[0].emit = 'changed';
++  const hint = { incremental: false };
++  let result = assembleObject(node, children, [children[0]], hint) as Record<string, unknown>;
++  expect(hint.incremental).toBe(false);
++  expect(result.extra).toBe((node.extras as Record<string, unknown>).extra);
++  node.local = result;
++  children[4].emit = undefined!;
++  hint.incremental = false;
++  result = assembleObject(node, children, [children[4]], hint) as Record<string, unknown>;
++  expect(hint.incremental).toBe(false);
++  expect(hasOwnProperty(result, '01')).toBe(false);
++  node.local = result;
++  children[4].emit = 11;
++  hint.incremental = false;
++  result = assembleObject(node, children, [children[4]], hint) as Record<string, unknown>;
++  expect(hint.incremental).toBe(false);
++  expect(Object.keys(result)).toEqual(['2', '10', 'constructor', '__proto__', '01', 'group', 'extra']);
++});
+

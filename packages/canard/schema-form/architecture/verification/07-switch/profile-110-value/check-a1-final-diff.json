@@ -1,0 +1,11 @@
+{
+  "name": "differential",
+  "label": "a1-final-diff",
+  "command": "/opt/homebrew/Cellar/node/26.10.0_2/bin/node /Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/packages/canard/schema-form/architecture/verification/07-switch/profile-110-value/differential.mjs a1",
+  "exitCode": 0,
+  "signal": null,
+  "started": 1791336490159,
+  "ended": 1791336492235,
+  "elapsedMs": 2076,
+  "summary": []
+}

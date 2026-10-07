@@ -1,0 +1,18 @@
+{
+  "name": "assembly",
+  "label": "a1-before-corrected",
+  "command": "npx --no-install vitest run --reporter=dot --configLoader runner --cache false --maxWorkers=1 --no-file-parallelism --project unit src/core/behaviors/objectBehavior/branch/utils/__tests__/assembleObject.stable-copy.test.ts",
+  "exitCode": 1,
+  "signal": null,
+  "started": 1791336148854,
+  "ended": 1791336151018,
+  "elapsedMs": 2164,
+  "summary": [
+    " Test Files  1 failed (1)",
+    "      Tests  1 failed | 5 passed (6)",
+    "   Duration  223ms (transform 45ms, setup 0ms, collect 84ms, tests 6ms, environment 0ms, prepare 37ms)",
+    "⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯",
+    " FAIL  |unit| src/core/behaviors/objectBehavior/branch/utils/__tests__/assembleObject.stable-copy.test.ts > copies the first incremental patch without own-key enumeration or descriptor reads",
+    "AssertionError: expected 1 to be +0 // Object.is equality"
+  ]
+}

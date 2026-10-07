@@ -1,0 +1,13 @@
+{
+  "name": "differential",
+  "label": "a1-broken-restoration-diff-valid",
+  "command": "node /Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/packages/canard/schema-form/architecture/verification/07-switch/profile-110-value/differential.mjs a1-broken-restoration",
+  "exitCode": 1,
+  "signal": null,
+  "started": 1791336396610,
+  "ended": 1791336398861,
+  "elapsedMs": 2251,
+  "summary": [
+    "AssertionError [ERR_ASSERTION]: head: fresh equal assembly restores previous local reference"
+  ]
+}

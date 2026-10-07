@@ -1,0 +1,416 @@
+{
+  "phase": "o1",
+  "from": 4,
+  "to": 9,
+  "base": "head",
+  "candidate": "o1",
+  "started": 1791335808660,
+  "ended": 1791335848907,
+  "workers": [
+    {
+      "name": "sample-0",
+      "mode": "first",
+      "run": 1,
+      "started": 1791335808660,
+      "ended": 1791335809405,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "name": "sample-0",
+      "mode": "first",
+      "run": 2,
+      "started": 1791335809405,
+      "ended": 1791335810142,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "name": "sample-0",
+      "mode": "first",
+      "run": 3,
+      "started": 1791335810142,
+      "ended": 1791335810887,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "name": "sample-0",
+      "mode": "first",
+      "run": 4,
+      "started": 1791335810887,
+      "ended": 1791335811614,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "name": "sample-0",
+      "mode": "first",
+      "run": 5,
+      "started": 1791335811614,
+      "ended": 1791335812344,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "name": "sample-0",
+      "mode": "first",
+      "run": 6,
+      "started": 1791335812344,
+      "ended": 1791335813071,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "name": "sample-0",
+      "mode": "first",
+      "run": 7,
+      "started": 1791335813071,
+      "ended": 1791335813810,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "name": "sample-0",
+      "mode": "first",
+      "run": 8,
+      "started": 1791335813810,
+      "ended": 1791335814539,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "name": "sample-0",
+      "mode": "first",
+      "run": 9,
+      "started": 1791335814539,
+      "ended": 1791335815283,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "name": "sample-0",
+      "mode": "later",
+      "run": 1,
+      "started": 1791335815283,
+      "ended": 1791335815982,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "name": "sample-0",
+      "mode": "later",
+      "run": 2,
+      "started": 1791335815982,
+      "ended": 1791335816688,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "name": "sample-0",
+      "mode": "later",
+      "run": 3,
+      "started": 1791335816688,
+      "ended": 1791335817401,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "name": "sample-0",
+      "mode": "later",
+      "run": 4,
+      "started": 1791335817401,
+      "ended": 1791335818106,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "name": "sample-0",
+      "mode": "later",
+      "run": 5,
+      "started": 1791335818106,
+      "ended": 1791335818796,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "name": "sample-0",
+      "mode": "later",
+      "run": 6,
+      "started": 1791335818796,
+      "ended": 1791335819511,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "name": "sample-0",
+      "mode": "later",
+      "run": 7,
+      "started": 1791335819511,
+      "ended": 1791335820228,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "name": "sample-0",
+      "mode": "later",
+      "run": 8,
+      "started": 1791335820228,
+      "ended": 1791335820923,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "name": "sample-0",
+      "mode": "later",
+      "run": 9,
+      "started": 1791335820923,
+      "ended": 1791335821617,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "name": "flat-100",
+      "mode": "first",
+      "run": 1,
+      "started": 1791335821617,
+      "ended": 1791335822498,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "name": "flat-100",
+      "mode": "first",
+      "run": 2,
+      "started": 1791335822498,
+      "ended": 1791335823382,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "name": "flat-100",
+      "mode": "first",
+      "run": 3,
+      "started": 1791335823382,
+      "ended": 1791335824272,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "name": "flat-100",
+      "mode": "first",
+      "run": 4,
+      "started": 1791335824272,
+      "ended": 1791335825166,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "name": "flat-100",
+      "mode": "first",
+      "run": 5,
+      "started": 1791335825166,
+      "ended": 1791335826051,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "name": "flat-100",
+      "mode": "first",
+      "run": 6,
+      "started": 1791335826051,
+      "ended": 1791335826950,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "name": "flat-100",
+      "mode": "first",
+      "run": 7,
+      "started": 1791335826950,
+      "ended": 1791335827827,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "name": "flat-100",
+      "mode": "first",
+      "run": 8,
+      "started": 1791335827827,
+      "ended": 1791335828706,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "name": "flat-100",
+      "mode": "first",
+      "run": 9,
+      "started": 1791335828706,
+      "ended": 1791335829582,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "name": "flat-100",
+      "mode": "later",
+      "run": 1,
+      "started": 1791335829582,
+      "ended": 1791335830354,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "name": "flat-100",
+      "mode": "later",
+      "run": 2,
+      "started": 1791335830354,
+      "ended": 1791335831106,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "name": "flat-100",
+      "mode": "later",
+      "run": 3,
+      "started": 1791335831106,
+      "ended": 1791335831851,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "name": "flat-100",
+      "mode": "later",
+      "run": 4,
+      "started": 1791335831851,
+      "ended": 1791335832579,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "name": "flat-100",
+      "mode": "later",
+      "run": 5,
+      "started": 1791335832579,
+      "ended": 1791335833319,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "name": "flat-100",
+      "mode": "later",
+      "run": 6,
+      "started": 1791335833319,
+      "ended": 1791335834064,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "name": "flat-100",
+      "mode": "later",
+      "run": 7,
+      "started": 1791335834064,
+      "ended": 1791335834798,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "name": "flat-100",
+      "mode": "later",
+      "run": 8,
+      "started": 1791335834798,
+      "ended": 1791335835528,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "name": "flat-100",
+      "mode": "later",
+      "run": 9,
+      "started": 1791335835528,
+      "ended": 1791335836263,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "name": "flat-500",
+      "mode": "first",
+      "run": 1,
+      "started": 1791335836263,
+      "ended": 1791335837667,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "name": "flat-500",
+      "mode": "first",
+      "run": 2,
+      "started": 1791335837667,
+      "ended": 1791335839066,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "name": "flat-500",
+      "mode": "first",
+      "run": 3,
+      "started": 1791335839066,
+      "ended": 1791335840464,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "name": "flat-500",
+      "mode": "first",
+      "run": 4,
+      "started": 1791335840464,
+      "ended": 1791335841868,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "name": "flat-500",
+      "mode": "first",
+      "run": 5,
+      "started": 1791335841868,
+      "ended": 1791335843265,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "name": "flat-500",
+      "mode": "first",
+      "run": 6,
+      "started": 1791335843265,
+      "ended": 1791335844680,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "name": "flat-500",
+      "mode": "first",
+      "run": 7,
+      "started": 1791335844680,
+      "ended": 1791335846102,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "name": "flat-500",
+      "mode": "first",
+      "run": 8,
+      "started": 1791335846102,
+      "ended": 1791335847484,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "name": "flat-500",
+      "mode": "first",
+      "run": 9,
+      "started": 1791335847484,
+      "ended": 1791335848907,
+      "status": 0,
+      "signal": null
+    }
+  ]
+}

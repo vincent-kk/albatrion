@@ -1,0 +1,25 @@
+{
+  "HEAD": "ba2571b86",
+  "sourceTextAssertions": false,
+  "variants": [
+    { "name": "O1 reset omitted", "change": "Remove callHint.incremental = false before assembly", "check": "check-o1-broken-reset.json", "exitCode": 1, "failedCases": 2, "observed": "전체 필드 초기화 및 가상 노드 재진입에서 incremental=true 잔존", "restored": true },
+    { "name": "O1 hint leak", "change": "Reflect.set(projected, '__value110_hint', hint)", "check": "check-o1-broken-leak.json", "exitCode": 1, "failedCases": 1, "observed": "emit/local/배달 payload 그래프에서 힌트 참조 발견", "restored": true },
+    { "name": "A1 unsafe key copy", "change": "Use patch[name] = Reflect.get(previous, name) in both copy loops", "check": "check-a1-broken-special-keys.json", "exitCode": 1, "failedCases": 2, "observed": "__proto__ own 데이터 키 누락 및 키 순서 불일치", "restored": true },
+    { "name": "A1 shape proof omitted", "change": "Replace children/schema/extras identity guards with stable truthiness", "check": "check-a1-broken-proof.json", "exitCode": 1, "failedCases": 3, "observed": "children/schema/extras 변경인데 incremental 경로에 진입", "restored": true },
+    { "name": "A1 child identity copied", "change": "structuredClone(Reflect.get(previous, name)) inside both copy loops", "check": "check-a1-broken-identity.json", "differentialCheck": "check-a1-broken-identity-diff.json", "exitCode": 1, "failedCases": 2, "observed": "자식 객체 참조 불일치; HEAD 차등 sample-1 write 0에서도 실패", "restored": true },
+    { "name": "VALUE-012 equal reference restoration omitted", "change": "In updateOutput use local=assembled and emit=projected without reference restoration", "check": "check-a1-broken-restoration-final.json", "exitCode": 1, "observed": "candidate: restored host emits previous reference 단언 실패; 같은 프로브의 HEAD는 통과", "restored": true }
+  ],
+  "excludedPreparation": [
+    "O1 초기 가상 프로브가 실제 재진입하지 않던 실패는 제외; group.local=undefined로 진입을 만들고 HEAD에서 초기화 사유의 실패를 확인",
+    "A1 초기 EffectiveSchema 래퍼 누락·Proxy 단언의 ownKeys 영향은 제외; 수정한 HEAD 확인은 작업 수 1건만 실패하고 동작 5건 통과",
+    "초기 복원 우회 변형은 일반 동등 쓰기만으로는 잡히지 않아 제외; fresh equal assembly 프로브를 추가하고 HEAD가 통과한 뒤 candidate의 emit 참조 단언 실패를 확인",
+    "읽기 전용 row 직접 수정 실패 및 자식 값이 지워져 HEAD까지 실패하던 준비 프로브는 제외"
+  ],
+  "excludedOverlap": {
+    "labels": ["a1-broken-restoration-diff", "a1-final-targeted"],
+    "overlapMs": 1071,
+    "reason": "첫 진단의 종료를 기다리기 전에 다음 unit 프로세스를 시작한 실행 실수",
+    "reruns": ["check-a1-broken-restoration-final.json", "check-a1-final-targeted-sequential.json"],
+    "measurementWorkersAffected": 0
+  }
+}

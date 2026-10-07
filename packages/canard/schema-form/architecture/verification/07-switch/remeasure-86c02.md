@@ -3889,3 +3889,73 @@ PKG에서 설치 없이 로컬 npx로 순차 실행했으며 Vitest에는 `--con
 E1 sample-0 이후 업데이트 7·8회 종료 메타데이터는 출력 잘림·복원 중 덮어쓰기를 기록하고 보수적 종료 상한으로 복원했습니다. 원래 시간 표본은 유지했으며 재실행·제외하지 않았습니다. 8회 worker는 640ms이고 요약의 131,092ms는 감사 시각까지의 종료 상한입니다. 초기 차분은 중복 검증 부담으로 420초 자체 마감에서 종료하여 하네스의 중복 비교를 줄였고, 범위를 유지한 정상 전체 차분은 각 약 32초에 통과했습니다. E1 정상 probe의 잘린 요약도 원문을 보존하고 완전한 별도 차분 기록으로 복원했습니다. 상세 근거는 [감사 JSON](profile-110-event/final-audit.json)에 있습니다.
 
 작업 중 별도로 바뀐 profile-108-ratios.md는 원복하거나 이번 패치에 포함하지 않고 보존했습니다.
+
+## 108라운드 VALUE-012 손질
+
+107라운드 Q109 (c)와 `profile-109-update.md`의 O1·A1을 각각 구현하고 판정했습니다. HEAD는 `ba2571b86`입니다. **O1과 A1 모두 기각했으며, 소유 DETAIL·제품 코드·전용 테스트를 모두 HEAD로 복원했습니다.** 채택한 변경이나 채택 패치는 없습니다. O1 기각 후 A1의 측정 기준도 HEAD입니다.
+
+### 측정 방법과 개별 판정
+
+105C-01과 최소 크기 부록에 따라 한 세션에서 HEAD/HEAD A/A를 먼저 실행하고 O1, A1 순서로 측정했습니다. 각 단계는 지정된 14행 × 9회이며, 각 회차는 production의 새 프로세스에서 warmup 20과 101쌍을 실행했습니다. 표본마다 H/W 순서를 교대하고 강제 GC를 시계 밖에서 실행했습니다. 행마다 909개 paired difference를 합쳤으며, 결정적 10,000회 bootstrap의 0.5%·99.5% 분위수로 99% 구간을 구했습니다. 양수는 기준보다 빨라진 시간입니다.
+
+이득은 구간 전체가 0보다 크고 중앙값이 해당 A/A 행의 부호 있는 통계보다 클 때입니다. 회귀는 구간 전체가 0보다 작고 중앙값 절댓값이 `max(abs(A/A), 기준 중앙값 × 0.5%)`를 넘을 때입니다. 회귀가 한 행이라도 있으면 기각했습니다. 전체 14행의 원시 통계와 판정은 [A/A](profile-110-value/aa-summary.json), [O1](profile-110-value/o1-summary.json), [A1](profile-110-value/a1-summary.json)에 있습니다.
+
+| 변경 | 행 | pooled 중앙값 ms | 99% 구간 ms | A/A 통계 ms | 회귀 바닥 ms | 판정 |
+| --- | --- | ---: | --- | ---: | ---: | --- |
+| O1 | nested-d5-f4 마운트 | +0.072084 | [0.019208, 0.112084] | +0.041000 | 0.041000 | 최고 이득 |
+| O1 | oneOf-40 첫 갱신 | +0.007083 | [0.003292, 0.011249] | −0.001376 | 0.007071 | 이득 |
+| O1 | sample-0 첫 갱신 | −0.000834 | [−0.001333, −0.000291] | −0.000375 | 0.000395 | 회귀 |
+| O1 | flat-100 첫 갱신 | −0.001083 | [−0.001792, −0.000250] | −0.000209 | 0.000415 | 회귀 |
+| O1 | flat-100 이후 갱신 | −0.001000 | [−0.001542, −0.000250] | −0.000458 | 0.000458 | 회귀 |
+| A1 | nested-d5-f4 마운트 | +0.076166 | [0.015124, 0.120084] | +0.041000 | 0.041000 | 최고 이득 |
+| A1 | flat-100 첫 갱신 | −0.018584 | [−0.019459, −0.017916] | −0.000209 | 0.000419 | 회귀 |
+| A1 | flat-100 이후 갱신 | −0.020208 | [−0.020876, −0.019375] | −0.000458 | 0.000458 | 회귀 |
+| A1 | flat-500 첫 갱신 | −0.105625 | [−0.106417, −0.104791] | +0.000292 | 0.000465 | 회귀 |
+| A1 | flat-500 이후 갱신 | −0.105458 | [−0.106417, −0.104583] | +0.000750 | 0.000750 | 회귀 |
+
+O1의 최고 행 기준 중앙값은 4.977583ms, A1은 4.998833ms입니다. O1은 작은 갱신 3행에서, A1은 flat-100·flat-500 갱신 4행에서 회귀했습니다. 음수 구간이어도 바닥을 넘지 않는 행은 회귀로 세지 않았습니다.
+
+### 속도·메모리 비용과 복원 자료
+
+O1은 settlement context를 약한 키로 쓰는 소유자 내부 WeakMap으로 힌트를 재사용했습니다. 매 조립 직전 모든 선언 필드를 초기화했으며, 현재 필드는 `incremental` 하나입니다. 비용은 조립마다 O(1) WeakMap 조회와 초기화입니다. 메모리는 기존 조립별 임시 객체 대신 context당 고정 모양 힌트 하나와 WeakMap 항목 하나를 두며, 노드의 필드나 전역 강한 참조를 추가하지 않습니다. 실제 작은 갱신에서는 조회·초기화 비용이 이득보다 컸습니다. 기각 뒤 남은 제품 속도·메모리 변경은 없습니다.
+
+A1은 STABLE_SHAPES가 동일 children·schema·extras·키 집합을 증명한 두 경로에서 첫 patch만 classic `for`와 `writeObjectKey`로 복사했습니다. 증명이 없으면 기존 spread 경로를 유지했습니다. 복사 시간은 O(K)이며, 키마다 안전한 쓰기 비용이 듭니다. 메모리는 기존과 같은 새 patch 객체 하나이고 기존 이름 배열을 사용하므로 새 인덱스·배열·영구 상태를 추가하지 않습니다. 복사 시 ownKeys 작업을 줄였지만 flat 갱신 시간은 증가했습니다. 기각 뒤 남은 제품 속도·메모리 변경은 없습니다.
+
+두 소유 DETAIL의 비용 계약을 제품 코드보다 먼저 수정했습니다. 아래 패치는 각각 측정했던 기준 HEAD에 대한 **기각 실험 복원 자료**이며, 적용 상태를 뜻하지 않습니다. 두 패치 모두 최종 HEAD에 대한 읽기 전용 dry-run이 통과했습니다.
+
+- [O1 기각 실험 패치](profile-110-value/o1-rejected-experiment.patch): `src/core/settle/DETAIL.md`, `src/core/settle/utils/compute/updateOutput.ts`, `src/core/settle/utils/compute/__tests__/updateOutput.hint.test.ts`.
+- [A1 기각 실험 패치](profile-110-value/a1-rejected-experiment.patch): `src/core/behaviors/objectBehavior/DETAIL.md`, `src/core/behaviors/objectBehavior/branch/utils/assembleObject.ts`, `src/core/behaviors/objectBehavior/branch/utils/__tests__/assembleObject.stable-copy.test.ts`.
+
+### 런타임 차등과 깨진 변형
+
+제품 소스 텍스트를 읽거나 파싱하는 단언 없이 HEAD 번들과 후보 번들의 실제 노드·배달·참조 동작을 비교했습니다. 59 스키마 중 35개는 생성 동작을, 24개는 거절 오류의 동일성을 비교했고, 추가 19개 fixture의 갱신과 함께 880개 작업을 확인했습니다. 키 순서·특수 키 `__proto__`/`constructor`/숫자형 키·자식 emit 참조·동등 값의 이전 참조 복원·구독 payload를 포함합니다. 차등별 1,980개 capture, 151,552개 자식 참조 확인, 994개 동등 참조 복원 확인을 통과했습니다. [O1 차등](profile-110-value/differential-o1.json)과 [A1 차등](profile-110-value/differential-a1.json)에 결과를 보존했습니다.
+
+O1 전용 테스트 4개와 A1 전용 테스트 7개는 정상 후보에서 통과했습니다. O1은 동일 settlement 안에서 힌트 재사용, 전체 필드 초기화, 가상 노드 재진입, emit·local·payload 그래프의 힌트 비도달성을 확인했습니다. A1은 키 순서와 안전한 쓰기, 자식 참조, proof 범위 밖 fallback, 두 복사 경로의 런타임 작업 수를 확인했습니다. O1의 HEAD 실행은 초기화·재사용 사유로 실패했고, A1의 HEAD 실행은 첫 복사의 ownKeys 작업 수 사유로 실패했습니다.
+
+| 의도적으로 깨뜨린 변형 | 관찰한 실패 |
+| --- | --- |
+| O1 초기화 제거 | 전체 필드·가상 재진입 2사례 실패 |
+| O1 projected 값에 힌트 삽입 | 출력·payload 그래프 누출 1사례 실패 |
+| A1 안전한 쓰기를 일반 대입으로 변경 | `__proto__`와 키 순서 2사례 실패 |
+| A1 children/schema/extras 증명 제거 | fallback·incremental 자격 3사례 실패 |
+| A1 자식 값을 structuredClone으로 복사 | 참조 2사례 및 sample-1 갱신 차등 실패 |
+| 이전 local/emit 참조 복원 우회 | fresh equal assembly 뒤 이전 emit 참조 복원 차등 실패 |
+
+깨진 변형은 모두 되돌렸습니다. [변형별 검증 기록](profile-110-value/broken-variants.json)에 실패 로그와 준비 단계에서 제외한 결과를 구분했습니다. 초기 진단 두 프로세스를 종료 확인 없이 시작하여 1.071초 겹친 실행 실수가 한 번 있었으며, 해당 결과 둘을 제외하고 순차 재실행했습니다. 성능 worker에는 겹침이나 제외가 없었습니다.
+
+### 최종 명령과 실행 감사
+
+최종 제품·DETAIL·전용 테스트 복원 뒤 PKG에서 아래 명령을 실행했습니다. vitest는 설치를 막는 `--no-install`, 외부 캐시 경로를 유지하는 `--configLoader runner --cache false`, 순차 실행용 `--maxWorkers=1 --no-file-parallelism`을 추가했습니다. production에는 package script와 같이 `NODE_ENV=production`을 전달했습니다.
+
+| 명령 | 결과 | 시간 |
+| --- | --- | ---: |
+| `npx vitest run --project unit --project render --project react18 --reporter=dot` | 448파일·3,265사례 통과, 허용 EVENT-070 4사례 실패, todo 1 | 302.428초 |
+| `NODE_ENV=production npx vitest run --project production --reporter=dot` | 9파일·20사례 통과 | 7.507초 |
+| `npx tsc --noEmit --composite false --rootDir . -p tsconfig.json` | 통과 | 8.693초 |
+| `npx eslint "src/**/*.{ts,tsx}"` | 오류 없이 통과, TSImportType 폐기 경고만 있음 | 6.064초 |
+| `node architecture/verification/07-switch/tools/check-legacy-isolation.mjs` | 1,659파일 격리 통과 | 0.639초 |
+
+개발 검증의 실패는 render·react18 각각 EVENT-070 useLayoutEffect·useEffect 두 사례뿐이며, watchdog 201 대 <200입니다. A/A 126회, O1 126회, A1 126회 총 378개 성능 worker는 모두 자연 종료했고 서로 겹치지 않았습니다. 최대 worker는 2.836초, 측정 batch는 70.096초, 최종 명령은 302.428초로 모두 8분 이내입니다. 설치·git 쓰기·cacheDir 설정은 없습니다. 번들·소스맵은 지정한 저장소 밖 bundles에만 두었습니다. profile-110-value의 모든 파일은 5MB 이하이며 최대 78,834바이트입니다. [최종 감사](profile-110-value/audit.json)와 [실행 ledger](profile-110-value/plan.md)에 근거를 보존했습니다.
+
+
+커밋할 때 두 실험의 시험 가운데 HEAD에서 통과하는 여섯 개를 지금 동작의 고정 시험으로 남겼습니다. `assembleObject.key-identity.test.ts`는 숫자·문자 키 순서, writeObjectKey 특수 키, 바뀌지 않은 자식 참조, 같은 값의 이전 참조 복원, 자식·schema·extras가 바뀔 때의 기존 경로를 단언합니다. `updateOutput.hint-exposure.test.ts`는 조립 힌트가 방출 값과 배달 payload에서 닿지 않음을 단언합니다. 기각된 구현의 작업 횟수와 힌트 재사용을 단언하던 다섯 개는 HEAD에서 실패하므로 남기지 않았습니다.

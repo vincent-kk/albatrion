@@ -1,0 +1,15 @@
+{
+  "name": "hint",
+  "label": "o1-after",
+  "command": "npx --no-install vitest run --reporter=dot --configLoader runner --cache false --maxWorkers=1 --no-file-parallelism --project unit src/core/settle/utils/compute/__tests__/updateOutput.hint.test.ts",
+  "exitCode": 0,
+  "signal": null,
+  "started": 1791335575644,
+  "ended": 1791335579016,
+  "elapsedMs": 3372,
+  "summary": [
+    " Test Files  1 passed (1)",
+    "      Tests  4 passed (4)",
+    "   Duration  1.54s (transform 848ms, setup 0ms, collect 1.38s, tests 14ms, environment 0ms, prepare 35ms)"
+  ]
+}

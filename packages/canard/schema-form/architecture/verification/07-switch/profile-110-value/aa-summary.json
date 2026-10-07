@@ -1,0 +1,236 @@
+{
+  "name": "aa",
+  "HEAD": "ba2571b86",
+  "protocol": "105C-01 + 최소 크기 부록",
+  "runs": 9,
+  "samplesPerRun": 101,
+  "bootstrapResamples": 10000,
+  "seed": "11000 + row index",
+  "rows": [
+    {
+      "name": "nested-d5-f4",
+      "mode": "mount",
+      "pooledMedianMs": 0.04100000000016735,
+      "ci99Ms": [
+        -0.006457999999838648,
+        0.08987600000000384
+      ],
+      "aaStatisticMs": 0.04100000000016735,
+      "baseMedianMs": 4.949415999999701,
+      "floorMs": 0.04100000000016735,
+      "verdict": "A/A",
+      "improvement": false,
+      "regression": false,
+      "pairedSamples": 909
+    },
+    {
+      "name": "flat-500",
+      "mode": "mount",
+      "pooledMedianMs": -0.000998999999865191,
+      "ci99Ms": [
+        -0.00641700000005585,
+        0.006291999999803011
+      ],
+      "aaStatisticMs": -0.000998999999865191,
+      "baseMedianMs": 1.5688329999998132,
+      "floorMs": 0.007844164999999067,
+      "verdict": "A/A",
+      "improvement": false,
+      "regression": false,
+      "pairedSamples": 909
+    },
+    {
+      "name": "oneOf-20",
+      "mode": "mount",
+      "pooledMedianMs": 0.002040999999962878,
+      "ci99Ms": [
+        -0.0035830000000487416,
+        0.00787499999995589
+      ],
+      "aaStatisticMs": 0.002040999999962878,
+      "baseMedianMs": 1.880666999999903,
+      "floorMs": 0.009403334999999515,
+      "verdict": "A/A",
+      "improvement": false,
+      "regression": false,
+      "pairedSamples": 909
+    },
+    {
+      "name": "sample-0",
+      "mode": "mount",
+      "pooledMedianMs": 0.0005420000000242453,
+      "ci99Ms": [
+        -0.0007489999999847896,
+        0.0013749999999959073
+      ],
+      "aaStatisticMs": 0.0005420000000242453,
+      "baseMedianMs": 0.09674999999994327,
+      "floorMs": 0.0005420000000242453,
+      "verdict": "A/A",
+      "improvement": false,
+      "regression": false,
+      "pairedSamples": 909
+    },
+    {
+      "name": "sample-0",
+      "mode": "first",
+      "pooledMedianMs": -0.0003749999999627107,
+      "ci99Ms": [
+        -0.0010410000000433683,
+        0.00033400000000938235
+      ],
+      "aaStatisticMs": -0.0003749999999627107,
+      "baseMedianMs": 0.07937500000014097,
+      "floorMs": 0.0003968750000007049,
+      "verdict": "A/A",
+      "improvement": false,
+      "regression": false,
+      "pairedSamples": 909
+    },
+    {
+      "name": "sample-0",
+      "mode": "later",
+      "pooledMedianMs": -0.00025100000001998524,
+      "ci99Ms": [
+        -0.0009169999999585343,
+        0.0005430000000501423
+      ],
+      "aaStatisticMs": -0.00025100000001998524,
+      "baseMedianMs": 0.07375000000013188,
+      "floorMs": 0.0003687500000006594,
+      "verdict": "A/A",
+      "improvement": false,
+      "regression": false,
+      "pairedSamples": 909
+    },
+    {
+      "name": "flat-100",
+      "mode": "first",
+      "pooledMedianMs": -0.0002090000000123382,
+      "ci99Ms": [
+        -0.0009990000000925647,
+        0.00041699999997035775
+      ],
+      "aaStatisticMs": -0.0002090000000123382,
+      "baseMedianMs": 0.08349900000001753,
+      "floorMs": 0.00041749500000008764,
+      "verdict": "A/A",
+      "improvement": false,
+      "regression": false,
+      "pairedSamples": 909
+    },
+    {
+      "name": "flat-100",
+      "mode": "later",
+      "pooledMedianMs": -0.0004580000000942164,
+      "ci99Ms": [
+        -0.0011660000000119908,
+        0.00012500000002546585
+      ],
+      "aaStatisticMs": -0.0004580000000942164,
+      "baseMedianMs": 0.07379099999999994,
+      "floorMs": 0.0004580000000942164,
+      "verdict": "A/A",
+      "improvement": false,
+      "regression": false,
+      "pairedSamples": 909
+    },
+    {
+      "name": "flat-500",
+      "mode": "first",
+      "pooledMedianMs": 0.0002919999999448919,
+      "ci99Ms": [
+        -0.0002919999999448919,
+        0.0007919999999330685
+      ],
+      "aaStatisticMs": 0.0002919999999448919,
+      "baseMedianMs": 0.09245800000019244,
+      "floorMs": 0.0004622900000009622,
+      "verdict": "A/A",
+      "improvement": false,
+      "regression": false,
+      "pairedSamples": 909
+    },
+    {
+      "name": "flat-500",
+      "mode": "later",
+      "pooledMedianMs": 0.0007500000000391083,
+      "ci99Ms": [
+        0.0003329999999550637,
+        0.001458999999954358
+      ],
+      "aaStatisticMs": 0.0007500000000391083,
+      "baseMedianMs": 0.07649899999989884,
+      "floorMs": 0.0007500000000391083,
+      "verdict": "A/A",
+      "improvement": false,
+      "regression": false,
+      "pairedSamples": 909
+    },
+    {
+      "name": "nested-d5-f4",
+      "mode": "first",
+      "pooledMedianMs": 0.027624999999716238,
+      "ci99Ms": [
+        -0.06920799999988958,
+        0.07158299999991868
+      ],
+      "aaStatisticMs": 0.027624999999716238,
+      "baseMedianMs": 0.1822920000002881,
+      "floorMs": 0.027624999999716238,
+      "verdict": "A/A",
+      "improvement": false,
+      "regression": false,
+      "pairedSamples": 909
+    },
+    {
+      "name": "nested-d5-f4",
+      "mode": "later",
+      "pooledMedianMs": 0.0013330000000451037,
+      "ci99Ms": [
+        0.00025100000004840695,
+        0.002248999999892476
+      ],
+      "aaStatisticMs": 0.0013330000000451037,
+      "baseMedianMs": 0.10399900000007278,
+      "floorMs": 0.0013330000000451037,
+      "verdict": "A/A",
+      "improvement": false,
+      "regression": false,
+      "pairedSamples": 909
+    },
+    {
+      "name": "oneOf-40",
+      "mode": "first",
+      "pooledMedianMs": -0.0013759999999933825,
+      "ci99Ms": [
+        -0.005250000000160071,
+        0.002292000000124972
+      ],
+      "aaStatisticMs": -0.0013759999999933825,
+      "baseMedianMs": 1.3983740000001035,
+      "floorMs": 0.006991870000000518,
+      "verdict": "A/A",
+      "improvement": false,
+      "regression": false,
+      "pairedSamples": 909
+    },
+    {
+      "name": "oneOf-40",
+      "mode": "later",
+      "pooledMedianMs": -0.0008330000000000837,
+      "ci99Ms": [
+        -0.004292000000077678,
+        0.003333999999995285
+      ],
+      "aaStatisticMs": -0.0008330000000000837,
+      "baseMedianMs": 0.9489590000000021,
+      "floorMs": 0.004744795000000011,
+      "verdict": "A/A",
+      "improvement": false,
+      "regression": false,
+      "pairedSamples": 909
+    }
+  ],
+  "verdict": "A/A"
+}
