@@ -10,7 +10,7 @@ The comparator short-circuits identical references. Otherwise it traverses order
 
 ## Acceptance Criteria
 
-### ordered-equality
+### ordered-equality — Ordered structural equality
 
 - Reordered object properties differ; identical component references remain equal.
 

@@ -10,7 +10,7 @@ The context supplies the latest consumer, object-identity deduplication, per-loa
 
 ## Acceptance Criteria
 
-### reporting
+### reporting — Single isolated error report
 
 - A root or field render failure is reported once and remains isolated by its boundary.
 - Replayed effects do not resend committed load warnings.
