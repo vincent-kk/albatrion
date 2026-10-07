@@ -1,0 +1,60 @@
+{
+  "head": "087e5618e35af1a9ccac5439c9f39b58bbba0013",
+  "observedHeadAtFinish": "be0ad1a453eb73a1b2c53dc58bad5e4a8e9b17e8",
+  "externalConcurrentChange": "진단 문서 하나만 추가; 제품 코드 동일; F-A 패치에서 제외",
+  "packageRoot": "/Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/packages/canard/schema-form",
+  "headNewTests": {
+    "exit": 1,
+    "passed": 16,
+    "failed": 1,
+    "reason": "F-A fiber 단언: 기대 21, HEAD 실제 24"
+  },
+  "changedNewTests": {
+    "exit": 0,
+    "passed": 17
+  },
+  "finalCounts": {
+    "exit": 0,
+    "passed": 3
+  },
+  "commands": [
+    {
+      "command": "npx vitest run --project unit --project render --project react18 --reporter=dot",
+      "exit": 0,
+      "files": 461,
+      "passed": 3398,
+      "todo": 1,
+      "durationSeconds": 64.56
+    },
+    {
+      "command": "yarn test:production",
+      "resolvedScript": "NODE_ENV=production vitest run --project production --reporter=dot --configLoader runner --cache false",
+      "exit": 0,
+      "files": 9,
+      "passed": 20
+    },
+    {
+      "command": "npx tsc --noEmit --composite false --rootDir . -p tsconfig.json",
+      "exit": 0
+    },
+    {
+      "command": "npx eslint \"src/**/*.{ts,tsx}\"",
+      "exit": 0
+    },
+    {
+      "command": "node architecture/verification/07-switch/tools/check-legacy-isolation.mjs",
+      "exit": 0,
+      "result": "LEGACY_ISOLATED",
+      "files": 1675
+    },
+    {
+      "command": "git diff --check",
+      "exit": 0
+    }
+  ],
+  "patchReverseCheck": { "exit": 0, "base": "087e5618e35af1a9ccac5439c9f39b58bbba0013", "externalDiagnosisExcluded": true },
+  "timingBenchmarkRun": false,
+  "latencyIterationsPerScenario": 8,
+  "installs": false,
+  "gitWrites": false
+}

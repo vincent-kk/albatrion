@@ -1,0 +1,32 @@
+# F-A 변경 파일
+
+- `architecture/verification/07-switch/profile-122-fa/README.md`
+- `architecture/verification/07-switch/profile-122-fa/change.json`
+- `architecture/verification/07-switch/profile-122-fa/head.json`
+- `architecture/verification/07-switch/tools/measure-react-render-counts.entry.tsx`
+- `architecture/verification/07-switch/tools/measure-react-render-counts.mjs`
+- `architecture/verification/07-switch/tools/prepare-react-bundles.mjs`
+- `src/components/SchemaNode/SchemaNodeProxy/__tests__/renderCounts.test.ts`
+- `src/components/SchemaNode/SchemaNodeProxy/__tests__/rendererBoundary.test.tsx`
+- `src/providers/FormErrorContext/usePlaceholderBoundaryReporter.ts`
+- `architecture/verification/07-switch/tools/prepare-branch1-bundles.mjs`
+- `src/components/SchemaNode/SchemaNodeProxy/DETAIL.md`
+- `src/components/SchemaNode/SchemaNodeProxy/INTENT.md`
+- `src/components/SchemaNode/SchemaNodeProxy/SchemaNodeProxy.tsx`
+- `src/components/SchemaNode/SchemaNodeProxy/components/SchemaNodeField.tsx`
+- `src/helpers/formTypeInputDefinition/DETAIL.md`
+- `src/helpers/formTypeInputDefinition/INTENT.md`
+- `src/helpers/formTypeInputDefinition/utils/withFormTypeInputErrorBoundary.tsx`
+- `src/helpers/virtualization/VirtualizationManager/DETAIL.md`
+- `src/helpers/virtualization/VirtualizationManager/VirtualizationManager.ts`
+- `src/providers/FormErrorContext/DETAIL.md`
+- `src/providers/FormErrorContext/FormErrorPathContext.ts`
+- `src/providers/FormErrorContext/INTENT.md`
+- `src/providers/FormErrorContext/index.ts`
+- `src/providers/FormErrorContext/useBoundaryReporter.ts`
+- `architecture/verification/07-switch/profile-122-fa/changes.md`
+- `architecture/verification/07-switch/profile-122-fa/verification.json`
+- `architecture/verification/07-switch/profile-122-fa/full-tests-summary.log`
+- `architecture/verification/07-switch/profile-122-fa/head-tests.log`
+- `architecture/verification/07-switch/profile-122-fa/change-tests.log`
+- `architecture/verification/07-switch/profile-122-fa/count-tests.log`

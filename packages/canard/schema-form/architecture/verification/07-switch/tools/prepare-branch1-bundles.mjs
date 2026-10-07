@@ -8,13 +8,16 @@ import { createRequire } from 'node:module';
 import { dirname, relative, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
+import { prepareReactBundles } from './prepare-react-bundles.mjs';
+
 /**
  * Prepare uninstrumented production runtimes without running timing measurements.
  * @param packageRoot - schema-form in the authorized stage-07 worktree
  * @param outputRoot - The caller-authorized scratch bundle directory
  * @returns Bundle paths, hashes and natural build-service exit evidence
  */
-export async function prepareBranch1Bundles(packageRoot, outputRoot) {
+export async function prepareBranch1Bundles(packageRoot, outputRoot, reactVariant) {
+  if (reactVariant) return prepareReactBundles(packageRoot, outputRoot, reactVariant);
   const worktree = resolve(packageRoot, '../../..');
   const head = '3a637c4cd';
   const selectionFiles = [
@@ -93,4 +96,7 @@ export async function prepareBranch1Bundles(packageRoot, outputRoot) {
 
 const packageRoot = resolve(dirname(fileURLToPath(import.meta.url)), '../../../..');
 const scratch = '/private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles';
-console.log(JSON.stringify(await prepareBranch1Bundles(packageRoot, scratch), null, 2));
+if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
+  const reactVariant = process.argv[2] === '--react-fa' ? (process.argv[3] ?? 'both') : undefined;
+  console.log(JSON.stringify(await prepareBranch1Bundles(packageRoot, scratch, reactVariant), null, 2));
+}

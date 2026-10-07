@@ -1,0 +1,3443 @@
+{
+  "version": "change",
+  "revision": "working",
+  "bundle": "/private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles/fa-change.cjs",
+  "sha256": "d50bb5e671dbff0a51cfad88d3bf058f85afcc7c3f641c76db5ed3ef1fd4619a",
+  "production": true,
+  "instrumentation": "React runtime function/class invocations and fiber tree; bundles unchanged",
+  "timingBenchmark": false,
+  "scenarios": [
+    {
+      "scenario": "flat",
+      "mode": "ctl",
+      "fibersPerField": {
+        "/a": 21,
+        "/b": 21,
+        "/o/x": 21,
+        "/o/y": 21
+      },
+      "fibersByPath": {
+        "(form)": {
+          "total": 26,
+          "components": {
+            "root": 2,
+            "Host": 1,
+            "memo:fwd:Anonymous": 1,
+            "fwd:Anonymous": 2,
+            "FormErrorContextProvider": 1,
+            "Provider": 8,
+            "ErrorBoundary": 1,
+            "fwd:FormContents": 1,
+            "WorkspaceContextProvider": 1,
+            "FormTypeInputsContextProvider": 1,
+            "FormTypeRendererContextProvider": 1,
+            "InputControlContextProvider": 1,
+            "VirtualizationContextProvider": 1,
+            "RootNodeContextProvider": 1,
+            "memo:Anonymous": 1,
+            "host:form": 1,
+            "SchemaNodeProxy": 1
+          }
+        },
+        "": {
+          "total": 15,
+          "components": {
+            "host:div": 2,
+            "memo:ErrorBoundary": 1,
+            "ErrorBoundary": 2,
+            "RendererWithErrorMessage": 1,
+            "memo:FormGroupRenderer": 1,
+            "Anonymous": 1,
+            "memo:Anonymous": 4,
+            "FormTypeInputBoundary": 1,
+            "Input": 1,
+            "FormTypeInputObject": 1
+          }
+        },
+        "/a": {
+          "total": 21,
+          "components": {
+            "SchemaNodeProxy": 1,
+            "root": 3,
+            "host:div": 3,
+            "memo:ErrorBoundary": 1,
+            "ErrorBoundary": 2,
+            "RendererWithErrorMessage": 1,
+            "memo:FormGroupRenderer": 1,
+            "host:label": 1,
+            "Anonymous": 1,
+            "memo:Anonymous": 1,
+            "FormTypeInputBoundary": 1,
+            "Input": 1,
+            "CtlInput": 1,
+            "host:input": 1,
+            "host:br": 1,
+            "host:em": 1
+          }
+        },
+        "/b": {
+          "total": 21,
+          "components": {
+            "SchemaNodeProxy": 1,
+            "root": 3,
+            "host:div": 3,
+            "memo:ErrorBoundary": 1,
+            "ErrorBoundary": 2,
+            "RendererWithErrorMessage": 1,
+            "memo:FormGroupRenderer": 1,
+            "host:label": 1,
+            "Anonymous": 1,
+            "memo:Anonymous": 1,
+            "FormTypeInputBoundary": 1,
+            "Input": 1,
+            "CtlInput": 1,
+            "host:input": 1,
+            "host:br": 1,
+            "host:em": 1
+          }
+        },
+        "/o": {
+          "total": 21,
+          "components": {
+            "SchemaNodeProxy": 1,
+            "root": 1,
+            "host:div": 4,
+            "memo:ErrorBoundary": 1,
+            "ErrorBoundary": 2,
+            "RendererWithErrorMessage": 1,
+            "memo:FormGroupRenderer": 1,
+            "host:fieldset": 1,
+            "host:legend": 1,
+            "host:em": 1,
+            "Anonymous": 1,
+            "memo:Anonymous": 3,
+            "FormTypeInputBoundary": 1,
+            "Input": 1,
+            "FormTypeInputObject": 1
+          }
+        },
+        "/o/x": {
+          "total": 21,
+          "components": {
+            "SchemaNodeProxy": 1,
+            "root": 3,
+            "host:div": 3,
+            "memo:ErrorBoundary": 1,
+            "ErrorBoundary": 2,
+            "RendererWithErrorMessage": 1,
+            "memo:FormGroupRenderer": 1,
+            "host:label": 1,
+            "Anonymous": 1,
+            "memo:Anonymous": 1,
+            "FormTypeInputBoundary": 1,
+            "Input": 1,
+            "CtlInput": 1,
+            "host:input": 1,
+            "host:br": 1,
+            "host:em": 1
+          }
+        },
+        "/o/y": {
+          "total": 21,
+          "components": {
+            "SchemaNodeProxy": 1,
+            "root": 3,
+            "host:div": 3,
+            "memo:ErrorBoundary": 1,
+            "ErrorBoundary": 2,
+            "RendererWithErrorMessage": 1,
+            "memo:FormGroupRenderer": 1,
+            "host:label": 1,
+            "Anonymous": 1,
+            "memo:Anonymous": 1,
+            "FormTypeInputBoundary": 1,
+            "Input": 1,
+            "CtlInput": 1,
+            "host:input": 1,
+            "host:br": 1,
+            "host:em": 1
+          }
+        }
+      },
+      "writes": [
+        {
+          "write": "input write /a",
+          "target": "/a",
+          "commits": 1,
+          "renders": {
+            "total": 20,
+            "byPath": {
+              "(form)": 1,
+              "": 9,
+              "/a": 10
+            },
+            "byComponent": {
+              "SchemaNodeProxy": {
+                "(form)": 1,
+                "/a": 1
+              },
+              "class:ErrorBoundary": {
+                "": 2,
+                "/a": 2
+              },
+              "RendererWithErrorMessage": {
+                "": 1,
+                "/a": 1
+              },
+              "memo:FormGroupRenderer": {
+                "": 1,
+                "/a": 1
+              },
+              "Anonymous": {
+                "": 1,
+                "/a": 1
+              },
+              "memo:Anonymous": {
+                "": 1,
+                "/a": 1
+              },
+              "FormTypeInputBoundary": {
+                "": 1,
+                "/a": 1
+              },
+              "Input": {
+                "": 1,
+                "/a": 1
+              },
+              "FormTypeInputObject": {
+                "": 1
+              },
+              "CtlInput": {
+                "/a": 1
+              }
+            }
+          },
+          "fibersVisited": 62,
+          "fibersCreated": 0,
+          "remounts": [],
+          "newMounts": []
+        },
+        {
+          "write": "input write /a again",
+          "target": "/a",
+          "commits": 1,
+          "renders": {
+            "total": 20,
+            "byPath": {
+              "(form)": 1,
+              "": 9,
+              "/a": 10
+            },
+            "byComponent": {
+              "SchemaNodeProxy": {
+                "(form)": 1,
+                "/a": 1
+              },
+              "class:ErrorBoundary": {
+                "": 2,
+                "/a": 2
+              },
+              "RendererWithErrorMessage": {
+                "": 1,
+                "/a": 1
+              },
+              "memo:FormGroupRenderer": {
+                "": 1,
+                "/a": 1
+              },
+              "Anonymous": {
+                "": 1,
+                "/a": 1
+              },
+              "memo:Anonymous": {
+                "": 1,
+                "/a": 1
+              },
+              "FormTypeInputBoundary": {
+                "": 1,
+                "/a": 1
+              },
+              "Input": {
+                "": 1,
+                "/a": 1
+              },
+              "FormTypeInputObject": {
+                "": 1
+              },
+              "CtlInput": {
+                "/a": 1
+              }
+            }
+          },
+          "fibersVisited": 62,
+          "fibersCreated": 0,
+          "remounts": [],
+          "newMounts": []
+        },
+        {
+          "write": "sibling setValue /b",
+          "target": "/b",
+          "commits": 1,
+          "renders": {
+            "total": 20,
+            "byPath": {
+              "(form)": 1,
+              "": 9,
+              "/b": 10
+            },
+            "byComponent": {
+              "SchemaNodeProxy": {
+                "(form)": 1,
+                "/b": 1
+              },
+              "class:ErrorBoundary": {
+                "": 2,
+                "/b": 2
+              },
+              "RendererWithErrorMessage": {
+                "": 1,
+                "/b": 1
+              },
+              "memo:FormGroupRenderer": {
+                "": 1,
+                "/b": 1
+              },
+              "Anonymous": {
+                "": 1,
+                "/b": 1
+              },
+              "memo:Anonymous": {
+                "": 1,
+                "/b": 1
+              },
+              "FormTypeInputBoundary": {
+                "": 1,
+                "/b": 1
+              },
+              "Input": {
+                "": 1,
+                "/b": 1
+              },
+              "FormTypeInputObject": {
+                "": 1
+              },
+              "CtlInput": {
+                "/b": 1
+              }
+            }
+          },
+          "fibersVisited": 62,
+          "fibersCreated": 2,
+          "remounts": [
+            "/b"
+          ],
+          "newMounts": []
+        },
+        {
+          "write": "same-value setValue /b",
+          "target": "/b",
+          "commits": 0,
+          "renders": {
+            "total": 0,
+            "byPath": {},
+            "byComponent": {}
+          },
+          "fibersVisited": 0,
+          "fibersCreated": 0,
+          "remounts": [],
+          "newMounts": []
+        },
+        {
+          "write": "parent setValue /o (x only)",
+          "target": "/o/x",
+          "commits": 1,
+          "renders": {
+            "total": 30,
+            "byPath": {
+              "(form)": 1,
+              "": 9,
+              "/o": 10,
+              "/o/x": 10
+            },
+            "byComponent": {
+              "SchemaNodeProxy": {
+                "(form)": 1,
+                "/o": 1,
+                "/o/x": 1
+              },
+              "class:ErrorBoundary": {
+                "": 2,
+                "/o": 2,
+                "/o/x": 2
+              },
+              "RendererWithErrorMessage": {
+                "": 1,
+                "/o": 1,
+                "/o/x": 1
+              },
+              "memo:FormGroupRenderer": {
+                "": 1,
+                "/o": 1,
+                "/o/x": 1
+              },
+              "Anonymous": {
+                "": 1,
+                "/o": 1,
+                "/o/x": 1
+              },
+              "memo:Anonymous": {
+                "": 1,
+                "/o": 1,
+                "/o/x": 1
+              },
+              "FormTypeInputBoundary": {
+                "": 1,
+                "/o": 1,
+                "/o/x": 1
+              },
+              "Input": {
+                "": 1,
+                "/o": 1,
+                "/o/x": 1
+              },
+              "FormTypeInputObject": {
+                "": 1,
+                "/o": 1
+              },
+              "CtlInput": {
+                "/o/x": 1
+              }
+            }
+          },
+          "fibersVisited": 83,
+          "fibersCreated": 2,
+          "remounts": [
+            "/o/x"
+          ],
+          "newMounts": []
+        },
+        {
+          "write": "whole setValue (a only)",
+          "target": "/a",
+          "commits": 1,
+          "renders": {
+            "total": 20,
+            "byPath": {
+              "(form)": 1,
+              "": 9,
+              "/a": 10
+            },
+            "byComponent": {
+              "SchemaNodeProxy": {
+                "(form)": 1,
+                "/a": 1
+              },
+              "class:ErrorBoundary": {
+                "": 2,
+                "/a": 2
+              },
+              "RendererWithErrorMessage": {
+                "": 1,
+                "/a": 1
+              },
+              "memo:FormGroupRenderer": {
+                "": 1,
+                "/a": 1
+              },
+              "Anonymous": {
+                "": 1,
+                "/a": 1
+              },
+              "memo:Anonymous": {
+                "": 1,
+                "/a": 1
+              },
+              "FormTypeInputBoundary": {
+                "": 1,
+                "/a": 1
+              },
+              "Input": {
+                "": 1,
+                "/a": 1
+              },
+              "FormTypeInputObject": {
+                "": 1
+              },
+              "CtlInput": {
+                "/a": 1
+              }
+            }
+          },
+          "fibersVisited": 62,
+          "fibersCreated": 2,
+          "remounts": [
+            "/a"
+          ],
+          "newMounts": []
+        },
+        {
+          "write": "refresh /a",
+          "target": "/a",
+          "commits": 1,
+          "renders": {
+            "total": 5,
+            "byPath": {
+              "/a": 5
+            },
+            "byComponent": {
+              "memo:Anonymous": {
+                "/a": 1
+              },
+              "FormTypeInputBoundary": {
+                "/a": 1
+              },
+              "class:ErrorBoundary": {
+                "/a": 1
+              },
+              "Input": {
+                "/a": 1
+              },
+              "CtlInput": {
+                "/a": 1
+              }
+            }
+          },
+          "fibersVisited": 60,
+          "fibersCreated": 2,
+          "remounts": [
+            "/a"
+          ],
+          "newMounts": []
+        },
+        {
+          "write": "showError(true)",
+          "target": null,
+          "commits": 1,
+          "renders": {
+            "total": 68,
+            "byPath": {
+              "(form)": 9,
+              "": 9,
+              "/a": 10,
+              "/b": 10,
+              "/o": 10,
+              "/o/x": 10,
+              "/o/y": 10
+            },
+            "byComponent": {
+              "fwd:FormContents": {
+                "(form)": 1
+              },
+              "WorkspaceContextProvider": {
+                "(form)": 1
+              },
+              "FormTypeInputsContextProvider": {
+                "(form)": 1
+              },
+              "FormTypeRendererContextProvider": {
+                "(form)": 1
+              },
+              "InputControlContextProvider": {
+                "(form)": 1
+              },
+              "VirtualizationContextProvider": {
+                "(form)": 1
+              },
+              "RootNodeContextProvider": {
+                "(form)": 1
+              },
+              "memo:Anonymous": {
+                "(form)": 1,
+                "": 1,
+                "/a": 1,
+                "/b": 1,
+                "/o": 1,
+                "/o/x": 1,
+                "/o/y": 1
+              },
+              "SchemaNodeProxy": {
+                "(form)": 1,
+                "/a": 1,
+                "/b": 1,
+                "/o": 1,
+                "/o/x": 1,
+                "/o/y": 1
+              },
+              "class:ErrorBoundary": {
+                "": 2,
+                "/a": 2,
+                "/b": 2,
+                "/o": 2,
+                "/o/x": 2,
+                "/o/y": 2
+              },
+              "RendererWithErrorMessage": {
+                "": 1,
+                "/a": 1,
+                "/b": 1,
+                "/o": 1,
+                "/o/x": 1,
+                "/o/y": 1
+              },
+              "memo:FormGroupRenderer": {
+                "": 1,
+                "/a": 1,
+                "/b": 1,
+                "/o": 1,
+                "/o/x": 1,
+                "/o/y": 1
+              },
+              "Anonymous": {
+                "": 1,
+                "/a": 1,
+                "/b": 1,
+                "/o": 1,
+                "/o/x": 1,
+                "/o/y": 1
+              },
+              "FormTypeInputBoundary": {
+                "": 1,
+                "/a": 1,
+                "/b": 1,
+                "/o": 1,
+                "/o/x": 1,
+                "/o/y": 1
+              },
+              "Input": {
+                "": 1,
+                "/a": 1,
+                "/b": 1,
+                "/o": 1,
+                "/o/x": 1,
+                "/o/y": 1
+              },
+              "FormTypeInputObject": {
+                "": 1,
+                "/o": 1
+              },
+              "CtlInput": {
+                "/a": 1,
+                "/b": 1,
+                "/o/x": 1,
+                "/o/y": 1
+              }
+            }
+          },
+          "fibersVisited": 146,
+          "fibersCreated": 0,
+          "remounts": [],
+          "newMounts": []
+        },
+        {
+          "write": "Form context prop change",
+          "target": null,
+          "commits": 1,
+          "renders": {
+            "total": 73,
+            "byPath": {
+              "(form)": 14,
+              "": 9,
+              "/a": 10,
+              "/b": 10,
+              "/o": 10,
+              "/o/x": 10,
+              "/o/y": 10
+            },
+            "byComponent": {
+              "Host": {
+                "(form)": 1
+              },
+              "fwd:Anonymous": {
+                "(form)": 2
+              },
+              "FormErrorContextProvider": {
+                "(form)": 1
+              },
+              "class:ErrorBoundary": {
+                "(form)": 1,
+                "": 2,
+                "/a": 2,
+                "/b": 2,
+                "/o": 2,
+                "/o/x": 2,
+                "/o/y": 2
+              },
+              "fwd:FormContents": {
+                "(form)": 1
+              },
+              "WorkspaceContextProvider": {
+                "(form)": 1
+              },
+              "FormTypeInputsContextProvider": {
+                "(form)": 1
+              },
+              "FormTypeRendererContextProvider": {
+                "(form)": 1
+              },
+              "InputControlContextProvider": {
+                "(form)": 1
+              },
+              "VirtualizationContextProvider": {
+                "(form)": 1
+              },
+              "RootNodeContextProvider": {
+                "(form)": 1
+              },
+              "memo:Anonymous": {
+                "(form)": 1,
+                "": 1,
+                "/a": 1,
+                "/b": 1,
+                "/o": 1,
+                "/o/x": 1,
+                "/o/y": 1
+              },
+              "SchemaNodeProxy": {
+                "(form)": 1,
+                "/a": 1,
+                "/b": 1,
+                "/o": 1,
+                "/o/x": 1,
+                "/o/y": 1
+              },
+              "RendererWithErrorMessage": {
+                "": 1,
+                "/a": 1,
+                "/b": 1,
+                "/o": 1,
+                "/o/x": 1,
+                "/o/y": 1
+              },
+              "memo:FormGroupRenderer": {
+                "": 1,
+                "/a": 1,
+                "/b": 1,
+                "/o": 1,
+                "/o/x": 1,
+                "/o/y": 1
+              },
+              "Anonymous": {
+                "": 1,
+                "/a": 1,
+                "/b": 1,
+                "/o": 1,
+                "/o/x": 1,
+                "/o/y": 1
+              },
+              "FormTypeInputBoundary": {
+                "": 1,
+                "/a": 1,
+                "/b": 1,
+                "/o": 1,
+                "/o/x": 1,
+                "/o/y": 1
+              },
+              "Input": {
+                "": 1,
+                "/a": 1,
+                "/b": 1,
+                "/o": 1,
+                "/o/x": 1,
+                "/o/y": 1
+              },
+              "FormTypeInputObject": {
+                "": 1,
+                "/o": 1
+              },
+              "CtlInput": {
+                "/a": 1,
+                "/b": 1,
+                "/o/x": 1,
+                "/o/y": 1
+              }
+            }
+          },
+          "fibersVisited": 146,
+          "fibersCreated": 0,
+          "remounts": [],
+          "newMounts": []
+        },
+        {
+          "write": "Form re-render, new inline onChange",
+          "target": null,
+          "commits": 1,
+          "renders": {
+            "total": 16,
+            "byPath": {
+              "(form)": 14,
+              "": 2
+            },
+            "byComponent": {
+              "Host": {
+                "(form)": 1
+              },
+              "fwd:Anonymous": {
+                "(form)": 2
+              },
+              "FormErrorContextProvider": {
+                "(form)": 1
+              },
+              "class:ErrorBoundary": {
+                "(form)": 1,
+                "": 1
+              },
+              "fwd:FormContents": {
+                "(form)": 1
+              },
+              "WorkspaceContextProvider": {
+                "(form)": 1
+              },
+              "FormTypeInputsContextProvider": {
+                "(form)": 1
+              },
+              "FormTypeRendererContextProvider": {
+                "(form)": 1
+              },
+              "InputControlContextProvider": {
+                "(form)": 1
+              },
+              "VirtualizationContextProvider": {
+                "(form)": 1
+              },
+              "RootNodeContextProvider": {
+                "(form)": 1
+              },
+              "memo:Anonymous": {
+                "(form)": 1
+              },
+              "SchemaNodeProxy": {
+                "(form)": 1
+              },
+              "RendererWithErrorMessage": {
+                "": 1
+              }
+            }
+          },
+          "fibersVisited": 31,
+          "fibersCreated": 0,
+          "remounts": [],
+          "newMounts": []
+        },
+        {
+          "write": "Form readOnly prop true",
+          "target": null,
+          "commits": 1,
+          "renders": {
+            "total": 46,
+            "byPath": {
+              "(form)": 14,
+              "": 7,
+              "/a": 5,
+              "/b": 5,
+              "/o": 5,
+              "/o/x": 5,
+              "/o/y": 5
+            },
+            "byComponent": {
+              "Host": {
+                "(form)": 1
+              },
+              "fwd:Anonymous": {
+                "(form)": 2
+              },
+              "FormErrorContextProvider": {
+                "(form)": 1
+              },
+              "class:ErrorBoundary": {
+                "(form)": 1,
+                "": 2,
+                "/a": 1,
+                "/b": 1,
+                "/o": 1,
+                "/o/x": 1,
+                "/o/y": 1
+              },
+              "fwd:FormContents": {
+                "(form)": 1
+              },
+              "WorkspaceContextProvider": {
+                "(form)": 1
+              },
+              "FormTypeInputsContextProvider": {
+                "(form)": 1
+              },
+              "FormTypeRendererContextProvider": {
+                "(form)": 1
+              },
+              "InputControlContextProvider": {
+                "(form)": 1
+              },
+              "VirtualizationContextProvider": {
+                "(form)": 1
+              },
+              "RootNodeContextProvider": {
+                "(form)": 1
+              },
+              "memo:Anonymous": {
+                "(form)": 1,
+                "": 1,
+                "/a": 1,
+                "/b": 1,
+                "/o": 1,
+                "/o/x": 1,
+                "/o/y": 1
+              },
+              "SchemaNodeProxy": {
+                "(form)": 1
+              },
+              "RendererWithErrorMessage": {
+                "": 1
+              },
+              "FormTypeInputBoundary": {
+                "": 1,
+                "/a": 1,
+                "/b": 1,
+                "/o": 1,
+                "/o/x": 1,
+                "/o/y": 1
+              },
+              "Input": {
+                "": 1,
+                "/a": 1,
+                "/b": 1,
+                "/o": 1,
+                "/o/x": 1,
+                "/o/y": 1
+              },
+              "FormTypeInputObject": {
+                "": 1,
+                "/o": 1
+              },
+              "CtlInput": {
+                "/a": 1,
+                "/b": 1,
+                "/o/x": 1,
+                "/o/y": 1
+              }
+            }
+          },
+          "fibersVisited": 137,
+          "fibersCreated": 0,
+          "remounts": [],
+          "newMounts": []
+        },
+        {
+          "write": "reset()",
+          "target": null,
+          "commits": 1,
+          "renders": {
+            "total": 68,
+            "byPath": {
+              "(form)": 9,
+              "": 9,
+              "/a": 10,
+              "/b": 10,
+              "/o": 10,
+              "/o/x": 10,
+              "/o/y": 10
+            },
+            "byComponent": {
+              "fwd:FormContents": {
+                "(form)": 1
+              },
+              "WorkspaceContextProvider": {
+                "(form)": 1
+              },
+              "FormTypeInputsContextProvider": {
+                "(form)": 1
+              },
+              "FormTypeRendererContextProvider": {
+                "(form)": 1
+              },
+              "InputControlContextProvider": {
+                "(form)": 1
+              },
+              "VirtualizationContextProvider": {
+                "(form)": 1
+              },
+              "RootNodeContextProvider": {
+                "(form)": 1
+              },
+              "memo:Anonymous": {
+                "(form)": 1,
+                "": 1,
+                "/a": 1,
+                "/b": 1,
+                "/o": 1,
+                "/o/x": 1,
+                "/o/y": 1
+              },
+              "SchemaNodeProxy": {
+                "(form)": 1,
+                "/a": 1,
+                "/b": 1,
+                "/o": 1,
+                "/o/x": 1,
+                "/o/y": 1
+              },
+              "class:ErrorBoundary": {
+                "": 2,
+                "/a": 2,
+                "/b": 2,
+                "/o": 2,
+                "/o/x": 2,
+                "/o/y": 2
+              },
+              "RendererWithErrorMessage": {
+                "": 1,
+                "/a": 1,
+                "/b": 1,
+                "/o": 1,
+                "/o/x": 1,
+                "/o/y": 1
+              },
+              "memo:FormGroupRenderer": {
+                "": 1,
+                "/a": 1,
+                "/b": 1,
+                "/o": 1,
+                "/o/x": 1,
+                "/o/y": 1
+              },
+              "Anonymous": {
+                "": 1,
+                "/a": 1,
+                "/b": 1,
+                "/o": 1,
+                "/o/x": 1,
+                "/o/y": 1
+              },
+              "FormTypeInputBoundary": {
+                "": 1,
+                "/a": 1,
+                "/b": 1,
+                "/o": 1,
+                "/o/x": 1,
+                "/o/y": 1
+              },
+              "Input": {
+                "": 1,
+                "/a": 1,
+                "/b": 1,
+                "/o": 1,
+                "/o/x": 1,
+                "/o/y": 1
+              },
+              "FormTypeInputObject": {
+                "": 1,
+                "/o": 1
+              },
+              "CtlInput": {
+                "/a": 1,
+                "/b": 1,
+                "/o/x": 1,
+                "/o/y": 1
+              }
+            }
+          },
+          "fibersVisited": 146,
+          "fibersCreated": 8,
+          "remounts": [
+            "/a",
+            "/b",
+            "/o/x",
+            "/o/y"
+          ],
+          "newMounts": []
+        }
+      ],
+      "refreshLatency": {
+        "unit": "µs",
+        "endpoint": "in-commit DOM input value setter/placement",
+        "operation": "external leaf setValue (automatic Refresh)",
+        "iterations": 8,
+        "median": 361.1669999999947,
+        "min": 307.79199999997786,
+        "max": 1287.4590000000126,
+        "samples": [
+          1287.4590000000126,
+          512.7080000000035,
+          501.2920000000065,
+          355.50000000000637,
+          365.208999999993,
+          307.79199999997786,
+          331.08299999997826,
+          357.12499999999636
+        ]
+      }
+    },
+    {
+      "scenario": "flat",
+      "mode": "unctl",
+      "fibersPerField": {
+        "/a": 21,
+        "/b": 21,
+        "/o/x": 21,
+        "/o/y": 21
+      },
+      "fibersByPath": {
+        "(form)": {
+          "total": 26,
+          "components": {
+            "root": 2,
+            "Host": 1,
+            "memo:fwd:Anonymous": 1,
+            "fwd:Anonymous": 2,
+            "FormErrorContextProvider": 1,
+            "Provider": 8,
+            "ErrorBoundary": 1,
+            "fwd:FormContents": 1,
+            "WorkspaceContextProvider": 1,
+            "FormTypeInputsContextProvider": 1,
+            "FormTypeRendererContextProvider": 1,
+            "InputControlContextProvider": 1,
+            "VirtualizationContextProvider": 1,
+            "RootNodeContextProvider": 1,
+            "memo:Anonymous": 1,
+            "host:form": 1,
+            "SchemaNodeProxy": 1
+          }
+        },
+        "": {
+          "total": 15,
+          "components": {
+            "host:div": 2,
+            "memo:ErrorBoundary": 1,
+            "ErrorBoundary": 2,
+            "RendererWithErrorMessage": 1,
+            "memo:FormGroupRenderer": 1,
+            "Anonymous": 1,
+            "memo:Anonymous": 4,
+            "FormTypeInputBoundary": 1,
+            "Input": 1,
+            "FormTypeInputObject": 1
+          }
+        },
+        "/a": {
+          "total": 21,
+          "components": {
+            "SchemaNodeProxy": 1,
+            "root": 3,
+            "host:div": 3,
+            "memo:ErrorBoundary": 1,
+            "ErrorBoundary": 2,
+            "RendererWithErrorMessage": 1,
+            "memo:FormGroupRenderer": 1,
+            "host:label": 1,
+            "Anonymous": 1,
+            "memo:Anonymous": 1,
+            "FormTypeInputBoundary": 1,
+            "Input": 1,
+            "UnctlInput": 1,
+            "host:input": 1,
+            "host:br": 1,
+            "host:em": 1
+          }
+        },
+        "/b": {
+          "total": 21,
+          "components": {
+            "SchemaNodeProxy": 1,
+            "root": 3,
+            "host:div": 3,
+            "memo:ErrorBoundary": 1,
+            "ErrorBoundary": 2,
+            "RendererWithErrorMessage": 1,
+            "memo:FormGroupRenderer": 1,
+            "host:label": 1,
+            "Anonymous": 1,
+            "memo:Anonymous": 1,
+            "FormTypeInputBoundary": 1,
+            "Input": 1,
+            "UnctlInput": 1,
+            "host:input": 1,
+            "host:br": 1,
+            "host:em": 1
+          }
+        },
+        "/o": {
+          "total": 21,
+          "components": {
+            "SchemaNodeProxy": 1,
+            "root": 1,
+            "host:div": 4,
+            "memo:ErrorBoundary": 1,
+            "ErrorBoundary": 2,
+            "RendererWithErrorMessage": 1,
+            "memo:FormGroupRenderer": 1,
+            "host:fieldset": 1,
+            "host:legend": 1,
+            "host:em": 1,
+            "Anonymous": 1,
+            "memo:Anonymous": 3,
+            "FormTypeInputBoundary": 1,
+            "Input": 1,
+            "FormTypeInputObject": 1
+          }
+        },
+        "/o/x": {
+          "total": 21,
+          "components": {
+            "SchemaNodeProxy": 1,
+            "root": 3,
+            "host:div": 3,
+            "memo:ErrorBoundary": 1,
+            "ErrorBoundary": 2,
+            "RendererWithErrorMessage": 1,
+            "memo:FormGroupRenderer": 1,
+            "host:label": 1,
+            "Anonymous": 1,
+            "memo:Anonymous": 1,
+            "FormTypeInputBoundary": 1,
+            "Input": 1,
+            "UnctlInput": 1,
+            "host:input": 1,
+            "host:br": 1,
+            "host:em": 1
+          }
+        },
+        "/o/y": {
+          "total": 21,
+          "components": {
+            "SchemaNodeProxy": 1,
+            "root": 3,
+            "host:div": 3,
+            "memo:ErrorBoundary": 1,
+            "ErrorBoundary": 2,
+            "RendererWithErrorMessage": 1,
+            "memo:FormGroupRenderer": 1,
+            "host:label": 1,
+            "Anonymous": 1,
+            "memo:Anonymous": 1,
+            "FormTypeInputBoundary": 1,
+            "Input": 1,
+            "UnctlInput": 1,
+            "host:input": 1,
+            "host:br": 1,
+            "host:em": 1
+          }
+        }
+      },
+      "writes": [
+        {
+          "write": "input write /a",
+          "target": "/a",
+          "commits": 1,
+          "renders": {
+            "total": 20,
+            "byPath": {
+              "(form)": 1,
+              "": 9,
+              "/a": 10
+            },
+            "byComponent": {
+              "SchemaNodeProxy": {
+                "(form)": 1,
+                "/a": 1
+              },
+              "class:ErrorBoundary": {
+                "": 2,
+                "/a": 2
+              },
+              "RendererWithErrorMessage": {
+                "": 1,
+                "/a": 1
+              },
+              "memo:FormGroupRenderer": {
+                "": 1,
+                "/a": 1
+              },
+              "Anonymous": {
+                "": 1,
+                "/a": 1
+              },
+              "memo:Anonymous": {
+                "": 1,
+                "/a": 1
+              },
+              "FormTypeInputBoundary": {
+                "": 1,
+                "/a": 1
+              },
+              "Input": {
+                "": 1,
+                "/a": 1
+              },
+              "FormTypeInputObject": {
+                "": 1
+              },
+              "UnctlInput": {
+                "/a": 1
+              }
+            }
+          },
+          "fibersVisited": 62,
+          "fibersCreated": 0,
+          "remounts": [],
+          "newMounts": []
+        },
+        {
+          "write": "input write /a again",
+          "target": "/a",
+          "commits": 1,
+          "renders": {
+            "total": 20,
+            "byPath": {
+              "(form)": 1,
+              "": 9,
+              "/a": 10
+            },
+            "byComponent": {
+              "SchemaNodeProxy": {
+                "(form)": 1,
+                "/a": 1
+              },
+              "class:ErrorBoundary": {
+                "": 2,
+                "/a": 2
+              },
+              "RendererWithErrorMessage": {
+                "": 1,
+                "/a": 1
+              },
+              "memo:FormGroupRenderer": {
+                "": 1,
+                "/a": 1
+              },
+              "Anonymous": {
+                "": 1,
+                "/a": 1
+              },
+              "memo:Anonymous": {
+                "": 1,
+                "/a": 1
+              },
+              "FormTypeInputBoundary": {
+                "": 1,
+                "/a": 1
+              },
+              "Input": {
+                "": 1,
+                "/a": 1
+              },
+              "FormTypeInputObject": {
+                "": 1
+              },
+              "UnctlInput": {
+                "/a": 1
+              }
+            }
+          },
+          "fibersVisited": 62,
+          "fibersCreated": 0,
+          "remounts": [],
+          "newMounts": []
+        },
+        {
+          "write": "sibling setValue /b",
+          "target": "/b",
+          "commits": 1,
+          "renders": {
+            "total": 20,
+            "byPath": {
+              "(form)": 1,
+              "": 9,
+              "/b": 10
+            },
+            "byComponent": {
+              "SchemaNodeProxy": {
+                "(form)": 1,
+                "/b": 1
+              },
+              "class:ErrorBoundary": {
+                "": 2,
+                "/b": 2
+              },
+              "RendererWithErrorMessage": {
+                "": 1,
+                "/b": 1
+              },
+              "memo:FormGroupRenderer": {
+                "": 1,
+                "/b": 1
+              },
+              "Anonymous": {
+                "": 1,
+                "/b": 1
+              },
+              "memo:Anonymous": {
+                "": 1,
+                "/b": 1
+              },
+              "FormTypeInputBoundary": {
+                "": 1,
+                "/b": 1
+              },
+              "Input": {
+                "": 1,
+                "/b": 1
+              },
+              "FormTypeInputObject": {
+                "": 1
+              },
+              "UnctlInput": {
+                "/b": 1
+              }
+            }
+          },
+          "fibersVisited": 62,
+          "fibersCreated": 2,
+          "remounts": [
+            "/b"
+          ],
+          "newMounts": []
+        },
+        {
+          "write": "same-value setValue /b",
+          "target": "/b",
+          "commits": 0,
+          "renders": {
+            "total": 0,
+            "byPath": {},
+            "byComponent": {}
+          },
+          "fibersVisited": 0,
+          "fibersCreated": 0,
+          "remounts": [],
+          "newMounts": []
+        },
+        {
+          "write": "parent setValue /o (x only)",
+          "target": "/o/x",
+          "commits": 1,
+          "renders": {
+            "total": 30,
+            "byPath": {
+              "(form)": 1,
+              "": 9,
+              "/o": 10,
+              "/o/x": 10
+            },
+            "byComponent": {
+              "SchemaNodeProxy": {
+                "(form)": 1,
+                "/o": 1,
+                "/o/x": 1
+              },
+              "class:ErrorBoundary": {
+                "": 2,
+                "/o": 2,
+                "/o/x": 2
+              },
+              "RendererWithErrorMessage": {
+                "": 1,
+                "/o": 1,
+                "/o/x": 1
+              },
+              "memo:FormGroupRenderer": {
+                "": 1,
+                "/o": 1,
+                "/o/x": 1
+              },
+              "Anonymous": {
+                "": 1,
+                "/o": 1,
+                "/o/x": 1
+              },
+              "memo:Anonymous": {
+                "": 1,
+                "/o": 1,
+                "/o/x": 1
+              },
+              "FormTypeInputBoundary": {
+                "": 1,
+                "/o": 1,
+                "/o/x": 1
+              },
+              "Input": {
+                "": 1,
+                "/o": 1,
+                "/o/x": 1
+              },
+              "FormTypeInputObject": {
+                "": 1,
+                "/o": 1
+              },
+              "UnctlInput": {
+                "/o/x": 1
+              }
+            }
+          },
+          "fibersVisited": 83,
+          "fibersCreated": 2,
+          "remounts": [
+            "/o/x"
+          ],
+          "newMounts": []
+        },
+        {
+          "write": "whole setValue (a only)",
+          "target": "/a",
+          "commits": 1,
+          "renders": {
+            "total": 20,
+            "byPath": {
+              "(form)": 1,
+              "": 9,
+              "/a": 10
+            },
+            "byComponent": {
+              "SchemaNodeProxy": {
+                "(form)": 1,
+                "/a": 1
+              },
+              "class:ErrorBoundary": {
+                "": 2,
+                "/a": 2
+              },
+              "RendererWithErrorMessage": {
+                "": 1,
+                "/a": 1
+              },
+              "memo:FormGroupRenderer": {
+                "": 1,
+                "/a": 1
+              },
+              "Anonymous": {
+                "": 1,
+                "/a": 1
+              },
+              "memo:Anonymous": {
+                "": 1,
+                "/a": 1
+              },
+              "FormTypeInputBoundary": {
+                "": 1,
+                "/a": 1
+              },
+              "Input": {
+                "": 1,
+                "/a": 1
+              },
+              "FormTypeInputObject": {
+                "": 1
+              },
+              "UnctlInput": {
+                "/a": 1
+              }
+            }
+          },
+          "fibersVisited": 62,
+          "fibersCreated": 2,
+          "remounts": [
+            "/a"
+          ],
+          "newMounts": []
+        },
+        {
+          "write": "refresh /a",
+          "target": "/a",
+          "commits": 1,
+          "renders": {
+            "total": 5,
+            "byPath": {
+              "/a": 5
+            },
+            "byComponent": {
+              "memo:Anonymous": {
+                "/a": 1
+              },
+              "FormTypeInputBoundary": {
+                "/a": 1
+              },
+              "class:ErrorBoundary": {
+                "/a": 1
+              },
+              "Input": {
+                "/a": 1
+              },
+              "UnctlInput": {
+                "/a": 1
+              }
+            }
+          },
+          "fibersVisited": 60,
+          "fibersCreated": 2,
+          "remounts": [
+            "/a"
+          ],
+          "newMounts": []
+        },
+        {
+          "write": "showError(true)",
+          "target": null,
+          "commits": 1,
+          "renders": {
+            "total": 68,
+            "byPath": {
+              "(form)": 9,
+              "": 9,
+              "/a": 10,
+              "/b": 10,
+              "/o": 10,
+              "/o/x": 10,
+              "/o/y": 10
+            },
+            "byComponent": {
+              "fwd:FormContents": {
+                "(form)": 1
+              },
+              "WorkspaceContextProvider": {
+                "(form)": 1
+              },
+              "FormTypeInputsContextProvider": {
+                "(form)": 1
+              },
+              "FormTypeRendererContextProvider": {
+                "(form)": 1
+              },
+              "InputControlContextProvider": {
+                "(form)": 1
+              },
+              "VirtualizationContextProvider": {
+                "(form)": 1
+              },
+              "RootNodeContextProvider": {
+                "(form)": 1
+              },
+              "memo:Anonymous": {
+                "(form)": 1,
+                "": 1,
+                "/a": 1,
+                "/b": 1,
+                "/o": 1,
+                "/o/x": 1,
+                "/o/y": 1
+              },
+              "SchemaNodeProxy": {
+                "(form)": 1,
+                "/a": 1,
+                "/b": 1,
+                "/o": 1,
+                "/o/x": 1,
+                "/o/y": 1
+              },
+              "class:ErrorBoundary": {
+                "": 2,
+                "/a": 2,
+                "/b": 2,
+                "/o": 2,
+                "/o/x": 2,
+                "/o/y": 2
+              },
+              "RendererWithErrorMessage": {
+                "": 1,
+                "/a": 1,
+                "/b": 1,
+                "/o": 1,
+                "/o/x": 1,
+                "/o/y": 1
+              },
+              "memo:FormGroupRenderer": {
+                "": 1,
+                "/a": 1,
+                "/b": 1,
+                "/o": 1,
+                "/o/x": 1,
+                "/o/y": 1
+              },
+              "Anonymous": {
+                "": 1,
+                "/a": 1,
+                "/b": 1,
+                "/o": 1,
+                "/o/x": 1,
+                "/o/y": 1
+              },
+              "FormTypeInputBoundary": {
+                "": 1,
+                "/a": 1,
+                "/b": 1,
+                "/o": 1,
+                "/o/x": 1,
+                "/o/y": 1
+              },
+              "Input": {
+                "": 1,
+                "/a": 1,
+                "/b": 1,
+                "/o": 1,
+                "/o/x": 1,
+                "/o/y": 1
+              },
+              "FormTypeInputObject": {
+                "": 1,
+                "/o": 1
+              },
+              "UnctlInput": {
+                "/a": 1,
+                "/b": 1,
+                "/o/x": 1,
+                "/o/y": 1
+              }
+            }
+          },
+          "fibersVisited": 146,
+          "fibersCreated": 0,
+          "remounts": [],
+          "newMounts": []
+        },
+        {
+          "write": "Form context prop change",
+          "target": null,
+          "commits": 1,
+          "renders": {
+            "total": 73,
+            "byPath": {
+              "(form)": 14,
+              "": 9,
+              "/a": 10,
+              "/b": 10,
+              "/o": 10,
+              "/o/x": 10,
+              "/o/y": 10
+            },
+            "byComponent": {
+              "Host": {
+                "(form)": 1
+              },
+              "fwd:Anonymous": {
+                "(form)": 2
+              },
+              "FormErrorContextProvider": {
+                "(form)": 1
+              },
+              "class:ErrorBoundary": {
+                "(form)": 1,
+                "": 2,
+                "/a": 2,
+                "/b": 2,
+                "/o": 2,
+                "/o/x": 2,
+                "/o/y": 2
+              },
+              "fwd:FormContents": {
+                "(form)": 1
+              },
+              "WorkspaceContextProvider": {
+                "(form)": 1
+              },
+              "FormTypeInputsContextProvider": {
+                "(form)": 1
+              },
+              "FormTypeRendererContextProvider": {
+                "(form)": 1
+              },
+              "InputControlContextProvider": {
+                "(form)": 1
+              },
+              "VirtualizationContextProvider": {
+                "(form)": 1
+              },
+              "RootNodeContextProvider": {
+                "(form)": 1
+              },
+              "memo:Anonymous": {
+                "(form)": 1,
+                "": 1,
+                "/a": 1,
+                "/b": 1,
+                "/o": 1,
+                "/o/x": 1,
+                "/o/y": 1
+              },
+              "SchemaNodeProxy": {
+                "(form)": 1,
+                "/a": 1,
+                "/b": 1,
+                "/o": 1,
+                "/o/x": 1,
+                "/o/y": 1
+              },
+              "RendererWithErrorMessage": {
+                "": 1,
+                "/a": 1,
+                "/b": 1,
+                "/o": 1,
+                "/o/x": 1,
+                "/o/y": 1
+              },
+              "memo:FormGroupRenderer": {
+                "": 1,
+                "/a": 1,
+                "/b": 1,
+                "/o": 1,
+                "/o/x": 1,
+                "/o/y": 1
+              },
+              "Anonymous": {
+                "": 1,
+                "/a": 1,
+                "/b": 1,
+                "/o": 1,
+                "/o/x": 1,
+                "/o/y": 1
+              },
+              "FormTypeInputBoundary": {
+                "": 1,
+                "/a": 1,
+                "/b": 1,
+                "/o": 1,
+                "/o/x": 1,
+                "/o/y": 1
+              },
+              "Input": {
+                "": 1,
+                "/a": 1,
+                "/b": 1,
+                "/o": 1,
+                "/o/x": 1,
+                "/o/y": 1
+              },
+              "FormTypeInputObject": {
+                "": 1,
+                "/o": 1
+              },
+              "UnctlInput": {
+                "/a": 1,
+                "/b": 1,
+                "/o/x": 1,
+                "/o/y": 1
+              }
+            }
+          },
+          "fibersVisited": 146,
+          "fibersCreated": 0,
+          "remounts": [],
+          "newMounts": []
+        },
+        {
+          "write": "Form re-render, new inline onChange",
+          "target": null,
+          "commits": 1,
+          "renders": {
+            "total": 16,
+            "byPath": {
+              "(form)": 14,
+              "": 2
+            },
+            "byComponent": {
+              "Host": {
+                "(form)": 1
+              },
+              "fwd:Anonymous": {
+                "(form)": 2
+              },
+              "FormErrorContextProvider": {
+                "(form)": 1
+              },
+              "class:ErrorBoundary": {
+                "(form)": 1,
+                "": 1
+              },
+              "fwd:FormContents": {
+                "(form)": 1
+              },
+              "WorkspaceContextProvider": {
+                "(form)": 1
+              },
+              "FormTypeInputsContextProvider": {
+                "(form)": 1
+              },
+              "FormTypeRendererContextProvider": {
+                "(form)": 1
+              },
+              "InputControlContextProvider": {
+                "(form)": 1
+              },
+              "VirtualizationContextProvider": {
+                "(form)": 1
+              },
+              "RootNodeContextProvider": {
+                "(form)": 1
+              },
+              "memo:Anonymous": {
+                "(form)": 1
+              },
+              "SchemaNodeProxy": {
+                "(form)": 1
+              },
+              "RendererWithErrorMessage": {
+                "": 1
+              }
+            }
+          },
+          "fibersVisited": 31,
+          "fibersCreated": 0,
+          "remounts": [],
+          "newMounts": []
+        },
+        {
+          "write": "Form readOnly prop true",
+          "target": null,
+          "commits": 1,
+          "renders": {
+            "total": 46,
+            "byPath": {
+              "(form)": 14,
+              "": 7,
+              "/a": 5,
+              "/b": 5,
+              "/o": 5,
+              "/o/x": 5,
+              "/o/y": 5
+            },
+            "byComponent": {
+              "Host": {
+                "(form)": 1
+              },
+              "fwd:Anonymous": {
+                "(form)": 2
+              },
+              "FormErrorContextProvider": {
+                "(form)": 1
+              },
+              "class:ErrorBoundary": {
+                "(form)": 1,
+                "": 2,
+                "/a": 1,
+                "/b": 1,
+                "/o": 1,
+                "/o/x": 1,
+                "/o/y": 1
+              },
+              "fwd:FormContents": {
+                "(form)": 1
+              },
+              "WorkspaceContextProvider": {
+                "(form)": 1
+              },
+              "FormTypeInputsContextProvider": {
+                "(form)": 1
+              },
+              "FormTypeRendererContextProvider": {
+                "(form)": 1
+              },
+              "InputControlContextProvider": {
+                "(form)": 1
+              },
+              "VirtualizationContextProvider": {
+                "(form)": 1
+              },
+              "RootNodeContextProvider": {
+                "(form)": 1
+              },
+              "memo:Anonymous": {
+                "(form)": 1,
+                "": 1,
+                "/a": 1,
+                "/b": 1,
+                "/o": 1,
+                "/o/x": 1,
+                "/o/y": 1
+              },
+              "SchemaNodeProxy": {
+                "(form)": 1
+              },
+              "RendererWithErrorMessage": {
+                "": 1
+              },
+              "FormTypeInputBoundary": {
+                "": 1,
+                "/a": 1,
+                "/b": 1,
+                "/o": 1,
+                "/o/x": 1,
+                "/o/y": 1
+              },
+              "Input": {
+                "": 1,
+                "/a": 1,
+                "/b": 1,
+                "/o": 1,
+                "/o/x": 1,
+                "/o/y": 1
+              },
+              "FormTypeInputObject": {
+                "": 1,
+                "/o": 1
+              },
+              "UnctlInput": {
+                "/a": 1,
+                "/b": 1,
+                "/o/x": 1,
+                "/o/y": 1
+              }
+            }
+          },
+          "fibersVisited": 137,
+          "fibersCreated": 0,
+          "remounts": [],
+          "newMounts": []
+        },
+        {
+          "write": "reset()",
+          "target": null,
+          "commits": 1,
+          "renders": {
+            "total": 68,
+            "byPath": {
+              "(form)": 9,
+              "": 9,
+              "/a": 10,
+              "/b": 10,
+              "/o": 10,
+              "/o/x": 10,
+              "/o/y": 10
+            },
+            "byComponent": {
+              "fwd:FormContents": {
+                "(form)": 1
+              },
+              "WorkspaceContextProvider": {
+                "(form)": 1
+              },
+              "FormTypeInputsContextProvider": {
+                "(form)": 1
+              },
+              "FormTypeRendererContextProvider": {
+                "(form)": 1
+              },
+              "InputControlContextProvider": {
+                "(form)": 1
+              },
+              "VirtualizationContextProvider": {
+                "(form)": 1
+              },
+              "RootNodeContextProvider": {
+                "(form)": 1
+              },
+              "memo:Anonymous": {
+                "(form)": 1,
+                "": 1,
+                "/a": 1,
+                "/b": 1,
+                "/o": 1,
+                "/o/x": 1,
+                "/o/y": 1
+              },
+              "SchemaNodeProxy": {
+                "(form)": 1,
+                "/a": 1,
+                "/b": 1,
+                "/o": 1,
+                "/o/x": 1,
+                "/o/y": 1
+              },
+              "class:ErrorBoundary": {
+                "": 2,
+                "/a": 2,
+                "/b": 2,
+                "/o": 2,
+                "/o/x": 2,
+                "/o/y": 2
+              },
+              "RendererWithErrorMessage": {
+                "": 1,
+                "/a": 1,
+                "/b": 1,
+                "/o": 1,
+                "/o/x": 1,
+                "/o/y": 1
+              },
+              "memo:FormGroupRenderer": {
+                "": 1,
+                "/a": 1,
+                "/b": 1,
+                "/o": 1,
+                "/o/x": 1,
+                "/o/y": 1
+              },
+              "Anonymous": {
+                "": 1,
+                "/a": 1,
+                "/b": 1,
+                "/o": 1,
+                "/o/x": 1,
+                "/o/y": 1
+              },
+              "FormTypeInputBoundary": {
+                "": 1,
+                "/a": 1,
+                "/b": 1,
+                "/o": 1,
+                "/o/x": 1,
+                "/o/y": 1
+              },
+              "Input": {
+                "": 1,
+                "/a": 1,
+                "/b": 1,
+                "/o": 1,
+                "/o/x": 1,
+                "/o/y": 1
+              },
+              "FormTypeInputObject": {
+                "": 1,
+                "/o": 1
+              },
+              "UnctlInput": {
+                "/a": 1,
+                "/b": 1,
+                "/o/x": 1,
+                "/o/y": 1
+              }
+            }
+          },
+          "fibersVisited": 146,
+          "fibersCreated": 8,
+          "remounts": [
+            "/a",
+            "/b",
+            "/o/x",
+            "/o/y"
+          ],
+          "newMounts": []
+        }
+      ],
+      "refreshLatency": {
+        "unit": "µs",
+        "endpoint": "in-commit DOM input value setter/placement",
+        "operation": "external leaf setValue (automatic Refresh)",
+        "iterations": 8,
+        "median": 292.3330000000135,
+        "min": 228.50000000005366,
+        "max": 364.3329999999878,
+        "samples": [
+          298.041000000012,
+          364.3329999999878,
+          334.3330000000151,
+          286.625000000015,
+          302.7080000000524,
+          254.1659999999979,
+          228.50000000005366,
+          246.20800000002419
+        ]
+      }
+    },
+    {
+      "scenario": "array",
+      "mode": "ctl",
+      "fibersPerField": {
+        "/arr/0": 18,
+        "/arr/1": 18,
+        "/arr/2": 18
+      },
+      "fibersByPath": {
+        "(form)": {
+          "total": 26,
+          "components": {
+            "root": 2,
+            "Host": 1,
+            "memo:fwd:Anonymous": 1,
+            "fwd:Anonymous": 2,
+            "FormErrorContextProvider": 1,
+            "Provider": 8,
+            "ErrorBoundary": 1,
+            "fwd:FormContents": 1,
+            "WorkspaceContextProvider": 1,
+            "FormTypeInputsContextProvider": 1,
+            "FormTypeRendererContextProvider": 1,
+            "InputControlContextProvider": 1,
+            "VirtualizationContextProvider": 1,
+            "RootNodeContextProvider": 1,
+            "memo:Anonymous": 1,
+            "host:form": 1,
+            "SchemaNodeProxy": 1
+          }
+        },
+        "": {
+          "total": 13,
+          "components": {
+            "host:div": 2,
+            "memo:ErrorBoundary": 1,
+            "ErrorBoundary": 2,
+            "RendererWithErrorMessage": 1,
+            "memo:FormGroupRenderer": 1,
+            "Anonymous": 1,
+            "memo:Anonymous": 2,
+            "FormTypeInputBoundary": 1,
+            "Input": 1,
+            "FormTypeInputObject": 1
+          }
+        },
+        "/arr": {
+          "total": 42,
+          "components": {
+            "SchemaNodeProxy": 1,
+            "root": 2,
+            "host:div": 9,
+            "memo:ErrorBoundary": 1,
+            "ErrorBoundary": 2,
+            "RendererWithErrorMessage": 1,
+            "memo:FormGroupRenderer": 1,
+            "host:fieldset": 1,
+            "host:legend": 1,
+            "host:em": 1,
+            "Anonymous": 1,
+            "memo:Anonymous": 4,
+            "FormTypeInputBoundary": 1,
+            "Input": 1,
+            "FormTypeInputArray": 1,
+            "memo:ArrayItems2": 1,
+            "Button": 4,
+            "host:button": 4,
+            "host:span": 4,
+            "host:label": 1
+          }
+        },
+        "/arr/0": {
+          "total": 18,
+          "components": {
+            "SchemaNodeProxy": 1,
+            "root": 1,
+            "host:div": 3,
+            "memo:ErrorBoundary": 1,
+            "ErrorBoundary": 2,
+            "RendererWithErrorMessage": 1,
+            "memo:FormGroupRenderer": 1,
+            "Anonymous": 1,
+            "memo:Anonymous": 1,
+            "FormTypeInputBoundary": 1,
+            "Input": 1,
+            "CtlInput": 1,
+            "host:input": 1,
+            "host:br": 1,
+            "host:em": 1
+          }
+        },
+        "/arr/1": {
+          "total": 18,
+          "components": {
+            "SchemaNodeProxy": 1,
+            "root": 1,
+            "host:div": 3,
+            "memo:ErrorBoundary": 1,
+            "ErrorBoundary": 2,
+            "RendererWithErrorMessage": 1,
+            "memo:FormGroupRenderer": 1,
+            "Anonymous": 1,
+            "memo:Anonymous": 1,
+            "FormTypeInputBoundary": 1,
+            "Input": 1,
+            "CtlInput": 1,
+            "host:input": 1,
+            "host:br": 1,
+            "host:em": 1
+          }
+        },
+        "/arr/2": {
+          "total": 18,
+          "components": {
+            "SchemaNodeProxy": 1,
+            "root": 1,
+            "host:div": 3,
+            "memo:ErrorBoundary": 1,
+            "ErrorBoundary": 2,
+            "RendererWithErrorMessage": 1,
+            "memo:FormGroupRenderer": 1,
+            "Anonymous": 1,
+            "memo:Anonymous": 1,
+            "FormTypeInputBoundary": 1,
+            "Input": 1,
+            "CtlInput": 1,
+            "host:input": 1,
+            "host:br": 1,
+            "host:em": 1
+          }
+        }
+      },
+      "writes": [
+        {
+          "write": "push",
+          "target": "/arr",
+          "commits": 1,
+          "renders": {
+            "total": 37,
+            "byPath": {
+              "(form)": 1,
+              "": 9,
+              "/arr": 17,
+              "/arr/3": 10
+            },
+            "byComponent": {
+              "SchemaNodeProxy": {
+                "(form)": 1,
+                "/arr": 1,
+                "/arr/3": 1
+              },
+              "class:ErrorBoundary": {
+                "": 2,
+                "/arr": 2,
+                "/arr/3": 2
+              },
+              "RendererWithErrorMessage": {
+                "": 1,
+                "/arr": 1,
+                "/arr/3": 1
+              },
+              "memo:FormGroupRenderer": {
+                "": 1,
+                "/arr": 1,
+                "/arr/3": 1
+              },
+              "Anonymous": {
+                "": 1,
+                "/arr": 1,
+                "/arr/3": 1
+              },
+              "memo:Anonymous": {
+                "": 1,
+                "/arr": 2,
+                "/arr/3": 1
+              },
+              "FormTypeInputBoundary": {
+                "": 1,
+                "/arr": 1,
+                "/arr/3": 1
+              },
+              "Input": {
+                "": 1,
+                "/arr": 1,
+                "/arr/3": 1
+              },
+              "FormTypeInputObject": {
+                "": 1
+              },
+              "FormTypeInputArray": {
+                "/arr": 1
+              },
+              "memo:ArrayItems2": {
+                "/arr": 1
+              },
+              "Button": {
+                "/arr": 5
+              },
+              "CtlInput": {
+                "/arr/3": 1
+              }
+            }
+          },
+          "fibersVisited": 104,
+          "fibersCreated": 23,
+          "remounts": [],
+          "newMounts": [
+            "/arr/3"
+          ]
+        },
+        {
+          "write": "push again",
+          "target": "/arr",
+          "commits": 1,
+          "renders": {
+            "total": 38,
+            "byPath": {
+              "(form)": 1,
+              "": 9,
+              "/arr": 18,
+              "/arr/4": 10
+            },
+            "byComponent": {
+              "SchemaNodeProxy": {
+                "(form)": 1,
+                "/arr": 1,
+                "/arr/4": 1
+              },
+              "class:ErrorBoundary": {
+                "": 2,
+                "/arr": 2,
+                "/arr/4": 2
+              },
+              "RendererWithErrorMessage": {
+                "": 1,
+                "/arr": 1,
+                "/arr/4": 1
+              },
+              "memo:FormGroupRenderer": {
+                "": 1,
+                "/arr": 1,
+                "/arr/4": 1
+              },
+              "Anonymous": {
+                "": 1,
+                "/arr": 1,
+                "/arr/4": 1
+              },
+              "memo:Anonymous": {
+                "": 1,
+                "/arr": 2,
+                "/arr/4": 1
+              },
+              "FormTypeInputBoundary": {
+                "": 1,
+                "/arr": 1,
+                "/arr/4": 1
+              },
+              "Input": {
+                "": 1,
+                "/arr": 1,
+                "/arr/4": 1
+              },
+              "FormTypeInputObject": {
+                "": 1
+              },
+              "FormTypeInputArray": {
+                "/arr": 1
+              },
+              "memo:ArrayItems2": {
+                "/arr": 1
+              },
+              "Button": {
+                "/arr": 6
+              },
+              "CtlInput": {
+                "/arr/4": 1
+              }
+            }
+          },
+          "fibersVisited": 109,
+          "fibersCreated": 23,
+          "remounts": [],
+          "newMounts": [
+            "/arr/4"
+          ]
+        },
+        {
+          "write": "remove(0)",
+          "target": "/arr",
+          "commits": 1,
+          "renders": {
+            "total": 66,
+            "byPath": {
+              "(form)": 1,
+              "": 9,
+              "/arr": 16,
+              "/arr/0": 10,
+              "/arr/1": 10,
+              "/arr/2": 10,
+              "/arr/3": 10
+            },
+            "byComponent": {
+              "SchemaNodeProxy": {
+                "(form)": 1,
+                "/arr": 1,
+                "/arr/0": 1,
+                "/arr/1": 1,
+                "/arr/2": 1,
+                "/arr/3": 1
+              },
+              "class:ErrorBoundary": {
+                "": 2,
+                "/arr": 2,
+                "/arr/0": 2,
+                "/arr/1": 2,
+                "/arr/2": 2,
+                "/arr/3": 2
+              },
+              "RendererWithErrorMessage": {
+                "": 1,
+                "/arr": 1,
+                "/arr/0": 1,
+                "/arr/1": 1,
+                "/arr/2": 1,
+                "/arr/3": 1
+              },
+              "memo:FormGroupRenderer": {
+                "": 1,
+                "/arr": 1,
+                "/arr/0": 1,
+                "/arr/1": 1,
+                "/arr/2": 1,
+                "/arr/3": 1
+              },
+              "Anonymous": {
+                "": 1,
+                "/arr": 1,
+                "/arr/0": 1,
+                "/arr/1": 1,
+                "/arr/2": 1,
+                "/arr/3": 1
+              },
+              "memo:Anonymous": {
+                "": 1,
+                "/arr": 1,
+                "/arr/0": 1,
+                "/arr/1": 1,
+                "/arr/2": 1,
+                "/arr/3": 1
+              },
+              "FormTypeInputBoundary": {
+                "": 1,
+                "/arr": 1,
+                "/arr/0": 1,
+                "/arr/1": 1,
+                "/arr/2": 1,
+                "/arr/3": 1
+              },
+              "Input": {
+                "": 1,
+                "/arr": 1,
+                "/arr/0": 1,
+                "/arr/1": 1,
+                "/arr/2": 1,
+                "/arr/3": 1
+              },
+              "FormTypeInputObject": {
+                "": 1
+              },
+              "FormTypeInputArray": {
+                "/arr": 1
+              },
+              "memo:ArrayItems2": {
+                "/arr": 1
+              },
+              "CtlInput": {
+                "/arr/0": 1,
+                "/arr/1": 1,
+                "/arr/2": 1,
+                "/arr/3": 1
+              },
+              "Button": {
+                "/arr": 5
+              }
+            }
+          },
+          "fibersVisited": 158,
+          "fibersCreated": 0,
+          "remounts": [],
+          "newMounts": []
+        },
+        {
+          "write": "remove(last)",
+          "target": "/arr",
+          "commits": 1,
+          "renders": {
+            "total": 25,
+            "byPath": {
+              "(form)": 1,
+              "": 9,
+              "/arr": 15
+            },
+            "byComponent": {
+              "SchemaNodeProxy": {
+                "(form)": 1,
+                "/arr": 1
+              },
+              "class:ErrorBoundary": {
+                "": 2,
+                "/arr": 2
+              },
+              "RendererWithErrorMessage": {
+                "": 1,
+                "/arr": 1
+              },
+              "memo:FormGroupRenderer": {
+                "": 1,
+                "/arr": 1
+              },
+              "Anonymous": {
+                "": 1,
+                "/arr": 1
+              },
+              "memo:Anonymous": {
+                "": 1,
+                "/arr": 1
+              },
+              "FormTypeInputBoundary": {
+                "": 1,
+                "/arr": 1
+              },
+              "Input": {
+                "": 1,
+                "/arr": 1
+              },
+              "FormTypeInputObject": {
+                "": 1
+              },
+              "FormTypeInputArray": {
+                "/arr": 1
+              },
+              "memo:ArrayItems2": {
+                "/arr": 1
+              },
+              "Button": {
+                "/arr": 4
+              }
+            }
+          },
+          "fibersVisited": 81,
+          "fibersCreated": 0,
+          "remounts": [],
+          "newMounts": []
+        },
+        {
+          "write": "replace setValue (+1 item)",
+          "target": "/arr",
+          "commits": 1,
+          "renders": {
+            "total": 37,
+            "byPath": {
+              "(form)": 1,
+              "": 9,
+              "/arr": 17,
+              "/arr/3": 10
+            },
+            "byComponent": {
+              "SchemaNodeProxy": {
+                "(form)": 1,
+                "/arr": 1,
+                "/arr/3": 1
+              },
+              "class:ErrorBoundary": {
+                "": 2,
+                "/arr": 2,
+                "/arr/3": 2
+              },
+              "RendererWithErrorMessage": {
+                "": 1,
+                "/arr": 1,
+                "/arr/3": 1
+              },
+              "memo:FormGroupRenderer": {
+                "": 1,
+                "/arr": 1,
+                "/arr/3": 1
+              },
+              "Anonymous": {
+                "": 1,
+                "/arr": 1,
+                "/arr/3": 1
+              },
+              "memo:Anonymous": {
+                "": 1,
+                "/arr": 2,
+                "/arr/3": 1
+              },
+              "FormTypeInputBoundary": {
+                "": 1,
+                "/arr": 1,
+                "/arr/3": 1
+              },
+              "Input": {
+                "": 1,
+                "/arr": 1,
+                "/arr/3": 1
+              },
+              "FormTypeInputObject": {
+                "": 1
+              },
+              "FormTypeInputArray": {
+                "/arr": 1
+              },
+              "memo:ArrayItems2": {
+                "/arr": 1
+              },
+              "Button": {
+                "/arr": 5
+              },
+              "CtlInput": {
+                "/arr/3": 1
+              }
+            }
+          },
+          "fibersVisited": 104,
+          "fibersCreated": 23,
+          "remounts": [],
+          "newMounts": [
+            "/arr/3"
+          ]
+        },
+        {
+          "write": "replace setValue (all new values)",
+          "target": "/arr",
+          "commits": 1,
+          "renders": {
+            "total": 60,
+            "byPath": {
+              "(form)": 1,
+              "": 9,
+              "/arr": 10,
+              "/arr/0": 10,
+              "/arr/1": 10,
+              "/arr/2": 10,
+              "/arr/3": 10
+            },
+            "byComponent": {
+              "SchemaNodeProxy": {
+                "(form)": 1,
+                "/arr": 1,
+                "/arr/0": 1,
+                "/arr/1": 1,
+                "/arr/2": 1,
+                "/arr/3": 1
+              },
+              "class:ErrorBoundary": {
+                "": 2,
+                "/arr": 2,
+                "/arr/0": 2,
+                "/arr/1": 2,
+                "/arr/2": 2,
+                "/arr/3": 2
+              },
+              "RendererWithErrorMessage": {
+                "": 1,
+                "/arr": 1,
+                "/arr/0": 1,
+                "/arr/1": 1,
+                "/arr/2": 1,
+                "/arr/3": 1
+              },
+              "memo:FormGroupRenderer": {
+                "": 1,
+                "/arr": 1,
+                "/arr/0": 1,
+                "/arr/1": 1,
+                "/arr/2": 1,
+                "/arr/3": 1
+              },
+              "Anonymous": {
+                "": 1,
+                "/arr": 1,
+                "/arr/0": 1,
+                "/arr/1": 1,
+                "/arr/2": 1,
+                "/arr/3": 1
+              },
+              "memo:Anonymous": {
+                "": 1,
+                "/arr": 1,
+                "/arr/0": 1,
+                "/arr/1": 1,
+                "/arr/2": 1,
+                "/arr/3": 1
+              },
+              "FormTypeInputBoundary": {
+                "": 1,
+                "/arr": 1,
+                "/arr/0": 1,
+                "/arr/1": 1,
+                "/arr/2": 1,
+                "/arr/3": 1
+              },
+              "Input": {
+                "": 1,
+                "/arr": 1,
+                "/arr/0": 1,
+                "/arr/1": 1,
+                "/arr/2": 1,
+                "/arr/3": 1
+              },
+              "FormTypeInputObject": {
+                "": 1
+              },
+              "FormTypeInputArray": {
+                "/arr": 1
+              },
+              "CtlInput": {
+                "/arr/0": 1,
+                "/arr/1": 1,
+                "/arr/2": 1,
+                "/arr/3": 1
+              }
+            }
+          },
+          "fibersVisited": 146,
+          "fibersCreated": 8,
+          "remounts": [
+            "/arr/0",
+            "/arr/1",
+            "/arr/2",
+            "/arr/3"
+          ],
+          "newMounts": []
+        }
+      ],
+      "refreshLatency": {
+        "unit": "µs",
+        "endpoint": "in-commit DOM input value setter/placement",
+        "operation": "external leaf setValue (automatic Refresh)",
+        "iterations": 8,
+        "median": 298.31250000000864,
+        "min": 278.12499999998863,
+        "max": 553.2910000000015,
+        "samples": [
+          553.2910000000015,
+          311.6250000000491,
+          286.66700000002265,
+          278.12499999998863,
+          299.9590000000012,
+          288.04200000001856,
+          296.6660000000161,
+          397.5409999999897
+        ]
+      }
+    },
+    {
+      "scenario": "array",
+      "mode": "unctl",
+      "fibersPerField": {
+        "/arr/0": 18,
+        "/arr/1": 18,
+        "/arr/2": 18
+      },
+      "fibersByPath": {
+        "(form)": {
+          "total": 26,
+          "components": {
+            "root": 2,
+            "Host": 1,
+            "memo:fwd:Anonymous": 1,
+            "fwd:Anonymous": 2,
+            "FormErrorContextProvider": 1,
+            "Provider": 8,
+            "ErrorBoundary": 1,
+            "fwd:FormContents": 1,
+            "WorkspaceContextProvider": 1,
+            "FormTypeInputsContextProvider": 1,
+            "FormTypeRendererContextProvider": 1,
+            "InputControlContextProvider": 1,
+            "VirtualizationContextProvider": 1,
+            "RootNodeContextProvider": 1,
+            "memo:Anonymous": 1,
+            "host:form": 1,
+            "SchemaNodeProxy": 1
+          }
+        },
+        "": {
+          "total": 13,
+          "components": {
+            "host:div": 2,
+            "memo:ErrorBoundary": 1,
+            "ErrorBoundary": 2,
+            "RendererWithErrorMessage": 1,
+            "memo:FormGroupRenderer": 1,
+            "Anonymous": 1,
+            "memo:Anonymous": 2,
+            "FormTypeInputBoundary": 1,
+            "Input": 1,
+            "FormTypeInputObject": 1
+          }
+        },
+        "/arr": {
+          "total": 42,
+          "components": {
+            "SchemaNodeProxy": 1,
+            "root": 2,
+            "host:div": 9,
+            "memo:ErrorBoundary": 1,
+            "ErrorBoundary": 2,
+            "RendererWithErrorMessage": 1,
+            "memo:FormGroupRenderer": 1,
+            "host:fieldset": 1,
+            "host:legend": 1,
+            "host:em": 1,
+            "Anonymous": 1,
+            "memo:Anonymous": 4,
+            "FormTypeInputBoundary": 1,
+            "Input": 1,
+            "FormTypeInputArray": 1,
+            "memo:ArrayItems2": 1,
+            "Button": 4,
+            "host:button": 4,
+            "host:span": 4,
+            "host:label": 1
+          }
+        },
+        "/arr/0": {
+          "total": 18,
+          "components": {
+            "SchemaNodeProxy": 1,
+            "root": 1,
+            "host:div": 3,
+            "memo:ErrorBoundary": 1,
+            "ErrorBoundary": 2,
+            "RendererWithErrorMessage": 1,
+            "memo:FormGroupRenderer": 1,
+            "Anonymous": 1,
+            "memo:Anonymous": 1,
+            "FormTypeInputBoundary": 1,
+            "Input": 1,
+            "UnctlInput": 1,
+            "host:input": 1,
+            "host:br": 1,
+            "host:em": 1
+          }
+        },
+        "/arr/1": {
+          "total": 18,
+          "components": {
+            "SchemaNodeProxy": 1,
+            "root": 1,
+            "host:div": 3,
+            "memo:ErrorBoundary": 1,
+            "ErrorBoundary": 2,
+            "RendererWithErrorMessage": 1,
+            "memo:FormGroupRenderer": 1,
+            "Anonymous": 1,
+            "memo:Anonymous": 1,
+            "FormTypeInputBoundary": 1,
+            "Input": 1,
+            "UnctlInput": 1,
+            "host:input": 1,
+            "host:br": 1,
+            "host:em": 1
+          }
+        },
+        "/arr/2": {
+          "total": 18,
+          "components": {
+            "SchemaNodeProxy": 1,
+            "root": 1,
+            "host:div": 3,
+            "memo:ErrorBoundary": 1,
+            "ErrorBoundary": 2,
+            "RendererWithErrorMessage": 1,
+            "memo:FormGroupRenderer": 1,
+            "Anonymous": 1,
+            "memo:Anonymous": 1,
+            "FormTypeInputBoundary": 1,
+            "Input": 1,
+            "UnctlInput": 1,
+            "host:input": 1,
+            "host:br": 1,
+            "host:em": 1
+          }
+        }
+      },
+      "writes": [
+        {
+          "write": "push",
+          "target": "/arr",
+          "commits": 1,
+          "renders": {
+            "total": 37,
+            "byPath": {
+              "(form)": 1,
+              "": 9,
+              "/arr": 17,
+              "/arr/3": 10
+            },
+            "byComponent": {
+              "SchemaNodeProxy": {
+                "(form)": 1,
+                "/arr": 1,
+                "/arr/3": 1
+              },
+              "class:ErrorBoundary": {
+                "": 2,
+                "/arr": 2,
+                "/arr/3": 2
+              },
+              "RendererWithErrorMessage": {
+                "": 1,
+                "/arr": 1,
+                "/arr/3": 1
+              },
+              "memo:FormGroupRenderer": {
+                "": 1,
+                "/arr": 1,
+                "/arr/3": 1
+              },
+              "Anonymous": {
+                "": 1,
+                "/arr": 1,
+                "/arr/3": 1
+              },
+              "memo:Anonymous": {
+                "": 1,
+                "/arr": 2,
+                "/arr/3": 1
+              },
+              "FormTypeInputBoundary": {
+                "": 1,
+                "/arr": 1,
+                "/arr/3": 1
+              },
+              "Input": {
+                "": 1,
+                "/arr": 1,
+                "/arr/3": 1
+              },
+              "FormTypeInputObject": {
+                "": 1
+              },
+              "FormTypeInputArray": {
+                "/arr": 1
+              },
+              "memo:ArrayItems2": {
+                "/arr": 1
+              },
+              "Button": {
+                "/arr": 5
+              },
+              "UnctlInput": {
+                "/arr/3": 1
+              }
+            }
+          },
+          "fibersVisited": 104,
+          "fibersCreated": 23,
+          "remounts": [],
+          "newMounts": [
+            "/arr/3"
+          ]
+        },
+        {
+          "write": "push again",
+          "target": "/arr",
+          "commits": 1,
+          "renders": {
+            "total": 38,
+            "byPath": {
+              "(form)": 1,
+              "": 9,
+              "/arr": 18,
+              "/arr/4": 10
+            },
+            "byComponent": {
+              "SchemaNodeProxy": {
+                "(form)": 1,
+                "/arr": 1,
+                "/arr/4": 1
+              },
+              "class:ErrorBoundary": {
+                "": 2,
+                "/arr": 2,
+                "/arr/4": 2
+              },
+              "RendererWithErrorMessage": {
+                "": 1,
+                "/arr": 1,
+                "/arr/4": 1
+              },
+              "memo:FormGroupRenderer": {
+                "": 1,
+                "/arr": 1,
+                "/arr/4": 1
+              },
+              "Anonymous": {
+                "": 1,
+                "/arr": 1,
+                "/arr/4": 1
+              },
+              "memo:Anonymous": {
+                "": 1,
+                "/arr": 2,
+                "/arr/4": 1
+              },
+              "FormTypeInputBoundary": {
+                "": 1,
+                "/arr": 1,
+                "/arr/4": 1
+              },
+              "Input": {
+                "": 1,
+                "/arr": 1,
+                "/arr/4": 1
+              },
+              "FormTypeInputObject": {
+                "": 1
+              },
+              "FormTypeInputArray": {
+                "/arr": 1
+              },
+              "memo:ArrayItems2": {
+                "/arr": 1
+              },
+              "Button": {
+                "/arr": 6
+              },
+              "UnctlInput": {
+                "/arr/4": 1
+              }
+            }
+          },
+          "fibersVisited": 109,
+          "fibersCreated": 23,
+          "remounts": [],
+          "newMounts": [
+            "/arr/4"
+          ]
+        },
+        {
+          "write": "remove(0)",
+          "target": "/arr",
+          "commits": 1,
+          "renders": {
+            "total": 66,
+            "byPath": {
+              "(form)": 1,
+              "": 9,
+              "/arr": 16,
+              "/arr/0": 10,
+              "/arr/1": 10,
+              "/arr/2": 10,
+              "/arr/3": 10
+            },
+            "byComponent": {
+              "SchemaNodeProxy": {
+                "(form)": 1,
+                "/arr": 1,
+                "/arr/0": 1,
+                "/arr/1": 1,
+                "/arr/2": 1,
+                "/arr/3": 1
+              },
+              "class:ErrorBoundary": {
+                "": 2,
+                "/arr": 2,
+                "/arr/0": 2,
+                "/arr/1": 2,
+                "/arr/2": 2,
+                "/arr/3": 2
+              },
+              "RendererWithErrorMessage": {
+                "": 1,
+                "/arr": 1,
+                "/arr/0": 1,
+                "/arr/1": 1,
+                "/arr/2": 1,
+                "/arr/3": 1
+              },
+              "memo:FormGroupRenderer": {
+                "": 1,
+                "/arr": 1,
+                "/arr/0": 1,
+                "/arr/1": 1,
+                "/arr/2": 1,
+                "/arr/3": 1
+              },
+              "Anonymous": {
+                "": 1,
+                "/arr": 1,
+                "/arr/0": 1,
+                "/arr/1": 1,
+                "/arr/2": 1,
+                "/arr/3": 1
+              },
+              "memo:Anonymous": {
+                "": 1,
+                "/arr": 1,
+                "/arr/0": 1,
+                "/arr/1": 1,
+                "/arr/2": 1,
+                "/arr/3": 1
+              },
+              "FormTypeInputBoundary": {
+                "": 1,
+                "/arr": 1,
+                "/arr/0": 1,
+                "/arr/1": 1,
+                "/arr/2": 1,
+                "/arr/3": 1
+              },
+              "Input": {
+                "": 1,
+                "/arr": 1,
+                "/arr/0": 1,
+                "/arr/1": 1,
+                "/arr/2": 1,
+                "/arr/3": 1
+              },
+              "FormTypeInputObject": {
+                "": 1
+              },
+              "FormTypeInputArray": {
+                "/arr": 1
+              },
+              "memo:ArrayItems2": {
+                "/arr": 1
+              },
+              "UnctlInput": {
+                "/arr/0": 1,
+                "/arr/1": 1,
+                "/arr/2": 1,
+                "/arr/3": 1
+              },
+              "Button": {
+                "/arr": 5
+              }
+            }
+          },
+          "fibersVisited": 158,
+          "fibersCreated": 0,
+          "remounts": [],
+          "newMounts": []
+        },
+        {
+          "write": "remove(last)",
+          "target": "/arr",
+          "commits": 1,
+          "renders": {
+            "total": 25,
+            "byPath": {
+              "(form)": 1,
+              "": 9,
+              "/arr": 15
+            },
+            "byComponent": {
+              "SchemaNodeProxy": {
+                "(form)": 1,
+                "/arr": 1
+              },
+              "class:ErrorBoundary": {
+                "": 2,
+                "/arr": 2
+              },
+              "RendererWithErrorMessage": {
+                "": 1,
+                "/arr": 1
+              },
+              "memo:FormGroupRenderer": {
+                "": 1,
+                "/arr": 1
+              },
+              "Anonymous": {
+                "": 1,
+                "/arr": 1
+              },
+              "memo:Anonymous": {
+                "": 1,
+                "/arr": 1
+              },
+              "FormTypeInputBoundary": {
+                "": 1,
+                "/arr": 1
+              },
+              "Input": {
+                "": 1,
+                "/arr": 1
+              },
+              "FormTypeInputObject": {
+                "": 1
+              },
+              "FormTypeInputArray": {
+                "/arr": 1
+              },
+              "memo:ArrayItems2": {
+                "/arr": 1
+              },
+              "Button": {
+                "/arr": 4
+              }
+            }
+          },
+          "fibersVisited": 81,
+          "fibersCreated": 0,
+          "remounts": [],
+          "newMounts": []
+        },
+        {
+          "write": "replace setValue (+1 item)",
+          "target": "/arr",
+          "commits": 1,
+          "renders": {
+            "total": 37,
+            "byPath": {
+              "(form)": 1,
+              "": 9,
+              "/arr": 17,
+              "/arr/3": 10
+            },
+            "byComponent": {
+              "SchemaNodeProxy": {
+                "(form)": 1,
+                "/arr": 1,
+                "/arr/3": 1
+              },
+              "class:ErrorBoundary": {
+                "": 2,
+                "/arr": 2,
+                "/arr/3": 2
+              },
+              "RendererWithErrorMessage": {
+                "": 1,
+                "/arr": 1,
+                "/arr/3": 1
+              },
+              "memo:FormGroupRenderer": {
+                "": 1,
+                "/arr": 1,
+                "/arr/3": 1
+              },
+              "Anonymous": {
+                "": 1,
+                "/arr": 1,
+                "/arr/3": 1
+              },
+              "memo:Anonymous": {
+                "": 1,
+                "/arr": 2,
+                "/arr/3": 1
+              },
+              "FormTypeInputBoundary": {
+                "": 1,
+                "/arr": 1,
+                "/arr/3": 1
+              },
+              "Input": {
+                "": 1,
+                "/arr": 1,
+                "/arr/3": 1
+              },
+              "FormTypeInputObject": {
+                "": 1
+              },
+              "FormTypeInputArray": {
+                "/arr": 1
+              },
+              "memo:ArrayItems2": {
+                "/arr": 1
+              },
+              "Button": {
+                "/arr": 5
+              },
+              "UnctlInput": {
+                "/arr/3": 1
+              }
+            }
+          },
+          "fibersVisited": 104,
+          "fibersCreated": 23,
+          "remounts": [],
+          "newMounts": [
+            "/arr/3"
+          ]
+        },
+        {
+          "write": "replace setValue (all new values)",
+          "target": "/arr",
+          "commits": 1,
+          "renders": {
+            "total": 60,
+            "byPath": {
+              "(form)": 1,
+              "": 9,
+              "/arr": 10,
+              "/arr/0": 10,
+              "/arr/1": 10,
+              "/arr/2": 10,
+              "/arr/3": 10
+            },
+            "byComponent": {
+              "SchemaNodeProxy": {
+                "(form)": 1,
+                "/arr": 1,
+                "/arr/0": 1,
+                "/arr/1": 1,
+                "/arr/2": 1,
+                "/arr/3": 1
+              },
+              "class:ErrorBoundary": {
+                "": 2,
+                "/arr": 2,
+                "/arr/0": 2,
+                "/arr/1": 2,
+                "/arr/2": 2,
+                "/arr/3": 2
+              },
+              "RendererWithErrorMessage": {
+                "": 1,
+                "/arr": 1,
+                "/arr/0": 1,
+                "/arr/1": 1,
+                "/arr/2": 1,
+                "/arr/3": 1
+              },
+              "memo:FormGroupRenderer": {
+                "": 1,
+                "/arr": 1,
+                "/arr/0": 1,
+                "/arr/1": 1,
+                "/arr/2": 1,
+                "/arr/3": 1
+              },
+              "Anonymous": {
+                "": 1,
+                "/arr": 1,
+                "/arr/0": 1,
+                "/arr/1": 1,
+                "/arr/2": 1,
+                "/arr/3": 1
+              },
+              "memo:Anonymous": {
+                "": 1,
+                "/arr": 1,
+                "/arr/0": 1,
+                "/arr/1": 1,
+                "/arr/2": 1,
+                "/arr/3": 1
+              },
+              "FormTypeInputBoundary": {
+                "": 1,
+                "/arr": 1,
+                "/arr/0": 1,
+                "/arr/1": 1,
+                "/arr/2": 1,
+                "/arr/3": 1
+              },
+              "Input": {
+                "": 1,
+                "/arr": 1,
+                "/arr/0": 1,
+                "/arr/1": 1,
+                "/arr/2": 1,
+                "/arr/3": 1
+              },
+              "FormTypeInputObject": {
+                "": 1
+              },
+              "FormTypeInputArray": {
+                "/arr": 1
+              },
+              "UnctlInput": {
+                "/arr/0": 1,
+                "/arr/1": 1,
+                "/arr/2": 1,
+                "/arr/3": 1
+              }
+            }
+          },
+          "fibersVisited": 146,
+          "fibersCreated": 8,
+          "remounts": [
+            "/arr/0",
+            "/arr/1",
+            "/arr/2",
+            "/arr/3"
+          ],
+          "newMounts": []
+        }
+      ],
+      "refreshLatency": {
+        "unit": "µs",
+        "endpoint": "in-commit DOM input value setter/placement",
+        "operation": "external leaf setValue (automatic Refresh)",
+        "iterations": 8,
+        "median": 321.8960000000095,
+        "min": 287.0420000000422,
+        "max": 385.12500000001637,
+        "samples": [
+          385.12500000001637,
+          377.4999999999977,
+          371.0829999999987,
+          305.54200000000264,
+          332.54199999998946,
+          311.25000000002956,
+          287.0420000000422,
+          301.62500000000136
+        ]
+      }
+    }
+  ]
+}
