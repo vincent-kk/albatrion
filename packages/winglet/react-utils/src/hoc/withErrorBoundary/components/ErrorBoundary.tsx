@@ -29,6 +29,9 @@ const FALLBACK = <FallbackMessage />;
 /**
  * Error boundary component that catches JavaScript errors during component rendering and displays fallback UI.
  * Prevents the entire application from crashing when errors occur in child components.
+ * Renders `children` unchanged until a descendant throws while rendering; afterwards it renders `fallback`
+ * (the default message when `fallback` is undefined) and calls `onError` with the error and component stack.
+ * Props: `children` (required), `fallback` (optional node), `onError` (optional reporter).
  * @example
  * <ErrorBoundary fallback={<CustomErrorUI />}>
  *   <MyComponent />

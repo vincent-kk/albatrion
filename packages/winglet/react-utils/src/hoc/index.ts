@@ -1,4 +1,5 @@
 export {
+  ErrorBoundary,
   type ErrorBoundaryReporter,
   type UseErrorBoundaryReporter,
   withErrorBoundary,
