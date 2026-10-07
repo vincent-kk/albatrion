@@ -7,6 +7,8 @@
 ## API Contracts
 
 - 입력 선택은 인라인 지정, 입력 맵, 내부 정의, 외부 정의, 플러그인 fallback의 우선순위를 유지합니다.
+- 모든 입력 공급 경로와 preferred/override 입력은 해석 지점에서 한 번 적용한 `withErrorBoundary`의 인스턴스를 Refresh 동안 유지합니다. 자동 Refresh와 명시 `refresh`는 실패한 경계의 상태를 풀지 않으며, `RequestRemount`와 `<Form key>`만 경계를 다시 마운트하여 실패 상태를 해제합니다(EVENT-039·040·042·070, 112C-01).
+- Refresh key는 오류 경계 안의 원본 사용자 입력 하나에만 적용합니다. 사설 어댑터는 `useFormTypeInputControl`이 반환한 적용 세대를 key로 사용하고 세대 prop을 사용자 입력에 전달하지 않습니다. 노드의 원시 Refresh 개정은 key로 직접 읽지 않으므로 IME 조합과 마운트된 자식 프록시가 보류한 세대를 유지합니다. 비제어 입력은 다시 마운트할 때 커밋된 defaultValue를 읽고 해당 입력의 캐럿·선택·IME 상태만 버립니다(EVENT-039·065, REACT-024·028).
 - 첫 마운트의 자식 layout effect에서 호출한 입력 onChange도 Context의 살아 있는 노드에 기록되며 부모 binding 준비 순서 때문에 버리지 않습니다(WRITE-046).
 - 사용자 변경은 폼 전체 잠금과 노드의 읽기 전용·disabled 상태를 확인합니다. `handleChange`는 한 `batch` 안에서 ① `writeSchemaNodeInput`으로 값 쓰기 ② 외부 오류 지움 ③ dirty 표시를 수행합니다. 세 단계 전체가 사슬 진입의 입력 출처 표식을 가지며 공개 옵션 비트를 더하지 않습니다. 사슬 끝에서 던지는 오류가 있어도 이미 표시한 dirty를 보존하고, 폐기된 노드의 표식 있는 세 단계는 조용히 버립니다(REACT-009–011, 69C-01·02).
 - 흐림 처리는 `Blurred` 발행 대신 `finishSchemaNodeInput`으로 입력 마침을 전달합니다. 문자열 행의 `finishInput`이 `options.trim` 자동 쓰기를 판단하고 외부 오류·dirty는 유지합니다(WRITE-083, LANDING-067).
@@ -25,9 +27,10 @@
 
 - 언마운트하면 해당 경로의 첨부 파일 상태를 제거합니다.
 - refresh는 자식 프록시 마운트 판정에 따라 입력 버전을 갱신하고 focus/select는 해당 입력의 DOM 명령으로 연결됩니다(REACT-028, EVENT-063).
+- 실패한 입력은 피어 쓰기의 자동 Refresh와 명시 Refresh 뒤에도 fallback을 유지하고, RequestRemount 또는 폼 key 교체 뒤에는 다시 실행됩니다. 정상 입력의 Refresh는 원본 입력만 교체하며 피어 입력의 DOM 상태와 입력 오류 경계는 유지합니다(EVENT-039·040·042·070, 112C-01).
 - 조합 중 Refresh에도 매 단계의 IME 텍스트와 입력 인스턴스를 보존하며 `value` setter를 호출하지 않습니다. 한 번의 `compositionend` 뒤 입력을 다시 마운트하고 이전 입력의 조합 텍스트는 노드에 늦게 쓰이지 않습니다(EVENT-065, REACT-024).
 - 한 입력 변경의 세 단계는 한 진입으로 정착·통지하고, 유효 스키마 변경은 입력 선택에 반영됩니다. 대체·폐기된 입력의 늦은 값·파일 쓰기와 초기화 뒤 미룬 touched는 살아 있는 폼 상태를 바꾸지 않습니다(REACT-011·012·024, 69C-01·02).
 
 ## Last Updated
 
-계약 기준: REACT-009–012·024·028·032·033, EVENT-065, WRITE-083, ERROR-202, 69C-01·02.
+계약 기준: REACT-009–012·024·028·032·033, EVENT-039·040·042·065·070, WRITE-083, ERROR-202, 69C-01·02, 112C-01.

@@ -138,7 +138,7 @@ export const SchemaNodeInput = memo(
           {...overrideProps}
           readOnly={rootReadOnly || node.readOnly || !!overrideProps.readOnly}
           disabled={rootDisabled || node.disabled || !!overrideProps.disabled}
-          key={generation}
+          inputGeneration={generation}
           jsonSchema={node.jsonSchema as JSONSchema}
           node={node}
           type={node.type}

@@ -2,7 +2,6 @@ import { type ComponentType, type RefObject, memo } from 'react';
 
 import { NULL_FUNCTION } from '@winglet/common-utils/constant';
 import { isMemoComponent, isReactComponent } from '@winglet/react-utils/filter';
-import { withErrorBoundary } from '@winglet/react-utils/hoc';
 import {
   useLazyConstant,
   useReference,
@@ -10,7 +9,7 @@ import {
 } from '@winglet/react-utils/hook';
 
 import type { SchemaNode } from '@/schema-form/core';
-import { useBoundaryReporter } from '@/schema-form/providers/FormErrorContext';
+import { withFormTypeInputErrorBoundary } from '@/schema-form/helpers/formTypeInputDefinition';
 import type {
   ChildNodeComponentProps,
   FormTypeInputProps,
@@ -54,17 +53,9 @@ export const SchemaNodeInputWrapper = (
       OverridePreferredFormTypeInput &&
       isReactComponent(OverridePreferredFormTypeInput)
         ? isMemoComponent(OverridePreferredFormTypeInput)
-          ? withErrorBoundary(
-              OverridePreferredFormTypeInput,
-              undefined,
-              useBoundaryReporter,
-            )
+          ? withFormTypeInputErrorBoundary(OverridePreferredFormTypeInput)
           : memo(
-              withErrorBoundary(
-                OverridePreferredFormTypeInput,
-                undefined,
-                useBoundaryReporter,
-              ),
+              withFormTypeInputErrorBoundary(OverridePreferredFormTypeInput),
             )
         : null,
     );

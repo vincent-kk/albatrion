@@ -1,13 +1,12 @@
 import { isReactComponent } from '@winglet/react-utils/filter';
-import { withErrorBoundary } from '@winglet/react-utils/hoc';
 
-import { useBoundaryReporter } from '@/schema-form/providers/FormErrorContext';
 import type { FormTypeInputMap } from '@/schema-form/types';
 
 import { INCLUDE_WILDCARD_REGEX } from './regex';
 import type { NormalizedFormTypeInputDefinition } from './type';
 import { formTypeTestFnFactory } from './utils/formTypeTestFnFactory';
 import { pathExactMatchFnFactory } from './utils/pathExactMatchFnFactory';
+import { withFormTypeInputErrorBoundary } from './utils/withFormTypeInputErrorBoundary';
 
 /**
  * Normalizes form type input map.
@@ -26,12 +25,12 @@ export const normalizeFormTypeInputMap = (
     if (INCLUDE_WILDCARD_REGEX.test(k))
       result.push({
         test: formTypeTestFnFactory(k),
-        Component: withErrorBoundary(Component, undefined, useBoundaryReporter),
+        Component: withFormTypeInputErrorBoundary(Component),
       });
     else
       result.push({
         test: pathExactMatchFnFactory(k),
-        Component: withErrorBoundary(Component, undefined, useBoundaryReporter),
+        Component: withFormTypeInputErrorBoundary(Component),
       });
   }
   return result;

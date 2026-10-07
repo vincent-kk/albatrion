@@ -1,15 +1,14 @@
 import { useMemo } from 'react';
 
 import { isReactComponent } from '@winglet/react-utils/filter';
-import { withErrorBoundary } from '@winglet/react-utils/hoc';
 
 import { PluginManager } from '@/schema-form/app/plugin';
 import type { SchemaNode } from '@/schema-form/core';
+import { withFormTypeInputErrorBoundary } from '@/schema-form/helpers/formTypeInputDefinition';
 import {
   useExternalFormContext,
   useFormTypeInputsContext,
 } from '@/schema-form/providers';
-import { useBoundaryReporter } from '@/schema-form/providers/FormErrorContext';
 import type { Hint, JSONSchema } from '@/schema-form/types';
 
 /** Select an input from the effective schema and ordered definition sources. */
@@ -23,7 +22,7 @@ export const useFormTypeInput = (node: SchemaNode, disabled: boolean) => {
   const Inline = useMemo(
     () =>
       isReactComponent(inline)
-        ? withErrorBoundary(inline, undefined, useBoundaryReporter)
+        ? withFormTypeInputErrorBoundary(inline)
         : null,
     [inline],
   );

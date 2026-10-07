@@ -4,9 +4,7 @@ import {
   isPlainObject,
 } from '@winglet/common-utils/filter';
 import { isReactComponent } from '@winglet/react-utils/filter';
-import { withErrorBoundary } from '@winglet/react-utils/hoc';
 
-import { useBoundaryReporter } from '@/schema-form/providers/FormErrorContext';
 import type {
   FormTypeInputDefinition,
   FormTypeTestFn,
@@ -14,6 +12,7 @@ import type {
 } from '@/schema-form/types';
 
 import type { NormalizedFormTypeInputDefinition } from './type';
+import { withFormTypeInputErrorBoundary } from './utils/withFormTypeInputErrorBoundary';
 
 /** Keep wrappers and one-time diagnostics at the definition's ownership point. */
 const cache = new WeakMap<
@@ -65,7 +64,7 @@ export const normalizeFormTypeInputDefinitions = (
     }
     const normalized = {
       test: isFunction(test) ? test : formTypeTestFnFactory(test),
-      Component: withErrorBoundary(Component, undefined, useBoundaryReporter),
+      Component: withFormTypeInputErrorBoundary(Component),
     };
     cache.set(definition, normalized);
     result.push(normalized);
