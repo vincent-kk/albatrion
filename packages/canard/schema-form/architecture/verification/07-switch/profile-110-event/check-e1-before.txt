@@ -1,0 +1,20 @@
+npm notice run albatrion@0.0.0 npx
+npm notice run 'vitest' run --reporter=dot --configLoader runner --cache false --maxWorkers=1 --no-file-parallelism --project unit src/core/__tests__/SchemaNode.update-value-marking.test.ts
+│ ┌────────────────────────────────────────────────────────────────────────────┐
+│ │  Info: Found a setup file with "setProjectAnnotations".                    │
+│ │  Skipping automatic provisioning of preview annotations to avoid           │
+│ │  conflicts. Since Storybook 10.3, "@storybook/addon-vitest" applies these  │
+│ │   automatically.                                                           │
+│ │  You can safely remove the "setProjectAnnotations" call from your setup    │
+│ │  file, or remove the file entirely if you don't have custom code there.    │
+│ └────────────────────────────────────────────────────────────────────────────┘
+
+ RUN  v3.2.6 /Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/packages/canard/schema-form
+
+···
+
+ Test Files  1 passed (1)
+      Tests  3 passed (3)
+   Start at  09:33:38
+   Duration  1.57s (transform 875ms, setup 0ms, collect 1.42s, tests 8ms, environment 0ms, prepare 35ms)
+

@@ -1,0 +1,18 @@
+{
+  "phase": "e1",
+  "mode": "production",
+  "comparator": "working",
+  "expected": "pass",
+  "exitCode": 0,
+  "signal": null,
+  "started": 1791333271595,
+  "ended": 1791333303954,
+  "elapsedMs": 32358,
+  "natural": true,
+  "summary": [
+    "EVENT110_DIFF_OK e1/production/working: 128 cases, 10262 updates, 15110 listeners"
+  ],
+  "reconstructedSummary": true,
+  "originalRecordSha256": "582c57479d281d0c96ffdcb412530472d9594bb3212aee4de488b227c55b0f02",
+  "evidence": "summary 출력에 중첩된 전체 차분이 들어가 JSON 끝이 잘렸습니다. 원문을 보존하고 정상 종료 메타데이터와 별도 완전한 차분 기록으로 요약만 복원했습니다. 시간 표본은 변경하지 않았습니다."
+}

@@ -1,0 +1,22 @@
+{
+  "phase": "2-e1-update-value",
+  "adopted": false,
+  "measuredBase": "2-e1-update-value-build-head.json",
+  "baseBundleSha256": "57085c08158ba78ea3030b5b789bb7c06eca81d8f878c0ab795a5574a57b7b75",
+  "candidateBundleSha256": "69aa182c9b57c294304919c3b3ad4b94da6d35f5825cea322fe5478311615ceb",
+  "patch": "2-e1-update-value-rejected.patch",
+  "files": [
+    {
+      "file": "packages/canard/schema-form/src/core/record/utils/markSchemaNodeEvent.ts"
+    },
+    {
+      "file": "packages/canard/schema-form/src/core/record/DETAIL.md",
+      "detailLines": [
+        62
+      ]
+    },
+    {
+      "file": "packages/canard/schema-form/src/core/__tests__/SchemaNode.update-value-marking.test.ts"
+    }
+  ]
+}

@@ -1,0 +1,1186 @@
+{
+  "HEAD": "4d4792307dd4f0545b2fef3c2dd7a4860588c8cd",
+  "phase": "2-e1-update-value",
+  "design": {
+    "runs": 9,
+    "warmup": 20,
+    "samples": 101,
+    "bootstrapTrials": 1999,
+    "bootstrapSeed": 101,
+    "canonicalSha256": "ef3772630d5238550f2cc48697d940ece4c3a28ab5a77580bab85472f23ba270",
+    "mode": "production",
+    "difference": "H−W"
+  },
+  "builds": {
+    "head": {
+      "HEAD": "4d4792307dd4f0545b2fef3c2dd7a4860588c8cd",
+      "version": "head",
+      "development": false,
+      "sourceTreeSha256": "63c0950d22336ab286894182f2b0544889605e9798061692060586ae9844fba6",
+      "bundleSha256": "57085c08158ba78ea3030b5b789bb7c06eca81d8f878c0ab795a5574a57b7b75",
+      "bytes": 543471,
+      "naturalBuildServices": 1
+    },
+    "working": {
+      "HEAD": "4d4792307dd4f0545b2fef3c2dd7a4860588c8cd",
+      "version": "working",
+      "development": false,
+      "sourceTreeSha256": "19c3046919e35db0d40ce15f4151ae3eddcbe6078532a816d442b2f313bd58a3",
+      "bundleSha256": "69aa182c9b57c294304919c3b3ad4b94da6d35f5825cea322fe5478311615ceb",
+      "bytes": 544190,
+      "naturalBuildServices": 1
+    }
+  },
+  "rows": [
+    {
+      "name": "nested-d5-f4",
+      "mode": "mount",
+      "pairs": 909,
+      "pooledMedianMs": 0.0020419999999603533,
+      "ci99Ms": [
+        -0.011541000000306667,
+        0.02116699999987759
+      ],
+      "aaStatisticMs": -0.0026670000000876826,
+      "baseMedianMs": 4.7364579999996295,
+      "floorMs": 0.02368228999999815,
+      "minimumSizeMs": 0.02368228999999815,
+      "workingMedianMs": 4.732040999999981,
+      "improved": false,
+      "regression": false,
+      "verdict": "채택 조건 미충족"
+    },
+    {
+      "name": "flat-500",
+      "mode": "mount",
+      "pairs": 909,
+      "pooledMedianMs": 0.0014999999999645297,
+      "ci99Ms": [
+        -0.0027919999999994616,
+        0.005082999999785898
+      ],
+      "aaStatisticMs": -1.1368683772161603e-13,
+      "baseMedianMs": 1.5009590000000088,
+      "floorMs": 0.007504795000000044,
+      "minimumSizeMs": 0.007504795000000044,
+      "workingMedianMs": 1.5016660000001139,
+      "improved": false,
+      "regression": false,
+      "verdict": "채택 조건 미충족"
+    },
+    {
+      "name": "oneOf-20",
+      "mode": "mount",
+      "pairs": 909,
+      "pooledMedianMs": -0.0027499999999918145,
+      "ci99Ms": [
+        -0.011209000000008018,
+        0.00708400000007714
+      ],
+      "aaStatisticMs": 0.0026249999999663487,
+      "baseMedianMs": 2.078666999999996,
+      "floorMs": 0.01039333499999998,
+      "minimumSizeMs": 0.01039333499999998,
+      "workingMedianMs": 2.074790999999891,
+      "improved": false,
+      "regression": false,
+      "verdict": "채택 조건 미충족"
+    },
+    {
+      "name": "sample-0",
+      "mode": "mount",
+      "pairs": 909,
+      "pooledMedianMs": -0.0006659999999669708,
+      "ci99Ms": [
+        -0.0014999999999645297,
+        0.00016699999997626946
+      ],
+      "aaStatisticMs": -0.0003760000000170294,
+      "baseMedianMs": 0.09829099999998903,
+      "floorMs": 0.0004914549999999452,
+      "minimumSizeMs": 0.0004914549999999452,
+      "workingMedianMs": 0.09854100000006838,
+      "improved": false,
+      "regression": false,
+      "verdict": "채택 조건 미충족"
+    },
+    {
+      "name": "sample-0",
+      "mode": "first",
+      "pairs": 909,
+      "pooledMedianMs": 0.000666999999964446,
+      "ci99Ms": [
+        5.684341886080802e-14,
+        0.001167000000009466
+      ],
+      "aaStatisticMs": 0.00008299999998939711,
+      "baseMedianMs": 0.08112500000004275,
+      "floorMs": 0.00040562500000021376,
+      "minimumSizeMs": 0.00040562500000021376,
+      "workingMedianMs": 0.08000000000004093,
+      "improved": true,
+      "regression": false,
+      "verdict": "개선"
+    },
+    {
+      "name": "sample-0",
+      "mode": "later",
+      "pairs": 909,
+      "pooledMedianMs": 0.00020900000015444675,
+      "ci99Ms": [
+        -0.000417999999967833,
+        0.0009590000000230248
+      ],
+      "aaStatisticMs": 0.0005830000000059954,
+      "baseMedianMs": 0.07520800000003192,
+      "floorMs": 0.0005830000000059954,
+      "minimumSizeMs": 0.0003760400000001596,
+      "workingMedianMs": 0.07516599999998164,
+      "improved": false,
+      "regression": false,
+      "verdict": "채택 조건 미충족"
+    },
+    {
+      "name": "flat-100",
+      "mode": "first",
+      "pairs": 909,
+      "pooledMedianMs": 0.0002910000000042601,
+      "ci99Ms": [
+        -0.00041699999997035775,
+        0.0010830000001078588
+      ],
+      "aaStatisticMs": 0.00012500000002546585,
+      "baseMedianMs": 0.08550099999996519,
+      "floorMs": 0.00042750499999982594,
+      "minimumSizeMs": 0.00042750499999982594,
+      "workingMedianMs": 0.08554200000000378,
+      "improved": false,
+      "regression": false,
+      "verdict": "채택 조건 미충족"
+    },
+    {
+      "name": "flat-100",
+      "mode": "later",
+      "pairs": 909,
+      "pooledMedianMs": -0.0007080000000314612,
+      "ci99Ms": [
+        -0.0014579999999568827,
+        -0.00008400000001529406
+      ],
+      "aaStatisticMs": 0.00008300000001781882,
+      "baseMedianMs": 0.07562499999991701,
+      "floorMs": 0.00037812499999958506,
+      "minimumSizeMs": 0.00037812499999958506,
+      "workingMedianMs": 0.0761659999999722,
+      "improved": false,
+      "regression": true,
+      "verdict": "회귀"
+    },
+    {
+      "name": "flat-500",
+      "mode": "first",
+      "pairs": 909,
+      "pooledMedianMs": -0.000041999999893960194,
+      "ci99Ms": [
+        -0.0007090000001426233,
+        0.0008330000000569271
+      ],
+      "aaStatisticMs": 0.0004989999999907013,
+      "baseMedianMs": 0.09004099999992832,
+      "floorMs": 0.0004989999999907013,
+      "minimumSizeMs": 0.0004502049999996416,
+      "workingMedianMs": 0.08999900000017647,
+      "improved": false,
+      "regression": false,
+      "verdict": "채택 조건 미충족"
+    },
+    {
+      "name": "flat-500",
+      "mode": "later",
+      "pairs": 909,
+      "pooledMedianMs": 0.000998999999978878,
+      "ci99Ms": [
+        0.0002919999999448919,
+        0.0016249999999899956
+      ],
+      "aaStatisticMs": 0.0004169999998566709,
+      "baseMedianMs": 0.07841599999994742,
+      "floorMs": 0.0004169999998566709,
+      "minimumSizeMs": 0.0003920799999997371,
+      "workingMedianMs": 0.07758299999989049,
+      "improved": true,
+      "regression": false,
+      "verdict": "개선"
+    },
+    {
+      "name": "nested-d5-f4",
+      "mode": "first",
+      "pairs": 909,
+      "pooledMedianMs": 0.02820800000017698,
+      "ci99Ms": [
+        -0.06854200000020683,
+        0.06941700000004403
+      ],
+      "aaStatisticMs": 0.034084000000120795,
+      "baseMedianMs": 0.18262499999991633,
+      "floorMs": 0.034084000000120795,
+      "minimumSizeMs": 0.0009131249999995817,
+      "workingMedianMs": 0.18229199999996126,
+      "improved": false,
+      "regression": false,
+      "verdict": "채택 조건 미충족"
+    },
+    {
+      "name": "nested-d5-f4",
+      "mode": "later",
+      "pairs": 909,
+      "pooledMedianMs": 0.0012910000000374566,
+      "ci99Ms": [
+        0.00045799999998052954,
+        0.002083000000084212
+      ],
+      "aaStatisticMs": 0.0008320000000594518,
+      "baseMedianMs": 0.10487499999976535,
+      "floorMs": 0.0008320000000594518,
+      "minimumSizeMs": 0.0005243749999988268,
+      "workingMedianMs": 0.10370900000003758,
+      "improved": true,
+      "regression": false,
+      "verdict": "개선"
+    },
+    {
+      "name": "oneOf-40",
+      "mode": "first",
+      "pairs": 909,
+      "pooledMedianMs": 0.0037919999999758147,
+      "ci99Ms": [
+        -0.0017919999997957348,
+        0.008374999999887223
+      ],
+      "aaStatisticMs": 0.0036250000000563887,
+      "baseMedianMs": 1.4775409999999738,
+      "floorMs": 0.0073877049999998695,
+      "minimumSizeMs": 0.0073877049999998695,
+      "workingMedianMs": 1.4732080000001133,
+      "improved": false,
+      "regression": false,
+      "verdict": "채택 조건 미충족"
+    },
+    {
+      "name": "oneOf-40",
+      "mode": "later",
+      "pairs": 909,
+      "pooledMedianMs": 0.011666000000047916,
+      "ci99Ms": [
+        0.00870800000006966,
+        0.015582999999992353
+      ],
+      "aaStatisticMs": 0.01149899999995796,
+      "baseMedianMs": 0.9702509999999762,
+      "floorMs": 0.01149899999995796,
+      "minimumSizeMs": 0.004851254999999881,
+      "workingMedianMs": 0.9569589999999266,
+      "improved": true,
+      "regression": false,
+      "verdict": "개선"
+    }
+  ],
+  "adopted": false,
+  "processes": [
+    {
+      "started": 1791333409257,
+      "ended": 1791333411787,
+      "elapsedMs": 2530,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "started": 1791333412430,
+      "ended": 1791333414948,
+      "elapsedMs": 2518,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "started": 1791333415593,
+      "ended": 1791333418154,
+      "elapsedMs": 2561,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "started": 1791333418800,
+      "ended": 1791333421328,
+      "elapsedMs": 2528,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "started": 1791333421981,
+      "ended": 1791333424542,
+      "elapsedMs": 2561,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "started": 1791333425198,
+      "ended": 1791333427730,
+      "elapsedMs": 2532,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "started": 1791333428385,
+      "ended": 1791333430948,
+      "elapsedMs": 2563,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "started": 1791333431599,
+      "ended": 1791333434134,
+      "elapsedMs": 2535,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "started": 1791333434787,
+      "ended": 1791333437342,
+      "elapsedMs": 2555,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "started": 1791333437999,
+      "ended": 1791333439242,
+      "elapsedMs": 1243,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "started": 1791333439902,
+      "ended": 1791333441145,
+      "elapsedMs": 1243,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "started": 1791333441804,
+      "ended": 1791333443058,
+      "elapsedMs": 1254,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "started": 1791333443715,
+      "ended": 1791333444964,
+      "elapsedMs": 1249,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "started": 1791333445622,
+      "ended": 1791333446878,
+      "elapsedMs": 1256,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "started": 1791333447537,
+      "ended": 1791333448818,
+      "elapsedMs": 1281,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "started": 1791333449479,
+      "ended": 1791333450714,
+      "elapsedMs": 1235,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "started": 1791333451363,
+      "ended": 1791333452624,
+      "elapsedMs": 1261,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "started": 1791333453282,
+      "ended": 1791333454531,
+      "elapsedMs": 1249,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "started": 1791333455192,
+      "ended": 1791333456443,
+      "elapsedMs": 1251,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "started": 1791333457102,
+      "ended": 1791333458377,
+      "elapsedMs": 1275,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "started": 1791333459035,
+      "ended": 1791333460283,
+      "elapsedMs": 1248,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "started": 1791333460946,
+      "ended": 1791333462199,
+      "elapsedMs": 1253,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "started": 1791333462859,
+      "ended": 1791333464121,
+      "elapsedMs": 1262,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "started": 1791333464781,
+      "ended": 1791333466048,
+      "elapsedMs": 1268,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "started": 1791333466703,
+      "ended": 1791333467966,
+      "elapsedMs": 1263,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "started": 1791333468629,
+      "ended": 1791333469882,
+      "elapsedMs": 1253,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "started": 1791333470547,
+      "ended": 1791333471795,
+      "elapsedMs": 1248,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "started": 1791333472474,
+      "ended": 1791333473115,
+      "elapsedMs": 641,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "started": 1791333473764,
+      "ended": 1791333474410,
+      "elapsedMs": 646,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "started": 1791333475067,
+      "ended": 1791333475708,
+      "elapsedMs": 641,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "started": 1791333476366,
+      "ended": 1791333477019,
+      "elapsedMs": 653,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "started": 1791333477679,
+      "ended": 1791333478322,
+      "elapsedMs": 643,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "started": 1791333478987,
+      "ended": 1791333479618,
+      "elapsedMs": 631,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "started": 1791333480284,
+      "ended": 1791333480942,
+      "elapsedMs": 658,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "started": 1791333481595,
+      "ended": 1791333482251,
+      "elapsedMs": 656,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "started": 1791333482902,
+      "ended": 1791333483536,
+      "elapsedMs": 634,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "started": 1791333484199,
+      "ended": 1791333484873,
+      "elapsedMs": 674,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "started": 1791333485525,
+      "ended": 1791333486191,
+      "elapsedMs": 666,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "started": 1791333486853,
+      "ended": 1791333487523,
+      "elapsedMs": 670,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "started": 1791333488188,
+      "ended": 1791333488875,
+      "elapsedMs": 687,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "started": 1791333489532,
+      "ended": 1791333490236,
+      "elapsedMs": 704,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "started": 1791333490894,
+      "ended": 1791333491583,
+      "elapsedMs": 689,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "started": 1791333492244,
+      "ended": 1791333492926,
+      "elapsedMs": 682,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "started": 1791333493590,
+      "ended": 1791333494266,
+      "elapsedMs": 676,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "started": 1791333494928,
+      "ended": 1791333495596,
+      "elapsedMs": 668,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "started": 1791333496253,
+      "ended": 1791333496899,
+      "elapsedMs": 646,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "started": 1791333497551,
+      "ended": 1791333498187,
+      "elapsedMs": 636,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "started": 1791333498850,
+      "ended": 1791333499485,
+      "elapsedMs": 635,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "started": 1791333500139,
+      "ended": 1791333500788,
+      "elapsedMs": 649,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "started": 1791333501446,
+      "ended": 1791333502069,
+      "elapsedMs": 623,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "started": 1791333502729,
+      "ended": 1791333503377,
+      "elapsedMs": 648,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "started": 1791333504043,
+      "ended": 1791333505340,
+      "elapsedMs": 1297,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "started": 1791333505340,
+      "ended": 1791333636432,
+      "elapsedMs": 131092,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "started": 1791333636791,
+      "ended": 1791333637430,
+      "elapsedMs": 639,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "started": 1791333638090,
+      "ended": 1791333638929,
+      "elapsedMs": 839,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "started": 1791333639592,
+      "ended": 1791333640454,
+      "elapsedMs": 862,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "started": 1791333641126,
+      "ended": 1791333641955,
+      "elapsedMs": 829,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "started": 1791333642620,
+      "ended": 1791333643457,
+      "elapsedMs": 837,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "started": 1791333644124,
+      "ended": 1791333644971,
+      "elapsedMs": 847,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "started": 1791333645637,
+      "ended": 1791333646468,
+      "elapsedMs": 831,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "started": 1791333647143,
+      "ended": 1791333647970,
+      "elapsedMs": 827,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "started": 1791333648640,
+      "ended": 1791333649476,
+      "elapsedMs": 836,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "started": 1791333650147,
+      "ended": 1791333650996,
+      "elapsedMs": 849,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "started": 1791333674727,
+      "ended": 1791333675415,
+      "elapsedMs": 688,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "started": 1791333676079,
+      "ended": 1791333676755,
+      "elapsedMs": 676,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "started": 1791333677418,
+      "ended": 1791333678096,
+      "elapsedMs": 678,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "started": 1791333678754,
+      "ended": 1791333679426,
+      "elapsedMs": 672,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "started": 1791333680093,
+      "ended": 1791333680779,
+      "elapsedMs": 686,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "started": 1791333681446,
+      "ended": 1791333682131,
+      "elapsedMs": 685,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "started": 1791333682798,
+      "ended": 1791333683479,
+      "elapsedMs": 681,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "started": 1791333684144,
+      "ended": 1791333684815,
+      "elapsedMs": 671,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "started": 1791333685480,
+      "ended": 1791333686145,
+      "elapsedMs": 665,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "started": 1791333686820,
+      "ended": 1791333688151,
+      "elapsedMs": 1331,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "started": 1791333688819,
+      "ended": 1791333690144,
+      "elapsedMs": 1325,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "started": 1791333690816,
+      "ended": 1791333692140,
+      "elapsedMs": 1324,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "started": 1791333692805,
+      "ended": 1791333694130,
+      "elapsedMs": 1325,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "started": 1791333694800,
+      "ended": 1791333696123,
+      "elapsedMs": 1323,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "started": 1791333696799,
+      "ended": 1791333698126,
+      "elapsedMs": 1327,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "started": 1791333698794,
+      "ended": 1791333700123,
+      "elapsedMs": 1329,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "started": 1791333700787,
+      "ended": 1791333702114,
+      "elapsedMs": 1327,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "started": 1791333702793,
+      "ended": 1791333704137,
+      "elapsedMs": 1344,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "started": 1791333704813,
+      "ended": 1791333705593,
+      "elapsedMs": 780,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "started": 1791333706258,
+      "ended": 1791333707045,
+      "elapsedMs": 787,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "started": 1791333707712,
+      "ended": 1791333708506,
+      "elapsedMs": 794,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "started": 1791333709182,
+      "ended": 1791333709961,
+      "elapsedMs": 779,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "started": 1791333710629,
+      "ended": 1791333711397,
+      "elapsedMs": 768,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "started": 1791333712068,
+      "ended": 1791333712848,
+      "elapsedMs": 780,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "started": 1791333713516,
+      "ended": 1791333714284,
+      "elapsedMs": 768,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "started": 1791333714955,
+      "ended": 1791333715717,
+      "elapsedMs": 762,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "started": 1791333716386,
+      "ended": 1791333717154,
+      "elapsedMs": 768,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "started": 1791333717824,
+      "ended": 1791333720547,
+      "elapsedMs": 2723,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "started": 1791333721221,
+      "ended": 1791333723944,
+      "elapsedMs": 2723,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "started": 1791333724615,
+      "ended": 1791333727336,
+      "elapsedMs": 2721,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "started": 1791333728011,
+      "ended": 1791333730725,
+      "elapsedMs": 2714,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "started": 1791333731406,
+      "ended": 1791333734129,
+      "elapsedMs": 2723,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "started": 1791333734806,
+      "ended": 1791333737536,
+      "elapsedMs": 2730,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "started": 1791333738209,
+      "ended": 1791333740920,
+      "elapsedMs": 2711,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "started": 1791333741583,
+      "ended": 1791333744331,
+      "elapsedMs": 2748,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "started": 1791333745011,
+      "ended": 1791333747777,
+      "elapsedMs": 2766,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "started": 1791333748452,
+      "ended": 1791333749512,
+      "elapsedMs": 1060,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "started": 1791333750179,
+      "ended": 1791333751224,
+      "elapsedMs": 1045,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "started": 1791333751893,
+      "ended": 1791333752938,
+      "elapsedMs": 1045,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "started": 1791333753616,
+      "ended": 1791333754655,
+      "elapsedMs": 1039,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "started": 1791333755332,
+      "ended": 1791333756370,
+      "elapsedMs": 1038,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "started": 1791333757058,
+      "ended": 1791333758098,
+      "elapsedMs": 1040,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "started": 1791333758785,
+      "ended": 1791333759830,
+      "elapsedMs": 1045,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "started": 1791333760505,
+      "ended": 1791333761544,
+      "elapsedMs": 1039,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "started": 1791333762217,
+      "ended": 1791333763260,
+      "elapsedMs": 1043,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "started": 1791333763940,
+      "ended": 1791333765893,
+      "elapsedMs": 1953,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "started": 1791333766574,
+      "ended": 1791333768542,
+      "elapsedMs": 1968,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "started": 1791333769236,
+      "ended": 1791333771184,
+      "elapsedMs": 1948,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "started": 1791333771860,
+      "ended": 1791333773818,
+      "elapsedMs": 1958,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "started": 1791333774502,
+      "ended": 1791333776465,
+      "elapsedMs": 1963,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "started": 1791333777148,
+      "ended": 1791333779109,
+      "elapsedMs": 1961,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "started": 1791333779794,
+      "ended": 1791333781740,
+      "elapsedMs": 1946,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "started": 1791333782416,
+      "ended": 1791333784381,
+      "elapsedMs": 1965,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "started": 1791333785068,
+      "ended": 1791333787031,
+      "elapsedMs": 1963,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "started": 1791333787713,
+      "ended": 1791333788674,
+      "elapsedMs": 961,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "started": 1791333789360,
+      "ended": 1791333790348,
+      "elapsedMs": 988,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "started": 1791333791041,
+      "ended": 1791333792015,
+      "elapsedMs": 974,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "started": 1791333792701,
+      "ended": 1791333793664,
+      "elapsedMs": 963,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "started": 1791333794348,
+      "ended": 1791333795311,
+      "elapsedMs": 963,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "started": 1791333795996,
+      "ended": 1791333796966,
+      "elapsedMs": 970,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "started": 1791333797649,
+      "ended": 1791333798631,
+      "elapsedMs": 982,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "started": 1791333799314,
+      "ended": 1791333800277,
+      "elapsedMs": 963,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "started": 1791333800949,
+      "ended": 1791333801906,
+      "elapsedMs": 957,
+      "status": 0,
+      "signal": null
+    }
+  ],
+  "maxWorkerMs": 131092,
+  "name": "2-e1-update-value",
+  "mode": "later",
+  "bestRow": "oneOf-40",
+  "pooledMedianMs": 0.011666000000047916,
+  "ci99Ms": [
+    0.00870800000006966,
+    0.015582999999992353
+  ],
+  "aaStatisticMs": 0.01149899999995796,
+  "baseMedianMs": 0.9702509999999762,
+  "floorMs": 0.01149899999995796,
+  "verdict": "기각"
+}

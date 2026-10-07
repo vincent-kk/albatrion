@@ -1,0 +1,21 @@
+{
+  "name": "e1-broken-unit",
+  "mode": "development",
+  "command": "npx --no-install vitest run --reporter=dot --configLoader runner --cache false --maxWorkers=1 --no-file-parallelism --project unit src/core/__tests__/SchemaNode.update-value-marking.test.ts",
+  "exitCode": 1,
+  "signal": null,
+  "natural": true,
+  "started": 1791333359472,
+  "ended": 1791333362663,
+  "elapsedMs": 3191,
+  "summary": [
+    "⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯",
+    " FAIL  |unit| src/core/__tests__/SchemaNode.update-value-marking.test.ts > UpdateValue pending delivery > retains runtime membership, other bits and the last defined payload/options",
+    "AssertionError: expected 2048 to be 2052 // Object.is equality",
+    " FAIL  |unit| src/core/__tests__/SchemaNode.update-value-marking.test.ts > UpdateValue pending delivery > keeps delivered subscriber payloads and revisions unchanged on later writes",
+    "AssertionError: expected +0 to be 1 // Object.is equality",
+    " Test Files  1 failed (1)",
+    "      Tests  2 failed | 1 passed (3)",
+    "   Duration  1.54s (transform 861ms, setup 0ms, collect 1.39s, tests 11ms, environment 0ms, prepare 35ms)"
+  ]
+}

@@ -1,0 +1,16 @@
+{
+  "name": "d1-after",
+  "mode": "development",
+  "command": "npx --no-install vitest run --reporter=dot --configLoader runner --cache false --maxWorkers=1 --no-file-parallelism --project unit src/core/settle/__tests__/settle.commit-membership.test.ts",
+  "exitCode": 0,
+  "signal": null,
+  "natural": true,
+  "started": 1791332155870,
+  "ended": 1791332158912,
+  "elapsedMs": 3042,
+  "summary": [
+    " Test Files  1 passed (1)",
+    "      Tests  2 passed (2)",
+    "   Duration  1.38s (transform 748ms, setup 0ms, collect 1.24s, tests 11ms, environment 0ms, prepare 35ms)"
+  ]
+}

@@ -1,0 +1,22 @@
+{
+  "phase": "1-d1-commit-membership",
+  "adopted": true,
+  "measuredBase": "1-d1-commit-membership-build-head.json",
+  "baseBundleSha256": "d170ef6aa68ab6f8899b8ad19e5ed0879864591bd0e3c345bf1fe984df6b3758",
+  "candidateBundleSha256": "57085c08158ba78ea3030b5b789bb7c06eca81d8f878c0ab795a5574a57b7b75",
+  "patch": "1-d1-commit-membership.patch",
+  "files": [
+    {
+      "file": "packages/canard/schema-form/src/core/settle/utils/commit/markCommitDeliveries.ts"
+    },
+    {
+      "file": "packages/canard/schema-form/src/core/settle/DETAIL.md",
+      "detailLines": [
+        38
+      ]
+    },
+    {
+      "file": "packages/canard/schema-form/src/core/settle/__tests__/settle.commit-membership.test.ts"
+    }
+  ]
+}

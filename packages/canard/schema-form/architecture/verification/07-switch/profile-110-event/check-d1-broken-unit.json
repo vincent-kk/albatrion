@@ -1,0 +1,19 @@
+{
+  "name": "d1-broken-unit",
+  "mode": "development",
+  "command": "npx --no-install vitest run --reporter=dot --configLoader runner --cache false --maxWorkers=1 --no-file-parallelism --project unit src/core/settle/__tests__/settle.commit-membership.test.ts",
+  "exitCode": 1,
+  "signal": null,
+  "natural": true,
+  "started": 1791332878368,
+  "ended": 1791332881463,
+  "elapsedMs": 3095,
+  "summary": [
+    "⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯",
+    " FAIL  |unit| src/core/settle/__tests__/settle.commit-membership.test.ts > commit candidate membership > visits global-state candidates before extra event candidates exactly once",
+    "AssertionError: expected [ Array(7) ] to deeply equal [ '/b', '', '/a', '/extra' ]",
+    " Test Files  1 failed (1)",
+    "      Tests  1 failed | 1 passed (2)",
+    "   Duration  1.43s (transform 766ms, setup 0ms, collect 1.27s, tests 13ms, environment 0ms, prepare 35ms)"
+  ]
+}

@@ -1,0 +1,1186 @@
+{
+  "HEAD": "4d4792307dd4f0545b2fef3c2dd7a4860588c8cd",
+  "phase": "1-d1-commit-membership",
+  "design": {
+    "runs": 9,
+    "warmup": 20,
+    "samples": 101,
+    "bootstrapTrials": 1999,
+    "bootstrapSeed": 101,
+    "canonicalSha256": "ef3772630d5238550f2cc48697d940ece4c3a28ab5a77580bab85472f23ba270",
+    "mode": "production",
+    "difference": "H−W"
+  },
+  "builds": {
+    "head": {
+      "HEAD": "4d4792307dd4f0545b2fef3c2dd7a4860588c8cd",
+      "version": "head",
+      "development": false,
+      "sourceTreeSha256": "6591c849446a1deb09c3eb1141e2122abfda74decb275adc4fdd13ec1f8df4a5",
+      "bundleSha256": "d170ef6aa68ab6f8899b8ad19e5ed0879864591bd0e3c345bf1fe984df6b3758",
+      "bytes": 543214,
+      "naturalBuildServices": 1
+    },
+    "working": {
+      "HEAD": "4d4792307dd4f0545b2fef3c2dd7a4860588c8cd",
+      "version": "working",
+      "development": false,
+      "sourceTreeSha256": "63c0950d22336ab286894182f2b0544889605e9798061692060586ae9844fba6",
+      "bundleSha256": "57085c08158ba78ea3030b5b789bb7c06eca81d8f878c0ab795a5574a57b7b75",
+      "bytes": 543471,
+      "naturalBuildServices": 1
+    }
+  },
+  "rows": [
+    {
+      "name": "nested-d5-f4",
+      "mode": "mount",
+      "pairs": 909,
+      "pooledMedianMs": -0.01274999999998272,
+      "ci99Ms": [
+        -0.033792000000175904,
+        0.004707999999936874
+      ],
+      "aaStatisticMs": -0.0026670000000876826,
+      "baseMedianMs": 4.746500000000012,
+      "floorMs": 0.02373250000000006,
+      "minimumSizeMs": 0.02373250000000006,
+      "workingMedianMs": 4.75741700000026,
+      "improved": false,
+      "regression": false,
+      "verdict": "채택 조건 미충족"
+    },
+    {
+      "name": "flat-500",
+      "mode": "mount",
+      "pairs": 909,
+      "pooledMedianMs": -0.0031249999999545253,
+      "ci99Ms": [
+        -0.009000000000014552,
+        0.0012089999997897394
+      ],
+      "aaStatisticMs": -1.1368683772161603e-13,
+      "baseMedianMs": 1.5102500000001555,
+      "floorMs": 0.007551250000000778,
+      "minimumSizeMs": 0.007551250000000778,
+      "workingMedianMs": 1.517084000000068,
+      "improved": false,
+      "regression": false,
+      "verdict": "채택 조건 미충족"
+    },
+    {
+      "name": "oneOf-20",
+      "mode": "mount",
+      "pairs": 909,
+      "pooledMedianMs": 0.002416999999923064,
+      "ci99Ms": [
+        -0.005248999999935222,
+        0.010209000000031665
+      ],
+      "aaStatisticMs": 0.0026249999999663487,
+      "baseMedianMs": 2.0893329999999537,
+      "floorMs": 0.010446664999999768,
+      "minimumSizeMs": 0.010446664999999768,
+      "workingMedianMs": 2.0956250000000693,
+      "improved": false,
+      "regression": false,
+      "verdict": "채택 조건 미충족"
+    },
+    {
+      "name": "sample-0",
+      "mode": "mount",
+      "pairs": 909,
+      "pooledMedianMs": 0.00029099999994741665,
+      "ci99Ms": [
+        -0.0007079999999746178,
+        0.0012500000000272848
+      ],
+      "aaStatisticMs": -0.0003760000000170294,
+      "baseMedianMs": 0.09741700000000719,
+      "floorMs": 0.000487085000000036,
+      "minimumSizeMs": 0.000487085000000036,
+      "workingMedianMs": 0.09724900000009029,
+      "improved": false,
+      "regression": false,
+      "verdict": "채택 조건 미충족"
+    },
+    {
+      "name": "sample-0",
+      "mode": "first",
+      "pairs": 909,
+      "pooledMedianMs": 0.00012499999996862243,
+      "ci99Ms": [
+        -0.00041699999997035775,
+        0.0007080000001451481
+      ],
+      "aaStatisticMs": 0.00008299999998939711,
+      "baseMedianMs": 0.08008299999997348,
+      "floorMs": 0.0004004149999998674,
+      "minimumSizeMs": 0.0004004149999998674,
+      "workingMedianMs": 0.08008300000003032,
+      "improved": false,
+      "regression": false,
+      "verdict": "채택 조건 미충족"
+    },
+    {
+      "name": "sample-0",
+      "mode": "later",
+      "pairs": 909,
+      "pooledMedianMs": 0.0001239999999711472,
+      "ci99Ms": [
+        -0.00045799999998052954,
+        0.0006670000000212895
+      ],
+      "aaStatisticMs": 0.0005830000000059954,
+      "baseMedianMs": 0.07474999999999454,
+      "floorMs": 0.0005830000000059954,
+      "minimumSizeMs": 0.00037374999999997274,
+      "workingMedianMs": 0.07429200000001401,
+      "improved": false,
+      "regression": false,
+      "verdict": "채택 조건 미충족"
+    },
+    {
+      "name": "flat-100",
+      "mode": "first",
+      "pairs": 909,
+      "pooledMedianMs": 0.0009570000000280743,
+      "ci99Ms": [
+        0,
+        0.0016249999999899956
+      ],
+      "aaStatisticMs": 0.00012500000002546585,
+      "baseMedianMs": 0.08570900000006532,
+      "floorMs": 0.00042854500000032657,
+      "minimumSizeMs": 0.00042854500000032657,
+      "workingMedianMs": 0.08475000000004229,
+      "improved": false,
+      "regression": false,
+      "verdict": "채택 조건 미충족"
+    },
+    {
+      "name": "flat-100",
+      "mode": "later",
+      "pairs": 909,
+      "pooledMedianMs": -0.0002499999999940883,
+      "ci99Ms": [
+        -0.0009589999999661813,
+        0.0004569999999830543
+      ],
+      "aaStatisticMs": 0.00008300000001781882,
+      "baseMedianMs": 0.07520899999994413,
+      "floorMs": 0.00037604499999972064,
+      "minimumSizeMs": 0.00037604499999972064,
+      "workingMedianMs": 0.07550000000003365,
+      "improved": false,
+      "regression": false,
+      "verdict": "채택 조건 미충족"
+    },
+    {
+      "name": "flat-500",
+      "mode": "first",
+      "pairs": 909,
+      "pooledMedianMs": 0.0004999999999881766,
+      "ci99Ms": [
+        -0.00033400000006622577,
+        0.0009590000000798682
+      ],
+      "aaStatisticMs": 0.0004989999999907013,
+      "baseMedianMs": 0.09137400000003026,
+      "floorMs": 0.0004989999999907013,
+      "minimumSizeMs": 0.0004568700000001513,
+      "workingMedianMs": 0.09083400000002939,
+      "improved": false,
+      "regression": false,
+      "verdict": "채택 조건 미충족"
+    },
+    {
+      "name": "flat-500",
+      "mode": "later",
+      "pairs": 909,
+      "pooledMedianMs": 0.0012500000000272848,
+      "ci99Ms": [
+        0.0006669999999076026,
+        0.0020419999999603533
+      ],
+      "aaStatisticMs": 0.0004169999998566709,
+      "baseMedianMs": 0.07970899999997982,
+      "floorMs": 0.0004169999998566709,
+      "minimumSizeMs": 0.0003985449999998991,
+      "workingMedianMs": 0.07824999999991178,
+      "improved": true,
+      "regression": false,
+      "verdict": "개선"
+    },
+    {
+      "name": "nested-d5-f4",
+      "mode": "first",
+      "pairs": 909,
+      "pooledMedianMs": 0.005582999999887761,
+      "ci99Ms": [
+        -0.0702089999999771,
+        0.07095800000001873
+      ],
+      "aaStatisticMs": 0.034084000000120795,
+      "baseMedianMs": 0.1847090000001117,
+      "floorMs": 0.034084000000120795,
+      "minimumSizeMs": 0.0009235450000005585,
+      "workingMedianMs": 0.17904100000009748,
+      "improved": false,
+      "regression": false,
+      "verdict": "채택 조건 미충족"
+    },
+    {
+      "name": "nested-d5-f4",
+      "mode": "later",
+      "pairs": 909,
+      "pooledMedianMs": 0.001458999999954358,
+      "ci99Ms": [
+        0.0007909999999355932,
+        0.00233299999990777
+      ],
+      "aaStatisticMs": 0.0008320000000594518,
+      "baseMedianMs": 0.10500099999998724,
+      "floorMs": 0.0008320000000594518,
+      "minimumSizeMs": 0.0005250049999999362,
+      "workingMedianMs": 0.10345800000004601,
+      "improved": true,
+      "regression": false,
+      "verdict": "개선"
+    },
+    {
+      "name": "oneOf-40",
+      "mode": "first",
+      "pairs": 909,
+      "pooledMedianMs": 0.0025830000000723885,
+      "ci99Ms": [
+        -0.0022910000000138098,
+        0.006374999999934516
+      ],
+      "aaStatisticMs": 0.0036250000000563887,
+      "baseMedianMs": 1.473999000000049,
+      "floorMs": 0.0073699950000002444,
+      "minimumSizeMs": 0.0073699950000002444,
+      "workingMedianMs": 1.4727510000000166,
+      "improved": false,
+      "regression": false,
+      "verdict": "채택 조건 미충족"
+    },
+    {
+      "name": "oneOf-40",
+      "mode": "later",
+      "pairs": 909,
+      "pooledMedianMs": 0.014499999999998181,
+      "ci99Ms": [
+        0.011040999999863743,
+        0.017959000000018932
+      ],
+      "aaStatisticMs": 0.01149899999995796,
+      "baseMedianMs": 0.972458999999958,
+      "floorMs": 0.01149899999995796,
+      "minimumSizeMs": 0.00486229499999979,
+      "workingMedianMs": 0.9574999999999818,
+      "improved": true,
+      "regression": false,
+      "verdict": "개선"
+    }
+  ],
+  "adopted": true,
+  "processes": [
+    {
+      "started": 1791332900936,
+      "ended": 1791332903473,
+      "elapsedMs": 2537,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "started": 1791332904108,
+      "ended": 1791332906713,
+      "elapsedMs": 2605,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "started": 1791332907354,
+      "ended": 1791332910019,
+      "elapsedMs": 2665,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "started": 1791332910655,
+      "ended": 1791332913338,
+      "elapsedMs": 2683,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "started": 1791332913967,
+      "ended": 1791332916485,
+      "elapsedMs": 2518,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "started": 1791332917113,
+      "ended": 1791332919631,
+      "elapsedMs": 2518,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "started": 1791332920272,
+      "ended": 1791332922842,
+      "elapsedMs": 2570,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "started": 1791332923469,
+      "ended": 1791332926017,
+      "elapsedMs": 2548,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "started": 1791332926642,
+      "ended": 1791332929187,
+      "elapsedMs": 2545,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "started": 1791332929817,
+      "ended": 1791332931183,
+      "elapsedMs": 1366,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "started": 1791332931812,
+      "ended": 1791332933188,
+      "elapsedMs": 1376,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "started": 1791332933853,
+      "ended": 1791332935086,
+      "elapsedMs": 1233,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "started": 1791332935733,
+      "ended": 1791332936994,
+      "elapsedMs": 1261,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "started": 1791332937628,
+      "ended": 1791332938876,
+      "elapsedMs": 1248,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "started": 1791332939509,
+      "ended": 1791332940748,
+      "elapsedMs": 1239,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "started": 1791332941387,
+      "ended": 1791332942667,
+      "elapsedMs": 1280,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "started": 1791332943300,
+      "ended": 1791332944564,
+      "elapsedMs": 1264,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "started": 1791332945199,
+      "ended": 1791332946436,
+      "elapsedMs": 1237,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "started": 1791332947074,
+      "ended": 1791332948345,
+      "elapsedMs": 1271,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "started": 1791332948981,
+      "ended": 1791332950259,
+      "elapsedMs": 1278,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "started": 1791332950907,
+      "ended": 1791332952653,
+      "elapsedMs": 1746,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "started": 1791332953318,
+      "ended": 1791332954604,
+      "elapsedMs": 1286,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "started": 1791332955243,
+      "ended": 1791332956505,
+      "elapsedMs": 1262,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "started": 1791332957146,
+      "ended": 1791332958401,
+      "elapsedMs": 1255,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "started": 1791332959067,
+      "ended": 1791332960316,
+      "elapsedMs": 1249,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "started": 1791332960949,
+      "ended": 1791332962205,
+      "elapsedMs": 1256,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "started": 1791332962855,
+      "ended": 1791332964115,
+      "elapsedMs": 1260,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "started": 1791332964746,
+      "ended": 1791332965395,
+      "elapsedMs": 649,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "started": 1791332966024,
+      "ended": 1791332966663,
+      "elapsedMs": 639,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "started": 1791332967298,
+      "ended": 1791332967947,
+      "elapsedMs": 649,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "started": 1791332968585,
+      "ended": 1791332969237,
+      "elapsedMs": 652,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "started": 1791332969869,
+      "ended": 1791332970513,
+      "elapsedMs": 644,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "started": 1791332971143,
+      "ended": 1791332971789,
+      "elapsedMs": 646,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "started": 1791332972418,
+      "ended": 1791332973069,
+      "elapsedMs": 651,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "started": 1791332973693,
+      "ended": 1791332974339,
+      "elapsedMs": 646,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "started": 1791332974976,
+      "ended": 1791332975613,
+      "elapsedMs": 637,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "started": 1791332976242,
+      "ended": 1791332976919,
+      "elapsedMs": 677,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "started": 1791332977549,
+      "ended": 1791332978213,
+      "elapsedMs": 664,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "started": 1791332978843,
+      "ended": 1791332979523,
+      "elapsedMs": 680,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "started": 1791332980157,
+      "ended": 1791332980841,
+      "elapsedMs": 684,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "started": 1791332981472,
+      "ended": 1791332982143,
+      "elapsedMs": 671,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "started": 1791332982784,
+      "ended": 1791332983454,
+      "elapsedMs": 670,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "started": 1791332984086,
+      "ended": 1791332984758,
+      "elapsedMs": 672,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "started": 1791332985388,
+      "ended": 1791332986069,
+      "elapsedMs": 681,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "started": 1791332986704,
+      "ended": 1791332987391,
+      "elapsedMs": 687,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "started": 1791332988022,
+      "ended": 1791332988651,
+      "elapsedMs": 629,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "started": 1791332989287,
+      "ended": 1791332989924,
+      "elapsedMs": 637,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "started": 1791332990554,
+      "ended": 1791332991192,
+      "elapsedMs": 638,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "started": 1791332991833,
+      "ended": 1791332992478,
+      "elapsedMs": 645,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "started": 1791332993117,
+      "ended": 1791332993754,
+      "elapsedMs": 637,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "started": 1791332994391,
+      "ended": 1791332995021,
+      "elapsedMs": 630,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "started": 1791332995671,
+      "ended": 1791332996308,
+      "elapsedMs": 637,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "started": 1791332996952,
+      "ended": 1791332997589,
+      "elapsedMs": 637,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "started": 1791332998238,
+      "ended": 1791332998873,
+      "elapsedMs": 635,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "started": 1791332999540,
+      "ended": 1791333000372,
+      "elapsedMs": 832,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "started": 1791333001020,
+      "ended": 1791333001860,
+      "elapsedMs": 840,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "started": 1791333002508,
+      "ended": 1791333003345,
+      "elapsedMs": 837,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "started": 1791333003994,
+      "ended": 1791333004839,
+      "elapsedMs": 845,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "started": 1791333005487,
+      "ended": 1791333006339,
+      "elapsedMs": 852,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "started": 1791333006984,
+      "ended": 1791333007821,
+      "elapsedMs": 837,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "started": 1791333008462,
+      "ended": 1791333009306,
+      "elapsedMs": 844,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "started": 1791333009959,
+      "ended": 1791333010808,
+      "elapsedMs": 849,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "started": 1791333011455,
+      "ended": 1791333012297,
+      "elapsedMs": 842,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "started": 1791333029449,
+      "ended": 1791333030122,
+      "elapsedMs": 673,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "started": 1791333030760,
+      "ended": 1791333031442,
+      "elapsedMs": 682,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "started": 1791333032087,
+      "ended": 1791333032746,
+      "elapsedMs": 659,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "started": 1791333033394,
+      "ended": 1791333034076,
+      "elapsedMs": 682,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "started": 1791333034729,
+      "ended": 1791333035405,
+      "elapsedMs": 676,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "started": 1791333036057,
+      "ended": 1791333036725,
+      "elapsedMs": 668,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "started": 1791333037368,
+      "ended": 1791333038039,
+      "elapsedMs": 671,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "started": 1791333038684,
+      "ended": 1791333039361,
+      "elapsedMs": 677,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "started": 1791333040009,
+      "ended": 1791333040683,
+      "elapsedMs": 674,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "started": 1791333041333,
+      "ended": 1791333042665,
+      "elapsedMs": 1332,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "started": 1791333043304,
+      "ended": 1791333044629,
+      "elapsedMs": 1325,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "started": 1791333045284,
+      "ended": 1791333046620,
+      "elapsedMs": 1336,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "started": 1791333047272,
+      "ended": 1791333048587,
+      "elapsedMs": 1315,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "started": 1791333049238,
+      "ended": 1791333050565,
+      "elapsedMs": 1327,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "started": 1791333051213,
+      "ended": 1791333052540,
+      "elapsedMs": 1327,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "started": 1791333053190,
+      "ended": 1791333054517,
+      "elapsedMs": 1327,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "started": 1791333055168,
+      "ended": 1791333056483,
+      "elapsedMs": 1315,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "started": 1791333057138,
+      "ended": 1791333058468,
+      "elapsedMs": 1330,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "started": 1791333059122,
+      "ended": 1791333059905,
+      "elapsedMs": 783,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "started": 1791333060550,
+      "ended": 1791333061339,
+      "elapsedMs": 789,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "started": 1791333061987,
+      "ended": 1791333062771,
+      "elapsedMs": 784,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "started": 1791333063428,
+      "ended": 1791333064217,
+      "elapsedMs": 789,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "started": 1791333064866,
+      "ended": 1791333065625,
+      "elapsedMs": 759,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "started": 1791333066273,
+      "ended": 1791333067050,
+      "elapsedMs": 777,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "started": 1791333067713,
+      "ended": 1791333068499,
+      "elapsedMs": 786,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "started": 1791333069152,
+      "ended": 1791333069920,
+      "elapsedMs": 768,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "started": 1791333070572,
+      "ended": 1791333071379,
+      "elapsedMs": 807,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "started": 1791333072028,
+      "ended": 1791333074789,
+      "elapsedMs": 2761,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "started": 1791333075441,
+      "ended": 1791333078189,
+      "elapsedMs": 2748,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "started": 1791333078845,
+      "ended": 1791333081558,
+      "elapsedMs": 2713,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "started": 1791333082202,
+      "ended": 1791333084963,
+      "elapsedMs": 2761,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "started": 1791333085612,
+      "ended": 1791333088334,
+      "elapsedMs": 2722,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "started": 1791333088993,
+      "ended": 1791333091731,
+      "elapsedMs": 2738,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "started": 1791333092377,
+      "ended": 1791333095106,
+      "elapsedMs": 2729,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "started": 1791333095756,
+      "ended": 1791333098485,
+      "elapsedMs": 2729,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "started": 1791333099137,
+      "ended": 1791333101884,
+      "elapsedMs": 2747,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "started": 1791333102537,
+      "ended": 1791333103596,
+      "elapsedMs": 1059,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "started": 1791333104246,
+      "ended": 1791333105306,
+      "elapsedMs": 1060,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "started": 1791333105959,
+      "ended": 1791333106997,
+      "elapsedMs": 1038,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "started": 1791333107646,
+      "ended": 1791333108682,
+      "elapsedMs": 1036,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "started": 1791333109339,
+      "ended": 1791333110406,
+      "elapsedMs": 1067,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "started": 1791333111058,
+      "ended": 1791333112098,
+      "elapsedMs": 1040,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "started": 1791333112743,
+      "ended": 1791333113809,
+      "elapsedMs": 1066,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "started": 1791333114459,
+      "ended": 1791333115503,
+      "elapsedMs": 1044,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "started": 1791333116157,
+      "ended": 1791333117201,
+      "elapsedMs": 1044,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "started": 1791333117854,
+      "ended": 1791333119826,
+      "elapsedMs": 1972,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "started": 1791333120487,
+      "ended": 1791333122436,
+      "elapsedMs": 1949,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "started": 1791333123088,
+      "ended": 1791333125033,
+      "elapsedMs": 1945,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "started": 1791333125681,
+      "ended": 1791333127648,
+      "elapsedMs": 1967,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "started": 1791333128299,
+      "ended": 1791333130278,
+      "elapsedMs": 1979,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "started": 1791333130933,
+      "ended": 1791333132922,
+      "elapsedMs": 1989,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "started": 1791333133572,
+      "ended": 1791333135524,
+      "elapsedMs": 1952,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "started": 1791333136187,
+      "ended": 1791333138138,
+      "elapsedMs": 1951,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "started": 1791333138794,
+      "ended": 1791333140748,
+      "elapsedMs": 1954,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "started": 1791333141392,
+      "ended": 1791333142356,
+      "elapsedMs": 964,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "started": 1791333143002,
+      "ended": 1791333143958,
+      "elapsedMs": 956,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "started": 1791333144608,
+      "ended": 1791333145580,
+      "elapsedMs": 972,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "started": 1791333146245,
+      "ended": 1791333147229,
+      "elapsedMs": 984,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "started": 1791333147915,
+      "ended": 1791333148875,
+      "elapsedMs": 960,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "started": 1791333149530,
+      "ended": 1791333150493,
+      "elapsedMs": 963,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "started": 1791333151141,
+      "ended": 1791333152119,
+      "elapsedMs": 978,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "started": 1791333152768,
+      "ended": 1791333153753,
+      "elapsedMs": 985,
+      "status": 0,
+      "signal": null
+    },
+    {
+      "started": 1791333154409,
+      "ended": 1791333155374,
+      "elapsedMs": 965,
+      "status": 0,
+      "signal": null
+    }
+  ],
+  "maxWorkerMs": 2761,
+  "name": "1-d1-commit-membership",
+  "mode": "later",
+  "bestRow": "oneOf-40",
+  "pooledMedianMs": 0.014499999999998181,
+  "ci99Ms": [
+    0.011040999999863743,
+    0.017959000000018932
+  ],
+  "aaStatisticMs": 0.01149899999995796,
+  "baseMedianMs": 0.972458999999958,
+  "floorMs": 0.01149899999995796,
+  "verdict": "채택"
+}

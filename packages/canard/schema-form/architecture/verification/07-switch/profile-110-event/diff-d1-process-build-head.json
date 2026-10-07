@@ -1,0 +1,13 @@
+{
+  "HEAD": "4d4792307dd4f0545b2fef3c2dd7a4860588c8cd",
+  "command": "build",
+  "args": [
+    "head"
+  ],
+  "status": 0,
+  "signal": null,
+  "started": 1791332161541,
+  "ended": 1791332165536,
+  "elapsedMs": 3995,
+  "driverSha256": "a6609122b8ad85aad10f8a7287a65b835824dfb58b8aa7568ed545f70fedfdd6"
+}

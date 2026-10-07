@@ -1,0 +1,15 @@
+{
+  "phase": "d1",
+  "mode": "production",
+  "comparator": "broken",
+  "expected": "fail",
+  "exitCode": 1,
+  "signal": null,
+  "started": 1791332882953,
+  "ended": 1791332883062,
+  "elapsedMs": 109,
+  "natural": true,
+  "summary": [
+    "AssertionError [ERR_ASSERTION]: pydantic-2.9 discriminated Literal/no-listeners runtime differential differs"
+  ]
+}

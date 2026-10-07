@@ -3838,3 +3838,54 @@ beginPostOrder와 의존 경로/owner·shape 등록을 유지한 채, 원래 dir
 - Filid가 전체 DETAIL 복원 시 기존 acceptance heading을 이유로 거절하여 범위 한정 역편집으로 측정 기반을 정확히 복원했습니다. 새 helper의 기존 compute/utils 위치에 대한 organ 경고는 기존 디렉터리 구조에서 발생한 경고이며 구조를 바꾸지 않았습니다. 이 작업에서 남은 차단은 없습니다.
 
 STOP: 다섯 후보에서 계약이나 폼 간 공유 변경을 요구한 항목은 없습니다. 새로운 STOP 항목은 없습니다.
+
+## 108라운드 EVENT-007 손질
+
+107라운드 Q109 (b)에서 허용한 EVENT-007 내부 손질을 profile-109-update의 D1 → E1 순서로 각각 구현·판정했습니다. 기준 HEAD는 `4d4792307dd4f0545b2fef3c2dd7a4860588c8cd`입니다. **D1은 채택하고 E1은 기각·완전 복원했습니다.** [전체 보고서](profile-110-event/report.md)와 [최종 감사](profile-110-event/final-audit.json)에 모든 행·출처·실행 기록을 남겼습니다.
+
+### 측정과 개별 판정
+
+105C-01 및 최소 크기 부록을 따라 한 세션에서 HEAD/HEAD A/A 9회씩을 먼저 실행한 뒤 D1을 HEAD에, E1을 채택된 D1에 비교했습니다. 마운트 4행과 첫·이후 업데이트 10행 각각 새 프로세스 9회, warmup 20회, H/W 순서 교대 101쌍입니다. 강제 GC·스키마 준비는 시계 밖이며 총 378개 프로세스·38,178쌍에서 시계 안 major GC는 0회였습니다. 양수는 기반−후보의 개선입니다.
+
+채택 조건은 풀링 짝차이 중앙값의 99% 구간 전체가 양수이고 중앙값이 해당 A/A 통계를 넘는 행이 하나 이상인 것입니다. 회귀 조건은 구간 전체가 음수이고 중앙값 절댓값이 `max(|A/A 통계|, 기반 중앙값 × 0.5%)`를 넘는 것이며 회귀가 하나라도 있으면 기각했습니다.
+
+| 변경·행 | 풀링 중앙값(ms) | 99% 구간(ms) | A/A 통계(ms) | 기반 중앙값(ms) | 회귀 문턱(ms) | 판정 |
+| --- | ---: | --- | ---: | ---: | ---: | --- |
+| D1 / oneOf-40 이후 업데이트 | +0.014500 | [0.011041, 0.017959] | +0.011499 | 0.972459 | 0.011499 | 개선·채택 |
+| D1 / flat-500 이후 업데이트 | +0.001250 | [0.000667, 0.002042] | +0.000417 | 0.079709 | 0.000417 | 개선 |
+| D1 / nested-d5-f4 이후 업데이트 | +0.001459 | [0.000791, 0.002333] | +0.000832 | 0.105001 | 0.000832 | 개선 |
+| E1 / oneOf-40 이후 업데이트 | +0.011666 | [0.008708, 0.015583] | +0.011499 | 0.970251 | 0.011499 | 개선 |
+| E1 / flat-100 이후 업데이트 | −0.000708 | [−0.001458, −0.000084] | +0.000083 | 0.075625 | 0.000378 | 회귀·기각 |
+
+D1은 전역 상태 후보를 먼저, 기존 membership에 없는 추가 후보를 다음으로 한 번씩 방문하고 모든 리비전 증가 뒤 배달합니다. 속도 비용은 O(G+C) 순회·membership 검사이며 합집합 Set 생성·복사를 제거했습니다. 메모리 비용은 합집합 크기에 비례하는 임시 Set 한 개를 없애고 iterator 두 개를 사용하는 것입니다. 상주 필드·캐시는 추가하지 않았습니다. 소유 settle/DETAIL.md의 비용 설명을 구현 전에 갱신했습니다. 회귀 행은 없습니다.
+
+E1 실험은 UpdateValue의 고정 비트 리터럴·대입을 사용하며 표시당 O(1) 분기가 속도 비용입니다. 배달 객체와 정의된 payload/options 표의 할당 수를 유지하고 추가 상주 필드·캐시는 없습니다. runtime 집합·pendingRevision 비트 및 이미 전달한 사건·표를 재사용하지 않는 조건을 유지했습니다. 소유 record/DETAIL.md를 먼저 갱신했으나 flat-100 회귀로 소스·DETAIL·추가 테스트를 모두 측정 기반과 바이트 단위로 복원했습니다. 최종 제품은 D1 후보의 498개 입력 소스 해시와 같습니다.
+
+- D1 채택 패치: [1-d1-commit-membership.patch](profile-110-event/1-d1-commit-membership.patch), [파일 목록](profile-110-event/1-d1-commit-membership-files.json), [개별 요약](profile-110-event/1-d1-commit-membership-summary.json). 기반은 HEAD이며 소스·소유 DETAIL·런타임 테스트를 포함합니다.
+- E1 기각 기록: [2-e1-update-value-rejected.patch](profile-110-event/2-e1-update-value-rejected.patch), [파일 목록](profile-110-event/2-e1-update-value-files.json), [개별 요약](profile-110-event/2-e1-update-value-summary.json). 기반은 채택된 D1이며 최종 제품에는 적용하지 않았습니다.
+
+### 런타임 차분과 고장 주입
+
+59개 코퍼스(원본 14개·경계 45개)를 HEAD와 비교했습니다. 35개 스키마는 업데이트했고 24개는 HEAD와 같은 구성 오류를 단언했습니다. 무구독·전 노드 구독 모드에서 코퍼스 업데이트 424개를 실행했습니다. 다섯 측정 폼을 더하면 **후보별 128개 조합·10,262개 업데이트·15,110개 리스너 호출**이며 flat-500의 501개 노드, nested-d5-f4의 1,365개 노드 전부에 리스너가 있는 폼을 포함합니다.
+
+테스트는 제품 소스 텍스트를 읽거나 파싱하지 않습니다. 실제 방문·배달 대상 순서와 집합, 모든 리비전 증가 뒤의 리스너 호출, changedNodes, payload/options, 전달된 참조의 재사용·이후 변조를 런타임으로 관찰했습니다. [D1 전체 차분](profile-110-event/diff-d1-production-working.json)과 [E1 전체 차분](profile-110-event/diff-e1-production-working.json)이 HEAD와 같습니다.
+
+D1의 Set 복사 개수 테스트는 수정 전 1 대 0으로 실패하고 수정 후 두 사례가 통과했습니다. [중복 제거를 끈 고장 변형](profile-110-event/d1-broken-variant.patch)은 방문 7회 대 4회로 단위 테스트가 실패하고 [전체 차분도 실패](profile-110-event/probe-d1-production-broken.json)했습니다. E1은 수정 전 특성화 세 사례가 통과했으며 [pendingRevision 증가를 끈 고장 변형](profile-110-event/e1-broken-variant.patch)은 두 단위 사례와 [전체 차분이 실패](profile-110-event/probe-e1-production-broken.json)했습니다. 고장 변형을 복원한 뒤 정상 후보만 측정했습니다.
+
+### 최종 검증과 실행 기록
+
+PKG에서 설치 없이 로컬 npx로 순차 실행했으며 Vitest에는 `--configLoader runner --cache false --maxWorkers=1 --no-file-parallelism`을 추가했습니다. `cacheDir`은 설정하지 않았고 production에는 패키지 스크립트와 같이 `NODE_ENV=production`을 환경으로 내보냈습니다.
+
+| 요청 명령 | 결과 | 자체 종료 경과 |
+| --- | --- | ---: |
+| `npx vitest run --project unit --project render --project react18 --reporter=dot` | 448파일·3,265사례 통과, 허용 EVENT-070 4사례 실패, todo 1 | 301.128초 |
+| `NODE_ENV=production npx vitest run --project production --reporter=dot` | 9파일·20사례 통과 | 7.029초 |
+| `npx tsc --noEmit --composite false --rootDir . -p tsconfig.json` | 통과 | 8.435초 |
+| `npx eslint "src/**/*.{ts,tsx}"` | 통과 | 5.898초 |
+| `node architecture/verification/07-switch/tools/check-legacy-isolation.mjs` | 1,659파일 격리 통과 | 0.423초 |
+
+개발 검증 실패는 render·react18 각각 Form.effectFeedback의 EVENT-070 useLayoutEffect·useEffect 두 사례뿐이며 watchdog 201 대 <200입니다. 저장소 기존 캐시 186개 파일은 크기·mtime이 그대로입니다. 번들·소스맵은 지정한 저장소 밖 bundles 경로에만 생성했습니다. 모든 프로세스가 자체 종료했고 8분을 넘은 단일 명령, 설치, git 쓰기는 없습니다.
+
+E1 sample-0 이후 업데이트 7·8회 종료 메타데이터는 출력 잘림·복원 중 덮어쓰기를 기록하고 보수적 종료 상한으로 복원했습니다. 원래 시간 표본은 유지했으며 재실행·제외하지 않았습니다. 8회 worker는 640ms이고 요약의 131,092ms는 감사 시각까지의 종료 상한입니다. 초기 차분은 중복 검증 부담으로 420초 자체 마감에서 종료하여 하네스의 중복 비교를 줄였고, 범위를 유지한 정상 전체 차분은 각 약 32초에 통과했습니다. E1 정상 probe의 잘린 요약도 원문을 보존하고 완전한 별도 차분 기록으로 복원했습니다. 상세 근거는 [감사 JSON](profile-110-event/final-audit.json)에 있습니다.
+
+작업 중 별도로 바뀐 profile-108-ratios.md는 원복하거나 이번 패치에 포함하지 않고 보존했습니다.

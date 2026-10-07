@@ -1,0 +1,310 @@
+{
+  "HEAD": "4d4792307dd4f0545b2fef3c2dd7a4860588c8cd",
+  "result": "D1 채택, E1 기각 후 완전 복원",
+  "design": {
+    "runs": 9,
+    "warmup": 20,
+    "samples": 101,
+    "bootstrapTrials": 1999,
+    "bootstrapSeed": 101,
+    "canonicalSha256": "ef3772630d5238550f2cc48697d940ece4c3a28ab5a77580bab85472f23ba270",
+    "mode": "production",
+    "difference": "H−W"
+  },
+  "protocol": {
+    "phaseOrder": [
+      "AA HEAD/HEAD",
+      "D1 HEAD/D1",
+      "E1 D1/D1+E1"
+    ],
+    "rowsPerPhase": 14,
+    "runsPerRow": 9,
+    "freshProcesses": 378,
+    "pooledPairs": 38178,
+    "warmup": 20,
+    "samples": 101,
+    "sampleOrderAlternates": true,
+    "forcedGcOutsideClock": true,
+    "majorGcInClock": 0,
+    "processRecordsSequential": true,
+    "maxTimingWorkerElapsedMs": 2765,
+    "reconstructedEndBounds": [
+      {
+        "file": "2-e1-update-value-process-pair-forced-sample-0-later-7-working.json",
+        "elapsedMs": 1297,
+        "endIsConservativeAuditUpperBound": true,
+        "evidence": "Metadata restored from its unchanged timing row; end bounded by the next sequential worker's start."
+      },
+      {
+        "file": "2-e1-update-value-process-pair-forced-sample-0-later-8-working.json",
+        "elapsedMs": 131092,
+        "endIsConservativeAuditUpperBound": true,
+        "evidence": "Exit-record stdout truncated after the timing row was persisted; native command returned exit code 0. End bounded by audit time; no sample rerun or removal."
+      }
+    ],
+    "noMeasurementSamplesRepeatedOrRemoved": true
+  },
+  "finalProduct": {
+    "sourceCount": 498,
+    "sourceTreeSha256": "63c0950d22336ab286894182f2b0544889605e9798061692060586ae9844fba6",
+    "bundleSha256": "57085c08158ba78ea3030b5b789bb7c06eca81d8f878c0ab795a5574a57b7b75",
+    "sourceHashMismatches": [],
+    "rejectedE1Restored": [
+      {
+        "file": "packages/canard/schema-form/src/core/record/utils/markSchemaNodeEvent.ts",
+        "equalsMeasuredBase": true
+      },
+      {
+        "file": "packages/canard/schema-form/src/core/record/DETAIL.md",
+        "equalsMeasuredBase": true
+      },
+      {
+        "file": "packages/canard/schema-form/src/core/__tests__/SchemaNode.update-value-marking.test.ts",
+        "equalsMeasuredBase": true
+      }
+    ]
+  },
+  "differential": {
+    "corpusSchemas": 59,
+    "validSchemasUpdated": 35,
+    "sameConstructionErrorsAsHead": 24,
+    "corpusUpdatesBothListenerModes": 424,
+    "combinationsPerChange": 128,
+    "updatesPerChange": 10262,
+    "listenerCallsPerChange": 15110,
+    "assertions": [
+      "delivery target set and insertion order",
+      "commit visitor order",
+      "all revision increments before every listener",
+      "changedNodes equal HEAD",
+      "payloads/options equal HEAD",
+      "handed-out tables immutable"
+    ],
+    "everyNodeListenerForms": [
+      {
+        "label": "sample-0",
+        "subscribed": true,
+        "mountedNodes": 3,
+        "updates": 8,
+        "visits": 17,
+        "changedNodes": 5,
+        "revisionIncrements": 10,
+        "deliveryWaves": 5,
+        "listenerCalls": 10,
+        "immutableHandouts": 10,
+        "captureSha256": "cbf088e41c2198de044678c58e26862b83a096119cfe515969f64ba3b07712fa"
+      },
+      {
+        "label": "flat-100",
+        "subscribed": true,
+        "mountedNodes": 101,
+        "updates": 311,
+        "visits": 721,
+        "changedNodes": 210,
+        "revisionIncrements": 420,
+        "deliveryWaves": 210,
+        "listenerCalls": 420,
+        "immutableHandouts": 420,
+        "captureSha256": "85136bca78ca068176415c37c8c50e9eda7b47d8f471a495557202a02883439a"
+      },
+      {
+        "label": "flat-500",
+        "subscribed": true,
+        "mountedNodes": 501,
+        "updates": 1511,
+        "visits": 3521,
+        "changedNodes": 1010,
+        "revisionIncrements": 2020,
+        "deliveryWaves": 1010,
+        "listenerCalls": 2020,
+        "immutableHandouts": 2020,
+        "captureSha256": "579383359f7dba78803334d146dc9666803ed1b73d5f4be8f44b30cdc486f82a"
+      },
+      {
+        "label": "nested-d5-f4",
+        "subscribed": true,
+        "mountedNodes": 1365,
+        "updates": 3083,
+        "visits": 19857,
+        "changedNodes": 2058,
+        "revisionIncrements": 12348,
+        "deliveryWaves": 2058,
+        "listenerCalls": 12348,
+        "immutableHandouts": 12348,
+        "captureSha256": "8f9c0a3343bc8556bfd1bbebffa494b72556972a2875841fa8a3482e7f8f0b21"
+      },
+      {
+        "label": "oneOf-40",
+        "subscribed": true,
+        "mountedNodes": 3,
+        "updates": 6,
+        "visits": 20,
+        "changedNodes": 4,
+        "revisionIncrements": 10,
+        "deliveryWaves": 4,
+        "listenerCalls": 10,
+        "immutableHandouts": 10,
+        "captureSha256": "697975268082becc4de090115f19167a5120ae0e2f93ee93c524d270ceadefc1"
+      }
+    ],
+    "brokenVariants": [
+      {
+        "phase": "d1",
+        "mode": "production",
+        "comparator": "broken",
+        "expected": "fail",
+        "exitCode": 1,
+        "signal": null,
+        "started": 1791332882953,
+        "ended": 1791332883062,
+        "elapsedMs": 109,
+        "natural": true,
+        "summary": [
+          "AssertionError [ERR_ASSERTION]: pydantic-2.9 discriminated Literal/no-listeners runtime differential differs"
+        ]
+      },
+      {
+        "phase": "e1",
+        "mode": "production",
+        "comparator": "broken",
+        "expected": "fail",
+        "exitCode": 1,
+        "signal": null,
+        "started": 1791333364227,
+        "ended": 1791333364338,
+        "elapsedMs": 111,
+        "natural": true,
+        "summary": [
+          "AssertionError [ERR_ASSERTION]: pydantic-2.9 discriminated Literal/no-listeners runtime differential differs"
+        ]
+      }
+    ],
+    "reconstructedE1ProbeSummary": true
+  },
+  "patches": [
+    {
+      "phase": "1-d1-commit-membership",
+      "adopted": true,
+      "measuredBase": "1-d1-commit-membership-build-head.json",
+      "baseBundleSha256": "d170ef6aa68ab6f8899b8ad19e5ed0879864591bd0e3c345bf1fe984df6b3758",
+      "candidateBundleSha256": "57085c08158ba78ea3030b5b789bb7c06eca81d8f878c0ab795a5574a57b7b75",
+      "patch": "1-d1-commit-membership.patch",
+      "files": [
+        {
+          "file": "packages/canard/schema-form/src/core/settle/utils/commit/markCommitDeliveries.ts"
+        },
+        {
+          "file": "packages/canard/schema-form/src/core/settle/DETAIL.md",
+          "detailLines": [
+            38
+          ]
+        },
+        {
+          "file": "packages/canard/schema-form/src/core/settle/__tests__/settle.commit-membership.test.ts"
+        }
+      ]
+    },
+    {
+      "phase": "2-e1-update-value",
+      "adopted": false,
+      "measuredBase": "2-e1-update-value-build-head.json",
+      "baseBundleSha256": "57085c08158ba78ea3030b5b789bb7c06eca81d8f878c0ab795a5574a57b7b75",
+      "candidateBundleSha256": "69aa182c9b57c294304919c3b3ad4b94da6d35f5825cea322fe5478311615ceb",
+      "patch": "2-e1-update-value-rejected.patch",
+      "files": [
+        {
+          "file": "packages/canard/schema-form/src/core/record/utils/markSchemaNodeEvent.ts"
+        },
+        {
+          "file": "packages/canard/schema-form/src/core/record/DETAIL.md",
+          "detailLines": [
+            62
+          ]
+        },
+        {
+          "file": "packages/canard/schema-form/src/core/__tests__/SchemaNode.update-value-marking.test.ts"
+        }
+      ]
+    }
+  ],
+  "finalCommands": [
+    {
+      "name": "development",
+      "command": "npx --no-install vitest run --reporter=dot --configLoader runner --cache false --maxWorkers=1 --no-file-parallelism --project unit --project render --project react18",
+      "exitCode": 1,
+      "natural": true,
+      "signal": null,
+      "elapsedMs": 301128,
+      "summary": [
+        " FAIL  |render| src/components/Form/__tests__/Form.effectFeedback.test.tsx > EVENT-070 cross-entry feedback > EVENT-070 React stops two fields writing back through useLayoutEffect",
+        " FAIL  |render| src/components/Form/__tests__/Form.effectFeedback.test.tsx > EVENT-070 cross-entry feedback > EVENT-070 React stops two fields writing back through useEffect",
+        " FAIL  |react18| src/components/Form/__tests__/Form.effectFeedback.test.tsx > EVENT-070 cross-entry feedback > EVENT-070 React stops two fields writing back through useLayoutEffect",
+        " FAIL  |react18| src/components/Form/__tests__/Form.effectFeedback.test.tsx > EVENT-070 cross-entry feedback > EVENT-070 React stops two fields writing back through useEffect",
+        " Test Files  2 failed | 448 passed (450)",
+        "      Tests  4 failed | 3265 passed | 1 todo (3270)"
+      ]
+    },
+    {
+      "name": "production",
+      "command": "npx --no-install vitest run --reporter=dot --configLoader runner --cache false --maxWorkers=1 --no-file-parallelism --project production",
+      "exitCode": 0,
+      "natural": true,
+      "signal": null,
+      "elapsedMs": 7029,
+      "summary": [
+        " Test Files  9 passed (9)",
+        "      Tests  20 passed (20)"
+      ]
+    },
+    {
+      "name": "typecheck",
+      "command": "npx --no-install tsc --noEmit --composite false --rootDir . -p tsconfig.json",
+      "exitCode": 0,
+      "natural": true,
+      "signal": null,
+      "elapsedMs": 8435,
+      "summary": []
+    },
+    {
+      "name": "lint",
+      "command": "npx --no-install eslint src/**/*.{ts,tsx}",
+      "exitCode": 0,
+      "natural": true,
+      "signal": null,
+      "elapsedMs": 5898,
+      "summary": []
+    },
+    {
+      "name": "legacy",
+      "command": "node architecture/verification/07-switch/tools/check-legacy-isolation.mjs",
+      "exitCode": 0,
+      "natural": true,
+      "signal": null,
+      "elapsedMs": 423,
+      "summary": [
+        "LEGACY_ISOLATED: 1659 files checked"
+      ]
+    }
+  ],
+  "cache": {
+    "observedFiles": 186,
+    "unchanged": true,
+    "cacheDirSet": false
+  },
+  "repository": {
+    "gitWrites": false,
+    "installs": false,
+    "bundleAndMapDirectory": "/private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles",
+    "unrelatedPreservedChange": "packages/canard/schema-form/architecture/verification/07-switch/profile-108-ratios.md"
+  },
+  "artifacts": {
+    "maximumExistingBytes": 90045,
+    "allExistingFilesUnder5MB": true
+  },
+  "harnessCorrections": [
+    "첫 차분 실행은 매 업데이트마다 모든 과거 사건을 재비교하는 검증 부담으로 420초 자체 마감에서 종료했습니다. 참조 중복은 즉시 검사하고 전체 사건 내용은 마지막에 검사하도록 검증 하네스만 고쳤습니다. 업데이트와 단언 범위는 유지했으며 이후 각 후보 전체 차분은 약 32초에 정상 종료했습니다.",
+    "E1 sample-0/later 8회의 종료 기록 stdout이 잘렸습니다. 시간 파일의 101쌍을 보존하고 exit 0 증거로 종료 메타데이터를 복원했습니다. 7회의 메타데이터 덮어쓰기는 원래 시간 파일 및 다음 순차 프로세스 시작 시각으로 복원했습니다. 두 종료 시각은 보수적 상한이며 표본 재실행·제외는 없습니다.",
+    "measure.mjs의 프로세스 메타데이터 출력 지점을 exit에서 beforeExit로 바꾸어 stdout이 완전히 배출되게 했습니다. 시간창과 측정 함수는 그대로 유지했습니다.",
+    "E1 정상 차분의 probe 요약 JSON 끝 잘림은 원문 보존 후 완전한 별도 차분 및 정상 종료 메타데이터로 복원했습니다."
+  ]
+}
