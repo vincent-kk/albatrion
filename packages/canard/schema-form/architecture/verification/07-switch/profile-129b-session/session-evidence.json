@@ -1,0 +1,932 @@
+{
+  "format": "profile-129b-session-evidence",
+  "sessionStartUtc": "2026-10-08T17:15:32.000Z",
+  "measurementStartUtc": "2026-10-08T17:20:15.536Z",
+  "measurementEndUtc": "2026-10-08T17:52:01.782Z",
+  "preparedUtc": "2026-10-08T17:58:28.741Z",
+  "rawRoot": "/private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/profile-129b-raw",
+  "head": "85e1b709ad4b0c483d478a74af6ab4c2496bcb00",
+  "sourceTree": "608826f72f75ee446020fd1b0bd5c658b98c14c6",
+  "node": "v26.10.0",
+  "nodeBinary": "/opt/homebrew/bin/node",
+  "design": {
+    "blocks": 24,
+    "warmup": 20,
+    "samples": 41,
+    "noGc": true
+  },
+  "bundles": [
+    {
+      "variant": "head",
+      "file": "/private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles/c-head.cjs",
+      "revision": "439fda3219ec6b42efbef4d7fa0f02a40111453f",
+      "sha256": "acd4c57073f92f7553f7b4e7a8e512a4aaea789534c3c58af2c53a5a5abddde8",
+      "bytes": 543666,
+      "patches": [],
+      "instrumented": false
+    },
+    {
+      "variant": "2",
+      "file": "/private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles/c-2.cjs",
+      "revision": "439fda3219ec6b42efbef4d7fa0f02a40111453f",
+      "sha256": "6a537c6444d19248203a32586506666867e4846192c3b5b4dc91518600c67d60",
+      "bytes": 545120,
+      "patches": [
+        {
+          "file": "/private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/branch2.patch",
+          "sha256": "2bedd61f48a3493da0a0bf4722ca8db85eafcb30ee76e7b7e61e7b17ed0eff91"
+        }
+      ],
+      "instrumented": false
+    }
+  ],
+  "manifestSha256": "d7440f494f0fd8fbf0d1760cf44dcf7a19c0213c0b1b6e73a5f2fa75612933a7",
+  "tools": {
+    "measure-core-pair-129.mjs": "c12de2d2122b9674376eef25a23daf91cf30c6baa1aca6e8f81a4f7fab679617",
+    "measure-core-worker-129.mjs": "b1b23cce0ec33775da2eec4d3d31470bc5898a778982105ee7ac33583853e46c",
+    "report-cluster-129.mjs": "9b4c3c4604a5ab07bf796330d28249aa9604e76e955dd7fcfadce94d9bded140",
+    "cluster-bootstrap-129.mjs": "e44019ee98670f609cc1fcc23d7c3f4603bc47cf5bf7c8c6090772260b359e90",
+    "median-129.mjs": "309cd06b8afef93aa34c758ef16465e8e10626c40f1089fa5692ea3b70054ce9",
+    "row-seed-129.mjs": "964a936a4c82b0326cb8ba5b5fabaf060ed224dcbd4ebb018e6fbf4e3c332eab",
+    "ga-validation-129.mjs": "6e9add3d03ac43f7788e2b7822483e502d11e352e1f6cf8d9c7a0921129fdcc3",
+    "confirm-settings-129.mjs": "2247b14cb177dadcc16708e1b9958c336bced860ffc79948feab293c8796dd29"
+  },
+  "noiseTerm": {
+    "source": "/private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/profile-129a-raw/core-aa-report.json",
+    "sha256": "11e8b16c9c6057d3a4bab57f179fce850df015ef78aefd597e8756b058117286",
+    "reused": true,
+    "rows": 208,
+    "summary": {
+      "verdictRows": 104,
+      "verdictExcludingZero": [
+        "computed-visible-derived/off/update-first",
+        "oneOf-40/off/axis-first",
+        "oneOf-40/off/axis-update"
+      ],
+      "verdictExcludingZeroRate": 0.028846153846153848,
+      "recordRows": 104,
+      "recordExcludingZero": [
+        "sample-1/off/update-later-nogc"
+      ],
+      "magnitudeMedianMs": 0.002864000000000061,
+      "magnitudeMaxMs": 0.08641599999999983
+    },
+    "committedEvidence": "profile-129a-session/",
+    "newAaMeasured": false
+  },
+  "result": {
+    "verdictRows": 104,
+    "recordRows": 104,
+    "gains": 44,
+    "axisGains": 12,
+    "flaggedRegressions": [],
+    "confirmedRegressions": [],
+    "exemptedRegressions": [],
+    "confirmationMeasurement": "No flagged rows; not run",
+    "countingRun": "No confirmed rows; not run",
+    "axisGainUs": 1529.9595,
+    "countedRegressionLossUs": 0,
+    "decision": "ADOPT"
+  },
+  "audit": {
+    "settings": 23,
+    "blocks": 552,
+    "workers": 1104,
+    "gaModes": 4992,
+    "allWarmup20": true,
+    "allSamples41": true,
+    "allSingleBundle": true,
+    "allABBA": true,
+    "allMeasuredCommandsSequential": true,
+    "allMeasuredCommandsExit0": true,
+    "allMeasuredCommandsSignalNull": true,
+    "measurementCommands": 23,
+    "recordedCommands": 25,
+    "maxRecordedCommandSeconds": 213.702025875,
+    "commandTiming": {
+      "median": 68.353208667,
+      "max": 213.62805670800003
+    },
+    "workerTiming": {
+      "median": 1.367031271,
+      "max": 4.684707792000001
+    },
+    "boundary": {
+      "workers": 1104,
+      "gaModes": 4992,
+      "allGaPassed": true,
+      "allMeasuredWorkersExit0": true,
+      "allMeasuredWorkersSignalNull": true,
+      "globalImmediateMax": 0,
+      "globalTimeoutMax": 0,
+      "schedulerMacrotaskMax": 0,
+      "scheduledMax": 0,
+      "microtasksPendingMax": 0,
+      "microtasksQueuedMax": 2
+    },
+    "allRows24Blocks": true,
+    "allRowsSeedsAndIntervalsRecomputed": true,
+    "noGcRowCount": 104,
+    "bundleAndToolHashesUnchanged": true,
+    "headUnchanged": true,
+    "productSourceUnchanged": true,
+    "trackedFilesUnchanged": true,
+    "indexUnchanged": true
+  },
+  "slopes": [
+    {
+      "mode": "axis-update",
+      "points": [
+        {
+          "branches": 5,
+          "baseUs": 660.4590000000001,
+          "candidateUs": 610.668,
+          "pairedStatisticUs": 47.70950000000001,
+          "lowUs": 40.95799999999994,
+          "highUs": 61.29099999999998,
+          "gain": true
+        },
+        {
+          "branches": 10,
+          "baseUs": 918.4590000000001,
+          "candidateUs": 817.7715,
+          "pairedStatisticUs": 101.375,
+          "lowUs": 92.12550000000003,
+          "highUs": 111.02149999999999,
+          "gain": true
+        },
+        {
+          "branches": 20,
+          "baseUs": 1405.2715,
+          "candidateUs": 1217.2509999999997,
+          "pairedStatisticUs": 191.89500000000004,
+          "lowUs": 180.54100000000005,
+          "highUs": 204.81249999999994,
+          "gain": true
+        },
+        {
+          "branches": 40,
+          "baseUs": 2394.8755000000006,
+          "candidateUs": 1960.314,
+          "pairedStatisticUs": 426.27099999999996,
+          "lowUs": 400.20800000000014,
+          "highUs": 475.75100000000003,
+          "gain": true
+        }
+      ],
+      "before": {
+        "slopeUsPerBranch": 49.43285739130436,
+        "interceptUs": 417.90017391304343,
+        "r2": 0.9999648175883444
+      },
+      "after": {
+        "slopeUsPerBranch": 38.43624434782609,
+        "interceptUs": 430.82154347826076,
+        "r2": 0.999495836019613
+      },
+      "reductionPercent": 22.245554118853473
+    },
+    {
+      "mode": "axis-first",
+      "points": [
+        {
+          "branches": 5,
+          "baseUs": 392.125,
+          "candidateUs": 359.70849999999996,
+          "pairedStatisticUs": 33.979499999999994,
+          "lowUs": 28.833,
+          "highUs": 40.37499999999999,
+          "gain": true
+        },
+        {
+          "branches": 10,
+          "baseUs": 570.584,
+          "candidateUs": 503.1875,
+          "pairedStatisticUs": 66.47900000000001,
+          "lowUs": 61.20899999999996,
+          "highUs": 71.20799999999994,
+          "gain": true
+        },
+        {
+          "branches": 20,
+          "baseUs": 891.376,
+          "candidateUs": 764.771,
+          "pairedStatisticUs": 128.06249999999997,
+          "lowUs": 119.75000000000003,
+          "highUs": 139.22850000000003,
+          "gain": true
+        },
+        {
+          "branches": 40,
+          "baseUs": 1538.3960000000002,
+          "candidateUs": 1269.7915000000003,
+          "pairedStatisticUs": 273.08299999999986,
+          "lowUs": 245.64549999999997,
+          "highUs": 297.3120000000001,
+          "gain": true
+        }
+      ],
+      "before": {
+        "slopeUsPerBranch": 32.585469565217394,
+        "interceptUs": 237.14269565217387,
+        "r2": 0.9998274097932166
+      },
+      "after": {
+        "slopeUsPerBranch": 25.864557391304356,
+        "interceptUs": 239.4041739130434,
+        "r2": 0.9996038733419221
+      },
+      "reductionPercent": 20.625488181048404
+    },
+    {
+      "mode": "axis-later",
+      "points": [
+        {
+          "branches": 5,
+          "baseUs": 251.66699999999997,
+          "candidateUs": 230.1045,
+          "pairedStatisticUs": 18.854499999999984,
+          "lowUs": 15.624999999999972,
+          "highUs": 23.334000000000007,
+          "gain": true
+        },
+        {
+          "branches": 10,
+          "baseUs": 329.688,
+          "candidateUs": 294.209,
+          "pairedStatisticUs": 35.270999999999994,
+          "lowUs": 31.729000000000006,
+          "highUs": 37.665999999999976,
+          "gain": true
+        },
+        {
+          "branches": 20,
+          "baseUs": 489.43799999999993,
+          "candidateUs": 424.25,
+          "pairedStatisticUs": 65.58349999999999,
+          "lowUs": 62.79100000000004,
+          "highUs": 67.95799999999997,
+          "gain": true
+        },
+        {
+          "branches": 40,
+          "baseUs": 814.2715,
+          "candidateUs": 662.9585,
+          "pairedStatisticUs": 141.39600000000007,
+          "lowUs": 132.708,
+          "highUs": 151.58399999999995,
+          "gain": true
+        }
+      ],
+      "before": {
+        "slopeUsPerBranch": 16.097218260869564,
+        "interceptUs": 169.44328260869565,
+        "r2": 0.9999557999128232
+      },
+      "after": {
+        "slopeUsPerBranch": 12.354664347826086,
+        "interceptUs": 171.23054347826087,
+        "r2": 0.9995454242892934
+      },
+      "reductionPercent": 23.249693533330444
+    }
+  ],
+  "commands": [
+    {
+      "sequence": 0,
+      "label": "core-sample-0-off-b0",
+      "command": "/opt/homebrew/bin/node",
+      "argv": [
+        "/Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/packages/canard/schema-form/architecture/verification/07-switch/tools/measure-core-pair-129.mjs",
+        "head:2",
+        "sample-0",
+        "off",
+        "--blocks=24",
+        "--first-block=0",
+        "--warmup=20",
+        "--samples=41",
+        "--no-gc",
+        "--bundles=/private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles",
+        "--base-revision=439fda3219ec6b42efbef4d7fa0f02a40111453f",
+        "--tag=129b"
+      ],
+      "startedUtc": "2026-10-08T17:20:15.536Z",
+      "endedUtc": "2026-10-08T17:20:50.532Z",
+      "seconds": 34.996914458,
+      "exitCode": 0,
+      "signal": null,
+      "error": null
+    },
+    {
+      "sequence": 1,
+      "label": "core-sample-1-off-b0",
+      "command": "/opt/homebrew/bin/node",
+      "argv": [
+        "/Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/packages/canard/schema-form/architecture/verification/07-switch/tools/measure-core-pair-129.mjs",
+        "head:2",
+        "sample-1",
+        "off",
+        "--blocks=24",
+        "--first-block=0",
+        "--warmup=20",
+        "--samples=41",
+        "--no-gc",
+        "--bundles=/private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles",
+        "--base-revision=439fda3219ec6b42efbef4d7fa0f02a40111453f",
+        "--tag=129b"
+      ],
+      "startedUtc": "2026-10-08T17:20:50.797Z",
+      "endedUtc": "2026-10-08T17:21:26.780Z",
+      "seconds": 35.983947625,
+      "exitCode": 0,
+      "signal": null,
+      "error": null
+    },
+    {
+      "sequence": 2,
+      "label": "core-sample-2-off-b0",
+      "command": "/opt/homebrew/bin/node",
+      "argv": [
+        "/Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/packages/canard/schema-form/architecture/verification/07-switch/tools/measure-core-pair-129.mjs",
+        "head:2",
+        "sample-2",
+        "off",
+        "--blocks=24",
+        "--first-block=0",
+        "--warmup=20",
+        "--samples=41",
+        "--no-gc",
+        "--bundles=/private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles",
+        "--base-revision=439fda3219ec6b42efbef4d7fa0f02a40111453f",
+        "--tag=129b"
+      ],
+      "startedUtc": "2026-10-08T17:21:27.048Z",
+      "endedUtc": "2026-10-08T17:22:03.656Z",
+      "seconds": 36.609467625,
+      "exitCode": 0,
+      "signal": null,
+      "error": null
+    },
+    {
+      "sequence": 3,
+      "label": "core-sample-3-off-b0",
+      "command": "/opt/homebrew/bin/node",
+      "argv": [
+        "/Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/packages/canard/schema-form/architecture/verification/07-switch/tools/measure-core-pair-129.mjs",
+        "head:2",
+        "sample-3",
+        "off",
+        "--blocks=24",
+        "--first-block=0",
+        "--warmup=20",
+        "--samples=41",
+        "--no-gc",
+        "--bundles=/private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles",
+        "--base-revision=439fda3219ec6b42efbef4d7fa0f02a40111453f",
+        "--tag=129b"
+      ],
+      "startedUtc": "2026-10-08T17:22:03.916Z",
+      "endedUtc": "2026-10-08T17:22:45.144Z",
+      "seconds": 41.229158459,
+      "exitCode": 0,
+      "signal": null,
+      "error": null
+    },
+    {
+      "sequence": 4,
+      "label": "core-flat-50-off-b0",
+      "command": "/opt/homebrew/bin/node",
+      "argv": [
+        "/Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/packages/canard/schema-form/architecture/verification/07-switch/tools/measure-core-pair-129.mjs",
+        "head:2",
+        "flat-50",
+        "off",
+        "--blocks=24",
+        "--first-block=0",
+        "--warmup=20",
+        "--samples=41",
+        "--no-gc",
+        "--bundles=/private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles",
+        "--base-revision=439fda3219ec6b42efbef4d7fa0f02a40111453f",
+        "--tag=129b"
+      ],
+      "startedUtc": "2026-10-08T17:22:45.416Z",
+      "endedUtc": "2026-10-08T17:23:27.536Z",
+      "seconds": 42.121927,
+      "exitCode": 0,
+      "signal": null,
+      "error": null
+    },
+    {
+      "sequence": 5,
+      "label": "core-flat-100-off-b0",
+      "command": "/opt/homebrew/bin/node",
+      "argv": [
+        "/Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/packages/canard/schema-form/architecture/verification/07-switch/tools/measure-core-pair-129.mjs",
+        "head:2",
+        "flat-100",
+        "off",
+        "--blocks=24",
+        "--first-block=0",
+        "--warmup=20",
+        "--samples=41",
+        "--no-gc",
+        "--bundles=/private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles",
+        "--base-revision=439fda3219ec6b42efbef4d7fa0f02a40111453f",
+        "--tag=129b"
+      ],
+      "startedUtc": "2026-10-08T17:23:27.809Z",
+      "endedUtc": "2026-10-08T17:24:12.666Z",
+      "seconds": 44.859459291,
+      "exitCode": 0,
+      "signal": null,
+      "error": null
+    },
+    {
+      "sequence": 6,
+      "label": "core-flat-500-off-b0",
+      "command": "/opt/homebrew/bin/node",
+      "argv": [
+        "/Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/packages/canard/schema-form/architecture/verification/07-switch/tools/measure-core-pair-129.mjs",
+        "head:2",
+        "flat-500",
+        "off",
+        "--blocks=24",
+        "--first-block=0",
+        "--warmup=20",
+        "--samples=41",
+        "--no-gc",
+        "--bundles=/private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles",
+        "--base-revision=439fda3219ec6b42efbef4d7fa0f02a40111453f",
+        "--tag=129b"
+      ],
+      "startedUtc": "2026-10-08T17:24:12.936Z",
+      "endedUtc": "2026-10-08T17:25:18.636Z",
+      "seconds": 65.703074875,
+      "exitCode": 0,
+      "signal": null,
+      "error": null
+    },
+    {
+      "sequence": 7,
+      "label": "core-nested-d3-f4-off-b0",
+      "command": "/opt/homebrew/bin/node",
+      "argv": [
+        "/Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/packages/canard/schema-form/architecture/verification/07-switch/tools/measure-core-pair-129.mjs",
+        "head:2",
+        "nested-d3-f4",
+        "off",
+        "--blocks=24",
+        "--first-block=0",
+        "--warmup=20",
+        "--samples=41",
+        "--no-gc",
+        "--bundles=/private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles",
+        "--base-revision=439fda3219ec6b42efbef4d7fa0f02a40111453f",
+        "--tag=129b"
+      ],
+      "startedUtc": "2026-10-08T17:25:18.908Z",
+      "endedUtc": "2026-10-08T17:26:04.176Z",
+      "seconds": 45.209429042000004,
+      "exitCode": 0,
+      "signal": null,
+      "error": null
+    },
+    {
+      "sequence": 8,
+      "label": "core-nested-d5-f4-off-b0",
+      "command": "/opt/homebrew/bin/node",
+      "argv": [
+        "/Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/packages/canard/schema-form/architecture/verification/07-switch/tools/measure-core-pair-129.mjs",
+        "head:2",
+        "nested-d5-f4",
+        "off",
+        "--blocks=24",
+        "--first-block=0",
+        "--warmup=20",
+        "--samples=41",
+        "--no-gc",
+        "--bundles=/private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles",
+        "--base-revision=439fda3219ec6b42efbef4d7fa0f02a40111453f",
+        "--tag=129b"
+      ],
+      "startedUtc": "2026-10-08T17:26:04.442Z",
+      "endedUtc": "2026-10-08T17:27:53.599Z",
+      "seconds": 109.15630804199999,
+      "exitCode": 0,
+      "signal": null,
+      "error": null
+    },
+    {
+      "sequence": 9,
+      "label": "core-array-100-off-b0",
+      "command": "/opt/homebrew/bin/node",
+      "argv": [
+        "/Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/packages/canard/schema-form/architecture/verification/07-switch/tools/measure-core-pair-129.mjs",
+        "head:2",
+        "array-100",
+        "off",
+        "--blocks=24",
+        "--first-block=0",
+        "--warmup=20",
+        "--samples=41",
+        "--no-gc",
+        "--bundles=/private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles",
+        "--base-revision=439fda3219ec6b42efbef4d7fa0f02a40111453f",
+        "--tag=129b"
+      ],
+      "startedUtc": "2026-10-08T17:27:53.867Z",
+      "endedUtc": "2026-10-08T17:28:39.118Z",
+      "seconds": 45.249704791000006,
+      "exitCode": 0,
+      "signal": null,
+      "error": null
+    },
+    {
+      "sequence": 10,
+      "label": "core-array-500-off-b0",
+      "command": "/opt/homebrew/bin/node",
+      "argv": [
+        "/Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/packages/canard/schema-form/architecture/verification/07-switch/tools/measure-core-pair-129.mjs",
+        "head:2",
+        "array-500",
+        "off",
+        "--blocks=24",
+        "--first-block=0",
+        "--warmup=20",
+        "--samples=41",
+        "--no-gc",
+        "--bundles=/private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles",
+        "--base-revision=439fda3219ec6b42efbef4d7fa0f02a40111453f",
+        "--tag=129b"
+      ],
+      "startedUtc": "2026-10-08T17:28:39.386Z",
+      "endedUtc": "2026-10-08T17:29:53.636Z",
+      "seconds": 74.249191666,
+      "exitCode": 0,
+      "signal": null,
+      "error": null
+    },
+    {
+      "sequence": 11,
+      "label": "core-array-1000-off-b0",
+      "command": "/opt/homebrew/bin/node",
+      "argv": [
+        "/Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/packages/canard/schema-form/architecture/verification/07-switch/tools/measure-core-pair-129.mjs",
+        "head:2",
+        "array-1000",
+        "off",
+        "--blocks=24",
+        "--first-block=0",
+        "--warmup=20",
+        "--samples=41",
+        "--no-gc",
+        "--bundles=/private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles",
+        "--base-revision=439fda3219ec6b42efbef4d7fa0f02a40111453f",
+        "--tag=129b"
+      ],
+      "startedUtc": "2026-10-08T17:29:53.900Z",
+      "endedUtc": "2026-10-08T17:31:46.538Z",
+      "seconds": 112.63734775,
+      "exitCode": 0,
+      "signal": null,
+      "error": null
+    },
+    {
+      "sequence": 12,
+      "label": "core-computed-visible-derived-off-b0",
+      "command": "/opt/homebrew/bin/node",
+      "argv": [
+        "/Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/packages/canard/schema-form/architecture/verification/07-switch/tools/measure-core-pair-129.mjs",
+        "head:2",
+        "computed-visible-derived",
+        "off",
+        "--blocks=24",
+        "--first-block=0",
+        "--warmup=20",
+        "--samples=41",
+        "--no-gc",
+        "--bundles=/private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles",
+        "--base-revision=439fda3219ec6b42efbef4d7fa0f02a40111453f",
+        "--tag=129b"
+      ],
+      "startedUtc": "2026-10-08T17:31:46.804Z",
+      "endedUtc": "2026-10-08T17:32:28.972Z",
+      "seconds": 42.167677416,
+      "exitCode": 0,
+      "signal": null,
+      "error": null
+    },
+    {
+      "sequence": 13,
+      "label": "core-oneOf-5-off-b0",
+      "command": "/opt/homebrew/bin/node",
+      "argv": [
+        "/Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/packages/canard/schema-form/architecture/verification/07-switch/tools/measure-core-pair-129.mjs",
+        "head:2",
+        "oneOf-5",
+        "off",
+        "--blocks=24",
+        "--first-block=0",
+        "--warmup=20",
+        "--samples=41",
+        "--no-gc",
+        "--bundles=/private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles",
+        "--base-revision=439fda3219ec6b42efbef4d7fa0f02a40111453f",
+        "--tag=129b"
+      ],
+      "startedUtc": "2026-10-08T17:32:29.239Z",
+      "endedUtc": "2026-10-08T17:33:37.667Z",
+      "seconds": 68.42760745899999,
+      "exitCode": 0,
+      "signal": null,
+      "error": null
+    },
+    {
+      "sequence": 14,
+      "label": "core-oneOf-5-on-b0",
+      "command": "/opt/homebrew/bin/node",
+      "argv": [
+        "/Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/packages/canard/schema-form/architecture/verification/07-switch/tools/measure-core-pair-129.mjs",
+        "head:2",
+        "oneOf-5",
+        "on",
+        "--blocks=24",
+        "--first-block=0",
+        "--warmup=20",
+        "--samples=41",
+        "--no-gc",
+        "--bundles=/private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles",
+        "--base-revision=439fda3219ec6b42efbef4d7fa0f02a40111453f",
+        "--tag=129b"
+      ],
+      "startedUtc": "2026-10-08T17:33:37.935Z",
+      "endedUtc": "2026-10-08T17:35:42.775Z",
+      "seconds": 124.83859925,
+      "exitCode": 0,
+      "signal": null,
+      "error": null
+    },
+    {
+      "sequence": 15,
+      "label": "core-oneOf-10-off-b0",
+      "command": "/opt/homebrew/bin/node",
+      "argv": [
+        "/Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/packages/canard/schema-form/architecture/verification/07-switch/tools/measure-core-pair-129.mjs",
+        "head:2",
+        "oneOf-10",
+        "off",
+        "--blocks=24",
+        "--first-block=0",
+        "--warmup=20",
+        "--samples=41",
+        "--no-gc",
+        "--bundles=/private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles",
+        "--base-revision=439fda3219ec6b42efbef4d7fa0f02a40111453f",
+        "--tag=129b"
+      ],
+      "startedUtc": "2026-10-08T17:35:43.042Z",
+      "endedUtc": "2026-10-08T17:37:01.914Z",
+      "seconds": 78.87132399999999,
+      "exitCode": 0,
+      "signal": null,
+      "error": null
+    },
+    {
+      "sequence": 16,
+      "label": "core-oneOf-10-on-b0",
+      "command": "/opt/homebrew/bin/node",
+      "argv": [
+        "/Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/packages/canard/schema-form/architecture/verification/07-switch/tools/measure-core-pair-129.mjs",
+        "head:2",
+        "oneOf-10",
+        "on",
+        "--blocks=24",
+        "--first-block=0",
+        "--warmup=20",
+        "--samples=41",
+        "--no-gc",
+        "--bundles=/private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles",
+        "--base-revision=439fda3219ec6b42efbef4d7fa0f02a40111453f",
+        "--tag=129b"
+      ],
+      "startedUtc": "2026-10-08T17:37:02.183Z",
+      "endedUtc": "2026-10-08T17:39:19.803Z",
+      "seconds": 137.61942670800002,
+      "exitCode": 0,
+      "signal": null,
+      "error": null
+    },
+    {
+      "sequence": 17,
+      "label": "core-oneOf-20-off-b0",
+      "command": "/opt/homebrew/bin/node",
+      "argv": [
+        "/Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/packages/canard/schema-form/architecture/verification/07-switch/tools/measure-core-pair-129.mjs",
+        "head:2",
+        "oneOf-20",
+        "off",
+        "--blocks=24",
+        "--first-block=0",
+        "--warmup=20",
+        "--samples=41",
+        "--no-gc",
+        "--bundles=/private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles",
+        "--base-revision=439fda3219ec6b42efbef4d7fa0f02a40111453f",
+        "--tag=129b"
+      ],
+      "startedUtc": "2026-10-08T17:39:20.070Z",
+      "endedUtc": "2026-10-08T17:40:58.617Z",
+      "seconds": 98.54582,
+      "exitCode": 0,
+      "signal": null,
+      "error": null
+    },
+    {
+      "sequence": 18,
+      "label": "core-oneOf-20-on-b0",
+      "command": "/opt/homebrew/bin/node",
+      "argv": [
+        "/Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/packages/canard/schema-form/architecture/verification/07-switch/tools/measure-core-pair-129.mjs",
+        "head:2",
+        "oneOf-20",
+        "on",
+        "--blocks=24",
+        "--first-block=0",
+        "--warmup=20",
+        "--samples=41",
+        "--no-gc",
+        "--bundles=/private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles",
+        "--base-revision=439fda3219ec6b42efbef4d7fa0f02a40111453f",
+        "--tag=129b"
+      ],
+      "startedUtc": "2026-10-08T17:40:58.885Z",
+      "endedUtc": "2026-10-08T17:43:40.844Z",
+      "seconds": 161.957963667,
+      "exitCode": 0,
+      "signal": null,
+      "error": null
+    },
+    {
+      "sequence": 19,
+      "label": "core-oneOf-40-off-b0",
+      "command": "/opt/homebrew/bin/node",
+      "argv": [
+        "/Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/packages/canard/schema-form/architecture/verification/07-switch/tools/measure-core-pair-129.mjs",
+        "head:2",
+        "oneOf-40",
+        "off",
+        "--blocks=24",
+        "--first-block=0",
+        "--warmup=20",
+        "--samples=41",
+        "--no-gc",
+        "--bundles=/private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles",
+        "--base-revision=439fda3219ec6b42efbef4d7fa0f02a40111453f",
+        "--tag=129b"
+      ],
+      "startedUtc": "2026-10-08T17:43:41.116Z",
+      "endedUtc": "2026-10-08T17:45:59.727Z",
+      "seconds": 138.610588292,
+      "exitCode": 0,
+      "signal": null,
+      "error": null
+    },
+    {
+      "sequence": 20,
+      "label": "core-oneOf-40-on-b0",
+      "command": "/opt/homebrew/bin/node",
+      "argv": [
+        "/Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/packages/canard/schema-form/architecture/verification/07-switch/tools/measure-core-pair-129.mjs",
+        "head:2",
+        "oneOf-40",
+        "on",
+        "--blocks=24",
+        "--first-block=0",
+        "--warmup=20",
+        "--samples=41",
+        "--no-gc",
+        "--bundles=/private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles",
+        "--base-revision=439fda3219ec6b42efbef4d7fa0f02a40111453f",
+        "--tag=129b"
+      ],
+      "startedUtc": "2026-10-08T17:45:59.993Z",
+      "endedUtc": "2026-10-08T17:49:33.696Z",
+      "seconds": 213.702025875,
+      "exitCode": 0,
+      "signal": null,
+      "error": null
+    },
+    {
+      "sequence": 21,
+      "label": "core-if-then-off-b0",
+      "command": "/opt/homebrew/bin/node",
+      "argv": [
+        "/Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/packages/canard/schema-form/architecture/verification/07-switch/tools/measure-core-pair-129.mjs",
+        "head:2",
+        "if-then",
+        "off",
+        "--blocks=24",
+        "--first-block=0",
+        "--warmup=20",
+        "--samples=41",
+        "--no-gc",
+        "--bundles=/private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles",
+        "--base-revision=439fda3219ec6b42efbef4d7fa0f02a40111453f",
+        "--tag=129b"
+      ],
+      "startedUtc": "2026-10-08T17:49:33.961Z",
+      "endedUtc": "2026-10-08T17:50:12.983Z",
+      "seconds": 39.021094459,
+      "exitCode": 0,
+      "signal": null,
+      "error": null
+    },
+    {
+      "sequence": 22,
+      "label": "core-if-then-on-b0",
+      "command": "/opt/homebrew/bin/node",
+      "argv": [
+        "/Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/packages/canard/schema-form/architecture/verification/07-switch/tools/measure-core-pair-129.mjs",
+        "head:2",
+        "if-then",
+        "on",
+        "--blocks=24",
+        "--first-block=0",
+        "--warmup=20",
+        "--samples=41",
+        "--no-gc",
+        "--bundles=/private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles",
+        "--base-revision=439fda3219ec6b42efbef4d7fa0f02a40111453f",
+        "--tag=129b"
+      ],
+      "startedUtc": "2026-10-08T17:50:13.251Z",
+      "endedUtc": "2026-10-08T17:52:01.782Z",
+      "seconds": 108.53085758299999,
+      "exitCode": 0,
+      "signal": null,
+      "error": null
+    },
+    {
+      "sequence": 23,
+      "label": "report-first",
+      "command": "/opt/homebrew/bin/node",
+      "argv": [
+        "/Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/packages/canard/schema-form/architecture/verification/07-switch/tools/report-cluster-129.mjs",
+        "--input=/private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/profile-129b-raw/core",
+        "--aa=/private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/profile-129a-raw/core-aa-report.json",
+        "--out=/private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/profile-129b-raw/first-report.json"
+      ],
+      "startedUtc": "2026-10-08T17:53:04.344Z",
+      "endedUtc": "2026-10-08T17:53:08.148Z",
+      "seconds": 3.802657917,
+      "exitCode": 0,
+      "signal": null,
+      "error": null
+    },
+    {
+      "sequence": 24,
+      "label": "report-final",
+      "command": "/opt/homebrew/bin/node",
+      "argv": [
+        "/Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/packages/canard/schema-form/architecture/verification/07-switch/tools/report-cluster-129.mjs",
+        "--input=/private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/profile-129b-raw/core",
+        "--aa=/private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/profile-129a-raw/core-aa-report.json",
+        "--out=/private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/profile-129b-raw/final-report.json"
+      ],
+      "startedUtc": "2026-10-08T17:56:27.189Z",
+      "endedUtc": "2026-10-08T17:56:30.955Z",
+      "seconds": 3.764591042,
+      "exitCode": 0,
+      "signal": null,
+      "error": null
+    }
+  ],
+  "executionExceptions": [
+    {
+      "phase": "preflight",
+      "command": "rg --files <07-switch>",
+      "error": "ENOBUFS",
+      "signal": "SIGTERM",
+      "status": null,
+      "source": "context-mode execute:javascript:error, 2026-10-08 17:15 UTC",
+      "explanation": "The initial unbounded rg query overflowed the child output buffer and the runtime terminated rg. It preceded all timing measurements."
+    },
+    {
+      "phase": "report-first",
+      "startedUtc": "2026-10-08T17:53:04.344Z",
+      "endedUtc": "2026-10-08T17:53:08.148Z",
+      "error": "ENOENT",
+      "overlappingProcess": "Node read-only first-report.json lookup",
+      "lookupExitCode": 1,
+      "explanation": "The lookup ran after the report CLI yielded a session id but before its natural completion. The report finished successfully; the lookup was repeated only after completion. No timing measurements were active."
+    }
+  ],
+  "fullSessionExecutionConditionsMet": false,
+  "allTimingMeasurementExecutionConditionsMet": true,
+  "gitWrites": false,
+  "installs": false,
+  "productCodeChanges": false,
+  "measurementToolChanges": false,
+  "remainingMeasurementSteps": []
+}

@@ -1,0 +1,67 @@
+{
+  "format": "profile-129b-final-verification",
+  "verifiedUtc": "2026-10-08T18:03:58.025Z",
+  "sessionStartUtc": "2026-10-08T17:15:32.000Z",
+  "elapsedSeconds": 2906.025,
+  "withinFiveHours": true,
+  "rawFiles": 2287,
+  "allRawHashesMatch": true,
+  "csvRows": 208,
+  "markdownRows": 208,
+  "allRowStatisticsMatch": true,
+  "allSlopePointsMatch": true,
+  "aaMatchesCommitted129aHash": true,
+  "bundleAndToolHashesUnchanged": true,
+  "headUnchanged": true,
+  "trackedFilesAndIndexUnchanged": true,
+  "allArtifactsUnderFiveMB": true,
+  "reportLinksChecked": 8,
+  "verificationProbeCorrections": [
+    {
+      "probe": "markdown table column indexing",
+      "result": "First probe used a one-column offset and failed; the corrected probe resolves columns by their header names and passed. No measurement or artifact changed."
+    }
+  ],
+  "fullSessionExecutionConditionsMet": false,
+  "executionExceptions": 2,
+  "decision": "ADOPT",
+  "flaggedRegressions": 0,
+  "confirmedRegressions": 0,
+  "gains": 44,
+  "artifacts": [
+    {
+      "file": "profile-129b-session.md",
+      "bytes": 14073,
+      "sha256": "47ca87bf007c77f993368ba17d0950e39f78c42ab001d093af7f3cbcb91d3918"
+    },
+    {
+      "file": "profile-129b-session/core-rows.csv",
+      "bytes": 44377,
+      "sha256": "7004a1f0ef5d8012943ec5fc877e8e94f59366cdd6a1bf9f95847b8f0cffcb85"
+    },
+    {
+      "file": "profile-129b-session/core-rows.md",
+      "bytes": 27120,
+      "sha256": "af7126b8b30f22cb129ef92a864f58e96ddd0fd957175c44d2c5645517060172"
+    },
+    {
+      "file": "profile-129b-session/raw-sha256.txt",
+      "bytes": 257631,
+      "sha256": "7ee7959eb57a97c2533a66561cf19ca08d0c90a7fcba0c0ab286e130fcb602c8"
+    },
+    {
+      "file": "profile-129b-session/session-evidence.json",
+      "bytes": 33249,
+      "sha256": "24c5fc2c86e7285a285d70aedb9cff16167bae179ce2d6537e210a517d436617"
+    },
+    {
+      "file": "profile-129b-session/slopes.json",
+      "bytes": 4698,
+      "sha256": "7c6ea4f76235a6555a7fcc597a9c8ceae4dcada6d58eb54293b0bd6a686f6c28"
+    }
+  ],
+  "closingUtc": "2026-10-08T18:04:55.000Z",
+  "elapsedSecondsAtClosing": 2963,
+  "allReportLinksExist": true,
+  "totalArtifactFiles": 7
+}

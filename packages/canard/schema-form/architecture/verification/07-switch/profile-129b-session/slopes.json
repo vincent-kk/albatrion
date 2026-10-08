@@ -1,0 +1,163 @@
+{
+  "unit": "µs per branch",
+  "method": "OLS y = intercept + slope × branch count over 5, 10, 20, 40; y is the corrected pooled sample median of each side, not the median paired difference",
+  "confidenceIntervalForSlope": null,
+  "slopes": [
+    {
+      "mode": "axis-update",
+      "points": [
+        {
+          "branches": 5,
+          "baseUs": 660.4590000000001,
+          "candidateUs": 610.668,
+          "pairedStatisticUs": 47.70950000000001,
+          "lowUs": 40.95799999999994,
+          "highUs": 61.29099999999998,
+          "gain": true
+        },
+        {
+          "branches": 10,
+          "baseUs": 918.4590000000001,
+          "candidateUs": 817.7715,
+          "pairedStatisticUs": 101.375,
+          "lowUs": 92.12550000000003,
+          "highUs": 111.02149999999999,
+          "gain": true
+        },
+        {
+          "branches": 20,
+          "baseUs": 1405.2715,
+          "candidateUs": 1217.2509999999997,
+          "pairedStatisticUs": 191.89500000000004,
+          "lowUs": 180.54100000000005,
+          "highUs": 204.81249999999994,
+          "gain": true
+        },
+        {
+          "branches": 40,
+          "baseUs": 2394.8755000000006,
+          "candidateUs": 1960.314,
+          "pairedStatisticUs": 426.27099999999996,
+          "lowUs": 400.20800000000014,
+          "highUs": 475.75100000000003,
+          "gain": true
+        }
+      ],
+      "before": {
+        "slopeUsPerBranch": 49.43285739130436,
+        "interceptUs": 417.90017391304343,
+        "r2": 0.9999648175883444
+      },
+      "after": {
+        "slopeUsPerBranch": 38.43624434782609,
+        "interceptUs": 430.82154347826076,
+        "r2": 0.999495836019613
+      },
+      "reductionPercent": 22.245554118853473
+    },
+    {
+      "mode": "axis-first",
+      "points": [
+        {
+          "branches": 5,
+          "baseUs": 392.125,
+          "candidateUs": 359.70849999999996,
+          "pairedStatisticUs": 33.979499999999994,
+          "lowUs": 28.833,
+          "highUs": 40.37499999999999,
+          "gain": true
+        },
+        {
+          "branches": 10,
+          "baseUs": 570.584,
+          "candidateUs": 503.1875,
+          "pairedStatisticUs": 66.47900000000001,
+          "lowUs": 61.20899999999996,
+          "highUs": 71.20799999999994,
+          "gain": true
+        },
+        {
+          "branches": 20,
+          "baseUs": 891.376,
+          "candidateUs": 764.771,
+          "pairedStatisticUs": 128.06249999999997,
+          "lowUs": 119.75000000000003,
+          "highUs": 139.22850000000003,
+          "gain": true
+        },
+        {
+          "branches": 40,
+          "baseUs": 1538.3960000000002,
+          "candidateUs": 1269.7915000000003,
+          "pairedStatisticUs": 273.08299999999986,
+          "lowUs": 245.64549999999997,
+          "highUs": 297.3120000000001,
+          "gain": true
+        }
+      ],
+      "before": {
+        "slopeUsPerBranch": 32.585469565217394,
+        "interceptUs": 237.14269565217387,
+        "r2": 0.9998274097932166
+      },
+      "after": {
+        "slopeUsPerBranch": 25.864557391304356,
+        "interceptUs": 239.4041739130434,
+        "r2": 0.9996038733419221
+      },
+      "reductionPercent": 20.625488181048404
+    },
+    {
+      "mode": "axis-later",
+      "points": [
+        {
+          "branches": 5,
+          "baseUs": 251.66699999999997,
+          "candidateUs": 230.1045,
+          "pairedStatisticUs": 18.854499999999984,
+          "lowUs": 15.624999999999972,
+          "highUs": 23.334000000000007,
+          "gain": true
+        },
+        {
+          "branches": 10,
+          "baseUs": 329.688,
+          "candidateUs": 294.209,
+          "pairedStatisticUs": 35.270999999999994,
+          "lowUs": 31.729000000000006,
+          "highUs": 37.665999999999976,
+          "gain": true
+        },
+        {
+          "branches": 20,
+          "baseUs": 489.43799999999993,
+          "candidateUs": 424.25,
+          "pairedStatisticUs": 65.58349999999999,
+          "lowUs": 62.79100000000004,
+          "highUs": 67.95799999999997,
+          "gain": true
+        },
+        {
+          "branches": 40,
+          "baseUs": 814.2715,
+          "candidateUs": 662.9585,
+          "pairedStatisticUs": 141.39600000000007,
+          "lowUs": 132.708,
+          "highUs": 151.58399999999995,
+          "gain": true
+        }
+      ],
+      "before": {
+        "slopeUsPerBranch": 16.097218260869564,
+        "interceptUs": 169.44328260869565,
+        "r2": 0.9999557999128232
+      },
+      "after": {
+        "slopeUsPerBranch": 12.354664347826086,
+        "interceptUs": 171.23054347826087,
+        "r2": 0.9995454242892934
+      },
+      "reductionPercent": 23.249693533330444
+    }
+  ]
+}
