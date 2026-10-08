@@ -1,0 +1,132 @@
+{
+  "result": "PASS",
+  "head": "f8f86f4d3347b194602d123b132281f7ff642560",
+  "rawFiles": 6321,
+  "measurementWorkers": 2088,
+  "mainCommands": 414,
+  "supplementalCommands": 108,
+  "gaFailures": 0,
+  "digestMismatches": 0,
+  "overlappingMeasurementIntervals": 0,
+  "commandFailures": 0,
+  "intervalsRecomputed": 160,
+  "maximumPairCommandSeconds": 34.65309516700002,
+  "maximumWorkerSeconds": 9.095822625,
+  "maximumBatchSeconds": 348.604144125,
+  "measurementStarted": "2026-10-08T03:43:39.286Z",
+  "measurementEnded": "2026-10-08T05:51:43.190Z",
+  "completedAt": "2026-10-08T06:12:19.118Z",
+  "sessionStart": "2026-10-08T03:39:46.000Z",
+  "elapsedSessionSeconds": 9153.118,
+  "verificationSeconds": 254.13999925,
+  "rawManifestVerified": true,
+  "artifactLimitsPassed": true,
+  "artifacts": [
+    {
+      "path": "profile-126b-session/core-2-F3.json",
+      "bytes": 804373,
+      "sha256": "3eb3f2981b2ac1545fc6f7e2cc0f6a620b2e8ef4f05acc4644f496444fe66054"
+    },
+    {
+      "path": "profile-126b-session/core-2-F3.md",
+      "bytes": 85360,
+      "sha256": "942320a6a2f74853e3ece3f3e5da934f3f3146b707b5dcce60d0113ef99ec1f7"
+    },
+    {
+      "path": "profile-126b-session/core-head-2.json",
+      "bytes": 774025,
+      "sha256": "e8c1624aff71a07eb2a529343020134ce3ddc1f804ffbeb504a0793f0356978c"
+    },
+    {
+      "path": "profile-126b-session/core-head-2.md",
+      "bytes": 82665,
+      "sha256": "9d2dc24a3dd169e662b9daa0b7931ff62fd5ec9954f4bce051845bbe92d62b40"
+    },
+    {
+      "path": "profile-126b-session/raw-sha256.txt",
+      "bytes": 744506,
+      "sha256": "c98cb54960000a1cdf32bb1bd65efa6ec403b5ec14fb535d200bd51cf9441cb4"
+    },
+    {
+      "path": "profile-126b-session/session-evidence.json",
+      "bytes": 35728,
+      "sha256": "e0a92689e773e7c95a429b4c352588c4c5d4c09c1472f66c6cdaedf867797f40"
+    },
+    {
+      "path": "profile-126b-session.md",
+      "bytes": 21154,
+      "sha256": "4e7dc8141cc20f8041e5d11f314c464b96d8806d1fb3ef12a46117d3a8616c59"
+    }
+  ],
+  "trackedChanges": 1,
+  "ownTrackedChanges": 0,
+  "scopeObservation": {
+    "path": "packages/canard/schema-form/architecture/verification/07-switch/performance.md",
+    "sha256": "80b0aeb85ca09028fd0de86cc9f2c06e46d54cd02f4fb5cc99fe6a63c4d50868",
+    "diffSha256": "e52f8ef395ccab49d3c462063b99375e3f68b253f073c2e7e53ecd498f52a826",
+    "mtime": "2026-10-08T04:32:07.855Z",
+    "statement": "세션 도구가 쓰지 않은 기존 성능 문서의 한 줄 추가를 발견했고, 측정 입력의 해시 일치를 확인한 뒤 그 변경을 보존했습니다."
+  },
+  "initialVerification": {
+    "result": "FAILED_SCOPE_CHECK",
+    "exitCode": 1,
+    "statement": "첫 검증은 수치·해시 검사를 통과한 뒤 기존 성능 문서의 예상하지 않은 수정 때문에 범위 검사에서 자연 종료 코드 1로 끝났습니다. 명령 시작 전에 이미 존재했던 보고서 생성 시각부터 실패 확인 시각까지의 상한도 8분 이내입니다.",
+    "detectedAt": "2026-10-08T06:03:55.000Z",
+    "reportExistedBeforeCommandStarted": "2026-10-08T05:58:21.390Z",
+    "commandDurationUpperBoundSeconds": 333.6100075683594
+  },
+  "reusedAA": {
+    "session": "126a",
+    "file": "/Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/packages/canard/schema-form/architecture/verification/07-switch/profile-126a-session/core-AA.json",
+    "sha256": "89f437a479fe1621f98ef339ef3442ef2811e84f423b55ff8617950351285244",
+    "statement": "사용자 지시에 따라 세션 126a의 행별 A/A 대응 차이 중앙값 절댓값을 잡음항으로 재사용했습니다."
+  },
+  "stages": [
+    {
+      "label": "head-2",
+      "verdict": "ADOPT",
+      "regressions": 12,
+      "gains": 50,
+      "exemptedRows": 12
+    },
+    {
+      "label": "2-F3",
+      "verdict": "REJECT",
+      "regressions": 20,
+      "gains": 9,
+      "exemptedRows": 0
+    }
+  ],
+  "scope": "Git 쓰기·설치·제품 코드 변경 없이 측정 자료와 한국어 보고서만 작성했습니다.",
+  "limitations": "scheduler 외부 import가 없어 (ga)의 경계 계수는 구조적으로 0이며, 실질적 시간 대조는 paired sentinel과 microtask 종단 차이를 사용합니다.",
+  "measurementCommandFailures": 0,
+  "verificationCommandFailures": 1,
+  "verificationCommandFailureReason": "기존 performance.md에서 별도로 발생한 수정 1행을 최초 범위 검사에서 발견했습니다. 그 수정은 보존하고 내용·diff 해시를 고정하여 재검증했습니다.",
+  "verifier": {
+    "path": "/private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/profile-126b-raw/verify.mjs",
+    "sha256": "db946d1a71de683f25338dc50aa7510e79e29a8f1b8aa6cf51b3a47c5a28763d",
+    "command": "/opt/homebrew/bin/node /private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/profile-126b-raw/verify.mjs verify"
+  },
+  "processExitStatement": "측정·분석·두 검증 명령이 각각 자연 종료했습니다. 최장 측정 배치는 348.604초이고, 최초 검증 명령의 실행 시간 상한은 333.611초이며, 재검증 명령은 254.140초입니다.",
+  "finalDocumentCheck": {
+    "result": "PASS",
+    "checkedAt": "2026-10-08T06:17:13.709Z",
+    "elapsedSessionSeconds": 9447.709,
+    "artifactFilesIncludingReport": 8,
+    "artifactFilesInDirectory": 7,
+    "maximumArtifactBytes": 804373,
+    "artifactHashesUnchanged": true,
+    "jsonValid": true,
+    "regressionTableRows": 32,
+    "headUnchanged": true,
+    "productTrackedChanges": 0,
+    "unrelatedDocumentChangePreserved": true,
+    "rawVerifierHashUnchanged": true,
+    "sessionUnderFourHours": true,
+    "priorCheckCorrection": "최초 최종 파일 검사는 기본 보고서를 별도 경로에 둔 사실을 빠뜨려 디렉터리 파일 수를 8개로 잘못 기대했습니다. 디렉터리 7개와 기본 보고서 1개로 바로잡았습니다.",
+    "statement": "최종 검증 기록을 저장한 뒤 모든 산출물의 크기·JSON·기존 해시·회귀 표의 32행과 저장소 변경 범위를 확인했습니다."
+  },
+  "finalDocumentCheckFailures": 1,
+  "finalArtifactCheckedAt": "2026-10-08T06:17:13.709Z",
+  "totalSessionElapsedSeconds": 9447.709
+}

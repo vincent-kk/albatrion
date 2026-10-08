@@ -1,0 +1,1073 @@
+{
+  "session": "126b",
+  "sessionStart": "2026-10-08T03:39:46.000Z",
+  "preflightAt": "2026-10-08T03:43:26.601Z",
+  "head": "f8f86f4d3347b194602d123b132281f7ff642560",
+  "initialWorkingTreeClean": true,
+  "node": "v26.10.0",
+  "v8": "14.6.202.34-node.35",
+  "requestedNodeBinary": "/opt/homebrew/bin/node",
+  "realNodeBinary": "/opt/homebrew/Cellar/node/26.10.0_2/bin/node",
+  "nodeSha256": "832eaf52cafa7ff1364c2ca378451db14fb043d8d23a5cfd18a0a103d66226fc",
+  "cpu": "Apple M1 Max",
+  "memoryBytes": 68719476736,
+  "bundleSourceRevision": "439fda3219ec6b42efbef4d7fa0f02a40111453f",
+  "bundles": [
+    {
+      "name": "head",
+      "original": "/private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles/c-head.cjs",
+      "rebuilt": "/private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles-126/c-head.cjs",
+      "sha256": "acd4c57073f92f7553f7b4e7a8e512a4aaea789534c3c58af2c53a5a5abddde8",
+      "bytes": 543666,
+      "entry": {
+        "file": "/private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles/c-head.cjs",
+        "revision": "439fda3219ec6b42efbef4d7fa0f02a40111453f",
+        "variant": "head",
+        "patches": [],
+        "overlayFiles": [],
+        "NODE_ENV": "production",
+        "instrumented": false,
+        "sha256": "acd4c57073f92f7553f7b4e7a8e512a4aaea789534c3c58af2c53a5a5abddde8",
+        "bytes": 543666,
+        "naturalBuildServiceExits": 1
+      }
+    },
+    {
+      "name": "2",
+      "original": "/private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles/c-2.cjs",
+      "rebuilt": "/private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles-126/c-2.cjs",
+      "sha256": "6a537c6444d19248203a32586506666867e4846192c3b5b4dc91518600c67d60",
+      "bytes": 545120,
+      "entry": {
+        "file": "/private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles/c-2.cjs",
+        "revision": "439fda3219ec6b42efbef4d7fa0f02a40111453f",
+        "variant": "2",
+        "patches": [
+          {
+            "file": "/private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/branch2.patch",
+            "sha256": "2bedd61f48a3493da0a0bf4722ca8db85eafcb30ee76e7b7e61e7b17ed0eff91"
+          }
+        ],
+        "overlayFiles": [
+          "packages/canard/schema-form/src/core/settle/utils/gates/evaluateGate.ts",
+          "packages/canard/schema-form/src/core/settle/utils/gates/flushPendingGateReads.ts",
+          "packages/canard/schema-form/src/core/settle/utils/gates/getGateRegistry.ts",
+          "packages/canard/schema-form/src/core/settle/utils/gates/readProjectedValue.ts"
+        ],
+        "NODE_ENV": "production",
+        "instrumented": false,
+        "sha256": "6a537c6444d19248203a32586506666867e4846192c3b5b4dc91518600c67d60",
+        "bytes": 545120,
+        "naturalBuildServiceExits": 1
+      }
+    },
+    {
+      "name": "F3",
+      "original": "/private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles/c-F3.cjs",
+      "rebuilt": "/private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles-126/c-F3.cjs",
+      "sha256": "54b06ce95995c6772e7393ab680a1d2a35a943690f9596a7c409823458515577",
+      "bytes": 545240,
+      "entry": {
+        "file": "/private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles/c-F3.cjs",
+        "revision": "439fda3219ec6b42efbef4d7fa0f02a40111453f",
+        "variant": "F3",
+        "patches": [
+          {
+            "file": "/private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/branchF3.patch",
+            "sha256": "05615d1c15e4fede590b6b3a6502d15cf7b69e0487af4c6f4d7ad67d15e2edcc"
+          }
+        ],
+        "overlayFiles": [
+          "packages/canard/schema-form/src/core/settle/utils/gates/evaluateGate.ts",
+          "packages/canard/schema-form/src/core/settle/utils/gates/flushPendingGateReads.ts",
+          "packages/canard/schema-form/src/core/settle/utils/gates/getGateRegistry.ts",
+          "packages/canard/schema-form/src/core/settle/utils/gates/readProjectedValue.ts"
+        ],
+        "NODE_ENV": "production",
+        "instrumented": false,
+        "sha256": "54b06ce95995c6772e7393ab680a1d2a35a943690f9596a7c409823458515577",
+        "bytes": 545240,
+        "naturalBuildServiceExits": 1
+      }
+    },
+    {
+      "name": "2F3",
+      "original": "/private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles/c-2F3.cjs",
+      "rebuilt": "/private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles-126/c-2F3.cjs",
+      "sha256": "54b06ce95995c6772e7393ab680a1d2a35a943690f9596a7c409823458515577",
+      "bytes": 545240,
+      "entry": {
+        "file": "/private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles/c-2F3.cjs",
+        "revision": "439fda3219ec6b42efbef4d7fa0f02a40111453f",
+        "variant": "2F3",
+        "patches": [
+          {
+            "file": "/private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/branch2.patch",
+            "sha256": "2bedd61f48a3493da0a0bf4722ca8db85eafcb30ee76e7b7e61e7b17ed0eff91"
+          },
+          {
+            "file": "/private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/branchF3-on-2.patch",
+            "sha256": "9f99ef7717324f60b5f4b8b68a018c629f447dbae591327cded4f8a51575e88f"
+          }
+        ],
+        "overlayFiles": [
+          "packages/canard/schema-form/src/core/settle/utils/gates/evaluateGate.ts",
+          "packages/canard/schema-form/src/core/settle/utils/gates/flushPendingGateReads.ts",
+          "packages/canard/schema-form/src/core/settle/utils/gates/getGateRegistry.ts",
+          "packages/canard/schema-form/src/core/settle/utils/gates/readProjectedValue.ts"
+        ],
+        "NODE_ENV": "production",
+        "instrumented": false,
+        "sha256": "54b06ce95995c6772e7393ab680a1d2a35a943690f9596a7c409823458515577",
+        "bytes": 545240,
+        "naturalBuildServiceExits": 1
+      }
+    }
+  ],
+  "originals": [
+    {
+      "name": "profile-126a-session.md",
+      "sha256": "7b4944581e4d1ce526280ebf733086ae7de4eddd5bea626d9776147adf7b491d"
+    },
+    {
+      "name": "profile-126a-session/core-AA.json",
+      "sha256": "89f437a479fe1621f98ef339ef3442ef2811e84f423b55ff8617950351285244"
+    },
+    {
+      "name": "profile-126a-session/core-AA.md",
+      "sha256": "3305c8e3be00cecaa9b1da06f33941bb5d07e52e2132badf5982d476e527f047"
+    },
+    {
+      "name": "profile-126a-session/session-verification.json",
+      "sha256": "3918309602b2ba5887034b5b22a9326510da00681a1d944dddcfd01655342892"
+    },
+    {
+      "name": "harness-126.md",
+      "sha256": "29ac55080238f83114a0fd58de853c15a385cdfe91afc89da39fbcaf61b7dd45"
+    },
+    {
+      "name": "tools/measure-core-pair-126.mjs",
+      "sha256": "a64cda1656a48419abd0c97ce348b43939df89986a43e8897c59e85bbf546c1b"
+    },
+    {
+      "name": "tools/measure-verdict-121.mjs",
+      "sha256": "1fb1a0ed5796ae88659188cab473b67039447a24ffa9fe80cf81e42c2e67e5a5"
+    },
+    {
+      "name": "tools/measure-pair-121.mjs",
+      "sha256": "c1e084d595bba03486c9b89ceacd07462709b783f1bd61f959c596b38ee2c4f6"
+    },
+    {
+      "name": "tools/report-verdict-121.mjs",
+      "sha256": "3a37cb47cb8cd2fedc6ca3dd59bd12ceed3cb9a4463a198a1b125d50802ae28b"
+    },
+    {
+      "name": "tools/endpointDifference95c01.mjs",
+      "sha256": "25d11780f9f01813255ac79694c4dbd5195154a69039929af283a315647bd4c1"
+    }
+  ],
+  "rules": [
+    {
+      "round": 95,
+      "gitPath": "origin/1.0.0-beta:packages/canard/schema-form/architecture/reviews/round-95-closing.md",
+      "sha256": "323d34e7789b077c5481d3432ea1226b948d3bc11c0f2678b7d319eb49fbb8e1"
+    },
+    {
+      "round": 105,
+      "gitPath": "origin/1.0.0-beta:packages/canard/schema-form/architecture/reviews/round-105-closing.md",
+      "sha256": "5536940e9baa5ffa099c32cf7c8bbe8bc44ec5a55a91c1d67862e26e59f3fa58"
+    },
+    {
+      "round": 124,
+      "gitPath": "origin/1.0.0-beta:packages/canard/schema-form/architecture/reviews/round-124-closing.md",
+      "sha256": "a98a7179a7d41e1d0101c1fe2da21978fbf97193429648280e6eb6ff591584cb"
+    },
+    {
+      "round": 125,
+      "gitPath": "origin/1.0.0-beta:packages/canard/schema-form/architecture/reviews/round-125-closing.md",
+      "sha256": "6774e85d24a97710be77c0930ac570f840c8f066d59dc3ea724426140629d7ed"
+    }
+  ],
+  "reusedAA": {
+    "session": "126a",
+    "file": "/Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/packages/canard/schema-form/architecture/verification/07-switch/profile-126a-session/core-AA.json",
+    "sha256": "89f437a479fe1621f98ef339ef3442ef2811e84f423b55ff8617950351285244",
+    "statement": "사용자 지시에 따라 세션 126a의 행별 A/A 대응 차이 중앙값 절댓값을 잡음항으로 재사용했습니다."
+  },
+  "adapters": [
+    {
+      "file": "/private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/profile-126b-raw/preload.mjs",
+      "sha256": "eff7ed671fae69121f64d1199e3a64c29d6036b546268dbe88e9cd21dc6cafa1"
+    },
+    {
+      "file": "/private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/profile-126b-raw/run.mjs",
+      "sha256": "f15cc73a1a54fa46ee8f18d875ae5b2f4c84c7bd710af9d4597be19df9b64928"
+    },
+    {
+      "file": "/private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/profile-126b-raw/analyze.mjs",
+      "sha256": "21a47ecf222917e26ea61e7419b0986c0cc9c16107841cd061da8a225f5f301a"
+    },
+    {
+      "file": "/private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/profile-126b-raw/verify.mjs",
+      "sha256": "db946d1a71de683f25338dc50aa7510e79e29a8f1b8aa6cf51b3a47c5a28763d"
+    }
+  ],
+  "settings": [
+    {
+      "fixture": "if-then",
+      "validation": "off"
+    },
+    {
+      "fixture": "if-then",
+      "validation": "on"
+    },
+    {
+      "fixture": "oneOf-10",
+      "validation": "off"
+    },
+    {
+      "fixture": "oneOf-20",
+      "validation": "off"
+    },
+    {
+      "fixture": "oneOf-40",
+      "validation": "off"
+    },
+    {
+      "fixture": "oneOf-5",
+      "validation": "off"
+    },
+    {
+      "fixture": "array-100",
+      "validation": "off"
+    },
+    {
+      "fixture": "array-1000",
+      "validation": "off"
+    },
+    {
+      "fixture": "array-500",
+      "validation": "off"
+    },
+    {
+      "fixture": "computed-visible-derived",
+      "validation": "off"
+    },
+    {
+      "fixture": "flat-100",
+      "validation": "off"
+    },
+    {
+      "fixture": "flat-50",
+      "validation": "off"
+    },
+    {
+      "fixture": "flat-500",
+      "validation": "off"
+    },
+    {
+      "fixture": "nested-d3-f4",
+      "validation": "off"
+    },
+    {
+      "fixture": "nested-d5-f4",
+      "validation": "off"
+    },
+    {
+      "fixture": "oneOf-10",
+      "validation": "on"
+    },
+    {
+      "fixture": "oneOf-20",
+      "validation": "on"
+    },
+    {
+      "fixture": "oneOf-40",
+      "validation": "on"
+    },
+    {
+      "fixture": "oneOf-5",
+      "validation": "on"
+    },
+    {
+      "fixture": "sample-0",
+      "validation": "off"
+    },
+    {
+      "fixture": "sample-1",
+      "validation": "off"
+    },
+    {
+      "fixture": "sample-2",
+      "validation": "off"
+    },
+    {
+      "fixture": "sample-3",
+      "validation": "off"
+    }
+  ],
+  "tasksPerStage": 207,
+  "processesPerSidePerRun": 2,
+  "blocksPerRun": 2,
+  "samplesPerProcess": 101,
+  "warmupPerProcess": 20,
+  "concurrency": 1,
+  "deadline": "2026-10-08T07:39:46.000Z",
+  "measurementCutoff": "2026-10-08T07:14:46.000Z",
+  "noGcExtension": "첫 쓰기 27개 열과 if-then OFF/ON mount·update·update-later 여섯 열을 기록하며 공식 시계·GC·작업 순서는 유지했습니다.",
+  "scope": "Git 쓰기·설치·제품 코드 변경 없이 제공된 번들을 그대로 측정합니다.",
+  "facts": {
+    "rawFiles": 6321,
+    "measurementWorkers": 2088,
+    "phases": [
+      {
+        "stage": "head:2",
+        "action": "main",
+        "commands": 207,
+        "started": "2026-10-08T03:43:39.086Z",
+        "ended": "2026-10-08T04:34:24.440Z"
+      },
+      {
+        "stage": "head:2",
+        "action": "extra",
+        "commands": 54,
+        "started": "2026-10-08T04:38:24.679Z",
+        "ended": "2026-10-08T04:46:26.821Z"
+      },
+      {
+        "stage": "2:F3",
+        "action": "main",
+        "commands": 207,
+        "started": "2026-10-08T04:48:12.476Z",
+        "ended": "2026-10-08T05:36:21.684Z"
+      },
+      {
+        "stage": "2:F3",
+        "action": "extra",
+        "commands": 54,
+        "started": "2026-10-08T05:40:37.196Z",
+        "ended": "2026-10-08T05:51:43.332Z"
+      }
+    ],
+    "maxPairSeconds": 34.65309516700002,
+    "maxWorkerSeconds": 9.095822625,
+    "maxBatchSeconds": 348.604144125,
+    "measurementStarted": "2026-10-08T03:43:39.286Z",
+    "measurementEnded": "2026-10-08T05:51:43.190Z"
+  },
+  "rawFiles": 6321,
+  "analysis": {
+    "session": "126b",
+    "commands": [
+      {
+        "stage": "head:2",
+        "fixture": "if-then",
+        "validation": "off",
+        "seconds": 6.353450042
+      },
+      {
+        "stage": "head:2",
+        "fixture": "if-then",
+        "validation": "on",
+        "seconds": 6.345525707999999
+      },
+      {
+        "stage": "head:2",
+        "fixture": "oneOf-10",
+        "validation": "off",
+        "seconds": 7.079016708
+      },
+      {
+        "stage": "head:2",
+        "fixture": "oneOf-20",
+        "validation": "off",
+        "seconds": 7.106650374999999
+      },
+      {
+        "stage": "head:2",
+        "fixture": "oneOf-40",
+        "validation": "off",
+        "seconds": 7.074632292
+      },
+      {
+        "stage": "head:2",
+        "fixture": "oneOf-5",
+        "validation": "off",
+        "seconds": 7.124753791
+      },
+      {
+        "stage": "head:2",
+        "fixture": "array-100",
+        "validation": "off",
+        "seconds": 4.1383459579999995
+      },
+      {
+        "stage": "head:2",
+        "fixture": "array-1000",
+        "validation": "off",
+        "seconds": 4.125692333
+      },
+      {
+        "stage": "head:2",
+        "fixture": "array-500",
+        "validation": "off",
+        "seconds": 4.134175375
+      },
+      {
+        "stage": "head:2",
+        "fixture": "computed-visible-derived",
+        "validation": "off",
+        "seconds": 4.129015208000001
+      },
+      {
+        "stage": "head:2",
+        "fixture": "flat-100",
+        "validation": "off",
+        "seconds": 4.136348792000001
+      },
+      {
+        "stage": "head:2",
+        "fixture": "flat-50",
+        "validation": "off",
+        "seconds": 4.141015042
+      },
+      {
+        "stage": "head:2",
+        "fixture": "flat-500",
+        "validation": "off",
+        "seconds": 4.166981209
+      },
+      {
+        "stage": "head:2",
+        "fixture": "nested-d3-f4",
+        "validation": "off",
+        "seconds": 4.124757625
+      },
+      {
+        "stage": "head:2",
+        "fixture": "nested-d5-f4",
+        "validation": "off",
+        "seconds": 4.120545083
+      },
+      {
+        "stage": "head:2",
+        "fixture": "oneOf-10",
+        "validation": "on",
+        "seconds": 4.115209333000001
+      },
+      {
+        "stage": "head:2",
+        "fixture": "oneOf-20",
+        "validation": "on",
+        "seconds": 4.108191792
+      },
+      {
+        "stage": "head:2",
+        "fixture": "oneOf-40",
+        "validation": "on",
+        "seconds": 4.105145333
+      },
+      {
+        "stage": "head:2",
+        "fixture": "oneOf-5",
+        "validation": "on",
+        "seconds": 4.120709167
+      },
+      {
+        "stage": "head:2",
+        "fixture": "sample-0",
+        "validation": "off",
+        "seconds": 4.128333583000001
+      },
+      {
+        "stage": "head:2",
+        "fixture": "sample-1",
+        "validation": "off",
+        "seconds": 4.137822375
+      },
+      {
+        "stage": "head:2",
+        "fixture": "sample-2",
+        "validation": "off",
+        "seconds": 4.138048708
+      },
+      {
+        "stage": "head:2",
+        "fixture": "sample-3",
+        "validation": "off",
+        "seconds": 4.1353054590000005
+      },
+      {
+        "stage": "head:2",
+        "fixture": "computed-visible-derived",
+        "validation": "off",
+        "action": "extra",
+        "seconds": 5.627769499999999
+      },
+      {
+        "stage": "head:2",
+        "fixture": "flat-100",
+        "validation": "off",
+        "action": "extra",
+        "seconds": 5.609287375
+      },
+      {
+        "stage": "head:2",
+        "fixture": "nested-d3-f4",
+        "validation": "off",
+        "action": "extra",
+        "seconds": 4.87322325
+      },
+      {
+        "stage": "head:2",
+        "fixture": "nested-d5-f4",
+        "validation": "off",
+        "action": "extra",
+        "seconds": 4.861603583
+      },
+      {
+        "stage": "head:2",
+        "fixture": "sample-1",
+        "validation": "off",
+        "action": "extra",
+        "seconds": 4.9030981250000005
+      },
+      {
+        "stage": "head:2",
+        "fixture": "sample-3",
+        "validation": "off",
+        "action": "extra",
+        "seconds": 5.607403458
+      },
+      {
+        "stage": "2:F3",
+        "fixture": "if-then",
+        "validation": "off",
+        "seconds": 6.370178417
+      },
+      {
+        "stage": "2:F3",
+        "fixture": "if-then",
+        "validation": "on",
+        "seconds": 6.357094624999999
+      },
+      {
+        "stage": "2:F3",
+        "fixture": "oneOf-10",
+        "validation": "off",
+        "seconds": 7.0745605
+      },
+      {
+        "stage": "2:F3",
+        "fixture": "oneOf-20",
+        "validation": "off",
+        "seconds": 7.071042208000001
+      },
+      {
+        "stage": "2:F3",
+        "fixture": "oneOf-40",
+        "validation": "off",
+        "seconds": 7.128317957999999
+      },
+      {
+        "stage": "2:F3",
+        "fixture": "oneOf-5",
+        "validation": "off",
+        "seconds": 7.092392167
+      },
+      {
+        "stage": "2:F3",
+        "fixture": "array-100",
+        "validation": "off",
+        "seconds": 4.136536583
+      },
+      {
+        "stage": "2:F3",
+        "fixture": "array-1000",
+        "validation": "off",
+        "seconds": 4.110723375
+      },
+      {
+        "stage": "2:F3",
+        "fixture": "array-500",
+        "validation": "off",
+        "seconds": 4.121540166
+      },
+      {
+        "stage": "2:F3",
+        "fixture": "computed-visible-derived",
+        "validation": "off",
+        "seconds": 4.132039042000001
+      },
+      {
+        "stage": "2:F3",
+        "fixture": "flat-100",
+        "validation": "off",
+        "seconds": 4.136421459
+      },
+      {
+        "stage": "2:F3",
+        "fixture": "flat-50",
+        "validation": "off",
+        "seconds": 4.131810832999999
+      },
+      {
+        "stage": "2:F3",
+        "fixture": "flat-500",
+        "validation": "off",
+        "seconds": 4.134790333
+      },
+      {
+        "stage": "2:F3",
+        "fixture": "nested-d3-f4",
+        "validation": "off",
+        "seconds": 4.140790416
+      },
+      {
+        "stage": "2:F3",
+        "fixture": "nested-d5-f4",
+        "validation": "off",
+        "seconds": 4.135924542
+      },
+      {
+        "stage": "2:F3",
+        "fixture": "oneOf-10",
+        "validation": "on",
+        "seconds": 4.105553583
+      },
+      {
+        "stage": "2:F3",
+        "fixture": "oneOf-20",
+        "validation": "on",
+        "seconds": 4.118843917
+      },
+      {
+        "stage": "2:F3",
+        "fixture": "oneOf-40",
+        "validation": "on",
+        "seconds": 4.117192416
+      },
+      {
+        "stage": "2:F3",
+        "fixture": "oneOf-5",
+        "validation": "on",
+        "seconds": 4.12317325
+      },
+      {
+        "stage": "2:F3",
+        "fixture": "sample-0",
+        "validation": "off",
+        "seconds": 4.137684749999999
+      },
+      {
+        "stage": "2:F3",
+        "fixture": "sample-1",
+        "validation": "off",
+        "seconds": 4.13212475
+      },
+      {
+        "stage": "2:F3",
+        "fixture": "sample-2",
+        "validation": "off",
+        "seconds": 4.142751667000001
+      },
+      {
+        "stage": "2:F3",
+        "fixture": "sample-3",
+        "validation": "off",
+        "seconds": 4.148898166
+      },
+      {
+        "stage": "2:F3",
+        "fixture": "array-100",
+        "validation": "off",
+        "action": "extra",
+        "seconds": 4.913413417
+      },
+      {
+        "stage": "2:F3",
+        "fixture": "flat-100",
+        "validation": "off",
+        "action": "extra",
+        "seconds": 5.669499792000001
+      },
+      {
+        "stage": "2:F3",
+        "fixture": "oneOf-20",
+        "validation": "off",
+        "action": "extra",
+        "seconds": 10.775294584000001
+      },
+      {
+        "stage": "2:F3",
+        "fixture": "oneOf-40",
+        "validation": "off",
+        "action": "extra",
+        "seconds": 7.806267958
+      },
+      {
+        "stage": "2:F3",
+        "fixture": "oneOf-5",
+        "validation": "off",
+        "action": "extra",
+        "seconds": 9.296561417000001
+      },
+      {
+        "stage": "2:F3",
+        "fixture": "sample-2",
+        "validation": "off",
+        "action": "extra",
+        "seconds": 4.87892025
+      }
+    ],
+    "totalCommands": 58,
+    "maximumAnalysisSeconds": 10.775294584000001,
+    "statement": "두 단계의 모든 설정과 누락 no-gc 기록 열을 순차 분석했고, 각 분석 명령은 8분 이내에 자연 종료했습니다."
+  },
+  "scopeObservation": {
+    "path": "packages/canard/schema-form/architecture/verification/07-switch/performance.md",
+    "sha256": "80b0aeb85ca09028fd0de86cc9f2c06e46d54cd02f4fb5cc99fe6a63c4d50868",
+    "diffSha256": "e52f8ef395ccab49d3c462063b99375e3f68b253f073c2e7e53ecd498f52a826",
+    "mtime": "2026-10-08T04:32:07.855Z",
+    "diff": "diff --git a/packages/canard/schema-form/architecture/verification/07-switch/performance.md b/packages/canard/schema-form/architecture/verification/07-switch/performance.md\nindex 3410989a4..895acf691 100644\n--- a/packages/canard/schema-form/architecture/verification/07-switch/performance.md\n+++ b/packages/canard/schema-form/architecture/verification/07-switch/performance.md\n@@ -517,6 +517,7 @@ benchmark-form(BF)의 코어 BF 갱신은 위 공식 코어 표에, React 19 fix\n - 절대 시간의 행은 개선 단계에서 적습니다(소유자 116라운드). 분기 마흔 개 전환, 깊이 다섯 마운트, 배열 천 개 갱신처럼 가장 느린 행을 60fps 프레임 예산 16.67 ms에 견주어 적으며, 배율 목표와는 별개의 기준입니다. 한 상호작용(쓰기부터 배달까지, 화면 층 포함)은 이 예산 안이어야 하고, 폼의 일은 메인 스레드의 CPU 버스트라 작을수록 좋습니다. 분기 마흔 개 전환의 1.65 ms는 예산 안이지만 손실로 봅니다. 기준은 둘입니다: 옛 판 대비 배율(상대)과 프레임 예산 안의 사용량(절대, 더 중요한 쪽)입니다. 목표 기기에 모바일이 들어가므로 데스크톱 벤치마크 수치로는 만족할 수 없고, 모바일 급 CPU 조건(CPU 스로틀링 또는 실제 중급 기기)에서도 재어 프레임 예산 대비로 적습니다. 시간을 위해 메모리를 더 쓰는 교환(미리 계산, 캐시, 소유 배열)은 받아들일 수 있습니다(소유자 116라운드 8행).\n - 원장의 바인딩·정착 계약마다, 그것을 구현하는 코드 자리(file:line)와 고정 시험을 짝지은 역방향 색인을 둡니다(소유자 119라운드 12행). 이번 7단계의 이격은 모두 구현이 원장의 어느 문장을 구현하는지 적지 않아 생겼습니다: 경계의 key 재마운트, 필드당 계층, 이중 구독, 마운트 때의 후보 계획입니다. React 층 감사 목록의 \"자리마다 계약 유무\"가 이 색인의 첫 조각입니다.\n - React 컴파일러의 도입을 검토합니다(소유자 123라운드). 입력 props를 자동으로 메모화해, memo로 불필요한 렌더를 억제하는 지금의 방식을 손으로 하지 않아도 되게 하는 길입니다. context의 선택 구독은 열지 않습니다.\n+- 가드 기반 조건부 분기(검증기 가드로 켜지는 if/then/else)의 절대 시간을 잽니다(소유자 126라운드). 대상은 가드 컴파일의 지연과 캐시, 호출 수이고, 모바일급 CPU 조건에서 잽니다. 옛 판에 없는 기능이므로 옛 판 대비 배율이 아니라 16.67 ms 프레임 예산만으로 최적화합니다. 7단계에서는 ON 행의 AJV 몫을 합격선으로 쓰지 않습니다.\n \n ## G26 CHECK의 의미\n \n",
+    "statement": "초기 깨끗한 작업 트리에서 세션 도구의 쓰기 대상이 아닌 기존 성능 문서에 한 줄이 추가된 사실을 발견했습니다. 측정 번들과 원본 도구의 해시는 일치했으며 이 문서 변경은 그대로 보존합니다.",
+    "initialVerification": {
+      "result": "FAILED_SCOPE_CHECK",
+      "exitCode": 1,
+      "detectedAt": "2026-10-08T06:03:55.000Z",
+      "reportExistedBeforeCommandStarted": "2026-10-08T05:58:21.390Z",
+      "commandDurationUpperBoundSeconds": 333.6100075683594,
+      "statement": "첫 검증은 수치·해시 검사를 통과한 뒤 기존 성능 문서의 예상하지 않은 수정 때문에 범위 검사에서 자연 종료 코드 1로 끝났습니다. 명령 시작 전에 이미 존재했던 보고서 생성 시각부터 실패 확인 시각까지의 상한도 8분 이내입니다."
+    }
+  },
+  "results": [
+    {
+      "stage": "head:2",
+      "verdict": {
+        "result": "ADOPT",
+        "reason": "유의한 이득이 있으며 회귀 12행 모두 124C-01의 합계 이득·2%·5µs·no-gc 99% 구간·아홉 회차 조건을 충족했습니다. 이 회귀는 GC 직후 재최적화 소음으로 기록하며 채택을 막지 않습니다."
+      },
+      "regressionRows": 12,
+      "gainRows": 50,
+      "exemptedRows": 12,
+      "blockingRows": 0,
+      "officialRows": 104,
+      "mainNoGcColumns": 33,
+      "supplemental": {
+        "settings": 6,
+        "commands": 54,
+        "processes": 216,
+        "runsPerSetting": 9,
+        "pairedSamplesPerRow": 1818,
+        "recordColumns": 9,
+        "gaFailures": 0,
+        "officialSamplesMerged": false
+      },
+      "calibration": {
+        "off": {
+          "emptyEndMs": {
+            "median": 0.015084,
+            "p99": 0.023,
+            "samples": 130896
+          },
+          "emptyMicroMs": {
+            "median": 0.002417,
+            "p99": 0.002917,
+            "samples": 130896
+          },
+          "emptyTailMs": {
+            "median": 0.012625,
+            "p99": 0.019833999999999997,
+            "samples": 130896
+          }
+        },
+        "on": {
+          "emptyEndMs": {
+            "median": 0.029625,
+            "p99": 0.042167,
+            "samples": 36360
+          },
+          "emptyMicroMs": {
+            "median": 0.00225,
+            "p99": 0.002875,
+            "samples": 36360
+          },
+          "emptyTailMs": {
+            "median": 0.027375,
+            "p99": 0.039,
+            "samples": 36360
+          }
+        }
+      },
+      "slopes": [
+        {
+          "label": "BF",
+          "mode": "axis-update",
+          "base": {
+            "microsecondsPerBranch": 47.967902608695645,
+            "interceptUs": 418.98582608695665
+          },
+          "candidate": {
+            "microsecondsPerBranch": 38.242399999999996,
+            "interceptUs": 424.08900000000006
+          },
+          "points": [
+            {
+              "branches": 5,
+              "baseUs": 643.8320000000001,
+              "candidateUs": 599.457
+            },
+            {
+              "branches": 10,
+              "baseUs": 902.6650000000001,
+              "candidateUs": 804.957
+            },
+            {
+              "branches": 20,
+              "baseUs": 1398.5819999999999,
+              "candidateUs": 1218.998
+            },
+            {
+              "branches": 40,
+              "baseUs": 2328.457,
+              "candidateUs": 1941.124
+            }
+          ]
+        },
+        {
+          "label": "first",
+          "mode": "axis-first",
+          "base": {
+            "microsecondsPerBranch": 32.03755304347826,
+            "interceptUs": 234.23313043478254
+          },
+          "candidate": {
+            "microsecondsPerBranch": 25.662085217391297,
+            "interceptUs": 236.3456521739131
+          },
+          "points": [
+            {
+              "branches": 5,
+              "baseUs": 381.791,
+              "candidateUs": 352.083
+            },
+            {
+              "branches": 10,
+              "baseUs": 560.5830000000001,
+              "candidateUs": 495.166
+            },
+            {
+              "branches": 20,
+              "baseUs": 888.125,
+              "candidateUs": 768.291
+            },
+            {
+              "branches": 40,
+              "baseUs": 1509.25,
+              "candidateUs": 1254.4989999999998
+            }
+          ]
+        },
+        {
+          "label": "later",
+          "mode": "axis-later",
+          "base": {
+            "microsecondsPerBranch": 15.623328695652171,
+            "interceptUs": 168.66608695652184
+          },
+          "candidate": {
+            "microsecondsPerBranch": 12.293274782608693,
+            "interceptUs": 170.948347826087
+          },
+          "points": [
+            {
+              "branches": 5,
+              "baseUs": 244.41600000000003,
+              "candidateUs": 228.207
+            },
+            {
+              "branches": 10,
+              "baseUs": 322.749,
+              "candidateUs": 291.416
+            },
+            {
+              "branches": 20,
+              "baseUs": 488.50000000000006,
+              "candidateUs": 427.875
+            },
+            {
+              "branches": 40,
+              "baseUs": 790.749,
+              "candidateUs": 658.2909999999999
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "stage": "2:F3",
+      "verdict": {
+        "result": "REJECT",
+        "reason": "유의한 이득은 9행이지만 지시된 고정 분기 축의 유의한 이득 합계가 0µs여서 회귀 합계의 열 배인 1337.540µs를 넘지 못했습니다. 회귀 20행 모두 124C-01의 합계 이득 조건을 충족하지 못하므로 채택을 막습니다."
+      },
+      "regressionRows": 20,
+      "gainRows": 9,
+      "exemptedRows": 0,
+      "blockingRows": 20,
+      "officialRows": 104,
+      "mainNoGcColumns": 33,
+      "supplemental": {
+        "settings": 6,
+        "commands": 54,
+        "processes": 216,
+        "runsPerSetting": 9,
+        "pairedSamplesPerRow": 1818,
+        "recordColumns": 13,
+        "gaFailures": 0,
+        "officialSamplesMerged": false
+      },
+      "calibration": {
+        "off": {
+          "emptyEndMs": {
+            "median": 0.015083,
+            "p99": 0.021541,
+            "samples": 130896
+          },
+          "emptyMicroMs": {
+            "median": 0.002417,
+            "p99": 0.002875,
+            "samples": 130896
+          },
+          "emptyTailMs": {
+            "median": 0.012625,
+            "p99": 0.018667000000000003,
+            "samples": 130896
+          }
+        },
+        "on": {
+          "emptyEndMs": {
+            "median": 0.029583,
+            "p99": 0.04125,
+            "samples": 36360
+          },
+          "emptyMicroMs": {
+            "median": 0.002209,
+            "p99": 0.002875,
+            "samples": 36360
+          },
+          "emptyTailMs": {
+            "median": 0.027374999999999997,
+            "p99": 0.038625,
+            "samples": 36360
+          }
+        }
+      },
+      "slopes": [
+        {
+          "label": "BF",
+          "mode": "axis-update",
+          "base": {
+            "microsecondsPerBranch": 38.497852173913046,
+            "interceptUs": 418.3125217391304
+          },
+          "candidate": {
+            "microsecondsPerBranch": 38.57470782608696,
+            "interceptUs": 425.7974782608695
+          },
+          "points": [
+            {
+              "branches": 5,
+              "baseUs": 599.251,
+              "candidateUs": 603.709
+            },
+            {
+              "branches": 10,
+              "baseUs": 807.6679999999999,
+              "candidateUs": 806.25
+            },
+            {
+              "branches": 20,
+              "baseUs": 1201.9180000000001,
+              "candidateUs": 1231.417
+            },
+            {
+              "branches": 40,
+              "baseUs": 1951.7520000000002,
+              "candidateUs": 1954.917
+            }
+          ]
+        },
+        {
+          "label": "first",
+          "mode": "axis-first",
+          "base": {
+            "microsecondsPerBranch": 25.83173391304348,
+            "interceptUs": 233.34273913043484
+          },
+          "candidate": {
+            "microsecondsPerBranch": 25.829380869565217,
+            "interceptUs": 238.34560869565223
+          },
+          "points": [
+            {
+              "branches": 5,
+              "baseUs": 352.292,
+              "candidateUs": 355.50100000000003
+            },
+            {
+              "branches": 10,
+              "baseUs": 497.99999999999994,
+              "candidateUs": 496.001
+            },
+            {
+              "branches": 20,
+              "baseUs": 758.3340000000001,
+              "candidateUs": 776.876
+            },
+            {
+              "branches": 40,
+              "baseUs": 1262.125,
+              "candidateUs": 1262.208
+            }
+          ]
+        },
+        {
+          "label": "later",
+          "mode": "axis-later",
+          "base": {
+            "microsecondsPerBranch": 12.413474782608697,
+            "interceptUs": 168.97634782608696
+          },
+          "candidate": {
+            "microsecondsPerBranch": 12.487850434782608,
+            "interceptUs": 171.22830434782608
+          },
+          "points": [
+            {
+              "branches": 5,
+              "baseUs": 227.958,
+              "candidateUs": 229.667
+            },
+            {
+              "branches": 10,
+              "baseUs": 292.62499999999994,
+              "candidateUs": 292.375
+            },
+            {
+              "branches": 20,
+              "baseUs": 423.375,
+              "candidateUs": 433.58399999999995
+            },
+            {
+              "branches": 40,
+              "baseUs": 662.9580000000001,
+              "candidateUs": 665.876
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "verificationCommand": "/opt/homebrew/bin/node /private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/profile-126b-raw/verify.mjs verify",
+  "statement": "원시 파일은 지정된 S/profile-126b-raw에 보존했고, 126a A/A를 두 단계의 잡음항으로 재사용했습니다. 모든 측정과 분석은 순차 실행했으며 저장소에는 측정 산출물과 한국어 보고서만 추가했습니다."
+}
