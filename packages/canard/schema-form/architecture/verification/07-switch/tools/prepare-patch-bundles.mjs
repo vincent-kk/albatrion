@@ -7,9 +7,9 @@ import { existsSync, mkdirSync, readdirSync, readFileSync, rmSync, writeFileSync
 import { createRequire } from 'node:module';
 import { join, relative, resolve } from 'node:path';
 
-/** Patch files under the scratch root; each applies to HEAD alone except the delta that composes F3 with 2. */
+/** Patch files under the scratch root; each applies to the base revision alone except the delta that composes F3 with 2. */
 const PATCHES = { '1c': 'branch1c.patch', '2': 'branch2.patch', F3: 'branchF3.patch', F3on2: 'branchF3-on-2.patch' };
-/** Variant name and the ordered patches applied to HEAD, in build order; headx reuses the head build. */
+/** Variant name and the ordered patches applied to the base revision, in build order; headx reuses the head build. */
 const VARIANTS = [['head', []], ['headx', []], ['1c', ['1c']], ['2', ['2']], ['F3', ['F3']], ['1c2', ['1c', '2']],
   ['1cF3', ['1c', 'F3']], ['2F3', ['2', 'F3on2']], ['1c2F3', ['1c', '2', 'F3on2']]];
 /** The only byte difference between c-head and c-headx. */
@@ -31,13 +31,14 @@ const readOverlay = (directory, prefix = '') => {
 };
 
 /**
- * Apply a variant's product-source hunks to HEAD copies outside the repository.
- * @param worktree - stage-07 worktree used only for `git show HEAD:<path>` reads
+ * Apply a variant's product-source hunks to base-revision copies outside the repository.
+ * @param worktree - stage-07 worktree used only for `git show <base>:<path>` reads
  * @param overlayRoot - Scratch directory recreated for this variant
  * @param patchFiles - Ordered patch paths; tests and documents are excluded from the overlay
+ * @param base - Full commit the patches apply to
  * @returns Patched product files keyed by worktree-relative path
  */
-const buildOverlay = (worktree, overlayRoot, patchFiles) => {
+const buildOverlay = (worktree, overlayRoot, patchFiles, base) => {
   rmSync(overlayRoot, { recursive: true, force: true });
   mkdirSync(overlayRoot, { recursive: true });
   for (const patchFile of patchFiles) {
@@ -46,9 +47,9 @@ const buildOverlay = (worktree, overlayRoot, patchFiles) => {
       const path = match[1];
       if (path.includes('/__tests__/') || path.endsWith('.md')) continue;
       const target = join(overlayRoot, path);
-      try { readFileSync(target); continue; } catch { /* First patch touching this file seeds HEAD's copy. */ }
+      try { readFileSync(target); continue; } catch { /* First patch touching this file seeds the base revision's copy. */ }
       mkdirSync(resolve(target, '..'), { recursive: true });
-      writeFileSync(target, childProcess.execFileSync('git', ['show', `HEAD:${path}`],
+      writeFileSync(target, childProcess.execFileSync('git', ['show', `${base}:${path}`],
         { cwd: worktree, encoding: 'utf8', timeout: 10000 }));
     }
     childProcess.execFileSync('git', ['apply', '--exclude=*/__tests__/*', '--exclude=*.md', patchFile],
@@ -58,14 +59,16 @@ const buildOverlay = (worktree, overlayRoot, patchFiles) => {
 };
 
 /**
- * Build HEAD and patch-composed production runtimes for paired measurement, without timing them.
+ * Build base-revision and patch-composed production runtimes for paired measurement, without timing them.
  * @param packageRoot - schema-form in the authorized stage-07 worktree
  * @param outputRoot - The caller-authorized scratch bundle directory; patches are read from its parent
- * @returns Bundle paths, hashes, overlay files and natural build-service exit evidence
+ * @param base - Commit the patches apply to; defaults to HEAD, and a fixed commit keeps a rebuild valid after the
+ *   patches have landed on HEAD
+ * @returns Bundle paths, hashes, overlay files and natural build-service exit evidence; `revision` is the resolved base
  */
-export async function preparePatchBundles(packageRoot, outputRoot) {
+export async function preparePatchBundles(packageRoot, outputRoot, base = 'HEAD') {
   const worktree = resolve(packageRoot, '../../..');
-  const head = childProcess.execFileSync('git', ['rev-parse', 'HEAD'], { cwd: worktree, encoding: 'utf8', timeout: 10000 }).trim();
+  const head = childProcess.execFileSync('git', ['rev-parse', `${base}^{commit}`], { cwd: worktree, encoding: 'utf8', timeout: 10000 }).trim();
   const patchRoot = resolve(outputRoot, '..');
   const require = createRequire(resolve(packageRoot, 'package.json'));
   const hash = text => createHash('sha256').update(text).digest('hex');
@@ -84,7 +87,7 @@ export async function preparePatchBundles(packageRoot, outputRoot) {
     }
     const patchFiles = names.map(name => resolve(patchRoot, PATCHES[name]));
     const overlayRoot = resolve(outputRoot, `.overlay-c-${variant}`);
-    const overlay = buildOverlay(worktree, overlayRoot, patchFiles);
+    const overlay = buildOverlay(worktree, overlayRoot, patchFiles, head);
     assert.equal(overlay.size > 0, names.length > 0, `${variant} overlay`);
     delete require.cache[require.resolve('esbuild')];
     const esbuild = require('esbuild');
@@ -120,7 +123,7 @@ export async function preparePatchBundles(packageRoot, outputRoot) {
           builder.onLoad({ filter: /\.(ts|tsx)$/ }, args => {
             const path = relative(worktree, args.path);
             if (!path.startsWith('packages/') || path.includes('node_modules')) return undefined;
-            let contents = overlay.has(path) ? overlay.get(path) : childProcess.execFileSync('git', ['show', `HEAD:${path}`],
+            let contents = overlay.has(path) ? overlay.get(path) : childProcess.execFileSync('git', ['show', `${head}:${path}`],
               { cwd: worktree, encoding: 'utf8', timeout: 10000 });
             if (overlay.has(path)) loaded.add(path);
             // The 121 verdict adapter measures oneOf-40 by the same one-token fixture widening.

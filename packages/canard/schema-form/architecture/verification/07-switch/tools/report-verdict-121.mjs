@@ -5,7 +5,7 @@
  *   node <이 파일> --input-dir=/원자료/디렉터리 --check
  *   node <이 파일> --pair /지정/f4/pair-AA.json
  * --smoke 입력은 measure-verdict-121의 stdout JSON 객체 또는 객체 배열입니다.
- * --pair 입력은 measure-verdict-121 --pair의 stdout 객체 또는 배열이며, 행마다 새 A/A 크기를
+ * --pair 입력은 measure-verdict-121 --pair의 stdout 객체, measure-core-pair-126의 { workers: [...] } 기록, 또는 그 배열이며, 행마다 새 A/A 크기를
  * 119 세션의 같은 번들 A/A 크기 옆에 적습니다. gc 없는 첫 쓰기 열은 기록 전용입니다.
  * 소량 표본은 공식 성능 판정을 내리지 않으며 (가)의 수치·경계 결과를 표시합니다.
  * 공식 입력은 verdict-121-summary.json 및 timingFile 파일, 세 회차·101표본입니다.
@@ -154,7 +154,8 @@ if (process.argv.includes('--smoke')) {
   console.log(`SMOKE_REPORT_121_OK: ${workers.length} workers; (ga) ${rows.filter(row => row.passed).length}/${rows.length}; boundary ${rows.filter(row => row.zeroEngineMacrotasks).length}/${rows.length}`);
 } else if (process.argv.includes('--pair')) {
   const input = JSON.parse(fs.readFileSync(process.argv[process.argv.indexOf('--pair') + 1], 'utf8'));
-  const workers = Array.isArray(input) ? input : [input];
+  // measure-core-pair-126 saves `{ workers: [...] }`; measure-verdict-121 --pair prints top-level summary/timings.
+  const workers = (Array.isArray(input) ? input : [input]).flatMap(item => Array.isArray(item.workers) ? item.workers : [item]);
   const rows = pairRows121(workers, verification);
   const us = value => value === null ? '—' : (value * 1000).toFixed(3);
   const lines = rows.map(row => `| ${row.fixture} | ${row.validation} | ${row.mode} | ${row.column} | ${us(row.newAAms)} [${us(row.newPaired.low)}, ${us(row.newPaired.high)}] | ${us(row.sameBundleAAms)} |`);

@@ -99,8 +99,10 @@ const packageRoot = resolve(dirname(fileURLToPath(import.meta.url)), '../../../.
 const scratch = '/private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles';
 if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
   const reactVariant = process.argv[2] === '--react-fa' ? (process.argv[3] ?? 'both') : undefined;
-  // --patch-variants builds c-*.cjs from current HEAD plus the scratch patches (c-head, c-headx, 1c, 2, F3 and their unions).
-  const results = process.argv[2] === '--patch-variants' ? await preparePatchBundles(packageRoot, scratch)
+  // --patch-variants [--base=<commit>] builds c-*.cjs from that commit (default HEAD) plus the scratch patches
+  // (c-head, c-headx, 1c, 2, F3 and their unions).
+  const base = process.argv.find(value => value.startsWith('--base='))?.slice(7) ?? 'HEAD';
+  const results = process.argv[2] === '--patch-variants' ? await preparePatchBundles(packageRoot, scratch, base)
     : await prepareBranch1Bundles(packageRoot, scratch, reactVariant);
   console.log(JSON.stringify(results, null, 2));
 }
