@@ -1,0 +1,195 @@
+{
+  "format": "profile-129d-session-verification",
+  "finishedAt": "2026-10-08T23:53:51.940Z",
+  "conservativeStartUtc": "2026-10-08T19:06:00.000Z",
+  "conservativeElapsedSeconds": 17271.94,
+  "underFivePointFiveHours": true,
+  "rawFilesVerified": 4161,
+  "csvRowsVerified": 512,
+  "tableRowsVerified": 512,
+  "rawSampleReconstructionAndBootstrapVerified": {
+    "core": 208,
+    "react": 304,
+    "total": 512,
+    "allBlocks24": true,
+    "rawSampleMediansReconstructed": true,
+    "allBootstrapIntervalsRecomputed": true,
+    "rowSeedsVerified": true,
+    "calibrationsConsistentAcrossChunks": true
+  },
+  "sourceAndHeadUnchanged": true,
+  "stagedDiffEmpty": true,
+  "preservedDocumentDiffUnchanged": true,
+  "newFilesOnlySessionArtifacts": true,
+  "artifactHashes": {
+    "profile-129d-session.md": {
+      "bytes": 15558,
+      "sha256": "5cd4c80c41b73fe9c8de28c440d2b7e47116e3fe38f77c668a6eb5f92084ce06"
+    },
+    "profile-129d-session/bundle-manifest.json": {
+      "bytes": 8230,
+      "sha256": "7ba4b85c5fc2a38f8832d4123d85bd5454b1a7b301aa75e3d5da9c2cdca2f018"
+    },
+    "profile-129d-session/core-rows.csv": {
+      "bytes": 52757,
+      "sha256": "f7edc4789a8c2fd0b7e17809fe8a2b7daee9e76789b2c7e9068734e2cc1e6cce"
+    },
+    "profile-129d-session/core-rows.md": {
+      "bytes": 26855,
+      "sha256": "9170e4dc2f4783314598580aa74ee15771c938ad127fd9c7605393978863f2ca"
+    },
+    "profile-129d-session/raw-sha256.txt": {
+      "bytes": 450779,
+      "sha256": "c6c0b6d5b8453b293d550f6e86d352a26789111974146a7dc4b8a404cc4e5a4d"
+    },
+    "profile-129d-session/react-rows.csv": {
+      "bytes": 69855,
+      "sha256": "999b8f82b8ddb6026e9c19cbe3e95af2fbafab45064e75d49a70548cda075218"
+    },
+    "profile-129d-session/react-rows.md": {
+      "bytes": 40838,
+      "sha256": "5075c5588fc0e5736e551ecad254f218f8205f0df79bd344dc75b94bfbda3904"
+    },
+    "profile-129d-session/session-evidence.json": {
+      "bytes": 17143,
+      "sha256": "e42bddd2ff7212ee9763fc438864134f6a82cb0e442fc5d032c15931b07c5596"
+    }
+  },
+  "maximumArtifactBytes": 450779,
+  "coreRate": 0,
+  "reactRate": 0.02631578947368421,
+  "binomialGroups": [
+    {
+      "name": "코어 판정 행입니다.",
+      "n": 104,
+      "excluded": 0,
+      "rate": 0,
+      "band": {
+        "low": 0,
+        "high": 4,
+        "probability": 0.9959420642826804,
+        "expected": 1.04
+      },
+      "withinBand": true,
+      "excludedKeys": []
+    },
+    {
+      "name": "코어 no-GC 기록 행입니다.",
+      "n": 104,
+      "excluded": 0,
+      "rate": 0,
+      "band": {
+        "low": 0,
+        "high": 4,
+        "probability": 0.9959420642826804,
+        "expected": 1.04
+      },
+      "withinBand": true,
+      "excludedKeys": []
+    },
+    {
+      "name": "React 판정 행입니다.",
+      "n": 76,
+      "excluded": 2,
+      "rate": 0.02631578947368421,
+      "band": {
+        "low": 0,
+        "high": 4,
+        "probability": 0.9989747971762595,
+        "expected": 0.76
+      },
+      "withinBand": true,
+      "excludedKeys": [
+        "oneOf-20/off/update-active",
+        "oneOf-20/off/update-wall"
+      ]
+    },
+    {
+      "name": "합친 판정 행입니다.",
+      "n": 180,
+      "excluded": 2,
+      "rate": 0.011111111111111112,
+      "band": {
+        "low": 0,
+        "high": 6,
+        "probability": 0.9975922606814949,
+        "expected": 1.8
+      },
+      "withinBand": true,
+      "excludedKeys": [
+        "oneOf-20/off/update-active",
+        "oneOf-20/off/update-wall"
+      ]
+    },
+    {
+      "name": "React 모든 기록 행입니다.",
+      "n": 228,
+      "excluded": 2,
+      "rate": 0.008771929824561403,
+      "band": {
+        "low": 0,
+        "high": 7,
+        "probability": 0.9976951008713469,
+        "expected": 2.2800000000000002
+      },
+      "withinBand": true,
+      "excludedKeys": [
+        "oneOf-20/off/mount-active-nogc",
+        "oneOf-20/off/profiler-update"
+      ]
+    },
+    {
+      "name": "React 시간 기록 행입니다.",
+      "n": 152,
+      "excluded": 2,
+      "rate": 0.013157894736842105,
+      "band": {
+        "low": 0,
+        "high": 5,
+        "probability": 0.9955099494407315,
+        "expected": 1.52
+      },
+      "withinBand": true,
+      "excludedKeys": [
+        "oneOf-20/off/mount-active-nogc",
+        "oneOf-20/off/profiler-update"
+      ]
+    },
+    {
+      "name": "React no-GC 시간 기록 행입니다.",
+      "n": 114,
+      "excluded": 1,
+      "rate": 0.008771929824561403,
+      "band": {
+        "low": 0,
+        "high": 5,
+        "probability": 0.9989373689224456,
+        "expected": 1.1400000000000001
+      },
+      "withinBand": true,
+      "excludedKeys": [
+        "oneOf-20/off/mount-active-nogc"
+      ]
+    },
+    {
+      "name": "React 판정 열의 no-GC 대응 행입니다.",
+      "n": 76,
+      "excluded": 1,
+      "rate": 0.013157894736842105,
+      "band": {
+        "low": 0,
+        "high": 4,
+        "probability": 0.9989747971762595,
+        "expected": 0.76
+      },
+      "withinBand": true,
+      "excludedKeys": [
+        "oneOf-20/off/mount-active-nogc"
+      ]
+    }
+  ],
+  "methodPass": true,
+  "fapBuilt": true,
+  "fapSha256": "d1171e4f7789a83571957ee9ff51888184f445e2ad76fbc200bb91e188997e29",
+  "remainingSteps": []
+}

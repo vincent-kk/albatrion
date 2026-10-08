@@ -1,0 +1,319 @@
+{
+  "format": "profile-129d-session-evidence",
+  "measuredAt": "2026-10-08T23:41:30.763Z",
+  "sessionStartConservativeUtc": "2026-10-08T19:06:00.000Z",
+  "firstMeasurementUtc": "2026-10-08T19:16:26.826Z",
+  "reportEndedUtc": "2026-10-08T23:41:30.763Z",
+  "baseRevision": "1a0176da3d20fe64632be271e0b2975e803a24d8",
+  "sourceState": {
+    "checkedAfterReportEndedUtc": "2026-10-08T23:41:30.763Z",
+    "head": "1a0176da3d20fe64632be271e0b2975e803a24d8",
+    "sourceTree": "4bfd58fca9170875a5368bbcfc0360cd34539a2e",
+    "stagedDiffEmpty": true,
+    "trackedChanges": [
+      "packages/canard/schema-form/architecture/verification/07-switch/performance.md"
+    ],
+    "preservedDocumentDiffUnchanged": true,
+    "productSourcesAndMeasurementToolsUnchanged": true
+  },
+  "initialStatus": "M packages/canard/schema-form/architecture/verification/07-switch/performance.md",
+  "firstObservedTreeClean": true,
+  "preservedDocumentDiff": "diff --git a/packages/canard/schema-form/architecture/verification/07-switch/performance.md b/packages/canard/schema-form/architecture/verification/07-switch/performance.md\nindex 895acf691..bb27abbf5 100644\n--- a/packages/canard/schema-form/architecture/verification/07-switch/performance.md\n+++ b/packages/canard/schema-form/architecture/verification/07-switch/performance.md\n@@ -512,6 +512,7 @@ benchmark-form(BF)의 코어 BF 갱신은 위 공식 코어 표에, React 19 fix\n - array-100 OFF BF·첫 갱신의 독립 짝 꼬리 jitter는 112라운드 개선 항목으로 남깁니다. 104라운드 성능 수용과 `(가)` 실패를 함께 기록하며, [113 독립 짝 검증](profile-113-paired.md)이 근거입니다.\n - 다섯 진입점의 wildcard re-export는 개선 단계에서 명시적 재수출로 정리합니다. 대상은 [dynamicExpression](../../../src/helpers/dynamicExpression/index.ts), [helper error](../../../src/helpers/error/index.ts), [jsonPointer](../../../src/helpers/jsonPointer/index.ts), [defaultValue](../../../src/helpers/defaultValue/index.ts), [errors](../../../src/errors/index.ts)입니다.\n - oneOf 전환의 분기별 장부는 개선 단계가 아니라 7단계에서 코드 수준으로 없앱니다(소유자 113라운드). 함수 그룹별로 한 번에 하나씩 고치고, 105C-01 아홉 회차로 판정합니다. 끝나면 분기 축을 다시 재어 이 보고서의 분기 절을 고칩니다. [112 분기 장부 진단](profile-112-branch.md)이 대상 목록입니다.\n+- 분기 변경 1d는 준비된 대안으로 보관합니다(124라운드 덧붙임, Q129). 1d는 다섯 뜨거운 함수를 바꾸지 않고, 분기가 둘 이상인 합집합 호스트만 별도 함수로 보내는 설계입니다([설계 기록](branch1d-design.md), [구현 기록](branch1d.md)). 1c가 회귀 없이 채택되었으므로 지금은 넣지 않습니다. 분기 축 최종 재측정에서 if-then 행에 확인된 회귀가 나오면, 1d가 준비된 대안입니다.\n - 번들 크기의 처분은 개선 단계에서 다룹니다(소유자 115라운드). 두 가지를 다룹니다. 첫째, 속도와 진단을 잃지 않는 작은 정리(약 600 B)입니다. 둘째, 일반화할 수 있는 로직(스키마 경로와 포인터, 식 컴파일, 값 동등, 개정 원장 같은 범용 후보)을 winglet 류의 별도 패키지로 나누는 길을 검토합니다. 의존성을 밖에 두고 재는 TEST-075에서는 이 분리가 측정값만 줄이고 소비자가 받는 총량은 그대로이므로, 개선 단계에서는 의존성을 포함한 총량도 함께 적어 판단합니다. [번들 분해](bundle-115.md)가 근거입니다.\n - 배타적 분기의 정적 분할 빠른 경로는 개선 단계에서 다룹니다(소유자 108라운드 덧붙임). 대상은 한 호스트의 분기 집합을 청사진이 정적으로 증명할 수 있는 경우입니다. 조건은 두 가지입니다: 분기가 판별이나 상호 배타의 식으로 서로 배타적이고, 분기 사이에 같은 이름의 중첩이 없거나 같은 이름·같은 종류의 공유뿐이어야 합니다. 이때 분기별 자식 집합과 공유 판정을 청사진에 미리 계산해 두면, 전환 때 조각 열거·공유 판정·후보 순회를 건너뜁니다. 증명이 서지 않는 호스트는 지금 경로를 그대로 씁니다. 결과는 바뀌지 않는 최적화이지만 구조 작업이라 7단계에서 하지 않습니다. 남은 분기 격차는 식의 종류가 아니라 분기 모델의 차이에서 옵니다. 옛 판은 노드를 켜고 껐고, 새 판은 조각을 열거하고 공유 중첩을 판정합니다. 그래서 allOf 겹침 같은 새 기능을 쓰지 않는 벤치마크 폼도 범용 장치의 비용을 치릅니다. [112 분기 장부 진단](profile-112-branch.md)이 근거입니다.\n - 절대 시간의 행은 개선 단계에서 적습니다(소유자 116라운드). 분기 마흔 개 전환, 깊이 다섯 마운트, 배열 천 개 갱신처럼 가장 느린 행을 60fps 프레임 예산 16.67 ms에 견주어 적으며, 배율 목표와는 별개의 기준입니다. 한 상호작용(쓰기부터 배달까지, 화면 층 포함)은 이 예산 안이어야 하고, 폼의 일은 메인 스레드의 CPU 버스트라 작을수록 좋습니다. 분기 마흔 개 전환의 1.65 ms는 예산 안이지만 손실로 봅니다. 기준은 둘입니다: 옛 판 대비 배율(상대)과 프레임 예산 안의 사용량(절대, 더 중요한 쪽)입니다. 목표 기기에 모바일이 들어가므로 데스크톱 벤치마크 수치로는 만족할 수 없고, 모바일 급 CPU 조건(CPU 스로틀링 또는 실제 중급 기기)에서도 재어 프레임 예산 대비로 적습니다. 시간을 위해 메모리를 더 쓰는 교환(미리 계산, 캐시, 소유 배열)은 받아들일 수 있습니다(소유자 116라운드 8행).\n",
+  "coreBuildSelection": {
+    "originalTool": "/Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/packages/canard/schema-form/architecture/verification/07-switch/tools/prepare-patch-bundles.mjs",
+    "originalSha256": "7caaca1a73ed45a7a52bbe7df4c14f7eee8e450559a2dd238b58b5fc62af5dfb",
+    "scopedModuleSha256": "4e98fa4c724eea411b39b85d99093b563c5fc5e1b6383d0cf14ed43abb0d1d55",
+    "variants": [
+      "head",
+      "headx"
+    ],
+    "functionBodyUnchanged": true,
+    "repositoryToolUnchanged": true
+  },
+  "toolSha256": {
+    "prepare-patch-bundles.mjs": "7caaca1a73ed45a7a52bbe7df4c14f7eee8e450559a2dd238b58b5fc62af5dfb",
+    "prepare-react-bundles.mjs": "70ff9a2141ae70e0acbcc3ff5e3705ea88b0e1fae8edaf72815695b8eeb94482",
+    "measure-core-pair-129.mjs": "c12de2d2122b9674376eef25a23daf91cf30c6baa1aca6e8f81a4f7fab679617",
+    "measure-core-worker-129.mjs": "b1b23cce0ec33775da2eec4d3d31470bc5898a778982105ee7ac33583853e46c",
+    "measure-react-pair-129.mjs": "adbb8ad16408e05cf3d3ad509b76073c26525e7815f5b5cf3dacb4e418f5ccfb",
+    "measure-react-pair-126.entry.tsx": "9b68bda96a97af6ef483c370b43d42305884f98b15f69d9ecf751a92757b57ea",
+    "report-cluster-129.mjs": "9b4c3c4604a5ab07bf796330d28249aa9604e76e955dd7fcfadce94d9bded140",
+    "cluster-bootstrap-129.mjs": "e44019ee98670f609cc1fcc23d7c3f4603bc47cf5bf7c8c6090772260b359e90",
+    "median-129.mjs": "309cd06b8afef93aa34c758ef16465e8e10626c40f1089fa5692ea3b70054ce9",
+    "row-seed-129.mjs": "964a936a4c82b0326cb8ba5b5fabaf060ed224dcbd4ebb018e6fbf4e3c332eab",
+    "ga-validation-129.mjs": "6e9add3d03ac43f7788e2b7822483e502d11e352e1f6cf8d9c7a0921129fdcc3",
+    "confirm-settings-129.mjs": "2247b14cb177dadcc16708e1b9958c336bced860ffc79948feab293c8796dd29"
+  },
+  "pairs": {
+    "core": 23,
+    "react": 80
+  },
+  "blocks": {
+    "core": 552,
+    "react": 456
+  },
+  "coreWorkers": 1104,
+  "reactWorkers": 912,
+  "executionFiles": 2016,
+  "gaModes": 4992,
+  "checkedWrites": 2149152,
+  "maxWorkerSeconds": 103.762554958,
+  "commands": {
+    "total": 105,
+    "core": 23,
+    "react": 80,
+    "reports": 2,
+    "maximumSeconds": 255.266975458,
+    "totalSeconds": 15322.781998461001,
+    "sequential": true,
+    "allExitCodeZero": true,
+    "allSignalsNull": true
+  },
+  "groups": [
+    {
+      "name": "코어 판정 행입니다.",
+      "n": 104,
+      "excluded": 0,
+      "rate": 0,
+      "band": {
+        "low": 0,
+        "high": 4,
+        "probability": 0.9959420642826804,
+        "expected": 1.04
+      },
+      "withinBand": true,
+      "excludedKeys": []
+    },
+    {
+      "name": "코어 no-GC 기록 행입니다.",
+      "n": 104,
+      "excluded": 0,
+      "rate": 0,
+      "band": {
+        "low": 0,
+        "high": 4,
+        "probability": 0.9959420642826804,
+        "expected": 1.04
+      },
+      "withinBand": true,
+      "excludedKeys": []
+    },
+    {
+      "name": "React 판정 행입니다.",
+      "n": 76,
+      "excluded": 2,
+      "rate": 0.02631578947368421,
+      "band": {
+        "low": 0,
+        "high": 4,
+        "probability": 0.9989747971762595,
+        "expected": 0.76
+      },
+      "withinBand": true,
+      "excludedKeys": [
+        "oneOf-20/off/update-active",
+        "oneOf-20/off/update-wall"
+      ]
+    },
+    {
+      "name": "합친 판정 행입니다.",
+      "n": 180,
+      "excluded": 2,
+      "rate": 0.011111111111111112,
+      "band": {
+        "low": 0,
+        "high": 6,
+        "probability": 0.9975922606814949,
+        "expected": 1.8
+      },
+      "withinBand": true,
+      "excludedKeys": [
+        "oneOf-20/off/update-active",
+        "oneOf-20/off/update-wall"
+      ]
+    },
+    {
+      "name": "React 모든 기록 행입니다.",
+      "n": 228,
+      "excluded": 2,
+      "rate": 0.008771929824561403,
+      "band": {
+        "low": 0,
+        "high": 7,
+        "probability": 0.9976951008713469,
+        "expected": 2.2800000000000002
+      },
+      "withinBand": true,
+      "excludedKeys": [
+        "oneOf-20/off/mount-active-nogc",
+        "oneOf-20/off/profiler-update"
+      ]
+    },
+    {
+      "name": "React 시간 기록 행입니다.",
+      "n": 152,
+      "excluded": 2,
+      "rate": 0.013157894736842105,
+      "band": {
+        "low": 0,
+        "high": 5,
+        "probability": 0.9955099494407315,
+        "expected": 1.52
+      },
+      "withinBand": true,
+      "excludedKeys": [
+        "oneOf-20/off/mount-active-nogc",
+        "oneOf-20/off/profiler-update"
+      ]
+    },
+    {
+      "name": "React no-GC 시간 기록 행입니다.",
+      "n": 114,
+      "excluded": 1,
+      "rate": 0.008771929824561403,
+      "band": {
+        "low": 0,
+        "high": 5,
+        "probability": 0.9989373689224456,
+        "expected": 1.1400000000000001
+      },
+      "withinBand": true,
+      "excludedKeys": [
+        "oneOf-20/off/mount-active-nogc"
+      ]
+    },
+    {
+      "name": "React 판정 열의 no-GC 대응 행입니다.",
+      "n": 76,
+      "excluded": 1,
+      "rate": 0.013157894736842105,
+      "band": {
+        "low": 0,
+        "high": 4,
+        "probability": 0.9989747971762595,
+        "expected": 0.76
+      },
+      "withinBand": true,
+      "excludedKeys": [
+        "oneOf-20/off/mount-active-nogc"
+      ]
+    }
+  ],
+  "pass": true,
+  "rows": {
+    "core": 208,
+    "react": 304,
+    "total": 512,
+    "allBlocks24": true,
+    "rawSampleMediansReconstructed": true,
+    "allBootstrapIntervalsRecomputed": true,
+    "rowSeedsVerified": true,
+    "calibrationsConsistentAcrossChunks": true
+  },
+  "raw": {
+    "root": "/private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/profile-129d-raw",
+    "files": 4161
+  },
+  "fap": {
+    "patchFile": "/private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/fa-prime.patch",
+    "patchSha256": "d9fc910260e8896d0beab25a5c4b98a5e18cfeed50ed5590da6c52e3ffb3a771",
+    "baseRevision": "1a0176da3d20fe64632be271e0b2975e803a24d8",
+    "patchCheckExitCode": 0,
+    "patchCheckStderr": "",
+    "built": true,
+    "productPatchSha256": "15b0b7f082083b810e757121bad4510476e8b30018bdf065542b0f4d2de2fd7a",
+    "overlayFiles": [
+      "packages/canard/schema-form/src/components/SchemaNode/SchemaNodeProxy/SchemaNodeProxy.tsx",
+      "packages/canard/schema-form/src/helpers/formTypeInputDefinition/utils/withFormTypeInputErrorBoundary.tsx",
+      "packages/canard/schema-form/src/helpers/virtualization/VirtualizationManager/VirtualizationManager.ts",
+      "packages/canard/schema-form/src/providers/FormErrorContext/FormErrorPathContext.ts",
+      "packages/canard/schema-form/src/providers/FormErrorContext/index.ts",
+      "packages/canard/schema-form/src/providers/FormErrorContext/useBoundaryReporter.ts",
+      "packages/canard/schema-form/src/providers/FormErrorContext/usePlaceholderBoundaryReporter.ts"
+    ],
+    "deletedFiles": [
+      "packages/canard/schema-form/src/components/SchemaNode/SchemaNodeProxy/components/SchemaNodeField.tsx"
+    ],
+    "loadedFiles": [
+      "packages/canard/schema-form/src/components/SchemaNode/SchemaNodeProxy/SchemaNodeProxy.tsx",
+      "packages/canard/schema-form/src/helpers/formTypeInputDefinition/utils/withFormTypeInputErrorBoundary.tsx",
+      "packages/canard/schema-form/src/helpers/virtualization/VirtualizationManager/VirtualizationManager.ts",
+      "packages/canard/schema-form/src/providers/FormErrorContext/FormErrorPathContext.ts",
+      "packages/canard/schema-form/src/providers/FormErrorContext/index.ts",
+      "packages/canard/schema-form/src/providers/FormErrorContext/useBoundaryReporter.ts",
+      "packages/canard/schema-form/src/providers/FormErrorContext/usePlaceholderBoundaryReporter.ts"
+    ],
+    "bundle": {
+      "file": "/private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles/r129-fap.cjs",
+      "revision": "1a0176da3d20fe64632be271e0b2975e803a24d8",
+      "variant": "head",
+      "NODE_ENV": "production",
+      "instrumented": false,
+      "sha256": "d1171e4f7789a83571957ee9ff51888184f445e2ad76fbc200bb91e188997e29",
+      "bytes": 962609,
+      "naturalBuildServiceExits": 1
+    }
+  },
+  "buildRecords": [
+    {
+      "file": "/private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles/e-head.cjs",
+      "revision": "1a0176da3d20fe64632be271e0b2975e803a24d8",
+      "variant": "head",
+      "patches": [],
+      "overlayFiles": [],
+      "NODE_ENV": "production",
+      "instrumented": false,
+      "sha256": "0e5bf3c3da8c000890926ac7f5a33890dfa42db2666c07ee4c013b9f892ab030",
+      "bytes": 548782,
+      "naturalBuildServiceExits": 1,
+      "builder": "/Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/packages/canard/schema-form/architecture/verification/07-switch/tools/prepare-patch-bundles.mjs",
+      "builderSha256": "7caaca1a73ed45a7a52bbe7df4c14f7eee8e450559a2dd238b58b5fc62af5dfb"
+    },
+    {
+      "file": "/private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles/e-headx.cjs",
+      "revision": "1a0176da3d20fe64632be271e0b2975e803a24d8",
+      "variant": "headx",
+      "patches": [],
+      "derivedFrom": "c-head.cjs + one trailing comment line",
+      "NODE_ENV": "production",
+      "instrumented": false,
+      "sha256": "be10e8cf16a25d98b975b881cad12ac88638f63809592039ff7fe0ea084deafb",
+      "bytes": 548844,
+      "naturalBuildServiceExits": 0,
+      "builder": "/Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/packages/canard/schema-form/architecture/verification/07-switch/tools/prepare-patch-bundles.mjs",
+      "builderSha256": "7caaca1a73ed45a7a52bbe7df4c14f7eee8e450559a2dd238b58b5fc62af5dfb"
+    },
+    {
+      "file": "/private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles/r129-base.cjs",
+      "revision": "1a0176da3d20fe64632be271e0b2975e803a24d8",
+      "variant": "head",
+      "NODE_ENV": "production",
+      "instrumented": false,
+      "sha256": "66695827fb1d81a9fec6f51b4ac59e78a14e713aa7e7d39589c4a2799acfc80c",
+      "bytes": 962623,
+      "naturalBuildServiceExits": 1,
+      "side": "base"
+    },
+    {
+      "file": "/private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles/r129-basex.cjs",
+      "side": "basex",
+      "revision": "1a0176da3d20fe64632be271e0b2975e803a24d8",
+      "derivedFrom": "r129-base.cjs + one trailing comment line",
+      "sha256": "ef9b5003e2debfc2837b5d00ce91133e543ba488205a7d8ffeae67ab84bd999d",
+      "bytes": 962678
+    },
+    {
+      "file": "/private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles/r129-fap.cjs",
+      "revision": "1a0176da3d20fe64632be271e0b2975e803a24d8",
+      "variant": "head",
+      "NODE_ENV": "production",
+      "instrumented": false,
+      "sha256": "d1171e4f7789a83571957ee9ff51888184f445e2ad76fbc200bb91e188997e29",
+      "bytes": 962609,
+      "naturalBuildServiceExits": 1,
+      "derivedFrom": "HEAD plus fa-prime.patch product hunks"
+    }
+  ],
+  "bundleManifestSha256": "7ba4b85c5fc2a38f8832d4123d85bd5454b1a7b301aa75e3d5da9c2cdca2f018",
+  "remainingSteps": []
+}
