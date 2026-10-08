@@ -1,0 +1,100 @@
+{
+  "format": "profile-129c-final-verification",
+  "closedUtc": "2026-10-08T19:01:41.858Z",
+  "elapsedSeconds": 3206.859,
+  "withinFiveHours": true,
+  "node": "v26.10.0",
+  "raw": {
+    "root": "/private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/profile-129c-raw",
+    "files": 2287,
+    "bytes": 27012945,
+    "allFilesListed": true,
+    "allSha256Match": true
+  },
+  "artifacts": [
+    {
+      "file": "profile-129c-session/124c-01.md",
+      "bytes": 1277,
+      "sha256": "eb8dd4d9ca8d308d218f15a9861f0b235114db12c14e7799aef8fc56e497be82"
+    },
+    {
+      "file": "profile-129c-session/core-rows.csv",
+      "bytes": 36242,
+      "sha256": "a792609e74055406910b14fdc140443d2400097ceaa1013e8f3b74c48f4f0c74"
+    },
+    {
+      "file": "profile-129c-session/core-rows.md",
+      "bytes": 16006,
+      "sha256": "302a3e3e802ccfb25fb556172040cfae91fd07da3d56fbfd61ec4ae291182eee"
+    },
+    {
+      "file": "profile-129c-session/final-report.json",
+      "bytes": 232490,
+      "sha256": "9f62bb3eb06fd53d0c4fac428a734ae35872d9465fc2007bdb0ec239a7b707b4"
+    },
+    {
+      "file": "profile-129c-session/first-report.json",
+      "bytes": 232490,
+      "sha256": "9f62bb3eb06fd53d0c4fac428a734ae35872d9465fc2007bdb0ec239a7b707b4"
+    },
+    {
+      "file": "profile-129c-session/raw-sha256.txt",
+      "bytes": 255400,
+      "sha256": "f11da5ee8b70ef8ad4c4cd505d43c5f30e149764fe5447dbf50a1513b5f6d881"
+    },
+    {
+      "file": "profile-129c-session/session-evidence.json",
+      "bytes": 35887,
+      "sha256": "f2ac3691f9d7faa533ed379b08a73acdb05f20c1bd6078418c3ef1ad651dcc8b"
+    },
+    {
+      "file": "profile-129c-session/slopes.json",
+      "bytes": 4365,
+      "sha256": "84bbf7c31134b5ed0a59dcb2411851afac09898de2974ef4b964df1613f5538a"
+    }
+  ],
+  "mainReport": {
+    "file": "profile-129c-session.md",
+    "bytes": 13674,
+    "sha256": "32158dbc0697aa3af1eb0358f8387417deddc67e142c1a923ac198cca727bdb0"
+  },
+  "allArtifactsWithin5MB": true,
+  "reportCopiesByteIdentical": true,
+  "csvRowsChecked": 208,
+  "markdownVerdictRowsChecked": 104,
+  "slopesRecomputed": true,
+  "result": {
+    "flagged": 0,
+    "confirmed": 0,
+    "gains": 34,
+    "exemptions": 0,
+    "verdict": "ADOPT"
+  },
+  "headUnchanged": true,
+  "trackedFilesUnchanged": true,
+  "indexUnchanged": true,
+  "sourceAndToolHashesUnchanged": true,
+  "commandCount": 25,
+  "maxCommandSeconds": 209.480530917,
+  "allCommandsSequential": true,
+  "allMeasurementAndReportCommandsNaturalExit": true,
+  "preparationCorrections": [
+    {
+      "command": "session-runner.mjs prepare",
+      "exitCode": 1,
+      "signal": null,
+      "seconds": 0.09311125,
+      "measurementStarted": false,
+      "reason": "The first in-memory source equality check also inspected a newly added test file absent at the base revision. The check was scoped to the manifest runtime overlays and rerun."
+    },
+    {
+      "command": "session-runner.mjs prepare",
+      "exitCode": 1,
+      "signal": null,
+      "seconds": 0.096887042,
+      "measurementStarted": false,
+      "reason": "The 129a evidence uses integrity.sourceTrees and summary.tools rather than top-level fields. The reader was corrected to its actual schema and rerun."
+    }
+  ],
+  "remainingWork": []
+}

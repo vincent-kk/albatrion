@@ -1,0 +1,143 @@
+{
+  "method": "절편이 있는 최소제곱 직선입니다. x는 분기 수이고 y는 각 번들의 보정된 전체 표본 중앙값입니다. 기울기는 기술 통계이며 신뢰 구간은 계산하지 않았습니다.",
+  "slopes": [
+    {
+      "mode": "axis-update",
+      "before": {
+        "slopeUsPerBranch": 39.261379130434776,
+        "interceptUs": 423.172891304348
+      },
+      "after": {
+        "slopeUsPerBranch": 31.638458260869562,
+        "interceptUs": 435.26928260869556
+      },
+      "reductionPercent": 19.415825522175943,
+      "points": [
+        {
+          "branches": 5,
+          "baseMedianMs": 0.6094595,
+          "candidateMedianMs": 0.584793,
+          "differenceMs": 0.026791999999999982,
+          "lowMs": 0.020937499999999998,
+          "highMs": 0.031291999999999986
+        },
+        {
+          "branches": 10,
+          "baseMedianMs": 0.819563,
+          "candidateMedianMs": 0.7592924999999999,
+          "differenceMs": 0.06097899999999995,
+          "lowMs": 0.05245900000000003,
+          "highMs": 0.07043799999999995
+        },
+        {
+          "branches": 20,
+          "baseMedianMs": 1.2202715,
+          "candidateMedianMs": 1.0717505,
+          "differenceMs": 0.14391749999999992,
+          "lowMs": 0.13308300000000006,
+          "highMs": 0.15574900000000014
+        },
+        {
+          "branches": 40,
+          "baseMedianMs": 1.988001,
+          "candidateMedianMs": 1.6981255,
+          "differenceMs": 0.2821450000000001,
+          "lowMs": 0.25956250000000003,
+          "highMs": 0.3111875000000002
+        }
+      ]
+    },
+    {
+      "mode": "axis-first",
+      "before": {
+        "slopeUsPerBranch": 26.284381739130435,
+        "interceptUs": 234.96521739130426
+      },
+      "after": {
+        "slopeUsPerBranch": 21.58217652173913,
+        "interceptUs": 250.06356521739127
+      },
+      "reductionPercent": 17.889731111274255,
+      "points": [
+        {
+          "branches": 5,
+          "baseMedianMs": 0.35837549999999996,
+          "candidateMedianMs": 0.3485835,
+          "differenceMs": 0.010041499999999981,
+          "lowMs": 0.005500000000000005,
+          "highMs": 0.015583000000000014
+        },
+        {
+          "branches": 10,
+          "baseMedianMs": 0.5046465,
+          "candidateMedianMs": 0.4750625,
+          "differenceMs": 0.030104500000000006,
+          "lowMs": 0.022749999999999992,
+          "highMs": 0.037645999999999985
+        },
+        {
+          "branches": 20,
+          "baseMedianMs": 0.764417,
+          "candidateMedianMs": 0.6843754999999999,
+          "differenceMs": 0.07910400000000001,
+          "lowMs": 0.07627050000000002,
+          "highMs": 0.08233400000000002
+        },
+        {
+          "branches": 40,
+          "baseMedianMs": 1.2837505,
+          "candidateMedianMs": 1.1108959999999999,
+          "differenceMs": 0.17087450000000004,
+          "lowMs": 0.15756250000000005,
+          "highMs": 0.18800050000000013
+        }
+      ]
+    },
+    {
+      "mode": "axis-later",
+      "before": {
+        "slopeUsPerBranch": 12.756645217391306,
+        "interceptUs": 167.31315217391304
+      },
+      "after": {
+        "slopeUsPerBranch": 9.826731304347824,
+        "interceptUs": 172.21791304347823
+      },
+      "reductionPercent": 22.967746324473225,
+      "points": [
+        {
+          "branches": 5,
+          "baseMedianMs": 0.2293965,
+          "candidateMedianMs": 0.21800049999999999,
+          "differenceMs": 0.011583499999999997,
+          "lowMs": 0.008937499999999987,
+          "highMs": 0.013541999999999998
+        },
+        {
+          "branches": 10,
+          "baseMedianMs": 0.29535449999999996,
+          "candidateMedianMs": 0.2724795,
+          "differenceMs": 0.0227705,
+          "lowMs": 0.020542000000000005,
+          "highMs": 0.02491600000000005
+        },
+        {
+          "branches": 20,
+          "baseMedianMs": 0.4247085,
+          "candidateMedianMs": 0.3716255,
+          "differenceMs": 0.05266649999999998,
+          "lowMs": 0.05125000000000002,
+          "highMs": 0.05358200000000002
+        },
+        {
+          "branches": 40,
+          "baseMedianMs": 0.6765415,
+          "candidateMedianMs": 0.5637709999999999,
+          "differenceMs": 0.10520849999999998,
+          "lowMs": 0.09600049999999999,
+          "highMs": 0.110562
+        }
+      ]
+    }
+  ]
+}
