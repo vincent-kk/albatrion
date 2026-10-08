@@ -1,0 +1,563 @@
+{
+  "format": "profile-129a-session-evidence",
+  "startUtc": "2026-10-08T12:25:23Z",
+  "measurementsEndUtc": "2026-10-08T16:59:32.945Z",
+  "preparedUtc": "2026-10-08T17:03:53.542Z",
+  "rawRoot": "/private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/profile-129a-raw",
+  "nodeInvocation": "/opt/homebrew/bin/node",
+  "editorDecisions": [
+    "origin/1.0.0-beta:packages/canard/schema-form/architecture/reviews/round-127-closing.md",
+    "origin/1.0.0-beta:packages/canard/schema-form/architecture/reviews/round-128-closing.md"
+  ],
+  "summary": {
+    "core": {
+      "summary": {
+        "verdictRows": 104,
+        "verdictExcludingZero": [
+          "computed-visible-derived/off/update-first",
+          "oneOf-40/off/axis-first",
+          "oneOf-40/off/axis-update"
+        ],
+        "verdictExcludingZeroRate": 0.028846153846153848,
+        "recordRows": 104,
+        "recordExcludingZero": [
+          "sample-1/off/update-later-nogc"
+        ],
+        "magnitudeMedianMs": 0.002864000000000061,
+        "magnitudeMaxMs": 0.08641599999999983
+      },
+      "coverage": {
+        "designBlocks": 24,
+        "rowsBelowDesignBlocks": 0
+      },
+      "all24": true,
+      "method": {
+        "unit": "one paired difference per ABBA block: median(base samples) − median(candidate samples)",
+        "statistic": "median of block differences (mean of the two middle values for an even count)",
+        "interval": "cluster bootstrap over blocks, xorshift32, 1,999 trials, nearest-rank 0.5% and 99.5%",
+        "seed": "32-bit FNV-1a of \"fixture/validation/mode\" (confirmation passes append \"#confirm\")",
+        "correction": "core: call count × pooled empty end-to-end median of the validation path, both sides; React: none",
+        "sign": "base − candidate; negative means the candidate is slower",
+        "correctedBaseMedian": true
+      },
+      "statisticExample": {
+        "median": -0.0010415000000000285,
+        "low": -0.010958999999999941,
+        "high": 0.010040999999999967,
+        "halfWidth": 0.011082499999999995,
+        "blocks": 24,
+        "trials": 1999,
+        "seed": 2457337952
+      },
+      "timingRecord": {
+        "rows": 104,
+        "excluding": 1
+      },
+      "noGcTiming": {
+        "rows": 104,
+        "excluding": 1
+      },
+      "verdictNoGc": {
+        "rows": 104,
+        "excluding": 1
+      },
+      "excluded": [
+        {
+          "key": "computed-visible-derived/off/update-first",
+          "column": "verdict",
+          "unit": "ms",
+          "statistic": {
+            "median": 0.003104499999999996,
+            "low": 0.0007080000000000142,
+            "high": 0.006667000000000006,
+            "halfWidth": 0.00356250000000001,
+            "blocks": 24,
+            "trials": 1999,
+            "seed": 210625598
+          },
+          "byOrder": {
+            "baseFirst": 0.0043330000000000035,
+            "candidateFirst": 0.003104499999999996
+          },
+          "noGc": {
+            "median": 0.0008125000000000007,
+            "low": -0.001021000000000001,
+            "high": 0.002250000000000002,
+            "halfWidth": 0.0018335000000000018,
+            "blocks": 24,
+            "trials": 1999,
+            "seed": 2742293512
+          }
+        },
+        {
+          "key": "oneOf-40/off/axis-first",
+          "column": "verdict",
+          "unit": "ms",
+          "statistic": {
+            "median": 0.03412499999999996,
+            "low": 0.0045839999999999215,
+            "high": 0.09535349999999987,
+            "halfWidth": 0.06122849999999991,
+            "blocks": 24,
+            "trials": 1999,
+            "seed": 1497483746
+          },
+          "byOrder": {
+            "baseFirst": 0.021979000000000082,
+            "candidateFirst": 0.05666649999999995
+          },
+          "noGc": {
+            "median": -0.01858299999999996,
+            "low": -0.05414599999999997,
+            "high": 0.010708999999999969,
+            "halfWidth": 0.03556300000000001,
+            "blocks": 24,
+            "trials": 1999,
+            "seed": 168348644
+          }
+        },
+        {
+          "key": "oneOf-40/off/axis-update",
+          "column": "verdict",
+          "unit": "ms",
+          "statistic": {
+            "median": 0.05310499999999996,
+            "low": 0.014207999999999998,
+            "high": 0.17025000000000023,
+            "halfWidth": 0.11714500000000028,
+            "blocks": 24,
+            "trials": 1999,
+            "seed": 2896553581
+          },
+          "byOrder": {
+            "baseFirst": 0.03604100000000021,
+            "candidateFirst": 0.08697850000000007
+          },
+          "noGc": {
+            "median": -0.042064000000000046,
+            "low": -0.09331349999999994,
+            "high": 0.016207000000000082,
+            "halfWidth": 0.05827100000000013,
+            "blocks": 24,
+            "trials": 1999,
+            "seed": 494438417
+          }
+        },
+        {
+          "key": "sample-1/off/update-later-nogc",
+          "column": "record",
+          "unit": "ms",
+          "statistic": {
+            "median": 0.0006250000000000006,
+            "low": 0.00006300000000000056,
+            "high": 0.0017080000000000012,
+            "halfWidth": 0.0010830000000000006,
+            "blocks": 24,
+            "trials": 1999,
+            "seed": 1036651316
+          },
+          "byOrder": {
+            "baseFirst": 0.00006300000000000056,
+            "candidateFirst": 0.0016875000000000015
+          },
+          "noGc": null
+        }
+      ]
+    },
+    "react": {
+      "summary": {
+        "verdictRows": 76,
+        "verdictExcludingZero": [],
+        "verdictExcludingZeroRate": 0,
+        "recordRows": 228,
+        "recordExcludingZero": [
+          "array-500/off/mount-wall-nogc",
+          "array-replace-200/off/profiler-mount",
+          "flat-50/off/profiler-update-nogc",
+          "oneOf-20/off/profiler-mount-nogc",
+          "oneOf-20/off/profiler-update-nogc"
+        ],
+        "magnitudeMedianMs": 0.017333007005561285,
+        "magnitudeMaxMs": 1.253437499998654
+      },
+      "coverage": {
+        "designBlocks": 24,
+        "rowsBelowDesignBlocks": 0
+      },
+      "all24": true,
+      "method": {
+        "unit": "one paired difference per ABBA block: median(base samples) − median(candidate samples)",
+        "statistic": "median of block differences (mean of the two middle values for an even count)",
+        "interval": "cluster bootstrap over blocks, xorshift32, 1,999 trials, nearest-rank 0.5% and 99.5%",
+        "seed": "32-bit FNV-1a of \"fixture/validation/mode\" (confirmation passes append \"#confirm\")",
+        "correction": "core: call count × pooled empty end-to-end median of the validation path, both sides; React: none",
+        "sign": "base − candidate; negative means the candidate is slower",
+        "correctedBaseMedian": false
+      },
+      "statisticExample": {
+        "median": 0,
+        "low": 0,
+        "high": 0,
+        "halfWidth": 0,
+        "blocks": 24,
+        "trials": 1999,
+        "seed": 2610160831
+      },
+      "timingRecord": {
+        "rows": 152,
+        "excluding": 5
+      },
+      "noGcTiming": {
+        "rows": 114,
+        "excluding": 4
+      },
+      "verdictNoGc": {
+        "rows": 76,
+        "excluding": 1
+      },
+      "excluded": [
+        {
+          "key": "array-500/off/mount-wall-nogc",
+          "column": "record",
+          "unit": "ms",
+          "statistic": {
+            "median": -2.881707999997161,
+            "low": -3.810041500000807,
+            "high": -0.009437000000616536,
+            "halfWidth": 2.8722709999965446,
+            "blocks": 24,
+            "trials": 1999,
+            "seed": 2841954487
+          },
+          "byOrder": {
+            "baseFirst": -3.0308749999967404,
+            "candidateFirst": -2.6872289999955683
+          },
+          "noGc": null
+        },
+        {
+          "key": "array-replace-200/off/profiler-mount",
+          "column": "record",
+          "unit": "ms",
+          "statistic": {
+            "median": -0.008945499999754247,
+            "low": -0.012129000004279078,
+            "high": -0.0017735000024003966,
+            "halfWidth": 0.007171999997353851,
+            "blocks": 24,
+            "trials": 1999,
+            "seed": 4153967386
+          },
+          "byOrder": {
+            "baseFirst": -0.004710499998054729,
+            "candidateFirst": -0.011225000001559238
+          },
+          "noGc": {
+            "median": -0.0011334999999235151,
+            "low": -0.005744000003687688,
+            "high": 0.006791500010876916,
+            "halfWidth": 0.007925000010800431,
+            "blocks": 24,
+            "trials": 1999,
+            "seed": 391627740
+          }
+        },
+        {
+          "key": "flat-50/off/profiler-update-nogc",
+          "column": "record",
+          "unit": "ms",
+          "statistic": {
+            "median": 0.019710499996222097,
+            "low": 0.00029600000289065065,
+            "high": 0.045806499996388084,
+            "halfWidth": 0.026096000000165986,
+            "blocks": 24,
+            "trials": 1999,
+            "seed": 1054933710
+          },
+          "byOrder": {
+            "baseFirst": 0.01500899999655303,
+            "candidateFirst": 0.030146000000627282
+          },
+          "noGc": null
+        },
+        {
+          "key": "oneOf-20/off/profiler-mount-nogc",
+          "column": "record",
+          "unit": "ms",
+          "statistic": {
+            "median": -0.0223185000011199,
+            "low": -0.06938800000352785,
+            "high": -0.0021715000003723617,
+            "halfWidth": 0.04706950000240795,
+            "blocks": 24,
+            "trials": 1999,
+            "seed": 2570846651
+          },
+          "byOrder": {
+            "baseFirst": -0.009859499997560306,
+            "candidateFirst": -0.048798999997416104
+          },
+          "noGc": null
+        },
+        {
+          "key": "oneOf-20/off/profiler-update-nogc",
+          "column": "record",
+          "unit": "ms",
+          "statistic": {
+            "median": -0.010952000001680062,
+            "low": -0.02987749999863354,
+            "high": -0.0012599999979556742,
+            "halfWidth": 0.018925499996953477,
+            "blocks": 24,
+            "trials": 1999,
+            "seed": 4111880771
+          },
+          "byOrder": {
+            "baseFirst": -0.010063499999546366,
+            "candidateFirst": -0.014187000001356864
+          },
+          "noGc": null
+        }
+      ]
+    },
+    "bands": [
+      {
+        "n": 104,
+        "p": 0.01,
+        "low": 0,
+        "high": 4,
+        "coverage": 0.9959420642826804
+      },
+      {
+        "n": 76,
+        "p": 0.01,
+        "low": 0,
+        "high": 4,
+        "coverage": 0.9989747971762595
+      },
+      {
+        "n": 180,
+        "p": 0.01,
+        "low": 0,
+        "high": 6,
+        "coverage": 0.9975922606814953
+      }
+    ],
+    "audit": {
+      "core": {
+        "commands": 42,
+        "blocks": 552,
+        "workers": 1104,
+        "maxCommandSeconds": 82.17035775000001,
+        "maxWorkerSeconds": 4.994601333000002,
+        "allExit0": true,
+        "allSignalNull": true,
+        "allWarmup20": true,
+        "allSamples41": true,
+        "allSingleBundle": true,
+        "allABBA": true,
+        "gaEntries": 4992,
+        "allGaPassed": true,
+        "settings": 23,
+        "environment": {
+          "head": "575df067c0c1a46731e8ea3048baac7d873286f8",
+          "node": "v26.10.0",
+          "v8": "14.6.202.34-node.35",
+          "cpu": "Apple M1 Max",
+          "platform": "darwin",
+          "arch": "arm64",
+          "started": "2026-10-08T12:29:08.337Z",
+          "ended": "2026-10-08T12:29:08.900Z",
+          "pid": 56012
+        }
+      },
+      "react": {
+        "commands": 146,
+        "blocks": 456,
+        "workers": 912,
+        "maxCommandSeconds": 230.034961417,
+        "maxWorkerSeconds": 106.551550791,
+        "allExit0": true,
+        "allSignalNull": true,
+        "allWarmup20": true,
+        "allSamples41": true,
+        "allSingleBundle": true,
+        "allABBA": true,
+        "gaEntries": null,
+        "allGaPassed": null,
+        "settings": 19,
+        "checkedWrites": 2149152,
+        "environment": {
+          "head": "575df067c0c1a46731e8ea3048baac7d873286f8",
+          "node": "v26.10.0",
+          "nodeBinary": "/opt/homebrew/Cellar/node/26.10.0_2/bin/node",
+          "v8": "14.6.202.34-node.35",
+          "react": "19.2.6",
+          "cpu": "Apple M1 Max",
+          "startedAt": "2026-10-08T13:55:38.929Z",
+          "endedAt": "2026-10-08T13:55:49.476Z",
+          "seconds": 10.547112917,
+          "warmup": 20,
+          "samples": 41,
+          "production": true,
+          "profiling": true,
+          "validation": "off",
+          "pid": 36543,
+          "bundlesLoaded": 1,
+          "noGcPass": true
+        }
+      }
+    },
+    "tools": {
+      "measure-core-pair-129.mjs": "c12de2d2122b9674376eef25a23daf91cf30c6baa1aca6e8f81a4f7fab679617",
+      "measure-core-worker-129.mjs": "b1b23cce0ec33775da2eec4d3d31470bc5898a778982105ee7ac33583853e46c",
+      "measure-react-pair-129.mjs": "adbb8ad16408e05cf3d3ad509b76073c26525e7815f5b5cf3dacb4e418f5ccfb",
+      "report-cluster-129.mjs": "9b4c3c4604a5ab07bf796330d28249aa9604e76e955dd7fcfadce94d9bded140",
+      "cluster-bootstrap-129.mjs": "e44019ee98670f609cc1fcc23d7c3f4603bc47cf5bf7c8c6090772260b359e90",
+      "median-129.mjs": "309cd06b8afef93aa34c758ef16465e8e10626c40f1089fa5692ea3b70054ce9",
+      "row-seed-129.mjs": "964a936a4c82b0326cb8ba5b5fabaf060ed224dcbd4ebb018e6fbf4e3c332eab",
+      "ga-validation-129.mjs": "6e9add3d03ac43f7788e2b7822483e502d11e352e1f6cf8d9c7a0921129fdcc3"
+    },
+    "head": "575df067c0c1a46731e8ea3048baac7d873286f8",
+    "sourceStatus": "",
+    "sourceVs4e": "",
+    "manifests": {
+      "d": "bcb688f55883806298805ff9fa313a35a9e6449be89c777b53f194d2bc73b4f4",
+      "react": "144b265646fcad2b7a398c091a2bde23b99db81c194aa24c5b7aa5eda790e984"
+    }
+  },
+  "integrity": {
+    "coreBoundary": {
+      "workers": 1104,
+      "gaModes": 4992,
+      "globalImmediateMax": 0,
+      "globalTimeoutMax": 0,
+      "schedulerMacrotaskMax": 0,
+      "scheduledMax": 0,
+      "microtasksPendingMax": 0,
+      "microtasksQueuedMax": 2
+    },
+    "bundles": [
+      {
+        "file": "d-head.cjs",
+        "sha256": "6b6ac5c2aa555fd570cc48cc8c36d669b03146c9619578e58d393976c3daf54a",
+        "bytes": 545174,
+        "revision": "4981390bcb71c9b374d920983878a5ad5567fe92",
+        "manifest": "d-manifest.json",
+        "shaMatches": true,
+        "bytesMatch": true
+      },
+      {
+        "file": "d-headx.cjs",
+        "sha256": "74c6e84caffac74d57803aeb88bcb64b3a89675abe41124ad080474630b0a1e4",
+        "bytes": 545236,
+        "revision": "4981390bcb71c9b374d920983878a5ad5567fe92",
+        "manifest": "d-manifest.json",
+        "shaMatches": true,
+        "bytesMatch": true,
+        "onlyTrailingComment": true
+      },
+      {
+        "file": "r126-base.cjs",
+        "sha256": "3d515213f30160e2351ddf00cc5146d83dc0d5229a373772e565db38d59d8d82",
+        "bytes": 958562,
+        "revision": "4e8490a72d5006befd16ffb02c2b74d9db8cb642",
+        "manifest": "r126-bundles.json",
+        "shaMatches": true,
+        "bytesMatch": true
+      },
+      {
+        "file": "r126-basex.cjs",
+        "sha256": "bb1b618ec9fa58e0797a596337c29d8d682006c755719c25bec313b8b4814ee5",
+        "bytes": 958617,
+        "revision": "4e8490a72d5006befd16ffb02c2b74d9db8cb642",
+        "manifest": "r126-bundles.json",
+        "shaMatches": true,
+        "bytesMatch": true,
+        "onlyTrailingComment": true
+      }
+    ],
+    "recordBands": [
+      {
+        "n": 104,
+        "p": 0.01,
+        "low": 0,
+        "high": 4,
+        "coverage": 0.9959420642826804
+      },
+      {
+        "n": 228,
+        "p": 0.01,
+        "low": 0,
+        "high": 7,
+        "coverage": 0.9976951008713473
+      },
+      {
+        "n": 152,
+        "p": 0.01,
+        "low": 0,
+        "high": 5,
+        "coverage": 0.9955099494407315
+      },
+      {
+        "n": 114,
+        "p": 0.01,
+        "low": 0,
+        "high": 5,
+        "coverage": 0.9989373689224456
+      }
+    ],
+    "sourceTrees": {
+      "HEAD": "608826f72f75ee446020fd1b0bd5c658b98c14c6",
+      "4e8490a72": "608826f72f75ee446020fd1b0bd5c658b98c14c6",
+      "4981390bcb71c9b374d920983878a5ad5567fe92": "608826f72f75ee446020fd1b0bd5c658b98c14c6"
+    }
+  },
+  "commandCount": 190,
+  "measurementCommandCount": 42,
+  "allRecordedCommandsExit0": true,
+  "commandsSequential": true,
+  "maxRecordedCommandSeconds": 230.24,
+  "preflightException": {
+    "phase": "사전 점검",
+    "exception": "광범위한 파일 목록 점검에서 Node execFileSync의 출력 버퍼 한도를 초과하여 rg 자식 프로세스가 자동으로 SIGTERM 종료되었습니다.",
+    "code": "ENOBUFS",
+    "command": "rg --files packages/canard/schema-form/architecture",
+    "measurementAffected": false,
+    "resolution": "파일 목록 탐색을 좁은 범위의 파일 시스템 읽기로 바꾸었습니다. 측정 프로세스는 모두 정상 종료하였습니다.",
+    "scope": "세션 전체의 모든 프로세스 자가 종료 조건에는 이 예외가 있습니다. 통계 방법의 통과 판정과 구분합니다."
+  },
+  "gitWrites": false,
+  "installs": false,
+  "productSourceChanges": false,
+  "toolSourceChanges": false,
+  "reportClosingUtc": "2026-10-08T17:13:43.674Z",
+  "elapsedSecondsAtClosing": 17300.674,
+  "withinFiveHours": true,
+  "finalRawVerification": {
+    "files": 4227,
+    "matched": 4227,
+    "missing": 0,
+    "mismatched": 0,
+    "manifestSha256": "14ec585cc0168b5354c3035271cfda178c89cb8b8f2c6681fc34441cea3854d6"
+  },
+  "finalRowVerification": {
+    "core": {
+      "rows": 208,
+      "verdict": 104,
+      "verdictExcluding": 3,
+      "record": 104,
+      "recordExcluding": 1,
+      "all24": true
+    },
+    "react": {
+      "rows": 304,
+      "verdict": 76,
+      "verdictExcluding": 0,
+      "record": 228,
+      "recordExcluding": 5,
+      "all24": true
+    }
+  }
+}

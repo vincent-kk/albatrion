@@ -1,0 +1,83 @@
+{
+  "format": "profile-129a-final-verification",
+  "checkedUtc": "2026-10-08T17:13:58.020Z",
+  "sessionStartUtc": "2026-10-08T12:25:23Z",
+  "elapsedSeconds": 17315.02,
+  "underFiveHours": true,
+  "rawHashVerification": {
+    "files": 4227,
+    "manifestEntries": 4227,
+    "mismatched": 0,
+    "exactFileList": true,
+    "rawRoot": "/private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/profile-129a-raw"
+  },
+  "rowChecks": {
+    "core": {
+      "rows": 208,
+      "verdict": 104,
+      "verdictExcluding": 3,
+      "record": 104,
+      "recordExcluding": 1,
+      "all24": true
+    },
+    "react": {
+      "rows": 304,
+      "verdict": 76,
+      "verdictExcluding": 0,
+      "record": 228,
+      "recordExcluding": 5,
+      "all24": true
+    }
+  },
+  "gitState": {
+    "head": "575df067c0c1a46731e8ea3048baac7d873286f8",
+    "status": "?? packages/canard/schema-form/architecture/verification/07-switch/profile-129a-session.md\n?? packages/canard/schema-form/architecture/verification/07-switch/profile-129a-session/",
+    "sourceStatus": "",
+    "sourceVs4e": "",
+    "trackedDiff": "",
+    "stagedDiff": ""
+  },
+  "allArtifactsUnderFiveMb": true,
+  "reportPlaceholderAbsent": true,
+  "artifactsExcludingThisVerificationFile": [
+    {
+      "path": "profile-129a-session.md",
+      "bytes": 18924,
+      "sha256": "c366b75b971fa6433dac481e6961242816786fd538e83b07b0d48daaf7eb4c18"
+    },
+    {
+      "path": "profile-129a-session/core-rows.csv",
+      "bytes": 42789,
+      "sha256": "56acf231c80c7ef7f57fe3d01792152722837bf97c99fdd90a004a7e4c6e6e2b"
+    },
+    {
+      "path": "profile-129a-session/core-rows.md",
+      "bytes": 25260,
+      "sha256": "a16766b739ee5a49e61898277f6afb2a7218482429cc4d995122271eb0d7015d"
+    },
+    {
+      "path": "profile-129a-session/raw-sha256.txt",
+      "bytes": 457527,
+      "sha256": "14ec585cc0168b5354c3035271cfda178c89cb8b8f2c6681fc34441cea3854d6"
+    },
+    {
+      "path": "profile-129a-session/react-rows.csv",
+      "bytes": 54798,
+      "sha256": "7d516e175edf63324ba004c3dbd3536e38cb111111f407526236701f28bfb832"
+    },
+    {
+      "path": "profile-129a-session/react-rows.md",
+      "bytes": 38320,
+      "sha256": "cb906c9139aa5e8311dcd3d15875bc2e82877064683881e7ee08335bccd27878"
+    },
+    {
+      "path": "profile-129a-session/session-evidence.json",
+      "bytes": 18138,
+      "sha256": "5b2eaffa9f586332d8f2970593c5d3e96f7ba1cf0304d82a644f5238d6018cd4"
+    }
+  ],
+  "statisticalVerdict": "PASS",
+  "strictEveryProcessSelfTerminated": false,
+  "strictProcessException": "사전 파일 목록 점검에서 출력 버퍼 한도로 rg 자식이 SIGTERM 종료되었습니다. 모든 측정 프로세스는 정상 종료하였습니다.",
+  "remaining129aSteps": []
+}
