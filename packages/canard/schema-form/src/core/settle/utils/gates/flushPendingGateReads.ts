@@ -4,9 +4,9 @@ import type { BlueprintGate, BlueprintNode } from '../../../blueprint';
 import type { SchemaNodeRecord } from '../../../record';
 import type { SettlementContext } from '../../type';
 import { flushPendingOutput } from '../compute/flushPendingOutput';
-import { resolveDependencyPath } from '../paths/resolveDependencyPath';
 import { getGateExpression } from './getGateExpression';
 import { bindGateHostPath } from './bindGateHostPath';
+import { getGateRegistry } from './getGateRegistry';
 
 /** Finite gate occurrences relative to a subtree that is about to be changed. */
 interface GateReadPlan {
@@ -86,6 +86,7 @@ export const flushPendingGateReads = <Self extends SchemaNodeRecord<Self>>(
     }
   };
   const blueprint = context.root.runtime.blueprint;
+  const registry = getGateRegistry(context.root.runtime);
   const flushGate = (gate: BlueprintGate, node: BlueprintNode,
     occurrencePath: string, childHostPath?: string): void => {
     for (const parent of gate.appliesWhen ?? []) flushGate(parent, node, occurrencePath);
@@ -95,7 +96,7 @@ export const flushPendingGateReads = <Self extends SchemaNodeRecord<Self>>(
     else {
       const expression = getGateExpression(blueprint, gate.schemaPath);
       for (const dependency of expression?.dependencies ?? [])
-        flushRead(resolveDependencyPath(hostPath, dependency));
+        flushRead(registry.resolveRead(hostPath, dependency));
     }
   };
   for (const occurrence of plan.occurrences) {

@@ -2,12 +2,10 @@ import { recordSettlementFailure } from '../errors/recordSettlementFailure';
 import { CONDITIONAL_SCHEMA_WITHOUT_VALIDATOR,
   SchemaFormError, VALIDATOR_MISSING } from '../../../../errors';
 import { isArray } from '@winglet/common-utils/filter';
-import { unescapeSegment } from '@winglet/json/pointer';
 import { hasOwnProperty } from '@winglet/common-utils/lib';
 import type { BlueprintGate } from '../../../blueprint';
 import type { SchemaNodeRecord } from '../../../record';
 import type { SettlementContext } from '../../type';
-import { resolveDependencyPath } from '../paths/resolveDependencyPath';
 import { readProjectedValue } from './readProjectedValue';
 import { EXPRESSION_THREW, GUARD_FAILED } from '../errors/settleErrorCode';
 import { getGateRegistry } from './getGateRegistry';
@@ -32,18 +30,27 @@ export const evaluateGate = <Self extends SchemaNodeRecord<Self>>(
   if (gate.appliesWhen?.some((parentGate) =>
     !evaluateGate(parentGate, context, owner)))
     return false;
-  const hostPath = getGateRegistry(owner.runtime).locate(owner, gate, edgeName).hostPath;
+  const registry = getGateRegistry(owner.runtime);
+  const occurrence = registry.locate(owner, gate, edgeName);
+  const hostPath = occurrence.hostPath;
   const raw = gate.kind === 'active' ? undefined : readProjectedValue(context, hostPath);
   const host = raw !== null && typeof raw === 'object' && !isArray(raw)
     ? raw : {};
   let input: Record<string, unknown> = { ...host };
-  const hostNode = gate.kind === 'active' ? undefined : hostPath === '' ? context.root :
-    hostPath.split('/').slice(1).reduce<Self | undefined>((node, encoded) => {
-      const structure = node?.structure;
-      const name = unescapeSegment(encoded);
-      return structure && hasOwnProperty(structure, name)
-        ? structure[name] : undefined;
-    }, context.root);
+  let hostNode: Self | undefined;
+  if (gate.kind !== 'active') {
+    if (hostPath === owner.path) hostNode = owner;
+    else {
+      hostNode = context.root;
+      const segments = hostPath ? registry.pathSegments(hostPath) : [];
+      for (let index = 0; index < segments.length; index++) {
+        const structure: Record<string, Self> | null | undefined = hostNode?.structure;
+        const name = segments[index];
+        hostNode = structure && hasOwnProperty(structure, name)
+          ? structure[name] : undefined;
+      }
+    }
+  }
   const extra = hostNode?.extras;
   let projectedHost = hostNode !== undefined;
   for (let ancestor: Self | null | undefined = hostNode;
@@ -110,7 +117,7 @@ export const evaluateGate = <Self extends SchemaNodeRecord<Self>>(
     if (expression) {
       const dependencies = new Array<unknown>(expression.dependencies.length);
       for (let index = 0; index < expression.dependencies.length; index++) {
-        const path = resolveDependencyPath(hostPath, expression.dependencies[index]);
+        const path = occurrence.watchPaths[index];
         dependencies[index] = path === '@' ? context.root.runtime.context ?? {} :
           readProjectedValue(context, path);
       }

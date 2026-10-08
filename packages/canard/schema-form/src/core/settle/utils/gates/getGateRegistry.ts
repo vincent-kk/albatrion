@@ -1,6 +1,6 @@
 import type { Blueprint, BlueprintGate, BlueprintNodeKind } from '../../../blueprint';
 import type { SchemaNodeRecord } from '../../../record';
-import { escapeSegment } from '@winglet/json/pointer';
+import { escapeSegment, unescapeSegment } from '@winglet/json/pointer';
 import { resolveGateOccurrence } from './resolveGateOccurrence';
 import type { GateOccurrence } from './type';
 import { resolveDependencyPath } from '../paths/resolveDependencyPath';
@@ -36,9 +36,38 @@ class GateRegistry {
   private readonly byPath = new Map<string, RegisteredNode>();
   /** Relocated gates keyed by their memoized evaluation host. */
   private readonly byLocation = new Map<string, Set<RegisteredGateOccurrence>>();
+  /** Absolute reads shared by gates that ask the same pointer at one host. */
+  private readonly resolvedReads = new Map<string, Map<string, string>>();
+  /** Decoded pointers contain no live shape or projected value. */
+  private readonly segments = new Map<string, readonly string[]>();
 
   /** Bind exact expression dependencies from this tree's analyzed blueprint. */
   constructor(private readonly blueprint: Blueprint) {}
+
+  /** Resolve each requested host/dependency pair once for this runtime. */
+  resolveRead(hostPath: string, dependency: string): string {
+    let reads = this.resolvedReads.get(hostPath);
+    if (!reads) {
+      reads = new Map();
+      this.resolvedReads.set(hostPath, reads);
+    }
+    let path = reads.get(dependency);
+    if (path === undefined) {
+      path = resolveDependencyPath(hostPath, dependency);
+      reads.set(dependency, path);
+    }
+    return path;
+  }
+
+  /** Decode an actually read absolute pointer once; callers still walk the live tree. */
+  pathSegments(path: string): readonly string[] {
+    let segments = this.segments.get(path);
+    if (!segments) {
+      segments = decodePointerSegments(path);
+      this.segments.set(path, segments);
+    }
+    return segments;
+  }
 
   /** Compare a path and kind in the current indexed shape, if indexed. */
   hasRegisteredPathKind(path: string, kind: BlueprintNodeKind): boolean | undefined {
@@ -82,7 +111,7 @@ class GateRegistry {
   /** Find or bind a gate inherited indirectly by a declaration. */
   locate<Self extends SchemaNodeRecord<Self>>(
     node: Self, gate: BlueprintGate, edgeName?: string,
-  ): GateOccurrence {
+  ): RegisteredGateOccurrence {
     this.register(node);
     const edge = edgeName ? this.byEdge.get(node)?.get(edgeName)?.get(gate) : undefined;
     if (edge) return edge;
@@ -163,7 +192,7 @@ class GateRegistry {
       return [`${location.hostPath}/${escapeSegment(gate.condition.propertyName)}`];
     const expression = getGateExpression(this.blueprint, gate.schemaPath);
     return expression ? expression.dependencies.map((dependency) => {
-      const path = resolveDependencyPath(location.hostPath, dependency);
+      const path = this.resolveRead(location.hostPath, dependency);
       return path;
     }) : [location.hostPath];
   }
@@ -200,7 +229,15 @@ const REGISTRIES = new WeakMap<object, GateRegistry>();
 
 /** Query surface shared by real registries and the branchless absence result. */
 type GateRegistryView = Pick<GateRegistry, 'hasRegisteredPathKind' | 'register' |
-  'locate' | 'relocated' | 'mayChangeAt' | 'mayChangeOwnDeclarationAt' | 'remove'>;
+  'locate' | 'relocated' | 'mayChangeAt' | 'mayChangeOwnDeclarationAt' | 'remove' |
+  'resolveRead' | 'pathSegments'>;
+/** Decode only pointer syntax; no lookup result can survive a shape change. */
+const decodePointerSegments = (path: string): readonly string[] => {
+  const segments = path.slice(1).split('/');
+  for (let index = 0; index < segments.length; index++)
+    segments[index] = unescapeSegment(segments[index]);
+  return segments;
+};
 /** No per-runtime maps, weak maps or live path registrations for branchless graphs. */
 const EMPTY_REGISTRY: GateRegistryView = Object.freeze({
   hasRegisteredPathKind: () => undefined,
@@ -210,6 +247,8 @@ const EMPTY_REGISTRY: GateRegistryView = Object.freeze({
   mayChangeAt: () => false,
   mayChangeOwnDeclarationAt: () => false,
   remove: () => undefined,
+  resolveRead: resolveDependencyPath,
+  pathSegments: decodePointerSegments,
 });
 /** Repeated absent relocation reads preserve reference identity. */
 const EMPTY_OCCURRENCES: readonly GateOccurrence[] = Object.freeze([]);
