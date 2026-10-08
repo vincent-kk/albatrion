@@ -1,0 +1,115 @@
+{
+  "result": "PASS",
+  "head": "33cd1d2e1fc810c821f4acaeee6abd49e6b072b9",
+  "rawFiles": 5226,
+  "mainCommands": 414,
+  "supplementalCommands": 18,
+  "measurementWorkers": 1728,
+  "gaFailures": 0,
+  "digestMismatches": 0,
+  "overlappingMeasurementIntervals": 0,
+  "commandFailures": 0,
+  "maximumPairCommandSeconds": 35.31015687500002,
+  "maximumWorkerSeconds": 9.006254542000002,
+  "maximumBatchSeconds": 375.609782541,
+  "measurementStarted": "2026-10-08T01:20:10.117Z",
+  "measurementEnded": "2026-10-08T03:17:21.050Z",
+  "completedAt": "2026-10-08T03:28:56.364Z",
+  "sessionStart": "2026-10-08T01:15:51.000Z",
+  "elapsedSessionSeconds": 7985.364,
+  "verificationSeconds": 55.093935542,
+  "intervalsRecomputed": 59,
+  "officialRowsPerStage": 104,
+  "aaRecords": 33,
+  "candidateRecords": 35,
+  "artifactLimitsPassed": true,
+  "artifacts": [
+    {
+      "path": "profile-126a-session/core-AA.json",
+      "bytes": 781477,
+      "sha256": "89f437a479fe1621f98ef339ef3442ef2811e84f423b55ff8617950351285244"
+    },
+    {
+      "path": "profile-126a-session/core-AA.md",
+      "bytes": 14475,
+      "sha256": "3305c8e3be00cecaa9b1da06f33941bb5d07e52e2132badf5982d476e527f047"
+    },
+    {
+      "path": "profile-126a-session/core-head-1c.json",
+      "bytes": 821729,
+      "sha256": "9d06f0524fded9ae0629e7cb56bdb754437add9d749eb61b31c1996196bd3011"
+    },
+    {
+      "path": "profile-126a-session/core-head-1c.md",
+      "bytes": 25690,
+      "sha256": "c6b3f2009abaa1a79b80dadcd6416089d7d47b6f36c9b7e236d71d545423797c"
+    },
+    {
+      "path": "profile-126a-session/raw-sha256.txt",
+      "bytes": 588106,
+      "sha256": "7aa1d12a1846ef6fb9ca0e8b52aa8c588eb2c7bd6473a5a5f3b19769da44a7dd"
+    },
+    {
+      "path": "profile-126a-session.md",
+      "bytes": 12534,
+      "sha256": "7b4944581e4d1ce526280ebf733086ae7de4eddd5bea626d9776147adf7b491d"
+    }
+  ],
+  "rawManifestVerified": true,
+  "trackedChanges": 0,
+  "adapters": [
+    {
+      "file": "/private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/profile-126a-preload.mjs",
+      "sha256": "7ba050717fbcf2079779ddc16b61bb006f50f031dabcf6dd890ed74f72ed7ce3"
+    },
+    {
+      "file": "/private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/profile-126a-run.mjs",
+      "sha256": "6c3c2e76ece35b9ba157e4baf9441f1ba6759a73236dcf0f96b1af2d14e83a6a"
+    },
+    {
+      "file": "/private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/profile-126a-analyze.mjs",
+      "sha256": "fe11ee1d99590a3314e031f628b0d4d095edc8f9a1ec0cefd22a20e3c74fa2ef"
+    },
+    {
+      "file": "/private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/profile-126a-extra-preload.mjs",
+      "sha256": "dc019b0a3aa732a2a36e805a5cf1e54f240fe2b685170ddc40be470e104f2b91"
+    },
+    {
+      "file": "/private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/profile-126a-extra-run.mjs",
+      "sha256": "024e385ce48a986a3db687883f3a65af305415fcb44e8533de52d63c82fd07c2"
+    },
+    {
+      "file": "/private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/profile-126a-extra-analyze.mjs",
+      "sha256": "c39a0953ba7390b1b456d4b8a2352ced1d726dc680735134205836b846e672fb"
+    },
+    {
+      "file": "/private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/profile-126a-verify.mjs",
+      "sha256": "5cd2b5c3de528aca962b2d3df2b7e6f03470a965eb91ee66fa5e53d6056e0ec2"
+    }
+  ],
+  "scope": "Git 쓰기·설치·제품 소스 변경 없이 측정 자료와 보고서만 작성했습니다.",
+  "verificationCommand": "/opt/homebrew/bin/node /private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/profile-126a-verify.mjs verify",
+  "verdict": "REJECT",
+  "regressionRows": 7,
+  "gainRows": 45,
+  "exemptedRows": 0,
+  "checks": [
+    "원자료에서 모든 공식 행과 기록 열의 대응 중앙값·버전별 중앙값·p99를 다시 확인했습니다.",
+    "회귀와 분기 축 및 no-gc 핵심 59개 구간을 원본 bootstrap으로 재계산해 일치를 확인했습니다.",
+    "같은 세션 A/A 하한, 0.5% 회귀 하한, 124C-01의 모든 행 조건과 기울기를 다시 확인했습니다.",
+    "세션 122의 같은 행 수치와 원본 입력·번들·측정기의 SHA-256을 확인했습니다.",
+    "유효 측정 프로세스의 자연 종료, 시간 상한과 전체 4시간 한도를 확인했습니다."
+  ],
+  "limitations": "번들이 scheduler 외부 모듈을 가져오지 않아 (ga)의 경계 계수는 구조적으로 0이며, 실질적인 시간 대조는 paired sentinel과 microtask 종단 차이를 사용합니다.",
+  "finalDocumentCheck": {
+    "result": "PASS",
+    "command": "/opt/homebrew/bin/node /private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/profile-126a-seal.mjs",
+    "toolSha256": "fee08544ef9cfb9a58153a13a4b31ca0f2816244534018c8eb8cab116feef93c",
+    "checkedAt": "2026-10-08T03:36:43.192Z",
+    "elapsedSessionSeconds": 8452.192,
+    "artifactFiles": 8,
+    "largestArtifactBytes": 821729,
+    "trackedChanges": 0,
+    "initialFormattingCheckCorrection": "첫 문서 검사에서 천 단위 쉼표를 필수로 가정한 검사 조건이 실패했습니다. 쉼표 유무를 정규화하도록 검사기만 정정한 뒤 문서 검사가 통과했습니다. 측정값과 원시 해시 검증에는 영향이 없었습니다."
+  }
+}

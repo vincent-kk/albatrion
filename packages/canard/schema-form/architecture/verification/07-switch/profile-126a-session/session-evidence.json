@@ -1,0 +1,508 @@
+{
+  "session": "126a",
+  "sessionStart": "2026-10-08T01:15:51.000Z",
+  "preflightAt": "2026-10-08T01:20:09.644Z",
+  "head": "33cd1d2e1fc810c821f4acaeee6abd49e6b072b9",
+  "initialWorkingTreeClean": true,
+  "node": "v26.10.0",
+  "v8": "14.6.202.34-node.35",
+  "requestedNodeBinary": "/opt/homebrew/bin/node",
+  "realNodeBinary": "/opt/homebrew/Cellar/node/26.10.0_2/bin/node",
+  "nodeSha256": "832eaf52cafa7ff1364c2ca378451db14fb043d8d23a5cfd18a0a103d66226fc",
+  "cpu": "Apple M1 Max",
+  "memoryBytes": 68719476736,
+  "bundleSourceRevision": "439fda3219ec6b42efbef4d7fa0f02a40111453f",
+  "bundles": [
+    {
+      "name": "head",
+      "original": "/private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles/c-head.cjs",
+      "rebuilt": "/private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles-126/c-head.cjs",
+      "sha256": "acd4c57073f92f7553f7b4e7a8e512a4aaea789534c3c58af2c53a5a5abddde8",
+      "bytes": 543666
+    },
+    {
+      "name": "headx",
+      "original": "/private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles/c-headx.cjs",
+      "rebuilt": "/private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles-126/c-headx.cjs",
+      "sha256": "84fc46d97faa554e357ede7182dedc0e2d0ff8b154eae183cc5d15229eda24e8",
+      "bytes": 543728
+    },
+    {
+      "name": "1c",
+      "original": "/private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles/c-1c.cjs",
+      "rebuilt": "/private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles-126/c-1c.cjs",
+      "sha256": "acd754e932d832c5e2654ee1d14495c79367eca24d6213928991ff7e7877273f",
+      "bytes": 547274
+    }
+  ],
+  "manifests": [
+    {
+      "path": "/private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles/c-bundles.json",
+      "sha256": "d7440f494f0fd8fbf0d1760cf44dcf7a19c0213c0b1b6e73a5f2fa75612933a7"
+    },
+    {
+      "path": "/private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles-126/c-bundles.json",
+      "sha256": "35ffee44c4cb1de4ac09b7e0d32693d81f7cd18149838a0875f45153d343b924"
+    }
+  ],
+  "originals": [
+    {
+      "name": "harness-126.md",
+      "sha256": "29ac55080238f83114a0fd58de853c15a385cdfe91afc89da39fbcaf61b7dd45"
+    },
+    {
+      "name": "profile-122-session.md",
+      "sha256": "864814e5ef8d2d988e76b65c080ff5f701b4f552d3a2d948ce78c894e1c578a4"
+    },
+    {
+      "name": "profile-122-session/core-AA.json",
+      "sha256": "072d4d9392edb9e6e55e45a83627a72e2af3eeaafd74b0dd791c43ea10eebfc6"
+    },
+    {
+      "name": "profile-122-session/core-head-1c.json",
+      "sha256": "66d2f60a524ced05451f32cb0bb1baa8d5977457fe27a45eafd79bd361122923"
+    },
+    {
+      "name": "tools/measure-core-pair-126.mjs",
+      "sha256": "a64cda1656a48419abd0c97ce348b43939df89986a43e8897c59e85bbf546c1b"
+    },
+    {
+      "name": "tools/measure-verdict-121.mjs",
+      "sha256": "1fb1a0ed5796ae88659188cab473b67039447a24ffa9fe80cf81e42c2e67e5a5"
+    },
+    {
+      "name": "tools/measure-pair-121.mjs",
+      "sha256": "c1e084d595bba03486c9b89ceacd07462709b783f1bd61f959c596b38ee2c4f6"
+    },
+    {
+      "name": "tools/report-verdict-121.mjs",
+      "sha256": "3a37cb47cb8cd2fedc6ca3dd59bd12ceed3cb9a4463a198a1b125d50802ae28b"
+    },
+    {
+      "name": "tools/endpointDifference95c01.mjs",
+      "sha256": "25d11780f9f01813255ac79694c4dbd5195154a69039929af283a315647bd4c1"
+    }
+  ],
+  "rules": [
+    {
+      "round": 95,
+      "gitPath": "origin/1.0.0-beta:packages/canard/schema-form/architecture/reviews/round-95-closing.md",
+      "sha256": "323d34e7789b077c5481d3432ea1226b948d3bc11c0f2678b7d319eb49fbb8e1"
+    },
+    {
+      "round": 105,
+      "gitPath": "origin/1.0.0-beta:packages/canard/schema-form/architecture/reviews/round-105-closing.md",
+      "sha256": "5536940e9baa5ffa099c32cf7c8bbe8bc44ec5a55a91c1d67862e26e59f3fa58"
+    },
+    {
+      "round": 124,
+      "gitPath": "origin/1.0.0-beta:packages/canard/schema-form/architecture/reviews/round-124-closing.md",
+      "sha256": "2ed6eb696c0196eab7f52c7007d653e138b755730a8094527a88753de45202d1"
+    },
+    {
+      "round": 125,
+      "gitPath": "origin/1.0.0-beta:packages/canard/schema-form/architecture/reviews/round-125-closing.md",
+      "sha256": "6774e85d24a97710be77c0930ac570f840c8f066d59dc3ea724426140629d7ed"
+    }
+  ],
+  "adapters": [
+    {
+      "file": "/private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/profile-126a-preload.mjs",
+      "sha256": "7ba050717fbcf2079779ddc16b61bb006f50f031dabcf6dd890ed74f72ed7ce3"
+    },
+    {
+      "file": "/private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/profile-126a-run.mjs",
+      "sha256": "6c3c2e76ece35b9ba157e4baf9441f1ba6759a73236dcf0f96b1af2d14e83a6a"
+    },
+    {
+      "file": "/private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/profile-126a-analyze.mjs",
+      "sha256": "fe11ee1d99590a3314e031f628b0d4d095edc8f9a1ec0cefd22a20e3c74fa2ef"
+    },
+    {
+      "file": "/private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/profile-126a-extra-preload.mjs",
+      "sha256": "dc019b0a3aa732a2a36e805a5cf1e54f240fe2b685170ddc40be470e104f2b91"
+    },
+    {
+      "file": "/private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/profile-126a-extra-run.mjs",
+      "sha256": "024e385ce48a986a3db687883f3a65af305415fcb44e8533de52d63c82fd07c2"
+    },
+    {
+      "file": "/private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/profile-126a-extra-analyze.mjs",
+      "sha256": "c39a0953ba7390b1b456d4b8a2352ced1d726dc680735134205836b846e672fb"
+    },
+    {
+      "file": "/private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/profile-126a-verify.mjs",
+      "sha256": "5cd2b5c3de528aca962b2d3df2b7e6f03470a965eb91ee66fa5e53d6056e0ec2"
+    }
+  ],
+  "settings": [
+    {
+      "fixture": "if-then",
+      "validation": "off"
+    },
+    {
+      "fixture": "if-then",
+      "validation": "on"
+    },
+    {
+      "fixture": "oneOf-10",
+      "validation": "off"
+    },
+    {
+      "fixture": "oneOf-20",
+      "validation": "off"
+    },
+    {
+      "fixture": "oneOf-40",
+      "validation": "off"
+    },
+    {
+      "fixture": "oneOf-5",
+      "validation": "off"
+    },
+    {
+      "fixture": "array-100",
+      "validation": "off"
+    },
+    {
+      "fixture": "array-1000",
+      "validation": "off"
+    },
+    {
+      "fixture": "array-500",
+      "validation": "off"
+    },
+    {
+      "fixture": "computed-visible-derived",
+      "validation": "off"
+    },
+    {
+      "fixture": "flat-100",
+      "validation": "off"
+    },
+    {
+      "fixture": "flat-50",
+      "validation": "off"
+    },
+    {
+      "fixture": "flat-500",
+      "validation": "off"
+    },
+    {
+      "fixture": "nested-d3-f4",
+      "validation": "off"
+    },
+    {
+      "fixture": "nested-d5-f4",
+      "validation": "off"
+    },
+    {
+      "fixture": "oneOf-10",
+      "validation": "on"
+    },
+    {
+      "fixture": "oneOf-20",
+      "validation": "on"
+    },
+    {
+      "fixture": "oneOf-40",
+      "validation": "on"
+    },
+    {
+      "fixture": "oneOf-5",
+      "validation": "on"
+    },
+    {
+      "fixture": "sample-0",
+      "validation": "off"
+    },
+    {
+      "fixture": "sample-1",
+      "validation": "off"
+    },
+    {
+      "fixture": "sample-2",
+      "validation": "off"
+    },
+    {
+      "fixture": "sample-3",
+      "validation": "off"
+    }
+  ],
+  "tasksPerStage": 207,
+  "processesPerSidePerRun": 2,
+  "blocksPerRun": 2,
+  "samplesPerProcess": 101,
+  "warmupPerProcess": 20,
+  "concurrency": 1,
+  "noGcExtension": "첫 쓰기 27개 열에 if-then OFF/ON의 mount·update·update-later 여섯 열을 추가 기록했고, 누락된 회귀 두 행은 아홉 회차로 보충했습니다.",
+  "scope": "Git 쓰기·설치·제품 소스 변경 없이 지정된 측정과 보고서만 작성했습니다.",
+  "preflightAdapters": [
+    {
+      "file": "/private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/profile-126a-preload.mjs",
+      "sha256": "7ba050717fbcf2079779ddc16b61bb006f50f031dabcf6dd890ed74f72ed7ce3"
+    },
+    {
+      "file": "/private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/profile-126a-run.mjs",
+      "sha256": "6c3c2e76ece35b9ba157e4baf9441f1ba6759a73236dcf0f96b1af2d14e83a6a"
+    }
+  ],
+  "rawFiles": 5226,
+  "measurementWorkers": 1728,
+  "mainCommands": 414,
+  "supplementalCommands": 18,
+  "mainProcessesPerStage": 828,
+  "supplementalProcesses": 72,
+  "gaFailures": 0,
+  "digestMismatches": 0,
+  "overlappingMeasurementIntervals": 0,
+  "maximumPairCommandSeconds": 35.31015687500002,
+  "maximumBatchSeconds": 375.609782541,
+  "period": {
+    "measurementStarted": "2026-10-08T01:20:10.117Z",
+    "measurementEnded": "2026-10-08T03:17:21.050Z",
+    "verifiedAt": "2026-10-08T03:28:56.364Z",
+    "sessionStart": "2026-10-08T01:15:51.000Z",
+    "elapsedSecondsAtVerification": 7985.364,
+    "supplementalStarted": "2026-10-08T03:13:55.039Z"
+  },
+  "method": {
+    "sign": "차이는 기준−변경의 ms 값이며, 음수는 변경이 느려졌음을 뜻합니다.",
+    "bootstrap": "원본 report-verdict-121의 pairRows121을 사용했으며, seed 101과 1,999회 재표집으로 pooled 대응 중앙값의 nearest-rank 99% 구간을 계산했습니다.",
+    "corrections": "검증 경로별 pooled 빈 호출 종단 중앙값을 양쪽에 같은 상수로 적용했고, 음수 clipping은 하지 않았습니다.",
+    "processDesign": "아홉 회차마다 두 블록을 사용했고, 새 프로세스마다 번들 하나만 올렸으며, ABBA 또는 BAAB의 수와 위치를 맞췄습니다.",
+    "noGc": "공식 강제 GC 회차 뒤 같은 전체 순서에서 강제 GC와 GC 뒤 빈 호출 버리기 없이 아홉 회차의 기록 열을 수집했습니다."
+  },
+  "verdict": "REJECT",
+  "regressionRows": 7,
+  "significantGainRows": 45,
+  "exchange": {
+    "axisGainRowCount": 12,
+    "axisGainSumUs": 1151.9620000000002,
+    "regressionSumUs": 38.748999999999725,
+    "tenRegressionSumUs": 387.4899999999973,
+    "rows": [
+      {
+        "row": "if-then/off/update",
+        "lossUs": 3.1670000000000034,
+        "lossPercent": 2.201201034223917,
+        "axisGainSumUs": 1151.9620000000002,
+        "regressionSumUs": 38.748999999999725,
+        "tenRegressionSumUs": 387.4899999999973,
+        "noGcRow": "if-then/off/update-nogc",
+        "noGcPaired": {
+          "median": -0.0011670000000000014,
+          "low": -0.0016670000000000018,
+          "high": -0.0008319999999999994,
+          "halfWidth": 0.0005000000000000004,
+          "trials": 1999,
+          "seed": 101
+        },
+        "noGcRuns": 9,
+        "noGcBlocksPerRun": 2,
+        "noGcSamples": 1818,
+        "supplemental": false,
+        "tests": {
+          "axisGainMoreThanTenRegressions": true,
+          "percentAtMostTwo": false,
+          "microsecondsAtMostFive": true,
+          "noGcIntervalContainsZero": false,
+          "noGcNineRuns": true
+        },
+        "exempt": false,
+        "outcome": "124C-01의 조건을 충족하지 못하므로 채택을 막습니다."
+      },
+      {
+        "row": "if-then/off/update-first",
+        "lossUs": 2.7490000000000014,
+        "lossPercent": 2.852399481193257,
+        "axisGainSumUs": 1151.9620000000002,
+        "regressionSumUs": 38.748999999999725,
+        "tenRegressionSumUs": 387.4899999999973,
+        "noGcRow": "if-then/off/update-first-nogc",
+        "noGcPaired": {
+          "median": -0.000791,
+          "low": -0.0010830000000000006,
+          "high": -0.0005409999999999998,
+          "halfWidth": 0.0002920000000000006,
+          "trials": 1999,
+          "seed": 101
+        },
+        "noGcRuns": 9,
+        "noGcBlocksPerRun": 2,
+        "noGcSamples": 1818,
+        "supplemental": false,
+        "tests": {
+          "axisGainMoreThanTenRegressions": true,
+          "percentAtMostTwo": false,
+          "microsecondsAtMostFive": true,
+          "noGcIntervalContainsZero": false,
+          "noGcNineRuns": true
+        },
+        "exempt": false,
+        "outcome": "124C-01의 조건을 충족하지 못하므로 채택을 막습니다."
+      },
+      {
+        "row": "if-then/off/update-later",
+        "lossUs": 0.2909999999999996,
+        "lossPercent": 0.7785953177257514,
+        "axisGainSumUs": 1151.9620000000002,
+        "regressionSumUs": 38.748999999999725,
+        "tenRegressionSumUs": 387.4899999999973,
+        "noGcRow": "if-then/off/update-later-nogc",
+        "noGcPaired": {
+          "median": -0.0002909999999999996,
+          "low": -0.0005010000000000014,
+          "high": -0.00004200000000000037,
+          "halfWidth": 0.0002489999999999992,
+          "trials": 1999,
+          "seed": 101
+        },
+        "noGcRuns": 9,
+        "noGcBlocksPerRun": 2,
+        "noGcSamples": 1818,
+        "supplemental": false,
+        "tests": {
+          "axisGainMoreThanTenRegressions": true,
+          "percentAtMostTwo": true,
+          "microsecondsAtMostFive": true,
+          "noGcIntervalContainsZero": false,
+          "noGcNineRuns": true
+        },
+        "exempt": false,
+        "outcome": "124C-01의 조건을 충족하지 못하므로 채택을 막습니다."
+      },
+      {
+        "row": "if-then/on/update",
+        "lossUs": 2.3330000000000295,
+        "lossPercent": 0.7871810617665617,
+        "axisGainSumUs": 1151.9620000000002,
+        "regressionSumUs": 38.748999999999725,
+        "tenRegressionSumUs": 387.4899999999973,
+        "noGcRow": "if-then/on/update-nogc",
+        "noGcPaired": {
+          "median": -0.0009589999999999876,
+          "low": -0.0016259999999999886,
+          "high": -9.999999999732445e-7,
+          "halfWidth": 0.0009580000000000144,
+          "trials": 1999,
+          "seed": 101
+        },
+        "noGcRuns": 9,
+        "noGcBlocksPerRun": 2,
+        "noGcSamples": 1818,
+        "supplemental": false,
+        "tests": {
+          "axisGainMoreThanTenRegressions": true,
+          "percentAtMostTwo": true,
+          "microsecondsAtMostFive": true,
+          "noGcIntervalContainsZero": false,
+          "noGcNineRuns": true
+        },
+        "exempt": false,
+        "outcome": "124C-01의 조건을 충족하지 못하므로 채택을 막습니다."
+      },
+      {
+        "row": "if-then/on/update-first",
+        "lossUs": 2.4170000000000025,
+        "lossPercent": 1.1643591448198798,
+        "axisGainSumUs": 1151.9620000000002,
+        "regressionSumUs": 38.748999999999725,
+        "tenRegressionSumUs": 387.4899999999973,
+        "noGcRow": "if-then/on/update-first-nogc",
+        "noGcPaired": {
+          "median": -0.0008340000000000014,
+          "low": -0.0014170000000000016,
+          "high": -0.00037600000000000133,
+          "halfWidth": 0.0005830000000000002,
+          "trials": 1999,
+          "seed": 101
+        },
+        "noGcRuns": 9,
+        "noGcBlocksPerRun": 2,
+        "noGcSamples": 1818,
+        "supplemental": false,
+        "tests": {
+          "axisGainMoreThanTenRegressions": true,
+          "percentAtMostTwo": true,
+          "microsecondsAtMostFive": true,
+          "noGcIntervalContainsZero": false,
+          "noGcNineRuns": true
+        },
+        "exempt": false,
+        "outcome": "124C-01의 조건을 충족하지 못하므로 채택을 막습니다."
+      },
+      {
+        "row": "oneOf-20/off/mount",
+        "lossUs": 27.374999999999705,
+        "lossPercent": 1.1980741532405645,
+        "axisGainSumUs": 1151.9620000000002,
+        "regressionSumUs": 38.748999999999725,
+        "tenRegressionSumUs": 387.4899999999973,
+        "noGcRow": "oneOf-20/off/mount-nogc",
+        "noGcPaired": {
+          "median": -0.021500000000000075,
+          "low": -0.026959000000000177,
+          "high": -0.01633400000000007,
+          "halfWidth": 0.005459000000000103,
+          "trials": 1999,
+          "seed": 101
+        },
+        "noGcRuns": 9,
+        "noGcBlocksPerRun": 2,
+        "noGcSamples": 1818,
+        "supplemental": true,
+        "tests": {
+          "axisGainMoreThanTenRegressions": true,
+          "percentAtMostTwo": true,
+          "microsecondsAtMostFive": false,
+          "noGcIntervalContainsZero": false,
+          "noGcNineRuns": true
+        },
+        "exempt": false,
+        "outcome": "124C-01의 조건을 충족하지 못하므로 채택을 막습니다."
+      },
+      {
+        "row": "computed-visible-derived/off/update-later",
+        "lossUs": 0.4169999999999868,
+        "lossPercent": 0.598561729369697,
+        "axisGainSumUs": 1151.9620000000002,
+        "regressionSumUs": 38.748999999999725,
+        "tenRegressionSumUs": 387.4899999999973,
+        "noGcRow": "computed-visible-derived/off/update-later-nogc",
+        "noGcPaired": {
+          "median": -0.00033400000000000096,
+          "low": -0.0006670000000000009,
+          "high": -0.00008299999999999974,
+          "halfWidth": 0.00033299999999999996,
+          "trials": 1999,
+          "seed": 101
+        },
+        "noGcRuns": 9,
+        "noGcBlocksPerRun": 2,
+        "noGcSamples": 1818,
+        "supplemental": true,
+        "tests": {
+          "axisGainMoreThanTenRegressions": true,
+          "percentAtMostTwo": true,
+          "microsecondsAtMostFive": true,
+          "noGcIntervalContainsZero": false,
+          "noGcNineRuns": true
+        },
+        "exempt": false,
+        "outcome": "124C-01의 조건을 충족하지 못하므로 채택을 막습니다."
+      }
+    ],
+    "exemptedRows": 0,
+    "blockingRows": 7
+  },
+  "sourceNote": "제공 번들은 빌드 리비전 439fda3219ec6b42efbef4d7fa0f02a40111453f의 바이트이며, 현재 측정 작업 트리 HEAD는 33cd1d2e1fc810c821f4acaeee6abd49e6b072b9입니다. 세션 로더는 원본 매니페스트의 리비전과 해시를 확인했고, 번들을 다시 만들지 않았습니다.",
+  "nodeBinaryNote": "요청된 /opt/homebrew/bin/node를 사용했으며, 실제 바이너리 경로와 SHA-256도 기록했습니다.",
+  "finalDocumentCheck": {
+    "result": "PASS",
+    "checkedAt": "2026-10-08T03:36:43.192Z",
+    "elapsedSessionSeconds": 8452.192,
+    "largestArtifactBytes": 821729,
+    "toolSha256": "fee08544ef9cfb9a58153a13a4b31ca0f2816244534018c8eb8cab116feef93c"
+  }
+}
