@@ -21,9 +21,14 @@ import { hasDistributedChildInput } from '../write/hasDistributedChildInput';
 import { createChildNode } from './createChildNode';
 import type { BlueprintChildEntry, BlueprintNode, BlueprintOptions, EffectiveSchema } from '../../../blueprint';
 import { indexEnteredLatentKey } from '../latent/indexEnteredLatentKey';
+import {
+  DIRECT_CHILD_SELECTION_PLANS, getDirectChildSelectionPlan,
+} from './selectChildren/utils/getDirectChildSelectionPlan';
 
 /** Ungated declarations are included by the effective-schema merger itself. */
 const NO_ACTIVE_IDS: readonly number[] = Object.freeze([]);
+/** Rejected single-declaration positions share an empty selection. */
+const NO_DECLARATIONS: BlueprintChildEntry['declarations'] = [];
 /** Static selection IDs belong to the analyzed child edge. */
 const STATIC_IDS = new WeakMap<BlueprintChildEntry, readonly number[]>();
 
@@ -142,17 +147,30 @@ export const selectChildren = <Self extends SchemaNodeRecord<Self>>(
   const seen = new Set<string>();
   const inactiveEntries: BlueprintChildEntry[] = [];
   let changed = false;
-  const entries = node.behavior.declareChildren(node);
-  for (let entryIndex = 0; entryIndex < entries.length; entryIndex++) {
-    const entry = entries[entryIndex];
-    if (immediate) flushPendingGateReads(entry.node,
+  const cached = context.kind !== 'load' && context.hasGates && node.behavior.type === 'object'
+    ? DIRECT_CHILD_SELECTION_PLANS.get(node.blueprintNode) : null;
+  const direct = cached === undefined
+    ? getDirectChildSelectionPlan(node.blueprintNode, node.runtime.blueprint, true) : cached;
+  const entries = direct ? null : node.behavior.declareChildren(node);
+  const count = direct ? direct.steps.length : entries!.length;
+  const flushReads = immediate && !direct;
+  for (let entryIndex = 0; entryIndex < count; entryIndex++) {
+    const step = direct?.steps[entryIndex];
+    const entry = step ? step.entry : entries![entryIndex];
+    if (flushReads && context.pendingOutputs?.size) flushPendingGateReads(entry.node,
       `${node.path}/${escapeSegment(entry.name)}`, context);
     let threw = false;
-    let declarations = entry.declarations;
-    let activeIds: number[] | undefined;
-    if (context.hasGates) {
+    let declarations: BlueprintChildEntry['declarations'];
+    let activeIds: readonly number[] | undefined;
+    if (step) {
+      const version = context.gateThrowVersion;
+      const admitted = !step.gate || evaluateGate(step.gate, context, node);
+      declarations = admitted ? entry.declarations : NO_DECLARATIONS;
+      activeIds = admitted ? step.ids : NO_ACTIVE_IDS;
+      threw = !admitted && context.gateThrowVersion !== version;
+    } else if (context.hasGates) {
       const active: typeof entry.declarations[number][] = [];
-      activeIds = [];
+      const ids: number[] = [];
       for (let index = 0; index < entry.declarations.length; index++) {
         const declaration = entry.declarations[index];
         const version = context.gateThrowVersion;
@@ -163,11 +181,12 @@ export const selectChildren = <Self extends SchemaNodeRecord<Self>>(
             gate.schemaPath === `${declaration.schemaPath}/controls/active`
               ? entry.name : undefined)) { admitted = false; break; }
         }
-        if (admitted) { active.push(declaration); activeIds.push(declaration.id); }
+        if (admitted) { active.push(declaration); ids.push(declaration.id); }
         else if (context.gateThrowVersion !== version) threw = true;
       }
       declarations = active;
-    }
+      activeIds = ids;
+    } else declarations = entry.declarations;
     if (declarations.length === 0) {
       const priorChild = hasOwnProperty(prior, entry.name)
         ? prior[entry.name] : undefined;

@@ -8,6 +8,9 @@ import { escapeSegment } from '@winglet/json/pointer';
 import { enterSchemaNode } from './enterSchemaNode';
 import { createChildNode } from './createChildNode';
 import { indexEnteredLatentKey } from '../latent/indexEnteredLatentKey';
+import {
+  DIRECT_CHILD_SELECTION_PLANS, getDirectChildSelectionPlan,
+} from './selectChildren/utils/getDirectChildSelectionPlan';
 
 /**
  * Start a gate wheel with only ungated children and their static overlays.
@@ -23,9 +26,15 @@ export const primeHost = <Self extends SchemaNodeRecord<Self>>(
 ): void => {
   const baseline: Record<string, Self> = {};
   Object.setPrototypeOf(baseline, null);
-  for (const entry of node.behavior.declareChildren(node)) {
-    if (baseline[entry.name] || !entry.declarations.some((declaration) =>
-      declaration.gates.length === 0)) continue;
+  const cached = context.kind !== 'load' && node.behavior.type === 'object'
+    ? DIRECT_CHILD_SELECTION_PLANS.get(node.blueprintNode) : null;
+  const direct = cached === undefined
+    ? getDirectChildSelectionPlan(node.blueprintNode, node.runtime.blueprint, false) : cached;
+  const entries = direct?.baseline ?? node.behavior.declareChildren(node);
+  for (let index = 0; index < entries.length; index++) {
+    const entry = entries[index];
+    if (baseline[entry.name] || (!direct && !entry.declarations.some((declaration) =>
+      declaration.gates.length === 0))) continue;
     const priorChild = hasOwnProperty(prior, entry.name) ? prior[entry.name] : undefined;
     const key = JSON.stringify([
       `${node.path}/${escapeSegment(entry.name)}`, entry.node.kind,
