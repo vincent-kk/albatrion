@@ -1,0 +1,19 @@
+{
+  "verifiedAt": "2026-10-08T11:26:18.360Z",
+  "elapsedSeconds": 18159.36,
+  "fiveHourLimitMet": false,
+  "exceededAtVerificationSeconds": 159.36,
+  "measurementsEndedBeforeDeadline": true,
+  "rawFiles": 3493,
+  "rawSha256ManifestLines": 3493,
+  "rawSha256Mismatches": 0,
+  "allArtifactsAtMostFiveMillionBytes": true,
+  "largestArtifactBytes": 429672,
+  "jsonParseFailures": 0,
+  "trackedDiffEmpty": true,
+  "statusOnlyContainsRequestedReportAndArtifactDirectory": true,
+  "remaining": {
+    "step2": ["nested-d5-f4의 8–9회가 남았습니다.", "array-500의 1–9회가 남았습니다.", "array-1000의 1–9회가 남았습니다."],
+    "step3": "HEAD와0.16.0의 전체 표 및122 대비 상태 변경 확인이 남았습니다."
+  }
+}

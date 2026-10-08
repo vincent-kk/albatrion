@@ -1,0 +1,29 @@
+{
+  "reportedAt": "2026-10-08T11:25:04.265Z",
+  "start": "2026-10-08T06:23:39.000Z",
+  "elapsedSeconds": 18085.266,
+  "head": "4e8490a72d5006befd16ffb02c2b74d9db8cb642",
+  "trackedDiffEmpty": true,
+  "executionRecords": 375,
+  "executionFailures": 0,
+  "maxRecordedCommandSeconds": 440.945924917,
+  "rawFiles": 3493,
+  "bundleChecks": [
+    {
+      "file": "/private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles/r126-base.cjs",
+      "sha256": "3d515213f30160e2351ddf00cc5146d83dc0d5229a373772e565db38d59d8d82",
+      "matches": true
+    },
+    {
+      "file": "/private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles/r126-fap.cjs",
+      "sha256": "dc59e7b3ac911a01e0c517db2c27da36e0e0617c2a93583ec1e08fff13367e8e",
+      "matches": true
+    },
+    {
+      "file": "/private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles/r126-basex.cjs",
+      "sha256": "bb1b618ec9fa58e0797a596337c29d8d682006c755719c25bec313b8b4814ee5",
+      "matches": true
+    }
+  ],
+  "initialAAParentRecord": "첫 A/A 부모 프로세스의 별도 실행 기록 파일은 없습니다. 도구의 종료 코드0과4개worker 실행 기록으로 자연 종료를 확인했습니다."
+}

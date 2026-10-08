@@ -1,0 +1,233 @@
+{
+  "startedAt": "2026-10-08T06:28:37.247Z",
+  "preparedAt": "2026-10-08T06:28:51.570Z",
+  "seconds": 14.321186041999999,
+  "head": "4e8490a72d5006befd16ffb02c2b74d9db8cb642",
+  "initialStatus": "",
+  "runtime": {
+    "node": "v26.10.0",
+    "nodeBinary": "/opt/homebrew/Cellar/node/26.10.0_2/bin/node",
+    "nodeSha256": "832eaf52cafa7ff1364c2ca378451db14fb043d8d23a5cfd18a0a103d66226fc",
+    "v8": "14.6.202.34-node.35",
+    "react": "19.2.6",
+    "cpu": "Apple M1 Max",
+    "os": "25.6.0"
+  },
+  "legacy": {
+    "file": "/Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/node_modules/@canard/schema-form_0.16.0/dist/index.mjs",
+    "sha256": "78362ee2e5b7c0bdca5f9b80f7490c32a54ea344565e97c2b4088080a3c861b2"
+  },
+  "manifest": {
+    "prefix": "r126",
+    "head": "4e8490a72d5006befd16ffb02c2b74d9db8cb642",
+    "node": "v26.10.0",
+    "nodeBinary": "/opt/homebrew/Cellar/node/26.10.0_2/bin/node",
+    "preparedAt": "2026-10-08T06:28:51.480Z",
+    "bundles": [
+      {
+        "file": "/private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles/r126-base.cjs",
+        "revision": "4e8490a72d5006befd16ffb02c2b74d9db8cb642",
+        "variant": "head",
+        "NODE_ENV": "production",
+        "instrumented": false,
+        "sha256": "3d515213f30160e2351ddf00cc5146d83dc0d5229a373772e565db38d59d8d82",
+        "bytes": 958562,
+        "naturalBuildServiceExits": 1,
+        "side": "base"
+      },
+      {
+        "file": "/private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles/r126-fap.cjs",
+        "revision": "4e8490a72d5006befd16ffb02c2b74d9db8cb642 + fa-prime.patch runtime overlay",
+        "variant": "head",
+        "NODE_ENV": "production",
+        "instrumented": false,
+        "sha256": "dc59e7b3ac911a01e0c517db2c27da36e0e0617c2a93583ec1e08fff13367e8e",
+        "bytes": 958723,
+        "naturalBuildServiceExits": 1,
+        "side": "change"
+      },
+      {
+        "file": "/private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles/r126-basex.cjs",
+        "side": "basex",
+        "revision": "4e8490a72d5006befd16ffb02c2b74d9db8cb642",
+        "sha256": "bb1b618ec9fa58e0797a596337c29d8d682006c755719c25bec313b8b4814ee5",
+        "bytes": 958617,
+        "derivedFrom": "r126-base.cjs + one trailing comment line"
+      }
+    ]
+  },
+  "patch": {
+    "file": "/private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/fa-prime.patch",
+    "sha256": "d9fc910260e8896d0beab25a5c4b98a5e18cfeed50ed5590da6c52e3ffb3a771",
+    "check": {
+      "exitCode": 0,
+      "signal": null,
+      "stderr": ""
+    },
+    "included": [
+      {
+        "file": "packages/canard/schema-form/src/components/SchemaNode/SchemaNodeProxy/SchemaNodeProxy.tsx",
+        "deleted": false,
+        "beforeSha256": "fabbedac38959fa5432428a7917b22713351fb64d250cb95f7d398941683a6fa",
+        "afterSha256": "4df73659e575015ad8030b0f060c729ac6644eec3d62c11c7461ab0981f8877a"
+      },
+      {
+        "file": "packages/canard/schema-form/src/components/SchemaNode/SchemaNodeProxy/components/SchemaNodeField.tsx",
+        "deleted": true,
+        "beforeSha256": "cee9cf2b1598eb46eb9246dfa4d99fc9ea70f572e6661eca99d84e1c27260ef2",
+        "afterSha256": null
+      },
+      {
+        "file": "packages/canard/schema-form/src/helpers/formTypeInputDefinition/utils/withFormTypeInputErrorBoundary.tsx",
+        "deleted": false,
+        "beforeSha256": "d4fbb5bb0ff8f3ecdcc98d91c443bc4719b4016bf145ab6e719ce82f4d793847",
+        "afterSha256": "89f7ac285bb1e67b66ca0e2868f27bfb9aea3d04ecd4249363f3dc7c962db0fc"
+      },
+      {
+        "file": "packages/canard/schema-form/src/helpers/virtualization/VirtualizationManager/VirtualizationManager.ts",
+        "deleted": false,
+        "beforeSha256": "2a0d7fd0d04eb37a6bf47193c83788bf77955761e8c003e9004a0a54c8ae2549",
+        "afterSha256": "6b1d54028081ca5a278f16dd0458f8c048a6b24b8d8088d991c5e349c6775de4"
+      },
+      {
+        "file": "packages/canard/schema-form/src/providers/FormErrorContext/FormErrorPathContext.ts",
+        "deleted": false,
+        "beforeSha256": "ee1f39b9afdc52fb546fa172b138545471e19034baa9e60565cdee2c777f91a0",
+        "afterSha256": "0b68a2e7f48c597845cde1c91cfdccf1ed1075dd23ce8d552b8a0e940b2efa58"
+      },
+      {
+        "file": "packages/canard/schema-form/src/providers/FormErrorContext/index.ts",
+        "deleted": false,
+        "beforeSha256": "9573a9fc934adbf8992484fcc083197631a9b6a99c21a0227d669cf01301f79e",
+        "afterSha256": "9cb40980de19cd95c9f4299600f3fe279df4275f96f148b5f169a20d652110b9"
+      },
+      {
+        "file": "packages/canard/schema-form/src/providers/FormErrorContext/useBoundaryReporter.ts",
+        "deleted": false,
+        "beforeSha256": "fe515ec8203f4366ff919441d1b3dd5d228e8283b6c1ef2e439c36c191b4701c",
+        "afterSha256": "7fa34481d23a2e7814cbb2abd2c634f8fb515b9cf4a86fdcfdc6a2120c50438b"
+      },
+      {
+        "file": "packages/canard/schema-form/src/providers/FormErrorContext/usePlaceholderBoundaryReporter.ts",
+        "deleted": false,
+        "beforeSha256": null,
+        "afterSha256": "c31a02743091e32e03fddf37d4e50ba0e9fdf4cf344fa4a5a7c70ebd285c9dee"
+      }
+    ],
+    "excluded": [
+      "packages/canard/schema-form/src/components/SchemaNode/SchemaNodeProxy/DETAIL.md",
+      "packages/canard/schema-form/src/components/SchemaNode/SchemaNodeProxy/INTENT.md",
+      "packages/canard/schema-form/src/helpers/formTypeInputDefinition/DETAIL.md",
+      "packages/canard/schema-form/src/helpers/formTypeInputDefinition/INTENT.md",
+      "packages/canard/schema-form/src/helpers/virtualization/VirtualizationManager/DETAIL.md",
+      "packages/canard/schema-form/src/providers/FormErrorContext/DETAIL.md",
+      "packages/canard/schema-form/src/providers/FormErrorContext/INTENT.md",
+      "packages/canard/schema-form/src/components/SchemaNode/SchemaNodeProxy/__tests__/renderCounts.test.ts",
+      "packages/canard/schema-form/src/components/SchemaNode/SchemaNodeProxy/__tests__/rendererBoundary.test.tsx"
+    ]
+  },
+  "sourceHashes": {
+    "harness-126.md": "29ac55080238f83114a0fd58de853c15a385cdfe91afc89da39fbcaf61b7dd45",
+    "performance.md": "80b0aeb85ca09028fd0de86cc9f2c06e46d54cd02f4fb5cc99fe6a63c4d50868",
+    "profile-122-session.md": "864814e5ef8d2d988e76b65c080ff5f701b4f552d3a2d948ce78c894e1c578a4",
+    "fa-regression-diagnosis-125.md": "c9b5aa642ae45eb2594f6e9ed30aae78d3f0b5e50910c9e87d7aab2ff19a586a",
+    "tools/prepare-react-bundles.mjs": "70ff9a2141ae70e0acbcc3ff5e3705ea88b0e1fae8edaf72815695b8eeb94482",
+    "tools/measure-react-pair-126.mjs": "2379c4a7b38c6f0fed3159e5c861225530b8f046cd70c20d15074723a6725d8f",
+    "tools/measure-react-pair-126.entry.tsx": "9b68bda96a97af6ef483c370b43d42305884f98b15f69d9ecf751a92757b57ea",
+    "tools/measure-react-render-counts.mjs": "f53dbc9421245386527d4da04c929ddbe0f65ec171d610902eff3c1dfab3b3fc",
+    "tools/measure-react-render-counts.entry.tsx": "6342273ae3896311195e8c7d371e7f14b65dc14e72c276da98c052def2d68b08"
+  },
+  "reviewHashes": {
+    "round-94-closing.md": "9c43548e6088eca971a6a276da11c187a3299bd817d46d5705bcf831c1f92495",
+    "round-95-closing.md": "323d34e7789b077c5481d3432ea1226b948d3bc11c0f2678b7d319eb49fbb8e1",
+    "round-105-closing.md": "5536940e9baa5ffa099c32cf7c8bbe8bc44ec5a55a91c1d67862e26e59f3fa58",
+    "round-118-closing.md": "7c85c5a3e68be8e61aca873d48019cd3a28feba320150f554c9410e3dca35008",
+    "round-119-owner-answers.md": "ecf7cf1f7e10aee212b7ea8a24387a6f2172296bc94e674653fc918a5935c25d",
+    "round-120-closing.md": "10c201b95b5b125892540a1d6b0405e2d6699969c22c86e3c19feff5b68ab640",
+    "round-121-closing.md": "13c8c7a8cb89a484c37c403c93bf541f5ba42ba4a2ec99b4b62b782581f8dd44",
+    "round-122-owner-answers.md": "9de2922f107aed4047ff0ebb80187988b810f809b56a91228b73c326f14e3eb1",
+    "round-123-owner-answers.md": "a1e98f8bfca5e0397cbc3f2e1dfd38a76d4401958faa031b6436c99362a668af",
+    "round-124-closing.md": "cf983da13de13adb71ea40ac345890ad4c2aefaeb643055687eee692e39c1cda",
+    "round-125-closing.md": "6774e85d24a97710be77c0930ac570f840c8f066d59dc3ea724426140629d7ed",
+    "round-126-owner-answers.md": "be3dfb28066bfa790748e8d26879efa093a9b625d492bc12d0287f1e4658b985"
+  },
+  "adapter": {
+    "file": "/private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/profile-126c-hook.mjs",
+    "sha256": "9ad723675378b55be2bd5adeef3ada4dd538d89f3797cb24c36fdffcaa673b39"
+  },
+  "preparationToolSha256": "c7c335ad4278427a56cd6f73bec767337c8aab5efb8fdab10dc8c322d4613260",
+  "sessionStartedAt": "2026-10-08T06:23:39.000Z",
+  "deadline": "2026-10-08T11:23:39.000Z",
+  "rawRoot": "/private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/profile-126c-raw",
+  "adapters": [
+    {
+      "file": "/private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/profile-126c-prepare.mjs",
+      "sha256": "c7c335ad4278427a56cd6f73bec767337c8aab5efb8fdab10dc8c322d4613260"
+    },
+    {
+      "file": "/private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/profile-126c-hook.mjs",
+      "sha256": "9ad723675378b55be2bd5adeef3ada4dd538d89f3797cb24c36fdffcaa673b39"
+    },
+    {
+      "file": "/private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/profile-126c-run.mjs",
+      "sha256": "01db6c0ece1df5f60f6e29927d97b55bad4a0fb3513f244c42dda80be6e3f304"
+    },
+    {
+      "file": "/private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/profile-126c-counts-hook.mjs",
+      "sha256": "4a96510145350c3e38874a651c6d60c7e43d2f7a53f59c053067a1421fecd7e5"
+    },
+    {
+      "file": "/private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/profile-126c-analyze.mjs",
+      "sha256": "d5aeb168c42e52ccbe83176759b05338b5e466359d4bffafc887f5ac37b31df4"
+    },
+    {
+      "file": "/private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/profile-126c-report.mjs",
+      "sha256": "848ed7d48e9719996e63a81cd8cd628964e26f2ea7af8f41d5d1be2eb70c2026"
+    }
+  ],
+  "scope": {
+    "AA": {
+      "fixtures": 19,
+      "runs": 9,
+      "workers": 684
+    },
+    "FAP": {
+      "completeFixtures": [
+        "sample-0",
+        "sample-1",
+        "sample-2",
+        "sample-3",
+        "flat-50",
+        "flat-100",
+        "flat-500",
+        "nested-d3-f4",
+        "array-100",
+        "oneOf-5",
+        "oneOf-10",
+        "oneOf-20",
+        "array-push-100",
+        "array-replace-200",
+        "array-push-remove-100",
+        "computed-visible-derived"
+      ],
+      "partial": {
+        "fixture": "nested-d5-f4",
+        "runs": 7
+      },
+      "remaining": [
+        "nested-d5-f4: runs 8–9",
+        "array-500: runs 1–9",
+        "array-1000: runs 1–9"
+      ],
+      "pairs": 151
+    },
+    "noGC": {
+      "fixtures": [
+        "nested-d3-f4",
+        "oneOf-20"
+      ],
+      "runs": 9
+    },
+    "legacyTable": "미측정"
+  }
+}

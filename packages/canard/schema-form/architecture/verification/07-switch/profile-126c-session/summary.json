@@ -1,0 +1,265 @@
+{
+  "AA": {
+    "medianMagnitudeMs": 0.005041000000119311,
+    "maxMagnitudeMs": 2.356916025688406,
+    "minMagnitudeMs": 0.00008200000002034358,
+    "ciExcludesZero": 27,
+    "fixtures": 19,
+    "runs": 9,
+    "workers": 684,
+    "checkedWrites": 1598652,
+    "referenceStatisticValidated": true
+  },
+  "FAP": {
+    "verdict": "REJECT",
+    "completeFixtures": [
+      "sample-0",
+      "sample-1",
+      "sample-2",
+      "sample-3",
+      "flat-50",
+      "flat-100",
+      "flat-500",
+      "nested-d3-f4",
+      "array-100",
+      "oneOf-5",
+      "oneOf-10",
+      "oneOf-20",
+      "array-push-100",
+      "array-replace-200",
+      "array-push-remove-100",
+      "computed-visible-derived"
+    ],
+    "pairs": 151,
+    "gainRows": 37,
+    "regressions": [
+      {
+        "fixture": "nested-d3-f4",
+        "column": "mount-wall",
+        "lossUs": 80.33299999942756,
+        "lossPercent": 0.5593343661294581,
+        "paired99": {
+          "median": -0.08033299999942756,
+          "low": -0.12150100000008024,
+          "high": -0.03837500000008731,
+          "halfWidth": 0.041957999999340245,
+          "trials": 1999,
+          "seed": 101
+        },
+        "noGC99": {
+          "median": -0.07241600000020298,
+          "low": -0.11666600000012295,
+          "high": -0.03787499999998545,
+          "halfWidth": 0.044249999999919964,
+          "trials": 1999,
+          "seed": 101
+        }
+      },
+      {
+        "fixture": "nested-d3-f4",
+        "column": "mount-active",
+        "lossUs": 76.12493944179732,
+        "lossPercent": 0.6398891103457793,
+        "paired99": {
+          "median": -0.07612493944179732,
+          "low": -0.11395798378759991,
+          "high": -0.041500987125346,
+          "halfWidth": 0.03783304434580259,
+          "trials": 1999,
+          "seed": 101
+        },
+        "noGC99": {
+          "median": -0.0658759881896458,
+          "low": -0.1081250443457975,
+          "high": -0.030458048820491967,
+          "halfWidth": 0.04224905615615171,
+          "trials": 1999,
+          "seed": 101
+        }
+      },
+      {
+        "fixture": "oneOf-20",
+        "column": "mount-wall",
+        "lossUs": 43.00000000012005,
+        "lossPercent": 0.6687446481006514,
+        "paired99": {
+          "median": -0.04300000000012005,
+          "low": -0.061791999999741165,
+          "high": -0.027916999999888503,
+          "halfWidth": 0.018791999999621112,
+          "trials": 1999,
+          "seed": 101
+        },
+        "noGC99": {
+          "median": -0.009707999999932326,
+          "low": -0.023583000000030552,
+          "high": 0.002043000000014672,
+          "halfWidth": 0.013875000000098225,
+          "trials": 1999,
+          "seed": 101
+        }
+      },
+      {
+        "fixture": "oneOf-20",
+        "column": "mount-active",
+        "lossUs": 43.708006969609414,
+        "lossPercent": 1.1127060693304882,
+        "paired99": {
+          "median": -0.043708006969609414,
+          "low": -0.05799996823509446,
+          "high": -0.028835012214642575,
+          "halfWidth": 0.01487299475496684,
+          "trials": 1999,
+          "seed": 101
+        },
+        "noGC99": {
+          "median": -0.012624014011350937,
+          "low": -0.02574906462862714,
+          "high": -0.0013340344428343087,
+          "halfWidth": 0.013125050617276202,
+          "trials": 1999,
+          "seed": 101
+        }
+      },
+      {
+        "fixture": "oneOf-20",
+        "column": "update-wall",
+        "lossUs": 34.95799999973315,
+        "lossPercent": 1.0395271902683028,
+        "paired99": {
+          "median": -0.03495799999973315,
+          "low": -0.060374999999794454,
+          "high": -0.015166999999792097,
+          "halfWidth": 0.025417000000061307,
+          "trials": 1999,
+          "seed": 101
+        },
+        "noGC99": {
+          "median": -0.007250999999882879,
+          "low": -0.022167000000081316,
+          "high": 0.0072079999999914435,
+          "halfWidth": 0.014916000000198437,
+          "trials": 1999,
+          "seed": 101
+        }
+      },
+      {
+        "fixture": "oneOf-20",
+        "column": "update-active",
+        "lossUs": 35.12603044509888,
+        "lossPercent": 1.0437478922630334,
+        "paired99": {
+          "median": -0.03512603044509888,
+          "low": -0.060707032680511475,
+          "high": -0.014624953269958496,
+          "halfWidth": 0.025581002235412598,
+          "trials": 1999,
+          "seed": 101
+        },
+        "noGC99": {
+          "median": -0.007541954517364502,
+          "low": -0.023124873638153076,
+          "high": 0.007124960422515869,
+          "halfWidth": 0.015582919120788574,
+          "trials": 1999,
+          "seed": 101
+        }
+      }
+    ],
+    "directedGainRows": [
+      "sample-1",
+      "array-replace-200",
+      "array-push-remove-100",
+      "computed-visible-derived"
+    ],
+    "gainUs": 25.04899996961285,
+    "lossUs": 313.2499768557864,
+    "partial": {
+      "nested-d5-f4": 7
+    },
+    "unmeasured": [
+      "array-500",
+      "array-1000"
+    ]
+  },
+  "counts": {
+    "assertions": {
+      "isolatedOtherFields": 540,
+      "globalInstancesOnce": 3600,
+      "globalInputsOnce": 432,
+      "globalNoRemount": 108
+    },
+    "latency": [
+      {
+        "side": "base",
+        "scenario": "flat",
+        "mode": "ctl",
+        "median": 345.91600000001677,
+        "p99": 1212.7909999999815,
+        "samples": 72
+      },
+      {
+        "side": "base",
+        "scenario": "flat",
+        "mode": "unctl",
+        "median": 280.37499999999227,
+        "p99": 367.541000000017,
+        "samples": 72
+      },
+      {
+        "side": "base",
+        "scenario": "array",
+        "mode": "ctl",
+        "median": 310.4579999999828,
+        "p99": 544.3750000000023,
+        "samples": 72
+      },
+      {
+        "side": "base",
+        "scenario": "array",
+        "mode": "unctl",
+        "median": 298.7080000000333,
+        "p99": 416.9160000000147,
+        "samples": 72
+      },
+      {
+        "side": "fap",
+        "scenario": "flat",
+        "mode": "ctl",
+        "median": 349.7500000000002,
+        "p99": 1309.1249999999945,
+        "samples": 72
+      },
+      {
+        "side": "fap",
+        "scenario": "flat",
+        "mode": "unctl",
+        "median": 263.37499999999636,
+        "p99": 383.5000000000264,
+        "samples": 72
+      },
+      {
+        "side": "fap",
+        "scenario": "array",
+        "mode": "ctl",
+        "median": 292.91699999998855,
+        "p99": 542.7090000000021,
+        "samples": 72
+      },
+      {
+        "side": "fap",
+        "scenario": "array",
+        "mode": "unctl",
+        "median": 307.12500000004184,
+        "p99": 406.0000000000059,
+        "samples": 72
+      }
+    ]
+  },
+  "HEAD_vs_016": {
+    "measured": false,
+    "unmetWall": null,
+    "unmetActive": null,
+    "changesSince122": null
+  }
+}
