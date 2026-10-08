@@ -1,4 +1,5 @@
-// Loaded by measure-verdict-121.mjs --pair; clocks, GC anchors and the post-GC discard come from that worker.
+// Loaded by measure-verdict-121.mjs --pair (and --single for measure-core-pair-126.mjs); clocks, GC anchors and the
+// post-GC discard come from that worker.
 import assert from 'node:assert/strict';
 import { execFileSync } from 'node:child_process';
 import { createHash } from 'node:crypto';
@@ -13,6 +14,63 @@ const canonical = value => JSON.stringify(value, (_key, item) => item && !Array.
   ? Object.fromEntries(Object.entries(item).sort(([a], [b]) => a.localeCompare(b))) : item);
 /** Rows that start with a mount's first write; the optional no-GC lane re-records exactly these. */
 const FIRST_WRITE_MODES = ['update-first', 'axis-first'];
+/** Scheduler-boundary counters that (ga) requires to stay zero for the current engine. */
+const BOUNDARY_KEYS = ['scheduled', 'executed', 'cancelled', 'pendingAtMicrotasks', 'pendingAtSentinel', 'tailScheduled', 'tailExecuted'];
+
+/**
+ * Wrap the engine's one macrotask boundary and return an observer shaped like `measure` that counts its use.
+ * The CJS bundles keep `@winglet/common-utils/scheduler` external, so wrapping the shared exports reaches them.
+ * @param req - Package-scoped require that the bundles also use
+ * @param clocks - The caller's microtask flush, sentinel pass count and setImmediate
+ * @returns Observer `(operation) => { result, record }` with `restore()` that unwraps the scheduler
+ */
+const boundaryObserver = (req, { flushMicrotasks, sentinelPasses, immediate }) => {
+  const scheduler = req('@winglet/common-utils/scheduler');
+  const originalSchedule = scheduler.scheduleMacrotaskSafe, originalCancel = scheduler.cancelMacrotaskSafe;
+  const pending = new Map();
+  let scope = null;
+  scheduler.scheduleMacrotaskSafe = (callback, ...args) => {
+    const owner = scope;
+    assert(owner, 'Engine scheduled outside the active operation');
+    owner.scheduled++;
+    const token = originalSchedule(function (...values) {
+      owner.executed++;
+      try { return callback.apply(this, values); } finally { pending.delete(token); }
+    }, ...args);
+    pending.set(token, owner);
+    return token;
+  };
+  scheduler.cancelMacrotaskSafe = token => {
+    const owner = pending.get(token);
+    if (owner) { owner.cancelled++; pending.delete(token); }
+    return originalCancel(token);
+  };
+  const observe = async operation => {
+    const record = Object.fromEntries(BOUNDARY_KEYS.map(key => [key, 0]));
+    scope = record;
+    const result = operation();
+    await flushMicrotasks();
+    record.pendingAtMicrotasks = pending.size;
+    for (let pass = 0; pass < sentinelPasses; pass++) {
+      await new Promise(resolve => immediate(resolve));
+      if (pass + 1 < sentinelPasses) await flushMicrotasks();
+    }
+    record.pendingAtSentinel = pending.size;
+    const scheduled = record.scheduled, executed = record.executed;
+    await flushMicrotasks(128);
+    await new Promise(resolve => immediate(resolve));
+    record.tailScheduled = record.scheduled - scheduled;
+    record.tailExecuted = record.executed - executed;
+    scope = null;
+    return { result, record };
+  };
+  observe.restore = () => {
+    scheduler.scheduleMacrotaskSafe = originalSchedule;
+    scheduler.cancelMacrotaskSafe = originalCancel;
+    assert.equal(pending.size, 0, 'Boundary pass left an engine callback pending');
+  };
+  return observe;
+};
 
 /**
  * Resolve a stage to its two bundle names; AA is HEAD against its trailing-comment copy.
@@ -78,32 +136,39 @@ const validatorServices = req => {
 /**
  * Measure two bundles of one fixture in one process, alternating which goes first per sample.
  * Per-sample forced GC governs every verdict column; the optional no-GC lane only adds record columns.
- * @param options - Stage, fixture, validation, run, bundle directory, sample counts and the caller's clocks
- * @returns Stem, per-version timings `[microtaskMs, sentinelEndToEndMs, pairedEmptyTailMs]` and a summary
+ * With `single`, the process loads only that side's bundle and, after the official samples, repeats the
+ * forced-GC sequence once under a scheduler-boundary wrapper so the caller can check (ga) per process.
+ * @param options - Stage, fixture, validation, run, bundle directory, sample counts, the caller's clocks and the
+ *   optional `single` side (`base` or `candidate`)
+ * @returns Stem, per-version timings `[microtaskMs, sentinelEndToEndMs, pairedEmptyTailMs]`, empty controls,
+ *   boundary ordering per verdict mode and value-digest counts per mode (single mode only) and a summary
  */
 export async function measurePair121(options) {
-  const { stage, fixtureName, validation, run, bundles, warmup, sampleCount, noGcFirst, repo, pkg, output, clocks, toolSha256 } = options;
+  const { stage, fixtureName, validation, run, bundles, warmup, sampleCount, noGcFirst, repo, pkg, output, clocks, toolSha256, single } = options;
   const { measure, discardPostGcPair, deadline, clock } = clocks;
+  assert(single === undefined || ['base', 'candidate'].includes(single), `Single side: ${single}`);
   assert(/^(sample-[0-3]|flat-(50|100|500)|nested-d[35]-f4|array-(100|500|1000)|computed-visible-derived|oneOf-(5|10|20|40)|if-then)$/.test(fixtureName));
   assert(['off', 'on'].includes(validation) && Number.isInteger(run) && run >= 1 && run <= 9);
   assert.equal(typeof globalThis.gc, 'function');
   const head = execFileSync('git', ['rev-parse', 'HEAD'], { cwd: repo, encoding: 'utf8' }).trim();
   const names = pairNames(stage);
   const manifest = JSON.parse(fs.readFileSync(path.join(bundles, 'c-bundles.json'), 'utf8'));
-  const texts = names.map(name => fs.readFileSync(path.join(bundles, `c-${name}.cjs`), 'utf8'));
+  const roles = ['base', 'candidate'];
+  const versions = single ? [single] : roles;
+  const texts = names.map((name, index) => versions.includes(roles[index]) ? fs.readFileSync(path.join(bundles, `c-${name}.cjs`), 'utf8') : null);
   for (let index = 0; index < 2; index++) {
+    if (texts[index] === null) continue;
     const entry = manifest.find(item => item.variant === names[index]);
     assert(entry && entry.revision === head && entry.sha256 === hash(texts[index]), `c-${names[index]} is not the built HEAD bundle`);
   }
-  if (stage === 'AA') {
+  if (stage === 'AA' && !single) {
     const suffix = texts[1].slice(texts[0].length);
     assert(texts[1].startsWith(texts[0]) && /^\/\/[^\n]*\n$/.test(suffix), 'A/A copy must differ only by one trailing comment line');
   }
-  const versions = ['base', 'candidate'];
   const req = createRequire(path.join(pkg, 'package.json'));
   const load = text => { const module = { exports: {} }; new Function('require', 'module', 'exports', text)(req, module, module.exports); return module.exports; };
-  const engines = { base: load(texts[0]), candidate: load(texts[1]) };
-  let fixture = engines.base.equivalentFixtures.find(item => item.name === fixtureName);
+  const engines = Object.fromEntries(versions.map(version => [version, load(texts[roles.indexOf(version)])]));
+  let fixture = engines[versions[0]].equivalentFixtures.find(item => item.name === fixtureName);
   if (!fixture && fixtureName === 'if-then') {
     const definition = JSON.parse(fs.readFileSync(path.join(output, 'profile-119-session/if-then.json'), 'utf8'));
     fixture = { name: fixtureName, workspace: definition.schema, interactions: definition.interactions };
@@ -121,14 +186,20 @@ export async function measurePair121(options) {
   const props = () => ({ jsonSchema: structuredClone(fixture.workspace), validationMode: validation === 'on' ? 1 : 0,
     onChange: noop, ...(validation === 'on' ? validatorServices(req) : {}) });
   const sum = records => records.reduce((total, record) => total.map((value, index) => round(value + record.timing[index])), [0, 0, 0]);
+  const ordering = Object.fromEntries(versions.map(version => [version, Object.fromEntries(modes.map(mode => [mode, []]))]));
   const save = (version, mode, records, root, index) => {
     if (index < 0) return;
+    if (observe !== measure) {
+      ordering[version][mode].push(Object.fromEntries(BOUNDARY_KEYS.map(key => [key, records.reduce((total, record) => total + record.record[key], 0)])));
+      return;
+    }
     timings[version][mode].push(sum(records));
     const digest = hash(canonical(typeof root.getValue === 'function' ? root.getValue() : root.value));
     checks[version][mode] ??= {};
     checks[version][mode][digest] = (checks[version][mode][digest] ?? 0) + 1;
   };
 
+  let observe = measure;
   /** One authored history and the fixed branch axis; `gc` false records only the first-write columns. */
   const sequence = async (version, index, gc) => {
     if (gc) globalThis.gc();
@@ -138,25 +209,25 @@ export async function measurePair121(options) {
     const keep = mode => gc ? mode : FIRST_WRITE_MODES.includes(mode) ? `${mode}-nogc` : null;
     const record = (mode, records, root) => { const column = keep(mode); if (column) save(version, column, records, root, index); };
     assert(clock() < deadline, 'Worker reached its self-ending seven-minute bound');
-    const mounted = await measure(() => engines[version].nodeFromJSONSchema(prepared));
+    const mounted = await observe(() => engines[version].nodeFromJSONSchema(prepared));
     const root = mounted.result;
     record('mount', [mounted], root);
     const updates = [];
     for (const interaction of fixture.interactions) {
-      const observed = await measure(() => apply(root, interaction));
+      const observed = await observe(() => apply(root, interaction));
       updates.push(observed);
       if (updates.length === 1) record('update-first', [observed], root);
     }
     record('update', updates, root);
-    record('update-later', [await measure(() => apply(root, laterInput))], root);
+    record('update-later', [await observe(() => apply(root, laterInput))], root);
     if (!axis) return;
     const preparedAxis = props();
-    const axisRoot = (await measure(() => engines[version].nodeFromJSONSchema(preparedAxis))).result;
-    const first = await measure(() => apply(axisRoot, { kind: 'set', path: '/kind', value: 'kind_4' }));
+    const axisRoot = (await observe(() => engines[version].nodeFromJSONSchema(preparedAxis))).result;
+    const first = await observe(() => apply(axisRoot, { kind: 'set', path: '/kind', value: 'kind_4' }));
     record('axis-first', [first], axisRoot);
-    const second = await measure(() => apply(axisRoot, { kind: 'set', path: '/kind', value: 'kind_0' }));
+    const second = await observe(() => apply(axisRoot, { kind: 'set', path: '/kind', value: 'kind_0' }));
     record('axis-update', [first, second], axisRoot);
-    record('axis-later', [await measure(() => apply(axisRoot, { kind: 'set', path: '/kind', value: 'kind_4' }))], axisRoot);
+    record('axis-later', [await observe(() => apply(axisRoot, { kind: 'set', path: '/kind', value: 'kind_4' }))], axisRoot);
   };
   const controls = async label => {
     for (let index = -warmup; index < sampleCount; index++) {
@@ -176,7 +247,11 @@ export async function measurePair121(options) {
     }
   }
   await controls('after');
-  for (const mode of Object.keys(checks.base))
+  if (single) {
+    observe = boundaryObserver(req, clocks);
+    for (let index = -warmup; index < sampleCount; index++) await sequence(single, index, true);
+    observe.restore();
+  } else for (const mode of Object.keys(checks.base))
     assert.deepEqual(checks.candidate[mode], checks.base[mode], `${fixtureName}/${mode} value mismatch`);
   assert.equal(execFileSync('git', ['rev-parse', 'HEAD'], { cwd: repo, encoding: 'utf8' }).trim(), head, 'HEAD changed during measurement');
   assert.equal(process.getActiveResourcesInfo().filter(name => ['Timeout', 'Immediate', 'MessagePort', 'PROCESSWRAP'].includes(name)).length, 0);
@@ -185,10 +260,17 @@ export async function measurePair121(options) {
       platform: process.platform, arch: process.arch, started, ended: new Date().toISOString(), pid: process.pid },
     warmup, sampleCount, explicitGc: true, postGcDiscardedPairs: 1, onChange: 'noop',
     sampleOrder: 'alternates per sample: (sampleIndex + run - 1) even => base first',
-    bundleSha256: { base: hash(texts[0]), candidate: hash(texts[1]) }, sameCompiledSource: texts[0] === texts[1],
+    bundleSha256: Object.fromEntries(versions.map(version => [version, hash(texts[roles.indexOf(version)])])),
+    sameCompiledSource: single ? null : texts[0] === texts[1], single: single ?? null, bundlesLoaded: versions.length,
     verdictColumns: modes, recordColumns: recordModes,
     recordColumnMethod: recordModes.length ? 'second full pass after the GC pass: same sequence and pairing, no forced gc or post-GC discard; only first writes after mount are kept' : null,
     timingColumns: ['microtaskMs', 'sentinelEndToEndMs', 'pairedEmptyTailMs'], toolSha256,
-    boundaryAudit: 'not repeated in pair mode; the single-version workers own the (ga) boundary check', negativeClipping: false };
-  return { stem: `pair-121-${stage.replace(':', '-')}-${fixtureName}-${validation}-r${run}`, timings, empty, summary };
+    boundaryAudit: single ? 'second forced-GC pass after the official samples under the @winglet/common-utils/scheduler wrapper; ordering per verdict mode'
+      : 'not repeated in pair mode; the single-version workers own the (ga) boundary check', negativeClipping: false };
+  const boundary = single ? Object.fromEntries(modes.map(mode => [mode, Object.fromEntries(BOUNDARY_KEYS.map(key => {
+    const sorted = ordering[single][mode].map(row => row[key]).toSorted((a, b) => a - b);
+    return [key, { median: sorted[Math.ceil(sorted.length * .5) - 1], p99: sorted[Math.ceil(sorted.length * .99) - 1], samples: sorted.length }];
+  }))])) : undefined;
+  return { stem: `pair-121-${stage.replace(':', '-')}-${fixtureName}-${validation}-r${run}${single ? '-' + single : ''}`, timings, empty, ordering: boundary,
+    checks: single ? checks[single] : undefined, summary };
 }

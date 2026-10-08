@@ -6,8 +6,10 @@
  *   node --expose-gc <이 파일> oneOf-5 off 1 old --warmup=1 --samples=3
  *   node --expose-gc <이 파일> --pair AA if-then off 1 --warmup=2 --samples=5 --no-gc-first
  *   node --expose-gc <이 파일> --pair head:1c oneOf-10 off 1
+ *   node --expose-gc <이 파일> --pair AA if-then off 1 --single=base --bundles=<디렉터리>
  * --pair는 S/bundles의 c-<이름>.cjs 두 개를 한 프로세스에서 표본마다 순서를 바꿔 잽니다. AA는 c-head와
  * 끝 주석 한 줄만 다른 c-headx입니다. --no-gc-first는 강제 gc 없는 마운트 직후 첫 쓰기를 기록 열로 더합니다.
+ * --single=<base|candidate>는 그 쪽 번들 하나만 올리고 공식 표본 뒤 경계 검사 회차를 더합니다(measure-core-pair-126.mjs가 띄움).
  * 기본값은 예열 20·표본 101입니다. stdout은 timing/summary JSON입니다.
  * GC/check anchor 뒤 버리는 빈 호출 쌍은 표본·보정 상수에 포함하지 않습니다.
  * 자체 검사는 행당 예열 2·표본 5로 no-op 통과와 5 ms callback 실패를 요구합니다.
@@ -166,9 +168,11 @@ if (process.argv.includes('--self-test')) {
   const [stage, fixtureName, validation, runText] = process.argv.slice(process.argv.indexOf('--pair') + 1);
   const bundles = process.argv.find(value => value.startsWith('--bundles='))?.slice(10) ??
     '/private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles';
+  const single = process.argv.find(value => value.startsWith('--single='))?.slice(9);
   console.log(JSON.stringify(await measurePair121({ stage, fixtureName, validation, run: Number(runText), bundles,
-    warmup: measurementWarmup, sampleCount, noGcFirst: process.argv.includes('--no-gc-first'), repo, pkg, output,
-    clocks: { measure, discardPostGcPair, deadline, clock }, toolSha256: hash(fs.readFileSync(fileURLToPath(import.meta.url))) })));
+    warmup: measurementWarmup, sampleCount, noGcFirst: process.argv.includes('--no-gc-first'), repo, pkg, output, single,
+    clocks: { measure, discardPostGcPair, deadline, clock, flushMicrotasks, sentinelPasses, immediate },
+    toolSha256: hash(fs.readFileSync(fileURLToPath(import.meta.url))) })));
 } else {
   assert.equal(execFileSync('git', ['rev-parse', 'HEAD'], { cwd: repo, encoding: 'utf8' }).trim(), measurementHead);
   const [fixtureName, validation, runText, version] = process.argv.slice(2);

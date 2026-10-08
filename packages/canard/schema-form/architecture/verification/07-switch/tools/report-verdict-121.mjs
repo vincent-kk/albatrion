@@ -94,8 +94,8 @@ export function pairRows121(workers, verification) {
   });
 }
 
-/** Seeded resampling estimates the median's 99% interval without external packages. */
-function bootstrap(values, seed) {
+/** Seeded resampling estimates the median's 99% interval without external packages; measure-core-pair-126 reuses it for (ga). */
+export function bootstrap(values, seed) {
   let state = seed >>> 0;
   const estimates = [];
   for (let repeat = 0; repeat < 1000; repeat++) {

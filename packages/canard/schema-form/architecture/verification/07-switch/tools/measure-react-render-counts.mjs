@@ -1,5 +1,6 @@
 // Moved from the round-121 scratch proxy-audit/ra.mjs; runtime instrumentation never edits React on disk.
-// Usage: node tools/measure-react-render-counts.mjs <head|change|current> [output.json|--counts-only]
+// Usage: node tools/measure-react-render-counts.mjs <head|change|current> [output.json|--counts-only] [--bundle=<file.cjs>]
+// --bundle measures a prepared bundle (for example S/bundles/fap-base.cjs) in place of fa-head/fa-change.
 import assert from 'node:assert/strict';
 import { createHash } from 'node:crypto';
 import { readFileSync, writeFileSync } from 'node:fs';
@@ -12,12 +13,14 @@ import { prepareReactBundles } from './prepare-react-bundles.mjs';
 const packageRoot = resolve(dirname(fileURLToPath(import.meta.url)), '../../../..');
 const scratch = '/private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles';
 const require = createRequire(resolve(packageRoot, 'package.json'));
-const [version = 'change', output] = process.argv.slice(2);
+const bundleOverride = process.argv.find(value => value.startsWith('--bundle='))?.slice(9);
+const [version = 'change', output] = process.argv.slice(2).filter(value => !value.startsWith('--bundle='));
 assert(['head', 'change', 'current'].includes(version));
 process.env.NODE_ENV = 'production';
 const countsOnly = output === '--counts-only';
 if (version === 'current') await prepareReactBundles(packageRoot, scratch, 'change');
-const file = resolve(scratch, `fa-${version === 'head' ? 'head' : 'change'}.cjs`);
+assert(!bundleOverride || version !== 'current', '--bundle measures an existing bundle; current rebuilds fa-change');
+const file = bundleOverride ? resolve(bundleOverride) : resolve(scratch, `fa-${version === 'head' ? 'head' : 'change'}.cjs`);
 
 const nameOf = (type) => {
   if (!type) return 'root';
@@ -191,7 +194,7 @@ for (const scenario of countsOnly ? ['flat'] : ['flat', 'array']) {
 }
 Module._extensions['.js'] = originalLoader;
 dom.window.close();
-const report = { version, revision: version === 'head' ? '087e5618e' : 'working',
+const report = { version, revision: bundleOverride ? 'prepared bundle (see its preparation record)' : version === 'head' ? '087e5618e' : 'working',
   bundle: file, sha256: createHash('sha256').update(readFileSync(file)).digest('hex'),
   production: true, instrumentation: 'React runtime function/class invocations and fiber tree; bundles unchanged',
   timingBenchmark: false, scenarios };
