@@ -11,7 +11,7 @@ import {
   VIRTUALIZATION_DISABLED_FOR_FORM,
   warnDevelopmentIssue,
 } from '@/schema-form/helpers/warning';
-import { useBoundaryReporter } from '@/schema-form/providers/FormErrorContext';
+import { usePlaceholderBoundaryReporter } from '@/schema-form/providers/FormErrorContext';
 
 import {
   type ResolvedVirtualizationOptions,
@@ -212,7 +212,7 @@ export class VirtualizationManager {
   constructor(options: ResolvedVirtualizationOptions) {
     this.options = options;
     this.Placeholder = isReactComponent(options.Placeholder)
-      ? withErrorBoundary(options.Placeholder, undefined, useBoundaryReporter)
+      ? withErrorBoundary(options.Placeholder, undefined, usePlaceholderBoundaryReporter)
       : null;
   }
 }

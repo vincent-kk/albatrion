@@ -1,6 +1,6 @@
 import type { ComponentType } from 'react';
 
-import { withErrorBoundary } from '@winglet/react-utils/hoc';
+import { ErrorBoundary } from '@winglet/react-utils/hoc';
 
 import { useBoundaryReporter } from '@/schema-form/providers/FormErrorContext';
 import type { FormTypeInputProps } from '@/schema-form/types';
@@ -19,5 +19,9 @@ export const withFormTypeInputErrorBoundary = (
   const Input = ({ inputGeneration, ...props }: FormTypeInputBindingProps) => (
     <Component {...props} key={inputGeneration} />
   );
-  return withErrorBoundary(Input, undefined, useBoundaryReporter);
+  /** Read the current field reporter while preserving the existing generation-consumer layer. */
+  return function FormTypeInputBoundary(props: FormTypeInputBindingProps) {
+    const onError = useBoundaryReporter(props.path);
+    return <ErrorBoundary onError={onError}><Input {...props} /></ErrorBoundary>;
+  };
 };

@@ -2,7 +2,7 @@
 
 ## Purpose
 
-Own the reporter lifetime outside the root error boundary and provide it to field boundaries.
+Own the reporter lifetime outside the root error boundary and provide explicit-path callbacks to field boundaries. Path context is reserved for deferred Placeholders whose wrapper resolves no field props.
 
 ## Boundaries
 
@@ -10,6 +10,7 @@ Own the reporter lifetime outside the root error boundary and provide it to fiel
 
 - Deliver committed records to the latest callback and preserve error identity.
 - Keep boundary wrappers at their component ownership point.
+- Read the reporter during render and take the current field path as a hook argument.
 
 ### Ask first
 

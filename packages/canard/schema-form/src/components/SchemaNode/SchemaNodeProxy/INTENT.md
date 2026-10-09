@@ -2,33 +2,30 @@
 
 ## Purpose
 
-SchemaNode 렌더링의 공개 조율 레이어. 경로 또는 노드 참조로 SchemaNode를 찾고, `FormTypeRenderer`와 `SchemaNodeInputWrapper`를 연결하여 에러 메시지·가시성·오버라이드 props를 계산한 뒤 렌더러에 전달한다.
+Resolve one schema node and own its subscriptions, renderer selection, and input factory in one proxy component. The renderer boundary owns injected formatting and rendering failures.
 
 ## Conventions
 
-- TypeScript + React (TSX), 비-memo 함수형 컴포넌트 (상위에서 memo 처리)
-- `path` 또는 `node` prop으로 노드 접근 (`useSchemaNode` 훅 위임)
-- `data-path={node.path}` div(`display: contents`, `role="none"`)로 DOM 경로 추적 지원
-- `FormTypeRenderer`는 `memo(withErrorBoundary(...))` 래핑 필수
-- `Wrapper`가 없으면 `Fragment`를 기본값으로 사용
-- `RequestRemount` 이벤트로 version을 Wrapper의 key로 활용 → 강제 리마운트
+- Keep node tracking and memoized selections in hooks; avoid a separate field component or field path provider.
+- Resolve the renderer once and wrap it in an ErrorBoundary used directly, without memo. Compute errorMessage inside that boundary.
+- Pass the current field path to the reporter hook; snapshot refs may bridge the stable renderer selection.
+- Preserve the display-contents wrapper and RequestRemount wrapper key.
 
 ## Boundaries
 
 ### Always do
 
-- `node.enabled === false`이면 `null` 반환 (필드 비활성화 지원)
-- `errorVisible`이 false이면 `formatError`를 `NULL_FUNCTION`으로 교체
-- `FormTypeRenderer`를 항상 `withErrorBoundary`로 래핑
-- `Input`을 `SchemaNodeInputWrapper(...)` 팩토리로 생성하여 `FormTypeRenderer`에 전달
+- Return null for missing or disabled nodes.
+- Hide formatted errors when error visibility is false.
+- Isolate formatting and renderer failures with the same field reporter and path.
+- Keep renderer boundaries mounted across Refresh; only RequestRemount replaces the subtree.
 
 ### Ask first
 
-- `SchemaNodeProxyProps` 인터페이스에 새 prop 추가 시
-- `RERENDERING_EVENT` 마스크 구성 변경 시
+- Adding a public proxy prop or changing the event tracking mask.
 
 ### Never do
 
-- `SchemaNodeProxy` 내부에서 직접 `SchemaNode`를 생성하거나 수정
-- `overridePropsRef` 값을 non-overridable(node, type, path 등) 필드에 적용
-- `FormTypeRenderer`를 에러 경계 없이 렌더링
+- Create or mutate schema nodes in the proxy.
+- Override essential node identity props with consumer props.
+- Add a second boundary around the entire field.

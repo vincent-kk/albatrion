@@ -1,6 +1,6 @@
 import { createContext } from 'react';
 
-/** Nearest field path; undefined identifies the outer form boundary. */
+/** Deferred Placeholder path, supplied only by DeferrableNodeProxy. */
 export const FormErrorPathContext = createContext<string | undefined>(
   undefined,
 );

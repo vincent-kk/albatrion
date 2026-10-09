@@ -1,12 +1,10 @@
-import { useCallback, useContext } from 'react';
+import { useCallback } from 'react';
 
-import { FormErrorPathContext } from './FormErrorPathContext';
 import { useFormErrorContext } from './useFormErrorContext';
 
-/** Return a stable boundary callback that reports only React's componentStack. */
-export const useBoundaryReporter = () => {
+/** Return a stable callback for the explicit field path, or the root when omitted. */
+export const useBoundaryReporter = (path?: string) => {
   const reporter = useFormErrorContext();
-  const path = useContext(FormErrorPathContext);
   return useCallback(
     (error: unknown, info: { componentStack?: string }) => {
       if (path === undefined) reporter?.pendingLoad?.();
