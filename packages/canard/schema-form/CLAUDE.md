@@ -58,7 +58,7 @@ npx -p @slats/agents-assets-sync inject-agents-settings --package=@canard/schema
 
 ### Error Isolation (user-injected render surfaces)
 
-사용자 주입 컴포넌트(FormTypeRenderer/FormTypeInput, virtualization `Placeholder` 등)는 반드시 `@winglet/react-utils/hoc`의 `withErrorBoundary`로 감싼다 — 하나가 렌더 중 throw해도 폼 전체가 아니라 그 서브트리만 fallback으로 격리된다. 래핑은 **컴포넌트를 해석·소유하는 지점에서 1회**만: 렌더러는 `SchemaNodeProxy`/`SchemaNodeInputWrapper`가 `memo(withErrorBoundary(...))`로, `Placeholder`는 `VirtualizationManager` 생성자가 form당 1회 래핑해 모든 지연 필드가 동일 인스턴스를 공유한다. 소비처(개별 렌더 위치)마다 반복 래핑하지 말 것. (`helpers/virtualization`는 이 `Placeholder` 방어만 React 예외로 허용 — INTENT.md 참조.)
+사용자 주입 컴포넌트(FormTypeRenderer/FormTypeInput, virtualization `Placeholder` 등)는 반드시 오류 경계로 격리한다 — 하나가 렌더 중 throw해도 폼 전체가 아니라 그 서브트리만 fallback으로 격리된다. 경계는 **컴포넌트를 해석·소유하는 지점에서 1회**만 둔다: 렌더러는 `SchemaNodeProxy`가 `@winglet/react-utils/hoc`의 `ErrorBoundary`를 직접 쓰고(children이 렌더마다 새 엘리먼트라 memo로 감싸지 않음), 입력은 `formTypeInputDefinition`의 사설 어댑터가 해석 지점에서 `ErrorBoundary`를 한 번 적용하며, `Placeholder`는 `VirtualizationManager` 생성자가 form당 1회 `withErrorBoundary`로 래핑해 모든 지연 필드가 동일 인스턴스를 공유한다. 소비처(개별 렌더 위치)마다 반복 래핑하지 말 것. (`helpers/virtualization`는 이 `Placeholder` 방어만 React 예외로 허용 — INTENT.md 참조.)
 
 ### Key APIs
 
