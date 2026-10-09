@@ -46,7 +46,8 @@ flowchart LR
 | 05 | [05-dispatch-and-validation/](05-dispatch-and-validation/) | PR-4(LANDING-064·084·093), ajv6·7·8 포함 | 03 | 04·06과 병렬 |
 | 06 | [06-array/](06-array/) | PR-5(LANDING-065·085·094) | 03 | 04·05와 병렬 |
 | 07 | [07-switch/](07-switch/) | PR-7(LANDING-067·087·095), 레거시 보존 | 02–06 전부 | 원샷 |
-| 08 | [08-plugins/](08-plugins/) | UI 플러그인 넷(LANDING-206) | 07 | — |
+| 07b | (디렉토리는 소유자가 열 때 만든다) | 소유자의 이해와 인터페이스 확정, 내부 코드 스타일링 — 소유자가 직접 다룬다(130라운드 소유자 답) | 07 병합 | — |
+| 08 | [08-plugins/](08-plugins/) | UI 플러그인 넷(LANDING-206) | 07b | 최적화와 병렬 |
 | 최적화 | [perf-optimization/](perf-optimization/) | 원장 PR 없음 — 27라운드 소유자 답(TEST-027 보충)의 "구현 완료 뒤 별도 작업". 대장 `../verification/performance-issues.md`의 열림 행 | 07 | 08과 병렬, 09 전 |
 | 09 | [09-release-and-cleanup/](09-release-and-cleanup/) | PR-8(LANDING-068·096) + `src/__legacy__/` 삭제(LANDING-205) | 08, 릴리스 전환 PR | — |
 | 별도 | [release-transition/](release-transition/) | LANDING-097 | 없음 | 언제든, 09 전 |
@@ -83,3 +84,4 @@ flowchart LR
 | 릴리스 전환 PR | 시점은 소유자가 정한다 | LANDING-204 |
 | 설계문서 | 별도 설계문서 PR, 02와 병렬 | LANDING-060 보충 |
 | 계획서 형식 | 디렉토리마다 문서 셋, seiri·filid 절차 | PROCESS-067 |
+| 07 뒤의 순서(2026-10-09) | 07 → 소유자의 이해와 인터페이스 확정·내부 코드 스타일링(07b, 소유자가 직접) → 성능 개선과 플러그인 개편(병렬) → 문서 정리와 레거시 제거(09) → 실제 배포 | `../reviews/round-130-owner-answers.md` |
