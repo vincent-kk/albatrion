@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 /** Parse the session CLI; reject incomplete, duplicate and unknown options before any measurement. */
 export function parseSession131(argv) {
   const names = ['kind', 'lane', 'base', 'candidate', 'rows', 'blocks', 'out', 'touch-counts', 'reduced-blocks',
-    'forms-per-process', 'warmup', 'samples', 'aa', 'first-report', 'axis-from', 'budget-seconds', 'smoke', 'swap'];
+    'forms-per-process', 'warmup', 'samples', 'aa', 'first-report', 'axis-from', 'budget-seconds', 'smoke', 'swap', 'node-version'];
   const values = {};
   for (let index = 0; index < argv.length; index++) {
     const match = /^--([a-z-]+)(?:=(.*))?$/.exec(argv[index]);
@@ -14,7 +14,8 @@ export function parseSession131(argv) {
     assert(value !== undefined && value !== '' && !String(value).startsWith('--'), `Missing value: --${name}`);
     values[name] = value;
   }
-  for (const name of ['kind', 'lane', 'base', 'candidate', 'rows', 'out']) assert(values[name], `Required: --${name}`);
+  for (const name of ['kind', 'lane', 'base', 'candidate', 'rows', 'out', 'node-version']) assert(values[name], `Required: --${name}`);
+  assert(/^v\d+\.\d+\.\d+$/.test(values['node-version']), '--node-version must look like v26.11.0');
   assert(['aa', 'verdict', 'confirm'].includes(values.kind), '--kind must be aa, verdict or confirm');
   assert(['core', 'react'].includes(values.lane), '--lane must be core or react');
   const number = (name, fallback, minimum) => {
@@ -34,5 +35,5 @@ export function parseSession131(argv) {
     out: values.out, blocks, reducedBlocks: Math.min(blocks, number('reduced-blocks', 8, 2)),
     formsPerProcess: number('forms-per-process', 1, 1), warmup: number('warmup', 20, 0), samples: number('samples', 41, 1),
     touchCounts: values['touch-counts'], aa: values.aa, firstReport: values['first-report'], axisFrom: values['axis-from'],
-    budgetSeconds, smoke: Boolean(values.smoke), swap: Boolean(values.swap) };
+    budgetSeconds, smoke: Boolean(values.smoke), swap: Boolean(values.swap), nodeVersion: values['node-version'] };
 }

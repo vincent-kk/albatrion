@@ -27,6 +27,7 @@ import { confirmSettings129 } from './confirm-settings-129.mjs';
 import { prepareReactBundles } from './prepare-react-bundles.mjs';
 import { loadBundle131 } from './load-bundle-131.mjs';
 import { telemetry131 } from './telemetry-131.mjs';
+import { measurementNode131 } from './measurement-node-131.mjs';
 
 const tool = fileURLToPath(import.meta.url);
 const directory = path.dirname(tool);
@@ -35,7 +36,7 @@ const pkg = path.join(repo, 'packages/canard/schema-form');
 const scratch = '/private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad';
 const bundles = path.join(scratch, 'bundles');
 assert.equal(repo, '/Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07');
-assert.equal(fs.realpathSync(process.execPath), fs.realpathSync('/opt/homebrew/bin/node'), 'Timing runs use /opt/homebrew/bin/node');
+assert.equal(fs.realpathSync(process.execPath), fs.realpathSync(measurementNode131), `Timing runs use ${measurementNode131}`);
 const flag = (name, fallback) => process.argv.find(value => value.startsWith(`--${name}=`))?.slice(name.length + 3) ?? fallback;
 const sessionJob = flag('session-job') ? JSON.parse(fs.readFileSync(flag('session-job'), 'utf8')) : null;
 let formIndex = 0;

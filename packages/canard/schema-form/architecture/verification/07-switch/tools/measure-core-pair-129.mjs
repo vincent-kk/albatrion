@@ -22,13 +22,14 @@ import { fileURLToPath } from 'node:url';
 import { confirmSettings129 } from './confirm-settings-129.mjs';
 import { gaValidation129 } from './ga-validation-129.mjs';
 import { rowSeed129 } from './row-seed-129.mjs';
+import { measurementNode131 } from './measurement-node-131.mjs';
 
 const tool = fileURLToPath(import.meta.url);
 const directory = path.dirname(tool);
 const repo = path.resolve(directory, '../../../../../../..');
 const scratch = '/private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad';
 assert.equal(repo, '/Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07');
-assert.equal(fs.realpathSync(process.execPath), fs.realpathSync('/opt/homebrew/bin/node'), 'Timing runs use /opt/homebrew/bin/node');
+assert.equal(fs.realpathSync(process.execPath), fs.realpathSync(measurementNode131), `Timing runs use ${measurementNode131}`);
 const flag = (name, fallback) => process.argv.find(value => value.startsWith(`--${name}=`))?.slice(name.length + 3) ?? fallback;
 const hash = value => createHash('sha256').update(value).digest('hex');
 const worker = path.join(directory, 'measure-core-worker-129.mjs');

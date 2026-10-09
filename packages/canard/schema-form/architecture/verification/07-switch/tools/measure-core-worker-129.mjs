@@ -1,5 +1,5 @@
 /*
- * 사용법(stage-07 루트, /opt/homebrew/bin/node --expose-gc):
+ * 사용법(stage-07 루트, ~/.nvm/versions/node/v26.11.1/bin/node --expose-gc):
  *   node --expose-gc <이 파일> --self-test
  *   node --expose-gc <이 파일> base AA if-then off --bundles=<디렉터리> [--warmup=20] [--samples=41] [--no-gc] [--base-revision=<sha>]
  * measure-core-pair-129.mjs가 블록마다 띄우는 측정 프로세스입니다. c-<이름>.cjs 하나만 올리고, 그 번들을 c-bundles.json의

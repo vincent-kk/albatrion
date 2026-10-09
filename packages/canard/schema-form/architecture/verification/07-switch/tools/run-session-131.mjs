@@ -24,9 +24,10 @@ import { rowSeed129 } from './row-seed-129.mjs';
 import { watchScope131 } from './watch-scope-131.mjs';
 import { annotateRow131 } from './annotate-row-131.mjs';
 import { preflightSession131, assertBudget131 } from './preflight-session-131.mjs';
+import { measurementNode131 } from './measurement-node-131.mjs';
 
 const tool = fileURLToPath(import.meta.url), directory = path.dirname(tool), repo = path.resolve(directory, '../../../../../../..');
-const node = '/opt/homebrew/bin/node';
+const node = measurementNode131;
 const read = file => JSON.parse(fs.readFileSync(file, 'utf8'));
 const hash = value => createHash('sha256').update(value).digest('hex');
 const write = (file, value) => fs.writeFileSync(file, JSON.stringify(value, null, 2) + '\n', { flag: 'wx' });
@@ -58,6 +59,7 @@ function measurePass(options, bundles, rows, phase, stage, deadline, processes, 
         const job = { role, stage, settings: group.map(({ fixture, validation }) => ({ fixture, validation })), bundle: bundles[role], out: output, deadlineEpochMs: workerDeadline };
         write(jobPath, job);
         const args = ['--expose-gc', worker, `--session-job=${jobPath}`, `--warmup=${options.warmup}`, `--samples=${options.samples}`, '--no-gc'];
+        assert.equal(fs.realpathSync(node), options.nodeRealpath, `${id}: ${node} changed during the session`);
         const startedAt = new Date().toISOString(), childStart = performance.now();
         const result = spawnSync(node, args, { cwd: repo, encoding: 'utf8', maxBuffer: 16 * 1024 * 1024 });
         const wallMs = performance.now() - childStart;
@@ -65,6 +67,7 @@ function measurePass(options, bundles, rows, phase, stage, deadline, processes, 
           command: node, argv: args, stderr: result.stderr?.slice(-4000), phase, block, role, position };
         write(path.join(raw, `${id}.execution.json`), execution);
         assert.equal(result.signal, null, `${id}: worker must end by itself`);
+        assert.equal(fs.realpathSync(node), options.nodeRealpath, `${id}: ${node} changed while the worker ran`);
         assert.equal(result.status, 0, `${id}: worker failed: ${result.stderr?.slice(-2000)}`);
         assert(wallMs < 480000, `${id}: worker exceeded eight minutes`);
         const batch = read(output);
@@ -132,13 +135,14 @@ function measurePass(options, bundles, rows, phase, stage, deadline, processes, 
 /** Run and finalize a complete session, including failure artifacts and immutable input/output hashes. */
 function main() {
   const started = performance.now(), options = parseSession131(process.argv.slice(2));
-  assert.equal(fs.realpathSync(process.execPath), fs.realpathSync(node), 'Use /opt/homebrew/bin/node');
-  assert.equal(process.version, 'v26.10.0', 'Node v26.10.0 is required');
+  assert.equal(fs.realpathSync(process.execPath), fs.realpathSync(node), `Use ${node}`);
+  assert.equal(process.version, options.nodeVersion, `Node ${options.nodeVersion} is required (--node-version)`);
+  options.nodeRealpath = fs.realpathSync(node);
   options.out = path.resolve(options.out);
   assert(!fs.existsSync(options.out) || fs.readdirSync(options.out).length === 0, '--out must be new or empty');
   fs.mkdirSync(options.out, { recursive: true });
   const session = { format: 'measurement-session-131', kind: options.kind, lane: options.lane, smoke: options.smoke,
-    status: 'failed', options, scoping: [], processes: [], time: { totalMs: 0, confirmMs: 0, reportMs: 0 },
+    status: 'failed', options, node: { version: process.version, v8: process.versions.v8, realpath: options.nodeRealpath }, scoping: [], processes: [], time: { totalMs: 0, confirmMs: 0, reportMs: 0 },
     digestChoice: 'no-GC pass: synchronous minor GC after the mounted observation digest, outside the timed write; forced-GC columns unchanged',
     multiForm: { requested: options.formsPerProcess, default: 1, biasValidated: false,
       validation: 'Later 24-block A/A compares formsPerProcess=1 and n, row statistics and form position/order; smoke is plumbing only.' } };
@@ -169,6 +173,7 @@ function main() {
       && (!aa.swapped || aa.swapPassed), 'Recompute and pass all three 131 A/A bands before a verdict');
     if (options.aa) assert(Array.isArray(aa.rows) && aa.rows.every(row => typeof row.key === 'string' &&
       Number.isFinite(row.aaMagnitudeMs) && row.aaMagnitudeMs >= 0), 'A/A row magnitudes must be finite and nonnegative');
+    if (options.aa) assert.equal(aaFile.node?.version, options.nodeVersion, 'The A/A must run on the same Node version as this session');
     if (options.aa && !options.smoke) assert(!aaFile.smoke && !aa.rows.some(row => row.blocks < 8), 'Smoke A/A cannot support a verdict');
     const selected = sessionRows131(options.rows, options.lane);
     const requested = options.kind === 'confirm' ? selected : watchScope131(selected, options.lane);

@@ -9,6 +9,7 @@ import { reportSession131 } from './report-session-131.mjs';
 import { summarizeSession131 } from './summarize-session-131.mjs';
 import { annotateRow131 } from './annotate-row-131.mjs';
 import { gcObservation131 } from './gc-observation-131.mjs';
+import { measurementNode131 } from './measurement-node-131.mjs';
 
 const hash = bytes => createHash('sha256').update(bytes).digest('hex');
 /** Recompute an existing A/A with all measured blocks and the 131 method, preserving the original measurement times. */
@@ -74,7 +75,7 @@ export function recomputeSession131(input, out) {
 
 if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
   try {
-    assert.equal(fs.realpathSync(process.execPath), fs.realpathSync('/opt/homebrew/bin/node'));
+    assert.equal(fs.realpathSync(process.execPath), fs.realpathSync(measurementNode131));
     const args = process.argv.slice(2), options = {};
     for (let i = 0; i < args.length; i++) {
       assert(['--in', '--out'].includes(args[i]) && !options[args[i]], 'Use --in <existing session> --out <new dir>');

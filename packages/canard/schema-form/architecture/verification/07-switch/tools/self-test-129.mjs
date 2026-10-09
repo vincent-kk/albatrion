@@ -1,5 +1,5 @@
 /*
- * 사용법(stage-07 루트, /opt/homebrew/bin/node):
+ * 사용법(stage-07 루트, ~/.nvm/versions/node/v26.11.1/bin/node):
  *   node <이 파일> [--rows=2000]
  * 129 도구의 자체 검사입니다. (1) 프로세스마다 수준이 다르지만 코드는 같은 A/A 행을 합성해 클러스터 bootstrap 99% 구간이 0을
  * 품는 비율을 내고, 같은 자료에 세션 119의 표본 단위 bootstrap(pairRows121)을 적용한 비율을 옆에 적습니다. (2) 참 이동을 넣은 행의

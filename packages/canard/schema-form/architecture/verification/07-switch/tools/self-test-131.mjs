@@ -25,6 +25,7 @@ import { useMeasuredBlocks131 } from './use-measured-blocks-131.mjs';
 import { binomialBand131, aaCounts131 } from './aa-band-131.mjs';
 import { swapReport131 } from './swap-report-131.mjs';
 import { selectMeasuredRows131 } from './select-measured-rows-131.mjs';
+import { measurementNode131, measurementNodeVersion131 } from './measurement-node-131.mjs';
 
 const root = fs.mkdtempSync(path.join(os.tmpdir(), 'self-test-131-'));
 const sha = value => createHash('sha256').update(value).digest('hex');
@@ -88,13 +89,16 @@ try {
     PerformanceObserver.prototype.disconnect = disconnect;
   }
   checks++;
-  const args = ['--kind', 'aa', '--lane=core', '--base', 'a', '--candidate=b', '--rows', 'core-129', '--blocks=24', '--out', root];
+  const args = ['--kind', 'aa', '--lane=core', '--base', 'a', '--candidate=b', '--rows', 'core-129', '--blocks=24', '--out', root, '--node-version', measurementNodeVersion131];
   const options = parseSession131(args);
   assert.equal(options.formsPerProcess, 1);
   assert.equal(options.reducedBlocks, 8);
   assert.equal(options.warmup, 20);
   assert.equal(options.samples, 41);
   assert.throws(() => parseSession131([...args, '--unknown=1']), /Unknown/);
+  assert.throws(() => parseSession131(args.slice(0, -2)), /Required: --node-version/);
+  assert.throws(() => parseSession131([...args.slice(0, -2), '--node-version', '26.11']), /must look like/);
+  assert.equal(parseSession131(args).nodeVersion, measurementNodeVersion131);
   assert.throws(() => parseSession131(args.map(value => value === '--blocks=24' ? '--blocks=0' : value)), /Invalid --blocks/);
   assert.throws(() => parseSession131(args.map(value => value === '--lane=core' ? '--lane=other' : value)), /--lane/);
   assert.throws(() => parseSession131([...args, '--forms-per-process=-1']), /Invalid --forms/);
@@ -144,9 +148,9 @@ try {
   fs.writeFileSync(manifestFile, JSON.stringify(manifest));
   const verified = verifyBundles131(bundleOptions);
   const guardedOut = path.join(root, 'budget-refusal');
-  const refusal = spawnSync('/opt/homebrew/bin/node', [new URL('./run-session-131.mjs', import.meta.url).pathname,
+  const refusal = spawnSync(measurementNode131, [new URL('./run-session-131.mjs', import.meta.url).pathname,
     '--kind=aa', '--lane=core', `--base=${bundleOptions.base}`, `--candidate=${bundleOptions.candidate}`,
-    '--rows=core-129', '--blocks=2', '--warmup=1', '--samples=1', '--budget-seconds=1', `--out=${guardedOut}`, '--smoke'],
+    '--rows=core-129', '--blocks=2', '--warmup=1', '--samples=1', '--budget-seconds=1', `--out=${guardedOut}`, '--smoke', `--node-version=${process.version}`],
     { encoding: 'utf8' });
   assert.equal(refusal.status, 1);
   assert.match(refusal.stdout, /Before measurement/);
