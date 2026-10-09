@@ -1,0 +1,141 @@
+{
+  "format": "session-verification-129e",
+  "pass": true,
+  "verifiedAt": "2026-10-09T04:06:02.369Z",
+  "elapsedSeconds": 15182.369,
+  "sessionStartConservativeUtc": "2026-10-08T23:53:00.000Z",
+  "measurementStart": "2026-10-09T00:00:40.714Z",
+  "measurementEnd": "2026-10-09T03:43:54.486Z",
+  "reportEnd": "2026-10-09T03:52:44.057Z",
+  "commands": 86,
+  "maximumCommandSeconds": 252.787642125,
+  "maximumWorkerSeconds": 105.07207691699999,
+  "sequentialCommands": true,
+  "allExitCodesZero": true,
+  "allSignalsNull": true,
+  "blocks": 456,
+  "workers": 912,
+  "checkedWrites": 2149152,
+  "workerSpansDisjoint": true,
+  "reusedPids": {
+    "29239": [
+      {
+        "pid": 29239,
+        "start": "2026-10-09T00:03:24.359Z",
+        "end": "2026-10-09T00:03:25.407Z"
+      },
+      {
+        "pid": 29239,
+        "start": "2026-10-09T03:29:46.977Z",
+        "end": "2026-10-09T03:30:05.776Z"
+      }
+    ]
+  },
+  "rowsReconstructed": 304,
+  "bootstrapRowsRecomputed": 304,
+  "csvRowsMatched": 304,
+  "markdownRowsMatched": 304,
+  "allCommitRowsZeroDifference": true,
+  "rawFiles": 1925,
+  "source": {
+    "head": "0f4dd2ee7c38c311e08f2da18f9b714f14e518f4",
+    "sourceTree": "4bfd58fca9170875a5368bbcfc0360cd34539a2e",
+    "baselineSourceTree": "4bfd58fca9170875a5368bbcfc0360cd34539a2e",
+    "productDiff": "",
+    "staged": "",
+    "headDelta": "packages/canard/schema-form/architecture/verification/07-switch/performance.md\npackages/canard/schema-form/architecture/verification/07-switch/profile-129d-session.md\npackages/canard/schema-form/architecture/verification/07-switch/profile-129d-session/bundle-manifest.json\npackages/canard/schema-form/architecture/verification/07-switch/profile-129d-session/core-rows.csv\npackages/canard/schema-form/architecture/verification/07-switch/profile-129d-session/core-rows.md\npackages/canard/schema-form/architecture/verification/07-switch/profile-129d-session/raw-sha256.txt\npackages/canard/schema-form/architecture/verification/07-switch/profile-129d-session/react-rows.csv\npackages/canard/schema-form/architecture/verification/07-switch/profile-129d-session/react-rows.md\npackages/canard/schema-form/architecture/verification/07-switch/profile-129d-session/session-evidence.json\npackages/canard/schema-form/architecture/verification/07-switch/profile-129d-session/verification.json",
+    "status": "?? packages/canard/schema-form/architecture/verification/07-switch/profile-129e-session.md\n?? packages/canard/schema-form/architecture/verification/07-switch/profile-129e-session/"
+  },
+  "environment": {
+    "node": "v26.10.0",
+    "nodeBinary": "/opt/homebrew/Cellar/node/26.10.0_2/bin/node",
+    "v8": "14.6.202.34-node.35",
+    "react": "19.2.6",
+    "cpu": "Apple M1 Max"
+  },
+  "artifactFiles": [
+    {
+      "file": "profile-129e-session/assertions.json",
+      "bytes": 121188,
+      "sha256": "2d3dfc0163fc88f6d5105fa4933fce15bbefb113269fc8f244661f3401fa9473"
+    },
+    {
+      "file": "profile-129e-session/bundle-manifest.json",
+      "bytes": 7716,
+      "sha256": "69b58319a3254a0325c98aa85a8e590bb29fe7787257bdc5160d95cd88b12fd9"
+    },
+    {
+      "file": "profile-129e-session/raw-sha256.txt",
+      "bytes": 214624,
+      "sha256": "e6c18e625ec3bd8abbffa609942aa43012c8bab969d674698e138c27fd649ba1"
+    },
+    {
+      "file": "profile-129e-session/react-final-report.json",
+      "bytes": 299579,
+      "sha256": "2f3f6eeb4cd7515634c27d3b797f18c398905f74e5903dd74b5148e64a353471"
+    },
+    {
+      "file": "profile-129e-session/react-first-report.json",
+      "bytes": 299441,
+      "sha256": "228e2ad4c020962bd44f9965cbfae6b73dad75db61d8acd0604bc04bb53ecc6a"
+    },
+    {
+      "file": "profile-129e-session/react-rows.csv",
+      "bytes": 73995,
+      "sha256": "2621f3c8d2fdd1449c99032767c5eaba54a0e91dc1559263acd1ebc6e74d93d6"
+    },
+    {
+      "file": "profile-129e-session/react-rows.md",
+      "bytes": 58080,
+      "sha256": "5a759fde746220e48795b8c0852df9004a2f23e762cf1b1b52d30d485dc39197"
+    },
+    {
+      "file": "profile-129e-session/render-counts.json",
+      "bytes": 181495,
+      "sha256": "20920ad64452f8766cd4e5b656f38462a3a67af2b7504f89dc27a680ac964537"
+    },
+    {
+      "file": "profile-129e-session/render-counts.md",
+      "bytes": 3530,
+      "sha256": "b9936fb8a517fbeeb2ac218489b15f900ce4b81910f24d5b166034e781448f5b"
+    },
+    {
+      "file": "profile-129e-session/render-writes.csv",
+      "bytes": 147059,
+      "sha256": "2fa816f1938ee60a3a9b2c6b2f39e479c5b3c578a4a54f2c89e7dcd13c36e515"
+    },
+    {
+      "file": "profile-129e-session/session-evidence.json",
+      "bytes": 166153,
+      "sha256": "b458b0c699097836b852ec49e0b067be20ec6f4701f2c8e29fa12e2f0f1c3830"
+    },
+    {
+      "file": "profile-129e-session/work-counts.csv",
+      "bytes": 30677,
+      "sha256": "81bed280ead8de04fbf14d857ad2fabf0a9036112cf6570bb51f79c57ba8503a"
+    },
+    {
+      "file": "profile-129e-session/work-counts.json",
+      "bytes": 675213,
+      "sha256": "bd4165b58eed66537403516f95e0acf7ce087ce4776b1c911c6a2e2e30b7ab38"
+    },
+    {
+      "file": "profile-129e-session/work-counts.md",
+      "bytes": 3400,
+      "sha256": "bcbb044558755af593bead8c8e5ab8a920e139565887a39827c8cae7e03d8d25"
+    },
+    {
+      "file": "profile-129e-session.md",
+      "bytes": 18377,
+      "sha256": "f5234116c08b9aa07ae029c6f2161096f6bac66ba504c4ba4f39863d54604388"
+    }
+  ],
+  "assertionsPassed": true,
+  "nativeRenderCountsVerified": true,
+  "workCountRows": 304,
+  "flagged": 0,
+  "confirmed": 0,
+  "gains": 22,
+  "decision": "ADOPT",
+  "mainReportPresent": true
+}

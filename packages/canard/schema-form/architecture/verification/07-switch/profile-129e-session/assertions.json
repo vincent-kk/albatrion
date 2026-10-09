@@ -1,0 +1,4951 @@
+{
+  "format": "render-assertions-129e",
+  "method": "Stable identities unite a fiber and its alternate; same display names do not merge distinct component instances.",
+  "base": [
+    {
+      "mode": "ctl",
+      "operation": "sibling setValue /b",
+      "otherFieldRenders": 0,
+      "fieldComponentInstances": [
+        {
+          "identity": 259301,
+          "component": "SchemaNodeField",
+          "path": "/b",
+          "count": 1
+        },
+        {
+          "identity": 259304,
+          "component": "memo:Anonymous",
+          "path": "/b",
+          "count": 1
+        },
+        {
+          "identity": 259305,
+          "component": "class:ErrorBoundary",
+          "path": "/b",
+          "count": 1
+        },
+        {
+          "identity": 259306,
+          "component": "FormGroupRenderer",
+          "path": "/b",
+          "count": 1
+        },
+        {
+          "identity": 259311,
+          "component": "Anonymous",
+          "path": "/b",
+          "count": 1
+        },
+        {
+          "identity": 259312,
+          "component": "memo:Anonymous",
+          "path": "/b",
+          "count": 1
+        },
+        {
+          "identity": 259314,
+          "component": "Anonymous",
+          "path": "/b",
+          "count": 1
+        },
+        {
+          "identity": 259315,
+          "component": "class:ErrorBoundary",
+          "path": "/b",
+          "count": 1
+        },
+        {
+          "identity": 259316,
+          "component": "Input",
+          "path": "/b",
+          "count": 1
+        },
+        {
+          "identity": 259317,
+          "component": "CtlInput",
+          "path": "/b",
+          "count": 1
+        }
+      ],
+      "renders": {
+        "total": 20,
+        "byPath": {
+          "": 10,
+          "/b": 10
+        },
+        "byComponent": {
+          "SchemaNodeField": 2,
+          "memo:Anonymous": 4,
+          "class:ErrorBoundary": 4,
+          "FormGroupRenderer": 2,
+          "Anonymous": 4,
+          "Input": 2,
+          "FormTypeInputObject": 1,
+          "CtlInput": 1
+        },
+        "instances": [
+          {
+            "identity": 259282,
+            "component": "SchemaNodeField",
+            "path": "",
+            "count": 1
+          },
+          {
+            "identity": 259285,
+            "component": "memo:Anonymous",
+            "path": "",
+            "count": 1
+          },
+          {
+            "identity": 259286,
+            "component": "class:ErrorBoundary",
+            "path": "",
+            "count": 1
+          },
+          {
+            "identity": 259287,
+            "component": "FormGroupRenderer",
+            "path": "",
+            "count": 1
+          },
+          {
+            "identity": 259288,
+            "component": "Anonymous",
+            "path": "",
+            "count": 1
+          },
+          {
+            "identity": 259289,
+            "component": "memo:Anonymous",
+            "path": "",
+            "count": 1
+          },
+          {
+            "identity": 259291,
+            "component": "Anonymous",
+            "path": "",
+            "count": 1
+          },
+          {
+            "identity": 259292,
+            "component": "class:ErrorBoundary",
+            "path": "",
+            "count": 1
+          },
+          {
+            "identity": 259293,
+            "component": "Input",
+            "path": "",
+            "count": 1
+          },
+          {
+            "identity": 259294,
+            "component": "FormTypeInputObject",
+            "path": "",
+            "count": 1
+          },
+          {
+            "identity": 259301,
+            "component": "SchemaNodeField",
+            "path": "/b",
+            "count": 1
+          },
+          {
+            "identity": 259304,
+            "component": "memo:Anonymous",
+            "path": "/b",
+            "count": 1
+          },
+          {
+            "identity": 259305,
+            "component": "class:ErrorBoundary",
+            "path": "/b",
+            "count": 1
+          },
+          {
+            "identity": 259306,
+            "component": "FormGroupRenderer",
+            "path": "/b",
+            "count": 1
+          },
+          {
+            "identity": 259311,
+            "component": "Anonymous",
+            "path": "/b",
+            "count": 1
+          },
+          {
+            "identity": 259312,
+            "component": "memo:Anonymous",
+            "path": "/b",
+            "count": 1
+          },
+          {
+            "identity": 259314,
+            "component": "Anonymous",
+            "path": "/b",
+            "count": 1
+          },
+          {
+            "identity": 259315,
+            "component": "class:ErrorBoundary",
+            "path": "/b",
+            "count": 1
+          },
+          {
+            "identity": 259316,
+            "component": "Input",
+            "path": "/b",
+            "count": 1
+          },
+          {
+            "identity": 259317,
+            "component": "CtlInput",
+            "path": "/b",
+            "count": 1
+          }
+        ]
+      },
+      "fibersVisited": 68,
+      "fibersCreated": 2,
+      "inputRemounts": [
+        "/b"
+      ],
+      "inputNewMounts": [],
+      "changedComponentCalls": 0,
+      "proxyCalls": 0,
+      "commits": 1,
+      "passed": true
+    },
+    {
+      "mode": "ctl",
+      "operation": "parent setValue /o (x only)",
+      "otherFieldRenders": 0,
+      "fieldComponentInstances": [
+        {
+          "identity": 259349,
+          "component": "SchemaNodeField",
+          "path": "/o/x",
+          "count": 1
+        },
+        {
+          "identity": 259352,
+          "component": "memo:Anonymous",
+          "path": "/o/x",
+          "count": 1
+        },
+        {
+          "identity": 259353,
+          "component": "class:ErrorBoundary",
+          "path": "/o/x",
+          "count": 1
+        },
+        {
+          "identity": 259354,
+          "component": "FormGroupRenderer",
+          "path": "/o/x",
+          "count": 1
+        },
+        {
+          "identity": 259359,
+          "component": "Anonymous",
+          "path": "/o/x",
+          "count": 1
+        },
+        {
+          "identity": 259360,
+          "component": "memo:Anonymous",
+          "path": "/o/x",
+          "count": 1
+        },
+        {
+          "identity": 259362,
+          "component": "Anonymous",
+          "path": "/o/x",
+          "count": 1
+        },
+        {
+          "identity": 259363,
+          "component": "class:ErrorBoundary",
+          "path": "/o/x",
+          "count": 1
+        },
+        {
+          "identity": 259364,
+          "component": "Input",
+          "path": "/o/x",
+          "count": 1
+        },
+        {
+          "identity": 259365,
+          "component": "CtlInput",
+          "path": "/o/x",
+          "count": 1
+        }
+      ],
+      "renders": {
+        "total": 30,
+        "byPath": {
+          "": 10,
+          "/o": 10,
+          "/o/x": 10
+        },
+        "byComponent": {
+          "SchemaNodeField": 3,
+          "memo:Anonymous": 6,
+          "class:ErrorBoundary": 6,
+          "FormGroupRenderer": 3,
+          "Anonymous": 6,
+          "Input": 3,
+          "FormTypeInputObject": 2,
+          "CtlInput": 1
+        },
+        "instances": [
+          {
+            "identity": 259282,
+            "component": "SchemaNodeField",
+            "path": "",
+            "count": 1
+          },
+          {
+            "identity": 259285,
+            "component": "memo:Anonymous",
+            "path": "",
+            "count": 1
+          },
+          {
+            "identity": 259286,
+            "component": "class:ErrorBoundary",
+            "path": "",
+            "count": 1
+          },
+          {
+            "identity": 259287,
+            "component": "FormGroupRenderer",
+            "path": "",
+            "count": 1
+          },
+          {
+            "identity": 259288,
+            "component": "Anonymous",
+            "path": "",
+            "count": 1
+          },
+          {
+            "identity": 259289,
+            "component": "memo:Anonymous",
+            "path": "",
+            "count": 1
+          },
+          {
+            "identity": 259291,
+            "component": "Anonymous",
+            "path": "",
+            "count": 1
+          },
+          {
+            "identity": 259292,
+            "component": "class:ErrorBoundary",
+            "path": "",
+            "count": 1
+          },
+          {
+            "identity": 259293,
+            "component": "Input",
+            "path": "",
+            "count": 1
+          },
+          {
+            "identity": 259294,
+            "component": "FormTypeInputObject",
+            "path": "",
+            "count": 1
+          },
+          {
+            "identity": 259326,
+            "component": "SchemaNodeField",
+            "path": "/o",
+            "count": 1
+          },
+          {
+            "identity": 259329,
+            "component": "memo:Anonymous",
+            "path": "/o",
+            "count": 1
+          },
+          {
+            "identity": 259330,
+            "component": "class:ErrorBoundary",
+            "path": "/o",
+            "count": 1
+          },
+          {
+            "identity": 259331,
+            "component": "FormGroupRenderer",
+            "path": "/o",
+            "count": 1
+          },
+          {
+            "identity": 259337,
+            "component": "Anonymous",
+            "path": "/o",
+            "count": 1
+          },
+          {
+            "identity": 259338,
+            "component": "memo:Anonymous",
+            "path": "/o",
+            "count": 1
+          },
+          {
+            "identity": 259340,
+            "component": "Anonymous",
+            "path": "/o",
+            "count": 1
+          },
+          {
+            "identity": 259341,
+            "component": "class:ErrorBoundary",
+            "path": "/o",
+            "count": 1
+          },
+          {
+            "identity": 259342,
+            "component": "Input",
+            "path": "/o",
+            "count": 1
+          },
+          {
+            "identity": 259343,
+            "component": "FormTypeInputObject",
+            "path": "/o",
+            "count": 1
+          },
+          {
+            "identity": 259349,
+            "component": "SchemaNodeField",
+            "path": "/o/x",
+            "count": 1
+          },
+          {
+            "identity": 259352,
+            "component": "memo:Anonymous",
+            "path": "/o/x",
+            "count": 1
+          },
+          {
+            "identity": 259353,
+            "component": "class:ErrorBoundary",
+            "path": "/o/x",
+            "count": 1
+          },
+          {
+            "identity": 259354,
+            "component": "FormGroupRenderer",
+            "path": "/o/x",
+            "count": 1
+          },
+          {
+            "identity": 259359,
+            "component": "Anonymous",
+            "path": "/o/x",
+            "count": 1
+          },
+          {
+            "identity": 259360,
+            "component": "memo:Anonymous",
+            "path": "/o/x",
+            "count": 1
+          },
+          {
+            "identity": 259362,
+            "component": "Anonymous",
+            "path": "/o/x",
+            "count": 1
+          },
+          {
+            "identity": 259363,
+            "component": "class:ErrorBoundary",
+            "path": "/o/x",
+            "count": 1
+          },
+          {
+            "identity": 259364,
+            "component": "Input",
+            "path": "/o/x",
+            "count": 1
+          },
+          {
+            "identity": 259365,
+            "component": "CtlInput",
+            "path": "/o/x",
+            "count": 1
+          }
+        ]
+      },
+      "fibersVisited": 92,
+      "fibersCreated": 2,
+      "inputRemounts": [
+        "/o/x"
+      ],
+      "inputNewMounts": [],
+      "changedComponentCalls": 0,
+      "proxyCalls": 0,
+      "commits": 1,
+      "passed": true
+    },
+    {
+      "mode": "ctl",
+      "operation": "Form context prop change",
+      "otherFieldRenders": null,
+      "fieldComponentInstances": [
+        {
+          "identity": 259301,
+          "component": "SchemaNodeField",
+          "path": "/b",
+          "count": 1
+        },
+        {
+          "identity": 259304,
+          "component": "memo:Anonymous",
+          "path": "/b",
+          "count": 1
+        },
+        {
+          "identity": 259305,
+          "component": "class:ErrorBoundary",
+          "path": "/b",
+          "count": 1
+        },
+        {
+          "identity": 259306,
+          "component": "FormGroupRenderer",
+          "path": "/b",
+          "count": 1
+        },
+        {
+          "identity": 259311,
+          "component": "Anonymous",
+          "path": "/b",
+          "count": 1
+        },
+        {
+          "identity": 259312,
+          "component": "memo:Anonymous",
+          "path": "/b",
+          "count": 1
+        },
+        {
+          "identity": 259314,
+          "component": "Anonymous",
+          "path": "/b",
+          "count": 1
+        },
+        {
+          "identity": 259315,
+          "component": "class:ErrorBoundary",
+          "path": "/b",
+          "count": 1
+        },
+        {
+          "identity": 259316,
+          "component": "Input",
+          "path": "/b",
+          "count": 1
+        },
+        {
+          "identity": 259317,
+          "component": "CtlInput",
+          "path": "/b",
+          "count": 1
+        },
+        {
+          "identity": 259349,
+          "component": "SchemaNodeField",
+          "path": "/o/x",
+          "count": 1
+        },
+        {
+          "identity": 259352,
+          "component": "memo:Anonymous",
+          "path": "/o/x",
+          "count": 1
+        },
+        {
+          "identity": 259353,
+          "component": "class:ErrorBoundary",
+          "path": "/o/x",
+          "count": 1
+        },
+        {
+          "identity": 259354,
+          "component": "FormGroupRenderer",
+          "path": "/o/x",
+          "count": 1
+        },
+        {
+          "identity": 259359,
+          "component": "Anonymous",
+          "path": "/o/x",
+          "count": 1
+        },
+        {
+          "identity": 259360,
+          "component": "memo:Anonymous",
+          "path": "/o/x",
+          "count": 1
+        },
+        {
+          "identity": 259362,
+          "component": "Anonymous",
+          "path": "/o/x",
+          "count": 1
+        },
+        {
+          "identity": 259363,
+          "component": "class:ErrorBoundary",
+          "path": "/o/x",
+          "count": 1
+        },
+        {
+          "identity": 259364,
+          "component": "Input",
+          "path": "/o/x",
+          "count": 1
+        },
+        {
+          "identity": 259365,
+          "component": "CtlInput",
+          "path": "/o/x",
+          "count": 1
+        },
+        {
+          "identity": 259374,
+          "component": "SchemaNodeField",
+          "path": "/a",
+          "count": 1
+        },
+        {
+          "identity": 259377,
+          "component": "memo:Anonymous",
+          "path": "/a",
+          "count": 1
+        },
+        {
+          "identity": 259378,
+          "component": "class:ErrorBoundary",
+          "path": "/a",
+          "count": 1
+        },
+        {
+          "identity": 259379,
+          "component": "FormGroupRenderer",
+          "path": "/a",
+          "count": 1
+        },
+        {
+          "identity": 259384,
+          "component": "Anonymous",
+          "path": "/a",
+          "count": 1
+        },
+        {
+          "identity": 259385,
+          "component": "memo:Anonymous",
+          "path": "/a",
+          "count": 1
+        },
+        {
+          "identity": 259387,
+          "component": "Anonymous",
+          "path": "/a",
+          "count": 1
+        },
+        {
+          "identity": 259388,
+          "component": "class:ErrorBoundary",
+          "path": "/a",
+          "count": 1
+        },
+        {
+          "identity": 259389,
+          "component": "Input",
+          "path": "/a",
+          "count": 1
+        },
+        {
+          "identity": 259390,
+          "component": "CtlInput",
+          "path": "/a",
+          "count": 1
+        },
+        {
+          "identity": 259398,
+          "component": "SchemaNodeField",
+          "path": "/o/y",
+          "count": 1
+        },
+        {
+          "identity": 259401,
+          "component": "memo:Anonymous",
+          "path": "/o/y",
+          "count": 1
+        },
+        {
+          "identity": 259402,
+          "component": "class:ErrorBoundary",
+          "path": "/o/y",
+          "count": 1
+        },
+        {
+          "identity": 259403,
+          "component": "FormGroupRenderer",
+          "path": "/o/y",
+          "count": 1
+        },
+        {
+          "identity": 259408,
+          "component": "Anonymous",
+          "path": "/o/y",
+          "count": 1
+        },
+        {
+          "identity": 259409,
+          "component": "memo:Anonymous",
+          "path": "/o/y",
+          "count": 1
+        },
+        {
+          "identity": 259411,
+          "component": "Anonymous",
+          "path": "/o/y",
+          "count": 1
+        },
+        {
+          "identity": 259412,
+          "component": "class:ErrorBoundary",
+          "path": "/o/y",
+          "count": 1
+        },
+        {
+          "identity": 259413,
+          "component": "Input",
+          "path": "/o/y",
+          "count": 1
+        },
+        {
+          "identity": 259414,
+          "component": "CtlInput",
+          "path": "/o/y",
+          "count": 1
+        }
+      ],
+      "renders": {
+        "total": 76,
+        "byPath": {
+          "(form)": 14,
+          "": 12,
+          "/a": 10,
+          "/b": 10,
+          "/o": 10,
+          "/o/x": 10,
+          "/o/y": 10
+        },
+        "byComponent": {
+          "Host": 1,
+          "fwd:Anonymous": 2,
+          "FormErrorContextProvider": 1,
+          "class:ErrorBoundary": 14,
+          "fwd:FormContents": 1,
+          "WorkspaceContextProvider": 1,
+          "FormTypeInputsContextProvider": 1,
+          "FormTypeRendererContextProvider": 1,
+          "InputControlContextProvider": 1,
+          "VirtualizationContextProvider": 1,
+          "RootNodeContextProvider": 1,
+          "memo:Anonymous": 13,
+          "SchemaNodeProxy": 1,
+          "Anonymous": 13,
+          "SchemaNodeField": 6,
+          "FormGroupRenderer": 6,
+          "Input": 6,
+          "FormTypeInputObject": 2,
+          "CtlInput": 4
+        },
+        "instances": [
+          {
+            "identity": 259255,
+            "component": "Host",
+            "path": "(form)",
+            "count": 1
+          },
+          {
+            "identity": 259257,
+            "component": "fwd:Anonymous",
+            "path": "(form)",
+            "count": 1
+          },
+          {
+            "identity": 259258,
+            "component": "FormErrorContextProvider",
+            "path": "(form)",
+            "count": 1
+          },
+          {
+            "identity": 259260,
+            "component": "fwd:Anonymous",
+            "path": "(form)",
+            "count": 1
+          },
+          {
+            "identity": 259261,
+            "component": "class:ErrorBoundary",
+            "path": "(form)",
+            "count": 1
+          },
+          {
+            "identity": 259262,
+            "component": "fwd:FormContents",
+            "path": "(form)",
+            "count": 1
+          },
+          {
+            "identity": 259263,
+            "component": "WorkspaceContextProvider",
+            "path": "(form)",
+            "count": 1
+          },
+          {
+            "identity": 259265,
+            "component": "FormTypeInputsContextProvider",
+            "path": "(form)",
+            "count": 1
+          },
+          {
+            "identity": 259267,
+            "component": "FormTypeRendererContextProvider",
+            "path": "(form)",
+            "count": 1
+          },
+          {
+            "identity": 259269,
+            "component": "InputControlContextProvider",
+            "path": "(form)",
+            "count": 1
+          },
+          {
+            "identity": 259271,
+            "component": "VirtualizationContextProvider",
+            "path": "(form)",
+            "count": 1
+          },
+          {
+            "identity": 259273,
+            "component": "RootNodeContextProvider",
+            "path": "(form)",
+            "count": 1
+          },
+          {
+            "identity": 259276,
+            "component": "memo:Anonymous",
+            "path": "(form)",
+            "count": 1
+          },
+          {
+            "identity": 259278,
+            "component": "SchemaNodeProxy",
+            "path": "(form)",
+            "count": 1
+          },
+          {
+            "identity": 259280,
+            "component": "Anonymous",
+            "path": "",
+            "count": 1
+          },
+          {
+            "identity": 259281,
+            "component": "class:ErrorBoundary",
+            "path": "",
+            "count": 1
+          },
+          {
+            "identity": 259282,
+            "component": "SchemaNodeField",
+            "path": "",
+            "count": 1
+          },
+          {
+            "identity": 259285,
+            "component": "memo:Anonymous",
+            "path": "",
+            "count": 1
+          },
+          {
+            "identity": 259286,
+            "component": "class:ErrorBoundary",
+            "path": "",
+            "count": 1
+          },
+          {
+            "identity": 259287,
+            "component": "FormGroupRenderer",
+            "path": "",
+            "count": 1
+          },
+          {
+            "identity": 259288,
+            "component": "Anonymous",
+            "path": "",
+            "count": 1
+          },
+          {
+            "identity": 259289,
+            "component": "memo:Anonymous",
+            "path": "",
+            "count": 1
+          },
+          {
+            "identity": 259291,
+            "component": "Anonymous",
+            "path": "",
+            "count": 1
+          },
+          {
+            "identity": 259292,
+            "component": "class:ErrorBoundary",
+            "path": "",
+            "count": 1
+          },
+          {
+            "identity": 259293,
+            "component": "Input",
+            "path": "",
+            "count": 1
+          },
+          {
+            "identity": 259294,
+            "component": "FormTypeInputObject",
+            "path": "",
+            "count": 1
+          },
+          {
+            "identity": 259301,
+            "component": "SchemaNodeField",
+            "path": "/b",
+            "count": 1
+          },
+          {
+            "identity": 259304,
+            "component": "memo:Anonymous",
+            "path": "/b",
+            "count": 1
+          },
+          {
+            "identity": 259305,
+            "component": "class:ErrorBoundary",
+            "path": "/b",
+            "count": 1
+          },
+          {
+            "identity": 259306,
+            "component": "FormGroupRenderer",
+            "path": "/b",
+            "count": 1
+          },
+          {
+            "identity": 259311,
+            "component": "Anonymous",
+            "path": "/b",
+            "count": 1
+          },
+          {
+            "identity": 259312,
+            "component": "memo:Anonymous",
+            "path": "/b",
+            "count": 1
+          },
+          {
+            "identity": 259314,
+            "component": "Anonymous",
+            "path": "/b",
+            "count": 1
+          },
+          {
+            "identity": 259315,
+            "component": "class:ErrorBoundary",
+            "path": "/b",
+            "count": 1
+          },
+          {
+            "identity": 259316,
+            "component": "Input",
+            "path": "/b",
+            "count": 1
+          },
+          {
+            "identity": 259317,
+            "component": "CtlInput",
+            "path": "/b",
+            "count": 1
+          },
+          {
+            "identity": 259326,
+            "component": "SchemaNodeField",
+            "path": "/o",
+            "count": 1
+          },
+          {
+            "identity": 259329,
+            "component": "memo:Anonymous",
+            "path": "/o",
+            "count": 1
+          },
+          {
+            "identity": 259330,
+            "component": "class:ErrorBoundary",
+            "path": "/o",
+            "count": 1
+          },
+          {
+            "identity": 259331,
+            "component": "FormGroupRenderer",
+            "path": "/o",
+            "count": 1
+          },
+          {
+            "identity": 259337,
+            "component": "Anonymous",
+            "path": "/o",
+            "count": 1
+          },
+          {
+            "identity": 259338,
+            "component": "memo:Anonymous",
+            "path": "/o",
+            "count": 1
+          },
+          {
+            "identity": 259340,
+            "component": "Anonymous",
+            "path": "/o",
+            "count": 1
+          },
+          {
+            "identity": 259341,
+            "component": "class:ErrorBoundary",
+            "path": "/o",
+            "count": 1
+          },
+          {
+            "identity": 259342,
+            "component": "Input",
+            "path": "/o",
+            "count": 1
+          },
+          {
+            "identity": 259343,
+            "component": "FormTypeInputObject",
+            "path": "/o",
+            "count": 1
+          },
+          {
+            "identity": 259349,
+            "component": "SchemaNodeField",
+            "path": "/o/x",
+            "count": 1
+          },
+          {
+            "identity": 259352,
+            "component": "memo:Anonymous",
+            "path": "/o/x",
+            "count": 1
+          },
+          {
+            "identity": 259353,
+            "component": "class:ErrorBoundary",
+            "path": "/o/x",
+            "count": 1
+          },
+          {
+            "identity": 259354,
+            "component": "FormGroupRenderer",
+            "path": "/o/x",
+            "count": 1
+          },
+          {
+            "identity": 259359,
+            "component": "Anonymous",
+            "path": "/o/x",
+            "count": 1
+          },
+          {
+            "identity": 259360,
+            "component": "memo:Anonymous",
+            "path": "/o/x",
+            "count": 1
+          },
+          {
+            "identity": 259362,
+            "component": "Anonymous",
+            "path": "/o/x",
+            "count": 1
+          },
+          {
+            "identity": 259363,
+            "component": "class:ErrorBoundary",
+            "path": "/o/x",
+            "count": 1
+          },
+          {
+            "identity": 259364,
+            "component": "Input",
+            "path": "/o/x",
+            "count": 1
+          },
+          {
+            "identity": 259365,
+            "component": "CtlInput",
+            "path": "/o/x",
+            "count": 1
+          },
+          {
+            "identity": 259374,
+            "component": "SchemaNodeField",
+            "path": "/a",
+            "count": 1
+          },
+          {
+            "identity": 259377,
+            "component": "memo:Anonymous",
+            "path": "/a",
+            "count": 1
+          },
+          {
+            "identity": 259378,
+            "component": "class:ErrorBoundary",
+            "path": "/a",
+            "count": 1
+          },
+          {
+            "identity": 259379,
+            "component": "FormGroupRenderer",
+            "path": "/a",
+            "count": 1
+          },
+          {
+            "identity": 259384,
+            "component": "Anonymous",
+            "path": "/a",
+            "count": 1
+          },
+          {
+            "identity": 259385,
+            "component": "memo:Anonymous",
+            "path": "/a",
+            "count": 1
+          },
+          {
+            "identity": 259387,
+            "component": "Anonymous",
+            "path": "/a",
+            "count": 1
+          },
+          {
+            "identity": 259388,
+            "component": "class:ErrorBoundary",
+            "path": "/a",
+            "count": 1
+          },
+          {
+            "identity": 259389,
+            "component": "Input",
+            "path": "/a",
+            "count": 1
+          },
+          {
+            "identity": 259390,
+            "component": "CtlInput",
+            "path": "/a",
+            "count": 1
+          },
+          {
+            "identity": 259398,
+            "component": "SchemaNodeField",
+            "path": "/o/y",
+            "count": 1
+          },
+          {
+            "identity": 259401,
+            "component": "memo:Anonymous",
+            "path": "/o/y",
+            "count": 1
+          },
+          {
+            "identity": 259402,
+            "component": "class:ErrorBoundary",
+            "path": "/o/y",
+            "count": 1
+          },
+          {
+            "identity": 259403,
+            "component": "FormGroupRenderer",
+            "path": "/o/y",
+            "count": 1
+          },
+          {
+            "identity": 259408,
+            "component": "Anonymous",
+            "path": "/o/y",
+            "count": 1
+          },
+          {
+            "identity": 259409,
+            "component": "memo:Anonymous",
+            "path": "/o/y",
+            "count": 1
+          },
+          {
+            "identity": 259411,
+            "component": "Anonymous",
+            "path": "/o/y",
+            "count": 1
+          },
+          {
+            "identity": 259412,
+            "component": "class:ErrorBoundary",
+            "path": "/o/y",
+            "count": 1
+          },
+          {
+            "identity": 259413,
+            "component": "Input",
+            "path": "/o/y",
+            "count": 1
+          },
+          {
+            "identity": 259414,
+            "component": "CtlInput",
+            "path": "/o/y",
+            "count": 1
+          }
+        ]
+      },
+      "fibersVisited": 164,
+      "fibersCreated": 0,
+      "inputRemounts": [],
+      "inputNewMounts": [],
+      "changedComponentCalls": 1,
+      "proxyCalls": 1,
+      "commits": 1,
+      "passed": true
+    },
+    {
+      "mode": "unctl",
+      "operation": "sibling setValue /b",
+      "otherFieldRenders": 0,
+      "fieldComponentInstances": [
+        {
+          "identity": 259465,
+          "component": "SchemaNodeField",
+          "path": "/b",
+          "count": 1
+        },
+        {
+          "identity": 259468,
+          "component": "memo:Anonymous",
+          "path": "/b",
+          "count": 1
+        },
+        {
+          "identity": 259469,
+          "component": "class:ErrorBoundary",
+          "path": "/b",
+          "count": 1
+        },
+        {
+          "identity": 259470,
+          "component": "FormGroupRenderer",
+          "path": "/b",
+          "count": 1
+        },
+        {
+          "identity": 259475,
+          "component": "Anonymous",
+          "path": "/b",
+          "count": 1
+        },
+        {
+          "identity": 259476,
+          "component": "memo:Anonymous",
+          "path": "/b",
+          "count": 1
+        },
+        {
+          "identity": 259478,
+          "component": "Anonymous",
+          "path": "/b",
+          "count": 1
+        },
+        {
+          "identity": 259479,
+          "component": "class:ErrorBoundary",
+          "path": "/b",
+          "count": 1
+        },
+        {
+          "identity": 259480,
+          "component": "Input",
+          "path": "/b",
+          "count": 1
+        },
+        {
+          "identity": 259481,
+          "component": "UnctlInput",
+          "path": "/b",
+          "count": 1
+        }
+      ],
+      "renders": {
+        "total": 20,
+        "byPath": {
+          "": 10,
+          "/b": 10
+        },
+        "byComponent": {
+          "SchemaNodeField": 2,
+          "memo:Anonymous": 4,
+          "class:ErrorBoundary": 4,
+          "FormGroupRenderer": 2,
+          "Anonymous": 4,
+          "Input": 2,
+          "FormTypeInputObject": 1,
+          "UnctlInput": 1
+        },
+        "instances": [
+          {
+            "identity": 259446,
+            "component": "SchemaNodeField",
+            "path": "",
+            "count": 1
+          },
+          {
+            "identity": 259449,
+            "component": "memo:Anonymous",
+            "path": "",
+            "count": 1
+          },
+          {
+            "identity": 259450,
+            "component": "class:ErrorBoundary",
+            "path": "",
+            "count": 1
+          },
+          {
+            "identity": 259451,
+            "component": "FormGroupRenderer",
+            "path": "",
+            "count": 1
+          },
+          {
+            "identity": 259452,
+            "component": "Anonymous",
+            "path": "",
+            "count": 1
+          },
+          {
+            "identity": 259453,
+            "component": "memo:Anonymous",
+            "path": "",
+            "count": 1
+          },
+          {
+            "identity": 259455,
+            "component": "Anonymous",
+            "path": "",
+            "count": 1
+          },
+          {
+            "identity": 259456,
+            "component": "class:ErrorBoundary",
+            "path": "",
+            "count": 1
+          },
+          {
+            "identity": 259457,
+            "component": "Input",
+            "path": "",
+            "count": 1
+          },
+          {
+            "identity": 259458,
+            "component": "FormTypeInputObject",
+            "path": "",
+            "count": 1
+          },
+          {
+            "identity": 259465,
+            "component": "SchemaNodeField",
+            "path": "/b",
+            "count": 1
+          },
+          {
+            "identity": 259468,
+            "component": "memo:Anonymous",
+            "path": "/b",
+            "count": 1
+          },
+          {
+            "identity": 259469,
+            "component": "class:ErrorBoundary",
+            "path": "/b",
+            "count": 1
+          },
+          {
+            "identity": 259470,
+            "component": "FormGroupRenderer",
+            "path": "/b",
+            "count": 1
+          },
+          {
+            "identity": 259475,
+            "component": "Anonymous",
+            "path": "/b",
+            "count": 1
+          },
+          {
+            "identity": 259476,
+            "component": "memo:Anonymous",
+            "path": "/b",
+            "count": 1
+          },
+          {
+            "identity": 259478,
+            "component": "Anonymous",
+            "path": "/b",
+            "count": 1
+          },
+          {
+            "identity": 259479,
+            "component": "class:ErrorBoundary",
+            "path": "/b",
+            "count": 1
+          },
+          {
+            "identity": 259480,
+            "component": "Input",
+            "path": "/b",
+            "count": 1
+          },
+          {
+            "identity": 259481,
+            "component": "UnctlInput",
+            "path": "/b",
+            "count": 1
+          }
+        ]
+      },
+      "fibersVisited": 68,
+      "fibersCreated": 2,
+      "inputRemounts": [
+        "/b"
+      ],
+      "inputNewMounts": [],
+      "changedComponentCalls": 0,
+      "proxyCalls": 0,
+      "commits": 1,
+      "passed": true
+    },
+    {
+      "mode": "unctl",
+      "operation": "parent setValue /o (x only)",
+      "otherFieldRenders": 0,
+      "fieldComponentInstances": [
+        {
+          "identity": 259513,
+          "component": "SchemaNodeField",
+          "path": "/o/x",
+          "count": 1
+        },
+        {
+          "identity": 259516,
+          "component": "memo:Anonymous",
+          "path": "/o/x",
+          "count": 1
+        },
+        {
+          "identity": 259517,
+          "component": "class:ErrorBoundary",
+          "path": "/o/x",
+          "count": 1
+        },
+        {
+          "identity": 259518,
+          "component": "FormGroupRenderer",
+          "path": "/o/x",
+          "count": 1
+        },
+        {
+          "identity": 259523,
+          "component": "Anonymous",
+          "path": "/o/x",
+          "count": 1
+        },
+        {
+          "identity": 259524,
+          "component": "memo:Anonymous",
+          "path": "/o/x",
+          "count": 1
+        },
+        {
+          "identity": 259526,
+          "component": "Anonymous",
+          "path": "/o/x",
+          "count": 1
+        },
+        {
+          "identity": 259527,
+          "component": "class:ErrorBoundary",
+          "path": "/o/x",
+          "count": 1
+        },
+        {
+          "identity": 259528,
+          "component": "Input",
+          "path": "/o/x",
+          "count": 1
+        },
+        {
+          "identity": 259529,
+          "component": "UnctlInput",
+          "path": "/o/x",
+          "count": 1
+        }
+      ],
+      "renders": {
+        "total": 30,
+        "byPath": {
+          "": 10,
+          "/o": 10,
+          "/o/x": 10
+        },
+        "byComponent": {
+          "SchemaNodeField": 3,
+          "memo:Anonymous": 6,
+          "class:ErrorBoundary": 6,
+          "FormGroupRenderer": 3,
+          "Anonymous": 6,
+          "Input": 3,
+          "FormTypeInputObject": 2,
+          "UnctlInput": 1
+        },
+        "instances": [
+          {
+            "identity": 259446,
+            "component": "SchemaNodeField",
+            "path": "",
+            "count": 1
+          },
+          {
+            "identity": 259449,
+            "component": "memo:Anonymous",
+            "path": "",
+            "count": 1
+          },
+          {
+            "identity": 259450,
+            "component": "class:ErrorBoundary",
+            "path": "",
+            "count": 1
+          },
+          {
+            "identity": 259451,
+            "component": "FormGroupRenderer",
+            "path": "",
+            "count": 1
+          },
+          {
+            "identity": 259452,
+            "component": "Anonymous",
+            "path": "",
+            "count": 1
+          },
+          {
+            "identity": 259453,
+            "component": "memo:Anonymous",
+            "path": "",
+            "count": 1
+          },
+          {
+            "identity": 259455,
+            "component": "Anonymous",
+            "path": "",
+            "count": 1
+          },
+          {
+            "identity": 259456,
+            "component": "class:ErrorBoundary",
+            "path": "",
+            "count": 1
+          },
+          {
+            "identity": 259457,
+            "component": "Input",
+            "path": "",
+            "count": 1
+          },
+          {
+            "identity": 259458,
+            "component": "FormTypeInputObject",
+            "path": "",
+            "count": 1
+          },
+          {
+            "identity": 259490,
+            "component": "SchemaNodeField",
+            "path": "/o",
+            "count": 1
+          },
+          {
+            "identity": 259493,
+            "component": "memo:Anonymous",
+            "path": "/o",
+            "count": 1
+          },
+          {
+            "identity": 259494,
+            "component": "class:ErrorBoundary",
+            "path": "/o",
+            "count": 1
+          },
+          {
+            "identity": 259495,
+            "component": "FormGroupRenderer",
+            "path": "/o",
+            "count": 1
+          },
+          {
+            "identity": 259501,
+            "component": "Anonymous",
+            "path": "/o",
+            "count": 1
+          },
+          {
+            "identity": 259502,
+            "component": "memo:Anonymous",
+            "path": "/o",
+            "count": 1
+          },
+          {
+            "identity": 259504,
+            "component": "Anonymous",
+            "path": "/o",
+            "count": 1
+          },
+          {
+            "identity": 259505,
+            "component": "class:ErrorBoundary",
+            "path": "/o",
+            "count": 1
+          },
+          {
+            "identity": 259506,
+            "component": "Input",
+            "path": "/o",
+            "count": 1
+          },
+          {
+            "identity": 259507,
+            "component": "FormTypeInputObject",
+            "path": "/o",
+            "count": 1
+          },
+          {
+            "identity": 259513,
+            "component": "SchemaNodeField",
+            "path": "/o/x",
+            "count": 1
+          },
+          {
+            "identity": 259516,
+            "component": "memo:Anonymous",
+            "path": "/o/x",
+            "count": 1
+          },
+          {
+            "identity": 259517,
+            "component": "class:ErrorBoundary",
+            "path": "/o/x",
+            "count": 1
+          },
+          {
+            "identity": 259518,
+            "component": "FormGroupRenderer",
+            "path": "/o/x",
+            "count": 1
+          },
+          {
+            "identity": 259523,
+            "component": "Anonymous",
+            "path": "/o/x",
+            "count": 1
+          },
+          {
+            "identity": 259524,
+            "component": "memo:Anonymous",
+            "path": "/o/x",
+            "count": 1
+          },
+          {
+            "identity": 259526,
+            "component": "Anonymous",
+            "path": "/o/x",
+            "count": 1
+          },
+          {
+            "identity": 259527,
+            "component": "class:ErrorBoundary",
+            "path": "/o/x",
+            "count": 1
+          },
+          {
+            "identity": 259528,
+            "component": "Input",
+            "path": "/o/x",
+            "count": 1
+          },
+          {
+            "identity": 259529,
+            "component": "UnctlInput",
+            "path": "/o/x",
+            "count": 1
+          }
+        ]
+      },
+      "fibersVisited": 92,
+      "fibersCreated": 2,
+      "inputRemounts": [
+        "/o/x"
+      ],
+      "inputNewMounts": [],
+      "changedComponentCalls": 0,
+      "proxyCalls": 0,
+      "commits": 1,
+      "passed": true
+    },
+    {
+      "mode": "unctl",
+      "operation": "Form context prop change",
+      "otherFieldRenders": null,
+      "fieldComponentInstances": [
+        {
+          "identity": 259465,
+          "component": "SchemaNodeField",
+          "path": "/b",
+          "count": 1
+        },
+        {
+          "identity": 259468,
+          "component": "memo:Anonymous",
+          "path": "/b",
+          "count": 1
+        },
+        {
+          "identity": 259469,
+          "component": "class:ErrorBoundary",
+          "path": "/b",
+          "count": 1
+        },
+        {
+          "identity": 259470,
+          "component": "FormGroupRenderer",
+          "path": "/b",
+          "count": 1
+        },
+        {
+          "identity": 259475,
+          "component": "Anonymous",
+          "path": "/b",
+          "count": 1
+        },
+        {
+          "identity": 259476,
+          "component": "memo:Anonymous",
+          "path": "/b",
+          "count": 1
+        },
+        {
+          "identity": 259478,
+          "component": "Anonymous",
+          "path": "/b",
+          "count": 1
+        },
+        {
+          "identity": 259479,
+          "component": "class:ErrorBoundary",
+          "path": "/b",
+          "count": 1
+        },
+        {
+          "identity": 259480,
+          "component": "Input",
+          "path": "/b",
+          "count": 1
+        },
+        {
+          "identity": 259481,
+          "component": "UnctlInput",
+          "path": "/b",
+          "count": 1
+        },
+        {
+          "identity": 259513,
+          "component": "SchemaNodeField",
+          "path": "/o/x",
+          "count": 1
+        },
+        {
+          "identity": 259516,
+          "component": "memo:Anonymous",
+          "path": "/o/x",
+          "count": 1
+        },
+        {
+          "identity": 259517,
+          "component": "class:ErrorBoundary",
+          "path": "/o/x",
+          "count": 1
+        },
+        {
+          "identity": 259518,
+          "component": "FormGroupRenderer",
+          "path": "/o/x",
+          "count": 1
+        },
+        {
+          "identity": 259523,
+          "component": "Anonymous",
+          "path": "/o/x",
+          "count": 1
+        },
+        {
+          "identity": 259524,
+          "component": "memo:Anonymous",
+          "path": "/o/x",
+          "count": 1
+        },
+        {
+          "identity": 259526,
+          "component": "Anonymous",
+          "path": "/o/x",
+          "count": 1
+        },
+        {
+          "identity": 259527,
+          "component": "class:ErrorBoundary",
+          "path": "/o/x",
+          "count": 1
+        },
+        {
+          "identity": 259528,
+          "component": "Input",
+          "path": "/o/x",
+          "count": 1
+        },
+        {
+          "identity": 259529,
+          "component": "UnctlInput",
+          "path": "/o/x",
+          "count": 1
+        },
+        {
+          "identity": 259538,
+          "component": "SchemaNodeField",
+          "path": "/a",
+          "count": 1
+        },
+        {
+          "identity": 259541,
+          "component": "memo:Anonymous",
+          "path": "/a",
+          "count": 1
+        },
+        {
+          "identity": 259542,
+          "component": "class:ErrorBoundary",
+          "path": "/a",
+          "count": 1
+        },
+        {
+          "identity": 259543,
+          "component": "FormGroupRenderer",
+          "path": "/a",
+          "count": 1
+        },
+        {
+          "identity": 259548,
+          "component": "Anonymous",
+          "path": "/a",
+          "count": 1
+        },
+        {
+          "identity": 259549,
+          "component": "memo:Anonymous",
+          "path": "/a",
+          "count": 1
+        },
+        {
+          "identity": 259551,
+          "component": "Anonymous",
+          "path": "/a",
+          "count": 1
+        },
+        {
+          "identity": 259552,
+          "component": "class:ErrorBoundary",
+          "path": "/a",
+          "count": 1
+        },
+        {
+          "identity": 259553,
+          "component": "Input",
+          "path": "/a",
+          "count": 1
+        },
+        {
+          "identity": 259554,
+          "component": "UnctlInput",
+          "path": "/a",
+          "count": 1
+        },
+        {
+          "identity": 259562,
+          "component": "SchemaNodeField",
+          "path": "/o/y",
+          "count": 1
+        },
+        {
+          "identity": 259565,
+          "component": "memo:Anonymous",
+          "path": "/o/y",
+          "count": 1
+        },
+        {
+          "identity": 259566,
+          "component": "class:ErrorBoundary",
+          "path": "/o/y",
+          "count": 1
+        },
+        {
+          "identity": 259567,
+          "component": "FormGroupRenderer",
+          "path": "/o/y",
+          "count": 1
+        },
+        {
+          "identity": 259572,
+          "component": "Anonymous",
+          "path": "/o/y",
+          "count": 1
+        },
+        {
+          "identity": 259573,
+          "component": "memo:Anonymous",
+          "path": "/o/y",
+          "count": 1
+        },
+        {
+          "identity": 259575,
+          "component": "Anonymous",
+          "path": "/o/y",
+          "count": 1
+        },
+        {
+          "identity": 259576,
+          "component": "class:ErrorBoundary",
+          "path": "/o/y",
+          "count": 1
+        },
+        {
+          "identity": 259577,
+          "component": "Input",
+          "path": "/o/y",
+          "count": 1
+        },
+        {
+          "identity": 259578,
+          "component": "UnctlInput",
+          "path": "/o/y",
+          "count": 1
+        }
+      ],
+      "renders": {
+        "total": 76,
+        "byPath": {
+          "(form)": 14,
+          "": 12,
+          "/a": 10,
+          "/b": 10,
+          "/o": 10,
+          "/o/x": 10,
+          "/o/y": 10
+        },
+        "byComponent": {
+          "Host": 1,
+          "fwd:Anonymous": 2,
+          "FormErrorContextProvider": 1,
+          "class:ErrorBoundary": 14,
+          "fwd:FormContents": 1,
+          "WorkspaceContextProvider": 1,
+          "FormTypeInputsContextProvider": 1,
+          "FormTypeRendererContextProvider": 1,
+          "InputControlContextProvider": 1,
+          "VirtualizationContextProvider": 1,
+          "RootNodeContextProvider": 1,
+          "memo:Anonymous": 13,
+          "SchemaNodeProxy": 1,
+          "Anonymous": 13,
+          "SchemaNodeField": 6,
+          "FormGroupRenderer": 6,
+          "Input": 6,
+          "FormTypeInputObject": 2,
+          "UnctlInput": 4
+        },
+        "instances": [
+          {
+            "identity": 259419,
+            "component": "Host",
+            "path": "(form)",
+            "count": 1
+          },
+          {
+            "identity": 259421,
+            "component": "fwd:Anonymous",
+            "path": "(form)",
+            "count": 1
+          },
+          {
+            "identity": 259422,
+            "component": "FormErrorContextProvider",
+            "path": "(form)",
+            "count": 1
+          },
+          {
+            "identity": 259424,
+            "component": "fwd:Anonymous",
+            "path": "(form)",
+            "count": 1
+          },
+          {
+            "identity": 259425,
+            "component": "class:ErrorBoundary",
+            "path": "(form)",
+            "count": 1
+          },
+          {
+            "identity": 259426,
+            "component": "fwd:FormContents",
+            "path": "(form)",
+            "count": 1
+          },
+          {
+            "identity": 259427,
+            "component": "WorkspaceContextProvider",
+            "path": "(form)",
+            "count": 1
+          },
+          {
+            "identity": 259429,
+            "component": "FormTypeInputsContextProvider",
+            "path": "(form)",
+            "count": 1
+          },
+          {
+            "identity": 259431,
+            "component": "FormTypeRendererContextProvider",
+            "path": "(form)",
+            "count": 1
+          },
+          {
+            "identity": 259433,
+            "component": "InputControlContextProvider",
+            "path": "(form)",
+            "count": 1
+          },
+          {
+            "identity": 259435,
+            "component": "VirtualizationContextProvider",
+            "path": "(form)",
+            "count": 1
+          },
+          {
+            "identity": 259437,
+            "component": "RootNodeContextProvider",
+            "path": "(form)",
+            "count": 1
+          },
+          {
+            "identity": 259440,
+            "component": "memo:Anonymous",
+            "path": "(form)",
+            "count": 1
+          },
+          {
+            "identity": 259442,
+            "component": "SchemaNodeProxy",
+            "path": "(form)",
+            "count": 1
+          },
+          {
+            "identity": 259444,
+            "component": "Anonymous",
+            "path": "",
+            "count": 1
+          },
+          {
+            "identity": 259445,
+            "component": "class:ErrorBoundary",
+            "path": "",
+            "count": 1
+          },
+          {
+            "identity": 259446,
+            "component": "SchemaNodeField",
+            "path": "",
+            "count": 1
+          },
+          {
+            "identity": 259449,
+            "component": "memo:Anonymous",
+            "path": "",
+            "count": 1
+          },
+          {
+            "identity": 259450,
+            "component": "class:ErrorBoundary",
+            "path": "",
+            "count": 1
+          },
+          {
+            "identity": 259451,
+            "component": "FormGroupRenderer",
+            "path": "",
+            "count": 1
+          },
+          {
+            "identity": 259452,
+            "component": "Anonymous",
+            "path": "",
+            "count": 1
+          },
+          {
+            "identity": 259453,
+            "component": "memo:Anonymous",
+            "path": "",
+            "count": 1
+          },
+          {
+            "identity": 259455,
+            "component": "Anonymous",
+            "path": "",
+            "count": 1
+          },
+          {
+            "identity": 259456,
+            "component": "class:ErrorBoundary",
+            "path": "",
+            "count": 1
+          },
+          {
+            "identity": 259457,
+            "component": "Input",
+            "path": "",
+            "count": 1
+          },
+          {
+            "identity": 259458,
+            "component": "FormTypeInputObject",
+            "path": "",
+            "count": 1
+          },
+          {
+            "identity": 259465,
+            "component": "SchemaNodeField",
+            "path": "/b",
+            "count": 1
+          },
+          {
+            "identity": 259468,
+            "component": "memo:Anonymous",
+            "path": "/b",
+            "count": 1
+          },
+          {
+            "identity": 259469,
+            "component": "class:ErrorBoundary",
+            "path": "/b",
+            "count": 1
+          },
+          {
+            "identity": 259470,
+            "component": "FormGroupRenderer",
+            "path": "/b",
+            "count": 1
+          },
+          {
+            "identity": 259475,
+            "component": "Anonymous",
+            "path": "/b",
+            "count": 1
+          },
+          {
+            "identity": 259476,
+            "component": "memo:Anonymous",
+            "path": "/b",
+            "count": 1
+          },
+          {
+            "identity": 259478,
+            "component": "Anonymous",
+            "path": "/b",
+            "count": 1
+          },
+          {
+            "identity": 259479,
+            "component": "class:ErrorBoundary",
+            "path": "/b",
+            "count": 1
+          },
+          {
+            "identity": 259480,
+            "component": "Input",
+            "path": "/b",
+            "count": 1
+          },
+          {
+            "identity": 259481,
+            "component": "UnctlInput",
+            "path": "/b",
+            "count": 1
+          },
+          {
+            "identity": 259490,
+            "component": "SchemaNodeField",
+            "path": "/o",
+            "count": 1
+          },
+          {
+            "identity": 259493,
+            "component": "memo:Anonymous",
+            "path": "/o",
+            "count": 1
+          },
+          {
+            "identity": 259494,
+            "component": "class:ErrorBoundary",
+            "path": "/o",
+            "count": 1
+          },
+          {
+            "identity": 259495,
+            "component": "FormGroupRenderer",
+            "path": "/o",
+            "count": 1
+          },
+          {
+            "identity": 259501,
+            "component": "Anonymous",
+            "path": "/o",
+            "count": 1
+          },
+          {
+            "identity": 259502,
+            "component": "memo:Anonymous",
+            "path": "/o",
+            "count": 1
+          },
+          {
+            "identity": 259504,
+            "component": "Anonymous",
+            "path": "/o",
+            "count": 1
+          },
+          {
+            "identity": 259505,
+            "component": "class:ErrorBoundary",
+            "path": "/o",
+            "count": 1
+          },
+          {
+            "identity": 259506,
+            "component": "Input",
+            "path": "/o",
+            "count": 1
+          },
+          {
+            "identity": 259507,
+            "component": "FormTypeInputObject",
+            "path": "/o",
+            "count": 1
+          },
+          {
+            "identity": 259513,
+            "component": "SchemaNodeField",
+            "path": "/o/x",
+            "count": 1
+          },
+          {
+            "identity": 259516,
+            "component": "memo:Anonymous",
+            "path": "/o/x",
+            "count": 1
+          },
+          {
+            "identity": 259517,
+            "component": "class:ErrorBoundary",
+            "path": "/o/x",
+            "count": 1
+          },
+          {
+            "identity": 259518,
+            "component": "FormGroupRenderer",
+            "path": "/o/x",
+            "count": 1
+          },
+          {
+            "identity": 259523,
+            "component": "Anonymous",
+            "path": "/o/x",
+            "count": 1
+          },
+          {
+            "identity": 259524,
+            "component": "memo:Anonymous",
+            "path": "/o/x",
+            "count": 1
+          },
+          {
+            "identity": 259526,
+            "component": "Anonymous",
+            "path": "/o/x",
+            "count": 1
+          },
+          {
+            "identity": 259527,
+            "component": "class:ErrorBoundary",
+            "path": "/o/x",
+            "count": 1
+          },
+          {
+            "identity": 259528,
+            "component": "Input",
+            "path": "/o/x",
+            "count": 1
+          },
+          {
+            "identity": 259529,
+            "component": "UnctlInput",
+            "path": "/o/x",
+            "count": 1
+          },
+          {
+            "identity": 259538,
+            "component": "SchemaNodeField",
+            "path": "/a",
+            "count": 1
+          },
+          {
+            "identity": 259541,
+            "component": "memo:Anonymous",
+            "path": "/a",
+            "count": 1
+          },
+          {
+            "identity": 259542,
+            "component": "class:ErrorBoundary",
+            "path": "/a",
+            "count": 1
+          },
+          {
+            "identity": 259543,
+            "component": "FormGroupRenderer",
+            "path": "/a",
+            "count": 1
+          },
+          {
+            "identity": 259548,
+            "component": "Anonymous",
+            "path": "/a",
+            "count": 1
+          },
+          {
+            "identity": 259549,
+            "component": "memo:Anonymous",
+            "path": "/a",
+            "count": 1
+          },
+          {
+            "identity": 259551,
+            "component": "Anonymous",
+            "path": "/a",
+            "count": 1
+          },
+          {
+            "identity": 259552,
+            "component": "class:ErrorBoundary",
+            "path": "/a",
+            "count": 1
+          },
+          {
+            "identity": 259553,
+            "component": "Input",
+            "path": "/a",
+            "count": 1
+          },
+          {
+            "identity": 259554,
+            "component": "UnctlInput",
+            "path": "/a",
+            "count": 1
+          },
+          {
+            "identity": 259562,
+            "component": "SchemaNodeField",
+            "path": "/o/y",
+            "count": 1
+          },
+          {
+            "identity": 259565,
+            "component": "memo:Anonymous",
+            "path": "/o/y",
+            "count": 1
+          },
+          {
+            "identity": 259566,
+            "component": "class:ErrorBoundary",
+            "path": "/o/y",
+            "count": 1
+          },
+          {
+            "identity": 259567,
+            "component": "FormGroupRenderer",
+            "path": "/o/y",
+            "count": 1
+          },
+          {
+            "identity": 259572,
+            "component": "Anonymous",
+            "path": "/o/y",
+            "count": 1
+          },
+          {
+            "identity": 259573,
+            "component": "memo:Anonymous",
+            "path": "/o/y",
+            "count": 1
+          },
+          {
+            "identity": 259575,
+            "component": "Anonymous",
+            "path": "/o/y",
+            "count": 1
+          },
+          {
+            "identity": 259576,
+            "component": "class:ErrorBoundary",
+            "path": "/o/y",
+            "count": 1
+          },
+          {
+            "identity": 259577,
+            "component": "Input",
+            "path": "/o/y",
+            "count": 1
+          },
+          {
+            "identity": 259578,
+            "component": "UnctlInput",
+            "path": "/o/y",
+            "count": 1
+          }
+        ]
+      },
+      "fibersVisited": 164,
+      "fibersCreated": 0,
+      "inputRemounts": [],
+      "inputNewMounts": [],
+      "changedComponentCalls": 1,
+      "proxyCalls": 1,
+      "commits": 1,
+      "passed": true
+    }
+  ],
+  "fap": [
+    {
+      "mode": "ctl",
+      "operation": "sibling setValue /b",
+      "otherFieldRenders": 0,
+      "fieldComponentInstances": [
+        {
+          "identity": 218429,
+          "component": "SchemaNodeProxy",
+          "path": "/b",
+          "count": 1
+        },
+        {
+          "identity": 218432,
+          "component": "class:ErrorBoundary",
+          "path": "/b",
+          "count": 1
+        },
+        {
+          "identity": 218433,
+          "component": "RendererWithErrorMessage",
+          "path": "/b",
+          "count": 1
+        },
+        {
+          "identity": 218434,
+          "component": "memo:FormGroupRenderer",
+          "path": "/b",
+          "count": 1
+        },
+        {
+          "identity": 218439,
+          "component": "Anonymous",
+          "path": "/b",
+          "count": 1
+        },
+        {
+          "identity": 218440,
+          "component": "memo:Anonymous",
+          "path": "/b",
+          "count": 1
+        },
+        {
+          "identity": 218442,
+          "component": "FormTypeInputBoundary",
+          "path": "/b",
+          "count": 1
+        },
+        {
+          "identity": 218443,
+          "component": "class:ErrorBoundary",
+          "path": "/b",
+          "count": 1
+        },
+        {
+          "identity": 218444,
+          "component": "Input",
+          "path": "/b",
+          "count": 1
+        },
+        {
+          "identity": 218445,
+          "component": "CtlInput",
+          "path": "/b",
+          "count": 1
+        }
+      ],
+      "renders": {
+        "total": 20,
+        "byPath": {
+          "(form)": 1,
+          "": 9,
+          "/b": 10
+        },
+        "byComponent": {
+          "SchemaNodeProxy": 2,
+          "class:ErrorBoundary": 4,
+          "RendererWithErrorMessage": 2,
+          "memo:FormGroupRenderer": 2,
+          "Anonymous": 2,
+          "memo:Anonymous": 2,
+          "FormTypeInputBoundary": 2,
+          "Input": 2,
+          "FormTypeInputObject": 1,
+          "CtlInput": 1
+        },
+        "instances": [
+          {
+            "identity": 218414,
+            "component": "SchemaNodeProxy",
+            "path": "(form)",
+            "count": 1
+          },
+          {
+            "identity": 218417,
+            "component": "class:ErrorBoundary",
+            "path": "",
+            "count": 1
+          },
+          {
+            "identity": 218418,
+            "component": "RendererWithErrorMessage",
+            "path": "",
+            "count": 1
+          },
+          {
+            "identity": 218419,
+            "component": "memo:FormGroupRenderer",
+            "path": "",
+            "count": 1
+          },
+          {
+            "identity": 218420,
+            "component": "Anonymous",
+            "path": "",
+            "count": 1
+          },
+          {
+            "identity": 218421,
+            "component": "memo:Anonymous",
+            "path": "",
+            "count": 1
+          },
+          {
+            "identity": 218423,
+            "component": "FormTypeInputBoundary",
+            "path": "",
+            "count": 1
+          },
+          {
+            "identity": 218424,
+            "component": "class:ErrorBoundary",
+            "path": "",
+            "count": 1
+          },
+          {
+            "identity": 218425,
+            "component": "Input",
+            "path": "",
+            "count": 1
+          },
+          {
+            "identity": 218426,
+            "component": "FormTypeInputObject",
+            "path": "",
+            "count": 1
+          },
+          {
+            "identity": 218429,
+            "component": "SchemaNodeProxy",
+            "path": "/b",
+            "count": 1
+          },
+          {
+            "identity": 218432,
+            "component": "class:ErrorBoundary",
+            "path": "/b",
+            "count": 1
+          },
+          {
+            "identity": 218433,
+            "component": "RendererWithErrorMessage",
+            "path": "/b",
+            "count": 1
+          },
+          {
+            "identity": 218434,
+            "component": "memo:FormGroupRenderer",
+            "path": "/b",
+            "count": 1
+          },
+          {
+            "identity": 218439,
+            "component": "Anonymous",
+            "path": "/b",
+            "count": 1
+          },
+          {
+            "identity": 218440,
+            "component": "memo:Anonymous",
+            "path": "/b",
+            "count": 1
+          },
+          {
+            "identity": 218442,
+            "component": "FormTypeInputBoundary",
+            "path": "/b",
+            "count": 1
+          },
+          {
+            "identity": 218443,
+            "component": "class:ErrorBoundary",
+            "path": "/b",
+            "count": 1
+          },
+          {
+            "identity": 218444,
+            "component": "Input",
+            "path": "/b",
+            "count": 1
+          },
+          {
+            "identity": 218445,
+            "component": "CtlInput",
+            "path": "/b",
+            "count": 1
+          }
+        ]
+      },
+      "fibersVisited": 60,
+      "fibersCreated": 2,
+      "inputRemounts": [
+        "/b"
+      ],
+      "inputNewMounts": [],
+      "changedComponentCalls": 6,
+      "proxyCalls": 2,
+      "commits": 1,
+      "passed": true
+    },
+    {
+      "mode": "ctl",
+      "operation": "parent setValue /o (x only)",
+      "otherFieldRenders": 0,
+      "fieldComponentInstances": [
+        {
+          "identity": 218469,
+          "component": "SchemaNodeProxy",
+          "path": "/o/x",
+          "count": 1
+        },
+        {
+          "identity": 218472,
+          "component": "class:ErrorBoundary",
+          "path": "/o/x",
+          "count": 1
+        },
+        {
+          "identity": 218473,
+          "component": "RendererWithErrorMessage",
+          "path": "/o/x",
+          "count": 1
+        },
+        {
+          "identity": 218474,
+          "component": "memo:FormGroupRenderer",
+          "path": "/o/x",
+          "count": 1
+        },
+        {
+          "identity": 218479,
+          "component": "Anonymous",
+          "path": "/o/x",
+          "count": 1
+        },
+        {
+          "identity": 218480,
+          "component": "memo:Anonymous",
+          "path": "/o/x",
+          "count": 1
+        },
+        {
+          "identity": 218482,
+          "component": "FormTypeInputBoundary",
+          "path": "/o/x",
+          "count": 1
+        },
+        {
+          "identity": 218483,
+          "component": "class:ErrorBoundary",
+          "path": "/o/x",
+          "count": 1
+        },
+        {
+          "identity": 218484,
+          "component": "Input",
+          "path": "/o/x",
+          "count": 1
+        },
+        {
+          "identity": 218485,
+          "component": "CtlInput",
+          "path": "/o/x",
+          "count": 1
+        }
+      ],
+      "renders": {
+        "total": 30,
+        "byPath": {
+          "(form)": 1,
+          "": 9,
+          "/o": 10,
+          "/o/x": 10
+        },
+        "byComponent": {
+          "SchemaNodeProxy": 3,
+          "class:ErrorBoundary": 6,
+          "RendererWithErrorMessage": 3,
+          "memo:FormGroupRenderer": 3,
+          "Anonymous": 3,
+          "memo:Anonymous": 3,
+          "FormTypeInputBoundary": 3,
+          "Input": 3,
+          "FormTypeInputObject": 2,
+          "CtlInput": 1
+        },
+        "instances": [
+          {
+            "identity": 218414,
+            "component": "SchemaNodeProxy",
+            "path": "(form)",
+            "count": 1
+          },
+          {
+            "identity": 218417,
+            "component": "class:ErrorBoundary",
+            "path": "",
+            "count": 1
+          },
+          {
+            "identity": 218418,
+            "component": "RendererWithErrorMessage",
+            "path": "",
+            "count": 1
+          },
+          {
+            "identity": 218419,
+            "component": "memo:FormGroupRenderer",
+            "path": "",
+            "count": 1
+          },
+          {
+            "identity": 218420,
+            "component": "Anonymous",
+            "path": "",
+            "count": 1
+          },
+          {
+            "identity": 218421,
+            "component": "memo:Anonymous",
+            "path": "",
+            "count": 1
+          },
+          {
+            "identity": 218423,
+            "component": "FormTypeInputBoundary",
+            "path": "",
+            "count": 1
+          },
+          {
+            "identity": 218424,
+            "component": "class:ErrorBoundary",
+            "path": "",
+            "count": 1
+          },
+          {
+            "identity": 218425,
+            "component": "Input",
+            "path": "",
+            "count": 1
+          },
+          {
+            "identity": 218426,
+            "component": "FormTypeInputObject",
+            "path": "",
+            "count": 1
+          },
+          {
+            "identity": 218450,
+            "component": "SchemaNodeProxy",
+            "path": "/o",
+            "count": 1
+          },
+          {
+            "identity": 218453,
+            "component": "class:ErrorBoundary",
+            "path": "/o",
+            "count": 1
+          },
+          {
+            "identity": 218454,
+            "component": "RendererWithErrorMessage",
+            "path": "/o",
+            "count": 1
+          },
+          {
+            "identity": 218455,
+            "component": "memo:FormGroupRenderer",
+            "path": "/o",
+            "count": 1
+          },
+          {
+            "identity": 218461,
+            "component": "Anonymous",
+            "path": "/o",
+            "count": 1
+          },
+          {
+            "identity": 218462,
+            "component": "memo:Anonymous",
+            "path": "/o",
+            "count": 1
+          },
+          {
+            "identity": 218464,
+            "component": "FormTypeInputBoundary",
+            "path": "/o",
+            "count": 1
+          },
+          {
+            "identity": 218465,
+            "component": "class:ErrorBoundary",
+            "path": "/o",
+            "count": 1
+          },
+          {
+            "identity": 218466,
+            "component": "Input",
+            "path": "/o",
+            "count": 1
+          },
+          {
+            "identity": 218467,
+            "component": "FormTypeInputObject",
+            "path": "/o",
+            "count": 1
+          },
+          {
+            "identity": 218469,
+            "component": "SchemaNodeProxy",
+            "path": "/o/x",
+            "count": 1
+          },
+          {
+            "identity": 218472,
+            "component": "class:ErrorBoundary",
+            "path": "/o/x",
+            "count": 1
+          },
+          {
+            "identity": 218473,
+            "component": "RendererWithErrorMessage",
+            "path": "/o/x",
+            "count": 1
+          },
+          {
+            "identity": 218474,
+            "component": "memo:FormGroupRenderer",
+            "path": "/o/x",
+            "count": 1
+          },
+          {
+            "identity": 218479,
+            "component": "Anonymous",
+            "path": "/o/x",
+            "count": 1
+          },
+          {
+            "identity": 218480,
+            "component": "memo:Anonymous",
+            "path": "/o/x",
+            "count": 1
+          },
+          {
+            "identity": 218482,
+            "component": "FormTypeInputBoundary",
+            "path": "/o/x",
+            "count": 1
+          },
+          {
+            "identity": 218483,
+            "component": "class:ErrorBoundary",
+            "path": "/o/x",
+            "count": 1
+          },
+          {
+            "identity": 218484,
+            "component": "Input",
+            "path": "/o/x",
+            "count": 1
+          },
+          {
+            "identity": 218485,
+            "component": "CtlInput",
+            "path": "/o/x",
+            "count": 1
+          }
+        ]
+      },
+      "fibersVisited": 80,
+      "fibersCreated": 2,
+      "inputRemounts": [
+        "/o/x"
+      ],
+      "inputNewMounts": [],
+      "changedComponentCalls": 9,
+      "proxyCalls": 3,
+      "commits": 1,
+      "passed": true
+    },
+    {
+      "mode": "ctl",
+      "operation": "Form context prop change",
+      "otherFieldRenders": null,
+      "fieldComponentInstances": [
+        {
+          "identity": 218429,
+          "component": "SchemaNodeProxy",
+          "path": "/b",
+          "count": 1
+        },
+        {
+          "identity": 218432,
+          "component": "class:ErrorBoundary",
+          "path": "/b",
+          "count": 1
+        },
+        {
+          "identity": 218433,
+          "component": "RendererWithErrorMessage",
+          "path": "/b",
+          "count": 1
+        },
+        {
+          "identity": 218434,
+          "component": "memo:FormGroupRenderer",
+          "path": "/b",
+          "count": 1
+        },
+        {
+          "identity": 218439,
+          "component": "Anonymous",
+          "path": "/b",
+          "count": 1
+        },
+        {
+          "identity": 218440,
+          "component": "memo:Anonymous",
+          "path": "/b",
+          "count": 1
+        },
+        {
+          "identity": 218442,
+          "component": "FormTypeInputBoundary",
+          "path": "/b",
+          "count": 1
+        },
+        {
+          "identity": 218443,
+          "component": "class:ErrorBoundary",
+          "path": "/b",
+          "count": 1
+        },
+        {
+          "identity": 218444,
+          "component": "Input",
+          "path": "/b",
+          "count": 1
+        },
+        {
+          "identity": 218445,
+          "component": "CtlInput",
+          "path": "/b",
+          "count": 1
+        },
+        {
+          "identity": 218469,
+          "component": "SchemaNodeProxy",
+          "path": "/o/x",
+          "count": 1
+        },
+        {
+          "identity": 218472,
+          "component": "class:ErrorBoundary",
+          "path": "/o/x",
+          "count": 1
+        },
+        {
+          "identity": 218473,
+          "component": "RendererWithErrorMessage",
+          "path": "/o/x",
+          "count": 1
+        },
+        {
+          "identity": 218474,
+          "component": "memo:FormGroupRenderer",
+          "path": "/o/x",
+          "count": 1
+        },
+        {
+          "identity": 218479,
+          "component": "Anonymous",
+          "path": "/o/x",
+          "count": 1
+        },
+        {
+          "identity": 218480,
+          "component": "memo:Anonymous",
+          "path": "/o/x",
+          "count": 1
+        },
+        {
+          "identity": 218482,
+          "component": "FormTypeInputBoundary",
+          "path": "/o/x",
+          "count": 1
+        },
+        {
+          "identity": 218483,
+          "component": "class:ErrorBoundary",
+          "path": "/o/x",
+          "count": 1
+        },
+        {
+          "identity": 218484,
+          "component": "Input",
+          "path": "/o/x",
+          "count": 1
+        },
+        {
+          "identity": 218485,
+          "component": "CtlInput",
+          "path": "/o/x",
+          "count": 1
+        },
+        {
+          "identity": 218490,
+          "component": "SchemaNodeProxy",
+          "path": "/a",
+          "count": 1
+        },
+        {
+          "identity": 218493,
+          "component": "class:ErrorBoundary",
+          "path": "/a",
+          "count": 1
+        },
+        {
+          "identity": 218494,
+          "component": "RendererWithErrorMessage",
+          "path": "/a",
+          "count": 1
+        },
+        {
+          "identity": 218495,
+          "component": "memo:FormGroupRenderer",
+          "path": "/a",
+          "count": 1
+        },
+        {
+          "identity": 218500,
+          "component": "Anonymous",
+          "path": "/a",
+          "count": 1
+        },
+        {
+          "identity": 218501,
+          "component": "memo:Anonymous",
+          "path": "/a",
+          "count": 1
+        },
+        {
+          "identity": 218503,
+          "component": "FormTypeInputBoundary",
+          "path": "/a",
+          "count": 1
+        },
+        {
+          "identity": 218504,
+          "component": "class:ErrorBoundary",
+          "path": "/a",
+          "count": 1
+        },
+        {
+          "identity": 218505,
+          "component": "Input",
+          "path": "/a",
+          "count": 1
+        },
+        {
+          "identity": 218506,
+          "component": "CtlInput",
+          "path": "/a",
+          "count": 1
+        },
+        {
+          "identity": 218510,
+          "component": "SchemaNodeProxy",
+          "path": "/o/y",
+          "count": 1
+        },
+        {
+          "identity": 218513,
+          "component": "class:ErrorBoundary",
+          "path": "/o/y",
+          "count": 1
+        },
+        {
+          "identity": 218514,
+          "component": "RendererWithErrorMessage",
+          "path": "/o/y",
+          "count": 1
+        },
+        {
+          "identity": 218515,
+          "component": "memo:FormGroupRenderer",
+          "path": "/o/y",
+          "count": 1
+        },
+        {
+          "identity": 218520,
+          "component": "Anonymous",
+          "path": "/o/y",
+          "count": 1
+        },
+        {
+          "identity": 218521,
+          "component": "memo:Anonymous",
+          "path": "/o/y",
+          "count": 1
+        },
+        {
+          "identity": 218523,
+          "component": "FormTypeInputBoundary",
+          "path": "/o/y",
+          "count": 1
+        },
+        {
+          "identity": 218524,
+          "component": "class:ErrorBoundary",
+          "path": "/o/y",
+          "count": 1
+        },
+        {
+          "identity": 218525,
+          "component": "Input",
+          "path": "/o/y",
+          "count": 1
+        },
+        {
+          "identity": 218526,
+          "component": "CtlInput",
+          "path": "/o/y",
+          "count": 1
+        }
+      ],
+      "renders": {
+        "total": 73,
+        "byPath": {
+          "(form)": 14,
+          "": 9,
+          "/a": 10,
+          "/b": 10,
+          "/o": 10,
+          "/o/x": 10,
+          "/o/y": 10
+        },
+        "byComponent": {
+          "Host": 1,
+          "fwd:Anonymous": 2,
+          "FormErrorContextProvider": 1,
+          "class:ErrorBoundary": 13,
+          "fwd:FormContents": 1,
+          "WorkspaceContextProvider": 1,
+          "FormTypeInputsContextProvider": 1,
+          "FormTypeRendererContextProvider": 1,
+          "InputControlContextProvider": 1,
+          "VirtualizationContextProvider": 1,
+          "RootNodeContextProvider": 1,
+          "memo:Anonymous": 7,
+          "SchemaNodeProxy": 6,
+          "RendererWithErrorMessage": 6,
+          "memo:FormGroupRenderer": 6,
+          "Anonymous": 6,
+          "FormTypeInputBoundary": 6,
+          "Input": 6,
+          "FormTypeInputObject": 2,
+          "CtlInput": 4
+        },
+        "instances": [
+          {
+            "identity": 218391,
+            "component": "Host",
+            "path": "(form)",
+            "count": 1
+          },
+          {
+            "identity": 218393,
+            "component": "fwd:Anonymous",
+            "path": "(form)",
+            "count": 1
+          },
+          {
+            "identity": 218394,
+            "component": "FormErrorContextProvider",
+            "path": "(form)",
+            "count": 1
+          },
+          {
+            "identity": 218396,
+            "component": "fwd:Anonymous",
+            "path": "(form)",
+            "count": 1
+          },
+          {
+            "identity": 218397,
+            "component": "class:ErrorBoundary",
+            "path": "(form)",
+            "count": 1
+          },
+          {
+            "identity": 218398,
+            "component": "fwd:FormContents",
+            "path": "(form)",
+            "count": 1
+          },
+          {
+            "identity": 218399,
+            "component": "WorkspaceContextProvider",
+            "path": "(form)",
+            "count": 1
+          },
+          {
+            "identity": 218401,
+            "component": "FormTypeInputsContextProvider",
+            "path": "(form)",
+            "count": 1
+          },
+          {
+            "identity": 218403,
+            "component": "FormTypeRendererContextProvider",
+            "path": "(form)",
+            "count": 1
+          },
+          {
+            "identity": 218405,
+            "component": "InputControlContextProvider",
+            "path": "(form)",
+            "count": 1
+          },
+          {
+            "identity": 218407,
+            "component": "VirtualizationContextProvider",
+            "path": "(form)",
+            "count": 1
+          },
+          {
+            "identity": 218409,
+            "component": "RootNodeContextProvider",
+            "path": "(form)",
+            "count": 1
+          },
+          {
+            "identity": 218412,
+            "component": "memo:Anonymous",
+            "path": "(form)",
+            "count": 1
+          },
+          {
+            "identity": 218414,
+            "component": "SchemaNodeProxy",
+            "path": "(form)",
+            "count": 1
+          },
+          {
+            "identity": 218417,
+            "component": "class:ErrorBoundary",
+            "path": "",
+            "count": 1
+          },
+          {
+            "identity": 218418,
+            "component": "RendererWithErrorMessage",
+            "path": "",
+            "count": 1
+          },
+          {
+            "identity": 218419,
+            "component": "memo:FormGroupRenderer",
+            "path": "",
+            "count": 1
+          },
+          {
+            "identity": 218420,
+            "component": "Anonymous",
+            "path": "",
+            "count": 1
+          },
+          {
+            "identity": 218421,
+            "component": "memo:Anonymous",
+            "path": "",
+            "count": 1
+          },
+          {
+            "identity": 218423,
+            "component": "FormTypeInputBoundary",
+            "path": "",
+            "count": 1
+          },
+          {
+            "identity": 218424,
+            "component": "class:ErrorBoundary",
+            "path": "",
+            "count": 1
+          },
+          {
+            "identity": 218425,
+            "component": "Input",
+            "path": "",
+            "count": 1
+          },
+          {
+            "identity": 218426,
+            "component": "FormTypeInputObject",
+            "path": "",
+            "count": 1
+          },
+          {
+            "identity": 218429,
+            "component": "SchemaNodeProxy",
+            "path": "/b",
+            "count": 1
+          },
+          {
+            "identity": 218432,
+            "component": "class:ErrorBoundary",
+            "path": "/b",
+            "count": 1
+          },
+          {
+            "identity": 218433,
+            "component": "RendererWithErrorMessage",
+            "path": "/b",
+            "count": 1
+          },
+          {
+            "identity": 218434,
+            "component": "memo:FormGroupRenderer",
+            "path": "/b",
+            "count": 1
+          },
+          {
+            "identity": 218439,
+            "component": "Anonymous",
+            "path": "/b",
+            "count": 1
+          },
+          {
+            "identity": 218440,
+            "component": "memo:Anonymous",
+            "path": "/b",
+            "count": 1
+          },
+          {
+            "identity": 218442,
+            "component": "FormTypeInputBoundary",
+            "path": "/b",
+            "count": 1
+          },
+          {
+            "identity": 218443,
+            "component": "class:ErrorBoundary",
+            "path": "/b",
+            "count": 1
+          },
+          {
+            "identity": 218444,
+            "component": "Input",
+            "path": "/b",
+            "count": 1
+          },
+          {
+            "identity": 218445,
+            "component": "CtlInput",
+            "path": "/b",
+            "count": 1
+          },
+          {
+            "identity": 218450,
+            "component": "SchemaNodeProxy",
+            "path": "/o",
+            "count": 1
+          },
+          {
+            "identity": 218453,
+            "component": "class:ErrorBoundary",
+            "path": "/o",
+            "count": 1
+          },
+          {
+            "identity": 218454,
+            "component": "RendererWithErrorMessage",
+            "path": "/o",
+            "count": 1
+          },
+          {
+            "identity": 218455,
+            "component": "memo:FormGroupRenderer",
+            "path": "/o",
+            "count": 1
+          },
+          {
+            "identity": 218461,
+            "component": "Anonymous",
+            "path": "/o",
+            "count": 1
+          },
+          {
+            "identity": 218462,
+            "component": "memo:Anonymous",
+            "path": "/o",
+            "count": 1
+          },
+          {
+            "identity": 218464,
+            "component": "FormTypeInputBoundary",
+            "path": "/o",
+            "count": 1
+          },
+          {
+            "identity": 218465,
+            "component": "class:ErrorBoundary",
+            "path": "/o",
+            "count": 1
+          },
+          {
+            "identity": 218466,
+            "component": "Input",
+            "path": "/o",
+            "count": 1
+          },
+          {
+            "identity": 218467,
+            "component": "FormTypeInputObject",
+            "path": "/o",
+            "count": 1
+          },
+          {
+            "identity": 218469,
+            "component": "SchemaNodeProxy",
+            "path": "/o/x",
+            "count": 1
+          },
+          {
+            "identity": 218472,
+            "component": "class:ErrorBoundary",
+            "path": "/o/x",
+            "count": 1
+          },
+          {
+            "identity": 218473,
+            "component": "RendererWithErrorMessage",
+            "path": "/o/x",
+            "count": 1
+          },
+          {
+            "identity": 218474,
+            "component": "memo:FormGroupRenderer",
+            "path": "/o/x",
+            "count": 1
+          },
+          {
+            "identity": 218479,
+            "component": "Anonymous",
+            "path": "/o/x",
+            "count": 1
+          },
+          {
+            "identity": 218480,
+            "component": "memo:Anonymous",
+            "path": "/o/x",
+            "count": 1
+          },
+          {
+            "identity": 218482,
+            "component": "FormTypeInputBoundary",
+            "path": "/o/x",
+            "count": 1
+          },
+          {
+            "identity": 218483,
+            "component": "class:ErrorBoundary",
+            "path": "/o/x",
+            "count": 1
+          },
+          {
+            "identity": 218484,
+            "component": "Input",
+            "path": "/o/x",
+            "count": 1
+          },
+          {
+            "identity": 218485,
+            "component": "CtlInput",
+            "path": "/o/x",
+            "count": 1
+          },
+          {
+            "identity": 218490,
+            "component": "SchemaNodeProxy",
+            "path": "/a",
+            "count": 1
+          },
+          {
+            "identity": 218493,
+            "component": "class:ErrorBoundary",
+            "path": "/a",
+            "count": 1
+          },
+          {
+            "identity": 218494,
+            "component": "RendererWithErrorMessage",
+            "path": "/a",
+            "count": 1
+          },
+          {
+            "identity": 218495,
+            "component": "memo:FormGroupRenderer",
+            "path": "/a",
+            "count": 1
+          },
+          {
+            "identity": 218500,
+            "component": "Anonymous",
+            "path": "/a",
+            "count": 1
+          },
+          {
+            "identity": 218501,
+            "component": "memo:Anonymous",
+            "path": "/a",
+            "count": 1
+          },
+          {
+            "identity": 218503,
+            "component": "FormTypeInputBoundary",
+            "path": "/a",
+            "count": 1
+          },
+          {
+            "identity": 218504,
+            "component": "class:ErrorBoundary",
+            "path": "/a",
+            "count": 1
+          },
+          {
+            "identity": 218505,
+            "component": "Input",
+            "path": "/a",
+            "count": 1
+          },
+          {
+            "identity": 218506,
+            "component": "CtlInput",
+            "path": "/a",
+            "count": 1
+          },
+          {
+            "identity": 218510,
+            "component": "SchemaNodeProxy",
+            "path": "/o/y",
+            "count": 1
+          },
+          {
+            "identity": 218513,
+            "component": "class:ErrorBoundary",
+            "path": "/o/y",
+            "count": 1
+          },
+          {
+            "identity": 218514,
+            "component": "RendererWithErrorMessage",
+            "path": "/o/y",
+            "count": 1
+          },
+          {
+            "identity": 218515,
+            "component": "memo:FormGroupRenderer",
+            "path": "/o/y",
+            "count": 1
+          },
+          {
+            "identity": 218520,
+            "component": "Anonymous",
+            "path": "/o/y",
+            "count": 1
+          },
+          {
+            "identity": 218521,
+            "component": "memo:Anonymous",
+            "path": "/o/y",
+            "count": 1
+          },
+          {
+            "identity": 218523,
+            "component": "FormTypeInputBoundary",
+            "path": "/o/y",
+            "count": 1
+          },
+          {
+            "identity": 218524,
+            "component": "class:ErrorBoundary",
+            "path": "/o/y",
+            "count": 1
+          },
+          {
+            "identity": 218525,
+            "component": "Input",
+            "path": "/o/y",
+            "count": 1
+          },
+          {
+            "identity": 218526,
+            "component": "CtlInput",
+            "path": "/o/y",
+            "count": 1
+          }
+        ]
+      },
+      "fibersVisited": 140,
+      "fibersCreated": 0,
+      "inputRemounts": [],
+      "inputNewMounts": [],
+      "changedComponentCalls": 18,
+      "proxyCalls": 6,
+      "commits": 1,
+      "passed": true
+    },
+    {
+      "mode": "unctl",
+      "operation": "sibling setValue /b",
+      "otherFieldRenders": 0,
+      "fieldComponentInstances": [
+        {
+          "identity": 218569,
+          "component": "SchemaNodeProxy",
+          "path": "/b",
+          "count": 1
+        },
+        {
+          "identity": 218572,
+          "component": "class:ErrorBoundary",
+          "path": "/b",
+          "count": 1
+        },
+        {
+          "identity": 218573,
+          "component": "RendererWithErrorMessage",
+          "path": "/b",
+          "count": 1
+        },
+        {
+          "identity": 218574,
+          "component": "memo:FormGroupRenderer",
+          "path": "/b",
+          "count": 1
+        },
+        {
+          "identity": 218579,
+          "component": "Anonymous",
+          "path": "/b",
+          "count": 1
+        },
+        {
+          "identity": 218580,
+          "component": "memo:Anonymous",
+          "path": "/b",
+          "count": 1
+        },
+        {
+          "identity": 218582,
+          "component": "FormTypeInputBoundary",
+          "path": "/b",
+          "count": 1
+        },
+        {
+          "identity": 218583,
+          "component": "class:ErrorBoundary",
+          "path": "/b",
+          "count": 1
+        },
+        {
+          "identity": 218584,
+          "component": "Input",
+          "path": "/b",
+          "count": 1
+        },
+        {
+          "identity": 218585,
+          "component": "UnctlInput",
+          "path": "/b",
+          "count": 1
+        }
+      ],
+      "renders": {
+        "total": 20,
+        "byPath": {
+          "(form)": 1,
+          "": 9,
+          "/b": 10
+        },
+        "byComponent": {
+          "SchemaNodeProxy": 2,
+          "class:ErrorBoundary": 4,
+          "RendererWithErrorMessage": 2,
+          "memo:FormGroupRenderer": 2,
+          "Anonymous": 2,
+          "memo:Anonymous": 2,
+          "FormTypeInputBoundary": 2,
+          "Input": 2,
+          "FormTypeInputObject": 1,
+          "UnctlInput": 1
+        },
+        "instances": [
+          {
+            "identity": 218554,
+            "component": "SchemaNodeProxy",
+            "path": "(form)",
+            "count": 1
+          },
+          {
+            "identity": 218557,
+            "component": "class:ErrorBoundary",
+            "path": "",
+            "count": 1
+          },
+          {
+            "identity": 218558,
+            "component": "RendererWithErrorMessage",
+            "path": "",
+            "count": 1
+          },
+          {
+            "identity": 218559,
+            "component": "memo:FormGroupRenderer",
+            "path": "",
+            "count": 1
+          },
+          {
+            "identity": 218560,
+            "component": "Anonymous",
+            "path": "",
+            "count": 1
+          },
+          {
+            "identity": 218561,
+            "component": "memo:Anonymous",
+            "path": "",
+            "count": 1
+          },
+          {
+            "identity": 218563,
+            "component": "FormTypeInputBoundary",
+            "path": "",
+            "count": 1
+          },
+          {
+            "identity": 218564,
+            "component": "class:ErrorBoundary",
+            "path": "",
+            "count": 1
+          },
+          {
+            "identity": 218565,
+            "component": "Input",
+            "path": "",
+            "count": 1
+          },
+          {
+            "identity": 218566,
+            "component": "FormTypeInputObject",
+            "path": "",
+            "count": 1
+          },
+          {
+            "identity": 218569,
+            "component": "SchemaNodeProxy",
+            "path": "/b",
+            "count": 1
+          },
+          {
+            "identity": 218572,
+            "component": "class:ErrorBoundary",
+            "path": "/b",
+            "count": 1
+          },
+          {
+            "identity": 218573,
+            "component": "RendererWithErrorMessage",
+            "path": "/b",
+            "count": 1
+          },
+          {
+            "identity": 218574,
+            "component": "memo:FormGroupRenderer",
+            "path": "/b",
+            "count": 1
+          },
+          {
+            "identity": 218579,
+            "component": "Anonymous",
+            "path": "/b",
+            "count": 1
+          },
+          {
+            "identity": 218580,
+            "component": "memo:Anonymous",
+            "path": "/b",
+            "count": 1
+          },
+          {
+            "identity": 218582,
+            "component": "FormTypeInputBoundary",
+            "path": "/b",
+            "count": 1
+          },
+          {
+            "identity": 218583,
+            "component": "class:ErrorBoundary",
+            "path": "/b",
+            "count": 1
+          },
+          {
+            "identity": 218584,
+            "component": "Input",
+            "path": "/b",
+            "count": 1
+          },
+          {
+            "identity": 218585,
+            "component": "UnctlInput",
+            "path": "/b",
+            "count": 1
+          }
+        ]
+      },
+      "fibersVisited": 60,
+      "fibersCreated": 2,
+      "inputRemounts": [
+        "/b"
+      ],
+      "inputNewMounts": [],
+      "changedComponentCalls": 6,
+      "proxyCalls": 2,
+      "commits": 1,
+      "passed": true
+    },
+    {
+      "mode": "unctl",
+      "operation": "parent setValue /o (x only)",
+      "otherFieldRenders": 0,
+      "fieldComponentInstances": [
+        {
+          "identity": 218609,
+          "component": "SchemaNodeProxy",
+          "path": "/o/x",
+          "count": 1
+        },
+        {
+          "identity": 218612,
+          "component": "class:ErrorBoundary",
+          "path": "/o/x",
+          "count": 1
+        },
+        {
+          "identity": 218613,
+          "component": "RendererWithErrorMessage",
+          "path": "/o/x",
+          "count": 1
+        },
+        {
+          "identity": 218614,
+          "component": "memo:FormGroupRenderer",
+          "path": "/o/x",
+          "count": 1
+        },
+        {
+          "identity": 218619,
+          "component": "Anonymous",
+          "path": "/o/x",
+          "count": 1
+        },
+        {
+          "identity": 218620,
+          "component": "memo:Anonymous",
+          "path": "/o/x",
+          "count": 1
+        },
+        {
+          "identity": 218622,
+          "component": "FormTypeInputBoundary",
+          "path": "/o/x",
+          "count": 1
+        },
+        {
+          "identity": 218623,
+          "component": "class:ErrorBoundary",
+          "path": "/o/x",
+          "count": 1
+        },
+        {
+          "identity": 218624,
+          "component": "Input",
+          "path": "/o/x",
+          "count": 1
+        },
+        {
+          "identity": 218625,
+          "component": "UnctlInput",
+          "path": "/o/x",
+          "count": 1
+        }
+      ],
+      "renders": {
+        "total": 30,
+        "byPath": {
+          "(form)": 1,
+          "": 9,
+          "/o": 10,
+          "/o/x": 10
+        },
+        "byComponent": {
+          "SchemaNodeProxy": 3,
+          "class:ErrorBoundary": 6,
+          "RendererWithErrorMessage": 3,
+          "memo:FormGroupRenderer": 3,
+          "Anonymous": 3,
+          "memo:Anonymous": 3,
+          "FormTypeInputBoundary": 3,
+          "Input": 3,
+          "FormTypeInputObject": 2,
+          "UnctlInput": 1
+        },
+        "instances": [
+          {
+            "identity": 218554,
+            "component": "SchemaNodeProxy",
+            "path": "(form)",
+            "count": 1
+          },
+          {
+            "identity": 218557,
+            "component": "class:ErrorBoundary",
+            "path": "",
+            "count": 1
+          },
+          {
+            "identity": 218558,
+            "component": "RendererWithErrorMessage",
+            "path": "",
+            "count": 1
+          },
+          {
+            "identity": 218559,
+            "component": "memo:FormGroupRenderer",
+            "path": "",
+            "count": 1
+          },
+          {
+            "identity": 218560,
+            "component": "Anonymous",
+            "path": "",
+            "count": 1
+          },
+          {
+            "identity": 218561,
+            "component": "memo:Anonymous",
+            "path": "",
+            "count": 1
+          },
+          {
+            "identity": 218563,
+            "component": "FormTypeInputBoundary",
+            "path": "",
+            "count": 1
+          },
+          {
+            "identity": 218564,
+            "component": "class:ErrorBoundary",
+            "path": "",
+            "count": 1
+          },
+          {
+            "identity": 218565,
+            "component": "Input",
+            "path": "",
+            "count": 1
+          },
+          {
+            "identity": 218566,
+            "component": "FormTypeInputObject",
+            "path": "",
+            "count": 1
+          },
+          {
+            "identity": 218590,
+            "component": "SchemaNodeProxy",
+            "path": "/o",
+            "count": 1
+          },
+          {
+            "identity": 218593,
+            "component": "class:ErrorBoundary",
+            "path": "/o",
+            "count": 1
+          },
+          {
+            "identity": 218594,
+            "component": "RendererWithErrorMessage",
+            "path": "/o",
+            "count": 1
+          },
+          {
+            "identity": 218595,
+            "component": "memo:FormGroupRenderer",
+            "path": "/o",
+            "count": 1
+          },
+          {
+            "identity": 218601,
+            "component": "Anonymous",
+            "path": "/o",
+            "count": 1
+          },
+          {
+            "identity": 218602,
+            "component": "memo:Anonymous",
+            "path": "/o",
+            "count": 1
+          },
+          {
+            "identity": 218604,
+            "component": "FormTypeInputBoundary",
+            "path": "/o",
+            "count": 1
+          },
+          {
+            "identity": 218605,
+            "component": "class:ErrorBoundary",
+            "path": "/o",
+            "count": 1
+          },
+          {
+            "identity": 218606,
+            "component": "Input",
+            "path": "/o",
+            "count": 1
+          },
+          {
+            "identity": 218607,
+            "component": "FormTypeInputObject",
+            "path": "/o",
+            "count": 1
+          },
+          {
+            "identity": 218609,
+            "component": "SchemaNodeProxy",
+            "path": "/o/x",
+            "count": 1
+          },
+          {
+            "identity": 218612,
+            "component": "class:ErrorBoundary",
+            "path": "/o/x",
+            "count": 1
+          },
+          {
+            "identity": 218613,
+            "component": "RendererWithErrorMessage",
+            "path": "/o/x",
+            "count": 1
+          },
+          {
+            "identity": 218614,
+            "component": "memo:FormGroupRenderer",
+            "path": "/o/x",
+            "count": 1
+          },
+          {
+            "identity": 218619,
+            "component": "Anonymous",
+            "path": "/o/x",
+            "count": 1
+          },
+          {
+            "identity": 218620,
+            "component": "memo:Anonymous",
+            "path": "/o/x",
+            "count": 1
+          },
+          {
+            "identity": 218622,
+            "component": "FormTypeInputBoundary",
+            "path": "/o/x",
+            "count": 1
+          },
+          {
+            "identity": 218623,
+            "component": "class:ErrorBoundary",
+            "path": "/o/x",
+            "count": 1
+          },
+          {
+            "identity": 218624,
+            "component": "Input",
+            "path": "/o/x",
+            "count": 1
+          },
+          {
+            "identity": 218625,
+            "component": "UnctlInput",
+            "path": "/o/x",
+            "count": 1
+          }
+        ]
+      },
+      "fibersVisited": 80,
+      "fibersCreated": 2,
+      "inputRemounts": [
+        "/o/x"
+      ],
+      "inputNewMounts": [],
+      "changedComponentCalls": 9,
+      "proxyCalls": 3,
+      "commits": 1,
+      "passed": true
+    },
+    {
+      "mode": "unctl",
+      "operation": "Form context prop change",
+      "otherFieldRenders": null,
+      "fieldComponentInstances": [
+        {
+          "identity": 218569,
+          "component": "SchemaNodeProxy",
+          "path": "/b",
+          "count": 1
+        },
+        {
+          "identity": 218572,
+          "component": "class:ErrorBoundary",
+          "path": "/b",
+          "count": 1
+        },
+        {
+          "identity": 218573,
+          "component": "RendererWithErrorMessage",
+          "path": "/b",
+          "count": 1
+        },
+        {
+          "identity": 218574,
+          "component": "memo:FormGroupRenderer",
+          "path": "/b",
+          "count": 1
+        },
+        {
+          "identity": 218579,
+          "component": "Anonymous",
+          "path": "/b",
+          "count": 1
+        },
+        {
+          "identity": 218580,
+          "component": "memo:Anonymous",
+          "path": "/b",
+          "count": 1
+        },
+        {
+          "identity": 218582,
+          "component": "FormTypeInputBoundary",
+          "path": "/b",
+          "count": 1
+        },
+        {
+          "identity": 218583,
+          "component": "class:ErrorBoundary",
+          "path": "/b",
+          "count": 1
+        },
+        {
+          "identity": 218584,
+          "component": "Input",
+          "path": "/b",
+          "count": 1
+        },
+        {
+          "identity": 218585,
+          "component": "UnctlInput",
+          "path": "/b",
+          "count": 1
+        },
+        {
+          "identity": 218609,
+          "component": "SchemaNodeProxy",
+          "path": "/o/x",
+          "count": 1
+        },
+        {
+          "identity": 218612,
+          "component": "class:ErrorBoundary",
+          "path": "/o/x",
+          "count": 1
+        },
+        {
+          "identity": 218613,
+          "component": "RendererWithErrorMessage",
+          "path": "/o/x",
+          "count": 1
+        },
+        {
+          "identity": 218614,
+          "component": "memo:FormGroupRenderer",
+          "path": "/o/x",
+          "count": 1
+        },
+        {
+          "identity": 218619,
+          "component": "Anonymous",
+          "path": "/o/x",
+          "count": 1
+        },
+        {
+          "identity": 218620,
+          "component": "memo:Anonymous",
+          "path": "/o/x",
+          "count": 1
+        },
+        {
+          "identity": 218622,
+          "component": "FormTypeInputBoundary",
+          "path": "/o/x",
+          "count": 1
+        },
+        {
+          "identity": 218623,
+          "component": "class:ErrorBoundary",
+          "path": "/o/x",
+          "count": 1
+        },
+        {
+          "identity": 218624,
+          "component": "Input",
+          "path": "/o/x",
+          "count": 1
+        },
+        {
+          "identity": 218625,
+          "component": "UnctlInput",
+          "path": "/o/x",
+          "count": 1
+        },
+        {
+          "identity": 218630,
+          "component": "SchemaNodeProxy",
+          "path": "/a",
+          "count": 1
+        },
+        {
+          "identity": 218633,
+          "component": "class:ErrorBoundary",
+          "path": "/a",
+          "count": 1
+        },
+        {
+          "identity": 218634,
+          "component": "RendererWithErrorMessage",
+          "path": "/a",
+          "count": 1
+        },
+        {
+          "identity": 218635,
+          "component": "memo:FormGroupRenderer",
+          "path": "/a",
+          "count": 1
+        },
+        {
+          "identity": 218640,
+          "component": "Anonymous",
+          "path": "/a",
+          "count": 1
+        },
+        {
+          "identity": 218641,
+          "component": "memo:Anonymous",
+          "path": "/a",
+          "count": 1
+        },
+        {
+          "identity": 218643,
+          "component": "FormTypeInputBoundary",
+          "path": "/a",
+          "count": 1
+        },
+        {
+          "identity": 218644,
+          "component": "class:ErrorBoundary",
+          "path": "/a",
+          "count": 1
+        },
+        {
+          "identity": 218645,
+          "component": "Input",
+          "path": "/a",
+          "count": 1
+        },
+        {
+          "identity": 218646,
+          "component": "UnctlInput",
+          "path": "/a",
+          "count": 1
+        },
+        {
+          "identity": 218650,
+          "component": "SchemaNodeProxy",
+          "path": "/o/y",
+          "count": 1
+        },
+        {
+          "identity": 218653,
+          "component": "class:ErrorBoundary",
+          "path": "/o/y",
+          "count": 1
+        },
+        {
+          "identity": 218654,
+          "component": "RendererWithErrorMessage",
+          "path": "/o/y",
+          "count": 1
+        },
+        {
+          "identity": 218655,
+          "component": "memo:FormGroupRenderer",
+          "path": "/o/y",
+          "count": 1
+        },
+        {
+          "identity": 218660,
+          "component": "Anonymous",
+          "path": "/o/y",
+          "count": 1
+        },
+        {
+          "identity": 218661,
+          "component": "memo:Anonymous",
+          "path": "/o/y",
+          "count": 1
+        },
+        {
+          "identity": 218663,
+          "component": "FormTypeInputBoundary",
+          "path": "/o/y",
+          "count": 1
+        },
+        {
+          "identity": 218664,
+          "component": "class:ErrorBoundary",
+          "path": "/o/y",
+          "count": 1
+        },
+        {
+          "identity": 218665,
+          "component": "Input",
+          "path": "/o/y",
+          "count": 1
+        },
+        {
+          "identity": 218666,
+          "component": "UnctlInput",
+          "path": "/o/y",
+          "count": 1
+        }
+      ],
+      "renders": {
+        "total": 73,
+        "byPath": {
+          "(form)": 14,
+          "": 9,
+          "/a": 10,
+          "/b": 10,
+          "/o": 10,
+          "/o/x": 10,
+          "/o/y": 10
+        },
+        "byComponent": {
+          "Host": 1,
+          "fwd:Anonymous": 2,
+          "FormErrorContextProvider": 1,
+          "class:ErrorBoundary": 13,
+          "fwd:FormContents": 1,
+          "WorkspaceContextProvider": 1,
+          "FormTypeInputsContextProvider": 1,
+          "FormTypeRendererContextProvider": 1,
+          "InputControlContextProvider": 1,
+          "VirtualizationContextProvider": 1,
+          "RootNodeContextProvider": 1,
+          "memo:Anonymous": 7,
+          "SchemaNodeProxy": 6,
+          "RendererWithErrorMessage": 6,
+          "memo:FormGroupRenderer": 6,
+          "Anonymous": 6,
+          "FormTypeInputBoundary": 6,
+          "Input": 6,
+          "FormTypeInputObject": 2,
+          "UnctlInput": 4
+        },
+        "instances": [
+          {
+            "identity": 218531,
+            "component": "Host",
+            "path": "(form)",
+            "count": 1
+          },
+          {
+            "identity": 218533,
+            "component": "fwd:Anonymous",
+            "path": "(form)",
+            "count": 1
+          },
+          {
+            "identity": 218534,
+            "component": "FormErrorContextProvider",
+            "path": "(form)",
+            "count": 1
+          },
+          {
+            "identity": 218536,
+            "component": "fwd:Anonymous",
+            "path": "(form)",
+            "count": 1
+          },
+          {
+            "identity": 218537,
+            "component": "class:ErrorBoundary",
+            "path": "(form)",
+            "count": 1
+          },
+          {
+            "identity": 218538,
+            "component": "fwd:FormContents",
+            "path": "(form)",
+            "count": 1
+          },
+          {
+            "identity": 218539,
+            "component": "WorkspaceContextProvider",
+            "path": "(form)",
+            "count": 1
+          },
+          {
+            "identity": 218541,
+            "component": "FormTypeInputsContextProvider",
+            "path": "(form)",
+            "count": 1
+          },
+          {
+            "identity": 218543,
+            "component": "FormTypeRendererContextProvider",
+            "path": "(form)",
+            "count": 1
+          },
+          {
+            "identity": 218545,
+            "component": "InputControlContextProvider",
+            "path": "(form)",
+            "count": 1
+          },
+          {
+            "identity": 218547,
+            "component": "VirtualizationContextProvider",
+            "path": "(form)",
+            "count": 1
+          },
+          {
+            "identity": 218549,
+            "component": "RootNodeContextProvider",
+            "path": "(form)",
+            "count": 1
+          },
+          {
+            "identity": 218552,
+            "component": "memo:Anonymous",
+            "path": "(form)",
+            "count": 1
+          },
+          {
+            "identity": 218554,
+            "component": "SchemaNodeProxy",
+            "path": "(form)",
+            "count": 1
+          },
+          {
+            "identity": 218557,
+            "component": "class:ErrorBoundary",
+            "path": "",
+            "count": 1
+          },
+          {
+            "identity": 218558,
+            "component": "RendererWithErrorMessage",
+            "path": "",
+            "count": 1
+          },
+          {
+            "identity": 218559,
+            "component": "memo:FormGroupRenderer",
+            "path": "",
+            "count": 1
+          },
+          {
+            "identity": 218560,
+            "component": "Anonymous",
+            "path": "",
+            "count": 1
+          },
+          {
+            "identity": 218561,
+            "component": "memo:Anonymous",
+            "path": "",
+            "count": 1
+          },
+          {
+            "identity": 218563,
+            "component": "FormTypeInputBoundary",
+            "path": "",
+            "count": 1
+          },
+          {
+            "identity": 218564,
+            "component": "class:ErrorBoundary",
+            "path": "",
+            "count": 1
+          },
+          {
+            "identity": 218565,
+            "component": "Input",
+            "path": "",
+            "count": 1
+          },
+          {
+            "identity": 218566,
+            "component": "FormTypeInputObject",
+            "path": "",
+            "count": 1
+          },
+          {
+            "identity": 218569,
+            "component": "SchemaNodeProxy",
+            "path": "/b",
+            "count": 1
+          },
+          {
+            "identity": 218572,
+            "component": "class:ErrorBoundary",
+            "path": "/b",
+            "count": 1
+          },
+          {
+            "identity": 218573,
+            "component": "RendererWithErrorMessage",
+            "path": "/b",
+            "count": 1
+          },
+          {
+            "identity": 218574,
+            "component": "memo:FormGroupRenderer",
+            "path": "/b",
+            "count": 1
+          },
+          {
+            "identity": 218579,
+            "component": "Anonymous",
+            "path": "/b",
+            "count": 1
+          },
+          {
+            "identity": 218580,
+            "component": "memo:Anonymous",
+            "path": "/b",
+            "count": 1
+          },
+          {
+            "identity": 218582,
+            "component": "FormTypeInputBoundary",
+            "path": "/b",
+            "count": 1
+          },
+          {
+            "identity": 218583,
+            "component": "class:ErrorBoundary",
+            "path": "/b",
+            "count": 1
+          },
+          {
+            "identity": 218584,
+            "component": "Input",
+            "path": "/b",
+            "count": 1
+          },
+          {
+            "identity": 218585,
+            "component": "UnctlInput",
+            "path": "/b",
+            "count": 1
+          },
+          {
+            "identity": 218590,
+            "component": "SchemaNodeProxy",
+            "path": "/o",
+            "count": 1
+          },
+          {
+            "identity": 218593,
+            "component": "class:ErrorBoundary",
+            "path": "/o",
+            "count": 1
+          },
+          {
+            "identity": 218594,
+            "component": "RendererWithErrorMessage",
+            "path": "/o",
+            "count": 1
+          },
+          {
+            "identity": 218595,
+            "component": "memo:FormGroupRenderer",
+            "path": "/o",
+            "count": 1
+          },
+          {
+            "identity": 218601,
+            "component": "Anonymous",
+            "path": "/o",
+            "count": 1
+          },
+          {
+            "identity": 218602,
+            "component": "memo:Anonymous",
+            "path": "/o",
+            "count": 1
+          },
+          {
+            "identity": 218604,
+            "component": "FormTypeInputBoundary",
+            "path": "/o",
+            "count": 1
+          },
+          {
+            "identity": 218605,
+            "component": "class:ErrorBoundary",
+            "path": "/o",
+            "count": 1
+          },
+          {
+            "identity": 218606,
+            "component": "Input",
+            "path": "/o",
+            "count": 1
+          },
+          {
+            "identity": 218607,
+            "component": "FormTypeInputObject",
+            "path": "/o",
+            "count": 1
+          },
+          {
+            "identity": 218609,
+            "component": "SchemaNodeProxy",
+            "path": "/o/x",
+            "count": 1
+          },
+          {
+            "identity": 218612,
+            "component": "class:ErrorBoundary",
+            "path": "/o/x",
+            "count": 1
+          },
+          {
+            "identity": 218613,
+            "component": "RendererWithErrorMessage",
+            "path": "/o/x",
+            "count": 1
+          },
+          {
+            "identity": 218614,
+            "component": "memo:FormGroupRenderer",
+            "path": "/o/x",
+            "count": 1
+          },
+          {
+            "identity": 218619,
+            "component": "Anonymous",
+            "path": "/o/x",
+            "count": 1
+          },
+          {
+            "identity": 218620,
+            "component": "memo:Anonymous",
+            "path": "/o/x",
+            "count": 1
+          },
+          {
+            "identity": 218622,
+            "component": "FormTypeInputBoundary",
+            "path": "/o/x",
+            "count": 1
+          },
+          {
+            "identity": 218623,
+            "component": "class:ErrorBoundary",
+            "path": "/o/x",
+            "count": 1
+          },
+          {
+            "identity": 218624,
+            "component": "Input",
+            "path": "/o/x",
+            "count": 1
+          },
+          {
+            "identity": 218625,
+            "component": "UnctlInput",
+            "path": "/o/x",
+            "count": 1
+          },
+          {
+            "identity": 218630,
+            "component": "SchemaNodeProxy",
+            "path": "/a",
+            "count": 1
+          },
+          {
+            "identity": 218633,
+            "component": "class:ErrorBoundary",
+            "path": "/a",
+            "count": 1
+          },
+          {
+            "identity": 218634,
+            "component": "RendererWithErrorMessage",
+            "path": "/a",
+            "count": 1
+          },
+          {
+            "identity": 218635,
+            "component": "memo:FormGroupRenderer",
+            "path": "/a",
+            "count": 1
+          },
+          {
+            "identity": 218640,
+            "component": "Anonymous",
+            "path": "/a",
+            "count": 1
+          },
+          {
+            "identity": 218641,
+            "component": "memo:Anonymous",
+            "path": "/a",
+            "count": 1
+          },
+          {
+            "identity": 218643,
+            "component": "FormTypeInputBoundary",
+            "path": "/a",
+            "count": 1
+          },
+          {
+            "identity": 218644,
+            "component": "class:ErrorBoundary",
+            "path": "/a",
+            "count": 1
+          },
+          {
+            "identity": 218645,
+            "component": "Input",
+            "path": "/a",
+            "count": 1
+          },
+          {
+            "identity": 218646,
+            "component": "UnctlInput",
+            "path": "/a",
+            "count": 1
+          },
+          {
+            "identity": 218650,
+            "component": "SchemaNodeProxy",
+            "path": "/o/y",
+            "count": 1
+          },
+          {
+            "identity": 218653,
+            "component": "class:ErrorBoundary",
+            "path": "/o/y",
+            "count": 1
+          },
+          {
+            "identity": 218654,
+            "component": "RendererWithErrorMessage",
+            "path": "/o/y",
+            "count": 1
+          },
+          {
+            "identity": 218655,
+            "component": "memo:FormGroupRenderer",
+            "path": "/o/y",
+            "count": 1
+          },
+          {
+            "identity": 218660,
+            "component": "Anonymous",
+            "path": "/o/y",
+            "count": 1
+          },
+          {
+            "identity": 218661,
+            "component": "memo:Anonymous",
+            "path": "/o/y",
+            "count": 1
+          },
+          {
+            "identity": 218663,
+            "component": "FormTypeInputBoundary",
+            "path": "/o/y",
+            "count": 1
+          },
+          {
+            "identity": 218664,
+            "component": "class:ErrorBoundary",
+            "path": "/o/y",
+            "count": 1
+          },
+          {
+            "identity": 218665,
+            "component": "Input",
+            "path": "/o/y",
+            "count": 1
+          },
+          {
+            "identity": 218666,
+            "component": "UnctlInput",
+            "path": "/o/y",
+            "count": 1
+          }
+        ]
+      },
+      "fibersVisited": 140,
+      "fibersCreated": 0,
+      "inputRemounts": [],
+      "inputNewMounts": [],
+      "changedComponentCalls": 18,
+      "proxyCalls": 6,
+      "commits": 1,
+      "passed": true
+    }
+  ],
+  "pass": true,
+  "sourceFiles": [
+    "fixture-counts-base.json",
+    "fixture-counts-fap.json"
+  ],
+  "sourceHashes": [
+    "ea70f9c79638648c585b3597fa5a5ce6df7cee4961650e2da0bc132077489d0e",
+    "02e2d1165ad32fc3d612b0b376bbdc20842f0e5a3fb15f06f389fde5c160c7d0"
+  ]
+}
