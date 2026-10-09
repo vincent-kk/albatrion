@@ -8,7 +8,7 @@
 
 `tools/run-session-131.mjs`는 `--kind aa|verdict|confirm`, `--lane core|react`, `--base`, `--candidate`, `--rows`, `--blocks`, `--out`을 받습니다. 옵션의 두 표기법을 모두 받으며 누락·중복·미지 옵션과 잘못된 숫자는 거절합니다. 번들 prefix에는 `.cjs`가 붙어 있어도 됩니다. 같은 디렉터리의 매니페스트에서 번들 바이트 수, SHA-256, 항목의 기준 리비전 및 매니페스트 기준 리비전을 대조합니다. 두 번들의 기준 리비전은 같아야 하며 A/A 후보는 기준 번들 뒤에 주석 한 줄만 추가한 복사여야 합니다. worker와 세션 종료 시에도 해시를 다시 검증합니다. 빌드 기준 리비전이 현재 HEAD와 같다고 가정하지 않습니다.
 
-코어는 `measure-core-worker-129.mjs`를 실행하고 React는 `measure-react-pair-129.mjs`의 기존 worker를 실행합니다. 기존 짝 실행기와 새 실행기는 `corePairRecord129`와 `reactPairRecord129`의 검증·직렬화를 공유합니다. 측정 로직을 새 실행기에 복사하지 않았습니다. 통계와 판정은 `reportCluster129`를 호출하므로 기존 블록 bootstrap, 중앙값, 보정, 시드 및 105C-01 계산을 사용합니다.
+코어는 `measure-core-worker-129.mjs`를 실행하고 React는 `measure-react-pair-129.mjs`의 기존 worker를 실행합니다. 기존 짝 실행기와 새 실행기는 `corePairRecord129`와 `reactPairRecord129`의 검증·직렬화를 공유합니다. 측정 로직을 새 실행기에 복사하지 않았습니다. 최초 실행기는 `reportCluster129`의 블록 bootstrap을 사용하였으나 아래 편집 결정 적용 후에는 `reportSession131`이 순서통계량 구간을 명시적으로 전달합니다. 기존 중앙값·보정·105C-01 판단 로직은 공유하며 새 인자가 없는 129 보고는 기존 bootstrap과 시드를 유지합니다.
 
 `verdict`에는 검증된 `--aa` 보고가 필요합니다. 첫 보고에서 회귀로 표시된 행만 자동으로 독립 확인하며 이득은 확인하지 않습니다. `confirm`에는 `--aa`와 `--first-report`가 필요하며 첫 원자료 해시, lane 및 번들 해시를 대조합니다. 실제 판정에는 smoke A/A 또는 8블록 미만의 잡음 자료를 사용할 수 없습니다. `--axis-from`은 React 면제 계산에 필요한 별도 코어 축 이득을 받을 때 사용합니다. 확인이 불완전하거나 A/A 행이 누락되면 성공으로 종료하지 않습니다.
 
@@ -22,7 +22,7 @@
 
 `--touch-counts`에는 행 키별 숫자 또는 `{ calls }`를 받습니다. 양수, 누락 또는 유효하지 않은 계수는 전체 블록을 사용합니다. 명시적으로 0인 비감시 행만 기본 8블록을 받으며 `--reduced-blocks`로 조절할 수 있습니다. 공식 `<mode>` 행이 전체 블록이면 대응 `<mode>-nogc` 행도 전체 블록으로 승격하고 `scopeReason`을 `official-full`로 기록합니다. 공식 행이 선택 파일에서 빠져도 그 행의 계수·감시 분류를 확인합니다. no-GC 구간만 넓어져 면제 조건 (3)이 쉬워지지 않도록 한 규칙입니다.
 
-같은 설정의 mode는 기존 worker의 한 순서를 공유하므로 해당 설정의 최대 블록 수까지 실행합니다. 행 통계에는 각 행에 지정한 블록만 사용합니다. 따라서 같은 fixture 안에서 행을 줄여도 실행 시간이 항상 줄지는 않습니다. 코어 빈 호출 보정 표본은 설정마다 한 원자료에서만 집계하여 행별 분할로 인한 중복을 막습니다.
+같은 설정의 mode는 기존 worker의 한 순서를 공유하므로 해당 설정의 최대 블록 수까지 실행합니다. 최초 구현은 각 행에 지정한 앞 블록만 사용하였으나 아래 편집 결정 적용 후에는 이미 측정한 블록을 모두 사용합니다. 따라서 같은 fixture 안에서 행을 줄여도 실행 시간이나 실제 통계 블록 수가 항상 줄지는 않습니다. 코어 빈 호출 보정 표본은 설정마다 한 원자료에서만 집계하여 행별 분할로 인한 중복을 막습니다.
 
 축소 행에도 105C-01 규칙을 그대로 적용합니다. 구간 전체가 0 아래이고 손실이 같은 행의 A/A 크기와 보정한 기준 중앙값의 0.5% 중 큰 값을 넘으면 회귀로 표시합니다. 표시된 축소 행은 독립적인 전체 24블록으로 확인합니다. 자체 검증은 8블록 합성 회귀가 표시되고 24블록 확인 뒤 REJECT되는 경우를 검사합니다. 블록 축소는 검출력을 낮추므로 비표시를 회귀 부재의 증명으로 해석하지 않습니다.
 
@@ -36,7 +36,7 @@
 
 no-GC 관측 digest 직후 동기 minor GC를 시계 밖에서 수행하는 선택은 유지하였습니다. React는 시작값과 data-path를 읽고 minor GC 및 네 번의 drain을 마친 뒤 쓰기 시계를 시작합니다. 코어는 no-GC 관측 digest 뒤에 같은 minor GC 앵커를 둡니다. 큰 관측 문자열과 배열이 다음 쓰기 창의 젊은 세대 채움 위상을 결정하는 영향을 줄이려는 선택입니다. 쓰기 뒤에는 이미 시작 상태가 달라지므로 같은 시작값 단언을 유지하기 위해 digest를 뒤로 미루는 대신 이 방법을 선택하였습니다. 구형 무앵커 no-GC 열과 같은 조건으로 취급하지 않습니다.
 
-no-GC 열에서는 `perf_hooks` GC 항목과 실제 창의 겹침을 표본별로 기록합니다. 쓰기 창 중 GC가 겹친 비율과 GC 없는 표본 중앙값을 기존 통계 옆에 적습니다. 코어와 React 모두 mount 행에는 빈 쓰기 창 목록을 전달하므로 쓰기 GC 비율은 null입니다. mount 자체의 GC 없는 중앙값은 mount 창을 기준으로 계산합니다. React mount 창은 지정 mount 함수가 반환한 mountMs와 반환 직후 시각에서 재구성하므로 짧은 반환 경계 오차가 있을 수 있습니다. GC 없는 표본이 없으면 중앙값은 null입니다. 이 중앙값은 원시 관측값이며 기존 보정 통계나 전체 표본 bootstrap을 대체하지 않습니다.
+no-GC 열에서는 `perf_hooks` GC 항목과 실제 창의 겹침을 표본별로 기록합니다. 쓰기 창 중 GC가 겹친 비율과 GC 없는 표본 중앙값을 기존 통계 옆에 적습니다. 코어와 React 모두 mount 행에는 빈 쓰기 창 목록을 전달하므로 쓰기 GC 비율은 null입니다. mount 자체의 GC 없는 중앙값은 mount 창을 기준으로 계산합니다. React mount 창은 지정 mount 함수가 반환한 mountMs와 반환 직후 시각에서 재구성하므로 짧은 반환 경계 오차가 있을 수 있습니다. GC 없는 표본이 없으면 중앙값은 null입니다. 이 중앙값은 원시 관측값이며 기존 보정 통계나 131C-01 순서통계량 블록 구간을 대체하지 않습니다.
 
 ## 구형 경로와 여러 폼의 계약을 유지합니다.
 
@@ -49,7 +49,7 @@ no-GC 열에서는 `perf_hooks` GC 항목과 실제 창의 겹침을 표본별�
 | measure-core-pair-129.mjs | c12de2d2122b9674376eef25a23daf91cf30c6baa1aca6e8f81a4f7fab679617 | 550304ec6ee27f134c1c0afe05e311120d464e2be55c3906c33904da99b507cf |
 | measure-core-worker-129.mjs | b1b23cce0ec33775da2eec4d3d31470bc5898a778982105ee7ac33583853e46c | 4ecb0e3618d756f38bb16ade5a1eadaab5d1088fc4da5769e45703c87544fd5d |
 | measure-react-pair-129.mjs | adbb8ad16408e05cf3d3ad509b76073c26525e7815f5b5cf3dacb4e418f5ccfb | 8c1ef2dc689366eacc7350c0b0479f4e6b272aac90364a763ecba4472ba89a7d |
-| report-cluster-129.mjs | 9b4c3c4604a5ab07bf796330d28249aa9604e76e955dd7fcfadce94d9bded140 | 8928949df1edd75fa0b3f7bba11a681b9d5ad1e9c2163fb16f21378ccf868f16 |
+| report-cluster-129.mjs | 9b4c3c4604a5ab07bf796330d28249aa9604e76e955dd7fcfadce94d9bded140 | 73a9485ac64b835238082562a5ba57ce6ddfc6ea01ad5cab26e4fba1e3a0814d |
 
 `--forms-per-process <n>`의 기본값은 1입니다. 같은 프로세스에서 같은 번들만 재사용하며 다른 번들은 거절합니다. `bundlesLoaded`는 번들을 실제 평가한 지점에서 증가한 횟수이며 worker, batch 및 세션 기록으로 전달합니다. 여러 폼이어도 한 번만 평가해야 합니다. 블록마다 폼 순서를 순환하고 form position을 기록합니다. 이전 여러 폼 smoke는 연결 검증만 수행하였으며 GC 관측 수정 전의 자료입니다. 편향이 없다는 검증은 후속 독립 A/A 세션에서 수행해야 하며 이번 결과로 기본값을 바꾸지 않았습니다.
 
@@ -80,7 +80,7 @@ worker를 시작하기 전에 `preflightSession131`이 `estimateSession131`로 �
 
 ## 자체 검증과 리뷰 수정 후 smoke를 기록합니다.
 
-새 GC 시작·종료 단언은 수정 전에 `start`의 부재로 실패하였습니다. 예산 거부 연결 검사도 실행 전 추정이 없어서 실패한 뒤 수정하여 통과하였습니다. 최종 `SELF_TEST_131_OK: 10 contract groups passed; no timing judgments`는 관측 시작·종료 횟수, 인자, 매니페스트, 실제 번들 평가 횟수, 원행 목록, no-GC 전체 블록 승격, 확인 대상, 8블록 회귀와 24블록 확인, 상태·확인 블록·주의 문구 및 worker 없는 예산 거부를 검사합니다. `SELF_TEST_129_ALL_OK`도 다시 통과하였습니다. 기존 (가) 검증은 no-op과 queueMicrotask를 통과시키고 5ms setImmediate를 시간·경계 양쪽에서 실패시키는 원래 결과를 유지하였습니다.
+직전 GC 수정에서는 새 시작·종료 단언이 수정 전에 `start`의 부재로 실패하였습니다. 예산 거부 연결 검사도 실행 전 추정이 없어서 실패한 뒤 수정하여 통과하였습니다. 당시 `SELF_TEST_131_OK: 10 contract groups passed; no timing judgments`는 관측 시작·종료 횟수, 인자, 매니페스트, 실제 번들 평가 횟수, 원행 목록, no-GC 전체 블록 승격, 확인 대상, 8블록 회귀와 24블록 확인, 상태·확인 블록·주의 문구 및 worker 없는 예산 거부를 검사하였습니다. 당시 `SELF_TEST_129_ALL_OK`도 통과하였습니다. 기존 (가) 검증은 no-op과 queueMicrotask를 통과시키고 5ms setImmediate를 시간·경계 양쪽에서 실패시키는 원래 결과를 유지하였습니다. 아래 방법 수정에서는 새 시간 측정 금지에 따라 이 실제 worker 검사를 다시 실행하지 않았습니다.
 
 코어는 `S/bundles/e-head.cjs`와 `e-headx.cjs`로 모든 23개 설정의 2블록, 예열 20회, 표본 41개를 실행하였습니다. 92개 순차 프로세스와 208개 행이 155.498초에 완료됐고 모든 (가)와 digest 단언이 통과했습니다. 강제 GC 열의 17,056개 표본에는 GC 관측 기록이 0개였으며 최종 104개 해당 행의 GC 관측은 모두 null이었습니다.
 
@@ -93,3 +93,49 @@ React는 `S/bundles/r129-base.cjs`와 `r129-basex.cjs`로 모든 19개 fixture�
 위임된 측정 세션은 진입점 하나를 실행하고 최종 JSON과 한국어 요약을 읽는 것으로 끝납니다. 예를 들어 `/opt/homebrew/bin/node <D>/tools/run-session-131.mjs --kind aa --lane core --base <S>/bundles/e-head --candidate <S>/bundles/e-headx --rows core-129 --blocks 24 --touch-counts <A/A 전용 계수 파일> --out <새 디렉터리>`로 실행합니다. 실제 변경 판정에는 `--kind verdict --aa <검증된 A/A final.json> --touch-counts <변경 작업 계수 파일>`과 후보 번들을 지정합니다.
 
 실제 변경 verdict의 자동 확인 실측, 정규 24블록 A/A 및 여러 폼의 편향 판정은 후속 측정 세션에 남아 있습니다. 합성 확인 검사는 도구 분기의 검증이며 시간 판정을 대신하지 않습니다.
+
+## 131C-01 편집 결정에 따라 구간과 A/A 집계를 수정합니다.
+
+이번 방법 수정의 시작 HEAD는 `c632f552bf3095c6feb8d1e35a24e3d7f83ee981`입니다. 근거는 `round-131-closing.md`의 131C-01입니다. `aa131-diagnosis.md`와 대조하여 승인된 구간 교체, 측정 블록 전부 사용, 중복 합침, 분리 이항 집계와 교환 옵션을 적용하였습니다.
+
+`median-interval-131.mjs`의 `medianInterval131(blockDifferences)`는 정렬한 n개 블록 차이에서 P(Binom(n, 1/2) ≤ k−1) ≤ 0.005인 가장 큰 k를 구합니다. 이항 계수와 꼬리 비교에는 BigInt를 사용합니다. 구간은 `[sorted[k−1], sorted[n−k]]`이고 중심은 기존과 같이 블록 차이의 중앙값입니다. 짝수 n에서는 가운데 두 값의 평균을 사용합니다. 기존 `median`, `low`, `high`, `halfWidth`, `blocks`, `trials`, `seed` 모양에 `k`, `coverage`, `unbounded`를 더합니다. 재표집하지 않으므로 trials는 0이고 seed는 null입니다. 포함률은 1에서 양쪽 이항 꼬리의 합을 뺀 값이며 동점이 있으면 보수적인 하한으로 해석합니다.
+
+| 블록 수입니다. | k입니다. | 포함률입니다. |
+| ---: | ---: | --- |
+| 8 | 1 | 99.21875%입니다. |
+| 12 | 2 | 99% 이상입니다. |
+| 16 | 3 | 99% 이상입니다. |
+| 20 | 4 | 99% 이상입니다. |
+| 24 | 6 | 99.3389248848%입니다. |
+
+8개 미만에서는 유한한 순서통계량 구간으로 99%를 보장할 수 없으므로 k=0, null 끝점과 `unbounded=true`를 기록합니다. 이 자료는 정규 A/A 통과나 verdict의 근거가 될 수 없습니다. 작은 smoke는 계산 경로를 기록할 수 있지만 여전히 `SMOKE_NO_VERDICT`입니다.
+
+131 실행기와 재계산기는 `reportSession131`을 통하여 모든 판정·기록·확인 행 구간에 새 함수를 사용합니다. 같은 새 방법의 A/A 중앙값 절댓값이 105C-01 하한에 들어가며, 구형 A/A는 먼저 재계산하고 세 이항 범위를 통과해야 합니다. `reportCluster129`의 명시적인 `interval131` 인자가 이 구간을 전달하며 보고의 method에도 순서통계량 방법과 `intervalId`를 기록합니다. `cluster-bootstrap-129.mjs`는 바꾸지 않았고, 새 인자가 없는 기존 129 호출은 기존 bootstrap을 사용합니다. 원래 16개 원기록의 기본 보고를 시작 HEAD의 보고 함수와 직접 비교하여 같은 객체임을 확인하였습니다. (가)의 프로세스 내부 잡음 보정은 원래 검증 방법을 유지하며 이 행별 블록 구간 교체의 대상이 아닙니다.
+
+`selectMeasuredRows131`은 설정을 행별로 내보낼 때 블록을 버리지 않습니다. 첫 통과와 확인 모두 측정한 블록 전체를 사용합니다. 최종 `blocks`와 `confirmBlocks`는 실제 사용 수이며 `plannedBlocks`는 원래 행에 요청한 수입니다. 실제 전체 블록을 얻은 행은 full로 분류하고, 원래 축소 요청에서 승격되었으면 `scopeReason=all-measured-blocks`를 기록합니다. 따라서 이항 집합도 요청 수가 아닌 실제 사용 수로 나눕니다.
+
+`mergeRows131`은 이름 목록을 사용하지 않고 `interactionCount === 1`로 단일 쓰기 이력을 감지합니다. `update`와 `update-first`, 그 no-GC 짝의 표본 동일성을 대조하고 각 쌍을 canonical update 한 행으로 표시합니다. JSON의 `mergedRows`와 행별 `mergedKeys`에 양쪽 키를 보존합니다. 빈 호출 보정 소유자는 중복을 합쳐도 하나만 유지합니다. 상관되지만 같지 않은 oneOf와 분기 축 행은 그대로 둡니다. 이 행들 때문에 이항 범위는 명목 범위라고 보고하며, 세 범위를 모두 검사한다는 것이 공동 99% 포함률을 보장하는 뜻은 아닙니다.
+
+A/A의 판정 행은 실제 축소 블록 집합, 전체 블록 집합 및 합계에 대해 각각 명목 1%의 99% 이항 예측 범위를 계산합니다. 세 범위 모두 안에 있고 모든 구간이 유한해야 `AA_PASS`입니다. 한 집합이 넘으면 전체가 안에 있더라도 `AA_FAIL`이며 정규 실행기의 종료 코드는 1입니다. 중복 판정·기록 행은 각각 한 번만 집계합니다.
+
+`--swap`은 `--kind aa`에만 허용합니다. 원 번들 매니페스트를 검증한 후 실제 두 번째 통과에서 base와 candidate를 교환하며, 이전 통계의 부호만 바꾸어 만들지 않습니다. 처음 worker를 시작하기 전에 두 통과의 비용과 확인 여유를 합쳐 예산을 검사합니다. 원기록은 raw, 교환 원기록은 swap 아래에 저장하고 한 최종 JSON과 요약에 양쪽 통계를 기록합니다. 각 행의 `statistic`, `swapStatistic`, `swapComparison`으로 같은 부호와 부호 반전을 구별하며 `if-then/on/update-later`도 포함합니다. 같은 부호는 측정기의 위치 효과를, 부호 반전은 번들 바이트의 효과를 가리키며 0 부호는 구별하지 않습니다. 이 비교 자체가 유의성 판정은 아닙니다. 이번 작업에서는 교환 옵션의 인자·예산·보고 연결을 합성 자료로 확인하였으며 실제 교환 시간 측정은 하지 않았습니다.
+
+## 기존 131a 원자료를 새 방법으로 재계산합니다.
+
+`recompute-session-131.mjs --in <S>/session-131a --out <S>/session-131a-recompute`를 실행하였습니다. 원 SHA-256 목록의 파일 2,083개를 대조한 뒤 설정별 가장 긴 원기록에서 각 행의 블록을 복원하고, 저장된 worker 메타데이터의 양쪽 실제 블록 목록과 일치함을 확인하였습니다. 원 세션은 수정하지 않았습니다. 새 번들을 평가하거나 worker를 실행하지 않았으며 원 세션의 측정 시간을 그대로 복사하고 `recompute.noNewTiming=true`를 기록하였습니다.
+
+45개 행이 이미 측정했던 추가 블록을 사용하게 되었으며 이 중 판정 행은 23개입니다. 구간 교체와 전체 블록 사용 후, 중복 합침 전에는 `sample-2/off/update`와 `sample-2/off/update-first`의 두 판정 행이 0을 제외합니다. 두 행은 같은 사건이므로 합침 후에는 `sample-2/off/update` 한 건입니다. 판정 7쌍과 기록 7쌍을 합쳐 전체 보고는 194행이고 판정 행은 97개입니다.
+
+| 실제 블록 집합입니다. | 0 제외/판정 행입니다. | 명목 1%의 99% 이항 범위입니다. | 결과입니다. |
+| --- | ---: | --- | --- |
+| 축소 집합입니다. | 1/54 | 0~3 | 범위 안입니다. |
+| 전체 집합입니다. | 0/43 | 0~3 | 범위 안입니다. |
+| 합계입니다. | 1/97 | 0~4 | 범위 안입니다. |
+
+따라서 재계산의 A/A 결과는 `AA_PASS`입니다. 진단의 최초 축소·전체 행 수와 다른 것은 앞 8블록만 쓰던 행이 실제 24블록 집합으로 옮겨지고, 그 집합에서 동일한 update 쌍을 한 번만 세기 때문입니다. 이 결과는 새 시간 측정이나 변경 후보의 채택 판정이 아닙니다. 기존 세션에는 교환 통과가 없으므로 if-then 부호 원인도 이번 재계산으로 판정하지 않았습니다.
+
+합친 fixture는 원자료의 interaction count가 1인 `sample-0`, `sample-1`, `sample-2`, `sample-3`, `array-100`, `array-500`, `array-1000`입니다. 각 fixture의 OFF update·update-first와 OFF update-nogc·update-first-nogc를 각각 한 행으로 합쳤습니다. 정확한 14쌍의 키는 최종 JSON의 `report.mergedRows`에 있습니다.
+
+산출물은 `/private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/session-131a-recompute/`에 있습니다. `final.json`, `first-report.json`, 한국어 `summary.md`, 복원한 행별 raw 및 `sha256.txt`를 기록하였습니다. `verify-session-131.mjs`로 새 산출물 해시, 전체 실제 블록, 중복 목록, 새 통계 재현 및 기존 GC 격리 기록을 검증하여 `VERIFY_SESSION_131_OK`를 확인하였습니다. 출력의 624개 프로세스와 1,018.913초는 원 세션의 기록이며 새 실행이 아닙니다.
+
+새 함수 부재로 자체 검증이 먼저 실패한 뒤 구현하였습니다. 최종 `MEDIAN_INTERVAL_131_OK`는 n=8~48의 정확한 k 표, 포함률 99% 이상, 비변경 입력과 유효성 및 고정 시드 합성 A/A를 검사합니다. 각 100만 회의 오탐률은 8블록 0.7829%인 7,829건과 24블록 0.6544%인 6,544건이며 이론값의 모의 오차 범위 안입니다. 전체 `SELF_TEST_131_OK: 14 contract groups passed; no timing judgments`는 구형 보고, 첫·확인 구간, 실제 블록, 메타데이터에 따른 중복, 세 이항 범위, 교환 통계·예산 및 요약 필드도 검사합니다. 모든 명령은 8분 안에 순차로 자체 종료하였으며 제품 시간 측정은 추가하지 않았습니다.

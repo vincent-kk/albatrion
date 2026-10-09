@@ -16,7 +16,9 @@ import { estimateSession131 } from './estimate-session-131.mjs';
 import { gcObservation131 } from './gc-observation-131.mjs';
 import { corePairRecord129 } from './measure-core-pair-129.mjs';
 import { reactPairRecord129 } from './measure-react-pair-129.mjs';
-import { reportCluster129 } from './report-cluster-129.mjs';
+import { reportSession131 } from './report-session-131.mjs';
+import { swapReport131 } from './swap-report-131.mjs';
+import { selectMeasuredRows131 } from './select-measured-rows-131.mjs';
 import { gaValidation129 } from './ga-validation-129.mjs';
 import { rowSeed129 } from './row-seed-129.mjs';
 import { watchScope131 } from './watch-scope-131.mjs';
@@ -117,12 +119,9 @@ function measurePass(options, bundles, rows, phase, stage, deadline, processes, 
         : setting.blocks.find(item => item.block === block.block).reports[role];
       block[role].gc = report.telemetry.gc;
     }
-    // A setting can be indivisible in the worker; expose only each row's requested blocks to the unchanged reporter.
-    return setting.rows.map(row => {
-      const selected = { ...record, verdictColumns: record.verdictColumns.includes(row.mode) ? [row.mode] : [],
-        recordColumns: record.recordColumns.includes(row.mode) ? [row.mode] : [], blocks: record.blocks.filter(block => block.block < row.blocks),
-        scope131: row, coreEmptyPool131: row === setting.rows.find(item => item.blocks === Math.max(...setting.rows.map(item => item.blocks))) };
-      if (confirm) selected.confirm = { ...confirm, modes: [row.mode] };
+    // An indivisible setting already measured every column; retain every block for each reported row.
+    return selectMeasuredRows131(record, setting.rows).map(selected => {
+      const row = selected.scope131;
       const source = path.join(raw, `pair-${row.key.replaceAll('/', '-')}.json`);
       write(source, selected);
       return { record: selected, source, sha256: hash(fs.readFileSync(source)) };
@@ -157,7 +156,7 @@ function main() {
     const bytes = fs.readFileSync(file); inputHashes[path.resolve(file)] = hash(bytes); return JSON.parse(bytes);
   };
   let reportMs = 0;
-  const report = input => { const start = performance.now(); try { return reportCluster129(input); } finally { reportMs += performance.now() - start; } };
+  const report = input => { const start = performance.now(); try { return reportSession131({ ...input, fullBlocks: options.blocks }); } finally { reportMs += performance.now() - start; } };
   try {
     const bundles = verifyBundles131(options);
     session.bundles = bundles;
@@ -166,6 +165,8 @@ function main() {
     const firstFile = jsonInput(options.firstReport), first = firstFile?.report ?? firstFile;
     const axisFile = jsonInput(options.axisFrom), axis = axisFile?.report ?? axisFile;
     if (options.aa) assert(aa.format === 'cluster-report-129' && aa.stage === 'AA', '--aa must be a 129 A/A report or final 131 A/A JSON');
+    if (options.aa) assert(aa.method?.intervalId === 'order-statistic-median-131' && aa.aaSummary?.passed
+      && (!aa.swapped || aa.swapPassed), 'Recompute and pass all three 131 A/A bands before a verdict');
     if (options.aa) assert(Array.isArray(aa.rows) && aa.rows.every(row => typeof row.key === 'string' &&
       Number.isFinite(row.aaMagnitudeMs) && row.aaMagnitudeMs >= 0), 'A/A row magnitudes must be finite and nonnegative');
     if (options.aa && !options.smoke) assert(!aaFile.smoke && !aa.rows.some(row => row.blocks < 8), 'Smoke A/A cannot support a verdict');
@@ -177,7 +178,7 @@ function main() {
     session.scoping = scopeRows131(requested, counts, options.blocks, options.reducedBlocks);
     const input = { aa, counts, axisGainMs: axis?.exemption?.axisGainMs };
     if (options.kind !== 'aa') {
-      const aaKeys = aa.rows.map(row => row.key);
+      const aaKeys = aa.rows.flatMap(row => row.mergedKeys ?? [row.key]);
       assert(requested.filter(row => !row.mode.endsWith('-nogc') && !/^(profiler|commits)-/.test(row.mode)).every(row => aaKeys.includes(row.key)), 'A/A noise row missing; cannot issue a silent pass');
     }
     let records, confirmRecords = [];
@@ -190,7 +191,8 @@ function main() {
       assert(records.every(item => item.record.bundleSha256.base === bundles.base.sha256 && item.record.bundleSha256.candidate === bundles.candidate.sha256), 'Confirmation bundles differ from first pass');
       const rows = confirmationRows131(first, options.lane, options.blocks);
       session.confirmationPlan = rows;
-      assert(rows.every(row => requested.some(item => item.key === row.key)), '--rows must include every flagged row of this lane');
+      assert(rows.every(row => (first.rows.find(item => item.key === row.key)?.mergedKeys ?? [row.key])
+        .some(key => requested.some(item => item.key === key))), '--rows must include every flagged row or merged alias of this lane');
       session.scoping = rows;
       checkBudget(rows);
       const confirmStart = performance.now();
@@ -205,6 +207,18 @@ function main() {
     const firstPath = path.join(options.out, 'first-report.json');
     result.inputs = { records: records.map(({ source, sha256 }) => ({ source, sha256 })) };
     write(firstPath, result);
+    let swapRecords = [];
+    if (options.swap) {
+      const swapStart = performance.now();
+      session.swapPreflight = preflightSession131({ ...options, swap: false, kind: 'confirm' }, session.scoping, deadline - Date.now());
+      assertBudget131(session.swapPreflight);
+      swapRecords = measurePass(options, { ...bundles, base: bundles.candidate, candidate: bundles.base }, session.scoping,
+        'swap', 'AA', deadline, session.processes);
+      const swapped = report({ records: swapRecords });
+      result = swapReport131(result, swapped);
+      session.swapReport = swapped;
+      session.time.swapMs = performance.now() - swapStart;
+    }
     if (options.kind === 'verdict') {
       const rows = confirmationRows131(result, options.lane, options.blocks), confirmStart = performance.now();
       session.confirmationPlan = rows;
@@ -218,11 +232,12 @@ function main() {
     }
     assert(!result.aaMissing?.length, 'Missing A/A noise entries');
     assert(result.decision !== 'CONFIRMATION_PENDING', 'Independent confirmation incomplete');
-    const all = [...records, ...confirmRecords];
+    const all = [...records, ...confirmRecords, ...swapRecords];
     result.rows = result.rows.map(row => {
-      const raw = records.find(item => item.record.scope131?.key === row.key) ?? records.find(item =>
+      const raw = records.find(item => (row.mergedKeys ?? [row.key]).includes(item.record.scope131?.key)) ?? records.find(item =>
         item.record.fixture === row.fixture && item.record.validation === row.validation && [...item.record.verdictColumns, ...item.record.recordColumns].includes(row.mode));
-      const scope = raw?.record.scope131 ?? session.scoping.find(item => item.key === row.key);
+      const planned = raw?.record.scope131 ?? session.scoping.find(item => item.key === row.key);
+      const scope = { ...planned, scope: row.scope, reason: row.scopeReason, blocks: row.blocks };
       return { ...annotateRow131(row, scope, result.confirmation?.rows.find(item => item.key === row.key)),
         gcObservation: raw ? gcObservation131(raw.record, row.mode) : null,
         confirmGcObservation: confirmRecords.find(item => item.record.scope131?.key === row.key)
@@ -230,6 +245,7 @@ function main() {
     });
     result.inputs = { records: records.map(({ source, sha256 }) => ({ source, sha256 })),
       confirmRecords: confirmRecords.map(({ source, sha256 }) => ({ source, sha256 })), aa: options.aa ?? null, counts: options.touchCounts ?? null,
+      swapRecords: swapRecords.map(({ source, sha256 }) => ({ source, sha256 })),
       toolSha256: hash(fs.readFileSync(path.join(directory, 'report-cluster-129.mjs'))) };
     if (options.smoke) result.decision = 'SMOKE_NO_VERDICT';
     session.report = result;
@@ -246,6 +262,7 @@ function main() {
       }));
     verifyBundles131(options);
     for (const [file, digest] of Object.entries(inputHashes)) assert.equal(hash(fs.readFileSync(file)), digest, `${file}: input digest changed`);
+    if (options.kind === 'aa' && !options.smoke) assert.equal(result.decision, 'AA_PASS', 'A/A failed: reduced, full and total bands must all pass in every requested orientation');
     session.status = 'passed';
   } catch (error) { session.error = error.message; process.exitCode = 1; }
   session.time.reportMs = reportMs;

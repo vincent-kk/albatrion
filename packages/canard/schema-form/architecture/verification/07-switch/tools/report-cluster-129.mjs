@@ -78,7 +78,7 @@ function normalizeRecord(record, source) {
  * @returns Map from row key to `{ key, lane, fixture, validation, mode, column, blocks, blockDifferencesMs, statistic,
  *   baseMedianMs, candidateMedianMs, correctionMs, byOrderMs }`
  */
-function buildRows(normalized, seedSuffix = '') {
+function buildRows(normalized, seedSuffix = '', interval131) {
   const emptyByPath = new Map();
   for (const { empty } of normalized) for (const pool of empty) {
     const id = `${pool.lane}/${pool.validation}`;
@@ -103,7 +103,7 @@ function buildRows(normalized, seedSuffix = '') {
     };
     rows.set(key, { key, lane: group.lane, fixture: group.fixture, validation: group.validation, mode: group.mode,
       column: group.record ? 'record' : 'verdict', blocks: blocks.length, blockDifferencesMs: differences,
-      statistic: clusterBootstrap129(differences, rowSeed129(key + seedSuffix)),
+      statistic: interval131 ? interval131(differences) : clusterBootstrap129(differences, rowSeed129(key + seedSuffix)),
       baseMedianMs: median129(blocks.flatMap(block => block.base)) - correctionMs,
       candidateMedianMs: median129(blocks.flatMap(block => block.candidate)) - correctionMs, correctionMs,
       byOrderMs: { baseFirst: orderMedian('base'), candidateFirst: orderMedian('candidate') } });
@@ -129,23 +129,26 @@ const workCount = (counts, key) => {
  * Judge one stage from cluster statistics: A/A magnitudes, or 105C-01 verdicts with the 128C-01 confirmation and the
  * 124C-01 exemption as 128C-01 reads it.
  * @param input - `{ records: [{ record, source }], confirmRecords?: [{ record, source }], aa?: cluster-report-129 A/A report,
- *   counts?: { [rowKey]: number | { calls, probe } }, axisGainMs?: number }`
+ *   counts?: { [rowKey]: number | { calls, probe } }, axisGainMs?: number,
+ *   interval131?: (blockDifferences) => statistic }`; omit the interval function to preserve the recorded 129 method
  * @returns cluster-report-129 object; for a change stage `decision` is ADOPT, REJECT or CONFIRMATION_PENDING by the rules only
  */
 export function reportCluster129(input) {
   const normalized = input.records.map(({ record, source }) => normalizeRecord(record, source));
   const stage = normalized[0].stage;
   assert(normalized.every(item => item.stage === stage && item.confirmModes === null), 'First-measurement inputs must share one stage and hold no confirmation records');
-  const rows = buildRows(normalized);
+  const rows = buildRows(normalized, '', input.interval131);
   const method = { unit: 'one paired difference per ABBA block: median(base samples) − median(candidate samples)',
     statistic: 'median of block differences (mean of the two middle values for an even count)',
-    interval: 'cluster bootstrap over blocks, xorshift32, 1,999 trials, nearest-rank 0.5% and 99.5%',
-    seed: '32-bit FNV-1a of "fixture/validation/mode" (confirmation passes append "#confirm")',
+    interval: input.interval131 ? 'order-statistic median interval: largest k with P(Binom(n, 1/2) <= k-1) <= 0.005; [sorted[k-1], sorted[n-k]]; exact coverage >= 0.99; unbounded for n < 8'
+      : 'cluster bootstrap over blocks, xorshift32, 1,999 trials, nearest-rank 0.5% and 99.5%',
+    seed: input.interval131 ? null : '32-bit FNV-1a of "fixture/validation/mode" (confirmation passes append "#confirm")',
     correction: 'core: call count × pooled empty end-to-end median of the validation path, both sides; React: none',
     sign: 'base − candidate; negative means the candidate is slower',
     correctedBaseMedian: normalized.every(item => item.corrected) };
   const list = [...rows.values()].sort((a, b) => a.key.localeCompare(b.key));
-  const excludesZero = row => row.statistic.low > 0 || row.statistic.high < 0;
+  const excludesZero = row => Number.isFinite(row.statistic.low) && Number.isFinite(row.statistic.high)
+    && (row.statistic.low > 0 || row.statistic.high < 0);
   const blockCoverage = { designBlocks: DESIGN_BLOCKS, rowsBelowDesignBlocks: list.filter(row => row.blocks < DESIGN_BLOCKS).length };
   if (stage === 'AA') {
     const verdictRows = list.filter(row => row.column === 'verdict'), recordRows = list.filter(row => row.column === 'record');
@@ -169,7 +172,7 @@ export function reportCluster129(input) {
   if (input.confirmRecords?.length) {
     const confirmNormalized = input.confirmRecords.map(({ record, source }) => normalizeRecord(record, source));
     assert(confirmNormalized.every(item => item.stage === stage && item.confirmModes), 'Confirmation records must come from confirm mode of the same stage');
-    const confirmRows = buildRows(confirmNormalized, '#confirm');
+    const confirmRows = buildRows(confirmNormalized, '#confirm', input.interval131);
     const allowed = new Set(confirmNormalized.flatMap(item => item.contributions.filter(contribution => item.confirmModes.includes(contribution.mode))
       .map(contribution => contribution.key)));
     const rowsOut = flagged.map(row => {

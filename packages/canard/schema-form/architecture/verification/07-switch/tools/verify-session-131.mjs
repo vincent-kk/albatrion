@@ -5,6 +5,8 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { reportCluster129 } from './report-cluster-129.mjs';
 import { annotateRow131 } from './annotate-row-131.mjs';
+import { reportSession131 } from './report-session-131.mjs';
+import { swapReport131 } from './swap-report-131.mjs';
 
 const hash = value => createHash('sha256').update(value).digest('hex');
 for (const file of process.argv.slice(2)) {
@@ -32,7 +34,14 @@ for (const file of process.argv.slice(2)) {
     assert.equal(hash(fs.readFileSync(path.join(out, relative))), digest, relative);
   }
   for (const row of session.report.rows) {
-    if (session.kind !== 'confirm') assert.equal(row.blocks, session.scoping.find(scope => scope.key === row.key).blocks);
+    if (session.kind !== 'confirm') {
+      if (session.report.method.intervalId === 'order-statistic-median-131') {
+        const measured = session.processes.filter(process => process.phase === 'raw' && process.role === 'base'
+          && process.forms.some(form => form.fixture === row.fixture && form.validation === row.validation));
+        assert.equal(row.blocks, measured.length, 'Every measured first-pass block is used');
+        assert.equal(row.scope, row.blocks >= session.options.blocks ? 'full' : 'reduced');
+      } else assert.equal(row.blocks, session.scoping.find(scope => scope.key === row.key).blocks);
+    }
     const confirmation = session.report.confirmation?.rows.find(item => item.key === row.key);
     const annotated = annotateRow131(row, { scope: row.scope, reason: row.scopeReason }, confirmation);
     for (const field of ['confirmBlocks', 'confirmStatus', 'observation131']) assert.equal(row[field], annotated[field]);
@@ -50,14 +59,24 @@ for (const file of process.argv.slice(2)) {
     }
   }
   if (session.kind === 'aa') {
-    const records = session.rawInputs.map(({ source, sha256 }) => {
+    const records = (session.report.inputs?.records ?? session.rawInputs).map(({ source, sha256 }) => {
       const bytes = fs.readFileSync(source); assert.equal(hash(bytes), sha256); return { source, record: JSON.parse(bytes) };
     });
-    const replay = reportCluster129({ records });
+    const currentMethod = session.report.method.intervalId === 'order-statistic-median-131';
+    let replay = currentMethod ? reportSession131({ records, fullBlocks: session.options.blocks }) : reportCluster129({ records });
+    if (session.options.swap) {
+      const swapRecords = session.report.inputs.swapRecords.map(({ source, sha256 }) => {
+        const bytes = fs.readFileSync(source); assert.equal(hash(bytes), sha256); return { source, record: JSON.parse(bytes) };
+      });
+      replay = swapReport131(replay, reportSession131({ records: swapRecords, fullBlocks: session.options.blocks }));
+      assert.equal(replay.swapPassed, session.report.swapPassed);
+    }
     assert.deepEqual(replay.aaSummary, session.report.aaSummary);
+    if (currentMethod) assert.deepEqual(replay.mergedRows, session.report.mergedRows);
     for (const row of replay.rows) {
       const saved = session.report.rows.find(item => item.key === row.key);
       assert.deepEqual(row.statistic, saved.statistic); assert.equal(row.correctionMs, saved.correctionMs);
+      if (session.options.swap) assert.deepEqual(row.swapStatistic, saved.swapStatistic);
     }
   }
   if (session.smoke) assert.equal(session.report.decision, 'SMOKE_NO_VERDICT');

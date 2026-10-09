@@ -7,10 +7,11 @@ export function preflightSession131(options, rows, budgetMs = options.budgetSeco
   const cost = planningCosts131(options.lane);
   const estimate = estimateSession131(cost.processes, rows, { ...cost, formsPerProcess: options.formsPerProcess,
     observedReportMs: cost.reportMs, targetWarmup: options.warmup, targetSamples: options.samples,
-    targetFullBlocks: options.blocks, targetReducedBlocks: options.reducedBlocks });
+    targetFullBlocks: options.blocks, targetReducedBlocks: options.reducedBlocks, swap: options.swap });
+  const passes = options.swap ? 2 : 1;
   const confirmReserveMs = options.smoke || options.kind === 'confirm' ? 0 : Math.max(1200000, estimate.totalMs * .25);
   const requiredMs = estimate.totalMs + confirmReserveMs;
-  return { estimate, confirmReserveMs, requiredMs, budgetMs, sourceSha256: cost.sourceSha256,
+  return { estimate, passes, confirmReserveMs, requiredMs, budgetMs, sourceSha256: cost.sourceSha256,
     fits: estimate.complete && Number.isFinite(requiredMs) && requiredMs < budgetMs,
     limitation: 'Planning extrapolation, not a runtime guarantee. Actual flagged confirmation rows are checked again against remaining budget.' };
 }

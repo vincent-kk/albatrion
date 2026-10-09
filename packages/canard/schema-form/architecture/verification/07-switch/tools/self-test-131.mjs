@@ -19,11 +19,48 @@ import { watchScope131 } from './watch-scope-131.mjs';
 import { telemetry131 } from './telemetry-131.mjs';
 import { annotateRow131 } from './annotate-row-131.mjs';
 import { preflightSession131, assertBudget131 } from './preflight-session-131.mjs';
+import { medianInterval131 } from './median-interval-131.mjs';
+import { reportSession131 } from './report-session-131.mjs';
+import { useMeasuredBlocks131 } from './use-measured-blocks-131.mjs';
+import { binomialBand131, aaCounts131 } from './aa-band-131.mjs';
+import { swapReport131 } from './swap-report-131.mjs';
+import { selectMeasuredRows131 } from './select-measured-rows-131.mjs';
 
 const root = fs.mkdtempSync(path.join(os.tmpdir(), 'self-test-131-'));
 const sha = value => createHash('sha256').update(value).digest('hex');
 let checks = 0;
 try {
+  const kTable = [1, 1, 1, 1, 2, 2, 2, 3, 3, 3, 4, 4, 4, 5, 5, 5, 6, 6, 7, 7, 7,
+    8, 8, 8, 9, 9, 10, 10, 10, 11, 11, 12, 12, 12, 13, 13, 14, 14, 14, 15, 15];
+  for (let n = 8; n <= 48; n++) {
+    const values = Array.from({ length: n }, (_, i) => n - i), result = medianInterval131(values);
+    assert.equal(result.k, kTable[n - 8], `Exact rank at n=${n}`);
+    assert(result.coverage >= .99);
+    assert.equal(result.low, result.k);
+    assert.equal(result.high, n - result.k + 1);
+    assert.equal(result.median, (n + 1) / 2);
+    assert.equal(values[0], n, 'Input is not mutated');
+  }
+  assert.throws(() => medianInterval131([]), /finite/);
+  assert.throws(() => medianInterval131([NaN]), /finite/);
+  assert.equal(medianInterval131([1, 2]).unbounded, true);
+  let randomState = 131132;
+  const random = () => { randomState ^= randomState << 13; randomState ^= randomState >>> 17; randomState ^= randomState << 5;
+    return (randomState >>> 0) / 4294967296; };
+  const simulated = [];
+  for (const blocks of [8, 24]) {
+    const trials = 1000000; let excluded = 0;
+    for (let trial = 0; trial < trials; trial++) {
+      const interval = medianInterval131(Array.from({ length: blocks }, () => random() - .5));
+      if (interval.low > 0 || interval.high < 0) excluded++;
+    }
+    const expected = 1 - medianInterval131(Array.from({ length: blocks }, (_, i) => i)).coverage;
+    const rate = excluded / trials;
+    assert(Math.abs(rate - expected) < 6 * Math.sqrt(expected * (1 - expected) / trials), 'Simulated rate agrees with exact coverage');
+    simulated.push({ blocks, trials, excluded, rate, expected });
+  }
+  console.log(`MEDIAN_INTERVAL_131_OK: exact k at n=8..48; coverage >= 0.99; simulated A/A ${simulated.map(item => `${item.blocks} blocks ${(100 * item.rate).toFixed(3)}% (${item.excluded}/${item.trials})`).join('; ')}`);
+  checks++;
   const observe = PerformanceObserver.prototype.observe, disconnect = PerformanceObserver.prototype.disconnect;
   let starts = 0, stops = 0;
   PerformanceObserver.prototype.observe = function(...args) { starts++; return observe.apply(this, args); };
@@ -63,8 +100,14 @@ try {
   assert.throws(() => parseSession131([...args, '--forms-per-process=-1']), /Invalid --forms/);
   assert.throws(() => parseSession131(args.map(value => value === 'aa' ? 'verdict' : value)), /require --aa/);
   assert.equal(parseSession131([...args, '--forms-per-process', '2']).formsPerProcess, 2);
+  assert.equal(parseSession131([...args, '--swap']).swap, true);
+  assert.throws(() => parseSession131([...args, '--swap=false']), /--swap takes/);
+  assert.throws(() => parseSession131([...args.map(value => value === 'aa' ? 'verdict' : value), '--aa=x', '--swap']), /only for kind aa/);
   const fullRows = scopeRows131(sessionRows131('core-129', 'core'), undefined, 24, 8);
   assertBudget131(preflightSession131(options, fullRows));
+  const normalPlan = preflightSession131(options, fullRows), swapPlan = preflightSession131({ ...options, swap: true }, fullRows);
+  assert.equal(swapPlan.estimate.totalMs, 2 * normalPlan.estimate.totalMs);
+  assert.equal(swapPlan.passes, 2);
   assert.throws(() => assertBudget131(preflightSession131(options, fullRows, 1)), /Before measurement/);
   for (const preset of ['react-129-main', 'react-129-large', 'react-129-array-1000', 'react-129-nested-d5']) {
     const requested = watchScope131(sessionRows131(preset, 'react'), 'react');
@@ -162,6 +205,60 @@ try {
   assert.equal(partitioned.rows.find(row => row.mode === 'mount').correctionMs, baseline.rows[0].correctionMs);
   checks++;
 
+  const long = { ...record, interactionCount: 1, verdictColumns: ['update', 'update-first'], recordColumns: ['update-nogc', 'update-first-nogc'],
+    scope131: { scope: 'full', blocks: 24 }, blocks: Array.from({ length: 24 }, (_, block) => ({ block, order: ['base', 'candidate'],
+      ...Object.fromEntries(['base', 'candidate'].map(role => [role, { emptyEndMs: [1], samples: Object.fromEntries(
+        ['update', 'update-first', 'update-nogc', 'update-first-nogc'].map(mode => [mode, [role === 'base' ? 10 : 9]])) }])) })) };
+  const selectedShort = { ...long, verdictColumns: ['update-first'], recordColumns: [], scope131: { scope: 'reduced', blocks: 8 }, blocks: long.blocks.slice(0, 8), coreEmptyPool131: false };
+  const plannedRows = [{ key: 'flat-50/off/update', mode: 'update', scope: 'full', blocks: 24 },
+    { key: 'flat-50/off/update-first', mode: 'update-first', scope: 'reduced', blocks: 8 }];
+  const selectedMeasured = selectMeasuredRows131(long, plannedRows);
+  assert.equal(selectedMeasured[1].blocks.length, 24, 'Actual runner partition keeps every measured block');
+  assert.equal(selectedMeasured.filter(item => item.coreEmptyPool131).length, 1);
+  const selectedConfirm = selectMeasuredRows131({ ...long, confirm: { modes: ['update', 'update-first'] } }, plannedRows);
+  assert.equal(selectedConfirm[1].blocks.length, 24);
+  assert.deepEqual(selectedConfirm[1].confirm.modes, ['update-first']);
+  const restored = useMeasuredBlocks131([{ source: 'all', record: long }, { source: 'short', record: selectedShort }]);
+  assert.equal(restored[1].record.blocks.length, 24);
+  const unique = reportSession131({ records: restored });
+  assert.equal(unique.rows.length, 2);
+  assert.equal(unique.aaSummary.verdictRows, 1);
+  assert.equal(unique.mergedRows.length, 2);
+  assert(unique.rows.every(row => row.blocks === 24 && row.scope === 'full' && row.statistic.k === 6));
+  const onlyFirst = reportSession131({ records: [{ source: 'first-only', record: selectedShort }] });
+  assert.equal(onlyFirst.rows[0].key, 'flat-50/off/update');
+  assert.equal(onlyFirst.rows[0].scope, 'reduced');
+  const correlated = reportSession131({ records: [{ source: 'two-interactions', record: { ...long, interactionCount: 2 } }] });
+  assert.equal(correlated.rows.length, 4);
+  assert(correlated.method.rowDependence.includes('명목'));
+  const difference = structuredClone(long); difference.blocks[0].base.samples['update-first'] = [999];
+  assert.throws(() => reportSession131({ records: [{ record: difference, source: 'mismatch' }] }), /cannot merge/);
+  assert.match(baseline.method.interval, /bootstrap/);
+  assert.equal(baseline.rows[0].statistic.trials, 1999);
+  checks++;
+
+  assert.deepEqual([binomialBand131(97).low, binomialBand131(97).high], [0, 4]);
+  assert.deepEqual([binomialBand131(21).low, binomialBand131(21).high], [0, 2]);
+  const artificial = Array.from({ length: 100 }, (_, i) => ({ key: String(i), column: 'verdict', scope: i < 21 ? 'full' : 'reduced',
+    excludesZero: i < 3, statistic: { unbounded: false } }));
+  const bands = aaCounts131(artificial, 24);
+  assert.equal(bands.total.inside, true);
+  assert.equal(bands.full.inside, false);
+  assert.equal(bands.passed, false, 'Total inside cannot hide full-row failure');
+  checks++;
+
+  const flipped = structuredClone(long);
+  for (const block of flipped.blocks) [block.base, block.candidate] = [block.candidate, block.base];
+  const swapped = swapReport131(unique, reportSession131({ records: [{ record: flipped, source: 'swapped' }] }));
+  assert(swapped.rows.every(row => row.swapComparison === 'sign-flipped'));
+  assert(swapReport131(unique, unique).rows.every(row => row.swapComparison === 'same-sign'));
+  const swappedSummary = summarizeSession131({ kind: 'aa', lane: 'core', smoke: true, status: 'passed', report: swapped,
+    scoping: [], processes: [], time: {}, estimate: { fixtures: [], complete: false } });
+  assert(swappedSummary.includes('교환 중앙값'));
+  assert(swappedSummary.includes('0을 제외') || swappedSummary.includes('0 제외/판정 행'));
+  assert(swappedSummary.includes('update-first<br>') || swappedSummary.includes('update<br>flat-50/off/update-first'));
+  checks++;
+
   const first = { format: 'cluster-report-129', stage: 'session131', flaggedRegressions: [
     { key: 'flat-50/off/mount', lane: 'core', fixture: 'flat-50', validation: 'off', mode: 'mount' },
     { key: 'flat-50/off/update-wall', lane: 'react', fixture: 'flat-50', validation: 'off', mode: 'update-wall' },
@@ -183,6 +280,14 @@ try {
   assert.equal(second.confirmation.rows[0].confirmed, true);
   assert.equal(second.confirmation.rows[0].second.blocks, 24);
   assert.equal(second.decision, 'REJECT');
+  const intervalAA = reportSession131({ records: [{ record: { ...record, blocks: Array.from({ length: 24 }, (_, block) => ({ ...record.blocks[block % 2], block })) }, source: 'new-aa' }] });
+  const newFirst = reportSession131({ records: [{ record: change, source: 'new-first' }], aa: intervalAA });
+  const newSecond = reportSession131({ records: [{ record: change, source: 'new-first' }], aa: intervalAA,
+    confirmRecords: [{ record: confirmed, source: 'new-confirm' }] });
+  assert.equal(newFirst.rows[0].statistic.k, 1);
+  assert.equal(newSecond.confirmation.rows[0].second.statistic.k, 6);
+  assert.equal(newSecond.rows[0].verdict.aaMagnitudeMs, Math.abs(intervalAA.rows[0].statistic.median));
+  assert.throws(() => reportSession131({ records: [{ record: change, source: 'old-aa' }], aa: baseline }), /Recompute A\/A/);
   const annotated = annotateRow131(second.rows[0], { scope: 'reduced', reason: 'zero-count' }, second.confirmation.rows[0]);
   assert.equal(annotated.confirmBlocks, 24);
   assert.equal(annotated.confirmStatus, '확인됨');

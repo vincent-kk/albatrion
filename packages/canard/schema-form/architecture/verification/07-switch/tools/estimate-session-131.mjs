@@ -24,8 +24,11 @@ export function estimateSession131(processes, rows, measuredOptions) {
   const fixedReportMs = measuredOptions.observedReportMs ?? 0;
   const driverPerProcessMs = measuredOptions.driverPerProcessMs ?? Math.max(0, (measuredOptions.observedSessionMs ?? modeledObservedMs) - modeledObservedMs - fixedReportMs) / Math.max(1, processes.length);
   const driverOverheadMs = driverPerProcessMs * targetProcesses + fixedReportMs;
-  return { totalMs: fixtures.reduce((sum, fixture) => sum + fixture.totalMs, 0) + driverOverheadMs,
-    driverOverheadMs, targetProcesses, fixtures, fullBlocks: measuredOptions.targetFullBlocks ?? 24, reducedBlocks: measuredOptions.targetReducedBlocks ?? 8,
+  const passes = measuredOptions.swap ? 2 : 1;
+  return { totalMs: (fixtures.reduce((sum, fixture) => sum + fixture.totalMs, 0) + driverOverheadMs) * passes,
+    driverOverheadMs: driverOverheadMs * passes, targetProcesses: targetProcesses * passes,
+    fixtures: fixtures.map(fixture => ({ ...fixture, totalMs: fixture.totalMs * passes })), passes,
+    fullBlocks: measuredOptions.targetFullBlocks ?? 24, reducedBlocks: measuredOptions.targetReducedBlocks ?? 8,
     warmup, samples, includesConfirmation: false,
     limitation: 'Linear stage extrapolation from smoke, no timing judgment; GC/JIT and fixture coupling may change costs. Missing warmup is not extrapolatable.',
     complete: (warmup === 0 || measuredOptions.warmup > 0) && fixtures.every(fixture => fixture.measuredFormRuns > 0) };
