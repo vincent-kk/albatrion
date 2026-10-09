@@ -22,6 +22,8 @@ import { fileURLToPath } from 'node:url';
 
 import { gaValidation129 } from './ga-validation-129.mjs';
 import { rowSeed129 } from './row-seed-129.mjs';
+import { loadBundle131 } from './load-bundle-131.mjs';
+import { telemetry131 } from './telemetry-131.mjs';
 
 const tool = fileURLToPath(import.meta.url);
 const output = path.resolve(path.dirname(tool), '..');
@@ -31,12 +33,14 @@ assert.equal(fs.realpathSync(repo), '/Users/Vincent/Workspace/albatrion/.claude/
 const immediate = globalThis.setImmediate;
 const clock = () => performance.now();
 const flag = (name, fallback) => process.argv.find(value => value.startsWith(`--${name}=`))?.slice(name.length + 3) ?? fallback;
+const sessionJob = flag('session-job') ? JSON.parse(fs.readFileSync(flag('session-job'), 'utf8')) : null;
+let formIndex = 0;
 const warmup = Number(flag('warmup', 20)), sampleCount = Number(flag('samples', 41));
 assert(Number.isInteger(warmup) && warmup >= 0 && Number.isInteger(sampleCount) && sampleCount > 0);
-const deadline = clock() + 420_000;
+const deadline = sessionJob ? Math.min(clock() + 420_000, sessionJob.deadlineEpochMs - Date.now() + clock()) : clock() + 420_000;
 const positional = process.argv.slice(2).filter(value => !value.startsWith('--'));
 // Validation's deferred error events schedule one further check-queue generation.
-const sentinelPasses = positional[3] === 'on' ? 2 : 1;
+let sentinelPasses = positional[3] === 'on' ? 2 : 1;
 const hash = value => createHash('sha256').update(value).digest('hex');
 const round = value => Number(value.toFixed(6));
 const canonical = value => JSON.stringify(value, (_key, item) => item && !Array.isArray(item) && typeof item === 'object'
@@ -66,6 +70,7 @@ async function measureCall(operation) {
     end = await new Promise(resolve => immediate(() => resolve(clock())));
     if (pass + 1 < sentinelPasses) await flushMicrotasks();
   }
+  if (sessionJob) return { result, timing: [round(micro), round(end - start)], window: [start, end] };
   return { result, timing: [round(micro), round(end - start)] };
 }
 
@@ -271,22 +276,29 @@ async function selfTest() {
  * @returns Worker report: timings per column, empty controls, boundary summary per verdict mode, value digests, summary
  */
 async function measureOne(side, stage, fixtureName, validation) {
+  const telemetry = sessionJob ? telemetry131(formIndex++ === 0) : null;
+  if (sessionJob) sentinelPasses = validation === 'on' ? 2 : 1;
   assert(['base', 'candidate'].includes(side), `Side: ${side}`);
   assert(/^(sample-[0-3]|flat-(50|100|500)|nested-d[35]-f4|array-(100|500|1000)|computed-visible-derived|oneOf-(5|10|20|40)|if-then)$/.test(fixtureName));
   assert(['off', 'on'].includes(validation));
   const bundles = flag('bundles');
-  assert(bundles, '--bundles=<directory> is required');
-  const name = pairNames(stage)[side === 'base' ? 0 : 1];
-  const manifestText = fs.readFileSync(path.join(bundles, 'c-bundles.json'), 'utf8'), manifest = JSON.parse(manifestText);
-  const entry = (Array.isArray(manifest) ? manifest : manifest.bundles).find(item => item.variant === name);
-  const file = path.join(bundles, `c-${name}.cjs`), text = fs.readFileSync(file, 'utf8');
+  assert(bundles || sessionJob, '--bundles=<directory> is required');
+  const name = sessionJob ? path.basename(sessionJob.bundle.file, '.cjs') : pairNames(stage)[side === 'base' ? 0 : 1];
+  const req = createRequire(path.join(pkg, 'package.json'));
+  const loaded = sessionJob ? loadBundle131(sessionJob.bundle, req) : null;
+  const manifestText = loaded?.manifestText ?? fs.readFileSync(path.join(bundles, 'c-bundles.json'), 'utf8'), manifest = JSON.parse(manifestText);
+  const entry = loaded?.entry ?? (Array.isArray(manifest) ? manifest : manifest.bundles).find(item => item.variant === name);
+  const file = sessionJob?.bundle.file ?? path.join(bundles, `c-${name}.cjs`), text = loaded?.text ?? fs.readFileSync(file, 'utf8');
   assert(entry && entry.sha256 === hash(text), `c-${name}.cjs does not match the SHA-256 in its build manifest`);
   if (flag('base-revision')) assert.equal(entry.revision, flag('base-revision'), `c-${name}.cjs was built from another base revision`);
   const head = execFileSync('git', ['rev-parse', 'HEAD'], { cwd: repo, encoding: 'utf8' }).trim();
-  const req = createRequire(path.join(pkg, 'package.json'));
   const module = { exports: {} };
-  new Function('require', 'module', 'exports', text)(req, module, module.exports);
-  const engine = module.exports;
+  let bundlesLoaded = loaded?.bundlesLoaded ?? 0;
+  if (!loaded) {
+    new Function('require', 'module', 'exports', text)(req, module, module.exports);
+    bundlesLoaded++;
+  }
+  const engine = loaded?.api ?? module.exports;
   let fixture = engine.equivalentFixtures.find(item => item.name === fixtureName);
   if (!fixture && fixtureName === 'if-then') {
     const definition = JSON.parse(fs.readFileSync(path.join(output, 'profile-119-session/if-then.json'), 'utf8'));
@@ -312,13 +324,16 @@ async function measureOne(side, stage, fixtureName, validation) {
       return;
     }
     timings[column].push(sum(records));
-    const digest = hash(canonical(typeof root.getValue === 'function' ? root.getValue() : root.value));
+    if (telemetry) telemetry.window(column, records.map(record => record.window), index);
+    const digest = telemetry ? telemetry.digest(() => hash(canonical(typeof root.getValue === 'function' ? root.getValue() : root.value)))
+      : hash(canonical(typeof root.getValue === 'function' ? root.getValue() : root.value));
     checks[column] ??= {};
     checks[column][digest] = (checks[column][digest] ?? 0) + 1;
+    if (telemetry && column.endsWith('-nogc')) telemetry.gc(true);
   };
   /** One authored history and the fixed branch axis; `gc` false writes every column to its `-nogc` record column. */
   const sequence = async (index, gc) => {
-    if (gc) globalThis.gc();
+    if (gc) telemetry ? telemetry.gc() : globalThis.gc();
     const prepared = props();
     await new Promise(resolve => immediate(resolve));
     if (gc) await discardPostGcPair();
@@ -346,24 +361,43 @@ async function measureOne(side, stage, fixtureName, validation) {
   };
   const controls = async label => {
     for (let index = -warmup; index < sampleCount; index++) {
-      globalThis.gc();
-      await new Promise(resolve => immediate(resolve));
-      await discardPostGcPair();
-      const observed = await measure(noop);
-      if (index >= 0) empty[label].push(observed.timing);
+      if (telemetry) await telemetry.run(index < 0 ? 'warmupMs' : 'sampleMs', async () => {
+        telemetry.gc();
+        await new Promise(resolve => immediate(resolve));
+        await discardPostGcPair();
+        const observed = await measure(noop);
+        if (index >= 0) empty[label].push(observed.timing);
+      });
+      else {
+        globalThis.gc();
+        await new Promise(resolve => immediate(resolve));
+        await discardPostGcPair();
+        const observed = await measure(noop);
+        if (index >= 0) empty[label].push(observed.timing);
+      }
     }
   };
   const started = new Date().toISOString();
+  telemetry?.ready();
   await controls('before');
-  for (const gc of noGc ? [true, false] : [true])
-    for (let index = -warmup; index < sampleCount; index++) await sequence(index, gc);
+  for (const gc of noGc ? [true, false] : [true]) {
+    if (telemetry && gc === false) telemetry.start();
+    for (let index = -warmup; index < sampleCount; index++) {
+      if (telemetry) await telemetry.run(index < 0 ? 'warmupMs' : 'sampleMs', () => sequence(index, gc));
+      else await sequence(index, gc);
+    }
+    if (telemetry && gc === false) await telemetry.stop();
+  }
   await controls('after');
   observe = boundaryObserver(req);
-  for (let index = -warmup; index < sampleCount; index++) await sequence(index, true);
+  for (let index = -warmup; index < sampleCount; index++) {
+    if (telemetry) await telemetry.run(index < 0 ? 'warmupMs' : 'sampleMs', () => sequence(index, true));
+    else await sequence(index, true);
+  }
   observe.restore();
   assert.equal(process.getActiveResourcesInfo().filter(item => ['Timeout', 'Immediate', 'MessagePort', 'PROCESSWRAP'].includes(item)).length, 0);
   const summary = { format: 'core-worker-129', side, name, stage, fixture: fixtureName, validation, interactionCount: fixture.interactions.length,
-    warmup, sampleCount, sentinelPasses, explicitGc: true, postGcDiscardedPairs: 1, onChange: 'noop', bundlesLoaded: 1,
+    warmup, sampleCount, sentinelPasses, explicitGc: true, postGcDiscardedPairs: 1, onChange: 'noop', bundlesLoaded,
     bundle: { file, sha256: hash(text), bytes: Buffer.byteLength(text), revision: entry.revision, manifestSha256: hash(manifestText) },
     verdictColumns: modes, recordColumns: recordModes,
     recordColumnMethod: noGc ? 'second full pass after the forced-GC pass: same sequence, no forced gc or post-GC discard; every column kept' : null,
@@ -373,11 +407,17 @@ async function measureOne(side, stage, fixtureName, validation) {
     environment: { head, node: process.version, v8: process.versions.v8, cpu: os.cpus()[0].model, platform: process.platform,
       arch: process.arch, started, ended: new Date().toISOString(), pid: process.pid },
     toolSha256: hash(fs.readFileSync(tool)), negativeClipping: false };
+  if (telemetry) return { timings, empty, ordering: boundarySummary(ordering), checks, summary, telemetry: await telemetry.finish() };
   return { timings, empty, ordering: boundarySummary(ordering), checks, summary };
 }
 
 assert.equal(typeof globalThis.gc, 'function', '--expose-gc is required');
-if (process.argv.includes('--self-test')) {
+if (sessionJob) {
+  const reports = [];
+  for (const setting of sessionJob.settings) reports.push(await measureOne(sessionJob.role, sessionJob.stage, setting.fixture, setting.validation));
+  assert(clock() < deadline, 'Worker exceeded its self-ending budget');
+  fs.writeFileSync(sessionJob.out, JSON.stringify({ reports, bundlesLoaded: reports.at(-1)?.summary.bundlesLoaded ?? 0, pid: process.pid }) + '\n', { flag: 'wx' });
+} else if (process.argv.includes('--self-test')) {
   const rows = await selfTest();
   console.log(JSON.stringify({ selfTest: rows, samplesPerRow: 5 }));
   console.log('SELF_TEST_129_OK: no-op PASS; queueMicrotask PASS (counted); setImmediate-5ms FAIL (timing and global boundary)');

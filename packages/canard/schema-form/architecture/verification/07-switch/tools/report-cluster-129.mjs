@@ -53,7 +53,7 @@ function normalizeRecord(record, source) {
       for (const column of [...record.verdictColumns, ...record.recordColumns])
         add(record.lane, record.fixture, record.validation, column, record.recordColumns.includes(column), record.callCounts?.[column] ?? 1,
           String(block.block), block.order, block.base.samples[column], block.candidate.samples[column]);
-      if (record.lane === 'core') empty.push({ lane: 'core', validation: record.validation, values: [...block.base.emptyEndMs, ...block.candidate.emptyEndMs] });
+      if (record.lane === 'core' && record.coreEmptyPool131 !== false) empty.push({ lane: 'core', validation: record.validation, values: [...block.base.emptyEndMs, ...block.candidate.emptyEndMs] });
     }
     return { stage: record.stage, lane: record.lane, confirmModes: record.confirm?.modes ?? null, contributions, empty, corrected: record.lane === 'core' };
   }

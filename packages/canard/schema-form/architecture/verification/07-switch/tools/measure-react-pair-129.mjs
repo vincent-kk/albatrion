@@ -25,6 +25,8 @@ import { fileURLToPath } from 'node:url';
 
 import { confirmSettings129 } from './confirm-settings-129.mjs';
 import { prepareReactBundles } from './prepare-react-bundles.mjs';
+import { loadBundle131 } from './load-bundle-131.mjs';
+import { telemetry131 } from './telemetry-131.mjs';
 
 const tool = fileURLToPath(import.meta.url);
 const directory = path.dirname(tool);
@@ -35,6 +37,8 @@ const bundles = path.join(scratch, 'bundles');
 assert.equal(repo, '/Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07');
 assert.equal(fs.realpathSync(process.execPath), fs.realpathSync('/opt/homebrew/bin/node'), 'Timing runs use /opt/homebrew/bin/node');
 const flag = (name, fallback) => process.argv.find(value => value.startsWith(`--${name}=`))?.slice(name.length + 3) ?? fallback;
+const sessionJob = flag('session-job') ? JSON.parse(fs.readFileSync(flag('session-job'), 'utf8')) : null;
+let formIndex = 0;
 const prefix = flag('prefix', 'fap');
 assert.match(prefix, /^[a-z0-9]+$/);
 const warmup = Number(flag('warmup', 20)), samples = Number(flag('samples', 41));
@@ -88,25 +92,32 @@ async function prepare() {
  * @returns Nothing; the report is written to `out`
  */
 async function worker(side, fixtureName, out) {
+  const telemetry = sessionJob ? telemetry131(formIndex++ === 0) : null;
   assert(['base', 'basex', 'change'].includes(side));
   assert.equal(typeof globalThis.gc, 'function', '--expose-gc is required');
-  assert(path.resolve(out).startsWith(scratch + '/'));
+  assert(sessionJob || path.resolve(out).startsWith(scratch + '/'));
   process.env.NODE_ENV = 'production';
-  const manifestText = fs.readFileSync(path.join(bundles, `${prefix}-bundles.json`), 'utf8'), manifest = JSON.parse(manifestText);
-  if (flag('base-revision')) assert.equal(manifest.head, flag('base-revision'), 'Bundles were built from another base revision');
-  const file = path.join(bundles, `${prefix}-${side}.cjs`), text = fs.readFileSync(file, 'utf8');
-  assert.equal(hash(text), manifest.bundles.find(record => record.side === side).sha256, `${prefix}-${side} does not match the SHA-256 in its manifest`);
   const pkgRequire = createRequire(path.join(pkg, 'package.json'));
+  const loaded = sessionJob ? loadBundle131(sessionJob.bundle, pkgRequire) : null;
+  const manifestText = loaded?.manifestText ?? fs.readFileSync(path.join(bundles, `${prefix}-bundles.json`), 'utf8'), manifest = JSON.parse(manifestText);
+  if (flag('base-revision')) assert.equal(manifest.head, flag('base-revision'), 'Bundles were built from another base revision');
+  const file = sessionJob?.bundle.file ?? path.join(bundles, `${prefix}-${side}.cjs`), text = loaded?.text ?? fs.readFileSync(file, 'utf8');
+  assert.equal(hash(text), loaded?.entry.sha256 ?? manifest.bundles.find(record => record.side === side).sha256, `${prefix}-${side} does not match the SHA-256 in its manifest`);
   const bfRequire = createRequire(path.join(repo, 'packages/aileron/benchmark-form/package.json'));
   assert.equal(pkgRequire.resolve('react-dom'), bfRequire.resolve('react-dom'), 'One react-dom instance');
   const module = { exports: {} };
-  new Function('require', 'module', 'exports', text)(pkgRequire, module, module.exports);
-  const api = module.exports;
+  let bundlesLoaded = loaded?.bundlesLoaded ?? 0;
+  if (!loaded) {
+    new Function('require', 'module', 'exports', text)(pkgRequire, module, module.exports);
+    bundlesLoaded++;
+  }
+  const api = loaded?.api ?? module.exports;
   const fixture = api.equivalentFixtures.find(item => item.name === fixtureName);
   assert(fixture, fixtureName);
   const dom = api.setupJsdom();
   const { flushSync } = pkgRequire('react-dom');
-  const started = performance.now(), startedAt = new Date().toISOString(), deadline = started + 420_000;
+  const started = performance.now(), startedAt = new Date().toISOString(), deadline = sessionJob
+    ? Math.min(started + 420_000, sessionJob.deadlineEpochMs - Date.now() + started) : started + 420_000;
   const drain = async () => { for (let pass = 0; pass < 4; pass++) await new Promise(resolve => setImmediate(resolve)); };
   const canonical = value => JSON.stringify(value, (_key, item) => item && !Array.isArray(item) && typeof item === 'object'
     ? Object.fromEntries(Object.entries(item).sort(([a], [b]) => a.localeCompare(b))) : item);
@@ -117,7 +128,7 @@ async function worker(side, fixtureName, out) {
 
   /** One untimed history; records the commits per write that every later sample of this process must repeat. */
   const calibrate = async () => {
-    globalThis.gc();
+    telemetry ? telemetry.gc() : globalThis.gc();
     await drain();
     const mounted = await api.mountEquivalentForm(cloneFixture(), 'latest');
     try {
@@ -133,23 +144,30 @@ async function worker(side, fixtureName, out) {
       return counts;
     } finally { mounted.teardown(); performance.clearMeasures(); performance.clearMarks(); }
   };
-  const calibrated = await calibrate();
+  telemetry?.ready();
+  const calibrated = telemetry ? await telemetry.run('calibrationMs', calibrate) : await calibrate();
 
   /** One fresh mount and authored write sequence; with `gc`, forced gc sits outside every clock, otherwise columns get `-nogc`. */
   const sequence = async (index, gc) => {
     assert(performance.now() < deadline, 'Worker reached its self-ending seven-minute bound');
-    if (gc) globalThis.gc();
+    if (gc) telemetry ? telemetry.gc() : globalThis.gc();
     await drain();
     const mounted = await api.mountEquivalentForm(cloneFixture(), 'latest');
+    const mountEnd = sessionJob ? performance.now() : null;
+    const mountStart = sessionJob ? mountEnd - mounted.mountMs : null;
     try {
       assert(mounted.commits.length > 0 && Number.isFinite(mounted.mountActiveMs), 'Profiling build and mount active clock');
       const mountCommits = mounted.commits.length;
       const mountDuration = mounted.commits.reduce((sum, value) => sum + value, 0);
       const paths = () => [...mounted.container.querySelectorAll('[data-path]:not([data-deferred])')]
         .map(element => element.getAttribute('data-path')).sort();
-      const mountedValue = canonical(mounted.handle.getValue()), mountedPaths = paths();
+      let mountedValue, mountedPaths;
+      if (telemetry) telemetry.digest(() => { mountedValue = canonical(mounted.handle.getValue()); mountedPaths = paths(); });
+      else { mountedValue = canonical(mounted.handle.getValue()); mountedPaths = paths(); }
+      if (telemetry && !gc) { telemetry.gc(true); await drain(); }
       mounted.commits.length = 0;
       let wall = 0, active = 0;
+      const writeWindows = telemetry ? [] : null;
       for (const [write, interaction] of fixture.interactions.entries()) {
         const before = mounted.commits.length;
         const activeStart = performance.eventLoopUtilization(), writeStart = performance.now();
@@ -157,13 +175,20 @@ async function worker(side, fixtureName, out) {
         await drain();
         const wallMs = performance.now() - writeStart;
         const activeMs = performance.eventLoopUtilization(activeStart).active;
+        if (telemetry) writeWindows.push([writeStart, writeStart + wallMs]);
         assert.equal(mounted.commits.length - before, calibrated[write], `${side}/${fixtureName}/sample ${index}/write ${write}: calibrated commit count`);
         checkedWrites++;
         wall += wallMs; active += activeMs;
       }
-      const updatedPaths = paths();
-      assert(mountedPaths.length > 0 && updatedPaths.length > 0);
-      const digest = hash(canonical({ mountedValue, updatedValue: canonical(mounted.handle.getValue()), mountedPaths, updatedPaths }));
+      let updatedPaths, digest;
+      if (telemetry) telemetry.digest(() => { updatedPaths = paths();
+        assert(mountedPaths.length > 0 && updatedPaths.length > 0);
+        digest = hash(canonical({ mountedValue, updatedValue: canonical(mounted.handle.getValue()), mountedPaths, updatedPaths })); });
+      else {
+        updatedPaths = paths();
+        assert(mountedPaths.length > 0 && updatedPaths.length > 0);
+        digest = hash(canonical({ mountedValue, updatedValue: canonical(mounted.handle.getValue()), mountedPaths, updatedPaths }));
+      }
       if (observation) assert.equal(digest, observation.digest, 'Every sample renders the same values and paths');
       else observation = { digest, mountedPaths: mountedPaths.length, updatedPaths: updatedPaths.length };
       if (index < 0) return;
@@ -171,24 +196,36 @@ async function worker(side, fixtureName, out) {
         'update-active': active, 'profiler-mount': mountDuration,
         'profiler-update': mounted.commits.reduce((sum, value) => sum + value, 0),
         'commits-mount': mountCommits, 'commits-update': mounted.commits.length };
-      for (const [name, value] of Object.entries(values)) { assert(Number.isFinite(value)); timing[gc ? name : `${name}-nogc`].push(value); }
+      for (const [name, value] of Object.entries(values)) {
+        assert(Number.isFinite(value));
+        const column = gc ? name : `${name}-nogc`;
+        timing[column].push(value);
+        telemetry?.window(column, name.includes('mount') ? [[mountStart, mountEnd]] : writeWindows, index, name.includes('mount') ? [] : writeWindows);
+      }
     } finally { mounted.teardown(); performance.clearMeasures(); performance.clearMarks(); }
   };
 
   try {
-    for (const gc of noGc ? [true, false] : [true])
-      for (let index = -warmup; index < samples; index++) await sequence(index, gc);
+    for (const gc of noGc ? [true, false] : [true]) {
+      if (telemetry && gc === false) telemetry.start();
+      for (let index = -warmup; index < samples; index++) {
+        if (telemetry) await telemetry.run(index < 0 ? 'warmupMs' : 'sampleMs', () => sequence(index, gc));
+        else await sequence(index, gc);
+      }
+      if (telemetry && gc === false) await telemetry.stop();
+    }
     await drain();
   } finally { dom.window.close(); }
   const report = { format: 'react-worker-129', side, fixture: fixtureName, timing, verdictColumns: VERDICT_COLUMNS,
     recordColumns: [...RECORD_COLUMNS, ...recordColumns], observation, calibratedCommitsPerWrite: calibrated, checkedWrites,
-    bundle: { file, sha256: hash(text), revision: manifest.head, manifestSha256: hash(manifestText) }, toolSha256: hash(fs.readFileSync(tool)),
+    bundle: { file, sha256: hash(text), revision: sessionJob?.bundle.revision ?? manifest.head, manifestSha256: hash(manifestText) }, toolSha256: hash(fs.readFileSync(tool)),
     environment: { head: git(['rev-parse', 'HEAD']).trim(), node: process.version, nodeBinary: process.execPath, v8: process.versions.v8,
       react: pkgRequire('react/package.json').version, cpu: os.cpus()[0].model, startedAt, endedAt: new Date().toISOString(),
       seconds: (performance.now() - started) / 1000, warmup, samples, production: true, profiling: true, validation: 'off',
-      pid: process.pid, bundlesLoaded: 1, noGcPass: noGc },
+      pid: process.pid, bundlesLoaded, noGcPass: noGc },
     wait: 'four setImmediate turns',
     method: 'One bundle per process; designated mountEquivalentForm endpoint; ELU active in the same spans; forced gc outside all clocks.' };
+  if (telemetry) { report.telemetry = await telemetry.finish(); return report; }
   fs.writeFileSync(out, JSON.stringify(report) + '\n', { flag: 'wx' });
 }
 
@@ -233,6 +270,15 @@ function pair(stage, fixtureName, raw, confirm, started) {
     }
     blocks.push({ block, order, reports });
   }
+  const record = reactPairRecord129({ blocks, stage, fixtureName, confirm, prefix, sides, warmup, samples, noGc,
+    seconds: (performance.now() - started) / 1000 });
+  const file = path.join(raw, `pair-${stage}-${fixtureName}-b${firstBlock}-${firstBlock + blockCount - 1}.json`);
+  fs.writeFileSync(file, JSON.stringify(record) + '\n', { flag: 'wx' });
+  return file;
+}
+
+/** Build the canonical 129 React pair record; the legacy CLI and session-131 share digest/commit validation. */
+export function reactPairRecord129({ blocks, stage, fixtureName, confirm, prefix, sides, warmup, samples, noGc, seconds }) {
   const all = blocks.flatMap(({ reports }) => [reports.base, reports.candidate]);
   for (const report of all) {
     assert.deepEqual(report.observation, all[0].observation, 'Digests must match across every process of both sides');
@@ -243,20 +289,22 @@ function pair(stage, fixtureName, raw, confirm, started) {
   const first = all[0];
   const side = report => ({ pid: report.environment.pid, position: report.position, seconds: report.seconds, bundleSha256: report.bundle.sha256,
     samples: Object.fromEntries([...first.verdictColumns, ...first.recordColumns].map(column => [column, report.timing[column]])) });
-  const record = { format: 'cluster-pair-129', lane: 'react', stage, prefix, fixture: fixtureName, validation: 'off', confirm,
+  return { format: 'cluster-pair-129', lane: 'react', stage, prefix, fixture: fixtureName, validation: 'off', confirm,
     baseRevision: first.bundle.revision, sides, bundleSha256: { base: blocks[0].reports.base.bundle.sha256, candidate: blocks[0].reports.candidate.bundle.sha256 },
     verdictColumns: first.verdictColumns, recordColumns: first.recordColumns,
     blocks: blocks.map(({ block, order, reports }) => ({ block, order, base: side(reports.base), candidate: side(reports.candidate) })),
     observation: first.observation, calibratedCommitsPerWrite: first.calibratedCommitsPerWrite, failedWrites: 0,
     valueUnit: 'ms per sample', sign: 'base − candidate; negative means the candidate is slower',
     environment: { node: process.version, nodeBinary: process.execPath, warmup, samples, bundlesPerProcess: 1,
-      seconds: (performance.now() - started) / 1000, toolSha256: hash(fs.readFileSync(tool)) } };
-  const file = path.join(raw, `pair-${stage}-${fixtureName}-b${firstBlock}-${firstBlock + blockCount - 1}.json`);
-  fs.writeFileSync(file, JSON.stringify(record) + '\n', { flag: 'wx' });
-  return file;
+      seconds, toolSha256: hash(fs.readFileSync(tool)) } };
 }
 
-if (process.argv[2] === '--prepare') {
+if (process.argv[1] && path.resolve(process.argv[1]) === tool) {
+if (sessionJob) {
+  const reports = [];
+  for (const setting of sessionJob.settings) reports.push(await worker(sessionJob.role === 'base' ? 'base' : 'change', setting.fixture));
+  fs.writeFileSync(sessionJob.out, JSON.stringify({ reports, bundlesLoaded: reports.at(-1)?.environment.bundlesLoaded ?? 0, pid: process.pid }) + '\n', { flag: 'wx' });
+} else if (process.argv[2] === '--prepare') {
   console.log(JSON.stringify(await prepare(), null, 2));
 } else if (process.argv[2] === '--worker') {
   const [side, fixtureName] = process.argv.slice(3);
@@ -280,4 +328,5 @@ if (process.argv[2] === '--prepare') {
     console.log(JSON.stringify({ stage, fixture: fixtureName, saved }));
   }
   assert((performance.now() - started) / 1000 < 480, 'One pair command must take less than eight minutes');
+}
 }

@@ -83,6 +83,15 @@ function measureSetting(stage, fixtureName, validation, raw, confirm) {
     }
     blocks.push({ block, order, sides });
   }
+  const record = corePairRecord129({ blocks, stage, fixtureName, validation, confirm, bundles, ga,
+    seconds: (performance.now() - started) / 1000 });
+  const file = path.join(raw, `pair-${stage.replace(':', '-')}-${fixtureName}-${validation}-b${firstBlock}-${firstBlock + blockCount - 1}.json`);
+  fs.writeFileSync(file, JSON.stringify(record) + '\n', { flag: 'wx' });
+  return file;
+}
+
+/** Build the canonical 129 core pair record; both the legacy CLI and session-131 use this validation/serializer. */
+export function corePairRecord129({ blocks, stage, fixtureName, validation, confirm, bundles, ga, seconds }) {
   const reports = blocks.flatMap(({ sides }) => [sides.base.report, sides.candidate.report]);
   const canonicalChecks = checks => JSON.stringify(Object.keys(checks).sort().map(mode =>
     [mode, Object.entries(checks[mode]).sort(([a], [b]) => a.localeCompare(b))]));
@@ -95,7 +104,7 @@ function measureSetting(stage, fixtureName, validation, raw, confirm) {
   const side = item => ({ pid: item.report.summary.environment.pid, position: item.position, seconds: item.seconds,
     bundleSha256: item.report.summary.bundle.sha256, emptyEndMs: [...item.report.empty.before, ...item.report.empty.after].map(row => row[1]),
     samples: Object.fromEntries(columns.map(column => [column, item.report.timings[column].map(row => row[1])])) });
-  const record = { format: 'cluster-pair-129', lane: 'core', stage, fixture: fixtureName, validation, confirm,
+  return { format: 'cluster-pair-129', lane: 'core', stage, fixture: fixtureName, validation, confirm,
     baseRevision: first.bundle.revision, bundles, bundleSha256: { base: blocks[0].sides.base.report.summary.bundle.sha256,
       candidate: blocks[0].sides.candidate.report.summary.bundle.sha256 },
     verdictColumns: first.verdictColumns, recordColumns: first.recordColumns, interactionCount: first.interactionCount,
@@ -107,13 +116,11 @@ function measureSetting(stage, fixtureName, validation, raw, confirm) {
     ga, gaPassed: true, schedulerImport: first.schedulerImport, valueUnit: 'ms sentinel end-to-end per sample, uncorrected',
     sign: 'base − candidate; negative means the candidate is slower',
     environment: { node: process.version, nodeBinary: process.execPath, warmup: first.warmup, samples: first.sampleCount,
-      bundlesPerProcess: 1, seconds: (performance.now() - started) / 1000,
+      bundlesPerProcess: 1, seconds,
       workerSha256: hash(fs.readFileSync(worker)), toolSha256: hash(fs.readFileSync(tool)) } };
-  const file = path.join(raw, `pair-${stage.replace(':', '-')}-${fixtureName}-${validation}-b${firstBlock}-${firstBlock + blockCount - 1}.json`);
-  fs.writeFileSync(file, JSON.stringify(record) + '\n', { flag: 'wx' });
-  return file;
 }
 
+if (process.argv[1] && path.resolve(process.argv[1]) === tool) {
 const confirmMode = process.argv[2] === 'confirm';
 const raw = path.join(scratch, 'core-pair-129', flag('tag', confirmMode ? 'confirm' : 'raw'));
 fs.mkdirSync(raw, { recursive: true });
@@ -130,3 +137,4 @@ if (confirmMode) {
   console.log(JSON.stringify({ stage, fixture: fixtureName, validation, blocks: [firstBlock, firstBlock + blockCount - 1], gaPassed: true, saved }));
 }
 assert((performance.now() - started) / 1000 < 480, 'One pair command must take less than eight minutes');
+}
