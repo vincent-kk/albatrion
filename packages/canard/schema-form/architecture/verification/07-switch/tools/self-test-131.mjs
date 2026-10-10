@@ -173,6 +173,13 @@ try {
   }
   assert(watchScope131(sessionRows131('react-129-large', 'react'), 'react').some(row => row.key === 'array-500/off/mount-wall-nogc'));
   assert(watchScope131(sessionRows131('smoke', 'core'), 'core').some(row => row.key === 'oneOf-40/off/axis-first'));
+  const nested = watchScope131(sessionRows131('react-129-nested-d5', 'react'), 'react', true);
+  assert(nested.every(row => row.fixture === 'nested-d5-f4'), 'watch-in-selection adds no other setting');
+  const main = watchScope131(sessionRows131('react-129-main', 'react'), 'react', true);
+  assert(main.some(row => row.key === 'array-500/off/mount-wall-nogc') && main.every(row => row.fixture !== 'array-1000'));
+  const scopedMain = scopeRows131(main, Object.fromEntries(main.map(row => [row.key, 0])), 24, 8);
+  assert.equal(scopedMain.find(row => row.key === 'array-500/off/mount-wall-nogc').blocks, 24, 'a watch row in the selection keeps full blocks');
+  assert.equal(parseSession131([...args, '--watch-in-selection']).watchInSelection, true);
   checks++;
 
   const rows = ['flat-50/off/mount', 'flat-50/off/update', 'oneOf-5/off/axis-first', 'if-then/on/update',

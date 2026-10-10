@@ -176,9 +176,9 @@ function main() {
     if (options.aa) assert.equal(aaFile.node?.version, options.nodeVersion, 'The A/A must run on the same Node version as this session');
     if (options.aa && !options.smoke) assert(!aaFile.smoke && !aa.rows.some(row => row.blocks < 8), 'Smoke A/A cannot support a verdict');
     const selected = sessionRows131(options.rows, options.lane);
-    const requested = options.kind === 'confirm' ? selected : watchScope131(selected, options.lane);
+    const requested = options.kind === 'confirm' ? selected : watchScope131(selected, options.lane, options.watchInSelection);
     session.rowSelection = { selected: selected.map(row => row.key), watchAdded: requested.filter(row => !selected.some(item => item.key === row.key)).map(row => row.key),
-      interpretation: 'Statistics and decisions cover this explicit session scope, not omitted rows. Fixed watch rows are always included in first passes.' };
+      interpretation: 'Statistics and decisions cover this explicit session scope, not omitted rows. Fixed watch rows are included in first passes; with --watch-in-selection only those of measured settings are.' , watchInSelection: options.watchInSelection };
     if (fs.existsSync(options.rows)) inputHashes[path.resolve(options.rows)] = hash(fs.readFileSync(options.rows));
     session.scoping = scopeRows131(requested, counts, options.blocks, options.reducedBlocks);
     const input = { aa, counts, axisGainMs: axis?.exemption?.axisGainMs };
