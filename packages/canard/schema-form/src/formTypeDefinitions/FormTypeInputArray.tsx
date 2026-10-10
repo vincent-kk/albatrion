@@ -1,4 +1,4 @@
-import { type CSSProperties, type ReactElement, memo, useCallback } from 'react';
+import { type CSSProperties, type MouseEventHandler, type ReactElement, memo, useCallback } from 'react';
 
 import type {
   FormTypeInputDefinition,
@@ -27,9 +27,11 @@ const ArrayItems = memo(function ArrayItems({
   const handleClick = useCallback(() => {
     node.push();
   }, [node]);
+  /** Remove the clicked row; React supplies its button, and direct sibling order is the array index. */
   const handleRemoveClick = useCallback(
-    (index: number) => {
-      node.remove(index);
+    (event: React.MouseEvent<HTMLButtonElement>) => {
+      const row = event.currentTarget.parentElement!;
+      node.remove(Array.prototype.indexOf.call(row.parentElement!.children, row));
     },
     [node],
   );
@@ -42,7 +44,7 @@ const ArrayItems = memo(function ArrayItems({
         <ChildNodeComponent key={key} />
         {!readOnly && (
           <Button title="remove item" label="x" disabled={disabled}
-            onClick={() => handleRemoveClick(index)} />
+            index={index} onClick={handleRemoveClick} />
         )}
       </div>,
     );
@@ -75,7 +77,12 @@ const ArrayItems = memo(function ArrayItems({
   );
 });
 
-const Button = ({
+/**
+ * Render a control only when its presentation, current index or shared handler changes.
+ * @param props - Native presentation and shared click handler; index keeps row positions in memo comparisons.
+ * @returns The same circular native button, without a per-row callback or hook.
+ */
+const Button = memo(function Button({
   title,
   label,
   disabled,
@@ -87,11 +94,12 @@ const Button = ({
   title: string;
   label: string;
   disabled?: boolean;
-  onClick: () => void;
+  onClick: MouseEventHandler<HTMLButtonElement>;
+  index?: number;
   size?: CSSProperties['width'];
   fontSize?: CSSProperties['fontSize'];
   style?: CSSProperties;
-}) => {
+}) {
   return (
     <button
       title={title}
@@ -125,7 +133,7 @@ const Button = ({
       </span>
     </button>
   );
-};
+});
 
 export const FormTypeInputArrayDefinition = {
   Component: FormTypeInputArray,
