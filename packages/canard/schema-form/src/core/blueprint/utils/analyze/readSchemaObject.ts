@@ -7,4 +7,6 @@ import type { BlueprintSchema } from '../../type';
  */
 export const readSchemaObject = (
   schema: BlueprintSchema,
-): Readonly<Record<string, any>> => (typeof schema === 'boolean' ? {} : schema);
+): Readonly<Record<string, any>> & {
+  properties?: Readonly<Record<string, BlueprintSchema>>;
+} => (typeof schema === 'boolean' ? {} : schema);

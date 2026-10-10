@@ -30,11 +30,11 @@ export type {
 export type { ValidationIssue } from '@/schema-form/core/validation';
 
 /**
- * Legacy JSONSchemaError extends ValidationIssue and adds `key` property.
+ * Renderer errors extend ValidationIssue with an internally managed array item key.
  */
 export interface JSONSchemaError<SourceError = unknown>
   extends ValidationIssue<SourceError> {
-  /** Legacy keyword parameters remain permissive until the PR-7 public engine switch. */
+  /** Renderer keyword parameters accept validator-specific values. */
   details?: Record<string, any>;
   /**
    * Internal management property for array item errors.

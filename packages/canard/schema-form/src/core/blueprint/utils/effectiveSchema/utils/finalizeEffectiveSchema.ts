@@ -51,7 +51,7 @@ export const finalizeEffectiveSchema = (
     schema.nullable = state.allowedTypes?.includes('null') ?? node.nullable;
   if (state.conflictingConst) {
     schema.enum = [];
-    OwnedSchemaValues.add(schema.enum as object);
+    OwnedSchemaValues.add(schema.enum);
   }
   return freezeEffectiveSchema({
     schema,

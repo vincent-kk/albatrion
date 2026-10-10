@@ -22,13 +22,18 @@ export const collectInlineTerminalWarnings = (
   node: BlueprintNode,
   emit: (diagnostic: BlueprintDiagnostic) => void,
 ): void => {
-  const pending = node.declarations
+  const pending: {
+    schema: BlueprintSchema;
+    schemaPath: string;
+    root: boolean;
+    ancestors: object[];
+  }[] = node.declarations
     .filter((declaration) => declaration.role === 'declaration')
     .map(({ schema, schemaPath }) => ({
       schema,
       schemaPath,
       root: true,
-      ancestors: [] as object[],
+      ancestors: [],
     }));
   const keys: string[] = [];
   const paths: string[] = [];
@@ -47,6 +52,7 @@ export const collectInlineTerminalWarnings = (
           if (!keys.includes(keyword)) keys.push(keyword);
           if (!paths.includes(entry.schemaPath)) paths.push(entry.schemaPath);
         }
+    /* eslint-disable @typescript-eslint/consistent-type-assertions -- Unvalidated keyword children need a runtime schema guard. */
     for (const keyword of [
       'properties',
       'patternProperties',
@@ -62,6 +68,7 @@ export const collectInlineTerminalWarnings = (
             root: false,
             ancestors,
           });
+    /* eslint-enable @typescript-eslint/consistent-type-assertions */
     for (const keyword of ['allOf', 'oneOf', 'anyOf', 'prefixItems'])
       if (isArray(record[keyword]))
         record[keyword].forEach((child: BlueprintSchema, index: number) =>

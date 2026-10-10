@@ -1,7 +1,6 @@
 import { isArray } from '@winglet/common-utils/filter';
 
 import type {
-  BlueprintChildEntry,
   BlueprintNodeKind,
   BlueprintSchemaType,
   PropertyDeclaration,
@@ -66,6 +65,7 @@ export const buildNodes = (
       ? 'union'
       : schemaType === 'integer'
         ? 'number'
+        // eslint-disable-next-line @typescript-eslint/consistent-type-assertions -- The array predicate does not narrow readonly arrays.
         : (schemaType as BlueprintNodeKind);
     const ownedDeclarations = [];
     const conjunctions = [];
@@ -102,7 +102,7 @@ export const buildNodes = (
       declarations: DEVELOPMENT
         ? Object.freeze(ownedDeclarations)
         : ownedDeclarations,
-      childEntries: [] as BlueprintChildEntry[],
+      childEntries: [],
     };
     context.nodes.push(node);
     const effective = mergeSchemaContributions(

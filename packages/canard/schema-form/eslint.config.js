@@ -56,6 +56,16 @@ export default [
     },
   },
   {
+    files: ['src/core/blueprint/**/*.ts', 'src/core/nodeFromJSONSchema.ts'],
+    ignores: ['**/__tests__/**'],
+    rules: {
+      '@typescript-eslint/consistent-type-assertions': [
+        'error',
+        { assertionStyle: 'never' },
+      ],
+    },
+  },
+  {
     files: ['src/core/SchemaNode/SchemaNode.ts'],
     rules: {
       'no-restricted-syntax': [

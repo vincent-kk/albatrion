@@ -10,8 +10,8 @@ import { getDataProperty } from '@winglet/common-utils/object';
  */
 export const freezeCreatedHintObjects = (
   result: Record<string, unknown>,
-  earlier: Record<string, unknown>,
-  later: Record<string, unknown>,
+  earlier: object,
+  later: object,
 ): void => {
   const keys = Object.keys(result);
   for (let index = 0; index < keys.length; index++) {
@@ -22,8 +22,8 @@ export const freezeCreatedHintObjects = (
     if (value === previous || value === next || !isPlainObject(value)) continue;
     freezeCreatedHintObjects(
       value,
-      previous as Record<string, unknown>,
-      next as Record<string, unknown>,
+      previous,
+      next,
     );
     Object.freeze(value);
   }

@@ -86,6 +86,7 @@ export const collectBlueprintWarnings = (
       }
       for (const gate of declaration.gates) {
         if (gate.kind !== 'discriminator') continue;
+        // eslint-disable-next-line @typescript-eslint/consistent-type-assertions -- Opaque discriminator data needs a runtime shape guard.
         const descriptor = gate.condition as {
           propertyName: string;
           values: readonly unknown[];

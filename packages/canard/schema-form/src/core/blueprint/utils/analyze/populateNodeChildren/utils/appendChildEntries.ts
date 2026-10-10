@@ -1,4 +1,3 @@
-import type { BlueprintChildEntry } from '../../../../type';
 import { createBlueprintGate } from '../../createBlueprintGate';
 import type { MutableNode } from '../../type';
 
@@ -21,7 +20,7 @@ export const appendChildEntries = (
   schemaPath: string,
   children: MutableNode[],
 ): void => {
-  const entries = node.childEntries as BlueprintChildEntry[];
+  const entries = node.childEntries;
   for (let childIndex = 0; childIndex < children.length; childIndex++) {
     const child = children[childIndex];
     const declarations = [];

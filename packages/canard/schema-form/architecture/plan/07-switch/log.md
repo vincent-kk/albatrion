@@ -93,7 +93,7 @@ U8 중단 기록: 원장 충돌 5파일의 원문 보존은 78C-01의 "버리고
 | `src/core/types/node.ts`, `constructor.ts` | `src/__legacy__/core/types/` (index는 이름으로 다시 내보내고 `event`·`state`·`value`는 남은 core 형을 가리킴) | 옮김 | LANDING-087, 71C-01 |
 | `src/core/nodeFromJSONSchema.ts`의 옛 구현과 `contextNodeFactory` | `src/__legacy__/core/nodeFromJSONSchema.ts`, `src/__legacy__/core/index.ts` | 옮김 | 70C-01 |
 | `src/types/jsonSchema.ts`의 옛 `JSONSchema` 묶음 | `src/__legacy__/types/jsonSchema.ts` | 사본(새 형은 core 스키마 형으로 뜻이 바뀜) | GOAL-088, 71C-01 조건 1 |
-| `src/types/error.ts`의 `ValidateFunction`·`ValidatorFactory`·`JSONSchemaError` | `src/__legacy__/types/error.ts` | 옮김(공개 형에서 빠짐) | 32C-01, I12 |
+| `src/types/error.ts`의 `ValidateFunction`·`ValidatorFactory`·`JSONSchemaError` | `src/__legacy__/types/error.ts` | 옛 형은 레거시 사본에 보존합니다. 공개 `ValidateFunction`·`ValidatorFactory`는 core 계약을 재수출하며, `JSONSchemaError`는 공개 index에서만 빠지고 렌더 형에 남습니다. | 32C-01, 35C-07, I12 |
 | `src/helpers/jsonSchema/`의 `extractSchemaInfo`·`filter`·`getResolveSchema`·`isNullBranch`·`stripSchemaExtensions` | `src/__legacy__/helpers/jsonSchema/` | 사본(옛 `JSONSchema` 형에 묶임) | 71C-01 조건 1 |
 | 레거시가 가져오던 새 코드 전부(전이 폐쇄): `errors`, `helpers/{error,warning,defaultValue,dynamicExpression,schemaIntersection,jsonPointer,jsonSchema}`, `app/constants`, `types/{value,injectTo}`, `core/types/{event,state,value}`와 `core/blueprint`·`core/validation`이 닿는 새 core 103파일 — 모두 190파일 | `src/__legacy__/` 같은 상대 경로 | 사본(전환 직전 `1def2cc4f`의 내용, 가져오기는 별칭 접두만 바꿈). 목록은 `verification/07-switch/legacy-copies.md` | 74라운드 소유자 답 |
 | 렌더 계층으로 가던 형 전용 연결(옛 스키마의 `FormTypeInput` 칸 형, 렌더 오류 형, 플러그인 형) | 레거시 안의 최소 형(`ComponentType<never>`, 로컬 `FormatError`, `PluginErrorFeatures`) | 대체 — 옛 렌더 계층은 복제하지 않음 | 75C-01 |

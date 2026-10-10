@@ -2,6 +2,8 @@
 
 ## Requirements
 
+- 내부 누적 스키마의 소유 배열·제어 필드는 선언부에서 형을 정하며, 생성 중인 자식 소속 배열은 가변이고 공개 청사진에서는 읽기 전용입니다. 공개 호스트의 종단 판정과 청사진의 불리언 스키마를 포함하는 판정 입력의 형 차이는 소유자 승인 대기 목록에 기록합니다. 형 정비는 생성 순서·검사·동결·소유권 색인·런타임 비용을 바꾸지 않으며 core와 React 기준 번들의 바이트 동일성으로 확인합니다(G27 B1).
+
 - 선언 수집의 packed gates/order 복사는 native slice를 사용합니다. fragment와 declaration의 배열은 계속 각각 소유하며 값·순서·ID·DFS·진단·capability는 같습니다. 속도 비용은 같은 원소 수에 비례하는 native 복사이며 입력과 fragment의 iterator 순회를 제거합니다. 메모리 비용은 호출마다 기존 네 배열과 원소 참조 수를 그대로 유지하며 추가 보유 자료는 없습니다(batch2 2-declaration-slice).
 
 - 자식 이름의 escapeSegment는 이름별 한 번 생산한 값을 schemaPath와 data path에 재사용합니다. 무게이트 경로는 지역 문자열 하나를 사용하고 일반 집계는 기존 properties Map의 값에 escapedName·path·inputs를 같은 필드 순서로 보관합니다. 공개 두 경로·template key 바이트·자식/기여/게이트 순서는 같습니다. 속도 비용은 이름 길이에 비례하는 escape 한 번이며 반복 기여와 뒤 build 순회의 재 escape를 제거합니다. 메모리 비용은 빠른 경로의 지역 문자열 하나, 일반 경로의 이름별 일시 기록 하나와 문자열 참조입니다. 소속 배열의 소유·동결은 유지하며 새 보유 색인·캐시·공개 필드는 없습니다(107라운드 3-path-strings).

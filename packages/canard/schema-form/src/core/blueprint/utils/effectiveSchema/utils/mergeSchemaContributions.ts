@@ -30,6 +30,7 @@ export const mergeSchemaContributions = (
   const staticTypes =
     node.schemaType === 'virtual'
       ? undefined
+      // eslint-disable-next-line @typescript-eslint/consistent-type-assertions -- The array predicate does not narrow readonly arrays.
       : ((isArray(node.schemaType)
           ? node.schemaType
           : [node.schemaType]) as readonly SchemaTypeName[]);

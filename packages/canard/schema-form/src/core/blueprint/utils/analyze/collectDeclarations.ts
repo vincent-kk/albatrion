@@ -8,7 +8,7 @@ import { createBlueprintGate } from './createBlueprintGate';
 import { readDiscriminatorBranches } from './readDiscriminatorBranches';
 import { readSchemaObject } from './readSchemaObject';
 import { resolveReference } from './resolveReference';
-import type { AnalysisContext, SchemaInput } from './type';
+import type { AnalysisContext, MutableFragment, SchemaInput } from './type';
 
 /** Keyword ranks form the authored total order, independent of object insertion order. */
 const FRAGMENT_KEYWORDS = [
@@ -66,7 +66,7 @@ export const collectDeclarations = (
         condition: schema.controls.active,
       }),
     );
-  const fragment = {
+  const fragment: MutableFragment = {
     id: context.fragments.length,
     hostPath: path,
     schemaPath: input.schemaPath,
@@ -74,10 +74,10 @@ export const collectDeclarations = (
     context: input.context,
     order: input.order.slice(),
     gates,
-    declares: [] as number[],
-    overlays: [] as number[],
-    inheritedOverlays: [] as number[],
-    children: [] as number[],
+    declares: [],
+    overlays: [],
+    inheritedOverlays: [],
+    children: [],
   };
   context.fragments.push(fragment);
   input.fragment?.children.push(fragment.id);

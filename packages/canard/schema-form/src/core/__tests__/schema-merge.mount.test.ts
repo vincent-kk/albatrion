@@ -3,6 +3,7 @@ import { afterEach, beforeEach, expect, it, vi } from 'vitest';
 import type { mergeEffectiveSchema } from '../blueprint/utils/effectiveSchema/mergeEffectiveSchema';
 import type { mergeSchemaContributions } from '../blueprint/utils/effectiveSchema/utils/mergeSchemaContributions';
 import { nodeFromJSONSchema } from '../nodeFromJSONSchema';
+import type { JSONSchema } from '../types/jsonSchema';
 import { captureBranchlessNodeTree } from './fixtures/captureBranchlessNodeTree';
 
 const counts = vi.hoisted(() => ({ runtime: 0, static: 0, fallback: false, memo: new WeakMap() }));
@@ -28,10 +29,10 @@ it('removes runtime remerges per cold mount while retaining every static check',
   const schema = { type: 'object', properties: { text: { type: 'string', default: 'a' },
     number: { type: 'number', default: 2 }, flag: { type: 'boolean', default: true } } } as const;
   counts.fallback = true;
-  const oracle = nodeFromJSONSchema({ jsonSchema: schema, validationMode: 0 });
+  const oracle = nodeFromJSONSchema<JSONSchema>({ jsonSchema: schema, validationMode: 0 });
   const before = { runtime: counts.runtime, static: counts.static };
   counts.fallback = false; counts.runtime = 0; counts.static = 0;
-  const root = nodeFromJSONSchema({ jsonSchema: structuredClone(schema), validationMode: 0 });
+  const root = nodeFromJSONSchema<JSONSchema>({ jsonSchema: structuredClone(schema), validationMode: 0 });
   console.log('SCHEMA_MERGE_COUNTS', JSON.stringify({ before, after: { runtime: counts.runtime, static: counts.static } }));
   expect(before).toEqual({ runtime: 4, static: 4 });
   expect(counts.static).toBe(before.static);
@@ -47,17 +48,17 @@ it('preserves node values, schemas, revisions, warning and event order through l
     list: { type: 'array', items: { type: 'string' }, default: ['first', 'second'] },
   } } as const;
   counts.fallback = true;
-  const oracle = nodeFromJSONSchema({ jsonSchema: schema, validationMode: 0 });
+  const oracle = nodeFromJSONSchema<JSONSchema>({ jsonSchema: schema, validationMode: 0 });
   counts.fallback = false;
-  const root = nodeFromJSONSchema({ jsonSchema: structuredClone(schema), validationMode: 0 });
+  const root = nodeFromJSONSchema<JSONSchema>({ jsonSchema: structuredClone(schema), validationMode: 0 });
   await new Promise(resolve => setImmediate(resolve));
   const events: unknown[][] = [[], []];
   const releases = [oracle, root].map((node, index) => node.subscribe(event => {
     events[index].push({ type: event.type, payload: event.payload });
   }));
   for (const [path, value] of [['/text', ' changed '], ['/branch/number', 4], ['/list/0', 'next']] as const) {
-    counts.fallback = true; oracle.find(path)!.setValue(value as never);
-    counts.fallback = false; root.find(path)!.setValue(value as never);
+    counts.fallback = true; oracle.find(path)!.setValue(value);
+    counts.fallback = false; root.find(path)!.setValue(value);
     await new Promise(resolve => setImmediate(resolve));
     expect(captureBranchlessNodeTree(root)).toEqual(captureBranchlessNodeTree(oracle));
     expect(root.revision()).toEqual(oracle.revision());
@@ -67,8 +68,8 @@ it('preserves node values, schemas, revisions, warning and event order through l
   }
   expect(events[0].length).toBeGreaterThan(0);
   const invalid = { text: 7, branch: { number: 'wrong' }, list: [2, true] };
-  counts.fallback = true; oracle.setValue(invalid as never);
-  counts.fallback = false; root.setValue(invalid as never);
+  counts.fallback = true; oracle.setValue(invalid);
+  counts.fallback = false; root.setValue(invalid);
   await new Promise(resolve => setImmediate(resolve));
   expect(captureBranchlessNodeTree(root)).toEqual(captureBranchlessNodeTree(oracle));
   expect(Reflect.get(root, 'runtime').typeMismatchRecords).toEqual(Reflect.get(oracle, 'runtime').typeMismatchRecords);

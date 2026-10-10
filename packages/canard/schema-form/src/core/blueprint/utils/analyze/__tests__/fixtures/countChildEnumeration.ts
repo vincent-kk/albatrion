@@ -1,7 +1,8 @@
 import { vi } from 'vitest';
 
 import { populateNodeChildren } from '../../populateNodeChildren';
-import type { AnalysisContext, MutableNode, SchemaInput } from '../../type';
+import type { BlueprintNode } from '../../../../type';
+import type { AnalysisContext, SchemaInput } from '../../type';
 
 /**
  * Count only one host's child preparation, with recursive construction replaced.
@@ -11,7 +12,7 @@ import type { AnalysisContext, MutableNode, SchemaInput } from '../../type';
  */
 export const countChildEnumeration = (
   context: AnalysisContext,
-  source: MutableNode,
+  source: BlueprintNode,
 ) => {
   const counts = {
     snapshots: 0,

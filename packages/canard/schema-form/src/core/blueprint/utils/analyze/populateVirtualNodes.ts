@@ -38,6 +38,7 @@ export const populateVirtualNodes = (
         context.options,
       );
     for (const [name, value] of Object.entries(virtual)) {
+      // eslint-disable-next-line @typescript-eslint/consistent-type-assertions -- Virtual entries are opaque until shape validation.
       const schema = readSchemaObject(value as Record<string, unknown>);
       const schemaPath = `${declaration.schemaPath}/options/virtual/${escapeSegment(name)}`;
       const fields = schema.fields;
@@ -137,7 +138,7 @@ export const populateVirtualNodes = (
       declarations: copyBlueprintDeclarations(node.declarations),
       hostPath: host.path,
     };
-    (host.childEntries as BlueprintChildEntry[]).push(
+    (host.childEntries).push(
       DEVELOPMENT ? Object.freeze(entry) : entry,
     );
   }

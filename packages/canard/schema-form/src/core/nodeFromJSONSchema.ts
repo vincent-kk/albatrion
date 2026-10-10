@@ -29,10 +29,11 @@ export function nodeFromJSONSchema<Schema extends JSONSchema>(props: {
   isAtomic?: (value: unknown) => boolean;
   deferMountValidation?: boolean;
 }): InferSchemaNode<Schema> {
-  // Blueprint invokes this predicate only for object/array declarations.
+  /* eslint-disable @typescript-eslint/consistent-type-assertions -- Narrowing authored boolean schemas requires a runtime guard. */
   const root = buildSchemaNodeTree<Schema>(
     props as Parameters<typeof buildSchemaNodeTree<Schema>>[0],
   );
+  /* eslint-enable @typescript-eslint/consistent-type-assertions */
   mountSchemaNode(root, undefined, undefined, {
     deferValidation: props.deferMountValidation ?? false,
   });

@@ -74,7 +74,7 @@ export const applySchemaContribution = (
             !earlier.includes(entry) && value.indexOf(entry) === index,
         ),
       ];
-      OwnedSchemaValues.add(state.schema.required as object);
+      OwnedSchemaValues.add(state.schema.required);
     } else if (key === 'pattern' && typeof value === 'string') {
       if (!state.patterns.includes(value)) state.patterns.push(value);
     } else if (key === 'allOf' && isArray(value)) {
@@ -82,7 +82,7 @@ export const applySchemaContribution = (
         ...(isArray(state.schema.allOf) ? state.schema.allOf : []),
         ...value,
       ];
-      OwnedSchemaValues.add(state.schema.allOf as object);
+      OwnedSchemaValues.add(state.schema.allOf);
     } else state.schema[key] = value;
   }
   applyConstraintKeywords(state, schema, declaration.schemaPath, options);

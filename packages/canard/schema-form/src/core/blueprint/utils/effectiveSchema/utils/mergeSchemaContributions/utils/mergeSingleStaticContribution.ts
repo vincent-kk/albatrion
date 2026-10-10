@@ -8,6 +8,7 @@ import type {
 } from '../../../../../type';
 import { OwnedSchemaValues } from '../../OwnedSchemaValues';
 import { freezeEffectiveSchema } from '../../freezeEffectiveSchema';
+import type { EffectiveSchemaFields } from '../../type';
 
 /**
  * Build hints only after a sole static contribution proves intersection unnecessary.
@@ -61,7 +62,7 @@ export const mergeSingleStaticContribution = (
     'maxProperties' in source
   )
     return undefined;
-  const schema: Record<string, unknown> = {};
+  const schema: EffectiveSchemaFields = {};
   const keys = Object.keys(source);
   for (let index = 0; index < keys.length; index++) {
     const key = keys[index];
@@ -69,6 +70,7 @@ export const mergeSingleStaticContribution = (
     if (value === undefined || key === 'type') continue;
     if (key === 'controls') {
       if (!value || typeof value !== 'object') continue;
+      // eslint-disable-next-line @typescript-eslint/consistent-type-assertions -- Authored controls may be any object; indexed reads need a runtime shape guard.
       const sourceControls = value as Record<string, unknown>;
       const controls: Record<string, unknown> = {};
       if (sourceControls.watch !== undefined)
@@ -89,7 +91,7 @@ export const mergeSingleStaticContribution = (
       OwnedSchemaValues.add(required);
     } else if (key === 'allOf' && isArray(value)) {
       schema.allOf = [...value];
-      OwnedSchemaValues.add(schema.allOf as object);
+      OwnedSchemaValues.add(schema.allOf);
     } else schema[key] = value;
   }
   schema.type = node.schemaType;

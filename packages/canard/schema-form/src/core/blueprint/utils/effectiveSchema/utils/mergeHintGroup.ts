@@ -44,13 +44,15 @@ export const mergeHintGroup = (
     arrayStrategy: 'replace',
     isAtomic,
   });
+  /* eslint-disable @typescript-eslint/consistent-type-assertions -- The merge returns an opaque object; indexed traversal needs a runtime shape guard. */
   if (result !== earlier && result !== source) {
     freezeCreatedHintObjects(
       result as Record<string, unknown>,
-      earlier as Record<string, unknown>,
-      source as Record<string, unknown>,
+      earlier,
+      source,
     );
     OwnedSchemaValues.add(result);
   }
+  /* eslint-enable @typescript-eslint/consistent-type-assertions */
   return result;
 };

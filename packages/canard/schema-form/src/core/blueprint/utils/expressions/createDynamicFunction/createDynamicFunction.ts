@@ -35,6 +35,7 @@ export const createDynamicFunction: CreateDynamicFunction = (
 
   const functionBody = getFunctionBody(processedExpression, coerceToBoolean);
   try {
+    // eslint-disable-next-line @typescript-eslint/consistent-type-assertions -- Function construction has no typed callable signature; a typed wrapper changes runtime code.
     return new Function('dependencies', functionBody) as DynamicFunction;
   } catch (error) {
     throw new JSONSchemaError(

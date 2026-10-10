@@ -54,8 +54,8 @@ export const inferLiteralTypes = (
         { guidance: 'Specify type explicitly for an object or array literal.' },
         context.options,
       );
-    if (!types.includes(type as SchemaTypeName))
-      types.push(type as SchemaTypeName);
+    if (!types.includes(type))
+      types.push(type);
   }
   if (types.filter((type) => type !== 'null').length === 1 && types.length > 0)
     return types;

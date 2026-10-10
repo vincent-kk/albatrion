@@ -57,7 +57,7 @@ export const populateNodeChildren = (
           hostPath: base.hostPath,
           fragment: base.fragment,
           role: base.role,
-          schema: child as SchemaInput['schema'],
+          schema: child,
           schemaPath: `${declaration.schemaPath}/properties/${escapedName}`,
           order: [...declaration.order, 0, index],
         };
@@ -128,7 +128,7 @@ export const populateNodeChildren = (
         const escapedName = existing ? existing.escapedName : escapeSegment(name);
         const input: SchemaInput = {
           ...base,
-          schema: child as SchemaInput['schema'],
+          schema: child,
           schemaPath: `${declaration.schemaPath}/properties/${escapedName}`,
           order: [...declaration.order, 0, index],
         };
@@ -145,11 +145,13 @@ export const populateNodeChildren = (
           path: `${node.path}/${escapedName}`,
           inputs: [input],
         });
+        /* eslint-disable @typescript-eslint/consistent-type-assertions -- Opaque gate data needs a runtime shape guard. */
         const discriminatorIndex = input.gates.findIndex(
           (gate) =>
             gate.kind === 'discriminator' &&
             (gate.condition as { propertyName?: string }).propertyName === name,
         );
+        /* eslint-enable @typescript-eslint/consistent-type-assertions */
         if (discriminatorIndex >= 0)
           properties.get(name)!.inputs.push({
             ...input,

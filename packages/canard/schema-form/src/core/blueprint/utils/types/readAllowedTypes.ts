@@ -40,6 +40,7 @@ export const readAllowedTypes = (
       },
       options,
     );
+  // eslint-disable-next-line @typescript-eslint/consistent-type-assertions -- The aggregate validation does not narrow each member; a per-member guard changes runtime code.
   const result = [...values] as SchemaTypeName[];
   if (schema.nullable === true && !result.includes('null')) result.push('null');
   return unionAllowedTypes([result]);

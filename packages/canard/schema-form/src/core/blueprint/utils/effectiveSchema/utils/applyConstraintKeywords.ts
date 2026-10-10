@@ -52,7 +52,7 @@ export const applyConstraintKeywords = (
     };
     OwnedSchemaValues.add(clause);
     target.allOf = [...(isArray(target.allOf) ? target.allOf : []), clause];
-    OwnedSchemaValues.add(target.allOf as object);
+    OwnedSchemaValues.add(target.allOf);
   }
   for (const [lower, upper] of RANGES) {
     const crossing =
@@ -100,7 +100,7 @@ export const applyConstraintKeywords = (
         options,
       );
     target.enum = [];
-    OwnedSchemaValues.add(target.enum as object);
+    OwnedSchemaValues.add(target.enum);
   } else if (enumeration !== undefined) {
     if (enumeration !== target.enum && enumeration !== source.enum)
       OwnedSchemaValues.add(enumeration);
@@ -121,7 +121,7 @@ export const applyConstraintKeywords = (
   if (state.conflictingConst) {
     delete target.const;
     target.enum = [];
-    OwnedSchemaValues.add(target.enum as object);
+    OwnedSchemaValues.add(target.enum);
   }
 };
 
