@@ -1,0 +1,63 @@
+(node:50243) [DEP0205] DeprecationWarning: `module.register()` is deprecated. Use `module.registerHooks()` instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+│
+▲  No story files found for the specified pattern:
+│  stories/**/*.story.@(js|jsx|mjs|ts|tsx)
+│
+▲  No story files found for the specified pattern: src/**/*.mdx
+│
+▲  No story files found for the specified pattern:
+│  src/**/*.story.@(js|jsx|mjs|ts|tsx)
+│
+▲  No story files found for the specified pattern:
+│  src/**/*.stories.@(js|jsx|mjs|ts|tsx)
+│ ┌────────────────────────────────────────────────────────────────────────────┐
+│ │  Info: Found a setup file with "setProjectAnnotations".                    │
+│ │  Skipping automatic provisioning of preview annotations to avoid           │
+│ │  conflicts. Since Storybook 10.3, "@storybook/addon-vitest" applies these  │
+│ │   automatically.                                                           │
+│ │  You can safely remove the "setProjectAnnotations" call from your setup    │
+│ │  file, or remove the file entirely if you don't have custom code there.    │
+│ └────────────────────────────────────────────────────────────────────────────┘
+
+ RUN  v3.2.6 /Users/Vincent/Workspace/albatrion/packages/canard/schema-form
+
+
+⎯⎯⎯⎯⎯⎯ Failed Suites 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  |unit| src/core/blueprint/__tests__/mergeEffectiveSchema.test.ts [ src/core/blueprint/__tests__/mergeEffectiveSchema.test.ts ]
+Error: Cannot find module '../utils/effectiveSchema/mergeEffectiveSchema' imported from '/Users/Vincent/Workspace/albatrion/packages/canard/schema-form/src/core/blueprint/__tests__/mergeEffectiveSchema.test.ts'
+ ❯ src/core/blueprint/__tests__/mergeEffectiveSchema.test.ts:4:1
+      2| 
+      3| import type { BlueprintGate, BlueprintSchema, EffectiveSchemaMemo } fr…
+      4| import { mergeEffectiveSchema } from '../utils/effectiveSchema/mergeEf…
+       | ^
+      5| import { createEffectiveSchemaNode } from './fixtures/createEffectiveS…
+      6| 
+
+Caused by: Error: Failed to load url ../utils/effectiveSchema/mergeEffectiveSchema (resolved id: ../utils/effectiveSchema/mergeEffectiveSchema) in /Users/Vincent/Workspace/albatrion/packages/canard/schema-form/src/core/blueprint/__tests__/mergeEffectiveSchema.test.ts. Does the file exist?
+ ❯ loadAndTransform ../../../node_modules/vite/dist/node/chunks/config.js:22739:33
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ FAIL  |unit| src/core/blueprint/__tests__/stripSchema.test.ts [ src/core/blueprint/__tests__/stripSchema.test.ts ]
+Error: Cannot find module '../utils/stripSchema/stripSchema' imported from '/Users/Vincent/Workspace/albatrion/packages/canard/schema-form/src/core/blueprint/__tests__/stripSchema.test.ts'
+ ❯ src/core/blueprint/__tests__/stripSchema.test.ts:3:1
+      1| import { describe, expect, it } from 'vitest';
+      2| 
+      3| import { stripSchema } from '../utils/stripSchema/stripSchema';
+       | ^
+      4| 
+      5| // filid:contract validator-schema
+
+Caused by: Error: Failed to load url ../utils/stripSchema/stripSchema (resolved id: ../utils/stripSchema/stripSchema) in /Users/Vincent/Workspace/albatrion/packages/canard/schema-form/src/core/blueprint/__tests__/stripSchema.test.ts. Does the file exist?
+ ❯ loadAndTransform ../../../node_modules/vite/dist/node/chunks/config.js:22739:33
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+
+
+ Test Files  2 failed (2)
+      Tests  no tests
+   Start at  11:02:25
+   Duration  312ms (transform 38ms, setup 0ms, collect 0ms, tests 0ms, environment 0ms, prepare 117ms)
+

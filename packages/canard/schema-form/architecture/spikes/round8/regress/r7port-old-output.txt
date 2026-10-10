@@ -1,0 +1,37 @@
+E1 transient-shape default injection (ADR 0007 §1 전이, round-4-spec A2 "주입 시점에 활성인 선언")
+  (a) if without required, kind default "b"
+    load {}          -> {"emit":{"kind":"b","x":"T"},"active":["else"],"rounds":2}
+    load {kind:"b"}  -> {"emit":{"kind":"b","x":"E"},"active":["else"],"rounds":2}
+  (b) if WITH required, kind default "a"
+    load {}          -> {"emit":{"kind":"a","x":"E"},"active":["then"],"rounds":2}
+    load {kind:"a"}  -> {"emit":{"kind":"a","x":"T"},"active":["then"],"rounds":2}
+
+E2 same writes, sequential vs batch (ADR 0008 §3 batch = mark N, settle 1)
+  sequential write(kind,a); write(kind,b) -> {"emit":{"kind":"b","x":"A"},"raw":{"kind":"b","x":"A"}}
+  batch(same two writes)                   -> {"emit":{"kind":"b","x":"B"},"raw":{"kind":"b","x":"B"}}
+
+E3 injectTo fires only when source emit changed vs previous commit (F11) — EMULATED via map()
+  load {src:x,tgt:custom}; user tgt=mine; then src y->x sequential -> {"afterLoad":{"src":"x","tgt":"f(x)"},"final":{"src":"x","tgt":"f(x)"}}
+  same, src y->x inside batch                                     -> {"afterLoad":{"src":"x","tgt":"f(x)"},"final":{"src":"x","tgt":"mine"}}
+
+E4 net-zero change: listener write-back vs batch (ADR 0008 §5 "emit 참조가 바뀌지 않은 쓰기는 onChange도 검증도 없다")
+  listener reverts bad->orig -> {"onChange":1,"validations":1,"seen":[{"prev":{"a":"orig"},"cur":{"a":"orig"}}],"final":{"a":"orig"}}
+  batch(bad, orig)           -> {"onChange":0,"validations":0,"seen":[],"final":{"a":"orig"}}
+
+E6 waves accumulated in ONE tick by un-batched writes (count only; cap applied per ADR text = inference)
+  30 writes, no listener          -> {"calls":30,"wavesInTick":30,"firstCallPastCap25":26}
+  30 writes, store listener a->b  -> {"calls":30,"wavesInTick":60,"firstCallPastCap25":13,"b":"derived:v30"}
+
+E7 Merge write containing an object and an array (03 §3 row 2 "Merge는 로드가 아니므로 default가 들어가지 않는다")
+  setValue({obj:{y:1}, items:[{y:1}]}, Merge) -> {"obj":{"y":"1"},"items":[{"x":"D","y":"1"}]}
+
+E9 negative cycle with two fixed points (ADR 0007 §2 "budget-exceeded로 표시된다", F13 order hint)
+  order F1,F2 -> {"order":12,"active":["F1"],"emit":{"a":1},"status":"stable","sweeps":2}
+  order F2,F1 -> {"order":21,"active":["F2"],"emit":{"b":2},"status":"stable","sweeps":2}
+
+E10 anyOf without discriminator, value matching both branches (ADR 0002 선택 가드 초기 선택)
+  -> {"load":{"a":1,"b":2},"emit":{"a":1},"active":["A"]}
+E12 select-guard, load {zzz:1} -> active ["A"] emit {"a":"A","zzz":1}
+E13 root {a}, user clears a to "" -> getValue() "<undefined>" raw {"a":""}
+
+PORT CHECK vs round6/claude r6-output.txt + r6-empty-output.txt: 28/28 lines identical

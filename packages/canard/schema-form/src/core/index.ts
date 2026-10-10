@@ -1,4 +1,7 @@
 export { nodeFromJSONSchema, contextNodeFactory } from './nodeFromJSONSchema';
+export { setContext } from './SchemaNode';
+export { SchemaNodeEventType, SchemaNodeRequestType } from './SchemaNode';
+export { retainValidationRoot, releaseValidationRoot } from './validation';
 
 export type {
   ArrayNode,
@@ -12,7 +15,7 @@ export type {
   SchemaNode,
   NodeListener,
   UnionNodeEventType,
-} from './nodes';
+} from '../__legacy__/core/nodes';
 
 export {
   NodeState,
@@ -30,4 +33,4 @@ export {
   isArrayNode,
   isBranchNode,
   isTerminalNode,
-} from './nodes';
+} from '../__legacy__/core/nodes';

@@ -1,0 +1,24 @@
+import { createDynamicFunction } from '@/schema-form/core/blueprint';
+import type { PathManager } from '@/schema-form/core/blueprint';
+import type { JSONSchemaWithVirtual } from '@/schema-form/types';
+
+import { ALIAS, type DerivedValueFieldName } from '../type';
+
+/**
+ * Creates a function to get derived values in a JSON schema.
+ * @param jsonSchema - Node's JSON schema
+ * @returns Derived value getter factory function
+ */
+export const getDerivedValueFactory =
+  (jsonSchema: JSONSchemaWithVirtual) =>
+  /**
+   * Returns a derived value factory function for the given dependency paths and field name.
+   * @param dependencyPaths - Dependency path array
+   * @param fieldName - Field name to get
+   * @returns Derived value getter factory function or undefined
+   */
+  (pathManager: PathManager, fieldName: DerivedValueFieldName) => {
+    const expression: string | undefined =
+      jsonSchema.computed?.[fieldName] ?? jsonSchema[ALIAS + fieldName];
+    return createDynamicFunction(pathManager, fieldName, expression);
+  };

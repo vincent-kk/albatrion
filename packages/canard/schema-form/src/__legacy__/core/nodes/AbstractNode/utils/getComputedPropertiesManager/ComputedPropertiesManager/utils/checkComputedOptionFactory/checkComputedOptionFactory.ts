@@ -1,0 +1,29 @@
+import { createDynamicFunction } from '@/schema-form/core/blueprint';
+import type { PathManager } from '@/schema-form/core/blueprint';
+import type { JSONSchemaWithVirtual } from '@/schema-form/types';
+
+import { ALIAS, type ConditionFieldName } from '../type';
+
+/**
+ * Creates a function to check computed options in a JSON schema.
+ * @param jsonSchema - Node's JSON schema
+ * @param rootJSONSchema - Root node's JSON schema
+ * @returns Computed option factory function
+ */
+export const checkComputedOptionFactory =
+  (jsonSchema: JSONSchemaWithVirtual, rootJSONSchema: JSONSchemaWithVirtual) =>
+  /**
+   * Returns a condition check function for the given dependency paths and field name.
+   * @param dependencyPaths - Dependency path array
+   * @param fieldName - Field name to check
+   * @returns Computed option check function or undefined
+   */
+  (pathManager: PathManager, fieldName: ConditionFieldName) => {
+    const expression: string | boolean | undefined =
+      rootJSONSchema[fieldName] ??
+      jsonSchema[fieldName] ??
+      jsonSchema.computed?.[fieldName] ??
+      jsonSchema[ALIAS + fieldName];
+    if (typeof expression === 'boolean') return () => expression;
+    return createDynamicFunction(pathManager, fieldName, expression, true);
+  };

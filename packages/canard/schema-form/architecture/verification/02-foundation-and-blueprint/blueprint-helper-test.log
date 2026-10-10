@@ -1,0 +1,31 @@
+│
+▲  No story files found for the specified pattern:
+│  stories/**/*.story.@(js|jsx|mjs|ts|tsx)
+│
+▲  No story files found for the specified pattern:
+│  src/**/*.stories.@(js|jsx|mjs|ts|tsx)
+│
+▲  No story files found for the specified pattern: src/**/*.mdx
+│
+▲  No story files found for the specified pattern:
+│  src/**/*.story.@(js|jsx|mjs|ts|tsx)
+│ ┌────────────────────────────────────────────────────────────────────────────┐
+│ │  Info: Found a setup file with "setProjectAnnotations".                    │
+│ │  Skipping automatic provisioning of preview annotations to avoid           │
+│ │  conflicts. Since Storybook 10.3, "@storybook/addon-vitest" applies these  │
+│ │   automatically.                                                           │
+│ │  You can safely remove the "setProjectAnnotations" call from your setup    │
+│ │  file, or remove the file entirely if you don't have custom code there.    │
+│ └────────────────────────────────────────────────────────────────────────────┘
+
+ RUN  v3.2.6 /Users/Vincent/Workspace/albatrion/packages/canard/schema-form
+
+ ✓ |unit| src/core/blueprint/__tests__/blueprint.recursion.test.ts (9 tests) 8ms
+ ✓ |unit| src/core/blueprint/__tests__/blueprint.expressions.test.ts (8 tests) 8ms
+
+ Test Files  2 passed (2)
+      Tests  17 passed (17)
+   Start at  11:58:18
+   Duration  897ms (transform 380ms, setup 0ms, collect 1.31s, tests 16ms, environment 0ms, prepare 110ms)
+
+

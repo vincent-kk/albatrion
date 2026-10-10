@@ -1,0 +1,56 @@
+Baseline: 01e52d0bd. Review of design records, not production implementation.
+Command: node packages/canard/schema-form/architecture/spikes/round6/codex/model.mjs
+Exit: 0
+
+ORDER_HINT
+Same raw {a:1,b:1}, same fragments, same empty seed.
+A guard = absence of b; B guard = absence of a.
+Order A,B: stable {a:1}; trace [[a],[a]].
+Order B,A: stable {b:1}; trace [[b],[b]].
+Both results are fixed points. This challenges allowing prior active state to
+change evaluation order; it does not challenge deterministic fixed ordering.
+The model deliberately varies order. It does not prove the existing prototype
+implements the suggested optimization. Restricting hints to semantics-preserving
+operations, or specifying an excluded schema class, could resolve this.
+Evidence: adr/0002-guard-fragment-model.md:68-72;
+adr/0007-settle-cycle.md:47-57; reviews/round-4-spec.md:146.
+
+BUDGET_PADDING
+Guard = absence of x, declared child x, raw x=1.
+One fragment, cap 2: budget-exceeded {}, trace [[x],[]].
+Add an always-false unrelated fragment, cap 3:
+budget-exceeded {x:1}, trace [[x],[],[x]].
+This is an explicitly unsupported nonconvergent case, not an undisclosed bug.
+It demonstrates why budget-exceeded needs a submission/observation contract.
+Evidence: adr/0007-settle-cycle.md:51-57,134.
+
+GUARD_INPUT
+For JSON Schema {type:'object'}, emitted null fails but substituted {} passes.
+This is an explicitly documented shape-guard exception. It disproves only an
+unqualified claim that shape guards always see the validator's emitted value.
+Evidence: adr/0002-guard-fragment-model.md:60-62;
+adr/0007-settle-cycle.md:50.
+
+Scope: 3 standalone model scenarios passed their counterexample assertions.
+No package tests, React browser tests, production code changes, or dependency
+installation. Model predicates directly implement only absence and object type;
+this is not a general JSON Schema validator or an end-to-end regression test.
+
+Review citation aliases (all relative to architecture/):
+M = 03-mental-model.md
+G = 00-goals.md
+Q = open-questions.md
+A1 = adr/0001-validator-input-invariant.md
+A2 = adr/0002-guard-fragment-model.md
+A3 = adr/0003-ampersand-namespace.md
+A5 = adr/0005-blueprint-analysis-and-node-sharing.md
+A6 = adr/0006-single-value-ownership.md
+A7 = adr/0007-settle-cycle.md
+A8 = adr/0008-event-system.md
+A11 = adr/0011-branch-node-composition.md
+A13 = adr/0013-core-does-not-rewrite-values.md
+
+External primary references inspected:
+https://json-schema.org/understanding-json-schema/reference/annotations
+https://json-schema.org/understanding-json-schema/reference/conditionals
+https://json-schema.org/understanding-json-schema/reference/combining

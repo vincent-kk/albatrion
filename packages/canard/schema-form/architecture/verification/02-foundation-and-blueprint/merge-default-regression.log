@@ -1,0 +1,11 @@
+
+ RUN  v3.2.6 /Users/Vincent/Workspace/albatrion/packages/winglet/common-utils
+
+ ✓ src/utils/object/merge/__tests__/mergeOptions.test.ts (11 tests) 3ms
+ ✓ src/utils/object/merge/__tests__/merge.test.ts (12 tests) 3ms
+
+ Test Files  2 passed (2)
+      Tests  23 passed (23)
+   Start at  11:46:35
+   Duration  373ms (transform 123ms, setup 0ms, collect 308ms, tests 6ms, environment 0ms, prepare 126ms)
+

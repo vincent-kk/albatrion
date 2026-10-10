@@ -1,0 +1,44 @@
+E1 transient-shape default injection (ADR 0007 §1 전이, round-4-spec A2 "주입 시점에 활성인 선언")
+  (a) if without required, kind default "b"
+    load {}          -> {"emit":{"kind":"b","x":"T"},"active":["else"],"rounds":2}
+    load {kind:"b"}  -> {"emit":{"kind":"b","x":"E"},"active":["else"],"rounds":2}
+  (b) if WITH required, kind default "a"
+    load {}          -> {"emit":{"kind":"a","x":"E"},"active":["then"],"rounds":2}
+    load {kind:"a"}  -> {"emit":{"kind":"a","x":"T"},"active":["then"],"rounds":2}
+
+E2 same writes, sequential vs batch (ADR 0008 §3 batch = mark N, settle 1)
+  sequential write(kind,a); write(kind,b) -> {"emit":{"kind":"b","x":"A"},"raw":{"kind":"b","x":"A"}}
+  batch(same two writes)                   -> {"emit":{"kind":"b","x":"B"},"raw":{"kind":"b","x":"B"}}
+
+E3 injectTo fires only when source emit changed vs previous commit (F11) — EMULATED via map()
+  load {src:x,tgt:custom}; user tgt=mine; then src y->x sequential -> {"afterLoad":{"src":"x","tgt":"f(x)"},"final":{"src":"x","tgt":"f(x)"}}
+  same, src y->x inside batch                                     -> {"afterLoad":{"src":"x","tgt":"f(x)"},"final":{"src":"x","tgt":"mine"}}
+
+E4 net-zero change: listener write-back vs batch (ADR 0008 §5 "emit 참조가 바뀌지 않은 쓰기는 onChange도 검증도 없다")
+  listener reverts bad->orig -> {"onChange":1,"validations":1,"seen":[{"prev":{"a":"orig"},"cur":{"a":"orig"}}],"final":{"a":"orig"}}
+  batch(bad, orig)           -> {"onChange":0,"validations":0,"seen":[],"final":{"a":"orig"}}
+
+E5 budget-exceeded: dev vs prod observable lifecycle (ADR 0007 §2 상한 초과, REPORT-v4c §5 A5)
+  dev  -> {"dev":true,"onChangeAfterKeystroke":0,"validations":0,"thrown":2,"committed":{"y":"1"},"status":"budget-exceeded"}
+  prod -> {"dev":false,"onChangeAfterKeystroke":1,"validations":1,"thrown":0,"committed":{"y":"1"},"status":"budget-exceeded"}
+
+E6 waves accumulated in ONE tick by un-batched writes (count only; cap applied per ADR text = inference)
+  30 writes, no listener          -> {"calls":30,"wavesInTick":30,"firstCallPastCap25":26}
+  30 writes, store listener a->b  -> {"calls":30,"wavesInTick":60,"firstCallPastCap25":13,"b":"derived:v30"}
+
+E7 Merge write containing an object and an array (03 §3 row 2 "Merge는 로드가 아니므로 default가 들어가지 않는다")
+  setValue({obj:{y:1}, items:[{y:1}]}, Merge) -> {"obj":{"y":"1"},"items":[{"x":"D","y":"1"}]}
+
+E8 positive loops: valid loaded data vs emitted value (ADR 0013 "형상은 그 값으로 수렴한다")
+  self loop  -> {"load":{"x":"v"},"emit":null,"raw":{"x":"v"},"status":"stable"}
+  mutual     -> {"load":{"a":1,"b":2},"emit":null,"status":"stable"}
+
+E9 negative cycle with two fixed points (ADR 0007 §2 "budget-exceeded로 표시된다", F13 order hint)
+  order F1,F2 -> {"order":12,"active":["F1"],"emit":{"a":1},"status":"stable","sweeps":2}
+  order F2,F1 -> {"order":21,"active":["F2"],"emit":{"b":2},"status":"stable","sweeps":2}
+
+E10 anyOf without discriminator, value matching both branches (ADR 0002 선택 가드 초기 선택)
+  -> {"load":{"a":1,"b":2},"emit":{"a":1},"active":["A"]}
+
+E11 store listener upper-cases the same field (A6/F7 Refresh, T-2 "타이핑은 리마운트하지 않는다")
+  deliveries to a -> [{"v":"k","refresh":false},{"v":"K","refresh":true}]

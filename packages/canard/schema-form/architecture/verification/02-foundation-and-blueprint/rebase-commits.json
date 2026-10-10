@@ -1,0 +1,162 @@
+[
+  {
+    "before": "55ed7550462ffbde1b73a5bb279bce83337799b5",
+    "after": "b75d2f935091117daa42465320ba5bfafe219f03",
+    "subject": "docs(schema-form): start foundation and blueprint implementation"
+  },
+  {
+    "before": "e736e3e42f9a8877a0410577b5c0af02c3ac3119",
+    "after": "ad34049e10fcdb28e7d06f3e5640a1ef538eb6d0",
+    "subject": "docs(schema-form): define v7 prototype contracts before implementation"
+  },
+  {
+    "before": "e468dcc56894c0d8ebbfc15cf0da736c7438784d",
+    "after": "b45075de7f84e00e098ef2bbdfd95bd4c66f7873",
+    "subject": "docs(schema-form): establish blueprint and intersection contracts"
+  },
+  {
+    "before": "c815947b8f83ce5d43ddb3603aa680f216301a63",
+    "after": "a1c27a1d1605a6d4e75cac93900ca13d926d7217",
+    "subject": "docs(schema-form): partition blueprint acceptance groups"
+  },
+  {
+    "before": "ad8dfaa054a97e1784e6695b8c73b50ebc51171c",
+    "after": "130fd1bc35f19b0a14ef9d127367cfbb7171bc6d",
+    "subject": "docs(scenarios): define injected scenario harness contracts"
+  },
+  {
+    "before": "f23d3e0c22e4a45dfa21fcf3bfee24ae4abdc618",
+    "after": "4dc0aebd0733aa300a3f9d9517a9a330f245e238",
+    "subject": "test(schema-form): pin legacy core and scale benchmarks"
+  },
+  {
+    "before": "f7eef9ed9d69a9e83607d6b074bb924251d72980",
+    "after": "b4083009a207ce028c315c2e77de8353a189663e",
+    "subject": "feat(common-utils): add explicit immutable merge policies"
+  },
+  {
+    "before": "52da39ddb22df6a2dd80bdc6f35631e1d373d74d",
+    "after": "351cf1f627a364b035fad9eddbc11c7df44b0889",
+    "subject": "feat(schema-form): introduce pure leaf constraint intersections"
+  },
+  {
+    "before": "4f9958baa33f68f22b1bae263825731008387f5f",
+    "after": "17b05ec413b1650f973af9b673e1b208e6a74856",
+    "subject": "docs(common-utils): define merge module and recursion boundaries"
+  },
+  {
+    "before": "c0ea5b69375cbbe43e2d6ecf09fcca82257b6cbf",
+    "after": "1cf3f6ba73b02a161087d724351f846f3ff1ead6",
+    "subject": "docs(common-utils): clarify recursive merge allocation policies"
+  },
+  {
+    "before": "56f74926ffcd9e91dc3451c66be9af162e50ffe7",
+    "after": "2259ffec97ce44fefb57e9357aa9907355340aac",
+    "subject": "docs(common-utils): normalize array policy before merge recursion"
+  },
+  {
+    "before": "f09033cf20b48ad58add31cdd38ca60a2b5d9c49",
+    "after": "afcae42b6d058da87ae911757b50bd3bf3927352",
+    "subject": "refactor(common-utils): isolate merge recursion and resolve array policy once"
+  },
+  {
+    "before": "071cc8bf367d3c010cbc8ab79e5fbf5102f175b7",
+    "after": "28ff24d679df024a6dfa96f9314b2f9265157c05",
+    "subject": "fix(common-utils): defer merge version bump to changeset"
+  },
+  {
+    "before": "3a9dd775c7fbde5d671665d4a9995d5402e6205b",
+    "after": "a9e718d32e5480a0390a82f2c8524000e4e35a61",
+    "subject": "test(common-utils): record merge restructure verification"
+  },
+  {
+    "before": "c1e0cfcccaf5e94eb02756a65750d50ba1b48059",
+    "after": "e4cffeed865bb6b493220847af1197d8d80b504e",
+    "subject": "docs(schema-form): record owner corrections and resume stage two"
+  },
+  {
+    "before": "7e4afa00b9dca6776c407d86ce883ee22c48c22f",
+    "after": "95921c528d294730a5411306a33576aa378498de",
+    "subject": "docs(schema-form): define effective schema memo isolation"
+  },
+  {
+    "before": "e1272956f67b0a1ccd4882748c7d8584c32f37a6",
+    "after": "e3de1dd90c0a9eeffe1d241c57d68612a2ac7134",
+    "subject": "docs(schema-form): preserve host context across blueprint references"
+  },
+  {
+    "before": "1f766df2f0d7d2d43f389aad1b13ef3edf27344d",
+    "after": "2bde700df2fad5745dc6b3af6c858d8494bb084c",
+    "subject": "docs(schema-form): define relocated expression compiler contracts"
+  },
+  {
+    "before": "358ba96dca44b2919555f35e1569d9c7bcca8614",
+    "after": "88976ca00d83c30bba0d0fd6ec1415451e560b80",
+    "subject": "feat(schema-form): add injected scenario harness and vitest projects"
+  },
+  {
+    "before": "5d01cfccb51bc3444b27190e98f1e3d902f66dc2",
+    "after": "a520aae2ff76f3960576e47897a202530f2feb26",
+    "subject": "docs(schema-form): distinguish current v7 rules from historical modes"
+  },
+  {
+    "before": "1686f6cbfd937a57987d31c6c90761e077fa9034",
+    "after": "c9b16c7a70bdf6a8be9647c599e1d8aaab0d2879",
+    "subject": "feat(schema-form): implement v7 settling prototype and ledger regressions"
+  },
+  {
+    "before": "4d59285ac5afd91311b4d851944c06059f6659b7",
+    "after": "b0677ffcf42e8adaa3717401a57232e62f7515db",
+    "subject": "docs(schema-form): preserve legacy schema contracts before relocation"
+  },
+  {
+    "before": "efded5377e9981f20a2077eca2993ab6d018c677",
+    "after": "60049db948c01e8e1e2925ebb99940d31a0bb05d",
+    "subject": "docs(schema-form): preserve literal union input types"
+  },
+  {
+    "before": "cd37bbf96315b920e293ca3215554f1dd8409278",
+    "after": "6e810b6d883d4ac6648c146cb93420a24b1e8917",
+    "subject": "docs(schema-form): distinguish fragment scope and nullable constructor inputs"
+  },
+  {
+    "before": "e473238d9b657c40e5fc2ca99f6836b103874eed",
+    "after": "a5c944bfae89b658f29e5b01e0a3a665332aeb7a",
+    "subject": "refactor(schema-form): move expression compiler into blueprint ownership"
+  },
+  {
+    "before": "2cee85e19aa40de349294d155b646f064bc0b89a",
+    "after": "63e26ab5cf5b065ac8243057c221e4aae0f8bee5",
+    "subject": "test(schema-form): record scanner reference corpus evidence"
+  },
+  {
+    "before": "f5decb15a204736840389f3832dfec43864a47f5",
+    "after": "db31f035e2a7e763627126219cadd9e458e65b26",
+    "subject": "docs(schema-form): preserve child control gate applicability"
+  },
+  {
+    "before": "7bb2a41c06fe1bb2b53bd621e775baf7b1807cb2",
+    "after": "d283c2083d6ac8afe69c2de0d7d839decc1f86a3",
+    "subject": "feat(schema-form): merge effective declarations and strip validator schemas"
+  },
+  {
+    "before": "8642f860d9d8a3805a05cfe8ad390cdbced19923",
+    "after": "739c7a55e78ad16eabdbc4c95553afcb4073aacb",
+    "subject": "refactor(schema-form): preserve replaced schema helpers under legacy"
+  },
+  {
+    "before": "d2566f73b462afa279f2f52ffcd9c946aaa56bf6",
+    "after": "7f537f435d28b3bc0ac478bd9280d2b5046767ee",
+    "subject": "docs(schema-form): specify narrowed effective type representation"
+  },
+  {
+    "before": "c59de75abff43a55a865a6268afad2eb0203c26b",
+    "after": "1d1ca6ac62feae9af2a4f4844ff8b6c849b503cd",
+    "subject": "docs(schema-form): complete prototype function contracts"
+  },
+  {
+    "before": "da4ef5c368aad793665d604c46af288a55f1adcb",
+    "after": "9b7613eb87b186e4d0dd400fc83f47d7b88dac32",
+    "subject": "feat(schema-form): establish blueprint analysis and verification checkpoint"
+  }
+]

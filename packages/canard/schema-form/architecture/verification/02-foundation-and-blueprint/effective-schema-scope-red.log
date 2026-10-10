@@ -1,0 +1,90 @@
+│
+▲  No story files found for the specified pattern:
+│  stories/**/*.story.@(js|jsx|mjs|ts|tsx)
+│
+▲  No story files found for the specified pattern:
+│  src/**/*.stories.@(js|jsx|mjs|ts|tsx)
+│
+▲  No story files found for the specified pattern:
+│  src/**/*.story.@(js|jsx|mjs|ts|tsx)
+│
+▲  No story files found for the specified pattern: src/**/*.mdx
+│ ┌────────────────────────────────────────────────────────────────────────────┐
+│ │  Info: Found a setup file with "setProjectAnnotations".                    │
+│ │  Skipping automatic provisioning of preview annotations to avoid           │
+│ │  conflicts. Since Storybook 10.3, "@storybook/addon-vitest" applies these  │
+│ │   automatically.                                                           │
+│ │  You can safely remove the "setProjectAnnotations" call from your setup    │
+│ │  file, or remove the file entirely if you don't have custom code there.    │
+│ └────────────────────────────────────────────────────────────────────────────┘
+
+ RUN  v3.2.6 /Users/Vincent/Workspace/albatrion/packages/canard/schema-form
+
+ ❯ |unit| src/core/blueprint/__tests__/mergeEffectiveSchema.test.ts (15 tests | 2 failed) 13ms
+   × mergeEffectiveSchema > selects gates and sorts contributions, ignoring shared declaration-only branches 5ms
+     → ALL_OF_TYPE_REDEFINITION at #/allOf/1; Static type declarations must have a nonempty intersection.
+   ✓ mergeEffectiveSchema > intersects numeric, length, item and property bounds with multipleOf 0ms
+   ✓ mergeEffectiveSchema > unions required, overwrites annotations, and combines standard readOnly locally 0ms
+   ✓ mergeEffectiveSchema > intersects enum and const by deep equality without conflating keywords 0ms
+   ✓ mergeEffectiveSchema > reports static enum, const and range failures at the contributing schema path 1ms
+   ✓ mergeEffectiveSchema > keeps runtime impossibility as enum empty or inverted ranges, with const removed 0ms
+   ✓ mergeEffectiveSchema > preserves the first pattern and appends other distinct patterns as allOf 0ms
+   ✓ mergeEffectiveSchema > merges groups without mutation, moving unshared references and replacing arrays 0ms
+   × mergeEffectiveSchema > leaves behavioral, state and virtual declarations intact outside effective hints 4ms
+     → expected { controls: { …(2) }, type: 'string' } to match object { controls: { …(2) } }
+(1 matching property omitted from actual)
+   ✓ mergeEffectiveSchema > narrows integer subsets and preserves scalar or shared static type identity 0ms
+   ✓ mergeEffectiveSchema > represents runtime gated type conflict without throwing or creating type empty 0ms
+   ✓ mergeEffectiveSchema > memoizes normalized active sets and separates static from runtime checks 0ms
+   ✓ mergeEffectiveSchema > separates memo contexts by atomic predicate and accepts a caller-owned memo 0ms
+   ✓ mergeEffectiveSchema > keeps boolean false schemas and ignores boolean true overlays 0ms
+   ✓ mergeEffectiveSchema > preserves draft-04 boolean exclusivity with its authored bound in allOf 0ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  |unit| src/core/blueprint/__tests__/mergeEffectiveSchema.test.ts > mergeEffectiveSchema > selects gates and sorts contributions, ignoring shared declaration-only branches
+JSONSchemaError: ALL_OF_TYPE_REDEFINITION at #/allOf/1; Static type declarations must have a nonempty intersection.
+ ❯ throwBlueprintError src/core/blueprint/utils/diagnostics/throwBlueprintError.ts:21:9
+     19| ): never => {
+     20|   options?.collect?.({ code, level: 'error', schemaPath, details });
+     21|   throw new JSONSchemaError(
+       |         ^
+     22|     code,
+     23|     `${code} at ${schemaPath || '#'}; ${details.guidance ?? 'check the…
+ ❯ applyTypeContribution src/core/blueprint/utils/effectiveSchema/utils/applyTypeContribution.ts:25:34
+ ❯ applySchemaContribution src/core/blueprint/utils/effectiveSchema/utils/applySchemaContribution.ts:24:3
+ ❯ mergeSchemaContributions src/core/blueprint/utils/effectiveSchema/utils/mergeSchemaContributions.ts:28:5
+ ❯ mergeEffectiveSchema src/core/blueprint/utils/effectiveSchema/mergeEffectiveSchema.ts:29:18
+ ❯ src/core/blueprint/__tests__/mergeEffectiveSchema.test.ts:27:12
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ FAIL  |unit| src/core/blueprint/__tests__/mergeEffectiveSchema.test.ts > mergeEffectiveSchema > leaves behavioral, state and virtual declarations intact outside effective hints
+AssertionError: expected { controls: { …(2) }, type: 'string' } to match object { controls: { …(2) } }
+(1 matching property omitted from actual)
+
+- Expected
++ Received
+
+  {
+    "controls": {
+-     "default": 1,
++     "default": 2,
+      "watch": [
+-       "./node",
++       "./fragment",
+      ],
+    },
+  }
+
+ ❯ src/core/blueprint/__tests__/mergeEffectiveSchema.test.ts:100:48
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  2 failed | 13 passed (15)
+   Start at  11:15:24
+   Duration  493ms (transform 141ms, setup 0ms, collect 256ms, tests 13ms, environment 0ms, prepare 53ms)
+

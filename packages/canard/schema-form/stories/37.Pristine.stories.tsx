@@ -1,6 +1,6 @@
 import { useCallback, useRef, useState } from 'react';
 
-import type { NodeStateFlags } from '@/schema-form/core/nodes';
+import type { NodeStateFlags } from '@/schema-form/__legacy__/core/nodes';
 
 import { Form, type FormHandle, type JSONSchema, NodeState } from '../src';
 import StoryLayout from './components/StoryLayout';

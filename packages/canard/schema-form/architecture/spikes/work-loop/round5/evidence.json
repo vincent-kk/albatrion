@@ -1,0 +1,733 @@
+{
+  "D1_retain": [
+    {
+      "file": "src/core/__tests__/ObjectNode.branch.nullable.blankState.test.ts",
+      "line": 101,
+      "title": "%s: 자식이 스키마 기준 새 상태를 가져야 함",
+      "parameterized": true,
+      "count": 2
+    },
+    {
+      "file": "src/core/__tests__/ObjectNode.branch.nullable.blankState.test.ts",
+      "line": 120,
+      "title": "%s: 풀린 값이 새 객체에 같은 쓰기를 한 값과 같아야 함",
+      "parameterized": true,
+      "count": 2
+    },
+    {
+      "file": "src/core/__tests__/ObjectNode.branch.nullable.blankState.test.ts",
+      "line": 137,
+      "title": "minItems 배열 자식도 경로와 무관하게 같은 상태여야 함 (terminal: %s)",
+      "parameterized": true,
+      "count": 2
+    },
+    {
+      "file": "src/core/__tests__/ObjectNode.branch.nullable.blankState.test.ts",
+      "line": 193,
+      "title": "derived 배열·자체 default를 가진 객체·null default 객체 자식도 경로와 무관하게 같은 상태여야 함",
+      "parameterized": false,
+      "count": 1
+    },
+    {
+      "file": "src/core/__tests__/ObjectNode.branch.nullable.blankState.test.ts",
+      "line": 260,
+      "title": "중첩 객체의 oneOf 분기도 경로와 무관하게 초기 분기로 돌아가야 함",
+      "parameterized": false,
+      "count": 1
+    },
+    {
+      "file": "src/core/__tests__/ObjectNode.branch.nullable.blankState.test.ts",
+      "line": 318,
+      "title": "nullable 노드 자신이 객체 default를 가지면 빈 양식은 그 default를 따라야 함",
+      "parameterized": false,
+      "count": 1
+    },
+    {
+      "file": "src/core/__tests__/ObjectNode.branch.nullable.blankState.test.ts",
+      "line": 363,
+      "title": "노드 자신의 default가 중첩 객체에 준 조각과 properties 밖의 키도 풀린 값에 포함되어야 함",
+      "parameterized": false,
+      "count": 1
+    },
+    {
+      "file": "src/__tests__/scenarios/nullable.object-blank-state.render.test.tsx",
+      "line": 31,
+      "title": "refreshes the child inputs to their schema defaults when the object is set to null",
+      "parameterized": false
+    },
+    {
+      "file": "src/__tests__/scenarios/nullable.object-blank-state.render.test.tsx",
+      "line": 42,
+      "title": "promotes to exactly what the blank form shows plus the user write",
+      "parameterized": false
+    },
+    {
+      "file": "src/__tests__/scenarios/nullable.object-blank-state.render.test.tsx",
+      "line": 148,
+      "title": "[default-after-null] a branch restore stays blank while nothing was reset",
+      "parameterized": false
+    },
+    {
+      "file": "src/core/__tests__/ObjectNode.branch.defaultAfterNull.test.ts",
+      "line": 79,
+      "title": "[default-after-null] keeps the restores blank while nothing was reset",
+      "parameterized": false
+    }
+  ],
+  "D4_explicit": [
+    {
+      "file": "src/components/__tests__/SchemaNodeProxy.refresh.test.tsx",
+      "line": 118,
+      "title": "should NOT publish RequestRefresh when SetValueOption.Default is used",
+      "parameterized": false
+    },
+    {
+      "file": "src/core/__tests__/RefreshAndDefaultValue.test.ts",
+      "line": 58,
+      "title": "should NOT publish RequestRefresh when SetValueOption.Default is used",
+      "parameterized": false
+    },
+    {
+      "file": "src/core/__tests__/RefreshAndDefaultValue.test.ts",
+      "line": 221,
+      "title": "should still publish UpdateValue when setting the same value with Overwrite option",
+      "parameterized": false
+    },
+    {
+      "file": "src/core/__tests__/RefreshAndDefaultValue.test.ts",
+      "line": 1299,
+      "title": "should handle setValue with SetValueOption.Default correctly (no RequestRefresh)",
+      "parameterized": false
+    },
+    {
+      "file": "src/core/__tests__/VirtualNode.test.ts",
+      "line": 281,
+      "title": "should NOT publish RequestRefresh when setValue with Default option",
+      "parameterized": false
+    },
+    {
+      "file": "src/__tests__/scenarios/refresh.uncontrolled-value.render.test.tsx",
+      "line": 66,
+      "title": "a non-Refresh setValue updates the node value but the uncontrolled DOM keeps the old value",
+      "parameterized": false
+    },
+    {
+      "file": "src/core/__tests__/AbstractNode.test.ts",
+      "line": 550,
+      "title": "event queue for node",
+      "parameterized": false
+    }
+  ],
+  "D5_default_off": [
+    {
+      "file": "src/__tests__/scenarios/default-value.render.test.tsx",
+      "line": 226,
+      "title": "seeds primitives, object, arrays and null from schema.default (DOM + tree)",
+      "parameterized": false
+    },
+    {
+      "file": "src/__tests__/scenarios/default-value.render.test.tsx",
+      "line": 310,
+      "title": "merges {name:\"ron\"} with child defaults — parent default wins per overlapping key, child fills the rest (DOM + tree)",
+      "parameterized": false
+    },
+    {
+      "file": "src/__tests__/scenarios/default-value.render.test.tsx",
+      "line": 375,
+      "title": "uses an object-array schema.default (1 row) filling omitted child defaults",
+      "parameterized": false
+    },
+    {
+      "file": "src/core/__tests__/BranchStrategy.oneOf.initialDefault.test.ts",
+      "line": 59,
+      "title": "preserves defaults from a nested %s during initial activation",
+      "parameterized": true,
+      "count": 2
+    },
+    {
+      "file": "src/core/__tests__/BranchStrategy.anyOf.initialDefault.test.ts",
+      "line": 49,
+      "title": "preserves defaults from a nested %s during initial activation",
+      "parameterized": true,
+      "count": 2
+    },
+    {
+      "file": "src/core/__tests__/BranchStrategy.anyOf.initialDefault.test.ts",
+      "line": 88,
+      "title": "preserves nested defaults for multiple initially active anyOf branches",
+      "parameterized": false
+    }
+  ],
+  "D6_namespace_or_binding": [
+    {
+      "file": "src/__tests__/scenarios/virtual.render.test.tsx",
+      "line": 86,
+      "title": "renders only the virtual wrapper when the virtual field owns a custom FormTypeInput",
+      "parameterized": false
+    },
+    {
+      "file": "src/core/__tests__/VirtualNode.test.ts",
+      "line": 16,
+      "title": "가상 노드가 정상적으로 생성되어야 함",
+      "parameterized": false
+    },
+    {
+      "file": "src/core/__tests__/VirtualNode.test.ts",
+      "line": 51,
+      "title": "가상 노드의 값이 참조 노드의 값에 따라 변경되어야 함",
+      "parameterized": false
+    },
+    {
+      "file": "src/core/__tests__/VirtualNode.test.ts",
+      "line": 92,
+      "title": "가상 노드의 값 변경 시 참조 노드의 값이 변경되어야 함",
+      "parameterized": false
+    },
+    {
+      "file": "src/core/__tests__/VirtualNode.test.ts",
+      "line": 128,
+      "title": "가상 노드의 이벤트가 정상적으로 발생해야 함",
+      "parameterized": false
+    },
+    {
+      "file": "src/core/__tests__/VirtualNode.test.ts",
+      "line": 180,
+      "title": "가상 노드의 기본값이 정상적으로 설정되어야 함",
+      "parameterized": false
+    },
+    {
+      "file": "src/core/__tests__/VirtualNode.test.ts",
+      "line": 214,
+      "title": "가상 노드의 자식 노드가 정상적으로 생성되어야 함",
+      "parameterized": false
+    },
+    {
+      "file": "src/core/__tests__/VirtualNode.test.ts",
+      "line": 247,
+      "title": "should publish RequestRefresh when setValue with Overwrite option",
+      "parameterized": false
+    },
+    {
+      "file": "src/core/__tests__/VirtualNode.test.ts",
+      "line": 281,
+      "title": "should NOT publish RequestRefresh when setValue with Default option",
+      "parameterized": false
+    },
+    {
+      "file": "src/core/__tests__/VirtualNode.test.ts",
+      "line": 315,
+      "title": "should propagate value changes to reference nodes when setValue is called",
+      "parameterized": false
+    },
+    {
+      "file": "src/core/__tests__/VirtualNode.test.ts",
+      "line": 355,
+      "title": "should publish UpdateValue on reference nodes when virtual node setValue is called",
+      "parameterized": false
+    },
+    {
+      "file": "src/core/__tests__/AbstractNode.test.ts",
+      "line": 550,
+      "title": "event queue for node",
+      "parameterized": false
+    },
+    {
+      "file": "src/core/__tests__/ObjectNode.branch.nullable.interface.test.ts",
+      "line": 92,
+      "title": "virtual 그룹을 통한 쓰기도 null을 풀어야 함",
+      "parameterized": false
+    },
+    {
+      "file": "src/helpers/jsonSchema/__tests__/preprocessSchema.virtaul.test.ts",
+      "line": 8,
+      "title": "should handle multiple mutations on same schema",
+      "parameterized": false
+    },
+    {
+      "file": "src/helpers/jsonSchema/__tests__/preprocessSchema.virtaul.test.ts",
+      "line": 140,
+      "title": "should handle normal schema",
+      "parameterized": false
+    },
+    {
+      "file": "src/helpers/jsonSchema/__tests__/preprocessSchema.virtaul.test.ts",
+      "line": 229,
+      "title": "should handle deeply nested if-then-else structures",
+      "parameterized": false
+    },
+    {
+      "file": "src/helpers/jsonSchema/__tests__/preprocessSchema.virtaul.test.ts",
+      "line": 295,
+      "title": "should handle mixed virtual and non-virtual fields in required",
+      "parameterized": false
+    },
+    {
+      "file": "src/helpers/jsonSchema/__tests__/preprocessSchema.virtaul.test.ts",
+      "line": 350,
+      "title": "should handle schemas without if property",
+      "parameterized": false
+    },
+    {
+      "file": "src/helpers/jsonSchema/__tests__/preprocessSchema.virtaul.test.ts",
+      "line": 370,
+      "title": "should handle empty virtual fields array",
+      "parameterized": false
+    },
+    {
+      "file": "src/helpers/jsonSchema/__tests__/preprocessSchema.virtaul.test.ts",
+      "line": 393,
+      "title": "should handle non-existent virtual keys in required",
+      "parameterized": false
+    },
+    {
+      "file": "src/helpers/jsonSchema/__tests__/preprocessSchema.virtaul.test.ts",
+      "line": 422,
+      "title": "should handle schemas without required arrays",
+      "parameterized": false
+    },
+    {
+      "file": "src/helpers/jsonSchema/__tests__/preprocessSchema.virtaul.test.ts",
+      "line": 452,
+      "title": "should handle complex nested structures with multiple virtual transformations",
+      "parameterized": false
+    },
+    {
+      "file": "src/helpers/jsonSchema/__tests__/preprocessSchema.oneOf.test.ts",
+      "line": 121,
+      "title": "should handle oneOf with virtual required fields",
+      "parameterized": false
+    },
+    {
+      "file": "src/helpers/jsonSchema/__tests__/preprocessSchema.oneOf.test.ts",
+      "line": 185,
+      "title": "should handle complex oneOf with nested conditions and virtual required",
+      "parameterized": false
+    },
+    {
+      "file": "src/helpers/jsonSchema/__tests__/preprocessSchema.oneOf.test.ts",
+      "line": 365,
+      "title": "should handle oneOf with mixed virtual required and regular required",
+      "parameterized": false
+    },
+    {
+      "file": "src/helpers/jsonSchema/__tests__/preprocessSchema.oneOf.test.ts",
+      "line": 426,
+      "title": "should handle oneOf with conditional virtual required in else clause",
+      "parameterized": false
+    },
+    {
+      "file": "src/helpers/jsonSchema/preprocessSchema/utils/__tests__/processVirtualSchema.test.ts",
+      "line": 24,
+      "title": "should transform virtual fields in required array",
+      "parameterized": false
+    },
+    {
+      "file": "src/helpers/jsonSchema/preprocessSchema/utils/__tests__/processVirtualSchema.test.ts",
+      "line": 46,
+      "title": "should handle multiple virtual fields",
+      "parameterized": false
+    },
+    {
+      "file": "src/helpers/jsonSchema/preprocessSchema/utils/__tests__/processVirtualSchema.test.ts",
+      "line": 76,
+      "title": "should handle mixed virtual and non-virtual required fields",
+      "parameterized": false
+    },
+    {
+      "file": "src/helpers/jsonSchema/preprocessSchema/utils/__tests__/processVirtualSchema.test.ts",
+      "line": 99,
+      "title": "should avoid duplicate required fields",
+      "parameterized": false
+    },
+    {
+      "file": "src/helpers/jsonSchema/preprocessSchema/utils/__tests__/processVirtualSchema.test.ts",
+      "line": 127,
+      "title": "should transform virtual fields in then clause",
+      "parameterized": false
+    },
+    {
+      "file": "src/helpers/jsonSchema/preprocessSchema/utils/__tests__/processVirtualSchema.test.ts",
+      "line": 158,
+      "title": "should transform virtual fields in else clause",
+      "parameterized": false
+    },
+    {
+      "file": "src/helpers/jsonSchema/preprocessSchema/utils/__tests__/processVirtualSchema.test.ts",
+      "line": 189,
+      "title": "should transform nested then/else with virtual fields",
+      "parameterized": false
+    },
+    {
+      "file": "src/helpers/jsonSchema/preprocessSchema/utils/__tests__/processVirtualSchema.test.ts",
+      "line": 242,
+      "title": "should handle both then and else clauses together",
+      "parameterized": false
+    },
+    {
+      "file": "src/helpers/jsonSchema/preprocessSchema/utils/__tests__/processVirtualSchema.test.ts",
+      "line": 287,
+      "title": "should transform all virtual fields appropriately",
+      "parameterized": false
+    },
+    {
+      "file": "src/helpers/jsonSchema/preprocessSchema/utils/__tests__/processVirtualSchema.test.ts",
+      "line": 343,
+      "title": "should handle empty virtual fields array",
+      "parameterized": false
+    },
+    {
+      "file": "src/helpers/jsonSchema/preprocessSchema/utils/__tests__/processVirtualSchema.test.ts",
+      "line": 363,
+      "title": "should handle virtual property without matching required field",
+      "parameterized": false
+    },
+    {
+      "file": "src/helpers/jsonSchema/preprocessSchema/utils/__tests__/processVirtualSchema.test.ts",
+      "line": 385,
+      "title": "should return null when virtual exists but no conditions are met",
+      "parameterized": false
+    },
+    {
+      "file": "src/helpers/jsonSchema/preprocessSchema/utils/__tests__/processVirtualSchema.test.ts",
+      "line": 402,
+      "title": "should handle schema without properties",
+      "parameterized": false
+    },
+    {
+      "file": "src/helpers/jsonSchema/preprocessSchema/utils/__tests__/processVirtualSchema.test.ts",
+      "line": 419,
+      "title": "should preserve original schema properties",
+      "parameterized": false
+    },
+    {
+      "file": "src/core/nodes/ObjectNode/strategies/BranchStrategy/utils/getFieldConditionMap/__tests__/flattenConditions.test.ts",
+      "line": 542,
+      "title": "should include virtualRequired fields in then block",
+      "parameterized": false
+    },
+    {
+      "file": "src/core/nodes/ObjectNode/strategies/BranchStrategy/utils/getFieldConditionMap/__tests__/flattenConditions.test.ts",
+      "line": 578,
+      "title": "should include virtualRequired fields in else block",
+      "parameterized": false
+    },
+    {
+      "file": "src/core/nodes/ObjectNode/strategies/BranchStrategy/utils/getFieldConditionMap/__tests__/flattenConditions.test.ts",
+      "line": 615,
+      "title": "should include virtualRequired fields in both then and else blocks",
+      "parameterized": false
+    },
+    {
+      "file": "src/core/nodes/ObjectNode/strategies/BranchStrategy/utils/getFieldConditionMap/__tests__/flattenConditions.test.ts",
+      "line": 654,
+      "title": "should handle multiple virtualRequired fields",
+      "parameterized": false
+    },
+    {
+      "file": "src/core/nodes/ObjectNode/strategies/BranchStrategy/utils/getFieldConditionMap/__tests__/flattenConditions.test.ts",
+      "line": 693,
+      "title": "should handle virtualRequired fields without required fields",
+      "parameterized": false
+    },
+    {
+      "file": "src/core/nodes/ObjectNode/strategies/BranchStrategy/utils/getFieldConditionMap/__tests__/flattenConditions.test.ts",
+      "line": 725,
+      "title": "should handle nested if-then-else with virtualRequired fields",
+      "parameterized": false
+    },
+    {
+      "file": "src/core/nodes/ObjectNode/strategies/BranchStrategy/utils/getFieldConditionMap/__tests__/flattenConditions.test.ts",
+      "line": 779,
+      "title": "should handle empty virtualRequired arrays",
+      "parameterized": false
+    },
+    {
+      "file": "src/core/nodes/ObjectNode/strategies/BranchStrategy/utils/getFieldConditionMap/__tests__/flattenConditions.test.ts",
+      "line": 816,
+      "title": "should handle virtualRequired fields only in nested else block",
+      "parameterized": false
+    },
+    {
+      "file": "src/__tests__/scenarios/virtual.render.test.tsx",
+      "line": 42,
+      "title": "renders a [data-path] wrapper for the virtual node with referenced fields nested inside",
+      "parameterized": false
+    },
+    {
+      "file": "src/__tests__/scenarios/virtual.render.test.tsx",
+      "line": 69,
+      "title": "does not render referenced real fields as direct object children",
+      "parameterized": false
+    },
+    {
+      "file": "src/__tests__/scenarios/virtual.render.test.tsx",
+      "line": 132,
+      "title": "aggregates both real fields after editing them, while object value omits the virtual key",
+      "parameterized": false
+    },
+    {
+      "file": "src/__tests__/scenarios/virtual.render.test.tsx",
+      "line": 151,
+      "title": "updates only the edited slot of the aggregation",
+      "parameterized": false
+    },
+    {
+      "file": "src/__tests__/scenarios/virtual.render.test.tsx",
+      "line": 165,
+      "title": "propagates a virtual setValue(Overwrite) to real fields and their DOM inputs",
+      "parameterized": false
+    },
+    {
+      "file": "src/__tests__/scenarios/virtual.render.test.tsx",
+      "line": 184,
+      "title": "clears referenced real fields when virtual is set to undefined(Overwrite)",
+      "parameterized": false
+    },
+    {
+      "file": "src/__tests__/scenarios/virtual.render.test.tsx",
+      "line": 217,
+      "title": "primes the aggregation and nested DOM from defaultValue (two-phase)",
+      "parameterized": false
+    },
+    {
+      "file": "src/__tests__/scenarios/virtual.render.test.tsx",
+      "line": 264,
+      "title": "renders the active virtual wrapper and its nested fields",
+      "parameterized": false
+    },
+    {
+      "file": "src/__tests__/scenarios/virtual.render.test.tsx",
+      "line": 280,
+      "title": "removes the virtual wrapper AND its nested real fields when deactivated, keeping the tree node",
+      "parameterized": false
+    },
+    {
+      "file": "src/__tests__/scenarios/virtual.render.test.tsx",
+      "line": 299,
+      "title": "remounts the previously hidden real-field inputs on re-activation",
+      "parameterized": false
+    },
+    {
+      "file": "src/__tests__/scenarios/virtual.render.test.tsx",
+      "line": 318,
+      "title": "converges without infinite-loop errors across active toggles",
+      "parameterized": false
+    }
+  ],
+  "D9_remove": [
+    {
+      "file": "src/__tests__/scenarios/refresh.uncontrolled-value.render.test.tsx",
+      "line": 278,
+      "title": "publishing RequestRemount remounts the subtree (Wrapper key bump)",
+      "parameterized": false
+    },
+    {
+      "file": "src/core/nodes/AbstractNode/utils/EventCascadeManager/__tests__/EventCascadeManager.test.ts",
+      "line": 83,
+      "title": "advances synchronously for dispatch()",
+      "parameterized": false
+    },
+    {
+      "file": "src/core/nodes/AbstractNode/utils/EventCascadeManager/__tests__/EventCascadeManager.test.ts",
+      "line": 131,
+      "title": "sums every bit for the BIT_MASK_ALL default and terminates",
+      "parameterized": false
+    }
+  ],
+  "D10_debounce_helper": [
+    {
+      "file": "src/core/nodes/AbstractNode/utils/__tests__/afterMicrotask.test.ts",
+      "line": 8,
+      "title": "should execute handler after microtask",
+      "parameterized": false
+    },
+    {
+      "file": "src/core/nodes/AbstractNode/utils/__tests__/afterMicrotask.test.ts",
+      "line": 19,
+      "title": "should cancel previous task when called multiple times",
+      "parameterized": false
+    },
+    {
+      "file": "src/core/nodes/AbstractNode/utils/__tests__/afterMicrotask.test.ts",
+      "line": 33,
+      "title": "should execute handler with correct timing",
+      "parameterized": false
+    },
+    {
+      "file": "src/core/nodes/AbstractNode/utils/__tests__/afterMicrotask.test.ts",
+      "line": 48,
+      "title": "should handle multiple different handlers independently",
+      "parameterized": false
+    },
+    {
+      "file": "src/core/nodes/AbstractNode/utils/__tests__/afterMicrotask.test.ts",
+      "line": 63,
+      "title": "should maintain closure over handler variables",
+      "parameterized": false
+    },
+    {
+      "file": "src/core/nodes/AbstractNode/utils/__tests__/afterMicrotask.test.ts",
+      "line": 79,
+      "title": "should only execute the last scheduled task when rapidly called",
+      "parameterized": false
+    }
+  ],
+  "common_two_phase": [
+    {
+      "file": "src/__tests__/scenarios/multi-render-split-brain.render.test.tsx",
+      "line": 92,
+      "title": "initial mount: both string locations agree (two-phase: sync then flush)",
+      "parameterized": false
+    },
+    {
+      "file": "src/__tests__/scenarios/nullable.render.test.tsx",
+      "line": 80,
+      "title": "primes array-syntax string/number defaults to null two-phase (sync + post-flush)",
+      "parameterized": false
+    },
+    {
+      "file": "src/__tests__/scenarios/array.prefixItems-terminal.render.test.tsx",
+      "line": 442,
+      "title": "mounts the tuple slots synchronously, then settles their defaults",
+      "parameterized": false
+    },
+    {
+      "file": "src/__tests__/scenarios/composition.oneOf.switch.render.test.tsx",
+      "line": 207,
+      "title": "primes the node tree for a non-zero default-selected branch synchronously",
+      "parameterized": false
+    },
+    {
+      "file": "src/__tests__/scenarios/composition.oneOf.switch.render.test.tsx",
+      "line": 231,
+      "title": "renders a default-selected non-zero oneOf branch field on first paint",
+      "parameterized": false
+    },
+    {
+      "file": "src/__tests__/scenarios/composition.anyOf.render.test.tsx",
+      "line": 64,
+      "title": "primes a default-active anyOf branch into the DOM at first paint",
+      "parameterized": false
+    },
+    {
+      "file": "src/__tests__/scenarios/composition.anyOf.render.test.tsx",
+      "line": 75,
+      "title": "settles the single default-active branch into the DOM after the cascade",
+      "parameterized": false
+    },
+    {
+      "file": "src/__tests__/scenarios/composition.anyOf.render.test.tsx",
+      "line": 95,
+      "title": "settles two default-active branches together after the cascade",
+      "parameterized": false
+    },
+    {
+      "file": "src/__tests__/scenarios/composition.nested-branch.render.test.tsx",
+      "line": 98,
+      "title": "primes the outer physical branch AND its inner standard branch on first render (two-phase)",
+      "parameterized": false
+    },
+    {
+      "file": "src/__tests__/scenarios/virtual.render.test.tsx",
+      "line": 217,
+      "title": "primes the aggregation and nested DOM from defaultValue (two-phase)",
+      "parameterized": false
+    },
+    {
+      "file": "src/__tests__/scenarios/composition.oneOf.initial.render.test.tsx",
+      "line": 52,
+      "title": "first branch (index 0)",
+      "parameterized": false
+    },
+    {
+      "file": "src/__tests__/scenarios/composition.oneOf.initial.render.test.tsx",
+      "line": 88,
+      "title": "non-first branch (index 2)",
+      "parameterized": false
+    },
+    {
+      "file": "src/__tests__/scenarios/composition.oneOf.initial.render.test.tsx",
+      "line": 129,
+      "title": "const-discriminated branch (index 2)",
+      "parameterized": false
+    },
+    {
+      "file": "src/__tests__/scenarios/composition.oneOf.initial.render.test.tsx",
+      "line": 172,
+      "title": "nested object oneOf branch",
+      "parameterized": false
+    },
+    {
+      "file": "src/__tests__/scenarios/composition.oneOf.initial.render.test.tsx",
+      "line": 215,
+      "title": "keeps a single branch schema default through the cascade (no clobber)",
+      "parameterized": false
+    },
+    {
+      "file": "src/__tests__/scenarios/composition.oneOf.initial.render.test.tsx",
+      "line": 259,
+      "title": "keeps multiple branch defaults (branch index 1) after flush",
+      "parameterized": false
+    },
+    {
+      "file": "src/__tests__/scenarios/composition.oneOf.initial.render.test.tsx",
+      "line": 309,
+      "title": "keeps a form defaultValue-seeded branch field after flush",
+      "parameterized": false
+    },
+    {
+      "file": "src/__tests__/scenarios/composition.oneOf.initial.render.test.tsx",
+      "line": 358,
+      "title": "keeps a const-discriminated branch default through the cascade",
+      "parameterized": false
+    },
+    {
+      "file": "src/__tests__/scenarios/composition.oneOf.initial.render.test.tsx",
+      "line": 407,
+      "title": "converges a doubly-nested oneOf branch and persists its default",
+      "parameterized": false
+    },
+    {
+      "file": "src/__tests__/scenarios/composition.oneOf.initial.render.test.tsx",
+      "line": 478,
+      "title": "converges the active nested branch and omits the inactive one",
+      "parameterized": false
+    },
+    {
+      "file": "src/__tests__/scenarios/computed.readonly-disabled.render.test.tsx",
+      "line": 226,
+      "title": "settles computed flags into the DOM after the cascade drains",
+      "parameterized": false
+    },
+    {
+      "file": "src/__tests__/scenarios/computed.visibility.render.test.tsx",
+      "line": 273,
+      "title": "settles to the visible field present in the DOM after the cascade drains",
+      "parameterized": false
+    },
+    {
+      "file": "src/__tests__/scenarios/computed.derived.render.test.tsx",
+      "line": 391,
+      "title": "reflects the derived value in the DOM only after the cascade fully drains (two-phase)",
+      "parameterized": false
+    },
+    {
+      "file": "src/__tests__/scenarios/computed.derived.render.test.tsx",
+      "line": 438,
+      "title": "surfaces INFINITE_LOOP_DETECTED for a diverging circular pair without hanging",
+      "parameterized": false
+    },
+    {
+      "file": "src/__tests__/scenarios/composition.allOf-ifThenElse.render.test.tsx",
+      "line": 30,
+      "title": "merges properties from every allOf branch into one object (DOM + tree)",
+      "parameterized": false
+    },
+    {
+      "file": "src/__tests__/harness.smoke.test.tsx",
+      "line": 129,
+      "title": "supports two-phase (synchronous-then-flushed) assertions",
+      "parameterized": false
+    }
+  ]
+}

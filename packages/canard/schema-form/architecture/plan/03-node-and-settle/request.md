@@ -1,0 +1,108 @@
+# 03 노드 트리와 정착 — 개발요청서
+
+> 원장 정본: LANDING-062(정의)·082(정착 지도)·092(보정), TEST-069(독립 검증 경계)·070(게이트). 규칙은 NODE·VALUE·WRITE·SETTLE 영역. 어긋나면 원장이 이긴다.
+
+## 우산 안의 자리
+
+- 우산 순서 03. base `1.0.0-beta`, 브랜치 제안 `feat/schema-form-node-and-settle`. 의존 02.
+- 다음: 04·05·06이 이 위에서 병렬로 진행한다. PR-2는 판별 게이트와 노드·조각의 `controls.active`를 실제로 평가하고, `if`만 술어 인터페이스 뒤에 둔다(26C-04, LANDING-062).
+- 가장 크고 어느 것과도 합치지 않는 PR이다(LANDING-204).
+
+## 목적
+
+상속 없는 단일 클래스 `SchemaNode`와 동작 행, `raw`·`extras` 둘뿐인 상태, 정착 루프(표시·계산·전이·커밋)와 예산·원본 B, `diagnostics`를 세운다. 새 엔진의 몸통이다.
+
+## 범위 — 원장이 정한 내용
+
+- **노드**: `src/core/SchemaNode/`의 단일 클래스와 `BEHAVIORS[type][strategy]`의 동작 행 — 잎 넷과 `union` 행, 객체·터미널 객체, 가상(터미널 배열은 06)(LANDING-062의 충돌 줄, BLUEPRINT-043). `src/core/record/`·`behaviors/`·`navigation/`, 공개 `type`·`strategy`·`active` 게터, 겉면 규칙의 기계 검사(파일 한정 린트, 멤버 목록 시험, 행 칸 순서 시험)(LANDING-062·092). 노드 공개 형은 `type` 판별 합집합이고 `UnionNode`는 `typeMismatch`로 두 멤버로 나뉜다(NODE-058, SURFACE-061). 겉면 멤버는 약 54개(SURFACE-058의 충돌 줄, EVENT-073).
+- **필드**: `type` — "`node.type`의 값은 여덟(`virtual` 포함)이고"(WRITE-099). `schemaType` — "`StringNode`는 `'string'`, `NumberNode`는 `'number'|'integer'`, `BooleanNode`는 `'boolean'`, `NullNode`는 `'null'`, `ObjectNode`는 `'object'`, `ArrayNode`는 `'array'`, `VirtualNode`는 `'virtual'`, `UnionNode`는 `UnionSchemaType`이다"(NODE-058). `nullable`. 불변식 "모든 코퍼스 칸에서 `Array.isArray(schemaType) === (type === 'union')`이고, 같은 칸의 노드와 배열 아이템이 같은 `schemaType` 참조를 가지며, 그 참조는 `Object.isFrozen`이다"(TEST-077). 목록을 읽는 기준은 BLUEPRINT-040.
+- **쓰기와 해석**: 쓰기 종류와 경계(WRITE-056·093), 규칙 A `isMember`·`convert`·`interpret`(순서 무관·멱등·무할당, 동점 12건, WRITE-093), U7 두 단계와 전이 라운드(WRITE-098·099), 전체 교체 쓰기의 잠복 원본 비움(WRITE-094), 비객체 V의 `Merge`(WRITE-079), null 계약(WRITE-096), 채움 정리 — "`setValue(undefined)`는 이미 있던 노드를 다시 채우지 않고 비운다", "채움이 일어나는 사건에는 노드 게이트(`controls.active`)가 켜짐도 든다(SETTLE-005)", "억제 비트 `DisableAutomaticWrites`의 범위는 그 호출(로드와 전체 교체 쓰기, `Merge`)이 일으킨 예약 층의 쓰기 전부다"(WRITE-097).
+- **정착**: 호스트 바퀴·노드 게이트·투영, 채움 시점(WRITE-090)과 로드 규칙의 범위(EVENT-072), 나감 비움 네 층과 하위 트리, 예산 다섯과 원본 B(되돌림 기록 항목 확정, LANDING-092), 라운드 상한 "라운드 = 게이트 가진 조각 수 + 노드 게이트 수 + 1"(SETTLE-005), 에지와 생김의 기준 "로드는 에지와 생김의 기준을 비운다"·"로드가 아닌 쓰기(`setValue(V)` 포함)는 직전 커밋을 기준으로 한다"(SETTLE-048), Refresh 대상(EVENT-071), 트리 순회 예산(SETTLE-047).
+- **경고등과 진단**: `typeMismatch`·`typeMismatches`(VALUE-030·037, SURFACE-061), `TYPE_MISMATCH` 경고 기록 칸, `diagnostics`(`stable`·`degraded`·`cause`·`commit`)와 초기화 시점(ERROR-204), `SetValueOption`.
+- **방출**: 빈 호스트·루트의 투영(VALUE-034), 원본 참조 그대로(VALUE-037).
+- parse의 문서는 새 자리 `src/core/behaviors/utils/parse/`의 문서로(LANDING-150).
+
+## 부딪히는 코드 · 그대로 쓰는 것 · 새 fractal (LANDING-082)
+
+| 부딪히는 오늘의 코드(교체 대상) | 그대로 쓰는 것 | 새 fractal |
+| --- | --- | --- |
+| `AbstractNode`의 `onChange` 전파·`__scoped__`·`__reset__`·루트 매크로태스크 디바운스, `ObjectNode` 전략 선택, `getNodeGroup`의 `isReactComponent`, `BranchStrategy.ts` | `getResolveSchema`, `extractSchemaInfo`, `omitEmptyObject`(→ `behaviors/objectBehavior/utils/`), `findNode`·`traversal`(→ `navigation/`), `shallowPatch`(→ `record/`). `core/parsers/*`는 교체 대상이 아니다(WRITE-052) | `src/core/record/`, `src/core/behaviors/`, `src/core/navigation/`, `src/core/SchemaNode/`, `src/core/settle/` |
+
+## 레거시 이동 (LANDING-159·205)
+
+`src/core/nodes` → `src/__legacy__/core/nodes/`, 그것이 가져오는 `src/core/parsers` → `src/__legacy__/core/parsers/`, 옛 `src/core/__tests__` → 레거시. 옮기기 전에 02가 고정한 벤치 기준선을 확인한다. 옛 노드는 07까지 오늘의 parse 동작을 지키고 새 parse를 가져오지 않는다. 레거시는 09까지 보존.
+
+## 착수 전 확인
+
+- LANDING-062의 안건 B·C·D와 노드 구조(N2·N5·N6·N14·공개 표면의 크기·`ContextNode`)는 닫혔다(18C-15·16·32–48·104·105). 프로토타입 v7은 02가 만들었다.
+- 명령 메서드 하나(EVENT-073)는 05가 겉면에 더하므로 이 PR의 겉면 시험은 명령 자리를 비워 둔다.
+
+## 산출물과 완료 기준
+
+- [ ] 새 fractal 다섯과 문서(INTENT·DETAIL), 겉면 기계 검사 셋
+- [ ] 규칙 A·U7·정착 루프·예산·원본 B·diagnostics 구현과 시험
+- [ ] `typeMismatch`·`typeMismatches`·`TYPE_MISMATCH` 기록
+- [ ] 레거시 이동과 벤치 기준선 대조 보고
+- [ ] `tsc --strict` 공개 형 시험, 벤치 게이트 통과(또는 소유자 수용)
+- [ ] `verification.md`의 게이트 전부 통과
+
+## 절차 (seiri·filid)
+
+- filid: fractal 다섯의 `INTENT.md`·`DETAIL.md`를 코드보다 먼저. `record/`·`navigation/`·`behaviors/`·`settle/`이 `SchemaNode/`와 어떤 방향으로 의존하는지(DAG)를 `DETAIL.md`에 적고, 스캔이 순환 0임을 PR 경계에서 확인한다. 옛 코드가 새 `navigation/`을 가져오는 일은 없다(레거시 → 새 코드 허용 목록은 02의 둘뿐).
+- seiri: 클래스 멤버 순서는 패키지 `CLAUDE.md`의 도메인 우선 순서, 동작 행의 칸 순서는 기계 검사로 고정, 동작 함수는 한 파일에 하나.
+
+## 02·01 보정에서 넘어온 것
+
+- PR 03은 `mergeEffectiveSchema`가 돌려주는 `EffectiveSchema.typeConflict`를 읽고, 그 게이트들이 켜진 동안의 정착 오류 `SHARED_NODE_CONFLICT`를 던진다. 신호의 최종 모양은 PR 03이 정한다(25C-04, BLUEPRINT-016, BLUEPRINT-041, BLUEPRINT-044).
+- 형 충돌 중에도 유효 스키마의 `type`과 `nullable`은 정적 선언의 값이다. 보정 PR이 `finalizeEffectiveSchema`를 그렇게 맞췄으므로 PR 03이 신호의 모양을 바꿀 때도 이 둘은 정적 값을 유지한다(BLUEPRINT-041, 25C-04).
+- PR 03은 판별 게이트 `{ kind: 'discriminator', condition: { propertyName, values } }`를 "`./<propertyName>`의 값이 `values`에 드는가"로 평가하고, 분기 자신의 `controls.active`와 AND 하나로 합쳐 다른 게이트와 같이 호스트 바퀴에서 평가한다. 02는 조건을 기록만 한다(25C-06, FRAGMENT-048, BLUEPRINT-017).
+- `@aileron/schema-form-scenarios`의 `ScenarioExpectation.diagnostics`는 PR 03이 더한다(25C-08, TEST-009, TEST-011).
+- 25C-11이 PR 03으로 넘긴 넷: 같은 칸의 노드와 배열 아이템이 같은 `schemaType` 참조를 갖는지, virtual 코퍼스에서 모은 `node.type`이 여덟 값 안인지, `onChange` 형 검사, 유효 목록 좁힘(25C-11, TEST-077).
+
+## 원장 항목 색인 (결정·보충에 PR-2를 든 현행 항목, 기계 추출)
+
+- BLUEPRINT-043 값 union에서 계속 그대로인 것 — `null`은 nullable로·`integer`는 `number`로 접음, 접은 집합이 둘 이상이면 `union`(행 `terminal`), `union`끼리는 접은 집합이 같을 때 같은 종류, 정합은 나열된 타입 가운데 하나, PR-1 인식·PR-2 행
+- CONTROLS-073 `controls.children` 항목 — 대상 해석, 청사진 오류, 형상 밖 대상, 항목 게이트 자리, 대상별 식, 값 키의 층, 상태 키는 로컬 결합
+- ERROR-204 `diagnostics`와 경고 중복 키는 폼 수준 로드(마운트, `FormHandle.reset()`)에서만 초기화 — `setValue(V)`·`resetSubtree()`는 비우지 않음, `degraded`의 복귀는 `FormHandle.reset()`
+- EVENT-071 로드가 아닌 쓰기(`setValue(V)` 포함)의 Refresh는 원본이 실제로 바뀐 노드에만(쓴 입력 제외) — "값이 같아도 낸다"는 로드의 새 수명만
+- EVENT-072 `resetSubtree()`에 걸린 로드 규칙(로드 뒤 검증, `batch` 안의 즉시 정착, 한 로드에 한 번, 로드마다 다시 만듦)은 그 하위 트리에만
+- LANDING-062 PR-2 노드 트리와 정착 — 단일 클래스 `SchemaNode`와 동작 행, 정착 루프, 예산 다섯과 원본 B, `diagnostics`
+- LANDING-063 PR-3 파생 — `controls.derived`·`injectTo`·`unsetValue`, 같은 대상 규칙, 에지 소비
+- LANDING-064 PR-4 통지와 검증 — 디스패처·`batch`·진입 사슬·`onError`의 core 쪽·`compileGuard`·배달 경로
+- LANDING-065 PR-5 배열 — 배열·터미널 배열 행, 아이템 호스트, 통째 교체의 identity
+- LANDING-071 위험이 모이는 곳은 PR-7 — 완화는 엔진 수준 통합 시나리오와 차등 테스트
+- LANDING-077 정착 조건 5 — 되돌림 기록에 `extras`와 배열 구조
+- LANDING-082 정착 지도 PR-2 — 부딪히는 코드, 그대로 쓰는 것과 옮길 자리, 새 fractal 다섯
+- LANDING-092 보정 PR-2 — 되돌림 기록 항목 확정, 노드 구조, `active` 게터, 나감 비움의 하위 트리 규칙
+- LANDING-150 착수 항목(18라운드) — parse 문서는 새 자리의 문서로 PR-2, `src/types/formTypeInput.ts:60-65`의 문서 주석은 PR-7
+- LANDING-159 레거시는 `src/__legacy__/` — 상대 경로 유지, PR마다 옮김, 새 fractal의 가져오기 금지, PR-7 통째 삭제, 시험 글롭 포함, filid 깊이 점검, 스토리북·벤치
+- LANDING-198 union 설계의 이주 점검 — PR-7 이주 목록에 LANDING-181–LANDING-186과 자사 플러그인마다 `union` 항목(권장), 바뀌지 않는 것, 이주 행마다 오늘과 새 동작을 시험으로 대조
+- NODE-018 비용(추정) — 노드마다 객체 하나, 행 아홉, 숨은 클래스, 벤치 여섯
+- NODE-045 `SchemaNodeRuntime` 칸의 형은 `record/`가 최소 인터페이스로 선언한다 — `import type` 포함 비순환, PR-2 순환 검사
+- NODE-055 노드 구조 벤치 B1–B6의 합격선 — PR-2에서 V8과 JavaScriptCore로, B1·B5·B6은 `guard:check`의 선 안, B2는 추정의 1.5배 이내이며 오늘보다 크지 않음, B3은 같은 맵, B4는 보고만
+- NODE-056 S1 parse 함수의 자리는 `src/core/behaviors/utils/parse/` — 부르는 쪽은 동작 행의 `interpret` 칸과 기본 union 입력(쓰지 않는 호출), 오늘의 `src/core/parsers/`는 레거시로 옮기고 새 parse를 가져오지 않음
+- NODE-058 `union` 노드의 공개 형 — `UnionMemberType`·`UnionSchemaType`, `UnionNode`와 판별 `value`, props의 `value`·`onChange`, 종류별 `schemaType` 좁힘, 가드 `isUnionNode`, `InferSchemaNode`·`InferValueType`·`InferJSONSchema`의 사상, 참조 안정성, PR-2·PR-7 게이트
+- PROCESS-027 설계 항목의 닫는 법 — 18라운드 안건 항목은 18라운드에 먼저, 나머지는 슬라이스 시작 때 짧은 설계로
+- PROCESS-059 18라운드 전 외부 안건 점검 — codex와 antigravity, 검토자는 파일을 고치지 않고 검증자가 거른다
+- PROCESS-060 총검증 — 18라운드 뒤 codex와 antigravity의 교차검증, 결과는 권고, 검토자는 파일을 고치지 않음
+- SETTLE-042 branch 객체 `local`·`emit`의 키 순서 — `propertyKeys`, 첫 선언의 전순서, `extras` 삽입 순서; 키 집합이 같으면 패치, 바뀌면 O(키 수)로 다시 짓기
+- SETTLE-044 직전 커밋의 활성 집합에서 출발하는 최적화는 채택하지 않는다 — 출발점 고정, PR-2 벤치 게이트
+- SETTLE-045 하위 트리 밖을 읽는 `controls.active` 게이트는 가장 낮은 공통 조상 L에서 평가 — L 전순서의 자리, 경로 재계산은 호스트 바퀴 예산, 재순회 없음
+- SETTLE-047 트리 전체 순회의 예산 — 로드와, 쓰기가 닿은 하위 트리를 도는 전체 교체 쓰기에서만
+- SETTLE-048 에지와 생김의 기준 — 로드는 비우고, 로드가 아닌 쓰기(`setValue(V)` 포함)는 직전 커밋
+- SURFACE-056 맨앞의 `Node`만 개명 — `NodeState`→`SchemaNodeState`, `NodeEventType`→`SchemaNodeEventType`, 종류·역할 낱말이 앞에 붙은 이름은 그대로
+- TEST-027 벤치 게이트 — 옛 판보다 느린 항목은 이유를 적고 Vincent가 받아들여야 병합, 통제 가능하고 일정 수준 안
+- TEST-032 벤치 시나리오 — G6의 네 상황과 새 구조 고유·메모리·14라운드 행
+- TEST-067 `$ref` 재귀 게이트(PR-1·PR-2) — 스캐너 확인, 코퍼스 14종, 무한 형상 표본과 `if/then` 정착 오류 표본, 청사진 1회 비용
+- TEST-069 PR-2 독립 검증 경계 — 자기 기제만 시험, 게이트 술어 대역 하나, 미룬 사례의 PR 배분, 프로토타입 회귀 배분
+- TEST-070 PR-2 게이트 — 실제 공개 형으로 `tsc --strict`를 단언 없이 통과, `children`은 저장 배열과 같은 참조, 실패 시 소유자 물음
+- VALUE-034 빈 호스트와 루트의 방출 — 빈 `local`은 `{}`·`[]`, `omitEmpty`는 빈 `local`을 방출하지 않음, 루트는 루트 종류의 빈 그릇, 배열 아이템의 빈자리는 `{}`·`[]`·`null`
+- WRITE-052 노드마다 타입에 맞는 parse — 뜻이 그대로인 변환만(형 정규화, ADR 0013 결정 1의 이름 붙은 예외 (→ WRITE-001, WRITE-052))
+- WRITE-056 parse를 부르는 자리와 적용 범위
+- WRITE-087 잠복 원본 열거의 반환 모양 — 읽기 전용 `{ path, value }` 배열, 전순서, 얼린 빈 배열 공유, 커밋 단계 메모
+- WRITE-093 `union` 행의 해석 — 기본 spec과 유효 목록, `isMember`·`convert`·`interpret`(규칙 A: 순서 무관·멱등·무할당), 노드에 드는 모든 쓰기의 경계와 한 진입의 두 번 해석, `Merge`는 통째, `trim`은 `finishInput`, PR-2·PR-4 게이트
+- WRITE-094 `setValue(V)`는 로드가 아니지만 V에 없는 경로의 원본(잠복 원본 포함)을 없음으로 만든다 — 잠복 원본이 지워지는 길 셋, 멱등은 방출 값·채움·에지에 대해
+- WRITE-096 null 계약의 문구 — 로드가 아닌 쓰기로 온 `null` 아래 자식은 채움 없이 없음, 로드로 온 `null`은 채움, 쓰기 종류에 호출자 전체 교체
+- WRITE-097 정리 — 억제 비트의 범위(로드·전체 교체 쓰기·`Merge`), 낡은 근거와 가리킴, LANDING-118, `setValue(undefined)`와 노드 게이트의 채움
+- WRITE-098 U7 정련 — 쓰기 경계는 정적 목록(`schemaType`, `nullable`)으로 한 번, 전이 단계는 최종 유효 목록이 좁은 노드만 원래 쓰인 값을 다시 해석, 로드도 같음, 유효 목록의 정의, PR-2 게이트
+- WRITE-099 U7 정련 2 — 전이 단계의 재해석은 전이 쓰기(다음 라운드, 한 라운드에 한 번, 상한이면 원본 B에는 쓰기 경계의 해석만), `VALIDATOR_COMPILE_FAILED`는 폼 수준 기록, 정적 선언 없는 이름의 게이트 없는 분기끼리 fold가 다르면 청사진 오류, `node.type`은 여덟, `union` 입력이 보내는 값, 목록 밖 `default`는 노드가 생길 때마다, `push(v)`의 스냅숏은 생성 값, `NON_JSON_WHOLE_VALUE`는 개발 모드에서만, 좁혀지지 않은 유효 목록은 `schemaType` 그 값, PR-2·PR-4·PR-1 게이트

@@ -1,0 +1,101 @@
+
+/** Each trial settle owns an event queue; the original v5 path is unchanged when disabled. */
+function beginExperiment(root) {
+  root.experiment = { seen: new Map(), clearSeen: new Map(), pending: new Map(),
+    offers: [], attempts: [], sequence: 0, ruleIds: new Map() };
+  root.injections.forEach((rule, index) => root.experiment.ruleIds.set(rule, index));
+}
+
+/** JSON-safe experiment trace; values use an explicit missing marker. */
+export function experimentTrace(root) {
+  const state = root.experiment;
+  const value = v => v === undefined ? { missing: true } : { value: v };
+  return {
+    offers: state.offers.map(item => ({ id: item.id, kind: item.kind, target: pathOf(item.to),
+      source: item.kind === 'clearValue' ? null : pathOf(item.rule.from), order: item.order,
+      value: value(item.value), sourceValue: value(item.sourceValue), bornRound: item.bornRound,
+      appliedRound: item.appliedRound ?? null, dropped: item.dropped ?? false,
+      superseded: item.superseded ?? false })),
+    attempts: state.attempts,
+  };
+}
+
+/** A higher score wins; equal kinds use later schema declaration, never target traversal order. */
+function experimentPriority(item) {
+  if (item.kind === 'clearValue') return SWITCHES.CLEAR_PRIORITY === 'clear-wins' ? 2 : -1;
+  if (SWITCHES.WRITE_CONFLICT === 'inject-wins') return item.kind === 'injectTo' ? 1 : 0;
+  if (SWITCHES.WRITE_CONFLICT === 'derived-wins') return item.kind === 'derived' ? 1 : 0;
+  return 0;
+}
+
+/** Consume a winner once; retry queued losses or unconsumed inject edges in the next round. */
+function experimentDerive(root, sid, dryRun) {
+  if (root.loadSuppressed) return false;
+  const state = root.experiment;
+  const candidates = new Map(state.pending);
+  const offer = (rule, to, kind, value, sourceValue, order) => {
+    const previous = candidates.get(rule);
+    if (previous) previous.superseded = true;
+    const item = { id: ++state.sequence, rule, to, kind, value, sourceValue, order,
+      bornRound: lastSettle.rounds };
+    state.offers.push(item);
+    candidates.set(rule, item);
+  };
+  for (const rule of root.injections) {
+    const e = emitOf(rule.from, sid);
+    const changed = state.seen.has(rule) ? !sameValue(e, state.seen.get(rule)) :
+      !edgeGated(rule) || fires(rule, e);
+    state.seen.set(rule, e);
+    if (changed) offer(rule, rule.to, rule.derived ? 'derived' : 'injectTo',
+      rule.map(valueOrUndefined(e)), valueOrUndefined(e), rule.order ?? state.ruleIds.get(rule));
+  }
+  visitNodes(root, node => {
+    if (node.clearExpression === undefined) return;
+    const condition = !!evalExpression(node.clearExpression, expressionView(root));
+    let loaded = false;
+    for (let n = node; n; n = n.parent) loaded ||= isLoaded(n);
+    const previous = state.clearSeen.has(node) ? state.clearSeen.get(node) :
+      SWITCHES.LOAD_EDGE_CLEAR === 'rising' && loaded ? false : node.clearWas;
+    state.clearSeen.set(node, condition);
+    if (condition && !previous) offer(node, node, 'clearValue', undefined, condition, node.clearOrder ?? -1);
+  });
+  const winners = new Map();
+  for (const item of candidates.values()) {
+    const previous = winners.get(item.to);
+    if (!previous || experimentPriority(item) > experimentPriority(previous) ||
+      experimentPriority(item) === experimentPriority(previous) && item.order > previous.order) winners.set(item.to, item);
+  }
+  const next = new Map();
+  let wrote = false;
+  for (const item of candidates.values()) {
+    const winner = winners.get(item.to);
+    const won = winner === item;
+    const consumed = won || item.kind !== 'injectTo' || SWITCHES.EDGE_CONSUMED_ON_LOSS;
+    const retry = !won && (SWITCHES.LOSER_FATE === 'requeued' || !consumed);
+    state.attempts.push({ round: lastSettle.rounds, offer: item.id, winner: winner.id,
+      won, consumed, retry, dryRun });
+    if (!won) {
+      if (retry) next.set(item.rule, item);
+      else if (!dryRun) item.dropped = true;
+      continue;
+    }
+    const current = item.kind === 'clearValue' && isAbsent(item.to) ? undefined :
+      item.to.kind === 'leaf' ? rawOf(item.to) : stagedTree(item.to);
+    const changed = !sameValue(item.value, current);
+    wrote ||= changed;
+    if (dryRun) continue;
+    item.appliedRound = lastSettle.rounds;
+    if (item.kind === 'clearValue') {
+      root.cleared.add(item.to);
+      root.fillValues.delete(item.to);
+    }
+    if (changed) {
+      autoWrite(root, item.to, item.value, item.rule, null);
+      if (item.kind === 'clearValue') erase(item.to);
+      root.autoLog.get(item.to).kind = item.kind;
+    }
+  }
+  if (!dryRun) state.pending = next;
+  lastSettle.conflicts = candidates.size - winners.size;
+  return wrote || next.size > 0;
+}

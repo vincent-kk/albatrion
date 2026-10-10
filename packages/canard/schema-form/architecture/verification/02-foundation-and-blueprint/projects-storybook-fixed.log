@@ -1,0 +1,1100 @@
+│
+▲  No story files found for the specified pattern:
+│  stories/**/*.story.@(js|jsx|mjs|ts|tsx)
+│
+▲  No story files found for the specified pattern: src/**/*.mdx
+│
+▲  No story files found for the specified pattern:
+│  src/**/*.stories.@(js|jsx|mjs|ts|tsx)
+│
+▲  No story files found for the specified pattern:
+│  src/**/*.story.@(js|jsx|mjs|ts|tsx)
+│ ┌────────────────────────────────────────────────────────────────────────────┐
+│ │  Info: Found a setup file with "setProjectAnnotations".                    │
+│ │  Skipping automatic provisioning of preview annotations to avoid           │
+│ │  conflicts. Since Storybook 10.3, "@storybook/addon-vitest" applies these  │
+│ │   automatically.                                                           │
+│ │  You can safely remove the "setProjectAnnotations" call from your setup    │
+│ │  file, or remove the file entirely if you don't have custom code there.    │
+│ └────────────────────────────────────────────────────────────────────────────┘
+
+ RUN  v3.2.6 /Users/Vincent/Workspace/albatrion/packages/canard/schema-form
+
+10:22:11 AM [vite] (client) Re-optimizing dependencies because lockfile has changed
+stderr | stories/35.PrefixItems.stories.tsx > Prefix Items Only Fixed Length Tuple
+strict mode: "prefixItems" is 3-tuple, but minItems or maxItems/items are not specified or different at path "#/properties/coordinate"
+stderr | stories/35.PrefixItems.stories.tsx > Prefix Items Only Fixed Length Tuple
+strict mode: "prefixItems" is 3-tuple, but minItems or maxItems/items are not specified or different at path "#/properties/person"
+stderr | stories/35.PrefixItems.stories.tsx > Prefix Items With Items Schema Open Tuple
+strict mode: "prefixItems" is 1-tuple, but minItems or maxItems/items are not specified or different at path "#/properties/header_and_data"
+stderr | stories/35.PrefixItems.stories.tsx > Prefix Items With Items Schema Open Tuple
+strict mode: "prefixItems" is 1-tuple, but minItems or maxItems/items are not specified or different at path "#/properties/command_with_args"
+stderr | stories/35.PrefixItems.stories.tsx > Terminal Strategy With Prefix Items
+strict mode: "prefixItems" is 3-tuple, but minItems or maxItems/items are not specified or different at path "#/properties/numbersWithDefaults"
+stderr | stories/35.PrefixItems.stories.tsx > Prefix Items Default Values
+strict mode: "prefixItems" is 2-tuple, but minItems or maxItems/items are not specified or different at path "#/properties/openTupleDefaults"
+stderr | stories/36.DerivedValue.stories.tsx > Real Circular Reference Converging
+Received NaN for the `%s` attribute. If this is expected, cast the value to a string. defaultValue
+stderr | stories/36.DerivedValue.stories.tsx > Real Circular Reference Diverging
+[SchemaFormError: Infinite loop detected in derived value computation.
+
+  ╭──────────────────────────────────────────────────
+  │  Node:         /a
+  │  Batch Count:  101 (exceeded maximum of 100)
+  ├──────────────────────────────────────────────────
+  │  Dependencies:
+  │    • ../b
+  ╰──────────────────────────────────────────────────
+
+This indicates a circular dependency where derived values reference each other
+in a loop (e.g., A depends on B, B depends on A).
+
+How to fix:
+  1. Check the 'computed.derived' expression in the node above
+  2. Look for circular references among the listed dependencies
+  3. Break the cycle by removing or restructuring one dependency]
+ ✓ |storybook (chromium)| stories/31.AnyOf.stories.tsx (10 tests) 492ms
+ ✓ |storybook (chromium)| stories/30.AllOfSchemaUsecase.stories.tsx (13 tests) 456ms
+ ❯ |storybook (chromium)| stories/07.FormRefHandle.stories.tsx (11 tests | 1 failed) 656ms
+   ✓ Form Ref Handle 247ms
+   × Form Type Input Array Terminal Ref 71ms
+     → 
+[34mClick to debug the error directly in Storybook: http://localhost:6006/?path=/story/form-07-formrefhandle--form-type-input-array-terminal-ref&addonPanel=storybook/interactions/panel[39m
+
+Found multiple elements with the role "button" and name "clear"
+
+Here are the matching elements:
+
+Ignored nodes: comments, script, style
+<button>
+  clear
+</button>
+
+Ignored nodes: comments, script, style
+<button>
+  clear
+</button>
+
+(If this is intentional, then use the `*AllBy*` variant of the query (like `queryAllByText`, `getAllByText`, or `findAllByText`)).
+
+Ignored nodes: comments, script, style
+<div>
+  <div>
+    <button>
+      set value
+    </button>
+    <button>
+      push value
+    </button>
+    <button>
+      clear
+    </button>
+    <hr />
+    <div
+      style="display: flex; gap: 5px; justify-content: start; flex-direction: column;"
+    >
+      <div
+        style="display: flex; gap: 10px; justify-content: start;"
+      >
+        <fieldset
+          style="flex: 1 1 0%;"
+        >
+          <legend>
+            Form
+          </legend>
+          <form>
+            <div
+              data-path=""
+              role="none"
+              style="display: contents;"
+            >
+              <div
+                role="none"
+                style="display: contents;"
+              >
+                <div
+                  data-path="/arr"
+                  role="none"
+                  style="display: contents;"
+                >
+                  <div
+                    style="margin-bottom: 5px; margin-left: 5px;"
+                  >
+                    <label
+                      for="/arr"
+                      style="margin-right: 5px;"
+                    >
+                      arr
+                       
+                    </label>
+                    <div
+                      role="none"
+                      style="display: contents;"
+                    >
+                      <div>
+                        i am array item: 
+                        terminal
+                        <div>
+                          1,2,3,NEW ITEM
+                        </div>
+                        <div>
+                          <button>
+                            onChange
+                          </button>
+                          <button>
+                            add
+                          </button>
+                          <button>
+                            update
+                          </button>
+                          <button>
+                            remove
+                          </button>
+                          <button>
+                            clear
+                          </button>
+                          <button>
+                            remove all
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                    <br />
+                    <em
+                      style="font-size: 0.85em;"
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+          </form>
+        </fieldset>
+        <fieldset
+          style="flex: 1 1 0%;"
+        >
+          <legend>
+            Value
+          </legend>
+          <pre>
+            {
+  "arr": [
+    1,
+    2,
+    3,
+    "NEW ITEM"
+  ]
+}
+          </pre>
+        </fieldset>
+      </div>
+      <fieldset>
+        <legend>
+          Schema
+        </legend>
+        <pre>
+          {
+  "type": "object",
+  "properties": {
+    "arr": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  }
+}
+        </pre>
+      </fieldset>
+    </div>
+  </div>
+</div>
+   ✓ Form Type Input Object Terminal Ref 14ms
+   ✓ Form Ref Handle With If Then Else 137ms
+   ✓ Form Ref Handle With If Then Else 2 18ms
+   ✓ Form Ref Handle With One Of 17ms
+   ✓ Form Ref Handle With Array 17ms
+   ✓ Form Ref Handle With Virtual Schema 15ms
+   ✓ Form Ref Handle With Get Data 15ms
+   ✓ Set Complex Value With Set Value 22ms
+   ✓ Form Ref Handle With Big Schema 82ms
+stderr | stories/35.PrefixItems.stories.tsx > Prefix Items With Validation
+strict mode: "prefixItems" is 2-tuple, but minItems or maxItems/items are not specified or different at path "#/properties/contact_info"
+stderr | stories/35.PrefixItems.stories.tsx > Prefix Items With Min Max Items
+strict mode: "prefixItems" is 2-tuple, but minItems or maxItems/items are not specified or different at path "#/properties/openWithMax"
+stderr | stories/35.PrefixItems.stories.tsx > Prefix Items With Min Max Items
+strict mode: "prefixItems" is 3-tuple, but minItems or maxItems/items are not specified or different at path "#/properties/partialTuple"
+stderr | stories/35.PrefixItems.stories.tsx > Prefix Items With Ref Open Tuple
+strict mode: "prefixItems" is 2-tuple, but minItems or maxItems/items are not specified or different at path "#/properties/document"
+ ✓ |storybook (chromium)| stories/35.PrefixItems.stories.tsx (13 tests) 500ms
+ ✓ |storybook (chromium)| stories/21.Validation.stories.tsx (17 tests) 607ms
+ ✓ |storybook (chromium)| stories/38.StateManagement.stories.tsx (10 tests) 450ms
+stderr | stories/17.OneOf.stories.tsx > Error Case 1
+%o
+
+%s
+
+%s
+ [JSONSchemaError: Property redefinition not allowed in 'oneOf' schema.
+
+  ╭──────────────────────────────────────────────────
+  │  Path:         
+  │  Composition:  oneOf
+  │  Property:     'category'
+  ├──────────────────────────────────────────────────
+  │  Conflict:  Property already defined in parent schema
+  ╰──────────────────────────────────────────────────
+
+A property defined in the parent schema's 'properties' cannot be
+redefined in a 'oneOf' sub-schema. The property 'category'
+exists in the parent and cannot be overridden.
+
+How to fix:
+  1. Remove 'category' from the oneOf sub-schema:
+     {
+       "properties": { "category": { ... } },
+       "oneOf": [
+         { "properties": { "newProp": { ... } } }  // Only new properties
+       ]
+     }
+
+  2. Or move 'category' to oneOf branches if it should vary:
+     {
+       "properties": { "commonProp": { ... } },
+       "oneOf": [
+         { "properties": { "category": { "type": "string" } } },
+         { "properties": { "category": { "type": "number" } } }
+       ]
+     }] The above error occurred in the <RootNodeContextProvider> component. React will try to recreate this component tree from scratch using the error boundary you provided, ErrorBoundary.
+stderr | stories/17.OneOf.stories.tsx > Error Case 1
+ErrorBoundary caught an error: [JSONSchemaError: Property redefinition not allowed in 'oneOf' schema.
+
+  ╭──────────────────────────────────────────────────
+  │  Path:         
+  │  Composition:  oneOf
+  │  Property:     'category'
+  ├──────────────────────────────────────────────────
+  │  Conflict:  Property already defined in parent schema
+  ╰──────────────────────────────────────────────────
+
+A property defined in the parent schema's 'properties' cannot be
+redefined in a 'oneOf' sub-schema. The property 'category'
+exists in the parent and cannot be overridden.
+
+How to fix:
+  1. Remove 'category' from the oneOf sub-schema:
+     {
+       "properties": { "category": { ... } },
+       "oneOf": [
+         { "properties": { "newProp": { ... } } }  // Only new properties
+       ]
+     }
+
+  2. Or move 'category' to oneOf branches if it should vary:
+     {
+       "properties": { "commonProp": { ... } },
+       "oneOf": [
+         { "properties": { "category": { "type": "string" } } },
+         { "properties": { "category": { "type": "number" } } }
+       ]
+     }] {
+  "componentStack": "
+    at RootNodeContextProvider (http://localhost:63315/src/providers/RootNodeContext/RootNodeContextProvider.tsx:16:3)
+    at VirtualizationContextProvider (http://localhost:63315/src/providers/VirtualizationContext/VirtualizationContextProvider.tsx:7:3)
+    at InputControlContextProvider (http://localhost:63315/src/providers/InputControlContext/InputControlContextProvider.tsx:5:3)
+    at FormTypeRendererContextProvider (http://localhost:63315/src/providers/FormTypeRendererContext/FormTypeRendererProvider.tsx:12:3)
+    at FormTypeInputsContextProvider (http://localhost:63315/src/providers/FormTypeInputsContext/FormTypeInputsContextProvider.tsx:10:3)
+    at WorkspaceContextProvider (http://localhost:63315/src/providers/WorkspaceContext/WorkspaceContextProvider.tsx:7:3)
+    at FormInner (http://localhost:63315/src/components/Form/Form.tsx:37:15)
+    at ErrorBoundary (http://localhost:63315/@fs/Users/Vincent/Workspace/albatrion/packages/winglet/react-utils/dist/hoc/withErrorBoundary/components/ErrorBoundary.mjs:9:3)
+    at fieldset (<anonymous>)
+    at div (<anonymous>)
+    at div (<anonymous>)
+    at StoryLayout (http://localhost:63315/stories/components/StoryLayout.tsx:4:3)
+    at hookified (http://localhost:63315/node_modules/.cache/storybook/10.4.1/d68f512085ea5eed42e1d4fe94d76c3440cded0ebf1c197983f9db9c8a3c2167/sb-vitest/deps/chunk-C3PWT4J6.js?v=3e140560:3584:11)
+    at unboundStoryFn (http://localhost:63315/node_modules/.cache/storybook/10.4.1/d68f512085ea5eed42e1d4fe94d76c3440cded0ebf1c197983f9db9c8a3c2167/sb-vitest/deps/chunk-C3PWT4J6.js?v=3e140560:4194:245)",
+}
+stderr | stories/17.OneOf.stories.tsx > Error Case 2
+strict mode: type "string" not allowed by context "object" at "#/oneOf/1" (strictTypes)
+stderr | stories/17.OneOf.stories.tsx > Error Case 2
+strict mode: missing type "object" for keyword "properties" at "#/oneOf/1" (strictTypes)
+stderr | stories/17.OneOf.stories.tsx > Error Case 2
+strict mode: type "string" not allowed by context "object" at "#/oneOf/1" (strictTypes)
+stderr | stories/17.OneOf.stories.tsx > Error Case 2
+strict mode: missing type "object" for keyword "properties" at "#/oneOf/1" (strictTypes)
+stderr | stories/17.OneOf.stories.tsx > Error Case 2
+%o
+
+%s
+
+%s
+ [JSONSchemaError: Type redefinition not allowed in 'oneOf' schema.
+
+  ╭──────────────────────────────────────────────────
+  │  Path:              
+  │  Composition:       oneOf
+  │  Parent Type:       object
+  │  Sub-schema Type:   string
+  │  Properties:        category, title
+  ├──────────────────────────────────────────────────
+  │  Conflict:  oneOf sub-schema attempts to change the type
+  ╰──────────────────────────────────────────────────
+
+In composition schemas (oneOf/anyOf), sub-schemas cannot redefine
+the type of the parent schema. The type must either be omitted
+or match exactly. Under a nullable parent a sub-schema may also
+narrow the type to 'object' or to 'null'.
+
+How to fix:
+  1. Remove the 'type' from the oneOf sub-schema:
+     {
+       "type": "object",
+       "oneOf": [
+         { "properties": { ... } }  // No type here
+       ]
+     }
+
+  2. Or ensure types match:
+     {
+       "type": "object",
+       "oneOf": [
+         { "type": "object", "properties": { ... } }
+       ]
+     }] The above error occurred in the <RootNodeContextProvider> component. React will try to recreate this component tree from scratch using the error boundary you provided, ErrorBoundary.
+stderr | stories/17.OneOf.stories.tsx > Error Case 2
+ErrorBoundary caught an error: [JSONSchemaError: Type redefinition not allowed in 'oneOf' schema.
+
+  ╭──────────────────────────────────────────────────
+  │  Path:              
+  │  Composition:       oneOf
+  │  Parent Type:       object
+  │  Sub-schema Type:   string
+  │  Properties:        category, title
+  ├──────────────────────────────────────────────────
+  │  Conflict:  oneOf sub-schema attempts to change the type
+  ╰──────────────────────────────────────────────────
+
+In composition schemas (oneOf/anyOf), sub-schemas cannot redefine
+the type of the parent schema. The type must either be omitted
+or match exactly. Under a nullable parent a sub-schema may also
+narrow the type to 'object' or to 'null'.
+
+How to fix:
+  1. Remove the 'type' from the oneOf sub-schema:
+     {
+       "type": "object",
+       "oneOf": [
+         { "properties": { ... } }  // No type here
+       ]
+     }
+
+  2. Or ensure types match:
+     {
+       "type": "object",
+       "oneOf": [
+         { "type": "object", "properties": { ... } }
+       ]
+     }] {
+  "componentStack": "
+    at RootNodeContextProvider (http://localhost:63315/src/providers/RootNodeContext/RootNodeContextProvider.tsx:16:3)
+    at VirtualizationContextProvider (http://localhost:63315/src/providers/VirtualizationContext/VirtualizationContextProvider.tsx:7:3)
+    at InputControlContextProvider (http://localhost:63315/src/providers/InputControlContext/InputControlContextProvider.tsx:5:3)
+    at FormTypeRendererContextProvider (http://localhost:63315/src/providers/FormTypeRendererContext/FormTypeRendererProvider.tsx:12:3)
+    at FormTypeInputsContextProvider (http://localhost:63315/src/providers/FormTypeInputsContext/FormTypeInputsContextProvider.tsx:10:3)
+    at WorkspaceContextProvider (http://localhost:63315/src/providers/WorkspaceContext/WorkspaceContextProvider.tsx:7:3)
+    at FormInner (http://localhost:63315/src/components/Form/Form.tsx:37:15)
+    at ErrorBoundary (http://localhost:63315/@fs/Users/Vincent/Workspace/albatrion/packages/winglet/react-utils/dist/hoc/withErrorBoundary/components/ErrorBoundary.mjs:9:3)
+    at fieldset (<anonymous>)
+    at div (<anonymous>)
+    at div (<anonymous>)
+    at StoryLayout (http://localhost:63315/stories/components/StoryLayout.tsx:4:3)
+    at hookified (http://localhost:63315/node_modules/.cache/storybook/10.4.1/d68f512085ea5eed42e1d4fe94d76c3440cded0ebf1c197983f9db9c8a3c2167/sb-vitest/deps/chunk-C3PWT4J6.js?v=3e140560:3584:11)
+    at unboundStoryFn (http://localhost:63315/node_modules/.cache/storybook/10.4.1/d68f512085ea5eed42e1d4fe94d76c3440cded0ebf1c197983f9db9c8a3c2167/sb-vitest/deps/chunk-C3PWT4J6.js?v=3e140560:4194:245)",
+}
+ ✓ |storybook (chromium)| stories/17.OneOf.stories.tsx (19 tests) 587ms
+stderr | stories/36.DerivedValue.stories.tsx > Danger Infinite Loop Simulation
+[SchemaFormError: Infinite loop detected in derived value computation.
+
+  ╭──────────────────────────────────────────────────
+  │  Node:         
+  │  Batch Count:  101 (exceeded maximum of 100)
+  ├──────────────────────────────────────────────────
+  │  Dependencies:
+  │    (none)
+  ╰──────────────────────────────────────────────────
+
+This indicates a circular dependency where derived values reference each other
+in a loop (e.g., A depends on B, B depends on A).
+
+How to fix:
+  1. Check the 'computed.derived' expression in the node above
+  2. Look for circular references among the listed dependencies
+  3. Break the cycle by removing or restructuring one dependency]
+stderr | stories/36.DerivedValue.stories.tsx > Circular Reference Diverging With Protection
+[SchemaFormError: Infinite loop detected in derived value computation.
+
+  ╭──────────────────────────────────────────────────
+  │  Node:         /a
+  │  Batch Count:  101 (exceeded maximum of 100)
+  ├──────────────────────────────────────────────────
+  │  Dependencies:
+  │    • ../b
+  ╰──────────────────────────────────────────────────
+
+This indicates a circular dependency where derived values reference each other
+in a loop (e.g., A depends on B, B depends on A).
+
+How to fix:
+  1. Check the 'computed.derived' expression in the node above
+  2. Look for circular references among the listed dependencies
+  3. Break the cycle by removing or restructuring one dependency]
+ ✓ |storybook (chromium)| stories/40.Virtualization.stories.tsx (6 tests) 825ms
+   ✓ Scroll Reveal  370ms
+stderr | stories/36.DerivedValue.stories.tsx > Three Node Circular Reference
+[SchemaFormError: Infinite loop detected in derived value computation.
+
+  ╭──────────────────────────────────────────────────
+  │  Node:         /a
+  │  Batch Count:  101 (exceeded maximum of 100)
+  ├──────────────────────────────────────────────────
+  │  Dependencies:
+  │    • ../c
+  ╰──────────────────────────────────────────────────
+
+This indicates a circular dependency where derived values reference each other
+in a loop (e.g., A depends on B, B depends on A).
+
+How to fix:
+  1. Check the 'computed.derived' expression in the node above
+  2. Look for circular references among the listed dependencies
+  3. Break the cycle by removing or restructuring one dependency]
+ ✓ |storybook (chromium)| stories/36.DerivedValue.stories.tsx (37 tests) 926ms
+stdout | stories/24.ControlledUsecase.stories.tsx > Trim On Blur Uncontrolled
+UncontrolledInput 렌더링됨 {
+  "defaultValue": undefined,
+}
+stdout | stories/24.ControlledUsecase.stories.tsx > Trim On Blur Uncontrolled
+ControlledInput 마운트됨
+stdout | stories/24.ControlledUsecase.stories.tsx > Trim On Blur Controlled
+ControlledInput 언마운트됨
+stdout | stories/24.ControlledUsecase.stories.tsx > Trim On Blur Controlled
+ControlledInput 렌더링됨 {
+  "value": undefined,
+}
+stdout | stories/24.ControlledUsecase.stories.tsx > Trim On Blur Controlled
+ControlledInput 마운트됨
+stdout | stories/24.ControlledUsecase.stories.tsx > No Trim On Blur Uncontrolled
+ControlledInput 언마운트됨
+stdout | stories/24.ControlledUsecase.stories.tsx > No Trim On Blur Uncontrolled
+UncontrolledInput 렌더링됨 {
+  "defaultValue": undefined,
+}
+stdout | stories/24.ControlledUsecase.stories.tsx > No Trim On Blur Uncontrolled
+ControlledInput 마운트됨
+stdout | stories/24.ControlledUsecase.stories.tsx > No Trim On Blur Controlled
+ControlledInput 언마운트됨
+stdout | stories/24.ControlledUsecase.stories.tsx > No Trim On Blur Controlled
+ControlledInput 렌더링됨 {
+  "value": undefined,
+}
+stdout | stories/24.ControlledUsecase.stories.tsx > No Trim On Blur Controlled
+ControlledInput 마운트됨
+stdout | stories/24.ControlledUsecase.stories.tsx > Focus And Select Single Controlled
+ControlledInput 언마운트됨
+stdout | stories/24.ControlledUsecase.stories.tsx > Focus And Select Single Controlled
+ControlledInput 렌더링됨 {
+  "value": undefined,
+}
+stdout | stories/24.ControlledUsecase.stories.tsx > Focus And Select Single Controlled
+ControlledInput 마운트됨
+stdout | stories/24.ControlledUsecase.stories.tsx > Focus And Select Multi Input Controlled
+ControlledInput 언마운트됨
+stderr | stories/41.OmitTrailing.stories.tsx > Prefix Items And Terminal
+strict mode: "prefixItems" is 2-tuple, but minItems or maxItems/items are not specified or different at path "#/properties/tuple"
+stderr | stories/06.IfThenElse.stories.tsx > If Then Else Complex 1
+strict mode: missing type "object" for keyword "properties" at "#/properties/settings/properties/privacy/oneOf/0" (strictTypes)
+stderr | stories/06.IfThenElse.stories.tsx > If Then Else Complex 1
+strict mode: missing type "object" for keyword "properties" at "#/properties/settings/properties/privacy/oneOf/1" (strictTypes)
+stderr | stories/06.IfThenElse.stories.tsx > If Then Else Complex 1
+strict mode: missing type "object" for keyword "properties" at "#/properties/settings/properties/privacy/oneOf/2" (strictTypes)
+ ✓ |storybook (chromium)| stories/39.InjectTo.stories.tsx (12 tests) 142ms
+stderr | stories/16.RefSchemaUsecase.stories.tsx > Conditional Sub Schema Ref
+%c
+
+%c ⚠️ [@canard/schema-form] SCHEMA_FORM_WARNING.ALL_OF_KEYWORD_IGNORED_FOR_FORM ⚠️ 
+
+%c  The 'if' keyword inside 'allOf' is used for JSON Schema validation,
+%c  but is not used when constructing the form.
+%c  
+%c    ╭──────────────────────────────────────────────────
+%c    │  Keyword:  if
+%c    ╰──────────────────────────────────────────────────
+%c  
+%c  Composition and conditional keywords inside 'allOf' entries are not applied
+%c  to form construction (allOf, anyOf, oneOf, not, if, then, else,
+%c  dependencies, ...).
+%c  
+%c  How to fix:
+%c    1. Move the 'if' keyword out of the 'allOf' entry
+%c    2. Declare it on the schema that owns the 'allOf', or restructure the branch
+ color: #666; color: #f59e0b; font-weight: bold; font-size: 1.25em; color: #d97706 color: #d97706 color: #d97706 color: #d97706 color: #d97706 color: #d97706 color: #d97706 color: #d97706 color: #d97706 color: #d97706 color: #d97706 color: #d97706 color: #d97706 color: #d97706 {
+  "allOfSchema": {
+    "if": {
+      "properties": {
+        "type": {
+          "const": "user",
+        },
+      },
+    },
+    "then": {
+      "properties": {
+        "user~permissions": {
+          "properties": {
+            "admin.access": {
+              "default": false,
+              "type": "boolean",
+            },
+            "read": {
+              "default": true,
+              "type": "boolean",
+            },
+            "write": {
+              "default": false,
+              "type": "boolean",
+            },
+          },
+          "type": "object",
+        },
+      },
+    },
+  },
+  "keyword": "if",
+}
+stderr | stories/16.RefSchemaUsecase.stories.tsx > Conditional Sub Schema Ref
+%c
+
+%c ⚠️ [@canard/schema-form] SCHEMA_FORM_WARNING.ALL_OF_KEYWORD_IGNORED_FOR_FORM ⚠️ 
+
+%c  The 'then' keyword inside 'allOf' is used for JSON Schema validation,
+%c  but is not used when constructing the form.
+%c  
+%c    ╭──────────────────────────────────────────────────
+%c    │  Keyword:  then
+%c    ╰──────────────────────────────────────────────────
+%c  
+%c  Composition and conditional keywords inside 'allOf' entries are not applied
+%c  to form construction (allOf, anyOf, oneOf, not, if, then, else,
+%c  dependencies, ...).
+%c  
+%c  How to fix:
+%c    1. Move the 'then' keyword out of the 'allOf' entry
+%c    2. Declare it on the schema that owns the 'allOf', or restructure the branch
+ color: #666; color: #f59e0b; font-weight: bold; font-size: 1.25em; color: #d97706 color: #d97706 color: #d97706 color: #d97706 color: #d97706 color: #d97706 color: #d97706 color: #d97706 color: #d97706 color: #d97706 color: #d97706 color: #d97706 color: #d97706 color: #d97706 {
+  "allOfSchema": {
+    "if": {
+      "properties": {
+        "type": {
+          "const": "user",
+        },
+      },
+    },
+    "then": {
+      "properties": {
+        "user~permissions": {
+          "properties": {
+            "admin.access": {
+              "default": false,
+              "type": "boolean",
+            },
+            "read": {
+              "default": true,
+              "type": "boolean",
+            },
+            "write": {
+              "default": false,
+              "type": "boolean",
+            },
+          },
+          "type": "object",
+        },
+      },
+    },
+  },
+  "keyword": "then",
+}
+ ✓ |storybook (chromium)| stories/16.RefSchemaUsecase.stories.tsx (11 tests) 186ms
+ ✓ |storybook (chromium)| stories/24.ControlledUsecase.stories.tsx (15 tests) 170ms
+ ✓ |storybook (chromium)| stories/28.NullableUsecase.stories.tsx (8 tests) 188ms
+ ✓ |storybook (chromium)| stories/21.ValidationExtended.stories.tsx (3 tests) 179ms
+ ✓ |storybook (chromium)| stories/41.OmitTrailing.stories.tsx (12 tests) 211ms
+ ✓ |storybook (chromium)| stories/06.IfThenElse.stories.tsx (7 tests) 215ms
+ ✓ |storybook (chromium)| stories/08.VirtualSchema.stories.tsx (8 tests) 211ms
+ ✓ |storybook (chromium)| stories/37.Pristine.stories.tsx (12 tests) 235ms
+stderr | stories/42.NullableContract.stories.tsx > Seeded Null With Branch Defaults
+%c
+
+%c ⚠️ [@canard/schema-form] SCHEMA_FORM_WARNING.NULLABLE_ONE_OF_NULL_UNREACHABLE ⚠️ 
+
+%c  This object is nullable, but no validator accepts null under its 'oneOf':
+%c  2 branches accept null, so null matches more than one.
+%c  
+%c    ╭──────────────────────────────────────────────────
+%c    │  Path:                    /target
+%c    │  Branches accepting null: 2 (exactly 1 is required)
+%c    ╰──────────────────────────────────────────────────
+%c  
+%c  A branch that declares no 'type' accepts null, because 'properties' and
+%c  'required' only apply to objects. The form keeps a null value as it is, so
+%c  validation of that value fails.
+%c  
+%c  How to fix:
+%c    1. Add one null branch and declare the type of the object branches:
+%c         oneOf: [
+%c           { type: 'null' },
+%c           { type: 'object', properties: { ... } },
+%c         ]
+%c    2. Or use 'anyOf', which a null branch alone satisfies
+ color: #666; color: #f59e0b; font-weight: bold; font-size: 1.25em; color: #d97706 color: #d97706 color: #d97706 color: #d97706 color: #d97706 color: #d97706 color: #d97706 color: #d97706 color: #d97706 color: #d97706 color: #d97706 color: #d97706 color: #d97706 color: #d97706 color: #d97706 color: #d97706 color: #d97706 color: #d97706 color: #d97706 {
+  "admitting": 2,
+  "path": "/target",
+}
+stderr | stories/43.NullBranchPattern.stories.tsx > Null Unreachable Warning
+%c
+
+%c ⚠️ [@canard/schema-form] SCHEMA_FORM_WARNING.NULLABLE_ONE_OF_NULL_UNREACHABLE ⚠️ 
+
+%c  This object is nullable, but no validator accepts null under its 'oneOf':
+%c  2 branches accept null, so null matches more than one.
+%c  
+%c    ╭──────────────────────────────────────────────────
+%c    │  Path:                    /target
+%c    │  Branches accepting null: 2 (exactly 1 is required)
+%c    ╰──────────────────────────────────────────────────
+%c  
+%c  A branch that declares no 'type' accepts null, because 'properties' and
+%c  'required' only apply to objects. The form keeps a null value as it is, so
+%c  validation of that value fails.
+%c  
+%c  How to fix:
+%c    1. Add one null branch and declare the type of the object branches:
+%c         oneOf: [
+%c           { type: 'null' },
+%c           { type: 'object', properties: { ... } },
+%c         ]
+%c    2. Or use 'anyOf', which a null branch alone satisfies
+ color: #666; color: #f59e0b; font-weight: bold; font-size: 1.25em; color: #d97706 color: #d97706 color: #d97706 color: #d97706 color: #d97706 color: #d97706 color: #d97706 color: #d97706 color: #d97706 color: #d97706 color: #d97706 color: #d97706 color: #d97706 color: #d97706 color: #d97706 color: #d97706 color: #d97706 color: #d97706 color: #d97706 {
+  "admitting": 2,
+  "path": "/target",
+}
+stderr | stories/43.NullBranchPattern.stories.tsx > Narrowing Needs Nullable Parent
+strict mode: type "null" not allowed by context "object" at "#/properties/target/oneOf/0" (strictTypes)
+stderr | stories/43.NullBranchPattern.stories.tsx > Narrowing Needs Nullable Parent
+strict mode: type "null" not allowed by context "object" at "#/properties/target/oneOf/0" (strictTypes)
+stderr | stories/43.NullBranchPattern.stories.tsx > Narrowing Needs Nullable Parent
+%o
+
+%s
+
+%s
+ [JSONSchemaError: Type redefinition not allowed in 'oneOf' schema.
+
+  ╭──────────────────────────────────────────────────
+  │  Path:              /target
+  │  Composition:       oneOf
+  │  Parent Type:       object
+  │  Sub-schema Type:   null
+  │  Properties:        kind
+  ├──────────────────────────────────────────────────
+  │  Conflict:  oneOf sub-schema attempts to change the type
+  ╰──────────────────────────────────────────────────
+
+In composition schemas (oneOf/anyOf), sub-schemas cannot redefine
+the type of the parent schema. The type must either be omitted
+or match exactly. Under a nullable parent a sub-schema may also
+narrow the type to 'object' or to 'null'.
+
+How to fix:
+  1. Remove the 'type' from the oneOf sub-schema:
+     {
+       "type": "object",
+       "oneOf": [
+         { "properties": { ... } }  // No type here
+       ]
+     }
+
+  2. Or ensure types match:
+     {
+       "type": "object",
+       "oneOf": [
+         { "type": "object", "properties": { ... } }
+       ]
+     }] The above error occurred in the <RootNodeContextProvider> component. React will try to recreate this component tree from scratch using the error boundary you provided, ErrorBoundary.
+stderr | stories/43.NullBranchPattern.stories.tsx > Narrowing Needs Nullable Parent
+ErrorBoundary caught an error: [JSONSchemaError: Type redefinition not allowed in 'oneOf' schema.
+
+  ╭──────────────────────────────────────────────────
+  │  Path:              /target
+  │  Composition:       oneOf
+  │  Parent Type:       object
+  │  Sub-schema Type:   null
+  │  Properties:        kind
+  ├──────────────────────────────────────────────────
+  │  Conflict:  oneOf sub-schema attempts to change the type
+  ╰──────────────────────────────────────────────────
+
+In composition schemas (oneOf/anyOf), sub-schemas cannot redefine
+the type of the parent schema. The type must either be omitted
+or match exactly. Under a nullable parent a sub-schema may also
+narrow the type to 'object' or to 'null'.
+
+How to fix:
+  1. Remove the 'type' from the oneOf sub-schema:
+     {
+       "type": "object",
+       "oneOf": [
+         { "properties": { ... } }  // No type here
+       ]
+     }
+
+  2. Or ensure types match:
+     {
+       "type": "object",
+       "oneOf": [
+         { "type": "object", "properties": { ... } }
+       ]
+     }] {
+  "componentStack": "
+    at RootNodeContextProvider (http://localhost:63315/src/providers/RootNodeContext/RootNodeContextProvider.tsx:16:3)
+    at VirtualizationContextProvider (http://localhost:63315/src/providers/VirtualizationContext/VirtualizationContextProvider.tsx:7:3)
+    at InputControlContextProvider (http://localhost:63315/src/providers/InputControlContext/InputControlContextProvider.tsx:5:3)
+    at FormTypeRendererContextProvider (http://localhost:63315/src/providers/FormTypeRendererContext/FormTypeRendererProvider.tsx:12:3)
+    at FormTypeInputsContextProvider (http://localhost:63315/src/providers/FormTypeInputsContext/FormTypeInputsContextProvider.tsx:10:3)
+    at WorkspaceContextProvider (http://localhost:63315/src/providers/WorkspaceContext/WorkspaceContextProvider.tsx:7:3)
+    at FormInner (http://localhost:63315/src/components/Form/Form.tsx:37:15)
+    at ErrorBoundary (http://localhost:63315/@fs/Users/Vincent/Workspace/albatrion/packages/winglet/react-utils/dist/hoc/withErrorBoundary/components/ErrorBoundary.mjs:9:3)
+    at fieldset (<anonymous>)
+    at div (<anonymous>)
+    at div (<anonymous>)
+    at StoryLayout (http://localhost:63315/stories/components/StoryLayout.tsx:4:3)
+    at hookified (http://localhost:63315/node_modules/.cache/storybook/10.4.1/d68f512085ea5eed42e1d4fe94d76c3440cded0ebf1c197983f9db9c8a3c2167/sb-vitest/deps/chunk-C3PWT4J6.js?v=3e140560:3584:11)
+    at unboundStoryFn (http://localhost:63315/node_modules/.cache/storybook/10.4.1/d68f512085ea5eed42e1d4fe94d76c3440cded0ebf1c197983f9db9c8a3c2167/sb-vitest/deps/chunk-C3PWT4J6.js?v=3e140560:4194:245)",
+}
+ ✓ |storybook (chromium)| stories/43.NullBranchPattern.stories.tsx (6 tests) 156ms
+ ✓ |storybook (chromium)| stories/29.NullableArraySyntax.stories.tsx (6 tests) 109ms
+ ✓ |storybook (chromium)| stories/42.NullableContract.stories.tsx (10 tests) 160ms
+ ✓ |storybook (chromium)| stories/10.DefaultValue.stories.tsx (6 tests) 147ms
+ ✓ |storybook (chromium)| stories/FormTypeInput.DefaultFormTypeInput.stories.tsx (13 tests) 154ms
+ ✓ |storybook (chromium)| stories/03.FormTypeInput.stories.tsx (7 tests) 169ms
+stderr | stories/09.NullSchema.stories.tsx > String Switch With Null
+Encountered two children with the same key, `%s`. Keys should be unique so that components maintain their identity across updates. Non-unique keys may cause children to be duplicated and/or omitted — the behavior is unsupported and could change in a future version. null
+ ✓ |storybook (chromium)| stories/09.NullSchema.stories.tsx (7 tests) 203ms
+ ✓ |storybook (chromium)| stories/02.TerminalMode.stories.tsx (16 tests) 257ms
+ ✓ |storybook (chromium)| stories/26.UploadFileUsecase.stories.tsx (6 tests) 83ms
+ ✓ |storybook (chromium)| stories/99.BuildTest.stories.tsx (6 tests) 102ms
+stderr | stories/33.FormTypeRendererPropsWithReactNode.stories.tsx > React Node Helper Description
+Each child in a list should have a unique "key" prop.%s%s See https://react.dev/link/warning-keys for more information. 
+
+Check the render method of `hookified`. 
+stderr | stories/13.FormError.stories.tsx > Error Boundary
+%o
+
+%s
+
+%s
+ [Error: Error accord from Input] The above error occurred in the <FormTypeInput> component. React will try to recreate this component tree from scratch using the error boundary you provided, ErrorBoundary.
+stderr | stories/13.FormError.stories.tsx > Error Boundary
+ErrorBoundary caught an error: [Error: Error accord from Input] {
+  "componentStack": "
+    at FormTypeInput (http://localhost:63315/Users/Vincent/Workspace/albatrion/packages/canard/schema-form/stories/13.FormError.stories.tsx?import&browserv=1790472143158:1001:19)
+    at ErrorBoundary (http://localhost:63315/@fs/Users/Vincent/Workspace/albatrion/packages/winglet/react-utils/dist/hoc/withErrorBoundary/components/ErrorBoundary.mjs:9:3)
+    at div (<anonymous>)
+    at http://localhost:63315/src/components/SchemaNode/SchemaNodeInput/SchemaNodeInput.tsx:23:5
+    at http://localhost:63315/src/components/SchemaNode/SchemaNodeInput/SchemaNodeInputWrapper.tsx:15:15
+    at div (<anonymous>)
+    at FormGroupRenderer (http://localhost:63315/src/components/FallbackComponents/FormGroupRenderer.tsx:4:3)
+    at ErrorBoundary (http://localhost:63315/@fs/Users/Vincent/Workspace/albatrion/packages/winglet/react-utils/dist/hoc/withErrorBoundary/components/ErrorBoundary.mjs:9:3)
+    at div (<anonymous>)
+    at SchemaNodeProxy (http://localhost:63315/src/components/SchemaNode/SchemaNodeProxy/SchemaNodeProxy.tsx:17:3)
+    at http://localhost:63315/src/components/Form/components/FormGroup.tsx:9:5
+    at div (<anonymous>)
+    at form (<anonymous>)
+    at http://localhost:63315/src/components/Form/components/FormRootProxy.tsx:5:6
+    at RootNodeContextProvider (http://localhost:63315/src/providers/RootNodeContext/RootNodeContextProvider.tsx:16:3)
+    at VirtualizationContextProvider (http://localhost:63315/src/providers/VirtualizationContext/VirtualizationContextProvider.tsx:7:3)
+    at InputControlContextProvider (http://localhost:63315/src/providers/InputControlContext/InputControlContextProvider.tsx:5:3)
+    at FormTypeRendererContextProvider (http://localhost:63315/src/providers/FormTypeRendererContext/FormTypeRendererProvider.tsx:12:3)
+    at FormTypeInputsContextProvider (http://localhost:63315/src/providers/FormTypeInputsContext/FormTypeInputsContextProvider.tsx:10:3)
+    at WorkspaceContextProvider (http://localhost:63315/src/providers/WorkspaceContext/WorkspaceContextProvider.tsx:7:3)
+    at FormInner (http://localhost:63315/src/components/Form/Form.tsx:37:15)
+    at ErrorBoundary (http://localhost:63315/@fs/Users/Vincent/Workspace/albatrion/packages/winglet/react-utils/dist/hoc/withErrorBoundary/components/ErrorBoundary.mjs:9:3)
+    at fieldset (<anonymous>)
+    at div (<anonymous>)
+    at div (<anonymous>)
+    at StoryLayout (http://localhost:63315/stories/components/StoryLayout.tsx:4:3)
+    at hookified (http://localhost:63315/node_modules/.cache/storybook/10.4.1/d68f512085ea5eed42e1d4fe94d76c3440cded0ebf1c197983f9db9c8a3c2167/sb-vitest/deps/chunk-C3PWT4J6.js?v=3e140560:3584:11)
+    at unboundStoryFn (http://localhost:63315/node_modules/.cache/storybook/10.4.1/d68f512085ea5eed42e1d4fe94d76c3440cded0ebf1c197983f9db9c8a3c2167/sb-vitest/deps/chunk-C3PWT4J6.js?v=3e140560:4194:245)",
+}
+stderr | stories/13.FormError.stories.tsx > Error Boundary
+%o
+
+%s
+
+%s
+ [Error: Error accord from Renderer] The above error occurred in the <children> component. React will try to recreate this component tree from scratch using the error boundary you provided, ErrorBoundary.
+stderr | stories/13.FormError.stories.tsx > Error Boundary
+ErrorBoundary caught an error: [Error: Error accord from Renderer] {
+  "componentStack": "
+    at children (http://localhost:63315/Users/Vincent/Workspace/albatrion/packages/canard/schema-form/stories/13.FormError.stories.tsx?import&browserv=1790472143158:1023:13)
+    at ErrorBoundary (http://localhost:63315/@fs/Users/Vincent/Workspace/albatrion/packages/winglet/react-utils/dist/hoc/withErrorBoundary/components/ErrorBoundary.mjs:9:3)
+    at div (<anonymous>)
+    at SchemaNodeProxy (http://localhost:63315/src/components/SchemaNode/SchemaNodeProxy/SchemaNodeProxy.tsx:17:3)
+    at http://localhost:63315/src/components/Form/components/FormRender.tsx:9:5
+    at div (<anonymous>)
+    at form (<anonymous>)
+    at http://localhost:63315/src/components/Form/components/FormRootProxy.tsx:5:6
+    at RootNodeContextProvider (http://localhost:63315/src/providers/RootNodeContext/RootNodeContextProvider.tsx:16:3)
+    at VirtualizationContextProvider (http://localhost:63315/src/providers/VirtualizationContext/VirtualizationContextProvider.tsx:7:3)
+    at InputControlContextProvider (http://localhost:63315/src/providers/InputControlContext/InputControlContextProvider.tsx:5:3)
+    at FormTypeRendererContextProvider (http://localhost:63315/src/providers/FormTypeRendererContext/FormTypeRendererProvider.tsx:12:3)
+    at FormTypeInputsContextProvider (http://localhost:63315/src/providers/FormTypeInputsContext/FormTypeInputsContextProvider.tsx:10:3)
+    at WorkspaceContextProvider (http://localhost:63315/src/providers/WorkspaceContext/WorkspaceContextProvider.tsx:7:3)
+    at FormInner (http://localhost:63315/src/components/Form/Form.tsx:37:15)
+    at ErrorBoundary (http://localhost:63315/@fs/Users/Vincent/Workspace/albatrion/packages/winglet/react-utils/dist/hoc/withErrorBoundary/components/ErrorBoundary.mjs:9:3)
+    at fieldset (<anonymous>)
+    at div (<anonymous>)
+    at div (<anonymous>)
+    at StoryLayout (http://localhost:63315/stories/components/StoryLayout.tsx:4:3)
+    at hookified (http://localhost:63315/node_modules/.cache/storybook/10.4.1/d68f512085ea5eed42e1d4fe94d76c3440cded0ebf1c197983f9db9c8a3c2167/sb-vitest/deps/chunk-C3PWT4J6.js?v=3e140560:3584:11)
+    at unboundStoryFn (http://localhost:63315/node_modules/.cache/storybook/10.4.1/d68f512085ea5eed42e1d4fe94d76c3440cded0ebf1c197983f9db9c8a3c2167/sb-vitest/deps/chunk-C3PWT4J6.js?v=3e140560:4194:245)",
+}
+ ✓ |storybook (chromium)| stories/13.FormError.stories.tsx (6 tests) 81ms
+ ✓ |storybook (chromium)| stories/33.FormTypeRendererPropsWithReactNode.stories.tsx (4 tests) 128ms
+ ✓ |storybook (chromium)| stories/19.SubmitUsecase.stories.tsx (4 tests) 84ms
+ ✓ |storybook (chromium)| stories/29.VisibleUsecase.stories.tsx (5 tests) 98ms
+ ✓ |storybook (chromium)| stories/01.NormalUsecase.stories.tsx (6 tests) 97ms
+ ✓ |storybook (chromium)| stories/25.PreferredInputUsecase.stories.tsx (5 tests) 116ms
+ ✓ |storybook (chromium)| stories/32.DynamicObjectFormType.stories.tsx (2 tests) 136ms
+ ✓ |storybook (chromium)| stories/14.ExternalProvider.stories.tsx (4 tests) 89ms
+ ✓ |storybook (chromium)| stories/34.ContextNode.stories.tsx (5 tests) 79ms
+ ✓ |storybook (chromium)| stories/18.OmitEmptyOptions.stories.tsx (4 tests) 64ms
+ ✓ |storybook (chromium)| stories/27.OptimizeArrayUsecase.stories.tsx (6 tests) 65ms
+stdout | stories/22.StringUsecase.stories.tsx > Trim On Blur Uncontrolled
+UncontrolledInput 렌더링됨 {
+  "defaultValue": undefined,
+}
+stdout | stories/22.StringUsecase.stories.tsx > Trim On Blur Uncontrolled
+ControlledInput 마운트됨
+stdout | stories/22.StringUsecase.stories.tsx > Trim On Blur Controlled
+ControlledInput 언마운트됨
+stdout | stories/22.StringUsecase.stories.tsx > Trim On Blur Controlled
+ControlledInput 렌더링됨 {
+  "value": undefined,
+}
+stdout | stories/22.StringUsecase.stories.tsx > Trim On Blur Controlled
+ControlledInput 마운트됨
+ ✓ |storybook (chromium)| stories/20.Reset.stories.tsx (4 tests) 66ms
+ ✓ |storybook (chromium)| stories/04.FromChildren.stories.tsx (5 tests) 78ms
+stdout | stories/22.StringUsecase.stories.tsx > No Trim On Blur Uncontrolled
+ControlledInput 언마운트됨
+stdout | stories/22.StringUsecase.stories.tsx > No Trim On Blur Uncontrolled
+UncontrolledInput 렌더링됨 {
+  "defaultValue": undefined,
+}
+stdout | stories/22.StringUsecase.stories.tsx > No Trim On Blur Uncontrolled
+ControlledInput 마운트됨
+stdout | stories/22.StringUsecase.stories.tsx > No Trim On Blur Controlled
+ControlledInput 언마운트됨
+stdout | stories/22.StringUsecase.stories.tsx > No Trim On Blur Controlled
+ControlledInput 렌더링됨 {
+  "value": undefined,
+}
+stdout | stories/22.StringUsecase.stories.tsx > No Trim On Blur Controlled
+ControlledInput 마운트됨
+ ✓ |storybook (chromium)| stories/22.StringUsecase.stories.tsx (5 tests) 66ms
+ ✓ |storybook (chromium)| stories/23.JSONSchemaPropsUsecase.stories.tsx (3 tests) 41ms
+ ✓ |storybook (chromium)| stories/11.ComputedProps.stories.tsx (3 tests) 52ms
+ ✓ |storybook (chromium)| stories/12.RenderTest.stories.tsx (3 tests) 40ms
+stdout | stories/05.WatchValues.stories.tsx > Watch With Branch Node
+defaultValue {
+  "age": 10,
+  "name": "harry",
+}
+stdout | stories/05.WatchValues.stories.tsx > Watch With Branch Node
+defaultValue {
+  "age": 10,
+  "name": "harry",
+}
+ ✓ |storybook (chromium)| stories/05.WatchValues.stories.tsx (2 tests) 36ms
+ ✓ |storybook (chromium)| stories/15.NodeState.stories.tsx (1 test) 15ms
+ ✓ |storybook (chromium)| stories/BugReport.01.RerenderRenderer-build.stories.tsx (3 tests) 28ms
+ ✓ |storybook (chromium)| stories/BugReport.01.RerenderRenderer.stories.tsx (3 tests) 29ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  |storybook (chromium)| stories/07.FormRefHandle.stories.tsx > Form Type Input Array Terminal Ref
+TestingLibraryElementError: 
+[34mClick to debug the error directly in Storybook: http://localhost:6006/?path=/story/form-07-formrefhandle--form-type-input-array-terminal-ref&addonPanel=storybook/interactions/panel[39m
+
+Found multiple elements with the role "button" and name "clear"
+
+Here are the matching elements:
+
+Ignored nodes: comments, script, style
+<button>
+  clear
+</button>
+
+Ignored nodes: comments, script, style
+<button>
+  clear
+</button>
+
+(If this is intentional, then use the `*AllBy*` variant of the query (like `queryAllByText`, `getAllByText`, or `findAllByText`)).
+
+Ignored nodes: comments, script, style
+<div>
+  <div>
+    <button>
+      set value
+    </button>
+    <button>
+      push value
+    </button>
+    <button>
+      clear
+    </button>
+    <hr />
+    <div
+      style="display: flex; gap: 5px; justify-content: start; flex-direction: column;"
+    >
+      <div
+        style="display: flex; gap: 10px; justify-content: start;"
+      >
+        <fieldset
+          style="flex: 1 1 0%;"
+        >
+          <legend>
+            Form
+          </legend>
+          <form>
+            <div
+              data-path=""
+              role="none"
+              style="display: contents;"
+            >
+              <div
+                role="none"
+                style="display: contents;"
+              >
+                <div
+                  data-path="/arr"
+                  role="none"
+                  style="display: contents;"
+                >
+                  <div
+                    style="margin-bottom: 5px; margin-left: 5px;"
+                  >
+                    <label
+                      for="/arr"
+                      style="margin-right: 5px;"
+                    >
+                      arr
+                       
+                    </label>
+                    <div
+                      role="none"
+                      style="display: contents;"
+                    >
+                      <div>
+                        i am array item: 
+                        terminal
+                        <div>
+                          1,2,3,NEW ITEM
+                        </div>
+                        <div>
+                          <button>
+                            onChange
+                          </button>
+                          <button>
+                            add
+                          </button>
+                          <button>
+                            update
+                          </button>
+                          <button>
+                            remove
+                          </button>
+                          <button>
+                            clear
+                          </button>
+                          <button>
+                            remove all
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                    <br />
+                    <em
+                      style="font-size: 0.85em;"
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+          </form>
+        </fieldset>
+        <fieldset
+          style="flex: 1 1 0%;"
+        >
+          <legend>
+            Value
+          </legend>
+          <pre>
+            {
+  "arr": [
+    1,
+    2,
+    3,
+    "NEW ITEM"
+  ]
+}
+          </pre>
+        </fieldset>
+      </div>
+      <fieldset>
+        <legend>
+          Schema
+        </legend>
+        <pre>
+          {
+  "type": "object",
+  "properties": {
+    "arr": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  }
+}
+        </pre>
+      </fieldset>
+    </div>
+  </div>
+</div>
+ ❯ getByRole stories/07.FormRefHandle.stories.tsx:334:33
+    332| 
+    333|     await step('clear 버튼 → 배열 비우기', async () => {
+    334|       const clearButton = canvas.getByRole('button', { name: 'clear' }…
+       |                                 ^
+    335|       await userEvent.click(clearButton);
+    336| 
+ ❯ ../../../node_modules/storybook/dist/_browser-chunks/chunk-SZQXB3JV.js:1070:18
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed | 48 passed (49)
+      Tests  1 failed | 389 passed (390)
+   Start at  10:22:11
+   Duration  16.97s (transform 0ms, setup 14.05s, collect 88.01s, tests 10.26s, environment 0ms, prepare 539.86s)
+
