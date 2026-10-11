@@ -45,7 +45,7 @@ flowchart LR
 | 04 | [04-derive-and-controls/](04-derive-and-controls/) | PR-3 + PR-6(LANDING-063·083·066·086) | 03 | 05·06과 병렬 |
 | 05 | [05-dispatch-and-validation/](05-dispatch-and-validation/) | PR-4(LANDING-064·084·093), ajv6·7·8 포함 | 03 | 04·06과 병렬 |
 | 06 | [06-array/](06-array/) | PR-5(LANDING-065·085·094) | 03 | 04·05와 병렬 |
-| 07 | [07-switch/](07-switch/) | PR-7(LANDING-067·087·095), 레거시 보존 | 02–06 전부 | 원샷 |
+| 07 | [07-switch/](07-switch/) | PR-7(LANDING-067·087·095), 레거시 보존 — PR #354 리뷰 중(2026-10-11; 열린 게이트 G23·G26·G27은 소유자 질의 `../reviews/owner-queue-07.md`의 답으로 닫힘) | 02–06 전부 | 원샷 |
 | 07b | (디렉토리는 소유자가 열 때 만든다) | 소유자의 이해와 인터페이스 확정, 내부 코드 스타일링 — 소유자가 직접 다룬다(130라운드 소유자 답) | 07 병합 | — |
 | 08 | [08-plugins/](08-plugins/) | UI 플러그인 넷(LANDING-206) | 07b | 최적화와 병렬 |
 | 최적화 | [perf-optimization/](perf-optimization/) | 원장 PR 없음 — 27라운드 소유자 답(TEST-027 보충)의 "구현 완료 뒤 별도 작업". 대장 `../verification/performance-issues.md`의 열림 행 | 07 | 08과 병렬, 09 전 |
