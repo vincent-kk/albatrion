@@ -1,3 +1,4 @@
+import { isObjectRecord } from '../../../../types/isObjectRecord';
 import { OwnedSchemaValues } from '../../OwnedSchemaValues';
 import type { EffectiveSchemaFields } from '../../type';
 
@@ -11,11 +12,10 @@ export function applyControlHints(
   target: EffectiveSchemaFields,
   source: unknown,
 ): void {
-  if (!source || typeof source !== 'object') return;
+  if (!isObjectRecord(source)) return;
   const previous = target.controls;
   const controls = { ...previous };
-  // eslint-disable-next-line @typescript-eslint/consistent-type-assertions -- Authored controls may be any object; indexed reads need a runtime shape guard.
-  const hints = source as Record<string, unknown>;
+  const hints = source;
   if (hints.watch !== undefined) controls.watch = hints.watch;
   if (hints.default !== undefined) controls.default = hints.default;
   if (Object.keys(controls).length) {

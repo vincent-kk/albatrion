@@ -38,7 +38,7 @@ export const populateVirtualNodes = (
         context.options,
       );
     for (const [name, value] of Object.entries(virtual)) {
-      // eslint-disable-next-line @typescript-eslint/consistent-type-assertions -- Virtual entries are opaque until shape validation.
+      // eslint-disable-next-line @typescript-eslint/consistent-type-assertions -- Virtual entries are authored values read before shape validation; callables and primitives reach the fields check, so a guard would narrow what is accepted.
       const schema = readSchemaObject(value as Record<string, unknown>);
       const schemaPath = `${declaration.schemaPath}/options/virtual/${escapeSegment(name)}`;
       const fields = schema.fields;

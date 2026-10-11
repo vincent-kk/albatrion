@@ -52,7 +52,7 @@ export const collectInlineTerminalWarnings = (
           if (!keys.includes(keyword)) keys.push(keyword);
           if (!paths.includes(entry.schemaPath)) paths.push(entry.schemaPath);
         }
-    /* eslint-disable @typescript-eslint/consistent-type-assertions -- Unvalidated keyword children need a runtime schema guard. */
+    /* eslint-disable @typescript-eslint/consistent-type-assertions -- Map-keyword children are unvalidated authored values the warning walk reads as schemas; a guard would change which values it visits. */
     for (const keyword of [
       'properties',
       'patternProperties',

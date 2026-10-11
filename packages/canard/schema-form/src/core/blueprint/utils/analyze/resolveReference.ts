@@ -3,6 +3,7 @@ import { getValue } from '@winglet/json/pointer';
 import type { BlueprintSchema } from '../../type';
 import { BlueprintErrorCode } from '../diagnostics/constant';
 import { throwBlueprintError } from '../diagnostics/throwBlueprintError';
+import { isBlueprintSchema } from '../types/isBlueprintSchema';
 import type { AnalysisContext } from './type';
 
 /**
@@ -28,13 +29,10 @@ export const resolveReference = (
       context.options,
     );
   let pointer: string;
-  let schema: BlueprintSchema | undefined;
+  let schema: unknown;
   try {
     pointer = decodeURIComponent(reference.slice(1));
-    // eslint-disable-next-line @typescript-eslint/consistent-type-assertions -- The looked-up value needs a runtime schema guard before it is used as a schema.
-    schema = getValue(context.schema, pointer) as
-      | BlueprintSchema
-      | undefined;
+    schema = getValue(context.schema, pointer);
   } catch (cause) {
     return throwBlueprintError(
       BlueprintErrorCode.UnknownJsonSchema,
@@ -47,11 +45,7 @@ export const resolveReference = (
       context.options,
     );
   }
-  if (
-    schema === undefined ||
-    (typeof schema !== 'boolean' &&
-      (schema === null || typeof schema !== 'object'))
-  )
+  if (!isBlueprintSchema(schema))
     return throwBlueprintError(
       BlueprintErrorCode.UnknownJsonSchema,
       schemaPath,

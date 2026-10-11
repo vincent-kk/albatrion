@@ -1,6 +1,8 @@
 import { isPlainObject } from '@winglet/common-utils/filter';
 import { getDataProperty } from '@winglet/common-utils/object';
 
+import { isObjectRecord } from '../../../../types/isObjectRecord';
+
 /**
  * Protect nested plain objects created by one completed immutable hint merge.
  * @param result - Merge-owned root; the caller protects its envelope separately.
@@ -9,10 +11,11 @@ import { getDataProperty } from '@winglet/common-utils/object';
  * @returns Nothing; visits only newly merged plain objects and never opaque inputs.
  */
 export const freezeCreatedHintObjects = (
-  result: Record<string, unknown>,
+  result: object,
   earlier: object,
   later: object,
 ): void => {
+  if (!isObjectRecord(result)) return;
   const keys = Object.keys(result);
   for (let index = 0; index < keys.length; index++) {
     const key = keys[index];

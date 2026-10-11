@@ -24,13 +24,7 @@ export const readAllowedTypes = (
   if (typeof schema === 'boolean' || schema.type === undefined)
     return undefined;
   const values = isArray(schema.type) ? schema.type : [schema.type];
-  if (
-    !values.length ||
-    values.some(
-      (value, index) =>
-        !TYPE_NAMES.includes(value) || values.indexOf(value) !== index,
-    )
-  )
+  if (!isAllowedTypeList(values))
     return throwBlueprintError(
       BlueprintErrorCode.UnknownJsonSchema,
       schemaPath,
@@ -40,8 +34,7 @@ export const readAllowedTypes = (
       },
       options,
     );
-  // eslint-disable-next-line @typescript-eslint/consistent-type-assertions -- The aggregate validation does not narrow each member; a per-member guard changes runtime code.
-  const result = [...values] as SchemaTypeName[];
+  const result = [...values];
   if (schema.nullable === true && !result.includes('null')) result.push('null');
   return unionAllowedTypes([result]);
 };
@@ -56,3 +49,16 @@ const TYPE_NAMES: readonly unknown[] = [
   'object',
   'array',
 ];
+
+/**
+ * Narrow indexed type entries through the authored list's existing validation.
+ * @param values - Raw list; sparse slots retain some's skip behavior
+ * @returns Whether indexed validation accepts the list before its iterator is copied
+ */
+function isAllowedTypeList(
+  values: readonly unknown[],
+): values is readonly SchemaTypeName[] {
+  return !!values.length && !values.some(
+    (value, index) => !TYPE_NAMES.includes(value) || values.indexOf(value) !== index,
+  );
+}

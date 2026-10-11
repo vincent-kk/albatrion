@@ -8,6 +8,7 @@ import type {
 } from '../../../../../type';
 import { OwnedSchemaValues } from '../../OwnedSchemaValues';
 import { freezeEffectiveSchema } from '../../freezeEffectiveSchema';
+import { applyControlHints } from '../../applySchemaContribution/utils/applyControlHints';
 import type { EffectiveSchemaFields } from '../../type';
 
 /**
@@ -69,18 +70,7 @@ export const mergeSingleStaticContribution = (
     const value = source[key];
     if (value === undefined || key === 'type') continue;
     if (key === 'controls') {
-      if (!value || typeof value !== 'object') continue;
-      // eslint-disable-next-line @typescript-eslint/consistent-type-assertions -- Authored controls may be any object; indexed reads need a runtime shape guard.
-      const sourceControls = value as Record<string, unknown>;
-      const controls: Record<string, unknown> = {};
-      if (sourceControls.watch !== undefined)
-        controls.watch = sourceControls.watch;
-      if (sourceControls.default !== undefined)
-        controls.default = sourceControls.default;
-      if (Object.keys(controls).length) {
-        schema.controls = controls;
-        OwnedSchemaValues.add(controls);
-      }
+      applyControlHints(schema, value);
     } else if (key === 'readOnly') schema.readOnly = value === true;
     else if (key === 'required' && isArray(value)) {
       const required: unknown[] = [];
