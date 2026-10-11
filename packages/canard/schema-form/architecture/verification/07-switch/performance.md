@@ -1,5 +1,7 @@
 # G26 성능 보고서
 
+측정 원자료는 `archive/stage-07-verification-raw` 브랜치(`98227ab19`)에 있으며, 이 보고서와 인용한 세션 보고서의 원자료 경로는 그 브랜치 기준입니다(140라운드 소유자 결정: 원자료는 보관 브랜치로, PR에는 보고서만).
+
 이 보고서는 stage 07의 최종 HEAD `11d8f2b48`을 공개판 0.16.0과 비교합니다. 코어 공식 수치는 [136j 최종 보고서](profile-136j-final.md), React 수치는 [136k 최종 보고서](profile-136k-final.md), 번들과 typecheck 수치는 [137 번들 자료](profile-137-g26/bundle.json)와 [137 typecheck 자료](profile-137-g26/typecheck.json)를 사용합니다. 136j의 측정 HEAD `069a1d272`와 최종 HEAD의 제품 src 트리는 같습니다.
 
 비분기·식 전용 폼에는 코어 마운트·갱신 중앙값 ≤1.5×, React production profiling 마운트 ≤1.2×·갱신 ≤1.0×를 적용합니다. 출처는 [85C-01](/Users/Vincent/Workspace/albatrion/packages/canard/schema-form/architecture/reviews/round-85-closing.md), [86C-01](/Users/Vincent/Workspace/albatrion/packages/canard/schema-form/architecture/reviews/round-86-closing.md)과 [91라운드 소유자 답](/Users/Vincent/Workspace/albatrion/packages/canard/schema-form/architecture/reviews/round-91-owner-answers.md)입니다. oneOf·if/then은 91라운드의 기준 ①·②·③으로 판단하며, 코어를 제외한 React render+commit 몫은 옛 판 이하여야 합니다. AJV 몫은 기록만 합니다.
