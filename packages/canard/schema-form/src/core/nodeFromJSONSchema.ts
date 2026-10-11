@@ -4,6 +4,7 @@ import type { FormErrorReporter } from '../errors';
 import type { InferValueType } from '../types/value';
 import { buildSchemaNodeTree, mountSchemaNode } from './SchemaNode';
 import type { InferSchemaNode } from './SchemaNode';
+import type { BlueprintOptions } from './blueprint';
 import type { JSONSchema } from './types/jsonSchema';
 import type { ValidationMode } from './types/state';
 import type { Validator } from './validation';
@@ -12,6 +13,8 @@ import type { Validator } from './validation';
  * Core-only host entry; <Form> calls the same build channel through binding-only functions.
  * @param props - Authored schema, initial value, services and host predicates;
  * invalid schemas fail during construction, before mounting.
+ * @param props.isTerminal - Renderer predicate accepting raw object or boolean schemas;
+ * undefined leaves earlier terminal hints intact.
  * @returns The mounted root; mount validation is requested unless explicitly deferred.
  */
 export function nodeFromJSONSchema<Schema extends JSONSchema>(props: {
@@ -25,15 +28,13 @@ export function nodeFromJSONSchema<Schema extends JSONSchema>(props: {
   errorReporter?: FormErrorReporter;
   unsetOnInactive?: boolean;
   disableAutomaticWrites?: boolean;
-  isTerminal?: (schema: JSONSchema) => boolean | undefined;
+  isTerminal?: BlueprintOptions['isTerminal'];
   isAtomic?: (value: unknown) => boolean;
   deferMountValidation?: boolean;
 }): InferSchemaNode<Schema> {
-  /* eslint-disable @typescript-eslint/consistent-type-assertions -- Narrowing authored boolean schemas requires a runtime guard. */
   const root = buildSchemaNodeTree<Schema>(
-    props as Parameters<typeof buildSchemaNodeTree<Schema>>[0],
+    props,
   );
-  /* eslint-enable @typescript-eslint/consistent-type-assertions */
   mountSchemaNode(root, undefined, undefined, {
     deferValidation: props.deferMountValidation ?? false,
   });

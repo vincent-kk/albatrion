@@ -31,8 +31,8 @@ export const resolveReference = (
   let schema: BlueprintSchema | undefined;
   try {
     pointer = decodeURIComponent(reference.slice(1));
-    // eslint-disable-next-line @typescript-eslint/consistent-type-assertions -- Boolean roots require a runtime guard before object traversal.
-    schema = getValue(context.schema as Record<string, unknown>, pointer) as
+    // eslint-disable-next-line @typescript-eslint/consistent-type-assertions -- The looked-up value needs a runtime schema guard before it is used as a schema.
+    schema = getValue(context.schema, pointer) as
       | BlueprintSchema
       | undefined;
   } catch (cause) {

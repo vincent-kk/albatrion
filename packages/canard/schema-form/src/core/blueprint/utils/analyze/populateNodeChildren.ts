@@ -145,13 +145,11 @@ export const populateNodeChildren = (
           path: `${node.path}/${escapedName}`,
           inputs: [input],
         });
-        /* eslint-disable @typescript-eslint/consistent-type-assertions -- Opaque gate data needs a runtime shape guard. */
         const discriminatorIndex = input.gates.findIndex(
           (gate) =>
             gate.kind === 'discriminator' &&
-            (gate.condition as { propertyName?: string }).propertyName === name,
+            gate.condition.propertyName === name,
         );
-        /* eslint-enable @typescript-eslint/consistent-type-assertions */
         if (discriminatorIndex >= 0)
           properties.get(name)!.inputs.push({
             ...input,

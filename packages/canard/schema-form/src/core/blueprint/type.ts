@@ -23,23 +23,50 @@ export type BlueprintSchemaType =
   | 'virtual'
   | readonly SchemaTypeName[];
 
-/** Declarative gate; analysis stores conditions but never evaluates them. */
-export interface BlueprintGate {
-  /** Mechanism that the settlement engine must interpret. */
-  readonly kind: 'if' | 'active' | 'discriminator';
+/** Location and ownership metadata shared by every declarative gate. */
+interface BlueprintGateBase {
   /** Authored location of the condition. */
   readonly schemaPath: string;
   /** First template host; settlement rebinds it for each live occurrence. */
   readonly hostPath: string;
   /** Absolute read paths or relative parent-climb counts; context reads are excluded. */
   readonly evaluationReads: readonly (string | number)[];
-  /** Original schema, expression, or discriminator descriptor. */
-  readonly condition: unknown;
   /** Select the complementary if branch without executing it. */
   readonly negated?: boolean;
   /** A children rule applies only while its owning declaration is active. */
   readonly appliesWhen?: readonly BlueprintGate[];
 }
+
+/** Validated tag metadata produced from explicit discriminator branches. */
+type DiscriminatorCondition = {
+  /** Property whose value selects the branch. */
+  readonly propertyName: string;
+  /** Authored tag values retained without coercion. */
+  readonly values: readonly unknown[];
+};
+
+/** Declarative gate; analysis stores kind-specific conditions but never evaluates them. */
+export type BlueprintGate = BlueprintGateBase &
+  (
+    | {
+        /** Schema condition that the settlement engine must interpret. */
+        readonly kind: 'if';
+        /** Original condition schema remains opaque to analysis. */
+        readonly condition: unknown;
+      }
+    | {
+        /** Expression condition that the settlement engine must interpret. */
+        readonly kind: 'active';
+        /** Original control expression remains opaque to analysis. */
+        readonly condition: unknown;
+      }
+    | {
+        /** Explicit tag condition that the settlement engine must interpret. */
+        readonly kind: 'discriminator';
+        /** Validated property name and authored branch tag values. */
+        readonly condition: DiscriminatorCondition;
+      }
+  );
 
 /** One authored contribution to a property's existence or effective schema. */
 export interface PropertyDeclaration {
