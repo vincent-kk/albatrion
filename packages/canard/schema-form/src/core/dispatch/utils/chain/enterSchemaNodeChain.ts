@@ -1,4 +1,5 @@
 import type { SchemaNodeRecord } from '../../../record';
+import { assertSchemaNodeWritable } from '../../../settle';
 import { assertNotInDelivery } from '../report/assertNotInDelivery';
 import { refuseListenerFeedback } from './refuseListenerFeedback';
 
@@ -10,6 +11,7 @@ import { refuseListenerFeedback } from './refuseListenerFeedback';
 export const enterSchemaNodeChain = <Self extends SchemaNodeRecord<Self>>(
   node: Self,
 ): boolean => {
+  assertSchemaNodeWritable(node);
   const runtime = node.rootNode.runtime;
   assertNotInDelivery(runtime);
   if (!runtime.entryDepth) {

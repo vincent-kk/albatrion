@@ -3,6 +3,22 @@ import { isArray } from '@winglet/common-utils/filter';
 import type { BlueprintNode } from '../../../blueprint';
 import { getCommittedDeclarationKey } from './getCommittedDeclarationKey';
 
+/** Unselected static fallbacks share IDs for the immutable declaration owner. */
+const DECLARATION_IDS = new WeakMap<BlueprintNode, readonly number[]>();
+
+/** Return the authored declaration order without a per-occurrence copy. */
+const declarationIds = (node: BlueprintNode): readonly number[] => {
+  let ids = DECLARATION_IDS.get(node);
+  if (!ids) {
+    const collected: number[] = [];
+    for (let index = 0; index < node.declarations.length; index++)
+      collected.push(node.declarations[index].id);
+    ids = Object.freeze(collected);
+    DECLARATION_IDS.set(node, ids);
+  }
+  return ids;
+};
+
 /** Shape data needed to resolve a declaration for a live or latent occurrence. */
 export interface ControlTarget<Self> {
   /** Decoded direct-child name used by controls.children. */
@@ -43,10 +59,12 @@ export const getControlLayers = <Self extends ControlTarget<Self>>(
   const selected = (current: Self): readonly number[] =>
     selectedDeclarationIds.get(current) ??
     current.runtime.committedDeclarationIds?.get(getCommittedDeclarationKey(current)) ??
-    current.blueprintNode.declarations.map((declaration) => declaration.id);
+    declarationIds(current.blueprintNode);
   const nodeIds = selected(node);
   const groups: ControlLayer<Self>[] = [];
-  for (const declaration of node.blueprintNode.declarations) {
+  const declarations = node.blueprintNode.declarations;
+  for (let index = 0; index < declarations.length; index++) {
+    const declaration = declarations[index];
     if (!nodeIds.includes(declaration.id) || declaration.scope !== 'node' ||
       !declaration.schema || typeof declaration.schema !== 'object') continue;
     const controls: unknown = Reflect.get(declaration.schema, 'controls');
@@ -58,17 +76,26 @@ export const getControlLayers = <Self extends ControlTarget<Self>>(
   const parent = node.parent;
   if (!parent) return groups;
   const parentIds = selected(parent);
-  for (const declaration of parent.blueprintNode.declarations) {
+  const parentDeclarations = parent.blueprintNode.declarations;
+  for (let index = 0; index < parentDeclarations.length; index++) {
+    const declaration = parentDeclarations[index];
     if (!parentIds.includes(declaration.id) || !declaration.schema ||
       typeof declaration.schema !== 'object') continue;
     const controls: unknown = Reflect.get(declaration.schema, 'controls');
     if (!controls || typeof controls !== 'object' || isArray(controls)) continue;
-    if (declaration.scope === 'fragment' &&
-      node.blueprintNode.declarations.some((child) =>
-        nodeIds.includes(child.id) && (
+    let ownsFragment = false;
+    if (declaration.scope === 'fragment')
+      for (let childIndex = 0; childIndex < declarations.length; childIndex++) {
+        const child = declarations[childIndex];
+        if (nodeIds.includes(child.id) && (
           child.schemaPath.startsWith(`${declaration.schemaPath}/properties/`) ||
           child.schemaPath.startsWith(`${declaration.schemaPath}/items/`) ||
-          child.schemaPath.startsWith(`${declaration.schemaPath}/prefixItems/`))))
+          child.schemaPath.startsWith(`${declaration.schemaPath}/prefixItems/`))) {
+          ownsFragment = true;
+          break;
+        }
+      }
+    if (ownsFragment)
       groups.push({ layer: 'fragment', declarationId: declaration.id,
         schemaPath: `${declaration.schemaPath}/controls`, controls, host: parent });
     const children: unknown = Reflect.get(controls, 'children');

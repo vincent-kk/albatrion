@@ -3,6 +3,7 @@ import type { SettlementContext } from '../../type';
 import { hasOwnProperty } from '@winglet/common-utils/lib';
 import { getDeclaredChildNames } from '../declarations/getDeclaredChildNames';
 import { flushPendingOutput } from '../compute/flushPendingOutput';
+import { getGateRegistry } from './getGateRegistry';
 
 /**
  * Read a publication only after its changed raw has been calculated.
@@ -31,8 +32,9 @@ export const readProjectedValue = <Self extends SchemaNodeRecord<Self>>(
   let value = projectedEmission(node, context);
   if (!path) return value;
   let atNode = true;
-  for (const encoded of path.slice(1).split('/')) {
-    const name = encoded.replace(/~1/g, '/').replace(/~0/g, '~');
+  const segments = getGateRegistry(node.runtime).pathSegments(path);
+  for (let index = 0; index < segments.length; index++) {
+    const name = segments[index];
     if (node.behavior.strategy === 'branch' && node.raw !== undefined &&
       flushPendingOutput(node, context)) value = projectedEmission(node, context);
     if (node.behavior.strategy === 'branch' && node.raw !== undefined &&

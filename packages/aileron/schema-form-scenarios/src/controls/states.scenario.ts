@@ -13,7 +13,7 @@ const combinationScenario = {
     hidden: { type: 'string', controls: { visible: true } },
   } },
   initialValue: { locked: 'L', disabled: 'D', hidden: 'H' },
-  steps: [{ action: 'setValue', path: '/locked', value: 'edited',
+  steps: [{ action: 'batch', steps: [{ action: 'setValue', path: '/locked', value: 'edited' }],
     expect: { states: {
       '/locked': { readOnly: true, disabled: false, visible: true, enabled: true },
       '/disabled': { readOnly: false, disabled: true, enabled: true },
@@ -28,7 +28,7 @@ const standardReadOnlyScenario = {
     field: { type: 'string', readOnly: true, controls: { readOnly: false } },
   } },
   initialValue: { field: 'before' },
-  steps: [{ action: 'setValue', path: '/field', value: 'after',
+  steps: [{ action: 'batch', steps: [{ action: 'setValue', path: '/field', value: 'after' }],
     expect: { states: { '/field': { readOnly: true, enabled: true } },
       outputValue: { field: 'after' } } }],
 } satisfies FormScenario;

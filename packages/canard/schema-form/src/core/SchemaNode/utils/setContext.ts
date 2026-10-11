@@ -10,4 +10,4 @@ import { requireRuntimeSchemaNode } from './requireRuntimeSchemaNode';
  */
 export const setContext = (root: SchemaNode,
   context: Readonly<Record<string, unknown>>): void =>
-  dispatchContextChange(requireRuntimeSchemaNode(root), context);
+  dispatchContextChange(requireRuntimeSchemaNode(root, true), context);

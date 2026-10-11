@@ -4,12 +4,22 @@ import type { BlueprintNode, PropertyDeclaration } from '../../../type';
  * Select effective contributions without executing their gate descriptions.
  * @param node - Owner of declarations and overlays.
  * @param activeIds - Gated IDs selected by the settlement caller.
+ * @param staticConjunctions - Optional one-shot conjunctive sequence from static construction.
  * @returns Contributions in authored total order, omitting shared disjunctive hints.
  */
 export const selectEffectiveDeclarations = (
   node: BlueprintNode,
   activeIds: readonly number[],
+  staticConjunctions?: readonly PropertyDeclaration[],
 ): PropertyDeclaration[] => {
+  if (staticConjunctions !== undefined) {
+    const selected: PropertyDeclaration[] = [];
+    for (let index = 0; index < staticConjunctions.length; index++) {
+      const entry = staticConjunctions[index];
+      if (!entry.validationOnly && entry.gates.length === 0) selected.push(entry);
+    }
+    return selected.sort(compareDeclarations);
+  }
   const active = node.declarations.filter(
     (entry) =>
       !entry.validationOnly &&

@@ -1,0 +1,1 @@
+export { isNullBranch } from './isNullBranch';

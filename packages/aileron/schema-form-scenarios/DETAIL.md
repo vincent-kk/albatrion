@@ -12,6 +12,8 @@ TEST-008, TEST-010, TEST-011, TEST-022, TEST-023, TEST-024, TEST-077 및 LANDING
 
 `FormScenario`는 이름, 구조적 스키마, 선택적 초기 값, 순서 있는 단계를 기술한다(TEST-011·023). 단계는 `setValue`, `clear`, `push`, `pop`, `remove`, `update`, `submit`, `reset`, `batch`, `resetSubtree` 중 하나이며 `update`는 배열 색인과 값을 받고 `resetSubtree`는 `{ action: 'resetSubtree', path }`로 해당 하위 트리만 로드한다(TEST-011·023, SETTLE-049, I19). 배열 동사의 결과, 단계 전후 노드 동일성과 키, 스냅숏 기본값, 자리별 청사진 종류, 청사진 없는 꼬리의 `extras`도 구조적 기대값으로 기술한다(TEST-018, NODE-051·052, WRITE-095·099). `ScenarioExpectation.states?: Record<경로, { visible?: boolean; readOnly?: boolean; disabled?: boolean; enabled?: boolean }>`는 노드별 로컬 상태 키 관찰이고, 형태·값·오류·진단 기대값과 함께 단계 완료 뒤에 검사한다(TEST-011·019·023, CONTROLS-082, 28C-02).
 
+공유 부류에 포함되는 장면 이름은 `<family>.` 접두사로 식별하고 모든 최상위 단계에 관찰 가능한 기대값을 둔다. 원장 근거는 description과 소비자 시험 제목에 기록한다. 원시 노드의 `clear`는 undefined 쓰기를 나타내며, nullable이 아닌 기본 문자열·수 입력의 화면 어댑터는 실제 입력을 비워 같은 값을 전달한다(LANDING-196). 호출자의 `setValue('')`를 화면 초안의 비우기와 혼동하지 않는다.
+
 코어 실행기는 TEST-023에 따라 schema-form의 코어 검증 소유자가 맡는다. 이 패키지는 코어 실행기를 공개하지 않으며 엔진 시나리오를 실행하지 않는다.
 
 `playScenario(scenario, element)`는 받은 요소를 탐색 범위로 사용한다. 렌더된 래퍼는 구조적 핸들과 화면 어댑터를 자신의 루트 요소에 등록하며, 렌더 테스트는 컨테이너에 직접 등록할 수 있다. 탐색은 받은 요소를 먼저 검사한 뒤 하위 요소를 검사한다. 등록이 없거나 후보가 여러 개면 명시적으로 실패한다. 등록 해제 함수는 자신이 만든 등록만 제거한다.
@@ -50,4 +52,4 @@ TEST-008, TEST-010, TEST-011, TEST-022, TEST-023, TEST-024, TEST-077 및 LANDING
 
 ## Last Updated
 
-2026-10-01
+2026-10-03

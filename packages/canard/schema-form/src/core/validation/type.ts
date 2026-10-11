@@ -27,7 +27,6 @@ export type GuardFunction = (value: unknown) => boolean;
 
 /**
  * Returns the verdict for its input and never throws; a throw is an execution failure.
- * Engine contract; the public `ValidateFunction` in `src/types/error.ts` keeps its legacy shape until PR-7.
  * @param data - Emitted value to check without modifying it.
  * @returns Ordered issues, or null when the value is valid.
  */

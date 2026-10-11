@@ -1,4 +1,4 @@
-import { intersectMultipleOf as intersect } from '@/schema-form/helpers/schemaIntersection';
+import { intersectMultipleOf as intersect } from '@/schema-form/__legacy__/helpers/schemaIntersection';
 
 /**
  * Intersects multipleOf constraints by calculating their least common multiple (LCM).

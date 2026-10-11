@@ -1,4 +1,4 @@
-import type { SchemaFormPlugin } from '@/schema-form/app/plugin/type';
+import type { SchemaFormPlugin } from '@/schema-form/app/plugin';
 
 import { createDivider } from './utils/createDivider';
 import { formatBulletList } from './utils/formatBulletList';
@@ -17,10 +17,10 @@ export const formatRegisterPluginError = (
   const errorMessage = getErrorMessage(error);
 
   const pluginFeatures: string[] = [];
-  if (plugin.FormError) pluginFeatures.push('FormError');
-  if (plugin.FormGroup) pluginFeatures.push('FormGroup');
-  if (plugin.FormInput) pluginFeatures.push('FormInput');
-  if (plugin.FormLabel) pluginFeatures.push('FormLabel');
+  if (plugin.FormTypeErrorRenderer) pluginFeatures.push('FormError');
+  if (plugin.FormTypeGroupRenderer) pluginFeatures.push('FormGroup');
+  if (plugin.FormTypeInputRenderer) pluginFeatures.push('FormInput');
+  if (plugin.FormTypeLabelRenderer) pluginFeatures.push('FormLabel');
   if (plugin.formTypeInputDefinitions?.length)
     pluginFeatures.push('formTypeInputDefinitions');
   if (plugin.validator) pluginFeatures.push('validator');

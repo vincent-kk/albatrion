@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { NodeState } from '../../types/state';
+import { SchemaNodeState } from '../../types/state';
 import { SetValueOption } from '../../types/value';
 import { loadSchemaNodeAtMount, writeSchemaNode } from '../index';
 import { createTestTree } from './fixtures/createTestTree';
@@ -18,9 +18,9 @@ describe('derive baseline alongside exit policy', () => {
     loadSchemaNodeAtMount(root, { clear: true, f: true, target: 'a' },
       SetValueOption.Overwrite);
     const target = root.structure!.target;
-    target.interactionState = { [NodeState.Dirty]: true, [NodeState.Touched]: true };
+    target.interactionState = { [SchemaNodeState.Dirty]: true, [SchemaNodeState.Touched]: true };
     writeSchemaNode(target, 'b', 'input', SetValueOption.Overwrite);
     expect(target.raw).toBe('b');
-    expect(target.interactionState[NodeState.Dirty]).toBe(true);
+    expect(target.interactionState[SchemaNodeState.Dirty]).toBe(true);
   });
 });

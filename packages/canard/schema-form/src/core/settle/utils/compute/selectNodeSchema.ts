@@ -48,7 +48,8 @@ export const selectNodeSchema = <Self extends SchemaNodeRecord<Self>>(
   }
   context.selectedDeclarationIds.set(node, active.map((declaration) => declaration.id));
   const effective = mergeEffectiveSchema(node.blueprintNode,
-    active.map((declaration) => declaration.id), { mode: 'runtime' });
+    active.map((declaration) => declaration.id),
+    { mode: 'runtime', isAtomic: node.runtime.blueprint?.isAtomic });
   if (effective.typeConflict) {
     recordSettlementFailure(context, new SchemaFormError(SHARED_NODE_CONFLICT,
       `Active declarations conflict at ${node.path}`, { path: node.path }), 'sharedConflict');

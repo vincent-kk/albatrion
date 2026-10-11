@@ -7,6 +7,8 @@ import { createWatchDeliveryIndex } from './utils/createWatchDeliveryIndex';
 import { commitGlobalState } from './commitGlobalState';
 import { getWatchDeliveryPaths } from './utils/getWatchDeliveryPaths';
 import { isSameDeliveryValue } from './utils/isSameDeliveryValue';
+import { readSettlementSource } from './utils/readSettlementSource';
+import { isArray } from '@winglet/common-utils/filter';
 
 /** Payload immutability follows the module's development build mode. */
 const DEVELOPMENT = process.env.NODE_ENV !== 'production';
@@ -28,7 +30,9 @@ export const markCommitDeliveries = <Self extends SchemaNodeRecord<Self>>(
   const refreshTargets = runtime.refreshTargets;
   const loadScope = context.kind === 'load' ? context.loadScope : undefined;
   const loadPrefix = loadScope ? `${loadScope.path}/` : '';
-  const automaticNodes = new Set(context.automaticLog.map((write) => write.node));
+  const automaticNodes = new Set<Self>();
+  for (let index = 0; index < context.automaticLog.length; index++)
+    automaticNodes.add(context.automaticLog[index].node);
   const watchIndex = runtime.deliveryWatchIndex;
   const watchNodes = getFeatureNodeIndex(runtime.blueprint).watchNodes;
   const fullWatchScan = context.exited.size > 0;
@@ -52,6 +56,24 @@ export const markCommitDeliveries = <Self extends SchemaNodeRecord<Self>>(
     }
   }
   const candidates = new Set<unknown>();
+  for (const host of context.changedNodes) {
+    if (host.detached || host.blueprintNode.kind !== 'object' || !host.children)
+      continue;
+    if (host.deliveryInitialized && host.deliveryPreviousSchema === undefined &&
+      !(host.deliveryChanges & SchemaNodeEventType.UpdateChildren)) continue;
+    const schema = host.schema.schema;
+    const required = typeof schema === 'object' ? schema.required : undefined;
+    for (let index = 0; index < host.children.length; index++) {
+      const child = host.children[index];
+      if (child.parent !== host || child.blueprintNode.kind === 'virtual') continue;
+      const next = isArray(required) && required.includes(child.name);
+      if (child.required === next) continue;
+      child.required = next;
+      candidates.add(child);
+      if (child.deliveryInitialized)
+        markSchemaNodeEvent(child, SchemaNodeEventType.UpdateComputedProperties);
+    }
+  }
   for (const node of context.changedNodes) candidates.add(node);
   for (const node of context.entered) candidates.add(node);
   for (const node of context.stateDirtyNodes) candidates.add(node);
@@ -76,9 +98,19 @@ export const markCommitDeliveries = <Self extends SchemaNodeRecord<Self>>(
     mark(context.root, SchemaNodeEventType.UpdateDiagnostics);
   runtime.deliveredDiagnostics = runtime.diagnostics;
   const globalState = commitGlobalState(context);
-  const ordered = new Set<unknown>(globalState.nodes);
-  for (const node of candidates) ordered.add(node);
-  for (const candidate of ordered) {
+  const globalNodes: ReadonlySet<unknown> = globalState.nodes;
+  let iterator: Iterator<unknown> = globalState.nodes.values();
+  let additional = false;
+  while (true) {
+    const next = iterator.next();
+    if (next.done) {
+      if (additional) break;
+      additional = true;
+      iterator = candidates.values();
+      continue;
+    }
+    const candidate = next.value;
+    if (additional && globalNodes.has(candidate)) continue;
     if (!isTreeNode(candidate)) continue;
     const node = candidate;
     visit?.(node);
@@ -106,9 +138,9 @@ export const markCommitDeliveries = <Self extends SchemaNodeRecord<Self>>(
         index.update(node, getWatchDeliveryPaths(node));
       } else runtime.deliveryWatchIndex?.remove(node);
     }
-    const watchChanged = initialized &&
-      (watched.length !== previousWatchValues.length ||
-        watched.some((value, index) => !isSameDeliveryValue(value, previousWatchValues[index])));
+    let watchChanged = initialized && watched.length !== previousWatchValues.length;
+    for (let index = 0; initialized && !watchChanged && index < watched.length; index++)
+      if (!isSameDeliveryValue(watched[index], previousWatchValues[index])) watchChanged = true;
     if (initialized) {
       if ((changes & SchemaNodeEventType.UpdateValue) &&
         (!isSameDeliveryValue(node.deliveryPreviousLocal, node.local) ||
@@ -121,7 +153,7 @@ export const markCommitDeliveries = <Self extends SchemaNodeRecord<Self>>(
           { local: node.local, emit: node.emit } : node.local;
         const payload = { previous: oldValue, current };
         const source = automaticNodes.has(node) ||
-          context.filledNodes.has(node) ? 'automatic' : context.kind;
+          context.filledNodes.has(node) ? 'automatic' : readSettlementSource(context, node.path);
         mark(node, SchemaNodeEventType.UpdateValue,
           DEVELOPMENT ? Object.freeze(payload) : payload,
           { source });
@@ -159,7 +191,7 @@ export const markCommitDeliveries = <Self extends SchemaNodeRecord<Self>>(
         { local: node.local, emit: node.emit } : node.local;
       const payload = { previous: undefined, current };
       const source = automaticNodes.has(node) ||
-        context.filledNodes.has(node) ? 'automatic' : context.kind;
+        context.filledNodes.has(node) ? 'automatic' : readSettlementSource(context, node.path);
       mark(node, SchemaNodeEventType.UpdateValue,
         DEVELOPMENT ? Object.freeze(payload) : payload,
         { source });
@@ -178,7 +210,9 @@ export const markCommitDeliveries = <Self extends SchemaNodeRecord<Self>>(
   }
   globalState.finish();
   runtime.revisionNodes?.clear();
-  const departing = [...context.exited, ...context.perished];
+  const departing: Self[] = [];
+  for (const node of context.exited) departing.push(node);
+  for (const node of context.perished) departing.push(node);
   const seenDeparting = new Set<Self>();
   while (departing.length) {
     const node = departing.pop();
@@ -199,7 +233,9 @@ export const markCommitDeliveries = <Self extends SchemaNodeRecord<Self>>(
     runtime.validationChangedNodes?.delete(node);
     runtime.validationTargets?.delete(node);
     runtime.validationPendingTargets?.delete(node);
-    for (const child of node.children ?? []) departing.push(child);
+    const children = node.children;
+    for (let index = 0; children && index < children.length; index++)
+      departing.push(children[index]);
   }
   runtime.deliveredContext = runtime.context;
   runtime.deliveryAffectedPaths = undefined;

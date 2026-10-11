@@ -1,0 +1,6 @@
+diff --git a/packages/canard/schema-form/src/core/record/utils/markSchemaNodeEvent.ts b/packages/canard/schema-form/src/core/record/utils/markSchemaNodeEvent.ts
+--- a/packages/canard/schema-form/src/core/record/utils/markSchemaNodeEvent.ts
++++ b/packages/canard/schema-form/src/core/record/utils/markSchemaNodeEvent.ts
+@@ -52,1 +52,1 @@
+-  node.pendingRevision |= bit;
++  if (bit !== SchemaNodeEventType.UpdateValue) node.pendingRevision |= bit;

@@ -3,11 +3,23 @@ import { isArray } from '@winglet/common-utils/filter';
 import type { BlueprintGate, PropertyDeclaration } from '../../type';
 import { validateControlGroups } from '../diagnostics/validateControlGroups';
 import { readAllowedTypes } from '../types/readAllowedTypes';
+import { collectSchemaCapabilities } from './collectSchemaCapabilities';
 import { createBlueprintGate } from './createBlueprintGate';
 import { readDiscriminatorBranches } from './readDiscriminatorBranches';
 import { readSchemaObject } from './readSchemaObject';
 import { resolveReference } from './resolveReference';
-import type { AnalysisContext, SchemaInput } from './type';
+import type { AnalysisContext, MutableFragment, SchemaInput } from './type';
+
+/** Keyword ranks form the authored total order, independent of object insertion order. */
+const FRAGMENT_KEYWORDS = [
+  ['allOf', 1],
+  ['then', 2],
+  ['else', 2],
+  ['oneOf', 3],
+  ['anyOf', 4],
+] as const;
+/** Only producer-owned internal records receive development protection. */
+const DEVELOPMENT = process.env.NODE_ENV !== 'production';
 
 /**
  * Expand one slot's fragments in keyword order without expanding child nodes.
@@ -16,7 +28,8 @@ import type { AnalysisContext, SchemaInput } from './type';
  * @param path - Data host of this slot
  * @param visiting - Authored positions currently expanded within this slot
  * @param ownerId - Root contribution whose reference and fragment overlays are expanded
- * @returns Ordered declarations, with finite reference cycles cut at their re-entry
+ * @param result - Owner's ordered sink; omitted calls allocate their own array
+ * @returns The sink after expansion, with finite reference cycles cut at re-entry
  */
 export const collectDeclarations = (
   context: AnalysisContext,
@@ -24,8 +37,9 @@ export const collectDeclarations = (
   path: string,
   visiting: readonly string[] = [],
   ownerId?: number,
+  result: PropertyDeclaration[] = [],
 ): PropertyDeclaration[] => {
-  if (visiting.includes(input.schemaPath)) return [];
+  if (visiting.includes(input.schemaPath)) return result;
   const schema = readSchemaObject(input.schema);
   validateControlGroups(
     context,
@@ -34,7 +48,10 @@ export const collectDeclarations = (
     input.isFragment ?? false,
   );
   readAllowedTypes(input.schema, input.schemaPath, context.options);
-  const gates: BlueprintGate[] = [...input.gates];
+  collectSchemaCapabilities(context, input.schema);
+  if (input.gates.length || input.context === 'declaration')
+    context.capabilities.branchless = false;
+  const gates: BlueprintGate[] = input.gates.slice();
   if (
     schema.controls?.active !== undefined &&
     !gates.some(
@@ -49,22 +66,22 @@ export const collectDeclarations = (
         condition: schema.controls.active,
       }),
     );
-  const fragment = {
+  const fragment: MutableFragment = {
     id: context.fragments.length,
     hostPath: path,
     schemaPath: input.schemaPath,
     schema: input.schema,
     context: input.context,
-    order: Object.freeze([...input.order]),
-    gates: Object.freeze(gates),
-    declares: [] as number[],
-    overlays: [] as number[],
-    inheritedOverlays: [] as number[],
-    children: [] as number[],
+    order: input.order.slice(),
+    gates,
+    declares: [],
+    overlays: [],
+    inheritedOverlays: [],
+    children: [],
   };
   context.fragments.push(fragment);
   input.fragment?.children.push(fragment.id);
-  const declaration: PropertyDeclaration = Object.freeze({
+  const declaration: PropertyDeclaration = {
     id: context.declarationId++,
     name: path.slice(path.lastIndexOf('/') + 1),
     path,
@@ -75,55 +92,63 @@ export const collectDeclarations = (
     scope: input.isFragment ? 'fragment' : 'node',
     validationOnly: false,
     context: input.context,
-    gates: fragment.gates,
-    order: fragment.order,
+    gates: fragment.gates.slice(),
+    order: fragment.order.slice(),
     inherited: input.inherited,
     hostPath: input.hostPath,
-  });
+  };
+  if (DEVELOPMENT) {
+    Object.freeze(fragment.order);
+    Object.freeze(fragment.gates);
+    Object.freeze(declaration.order);
+    Object.freeze(declaration.gates);
+    Object.freeze(declaration);
+  }
   fragment[input.role === 'declaration' ? 'declares' : 'overlays'].push(
     declaration.id,
   );
   if (input.inherited) fragment.inheritedOverlays.push(declaration.id);
-  const result = [declaration];
+  result.push(declaration);
   const owner = ownerId ?? declaration.id;
-  context.declarationOwners.set(declaration.id, owner);
-  const discriminators = readDiscriminatorBranches(
-    context,
-    input.schema,
-    input.schemaPath,
-  );
-  if (discriminators.size) {
+  if (!context.capabilities.branchless)
+    (context.declarationOwners ??= new Map()).set(declaration.id, owner);
+  const discriminators =
+    schema.controls?.discriminator === undefined
+      ? undefined
+      : readDiscriminatorBranches(context, input.schema, input.schemaPath);
+  if (discriminators?.size) {
     context.discriminatorBranches ??= new Set<string>();
     for (const branchPath of discriminators.keys())
       context.discriminatorBranches.add(branchPath);
   }
+  if (typeof schema.$ref !== 'string' && schema.allOf === undefined &&
+    schema.if === undefined && schema.oneOf === undefined && schema.anyOf === undefined)
+    return result;
   const stack = [...visiting, input.schemaPath];
   if (typeof schema.$ref === 'string') {
     const target = resolveReference(context, schema.$ref, input.schemaPath);
-    result.push(
-      ...collectDeclarations(
-        context,
-        {
-          ...input,
-          ...target,
-          gates,
-          fragment,
-          role: 'overlay',
-          inherited: true,
-        },
-        path,
-        stack,
-        owner,
-      ),
+    collectDeclarations(
+      context,
+      {
+        ...input,
+        ...target,
+        gates,
+        fragment,
+        role: 'overlay',
+        inherited: true,
+      },
+      path,
+      stack,
+      owner,
+      result,
     );
   }
-  for (const [keyword, rank] of [
-    ['allOf', 1],
-    ['then', 2],
-    ['else', 2],
-    ['oneOf', 3],
-    ['anyOf', 4],
-  ] as const) {
+  for (
+    let keywordIndex = 0;
+    keywordIndex < FRAGMENT_KEYWORDS.length;
+    keywordIndex++
+  ) {
+    const [keyword, rank] = FRAGMENT_KEYWORDS[keywordIndex];
     if ((keyword === 'then' || keyword === 'else') && schema.if === undefined)
       continue;
     const values =
@@ -131,11 +156,12 @@ export const collectDeclarations = (
         ? [schema[keyword]]
         : schema[keyword];
     if (!isArray(values)) continue;
-    values.forEach((child, index) => {
-      if (child === undefined || child === false) return;
+    for (let index = 0; index < values.length; index++) {
+      const child = values[index];
+      if (child === undefined || child === false) continue;
       const childPath = `${input.schemaPath}/${keyword}${keyword === 'then' || keyword === 'else' ? '' : `/${index}`}`;
       const nestedGates = [...gates];
-      const discriminator = discriminators.get(childPath);
+      const discriminator = discriminators?.get(childPath);
       if (discriminator)
         nestedGates.push(
           createBlueprintGate({
@@ -160,27 +186,26 @@ export const collectDeclarations = (
       const declarationOnly =
         input.context === 'declaration' ||
         (branch && active === undefined && discriminator === undefined);
-      result.push(
-        ...collectDeclarations(
-          context,
-          {
-            schema: child,
-            schemaPath: childPath,
-            role: 'overlay',
-            gates: nestedGates,
-            context: declarationOnly ? 'declaration' : 'conjunction',
-            order: [...input.order, rank, keyword === 'else' ? 1 : index],
-            inherited: input.inherited,
-            hostPath: path,
-            fragment,
-            isFragment: true,
-          },
-          path,
-          stack,
-          owner,
-        ),
+      collectDeclarations(
+        context,
+        {
+          schema: child,
+          schemaPath: childPath,
+          role: 'overlay',
+          gates: nestedGates,
+          context: declarationOnly ? 'declaration' : 'conjunction',
+          order: [...input.order, rank, keyword === 'else' ? 1 : index],
+          inherited: input.inherited,
+          hostPath: path,
+          fragment,
+          isFragment: true,
+        },
+        path,
+        stack,
+        owner,
+        result,
       );
-    });
+    }
   }
   return result;
 };

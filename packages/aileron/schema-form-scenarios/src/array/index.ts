@@ -1,4 +1,5 @@
 import type { FormScenario } from '../types';
+import { arrayRenderScenarios } from './render.scenario';
 import { pushSlotScenario } from './push-slot.scenario';
 import { popSlotScenario } from './pop-slot.scenario';
 import { removeSlotScenario } from './remove-slot.scenario';
@@ -22,4 +23,5 @@ export const arrayScenarios: readonly FormScenario[] = [
   terminalVerbsScenario, omitTrailingScenario, positionReconcileScenario,
   extrasTailScenario, extraBecomesNodeScenario, landing202Scenario,
   emptyOutputScenario, sourceBStructureScenario,
+  ...arrayRenderScenarios,
 ];

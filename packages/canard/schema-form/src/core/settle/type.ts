@@ -27,6 +27,11 @@ export interface SettlementContext<Self extends SchemaNodeRecord<Self>> {
   target: Self;
   /** Entry origin retained for later transition rules. */
   kind: SchemaNodeWriteKind;
+  /** Binding delivery origin, independent of replacement or merge semantics. */
+  source?: SchemaNodeWriteKind;
+  /** Call-ordered origins, resolved by the final write covering each path. */
+  writeOrigins?: readonly { path: string; source: SchemaNodeWriteKind;
+    keys?: readonly string[] }[];
   /** Public bit mask retained for the development trace entry. */
   option: number;
   /** Binding entry name when the settlement has no public write kind. */
@@ -35,6 +40,8 @@ export interface SettlementContext<Self extends SchemaNodeRecord<Self>> {
   contextOwners?: readonly string[];
   /** Whether this analysis contains any authored gate. */
   hasGates: boolean;
+  /** First-load postorder awaiting independent leaf fill before its only assembly. */
+  initialOutputs?: Self[];
   /** Cached reverse references, absent for a blueprint without virtual nodes. */
   virtualReferenceIndex: VirtualReferenceIndex | null;
   /** Call-local suppression after explicit bits override the form default. */

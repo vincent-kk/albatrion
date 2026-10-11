@@ -14,14 +14,14 @@ import type {
 export interface ExternalFormContext {
   /** List of FormTypeInputDefinition declared externally */
   fromExternalFormTypeInputDefinitions?: NormalizedFormTypeInputDefinition[];
-  /** FormGroupRenderer component declared externally */
-  FormGroupRenderer?: ComponentType<FormTypeRendererProps>;
-  /** FormLabelRenderer component declared externally */
-  FormLabelRenderer?: ComponentType<FormTypeRendererProps>;
-  /** FormInputRenderer component declared externally */
-  FormInputRenderer?: ComponentType<FormTypeRendererProps>;
-  /** FormErrorRenderer component declared externally */
-  FormErrorRenderer?: ComponentType<FormTypeRendererProps>;
+  /** FormTypeGroupRenderer component declared externally */
+  FormTypeGroupRenderer?: ComponentType<FormTypeRendererProps>;
+  /** FormTypeLabelRenderer component declared externally */
+  FormTypeLabelRenderer?: ComponentType<FormTypeRendererProps>;
+  /** FormTypeInputRenderer component declared externally */
+  FormTypeInputRenderer?: ComponentType<FormTypeRendererProps>;
+  /** FormTypeErrorRenderer component declared externally */
+  FormTypeErrorRenderer?: ComponentType<FormTypeRendererProps>;
   /** FormatError function declared externally */
   formatError?: FormatError;
   /** Error display condition (default: ShowError.DirtyTouched) */

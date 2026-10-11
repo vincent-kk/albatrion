@@ -1,0 +1,138 @@
+{
+  "baseRevision": "1a0176da3d20fe64632be271e0b2975e803a24d8",
+  "sourceTree": "4bfd58fca9170875a5368bbcfc0360cd34539a2e",
+  "bundles": {
+    "prefix": "r129e",
+    "head": "1a0176da3d20fe64632be271e0b2975e803a24d8",
+    "baseRevision": "1a0176da3d20fe64632be271e0b2975e803a24d8",
+    "node": "v26.10.0",
+    "bundles": [
+      {
+        "file": "/private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles/r129e-base.cjs",
+        "revision": "1a0176da3d20fe64632be271e0b2975e803a24d8",
+        "variant": "head",
+        "NODE_ENV": "production",
+        "instrumented": false,
+        "sha256": "66695827fb1d81a9fec6f51b4ac59e78a14e713aa7e7d39589c4a2799acfc80c",
+        "bytes": 962623,
+        "naturalBuildServiceExits": 1,
+        "side": "base",
+        "sourceFile": "/private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles/r129-base.cjs",
+        "aliasOnly": true
+      },
+      {
+        "file": "/private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles/r129e-change.cjs",
+        "revision": "1a0176da3d20fe64632be271e0b2975e803a24d8",
+        "variant": "head",
+        "NODE_ENV": "production",
+        "instrumented": false,
+        "sha256": "d1171e4f7789a83571957ee9ff51888184f445e2ad76fbc200bb91e188997e29",
+        "bytes": 962609,
+        "naturalBuildServiceExits": 1,
+        "side": "change",
+        "sourceFile": "/private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles/r129-fap.cjs",
+        "aliasOnly": true
+      }
+    ],
+    "source129dManifest": "/Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/packages/canard/schema-form/architecture/verification/07-switch/profile-129d-session/bundle-manifest.json",
+    "patchFile": "/private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/fa-prime.patch",
+    "patchSha256": "d9fc910260e8896d0beab25a5c4b98a5e18cfeed50ed5590da6c52e3ffb3a771"
+  },
+  "original129dManifests": {
+    "base": {
+      "prefix": "r129",
+      "head": "1a0176da3d20fe64632be271e0b2975e803a24d8",
+      "baseRevision": "1a0176da3d20fe64632be271e0b2975e803a24d8",
+      "node": "v26.10.0",
+      "nodeBinary": "/opt/homebrew/Cellar/node/26.10.0_2/bin/node",
+      "builder": {
+        "file": "/Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/packages/canard/schema-form/architecture/verification/07-switch/tools/prepare-react-bundles.mjs",
+        "sha256": "70ff9a2141ae70e0acbcc3ff5e3705ea88b0e1fae8edaf72815695b8eeb94482"
+      },
+      "entry": {
+        "file": "/Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/packages/canard/schema-form/architecture/verification/07-switch/tools/measure-react-pair-126.entry.tsx",
+        "sha256": "9b68bda96a97af6ef483c370b43d42305884f98b15f69d9ecf751a92757b57ea"
+      },
+      "preparedAt": "2026-10-08T19:15:30.979Z",
+      "bundles": [
+        {
+          "file": "/private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles/r129-base.cjs",
+          "revision": "1a0176da3d20fe64632be271e0b2975e803a24d8",
+          "variant": "head",
+          "NODE_ENV": "production",
+          "instrumented": false,
+          "sha256": "66695827fb1d81a9fec6f51b4ac59e78a14e713aa7e7d39589c4a2799acfc80c",
+          "bytes": 962623,
+          "naturalBuildServiceExits": 1,
+          "side": "base"
+        },
+        {
+          "file": "/private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles/r129-basex.cjs",
+          "side": "basex",
+          "revision": "1a0176da3d20fe64632be271e0b2975e803a24d8",
+          "derivedFrom": "r129-base.cjs + one trailing comment line",
+          "sha256": "ef9b5003e2debfc2837b5d00ce91133e543ba488205a7d8ffeae67ab84bd999d",
+          "bytes": 962678
+        }
+      ]
+    },
+    "fap": {
+      "baseRevision": "1a0176da3d20fe64632be271e0b2975e803a24d8",
+      "head": "1a0176da3d20fe64632be271e0b2975e803a24d8",
+      "node": "v26.10.0",
+      "nodeBinary": "/opt/homebrew/Cellar/node/26.10.0_2/bin/node",
+      "builder": {
+        "file": "/Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/packages/canard/schema-form/architecture/verification/07-switch/tools/prepare-react-bundles.mjs",
+        "sha256": "70ff9a2141ae70e0acbcc3ff5e3705ea88b0e1fae8edaf72815695b8eeb94482"
+      },
+      "entry": {
+        "file": "/Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/packages/canard/schema-form/architecture/verification/07-switch/tools/measure-react-pair-126.entry.tsx",
+        "sha256": "9b68bda96a97af6ef483c370b43d42305884f98b15f69d9ecf751a92757b57ea"
+      },
+      "patchFile": "/private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/fa-prime.patch",
+      "patchSha256": "d9fc910260e8896d0beab25a5c4b98a5e18cfeed50ed5590da6c52e3ffb3a771",
+      "patchCheckExitCode": 0,
+      "patchCheckStderr": "",
+      "built": true,
+      "productPatchSha256": "15b0b7f082083b810e757121bad4510476e8b30018bdf065542b0f4d2de2fd7a",
+      "overlayFiles": [
+        "packages/canard/schema-form/src/components/SchemaNode/SchemaNodeProxy/SchemaNodeProxy.tsx",
+        "packages/canard/schema-form/src/helpers/formTypeInputDefinition/utils/withFormTypeInputErrorBoundary.tsx",
+        "packages/canard/schema-form/src/helpers/virtualization/VirtualizationManager/VirtualizationManager.ts",
+        "packages/canard/schema-form/src/providers/FormErrorContext/FormErrorPathContext.ts",
+        "packages/canard/schema-form/src/providers/FormErrorContext/index.ts",
+        "packages/canard/schema-form/src/providers/FormErrorContext/useBoundaryReporter.ts",
+        "packages/canard/schema-form/src/providers/FormErrorContext/usePlaceholderBoundaryReporter.ts"
+      ],
+      "deletedFiles": [
+        "packages/canard/schema-form/src/components/SchemaNode/SchemaNodeProxy/components/SchemaNodeField.tsx"
+      ],
+      "loadedFiles": [
+        "packages/canard/schema-form/src/components/SchemaNode/SchemaNodeProxy/SchemaNodeProxy.tsx",
+        "packages/canard/schema-form/src/helpers/formTypeInputDefinition/utils/withFormTypeInputErrorBoundary.tsx",
+        "packages/canard/schema-form/src/helpers/virtualization/VirtualizationManager/VirtualizationManager.ts",
+        "packages/canard/schema-form/src/providers/FormErrorContext/FormErrorPathContext.ts",
+        "packages/canard/schema-form/src/providers/FormErrorContext/index.ts",
+        "packages/canard/schema-form/src/providers/FormErrorContext/useBoundaryReporter.ts",
+        "packages/canard/schema-form/src/providers/FormErrorContext/usePlaceholderBoundaryReporter.ts"
+      ],
+      "bundle": {
+        "file": "/private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles/r129-fap.cjs",
+        "revision": "1a0176da3d20fe64632be271e0b2975e803a24d8",
+        "variant": "head",
+        "NODE_ENV": "production",
+        "instrumented": false,
+        "sha256": "d1171e4f7789a83571957ee9ff51888184f445e2ad76fbc200bb91e188997e29",
+        "bytes": 962609,
+        "naturalBuildServiceExits": 1
+      }
+    }
+  },
+  "aa": {
+    "path": "/private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/profile-129d-raw/react-aa-report.json",
+    "sha256": "6b7bd16ae99dccb2f5e90673eb81b7c39fbf78dfd9ff683c29b1c1042bf6d72e",
+    "sourceRevision": "1a0176da3d20fe64632be271e0b2975e803a24d8",
+    "rows": 304,
+    "verdictRows": 76
+  }
+}

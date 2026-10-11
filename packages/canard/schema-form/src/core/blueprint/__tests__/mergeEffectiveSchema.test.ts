@@ -560,7 +560,7 @@ describe('mergeEffectiveSchema', () => {
       expect(forbidden).toEqual({ schema: false, typeConflict: false });
       expect(
         mergeEffectiveSchema(createEffectiveSchemaNode([false, {}]), []),
-      ).toBe(forbidden);
+      ).not.toBe(forbidden);
     });
   });
 });

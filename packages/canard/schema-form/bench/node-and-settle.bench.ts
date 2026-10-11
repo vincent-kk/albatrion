@@ -14,8 +14,8 @@ import { schemaNodeFactory, SetValueOption } from '../src/core/SchemaNode';
 import type { SchemaNode as RuntimeSchemaNode } from '../src/core/SchemaNode/SchemaNode';
 import { loadSchemaNodeAtMount } from '../src/core/settle';
 import { getGateRegistry } from '../src/core/settle/utils/gates/getGateRegistry';
-import { nodeFromJSONSchema } from '../src/core/nodeFromJSONSchema';
-import type { JSONSchema } from '../src/types';
+import { nodeFromJSONSchema } from '../src/__legacy__/core/nodeFromJSONSchema';
+import type { JSONSchema } from '../src/__legacy__/types';
 
 const noop = () => {};
 const sampleCount = 100;

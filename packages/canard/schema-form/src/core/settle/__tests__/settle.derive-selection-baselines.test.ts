@@ -1,6 +1,6 @@
 import { describe, expect, it, vi } from 'vitest';
 
-import { NodeState } from '../../types/state';
+import { SchemaNodeState } from '../../types/state';
 import { SetValueOption } from '../../types/value';
 import { loadSchemaNodeAtMount, writeSchemaNode } from '../index';
 import { createTestTree } from './fixtures/createTestTree';
@@ -130,12 +130,12 @@ describe('newly selected declaration baselines', () => {
     loadSchemaNodeAtMount(root, { enabled: false, c: false, x: 'keep' },
       SetValueOption.Overwrite);
     const target = root.structure!.x;
-    target.interactionState = { [NodeState.Dirty]: true, [NodeState.Touched]: true };
+    target.interactionState = { [SchemaNodeState.Dirty]: true, [SchemaNodeState.Touched]: true };
     writeSchemaNode(root.structure!.enabled, true, 'input', SetValueOption.Overwrite);
-    expect(target.interactionState[NodeState.Dirty]).toBe(true);
+    expect(target.interactionState[SchemaNodeState.Dirty]).toBe(true);
     writeSchemaNode(root.structure!.c, true, 'input', SetValueOption.Overwrite);
-    expect(target.interactionState[NodeState.Dirty]).toBe(false);
-    expect(target.interactionState[NodeState.Touched]).toBe(false);
+    expect(target.interactionState[SchemaNodeState.Dirty]).toBe(false);
+    expect(target.interactionState[SchemaNodeState.Touched]).toBe(false);
   });
 
   it('FRAGMENT-050 if/then shared injectTo fires on its next source edge', () => {

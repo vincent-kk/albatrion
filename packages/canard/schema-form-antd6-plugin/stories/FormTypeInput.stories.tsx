@@ -4,7 +4,7 @@ import type { Meta, StoryFn } from '@storybook/react-vite';
 
 import {
   Form,
-  type JSONSchemaError,
+  type ValidationIssue,
   registerPlugin,
 } from '@canard/schema-form';
 import { plugin as ajv8Plugin } from '@canard/schema-form-ajv8-plugin';
@@ -35,7 +35,7 @@ export default {
   decorators: [
     (Story, context) => {
       const [value, setValue] = useState<Record<string, unknown>>({});
-      const [errors, setErrors] = useState<JSONSchemaError[]>([]);
+      const [errors, setErrors] = useState<readonly ValidationIssue[]>([]);
       return (
         <StoryLayout
           jsonSchema={context.args.jsonSchema}

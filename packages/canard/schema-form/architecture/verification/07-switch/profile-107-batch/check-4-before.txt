@@ -1,0 +1,51 @@
+(node:80530) [DEP0205] DeprecationWarning: `module.register()` is deprecated. Use `module.registerHooks()` instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+│ ┌────────────────────────────────────────────────────────────────────────────┐
+│ │  Info: Found a setup file with "setProjectAnnotations".                    │
+│ │  Skipping automatic provisioning of preview annotations to avoid           │
+│ │  conflicts. Since Storybook 10.3, "@storybook/addon-vitest" applies these  │
+│ │   automatically.                                                           │
+│ │  You can safely remove the "setProjectAnnotations" call from your setup    │
+│ │  file, or remove the file entirely if you don't have custom code there.    │
+│ └────────────────────────────────────────────────────────────────────────────┘
+
+ RUN  v3.2.6 /Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/packages/canard/schema-form
+
+········stdout | src/core/blueprint/__tests__/blueprint.path-key-once.test.ts > tuple key construction > counts tuple constructions and whole-key re-encoding against HEAD per node
+PATH105 {"fixture":"nested-d5-f4","nodes":1365,"tupleTraversalsBefore":1365,"tupleTraversalsAfter":1365,"wholeKeyEncodingsBefore":2730,"wholeKeyEncodingsAfter":0,"hostKeyReencodingsBefore":1365,"hostKeyReencodingsAfter":0,"producedKeysBefore":2730,"producedKeysAfter":2730}
+PATH105 {"fixture":"flat-500","nodes":501,"tupleTraversalsBefore":501,"tupleTraversalsAfter":501,"wholeKeyEncodingsBefore":1002,"wholeKeyEncodingsAfter":0,"hostKeyReencodingsBefore":501,"hostKeyReencodingsAfter":0,"producedKeysBefore":1002,"producedKeysAfter":1002}
+PATH105 {"fixture":"oneOf-20","nodes":63,"tupleTraversalsBefore":63,"tupleTraversalsAfter":63,"wholeKeyEncodingsBefore":126,"wholeKeyEncodingsAfter":0,"hostKeyReencodingsBefore":63,"hostKeyReencodingsAfter":0,"producedKeysBefore":126,"producedKeysAfter":126}
+PATH105 {"fixture":"sample-0","nodes":3,"tupleTraversalsBefore":3,"tupleTraversalsAfter":3,"wholeKeyEncodingsBefore":6,"wholeKeyEncodingsAfter":0,"hostKeyReencodingsBefore":3,"hostKeyReencodingsAfter":0,"producedKeysBefore":6,"producedKeysAfter":6}
+
+······stdout | src/core/blueprint/__tests__/blueprint.owned-inline-template-scan.test.ts > produces identical escaped lookup bytes with zero JavaScript quote/backslash scan steps
+107COUNT template-key lookups=2 JS-scan-steps=88
+
+x·
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  |unit| src/core/blueprint/__tests__/blueprint.owned-inline-template-scan.test.ts > produces identical escaped lookup bytes with zero JavaScript quote/backslash scan steps
+AssertionError: expected 88 to be +0 // Object.is equality
+
+- Expected
++ Received
+
+- 0
++ 88
+
+ ❯ src/core/blueprint/__tests__/blueprint.owned-inline-template-scan.test.ts:36:17
+     34|   console.log(`107COUNT template-key lookups=${lookups} JS-scan-steps=…
+     35|   expect(lookups).toBeGreaterThan(1);
+     36|   expect(scans).toBe(0);
+       |                 ^
+     37| });
+     38| 
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed | 4 passed (5)
+      Tests  1 failed | 15 passed (16)
+   Start at  04:57:07
+   Duration  2.90s (transform 831ms, setup 0ms, collect 1.77s, tests 321ms, environment 0ms, prepare 179ms)
+

@@ -1,9 +1,6 @@
 import { isArray } from '@winglet/common-utils/filter';
 
-import type {
-  JSONSchemaType,
-  JSONSchemaWithVirtual,
-} from '@/schema-form/types';
+import type { JSONSchemaType } from '@/schema-form/types';
 
 type Return = {
   type: JSONSchemaType;
@@ -12,7 +9,7 @@ type Return = {
 
 export const extractSchemaInfo = <
   Schema extends {
-    type?: JSONSchemaWithVirtual['type'];
+    type?: string | readonly string[];
     nullable?: boolean;
   },
 >(

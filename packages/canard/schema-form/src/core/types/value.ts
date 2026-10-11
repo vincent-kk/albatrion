@@ -5,20 +5,12 @@ import {
   BIT_FLAG_01,
   BIT_FLAG_02,
   BIT_FLAG_03,
-  BIT_FLAG_04,
-  BIT_FLAG_05,
-  BIT_FLAG_06,
-  BIT_FLAG_07,
-  BIT_FLAG_08,
-  BIT_FLAG_09,
-  BIT_FLAG_10,
-  BIT_FLAG_11,
   BIT_MASK_NONE,
 } from '@/schema-form/app/constants';
 
 /**
  * Callback a node invokes to notify its parent of a value change.
- * @remarks `automatic` marks a value the form produced by itself (see `SetValueOption.Automatic`); a parent that is `null` records it without becoming an object.
+ * @remarks `automatic` marks a value the form produced by itself ; a parent that is `null` records it without becoming an object.
  */
 export type HandleChange<Value = any> = Fn<
   [value: Value, batch?: boolean, automatic?: boolean]
@@ -26,49 +18,18 @@ export type HandleChange<Value = any> = Fn<
 
 /** Bit flags controlling how a value application behaves. */
 export enum SetValueOption {
+  /** Internal empty option accumulator. */
   None = BIT_MASK_NONE,
-  /** Replace the current value instead of merging into it — a value equal to the current one is still applied */
+  /** Internal whole-replacement mark for array batch composition. */
   Replace = BIT_FLAG_00,
-  /** Report the new value to the parent through onChange */
-  EmitChange = BIT_FLAG_01,
-  /** Propagate the update to child nodes — read by an object branch only; an array branch always rebuilds its items */
-  Propagate = BIT_FLAG_02,
-  /** Publish RequestRefresh so an uncontrolled FormTypeInput re-reads the value */
-  Refresh = BIT_FLAG_03,
-  /** Report to the parent in batch mode — the parent defers its commit to one batched emit */
-  Batch = BIT_FLAG_04,
-  /** Publish UpdateValue as unsettled (deferred, re-runs computed filtering) and update computed properties at once — read by branch nodes only */
-  Isolate = BIT_FLAG_05,
-  /** Drop the keys the schema does not declare — read by object nodes only */
-  Normalize = BIT_FLAG_06,
-  /** Publish the UpdateValue event */
-  PublishUpdateEvent = BIT_FLAG_07,
-  /** Keep the UpdateValue event from triggering the node's `injectTo` */
-  PreventInjection = BIT_FLAG_08,
-  /** The form wrote this value by itself (default, reset, derived) — it never turns a `null` ancestor into an object */
-  Automatic = BIT_FLAG_09,
-  /** Report to the parent in batch mode without publishing UpdateValue */
-  BatchedEmitChange = EmitChange | Batch,
-  /** Default SetValue option */
-  Default = EmitChange | PublishUpdateEvent,
-  /** Default SetValue option with batch mode */
-  BatchDefault = Batch | Default,
-  /** Reset the node to its initial value */
-  Reset = Replace | Propagate | BatchDefault | PreventInjection | Automatic,
-  /** Reset the node to its initial value and update the computed properties at once */
-  IsolateReset = Reset | Isolate,
-  /** Reset the node to its initial value, normalize it and trigger a refresh */
-  StableReset = Reset | Refresh | Normalize,
-  /** Reset the node in isolation, normalize it and trigger a refresh */
-  IsolateStableReset = StableReset | Isolate,
-  /** Merge into the current value, propagate to children and trigger a refresh */
-  Merge = Propagate | Refresh | Isolate | BatchDefault,
-  /** Replace the value and propagate the update with refresh */
-  Overwrite = Replace | Merge,
+  /** Replace the addressed value, preserving existing node lifetimes. */
+  Overwrite = BIT_FLAG_00,
+  /** Retain omitted object keys while replacing supplied values. */
+  Merge = BIT_FLAG_01,
   /** Suppress automatic writes caused by this call. */
-  DisableAutomaticWrites = BIT_FLAG_10,
-  /** Enable automatic writes for this call even when the form suppresses them. */
-  EnableAutomaticWrites = BIT_FLAG_11,
+  DisableAutomaticWrites = BIT_FLAG_02,
+  /** Enable automatic writes even when the form suppresses them. */
+  EnableAutomaticWrites = BIT_FLAG_03,
 }
 
 /** Subset of `SetValueOption` exposed to consumers of the package. */

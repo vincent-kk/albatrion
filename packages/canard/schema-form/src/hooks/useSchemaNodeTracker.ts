@@ -5,15 +5,15 @@ import { NOOP_FUNCTION } from '@winglet/common-utils/constant';
 import type { Fn } from '@aileron/declare';
 
 import { BIT_MASK_ALL } from '@/schema-form/app/constants';
-import type { NodeListener, UnionNodeEventType } from '@/schema-form/core';
+import type { SchemaNode } from '@/schema-form/core';
 
 /**
  * Re-renders the component whenever the node delivers events matching the mask.
  *
  * Implemented with `useSyncExternalStore` over the node's delivery ledger
  * (`node.revision(mask)`), which makes it safe under React concurrent
- * rendering by contract: node events are microtask-batched, so under a
- * concurrent mount (Suspense retry / transition) the cascade can drain in the
+ * rendering by contract: under a concurrent mount (Suspense retry /
+ * transition) synchronous node delivery can occur in the
  * gap between the render phase and the commit phase — before any subscription
  * exists. React re-checks the snapshot at commit and forces a resync render
  * when it diverged, so deliveries in that gap are never lost.
@@ -24,17 +24,19 @@ import type { NodeListener, UnionNodeEventType } from '@/schema-form/core';
  * catch-up (see `useSchemaNodeSubscribe`'s `onSubscribe` option).
  *
  * @param node - SchemaNode to track (null is allowed and tracks nothing)
- * @param tracking - Bitmask of `NodeEventType`s that trigger a re-render
+ * @param tracking - Bitmask of `SchemaNodeEventType`s that trigger a re-render
  *                   (defaults to all events)
  * @returns Monotonic revision of matching deliveries — usable as a dependency
  *          or key that changes with every tracked delivery
  */
-export const useSchemaNodeTracker = <Node extends {
-  subscribe(listener: NodeListener): Fn;
-  revision(mask?: number): number;
-}>(
+export const useSchemaNodeTracker = <
+  Node extends {
+    subscribe(listener: Parameters<SchemaNode['subscribe']>[0]): Fn;
+    revision(mask?: number): number;
+  },
+>(
   node: Node | null,
-  tracking: UnionNodeEventType = BIT_MASK_ALL,
+  tracking: number = BIT_MASK_ALL,
 ): number => {
   const subscribe = useCallback(
     (onStoreChange: Fn) => {

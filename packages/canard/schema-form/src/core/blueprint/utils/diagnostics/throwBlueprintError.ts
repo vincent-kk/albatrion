@@ -11,7 +11,12 @@ import type { BlueprintErrorCode } from './constant';
  * @param options - Optional diagnostic consumer
  * @returns Never; construction cannot continue with the invalid schema
  */
-export const throwBlueprintError = (
+export const throwBlueprintError: (
+  code: BlueprintErrorCode,
+  schemaPath: string,
+  details?: Record<string, unknown>,
+  options?: Pick<BlueprintOptions, 'collect'>,
+) => never = (
   code: BlueprintErrorCode,
   schemaPath: string,
   details: Record<string, unknown> = {},

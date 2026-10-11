@@ -2,6 +2,7 @@ import type { SchemaNodeRecord } from '../../../record';
 import type { SettlementContext } from '../../type';
 import { getGateRegistry } from '../gates/getGateRegistry';
 import { getDependencyIndex } from './getDependencyIndex';
+import { DirtyPathSet } from './DirtyPathSet';
 
 /**
  * Schedule changed nodes, ancestors, and blueprint reverse dependency owners.
@@ -11,6 +12,8 @@ import { getDependencyIndex } from './getDependencyIndex';
 export const registerRecalculation = <Self extends SchemaNodeRecord<Self>>(
   context: SettlementContext<Self>,
 ): void => {
+  if (!context.hasGates && context.dirtyPaths instanceof DirtyPathSet)
+    context.dirtyPaths.beginPostOrder();
   const blueprint = context.root.runtime.blueprint;
   const dependencies = getDependencyIndex(blueprint);
   for (const changed of context.changedRaw)
@@ -20,9 +23,11 @@ export const registerRecalculation = <Self extends SchemaNodeRecord<Self>>(
       context.shapeDirtyPaths.add(declarationPath.slice(0,
         declarationPath.lastIndexOf('/')));
     }
+  const expanded = new Set<string>();
   for (const path of context.dirtyPaths) {
     let ancestor = path;
-    while (ancestor) {
+    while (ancestor && !expanded.has(ancestor)) {
+      expanded.add(ancestor);
       ancestor = ancestor.slice(0, ancestor.lastIndexOf('/'));
       context.dirtyPaths.add(ancestor);
     }

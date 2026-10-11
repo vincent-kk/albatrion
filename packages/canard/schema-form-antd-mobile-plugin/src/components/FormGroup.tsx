@@ -15,7 +15,7 @@ export const FormGroup = ({
 }: FormTypeRendererProps) => {
   if (depth === 0) return <Input />;
 
-  if (node.group === 'branch') {
+  if (node.strategy === 'branch') {
     return (
       <Space direction="vertical" block>
         <Input />

@@ -1,4 +1,4 @@
-import type { SchemaNode } from '../../../core/types';
+import type { SchemaNode } from '../types';
 import type { ArrayNode } from './ArrayNode';
 import type { BooleanNode } from './BooleanNode';
 import type { NullNode } from './NullNode';

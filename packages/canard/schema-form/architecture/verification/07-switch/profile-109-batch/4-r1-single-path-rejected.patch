@@ -1,0 +1,148 @@
+diff --git a/packages/canard/schema-form/src/core/settle/utils/write/registerRecalculation.ts b/packages/canard/schema-form/src/core/settle/utils/write/registerRecalculation.ts
+--- a/packages/canard/schema-form/src/core/settle/utils/write/registerRecalculation.ts
++++ b/packages/canard/schema-form/src/core/settle/utils/write/registerRecalculation.ts
+@@ -12,24 +12,35 @@
+ export const registerRecalculation = <Self extends SchemaNodeRecord<Self>>(
+   context: SettlementContext<Self>,
+ ): void => {
++  let singlePath = !context.hasGates && context.dirtyPaths.size === 1
++    ? context.dirtyPaths.values().next().value : undefined;
+   if (!context.hasGates && context.dirtyPaths instanceof DirtyPathSet)
+     context.dirtyPaths.beginPostOrder();
+   const blueprint = context.root.runtime.blueprint;
+   const dependencies = getDependencyIndex(blueprint);
+   for (const changed of context.changedRaw)
+     for (const declarationPath of dependencies.affected(changed, context.root)) {
++      if (declarationPath !== singlePath) singlePath = undefined;
+       context.dirtyPaths.add(declarationPath);
+       context.dependencyOwnerPaths.add(declarationPath);
+       context.shapeDirtyPaths.add(declarationPath.slice(0,
+         declarationPath.lastIndexOf('/')));
+     }
+-  const expanded = new Set<string>();
+-  for (const path of context.dirtyPaths) {
+-    let ancestor = path;
+-    while (ancestor && !expanded.has(ancestor)) {
+-      expanded.add(ancestor);
++  if (singlePath !== undefined) {
++    let ancestor = singlePath;
++    while (ancestor) {
+       ancestor = ancestor.slice(0, ancestor.lastIndexOf('/'));
+       context.dirtyPaths.add(ancestor);
++    }
++  } else {
++    const expanded = new Set<string>();
++    for (const path of context.dirtyPaths) {
++      let ancestor = path;
++      while (ancestor && !expanded.has(ancestor)) {
++        expanded.add(ancestor);
++        ancestor = ancestor.slice(0, ancestor.lastIndexOf('/'));
++        context.dirtyPaths.add(ancestor);
++      }
+     }
+   }
+   if (context.hasGates) {
+diff --git a/packages/canard/schema-form/src/core/settle/DETAIL.md b/packages/canard/schema-form/src/core/settle/DETAIL.md
+--- a/packages/canard/schema-form/src/core/settle/DETAIL.md
++++ b/packages/canard/schema-form/src/core/settle/DETAIL.md
+@@ -1,6 +1,8 @@
+ # settle 계약
+ 
+ ## Requirements
++
++- 게이트 없는 등록은 원래 dirty 경로가 하나이고 의존 조회가 다른 경로를 더하지 않으면 그 경로의 조상만 직접 복구합니다. beginPostOrder의 첫 descendant 순서와 의존 질의·dependencyOwner·shapeDirty 입력은 유지하며, 다중 경로·게이트·추가 의존 경로는 기존 중복 제거 확장입니다. 속도 비용은 O(1) 단일 경로 확인과 기존 O(D) 조상 등록이며 별도 expanded Set과 중복 membership/확장 방문을 제거합니다. 메모리 비용은 O(1) 경로 반복자와 local을 쓰고 O(D) 임시 expanded Set을 제거하며 기존 post-order 색인과 새 보유 메모리·문맥 필드·폼 간 공유는 없습니다(109 갱신 R1).
+ 
+ - 분기·파생·잠복 원본이 없고 살아 있는 비루트 scalar의 현재 원본·입력·유효 타입이 같은 경우만 쓰기 진입을 특화합니다. dispose·가상·detach·잠복 검사와 빈 wrong-kind release의 호출을 생략하되 조상 표시와 실제 wrong-kind 처리, 표시·계산·전이 조건·상태 키·커밋·배달 순서는 유지합니다. 이 증명은 빈 derive 검사와 대상 유효 타입 재해석에만 전달하며 실제 생김·이탈·배열·오류 처리는 기존 마감입니다. 속도 비용은 고정 수의 O(1) 타입·capability·size 검사이며 빈 helper·배열·sort callback 및 중복 유효 타입 해석을 제거합니다. 메모리 비용은 호출별 boolean/local만 추가하고 빈 release 임시 배열·closure를 줄이며 새 상주 메모리·문맥 필드·폼 간 공유는 없습니다(109 갱신 F1).
+ 
+diff --git a/packages/canard/schema-form/src/core/settle/__tests__/settle.recalculation-work.test.ts b/packages/canard/schema-form/src/core/settle/__tests__/settle.recalculation-work.test.ts
+new file mode 100644
+--- /dev/null
++++ b/packages/canard/schema-form/src/core/settle/__tests__/settle.recalculation-work.test.ts
+@@ -0,0 +1,87 @@
++import { afterEach, expect, it, vi } from 'vitest';
++
++import { SetValueOption } from '../../types/value';
++import { loadSchemaNodeAtMount } from '../index';
++import { createSettlementContext } from '../utils/settlement/createSettlementContext';
++import { finishSettlement } from '../utils/settlement/finishSettlement';
++import { getSettlementScratch } from '../utils/write/getSettlementScratch';
++import { releaseSettlementScratch } from '../utils/write/releaseSettlementScratch';
++import { markWrite } from '../utils/write/markWrite';
++import { registerRecalculation } from '../utils/write/registerRecalculation';
++import * as dependencies from '../utils/write/getDependencyIndex';
++import { computeNode } from '../utils/compute/computeNode';
++import { createTestTree } from './fixtures/createTestTree';
++
++afterEach(() => { vi.restoreAllMocks(); vi.unstubAllGlobals(); });
++
++it('keeps dependency expansion and ancestor order without allocating a duplicate expansion Set', () => {
++  const { root } = createTestTree({ type: 'object', properties: {
++    group: { type: 'object', properties: { value: { type: 'string' } } },
++  } });
++  loadSchemaNodeAtMount(root, { group: { value: 'before' } }, SetValueOption.Overwrite);
++  const leaf = root.structure!.group.structure!.value;
++  const scratch = getSettlementScratch(root.runtime);
++  const context = createSettlementContext(leaf, 'input', SetValueOption.Overwrite, scratch);
++  markWrite(leaf, 'after', context);
++  const query = vi.spyOn(dependencies, 'getDependencyIndex');
++  const NativeSet = globalThis.Set;
++  let allocated = 0;
++  class CountedSet<T> extends NativeSet<T> {
++    constructor(values?: Iterable<T> | null) { super(values); allocated++; }
++  }
++  vi.stubGlobal('Set', CountedSet);
++  try { registerRecalculation(context); } finally { vi.unstubAllGlobals(); }
++  expect(allocated).toBe(1);
++  expect(query).toHaveBeenCalledTimes(1);
++  expect([...context.dirtyPaths]).toEqual(['/group/value', '/group', '']);
++  expect([...context.dirtyChildrenByParent!.get('/group')!]).toEqual([['/group/value', 'value']]);
++  expect([...context.dirtyChildrenByParent!.get('')!]).toEqual([['/group', 'group']]);
++  computeNode(root, context);
++  finishSettlement(context, scratch);
++  releaseSettlementScratch(scratch);
++  expect(root.emit).toEqual({ group: { value: 'after' } });
++  expect(root.runtime.commitNumber).toBe(2);
++});
++
++it('retains the general expansion and first-descendant order for multiple dirty paths', () => {
++  const { root } = createTestTree({ type: 'object', properties: {
++    left: { type: 'string' }, right: { type: 'string' },
++  } });
++  loadSchemaNodeAtMount(root, { left: 'L', right: 'R' }, SetValueOption.Overwrite);
++  const scratch = getSettlementScratch(root.runtime);
++  const context = createSettlementContext(root.structure!.left, 'input', SetValueOption.Overwrite, scratch);
++  markWrite(root.structure!.left, 'L2', context);
++  markWrite(root.structure!.right, 'R2', context);
++  registerRecalculation(context);
++  expect([...context.dirtyPaths]).toEqual(['/left', '/right', '']);
++  expect([...context.dirtyChildrenByParent!.get('')!]).toEqual([['/left', 'left'], ['/right', 'right']]);
++  computeNode(root, context);
++  finishSettlement(context, scratch);
++  releaseSettlementScratch(scratch);
++  expect(root.emit).toEqual({ left: 'L2', right: 'R2' });
++});
++
++it('keeps the general expansion when a dependency adds another declaration path', () => {
++  const { root } = createTestTree({ type: 'object', properties: {
++    source: { type: 'string' }, dependent: { type: 'string', controls: { watch: ['../source'] } },
++  } });
++  loadSchemaNodeAtMount(root, { source: 'before', dependent: 'D' }, SetValueOption.Overwrite);
++  dependencies.getDependencyIndex(root.runtime.blueprint);
++  const scratch = getSettlementScratch(root.runtime);
++  const context = createSettlementContext(root.structure!.source, 'input', SetValueOption.Overwrite, scratch);
++  markWrite(root.structure!.source, 'after', context);
++  const NativeSet = globalThis.Set;
++  let allocated = 0;
++  class CountedSet<T> extends NativeSet<T> {
++    constructor(values?: Iterable<T> | null) { super(values); allocated++; }
++  }
++  vi.stubGlobal('Set', CountedSet);
++  try { registerRecalculation(context); } finally { vi.unstubAllGlobals(); }
++  expect(allocated).toBe(3);
++  expect([...context.dirtyPaths]).toEqual(['/source', '', '/dependent']);
++  expect([...context.dependencyOwnerPaths]).toEqual(['/dependent']);
++  computeNode(root, context);
++  finishSettlement(context, scratch);
++  releaseSettlementScratch(scratch);
++  expect(root.emit).toEqual({ source: 'after', dependent: 'D' });
++});

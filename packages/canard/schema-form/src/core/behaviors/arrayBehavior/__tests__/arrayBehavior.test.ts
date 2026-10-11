@@ -35,6 +35,7 @@ const makeRecord = (
   schema: { schema: { options }, typeConflict: false },
   interactionState: {}, revisionLedger: EMPTY_REVISION_LEDGER,
     deliveryInitialized: false, deliveryChanges: 0, pendingRevision: 0, detached: false,
+    disposed: false, interactionReset: 0,
 });
 
 // filid:contract array-branch

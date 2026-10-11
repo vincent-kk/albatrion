@@ -2,7 +2,7 @@ import { equals } from '@winglet/common-utils/object';
 
 import type { Nullish } from '@aileron/declare';
 
-import type { ArraySchema, ArrayValue } from '@/schema-form/types';
+import type { ArraySchema, ArrayValue } from '@/schema-form/__legacy__/types';
 
 import {
   type BranchNodeConstructorProps,
@@ -10,7 +10,7 @@ import {
   type SchemaNode,
   SetValueOption,
   type UnionSetValueOption,
-} from '../../../../core/types';
+} from '../../types';
 import { AbstractNode } from '../AbstractNode';
 import {
   type ArrayNodeStrategy,

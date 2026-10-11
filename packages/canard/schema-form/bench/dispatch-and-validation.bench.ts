@@ -11,14 +11,14 @@ import Ajv from 'ajv';
 import type { AnySchema } from 'ajv';
 
 import { blueprint } from '../src/core/blueprint';
-import { nodeFromJSONSchema } from '../src/core/nodeFromJSONSchema';
+import { nodeFromJSONSchema } from '../src/__legacy__/core/nodeFromJSONSchema';
 import { schemaNodeFactory, SetValueOption } from '../src/core/SchemaNode';
 import { SchemaNode } from '../src/core/SchemaNode/SchemaNode';
 import { dispatchMount } from '../src/core/dispatch';
 import { createTestValidator } from '../src/core/__tests__/fixtures/createTestValidator';
 import { ValidationMode } from '../src/core/types/state';
 import type { Validator } from '../src/core/validation';
-import type { JSONSchema } from '../src/types';
+import type { JSONSchema } from '../src/__legacy__/types';
 
 // Load plugin source at runtime without adding it to this composite project's files.
 const pluginSource = new URL('../../schema-form-ajv8-plugin/src/default/validatorPlugin.ts', import.meta.url);

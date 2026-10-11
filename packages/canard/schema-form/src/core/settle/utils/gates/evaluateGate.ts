@@ -2,12 +2,10 @@ import { recordSettlementFailure } from '../errors/recordSettlementFailure';
 import { CONDITIONAL_SCHEMA_WITHOUT_VALIDATOR,
   SchemaFormError, VALIDATOR_MISSING } from '../../../../errors';
 import { isArray } from '@winglet/common-utils/filter';
-import { unescapeSegment } from '@winglet/json/pointer';
 import { hasOwnProperty } from '@winglet/common-utils/lib';
 import type { BlueprintGate } from '../../../blueprint';
 import type { SchemaNodeRecord } from '../../../record';
 import type { SettlementContext } from '../../type';
-import { resolveDependencyPath } from '../paths/resolveDependencyPath';
 import { readProjectedValue } from './readProjectedValue';
 import { EXPRESSION_THREW, GUARD_FAILED } from '../errors/settleErrorCode';
 import { getGateRegistry } from './getGateRegistry';
@@ -32,18 +30,27 @@ export const evaluateGate = <Self extends SchemaNodeRecord<Self>>(
   if (gate.appliesWhen?.some((parentGate) =>
     !evaluateGate(parentGate, context, owner)))
     return false;
-  const hostPath = getGateRegistry(owner.runtime).locate(owner, gate, edgeName).hostPath;
+  const registry = getGateRegistry(owner.runtime);
+  const occurrence = registry.locate(owner, gate, edgeName);
+  const hostPath = occurrence.hostPath;
   const raw = gate.kind === 'active' ? undefined : readProjectedValue(context, hostPath);
   const host = raw !== null && typeof raw === 'object' && !isArray(raw)
     ? raw : {};
   let input: Record<string, unknown> = { ...host };
-  const hostNode = gate.kind === 'active' ? undefined : hostPath === '' ? context.root :
-    hostPath.split('/').slice(1).reduce<Self | undefined>((node, encoded) => {
-      const structure = node?.structure;
-      const name = unescapeSegment(encoded);
-      return structure && hasOwnProperty(structure, name)
-        ? structure[name] : undefined;
-    }, context.root);
+  let hostNode: Self | undefined;
+  if (gate.kind !== 'active') {
+    if (hostPath === owner.path) hostNode = owner;
+    else {
+      hostNode = context.root;
+      const segments = hostPath ? registry.pathSegments(hostPath) : [];
+      for (let index = 0; index < segments.length; index++) {
+        const structure: Record<string, Self> | null | undefined = hostNode?.structure;
+        const name = segments[index];
+        hostNode = structure && hasOwnProperty(structure, name)
+          ? structure[name] : undefined;
+      }
+    }
+  }
   const extra = hostNode?.extras;
   let projectedHost = hostNode !== undefined;
   for (let ancestor: Self | null | undefined = hostNode;
@@ -67,7 +74,9 @@ export const evaluateGate = <Self extends SchemaNodeRecord<Self>>(
         !('values' in condition) || !isArray(condition.values)) return false;
       const value = hasOwnProperty(input, condition.propertyName)
         ? input[condition.propertyName] : undefined;
-      return condition.values.some((candidate: unknown) => Object.is(candidate, value));
+      for (let index = 0; index < condition.values.length; index++)
+        if (condition.values[index] === value) return true;
+      return false;
     }
     if (gate.kind === 'if') {
       const runtime = context.root.runtime;
@@ -81,13 +90,9 @@ export const evaluateGate = <Self extends SchemaNodeRecord<Self>>(
           const record = { level: 'warning' as const,
             code: `SCHEMA_FORM_WARNING.${VALIDATOR_MISSING}` as const,
             message: 'Validation is disabled because no validator was selected' };
-          if (runtime.entryDepth)
-            (runtime.pendingWarningRecords ??= new Map()).set(VALIDATOR_MISSING,
-              record);
-          if (runtime.entryDepth)
-            runtime.chainOccurrences?.push({ kind: 'record', record });
-          else if (runtime.errorReporter?.hasConsumer())
-            runtime.errorReporter.report(record);
+          (runtime.pendingWarningRecords ??= new Map()).set(VALIDATOR_MISSING,
+            record);
+          runtime.chainOccurrences?.push({ kind: 'record', record });
         }
         if (keys && !keys.has(CONDITIONAL_SCHEMA_WITHOUT_VALIDATOR)) {
           keys.add(CONDITIONAL_SCHEMA_WITHOUT_VALIDATOR);
@@ -95,13 +100,9 @@ export const evaluateGate = <Self extends SchemaNodeRecord<Self>>(
             code: `SCHEMA_FORM_WARNING.${CONDITIONAL_SCHEMA_WITHOUT_VALIDATOR}` as const,
             message: 'Conditional schema is inactive without a validator',
             schemaPath: gate.schemaPath };
-          if (runtime.entryDepth)
-            (runtime.pendingWarningRecords ??= new Map()).set(
-              CONDITIONAL_SCHEMA_WITHOUT_VALIDATOR, record);
-          if (runtime.entryDepth)
-            runtime.chainOccurrences?.push({ kind: 'record', record });
-          else if (runtime.errorReporter?.hasConsumer())
-            runtime.errorReporter.report(record);
+          (runtime.pendingWarningRecords ??= new Map()).set(
+            CONDITIONAL_SCHEMA_WITHOUT_VALIDATOR, record);
+          runtime.chainOccurrences?.push({ kind: 'record', record });
         }
         return false;
       }
@@ -114,11 +115,12 @@ export const evaluateGate = <Self extends SchemaNodeRecord<Self>>(
     const expression = blueprint ? getGateExpression(blueprint, gate.schemaPath) :
       undefined;
     if (expression) {
-      const dependencies = expression.dependencies.map((dependency) => {
-        const path = resolveDependencyPath(hostPath, dependency);
-        return path === '@' ? context.root.runtime.context ?? {} :
+      const dependencies = new Array<unknown>(expression.dependencies.length);
+      for (let index = 0; index < expression.dependencies.length; index++) {
+        const path = occurrence.watchPaths[index];
+        dependencies[index] = path === '@' ? context.root.runtime.context ?? {} :
           readProjectedValue(context, path);
-      });
+      }
       return Boolean(expression.evaluate(dependencies));
     }
     return gate.condition === true;

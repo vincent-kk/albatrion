@@ -1,9 +1,9 @@
 import { PathKeyedMap } from '../../../utils/pathIndex/PathKeyedMap';
+import { readSettlementSource } from './utils/readSettlementSource';
 import { getCommittedDeclarationKey } from '../controls/getCommittedDeclarationKey';
 import type { SchemaNodeRecord, TypeMismatchRecord } from '../../../record';
 import { indexSchemaNodeWarning } from '../../../record';
 import { NON_JSON_WHOLE_VALUE, TYPE_MISMATCH } from '../../../../errors';
-import { warnDevelopmentIssue } from '../../../../helpers/warning';
 import type { SettlementContext } from '../../type';
 import { collectNonJsonPaths } from './collectNonJsonPaths';
 import { conversionCandidates } from './conversionCandidates';
@@ -32,11 +32,11 @@ export const commitSettlement = <Self extends SchemaNodeRecord<Self>>(
 ): void => {
   const runtime = context.root.runtime;
   const development = process.env.NODE_ENV !== 'production';
-  snapshotExitedPolicies(context);
-  commitDeriveRules(context);
-  commitExitPolicyValues(context);
+  if (context.exited.size > 0) snapshotExitedPolicies(context);
+  if (runtime.blueprint.capabilities.hasDerive) commitDeriveRules(context);
+  if (runtime.blueprint.capabilities.hasExpressions) commitExitPolicyValues(context);
   if (development) {
-    finalizeDeriveTrace(context);
+    if (context.traceRounds?.length) finalizeDeriveTrace(context);
     runtime.settlementTrace = { entry: { api: context.entryApi ?? context.kind,
       option: context.option },
       rounds: context.traceRounds ?? [],
@@ -44,11 +44,12 @@ export const commitSettlement = <Self extends SchemaNodeRecord<Self>>(
   } else delete runtime.settlementTrace;
   const commit = (runtime.commitNumber ?? 0) + 1;
   runtime.commitNumber = commit;
-  const declarations = runtime.committedDeclarationIds ??= new PathKeyedMap('pair');
-  runtime.committedDeclarationIds = declarations;
-  for (const [node, ids] of context.selectedDeclarationIds)
-    if (!node.detached)
-      declarations.set(getCommittedDeclarationKey(node), ids);
+  if (context.hasGates) {
+    const declarations = runtime.committedDeclarationIds ??= new PathKeyedMap('pair');
+    for (const [node, ids] of context.selectedDeclarationIds)
+      if (!node.detached)
+        declarations.set(getCommittedDeclarationKey(node), ids);
+  }
   if (context.failures?.length && runtime.diagnostics.status !== 'degraded')
     runtime.diagnostics = { status: 'degraded', cause: context.cause,
       ...(context.exceededBudget ? { exceededBudget: context.exceededBudget,
@@ -56,9 +57,14 @@ export const commitSettlement = <Self extends SchemaNodeRecord<Self>>(
       commit };
   const refreshTargets = runtime.refreshTargets ?? new Set<string>();
   refreshTargets.clear();
-  if (context.kind !== 'load')
-    for (const path of context.changedRaw)
-      if (path !== context.target.path) refreshTargets.add(path);
+  const loadScope = context.kind === 'load' ? context.loadScope : undefined;
+  const loadPrefix = loadScope ? `${loadScope.path}/` : '';
+  for (const path of context.changedRaw) {
+    if (loadScope && (path === loadScope.path || path.startsWith(loadPrefix)))
+      continue;
+    if (readSettlementSource(context, path, true) !== 'input')
+      refreshTargets.add(path);
+  }
   runtime.refreshTargets = refreshTargets;
   let warnings: TypeMismatchRecord[] | undefined;
   let warningTasks: Map<Self, () => void> | undefined;
@@ -109,23 +115,17 @@ export const commitSettlement = <Self extends SchemaNodeRecord<Self>>(
         typeof node.raw === 'object' && context.changedRaw.has(node.path)) {
         const innerPaths = collectNonJsonPaths(node.raw, node.path);
         if (innerPaths.length) {
-          if (!runtime.entryDepth)
-            warnDevelopmentIssue({ code: NON_JSON_WHOLE_VALUE,
+          const code = `SCHEMA_FORM_WARNING.${NON_JSON_WHOLE_VALUE}` as const;
+          const key = JSON.stringify([code, node.path]);
+          if (!runtime.warningKeys?.has(key)) {
+            (runtime.warningKeys ??= new Set()).add(key);
+            const record = {
+              level: 'warning', code, path: node.path,
               message: `Whole value at ${node.path} contains non-JSON data`,
-              details: { path: node.path, innerPaths } });
-          else {
-            const code = `SCHEMA_FORM_WARNING.${NON_JSON_WHOLE_VALUE}` as const;
-            const key = JSON.stringify([code, node.path]);
-            if (!runtime.warningKeys?.has(key)) {
-              (runtime.warningKeys ??= new Set()).add(key);
-              const record = {
-                level: 'warning', code, path: node.path,
-                message: `Whole value at ${node.path} contains non-JSON data`,
-                details: { path: node.path, innerPaths },
-              } as const;
-              indexSchemaNodeWarning(runtime, key, node.path, record);
-              runtime.chainOccurrences?.push({ kind: 'record', record });
-            }
+              details: { path: node.path, innerPaths },
+            } as const;
+            indexSchemaNodeWarning(runtime, key, node.path, record);
+            runtime.chainOccurrences?.push({ kind: 'record', record });
           }
         }
       }
@@ -136,14 +136,21 @@ export const commitSettlement = <Self extends SchemaNodeRecord<Self>>(
   runtime.typeMismatchRecords = warnings ? Object.freeze(warnings) : EMPTY_WARNINGS;
   const mismatchMemo = runtime.typeMismatchesMemo ??
     new PathKeyedMap<{ commit: number; paths: readonly string[] }>('path');
-  mismatchMemo.clear();
-  if (runtime.typeMismatchPaths.size === 0)
-    mismatchMemo.set('', { commit, paths: EMPTY_PATHS });
-  else {
+  if (runtime.typeMismatchPaths.size === 0) {
+    const empty = mismatchMemo.get('');
+    if (mismatchMemo.size === 1 && empty?.paths.length === 0)
+      empty.commit = commit;
+    else {
+      mismatchMemo.clear();
+      mismatchMemo.set('', { commit, paths: EMPTY_PATHS });
+    }
+  } else {
+    mismatchMemo.clear();
     const allPaths = [...runtime.typeMismatchPaths].sort();
     mismatchMemo.set('', { commit, paths: Object.freeze(allPaths) });
     const byAncestor = new Map<string, string[]>();
-    for (const path of allPaths) {
+    for (let index = 0; index < allPaths.length; index++) {
+      const path = allPaths[index];
       let ancestor = path;
       while (ancestor) {
         let paths = byAncestor.get(ancestor);

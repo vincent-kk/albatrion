@@ -1,0 +1,1 @@
+export { extractSchemaInfo } from './extractSchemaInfo';

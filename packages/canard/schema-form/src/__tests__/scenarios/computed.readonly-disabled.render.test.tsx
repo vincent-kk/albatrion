@@ -39,16 +39,16 @@ const computedSchema = {
     prepared: { type: 'boolean' },
     name: {
       type: 'string',
-      computed: { readOnly: '!(/prepared)' },
+      controls: { readOnly: '!(/prepared)' },
     },
     age: {
       type: 'number',
-      computed: { disabled: '(../name)===undefined||(../name).length<5' },
+      controls: { disabled: '(../name)===undefined||(../name).length<5' },
     },
     nationality: {
       type: 'string',
       enum: ['', 'US', 'UK', 'JP', 'KR'],
-      computed: { disabled: '(../age)===undefined||(../age)<10' },
+      controls: { disabled: '(../age)===undefined||(../age)<10' },
     },
   },
 } satisfies JSONSchema;
@@ -61,7 +61,7 @@ const selectReadOnlySchema = {
     nationality: {
       type: 'string',
       enum: ['', 'US', 'KR'],
-      computed: { readOnly: '!(/unlock)' },
+      controls: { readOnly: '!(/unlock)' },
     },
   },
 } satisfies JSONSchema;

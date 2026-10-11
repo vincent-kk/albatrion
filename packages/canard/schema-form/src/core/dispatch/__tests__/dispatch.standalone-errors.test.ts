@@ -2,7 +2,7 @@ import { describe, expect, it, vi } from 'vitest';
 
 import { createTestValidator } from '../../__tests__/fixtures/createTestValidator';
 import { SchemaNodeEventType, SchemaNodeRequestType } from '../../record';
-import { NodeState, ValidationMode } from '../../types/state';
+import { SchemaNodeState, ValidationMode } from '../../types/state';
 import type { Validator } from '../../validation';
 import { dispatchMount, dispatchRequest, dispatchSetState, dispatchSetValue,
   subscribeSchemaNode } from '../index';
@@ -72,7 +72,7 @@ describe('standalone wave failures', () => {
         dispatchSetValue(child, 'after');
     });
 
-    expect(() => dispatchSetState(root, { [NodeState.Dirty]: true })).toThrow(failure);
+    expect(() => dispatchSetState(root, { [SchemaNodeState.Dirty]: true })).toThrow(failure);
     expect(child.emit).toBe('after');
     expect(report).toHaveBeenCalledTimes(1);
     expect(report.mock.calls[0][0]).toMatchObject({
@@ -140,7 +140,7 @@ describe('standalone wave failures', () => {
     const failure = new Error('onChange state listener');
     let changed = false;
     runtime.onChange = () => {
-      if (!changed) { changed = true; dispatchSetState(root, { [NodeState.Dirty]: true }); }
+      if (!changed) { changed = true; dispatchSetState(root, { [SchemaNodeState.Dirty]: true }); }
     };
     subscribeSchemaNode(root, (event) => {
       if (event.type & SchemaNodeEventType.UpdateState) dispatchSetValue(b, 'after');

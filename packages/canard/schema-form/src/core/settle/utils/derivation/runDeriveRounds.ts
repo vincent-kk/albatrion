@@ -1,13 +1,16 @@
 import { recordSettlementFailure } from '../errors/recordSettlementFailure';
 import { INVALID_VIRTUAL_NODE_VALUES, SchemaFormError } from '../../../../errors';
 import type { SchemaNodeRecord } from '../../../record';
+import { DeriveConvergenceTargets } from '../../../blueprint';
 import { DERIVE_ROUND_CAP, evaluateDeriveRound } from '../../derive';
+import type { DeriveRoundDecision } from '../../derive';
 import type { SettlementContext } from '../../type';
 import { computeNode } from '../compute/computeNode';
 import { sameValue } from '../compute/sameValue';
 import { BUDGET_EXCEEDED, EXPRESSION_THREW, INJECT_TARGET_MISSING } from '../errors/settleErrorCode';
 import { registerRecalculation } from '../write/registerRecalculation';
 import { collectDeriveSourcePaths } from './collectDeriveSourcePaths';
+import { deriveShadowEvaluation } from './deriveShadowEvaluation';
 import { getDeriveState } from './getDeriveState';
 import { applyDeriveWrite } from './utils/applyDeriveWrite';
 
@@ -23,6 +26,8 @@ const ERROR_LABELS = { expression: 'Derive expression failed',
  * Apply bounded automatic candidates and recalculate before the next decision.
  * @param context - Current write and its reversible automatic log
  * @returns Nothing; failures and applied-round count stay in the settlement
+ * Package Vitest setup owns the module-local shadow switch; passing it through
+ * SettlementContext would expose test-only verification in runtime contracts.
  */
 export const runDeriveRounds = <Self extends SchemaNodeRecord<Self>>(
   context: SettlementContext<Self>,
@@ -53,10 +58,12 @@ export const runDeriveRounds = <Self extends SchemaNodeRecord<Self>>(
         ), failure.kind, [failure.kind, failure.sourcePath,
           failure.targetPath ?? '', failure.schemaPath].join('\u0000'));
       }
-      const changed = decision.writes.filter(
-        (write) => !write.target || write.target.blueprintNode.kind === 'virtual' ||
-          !sameValue(write.target.emit, write.value),
-      );
+      const changed: DeriveRoundDecision<Self>['writes'][number][] = [];
+      for (let index = 0; index < decision.writes.length; index++) {
+        const write = decision.writes[index];
+        if (!write.target || write.target.blueprintNode.kind === 'virtual' ||
+          !sameValue(write.target.emit, write.value)) changed.push(write);
+      }
       if (changed.length === 0) return;
       if ((context.deriveRounds ?? 0) >= DERIVE_ROUND_CAP) {
         recordSettlementFailure(context, new SchemaFormError(
@@ -73,7 +80,11 @@ export const runDeriveRounds = <Self extends SchemaNodeRecord<Self>>(
       context.automaticChanged = false;
       context.automatic = true;
       context.inTransition = true;
-      for (const write of changed) {
+      const terminalTargets = DeriveConvergenceTargets.getOrCollect(context.root.runtime.blueprint);
+      let skipConfirmation = terminalTargets !== undefined && decision.failures.length === 0;
+      for (let index = 0; index < changed.length; index++) {
+        const write = changed[index];
+        if (skipConfirmation && !terminalTargets!.has(write.targetPath)) skipConfirmation = false;
         applyDeriveWrite(write, context);
         state.appliedRanks.set(write.targetPath,
           Math.max(state.appliedRanks.get(write.targetPath) ?? 0, write.rank));
@@ -93,6 +104,16 @@ export const runDeriveRounds = <Self extends SchemaNodeRecord<Self>>(
         return;
       }
       if (context.exceededBudget) return;
+      if (skipConfirmation) {
+        if (deriveShadowEvaluation.enabled) {
+          state.sourcePaths = context.loadScope ? undefined : collectDeriveSourcePaths(context);
+          const confirmation = evaluateDeriveRound(context.root, state);
+          if (confirmation.writes.length !== 0 || confirmation.failures.length !== 0)
+            throw new Error('Derive convergence proof failed: confirmation was not empty');
+        }
+        if (state.trace) (context.traceRounds ??= []).push([]);
+        return;
+      }
     }
   } finally {
     context.automatic = false;

@@ -1,0 +1,34 @@
+--- profile-114-g26/measure-react.mjs	2026-10-07 15:42:38
++++ /private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/measure-react-layer-136k.mjs	2026-10-11 14:45:13
+@@ -8,18 +8,18 @@
+ import path from 'node:path';
+ import { fileURLToPath, pathToFileURL } from 'node:url';
+ 
+-import { instrumentRound93i } from '../tools/instrument-round-93i.mjs';
+-import { instrumentCore } from './instrument-core.mjs';
++import { instrumentRound93i } from 'file:///Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/packages/canard/schema-form/architecture/verification/07-switch/tools/instrument-round-93i.mjs';
++import { instrumentCore } from 'file:///Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/packages/canard/schema-form/architecture/verification/07-switch/profile-114-g26/instrument-core.mjs';
+ 
+-const directory = path.dirname(fileURLToPath(import.meta.url));
+-const repo = path.resolve(directory, '../../../../../../..');
++const directory = '/private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/session-136k-layer';
++const repo = '/Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07';
+ const pkg = path.join(repo, 'packages/canard/schema-form');
+ const bf = path.join(repo, 'packages/aileron/benchmark-form');
+ const bfRequire = createRequire(path.join(bf, 'package.json'));
+ const pkgRequire = createRequire(path.join(pkg, 'package.json'));
+ const head = execFileSync('git', ['rev-parse', 'HEAD'], { cwd: repo, encoding: 'utf8' }).trim();
+ assert.equal(repo, '/Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07');
+-assert.equal(head, 'af3cd579b892393de3693f737afe68cfce3993f8');
++assert.equal(head, 'f4e6aeb1b9abc9e8db5c2a4b26de023b4fe6b16f');
+ const started = performance.now();
+ const lane = process.argv.includes('--phases') ? 'phases' : 'plain';
+ const fixtureName = process.argv[3];
+@@ -137,6 +137,7 @@
+     ` }, write: false, sourcemap: false, bundle: true, packages: 'external', platform: 'node',
+       format: 'cjs', jsx: 'automatic', define: { 'process.env.NODE_ENV': '"production"' },
+       plugins: [{ name: 'g26-current-source', setup(builder) {
++        builder.onResolve({ filter: /^@canard\/schema-form_0\.16\.0$/ }, () => ({ path: pathToFileURL(oldEsmEntry).href, external: true }));
+         builder.onResolve({ filter: /^@canard\/schema-form$/ }, () => ({ path: path.join(pkg, 'src/index.ts') }));
+         builder.onResolve({ filter: /^react-dom\/client$/ }, () => ({ path: bfRequire.resolve('react-dom/profiling'), external: true }));
+         builder.onResolve({ filter: /^@\/schema-form/ }, args => {

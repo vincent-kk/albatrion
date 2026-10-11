@@ -79,6 +79,7 @@ const makeRecord = (): SchemaNodeRecord<PathNode> => {
     revisionLedger: EMPTY_REVISION_LEDGER,
     deliveryInitialized: false, deliveryChanges: 0, pendingRevision: 0,
     detached: false,
+    disposed: false, interactionReset: 0,
   };
 };
 

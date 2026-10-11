@@ -156,6 +156,17 @@ describe('settle commit', () => {
     expect(root.structure!.a.revisionLedger).toBe(revision);
   });
 
+  it('EVENT-071 refreshes a caller-written leaf and excludes only the input-origin leaf', () => {
+    const { root } = createTestTree({ type: 'object', properties: {
+      a: { type: 'string' },
+    } });
+    writeSchemaNode(root, { a: 'old' }, 'callerReplace', SetValueOption.Overwrite);
+    writeSchemaNode(root.structure!.a, 'caller', 'callerReplace', SetValueOption.Overwrite);
+    expect([...root.runtime.refreshTargets!]).toEqual(['/a']);
+    writeSchemaNode(root.structure!.a, 'typed', 'input', SetValueOption.Overwrite);
+    expect(root.runtime.refreshTargets?.size).toBe(0);
+  });
+
   it('WRITE-087 memoizes frozen inactive values after a gate leaves', () => {
     const { root } = createTestTree({ type: 'object', properties: {
       flag: { type: 'boolean' },
@@ -436,12 +447,17 @@ describe('settle commit', () => {
     const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
     const first = createTestTree({ type: 'object', options: { terminal: true } }).root;
     writeSchemaNode(first, { bad: undefined }, 'callerReplace', SetValueOption.Overwrite);
-    expect(warn.mock.calls.some((call) => String(call[0]).includes('NON_JSON_WHOLE_VALUE')))
-      .toBe(true);
+    expect(warn).not.toHaveBeenCalled();
+    expect([...first.runtime.pendingWarningRecords?.values() ?? []])
+      .toEqual([expect.objectContaining({
+        code: 'SCHEMA_FORM_WARNING.NON_JSON_WHOLE_VALUE',
+        details: { path: '', innerPaths: ['/bad'] },
+      })]);
     warn.mockClear();
     vi.stubEnv('NODE_ENV', 'production');
     const second = createTestTree({ type: 'object', options: { terminal: true } }).root;
     writeSchemaNode(second, { bad: undefined }, 'callerReplace', SetValueOption.Overwrite);
     expect(warn).not.toHaveBeenCalled();
+    expect(second.runtime.pendingWarningRecords?.size ?? 0).toBe(0);
   });
 });

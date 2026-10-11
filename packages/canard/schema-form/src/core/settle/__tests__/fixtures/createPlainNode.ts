@@ -62,5 +62,6 @@ export const createPlainNode = (
     deliveryInitialized: false, deliveryChanges: 0,
     pendingDelivery: undefined, pendingRevision: 0,
     pendingNonSettleDelivery: undefined, detached: false,
+    disposed: false, interactionReset: 0,
   };
 };

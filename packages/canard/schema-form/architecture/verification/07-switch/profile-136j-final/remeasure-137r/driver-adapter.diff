@@ -1,0 +1,84 @@
+--- ../session-136j/driver.mjs	2026-10-11 12:31:07
++++ driver.mjs	2026-10-11 15:00:12
+@@ -5,7 +5,7 @@
+ import path from 'node:path';
+ import {createHash} from 'node:crypto';
+ import {spawnSync,execFileSync} from 'node:child_process';
+-const W="/Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07", D="/Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/packages/canard/schema-form/architecture/verification/07-switch", T="/private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/session-136j", H="069a1d272de2365865ca5ca0c8210d0d2edd8a14", N="/Users/Vincent/.nvm/versions/node/v26.11.1/bin/node";
++const W="/Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07", D="/Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/packages/canard/schema-form/architecture/verification/07-switch", T="/private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/session-137r", H="875e0e770a402292bfb06c0fe78810e700364524", N="/Users/Vincent/.nvm/versions/node/v26.11.1/bin/node";
+ const started=new Date().toISOString(), start=performance.now(), log=[];
+ const raw=T+'/raw', bundles=T+'/bundles';
+ for(const dir of [raw,raw+'/core',raw+'/logs',bundles])fs.mkdirSync(dir,{recursive:true});
+@@ -32,7 +32,7 @@
+ branchAdapterSha256:hash(fs.readFileSync(T+'/branch-worker.mjs')),checkProbeChange:'112 forced-zero/preSentinel checks adapted to current independent paired-empty-tail column'},null,2));
+ let ordinal=0;
+ function run(label,args,{expectedFailure=false,save=null}={}){
+-  progress(label,ordinal,178,label);const childStarted=new Date().toISOString(), t=performance.now();
++  progress(label,ordinal,138,label);const childStarted=new Date().toISOString(), t=performance.now();
+   const r=spawnSync(N,args,{cwd:W,env,encoding:'utf8',maxBuffer:8_000_000});
+   const ended=new Date().toISOString();
+   fs.writeFileSync(raw+'/logs/'+label+'.stdout',r.stdout??'');
+@@ -62,57 +62,29 @@
+     const sources=Object.fromEntries(Object.entries(summary.releaseSources).sort(([a],[b])=>a.localeCompare(b)));
+     const id=hash(JSON.stringify(sources));releaseSourceSets[id]??=sources;delete summary.releaseSources;
+     records.push({...summary,releaseSourceSet:id,timingFile,workerExit:{code:entry.code,signal:entry.signal,natural:entry.natural}});
+-    ordinal++;progress('core',ordinal,178,label);console.log(ordinal+'/178 '+label+' '+entry.elapsedMs.toFixed(0)+'ms');
++    ordinal++;progress('core',ordinal,138,label);console.log(ordinal+'/178 '+label+' '+entry.elapsedMs.toFixed(0)+'ms');
+   }
+   const coreEnded=new Date().toISOString(),coreWallTimeMs=performance.now()-coreStart;
+   fs.writeFileSync(raw+'/manifest.json',JSON.stringify({records,jobs,releaseSourceSets,discardedPartialRuns:[],
+     toolChecks:log.slice(0,4),preliminaryProcesses:[],preliminaryNote:'Direct Node, no yarn exec; no discarded measurements.'}));
+-  const branchStarted=new Date().toISOString(),branchStart=performance.now();
+-  for(let runNo=1;runNo<=9;runNo++)for(const size of [5,10,20,40]){
+-    const {entry}=run('cpu-oneOf-'+size+'-r'+runNo,['--expose-gc',T+'/branch-worker.mjs','cpu',String(size),String(runNo)]);
+-    ordinal++;progress('branch-cpu',ordinal,178,'oneOf-'+size+' r'+runNo);console.log(ordinal+'/178 CPU oneOf-'+size+' r'+runNo+' '+entry.elapsedMs.toFixed(0)+'ms');
+-  }
+-  for(const size of [5,10,20,40]){
+-    const {entry}=run('counts-oneOf-'+size+'-r1',['--expose-gc',T+'/branch-worker.mjs','counts',String(size),'1']);
+-    ordinal++;progress('branch-counts',ordinal,178,'oneOf-'+size);console.log(ordinal+'/178 counts oneOf-'+size+' '+entry.elapsedMs.toFixed(0)+'ms');
+-  }
+-  const branchEnded=new Date().toISOString(),branchWallTimeMs=performance.now()-branchStart;
+   run('row-check',[T+'/check-report-row.mjs']);
+   const {r:report}=run('canonical-report',[T+'/report-core.mjs','--transport'],{save:raw+'/reporter-output.json'});
+   const summary=JSON.parse(report.stdout).summary;
+   assert.deepEqual([summary.officialRows.length,summary.updateSplitRows.length,summary.branchAxisRows.length],[46,46,16]);
+-  run('branch-analysis',[T+'/analyze.mjs']);
+-  for(const name of fs.readdirSync(bundles).filter(n=>/^(cpu|counts)-oneOf-.*\.json$/.test(n))){
+-    const data=JSON.parse(fs.readFileSync(bundles+'/'+name));
+-    assert.equal(data.head,H);assert.equal(data.node,process.version);assert.equal(data.v8,process.versions.v8);
+-    for(const source of data.sources)assert.equal(hash(fs.readFileSync(path.resolve(D,'../../..',source.path))),source.sha256,'Measured source changed');
+-  }
+   const after=capture();assert.deepEqual(after,before,'Environment/source/index changed');assert.equal(git(['status','--porcelain']),'');
+   for(let i=1;i<log.length;i++)assert(Date.parse(log[i].started)>=Date.parse(log[i-1].ended),'Child overlap');
+   const audit={engine:'codex',tier:'high',head:H,node:process.version,v8:process.versions.v8,cpu:os.cpus()[0].model,
+     started,ended:new Date().toISOString(),wallTimeMs:performance.now()-start,coreStarted,coreEnded,coreWallTimeMs,
+-    branchStarted,branchEnded,branchWallTimeMs,measurementWorkers:178,coreWorkers:138,cpuWorkers:36,countWorkers:4,
+-    concurrency:1,allMeasurementWorkersNaturallyExitedZero:true,overlapCheckPassed:true,maxWorkerMs:Math.max(...log.filter(x=>/^(core-|cpu-|counts-)/.test(x.label)).map(x=>x.elapsedMs)),
++    measurementWorkers:138,coreWorkers:138,cpuWorkers:0,countWorkers:0,scope:'137C-01 core-only rerun; branch axis not re-measured',
++    concurrency:1,allMeasurementWorkersNaturallyExitedZero:true,overlapCheckPassed:true,maxWorkerMs:Math.max(...log.filter(x=>/^core-/.test(x.label)).map(x=>x.elapsedMs)),
+     before,after,processes:log,noGitWrites:true,noInstalls:true,noProductChanges:true,nodeChangeFrom111:'v26.10.0 / 14.6.202.34-node.35 -> v26.11.1 / '+process.versions.v8,
+     wallTimeScope:'Background driver start through analysis and final source audit; excludes renderer/publishing',
+     preparationExceptions:['Read-source command syntax typo corrected before measurement; no sample loss.']};
+   fs.writeFileSync(raw+'/audit.json',JSON.stringify(audit));
+-  run('render-report',[T+'/render-report.mjs']);
+-  const previousEnded=audit.ended,previousWall=audit.wallTimeMs;
+-  audit.ended=new Date().toISOString();audit.wallTimeMs=performance.now()-start;
+-  audit.wallTimeScope='Background driver start through renderer natural exit; excludes publication';
+-  fs.writeFileSync(raw+'/audit.json',JSON.stringify(audit));
+-  fs.writeFileSync(T+'/publish/profile-136j-final/audit.json',JSON.stringify(audit,null,2));
+-  const finalReport=T+'/publish/profile-136j-final.md';
+-  fs.writeFileSync(finalReport,fs.readFileSync(finalReport,'utf8').replace('**'+(previousWall/60000).toFixed(3)+'분**','**'+(audit.wallTimeMs/60000).toFixed(3)+'분**').replace(previousEnded,audit.ended));
+-  const finalIndex=JSON.parse(fs.readFileSync(T+'/publish/profile-136j-final/artifact-index.json'));
+-  for(const file of finalIndex.files){const bytes=fs.readFileSync(T+'/publish/'+file.path);file.bytes=bytes.length;file.sha256=hash(bytes);assert(bytes.length<5_000_000);}
+-  finalIndex.maxBytes=Math.max(...finalIndex.files.map(f=>f.bytes));
+-  fs.writeFileSync(T+'/publish/profile-136j-final/artifact-index.json',JSON.stringify(finalIndex,null,2));
+-  fs.writeFileSync(raw+'/driver-completion.json',JSON.stringify({ended:new Date().toISOString(),fullDriverWallMs:performance.now()-start,processes:log.length,measurementWorkers:178}));
+-  progress('complete',178,178,'Report staged at '+T+'/publish/profile-136j-final.md');
++  fs.writeFileSync(raw+'/driver-completion.json',JSON.stringify({ended:new Date().toISOString(),fullDriverWallMs:performance.now()-start,processes:log.length,measurementWorkers:138}));
++  progress('complete',138,178,'Core rerun complete');
+ }catch(error){
+-  progress('failed',ordinal,178,String(error.stack??error));
++  progress('failed',ordinal,138,String(error.stack??error));
+   console.error(error.stack??error);
+   process.exitCode=1;
+ }

@@ -9,6 +9,7 @@
 - 옵션과 backfill 값의 계약은 resolveVirtualizationOptions 진입점에서 소비하며 부모의 집계 진입점이나 호환 타입 파일을 역참조하지 않습니다.
 - create는 비활성 또는 관찰 API 부재 시 null입니다. forBranch와 forChild는 설정에 맞는 대상일 때만 매니저를 반환합니다.
 - 노출은 등록 삭제와 unobserve 후 콜백 실행으로 이어집니다. idle backfill은 지정된 모드에서만 시작합니다.
+- Placeholder 경계는 폼마다 한 번 감싸고 전용 보고 훅으로 DeferrableNodeProxy가 제공하는 경로 문맥을 읽습니다. 경로 문맥은 이 Placeholder 용도로만 유지하며, 일반 필드는 path를 명시적으로 전달합니다(ERROR-090·114, 121C-01 F-A). Placeholder의 fiber와 보고 비용은 바뀌지 않습니다.
 
 ## Acceptance Criteria
 
@@ -19,4 +20,4 @@
 
 ## Last Updated
 
-2026-09-16
+2026-10-08 — ERROR-090·114, 121C-01 F-A.

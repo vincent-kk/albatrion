@@ -23,17 +23,17 @@ import type {
 import type { ValidatorPlugin } from './type';
 
 interface RenderKit {
-  FormGroup: ComponentType<FormTypeRendererProps>;
-  FormLabel: ComponentType<FormTypeRendererProps>;
-  FormInput: ComponentType<FormTypeRendererProps>;
-  FormError: ComponentType<FormTypeRendererProps>;
+  FormTypeGroupRenderer: ComponentType<FormTypeRendererProps>;
+  FormTypeLabelRenderer: ComponentType<FormTypeRendererProps>;
+  FormTypeInputRenderer: ComponentType<FormTypeRendererProps>;
+  FormTypeErrorRenderer: ComponentType<FormTypeRendererProps>;
 }
 
 const defaultRenderKit = {
-  FormGroup: FormGroupRenderer,
-  FormLabel: FormLabelRenderer,
-  FormInput: FormInputRenderer,
-  FormError: FormErrorRenderer,
+  FormTypeGroupRenderer: FormGroupRenderer,
+  FormTypeLabelRenderer: FormLabelRenderer,
+  FormTypeInputRenderer: FormInputRenderer,
+  FormTypeErrorRenderer: FormErrorRenderer,
 } as const;
 
 const defaultFormTypeInputDefinitions =
@@ -42,17 +42,17 @@ const defaultFormTypeInputDefinitions =
 export class PluginManager {
   private static __renderKit__: RenderKit = defaultRenderKit;
 
-  static get FormGroup() {
-    return PluginManager.__renderKit__.FormGroup;
+  static get FormTypeGroupRenderer() {
+    return PluginManager.__renderKit__.FormTypeGroupRenderer;
   }
-  static get FormLabel() {
-    return PluginManager.__renderKit__.FormLabel;
+  static get FormTypeLabelRenderer() {
+    return PluginManager.__renderKit__.FormTypeLabelRenderer;
   }
-  static get FormInput() {
-    return PluginManager.__renderKit__.FormInput;
+  static get FormTypeInputRenderer() {
+    return PluginManager.__renderKit__.FormTypeInputRenderer;
   }
-  static get FormError() {
-    return PluginManager.__renderKit__.FormError;
+  static get FormTypeErrorRenderer() {
+    return PluginManager.__renderKit__.FormTypeErrorRenderer;
   }
 
   static appendRenderKit(renderKit: Partial<RenderKit> | undefined) {

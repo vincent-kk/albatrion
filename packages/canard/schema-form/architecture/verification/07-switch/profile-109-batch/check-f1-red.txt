@@ -1,0 +1,131 @@
+(node:81510) [DEP0205] DeprecationWarning: `module.register()` is deprecated. Use `module.registerHooks()` instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+│ ┌────────────────────────────────────────────────────────────────────────────┐
+│ │  Info: Found a setup file with "setProjectAnnotations".                    │
+│ │  Skipping automatic provisioning of preview annotations to avoid           │
+│ │  conflicts. Since Storybook 10.3, "@storybook/addon-vitest" applies these  │
+│ │   automatically.                                                           │
+│ │  You can safely remove the "setProjectAnnotations" call from your setup    │
+│ │  file, or remove the file entirely if you don't have custom code there.    │
+│ └────────────────────────────────────────────────────────────────────────────┘
+
+ RUN  v3.2.6 /Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/packages/canard/schema-form
+
+x·
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  |unit| src/core/settle/__tests__/settle.scalar-entry-work.test.ts > removes fixed writable, latent, wrong-kind and effective-type work on normal scalar writes
+AssertionError: expected "assertSchemaNodeWritable" to not be called at all, but actually been called 2 times
+
+Received: 
+
+  1st assertSchemaNodeWritable call:
+
+    Array [
+      Object {
+        "active": true,
+        "behavior": [Object],
+        "blueprintNode": [Object],
+        "children": null,
+        "deliveryChanges": 0,
+        "deliveryInitialized": true,
+        "deliveryPreviousEmit": undefined,
+        "deliveryPreviousLocal": undefined,
+        "depth": 1,
+        "detached": false,
+        "disabled": false,
+        "disposed": false,
+        "emit": "later",
+        "escapedName": "value",
+        "extras": undefined,
+        "interactionReset": 0,
+        "interactionState": [Object],
+        "itemCount": 0,
+        "itemKey": null,
+        "local": "later",
+        "name": "value",
+        "nextItemKey": 0,
+        "nullable": false,
+        "parent": [Object],
+        "path": "/value",
+        "pendingDelivery": [Object],
+        "pendingNonSettleDelivery": undefined,
+        "pendingRevision": 0,
+        "raw": "later",
+        "readOnly": false,
+        "required": false,
+        "revisionLedger": [SchemaNodeRevisionLedger],
+        "rootNode": [Object],
+        "runtime": [Object],
+        "schema": [Object],
+        "schemaType": "string",
+        "structure": null,
+        "visible": true,
+      },
+    ]
+
+  2nd assertSchemaNodeWritable call:
+
+    Array [
+      Object {
+        "active": true,
+        "behavior": [Object],
+        "blueprintNode": [Object],
+        "children": null,
+        "deliveryChanges": 0,
+        "deliveryInitialized": true,
+        "deliveryPreviousEmit": undefined,
+        "deliveryPreviousLocal": undefined,
+        "depth": 1,
+        "detached": false,
+        "disabled": false,
+        "disposed": false,
+        "emit": "later",
+        "escapedName": "value",
+        "extras": undefined,
+        "interactionReset": 0,
+        "interactionState": [Object],
+        "itemCount": 0,
+        "itemKey": null,
+        "local": "later",
+        "name": "value",
+        "nextItemKey": 0,
+        "nullable": false,
+        "parent": [Object],
+        "path": "/value",
+        "pendingDelivery": [Object],
+        "pendingNonSettleDelivery": undefined,
+        "pendingRevision": 0,
+        "raw": "later",
+        "readOnly": false,
+        "required": false,
+        "revisionLedger": [SchemaNodeRevisionLedger],
+        "rootNode": [Object],
+        "runtime": [Object],
+        "schema": [Object],
+        "schemaType": "string",
+        "structure": null,
+        "visible": true,
+      },
+    ]
+
+
+Number of calls: 2
+
+ ❯ src/core/settle/__tests__/settle.scalar-entry-work.test.ts:27:30
+     25|     expect(root.emit).toEqual({ value, sibling: 3 });
+     26|   }
+     27|   expect(assertWritable).not.toHaveBeenCalled();
+       |                              ^
+     28|   expect(prune).not.toHaveBeenCalled();
+     29|   expect(release).not.toHaveBeenCalled();
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 1 passed (2)
+   Start at  08:08:07
+   Duration  1.38s (transform 736ms, setup 0ms, collect 1.19s, tests 26ms, environment 0ms, prepare 35ms)
+

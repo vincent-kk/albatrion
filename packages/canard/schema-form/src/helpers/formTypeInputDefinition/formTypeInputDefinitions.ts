@@ -4,7 +4,6 @@ import {
   isPlainObject,
 } from '@winglet/common-utils/filter';
 import { isReactComponent } from '@winglet/react-utils/filter';
-import { withErrorBoundary } from '@winglet/react-utils/hoc';
 
 import type {
   FormTypeInputDefinition,
@@ -13,46 +12,74 @@ import type {
 } from '@/schema-form/types';
 
 import type { NormalizedFormTypeInputDefinition } from './type';
+import { withFormTypeInputErrorBoundary } from './utils/withFormTypeInputErrorBoundary';
 
-/**
- * Normalizes form type input definitions.
- * @param formTypeInputDefinitions - Form type input definitions
- * @returns Normalized form type input definitions
- */
+/** Keep wrappers and one-time diagnostics at the definition's ownership point. */
+const cache = new WeakMap<
+  FormTypeInputDefinition,
+  NormalizedFormTypeInputDefinition
+>();
+/** The matching surface deliberately excludes extensions and mismatch state. */
+const testKeys = [
+  'type',
+  'schemaType',
+  'path',
+  'required',
+  'nullable',
+  'format',
+  'formType',
+];
+
+/** Normalize definitions in priority order, warning once for invalid object-test keys. */
 export const normalizeFormTypeInputDefinitions = (
-  formTypeInputDefinitions?: FormTypeInputDefinition[],
+  definitions?: FormTypeInputDefinition[],
 ): NormalizedFormTypeInputDefinition[] => {
-  if (!formTypeInputDefinitions) return [];
   const result: NormalizedFormTypeInputDefinition[] = [];
-  for (const { Component, test } of formTypeInputDefinitions) {
-    if (!isReactComponent(Component)) continue;
-    if (isFunction(test))
-      result.push({
-        test,
-        Component: withErrorBoundary(Component),
-      });
-    else if (isPlainObject(test)) {
-      result.push({
-        test: formTypeTestFnFactory(test),
-        Component: withErrorBoundary(Component),
-      });
+  for (const definition of definitions ?? []) {
+    if (cache.has(definition)) {
+      result.push(cache.get(definition)!);
+      continue;
     }
+    const { Component, test } = definition;
+    if (
+      !isReactComponent(Component) ||
+      (!isFunction(test) && !isPlainObject(test))
+    )
+      continue;
+    if (!isFunction(test)) {
+      const invalid = Object.keys(test).filter(
+        (key) => !testKeys.includes(key),
+      );
+      const types: readonly unknown[] = isArray(test.type)
+        ? test.type
+        : [test.type];
+      if (types.includes('integer')) invalid.push('type:integer');
+      if (invalid.length && process.env.NODE_ENV !== 'production')
+        console.warn('SCHEMA_FORM_WARNING.FORM_TYPE_TEST_INVALID', {
+          definition,
+          invalid,
+        });
+    }
+    const normalized = {
+      test: isFunction(test) ? test : formTypeTestFnFactory(test),
+      Component: withFormTypeInputErrorBoundary(Component),
+    };
+    cache.set(definition, normalized);
+    result.push(normalized);
   }
   return result;
 };
 
 const formTypeTestFnFactory = (test: FormTypeTestObject): FormTypeTestFn => {
-  const keys = Object.keys(test);
-  return (hint) => {
-    for (let i = 0, k = keys[0], l = keys.length; i < l; i++, k = keys[i]) {
-      const reference = test[k as keyof FormTypeTestObject];
-      const subject = hint[k as keyof FormTypeTestObject];
-      if (isArray(reference)) {
-        if (reference.indexOf(subject as any) === -1) return false;
-      } else {
-        if (reference !== subject) return false;
-      }
-    }
-    return true;
-  };
+  const keys = Object.keys(test).filter((key) =>
+    testKeys.includes(key),
+  ) as (keyof FormTypeTestObject)[];
+  return (hint) =>
+    keys.every((key) => {
+      const reference: unknown = test[key],
+        subject: unknown = hint[key];
+      return isArray(reference)
+        ? reference.includes(subject)
+        : reference === subject;
+    });
 };

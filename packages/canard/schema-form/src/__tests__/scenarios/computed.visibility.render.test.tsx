@@ -35,7 +35,7 @@ const visiblePreserveSchema = {
     optionalVisible: {
       type: 'string',
       default: 'init',
-      '&visible': '../showOptional === true',
+      controls: { visible: '../showOptional === true' },
     },
     always: { type: 'string' },
   },
@@ -49,7 +49,7 @@ const activeRemoveSchema = {
     optionalActive: {
       type: 'string',
       default: 'init',
-      '&active': '../enableOptional === true',
+      controls: { active: '../enableOptional === true' },
     },
   },
 } satisfies JSONSchema;
@@ -59,8 +59,8 @@ const discriminatorSchema = {
   type: 'object',
   properties: {
     category: { type: 'string', enum: ['game', 'movie'], default: 'game' },
-    openingDate: { type: 'string', '&visible': '../category === "game"' },
-    releaseDate: { type: 'string', '&visible': '../category === "movie"' },
+    openingDate: { type: 'string', controls: { visible: '../category === "game"' }},
+    releaseDate: { type: 'string', controls: { visible: '../category === "movie"' }},
   },
 } satisfies JSONSchema;
 
@@ -72,7 +72,7 @@ const watchVisibleSchema = {
     detail: {
       type: 'string',
       default: 'd',
-      computed: {
+      controls: {
         visible: '../trigger === "on"',
         watch: ['../trigger'],
       },
@@ -85,8 +85,8 @@ const visibleVsActiveSchema = {
   type: 'object',
   properties: {
     mode: { type: 'string', enum: ['visible', 'active'], default: 'visible' },
-    visibleField: { type: 'string', '&visible': '../mode === "visible"' },
-    activeField: { type: 'string', '&active': '../mode === "visible"' },
+    visibleField: { type: 'string', controls: { visible: '../mode === "visible"' }},
+    activeField: { type: 'string', controls: { active: '../mode === "visible"' }},
   },
 } satisfies JSONSchema;
 

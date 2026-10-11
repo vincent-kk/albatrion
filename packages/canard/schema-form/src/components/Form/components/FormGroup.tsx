@@ -20,14 +20,14 @@ import type {
 export type FormGroupProps<Value extends AllowedValue> = {
   path?: string;
   FormTypeInput?: ComponentType<FormTypeInputProps<Value>>;
-  FormTypeRenderer?: ComponentType<FormTypeRendererProps>;
+  FormTypeGroupRenderer?: ComponentType<FormTypeRendererProps>;
   Wrapper?: ComponentType<PropsWithChildren<Dictionary>>;
 } & ChildNodeComponentProps;
 
 /**
  * Renders a complete form field group with customizable input and renderer components.
  *
- * Combines FormTypeInput and FormTypeRenderer to create a cohesive field experience,
+ * Combines FormTypeInput and FormTypeGroupRenderer to create a cohesive field experience,
  * typically including label, input, error messages, and any additional UI elements.
  * Allows overriding default components for specialized field types.
  *
@@ -95,7 +95,7 @@ export type FormGroupProps<Value extends AllowedValue> = {
  *
  * <Form.Group
  *   path="/address"
- *   FormTypeRenderer={AddressRenderer}
+ *   FormTypeGroupRenderer={AddressRenderer}
  * />
  * ```
  */
@@ -103,14 +103,14 @@ export const FormGroup = memo(
   ({
     path,
     FormTypeInput,
-    FormTypeRenderer,
+    FormTypeGroupRenderer,
     Wrapper,
     ...restProps
   }: FormGroupProps<AllowedValue>) => {
     const overridePropsRef = useReference(restProps);
     const constant = useConstant({
       FormTypeInput: FormTypeInput as ComponentType<FormTypeInputProps>,
-      FormTypeRenderer,
+      FormTypeGroupRenderer,
       Wrapper,
     });
     return (
@@ -118,7 +118,7 @@ export const FormGroup = memo(
         path={path}
         overridePropsRef={overridePropsRef}
         FormTypeInput={constant.FormTypeInput}
-        FormTypeRenderer={constant.FormTypeRenderer}
+        FormTypeGroupRenderer={constant.FormTypeGroupRenderer}
         Wrapper={constant.Wrapper}
       />
     );

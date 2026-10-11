@@ -58,7 +58,7 @@ npx -p @slats/agents-assets-sync inject-agents-settings --package=@canard/schema
 
 ### Error Isolation (user-injected render surfaces)
 
-사용자 주입 컴포넌트(FormTypeRenderer/FormTypeInput, virtualization `Placeholder` 등)는 반드시 `@winglet/react-utils/hoc`의 `withErrorBoundary`로 감싼다 — 하나가 렌더 중 throw해도 폼 전체가 아니라 그 서브트리만 fallback으로 격리된다. 래핑은 **컴포넌트를 해석·소유하는 지점에서 1회**만: 렌더러는 `SchemaNodeProxy`/`SchemaNodeInputWrapper`가 `memo(withErrorBoundary(...))`로, `Placeholder`는 `VirtualizationManager` 생성자가 form당 1회 래핑해 모든 지연 필드가 동일 인스턴스를 공유한다. 소비처(개별 렌더 위치)마다 반복 래핑하지 말 것. (`helpers/virtualization`는 이 `Placeholder` 방어만 React 예외로 허용 — INTENT.md 참조.)
+사용자 주입 컴포넌트(FormTypeRenderer/FormTypeInput, virtualization `Placeholder` 등)는 반드시 오류 경계로 격리한다 — 하나가 렌더 중 throw해도 폼 전체가 아니라 그 서브트리만 fallback으로 격리된다. 경계는 **컴포넌트를 해석·소유하는 지점에서 1회**만 둔다: 렌더러는 `SchemaNodeProxy`가 `@winglet/react-utils/hoc`의 `ErrorBoundary`를 직접 쓰고(children이 렌더마다 새 엘리먼트라 memo로 감싸지 않음), 입력은 `formTypeInputDefinition`의 사설 어댑터가 해석 지점에서 `ErrorBoundary`를 한 번 적용하며, `Placeholder`는 `VirtualizationManager` 생성자가 form당 1회 `withErrorBoundary`로 래핑해 모든 지연 필드가 동일 인스턴스를 공유한다. 소비처(개별 렌더 위치)마다 반복 래핑하지 말 것. (`helpers/virtualization`는 이 `Placeholder` 방어만 React 예외로 허용 — INTENT.md 참조.)
 
 ### Key APIs
 
@@ -67,7 +67,7 @@ npx -p @slats/agents-assets-sync inject-agents-settings --package=@canard/schema
 - `registerPlugin()` — 플러그인 전역 등록 (렌더 전 필수)
 - `node.find('/path')` — JSONPointer 노드 탐색 (`..` 부모, `*` 와일드카드는 제한적 사용)
 - `node.value` / `node.enhancedValue` (가상 필드 포함)
-- `node.normalizedValue` — 스키마 옵션으로 정제된 값. `FormHandle.getValue`/`submit`/루트 방출/부모측 hydration 스냅샷이 이 값을 읽으며, `ArrayNode`는 `options.omitTrailing` 트림을 여기에 적용 (`omitEmpty`는 부모 전파 경로 전용)
+- `node.outputValue` — 스키마 옵션으로 정제된 값. `FormHandle.getValue`/`submit`/루트 방출/부모측 hydration 스냅샷이 이 값을 읽으며, `ArrayNode`는 `options.omitTrailing` 트림을 여기에 적용 (`omitEmpty`는 부모 전파 경로 전용)
 - `node.validate()` / `node.errors`
 - `node.subscribe()` — 노드 이벤트 구독 (cleanup 함수 반환). 구독 전에 전달된 이벤트는 재생되지 않음 — 상태 미러는 `useSchemaNodeSubscribe`의 `onSubscribe` catch-up 사용
 - `node.revision(mask?)` — 전달된 이벤트 배치의 단조 리비전 (리스너 유무 무관 집계, 늦은 구독자의 갭 감지용; `useSchemaNodeTracker`가 useSyncExternalStore 스냅샷으로 사용)
@@ -118,9 +118,8 @@ product projects. Run `yarn test --run --project <name>` to select a project.
 - The renderer registers its handle on the wrapper root or render container.
   `playScenario` searches the received element and descendants, so story and
   render contexts share the same call shape.
-- Scenario stories mirror the same data and call `playScenario` from `play`;
-  usage stories are documentation-only. New-engine stories begin at the engine
-  switch; the current stories keep rendering the legacy public entry point.
+- Scenario stories render the current public Form entry, mirror the same data,
+  and call `playScenario` from `play`; usage stories are documentation-only.
 - Final observable behavior needs a render scenario; a core test alone does not
   verify DOM behavior. Harness skeleton tests and empty families claim no engine
   behavior coverage.
@@ -145,4 +144,4 @@ Identity → Tree Structure → Value Management → Computed Properties → Sta
 
 ## Build Output
 
-`dist/index.cjs` + `dist/index.mjs` + `dist/index.d.ts` — raw 약 240KB / gzip 약 44KB. 비압축 배포는 의도된 선택(최종 minify 는 소비자 번들러에 위임)
+`dist/index.cjs` + `dist/index.mjs` + `dist/index.d.ts`. 비압축 배포는 의도된 선택(최종 minify 는 소비자 번들러에 위임)

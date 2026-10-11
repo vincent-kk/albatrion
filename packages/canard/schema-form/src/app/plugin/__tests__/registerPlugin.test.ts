@@ -29,7 +29,7 @@ describe('registerPlugin', () => {
     const base = PluginManager.formTypeInputDefinitions.length;
     registerPlugin({
       ...plugin,
-      validator: { compile: () => () => null },
+      validator: { compile: () => () => null, compileGuard: () => () => true },
     });
     expect(PluginManager.formTypeInputDefinitions.length).toBe(base + 1);
     expect(PluginManager.validator).toBeDefined();
@@ -46,8 +46,10 @@ describe('registerPlugin', () => {
     expect(PluginManager.formTypeInputDefinitions.length).toBe(base + 1);
   });
 
-  it('bind 없이 compile만 가진 validator 플러그인을 등록할 수 있다', () => {
-    registerPlugin({ validator: { compile: () => () => null } });
+  it('VALIDATE-044 bind 없이 compile과 compileGuard를 가진 validator 플러그인을 등록할 수 있다', () => {
+    registerPlugin({
+      validator: { compile: () => () => null, compileGuard: () => () => true },
+    });
     expect(PluginManager.validator?.compile).toBeTypeOf('function');
     expect(PluginManager.validator?.bind).toBeUndefined();
   });
@@ -70,10 +72,10 @@ describe('registerPlugin', () => {
   it('동일 플러그인의 변경된 함수 참조를 다시 반영한다', () => {
     const first = () => null;
     const second = () => null;
-    const mutable = { FormLabel: first };
+    const mutable = { FormTypeLabelRenderer: first };
     registerPlugin(mutable);
-    mutable.FormLabel = second;
+    mutable.FormTypeLabelRenderer = second;
     registerPlugin(mutable);
-    expect(PluginManager.FormLabel).toBe(second);
+    expect(PluginManager.FormTypeLabelRenderer).toBe(second);
   });
 });

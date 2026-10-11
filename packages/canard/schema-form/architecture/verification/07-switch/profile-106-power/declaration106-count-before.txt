@@ -1,0 +1,42 @@
+(node:46990) [DEP0205] DeprecationWarning: `module.register()` is deprecated. Use `module.registerHooks()` instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+│ ┌────────────────────────────────────────────────────────────────────────────┐
+│ │  Info: Found a setup file with "setProjectAnnotations".                    │
+│ │  Skipping automatic provisioning of preview annotations to avoid           │
+│ │  conflicts. Since Storybook 10.3, "@storybook/addon-vitest" applies these  │
+│ │   automatically.                                                           │
+│ │  You can safely remove the "setProjectAnnotations" call from your setup    │
+│ │  file, or remove the file entirely if you don't have custom code there.    │
+│ └────────────────────────────────────────────────────────────────────────────┘
+
+ RUN  v3.2.6 /Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/packages/canard/schema-form
+
+x
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  |unit| src/core/blueprint/__tests__/blueprint.owned-inline-declaration-counts.test.ts > counts collection boundaries and temporary result arrays per fixture node
+AssertionError: nested-d5-f4: intermediate arrays: expected 1365 to be +0 // Object.is equality
+
+- Expected
++ Received
+
+- 0
++ 1365
+
+ ❯ src/core/blueprint/__tests__/blueprint.owned-inline-declaration-counts.test.ts:51:69
+     49|     expect([0, counts.calls]).toContain(counts.arrays);
+     50|     if (process.env.REQUIRE_DECLARATION_SINK === '1')
+     51|       expect(counts.arrays, `${fixture.name}: intermediate arrays`).to…
+       |                                                                     ^
+     52|   }
+     53| });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed (1)
+   Start at  02:31:31
+   Duration  682ms (transform 285ms, setup 0ms, collect 500ms, tests 17ms, environment 0ms, prepare 36ms)
+

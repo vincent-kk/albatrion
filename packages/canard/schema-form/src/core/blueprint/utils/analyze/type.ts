@@ -1,4 +1,6 @@
 import type {
+  Blueprint,
+  BlueprintChildEntry,
   BlueprintGate,
   BlueprintNode,
   BlueprintOptions,
@@ -9,8 +11,8 @@ import type {
 
 /** Writable construction view; public arrays and records are frozen at publication. */
 export type MutableNode = {
-  -readonly [Key in keyof BlueprintNode]: BlueprintNode[Key];
-};
+  -readonly [Key in keyof Omit<BlueprintNode, 'childEntries'>]: BlueprintNode[Key];
+} & { childEntries: BlueprintChildEntry[] };
 /** Writable fragment ownership lists during one analysis. */
 export type MutableFragment = Omit<
   SchemaFragment,
@@ -36,15 +38,19 @@ export interface SchemaInput {
 }
 /** State owned by one invocation, never process-global or reused across roots. */
 export interface AnalysisContext {
+  /** Literal/default and finite-shape evidence, independent of branchless evidence. */
+  staticFirstLoad: boolean;
+  /** Monotonic feature evidence collected together with authored declarations. */
+  capabilities: { -readonly [Key in keyof Blueprint['capabilities']]: boolean };
   schema: BlueprintSchema;
   options: BlueprintOptions;
   nodes: MutableNode[];
   fragments: MutableFragment[];
   declarationId: number;
-  declarationOwners: Map<number, number>;
+  declarationOwners: Map<number, number> | undefined;
   templates: Map<string, MutableNode[]>;
   constructing: Map<string, MutableNode[]>;
   /** Authored branch locations converted into explicit discriminator gates. */
   discriminatorBranches?: Set<string>;
-  dependencies: Record<string, number[]>;
+  dependencies: Record<string, number[]> | undefined;
 }

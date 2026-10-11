@@ -4,6 +4,7 @@ import type { SchemaNodeRecord } from '../../../record';
 import type { ValidationIssue } from '../../type';
 import { isOffUnionBranchIssue } from './isOffUnionBranchIssue';
 import { normalizeIssueDataPath } from './normalizeIssueDataPath';
+import { updateSchemaNodeGlobalErrors } from './updateSchemaNodeGlobalErrors';
 
 /** Identify a record owned by this tree without an unchecked type assertion. */
 const isOwnedNode = <Self extends SchemaNodeRecord<Self>>(
@@ -24,19 +25,26 @@ export const routeValidationIssues = <Self extends SchemaNodeRecord<Self>>(
   const runtime = root.runtime;
   const before = runtime.validationErrors ?? new Map<unknown, readonly unknown[]>();
   const next = new Map<unknown, readonly unknown[]>(before);
-  const activeIds = issues.length > 0 && runtime.committedDeclarationIds ?
-    new Set([...runtime.committedDeclarationIds.values()].flat()) : undefined;
+  let activeIds: Set<number> | undefined;
+  if (issues.length > 0 && runtime.committedDeclarationIds?.size) {
+    activeIds = new Set<number>();
+    for (const ids of runtime.committedDeclarationIds.values())
+      for (let index = 0; index < ids.length; index++) activeIds.add(ids[index]);
+  }
   const inScope = (node: Self): boolean => node === target ||
     node.path.startsWith(`${target.path}/`);
   for (const node of before.keys())
     if (isOwnedNode<Self>(node, runtime) && inScope(node)) next.delete(node);
-  for (const issue of issues) {
+  for (let index = 0; index < issues.length; index++) {
+    const issue = issues[index];
     if (isOffUnionBranchIssue(issue, runtime.blueprint, activeIds)) continue;
     const path = normalizeIssueDataPath(issue.dataPath);
     let node = root;
     if (path) {
       if (!path.startsWith('/')) continue;
-      for (const encoded of path.slice(1).split('/')) {
+      const segments = path.slice(1).split('/');
+      for (let segmentIndex = 0; segmentIndex < segments.length; segmentIndex++) {
+        const encoded = segments[segmentIndex];
         if (node.structure === null) break;
         const key = encoded.replace(/~1/g, '/').replace(/~0/g, '~');
         if (!hasOwnProperty(node.structure, key)) { node = root; break; }
@@ -54,19 +62,25 @@ export const routeValidationIssues = <Self extends SchemaNodeRecord<Self>>(
     next.set(node, [...previous, issue]);
   }
   const changed = new Set<Self>();
-  for (const node of new Set([...before.keys(), ...next.keys()])) {
+  const candidates = new Set(before.keys());
+  for (const node of next.keys()) candidates.add(node);
+  for (const node of candidates) {
     if (!isOwnedNode<Self>(node, runtime) || !inScope(node)) continue;
     const current = node;
     const oldIssues = before.get(node) ?? [];
     const newIssues = next.get(node) ?? [];
-    if (oldIssues.length !== newIssues.length ||
-      oldIssues.some((issue, index) => issue !== newIssues[index])) changed.add(current);
+    if (oldIssues.length !== newIssues.length) changed.add(current);
+    else for (let index = 0; index < oldIssues.length; index++)
+      if (oldIssues[index] !== newIssues[index]) { changed.add(current); break; }
   }
   runtime.validationErrors = next;
   if (runtime.validationChangedNodes)
     for (const node of changed) runtime.validationChangedNodes.add(node);
   else runtime.validationChangedNodes = changed;
-  runtime.globalErrors = issues;
+  if (runtime.routedValidationErrors !== issues) {
+    runtime.routedValidationErrors = issues;
+    updateSchemaNodeGlobalErrors(root);
+  }
   runtime.combinedErrors?.clear();
   return changed;
 };

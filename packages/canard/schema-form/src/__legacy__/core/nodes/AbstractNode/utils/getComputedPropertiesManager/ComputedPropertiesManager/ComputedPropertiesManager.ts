@@ -1,9 +1,9 @@
-import { getPathManager } from '@/schema-form/core/blueprint';
-import type { DynamicFunction } from '@/schema-form/core/blueprint';
+import { getPathManager } from '@/schema-form/__legacy__/core/blueprint';
+import type { DynamicFunction } from '@/schema-form/__legacy__/core/blueprint';
 import type {
   JSONSchemaType,
   JSONSchemaWithVirtual,
-} from '@/schema-form/types';
+} from '@/schema-form/__legacy__/types';
 
 import type { ComputedProperties } from './type';
 import { checkComputedOptionFactory } from './utils/checkComputedOptionFactory';

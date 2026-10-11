@@ -110,6 +110,6 @@ const FormTypeInputSlider = ({
 
 export const FormTypeInputSliderDefinition = {
   Component: FormTypeInputSlider,
-  test: ({ type, formType }) =>
+  test: ({ schemaType: type, formType }) =>
     (type === 'number' || type === 'integer') && formType === 'slider',
 } satisfies FormTypeInputDefinition;

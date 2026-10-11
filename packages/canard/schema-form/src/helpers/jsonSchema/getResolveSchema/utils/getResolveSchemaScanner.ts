@@ -21,8 +21,12 @@ export const getResolveSchemaScanner = (
         const { $ref: _, ...preferredSchema } = entry.schema;
         const referenceSchema = referenceTable.get(path);
         if (referenceSchema === undefined) return;
-        if (isEmptyObject(preferredSchema)) return referenceSchema;
-        return merge(clone(referenceSchema), preferredSchema);
+        if (isEmptyObject(preferredSchema))
+          return referenceSchema as JSONSchemaWithRef;
+        return merge(
+          clone(referenceSchema),
+          preferredSchema,
+        ) as JSONSchemaWithRef;
       },
       maxDepth,
     },

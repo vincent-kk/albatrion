@@ -15,7 +15,7 @@ export const FormGroupRenderer = ({
 }: FormTypeRendererProps) => {
   if (depth === 0) return <Input />;
 
-  if (node.group === 'branch') {
+  if (node.strategy === 'branch') {
     return (
       <fieldset
         style={{

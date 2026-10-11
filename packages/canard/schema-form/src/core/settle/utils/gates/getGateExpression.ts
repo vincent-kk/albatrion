@@ -13,6 +13,7 @@ const GATE_EXPRESSIONS = new WeakMap<Blueprint,
 export const getGateExpression = (
   blueprint: Blueprint, schemaPath: string,
 ): BlueprintExpression | undefined => {
+  if (blueprint.capabilities.branchless) return undefined;
   let expressions = GATE_EXPRESSIONS.get(blueprint);
   if (!expressions) {
     const indexed = new Map<string, BlueprintExpression>();

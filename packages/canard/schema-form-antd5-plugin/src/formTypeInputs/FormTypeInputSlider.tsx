@@ -50,7 +50,7 @@ const FormTypeInputSlider = ({
 export const FormTypeInputSliderDefinition = {
   Component: FormTypeInputSlider,
   test: {
-    type: ['number', 'integer'],
+    schemaType: ['number', 'integer'],
     formType: 'slider',
   },
 } satisfies FormTypeInputDefinition;

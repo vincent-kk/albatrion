@@ -4,9 +4,8 @@ import type { ComponentType } from 'react';
 import { vi } from 'vitest';
 
 import {
-  NodeEventType,
-  NodeState,
   type SchemaNode,
+  SchemaNodeEventType,
   SetValueOption,
 } from '@/schema-form/core';
 import type {
@@ -21,9 +20,9 @@ import type {
 type MockSchemaNodeOverrides = {
   path?: string;
   name?: string;
-  schemaType?: string;
-  type?: string;
-  jsonSchema?: JSONSchemaWithVirtual;
+  schemaType?: SchemaNode['schemaType'];
+  type?: SchemaNode['type'];
+  jsonSchema?: SchemaNode['jsonSchema'];
   value?: any;
   defaultValue?: any;
   required?: boolean;
@@ -78,10 +77,10 @@ export const createMockSchemaNode = (
     isRoot: false,
     depth: 1,
     parentNode: undefined,
-    children: undefined, // Terminal nodes have no children
+    children: null, // Terminal nodes have no children
 
     // Node group - used by isTerminalNode/isBranchNode
-    group: 'terminal' as const,
+    strategy: 'terminal' as const,
 
     // Error & state
     errors: [] as any[],
@@ -94,7 +93,8 @@ export const createMockSchemaNode = (
     setState: vi.fn((newState: Record<string, boolean>) => {
       Object.assign(mockNode.state, newState);
     }),
-    publish: vi.fn(),
+    request: vi.fn(),
+    batch: vi.fn((fn: () => void) => fn()),
     subscribe: vi.fn(() => vi.fn()), // Returns unsubscribe function
     revision: vi.fn(() => 0), // Delivery-ledger revision (no deliveries on a mock)
     find: vi.fn(),
@@ -256,19 +256,15 @@ export const resetAllMocks = () => {
 /**
  * Default SetValueOption used by handleChange in SchemaNodeInput
  */
-export const HANDLE_CHANGE_OPTION =
-  SetValueOption.Replace |
-  SetValueOption.Propagate |
-  SetValueOption.EmitChange |
-  SetValueOption.PublishUpdateEvent;
+export const HANDLE_CHANGE_OPTION = SetValueOption.Overwrite;
 
 /**
  * Events that trigger re-rendering in SchemaNodeInput
  */
 export const REACTIVE_RERENDERING_EVENTS =
-  NodeEventType.UpdateValue |
-  NodeEventType.UpdateError |
-  NodeEventType.UpdateComputedProperties;
+  SchemaNodeEventType.UpdateValue |
+  SchemaNodeEventType.UpdateError |
+  SchemaNodeEventType.UpdateComputedProperties;
 
 /**
  * Pre-configured test scenarios for common testing patterns
@@ -343,8 +339,8 @@ export const testScenarios = {
       name: 'name',
       value: 'modified',
       state: {
-        [NodeState.Dirty]: true,
-        [NodeState.Touched]: true,
+        [1]: true,
+        [2]: true,
       },
     }),
 

@@ -1,6 +1,6 @@
 import { isCompatibleSchemaType } from '@winglet/json-schema/filter';
 
-import type { JSONSchema } from '@/schema-form/types';
+import type { JSONSchema } from '@/schema-form/__legacy__/types';
 
 /**
  * Validates type compatibility between two schemas during allOf schema merging.

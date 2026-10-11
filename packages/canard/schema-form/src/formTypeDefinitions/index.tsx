@@ -10,7 +10,9 @@ import { FormTypeInputStringCheckboxDefinition } from './FormTypeInputStringChec
 import { FormTypeInputStringEnumDefinition } from './FormTypeInputStringEnum';
 import { FormTypeInputStringRadioDefinition } from './FormTypeInputStringRadio';
 import { FormTypeInputVirtualDefinition } from './FormTypeInputVirtual';
+import { FormTypeInputUnionDefinition } from './FormTypeInputUnion';
 
+/** Ordered default input fallbacks; union precedes the ordinary string definition. */
 export const formTypeDefinitions = [
   FormTypeInputDateFormatDefinition,
   FormTypeInputStringCheckboxDefinition,
@@ -20,6 +22,7 @@ export const formTypeDefinitions = [
   FormTypeInputArrayDefinition,
   FormTypeInputObjectDefinition,
   FormTypeInputBooleanDefinition,
+  FormTypeInputUnionDefinition,
   FormTypeInputStringDefinition,
   FormTypeInputNumberDefinition,
 ] satisfies FormTypeInputDefinition[];

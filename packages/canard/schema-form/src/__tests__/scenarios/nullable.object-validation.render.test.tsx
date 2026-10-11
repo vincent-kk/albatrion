@@ -15,8 +15,8 @@ import { renderForm } from '../renderForm';
  */
 describe('nullable.object-validation.render — validity of a preserved null is the schema’s decision', () => {
   const branches = [
-    { '&if': "./kind === 'a'", properties: { aValue: { type: 'string' } } },
-    { '&if': "./kind === 'b'", properties: { bValue: { type: 'string' } } },
+    { controls: { active: "./kind === 'a'" }, properties: { aValue: { type: 'string' } } },
+    { controls: { active: "./kind === 'b'" }, properties: { bValue: { type: 'string' } } },
   ];
   const target = (composition: 'oneOf' | 'anyOf') =>
     ({

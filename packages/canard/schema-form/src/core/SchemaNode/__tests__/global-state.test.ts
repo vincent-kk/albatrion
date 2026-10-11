@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 
 import { makeSchemaNodeTree } from '../../__tests__/makeSchemaNodeTree';
 import { SchemaNodeEventType } from '../../record';
-import { NodeState } from '../../types/state';
+import { SchemaNodeState } from '../../types/state';
 
 // filid:contract surface-members
 describe('EVENT-062 43C-01 globalState surface', () => {
@@ -16,18 +16,18 @@ describe('EVENT-062 43C-01 globalState surface', () => {
     if (!first || !second) throw new Error('Expected both children');
     const empty = root.globalState;
     expect(empty).toEqual({});
-    first.state = { [NodeState.Dirty]: true };
+    first.state = { [SchemaNodeState.Dirty]: true };
     const one = root.globalState;
-    expect(one).toEqual({ [NodeState.Dirty]: true });
-    second.setState({ [NodeState.Dirty]: true, [NodeState.Touched]: true });
+    expect(one).toEqual({ [SchemaNodeState.Dirty]: true });
+    second.setState({ [SchemaNodeState.Dirty]: true, [SchemaNodeState.Touched]: true });
     expect(root.globalState).toEqual({
-      [NodeState.Dirty]: true, [NodeState.Touched]: true,
+      [SchemaNodeState.Dirty]: true, [SchemaNodeState.Touched]: true,
     });
-    first.setState({ [NodeState.Dirty]: false });
+    first.setState({ [SchemaNodeState.Dirty]: false });
     const two = root.globalState;
     expect(two).toBe(root.globalState);
-    second.setState({ [NodeState.Touched]: false });
-    expect(root.globalState).toEqual({ [NodeState.Dirty]: true });
+    second.setState({ [SchemaNodeState.Touched]: false });
+    expect(root.globalState).toEqual({ [SchemaNodeState.Dirty]: true });
     second.clearSubtreeState();
     expect(root.globalState).toEqual({});
     expect(root.globalState).not.toBe(empty);
@@ -41,14 +41,14 @@ describe('EVENT-062 43C-01 globalState surface', () => {
     const first = root.find('/first');
     const second = root.find('/second');
     if (!first || !second) throw new Error('Expected both children');
-    first.setState({ [NodeState.Dirty]: true });
+    first.setState({ [SchemaNodeState.Dirty]: true });
     const before = root.globalState;
     const events: number[] = [];
     root.subscribe((event) => {
       if (event.type & SchemaNodeEventType.UpdateGlobalState) events.push(event.type);
     });
-    second.setState({ [NodeState.Dirty]: true });
-    first.setState({ [NodeState.Dirty]: false });
+    second.setState({ [SchemaNodeState.Dirty]: true });
+    first.setState({ [SchemaNodeState.Dirty]: false });
     expect(root.globalState).toBe(before);
     expect(events).toEqual([]);
   });
@@ -66,9 +66,9 @@ describe('EVENT-062 43C-01 globalState surface', () => {
       if (event.type & SchemaNodeEventType.UpdateGlobalState) events.push(event.type);
     });
     root.batch(() => {
-      first.setState({ [NodeState.Dirty]: true });
-      second.setState({ [NodeState.Dirty]: true });
-      first.setState({ [NodeState.Dirty]: false });
+      first.setState({ [SchemaNodeState.Dirty]: true });
+      second.setState({ [SchemaNodeState.Dirty]: true });
+      first.setState({ [SchemaNodeState.Dirty]: false });
       expect(events).toEqual([]);
     });
     expect(events).toHaveLength(1);
@@ -81,9 +81,9 @@ describe('EVENT-062 43C-01 globalState surface', () => {
     root.subscribe((event) => {
       if (event.type & SchemaNodeEventType.UpdateGlobalState) events.push(event.type);
     });
-    root.setState({ [NodeState.Dirty]: true });
+    root.setState({ [SchemaNodeState.Dirty]: true });
     expect(events).toHaveLength(1);
-    expect(root.globalState).toEqual({ [NodeState.Dirty]: true });
+    expect(root.globalState).toEqual({ [SchemaNodeState.Dirty]: true });
   });
 
   it('normalizes truthy nonboolean state values to true', () => {
@@ -101,7 +101,7 @@ describe('EVENT-062 43C-01 globalState surface', () => {
     root.setValue({ target: 'edited' });
     const target = root.find('/target');
     if (!target) throw new Error('Expected the active target');
-    target.setState({ [NodeState.Dirty]: true });
+    target.setState({ [SchemaNodeState.Dirty]: true });
     target.resetSubtree();
     expect(root.globalState).toEqual({});
   });
@@ -114,16 +114,16 @@ describe('EVENT-062 43C-01 globalState surface', () => {
     root.setValue({ flag: true, target: 'value' });
     const old = root.find('/target');
     if (!old) throw new Error('Expected the active target');
-    old.setState({ [NodeState.Dirty]: true });
-    expect(root.globalState).toEqual({ [NodeState.Dirty]: true });
+    old.setState({ [SchemaNodeState.Dirty]: true });
+    expect(root.globalState).toEqual({ [SchemaNodeState.Dirty]: true });
     root.find('/flag')?.setValue(false);
     expect(root.globalState).toEqual({});
     expect(old.globalState).toBe(root.globalState);
     root.find('/flag')?.setValue(true);
     const current = root.find('/target');
     if (!current || current === old) throw new Error('Expected a new target');
-    current.setState({ [NodeState.Dirty]: true });
-    expect(root.globalState).toEqual({ [NodeState.Dirty]: true });
+    current.setState({ [SchemaNodeState.Dirty]: true });
+    expect(root.globalState).toEqual({ [SchemaNodeState.Dirty]: true });
     expect(old.globalState).toBe(root.globalState);
   });
 });

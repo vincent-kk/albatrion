@@ -2,7 +2,7 @@ import { equals } from '@winglet/common-utils/object';
 
 import type { Nullish } from '@aileron/declare';
 
-import type { ObjectSchema, ObjectValue } from '@/schema-form/types';
+import type { ObjectSchema, ObjectValue } from '@/schema-form/__legacy__/types';
 
 import { AbstractNode } from '../AbstractNode';
 import type {
@@ -10,7 +10,7 @@ import type {
   HandleChange,
   SchemaNode,
   UnionSetValueOption,
-} from '../../../../core/types';
+} from '../../types';
 import {
   BranchStrategy,
   type ObjectNodeStrategy,

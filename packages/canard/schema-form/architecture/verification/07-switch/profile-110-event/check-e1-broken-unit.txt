@@ -1,0 +1,61 @@
+npm notice run albatrion@0.0.0 npx
+npm notice run 'vitest' run --reporter=dot --configLoader runner --cache false --maxWorkers=1 --no-file-parallelism --project unit src/core/__tests__/SchemaNode.update-value-marking.test.ts
+│ ┌────────────────────────────────────────────────────────────────────────────┐
+│ │  Info: Found a setup file with "setProjectAnnotations".                    │
+│ │  Skipping automatic provisioning of preview annotations to avoid           │
+│ │  conflicts. Since Storybook 10.3, "@storybook/addon-vitest" applies these  │
+│ │   automatically.                                                           │
+│ │  You can safely remove the "setProjectAnnotations" call from your setup    │
+│ │  file, or remove the file entirely if you don't have custom code there.    │
+│ └────────────────────────────────────────────────────────────────────────────┘
+
+ RUN  v3.2.6 /Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/packages/canard/schema-form
+
+x·x
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  |unit| src/core/__tests__/SchemaNode.update-value-marking.test.ts > UpdateValue pending delivery > retains runtime membership, other bits and the last defined payload/options
+AssertionError: expected 2048 to be 2052 // Object.is equality
+
+- Expected
++ Received
+
+- 2052
++ 2048
+
+ ❯ src/core/__tests__/SchemaNode.update-value-marking.test.ts:24:34
+     22|     expect(Object.keys(event?.payload ?? {})).toEqual(['4']);
+     23|     expect(Object.keys(event?.options ?? {})).toEqual(['4']);
+     24|     expect(root.pendingRevision).toBe(SchemaNodeEventType.RequestFocus…
+       |                                  ^
+     25|     expect(root.runtime.deliveries?.has(root)).toBe(true);
+     26|     expect(root.runtime.revisionNodes?.has(root)).toBe(true);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ FAIL  |unit| src/core/__tests__/SchemaNode.update-value-marking.test.ts > UpdateValue pending delivery > keeps delivered subscriber payloads and revisions unchanged on later writes
+AssertionError: expected +0 to be 1 // Object.is equality
+
+- Expected
++ Received
+
+- 1
++ 0
+
+ ❯ src/core/__tests__/SchemaNode.update-value-marking.test.ts:56:60
+     54|     expect(events[1].payload?.[SchemaNodeEventType.UpdateValue]).toEqu…
+     55|     expect(events[1].payload).not.toBe(events[0].payload);
+     56|     expect(root.revision(SchemaNodeEventType.UpdateValue)).toBe(revisi…
+       |                                                            ^
+     57|   });
+     58| });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  2 failed | 1 passed (3)
+   Start at  09:36:01
+   Duration  1.54s (transform 861ms, setup 0ms, collect 1.39s, tests 11ms, environment 0ms, prepare 35ms)
+

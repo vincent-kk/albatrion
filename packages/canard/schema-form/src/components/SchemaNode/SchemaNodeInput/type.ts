@@ -1,10 +1,10 @@
 import type { ComponentType, RefObject } from 'react';
 
 import type { SchemaNode } from '@/schema-form/core';
-import { NodeEventType, SetValueOption } from '@/schema-form/core';
+import { SchemaNodeEventType } from '@/schema-form/core';
+import type { FormTypeInputBindingProps } from '@/schema-form/helpers/formTypeInputDefinition';
 import type {
   ChildNodeComponentProps,
-  FormTypeInputProps,
   OverridableFormTypeInputProps,
 } from '@/schema-form/types';
 
@@ -15,7 +15,7 @@ export interface SchemaNodeInputProps {
   onChangeRef: RefObject<ChildNodeComponentProps['onChange']>;
   onFileAttachRef: RefObject<ChildNodeComponentProps['onFileAttach']>;
   overrideProps: OverridableFormTypeInputProps;
-  PreferredFormTypeInput: ComponentType<FormTypeInputProps> | null;
+  PreferredFormTypeInput: ComponentType<FormTypeInputBindingProps> | null;
   NodeProxy: ComponentType<SchemaNodeProxyProps>;
 }
 
@@ -29,15 +29,11 @@ export type ChildNodeComponent<
   Props extends ChildNodeComponentProps = ChildNodeComponentProps,
 > = ComponentType<Props> & AdditionalChildNodeProperties;
 
-/** Default option for node setValue when onChange is triggered in SchemaNodeInput component */
-export const HANDLE_CHANGE_OPTION =
-  SetValueOption.Replace |
-  SetValueOption.Propagate |
-  SetValueOption.EmitChange |
-  SetValueOption.PublishUpdateEvent;
-
+/** Node deliveries that refresh the props of the current input instance. */
 export const REACTIVE_RERENDERING_EVENTS =
-  NodeEventType.UpdateValue |
-  NodeEventType.UpdateState |
-  NodeEventType.UpdateError |
-  NodeEventType.UpdateComputedProperties;
+  SchemaNodeEventType.UpdateValue |
+  SchemaNodeEventType.UpdateState |
+  SchemaNodeEventType.UpdateError |
+  SchemaNodeEventType.UpdateComputedProperties |
+  SchemaNodeEventType.UpdateJsonSchema |
+  SchemaNodeEventType.UpdatePath;

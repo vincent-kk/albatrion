@@ -81,7 +81,7 @@ const FormTypeInputRadioGroup = ({
 
 export const FormTypeInputRadioGroupDefinition = {
   Component: FormTypeInputRadioGroup,
-  test: ({ type, formType, jsonSchema }) => {
+  test: ({ schemaType: type, formType, jsonSchema }) => {
     return (
       (type === 'string' || type === 'number' || type === 'integer') &&
       (formType === 'radio' || formType === 'radiogroup') &&

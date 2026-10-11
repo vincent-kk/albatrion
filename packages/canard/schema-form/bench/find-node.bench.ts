@@ -63,7 +63,10 @@ const path7 = '/next/next/next/next/next/next/next/leaf';
 const path12 =
   '/next/next/next/next/next/next/next/next/next/next/next/next/leaf';
 
-describe('findNode', () => {
+if (!depth12.find(path12) || !wide50.find('/field_49'))
+  throw new Error('find benchmark requires mounted deep and wide leaves');
+
+describe('navigation: find through core', () => {
   bench('depth 3 (4 segments)', () => {
     depth3.find(path3);
   });

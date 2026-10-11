@@ -9,6 +9,11 @@
 
 ## API Contracts
 
+- 폼 수준 `globalErrors`는 루트 외부 오류 뒤에 라우팅된 전체 검증 목록을 합친 저장 참조입니다. 별도 `routedValidationErrors` 참조는 검증 목록만 보유하며 루트 외부 오류 또는 라우팅 목록이 바뀔 때만 합친 목록을 갱신합니다. 외부 오류 맵과 경로 키 인계 맵은 최소 `dataPath` 계약을 사용합니다. 읽기는 O(1)이고 두 목록의 병합은 변경당 O(E+V), 추가 상주 비용은 트리당 참조 한 칸이며 노드 고정 필드는 늘리지 않습니다(SURFACE-053, VALIDATE-043, 79C-01).
+
+- 노드 레코드는 폐기 표시와 상호작용 초기화 번호를 고정 칸으로 보유합니다. 초기값은 각각 거짓과 0이며, 번호는 `revision`의 사건 비트가 아닌 바인딩 전용 읽기로 관찰합니다. 상호작용 초기화 번호는 상태 칸 쓰기로 `dirty`·`touched`를 비우는 셋(폼 reset, `clearState`, `controls.resetInteraction`)에서 오르고 비움이 아닌 쓰기에서는 오르지 않습니다(REACT-024). 재생성 인계의 폐기에서는 Refresh 번호와 이 번호를 통지 없이 동기로 올립니다. 메모리 비용은 노드당 boolean 칸 하나와 number 칸 하나의 고정 슬롯 두 개이며, 판정 identity는 공유 청사진당 함수 참조 두 개를 보유하여 노드별 판정 칸을 추가하지 않습니다(REACT-024, WRITE-046·086, 69C-02·04, 실행 ADR D5).
+- 런타임이 보유한 청사진 결과는 작성 때 받은 `isAtomic`·`isTerminal`의 identity를 유지합니다. 정착의 런타임 병합은 이 두 참조를 그대로 소비하며 레코드가 판정 함수를 다시 만들거나 React를 가져오지 않습니다(REACT-003, 69C-04, 실행 ADR D5).
+
 - 정착 도중 공개 상태 쓰기가 전역 계수를 즉시 반영하면, 이미 포착된 `deliveryPreviousState`도 그 쓰기 뒤 상태로 옮깁니다. 커밋은 즉시 처리한 증감과 상태 사건을 다시 만들지 않으며 이후 정착 상태 변경만 비교합니다. 변경 마스크가 없는 노드에는 기준 칸을 만들지 않습니다(EVENT-062·067, 43C-01, 65C-03).
 - S2의 배달 작업 기록은 레코드에 있습니다. `deliveryInitialized`는 첫 커밋 여부, `deliveryChanges`는 계산·형상·키 재부여·상태 쓰기가 포착한 변경 종류입니다. 첫 변경에서만 `deliveryPreviousLocal`·`deliveryPreviousEmit`, `deliveryPreviousPath`, `deliveryPreviousChildren`, `deliveryPreviousComputed`(네 상태의 비트 묶음), `deliveryPreviousSchema`, `deliveryPreviousState`에 그 종류의 기준을 보관합니다. `deliveryWatchValues`는 정적 watch 선언 대상에만 남기는 감시 기준입니다. 생성자는 이전 값 칸을 `undefined`, 변경 마스크를 `0`, 초기화 표시를 `false`로 대입하며 객체를 할당하지 않습니다. 11필드 관측 스냅숏 객체는 두지 않습니다(NODE-004, VALUE-002, 65C-03).
 - 기준 칸·변경 마스크는 작업의 기록이며 공개 읽기와 형상·값·방출 계산에 들어가지 않습니다(P3). 커밋은 변경 종류만 최종 값과 비교하여 같은 기준으로 돌아온 A→B→A를 제외하고 비트 개정과 payload를 확정한 뒤 기준 칸·변경 마스크를 비웁니다. 배달 전 여러 커밋이 있으면 각 커밋의 개정은 독립적으로 증가하며 `pendingDelivery.payload.previous`가 마지막 통지 기준을 계속 유지합니다. `pendingRevision`은 커밋에서, `pendingDelivery`·`pendingNonSettleDelivery`는 파동 전체 분리 때 비웁니다. 마지막 통지 기준과 커밋 비교 기준의 수명을 섞지 않습니다(EVENT-007·024). 이탈/소멸은 이 작업 기록과 런타임 대상 집합·감시/검증 장부를 제거하고 detached 읽기는 유지합니다(63C-02, I5).
@@ -19,7 +24,7 @@
 - 선택적 `warningKeysByPath`는 데이터 경로의 각 조상→경고 구조 키 역색인입니다. `indexSchemaNodeWarning`은 경고를 대기 저장소에 넣을 때 이 색인을 함께 갱신하고 삭제 시 두 경고 저장소에서도 지웁니다. 재인덱싱과 소멸은 영향받은 아이템 접두사의 키만 조회하며 기록 객체는 발생 당시 경로를 보존합니다. 비용은 경고 등록/삭제 O(경로 깊이), 메모리 O(경고 수 × 깊이)이고 경고가 없는 트리에는 색인을 만들지 않습니다(35C-09, ERROR-017·024, NODE-045).
 
 - 진입점은 `SchemaNodeRecord`, `Behavior`, `UnionSpec`, `SchemaNodeFactory`, `SchemaNodeRuntime`, `SettlementScratch`, `updateSchemaNodeNameAndPath`, `patchSchemaNodeInteractionState`, `shallowPatch`를 이름으로 내보냅니다. 외부 소비자는 레코드의 진입점으로만 들어옵니다(NODE-008·016).
-- 진입점은 기존 레코드 계약과 함께 `SchemaNodeEventType`, `SchemaNodeRequestType`, `markSchemaNodeEvent`를 이름으로 내보냅니다. 두 열거는 새 엔진의 비트와 명령 종류를 이곳에서 처음 선언하고 옛 `core/types/event.ts`는 07의 소비자 이주까지 그대로 둡니다. `RequestEmitChange`·`RequestInjection`은 두지 않습니다(SURFACE-056·060, EVENT-073, LANDING-158·170).
+- 진입점은 기존 레코드 계약과 함께 `SchemaNodeEventType`, `SchemaNodeRequestType`, `markSchemaNodeEvent`를 이름으로 내보냅니다. 두 열거의 비트와 명령 종류는 이 모듈이 소유하고 core와 패키지 진입점이 이름으로 내보냅니다. `RequestEmitChange`·`RequestInjection`은 두지 않습니다(SURFACE-056·060, EVENT-073, LANDING-067·087·158·170).
 - `SchemaNodeEventType`은 남는 옛 비트의 자리 값을 유지하고 `UpdateJsonSchema`·`UpdateDiagnostics`를 더합니다. `SchemaNodeRequestType`의 `Focus`·`Select`·`Refresh`·`Remount`는 각각 `RequestFocus`·`RequestSelect`·`RequestRefresh`·`RequestRemount` 비트와 같습니다. 한 명령 호출은 종류 하나만 받습니다(EVENT-043·064·073, SURFACE-057·060).
 - 모든 종류의 논리 필드 선언과 생성자 대입 순서는 일치합니다. 배달 작업 칸은 `revisionLedger` 뒤와 `detached` 앞에 둡니다. 상호작용 상태의 저장 칸은 공개 `state`와 구별하며, 기준값과 개정은 상태가 아니라 작업 기록입니다(NODE-004, VALUE-002, 65C-03).
 - `itemKey`는 배열 아이템의 생성 순서 nonce인 숫자이며 아이템이 아니면 `null`이고 공개 멤버로 노출하지 않습니다. 배열 branch 호스트의 `itemCount`는 청사진 없는 꼬리 자리를 포함한 값의 길이이며 그 밖에는 `0`입니다. 호스트의 `nextItemKey`는 새 아이템의 키 계수이고 원본 B 되돌림에서도 감소하지 않습니다. 세 필드는 모든 노드에 같은 고정 칸 세 개의 메모리 비용을 더하며 아이템 목록은 기존 `structure`에 둡니다(NODE-004·045·051·052, GOAL-073, SURFACE-054, 35C-05, 실행 ADR D3).
@@ -40,7 +45,7 @@
 - `committedRuleValues`는 규칙 템플릿·발생 경로·종류를 키로 하여 `injectTo` 원천 방출 값, `derived` 의존 값 튜플, `unsetValue`·`resetInteraction`·`unsetOnInactive` 식 값을 보관합니다. 던진 `unsetOnInactive` 식은 유지로 기록하고, 커밋은 평가한 발생만 바꾸며 나간 노드의 항목을 지웁니다. 정착 안의 소비 값은 작업 칸에 두고 로드는 범위 안의 커밋 기준을 비웁니다. 비용은 규칙 발생 수에 비례하고 규칙 없는 노드에는 별도 필드를 두지 않습니다(SETTLE-004·028·048, WRITE-031·038, ERROR-122, NODE-004·045, 28C-05).
 - `context`는 트리 생성 때 받은 맥락 객체 한 개이며 없으면 `{}`입니다. `@`와 `injectTo`의 `ctx.context` 및 `node.context`는 이 참조를 읽고, 깊이 같은 맥락 갱신은 칸을 바꾸지 않습니다(CONTROLS-080, SURFACE-055, NODE-004·045, 28C-03·08).
 - `settlementTrace`는 개발 모드의 선택 칸 하나로 마지막 정착 기록 하나만 보유하고 정착마다 교체합니다. `process.env.NODE_ENV !== 'production'`에서만 진입·라운드별 규칙·결과·예산 초과 마지막 라운드 항목을 만들며 프로덕션은 기록과 칸을 만들지 않습니다. 비용은 개발 모드에서 정착마다 기록 하나의 할당이고 프로덕션에서는 0이며, 노드별 고정 필드와 공개 멤버는 늘리지 않습니다(ERROR-030·159, GOAL-086, NODE-004·045, 28C-01).
-- 모든 런타임은 분석된 `blueprint`를 필수로 보유하여 식과 역의존 사전을 같은 연결에서 읽습니다. 독립 레코드·탐색 시험도 작은 실제 청사진으로 런타임을 만듭니다. 재사용 정착 scratch는 중간 라운드에서 나간 노드를 최종 형상까지 보류하여 재진입 시 동일 레코드를 찾습니다. `commitNumber`는 정착 호출마다 하나씩 증가하며 `refreshTargets`는 마지막 비로드 쓰기에서 원본이 바뀐 입력 이외의 경로 집합입니다(SETTLE-005·017, EVENT-071, NODE-045).
+- 모든 런타임은 분석된 `blueprint`를 필수로 보유하여 식과 역의존 사전을 같은 연결에서 읽습니다. 독립 레코드·탐색 시험도 작은 실제 청사진으로 런타임을 만듭니다. 재사용 정착 scratch는 중간 라운드에서 나간 노드를 최종 형상까지 보류하여 재진입 시 동일 레코드를 찾습니다. `commitNumber`는 정착 호출마다 하나씩 증가하며 `refreshTargets`는 마지막 정착의 비로드 쓰기로 원본이 바뀐 경로 중 입력 출처로 쓴 자신을 제외한 집합입니다. 하위 트리 로드 중 범위 밖에 쓴 주입 대상도 포함하며, 로드 범위 노드는 별도로 값의 변화와 무관하게 Refresh를 받습니다(SETTLE-005·017·049, EVENT-039·071, NODE-045, 72C-01).
 - `SchemaNodeRuntime<Self>`의 루트 보유 자료는 `loadSnapshot`(WRITE-085), `latentRaw`(NODE-043·044, WRITE-087), `typeMismatchPaths`(VALUE-030·037), `inactiveValuesMemo`와 항목 재사용 메모(VALUE-029, WRITE-087)입니다. 잠복 원본의 `(절대 path, kind)` 항목은 값, 분류용 청사진 노드, 재귀 발생까지 구별하는 문서 순서 키를 함께 보유합니다. 항목 재사용 메모는 열거 대상의 직전 값·얼린 항목 객체를 보유하여 같은 값의 참조를 유지합니다. 트리당 메모가 잠복 항목 수와 조상 경로 수에 비례해 늘지만 노드 고정 필드·생성자 할당은 늘지 않습니다. 루트는 이 자료를 별도 레코드 필드 없이 자신의 런타임을 통해 보유하며, 런타임 칸을 추가할 때는 `record/` 선언을 먼저 고쳐야 합니다(26C-06, NODE-045).
 - 선택적 잠복 변경 표시는 잠복 원본의 쓰기·삭제 뒤 다음 커밋에서 열거 메모를 갱신하도록 합니다. 일반 입력 쓰기는 잠복 집합·값이 같으면 변경 표시를 켜지 않아 열거 전체를 다시 걷지 않습니다. 이 표시는 노드 고정 필드가 아니라 트리 런타임의 작업 상태입니다(SETTLE-047, WRITE-087).
 - 선택적 `detachedReads`는 트리당 `WeakMap<object, DetachedSchemaNodeReads>` 하나입니다. 각 이탈 노드의 마지막 커밋 `typeMismatch`·`typeMismatches`·`inactiveValues`·`defaultValue`·`visible`·`readOnly`·`disabled`를 얼린 읽기 묶음으로 보존하며 재진입한 새 노드는 이 묶음을 사용하지 않습니다. 이탈이 없는 트리에는 맵을 할당하지 않고, 이탈 노드당 세 읽기 칸이 늘되 레코드 고정 필드는 늘리지 않습니다(NODE-004·044·045, 26C-06·10, 28C-02).
@@ -53,7 +58,7 @@
 - `updateSchemaNodeNameAndPath<Self extends { path: string; depth: number }>(node: SchemaNodeRecord<Self>, name: string, parent: Self | null): void`는 JSON Pointer 이스케이프를 적용한 `escapedName`·절대 `path`·`depth`를 일관되게 고칩니다. 부모의 `path`·`depth`를 읽으므로 `Self`에 그 두 칸을 요구합니다. 호출자가 영향받은 자손을 같은 함수로 갱신합니다. `patchSchemaNodeInteractionState<Self>(node: SchemaNodeRecord<Self>, patch: Partial<NodeStateFlags>): void`는 `shallowPatch<State extends object>(previous: State, patch: Partial<State>): State`의 결과만 `interactionState`에 반영합니다. 같은 키·값이면 이전 참조를 돌려줍니다(NODE-008, LANDING-082).
 - `record`가 `settle`, `SchemaNode`, `dispatch`, `validation`, 앱·플러그인 및 레거시를 가져오는 일은 타입 전용 import까지 금지합니다. 행이나 런타임 칸을 늘릴 때 이 선언을 먼저 고치는 것이 의존 역전의 비용입니다(NODE-016·045, LANDING-159).
 
-- `revisionLedger`의 이름과 비트별 읽기를 유지하면서 배달된 노드의 카운터는 알려진 17개 비트의 조밀한 슬롯에 보관합니다. 내부 `SchemaNodeRevisionLedger`는 진입점에서 정착·dispatch에 제공하며 비트 접근자는 슬롯을 읽습니다. 변경된 원장만 슬롯 사본과 새 원장으로 교체하므로 읽기가 보관한 이전 원장은 바뀌지 않습니다. 빈 원장은 공유 동결 상수이며 노드 고정 필드는 늘지 않습니다. 비트별 증가 시점과 `revision(mask)` 합은 리스너와 무관하게 동일합니다(EVENT-001·007, 65C-01, I11 step 1).
+- `revisionLedger`의 이름과 비트별 읽기를 유지하면서 배달된 노드의 카운터는 알려진 17개 비트의 조밀한 슬롯에 보관합니다. 내부 `SchemaNodeRevisionLedger`는 진입점에서 정착·dispatch에 제공하며 비트 접근자는 슬롯을 읽습니다. 변경된 원장만 슬롯 사본과 새 원장으로 교체하므로 읽기가 보관한 이전 원장은 바뀌지 않습니다. 빈 원장은 공유 동결 상수이며 노드 고정 필드는 늘지 않습니다. 노드의 첫 배달은 공유 빈 원장에서 비트를 읽어 복사하지 않고 빈 슬롯에서 시작합니다(빈 원장의 비트 읽기는 모두 `undefined`이므로 결과가 같습니다). 비트별 증가 시점과 `revision(mask)` 합은 리스너와 무관하게 동일합니다(EVENT-001·007, 65C-01, I11 step 1).
 - 아직 전달하지 않은 배달 항목·비트별 payload/options 표와 커밋 비트 항목은 같은 대기열 안에서 갱신합니다. dispatch가 파동을 전달하기 전에 표를 분리하므로 이미 리스너에게 건넨 사건·payload/options는 다음 표시가 수정하지 않습니다. 마지막 정의된 값, 최초 삽입 순서와 개발 모드 payload 동결은 유지하며 반복 표시의 객체·표 복사를 없앱니다(EVENT-004·006·007·023·024, 65C-01, I11 step 1).
 - 계산·상태 변경의 현장 기록은 감시 역색인이 있을 때만 `deliveryAffectedPaths`에 영향 경로를 더합니다. 이 경로 작업 집합은 정착 커밋에서 소비/삭제하고 변경 노드의 관측 필드를 다시 읽어 경로 집합을 재구축하지 않습니다. 경로 이동 목록과 형상 출입 사실은 그대로 감시 색인 조회에 합류합니다. 정적 watch 선언 색인과 affected 조회는 유지합니다(65C-02·03).
 
@@ -77,4 +82,4 @@
 
 ## Last Updated
 
-2026-10-02
+계약 기준: 69C-02·04, REACT-003·024, WRITE-046·086, 실행 ADR D5.

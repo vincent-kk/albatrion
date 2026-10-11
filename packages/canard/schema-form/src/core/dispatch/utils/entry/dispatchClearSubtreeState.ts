@@ -1,6 +1,7 @@
 import { accumulateGlobalStateDeltas, publishGlobalStateDeltas,
   SchemaNodeEventType } from '../../../record';
 import type { SchemaNodeRecord } from '../../../record';
+import { assertSchemaNodeWritable } from '../../../settle';
 import { flushQueuedEvents } from '../chain/flushQueuedEvents';
 import { queueNonSettleEvent } from '../chain/queueNonSettleEvent';
 import { refuseListenerFeedback } from '../chain/refuseListenerFeedback';
@@ -14,15 +15,19 @@ import { assertNotInDelivery } from '../report/assertNotInDelivery';
 export const dispatchClearSubtreeState = <Self extends SchemaNodeRecord<Self>>(
   node: Self,
 ): void => {
+  assertSchemaNodeWritable(node);
   if (node.detached) return;
   const runtime = node.rootNode.runtime;
   assertNotInDelivery(runtime);
   if (refuseListenerFeedback(runtime)) return;
   const deltas = new Map<string, number>();
   const pending = [node];
+  const visited = new Set<Self>();
   while (pending.length) {
     const current = pending.pop();
-    if (!current || current.detached) continue;
+    if (!current || current.detached || visited.has(current)) continue;
+    visited.add(current);
+    current.interactionReset += 1;
     if (Object.keys(current.interactionState).length) {
       const previous = current.interactionState;
       current.interactionState = {};

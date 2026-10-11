@@ -1,0 +1,29 @@
+(node:8906) [DEP0205] DeprecationWarning: `module.register()` is deprecated. Use `module.registerHooks()` instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+│ ┌────────────────────────────────────────────────────────────────────────────┐
+│ │  Info: Found a setup file with "setProjectAnnotations".                    │
+│ │  Skipping automatic provisioning of preview annotations to avoid           │
+│ │  conflicts. Since Storybook 10.3, "@storybook/addon-vitest" applies these  │
+│ │   automatically.                                                           │
+│ │  You can safely remove the "setProjectAnnotations" call from your setup    │
+│ │  file, or remove the file entirely if you don't have custom code there.    │
+│ └────────────────────────────────────────────────────────────────────────────┘
+
+ RUN  v3.2.6 /Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/packages/canard/schema-form
+
+·········stdout | src/core/blueprint/__tests__/blueprint.owned-inline-path-work.test.ts > escapes each ungated name once while producing both public paths
+107COUNT path-strings fast escaping=2 names=2
+
+stdout | src/core/blueprint/__tests__/blueprint.owned-inline-path-work.test.ts > reuses one escaped segment across contributions to the same general-path name
+107COUNT path-strings general escaping=2 names=2
+
+·········stdout | src/core/blueprint/__tests__/blueprint.owned-inline-fragment-work.test.ts > empty fragment work > keeps the plain declaration and fragment without checking keyword arrays
+106COUNT empty-fragment keyword-array-check=0
+
+··
+
+ Test Files  9 passed (9)
+      Tests  20 passed (20)
+   Start at  08:40:27
+   Duration  5.44s (transform 1.08s, setup 0ms, collect 2.47s, tests 232ms, environment 1.34s, prepare 307ms)
+

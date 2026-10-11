@@ -1,0 +1,101 @@
+diff --git a/packages/canard/schema-form/src/core/blueprint/DETAIL.md b/packages/canard/schema-form/src/core/blueprint/DETAIL.md
+index b94a26313..dffa3ccc7 100644
+--- a/packages/canard/schema-form/src/core/blueprint/DETAIL.md
++++ b/packages/canard/schema-form/src/core/blueprint/DETAIL.md
+@@ -2,6 +2,8 @@
+ 
+ ## Requirements
+ 
++- 자식 연결의 선언에서 이름·경로·호스트·작성 위치와 게이트가 이미 연결 문맥과 같으면 동결된 원본 선언 및 선언 배열을 재사용합니다. 다른 호스트의 참조 연결은 변경된 선언만 새 기록으로 만들고 필요한 게이트만 다시 결합합니다. 노드·조각·식의 내용, 정적 오류·경고와 작성 순서는 유지합니다. 같은 호스트는 O(선언 수) 조건 비교로 기존 선언 spread·게이트 배열 및 선언 배열 복사를 제거하고, 다른 호스트는 기존 O(선언+게이트 수)입니다. 보유 색인이나 노드 필드는 늘리지 않으며 원본 선언·배열의 수명은 청사진 수명과 같습니다. 제거되는 임시/보유 기록 수와 종단 시간은 101라운드 짝 측정으로 확인합니다(100C-01).
++
+ - 단일 무조건 노드 선언이며 nullable·형 배열·pattern·원자 판정·진단 수집기가 없는 경우, 기존 정적 교차 검사의 정규화 결과를 기본 런타임 메모에 미리 둡니다. 선언 선택과 병합의 의미는 유지하며 활성 ID 목록이 달라도 같은 무조건 집합은 같은 참조입니다. 그 밖의 선언·정책과 호출자 메모는 기존 병합을 사용합니다. 노드당 고정 자격 검사만 추가하고 기존 런타임 재병합 및 그 임시 배열·누적 상태를 제거합니다. 기존 약한 캐시가 정적 결과를 보유하므로 별도 색인이나 공개 노드 필드는 없으며, 조기 보유는 O(적격 노드 수)입니다(BLUEPRINT-021, NODE-006, SETTLE-017, 100라운드).
+ 
+ - 파생 수렴 증명은 첫 실제 파생 쓰기 라운드에서 모든 선언·식·watch·injectTo 원천·gate 읽기를 포함해 정적 대상마다 한 번 계산합니다. 쓰기 없는 생성·마운트에서는 증명을 수집하거나 등록하지 않습니다. 비활성 선언도 제외하지 않으며 조상·자손 양방향 교차를 사용합니다. 불완전 식·맥락/전체 호스트 읽기·발생별 재귀/배열 경로는 폼 전체 fallback이며 이 결과도 청사진에 메모합니다. 단순 리터럴·경로·연산자 식만 읽기 완전성을 증명하고 컨테이너·가상 쓰기는 보수적으로 제외합니다. 첫 쓰기는 O(선언+읽기+대상×읽기) 작업·임시 색인을 부담하고, 이후 쓰기와 같은 청사진의 두 번째 폼은 O(1) 약한 캐시 조회를 사용합니다. 약한 sidecar는 청사진당 한 항목과 O(대상 수) 경로 참조를 보유하며 기존 O(식 수) 완전성 등록은 유지합니다. 파생 없는 폼은 증명 수집·등록·할당 없이 반환합니다. 정적 오류·경고·식 컴파일은 생성 시점 그대로이며 값 평가·노드 및 식 descriptor shape 추가는 없습니다(98C-01, 99라운드).
+@@ -60,6 +62,11 @@
+ 
+ - 분기 없는 식·derive·watch·state 스키마는 각 기능 색인과 역의존 정보를 유지하며 쓰기 후 값·상태·감시가 같습니다. 기능 없는 청사진의 빈 조회 결과는 변경할 수 없고 반복 조회 참조가 같습니다.
+ 
++### cold-child-binding — 콜드 연결의 선언 재사용
++
++- 89C-03의 코퍼스 14종과 경계 45종에서 HEAD 대비 노드·선언·조각·식·의존·오류·경고가 같습니다.
++- 동일 호스트의 자식 선언은 한 번만 생성·동결하며 선언 배열도 재사용합니다. 다른 호스트 참조는 그 호스트의 이름·경로·작성 위치·게이트를 보존하고 caller schema를 변경하지 않습니다.
++
+ ### type-syntax — 명시한 형과 전략
+ 
+ - BLUEPRINT-045 E1–E10·E28의 종류·schemaType·nullable·전략·오류가 일치합니다. TEST-077의 명시 union과 union 입력 형 계약을 만족합니다.
+@@ -139,4 +146,4 @@
+ 
+ ## Last Updated
+ 
+-2026-10-06. 계약 기준: REACT-003·004, 69C-04, 89C-03, 98C-01, 100라운드.
++2026-10-06. 계약 기준: REACT-003·004, 69C-04, 89C-03, 98C-01, 100C-01, 101라운드.
+diff --git a/packages/canard/schema-form/src/core/blueprint/utils/analyze/populateNodeChildren.ts b/packages/canard/schema-form/src/core/blueprint/utils/analyze/populateNodeChildren.ts
+index 81fc39b13..4b2c498c4 100644
+--- a/packages/canard/schema-form/src/core/blueprint/utils/analyze/populateNodeChildren.ts
++++ b/packages/canard/schema-form/src/core/blueprint/utils/analyze/populateNodeChildren.ts
+@@ -1,7 +1,7 @@
+ import { isArray } from '@winglet/common-utils/filter';
+ import { escapeSegment } from '@winglet/json/pointer';
+ 
+-import type { BlueprintChildEntry } from '../../type';
++import type { BlueprintChildEntry, BlueprintGate, PropertyDeclaration } from '../../type';
+ import { BlueprintErrorCode } from '../diagnostics/constant';
+ import { throwBlueprintError } from '../diagnostics/throwBlueprintError';
+ import { createBlueprintGate } from './createBlueprintGate';
+@@ -160,31 +160,36 @@ export const populateNodeChildren = (
+   for (const [name, inputs] of properties) {
+     const path = `${node.path}/${escapeSegment(name)}`;
+     for (const child of build(context, inputs, path)) {
+-      const declarations = child.declarations.map((declaration) =>
+-        Object.freeze({
+-          ...declaration,
+-          name,
+-          path,
+-          hostPath: node.path,
+-          schemaPath:
+-            declaration.schemaPath === child.schemaPath
+-              ? inputs[0].schemaPath
+-              : declaration.schemaPath,
+-          gates: Object.freeze(
+-            declaration.gates.map((gate) =>
+-              gate.hostPath === child.path
+-                ? createBlueprintGate({ ...gate, hostPath: path })
+-                : gate,
+-            ),
+-          ),
+-        }),
+-      );
++      let declarations: PropertyDeclaration[] | undefined;
++      for (let index = 0; index < child.declarations.length; index++) {
++        const declaration = child.declarations[index];
++        const schemaPath = declaration.schemaPath === child.schemaPath
++          ? inputs[0].schemaPath : declaration.schemaPath;
++        let gates: BlueprintGate[] | undefined;
++        if (path !== child.path)
++          for (let gateIndex = 0; gateIndex < declaration.gates.length; gateIndex++) {
++            const gate = declaration.gates[gateIndex];
++            if (gate.hostPath === child.path) {
++              gates ??= declaration.gates.slice();
++              gates[gateIndex] = createBlueprintGate({ ...gate, hostPath: path });
++            }
++          }
++        if (declaration.name === name && declaration.path === path &&
++          declaration.hostPath === node.path && declaration.schemaPath === schemaPath &&
++          gates === undefined)
++          continue;
++        declarations ??= child.declarations.slice();
++        declarations[index] = Object.freeze({
++          ...declaration, name, path, hostPath: node.path, schemaPath,
++          gates: gates === undefined ? declaration.gates : Object.freeze(gates),
++        });
++      }
+       entries.push(
+         Object.freeze({
+           name,
+           node: child,
+           hostPath: node.path,
+-          declarations: Object.freeze(declarations),
++          declarations: declarations === undefined ? child.declarations : Object.freeze(declarations),
+         }),
+       );
+     }

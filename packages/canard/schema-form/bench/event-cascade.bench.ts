@@ -9,13 +9,9 @@ import {
 import type { JSONSchema } from '@/schema-form/types';
 
 /**
- * Event cascade hot path — `setValue` → cascade → subscribers.
+ * Dispatch hot path — public `setValue` through synchronous settlement and delivery.
  *
- * Design notes (learned the hard way):
- *  - schema-form's cascade is fundamentally async: `setValue` queues work
- *    that is flushed on a macrotask. Calling `setValue` repeatedly WITHOUT
- *    draining (a "sync only" lane) piles up cascades and triggers a
- *    re-entrancy error in `__processChildren__`. So every lane MUST drain.
+ * The legacy drain is retained as a control for the saved baseline:
  *  - A single `setValue + setTimeout(0)` is dominated by the ~1ms macrotask
  *    timer floor, NOT schema-form cost (the "drain dominant" problem).
  *
@@ -47,9 +43,9 @@ const derivedSchema: JSONSchema = {
   properties: {
     a: { type: 'number', default: 0 },
     b: { type: 'number', default: 0 },
-    sum: { type: 'number', computed: { derived: '../a + ../b' } },
-    twice: { type: 'number', computed: { derived: '../sum * 2' } },
-    label: { type: 'string', computed: { derived: '"v=" + ../twice' } },
+    sum: { type: 'number', controls: { derived: '../a + ../b' } },
+    twice: { type: 'number', controls: { derived: '../sum * 2' } },
+    label: { type: 'string', controls: { derived: '"v=" + ../twice' } },
   },
 };
 
@@ -60,14 +56,14 @@ const oneOfSchema: JSONSchema = {
   },
   oneOf: [
     {
-      '&if': "./type === 'a'",
+      controls: { active: "./type === 'a'" },
       properties: {
         x: { type: 'string', default: 'A' },
         y: { type: 'number', default: 1 },
       },
     },
     {
-      '&if': "./type === 'b'",
+      controls: { active: "./type === 'b'" },
       properties: {
         x: { type: 'string', default: 'B' },
         y: { type: 'number', default: 2 },
@@ -95,7 +91,16 @@ const oneOfNode: SchemaNode = nodeFromJSONSchema({
 let counter = 0;
 let oneOfToggle = false;
 
-describe('event cascade (macrotask drain)', () => {
+if (
+  !flatNode.find('/f0') ||
+  !derivedNode.find('/label') ||
+  !oneOfNode.find('/x')
+)
+  throw new Error(
+    'dispatch benchmark requires mounted flat, derived and branch fields',
+  );
+
+describe('dispatch: public writes (legacy macrotask drain retained)', () => {
   bench(
     `flat batch: ${BATCH} setValue on distinct fields + 1 drain`,
     async () => {

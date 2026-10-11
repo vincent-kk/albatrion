@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 
 import { SchemaNodeEventType, SchemaNodeRequestType } from '../../record';
-import { NodeState } from '../../types/state';
+import { SchemaNodeState } from '../../types/state';
 import { dispatchBatch, dispatchClearExternalErrors, dispatchClearSubtreeState,
   dispatchMount, dispatchRequest, dispatchSetExternalErrors, dispatchSetState,
   dispatchSetSubtreeState, dispatchSetValue, readSchemaNodeRevision,
@@ -88,7 +88,7 @@ describe('dispatcher budgets', () => {
   it('EVENT-008 refuses state, external error, and request writes at the feedback limit', () => {
     const { root, runtime } = createDispatchTree({ type: 'string' });
     const issues = [{ dataPath: '', message: 'kept' }];
-    dispatchSetState(root, { [NodeState.Touched]: true });
+    dispatchSetState(root, { [SchemaNodeState.Touched]: true });
     dispatchSetExternalErrors(root, issues);
     const observed: number[] = [];
     let feedbackCalls = 0;
@@ -99,8 +99,8 @@ describe('dispatcher budgets', () => {
         dispatchSetValue(root, `p${feedbackCalls++}`);
         return;
       }
-      dispatchSetState(root, { [NodeState.Dirty]: true });
-      dispatchSetSubtreeState(root, { [NodeState.Dirty]: true });
+      dispatchSetState(root, { [SchemaNodeState.Dirty]: true });
+      dispatchSetSubtreeState(root, { [SchemaNodeState.Dirty]: true });
       dispatchClearSubtreeState(root);
       dispatchSetExternalErrors(root, [{ dataPath: '', message: 'blocked' }]);
       dispatchClearExternalErrors(root);
@@ -108,8 +108,8 @@ describe('dispatcher budgets', () => {
     });
 
     expect(() => dispatchSetValue(root, 'go')).toThrow();
-    expect(root.interactionState[NodeState.Touched]).toBe(true);
-    expect(root.interactionState[NodeState.Dirty]).toBeUndefined();
+    expect(root.interactionState[SchemaNodeState.Touched]).toBe(true);
+    expect(root.interactionState[SchemaNodeState.Dirty]).toBeUndefined();
     expect(runtime.nodeErrors?.get(root)).toBe(issues);
     expect(observed).toHaveLength(26);
     expect(readSchemaNodeRevision(root, SchemaNodeEventType.UpdateState)).toBe(1);

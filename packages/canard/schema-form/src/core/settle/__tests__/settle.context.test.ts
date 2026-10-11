@@ -6,7 +6,7 @@ import { blueprint } from '../../blueprint';
 import type { BlueprintSchema } from '../../blueprint';
 import type { SchemaNodeRuntime } from '../../record';
 import { schemaNodeFactory, setContext, SetValueOption } from '../../SchemaNode';
-import { NodeState } from '../../types/state';
+import { SchemaNodeState } from '../../types/state';
 
 /** Build one runtime tree with the already merged binding context. */
 const createContextTree = (schema: BlueprintSchema,
@@ -31,15 +31,15 @@ describe('context change settlement', () => {
     expect(reset).not.toBeNull();
     if (!reset) return;
     const runtime: SchemaNodeRuntime<unknown> = Reflect.get(root, 'runtime');
-    Reflect.set(reset, 'state', { [NodeState.Dirty]: true, [NodeState.Touched]: true });
+    Reflect.set(reset, 'state', { [SchemaNodeState.Dirty]: true, [SchemaNodeState.Touched]: true });
 
     setContext(root, { show: true, label: 'new', clear: true, reset: true });
 
     expect(root.find('/shown')?.active).toBe(true);
     expect(root.find('/derived')?.value).toBe('new');
     expect(root.find('/cleared')?.value).toBeUndefined();
-    expect(Reflect.get(reset, 'state')[NodeState.Dirty]).toBe(false);
-    expect(Reflect.get(reset, 'state')[NodeState.Touched]).toBe(false);
+    expect(Reflect.get(reset, 'state')[SchemaNodeState.Dirty]).toBe(false);
+    expect(Reflect.get(reset, 'state')[SchemaNodeState.Touched]).toBe(false);
     expect(runtime.settlementTrace?.entry.api).toBe('setContext');
   });
 

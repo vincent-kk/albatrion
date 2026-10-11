@@ -1,0 +1,51 @@
+--- /private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles/r136-final.cjs	2026-10-11 10:58:17
++++ /private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/g27-fix-139/r139.cjs	2026-10-11 16:05:01
+@@ -20613,7 +20613,11 @@
+       let delivering = false;
+       const service = {
+         hasConsumer: () => !!service.onError || false,
+-        beginLoad: () => warnings.clear(),
++        load: 0,
++        beginLoad: () => {
++          service.load++;
++          warnings.clear();
++        },
+         report(record) {
+           if (delivering) return;
+           if (record.error && typeof record.error === "object") {
+@@ -20841,10 +20845,8 @@
+           const invalid = Object.keys(test).filter(
+             (key) => !testKeys.includes(key)
+           );
+-          if ((isArray(test.type) ? test.type : [test.type]).includes(
+-            "integer"
+-          ))
+-            invalid.push("type:integer");
++          const types = isArray(test.type) ? test.type : [test.type];
++          if (types.includes("integer")) invalid.push("type:integer");
+           if (invalid.length && false)
+             console.warn("SCHEMA_FORM_WARNING.FORM_TYPE_TEST_INVALID", {
+               definition,
+@@ -22694,7 +22696,8 @@
+     "use strict";
+     import_react57 = require("react");
+     init_FormErrorContext2();
+-    EMPTY_CHILDREN = Object.freeze([]);
++    EMPTY_CHILDREN = [];
++    Object.freeze(EMPTY_CHILDREN);
+     COMMITTED = 1;
+     ACCESSED = 2;
+     useTerminalChildren = (node) => {
+@@ -22704,7 +22707,12 @@
+         accessed.current = 0;
+         if (node.strategy !== "terminal" || !reporter?.hasConsumer())
+           return EMPTY_CHILDREN;
++        let readLoad = reporter.load;
+         const get = (target = EMPTY_CHILDREN, key, receiver) => {
++          if (readLoad !== reporter.load) {
++            readLoad = reporter.load;
++            accessed.current &= ~ACCESSED;
++          }
+           if (key === void 0) {
+             reporter.report({
+               level: "warning",

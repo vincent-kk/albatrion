@@ -1,36 +1,48 @@
-export { nodeFromJSONSchema, contextNodeFactory } from './nodeFromJSONSchema';
-export { setContext } from './SchemaNode';
-export { SchemaNodeEventType, SchemaNodeRequestType } from './SchemaNode';
-export { retainValidationRoot, releaseValidationRoot } from './validation';
-
-export type {
-  ArrayNode,
-  BooleanNode,
-  NullNode,
-  NumberNode,
-  ObjectNode,
-  StringNode,
-  VirtualNode,
-  InferSchemaNode,
-  SchemaNode,
-  NodeListener,
-  UnionNodeEventType,
-} from '../__legacy__/core/nodes';
-
+export { nodeFromJSONSchema } from './nodeFromJSONSchema';
 export {
-  NodeState,
-  NodeEventType,
-  ValidationMode,
+  schemaNodeFactory,
+  setContext,
   SetValueOption,
-  PublicSetValueOption,
-  PublicNodeEventType,
+  SchemaNodeEventType,
+  SchemaNodeRequestType,
   isSchemaNode,
-  isBooleanNode,
-  isNumberNode,
-  isObjectNode,
   isStringNode,
-  isVirtualNode,
+  isNumberNode,
+  isBooleanNode,
+  isObjectNode,
   isArrayNode,
+  isVirtualNode,
+  isUnionNode,
   isBranchNode,
   isTerminalNode,
-} from '../__legacy__/core/nodes';
+  buildSchemaNodeTree,
+  mountSchemaNode,
+  reloadSchemaNodeForm,
+  adoptSchemaNodeTree,
+  writeSchemaNodeInput,
+  finishSchemaNodeInput,
+  readSchemaNodeInteractionReset,
+  observeSchemaNodeReports,
+  interpretSchemaNodeDraft,
+} from './SchemaNode';
+export type {
+  SchemaNode,
+  StringNode,
+  NumberNode,
+  BooleanNode,
+  NullNode,
+  ObjectNode,
+  ArrayNode,
+  VirtualNode,
+  UnionNode,
+  BranchNode,
+  TerminalNode,
+  UnionMemberType,
+  UnionSchemaType,
+  InferSchemaNode,
+  FormTypeInputProps,
+} from './SchemaNode';
+export { SchemaNodeState, ValidationMode } from './types/state';
+export type { JSONSchema } from './types/jsonSchema';
+export { retainValidationRoot, releaseValidationRoot } from './validation';
+export type { Validator, ValidationIssue } from './validation';

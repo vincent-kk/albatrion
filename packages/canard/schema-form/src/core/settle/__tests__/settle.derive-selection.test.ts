@@ -1,7 +1,7 @@
 import { describe, expect, it, vi } from 'vitest';
 
 import type { BlueprintSchema } from '../../blueprint';
-import { NodeState } from '../../types/state';
+import { SchemaNodeState } from '../../types/state';
 import { SetValueOption } from '../../types/value';
 import { loadSchemaNodeAtMount, writeSchemaNode } from '../index';
 import { createTestTree } from './fixtures/createTestTree';
@@ -37,11 +37,11 @@ describe('active derive declarations', () => {
     loadSchemaNodeAtMount(root, { H: { enabled: false, x: 'own' } },
       SetValueOption.Overwrite);
     const target = root.structure!.H.structure!.x;
-    target.interactionState = { [NodeState.Dirty]: true, [NodeState.Touched]: true };
+    target.interactionState = { [SchemaNodeState.Dirty]: true, [SchemaNodeState.Touched]: true };
     writeSchemaNode(root.structure!.H.structure!.enabled, true, 'input',
       SetValueOption.Overwrite);
-    expect(target.interactionState[NodeState.Dirty]).toBe(true);
-    expect(target.interactionState[NodeState.Touched]).toBe(true);
+    expect(target.interactionState[SchemaNodeState.Dirty]).toBe(true);
+    expect(target.interactionState[SchemaNodeState.Touched]).toBe(true);
   });
 
   it('FRAGMENT-050 shared node baseline only on depth-two if activation', () => {
@@ -149,11 +149,11 @@ describe('active derive declarations', () => {
     loadSchemaNodeAtMount(root, { flag: false, H: { P: { q: 'q0' } } },
       SetValueOption.Overwrite);
     const target = root.structure!.H.structure!.P;
-    target.interactionState = { [NodeState.Dirty]: true, [NodeState.Touched]: true };
+    target.interactionState = { [SchemaNodeState.Dirty]: true, [SchemaNodeState.Touched]: true };
     writeSchemaNode(target.structure!.q, 'user', 'input', SetValueOption.Overwrite);
     expect(target.structure?.q?.raw).toBe('user');
-    expect(target.interactionState[NodeState.Dirty]).toBe(true);
-    expect(target.interactionState[NodeState.Touched]).toBe(true);
+    expect(target.interactionState[SchemaNodeState.Dirty]).toBe(true);
+    expect(target.interactionState[SchemaNodeState.Touched]).toBe(true);
   });
 
   it('FRAGMENT-050 shared node baseline only after inactive declaration reselects', () => {

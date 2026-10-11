@@ -1,4 +1,4 @@
-import type { ChangeEvent } from 'react';
+import { type ChangeEvent, useLayoutEffect, useRef } from 'react';
 
 import { useHandle } from '@winglet/react-utils/hook';
 
@@ -13,20 +13,26 @@ const FormTypeInputBoolean = ({
   readOnly,
   disabled,
   defaultValue,
+  value,
   onChange,
   style,
   className,
 }: FormTypeInputProps<boolean | null>) => {
+  const ref = useRef<HTMLInputElement>(null);
+  useLayoutEffect(() => {
+    if (ref.current) ref.current.indeterminate = typeof value !== 'boolean';
+  }, [value]);
   const handleChange = useHandle((event: ChangeEvent<HTMLInputElement>) => {
     onChange(event.target.checked);
   });
   return (
     <input
+      ref={ref}
       type="checkbox"
       id={path}
       name={name}
       disabled={disabled || readOnly}
-      defaultChecked={defaultValue ?? undefined}
+      defaultChecked={defaultValue === true}
       onChange={handleChange}
       style={style}
       className={className}

@@ -14,11 +14,8 @@ function getAbsolutePath(value: string): any {
 }
 const config: StorybookConfig = {
   stories: [
-    '../src/**/*.mdx',
-    '../src/**/*.story.@(js|jsx|mjs|ts|tsx)',
-    '../src/**/*.stories.@(js|jsx|mjs|ts|tsx)',
-    '../stories/**/*.story.@(js|jsx|mjs|ts|tsx)',
-    '../stories/**/*.stories.@(js|jsx|mjs|ts|tsx)',
+    '../stories/scenarios/**/*.stories.tsx',
+    '../stories/usage/**/*.stories.tsx',
   ],
   addons: [
     getAbsolutePath('@chromatic-com/storybook'),

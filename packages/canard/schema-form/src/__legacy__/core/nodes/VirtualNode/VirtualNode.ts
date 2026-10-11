@@ -1,8 +1,8 @@
 import { map } from '@winglet/common-utils/array';
 
-import { JSONSchemaError } from '@/schema-form/errors';
-import { formatInvalidVirtualNodeValuesError } from '@/schema-form/helpers/error';
-import type { VirtualNodeValue, VirtualSchema } from '@/schema-form/types';
+import { JSONSchemaError } from '@/schema-form/__legacy__/errors';
+import { formatInvalidVirtualNodeValuesError } from '@/schema-form/__legacy__/helpers/error';
+import type { VirtualNodeValue, VirtualSchema } from '@/schema-form/__legacy__/types';
 
 import { AbstractNode } from '../AbstractNode';
 import {
@@ -12,7 +12,7 @@ import {
   SetValueOption,
   type UnionSetValueOption,
   type VirtualNodeConstructorProps,
-} from '../../../../core/types';
+} from '../../types';
 
 /**
  * Node class for handling virtual schemas.

@@ -12,7 +12,7 @@ export const orderScenario = {
       expect: { outputValue: { first: 'new', second: 'new' },
         deliveryOrder: ['', '/first', '/second'], onChangeCount: 1,
         validationRequestCount: 1 } },
-    { action: 'setValue', path: '/first', value: 'new',
+    { action: 'batch', steps: [{ action: 'setValue', path: '/first', value: 'new' }],
       expect: { deliveryOrder: [], onChangeCount: 0, validationRequestCount: 0 } },
   ],
 } satisfies FormScenario;

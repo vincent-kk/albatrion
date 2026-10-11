@@ -1,6 +1,8 @@
 import { Button, type ButtonProps } from 'antd-mobile';
 
 import { map } from '@winglet/common-utils/array';
+import { isArray } from '@winglet/common-utils/filter';
+import { minLite } from '@winglet/common-utils/math';
 import { useHandle } from '@winglet/react-utils/hook';
 
 import type {
@@ -25,12 +27,20 @@ const Remove = (props: ButtonProps) => (
 );
 
 const FormTypeInputArray = ({
+  jsonSchema,
   node,
   readOnly,
   disabled,
   ChildNodeComponents,
   style,
 }: FormTypeInputProps<any[]>) => {
+  const maxItems = minLite(
+    typeof jsonSchema.maxItems === 'number' ? jsonSchema.maxItems : Infinity,
+    !jsonSchema.items && isArray(jsonSchema.prefixItems)
+      ? jsonSchema.prefixItems.length
+      : Infinity,
+  );
+  const length = node.children?.length ?? node.value?.length ?? 0;
   const handleClick = useHandle(() => {
     node.push();
   });
@@ -55,7 +65,7 @@ const FormTypeInputArray = ({
           );
         })}
 
-      {!readOnly && node.maxItems > node.length && (
+      {!readOnly && maxItems > length && (
         <div>
           <Add disabled={disabled} onClick={handleClick} />
         </div>

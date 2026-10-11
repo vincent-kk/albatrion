@@ -5,7 +5,6 @@ import { isReactComponent } from '@winglet/react-utils/filter';
 import { useConstant } from '@winglet/react-utils/hook';
 
 import type { FormProps } from '@/schema-form/components/Form';
-import { NodeState } from '@/schema-form/core';
 import { ShowError } from '@/schema-form/types';
 
 import { useExternalFormContext } from '../ExternalFormContext';
@@ -15,7 +14,10 @@ const DEFAULT_SHOW_ERROR = ShowError.DirtyTouched;
 
 interface FormTypeRendererContextProviderProps {
   /** Custom form type renderer component */
-  CustomFormTypeRenderer?: FormProps['CustomFormTypeRenderer'];
+  FormTypeGroupRenderer?: FormProps['FormTypeGroupRenderer'];
+  FormTypeLabelRenderer?: FormProps['FormTypeLabelRenderer'];
+  FormTypeInputRenderer?: FormProps['FormTypeInputRenderer'];
+  FormTypeErrorRenderer?: FormProps['FormTypeErrorRenderer'];
   /** Custom format error function */
   formatError?: FormProps['formatError'];
   /**
@@ -30,13 +32,16 @@ interface FormTypeRendererContextProviderProps {
 }
 
 export const FormTypeRendererContextProvider = ({
-  CustomFormTypeRenderer,
+  FormTypeGroupRenderer,
+  FormTypeLabelRenderer,
+  FormTypeInputRenderer,
+  FormTypeErrorRenderer,
   formatError,
   showError: inputShowError,
   children,
 }: PropsWithChildren<FormTypeRendererContextProviderProps>) => {
   const {
-    FormGroupRenderer: ExternalFormGroupRenderer,
+    FormTypeGroupRenderer: ExternalFormGroupRenderer,
     formatError: externalFormatError,
     showError: externalShowError,
   } = useExternalFormContext();
@@ -54,9 +59,9 @@ export const FormTypeRendererContextProvider = ({
     return (
       condition: Parameters<FormTypeRendererContext['checkShowError']>[0],
     ) => {
-      const showError = condition?.[NodeState.ShowError],
-        dirty = condition?.[NodeState.Dirty],
-        touched = condition?.[NodeState.Touched];
+      const showError = condition?.[4],
+        dirty = condition?.[1],
+        touched = condition?.[2];
       if (showError !== undefined) return showError;
       if (errorState & ShowError.Always) return true;
       if (errorState & ShowError.Never) return false;
@@ -68,18 +73,26 @@ export const FormTypeRendererContextProvider = ({
   }, [inputShowError, externalShowError]);
 
   const constant = useConstant({
-    CustomFormTypeRenderer,
+    FormTypeGroupRenderer,
+    FormTypeLabelRenderer,
+    FormTypeInputRenderer,
+    FormTypeErrorRenderer,
     formatError,
   });
   const value = useMemo(() => {
-    const FormTypeRenderer = isReactComponent(constant.CustomFormTypeRenderer)
-      ? constant.CustomFormTypeRenderer
+    const FormTypeGroupRenderer = isReactComponent(
+      constant.FormTypeGroupRenderer,
+    )
+      ? constant.FormTypeGroupRenderer
       : ExternalFormGroupRenderer;
     const formatError = isFunction(constant.formatError)
       ? constant.formatError
       : externalFormatError;
     return {
-      FormTypeRenderer,
+      FormTypeGroupRenderer,
+      FormTypeLabelRenderer: constant.FormTypeLabelRenderer,
+      FormTypeInputRenderer: constant.FormTypeInputRenderer,
+      FormTypeErrorRenderer: constant.FormTypeErrorRenderer,
       formatError,
       checkShowError,
     };

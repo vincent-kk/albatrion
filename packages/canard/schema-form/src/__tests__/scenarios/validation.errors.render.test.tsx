@@ -47,12 +47,12 @@ const credentialsSchema = {
     name: {
       type: 'string',
       minLength: 3,
-      errorMessages: { minLength: 'NAME_TOO_SHORT' },
+      presentation: { errorMessages: { minLength: 'NAME_TOO_SHORT' } },
     },
     email: {
       type: 'string',
       pattern: '^[^@\\s]+@[^@\\s]+$',
-      errorMessages: { pattern: 'BAD_EMAIL', required: 'EMAIL_REQUIRED' },
+      presentation: { errorMessages: { pattern: 'BAD_EMAIL', required: 'EMAIL_REQUIRED' } },
     },
   },
   required: ['email'],
@@ -66,7 +66,7 @@ const ageSchema = {
       type: 'number',
       minimum: 18,
       maximum: 99,
-      errorMessages: { minimum: 'AGE_TOO_LOW', maximum: 'AGE_TOO_HIGH' },
+      presentation: { errorMessages: { minimum: 'AGE_TOO_LOW', maximum: 'AGE_TOO_HIGH' } },
     },
   },
 } satisfies JSONSchema;

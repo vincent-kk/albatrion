@@ -28,8 +28,8 @@ export const registerBlueprintDependency = (
       },
       context.options,
     );
-  const ids =
-    context.dependencies[path as string] ??
-    (context.dependencies[path as string] = []);
+  const dependencies = context.dependencies ??= Object.create(null);
+  context.capabilities.hasDependencies = true;
+  const ids = dependencies[path] ?? (dependencies[path] = []);
   if (!ids.includes(declaration.id)) ids.push(declaration.id);
 };

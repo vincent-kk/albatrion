@@ -61,7 +61,8 @@ export const exitSchemaNodeChain = <Self extends SchemaNodeRecord<Self>>(
   }
   const changed = runtime.chainInitialEmit !== root.emit;
   const requests = runtime.validationTargets;
-  if (runtime.validationMode && runtime.validationMode & ValidationMode.OnChange) {
+  if (!runtime.deferMountValidation && runtime.validationMode &&
+    runtime.validationMode & ValidationMode.OnChange) {
     runtime.reportValidationFailure ??= (error) =>
       reportValidationFailure(runtime, error);
     if (changed && !requests?.has(root)) {
@@ -74,6 +75,7 @@ export const exitSchemaNodeChain = <Self extends SchemaNodeRecord<Self>>(
     }
   }
   runtime.validationTargets = undefined;
+  runtime.deferMountValidation = undefined;
   runtime.entryDepth = 0;
   const errors = runtime.chainErrors ?? [];
   if (runtime.stateChanged) {

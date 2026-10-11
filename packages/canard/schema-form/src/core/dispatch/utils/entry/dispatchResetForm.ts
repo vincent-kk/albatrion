@@ -5,16 +5,17 @@ import { enterSchemaNodeChain } from '../chain/enterSchemaNodeChain';
 import { captureChainError } from '../chain/captureChainError';
 import { exitSchemaNodeChain } from '../chain/exitSchemaNodeChain';
 import { clearWarningKeys } from '../report/clearWarningKeys';
+import { clearSchemaNodeFormErrors } from './utils/clearSchemaNodeFormErrors';
 
 /**
  * Start a new form load lifetime with a replacement root source.
  * @param root - Live form root
- * @param value - Replacement load snapshot, defaulting to the retained source
+ * @param value - Required replacement load snapshot; undefined clears the source
  * @param option - Automatic-write selection for this load
  * @returns Nothing; the outer entry delivers the load
  */
 export const dispatchResetForm = <Self extends SchemaNodeRecord<Self>>(
-  root: Self, value: unknown = root.runtime.loadSnapshot,
+  root: Self, value: unknown,
   option: SetValueOption = SetValueOption.Overwrite,
 ): void => {
   if (!enterSchemaNodeChain(root)) return;
@@ -23,7 +24,10 @@ export const dispatchResetForm = <Self extends SchemaNodeRecord<Self>>(
   root.runtime.validationCompileReported = false;
   root.runtime.batchWrites = undefined;
   (root.runtime.validationTargets ??= new Set()).add(root);
-  try { resetSchemaNodeForm(root, value, option); }
+  try {
+    clearSchemaNodeFormErrors(root);
+    resetSchemaNodeForm(root, value, option);
+  }
   catch (error) { captureChainError(root.runtime, error); }
   finally { exitSchemaNodeChain(root); }
 };

@@ -1,0 +1,939 @@
+│ ┌────────────────────────────────────────────────────────────────────────────┐
+│ │  Info: Found a setup file with "setProjectAnnotations".                    │
+│ │  Skipping automatic provisioning of preview annotations to avoid           │
+│ │  conflicts. Since Storybook 10.3, "@storybook/addon-vitest" applies these  │
+│ │   automatically.                                                           │
+│ │  You can safely remove the "setProjectAnnotations" call from your setup    │
+│ │  file, or remove the file entirely if you don't have custom code there.    │
+│ └────────────────────────────────────────────────────────────────────────────┘
+
+ RUN  v3.2.6 /Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/packages/canard/schema-form
+
+·······················································································································································································································································································································································································································································································································································································································································································································································································································································································································································································································································································································································································································································································································································································································································································-········································stdout | src/core/__tests__/schema-merge.mount.test.ts > removes runtime remerges per cold mount while retaining every static check
+SCHEMA_MERGE_COUNTS {"before":{"runtime":4,"static":4},"after":{"runtime":0,"static":4}}
+
+······································································································································································································································································································································································stdout | src/errors/__tests__/formErrorCode.ledger.test.ts > form error codes > ERROR-164 code table matches the live ledger rows, supplements, order and level
+ERROR-164 live code count: 60
+
+·······················································································································································································································································································································································································································································································································································································································································································································································································································································································································································································································································································································································································································································································································································xxxx··········································································································
+
+ Test Files  2 failed | 434 passed (436)
+      Tests  4 failed | 3238 passed | 1 todo (3243)
+   Start at  23:40:41
+   Duration  301.71s (transform 4.83s, setup 0ms, collect 78.44s, tests 132.73s, environment 22.52s, prepare 15.43s)
+
+(node:78625) [DEP0205] DeprecationWarning: `module.register()` is deprecated. Use `module.registerHooks()` instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+stderr | src/helpers/virtualization/__tests__/VirtualizationManager.selection.test.ts > VirtualizationManager selection API > create returns null when IntersectionObserver is unavailable
+
+
+ ⚠️ [@canard/schema-form] SCHEMA_FORM_WARNING.VIRTUALIZATION_DISABLED_FOR_FORM ⚠️ 
+
+  'virtualization' is enabled but IntersectionObserver is unavailable, so it is
+  disabled. Render-level virtualization is client-side-rendering only.
+  
+    ╭──────────────────────────────────────────────────
+    │  Requires:  IntersectionObserver (browser only)
+    │  Status:    disabled (unavailable in this environment, e.g. SSR)
+    ╰──────────────────────────────────────────────────
+  
+  Enabling it in an SSR/hydration app causes a hydration mismatch: the server
+  renders every field while the client gates them behind placeholders.
+  
+  How to fix:
+    1. Do not set 'virtualization' in SSR/hydration apps
+    2. Or enable it only on the client, after mount (client-side rendering only)
+
+
+stderr | src/__tests__/scenarios/refSchema-context-provider.render.test.tsx > context passed via Form context prop reaches FormTypeInput > clears props.context when the Form context prop is emptied
+Validation is disabled because no validator was selected {
+  level: 'warning',
+  code: 'SCHEMA_FORM_WARNING.VALIDATOR_MISSING',
+  message: 'Validation is disabled because no validator was selected'
+}
+
+stderr | src/__tests__/scenarios/refSchema-context-provider.render.test.tsx > FormProvider supplies definitions/context to a nested Form > renders a field via a FormProvider-supplied formTypeInputDefinition
+Validation is disabled because no validator was selected {
+  level: 'warning',
+  code: 'SCHEMA_FORM_WARNING.VALIDATOR_MISSING',
+  message: 'Validation is disabled because no validator was selected'
+}
+
+stderr | src/__tests__/scenarios/refSchema-context-provider.render.test.tsx > FormProvider supplies definitions/context to a nested Form > reaches computed expressions through FormProvider.context alone
+Validation is disabled because no validator was selected {
+  level: 'warning',
+  code: 'SCHEMA_FORM_WARNING.VALIDATOR_MISSING',
+  message: 'Validation is disabled because no validator was selected'
+}
+
+stderr | src/__tests__/scenarios/refSchema-context-provider.render.test.tsx > FormProvider supplies definitions/context to a nested Form > merges provider + Form context, Form-level keys overriding by key
+Validation is disabled because no validator was selected {
+  level: 'warning',
+  code: 'SCHEMA_FORM_WARNING.VALIDATOR_MISSING',
+  message: 'Validation is disabled because no validator was selected'
+}
+
+stderr | src/__tests__/scenarios/refSchema-context-provider.render.test.tsx > FormProvider supplies definitions/context to a nested Form > clears the merged context when FormProvider context is emptied
+Validation is disabled because no validator was selected {
+  level: 'warning',
+  code: 'SCHEMA_FORM_WARNING.VALIDATOR_MISSING',
+  message: 'Validation is disabled because no validator was selected'
+}
+
+stderr | src/__tests__/scenarios/refSchema-context-provider.render.test.tsx > context passed via Form context prop reaches FormTypeInput > clears props.context when the Form context prop is emptied
+Validation is disabled because no validator was selected {
+  level: 'warning',
+  code: 'SCHEMA_FORM_WARNING.VALIDATOR_MISSING',
+  message: 'Validation is disabled because no validator was selected'
+}
+
+stderr | src/__tests__/scenarios/refSchema-context-provider.render.test.tsx > FormProvider supplies definitions/context to a nested Form > renders a field via a FormProvider-supplied formTypeInputDefinition
+Validation is disabled because no validator was selected {
+  level: 'warning',
+  code: 'SCHEMA_FORM_WARNING.VALIDATOR_MISSING',
+  message: 'Validation is disabled because no validator was selected'
+}
+
+stderr | src/__tests__/scenarios/refSchema-context-provider.render.test.tsx > FormProvider supplies definitions/context to a nested Form > reaches computed expressions through FormProvider.context alone
+Validation is disabled because no validator was selected {
+  level: 'warning',
+  code: 'SCHEMA_FORM_WARNING.VALIDATOR_MISSING',
+  message: 'Validation is disabled because no validator was selected'
+}
+
+stderr | src/__tests__/scenarios/refSchema-context-provider.render.test.tsx > FormProvider supplies definitions/context to a nested Form > merges provider + Form context, Form-level keys overriding by key
+Validation is disabled because no validator was selected {
+  level: 'warning',
+  code: 'SCHEMA_FORM_WARNING.VALIDATOR_MISSING',
+  message: 'Validation is disabled because no validator was selected'
+}
+
+stderr | src/__tests__/scenarios/refSchema-context-provider.render.test.tsx > FormProvider supplies definitions/context to a nested Form > clears the merged context when FormProvider context is emptied
+Validation is disabled because no validator was selected {
+  level: 'warning',
+  code: 'SCHEMA_FORM_WARNING.VALIDATOR_MISSING',
+  message: 'Validation is disabled because no validator was selected'
+}
+
+stderr | src/components/SchemaNode/SchemaNodeInput/__tests__/inputBinding.test.tsx > REACT-009 REACT-011 batches input write, error clear and dirty without refreshing itself
+Validation is disabled because no validator was selected {
+  level: 'warning',
+  code: 'SCHEMA_FORM_WARNING.VALIDATOR_MISSING',
+  message: 'Validation is disabled because no validator was selected'
+}
+
+stderr | src/components/SchemaNode/SchemaNodeInput/__tests__/inputBinding.test.tsx > REACT-024 rejects old change and file callbacks immediately after refresh
+Validation is disabled because no validator was selected {
+  level: 'warning',
+  code: 'SCHEMA_FORM_WARNING.VALIDATOR_MISSING',
+  message: 'Validation is disabled because no validator was selected'
+}
+
+stderr | src/components/SchemaNode/SchemaNodeInput/__tests__/inputBinding.test.tsx > REACT-024 ignores deferred touched after reset and trims at blur
+Validation is disabled because no validator was selected {
+  level: 'warning',
+  code: 'SCHEMA_FORM_WARNING.VALIDATOR_MISSING',
+  message: 'Validation is disabled because no validator was selected'
+}
+
+stderr | src/components/SchemaNode/SchemaNodeInput/__tests__/inputBinding.test.tsx > REACT-028 preserves a branch input with mounted child proxies on refresh
+Validation is disabled because no validator was selected {
+  level: 'warning',
+  code: 'SCHEMA_FORM_WARNING.VALIDATOR_MISSING',
+  message: 'Validation is disabled because no validator was selected'
+}
+
+stderr | src/components/SchemaNode/SchemaNodeInput/__tests__/inputBinding.test.tsx > REACT-009 REACT-011 batches input write, error clear and dirty without refreshing itself
+Validation is disabled because no validator was selected {
+  level: 'warning',
+  code: 'SCHEMA_FORM_WARNING.VALIDATOR_MISSING',
+  message: 'Validation is disabled because no validator was selected'
+}
+
+stderr | src/components/SchemaNode/SchemaNodeInput/__tests__/inputBinding.test.tsx > REACT-024 rejects old change and file callbacks immediately after refresh
+Validation is disabled because no validator was selected {
+  level: 'warning',
+  code: 'SCHEMA_FORM_WARNING.VALIDATOR_MISSING',
+  message: 'Validation is disabled because no validator was selected'
+}
+
+stderr | src/components/SchemaNode/SchemaNodeInput/__tests__/inputBinding.test.tsx > REACT-024 ignores deferred touched after reset and trims at blur
+Validation is disabled because no validator was selected {
+  level: 'warning',
+  code: 'SCHEMA_FORM_WARNING.VALIDATOR_MISSING',
+  message: 'Validation is disabled because no validator was selected'
+}
+
+stderr | src/components/SchemaNode/SchemaNodeInput/__tests__/inputBinding.test.tsx > REACT-028 preserves a branch input with mounted child proxies on refresh
+Validation is disabled because no validator was selected {
+  level: 'warning',
+  code: 'SCHEMA_FORM_WARNING.VALIDATOR_MISSING',
+  message: 'Validation is disabled because no validator was selected'
+}
+
+stderr | src/__tests__/migration/form-lifecycle.test.tsx > LANDING-039 changed-schema reset switches the handle before returning
+Validation is disabled because no validator was selected {
+  level: 'warning',
+  code: 'SCHEMA_FORM_WARNING.VALIDATOR_MISSING',
+  message: 'Validation is disabled because no validator was selected'
+}
+Validation is disabled because no validator was selected {
+  level: 'warning',
+  code: 'SCHEMA_FORM_WARNING.VALIDATOR_MISSING',
+  message: 'Validation is disabled because no validator was selected'
+}
+
+stderr | src/__tests__/migration/form-lifecycle.test.tsx > LANDING-039 changed-schema reset switches the handle before returning
+Validation is disabled because no validator was selected {
+  level: 'warning',
+  code: 'SCHEMA_FORM_WARNING.VALIDATOR_MISSING',
+  message: 'Validation is disabled because no validator was selected'
+}
+Validation is disabled because no validator was selected {
+  level: 'warning',
+  code: 'SCHEMA_FORM_WARNING.VALIDATOR_MISSING',
+  message: 'Validation is disabled because no validator was selected'
+}
+
+stderr | src/formTypeDefinitions/__tests__/blockedUnionInput.test.tsx > REACT-033 re-evaluates the retained draft when the effective list changes
+TERMINAL_SUBTREE_KEY_IGNORED_FOR_FORM at #/properties/field {
+  level: 'warning',
+  code: 'SCHEMA_FORM_WARNING.TERMINAL_SUBTREE_KEY_IGNORED_FOR_FORM',
+  message: 'TERMINAL_SUBTREE_KEY_IGNORED_FOR_FORM at #/properties/field',
+  schemaPath: '#/properties/field',
+  details: { keys: [ 'controls' ], paths: [ '#/properties/field/allOf/0' ] }
+}
+
+stderr | src/formTypeDefinitions/__tests__/blockedUnionInput.test.tsx > REACT-033 defers effective-list draft re-evaluation until composition ends
+TERMINAL_SUBTREE_KEY_IGNORED_FOR_FORM at #/properties/field {
+  level: 'warning',
+  code: 'SCHEMA_FORM_WARNING.TERMINAL_SUBTREE_KEY_IGNORED_FOR_FORM',
+  message: 'TERMINAL_SUBTREE_KEY_IGNORED_FOR_FORM at #/properties/field',
+  schemaPath: '#/properties/field',
+  details: { keys: [ 'controls' ], paths: [ '#/properties/field/allOf/0' ] }
+}
+
+stderr | src/formTypeDefinitions/__tests__/blockedUnionInput.test.tsx > REACT-033 displays containers read-only and marks mismatched primitives
+Type mismatch at  (commit 2) {
+  level: 'warning',
+  code: 'SCHEMA_FORM_WARNING.TYPE_MISMATCH',
+  path: '',
+  message: 'Type mismatch at  (commit 2)',
+  details: {
+    path: '',
+    expected: { schemaType: [Array], nullable: false, effective: [Array] },
+    received: 'array',
+    reason: 'unconvertible',
+    source: 'callerReplace'
+  }
+}
+
+stderr | src/formTypeDefinitions/__tests__/blockedUnionInput.test.tsx > REACT-033 re-evaluates the retained draft when the effective list changes
+TERMINAL_SUBTREE_KEY_IGNORED_FOR_FORM at #/properties/field {
+  level: 'warning',
+  code: 'SCHEMA_FORM_WARNING.TERMINAL_SUBTREE_KEY_IGNORED_FOR_FORM',
+  message: 'TERMINAL_SUBTREE_KEY_IGNORED_FOR_FORM at #/properties/field',
+  schemaPath: '#/properties/field',
+  details: { keys: [ 'controls' ], paths: [ '#/properties/field/allOf/0' ] }
+}
+
+stderr | src/formTypeDefinitions/__tests__/blockedUnionInput.test.tsx > REACT-033 defers effective-list draft re-evaluation until composition ends
+TERMINAL_SUBTREE_KEY_IGNORED_FOR_FORM at #/properties/field {
+  level: 'warning',
+  code: 'SCHEMA_FORM_WARNING.TERMINAL_SUBTREE_KEY_IGNORED_FOR_FORM',
+  message: 'TERMINAL_SUBTREE_KEY_IGNORED_FOR_FORM at #/properties/field',
+  schemaPath: '#/properties/field',
+  details: { keys: [ 'controls' ], paths: [ '#/properties/field/allOf/0' ] }
+}
+
+stderr | src/formTypeDefinitions/__tests__/blockedUnionInput.test.tsx > REACT-033 displays containers read-only and marks mismatched primitives
+Type mismatch at  (commit 2) {
+  level: 'warning',
+  code: 'SCHEMA_FORM_WARNING.TYPE_MISMATCH',
+  path: '',
+  message: 'Type mismatch at  (commit 2)',
+  details: {
+    path: '',
+    expected: { schemaType: [Array], nullable: false, effective: [Array] },
+    received: 'array',
+    reason: 'unconvertible',
+    source: 'callerReplace'
+  }
+}
+
+stderr | src/components/Form/__tests__/Form.binding.test.tsx > Form engine binding > REACT-007 LANDING-075 does not emit a mount change in StrictMode
+Validation is disabled because no validator was selected {
+  level: 'warning',
+  code: 'SCHEMA_FORM_WARNING.VALIDATOR_MISSING',
+  message: 'Validation is disabled because no validator was selected'
+}
+
+stderr | src/components/Form/__tests__/Form.binding.test.tsx > Form engine binding > SURFACE-059 EVENT-073 exposes exactly eighteen handle members and optional-path commands
+Validation is disabled because no validator was selected {
+  level: 'warning',
+  code: 'SCHEMA_FORM_WARNING.VALIDATOR_MISSING',
+  message: 'Validation is disabled because no validator was selected'
+}
+
+stderr | src/components/Form/__tests__/Form.binding.test.tsx > Form engine binding > WRITE-042 WRITE-043 WRITE-045 resets the same tree synchronously and clears interaction
+Validation is disabled because no validator was selected {
+  level: 'warning',
+  code: 'SCHEMA_FORM_WARNING.VALIDATOR_MISSING',
+  message: 'Validation is disabled because no validator was selected'
+}
+
+stderr | src/components/Form/__tests__/Form.binding.test.tsx > Form engine binding > WRITE-043 WRITE-046 switches the handle inside reset after a committed schema change
+Validation is disabled because no validator was selected {
+  level: 'warning',
+  code: 'SCHEMA_FORM_WARNING.VALIDATOR_MISSING',
+  message: 'Validation is disabled because no validator was selected'
+}
+Validation is disabled because no validator was selected {
+  level: 'warning',
+  code: 'SCHEMA_FORM_WARNING.VALIDATOR_MISSING',
+  message: 'Validation is disabled because no validator was selected'
+}
+
+stderr | src/components/Form/__tests__/Form.binding.test.tsx > Form engine binding > LANDING-067 submits outputValue and retains raw array positions
+Validation is disabled because no validator was selected {
+  level: 'warning',
+  code: 'SCHEMA_FORM_WARNING.VALIDATOR_MISSING',
+  message: 'Validation is disabled because no validator was selected'
+}
+
+stderr | src/components/Form/__tests__/Form.binding.test.tsx > Form engine binding > REACT-007 LANDING-075 does not emit a mount change in StrictMode
+Validation is disabled because no validator was selected {
+  level: 'warning',
+  code: 'SCHEMA_FORM_WARNING.VALIDATOR_MISSING',
+  message: 'Validation is disabled because no validator was selected'
+}
+
+stderr | src/components/Form/__tests__/Form.binding.test.tsx > Form engine binding > SURFACE-059 EVENT-073 exposes exactly eighteen handle members and optional-path commands
+Validation is disabled because no validator was selected {
+  level: 'warning',
+  code: 'SCHEMA_FORM_WARNING.VALIDATOR_MISSING',
+  message: 'Validation is disabled because no validator was selected'
+}
+
+stderr | src/components/Form/__tests__/Form.binding.test.tsx > Form engine binding > WRITE-042 WRITE-043 WRITE-045 resets the same tree synchronously and clears interaction
+Validation is disabled because no validator was selected {
+  level: 'warning',
+  code: 'SCHEMA_FORM_WARNING.VALIDATOR_MISSING',
+  message: 'Validation is disabled because no validator was selected'
+}
+
+stderr | src/components/Form/__tests__/Form.binding.test.tsx > Form engine binding > WRITE-043 WRITE-046 switches the handle inside reset after a committed schema change
+Validation is disabled because no validator was selected {
+  level: 'warning',
+  code: 'SCHEMA_FORM_WARNING.VALIDATOR_MISSING',
+  message: 'Validation is disabled because no validator was selected'
+}
+Validation is disabled because no validator was selected {
+  level: 'warning',
+  code: 'SCHEMA_FORM_WARNING.VALIDATOR_MISSING',
+  message: 'Validation is disabled because no validator was selected'
+}
+
+stderr | src/components/Form/__tests__/Form.binding.test.tsx > Form engine binding > LANDING-067 submits outputValue and retains raw array positions
+Validation is disabled because no validator was selected {
+  level: 'warning',
+  code: 'SCHEMA_FORM_WARNING.VALIDATOR_MISSING',
+  message: 'Validation is disabled because no validator was selected'
+}
+
+stderr | src/components/Form/__tests__/Form.policies.test.tsx > LANDING-067 REACT-009 combines root locks without blocking imperative writes
+Validation is disabled because no validator was selected {
+  level: 'warning',
+  code: 'SCHEMA_FORM_WARNING.VALIDATOR_MISSING',
+  message: 'Validation is disabled because no validator was selected'
+}
+
+stderr | src/components/Form/__tests__/Form.policies.test.tsx > LANDING-067 resolves specialized renderers through Form then FormProvider
+Validation is disabled because no validator was selected {
+  level: 'warning',
+  code: 'SCHEMA_FORM_WARNING.VALIDATOR_MISSING',
+  message: 'Validation is disabled because no validator was selected'
+}
+Validation is disabled because no validator was selected {
+  level: 'warning',
+  code: 'SCHEMA_FORM_WARNING.VALIDATOR_MISSING',
+  message: 'Validation is disabled because no validator was selected'
+}
+
+stderr | src/components/Form/__tests__/Form.policies.test.tsx > LANDING-067 REACT-009 combines root locks without blocking imperative writes
+Validation is disabled because no validator was selected {
+  level: 'warning',
+  code: 'SCHEMA_FORM_WARNING.VALIDATOR_MISSING',
+  message: 'Validation is disabled because no validator was selected'
+}
+
+stderr | src/components/Form/__tests__/Form.policies.test.tsx > LANDING-067 resolves specialized renderers through Form then FormProvider
+Validation is disabled because no validator was selected {
+  level: 'warning',
+  code: 'SCHEMA_FORM_WARNING.VALIDATOR_MISSING',
+  message: 'Validation is disabled because no validator was selected'
+}
+Validation is disabled because no validator was selected {
+  level: 'warning',
+  code: 'SCHEMA_FORM_WARNING.VALIDATOR_MISSING',
+  message: 'Validation is disabled because no validator was selected'
+}
+
+stderr | src/formTypeDefinitions/__tests__/array-memo.test.tsx > keeps array rows and buttons without repeating their map on a leaf value update
+Validation is disabled because no validator was selected {
+  level: 'warning',
+  code: 'SCHEMA_FORM_WARNING.VALIDATOR_MISSING',
+  message: 'Validation is disabled because no validator was selected'
+}
+
+stderr | src/formTypeDefinitions/__tests__/array-memo.test.tsx > rebuilds array controls for structure, disabled, readOnly and schema changes
+Validation is disabled because no validator was selected {
+  level: 'warning',
+  code: 'SCHEMA_FORM_WARNING.VALIDATOR_MISSING',
+  message: 'Validation is disabled because no validator was selected'
+}
+
+stderr | src/formTypeDefinitions/__tests__/array-memo.test.tsx > keeps array rows and buttons without repeating their map on a leaf value update
+Validation is disabled because no validator was selected {
+  level: 'warning',
+  code: 'SCHEMA_FORM_WARNING.VALIDATOR_MISSING',
+  message: 'Validation is disabled because no validator was selected'
+}
+
+stderr | src/formTypeDefinitions/__tests__/array-memo.test.tsx > rebuilds array controls for structure, disabled, readOnly and schema changes
+Validation is disabled because no validator was selected {
+  level: 'warning',
+  code: 'SCHEMA_FORM_WARNING.VALIDATOR_MISSING',
+  message: 'Validation is disabled because no validator was selected'
+}
+
+stderr | src/components/SchemaNode/SchemaNodeInput/__tests__/compositionRefresh.test.tsx > EVENT-065 REACT-024 defers Refresh until compositionend and rejects the old draft
+Validation is disabled because no validator was selected {
+  level: 'warning',
+  code: 'SCHEMA_FORM_WARNING.VALIDATOR_MISSING',
+  message: 'Validation is disabled because no validator was selected'
+}
+
+stderr | src/components/SchemaNode/SchemaNodeInput/__tests__/compositionRefresh.test.tsx > EVENT-065 publishes completed text without remounting when no Refresh intervenes
+Validation is disabled because no validator was selected {
+  level: 'warning',
+  code: 'SCHEMA_FORM_WARNING.VALIDATOR_MISSING',
+  message: 'Validation is disabled because no validator was selected'
+}
+
+stderr | src/components/SchemaNode/SchemaNodeInput/__tests__/compositionRefresh.test.tsx > EVENT-065 REACT-024 defers Refresh until compositionend and rejects the old draft
+Validation is disabled because no validator was selected {
+  level: 'warning',
+  code: 'SCHEMA_FORM_WARNING.VALIDATOR_MISSING',
+  message: 'Validation is disabled because no validator was selected'
+}
+
+stderr | src/components/SchemaNode/SchemaNodeInput/__tests__/compositionRefresh.test.tsx > EVENT-065 publishes completed text without remounting when no Refresh intervenes
+Validation is disabled because no validator was selected {
+  level: 'warning',
+  code: 'SCHEMA_FORM_WARNING.VALIDATOR_MISSING',
+  message: 'Validation is disabled because no validator was selected'
+}
+
+stderr | src/components/Form/__tests__/Form.resetCommit.test.tsx > WRITE-043 WRITE-046 rechecks committed props after a reset in the same event
+Validation is disabled because no validator was selected {
+  level: 'warning',
+  code: 'SCHEMA_FORM_WARNING.VALIDATOR_MISSING',
+  message: 'Validation is disabled because no validator was selected'
+}
+
+stderr | src/components/Form/__tests__/Form.resetCommit.test.tsx > LANDING-095 REACT-002 REACT-003 preserves presentation identities and clones incoming values
+Validation is disabled because no validator was selected {
+  level: 'warning',
+  code: 'SCHEMA_FORM_WARNING.VALIDATOR_MISSING',
+  message: 'Validation is disabled because no validator was selected'
+}
+
+stderr | src/components/Form/__tests__/Form.resetCommit.test.tsx > WRITE-043 WRITE-046 rechecks committed props after a reset in the same event
+Validation is disabled because no validator was selected {
+  level: 'warning',
+  code: 'SCHEMA_FORM_WARNING.VALIDATOR_MISSING',
+  message: 'Validation is disabled because no validator was selected'
+}
+
+stderr | src/components/Form/__tests__/Form.resetCommit.test.tsx > LANDING-095 REACT-002 REACT-003 preserves presentation identities and clones incoming values
+Validation is disabled because no validator was selected {
+  level: 'warning',
+  code: 'SCHEMA_FORM_WARNING.VALIDATOR_MISSING',
+  message: 'Validation is disabled because no validator was selected'
+}
+
+stderr | src/components/Form/__tests__/Form.submission.test.tsx > LANDING-095 ERROR-032 rejects degraded imperative submission without delivering a value
+Validation is disabled because no validator was selected {
+  level: 'warning',
+  code: 'SCHEMA_FORM_WARNING.VALIDATOR_MISSING',
+  message: 'Validation is disabled because no validator was selected'
+}
+
+stderr | src/components/Form/__tests__/Form.submission.test.tsx > WRITE-043 WRITE-045 retains an equivalent authored schema and reapplies external errors on reset
+Validation is disabled because no validator was selected {
+  level: 'warning',
+  code: 'SCHEMA_FORM_WARNING.VALIDATOR_MISSING',
+  message: 'Validation is disabled because no validator was selected'
+}
+
+stderr | src/components/Form/__tests__/Form.submission.test.tsx > LANDING-095 ERROR-032 rejects degraded imperative submission without delivering a value
+Validation is disabled because no validator was selected {
+  level: 'warning',
+  code: 'SCHEMA_FORM_WARNING.VALIDATOR_MISSING',
+  message: 'Validation is disabled because no validator was selected'
+}
+
+stderr | src/components/Form/__tests__/Form.submission.test.tsx > WRITE-043 WRITE-045 retains an equivalent authored schema and reapplies external errors on reset
+Validation is disabled because no validator was selected {
+  level: 'warning',
+  code: 'SCHEMA_FORM_WARNING.VALIDATOR_MISSING',
+  message: 'Validation is disabled because no validator was selected'
+}
+
+stderr | src/components/SchemaNode/SchemaNodeProxy/__tests__/effectiveSchema.test.tsx > REACT-012 changes input selection when an active fragment changes only presentation
+TERMINAL_SUBTREE_KEY_IGNORED_FOR_FORM at #/properties/field {
+  level: 'warning',
+  code: 'SCHEMA_FORM_WARNING.TERMINAL_SUBTREE_KEY_IGNORED_FOR_FORM',
+  message: 'TERMINAL_SUBTREE_KEY_IGNORED_FOR_FORM at #/properties/field',
+  schemaPath: '#/properties/field',
+  details: {
+    keys: [ 'controls', 'presentation' ],
+    paths: [ '#/properties/field/allOf/0' ]
+  }
+}
+Validation is disabled because no validator was selected {
+  level: 'warning',
+  code: 'SCHEMA_FORM_WARNING.VALIDATOR_MISSING',
+  message: 'Validation is disabled because no validator was selected'
+}
+
+stderr | src/components/SchemaNode/SchemaNodeProxy/__tests__/effectiveSchema.test.tsx > REACT-012 changes input selection when an active fragment changes only presentation
+TERMINAL_SUBTREE_KEY_IGNORED_FOR_FORM at #/properties/field {
+  level: 'warning',
+  code: 'SCHEMA_FORM_WARNING.TERMINAL_SUBTREE_KEY_IGNORED_FOR_FORM',
+  message: 'TERMINAL_SUBTREE_KEY_IGNORED_FOR_FORM at #/properties/field',
+  schemaPath: '#/properties/field',
+  details: {
+    keys: [ 'controls', 'presentation' ],
+    paths: [ '#/properties/field/allOf/0' ]
+  }
+}
+Validation is disabled because no validator was selected {
+  level: 'warning',
+  code: 'SCHEMA_FORM_WARNING.VALIDATOR_MISSING',
+  message: 'Validation is disabled because no validator was selected'
+}
+
+stderr | src/components/SchemaNode/DeferrableNodeProxy/__tests__/commands.test.tsx > EVENT-063 REACT-028 reveals deferred inputs on focus, preserving defer on refresh
+Validation is disabled because no validator was selected {
+  level: 'warning',
+  code: 'SCHEMA_FORM_WARNING.VALIDATOR_MISSING',
+  message: 'Validation is disabled because no validator was selected'
+}
+
+stderr | src/components/SchemaNode/DeferrableNodeProxy/__tests__/commands.test.tsx > EVENT-063 REACT-028 reveals deferred inputs on focus, preserving defer on refresh
+Validation is disabled because no validator was selected {
+  level: 'warning',
+  code: 'SCHEMA_FORM_WARNING.VALIDATOR_MISSING',
+  message: 'Validation is disabled because no validator was selected'
+}
+
+stderr | src/formTypeDefinitions/__tests__/drafts.test.tsx > REACT-027 LANDING-150 writes undefined for an empty nonnullable number and null for nullable
+Validation is disabled because no validator was selected {
+  level: 'warning',
+  code: 'SCHEMA_FORM_WARNING.VALIDATOR_MISSING',
+  message: 'Validation is disabled because no validator was selected'
+}
+Validation is disabled because no validator was selected {
+  level: 'warning',
+  code: 'SCHEMA_FORM_WARNING.VALIDATOR_MISSING',
+  message: 'Validation is disabled because no validator was selected'
+}
+
+stderr | src/formTypeDefinitions/__tests__/drafts.test.tsx > REACT-027 restores a bad numeric draft on blur without publishing it
+Validation is disabled because no validator was selected {
+  level: 'warning',
+  code: 'SCHEMA_FORM_WARNING.VALIDATOR_MISSING',
+  message: 'Validation is disabled because no validator was selected'
+}
+
+stderr | src/formTypeDefinitions/__tests__/drafts.test.tsx > REACT-027 renders a nonboolean checkbox value as indeterminate
+Type mismatch at  (commit 1) {
+  level: 'warning',
+  code: 'SCHEMA_FORM_WARNING.TYPE_MISMATCH',
+  path: '',
+  message: 'Type mismatch at  (commit 1)',
+  details: {
+    path: '',
+    expected: { schemaType: 'boolean', nullable: false, effective: 'boolean' },
+    received: 'string',
+    reason: 'unconvertible',
+    source: 'load'
+  }
+}
+Validation is disabled because no validator was selected {
+  level: 'warning',
+  code: 'SCHEMA_FORM_WARNING.VALIDATOR_MISSING',
+  message: 'Validation is disabled because no validator was selected'
+}
+
+stderr | src/formTypeDefinitions/__tests__/drafts.test.tsx > REACT-027 LANDING-150 writes undefined for an empty nonnullable number and null for nullable
+Validation is disabled because no validator was selected {
+  level: 'warning',
+  code: 'SCHEMA_FORM_WARNING.VALIDATOR_MISSING',
+  message: 'Validation is disabled because no validator was selected'
+}
+Validation is disabled because no validator was selected {
+  level: 'warning',
+  code: 'SCHEMA_FORM_WARNING.VALIDATOR_MISSING',
+  message: 'Validation is disabled because no validator was selected'
+}
+
+stderr | src/formTypeDefinitions/__tests__/drafts.test.tsx > REACT-027 restores a bad numeric draft on blur without publishing it
+Validation is disabled because no validator was selected {
+  level: 'warning',
+  code: 'SCHEMA_FORM_WARNING.VALIDATOR_MISSING',
+  message: 'Validation is disabled because no validator was selected'
+}
+
+stderr | src/formTypeDefinitions/__tests__/drafts.test.tsx > REACT-027 renders a nonboolean checkbox value as indeterminate
+Type mismatch at  (commit 1) {
+  level: 'warning',
+  code: 'SCHEMA_FORM_WARNING.TYPE_MISMATCH',
+  path: '',
+  message: 'Type mismatch at  (commit 1)',
+  details: {
+    path: '',
+    expected: { schemaType: 'boolean', nullable: false, effective: 'boolean' },
+    received: 'string',
+    reason: 'unconvertible',
+    source: 'load'
+  }
+}
+Validation is disabled because no validator was selected {
+  level: 'warning',
+  code: 'SCHEMA_FORM_WARNING.VALIDATOR_MISSING',
+  message: 'Validation is disabled because no validator was selected'
+}
+
+stderr | src/components/SchemaNode/SchemaNodeInput/__tests__/selection.test.tsx > REACT-012 REACT-032 passes integer kind and effective schema through Hint and input props
+Validation is disabled because no validator was selected {
+  level: 'warning',
+  code: 'SCHEMA_FORM_WARNING.VALIDATOR_MISSING',
+  message: 'Validation is disabled because no validator was selected'
+}
+
+stderr | src/components/SchemaNode/SchemaNodeInput/__tests__/selection.test.tsx > REACT-012 REACT-032 passes integer kind and effective schema through Hint and input props
+Validation is disabled because no validator was selected {
+  level: 'warning',
+  code: 'SCHEMA_FORM_WARNING.VALIDATOR_MISSING',
+  message: 'Validation is disabled because no validator was selected'
+}
+
+stderr | src/providers/RootNodeContext/__tests__/mountFailures.test.tsx > ERROR-026 ERROR-117 delivers buffered load errors before a root render failure
+Error: render
+    at /Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/packages/canard/schema-form/src/providers/RootNodeContext/__tests__/mountFailures.test.tsx:58:23
+    at file:///Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/node_modules/@vitest/runner/dist/chunk-hooks.js:155:11
+    at file:///Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/node_modules/@vitest/runner/dist/chunk-hooks.js:752:26
+    at file:///Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/node_modules/@vitest/runner/dist/chunk-hooks.js:1897:20
+    at new Promise (<anonymous>)
+    at runWithTimeout (file:///Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/node_modules/@vitest/runner/dist/chunk-hooks.js:1863:10)
+    at runTest (file:///Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/node_modules/@vitest/runner/dist/chunk-hooks.js:1574:12)
+    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+    at async runSuite (file:///Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/node_modules/@vitest/runner/dist/chunk-hooks.js:1729:8)
+    at async runFiles (file:///Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/node_modules/@vitest/runner/dist/chunk-hooks.js:1787:3) {
+  [stack]: [Getter/Setter],
+  [message]: 'render'
+}
+
+The above error occurred in the <Broken> component.
+
+React will try to recreate this component tree from scratch using the error boundary you provided, ErrorBoundary.
+
+ErrorBoundary caught an error: Error: render
+    at /Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/packages/canard/schema-form/src/providers/RootNodeContext/__tests__/mountFailures.test.tsx:58:23
+    at file:///Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/node_modules/@vitest/runner/dist/chunk-hooks.js:155:11
+    at file:///Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/node_modules/@vitest/runner/dist/chunk-hooks.js:752:26
+    at file:///Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/node_modules/@vitest/runner/dist/chunk-hooks.js:1897:20
+    at new Promise (<anonymous>)
+    at runWithTimeout (file:///Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/node_modules/@vitest/runner/dist/chunk-hooks.js:1863:10)
+    at runTest (file:///Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/node_modules/@vitest/runner/dist/chunk-hooks.js:1574:12)
+    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)
+    at async runSuite (file:///Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/node_modules/@vitest/runner/dist/chunk-hooks.js:1729:8)
+    at async runFiles (file:///Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/node_modules/@vitest/runner/dist/chunk-hooks.js:1787:3) {
+  componentStack: '\n' +
+    '    at Broken (<anonymous>)\n' +
+    '    at form (<anonymous>)\n' +
+    '    at /Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/packages/canard/schema-form/src/components/Form/components/FormRootProxy.tsx:9:6\n' +
+    '    at RootNodeContextProvider (/Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/packages/canard/schema-form/src/providers/RootNodeContext/RootNodeContextProvider.tsx:35:3)\n' +
+    '    at VirtualizationContextProvider (/Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/packages/canard/schema-form/src/providers/VirtualizationContext/VirtualizationContextProvider.tsx:13:3)\n' +
+    '    at InputControlContextProvider (/Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/packages/canard/schema-form/src/providers/InputControlContext/InputControlContextProvider.tsx:9:3)\n' +
+    '    at FormTypeRendererContextProvider (/Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/packages/canard/schema-form/src/providers/FormTypeRendererContext/FormTypeRendererProvider.tsx:20:3)\n' +
+    '    at FormTypeInputsContextProvider (/Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/packages/canard/schema-form/src/providers/FormTypeInputsContext/FormTypeInputsContextProvider.tsx:13:3)\n' +
+    '    at WorkspaceContextProvider (/Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/packages/canard/schema-form/src/providers/WorkspaceContext/WorkspaceContextProvider.tsx:13:3)\n' +
+    '    at FormContents (/Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/packages/canard/schema-form/src/components/Form/components/FormContents.tsx:23:51)\n' +
+    '    at ErrorBoundary (/Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/packages/winglet/react-utils/dist/hoc/withErrorBoundary/components/ErrorBoundary.mjs:13:3)\n' +
+    '    at /Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/packages/winglet/react-utils/dist/hoc/withErrorBoundary/withErrorBoundaryForwardRef.mjs:15:13\n' +
+    '    at FormErrorContextProvider (/Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/packages/canard/schema-form/src/providers/FormErrorContext/FormErrorContextProvider.tsx:11:3)\n' +
+    '    at /Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/packages/canard/schema-form/src/components/Form/Form.tsx:18:174'
+}
+
+stderr | src/providers/RootNodeContext/__tests__/mountFailures.test.tsx > ERROR-026 ERROR-117 delivers buffered load errors before a root render failure
+Error: Uncaught [Error: render]
+    at reportException (/Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/node_modules/jsdom/lib/jsdom/living/helpers/runtime-script-errors.js:66:24)
+    at innerInvokeEventListeners (/Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:353:9)
+    at invokeEventListeners (/Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:286:3)
+    at HTMLUnknownElementImpl._dispatch (/Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:233:9)
+    at HTMLUnknownElementImpl.dispatchEvent (/Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:104:17)
+    at HTMLUnknownElement.dispatchEvent (/Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/node_modules/jsdom/lib/jsdom/living/generated/EventTarget.js:241:34)
+    at Object.invokeGuardedCallbackDev (file:///Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/node_modules/react-dom18/cjs/react-dom.development.js:4213:16)
+    at invokeGuardedCallback (file:///Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/node_modules/react-dom18/cjs/react-dom.development.js:4277:31)
+    at beginWork$1 (file:///Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/node_modules/react-dom18/cjs/react-dom.development.js:27490:7)
+    at performUnitOfWork (file:///Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/node_modules/react-dom18/cjs/react-dom.development.js:26599:12) Error: render
+    at /Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/packages/canard/schema-form/src/providers/RootNodeContext/__tests__/mountFailures.test.tsx:44:23
+    at file:///Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/node_modules/@vitest/runner/dist/chunk-hooks.js:155:11
+    at file:///Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/node_modules/@vitest/runner/dist/chunk-hooks.js:752:26
+    at file:///Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/node_modules/@vitest/runner/dist/chunk-hooks.js:1897:20
+    at new Promise (<anonymous>)
+    at runWithTimeout (file:///Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/node_modules/@vitest/runner/dist/chunk-hooks.js:1863:10)
+    at runTest (file:///Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/node_modules/@vitest/runner/dist/chunk-hooks.js:1574:12)
+    at processTicksAndRejections (node:internal/process/task_queues:104:5)
+    at runSuite (file:///Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/node_modules/@vitest/runner/dist/chunk-hooks.js:1729:8)
+    at runFiles (file:///Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/node_modules/@vitest/runner/dist/chunk-hooks.js:1787:3)
+Error: Uncaught [Error: render]
+    at reportException (/Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/node_modules/jsdom/lib/jsdom/living/helpers/runtime-script-errors.js:66:24)
+    at innerInvokeEventListeners (/Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:353:9)
+    at invokeEventListeners (/Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:286:3)
+    at HTMLUnknownElementImpl._dispatch (/Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:233:9)
+    at HTMLUnknownElementImpl.dispatchEvent (/Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/node_modules/jsdom/lib/jsdom/living/events/EventTarget-impl.js:104:17)
+    at HTMLUnknownElement.dispatchEvent (/Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/node_modules/jsdom/lib/jsdom/living/generated/EventTarget.js:241:34)
+    at Object.invokeGuardedCallbackDev (file:///Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/node_modules/react-dom18/cjs/react-dom.development.js:4213:16)
+    at invokeGuardedCallback (file:///Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/node_modules/react-dom18/cjs/react-dom.development.js:4277:31)
+    at beginWork$1 (file:///Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/node_modules/react-dom18/cjs/react-dom.development.js:27490:7)
+    at performUnitOfWork (file:///Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/node_modules/react-dom18/cjs/react-dom.development.js:26599:12) Error: render
+    at /Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/packages/canard/schema-form/src/providers/RootNodeContext/__tests__/mountFailures.test.tsx:44:23
+    at file:///Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/node_modules/@vitest/runner/dist/chunk-hooks.js:155:11
+    at file:///Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/node_modules/@vitest/runner/dist/chunk-hooks.js:752:26
+    at file:///Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/node_modules/@vitest/runner/dist/chunk-hooks.js:1897:20
+    at new Promise (<anonymous>)
+    at runWithTimeout (file:///Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/node_modules/@vitest/runner/dist/chunk-hooks.js:1863:10)
+    at runTest (file:///Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/node_modules/@vitest/runner/dist/chunk-hooks.js:1574:12)
+    at processTicksAndRejections (node:internal/process/task_queues:104:5)
+    at runSuite (file:///Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/node_modules/@vitest/runner/dist/chunk-hooks.js:1729:8)
+    at runFiles (file:///Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/node_modules/@vitest/runner/dist/chunk-hooks.js:1787:3)
+The above error occurred in the <Broken> component:
+
+    at Broken
+    at form
+    at /Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/packages/canard/schema-form/src/components/Form/components/FormRootProxy.tsx:9:6
+    at RootNodeContextProvider (/Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/packages/canard/schema-form/src/providers/RootNodeContext/RootNodeContextProvider.tsx:41:3)
+    at VirtualizationContextProvider (/Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/packages/canard/schema-form/src/providers/VirtualizationContext/VirtualizationContextProvider.tsx:13:3)
+    at InputControlContextProvider (/Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/packages/canard/schema-form/src/providers/InputControlContext/InputControlContextProvider.tsx:9:3)
+    at FormTypeRendererContextProvider (/Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/packages/canard/schema-form/src/providers/FormTypeRendererContext/FormTypeRendererProvider.tsx:20:3)
+    at FormTypeInputsContextProvider (/Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/packages/canard/schema-form/src/providers/FormTypeInputsContext/FormTypeInputsContextProvider.tsx:13:3)
+    at WorkspaceContextProvider (/Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/packages/canard/schema-form/src/providers/WorkspaceContext/WorkspaceContextProvider.tsx:13:3)
+    at FormContents (/Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/packages/canard/schema-form/src/components/Form/components/FormContents.tsx:28:19)
+    at ErrorBoundary (/Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/packages/winglet/react-utils/dist/hoc/withErrorBoundary/components/ErrorBoundary.mjs:13:3)
+    at /Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/packages/winglet/react-utils/dist/hoc/withErrorBoundary/withErrorBoundaryForwardRef.mjs:15:13
+    at FormErrorContextProvider (/Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/packages/canard/schema-form/src/providers/FormErrorContext/FormErrorContextProvider.tsx:11:3)
+    at /Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/packages/canard/schema-form/src/components/Form/Form.tsx:18:148
+
+React will try to recreate this component tree from scratch using the error boundary you provided, ErrorBoundary.
+ErrorBoundary caught an error: Error: render
+    at /Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/packages/canard/schema-form/src/providers/RootNodeContext/__tests__/mountFailures.test.tsx:44:23
+    at file:///Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/node_modules/@vitest/runner/dist/chunk-hooks.js:155:11
+    at file:///Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/node_modules/@vitest/runner/dist/chunk-hooks.js:752:26
+    at file:///Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/node_modules/@vitest/runner/dist/chunk-hooks.js:1897:20
+    at new Promise (<anonymous>)
+    at runWithTimeout (file:///Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/node_modules/@vitest/runner/dist/chunk-hooks.js:1863:10)
+    at runTest (file:///Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/node_modules/@vitest/runner/dist/chunk-hooks.js:1574:12)
+    at processTicksAndRejections (node:internal/process/task_queues:104:5)
+    at runSuite (file:///Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/node_modules/@vitest/runner/dist/chunk-hooks.js:1729:8)
+    at runFiles (file:///Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/node_modules/@vitest/runner/dist/chunk-hooks.js:1787:3) {
+  componentStack: '\n' +
+    '    at Broken\n' +
+    '    at form\n' +
+    '    at /Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/packages/canard/schema-form/src/components/Form/components/FormRootProxy.tsx:9:6\n' +
+    '    at RootNodeContextProvider (/Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/packages/canard/schema-form/src/providers/RootNodeContext/RootNodeContextProvider.tsx:41:3)\n' +
+    '    at VirtualizationContextProvider (/Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/packages/canard/schema-form/src/providers/VirtualizationContext/VirtualizationContextProvider.tsx:13:3)\n' +
+    '    at InputControlContextProvider (/Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/packages/canard/schema-form/src/providers/InputControlContext/InputControlContextProvider.tsx:9:3)\n' +
+    '    at FormTypeRendererContextProvider (/Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/packages/canard/schema-form/src/providers/FormTypeRendererContext/FormTypeRendererProvider.tsx:20:3)\n' +
+    '    at FormTypeInputsContextProvider (/Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/packages/canard/schema-form/src/providers/FormTypeInputsContext/FormTypeInputsContextProvider.tsx:13:3)\n' +
+    '    at WorkspaceContextProvider (/Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/packages/canard/schema-form/src/providers/WorkspaceContext/WorkspaceContextProvider.tsx:13:3)\n' +
+    '    at FormContents (/Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/packages/canard/schema-form/src/components/Form/components/FormContents.tsx:28:19)\n' +
+    '    at ErrorBoundary (/Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/packages/winglet/react-utils/dist/hoc/withErrorBoundary/components/ErrorBoundary.mjs:13:3)\n' +
+    '    at /Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/packages/winglet/react-utils/dist/hoc/withErrorBoundary/withErrorBoundaryForwardRef.mjs:15:13\n' +
+    '    at FormErrorContextProvider (/Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/packages/canard/schema-form/src/providers/FormErrorContext/FormErrorContextProvider.tsx:11:3)\n' +
+    '    at /Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/packages/canard/schema-form/src/components/Form/Form.tsx:18:148'
+}
+
+stderr | src/components/Form/__tests__/Form.reactVersions.test.tsx > REACT-017 runtime compatibility > REACT-017 ERROR-115 ERROR-116 TEST-024 StrictMode mounts without throwing or emitting onChange
+Validation is disabled because no validator was selected {
+  level: 'warning',
+  code: 'SCHEMA_FORM_WARNING.VALIDATOR_MISSING',
+  message: 'Validation is disabled because no validator was selected'
+}
+
+stderr | src/components/Form/__tests__/Form.reactVersions.test.tsx > REACT-017 runtime compatibility > REACT-017 ERROR-115 ERROR-116 TEST-024 StrictMode mounts without throwing or emitting onChange
+Validation is disabled because no validator was selected {
+  level: 'warning',
+  code: 'SCHEMA_FORM_WARNING.VALIDATOR_MISSING',
+  message: 'Validation is disabled because no validator was selected'
+}
+
+stderr | src/components/Form/__tests__/Form.reactVersions.test.tsx > REACT-017 runtime compatibility > REACT-017 ERROR-115 ERROR-116 TEST-024 renderToString does not throw or emit onChange
+Warning: useLayoutEffect does nothing on the server, because its effect cannot be encoded into the server renderer's output format. This will lead to a mismatch between the initial, non-hydrated UI and the intended UI. To avoid this, useLayoutEffect should only be used in components that render exclusively on the client. See https://reactjs.org/link/uselayouteffect-ssr for common fixes.
+    at RootNodeContextProvider (/Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/packages/canard/schema-form/src/providers/RootNodeContext/RootNodeContextProvider.tsx:41:3)
+    at VirtualizationContextProvider (/Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/packages/canard/schema-form/src/providers/VirtualizationContext/VirtualizationContextProvider.tsx:13:3)
+    at InputControlContextProvider (/Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/packages/canard/schema-form/src/providers/InputControlContext/InputControlContextProvider.tsx:9:3)
+    at FormTypeRendererContextProvider (/Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/packages/canard/schema-form/src/providers/FormTypeRendererContext/FormTypeRendererProvider.tsx:20:3)
+    at FormTypeInputsContextProvider (/Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/packages/canard/schema-form/src/providers/FormTypeInputsContext/FormTypeInputsContextProvider.tsx:13:3)
+    at WorkspaceContextProvider (/Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/packages/canard/schema-form/src/providers/WorkspaceContext/WorkspaceContextProvider.tsx:13:3)
+    at FormContents (/Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/packages/canard/schema-form/src/components/Form/components/FormContents.tsx:28:19)
+    at ErrorBoundary (/Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/packages/winglet/react-utils/dist/hoc/withErrorBoundary/components/ErrorBoundary.mjs:13:3)
+    at /Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/packages/winglet/react-utils/dist/hoc/withErrorBoundary/withErrorBoundaryForwardRef.mjs:15:13
+    at FormErrorContextProvider (/Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/packages/canard/schema-form/src/providers/FormErrorContext/FormErrorContextProvider.tsx:11:3)
+    at /Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/packages/canard/schema-form/src/components/Form/Form.tsx:18:148
+Warning: useLayoutEffect does nothing on the server, because its effect cannot be encoded into the server renderer's output format. This will lead to a mismatch between the initial, non-hydrated UI and the intended UI. To avoid this, useLayoutEffect should only be used in components that render exclusively on the client. See https://reactjs.org/link/uselayouteffect-ssr for common fixes.
+    at RootNodeContextProvider (/Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/packages/canard/schema-form/src/providers/RootNodeContext/RootNodeContextProvider.tsx:41:3)
+    at VirtualizationContextProvider (/Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/packages/canard/schema-form/src/providers/VirtualizationContext/VirtualizationContextProvider.tsx:13:3)
+    at InputControlContextProvider (/Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/packages/canard/schema-form/src/providers/InputControlContext/InputControlContextProvider.tsx:9:3)
+    at FormTypeRendererContextProvider (/Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/packages/canard/schema-form/src/providers/FormTypeRendererContext/FormTypeRendererProvider.tsx:20:3)
+    at FormTypeInputsContextProvider (/Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/packages/canard/schema-form/src/providers/FormTypeInputsContext/FormTypeInputsContextProvider.tsx:13:3)
+    at WorkspaceContextProvider (/Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/packages/canard/schema-form/src/providers/WorkspaceContext/WorkspaceContextProvider.tsx:13:3)
+    at FormContents (/Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/packages/canard/schema-form/src/components/Form/components/FormContents.tsx:28:19)
+    at ErrorBoundary (/Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/packages/winglet/react-utils/dist/hoc/withErrorBoundary/components/ErrorBoundary.mjs:13:3)
+    at /Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/packages/winglet/react-utils/dist/hoc/withErrorBoundary/withErrorBoundaryForwardRef.mjs:15:13
+    at FormErrorContextProvider (/Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/packages/canard/schema-form/src/providers/FormErrorContext/FormErrorContextProvider.tsx:11:3)
+    at /Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/packages/canard/schema-form/src/components/Form/Form.tsx:18:148
+Warning: useLayoutEffect does nothing on the server, because its effect cannot be encoded into the server renderer's output format. This will lead to a mismatch between the initial, non-hydrated UI and the intended UI. To avoid this, useLayoutEffect should only be used in components that render exclusively on the client. See https://reactjs.org/link/uselayouteffect-ssr for common fixes.
+    at RootNodeContextProvider (/Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/packages/canard/schema-form/src/providers/RootNodeContext/RootNodeContextProvider.tsx:41:3)
+    at VirtualizationContextProvider (/Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/packages/canard/schema-form/src/providers/VirtualizationContext/VirtualizationContextProvider.tsx:13:3)
+    at InputControlContextProvider (/Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/packages/canard/schema-form/src/providers/InputControlContext/InputControlContextProvider.tsx:9:3)
+    at FormTypeRendererContextProvider (/Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/packages/canard/schema-form/src/providers/FormTypeRendererContext/FormTypeRendererProvider.tsx:20:3)
+    at FormTypeInputsContextProvider (/Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/packages/canard/schema-form/src/providers/FormTypeInputsContext/FormTypeInputsContextProvider.tsx:13:3)
+    at WorkspaceContextProvider (/Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/packages/canard/schema-form/src/providers/WorkspaceContext/WorkspaceContextProvider.tsx:13:3)
+    at FormContents (/Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/packages/canard/schema-form/src/components/Form/components/FormContents.tsx:28:19)
+    at ErrorBoundary (/Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/packages/winglet/react-utils/dist/hoc/withErrorBoundary/components/ErrorBoundary.mjs:13:3)
+    at /Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/packages/winglet/react-utils/dist/hoc/withErrorBoundary/withErrorBoundaryForwardRef.mjs:15:13
+    at FormErrorContextProvider (/Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/packages/canard/schema-form/src/providers/FormErrorContext/FormErrorContextProvider.tsx:11:3)
+    at /Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/packages/canard/schema-form/src/components/Form/Form.tsx:18:148
+Warning: useLayoutEffect does nothing on the server, because its effect cannot be encoded into the server renderer's output format. This will lead to a mismatch between the initial, non-hydrated UI and the intended UI. To avoid this, useLayoutEffect should only be used in components that render exclusively on the client. See https://reactjs.org/link/uselayouteffect-ssr for common fixes.
+    at /Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/packages/canard/schema-form/src/components/SchemaNode/SchemaNodeInput/SchemaNodeInput.tsx:32:5
+    at /Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/packages/canard/schema-form/src/components/SchemaNode/SchemaNodeInput/SchemaNodeInputWrapper.tsx:21:15
+    at FormGroupRenderer (/Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/packages/canard/schema-form/src/components/FallbackComponents/FormGroupRenderer.tsx:7:3)
+    at ErrorBoundary (/Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/packages/winglet/react-utils/dist/hoc/withErrorBoundary/components/ErrorBoundary.mjs:13:3)
+    at /Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/packages/winglet/react-utils/dist/hoc/withErrorBoundary/withErrorBoundary.mjs:13:13
+    at div
+    at SchemaNodeField (/Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/packages/canard/schema-form/src/components/SchemaNode/SchemaNodeProxy/components/SchemaNodeField.tsx:26:3)
+    at ErrorBoundary (/Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/packages/winglet/react-utils/dist/hoc/withErrorBoundary/components/ErrorBoundary.mjs:13:3)
+    at /Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/packages/winglet/react-utils/dist/hoc/withErrorBoundary/withErrorBoundary.mjs:13:13
+    at SchemaNodeProxy (/Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/packages/canard/schema-form/src/components/SchemaNode/SchemaNodeProxy/SchemaNodeProxy.tsx:18:62)
+    at form
+    at /Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/packages/canard/schema-form/src/components/Form/components/FormRootProxy.tsx:9:6
+    at RootNodeContextProvider (/Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/packages/canard/schema-form/src/providers/RootNodeContext/RootNodeContextProvider.tsx:41:3)
+    at VirtualizationContextProvider (/Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/packages/canard/schema-form/src/providers/VirtualizationContext/VirtualizationContextProvider.tsx:13:3)
+    at InputControlContextProvider (/Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/packages/canard/schema-form/src/providers/InputControlContext/InputControlContextProvider.tsx:9:3)
+    at FormTypeRendererContextProvider (/Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/packages/canard/schema-form/src/providers/FormTypeRendererContext/FormTypeRendererProvider.tsx:20:3)
+    at FormTypeInputsContextProvider (/Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/packages/canard/schema-form/src/providers/FormTypeInputsContext/FormTypeInputsContextProvider.tsx:13:3)
+    at WorkspaceContextProvider (/Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/packages/canard/schema-form/src/providers/WorkspaceContext/WorkspaceContextProvider.tsx:13:3)
+    at FormContents (/Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/packages/canard/schema-form/src/components/Form/components/FormContents.tsx:28:19)
+    at ErrorBoundary (/Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/packages/winglet/react-utils/dist/hoc/withErrorBoundary/components/ErrorBoundary.mjs:13:3)
+    at /Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/packages/winglet/react-utils/dist/hoc/withErrorBoundary/withErrorBoundaryForwardRef.mjs:15:13
+    at FormErrorContextProvider (/Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/packages/canard/schema-form/src/providers/FormErrorContext/FormErrorContextProvider.tsx:11:3)
+    at /Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/packages/canard/schema-form/src/components/Form/Form.tsx:18:148
+Warning: useLayoutEffect does nothing on the server, because its effect cannot be encoded into the server renderer's output format. This will lead to a mismatch between the initial, non-hydrated UI and the intended UI. To avoid this, useLayoutEffect should only be used in components that render exclusively on the client. See https://reactjs.org/link/uselayouteffect-ssr for common fixes.
+    at /Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/packages/canard/schema-form/src/components/SchemaNode/SchemaNodeInput/SchemaNodeInput.tsx:32:5
+    at /Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/packages/canard/schema-form/src/components/SchemaNode/SchemaNodeInput/SchemaNodeInputWrapper.tsx:21:15
+    at FormGroupRenderer (/Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/packages/canard/schema-form/src/components/FallbackComponents/FormGroupRenderer.tsx:7:3)
+    at ErrorBoundary (/Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/packages/winglet/react-utils/dist/hoc/withErrorBoundary/components/ErrorBoundary.mjs:13:3)
+    at /Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/packages/winglet/react-utils/dist/hoc/withErrorBoundary/withErrorBoundary.mjs:13:13
+    at div
+    at SchemaNodeField (/Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/packages/canard/schema-form/src/components/SchemaNode/SchemaNodeProxy/components/SchemaNodeField.tsx:26:3)
+    at ErrorBoundary (/Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/packages/winglet/react-utils/dist/hoc/withErrorBoundary/components/ErrorBoundary.mjs:13:3)
+    at /Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/packages/winglet/react-utils/dist/hoc/withErrorBoundary/withErrorBoundary.mjs:13:13
+    at SchemaNodeProxy (/Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/packages/canard/schema-form/src/components/SchemaNode/SchemaNodeProxy/SchemaNodeProxy.tsx:18:62)
+    at form
+    at /Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/packages/canard/schema-form/src/components/Form/components/FormRootProxy.tsx:9:6
+    at RootNodeContextProvider (/Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/packages/canard/schema-form/src/providers/RootNodeContext/RootNodeContextProvider.tsx:41:3)
+    at VirtualizationContextProvider (/Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/packages/canard/schema-form/src/providers/VirtualizationContext/VirtualizationContextProvider.tsx:13:3)
+    at InputControlContextProvider (/Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/packages/canard/schema-form/src/providers/InputControlContext/InputControlContextProvider.tsx:9:3)
+    at FormTypeRendererContextProvider (/Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/packages/canard/schema-form/src/providers/FormTypeRendererContext/FormTypeRendererProvider.tsx:20:3)
+    at FormTypeInputsContextProvider (/Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/packages/canard/schema-form/src/providers/FormTypeInputsContext/FormTypeInputsContextProvider.tsx:13:3)
+    at WorkspaceContextProvider (/Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/packages/canard/schema-form/src/providers/WorkspaceContext/WorkspaceContextProvider.tsx:13:3)
+    at FormContents (/Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/packages/canard/schema-form/src/components/Form/components/FormContents.tsx:28:19)
+    at ErrorBoundary (/Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/packages/winglet/react-utils/dist/hoc/withErrorBoundary/components/ErrorBoundary.mjs:13:3)
+    at /Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/packages/winglet/react-utils/dist/hoc/withErrorBoundary/withErrorBoundaryForwardRef.mjs:15:13
+    at FormErrorContextProvider (/Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/packages/canard/schema-form/src/providers/FormErrorContext/FormErrorContextProvider.tsx:11:3)
+    at /Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/packages/canard/schema-form/src/components/Form/Form.tsx:18:148
+
+stderr | src/__tests__/scenarioHarness.render.test.tsx > scenario harness with the public Form > accepts the real form through structural injection and shares its DOM handle
+Validation is disabled because no validator was selected {
+  level: 'warning',
+  code: 'SCHEMA_FORM_WARNING.VALIDATOR_MISSING',
+  message: 'Validation is disabled because no validator was selected'
+}
+
+stderr | src/__tests__/scenarioHarness.render.test.tsx > scenario harness with the public Form > accepts the real form through structural injection and shares its DOM handle
+Validation is disabled because no validator was selected {
+  level: 'warning',
+  code: 'SCHEMA_FORM_WARNING.VALIDATOR_MISSING',
+  message: 'Validation is disabled because no validator was selected'
+}
+
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 4 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  |render| src/components/Form/__tests__/Form.effectFeedback.test.tsx > EVENT-070 cross-entry feedback > EVENT-070 React stops two fields writing back through useLayoutEffect
+AssertionError: The watchdog is a failure, not React stopping the cycle: expected 201 to be less than 200
+ ❯ runFeedback src/components/Form/__tests__/Form.effectFeedback.test.tsx:48:77
+     46|   }
+     47|   expect(writes, 'Both fields must have entered feedback').toBeGreater…
+     48|   expect(writes, 'The watchdog is a failure, not React stopping the cy…
+       |                                                                             ^
+     49|   expect(records.join('\n')).not.toContain(watchdog);
+     50|   if (records.length) expect(records.join('\n')).toMatch(/maximum upda…
+ ❯ src/components/Form/__tests__/Form.effectFeedback.test.tsx:55:5
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/4]⎯
+
+ FAIL  |render| src/components/Form/__tests__/Form.effectFeedback.test.tsx > EVENT-070 cross-entry feedback > EVENT-070 React stops two fields writing back through useEffect
+AssertionError: The watchdog is a failure, not React stopping the cycle: expected 201 to be less than 200
+ ❯ runFeedback src/components/Form/__tests__/Form.effectFeedback.test.tsx:48:77
+     46|   }
+     47|   expect(writes, 'Both fields must have entered feedback').toBeGreater…
+     48|   expect(writes, 'The watchdog is a failure, not React stopping the cy…
+       |                                                                             ^
+     49|   expect(records.join('\n')).not.toContain(watchdog);
+     50|   if (records.length) expect(records.join('\n')).toMatch(/maximum upda…
+ ❯ src/components/Form/__tests__/Form.effectFeedback.test.tsx:58:5
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/4]⎯
+
+ FAIL  |react18| src/components/Form/__tests__/Form.effectFeedback.test.tsx > EVENT-070 cross-entry feedback > EVENT-070 React stops two fields writing back through useLayoutEffect
+AssertionError: The watchdog is a failure, not React stopping the cycle: expected 201 to be less than 200
+ ❯ runFeedback src/components/Form/__tests__/Form.effectFeedback.test.tsx:48:77
+     46|   }
+     47|   expect(writes, 'Both fields must have entered feedback').toBeGreater…
+     48|   expect(writes, 'The watchdog is a failure, not React stopping the cy…
+       |                                                                             ^
+     49|   expect(records.join('\n')).not.toContain(watchdog);
+     50|   if (records.length) expect(records.join('\n')).toMatch(/maximum upda…
+ ❯ src/components/Form/__tests__/Form.effectFeedback.test.tsx:55:5
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/4]⎯
+
+ FAIL  |react18| src/components/Form/__tests__/Form.effectFeedback.test.tsx > EVENT-070 cross-entry feedback > EVENT-070 React stops two fields writing back through useEffect
+AssertionError: The watchdog is a failure, not React stopping the cycle: expected 201 to be less than 200
+ ❯ runFeedback src/components/Form/__tests__/Form.effectFeedback.test.tsx:48:77
+     46|   }
+     47|   expect(writes, 'Both fields must have entered feedback').toBeGreater…
+     48|   expect(writes, 'The watchdog is a failure, not React stopping the cy…
+       |                                                                             ^
+     49|   expect(records.join('\n')).not.toContain(watchdog);
+     50|   if (records.length) expect(records.join('\n')).toMatch(/maximum upda…
+ ❯ src/components/Form/__tests__/Form.effectFeedback.test.tsx:58:5
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/4]⎯
+

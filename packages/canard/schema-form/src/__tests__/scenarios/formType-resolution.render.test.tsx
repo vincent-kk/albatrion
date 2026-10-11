@@ -25,7 +25,7 @@ import { renderForm } from '../renderForm';
  *    definitions).
  *  - `formTypeInputMap` path matching: exact JSONPointer, `*` wildcard segments
  *    (array indices AND object keys).
- *  - `CustomFormTypeRenderer` / `FormTypeRenderer` wrapping the resolved `Input`
+ *  - `FormTypeGroupRenderer` / `FormTypeRenderer` wrapping the resolved `Input`
  *    and surfacing `name` / `errorMessage` as ReactNode.
  *  - `Form.Render` custom layout addressed by JSONPointer, including its
  *    `FormTypeInput` prop override and the render-prop bag (`value`, `node`,
@@ -61,7 +61,7 @@ const variantOf = (
 const WrapRenderer = (props: FormTypeRendererProps) => {
   const { Input, name, path, errorMessage, depth, node } = props;
   if (depth === 0) return <Input />;
-  if (node.group === 'branch')
+  if (node.strategy === 'branch')
     return (
       <fieldset data-branch={path}>
         <legend>{name}</legend>
@@ -86,7 +86,7 @@ describe('formType-resolution — selection priority', () => {
     const schema = {
       type: 'object',
       properties: {
-        name: { type: 'string', FormTypeInput: makeInput('inline') },
+        name: { type: 'string', presentation: { FormTypeInput: makeInput('inline') } },
       },
     } satisfies JSONSchema;
 
@@ -151,7 +151,7 @@ describe('formType-resolution — selection priority', () => {
     const schema = {
       type: 'object',
       properties: {
-        name: { type: 'string', FormTypeInput: null as any },
+        name: { type: 'string', presentation: { FormTypeInput: null as any } },
         age: { type: 'number' },
       },
     } satisfies JSONSchema;
@@ -261,7 +261,7 @@ describe('formType-resolution — formTypeInputMap by path', () => {
   });
 });
 
-describe('formType-resolution — CustomFormTypeRenderer (ReactNode)', () => {
+describe('formType-resolution — FormTypeGroupRenderer (ReactNode)', () => {
   it('wraps a terminal Input with its name label and pipes the value', async () => {
     const schema = {
       type: 'object',
@@ -270,7 +270,7 @@ describe('formType-resolution — CustomFormTypeRenderer (ReactNode)', () => {
 
     const form = await renderForm(schema, {
       defaultValue: { username: 'neo' },
-      CustomFormTypeRenderer: WrapRenderer,
+      FormTypeGroupRenderer: WrapRenderer,
       formTypeInputDefinitions: stringDefs,
     });
 
@@ -300,7 +300,7 @@ describe('formType-resolution — CustomFormTypeRenderer (ReactNode)', () => {
 
     const form = await renderForm(schema, {
       defaultValue: { address: { city: 'Seoul' } },
-      CustomFormTypeRenderer: WrapRenderer,
+      FormTypeGroupRenderer: WrapRenderer,
       formTypeInputDefinitions: stringDefs,
     });
 
@@ -323,7 +323,7 @@ describe('formType-resolution — CustomFormTypeRenderer (ReactNode)', () => {
     const form = await renderForm(schema, {
       validator: true,
       showError: true,
-      CustomFormTypeRenderer: WrapRenderer,
+      FormTypeGroupRenderer: WrapRenderer,
       formTypeInputDefinitions: stringDefs,
     });
 

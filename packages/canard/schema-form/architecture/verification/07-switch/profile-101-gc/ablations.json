@@ -1,0 +1,153 @@
+[
+  {
+    "id": "blueprint-cache",
+    "classification": "structural",
+    "scope": "Whole-analysis ceiling; reuses a completed blueprint and skips all cold validation.",
+    "edits": [
+      {
+        "file": "packages/canard/schema-form/src/core/blueprint/blueprint.ts",
+        "name": "blueprint",
+        "memo": "101-blueprint"
+      }
+    ]
+  },
+  {
+    "id": "nodes-replay",
+    "classification": "structural",
+    "scope": "buildNodes allocation/function-subtree ceiling; replays the complete analyzed node/fragment context. Descendant work is also removed.",
+    "edits": [
+      {
+        "file": "packages/canard/schema-form/src/core/blueprint/utils/analyze/buildNodes.ts",
+        "name": "buildNodes",
+        "body": "if (path !== '') return (() => __ORIGINAL_BODY__)();\nconst held = globalThis.__allocation101Nodes;\nif (held) {\n  context.nodes = held.nodes;\n  context.fragments = held.fragments;\n  context.capabilities = held.capabilities;\n  context.staticFirstLoad = held.staticFirstLoad;\n  context.declarationId = held.declarationId;\n  context.declarationOwners = held.declarationOwners;\n  context.dependencies = held.dependencies;\n  return held.result;\n}\nconst result = (() => __ORIGINAL_BODY__)();\nglobalThis.__allocation101Nodes = { result, nodes: context.nodes, fragments: context.fragments,\n  capabilities: context.capabilities, staticFirstLoad: context.staticFirstLoad,\n  declarationId: context.declarationId, declarationOwners: context.declarationOwners,\n  dependencies: context.dependencies };\nreturn result;"
+      }
+    ]
+  },
+  {
+    "id": "declarations-replay",
+    "classification": "structural",
+    "scope": "collectDeclarations allocation/function-subtree ceiling; shares declarations/fragments and skips cold static diagnostics.",
+    "edits": [
+      {
+        "file": "packages/canard/schema-form/src/core/blueprint/utils/analyze/collectDeclarations.ts",
+        "name": "collectDeclarations",
+        "body": "const key = '101-declarations';\nconst cursors = globalThis.__profile99SequenceCursors;\nconst index = cursors[key] ?? 0;\ncursors[key] = index + 1;\nconst held = (globalThis.__profile99Sequences ??= {})[key] ??= [];\nconst cached = held[index];\nif (cached) {\n  cursors[key] = cached.next;\n  for (let item = 0; item < cached.fragments.length; item++) context.fragments.push(cached.fragments[item]);\n  context.declarationId += cached.idDelta;\n  Object.assign(context.capabilities, cached.capabilities);\n  if (cached.owners) context.declarationOwners = cached.owners;\n  return cached.result;\n}\nconst before = context.fragments.length;\nconst idBefore = context.declarationId;\nconst result = (() => __ORIGINAL_BODY__)();\nheld[index] = { result, fragments: context.fragments.slice(before),\n  idDelta: context.declarationId - idBefore, next: cursors[key],\n  capabilities: { ...context.capabilities }, owners: context.declarationOwners };\nreturn result;"
+      }
+    ]
+  },
+  {
+    "id": "load-zero",
+    "classification": "structural",
+    "scope": "loadStaticFirstTree ceiling; removes eager tree hydration, allocating neither frames nor children. Output is intentionally incomplete.",
+    "edits": [
+      {
+        "file": "packages/canard/schema-form/src/core/settle/utils/load/loadStaticFirstTree.ts",
+        "name": "loadStaticFirstTree",
+        "body": "return;"
+      }
+    ]
+  },
+  {
+    "id": "dependency-path-replay",
+    "classification": "structural",
+    "scope": "Supplement for oneOf's largest allocating function; reuses resolved strings by call position.",
+    "edits": [
+      {
+        "file": "packages/canard/schema-form/src/core/settle/utils/paths/resolveDependencyPath.ts",
+        "name": "resolveDependencyPath",
+        "memoSequence": "101-dependency-path"
+      }
+    ]
+  },
+  {
+    "id": "nodes-empty-hosts",
+    "classification": "code-level",
+    "scope": "Avoid temporary host-path arrays and JSON pair serialization only when every contribution has no gates; keep analysis and diagnostics.",
+    "edits": [
+      {
+        "file": "packages/canard/schema-form/src/core/blueprint/utils/analyze/buildNodes.ts",
+        "replace": {
+          "before": "  const hostPaths: string[][] = [];\n  for (let index = 0; index < inputs.length; index++) {\n    const gates = inputs[index].gates;\n    const paths: string[] = [];\n    for (let gate = 0; gate < gates.length; gate++) paths.push(gates[gate].hostPath);\n    hostPaths.push(paths);\n  }\n  const boundKey = JSON.stringify([key, hostPaths]);",
+          "after": "  let hasHosts = false;\n  for (let index = 0; index < inputs.length; index++)\n    if (inputs[index].gates.length) { hasHosts = true; break; }\n  let boundKey = 'no-hosts:' + key;\n  if (hasHosts) {\n    const hostPaths: string[][] = [];\n    for (let index = 0; index < inputs.length; index++) {\n      const gates = inputs[index].gates;\n      const paths: string[] = [];\n      for (let gate = 0; gate < gates.length; gate++) paths.push(gates[gate].hostPath);\n      hostPaths.push(paths);\n    }\n    boundKey = JSON.stringify([key, hostPaths]);\n  }"
+        }
+      }
+    ]
+  },
+  {
+    "id": "declarations-empty-arrays",
+    "classification": "code-level",
+    "scope": "Share proven immutable empty gate/order/unused overlay lists; still allocate every declaration and fragment and surface all diagnostics.",
+    "edits": [
+      {
+        "file": "packages/canard/schema-form/src/core/blueprint/utils/analyze/collectDeclarations.ts",
+        "replace": {
+          "before": "export const collectDeclarations = (",
+          "after": "const EMPTY_ALLOCATION_101: never[] = Object.freeze([]) as unknown as never[];\nexport const collectDeclarations = ("
+        }
+      },
+      {
+        "file": "packages/canard/schema-form/src/core/blueprint/utils/analyze/collectDeclarations.ts",
+        "replace": {
+          "before": "  const gates: BlueprintGate[] = [...input.gates];",
+          "after": "  const gates: BlueprintGate[] = input.gates.length === 0 && schema.controls?.active === undefined ? EMPTY_ALLOCATION_101 : [...input.gates];"
+        }
+      },
+      {
+        "file": "packages/canard/schema-form/src/core/blueprint/utils/analyze/collectDeclarations.ts",
+        "replace": {
+          "before": "    order: Object.freeze([...input.order]),",
+          "after": "    order: input.order.length === 0 ? EMPTY_ALLOCATION_101 : Object.freeze([...input.order]),"
+        }
+      },
+      {
+        "file": "packages/canard/schema-form/src/core/blueprint/utils/analyze/collectDeclarations.ts",
+        "replace": {
+          "before": "    overlays: [] as number[],",
+          "after": "    overlays: (input.role === 'declaration' ? EMPTY_ALLOCATION_101 : []) as number[],"
+        }
+      },
+      {
+        "file": "packages/canard/schema-form/src/core/blueprint/utils/analyze/collectDeclarations.ts",
+        "replace": {
+          "before": "    inheritedOverlays: [] as number[],",
+          "after": "    inheritedOverlays: (input.inherited ? [] : EMPTY_ALLOCATION_101) as number[],"
+        }
+      }
+    ]
+  },
+  {
+    "id": "load-frame-pool",
+    "classification": "code-level",
+    "scope": "Reuse mutable DFS frames by depth within one mount; keep node construction, interpretation, commit, warning and finalization order.",
+    "edits": [
+      {
+        "file": "packages/canard/schema-form/src/core/settle/utils/load/loadStaticFirstTree.ts",
+        "replace": {
+          "before": "  let deltas: Map<string, number> | undefined;",
+          "after": "  const reusableFrames: Frame<Self>[] = [stack[0]];\n  let deltas: Map<string, number> | undefined;"
+        }
+      },
+      {
+        "file": "packages/canard/schema-form/src/core/settle/utils/load/loadStaticFirstTree.ts",
+        "replace": {
+          "before": "      stack.push({ node: child, input, automatic: frame.automatic,\n        entered: false, index: 0, entries: EMPTY, required: EMPTY, order: 0, children: undefined });",
+          "after": "      const depth = stack.length;\n      let next = reusableFrames[depth];\n      if (!next) reusableFrames[depth] = next = { node: child, input, automatic: frame.automatic,\n        entered: false, index: 0, entries: EMPTY, required: EMPTY, order: 0, children: undefined };\n      else {\n        next.node = child; next.input = input; next.automatic = frame.automatic;\n        next.entered = false; next.index = 0; next.entries = EMPTY; next.required = EMPTY;\n        next.order = 0; next.children = undefined;\n      }\n      stack.push(next);"
+        }
+      }
+    ]
+  },
+  {
+    "id": "nodes-empty-hosts-guarded",
+    "classification": "code-level",
+    "scope": "Restrict the empty-host allocation fast path to one ungated contribution; gated/multiple-contribution inputs execute the original binding code without speculative prefix allocation.",
+    "edits": [
+      {
+        "file": "packages/canard/schema-form/src/core/blueprint/utils/analyze/buildNodes.ts",
+        "replace": {
+          "before": "  const hostPaths: string[][] = [];\n  for (let index = 0; index < inputs.length; index++) {\n    const gates = inputs[index].gates;\n    const paths: string[] = [];\n    for (let gate = 0; gate < gates.length; gate++) paths.push(gates[gate].hostPath);\n    hostPaths.push(paths);\n  }\n  const boundKey = JSON.stringify([key, hostPaths]);",
+          "after": "  let boundKey: string;\n  if (inputs.length === 1 && inputs[0].gates.length === 0) boundKey = 'no-hosts:' + key;\n  else {\n    const hostPaths: string[][] = [];\n    for (let index = 0; index < inputs.length; index++) {\n      const gates = inputs[index].gates;\n      const paths: string[] = [];\n      for (let gate = 0; gate < gates.length; gate++) paths.push(gates[gate].hostPath);\n      hostPaths.push(paths);\n    }\n    boundKey = JSON.stringify([key, hostPaths]);\n  }"
+        }
+      }
+    ]
+  }
+]

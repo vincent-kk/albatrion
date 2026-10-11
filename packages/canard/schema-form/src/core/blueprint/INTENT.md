@@ -10,6 +10,7 @@ Analyze an authored schema into renderer-independent declarations and fragments 
 - Use full names, including `PropertyDeclaration` and `SchemaFragment`.
 - Analysis receives renderer decisions as predicates and never imports React.
 - Keep authored schemas immutable and retain reference identity where the merge contract permits it.
+- Publish branch, feature and convergence proofs only after declaration collection has completed; include disabled declarations and keep uncertain reads on the conservative path.
 
 ## Boundaries
 
