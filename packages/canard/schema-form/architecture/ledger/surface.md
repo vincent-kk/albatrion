@@ -833,6 +833,7 @@
   > 【추론】 `FormHandle`의 `getState`·`setState`·`clearState`·`getErrors`는 오늘처럼 루트에 위임한다.
 - 보충:
   > 편집자 결정(43C-01): "【추론】 셈(키별 참 노드 수)과 현재 `globalState` 객체는 NODE-004·26C-06대로 트리마다 하나인 `SchemaNodeRuntime`의 칸이고(칸을 더하는 절차는 NODE-045), 모든 노드의 `globalState` 게터는 SURFACE-053대로 그 런타임을 읽는 문장 하나다; 셈의 갱신은 두 곳이다 — 상태를 쓰는 `dispatch` 진입(`setState`, `setSubtreeState`, `clearSubtreeState`)에서 키마다 거짓→참이면 더하고 참→거짓이면 빼며, 정착 커밋에서 형상에 든 노드는 그때 참인 키의 수만큼 더하고 형상을 떠난 노드는 그만큼 뺀다. 커밋의 이 덧붙임은 `settle`의 공유 자리라 06과 부딪히면 33C-01의 결대로 뒤에 머지하는 쪽이 맞춘다." (`reviews/round-43-closing.md:10`)
+  > 편집자 결정(79C-01): "【추론】 SURFACE-053은 `globalErrors` 게터를 "트리 전체의 값을 든 런타임을 읽는 문장 하나, 어느 노드에서 읽어도 같다(오늘과 같음)"로 두었고 `FormHandle.getErrors`는 루트에 위임하며, VALIDATE-043 (1)의 "모든 에러는 순서대로 폼 수준 목록에 남는다"는 검증기가 낸 에러의 라우팅이 판정을 바꾸지 않는다는 뜻이지 외부 오류의 포함 여부를 정한 문장이 아니다. 원장이 `globalErrors`의 내용을 바꾸는 이주 행을 두지 않았으므로 내용은 오늘과 같다: 옛 엔진의 `globalErrors`는 루트의 외부 오류를 앞에, 검증의 전역 목록을 뒤에 합친 것이고, Form `errors` 속성은 변환한 목록을 통째로 루트에 걸고 경로마다 해당 노드에도 걸므로 `errors` 속성으로 준 오류는 `getErrors()`에 나오며, 루트 아닌 노드에 `node.setExternalErrors`로 직접 건 외부 오류는 그 노드의 `errors`에만 남고 `getErrors()`에는 나오지 않는다. 그러므로 (가)도 (나)도 아니다: 코어는 런타임의 폼 수준 목록을 "루트의 외부 오류 + 라우팅 목록"으로 만들되 읽을 때가 아니라 둘 가운데 하나가 바뀔 때(루트의 `setExternalErrors`·`clearExternalErrors`, 검증 라우팅) 합친 배열을 다시 만들어 같은 값은 같은 참조로 돌려주고(패키지의 "같은 값을 두 번 읽으면 같은 참조" 규칙), 바인딩은 오늘처럼 `errors` 속성을 루트에 통째로, 경로마다 노드에도 건다(69C-03의 경로 키 재적용은 노드 쪽이고 루트에 거는 것이 함께 간다). 07의 세 사례는 외부 오류를 Form `errors` 속성(또는 루트)으로 걸었으면 `getErrors()` 포함을 단언하고, 루트 아닌 노드에 직접 걸었으면 그 노드의 `errors`만 단언하며 `getErrors()` 단언은 지운다; 사례마다 어느 쪽인지 머리에 적는다. 이주 점검표에는 "`globalErrors`·`getErrors()`의 내용: 변경 없음(루트 외부 오류 + 검증 목록)"으로 한 줄 적어 소비자가 확인할 수 있게 한다." (`reviews/round-79-closing.md:9`)
 - 상태: 현행
 - 출처: `reviews/round-18-closing.md:1155-1159`(정본)
 - 닫은 사람: 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-41)
@@ -949,6 +950,8 @@
   > 실패: 빠진 이주 행을 더한다.
 - 보충:
   > 소유자(30라운드, 폼 핸들의 명령 모양): "네 맞습니다. 추가로, path 는 optional, 없으면 root 를 지칭합니다." (`reviews/round-30-owner-answers.md:11`) — `FormHandle`의 멤버는 열여섯에서 열여덟이 되고(`refresh`·`remount` 추가), `focus`·`select`의 경로 인자는 필수에서 선택으로 바뀐다(없으면 루트). 이 둘은 원장의 결정으로 바뀌는 멤버이므로 PR-7의 대조 목록과 이주 행에 든다(원장 관리자, 2026-10-01).
+  > 편집자 결정(80C-01): "【추론】 SURFACE-059는 바뀌는 `FormHandle` 멤버마다 이주 행이 있어야 한다고 했고 그 게이트의 실패 처분이 "빠진 이주 행을 더한다"이므로, 30라운드가 `FormHandle`의 명령 모양을 정하면서 SURFACE-059의 대조 목록에 든다고만 적고 이주 행을 두지 않은 것은 빠진 행이다. 07은 이주 점검표에 LANDING-209 행을 올리고 기존 시험 `Form.binding`의 "SURFACE-059 EVENT-073 … optional-path commands" 사례를 (가)의 시험으로 인용한다." (`reviews/round-80-closing.md:10`)
+  > 편집자 결정(80C-02): "【추론】 되돌리지 않는 까닭은 패키지의 "같은 값을 두 번 읽으면 같은 참조" 규칙이다 — `getErrors()`가 돌려주는 배열은 79C-01대로 코어가 바뀔 때만 다시 만드는 공유 배열이므로 소비자가 고치면 코어의 상태가 깨진다; 변경 가능한 형을 돌려주면서 "고치지 말라"고 문서에만 적는 것보다 형이 계약을 말하는 것이 맞다. 받는 쪽(`errors` 속성, 콜백 인자)의 `readonly`는 넓히는 변경이라 소비자 코드를 깨지 않는다. 07은 이주 점검표에 LANDING-210 행을 올리고, 되돌림이 아닌 복사의 안내 한 줄을 PR-8 이주 안내의 재료로 적는다." (`reviews/round-80-closing.md:18`)
 - 상태: 현행
 - 출처: `reviews/round-18-closing.md:2276-2282,2298-2301`(정본)
 - 닫은 사람: 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-87)
