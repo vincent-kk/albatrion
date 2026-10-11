@@ -9,10 +9,10 @@ Planning method: 저장소 지침 — `PLAN.md` §2와 `plan/prompts.md`의 단�
 - 단계: 07 전환(PR-7). 브랜치 `feat/schema-form-switch`, 작업 자리는 워크트리 `.claude/worktrees/stage-07`(`.claude/commands/`·`.vscode/`는 sparse-checkout으로 뺌). 2026-10-11 원장 관리자가 `1.0.0-beta`를 14개 커밋으로 묶고(`351ece24e`) 이 가지를 그 위의 커밋 하나(`f8a39d65e`)로 다시 세웠습니다. 측정 원자료는 브랜치 `archive/stage-07-verification-raw`와 태그 `archive/stage-07-pre-rebase-20261011`(둘 다 `98227ab19`)에 있습니다(140라운드).
 - PR: [#354](https://github.com/vincent-kk/albatrion/pull/354), base `1.0.0-beta`, 리뷰 중입니다. G23·G27이 닫힐 때까지 머지하지 않습니다.
 - seiri 작업 `schema-form-switch`, 단계 execute. 게이트 원장은 워크트리의 `.seiri/tasks/schema-form-switch/gates.md`(gitignore)이며, seiri `gates status`는 메인 체크아웃 경로를 읽어 원장이 없다고 답합니다. 워크트리 파일을 직접 읽습니다. 72시간 유휴 삭제에 대비한 사본은 [gates-snapshot.md](gates-snapshot.md).
-- 게이트 상태(2026-10-11, 142라운드 반영): 원장 36개 가운데 34개 충족, 열린 것은 둘입니다. G23은 브라우저 게이트(`packages/canard/schema-form`에서 `yarn vitest run --project storybook`)이며 142라운드 답대로 소유자가 따로 지시할 때 진행합니다. G26은 142라운드 답(느린 행 9행 수용, 기준 ①은 성능 개선 단계로 이월)을 `performance.md`에 반영해 닫혔습니다. G27은 core 형 단언 14개 때문에 미충족이며, 142라운드에서 소유자가 승인을 보류하고 하나씩 다시 검토하라고 했습니다. 그 밖의 차단 항목은 모두 닫혔고, 그 밖의 차단 항목은 모두 닫혔습니다([3단계 보충 검증](../../verification/07-switch/g27-phase3.md), [G32 재검증](../../verification/07-switch/g32-recheck.md)). 이 가지가 core 밖에 더한 형 단언 최대 17개는 원장 관리자가 질의 4항의 덧붙임으로 올렸고, 없애는 제안은 07b입니다.
+- 게이트 상태(2026-10-11, 142라운드 반영): 원장 36개 가운데 33개 충족, 열린 것은 셋입니다. G23은 브라우저 게이트(`packages/canard/schema-form`에서 `yarn vitest run --project storybook`)이며 142라운드 답대로 소유자가 따로 지시할 때 진행합니다. G26은 142라운드 답(느린 행 9행 수용, 기준 ①은 성능 개선 단계로 이월)을 반영해 닫혔다가, 143라운드 답으로 화면 배열 갱신 3행(array-push-100·array-replace-200·array-push-remove-100)의 수용이 거두어져 다시 열렸습니다. 그 3행은 구간별 귀속(1단계, 읽기 전용 측정)과 고침 시도(2단계, 고침마다 판정 세션) 뒤 다시 판정합니다. G27은 core 형 단언 14개 때문에 미충족이며, 142라운드에서 소유자가 승인을 보류하고 하나씩 다시 검토하라고 했습니다. 그 밖의 차단 항목은 모두 닫혔고, 그 밖의 차단 항목은 모두 닫혔습니다([3단계 보충 검증](../../verification/07-switch/g27-phase3.md), [G32 재검증](../../verification/07-switch/g32-recheck.md)). 이 가지가 core 밖에 더한 형 단언 최대 17개는 원장 관리자가 질의 4항의 덧붙임으로 올렸고, 없애는 제안은 07b입니다.
 - 139C-01 판정 세션: [139a](../../verification/07-switch/profile-139a-session.md)와 [139b](../../verification/07-switch/profile-139b-session.md) 모두 ADOPT, 회귀 0행입니다.
-- 다음 행동: core 형 단언 14건의 재검토 표(건, 제거 길, 비용, 제안)를 커밋 전에 원장 관리자에게 보내고, 소유자 답에 따라 제거합니다. 코드가 바뀌면 134C-01·139C-01대로 판정 세션이 필요합니다. 개선 항목 여섯의 배정(질의 2항)은 열려 있습니다. G27 검증의 N2(계수 시험의 고정 스크래치 경로)는 비차단으로 열려 있습니다.
-- 원장 관리자 다음 라운드 번호: 143.
+- 다음 행동: 배열 3행의 1단계 구간별 표를 원장 관리자에게 먼저 보냅니다. 동시에 core 형 단언 14건의 재검토 표(건, 제거 길, 비용, 제안)를 커밋 전에 원장 관리자에게 보내고, 소유자 답에 따라 제거합니다. 코드가 바뀌면 134C-01·139C-01대로 판정 세션이 필요합니다. 개선 항목 여섯의 배정(질의 2항)은 열려 있습니다. G27 검증의 N2(계수 시험의 고정 스크래치 경로)는 비차단으로 열려 있습니다.
+- 원장 관리자 다음 라운드 번호: 144. 측정은 직렬(135라운드)이며 세션은 2시간 이내(129라운드)입니다.
 
 ## 1. 최초 기준선
 
