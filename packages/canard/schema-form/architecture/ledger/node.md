@@ -793,6 +793,7 @@
   > 【추론】 `InferSchemaNode<Schema>`로의 좁힘은 overload 선언으로 한다.
 - 보충:
   > 소유자(146라운드, isTerminal 콜백 계약 변경(#14)): "계약 변경 받음 (Recommended)" (`reviews/round-146-owner-answers.md:8`) — nodeFromJSONSchema의 isTerminal 선언을 실제 전달 대상에 맞춰 단언을 없앤다; 공개 루트 밖의 core 계약(원장 관리자, 2026-10-11).
+  > 소유자(150라운드, 형 추론의 우선순위(원칙)): "외부 사용자의 경우 form에 주입한 값이나 jsonSchema, handler등을 통해서 다양한 타입 추론이 가능하면 정확하게 이루어졌으면 좋겠어." (`reviews/round-150-owner-answers.md:7`) — 외부 사용자의 추론(defaultValue·핸들러·ref·제네릭 주입)은 정확하게, 스키마 기반 추론은 모호해도 되며, 패키지 내부는 이유가 적힌 형 단언으로 안전성을 보장해도 된다; 옛 구조의 형 추론은 07b의 공개 형 추론 감사에서 참고한다(원장 관리자, 2026-10-11).
 - 상태: 현행
 - 출처: `reviews/round-18-closing.md:1005-1013`(정본)
 - 닫은 사람: 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-37)

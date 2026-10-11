@@ -1296,6 +1296,7 @@
   > 소유자(146라운드, new Function 반환값(#12)): "지금 자리에 이유와 함께 남김 (Recommended)" (`reviews/round-146-owner-answers.md:9`) — `new Function` 반환값의 단언 1건은 생성자 반환 형에 호출 서명이 없어 제거 불가, 이유를 그 줄에 적고 남긴다; 나머지 13건은 제거(6건 형만, 7건 런타임 가드는 번들 하나로 판정)(원장 관리자, 2026-10-11).
   > 소유자(147라운드, 공개 형 변경의 버전 처리): "마이너 버전으로 해도 되는데, 지금 수정하지말고 changeset으로 저장해둬줘. 한번에 올리려고 해" (`reviews/round-147-owner-answers.md:7`) — 146라운드의 common-utils·json 공개 형 변경은 package.json 버전을 지금 올리지 않고 `.changeset/`에 minor 변경 파일로 저장해 소유자가 한 번에 올린다(원장 관리자, 2026-10-11).
   > 소유자(149라운드, isArray overload와 소비 코드 6곳): "(가) overload 넣고 6곳 선언을 넓힘" (`reviews/round-149-owner-answers.md:7`) — common-utils isArray의 readonly overload를 넣고 schema-form의 `includes` 호출 6곳의 받는 쪽 선언을 넓힌다; `src/__legacy__` 4곳은 소유자가 승인한 예외(원장 관리자, 2026-10-11).
+  > 소유자(150라운드, 형 추론의 우선순위(원칙)): "외부 사용자의 경우 form에 주입한 값이나 jsonSchema, handler등을 통해서 다양한 타입 추론이 가능하면 정확하게 이루어졌으면 좋겠어." (`reviews/round-150-owner-answers.md:7`) — 외부 사용자의 추론(defaultValue·핸들러·ref·제네릭 주입)은 정확하게, 스키마 기반 추론은 모호해도 되며, 패키지 내부는 이유가 적힌 형 단언으로 안전성을 보장해도 된다; 옛 구조의 형 추론은 07b의 공개 형 추론 감사에서 참고한다(원장 관리자, 2026-10-11).
 - 상태: 현행
 - 출처: `reviews/round-18-closing.md:1019-1023`(정본)
 - 닫은 사람: 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-37)
