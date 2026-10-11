@@ -308,3 +308,6 @@ reviews/round-142-owner-answers.md:11	142	코어 형 단언 14건과 개선 항�
 reviews/round-143-owner-answers.md:7	143	배열 3행의 시도 충분성	"베열 3행에 대해서는? 줄일 수 있겠어? 충분히 검토 결과 실패한걸로 보였는데. 줄일 수 있으면 좋은데 충분히 시도해본 후의 실패인지 아닌지는 궁금하긴 하네" (2026-10-11, 원장 세션)
 reviews/round-143-owner-answers.md:8	143	배열 3행의 재판정	"다시 판정을 해보자. 빈 고리를 매꿔 넣어봐. 줄여보자 이번에" (2026-10-11, 원장 세션)
 reviews/round-144-owner-answers.md:7	144	배열 3행 재판정의 판정 열	"어떨까? 일부 조건을 바꿨으니, 평가의 엄밀성에 필요하다면 수전해도된다" (2026-10-11, 원장 세션; "수전"은 "수정"의 오타로 읽음)
+reviews/round-146-owner-answers.md:7	146	다른 패키지 공개 형 변경(#1·#10·#5)	"공개 형 변경 받음 (Recommended)" (2026-10-11, 원장 세션의 선택지 답)
+reviews/round-146-owner-answers.md:8	146	isTerminal 콜백 계약 변경(#14)	"계약 변경 받음 (Recommended)" (2026-10-11, 원장 세션의 선택지 답)
+reviews/round-146-owner-answers.md:9	146	new Function 반환값(#12)	"지금 자리에 이유와 함께 남김 (Recommended)" (2026-10-11, 원장 세션의 선택지 답)

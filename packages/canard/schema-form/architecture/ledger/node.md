@@ -791,7 +791,8 @@
   > 【추론】 레코드를 넘겨받는 공개 메서드는 `this: AnyNode` 매개변수로 선언한다.
   > 【추론】 생성은 종류별 생성 표가 `AnyNode`를 돌려준다.
   > 【추론】 `InferSchemaNode<Schema>`로의 좁힘은 overload 선언으로 한다.
-- 보충: 없음
+- 보충:
+  > 소유자(146라운드, isTerminal 콜백 계약 변경(#14)): "계약 변경 받음 (Recommended)" (`reviews/round-146-owner-answers.md:8`) — nodeFromJSONSchema의 isTerminal 선언을 실제 전달 대상에 맞춰 단언을 없앤다; 공개 루트 밖의 core 계약(원장 관리자, 2026-10-11).
 - 상태: 현행
 - 출처: `reviews/round-18-closing.md:1005-1013`(정본)
 - 닫은 사람: 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-37)
