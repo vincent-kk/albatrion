@@ -619,6 +619,10 @@ immediate의 Profiler callback 횟수이며 commit 시간이 아닙니다. 단�
 
 [136k 회차별 판정](profile-136k-final.md#목표-배율-초과와-회차-판정)에서 pooled 목표 배율 초과는 wall·active 18지표행입니다. sample-0·sample-2·nested-d3-f4의 6지표행은 세 회차가 목표선 양쪽에 있으므로 94C-02의 동률·충족 규칙을 적용합니다. sample-1·sample-3·array-push-100·array-replace-200·array-push-remove-100·computed-visible-derived의 update는 두 시간 열 모두 세 회차가 1.0×를 넘으므로 미달입니다. 따라서 소유자 판단이 필요했던 행([소유자 질의 7번](/Users/Vincent/Workspace/albatrion/packages/canard/schema-form/architecture/reviews/owner-queue-07.md))은 6개 폼, wall·active를 각각 세면 12지표행이며, [142라운드 답](/Users/Vincent/Workspace/albatrion/packages/canard/schema-form/architecture/reviews/round-142-owner-answers.md)이 7단계 수용으로 수용하였습니다. 그 가운데 배열 3개 폼의 6지표행은 [143라운드 답](/Users/Vincent/Workspace/albatrion/packages/canard/schema-form/architecture/reviews/round-143-owner-answers.md)에 따라 수용을 거두고 재판정 중입니다.
 
+배열 3개 폼의 143라운드 재판정 출발 수치는 [151C-01](/Users/Vincent/Workspace/albatrion/packages/canard/schema-form/architecture/reviews/round-151-closing.md)대로 136k 공식 절차를 그대로 쓴 [대조 세션](profile-148-control.md)의 값입니다(2026-10-11, HEAD `34b370eed`, 측정 번들은 `b1035b73b`와 바이트 동일). wall 중앙값 격차는 array-push-100 +7.08 ms(84.91 → 91.98, 1.083×), array-replace-200 +8.84 ms(105.31 → 114.15, 1.084×), array-push-remove-100 +9.85 ms(123.46 → 133.31, 1.080×)이며, drainTicks(2) 기록 열의 배율은 1.689×·1.109×·1.548×입니다. [단계 분해 세션](profile-143-stage1.md)의 방향(push 계열의 증가는 코어 settle·structure 경로이고 React는 상쇄)과 상위 함수 목록은 유지하지만, 그 세션의 절대 크기는 공식 격차에 대응시키지 않습니다.
+
+**열린 항목: HEAD만 측정 loop의 모양에 민감합니다.** 같은 번들이라도 HEAD는 공식 절차에서 약 92·133 ms, 단계 분해 하네스와 판정 하네스(A/A 136i)에서 약 102·147~154 ms(push-100·push-remove-100)이며, 옛 판은 하네스와 무관하게 같습니다. 번들을 맞바꾼 대조에서 차이는 하네스를 따라갔고, 번들 형식·winglet 외부화·eager init·loader·GC와 clone 순서·쓰기 loop 모양은 단독 원인이 아니었습니다. 원인은 확정하지 못했으며 7단계에서 따로 진단하지 않습니다. 코어 고침이 이 민감도를 줄이는지는 2단계 판정의 강제 GC 열과 update-wall-nogc 열로 봅니다.
+
 | 폼/작업/지표 | pooled 배율 | 목표 | 회차 1 / 2 / 3 배율 | 원절차 판정 | 소유자 수용 |
 | --- | --- | --- | --- | --- | --- |
 | sample-0/update/wall | 1.0407 | ≤1.0× | 0.9847 / 1.0639 / 1.0213 | 동률로 충족합니다. | 원절차상 동률·충족입니다. |
@@ -920,7 +924,7 @@ benchmark-form(BF)의 코어 BF 갱신은 위 공식 코어 표에, React 19 fix
 
 이 목록은 R130이 정한 **07 → 07b의 이해·인터페이스 확정·내부 스타일링 → 최적화와 플러그인 개편 → 문서 정리·레거시 제거 → 배포** 순서의 입력입니다. 기존 목록을 없애지 않고 출처·현재 처분·담당 단계로 풀어 적었습니다. 성능 과제는 최적화 단계의 요청서와 대장에 연결하며, 내부 코드 정돈과 인터페이스 확정은 07b에 연결합니다. 원장이 담당 단계를 정하지 않은 항목에는 원장 관리자의 제안 단계를 "(제안)"으로 붙입니다.
 
-표의 한 행을 한 항목으로 센 집계는 07b 6항목(그중 원장 관리자 제안 4), 최적화 23항목(그중 제안 2)입니다. "제안"으로 표시한 여섯 항목은 원장이 단계를 정하지 않아 원장 관리자가 배정을 제안한 것이며, 소유자가 PR 시점에 바꿀 수 있습니다([소유자 질의 2번](/Users/Vincent/Workspace/albatrion/packages/canard/schema-form/architecture/reviews/owner-queue-07.md)). 이 숫자는 아래 목록 자체의 행별 집계이며 성능 측정값이 아닙니다. P1·W1은 하나의 작은 수정 항목으로 세고, 서로 다른 청사진 후보와 번들 처분 과제는 별도 행으로 셉니다.
+표의 한 행을 한 항목으로 센 집계는 07b 7항목(그중 원장 관리자 제안 4), 최적화 23항목(그중 제안 2)입니다. "제안"으로 표시한 여섯 항목은 원장이 단계를 정하지 않아 원장 관리자가 배정을 제안한 것이며, 소유자가 PR 시점에 바꿀 수 있습니다([소유자 질의 2번](/Users/Vincent/Workspace/albatrion/packages/canard/schema-form/architecture/reviews/owner-queue-07.md)). 이 숫자는 아래 목록 자체의 행별 집계이며 성능 측정값이 아닙니다. P1·W1은 하나의 작은 수정 항목으로 세고, 서로 다른 청사진 후보와 번들 처분 과제는 별도 행으로 셉니다.
 
 | 항목 ID | 다룰 단계 | 출처 라운드 | 이월한 일과 유지할 계약 | 근거 문서와 배정 이유 |
 | --- | --- | --- | --- | --- |
@@ -953,6 +957,7 @@ benchmark-form(BF)의 코어 BF 갱신은 위 공식 코어 표에, React 19 fix
 | 개선-27 | 07b 인터페이스·스타일링 단계 | 130입니다. | 소유자가 구현을 이해하고 공개 인터페이스를 확정합니다. 공개 계약 변경이 나오면 원장 라운드에 먼저 기록합니다. | R130과 원격 참조의 plan/README.md입니다. 07b를 소유자가 열 때 구체적인 요청서를 만듭니다. |
 | 개선-28 | 07b(제안), 시험 도구 정리 | 136입니다(원장 관리자 제안). | 측정 도구 `tools/measure-react-render-counts.mjs`에 계수 전용 모드에서도 다섯 쓰기(showError, context, onChange, readOnly, reset)를 포함하는 명시 옵션을 두고, 시험 도우미 `runtimeCounts.mjs`의 도구 소스 문자열 치환을 없앱니다. 지금의 치환은 도구 쪽 한 줄이 바뀌면 조용히 깨집니다. 07 안에서는 마지막 코드 변경 뒤의 A/A 전제를 지키려고 손대지 않습니다. | [136h 기록](profile-136h-session.md)의 "커밋에 적용한 소스" 절과 커밋 `daca1d14a`입니다. |
 | 개선-29 | 최적화 단계 | 142입니다. | 분기 수에 비례하는 전환 비용의 구조, 곧 게이트 등록·평가와 경로 계산의 분기당 방문을 없앱니다. 7단계는 분기 40개에서 BF 1,014.1 µs, 첫 전환 653.3 µs, 이후 갱신 319.8 µs(16.67 ms 예산의 6.08%·3.92%·1.92%)로 닫았으며, GOAL-011의 기준 ①은 이 단계에서 다시 판정합니다. | [142라운드 답](/Users/Vincent/Workspace/albatrion/packages/canard/schema-form/architecture/reviews/round-142-owner-answers.md)의 기준 ① 답("성능 개선 단계로 이월")과 위 기준 ① 절입니다. 1d는 준비된 대안으로 남아 있습니다. |
+| 개선-30 | 07b 인터페이스·스타일링 단계 | 150입니다. | 공개 형 추론을 감사합니다. defaultValue, 핸들러, FormHandle ref, 제네릭 주입(`Form<Schema, Value>`)의 네 경로에서 외부 사용자가 얻는 추론을 옛 판(`src/__legacy__`)과 형 시험으로 나란히 비교하고, 어긋나는 자리를 고칩니다. 스키마 기반 추론(`InferValueType`)의 모호함은 허용하며, 패키지 내부 추론은 이유가 적힌 단언으로 보장할 수 있습니다. 측정 항목이 아닙니다. | [150라운드 답](/Users/Vincent/Workspace/albatrion/packages/canard/schema-form/architecture/reviews/round-150-owner-answers.md)의 원칙 (1)~(4)입니다. 외부 사용자의 형 추론이 내부 추론보다 우선합니다. |
 
 ### 기존 목록에서 07의 처분으로 옮긴 항목
 
