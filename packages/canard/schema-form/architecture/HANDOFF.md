@@ -243,7 +243,7 @@ node ledger/checks/doc-coverage.mjs design/*.md adr/*.md -- ledger/*.md   # 설�
 | `reviews/round-134-closing.md` | 134라운드 편집자 결정 하나: 세션 수 절감 |
 | `reviews/round-135-owner-answers.md` | 135라운드 소유자 답 하나: 지연과 동시 진행 |
 | `reviews/round-136-closing.md` | 136라운드 편집자 결정 하나: 넷 번들 거절, 셋 번들 재판정, F-E 보류 |
-| `reviews/round-137-closing.md` | 137라운드 편집자 결정 하나: (가) 실패 재측정, 31행과 기준 ①의 질의 |
+| `reviews/round-137-closing.md` | 137라운드 편집자 결정 하나: (가) 실패 재측정, 느린 행 서른하나와 기준 ①의 질의 |
 | `reviews/round-138-closing.md` | 138라운드 편집자 결정 하나: 수용 대기 행의 정직 표시와 G26 열린 채 PR |
 | `reviews/round-139-closing.md` | 139라운드 편집자 결정 하나: G27 2단계 고침의 측정과 게이트 처리 |
 | `reviews/round-140-owner-answers.md` | 140라운드 소유자 답 하나: 측정 원자료의 처분 |
