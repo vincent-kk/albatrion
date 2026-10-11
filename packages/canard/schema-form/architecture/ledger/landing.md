@@ -2999,6 +2999,7 @@
   > 소유자(140라운드, 측정 원자료의 처분): "원자료는 보관 브랜치로, PR에는 보고서만 (Recommended)" (`reviews/round-140-owner-answers.md:7`) — 7단계 측정 원자료(json·gz·cpuprofile, 약 1,180 MB)는 07 브랜치 tip을 보존한 태그 `archive/stage-07-pre-rebase-20261011`과 브랜치 `archive/stage-07-verification-raw`에 남기고, PR 트리에는 보고서·도구·해시(sha256) 목록만 남긴다; 보고서의 원자료 인용은 그 보관 브랜치를 가리킨다(원장 관리자, 2026-10-11).
   > 편집자 결정(141C-01): "【추론】 132라운드 소유자 답은 "PR 생성까지 자체적으로"였고 133라운드 답은 PR 생성 때 우산을 정리하라는 것이었으므로, PR이 열린 지금이 그 두 지시의 끝이다. 열린 게이트 셋은 모두 소유자만 닫을 수 있는 종류(수용, 승인, 직접 확인)이고 138C-01·139C-01이 그 상태를 정직하게 표시한 채 PR을 올리기로 했으므로, 남은 일은 소유자의 답을 받아 표시를 바꾸는 것뿐이다. 우산에는 정리 뒤 원장 커밋이 다시 쌓이지만 소유자가 "작업중엔 안해도 되니까"라고 했으므로 다음 묶음은 다음 PR 때다." (`reviews/round-141-closing.md:9`)
   > 소유자(142라운드, 질의 방식과 G23의 순서): "분류해서 질의하라. 브라우저 권한은 후순위로 내가 따로 지시하겠다. 시간 지연 관련한 질의와 구조 변경 등에 대한 질의 등 주제별로 묶어라." (`reviews/round-142-owner-answers.md:7`) — 7단계 PR #354의 열린 게이트에 대한 소유자 질의는 성능·시간 지연 묶음과 구조 변경 묶음으로 나눠 올리고, G23 브라우저 확인은 소유자가 따로 지시할 때 진행한다(원장 관리자, 2026-10-11).
+  > 소유자(149라운드, isArray overload와 소비 코드 6곳): "(가) overload 넣고 6곳 선언을 넓힘" (`reviews/round-149-owner-answers.md:7`) — common-utils isArray의 readonly overload를 넣고 schema-form의 `includes` 호출 6곳의 받는 쪽 선언을 넓힌다; `src/__legacy__` 4곳은 소유자가 승인한 예외(원장 관리자, 2026-10-11).
 - 상태: 현행
 - 출처: `reviews/round-18-owner-answers.md:44`(정본, 반영 칸), `reviews/round-18-owner-answers.md:45`
 - 닫은 사람: 소유자 답(`reviews/round-18-owner-answers.md:44` 개발계획 P3·P4), 소유자 답(`reviews/round-18-owner-answers.md:45` 개발계획 1-가)
