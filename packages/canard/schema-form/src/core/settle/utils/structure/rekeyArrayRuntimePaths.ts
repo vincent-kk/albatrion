@@ -15,18 +15,20 @@ export type { ArrayPathMove } from './type';
  * Move indexed entries in two phases so chained shifts cannot collide.
  * @param runtime - Tree-owned stores and their persistent path indexes
  * @param hostPath - Array host whose position paths are being replaced
- * @param moves - Every old slot in order, with destinations absent for perished slots
+ * @param moves - Old slots after the preserved prefix, without destinations for perished slots
+ * @param preservedPrefixCount - Proven unchanged leading positions; zero for a general plan
  * @returns Nothing; affected cached views are invalidated
  */
 export const rekeyArrayRuntimePaths = <Self>(
   runtime: SchemaNodeRuntime<Self>, hostPath: string,
   moves: readonly ArrayPathMove[],
+  preservedPrefixCount: number = 0,
 ): void => {
   const stores = getRuntimePathStores(runtime);
   const unaddressed = new Set<string>();
   for (const store of [stores.latent, stores.metadata, stores.declarations,
     stores.rules, stores.mismatches])
-    for (const path of store.pathIndex.tail(hostPath, moves.length)) unaddressed.add(path);
+    for (const path of store.pathIndex.tail(hostPath, preservedPrefixCount + moves.length)) unaddressed.add(path);
   prunePerishedPaths(runtime, unaddressed);
   const changed = moves.filter((move) => move.previous !== move.current);
   const prefix = `${hostPath}/`;
@@ -35,6 +37,8 @@ export const rekeyArrayRuntimePaths = <Self>(
     if (!path.startsWith(prefix)) return path;
     const slash = path.indexOf('/', prefix.length);
     const itemPath = slash < 0 ? path : path.slice(0, slash);
+    const position = Number(itemPath.slice(prefix.length));
+    if (position >= 0 && position < preservedPrefixCount) return path;
     const destination = moveByPath.get(itemPath);
     return destination === undefined ? undefined : destination + path.slice(itemPath.length);
   };

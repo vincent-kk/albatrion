@@ -18,6 +18,8 @@ import { markWrite } from '../write/markWrite';
 import { prunePerishedPaths } from '../transition/prunePerishedPaths';
 import { rekeyArrayRuntimePaths } from './rekeyArrayRuntimePaths';
 import type { ArrayPathMove } from './rekeyArrayRuntimePaths';
+import { canApplyArrayTail } from './applyArraySlots/utils/canApplyArrayTail';
+import { applyArrayTail } from './applyArraySlots/utils/applyArrayTail';
 
 /**
  * Apply a branch plan before calculation while paths are free to change.
@@ -30,6 +32,7 @@ export const applyArraySlots = <Self extends SchemaNodeRecord<Self>>(
   host: Self, plan: Extract<ArrayArrangePlan, { kind: 'slots' }>,
   context: SettlementContext<Self>,
 ): unknown => {
+  if (canApplyArrayTail(host, plan)) return applyArrayTail(host, plan, context);
   const oldCount = host.itemCount;
   const oldItems = host.structure ?? {};
   const oldRaw = readRawTree(host, context);
