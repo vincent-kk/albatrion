@@ -27,13 +27,12 @@ export const mergeSchemaContributions = (
 ): EffectiveSchema => {
   const single = mergeSingleStaticContribution(node, declarations, options);
   if (single !== undefined) return single;
-  const staticTypes =
+  const staticTypes: readonly SchemaTypeName[] | undefined =
     node.schemaType === 'virtual'
       ? undefined
-      // eslint-disable-next-line @typescript-eslint/consistent-type-assertions -- The array predicate does not narrow readonly arrays.
-      : ((isArray(node.schemaType)
-          ? node.schemaType
-          : [node.schemaType]) as readonly SchemaTypeName[]);
+      : isArray(node.schemaType)
+        ? node.schemaType
+        : [node.schemaType];
   const state: EffectiveSchemaState = {
     schema: {},
     patterns: [],

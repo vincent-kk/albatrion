@@ -65,8 +65,7 @@ export const buildNodes = (
       ? 'union'
       : schemaType === 'integer'
         ? 'number'
-        // eslint-disable-next-line @typescript-eslint/consistent-type-assertions -- The array predicate does not narrow readonly arrays.
-        : (schemaType as BlueprintNodeKind);
+        : schemaType;
     const ownedDeclarations = [];
     const conjunctions = [];
     for (let item = 0; item < group.declarations.length; item++) {

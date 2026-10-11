@@ -91,7 +91,7 @@ export const collectBlueprintWarnings = (
           (entry) => entry.name === descriptor.propertyName,
         )?.node;
         if (!tag) continue;
-        const allowed = isArray(tag.schemaType)
+        const allowed: readonly unknown[] = isArray(tag.schemaType)
           ? tag.schemaType
           : [tag.schemaType];
         if (

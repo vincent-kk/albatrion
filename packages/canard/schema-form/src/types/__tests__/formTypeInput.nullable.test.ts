@@ -22,7 +22,7 @@ const testMatches = (test: FormTypeTestObject, hint: Hint): boolean => {
   }
 
   if (test.schemaType !== undefined) {
-    const types = isArray(test.schemaType)
+    const types: readonly unknown[] = isArray(test.schemaType)
       ? test.schemaType
       : [test.schemaType];
     if (!types.includes(hint.schemaType)) return false;

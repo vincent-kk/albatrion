@@ -16,7 +16,7 @@ const FormTypeInputUnion = (props: FormTypeInputProps) => {
   const effectiveTypes = useMemo(() => {
     const authored = isArray(schemaType) ? schemaType : [schemaType];
     const type = jsonSchema.type;
-    const effective = isArray(type) ? type : type === undefined ? authored : [type];
+    const effective: readonly string[] = isArray(type) ? type : type === undefined ? authored : [type];
     return authored.filter((kind) => effective.includes(kind));
   }, [schemaType, jsonSchema]);
   const effectiveKey = effectiveTypes.join(',');

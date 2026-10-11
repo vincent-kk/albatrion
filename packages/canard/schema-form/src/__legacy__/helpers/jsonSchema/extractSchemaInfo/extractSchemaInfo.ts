@@ -19,7 +19,8 @@ export const extractSchemaInfo = <
   jsonSchema: Schema | undefined,
 ) => {
   if (jsonSchema === undefined) return null;
-  const type = jsonSchema.type;
+  const type: JSONSchemaWithVirtual['type'] | readonly string[] | undefined =
+    jsonSchema.type;
   if (type === undefined) return null;
   if (isArray(type)) {
     if (type.length === 0 || type.length > 2) return null;
