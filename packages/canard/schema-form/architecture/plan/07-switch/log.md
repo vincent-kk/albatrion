@@ -6,15 +6,13 @@ Planning method: 저장소 지침 — `PLAN.md` §2와 `plan/prompts.md`의 단�
 
 ## 0. 재개 지점
 
-- 단계: 07 전환(PR-7). 브랜치 `feat/schema-form-switch`, 작업 자리는 워크트리 `.claude/worktrees/stage-07`(`.claude/commands/`·`.vscode/`는 sparse-checkout으로 뺌). base는 `1.0.0-beta`이며, 원장 관리자가 G27 마감 보고 뒤 `1.0.0-beta`를 재작성하고 이 가지를 rebase합니다. 그 사이에는 커밋하지 않습니다. PR: 아직 없음.
+- 단계: 07 전환(PR-7). 브랜치 `feat/schema-form-switch`, 작업 자리는 워크트리 `.claude/worktrees/stage-07`(`.claude/commands/`·`.vscode/`는 sparse-checkout으로 뺌). 2026-10-11 원장 관리자가 `1.0.0-beta`를 14개 커밋으로 묶고(`351ece24e`) 이 가지를 그 위의 커밋 하나(`f8a39d65e`)로 다시 세웠습니다. 측정 원자료는 브랜치 `archive/stage-07-verification-raw`와 태그 `archive/stage-07-pre-rebase-20261011`(둘 다 `98227ab19`)에 있습니다(140라운드).
+- PR: [#354](https://github.com/vincent-kk/albatrion/pull/354), base `1.0.0-beta`, 리뷰 중입니다. G23·G26·G27이 소유자 답으로 닫힐 때까지 머지하지 않습니다.
 - seiri 작업 `schema-form-switch`, 단계 execute. 게이트 원장은 워크트리의 `.seiri/tasks/schema-form-switch/gates.md`(gitignore)이며, seiri `gates status`는 메인 체크아웃 경로를 읽어 원장이 없다고 답합니다. 워크트리 파일을 직접 읽습니다. 72시간 유휴 삭제에 대비한 사본은 [gates-snapshot.md](gates-snapshot.md).
-- 게이트 상태(2026-10-11): 열린 것은 넷입니다. G23은 소유자의 브라우저 실행(`packages/canard/schema-form`에서 `yarn vitest run --project storybook`)을 기다립니다. G26은 138C-01에 따라 `수용 대기` 행이 소유자 질의 5·7항의 답을 기다립니다. G27은 core 형 단언 14개 때문에 "미충족(질의 4항 대기)"입니다. [3단계 보충 검증](../../verification/07-switch/g27-phase3.md)이 질의 4항 밖에 남긴 차단 지적은 B2(G32 근거) 하나였고, [G32 재검증](../../verification/07-switch/g32-recheck.md#2026-10-11-재검증--f9ae05d5ea76ebf44a)의 PASS 기록으로 닫혔습니다. 비core 비시험 코드에서 이 가지가 더한 형 단언 최대 17개의 처리는 원장 관리자에게 질의했습니다. G33은 PR을 기다립니다. G13b·G17b·G19b·G28·G29·G31은 2026-10-11 HEAD `78841d697`에서, G32는 `a76ebf44a`에서 다시 확인했습니다.
+- 게이트 상태(2026-10-11): 원장 36개 가운데 33개 충족, 열린 것은 셋입니다. G23은 소유자의 브라우저 실행(`packages/canard/schema-form`에서 `yarn vitest run --project storybook`)을 기다립니다. G26은 138C-01에 따라 `수용 대기` 행이 소유자 질의 5·7항의 답을 기다립니다. G27은 core 형 단언 14개 때문에 "미충족(질의 4항 대기)"이며, 그 밖의 차단 항목은 모두 닫혔습니다([3단계 보충 검증](../../verification/07-switch/g27-phase3.md), [G32 재검증](../../verification/07-switch/g32-recheck.md)). 이 가지가 core 밖에 더한 형 단언 최대 17개는 원장 관리자가 질의 4항의 덧붙임으로 올렸고, 없애는 제안은 07b입니다.
 - 139C-01 판정 세션: [139a](../../verification/07-switch/profile-139a-session.md)와 [139b](../../verification/07-switch/profile-139b-session.md) 모두 ADOPT, 회귀 0행입니다.
-- 다음 행동, 순서대로:
-  1. 원장 관리자에게 "G27 완료, 작업 트리 깨끗함"을 보고하고 멈춥니다. 비core 형 단언 질의의 답이 오면 그대로 따릅니다.
-  2. 원장 관리자의 rebase 뒤 tip을 확인하고 `gh pr create --base 1.0.0-beta --body-file`로 PR을 엽니다. 본문에는 세션 링크를 넣지 않고 `reviews/owner-queue-07.md`를 연결합니다. PR 본문 "알림" 절에는 88C-02의 측정 원 자료(약 124 MB, `0189c443b`)가 재작성 뒤에도 히스토리에 남는지 확인해 적습니다.
-  3. `PLAN.md` §3의 07 행을 `리뷰`와 PR 링크로 바꾸고(G33), `gh pr view`의 base를 이 기록에 적습니다. 머지하지 않습니다.
-- 원장 관리자 다음 라운드 번호: 140.
+- 다음 행동: 소유자 답(질의 4·5·7항)과 G23 브라우저 실행을 기다립니다. 답이 오면 원장 관리자의 지시대로 처리합니다. G27 검증의 N2(계수 시험의 고정 스크래치 경로)는 비차단으로 열려 있습니다.
+- 원장 관리자 다음 라운드 번호: 141.
 
 ## 1. 최초 기준선
 
@@ -501,3 +499,19 @@ G29의 플러그인 빌드는 이 HEAD의 공개 타입으로 다시 했습니�
 | `yarn workspace @canard/schema-form-mui-plugin build` | 종료 0, index.mjs 30.18 kB |
 
 G31의 여섯 범위 전체 실행은 같은 snapshot에서 이 게이트 밖의 지적 25건을 냈습니다. 모두 이 가지 이전부터 있던 것입니다. 하나는 helper 시험 넷의 사례 수가 상한 32를 넘는 것(58·58·44·33건)이며, 이 가지에서의 차분은 렌더러 이름 변경뿐입니다. 나머지는 진입점 표면과 spec 사례 수의 미확정 경고입니다.
+
+### 2026-10-11 rebase 뒤 tip 확인과 PR(G33)
+
+원장 관리자가 다시 세운 tip `f8a39d65e`를 확인했습니다. 부모는 `351ece24e`이고 작업 트리는 깨끗했습니다. `git diff 98227ab19 f8a39d65e -- packages/canard/schema-form/src`는 비어 있어 src 트리가 바이트까지 같습니다. 그 밖의 차분은 우산의 원장·리뷰 문서와 지워진 측정 원자료뿐입니다.
+
+새 tip에서 원장의 CHECK를 글자 그대로 다시 실행했습니다. G28 `LINT_TYPECHECK_OK`, G29 `ALL_TESTS_GREEN`, G30 `LEDGER_LINKS_OK`이며, G31은 facts 1,097파일 exact와 boundaries·dag 지적 0건(통과 260, snapshot `282ab981…`, `78841d697`과 같음)입니다. 원자료 삭제로 깨진 시험이나 검사는 없습니다.
+
+G26 보고서 머리에 원자료 보관 위치의 한 문단을 넣었습니다(`0ff52e57b`). 그 커밋을 fast-forward로 푸시한 뒤 `gh pr create --base 1.0.0-beta --head feat/schema-form-switch --body-file`로 PR을 열었습니다. 본문에는 세션 링크나 공동 저자 줄이 없습니다.
+
+`gh pr view 354 --json number,state,baseRefName,headRefName,headRefOid,url,isDraft`의 단독 호출 결과는 다음과 같습니다.
+
+```json
+{"baseRefName":"1.0.0-beta","headRefName":"feat/schema-form-switch","headRefOid":"0ff52e57b1d2f864ad89e60de70cc3bbe85fa8fb","isDraft":false,"number":354,"state":"OPEN","url":"https://github.com/vincent-kk/albatrion/pull/354"}
+```
+
+`PLAN.md` §3의 07 행을 `리뷰`와 [#354](https://github.com/vincent-kk/albatrion/pull/354)로 바꿨습니다.

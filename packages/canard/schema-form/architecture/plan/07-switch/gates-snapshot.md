@@ -1,4 +1,4 @@
-# 07 게이트 원장 사본(2026-10-11, HEAD `a76ebf44a` 기준)
+# 07 게이트 원장 사본(2026-10-11, PR #354 생성 뒤)
 
 정본은 워크트리의 `.seiri/tasks/schema-form-switch/gates.md`(gitignore)다. 이 사본은 72시간 유휴 삭제에 대비한 기록이며, 정본이 없으면 이 파일을 정본 자리로 복사해 쓴다.
 
@@ -185,7 +185,7 @@ Plan: ../../../packages/canard/schema-form/architecture/plan/07-switch/execution
       CHECK: `{ (cd packages/canard/schema-form && npx vitest run --project unit --project render --project react18 --reporter=dot) && (cd packages/aileron/schema-form-scenarios && npx vitest run --config vite.config.ts --reporter=dot) && echo ALL_TESTS_GREEN; } 2>&1 | tail -3`
       NOTE: 2026-10-07 — 전체 출력이 48 KB를 넘어 도구가 결과를 파일로 빼면 원장 훅이 표지를 보지 못한다. CHECK 전체를 묶어 끝 세 줄만 남김(표지는 성공 때만 찍히므로 판정 조건은 같음)
       EXPECT: `ALL_TESTS_GREEN`
-      EVIDENCE: ALL_TESTS_GREEN (2026-10-11, worktree HEAD 78841d697; CHECK run verbatim in the background so the hook saw no output and marked it regressed, recorded by hand from the task output). Plugin builds re-run at 78841d697 against the freshly built @canard/schema-form dist: antd5, antd6, antd-mobile, mui each exit 0 (log.md G29 evidence 2026-10-11).
+      EVIDENCE: ALL_TESTS_GREEN
 
 - [x] G30: 원장 인용 검사의 문제가 0이다
       CHECK: `(cd packages/canard/schema-form/architecture && node ledger/checks/plan-links.mjs plan/README.md plan/*/*.md -- ledger/*.md | tail -1 | grep -q 'problems 0$') && echo LEDGER_LINKS_OK`
@@ -193,12 +193,12 @@ Plan: ../../../packages/canard/schema-form/architecture/plan/07-switch/execution
       EVIDENCE: LEDGER_LINKS_OK
 
 - [x] G31: filid 스캔에서 organ 외부 소비와 순환이 0이다
-      EVIDENCE: filid facts bootstrap at packages/canard/schema-form on 2026-10-11, worktree HEAD 78841d697: 1,097 files exact, 0 rejected, 0 uncertain. fractal_inspect validate scopes boundaries+dag: status ok, 0 findings, 260 passed (snapshot 282ab981…). The six-scope run at the same snapshot reports 25 findings outside this gate, all pre-existing: test-record-case-cap over 32 in four helper tests whose branch diff is only renderer renames, and indeterminate entry-point-surface and spec case-count warnings.
+      EVIDENCE: Re-run 2026-10-11 at the rebased tip f8a39d65e (src tree byte-identical to 98227ab19): facts 1,097 files exact, 0 rejected, 0 uncertain; fractal_inspect validate boundaries+dag status ok, 0 findings, 260 passed, snapshot 282ab981… (same as at 78841d697). Six-scope findings outside this gate are pre-existing (log.md 2026-10-11 gate recheck).
 
 - [x] G32: antigravity(멈추면 Claude verifier)의 원장 대 구현 대조에서 차단 지적이 0이다
       EVIDENCE: 2026-10-11 ledger-versus-implementation cross-check over the 13 source commits f9ae05d5e..a76ebf44a (src, excluding __legacy__): antigravity tier high, session 13fcda8b, G32 PASS with 0 blocking. All 19 cited ledger headings checked by hand at the cited lines; one cited path (src/types/formType.ts) does not exist but the public-type conclusion holds (src/types diff is error.ts comments only); its CLAUDE.md non-blocking note was already fixed in 78841d697. Recorded in verification/07-switch/g32-recheck.md, section 2026-10-11.
 
-- [ ] G33: `PLAN.md` §3의 07 행이 `리뷰`이고 PR 번호 링크를 든다(PR의 base가 `1.0.0-beta`임은 `gh pr view`의 단독 호출 결과를 `log.md`에 적는다)
+- [x] G33: `PLAN.md` §3의 07 행이 `리뷰`이고 PR 번호 링크를 든다(PR의 base가 `1.0.0-beta`임은 `gh pr view`의 단독 호출 결과를 `log.md`에 적는다)
       CHECK: `grep -qE '^\| 07 \| 전환 \| 리뷰 \| \[#[0-9]+\]' packages/canard/schema-form/architecture/PLAN.md && echo BOARD_IN_REVIEW`
       EXPECT: `BOARD_IN_REVIEW`
-      EVIDENCE: pending
+      EVIDENCE: BOARD_IN_REVIEW (2026-10-11; PR #354, base 1.0.0-beta per the standalone gh pr view recorded in log.md; CHECK run verbatim, recorded by hand)
