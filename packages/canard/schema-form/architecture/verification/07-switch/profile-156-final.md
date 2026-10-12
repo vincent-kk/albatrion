@@ -69,13 +69,13 @@ fixture·lane·metric·버전별 303표본을 pool했습니다. nearest-rank med
 @@ -19,8 +19,8 @@
  import path from 'node:path';
  import { fileURLToPath, pathToFileURL } from 'node:url';
- 
+
 -import { instrumentRound93i } from "file:///Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/packages/canard/schema-form/architecture/verification/07-switch/tools/instrument-round-93i.mjs";
 -import { instrumentCore } from "file:///Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/packages/canard/schema-form/architecture/verification/07-switch/profile-114-g26/instrument-core.mjs";
 +import { instrumentRound93i } from "./instrument-round-93i.mjs";
 +import { instrumentCore } from "./instrument-core.mjs";
  import { performance } from 'node:perf_hooks';
- 
+
  const directory = "/Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/packages/canard/schema-form/architecture/verification/07-switch/tools";
 @@ -31,15 +31,15 @@
  const pkgRequire = createRequire(path.join(pkg, 'package.json'));
@@ -129,7 +129,7 @@ fixture·lane·metric·버전별 303표본을 pool했습니다. nearest-rank med
 --- 148/analyze.mjs
 +++ 156/analyze.mjs
 @@ -8,7 +8,7 @@
- 
+
  assert.equal(process.version, 'v26.11.1');
  const out = path.dirname(fileURLToPath(import.meta.url));
 -const scratch = path.resolve(out, '../..');
