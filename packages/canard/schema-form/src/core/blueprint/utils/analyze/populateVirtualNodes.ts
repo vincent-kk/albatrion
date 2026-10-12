@@ -1,3 +1,4 @@
+import { isArray } from '@winglet/common-utils/filter';
 import { escapeSegment } from '@winglet/json/pointer';
 
 import type { BlueprintChildEntry, PropertyDeclaration } from '../../type';
@@ -25,7 +26,7 @@ export const populateVirtualNodes = (
   for (const declaration of host.declarations) {
     const virtual = readSchemaObject(declaration.schema).options?.virtual;
     if (virtual === undefined) continue;
-    if (!virtual || typeof virtual !== 'object' || Array.isArray(virtual))
+    if (!virtual || typeof virtual !== 'object' || isArray(virtual))
       throwBlueprintError(
         BlueprintErrorCode.VirtualFieldsNotValid,
         `${declaration.schemaPath}/options/virtual`,
@@ -37,7 +38,7 @@ export const populateVirtualNodes = (
       const schemaPath = `${declaration.schemaPath}/options/virtual/${escapeSegment(name)}`;
       const fields = schema.fields;
       if (
-        !Array.isArray(fields) ||
+        !isArray(fields) ||
         fields.some((field) => typeof field !== 'string') ||
         fields.some((field, index) => fields.indexOf(field) !== index)
       )

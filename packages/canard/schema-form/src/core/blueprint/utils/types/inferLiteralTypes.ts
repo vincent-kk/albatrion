@@ -1,3 +1,4 @@
+import { isArray } from '@winglet/common-utils/filter';
 import { hasOwnProperty } from '@winglet/common-utils/lib';
 
 import type { BlueprintSchema, SchemaTypeName } from '../../type';
@@ -27,7 +28,7 @@ export const inferLiteralTypes = (
     }
     if (hasOwnProperty(part.schema, 'enum')) {
       hasLiteral = true;
-      if (!Array.isArray(part.schema.enum))
+      if (!isArray(part.schema.enum))
         return throwBlueprintError(
           BlueprintErrorCode.UnknownJsonSchema,
           part.schemaPath,

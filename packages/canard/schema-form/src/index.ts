@@ -71,7 +71,8 @@ export type {
   InjectToHandler,
   ValidatorFactory,
   ValidateFunction,
-  PublicJSONSchemaError as JSONSchemaError,
+  ValidationIssue,
+  JSONSchemaError,
 } from './types';
 
 export type * from './types/rolled';

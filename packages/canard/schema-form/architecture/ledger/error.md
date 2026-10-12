@@ -266,7 +266,9 @@
 
 - 결정:
   > **진입 사슬.** 사슬 머리(리스너·`onChange` 밖에서 열린 동기 진입)와, 그 통지·`onChange`·리스너 안에서 열린 진입 전부가 한 사슬이다. ADR 0008의 "최외곽 진입"은 사슬 머리가 아닌 진입이며, 되먹임 상한(파동 25)은 진입마다, `onChange` 중첩 상한(25)은 사슬마다 센다. 사슬 안에서 난 오류 — 정착 오류, 리스너 오류, 되먹임·중첩 초과, `batch(fn)`의 fn이 던진 예외 — 는 모두 모아 두었다가 **사슬 머리가 끝날 때 한 번** 던진다. 안쪽 진입과 안쪽 `batch`는 정상 반환한다(fn이 던진 예외도 모아 둔다. 안쪽에서 던지면 사슬이 끊겨 통지가 빠진다). 순서는 커밋 → 통지 → 검증 요청 → `onChange` → 기록마다 `onError` → throw다. 그래서 값은 커밋되고, 구독자는 통지받고(P5: 커밋된 것은 반드시 통지된다), 호출자는 한 번만 오류를 본다.
-- 보충: 없음
+- 보충:
+  > 편집자 결정(58C-01): "【추론】 ERROR-004는 "사슬 안에서 난 오류 — 정착 오류, 리스너 오류, 되먹임·중첩 초과, `batch(fn)`의 fn이 던진 예외 — 는 모두 모아 두었다가 사슬 머리가 끝날 때 한 번 던진다"고 적었고 ERROR-005는 둘 이상이면 발생 순서대로 `details.errors`에 묶는다고 적었으므로, 한 정착 안에서 난 정착 오류는 게이트 실패든 공유 충돌·주입 대상 없음·쓰기 모양·식 throw·예산 초과든 모두 기록되어 묶인다; 정착이 `context.failure` 하나에 첫 실패만 남기고 뒤의 실패를 버리는 것은 ERROR-004의 "모두 모아"에 어긋나는 결함이라 55C-01과 같은 자리(집계 오류, LANDING-064 PR-4 행)에서 05가 고친다 — 정착은 실패 목록을 들고, `diagnostics.cause`는 그 목록의 첫 실패의 원인을 적으며(한 값, ERROR-034의 모양), 사슬 끝의 디스패치가 목록 전부를 발생 순서대로 하나로 묶어 던진다." (`reviews/round-58-closing.md:9`)
+  > 편집자 결정(58C-01): "【추론】 29C-03대로 계산 단계 뒤의 진행을 막는 조건은 예산 초과 하나이고 나머지 정착 오류는 계산 결과로 커밋되므로, "첫 실패만"이 의도된 규칙인 경우는 없다: 예산 초과는 그 뒤로 더 돌지 않아 더 이상의 오류가 나지 않는 것이지 앞서 기록된 오류를 버리는 것이 아니며, 예산 초과 앞에 난 가드 실패나 충돌은 묶음에 그대로 든다. 05 verifier가 찾은 순서 결함(게이트 아닌 실패가 게이트 실패 사이에서 발생 순서를 잃음)도 같은 수정에 든다." (`reviews/round-58-closing.md:10`)
 - 상태: 현행
 - 출처: `adr/0014-error-policy.md:49`(정본), `08-design-a-to-z.md:355`
 - 닫은 사람: 편집자 결정(ADR 0008 원리 도출)
@@ -280,7 +282,10 @@
 
 - 결정:
   > **묶음.** 오류가 하나면 그대로 던진다. 둘 이상이면(부른 쪽이 있는 자리에서 `onError` 핸들러가 던진 예외를 원래 오류와 합칠 때 포함) `SchemaFormError` 하나(전용 코드, 가칭 `SCHEMA_FORM_ERROR.MULTIPLE_ERRORS`)로 묶어 발생 순서대로 `details.errors`에 담는다. 식이 던진 원래 예외는 `SchemaFormError`로 감싸고 `details.error`에 싣는다(오늘 `INJECT_TO`와 같은 방식). 내장 `AggregateError`와 `Error`의 `cause` 선택지는 쓰지 않는다. 빌드 변환 대상이 ES2020이라 둘 다 없고, 내장 `AggregateError`로 판별하면 사용자 코드의 `Promise.any`가 낸 남의 오류까지 폼의 것으로 오인한다. `BaseError.toJSON`이 `details`를 재귀 복사하므로 `details.errors`는 새 장치 없이 직렬화된다.
-- 보충: 없음
+- 보충:
+  > 편집자 결정(55C-01): "【추론】 ERROR-005는 "오류가 하나면 그대로 던진다. 둘 이상이면 … `SchemaFormError` 하나(전용 코드, 가칭 `SCHEMA_FORM_ERROR.MULTIPLE_ERRORS`)로 묶어 발생 순서대로 `details.errors`에 담는다"고 적었고 ERROR-041은 가드 실패를 게이트마다의 정착 오류로 두었으므로, 한 쓰기가 가드 둘을 실패시키면 둘 다 기록되고(둘 다 surface `thrown`) 사슬 끝에서 하나로 묶어 던진다; `settle/utils/gates/evaluateGate.ts:127`이 첫 실패만 남기고 둘째를 드러내지 않는 것은 기록과 던짐이 어긋나는 결함이다. "`SchemaFormError`의 집계 오류(`details.errors`)"는 LANDING-064의 PR-4 행이므로 05가 PR-4에서 고친다(정착이 실패를 모으고 사슬 끝의 디스패치가 묶음); 06·07에 넘기지 않는다." (`reviews/round-55-closing.md:9`)
+  > 편집자 결정(58C-01): "【추론】 ERROR-004는 "사슬 안에서 난 오류 — 정착 오류, 리스너 오류, 되먹임·중첩 초과, `batch(fn)`의 fn이 던진 예외 — 는 모두 모아 두었다가 사슬 머리가 끝날 때 한 번 던진다"고 적었고 ERROR-005는 둘 이상이면 발생 순서대로 `details.errors`에 묶는다고 적었으므로, 한 정착 안에서 난 정착 오류는 게이트 실패든 공유 충돌·주입 대상 없음·쓰기 모양·식 throw·예산 초과든 모두 기록되어 묶인다; 정착이 `context.failure` 하나에 첫 실패만 남기고 뒤의 실패를 버리는 것은 ERROR-004의 "모두 모아"에 어긋나는 결함이라 55C-01과 같은 자리(집계 오류, LANDING-064 PR-4 행)에서 05가 고친다 — 정착은 실패 목록을 들고, `diagnostics.cause`는 그 목록의 첫 실패의 원인을 적으며(한 값, ERROR-034의 모양), 사슬 끝의 디스패치가 목록 전부를 발생 순서대로 하나로 묶어 던진다." (`reviews/round-58-closing.md:9`)
+  > 편집자 결정(59C-01): "【추론】 ERROR-017은 `path`를 "데이터 경로이며 노드에 묶인 사건에만 있다"로, `details`를 오류의 세부(`error.details`와 같은 참조)로 두었고 ERROR-005는 둘 이상의 오류를 발생 순서대로 `details.errors`에 담게 했으므로, 같은 대상을 겨눈 다른 출처의 오류 둘이 묶음 안에서 같은 모양으로 보이는 것은 묶음의 쓸모(어느 선언이 잘못되었는지 찾기)를 깎는다; 그래서 자동 쓰기가 대상에서 실패하는 두 오류 — `INJECT_TARGET_MISSING`(동적 대상 없음, `cause` `'injectTarget'`)과 자동 쓰기의 가상 노드 쓰기 모양 오류(가칭 `INVALID_VIRTUAL_NODE_VALUES`, `cause` 가칭 `'writeShape'`) — 의 `details`에 출처 노드의 데이터 경로 `sourcePath`(쓰기를 낸 `controls.injectTo` 선언의 노드)를 더한다. `path`는 지금처럼 사건이 묶인 대상 노드의 경로로 두어 ERROR-017의 뜻을 지키고, ERROR-195가 적은 `details`(기대 길이, 받은 값)는 그대로 남는다; 호출자 경로의 쓰기 모양 오류(42C-02)는 출처가 호출자라 `sourcePath`가 없다. 덧붙이는 변경이고 두 코드는 PR-4의 오류 라우팅 범위라 05가 PR-4에서 하며, 중복 제거를 없앤 수정(같은 대상에 대한 출처별 오류를 모두 남김)은 58C-01의 "모두 모아"에 든다." (`reviews/round-59-closing.md:9`)
 - 상태: 현행
 - 출처: `adr/0014-error-policy.md:51`(정본), `08-design-a-to-z.md:355`, `03-mental-model.md:180`(맥락: "둘 이상의 오류는 `SchemaFormError`의 `details.errors`로 묶는다(`AggregateError`·`cause`는 쓰지 않는다)")
 - 닫은 사람: 편집자 결정(17라운드, ADR 0014 4판 채택)
@@ -414,7 +419,8 @@
   > - 바운더리가 잡은 렌더 오류
   > - 검증기 없음과 조건부 스키마 경고
   > - 렌더 계층 경고: 가상화 꺼짐, `presentation` 키 의심
-- 보충: 없음
+- 보충:
+  > 편집자 결정(61C-01): "【추론】 삭제·대체는 열이다: `JSON_SCHEMA_ERROR.INJECT_TARGET_NOT_FOUND` 삭제(`injectTo` 대상은 정적으로 알 수 없고 동적 실패는 `SCHEMA_FORM_ERROR.INJECT_TARGET_MISSING`, CONTROLS-079); `JSON_SCHEMA_ERROR.INVALID_VIRTUAL_NODE_VALUES` 삭제 → `SCHEMA_FORM_ERROR.INVALID_VIRTUAL_NODE_VALUES`(쓰기 오류로 부류 이동, ERROR-195); `SCHEMA_FORM_WARNING.VALUE_TYPE_MISMATCH` 삭제 → `SCHEMA_FORM_WARNING.TYPE_MISMATCH`(소유자 확정, SURFACE-061); `SCHEMA_FORM_WARNING.UNSET_ON_INACTIVE_ON_OBJECT` 삭제(소유자 판정으로 코드 행 제거); `NodeState` → `SchemaNodeState`, `NodeEventType` → `SchemaNodeEventType`(SURFACE-056, 옛 소비자 이주는 07); `valueTypeMismatch`·`valueTypeMismatches` → `typeMismatch`·`typeMismatches`(SURFACE-061); `latent` → `getInactiveValues(path)`(SURFACE-006); 옛 Form 속성 `onListenerError`와 `throwOnBudgetExceeded` 삭제(기록은 `onError`가 받고, 모든 환경에서 사슬 끝에 던진다). 원장에서 이 옛 이름을 가진 문장은 옛 글로 남고 이 보충이 이긴다." (`reviews/round-61-closing.md:10`)
 - 상태: 현행
 - 출처: `adr/0014-error-policy.md:78-92`(정본), `08-design-a-to-z.md:373`, `adr/0008-event-system.md:68`
 - 닫은 사람: 17라운드 스웜 수렴(편집자 결정)
@@ -468,7 +474,8 @@
   > - `componentStack`: 바운더리가 잡은 오류에만 있으며, `errorInfo.componentStack`이다.
   >
   > 호스트는 `aggregate ?? error`의 동일성으로 전역 처리기와의 중복을 거를 수 있다. 다만 핸들러가 던져 부른 쪽이 있는 자리에서 새 묶음이 생기면, 이미 전달된 기록의 `aggregate ?? error`와 실제로 던진 값은 다르다(핸들러 결함의 경우다). 경고는 `BaseError` 인스턴스가 아닌 평범한 기록이다.
-- 보충: 없음
+- 보충:
+  > 편집자 결정(59C-01): "【추론】 ERROR-017은 `path`를 "데이터 경로이며 노드에 묶인 사건에만 있다"로, `details`를 오류의 세부(`error.details`와 같은 참조)로 두었고 ERROR-005는 둘 이상의 오류를 발생 순서대로 `details.errors`에 담게 했으므로, 같은 대상을 겨눈 다른 출처의 오류 둘이 묶음 안에서 같은 모양으로 보이는 것은 묶음의 쓸모(어느 선언이 잘못되었는지 찾기)를 깎는다; 그래서 자동 쓰기가 대상에서 실패하는 두 오류 — `INJECT_TARGET_MISSING`(동적 대상 없음, `cause` `'injectTarget'`)과 자동 쓰기의 가상 노드 쓰기 모양 오류(가칭 `INVALID_VIRTUAL_NODE_VALUES`, `cause` 가칭 `'writeShape'`) — 의 `details`에 출처 노드의 데이터 경로 `sourcePath`(쓰기를 낸 `controls.injectTo` 선언의 노드)를 더한다. `path`는 지금처럼 사건이 묶인 대상 노드의 경로로 두어 ERROR-017의 뜻을 지키고, ERROR-195가 적은 `details`(기대 길이, 받은 값)는 그대로 남는다; 호출자 경로의 쓰기 모양 오류(42C-02)는 출처가 호출자라 `sourcePath`가 없다. 덧붙이는 변경이고 두 코드는 PR-4의 오류 라우팅 범위라 05가 PR-4에서 하며, 중복 제거를 없앤 수정(같은 대상에 대한 출처별 오류를 모두 남김)은 58C-01의 "모두 모아"에 든다." (`reviews/round-59-closing.md:9`)
 - 상태: 현행
 - 출처: `adr/0014-error-policy.md:106-118`(정본), `08-design-a-to-z.md:359`
 - 닫은 사람: 17라운드 스웜 수렴(편집자 결정)
@@ -501,6 +508,8 @@
   > 8. 재대조(레이아웃 효과)의 기록은 그 레이아웃 효과에서 부른다.
 - 보충:
   > "청사진 경고는 청사진 캐시에 남아 다음 커밋된 로드에서 간다" (`09-landing-and-test-strategy.md:48`)
+  > 편집자 결정(89C-01): "【추론】 SETTLE-003은 계산을 "루트에서 한 번 내려간다. 재계산 목록의 자식을 먼저 완료한 뒤 자기 `local`·`emit`·유효 스키마를 만든다"고 적었으므로 자식을 마친 뒤 올라오며 `assemble`을 한 번 부르는 후위 확정은 원장의 모양 그대로이고, EVENT-005의 배달 순서(문서 순서의 위에서 아래)는 들어갈 때 예약한 자리로 지키며, EVENT-007 "`revision`은 커밋 시 배달 집합 전체를 한 번에 올린다"와 SETTLE-001 "표시 N번에 계산·커밋 1번, 통지 1번"은 "첫 리스너가 불리기 전에 모든 노드의 `revision`과 payload가 확정되어 있다"는 뜻이므로, 루트가 끝난 뒤 예약된 순서로 기존 디스패처가 배달하는 설계는 일괄 커밋이다 — 커밋 번호는 하나이며(SETTLE-006), 범용 경로가 같은 로드에 매겼을 번호와 같아야 하므로 자격 판정이 끝난 뒤에 예약한다(자격 미달의 되돌림이 번호를 소비하면 차등 시험의 커밋 번호 비교가 어긋난다). 중간 상태의 관측 경계: 첫 로드는 `root.parent === null`이고 첫 커밋 전이라 구독자가 없고(REACT-007 "구독자가 없으니 통지는 무해하다"), ERROR-019 1번은 청사진·마운트 정착의 기록을 로드 객체에 모아 커밋 뒤 준비 이펙트에서 부르며 2번은 "정착 도중에는 부르지 않는다"고 했고, 변환 실패 경고(LANDING-126·WRITE-055)도 같은 기록이다. 그러므로 첫 로드 동안 밖으로 드러나는 동기 사건은 둘뿐이다 — (가) 노드가 하나도 생기기 전에 던지는 청사진 오류(ADR 0014, BLUEPRINT-012의 정적 충돌, BLUEPRINT-044 S0–S6)와 (나) 정착 자체의 예외로 로드가 중단되는 경우 — 이고, 설계안의 1단계(정적 검증을 먼저 마침)와 "예외 경계의 오류 후 상태까지 일치" 조건이 둘을 덮는다. 만약 지금 구현 어딘가가 정착 도중 보고자를 동기로 부른다면 그것은 지킬 경계가 아니라 ERROR-019 2번의 결함이고, 발견한 07이 고친다(49C-01). 특성화(characterization) 시험은 그래서 "중간 상태가 보이지 않는다"를 단언하는 것이지 보이는 중간 상태를 보존하는 것이 아니다." (`reviews/round-89-closing.md:9`)
+  > 편집자 결정(90C-02): "【추론】 ERROR-019는 "한 사건에 기록 하나이며, 발생 순서대로 부른다"와 2번 "정착 도중에는 부르지 않는다"를 정했고 89C-01은 정착 도중의 동기 보고가 있으면 보존할 경계가 아니라 결함이므로 발견한 07이 고치라고 했다. 사슬 없는 내부 정착에서 게이트 평가가 검증기 부재(ERROR-147의 경고 기록)를 보고자에게 직접, 그것도 두 번 부른 것은 두 문장을 모두 어기고, 커밋이 통째 값의 JSON 부정합 경고(VALUE-037의 가칭 `NON_JSON_WHOLE_VALUE`)를 콘솔에 즉시 낸 것은 둘째를 어긴다. 둘을 기록으로 보관해 사슬 끝에 보내는 수정은 원장대로이고, 회귀 시험 둘의 붉음에서 초록이 증거다. 귀속은 고친 파일로 적는다(게이트 평가와 검증기 부재의 보고는 05의 통지·검증, 커밋의 경고는 03의 정착에 05가 얹은 보고 경로) — `plan/07-switch/log.md` §8에 한 줄씩." (`reviews/round-90-closing.md:16`)
 - 상태: 현행
 - 출처: `adr/0014-error-policy.md:122-132`(정본), `08-design-a-to-z.md:361`, `09-landing-and-test-strategy.md:48,174`
 - 닫은 사람: 17라운드 스웜 수렴(편집자 결정)
@@ -522,7 +531,9 @@
 
 - 결정:
   > **환경.** 클라이언트의 모든 환경에서 같은 사건은 같은 `code`, `level`, `details`, `surface`로 한 번 간다(G5). 핸들러가 있으면 프로덕션에서도 경고를 받는다. 예외는 하나다. 가드 컴파일 실패는 개발 모드가 시점을 앞당겨 마운트의 커밋 뒤에 보낸다(`surface`는 `'sink'`). 프로덕션에서는 그 가드를 처음 평가하는 사슬 끝에서 보내며(`surface`는 `'thrown'`), 한 번도 평가되지 않은 가드의 실패는 기록이 없다(§6). 오류 메시지는 어느 환경에서도 줄이지 않는다.
-- 보충: 없음
+- 보충:
+  > 편집자 결정(31C-02): "【추론】 ERROR-021이 "예외는 하나다"라고 적은 가드 컴파일 실패의 시점 차이에, 18라운드 뒤 블록 WRITE-099가 둘째 예외를 더했다: `NON_JSON_WHOLE_VALUE`의 깊이 점검은 핸들러가 있어도 프로덕션에서는 돌지 않는다. 뒤 결정이 이기므로 운영 모드에서 핸들러가 받지 못하는 경고는 이 코드 하나다." (`reviews/round-31-closing.md:20`)
+  > 편집자 결정(31C-02): "【추론】 `RESET_REBUILT_BY_REFERENCE`(ERROR-196)와 `MULTIPLE_GATED_BRANCHES_ACTIVE`의 "개발 모드이거나 핸들러가 있을 때만 판정"은 판정 비용(순회 한 번 더)을 소비자가 없을 때 아끼는 것이라 ERROR-021과 어긋나지 않는다: 핸들러가 있으면 프로덕션에서도 판정하고 전달한다. 구현은 이 둘을 `hasConsumer()`로, `NON_JSON_WHOLE_VALUE`를 개발 모드 조건으로 거르며, 나머지 경고는 ERROR-021대로 판정하고 소비자가 있으면 전달한다." (`reviews/round-31-closing.md:21`)
 - 상태: 현행
 - 출처: `adr/0014-error-policy.md:135`(정본), `08-design-a-to-z.md:362`
 - 닫은 사람: 17라운드 스웜 수렴(편집자 결정)
@@ -677,7 +688,10 @@
   > - PR-7: Form 속성, 바깥 감싸개와 보고기 문맥, 로드 기록의 준비 이펙트 전달, 바운더리의 렌더 때 보고기 읽기와 `componentStack`, 네이티브 submit 경로의 오류 층 거부 처리, `@winglet/react-utils`의 minor 변경(그 모듈의 `DETAIL.md`를 먼저 갱신)을 넣는다.
   > - PR-8: 코드 표와 이주 안내를 넣는다.
   > - 착수 조건: 검증 결과 형의 `ValidationIssue` 개명(08 §14)이 `onError`의 공개보다 먼저(또는 같은 PR에) 선다. 오늘은 `onValidate`가 공개 형 `JSONSchemaError[]`를 받는다.
-- 보충: 없음
+- 보충:
+  > 편집자 결정(34C-02): "【추론】 ERROR-032가 PR-4에 둔 "`ValidationIssue` 개명"은 새 이름을 공개 index에 내보내 `onError`의 공개(PR-7)보다 먼저 세우는 것이고, 옛 이름 `JSONSchemaError`를 같은 형의 별칭으로 PR-7까지 남기는 것은 LANDING-159 규칙 3(공개 진입점은 PR-7까지 옛 엔진)과 맞다; 옛 `<Form>` 형과 플러그인 스토리 파일이 아직 옛 이름을 가져오기 때문이다." (`reviews/round-34-closing.md:18`)
+  > 편집자 결정(34C-02): "【추론】 별칭을 지우는 것은 LANDING-024 이주 21의 적용이며 전환(PR-7) 또는 이주 안내를 넣는 PR-8의 몫이다; ajv 플러그인 셋은 PR-4에서 새 이름으로 바꿔 가져온다(LANDING 영역 형제 패키지 문단)." (`reviews/round-34-closing.md:19`)
+  > 편집자 결정(35C-07): "【추론】 공개 `ValidateFunction`·`ValidatorFactory`(`src/types/error.ts`)의 모양을 PR-4에서 옮기거나 바꾸는 항목은 없다: ERROR-032의 PR-4 몫은 `ValidationIssue` 개명과 `ValidateFunction` 문서 주석("입력의 판정은 돌려주고 던지지 않는다. 던지면 실행 실패다")뿐이며, 그 주석은 PR-4에서 코어 `src/core/validation/`의 `ValidateFunction`에 달고 PR-7의 전환에서 공개 선언으로 옮긴다; 같은 이름의 두 형은 코어 쪽 선언에 이름 함정 한 줄로 가른다." (`reviews/round-35-closing.md:58`)
 - 상태: 현행
 - 출처: `adr/0014-error-policy.md:178-184`(정본), `08-design-a-to-z.md:571-578`
 - 닫은 사람: 편집자 결정(17라운드, ADR 0014 4판 채택)
@@ -725,6 +739,7 @@
   > "emit 참조가 바뀌지 않은 쓰기는 `onChange`를 내지 않으므로 예산 초과가 보이지 않기 때문이다(06 §4.9, C2)." (`adr/0008-event-system.md:157`)
   > "`onChange`·`onDiagnosticsChange`는 준비 전의 호출을 버린다(마운트 뒤의 `diagnostics`는 핸들로 읽는다)." (`09-landing-and-test-strategy.md:48`)
   > "`onChange`·`onDiagnosticsChange`는 마운트 동안의 호출을 오늘처럼 버린다." (`08-design-a-to-z.md:367`)
+  > 편집자 결정(58C-01): "【추론】 ERROR-004는 "사슬 안에서 난 오류 — 정착 오류, 리스너 오류, 되먹임·중첩 초과, `batch(fn)`의 fn이 던진 예외 — 는 모두 모아 두었다가 사슬 머리가 끝날 때 한 번 던진다"고 적었고 ERROR-005는 둘 이상이면 발생 순서대로 `details.errors`에 묶는다고 적었으므로, 한 정착 안에서 난 정착 오류는 게이트 실패든 공유 충돌·주입 대상 없음·쓰기 모양·식 throw·예산 초과든 모두 기록되어 묶인다; 정착이 `context.failure` 하나에 첫 실패만 남기고 뒤의 실패를 버리는 것은 ERROR-004의 "모두 모아"에 어긋나는 결함이라 55C-01과 같은 자리(집계 오류, LANDING-064 PR-4 행)에서 05가 고친다 — 정착은 실패 목록을 들고, `diagnostics.cause`는 그 목록의 첫 실패의 원인을 적으며(한 값, ERROR-034의 모양), 사슬 끝의 디스패치가 목록 전부를 발생 순서대로 하나로 묶어 던진다." (`reviews/round-58-closing.md:9`)
 - 상태: 분할됨(→ ERROR-128, ERROR-129, ERROR-130, ERROR-131, ERROR-132, ERROR-133, ERROR-134, ERROR-135, ERROR-136, ERROR-137, ERROR-138, ERROR-139, ERROR-140, ERROR-141, ERROR-142)
 - 출처: `adr/0014-error-policy.md:199-207`(정본), `08-design-a-to-z.md:397`, `03-mental-model.md:67,116`, `02-target-overview.md:148,169,310-312,332`, `adr/0006-single-value-ownership.md:37`, `adr/0007-settle-cycle.md:47,59,64,116,145`, `adr/0008-event-system.md:157,160,161-164,169-171`
 - 닫은 사람: 소유자 답(`reviews/round-14-owner-answers.md:8` O-2), 소유자 답(`reviews/round-17-owner-answers.md:9` R17-1), 편집자 결정(17라운드, `exceededBudget` 다섯 값을 셋으로 줄이고 되먹임·중첩 초과를 `diagnostics`에서 뺌, `adr/0014-error-policy.md:207`·`02-target-overview.md:310`)
@@ -814,6 +829,10 @@
 - 보충:
   > "AJV에서 가드의 호출은 싸고(좁은 가드 5–58 ns, 루트에 걸린 가드 200개를 키 입력마다 전부 돌려 7.9 µs) 비싼 것은 **컴파일**이다(가드 하나에 70–270 µs, 200개면 폼 생성 시점에 14–54 ms)." (`adr/0004-validator-plugin-compile-guard.md:46`)
   > "컴파일의 실패(지원하지 않는 정규식 등)를 폼 생성의 실패로 둘 것인가. Python 정규식 `(?i)…`은 Ajv 컴파일이 throw한다. 17라운드에 닫혔다: 가드 컴파일의 실패는 폼 생성의 실패가 아니라 그 게이트의 가드 실패(정착 오류)이고, 전체 스키마 컴파일의 실패는 검증 불가다(위 결정 절, ADR 0014 4판)." (`adr/0004-validator-plugin-compile-guard.md:78`)
+  > 편집자 결정(53C-01): "【추론】 ERROR-041은 "어느 환경이든 컴파일 실패는 그 게이트의 가드 실패다(게이트는 거짓, … 정착 오류)"라고 적어 실패의 단위를 게이트 하나로 두었고, ADR 0004 §78은 "가드 컴파일의 실패는 폼 생성의 실패가 아니라 그 게이트의 가드 실패(정착 오류)이고, 전체 스키마 컴파일의 실패는 검증 불가다"라고 둘을 갈랐다; 그러므로 루트의 다른 곳에 있는 컴파일 오류는 그 루트의 전체 검증을 검증 불가(`VALIDATOR_COMPILE_FAILED`)로 만들 뿐이고, 그 오류와 무관하게 자족한 가드가 올바로 평가되는 직접 경로의 동작이 원장이 적은 동작이다. 루트 위치 경로에서 모든 가드가 실패하던 것은 "가드 인스턴스가 위치를 풀며 루트 전체를 컴파일한다"는 방식에서 생긴 한계이지 원장이 요구한 동작이 아니며, 52라운드 조건 (1)의 "같은 판정"은 컴파일되는 루트에서의 판정 일치를 뜻한다(verifier가 확인). 그래서 직접 경로는 F2를 재현하지 않고, 05는 이 차이를 플러그인 README·`CLAUDE.md`·실행 기록과 PR의 소유자 묶음에 "루트 위치 경로의 한계"로 적는다; `$schema`가 있는 루트·가드를 루트 위치 경로로 돌리는 수정은 자족 조건의 보강으로 맞다. 옵션 이름 `configure({ directGuardCompile?: boolean })`은 31C-05의 가칭 목록에 든다." (`reviews/round-53-closing.md:9`)
+  > 편집자 결정(55C-01): "【추론】 ERROR-005는 "오류가 하나면 그대로 던진다. 둘 이상이면 … `SchemaFormError` 하나(전용 코드, 가칭 `SCHEMA_FORM_ERROR.MULTIPLE_ERRORS`)로 묶어 발생 순서대로 `details.errors`에 담는다"고 적었고 ERROR-041은 가드 실패를 게이트마다의 정착 오류로 두었으므로, 한 쓰기가 가드 둘을 실패시키면 둘 다 기록되고(둘 다 surface `thrown`) 사슬 끝에서 하나로 묶어 던진다; `settle/utils/gates/evaluateGate.ts:127`이 첫 실패만 남기고 둘째를 드러내지 않는 것은 기록과 던짐이 어긋나는 결함이다. "`SchemaFormError`의 집계 오류(`details.errors`)"는 LANDING-064의 PR-4 행이므로 05가 PR-4에서 고친다(정착이 실패를 모으고 사슬 끝의 디스패치가 묶음); 06·07에 넘기지 않는다." (`reviews/round-55-closing.md:9`)
+  > 편집자 결정(55C-02): "【추론】 소비자가 `bind(instance)`로 넘긴 인스턴스의 설정은 VALIDATE-003대로 소비자의 책임이고 VALIDATE-033은 가드용 인스턴스가 `allErrors: false` 말고는 같은 설정을 따르게 했으므로, 플러그인이 가드 인스턴스에서 `strictTypes`·`strictRequired`를 몰래 끄는 것은 두 항목에 어긋난다; 그런 인스턴스에서 일부 가드가 컴파일에 실패하면 ERROR-041대로 그 게이트의 가드 실패(정착 오류, `onError` 기록)로 드러나고 전체 검증은 그대로이므로, "엄격 옵션을 켠 인스턴스를 바인딩하면 일부 `if` 가드가 컴파일에 실패해 그 게이트가 거짓이 될 수 있다(strict 모드는 기본이 아니다, VALIDATE-005)"를 플러그인 문서에 적는 문서화된 한계다. 두 가드 경로 모두 같다." (`reviews/round-55-closing.md:17`)
+  > 소유자(126라운드, 조건부 분기의 최적화 기준): "이 케이스는 구판 폼엔 없는 기능이니까, 완전히 16.67ms 윈도우를 기반으로 최적화를 해야할거 같네. 지금 하자는건 아닌데 말이야" (`reviews/round-126-owner-answers.md:7`) — 검증기 가드로 켜지는 if/then/else 분기는 옛 판 대비 배율이 아니라 16.67 ms 프레임 예산의 절대 기준만으로 개선 단계에서 최적화한다(원장 관리자, 2026-10-08).
 - 상태: 현행
 - 출처: `adr/0014-error-policy.md:218`(정본), `08-design-a-to-z.md:180`, `adr/0004-validator-plugin-compile-guard.md:9,46,78`, `08-design-a-to-z.md:345`
 - 닫은 사람: 17라운드 스웜 수렴(편집자 결정)
@@ -1276,7 +1295,10 @@
 
 - 결정:
   > 작성자 스키마·호출자 데이터에서 온 정착 오류(예산 초과, `controls` 식·가드 실패, `controls.injectTo` 대상 없음)와 공유 충돌은 모든 환경에서 커밋·통지 뒤 사슬 끝에서 던진다(R17-1 나, 17라운드 소유자 답: "나 허용. 망가진 값을 올리는게 더 위험하겠다").
-- 보충: 없음
+- 보충:
+  > 편집자 결정(26C-05): "【추론】 정착은 활성 집합의 유효 스키마를 계산한 뒤 `typeConflict`가 참인 노드마다 정착 오류 `SHARED_NODE_CONFLICT`를 내고, `diagnostics.cause`는 `'sharedConflict'`이며, 드러남은 정착 오류 규칙대로 모든 환경에서 커밋·통지 뒤 사슬 끝이다(PR-2에서 사슬은 `settle` 호출 하나)." (`reviews/round-26-closing.md:57`)
+  > 편집자 결정(29C-03): "【추론】 형상이 정해졌으므로 그 뒤의 파생 라운드·전이(채움과 나감 비움)는 29C-02대로 평소처럼 돌고, 커밋되는 것은 그 계산 결과와 그 정착의 자동 쓰기다; 자동 쓰기를 뺀 원본 B는 SETTLE-011의 예산 초과 처분이라 공유 충돌에는 쓰지 않는다." (`reviews/round-29-closing.md:36`)
+  > 편집자 결정(29C-03): "【추론】 그래서 계산 단계 뒤의 진행을 막는 조건은 예산 초과(`cause: 'budget'`) 하나이고, 나머지 정착 오류(`'expression'`·`'injectTarget'`·`'sharedConflict'`)는 계산 결과로 커밋한다; 03(PR-2)이 공유 충돌에서 전이 전체를 건너뛴 것은 29C-02의 것과 같은 결함이며 04가 함께 고치고 `plan/04-derive-and-controls/log.md` §4에 적는다." (`reviews/round-29-closing.md:38`)
 - 상태: 현행
 - 출처: `adr/0014-error-policy.md:53#1`(정본, ERROR-006에서 분할)
 - 닫은 사람: 소유자 답(`reviews/round-17-owner-answers.md:9` R17-1), 소유자 답(`reviews/round-14-owner-answers.md:16` O-10; 공유 충돌)
@@ -1300,7 +1322,8 @@
 
 - 결정:
   > 끄는 스위치는 없다(Form 속성 `throwOnBudgetExceeded`는 없다).
-- 보충: 없음
+- 보충:
+  > 편집자 결정(61C-01): "【추론】 삭제·대체는 열이다: `JSON_SCHEMA_ERROR.INJECT_TARGET_NOT_FOUND` 삭제(`injectTo` 대상은 정적으로 알 수 없고 동적 실패는 `SCHEMA_FORM_ERROR.INJECT_TARGET_MISSING`, CONTROLS-079); `JSON_SCHEMA_ERROR.INVALID_VIRTUAL_NODE_VALUES` 삭제 → `SCHEMA_FORM_ERROR.INVALID_VIRTUAL_NODE_VALUES`(쓰기 오류로 부류 이동, ERROR-195); `SCHEMA_FORM_WARNING.VALUE_TYPE_MISMATCH` 삭제 → `SCHEMA_FORM_WARNING.TYPE_MISMATCH`(소유자 확정, SURFACE-061); `SCHEMA_FORM_WARNING.UNSET_ON_INACTIVE_ON_OBJECT` 삭제(소유자 판정으로 코드 행 제거); `NodeState` → `SchemaNodeState`, `NodeEventType` → `SchemaNodeEventType`(SURFACE-056, 옛 소비자 이주는 07); `valueTypeMismatch`·`valueTypeMismatches` → `typeMismatch`·`typeMismatches`(SURFACE-061); `latent` → `getInactiveValues(path)`(SURFACE-006); 옛 Form 속성 `onListenerError`와 `throwOnBudgetExceeded` 삭제(기록은 `onError`가 받고, 모든 환경에서 사슬 끝에 던진다). 원장에서 이 옛 이름을 가진 문장은 옛 글로 남고 이 보충이 이긴다." (`reviews/round-61-closing.md:10`)
 - 상태: 현행
 - 출처: `adr/0014-error-policy.md:53#3`(정본, ERROR-006에서 분할)
 - 닫은 사람: 소유자 답(`reviews/round-17-owner-answers.md:9` R17-1)
@@ -1498,7 +1521,8 @@
 
 - 결정:
   > 필드 바운더리는 오늘처럼 인라인 입력(`useFormTypeInput.ts:36-37`), 덮어쓴 입력(`SchemaNodeInputWrapper.tsx:56-57`), 정의·맵의 입력(`formTypeInputDefinitions.ts:32`·`:37`, `formTypeInputMap.ts:32`·`:37`), 렌더러(`SchemaNodeProxy.tsx:59`), `Placeholder`(`VirtualizationManager.ts:214`)를 감싼다.
-- 보충: 없음
+- 보충:
+  > 편집자 결정(121C-01): "【추론】 (1) 감사가 가린 "벗어난 자리" 가운데 가장 큰 F-A는 필드마다 SchemaNodeField·Provider·BoundedField의 세 층을 두는 것인데, ERROR-090의 목록에 필드 전체를 감싸는 바운더리는 없다 — 거기 적힌 것은 입력들과 렌더러(`SchemaNodeProxy.tsx:59`)와 Placeholder다. 그러므로 필드 층을 프록시로 합치고 렌더러 경계를 그대로 두는 것은 ERROR-090을 지키며, ERROR-114가 요구하는 것은 보고기를 렌더 때 문맥에서 읽는 것이지 경로의 전달 방식이 아니므로 `useBoundaryReporter`가 경로를 인자로 받아도 된다. 조건: ERROR-044의 RENDER_FAILED 행이 지금과 같은 경로·보고기·드러남으로 나는지 고정 시험이 단언하고, 112C-01의 경계 고정(key 밖)과 EVENT-039의 Refresh 범위도 그대로임을 단언한다. (2) 순서는 효과 큰 것부터이고, F-D(배열 템플릿의 삭제 버튼 memo와 onRemove 안정화)는 옛 판에도 있던 낭비지만 119라운드 (b) "기존 항목의 렌더 0"에 어긋나므로 고친다 — 옛 판과 같다는 것은 되돌리지 않을 이유이지 고치지 않을 이유가 아니다. 자식마다의 layout effect는 REACT-028(프록시의 마운트·언마운트 효과가 노드별 수를 올리고 내림)이 정한 일이고 쓰기 경로가 아니므로 유지한다. (3) 전역 문맥 변화에 모든 필드가 렌더되는 것은 옛 판도 같아 7단계의 회귀가 아니고, 119라운드의 "전역 문맥 변화에 자식 필드가 렌더되지 않음" 단언은 두 판 모두 실패한다. 0으로 만드는 두 길(필드마다 selector 스냅샷, 문맥을 노드 이벤트로)은 모든 입력이 받는 속성(showError·context·readOnly)의 전달 방식을 바꾸므로 바인딩 계약의 변경이고 104라운드 범위 밖이다 — 소유자에게 올린다. 쓰기 경로가 아니라 드문 폼 단위 변화라는 07의 읽기는 맞다." (`reviews/round-121-closing.md:9`)
 - 상태: 현행
 - 출처: `adr/0014-error-policy.md:66#6`(정본, ERROR-010에서 분할)
 - 닫은 사람: 스웜 수렴(편집자 결정, `reviews/raw-round17-convergence.md:88` E8)
@@ -1600,7 +1624,8 @@
 
 - 결정:
   > `throwOnBudgetExceeded`는 없고(R17-1 나), 가칭 `onListenerError`는 `onError`에 흡수된다.
-- 보충: 없음
+- 보충:
+  > 편집자 결정(61C-01): "【추론】 삭제·대체는 열이다: `JSON_SCHEMA_ERROR.INJECT_TARGET_NOT_FOUND` 삭제(`injectTo` 대상은 정적으로 알 수 없고 동적 실패는 `SCHEMA_FORM_ERROR.INJECT_TARGET_MISSING`, CONTROLS-079); `JSON_SCHEMA_ERROR.INVALID_VIRTUAL_NODE_VALUES` 삭제 → `SCHEMA_FORM_ERROR.INVALID_VIRTUAL_NODE_VALUES`(쓰기 오류로 부류 이동, ERROR-195); `SCHEMA_FORM_WARNING.VALUE_TYPE_MISMATCH` 삭제 → `SCHEMA_FORM_WARNING.TYPE_MISMATCH`(소유자 확정, SURFACE-061); `SCHEMA_FORM_WARNING.UNSET_ON_INACTIVE_ON_OBJECT` 삭제(소유자 판정으로 코드 행 제거); `NodeState` → `SchemaNodeState`, `NodeEventType` → `SchemaNodeEventType`(SURFACE-056, 옛 소비자 이주는 07); `valueTypeMismatch`·`valueTypeMismatches` → `typeMismatch`·`typeMismatches`(SURFACE-061); `latent` → `getInactiveValues(path)`(SURFACE-006); 옛 Form 속성 `onListenerError`와 `throwOnBudgetExceeded` 삭제(기록은 `onError`가 받고, 모든 환경에서 사슬 끝에 던진다). 원장에서 이 옛 이름을 가진 문장은 옛 글로 남고 이 보충이 이긴다." (`reviews/round-61-closing.md:10`)
 - 상태: 현행
 - 출처: `adr/0014-error-policy.md:70#6`(정본, ERROR-011에서 분할)
 - 닫은 사람: 소유자 답(`reviews/round-17-owner-answers.md:9` R17-1; 앞 절), 스웜 수렴(편집자 결정, `reviews/raw-round17-convergence.md:93` E13; 뒤 절)
@@ -1786,7 +1811,8 @@
 
 - 결정:
   > `@winglet/react-utils`의 `withErrorBoundary`·`withErrorBoundaryForwardRef`에는 렌더 때 보고 함수를 얻는 선택 인자를 더한다.
-- 보충: 없음
+- 보충:
+  > 편집자 결정(118C-01): "【추론】 (1) 측정은 두 판이 같은 일을 재야 한다. 지금의 wall은 옛 판이 타이머 대기 안으로 미룬 커밋을 세지 않고 새 판이 동기로 끝낸 커밋은 세므로, 94C-01이 걷어낸 계측 치우침과 같은 종류의 치우침이다 — 옛 판에 유리한 쪽으로. 타이머 하한 없는 대기는 두 판의 모든 커밋이 끝날 때까지 기다리되 타이머의 최소 대기를 빼고, CPU 활성 시간은 대기 자체를 빼므로 둘을 판정 열로 둔다; 기존 wall은 비교의 연속을 위해 기록 열로 남긴다. 그 결과 flat·nested·computed의 React 층 증가는 사라지거나 음수가 되고, 실제로 남는 것은 array-push·push-remove(쓰기당 +0.23~+0.64 ms)와 replace-200(+9.5~+11.2 ms)이다. 커밋 수 단언(옛 2, 새 1)은 이 기제가 측정의 전제임을 고정한다. 제품의 커밋을 미뤄 지표를 맞추는 것은 REACT-024(동기 정착·uSES 읽기)를 뒤집는 것이고 사용자에게는 더 늦은 화면이므로 쓰지 않는다. 판정 열의 변경은 소유자가 정한 React 층 목표(27라운드, 85C-01)의 측정 방법을 바꾸는 것이므로 소유자에게 알리고, 소유자가 다르게 보면 바로잡는다. (2) 실제로 늘어난 일은 필드당 fiber 계층 다섯이고, 이 가운데 경계 계층(입력 경계의 세 층, 프록시의 래퍼와 경계)을 줄이는 고침은 결과를 바꾸지 않는 코드 수준이다. 두 고침 모두 ErrorBoundary 클래스를 직접 써야 하는데 `@winglet/react-utils`는 `withErrorBoundary`만 내보낸다; 클래스를 더해 내보내는 것은 기존 소비자의 동작을 바꾸지 않는 추가이고, ERROR-115가 같은 패키지의 감싸개에 선택 인자를 더한 선례와 같은 "안전한 확장"이다(reuse-first). schema-form 안에 내부 경계 클래스를 두면 winglet의 것과 중복된다. 패키지 CLAUDE.md의 문장은 112C-01이 정한 "경계는 해석·소유 지점에서 한 번 만들어 고정"의 뜻을 그대로 두고 수단(`withErrorBoundary` 또는 ErrorBoundary 직접)만 넓히며, CLAUDE.md의 변경은 07 세션의 규칙대로 소유자 확인을 받는다. 기대 효과(필드당 fiber 2개, replace-200 약 −3 ms, push 쓰기당 약 −0.03 ms)는 추정이므로 변경 하나에 105C-01 판정 하나로 확인한다; 공개 API와 EVENT-039·040, REACT-019·024, 112C-01의 단언 시험은 그대로 초록이어야 한다. 입력당 노드 이중 구독과 자식마다의 layout effect는 다음 코드 수준 후보로 두되 바인딩 계약(REACT-024의 늦은 쓰기 차단, 112C-01의 경계 고정)에 닿는지 명세에 적는다." (`reviews/round-118-closing.md:9`)
 - 상태: 현행
 - 출처: `adr/0014-error-policy.md:158#6`(정본, ERROR-027에서 분할)
 - 닫은 사람: 소유자 답(`reviews/round-17-owner-answers.md:34` (나)), 스웜 수렴(편집자 결정, `reviews/raw-round17-onerror.md:56`)
@@ -1808,7 +1834,8 @@
 
 - 결정:
   > 인자의 모양(ErrorBoundary 보고 콜백 속성과 그 공개, 또는 감싸개의 보고기 읽기 인자)은 PR-7에서 고른다.
-- 보충: 없음
+- 보충:
+  > 편집자 결정(68C-08): "【추론】 ERROR-117은 "인자의 모양(ErrorBoundary 보고 콜백 속성과 그 공개, 또는 감싸개의 보고기 읽기 인자)은 PR-7에서 고른다"고 두 후보를 함께 적었고, 07은 둘을 겹쳐 골랐다: 루트 바운더리는 (가) 속성을 직접 쓰고, 감싸는 자리가 모듈 수준·`FormProvider`·폼마다로 갈리는 필드 바운더리는 감싸기를 그대로 두고 (나) 셋째 인자로 "문맥에서 보고기를 읽는 훅"을 넘겨 렌더 때 읽는다. 이것은 17라운드 스웜 수렴의 요구(감싸기 자리를 옮기지 않고 렌더 때 문맥에서 보고기를 읽음, R17G-9)와 소유자 허용의 범위(더하기만 하는 변경, 주지 않으면 오늘 동작, `minor`)를 모두 지키므로 그대로 확정한다. 조건 셋: `@winglet/react-utils`의 그 모듈 `DETAIL.md`를 코드보다 먼저 갱신한다(ERROR-117의 출처 행), 보고기는 전달 중 표지·`WeakSet`·경고 집합을 드는 인스턴스 보고기이고 바운더리는 그것을 부르기만 한다(ERROR-110–116의 역할 분담 그대로), `info`는 React가 주는 `componentStack`만 노출하고 다른 필드는 더하지 않는다. 훅 인자의 이름 `useReporter`는 React 훅 규칙(렌더 때 조건 없이 호출)을 따라야 하므로 감싸개는 인자가 없을 때도 호출 수를 바꾸지 않도록 기본 훅(항상 `undefined`를 돌려줌)을 쓴다." (`reviews/round-68-closing.md:58`)
 - 상태: 현행
 - 출처: `adr/0014-error-policy.md:158#8`(정본, ERROR-027에서 분할)
 - 닫은 사람: 스웜 수렴(편집자 결정, `reviews/raw-round17-onerror.md:56`)
@@ -1852,7 +1879,10 @@
 
 - 결정:
   > 던지면 그 자리마다 정의된 값으로 정착을 마치고, 사슬의 끝에서 모든 환경에서 throw한다(R17-1 나, 가칭 코드 `SCHEMA_FORM_ERROR.EXPRESSION_THREW`, 원래 예외는 `details.error`).
-- 보충: 없음
+- 보충:
+  > 편집자 결정(29C-02): "【추론】 식이나 가드가 던진 정착은 ERROR-121대로 그 자리마다 정의된 값으로 마치며, 던짐이 정착의 단계(파생 라운드, 전이의 채움과 나감 비움)를 끊는다는 문장은 원장에 없다; 트리 전체에 미치는 효과는 `degraded` 표식(ERROR-126)과 사슬 끝 throw뿐이다." (`reviews/round-29-closing.md:23`)
+  > 편집자 결정(29C-02): "【추론】 파생 규칙이 던지면 ERROR-122대로 그 규칙만 그 라운드의 후보에서 빠지고 에지를 소비하며, 같은 정착의 다른 규칙·다음 파생 라운드·채움·나감 비움은 평소대로 진행한다; 무관한 `controls.derived` 하나가 던져 로드의 채움이 빠지는 것은 결함이다." (`reviews/round-29-closing.md:24`)
+  > 편집자 결정(29C-02): "【추론】 정착의 자동 쓰기를 모두 뺀 원본 B를 커밋하는 것은 SETTLE-011의 예산 초과 처분이며, 식·가드의 throw에는 적용하지 않는다." (`reviews/round-29-closing.md:27`)
 - 상태: 현행
 - 출처: `adr/0014-error-policy.md:188#2`(정본, ERROR-033에서 분할)
 - 닫은 사람: 소유자 답(`reviews/round-17-owner-answers.md:9` R17-1)
@@ -1868,7 +1898,13 @@
   > | 상태 키(`controls.visible`·`controls.readOnly`·`controls.disabled`, 조각과 `controls.children`의 `controls`) | 그 선언은 없는 것이다 |
   > | 파생 규칙(`controls.derived`·`controls.injectTo`·`controls.unsetValue`), 동적으로만 아는 `controls.injectTo` 대상이 없음 | 그 규칙을 그 라운드의 후보에서 빼고 에지를 소비한다 |
   > | `controls.resetInteraction` | 그 판정은 거짓이다 |
-- 보충: 없음
+- 보충:
+  > 편집자 결정(28C-05): "【추론】 ERROR-122의 자리별 값 표에 행 하나를 더해 읽는다: `controls.unsetOnInactive`의 식(노드 자신, `controls.children` 항목의 `controls`, 조각의 `controls`)이 직전 커밋의 방출 트리에서 던지면 그 선언은 "유지"다." (`reviews/round-28-closing.md:55`)
+  > 편집자 결정(28C-05): "【추론】 "선언 없음"(아래 층으로 떨어짐)이 아니다: 되돌릴 수 없는 쓰기는 만장일치이고(WRITE-031) 던진 식은 비움에 찬성한 표가 아니며, 아래 층(Form 속성)이 참일 때 작성자의 잘못으로 커밋된 값을 잃게 되어 ERROR-125의 원칙(작성자의 잘못으로 커밋된 값을 잃지 않는다)에 어긋난다." (`reviews/round-28-closing.md:56`)
+  > 편집자 결정(28C-05): "【추론】 던진 사실은 다른 자리와 같이 `EXPRESSION_THREW`로 사슬 끝에서 throw하고, 그 식을 평가한 정착의 커밋은 `degraded`다(ERROR-126)." (`reviews/round-28-closing.md:58`)
+  > 편집자 결정(29C-02): "【추론】 파생 규칙이 던지면 ERROR-122대로 그 규칙만 그 라운드의 후보에서 빠지고 에지를 소비하며, 같은 정착의 다른 규칙·다음 파생 라운드·채움·나감 비움은 평소대로 진행한다; 무관한 `controls.derived` 하나가 던져 로드의 채움이 빠지는 것은 결함이다." (`reviews/round-29-closing.md:24`)
+  > 편집자 결정(29C-02): "【추론】 게이트가 던지면 그 게이트만 거짓이고, ERROR-125가 막는 것은 그 게이트로 나간 노드(WRITE-033대로 함께 나가는 하위 트리 포함)의 나감 비움뿐이다; 무관한 노드의 채움·나감 비움과 무관한 파생은 진행한다." (`reviews/round-29-closing.md:25`)
+  > 편집자 결정(29C-02): "【추론】 상태 키의 식이 던지면 그 선언만 없는 것이고, 상태 키는 형상과 값을 바꾸지 않으므로(CONTROLS-022·023) 같은 정착의 채움·나감 비움에 영향이 없다." (`reviews/round-29-closing.md:26`)
 - 상태: 현행
 - 출처: `adr/0014-error-policy.md:190-195`(정본, ERROR-033에서 분할)
 - 닫은 사람: 편집자 결정(17라운드, `adr/0014-error-policy.md:188`)
@@ -1904,7 +1940,10 @@
 
 - 결정:
   > 식이나 가드가 던져 거짓이 된 게이트로 나간 노드에는 나감 비움을 적용하지 않는다(작성자의 잘못으로 커밋된 값을 잃지 않는다).
-- 보충: 없음
+- 보충:
+  > 편집자 결정(28C-05): "【추론】 "선언 없음"(아래 층으로 떨어짐)이 아니다: 되돌릴 수 없는 쓰기는 만장일치이고(WRITE-031) 던진 식은 비움에 찬성한 표가 아니며, 아래 층(Form 속성)이 참일 때 작성자의 잘못으로 커밋된 값을 잃게 되어 ERROR-125의 원칙(작성자의 잘못으로 커밋된 값을 잃지 않는다)에 어긋난다." (`reviews/round-28-closing.md:56`)
+  > 편집자 결정(29C-02): "【추론】 게이트가 던지면 그 게이트만 거짓이고, ERROR-125가 막는 것은 그 게이트로 나간 노드(WRITE-033대로 함께 나가는 하위 트리 포함)의 나감 비움뿐이다; 무관한 노드의 채움·나감 비움과 무관한 파생은 진행한다." (`reviews/round-29-closing.md:25`)
+  > 편집자 결정(29C-02): "【추론】 03(PR-2)이 계산 단계의 실패 하나로 그 정착의 전이(채움)와 나감 비움 전체를 건너뛴 것(`src/core/settle/utils/settlement/finishSettlement.ts:32-33`, `src/core/settle/utils/transition/finalizeExits.ts:46`; 파생 쪽도 같다 — `src/core/settle/utils/derivation/runDeriveRounds.ts`의 `context.failure` 조기 반환 두 곳이 실패 하나로 뒤 파생 라운드를 끊는다)은 ERROR-125보다 넓은 근사이고 03의 기록에 결정으로 남아 있지 않으므로 결함이다; 04가 ERROR-125의 범위(그 게이트로 나간 노드)로 좁혀 고치고 `plan/04-derive-and-controls/log.md` §4에 03의 이탈로 적는다(28C-03의 `@` 사례와 같은 처리)." (`reviews/round-29-closing.md:28`)
 - 상태: 현행
 - 출처: `adr/0014-error-policy.md:197#3`(정본, ERROR-033에서 분할)
 - 닫은 사람: 편집자 결정(17라운드, `adr/0014-error-policy.md:197`)
@@ -1915,7 +1954,8 @@
 
 - 결정:
   > 어느 자리든 식이나 가드가 던지면 그 커밋은 `degraded`다(§5).
-- 보충: 없음
+- 보충:
+  > 편집자 결정(28C-05): "【추론】 던진 사실은 다른 자리와 같이 `EXPRESSION_THREW`로 사슬 끝에서 throw하고, 그 식을 평가한 정착의 커밋은 `degraded`다(ERROR-126)." (`reviews/round-28-closing.md:58`)
 - 상태: 현행
 - 출처: `adr/0014-error-policy.md:197#4`(정본, ERROR-033에서 분할)
 - 닫은 사람: 소유자 답(`reviews/round-17-owner-answers.md:9` R17-1)
@@ -2006,6 +2046,9 @@
   > 편집자 결정(18C-21): "【추론】 `diagnostics.cause`에 다섯째 값 `(가칭) 'writeShape'`를 둔다(자동 쓰기가 대상이 받을 수 없는 모양의 값을 냄)." (`reviews/round-18-closing.md:666`)
   > 편집자 결정(18C-21): "【추론】 `'injectTarget'`은 "동적 대상 없음"이라는 한 뜻으로 남는다." (`reviews/round-18-closing.md:667`)
   > 편집자 결정(18C-21): "【추론】 한 값이 한 뜻을 가져야 예측할 수 있기 때문이다." (`reviews/round-18-closing.md:668`)
+  > 편집자 결정(26C-05): "【추론】 정착은 활성 집합의 유효 스키마를 계산한 뒤 `typeConflict`가 참인 노드마다 정착 오류 `SHARED_NODE_CONFLICT`를 내고, `diagnostics.cause`는 `'sharedConflict'`이며, 드러남은 정착 오류 규칙대로 모든 환경에서 커밋·통지 뒤 사슬 끝이다(PR-2에서 사슬은 `settle` 호출 하나)." (`reviews/round-26-closing.md:57`)
+  > 편집자 결정(26C-05): "【추론】 오류의 조건은 그 게이트들이 켜진 동안이고(BLUEPRINT-041 U2), 그로 인한 `degraded`는 ERROR-204대로 폼 수준 로드에서만 비운다." (`reviews/round-26-closing.md:58`)
+  > 편집자 결정(26C-05): "【추론】 BLUEPRINT-044 S5의 다른 조건(정적 선언이 없는 이름에서 fold가 다른 게이트 선언이 동시에 켜짐)은 유효 스키마의 신호가 아니며, 정착이 켜진 선언 집합에서 판정해 같은 코드 `SHARED_NODE_CONFLICT`와 `cause: 'sharedConflict'`로 낸다." (`reviews/round-26-closing.md:59`)
 - 상태: 현행
 - 출처: `adr/0014-error-policy.md:201#6`(정본, ERROR-034에서 분할), `reviews/round-18-closing.md:28,666-668`
 - 닫은 사람: 소유자 답(`reviews/round-17-owner-answers.md:9` R17-1; 원인 넷), 편집자 결정(17라운드, `adr/0014-error-policy.md:201`; 값 이름), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-01·18C-21)
@@ -2343,6 +2386,14 @@
   > 편집자 결정(25C-01): "【추론】 ERROR-164 `DISCRIMINATOR_MISMATCH` 행의 "선언 사이 값이 다름"은 별도 코드가 아니라 정적 연언 행의 사건을 판별 관점에서 적은 것이다." (`reviews/round-25-closing.md:11`)
   > 편집자 결정(25C-12): "【추론】 한 노드에 모인 선언들이 서로 다른 `controls.discriminator` 키를 적으면 SCHEMA-013대로 청사진 오류이고 코드는 `DISCRIMINATOR_MISMATCH`이며, ERROR-164 그 행의 "선언 사이 값이 다름"은 바로 이 경우를 뜻한다." (`reviews/round-25-closing.md:113`)
   > 편집자 결정(25C-12): "【추론】 그래서 `DISCRIMINATOR_MISMATCH`는 넷이다: 키가 어느 분기에도 없음(`reason: 'missing'`), 분기끼리 종류가 다름(`reason: 'kind'`), 분기 사이 값이 겹침(`reason: 'overlap'`), 같은 노드의 선언 사이 판별 키가 다름(`reason: 'key'`, details `{ propertyName, other, reason }`); 25C-01의 둘째·셋째 문장은 이 넷으로 바꿔 읽는다." (`reviews/round-25-closing.md:114`)
+  > 편집자 결정(28C-01): "【추론】 ERROR-159 정착 추적 행의 기록은 트리마다 하나인 `SchemaNodeRuntime`의 칸에 들며(26C-06), 칸을 더하는 절차는 NODE-045대로 `record/`의 선언을 고치고 그 대가를 레코드 `DETAIL.md`에 적는 것이다." (`reviews/round-28-closing.md:9`)
+  > 편집자 결정(28C-01): "【추론】 그 칸은 마지막 정착의 기록 하나만 들고 정착마다 새 기록으로 바꾼다: "정착마다 기록"은 기록의 단위이고, 누적 저장은 어느 항목도 예산(NODE-018)을 주지 않았다." (`reviews/round-28-closing.md:10`)
+  > 편집자 결정(28C-01): "【추론】 프로덕션에서는 기록을 만들지 않으므로 칸은 비어 있다; 이 행은 다른 경고 행의 "개발 모드 로그"와 달리 "(기록)" 층이라 콘솔 출력이 아니다." (`reviews/round-28-closing.md:11`)
+  > 편집자 결정(28C-01): "【추론】 PR-3은 이 기록을 위한 공개 `SchemaNode` 멤버·`onError` 기록·`FormHandle` 멤버를 더하지 않는다: 원장이 정한 멤버가 없고(26C-01), 이 행은 "`onError`에 가지 않음"이다." (`reviews/round-28-closing.md:12`)
+  > 편집자 결정(28C-01): "【추론】 개발 모드의 판정은 `process.env.NODE_ENV !== 'production'`(정적 치환)이며 ERROR-030의 보고기 판정과 같은 기준이고, 이 기록은 `onError` 핸들러의 유무(`hasConsumer()`)는 보지 않는다." (`reviews/round-28-closing.md:15`)
+  > 편집자 결정(29C-03): "【추론】 `SHARED_NODE_CONFLICT`가 난 정착의 자리별 값은 "전순서에서 앞선 종류의 노드를 살린 형상"이다(BLUEPRINT-012, ERROR-159·164): 게이트 선언끼리의 충돌에서는 충돌한 이름의 다른 종류 노드 하나가 형상에서 빠지고, 한 노드 안의 형 충돌(`typeConflict`, 26C-05·BLUEPRINT-041)에서는 노드가 정적 `schemaType`으로 남으며, 어느 쪽이든 형상은 정해진다." (`reviews/round-29-closing.md:35`)
+  > 편집자 결정(29C-03): "【추론】 형상이 정해졌으므로 그 뒤의 파생 라운드·전이(채움과 나감 비움)는 29C-02대로 평소처럼 돌고, 커밋되는 것은 그 계산 결과와 그 정착의 자동 쓰기다; 자동 쓰기를 뺀 원본 B는 SETTLE-011의 예산 초과 처분이라 공유 충돌에는 쓰지 않는다." (`reviews/round-29-closing.md:36`)
+  > 편집자 결정(29C-03): "【추론】 마운트의 공유 충돌도 커밋은 한다(ERROR-070 "공유 충돌은 모든 환경에서 커밋·통지 뒤 사슬 끝에서 던진다"; ERROR-164의 "커밋 뒤 싱크"는 렌더 계층의 커밋 뒤 이펙트다, ERROR-079); 폼이 서지 않는 것은 렌더 계층이 그리는 대체 화면이지 코어가 커밋을 멈추는 것이 아니다." (`reviews/round-29-closing.md:37`)
 - 상태: 현행
 - 출처: `adr/0014-error-policy.md:224-242`(정본, ERROR-043에서 분할), `reviews/round-18-closing.md:103,385,713`
 - 닫은 사람: 편집자 결정(17라운드, ADR 0014 4판 채택), 소유자 답 O-1(`reviews/round-14-owner-answers.md:7`)·O-10(`reviews/round-14-owner-answers.md:16`), 소유자 답 C-20(`reviews/round-10-owner-answers.md:17`)·13라운드 답 4(`reviews/round-13-owner-answers.md:10`), 소유자 답 E-23·E-19(`reviews/round-10-owner-answers.md:38,40`), 소유자 답(`reviews/round-17-owner-answers.md:9` R17-1; `adr/0014-error-policy.md:229,231,234,237,239`), 소유자 답(`reviews/round-12-owner-answers.md:14` 6 `else: false` 경고; `adr/0014-error-policy.md:230`), 소유자 답(`reviews/round-17-owner-answers.md:14` 통보 3, `reviews/round-17-owner-answers.md:33` (가); `adr/0014-error-policy.md:238`), 소유자 답(`reviews/round-17-owner-answers.md:15` 통보 4; `adr/0014-error-policy.md:240,242`), 게이트 고침(R17G-2, `reviews/raw-round17-onerror.md:150`; `adr/0014-error-policy.md:238`), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-03·18C-14·18C-23)
@@ -2490,6 +2541,13 @@
   > 편집자 결정(25C-12): "【추론】 한 노드에 모인 선언들이 서로 다른 `controls.discriminator` 키를 적으면 SCHEMA-013대로 청사진 오류이고 코드는 `DISCRIMINATOR_MISMATCH`이며, ERROR-164 그 행의 "선언 사이 값이 다름"은 바로 이 경우를 뜻한다." (`reviews/round-25-closing.md:113`)
   > 편집자 결정(25C-12): "【추론】 그래서 `DISCRIMINATOR_MISMATCH`는 넷이다: 키가 어느 분기에도 없음(`reason: 'missing'`), 분기끼리 종류가 다름(`reason: 'kind'`), 분기 사이 값이 겹침(`reason: 'overlap'`), 같은 노드의 선언 사이 판별 키가 다름(`reason: 'key'`, details `{ propertyName, other, reason }`); 25C-01의 둘째·셋째 문장은 이 넷으로 바꿔 읽는다." (`reviews/round-25-closing.md:114`)
   > 편집자 결정(25C-12): "【추론】 한 분기의 정적 연언 안 판별 값의 공집합이 `EMPTY_ENUM_INTERSECTION`인 것(25C-01 첫 문장)은 그대로다." (`reviews/round-25-closing.md:115`)
+  > 편집자 결정(29C-03): "【추론】 형상이 정해졌으므로 그 뒤의 파생 라운드·전이(채움과 나감 비움)는 29C-02대로 평소처럼 돌고, 커밋되는 것은 그 계산 결과와 그 정착의 자동 쓰기다; 자동 쓰기를 뺀 원본 B는 SETTLE-011의 예산 초과 처분이라 공유 충돌에는 쓰지 않는다." (`reviews/round-29-closing.md:36`)
+  > 편집자 결정(29C-03): "【추론】 마운트의 공유 충돌도 커밋은 한다(ERROR-070 "공유 충돌은 모든 환경에서 커밋·통지 뒤 사슬 끝에서 던진다"; ERROR-164의 "커밋 뒤 싱크"는 렌더 계층의 커밋 뒤 이펙트다, ERROR-079); 폼이 서지 않는 것은 렌더 계층이 그리는 대체 화면이지 코어가 커밋을 멈추는 것이 아니다." (`reviews/round-29-closing.md:37`)
+  > 편집자 결정(31C-05): "【추론】 ERROR-164가 "'(가칭)'인 코드 이름은 PR-4에서 확정한다"고 적었으므로 가칭 이름의 확정은 05 작업자의 결정이고 소유자 결정이 아니다; 확정한 이름(바꾼 것은 까닭과 함께)은 PR 본문과 `plan/05-dispatch-and-validation/log.md`에 적는다." (`reviews/round-31-closing.md:45`)
+  > 편집자 결정(31C-05): "【추론】 원장은 명세이므로 가칭 표기가 그대로 남으면 어긋난다: 05가 목록을 보내면 원장 관리자가 ERROR-164와 제목에 그 코드를 든 항목마다 05의 기록을 출처로 보충 한 줄을 더한다(옛 글은 자라기만 한다). 05가 새 라운드를 열 필요는 없다." (`reviews/round-31-closing.md:46`)
+  > 편집자 결정(31C-05): "【추론】 소유자 답이나 뒤 라운드가 이미 확정한 이름은 가칭 문장을 이긴다: `union`·`unionBehavior/`·`isUnionNode`(BLUEPRINT-035), 경고등 코드 `SCHEMA_FORM_WARNING.TYPE_MISMATCH`(SURFACE-061, `VALUE_TYPE_MISMATCH` 가칭을 대신함), `JSON_SCHEMA_ERROR.INJECT_TARGET_NOT_FOUND`는 낼 자리가 없어 확정에서 빠짐(CONTROLS-079). 공개 이름은 맨 `Node`로 시작하지 않는다(SURFACE-056)." (`reviews/round-31-closing.md:47`)
+  > 편집자 결정(61C-01): "【추론】 처분의 정본은 `plan/05-dispatch-and-validation/log.md:80-156`의 표다(원장의 과거 인용은 현행 결정과 보충이 이기고, 코드 표 행은 ERROR-164의 새 설계 행과 후속 보충을 따른다). 그 표대로 다음은 그 이름 그대로 확정이다 — 청사진 오류 `JSON_SCHEMA_ERROR.UNKNOWN_GROUP_KEY`·`DISCRIMINATOR_MISMATCH`·`SHARED_NODE_KIND_CONFLICT`·`TERMINAL_STRATEGY_MISMATCH`·`INVALID_CONTROL_SHAPE`·`RECURSIVE_SHAPE_UNBOUNDED`·`VIRTUAL_FIELDS_MISMATCH`·`CHILDREN_TARGET_NOT_FOUND`·`TERMINAL_OPTION_UNSUPPORTED`; 정착·사슬·쓰기 오류 `SCHEMA_FORM_ERROR.SHARED_NODE_CONFLICT`·`BUDGET_EXCEEDED`·`EXPRESSION_THREW`·`GUARD_FAILED`·`INJECT_TARGET_MISSING`·`FEEDBACK_LIMIT_EXCEEDED`·`LISTENER_THREW`·`MULTIPLE_ERRORS`·`INVALID_WRITE_OPTION`·`DISPOSED_NODE_WRITE`·`WRITE_IN_OBSERVER`·`SUBMIT_WHILE_DEGRADED`·`VALIDATOR_COMPILE_FAILED`·`VALIDATOR_THREW`·`RENDER_FAILED`·`RECURSIVE_SHAPE_DIVERGED`·`INVALID_VIRTUAL_NODE_VALUES`·`ARRAY_METHOD_ON_NON_ARRAY`; 경고 `SCHEMA_FORM_WARNING.IF_WITHOUT_ELSE_FALSE`·`LOCK_ON_NON_TERMINAL_OBJECT`·`CONDITIONAL_SCHEMA_WITHOUT_VALIDATOR`·`VALIDATOR_MISSING`·`MULTIPLE_GATED_BRANCHES_ACTIVE`·`PRESENTATION_KEY_SUSPECT`·`RESET_REBUILT_BY_REFERENCE`·`DIALECT_MISMATCH`·`DEPENDENT_SCHEMAS_IGNORED_FOR_FORM`·`CHILD_NODE_COMPONENTS_ON_TERMINAL`·`DISCRIMINATOR_BRANCH_UNREACHABLE`·`NON_JSON_WHOLE_VALUE`·`FORM_TYPE_TEST_INVALID`·`TERMINAL_SUBTREE_KEY_IGNORED_FOR_FORM`·`TYPE_MISMATCH`; `UNHANDLED_ERROR.VALIDATOR_BIND_REFUSED`; 형·멤버·내부 이름 `FormErrorRecord`·`FormErrorCode`·`FormErrorReporter`·`Validator`·`ValidatorBindRefusedError`·`revisionLedger`·`UpdateJsonSchema`·`retainValidationRoot`·`releaseValidationRoot`·`SchemaNodeState`·`SchemaNodeEventType`·`SchemaNodeRequestType`(`Focus`·`Select`·`Refresh`·`Remount`)·`typeMismatch`·`typeMismatches`·`union`·`unionBehavior`·`isUnionNode`·`setContext`·`sameValue`·`configure({ directGuardCompile })`; 진단 값 `writeShape`·`recursion`·`duplicateSchemaId`." (`reviews/round-61-closing.md:9`)
+  > 편집자 결정(61C-01): "【추론】 삭제·대체는 열이다: `JSON_SCHEMA_ERROR.INJECT_TARGET_NOT_FOUND` 삭제(`injectTo` 대상은 정적으로 알 수 없고 동적 실패는 `SCHEMA_FORM_ERROR.INJECT_TARGET_MISSING`, CONTROLS-079); `JSON_SCHEMA_ERROR.INVALID_VIRTUAL_NODE_VALUES` 삭제 → `SCHEMA_FORM_ERROR.INVALID_VIRTUAL_NODE_VALUES`(쓰기 오류로 부류 이동, ERROR-195); `SCHEMA_FORM_WARNING.VALUE_TYPE_MISMATCH` 삭제 → `SCHEMA_FORM_WARNING.TYPE_MISMATCH`(소유자 확정, SURFACE-061); `SCHEMA_FORM_WARNING.UNSET_ON_INACTIVE_ON_OBJECT` 삭제(소유자 판정으로 코드 행 제거); `NodeState` → `SchemaNodeState`, `NodeEventType` → `SchemaNodeEventType`(SURFACE-056, 옛 소비자 이주는 07); `valueTypeMismatch`·`valueTypeMismatches` → `typeMismatch`·`typeMismatches`(SURFACE-061); `latent` → `getInactiveValues(path)`(SURFACE-006); 옛 Form 속성 `onListenerError`와 `throwOnBudgetExceeded` 삭제(기록은 `onError`가 받고, 모든 환경에서 사슬 끝에 던진다). 원장에서 이 옛 이름을 가진 문장은 옛 글로 남고 이 보충이 이긴다." (`reviews/round-61-closing.md:10`)
 - 상태: 현행
 - 출처: `adr/0014-error-policy.md:248-300`(정본, ERROR-044에서 분할), `reviews/round-18-closing.md:386-387,661,670,731-733`, `reviews/round-18-closing.md:2458-2461,2550,2581`, `reviews/round-18-owner-answers.md:34`, `reviews/round-18-owner-answers.md:37`, `reviews/round-18-closing.md:2797-2798`, `reviews/round-18-owner-answers.md:41`
 - 닫은 사람: 편집자 결정(17라운드, ADR 0014 4판 채택), 게이트 고침(R17G-9·R17G-2), 소유자 답(`reviews/round-17-owner-answers.md:9` R17-1; `adr/0014-error-policy.md:263,266,267-271,279,281`), 소유자 답(`reviews/round-14-owner-answers.md:7` O-1; `adr/0014-error-policy.md:260`), 소유자 답(`reviews/round-14-owner-answers.md:16` O-10; `adr/0014-error-policy.md:261,266`), 소유자 답(`reviews/round-12-owner-answers.md:14` 6 `else: false` 경고; `adr/0014-error-policy.md:290`), 소유자 답(`reviews/round-17-owner-answers.md:14` 통보 3; `adr/0014-error-policy.md:281,293`), 소유자 답(`reviews/round-17-owner-answers.md:33` (가); `adr/0014-error-policy.md:293`), 소유자 답(`reviews/round-17-owner-answers.md:15` 통보 4; `adr/0014-error-policy.md:296`), 소유자 답(`reviews/round-17-owner-answers.md:11` R17-3; `adr/0014-error-policy.md:295`), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-14·18C-21·18C-24), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-90·18C-91·18C-92), 소유자 답(`reviews/round-18-owner-answers.md:34` union O4; `VALIDATOR_BIND_REFUSED` 행), 소유자 답(`reviews/round-18-owner-answers.md:37` union O7·O8), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-98), 소유자 답(`reviews/round-18-owner-answers.md:41` 설계서 메모 4)
@@ -2739,6 +2797,7 @@
 - 보충:
   > 편집자 결정(18C-73): "【추론】 코드는 (가칭) `SCHEMA_FORM_WARNING.CHILD_NODE_COMPONENTS_ON_TERMINAL`이고 `level`은 `warning`이다." (`reviews/round-18-closing.md:2032`)
   > 편집자 결정(18C-38): "【추론】 가상은 `branch`이므로 ERROR-185의 경고(터미널 노드의 입력이 빈 `ChildNodeComponents`를 읽을 때의 개발 모드 경고)는 가상 노드에 적용되지 않는다." (`reviews/round-18-closing.md:1032`)
+  > 소유자(180라운드, G23 닫힘, 18C-73 개발 모드·브랜치 노드 한정): "1. 네 확인했습니다. 입력기를 쓰는 부분이라고 해서 직접 진행했죠.\n2. 저도 동의합니다. 개발모드에서만 켜고, object / array 처럼 브랜치 노드에 대해서만 처리했으면 해요. 나머지는 터미널만 가능하니까요. \n리뷰어는 지금 제 요구사항 처리중이긴 한데, 추가로 잘 이야기해줘요" (`reviews/round-180-owner-answers.md:7`) — G23 닫힘(소유자의 실제 IME 확인, Safari 생략); 빈 ChildNodeComponents 읽기 감지기는 개발 모드에서만, object·array 스키마 노드가 터미널이 된 경우에만 둔다; reviewer가 PR #354에서 처리(원장 관리자, 2026-10-12).
 - 상태: 현행
 - 출처: `adr/0011-branch-node-composition.md:61#2`(정본, 규칙은 NODE-031. ADR 0014 §7.2 코드 목록 `adr/0014-error-policy.md:248-301`에 이 경고의 행이 없다), `reviews/round-18-closing.md:2031-2040,2046-2047,1029-1038`
 - 닫은 사람: 원리(`00-goals.md:105` C2 작성자 실수의 가시성, 소유자 채택 `reviews/round-2.md:112`), 편집자 결정(ADR 0011 4차 본문, `adr/0011-branch-node-composition.md:12`), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-73·18C-38)
@@ -2758,6 +2817,7 @@
   > 편집자 결정(18C-91): "【추론】 `expected.schemaType`은 `node.schemaType`이고, `expected.effective`는 그 커밋의 유효 목록이다." (`reviews/round-18-closing.md:2528`)
   > 편집자 결정(18C-91): "【추론】 `source`는 EVENT-060의 쓰기 출처 값에 `'gate'`를 더한 것이다." (`reviews/round-18-closing.md:2531`)
   > 반영 칸(설계서 메모 4): "게터 `typeMismatch: boolean`, 경로 목록 `typeMismatches: readonly string[]`, 경고 코드 `SCHEMA_FORM_WARNING.TYPE_MISMATCH`." (`reviews/round-18-owner-answers.md:41`)
+  > 편집자 결정(61C-01): "【추론】 삭제·대체는 열이다: `JSON_SCHEMA_ERROR.INJECT_TARGET_NOT_FOUND` 삭제(`injectTo` 대상은 정적으로 알 수 없고 동적 실패는 `SCHEMA_FORM_ERROR.INJECT_TARGET_MISSING`, CONTROLS-079); `JSON_SCHEMA_ERROR.INVALID_VIRTUAL_NODE_VALUES` 삭제 → `SCHEMA_FORM_ERROR.INVALID_VIRTUAL_NODE_VALUES`(쓰기 오류로 부류 이동, ERROR-195); `SCHEMA_FORM_WARNING.VALUE_TYPE_MISMATCH` 삭제 → `SCHEMA_FORM_WARNING.TYPE_MISMATCH`(소유자 확정, SURFACE-061); `SCHEMA_FORM_WARNING.UNSET_ON_INACTIVE_ON_OBJECT` 삭제(소유자 판정으로 코드 행 제거); `NodeState` → `SchemaNodeState`, `NodeEventType` → `SchemaNodeEventType`(SURFACE-056, 옛 소비자 이주는 07); `valueTypeMismatch`·`valueTypeMismatches` → `typeMismatch`·`typeMismatches`(SURFACE-061); `latent` → `getInactiveValues(path)`(SURFACE-006); 옛 Form 속성 `onListenerError`와 `throwOnBudgetExceeded` 삭제(기록은 `onError`가 받고, 모든 환경에서 사슬 끝에 던진다). 원장에서 이 옛 이름을 가진 문장은 옛 글로 남고 이 보충이 이긴다." (`reviews/round-61-closing.md:10`)
 - 상태: 현행
 - 출처: `reviews/round-18-owner-answers.md:9`(정본, S1 셋째의 반영 칸. 표 행이라 조각 번호로 나눌 수 없다. ERROR-182에서 분할), `reviews/round-18-owner-answers.md:17`, `reviews/round-18-closing.md:2527-2528,2531`, `reviews/round-18-owner-answers.md:41`
 - 닫은 사람: 편집자 결정(18라운드, `reviews/round-18-owner-answers.md:9` 반영 칸), 소유자 답(`reviews/round-18-owner-answers.md:17` 12-7; level `warning`), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-91), 소유자 답(`reviews/round-18-owner-answers.md:41` 설계서 메모 4)
@@ -2887,7 +2947,11 @@
   > 【추론】 코드는 오류 클래스와 무리를 옮겨 `SCHEMA_FORM_ERROR.INVALID_VIRTUAL_NODE_VALUES`(가칭)로 한다.
   > 【추론】 `JSON_SCHEMA_ERROR`는 청사진 오류의 무리이고, 이 사건은 쓰기의 오류이기 때문이다.
   > 【추론】 기록에는 `path`와 `details`(기대 길이, 받은 값)를 싣는다.
-- 보충: 없음
+- 보충:
+  > 편집자 결정(42C-02): "【추론】 쓰기 쪽: 가상 노드에 온 호출자 쓰기는 ERROR-195대로 값이 `undefined`면 참조한 노드 모두에 그 쓰기 종류로 `undefined`를 쓰고, 배열인지를 길이보다 먼저 보아 길이가 참조 수와 같은 배열이면 자리마다 그 원소를 참조 노드에 같은 종류로 쓰며(나뉜 값은 참조 노드마다 `interpret`를 지난다), 그 밖의 값(`null`, 배열 아닌 값, 길이가 다른 배열)은 호출자 오류로 즉시 `SchemaFormError`(가칭 `INVALID_VIRTUAL_NODE_VALUES`, 기록에 `path`와 `details`의 기대 길이·받은 값)를 던진다; 자동 쓰기 경로의 분류(정착 오류, `cause` 가칭 `'writeShape'`)는 이미 있는 대로다. 가상 노드 자신은 `raw`가 없으므로(NODE-034) 쓰기가 가상 노드에 남기는 것은 dirty 표시뿐이고 값은 참조 노드에 산다." (`reviews/round-42-closing.md:18`)
+  > 편집자 결정(45C-01): "【추론】 ERROR-195가 "참조한 잎 모두에 그 쓰기 종류로 `undefined`를 쓴다"고 적었고 쓰기의 종류는 호출자가 선언하며 core가 바꾸지 않으므로(WRITE 영역 D-4), 가상 노드는 종류를 바꾸지 않는 통로다: 호출자가 `Merge`를 주면 참조 노드마다 그 원소(또는 `undefined`)를 `Merge`로 쓰고 참조된 객체·배열 형제에서는 부분 쓰기가 되며, 옵션이 없거나 `Overwrite`면 참조 노드마다 전체 교체 쓰기다; 잎 참조에서는 둘이 같다. 42C-02의 "참조 노드마다의 전체 교체 쓰기"는 되물은 사례(옵션 없는 `setValue(undefined)`, 곧 기본 종류 `Overwrite`)를 말한 것이고 종류를 고정한 것이 아니다. 06의 "Merge여도 참조 가지를 교체한다" 시험은 뒤집어 "Merge는 참조 노드에서 부분 쓰기"로 둔다." (`reviews/round-45-closing.md:9`)
+  > 편집자 결정(59C-01): "【추론】 ERROR-017은 `path`를 "데이터 경로이며 노드에 묶인 사건에만 있다"로, `details`를 오류의 세부(`error.details`와 같은 참조)로 두었고 ERROR-005는 둘 이상의 오류를 발생 순서대로 `details.errors`에 담게 했으므로, 같은 대상을 겨눈 다른 출처의 오류 둘이 묶음 안에서 같은 모양으로 보이는 것은 묶음의 쓸모(어느 선언이 잘못되었는지 찾기)를 깎는다; 그래서 자동 쓰기가 대상에서 실패하는 두 오류 — `INJECT_TARGET_MISSING`(동적 대상 없음, `cause` `'injectTarget'`)과 자동 쓰기의 가상 노드 쓰기 모양 오류(가칭 `INVALID_VIRTUAL_NODE_VALUES`, `cause` 가칭 `'writeShape'`) — 의 `details`에 출처 노드의 데이터 경로 `sourcePath`(쓰기를 낸 `controls.injectTo` 선언의 노드)를 더한다. `path`는 지금처럼 사건이 묶인 대상 노드의 경로로 두어 ERROR-017의 뜻을 지키고, ERROR-195가 적은 `details`(기대 길이, 받은 값)는 그대로 남는다; 호출자 경로의 쓰기 모양 오류(42C-02)는 출처가 호출자라 `sourcePath`가 없다. 덧붙이는 변경이고 두 코드는 PR-4의 오류 라우팅 범위라 05가 PR-4에서 하며, 중복 제거를 없앤 수정(같은 대상에 대한 출처별 오류를 모두 남김)은 58C-01의 "모두 모아"에 든다." (`reviews/round-59-closing.md:9`)
+  > 편집자 결정(61C-01): "【추론】 삭제·대체는 열이다: `JSON_SCHEMA_ERROR.INJECT_TARGET_NOT_FOUND` 삭제(`injectTo` 대상은 정적으로 알 수 없고 동적 실패는 `SCHEMA_FORM_ERROR.INJECT_TARGET_MISSING`, CONTROLS-079); `JSON_SCHEMA_ERROR.INVALID_VIRTUAL_NODE_VALUES` 삭제 → `SCHEMA_FORM_ERROR.INVALID_VIRTUAL_NODE_VALUES`(쓰기 오류로 부류 이동, ERROR-195); `SCHEMA_FORM_WARNING.VALUE_TYPE_MISMATCH` 삭제 → `SCHEMA_FORM_WARNING.TYPE_MISMATCH`(소유자 확정, SURFACE-061); `SCHEMA_FORM_WARNING.UNSET_ON_INACTIVE_ON_OBJECT` 삭제(소유자 판정으로 코드 행 제거); `NodeState` → `SchemaNodeState`, `NodeEventType` → `SchemaNodeEventType`(SURFACE-056, 옛 소비자 이주는 07); `valueTypeMismatch`·`valueTypeMismatches` → `typeMismatch`·`typeMismatches`(SURFACE-061); `latent` → `getInactiveValues(path)`(SURFACE-006); 옛 Form 속성 `onListenerError`와 `throwOnBudgetExceeded` 삭제(기록은 `onError`가 받고, 모든 환경에서 사슬 끝에 던진다). 원장에서 이 옛 이름을 가진 문장은 옛 글로 남고 이 보충이 이긴다." (`reviews/round-61-closing.md:10`)
 - 상태: 현행
 - 출처: `reviews/round-18-closing.md:654-672`(정본)
 - 닫은 사람: 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-21)
@@ -2914,6 +2978,7 @@
 - 보충:
   > 편집자 결정(18C-98): "【추론】 `diagnostics`와 경고 중복 키는 폼 수준 로드(마운트, `FormHandle.reset()`)에서만 초기화한다." (`reviews/round-18-closing.md:2797`)
   > 편집자 결정(18C-98): "【추론】 `setValue(V)`와 `resetSubtree()`는 초기화하지 않는다." (`reviews/round-18-closing.md:2798`)
+  > 편집자 결정(31C-02): "【추론】 `RESET_REBUILT_BY_REFERENCE`(ERROR-196)와 `MULTIPLE_GATED_BRANCHES_ACTIVE`의 "개발 모드이거나 핸들러가 있을 때만 판정"은 판정 비용(순회 한 번 더)을 소비자가 없을 때 아끼는 것이라 ERROR-021과 어긋나지 않는다: 핸들러가 있으면 프로덕션에서도 판정하고 전달한다. 구현은 이 둘을 `hasConsumer()`로, `NON_JSON_WHOLE_VALUE`를 개발 모드 조건으로 거르며, 나머지 경고는 ERROR-021대로 판정하고 소비자가 있으면 전달한다." (`reviews/round-31-closing.md:21`)
 - 상태: 현행
 - 출처: `reviews/round-18-closing.md:686-699`(정본), `reviews/round-18-closing.md:2797-2798`
 - 닫은 사람: 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-22), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-98)
@@ -2928,7 +2993,9 @@
   > 【추론】 throw 직전에 `onError`로 보낸다(surface `'thrown'`).
   > 【추론】 기록에는 `path`와 `details.method`를 싣는다.
   > 【추론】 §7.1 호출자 오류 행의 항목 목록과 ADR 0014 §3의 받는 것 목록에 더한다.
-- 보충: 없음
+- 보충:
+  > 편집자 결정(35C-01): "【추론】 ERROR-197의 던짐(`type`이 배열이 아닌 노드에서 `push`·`pop`·`update`·`remove`·`clear`를 부르면 행의 공유 칸이 모든 환경에서 즉시 `SchemaFormError`를 던진다, 기록에 `path`와 `details.method`)은 PR-5가 만드는 배열 행의 공유 칸에 사는 것이라 PR-5의 몫이고, NODE-014대로 메서드는 단일 클래스에 두되 형은 공개 `ArrayNode` 인터페이스에만 준다." (`reviews/round-35-closing.md:9`)
+  > 편집자 결정(35C-01): "【추론】 "throw 직전에 `onError`로 보낸다(surface `'thrown'`)"는 PR-4의 보고기를 쓰므로 33C-01의 디스패치 배선과 함께 뒤에 머지하는 단계가 더한다; 06이 먼저 머지되면 공유 칸은 던지기만 하고 보고를 시도하지 않으며, 그 자리의 DETAIL에 배선 PR이 보고를 더한다는 한 줄을 남긴다. 코드 이름은 가칭 그대로 쓰고 05의 확정 목록(31C-05)에 든다." (`reviews/round-35-closing.md:10`)
 - 상태: 현행
 - 출처: `reviews/round-18-closing.md:709-713`(정본)
 - 닫은 사람: 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-23)
@@ -2955,6 +3022,8 @@
   > 【추론】 `JSON_SCHEMA_ERROR.INJECT_TARGET_NOT_FOUND`는 목록에서 빠진다(18C-14).
 - 보충:
   > 반영 칸(설계서 메모 4): "게터 `typeMismatch: boolean`, 경로 목록 `typeMismatches: readonly string[]`, 경고 코드 `SCHEMA_FORM_WARNING.TYPE_MISMATCH`." (`reviews/round-18-owner-answers.md:41`)
+  > 편집자 결정(61C-01): "【추론】 처분의 정본은 `plan/05-dispatch-and-validation/log.md:80-156`의 표다(원장의 과거 인용은 현행 결정과 보충이 이기고, 코드 표 행은 ERROR-164의 새 설계 행과 후속 보충을 따른다). 그 표대로 다음은 그 이름 그대로 확정이다 — 청사진 오류 `JSON_SCHEMA_ERROR.UNKNOWN_GROUP_KEY`·`DISCRIMINATOR_MISMATCH`·`SHARED_NODE_KIND_CONFLICT`·`TERMINAL_STRATEGY_MISMATCH`·`INVALID_CONTROL_SHAPE`·`RECURSIVE_SHAPE_UNBOUNDED`·`VIRTUAL_FIELDS_MISMATCH`·`CHILDREN_TARGET_NOT_FOUND`·`TERMINAL_OPTION_UNSUPPORTED`; 정착·사슬·쓰기 오류 `SCHEMA_FORM_ERROR.SHARED_NODE_CONFLICT`·`BUDGET_EXCEEDED`·`EXPRESSION_THREW`·`GUARD_FAILED`·`INJECT_TARGET_MISSING`·`FEEDBACK_LIMIT_EXCEEDED`·`LISTENER_THREW`·`MULTIPLE_ERRORS`·`INVALID_WRITE_OPTION`·`DISPOSED_NODE_WRITE`·`WRITE_IN_OBSERVER`·`SUBMIT_WHILE_DEGRADED`·`VALIDATOR_COMPILE_FAILED`·`VALIDATOR_THREW`·`RENDER_FAILED`·`RECURSIVE_SHAPE_DIVERGED`·`INVALID_VIRTUAL_NODE_VALUES`·`ARRAY_METHOD_ON_NON_ARRAY`; 경고 `SCHEMA_FORM_WARNING.IF_WITHOUT_ELSE_FALSE`·`LOCK_ON_NON_TERMINAL_OBJECT`·`CONDITIONAL_SCHEMA_WITHOUT_VALIDATOR`·`VALIDATOR_MISSING`·`MULTIPLE_GATED_BRANCHES_ACTIVE`·`PRESENTATION_KEY_SUSPECT`·`RESET_REBUILT_BY_REFERENCE`·`DIALECT_MISMATCH`·`DEPENDENT_SCHEMAS_IGNORED_FOR_FORM`·`CHILD_NODE_COMPONENTS_ON_TERMINAL`·`DISCRIMINATOR_BRANCH_UNREACHABLE`·`NON_JSON_WHOLE_VALUE`·`FORM_TYPE_TEST_INVALID`·`TERMINAL_SUBTREE_KEY_IGNORED_FOR_FORM`·`TYPE_MISMATCH`; `UNHANDLED_ERROR.VALIDATOR_BIND_REFUSED`; 형·멤버·내부 이름 `FormErrorRecord`·`FormErrorCode`·`FormErrorReporter`·`Validator`·`ValidatorBindRefusedError`·`revisionLedger`·`UpdateJsonSchema`·`retainValidationRoot`·`releaseValidationRoot`·`SchemaNodeState`·`SchemaNodeEventType`·`SchemaNodeRequestType`(`Focus`·`Select`·`Refresh`·`Remount`)·`typeMismatch`·`typeMismatches`·`union`·`unionBehavior`·`isUnionNode`·`setContext`·`sameValue`·`configure({ directGuardCompile })`; 진단 값 `writeShape`·`recursion`·`duplicateSchemaId`." (`reviews/round-61-closing.md:9`)
+  > 편집자 결정(61C-01): "【추론】 삭제·대체는 열이다: `JSON_SCHEMA_ERROR.INJECT_TARGET_NOT_FOUND` 삭제(`injectTo` 대상은 정적으로 알 수 없고 동적 실패는 `SCHEMA_FORM_ERROR.INJECT_TARGET_MISSING`, CONTROLS-079); `JSON_SCHEMA_ERROR.INVALID_VIRTUAL_NODE_VALUES` 삭제 → `SCHEMA_FORM_ERROR.INVALID_VIRTUAL_NODE_VALUES`(쓰기 오류로 부류 이동, ERROR-195); `SCHEMA_FORM_WARNING.VALUE_TYPE_MISMATCH` 삭제 → `SCHEMA_FORM_WARNING.TYPE_MISMATCH`(소유자 확정, SURFACE-061); `SCHEMA_FORM_WARNING.UNSET_ON_INACTIVE_ON_OBJECT` 삭제(소유자 판정으로 코드 행 제거); `NodeState` → `SchemaNodeState`, `NodeEventType` → `SchemaNodeEventType`(SURFACE-056, 옛 소비자 이주는 07); `valueTypeMismatch`·`valueTypeMismatches` → `typeMismatch`·`typeMismatches`(SURFACE-061); `latent` → `getInactiveValues(path)`(SURFACE-006); 옛 Form 속성 `onListenerError`와 `throwOnBudgetExceeded` 삭제(기록은 `onError`가 받고, 모든 환경에서 사슬 끝에 던진다). 원장에서 이 옛 이름을 가진 문장은 옛 글로 남고 이 보충이 이긴다." (`reviews/round-61-closing.md:10`)
 - 상태: 현행
 - 출처: `reviews/round-18-closing.md:723-733,735-738`(정본), `reviews/round-18-owner-answers.md:41`
 - 닫은 사람: 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-24), 소유자 답(`reviews/round-18-owner-answers.md:41` 설계서 메모 4)
@@ -2994,7 +3063,9 @@
   > 【추론】 플러그인이 떼어 두지 못해 등록이 실패하면 새 코드 없이 있는 부류로 드러낸다.
   > 【추론】 전체 컴파일은 `SCHEMA_FORM_ERROR.VALIDATOR_COMPILE_FAILED`, 가드는 `SCHEMA_FORM_ERROR.GUARD_FAILED`이며, `details`에 가칭 `reason: 'duplicateSchemaId'`와 `$id`를 싣는다.
   > 【추론】 ADR 0014 §7.2 (미정) 행의 이 줄은 "코드 없음"으로 닫는다.
-- 보충: 없음
+- 보충:
+  > 편집자 결정(31C-03): "【추론】 `reason`은 새 코드가 아니라 기록의 `details` 칸이며, 그 값은 코드마다 원장이 이름 붙인 것으로 닫힌 리터럴 합집합이다: `VALUE_TYPE_MISMATCH`는 `'unconvertible'`·`'ambiguous'`(VALUE-037), `DISCRIMINATOR_MISMATCH`는 `'missing'`·`'kind'`·`'overlap'`·`'key'`(25C-12), `VALIDATOR_COMPILE_FAILED`·`GUARD_FAILED`는 `'duplicateSchemaId'`(ERROR-201, 가칭) 하나다." (`reviews/round-31-closing.md:28`)
+  > 편집자 결정(31C-03): "【추론】 원장이 이름 붙이지 않은 원인(예: 검증기 `compile`이 던짐)에는 `reason`을 싣지 않고 그 코드의 ERROR-164 행이 정한 `details`(원래 예외 등)만 싣는다; 값을 하나 더하는 것은 원장 항목이지 코드만의 변경이 아니다." (`reviews/round-31-closing.md:29`)
 - 상태: 현행
 - 출처: `reviews/round-18-closing.md:1587-1591`(정본)
 - 닫은 사람: 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-57)
@@ -3019,6 +3090,8 @@
 - 보충:
   > 편집자 결정(18C-98): "【추론】 `diagnostics`와 경고 중복 키는 폼 수준 로드(마운트, `FormHandle.reset()`)에서만 초기화한다." (`reviews/round-18-closing.md:2797`)
   > 편집자 결정(18C-98): "【추론】 `setValue(V)`와 `resetSubtree()`는 초기화하지 않는다." (`reviews/round-18-closing.md:2798`)
+  > 편집자 결정(139C-01): "【추론】 105C-01의 "변경 하나에 판정 하나"는 변경의 크기로 면제되지 않는다 — 정수 비교 하나와 형 변경만이라는 근거로 측정을 건너뛰면 규칙은 그때그때의 설명에 따라 달라진다(137C-01·138C-01과 같은 자리). 반면 A/A는 측정기 조건의 소음이라 작은 코드 변경에 무관하다는 134C-01의 전제가 136i(0/68행)로 방금 확인되었으므로 새 A/A는 비용만 더한다; 판정 세션은 main 행 집합 하나로 족한데, B4의 추가 비용은 reset 경로의 정수 비교 하나이고 측정 행(mount·update·BF)은 reset을 돌리지 않으며 array-1000·nested-d5 부분이 더 보는 것은 큰 폼의 같은 경로이기 때문이다 — 번들 차분을 먼저 실어 "그 둘 외의 차이가 없다"를 보이는 것이 이 축소의 조건이다. G27의 코어 형 단언 14개는 작업 공간 규칙(명시적 사용자 승인)에 따라 소유자만 닫을 수 있고 132라운드가 그런 결정을 PR 시점에 묻도록 했으므로 138C-01과 같이 게이트를 정직하게 열어 둔다. B4는 구조 검증이 잡은 실제 회귀이고 F-F의 "소비자가 있을 때만 보고"가 로드 경계를 넘어 상태를 남긴 것이므로, 고침은 상태를 로드 번호에 묶어 F-F의 조건을 지키면서 경계를 되살리는 것이 맞고, 두 React 판에서 고치기 전 실패·고친 뒤 통과하는 시험이 그 증거다." (`reviews/round-139-closing.md:9`)
+  > 소유자(180라운드, G23 닫힘, 18C-73 개발 모드·브랜치 노드 한정): "1. 네 확인했습니다. 입력기를 쓰는 부분이라고 해서 직접 진행했죠.\n2. 저도 동의합니다. 개발모드에서만 켜고, object / array 처럼 브랜치 노드에 대해서만 처리했으면 해요. 나머지는 터미널만 가능하니까요. \n리뷰어는 지금 제 요구사항 처리중이긴 한데, 추가로 잘 이야기해줘요" (`reviews/round-180-owner-answers.md:7`) — G23 닫힘(소유자의 실제 IME 확인, Safari 생략); 빈 ChildNodeComponents 읽기 감지기는 개발 모드에서만, object·array 스키마 노드가 터미널이 된 경우에만 둔다; reviewer가 PR #354에서 처리(원장 관리자, 2026-10-12).
 - 상태: 현행
 - 출처: `reviews/round-18-closing.md:2031-2040,2046-2047`(정본), `reviews/round-18-closing.md:2797-2798`
 - 닫은 사람: 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-73), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-98)
@@ -3053,7 +3126,9 @@
   > 무엇: 한 하위 트리의 예산 초과로 `degraded`가 된 폼에서 다른 하위 트리의 `resetSubtree()`, 루트 `setValue(V)`, `FormHandle.reset()`을 차례로 부르고 `diagnostics`, 경고 중복 키, 제출 거부를 본다.
   > 통과: 앞의 둘 뒤에는 `degraded`, 중복 키, 제출 거부가 그대로 남고, `FormHandle.reset()` 뒤에는 `stable`이며 중복 키가 비었다.
   > 실패: 초기화하는 로드의 목록을 고친다.
-- 보충: 없음
+- 보충:
+  > 편집자 결정(26C-02): "【추론】 게이트 문장의 `FormHandle.reset()`은 코어에서 루트 노드의 폼 수준 로드(마운트와 같은 초기화 범위, 로드 스냅숏 갱신)로 읽고, `resetSubtree()`는 그 노드의 로드로 읽는다." (`reviews/round-26-closing.md:24`)
+  > 편집자 결정(26C-02): "【추론】 ERROR-204 게이트의 제출 거부 단언은 제출이 Form 바인딩이므로 PR-7이 하고, 경고 중복 키의 초기화 단언은 경고의 구조 키를 들여오는 PR-4가 하며(ERROR-032, LANDING-064), PR-2는 `diagnostics`의 초기화만 단언한다." (`reviews/round-26-closing.md:25`)
 - 상태: 현행
 - 출처: `reviews/round-18-closing.md:2797-2799,2805-2808`(정본)
 - 닫은 사람: 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-98)

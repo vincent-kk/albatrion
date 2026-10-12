@@ -1,8 +1,10 @@
+import { isArray } from '@winglet/common-utils/filter';
 import { escapeSegment } from '@winglet/json/pointer';
 
 import type { BlueprintChildEntry } from '../../type';
 import { BlueprintErrorCode } from '../diagnostics/constant';
 import { throwBlueprintError } from '../diagnostics/throwBlueprintError';
+import { createBlueprintGate } from './createBlueprintGate';
 import { populateVirtualNodes } from './populateVirtualNodes';
 import { readSchemaObject } from './readSchemaObject';
 import type { AnalysisContext, MutableNode, SchemaInput } from './type';
@@ -36,7 +38,7 @@ export const populateNodeChildren = (
         gate:
           entry.controls?.active === undefined
             ? undefined
-            : Object.freeze({
+            : createBlueprintGate({
                 kind: 'active' as const,
                 schemaPath: `${owner.schemaPath}/controls/children/${index}/controls/active`,
                 hostPath: node.path,
@@ -50,7 +52,7 @@ export const populateNodeChildren = (
     const schema = readSchemaObject(declaration.schema);
     if (
       schema.type === 'null' ||
-      (Array.isArray(schema.type) &&
+      (isArray(schema.type) &&
         schema.type.length === 1 &&
         schema.type[0] === 'null')
     )
@@ -100,8 +102,8 @@ export const populateNodeChildren = (
     if (node.kind !== 'array') continue;
     const tuple =
       schema.prefixItems ??
-      (Array.isArray(schema.items) ? schema.items : undefined);
-    if (schema.prefixItems !== undefined && !Array.isArray(schema.prefixItems))
+      (isArray(schema.items) ? schema.items : undefined);
+    if (schema.prefixItems !== undefined && !isArray(schema.prefixItems))
       throwBlueprintError(
         BlueprintErrorCode.UnexpectedArraySchema,
         declaration.schemaPath,
@@ -120,7 +122,11 @@ export const populateNodeChildren = (
         if (existing) existing.push(input);
         else tuples.set(index, [input]);
       });
-    else if (schema.items !== undefined && typeof schema.items !== 'boolean') {
+    if (
+      schema.items !== undefined &&
+      typeof schema.items !== 'boolean' &&
+      !isArray(schema.items)
+    ) {
       if (schema.items === null || typeof schema.items !== 'object')
         throwBlueprintError(
           BlueprintErrorCode.UnexpectedArraySchema,
@@ -135,6 +141,20 @@ export const populateNodeChildren = (
         order: [...declaration.order, 0, 0],
       });
     }
+    const additionalItems = isArray(schema.items) && schema.prefixItems === undefined
+      ? schema.additionalItems
+      : undefined;
+    if (
+      additionalItems !== null &&
+      typeof additionalItems === 'object' &&
+      !isArray(additionalItems)
+    )
+      itemInputs.push({
+        ...base,
+        schema: additionalItems,
+        schemaPath: `${declaration.schemaPath}/additionalItems`,
+        order: [...declaration.order, 0, schema.items.length],
+      });
   }
   const entries = node.childEntries as BlueprintChildEntry[];
   for (const [name, inputs] of properties) {
@@ -153,7 +173,7 @@ export const populateNodeChildren = (
           gates: Object.freeze(
             declaration.gates.map((gate) =>
               gate.hostPath === child.path
-                ? Object.freeze({ ...gate, hostPath: path })
+                ? createBlueprintGate({ ...gate, hostPath: path })
                 : gate,
             ),
           ),

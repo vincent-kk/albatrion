@@ -1,3 +1,5 @@
+import { isArray } from '@winglet/common-utils/filter';
+
 import type {
   Blueprint,
   BlueprintDiagnostic,
@@ -71,7 +73,7 @@ export const collectBlueprintWarnings = (
           warning(BlueprintWarningCode.IfWithoutElseFalse);
         if (
           (schema.type === 'null' ||
-            (Array.isArray(schema.type) &&
+            (isArray(schema.type) &&
               schema.type.length === 1 &&
               schema.type[0] === 'null')) &&
           (schema.properties !== undefined ||
@@ -89,7 +91,7 @@ export const collectBlueprintWarnings = (
           (entry) => entry.name === descriptor.propertyName,
         )?.node;
         if (!tag) continue;
-        const allowed = Array.isArray(tag.schemaType)
+        const allowed = isArray(tag.schemaType)
           ? tag.schemaType
           : [tag.schemaType];
         if (
@@ -97,7 +99,7 @@ export const collectBlueprintWarnings = (
             value === null
               ? !tag.nullable
               : !allowed.includes(
-                  Array.isArray(value)
+                  isArray(value)
                     ? 'array'
                     : typeof value === 'number' &&
                         Number.isInteger(value) &&

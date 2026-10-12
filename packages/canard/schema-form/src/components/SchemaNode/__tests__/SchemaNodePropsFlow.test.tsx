@@ -21,9 +21,9 @@ import {
 } from './SchemaNodePropsFlow.helpers';
 
 // Mock isSchemaNode to accept our mock objects
-vi.mock('@/schema-form/core/nodes/filter', async (importOriginal) => {
+vi.mock('@/schema-form/__legacy__/core/nodes/filter', async (importOriginal) => {
   const original =
-    await importOriginal<typeof import('@/schema-form/core/nodes/filter')>();
+    await importOriginal<typeof import('@/schema-form/__legacy__/core/nodes/filter')>();
   return {
     ...original,
     isSchemaNode: (input: any): boolean => {

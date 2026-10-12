@@ -1,3 +1,5 @@
+import { isArray } from '@winglet/common-utils/filter';
+
 import { createDivider } from './utils/createDivider';
 import { formatIndexedList } from './utils/formatIndexedList';
 import { formatLines } from './utils/formatLines';
@@ -105,7 +107,7 @@ export const formatObservedValuesError = (
   const divider = createDivider();
   const errorMessage = getErrorMessage(error);
   const watchDisplay = formatValuePreview(watch);
-  const watchPaths = Array.isArray(watch) ? watch : [watch];
+  const watchPaths = isArray(watch) ? watch : [watch];
   const watchSection = watchPaths
     .map((path, i) => `  │    [${i}] ${path} → index ${watchValueIndexes[i]}`)
     .join('\n');

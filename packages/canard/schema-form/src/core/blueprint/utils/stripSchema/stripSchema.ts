@@ -1,3 +1,4 @@
+import { isArray } from '@winglet/common-utils/filter';
 import { JSONSchemaScanner } from '@winglet/json-schema/scanner';
 
 import type { BlueprintSchema } from '../../type';
@@ -20,7 +21,7 @@ export const stripSchema = (schema: BlueprintSchema): BlueprintSchema => {
     options: {
       additionalKeywords: [...STRIP_SCHEMA_KEYWORDS],
       mutate: (entry) => {
-        if (Array.isArray(entry.schema)) return undefined;
+        if (isArray(entry.schema)) return undefined;
         const stripped = removeFormGroups(entry);
         if (stripped !== undefined) changed = true;
         const value = stripped ?? entry.schema;

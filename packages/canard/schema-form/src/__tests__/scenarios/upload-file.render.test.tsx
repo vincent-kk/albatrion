@@ -3,6 +3,7 @@ import type { FC } from 'react';
 import '@testing-library/jest-dom';
 import { describe, expect, it } from 'vitest';
 
+import { isArray } from '@winglet/common-utils/filter';
 import type { JSONSchema } from '@winglet/json-schema';
 
 import { type FormTypeInputProps } from '@/schema-form';
@@ -180,7 +181,7 @@ describe('upload-file — single-file field', () => {
     const map = form.attachedFilesMap();
     expect(Array.from(map.keys())).toEqual(['/attachment']);
     const files = map.get('/attachment');
-    expect(Array.isArray(files)).toBe(true);
+    expect(isArray(files)).toBe(true);
     expect(files).toHaveLength(1);
     expect(files![0]).toBeInstanceOf(File);
     expect(files![0].name).toBe('a.png');
@@ -232,7 +233,7 @@ describe('upload-file — multi-file array', () => {
     expect(files!.map((f) => f.name)).toEqual(['a.png', 'b.png', 'c.png']);
 
     const value = form.node('/attachments')?.value as FileMeta[];
-    expect(Array.isArray(value)).toBe(true);
+    expect(isArray(value)).toBe(true);
     expect(value).toHaveLength(3);
     expect(value.map((m) => m.name)).toEqual(['a.png', 'b.png', 'c.png']);
   });

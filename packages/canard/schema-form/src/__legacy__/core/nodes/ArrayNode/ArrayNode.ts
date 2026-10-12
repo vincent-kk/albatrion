@@ -1,0 +1,218 @@
+import { equals } from '@winglet/common-utils/object';
+
+import type { Nullish } from '@aileron/declare';
+
+import type { ArraySchema, ArrayValue } from '@/schema-form/types';
+
+import {
+  type BranchNodeConstructorProps,
+  type HandleChange,
+  type SchemaNode,
+  SetValueOption,
+  type UnionSetValueOption,
+} from '../../../../core/types';
+import { AbstractNode } from '../AbstractNode';
+import {
+  type ArrayNodeStrategy,
+  BranchStrategy,
+  TerminalStrategy,
+} from './strategies';
+import { omitTrailingArray, resolveArrayValueFilter } from './utils';
+
+/**
+ * Node class for handling array schemas.
+ * @remarks Manages each element of the array and provides `push`/`pop`/`update`/`remove`/`clear` functionality.
+ */
+export class ArrayNode extends AbstractNode<ArraySchema, ArrayValue> {
+  public override readonly type = 'array';
+
+  /** Active child nodes within the current scope. */
+  public override get children() {
+    return this.__strategy__.children;
+  }
+
+  /** Current length of the array. */
+  public get length() {
+    return this.__strategy__.length;
+  }
+
+  /** Minimum number of items required in the array (from JSON Schema minItems) */
+  public get minItems() {
+    return this.__strategy__.minItems;
+  }
+
+  /** Maximum number of items allowed in the array (from JSON Schema maxItems) */
+  public get maxItems() {
+    return this.__strategy__.maxItems;
+  }
+
+  /**
+   * @internal Strategy used by the array node.
+   * @remarks `BranchStrategy` for branch node with child nodes, `TerminalStrategy` for simple array data, without child nodes.
+   */
+  private __strategy__: ArrayNodeStrategy;
+
+  /** @internal */
+  public override __equals__(
+    this: ArrayNode,
+    left: ArrayValue | Nullish,
+    right: ArrayValue | Nullish,
+  ): boolean {
+    return equals(left, right);
+  }
+
+  /** @internal */
+  protected override onChange: HandleChange<ArrayValue | Nullish>;
+
+  /** @internal Whether `options.omitTrailing` is enabled for this node. */
+  private readonly __omitTrailing__: boolean;
+
+  /** Current array value or `undefined`. */
+  public override get value() {
+    return this.__strategy__.value;
+  }
+
+  public override set value(input: ArrayValue | Nullish) {
+    this.setValue(input);
+  }
+
+  /** Normalized value: children contribute their own `normalizedValue`, then `options.omitTrailing` trims the tail; `options.omitEmpty` stays on the parent-propagation path, and child nodes and the `value` getter keep the raw array. */
+  public override get normalizedValue(): ArrayValue | Nullish {
+    const normalized = this.__strategy__.normalizedValue;
+    return this.__omitTrailing__ ? omitTrailingArray(normalized) : normalized;
+  }
+
+  protected override applyValue(
+    this: ArrayNode,
+    input: ArrayValue | Nullish,
+    option: UnionSetValueOption,
+  ) {
+    this.__strategy__.applyValue(input, option);
+  }
+
+  /**
+   * @internal Mirrors the constructor: a given value or the schema default wins; otherwise the array is emptied and filled up to `minItems` with item defaults.
+   * @remarks The fill carries the `Reset` preset without `Replace`/`Propagate`: `Automatic` keeps a `null` ancestor recording it instead of promoting it, and `PreventInjection` keeps the fill from firing this array's own `injectTo`, which would write into other nodes. A derived value is the final winner, so the fill is skipped whenever `derived` applies.
+   * @remarks An inactive node cannot hold `base` — `__reset__` applies `undefined` instead — so `base` is recorded as the restore value directly, and the `minItems` filler that the branch strategy's refill produced is cleared so it cannot outrank that restore value on reactivation.
+   */
+  public override __resetToBlank__(
+    this: ArrayNode,
+    input?: ArrayValue | Nullish,
+  ) {
+    const base = input !== undefined ? input : this.jsonSchema.default;
+    this.__reset__({
+      inputValue: base !== undefined ? base : [],
+      applyDerivedValue: true,
+    });
+    if (
+      base === undefined &&
+      !(this.active && this.__computeManager__.isDerivedDefined)
+    )
+      while (this.length < this.minItems)
+        this.__strategy__.push(
+          undefined,
+          true,
+          SetValueOption.Reset &
+            ~(SetValueOption.Replace | SetValueOption.Propagate),
+        );
+    this.__setDefaultValue__(
+      this.__computeManager__.active || base === undefined
+        ? this.__blankValue__
+        : base,
+    );
+    if (!this.__computeManager__.active && base !== undefined && this.length)
+      this.applyValue(
+        undefined,
+        SetValueOption.BatchDefault | SetValueOption.Automatic,
+      );
+  }
+
+  /**
+   * The array as it stands right after a blank reset.
+   * @internal A strategy with item nodes reports its value on the next batch, so the items are read directly.
+   */
+  private get __blankValue__(): ArrayValue | Nullish {
+    const children = this.children;
+    if (children === null || this.value == null) return this.value;
+    return children.map((child) => child.node.value);
+  }
+
+  /**
+   * Adds a new element to the array.
+   * @param data - Value to add (optional, uses default if not provided)
+   * @param unlimited - If `true`, ignores `maxItems` constraint
+   * @returns The length of the array after the push operation
+   */
+  public push(this: ArrayNode, data?: ArrayValue[number], unlimited?: boolean) {
+    return this.__strategy__.push(data, unlimited);
+  }
+
+  /**
+   * Removes the last element from the array.
+   * @returns The removed value, or `undefined` if array was empty
+   */
+  public pop(this: ArrayNode) {
+    return this.__strategy__.pop();
+  }
+
+  /**
+   * Updates the value of an element at the specified index.
+   * @param index - Index of the element to update
+   * @param data - New value
+   * @returns The updated value, or `undefined` if index was out of bounds
+   */
+  public update(this: ArrayNode, index: number, data: ArrayValue[number]) {
+    return this.__strategy__.update(index, data);
+  }
+
+  /**
+   * Removes an element at the specified index.
+   * @param index - Index of the element to remove
+   * @returns The removed value, or `undefined` if index was out of bounds
+   */
+  public remove(this: ArrayNode, index: number) {
+    return this.__strategy__.remove(index);
+  }
+
+  /**
+   * Clears all elements from the array.
+   * @remarks Removes every item whatever `minItems` says — the constraint is left to validation, and a reset restores the fill. A `null` array stays `null`.
+   */
+  public clear(this: ArrayNode) {
+    return this.__strategy__.clear();
+  }
+
+  /** @internal */
+  public override __initialize__(this: ArrayNode, actor?: SchemaNode): boolean {
+    if (super.__initialize__(actor)) {
+      this.__strategy__.initialize?.();
+      return true;
+    }
+    return false;
+  }
+
+  constructor(properties: BranchNodeConstructorProps<ArraySchema>) {
+    super(properties);
+    const hasDefault =
+      properties.defaultValue !== undefined ||
+      properties.jsonSchema.default !== undefined;
+    this.__omitTrailing__ = this.jsonSchema.options?.omitTrailing === true;
+    const filterValue = resolveArrayValueFilter(this.jsonSchema.options);
+    const handleChange: HandleChange<ArrayValue | Nullish> = (
+      value,
+      batch,
+      automatic,
+    ) => super.onChange(filterValue(value), batch, automatic);
+    this.onChange = handleChange;
+    this.__strategy__ =
+      this.group === 'terminal'
+        ? new TerminalStrategy(this, hasDefault, handleChange)
+        : new BranchStrategy(
+            this,
+            hasDefault,
+            handleChange,
+            properties.nodeFactory,
+          );
+    this.__initialize__();
+  }
+}

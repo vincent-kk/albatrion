@@ -8,18 +8,54 @@ export interface ScenarioExpectation {
   readonly outputValue?: unknown;
   /** Expected values at individual JSON Pointer paths. */
   readonly values?: Readonly<Record<string, unknown>>;
+  /** Local state keys observed on nodes at JSON Pointer paths. */
+  readonly states?: Readonly<Record<string, Readonly<{
+    visible?: boolean;
+    readOnly?: boolean;
+    disabled?: boolean;
+    enabled?: boolean;
+  }>>>;
   /** Expected validation errors, indexed by JSON Pointer. */
   readonly errors?: Readonly<Record<string, readonly unknown[]>>;
+  /** Synchronous result of the action, including undefined when present. */
+  readonly result?: unknown;
+  /** New path to the path of the same node before this step. */
+  readonly identity?: Readonly<Record<string, string>>;
+  /** Load-snapshot values observed through each node's defaultValue. */
+  readonly defaultValues?: Readonly<Record<string, unknown>>;
+  /** Blueprint schema types selected for array positions. */
+  readonly schemaTypes?: Readonly<Record<string, unknown>>;
+  /** Untemplated array tail values retained by a host. */
+  readonly extras?: Readonly<Record<string, unknown>>;
+  /** Paths receiving value deliveries, in document order for this step. */
+  readonly deliveryOrder?: readonly string[];
+  /** Whole-form change callbacks made by this step. */
+  readonly onChangeCount?: number;
+  /** Validation requests made by this step before any explicit verdict check. */
+  readonly validationRequestCount?: number;
+  /** Structured error and warning codes reported during this step. */
+  readonly onErrorCodes?: readonly string[];
+  /** Expected settlement health fields on the form root. */
+  readonly diagnostics?: Readonly<{
+    status: 'stable' | 'degraded';
+    cause?: 'budget' | 'expression' | 'injectTarget' | 'sharedConflict';
+    exceededBudget?: 'hostWheel' | 'derive' | 'transition' | 'recursion';
+    iterations?: number;
+    commit?: number;
+  }>;
 }
 
 /** Closed ledger vocabulary; batch interpretation belongs to the injected engine. */
 export type FormScenarioStep = (
   | { readonly action: 'setValue'; readonly path: string; readonly value: unknown }
   | { readonly action: 'clear'; readonly path: string }
-  | { readonly action: 'push'; readonly path: string; readonly value: unknown }
+  | { readonly action: 'push'; readonly path: string; readonly value?: unknown }
+  | { readonly action: 'pop'; readonly path: string }
   | { readonly action: 'remove'; readonly path: string; readonly index: number }
-  | { readonly action: 'update'; readonly path: string; readonly schema: object }
-  | { readonly action: 'submit' | 'reset' }
+  | { readonly action: 'update'; readonly path: string; readonly index: number; readonly value: unknown }
+  | { readonly action: 'submit' }
+  | { readonly action: 'reset'; readonly automaticWrites?: 'disabled' }
+  | { readonly action: 'resetSubtree'; readonly path: string }
   | { readonly action: 'batch'; readonly steps: readonly FormScenarioStep[] }
 ) & { readonly expect?: ScenarioExpectation };
 
@@ -27,6 +63,8 @@ export type FormScenarioStep = (
 export interface FormScenario<Schema = object, Value = unknown> {
   /** Human-readable behavior used as the test and story label. */
   readonly name: string;
+  /** Ledger IDs and the behavior this scene checks. */
+  readonly description?: string;
   /** Schema interpreted by the injected form engine. */
   readonly schema: Schema;
   /** Optional initial value passed to the consumer's form. */

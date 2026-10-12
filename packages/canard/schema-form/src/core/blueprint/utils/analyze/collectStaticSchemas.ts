@@ -1,3 +1,5 @@
+import { isArray } from '@winglet/common-utils/filter';
+
 import type { BlueprintSchema } from '../../type';
 import { resolveReference } from './resolveReference';
 import type { AnalysisContext } from './type';
@@ -31,7 +33,7 @@ export const collectStaticSchemas = (
       ...collectStaticSchemas(context, target.schema, target.schemaPath, stack, cycle),
     );
   }
-  if (Array.isArray(schema.allOf))
+  if (isArray(schema.allOf))
     schema.allOf.forEach((part, index) => {
       const controls =
         typeof part === 'object' && part !== null ? part.controls : undefined;

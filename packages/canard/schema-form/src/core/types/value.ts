@@ -11,6 +11,8 @@ import {
   BIT_FLAG_07,
   BIT_FLAG_08,
   BIT_FLAG_09,
+  BIT_FLAG_10,
+  BIT_FLAG_11,
   BIT_MASK_NONE,
 } from '@/schema-form/app/constants';
 
@@ -63,6 +65,10 @@ export enum SetValueOption {
   Merge = Propagate | Refresh | Isolate | BatchDefault,
   /** Replace the value and propagate the update with refresh */
   Overwrite = Replace | Merge,
+  /** Suppress automatic writes caused by this call. */
+  DisableAutomaticWrites = BIT_FLAG_10,
+  /** Enable automatic writes for this call even when the form suppresses them. */
+  EnableAutomaticWrites = BIT_FLAG_11,
 }
 
 /** Subset of `SetValueOption` exposed to consumers of the package. */

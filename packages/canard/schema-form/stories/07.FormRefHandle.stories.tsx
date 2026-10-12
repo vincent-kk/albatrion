@@ -3,7 +3,7 @@ import { useMemo, useRef, useState } from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
 import { expect, userEvent, waitFor, within } from 'storybook/test';
 
-import type { ObjectNode } from '@/schema-form/core/nodes/ObjectNode';
+import type { ObjectNode } from '@/schema-form/__legacy__/core/nodes/ObjectNode';
 
 import {
   Form,

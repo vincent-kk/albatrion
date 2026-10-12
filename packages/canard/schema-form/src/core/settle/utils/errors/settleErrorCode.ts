@@ -1,0 +1,20 @@
+// Compatibility names for settlement; the shared error ledger table owns their values.
+import {
+  BUDGET_EXCEEDED,
+  RECURSIVE_SHAPE_DIVERGED,
+  EXPRESSION_THREW,
+  GUARD_FAILED,
+  SHARED_NODE_CONFLICT,
+  DISPOSED_NODE_WRITE,
+  INJECT_TARGET_MISSING,
+} from '@/schema-form/errors';
+
+export {
+  BUDGET_EXCEEDED,
+  RECURSIVE_SHAPE_DIVERGED,
+  EXPRESSION_THREW,
+  GUARD_FAILED,
+  SHARED_NODE_CONFLICT,
+  DISPOSED_NODE_WRITE,
+  INJECT_TARGET_MISSING,
+};

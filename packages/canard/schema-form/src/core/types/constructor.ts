@@ -9,7 +9,7 @@ import type {
   ValidatorFactory,
 } from '@/schema-form/types';
 
-import type { ContextNode } from '../nodes/ContextNode';
+import type { ContextNode } from '../../__legacy__/core/nodes/ContextNode';
 import type { SchemaNode } from './node';
 import type { ValidationMode } from './state';
 import type { HandleChange } from './value';

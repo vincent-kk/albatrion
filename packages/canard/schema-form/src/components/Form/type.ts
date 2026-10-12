@@ -9,7 +9,7 @@ import type {
   SchemaNode,
   ValidationMode,
 } from '@/schema-form/core';
-import type { NodeStateFlags } from '@/schema-form/core/nodes';
+import type { NodeStateFlags } from '@/schema-form/__legacy__/core/nodes';
 import type { VirtualizationOptions } from '@/schema-form/helpers/virtualization';
 import type {
   AllowedValue,

@@ -7,8 +7,8 @@ import type {
   ValidatorFactory,
 } from '@/schema-form/types';
 
-import { contextNodeFactory, createSchemaNodeFactory } from './nodes';
-import type { ContextNode } from './nodes';
+import { contextNodeFactory, createSchemaNodeFactory } from '../__legacy__/core/nodes';
+import type { ContextNode } from '../__legacy__/core/nodes';
 import type { InferSchemaNode, ValidationMode } from './types';
 
 /** Properties interface for creating Node from JSON Schema */

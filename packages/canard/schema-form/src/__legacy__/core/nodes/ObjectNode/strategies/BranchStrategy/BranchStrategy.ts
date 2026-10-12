@@ -1,0 +1,922 @@
+import {
+  differenceLite,
+  primitiveArrayEqual,
+  sortWithReference,
+} from '@winglet/common-utils/array';
+import { isArray, isEmptyObject } from '@winglet/common-utils/filter';
+import { getObjectKeys, sortObjectKeys } from '@winglet/common-utils/object';
+
+import type { Fn, Nullish } from '@aileron/declare';
+
+import { ENHANCED_KEY } from '@/schema-form/app/constants';
+import type { AbstractNode } from '@/schema-form/__legacy__/core/nodes/AbstractNode';
+import type { ObjectNode } from '@/schema-form/__legacy__/core/nodes/ObjectNode';
+import {
+  type ChildNode,
+  type HandleChange,
+  NodeEventType,
+  type SchemaNode,
+  type SchemaNodeFactory,
+  SetValueOption,
+  type UnionSetValueOption,
+} from '@/schema-form/core/types';
+import { getDefaultValue } from '@/schema-form/helpers/defaultValue';
+import { joinSegment } from '@/schema-form/helpers/jsonPointer';
+import { isTerminalType } from '@/schema-form/helpers/jsonSchema';
+import type { ObjectValue } from '@/schema-form/types';
+
+import type { ObjectNodeStrategy } from '../types';
+import type { ChildNodeMap } from './type';
+import {
+  type FieldConditionMap,
+  getChildNodeMap,
+  getChildren,
+  getCompositionKeyInfo,
+  getCompositionNodeMapList,
+  getConditionsMap,
+  getFieldConditionMap,
+  getVirtualReferencesMap,
+  hasCompositionSchema,
+  processValueWithCondition,
+  processValueWithValidate,
+  validateSchemaType,
+} from './utils';
+
+export class BranchStrategy implements ObjectNodeStrategy {
+  /** Host ObjectNode instance that this strategy belongs to */
+  private readonly __host__: ObjectNode;
+
+  /** Flag indicating whether to ignore additional properties */
+  private readonly __ignoreAdditionalProperties__: boolean;
+
+  /** Callback function to handle value changes */
+  private readonly __handleChange__: HandleChange<ObjectValue | Nullish>;
+
+  /** Array of schema property keys in order */
+  private readonly __propertyKeys__: string[];
+
+  /** Map of field conditions for conditional schema properties */
+  private readonly __fieldConditionMap__?: FieldConditionMap;
+
+  /** Map of property keys to child nodes */
+  private readonly __childNodeMap__: ChildNodeMap;
+
+  /** Flag indicating whether the node is in isolation mode (affects condition processing) */
+  private __isolated__: boolean = false;
+
+  /** Flag indicating whether the strategy is already processing a batch */
+  private __batched__: boolean = false;
+
+  /** Whether a child write from outside the form's own machinery is waiting for the next commit */
+  private __intended__: boolean = false;
+
+  /** Flag indicating whether the strategy is locked to prevent recursive updates */
+  private __locked__: boolean = true;
+
+  /** Current committed value of the object node */
+  private __value__: ObjectValue | Nullish;
+
+  /** Draft value containing pending changes before commit */
+  private __draft__: ObjectValue | Nullish;
+
+  /**
+   * What the children hold while the object is `null` — the object it becomes on its first outside write.
+   * @remarks Meaningful only while `__isNull__`. It starts from the node's own object `default` and takes child emits on top — the way the constructor merges child emits into its base — and is rebuilt each time the object becomes `null`, because a child whose blank reset changes nothing emits nothing and would keep its old entry.
+   */
+  private __blank__: ObjectValue = {};
+
+  /**
+   * Whether an activating child already carries live array state of its own.
+   * @param node - Child node being restored by a branch switch
+   * @returns `true` for an array child holding items — a same-batch hydration or an inactive-branch injection whose raw item nodes (incl. trailing empties) must survive the restore
+   * @remarks Deliberately array-only: defaulted objects legitimately hold content right after a reset, so content cannot distinguish their pristine state and they keep the composed/defaults restoration chain. The type check runs before the `value` read, so non-array getters (which may recompose) are never touched.
+   */
+  private __hasArrayState__(node: SchemaNode): boolean {
+    if (node.type !== 'array') return false;
+    const value = node.value;
+    return isArray(value) && value.length > 0;
+  }
+
+  /** Flag indicating whether the object value is expired */
+  private __expired__: boolean = true;
+
+  /**
+   * What `__parseValue__` gave the last read of a value whose commit is still pending — `false` when the draft changes nothing.
+   * @remarks Meaningful only while `__composedValid__`. Repeated reads return this one reference, and the batched commit the window was waiting for uses it instead of composing again; every other commit composes for itself.
+   */
+  private __composed__: ObjectValue | Nullish | false;
+
+  /** Whether `__composed__` still matches the pending draft: a child write and every commit clear it. */
+  private __composedValid__: boolean = false;
+
+  /**
+   * The object this node's own schema `default` gives its children while the node is `null`.
+   * @remarks A form without a default value builds the children from it, so the blank form of a null node does too; `undefined` when the schema default is absent or `null`.
+   */
+  private get __blankBase__(): ObjectValue | undefined {
+    return this.__host__.jsonSchema.default ?? undefined;
+  }
+
+  /** Whether the object is `null` with no child write pending in the draft. */
+  private get __isNull__() {
+    return (
+      this.__value__ === null &&
+      (this.__draft__ === null || isEmptyObject(this.__draft__))
+    );
+  }
+
+  /**
+   * Determines whether to queue or immediately process value changes.
+   *
+   * In batch mode: Publishes RequestEmitChange event for deferred processing
+   * In sync mode: Immediately calls handleEmitChange for instant updates
+   *
+   * @param option - Change options (optional)
+   * @private
+   */
+  private __emitChange__(
+    option: UnionSetValueOption,
+    batched: boolean = false,
+  ) {
+    if (this.__locked__) return;
+    if (batched) {
+      if (this.__batched__) return;
+      this.__batched__ = true;
+      this.__host__.publish(NodeEventType.RequestEmitChange, option);
+    } else this.__handleEmitChange__(option);
+  }
+
+  /**
+   * Reflects value changes and publishes related events.
+   * @param option - Setting options
+   * @param pending - Whether this is the batched commit a pending window was waiting for; only that commit may use what a read composed in the window
+   * @private
+   */
+  private __handleEmitChange__(
+    option: UnionSetValueOption = SetValueOption.Default,
+    pending: boolean = false,
+  ) {
+    if (this.__locked__) return;
+    const host = this.__host__;
+    const replace = (option & SetValueOption.Replace) > 0;
+    const normalize = (option & SetValueOption.Normalize) > 0;
+    const settled = (option & SetValueOption.Isolate) === 0;
+    const inject = (option & SetValueOption.PreventInjection) === 0;
+
+    const base = this.__value__;
+    const draft = this.__draft__;
+    const previous = base ? { ...base } : base;
+    const current =
+      pending && this.__composedValid__
+        ? this.__composed__
+        : this.__parseValue__(base, draft, replace, normalize, host.nullable);
+    this.__composedValid__ = false;
+
+    const intended = this.__intended__;
+    const automatic = (option & SetValueOption.Automatic) > 0 && !intended;
+    this.__intended__ = false;
+
+    if (current === false) {
+      if (intended && host.__hasNullAncestor__)
+        this.__handleChange__(base, (option & SetValueOption.Batch) > 0, false);
+      return;
+    }
+
+    if (!automatic) host.__markIntendedWrite__();
+    this.__value__ = current;
+    this.__draft__ = {};
+
+    if (this.__expired__) this.__expired__ = false;
+    if (option & SetValueOption.EmitChange)
+      this.__handleChange__(
+        current,
+        (option & SetValueOption.Batch) > 0,
+        automatic,
+      );
+    if (option & SetValueOption.Propagate)
+      this.__propagate__(current, draft, replace, option);
+    if (option & SetValueOption.Refresh)
+      host.publish(NodeEventType.RequestRefresh);
+    if (option & SetValueOption.Isolate) host.__updateComputedProperties__();
+    if (option & SetValueOption.PublishUpdateEvent)
+      host.publish(
+        NodeEventType.UpdateValue,
+        current,
+        { previous, current, settled, inject },
+        settled && host.initialized,
+      );
+  }
+
+  /**
+   * Parses input value and processes it as an object.
+   * @param base - Base object to parse
+   * @param draft - Draft object to parse
+   * @param nullable - Whether the object is nullable
+   * @param replace - Whether to replace the existing value
+   * @returns {ObjectValue} Processed object, or `false` when the draft changes nothing
+   * @remarks An empty draft merged into a `null` base changes nothing — only a replace (an explicit `{}`) or a child write may promote `null`. Keys merged into a `null` base land on the blank form, as a child write does.
+   * @private
+   */
+  private __parseValue__(
+    base: ObjectValue | Nullish,
+    draft: ObjectValue | Nullish,
+    replace: boolean,
+    normalize: boolean,
+    nullable: boolean,
+  ) {
+    if (draft === undefined) return undefined;
+    if (draft === null) return nullable ? null : {};
+    if (!replace && base === null && isEmptyObject(draft)) return false;
+    if (replace || base === undefined)
+      return this.__processValue__(draft, normalize);
+    if (base === null)
+      return this.__processValue__({ ...this.__blank__, ...draft }, normalize);
+    if (isEmptyObject(draft) || this.__host__.__equals__(base, draft))
+      return false;
+    return this.__processValue__({ ...base, ...draft }, normalize);
+  }
+
+  /**
+   * Processes input value and processes it as an object.
+   * @param input - Object to parse
+   * @returns {ObjectValue} Parsed object
+   * @private
+   */
+  private __processValue__(input: ObjectValue, normalize?: boolean) {
+    const value = sortObjectKeys(input, this.__propertyKeys__, {
+      ignoreUndefinedKey: this.__ignoreAdditionalProperties__ || normalize,
+      ignoreUndefinedValue: true,
+    });
+    if (this.__isolated__)
+      return processValueWithCondition(value, this.__fieldConditionMap__);
+    return value;
+  }
+
+  /**
+   * Propagates value changes to child nodes.
+   * @param replace - Whether to replace existing values
+   * @param option - Setting options
+   * @remarks Skips a filtering child (raw ≠ normalized) when the incoming slice equals its own normalized output — echoing it back would erase raw-only state such as trailing empty array items.
+   *          Becoming `null` blanks the children of every branch, not only the one in use: a branch restore returns a child to its default, and a child left out would bring its old value back.
+   * @private
+   */
+  private __propagate__(
+    source: ObjectValue | Nullish,
+    target: ObjectValue | Nullish,
+    replace: boolean,
+    option: UnionSetValueOption,
+  ) {
+    const current = source || {};
+    const committed = target || {};
+    const nullify = target === null;
+    if (nullify) this.__blank__ = { ...this.__blankBase__ };
+    const propagateOption =
+      target == null ? option & ~SetValueOption.EmitChange : option;
+    this.__locked__ = true;
+    const nodes = source === null ? this.__subnodes__ : this.__children__;
+    for (let i = 0, l = nodes.length; i < l; i++) {
+      const node = nodes[i].node;
+      if (node.type === 'virtual') continue;
+      const name = node.name;
+      if (source === null) {
+        (node as AbstractNode).__resetToBlank__(this.__blankBase__?.[name]);
+        continue;
+      }
+      if (replace || nullify || (name in committed && name in current)) {
+        const nextValue = nullify ? null : current[name];
+        if (
+          !nullify &&
+          node.normalizedValue !== node.value &&
+          (node as AbstractNode).__equals__(node.normalizedValue, nextValue)
+        )
+          continue;
+        node.setValue(nextValue, propagateOption);
+      }
+    }
+    this.__locked__ = false;
+  }
+
+  /**
+   * Gets the current value of the object.
+   * @returns The committed value, with a child write whose commit is still pending laid over it
+   * @remarks A read commits nothing: the pending commit still runs once, on its own path and with its own options. While locked the committed value is returned as it stands.
+   */
+  public get value() {
+    if (!this.__expired__ || this.__locked__) return this.__value__;
+    if (!this.__composedValid__) {
+      this.__composed__ = this.__parseValue__(
+        this.__value__,
+        this.__draft__,
+        false,
+        false,
+        this.__host__.nullable,
+      );
+      this.__composedValid__ = true;
+    }
+    return this.__composed__ === false ? this.__value__ : this.__composed__;
+  }
+
+  /**
+   * Applies input value to the object node.
+   * @param input - Object value to set
+   * @param option - Setting options
+   */
+  public applyValue(input: ObjectValue | Nullish, option: UnionSetValueOption) {
+    this.__draft__ = input;
+    if ((option & SetValueOption.Automatic) === 0 && !isEmptyObject(input))
+      this.__intended__ = true;
+    this.__expired__ = true;
+    // Keep a pending composition reset isolated until its event is settled.
+    this.__isolated__ =
+      (option & SetValueOption.Isolate) > 0 ||
+      (!this.__isPristine__ && this.__isolated__);
+    this.__emitChange__(option);
+  }
+
+  /**
+   * Rebuilds the subtree the way a form without a default value builds it.
+   * @param input - Value the parent's schema default assigns to this object, if any
+   * @remarks Mirrors the constructor: the base becomes the value, children take their slice of it or their own schema default, and what they emit is merged in — so a base the children merely repeat is, as at construction, not reported to the parent — the parent already holds that slice in its own base.
+   */
+  public resetToBlank(input?: ObjectValue | Nullish) {
+    const host = this.__host__;
+    const base = input !== undefined ? input : getDefaultValue(host.jsonSchema);
+    if (base === null) {
+      host.__setDefaultValue__(null);
+      return host.setValue(null, SetValueOption.StableReset);
+    }
+    this.__value__ = base;
+    this.__draft__ = {};
+    this.__locked__ = true;
+    for (let i = 0, l = this.__subnodes__.length; i < l; i++) {
+      const node = this.__subnodes__[i].node;
+      if (node.type === 'virtual') continue;
+      (node as AbstractNode).__resetToBlank__(base?.[node.name]);
+    }
+    this.__locked__ = false;
+    this.__expired__ = true;
+    this.__emitChange__(
+      SetValueOption.StableReset &
+        ~(SetValueOption.Propagate | SetValueOption.Replace),
+    );
+    host.__setDefaultValue__(this.__value__);
+  }
+
+  /** Array of child nodes for regular properties (non-oneOf) */
+  private readonly __propertyChildren__: ChildNode[];
+
+  /** Current active children nodes (combination of property and oneOf children) */
+  private __children__: ChildNode[] = [];
+
+  /** Array of child nodes for regular properties and oneOf properties */
+  private readonly __subnodes__: ChildNode[];
+
+  /**
+   * Publishes a child node change event.
+   * @private
+   */
+  private __publishChildrenChange__() {
+    if (this.__locked__) return;
+    this.__host__.publish(NodeEventType.UpdateChildren);
+  }
+
+  /**
+   * Gets the child nodes of the object node.
+   * @returns List of child nodes
+   */
+  public get children() {
+    return this.__children__;
+  }
+
+  /**
+   * Gets all of the child nodes of the object node.
+   * @returns List of child nodes
+   */
+  public get subnodes() {
+    return this.__subnodes__;
+  }
+
+  /** Set of all oneOf schema keys, undefined if no oneOf schema exists */
+  private readonly __oneOfKeySet__?: Set<string>;
+
+  /** Array of key sets for each oneOf branch, undefined if no oneOf schema exists */
+  private readonly __oneOfKeySetList__?: Set<string>[];
+
+  /** Array of child node arrays for each oneOf branch */
+  private readonly __oneOfChildNodeMapList__?: ChildNodeMap[];
+
+  /** Previously active oneOf index for tracking oneOf branch changes */
+  private __oneOfIndex__: number = -1;
+
+  /** Active oneOf child node map */
+  private __oneOfChildNodeMap__: ChildNodeMap | null = null;
+
+  /** Set of all anyOf schema keys, undefined if no anyOf schema exists */
+  private readonly __anyOfKeySet__?: Set<string>;
+
+  /** Array of key sets for each anyOf branch, undefined if no anyOf schema exists */
+  private readonly __anyOfKeySetList__?: Set<string>[];
+
+  /** Array of child node arrays for each anyOf branch */
+  private readonly __anyOfChildNodeMapList__?: ChildNodeMap[];
+
+  /** Previously active anyOf index for tracking anyOf branch changes */
+  private __anyOfIndices__: number[] = [];
+
+  /** Active anyOf child node maps */
+  private __anyOfChildNodeMaps__: ChildNodeMap[] | null = null;
+
+  /** Function to validate composition value */
+  private __validateAllowedKey__: Fn<[key: string], boolean> | undefined;
+
+  /** Whether the object node has no oneOf and anyOf schema */
+  private get __isPristine__() {
+    return (
+      this.__oneOfChildNodeMapList__ === undefined &&
+      this.__anyOfChildNodeMapList__ === undefined
+    );
+  }
+
+  /**
+   * Updates child nodes when oneOf index changes, if oneOf schema exists.
+   * @private
+   */
+  private __prepareCompositionChildren__() {
+    if (this.__isPristine__) return;
+    this.__validateAllowedKey__ = this.__createAllowedKeyValidator__();
+    this.__host__.subscribe(({ type }) => {
+      if (type & NodeEventType.UpdateComputedProperties) {
+        const isolation = this.__isolated__;
+        const skipOneOfUpdate = this.__processOneOfChildren__(isolation);
+        const skipAnyOfUpdate = this.__processAnyOfChildren__(isolation);
+        if (skipOneOfUpdate && skipAnyOfUpdate) return;
+        if (isolation) this.__isolated__ = false;
+        this.__processChildren__();
+        this.__processCompositionValue__(isolation);
+      }
+    });
+  }
+
+  /**
+   * Updates child nodes when oneOf index changes, if oneOf schema exists.
+   * @remarks Restore input prefers a child's own live array state (`__hasArrayState__`) over the composed value; only that case widens the preferLatest/default gates, so every other path keeps the restore-defaults contract.
+   * @private
+   */
+  private __processOneOfChildren__(isolation: boolean) {
+    if (this.__oneOfChildNodeMapList__ === undefined) return true;
+
+    const current = this.__host__.oneOfIndex;
+    const previous = this.__oneOfIndex__;
+
+    if (!isolation && current === previous) return true;
+
+    const oneOfChildNodeMap =
+      current > -1 ? this.__oneOfChildNodeMapList__[current] : null;
+    const preserveInitial =
+      previous === -1 && this.__oneOfChildNodeMap__ === oneOfChildNodeMap;
+
+    this.__locked__ = true;
+    const previousOneOfChildNodeMap =
+      previous > -1 ? this.__oneOfChildNodeMapList__[previous] : null;
+    if (previousOneOfChildNodeMap)
+      for (const child of previousOneOfChildNodeMap.values()) {
+        child.node.__reset__({ updateScoped: true });
+      }
+    if (oneOfChildNodeMap)
+      for (const child of oneOfChildNodeMap.values()) {
+        const node = child.node;
+        const previousNode = previousOneOfChildNodeMap?.get(node.name)?.node;
+        const hasArrayState = this.__hasArrayState__(node);
+        const candidate = hasArrayState
+          ? node.value
+          : this.__value__?.[node.name];
+        const restoreValue =
+          candidate !== undefined &&
+          validateSchemaType(candidate, node.type, node.nullable)
+            ? candidate
+            : undefined;
+        const preserveArrayState = hasArrayState && restoreValue !== undefined;
+        node.__reset__({
+          updateScoped: true,
+          isolate: !preserveInitial && hasCompositionSchema(node),
+          preferLatest:
+            isolation ||
+            preserveInitial ||
+            preserveArrayState ||
+            (node.type === previousNode?.type && isTerminalType(node.type)),
+          applyDerivedValue: true,
+          checkDefaultValueFirst:
+            isolation === false && !preserveInitial && !preserveArrayState,
+          fallbackValue: restoreValue,
+        });
+        node.__updateComputedPropertiesRecursively__();
+      }
+    this.__locked__ = false;
+
+    this.__oneOfIndex__ = current;
+    this.__oneOfChildNodeMap__ = oneOfChildNodeMap;
+
+    return false;
+  }
+
+  /**
+   * Updates child nodes when anyOf indices change, if anyOf schema exists.
+   * @param isolation - Whether the operation is in isolation mode
+   * @returns Array of active anyOf child node maps, null if no change needed, or undefined if no active anyOf branches
+   * @private
+   */
+  private __processAnyOfChildren__(isolation: boolean) {
+    if (this.__anyOfChildNodeMapList__ === undefined) return true;
+
+    const current = this.__host__.anyOfIndices;
+    const previous = this.__anyOfIndices__;
+
+    if (!isolation && primitiveArrayEqual(current, previous)) return true;
+
+    const anyOfChildNodeMaps = new Array<ChildNodeMap>(current.length);
+    for (let i = 0, l = current.length; i < l; i++)
+      anyOfChildNodeMaps[i] = this.__anyOfChildNodeMapList__[current[i]];
+
+    const primedAnyOfMaps = this.__anyOfChildNodeMaps__;
+    const preserveInitial =
+      previous.length === 0 &&
+      primedAnyOfMaps !== null &&
+      primitiveArrayEqual(primedAnyOfMaps, anyOfChildNodeMaps);
+
+    this.__locked__ = true;
+    const disables = isolation ? previous : differenceLite(previous, current);
+    if (disables.length > 0)
+      for (let i = 0, l = disables.length; i < l; i++) {
+        const anyOfChildNodes =
+          this.__anyOfChildNodeMapList__[disables[i]].values();
+        for (const child of anyOfChildNodes) {
+          child.node.__reset__({ updateScoped: true });
+        }
+      }
+    const enables = isolation ? current : differenceLite(current, previous);
+    if (enables.length > 0)
+      for (let i = 0, l = enables.length; i < l; i++) {
+        const anyOfChildNodes =
+          this.__anyOfChildNodeMapList__[enables[i]].values();
+        for (const child of anyOfChildNodes) {
+          const node = child.node;
+          const hasArrayState = this.__hasArrayState__(node);
+          const restoreValue = hasArrayState
+            ? node.value
+            : this.__value__?.[node.name];
+          node.__reset__({
+            updateScoped: true,
+            isolate: !preserveInitial && hasCompositionSchema(node),
+            preferLatest:
+              isolation ||
+              preserveInitial ||
+              (hasArrayState &&
+                validateSchemaType(restoreValue, node.type, node.nullable)),
+            applyDerivedValue: true,
+            fallbackValue: restoreValue,
+          });
+          node.__updateComputedPropertiesRecursively__();
+        }
+      }
+    this.__locked__ = false;
+
+    this.__anyOfIndices__ = current;
+    this.__anyOfChildNodeMaps__ =
+      anyOfChildNodeMaps.length > 0 ? anyOfChildNodeMaps : null;
+
+    return false;
+  }
+
+  /**
+   * Updates the active children array based on current oneOf and anyOf selections.
+   * @param oneOfChildNodeMap - Active oneOf child node map (null if no oneOf or none selected)
+   * @param anyOfChildNodeMaps - Array of active anyOf child node maps (null if no anyOf or none selected)
+   * @private
+   */
+  private __processChildren__() {
+    const oneOfChildNodeMap = this.__oneOfChildNodeMap__;
+    const anyOfChildNodeMaps = this.__anyOfChildNodeMaps__;
+    if (oneOfChildNodeMap === null && anyOfChildNodeMaps === null)
+      this.__children__ = this.__propertyChildren__;
+    else {
+      const keys = this.__propertyKeys__;
+      const children: ChildNode[] = [];
+      for (let i = 0, k = keys[0], l = keys.length; i < l; i++, k = keys[i]) {
+        const childNode =
+          this.__childNodeMap__.get(k) ||
+          oneOfChildNodeMap?.get(k) ||
+          anyOfChildNodeMaps?.find((map) => map.has(k))?.get(k);
+        if (childNode) children.push(childNode);
+      }
+      this.__children__ = children;
+    }
+    this.__publishChildrenChange__();
+  }
+
+  /**
+   * Processes and validates the object value according to active composition branches.
+   * Filters out properties that are not allowed by current oneOf/anyOf selections.
+   * @param isolation - Whether the operation is in isolation mode
+   * @remarks A `null` value with no pending child write has no keys to filter; recomposing it would commit `{}` in its place, so only the enhancer is adjusted.
+   * @private
+   */
+  private __processCompositionValue__(isolation: boolean) {
+    if (this.__host__.__validationEnabled__)
+      this.__host__.__adjustEnhancer__(
+        joinSegment(this.__host__.path, ENHANCED_KEY),
+        this.__oneOfIndex__,
+      );
+    if (this.__isNull__) {
+      this.__blank__ = processValueWithValidate(
+        this.__blank__,
+        this.__validateAllowedKey__,
+      );
+      return;
+    }
+    this.__draft__ = processValueWithValidate(
+      this.__processValue__({ ...this.__value__, ...this.__draft__ }),
+      this.__validateAllowedKey__,
+    );
+    this.__expired__ = false;
+    this.__processComputedProperties__(this.__draft__);
+    this.__emitChange__(
+      isolation ? SetValueOption.IsolateReset : SetValueOption.Reset,
+    );
+  }
+
+  /**
+   * Creates a validator function that determines whether a property key is allowed
+   * based on the current oneOf and anyOf selections.
+   * @returns Function that validates if a property key should be included in the object value
+   * @private
+   */
+  private __createAllowedKeyValidator__() {
+    return (key: string) => {
+      if (
+        this.__oneOfKeySet__?.has(key) &&
+        this.__oneOfKeySetList__ !== undefined
+      )
+        if (this.__oneOfIndex__ > -1)
+          return this.__oneOfKeySetList__[this.__oneOfIndex__].has(key);
+        else return false;
+      if (
+        this.__anyOfKeySet__?.has(key) &&
+        this.__anyOfKeySetList__ !== undefined
+      )
+        if (this.__anyOfIndices__.length > 0) {
+          for (let i = 0, l = this.__anyOfIndices__.length; i < l; i++)
+            if (this.__anyOfKeySetList__[this.__anyOfIndices__[i]].has(key))
+              return true;
+          return false;
+        } else return false;
+      return true;
+    };
+  }
+
+  /**
+   * Prepares the process computed properties.
+   * @private
+   */
+  private __prepareProcessComputedProperties__() {
+    this.__host__.subscribe(({ type, options }) => {
+      if (type & NodeEventType.UpdateValue) {
+        if (options?.[NodeEventType.UpdateValue]?.settled) return;
+        if (this.__processComputedProperties__(this.__value__)) return;
+        this.__emitChange__(
+          SetValueOption.BatchedEmitChange | SetValueOption.Automatic,
+        );
+      }
+    });
+  }
+
+  /**
+   * Excludes values of invisible child elements from the computed value.
+   * @param source - Source object to check
+   * @returns Whether the computed properties were processed
+   * @private
+   */
+  private __processComputedProperties__(source: ObjectValue | Nullish) {
+    if (!source || !this.__draft__) return false;
+    let noop = true;
+    for (let i = 0, l = this.__children__.length; i < l; i++) {
+      const node = this.__children__[i].node;
+      if (node.type === 'virtual') continue;
+      if (node.active) continue;
+      const name = node.name;
+      if (source[name] === undefined) continue;
+      this.__draft__[name] = undefined;
+      if (noop) noop = false;
+    }
+    return noop;
+  }
+
+  /**
+   * Propagates activation to all child nodes.
+   * @internal Internal implementation method. Do not call directly.
+   */
+  public initialize() {
+    let enabled = false;
+    for (let i = 0, l = this.__subnodes__.length; i < l; i++) {
+      const childNode = this.__subnodes__[i].node;
+      (childNode as AbstractNode).__initialize__(this.__host__);
+      if (!enabled && childNode.__computeManager__.isEnabled) enabled = true;
+    }
+    if (enabled) this.__prepareProcessComputedProperties__();
+    this.__primeInitialBranch__();
+    this.__processChildren__();
+  }
+
+  /**
+   * Snaps active oneOf/anyOf maps once at init,
+   * ahead of the UpdateComputedProperties cascade,
+   * so React's first `useState(node.children)` reads the complete list.
+   * @private
+   */
+  private __primeInitialBranch__() {
+    if (this.__oneOfChildNodeMapList__) {
+      const index = this.__host__.oneOfIndex;
+      if (index > -1)
+        this.__oneOfChildNodeMap__ = this.__oneOfChildNodeMapList__[index];
+    }
+    if (this.__anyOfChildNodeMapList__) {
+      const indices = this.__host__.anyOfIndices;
+      if (indices.length > 0) {
+        const maps = new Array<ChildNodeMap>(indices.length);
+        for (let i = 0, l = indices.length; i < l; i++)
+          maps[i] = this.__anyOfChildNodeMapList__[indices[i]];
+        this.__anyOfChildNodeMaps__ = maps;
+      }
+    }
+  }
+
+  /**
+   * Initializes the BranchStrategy object.
+   * @param host - Host ObjectNode object
+   * @param handleChange - Value change handler
+   * @param handleRefresh - Refresh handler
+   * @param handleSetDefaultValue - Default value setting handler
+   * @param handleUpdateComputedProperties - Computed properties update handler
+   * @param nodeFactory - Node creation factory
+   */
+  constructor(
+    host: ObjectNode,
+    handleChange: HandleChange<ObjectValue | Nullish>,
+    nodeFactory: SchemaNodeFactory,
+  ) {
+    this.__host__ = host;
+    this.__handleChange__ = handleChange;
+
+    this.__value__ = host.defaultValue;
+    this.__draft__ = host.defaultValue === null ? null : {};
+
+    const jsonSchema = host.jsonSchema;
+
+    this.__ignoreAdditionalProperties__ =
+      jsonSchema.additionalProperties === false;
+
+    const propertyKeys = sortWithReference(
+      getObjectKeys(jsonSchema.properties),
+      jsonSchema.propertyKeys,
+    );
+
+    const oneOfKeyInfo = getCompositionKeyInfo('oneOf', jsonSchema);
+    if (oneOfKeyInfo) {
+      this.__oneOfKeySet__ = oneOfKeyInfo.unionKeySet;
+      this.__oneOfKeySetList__ = oneOfKeyInfo.schemaKeySets;
+    }
+
+    const anyOfKeyInfo = getCompositionKeyInfo('anyOf', jsonSchema);
+    if (anyOfKeyInfo) {
+      this.__anyOfKeySet__ = anyOfKeyInfo.unionKeySet;
+      this.__anyOfKeySetList__ = anyOfKeyInfo.schemaKeySets;
+    }
+
+    if (this.__oneOfKeySet__ || this.__anyOfKeySet__) {
+      this.__propertyKeys__ = sortWithReference(
+        [
+          ...propertyKeys,
+          ...(this.__oneOfKeySet__ ? Array.from(this.__oneOfKeySet__) : []),
+          ...(this.__anyOfKeySet__ ? Array.from(this.__anyOfKeySet__) : []),
+        ],
+        jsonSchema.propertyKeys,
+      );
+    } else this.__propertyKeys__ = propertyKeys;
+
+    const handleChangeFactory =
+      (property: string): HandleChange =>
+      (input, batched, automatic) => {
+        if (this.__isNull__) {
+          // Locked means this strategy is driving its own children (construction,
+          // propagation, branch restore); like an automatic or valueless write, it is recorded only.
+          if (automatic || this.__locked__ || input === undefined) {
+            this.__blank__[property] = input;
+            return;
+          }
+          this.__draft__ = { ...this.__blank__ };
+        } else {
+          if (this.__draft__ == null) this.__draft__ = {};
+          if (input === undefined && this.__value__?.[property] === input)
+            return;
+          if (input !== undefined && this.__draft__[property] === input) {
+            // The draft already holds this value, but an outside write of it still has to reach a null ancestor.
+            if (automatic || this.__locked__) return;
+            this.__intended__ = true;
+            return this.__emitChange__(SetValueOption.Default, batched);
+          }
+        }
+        this.__draft__[property] = input;
+        this.__composedValid__ = false;
+        this.__expired__ = true;
+        if (this.__isolated__ && this.__isPristine__) this.__isolated__ = false;
+        if (!automatic && !this.__locked__) this.__intended__ = true;
+        this.__emitChange__(
+          automatic
+            ? SetValueOption.Default | SetValueOption.Automatic
+            : SetValueOption.Default,
+          batched,
+        );
+      };
+    host.subscribe(({ type, payload }) => {
+      if (type & NodeEventType.RequestEmitChange) {
+        this.__handleEmitChange__(
+          payload?.[NodeEventType.RequestEmitChange],
+          true,
+        );
+        this.__batched__ = false;
+      }
+    });
+
+    const childDefaults =
+      host.defaultValue === null ? this.__blankBase__ : host.defaultValue;
+    if (host.defaultValue === null) this.__blank__ = { ...this.__blankBase__ };
+
+    const { virtualReferencesMap, virtualReferenceFieldsMap } =
+      getVirtualReferencesMap(host.name, propertyKeys, host.jsonSchema.virtual);
+
+    this.__fieldConditionMap__ = getFieldConditionMap(jsonSchema);
+
+    const conditionsMap = getConditionsMap(this.__fieldConditionMap__);
+
+    this.__childNodeMap__ = getChildNodeMap(
+      host,
+      jsonSchema,
+      propertyKeys,
+      childDefaults,
+      conditionsMap,
+      virtualReferencesMap,
+      virtualReferenceFieldsMap,
+      handleChangeFactory,
+      nodeFactory,
+    );
+
+    this.__propertyChildren__ = getChildren(
+      host,
+      propertyKeys,
+      this.__childNodeMap__,
+      conditionsMap,
+      virtualReferencesMap,
+      virtualReferenceFieldsMap,
+      nodeFactory,
+    );
+
+    this.__oneOfChildNodeMapList__ = getCompositionNodeMapList(
+      host,
+      'oneOf',
+      jsonSchema,
+      childDefaults,
+      this.__childNodeMap__,
+      this.__oneOfKeySetList__,
+      this.__anyOfKeySet__,
+      handleChangeFactory,
+      nodeFactory,
+    );
+
+    this.__anyOfChildNodeMapList__ = getCompositionNodeMapList(
+      host,
+      'anyOf',
+      jsonSchema,
+      childDefaults,
+      this.__childNodeMap__,
+      this.__anyOfKeySetList__,
+      this.__oneOfKeySet__,
+      handleChangeFactory,
+      nodeFactory,
+    );
+
+    const subnodes = [...this.__propertyChildren__];
+    if (this.__oneOfChildNodeMapList__)
+      for (const childNodeMap of this.__oneOfChildNodeMapList__)
+        for (const child of childNodeMap.values()) subnodes.push(child);
+    if (this.__anyOfChildNodeMapList__)
+      for (const childNodeMap of this.__anyOfChildNodeMapList__)
+        for (const child of childNodeMap.values()) subnodes.push(child);
+    this.__subnodes__ = subnodes;
+
+    this.__locked__ = false;
+
+    this.__emitChange__(SetValueOption.Default);
+    this.__host__.__setDefaultValue__(this.__value__);
+
+    this.__prepareCompositionChildren__();
+  }
+}

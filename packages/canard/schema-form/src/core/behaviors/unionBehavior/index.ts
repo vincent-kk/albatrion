@@ -1,0 +1,1 @@
+export { unionBehavior } from './unionBehavior';

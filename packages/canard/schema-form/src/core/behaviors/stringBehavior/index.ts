@@ -1,0 +1,1 @@
+export { stringBehavior } from './stringBehavior';

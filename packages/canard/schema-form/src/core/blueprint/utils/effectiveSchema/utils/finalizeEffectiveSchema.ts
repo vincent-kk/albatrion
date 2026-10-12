@@ -1,3 +1,5 @@
+import { isArray } from '@winglet/common-utils/filter';
+
 import type { BlueprintNode, EffectiveSchema } from '../../../type';
 import type { EffectiveSchemaState } from './type';
 
@@ -17,12 +19,12 @@ export const finalizeEffectiveSchema = (
     schema.pattern = state.patterns[0];
     if (state.patterns.length > 1)
       schema.allOf = [
-        ...(Array.isArray(schema.allOf) ? schema.allOf : []),
+        ...(isArray(schema.allOf) ? schema.allOf : []),
         ...state.patterns.slice(1).map((pattern) => ({ pattern })),
       ];
   }
   const types = state.allowedTypes?.filter((type) => type !== 'null');
-  const staticTypes = Array.isArray(node.schemaType)
+  const staticTypes = isArray(node.schemaType)
     ? node.schemaType
     : [node.schemaType];
   const unchanged =

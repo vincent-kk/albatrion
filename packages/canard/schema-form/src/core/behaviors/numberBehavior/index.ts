@@ -1,0 +1,1 @@
+export { numberBehavior } from './numberBehavior';

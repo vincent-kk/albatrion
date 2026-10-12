@@ -13,3 +13,8 @@ export const NULL_BRANCH_IGNORED_FOR_FORM =
   `${SCHEMA_FORM_WARNING}.NULL_BRANCH_IGNORED_FOR_FORM` as const;
 export const VIRTUALIZATION_DISABLED_FOR_FORM =
   `${SCHEMA_FORM_WARNING}.VIRTUALIZATION_DISABLED_FOR_FORM` as const;
+/** A committed raw value misses its active type list. */
+export const TYPE_MISMATCH = `${SCHEMA_FORM_WARNING}.TYPE_MISMATCH` as const;
+/** A whole object or array contains a value JSON cannot preserve. */
+export const NON_JSON_WHOLE_VALUE =
+  `${SCHEMA_FORM_WARNING}.NON_JSON_WHOLE_VALUE` as const;

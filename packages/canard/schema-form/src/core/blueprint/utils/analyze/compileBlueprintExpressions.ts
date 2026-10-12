@@ -1,3 +1,5 @@
+import { isArray } from '@winglet/common-utils/filter';
+
 import type { BlueprintExpression } from '../../type';
 import { BlueprintErrorCode } from '../diagnostics/constant';
 import { throwBlueprintError } from '../diagnostics/throwBlueprintError';
@@ -36,7 +38,7 @@ export const compileBlueprintExpressions = (
         if (!group.controls) continue;
         const watch = group.controls.watch;
         if (watch !== undefined) {
-          const paths = Array.isArray(watch) ? watch : [watch];
+          const paths = isArray(watch) ? watch : [watch];
           for (const path of paths)
             registerBlueprintDependency(
               context,

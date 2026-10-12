@@ -29,8 +29,10 @@ export interface BlueprintGate {
   readonly kind: 'if' | 'active' | 'discriminator';
   /** Authored location of the condition. */
   readonly schemaPath: string;
-  /** Data host from which relative expressions are evaluated. */
+  /** First template host; settlement rebinds it for each live occurrence. */
   readonly hostPath: string;
+  /** Absolute read paths or relative parent-climb counts; context reads are excluded. */
+  readonly evaluationReads: readonly (string | number)[];
   /** Original schema, expression, or discriminator descriptor. */
   readonly condition: unknown;
   /** Select the complementary if branch without executing it. */
@@ -163,6 +165,16 @@ export interface Blueprint {
   readonly dependencies: Readonly<Record<string, readonly number[]>>;
   /** Compiled authored expressions with relative dependencies for per-edge rebinding. */
   readonly expressions: readonly BlueprintExpression[];
+}
+
+/** Conservative static bounds shared by feature passes for one blueprint. */
+export interface BlueprintFeatureNodeIndex {
+  /** Templates whose own declarations can change local state keys. */
+  readonly stateKeyNodes: ReadonlySet<number>;
+  /** Parent templates and direct child names addressed by state control layers. */
+  readonly stateKeyChildren: ReadonlyMap<number, ReadonlySet<string>>;
+  /** Templates whose node or referring-edge declarations can supply watch hints. */
+  readonly watchNodes: ReadonlySet<number>;
 }
 
 /** A compiled expression never executed during schema analysis. */

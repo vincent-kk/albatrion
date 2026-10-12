@@ -31,7 +31,7 @@ describe('ajvValidatorPlugin (2019)', () => {
       expect(result![0]).toMatchObject({
         keyword: 'type',
         message: 'must be string',
-        dataPath: '/',
+        dataPath: '',
         details: expect.any(Object),
         source: expect.any(Object),
       });
