@@ -1,3 +1,4 @@
+export { assertVirtualWriteShape } from './utils/write/assertVirtualWriteShape';
 export { writeSchemaNode } from './utils/write/writeSchemaNode';
 export { assertSchemaNodeWritable } from './utils/dispose/assertSchemaNodeWritable';
 export { disposeSchemaNodeTree } from './utils/dispose/disposeSchemaNodeTree';

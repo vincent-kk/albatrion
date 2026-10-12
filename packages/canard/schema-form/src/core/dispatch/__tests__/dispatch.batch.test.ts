@@ -123,7 +123,7 @@ describe('dispatcher batch', () => {
       },
     });
     dispatchMount(root, { left: 'old', right: 'old' });
-    const before = runtime.commitNumber;
+    const before = runtime.commitNumber ?? 0;
     dispatchBatch(root, () => {
       dispatchSetValue(getDispatchChild(root, 'left'), 'new-left');
       dispatchSetValue(getDispatchChild(root, 'right'), 'new-right');
@@ -251,7 +251,7 @@ describe('dispatcher batch', () => {
   it('191C-01 LANDING-011 EVENT-013 restores the edited value after a batched triple toggle', () => {
     const { root, runtime } = hideVat(companySchema);
     const company = getDispatchChild(root, 'company');
-    const before = runtime.commitNumber;
+    const before = runtime.commitNumber ?? 0;
     dispatchBatch(root, () => {
       dispatchSetValue(company, true);
       dispatchSetValue(company, false);
@@ -338,7 +338,7 @@ describe('dispatcher batch', () => {
 
   it('191C-01 keeps a single-write batch unchanged', () => {
     const { root, runtime } = hideVat(noteSchema);
-    const before = runtime.commitNumber;
+    const before = runtime.commitNumber ?? 0;
     dispatchBatch(root, () =>
       dispatchSetValue(getDispatchChild(root, 'note'), 'x'),
     );
@@ -448,5 +448,65 @@ describe('dispatcher batch', () => {
       dispatchSetValue(k, 'b');
     });
     expect(runtime.latentRaw.has(latent('/value', 'string'))).toBe(true);
+  });
+});
+
+/** Two real dates composed by one virtual node beside an unrelated field. */
+const periodSchema = {
+  type: 'object',
+  properties: {
+    startDate: { type: 'string' },
+    endDate: { type: 'string' },
+    note: { type: 'string' },
+  },
+  options: { virtual: { period: { fields: ['startDate', 'endDate'] } } },
+} as const;
+
+describe('virtual writes inside a batch (R2, 195C-01 F6)', () => {
+  it('applies a single virtual write to its fields (control)', () => {
+    const { root } = createDispatchTree(
+      periodSchema,
+      undefined,
+      createTestValidator(),
+    );
+    dispatchMount(root, { startDate: 's0', endDate: 'e0', note: 'n' });
+    dispatchSetValue(getDispatchChild(root, 'period'), ['s1', 'e1']);
+    expect(getDispatchChild(root, 'startDate').emit).toBe('s1');
+    expect(getDispatchChild(root, 'endDate').emit).toBe('e1');
+  });
+
+  it('applies a virtual write made beside another write in one batch', () => {
+    const { root, runtime } = createDispatchTree(
+      periodSchema,
+      undefined,
+      createTestValidator(),
+    );
+    dispatchMount(root, { startDate: 's0', endDate: 'e0', note: 'n' });
+    const before = runtime.commitNumber ?? 0;
+    dispatchBatch(root, () => {
+      dispatchSetValue(getDispatchChild(root, 'period'), ['s1', 'e1']);
+      dispatchSetValue(getDispatchChild(root, 'note'), 'x');
+    });
+    expect(getDispatchChild(root, 'startDate').emit).toBe('s1');
+    expect(getDispatchChild(root, 'endDate').emit).toBe('e1');
+    expect(getDispatchChild(root, 'note').emit).toBe('x');
+    expect(root.emit).toEqual({ startDate: 's1', endDate: 'e1', note: 'x' });
+    expect(runtime.commitNumber).toBe(before + 1);
+  });
+
+  it('rejects an invalid virtual shape when it is marked inside a batch, as a single write does', () => {
+    const { root } = createDispatchTree(
+      periodSchema,
+      undefined,
+      createTestValidator(),
+    );
+    dispatchMount(root, { startDate: 's0', endDate: 'e0', note: 'n' });
+    expect(() =>
+      dispatchBatch(root, () => {
+        dispatchSetValue(getDispatchChild(root, 'period'), 'bad');
+        dispatchSetValue(getDispatchChild(root, 'note'), 'x');
+      }),
+    ).toThrow('Invalid virtual node values at /period');
+    expect(getDispatchChild(root, 'startDate').emit).toBe('s0');
   });
 });

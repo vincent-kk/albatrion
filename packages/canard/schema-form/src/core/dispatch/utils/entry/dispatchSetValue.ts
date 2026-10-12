@@ -1,6 +1,6 @@
 import { INVALID_WRITE_OPTION, SchemaFormError } from '../../../../errors';
 import type { SchemaNodeRecord } from '../../../record';
-import { writeSchemaNode } from '../../../settle';
+import { assertVirtualWriteShape, writeSchemaNode } from '../../../settle';
 import { SetValueOption } from '../../../types/value';
 import { captureChainError } from '../chain/captureChainError';
 import { enterSchemaNodeChain } from '../chain/enterSchemaNodeChain';
@@ -36,6 +36,8 @@ export const dispatchSetValue = <Self extends SchemaNodeRecord<Self>>(
         ? value(runtime.batchDepth ? readBatchValue(node) : node.local)
         : value;
     if (runtime.batchDepth) {
+      if (node.behavior.type === 'virtual')
+        assertVirtualWriteShape(node, input);
       (runtime.batchWrites ??= []).push({ node, value: input, option, source });
     } else {
       const merge =

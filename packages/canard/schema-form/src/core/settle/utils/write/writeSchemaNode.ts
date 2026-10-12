@@ -124,8 +124,11 @@ export const writeSchemaNode = <Self extends SchemaNodeRecord<Self>>(
       if (batch) {
         for (let index = 0; index < writeOrigins.length; index++) {
           const origin = writeOrigins[index];
-          if (origin.source !== 'automatic')
-            pruneLatentRaw(node.runtime, origin.path, origin.keys, context);
+          if (origin.source === 'automatic') continue;
+          pruneLatentRaw(node.runtime, origin.path, origin.keys, context);
+          if (origin.fields)
+            for (const field of origin.fields)
+              pruneLatentRaw(node.runtime, field, undefined, context);
         }
       } else pruneLatentRaw(node.runtime, node.path, undefined, context);
     }

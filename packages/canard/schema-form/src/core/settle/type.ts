@@ -36,6 +36,8 @@ export interface SettlementContext<Self extends SchemaNodeRecord<Self>> {
     path: string;
     source: SchemaNodeWriteKind;
     keys?: readonly string[];
+    /** Sibling paths an overwriting virtual write replaces; the batch form of virtualReplacePaths. */
+    fields?: readonly string[];
   }[];
   /** Public bit mask retained for the development trace entry. */
   option: number;

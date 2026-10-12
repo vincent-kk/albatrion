@@ -22,6 +22,7 @@ export const collectReplacePaths = <Self extends SchemaNodeRecord<Self>>(
       for (let key = 0; key < origin.keys.length; key++)
         paths.push(`${origin.path}/${escapeSegment(origin.keys[key])}`);
     else paths.push(origin.path);
+    if (origin.fields) paths.push(...origin.fields);
   }
   return paths;
 };

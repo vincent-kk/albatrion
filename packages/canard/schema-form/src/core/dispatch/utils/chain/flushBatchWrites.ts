@@ -44,6 +44,7 @@ export const flushBatchWrites = <Self extends SchemaNodeRecord<Self>>(
       path: string;
       source: SchemaNodeWriteKind;
       keys?: readonly string[];
+      fields?: readonly string[];
     } => {
       const partial =
         (write.option & SetValueOption.Merge) === SetValueOption.Merge &&
@@ -57,6 +58,13 @@ export const flushBatchWrites = <Self extends SchemaNodeRecord<Self>>(
           typeof write.value === 'object' &&
           !isArray(write.value)
             ? Object.keys(write.value)
+            : undefined,
+        fields:
+          !partial && write.node.behavior.type === 'virtual'
+            ? (write.node.blueprintNode.fields ?? []).flatMap((field) => {
+                const sibling = write.node.parent?.structure?.[field];
+                return sibling ? [sibling.path] : [];
+              })
             : undefined,
       };
     },
