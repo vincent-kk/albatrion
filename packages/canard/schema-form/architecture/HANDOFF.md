@@ -15,7 +15,7 @@
 - **154라운드(2026-10-12, 닫기).** 배열 2단계 코어 ① 고침의 판정은 React·코어 모두 채택이고 회귀가 없다. push 계열 두 행은 출발 격차보다 크게 줄었고 replace-200은 이 고침의 대상이 아니라 변화가 없다. 고침 ①을 채택하고 코어 ②로 간다(reviews/round-154-closing.md).
 - **155라운드(2026-10-12, 닫기).** 배열 2단계 코어 ② 고침의 판정은 React·코어 모두 채택이고 회귀가 없다. push-remove-100에 유의한 이득이 있고 push-100도 빠른 쪽이며, replace-200은 닿지 않는 행이라 변화가 없다. 고침 ②를 채택하고 최종 세 행 재측정과 G27 새 문맥 verify, PR 갱신으로 간다(reviews/round-155-closing.md).
 - **156라운드(2026-10-12, 닫기).** 배열 세 행의 최종 재측정으로 소유자에게 올릴 수치를 확정했다. push-remove-100은 격차가 사라졌고, push-100은 거의 사라졌으며, replace-200은 코어 고침이 닿지 않는 React 렌더 몫이라 격차가 그대로다. 세 행의 수용 여부는 소유자 결정으로 올리고 권고는 수용과 replace 이월이다(reviews/round-156-closing.md).
-- **157라운드(2026-10-12, 소유자).** 배열 세 행은 권고 (가)대로 최종 수치로 수용하고, replace-200의 React 렌더 쪽 개선은 성능 개선 단계로 이월한다(개선-32). G26은 닫힌다(reviews/round-157-owner-answers.md). 다음 라운드 번호는 158.
+- **157라운드(2026-10-12, 소유자).** 배열 세 행은 권고 (가)대로 최종 수치로 수용하고, replace-200의 React 렌더 쪽 개선은 성능 개선 단계로 이월한다(개선-32). G26은 닫힌다. replace-200 격차의 원인 추정(자식 200개 신규 마운트의 마운트당 고정 비용, React 렌더와 코어 settle이 반씩)과 세 개선 길을 개선-32 본문에 적는다(reviews/round-157-owner-answers.md). 다음 라운드 번호는 158.
 - **그 앞의 라운드 요지(19라운드부터)는 PLAN-LOG.md 2절에 있다.** 라운드마다 한 문단이며, 1절의 기록 표와 같은 순서다.
 - **설계의 정본은 단일 원장 `ledger/`다.** 영역 17개, 항목 1,350개(80라운드 뒤, 24라운드 뒤 1,348; 현행 1,076(부정 결정·기록 포함), 대체됨 199, 분할됨 49, 중복 24, 열림 0). 형식과 규칙은 `ledger/README.md`.
 - **옛 설계 문서(`00`–`09`, `adr/`, `open-questions.md`)는 동결됐다.** 더 고치지 않는다. 어긋남은 원장의 충돌 칸에 적는다. 원장이 인용하는 옛 문서의 `path:line`은 모두 커밋 `ba398c330` 기준 줄 번호다(그 뒤 옛 문서는 바뀌지 않았다).
@@ -272,7 +272,7 @@ node ledger/checks/doc-coverage.mjs design/*.md adr/*.md -- ledger/*.md   # 설�
 | `reviews/round-154-closing.md` | 154라운드 편집자 결정 하나: 배열 코어 ① 채택과 세 행의 수치 |
 | `reviews/round-155-closing.md` | 155라운드 편집자 결정 하나: 배열 코어 ② 채택과 두 열린 항목 |
 | `reviews/round-156-closing.md` | 156라운드 편집자 결정 하나: 배열 세 행 최종 수치 확정과 소유자 선택지 |
-| `reviews/round-157-owner-answers.md` | 157라운드 소유자 답 하나: 배열 세 행 수용과 replace-200 이월 |
+| `reviews/round-157-owner-answers.md` | 157라운드 소유자 답 둘: 배열 세 행 수용과 replace-200 이월, 격차 원인 추정의 기록 |
 | reviews/raw-round97-gate-selection/ | 97라운드 원자료: 게이트 선택 설계안의 독립 검증 보고 |
 | `reviews/round-28-closing.md` | 28라운드 편집자 결정의 정본(28C-01~08: 04(PR-3+PR-6) 실행 계획 초안의 해석 일곱 건과 후속 둘 — 개발 모드 정착 기록의 자리, `enabled`와 떼어진 노드의 상태 게터, `@` 맥락과 `setContext`의 PR, 억제 비트와 `resetInteraction`, `unsetOnInactive` 식의 throw, TEST-071의 값 크기, `watchValues`의 PR, `node.context`의 PR과 맥락 변경 정착). 보충 줄만 |
 | `reviews/round-29-closing.md` | 29라운드 편집자 결정의 정본(29C-01~04: 생긴·로드된 노드의 파생 규칙은 원천이 `undefined`여도 발화, 채움 뒤의 값 변화는 새 에지, v7의 모형 선택은 이식하지 않음; 식이 던진 정착의 채움·나감 비움은 진행, 03의 전이 전체 생략은 결함; 공유 충돌 정착도 진행하고 원본 B는 예산 초과에만; 조각 `controls`의 `injectTo`는 불허). 보충 줄만 |
