@@ -1,28 +1,19 @@
-// Invoked by count tests; adapt the read-only diagnostic runner, never product source.
-import { readFileSync } from 'node:fs';
-import { resolve } from 'node:path';
-import { fileURLToPath, pathToFileURL } from 'node:url';
+// Invoked by count tests; run the diagnostic tool with a private bundle directory.
+import { spawnSync } from 'node:child_process';
+import { mkdtempSync, rmSync } from 'node:fs';
+import { tmpdir } from 'node:os';
+import { join, resolve } from 'node:path';
+import { fileURLToPath } from 'node:url';
 
 const packageRoot = fileURLToPath(new URL('../../../../../../', import.meta.url));
-const tools = resolve(packageRoot, 'architecture/verification/07-switch/tools');
-let runner = readFileSync(resolve(tools, 'measure-react-render-counts.mjs'), 'utf8');
-runner = runner
-  .replace("import { prepareReactBundles } from './prepare-react-bundles.mjs';",
-    'import { prepareReactBundles } from ' + JSON.stringify(pathToFileURL(resolve(tools, 'prepare-react-bundles.mjs')).href) + ';')
-  .replace("const packageRoot = resolve(dirname(fileURLToPath(import.meta.url)), '../../../..');",
-    'const packageRoot = ' + JSON.stringify(packageRoot) + ';')
-  .replace("const countsOnly = output === '--counts-only';", 'const countsOnly = true;')
-  .replace('...(countsOnly ? [] : [', '...[')
-  .replace('      ]),\n    ] : [', '      ],\n    ] : [')
-  .replace('globalThis.__faCommit =',
-    "globalThis.__faLayout = () => { if (counting) log.push({ kind: 'layout' }); };\nglobalThis.__faCommit =")
-  .replace('  module._compile(source, filename);',
-    "  source = replaceOnce(source, '          lastEffect = create();', '          if (flags & 4) globalThis.__faLayout();\\\n          lastEffect = create();');\n  module._compile(source, filename);")
-  .replace('        fibersVisited:',
-    "        layoutEffects: log.filter(event => event.kind === 'layout').length,\n        fibersVisited:");
+const tool = resolve(packageRoot, 'architecture/verification/07-switch/tools/measure-react-render-counts.mjs');
+const outputDirectory = mkdtempSync(join(tmpdir(), `schema-form-react-counts-${process.pid}-`));
 try {
-  await import('data:text/javascript;base64,' + Buffer.from(runner).toString('base64'));
-} catch (error) {
-  console.error(error.name + ': ' + error.message);
-  process.exitCode = 1;
+  const result = spawnSync(process.execPath, [tool, ...process.argv.slice(2),
+    '--counts-only', '--all-writes', '--layout-effects', `--output-dir=${outputDirectory}`],
+  { stdio: 'inherit' });
+  if (result.error) throw result.error;
+  process.exitCode = result.status ?? 1;
+} finally {
+  rmSync(outputDirectory, { recursive: true, force: true });
 }
