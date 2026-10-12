@@ -8,8 +8,7 @@ import type { ChildNodeComponent } from '../type';
 import { isDetectableTerminal } from './utils/isDetectableTerminal';
 
 /** Shared immutable child list for strategies that need no read detector; frozen once at module load. */
-const EMPTY_CHILDREN: ChildNodeComponent[] = [];
-Object.freeze(EMPTY_CHILDREN);
+const EMPTY_CHILDREN = Object.freeze([]) as unknown as ChildNodeComponent[];
 
 /** Read-detector state after the input's owning layout effect commits. */
 const COMMITTED = 1;
