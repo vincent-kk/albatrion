@@ -82,4 +82,4 @@
 
 | 날짜 | 무엇 | 어디 |
 | --- | --- | --- |
-| 2026-10-12 | 161라운드(닫기): 개선-32 범위 확정 — 커밋 1 F-E 재구현 + 단일 revision 읽기, 커밋 2 layout effect 축소; 판정 세션은 커밋마다 따로; 길 3 제외. 보충 2줄 | `reviews/round-161-closing.md` |
+| 2026-10-12 | 163라운드(닫기): 개선-30 형 추론 감사 73사례 — 차이 9건 중 6건 새 판 유지, 1건(formatError node.value) 0.16.0대로 되돌림, 2건(onValidate 오류 배열 readonly, onStateChange flag 집합)은 소유자 결정. 보충 2줄 | `reviews/round-163-closing.md` |
