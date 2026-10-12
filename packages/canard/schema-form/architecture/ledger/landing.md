@@ -1431,6 +1431,7 @@
   > 편집자 결정(33C-01): "【추론】 06이 먼저 머지되면 그 동사는 03(PR-2)이 겉면 쓰기를 둔 모양 — 정착 호출 하나(TEST-069 "PR-2에서 사슬은 settle 호출 하나다") — 을 따르고, 05가 머지되는 쪽(또는 06이 뒤라면 06)이 겉면 위임을 `dispatch` 진입으로 옮기면서 배열 동사 다섯의 진입 파일을 더한다; `batch` 안의 배열 동사가 형제 진입으로 합쳐지는 것(EVENT-035)과 진입당 `onChange` 한 번은 그 뒤에만 성립하므로 06의 시험은 그 둘을 단언하지 않는다(03 log §4의 `batch` 사례 배분과 같다)." (`reviews/round-33-closing.md:11`)
   > 편집자 결정(34C-01): "【추론】 LANDING-084는 PR-4의 새 fractal 칸에 "`app/plugin/type.ts` 개정"을 적었고 VALIDATE-044는 플러그인이 `Validator`에 소비자 훅 `bind?`만 더 가진다고 했으므로, 플러그인이 구현하고 가져오는 계약 형은 오늘도 공개 index가 내보내는 `ValidatorPlugin`이며 그 개정은 PR-4의 몫이다; 32C-01의 "새 계약 형은 공개 index가 아닌 새 엔진 쪽 모듈에서 내보낸다"는 코어가 받는 계약 형 `Validator`(가칭)와 Form 속성 `validatorFactory`의 공개 형에 한한 말이고, 플러그인용 `ValidatorPlugin`에는 미치지 않는다." (`reviews/round-34-closing.md:9`)
   > 편집자 결정(34C-01): "【추론】 PR-4의 `ValidatorPlugin` 개정은 더하기만 한다: `compileGuard?(root, pointer)`·`release?(root)`를 선택 멤버로 더하고, `compile` 결과 함수의 에러 정규화에 `rejectedKey`를 더한다; 선택으로 두는 까닭은 옛 엔진이 PR-7까지 공개 진입점을 섬기는 동안(LANDING-159 규칙 3) 소비자의 사용자 정의 플러그인이 형 검사에서 깨지지 않게 하는 것이며, 필수로 좁히는 것은 Form 속성이 `{ compile, compileGuard }` 객체가 되는 PR-7(LANDING-036 이주 33)에서 이주 항목과 함께 한다." (`reviews/round-34-closing.md:10`)
+  > 편집자 결정(182C-01): "【추론】 인용 오류는 원장의 신뢰를 깎으므로 발견 즉시 바로잡는다. 빌드 결함은 제품 코드가 아니라 저장소의 빌드 도구에 있고 옛 배포본부터 같았으므로 07의 게이트를 다시 열 이유는 없지만, 1.0.0 배포 전에는 고쳐야 ESM 소비자가 개발 전용 비용을 지지 않는다 — 그래서 소유자 결정으로 올린다." (`reviews/round-182-closing.md:9`)
 - 상태: 현행
 - 출처: `09-landing-and-test-strategy.md:35`(정본), `08-design-a-to-z.md:574`, `05-before-after.md:159`
 - 닫은 사람: 편집자 결정(16라운드 정착 검토), 17라운드 스웜 수렴(편집자 결정, 진입 사슬은 `dispatch`가 소유)
@@ -3027,6 +3028,7 @@
   > 소유자(179라운드, deprecated 타입 전면 교체): "응 맞아. 지원종료된 타입을 찾아서 모두 호환되는 최신 타입으로. 내가 지시했어" (`reviews/round-179-owner-answers.md:7`) — schema-form src(레거시 제외)의 deprecated 타입 사용을 호환되는 최신 타입으로 모두 바꾼다; 07b-1 위 별도 커밋(개선-37), 공개 d.ts 자리는 React 18·19 동치일 때만(원장 관리자, 2026-10-12).
   > 소유자(180라운드, G23 닫힘, 18C-73 개발 모드·브랜치 노드 한정): "1. 네 확인했습니다. 입력기를 쓰는 부분이라고 해서 직접 진행했죠.\n2. 저도 동의합니다. 개발모드에서만 켜고, object / array 처럼 브랜치 노드에 대해서만 처리했으면 해요. 나머지는 터미널만 가능하니까요. \n리뷰어는 지금 제 요구사항 처리중이긴 한데, 추가로 잘 이야기해줘요" (`reviews/round-180-owner-answers.md:7`) — G23 닫힘(소유자의 실제 IME 확인, Safari 생략); 빈 ChildNodeComponents 읽기 감지기는 개발 모드에서만, object·array 스키마 노드가 터미널이 된 경우에만 둔다; reviewer가 PR #354에서 처리(원장 관리자, 2026-10-12).
   > 소유자(181라운드, 한쪽 지시를 다른 쪽이 따름): "리뷰어랑 노르덴은 제가 직접 볼건데요, 왔다갔다 하면서 응답하는건 좀 힘듭니다.\n되도록이면 한쪽에 지시하면 나머지가 좀 따랐으면 좋겠네요." (`reviews/round-181-owner-answers.md:7`) — reviewer 세션과 원장 세션 가운데 한쪽에 준 소유자 지시는 다른 쪽이 재확인 없이 따른다; 예외는 권한·설정 변경과 파괴적 조치(원장 관리자, 2026-10-13).
+  > 편집자 결정(182C-01): "【추론】 인용 오류는 원장의 신뢰를 깎으므로 발견 즉시 바로잡는다. 빌드 결함은 제품 코드가 아니라 저장소의 빌드 도구에 있고 옛 배포본부터 같았으므로 07의 게이트를 다시 열 이유는 없지만, 1.0.0 배포 전에는 고쳐야 ESM 소비자가 개발 전용 비용을 지지 않는다 — 그래서 소유자 결정으로 올린다." (`reviews/round-182-closing.md:9`)
 - 상태: 현행
 - 출처: `reviews/round-18-owner-answers.md:44`(정본, 반영 칸), `reviews/round-18-owner-answers.md:45`
 - 닫은 사람: 소유자 답(`reviews/round-18-owner-answers.md:44` 개발계획 P3·P4), 소유자 답(`reviews/round-18-owner-answers.md:45` 개발계획 1-가)
