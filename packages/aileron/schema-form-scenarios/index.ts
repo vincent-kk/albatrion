@@ -15,6 +15,14 @@ export { validationScenarios } from './src/validation/index';
 export { compositionFeatureScenarios, compositionFindingScenarios } from './src/features/composition/index';
 export { structureFeatureScenarios } from './src/features/structure/index';
 export { valuesFeatureScenarios, valuesFindingScenarios } from './src/features/values/index';
+export {
+  externalErrorStages, forcedShowErrorCase, formatErrorCases, interactionStateStages, nodeExternalError,
+  showErrorCases, submitOutcomes, validationModeCases, validationStateFeatureScenarios,
+} from './src/features/validation-state/index';
+export type {
+  ExternalErrorStage, FormatErrorCase, InteractionStateNames, InteractionStateStage, KeywordsByPath,
+  ShowErrorCase, ShowErrorName, ValidationModeCase, ValidationModeName,
+} from './src/features/validation-state/index';
 export { findScenarioHandle } from './src/utils/findScenarioHandle';
 export { playScenario } from './src/utils/playScenario';
 export { registerScenarioHandle } from './src/utils/registerScenarioHandle';
