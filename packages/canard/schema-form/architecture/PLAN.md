@@ -82,4 +82,4 @@
 
 | 날짜 | 무엇 | 어디 |
 | --- | --- | --- |
-| 2026-10-12 | 164라운드(닫기): 163C-01 (2) 뒤집음 — formatError node.value는 unknown 유지(런타임이 union을 보장하지 않음); 감사 차이 최종 처분은 새 판 유지 7, 소유자 결정 2. 보충 2줄 | `reviews/round-164-closing.md` |
+| 2026-10-12 | 165라운드(닫기): 개선-32 커밋 1은 입력 제어 훅의 useSyncExternalStore 직접 사용 유지, INTENT 구독 규약에 예외 한 줄; tracker 훅 확장은 받지 않음. 보충 1줄 | `reviews/round-165-closing.md` |
