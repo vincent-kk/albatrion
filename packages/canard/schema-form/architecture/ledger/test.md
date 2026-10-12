@@ -509,6 +509,7 @@
   > 편집자 결정(201C-01): "【추론】 ERROR-139는 "어디로 드러나는가"를 적었고 ERROR-016·019는 "무엇이 기록되는가"를 적어 둘을 합치면 검증 거부는 싱크만이다. 제품이 이미 그렇고 스토리가 고정하니 문서 한 문장만 맞추면 된다." (`reviews/round-201-closing.md:9`)
   > 편집자 결정(202C-01): "【추론】 소유자는 멈춤 없이, 권한 문제는 미루라고 했다. G4의 품질 증거는 이미 셋이고 PR 최종 검증이 남아 있으니 verifier 하나를 뒤로 미뤄도 위험이 작다." (`reviews/round-202-closing.md:9`)
   > 편집자 결정(203C-01): "【추론】 그룹별 verifier는 품질 보강이고 게이트(자동·e2e·실제 창)는 그대로 돌고 있다. PR 머지 전 독립 검증은 어차피 원장 관리자 몫이므로 거기에 그룹 검토를 얹으면 소유자 부재 중에도 머지 조건이 유지된다." (`reviews/round-203-closing.md:9`)
+  > 편집자 결정(205C-01): "【추론】 변이 탐침은 verifier가 하던 핵심 검사(적재 하중 확인)를 같은 세션이 직접 한 것이라 증거 등급이 조금 낮지만 PR 전체 독립 검증이 남아 있다. 07b-1에 코드가 들어왔으니 이번 rebase 뒤에는 게이트 재실행이 필요하다." (`reviews/round-205-closing.md:9`)
 - 상태: 현행
 - 출처: `09-landing-and-test-strategy.md:210-212`(정본), `reviews/round-16-owner-answers.md:10`, `reviews/round-16-owner-review.md:55`
 - 닫은 사람: 소유자 답(`reviews/round-16-owner-answers.md:10` 답 4)
