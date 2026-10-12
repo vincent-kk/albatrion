@@ -1,10 +1,9 @@
 import { isArray } from '@winglet/common-utils/filter';
 
+import { isDevelopment } from '@/schema-form/app/environment';
+
 import type { EffectiveSchema } from '../../../type';
 import { OwnedSchemaValues } from './OwnedSchemaValues';
-
-/** Environment selection matches commit payload protection and is folded by bundlers. */
-const DEVELOPMENT = process.env.NODE_ENV !== 'production';
 
 /**
  * Protect producer-owned public values once at the end of one schema merge.
@@ -69,6 +68,6 @@ export const freezeEffectiveSchema = (
       }
     Object.freeze(schema);
   }
-  if (DEVELOPMENT) Object.freeze(result);
+  if (isDevelopment()) Object.freeze(result);
   return result;
 };

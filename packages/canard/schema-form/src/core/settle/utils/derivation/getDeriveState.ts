@@ -1,3 +1,5 @@
+import { isDevelopment } from '@/schema-form/app/environment';
+
 import type { SchemaNodeRecord } from '../../../record';
 import { getDeriveRuleTable } from '../../derive';
 import type { DeriveState } from '../../derive';
@@ -28,7 +30,7 @@ export const getDeriveState = <Self extends SchemaNodeRecord<Self>>(
     entered: context.entered,
     revived: context.revived,
     suppressAutomaticWrites: context.suppressAutomaticWrites,
-    trace: process.env.NODE_ENV !== 'production',
+    trace: isDevelopment(),
   };
   context.deriveState = state;
   return state;

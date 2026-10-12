@@ -1,8 +1,7 @@
+import { isDevelopment } from '@/schema-form/app/environment';
+
 import { SchemaNodeEventType, SchemaNodeRevisionLedger } from '../../../record';
 import type { SchemaNodeRecord } from '../../../record';
-
-/** Payload immutability uses the same build mode as generic delivery marking. */
-const DEVELOPMENT = process.env.NODE_ENV !== 'production';
 
 /**
  * Finalize one reserved first-load delivery after its children complete.
@@ -24,7 +23,7 @@ export const commitStaticFirstNode = <Self extends SchemaNodeRecord<Self>>(
   node.pendingDelivery = {
     type,
     payload: {
-      [SchemaNodeEventType.UpdateValue]: DEVELOPMENT
+      [SchemaNodeEventType.UpdateValue]: isDevelopment()
         ? Object.freeze(payload)
         : payload,
     },

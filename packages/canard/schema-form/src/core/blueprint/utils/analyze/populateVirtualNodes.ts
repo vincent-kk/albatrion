@@ -1,6 +1,8 @@
 import { isArray } from '@winglet/common-utils/filter';
 import { escapeSegment } from '@winglet/json/pointer';
 
+import { isDevelopment } from '@/schema-form/app/environment';
+
 import type { BlueprintChildEntry, PropertyDeclaration } from '../../type';
 import { copyBlueprintDeclarations } from '../declarations/copyBlueprintDeclarations';
 import { BlueprintErrorCode } from '../diagnostics/constant';
@@ -10,11 +12,10 @@ import { collectDeclarations } from './collectDeclarations';
 import { readSchemaObject } from './readSchemaObject';
 import type { AnalysisContext, MutableNode } from './type';
 
-/** Virtual bindings own their containers; authored fields remain borrowed inputs. */
-const DEVELOPMENT = process.env.NODE_ENV !== 'production';
-
 /**
  * Bind virtual tuples to real sibling templates without rewriting schema keywords.
+ * Virtual bindings own their containers; authored fields remain borrowed inputs, so only
+ * the owned containers are frozen in development.
  * @param context - Construction state owning virtual nodes and declarations
  * @param host - Completed real-property host whose virtual groups are being bound
  * @returns Nothing; appends stable virtual child edges to the host
@@ -99,7 +100,7 @@ export const populateVirtualNodes = (
       if (group) group.declarations.push(...declarations);
       else
         groups.set(name, {
-          fields: DEVELOPMENT ? Object.freeze([...fields]) : [...fields],
+          fields: isDevelopment() ? Object.freeze([...fields]) : [...fields],
           declarations,
         });
     }
@@ -114,7 +115,7 @@ export const populateVirtualNodes = (
           ...edge,
           declarations: copyBlueprintDeclarations(edge.declarations),
         };
-        childEntries.push(DEVELOPMENT ? Object.freeze(copy) : copy);
+        childEntries.push(isDevelopment() ? Object.freeze(copy) : copy);
       }
     }
     const node: MutableNode = {
@@ -125,7 +126,7 @@ export const populateVirtualNodes = (
       schemaType: 'virtual',
       nullable: false,
       strategy: resolveNodeStrategy(context, 'virtual', group.declarations),
-      declarations: DEVELOPMENT
+      declarations: isDevelopment()
         ? Object.freeze(group.declarations)
         : group.declarations,
       childEntries,
@@ -138,6 +139,6 @@ export const populateVirtualNodes = (
       declarations: copyBlueprintDeclarations(node.declarations),
       hostPath: host.path,
     };
-    host.childEntries.push(DEVELOPMENT ? Object.freeze(entry) : entry);
+    host.childEntries.push(isDevelopment() ? Object.freeze(entry) : entry);
   }
 };

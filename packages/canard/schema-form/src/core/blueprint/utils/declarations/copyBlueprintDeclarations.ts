@@ -1,7 +1,6 @@
-import type { PropertyDeclaration } from '../../type';
+import { isDevelopment } from '@/schema-form/app/environment';
 
-/** Bundlers remove development protection from record-copy sites in production. */
-const DEVELOPMENT = process.env.NODE_ENV !== 'production';
+import type { PropertyDeclaration } from '../../type';
 
 /**
  * Give a virtual binding its own records and memberships while borrowing graph links.
@@ -19,12 +18,12 @@ export const copyBlueprintDeclarations = (
       order: [...declaration.order],
       gates: [...declaration.gates],
     };
-    if (DEVELOPMENT) {
+    if (isDevelopment()) {
       Object.freeze(copy.order);
       Object.freeze(copy.gates);
       Object.freeze(copy);
     }
     result.push(copy);
   }
-  return DEVELOPMENT ? Object.freeze(result) : result;
+  return isDevelopment() ? Object.freeze(result) : result;
 };

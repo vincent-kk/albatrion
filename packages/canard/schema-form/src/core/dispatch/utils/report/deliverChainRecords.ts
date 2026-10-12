@@ -1,3 +1,5 @@
+import { isDevelopment } from '@/schema-form/app/environment';
+
 import { NON_JSON_WHOLE_VALUE } from '../../../../errors';
 import type { FormErrorRecord } from '../../../../errors';
 import type { SchemaNodeRuntime } from '../../../record';
@@ -25,7 +27,7 @@ export const deliverChainRecords = (
   for (const record of records) {
     if (!reporter?.hasConsumer()) {
       if (
-        process.env.NODE_ENV !== 'production' &&
+        isDevelopment() &&
         record.code === `SCHEMA_FORM_WARNING.${NON_JSON_WHOLE_VALUE}`
       )
         console.warn(record.code, record.message, record.details);

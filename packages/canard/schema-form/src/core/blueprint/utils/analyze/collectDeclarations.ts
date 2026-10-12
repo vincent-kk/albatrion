@@ -1,5 +1,7 @@
 import { isArray } from '@winglet/common-utils/filter';
 
+import { isDevelopment } from '@/schema-form/app/environment';
+
 import type { BlueprintGate, PropertyDeclaration } from '../../type';
 import { validateControlGroups } from '../diagnostics/validateControlGroups';
 import { readAllowedTypes } from '../types/readAllowedTypes';
@@ -18,8 +20,6 @@ const FRAGMENT_KEYWORDS = [
   ['oneOf', 3],
   ['anyOf', 4],
 ] as const;
-/** Only producer-owned internal records receive development protection. */
-const DEVELOPMENT = process.env.NODE_ENV !== 'production';
 
 /**
  * Expand one slot's fragments in keyword order without expanding child nodes.
@@ -97,7 +97,7 @@ export const collectDeclarations = (
     inherited: input.inherited,
     hostPath: input.hostPath,
   };
-  if (DEVELOPMENT) {
+  if (isDevelopment()) {
     Object.freeze(fragment.order);
     Object.freeze(fragment.gates);
     Object.freeze(declaration.order);

@@ -1,5 +1,7 @@
 import { isArray } from '@winglet/common-utils/filter';
 
+import { isDevelopment } from '@/schema-form/app/environment';
+
 import type {
   BlueprintNodeKind,
   BlueprintSchemaType,
@@ -18,8 +20,6 @@ import type { AnalysisContext, MutableNode, SchemaInput } from './type';
 
 /** Static construction has no active gated declaration IDs. */
 const NO_ACTIVE_DECLARATION_IDS: readonly number[] = [];
-/** Internal records are protected only in development. */
-const DEVELOPMENT = process.env.NODE_ENV !== 'production';
 
 /**
  * Construct schema templates once per authored declaration/gate combination.
@@ -82,7 +82,7 @@ export const buildNodes = (
               validationOnly: true,
             }
           : declaration;
-      if (DEVELOPMENT && owned !== declaration) {
+      if (isDevelopment() && owned !== declaration) {
         Object.freeze(owned.order);
         Object.freeze(owned.gates);
         Object.freeze(owned);
@@ -98,7 +98,7 @@ export const buildNodes = (
       schemaType,
       nullable,
       strategy: resolveNodeStrategy(context, kind, group.declarations),
-      declarations: DEVELOPMENT
+      declarations: isDevelopment()
         ? Object.freeze(ownedDeclarations)
         : ownedDeclarations,
       childEntries: [],

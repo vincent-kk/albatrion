@@ -1,8 +1,7 @@
+import { isDevelopment } from '@/schema-form/app/environment';
+
 import { createBlueprintGate } from '../../createBlueprintGate';
 import type { MutableNode } from '../../type';
-
-/** Host binding memberships are protected only in development. */
-const DEVELOPMENT = process.env.NODE_ENV !== 'production';
 
 /**
  * Append host-owned bindings for constructed templates in their existing order.
@@ -51,7 +50,7 @@ export const appendChildEntries = (
             : declaration.schemaPath,
         gates,
       };
-      if (DEVELOPMENT) {
+      if (isDevelopment()) {
         Object.freeze(binding.order);
         Object.freeze(gates);
         Object.freeze(binding);
@@ -64,7 +63,7 @@ export const appendChildEntries = (
       hostPath: node.path,
       declarations,
     };
-    if (DEVELOPMENT) {
+    if (isDevelopment()) {
       Object.freeze(declarations);
       Object.freeze(entry);
     }

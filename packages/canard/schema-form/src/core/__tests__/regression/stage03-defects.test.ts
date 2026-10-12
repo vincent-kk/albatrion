@@ -3,6 +3,12 @@ import { describe, expect, it, vi } from 'vitest';
 import { SetValueOption } from '../../SchemaNode';
 import { makeSchemaNodeTree } from '../makeSchemaNodeTree';
 
+const environment = vi.hoisted(() => ({ development: true }));
+
+vi.mock('@/schema-form/app/environment', () => ({
+  isDevelopment: () => environment.development,
+}));
+
 // filid:contract factory-single-path
 describe('stage 03 ledger adjudication regressions', () => {
   const selfNegatingGate = () =>
@@ -33,20 +39,20 @@ describe('stage 03 ledger adjudication regressions', () => {
   };
 
   it('selfcheck-v5.mjs:220 commits Source B after a self-negating shape cycle in production', () => {
-    vi.stubEnv('NODE_ENV', 'production');
+    environment.development = false;
     try {
       expectSelfNegatingBudget();
     } finally {
-      vi.unstubAllEnvs();
+      environment.development = true;
     }
   });
 
   it('selfcheck-v5.mjs:227 throws after that commit in development', () => {
-    vi.stubEnv('NODE_ENV', 'development');
+    environment.development = true;
     try {
       expectSelfNegatingBudget();
     } finally {
-      vi.unstubAllEnvs();
+      environment.development = true;
     }
   });
 

@@ -9,6 +9,12 @@ import {
 import { getTransitionCap } from '../utils/transition/getTransitionCap';
 import { createTestTree } from './fixtures/createTestTree';
 
+const environment = vi.hoisted(() => ({ development: true }));
+
+vi.mock('@/schema-form/app/environment', () => ({
+  isDevelopment: () => environment.development,
+}));
+
 // filid:contract settle-budget
 describe('settle exits and budgets', () => {
   it('SETTLE-041 counts discriminator and branch active as one fragment in both budgets', () => {
@@ -469,7 +475,7 @@ describe('settle exits and budgets', () => {
         b: { type: 'boolean', controls: { active: '../a' } },
       },
     });
-    vi.stubEnv('NODE_ENV', 'production');
+    environment.development = false;
     try {
       expect(() =>
         writeSchemaNode(
@@ -482,7 +488,7 @@ describe('settle exits and budgets', () => {
       expect(root.runtime.commitNumber).toBe(1);
       expect(root.runtime.diagnostics.status).toBe('degraded');
     } finally {
-      vi.unstubAllEnvs();
+      environment.development = true;
     }
   });
 

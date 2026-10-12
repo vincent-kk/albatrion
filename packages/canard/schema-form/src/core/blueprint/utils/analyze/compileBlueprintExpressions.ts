@@ -1,5 +1,7 @@
 import { isArray } from '@winglet/common-utils/filter';
 
+import { isDevelopment } from '@/schema-form/app/environment';
+
 import type { BlueprintExpression } from '../../type';
 import { BlueprintErrorCode } from '../diagnostics/constant';
 import { throwBlueprintError } from '../diagnostics/throwBlueprintError';
@@ -22,8 +24,6 @@ const EXPRESSION_KEYS = [
   'unsetValue',
   'resetInteraction',
 ] as const;
-/** Compiled records and dependency memberships remain invocation-owned. */
-const DEVELOPMENT = process.env.NODE_ENV !== 'production';
 
 /**
  * Compile authored control expressions while preserving relative dependency paths.
@@ -108,7 +108,7 @@ export const compileBlueprintExpressions = (
             dependencies,
             evaluate,
           };
-          if (DEVELOPMENT) {
+          if (isDevelopment()) {
             Object.freeze(dependencies);
             Object.freeze(compiled);
           }
@@ -122,7 +122,7 @@ export const compileBlueprintExpressions = (
       }
     }
   }
-  if (DEVELOPMENT && context.dependencies)
+  if (isDevelopment() && context.dependencies)
     for (const ids of Object.values(context.dependencies)) Object.freeze(ids);
-  return DEVELOPMENT ? Object.freeze(expressions) : expressions;
+  return isDevelopment() ? Object.freeze(expressions) : expressions;
 };

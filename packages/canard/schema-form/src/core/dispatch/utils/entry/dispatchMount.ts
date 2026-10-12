@@ -1,3 +1,5 @@
+import { isDevelopment } from '@/schema-form/app/environment';
+
 import { VALIDATOR_MISSING } from '../../../../errors';
 import type { FormErrorRecord } from '../../../../errors';
 import type { SchemaNodeRecord } from '../../../record';
@@ -31,7 +33,7 @@ export const dispatchMount = <Self extends SchemaNodeRecord<Self>>(
   root.runtime.deferMountValidation = settings.deferValidation === true;
   if (!settings.deferValidation)
     (root.runtime.validationTargets ??= new Set()).add(root);
-  root.runtime.mountingGuardPass = process.env.NODE_ENV !== 'production';
+  root.runtime.mountingGuardPass = isDevelopment();
   try {
     loadSchemaNodeAtMount(root, value, option);
   } catch (error) {

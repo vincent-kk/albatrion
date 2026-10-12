@@ -1,6 +1,8 @@
 import { isArray } from '@winglet/common-utils/filter';
 import { escapeSegment } from '@winglet/json/pointer';
 
+import { isDevelopment } from '@/schema-form/app/environment';
+
 import { BlueprintErrorCode } from '../diagnostics/constant';
 import { throwBlueprintError } from '../diagnostics/throwBlueprintError';
 import { createBlueprintGate } from './createBlueprintGate';
@@ -9,11 +11,10 @@ import { populateVirtualNodes } from './populateVirtualNodes';
 import { readSchemaObject } from './readSchemaObject';
 import type { AnalysisContext, MutableNode, SchemaInput } from './type';
 
-/** Host binding memberships are owned even when their templates are shared. */
-const DEVELOPMENT = process.env.NODE_ENV !== 'production';
-
 /**
  * Bind object properties and array templates without allocating runtime nodes.
+ * Host binding memberships are owned even when their templates are shared, so they
+ * are frozen in development while the shared templates are not.
  * @param context - Root-local graph and declaration state
  * @param node - Already registered template, allowing recursive back-references
  * @param build - Owner's recursive template constructor
@@ -230,6 +231,6 @@ export const populateNodeChildren = (
       .map(
         ([index, inputs]) => build(context, inputs, `${node.path}/${index}`)[0],
       );
-  if (DEVELOPMENT && node.prefixItems) Object.freeze(node.prefixItems);
+  if (isDevelopment() && node.prefixItems) Object.freeze(node.prefixItems);
   if (node.kind === 'object') populateVirtualNodes(context, node);
 };

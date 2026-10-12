@@ -2,7 +2,7 @@
 
 ## Purpose
 
-개발 환경 전용 진단 경고를 일원화하는 헬퍼. 에러 시스템과 동일한 `code + formatted message + details` 구조를 사용하되 Error 인스턴스를 생성하지 않고 `printWarning`으로 방출한다. 프로덕션(`NODE_ENV === 'production'`)에서는 완전 무음.
+개발 환경 전용 진단 경고를 일원화하는 헬퍼. 에러 시스템과 동일한 `code + formatted message + details` 구조를 사용하되 Error 인스턴스를 생성하지 않고 `printWarning`으로 방출한다. 프로덕션(`isDevelopment()`가 거짓)에서는 완전 무음.
 
 ## Conventions
 

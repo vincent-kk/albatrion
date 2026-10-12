@@ -1,3 +1,5 @@
+import { isDevelopment } from '@/schema-form/app/environment';
+
 import { TYPE_MISMATCH } from '../../../../errors';
 import { indexSchemaNodeWarning } from '../../../record';
 import type { SchemaNodeRecord, TypeMismatchRecord } from '../../../record';
@@ -23,7 +25,7 @@ export const finishStaticFirstLoad = <Self extends SchemaNodeRecord<Self>>(
 ): void => {
   const runtime = root.runtime;
   const commit = runtime.commitNumber!;
-  if (process.env.NODE_ENV !== 'production')
+  if (isDevelopment())
     runtime.settlementTrace = { entry: { api: 'load', option }, rounds: [] };
   else delete runtime.settlementTrace;
   runtime.refreshTargets ??= new Set();

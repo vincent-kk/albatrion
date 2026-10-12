@@ -5,11 +5,17 @@ import { SetValueOption } from '../../types/value';
 import { loadSchemaNodeAtMount, writeSchemaNode } from '../index';
 import { createTestTree } from './fixtures/createTestTree';
 
+const environment = vi.hoisted(() => ({ development: true }));
+
+vi.mock('@/schema-form/app/environment', () => ({
+  isDevelopment: () => environment.development,
+}));
+
 // filid:contract settle-write
 describe('settle commit', () => {
   afterEach(() => {
+    environment.development = true;
     vi.restoreAllMocks();
-    vi.unstubAllEnvs();
   });
   it('VALUE-037 reports an out-of-list mount default as a fill', () => {
     const { root } = createTestTree({
@@ -888,7 +894,7 @@ describe('settle commit', () => {
       }),
     ]);
     warn.mockClear();
-    vi.stubEnv('NODE_ENV', 'production');
+    environment.development = false;
     const second = createTestTree({
       type: 'object',
       options: { terminal: true },

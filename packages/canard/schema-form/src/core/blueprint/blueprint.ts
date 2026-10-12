@@ -1,3 +1,5 @@
+import { isDevelopment } from '@/schema-form/app/environment';
+
 import type { Blueprint, BlueprintOptions, BlueprintSchema } from './type';
 import { buildNodes } from './utils/analyze/buildNodes';
 import { compileBlueprintExpressions } from './utils/analyze/compileBlueprintExpressions';
@@ -6,9 +8,6 @@ import { validateShape } from './utils/analyze/validateShape';
 import { collectBlueprintWarnings } from './utils/diagnostics/collectBlueprintWarnings';
 import { validateChildTargets } from './utils/diagnostics/validateChildTargets';
 import { StaticFirstLoadCapability } from './utils/features/StaticFirstLoadCapability';
-
-/** Bundlers select internal protection once, before any blueprint is constructed. */
-const DEVELOPMENT = process.env.NODE_ENV !== 'production';
 
 /**
  * Analyze authored schema data into an immutable, finite declaration graph.
@@ -85,12 +84,12 @@ export const blueprint = (
         node.strategy !== 'branch')
     )
       context.staticFirstLoad = false;
-    if (DEVELOPMENT) {
+    if (isDevelopment()) {
       Object.freeze(node.childEntries);
       Object.freeze(node);
     }
   }
-  if (DEVELOPMENT)
+  if (isDevelopment())
     for (let index = 0; index < context.fragments.length; index++) {
       const fragment = context.fragments[index];
       Object.freeze(fragment.declares);
@@ -110,7 +109,7 @@ export const blueprint = (
     dependencies: context.dependencies ?? Object.create(null),
     expressions,
   };
-  if (DEVELOPMENT) {
+  if (isDevelopment()) {
     Object.freeze(context.capabilities);
     Object.freeze(context.nodes);
     Object.freeze(context.fragments);

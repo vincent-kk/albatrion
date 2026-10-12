@@ -2,10 +2,16 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import { warnDevelopmentIssue } from '../warnDevelopmentIssue';
 
+const environment = vi.hoisted(() => ({ development: true }));
+
+vi.mock('@/schema-form/app/environment', () => ({
+  isDevelopment: () => environment.development,
+}));
+
 describe('warnDevelopmentIssue', () => {
   afterEach(() => {
+    environment.development = true;
     vi.restoreAllMocks();
-    vi.unstubAllEnvs();
   });
 
   it('개발 환경에서 패키지 프리픽스 + code + message 형식으로 경고를 출력한다', () => {
@@ -46,7 +52,7 @@ describe('warnDevelopmentIssue', () => {
 
   it('production 환경에서는 출력하지 않는다', () => {
     const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
-    vi.stubEnv('NODE_ENV', 'production');
+    environment.development = false;
     warnDevelopmentIssue({
       code: 'SCHEMA_FORM_WARNING.WARN_SPEC_PROD',
       message: 'silent',

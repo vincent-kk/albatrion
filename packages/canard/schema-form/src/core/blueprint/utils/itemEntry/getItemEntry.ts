@@ -1,3 +1,5 @@
+import { isDevelopment } from '@/schema-form/app/environment';
+
 import type { BlueprintChildEntry, BlueprintNode } from '../../type';
 import { getItemSchemaPath } from './getItemEntry/utils/getItemSchemaPath';
 
@@ -6,8 +8,6 @@ const ENTRIES = new WeakMap<
   BlueprintNode,
   (BlueprintChildEntry | undefined)[]
 >();
-/** Lazy records follow the same module-time mode as their owning blueprint. */
-const DEVELOPMENT = process.env.NODE_ENV !== 'production';
 
 /**
  * Bind an array slot to its reusable item template without creating a runtime node.
@@ -47,7 +47,7 @@ export const getItemEntry = (
           ? schemaPath
           : declaration.schemaPath,
     };
-    if (DEVELOPMENT) {
+    if (isDevelopment()) {
       Object.freeze(binding.order);
       Object.freeze(binding.gates);
       Object.freeze(binding);
@@ -60,7 +60,7 @@ export const getItemEntry = (
     hostPath: template.path,
     declarations,
   };
-  if (DEVELOPMENT) {
+  if (isDevelopment()) {
     Object.freeze(declarations);
     Object.freeze(entry);
   }

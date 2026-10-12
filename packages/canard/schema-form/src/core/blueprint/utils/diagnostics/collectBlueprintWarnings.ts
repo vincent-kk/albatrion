@@ -1,5 +1,7 @@
 import { isArray } from '@winglet/common-utils/filter';
 
+import { isDevelopment } from '@/schema-form/app/environment';
+
 import type {
   Blueprint,
   BlueprintDiagnostic,
@@ -8,9 +10,6 @@ import type {
 import { readSchemaObject } from '../analyze/readSchemaObject';
 import { collectInlineTerminalWarnings } from './collectInlineTerminalWarnings';
 import { BlueprintWarningCode } from './constant';
-
-/** Diagnostics are internal records protected only in development. */
-const DEVELOPMENT = process.env.NODE_ENV !== 'production';
 
 /**
  * Collect advisory records only when a consumer explicitly requests diagnostics.
@@ -28,7 +27,7 @@ export const collectBlueprintWarnings = (
     const key = `${diagnostic.code}:${diagnostic.schemaPath}:${diagnostic.details.keyword ?? ''}`;
     if (seen.has(key)) return;
     seen.add(key);
-    collect(DEVELOPMENT ? Object.freeze(diagnostic) : diagnostic);
+    collect(isDevelopment() ? Object.freeze(diagnostic) : diagnostic);
   };
   for (const node of blueprint.nodes) {
     if (node.strategy === 'terminal') collectInlineTerminalWarnings(node, emit);

@@ -7,6 +7,12 @@ import { loadSchemaNodeAtMount, writeSchemaNode } from '../index';
 import { createTestTree } from './fixtures/createTestTree';
 import { setTestInteractionState } from './fixtures/setTestInteractionState';
 
+const environment = vi.hoisted(() => ({ development: true }));
+
+vi.mock('@/schema-form/app/environment', () => ({
+  isDevelopment: () => environment.development,
+}));
+
 // filid:contract settle-derive
 describe('settle derivation', () => {
   it('SETTLE-046 load fires derived from the loaded source', () => {
@@ -380,7 +386,7 @@ describe('settle derivation', () => {
   });
 
   it('28C-01 trace slot is absent in production settlements', () => {
-    vi.stubEnv('NODE_ENV', 'production');
+    environment.development = false;
     try {
       const { root } = createTestTree({
         type: 'object',
@@ -393,7 +399,7 @@ describe('settle derivation', () => {
       expect(root.structure?.target?.raw).toBe('A');
       expect('settlementTrace' in root.runtime).toBe(false);
     } finally {
-      vi.unstubAllEnvs();
+      environment.development = true;
     }
   });
 });

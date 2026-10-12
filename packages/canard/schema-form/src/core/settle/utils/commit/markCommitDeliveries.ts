@@ -1,5 +1,7 @@
 import { isArray } from '@winglet/common-utils/filter';
 
+import { isDevelopment } from '@/schema-form/app/environment';
+
 import { getFeatureNodeIndex } from '../../../blueprint';
 import {
   SchemaNodeEventType,
@@ -15,9 +17,6 @@ import { createWatchDeliveryIndex } from './utils/createWatchDeliveryIndex';
 import { getWatchDeliveryPaths } from './utils/getWatchDeliveryPaths';
 import { isSameDeliveryValue } from './utils/isSameDeliveryValue';
 import { readSettlementSource } from './utils/readSettlementSource';
-
-/** Payload immutability follows the module's development build mode. */
-const DEVELOPMENT = process.env.NODE_ENV !== 'production';
 
 /** Candidates without a watch declaration share the same immutable empty value. */
 const EMPTY_WATCH_VALUES: readonly unknown[] = Object.freeze([]);
@@ -200,7 +199,7 @@ export const markCommitDeliveries = <Self extends SchemaNodeRecord<Self>>(
         mark(
           node,
           SchemaNodeEventType.UpdateValue,
-          DEVELOPMENT ? Object.freeze(payload) : payload,
+          isDevelopment() ? Object.freeze(payload) : payload,
           { source },
         );
       }
@@ -217,7 +216,7 @@ export const markCommitDeliveries = <Self extends SchemaNodeRecord<Self>>(
         mark(
           node,
           SchemaNodeEventType.UpdatePath,
-          DEVELOPMENT ? Object.freeze(payload) : payload,
+          isDevelopment() ? Object.freeze(payload) : payload,
         );
       }
       if (
@@ -261,7 +260,7 @@ export const markCommitDeliveries = <Self extends SchemaNodeRecord<Self>>(
         mark(
           node,
           SchemaNodeEventType.UpdateJsonSchema,
-          DEVELOPMENT ? Object.freeze(payload) : payload,
+          isDevelopment() ? Object.freeze(payload) : payload,
         );
       }
     } else if (context.changedNodes.has(node)) {
@@ -277,7 +276,7 @@ export const markCommitDeliveries = <Self extends SchemaNodeRecord<Self>>(
       mark(
         node,
         SchemaNodeEventType.UpdateValue,
-        DEVELOPMENT ? Object.freeze(payload) : payload,
+        isDevelopment() ? Object.freeze(payload) : payload,
         { source },
       );
     }
