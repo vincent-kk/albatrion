@@ -111,6 +111,7 @@
   > | 합성 API | `Form.Group`·`Form.Label`·`Form.Input`·`Form.Error`·`Form.Render`와 props `FormGroupProps`·`FormLabelProps`·`FormInputProps`·`FormErrorProps`·`FormRenderProps`. `path`를 받아 그 노드의 일부를 그리며 `Form.Group`·`Form.Label`·`Form.Input`·`Form.Error`는 같은 이름의 `FormTypeXRenderer`를 부르고 `Form.Render`는 소비자가 직접 그린다 | 그대로 |
 - 보충:
   > "이름 없는 형 `FormGroup`·`FormLabel`·`FormInput`·`FormError`·`FormRender`는 합성 구성 요소만 가리키게 된다(플러그인 키가 옮겨 가므로 충돌이 사라진다)." (`reviews/round-15-decisions.md:38`)
+  > 편집자 결정(209C-01): "【추론】 꼬리는 전부 사양대로이고 측정 경로와 독립이라 다시 전체 시험을 돌려 측정을 흔들 이유가 없다. verifier 거부는 세션 공통이라 직접 검증으로 대체하되 그 사실을 적어 둔다." (`reviews/round-209-closing.md:9`)
 - 상태: 현행
 - 출처: `08-design-a-to-z.md:409`(정본), `reviews/round-15-decisions.md:38`
 - 닫은 사람: 소유자 답(`reviews/round-15-decisions.md:21` 8)
