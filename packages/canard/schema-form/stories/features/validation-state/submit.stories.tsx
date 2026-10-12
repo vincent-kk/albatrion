@@ -7,7 +7,7 @@ import { expect, fn, spyOn, userEvent, waitFor } from 'storybook/test';
 
 import { FeatureStory } from '../components/FeatureStory';
 import { findScenario } from '../components/findScenario';
-import { createHandleProbe } from './utils/createHandleProbe';
+import { createHandleProbe } from '../components/createHandleProbe';
 
 export default { title: 'Features/ValidationState/Submit', component: FeatureStory, tags: ['autodocs'] } satisfies Meta<typeof FeatureStory>;
 type Story = StoryObj<typeof FeatureStory>;

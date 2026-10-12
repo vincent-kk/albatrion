@@ -7,8 +7,8 @@ import { userEvent } from 'storybook/test';
 
 import { FeatureStory } from '../components/FeatureStory';
 import { findScenario } from '../components/findScenario';
-import { createHandleProbe } from './utils/createHandleProbe';
-import { expectEventually } from './utils/expectEventually';
+import { createHandleProbe } from '../components/createHandleProbe';
+import { expectEventually } from '../components/expectEventually';
 import { readShownMessage } from './utils/readShownMessage';
 import { toShowError } from './utils/toShowError';
 

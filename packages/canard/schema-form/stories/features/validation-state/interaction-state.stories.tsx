@@ -7,9 +7,9 @@ import { SchemaNodeState } from '../../../src';
 
 import { FeatureStory } from '../components/FeatureStory';
 import { findScenario } from '../components/findScenario';
-import { createHandleProbe } from './utils/createHandleProbe';
-import { expectEventually } from './utils/expectEventually';
-import { readStateNames } from './utils/readStateNames';
+import { createHandleProbe } from '../components/createHandleProbe';
+import { expectEventually } from '../components/expectEventually';
+import { readStateNames } from '../components/readStateNames';
 
 export default { title: 'Features/ValidationState/InteractionState', component: FeatureStory, tags: ['autodocs'] } satisfies Meta<typeof FeatureStory>;
 type Story = StoryObj<typeof FeatureStory>;

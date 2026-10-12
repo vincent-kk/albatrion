@@ -1,6 +1,6 @@
 import type { InteractionStateNames } from '@aileron/schema-form-scenarios';
 
-import { SchemaNodeState } from '../../../../src';
+import { SchemaNodeState } from '../../../src';
 
 /**
  * Translate a global state record into flag names, keeping only keys whose value is true.

@@ -6,8 +6,8 @@ import { expect } from 'storybook/test';
 import { FeatureStory } from '../components/FeatureStory';
 import { findScenario } from '../components/findScenario';
 import { createCatalogFormatError } from './utils/createCatalogFormatError';
-import { createHandleProbe } from './utils/createHandleProbe';
-import { expectEventually } from './utils/expectEventually';
+import { createHandleProbe } from '../components/createHandleProbe';
+import { expectEventually } from '../components/expectEventually';
 import { readShownMessage } from './utils/readShownMessage';
 
 export default { title: 'Features/ValidationState/FormatError', component: FeatureStory, tags: ['autodocs'] } satisfies Meta<typeof FeatureStory>;

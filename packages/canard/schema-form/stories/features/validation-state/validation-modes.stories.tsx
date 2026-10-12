@@ -4,8 +4,8 @@ import type { Meta, StoryObj } from '@storybook/react-vite';
 
 import { FeatureStory } from '../components/FeatureStory';
 import { findScenario } from '../components/findScenario';
-import { createHandleProbe } from './utils/createHandleProbe';
-import { expectEventually } from './utils/expectEventually';
+import { createHandleProbe } from '../components/createHandleProbe';
+import { expectEventually } from '../components/expectEventually';
 import { readKeywords } from './utils/readKeywords';
 import { toValidationMode } from './utils/toValidationMode';
 

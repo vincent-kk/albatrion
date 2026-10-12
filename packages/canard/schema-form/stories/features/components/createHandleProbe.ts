@@ -1,6 +1,6 @@
 import { expect, fn, waitFor } from 'storybook/test';
 
-import type { FormHandle } from '../../../../src';
+import type { FormHandle } from '../../../src';
 
 /** A per-story spy that captures mounted handles for consumer-only play steps. */
 export interface HandleProbe {

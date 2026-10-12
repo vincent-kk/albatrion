@@ -23,6 +23,8 @@ export type {
   ExternalErrorStage, FormatErrorCase, InteractionStateNames, InteractionStateStage, KeywordsByPath,
   ShowErrorCase, ShowErrorName, ValidationModeCase, ValidationModeName,
 } from './src/features/validation-state/index';
+export { contextStages, derivationFeatureScenarios, resetInteractionStages } from './src/features/derivation/index';
+export type { ContextStage, ResetInteractionStage } from './src/features/derivation/index';
 export { findScenarioHandle } from './src/utils/findScenarioHandle';
 export { playScenario } from './src/utils/playScenario';
 export { registerScenarioHandle } from './src/utils/registerScenarioHandle';
