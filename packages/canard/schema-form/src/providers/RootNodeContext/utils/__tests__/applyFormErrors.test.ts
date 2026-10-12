@@ -47,3 +47,39 @@ it('79C-01 groups repeated error paths in one pass and clears retired paths', ()
   expect(retired.setExternalErrors).toHaveBeenCalledExactlyOnceWith([]);
   expect(root.find).toHaveBeenCalledTimes(5);
 });
+
+const rootWithChild = () => {
+  const child = { setExternalErrors: vi.fn() };
+  const root = {
+    batch: (callback: () => void) => callback(),
+    setExternalErrors: vi.fn(),
+    find: vi.fn((path: string) => (path === '' ? root : child)),
+  };
+  return { root: root as unknown as SchemaNode, rootMock: root, child };
+};
+
+it.each([
+  ['null', null],
+  ['an object', { dataPath: '/a', message: 'not a list' }],
+])('178C-01 reads %s as an empty errors prop like 0.16.0', (_label, errors) => {
+  const { root, rootMock, child } = rootWithChild();
+
+  expect(() =>
+    applyFormErrors(root, errors as unknown as ValidationIssue[]),
+  ).not.toThrow();
+
+  expect(rootMock.setExternalErrors).toHaveBeenCalledExactlyOnceWith([]);
+  expect(child.setExternalErrors).not.toHaveBeenCalled();
+});
+
+it('178C-01 reads a null previous list as empty', () => {
+  const { root, rootMock, child } = rootWithChild();
+  const issue: ValidationIssue = { dataPath: '/a', message: 'first' };
+
+  expect(() =>
+    applyFormErrors(root, [issue], null as unknown as ValidationIssue[]),
+  ).not.toThrow();
+
+  expect(rootMock.setExternalErrors).toHaveBeenCalledExactlyOnceWith([issue]);
+  expect(child.setExternalErrors).toHaveBeenCalledExactlyOnceWith([issue]);
+});
