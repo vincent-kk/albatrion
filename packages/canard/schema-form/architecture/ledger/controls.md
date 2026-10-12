@@ -484,6 +484,7 @@
   > "| `resetInteraction` | 동사 | 노드 | 커밋 | 식이 참이 되면 `dirty`·`touched`를 초기화한다. 값은 건드리지 않는다 | `unsetValue`와 같은 시점 규칙 | 같음 |" (`08-design-a-to-z.md:111`)
   > 편집자 결정(28C-04): "【추론】 `DisableAutomaticWrites`로 억제한 로드(`FormHandle.reset(DisableAutomaticWrites)` 등)에서도 `controls.resetInteraction`은 커밋 단계에서 로드된 값으로 판정하고 참이면 `dirty`·`touched`를 비운다." (`reviews/round-28-closing.md:47`)
   > 편집자 결정(28C-04): "【추론】 억제 비트의 범위는 그 호출이 일으킨 예약 층의 자동 쓰기(채움, `controls.derived`, `controls.injectTo`, `controls.unsetValue`, 나감의 비움)이고, `controls.resetInteraction`은 원본 쓰기도 예약 층의 자동 쓰기도 아니므로(EVENT-012) 그 범위 밖이다; 포커스 아웃 `trim`은 호출 비트가 아니라 Form 속성 `disableAutomaticWrites`만이 억제한다(21C-01, WRITE-100)." (`reviews/round-28-closing.md:48`)
+  > 편집자 결정(202C-01): "【추론】 소유자는 멈춤 없이, 권한 문제는 미루라고 했다. G4의 품질 증거는 이미 셋이고 PR 최종 검증이 남아 있으니 verifier 하나를 뒤로 미뤄도 위험이 작다." (`reviews/round-202-closing.md:9`)
 - 상태: 현행
 - 출처: `adr/0003-group-namespace.md:80,81,90`(정본), `08-design-a-to-z.md:111`, `07-conclusions.md:127`
 - 닫은 사람: 소유자 답(`reviews/round-12-owner-answers.md:15` 7 "input을 초기화"), 소유자 답(`reviews/round-12-owner-answers.md:13` 5 `&clearValue` 두 문장), 소유자 답(`reviews/round-9-spec.md:68` pristine 정정), 소유자 답(`reviews/round-10-owner-answers.md:32` E-5)
