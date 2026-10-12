@@ -5,7 +5,7 @@
 - `Form`은 공개 폼 컴포넌트로서 Provider를 고정 순서로 조합하고 `FormHandle` ref를 노출합니다. 노드 생성은 `RootNodeContextProvider`에 맡겨 폼 조합과 트리 생성의 책임을 분리합니다.
 - **폼 밖으로 나가는 값은 `rootNode.outputValue`(투영 값)이고, 폼 안으로 들어오는 값은 원본 입력입니다.** `getValue`·제출·변경 방출은 투영 값을 읽고 `setValue`는 받은 값을 노드에 전달합니다. 편집 중인 `value`와 방출 값을 구별합니다(LANDING-067).
 - `onChange`와 `onDiagnosticsChange`는 준비 깃발이 참이 된 뒤에만 전달합니다. 마운트 정착 중 변경·진단 통지는 버리며, 직전 방출 값과 같은 참조는 다시 내보내지 않습니다. 마운트의 오류 기록 전달과 검증 요청은 커밋 뒤 준비 layout effect가 담당합니다(REACT-007, ERROR-026, 69C-05).
-- `submit`은 진단이 `degraded`이면 모든 환경에서 `SUBMIT_WHILE_DEGRADED`로 거부합니다. 검증기가 있으나 전체 스키마 컴파일이 실패하여 검증 불가이고 모드가 `None`이 아니면 제출도 거부합니다. 검증기 미등록만으로는 제출을 거부하지 않습니다. 허용된 제출은 투영 값을 확정하고 필요한 검증을 수행하며, 검증 오류가 있으면 `inputOnSubmit`을 호출하지 않고 `ValidationError('SCHEMA_VALIDATION_FAILED')`의 상세에 `{value, errors, jsonSchema}`를 담습니다. 네이티브 submit 경로의 거부는 `onError`와 주인 없는 오류 싱크로 전달합니다(LANDING-025·095).
+- `submit`은 진단이 `degraded`이면 모든 환경에서 `SUBMIT_WHILE_DEGRADED`로 거부합니다. 검증기가 있으나 전체 스키마 컴파일이 실패하여 검증 불가이고 모드가 `None`이 아니면 제출도 거부합니다. 검증기 미등록만으로는 제출을 거부하지 않습니다. 허용된 제출은 투영 값을 확정하고 필요한 검증을 수행하며, 검증 오류가 있으면 `inputOnSubmit`을 호출하지 않고 `ValidationError('SCHEMA_VALIDATION_FAILED')`의 상세에 `{value, errors, jsonSchema}`를 담습니다. 네이티브 submit 경로의 거부 가운데 degraded 같은 오류 계층 원인은 `onError` 뒤 주인 없는 오류 싱크로, 검증 실패(`SCHEMA_VALIDATION_FAILED`)는 기록되지 않으므로 `onError` 없이 싱크로만 전달합니다(ERROR-016·019·139, LANDING-025·095).
 - Provider의 현행 중첩 순서는 계약입니다. 바깥 설정과 안쪽 노드·폼 루트의 소비 관계를 유지해야 하므로 부분 렌더나 순서 변경은 허용하지 않습니다.
 - 네이티브 제출 함수는 추적 제출 핸들이 같은 동안 참조를 유지하여 관계없는 Form 속성 변경이 FormRootProxy를 다시 렌더하지 않습니다. 제출 이벤트의 기본 동작 억제와 실패의 호스트 보고는 유지합니다(121C-01 F-C).
 
