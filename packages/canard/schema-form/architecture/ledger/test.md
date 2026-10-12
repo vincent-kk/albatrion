@@ -637,6 +637,7 @@
   > 소유자(169라운드, 32a 뒤 멈춤, 배열 확인 측정 축소 또는 생략): "32a 까지만 하고 잠시 멈춰줘. 배열 라운드는 좀 짧게 검증해보던가 아니면 일단 생략 브라우저 검토랑 코드리뷰를 해야되거든" (`reviews/round-169-owner-answers.md:7`) — 판정 세션 32a의 남은 두 부분까지만 돌리고 멈춘다; 배열 천 개 두 행의 확인 측정은 지금 돌리지 않고 재개 시 짧게 하거나 생략할지 정한다; 소유자가 브라우저 검토와 코드 리뷰를 한다(원장 관리자, 2026-10-12).
   > 소유자(170라운드, 커밋 1 맞바꿈 수용, 확인 측정은 짧은 추세 확인): "어 받아들이자. 짧게 추세만 검증해. 블록 수를 더 줄여." (`reviews/round-170-owner-answers.md:7`) — 개선-32 커밋 1을 소유자 수용으로 채택한다(array-1000 갱신 약 −72 µs 손실 대 마운트 약 +12 ms·replace-200 약 −2 ms 이득); 확인 측정은 블록 8개로 두 행만 돌려 추세만 기록한다(원장 관리자, 2026-10-12).
   > 편집자 결정(208C-01): "【추론】 (1)은 오류 경로의 원자성이라 새 동작이 옳고 소비자에게 더 안전하다. 꼬리는 전부 외부 오류 채널과 설정·문서라 쓰기 경로 측정과 독립이다." (`reviews/round-208-closing.md:9`)
+  > 편집자 결정(212C-01): "【추론】 방향 확인은 판정이 아니라 "회귀 방향이 없다"를 보는 문턱이고 그 문턱을 넘었다. rebase를 두 번 하지 않도록 3라운드 push를 먼저 기다리는 것이 싸다." (`reviews/round-212-closing.md:13`)
 - 상태: 현행
 - 출처: `09-landing-and-test-strategy.md:223`(정본), `adr/0009-performance-budget-and-benchmarks.md:9,92`, `08-design-a-to-z.md:609`, `reviews/round-16-owner-answers.md:12`, `reviews/round-16-owner-review.md:57`, `reviews/round-18-agenda.md:68`
 - 닫은 사람: 소유자 답(`reviews/round-16-owner-answers.md:12` 답 6), 편집자 결정(16라운드 도출, '통제 가능'의 뜻, `09-landing-and-test-strategy.md:223`)
