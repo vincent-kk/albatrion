@@ -1,5 +1,3 @@
-import { DEVELOPMENT } from '@/schema-form/app/environment';
-
 import { NON_JSON_WHOLE_VALUE, TYPE_MISMATCH } from '../../../../errors';
 import type { SchemaNodeRecord, TypeMismatchRecord } from '../../../record';
 import { indexSchemaNodeWarning } from '../../../record';
@@ -33,7 +31,7 @@ export const commitSettlement = <Self extends SchemaNodeRecord<Self>>(
   context: SettlementContext<Self>,
 ): void => {
   const runtime = context.root.runtime;
-  const development = DEVELOPMENT;
+  const development = process.env.NODE_ENV !== 'production';
   if (context.exited.size > 0) snapshotExitedPolicies(context);
   if (runtime.blueprint.capabilities.hasDerive) commitDeriveRules(context);
   if (runtime.blueprint.capabilities.hasExpressions)

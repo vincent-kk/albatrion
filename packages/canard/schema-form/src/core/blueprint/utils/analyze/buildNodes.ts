@@ -1,7 +1,5 @@
 import { isArray } from '@winglet/common-utils/filter';
 
-import { DEVELOPMENT } from '@/schema-form/app/environment';
-
 import type {
   BlueprintNodeKind,
   BlueprintSchemaType,
@@ -82,7 +80,7 @@ export const buildNodes = (
               validationOnly: true,
             }
           : declaration;
-      if (DEVELOPMENT && owned !== declaration) {
+      if (process.env.NODE_ENV !== 'production' && owned !== declaration) {
         Object.freeze(owned.order);
         Object.freeze(owned.gates);
         Object.freeze(owned);
@@ -98,9 +96,10 @@ export const buildNodes = (
       schemaType,
       nullable,
       strategy: resolveNodeStrategy(context, kind, group.declarations),
-      declarations: DEVELOPMENT
-        ? Object.freeze(ownedDeclarations)
-        : ownedDeclarations,
+      declarations:
+        process.env.NODE_ENV !== 'production'
+          ? Object.freeze(ownedDeclarations)
+          : ownedDeclarations,
       childEntries: [],
     };
     context.nodes.push(node);

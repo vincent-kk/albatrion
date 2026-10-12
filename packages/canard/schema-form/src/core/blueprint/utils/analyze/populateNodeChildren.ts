@@ -1,8 +1,6 @@
 import { isArray } from '@winglet/common-utils/filter';
 import { escapeSegment } from '@winglet/json/pointer';
 
-import { DEVELOPMENT } from '@/schema-form/app/environment';
-
 import { BlueprintErrorCode } from '../diagnostics/constant';
 import { throwBlueprintError } from '../diagnostics/throwBlueprintError';
 import { createBlueprintGate } from './createBlueprintGate';
@@ -231,6 +229,7 @@ export const populateNodeChildren = (
       .map(
         ([index, inputs]) => build(context, inputs, `${node.path}/${index}`)[0],
       );
-  if (DEVELOPMENT && node.prefixItems) Object.freeze(node.prefixItems);
+  if (process.env.NODE_ENV !== 'production' && node.prefixItems)
+    Object.freeze(node.prefixItems);
   if (node.kind === 'object') populateVirtualNodes(context, node);
 };

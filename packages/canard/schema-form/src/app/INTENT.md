@@ -9,7 +9,7 @@
 - TypeScript, 클래스 기반 singleton 패턴 (`PluginManager` static class)
 - 플러그인은 구조와 함수 identity를 반영한 비교 키로 중복 등록을 방지합니다.
 - 상수는 용도별로 파일 분리
-- 개발 전용 분기의 판정은 `environment`의 모듈 상수 `DEVELOPMENT` 하나를 읽는다 (constants에는 런타임 로직을 두지 않으므로 별도 구획)
+- 개발 전용 분기의 판정은 사용처마다 bare `process.env.NODE_ENV !== 'production'` 비교이며 모듈 상수·함수를 두지 않는다 (번들러가 사용처에서만 접기 때문)
 
 ## Boundaries
 

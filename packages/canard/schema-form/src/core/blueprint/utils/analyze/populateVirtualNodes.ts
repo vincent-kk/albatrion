@@ -1,8 +1,6 @@
 import { isArray } from '@winglet/common-utils/filter';
 import { escapeSegment } from '@winglet/json/pointer';
 
-import { DEVELOPMENT } from '@/schema-form/app/environment';
-
 import type { BlueprintChildEntry, PropertyDeclaration } from '../../type';
 import { copyBlueprintDeclarations } from '../declarations/copyBlueprintDeclarations';
 import { BlueprintErrorCode } from '../diagnostics/constant';
@@ -100,7 +98,10 @@ export const populateVirtualNodes = (
       if (group) group.declarations.push(...declarations);
       else
         groups.set(name, {
-          fields: DEVELOPMENT ? Object.freeze([...fields]) : [...fields],
+          fields:
+            process.env.NODE_ENV !== 'production'
+              ? Object.freeze([...fields])
+              : [...fields],
           declarations,
         });
     }
@@ -115,7 +116,9 @@ export const populateVirtualNodes = (
           ...edge,
           declarations: copyBlueprintDeclarations(edge.declarations),
         };
-        childEntries.push(DEVELOPMENT ? Object.freeze(copy) : copy);
+        childEntries.push(
+          process.env.NODE_ENV !== 'production' ? Object.freeze(copy) : copy,
+        );
       }
     }
     const node: MutableNode = {
@@ -126,9 +129,10 @@ export const populateVirtualNodes = (
       schemaType: 'virtual',
       nullable: false,
       strategy: resolveNodeStrategy(context, 'virtual', group.declarations),
-      declarations: DEVELOPMENT
-        ? Object.freeze(group.declarations)
-        : group.declarations,
+      declarations:
+        process.env.NODE_ENV !== 'production'
+          ? Object.freeze(group.declarations)
+          : group.declarations,
       childEntries,
       fields: group.fields,
     };
@@ -139,6 +143,8 @@ export const populateVirtualNodes = (
       declarations: copyBlueprintDeclarations(node.declarations),
       hostPath: host.path,
     };
-    host.childEntries.push(DEVELOPMENT ? Object.freeze(entry) : entry);
+    host.childEntries.push(
+      process.env.NODE_ENV !== 'production' ? Object.freeze(entry) : entry,
+    );
   }
 };

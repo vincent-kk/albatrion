@@ -3,14 +3,6 @@ import { describe, expect, it, vi } from 'vitest';
 import { createDispatchTree } from '../../dispatch/__tests__/fixtures/createDispatchTree';
 import type { Validator } from '../type';
 
-const environment = vi.hoisted(() => ({ development: true }));
-
-vi.mock('@/schema-form/app/environment', () => ({
-  get DEVELOPMENT() {
-    return environment.development;
-  },
-}));
-
 // filid:contract validation-guard
 describe('dialect reporting', () => {
   it('ERROR-188 warns at tree creation for a declared mismatch in development', () => {
@@ -56,7 +48,7 @@ describe('dialect reporting', () => {
   });
 
   it('ERROR-188 emits nothing in production', () => {
-    environment.development = false;
+    vi.stubEnv('NODE_ENV', 'production');
     try {
       const report = vi.fn();
       createDispatchTree(
@@ -71,7 +63,7 @@ describe('dialect reporting', () => {
       );
       expect(report).not.toHaveBeenCalled();
     } finally {
-      environment.development = true;
+      vi.unstubAllEnvs();
     }
   });
 });

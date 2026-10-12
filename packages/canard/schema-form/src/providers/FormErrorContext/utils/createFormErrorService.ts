@@ -1,4 +1,3 @@
-import { DEVELOPMENT } from '@/schema-form/app/environment';
 import { observeSchemaNodeReports } from '@/schema-form/core';
 import type { FormErrorRecord } from '@/schema-form/errors';
 
@@ -11,7 +10,8 @@ export const createFormErrorService = (): FormErrorService => {
   const warnings = new Set<string>();
   let delivering = false;
   const service: FormErrorService = {
-    hasConsumer: () => !!service.onError || DEVELOPMENT,
+    hasConsumer: () =>
+      !!service.onError || process.env.NODE_ENV !== 'production',
     load: 0,
     beginLoad: () => {
       service.load++;
@@ -33,7 +33,8 @@ export const createFormErrorService = (): FormErrorService => {
           const deliver = () => service.onError?.(record);
           if (service.root) observeSchemaNodeReports(service.root, deliver);
           else deliver();
-        } else if (DEVELOPMENT) console.warn(record.message, record);
+        } else if (process.env.NODE_ENV !== 'production')
+          console.warn(record.message, record);
       } finally {
         delivering = false;
       }

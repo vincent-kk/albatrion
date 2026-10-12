@@ -6,14 +6,6 @@ import { ValidationMode } from '../types/state';
 import type { Validator } from '../validation';
 import { createTestValidator } from './fixtures/createTestValidator';
 
-const environment = vi.hoisted(() => ({ development: true }));
-
-vi.mock('@/schema-form/app/environment', () => ({
-  get DEVELOPMENT() {
-    return environment.development;
-  },
-}));
-
 /** One conditional tree whose guard can be evaluated at mount or later. */
 const schema = {
   type: 'object',
@@ -25,7 +17,7 @@ const schema = {
 };
 
 afterEach(() => {
-  environment.development = true;
+  vi.unstubAllEnvs();
 });
 
 describe('guard records at public entry boundaries', () => {
@@ -82,7 +74,7 @@ describe('guard records at public entry boundaries', () => {
     expect(report).not.toHaveBeenCalled();
   });
   it('ERROR-041 dev compiles once and each consuming tree records after mount commit at sink', () => {
-    environment.development = true;
+    vi.unstubAllEnvs();
     const compileGuard = vi.fn(() => {
       throw new Error('bad guard');
     });
@@ -127,7 +119,7 @@ describe('guard records at public entry boundaries', () => {
   });
 
   it('ERROR-041 production skips unevaluated guards and reports first failure after commit', () => {
-    environment.development = false;
+    vi.stubEnv('NODE_ENV', 'production');
     const compileGuard = vi.fn(() => {
       throw new Error('bad guard');
     });
@@ -168,7 +160,7 @@ describe('guard records at public entry boundaries', () => {
   });
 
   it('VALIDATE-044 treats a Promise-returning guard as GUARD_FAILED', () => {
-    environment.development = false;
+    vi.stubEnv('NODE_ENV', 'production');
     const report = vi.fn();
     const { root } = createDispatchTree(
       schema,

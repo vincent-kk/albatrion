@@ -1,7 +1,5 @@
 import type { PartialBy } from '@aileron/declare';
 
-import { DEVELOPMENT } from '@/schema-form/app/environment';
-
 import { DIALECT_MISMATCH } from '../../../errors';
 import { BEHAVIORS } from '../../behaviors';
 import {
@@ -136,7 +134,7 @@ export function schemaNodeFactory(
     });
   const authoredSchema = analysis.schema;
   if (
-    DEVELOPMENT &&
+    process.env.NODE_ENV !== 'production' &&
     validator?.dialect &&
     authoredSchema !== null &&
     typeof authoredSchema === 'object' &&
@@ -165,7 +163,7 @@ export function schemaNodeFactory(
   }
   if (
     validator &&
-    DEVELOPMENT &&
+    process.env.NODE_ENV !== 'production' &&
     analysis.schema !== null &&
     typeof analysis.schema === 'object'
   )

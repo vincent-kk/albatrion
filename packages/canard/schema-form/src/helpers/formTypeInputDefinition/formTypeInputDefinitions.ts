@@ -5,7 +5,6 @@ import {
 } from '@winglet/common-utils/filter';
 import { isReactComponent } from '@winglet/react-utils/filter';
 
-import { DEVELOPMENT } from '@/schema-form/app/environment';
 import type {
   FormTypeInputDefinition,
   FormTypeTestFn,
@@ -55,7 +54,7 @@ export const normalizeFormTypeInputDefinitions = (
         ? test.type
         : [test.type];
       if (types.includes('integer')) invalid.push('type:integer');
-      if (invalid.length && DEVELOPMENT)
+      if (invalid.length && process.env.NODE_ENV !== 'production')
         console.warn('SCHEMA_FORM_WARNING.FORM_TYPE_TEST_INVALID', {
           definition,
           invalid,

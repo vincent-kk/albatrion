@@ -7,6 +7,34 @@ import { createESLintConfig } from '../../../eslint.config.mjs';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
+/** `process.env.NODE_ENV` appears only as a bare `!== 'production'` / `=== 'production'` comparison at its use site, so consumer bundlers fold every development-only branch (rounds 189, 196, 200C-01). */
+const ENVIRONMENT_TOKEN =
+  "[object.object.name='process'][object.property.name='env'][property.name='NODE_ENV']";
+const environmentTokenRules = [
+  {
+    selector: `:not(BinaryExpression) > MemberExpression${ENVIRONMENT_TOKEN}`,
+    message:
+      "Compare process.env.NODE_ENV to 'production' at the use site; no constant, destructuring, assignment or bare read (200C-01).",
+  },
+  {
+    selector:
+      "BinaryExpression[left.object.object.name='process'][left.object.property.name='env'][left.property.name='NODE_ENV']:not([operator='!=='][right.value='production']):not([operator='==='][right.value='production'])",
+    message:
+      "process.env.NODE_ENV is compared only with !== 'production' or === 'production' (200C-01).",
+  },
+  {
+    selector: `BinaryExpression > MemberExpression.right${ENVIRONMENT_TOKEN}`,
+    message:
+      "Write the comparison as process.env.NODE_ENV !== 'production' with the token on the left (200C-01).",
+  },
+  {
+    selector:
+      "VariableDeclarator[id.type='ObjectPattern'][init.object.name='process'][init.property.name='env']",
+    message:
+      'Do not destructure process.env; compare process.env.NODE_ENV at the use site (200C-01).',
+  },
+];
+
 export default [
   ...createESLintConfig(path.resolve(__dirname, './tsconfig.json')),
   {
@@ -70,6 +98,7 @@ export default [
     rules: {
       'no-restricted-syntax': [
         'error',
+        ...environmentTokenRules,
         {
           selector: "PropertyDefinition[key.type='PrivateIdentifier']",
           message:
@@ -128,6 +157,20 @@ export default [
             'SchemaNode branching belongs to its owner modules (NODE-010).',
         },
       ],
+    },
+  },
+  {
+    // Files without their own no-restricted-syntax block; the two blocks that have one spread the same rules.
+    files: [
+      'src/core/**/*.{ts,tsx}',
+      'src/app/**/*.{ts,tsx}',
+      'src/types/**/*.{ts,tsx}',
+      'src/errors/**/*.{ts,tsx}',
+      'src/index.ts',
+    ],
+    ignores: ['src/core/SchemaNode/SchemaNode.ts', '**/__tests__/**'],
+    rules: {
+      'no-restricted-syntax': ['error', ...environmentTokenRules],
     },
   },
   {
@@ -203,6 +246,7 @@ export default [
     rules: {
       'no-restricted-syntax': [
         'error',
+        ...environmentTokenRules,
         // Keep the base-config entries (per-rule overrides replace, not merge).
         {
           selector: "PropertyDefinition[key.type='PrivateIdentifier']",

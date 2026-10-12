@@ -10,14 +10,6 @@ import { dispatchMount, dispatchSetValue, subscribeSchemaNode } from '../index';
 import { createFormErrorRecord } from '../utils/report/createFormErrorRecord';
 import { createDispatchTree } from './fixtures/createDispatchTree';
 
-const environment = vi.hoisted(() => ({ development: true }));
-
-vi.mock('@/schema-form/app/environment', () => ({
-  get DEVELOPMENT() {
-    return environment.development;
-  },
-}));
-
 // filid:contract dispatch-report
 describe('chain error reporting', () => {
   it('ERROR-023 ERROR-041 retains the first bundled guard error in its stored record', () => {
@@ -320,7 +312,7 @@ describe('chain error reporting', () => {
       .mockImplementation(() => undefined);
     const schema = { type: 'object', options: { terminal: true } };
     try {
-      environment.development = true;
+      vi.unstubAllEnvs();
       const dev = createDispatchTree(schema);
       dispatchSetValue(dev.root, { bad: undefined });
       expect(
@@ -329,13 +321,13 @@ describe('chain error reporting', () => {
         ),
       ).toBe(true);
       consoleWarn.mockClear();
-      environment.development = false;
+      vi.stubEnv('NODE_ENV', 'production');
       const prod = createDispatchTree(schema);
       dispatchSetValue(prod.root, { bad: undefined });
       expect(consoleWarn).not.toHaveBeenCalled();
       expect(prod.runtime.warningKeys).toBeUndefined();
     } finally {
-      environment.development = true;
+      vi.unstubAllEnvs();
       consoleWarn.mockRestore();
     }
   });

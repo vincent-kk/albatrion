@@ -1,1 +1,0 @@
-export { DEVELOPMENT } from './development';

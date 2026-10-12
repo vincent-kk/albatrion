@@ -1,5 +1,3 @@
-import { DEVELOPMENT } from '@/schema-form/app/environment';
-
 import type { BlueprintChildEntry, BlueprintNode } from '../../type';
 import { getItemSchemaPath } from './getItemEntry/utils/getItemSchemaPath';
 
@@ -47,7 +45,7 @@ export const getItemEntry = (
           ? schemaPath
           : declaration.schemaPath,
     };
-    if (DEVELOPMENT) {
+    if (process.env.NODE_ENV !== 'production') {
       Object.freeze(binding.order);
       Object.freeze(binding.gates);
       Object.freeze(binding);
@@ -60,7 +58,7 @@ export const getItemEntry = (
     hostPath: template.path,
     declarations,
   };
-  if (DEVELOPMENT) {
+  if (process.env.NODE_ENV !== 'production') {
     Object.freeze(declarations);
     Object.freeze(entry);
   }

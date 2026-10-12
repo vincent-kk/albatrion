@@ -2,17 +2,9 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import { warnDevelopmentIssue } from '../warnDevelopmentIssue';
 
-const environment = vi.hoisted(() => ({ development: true }));
-
-vi.mock('@/schema-form/app/environment', () => ({
-  get DEVELOPMENT() {
-    return environment.development;
-  },
-}));
-
 describe('warnDevelopmentIssue', () => {
   afterEach(() => {
-    environment.development = true;
+    vi.unstubAllEnvs();
     vi.restoreAllMocks();
   });
 
@@ -54,7 +46,7 @@ describe('warnDevelopmentIssue', () => {
 
   it('production 환경에서는 출력하지 않는다', () => {
     const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
-    environment.development = false;
+    vi.stubEnv('NODE_ENV', 'production');
     warnDevelopmentIssue({
       code: 'SCHEMA_FORM_WARNING.WARN_SPEC_PROD',
       message: 'silent',

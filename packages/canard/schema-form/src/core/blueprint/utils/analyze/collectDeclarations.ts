@@ -1,7 +1,5 @@
 import { isArray } from '@winglet/common-utils/filter';
 
-import { DEVELOPMENT } from '@/schema-form/app/environment';
-
 import type { BlueprintGate, PropertyDeclaration } from '../../type';
 import { validateControlGroups } from '../diagnostics/validateControlGroups';
 import { readAllowedTypes } from '../types/readAllowedTypes';
@@ -97,7 +95,7 @@ export const collectDeclarations = (
     inherited: input.inherited,
     hostPath: input.hostPath,
   };
-  if (DEVELOPMENT) {
+  if (process.env.NODE_ENV !== 'production') {
     Object.freeze(fragment.order);
     Object.freeze(fragment.gates);
     Object.freeze(declaration.order);

@@ -1,5 +1,3 @@
-import { DEVELOPMENT } from '@/schema-form/app/environment';
-
 import { SchemaNodeEventType, SchemaNodeRevisionLedger } from '../../../record';
 import type { SchemaNodeRecord } from '../../../record';
 
@@ -23,9 +21,10 @@ export const commitStaticFirstNode = <Self extends SchemaNodeRecord<Self>>(
   node.pendingDelivery = {
     type,
     payload: {
-      [SchemaNodeEventType.UpdateValue]: DEVELOPMENT
-        ? Object.freeze(payload)
-        : payload,
+      [SchemaNodeEventType.UpdateValue]:
+        process.env.NODE_ENV !== 'production'
+          ? Object.freeze(payload)
+          : payload,
     },
     options: {
       [SchemaNodeEventType.UpdateValue]: {

@@ -1,7 +1,5 @@
 import { isArray } from '@winglet/common-utils/filter';
 
-import { DEVELOPMENT } from '@/schema-form/app/environment';
-
 import type { BlueprintExpression } from '../../type';
 import { BlueprintErrorCode } from '../diagnostics/constant';
 import { throwBlueprintError } from '../diagnostics/throwBlueprintError';
@@ -108,7 +106,7 @@ export const compileBlueprintExpressions = (
             dependencies,
             evaluate,
           };
-          if (DEVELOPMENT) {
+          if (process.env.NODE_ENV !== 'production') {
             Object.freeze(dependencies);
             Object.freeze(compiled);
           }
@@ -122,7 +120,9 @@ export const compileBlueprintExpressions = (
       }
     }
   }
-  if (DEVELOPMENT && context.dependencies)
+  if (process.env.NODE_ENV !== 'production' && context.dependencies)
     for (const ids of Object.values(context.dependencies)) Object.freeze(ids);
-  return DEVELOPMENT ? Object.freeze(expressions) : expressions;
+  return process.env.NODE_ENV !== 'production'
+    ? Object.freeze(expressions)
+    : expressions;
 };

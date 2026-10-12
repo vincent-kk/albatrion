@@ -11,14 +11,6 @@ import { afterEach, expect, it, vi } from 'vitest';
 import { Form, type FormHandle } from '@/schema-form/components/Form';
 import type { FormTypeInputProps, JSONSchema } from '@/schema-form/types';
 
-const environment = vi.hoisted(() => ({ development: true }));
-
-vi.mock('@/schema-form/app/environment', () => ({
-  get DEVELOPMENT() {
-    return environment.development;
-  },
-}));
-
 /** An object made terminal by an inline input: the one shape whose empty child list is a mistake to read (round 180). */
 const detectable = (Input: ComponentType<FormTypeInputProps>) =>
   ({
@@ -28,13 +20,13 @@ const detectable = (Input: ComponentType<FormTypeInputProps>) =>
   }) satisfies JSONSchema;
 
 afterEach(() => {
-  environment.development = true;
+  vi.unstubAllEnvs();
   cleanup();
   vi.restoreAllMocks();
 });
 
 it('round 180 hands a production build a plain empty list even with an error handler', async () => {
-  environment.development = false;
+  vi.stubEnv('NODE_ENV', 'production');
   const onError = vi.fn();
   const lists: unknown[] = [];
   const Input = ({ ChildNodeComponents }: FormTypeInputProps) => {
@@ -51,7 +43,7 @@ it('round 180 hands a production build a plain empty list even with an error han
   await act(async () => {
     await Promise.resolve();
   });
-  environment.development = true;
+  vi.unstubAllEnvs();
   const plain: unknown[] = [];
   const PlainInput = ({ ChildNodeComponents }: FormTypeInputProps) => {
     plain.push(ChildNodeComponents);

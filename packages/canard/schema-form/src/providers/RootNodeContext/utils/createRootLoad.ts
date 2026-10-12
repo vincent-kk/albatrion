@@ -1,6 +1,5 @@
 import { clone } from '@winglet/common-utils/object';
 
-import { DEVELOPMENT } from '@/schema-form/app/environment';
 import { buildSchemaNodeTree, mountSchemaNode } from '@/schema-form/core';
 import {
   isRenderAtomic,
@@ -35,7 +34,8 @@ export const createRootLoad = (
       isTerminal: isRenderTerminal,
       isAtomic: isRenderAtomic,
       errorReporter: {
-        hasConsumer: () => reporter?.hasConsumer() ?? DEVELOPMENT,
+        hasConsumer: () =>
+          reporter?.hasConsumer() ?? process.env.NODE_ENV !== 'production',
         report: (record) => {
           if (load.ready) {
             if (reporter && load.root) reporter.root = load.root;

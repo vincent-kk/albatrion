@@ -1,6 +1,5 @@
 import { useLayoutEffect, useMemo, useRef } from 'react';
 
-import { DEVELOPMENT } from '@/schema-form/app/environment';
 import type { SchemaNode } from '@/schema-form/core';
 import { useFormErrorContext } from '@/schema-form/providers/FormErrorContext';
 
@@ -25,43 +24,52 @@ export const useTerminalChildren = (node: SchemaNode): ChildNodeComponent[] => {
   const accessed = useRef(0);
   const children = useMemo(() => {
     accessed.current = 0;
-    if (!DEVELOPMENT || !reporter || !isDetectableTerminal(node))
-      return EMPTY_CHILDREN;
-    let readLoad = reporter.load;
-    const get = (
-      target: object = EMPTY_CHILDREN,
-      key?: string | symbol,
-      receiver?: unknown,
-    ): unknown => {
-      if (readLoad !== reporter.load) {
-        readLoad = reporter.load;
-        accessed.current &= ~ACCESSED;
-      }
-      if (key === undefined) {
-        reporter.report({
-          level: 'warning',
-          code: 'SCHEMA_FORM_WARNING.CHILD_NODE_COMPONENTS_ON_TERMINAL',
-          message: 'Terminal inputs have no child components',
-          path: node.path,
-        });
-        return;
-      }
-      if (
-        !(accessed.current & ACCESSED) &&
-        (key === 'length' ||
-          key === Symbol.iterator ||
-          (typeof key === 'string' && /^\d+$/.test(key)))
-      ) {
-        accessed.current |= ACCESSED;
-        if (accessed.current & COMMITTED) queueMicrotask(get);
-      }
-      return Reflect.get(target, key, receiver);
-    };
-    return new Proxy<ChildNodeComponent[]>(EMPTY_CHILDREN, { get });
+    if (
+      process.env.NODE_ENV !== 'production' &&
+      reporter &&
+      isDetectableTerminal(node)
+    ) {
+      let readLoad = reporter.load;
+      const get = (
+        target: object = EMPTY_CHILDREN,
+        key?: string | symbol,
+        receiver?: unknown,
+      ): unknown => {
+        if (readLoad !== reporter.load) {
+          readLoad = reporter.load;
+          accessed.current &= ~ACCESSED;
+        }
+        if (key === undefined) {
+          reporter.report({
+            level: 'warning',
+            code: 'SCHEMA_FORM_WARNING.CHILD_NODE_COMPONENTS_ON_TERMINAL',
+            message: 'Terminal inputs have no child components',
+            path: node.path,
+          });
+          return;
+        }
+        if (
+          !(accessed.current & ACCESSED) &&
+          (key === 'length' ||
+            key === Symbol.iterator ||
+            (typeof key === 'string' && /^\d+$/.test(key)))
+        ) {
+          accessed.current |= ACCESSED;
+          if (accessed.current & COMMITTED) queueMicrotask(get);
+        }
+        return Reflect.get(target, key, receiver);
+      };
+      return new Proxy<ChildNodeComponent[]>(EMPTY_CHILDREN, { get });
+    }
+    return EMPTY_CHILDREN;
   }, [node, reporter]);
   useLayoutEffect(() => {
     accessed.current |= COMMITTED;
-    if (node.strategy === 'terminal' && accessed.current & ACCESSED)
+    if (
+      process.env.NODE_ENV !== 'production' &&
+      node.strategy === 'terminal' &&
+      accessed.current & ACCESSED
+    )
       reporter?.report({
         level: 'warning',
         code: 'SCHEMA_FORM_WARNING.CHILD_NODE_COMPONENTS_ON_TERMINAL',
