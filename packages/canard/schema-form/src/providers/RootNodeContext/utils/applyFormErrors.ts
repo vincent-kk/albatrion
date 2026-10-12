@@ -13,31 +13,38 @@ export const applyFormErrors = (
 ): void => {
   if (!isArray(errors)) errors = NO_ERRORS;
   if (!isArray(previous)) previous = NO_ERRORS;
-  const groups = new Map<string, ValidationIssue[]>();
-  const paths: string[] = [];
+  const resolved = new Map<string, SchemaNode | null>();
+  const resolve = (dataPath: string): SchemaNode | null => {
+    let node = resolved.get(dataPath);
+    if (node === undefined) {
+      node = root.find(dataPath);
+      resolved.set(dataPath, node);
+    }
+    return node;
+  };
+  const groups = new Map<SchemaNode, ValidationIssue[]>();
+  const nodes: SchemaNode[] = [];
   for (let index = 0; index < errors.length; index++) {
     const issue = errors[index];
-    const path = issue.dataPath;
-    let group = groups.get(path);
+    const node = resolve(issue.dataPath);
+    if (!node || node === root) continue;
+    let group = groups.get(node);
     if (!group) {
       group = [];
-      groups.set(path, group);
-      paths.push(path);
+      groups.set(node, group);
+      nodes.push(node);
     }
     group.push(issue);
   }
   for (let index = 0; index < previous.length; index++) {
-    const path = previous[index].dataPath;
-    if (groups.has(path)) continue;
-    groups.set(path, []);
-    paths.push(path);
+    const node = resolve(previous[index].dataPath);
+    if (!node || node === root || groups.has(node)) continue;
+    groups.set(node, []);
+    nodes.push(node);
   }
   root.batch(() => {
     root.setExternalErrors(errors);
-    for (let index = 0; index < paths.length; index++) {
-      const path = paths[index];
-      const node = root.find(path);
-      if (node && node !== root) node.setExternalErrors(groups.get(path)!);
-    }
+    for (let index = 0; index < nodes.length; index++)
+      nodes[index].setExternalErrors(groups.get(nodes[index])!);
   });
 };

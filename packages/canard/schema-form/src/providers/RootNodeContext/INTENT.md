@@ -9,7 +9,7 @@ JSON Schema로부터 루트 `SchemaNode` 트리를 생성하고 Context로 공�
 - TypeScript + React, Generic 타입 파라미터 (`Schema`, `Value`) 사용
 - `nodeFromJSONSchema()`로 `useMemo` 내에서 루트 노드 생성 (jsonSchema/defaultValue 변경 시 재생성)
 - 기본 `validationMode`: `ValidationMode.OnChange | ValidationMode.OnRequest`
-- 외부 에러(`errors` prop): `applyFormErrors`가 전체 목록을 루트에 적용한 뒤 경로별로 묶어 비루트 노드의 `setExternalErrors()` 호출
+- 외부 에러(`errors` prop): `applyFormErrors`가 전체 목록을 루트에 적용한 뒤 `find()`로 찾은 노드의 표준 경로별로 묶어 비루트 노드의 `setExternalErrors()` 호출
 - `contextNodeFactory(context)`로 사용자 정의 context를 노드 시스템에 주입
 - 이벤트 구독: `UpdateGlobalError` → `onValidate`, `UpdateGlobalState` → `onStateChange`
 

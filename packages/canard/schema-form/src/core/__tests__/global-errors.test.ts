@@ -111,6 +111,31 @@ describe('form-level external and validation errors', () => {
     expect(aggregateEvents).toBe(2);
   });
 
+  it('195C-01 places a non-standard-path issue in the root list once when the node receives the same reference', () => {
+    const root = createRoot();
+    const field = root.find('/field')!;
+    const issue = { dataPath: '#/field', message: 'server' };
+    root.setExternalErrors([issue]);
+    field.setExternalErrors([issue]);
+    expect(root.errors).toEqual([issue]);
+    expect(field.errors).toEqual([issue]);
+    field.clearExternalErrors();
+    expect(root.errors).toEqual([]);
+  });
+
+  it('195C-01 attributes a child list to the node regardless of its dataPath on rewrite and clear', () => {
+    const root = createRoot();
+    const field = root.find('/field')!;
+    const first = { dataPath: '/other', message: 'a' };
+    const second = { dataPath: '/elsewhere', message: 'b' };
+    field.setExternalErrors([first]);
+    expect(root.errors).toEqual([first]);
+    field.setExternalErrors([second]);
+    expect(root.errors).toEqual([second]);
+    field.clearExternalErrors();
+    expect(root.errors).toEqual([]);
+  });
+
   it('195C-01 rebuilds the root list for a child clear made by a listener during delivery', () => {
     const root = createRoot();
     const field = root.find('/field')!;

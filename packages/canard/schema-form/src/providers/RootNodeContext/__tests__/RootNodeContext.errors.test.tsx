@@ -19,6 +19,37 @@ const external = [
   { dataPath: '/absent', message: 'ownerless error' },
 ];
 
+it('195C-01 applies a non-standard-path errors prop once per node and clears it on the next prop', () => {
+  const ref = createRef<FormHandle>();
+  const hashed = [{ dataPath: '#/field', message: 'hashed' }];
+  const view = render(
+    <Form
+      ref={ref}
+      jsonSchema={schema}
+      errors={hashed}
+      validationMode={ValidationMode.None}
+    >
+      <span />
+    </Form>,
+  );
+  expect(ref.current!.node!.errors).toEqual(hashed);
+  expect(ref.current!.findNode('/field')!.errors).toEqual(hashed);
+  expect(ref.current!.getErrors()).toEqual(hashed);
+  view.rerender(
+    <Form
+      ref={ref}
+      jsonSchema={schema}
+      errors={[]}
+      validationMode={ValidationMode.None}
+    >
+      <span />
+    </Form>,
+  );
+  expect(ref.current!.node!.errors).toEqual([]);
+  expect(ref.current!.findNode('/field')!.errors).toEqual([]);
+  expect(ref.current!.getErrors()).toEqual([]);
+});
+
 it('SURFACE-053 VALIDATE-043 79C-01 applies Form errors whole to the root and by path to each node', () => {
   const ref = createRef<FormHandle>();
   const view = render(

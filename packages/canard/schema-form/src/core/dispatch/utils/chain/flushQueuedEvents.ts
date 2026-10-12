@@ -48,12 +48,12 @@ export const flushQueuedEvents = <Self extends SchemaNodeRecord<Self>>(
   }
   try {
     while (
-      runtime.pendingExternalErrorPaths?.size ||
+      runtime.pendingExternalErrorNodes?.size ||
       runtime.queuedNonSettleEvents?.size ||
       runtime.deliveries?.size ||
       (!runtime.entryDepth && runtime.stateChanged)
     ) {
-      if (runtime.pendingExternalErrorPaths?.size) {
+      if (runtime.pendingExternalErrorNodes?.size) {
         rebuildRootExternalErrors(root);
         continue;
       }
