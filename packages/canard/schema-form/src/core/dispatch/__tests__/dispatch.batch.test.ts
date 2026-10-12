@@ -504,7 +504,7 @@ describe('other-kind re-entry inside a batch (R1, 195C-01 F2)', () => {
     expect(runtime.latentRaw.has(latent('/value', 'string'))).toBe(true);
   });
 
-  it('prunes only the latent raw of the sibling a batched virtual overwrite replaces while the branch switches (the replaced sibling value itself is R3)', () => {
+  it('prunes only the latent raw of the sibling a batched virtual overwrite replaces while the branch switches', () => {
     const schema = {
       type: 'object',
       properties: {
@@ -584,6 +584,44 @@ describe('other-kind re-entry inside a batch (R1, 195C-01 F2)', () => {
       tag: true,
     });
     expect(batched).toEqual(sequential);
+  });
+
+  it('values a batch like one whole root write of the composed value, unlike two sequential writes (GOAL-010, 62C-01)', () => {
+    const schema = {
+      type: 'object',
+      properties: { k: { type: 'string' }, endDate: { type: 'string' } },
+      if: { properties: { k: { const: 'a' } }, required: ['k'] },
+      then: { properties: { startDate: { type: 'string' } } },
+      else: { properties: { startDate: { type: 'number' } } },
+      options: { virtual: { period: { fields: ['startDate', 'endDate'] } } },
+    } as const;
+    const run = (write: (root: DispatchTestNode) => void) => {
+      const { root } = createDispatchTree(
+        schema,
+        undefined,
+        createTestValidator(),
+      );
+      dispatchMount(root, { k: 'a', startDate: 's', endDate: 'e' });
+      dispatchSetValue(getDispatchChild(root, 'k'), 'b');
+      write(root);
+      return getDispatchChild(root, 'startDate').emit;
+    };
+    const batched = run((root) =>
+      dispatchBatch(root, () => {
+        dispatchSetValue(getDispatchChild(root, 'period'), [7, 'e2']);
+        dispatchSetValue(getDispatchChild(root, 'k'), 'a');
+      }),
+    );
+    const whole = run((root) =>
+      dispatchSetValue(root, { k: 'a', startDate: 7, endDate: 'e2' }),
+    );
+    const sequential = run((root) => {
+      dispatchSetValue(getDispatchChild(root, 'period'), [7, 'e2']);
+      dispatchSetValue(getDispatchChild(root, 'k'), 'a');
+    });
+    expect(batched).toBe('7');
+    expect(whole).toBe(batched);
+    expect(sequential).toBe(undefined);
   });
 });
 
