@@ -618,6 +618,7 @@
   > 실패: 기본 입력이 목록 밖 값을 보내거나 초안을 쓰면 감싸개를 고치고, 규칙이 입력 사례를 하나로 정하지 못하면 이 블록을 고친다.
 - 보충:
   > 반영 칸(설계서 메모 4): "게터 `typeMismatch: boolean`, 경로 목록 `typeMismatches: readonly string[]`, 경고 코드 `SCHEMA_FORM_WARNING.TYPE_MISMATCH`." (`reviews/round-18-owner-answers.md:41`)
+  > 편집자 결정(199C-01): "【추론】 영역 밖 값의 표시는 원장이 비워 둔 제품 결정이고 다른 그룹에 의존하지 않으니 미루는 데 비용이 없다." (`reviews/round-199-closing.md:9`)
 - 상태: 현행
 - 출처: `reviews/round-18-closing.md:2575-2580,2582-2618,2627-2630`(정본), `reviews/round-18-owner-answers.md:41`
 - 닫은 사람: 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-92), 소유자 답(`reviews/round-18-owner-answers.md:41` 설계서 메모 4)
