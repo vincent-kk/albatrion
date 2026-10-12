@@ -201,6 +201,7 @@
   > 편집자 결정(26C-01): "【추론】 뒤 PR의 멤버를 PR-2 클래스에 무해한 구현(스텁)이나 `SchemaNodeRuntime` 칸으로의 위임으로 미리 두지 않는다: PR-2의 시험 대역은 `if` 게이트 술어 하나뿐이고 시험만을 위한 주입 자리를 새로 만들지 않는다(TEST-069 (나)); LANDING-062의 "게이트는 술어 인터페이스 뒤의 스텁"은 이 술어 하나를 말한다." (`reviews/round-26-closing.md:13`)
   > 편집자 결정(18C-25): "【추론】 PR-2에서 사슬은 `settle` 호출 하나다(`setValue`가 `settle` 쓰기로 직접 위임, `reviews/raw-round17-node-structure.md:74`)." (`reviews/round-18-closing.md:756`)
   > 편집자 결정(28C-08): "【추론】 내보내기 자리는 NODE-010대로다: `SchemaNode/` 진입점이 바인딩 전용으로 이름을 붙여 내보내고, `core/index.ts`는 이름으로 다시 내보내며(`finishInput`과 같은 취급), `src/index.ts`는 내보내지 않는다." (`reviews/round-28-closing.md:89`)
+  > 편집자 결정(206C-01): "【추론】 소비자 증거가 "겉면이 엔진의 유일한 출구"를 보여 주니 트리가 그 관계를 말하게 하는 것이 목표이고, C는 그것을 가장 적은 이동(진입점 하나와 이름표 67개)으로 이룬다. B는 겉면 루트를 비대하게 하고 D는 묶음 사이 상호 의존을 만든다." (`reviews/round-206-closing.md:9`)
 - 상태: 현행
 - 출처: `09-landing-and-test-strategy.md:109`(정본)
 - 닫은 사람: 17라운드 스웜 수렴(편집자 결정, `reviews/raw-round17-node-structure.md` §6; 소유자 지시 `reviews/round-17-owner-answers.md:25`)
@@ -804,6 +805,7 @@
   > 편집자 결정(158C-01): "【추론】 첫 verify 실패는 증거의 범위 문제였고 재확인이 같은 HEAD에서 통과했으므로 G27의 닫힘 조건(153C-01 (3))은 충족된다. codex 쪽 fractal_inspect의 indeterminate는 다른 facts 저장소를 읽은 환경 차이이고 같은 HEAD의 주 세션 결과가 ok이므로 판정을 가르지 않지만, 두 결과가 다르게 나온 사실 자체는 숨기지 않고 적는다. 비차단 넷 가운데 코드나 시험을 건드리는 셋을 07에서 고치면 facts·번들·시험 증거가 다시 낡아 verify를 되풀이해야 하므로, 07b로 넘기는 것이 비용에 맞다; N5는 보고서 글자라 어느 증거도 낡게 하지 않는다. G23은 소유자가 142라운드에서 "후순위로 내가 따로 지시하겠다"고 했으므로 묻지 않고 기다린다." (`reviews/round-158-closing.md:9`)
   > 소유자(190라운드, 제한된 `as unknown as` 허용, 한 줄 정리): "이거 말이야. … 이렇게 하지 않은 이유가 있어? 불필요하게 두줄을 쓴거같은데.\n필요하면 제한적인 범위 내에서 unkown 을 써도 돼. 남용하는게 싫은거지 적절하게 쓰는거면 문제없어." / "그래 리뷰어한테 전해줘. 한 줄로 정리하라고." (`reviews/round-190-owner-answers.md:7`) — 150라운드 원칙 3의 예외: 공개 형이 readonly를 허용하지 않는 동결 상수처럼 제한된 자리의 `as unknown as T`는 이유를 적고 허용; EMPTY_CHILDREN은 한 줄로(원장 관리자, 2026-10-13).
   > 소유자(193라운드, 주석 고침, core·SchemaNode 위계 재고찰, 현 구조 불수용): "가도 되는데, core 와 schemaNode 의 관계, 그리고 위계에 대해서 충분히 고찰을 하고 고치도록 해. filid 구조검사만으론 통과가 가능할 수도 있는데, 난 지금 구조는 용납하지 않아" (`reviews/round-193-owner-answers.md:7`) — SchemaNode 클래스의 inheritDoc 주석은 reviewer 2라운드에서 직접 문장으로; src/core의 평평한 구조는 소유자가 받아들이지 않으므로 core와 SchemaNode의 관계·위계를 고찰한 문서를 먼저 쓰고 07 머지 뒤 재배치(개선-38)(원장 관리자, 2026-10-13).
+  > 편집자 결정(206C-01): "【추론】 소비자 증거가 "겉면이 엔진의 유일한 출구"를 보여 주니 트리가 그 관계를 말하게 하는 것이 목표이고, C는 그것을 가장 적은 이동(진입점 하나와 이름표 67개)으로 이룬다. B는 겉면 루트를 비대하게 하고 D는 묶음 사이 상호 의존을 만든다." (`reviews/round-206-closing.md:9`)
 - 상태: 현행
 - 출처: `reviews/round-18-closing.md:1005-1013`(정본)
 - 닫은 사람: 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-37)
