@@ -13,3 +13,7 @@
 ## 덧붙임(2026-10-12)
 
 소유자가 167C-01 (2)를 확인했다: "음 뭐 괜찮을거같네. false 상태를 받을 수는 있는거지? 그게 undefined로 해석되는거고" (2026-10-12, 원장 세션). 원장 관리자의 답: 노드에 setState({ dirty: false })처럼 false를 주면 새 판은 그 노드의 flag를 끄고(NodeStateFlags는 boolean | undefined), 그 flag가 켜진 노드 수가 0이 되면 global state의 키를 지우므로 onStateChange 소비자는 undefined(키 없음)를 본다 — "false를 주면 undefined로 해석된다"가 정확하다. 옛 판은 false 입력을 버려 global 키가 true로 남았다. 키 소멸 시점의 새 판 유지는 소유자 확인으로 굳는다.
+
+## 덧붙임 2(2026-10-12)
+
+07b-1이 감사 차이 4의 형 고침을 ed9be03c2(PR #355)로 커밋·push했다. SchemaNode.globalState와 onStateChange의 형은 Readonly<Record<string, boolean | undefined>>이고 문서 주석에 "발행 값은 true 또는 없음, false는 발행하지 않음"을 적었으며 런타임은 그대로다. 검증: d.ts 차분은 그 선언과 주석뿐; 시험 둘 추가(키 없음 → true → 없음 전이에서 false가 나오지 않음, 소비자가 false와 undefined를 담은 복사본을 그 형으로 다시 넘길 수 있음), 형 계약 시험의 고정 갱신; tsc·eslint 통과, 482파일 3,493건 통과(todo 1). 감사 runner는 73사례 중 12사례가 바뀌었고 11사례는 출력 state 형 문자열만, H18은 값 형이 0.16.0 열과 같아졌다; 공유 객체에 직접 쓰는 state[1] = false는 Readonly 때문에 여전히 거부되며(TS2542) 의도한 남은 차이로 기록했다; 새 사례 해시 9c539feb…. 같은 커밋에 07b 문서의 최종 처분(새 판 유지 8건, 형 되돌림 1건)과 개선-36 보충 두 줄을 넣었다. 운영 기록: 이 고침은 codex 위임이 07b-1 세션의 자동 모드 분류기에 막혀 Claude worker로 진행했다(07b-1 세션 안의 대체 경로; 원장 관리자에게 권한을 넘긴 것이 아님). 개선-32 커밋 1은 비차단 반영이 끝났고(시험 8개, 두 절은 변이로 고정 확인, 전체 3,491건 통과, INTENT 예외 줄 포함) replace-200 한 행의 방향 확인(ed9be03c2 대 작업 트리, immediate·record 두 lane, 3라운드)이 돌고 있다.
