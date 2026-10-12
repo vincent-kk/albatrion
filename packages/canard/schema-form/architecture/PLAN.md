@@ -82,4 +82,4 @@
 
 | 날짜 | 무엇 | 어디 |
 | --- | --- | --- |
-| 2026-10-12 | 163라운드(닫기): 개선-30 형 추론 감사 73사례 — 차이 9건 중 6건 새 판 유지, 1건(formatError node.value) 0.16.0대로 되돌림, 2건(onValidate 오류 배열 readonly, onStateChange flag 집합)은 소유자 결정. 보충 2줄 | `reviews/round-163-closing.md` |
+| 2026-10-12 | 164라운드(닫기): 163C-01 (2) 뒤집음 — formatError node.value는 unknown 유지(런타임이 union을 보장하지 않음); 감사 차이 최종 처분은 새 판 유지 7, 소유자 결정 2. 보충 2줄 | `reviews/round-164-closing.md` |
