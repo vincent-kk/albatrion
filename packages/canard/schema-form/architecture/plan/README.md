@@ -45,7 +45,7 @@ flowchart LR
 | 04 | [04-derive-and-controls/](04-derive-and-controls/) | PR-3 + PR-6(LANDING-063·083·066·086) | 03 | 05·06과 병렬 |
 | 05 | [05-dispatch-and-validation/](05-dispatch-and-validation/) | PR-4(LANDING-064·084·093), ajv6·7·8 포함 | 03 | 04·06과 병렬 |
 | 06 | [06-array/](06-array/) | PR-5(LANDING-065·085·094) | 03 | 04·05와 병렬 |
-| 07 | [07-switch/](07-switch/) | PR-7(LANDING-067·087·095), 레거시 보존 — PR #354 리뷰 중(2026-10-11; 142·143라운드 답으로 G26은 157라운드 답으로 닫힘(세 행 수용, replace-200은 개선-32로 이월), G27은 153라운드로 셈이 끝나 새 문맥 verify만 남음, G23은 소유자가 따로 지시할 때 — `../reviews/owner-queue-07.md`) | 02–06 전부 | 원샷 |
+| 07 | [07-switch/](07-switch/) | PR-7(LANDING-067·087·095), 레거시 보존 — PR #354 리뷰 중(2026-10-11; 142·143라운드 답으로 G26은 157라운드 답으로 닫힘(세 행 수용, replace-200은 개선-32로 이월), G27은 158라운드로 닫힘(제거 11, 이유 적힌 단언 3), 남은 게이트는 G23 하나로 소유자가 따로 지시할 때 — `../reviews/owner-queue-07.md`) | 02–06 전부 | 원샷 |
 | 07b | (디렉토리는 소유자가 열 때 만든다) | 소유자의 이해와 인터페이스 확정, 내부 코드 스타일링 — 소유자가 직접 다룬다(130라운드 소유자 답) | 07 병합 | — |
 | 08 | [08-plugins/](08-plugins/) | UI 플러그인 넷(LANDING-206) | 07b | 최적화와 병렬 |
 | 최적화 | [perf-optimization/](perf-optimization/) | 원장 PR 없음 — 27라운드 소유자 답(TEST-027 보충)의 "구현 완료 뒤 별도 작업". 대장 `../verification/performance-issues.md`의 열림 행 | 07 | 08과 병렬, 09 전 |
