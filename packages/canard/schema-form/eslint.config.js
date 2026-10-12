@@ -33,6 +33,12 @@ const environmentTokenRules = [
     message:
       'Do not destructure process.env; compare process.env.NODE_ENV at the use site (200C-01).',
   },
+  {
+    selector:
+      "MemberExpression[computed=true][object.object.name='process'][object.property.name='env']",
+    message:
+      'Read process.env.NODE_ENV with dot access so consumer bundlers can fold it; no computed access (200C-01).',
+  },
 ];
 
 export default [
@@ -160,7 +166,7 @@ export default [
     },
   },
   {
-    // Files without their own no-restricted-syntax block; the two blocks that have one spread the same rules.
+    // Restates the base private-member entries because per-rule overrides replace, not merge.
     files: [
       'src/core/**/*.{ts,tsx}',
       'src/app/**/*.{ts,tsx}',
@@ -170,7 +176,20 @@ export default [
     ],
     ignores: ['src/core/SchemaNode/SchemaNode.ts', '**/__tests__/**'],
     rules: {
-      'no-restricted-syntax': ['error', ...environmentTokenRules],
+      'no-restricted-syntax': [
+        'error',
+        ...environmentTokenRules,
+        {
+          selector: "PropertyDefinition[key.type='PrivateIdentifier']",
+          message:
+            "ES private fields (#) are not allowed. Use 'private __fieldName__' convention instead for ECMA 2022 compatibility.",
+        },
+        {
+          selector: "MethodDefinition[key.type='PrivateIdentifier']",
+          message:
+            "ES private methods (#) are not allowed. Use 'private __methodName__()' convention instead for ECMA 2022 compatibility.",
+        },
+      ],
     },
   },
   {
