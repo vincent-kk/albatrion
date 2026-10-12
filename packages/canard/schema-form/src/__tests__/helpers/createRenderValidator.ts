@@ -5,7 +5,8 @@ import type { ValidationIssue, ValidatorPlugin } from '@/schema-form';
 
 /**
  * Register each copied root once so synchronous guards resolve root-local refs.
- * @returns An isolated validator with root registration, guards, and release.
+ * @returns An isolated validator with root registration, guards, and release; an
+ *   `additionalProperties` issue names its extra key in `rejectedKey`, as the ajv8 plugin does.
  */
 export const createRenderValidator = (): ValidatorPlugin => {
   const roots = new WeakMap<object, { ajv: Ajv; id: string }>();
@@ -44,6 +45,9 @@ export const createRenderValidator = (): ValidatorPlugin => {
             message: error.message,
             details: error.params,
             source: error,
+            ...(error.keyword === 'additionalProperties'
+              ? { rejectedKey: String(error.params.additionalProperty) }
+              : {}),
           }),
         );
       };
