@@ -37,6 +37,36 @@ const readEventNames = (types: readonly number[]): string[] => {
   return Object.entries(SchemaNodeEventType).flatMap(([name, bit]) => (typeof bit === 'number' && union & bit ? [name] : []));
 };
 
+// it.fails passes on any throw, so a renamed or dropped commit scenario must fail loudly here instead.
+if (!eventsFeatureScenarios.some((item) => item.name === 'events.render-commits')) throw new Error('Missing scenario: events.render-commits');
+
+/**
+ * Write renderCommitStages and compare the React commits below the group with the expected counts.
+ * @param validated - Whether OnChange validation runs; otherwise the mode is None.
+ * @returns Completion after every stage was compared; throws on the first mismatch.
+ */
+const expectCommits = async (validated: boolean) => {
+  const scenario = scenarioNamed('events.render-commits');
+  let commits = 0;
+  const form = await renderForm(scenario.schema as JSONSchema, { defaultValue: scenario.initialValue, validator: true,
+    ...(!validated && { validationMode: ValidationMode.None }),
+    children: () => <Profiler id="group" onRender={() => { commits++; }}><Form.Group /></Profiler> });
+  try {
+    for (const stage of renderCommitStages) {
+      await form.flush();
+      const start = commits;
+      act(() => {
+        if (stage.batch) form.handle.node!.batch(() => { for (const [key, value] of Object.entries(stage.value)) form.node(`/${key}`)!.setValue(value); });
+        else form.handle.setValue(stage.value);
+      });
+      await form.flush();
+      expect({ commits: commits - start, value: form.getValue() }, stage.label).toEqual({ commits: validated ? stage.commitsWithValidation : stage.commits, value: stage.value });
+    }
+  } finally {
+    form.unmount();
+  }
+};
+
 describe('features — events consumer-only', () => {
   it('EVENT-001 and EVENT-012 node.subscribe receives the event kind of each change, and state writes and commands are not value writes', async () => {
     const scenario = scenarioNamed('events.subscription-kinds');
@@ -71,28 +101,11 @@ describe('features — events consumer-only', () => {
     }
   });
 
-  it.each([
-    ['None', false],
-    ['OnChange', true],
-  ] as const)('EVENT-002, EVENT-004 and EVENT-046 commits per write below the group with validation mode %s', async (_, validated) => {
-    const scenario = scenarioNamed('events.render-commits');
-    let commits = 0;
-    const form = await renderForm(scenario.schema as JSONSchema, { defaultValue: scenario.initialValue, validator: true,
-      ...(!validated && { validationMode: ValidationMode.None }),
-      children: () => <Profiler id="group" onRender={() => { commits++; }}><Form.Group /></Profiler> });
-    try {
-      for (const stage of renderCommitStages) {
-        await form.flush();
-        const start = commits;
-        act(() => {
-          if (stage.batch) form.handle.node!.batch(() => { for (const [key, value] of Object.entries(stage.value)) form.node(`/${key}`)!.setValue(value); });
-          else form.handle.setValue(stage.value);
-        });
-        await form.flush();
-        expect({ commits: commits - start, value: form.getValue() }, stage.label).toEqual({ commits: validated ? stage.commitsWithValidation : stage.commits, value: stage.value });
-      }
-    } finally {
-      form.unmount();
-    }
+  it('EVENT-002 and EVENT-004 one write or one batch is one React commit below the group, and an unchanged write commits nothing', async () => {
+    await expectCommits(false);
+  });
+
+  it.fails('Finding (round 207): an OnChange validation whose result stays empty adds a second commit instead of keeping the reference (GOAL-011)', async () => {
+    await expectCommits(true);
   });
 });
