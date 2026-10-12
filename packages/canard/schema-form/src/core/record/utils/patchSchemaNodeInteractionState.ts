@@ -1,5 +1,5 @@
 import type { NodeStateFlags } from '../../types/state';
-import type { SchemaNodeRecord } from '../type';
+import type { SchemaNodeRecord } from '../types/record';
 import { shallowPatch } from './shallowPatch';
 
 /** Patch live interaction flags while retaining their reference for a no-op. */

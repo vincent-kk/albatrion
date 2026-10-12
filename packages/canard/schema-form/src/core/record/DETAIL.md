@@ -25,6 +25,7 @@
 
 - 진입점은 `SchemaNodeRecord`, `Behavior`, `UnionSpec`, `SchemaNodeFactory`, `SchemaNodeRuntime`, `SettlementScratch`, `updateSchemaNodeNameAndPath`, `patchSchemaNodeInteractionState`, `shallowPatch`를 이름으로 내보냅니다. 외부 소비자는 레코드의 진입점으로만 들어옵니다(NODE-008·016).
 - 진입점은 기존 레코드 계약과 함께 `SchemaNodeEventType`, `SchemaNodeRequestType`, `markSchemaNodeEvent`를 이름으로 내보냅니다. 두 열거의 비트와 명령 종류는 이 모듈이 소유하고 core와 패키지 진입점이 이름으로 내보냅니다. `RequestEmitChange`·`RequestInjection`은 두지 않습니다(SURFACE-056·060, EVENT-073, LANDING-067·087·158·170).
+- 열거와 공유 빈 원장 상수는 `constants/` 구획에, 계약 형은 목적별 `types/` 구획(레코드·행·런타임)에 두고 진입점이 이름으로 내보냅니다. 두 구획은 organ이며 바깥 소비자는 진입점으로만 들어옵니다.
 - `SchemaNodeEventType`은 남는 옛 비트의 자리 값을 유지하고 `UpdateJsonSchema`·`UpdateDiagnostics`를 더합니다. `SchemaNodeRequestType`의 `Focus`·`Select`·`Refresh`·`Remount`는 각각 `RequestFocus`·`RequestSelect`·`RequestRefresh`·`RequestRemount` 비트와 같습니다. 한 명령 호출은 종류 하나만 받습니다(EVENT-043·064·073, SURFACE-057·060).
 - 모든 종류의 논리 필드 선언과 생성자 대입 순서는 일치합니다. 배달 작업 칸은 `revisionLedger` 뒤와 `detached` 앞에 둡니다. 상호작용 상태의 저장 칸은 공개 `state`와 구별하며, 기준값과 개정은 상태가 아니라 작업 기록입니다(NODE-004, VALUE-002, 65C-03).
 - `itemKey`는 배열 아이템의 생성 순서 nonce인 숫자이며 아이템이 아니면 `null`이고 공개 멤버로 노출하지 않습니다. 배열 branch 호스트의 `itemCount`는 청사진 없는 꼬리 자리를 포함한 값의 길이이며 그 밖에는 `0`입니다. 호스트의 `nextItemKey`는 새 아이템의 키 계수이고 원본 B 되돌림에서도 감소하지 않습니다. 세 필드는 모든 노드에 같은 고정 칸 세 개의 메모리 비용을 더하며 아이템 목록은 기존 `structure`에 둡니다(NODE-004·045·051·052, GOAL-073, SURFACE-054, 35C-05, 실행 ADR D3).

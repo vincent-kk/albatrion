@@ -1,13 +1,16 @@
 import { describe, expect, it, vi } from 'vitest';
 
-import { SchemaNodeEventType } from '../../SchemaNodeEventType';
-import { EMPTY_REVISION_LEDGER } from '../../type';
+import { SchemaNodeEventType } from '../../constants/SchemaNodeEventType';
+import { EMPTY_REVISION_LEDGER } from '../../constants/emptyRevisionLedger';
 import { SchemaNodeRevisionLedger } from '../SchemaNodeRevisionLedger';
 
 const reads = vi.hoisted(() => ({ bits: 0 }));
 
-vi.mock('../../type', async (importOriginal) => {
-  const original = await importOriginal<typeof import('../../type')>();
+vi.mock('../../constants/emptyRevisionLedger', async (importOriginal) => {
+  const original =
+    await importOriginal<
+      typeof import('../../constants/emptyRevisionLedger')
+    >();
   return {
     ...original,
     EMPTY_REVISION_LEDGER: new Proxy(original.EMPTY_REVISION_LEDGER, {

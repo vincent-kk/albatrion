@@ -1,5 +1,5 @@
-import { SchemaNodeEventType } from '../SchemaNodeEventType';
-import type { SchemaNodeRecord } from '../type';
+import { SchemaNodeEventType } from '../constants/SchemaNodeEventType';
+import type { SchemaNodeRecord } from '../types/record';
 
 /** Field decisions that contribute to one committed event kind. */
 const CHANGE_BITS = {

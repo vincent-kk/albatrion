@@ -1,20 +1,21 @@
+export type { SchemaNodeRecord, SchemaNodeDelivery } from './types/record';
 export type {
-  SchemaNodeRecord,
   Behavior,
   ArrayOperation,
   ArrayArrangePlan,
   UnionSpec,
   SchemaNodeFactory,
+} from './types/behavior';
+export type {
   SchemaNodeRuntime,
   SettlementScratch,
   Distribution,
   TypeMismatchRecord,
-  SchemaNodeDelivery,
-} from './type';
-export { EMPTY_REVISION_LEDGER } from './type';
+} from './types/runtime';
+export { EMPTY_REVISION_LEDGER } from './constants/emptyRevisionLedger';
 export { SchemaNodeRevisionLedger } from './utils/SchemaNodeRevisionLedger';
-export { SchemaNodeEventType } from './SchemaNodeEventType';
-export { SchemaNodeRequestType } from './SchemaNodeRequestType';
+export { SchemaNodeEventType } from './constants/SchemaNodeEventType';
+export { SchemaNodeRequestType } from './constants/SchemaNodeRequestType';
 export { markSchemaNodeEvent } from './utils/markSchemaNodeEvent';
 export { indexSchemaNodeWarning } from './utils/indexSchemaNodeWarning';
 export { updateSchemaNodeNameAndPath } from './utils/updateSchemaNodeNameAndPath';

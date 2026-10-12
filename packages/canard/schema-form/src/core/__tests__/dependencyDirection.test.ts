@@ -132,7 +132,7 @@ describe('NODE-016 and NODE-045 dependency direction', () => {
     for (const name of FRACTALS)
       expect(files.some((file) => owner(file) === name)).toBe(true);
     for (const nested of [
-      'record/type.ts',
+      'record/types/runtime.ts',
       'SchemaNode/utils/guards.ts',
       'settle/utils/write/writeSchemaNode.ts',
       'behaviors/utils/parse/utils/number/parseNumber.ts',
@@ -145,8 +145,8 @@ describe('NODE-016 and NODE-045 dependency direction', () => {
     expect(
       edges.some(
         ({ source, specifier }) =>
-          source.endsWith(`${sep}record${sep}type.ts`) &&
-          specifier === '../blueprint',
+          source.endsWith(`${sep}record${sep}types${sep}runtime.ts`) &&
+          specifier === '../../blueprint',
       ),
     ).toBe(true);
     expect(

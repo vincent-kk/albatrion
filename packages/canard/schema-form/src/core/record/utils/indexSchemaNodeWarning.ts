@@ -1,5 +1,5 @@
 import type { FormErrorRecord } from '../../../errors';
-import type { SchemaNodeRuntime } from '../type';
+import type { SchemaNodeRuntime } from '../types/runtime';
 
 /**
  * Index a warning at every data-path ancestor, or forget its current identity.

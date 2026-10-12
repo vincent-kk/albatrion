@@ -1,5 +1,5 @@
-import { SchemaNodeEventType } from '../SchemaNodeEventType';
-import { EMPTY_REVISION_LEDGER } from '../type';
+import { SchemaNodeEventType } from '../constants/SchemaNodeEventType';
+import { EMPTY_REVISION_LEDGER } from '../constants/emptyRevisionLedger';
 
 /** Known event bits occupy consecutive slots rather than sparse numeric elements. */
 const KNOWN_BITS = (SchemaNodeEventType.UpdateDiagnostics << 1) - 1;

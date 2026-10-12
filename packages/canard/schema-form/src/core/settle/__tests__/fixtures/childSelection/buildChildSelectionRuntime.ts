@@ -1,6 +1,6 @@
 import childProcess from 'node:child_process';
 import { once } from 'node:events';
-import { readFileSync } from 'node:fs';
+import { existsSync, readFileSync } from 'node:fs';
 import { createRequire } from 'node:module';
 import { dirname, relative, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -87,6 +87,25 @@ export const buildChildSelectionRuntime = async (
       services.push(child);
     return child;
   }) as typeof childProcess.spawn;
+  /** Source files of the pinned revision; relative imports resolve against this list, not the working tree. */
+  const pinnedPaths = revision
+    ? new Set(
+        childProcess
+          .execFileSync(
+            'git',
+            [
+              'ls-tree',
+              '-r',
+              '--name-only',
+              revision,
+              '--',
+              relative(worktree, resolve(packageRoot, 'src')),
+            ],
+            { cwd: worktree, encoding: 'utf8', timeout: 10000 },
+          )
+          .split('\n'),
+      )
+    : null;
   let output: string;
   try {
     const result = await build({
@@ -106,6 +125,22 @@ export const buildChildSelectionRuntime = async (
         {
           name: 'local-child-selection-observers',
           setup(builder) {
+            builder.onResolve({ filter: /^\.\.?\// }, (args) => {
+              if (!pinnedPaths || args.kind === 'entry-point') return;
+              const base = resolve(dirname(args.importer), args.path);
+              for (const suffix of [
+                '',
+                '.ts',
+                '.tsx',
+                '/index.ts',
+                '/index.tsx',
+              ]) {
+                const candidate = `${base}${suffix}`;
+                if (pinnedPaths.has(relative(worktree, candidate)))
+                  return { path: candidate };
+              }
+              return;
+            });
             builder.onLoad({ filter: /\.(ts|tsx)$/ }, (args) => {
               const path = relative(worktree, args.path);
               if (
@@ -230,6 +265,11 @@ export const buildChildSelectionRuntime = async (
               return {
                 contents,
                 loader: args.path.endsWith('.tsx') ? 'tsx' : 'ts',
+                // A file that exists only in the pinned revision has no directory on disk; bare and
+                // alias specifiers then resolve from the package root (relative ones use the importer).
+                resolveDir: existsSync(dirname(args.path))
+                  ? dirname(args.path)
+                  : packageRoot,
               };
             });
           },

@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 
-import { SchemaNodeEventType } from '../../SchemaNodeEventType';
-import { EMPTY_REVISION_LEDGER } from '../../type';
+import { SchemaNodeEventType } from '../../constants/SchemaNodeEventType';
+import { EMPTY_REVISION_LEDGER } from '../../constants/emptyRevisionLedger';
 import { SchemaNodeRevisionLedger } from '../SchemaNodeRevisionLedger';
 
 describe('SchemaNodeRevisionLedger counters', () => {

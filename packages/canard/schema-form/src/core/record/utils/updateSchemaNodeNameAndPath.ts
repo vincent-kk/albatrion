@@ -1,4 +1,4 @@
-import type { SchemaNodeRecord } from '../type';
+import type { SchemaNodeRecord } from '../types/record';
 import { captureSchemaNodeChange } from './captureSchemaNodeChange';
 
 /** Rebind a node's direct identity; callers rebind affected descendants separately. */

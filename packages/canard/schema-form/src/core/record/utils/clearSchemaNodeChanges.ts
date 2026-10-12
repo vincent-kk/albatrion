@@ -1,5 +1,5 @@
-import { SchemaNodeEventType } from '../SchemaNodeEventType';
-import type { SchemaNodeRecord } from '../type';
+import { SchemaNodeEventType } from '../constants/SchemaNodeEventType';
+import type { SchemaNodeRecord } from '../types/record';
 
 /**
  * Release only the baseline slots used by the completed commit.

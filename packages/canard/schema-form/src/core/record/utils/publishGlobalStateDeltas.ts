@@ -1,5 +1,5 @@
-import { SchemaNodeEventType } from '../SchemaNodeEventType';
-import type { SchemaNodeRecord } from '../type';
+import { SchemaNodeEventType } from '../constants/SchemaNodeEventType';
+import type { SchemaNodeRecord } from '../types/record';
 
 /** Publish net per-key count changes and queue one root event on a zero crossing. */
 export const publishGlobalStateDeltas = <Self extends SchemaNodeRecord<Self>>(

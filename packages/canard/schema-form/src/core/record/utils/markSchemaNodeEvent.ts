@@ -1,5 +1,5 @@
-import type { SchemaNodeEventType } from '../SchemaNodeEventType';
-import type { SchemaNodeRecord } from '../type';
+import type { SchemaNodeEventType } from '../constants/SchemaNodeEventType';
+import type { SchemaNodeRecord } from '../types/record';
 
 /**
  * Merge one event into the record's pending delivery without scheduling it.
