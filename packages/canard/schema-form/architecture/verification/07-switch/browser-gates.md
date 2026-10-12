@@ -7,7 +7,7 @@ U9에서는 샌드박스의 Chromium 시작이 `bootstrap_check_in … Permissio
 | EVENT-065 IME composition | EVENT-065 Korean IME plain, caret formatter and Refresh during composition | storybook 프로젝트, Playwright Chromium; CDP `Input.imeSetComposition`/`Input.insertText` | 통과 (자동 Chromium) | 평범한 입력·포매터·Refresh 모두 ㄱ→가→각 DOM·캐럿 유지, 조합 중 value 세터 0회, compositionend 1회. Refresh는 종료 후 재마운트하며 이전 입력의 조합 텍스트는 Refresh 번호 검사로 노드에 미전달(REACT-024) | 미확인 |
 | REACT-027 number badInput 및 blur 표시 | REACT-027 number badInput stays local and blur restores node display | storybook 프로젝트, Playwright Chromium | 소유자 실행 대기 | 통과: 비운 값 undefined, 미완성 지수 badInput은 노드에 미전달, blur 후 1로 복원 | 미확인 |
 | REACT-028 입력 재마운트 판정(reset/StrictMode/virtualization) | REACT-028 reset and Refresh remount judgment in StrictMode and virtualization | storybook 프로젝트, Playwright Chromium | 소유자 실행 대기 | 통과: StrictMode에서 자식을 그리는 컨테이너 유지, 터미널·전체값·빈 배열·접힌 입력 재마운트, 미노출 Refresh 유지와 focus 노출 및 늦은 쓰기 거절 | 미확인 |
-| 18C-73 빈 ChildNodeComponents 감지 비용 | 18C-73 empty ChildNodeComponents detection cost | storybook 프로젝트, Playwright Chromium; 감지 배열과 동결 빈 배열 각 100,000회 읽기의 ms 기록 | 소유자 실행 대기 | 통과: 첫 읽기 경고 1건, 유한한 ms 측정; 실제 수치는 스토리 출력 및 `18C-73 detection timing` 로그 | 미확인 |
+| 18C-73 빈 ChildNodeComponents 감지 비용 | 18C-73 empty ChildNodeComponents detection cost | storybook 프로젝트, Playwright Chromium; 인라인 입력으로 터미널이 된 object 노드에서 감지 배열과 동결 빈 배열 각 100,000회 읽기의 ms 기록 | 소유자 실행 대기 | 통과: 첫 읽기 경고 1건, 유한한 ms 측정; 실제 수치는 스토리 출력 및 `18C-73 detection timing` 로그. 180라운드 수용: 감지기는 개발 모드이고 object·array 노드가 인라인 입력으로 터미널이 된 경우로 한정되며, string 등 본래 터미널 노드는 프로덕션과 같이 보통의 빈 배열을 받는다 | 미확인 |
 
 소유자는 `packages/canard/schema-form`에서 실행해 주십시오. Chromium이 없을 때만 첫 명령이 필요합니다. 이 작업에서는 설치하지 않았습니다.
 

@@ -1,14 +1,74 @@
-import { createRef, useLayoutEffect, useState } from 'react';
+import {
+  type ComponentType,
+  createRef,
+  useLayoutEffect,
+  useState,
+} from 'react';
 
 import { act, cleanup, fireEvent, render } from '@testing-library/react';
 import { afterEach, expect, it, vi } from 'vitest';
 
 import { Form, type FormHandle } from '@/schema-form/components/Form';
-import type { FormTypeInputProps } from '@/schema-form/types';
+import type { FormTypeInputProps, JSONSchema } from '@/schema-form/types';
+
+const environment = vi.hoisted(() => ({ development: true }));
+
+vi.mock('@/schema-form/app/environment', () => ({
+  isDevelopment: () => environment.development,
+}));
+
+/** An object made terminal by an inline input: the one shape whose empty child list is a mistake to read (round 180). */
+const detectable = (Input: ComponentType<FormTypeInputProps>) =>
+  ({
+    type: 'object',
+    properties: { leaf: { type: 'string' } },
+    presentation: { FormTypeInput: Input },
+  }) satisfies JSONSchema;
 
 afterEach(() => {
+  environment.development = true;
   cleanup();
   vi.restoreAllMocks();
+});
+
+it('round 180 hands a production build a plain empty list even with an error handler', async () => {
+  environment.development = false;
+  const onError = vi.fn();
+  const lists: unknown[] = [];
+  const Input = ({ ChildNodeComponents }: FormTypeInputProps) => {
+    lists.push(ChildNodeComponents);
+    return <input data-count={ChildNodeComponents.length} />;
+  };
+  render(
+    <Form
+      validationMode={0}
+      jsonSchema={detectable(Input)}
+      onError={onError}
+    />,
+  );
+  await act(async () => {
+    await Promise.resolve();
+  });
+  expect(Object.isFrozen(lists[0])).toBe(true);
+  expect(onError).not.toHaveBeenCalled();
+});
+
+it('round 180 hands a string node a plain empty list in development', async () => {
+  const onError = vi.fn();
+  const Input = ({ ChildNodeComponents }: FormTypeInputProps) => (
+    <input data-count={ChildNodeComponents.length} />
+  );
+  render(
+    <Form
+      validationMode={0}
+      jsonSchema={{ type: 'string', presentation: { FormTypeInput: Input } }}
+      onError={onError}
+    />,
+  );
+  await act(async () => {
+    await Promise.resolve();
+  });
+  expect(onError).not.toHaveBeenCalled();
 });
 
 it('ERROR-202 reports a terminal input first reading children in an event after mount', async () => {
@@ -26,11 +86,8 @@ it('ERROR-202 reports a terminal input first reading children in an event after 
   const view = render(
     <Form
       validationMode={0}
-      jsonSchema={{ type: 'string' }}
+      jsonSchema={detectable(Input)}
       onError={onError}
-      formTypeInputDefinitions={[
-        { test: { type: 'string' }, Component: Input },
-      ]}
     />,
   );
   expect(onError).not.toHaveBeenCalled();
@@ -63,11 +120,8 @@ it('ERROR-202 reports a child layout read after the initial render', () => {
   render(
     <Form
       validationMode={0}
-      jsonSchema={{ type: 'string' }}
+      jsonSchema={detectable(Input)}
       onError={onError}
-      formTypeInputDefinitions={[
-        { test: { type: 'string' }, Component: Input },
-      ]}
     />,
   );
   expect(onError.mock.calls.map(([record]) => record.code)).toEqual([
@@ -90,11 +144,8 @@ it('ERROR-202 keeps the terminal empty list stable across a late render read', a
   render(
     <Form
       validationMode={0}
-      jsonSchema={{ type: 'string' }}
+      jsonSchema={detectable(Input)}
       onError={onError}
-      formTypeInputDefinitions={[
-        { test: { type: 'string' }, Component: Input },
-      ]}
     />,
   );
   fireEvent.click(document.querySelector('button')!);
@@ -117,12 +168,9 @@ it('ERROR-202 reports the first terminal child read again after a retained-root 
     <Form
       ref={ref}
       validationMode={0}
-      jsonSchema={{ type: 'string' }}
+      jsonSchema={detectable(Input)}
       defaultValue="value"
       onError={onError}
-      formTypeInputDefinitions={[
-        { test: { type: 'string' }, Component: Input },
-      ]}
     />,
   );
   const warnings = () =>

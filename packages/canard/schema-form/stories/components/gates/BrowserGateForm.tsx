@@ -54,7 +54,7 @@ export function BrowserGateForm({ mode }: { mode: 'ime' | 'number' | 'remount' |
       refresh: { type: 'string', presentation: { FormTypeInput: CompositionInput } },
     } };
     if (mode === 'number') return { type: 'number' };
-    if (mode === 'cost') return { type: 'string', presentation: { FormTypeInput: MeasuredChildren } };
+    if (mode === 'cost') return { type: 'object', properties: { leaf: { type: 'string' } }, presentation: { FormTypeInput: MeasuredChildren } };
     return { type: 'object', format: 'children', properties: {
       terminal: { type: 'string', presentation: { FormTypeInput: TrackedInput } },
       branch: { type: 'object', format: 'children', properties: {

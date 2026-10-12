@@ -1,9 +1,11 @@
 import { useLayoutEffect, useMemo, useRef } from 'react';
 
+import { isDevelopment } from '@/schema-form/app/environment';
 import type { SchemaNode } from '@/schema-form/core';
 import { useFormErrorContext } from '@/schema-form/providers/FormErrorContext';
 
 import type { ChildNodeComponent } from '../type';
+import { isDetectableTerminal } from './utils/isDetectableTerminal';
 
 /** Shared immutable child list for strategies that need no read detector; frozen once at module load. */
 const EMPTY_CHILDREN: ChildNodeComponent[] = [];
@@ -17,14 +19,14 @@ const ACCESSED = 2;
 /**
  * Detect terminal child-list reads using React's committed effect and a post-commit microtask.
  * @param node - Live node whose terminal strategy has no child components.
- * @returns A stable empty list; only terminal consumers receive a read detector.
+ * @returns A stable empty list; only development builds of an object or array made terminal by an inline input receive a read detector (round 180).
  */
 export const useTerminalChildren = (node: SchemaNode): ChildNodeComponent[] => {
   const reporter = useFormErrorContext();
   const accessed = useRef(0);
   const children = useMemo(() => {
     accessed.current = 0;
-    if (node.strategy !== 'terminal' || !reporter?.hasConsumer())
+    if (!isDevelopment() || !reporter || !isDetectableTerminal(node))
       return EMPTY_CHILDREN;
     let readLoad = reporter.load;
     const get = (
