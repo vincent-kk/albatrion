@@ -190,7 +190,8 @@ export interface SchemaFormPlugin {
  *         return null;
  *       } catch (thrown) {
  *         if (Array.isArray(thrown?.errors)) {
- *           return transformErrors(thrown.errors);
+ *           // Map Ajv errors to ValidationIssue the way @canard/schema-form-ajv8-plugin does.
+ *           return toValidationIssues(thrown.errors);
  *         }
  *         throw thrown;
  *       }
