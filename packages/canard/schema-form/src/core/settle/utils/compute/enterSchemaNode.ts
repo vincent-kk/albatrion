@@ -2,6 +2,7 @@ import type { SchemaNodeRecord } from '../../../record';
 import type { SettlementContext } from '../../type';
 import { restoreLatentState } from '../latent/restoreLatentState';
 import { hasDistributedChildInput } from '../write/hasDistributedChildInput';
+import { isWithinReplacePaths } from '../write/isWithinReplacePaths';
 import { markWrite } from '../write/markWrite';
 
 /**
@@ -9,7 +10,8 @@ import { markWrite } from '../write/markWrite';
  * @param host - Live parent that may have received a current write
  * @param child - Occurrence newly entering the shape
  * @param name - Child name in the parent's declaration
- * @param context - Current distribution and per-kind latent sources
+ * @param context - Current distribution and per-kind latent sources; in a batch only a
+ * child inside the replace paths reads the host's distribution
  * @returns Nothing; the child is ready for shape calculation
  */
 export const enterSchemaNode = <Self extends SchemaNodeRecord<Self>>(
@@ -18,7 +20,9 @@ export const enterSchemaNode = <Self extends SchemaNodeRecord<Self>>(
   name: string,
   context: SettlementContext<Self>,
 ): void => {
-  const distribution = context.distributedInputs.get(host);
+  const distribution = isWithinReplacePaths(context, child.path)
+    ? context.distributedInputs.get(host)
+    : undefined;
   const latent = context.root.runtime.latentRaw;
   const key =
     latent.size > 0

@@ -13,7 +13,10 @@ import {
   dispatchUpdate,
   subscribeSchemaNode,
 } from '../index';
-import { createDispatchTree } from './fixtures/createDispatchTree';
+import {
+  type DispatchTestNode,
+  createDispatchTree,
+} from './fixtures/createDispatchTree';
 import { getDispatchChild } from './fixtures/getDispatchChild';
 
 /** A guarded then branch plus an unrelated field, mirrored from the 07c finding scenario. */
@@ -448,6 +451,139 @@ describe('dispatcher batch', () => {
       dispatchSetValue(k, 'b');
     });
     expect(runtime.latentRaw.has(latent('/value', 'string'))).toBe(true);
+  });
+});
+
+describe('other-kind re-entry inside a batch (R1, 195C-01 F2)', () => {
+  it('restores the latent string on a single re-entry write (control)', () => {
+    const { root, runtime } = createDispatchTree(
+      kindSchema(true),
+      undefined,
+      createTestValidator(),
+    );
+    dispatchMount(root, { k: 'a', value: 's' });
+    dispatchSetValue(getDispatchChild(root, 'k'), 'b');
+    dispatchSetValue(root, { value: 5 }, SetValueOption.Merge);
+    expect(root.emit).toEqual({ k: 'b', value: 5 });
+    dispatchSetValue(getDispatchChild(root, 'k'), 'a');
+    expect(root.emit).toEqual({ k: 'a', value: 's' });
+    expect(runtime.latentRaw.has(latent('/value', 'number'))).toBe(true);
+  });
+
+  it('restores the latent string when the re-entry write shares a batch with another path', () => {
+    const { root, runtime } = createDispatchTree(
+      kindSchema(true),
+      undefined,
+      createTestValidator(),
+    );
+    dispatchMount(root, { k: 'a', value: 's' });
+    dispatchSetValue(getDispatchChild(root, 'k'), 'b');
+    dispatchSetValue(root, { value: 5 }, SetValueOption.Merge);
+    dispatchBatch(root, () => {
+      dispatchSetValue(getDispatchChild(root, 'k'), 'a');
+      dispatchSetValue(getDispatchChild(root, 'other'), 'x');
+    });
+    expect(root.emit).toEqual({ k: 'a', value: 's', other: 'x' });
+    expect(runtime.latentRaw.has(latent('/value', 'number'))).toBe(true);
+  });
+
+  it('leaves the other-kind node empty when a batched double write switches the branch', () => {
+    const { root, runtime } = createDispatchTree(
+      kindSchema(false),
+      undefined,
+      createTestValidator(),
+    );
+    dispatchMount(root, { k: 'a', value: 's' });
+    const k = getDispatchChild(root, 'k');
+    dispatchBatch(root, () => {
+      dispatchSetValue(k, 'b');
+      dispatchSetValue(k, 'b');
+    });
+    expect(root.emit).toEqual({ k: 'b' });
+    expect(getDispatchChild(root, 'value').emit).toBe(undefined);
+    expect(runtime.latentRaw.has(latent('/value', 'string'))).toBe(true);
+  });
+
+  it('prunes only the latent raw of the sibling a batched virtual overwrite replaces while the branch switches (the replaced sibling value itself is R3)', () => {
+    const schema = {
+      type: 'object',
+      properties: {
+        k: { type: 'string' },
+        m: { type: 'string' },
+        endDate: { type: 'string' },
+      },
+      allOf: [
+        {
+          if: { properties: { k: { const: 'a' } }, required: ['k'] },
+          then: {
+            properties: {
+              startDate: { type: 'string' },
+              value: { type: 'string' },
+            },
+          },
+          else: {
+            properties: {
+              startDate: { type: 'number' },
+              value: { type: 'number' },
+            },
+          },
+        },
+        {
+          if: { properties: { m: { const: 'x' } }, required: ['m'] },
+          then: { properties: { tag: { type: 'string' } } },
+          else: { properties: { tag: { type: 'number' } } },
+        },
+      ],
+      options: { virtual: { period: { fields: ['startDate', 'endDate'] } } },
+    } as const;
+    const run = (write: (root: DispatchTestNode) => void) => {
+      const { root, runtime } = createDispatchTree(
+        schema,
+        undefined,
+        createTestValidator(),
+      );
+      dispatchMount(root, {
+        k: 'a',
+        m: 'x',
+        startDate: 's',
+        endDate: 'e',
+        value: 'v',
+        tag: 't',
+      });
+      dispatchSetValue(getDispatchChild(root, 'k'), 'b');
+      dispatchSetValue(getDispatchChild(root, 'm'), 'y');
+      expect(runtime.latentRaw.has(latent('/startDate', 'string'))).toBe(true);
+      expect(runtime.latentRaw.has(latent('/value', 'string'))).toBe(true);
+      expect(runtime.latentRaw.has(latent('/tag', 'string'))).toBe(true);
+      write(root);
+      const { startDate: _startDate, ...emit } = root.emit as Record<
+        string,
+        unknown
+      >;
+      return {
+        emit,
+        startDate: runtime.latentRaw.has(latent('/startDate', 'string')),
+        value: runtime.latentRaw.has(latent('/value', 'string')),
+        tag: runtime.latentRaw.has(latent('/tag', 'string')),
+      };
+    };
+    const sequential = run((root) => {
+      dispatchSetValue(getDispatchChild(root, 'period'), [7, 'e2']);
+      dispatchSetValue(getDispatchChild(root, 'k'), 'a');
+    });
+    const batched = run((root) =>
+      dispatchBatch(root, () => {
+        dispatchSetValue(getDispatchChild(root, 'period'), [7, 'e2']);
+        dispatchSetValue(getDispatchChild(root, 'k'), 'a');
+      }),
+    );
+    expect(sequential).toEqual({
+      emit: { k: 'a', m: 'y', endDate: 'e2', value: 'v' },
+      startDate: false,
+      value: false,
+      tag: true,
+    });
+    expect(batched).toEqual(sequential);
   });
 });
 

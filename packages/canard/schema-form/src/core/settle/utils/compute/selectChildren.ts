@@ -22,6 +22,7 @@ import { distributeLatentValue } from '../latent/distributeLatentValue';
 import { getLatentOrder } from '../latent/getLatentOrder';
 import { indexEnteredLatentKey } from '../latent/indexEnteredLatentKey';
 import { hasDistributedChildInput } from '../write/hasDistributedChildInput';
+import { isWithinReplacePaths } from '../write/isWithinReplacePaths';
 import { createChildNode } from './createChildNode';
 import { enterSchemaNode } from './enterSchemaNode';
 import { flushPendingOutput } from './flushPendingOutput';
@@ -322,7 +323,11 @@ export const selectChildren = <Self extends SchemaNodeRecord<Self>>(
       next[entry.name]?.blueprintNode.kind === entry.node.kind
         ? next[entry.name]
         : undefined;
-    const distribution = context.distributedInputs.get(node);
+    const distribution =
+      context.replacePaths === undefined ||
+      isWithinReplacePaths(context, `${node.path}/${escapeSegment(entry.name)}`)
+        ? context.distributedInputs.get(node)
+        : undefined;
     const ownsInput =
       distribution &&
       hasDistributedChildInput(
@@ -452,7 +457,11 @@ export const selectChildren = <Self extends SchemaNodeRecord<Self>>(
     )
       continue;
     seen.add(entry.name);
-    const distribution = context.distributedInputs.get(node);
+    const distribution =
+      context.replacePaths === undefined ||
+      isWithinReplacePaths(context, `${node.path}/${escapeSegment(entry.name)}`)
+        ? context.distributedInputs.get(node)
+        : undefined;
     if (
       !distribution ||
       !hasDistributedChildInput(
