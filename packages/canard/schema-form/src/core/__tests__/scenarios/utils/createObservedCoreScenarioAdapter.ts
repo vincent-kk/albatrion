@@ -1,11 +1,16 @@
-import type { FormScenario, FormScenarioStep, ScenarioAdapter,
-  ScenarioExpectation } from '@aileron/schema-form-scenarios';
 import { expect } from 'vitest';
 
-import type { BlueprintSchema } from '../../../blueprint';
+import type {
+  FormScenario,
+  FormScenarioStep,
+  ScenarioAdapter,
+  ScenarioExpectation,
+} from '@aileron/schema-form-scenarios';
+
 import { SchemaNodeEventType, SetValueOption } from '../../../SchemaNode';
 import type { SchemaNode } from '../../../SchemaNode';
 import type { SchemaNode as RuntimeSchemaNode } from '../../../SchemaNode/SchemaNode';
+import type { BlueprintSchema } from '../../../blueprint';
 import { loadSchemaNodeAtMount } from '../../../settle';
 import { ValidationMode } from '../../../types/state';
 import { makeSchemaNodeTree } from '../../makeSchemaNodeTree';
@@ -13,8 +18,11 @@ import { assertCoreScenarioExpectation } from './assertCoreScenarioExpectation';
 import { executeCoreScenarioStep } from './executeCoreScenarioStep';
 
 /** Execute batches through the public node boundary while reusing existing actions. */
-const executeStep = (root: SchemaNode, scenario: FormScenario,
-  step: FormScenarioStep): void => {
+const executeStep = (
+  root: SchemaNode,
+  scenario: FormScenario,
+  step: FormScenarioStep,
+): void => {
   if (step.action === 'batch') {
     root.batch(() => {
       for (const nested of step.steps) executeStep(root, scenario, nested);
@@ -39,23 +47,39 @@ const subscribeValueTree = (node: SchemaNode, order: string[]): void => {
  * @returns Step-local observations through the shared adapter interface
  */
 export function createObservedCoreScenarioAdapter(
-  scenario: FormScenario, family: 'notify' | 'validation',
+  scenario: FormScenario,
+  family: 'notify' | 'validation',
 ): ScenarioAdapter {
   const delivered: string[] = [];
   const reported: string[] = [];
   let onChangeCount = 0;
   let validationRequestStamp = 0;
-  const { root, runtime } = makeSchemaNodeTree(scenario.schema as BlueprintSchema, {
-    snapshot: scenario.initialValue,
-    errorReporter: { hasConsumer: () => true,
-      report: (record) => { reported.push(record.code); } },
-  });
-  loadSchemaNodeAtMount(root as RuntimeSchemaNode, scenario.initialValue,
-    SetValueOption.Overwrite);
+  const { root, runtime } = makeSchemaNodeTree(
+    scenario.schema as BlueprintSchema,
+    {
+      snapshot: scenario.initialValue,
+      errorReporter: {
+        hasConsumer: () => true,
+        report: (record) => {
+          reported.push(record.code);
+        },
+      },
+    },
+  );
+  loadSchemaNodeAtMount(
+    root as RuntimeSchemaNode,
+    scenario.initialValue,
+    SetValueOption.Overwrite,
+  );
   subscribeValueTree(root, delivered);
-  Reflect.set(runtime, 'onChange', () => { onChangeCount += 1; });
-  Reflect.set(runtime, 'validationMode', family === 'notify'
-    ? ValidationMode.OnChange : ValidationMode.OnRequest);
+  Reflect.set(runtime, 'onChange', () => {
+    onChangeCount += 1;
+  });
+  Reflect.set(
+    runtime,
+    'validationMode',
+    family === 'notify' ? ValidationMode.OnChange : ValidationMode.OnRequest,
+  );
 
   return {
     execute: (step) => {
@@ -65,17 +89,27 @@ export function createObservedCoreScenarioAdapter(
       validationRequestStamp = Reflect.get(runtime, 'validationStamp') ?? 0;
       executeStep(root, scenario, step);
     },
-    settle: family === 'validation' ? async () => { await root.validate(); } : undefined,
+    settle:
+      family === 'validation'
+        ? async () => {
+            await root.validate();
+          }
+        : undefined,
     assert: (expectation: ScenarioExpectation) => {
-      assertCoreScenarioExpectation(root, { ...expectation, errors: undefined });
+      assertCoreScenarioExpectation(root, {
+        ...expectation,
+        errors: undefined,
+      });
       if (expectation.deliveryOrder)
         expect(delivered, 'deliveryOrder').toEqual(expectation.deliveryOrder);
       if (expectation.onChangeCount !== undefined)
         expect(onChangeCount, 'onChangeCount').toBe(expectation.onChangeCount);
       if (expectation.validationRequestCount !== undefined)
-        expect((Reflect.get(runtime, 'validationStamp') ?? 0) - validationRequestStamp,
-          'validationRequestCount')
-          .toBe(expectation.validationRequestCount);
+        expect(
+          (Reflect.get(runtime, 'validationStamp') ?? 0) -
+            validationRequestStamp,
+          'validationRequestCount',
+        ).toBe(expectation.validationRequestCount);
       if (expectation.onErrorCodes)
         expect(reported, 'onErrorCodes').toEqual(expectation.onErrorCodes);
       for (const [path, issues] of Object.entries(expectation.errors ?? {})) {

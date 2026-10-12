@@ -1,13 +1,14 @@
 import type { BlueprintSchema } from '../../../blueprint';
 import type { GuardFunction, ValidateFunction, Validator } from '../../type';
 import { createValidatorCopy } from '../copy/createValidatorCopy';
-import { validationEntries } from './validationEntries';
 import { evictValidationRoot } from '../lifetime/evictValidationRoot';
 import { recentReleaseList } from '../lifetime/recentReleaseList';
+import { validationEntries } from './validationEntries';
 
 /** Successful or failed compilation retained under one authored position. */
-export type GuardResult = { readonly guard: GuardFunction; readonly failure?: never } |
-  { readonly failure: unknown; readonly guard?: never };
+export type GuardResult =
+  | { readonly guard: GuardFunction; readonly failure?: never }
+  | { readonly failure: unknown; readonly guard?: never };
 
 /** One validator/root cache entry shared by every consuming tree. */
 export interface ValidationEntry {
@@ -30,7 +31,8 @@ export interface ValidationEntry {
  * @returns The shared entry, including a cached compilation failure.
  */
 export const readValidationEntry = (
-  validator: Validator, authoredRoot: BlueprintSchema,
+  validator: Validator,
+  authoredRoot: BlueprintSchema,
 ): ValidationEntry => {
   let roots = validationEntries.get(validator);
   if (!roots) {
@@ -44,8 +46,12 @@ export const readValidationEntry = (
   const list = recentReleaseList(validator);
   if (typeof authoredRoot.$id === 'string')
     for (const oldRoot of [...list.recent])
-      if (oldRoot !== authoredRoot && typeof oldRoot === 'object' &&
-        oldRoot !== null && oldRoot.$id === authoredRoot.$id)
+      if (
+        oldRoot !== authoredRoot &&
+        typeof oldRoot === 'object' &&
+        oldRoot !== null &&
+        oldRoot.$id === authoredRoot.$id
+      )
         evictValidationRoot(validator, oldRoot);
   list.counts.set(authoredRoot, 0);
   list.recent.push(authoredRoot);
@@ -53,10 +59,18 @@ export const readValidationEntry = (
   const copy = createValidatorCopy(authoredRoot);
   let validate: ValidateFunction | undefined;
   let failure: unknown;
-  try { validate = validator.compile(copy); }
-  catch (error) { failure = error; }
-  const entry: ValidationEntry = { copy, guards: new Map(), validate, failure,
-    eagerCompiled: false };
+  try {
+    validate = validator.compile(copy);
+  } catch (error) {
+    failure = error;
+  }
+  const entry: ValidationEntry = {
+    copy,
+    guards: new Map(),
+    validate,
+    failure,
+    eagerCompiled: false,
+  };
   roots.set(authoredRoot, entry);
   return entry;
 };

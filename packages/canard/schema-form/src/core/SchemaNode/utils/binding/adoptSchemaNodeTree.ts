@@ -10,7 +10,10 @@ import { requireRuntimeSchemaNode } from '../requireRuntimeSchemaNode';
  * @returns Nothing; the dispatcher completes the operation synchronously
  */
 export const adoptSchemaNodeTree = (
-  previousRoot: SchemaNode, nextRoot: SchemaNode,
+  previousRoot: SchemaNode,
+  nextRoot: SchemaNode,
 ): void =>
-  adoptSchemaNodeChain(requireRuntimeSchemaNode(previousRoot, true), requireRuntimeSchemaNode(nextRoot, true));
-
+  adoptSchemaNodeChain(
+    requireRuntimeSchemaNode(previousRoot, true),
+    requireRuntimeSchemaNode(nextRoot, true),
+  );

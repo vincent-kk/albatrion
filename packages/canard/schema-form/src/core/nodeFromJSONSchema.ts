@@ -32,9 +32,7 @@ export function nodeFromJSONSchema<Schema extends JSONSchema>(props: {
   isAtomic?: (value: unknown) => boolean;
   deferMountValidation?: boolean;
 }): InferSchemaNode<Schema> {
-  const root = buildSchemaNodeTree<Schema>(
-    props,
-  );
+  const root = buildSchemaNodeTree<Schema>(props);
   mountSchemaNode(root, undefined, undefined, {
     deferValidation: props.deferMountValidation ?? false,
   });

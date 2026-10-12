@@ -10,12 +10,16 @@ import type { SettlementContext } from '../../type';
  * @returns Whether a latent descendant can prevent an empty-host fill
  */
 export const hasLatentUnder = <Self extends SchemaNodeRecord<Self>>(
-  context: SettlementContext<Self>, path: string,
+  context: SettlementContext<Self>,
+  path: string,
 ): boolean => {
   if (!context.latentPrefixes) {
     const ignored = new Set<string>();
     for (const node of [...context.entered, ...context.revived])
-      if (!node.detached && (!node.parent || node.parent.structure?.[node.name] === node))
+      if (
+        !node.detached &&
+        (!node.parent || node.parent.structure?.[node.name] === node)
+      )
         ignored.add(JSON.stringify([node.path, node.blueprintNode.kind]));
     const prefixes = new Set<string>();
     for (const key of context.root.runtime.latentRaw.keys()) {

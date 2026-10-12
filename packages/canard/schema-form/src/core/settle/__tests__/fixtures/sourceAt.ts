@@ -10,8 +10,12 @@ import type { PlainNode } from './createPlainNode';
  * @returns The occurrence's raw source, or its latent value when absent
  */
 export const sourceAt = (
-  root: PlainNode, path: string, kind?: BlueprintNodeKind,
+  root: PlainNode,
+  path: string,
+  kind?: BlueprintNodeKind,
 ): unknown => {
   const live = find(root, path);
-  return live ? live.raw : root.runtime.latentRaw.get(JSON.stringify([path, kind]));
+  return live
+    ? live.raw
+    : root.runtime.latentRaw.get(JSON.stringify([path, kind]));
 };

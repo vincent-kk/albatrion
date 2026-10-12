@@ -4,8 +4,8 @@ import type { BlueprintSchema } from '../../../blueprint';
 import { dispatchMount, subscribeSchemaNode } from '../../../dispatch';
 import { SetValueOption } from '../../../types/value';
 import * as selection from '../../utils/compute/selectChildren/utils/canReuseArrayChildren';
-import { createTestTree } from './createTestTree';
 import type { PlainNode } from './createPlainNode';
+import { createTestTree } from './createTestTree';
 import { observeArraySelection } from './observeArraySelection';
 import { observeDetachedReads } from './observeDetachedReads';
 
@@ -16,7 +16,9 @@ import { observeDetachedReads } from './observeDetachedReads';
  * @param steps - Public writes and whether each must use the shortcut
  * @returns Candidate tree after matching values, deliveries, records and departures
  */
-export const compareArraySelection = (schema: BlueprintSchema, input: unknown,
+export const compareArraySelection = (
+  schema: BlueprintSchema,
+  input: unknown,
   steps: readonly { apply: (root: PlainNode) => unknown; reuse: boolean }[],
 ): PlainNode => {
   const observations: unknown[][] = [];
@@ -27,9 +29,10 @@ export const compareArraySelection = (schema: BlueprintSchema, input: unknown,
     const report = vi.fn();
     root.runtime.validationMode = 0;
     root.runtime.errorReporter = { hasConsumer: () => true, report };
-    const listen = (node: PlainNode) => subscribeSchemaNode(node, event => {
-      delivered.push({ path: node.path, event });
-    });
+    const listen = (node: PlainNode) =>
+      subscribeSchemaNode(node, (event) => {
+        delivered.push({ path: node.path, event });
+      });
     listen(root);
     const factory = root.runtime.nodeFactory;
     root.runtime.nodeFactory = (entry, parent, runtime) => {
@@ -37,7 +40,9 @@ export const compareArraySelection = (schema: BlueprintSchema, input: unknown,
       listen(node);
       return node;
     };
-    dispatchMount(root, input, SetValueOption.Overwrite, { deferValidation: true });
+    dispatchMount(root, input, SetValueOption.Overwrite, {
+      deferValidation: true,
+    });
     const history: unknown[] = [];
     const route = vi.spyOn(selection, 'canReuseArrayChildren');
     if (generic) route.mockReturnValue(false);
@@ -46,17 +51,28 @@ export const compareArraySelection = (schema: BlueprintSchema, input: unknown,
         delivered.length = 0;
         report.mockClear();
         route.mockClear();
-        const former = [...root.children ?? []];
+        const former = [...(root.children ?? [])];
         let result: unknown;
-        try { result = step.apply(root); }
-        catch (error) { result = error; }
-        if (!generic) expect(route.mock.results.some(call => call.value === true))
-          .toBe(step.reuse);
-        history.push({ result, delivered: [...delivered], records: [...report.mock.calls],
+        try {
+          result = step.apply(root);
+        } catch (error) {
+          result = error;
+        }
+        if (!generic)
+          expect(route.mock.results.some((call) => call.value === true)).toBe(
+            step.reuse,
+          );
+        history.push({
+          result,
+          delivered: [...delivered],
+          records: [...report.mock.calls],
           settlement: observeArraySelection(root),
-          departed: observeDetachedReads(root, former) });
+          departed: observeDetachedReads(root, former),
+        });
       }
-    } finally { route.mockRestore(); }
+    } finally {
+      route.mockRestore();
+    }
     observations.push(history);
     if (!generic) candidate = root;
   }

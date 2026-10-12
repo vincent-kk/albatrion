@@ -1,12 +1,13 @@
+import { isArray } from '@winglet/common-utils/filter';
+
+import { RESET_REBUILT_BY_REFERENCE } from '../../../../errors';
 import type { SchemaNodeRecord } from '../../../record';
 import { indexSchemaNodeWarning } from '../../../record';
-import { isArray } from '@winglet/common-utils/filter';
-import { RESET_REBUILT_BY_REFERENCE } from '../../../../errors';
-import { assertValidationRootReady } from '../../../validation';
 import { disposeSchemaNodeTree } from '../../../settle';
-import { restoreAdoptedExternalErrors } from './restoreAdoptedExternalErrors';
+import { assertValidationRootReady } from '../../../validation';
 import { dedupeWarningRecord } from '../report/dedupeWarningRecord';
 import { readReferenceOnlySchemaPaths } from '../report/readReferenceOnlySchemaPaths';
+import { restoreAdoptedExternalErrors } from './restoreAdoptedExternalErrors';
 
 /**
  * Transfer an open entry to a rebuilt root before its outer call completes.
@@ -15,7 +16,8 @@ import { readReferenceOnlySchemaPaths } from '../report/readReferenceOnlySchemaP
  * @returns Nothing; the replacement runtime owns pending chain state
  */
 export const adoptSchemaNodeChain = <Self extends SchemaNodeRecord<Self>>(
-  previousRoot: Self, nextRoot: Self,
+  previousRoot: Self,
+  nextRoot: Self,
 ): void => {
   assertValidationRootReady(nextRoot);
   const previous = previousRoot.runtime;
@@ -34,34 +36,55 @@ export const adoptSchemaNodeChain = <Self extends SchemaNodeRecord<Self>>(
   next.onChangeBudget = previous.onChangeBudget;
   next.batchDepth = previous.batchDepth;
   next.batchWrites = previous.batchWrites;
-  next.validationTargets = previous.validationTargets?.size ? new Set([nextRoot]) :
-    undefined;
+  next.validationTargets = previous.validationTargets?.size
+    ? new Set([nextRoot])
+    : undefined;
   next.deliveries = previous.deliveries;
   next.queuedNonSettleEvents = previous.queuedNonSettleEvents;
   next.stateChanged = previous.stateChanged;
   next.adoptedExternalErrors = new Map(previous.adoptedExternalErrors);
   for (const [node, errors] of previous.nodeErrors ?? [])
-    if (node !== null && typeof node === 'object' &&
-      'path' in node && typeof node.path === 'string')
+    if (
+      node !== null &&
+      typeof node === 'object' &&
+      'path' in node &&
+      typeof node.path === 'string'
+    )
       next.adoptedExternalErrors.set(node.path, errors);
   restoreAdoptedExternalErrors(nextRoot);
   if (previous.pendingWarningRecords)
     for (const [key, record] of previous.pendingWarningRecords) {
-      const parts: unknown = record.path === undefined ? undefined : JSON.parse(key);
-      indexSchemaNodeWarning(next, key,
-        isArray(parts) && typeof parts[1] === 'string' ? parts[1] : undefined, record);
+      const parts: unknown =
+        record.path === undefined ? undefined : JSON.parse(key);
+      indexSchemaNodeWarning(
+        next,
+        key,
+        isArray(parts) && typeof parts[1] === 'string' ? parts[1] : undefined,
+        record,
+      );
     }
   if (next.errorReporter?.hasConsumer()) {
-    const paths = next.rebuiltReferenceSchemaPaths ??
-      readReferenceOnlySchemaPaths(previous.blueprint?.schema, next.blueprint?.schema);
+    const paths =
+      next.rebuiltReferenceSchemaPaths ??
+      readReferenceOnlySchemaPaths(
+        previous.blueprint?.schema,
+        next.blueprint?.schema,
+      );
     if (paths.length) {
       const code = `SCHEMA_FORM_WARNING.${RESET_REBUILT_BY_REFERENCE}`;
-      const record = dedupeWarningRecord(next.warningKeys ??= new Set(),
-        code, '', '', () => 'Form reset rebuilt the schema by reference',
-        { details: { schemaPaths: paths } });
+      const record = dedupeWarningRecord(
+        (next.warningKeys ??= new Set()),
+        code,
+        '',
+        '',
+        () => 'Form reset rebuilt the schema by reference',
+        { details: { schemaPaths: paths } },
+      );
       if (record) {
         (next.pendingWarningRecords ??= new Map()).set(
-          JSON.stringify([code, '']), record);
+          JSON.stringify([code, '']),
+          record,
+        );
         next.chainOccurrences?.push({ kind: 'record', record });
       }
     }

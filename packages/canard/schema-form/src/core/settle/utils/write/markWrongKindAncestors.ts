@@ -9,12 +9,17 @@ import { isPlain } from './isPlain';
  * @returns Nothing; candidates remain unchanged until child emits are calculated
  */
 export const markWrongKindAncestors = <Self extends SchemaNodeRecord<Self>>(
-  node: Self, context: SettlementContext<Self>,
+  node: Self,
+  context: SettlementContext<Self>,
 ): void => {
   let parent = node.parent;
   while (parent) {
-    if (parent.behavior.type === 'object' && parent.behavior.strategy === 'branch' &&
-      parent.raw !== undefined && !isPlain(parent.raw))
+    if (
+      parent.behavior.type === 'object' &&
+      parent.behavior.strategy === 'branch' &&
+      parent.raw !== undefined &&
+      !isPlain(parent.raw)
+    )
       context.wrongKindHosts.add(parent);
     parent = parent.parent;
   }

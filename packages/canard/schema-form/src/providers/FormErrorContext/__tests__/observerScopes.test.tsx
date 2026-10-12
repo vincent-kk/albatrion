@@ -21,13 +21,26 @@ it('ERROR-113 guards an initial field boundary report under StrictMode', () => {
     root = props.node.rootNode;
     throw failure;
   };
-  render(<StrictMode><Form jsonSchema={{ type: 'string', presentation: { FormTypeInput: Input } }}
-    defaultValue="kept" validationMode={ValidationMode.None} onError={(record) => {
-      if (record.error !== failure) return;
-      try { root!.setValue('forbidden'); }
-      catch (error) { refusal = error; }
-    }} /></StrictMode>);
-  expect(refusal).toMatchObject({ code: 'SCHEMA_FORM_ERROR.WRITE_IN_OBSERVER' });
+  render(
+    <StrictMode>
+      <Form
+        jsonSchema={{ type: 'string', presentation: { FormTypeInput: Input } }}
+        defaultValue="kept"
+        validationMode={ValidationMode.None}
+        onError={(record) => {
+          if (record.error !== failure) return;
+          try {
+            root!.setValue('forbidden');
+          } catch (error) {
+            refusal = error;
+          }
+        }}
+      />
+    </StrictMode>,
+  );
+  expect(refusal).toMatchObject({
+    code: 'SCHEMA_FORM_ERROR.WRITE_IN_OBSERVER',
+  });
   expect(root!.value).toBe('kept');
 });
 
@@ -40,15 +53,30 @@ it('ERROR-113 rejects writes in the field boundary reporter after commit', () =>
     if (value === 'throw') throw failure;
     return <input />;
   };
-  const view = render(<Form ref={ref} jsonSchema={{ type: 'object', properties: {
-    field: { type: 'string', presentation: { FormTypeInput: Input } },
-  } }} validationMode={ValidationMode.None} onError={(record) => {
-    if (record.error !== failure) return;
-    try { ref.current!.findNode('/field')!.setValue('forbidden'); }
-    catch (error) { refusal = error; }
-  }} />);
+  const view = render(
+    <Form
+      ref={ref}
+      jsonSchema={{
+        type: 'object',
+        properties: {
+          field: { type: 'string', presentation: { FormTypeInput: Input } },
+        },
+      }}
+      validationMode={ValidationMode.None}
+      onError={(record) => {
+        if (record.error !== failure) return;
+        try {
+          ref.current!.findNode('/field')!.setValue('forbidden');
+        } catch (error) {
+          refusal = error;
+        }
+      }}
+    />,
+  );
   act(() => ref.current!.findNode('/field')!.setValue('throw'));
-  expect(refusal).toMatchObject({ code: 'SCHEMA_FORM_ERROR.WRITE_IN_OBSERVER' });
+  expect(refusal).toMatchObject({
+    code: 'SCHEMA_FORM_ERROR.WRITE_IN_OBSERVER',
+  });
   expect(ref.current!.findNode('/field')!.value).toBe('throw');
   expect(view.container.textContent).toContain('An unexpected error');
 });
@@ -62,16 +90,41 @@ it('ERROR-113 rejects writes in the root boundary reporter while retaining its r
   let root: FormHandle['node'];
   const onError = (record: { error?: unknown }) => {
     if (record.error !== failure) return;
-    try { root!.setValue('forbidden'); }
-    catch (error) { refusal = error; }
+    try {
+      root!.setValue('forbidden');
+    } catch (error) {
+      refusal = error;
+    }
   };
-  const Broken = () => { throw failure; };
-  const view = render(<Form ref={ref} jsonSchema={schema} defaultValue="kept"
-    validationMode={ValidationMode.None} onError={onError}><span /></Form>);
+  const Broken = () => {
+    throw failure;
+  };
+  const view = render(
+    <Form
+      ref={ref}
+      jsonSchema={schema}
+      defaultValue="kept"
+      validationMode={ValidationMode.None}
+      onError={onError}
+    >
+      <span />
+    </Form>,
+  );
   root = ref.current!.node;
-  view.rerender(<Form ref={ref} jsonSchema={schema} defaultValue="kept"
-    validationMode={ValidationMode.None} onError={onError}><Broken /></Form>);
-  expect(refusal).toMatchObject({ code: 'SCHEMA_FORM_ERROR.WRITE_IN_OBSERVER' });
+  view.rerender(
+    <Form
+      ref={ref}
+      jsonSchema={schema}
+      defaultValue="kept"
+      validationMode={ValidationMode.None}
+      onError={onError}
+    >
+      <Broken />
+    </Form>,
+  );
+  expect(refusal).toMatchObject({
+    code: 'SCHEMA_FORM_ERROR.WRITE_IN_OBSERVER',
+  });
   expect(root!.value).toBe('kept');
 });
 
@@ -84,15 +137,33 @@ it('ERROR-113 scopes reports to a replacement root after schema reset', () => {
     return <input />;
   };
   const onError = () => {
-    try { root!.setValue(3); }
-    catch (error) { refusal = error; }
+    try {
+      root!.setValue(3);
+    } catch (error) {
+      refusal = error;
+    }
   };
-  const view = render(<Form ref={ref} jsonSchema={{ type: 'string' }}
-    validationMode={ValidationMode.None} onError={onError} />);
-  view.rerender(<Form ref={ref} jsonSchema={{ type: 'number', presentation: { FormTypeInput: Input } }}
-    defaultValue={3} validationMode={ValidationMode.None} onError={onError} />);
+  const view = render(
+    <Form
+      ref={ref}
+      jsonSchema={{ type: 'string' }}
+      validationMode={ValidationMode.None}
+      onError={onError}
+    />,
+  );
+  view.rerender(
+    <Form
+      ref={ref}
+      jsonSchema={{ type: 'number', presentation: { FormTypeInput: Input } }}
+      defaultValue={3}
+      validationMode={ValidationMode.None}
+      onError={onError}
+    />,
+  );
   act(() => ref.current!.reset());
   act(() => root!.setValue('invalid'));
   expect(ref.current!.node!.value).toBe('invalid');
-  expect(refusal).toMatchObject({ code: 'SCHEMA_FORM_ERROR.WRITE_IN_OBSERVER' });
+  expect(refusal).toMatchObject({
+    code: 'SCHEMA_FORM_ERROR.WRITE_IN_OBSERVER',
+  });
 });

@@ -3,14 +3,25 @@ import { describe, expect, it } from 'vitest';
 import { makeSchemaNodeTree } from '../makeSchemaNodeTree';
 
 const heldNode = (base: 'none' | 'unconditional' | 'default') => {
-  const properties = { kind: { type: 'string' },
+  const properties = {
+    kind: { type: 'string' },
     ...(base === 'none' ? { x: { type: 'string' } } : {}),
     ...(base === 'default' ? { x: { type: 'string', default: 'B' } } : {}),
   };
-  const { root } = makeSchemaNodeTree({ type: 'object', properties,
-    ...(base === 'unconditional' ? { allOf: [{ properties: {
-      x: { type: 'string', default: 'U' },
-    } }] } : {}),
+  const { root } = makeSchemaNodeTree({
+    type: 'object',
+    properties,
+    ...(base === 'unconditional'
+      ? {
+          allOf: [
+            {
+              properties: {
+                x: { type: 'string', default: 'U' },
+              },
+            },
+          ],
+        }
+      : {}),
     if: { properties: { kind: { const: 'on' } }, required: ['kind'] },
     then: { properties: { x: { type: 'string', default: 'T' } } },
   });
@@ -21,16 +32,27 @@ const heldNode = (base: 'none' | 'unconditional' | 'default') => {
 // filid:contract factory-single-path
 describe('round9b fragment retention regression', () => {
   it('r9b.mjs:18 keeps a shared node alive as another holder activates', () => {
-    const { root } = makeSchemaNodeTree({ type: 'object', properties: {
-      a: { type: 'number' }, b: { type: 'number' },
-    }, allOf: [
-      { controls: { active: './a === 1' }, properties: {
-        x: { type: 'string', default: 'P' },
-      } },
-      { controls: { active: './b === 1' }, properties: {
-        x: { type: 'string', default: 'Q' },
-      } },
-    ] });
+    const { root } = makeSchemaNodeTree({
+      type: 'object',
+      properties: {
+        a: { type: 'number' },
+        b: { type: 'number' },
+      },
+      allOf: [
+        {
+          controls: { active: './a === 1' },
+          properties: {
+            x: { type: 'string', default: 'P' },
+          },
+        },
+        {
+          controls: { active: './b === 1' },
+          properties: {
+            x: { type: 'string', default: 'Q' },
+          },
+        },
+      ],
+    });
     root.setValue({ a: 1 });
     const x = root.find('/x');
     expect(x?.raw).toBe('P');
@@ -65,12 +87,21 @@ describe('round9b fragment retention regression', () => {
   });
 
   it('r9b.mjs:50 gates birth by final shape and retains inactive raw', () => {
-    const { root } = makeSchemaNodeTree({ type: 'object', properties: {
-      show: { type: 'boolean' }, note: { type: 'string' },
-      x: { type: 'string', default: 'D', controls: {
-        active: '../show === true', default: 'E',
-      } },
-    } });
+    const { root } = makeSchemaNodeTree({
+      type: 'object',
+      properties: {
+        show: { type: 'boolean' },
+        note: { type: 'string' },
+        x: {
+          type: 'string',
+          default: 'D',
+          controls: {
+            active: '../show === true',
+            default: 'E',
+          },
+        },
+      },
+    });
     root.setValue({ show: false });
     expect(root.find('/x')).toBeNull();
     root.find('/show')?.setValue(true);
@@ -80,16 +111,26 @@ describe('round9b fragment retention regression', () => {
     expect(root.find('/x')?.raw).toBeUndefined();
     root.find('/x')?.setValue('retained');
     root.find('/show')?.setValue(false);
-    expect(root.inactiveValues).toContainEqual({ path: '/x', value: 'retained' });
+    expect(root.inactiveValues).toContainEqual({
+      path: '/x',
+      value: 'retained',
+    });
     root.find('/show')?.setValue(true);
     expect(root.find('/x')?.raw).toBe('retained');
   });
 
   it('r9b.mjs:50 TEST-069 replaces historical raw-unit birth with shape-unit birth', () => {
-    const { root } = makeSchemaNodeTree({ type: 'object', properties: {
-      show: { type: 'boolean' }, x: { type: 'string', default: 'D',
-        controls: { active: '../show === true', default: 'E' } },
-    } });
+    const { root } = makeSchemaNodeTree({
+      type: 'object',
+      properties: {
+        show: { type: 'boolean' },
+        x: {
+          type: 'string',
+          default: 'D',
+          controls: { active: '../show === true', default: 'E' },
+        },
+      },
+    });
     root.setValue({ show: false });
     expect(root.find('/x')).toBeNull();
     expect(root.outputValue).toEqual({ show: false });
@@ -98,12 +139,17 @@ describe('round9b fragment retention regression', () => {
   });
 
   it('r9b.mjs:73 rebirths a gated object descendant on the next lifetime', () => {
-    const { root } = makeSchemaNodeTree({ type: 'object', properties: {
-      show: { type: 'boolean' }, group: { type: 'object',
-        controls: { active: '../show === true' },
-        properties: { x: { type: 'string', default: 'D' } },
+    const { root } = makeSchemaNodeTree({
+      type: 'object',
+      properties: {
+        show: { type: 'boolean' },
+        group: {
+          type: 'object',
+          controls: { active: '../show === true' },
+          properties: { x: { type: 'string', default: 'D' } },
+        },
       },
-    } });
+    });
     root.setValue({ show: false });
     expect(root.find('/group/x')).toBeNull();
     root.find('/show')?.setValue(true);
@@ -123,7 +169,10 @@ describe('round9b fragment retention regression', () => {
         { properties: { kind: { const: 'a' }, x: { type: 'string' } } },
         { properties: { kind: { const: 'b' }, y: { type: 'number' } } },
       ];
-      const { root } = makeSchemaNodeTree({ type: 'object', [keyword]: branches });
+      const { root } = makeSchemaNodeTree({
+        type: 'object',
+        [keyword]: branches,
+      });
       root.setValue({ kind: 'b', y: 1 });
       expect(root.find('/kind')?.raw).toBe('b');
       expect(root.find('/kind')?.jsonSchema).not.toHaveProperty('const');

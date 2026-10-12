@@ -21,7 +21,9 @@ export interface ScopedExpressionResult {
  * @returns The shared result or thrown cause
  */
 export const evaluateScopedExpression = <Self extends SchemaNodeRecord<Self>>(
-  root: Self, host: Self, rule: DeriveRule,
+  root: Self,
+  host: Self,
+  rule: DeriveRule,
   cache: Map<string, ScopedExpressionResult>,
 ): ScopedExpressionResult => {
   if (!rule.expression) return { value: rule.literal, threw: false };
@@ -30,9 +32,14 @@ export const evaluateScopedExpression = <Self extends SchemaNodeRecord<Self>>(
   if (cached) return cached;
   let result: ScopedExpressionResult;
   try {
-    result = { value: rule.expression.evaluate(rule.expression.dependencies.map(
-      (dependency) => readDeriveDependency(root, host.path, dependency))),
-      threw: false };
+    result = {
+      value: rule.expression.evaluate(
+        rule.expression.dependencies.map((dependency) =>
+          readDeriveDependency(root, host.path, dependency),
+        ),
+      ),
+      threw: false,
+    };
   } catch (cause) {
     result = { value: undefined, threw: true, cause };
   }

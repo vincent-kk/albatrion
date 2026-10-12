@@ -1,7 +1,7 @@
 import { SchemaNodeEventType } from '../../../../record';
 import type { SchemaNodeRecord } from '../../../../record';
-import { routeValidationIssues } from '../../../../validation';
 import { ValidationMode } from '../../../../types/state';
+import { routeValidationIssues } from '../../../../validation';
 import { queueNonSettleEvent } from '../../chain/queueNonSettleEvent';
 
 /**

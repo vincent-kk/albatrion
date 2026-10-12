@@ -1,11 +1,11 @@
+import { INVALID_WRITE_OPTION, SchemaFormError } from '../../../../errors';
 import type { SchemaNodeRecord } from '../../../record';
 import { writeSchemaNode } from '../../../settle';
 import { SetValueOption } from '../../../types/value';
-import { enterSchemaNodeChain } from '../chain/enterSchemaNodeChain';
 import { captureChainError } from '../chain/captureChainError';
+import { enterSchemaNodeChain } from '../chain/enterSchemaNodeChain';
 import { exitSchemaNodeChain } from '../chain/exitSchemaNodeChain';
 import { readBatchValue } from '../chain/readBatchValue';
-import { INVALID_WRITE_OPTION, SchemaFormError } from '../../../../errors';
 
 /**
  * Commit a public value write or mark it within the current batch.
@@ -16,24 +16,38 @@ import { INVALID_WRITE_OPTION, SchemaFormError } from '../../../../errors';
  * @returns Nothing; outer entry owns notification and failures
  */
 export const dispatchSetValue = <Self extends SchemaNodeRecord<Self>>(
-  node: Self, value: unknown, option: SetValueOption = SetValueOption.Overwrite,
+  node: Self,
+  value: unknown,
+  option: SetValueOption = SetValueOption.Overwrite,
   source?: 'input',
 ): void => {
   if (source === 'input' && (node.disposed || node.rootNode.disposed)) return;
   if (!enterSchemaNodeChain(node)) return;
   try {
-    if ((option & SetValueOption.Overwrite) && (option & SetValueOption.Merge))
-      throw new SchemaFormError(INVALID_WRITE_OPTION,
-        'Overwrite and Merge cannot be combined', { path: node.path, option });
+    if (option & SetValueOption.Overwrite && option & SetValueOption.Merge)
+      throw new SchemaFormError(
+        INVALID_WRITE_OPTION,
+        'Overwrite and Merge cannot be combined',
+        { path: node.path, option },
+      );
     const runtime = node.rootNode.runtime;
-    const input = typeof value === 'function' ?
-      value(runtime.batchDepth ? readBatchValue(node) : node.local) : value;
+    const input =
+      typeof value === 'function'
+        ? value(runtime.batchDepth ? readBatchValue(node) : node.local)
+        : value;
     if (runtime.batchDepth) {
       (runtime.batchWrites ??= []).push({ node, value: input, option, source });
     } else {
-      const merge = (option & SetValueOption.Merge) === SetValueOption.Merge &&
+      const merge =
+        (option & SetValueOption.Merge) === SetValueOption.Merge &&
         !(option & SetValueOption.Replace);
-      writeSchemaNode(node, input, merge ? 'callerPartial' : 'callerReplace', option, source);
+      writeSchemaNode(
+        node,
+        input,
+        merge ? 'callerPartial' : 'callerReplace',
+        option,
+        source,
+      );
     }
   } catch (error) {
     if (node.rootNode.runtime.batchDepth) throw error;

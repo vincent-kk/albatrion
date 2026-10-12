@@ -1,5 +1,5 @@
-import Ajv from 'ajv/dist/2020';
 import type { AnySchema } from 'ajv';
+import Ajv from 'ajv/dist/2020';
 
 import type { ValidationIssue, ValidatorPlugin } from '@/schema-form';
 
@@ -12,8 +12,15 @@ export const createRenderValidator = (): ValidatorPlugin => {
   const registered = (root: Parameters<ValidatorPlugin['compile']>[0]) => {
     let entry = roots.get(root);
     if (!entry) {
-      const ajv = new Ajv({ allErrors: true, strict: false, validateFormats: false });
-      const id = typeof root.$id === 'string' ? root.$id : 'https://schema-form.test/root';
+      const ajv = new Ajv({
+        allErrors: true,
+        strict: false,
+        validateFormats: false,
+      });
+      const id =
+        typeof root.$id === 'string'
+          ? root.$id
+          : 'https://schema-form.test/root';
       ajv.addSchema(root as AnySchema, id);
       entry = { ajv, id };
       roots.set(root, entry);
@@ -26,16 +33,19 @@ export const createRenderValidator = (): ValidatorPlugin => {
       const validate = ajv.getSchema(id)!;
       return (value) => {
         if (validate(value)) return null;
-        return (validate.errors ?? []).map((error): ValidationIssue => ({
-          dataPath: error.keyword === 'required'
-            ? `${error.instancePath}/${String(error.params.missingProperty).replace(/~/g, '~0').replace(/\//g, '~1')}`
-            : error.instancePath,
-          schemaPath: error.schemaPath,
-          keyword: error.keyword,
-          message: error.message,
-          details: error.params,
-          source: error,
-        }));
+        return (validate.errors ?? []).map(
+          (error): ValidationIssue => ({
+            dataPath:
+              error.keyword === 'required'
+                ? `${error.instancePath}/${String(error.params.missingProperty).replace(/~/g, '~0').replace(/\//g, '~1')}`
+                : error.instancePath,
+            schemaPath: error.schemaPath,
+            keyword: error.keyword,
+            message: error.message,
+            details: error.params,
+            source: error,
+          }),
+        );
       };
     },
     compileGuard(root, pointer) {
@@ -44,10 +54,13 @@ export const createRenderValidator = (): ValidatorPlugin => {
       if (!guard) throw new Error(`No guard at ${pointer}`);
       return (value) => {
         const result: unknown = guard(value);
-        if (typeof result !== 'boolean') throw new TypeError('Guard must be synchronous');
+        if (typeof result !== 'boolean')
+          throw new TypeError('Guard must be synchronous');
         return result;
       };
     },
-    release: (root) => { roots.delete(root); },
+    release: (root) => {
+      roots.delete(root);
+    },
   };
 };

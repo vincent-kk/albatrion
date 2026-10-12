@@ -2,10 +2,19 @@ import { describe, expect, it } from 'vitest';
 
 import { SchemaNodeEventType, SchemaNodeRequestType } from '../../record';
 import { SchemaNodeState } from '../../types/state';
-import { dispatchBatch, dispatchClearExternalErrors, dispatchClearSubtreeState,
-  dispatchMount, dispatchRequest, dispatchSetExternalErrors, dispatchSetState,
-  dispatchSetSubtreeState, dispatchSetValue, readSchemaNodeRevision,
-  subscribeSchemaNode } from '../index';
+import {
+  dispatchBatch,
+  dispatchClearExternalErrors,
+  dispatchClearSubtreeState,
+  dispatchMount,
+  dispatchRequest,
+  dispatchSetExternalErrors,
+  dispatchSetState,
+  dispatchSetSubtreeState,
+  dispatchSetValue,
+  readSchemaNodeRevision,
+  subscribeSchemaNode,
+} from '../index';
 import { createDispatchTree } from './fixtures/createDispatchTree';
 import type { DispatchTestNode } from './fixtures/createDispatchTree';
 import { getDispatchChild } from './fixtures/getDispatchChild';
@@ -71,10 +80,11 @@ describe('dispatcher budgets', () => {
     subscribeSchemaNode(root, () => {
       observed.push(root.emit);
       if (feedbackCalls < 25) dispatchSetValue(root, `p${feedbackCalls++}`);
-      else dispatchBatch(root, () => {
-        batchRan = true;
-        dispatchSetValue(root, 'blocked');
-      });
+      else
+        dispatchBatch(root, () => {
+          batchRan = true;
+          dispatchSetValue(root, 'blocked');
+        });
     });
 
     expect(() => dispatchSetValue(root, 'go')).toThrow();
@@ -112,9 +122,15 @@ describe('dispatcher budgets', () => {
     expect(root.interactionState[SchemaNodeState.Dirty]).toBeUndefined();
     expect(runtime.nodeErrors?.get(root)).toBe(issues);
     expect(observed).toHaveLength(26);
-    expect(readSchemaNodeRevision(root, SchemaNodeEventType.UpdateState)).toBe(1);
-    expect(readSchemaNodeRevision(root, SchemaNodeEventType.UpdateError)).toBe(1);
-    expect(readSchemaNodeRevision(root, SchemaNodeEventType.RequestFocus)).toBe(0);
+    expect(readSchemaNodeRevision(root, SchemaNodeEventType.UpdateState)).toBe(
+      1,
+    );
+    expect(readSchemaNodeRevision(root, SchemaNodeEventType.UpdateError)).toBe(
+      1,
+    );
+    expect(readSchemaNodeRevision(root, SchemaNodeEventType.RequestFocus)).toBe(
+      0,
+    );
     expect(runtime.entryDepth).toBe(0);
   });
 
@@ -132,13 +148,22 @@ describe('dispatcher budgets', () => {
 
   it('CONTROLS-079 treats a user callback write as nested feedback', () => {
     let root: DispatchTestNode | undefined;
-    const { root: created, runtime } = createDispatchTree({ type: 'object', properties: {
-      source: { type: 'string', controls: { injectTo: () => {
-        if (root) dispatchSetValue(getDispatchChild(root, 'target'), 'callback');
-        return {};
-      } } },
-      target: { type: 'string' },
-    } });
+    const { root: created, runtime } = createDispatchTree({
+      type: 'object',
+      properties: {
+        source: {
+          type: 'string',
+          controls: {
+            injectTo: () => {
+              if (root)
+                dispatchSetValue(getDispatchChild(root, 'target'), 'callback');
+              return {};
+            },
+          },
+        },
+        target: { type: 'string' },
+      },
+    });
     root = created;
     dispatchMount(root, { source: 'start', target: 'old' });
     dispatchSetValue(getDispatchChild(root, 'source'), 'next');

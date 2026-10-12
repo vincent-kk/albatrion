@@ -21,9 +21,7 @@ export const useFormTypeInput = (node: SchemaNode, disabled: boolean) => {
   const inline = schema.presentation?.FormTypeInput;
   const Inline = useMemo(
     () =>
-      isReactComponent(inline)
-        ? withFormTypeInputErrorBoundary(inline)
-        : null,
+      isReactComponent(inline) ? withFormTypeInputErrorBoundary(inline) : null,
     [inline],
   );
   return useMemo(() => {

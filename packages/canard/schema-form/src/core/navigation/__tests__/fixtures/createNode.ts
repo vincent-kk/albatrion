@@ -1,8 +1,8 @@
-import { PathKeyedMap } from '../../../utils/pathIndex/PathKeyedMap';
-import { PathKeyedSet } from '../../../utils/pathIndex/PathKeyedSet';
 import { blueprint } from '../../../blueprint';
 import { EMPTY_REVISION_LEDGER } from '../../../record';
 import type { SchemaNodeRecord, SchemaNodeRuntime } from '../../../record';
+import { PathKeyedMap } from '../../../utils/pathIndex/PathKeyedMap';
+import { PathKeyedSet } from '../../../utils/pathIndex/PathKeyedSet';
 
 /** Plain node used to exercise navigation without the later engine class. */
 export interface TestNode extends SchemaNodeRecord<TestNode> {}
@@ -24,13 +24,20 @@ export const createNode = (
       blueprint: analysis,
       diagnostics: { status: 'stable' },
       nodeFactory: (entry, owner, treeRuntime) =>
-        createNode('name' in entry ? entry.name : '', owner, 'branch', treeRuntime),
+        createNode(
+          'name' in entry ? entry.name : '',
+          owner,
+          'branch',
+          treeRuntime,
+        ),
       globalStateCounts: new Map(),
       globalState: {},
       loadSnapshot: undefined,
       latentRaw: new PathKeyedMap('pair'),
       typeMismatchPaths: new PathKeyedSet(),
-      inactiveValuesMemo: new PathKeyedMap<readonly { path: string; value: unknown }[]>('path'),
+      inactiveValuesMemo: new PathKeyedMap<
+        readonly { path: string; value: unknown }[]
+      >('path'),
     };
   const escapedName = name.replace(/~/g, '~0').replace(/\//g, '~1');
   const node: TestNode = {
@@ -47,7 +54,9 @@ export const createNode = (
     runtime,
     blueprintNode: template,
     parent,
-    get rootNode() { return parent?.rootNode ?? this; },
+    get rootNode() {
+      return parent?.rootNode ?? this;
+    },
     name,
     escapedName,
     path: parent === null ? '' : `${parent.path}/${escapedName}`,
@@ -71,9 +80,12 @@ export const createNode = (
     schema: { schema: {}, typeConflict: false },
     interactionState: {},
     revisionLedger: EMPTY_REVISION_LEDGER,
-    deliveryInitialized: false, deliveryChanges: 0, pendingRevision: 0,
+    deliveryInitialized: false,
+    deliveryChanges: 0,
+    pendingRevision: 0,
     detached: false,
-    disposed: false, interactionReset: 0,
+    disposed: false,
+    interactionReset: 0,
   };
   if (parent?.structure !== null && parent !== null) {
     parent.structure[name] = node;

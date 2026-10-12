@@ -8,8 +8,5 @@ import { requireRuntimeSchemaNode } from '../requireRuntimeSchemaNode';
  * @param node - Public occurrence whose interaction lifetime is observed
  * @returns The monotone interaction-reset number
  */
-export const readSchemaNodeInteractionReset = (
-  node: SchemaNode,
-): number =>
+export const readSchemaNodeInteractionReset = (node: SchemaNode): number =>
   readInteractionReset(requireRuntimeSchemaNode(node));
-

@@ -1,7 +1,7 @@
 import { vi } from 'vitest';
 
-import { populateNodeChildren } from '../../populateNodeChildren';
 import type { BlueprintNode } from '../../../../type';
+import { populateNodeChildren } from '../../populateNodeChildren';
 import type { AnalysisContext, SchemaInput } from '../../type';
 
 /**

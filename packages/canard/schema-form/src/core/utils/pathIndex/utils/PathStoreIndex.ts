@@ -65,7 +65,9 @@ export class PathStoreIndex {
   }
 
   /** Retain emptied prefixes while chained destinations are assembled. */
-  beginBatch(): void { this.batchDepth++; }
+  beginBatch(): void {
+    this.batchDepth++;
+  }
 
   /** Discard only prefixes still empty after the outer batch. */
   endBatch(): void {
@@ -121,13 +123,19 @@ export class PathStoreIndex {
     for (let i = missing.length - 1; i >= 0; i--) {
       const current = missing[i];
       const segment = current.slice(current.lastIndexOf('/') + 1);
-      const prefix: PathPrefix = { path: current, parent, segment,
+      const prefix: PathPrefix = {
+        path: current,
+        parent,
+        segment,
         numeric: current !== '' && isCanonicalArraySlot(segment),
-        keys: new Set(), exact: new Set() };
+        keys: new Set(),
+        exact: new Set(),
+      };
       this.prefixes.set(current, prefix);
       if (prefix.numeric && parent) {
         let slots = this.slots.get(parent.path);
-        if (!slots) this.slots.set(parent.path, slots = new NumericPathIndex());
+        if (!slots)
+          this.slots.set(parent.path, (slots = new NumericPathIndex()));
         slots.add(segment, current);
       }
       parent = prefix;

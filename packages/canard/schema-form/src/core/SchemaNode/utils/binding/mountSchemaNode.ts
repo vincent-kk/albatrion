@@ -12,8 +12,9 @@ import { requireRuntimeSchemaNode } from '../requireRuntimeSchemaNode';
  * @returns Nothing; the dispatcher completes the operation synchronously
  */
 export const mountSchemaNode = (
-  root: SchemaNode, value?: unknown, option?: SetValueOption,
+  root: SchemaNode,
+  value?: unknown,
+  option?: SetValueOption,
   settings?: { deferValidation?: boolean },
 ): void =>
   dispatchMount(requireRuntimeSchemaNode(root, true), value, option, settings);
-

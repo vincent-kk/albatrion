@@ -1,7 +1,8 @@
 import type { SchemaNodeDelivery, SchemaNodeRecord } from '../../../../record';
 
 /** Structural observation adapter combining the public methods with the record contract. */
-export interface ChildSelectionRuntimeNode extends SchemaNodeRecord<ChildSelectionRuntimeNode> {
+export interface ChildSelectionRuntimeNode
+  extends SchemaNodeRecord<ChildSelectionRuntimeNode> {
   /** Consumer-visible value read alongside the settlement record's emission. */
   readonly value: unknown;
   /** Public validation issues captured without depending on the node class. */

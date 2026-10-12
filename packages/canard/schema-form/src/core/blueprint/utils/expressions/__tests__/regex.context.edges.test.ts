@@ -3,7 +3,6 @@ import { describe, expect, test } from 'vitest';
 import { JSON_POINTER_PATH_REGEX } from '../regex';
 
 describe('Context Symbol (@) - JSON_POINTER_REGEX', () => {
-
   // 헬퍼 함수: 매칭된 결과 추출
   const extractMatches = (input: string): string[] => {
     JSON_POINTER_PATH_REGEX.lastIndex = 0;

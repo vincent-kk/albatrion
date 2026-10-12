@@ -1,19 +1,20 @@
-import { FEEDBACK_LIMIT_EXCEEDED, SchemaFormError } from '../../../../errors';
 import { isArray } from '@winglet/common-utils/filter';
+
+import { FEEDBACK_LIMIT_EXCEEDED, SchemaFormError } from '../../../../errors';
 import type { FormErrorRecord } from '../../../../errors';
 import type { SchemaNodeRecord } from '../../../record';
 import { indexSchemaNodeWarning } from '../../../record';
 import { ValidationMode } from '../../../types/state';
 import { requestSchemaNodeValidation } from '../../../validation';
-import { deliverValidationWave } from './deliverValidationWave';
-import { reportValidationFailure } from '../report/reportValidationFailure';
-import { runDeliveryWaves } from './runDeliveryWaves';
-import { flushQueuedEvents } from './flushQueuedEvents';
-import { resolveSchemaNodeChainRoot } from './resolveSchemaNodeChainRoot';
 import { bundleChainErrors } from '../report/bundleChainErrors';
 import { collectChainRecords } from '../report/collectChainRecords';
 import { deliverChainRecords } from '../report/deliverChainRecords';
+import { reportValidationFailure } from '../report/reportValidationFailure';
 import { captureChainError } from './captureChainError';
+import { deliverValidationWave } from './deliverValidationWave';
+import { flushQueuedEvents } from './flushQueuedEvents';
+import { resolveSchemaNodeChainRoot } from './resolveSchemaNodeChainRoot';
+import { runDeliveryWaves } from './runDeliveryWaves';
 
 /**
  * Exit one public write and finish the outermost chain in contract order.
@@ -22,7 +23,8 @@ import { captureChainError } from './captureChainError';
  * @returns Nothing; the chain may throw its single failure or aggregate
  */
 export const exitSchemaNodeChain = <Self extends SchemaNodeRecord<Self>>(
-  node: Self, failure?: unknown,
+  node: Self,
+  failure?: unknown,
 ): void => {
   const activeRoot = resolveSchemaNodeChainRoot(node.rootNode);
   const runtime = activeRoot.runtime;
@@ -39,13 +41,22 @@ export const exitSchemaNodeChain = <Self extends SchemaNodeRecord<Self>>(
   const warnings = runtime.pendingWarningRecords;
   if (warnings?.size) {
     for (const [key, record] of warnings) {
-      if (!occurrences.some((item) => item.kind === 'record' && item.record === record))
+      if (
+        !occurrences.some(
+          (item) => item.kind === 'record' && item.record === record,
+        )
+      )
         pending.push(record);
       if (!runtime.warningKeys?.has(key)) {
         const parts: unknown = JSON.parse(key.startsWith('[') ? key : 'null');
         const path = isArray(parts) ? parts[1] : undefined;
-        indexSchemaNodeWarning(runtime, key,
-          typeof path === 'string' ? path : undefined, undefined, true);
+        indexSchemaNodeWarning(
+          runtime,
+          key,
+          typeof path === 'string' ? path : undefined,
+          undefined,
+          true,
+        );
       }
     }
     warnings.clear();
@@ -53,7 +64,11 @@ export const exitSchemaNodeChain = <Self extends SchemaNodeRecord<Self>>(
   const guardRecords = runtime.guardFailureRecords;
   if (guardRecords?.size) {
     for (const [key, record] of guardRecords) {
-      if (!occurrences.some((item) => item.kind === 'record' && item.record === record))
+      if (
+        !occurrences.some(
+          (item) => item.kind === 'record' && item.record === record,
+        )
+      )
         pending.push(record);
       (runtime.reportedGuardFailures ??= new Set()).add(key);
     }
@@ -61,17 +76,22 @@ export const exitSchemaNodeChain = <Self extends SchemaNodeRecord<Self>>(
   }
   const changed = runtime.chainInitialEmit !== root.emit;
   const requests = runtime.validationTargets;
-  if (!runtime.deferMountValidation && runtime.validationMode &&
-    runtime.validationMode & ValidationMode.OnChange) {
+  if (
+    !runtime.deferMountValidation &&
+    runtime.validationMode &&
+    runtime.validationMode & ValidationMode.OnChange
+  ) {
     runtime.reportValidationFailure ??= (error) =>
       reportValidationFailure(runtime, error);
     if (changed && !requests?.has(root)) {
       requestSchemaNodeValidation(root, (issues, commit) =>
-        deliverValidationWave(root, issues, commit));
+        deliverValidationWave(root, issues, commit),
+      );
     }
     for (const target of requests ?? []) {
       requestSchemaNodeValidation(target, (issues, commit) =>
-        deliverValidationWave(target, issues, commit));
+        deliverValidationWave(target, issues, commit),
+      );
     }
   }
   runtime.validationTargets = undefined;
@@ -80,8 +100,9 @@ export const exitSchemaNodeChain = <Self extends SchemaNodeRecord<Self>>(
   const errors = runtime.chainErrors ?? [];
   if (runtime.stateChanged) {
     runtime.stateChanged = false;
-    try { runtime.onStateChange?.(); }
-    catch (error) {
+    try {
+      runtime.onStateChange?.();
+    } catch (error) {
       errors.push(error);
       if (runtime.errorReporter?.hasConsumer())
         occurrences.push({ kind: 'error', error });
@@ -91,21 +112,24 @@ export const exitSchemaNodeChain = <Self extends SchemaNodeRecord<Self>>(
   }
   if (changed && runtime.onChange) {
     if ((runtime.onChangeBudget ?? 0) >= 25) {
-      const error = new SchemaFormError(FEEDBACK_LIMIT_EXCEEDED,
-        'onChange nesting exceeded 25 callbacks');
+      const error = new SchemaFormError(
+        FEEDBACK_LIMIT_EXCEEDED,
+        'onChange nesting exceeded 25 callbacks',
+      );
       errors.push(error);
       if (runtime.errorReporter?.hasConsumer())
         occurrences.push({ kind: 'error', error });
-    }
-    else {
+    } else {
       runtime.onChangeBudget = (runtime.onChangeBudget ?? 0) + 1;
-      try { runtime.onChange(root.emit); }
-      catch (error) {
+      try {
+        runtime.onChange(root.emit);
+      } catch (error) {
         errors.push(error);
         if (runtime.errorReporter?.hasConsumer())
           occurrences.push({ kind: 'error', error });
+      } finally {
+        runtime.onChangeBudget -= 1;
       }
-      finally { runtime.onChangeBudget -= 1; }
     }
   }
   const enclosing = runtime.enclosingChain;
@@ -118,18 +142,29 @@ export const exitSchemaNodeChain = <Self extends SchemaNodeRecord<Self>>(
   runtime.chainOccurrences = enclosing?.occurrences;
   if (enclosing) {
     enclosing.errors.push(...errors);
-    for (const record of pending) enclosing.occurrences.push({ kind: 'record', record });
+    for (const record of pending)
+      enclosing.occurrences.push({ kind: 'record', record });
     enclosing.occurrences.push(...occurrences);
     return;
   }
   const original = bundleChainErrors(errors);
-  const aggregate = errors.length > 1 && original instanceof SchemaFormError
-    ? original : undefined;
-  collectChainRecords(pending, occurrences, aggregate, 'thrown',
-    runtime.reportedGuardFailures);
+  const aggregate =
+    errors.length > 1 && original instanceof SchemaFormError
+      ? original
+      : undefined;
+  collectChainRecords(
+    pending,
+    occurrences,
+    aggregate,
+    'thrown',
+    runtime.reportedGuardFailures,
+  );
   const handlerErrors = deliverChainRecords(runtime, pending, original, true);
-  const exposed = !errors.length ? bundleChainErrors(handlerErrors) :
-    handlerErrors.length ? bundleChainErrors([original, ...handlerErrors]) : original;
+  const exposed = !errors.length
+    ? bundleChainErrors(handlerErrors)
+    : handlerErrors.length
+      ? bundleChainErrors([original, ...handlerErrors])
+      : original;
   if (!errors.length && !handlerErrors.length) return;
   throw exposed;
 };

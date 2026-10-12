@@ -1,10 +1,10 @@
-import { captureSchemaNodeChange } from '../../../record';
-import { recordSettlementFailure } from '../errors/recordSettlementFailure';
 import { SchemaFormError } from '../../../../errors';
-import type { SchemaNodeRecord } from '../../../record';
 import { getFeatureNodeIndex } from '../../../blueprint';
+import { captureSchemaNodeChange } from '../../../record';
+import type { SchemaNodeRecord } from '../../../record';
 import type { SettlementContext } from '../../type';
 import { calculateStateKeys } from '../controls/calculateStateKeys';
+import { recordSettlementFailure } from '../errors/recordSettlementFailure';
 import { EXPRESSION_THREW } from '../errors/settleErrorCode';
 
 /**
@@ -17,21 +17,36 @@ export const publishStateKeys = <Self extends SchemaNodeRecord<Self>>(
 ): void => {
   const index = getFeatureNodeIndex(context.root.runtime.blueprint);
   if (!index.stateKeyNodes.size && !index.stateKeyChildren.size) return;
-  const result = calculateStateKeys(context.root, context.stateDirtyNodes,
-    context.selectedDeclarationIds, (source) => context.kind === 'load' ||
+  const result = calculateStateKeys(
+    context.root,
+    context.stateDirtyNodes,
+    context.selectedDeclarationIds,
+    (source) =>
+      context.kind === 'load' ||
       context.dependencyOwnerPaths.has(source.path) ||
-      context.shapeDirtyPaths.has(source.path));
+      context.shapeDirtyPaths.has(source.path),
+  );
   for (const { node, visible, readOnly, disabled } of result.entries) {
-    if (node.visible !== visible || node.readOnly !== readOnly ||
-      node.disabled !== disabled) context.changedNodes.add(node);
+    if (
+      node.visible !== visible ||
+      node.readOnly !== readOnly ||
+      node.disabled !== disabled
+    )
+      context.changedNodes.add(node);
     node.visible = captureSchemaNodeChange(node, 'visible', visible);
     node.readOnly = captureSchemaNodeChange(node, 'readOnly', readOnly);
     node.disabled = captureSchemaNodeChange(node, 'disabled', disabled);
   }
   for (const failure of result.failures) {
     const { path, schemaPath, cause } = failure;
-    recordSettlementFailure(context, new SchemaFormError(EXPRESSION_THREW,
-      `State key expression failed at ${schemaPath}`,
-      { path, schemaPath, cause }), 'expression');
+    recordSettlementFailure(
+      context,
+      new SchemaFormError(
+        EXPRESSION_THREW,
+        `State key expression failed at ${schemaPath}`,
+        { path, schemaPath, cause },
+      ),
+      'expression',
+    );
   }
 };

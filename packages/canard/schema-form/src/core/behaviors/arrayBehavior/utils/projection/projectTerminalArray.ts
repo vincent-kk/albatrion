@@ -1,4 +1,5 @@
 import { isArray } from '@winglet/common-utils/filter';
+
 import type { Behavior } from '../../../../record';
 import { getStaticChoices } from '../../../utils/options/getStaticChoices';
 import { omitEmptyArray } from './omitEmptyArray';

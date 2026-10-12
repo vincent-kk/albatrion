@@ -7,8 +7,8 @@ import type {
   PropertyDeclaration,
 } from '../../../../../type';
 import { OwnedSchemaValues } from '../../OwnedSchemaValues';
-import { freezeEffectiveSchema } from '../../freezeEffectiveSchema';
 import { applyControlHints } from '../../applySchemaContribution/utils/applyControlHints';
+import { freezeEffectiveSchema } from '../../freezeEffectiveSchema';
 import type { EffectiveSchemaFields } from '../../type';
 
 /**

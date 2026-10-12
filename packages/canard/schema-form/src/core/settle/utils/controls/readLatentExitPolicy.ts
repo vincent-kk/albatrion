@@ -8,8 +8,9 @@ const EXIT_LAYERS = ['node', 'children', 'fragment'] as const;
  * @returns The nearest layer's unanimous clear, or inherited when undeclared
  */
 export const readLatentExitPolicy = (
-  decisions: readonly { layer: 'node' | 'children' | 'fragment';
-    clear: boolean }[] | undefined,
+  decisions:
+    | readonly { layer: 'node' | 'children' | 'fragment'; clear: boolean }[]
+    | undefined,
   inherited: boolean,
 ): boolean => {
   for (const layer of EXIT_LAYERS) {

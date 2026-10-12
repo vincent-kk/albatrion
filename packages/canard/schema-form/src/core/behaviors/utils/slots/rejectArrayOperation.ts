@@ -8,7 +8,9 @@ import type { Behavior } from '../../../record';
  * @returns Never; every call throws SchemaFormError
  */
 export const rejectArrayOperation: Behavior['arrange'] = (node, operation) => {
-  throw new SchemaFormError(ARRAY_METHOD_ON_NON_ARRAY,
+  throw new SchemaFormError(
+    ARRAY_METHOD_ON_NON_ARRAY,
     `Cannot ${operation.kind} non-array node at ${node.path}`,
-    { path: node.path, method: operation.kind });
+    { path: node.path, method: operation.kind },
+  );
 };

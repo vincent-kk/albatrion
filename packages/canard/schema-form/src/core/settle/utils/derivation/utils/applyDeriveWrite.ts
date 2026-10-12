@@ -18,8 +18,17 @@ export const applyDeriveWrite = <Self extends SchemaNodeRecord<Self>>(
 ): void => {
   if (!write.target) {
     if (write.template && write.siblings && write.targetOrder)
-      distributeLatentValue(context.root.runtime, context, write.targetPath,
-        write.template, write.value, write.targetOrder, true, write.siblings, true);
+      distributeLatentValue(
+        context.root.runtime,
+        context,
+        write.targetPath,
+        write.template,
+        write.value,
+        write.targetOrder,
+        true,
+        write.siblings,
+        true,
+      );
     return;
   }
   if (write.target.blueprintNode.kind !== 'virtual') {

@@ -1,6 +1,7 @@
 import { describe, expect, it, vi } from 'vitest';
-import { SchemaNodeState } from '../../types/state';
+
 import { SchemaNodeEventType } from '../../record';
+import { SchemaNodeState } from '../../types/state';
 import * as dispatch from '../index';
 import { createDispatchTree } from './fixtures/createDispatchTree';
 import { getDispatchChild } from './fixtures/getDispatchChild';
@@ -11,24 +12,34 @@ describe('binding load lifetime', () => {
   it('REACT-010 WRITE-046 adoption inside an input updater drops the rest of the marked entry', () => {
     const previous = createDispatchTree({ type: 'string' }, 'old');
     dispatch.dispatchMount(previous.root);
-    dispatch.dispatchSetExternalErrors(previous.root, [{ dataPath: '', message: 'kept' }]);
+    dispatch.dispatchSetExternalErrors(previous.root, [
+      { dataPath: '', message: 'kept' },
+    ]);
     const oldState = previous.root.interactionState;
     const next = createDispatchTree({ type: 'string' }, 'new');
-    expect(() => dispatch.dispatchWriteInput(previous.root, () => {
-      dispatch.adoptSchemaNodeChain(previous.root, next.root);
-      dispatch.dispatchMount(next.root);
-      return 'late';
-    })).not.toThrow();
+    expect(() =>
+      dispatch.dispatchWriteInput(previous.root, () => {
+        dispatch.adoptSchemaNodeChain(previous.root, next.root);
+        dispatch.dispatchMount(next.root);
+        return 'late';
+      }),
+    ).not.toThrow();
     expect(previous.root.local).toBe('old');
     expect(previous.root.interactionState).toBe(oldState);
-    expect(previous.runtime.nodeErrors?.get(previous.root)).toEqual([{ dataPath: '', message: 'kept' }]);
+    expect(previous.runtime.nodeErrors?.get(previous.root)).toEqual([
+      { dataPath: '', message: 'kept' },
+    ]);
     expect(next.root.local).toBe('new');
   });
 
   it('REACT-024 virtual aliases advance interaction reset once per occurrence', () => {
-    const { root } = createDispatchTree({ type: 'object', properties: {
-      child: { type: 'string' },
-    }, options: { virtual: { alias: { fields: ['child'] } } } });
+    const { root } = createDispatchTree({
+      type: 'object',
+      properties: {
+        child: { type: 'string' },
+      },
+      options: { virtual: { alias: { fields: ['child'] } } },
+    });
     dispatch.dispatchMount(root, { child: 'old' });
     const child = getDispatchChild(root, 'child');
     dispatch.dispatchClearSubtreeState(root);
@@ -39,7 +50,10 @@ describe('binding load lifetime', () => {
 
   it('WRITE-046 disposed validation cannot mutate the last committed errors', async () => {
     const validate = vi.fn(() => [{ dataPath: '', message: 'new error' }]);
-    const validator = { compile: () => validate, compileGuard: () => () => true };
+    const validator = {
+      compile: () => validate,
+      compileGuard: () => () => true,
+    };
     const previous = createDispatchTree({ type: 'string' }, 'old', validator);
     dispatch.dispatchMount(previous.root);
     const next = createDispatchTree({ type: 'string' });
@@ -57,7 +71,9 @@ describe('binding load lifetime', () => {
     const { root, runtime } = createDispatchTree(schema, { child: 'base' });
     dispatch.dispatchMount(root);
     const child = getDispatchChild(root, 'child');
-    dispatch.dispatchSetExternalErrors(child, [{ dataPath: '/child', message: 'external' }]);
+    dispatch.dispatchSetExternalErrors(child, [
+      { dataPath: '/child', message: 'external' },
+    ]);
     runtime.validationErrors = new Map([[child, [{ dataPath: '/child' }]]]);
     dispatch.dispatchResetForm(root, root.runtime.loadSnapshot);
     expect(runtime.nodeErrors?.size ?? 0).toBe(0);
@@ -74,7 +90,9 @@ describe('binding load lifetime', () => {
     dispatch.adoptSchemaNodeChain(previous.root, next.root);
     dispatch.dispatchMount(next.root, { child: 'new' });
     expect(next.runtime.nodeErrors?.has(oldChild)).toBe(false);
-    expect(next.runtime.nodeErrors?.get(getDispatchChild(next.root, 'child'))).toBe(errors);
+    expect(
+      next.runtime.nodeErrors?.get(getDispatchChild(next.root, 'child')),
+    ).toBe(errors);
   });
 
   it('WRITE-046 disposal advances both numbers without notification and preserves old reads and references', () => {
@@ -87,14 +105,25 @@ describe('binding load lifetime', () => {
     const listener = vi.fn();
     const counters = nodes.map((node) => {
       dispatch.subscribeSchemaNode(node, listener);
-      return [dispatch.readSchemaNodeRevision(node, SchemaNodeEventType.RequestRefresh), node.interactionReset];
+      return [
+        dispatch.readSchemaNodeRevision(
+          node,
+          SchemaNodeEventType.RequestRefresh,
+        ),
+        node.interactionReset,
+      ];
     });
     const next = createDispatchTree(schema);
     dispatch.adoptSchemaNodeChain(previous.root, next.root);
     for (const [index, node] of nodes.entries()) {
       expect(node.disposed).toBe(true);
       expect(node.local).toBe(values[index]);
-      expect(dispatch.readSchemaNodeRevision(node, SchemaNodeEventType.RequestRefresh)).toBe(counters[index][0] + 1);
+      expect(
+        dispatch.readSchemaNodeRevision(
+          node,
+          SchemaNodeEventType.RequestRefresh,
+        ),
+      ).toBe(counters[index][0] + 1);
       expect(node.interactionReset).toBe(counters[index][1] + 1);
     }
     expect(previous.root.children).toBe(children);
@@ -111,20 +140,34 @@ describe('binding load lifetime', () => {
     const previous = createDispatchTree(schema);
     dispatch.dispatchMount(previous.root, { child: 'old' });
     const child = getDispatchChild(previous.root, 'child');
-    dispatch.adoptSchemaNodeChain(previous.root, createDispatchTree(schema).root);
+    dispatch.adoptSchemaNodeChain(
+      previous.root,
+      createDispatchTree(schema).root,
+    );
     expect(() => dispatch.dispatchWriteInput(child, 'late')).not.toThrow();
     expect(child.local).toBe('old');
     expect(() => dispatch.dispatchSetValue(child, 'late')).toThrowError(
-      expect.objectContaining({ code: expect.stringContaining('DISPOSED_NODE_WRITE') }));
-    expect(() => dispatch.dispatchSetState(child, { [SchemaNodeState.Dirty]: true })).toThrowError(
-      expect.objectContaining({ code: expect.stringContaining('DISPOSED_NODE_WRITE') }));
+      expect.objectContaining({
+        code: expect.stringContaining('DISPOSED_NODE_WRITE'),
+      }),
+    );
+    expect(() =>
+      dispatch.dispatchSetState(child, { [SchemaNodeState.Dirty]: true }),
+    ).toThrowError(
+      expect.objectContaining({
+        code: expect.stringContaining('DISPOSED_NODE_WRITE'),
+      }),
+    );
   });
 
   it('REACT-024 only reset raisers advance interaction reset, including already empty flags', () => {
-    const { root } = createDispatchTree({ type: 'object', properties: {
-      clear: { type: 'boolean' },
-      child: { type: 'string', controls: { resetInteraction: '../clear' } },
-    } });
+    const { root } = createDispatchTree({
+      type: 'object',
+      properties: {
+        clear: { type: 'boolean' },
+        child: { type: 'string', controls: { resetInteraction: '../clear' } },
+      },
+    });
     dispatch.dispatchMount(root, { clear: false, child: 'old' });
     const child = getDispatchChild(root, 'child');
     expect(child.interactionReset).toBe(0);

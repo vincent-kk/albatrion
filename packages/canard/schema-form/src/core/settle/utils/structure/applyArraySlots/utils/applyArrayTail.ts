@@ -4,7 +4,6 @@ import { getItemEntry } from '../../../../../blueprint';
 import { captureSchemaNodeChange } from '../../../../../record';
 import type { ArrayArrangePlan, SchemaNodeRecord } from '../../../../../record';
 import type { SettlementContext } from '../../../../type';
-import { walkOwnedSchemaNodes } from '../../../walkOwnedSchemaNodes';
 import { createChildNode } from '../../../compute/createChildNode';
 import { captureDetachedSchemaNodeReads } from '../../../detached/captureDetachedSchemaNodeReads';
 import { getGateRegistry } from '../../../gates/getGateRegistry';
@@ -13,6 +12,7 @@ import { readLatentSlotSource } from '../../../latent/readLatentSlotSource';
 import { getLoadValue } from '../../../load/getLoadValue';
 import { setLoadValue } from '../../../load/setLoadValue';
 import { prunePerishedPaths } from '../../../transition/prunePerishedPaths';
+import { walkOwnedSchemaNodes } from '../../../walkOwnedSchemaNodes';
 import { markWrite } from '../../../write/markWrite';
 import { rekeyArrayRuntimePaths } from '../../rekeyArrayRuntimePaths';
 import type { ArrayPathMove } from '../../type';
@@ -26,7 +26,8 @@ import type { ArrayPathMove } from '../../type';
  * @returns Committed removed-slot value, or its retained source when no item is live
  */
 export const applyArrayTail = <Self extends SchemaNodeRecord<Self>>(
-  host: Self, plan: Extract<ArrayArrangePlan, { kind: 'slots' }>,
+  host: Self,
+  plan: Extract<ArrayArrangePlan, { kind: 'slots' }>,
   context: SettlementContext<Self>,
 ): unknown => {
   const oldCount = host.itemCount;
@@ -36,12 +37,25 @@ export const applyArrayTail = <Self extends SchemaNodeRecord<Self>>(
   const oldSnapshot = isArray(snapshot) ? snapshot : [];
   const oldExtras = isArray(host.extras) ? host.extras : [];
   const templateCount = host.blueprintNode.prefixItems?.length ?? 0;
-  const removedIndex = plan.result.source === 'removed' ? plan.result.index : -1;
+  const removedIndex =
+    plan.result.source === 'removed' ? plan.result.index : -1;
   const removedItem = items[String(removedIndex)];
-  const removedEntry = removedIndex < 0 ? undefined : getItemEntry(host.blueprintNode, removedIndex);
-  const removed = removedIndex < 0 ? undefined : removedItem ? removedItem.local :
-    removedEntry ? readLatentSlotSource(context, `${host.path}/${removedIndex}`, removedEntry.node) :
-      oldExtras[removedIndex - templateCount];
+  const removedEntry =
+    removedIndex < 0
+      ? undefined
+      : getItemEntry(host.blueprintNode, removedIndex);
+  const removed =
+    removedIndex < 0
+      ? undefined
+      : removedItem
+        ? removedItem.local
+        : removedEntry
+          ? readLatentSlotSource(
+              context,
+              `${host.path}/${removedIndex}`,
+              removedEntry.node,
+            )
+          : oldExtras[removedIndex - templateCount];
   const registry = getGateRegistry(host.runtime);
   if (context.hasGates)
     for (const item of host.children ?? []) registry.remove(item);
@@ -80,7 +94,8 @@ export const applyArrayTail = <Self extends SchemaNodeRecord<Self>>(
     walkOwnedSchemaNodes(item, (departing) => {
       if (!departing.runtime.detachedReads?.has(departing))
         captureDetachedSchemaNodeReads(departing, {
-          emit: context.previousEmit, context: context.previousContext,
+          emit: context.previousEmit,
+          context: context.previousContext,
           schema: departing.schema.schema,
         });
     });
@@ -110,6 +125,10 @@ export const applyArrayTail = <Self extends SchemaNodeRecord<Self>>(
   if (context.hasGates)
     for (const item of host.children)
       walkOwnedSchemaNodes(item, (node) => registry.register(node));
-  host.runtime.loadSnapshot = setLoadValue(host.runtime.loadSnapshot, host.path, nextSnapshot);
+  host.runtime.loadSnapshot = setLoadValue(
+    host.runtime.loadSnapshot,
+    host.path,
+    nextSnapshot,
+  );
   return removed;
 };

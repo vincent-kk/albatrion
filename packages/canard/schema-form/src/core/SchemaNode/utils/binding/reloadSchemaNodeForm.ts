@@ -11,6 +11,8 @@ import { requireRuntimeSchemaNode } from '../requireRuntimeSchemaNode';
  * @returns Nothing; the dispatcher completes the operation synchronously
  */
 export const reloadSchemaNodeForm = (
-  root: SchemaNode, value: unknown, option?: SetValueOption,
+  root: SchemaNode,
+  value: unknown,
+  option?: SetValueOption,
 ): void =>
   dispatchResetForm(requireRuntimeSchemaNode(root, true), value, option);

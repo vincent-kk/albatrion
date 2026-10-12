@@ -13,16 +13,20 @@ import { assertNotInDelivery } from '../report/assertNotInDelivery';
  * @returns Nothing; delivery is synchronous outside a public write
  */
 export const dispatchRequest = <Self extends SchemaNodeRecord<Self>>(
-  node: Self, kind: SchemaNodeRequestType,
+  node: Self,
+  kind: SchemaNodeRequestType,
 ): void => {
   assertSchemaNodeWritable(node);
   if (node.detached) return;
   const runtime = node.rootNode.runtime;
   assertNotInDelivery(runtime);
-  if (kind !== SchemaNodeRequestType.Focus &&
+  if (
+    kind !== SchemaNodeRequestType.Focus &&
     kind !== SchemaNodeRequestType.Select &&
     kind !== SchemaNodeRequestType.Refresh &&
-    kind !== SchemaNodeRequestType.Remount) return;
+    kind !== SchemaNodeRequestType.Remount
+  )
+    return;
   if (refuseListenerFeedback(runtime)) return;
   queueNonSettleEvent(node, kind);
   if (!runtime.entryDepth) flushQueuedEvents(node.rootNode);

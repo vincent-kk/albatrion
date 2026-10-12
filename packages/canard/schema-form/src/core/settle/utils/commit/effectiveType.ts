@@ -12,17 +12,22 @@ export const effectiveType = <Self extends SchemaNodeRecord<Self>>(
   node: Self,
 ): BlueprintSchemaType => {
   const schema = node.schema.schema;
-  const candidate = typeof schema === 'object' && schema !== null
-    ? schema.type : undefined;
+  const candidate =
+    typeof schema === 'object' && schema !== null ? schema.type : undefined;
   if (typeof candidate === 'string' && isTypeName(candidate)) return candidate;
-  if (isArray(candidate) && candidate.every(isTypeName))
-    return candidate;
+  if (isArray(candidate) && candidate.every(isTypeName)) return candidate;
   return node.schemaType;
 };
 
 /** Identify only JSON Schema type names; other authored values stay opaque. */
 function isTypeName(value: unknown): value is SchemaTypeName {
-  return value === 'string' || value === 'number' || value === 'integer' ||
-    value === 'boolean' || value === 'null' || value === 'object' ||
-    value === 'array';
+  return (
+    value === 'string' ||
+    value === 'number' ||
+    value === 'integer' ||
+    value === 'boolean' ||
+    value === 'null' ||
+    value === 'object' ||
+    value === 'array'
+  );
 }

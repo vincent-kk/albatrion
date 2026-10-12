@@ -4,5 +4,8 @@
  * @param current - Value after this commit
  * @returns Whether no change is delivered for the pair
  */
-export const isSameDeliveryValue = (previous: unknown, current: unknown): boolean =>
-  previous === current || Number.isNaN(previous) && Number.isNaN(current);
+export const isSameDeliveryValue = (
+  previous: unknown,
+  current: unknown,
+): boolean =>
+  previous === current || (Number.isNaN(previous) && Number.isNaN(current));

@@ -1,11 +1,11 @@
-import { recordSettlementFailure } from '../errors/recordSettlementFailure';
-import { SchemaNodeState } from '../../../types/state';
+import { SchemaFormError } from '../../../../errors';
 import { captureSchemaNodeChange, shallowPatch } from '../../../record';
 import type { SchemaNodeRecord } from '../../../record';
+import { SchemaNodeState } from '../../../types/state';
 import { evaluateResetInteraction } from '../../derive';
 import type { SettlementContext } from '../../type';
 import { getDeriveState } from '../derivation/getDeriveState';
-import { SchemaFormError } from '../../../../errors';
+import { recordSettlementFailure } from '../errors/recordSettlementFailure';
 import { EXPRESSION_THREW } from '../errors/settleErrorCode';
 import { walkOwnedSchemaNodes } from '../walkOwnedSchemaNodes';
 import { pruneCommittedRuleKeys } from './pruneCommittedRuleKeys';
@@ -25,18 +25,31 @@ export const commitDeriveRules = <Self extends SchemaNodeRecord<Self>>(
   if (state.trace && decision.trace.length)
     (context.traceRounds ??= []).push([...decision.trace]);
   for (const failure of decision.failures) {
-    recordSettlementFailure(context, new SchemaFormError(EXPRESSION_THREW,
-      `Reset interaction expression failed at ${failure.schemaPath}`,
-      { path: failure.sourcePath,
-        schemaPath: failure.schemaPath, cause: failure.cause }), 'expression');
+    recordSettlementFailure(
+      context,
+      new SchemaFormError(
+        EXPRESSION_THREW,
+        `Reset interaction expression failed at ${failure.schemaPath}`,
+        {
+          path: failure.sourcePath,
+          schemaPath: failure.schemaPath,
+          cause: failure.cause,
+        },
+      ),
+      'expression',
+    );
   }
   for (const node of decision.nodes) {
     node.interactionReset += 1;
     const previous = node.interactionState;
-    node.interactionState = captureSchemaNodeChange(node, 'interactionState',
+    node.interactionState = captureSchemaNodeChange(
+      node,
+      'interactionState',
       shallowPatch(node.interactionState, {
-        [SchemaNodeState.Dirty]: false, [SchemaNodeState.Touched]: false,
-      }));
+        [SchemaNodeState.Dirty]: false,
+        [SchemaNodeState.Touched]: false,
+      }),
+    );
     if (node.interactionState !== previous) context.changedNodes.add(node);
   }
   const runtime = context.root.runtime;
@@ -44,9 +57,14 @@ export const commitDeriveRules = <Self extends SchemaNodeRecord<Self>>(
     pruneCommittedRuleKeys(runtime, path, 'source');
   for (const exited of context.exited)
     walkOwnedSchemaNodes(exited, (node) =>
-      pruneCommittedRuleKeys(runtime, node.path, 'occurrence'));
+      pruneCommittedRuleKeys(runtime, node.path, 'occurrence'),
+    );
   for (const key of state.activeRuleKeys)
     if (state.consumedRuleValues.has(key))
-      updateCommittedRuleValue(runtime, key, 'set',
-        state.consumedRuleValues.get(key));
+      updateCommittedRuleValue(
+        runtime,
+        key,
+        'set',
+        state.consumedRuleValues.get(key),
+      );
 };

@@ -4,9 +4,9 @@ import { render } from '@testing-library/react';
 
 import {
   Form,
-  FormProvider,
   type FormHandle,
   type FormProps,
+  FormProvider,
   type FormTypeInputProps,
   type JSONSchema,
   registerPlugin,
@@ -14,8 +14,14 @@ import {
 
 /** Resolution paths whose field boundaries must share the Refresh policy. */
 export const INPUT_SUPPLIES = [
-  'inline', 'map', 'wildcard map', 'definitions', 'external', 'plugin',
-  'preferred', 'memo preferred',
+  'inline',
+  'map',
+  'wildcard map',
+  'definitions',
+  'external',
+  'plugin',
+  'preferred',
+  'memo preferred',
 ] as const;
 
 /** Render an input through its owning resolver, retaining definitions across Form key changes.
@@ -42,23 +48,40 @@ export const renderInputSupply = (
     jsonSchema: {
       type: 'object',
       properties: {
-        field: supply === 'inline'
-          ? { ...fieldSchema, presentation: { FormTypeInput: Component } }
-          : fieldSchema,
-        peer: { type: 'string', presentation: { FormTypeInput: Peer ?? DefaultPeer } },
+        field:
+          supply === 'inline'
+            ? { ...fieldSchema, presentation: { FormTypeInput: Component } }
+            : fieldSchema,
+        peer: {
+          type: 'string',
+          presentation: { FormTypeInput: Peer ?? DefaultPeer },
+        },
       },
     },
     defaultValue: { field: defaultValue, peer: 'idle' },
     onError: () => {},
   };
   if (supply === 'map' || supply === 'wildcard map')
-    props.formTypeInputMap = { [supply === 'map' ? '^/field$' : '/*']: Component };
+    props.formTypeInputMap = {
+      [supply === 'map' ? '^/field$' : '/*']: Component,
+    };
   if (supply === 'definitions') props.formTypeInputDefinitions = definitions;
-  if (supply === 'plugin') registerPlugin({ formTypeInputDefinitions: definitions });
+  if (supply === 'plugin')
+    registerPlugin({ formTypeInputDefinitions: definitions });
   if (supply === 'preferred' || supply === 'memo preferred')
-    props.children = <><Form.Input path="/field" FormTypeInput={supply === 'preferred' ? Component : memo(Component)} /><Form.Input path="/peer" /></>;
+    props.children = (
+      <>
+        <Form.Input
+          path="/field"
+          FormTypeInput={supply === 'preferred' ? Component : memo(Component)}
+        />
+        <Form.Input path="/peer" />
+      </>
+    );
   const element = (key: number) => (
-    <FormProvider formTypeInputDefinitions={supply === 'external' ? definitions : undefined}>
+    <FormProvider
+      formTypeInputDefinitions={supply === 'external' ? definitions : undefined}
+    >
       <Form key={key} ref={ref} {...props} />
     </FormProvider>
   );

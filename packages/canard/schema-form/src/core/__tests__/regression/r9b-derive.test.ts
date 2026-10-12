@@ -2,16 +2,25 @@ import { describe, expect, it } from 'vitest';
 
 import { makeSchemaNodeTree } from '../makeSchemaNodeTree';
 
-const finalShapeTree = (seedDefault: boolean) => makeSchemaNodeTree({
-  type: 'object', properties: {
-    seed: { type: 'number', ...(seedDefault ? { default: 1 } : {}) },
-    on: { type: 'number', controls: {
-      derived: seedDefault ? '../seed === 1 ? 0 : 1' : '0',
-    } },
-  }, allOf: [{ controls: { active: './on === 1' },
-    properties: { x: { type: 'string', default: 'P' } },
-  }],
-}).root;
+const finalShapeTree = (seedDefault: boolean) =>
+  makeSchemaNodeTree({
+    type: 'object',
+    properties: {
+      seed: { type: 'number', ...(seedDefault ? { default: 1 } : {}) },
+      on: {
+        type: 'number',
+        controls: {
+          derived: seedDefault ? '../seed === 1 ? 0 : 1' : '0',
+        },
+      },
+    },
+    allOf: [
+      {
+        controls: { active: './on === 1' },
+        properties: { x: { type: 'string', default: 'P' } },
+      },
+    ],
+  }).root;
 
 // filid:contract factory-single-path
 describe('round9b final derive shape', () => {
@@ -40,15 +49,28 @@ describe('round9b final derive shape', () => {
   });
 
   it('r9b.mjs:137 FRAGMENT-050 retracts only intermediate c before commit', () => {
-    const { root } = makeSchemaNodeTree({ type: 'object', properties: {
-      t: { type: 'string' },
-    }, allOf: [{ controls: { active: './t === undefined' }, properties: {
-      c: { type: 'string', default: 'C', controls: {
-        injectTo: (value: unknown) => ({
-          '../t': value === undefined ? undefined : `from-${value}`,
-        }),
-      } },
-    } }] });
+    const { root } = makeSchemaNodeTree({
+      type: 'object',
+      properties: {
+        t: { type: 'string' },
+      },
+      allOf: [
+        {
+          controls: { active: './t === undefined' },
+          properties: {
+            c: {
+              type: 'string',
+              default: 'C',
+              controls: {
+                injectTo: (value: unknown) => ({
+                  '../t': value === undefined ? undefined : `from-${value}`,
+                }),
+              },
+            },
+          },
+        },
+      ],
+    });
     root.setValue({});
     expect(root.outputValue).toEqual({ t: 'from-C' });
     expect(root.find('/c')).toBeNull();

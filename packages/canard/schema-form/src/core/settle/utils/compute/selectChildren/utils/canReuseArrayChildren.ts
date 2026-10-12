@@ -24,12 +24,22 @@ export const canReuseArrayChildren = <Self extends SchemaNodeRecord<Self>>(
   const capabilities = node.runtime.blueprint.capabilities;
   const oldCount = context.arrayCounts.get(node);
   const children = node.children;
-  if (context.hasGates || !capabilities.branchless || capabilities.hasExpressions ||
-    capabilities.hasDerive || oldCount === undefined || oldCount === node.itemCount ||
-    node.raw !== undefined || context.distributedInputs.has(node) ||
-    context.pathChanges.length > 0 || context.pendingExits.size > 0 ||
-    node.structure !== prior || !children ||
-    !isArray(getLoadValue(context.previousEmit, node.path))) return false;
+  if (
+    context.hasGates ||
+    !capabilities.branchless ||
+    capabilities.hasExpressions ||
+    capabilities.hasDerive ||
+    oldCount === undefined ||
+    oldCount === node.itemCount ||
+    node.raw !== undefined ||
+    context.distributedInputs.has(node) ||
+    context.pathChanges.length > 0 ||
+    context.pendingExits.size > 0 ||
+    node.structure !== prior ||
+    !children ||
+    !isArray(getLoadValue(context.previousEmit, node.path))
+  )
+    return false;
   const prefixCount = Math.min(oldCount, node.itemCount);
   let position = 0;
   for (let index = 0; index < node.itemCount; index++) {
@@ -39,14 +49,26 @@ export const canReuseArrayChildren = <Self extends SchemaNodeRecord<Self>>(
       continue;
     }
     const child = children[position++];
-    const schema = mergeEffectiveSchema(entry.node, NO_ACTIVE_IDS,
-      { mode: 'runtime', isAtomic: node.runtime.blueprint.isAtomic });
-    if (!child || child !== prior[entry.name] || child.blueprintNode !== entry.node ||
-      child.name !== entry.name || child.parent !== node ||
-      child.path !== `${node.path}/${entry.name}` || child.schema !== schema ||
-      !child.active || child.detached || schema.typeConflict ||
-      entry.node.kind === 'virtual' || !entry.declarations.length ||
-      index < prefixCount && context.entered.has(child)) return false;
+    const schema = mergeEffectiveSchema(entry.node, NO_ACTIVE_IDS, {
+      mode: 'runtime',
+      isAtomic: node.runtime.blueprint.isAtomic,
+    });
+    if (
+      !child ||
+      child !== prior[entry.name] ||
+      child.blueprintNode !== entry.node ||
+      child.name !== entry.name ||
+      child.parent !== node ||
+      child.path !== `${node.path}/${entry.name}` ||
+      child.schema !== schema ||
+      !child.active ||
+      child.detached ||
+      schema.typeConflict ||
+      entry.node.kind === 'virtual' ||
+      !entry.declarations.length ||
+      (index < prefixCount && context.entered.has(child))
+    )
+      return false;
   }
   return position === children.length;
 };

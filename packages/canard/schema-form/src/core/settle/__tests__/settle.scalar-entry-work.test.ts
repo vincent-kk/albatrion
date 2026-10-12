@@ -2,18 +2,22 @@ import { afterEach, expect, it, vi } from 'vitest';
 
 import { SetValueOption } from '../../types/value';
 import { loadSchemaNodeAtMount, writeSchemaNode } from '../index';
+import * as types from '../utils/commit/effectiveType';
 import * as writable from '../utils/dispose/assertSchemaNodeWritable';
 import * as latent from '../utils/write/pruneLatentRaw';
 import * as wrongKind from '../utils/write/releaseWrongKindHosts';
-import * as types from '../utils/commit/effectiveType';
 import { createTestTree } from './fixtures/createTestTree';
 
 afterEach(() => vi.restoreAllMocks());
 
 it('removes fixed writable, latent, wrong-kind and effective-type work on normal scalar writes', () => {
-  const { root } = createTestTree({ type: 'object', properties: {
-    value: { type: 'string' }, sibling: { type: 'number', default: 3 },
-  } });
+  const { root } = createTestTree({
+    type: 'object',
+    properties: {
+      value: { type: 'string' },
+      sibling: { type: 'number', default: 3 },
+    },
+  });
   loadSchemaNodeAtMount(root, { value: 'before' }, SetValueOption.Overwrite);
   const leaf = root.structure!.value;
   const assertWritable = vi.spyOn(writable, 'assertSchemaNodeWritable');
@@ -27,14 +31,20 @@ it('removes fixed writable, latent, wrong-kind and effective-type work on normal
   expect(assertWritable).not.toHaveBeenCalled();
   expect(prune).not.toHaveBeenCalled();
   expect(release).not.toHaveBeenCalled();
-  expect(effective.mock.calls.filter(([node]) => node === leaf)).toHaveLength(2);
+  expect(effective.mock.calls.filter(([node]) => node === leaf)).toHaveLength(
+    2,
+  );
   expect(root.runtime.commitNumber).toBe(3);
 });
 
 it('retains general checks and derived writes when their inputs exist', () => {
-  const { root } = createTestTree({ type: 'object', properties: {
-    value: { type: 'string' }, copy: { type: 'string', controls: { derived: '../value' } },
-  } });
+  const { root } = createTestTree({
+    type: 'object',
+    properties: {
+      value: { type: 'string' },
+      copy: { type: 'string', controls: { derived: '../value' } },
+    },
+  });
   loadSchemaNodeAtMount(root, { value: 'before' }, SetValueOption.Overwrite);
   const leaf = root.structure!.value;
   const assertWritable = vi.spyOn(writable, 'assertSchemaNodeWritable');
@@ -44,7 +54,8 @@ it('retains general checks and derived writes when their inputs exist', () => {
   expect(release).toHaveBeenCalledTimes(1);
   expect(root.emit).toEqual({ value: 'after', copy: 'after' });
   leaf.disposed = true;
-  expect(() => writeSchemaNode(leaf, 'retired', 'callerReplace', SetValueOption.Overwrite))
-    .toThrow('Cannot write disposed node');
+  expect(() =>
+    writeSchemaNode(leaf, 'retired', 'callerReplace', SetValueOption.Overwrite),
+  ).toThrow('Cannot write disposed node');
   expect(root.emit).toEqual({ value: 'after', copy: 'after' });
 });

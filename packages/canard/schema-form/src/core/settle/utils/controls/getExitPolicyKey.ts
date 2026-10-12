@@ -7,5 +7,11 @@ import type { ControlLayer } from './getControlLayers';
  */
 export const getExitPolicyKey = (
   group: ControlLayer<{ path: string; blueprintNode: { kind: string } }>,
-): string => JSON.stringify([group.host.path, group.host.blueprintNode.kind,
-  group.declarationId, `${group.schemaPath}/unsetOnInactive`, undefined]);
+): string =>
+  JSON.stringify([
+    group.host.path,
+    group.host.blueprintNode.kind,
+    group.declarationId,
+    `${group.schemaPath}/unsetOnInactive`,
+    undefined,
+  ]);

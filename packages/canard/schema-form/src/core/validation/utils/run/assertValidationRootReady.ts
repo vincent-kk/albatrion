@@ -20,14 +20,30 @@ export const assertValidationRootReady = <Self extends SchemaNodeRecord<Self>>(
   const authoredRoot = root.runtime.blueprint.schema;
   const entry = readValidationEntry(validator, authoredRoot);
   if (entry.validate && !entry.failure) return entry.validate;
-  const id = typeof authoredRoot === 'object' && authoredRoot !== null &&
-    typeof authoredRoot.$id === 'string' ? authoredRoot.$id : undefined;
-  const duplicate = !!id && entry.failure instanceof Error &&
+  const id =
+    typeof authoredRoot === 'object' &&
+    authoredRoot !== null &&
+    typeof authoredRoot.$id === 'string'
+      ? authoredRoot.$id
+      : undefined;
+  const duplicate =
+    !!id &&
+    entry.failure instanceof Error &&
     /already exists|duplicate/i.test(entry.failure.message) &&
-    [...recentReleaseList(validator).counts].some(([other, count]) =>
-      other !== authoredRoot && count > 0 && typeof other === 'object' &&
-      other !== null && other.$id === id);
-  throw new SchemaFormError(VALIDATOR_COMPILE_FAILED,
+    [...recentReleaseList(validator).counts].some(
+      ([other, count]) =>
+        other !== authoredRoot &&
+        count > 0 &&
+        typeof other === 'object' &&
+        other !== null &&
+        other.$id === id,
+    );
+  throw new SchemaFormError(
+    VALIDATOR_COMPILE_FAILED,
     'Whole-schema validation could not be compiled',
-    { error: entry.failure, ...(duplicate ? { reason: 'duplicateSchemaId', $id: id } : {}) });
+    {
+      error: entry.failure,
+      ...(duplicate ? { reason: 'duplicateSchemaId', $id: id } : {}),
+    },
+  );
 };

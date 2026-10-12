@@ -47,7 +47,9 @@ describe('round 19 untyped host inference', () => {
         oneOf: [{ type: 'object', controls: { active: './enabled' } }],
       }),
     ).toThrow(
-      expect.objectContaining({ specific: BlueprintErrorCode.UnknownJsonSchema }),
+      expect.objectContaining({
+        specific: BlueprintErrorCode.UnknownJsonSchema,
+      }),
     );
   });
 
@@ -67,7 +69,9 @@ describe('round 19 untyped host inference', () => {
         ],
       }),
     ).toThrow(
-      expect.objectContaining({ specific: BlueprintErrorCode.UnknownJsonSchema }),
+      expect.objectContaining({
+        specific: BlueprintErrorCode.UnknownJsonSchema,
+      }),
     );
   });
 
@@ -75,7 +79,9 @@ describe('round 19 untyped host inference', () => {
     expect(() =>
       blueprint({ anyOf: [{ type: 'object' }, { type: 'array' }] }),
     ).toThrow(
-      expect.objectContaining({ specific: BlueprintErrorCode.UnknownJsonSchema }),
+      expect.objectContaining({
+        specific: BlueprintErrorCode.UnknownJsonSchema,
+      }),
     );
   });
 
@@ -110,7 +116,9 @@ describe('round 19 untyped host inference', () => {
 
   it('reports an empty union after cutting its only recursive branch', () => {
     expect(() => blueprint({ anyOf: [{ $ref: '#' }] })).toThrow(
-      expect.objectContaining({ specific: BlueprintErrorCode.UnknownJsonSchema }),
+      expect.objectContaining({
+        specific: BlueprintErrorCode.UnknownJsonSchema,
+      }),
     );
   });
 
@@ -130,14 +138,13 @@ describe('round 19 untyped host inference', () => {
     },
   );
 
-  it.each([
-    [{ enum: ['cat', 1] }],
-    [{ const: { name: 'cat' } }],
-  ] as const)(
+  it.each([[{ enum: ['cat', 1] }], [{ const: { name: 'cat' } }]] as const)(
     'rejects mixed or object literals without an explicit type',
     (schema) => {
       expect(() => blueprint(schema)).toThrow(
-        expect.objectContaining({ specific: BlueprintErrorCode.UnknownJsonSchema }),
+        expect.objectContaining({
+          specific: BlueprintErrorCode.UnknownJsonSchema,
+        }),
       );
     },
   );

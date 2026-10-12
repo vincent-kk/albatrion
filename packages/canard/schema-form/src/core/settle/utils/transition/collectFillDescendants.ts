@@ -11,7 +11,9 @@ import type { SettlementContext } from '../../type';
  * @returns Depth buckets for the same round, or undefined when only gates produced nodes
  */
 export const collectFillDescendants = <Self extends SchemaNodeRecord<Self>>(
-  context: SettlementContext<Self>, appearances: Iterator<Self>, count: number,
+  context: SettlementContext<Self>,
+  appearances: Iterator<Self>,
+  count: number,
   ancestors: Map<Self, number>,
   newArrayHosts?: ReadonlySet<Self>,
 ): Self[][] | undefined => {
@@ -21,18 +23,34 @@ export const collectFillDescendants = <Self extends SchemaNodeRecord<Self>>(
     const node = appearances.next().value!;
     if (node.detached || !node.parent) continue;
     const parentOrigin = ancestors.get(node.parent);
-    if (parentOrigin === undefined &&
-      !context.distributedInputs.get(node.parent)?.automatic) continue;
-    const newItem = node.parent.behavior.type === 'array' &&
+    if (
+      parentOrigin === undefined &&
+      !context.distributedInputs.get(node.parent)?.automatic
+    )
+      continue;
+    const newItem =
+      node.parent.behavior.type === 'array' &&
       newArrayHosts?.has(node.parent) &&
-      parentOrigin !== undefined && parentOrigin >= 0 && Number(node.name) >= parentOrigin;
-    const firstEvaluation = parentOrigin === -1 && firstEvaluations?.has(node.parent);
+      parentOrigin !== undefined &&
+      parentOrigin >= 0 &&
+      Number(node.name) >= parentOrigin;
+    const firstEvaluation =
+      parentOrigin === -1 && firstEvaluations?.has(node.parent);
     if (context.hasGates && !firstEvaluation && !newItem) {
       const declarations = node.blueprintNode.declarations;
       let ungated = false;
-      for (let declarationIndex = 0; declarationIndex < declarations.length; declarationIndex++)
-        if (declarations[declarationIndex].role === 'declaration' &&
-          declarations[declarationIndex].gates.length === 0) { ungated = true; break; }
+      for (
+        let declarationIndex = 0;
+        declarationIndex < declarations.length;
+        declarationIndex++
+      )
+        if (
+          declarations[declarationIndex].role === 'declaration' &&
+          declarations[declarationIndex].gates.length === 0
+        ) {
+          ungated = true;
+          break;
+        }
       if (!ungated) continue;
     }
     if (node.behavior.strategy === 'branch') {

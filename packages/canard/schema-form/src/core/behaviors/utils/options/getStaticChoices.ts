@@ -31,21 +31,29 @@ export const getStaticChoices = (effective: EffectiveSchema): StaticChoices => {
   const cached = CHOICES.get(effective);
   if (cached) return cached;
   const schema = effective.schema;
-  const options = typeof schema === 'object' && schema !== null ? schema.options : undefined;
+  const options =
+    typeof schema === 'object' && schema !== null ? schema.options : undefined;
   if (options === undefined) {
     CHOICES.set(effective, DEFAULT_CHOICES);
     return DEFAULT_CHOICES;
   }
-  const hints = typeof options === 'object' && options !== null && !isArray(options)
-    ? options
-    : undefined;
-  const propertyKeys = hints && 'propertyKeys' in hints ? hints.propertyKeys : undefined;
+  const hints =
+    typeof options === 'object' && options !== null && !isArray(options)
+      ? options
+      : undefined;
+  const propertyKeys =
+    hints && 'propertyKeys' in hints ? hints.propertyKeys : undefined;
   const choices: StaticChoices = Object.freeze({
     omitEmpty: !hints || !('omitEmpty' in hints) || hints.omitEmpty !== false,
-    omitTrailing: !!hints && 'omitTrailing' in hints && hints.omitTrailing === true,
+    omitTrailing:
+      !!hints && 'omitTrailing' in hints && hints.omitTrailing === true,
     trim: !!hints && 'trim' in hints && hints.trim === true,
     propertyKeys: isArray(propertyKeys)
-      ? Object.freeze(propertyKeys.filter((key: unknown): key is string => typeof key === 'string'))
+      ? Object.freeze(
+          propertyKeys.filter(
+            (key: unknown): key is string => typeof key === 'string',
+          ),
+        )
       : NO_KEYS,
   });
   CHOICES.set(effective, choices);

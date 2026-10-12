@@ -13,7 +13,8 @@ describe('chain failure bundles', () => {
     const second = { raw: true };
     const result = bundleChainErrors([first, second]);
     expect(result).toBeInstanceOf(SchemaFormError);
-    if (!(result instanceof SchemaFormError)) throw new Error('Expected aggregate');
+    if (!(result instanceof SchemaFormError))
+      throw new Error('Expected aggregate');
     expect(result.code).toBe(`SCHEMA_FORM_ERROR.${MULTIPLE_ERRORS}`);
     expect(result.details.errors).toEqual([first, second]);
     expect(bundleChainErrors([first])).toBe(first);
@@ -23,30 +24,64 @@ describe('chain failure bundles', () => {
     const first = new Error('listener');
     const handler = new Error('handler');
     const seen: unknown[] = [];
-    const { root } = createDispatchTree({ type: 'string' }, undefined,
-      undefined, { hasConsumer: () => true, report: (record) => {
-        seen.push(record.error);
-        if (record.error === first) throw handler;
-      } });
-    subscribeSchemaNode(root, () => { throw first; });
-    subscribeSchemaNode(root, () => { throw new Error('second'); });
+    const { root } = createDispatchTree(
+      { type: 'string' },
+      undefined,
+      undefined,
+      {
+        hasConsumer: () => true,
+        report: (record) => {
+          seen.push(record.error);
+          if (record.error === first) throw handler;
+        },
+      },
+    );
+    subscribeSchemaNode(root, () => {
+      throw first;
+    });
+    subscribeSchemaNode(root, () => {
+      throw new Error('second');
+    });
     let caught: unknown;
-    try { dispatchSetValue(root, 'value'); } catch (error) { caught = error; }
+    try {
+      dispatchSetValue(root, 'value');
+    } catch (error) {
+      caught = error;
+    }
     expect(seen).toHaveLength(2);
     expect(caught).toBeInstanceOf(SchemaFormError);
-    if (!(caught instanceof SchemaFormError)) throw new Error('Expected aggregate');
+    if (!(caught instanceof SchemaFormError))
+      throw new Error('Expected aggregate');
     const components = caught.details.errors;
     expect(components).toEqual([expect.any(SchemaFormError), handler]);
-    expect(Array.isArray(components) && components[0]).toBeInstanceOf(SchemaFormError);
+    expect(Array.isArray(components) && components[0]).toBeInstanceOf(
+      SchemaFormError,
+    );
   });
 
   it('ERROR-028 a warning-only handler failure is thrown once', () => {
     const error = new Error('handler');
-    const { root, runtime } = createDispatchTree({ type: 'string' }, undefined,
-      undefined, { hasConsumer: () => true, report: () => { throw error; } });
-    runtime.pendingWarningRecords = new Map([['warning', {
-      level: 'warning', code: 'SCHEMA_FORM_WARNING.TYPE_MISMATCH', message: 'warning',
-    }]]);
+    const { root, runtime } = createDispatchTree(
+      { type: 'string' },
+      undefined,
+      undefined,
+      {
+        hasConsumer: () => true,
+        report: () => {
+          throw error;
+        },
+      },
+    );
+    runtime.pendingWarningRecords = new Map([
+      [
+        'warning',
+        {
+          level: 'warning',
+          code: 'SCHEMA_FORM_WARNING.TYPE_MISMATCH',
+          message: 'warning',
+        },
+      ],
+    ]);
     expect(() => dispatchSetValue(root, 'value')).toThrow(error);
   });
 
@@ -55,35 +90,70 @@ describe('chain failure bundles', () => {
     const handler = new Error('handler');
     const seen: string[] = [];
     const sink = vi.spyOn(console, 'error').mockImplementation(() => undefined);
-    const { runtime } = createDispatchTree({ type: 'string' }, undefined,
-      undefined, { hasConsumer: () => true, report: (record) => {
-        seen.push(record.message);
-        if (record.message === 'first') throw handler;
-      } });
+    const { runtime } = createDispatchTree(
+      { type: 'string' },
+      undefined,
+      undefined,
+      {
+        hasConsumer: () => true,
+        report: (record) => {
+          seen.push(record.message);
+          if (record.message === 'first') throw handler;
+        },
+      },
+    );
     try {
-      const failures = deliverChainRecords(runtime, [
-        { level: 'warning', code: 'SCHEMA_FORM_WARNING.TYPE_MISMATCH',
-          message: 'first' },
-        { level: 'warning', code: 'SCHEMA_FORM_WARNING.TYPE_MISMATCH',
-          message: 'second' },
-      ], original, false);
+      const failures = deliverChainRecords(
+        runtime,
+        [
+          {
+            level: 'warning',
+            code: 'SCHEMA_FORM_WARNING.TYPE_MISMATCH',
+            message: 'first',
+          },
+          {
+            level: 'warning',
+            code: 'SCHEMA_FORM_WARNING.TYPE_MISMATCH',
+            message: 'second',
+          },
+        ],
+        original,
+        false,
+      );
       expect(failures).toEqual([]);
       expect(seen).toEqual(['first', 'second']);
       expect(sink.mock.calls).toEqual([[handler], [original]]);
-    } finally { sink.mockRestore(); }
+    } finally {
+      sink.mockRestore();
+    }
   });
 
   it('ERROR-017 ERROR-023 puts the actual aggregate on each component record', () => {
     const first = new SchemaFormError('GUARD_FAILED', 'first', { path: '/a' });
     const second = new Error('second');
-    const records: { error?: unknown; aggregate?: SchemaFormError;
-      details?: unknown }[] = [];
-    const { root } = createDispatchTree({ type: 'string' }, undefined,
-      undefined, { hasConsumer: () => true, report: (record) => records.push(record) });
-    subscribeSchemaNode(root, () => { throw first; });
-    subscribeSchemaNode(root, () => { throw second; });
+    const records: {
+      error?: unknown;
+      aggregate?: SchemaFormError;
+      details?: unknown;
+    }[] = [];
+    const { root } = createDispatchTree(
+      { type: 'string' },
+      undefined,
+      undefined,
+      { hasConsumer: () => true, report: (record) => records.push(record) },
+    );
+    subscribeSchemaNode(root, () => {
+      throw first;
+    });
+    subscribeSchemaNode(root, () => {
+      throw second;
+    });
     let thrown: unknown;
-    try { dispatchSetValue(root, 'value'); } catch (error) { thrown = error; }
+    try {
+      dispatchSetValue(root, 'value');
+    } catch (error) {
+      thrown = error;
+    }
     expect(thrown).toBeInstanceOf(SchemaFormError);
     expect(records.map((record) => record.error)).toEqual([first, second]);
     expect(records[0].details).toBe(first.details);

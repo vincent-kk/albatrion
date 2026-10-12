@@ -1,4 +1,5 @@
 import { isArray } from '@winglet/common-utils/filter';
+
 import type { SchemaNodeRecord } from '../../../record';
 
 /**
@@ -8,10 +9,12 @@ import type { SchemaNodeRecord } from '../../../record';
  * @returns Undeclared tail or undefined when every position has a blueprint
  */
 export const arrayExtras = <Self extends SchemaNodeRecord<Self>>(
-  node: Self, value: readonly unknown[],
+  node: Self,
+  value: readonly unknown[],
 ): unknown[] | undefined => {
   if (node.blueprintNode.item) return undefined;
-  const start = isArray(node.blueprintNode.prefixItems) ?
-    node.blueprintNode.prefixItems.length : 0;
+  const start = isArray(node.blueprintNode.prefixItems)
+    ? node.blueprintNode.prefixItems.length
+    : 0;
   return value.length > start ? value.slice(start) : undefined;
 };

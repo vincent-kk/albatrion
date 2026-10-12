@@ -3,7 +3,6 @@ import { describe, expect, test } from 'vitest';
 import { JSON_POINTER_PATH_REGEX } from '../regex';
 
 describe('Context Symbol (@) - JSON_POINTER_REGEX', () => {
-
   // 헬퍼 함수: 의존성 변환 테스트
   const testDepsMatch = (input: string) => {
     const pathManager: string[] = [];

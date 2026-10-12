@@ -9,10 +9,16 @@ import { requireRuntimeSchemaNode } from '../requireRuntimeSchemaNode';
  * @returns Nothing; restores the preceding scope even when delivery throws
  * @throws The callback's exception after restoring the observer scope
  */
-export const observeSchemaNodeReports = (root: SchemaNode, deliver: () => void): void => {
+export const observeSchemaNodeReports = (
+  root: SchemaNode,
+  deliver: () => void,
+): void => {
   const runtime = requireRuntimeSchemaNode(root, true).runtime;
   const previous = runtime.reportingErrors;
   runtime.reportingErrors = true;
-  try { deliver(); }
-  finally { runtime.reportingErrors = previous; }
+  try {
+    deliver();
+  } finally {
+    runtime.reportingErrors = previous;
+  }
 };

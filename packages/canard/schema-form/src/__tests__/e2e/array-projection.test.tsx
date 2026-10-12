@@ -1,5 +1,6 @@
-import { arrayScenarios, playScenario } from '@aileron/schema-form-scenarios';
 import { describe, expect, it } from 'vitest';
+
+import { arrayScenarios, playScenario } from '@aileron/schema-form-scenarios';
 
 import type { JSONSchema } from '@/schema-form';
 
@@ -15,7 +16,8 @@ const run = async (name: string) => {
   expect(scenario, name).toBeDefined();
   if (!scenario) throw new Error(`Missing scenario: ${name}`);
   const form = await renderForm(scenario.schema as JSONSchema, {
-    defaultValue: scenario.initialValue, strictMode: true,
+    defaultValue: scenario.initialValue,
+    strictMode: true,
   });
   try {
     await playScenario(scenario, form.container);
@@ -35,27 +37,27 @@ describe('array-projection — TEST-011 / TEST-023 shared screen runner', () => 
     await run('array.nullable-slots-reset');
   });
 
-  it("VALUE-034 omitTrailing trims trailing holes and preserves leading null slots", async () => {
-    await run("array.omit-trailing-leading-holes");
+  it('VALUE-034 omitTrailing trims trailing holes and preserves leading null slots', async () => {
+    await run('array.omit-trailing-leading-holes');
   });
 
-  it("LANDING-023 branch arrays inject projected output and retain edited slots", async () => {
-    await run("array.branch-projection-injection");
+  it('LANDING-023 branch arrays inject projected output and retain edited slots', async () => {
+    await run('array.branch-projection-injection');
   });
 
-  it("LANDING-116 minItems does not allocate inputs and explicit slots remain editable", async () => {
-    await run("array.min-items-explicit-slots");
+  it('LANDING-116 minItems does not allocate inputs and explicit slots remain editable', async () => {
+    await run('array.min-items-explicit-slots');
   });
 
-  it("LANDING-149 prefixItems uses position schemas and reset restores external defaults", async () => {
-    await run("array.prefix-items-external-reset");
+  it('LANDING-149 prefixItems uses position schemas and reset restores external defaults', async () => {
+    await run('array.prefix-items-external-reset');
   });
 
-  it("LANDING-142 terminal object whole writes and reset preserve external values", async () => {
-    await run("array.terminal-object-external-reset");
+  it('LANDING-142 terminal object whole writes and reset preserve external values', async () => {
+    await run('array.terminal-object-external-reset');
   });
 
-  it("LANDING-149 terminal array ignores tuple fill and resets the whole value", async () => {
-    await run("array.terminal-array-external-reset");
+  it('LANDING-149 terminal array ignores tuple fill and resets the whole value', async () => {
+    await run('array.terminal-array-external-reset');
   });
 });

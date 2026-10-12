@@ -8,7 +8,9 @@ const DECLARED_NAMES = new WeakMap<BlueprintNode, ReadonlySet<string>>();
  * @param template - Immutable analyzed node shared by runtime occurrences
  * @returns Cached declared names; callers must not mutate this blueprint-owned index
  */
-export const getDeclaredChildNames = (template: BlueprintNode): ReadonlySet<string> => {
+export const getDeclaredChildNames = (
+  template: BlueprintNode,
+): ReadonlySet<string> => {
   let names = DECLARED_NAMES.get(template);
   if (!names) {
     names = new Set(template.childEntries.map((entry) => entry.name));

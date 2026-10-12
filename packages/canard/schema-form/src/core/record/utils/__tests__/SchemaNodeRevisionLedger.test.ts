@@ -16,7 +16,9 @@ describe('SchemaNodeRevisionLedger counters', () => {
       plain = new SchemaNodeRevisionLedger(plain, mask);
       for (let bit = 0; bit < 17; bit++) {
         expect(shared[1 << bit]).toBe(plain[1 << bit]);
-        expect(shared.read((1 << bit) | mask)).toBe(plain.read((1 << bit) | mask));
+        expect(shared.read((1 << bit) | mask)).toBe(
+          plain.read((1 << bit) | mask),
+        );
         expect(before[1 << bit]).toBe(saved[bit]);
       }
       expect(shared.read(-1)).toBe(plain.read(-1));
@@ -40,8 +42,10 @@ describe('SchemaNodeRevisionLedger counters', () => {
   });
 
   it('ignores unknown positive and sign bits in writes and reads', () => {
-    const ledger = new SchemaNodeRevisionLedger({},
-      SchemaNodeEventType.UpdateValue | (1 << 17) | (1 << 30) | (1 << 31));
+    const ledger = new SchemaNodeRevisionLedger(
+      {},
+      SchemaNodeEventType.UpdateValue | (1 << 17) | (1 << 30) | (1 << 31),
+    );
     expect(ledger.read(-1)).toBe(1);
     expect(ledger.read((1 << 17) | (1 << 30) | (1 << 31))).toBe(0);
     expect(ledger[1 << 17]).toBeUndefined();

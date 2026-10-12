@@ -1,7 +1,12 @@
-import { hasOwnProperty } from '@winglet/common-utils/lib';
 import { isArray } from '@winglet/common-utils/filter';
+import { hasOwnProperty } from '@winglet/common-utils/lib';
 
-import type { Blueprint, BlueprintChildEntry, BlueprintGate, BlueprintNode } from '../../../../../blueprint';
+import type {
+  Blueprint,
+  BlueprintChildEntry,
+  BlueprintGate,
+  BlueprintNode,
+} from '../../../../../blueprint';
 import { getGateExpression } from '../../../gates/getGateExpression';
 
 /** One authored evaluation position; its condition still runs on every visit. */
@@ -27,7 +32,10 @@ interface DirectChildSelectionPlan {
  * hosts own the lifetime and live records are never retained. Callers read an entry
  * here first and call {@link getDirectChildSelectionPlan} only while it is `undefined`.
  */
-export const DIRECT_CHILD_SELECTION_PLANS = new WeakMap<BlueprintNode, DirectChildSelectionPlan | null>();
+export const DIRECT_CHILD_SELECTION_PLANS = new WeakMap<
+  BlueprintNode,
+  DirectChildSelectionPlan | null
+>();
 
 /**
  * Read a prepared baseline or lazily prepare eligible multi-branch union candidates.
@@ -47,9 +55,14 @@ export const getDirectChildSelectionPlan = (
   if (cached !== undefined) return cached;
   if (!prepare) return null;
   const schema = host.declarations[0]?.schema;
-  if (typeof schema !== 'object' || schema === null ||
-    !((isArray(schema.oneOf) && schema.oneOf.length > 1) ||
-      (isArray(schema.anyOf) && schema.anyOf.length > 1))) {
+  if (
+    typeof schema !== 'object' ||
+    schema === null ||
+    !(
+      (isArray(schema.oneOf) && schema.oneOf.length > 1) ||
+      (isArray(schema.anyOf) && schema.anyOf.length > 1)
+    )
+  ) {
     DIRECT_CHILD_SELECTION_PLANS.set(host, null);
     return null;
   }
@@ -59,13 +72,20 @@ export const getDirectChildSelectionPlan = (
   for (let index = 0; index < host.childEntries.length; index++) {
     const entry = host.childEntries[index];
     const declarations = entry.declarations;
-    if (hasOwnProperty(names, entry.name) || declarations.length !== 1 ||
-      entry.node.kind === 'virtual' || entry.node.childEntries.length > 0 ||
-      entry.node.item || entry.node.prefixItems?.length ||
-      entry.node.declarations.length !== 1 || entry.node.declarations[0].id !== declarations[0].id ||
+    if (
+      hasOwnProperty(names, entry.name) ||
+      declarations.length !== 1 ||
+      entry.node.kind === 'virtual' ||
+      entry.node.childEntries.length > 0 ||
+      entry.node.item ||
+      entry.node.prefixItems?.length ||
+      entry.node.declarations.length !== 1 ||
+      entry.node.declarations[0].id !== declarations[0].id ||
       declarations[0].gates.length > 1 ||
-      entry.node.declarations[0].gates.length !== declarations[0].gates.length ||
-      entry.node.declarations[0].gates[0] !== declarations[0].gates[0]) {
+      entry.node.declarations[0].gates.length !==
+        declarations[0].gates.length ||
+      entry.node.declarations[0].gates[0] !== declarations[0].gates[0]
+    ) {
       DIRECT_CHILD_SELECTION_PLANS.set(host, null);
       return null;
     }
@@ -73,10 +93,14 @@ export const getDirectChildSelectionPlan = (
     const gate = declaration.gates[0];
     if (gate) {
       const expression = getGateExpression(blueprint, gate.schemaPath);
-      if (gate.kind !== 'active' || gate.appliesWhen?.length ||
+      if (
+        gate.kind !== 'active' ||
+        gate.appliesWhen?.length ||
         gate.hostPath !== host.path ||
         gate.schemaPath === `${declaration.schemaPath}/controls/active` ||
-        !expression || expression.dependencies.length !== 1) {
+        !expression ||
+        expression.dependencies.length !== 1
+      ) {
         DIRECT_CHILD_SELECTION_PLANS.set(host, null);
         return null;
       }

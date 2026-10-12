@@ -216,7 +216,9 @@ describe('state-management — clearState clears flags but keeps values', () => 
 
     // flags cleared (tree + indicator)
     expect(form.node('/name')?.state[SchemaNodeState.Dirty]).toBeFalsy();
-    expect(form.node('/address/city')?.state[SchemaNodeState.Dirty]).toBeFalsy();
+    expect(
+      form.node('/address/city')?.state[SchemaNodeState.Dirty],
+    ).toBeFalsy();
     expect(indicatorOf(form, '/name')?.dataset.dirty).toBe('false');
     expect(indicatorOf(form, '/address/city')?.dataset.dirty).toBe('false');
     // values KEPT (DOM + tree) — this is the clearState contract
@@ -355,7 +357,9 @@ describe('state-management — subtree ops affect only the target subtree', () =
 
     await runImperative(form, () => form.node('/address')?.clearSubtreeState());
 
-    expect(form.node('/address/city')?.state[SchemaNodeState.Dirty]).toBeFalsy();
+    expect(
+      form.node('/address/city')?.state[SchemaNodeState.Dirty],
+    ).toBeFalsy();
     expect(form.node('/name')?.state[SchemaNodeState.Dirty]).toBe(true);
     // DOM mirrors the partial clear
     expect(indicatorOf(form, '/address/city')?.dataset.dirty).toBe('false');
@@ -414,7 +418,9 @@ describe('state-management — reset vs clearState vs resetSubtree (values)', ()
     expect(form.value('/address/city')).toBe('Seoul');
     expect(form.getValue()?.address?.city).toBe('Seoul');
     expect(form.value('/name')).toBe('Jane');
-    expect(form.node('/address/city')?.state[SchemaNodeState.Dirty]).toBeFalsy();
+    expect(
+      form.node('/address/city')?.state[SchemaNodeState.Dirty],
+    ).toBeFalsy();
   });
 });
 
@@ -437,8 +443,12 @@ describe('state-management — array item subtree state by index', () => {
     );
 
     // item 1 subtree dirty, item 0 untouched (tree)
-    expect(form.node('/items/1/label')?.state[SchemaNodeState.Dirty]).toBe(true);
-    expect(form.node('/items/0/label')?.state[SchemaNodeState.Dirty]).toBeFalsy();
+    expect(form.node('/items/1/label')?.state[SchemaNodeState.Dirty]).toBe(
+      true,
+    );
+    expect(
+      form.node('/items/0/label')?.state[SchemaNodeState.Dirty],
+    ).toBeFalsy();
     // DOM indicators by index
     expect(indicatorOf(form, '/items/1/label')?.dataset.dirty).toBe('true');
     expect(indicatorOf(form, '/items/0/label')?.dataset.dirty).toBe('false');

@@ -27,7 +27,11 @@ export const appendChildEntries = (
     for (let index = 0; index < child.declarations.length; index++) {
       const declaration = child.declarations[index];
       const gates = [];
-      for (let gateIndex = 0; gateIndex < declaration.gates.length; gateIndex++) {
+      for (
+        let gateIndex = 0;
+        gateIndex < declaration.gates.length;
+        gateIndex++
+      ) {
         const gate = declaration.gates[gateIndex];
         gates.push(
           gate.hostPath === child.path

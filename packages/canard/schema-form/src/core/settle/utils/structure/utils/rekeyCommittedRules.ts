@@ -1,4 +1,5 @@
 import { isArray } from '@winglet/common-utils/filter';
+
 import type { SchemaNodeRuntime } from '../../../../record';
 import { updateCommittedRuleValue } from '../../commit/updateCommittedRuleValue';
 import { getRuntimePathStores } from '../../pathIndex/getRuntimePathStores';
@@ -12,7 +13,8 @@ import type { ArrayPathMove } from '../type';
  * @returns Nothing; deletion precedes insertion to preserve chained shifts
  */
 export const rekeyCommittedRules = <Self>(
-  runtime: SchemaNodeRuntime<Self>, moves: readonly ArrayPathMove[],
+  runtime: SchemaNodeRuntime<Self>,
+  moves: readonly ArrayPathMove[],
   mapPath: (path: string) => string | undefined,
 ): void => {
   const { rules } = getRuntimePathStores(runtime);
@@ -29,12 +31,20 @@ export const rekeyCommittedRules = <Self>(
       const value = rules.get(key);
       updateCommittedRuleValue(runtime, key, 'delete');
       const source = mapPath(parts[0]);
-      const target = typeof parts[5] === 'string' ? mapPath(parts[5]) : undefined;
-      if (source === undefined || typeof parts[5] === 'string' && target === undefined) continue;
+      const target =
+        typeof parts[5] === 'string' ? mapPath(parts[5]) : undefined;
+      if (
+        source === undefined ||
+        (typeof parts[5] === 'string' && target === undefined)
+      )
+        continue;
       parts[0] = source;
       if (target !== undefined) parts[5] = target;
       inserts.push([JSON.stringify(parts), value]);
     }
-    for (const [key, value] of inserts) updateCommittedRuleValue(runtime, key, 'set', value);
-  } finally { rules.pathIndex.endBatch(); }
+    for (const [key, value] of inserts)
+      updateCommittedRuleValue(runtime, key, 'set', value);
+  } finally {
+    rules.pathIndex.endBatch();
+  }
 };

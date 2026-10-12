@@ -1,12 +1,15 @@
-import { captureSchemaNodeChange } from '../../../record';
-import { recordSettlementFailure } from '../errors/recordSettlementFailure';
-import { MULTIPLE_GATED_BRANCHES_ACTIVE, SchemaFormError } from '../../../../errors';
+import {
+  MULTIPLE_GATED_BRANCHES_ACTIVE,
+  SchemaFormError,
+} from '../../../../errors';
 import { mergeEffectiveSchema } from '../../../blueprint';
+import { captureSchemaNodeChange } from '../../../record';
 import type { SchemaNodeRecord } from '../../../record';
 import { indexSchemaNodeWarning } from '../../../record';
 import type { SettlementContext } from '../../type';
-import { evaluateGate } from '../gates/evaluateGate';
+import { recordSettlementFailure } from '../errors/recordSettlementFailure';
 import { SHARED_NODE_CONFLICT } from '../errors/settleErrorCode';
+import { evaluateGate } from '../gates/evaluateGate';
 
 /**
  * Recompute one node's active overlays and effective schema in a host round.
@@ -19,13 +22,19 @@ export const selectNodeSchema = <Self extends SchemaNodeRecord<Self>>(
   context: SettlementContext<Self>,
 ): boolean => {
   const active = node.blueprintNode.declarations.filter((declaration) =>
-    declaration.gates.every((gate) => evaluateGate(gate, context, node)));
+    declaration.gates.every((gate) => evaluateGate(gate, context, node)),
+  );
   if (node.runtime.errorReporter?.hasConsumer()) {
     const branches = new Map<string, number[]>();
     for (const declaration of active) {
       const match = /^(.*\/oneOf)\/(\d+)(?:\/|$)/.exec(declaration.schemaPath);
-      if (!match || !declaration.gates.some((gate) =>
-        gate.schemaPath.startsWith(`${match[1]}/${match[2]}/`))) continue;
+      if (
+        !match ||
+        !declaration.gates.some((gate) =>
+          gate.schemaPath.startsWith(`${match[1]}/${match[2]}/`),
+        )
+      )
+        continue;
       const branch = Number(match[2]);
       const selected = branches.get(match[1]) ?? [];
       if (!selected.includes(branch)) selected.push(branch);
@@ -33,12 +42,16 @@ export const selectNodeSchema = <Self extends SchemaNodeRecord<Self>>(
     }
     for (const [schemaPath, selected] of branches) {
       if (selected.length < 2) continue;
-      const code = `SCHEMA_FORM_WARNING.${MULTIPLE_GATED_BRANCHES_ACTIVE}` as const;
+      const code =
+        `SCHEMA_FORM_WARNING.${MULTIPLE_GATED_BRANCHES_ACTIVE}` as const;
       const key = JSON.stringify([code, node.path, schemaPath]);
       if (node.runtime.warningKeys?.has(key)) continue;
       (node.runtime.warningKeys ??= new Set()).add(key);
       const record = {
-        level: 'warning', code, path: node.path, schemaPath,
+        level: 'warning',
+        code,
+        path: node.path,
+        schemaPath,
         message: `Multiple gated oneOf branches are active at ${schemaPath}`,
         details: { branches: selected },
       } as const;
@@ -46,16 +59,32 @@ export const selectNodeSchema = <Self extends SchemaNodeRecord<Self>>(
       node.runtime.chainOccurrences?.push({ kind: 'record', record });
     }
   }
-  context.selectedDeclarationIds.set(node, active.map((declaration) => declaration.id));
-  const effective = mergeEffectiveSchema(node.blueprintNode,
+  context.selectedDeclarationIds.set(
+    node,
     active.map((declaration) => declaration.id),
-    { mode: 'runtime', isAtomic: node.runtime.blueprint?.isAtomic });
+  );
+  const effective = mergeEffectiveSchema(
+    node.blueprintNode,
+    active.map((declaration) => declaration.id),
+    { mode: 'runtime', isAtomic: node.runtime.blueprint?.isAtomic },
+  );
   if (effective.typeConflict) {
-    recordSettlementFailure(context, new SchemaFormError(SHARED_NODE_CONFLICT,
-      `Active declarations conflict at ${node.path}`, { path: node.path }), 'sharedConflict');
+    recordSettlementFailure(
+      context,
+      new SchemaFormError(
+        SHARED_NODE_CONFLICT,
+        `Active declarations conflict at ${node.path}`,
+        { path: node.path },
+      ),
+      'sharedConflict',
+    );
   }
   if (node.parent === null)
-    node.active = captureSchemaNodeChange(node, 'active', active.some((declaration) => declaration.role === 'declaration'));
+    node.active = captureSchemaNodeChange(
+      node,
+      'active',
+      active.some((declaration) => declaration.role === 'declaration'),
+    );
   if (node.schema === effective) return false;
   node.schema = captureSchemaNodeChange(node, 'schema', effective);
   context.changedNodes.add(node);

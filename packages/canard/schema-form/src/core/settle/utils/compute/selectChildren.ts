@@ -1,30 +1,37 @@
-import { captureSchemaNodeChange } from '../../../record';
-import { recordSettlementFailure } from '../errors/recordSettlementFailure';
-import { SchemaFormError } from '../../../../errors';
 import { hasOwnProperty } from '@winglet/common-utils/lib';
 import { escapeSegment } from '@winglet/json/pointer';
+
+import { SchemaFormError } from '../../../../errors';
 import { mergeEffectiveSchema } from '../../../blueprint';
+import type {
+  BlueprintChildEntry,
+  BlueprintNode,
+  BlueprintOptions,
+  EffectiveSchema,
+} from '../../../blueprint';
+import { captureSchemaNodeChange } from '../../../record';
 import type { SchemaNodeRecord } from '../../../record';
 import type { SettlementContext } from '../../type';
-import { evaluateGate } from '../gates/evaluateGate';
+import { recordSettlementFailure } from '../errors/recordSettlementFailure';
 import { SHARED_NODE_CONFLICT } from '../errors/settleErrorCode';
-import { getGateRegistry } from '../gates/getGateRegistry';
-import { hasSharedConflict } from './hasSharedConflict';
-import { flushPendingOutput } from './flushPendingOutput';
-import { flushPendingGateReads } from '../gates/flushPendingGateReads';
-import { hasRecursiveExpansion } from './hasRecursiveExpansion';
 import { RECURSIVE_SHAPE_DIVERGED } from '../errors/settleErrorCode';
-import { getLatentOrder } from '../latent/getLatentOrder';
+import { evaluateGate } from '../gates/evaluateGate';
+import { flushPendingGateReads } from '../gates/flushPendingGateReads';
+import { getGateRegistry } from '../gates/getGateRegistry';
 import { distributeLatentValue } from '../latent/distributeLatentValue';
-import { enterSchemaNode } from './enterSchemaNode';
+import { getLatentOrder } from '../latent/getLatentOrder';
+import { indexEnteredLatentKey } from '../latent/indexEnteredLatentKey';
 import { hasDistributedChildInput } from '../write/hasDistributedChildInput';
 import { createChildNode } from './createChildNode';
-import type { BlueprintChildEntry, BlueprintNode, BlueprintOptions, EffectiveSchema } from '../../../blueprint';
-import { indexEnteredLatentKey } from '../latent/indexEnteredLatentKey';
-import {
-  DIRECT_CHILD_SELECTION_PLANS, getDirectChildSelectionPlan,
-} from './selectChildren/utils/getDirectChildSelectionPlan';
+import { enterSchemaNode } from './enterSchemaNode';
+import { flushPendingOutput } from './flushPendingOutput';
+import { hasRecursiveExpansion } from './hasRecursiveExpansion';
+import { hasSharedConflict } from './hasSharedConflict';
 import { canReuseArrayChildren } from './selectChildren/utils/canReuseArrayChildren';
+import {
+  DIRECT_CHILD_SELECTION_PLANS,
+  getDirectChildSelectionPlan,
+} from './selectChildren/utils/getDirectChildSelectionPlan';
 import { reuseArrayChildren } from './selectChildren/utils/reuseArrayChildren';
 import { staticIds } from './selectChildren/utils/staticIds';
 
@@ -33,25 +40,53 @@ const NO_ACTIVE_IDS: readonly number[] = Object.freeze([]);
 /** Rejected single-declaration positions share an empty selection. */
 const NO_DECLARATIONS: BlueprintChildEntry['declarations'] = [];
 /** Immutable, ungated object shapes shared by occurrences of one blueprint host. */
-const STATIC_SHAPES = new WeakMap<BlueprintNode, readonly {
-  entry: BlueprintChildEntry; ids: readonly number[]; schema: EffectiveSchema;
-}[] | null>();
+const STATIC_SHAPES = new WeakMap<
+  BlueprintNode,
+  | readonly {
+      entry: BlueprintChildEntry;
+      ids: readonly number[];
+      schema: EffectiveSchema;
+    }[]
+  | null
+>();
 
 /** Memoize an unambiguous static host in the structure's property order. */
-const staticShape = (host: BlueprintNode, isAtomic: BlueprintOptions['isAtomic']) => {
+const staticShape = (
+  host: BlueprintNode,
+  isAtomic: BlueprintOptions['isAtomic'],
+) => {
   if (STATIC_SHAPES.has(host)) return STATIC_SHAPES.get(host);
-  const selected: Record<string, {
-    entry: BlueprintChildEntry; ids: readonly number[]; schema: EffectiveSchema;
-  }> = Object.create(null);
+  const selected: Record<
+    string,
+    {
+      entry: BlueprintChildEntry;
+      ids: readonly number[];
+      schema: EffectiveSchema;
+    }
+  > = Object.create(null);
   for (let index = 0; index < host.childEntries.length; index++) {
     const entry = host.childEntries[index];
-    const schema = mergeEffectiveSchema(entry.node, NO_ACTIVE_IDS, { mode: 'runtime', isAtomic });
+    const schema = mergeEffectiveSchema(entry.node, NO_ACTIVE_IDS, {
+      mode: 'runtime',
+      isAtomic,
+    });
     let hasGate = false;
-    for (let declarationIndex = 0; declarationIndex < entry.declarations.length; declarationIndex++)
-      if (entry.declarations[declarationIndex].gates.length > 0) { hasGate = true; break; }
-    if (hasOwnProperty(selected, entry.name) || entry.node.kind === 'virtual' ||
-      !entry.declarations.length || schema.typeConflict ||
-      hasGate) {
+    for (
+      let declarationIndex = 0;
+      declarationIndex < entry.declarations.length;
+      declarationIndex++
+    )
+      if (entry.declarations[declarationIndex].gates.length > 0) {
+        hasGate = true;
+        break;
+      }
+    if (
+      hasOwnProperty(selected, entry.name) ||
+      entry.node.kind === 'virtual' ||
+      !entry.declarations.length ||
+      schema.typeConflict ||
+      hasGate
+    ) {
       STATIC_SHAPES.set(host, null);
       return null;
     }
@@ -78,21 +113,35 @@ export const selectChildren = <Self extends SchemaNodeRecord<Self>>(
   computeChild: (child: Self) => void,
   immediate: boolean,
 ): boolean => {
-  if (node.behavior.type === 'array' && canReuseArrayChildren(node, context, prior)) {
+  if (
+    node.behavior.type === 'array' &&
+    canReuseArrayChildren(node, context, prior)
+  ) {
     reuseArrayChildren(node, context, prior, computeChild);
     return false;
   }
   if (!context.hasGates && node.behavior.type === 'object') {
-    const shape = staticShape(node.blueprintNode, node.runtime.blueprint?.isAtomic);
+    const shape = staticShape(
+      node.blueprintNode,
+      node.runtime.blueprint?.isAtomic,
+    );
     const children = node.children;
     let matches = !!shape && !!children && children.length === shape.length;
     if (matches && shape && children)
       for (let index = 0; index < shape.length; index++) {
         const { entry, schema } = shape[index];
         const child = children[index];
-        if (child.name !== entry.name || child.blueprintNode !== entry.node ||
-          child.schema !== schema || !child.active || child.detached ||
-          node.structure?.[entry.name] !== child) { matches = false; break; }
+        if (
+          child.name !== entry.name ||
+          child.blueprintNode !== entry.node ||
+          child.schema !== schema ||
+          !child.active ||
+          child.detached ||
+          node.structure?.[entry.name] !== child
+        ) {
+          matches = false;
+          break;
+        }
       }
     if (matches && shape && children) {
       for (let index = 0; index < shape.length; index++) {
@@ -120,7 +169,11 @@ export const selectChildren = <Self extends SchemaNodeRecord<Self>>(
     for (let index = 0; !changed && index < children.length; index++)
       if (children[index] !== before[index]) changed = true;
     node.structure = next;
-    node.children = captureSchemaNodeChange(node, 'children', changed ? children : before);
+    node.children = captureSchemaNodeChange(
+      node,
+      'children',
+      changed ? children : before,
+    );
     if (changed) context.changedNodes.add(node);
     return changed;
   }
@@ -138,18 +191,32 @@ export const selectChildren = <Self extends SchemaNodeRecord<Self>>(
   const seen = new Set<string>();
   const inactiveEntries: BlueprintChildEntry[] = [];
   let changed = false;
-  const cached = context.kind !== 'load' && context.hasGates && node.behavior.type === 'object'
-    ? DIRECT_CHILD_SELECTION_PLANS.get(node.blueprintNode) : null;
-  const direct = cached === undefined
-    ? getDirectChildSelectionPlan(node.blueprintNode, node.runtime.blueprint, true) : cached;
+  const cached =
+    context.kind !== 'load' &&
+    context.hasGates &&
+    node.behavior.type === 'object'
+      ? DIRECT_CHILD_SELECTION_PLANS.get(node.blueprintNode)
+      : null;
+  const direct =
+    cached === undefined
+      ? getDirectChildSelectionPlan(
+          node.blueprintNode,
+          node.runtime.blueprint,
+          true,
+        )
+      : cached;
   const entries = direct ? null : node.behavior.declareChildren(node);
   const count = direct ? direct.steps.length : entries!.length;
   const flushReads = immediate && !direct;
   for (let entryIndex = 0; entryIndex < count; entryIndex++) {
     const step = direct?.steps[entryIndex];
     const entry = step ? step.entry : entries![entryIndex];
-    if (flushReads && context.pendingOutputs?.size) flushPendingGateReads(entry.node,
-      `${node.path}/${escapeSegment(entry.name)}`, context);
+    if (flushReads && context.pendingOutputs?.size)
+      flushPendingGateReads(
+        entry.node,
+        `${node.path}/${escapeSegment(entry.name)}`,
+        context,
+      );
     let threw = false;
     let declarations: BlueprintChildEntry['declarations'];
     let activeIds: readonly number[] | undefined;
@@ -160,38 +227,64 @@ export const selectChildren = <Self extends SchemaNodeRecord<Self>>(
       activeIds = admitted ? step.ids : NO_ACTIVE_IDS;
       threw = !admitted && context.gateThrowVersion !== version;
     } else if (context.hasGates) {
-      const active: typeof entry.declarations[number][] = [];
+      const active: (typeof entry.declarations)[number][] = [];
       const ids: number[] = [];
       for (let index = 0; index < entry.declarations.length; index++) {
         const declaration = entry.declarations[index];
         const version = context.gateThrowVersion;
         let admitted = true;
-        for (let gateIndex = 0; gateIndex < declaration.gates.length; gateIndex++) {
+        for (
+          let gateIndex = 0;
+          gateIndex < declaration.gates.length;
+          gateIndex++
+        ) {
           const gate = declaration.gates[gateIndex];
-          if (!evaluateGate(gate, context, node,
-            gate.schemaPath === `${declaration.schemaPath}/controls/active`
-              ? entry.name : undefined)) { admitted = false; break; }
+          if (
+            !evaluateGate(
+              gate,
+              context,
+              node,
+              gate.schemaPath === `${declaration.schemaPath}/controls/active`
+                ? entry.name
+                : undefined,
+            )
+          ) {
+            admitted = false;
+            break;
+          }
         }
-        if (admitted) { active.push(declaration); ids.push(declaration.id); }
-        else if (context.gateThrowVersion !== version) threw = true;
+        if (admitted) {
+          active.push(declaration);
+          ids.push(declaration.id);
+        } else if (context.gateThrowVersion !== version) threw = true;
       }
       declarations = active;
       activeIds = ids;
     } else declarations = entry.declarations;
     if (declarations.length === 0) {
       const priorChild = hasOwnProperty(prior, entry.name)
-        ? prior[entry.name] : undefined;
-      const exiting = priorChild?.blueprintNode.kind === entry.node.kind
-        ? priorChild : context.pendingExits.get(JSON.stringify([
-          `${node.path}/${escapeSegment(entry.name)}`, entry.node.kind]));
+        ? prior[entry.name]
+        : undefined;
+      const exiting =
+        priorChild?.blueprintNode.kind === entry.node.kind
+          ? priorChild
+          : context.pendingExits.get(
+              JSON.stringify([
+                `${node.path}/${escapeSegment(entry.name)}`,
+                entry.node.kind,
+              ]),
+            );
       if (exiting) {
         if (threw) (context.throwingGateExits ??= new Set()).add(exiting);
         else context.throwingGateExits?.delete(exiting);
       }
-      if (context.distributedInputs.has(node) ||
-        next[entry.name]) inactiveEntries.push(entry);
-      if (next[entry.name] && !seen.has(entry.name) &&
-        next[entry.name].blueprintNode.kind === entry.node.kind) {
+      if (context.distributedInputs.has(node) || next[entry.name])
+        inactiveEntries.push(entry);
+      if (
+        next[entry.name] &&
+        !seen.has(entry.name) &&
+        next[entry.name].blueprintNode.kind === entry.node.kind
+      ) {
         delete next[entry.name];
         changed = true;
         if (immediate) {
@@ -201,49 +294,87 @@ export const selectChildren = <Self extends SchemaNodeRecord<Self>>(
       continue;
     }
     const retained = hasOwnProperty(prior, entry.name)
-      ? prior[entry.name] : undefined;
+      ? prior[entry.name]
+      : undefined;
     if (retained?.blueprintNode.kind === entry.node.kind)
       context.throwingGateExits?.delete(retained);
     if (seen.has(entry.name)) {
       if (next[entry.name]?.blueprintNode.kind !== entry.node.kind) {
-        recordSettlementFailure(context, new SchemaFormError(SHARED_NODE_CONFLICT,
-          `Active declarations conflict at ${node.path}/${entry.name}`,
-          { path: `${node.path}/${entry.name}` }), 'sharedConflict');
+        recordSettlementFailure(
+          context,
+          new SchemaFormError(
+            SHARED_NODE_CONFLICT,
+            `Active declarations conflict at ${node.path}/${entry.name}`,
+            { path: `${node.path}/${entry.name}` },
+          ),
+          'sharedConflict',
+        );
       }
       continue;
     }
     seen.add(entry.name);
-    const priorChild = hasOwnProperty(prior, entry.name) &&
+    const priorChild =
+      hasOwnProperty(prior, entry.name) &&
       prior[entry.name].blueprintNode.kind === entry.node.kind
-      ? prior[entry.name] : undefined;
-    const currentChild = next[entry.name]?.blueprintNode.kind === entry.node.kind
-      ? next[entry.name] : undefined;
+        ? prior[entry.name]
+        : undefined;
+    const currentChild =
+      next[entry.name]?.blueprintNode.kind === entry.node.kind
+        ? next[entry.name]
+        : undefined;
     const distribution = context.distributedInputs.get(node);
-    const ownsInput = distribution &&
-      hasDistributedChildInput(distribution.input, entry.name,
-        node.behavior.type === 'array');
+    const ownsInput =
+      distribution &&
+      hasDistributedChildInput(
+        distribution.input,
+        entry.name,
+        node.behavior.type === 'array',
+      );
     const latent = context.root.runtime.latentRaw;
-    const latentKey = latent.size > 0 && !priorChild ? JSON.stringify([
-      `${node.path}/${escapeSegment(entry.name)}`, entry.node.kind,
-    ]) : undefined;
-    const input = ownsInput ? Reflect.get(distribution.input, entry.name) :
-      distribution?.whole ? undefined :
-        latentKey !== undefined && latent.has(latentKey) ? latent.get(latentKey) : undefined;
-    if (!priorChild && !currentChild &&
-      hasRecursiveExpansion(node, entry.node, input, context)) {
+    const latentKey =
+      latent.size > 0 && !priorChild
+        ? JSON.stringify([
+            `${node.path}/${escapeSegment(entry.name)}`,
+            entry.node.kind,
+          ])
+        : undefined;
+    const input = ownsInput
+      ? Reflect.get(distribution.input, entry.name)
+      : distribution?.whole
+        ? undefined
+        : latentKey !== undefined && latent.has(latentKey)
+          ? latent.get(latentKey)
+          : undefined;
+    if (
+      !priorChild &&
+      !currentChild &&
+      hasRecursiveExpansion(node, entry.node, input, context)
+    ) {
       if (!context.exceededBudget) {
-        recordSettlementFailure(context, new SchemaFormError(RECURSIVE_SHAPE_DIVERGED,
-          `Recursive shape diverged at ${node.path}/${entry.name}`,
-          { path: `${node.path}/${entry.name}` }), 'budget');
+        recordSettlementFailure(
+          context,
+          new SchemaFormError(
+            RECURSIVE_SHAPE_DIVERGED,
+            `Recursive shape diverged at ${node.path}/${entry.name}`,
+            { path: `${node.path}/${entry.name}` },
+          ),
+          'budget',
+        );
         context.exceededBudget = 'recursion';
       }
       continue;
     }
-    const key = context.pendingExits.size > 0 ? JSON.stringify([
-      `${node.path}/${escapeSegment(entry.name)}`, entry.node.kind,
-    ]) : undefined;
-    const pending = key === undefined ? undefined : context.pendingExits.get(key);
-    const child = currentChild ?? priorChild ?? pending ?? createChildNode(node, entry);
+    const key =
+      context.pendingExits.size > 0
+        ? JSON.stringify([
+            `${node.path}/${escapeSegment(entry.name)}`,
+            entry.node.kind,
+          ])
+        : undefined;
+    const pending =
+      key === undefined ? undefined : context.pendingExits.get(key);
+    const child =
+      currentChild ?? priorChild ?? pending ?? createChildNode(node, entry);
     context.perished.delete(child);
     if (key !== undefined) context.pendingExits.delete(key);
     if (pending && child === pending) {
@@ -265,9 +396,11 @@ export const selectChildren = <Self extends SchemaNodeRecord<Self>>(
     const ids = activeIds ?? staticIds(entry);
     if (context.selectedDeclarationIds.get(child) !== ids)
       context.selectedDeclarationIds.set(child, ids);
-    const effective = mergeEffectiveSchema(child.blueprintNode,
+    const effective = mergeEffectiveSchema(
+      child.blueprintNode,
       context.hasGates ? ids : NO_ACTIVE_IDS,
-      { mode: 'runtime', isAtomic: node.runtime.blueprint?.isAtomic });
+      { mode: 'runtime', isAtomic: node.runtime.blueprint?.isAtomic },
+    );
     if (child.schema !== effective) {
       if (!context.originalSchemas.has(child.path))
         context.originalSchemas.set(child.path, child.schema);
@@ -279,9 +412,16 @@ export const selectChildren = <Self extends SchemaNodeRecord<Self>>(
       changed = true;
       entryChanged = true;
     }
-    if ((effective.typeConflict || hasSharedConflict(entry, declarations))) {
-      recordSettlementFailure(context, new SchemaFormError(SHARED_NODE_CONFLICT,
-        `Active declarations conflict at ${child.path}`, { path: child.path }), 'sharedConflict');
+    if (effective.typeConflict || hasSharedConflict(entry, declarations)) {
+      recordSettlementFailure(
+        context,
+        new SchemaFormError(
+          SHARED_NODE_CONFLICT,
+          `Active declarations conflict at ${child.path}`,
+          { path: child.path },
+        ),
+        'sharedConflict',
+      );
     }
     child.active = captureSchemaNodeChange(child, 'active', true);
     child.detached = false;
@@ -305,18 +445,34 @@ export const selectChildren = <Self extends SchemaNodeRecord<Self>>(
   flushPendingOutput(node, context);
   for (let index = 0; index < inactiveEntries.length; index++) {
     const entry = inactiveEntries[index];
-    if (next[entry.name] || seen.has(entry.name) ||
-      (context.kind !== 'load' && hasOwnProperty(prior, entry.name))) continue;
+    if (
+      next[entry.name] ||
+      seen.has(entry.name) ||
+      (context.kind !== 'load' && hasOwnProperty(prior, entry.name))
+    )
+      continue;
     seen.add(entry.name);
     const distribution = context.distributedInputs.get(node);
-    if (!distribution ||
-      !hasDistributedChildInput(distribution.input, entry.name,
-        node.behavior.type === 'array')) continue;
-    distributeLatentValue(node.runtime, context,
-      `${node.path}/${escapeSegment(entry.name)}`, entry.node,
+    if (
+      !distribution ||
+      !hasDistributedChildInput(
+        distribution.input,
+        entry.name,
+        node.behavior.type === 'array',
+      )
+    )
+      continue;
+    distributeLatentValue(
+      node.runtime,
+      context,
+      `${node.path}/${escapeSegment(entry.name)}`,
+      entry.node,
       Reflect.get(distribution.input, entry.name),
-      getLatentOrder(node, entry.name, entry.node), distribution.whole,
-      node.blueprintNode.childEntries, distribution.automatic);
+      getLatentOrder(node, entry.name, entry.node),
+      distribution.whole,
+      node.blueprintNode.childEntries,
+      distribution.automatic,
+    );
   }
   const priorNames = Object.keys(prior);
   for (let index = 0; index < priorNames.length; index++) {

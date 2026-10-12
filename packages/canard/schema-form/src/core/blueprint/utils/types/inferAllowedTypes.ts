@@ -73,14 +73,20 @@ export const inferAllowedTypes = (
         )
           return;
         hasKeywordBranch = true;
-        const types = inferAllowedTypes(context, branch, path, true, stack, true);
+        const types = inferAllowedTypes(
+          context,
+          branch,
+          path,
+          true,
+          stack,
+          true,
+        );
         if (!types)
           return throwBlueprintError(
             BlueprintErrorCode.UnknownJsonSchema,
             path,
             {
-              guidance:
-                'Specify type explicitly for an unconstrained branch.',
+              guidance: 'Specify type explicitly for an unconstrained branch.',
             },
             context.options,
           );

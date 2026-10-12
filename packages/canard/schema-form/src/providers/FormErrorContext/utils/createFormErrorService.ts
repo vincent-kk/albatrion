@@ -1,5 +1,5 @@
-import type { FormErrorRecord } from '@/schema-form/errors';
 import { observeSchemaNodeReports } from '@/schema-form/core';
+import type { FormErrorRecord } from '@/schema-form/errors';
 
 import { reportErrorToHost } from '../reportErrorToHost';
 import type { FormErrorService } from '../type';
@@ -33,8 +33,7 @@ export const createFormErrorService = (): FormErrorService => {
           const deliver = () => service.onError?.(record);
           if (service.root) observeSchemaNodeReports(service.root, deliver);
           else deliver();
-        }
-        else if (process.env.NODE_ENV !== 'production')
+        } else if (process.env.NODE_ENV !== 'production')
           console.warn(record.message, record);
       } finally {
         delivering = false;

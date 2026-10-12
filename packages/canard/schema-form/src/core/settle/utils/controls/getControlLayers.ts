@@ -30,7 +30,9 @@ export interface ControlTarget<Self> {
   /** Direct parent whose groups may address this occurrence. */
   readonly parent: Self | null;
   /** Last active declaration choices for the whole tree. */
-  readonly runtime: { readonly committedDeclarationIds?: ReadonlyMap<string, readonly number[]> };
+  readonly runtime: {
+    readonly committedDeclarationIds?: ReadonlyMap<string, readonly number[]>;
+  };
 }
 
 /** One selected declaration and the host that owns its expression paths. */
@@ -54,24 +56,36 @@ export interface ControlLayer<Self> {
  * @returns Active control groups without evaluating their state keys
  */
 export const getControlLayers = <Self extends ControlTarget<Self>>(
-  node: Self, selectedDeclarationIds: ReadonlyMap<Self, readonly number[]>,
+  node: Self,
+  selectedDeclarationIds: ReadonlyMap<Self, readonly number[]>,
 ): readonly ControlLayer<Self>[] => {
   const selected = (current: Self): readonly number[] =>
     selectedDeclarationIds.get(current) ??
-    current.runtime.committedDeclarationIds?.get(getCommittedDeclarationKey(current)) ??
+    current.runtime.committedDeclarationIds?.get(
+      getCommittedDeclarationKey(current),
+    ) ??
     declarationIds(current.blueprintNode);
   const nodeIds = selected(node);
   const groups: ControlLayer<Self>[] = [];
   const declarations = node.blueprintNode.declarations;
   for (let index = 0; index < declarations.length; index++) {
     const declaration = declarations[index];
-    if (!nodeIds.includes(declaration.id) || declaration.scope !== 'node' ||
-      !declaration.schema || typeof declaration.schema !== 'object') continue;
+    if (
+      !nodeIds.includes(declaration.id) ||
+      declaration.scope !== 'node' ||
+      !declaration.schema ||
+      typeof declaration.schema !== 'object'
+    )
+      continue;
     const controls: unknown = Reflect.get(declaration.schema, 'controls');
     if (controls && typeof controls === 'object' && !isArray(controls))
-      groups.push({ layer: 'node', declarationId: declaration.id,
-        schemaPath: `${declaration.schemaPath}/controls`, controls,
-        host: node });
+      groups.push({
+        layer: 'node',
+        declarationId: declaration.id,
+        schemaPath: `${declaration.schemaPath}/controls`,
+        controls,
+        host: node,
+      });
   }
   const parent = node.parent;
   if (!parent) return groups;
@@ -79,25 +93,41 @@ export const getControlLayers = <Self extends ControlTarget<Self>>(
   const parentDeclarations = parent.blueprintNode.declarations;
   for (let index = 0; index < parentDeclarations.length; index++) {
     const declaration = parentDeclarations[index];
-    if (!parentIds.includes(declaration.id) || !declaration.schema ||
-      typeof declaration.schema !== 'object') continue;
+    if (
+      !parentIds.includes(declaration.id) ||
+      !declaration.schema ||
+      typeof declaration.schema !== 'object'
+    )
+      continue;
     const controls: unknown = Reflect.get(declaration.schema, 'controls');
-    if (!controls || typeof controls !== 'object' || isArray(controls)) continue;
+    if (!controls || typeof controls !== 'object' || isArray(controls))
+      continue;
     let ownsFragment = false;
     if (declaration.scope === 'fragment')
       for (let childIndex = 0; childIndex < declarations.length; childIndex++) {
         const child = declarations[childIndex];
-        if (nodeIds.includes(child.id) && (
-          child.schemaPath.startsWith(`${declaration.schemaPath}/properties/`) ||
-          child.schemaPath.startsWith(`${declaration.schemaPath}/items/`) ||
-          child.schemaPath.startsWith(`${declaration.schemaPath}/prefixItems/`))) {
+        if (
+          nodeIds.includes(child.id) &&
+          (child.schemaPath.startsWith(
+            `${declaration.schemaPath}/properties/`,
+          ) ||
+            child.schemaPath.startsWith(`${declaration.schemaPath}/items/`) ||
+            child.schemaPath.startsWith(
+              `${declaration.schemaPath}/prefixItems/`,
+            ))
+        ) {
           ownsFragment = true;
           break;
         }
       }
     if (ownsFragment)
-      groups.push({ layer: 'fragment', declarationId: declaration.id,
-        schemaPath: `${declaration.schemaPath}/controls`, controls, host: parent });
+      groups.push({
+        layer: 'fragment',
+        declarationId: declaration.id,
+        schemaPath: `${declaration.schemaPath}/controls`,
+        controls,
+        host: parent,
+      });
     const children: unknown = Reflect.get(controls, 'children');
     if (!isArray(children)) continue;
     for (let index = 0; index < children.length; index++) {
@@ -106,10 +136,18 @@ export const getControlLayers = <Self extends ControlTarget<Self>>(
       const targets: unknown = Reflect.get(item, 'targets');
       if (!isArray(targets) || !targets.includes(node.name)) continue;
       const itemControls: unknown = Reflect.get(item, 'controls');
-      if (itemControls && typeof itemControls === 'object' && !isArray(itemControls))
-        groups.push({ layer: 'children', declarationId: declaration.id,
+      if (
+        itemControls &&
+        typeof itemControls === 'object' &&
+        !isArray(itemControls)
+      )
+        groups.push({
+          layer: 'children',
+          declarationId: declaration.id,
           schemaPath: `${declaration.schemaPath}/controls/children/${index}/controls`,
-          controls: itemControls, host: parent });
+          controls: itemControls,
+          host: parent,
+        });
     }
   }
   return groups;

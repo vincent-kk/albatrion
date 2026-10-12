@@ -1,5 +1,5 @@
-import type { SchemaNode as PublicSchemaNode } from '../type';
 import { SchemaNode as RuntimeSchemaNode } from '../SchemaNode';
+import type { SchemaNode as PublicSchemaNode } from '../type';
 
 /**
  * Narrow the public discriminated view to the single binding runtime class.
@@ -9,9 +9,15 @@ import { SchemaNode as RuntimeSchemaNode } from '../SchemaNode';
  * @throws TypeError when the input does not have the required runtime shape
  */
 export const requireRuntimeSchemaNode = (
-  node: PublicSchemaNode, rootOnly = false,
+  node: PublicSchemaNode,
+  rootOnly = false,
 ): RuntimeSchemaNode => {
-  if (node instanceof RuntimeSchemaNode &&
-    (!rootOnly || node.isRoot && !node.detached)) return node;
-  throw new TypeError('Binding requires a schema-form node with the requested root shape');
+  if (
+    node instanceof RuntimeSchemaNode &&
+    (!rootOnly || (node.isRoot && !node.detached))
+  )
+    return node;
+  throw new TypeError(
+    'Binding requires a schema-form node with the requested root shape',
+  );
 };

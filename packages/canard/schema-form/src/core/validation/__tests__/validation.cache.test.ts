@@ -1,4 +1,5 @@
 import { describe, expect, it, vi } from 'vitest';
+
 import type { Validator } from '../type';
 import { readValidationEntry } from '../utils/cache/readValidationEntry';
 
@@ -8,7 +9,10 @@ describe('validator cache', () => {
     const compile = vi.fn(() => () => null);
     const compileGuard = vi.fn(() => () => true);
     const first: Validator = { compile, compileGuard };
-    const second: Validator = { compile: vi.fn(() => () => null), compileGuard };
+    const second: Validator = {
+      compile: vi.fn(() => () => null),
+      compileGuard,
+    };
     const entry = readValidationEntry(first, root);
     expect(readValidationEntry(first, root)).toBe(entry);
     expect(entry.copy).not.toBe(root);
@@ -20,8 +24,11 @@ describe('validator cache', () => {
 
   it('VALIDATE-044 core never binds a validator', () => {
     const bind = vi.fn();
-    const validator = { compile: () => () => null,
-      compileGuard: () => () => true, bind };
+    const validator = {
+      compile: () => () => null,
+      compileGuard: () => () => true,
+      bind,
+    };
     readValidationEntry(validator, { type: 'string' });
     expect(bind).not.toHaveBeenCalled();
   });

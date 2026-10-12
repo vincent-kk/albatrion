@@ -1,17 +1,21 @@
-import { recordSettlementFailure } from '../errors/recordSettlementFailure';
-import { CONDITIONAL_SCHEMA_WITHOUT_VALIDATOR,
-  SchemaFormError, VALIDATOR_MISSING } from '../../../../errors';
 import { isArray } from '@winglet/common-utils/filter';
 import { hasOwnProperty } from '@winglet/common-utils/lib';
+
+import {
+  CONDITIONAL_SCHEMA_WITHOUT_VALIDATOR,
+  SchemaFormError,
+  VALIDATOR_MISSING,
+} from '../../../../errors';
 import type { BlueprintGate } from '../../../blueprint';
 import type { SchemaNodeRecord } from '../../../record';
-import type { SettlementContext } from '../../type';
-import { readProjectedValue } from './readProjectedValue';
-import { EXPRESSION_THREW, GUARD_FAILED } from '../errors/settleErrorCode';
-import { getGateRegistry } from './getGateRegistry';
-import { getGateExpression } from './getGateExpression';
-import { readSchemaNodeGuard } from '../../../validation';
 import { ValidationMode } from '../../../types/state';
+import { readSchemaNodeGuard } from '../../../validation';
+import type { SettlementContext } from '../../type';
+import { recordSettlementFailure } from '../errors/recordSettlementFailure';
+import { EXPRESSION_THREW, GUARD_FAILED } from '../errors/settleErrorCode';
+import { getGateExpression } from './getGateExpression';
+import { getGateRegistry } from './getGateRegistry';
+import { readProjectedValue } from './readProjectedValue';
 
 /**
  * Evaluate one bound gate with the real expression or validator guard.
@@ -27,15 +31,19 @@ export const evaluateGate = <Self extends SchemaNodeRecord<Self>>(
   owner: Self,
   edgeName?: string,
 ): boolean => {
-  if (gate.appliesWhen?.some((parentGate) =>
-    !evaluateGate(parentGate, context, owner)))
+  if (
+    gate.appliesWhen?.some(
+      (parentGate) => !evaluateGate(parentGate, context, owner),
+    )
+  )
     return false;
   const registry = getGateRegistry(owner.runtime);
   const occurrence = registry.locate(owner, gate, edgeName);
   const hostPath = occurrence.hostPath;
-  const raw = gate.kind === 'active' ? undefined : readProjectedValue(context, hostPath);
-  const host = raw !== null && typeof raw === 'object' && !isArray(raw)
-    ? raw : {};
+  const raw =
+    gate.kind === 'active' ? undefined : readProjectedValue(context, hostPath);
+  const host =
+    raw !== null && typeof raw === 'object' && !isArray(raw) ? raw : {};
   let input: Record<string, unknown> = { ...host };
   let hostNode: Self | undefined;
   if (gate.kind !== 'active') {
@@ -44,36 +52,56 @@ export const evaluateGate = <Self extends SchemaNodeRecord<Self>>(
       hostNode = context.root;
       const segments = hostPath ? registry.pathSegments(hostPath) : [];
       for (let index = 0; index < segments.length; index++) {
-        const structure: Record<string, Self> | null | undefined = hostNode?.structure;
+        const structure: Record<string, Self> | null | undefined =
+          hostNode?.structure;
         const name = segments[index];
-        hostNode = structure && hasOwnProperty(structure, name)
-          ? structure[name] : undefined;
+        hostNode =
+          structure && hasOwnProperty(structure, name)
+            ? structure[name]
+            : undefined;
       }
     }
   }
   const extra = hostNode?.extras;
   let projectedHost = hostNode !== undefined;
-  for (let ancestor: Self | null | undefined = hostNode;
-    ancestor; ancestor = ancestor.parent)
-    if (ancestor.behavior.strategy === 'branch' && ancestor.raw !== undefined &&
-      (ancestor.parent !== null || raw === null || typeof raw !== 'object' ||
-        isArray(raw))) {
+  for (
+    let ancestor: Self | null | undefined = hostNode;
+    ancestor;
+    ancestor = ancestor.parent
+  )
+    if (
+      ancestor.behavior.strategy === 'branch' &&
+      ancestor.raw !== undefined &&
+      (ancestor.parent !== null ||
+        raw === null ||
+        typeof raw !== 'object' ||
+        isArray(raw))
+    ) {
       projectedHost = false;
       break;
     }
   const projectedExtra = projectedHost ? extra : undefined;
-  if (projectedExtra !== null && typeof projectedExtra === 'object' &&
-    !isArray(projectedExtra))
+  if (
+    projectedExtra !== null &&
+    typeof projectedExtra === 'object' &&
+    !isArray(projectedExtra)
+  )
     input = { ...input, ...projectedExtra };
   try {
     if (gate.kind === 'discriminator') {
       const condition = gate.condition;
-      if (condition === null || typeof condition !== 'object' ||
+      if (
+        condition === null ||
+        typeof condition !== 'object' ||
         !('propertyName' in condition) ||
         typeof condition.propertyName !== 'string' ||
-        !('values' in condition) || !isArray(condition.values)) return false;
+        !('values' in condition) ||
+        !isArray(condition.values)
+      )
+        return false;
       const value = hasOwnProperty(input, condition.propertyName)
-        ? input[condition.propertyName] : undefined;
+        ? input[condition.propertyName]
+        : undefined;
       for (let index = 0; index < condition.values.length; index++)
         if (condition.values[index] === value) return true;
       return false;
@@ -83,43 +111,60 @@ export const evaluateGate = <Self extends SchemaNodeRecord<Self>>(
       const guard = readSchemaNodeGuard(runtime, gate);
       if (!guard) {
         const keys = runtime.errorReporter?.hasConsumer()
-          ? runtime.warningKeys ??= new Set() : undefined;
-        if (runtime.validationMode !== ValidationMode.None &&
-          keys && !keys.has(VALIDATOR_MISSING)) {
+          ? (runtime.warningKeys ??= new Set())
+          : undefined;
+        if (
+          runtime.validationMode !== ValidationMode.None &&
+          keys &&
+          !keys.has(VALIDATOR_MISSING)
+        ) {
           keys.add(VALIDATOR_MISSING);
-          const record = { level: 'warning' as const,
+          const record = {
+            level: 'warning' as const,
             code: `SCHEMA_FORM_WARNING.${VALIDATOR_MISSING}` as const,
-            message: 'Validation is disabled because no validator was selected' };
-          (runtime.pendingWarningRecords ??= new Map()).set(VALIDATOR_MISSING,
-            record);
+            message: 'Validation is disabled because no validator was selected',
+          };
+          (runtime.pendingWarningRecords ??= new Map()).set(
+            VALIDATOR_MISSING,
+            record,
+          );
           runtime.chainOccurrences?.push({ kind: 'record', record });
         }
         if (keys && !keys.has(CONDITIONAL_SCHEMA_WITHOUT_VALIDATOR)) {
           keys.add(CONDITIONAL_SCHEMA_WITHOUT_VALIDATOR);
-          const record = { level: 'warning' as const,
+          const record = {
+            level: 'warning' as const,
             code: `SCHEMA_FORM_WARNING.${CONDITIONAL_SCHEMA_WITHOUT_VALIDATOR}` as const,
             message: 'Conditional schema is inactive without a validator',
-            schemaPath: gate.schemaPath };
+            schemaPath: gate.schemaPath,
+          };
           (runtime.pendingWarningRecords ??= new Map()).set(
-            CONDITIONAL_SCHEMA_WITHOUT_VALIDATOR, record);
+            CONDITIONAL_SCHEMA_WITHOUT_VALIDATOR,
+            record,
+          );
           runtime.chainOccurrences?.push({ kind: 'record', record });
         }
         return false;
       }
       const result: unknown = guard(input);
       if (typeof result !== 'boolean')
-        throw new TypeError(`Guard at ${gate.schemaPath} did not return a boolean`);
+        throw new TypeError(
+          `Guard at ${gate.schemaPath} did not return a boolean`,
+        );
       return gate.negated ? !result : result;
     }
     const blueprint = context.root.runtime.blueprint;
-    const expression = blueprint ? getGateExpression(blueprint, gate.schemaPath) :
-      undefined;
+    const expression = blueprint
+      ? getGateExpression(blueprint, gate.schemaPath)
+      : undefined;
     if (expression) {
       const dependencies = new Array<unknown>(expression.dependencies.length);
       for (let index = 0; index < expression.dependencies.length; index++) {
         const path = occurrence.watchPaths[index];
-        dependencies[index] = path === '@' ? context.root.runtime.context ?? {} :
-          readProjectedValue(context, path);
+        dependencies[index] =
+          path === '@'
+            ? (context.root.runtime.context ?? {})
+            : readProjectedValue(context, path);
       }
       return Boolean(expression.evaluate(dependencies));
     }
@@ -128,25 +173,40 @@ export const evaluateGate = <Self extends SchemaNodeRecord<Self>>(
     const runtime = context.root.runtime;
     context.gateThrowVersion = (context.gateThrowVersion ?? 0) + 1;
     const code = gate.kind === 'if' ? GUARD_FAILED : EXPRESSION_THREW;
-    const repeated = context.failures?.some((error) =>
-      error.code === `SCHEMA_FORM_ERROR.${code}` &&
-      error.details.path === hostPath && error.details.schemaPath === gate.schemaPath);
-    const failure = runtime.mountingGuardPass || repeated ? undefined :
-      new SchemaFormError(code, `Gate evaluation failed at ${gate.schemaPath}`,
-        { path: hostPath, schemaPath: gate.schemaPath, cause });
-    if (gate.kind === 'if' && runtime.errorReporter?.hasConsumer() &&
+    const repeated = context.failures?.some(
+      (error) =>
+        error.code === `SCHEMA_FORM_ERROR.${code}` &&
+        error.details.path === hostPath &&
+        error.details.schemaPath === gate.schemaPath,
+    );
+    const failure =
+      runtime.mountingGuardPass || repeated
+        ? undefined
+        : new SchemaFormError(
+            code,
+            `Gate evaluation failed at ${gate.schemaPath}`,
+            { path: hostPath, schemaPath: gate.schemaPath, cause },
+          );
+    if (
+      gate.kind === 'if' &&
+      runtime.errorReporter?.hasConsumer() &&
       !runtime.reportedGuardFailures?.has(gate.schemaPath) &&
-      !runtime.guardFailureRecords?.has(gate.schemaPath))
-      {
-        const record = { level: 'error' as const,
-          code: 'SCHEMA_FORM_ERROR.GUARD_FAILED' as const,
-          message: `Gate evaluation failed at ${gate.schemaPath}`,
-          schemaPath: gate.schemaPath, path: hostPath,
-          details: { cause },
-          surface: runtime.mountingGuardPass ? 'sink' as const : 'thrown' as const };
-        (runtime.guardFailureRecords ??= new Map()).set(gate.schemaPath, record);
-        runtime.chainOccurrences?.push({ kind: 'record', record });
-      }
+      !runtime.guardFailureRecords?.has(gate.schemaPath)
+    ) {
+      const record = {
+        level: 'error' as const,
+        code: 'SCHEMA_FORM_ERROR.GUARD_FAILED' as const,
+        message: `Gate evaluation failed at ${gate.schemaPath}`,
+        schemaPath: gate.schemaPath,
+        path: hostPath,
+        details: { cause },
+        surface: runtime.mountingGuardPass
+          ? ('sink' as const)
+          : ('thrown' as const),
+      };
+      (runtime.guardFailureRecords ??= new Map()).set(gate.schemaPath, record);
+      runtime.chainOccurrences?.push({ kind: 'record', record });
+    }
     if (failure) recordSettlementFailure(context, failure, 'expression');
     return false;
   }

@@ -7,9 +7,13 @@ import { SchemaNodeState } from '../../types/state';
 // filid:contract surface-members
 describe('EVENT-062 43C-01 globalState surface', () => {
   it('counts true keys across nodes and removes a key only at zero', () => {
-    const { root } = makeSchemaNodeTree({ type: 'object', properties: {
-      first: { type: 'string' }, second: { type: 'string' },
-    } });
+    const { root } = makeSchemaNodeTree({
+      type: 'object',
+      properties: {
+        first: { type: 'string' },
+        second: { type: 'string' },
+      },
+    });
     root.setValue({ first: 'a', second: 'b' });
     const first = root.find('/first');
     const second = root.find('/second');
@@ -19,9 +23,13 @@ describe('EVENT-062 43C-01 globalState surface', () => {
     first.state = { [SchemaNodeState.Dirty]: true };
     const one = root.globalState;
     expect(one).toEqual({ [SchemaNodeState.Dirty]: true });
-    second.setState({ [SchemaNodeState.Dirty]: true, [SchemaNodeState.Touched]: true });
+    second.setState({
+      [SchemaNodeState.Dirty]: true,
+      [SchemaNodeState.Touched]: true,
+    });
     expect(root.globalState).toEqual({
-      [SchemaNodeState.Dirty]: true, [SchemaNodeState.Touched]: true,
+      [SchemaNodeState.Dirty]: true,
+      [SchemaNodeState.Touched]: true,
     });
     first.setState({ [SchemaNodeState.Dirty]: false });
     const two = root.globalState;
@@ -34,9 +42,13 @@ describe('EVENT-062 43C-01 globalState surface', () => {
   });
 
   it('retains the aggregate reference and emits no root event without a zero crossing', () => {
-    const { root } = makeSchemaNodeTree({ type: 'object', properties: {
-      first: { type: 'string' }, second: { type: 'string' },
-    } });
+    const { root } = makeSchemaNodeTree({
+      type: 'object',
+      properties: {
+        first: { type: 'string' },
+        second: { type: 'string' },
+      },
+    });
     root.setValue({ first: 'a', second: 'b' });
     const first = root.find('/first');
     const second = root.find('/second');
@@ -45,7 +57,8 @@ describe('EVENT-062 43C-01 globalState surface', () => {
     const before = root.globalState;
     const events: number[] = [];
     root.subscribe((event) => {
-      if (event.type & SchemaNodeEventType.UpdateGlobalState) events.push(event.type);
+      if (event.type & SchemaNodeEventType.UpdateGlobalState)
+        events.push(event.type);
     });
     second.setState({ [SchemaNodeState.Dirty]: true });
     first.setState({ [SchemaNodeState.Dirty]: false });
@@ -54,16 +67,21 @@ describe('EVENT-062 43C-01 globalState surface', () => {
   });
 
   it('queues one root event until the outer batch ends', () => {
-    const { root } = makeSchemaNodeTree({ type: 'object', properties: {
-      first: { type: 'string' }, second: { type: 'string' },
-    } });
+    const { root } = makeSchemaNodeTree({
+      type: 'object',
+      properties: {
+        first: { type: 'string' },
+        second: { type: 'string' },
+      },
+    });
     root.setValue({ first: 'a', second: 'b' });
     const first = root.find('/first');
     const second = root.find('/second');
     if (!first || !second) throw new Error('Expected both children');
     const events: number[] = [];
     root.subscribe((event) => {
-      if (event.type & SchemaNodeEventType.UpdateGlobalState) events.push(event.type);
+      if (event.type & SchemaNodeEventType.UpdateGlobalState)
+        events.push(event.type);
     });
     root.batch(() => {
       first.setState({ [SchemaNodeState.Dirty]: true });
@@ -79,7 +97,8 @@ describe('EVENT-062 43C-01 globalState surface', () => {
     const { root } = makeSchemaNodeTree({ type: 'string' });
     const events: number[] = [];
     root.subscribe((event) => {
-      if (event.type & SchemaNodeEventType.UpdateGlobalState) events.push(event.type);
+      if (event.type & SchemaNodeEventType.UpdateGlobalState)
+        events.push(event.type);
     });
     root.setState({ [SchemaNodeState.Dirty]: true });
     expect(events).toHaveLength(1);
@@ -95,9 +114,15 @@ describe('EVENT-062 43C-01 globalState surface', () => {
   });
 
   it('lowers a live node count when a subtree load clears its state', () => {
-    const { root } = makeSchemaNodeTree({ type: 'object', properties: {
-      target: { type: 'string' },
-    } }, { snapshot: { target: 'loaded' } });
+    const { root } = makeSchemaNodeTree(
+      {
+        type: 'object',
+        properties: {
+          target: { type: 'string' },
+        },
+      },
+      { snapshot: { target: 'loaded' } },
+    );
     root.setValue({ target: 'edited' });
     const target = root.find('/target');
     if (!target) throw new Error('Expected the active target');
@@ -107,10 +132,13 @@ describe('EVENT-062 43C-01 globalState surface', () => {
   });
 
   it('lowers counts on exit and lets detached references read the live aggregate', () => {
-    const { root } = makeSchemaNodeTree({ type: 'object', properties: {
-      flag: { type: 'boolean' },
-      target: { type: 'string', controls: { active: '../flag' } },
-    } });
+    const { root } = makeSchemaNodeTree({
+      type: 'object',
+      properties: {
+        flag: { type: 'boolean' },
+        target: { type: 'string', controls: { active: '../flag' } },
+      },
+    });
     root.setValue({ flag: true, target: 'value' });
     const old = root.find('/target');
     if (!old) throw new Error('Expected the active target');

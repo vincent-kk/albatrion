@@ -12,7 +12,9 @@ import { assertNotInDelivery } from '../report/assertNotInDelivery';
  * @param node - Occurrence whose external errors are removed
  * @returns Nothing; delivery is synchronous outside a public write
  */
-export const dispatchClearExternalErrors = <Self extends SchemaNodeRecord<Self>>(
+export const dispatchClearExternalErrors = <
+  Self extends SchemaNodeRecord<Self>,
+>(
   node: Self,
 ): void => {
   assertSchemaNodeWritable(node);

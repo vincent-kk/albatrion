@@ -15,8 +15,11 @@ export const getDeriveSourceOrder = <Self extends SchemaNodeRecord<Self>>(
     const current: Self = node;
     const parent: Self | null = current.parent;
     if (!parent) break;
-    const found = getDeriveChildEntry(parent.blueprintNode,
-      current.name, current.blueprintNode.kind);
+    const found = getDeriveChildEntry(
+      parent.blueprintNode,
+      current.name,
+      current.blueprintNode.kind,
+    );
     order.unshift(found?.position ?? (Number(current.name) || 0));
     node = parent;
   }

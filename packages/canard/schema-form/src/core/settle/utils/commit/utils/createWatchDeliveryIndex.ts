@@ -18,14 +18,18 @@ class WatchDeliveryIndex {
   private readonly pathsByNode = new Map<unknown, readonly string[]>();
   /** Root of the resolved path prefix tree. */
   private readonly root: WatchPathNode = {
-    watchers: new Set(), children: new Map(),
+    watchers: new Set(),
+    children: new Map(),
   };
 
   /** Replace one node's effective watch paths in the live index. */
   update(node: unknown, paths: readonly string[]): void {
     const previous = this.pathsByNode.get(node);
-    if (previous?.length === paths.length &&
-      previous.every((path, index) => path === paths[index])) return;
+    if (
+      previous?.length === paths.length &&
+      previous.every((path, index) => path === paths[index])
+    )
+      return;
     this.remove(node);
     const unique: string[] = [];
     for (const path of paths) if (!unique.includes(path)) unique.push(path);
@@ -99,6 +103,6 @@ class WatchDeliveryIndex {
  * Allocate the tree's reverse watch index only when a watch first appears.
  * @returns A fresh live reverse watch index for one tree
  */
-export const createWatchDeliveryIndex = <Self>():
-  NonNullable<SchemaNodeRuntime<Self>['deliveryWatchIndex']> =>
-  new WatchDeliveryIndex();
+export const createWatchDeliveryIndex = <Self>(): NonNullable<
+  SchemaNodeRuntime<Self>['deliveryWatchIndex']
+> => new WatchDeliveryIndex();

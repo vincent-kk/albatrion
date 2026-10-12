@@ -125,7 +125,9 @@ export const populateNodeChildren = (
     )
       Object.entries(schema.properties).forEach(([name, child], index) => {
         const existing = properties.get(name);
-        const escapedName = existing ? existing.escapedName : escapeSegment(name);
+        const escapedName = existing
+          ? existing.escapedName
+          : escapeSegment(name);
         const input: SchemaInput = {
           ...base,
           schema: child,
@@ -140,11 +142,12 @@ export const populateNodeChildren = (
           .map(({ gate }) => gate!);
         input.gates = [...input.gates, ...entryGates];
         if (existing) existing.inputs.push(input);
-        else properties.set(name, {
-          escapedName,
-          path: `${node.path}/${escapedName}`,
-          inputs: [input],
-        });
+        else
+          properties.set(name, {
+            escapedName,
+            path: `${node.path}/${escapedName}`,
+            inputs: [input],
+          });
         const discriminatorIndex = input.gates.findIndex(
           (gate) =>
             gate.kind === 'discriminator' &&

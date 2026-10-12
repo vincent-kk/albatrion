@@ -10,14 +10,16 @@ export const observeChildSelectionPlans = () => {
   const plans: object[] = [];
   const hosts: object[] = [];
   const original = planning.getDirectChildSelectionPlan;
-  vi.spyOn(planning, 'getDirectChildSelectionPlan').mockImplementation((host, blueprint, prepare) => {
-    const plan = original(host, blueprint, prepare);
-    if (plan && !plans.includes(plan)) {
-      expect(prepare).toBe(true);
-      plans.push(plan);
-      hosts.push(host);
-    }
-    return plan;
-  });
+  vi.spyOn(planning, 'getDirectChildSelectionPlan').mockImplementation(
+    (host, blueprint, prepare) => {
+      const plan = original(host, blueprint, prepare);
+      if (plan && !plans.includes(plan)) {
+        expect(prepare).toBe(true);
+        plans.push(plan);
+        hosts.push(host);
+      }
+      return plan;
+    },
+  );
   return { plans, hosts };
 };

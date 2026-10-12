@@ -12,14 +12,25 @@ import { receivedType } from '../commit/receivedType';
  * @returns Warning data, or undefined without allocating warning storage
  */
 export const readStaticFirstWarning = <Self extends SchemaNodeRecord<Self>>(
-  node: Self, automatic: boolean,
+  node: Self,
+  automatic: boolean,
 ): TypeMismatchRecord | undefined => {
   const effective = effectiveType(node);
   if (!isTypeMismatch(node.raw, effective, node.nullable)) return undefined;
   const candidates = conversionCandidates(node, effective);
   const ambiguous = candidates.length > 1;
-  return { level: 'warning', code: TYPE_MISMATCH, path: node.path,
-    expected: { schemaType: node.schemaType, nullable: node.nullable, effective },
-    received: receivedType(node.raw), reason: ambiguous ? 'ambiguous' : 'unconvertible',
-    ...(ambiguous ? { candidates } : {}), source: automatic ? 'fill' : 'load' };
+  return {
+    level: 'warning',
+    code: TYPE_MISMATCH,
+    path: node.path,
+    expected: {
+      schemaType: node.schemaType,
+      nullable: node.nullable,
+      effective,
+    },
+    received: receivedType(node.raw),
+    reason: ambiguous ? 'ambiguous' : 'unconvertible',
+    ...(ambiguous ? { candidates } : {}),
+    source: automatic ? 'fill' : 'load',
+  };
 };

@@ -15,23 +15,45 @@ export const hasIndependentLeafDefaults = (blueprint: Blueprint): boolean => {
   let independent = blueprint.expressions.length === 0;
   for (let index = 0; independent && index < blueprint.nodes.length; index++) {
     const node = blueprint.nodes[index];
-    if (node.kind !== 'object' && node.kind !== 'string' && node.kind !== 'number' &&
-      node.kind !== 'boolean' && node.kind !== 'null' ||
-      node.kind === 'object' && node.strategy !== 'branch') {
+    if (
+      (node.kind !== 'object' &&
+        node.kind !== 'string' &&
+        node.kind !== 'number' &&
+        node.kind !== 'boolean' &&
+        node.kind !== 'null') ||
+      (node.kind === 'object' && node.strategy !== 'branch')
+    ) {
       independent = false;
       break;
     }
-    for (let declarationIndex = 0; declarationIndex < node.declarations.length; declarationIndex++) {
+    for (
+      let declarationIndex = 0;
+      declarationIndex < node.declarations.length;
+      declarationIndex++
+    ) {
       const declaration = node.declarations[declarationIndex];
-      if (declaration.gates.length) { independent = false; break; }
+      if (declaration.gates.length) {
+        independent = false;
+        break;
+      }
       const schema = declaration.schema;
       if (!schema || typeof schema !== 'object') continue;
-      if (schema.controls !== undefined) { independent = false; break; }
+      if (schema.controls !== undefined) {
+        independent = false;
+        break;
+      }
       const value = schema.default;
       if (value === undefined) continue;
-      if (node.kind === 'object' || value !== null &&
-        typeof value !== 'string' && typeof value !== 'number' &&
-        typeof value !== 'boolean') { independent = false; break; }
+      if (
+        node.kind === 'object' ||
+        (value !== null &&
+          typeof value !== 'string' &&
+          typeof value !== 'number' &&
+          typeof value !== 'boolean')
+      ) {
+        independent = false;
+        break;
+      }
       hasDefault = true;
     }
   }

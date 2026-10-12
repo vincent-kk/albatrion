@@ -1,10 +1,15 @@
-import type { Blueprint, BlueprintGate, BlueprintNodeKind } from '../../../blueprint';
-import type { SchemaNodeRecord } from '../../../record';
 import { escapeSegment, unescapeSegment } from '@winglet/json/pointer';
-import { resolveGateOccurrence } from './resolveGateOccurrence';
-import type { GateOccurrence } from './type';
+
+import type {
+  Blueprint,
+  BlueprintGate,
+  BlueprintNodeKind,
+} from '../../../blueprint';
+import type { SchemaNodeRecord } from '../../../record';
 import { resolveDependencyPath } from '../paths/resolveDependencyPath';
 import { getGateExpression } from './getGateExpression';
+import { resolveGateOccurrence } from './resolveGateOccurrence';
+import type { GateOccurrence } from './type';
 
 /** Bound gate with exact read paths used to invalidate its L. */
 interface RegisteredGateOccurrence extends GateOccurrence {
@@ -27,15 +32,22 @@ interface RegisteredNode {
 /** Settlement-owned location index that follows live record lifetimes. */
 class GateRegistry {
   /** Gates bound to a live node's own template and inherited declarations. */
-  private readonly byNode = new WeakMap<object,
-    Map<BlueprintGate, RegisteredGateOccurrence>>();
+  private readonly byNode = new WeakMap<
+    object,
+    Map<BlueprintGate, RegisteredGateOccurrence>
+  >();
   /** Direct child gate bindings distinguished from the owner's same gate. */
-  private readonly byEdge = new WeakMap<object,
-    Map<string, Map<BlueprintGate, RegisteredGateOccurrence>>>();
+  private readonly byEdge = new WeakMap<
+    object,
+    Map<string, Map<BlueprintGate, RegisteredGateOccurrence>>
+  >();
   /** Current node identity and gate entries at each absolute path. */
   private readonly byPath = new Map<string, RegisteredNode>();
   /** Relocated gates keyed by their memoized evaluation host. */
-  private readonly byLocation = new Map<string, Set<RegisteredGateOccurrence>>();
+  private readonly byLocation = new Map<
+    string,
+    Set<RegisteredGateOccurrence>
+  >();
   /** Absolute reads shared by gates that ask the same pointer at one host. */
   private readonly resolvedReads = new Map<string, Map<string, string>>();
   /** Decoded pointers contain no live shape or projected value. */
@@ -70,7 +82,10 @@ class GateRegistry {
   }
 
   /** Compare a path and kind in the current indexed shape, if indexed. */
-  hasRegisteredPathKind(path: string, kind: BlueprintNodeKind): boolean | undefined {
+  hasRegisteredPathKind(
+    path: string,
+    kind: BlueprintNodeKind,
+  ): boolean | undefined {
     if (this.byPath.size === 0) return undefined;
     return this.byPath.get(path)?.kind === kind;
   }
@@ -80,12 +95,20 @@ class GateRegistry {
     if (this.byPath.get(node.path)?.node === node) return;
     this.removePath(node.path);
     const memo = new Map<BlueprintGate, RegisteredGateOccurrence>();
-    const edges = new Map<string, Map<BlueprintGate, RegisteredGateOccurrence>>();
+    const edges = new Map<
+      string,
+      Map<BlueprintGate, RegisteredGateOccurrence>
+    >();
     for (const declaration of node.blueprintNode.declarations)
       for (const gate of declaration.gates)
-        this.add(node, gate, memo,
+        this.add(
+          node,
+          gate,
+          memo,
           gate.schemaPath === `${node.blueprintNode.schemaPath}/controls/active`
-            ? node.path : undefined);
+            ? node.path
+            : undefined,
+        );
     const ownOccurrences = [...memo.values()];
     for (const entry of node.blueprintNode.childEntries) {
       let edgeMemo = edges.get(entry.name);
@@ -96,24 +119,37 @@ class GateRegistry {
       for (const declaration of entry.declarations)
         for (const gate of declaration.gates)
           if (gate.schemaPath === `${declaration.schemaPath}/controls/active`)
-            this.add(node, gate, edgeMemo,
-              `${node.path}/${escapeSegment(entry.name)}`);
+            this.add(
+              node,
+              gate,
+              edgeMemo,
+              `${node.path}/${escapeSegment(entry.name)}`,
+            );
           else this.add(node, gate, memo);
     }
     this.byNode.set(node, memo);
     this.byEdge.set(node, edges);
-    this.byPath.set(node.path, { node, kind: node.blueprintNode.kind,
-      ownOccurrences, occurrences: [
-      ...memo.values(), ...[...edges.values()].flatMap((edge) => [...edge.values()]),
-    ] });
+    this.byPath.set(node.path, {
+      node,
+      kind: node.blueprintNode.kind,
+      ownOccurrences,
+      occurrences: [
+        ...memo.values(),
+        ...[...edges.values()].flatMap((edge) => [...edge.values()]),
+      ],
+    });
   }
 
   /** Find or bind a gate inherited indirectly by a declaration. */
   locate<Self extends SchemaNodeRecord<Self>>(
-    node: Self, gate: BlueprintGate, edgeName?: string,
+    node: Self,
+    gate: BlueprintGate,
+    edgeName?: string,
   ): RegisteredGateOccurrence {
     this.register(node);
-    const edge = edgeName ? this.byEdge.get(node)?.get(edgeName)?.get(gate) : undefined;
+    const edge = edgeName
+      ? this.byEdge.get(node)?.get(edgeName)?.get(gate)
+      : undefined;
     if (edge) return edge;
     const existing = this.byNode.get(node)?.get(gate);
     if (existing) return existing;
@@ -121,12 +157,17 @@ class GateRegistry {
     if (!memo) throw new Error(`Missing gate memo at ${node.path}`);
     this.add(node, gate, memo);
     const edges = this.byEdge.get(node);
-    this.byPath.set(node.path, { node, kind: node.blueprintNode.kind,
+    this.byPath.set(node.path, {
+      node,
+      kind: node.blueprintNode.kind,
       ownOccurrences: this.byPath.get(node.path)?.ownOccurrences ?? [],
       occurrences: [
-      ...memo.values(), ...[...edges?.values() ?? []].flatMap((edgeMemo) =>
-        [...edgeMemo.values()]),
-    ] });
+        ...memo.values(),
+        ...[...(edges?.values() ?? [])].flatMap((edgeMemo) => [
+          ...edgeMemo.values(),
+        ]),
+      ],
+    });
     const occurrence = memo.get(gate);
     if (!occurrence) throw new Error(`Missing gate at ${node.path}`);
     return occurrence;
@@ -134,23 +175,32 @@ class GateRegistry {
 
   /** Read relocated gates at one host without scanning other templates. */
   relocated(path: string): readonly GateOccurrence[] {
-    return [...this.byLocation.get(path) ?? []].filter((entry) =>
-      entry.hostPath !== path);
+    return [...(this.byLocation.get(path) ?? [])].filter(
+      (entry) => entry.hostPath !== path,
+    );
   }
 
   /** Whether changed raw intersects any read that can affect this host's wheel. */
-  mayChangeAt(path: string, changedRaw: ReadonlySet<string>,
-    changedAncestors: ReadonlySet<string>): boolean {
+  mayChangeAt(
+    path: string,
+    changedRaw: ReadonlySet<string>,
+    changedAncestors: ReadonlySet<string>,
+  ): boolean {
     for (const occurrence of this.byLocation.get(path) ?? [])
-      if (this.readsChanged(occurrence, changedRaw, changedAncestors)) return true;
+      if (this.readsChanged(occurrence, changedRaw, changedAncestors))
+        return true;
     return false;
   }
 
   /** Whether a changed read can reselect this live node's own declarations. */
-  mayChangeOwnDeclarationAt(path: string, changedRaw: ReadonlySet<string>,
-    changedAncestors: ReadonlySet<string>): boolean {
+  mayChangeOwnDeclarationAt(
+    path: string,
+    changedRaw: ReadonlySet<string>,
+    changedAncestors: ReadonlySet<string>,
+  ): boolean {
     for (const occurrence of this.byPath.get(path)?.ownOccurrences ?? [])
-      if (this.readsChanged(occurrence, changedRaw, changedAncestors)) return true;
+      if (this.readsChanged(occurrence, changedRaw, changedAncestors))
+        return true;
     return false;
   }
 
@@ -163,15 +213,22 @@ class GateRegistry {
 
   /** Index one gate only once for this occurrence. */
   private add<Self extends SchemaNodeRecord<Self>>(
-    node: Self, gate: BlueprintGate,
+    node: Self,
+    gate: BlueprintGate,
     memo: Map<BlueprintGate, RegisteredGateOccurrence>,
     childHostPath?: string,
   ): void {
     if (memo.has(gate)) return;
-    const location = resolveGateOccurrence(gate, node.blueprintNode.path,
-      node.path, childHostPath);
-    const occurrence: RegisteredGateOccurrence = { ...location,
-      watchPaths: this.watchPaths(location) };
+    const location = resolveGateOccurrence(
+      gate,
+      node.blueprintNode.path,
+      node.path,
+      childHostPath,
+    );
+    const occurrence: RegisteredGateOccurrence = {
+      ...location,
+      watchPaths: this.watchPaths(location),
+    };
     memo.set(gate, occurrence);
     let entries = this.byLocation.get(occurrence.evaluationHostPath);
     if (!entries) {
@@ -185,28 +242,41 @@ class GateRegistry {
   private watchPaths(location: GateOccurrence): readonly string[] {
     const gate = location.gate;
     if (gate.kind === 'if') return [location.hostPath];
-    if (gate.kind === 'discriminator' && gate.condition !== null &&
+    if (
+      gate.kind === 'discriminator' &&
+      gate.condition !== null &&
       typeof gate.condition === 'object' &&
       'propertyName' in gate.condition &&
-      typeof gate.condition.propertyName === 'string')
-      return [`${location.hostPath}/${escapeSegment(gate.condition.propertyName)}`];
+      typeof gate.condition.propertyName === 'string'
+    )
+      return [
+        `${location.hostPath}/${escapeSegment(gate.condition.propertyName)}`,
+      ];
     const expression = getGateExpression(this.blueprint, gate.schemaPath);
-    return expression ? expression.dependencies.map((dependency) => {
-      const path = this.resolveRead(location.hostPath, dependency);
-      return path;
-    }) : [location.hostPath];
+    return expression
+      ? expression.dependencies.map((dependency) => {
+          const path = this.resolveRead(location.hostPath, dependency);
+          return path;
+        })
+      : [location.hostPath];
   }
 
   /** Check whether a bound gate reads a changed raw path. */
   private readsChanged(
-    occurrence: RegisteredGateOccurrence, changedRaw: ReadonlySet<string>,
+    occurrence: RegisteredGateOccurrence,
+    changedRaw: ReadonlySet<string>,
     changedAncestors: ReadonlySet<string>,
   ): boolean {
     if (changedRaw.size === 0) return false;
     for (const watched of occurrence.watchPaths) {
-      if (watched === '' || changedRaw.has(watched) || changedAncestors.has(watched)) return true;
+      if (
+        watched === '' ||
+        changedRaw.has(watched) ||
+        changedAncestors.has(watched)
+      )
+        return true;
       if (watched.startsWith('/'))
-        for (let prefix = watched; prefix;) {
+        for (let prefix = watched; prefix; ) {
           prefix = prefix.slice(0, prefix.lastIndexOf('/'));
           if (changedRaw.has(prefix)) return true;
         }
@@ -228,9 +298,18 @@ class GateRegistry {
 const REGISTRIES = new WeakMap<object, GateRegistry>();
 
 /** Query surface shared by real registries and the branchless absence result. */
-type GateRegistryView = Pick<GateRegistry, 'hasRegisteredPathKind' | 'register' |
-  'locate' | 'relocated' | 'mayChangeAt' | 'mayChangeOwnDeclarationAt' | 'remove' |
-  'resolveRead' | 'pathSegments'>;
+type GateRegistryView = Pick<
+  GateRegistry,
+  | 'hasRegisteredPathKind'
+  | 'register'
+  | 'locate'
+  | 'relocated'
+  | 'mayChangeAt'
+  | 'mayChangeOwnDeclarationAt'
+  | 'remove'
+  | 'resolveRead'
+  | 'pathSegments'
+>;
 /** Decode only pointer syntax; no lookup result can survive a shape change. */
 const decodePointerSegments = (path: string): readonly string[] => {
   const segments = path.slice(1).split('/');
@@ -242,7 +321,9 @@ const decodePointerSegments = (path: string): readonly string[] => {
 const EMPTY_REGISTRY: GateRegistryView = Object.freeze({
   hasRegisteredPathKind: () => undefined,
   register: () => undefined,
-  locate: (): never => { throw new Error('A branchless blueprint has no gate occurrences'); },
+  locate: (): never => {
+    throw new Error('A branchless blueprint has no gate occurrences');
+  },
   relocated: () => EMPTY_OCCURRENCES,
   mayChangeAt: () => false,
   mayChangeOwnDeclarationAt: () => false,
@@ -258,7 +339,9 @@ const EMPTY_OCCURRENCES: readonly GateOccurrence[] = Object.freeze([]);
  * @param runtime - Shared root runtime identity
  * @returns Registry of memoized L values for live records
  */
-export const getGateRegistry = (runtime: { blueprint: Blueprint }): GateRegistryView => {
+export const getGateRegistry = (runtime: {
+  blueprint: Blueprint;
+}): GateRegistryView => {
   if (runtime.blueprint.capabilities.branchless) return EMPTY_REGISTRY;
   let registry = REGISTRIES.get(runtime);
   if (!registry) {

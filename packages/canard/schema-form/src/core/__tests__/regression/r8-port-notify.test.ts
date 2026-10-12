@@ -3,12 +3,18 @@ import { describe, expect, it } from 'vitest';
 import { makeSchemaNodeTree } from '../makeSchemaNodeTree';
 
 const derivedTree = () => {
-  const { root } = makeSchemaNodeTree({ type: 'object', properties: {
-    a: { type: 'number' },
-    d: { type: 'string', controls: {
-      derived: '../a === undefined ? undefined : "f(" + ../a + ")"',
-    } },
-  } });
+  const { root } = makeSchemaNodeTree({
+    type: 'object',
+    properties: {
+      a: { type: 'number' },
+      d: {
+        type: 'string',
+        controls: {
+          derived: '../a === undefined ? undefined : "f(" + ../a + ")"',
+        },
+      },
+    },
+  });
   root.setValue({ a: 1 });
   return root;
 };

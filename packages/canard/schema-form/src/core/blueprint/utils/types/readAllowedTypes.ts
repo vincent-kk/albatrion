@@ -58,7 +58,11 @@ const TYPE_NAMES: readonly unknown[] = [
 function isAllowedTypeList(
   values: readonly unknown[],
 ): values is readonly SchemaTypeName[] {
-  return !!values.length && !values.some(
-    (value, index) => !TYPE_NAMES.includes(value) || values.indexOf(value) !== index,
+  return (
+    !!values.length &&
+    !values.some(
+      (value, index) =>
+        !TYPE_NAMES.includes(value) || values.indexOf(value) !== index,
+    )
   );
 }

@@ -16,10 +16,15 @@ export const conversionCandidates = <Self extends SchemaNodeRecord<Self>>(
   const candidates: Exclude<SchemaTypeName, 'null'>[] = [];
   for (const kind of kinds) {
     if (kind === 'null' || kind === 'virtual') continue;
-    const converted = node.behavior.interpret(node.raw,
-      { kinds: kind, mask: 0, nullable: node.nullable });
-    if (!Object.is(converted, node.raw) &&
-      !isTypeMismatch(converted, kind, node.nullable))
+    const converted = node.behavior.interpret(node.raw, {
+      kinds: kind,
+      mask: 0,
+      nullable: node.nullable,
+    });
+    if (
+      !Object.is(converted, node.raw) &&
+      !isTypeMismatch(converted, kind, node.nullable)
+    )
       candidates.push(kind);
   }
   return candidates;

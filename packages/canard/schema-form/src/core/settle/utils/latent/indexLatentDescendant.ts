@@ -7,7 +7,10 @@
  * @returns Nothing; the index is updated in place
  */
 export const indexLatentDescendant = (
-  index: Map<string, Set<string>>, key: string, path: string, present: boolean,
+  index: Map<string, Set<string>>,
+  key: string,
+  path: string,
+  present: boolean,
 ): void => {
   let ancestor = path;
   while (true) {

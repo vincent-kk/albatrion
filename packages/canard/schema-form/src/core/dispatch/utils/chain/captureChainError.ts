@@ -7,7 +7,8 @@ import type { SchemaNodeRuntime } from '../../../record';
  * @returns Nothing; the chain owns the retained occurrence
  */
 export const captureChainError = <Self>(
-  runtime: SchemaNodeRuntime<Self>, error: unknown,
+  runtime: SchemaNodeRuntime<Self>,
+  error: unknown,
 ): void => {
   runtime.chainErrors?.push(error);
   if (runtime.errorReporter?.hasConsumer())

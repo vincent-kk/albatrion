@@ -1,4 +1,5 @@
 import { isArray } from '@winglet/common-utils/filter';
+
 import type { SchemaNodeRecord } from '../../../record';
 
 /**
@@ -11,11 +12,22 @@ export const hasWrongKindBranchAncestor = <Self extends SchemaNodeRecord<Self>>(
 ): boolean => {
   let parent = node.parent;
   while (parent) {
-    if (parent.behavior.type === 'object' && parent.behavior.strategy === 'branch' &&
-      parent.raw !== undefined && (parent.raw === null ||
-        typeof parent.raw !== 'object' || isArray(parent.raw))) return true;
-    if (parent.behavior.type === 'array' && parent.behavior.strategy === 'branch' &&
-      parent.raw !== undefined && !isArray(parent.raw)) return true;
+    if (
+      parent.behavior.type === 'object' &&
+      parent.behavior.strategy === 'branch' &&
+      parent.raw !== undefined &&
+      (parent.raw === null ||
+        typeof parent.raw !== 'object' ||
+        isArray(parent.raw))
+    )
+      return true;
+    if (
+      parent.behavior.type === 'array' &&
+      parent.behavior.strategy === 'branch' &&
+      parent.raw !== undefined &&
+      !isArray(parent.raw)
+    )
+      return true;
     parent = parent.parent;
   }
   return false;

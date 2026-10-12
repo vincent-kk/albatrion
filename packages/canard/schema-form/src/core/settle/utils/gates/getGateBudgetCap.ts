@@ -1,4 +1,8 @@
-import type { Blueprint, BlueprintGate, PropertyDeclaration } from '../../../blueprint';
+import type {
+  Blueprint,
+  BlueprintGate,
+  PropertyDeclaration,
+} from '../../../blueprint';
 
 interface GateBudgetIndex {
   /** Authored decisions reached by each evaluated gate. */
@@ -39,11 +43,15 @@ const getIndex = (blueprint: Blueprint): GateBudgetIndex => {
         add(gate, `fragment:${declaration.fragmentId}`);
     for (const gate of declaration.gates) {
       if (gate.kind !== 'active') continue;
-      if (gate.schemaPath.includes('/controls/children/') &&
-        gate.schemaPath.endsWith('/controls/active'))
+      if (
+        gate.schemaPath.includes('/controls/children/') &&
+        gate.schemaPath.endsWith('/controls/active')
+      )
         add(gate, `node:${gate.schemaPath}`);
-      else if (declaration.scope === 'node' &&
-        gate.schemaPath === `${declaration.schemaPath}/controls/active`)
+      else if (
+        declaration.scope === 'node' &&
+        gate.schemaPath === `${declaration.schemaPath}/controls/active`
+      )
         add(gate, `node:${gate.schemaPath}`);
     }
   };
@@ -69,8 +77,12 @@ export const getHostWheelBudgetCap = (
 ): number => {
   if (blueprint.capabilities.branchless) return 1;
   const cached = HOST_CAPS.get(host);
-  if (cached && cached.gates.length === gates.length &&
-    cached.gates.every((gate, index) => gate === gates[index])) return cached.cap;
+  if (
+    cached &&
+    cached.gates.length === gates.length &&
+    cached.gates.every((gate, index) => gate === gates[index])
+  )
+    return cached.cap;
   const index = getIndex(blueprint);
   const decisions = new Set<string>();
   for (const gate of gates)

@@ -7,8 +7,11 @@ import type { SchemaNodeRecord } from '../../../record';
  */
 const isSchemaNodeChainRoot = <Self extends SchemaNodeRecord<Self>>(
   value: unknown,
-): value is Self => value !== null && typeof value === 'object' &&
-  'runtime' in value && 'rootNode' in value;
+): value is Self =>
+  value !== null &&
+  typeof value === 'object' &&
+  'runtime' in value &&
+  'rootNode' in value;
 
 /**
  * Follow a rebuilt root to the current owner of an open entry.

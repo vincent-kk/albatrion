@@ -24,14 +24,15 @@ export const finalizeDeriveTrace = <Self extends SchemaNodeRecord<Self>>(
         for (const encoded of entry.targetPath.split('/').slice(1)) {
           const name = unescapeSegment(encoded);
           const children: Record<string, Self> | null = node?.structure ?? null;
-          node = children && hasOwnProperty(children, name) ?
-            children[name] : undefined;
+          node =
+            children && hasOwnProperty(children, name)
+              ? children[name]
+              : undefined;
           if (!node) break;
         }
         exists = Boolean(node && !node.detached);
         live.set(entry.targetPath, exists);
       }
-      if (!exists)
-        round[index] = { ...entry, result: 'withdrawn' };
+      if (!exists) round[index] = { ...entry, result: 'withdrawn' };
     }
 };

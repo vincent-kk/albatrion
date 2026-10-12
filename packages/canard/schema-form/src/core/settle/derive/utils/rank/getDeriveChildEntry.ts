@@ -1,7 +1,10 @@
 import type { BlueprintNode, BlueprintNodeKind } from '../../../../blueprint';
 
 /** Immutable template indexes are built once when a rule first uses the host. */
-const CHILDREN = new WeakMap<BlueprintNode, ReadonlyMap<string, readonly number[]>>();
+const CHILDREN = new WeakMap<
+  BlueprintNode,
+  ReadonlyMap<string, readonly number[]>
+>();
 
 /**
  * Find a declared child without rescanning a wide host on every injection.
@@ -11,7 +14,9 @@ const CHILDREN = new WeakMap<BlueprintNode, ReadonlyMap<string, readonly number[
  * @returns First matching edge and its document position
  */
 export const getDeriveChildEntry = (
-  parent: BlueprintNode, name: string, kind?: BlueprintNodeKind,
+  parent: BlueprintNode,
+  name: string,
+  kind?: BlueprintNodeKind,
 ) => {
   let index = CHILDREN.get(parent);
   if (!index) {
@@ -25,8 +30,12 @@ export const getDeriveChildEntry = (
     CHILDREN.set(parent, index);
   }
   const positions = index.get(name);
-  const position = kind ? positions?.find((candidate) =>
-    parent.childEntries[candidate].node.kind === kind) : positions?.[0];
-  return position === undefined ? undefined :
-    { entry: parent.childEntries[position], position };
+  const position = kind
+    ? positions?.find(
+        (candidate) => parent.childEntries[candidate].node.kind === kind,
+      )
+    : positions?.[0];
+  return position === undefined
+    ? undefined
+    : { entry: parent.childEntries[position], position };
 };

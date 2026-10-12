@@ -12,15 +12,22 @@ import { getSelectedDeclarationIds } from './getSelectedDeclarationIds';
  * @returns Current target, or none when its scoped declaration is inactive
  */
 export const getRuleTargets = <Self extends SchemaNodeRecord<Self>>(
-  source: Self, rule: DeriveRule, state: DeriveState<Self>,
+  source: Self,
+  rule: DeriveRule,
+  state: DeriveState<Self>,
 ): readonly Self[] => {
   if (!rule.targetName) return [source];
   const children = source.structure;
   if (!children || !hasOwnProperty(children, rule.targetName)) return [];
   const target = children[rule.targetName];
   if (target.detached) return [];
-  if (rule.layer === 'fragment' && rule.targetDeclarationIds &&
+  if (
+    rule.layer === 'fragment' &&
+    rule.targetDeclarationIds &&
     !rule.targetDeclarationIds.some((id) =>
-      getSelectedDeclarationIds(target, state).includes(id))) return [];
+      getSelectedDeclarationIds(target, state).includes(id),
+    )
+  )
+    return [];
   return [target];
 };

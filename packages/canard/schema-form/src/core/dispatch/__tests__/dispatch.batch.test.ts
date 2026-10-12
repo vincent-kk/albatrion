@@ -1,8 +1,13 @@
 import { describe, expect, it } from 'vitest';
 
 import { SetValueOption } from '../../types/value';
-import { dispatchBatch, dispatchMount, dispatchResetSubtree,
-  dispatchSetValue, subscribeSchemaNode } from '../index';
+import {
+  dispatchBatch,
+  dispatchMount,
+  dispatchResetSubtree,
+  dispatchSetValue,
+  subscribeSchemaNode,
+} from '../index';
 import { createDispatchTree } from './fixtures/createDispatchTree';
 import { getDispatchChild } from './fixtures/getDispatchChild';
 
@@ -11,7 +16,9 @@ describe('dispatcher batch', () => {
   it('EVENT-013 EVENT-014 EVENT-019 and EVENT-035 commit one outer batch', () => {
     const { root, runtime } = createDispatchTree({ type: 'string' });
     let calls = 0;
-    subscribeSchemaNode(root, () => { calls += 1; });
+    subscribeSchemaNode(root, () => {
+      calls += 1;
+    });
     dispatchBatch(root, () => {
       dispatchSetValue(root, 'first');
       expect(root.emit).toBe(undefined);
@@ -24,9 +31,16 @@ describe('dispatcher batch', () => {
   });
 
   it('EVENT-015 and EVENT-072 settle subtree reset immediately inside batch', () => {
-    const { root } = createDispatchTree({ type: 'object', properties: {
-      child: { type: 'string' }, sibling: { type: 'string' },
-    } }, { child: 'base', sibling: 'kept' });
+    const { root } = createDispatchTree(
+      {
+        type: 'object',
+        properties: {
+          child: { type: 'string' },
+          sibling: { type: 'string' },
+        },
+      },
+      { child: 'base', sibling: 'kept' },
+    );
     dispatchMount(root, { child: 'base', sibling: 'kept' });
     dispatchBatch(root, () => {
       dispatchSetValue(getDispatchChild(root, 'child'), 'pending');
@@ -37,9 +51,13 @@ describe('dispatcher batch', () => {
   });
 
   it('EVENT-013 applies sibling marks in one settlement', () => {
-    const { root, runtime } = createDispatchTree({ type: 'object', properties: {
-      left: { type: 'string' }, right: { type: 'string' },
-    } });
+    const { root, runtime } = createDispatchTree({
+      type: 'object',
+      properties: {
+        left: { type: 'string' },
+        right: { type: 'string' },
+      },
+    });
     dispatchMount(root, { left: 'old', right: 'old' });
     const before = runtime.commitNumber;
     dispatchBatch(root, () => {
@@ -53,21 +71,27 @@ describe('dispatcher batch', () => {
   it('EVENT-017 commits marked writes before rethrowing fn failure', () => {
     const { root } = createDispatchTree({ type: 'string' });
     const failure = new Error('batch failed');
-    expect(() => dispatchBatch(root, () => {
-      dispatchSetValue(root, 'kept');
-      throw failure;
-    })).toThrow(failure);
+    expect(() =>
+      dispatchBatch(root, () => {
+        dispatchSetValue(root, 'kept');
+        throw failure;
+      }),
+    ).toThrow(failure);
     expect(root.emit).toBe('kept');
   });
 
   it('EVENT-061 treats an updater failure as a callback failure', () => {
     const { root } = createDispatchTree({ type: 'number' });
     const failure = new Error('updater failed');
-    expect(() => dispatchBatch(root, () => {
-      dispatchSetValue(root, 1);
-      dispatchSetValue(root, () => { throw failure; });
-      dispatchSetValue(root, 2);
-    })).toThrow(failure);
+    expect(() =>
+      dispatchBatch(root, () => {
+        dispatchSetValue(root, 1);
+        dispatchSetValue(root, () => {
+          throw failure;
+        });
+        dispatchSetValue(root, 2);
+      }),
+    ).toThrow(failure);
     expect(root.emit).toBe(1);
   });
 
@@ -75,11 +99,15 @@ describe('dispatcher batch', () => {
     const { root } = createDispatchTree({ type: 'string' });
     const failure = new Error('nested failure');
     let continued = false;
-    expect(() => dispatchBatch(root, () => {
-      dispatchSetValue(root, 'first');
-      dispatchBatch(root, () => { throw failure; });
-      continued = true;
-    })).toThrow(failure);
+    expect(() =>
+      dispatchBatch(root, () => {
+        dispatchSetValue(root, 'first');
+        dispatchBatch(root, () => {
+          throw failure;
+        });
+        continued = true;
+      }),
+    ).toThrow(failure);
     expect(continued).toBe(false);
     expect(root.emit).toBe('first');
   });
@@ -108,9 +136,13 @@ describe('dispatcher batch', () => {
   });
 
   it('EVENT-061 branch updater sees an earlier partial mark over committed values', () => {
-    const { root } = createDispatchTree({ type: 'object', properties: {
-      left: { type: 'string' }, right: { type: 'string' },
-    } });
+    const { root } = createDispatchTree({
+      type: 'object',
+      properties: {
+        left: { type: 'string' },
+        right: { type: 'string' },
+      },
+    });
     dispatchMount(root, { left: 'old', right: 'kept' });
     const previous: unknown[] = [];
     dispatchBatch(root, () => {
@@ -125,11 +157,16 @@ describe('dispatcher batch', () => {
   });
 
   it('WRITE-015 keeps automatic-write suppression inside batch', () => {
-    const { root } = createDispatchTree({ type: 'object', properties: {
-      name: { type: 'string', default: 'filled' },
-    } });
-    const both = SetValueOption.Overwrite |
-      SetValueOption.DisableAutomaticWrites | SetValueOption.EnableAutomaticWrites;
+    const { root } = createDispatchTree({
+      type: 'object',
+      properties: {
+        name: { type: 'string', default: 'filled' },
+      },
+    });
+    const both =
+      SetValueOption.Overwrite |
+      SetValueOption.DisableAutomaticWrites |
+      SetValueOption.EnableAutomaticWrites;
     dispatchBatch(root, () => dispatchSetValue(root, {}, both));
     expect(root.structure?.name?.raw).toBeUndefined();
   });

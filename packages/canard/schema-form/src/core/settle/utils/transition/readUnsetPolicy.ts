@@ -9,6 +9,11 @@ import { readExitLayerPolicy } from '../controls/readExitLayerPolicy';
  * @returns The closest authored keep or clear decision
  */
 export const readUnsetPolicy = <Self extends SchemaNodeRecord<Self>>(
-  node: Self, inherited: boolean,
-): boolean => readExitLayerPolicy(getControlLayers(node, new Map()),
-  node.runtime.committedRuleValues, inherited);
+  node: Self,
+  inherited: boolean,
+): boolean =>
+  readExitLayerPolicy(
+    getControlLayers(node, new Map()),
+    node.runtime.committedRuleValues,
+    inherited,
+  );

@@ -5,6 +5,8 @@ import type { SchemaNodeRecord } from '../../../record';
  * @param node - Live or retired occurrence whose lifetime is observed
  * @returns Its monotone counter, independent of event revisions
  */
-export const readSchemaNodeInteractionReset = <Self extends SchemaNodeRecord<Self>>(
+export const readSchemaNodeInteractionReset = <
+  Self extends SchemaNodeRecord<Self>,
+>(
   node: Self,
 ): number => node.interactionReset;

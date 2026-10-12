@@ -8,14 +8,14 @@ import { SetValueOption } from '../../../types/value';
 import { createChildNode } from '../compute/createChildNode';
 import { getDeclaredChildNames } from '../declarations/getDeclaredChildNames';
 import { arrayExtras } from '../write/arrayExtras';
-import { nextExtras } from '../write/nextExtras';
 import { isPlain } from '../write/isPlain';
+import { nextExtras } from '../write/nextExtras';
 import { staticSpec } from '../write/staticSpec';
 import { assembleStaticFirstNode } from './assembleStaticFirstNode';
 import { commitStaticFirstNode } from './commitStaticFirstNode';
+import { finishStaticFirstLoad } from './finishStaticFirstLoad';
 import { getStaticObjectEntries } from './getStaticObjectEntries';
 import { isMissingStaticInput } from './isMissingStaticInput';
-import { finishStaticFirstLoad } from './finishStaticFirstLoad';
 import { readStaticFirstWarning } from './readStaticFirstWarning';
 
 /** DFS frames have one fixed layout and are retained only along the active ancestry. */
@@ -40,16 +40,29 @@ const EMPTY = Object.freeze([]);
  * @returns Nothing; one reserved commit and every occurrence are eager before return
  */
 export const loadStaticFirstTree = <Self extends SchemaNodeRecord<Self>>(
-  root: Self, option: SetValueOption,
+  root: Self,
+  option: SetValueOption,
 ): void => {
   const runtime = root.runtime;
   const commit = (runtime.commitNumber ?? 0) + 1;
   const disable = (option & SetValueOption.DisableAutomaticWrites) !== 0;
   const enable = (option & SetValueOption.EnableAutomaticWrites) !== 0;
-  const suppress = disable || !enable && runtime.disableAutomaticWrites === true;
-  const deliveries = runtime.deliveries ??= new Set();
-  const stack: Frame<Self>[] = [{ node: root, input: undefined, automatic: false,
-    entered: false, index: 0, entries: EMPTY, required: EMPTY, order: 0, children: undefined }];
+  const suppress =
+    disable || (!enable && runtime.disableAutomaticWrites === true);
+  const deliveries = (runtime.deliveries ??= new Set());
+  const stack: Frame<Self>[] = [
+    {
+      node: root,
+      input: undefined,
+      automatic: false,
+      entered: false,
+      index: 0,
+      entries: EMPTY,
+      required: EMPTY,
+      order: 0,
+      children: undefined,
+    },
+  ];
   let deltas: Map<string, number> | undefined;
   let warnings: { order: number; warning: TypeMismatchRecord }[] | undefined;
   let order = 0;
@@ -61,16 +74,30 @@ export const loadStaticFirstTree = <Self extends SchemaNodeRecord<Self>>(
       frame.order = order++;
       deliveries.add(node);
       const schema = node.schema.schema;
-      const authored = typeof schema === 'object' && schema !== null ? schema : undefined;
-      const fallback = authored && hasOwnProperty(authored, 'default') ? authored.default : undefined;
+      const authored =
+        typeof schema === 'object' && schema !== null ? schema : undefined;
+      const fallback =
+        authored && hasOwnProperty(authored, 'default')
+          ? authored.default
+          : undefined;
       let input = frame.input;
-      if (!suppress && fallback !== undefined &&
-        !(node.behavior.type === 'array' && node.behavior.strategy === 'branch' && input !== undefined) &&
-        isMissingStaticInput(node.blueprintNode, input)) {
+      if (
+        !suppress &&
+        fallback !== undefined &&
+        !(
+          node.behavior.type === 'array' &&
+          node.behavior.strategy === 'branch' &&
+          input !== undefined
+        ) &&
+        isMissingStaticInput(node.blueprintNode, input)
+      ) {
         input = fallback;
         frame.automatic = true;
       }
-      const value = node.behavior.interpret(input, staticSpec(node.schemaType, node.nullable));
+      const value = node.behavior.interpret(
+        input,
+        staticSpec(node.schemaType, node.nullable),
+      );
       frame.input = value;
       if (node.behavior.strategy === 'branch') {
         node.structure = Object.create(null);
@@ -84,10 +111,18 @@ export const loadStaticFirstTree = <Self extends SchemaNodeRecord<Self>>(
         } else {
           const object = isPlain(value);
           node.raw = object ? undefined : value;
-          node.extras = object ? nextExtras(undefined, value,
-            getDeclaredChildNames(node.blueprintNode), false) : undefined;
+          node.extras = object
+            ? nextExtras(
+                undefined,
+                value,
+                getDeclaredChildNames(node.blueprintNode),
+                false,
+              )
+            : undefined;
           frame.entries = getStaticObjectEntries(node.blueprintNode);
-          frame.required = isArray(authored?.required) ? authored.required : EMPTY;
+          frame.required = isArray(authored?.required)
+            ? authored.required
+            : EMPTY;
         }
       } else node.raw = value;
       const state = node.interactionState;
@@ -103,10 +138,23 @@ export const loadStaticFirstTree = <Self extends SchemaNodeRecord<Self>>(
       node.structure![entry.name] = child;
       frame.children!.push(child);
       child.required = frame.required.includes(entry.name);
-      const input = frame.input !== null && typeof frame.input === 'object' &&
-        hasOwnProperty(frame.input, entry.name) ? Reflect.get(frame.input, entry.name) : undefined;
-      stack.push({ node: child, input, automatic: frame.automatic,
-        entered: false, index: 0, entries: EMPTY, required: EMPTY, order: 0, children: undefined });
+      const input =
+        frame.input !== null &&
+        typeof frame.input === 'object' &&
+        hasOwnProperty(frame.input, entry.name)
+          ? Reflect.get(frame.input, entry.name)
+          : undefined;
+      stack.push({
+        node: child,
+        input,
+        automatic: frame.automatic,
+        entered: false,
+        index: 0,
+        entries: EMPTY,
+        required: EMPTY,
+        order: 0,
+        children: undefined,
+      });
       continue;
     }
     assembleStaticFirstNode(node);

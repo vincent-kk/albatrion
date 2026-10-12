@@ -1,17 +1,17 @@
 import type { BlueprintGate } from '../../../blueprint';
 import type { SchemaNodeRecord } from '../../../record';
 import type { SettlementContext } from '../../type';
+import { getHostWheelBudgetCap } from '../gates/getGateBudgetCap';
 import { dirtyChildren } from './dirtyChildren';
-import { primeHost } from './primeHost';
 import { preserveReferences } from './preserveReferences';
-import { selectChildren } from './selectChildren';
-import { selectNodeSchema } from './selectNodeSchema';
+import { primeHost } from './primeHost';
 import { relocatedGates } from './relocatedGates';
 import { scheduleRelocatedGates } from './scheduleRelocatedGates';
+import { selectChildren } from './selectChildren';
+import { selectNodeSchema } from './selectNodeSchema';
 import { updateOutput } from './updateOutput';
-import { getHostWheelBudgetCap } from '../gates/getGateBudgetCap';
-import { hasIndependentLeafDefaults } from './utils/hasIndependentLeafDefaults';
 import { computeStableNode } from './utils/computeStableNode';
+import { hasIndependentLeafDefaults } from './utils/hasIndependentLeafDefaults';
 
 /**
  * Finish a dirty subtree with one descent and a bounded host gate wheel.
@@ -23,21 +23,36 @@ export const computeNode = <Self extends SchemaNodeRecord<Self>>(
   node: Self,
   context: SettlementContext<Self>,
 ): void => {
-  if (!context.hasGates && context.root.runtime.blueprint.capabilities.branchless &&
-    context.shapeDirtyPaths.size === 0 && context.entered.size === 0) {
+  if (
+    !context.hasGates &&
+    context.root.runtime.blueprint.capabilities.branchless &&
+    context.shapeDirtyPaths.size === 0 &&
+    context.entered.size === 0
+  ) {
     computeStableNode(node, context);
     return;
   }
   if (!context.dirtyPaths.has(node.path)) return;
-  if (node === context.root && context.kind === 'load' &&
-    node.behavior.type === 'object' && node.behavior.strategy === 'branch' &&
-    !node.deliveryInitialized && !context.suppressAutomaticWrites &&
-    !context.hasGates && context.writtenInputs.get(node) === undefined &&
+  if (
+    node === context.root &&
+    context.kind === 'load' &&
+    node.behavior.type === 'object' &&
+    node.behavior.strategy === 'branch' &&
+    !node.deliveryInitialized &&
+    !context.suppressAutomaticWrites &&
+    !context.hasGates &&
+    context.writtenInputs.get(node) === undefined &&
     node.runtime.latentRaw.size === 0 &&
-    hasIndependentLeafDefaults(node.runtime.blueprint)) context.initialOutputs = [];
+    hasIndependentLeafDefaults(node.runtime.blueprint)
+  )
+    context.initialOutputs = [];
   context.stateDirtyNodes.add(node);
-  if (!context.hasGates && node.parent !== null &&
-    node.behavior.strategy === 'terminal' && context.entered.has(node)) {
+  if (
+    !context.hasGates &&
+    node.parent !== null &&
+    node.behavior.strategy === 'terminal' &&
+    context.entered.has(node)
+  ) {
     if (context.initialOutputs) context.initialOutputs.push(node);
     else updateOutput(node, context);
     context.dirtyPaths.delete(node.path);
@@ -58,8 +73,13 @@ export const computeNode = <Self extends SchemaNodeRecord<Self>>(
   }
   if (!context.originalSchemas.has(node.path))
     context.originalSchemas.set(node.path, node.schema);
-  const previous = { local: node.local, emit: node.emit, children: node.children,
-    schema: node.schema, active: node.active };
+  const previous = {
+    local: node.local,
+    emit: node.emit,
+    children: node.children,
+    schema: node.schema,
+    active: node.active,
+  };
   if (node.behavior.strategy !== 'branch') {
     if (node.parent === null) selectNodeSchema(node, context);
     updateOutput(node, context);
@@ -83,7 +103,11 @@ export const computeNode = <Self extends SchemaNodeRecord<Self>>(
     const entries = node.behavior.declareChildren(node);
     for (let entryIndex = 0; entryIndex < entries.length; entryIndex++) {
       const declarations = entries[entryIndex].declarations;
-      for (let declarationIndex = 0; declarationIndex < declarations.length; declarationIndex++) {
+      for (
+        let declarationIndex = 0;
+        declarationIndex < declarations.length;
+        declarationIndex++
+      ) {
         const declaredGates = declarations[declarationIndex].gates;
         for (let gateIndex = 0; gateIndex < declaredGates.length; gateIndex++) {
           const gate = declaredGates[gateIndex];
@@ -95,7 +119,11 @@ export const computeNode = <Self extends SchemaNodeRecord<Self>>(
       }
     }
     const declarations = node.blueprintNode.declarations;
-    for (let declarationIndex = 0; declarationIndex < declarations.length; declarationIndex++) {
+    for (
+      let declarationIndex = 0;
+      declarationIndex < declarations.length;
+      declarationIndex++
+    ) {
       const declaredGates = declarations[declarationIndex].gates;
       for (let gateIndex = 0; gateIndex < declaredGates.length; gateIndex++) {
         const gate = declaredGates[gateIndex];
@@ -122,11 +150,18 @@ export const computeNode = <Self extends SchemaNodeRecord<Self>>(
     scheduleRelocatedGates(relocatedGates(node), context);
   let cap = getHostWheelBudgetCap(node, node.runtime.blueprint, gates);
   for (let round = 0; round < cap; round++) {
-    const schemaChanged = node.parent === null && selectNodeSchema(node, context);
-    const changed = selectChildren(node, context, prior,
-      (child) => computeNode(child, context), gates.length > 0);
+    const schemaChanged =
+      node.parent === null && selectNodeSchema(node, context);
+    const changed = selectChildren(
+      node,
+      context,
+      prior,
+      (child) => computeNode(child, context),
+      gates.length > 0,
+    );
     const dirty = dirtyChildren(node, context);
-    for (let index = 0; index < dirty.length; index++) computeNode(dirty[index], context);
+    for (let index = 0; index < dirty.length; index++)
+      computeNode(dirty[index], context);
     let outputChanged = false;
     if (context.initialOutputs) context.initialOutputs.push(node);
     else outputChanged = updateOutput(node, context);

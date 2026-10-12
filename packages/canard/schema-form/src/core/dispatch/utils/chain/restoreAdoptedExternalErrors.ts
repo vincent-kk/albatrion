@@ -1,6 +1,6 @@
+import { find } from '../../../navigation';
 import type { SchemaNodeRecord } from '../../../record';
 import { SchemaNodeEventType } from '../../../record';
-import { find } from '../../../navigation';
 import { updateSchemaNodeGlobalErrors } from '../../../validation';
 import { queueNonSettleEvent } from './queueNonSettleEvent';
 
@@ -9,7 +9,9 @@ import { queueNonSettleEvent } from './queueNonSettleEvent';
  * @param root - New root after construction or mount
  * @returns Nothing; mounted occurrences own their external error references
  */
-export const restoreAdoptedExternalErrors = <Self extends SchemaNodeRecord<Self>>(
+export const restoreAdoptedExternalErrors = <
+  Self extends SchemaNodeRecord<Self>,
+>(
   root: Self,
 ): void => {
   const runtime = root.runtime;
@@ -21,5 +23,6 @@ export const restoreAdoptedExternalErrors = <Self extends SchemaNodeRecord<Self>
     runtime.adoptedExternalErrors?.delete(path);
     queueNonSettleEvent(node, SchemaNodeEventType.UpdateError, errors);
   }
-  if (!runtime.adoptedExternalErrors?.size) runtime.adoptedExternalErrors = undefined;
+  if (!runtime.adoptedExternalErrors?.size)
+    runtime.adoptedExternalErrors = undefined;
 };

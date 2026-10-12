@@ -59,8 +59,14 @@ const discriminatorSchema = {
   type: 'object',
   properties: {
     category: { type: 'string', enum: ['game', 'movie'], default: 'game' },
-    openingDate: { type: 'string', controls: { visible: '../category === "game"' }},
-    releaseDate: { type: 'string', controls: { visible: '../category === "movie"' }},
+    openingDate: {
+      type: 'string',
+      controls: { visible: '../category === "game"' },
+    },
+    releaseDate: {
+      type: 'string',
+      controls: { visible: '../category === "movie"' },
+    },
   },
 } satisfies JSONSchema;
 
@@ -85,8 +91,14 @@ const visibleVsActiveSchema = {
   type: 'object',
   properties: {
     mode: { type: 'string', enum: ['visible', 'active'], default: 'visible' },
-    visibleField: { type: 'string', controls: { visible: '../mode === "visible"' }},
-    activeField: { type: 'string', controls: { active: '../mode === "visible"' }},
+    visibleField: {
+      type: 'string',
+      controls: { visible: '../mode === "visible"' },
+    },
+    activeField: {
+      type: 'string',
+      controls: { active: '../mode === "visible"' },
+    },
   },
 } satisfies JSONSchema;
 

@@ -1,15 +1,15 @@
-import { PathKeyedMap } from '../../utils/pathIndex/PathKeyedMap';
-import { PathKeyedSet } from '../../utils/pathIndex/PathKeyedSet';
 import { describe, expect, it } from 'vitest';
 
 import { blueprint } from '../../blueprint';
+import { PathKeyedMap } from '../../utils/pathIndex/PathKeyedMap';
+import { PathKeyedSet } from '../../utils/pathIndex/PathKeyedSet';
 import { EMPTY_REVISION_LEDGER } from '../index';
 import type { SchemaNodeRecord } from '../index';
 import {
-  patchSchemaNodeInteractionState,
+  SchemaNodeEventType,
   captureSchemaNodeChange,
   clearSchemaNodeChanges,
-  SchemaNodeEventType,
+  patchSchemaNodeInteractionState,
   shallowPatch,
   updateSchemaNodeNameAndPath,
 } from '../index';
@@ -49,7 +49,9 @@ const makeRecord = (): SchemaNodeRecord<PathNode> => {
       loadSnapshot: undefined,
       latentRaw: new PathKeyedMap('pair'),
       typeMismatchPaths: new PathKeyedSet(),
-      inactiveValuesMemo: new PathKeyedMap<readonly { path: string; value: unknown }[]>('path'),
+      inactiveValuesMemo: new PathKeyedMap<
+        readonly { path: string; value: unknown }[]
+      >('path'),
     },
     blueprintNode,
     parent: null,
@@ -77,9 +79,12 @@ const makeRecord = (): SchemaNodeRecord<PathNode> => {
     schema: { schema: {}, typeConflict: false },
     interactionState: {},
     revisionLedger: EMPTY_REVISION_LEDGER,
-    deliveryInitialized: false, deliveryChanges: 0, pendingRevision: 0,
+    deliveryInitialized: false,
+    deliveryChanges: 0,
+    pendingRevision: 0,
     detached: false,
-    disposed: false, interactionReset: 0,
+    disposed: false,
+    interactionReset: 0,
   };
 };
 
@@ -107,22 +112,33 @@ describe('record layout operations', () => {
   it('keeps distinct first baselines for path, children, computed, schema and state', () => {
     const node = makeRecord();
     node.deliveryInitialized = true;
-    const children = node.children, schema = node.schema, state = node.interactionState;
+    const children = node.children,
+      schema = node.schema,
+      state = node.interactionState;
     node.path = captureSchemaNodeChange(node, 'path', '/next');
     node.children = captureSchemaNodeChange(node, 'children', []);
     node.visible = captureSchemaNodeChange(node, 'visible', false);
     node.disabled = captureSchemaNodeChange(node, 'disabled', true);
-    node.schema = captureSchemaNodeChange(node, 'schema', { schema: { title: 'next' }, typeConflict: false });
-    node.interactionState = captureSchemaNodeChange(node, 'interactionState', { dirty: true });
+    node.schema = captureSchemaNodeChange(node, 'schema', {
+      schema: { title: 'next' },
+      typeConflict: false,
+    });
+    node.interactionState = captureSchemaNodeChange(node, 'interactionState', {
+      dirty: true,
+    });
     expect(node.deliveryPreviousPath).toBe('');
     expect(node.deliveryPreviousChildren).toBe(children);
     expect(node.deliveryPreviousComputed).toBe(3);
     expect(node.deliveryPreviousSchema).toBe(schema);
     expect(node.deliveryPreviousState).toBe(state);
     clearSchemaNodeChanges(node);
-    expect([node.deliveryPreviousPath, node.deliveryPreviousChildren,
-      node.deliveryPreviousComputed, node.deliveryPreviousSchema, node.deliveryPreviousState])
-      .toEqual([undefined, undefined, undefined, undefined, undefined]);
+    expect([
+      node.deliveryPreviousPath,
+      node.deliveryPreviousChildren,
+      node.deliveryPreviousComputed,
+      node.deliveryPreviousSchema,
+      node.deliveryPreviousState,
+    ]).toEqual([undefined, undefined, undefined, undefined, undefined]);
     expect(node.path).toBe('/next');
     expect(node.visible).toBe(false);
     expect(node.interactionState).toEqual({ dirty: true });

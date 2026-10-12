@@ -1,5 +1,6 @@
-import { getItemEntry } from '../../../blueprint';
 import { isArray } from '@winglet/common-utils/filter';
+
+import { getItemEntry } from '../../../blueprint';
 import type { SchemaNodeRecord } from '../../../record';
 import type { SettlementContext } from '../../type';
 import { HostLatent } from './HostLatent';
@@ -16,14 +17,17 @@ import { readRawTree } from './readRawTree';
  * @returns Frozen whole-array host latent
  */
 export const captureArrayLatent = <Self extends SchemaNodeRecord<Self>>(
-  node: Self, context: SettlementContext<Self>,
+  node: Self,
+  context: SettlementContext<Self>,
 ): HostLatent => {
   const slots: unknown[] = [];
   let tailStart = 0;
   for (let index = 0; index < node.itemCount; index++) {
     const entry = getItemEntry(node.blueprintNode, index);
     if (!entry) {
-      slots.push(isArray(node.extras) ? node.extras[index - tailStart] : undefined);
+      slots.push(
+        isArray(node.extras) ? node.extras[index - tailStart] : undefined,
+      );
       continue;
     }
     tailStart++;
@@ -32,8 +36,9 @@ export const captureArrayLatent = <Self extends SchemaNodeRecord<Self>>(
       slots.push(readRawTree(item, context));
       continue;
     }
-    slots.push(readLatentSlotSource(context,
-      `${node.path}/${index}`, entry.node));
+    slots.push(
+      readLatentSlotSource(context, `${node.path}/${index}`, entry.node),
+    );
   }
   return new HostLatent(Object.freeze(slots), undefined);
 };

@@ -14,7 +14,10 @@ const EXIT_LAYERS = ['node', 'children', 'fragment'] as const;
  * @returns The first declared layer's unanimous clear or any keep decision
  */
 export const readExitLayerPolicy = (
-  groups: readonly ControlLayer<{ path: string; blueprintNode: { kind: string } }>[],
+  groups: readonly ControlLayer<{
+    path: string;
+    blueprintNode: { kind: string };
+  }>[],
   committedRuleValues: ReadonlyMap<string, unknown> | undefined,
   inherited: boolean,
 ): boolean => {
@@ -22,12 +25,16 @@ export const readExitLayerPolicy = (
     let declared = false;
     let keep = false;
     for (const group of groups) {
-      if (group.layer !== layer ||
-        !hasOwnProperty(group.controls, 'unsetOnInactive')) continue;
+      if (
+        group.layer !== layer ||
+        !hasOwnProperty(group.controls, 'unsetOnInactive')
+      )
+        continue;
       declared = true;
       const literal: unknown = Reflect.get(group.controls, 'unsetOnInactive');
       const key = getExitPolicyKey(group);
-      const value = typeof literal === 'string' ? committedRuleValues?.get(key) : literal;
+      const value =
+        typeof literal === 'string' ? committedRuleValues?.get(key) : literal;
       if (value !== true) keep = true;
     }
     if (declared) return !keep;

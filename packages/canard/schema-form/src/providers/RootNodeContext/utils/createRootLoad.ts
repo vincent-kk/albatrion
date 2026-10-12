@@ -40,8 +40,7 @@ export const createRootLoad = (
           if (load.ready) {
             if (reporter && load.root) reporter.root = load.root;
             reporter?.report(record);
-          }
-          else load.records.push(record);
+          } else load.records.push(record);
         },
       },
       onChange: (value) => {

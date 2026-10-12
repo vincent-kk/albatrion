@@ -11,10 +11,17 @@ export const readBatchValue = <Self extends SchemaNodeRecord<Self>>(
 ): unknown => {
   const root = node.rootNode;
   const names: string[] = [];
-  for (let cursor: Self | null = node; cursor && cursor !== root; cursor = cursor.parent)
+  for (
+    let cursor: Self | null = node;
+    cursor && cursor !== root;
+    cursor = cursor.parent
+  )
     names.unshift(cursor.name);
   let value = composeBatchValue(root, root.runtime.batchWrites ?? []);
   for (const name of names)
-    value = value !== null && typeof value === 'object' ? Reflect.get(value, name) : undefined;
+    value =
+      value !== null && typeof value === 'object'
+        ? Reflect.get(value, name)
+        : undefined;
   return value;
 };

@@ -3,12 +3,20 @@ import { expect, it, vi } from 'vitest';
 import { blueprint } from '../blueprint';
 
 /** The existing collection boundary identifies invocation-owned input arrays. */
-const work = vi.hoisted(() => ({ inputs: new WeakSet<object>(), iterations: 0 }));
+const work = vi.hoisted(() => ({
+  inputs: new WeakSet<object>(),
+  iterations: 0,
+}));
 
 vi.mock('../utils/analyze/collectDeclarations', async (importOriginal) => {
-  const original = await importOriginal<typeof import('../utils/analyze/collectDeclarations')>();
+  const original =
+    await importOriginal<
+      typeof import('../utils/analyze/collectDeclarations')
+    >();
   return {
-    collectDeclarations: (...args: Parameters<typeof original.collectDeclarations>) => {
+    collectDeclarations: (
+      ...args: Parameters<typeof original.collectDeclarations>
+    ) => {
       work.inputs.add(args[1].gates);
       work.inputs.add(args[1].order);
       return original.collectDeclarations(...args);
@@ -26,7 +34,10 @@ it('copies packed input memberships without invoking their iterators', () => {
   };
   let result;
   try {
-    result = blueprint({ type: 'object', properties: { first: { type: 'string' }, second: { type: 'number' } } });
+    result = blueprint({
+      type: 'object',
+      properties: { first: { type: 'string' }, second: { type: 'number' } },
+    });
   } finally {
     Array.prototype[Symbol.iterator] = iterator;
   }
@@ -39,6 +50,8 @@ it('copies packed input memberships without invoking their iterators', () => {
     expect(declaration.order).not.toBe(fragment.order);
     expect(declaration.gates).toEqual(fragment.gates);
     expect(declaration.order).toEqual(fragment.order);
-    expect(Object.isFrozen(declaration.gates)).toBe(process.env.NODE_ENV !== 'production');
+    expect(Object.isFrozen(declaration.gates)).toBe(
+      process.env.NODE_ENV !== 'production',
+    );
   }
 });

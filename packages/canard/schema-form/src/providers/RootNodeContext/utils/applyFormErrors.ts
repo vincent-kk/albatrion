@@ -30,8 +30,7 @@ export const applyFormErrors = (
     for (let index = 0; index < paths.length; index++) {
       const path = paths[index];
       const node = root.find(path);
-      if (node && node !== root)
-        node.setExternalErrors(groups.get(path)!);
+      if (node && node !== root) node.setExternalErrors(groups.get(path)!);
     }
   });
 };

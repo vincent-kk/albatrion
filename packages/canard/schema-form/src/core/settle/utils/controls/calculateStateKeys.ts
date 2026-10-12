@@ -9,9 +9,18 @@ const NO_FAILURES: readonly [] = Object.freeze([]);
 
 /** Each state key has its own identity and order-independent combination. */
 const STATE_KEYS = {
-  visible: { initial: true, combine: (left: boolean, right: boolean) => left && right },
-  readOnly: { initial: false, combine: (left: boolean, right: boolean) => left || right },
-  disabled: { initial: false, combine: (left: boolean, right: boolean) => left || right },
+  visible: {
+    initial: true,
+    combine: (left: boolean, right: boolean) => left && right,
+  },
+  readOnly: {
+    initial: false,
+    combine: (left: boolean, right: boolean) => left || right,
+  },
+  disabled: {
+    initial: false,
+    combine: (left: boolean, right: boolean) => left || right,
+  },
 } as const;
 /** Fixed control key order; combination does not depend on this order. */
 const KEY_NAMES = ['visible', 'readOnly', 'disabled'] as const;
@@ -19,11 +28,18 @@ const KEY_NAMES = ['visible', 'readOnly', 'disabled'] as const;
 /** Pure calculation result, including the all expressions that failed. */
 export interface CalculatedStateKeys<Self> {
   /** Final local values paired with their live targets. */
-  readonly entries: readonly { readonly node: Self; readonly visible: boolean;
-    readonly readOnly: boolean; readonly disabled: boolean }[];
+  readonly entries: readonly {
+    readonly node: Self;
+    readonly visible: boolean;
+    readonly readOnly: boolean;
+    readonly disabled: boolean;
+  }[];
   /** Failed state expressions in evaluation order. */
-  readonly failures: readonly { readonly path: string; readonly schemaPath: string;
-    readonly cause: unknown }[];
+  readonly failures: readonly {
+    readonly path: string;
+    readonly schemaPath: string;
+    readonly cause: unknown;
+  }[];
 }
 
 /**
@@ -35,16 +51,23 @@ export interface CalculatedStateKeys<Self> {
  * @returns Local values and all expression failures, without mutating records
  */
 export const calculateStateKeys = <Self extends SchemaNodeRecord<Self>>(
-  root: Self, stateDirtyNodes: ReadonlySet<Self>,
+  root: Self,
+  stateDirtyNodes: ReadonlySet<Self>,
   selectedDeclarationIds: ReadonlyMap<Self, readonly number[]>,
   expandFrom: (source: Self) => boolean,
 ): CalculatedStateKeys<Self> => {
   const blueprint = root.runtime.blueprint;
   const index = getFeatureNodeIndex(blueprint);
-  const isTarget = (node: Self): boolean => index.stateKeyNodes.has(node.blueprintNode.id) ||
-    !!node.parent && !!(index.stateKeyChildren.get(node.parent.blueprintNode.id)?.has(node.name) ||
-      node.parent.blueprintNode.kind === 'array' &&
-      index.stateKeyChildren.get(node.parent.blueprintNode.id)?.has('*'));
+  const isTarget = (node: Self): boolean =>
+    index.stateKeyNodes.has(node.blueprintNode.id) ||
+    (!!node.parent &&
+      !!(
+        index.stateKeyChildren
+          .get(node.parent.blueprintNode.id)
+          ?.has(node.name) ||
+        (node.parent.blueprintNode.kind === 'array' &&
+          index.stateKeyChildren.get(node.parent.blueprintNode.id)?.has('*'))
+      ));
   const candidates = new Set<Self>();
   for (const node of stateDirtyNodes) if (isTarget(node)) candidates.add(node);
   for (const source of stateDirtyNodes) {
@@ -53,20 +76,27 @@ export const calculateStateKeys = <Self extends SchemaNodeRecord<Self>>(
     if (source.detached || !source.children?.length) continue;
     if (!expandFrom(source)) continue;
     for (const child of source.children)
-      if (targets.has(child.name) || source.blueprintNode.kind === 'array' && targets.has('*'))
+      if (
+        targets.has(child.name) ||
+        (source.blueprintNode.kind === 'array' && targets.has('*'))
+      )
         candidates.add(child);
   }
   const evaluated = new Map<string, boolean | undefined>();
   const entries: CalculatedStateKeys<Self>['entries'][number][] = [];
   let failures: CalculatedStateKeys<Self>['failures'][number][] | undefined;
   for (const node of candidates) {
-    if (node.detached || node.parent && node.parent.structure?.[node.name] !== node)
+    if (
+      node.detached ||
+      (node.parent && node.parent.structure?.[node.name] !== node)
+    )
       continue;
     const schema = node.schema.schema;
     const next: Record<keyof typeof STATE_KEYS, boolean> = {
       visible: STATE_KEYS.visible.initial,
       readOnly: typeof schema === 'object' && schema.readOnly === true,
-      disabled: STATE_KEYS.disabled.initial };
+      disabled: STATE_KEYS.disabled.initial,
+    };
     for (const group of getControlLayers(node, selectedDeclarationIds))
       for (const key of KEY_NAMES) {
         const literal: unknown = Reflect.get(group.controls, key);
@@ -78,19 +108,33 @@ export const calculateStateKeys = <Self extends SchemaNodeRecord<Self>>(
           const cacheKey = JSON.stringify([group.host.path, schemaPath]);
           if (evaluated.has(cacheKey)) value = evaluated.get(cacheKey);
           else {
-            const expression = getControlExpression(blueprint,
-              group.declarationId, schemaPath, key);
-            if (expression) try {
-              value = Boolean(expression.evaluate(expression.dependencies.map(
-                (dependency) => readStateDependency(root,
-                  group.host.path, dependency))));
-            } catch (cause) {
-              (failures ??= []).push({ path: group.host.path, schemaPath, cause });
-            }
+            const expression = getControlExpression(
+              blueprint,
+              group.declarationId,
+              schemaPath,
+              key,
+            );
+            if (expression)
+              try {
+                value = Boolean(
+                  expression.evaluate(
+                    expression.dependencies.map((dependency) =>
+                      readStateDependency(root, group.host.path, dependency),
+                    ),
+                  ),
+                );
+              } catch (cause) {
+                (failures ??= []).push({
+                  path: group.host.path,
+                  schemaPath,
+                  cause,
+                });
+              }
             evaluated.set(cacheKey, value);
           }
         }
-        if (value !== undefined) next[key] = STATE_KEYS[key].combine(next[key], value);
+        if (value !== undefined)
+          next[key] = STATE_KEYS[key].combine(next[key], value);
       }
     entries.push({ node, ...next });
   }

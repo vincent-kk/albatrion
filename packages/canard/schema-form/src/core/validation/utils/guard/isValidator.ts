@@ -6,6 +6,9 @@ import type { Validator } from '../../type';
  * @returns Whether core can call both compilation operations.
  */
 export const isValidator = (candidate: unknown): candidate is Validator =>
-  candidate !== null && typeof candidate === 'object' &&
-  'compile' in candidate && typeof candidate.compile === 'function' &&
-  'compileGuard' in candidate && typeof candidate.compileGuard === 'function';
+  candidate !== null &&
+  typeof candidate === 'object' &&
+  'compile' in candidate &&
+  typeof candidate.compile === 'function' &&
+  'compileGuard' in candidate &&
+  typeof candidate.compileGuard === 'function';

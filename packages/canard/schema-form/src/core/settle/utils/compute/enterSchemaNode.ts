@@ -1,8 +1,8 @@
 import type { SchemaNodeRecord } from '../../../record';
 import type { SettlementContext } from '../../type';
+import { restoreLatentState } from '../latent/restoreLatentState';
 import { hasDistributedChildInput } from '../write/hasDistributedChildInput';
 import { markWrite } from '../write/markWrite';
-import { restoreLatentState } from '../latent/restoreLatentState';
 
 /**
  * Give this settlement's distributed key priority over an entering node's latent.
@@ -13,14 +13,25 @@ import { restoreLatentState } from '../latent/restoreLatentState';
  * @returns Nothing; the child is ready for shape calculation
  */
 export const enterSchemaNode = <Self extends SchemaNodeRecord<Self>>(
-  host: Self, child: Self, name: string, context: SettlementContext<Self>,
+  host: Self,
+  child: Self,
+  name: string,
+  context: SettlementContext<Self>,
 ): void => {
   const distribution = context.distributedInputs.get(host);
   const latent = context.root.runtime.latentRaw;
-  const key = latent.size > 0 ? JSON.stringify([child.path, child.blueprintNode.kind]) : undefined;
+  const key =
+    latent.size > 0
+      ? JSON.stringify([child.path, child.blueprintNode.kind])
+      : undefined;
   const own = key === undefined ? undefined : latent.get(key);
-  const write = distribution && hasDistributedChildInput(distribution.input, name,
-    host.behavior.type === 'array');
+  const write =
+    distribution &&
+    hasDistributedChildInput(
+      distribution.input,
+      name,
+      host.behavior.type === 'array',
+    );
   if (write || distribution?.whole) {
     if (write && !distribution.whole && key !== undefined && latent.has(key))
       restoreLatentState(child, own, context);

@@ -1,8 +1,12 @@
+import { BEHAVIORS } from '../../../behaviors';
 import { mergeEffectiveSchema } from '../../../blueprint';
 import type { BlueprintChildEntry, BlueprintNode } from '../../../blueprint';
-import { BEHAVIORS } from '../../../behaviors';
 import { EMPTY_REVISION_LEDGER } from '../../../record';
-import type { Behavior, SchemaNodeRecord, SchemaNodeRuntime } from '../../../record';
+import type {
+  Behavior,
+  SchemaNodeRecord,
+  SchemaNodeRuntime,
+} from '../../../record';
 
 /** Plain record used by settlement tests, without the later SchemaNode class. */
 export interface PlainNode extends SchemaNodeRecord<PlainNode> {}
@@ -25,19 +29,27 @@ export const createPlainNode = (
   const name = 'node' in entry ? entry.name : '';
   const escapedName = name.replace(/~/g, '~0').replace(/\//g, '~1');
   const row = BEHAVIORS[template.kind]?.[template.strategy];
-  if (!row) throw new Error(`Missing behavior for ${template.kind}/${template.strategy}`);
+  if (!row)
+    throw new Error(
+      `Missing behavior for ${template.kind}/${template.strategy}`,
+    );
   const behavior: Behavior<PlainNode> = {
     interpret: row.interpret,
     assemble: (node, children) => {
       visits.push(node.path);
       return Reflect.apply(row.assemble, undefined, [node, children]);
     },
-    project: (node, local) => Reflect.apply(row.project, undefined, [node, local]),
+    project: (node, local) =>
+      Reflect.apply(row.project, undefined, [node, local]),
     finishInput: (node) => Reflect.apply(row.finishInput, undefined, [node]),
     declareChildren: (node) => {
       const entries: readonly BlueprintChildEntry[] = Reflect.apply(
-        row.declareChildren, undefined, [node]);
-      for (const child of entries) visits.push(`select:${node.path}/${child.name}`);
+        row.declareChildren,
+        undefined,
+        [node],
+      );
+      for (const child of entries)
+        visits.push(`select:${node.path}/${child.name}`);
       return entries;
     },
     arrange: row.arrange,
@@ -45,23 +57,43 @@ export const createPlainNode = (
     strategy: row.strategy,
   };
   return {
-    behavior, runtime, blueprintNode: template, parent,
-    get rootNode() { return parent?.rootNode ?? this; },
-    name, escapedName,
+    behavior,
+    runtime,
+    blueprintNode: template,
+    parent,
+    get rootNode() {
+      return parent?.rootNode ?? this;
+    },
+    name,
+    escapedName,
     path: parent ? `${parent.path}/${escapedName}` : '',
     depth: parent ? parent.depth + 1 : 0,
-    required: false, nullable: template.nullable, schemaType: template.schemaType,
+    required: false,
+    nullable: template.nullable,
+    schemaType: template.schemaType,
     structure: template.strategy === 'branch' ? {} : null,
     children: template.strategy === 'branch' ? [] : null,
-    itemKey: null, itemCount: 0, nextItemKey: 0,
-    raw: undefined, extras: undefined, active: true,
-    visible: true, readOnly: false, disabled: false,
-    local: undefined, emit: undefined,
+    itemKey: null,
+    itemCount: 0,
+    nextItemKey: 0,
+    raw: undefined,
+    extras: undefined,
+    active: true,
+    visible: true,
+    readOnly: false,
+    disabled: false,
+    local: undefined,
+    emit: undefined,
     schema: mergeEffectiveSchema(template, [], { mode: 'runtime' }),
-    interactionState: {}, revisionLedger: EMPTY_REVISION_LEDGER,
-    deliveryInitialized: false, deliveryChanges: 0,
-    pendingDelivery: undefined, pendingRevision: 0,
-    pendingNonSettleDelivery: undefined, detached: false,
-    disposed: false, interactionReset: 0,
+    interactionState: {},
+    revisionLedger: EMPTY_REVISION_LEDGER,
+    deliveryInitialized: false,
+    deliveryChanges: 0,
+    pendingDelivery: undefined,
+    pendingRevision: 0,
+    pendingNonSettleDelivery: undefined,
+    detached: false,
+    disposed: false,
+    interactionReset: 0,
   };
 };

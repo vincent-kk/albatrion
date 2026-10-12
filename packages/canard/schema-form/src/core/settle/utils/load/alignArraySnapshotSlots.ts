@@ -1,10 +1,11 @@
 import { isArray } from '@winglet/common-utils/filter';
 import { unescapeSegment } from '@winglet/json/pointer';
+
 import type { SchemaNodeRecord } from '../../../record';
-import { getLoadValue } from './getLoadValue';
-import { setLoadValue } from './setLoadValue';
 import { sameValue } from '../compute/sameValue';
 import { isCanonicalArrayIndex } from '../paths/isCanonicalArrayIndex';
+import { getLoadValue } from './getLoadValue';
+import { setLoadValue } from './setLoadValue';
 
 /**
  * Align resized arrays in one snapshot draft after their final shapes are known.
@@ -67,8 +68,10 @@ export const alignArraySnapshotSlots = <Self extends SchemaNodeRecord<Self>>(
         byName = true;
         break;
       }
-      probe = probe !== null && typeof probe === 'object'
-        ? Reflect.get(probe, segment) : undefined;
+      probe =
+        probe !== null && typeof probe === 'object'
+          ? Reflect.get(probe, segment)
+          : undefined;
     }
     if (byName) {
       draft = setLoadValue(draft, host.path, slots);

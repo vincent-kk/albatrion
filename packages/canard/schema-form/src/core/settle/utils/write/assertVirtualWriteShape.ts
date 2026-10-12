@@ -1,5 +1,9 @@
 import { isArray } from '@winglet/common-utils/filter';
-import { INVALID_VIRTUAL_NODE_VALUES, SchemaFormError } from '../../../../errors';
+
+import {
+  INVALID_VIRTUAL_NODE_VALUES,
+  SchemaFormError,
+} from '../../../../errors';
 import type { SchemaNodeRecord } from '../../../record';
 
 /**
@@ -9,11 +13,17 @@ import type { SchemaNodeRecord } from '../../../record';
  * @returns Nothing when the caller supplied a valid virtual shape
  */
 export const assertVirtualWriteShape = <Self extends SchemaNodeRecord<Self>>(
-  node: Self, input: unknown,
+  node: Self,
+  input: unknown,
 ): void => {
   const fields = node.blueprintNode.fields ?? [];
-  if (input !== undefined && (!isArray(input) || input.length !== fields.length))
-    throw new SchemaFormError(INVALID_VIRTUAL_NODE_VALUES,
+  if (
+    input !== undefined &&
+    (!isArray(input) || input.length !== fields.length)
+  )
+    throw new SchemaFormError(
+      INVALID_VIRTUAL_NODE_VALUES,
       `Invalid virtual node values at ${node.path}`,
-      { path: node.path, expected: fields.length, received: input });
+      { path: node.path, expected: fields.length, received: input },
+    );
 };

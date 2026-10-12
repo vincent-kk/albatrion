@@ -1,5 +1,9 @@
-import { accumulateGlobalStateDeltas, patchSchemaNodeInteractionState,
-  publishGlobalStateDeltas, SchemaNodeEventType } from '../../../record';
+import {
+  SchemaNodeEventType,
+  accumulateGlobalStateDeltas,
+  patchSchemaNodeInteractionState,
+  publishGlobalStateDeltas,
+} from '../../../record';
 import type { SchemaNodeRecord } from '../../../record';
 import { assertSchemaNodeWritable } from '../../../settle';
 import type { NodeStateFlags } from '../../../types/state';
@@ -15,7 +19,8 @@ import { assertNotInDelivery } from '../report/assertNotInDelivery';
  * @returns Nothing; delivery is synchronous outside a public write
  */
 export const dispatchSetState = <Self extends SchemaNodeRecord<Self>>(
-  node: Self, state: NodeStateFlags,
+  node: Self,
+  state: NodeStateFlags,
 ): void => {
   assertSchemaNodeWritable(node);
   if (node.detached) return;
@@ -31,6 +36,10 @@ export const dispatchSetState = <Self extends SchemaNodeRecord<Self>>(
   if (node.deliveryChanges & SchemaNodeEventType.UpdateState)
     node.deliveryPreviousState = node.interactionState;
   runtime.stateChanged = true;
-  queueNonSettleEvent(node, SchemaNodeEventType.UpdateState, node.interactionState);
+  queueNonSettleEvent(
+    node,
+    SchemaNodeEventType.UpdateState,
+    node.interactionState,
+  );
   if (!runtime.entryDepth) flushQueuedEvents(node.rootNode);
 };

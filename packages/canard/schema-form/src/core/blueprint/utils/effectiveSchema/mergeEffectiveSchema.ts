@@ -28,9 +28,11 @@ export const mergeEffectiveSchema = (
   options: EffectiveSchemaOptions = {},
   memo: EffectiveSchemaMemo = DEFAULT_MEMO,
 ): EffectiveSchema => {
-  const defaultNoActive = activeDeclarationIds.length === 0 &&
+  const defaultNoActive =
+    activeDeclarationIds.length === 0 &&
     (options.mode === undefined || options.mode === 'runtime') &&
-    options.isAtomic === undefined && options.collect === undefined &&
+    options.isAtomic === undefined &&
+    options.collect === undefined &&
     memo === DEFAULT_MEMO;
   if (defaultNoActive) {
     const cached = DEFAULT_NO_ACTIVE.get(node);
@@ -41,9 +43,14 @@ export const mergeEffectiveSchema = (
   const key = declarations.map((declaration) => declaration.id).join(',');
   const cached = schemas.get(key);
   if (cached !== undefined) return cached;
-  if (memo === DEFAULT_MEMO && options.collect === undefined &&
-    options.isAtomic === undefined && (options.mode === undefined || options.mode === 'runtime') &&
-    node.declarations.length === 1 && node.declarations[0].gates.length === 0) {
+  if (
+    memo === DEFAULT_MEMO &&
+    options.collect === undefined &&
+    options.isAtomic === undefined &&
+    (options.mode === undefined || options.mode === 'runtime') &&
+    node.declarations.length === 1 &&
+    node.declarations[0].gates.length === 0
+  ) {
     const normalized = DEFAULT_NO_ACTIVE.get(node);
     if (normalized !== undefined) {
       schemas.set(key, normalized);

@@ -8,10 +8,21 @@ import type { SchemaNodeRecord } from '../../../record';
  * @returns Whether the compiler proved the approved, narrow first-load scope
  */
 export const canLoadStaticFirstTree = <Self extends SchemaNodeRecord<Self>>(
-  root: Self, value: unknown,
-): boolean => value === undefined && root.parent === null && !root.disposed &&
-  !root.detached && !root.deliveryInitialized && !root.runtime.commitNumber &&
-  !root.children?.length && !root.pendingDelivery && !root.pendingRevision &&
-  root.raw === undefined && root.extras === undefined && !root.runtime.deliveries?.size &&
-  root.runtime.latentRaw.size === 0 && root.runtime.globalStateCounts.size === 0 &&
+  root: Self,
+  value: unknown,
+): boolean =>
+  value === undefined &&
+  root.parent === null &&
+  !root.disposed &&
+  !root.detached &&
+  !root.deliveryInitialized &&
+  !root.runtime.commitNumber &&
+  !root.children?.length &&
+  !root.pendingDelivery &&
+  !root.pendingRevision &&
+  root.raw === undefined &&
+  root.extras === undefined &&
+  !root.runtime.deliveries?.size &&
+  root.runtime.latentRaw.size === 0 &&
+  root.runtime.globalStateCounts.size === 0 &&
   StaticFirstLoadCapability.has(root.runtime.blueprint);

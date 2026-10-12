@@ -8,7 +8,8 @@ import type { SchemaNodeListener } from '../../type';
  * @returns Cleanup that takes effect even during an active wave
  */
 export const subscribeSchemaNode = <Self extends SchemaNodeRecord<Self>>(
-  node: Self, listener: SchemaNodeListener,
+  node: Self,
+  listener: SchemaNodeListener,
 ): (() => void) => {
   if (node.disposed || node.rootNode.disposed) return () => {};
   const runtime = node.rootNode.runtime;

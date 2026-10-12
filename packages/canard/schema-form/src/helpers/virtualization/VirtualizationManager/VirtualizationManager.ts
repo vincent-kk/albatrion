@@ -212,7 +212,11 @@ export class VirtualizationManager {
   constructor(options: ResolvedVirtualizationOptions) {
     this.options = options;
     this.Placeholder = isReactComponent(options.Placeholder)
-      ? withErrorBoundary(options.Placeholder, undefined, usePlaceholderBoundaryReporter)
+      ? withErrorBoundary(
+          options.Placeholder,
+          undefined,
+          usePlaceholderBoundaryReporter,
+        )
       : null;
   }
 }

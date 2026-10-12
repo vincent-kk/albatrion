@@ -10,10 +10,16 @@ import { getWatchPaths } from './utils/getWatchPaths';
 const TABLES = new WeakMap<Blueprint, DeriveRuleTable>();
 /** Rule-free analyses share a read-only empty table. */
 const EMPTY_TABLE: DeriveRuleTable = Object.freeze({
-  rules: Object.freeze([]), byDeclaration: emptyReadonlyMap,
+  rules: Object.freeze([]),
+  byDeclaration: emptyReadonlyMap,
 });
 /** Keys whose string expression is evaluated by the first derive unit. */
-const RULE_KEYS = ['derived', 'unsetValue', 'resetInteraction', 'injectTo'] as const;
+const RULE_KEYS = [
+  'derived',
+  'unsetValue',
+  'resetInteraction',
+  'injectTo',
+] as const;
 
 /** One control group and one directly addressed target. */
 interface RuleGroup {
@@ -45,29 +51,47 @@ export const getDeriveRuleTable = (blueprint: Blueprint): DeriveRuleTable => {
   for (const node of blueprint.nodes)
     for (const declaration of node.declarations) {
       const schema = declaration.schema;
-      const controls = schema && typeof schema === 'object' ?
-        Reflect.get(schema, 'controls') : undefined;
-      if (!controls || typeof controls !== 'object' || isArray(controls)) continue;
+      const controls =
+        schema && typeof schema === 'object'
+          ? Reflect.get(schema, 'controls')
+          : undefined;
+      if (!controls || typeof controls !== 'object' || isArray(controls))
+        continue;
       const groups: RuleGroup[] = [];
-      const hasOwnRules = Reflect.get(controls, 'derived') !== undefined ||
+      const hasOwnRules =
+        Reflect.get(controls, 'derived') !== undefined ||
         Reflect.get(controls, 'unsetValue') !== undefined ||
         Reflect.get(controls, 'resetInteraction') !== undefined ||
         Reflect.get(controls, 'injectTo') !== undefined;
       if (hasOwnRules && declaration.scope === 'fragment') {
         for (const entry of node.childEntries) {
-          const selected = entry.declarations.filter((child) =>
-            child.schemaPath.startsWith(`${declaration.schemaPath}/properties/`) ||
-            child.schemaPath.startsWith(`${declaration.schemaPath}/items/`) ||
-            child.schemaPath.startsWith(`${declaration.schemaPath}/prefixItems/`));
-          if (selected.length) groups.push({ controls,
-            schemaPath: `${declaration.schemaPath}/controls`, layer: 'fragment',
-            targetName: entry.name,
-            targetDeclarationIds: selected.map((child) => child.id),
-            targetNodes: [entry.node] });
+          const selected = entry.declarations.filter(
+            (child) =>
+              child.schemaPath.startsWith(
+                `${declaration.schemaPath}/properties/`,
+              ) ||
+              child.schemaPath.startsWith(`${declaration.schemaPath}/items/`) ||
+              child.schemaPath.startsWith(
+                `${declaration.schemaPath}/prefixItems/`,
+              ),
+          );
+          if (selected.length)
+            groups.push({
+              controls,
+              schemaPath: `${declaration.schemaPath}/controls`,
+              layer: 'fragment',
+              targetName: entry.name,
+              targetDeclarationIds: selected.map((child) => child.id),
+              targetNodes: [entry.node],
+            });
         }
-      } else if (hasOwnRules) groups.push({ controls,
-        schemaPath: `${declaration.schemaPath}/controls`, layer: 'node',
-        targetNodes: [node] });
+      } else if (hasOwnRules)
+        groups.push({
+          controls,
+          schemaPath: `${declaration.schemaPath}/controls`,
+          layer: 'node',
+          targetNodes: [node],
+        });
       const children: unknown = Reflect.get(controls, 'children');
       if (isArray(children))
         for (let index = 0; index < children.length; index++) {
@@ -75,15 +99,25 @@ export const getDeriveRuleTable = (blueprint: Blueprint): DeriveRuleTable => {
           if (!item || typeof item !== 'object') continue;
           const itemControls: unknown = Reflect.get(item, 'controls');
           const names: unknown = Reflect.get(item, 'targets');
-          if (!itemControls || typeof itemControls !== 'object' || !isArray(names))
+          if (
+            !itemControls ||
+            typeof itemControls !== 'object' ||
+            !isArray(names)
+          )
             continue;
           for (const name of names) {
             if (typeof name !== 'string') continue;
-            const targets = node.childEntries.filter((entry) => entry.name === name);
-            if (targets.length) groups.push({ controls: itemControls,
-              schemaPath: `${declaration.schemaPath}/controls/children/${index}/controls`,
-              layer: 'children', targetName: name,
-              targetNodes: targets.map((target) => target.node) });
+            const targets = node.childEntries.filter(
+              (entry) => entry.name === name,
+            );
+            if (targets.length)
+              groups.push({
+                controls: itemControls,
+                schemaPath: `${declaration.schemaPath}/controls/children/${index}/controls`,
+                layer: 'children',
+                targetName: name,
+                targetNodes: targets.map((target) => target.node),
+              });
           }
         }
       for (const group of groups)
@@ -91,23 +125,36 @@ export const getDeriveRuleTable = (blueprint: Blueprint): DeriveRuleTable => {
           const literal: unknown = Reflect.get(group.controls, kind);
           if (literal === undefined) continue;
           const schemaPath = `${group.schemaPath}/${kind}`;
-          const expression = getControlExpression(blueprint,
-            declaration.id, schemaPath, kind);
+          const expression = getControlExpression(
+            blueprint,
+            declaration.id,
+            schemaPath,
+            kind,
+          );
           if (typeof literal === 'string' && !expression) continue;
           if (kind === 'injectTo' && typeof literal !== 'function') continue;
-          const dependencies = [...expression?.dependencies ?? []];
+          const dependencies = [...(expression?.dependencies ?? [])];
           const watchDependencies: string[] = [];
           if (kind === 'derived')
             for (const targetNode of group.targetNodes)
               for (const watch of getWatchPaths(targetNode)) {
-                if (!watchDependencies.includes(watch)) watchDependencies.push(watch);
+                if (!watchDependencies.includes(watch))
+                  watchDependencies.push(watch);
                 if (!dependencies.includes(watch)) dependencies.push(watch);
               }
-          const rule: DeriveRule = { declarationId: declaration.id, kind,
-            schemaPath, layer: group.layer, targetName: group.targetName,
+          const rule: DeriveRule = {
+            declarationId: declaration.id,
+            kind,
+            schemaPath,
+            layer: group.layer,
+            targetName: group.targetName,
             targetDeclarationIds: group.targetDeclarationIds,
-            dependencies, watchDependencies, expression, literal,
-            order: rules.length };
+            dependencies,
+            watchDependencies,
+            expression,
+            literal,
+            order: rules.length,
+          };
           rules.push(rule);
           const owned = byDeclaration.get(declaration.id) ?? [];
           owned.push(rule);

@@ -10,12 +10,21 @@ import { captureChainError } from './captureChainError';
 export const refuseListenerFeedback = <Self>(
   runtime: SchemaNodeRuntime<Self>,
 ): boolean => {
-  if (!runtime.entryDepth || !runtime.currentListener ||
-    (runtime.feedbackBudget ?? 0) < 25) return false;
+  if (
+    !runtime.entryDepth ||
+    !runtime.currentListener ||
+    (runtime.feedbackBudget ?? 0) < 25
+  )
+    return false;
   (runtime.feedbackBlockedListeners ??= new Set()).add(runtime.currentListener);
   if (!runtime.feedbackLimitReported) {
-    captureChainError(runtime, new SchemaFormError(FEEDBACK_LIMIT_EXCEEDED,
-      'Listener feedback exceeded 25 waves'));
+    captureChainError(
+      runtime,
+      new SchemaFormError(
+        FEEDBACK_LIMIT_EXCEEDED,
+        'Listener feedback exceeded 25 waves',
+      ),
+    );
     runtime.feedbackLimitReported = true;
   }
   return true;

@@ -8,7 +8,8 @@ import type { SettlementContext } from '../../type';
  * @returns Nothing; an existing index gains this occurrence under its current key
  */
 export const indexEnteredLatentKey = <Self extends SchemaNodeRecord<Self>>(
-  context: SettlementContext<Self>, node: Self,
+  context: SettlementContext<Self>,
+  node: Self,
 ): void => {
   const index = context.enteredLatentKeys;
   if (!index) return;

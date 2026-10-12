@@ -1,5 +1,9 @@
-import { accumulateGlobalStateDeltas, patchSchemaNodeInteractionState,
-  publishGlobalStateDeltas, SchemaNodeEventType } from '../../../record';
+import {
+  SchemaNodeEventType,
+  accumulateGlobalStateDeltas,
+  patchSchemaNodeInteractionState,
+  publishGlobalStateDeltas,
+} from '../../../record';
 import type { SchemaNodeRecord } from '../../../record';
 import { assertSchemaNodeWritable } from '../../../settle';
 import type { NodeStateFlags } from '../../../types/state';
@@ -15,7 +19,8 @@ import { assertNotInDelivery } from '../report/assertNotInDelivery';
  * @returns Nothing; one wave follows the whole traversal outside an entry
  */
 export const dispatchSetSubtreeState = <Self extends SchemaNodeRecord<Self>>(
-  node: Self, state: NodeStateFlags,
+  node: Self,
+  state: NodeStateFlags,
 ): void => {
   assertSchemaNodeWritable(node);
   if (node.detached) return;
@@ -30,12 +35,20 @@ export const dispatchSetSubtreeState = <Self extends SchemaNodeRecord<Self>>(
     const previous = current.interactionState;
     patchSchemaNodeInteractionState(current, state);
     if (previous !== current.interactionState) {
-      accumulateGlobalStateDeltas(deltas, previous, current.interactionState, state);
+      accumulateGlobalStateDeltas(
+        deltas,
+        previous,
+        current.interactionState,
+        state,
+      );
       if (current.deliveryChanges & SchemaNodeEventType.UpdateState)
         current.deliveryPreviousState = current.interactionState;
       runtime.stateChanged = true;
-      queueNonSettleEvent(current, SchemaNodeEventType.UpdateState,
-        current.interactionState);
+      queueNonSettleEvent(
+        current,
+        SchemaNodeEventType.UpdateState,
+        current.interactionState,
+      );
     }
     for (const child of current.children ?? []) pending.push(child);
   }

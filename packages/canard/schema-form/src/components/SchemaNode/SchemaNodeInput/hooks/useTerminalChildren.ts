@@ -27,7 +27,11 @@ export const useTerminalChildren = (node: SchemaNode): ChildNodeComponent[] => {
     if (node.strategy !== 'terminal' || !reporter?.hasConsumer())
       return EMPTY_CHILDREN;
     let readLoad = reporter.load;
-    const get = (target: object = EMPTY_CHILDREN, key?: string | symbol, receiver?: unknown): unknown => {
+    const get = (
+      target: object = EMPTY_CHILDREN,
+      key?: string | symbol,
+      receiver?: unknown,
+    ): unknown => {
       if (readLoad !== reporter.load) {
         readLoad = reporter.load;
         accessed.current &= ~ACCESSED;
@@ -41,9 +45,12 @@ export const useTerminalChildren = (node: SchemaNode): ChildNodeComponent[] => {
         });
         return;
       }
-      if (!(accessed.current & ACCESSED) &&
-        (key === 'length' || key === Symbol.iterator ||
-          (typeof key === 'string' && /^\d+$/.test(key)))) {
+      if (
+        !(accessed.current & ACCESSED) &&
+        (key === 'length' ||
+          key === Symbol.iterator ||
+          (typeof key === 'string' && /^\d+$/.test(key)))
+      ) {
         accessed.current |= ACCESSED;
         if (accessed.current & COMMITTED) queueMicrotask(get);
       }
@@ -53,7 +60,7 @@ export const useTerminalChildren = (node: SchemaNode): ChildNodeComponent[] => {
   }, [node, reporter]);
   useLayoutEffect(() => {
     accessed.current |= COMMITTED;
-    if (node.strategy === 'terminal' && (accessed.current & ACCESSED))
+    if (node.strategy === 'terminal' && accessed.current & ACCESSED)
       reporter?.report({
         level: 'warning',
         code: 'SCHEMA_FORM_WARNING.CHILD_NODE_COMPONENTS_ON_TERMINAL',

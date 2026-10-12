@@ -33,24 +33,40 @@ describe('BlueprintGate evaluation reads', () => {
   });
 
   it('SETTLE-045 preserves one read list for a shared reference template', () => {
-    const analysis = blueprint({ type: 'object',
-      $defs: { branch: { type: 'object', properties: {
-        flag: { type: 'boolean' },
-        child: { type: 'string', controls: { active: '../flag' } },
-      } } },
-      properties: { p: { $ref: '#/$defs/branch' }, q: { $ref: '#/$defs/branch' } },
+    const analysis = blueprint({
+      type: 'object',
+      $defs: {
+        branch: {
+          type: 'object',
+          properties: {
+            flag: { type: 'boolean' },
+            child: { type: 'string', controls: { active: '../flag' } },
+          },
+        },
+      },
+      properties: {
+        p: { $ref: '#/$defs/branch' },
+        q: { $ref: '#/$defs/branch' },
+      },
     });
     const [p, q] = analysis.root.childEntries;
     expect(p.node).toBe(q.node);
-    expect(p.node.childEntries[1].declarations[0].gates[0].evaluationReads).toEqual([1]);
+    expect(
+      p.node.childEntries[1].declarations[0].gates[0].evaluationReads,
+    ).toEqual([1]);
   });
 
   it('SETTLE-045 keeps finite recursive template reads independent of depth', () => {
     const analysis = blueprint({
-      $defs: { loop: { type: 'object', properties: {
-        flag: { type: 'boolean' },
-        next: { $ref: '#/$defs/loop', controls: { active: '../flag' } },
-      } } },
+      $defs: {
+        loop: {
+          type: 'object',
+          properties: {
+            flag: { type: 'boolean' },
+            next: { $ref: '#/$defs/loop', controls: { active: '../flag' } },
+          },
+        },
+      },
       $ref: '#/$defs/loop',
     });
     const first = analysis.root.childEntries[1];
@@ -59,5 +75,4 @@ describe('BlueprintGate evaluation reads', () => {
     expect(first.declarations[0].gates[0].evaluationReads).toEqual([1]);
     expect(second.declarations[0].gates[0].evaluationReads).toEqual([1]);
   });
-
 });

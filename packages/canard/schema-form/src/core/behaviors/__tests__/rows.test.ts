@@ -1,13 +1,13 @@
-import { PathKeyedMap } from '../../utils/pathIndex/PathKeyedMap';
-import { PathKeyedSet } from '../../utils/pathIndex/PathKeyedSet';
 import { describe, expect, it } from 'vitest';
 
 import { blueprint } from '../../blueprint';
 import type { BlueprintNode } from '../../blueprint';
 import { EMPTY_REVISION_LEDGER } from '../../record';
 import type { Behavior, SchemaNodeRecord, UnionSpec } from '../../record';
-import { BEHAVIORS } from '../index';
+import { PathKeyedMap } from '../../utils/pathIndex/PathKeyedMap';
+import { PathKeyedSet } from '../../utils/pathIndex/PathKeyedSet';
 import { booleanBehavior } from '../booleanBehavior';
+import { BEHAVIORS } from '../index';
 import { nullBehavior } from '../nullBehavior';
 import { numberBehavior } from '../numberBehavior';
 import { objectBehavior } from '../objectBehavior';
@@ -41,7 +41,9 @@ const makeRecord = (
     loadSnapshot: undefined,
     latentRaw: new PathKeyedMap('pair'),
     typeMismatchPaths: new PathKeyedSet(),
-    inactiveValuesMemo: new PathKeyedMap<readonly { path: string; value: unknown }[]>('path'),
+    inactiveValuesMemo: new PathKeyedMap<
+      readonly { path: string; value: unknown }[]
+    >('path'),
   },
   blueprintNode,
   parent: null,
@@ -69,9 +71,12 @@ const makeRecord = (
   schema: { schema: { options }, typeConflict: false },
   interactionState: {},
   revisionLedger: EMPTY_REVISION_LEDGER,
-    deliveryInitialized: false, deliveryChanges: 0, pendingRevision: 0,
+  deliveryInitialized: false,
+  deliveryChanges: 0,
+  pendingRevision: 0,
   detached: false,
-  disposed: false, interactionReset: 0,
+  disposed: false,
+  interactionReset: 0,
 });
 
 /** Construct the read-only scalar interpretation restriction. */
@@ -83,20 +88,37 @@ const spec = (kinds: UnionSpec['kinds']): UnionSpec => ({
 
 describe('behavior rows', () => {
   it('TEST-069 row combinations covers every kind and strategy choice', () => {
-    const types = ['string', 'number', 'boolean', 'null', 'object',
-      'array', 'virtual', 'union'];
+    const types = [
+      'string',
+      'number',
+      'boolean',
+      'null',
+      'object',
+      'array',
+      'virtual',
+      'union',
+    ];
     const strategies = ['branch', 'terminal'];
     const present: string[] = [];
     for (const type of types)
       for (const strategy of strategies) {
-        const row = Object.entries(BEHAVIORS).find(([kind]) => kind === type)?.[1];
+        const row = Object.entries(BEHAVIORS).find(
+          ([kind]) => kind === type,
+        )?.[1];
         const selected = strategy === 'branch' ? row?.branch : row?.terminal;
         if (selected) present.push(`${type}.${strategy}`);
       }
     expect(present).toEqual([
-      'string.terminal', 'number.terminal', 'boolean.terminal',
-      'null.terminal', 'object.branch', 'object.terminal',
-      'array.branch', 'array.terminal', 'virtual.branch', 'union.terminal',
+      'string.terminal',
+      'number.terminal',
+      'boolean.terminal',
+      'null.terminal',
+      'object.branch',
+      'object.terminal',
+      'array.branch',
+      'array.terminal',
+      'virtual.branch',
+      'union.terminal',
     ]);
   });
 
@@ -105,13 +127,19 @@ describe('behavior rows', () => {
     expect(numberBehavior.interpret).toBe(booleanBehavior.interpret);
     expect(booleanBehavior.interpret).toBe(unionBehavior.interpret);
     expect(stringBehavior.assemble).toBe(numberBehavior.assemble);
-    expect(numberBehavior.declareChildren).toBe(booleanBehavior.declareChildren);
+    expect(numberBehavior.declareChildren).toBe(
+      booleanBehavior.declareChildren,
+    );
     expect(numberBehavior.finishInput).toBe(booleanBehavior.finishInput);
     expect(numberBehavior.project).toBe(booleanBehavior.project);
     expect(nullBehavior.project).toBe(numberBehavior.project);
-    expect(objectBehavior.branch.interpret).toBe(objectBehavior.terminal.interpret);
+    expect(objectBehavior.branch.interpret).toBe(
+      objectBehavior.terminal.interpret,
+    );
     expect(objectBehavior.branch.project).toBe(objectBehavior.terminal.project);
-    expect(objectBehavior.branch.declareChildren).toBe(virtualBehavior.declareChildren);
+    expect(objectBehavior.branch.declareChildren).toBe(
+      virtualBehavior.declareChildren,
+    );
     expect(stringBehavior.interpret(3, spec('string'))).toBe('3');
     expect(numberBehavior.interpret('12', spec('number'))).toBe(12);
     expect(booleanBehavior.interpret('false', spec('boolean'))).toBe(false);
@@ -125,7 +153,10 @@ describe('behavior rows', () => {
     expect(stringBehavior.project(node, '')).toBeUndefined();
     const choices = getStaticChoices(node.schema);
     expect(getStaticChoices(node.schema)).toBe(choices);
-    node.schema = { schema: { options: { omitEmpty: false } }, typeConflict: false };
+    node.schema = {
+      schema: { options: { omitEmpty: false } },
+      typeConflict: false,
+    };
     expect(stringBehavior.project(node, '')).toBe('');
   });
 
@@ -133,11 +164,16 @@ describe('behavior rows', () => {
     const object = { nested: [1] };
     const node = makeRecord(unionBehavior, object);
     expect(nullBehavior.interpret(object, spec('number'))).toBe(object);
-    expect(unionBehavior.interpret(object, spec(['object', 'string']))).toBe(object);
+    expect(unionBehavior.interpret(object, spec(['object', 'string']))).toBe(
+      object,
+    );
     expect(unionBehavior.assemble(node, [])).toBe(object);
     expect(unionBehavior.project(node, object)).toBe(object);
-    expect(unionBehavior.finishInput(makeRecord(unionBehavior, '  a ', { trim: true })))
-      .toBe('a');
+    expect(
+      unionBehavior.finishInput(
+        makeRecord(unionBehavior, '  a ', { trim: true }),
+      ),
+    ).toBe('a');
   });
 
   it('assembles virtual sibling values but emits no virtual field', () => {
@@ -149,7 +185,9 @@ describe('behavior rows', () => {
     node.local = tuple;
     expect(virtualBehavior.assemble(node, [first, second])).toBe(tuple);
     expect(virtualBehavior.project(node, tuple)).toBeUndefined();
-    expect(virtualBehavior.declareChildren(node)).toBe(node.blueprintNode.childEntries);
+    expect(virtualBehavior.declareChildren(node)).toBe(
+      node.blueprintNode.childEntries,
+    );
   });
 
   it('preserves terminal object identity and omits only an empty object', () => {
@@ -173,20 +211,29 @@ describe('behavior rows', () => {
     const node = makeRecord(objectBehavior.branch, {}, {}, template);
     const declared = objectBehavior.branch.declareChildren(node);
     expect(declared).toBe(template.childEntries);
-    expect(declared.map((entry) => entry.name)).toEqual(['always', 'conditional']);
-    expect(declared.some((entry) =>
-      entry.declarations.some((declaration) => declaration.gates.length > 0),
-    )).toBe(true);
+    expect(declared.map((entry) => entry.name)).toEqual([
+      'always',
+      'conditional',
+    ]);
+    expect(
+      declared.some((entry) =>
+        entry.declarations.some((declaration) => declaration.gates.length > 0),
+      ),
+    ).toBe(true);
   });
 
   it('assembles current object children in preferred, declaration, extras order', () => {
     const node = makeRecord(objectBehavior.branch, undefined, {
       propertyKeys: ['second'],
     });
-    const children = [{ name: 'first', emit: 1 }, { name: 'second', emit: 2 }];
+    const children = [
+      { name: 'first', emit: 1 },
+      { name: 'second', emit: 2 },
+    ];
     node.extras = { other: 3 };
     const local = objectBehavior.branch.assemble(node, children);
-    if (local === null || typeof local !== 'object') throw new Error('object assembly returned a scalar');
+    if (local === null || typeof local !== 'object')
+      throw new Error('object assembly returned a scalar');
     expect(Object.keys(local)).toEqual(['second', 'first', 'other']);
     expect(local).toEqual({ second: 2, first: 1, other: 3 });
     node.local = local;
@@ -198,9 +245,8 @@ describe('behavior rows', () => {
     node.local = changed;
     node.extras = { other: 3, last: 5 };
     const expanded = objectBehavior.branch.assemble(node, children);
-    if (expanded === null || typeof expanded !== 'object') throw new Error('object assembly returned a scalar');
-    expect(Object.keys(expanded)).toEqual([
-      'second', 'first', 'other', 'last',
-    ]);
+    if (expanded === null || typeof expanded !== 'object')
+      throw new Error('object assembly returned a scalar');
+    expect(Object.keys(expanded)).toEqual(['second', 'first', 'other', 'last']);
   });
 });

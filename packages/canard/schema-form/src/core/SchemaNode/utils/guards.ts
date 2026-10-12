@@ -1,6 +1,16 @@
 import { SchemaNode as RuntimeSchemaNode } from '../SchemaNode';
-import type { ArrayNode, BooleanNode, BranchNode, NumberNode, ObjectNode,
-  SchemaNode, StringNode, TerminalNode, UnionNode, VirtualNode } from '../type';
+import type {
+  ArrayNode,
+  BooleanNode,
+  BranchNode,
+  NumberNode,
+  ObjectNode,
+  SchemaNode,
+  StringNode,
+  TerminalNode,
+  UnionNode,
+  VirtualNode,
+} from '../type';
 
 /** Identify instances of the single runtime class. */
 export const isSchemaNode = (value: unknown): value is SchemaNode =>

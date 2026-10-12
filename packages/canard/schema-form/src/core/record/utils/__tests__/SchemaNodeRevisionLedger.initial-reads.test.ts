@@ -24,8 +24,10 @@ describe('SchemaNodeRevisionLedger initial previous reads', () => {
     reads.bits = 0;
     const nodes = 8;
     for (let node = 0; node < nodes; node++) {
-      const ledger = new SchemaNodeRevisionLedger(EMPTY_REVISION_LEDGER,
-        SchemaNodeEventType.Initialized | SchemaNodeEventType.UpdateValue);
+      const ledger = new SchemaNodeRevisionLedger(
+        EMPTY_REVISION_LEDGER,
+        SchemaNodeEventType.Initialized | SchemaNodeEventType.UpdateValue,
+      );
       expect(ledger.read(-1)).toBe(2);
     }
     expect(reads.bits / nodes).toBe(0);
@@ -33,13 +35,19 @@ describe('SchemaNodeRevisionLedger initial previous reads', () => {
 
   it('still reads all 17 bits from a distinct plain previous record', () => {
     let count = 0;
-    const previous = new Proxy({ [SchemaNodeEventType.UpdateValue]: 7 }, {
-      get(target, key, receiver) {
-        if (typeof key === 'string' && /^\d+$/.test(key)) count++;
-        return Reflect.get(target, key, receiver);
+    const previous = new Proxy(
+      { [SchemaNodeEventType.UpdateValue]: 7 },
+      {
+        get(target, key, receiver) {
+          if (typeof key === 'string' && /^\d+$/.test(key)) count++;
+          return Reflect.get(target, key, receiver);
+        },
       },
-    });
-    const ledger = new SchemaNodeRevisionLedger(previous, SchemaNodeEventType.UpdateValue);
+    );
+    const ledger = new SchemaNodeRevisionLedger(
+      previous,
+      SchemaNodeEventType.UpdateValue,
+    );
     expect(count).toBe(17);
     expect(ledger[SchemaNodeEventType.UpdateValue]).toBe(8);
     expect(ledger.read(-1)).toBe(8);

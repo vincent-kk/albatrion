@@ -9,7 +9,9 @@ import type { DeriveState } from '../../../type';
  * @returns Nothing; both active indexes contain the key
  */
 export const addActiveRuleKey = <Self extends SchemaNodeRecord<Self>>(
-  state: DeriveState<Self>, sourcePath: string, key: string,
+  state: DeriveState<Self>,
+  sourcePath: string,
+  key: string,
 ): void => {
   state.activeRuleKeys.add(key);
   let sourceKeys = state.activeRuleKeysBySource.get(sourcePath);

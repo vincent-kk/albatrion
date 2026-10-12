@@ -5,7 +5,8 @@
  * @returns Ordered references to surviving old positions
  */
 export const copyArraySlots = (
-  count: number, removedIndex: number = -1,
+  count: number,
+  removedIndex: number = -1,
 ): { from: number }[] => {
   const slots: { from: number }[] = [];
   for (let index = 0; index < count; index++)

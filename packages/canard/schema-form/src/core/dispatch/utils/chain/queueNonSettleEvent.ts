@@ -1,5 +1,8 @@
 import type { SchemaNodeRecord } from '../../../record';
-import type { SchemaNodeEventType, SchemaNodeRequestType } from '../../../record';
+import type {
+  SchemaNodeEventType,
+  SchemaNodeRequestType,
+} from '../../../record';
 
 /**
  * Merge an event into the next wave without touching settlement's event table.
@@ -9,7 +12,8 @@ import type { SchemaNodeEventType, SchemaNodeRequestType } from '../../../record
  * @returns Nothing; the outer entry or caller flushes this table
  */
 export const queueNonSettleEvent = <Self extends SchemaNodeRecord<Self>>(
-  node: Self, bit: SchemaNodeEventType | SchemaNodeRequestType,
+  node: Self,
+  bit: SchemaNodeEventType | SchemaNodeRequestType,
   payload?: unknown,
 ): void => {
   const runtime = node.rootNode.runtime;
@@ -17,8 +21,10 @@ export const queueNonSettleEvent = <Self extends SchemaNodeRecord<Self>>(
   const previous = node.pendingNonSettleDelivery;
   node.pendingNonSettleDelivery = {
     type: (previous?.type ?? 0) | bit,
-    payload: payload === undefined ? previous?.payload :
-      { ...previous?.payload, [bit]: payload },
+    payload:
+      payload === undefined
+        ? previous?.payload
+        : { ...previous?.payload, [bit]: payload },
   };
   queued.add(node);
   runtime.queuedNonSettleEvents = queued;

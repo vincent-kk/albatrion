@@ -1,11 +1,11 @@
 import { captureSchemaNodeChange } from '../../../record';
-import { walkOwnedSchemaNodes } from '../walkOwnedSchemaNodes';
 import type { SchemaNodeRecord } from '../../../record';
 import type { SettlementContext } from '../../type';
 import { captureDetachedSchemaNodeReads } from '../detached/captureDetachedSchemaNodeReads';
 import { getGateRegistry } from '../gates/getGateRegistry';
-import { prunePerishedPaths } from './prunePerishedPaths';
+import { walkOwnedSchemaNodes } from '../walkOwnedSchemaNodes';
 import { pruneArrayTailPaths } from './pruneArrayTailPaths';
+import { prunePerishedPaths } from './prunePerishedPaths';
 
 /**
  * Detach final length-removed items without exit clearing or latent capture.
@@ -23,7 +23,8 @@ export const finalizePerished = <Self extends SchemaNodeRecord<Self>>(
         captureDetachedSchemaNodeReads(departing, {
           emit: context.previousEmit,
           context: context.previousContext,
-          schema: context.originalSchemas.get(departing.path)?.schema ??
+          schema:
+            context.originalSchemas.get(departing.path)?.schema ??
             departing.schema.schema,
         });
       departing.detached = true;
@@ -31,7 +32,10 @@ export const finalizePerished = <Self extends SchemaNodeRecord<Self>>(
     });
     getGateRegistry(node.runtime).remove(node);
     for (const [key, pending] of context.pendingExits)
-      if (pending.path === node.path || pending.path.startsWith(`${node.path}/`))
+      if (
+        pending.path === node.path ||
+        pending.path.startsWith(`${node.path}/`)
+      )
         context.pendingExits.delete(key);
     if (!node.parent?.structure?.[node.name])
       (perishedPaths ??= new Set()).add(node.path);

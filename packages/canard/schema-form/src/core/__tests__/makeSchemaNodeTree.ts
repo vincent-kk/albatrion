@@ -1,10 +1,10 @@
-import { PathKeyedMap } from '../utils/pathIndex/PathKeyedMap';
-import { PathKeyedSet } from '../utils/pathIndex/PathKeyedSet';
+import type { FormErrorReporter } from '../../errors';
+import { schemaNodeFactory } from '../SchemaNode';
 import { blueprint } from '../blueprint';
 import type { BlueprintSchema } from '../blueprint';
-import { schemaNodeFactory } from '../SchemaNode';
+import { PathKeyedMap } from '../utils/pathIndex/PathKeyedMap';
+import { PathKeyedSet } from '../utils/pathIndex/PathKeyedSet';
 import type { Validator } from '../validation';
-import type { FormErrorReporter } from '../../errors';
 import { createTestValidator } from './fixtures/createTestValidator';
 
 /** Compile authored declarations and expose only the PR-2 node surface to tests. */
@@ -24,9 +24,12 @@ export const makeSchemaNodeTree = (
     loadSnapshot: options.snapshot,
     latentRaw: new PathKeyedMap('pair'),
     typeMismatchPaths: new PathKeyedSet(),
-    inactiveValuesMemo: new PathKeyedMap<readonly { path: string; value: unknown }[]>('path'),
+    inactiveValuesMemo: new PathKeyedMap<
+      readonly { path: string; value: unknown }[]
+    >('path'),
   };
-  const validator = 'validator' in options ? options.validator : createTestValidator();
+  const validator =
+    'validator' in options ? options.validator : createTestValidator();
   const root = schemaNodeFactory(analysis, runtime, validator);
   const treeRuntime: unknown = Reflect.get(root, 'runtime');
   if (treeRuntime === null || typeof treeRuntime !== 'object')

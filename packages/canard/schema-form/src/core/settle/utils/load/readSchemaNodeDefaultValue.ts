@@ -8,6 +8,7 @@ import { getLoadValue } from './getLoadValue';
  */
 export const readSchemaNodeDefaultValue = <Self extends SchemaNodeRecord<Self>>(
   node: Self,
-): unknown => node.detached
-  ? node.runtime.detachedReads?.get(node)?.defaultValue
-  : getLoadValue(node.runtime.loadSnapshot, node.path);
+): unknown =>
+  node.detached
+    ? node.runtime.detachedReads?.get(node)?.defaultValue
+    : getLoadValue(node.runtime.loadSnapshot, node.path);

@@ -10,7 +10,8 @@ export interface SchemaNodePath {
 export const getSchemaNodePath = (
   pointer?: string | readonly string[] | null,
 ): SchemaNodePath => {
-  if (pointer == null || pointer === '') return { absolute: false, segments: [] };
+  if (pointer == null || pointer === '')
+    return { absolute: false, segments: [] };
   if (typeof pointer !== 'string') {
     const absolute = pointer[0] === '#';
     return { absolute, segments: absolute ? pointer.slice(1) : pointer };

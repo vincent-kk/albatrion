@@ -32,7 +32,10 @@ export type GuardFunction = (value: unknown) => boolean;
  */
 export type ValidateFunction<Value = unknown> = (
   data: Value,
-) => Promise<readonly ValidationIssue[] | null> | readonly ValidationIssue[] | null;
+) =>
+  | Promise<readonly ValidationIssue[] | null>
+  | readonly ValidationIssue[]
+  | null;
 
 /**
  * Compiles validation and synchronous guards for one engine-owned schema copy.

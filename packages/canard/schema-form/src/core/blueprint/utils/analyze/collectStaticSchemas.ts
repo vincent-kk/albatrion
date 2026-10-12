@@ -30,7 +30,13 @@ export const collectStaticSchemas = (
   if (typeof schema.$ref === 'string') {
     const target = resolveReference(context, schema.$ref, schemaPath);
     result.push(
-      ...collectStaticSchemas(context, target.schema, target.schemaPath, stack, cycle),
+      ...collectStaticSchemas(
+        context,
+        target.schema,
+        target.schemaPath,
+        stack,
+        cycle,
+      ),
     );
   }
   if (isArray(schema.allOf))

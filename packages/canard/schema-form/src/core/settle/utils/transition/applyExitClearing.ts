@@ -3,8 +3,8 @@ import type { SettlementContext } from '../../type';
 import { getLatentOrder } from '../latent/getLatentOrder';
 import { captureExitedRaw } from './captureExitedRaw';
 import { captureLatentDescendants } from './captureLatentDescendants';
-import { readUnsetPolicy } from './readUnsetPolicy';
 import { readDepartingAncestorPolicy } from './readDepartingAncestorPolicy';
+import { readUnsetPolicy } from './readUnsetPolicy';
 
 /**
  * Apply final exit policies to each detached previously live subtree.
@@ -19,8 +19,13 @@ export const applyExitClearing = <Self extends SchemaNodeRecord<Self>>(
   for (const node of context.exited) {
     if (skip(node) || context.entered.has(node) || !node.detached) continue;
     const inherited = readDepartingAncestorPolicy(context, node);
-    captureExitedRaw(node, inherited, context, true,
-      getLatentOrder(node.parent, node.name, node.blueprintNode));
+    captureExitedRaw(
+      node,
+      inherited,
+      context,
+      true,
+      getLatentOrder(node.parent, node.name, node.blueprintNode),
+    );
     captureLatentDescendants(context, node, readUnsetPolicy(node, inherited));
   }
 };

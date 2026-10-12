@@ -3,7 +3,11 @@ import { Fragment, memo, useMemo } from 'react';
 import { NULL_FUNCTION } from '@winglet/common-utils/constant';
 import { isMemoComponent } from '@winglet/react-utils/filter';
 import { ErrorBoundary } from '@winglet/react-utils/hoc';
-import { useConstant, useLazyConstant, useReference } from '@winglet/react-utils/hook';
+import {
+  useConstant,
+  useLazyConstant,
+  useReference,
+} from '@winglet/react-utils/hook';
 
 import { DISPLAY_CONTENT, NONE_ROLE } from '@/schema-form/app/constants';
 import { SchemaNodeEventType } from '@/schema-form/core';
@@ -44,9 +48,15 @@ export const SchemaNodeProxy = ({
   const onError = useBoundaryReporter(node?.path);
 
   const Input = useMemo<FormTypeRendererProps['Input']>(
-    () => SchemaNodeInputWrapper(
-      node, onChangeRef, onFileAttachRef, overridePropsRef, FormTypeInput, SchemaNodeProxy,
-    ),
+    () =>
+      SchemaNodeInputWrapper(
+        node,
+        onChangeRef,
+        onFileAttachRef,
+        overridePropsRef,
+        FormTypeInput,
+        SchemaNodeProxy,
+      ),
     [node, onChangeRef, onFileAttachRef, overridePropsRef, FormTypeInput],
   );
 
@@ -60,7 +70,9 @@ export const SchemaNodeProxy = ({
     const Component = InputFormTypeRenderer || ContextFormTypeRenderer;
     const Renderer = isMemoComponent(Component) ? Component : memo(Component);
     /** Compute the message below the owning boundary without leaking extra props to the renderer. */
-    return function RendererWithErrorMessage(props: Omit<FormTypeRendererProps, 'errorMessage'>) {
+    return function RendererWithErrorMessage(
+      props: Omit<FormTypeRendererProps, 'errorMessage'>,
+    ) {
       const { node, context, formatError } = props;
       const errorMessage = useMemo(() => {
         const errors = node.errors;
@@ -80,7 +92,10 @@ export const SchemaNodeProxy = ({
   const { context } = useWorkspaceContext();
   const errorVisible = checkShowError(node?.state);
   const formatError = errorVisible ? contextFormatError : NULL_FUNCTION;
-  const version = useSchemaNodeTracker(node, SchemaNodeEventType.RequestRemount);
+  const version = useSchemaNodeTracker(
+    node,
+    SchemaNodeEventType.RequestRemount,
+  );
 
   if (!node?.enabled) return null;
 
@@ -89,7 +104,8 @@ export const SchemaNodeProxy = ({
       <div data-path={node.path} role={NONE_ROLE} style={DISPLAY_CONTENT}>
         <ErrorBoundary onError={onError}>
           <FormTypeGroupRenderer
-            {...(node.jsonSchema as JSONSchema).presentation?.FormTypeRendererProps}
+            {...(node.jsonSchema as JSONSchema).presentation
+              ?.FormTypeRendererProps}
             {...overridePropsRef?.current}
             // Essential node properties are owned by the binding.
             node={node}

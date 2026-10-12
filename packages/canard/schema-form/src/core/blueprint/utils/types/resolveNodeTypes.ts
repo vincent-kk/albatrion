@@ -21,10 +21,12 @@ export const resolveNodeTypes = (
   allowed: readonly SchemaTypeName[];
   declarations: readonly PropertyDeclaration[];
 }[] => {
-  const fixed = context.capabilities.branchless ? declarations : declarations.filter(
-    (declaration) =>
-      declaration.context === 'conjunction' && !declaration.gates.length,
-  );
+  const fixed = context.capabilities.branchless
+    ? declarations
+    : declarations.filter(
+        (declaration) =>
+          declaration.context === 'conjunction' && !declaration.gates.length,
+      );
   const staticOwner = fixed.some(
     (declaration) => declaration.role === 'declaration',
   );
@@ -53,7 +55,8 @@ export const resolveNodeTypes = (
         fixed[0].schema,
         fixed[0].schemaPath,
       );
-    if (context.capabilities.branchless) return [{ allowed: allowed!, declarations }];
+    if (context.capabilities.branchless)
+      return [{ allowed: allowed!, declarations }];
     const mask = foldAllowedTypes(allowed!);
     for (const declaration of declarations) {
       if (

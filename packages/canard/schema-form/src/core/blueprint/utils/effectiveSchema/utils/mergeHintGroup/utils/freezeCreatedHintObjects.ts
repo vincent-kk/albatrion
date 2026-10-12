@@ -23,11 +23,7 @@ export const freezeCreatedHintObjects = (
     const previous = getDataProperty(earlier, key);
     const next = getDataProperty(later, key);
     if (value === previous || value === next || !isPlainObject(value)) continue;
-    freezeCreatedHintObjects(
-      value,
-      previous,
-      next,
-    );
+    freezeCreatedHintObjects(value, previous, next);
     Object.freeze(value);
   }
 };

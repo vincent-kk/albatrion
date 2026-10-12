@@ -1,5 +1,5 @@
-import type { FormErrorRecord, FormErrorReporter } from '@/schema-form/errors';
 import type { SchemaNode } from '@/schema-form/core';
+import type { FormErrorRecord, FormErrorReporter } from '@/schema-form/errors';
 
 /** Mutable instance service retained outside the root boundary. */
 export interface FormErrorService extends FormErrorReporter {

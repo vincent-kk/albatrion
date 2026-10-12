@@ -77,12 +77,19 @@ type InferredKinds<Value> = readonly [
   ...([Extract<Value, boolean>] extends [never] ? [] : ['boolean']),
   ...([Extract<Value, ArrayValue>] extends [never] ? [] : ['array']),
   ...([Extract<Exclude<Value, ArrayValue>, ObjectValue>] extends [never]
-    ? [] : ['object']),
+    ? []
+    : ['object']),
 ];
 
 /** A multi-kind value belongs to one terminal schema, including its nullable flag. */
-type UnionSchema<Value, Options extends Dictionary> = Omit<JSONSchema<Options>, 'type'> & {
-  type: readonly [...InferredKinds<Value>, ...(null extends Value ? ['null'] : [])];
+type UnionSchema<Value, Options extends Dictionary> = Omit<
+  JSONSchema<Options>,
+  'type'
+> & {
+  type: readonly [
+    ...InferredKinds<Value>,
+    ...(null extends Value ? ['null'] : []),
+  ];
 };
 
 /**
@@ -97,13 +104,17 @@ export type InferJSONSchema<
   Options extends Dictionary = object,
 > = unknown extends Value
   ? JSONSchema<Options>
-  : InferredKinds<Exclude<Value, null>> extends readonly [unknown, unknown, ...unknown[]]
+  : InferredKinds<Exclude<Value, null>> extends readonly [
+        unknown,
+        unknown,
+        ...unknown[],
+      ]
     ? UnionSchema<Value, Options>
     : [Value] extends [null]
-  ? NullSchema<Options>
-  : IsNullable<Value> extends true
-    ? InferNullableSchema<Exclude<Value, null>, Options>
-    : InferNonNullableSchema<Value, Options>;
+      ? NullSchema<Options>
+      : IsNullable<Value> extends true
+        ? InferNullableSchema<Exclude<Value, null>, Options>
+        : InferNonNullableSchema<Value, Options>;
 
 /** Binding presentation payload; core treats these fields as opaque data. */
 export type SchemaPresentation = Pick<

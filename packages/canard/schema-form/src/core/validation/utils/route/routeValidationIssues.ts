@@ -8,8 +8,11 @@ import { updateSchemaNodeGlobalErrors } from './updateSchemaNodeGlobalErrors';
 
 /** Identify a record owned by this tree without an unchecked type assertion. */
 const isOwnedNode = <Self extends SchemaNodeRecord<Self>>(
-  candidate: unknown, runtime: Self['runtime'],
-): candidate is Self => candidate !== null && typeof candidate === 'object' &&
+  candidate: unknown,
+  runtime: Self['runtime'],
+): candidate is Self =>
+  candidate !== null &&
+  typeof candidate === 'object' &&
   Reflect.get(candidate, 'runtime') === runtime;
 
 /**
@@ -19,20 +22,23 @@ const isOwnedNode = <Self extends SchemaNodeRecord<Self>>(
  * @returns Nodes whose displayed validator issues changed.
  */
 export const routeValidationIssues = <Self extends SchemaNodeRecord<Self>>(
-  target: Self, issues: readonly ValidationIssue[],
+  target: Self,
+  issues: readonly ValidationIssue[],
 ): Set<Self> => {
   const root = target.rootNode;
   const runtime = root.runtime;
-  const before = runtime.validationErrors ?? new Map<unknown, readonly unknown[]>();
+  const before =
+    runtime.validationErrors ?? new Map<unknown, readonly unknown[]>();
   const next = new Map<unknown, readonly unknown[]>(before);
   let activeIds: Set<number> | undefined;
   if (issues.length > 0 && runtime.committedDeclarationIds?.size) {
     activeIds = new Set<number>();
     for (const ids of runtime.committedDeclarationIds.values())
-      for (let index = 0; index < ids.length; index++) activeIds.add(ids[index]);
+      for (let index = 0; index < ids.length; index++)
+        activeIds.add(ids[index]);
   }
-  const inScope = (node: Self): boolean => node === target ||
-    node.path.startsWith(`${target.path}/`);
+  const inScope = (node: Self): boolean =>
+    node === target || node.path.startsWith(`${target.path}/`);
   for (const node of before.keys())
     if (isOwnedNode<Self>(node, runtime) && inScope(node)) next.delete(node);
   for (let index = 0; index < issues.length; index++) {
@@ -43,13 +49,23 @@ export const routeValidationIssues = <Self extends SchemaNodeRecord<Self>>(
     if (path) {
       if (!path.startsWith('/')) continue;
       const segments = path.slice(1).split('/');
-      for (let segmentIndex = 0; segmentIndex < segments.length; segmentIndex++) {
+      for (
+        let segmentIndex = 0;
+        segmentIndex < segments.length;
+        segmentIndex++
+      ) {
         const encoded = segments[segmentIndex];
         if (node.structure === null) break;
         const key = encoded.replace(/~1/g, '/').replace(/~0/g, '~');
-        if (!hasOwnProperty(node.structure, key)) { node = root; break; }
+        if (!hasOwnProperty(node.structure, key)) {
+          node = root;
+          break;
+        }
         const child = node.structure[key];
-        if (!child) { node = root; break; }
+        if (!child) {
+          node = root;
+          break;
+        }
         node = child;
       }
       if (node === root && path !== '') continue;
@@ -70,8 +86,12 @@ export const routeValidationIssues = <Self extends SchemaNodeRecord<Self>>(
     const oldIssues = before.get(node) ?? [];
     const newIssues = next.get(node) ?? [];
     if (oldIssues.length !== newIssues.length) changed.add(current);
-    else for (let index = 0; index < oldIssues.length; index++)
-      if (oldIssues[index] !== newIssues[index]) { changed.add(current); break; }
+    else
+      for (let index = 0; index < oldIssues.length; index++)
+        if (oldIssues[index] !== newIssues[index]) {
+          changed.add(current);
+          break;
+        }
   }
   runtime.validationErrors = next;
   if (runtime.validationChangedNodes)

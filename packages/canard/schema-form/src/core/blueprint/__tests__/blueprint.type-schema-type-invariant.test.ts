@@ -132,10 +132,9 @@ const TYPE_CELLS: readonly (readonly [string, BlueprintSchema])[] = [
 
 const expectInvariant = (label: string, schema: BlueprintSchema) => {
   for (const node of blueprint(schema).nodes) {
-    expect(
-      isArray(node.schemaType),
-      `${label} ${node.schemaPath}`,
-    ).toBe(node.kind === 'union');
+    expect(isArray(node.schemaType), `${label} ${node.schemaPath}`).toBe(
+      node.kind === 'union',
+    );
     if (isArray(node.schemaType))
       expect(
         Object.isFrozen(node.schemaType),

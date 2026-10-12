@@ -1,6 +1,6 @@
+import type { PathKeyMode, PathKeyedMove } from './type';
 import { PathStoreIndex } from './utils/PathStoreIndex';
 import { getStoreKeyPaths } from './utils/getStoreKeyPaths';
-import type { PathKeyMode, PathKeyedMove } from './type';
 
 /** Native Map whose declared mutation surface owns persistent path indexes. */
 export class PathKeyedMap<Value> extends Map<string, Value> {
@@ -18,7 +18,8 @@ export class PathKeyedMap<Value> extends Map<string, Value> {
 
   /** Index newly inserted identities; value-only writes do not touch the index. */
   override set(key: string, value: Value): this {
-    if (!this.has(key)) this.pathIndex.add(key, getStoreKeyPaths(key, this.mode));
+    if (!this.has(key))
+      this.pathIndex.add(key, getStoreKeyPaths(key, this.mode));
     return super.set(key, value);
   }
 
@@ -46,10 +47,13 @@ export class PathKeyedMap<Value> extends Map<string, Value> {
         this.pathIndex.delete(move.previous);
         super.delete(move.previous);
       }
-      for (const move of moves) if (move.key !== undefined) {
-        this.pathIndex.add(move.key, move.paths);
-        super.set(move.key, move.value);
-      }
-    } finally { this.pathIndex.endBatch(); }
+      for (const move of moves)
+        if (move.key !== undefined) {
+          this.pathIndex.add(move.key, move.paths);
+          super.set(move.key, move.value);
+        }
+    } finally {
+      this.pathIndex.endBatch();
+    }
   }
 }

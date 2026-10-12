@@ -54,9 +54,7 @@ export const SchemaNodeInputWrapper = (
       isReactComponent(OverridePreferredFormTypeInput)
         ? isMemoComponent(OverridePreferredFormTypeInput)
           ? withFormTypeInputErrorBoundary(OverridePreferredFormTypeInput)
-          : memo(
-              withFormTypeInputErrorBoundary(OverridePreferredFormTypeInput),
-            )
+          : memo(withFormTypeInputErrorBoundary(OverridePreferredFormTypeInput))
         : null,
     );
     return (

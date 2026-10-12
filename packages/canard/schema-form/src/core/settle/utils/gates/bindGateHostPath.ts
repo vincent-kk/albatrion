@@ -15,10 +15,17 @@ export const bindGateHostPath = (
   occurrencePath: string,
   childHostPath?: string,
 ): string => {
-  const suffix = gate.hostPath === templatePath ? '' :
-    gate.hostPath.startsWith(`${templatePath}/`)
-      ? gate.hostPath.slice(templatePath.length) : undefined;
-  return childHostPath ?? bindTemplatePath(
-    suffix === undefined ? gate.hostPath : `${occurrencePath}${suffix}`,
-    occurrencePath);
+  const suffix =
+    gate.hostPath === templatePath
+      ? ''
+      : gate.hostPath.startsWith(`${templatePath}/`)
+        ? gate.hostPath.slice(templatePath.length)
+        : undefined;
+  return (
+    childHostPath ??
+    bindTemplatePath(
+      suffix === undefined ? gate.hostPath : `${occurrencePath}${suffix}`,
+      occurrencePath,
+    )
+  );
 };

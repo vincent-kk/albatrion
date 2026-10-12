@@ -10,7 +10,8 @@ import type { SchemaNodeRecord } from '../../../record';
  * @returns Real owner paths, including a gated-out final item slot
  */
 export const expandTemplatePaths = <Self extends SchemaNodeRecord<Self>>(
-  root: Self, templatePath: string,
+  root: Self,
+  templatePath: string,
 ): string[] => {
   if (!templatePath.includes('/*')) return [templatePath];
   const segments = templatePath.split('/').slice(1);
@@ -22,7 +23,10 @@ export const expandTemplatePaths = <Self extends SchemaNodeRecord<Self>>(
     const current = pending.pop();
     if (!current) continue;
     const { node, depth, path } = current;
-    if (depth === segments.length) { paths.push(path); continue; }
+    if (depth === segments.length) {
+      paths.push(path);
+      continue;
+    }
     if (!node) continue;
     const segment = segments[depth];
     if (segment === '*') {
@@ -30,17 +34,26 @@ export const expandTemplatePaths = <Self extends SchemaNodeRecord<Self>>(
         const name = String(index);
         const child = node.structure?.[name];
         if (depth + 1 === segments.length || child)
-          pending.push({ node: child, depth: depth + 1, path: `${path}/${name}` });
+          pending.push({
+            node: child,
+            depth: depth + 1,
+            path: `${path}/${name}`,
+          });
       }
       continue;
     }
     const name = unescapeSegment(segment);
     const structure = node.structure;
-    const child = structure && hasOwnProperty(structure, name)
-      ? structure[name] : undefined;
+    const child =
+      structure && hasOwnProperty(structure, name)
+        ? structure[name]
+        : undefined;
     if (depth + 1 === segments.length || child)
-      pending.push({ node: child, depth: depth + 1,
-        path: `${path}/${segment}` });
+      pending.push({
+        node: child,
+        depth: depth + 1,
+        path: `${path}/${segment}`,
+      });
   }
   return paths;
 };

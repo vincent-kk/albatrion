@@ -5,10 +5,18 @@ import { nodeFromJSONSchema } from '../index';
 afterEach(() => vi.restoreAllMocks());
 
 it('82C-01 patches one object leaf without enumerating its previous siblings', () => {
-  const root = nodeFromJSONSchema({ jsonSchema: { type: 'object',
-    properties: Object.fromEntries(Array.from({ length: 100 }, (_, index) =>
-      [`value${index}`, { type: 'string', default: 'before' }])),
-  }, validationMode: 0 });
+  const root = nodeFromJSONSchema({
+    jsonSchema: {
+      type: 'object',
+      properties: Object.fromEntries(
+        Array.from({ length: 100 }, (_, index) => [
+          `value${index}`,
+          { type: 'string', default: 'before' },
+        ]),
+      ),
+    },
+    validationMode: 0,
+  });
   const previous = root.value;
   const keys = Object.keys;
   let fullScans = 0;

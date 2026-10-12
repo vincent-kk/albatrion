@@ -1,5 +1,5 @@
-import { captureSchemaNodeChange } from '../../../record';
 import type { EffectiveSchema } from '../../../blueprint';
+import { captureSchemaNodeChange } from '../../../record';
 import type { SchemaNodeRecord } from '../../../record';
 import type { SettlementContext } from '../../type';
 import { sameValue } from './sameValue';
@@ -25,16 +25,30 @@ export const preserveReferences = <Self extends SchemaNodeRecord<Self>>(
   previous: CalculatedSnapshot<Self>,
   context: SettlementContext<Self>,
 ): void => {
-  if (sameValue(previous.local, node.local)) node.local = captureSchemaNodeChange(node, 'local', previous.local);
-  if (sameValue(previous.emit, node.emit)) node.emit = captureSchemaNodeChange(node, 'emit', previous.emit);
-  if (previous.children && node.children &&
+  if (sameValue(previous.local, node.local))
+    node.local = captureSchemaNodeChange(node, 'local', previous.local);
+  if (sameValue(previous.emit, node.emit))
+    node.emit = captureSchemaNodeChange(node, 'emit', previous.emit);
+  if (
+    previous.children &&
+    node.children &&
     previous.children.length === node.children.length &&
-    previous.children.every((child, index) => child === node.children?.[index]))
-    node.children = captureSchemaNodeChange(node, 'children', previous.children);
-  if (node.local === previous.local && node.emit === previous.emit &&
+    previous.children.every((child, index) => child === node.children?.[index])
+  )
+    node.children = captureSchemaNodeChange(
+      node,
+      'children',
+      previous.children,
+    );
+  if (
+    node.local === previous.local &&
+    node.emit === previous.emit &&
     node.children === previous.children &&
-    node.schema === (context.originalSchemas.get(node.path) ?? previous.schema) &&
-    node.active === previous.active && !context.changedRaw.has(node.path) &&
-    !context.entered.has(node))
+    node.schema ===
+      (context.originalSchemas.get(node.path) ?? previous.schema) &&
+    node.active === previous.active &&
+    !context.changedRaw.has(node.path) &&
+    !context.entered.has(node)
+  )
     context.changedNodes.delete(node);
 };

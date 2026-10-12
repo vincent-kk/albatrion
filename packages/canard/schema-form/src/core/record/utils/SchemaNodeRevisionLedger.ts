@@ -18,9 +18,12 @@ export class SchemaNodeRevisionLedger {
    */
   constructor(previous: Readonly<Record<number, number>>, mask: number) {
     // The shared empty ledger has no counters, so a first delivery starts empty.
-    const counts: number[] = previous === EMPTY_REVISION_LEDGER ? [] :
-      previous instanceof SchemaNodeRevisionLedger ? previous.counts.slice() :
-        Array.from({ length: 17 }, (_, index) => previous[1 << index]);
+    const counts: number[] =
+      previous === EMPTY_REVISION_LEDGER
+        ? []
+        : previous instanceof SchemaNodeRevisionLedger
+          ? previous.counts.slice()
+          : Array.from({ length: 17 }, (_, index) => previous[1 << index]);
     let remaining = mask & KNOWN_BITS;
     while (remaining) {
       const bit = remaining & -remaining;
@@ -48,37 +51,71 @@ export class SchemaNodeRevisionLedger {
   }
 
   /** Initialization counter. */
-  get [SchemaNodeEventType.Initialized]() { return this.counts[0]; }
+  get [SchemaNodeEventType.Initialized]() {
+    return this.counts[0];
+  }
   /** Path counter. */
-  get [SchemaNodeEventType.UpdatePath]() { return this.counts[1]; }
+  get [SchemaNodeEventType.UpdatePath]() {
+    return this.counts[1];
+  }
   /** Value counter. */
-  get [SchemaNodeEventType.UpdateValue]() { return this.counts[2]; }
+  get [SchemaNodeEventType.UpdateValue]() {
+    return this.counts[2];
+  }
   /** Interaction counter. */
-  get [SchemaNodeEventType.UpdateState]() { return this.counts[3]; }
+  get [SchemaNodeEventType.UpdateState]() {
+    return this.counts[3];
+  }
   /** Global interaction counter. */
-  get [SchemaNodeEventType.UpdateGlobalState]() { return this.counts[4]; }
+  get [SchemaNodeEventType.UpdateGlobalState]() {
+    return this.counts[4];
+  }
   /** Validation counter. */
-  get [SchemaNodeEventType.UpdateError]() { return this.counts[5]; }
+  get [SchemaNodeEventType.UpdateError]() {
+    return this.counts[5];
+  }
   /** Aggregate validation counter. */
-  get [SchemaNodeEventType.UpdateGlobalError]() { return this.counts[6]; }
+  get [SchemaNodeEventType.UpdateGlobalError]() {
+    return this.counts[6];
+  }
   /** Child shape counter. */
-  get [SchemaNodeEventType.UpdateChildren]() { return this.counts[7]; }
+  get [SchemaNodeEventType.UpdateChildren]() {
+    return this.counts[7];
+  }
   /** Computed state counter. */
-  get [SchemaNodeEventType.UpdateComputedProperties]() { return this.counts[8]; }
+  get [SchemaNodeEventType.UpdateComputedProperties]() {
+    return this.counts[8];
+  }
   /** Focus entry counter. */
-  get [SchemaNodeEventType.Focused]() { return this.counts[9]; }
+  get [SchemaNodeEventType.Focused]() {
+    return this.counts[9];
+  }
   /** Focus exit counter. */
-  get [SchemaNodeEventType.Blurred]() { return this.counts[10]; }
+  get [SchemaNodeEventType.Blurred]() {
+    return this.counts[10];
+  }
   /** Focus request counter. */
-  get [SchemaNodeEventType.RequestFocus]() { return this.counts[11]; }
+  get [SchemaNodeEventType.RequestFocus]() {
+    return this.counts[11];
+  }
   /** Selection request counter. */
-  get [SchemaNodeEventType.RequestSelect]() { return this.counts[12]; }
+  get [SchemaNodeEventType.RequestSelect]() {
+    return this.counts[12];
+  }
   /** Refresh request counter. */
-  get [SchemaNodeEventType.RequestRefresh]() { return this.counts[13]; }
+  get [SchemaNodeEventType.RequestRefresh]() {
+    return this.counts[13];
+  }
   /** Remount request counter. */
-  get [SchemaNodeEventType.RequestRemount]() { return this.counts[14]; }
+  get [SchemaNodeEventType.RequestRemount]() {
+    return this.counts[14];
+  }
   /** Effective schema counter. */
-  get [SchemaNodeEventType.UpdateJsonSchema]() { return this.counts[15]; }
+  get [SchemaNodeEventType.UpdateJsonSchema]() {
+    return this.counts[15];
+  }
   /** Settlement diagnostics counter. */
-  get [SchemaNodeEventType.UpdateDiagnostics]() { return this.counts[16]; }
+  get [SchemaNodeEventType.UpdateDiagnostics]() {
+    return this.counts[16];
+  }
 }

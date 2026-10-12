@@ -1,8 +1,8 @@
-import { PathKeyedMap } from '../../../utils/pathIndex/PathKeyedMap';
 import { isArray } from '@winglet/common-utils/filter';
 
 import type { BlueprintNode } from '../../../blueprint';
 import type { SchemaNodeRecord, SchemaNodeRuntime } from '../../../record';
+import { PathKeyedMap } from '../../../utils/pathIndex/PathKeyedMap';
 import type { SettlementContext } from '../../type';
 import { indexLatentDescendant } from './indexLatentDescendant';
 
@@ -21,8 +21,11 @@ import { indexLatentDescendant } from './indexLatentDescendant';
 export const setLatentRaw = <Self extends SchemaNodeRecord<Self>>(
   runtime: SchemaNodeRuntime<Self>,
   log: Map<string, { present: boolean; value: unknown }> | undefined,
-  key: string, present: boolean, value: unknown,
-  template?: BlueprintNode, order?: readonly number[],
+  key: string,
+  present: boolean,
+  value: unknown,
+  template?: BlueprintNode,
+  order?: readonly number[],
   context?: SettlementContext<Self>,
 ): void => {
   const latent = runtime.latentRaw;
@@ -30,15 +33,17 @@ export const setLatentRaw = <Self extends SchemaNodeRecord<Self>>(
   const prior = latent.get(key);
   const index = context?.latentDescendantKeys;
   const identity: unknown = index ? JSON.parse(key) : undefined;
-  const path = isArray(identity) && typeof identity[0] === 'string' ?
-    identity[0] : undefined;
-  const missingMetadata = present && template !== undefined &&
-    !runtime.latentRawMetadata?.has(key);
+  const path =
+    isArray(identity) && typeof identity[0] === 'string'
+      ? identity[0]
+      : undefined;
+  const missingMetadata =
+    present && template !== undefined && !runtime.latentRawMetadata?.has(key);
   if (log && !log.has(key)) log.set(key, { present: had, value: prior });
   if (present) latent.set(key, value);
   else latent.delete(key);
   if (template && order) {
-    const metadata = runtime.latentRawMetadata ??= new PathKeyedMap('pair');
+    const metadata = (runtime.latentRawMetadata ??= new PathKeyedMap('pair'));
     runtime.latentRawMetadata = metadata;
     const identity: unknown = JSON.parse(key);
     if (isArray(identity) && typeof identity[0] === 'string')
@@ -48,7 +53,11 @@ export const setLatentRaw = <Self extends SchemaNodeRecord<Self>>(
     indexLatentDescendant(index, key, path, false);
   if (index && path !== undefined && present && !had)
     indexLatentDescendant(index, key, path, true);
-  if (had !== present || present && !Object.is(prior, value) || missingMetadata) {
+  if (
+    had !== present ||
+    (present && !Object.is(prior, value)) ||
+    missingMetadata
+  ) {
     runtime.latentRawDirty = true;
     if (context) context.latentPrefixes = undefined;
   }

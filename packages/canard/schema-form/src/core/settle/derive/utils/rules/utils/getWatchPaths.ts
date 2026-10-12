@@ -16,12 +16,17 @@ export const getWatchPaths = (node: BlueprintNode): readonly string[] => {
   const watches: string[] = [];
   for (const declaration of node.declarations) {
     const schema = declaration.schema;
-    const controls = schema && typeof schema === 'object' ?
-      Reflect.get(schema, 'controls') : undefined;
-    const watch = controls && typeof controls === 'object' ?
-      Reflect.get(controls, 'watch') : undefined;
+    const controls =
+      schema && typeof schema === 'object'
+        ? Reflect.get(schema, 'controls')
+        : undefined;
+    const watch =
+      controls && typeof controls === 'object'
+        ? Reflect.get(controls, 'watch')
+        : undefined;
     for (const path of isArray(watch) ? watch : [])
-      if (typeof path === 'string' && !watches.includes(path)) watches.push(path);
+      if (typeof path === 'string' && !watches.includes(path))
+        watches.push(path);
   }
   WATCH_PATHS.set(node, watches);
   return watches;

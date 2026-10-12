@@ -9,7 +9,9 @@ import type { SchemaNodeRuntime } from '../../../record';
  * @returns Nothing; pending data warnings keep their current-key path index
  * @remarks O(pending warnings × path depth), only at form-level loads.
  */
-export const clearWarningKeys = <Self>(runtime: SchemaNodeRuntime<Self>): void => {
+export const clearWarningKeys = <Self>(
+  runtime: SchemaNodeRuntime<Self>,
+): void => {
   runtime.warningKeys?.clear();
   runtime.warningKeysByPath?.clear();
   for (const [key, record] of runtime.pendingWarningRecords ?? []) {

@@ -1,10 +1,14 @@
+import { createTestValidator } from '../../../__tests__/fixtures/createTestValidator';
+import { blueprint } from '../../../blueprint';
+import type {
+  Blueprint,
+  BlueprintOptions,
+  BlueprintSchema,
+} from '../../../blueprint';
+import type { SchemaNodeRuntime } from '../../../record';
 import { PathKeyedMap } from '../../../utils/pathIndex/PathKeyedMap';
 import { PathKeyedSet } from '../../../utils/pathIndex/PathKeyedSet';
-import { blueprint } from '../../../blueprint';
-import type { Blueprint, BlueprintOptions, BlueprintSchema } from '../../../blueprint';
-import type { SchemaNodeRuntime } from '../../../record';
 import type { Validator } from '../../../validation';
-import { createTestValidator } from '../../../__tests__/fixtures/createTestValidator';
 import { createPlainNode } from './createPlainNode';
 import type { PlainNode } from './createPlainNode';
 
@@ -35,8 +39,13 @@ export const createTestTree = (
     loadSnapshot: undefined,
     latentRaw: new PathKeyedMap('pair'),
     typeMismatchPaths: new PathKeyedSet(),
-    inactiveValuesMemo: new PathKeyedMap<readonly { path: string; value: unknown }[]>('path'),
+    inactiveValuesMemo: new PathKeyedMap<
+      readonly { path: string; value: unknown }[]
+    >('path'),
   };
-  return { root: createPlainNode(analysis.root, null, runtime, visits),
-    blueprint: analysis, visits };
+  return {
+    root: createPlainNode(analysis.root, null, runtime, visits),
+    blueprint: analysis,
+    visits,
+  };
 };

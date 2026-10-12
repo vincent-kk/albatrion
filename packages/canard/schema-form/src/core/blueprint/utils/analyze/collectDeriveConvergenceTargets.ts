@@ -1,8 +1,15 @@
 import { isArray } from '@winglet/common-utils/filter';
 import { escapeSegment } from '@winglet/json/pointer';
 
-import { getAbsolutePath, stripFragment } from '../../../../helpers/jsonPointer';
-import type { Blueprint, BlueprintExpression, PropertyDeclaration } from '../../type';
+import {
+  getAbsolutePath,
+  stripFragment,
+} from '../../../../helpers/jsonPointer';
+import type {
+  Blueprint,
+  BlueprintExpression,
+  PropertyDeclaration,
+} from '../../type';
 import { CompleteExpressionReads } from './compileBlueprintExpressions/utils/CompleteExpressionReads';
 
 /**
@@ -12,8 +19,14 @@ import { CompleteExpressionReads } from './compileBlueprintExpressions/utils/Com
  * @returns Absolute pointer with fragment and root spellings normalized
  */
 const resolveRead = (host: string, dependency: string): string =>
-  stripFragment(getAbsolutePath(host, dependency[0] === '/' ||
-    dependency[0] === '#' || dependency[0] === '.' ? dependency : `./${dependency}`));
+  stripFragment(
+    getAbsolutePath(
+      host,
+      dependency[0] === '/' || dependency[0] === '#' || dependency[0] === '.'
+        ? dependency
+        : `./${dependency}`,
+    ),
+  );
 
 /**
  * Detect a `*` segment without splitting the pointer into an array.
@@ -21,7 +34,10 @@ const resolveRead = (host: string, dependency: string): string =>
  * @returns True when one segment is exactly `*`
  */
 const hasWildcardSegment = (path: string): boolean =>
-  path === '*' || path.startsWith('*/') || path.endsWith('/*') || path.includes('/*/');
+  path === '*' ||
+  path.startsWith('*/') ||
+  path.endsWith('/*') ||
+  path.includes('/*/');
 
 /**
  * Prove which static terminal writes cannot create a rule or gate edge.
@@ -38,15 +54,23 @@ export const collectDeriveConvergenceTargets = (
   for (let index = 0; index < nodes.length; index++) {
     const node = nodes[index];
     if (node.item || hasWildcardSegment(node.path)) return undefined;
-    if (node.kind === 'object' || node.kind === 'array' || node.kind === 'virtual' ||
-      node.kind === 'union')
+    if (
+      node.kind === 'object' ||
+      node.kind === 'array' ||
+      node.kind === 'virtual' ||
+      node.kind === 'union'
+    )
       hosts.add(node.path);
     for (let child = 0; child < node.childEntries.length; child++) {
       const entry = node.childEntries[child];
       if (entry.node.path !== `${node.path}/${escapeSegment(entry.name)}`)
         return undefined;
     }
-    for (let declaration = 0; declaration < node.declarations.length; declaration++) {
+    for (
+      let declaration = 0;
+      declaration < node.declarations.length;
+      declaration++
+    ) {
       const entry = node.declarations[declaration];
       if (entry.path !== node.path) return undefined;
       declarations.set(entry.id, entry);
@@ -54,15 +78,23 @@ export const collectDeriveConvergenceTargets = (
   }
   const reads = new Set<string>();
   const expressions = blueprint.expressions;
-  const gateExpressions = blueprint.capabilities.branchless ? undefined :
-    new Map<string, BlueprintExpression>();
+  const gateExpressions = blueprint.capabilities.branchless
+    ? undefined
+    : new Map<string, BlueprintExpression>();
   for (let index = 0; index < expressions.length; index++) {
     const expression = expressions[index];
     if (!CompleteExpressionReads.has(expression)) return undefined;
-    if (expression.key === 'active' && gateExpressions &&
-      !gateExpressions.has(expression.schemaPath))
+    if (
+      expression.key === 'active' &&
+      gateExpressions &&
+      !gateExpressions.has(expression.schemaPath)
+    )
       gateExpressions.set(expression.schemaPath, expression);
-    for (let dependency = 0; dependency < expression.dependencies.length; dependency++) {
+    for (
+      let dependency = 0;
+      dependency < expression.dependencies.length;
+      dependency++
+    ) {
       const path = expression.dependencies[dependency];
       if (path === '@') return undefined;
       const read = resolveRead(expression.hostPath, path);
@@ -83,29 +115,38 @@ export const collectDeriveConvergenceTargets = (
   }
   for (let index = 0; index < nodes.length; index++) {
     const node = nodes[index];
-    for (let declaration = 0; declaration < node.declarations.length; declaration++) {
+    for (
+      let declaration = 0;
+      declaration < node.declarations.length;
+      declaration++
+    ) {
       const entry = node.declarations[declaration];
-      const controls = typeof entry.schema === 'object' ? entry.schema.controls : undefined;
+      const controls =
+        typeof entry.schema === 'object' ? entry.schema.controls : undefined;
       if (controls && typeof controls === 'object') {
-        if (typeof Reflect.get(controls, 'injectTo') === 'function') reads.add(node.path);
+        if (typeof Reflect.get(controls, 'injectTo') === 'function')
+          reads.add(node.path);
         const children = Reflect.get(controls, 'children');
-        if (isArray(children)) for (let child = 0; child < children.length; child++) {
-          const childControls = children[child]?.controls;
-          if (!childControls || typeof childControls !== 'object') continue;
-          if (typeof childControls.injectTo === 'function') reads.add(node.path);
-          const watches = childControls.watch;
-          if (watches === undefined) continue;
-          const paths = isArray(watches) ? watches : [watches];
-          const targets = children[child].targets;
-          if (!isArray(targets)) return undefined;
-          for (let target = 0; target < targets.length; target++) {
-            const targetPath = `${node.path}/${escapeSegment(targets[target])}`;
-            for (let watch = 0; watch < paths.length; watch++) {
-              if (typeof paths[watch] !== 'string' || paths[watch] === '@') return undefined;
-              reads.add(resolveRead(targetPath, paths[watch]));
+        if (isArray(children))
+          for (let child = 0; child < children.length; child++) {
+            const childControls = children[child]?.controls;
+            if (!childControls || typeof childControls !== 'object') continue;
+            if (typeof childControls.injectTo === 'function')
+              reads.add(node.path);
+            const watches = childControls.watch;
+            if (watches === undefined) continue;
+            const paths = isArray(watches) ? watches : [watches];
+            const targets = children[child].targets;
+            if (!isArray(targets)) return undefined;
+            for (let target = 0; target < targets.length; target++) {
+              const targetPath = `${node.path}/${escapeSegment(targets[target])}`;
+              for (let watch = 0; watch < paths.length; watch++) {
+                if (typeof paths[watch] !== 'string' || paths[watch] === '@')
+                  return undefined;
+                reads.add(resolveRead(targetPath, paths[watch]));
+              }
             }
           }
-        }
       }
       for (let gateIndex = 0; gateIndex < entry.gates.length; gateIndex++) {
         const gate = entry.gates[gateIndex];
@@ -116,8 +157,11 @@ export const collectDeriveConvergenceTargets = (
         if (typeof gate.condition !== 'string') continue;
         const expression = gateExpressions?.get(gate.schemaPath);
         if (!expression && gate.condition.trim()) return undefined;
-        if (expression) for (let path = 0; path < expression.dependencies.length; path++)
-          reads.add(resolveRead(gate.hostPath, expression.dependencies[path]));
+        if (expression)
+          for (let path = 0; path < expression.dependencies.length; path++)
+            reads.add(
+              resolveRead(gate.hostPath, expression.dependencies[path]),
+            );
       }
     }
   }
@@ -129,8 +173,12 @@ export const collectDeriveConvergenceTargets = (
     let terminal = true;
     for (let read = 0; read < readPaths.length; read++) {
       const path = readPaths[read];
-      if (!path || path === node.path || path.startsWith(`${node.path}/`) ||
-        node.path.startsWith(`${path}/`)) {
+      if (
+        !path ||
+        path === node.path ||
+        path.startsWith(`${node.path}/`) ||
+        node.path.startsWith(`${path}/`)
+      ) {
         terminal = false;
         break;
       }

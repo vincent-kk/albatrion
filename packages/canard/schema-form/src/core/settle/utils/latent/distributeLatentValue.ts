@@ -1,4 +1,5 @@
 import { escapeSegment, unescapeSegment } from '@winglet/json/pointer';
+
 import { BEHAVIORS, isOmittedEmpty } from '../../../behaviors';
 import type { BlueprintChildEntry, BlueprintNode } from '../../../blueprint';
 import type { SchemaNodeRecord, SchemaNodeRuntime } from '../../../record';
@@ -26,10 +27,15 @@ import { setLatentRaw } from './setLatentRaw';
  * @returns Whether a terminal descendant would have a projected emit
  */
 export const distributeLatentValue = <Self extends SchemaNodeRecord<Self>>(
-  runtime: SchemaNodeRuntime<Self>, context: SettlementContext<Self> | undefined,
-  path: string, template: BlueprintNode, value: unknown,
-  order: readonly number[], whole: boolean,
-  siblings: readonly BlueprintChildEntry[], automatic = false,
+  runtime: SchemaNodeRuntime<Self>,
+  context: SettlementContext<Self> | undefined,
+  path: string,
+  template: BlueprintNode,
+  value: unknown,
+  order: readonly number[],
+  whole: boolean,
+  siblings: readonly BlueprintChildEntry[],
+  automatic = false,
   seen: WeakSet<object> = new WeakSet(),
 ): boolean => {
   if (template.kind === 'virtual') return false;
@@ -39,23 +45,47 @@ export const distributeLatentValue = <Self extends SchemaNodeRecord<Self>>(
   const clearOtherKinds = (): void => {
     for (const entry of siblings)
       if (entry.name === name && entry.node.kind !== template.kind)
-        setLatentRaw(runtime, log, JSON.stringify([path, entry.node.kind]),
-          false, undefined, undefined, undefined, context);
+        setLatentRaw(
+          runtime,
+          log,
+          JSON.stringify([path, entry.node.kind]),
+          false,
+          undefined,
+          undefined,
+          undefined,
+          context,
+        );
   };
   if (template.strategy === 'terminal') {
     const row = BEHAVIORS[template.kind]?.[template.strategy];
-    const interpreted = row ? row.interpret(value,
-      staticSpec(template.schemaType, template.nullable)) : value;
-    setLatentRaw(runtime, log, key, interpreted !== undefined, interpreted,
-      template, order, context);
+    const interpreted = row
+      ? row.interpret(value, staticSpec(template.schemaType, template.nullable))
+      : value;
+    setLatentRaw(
+      runtime,
+      log,
+      key,
+      interpreted !== undefined,
+      interpreted,
+      template,
+      order,
+      context,
+    );
     clearOtherKinds();
     return interpreted !== undefined && !isOmittedEmpty(template, interpreted);
   }
   if (!isPlain(value)) {
     pruneLatentRaw(runtime, path, undefined, context);
-    setLatentRaw(runtime, log, key, value !== undefined,
+    setLatentRaw(
+      runtime,
+      log,
+      key,
+      value !== undefined,
       value === undefined ? undefined : new HostLatent(value, undefined),
-      template, order, context);
+      template,
+      order,
+      context,
+    );
     clearOtherKinds();
     return false;
   }
@@ -65,24 +95,55 @@ export const distributeLatentValue = <Self extends SchemaNodeRecord<Self>>(
   const prior = runtime.latentRaw.get(key);
   const previous = prior instanceof HostLatent ? prior : undefined;
   const declared = getDeclaredChildNames(template);
-  const extras = nextExtras(whole ? undefined : previous?.extras,
-    value, declared, !whole);
+  const extras = nextExtras(
+    whole ? undefined : previous?.extras,
+    value,
+    declared,
+    !whole,
+  );
   let wrote = false;
   const names = Object.keys(value);
   for (const name of names) {
-    const index = template.childEntries.findIndex((entry) => entry.name === name);
+    const index = template.childEntries.findIndex(
+      (entry) => entry.name === name,
+    );
     if (index < 0) continue;
     const entry = template.childEntries[index];
-    if (distributeLatentValue(runtime, context,
-      `${path}/${escapeSegment(name)}`, entry.node, Reflect.get(value, name),
-      [...order, index], whole, template.childEntries, automatic, seen))
+    if (
+      distributeLatentValue(
+        runtime,
+        context,
+        `${path}/${escapeSegment(name)}`,
+        entry.node,
+        Reflect.get(value, name),
+        [...order, index],
+        whole,
+        template.childEntries,
+        automatic,
+        seen,
+      )
+    )
       wrote = true;
   }
-  const raw = whole || wrote && !automatic ? undefined : previous?.raw;
-  const host = raw === undefined && extras === undefined ? undefined :
-    previous && Object.is(previous.raw, raw) &&
-      Object.is(previous.extras, extras) ? previous : new HostLatent(raw, extras);
-  setLatentRaw(runtime, log, key, host !== undefined, host, template, order, context);
+  const raw = whole || (wrote && !automatic) ? undefined : previous?.raw;
+  const host =
+    raw === undefined && extras === undefined
+      ? undefined
+      : previous &&
+          Object.is(previous.raw, raw) &&
+          Object.is(previous.extras, extras)
+        ? previous
+        : new HostLatent(raw, extras);
+  setLatentRaw(
+    runtime,
+    log,
+    key,
+    host !== undefined,
+    host,
+    template,
+    order,
+    context,
+  );
   clearOtherKinds();
   seen.delete(value);
   return wrote;

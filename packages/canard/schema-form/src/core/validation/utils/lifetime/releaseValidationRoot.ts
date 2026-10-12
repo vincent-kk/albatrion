@@ -9,8 +9,10 @@ import { recentReleaseList } from './recentReleaseList';
  * @param authoredRoot - Original root whose committed consumer was cleaned up.
  * @returns Nothing; the oldest zero-consumer registration may be evicted.
  */
-export const releaseValidationRoot = (validator: Validator,
-  authoredRoot: BlueprintSchema): void => {
+export const releaseValidationRoot = (
+  validator: Validator,
+  authoredRoot: BlueprintSchema,
+): void => {
   const list = recentReleaseList(validator);
   const count = list.counts.get(authoredRoot);
   if (!count || count <= 0) return;

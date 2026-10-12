@@ -13,18 +13,29 @@ it('guards each resolved value once with the existing schema acceptance and diag
   const context: AnalysisContext = {
     staticFirstLoad: true,
     capabilities: {
-      branchless: true, hasExpressions: false, hasDerive: false,
-      hasWatch: false, hasState: false, hasDependencies: false,
+      branchless: true,
+      hasExpressions: false,
+      hasDerive: false,
+      hasWatch: false,
+      hasState: false,
+      hasDependencies: false,
     },
-    schema: {}, options: { collect }, nodes: [], fragments: [],
-    declarationId: 0, declarationOwners: undefined, templates: new Map(),
-    constructing: new Map(), dependencies: undefined,
+    schema: {},
+    options: { collect },
+    nodes: [],
+    fragments: [],
+    declarationId: 0,
+    declarationOwners: undefined,
+    templates: new Map(),
+    constructing: new Map(),
+    dependencies: undefined,
   };
   for (const target of [true, false, {}, [], new Date(0)]) {
     context.schema = { target };
     calls.mockClear();
     expect(resolveReference(context, '#/target', '#/allOf/0')).toEqual({
-      schema: target, schemaPath: '#/target',
+      schema: target,
+      schemaPath: '#/target',
     });
     expect(calls).toHaveBeenCalledExactlyOnceWith(target);
   }
@@ -33,13 +44,18 @@ it('guards each resolved value once with the existing schema acceptance and diag
     calls.mockClear();
     collect.mockClear();
     expect(() => resolveReference(context, '#/target', '#/allOf/0')).toThrow(
-      expect.objectContaining({ specific: BlueprintErrorCode.UnknownJsonSchema }),
+      expect.objectContaining({
+        specific: BlueprintErrorCode.UnknownJsonSchema,
+      }),
     );
     expect(calls).toHaveBeenCalledExactlyOnceWith(target);
     expect(collect).toHaveBeenCalledExactlyOnceWith({
-      code: BlueprintErrorCode.UnknownJsonSchema, level: 'error',
-      schemaPath: '#/allOf/0', details: {
-        reference: '#/target', guidance: 'The reference must identify a schema.',
+      code: BlueprintErrorCode.UnknownJsonSchema,
+      level: 'error',
+      schemaPath: '#/allOf/0',
+      details: {
+        reference: '#/target',
+        guidance: 'The reference must identify a schema.',
       },
     });
   }
@@ -50,11 +66,21 @@ it('keeps pointer failures before the result guard', () => {
   const context: AnalysisContext = {
     staticFirstLoad: true,
     capabilities: {
-      branchless: true, hasExpressions: false, hasDerive: false,
-      hasWatch: false, hasState: false, hasDependencies: false,
+      branchless: true,
+      hasExpressions: false,
+      hasDerive: false,
+      hasWatch: false,
+      hasState: false,
+      hasDependencies: false,
     },
-    schema: {}, options: {}, nodes: [], fragments: [], declarationId: 0,
-    declarationOwners: undefined, templates: new Map(), constructing: new Map(),
+    schema: {},
+    options: {},
+    nodes: [],
+    fragments: [],
+    declarationId: 0,
+    declarationOwners: undefined,
+    templates: new Map(),
+    constructing: new Map(),
     dependencies: undefined,
   };
   expect(() => resolveReference(context, '#/%', '#')).toThrow(

@@ -1,7 +1,7 @@
 import type { SchemaNodeRecord } from '../../../record';
 import { arrangeSchemaNodeItems } from '../../../settle';
-import { enterSchemaNodeChain } from '../chain/enterSchemaNodeChain';
 import { captureChainError } from '../chain/captureChainError';
+import { enterSchemaNodeChain } from '../chain/enterSchemaNodeChain';
 import { exitSchemaNodeChain } from '../chain/exitSchemaNodeChain';
 import { markBatchArrayOperation } from '../chain/markBatchArrayOperation';
 
@@ -13,7 +13,8 @@ import { markBatchArrayOperation } from '../chain/markBatchArrayOperation';
  * @throws Non-array or settlement failures at the outer chain end
  */
 export const dispatchRemove = <Self extends SchemaNodeRecord<Self>>(
-  node: Self, index: number,
+  node: Self,
+  index: number,
 ): unknown => {
   if (!enterSchemaNodeChain(node)) return;
   try {

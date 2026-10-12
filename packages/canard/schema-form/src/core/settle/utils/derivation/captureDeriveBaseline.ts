@@ -14,6 +14,10 @@ export const captureDeriveBaseline = <Self extends SchemaNodeRecord<Self>>(
   const state = getDeriveState(context);
   if (!state) return;
   state.consumedRuleValues.clear();
-  evaluateDeriveRound(context.root, { ...state, loadScope: undefined,
-    suppressAutomaticWrites: true, trace: false });
+  evaluateDeriveRound(context.root, {
+    ...state,
+    loadScope: undefined,
+    suppressAutomaticWrites: true,
+    trace: false,
+  });
 };

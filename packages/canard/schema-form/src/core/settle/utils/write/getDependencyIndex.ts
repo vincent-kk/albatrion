@@ -3,12 +3,12 @@ import { escapeSegment } from '@winglet/json/pointer';
 import type { Blueprint, PropertyDeclaration } from '../../../blueprint';
 import type { SchemaNodeRecord } from '../../../record';
 import { getDeriveRuleTable } from '../../derive';
-import { bindTemplatePath } from '../paths/bindTemplatePath';
-import { expandTemplatePaths } from '../paths/expandTemplatePaths';
-import { resolveDependencyPath } from '../paths/resolveDependencyPath';
-import { isCanonicalArrayIndex } from '../paths/isCanonicalArrayIndex';
 import { getContextOwners } from '../context/getContextOwners';
 import { getGateExpression } from '../gates/getGateExpression';
+import { bindTemplatePath } from '../paths/bindTemplatePath';
+import { expandTemplatePaths } from '../paths/expandTemplatePaths';
+import { isCanonicalArrayIndex } from '../paths/isCanonicalArrayIndex';
+import { resolveDependencyPath } from '../paths/resolveDependencyPath';
 
 /** No reverse dependency owners for a gate-free input path. */
 const NO_OWNERS: readonly string[] = Object.freeze([]);
@@ -36,9 +36,14 @@ class DependencyIndex {
     getContextOwners(blueprint);
     const dependencies = Object.entries(blueprint.dependencies);
     if (dependencies.length === 0 && blueprint.expressions.length === 0) return;
-    const declarations = new Map<number, PropertyDeclaration>(blueprint.nodes.flatMap((node) =>
-      node.declarations.map((declaration): [number, PropertyDeclaration] =>
-        [declaration.id, declaration])));
+    const declarations = new Map<number, PropertyDeclaration>(
+      blueprint.nodes.flatMap((node) =>
+        node.declarations.map((declaration): [number, PropertyDeclaration] => [
+          declaration.id,
+          declaration,
+        ]),
+      ),
+    );
     for (const [dependency, ids] of dependencies)
       for (const id of ids) {
         const declaration = declarations.get(id);
@@ -73,17 +78,22 @@ class DependencyIndex {
 
   /** Return owners whose reads intersect a changed path in either direction. */
   affected<Self extends SchemaNodeRecord<Self>>(
-    changedPath: string, root: Self,
+    changedPath: string,
+    root: Self,
   ): readonly string[] {
     const rootIndex = this.root;
-    if (!rootIndex || rootIndex.owners.length === 0 && rootIndex.children.size === 0)
+    if (
+      !rootIndex ||
+      (rootIndex.owners.length === 0 && rootIndex.children.size === 0)
+    )
       return NO_OWNERS;
     const owners = new Set<string>();
     let current: DependencyNode[] = [rootIndex];
     const collect = (node: DependencyNode): void => {
       for (const entry of node.owners) {
         const path = entry.bindable
-          ? bindTemplatePath(entry.path, changedPath) : entry.path;
+          ? bindTemplatePath(entry.path, changedPath)
+          : entry.path;
         if (path.includes('/*'))
           for (const expanded of expandTemplatePaths(root, path))
             owners.add(expanded);
@@ -121,9 +131,14 @@ class DependencyIndex {
     const watchedParts = watchedPath.split('/');
     // A fixed read of another item depends on that array host's whole subtree.
     for (let index = 1; index < ownerParts.length; index++) {
-      if (ownerParts[index] === '*' && watchedParts[index] !== '*' &&
-        ownerParts.slice(1, index).every((part, position) =>
-          part === watchedParts[position + 1]) && watchedParts[index]) {
+      if (
+        ownerParts[index] === '*' &&
+        watchedParts[index] !== '*' &&
+        ownerParts
+          .slice(1, index)
+          .every((part, position) => part === watchedParts[position + 1]) &&
+        watchedParts[index]
+      ) {
         watchedPath = ownerParts.slice(0, index).join('/');
         break;
       }
@@ -140,9 +155,12 @@ class DependencyIndex {
     const indexedParts = watchedPath.split('/');
     if (!current.ownerPaths.has(owner)) {
       current.ownerPaths.add(owner);
-      current.owners.push({ path: owner,
-        bindable: ownerParts.every((part, index) =>
-          part !== '*' || indexedParts[index] === '*') });
+      current.owners.push({
+        path: owner,
+        bindable: ownerParts.every(
+          (part, index) => part !== '*' || indexedParts[index] === '*',
+        ),
+      });
     }
   }
 }
@@ -159,7 +177,10 @@ Object.freeze(EMPTY_INDEX);
  * @returns Reverse dependency trie for ancestor and descendant invalidation
  */
 export const getDependencyIndex = (blueprint: Blueprint): DependencyIndex => {
-  if (!blueprint.capabilities.hasDependencies && !blueprint.capabilities.hasExpressions)
+  if (
+    !blueprint.capabilities.hasDependencies &&
+    !blueprint.capabilities.hasExpressions
+  )
     return EMPTY_INDEX;
   let index = INDEXES.get(blueprint);
   if (!index) {

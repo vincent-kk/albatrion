@@ -18,7 +18,9 @@ it('guards the merge-owned root and each created descendant, retaining borrowed 
   const style = calls.mock.calls[1][0];
   const nested = calls.mock.calls[2][0];
   expect(result).toEqual({
-    style: { nested: { first: 1, second: 2 }, borrowed }, first: true, last: true,
+    style: { nested: { first: 1, second: 2 }, borrowed },
+    first: true,
+    last: true,
   });
   expect(Object.isFrozen(style)).toBe(true);
   expect(Object.isFrozen(nested)).toBe(true);

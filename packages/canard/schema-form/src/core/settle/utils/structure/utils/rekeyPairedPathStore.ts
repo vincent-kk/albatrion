@@ -1,4 +1,5 @@
 import { isArray } from '@winglet/common-utils/filter';
+
 import type { PathKeyedMap } from '../../../../utils/pathIndex/PathKeyedMap';
 import type { PathKeyedMove } from '../../../../utils/pathIndex/type';
 import type { ArrayPathMove } from '../type';
@@ -12,7 +13,8 @@ import type { ArrayPathMove } from '../type';
  * @returns Nothing; all old identities are removed before any destination is inserted
  */
 export const rekeyPairedPathStore = <Value>(
-  store: PathKeyedMap<Value>, moves: readonly ArrayPathMove[],
+  store: PathKeyedMap<Value>,
+  moves: readonly ArrayPathMove[],
   mapPath: (path: string) => string | undefined,
   transform?: (value: Value, path: string, previous: string) => Value,
 ): void => {
@@ -31,8 +33,12 @@ export const rekeyPairedPathStore = <Value>(
       continue;
     }
     parts[0] = path;
-    replacements.push({ previous: key, key: JSON.stringify(parts),
-      value: transform ? transform(value, path, previous) : value, paths: [path] });
+    replacements.push({
+      previous: key,
+      key: JSON.stringify(parts),
+      value: transform ? transform(value, path, previous) : value,
+      paths: [path],
+    });
   }
   store.replaceEntries(replacements);
 };

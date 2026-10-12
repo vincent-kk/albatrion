@@ -8,11 +8,8 @@ import {
 
 import { act, render, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { registerScenarioHandle } from '@aileron/schema-form-scenarios';
 
-import { createRenderValidator } from './helpers/createRenderValidator';
-import { observeErrorSink } from './helpers/observeErrorSink';
-import { createRenderScenarioAdapter } from './helpers/createRenderScenarioAdapter';
+import { registerScenarioHandle } from '@aileron/schema-form-scenarios';
 
 import {
   Form,
@@ -21,11 +18,15 @@ import {
   type FormTypeInputDefinition,
   type FormTypeInputProps,
   type JSONSchema,
-  type ValidationIssue,
   type SchemaNode,
+  type ValidationIssue,
   registerPlugin,
 } from '@/schema-form';
 import type { FormErrorRecord } from '@/schema-form/errors';
+
+import { createRenderScenarioAdapter } from './helpers/createRenderScenarioAdapter';
+import { createRenderValidator } from './helpers/createRenderValidator';
+import { observeErrorSink } from './helpers/observeErrorSink';
 
 /** The shared harness observes settled node state and committed React DOM. */
 export const setupValidatorPlugin = (): void => {
@@ -201,7 +202,11 @@ const byId = (
   container: HTMLElement,
   path: string,
 ): HTMLInputElement | HTMLSelectElement | null =>
-  Array.from(container.querySelectorAll<HTMLInputElement | HTMLSelectElement>('input[id], select[id], textarea[id]')).find((element) => element.id === path) ?? null;
+  Array.from(
+    container.querySelectorAll<HTMLInputElement | HTMLSelectElement>(
+      'input[id], select[id], textarea[id]',
+    ),
+  ).find((element) => element.id === path) ?? null;
 
 const byPath = (container: HTMLElement, path: string): HTMLElement | null =>
   container.querySelector(`[data-path="${path}"]`);
@@ -299,7 +304,12 @@ export const renderForm = async (
     user,
     lastValue: () => changes[changes.length - 1],
     changeLog: () => changes.slice(),
-    caughtErrors: () => sink.errors().map((error) => error instanceof Error ? error.message : String(error)),
+    caughtErrors: () =>
+      sink
+        .errors()
+        .map((error) =>
+          error instanceof Error ? error.message : String(error),
+        ),
     sinkErrors: sink.errors,
     errorRecords: () => records.slice(),
     unmount: () => {
@@ -411,6 +421,10 @@ export const renderForm = async (
 
     flush,
   };
-  unregister = registerScenarioHandle(container, harness.handle, createRenderScenarioAdapter(harness));
+  unregister = registerScenarioHandle(
+    container,
+    harness.handle,
+    createRenderScenarioAdapter(harness),
+  );
   return harness;
 };

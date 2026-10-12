@@ -85,7 +85,9 @@ describe('resolveArrayLimits', () => {
     const activeIds = node.declarations
       .filter((declaration) => declaration.gates.length)
       .map((declaration) => declaration.id);
-    expect(resolveArrayLimits(mergeEffectiveSchema(node, activeIds).schema)).toEqual({
+    expect(
+      resolveArrayLimits(mergeEffectiveSchema(node, activeIds).schema),
+    ).toEqual({
       min: 1,
       max: 3,
     });

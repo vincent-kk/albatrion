@@ -5,7 +5,7 @@
  * @returns Display text, container status, and a serialization failure marker
  */
 export const readUnionDisplay = (value: unknown, nullable: boolean) => {
-  if (value === undefined || value === null && nullable)
+  if (value === undefined || (value === null && nullable))
     return { text: '', structured: false, invalid: false };
   if (value === null || typeof value !== 'object')
     return { text: String(value), structured: false, invalid: false };

@@ -9,9 +9,14 @@ import type { SchemaNodeRuntime } from '../../../../record';
  * @returns Metadata at the surviving position, preserving other order slots
  */
 export const rekeyLatentMetadata = <Self>(
-  metadata: NonNullable<SchemaNodeRuntime<Self>['latentRawMetadata']> extends
-    Map<string, infer Value> ? Value : never,
-  path: string, previous: string, hostPath: string,
+  metadata: NonNullable<
+    SchemaNodeRuntime<Self>['latentRawMetadata']
+  > extends Map<string, infer Value>
+    ? Value
+    : never,
+  path: string,
+  previous: string,
+  hostPath: string,
 ) => {
   const position = hostPath === '' ? 0 : hostPath.split('/').length - 1;
   const order = [...metadata.order];

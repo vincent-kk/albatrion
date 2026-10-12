@@ -9,8 +9,10 @@ import { recentReleaseList } from './recentReleaseList';
  * @param authoredRoot - Original root object kept by the tree.
  * @returns Nothing; a recently released root keeps its compiled registration.
  */
-export const retainValidationRoot = (validator: Validator,
-  authoredRoot: BlueprintSchema): void => {
+export const retainValidationRoot = (
+  validator: Validator,
+  authoredRoot: BlueprintSchema,
+): void => {
   readValidationEntry(validator, authoredRoot);
   const list = recentReleaseList(validator);
   const index = list.recent.indexOf(authoredRoot);

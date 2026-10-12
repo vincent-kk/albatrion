@@ -1,4 +1,8 @@
-import { EMPTY_REVISION_LEDGER, SchemaNodeRevisionLedger, SchemaNodeEventType } from '../../../record';
+import {
+  EMPTY_REVISION_LEDGER,
+  SchemaNodeEventType,
+  SchemaNodeRevisionLedger,
+} from '../../../record';
 import type { SchemaNodeRecord } from '../../../record';
 
 /**
@@ -8,7 +12,8 @@ import type { SchemaNodeRecord } from '../../../record';
  * @returns Monotone count independent of listener presence
  */
 export const readSchemaNodeRevision = <Self extends SchemaNodeRecord<Self>>(
-  node: Self, mask = Number.MAX_SAFE_INTEGER,
+  node: Self,
+  mask = Number.MAX_SAFE_INTEGER,
 ): number => {
   const ledger = node.revisionLedger;
   if (ledger === EMPTY_REVISION_LEDGER) return 0;

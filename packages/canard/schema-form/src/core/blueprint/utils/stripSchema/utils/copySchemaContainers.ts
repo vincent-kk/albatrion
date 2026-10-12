@@ -20,10 +20,7 @@ export const copySchemaContainers = (
     if (!value || typeof value !== 'object') continue;
     if (kind === 'schemaMap' || kind === 'objectMap')
       result[keyword] = { ...value };
-    else if (
-      (kind === 'schemaList' || kind === 'items') &&
-      isArray(value)
-    )
+    else if ((kind === 'schemaList' || kind === 'items') && isArray(value))
       result[keyword] = [...value];
   }
   return result;

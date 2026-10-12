@@ -14,7 +14,11 @@ export const flushPendingOutput = <Self extends SchemaNodeRecord<Self>>(
   context: SettlementContext<Self>,
 ): boolean => {
   if (!context.pendingOutputs?.delete(node)) return false;
-  node.children = captureSchemaNodeChange(node, 'children', Object.values(node.structure ?? {}));
+  node.children = captureSchemaNodeChange(
+    node,
+    'children',
+    Object.values(node.structure ?? {}),
+  );
   updateOutput(node, context);
   return true;
 };

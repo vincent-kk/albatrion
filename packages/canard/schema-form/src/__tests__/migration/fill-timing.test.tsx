@@ -1,7 +1,7 @@
 import { act } from '@testing-library/react';
 import { afterEach, expect, it } from 'vitest';
 
-import { SetValueOption, type FormTypeInputProps } from '@/schema-form';
+import { type FormTypeInputProps, SetValueOption } from '@/schema-form';
 
 import { type FormHarness, renderForm } from '../renderForm';
 
@@ -9,11 +9,18 @@ let form: FormHarness;
 afterEach(() => form?.unmount());
 
 it('LANDING-200 child input restores a null object without refilling its sibling', async () => {
-  form = await renderForm({ type: 'object', properties: {
-    o: { type: 'object', properties: {
-      a: { type: 'string', default: 'x' }, c: { type: 'number' },
-    } },
-  } });
+  form = await renderForm({
+    type: 'object',
+    properties: {
+      o: {
+        type: 'object',
+        properties: {
+          a: { type: 'string', default: 'x' },
+          c: { type: 'number' },
+        },
+      },
+    },
+  });
   expect(form.value('/o/a')).toBe('x');
   const child = form.node('/o/a');
   await act(async () => form.node('/o')!.setValue(null));
@@ -28,12 +35,21 @@ it('LANDING-200 child input restores a null object without refilling its sibling
 
 it('LANDING-201 input Overwrite preserves the input instance and caret', async () => {
   const Input = ({ path, value, onChange }: FormTypeInputProps) => (
-    <input id={path} defaultValue={value ?? ''}
-      onChange={(event) => onChange(event.target.value, SetValueOption.Overwrite)} />
+    <input
+      id={path}
+      defaultValue={value ?? ''}
+      onChange={(event) =>
+        onChange(event.target.value, SetValueOption.Overwrite)
+      }
+    />
   );
-  form = await renderForm({ type: 'string' }, {
-    defaultValue: '', formTypeInputDefinitions: [{ test: () => true, Component: Input }],
-  });
+  form = await renderForm(
+    { type: 'string' },
+    {
+      defaultValue: '',
+      formTypeInputDefinitions: [{ test: () => true, Component: Input }],
+    },
+  );
   const field = form.field('') as HTMLInputElement;
   await form.user.type(field, 'abc');
   expect(form.field('')).toBe(field);
@@ -43,9 +59,16 @@ it('LANDING-201 input Overwrite preserves the input instance and caret', async (
 });
 
 it('LANDING-202 whole-array replacement fills only the newly created tail', async () => {
-  form = await renderForm({ type: 'array', items: {
-    type: 'object', properties: { a: { type: 'string', default: 'x' } },
-  } }, { defaultValue: [{}] });
+  form = await renderForm(
+    {
+      type: 'array',
+      items: {
+        type: 'object',
+        properties: { a: { type: 'string', default: 'x' } },
+      },
+    },
+    { defaultValue: [{}] },
+  );
   const item = form.node('/0');
   expect(form.value('/0/a')).toBe('x');
   await form.setValue([{}, {}]);

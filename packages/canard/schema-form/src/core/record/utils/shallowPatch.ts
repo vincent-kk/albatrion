@@ -9,7 +9,11 @@ export const shallowPatch = <State extends object>(
   for (const key of Object.keys(patch)) {
     const value = Reflect.get(patch, key);
     const present = hasOwnProperty(previous, key);
-    if (value === undefined ? !present : present && Object.is(Reflect.get(previous, key), value))
+    if (
+      value === undefined
+        ? !present
+        : present && Object.is(Reflect.get(previous, key), value)
+    )
       continue;
     if (result === previous) result = { ...previous };
     if (value === undefined) Reflect.deleteProperty(result, key);

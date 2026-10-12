@@ -1,7 +1,10 @@
-import type { FormScenario, FormScenarioStep } from '@aileron/schema-form-scenarios';
+import type {
+  FormScenario,
+  FormScenarioStep,
+} from '@aileron/schema-form-scenarios';
 
-import type { SchemaNode as RuntimeSchemaNode } from '../../../SchemaNode/SchemaNode';
 import { SetValueOption } from '../../../SchemaNode';
+import type { SchemaNode as RuntimeSchemaNode } from '../../../SchemaNode/SchemaNode';
 import { resetSchemaNodeForm } from '../../../settle';
 
 /**
@@ -12,21 +15,33 @@ import { resetSchemaNodeForm } from '../../../settle';
  * @returns The synchronous action result after settlement
  */
 export function executeCoreScenarioStep(
-  root: RuntimeSchemaNode, scenario: FormScenario, step: FormScenarioStep,
+  root: RuntimeSchemaNode,
+  scenario: FormScenario,
+  step: FormScenarioStep,
 ): unknown {
   const previousDiagnostics = root.diagnostics;
   try {
     if (step.action === 'reset') {
-      resetSchemaNodeForm(root, scenario.initialValue,
-        SetValueOption.Overwrite | (step.automaticWrites === 'disabled'
-          ? SetValueOption.DisableAutomaticWrites : 0));
+      resetSchemaNodeForm(
+        root,
+        scenario.initialValue,
+        SetValueOption.Overwrite |
+          (step.automaticWrites === 'disabled'
+            ? SetValueOption.DisableAutomaticWrites
+            : 0),
+      );
     } else if (step.action === 'resetSubtree') {
       const node = root.find(step.path);
       if (!node) throw new Error(`Scenario node missing at ${step.path}`);
       node.resetSubtree();
-    } else if (step.action === 'setValue' || step.action === 'clear' ||
-      step.action === 'push' || step.action === 'pop' ||
-      step.action === 'remove' || step.action === 'update') {
+    } else if (
+      step.action === 'setValue' ||
+      step.action === 'clear' ||
+      step.action === 'push' ||
+      step.action === 'pop' ||
+      step.action === 'remove' ||
+      step.action === 'update'
+    ) {
       const node = root.find(step.path);
       if (!node) throw new Error(`Scenario node missing at ${step.path}`);
       if (step.action === 'setValue') return node.setValue(step.value);
@@ -37,16 +52,23 @@ export function executeCoreScenarioStep(
       if (step.action === 'remove') return node.remove(step.index);
       return node.update(step.index, step.value);
     } else if (step.action === 'batch') {
-      for (const nested of step.steps) executeCoreScenarioStep(root, scenario, nested);
+      for (const nested of step.steps)
+        executeCoreScenarioStep(root, scenario, nested);
     } else {
-      throw new Error(`Core scenario action ${step.action} requires a later PR`);
+      throw new Error(
+        `Core scenario action ${step.action} requires a later PR`,
+      );
     }
   } catch (error) {
-    if ((step.action !== 'setValue' && step.action !== 'reset' &&
-      step.action !== 'resetSubtree') ||
+    if (
+      (step.action !== 'setValue' &&
+        step.action !== 'reset' &&
+        step.action !== 'resetSubtree') ||
       step.expect?.diagnostics?.status !== 'degraded' ||
       root.diagnostics.status !== 'degraded' ||
-      root.diagnostics === previousDiagnostics) throw error;
+      root.diagnostics === previousDiagnostics
+    )
+      throw error;
   }
   return undefined;
 }

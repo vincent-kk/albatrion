@@ -1,9 +1,14 @@
 import type { BlueprintNodeKind } from '../../../blueprint';
 
 /** Last serialized identity for a live or latent declaration target. */
-const KEYS = new WeakMap<object, {
-  path: string; kind: BlueprintNodeKind; key: string;
-}>();
+const KEYS = new WeakMap<
+  object,
+  {
+    path: string;
+    kind: BlueprintNodeKind;
+    key: string;
+  }
+>();
 
 /**
  * Reuse the exact path/kind pair identity until an occurrence is reindexed.

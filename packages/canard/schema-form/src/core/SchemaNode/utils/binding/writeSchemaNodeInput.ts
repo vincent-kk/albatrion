@@ -11,7 +11,7 @@ import { requireRuntimeSchemaNode } from '../requireRuntimeSchemaNode';
  * @returns Nothing; the dispatcher completes the operation synchronously
  */
 export const writeSchemaNodeInput = (
-  node: SchemaNode, value: unknown, option?: SetValueOption,
-): void =>
-  dispatchWriteInput(requireRuntimeSchemaNode(node), value, option);
-
+  node: SchemaNode,
+  value: unknown,
+  option?: SetValueOption,
+): void => dispatchWriteInput(requireRuntimeSchemaNode(node), value, option);

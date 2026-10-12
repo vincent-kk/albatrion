@@ -1,10 +1,10 @@
 import { hasOwnProperty } from '@winglet/common-utils/lib';
 
-import { walkOwnedSchemaNodes } from '../walkOwnedSchemaNodes';
 import type { SchemaNodeRecord } from '../../../record';
 import type { SettlementContext } from '../../type';
 import { getControlLayers } from '../controls/getControlLayers';
 import { readExitLayerPolicy } from '../controls/readExitLayerPolicy';
+import { walkOwnedSchemaNodes } from '../walkOwnedSchemaNodes';
 
 /**
  * Transfer an exiting occurrence's last-live decisions to its latent source.
@@ -21,11 +21,16 @@ export const snapshotExitedPolicies = <Self extends SchemaNodeRecord<Self>>(
       if (!runtime.latentRaw.has(key)) return;
       const metadata = runtime.latentRawMetadata?.get(key);
       if (!metadata) return;
-      const exitLayers = getControlLayers(node, new Map()).filter((group) =>
-        hasOwnProperty(group.controls, 'unsetOnInactive')).map((group) => ({
-        layer: group.layer,
-        clear: readExitLayerPolicy([group], runtime.committedRuleValues, false),
-      }));
+      const exitLayers = getControlLayers(node, new Map())
+        .filter((group) => hasOwnProperty(group.controls, 'unsetOnInactive'))
+        .map((group) => ({
+          layer: group.layer,
+          clear: readExitLayerPolicy(
+            [group],
+            runtime.committedRuleValues,
+            false,
+          ),
+        }));
       runtime.latentRawMetadata?.set(key, { ...metadata, exitLayers });
       context.latentDescendantKeys = undefined;
     });

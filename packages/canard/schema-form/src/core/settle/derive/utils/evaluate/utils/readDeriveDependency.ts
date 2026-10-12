@@ -12,7 +12,9 @@ import { resolveDependencyPath } from '../../../../utils/paths/resolveDependency
  * @returns Projected value, context object, or undefined for an absent path
  */
 export const readDeriveDependency = <Self extends SchemaNodeRecord<Self>>(
-  root: Self, hostPath: string, dependency: string,
+  root: Self,
+  hostPath: string,
+  dependency: string,
 ): unknown => {
   const path = resolveDependencyPath(hostPath, dependency);
   if (path === '@') return root.runtime.context ?? {};

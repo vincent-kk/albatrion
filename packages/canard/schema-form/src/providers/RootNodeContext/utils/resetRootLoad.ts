@@ -1,10 +1,10 @@
 import { clone } from '@winglet/common-utils/object';
 
 import {
+  SetValueOption,
   adoptSchemaNodeTree,
   mountSchemaNode,
   reloadSchemaNodeForm,
-  SetValueOption,
 } from '@/schema-form/core';
 import { isSameSchema } from '@/schema-form/helpers/schemaIdentity';
 
@@ -22,13 +22,19 @@ import { createRootLoad } from './createRootLoad';
 export const resetRootLoad = (
   previous: RootLoad,
   props: RootLoadProps,
-  option?: typeof SetValueOption.DisableAutomaticWrites | typeof SetValueOption.EnableAutomaticWrites,
+  option?:
+    | typeof SetValueOption.DisableAutomaticWrites
+    | typeof SetValueOption.EnableAutomaticWrites,
 ): RootLoad => {
-  const automaticWrites = (option ?? 0) &
-    (SetValueOption.DisableAutomaticWrites | SetValueOption.EnableAutomaticWrites);
-  const loadOption = automaticWrites || (props.disableAutomaticWrites
-    ? SetValueOption.DisableAutomaticWrites
-    : SetValueOption.EnableAutomaticWrites);
+  const automaticWrites =
+    (option ?? 0) &
+    (SetValueOption.DisableAutomaticWrites |
+      SetValueOption.EnableAutomaticWrites);
+  const loadOption =
+    automaticWrites ||
+    (props.disableAutomaticWrites
+      ? SetValueOption.DisableAutomaticWrites
+      : SetValueOption.EnableAutomaticWrites);
   previous.reporter?.beginLoad();
   const root = previous.root;
   if (

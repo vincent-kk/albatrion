@@ -12,7 +12,8 @@ import { getDeriveChildEntry } from '../../rank/getDeriveChildEntry';
  * @returns Declared target and optional live occurrence
  */
 export const getInjectTarget = <Self extends SchemaNodeRecord<Self>>(
-  root: Self, path: string,
+  root: Self,
+  path: string,
 ) => {
   if (path === '@') return undefined;
   let template = root.blueprintNode;
@@ -24,16 +25,29 @@ export const getInjectTarget = <Self extends SchemaNodeRecord<Self>>(
     const name = unescapeSegment(encoded);
     siblings = template.childEntries;
     const index = Number(name);
-    const item = template.kind === 'array' && Number.isInteger(index) &&
-      index >= 0 && String(index) === name ? getItemEntry(template, index) :
-      undefined;
-    const found = item ? { entry: item, position: index } :
-      getDeriveChildEntry(template, name);
+    const item =
+      template.kind === 'array' &&
+      Number.isInteger(index) &&
+      index >= 0 &&
+      String(index) === name
+        ? getItemEntry(template, index)
+        : undefined;
+    const found = item
+      ? { entry: item, position: index }
+      : getDeriveChildEntry(template, name);
     if (!found) return undefined;
     order.push(found.position);
     const structure: Record<string, Self> | null = live?.structure ?? null;
-    live = structure && hasOwnProperty(structure, name) ? structure[name] : undefined;
+    live =
+      structure && hasOwnProperty(structure, name)
+        ? structure[name]
+        : undefined;
     template = live?.blueprintNode ?? found.entry.node;
   }
-  return { target: live, template: live?.blueprintNode ?? template, siblings, order };
+  return {
+    target: live,
+    template: live?.blueprintNode ?? template,
+    siblings,
+    order,
+  };
 };

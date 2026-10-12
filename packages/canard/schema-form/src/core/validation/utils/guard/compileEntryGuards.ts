@@ -10,7 +10,9 @@ import type { ValidationEntry } from '../cache/readValidationEntry';
  * @returns Nothing; failed positions remain cached for consuming trees.
  */
 export const compileEntryGuards = (
-  entry: ValidationEntry, validator: Validator, analysis: Blueprint,
+  entry: ValidationEntry,
+  validator: Validator,
+  analysis: Blueprint,
 ): void => {
   if (entry.eagerCompiled) return;
   entry.eagerCompiled = true;
@@ -25,10 +27,15 @@ export const compileEntryGuards = (
   for (const gate of gates) {
     if (gate.kind !== 'if') continue;
     const pointer = gate.schemaPath.startsWith('#')
-      ? gate.schemaPath.slice(1) : gate.schemaPath;
+      ? gate.schemaPath.slice(1)
+      : gate.schemaPath;
     if (entry.guards.has(pointer)) continue;
-    try { entry.guards.set(pointer,
-      { guard: validator.compileGuard(entry.copy, pointer) }); }
-    catch (failure) { entry.guards.set(pointer, { failure }); }
+    try {
+      entry.guards.set(pointer, {
+        guard: validator.compileGuard(entry.copy, pointer),
+      });
+    } catch (failure) {
+      entry.guards.set(pointer, { failure });
+    }
   }
 };

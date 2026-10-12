@@ -1,8 +1,8 @@
 import type { SchemaNodeRecord } from '../../../record';
 import type { SetValueOption } from '../../../types/value';
 import { writeSchemaNode } from '../write/writeSchemaNode';
-import { setLoadValue } from './setLoadValue';
 import { clearSubtreeState } from './clearSubtreeState';
+import { setLoadValue } from './setLoadValue';
 
 /**
  * Load a new committed form prop as the root's fresh lifetime.
@@ -12,7 +12,9 @@ import { clearSubtreeState } from './clearSubtreeState';
  * @returns Nothing; one settle call commits the loaded tree
  */
 export const resetSchemaNodeForm = <Self extends SchemaNodeRecord<Self>>(
-  root: Self, value: unknown, option: SetValueOption,
+  root: Self,
+  value: unknown,
+  option: SetValueOption,
 ): void => {
   const nextSnapshot = setLoadValue(root.runtime.loadSnapshot, '', value);
   root.runtime.diagnostics = { status: 'stable' };

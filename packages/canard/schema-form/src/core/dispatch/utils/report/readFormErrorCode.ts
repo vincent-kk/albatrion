@@ -1,5 +1,9 @@
-import { FORM_ERROR_CODE_TABLE, JSONSchemaError, LISTENER_THREW,
-  SchemaFormError } from '../../../../errors';
+import {
+  FORM_ERROR_CODE_TABLE,
+  JSONSchemaError,
+  LISTENER_THREW,
+  SchemaFormError,
+} from '../../../../errors';
 import type { FormErrorCode } from '../../../../errors';
 
 /**
@@ -9,6 +13,6 @@ import type { FormErrorCode } from '../../../../errors';
  */
 export const readFormErrorCode = (error: unknown): FormErrorCode =>
   error instanceof SchemaFormError || error instanceof JSONSchemaError
-    ? FORM_ERROR_CODE_TABLE.find(([code]) => code === error.code)?.[0] ??
-      `SCHEMA_FORM_ERROR.${LISTENER_THREW}`
+    ? (FORM_ERROR_CODE_TABLE.find(([code]) => code === error.code)?.[0] ??
+      `SCHEMA_FORM_ERROR.${LISTENER_THREW}`)
     : `SCHEMA_FORM_ERROR.${LISTENER_THREW}`;

@@ -11,15 +11,20 @@ import type { SettlementContext } from '../../type';
  * @returns Nothing; only recomputation of the same occurrence identity is deduplicated
  */
 export const recordSettlementFailure = <Self extends SchemaNodeRecord<Self>>(
-  context: SettlementContext<Self>, failure: SchemaFormError,
+  context: SettlementContext<Self>,
+  failure: SchemaFormError,
   cause: NonNullable<SettlementContext<Self>['cause']>,
-  identity: string = [failure.code, String(failure.details.path),
-    String(failure.details.schemaPath), failure.message].join('\u0000'),
+  identity: string = [
+    failure.code,
+    String(failure.details.path),
+    String(failure.details.schemaPath),
+    failure.message,
+  ].join('\u0000'),
 ): void => {
-  const keys = context.failureKeys ??= new Set();
+  const keys = (context.failureKeys ??= new Set());
   if (keys.has(identity)) return;
   keys.add(identity);
-  const failures = context.failures ??= [];
+  const failures = (context.failures ??= []);
   failures.push(failure);
   context.cause ??= cause;
   const runtime = context.root.runtime;

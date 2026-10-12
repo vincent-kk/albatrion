@@ -3,9 +3,13 @@ import type { BlueprintChildEntry, BlueprintNode } from '../../../../blueprint';
 import type { Behavior } from '../../../../record';
 
 /** Each template keeps only its most recent count's entry list. */
-const LAST = new WeakMap<BlueprintNode, {
-  count: number; result: readonly BlueprintChildEntry[];
-}>();
+const LAST = new WeakMap<
+  BlueprintNode,
+  {
+    count: number;
+    result: readonly BlueprintChildEntry[];
+  }
+>();
 /** Shared declaration result when an array has no templated positions. */
 const EMPTY: readonly BlueprintChildEntry[] = Object.freeze([]);
 

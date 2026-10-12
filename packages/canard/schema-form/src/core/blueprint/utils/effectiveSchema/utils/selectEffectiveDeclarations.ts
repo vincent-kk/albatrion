@@ -16,7 +16,8 @@ export const selectEffectiveDeclarations = (
     const selected: PropertyDeclaration[] = [];
     for (let index = 0; index < staticConjunctions.length; index++) {
       const entry = staticConjunctions[index];
-      if (!entry.validationOnly && entry.gates.length === 0) selected.push(entry);
+      if (!entry.validationOnly && entry.gates.length === 0)
+        selected.push(entry);
     }
     return selected.sort(compareDeclarations);
   }

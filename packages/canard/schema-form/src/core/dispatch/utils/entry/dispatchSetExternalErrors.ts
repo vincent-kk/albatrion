@@ -15,7 +15,8 @@ import { assertNotInDelivery } from '../report/assertNotInDelivery';
  * @returns Nothing; delivery is synchronous outside a public write
  */
 export const dispatchSetExternalErrors = <Self extends SchemaNodeRecord<Self>>(
-  node: Self, errors: readonly ValidationIssue[],
+  node: Self,
+  errors: readonly ValidationIssue[],
 ): void => {
   assertSchemaNodeWritable(node);
   if (node.detached) return;

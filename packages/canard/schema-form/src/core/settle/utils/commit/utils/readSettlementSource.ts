@@ -9,17 +9,29 @@ import type { SchemaNodeWriteKind, SettlementContext } from '../../../type';
  * @returns The effective origin, or undefined for an indirect Refresh target
  */
 export const readSettlementSource = <Self extends SchemaNodeRecord<Self>>(
-  context: SettlementContext<Self>, path: string, exact = false,
+  context: SettlementContext<Self>,
+  path: string,
+  exact = false,
 ): SchemaNodeWriteKind | undefined => {
   const origins = context.writeOrigins;
   for (let index = (origins?.length ?? 0) - 1; index >= 0; index--) {
     const origin = origins![index];
-    if (origin.keys && path !== origin.path &&
-      !origin.keys.includes(path.slice(origin.path.length + 1).split('/')[0]
-        .replace(/~1/g, '/').replace(/~0/g, '~'))) continue;
+    if (
+      origin.keys &&
+      path !== origin.path &&
+      !origin.keys.includes(
+        path
+          .slice(origin.path.length + 1)
+          .split('/')[0]
+          .replace(/~1/g, '/')
+          .replace(/~0/g, '~'),
+      )
+    )
+      continue;
     if (path === origin.path || path.startsWith(`${origin.path}/`))
       return !exact || path === origin.path ? origin.source : undefined;
   }
-  return !exact || path === context.target.path ? context.source ?? context.kind :
-    undefined;
+  return !exact || path === context.target.path
+    ? (context.source ?? context.kind)
+    : undefined;
 };

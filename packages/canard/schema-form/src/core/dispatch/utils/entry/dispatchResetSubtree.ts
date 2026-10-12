@@ -1,8 +1,8 @@
 import type { SchemaNodeRecord } from '../../../record';
 import { resetSchemaNodeSubtree } from '../../../settle';
 import { SetValueOption } from '../../../types/value';
-import { enterSchemaNodeChain } from '../chain/enterSchemaNodeChain';
 import { captureChainError } from '../chain/captureChainError';
+import { enterSchemaNodeChain } from '../chain/enterSchemaNodeChain';
 import { exitSchemaNodeChain } from '../chain/exitSchemaNodeChain';
 
 /**
@@ -12,15 +12,22 @@ import { exitSchemaNodeChain } from '../chain/exitSchemaNodeChain';
  * @returns Nothing; the outer entry delivers its committed bits
  */
 export const dispatchResetSubtree = <Self extends SchemaNodeRecord<Self>>(
-  node: Self, option: SetValueOption = SetValueOption.Overwrite,
+  node: Self,
+  option: SetValueOption = SetValueOption.Overwrite,
 ): void => {
   if (!enterSchemaNodeChain(node)) return;
   const runtime = node.rootNode.runtime;
   if (runtime.batchWrites)
-    runtime.batchWrites = runtime.batchWrites.filter((write) =>
-      write.node !== node && !write.node.path.startsWith(`${node.path}/`));
+    runtime.batchWrites = runtime.batchWrites.filter(
+      (write) =>
+        write.node !== node && !write.node.path.startsWith(`${node.path}/`),
+    );
   (runtime.validationTargets ??= new Set()).add(node);
-  try { resetSchemaNodeSubtree(node, option); }
-  catch (error) { captureChainError(runtime, error); }
-  finally { exitSchemaNodeChain(node); }
+  try {
+    resetSchemaNodeSubtree(node, option);
+  } catch (error) {
+    captureChainError(runtime, error);
+  } finally {
+    exitSchemaNodeChain(node);
+  }
 };

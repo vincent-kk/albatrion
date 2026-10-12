@@ -2,9 +2,14 @@ import type { BlueprintSchemaType, SchemaTypeName } from '../../../blueprint';
 import type { UnionSpec } from '../../../record';
 
 /** Scalar restrictions are finite; union arrays are weakly keyed by blueprint identity. */
-const SCALAR_SPECS = [new Map<string, UnionSpec>(), new Map<string, UnionSpec>()];
-const UNION_SPECS = [new WeakMap<readonly SchemaTypeName[], UnionSpec>(),
-  new WeakMap<readonly SchemaTypeName[], UnionSpec>()];
+const SCALAR_SPECS = [
+  new Map<string, UnionSpec>(),
+  new Map<string, UnionSpec>(),
+];
+const UNION_SPECS = [
+  new WeakMap<readonly SchemaTypeName[], UnionSpec>(),
+  new WeakMap<readonly SchemaTypeName[], UnionSpec>(),
+];
 const NO_KINDS: readonly Exclude<SchemaTypeName, 'null'>[] = Object.freeze([]);
 
 /**
@@ -21,8 +26,8 @@ export const staticSpec = (
   if (typeof schemaType === 'string') {
     const cached = SCALAR_SPECS[index].get(schemaType);
     if (cached) return cached;
-    const kinds = schemaType === 'virtual' || schemaType === 'null'
-      ? NO_KINDS : schemaType;
+    const kinds =
+      schemaType === 'virtual' || schemaType === 'null' ? NO_KINDS : schemaType;
     const spec: UnionSpec = { kinds, mask: 0, nullable };
     SCALAR_SPECS[index].set(schemaType, spec);
     return spec;
@@ -33,7 +38,9 @@ export const staticSpec = (
     (kind): kind is Exclude<SchemaTypeName, 'null'> => kind !== 'null',
   );
   const spec: UnionSpec = {
-    kinds: kinds.length === 1 ? kinds[0] : kinds, mask: 0, nullable,
+    kinds: kinds.length === 1 ? kinds[0] : kinds,
+    mask: 0,
+    nullable,
   };
   UNION_SPECS[index].set(schemaType, spec);
   return spec;

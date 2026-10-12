@@ -11,6 +11,8 @@ export const assertNotInDelivery = (
   runtime: Pick<SchemaNodeRuntime<unknown>, 'reportingErrors'>,
 ): void => {
   if (runtime.reportingErrors)
-    throw new SchemaFormError(WRITE_IN_OBSERVER,
-      'A form cannot be written while its error observer is running');
+    throw new SchemaFormError(
+      WRITE_IN_OBSERVER,
+      'A form cannot be written while its error observer is running',
+    );
 };

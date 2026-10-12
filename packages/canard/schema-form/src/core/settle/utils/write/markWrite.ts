@@ -1,16 +1,17 @@
 import { isArray } from '@winglet/common-utils/filter';
+
 import type { SchemaNodeRecord, UnionSpec } from '../../../record';
 import type { SettlementContext } from '../../type';
+import { sameValue } from '../compute/sameValue';
+import { getDeclaredChildNames } from '../declarations/getDeclaredChildNames';
+import { indexEnteredLatentKey } from '../latent/indexEnteredLatentKey';
+import { arrayExtras } from './arrayExtras';
 import { assertVirtualWriteShape } from './assertVirtualWriteShape';
+import { hasDistributedChildInput } from './hasDistributedChildInput';
 import { isPlain } from './isPlain';
 import { nextExtras } from './nextExtras';
 import { pruneLatentRaw } from './pruneLatentRaw';
 import { staticSpec } from './staticSpec';
-import { sameValue } from '../compute/sameValue';
-import { hasDistributedChildInput } from './hasDistributedChildInput';
-import { arrayExtras } from './arrayExtras';
-import { indexEnteredLatentKey } from '../latent/indexEnteredLatentKey';
-import { getDeclaredChildNames } from '../declarations/getDeclaredChildNames';
 
 /**
  * Mark a terminal source or distribute an object host write by declared key.
@@ -21,11 +22,17 @@ import { getDeclaredChildNames } from '../declarations/getDeclaredChildNames';
  * @returns Nothing; only this node's own state channels are stored here
  */
 export const markWrite = <Self extends SchemaNodeRecord<Self>>(
-  node: Self, input: unknown, context: SettlementContext<Self>,
+  node: Self,
+  input: unknown,
+  context: SettlementContext<Self>,
   spec: UnionSpec = staticSpec(node.schemaType, node.nullable),
 ): void => {
-  if (node.behavior.type === 'virtual' && !context.automatic &&
-    context.kind !== 'load') assertVirtualWriteShape(node, input);
+  if (
+    node.behavior.type === 'virtual' &&
+    !context.automatic &&
+    context.kind !== 'load'
+  )
+    assertVirtualWriteShape(node, input);
   if (context.loadScope) {
     context.entered.add(node);
     indexEnteredLatentKey(context, node);
@@ -35,9 +42,13 @@ export const markWrite = <Self extends SchemaNodeRecord<Self>>(
     context.shapeDirtyPaths.add(node.path);
   const isMerge = context.kind === 'callerPartial' && !context.automatic;
   if (!context.automatic) context.writtenInputs.set(node, input);
-  else context.automaticLog.push({ node, previousRaw: node.raw,
-    previousExtras: node.extras,
-    previousDistributed: context.distributedInputs.get(node) });
+  else
+    context.automaticLog.push({
+      node,
+      previousRaw: node.raw,
+      previousExtras: node.extras,
+      previousDistributed: context.distributedInputs.get(node),
+    });
   const value = node.behavior.interpret(input, spec);
   if (node.behavior.strategy !== 'branch') {
     if (!sameValue(node.raw, value)) {
@@ -70,9 +81,13 @@ export const markWrite = <Self extends SchemaNodeRecord<Self>>(
   let countChanged = false;
   if (node.behavior.type === 'array') {
     const previousItemCount = node.itemCount;
-    if (context.automatic) context.arrayStructureLog.push({ host: node,
-      previousItems: [...node.children ?? []], previousItemCount,
-      previousExtras: node.extras });
+    if (context.automatic)
+      context.arrayStructureLog.push({
+        host: node,
+        previousItems: [...(node.children ?? [])],
+        previousItemCount,
+        previousExtras: node.extras,
+      });
     if (!context.arrayCounts.has(node))
       context.arrayCounts.set(node, previousItemCount);
     node.itemCount = isArray(value) ? value.length : 0;
@@ -105,20 +120,30 @@ export const markWrite = <Self extends SchemaNodeRecord<Self>>(
     if (context.automatic) context.automaticChanged = true;
   }
   context.distributedInputs.set(node, {
-    input: value, whole, automatic: context.automatic,
+    input: value,
+    whole,
+    automatic: context.automatic,
   });
   context.dirtyPaths.add(node.path);
   context.shapeDirtyPaths.add(node.path);
   if (node.structure === null) return;
   for (const name of Object.keys(node.structure)) {
-    if (node.behavior.type === 'array' && Number(name) >= node.itemCount) continue;
-    if (!whole && !hasDistributedChildInput(value, name,
-      node.behavior.type === 'array')) continue;
+    if (node.behavior.type === 'array' && Number(name) >= node.itemCount)
+      continue;
+    if (
+      !whole &&
+      !hasDistributedChildInput(value, name, node.behavior.type === 'array')
+    )
+      continue;
     const child = node.structure[name];
     if (child.behavior.type === 'virtual') continue;
-    const childInput = hasDistributedChildInput(value, name,
-      node.behavior.type === 'array') ?
-      Reflect.get(value, name) : undefined;
+    const childInput = hasDistributedChildInput(
+      value,
+      name,
+      node.behavior.type === 'array',
+    )
+      ? Reflect.get(value, name)
+      : undefined;
     if (context.automatic) {
       context.writtenInputs.set(child, childInput);
       context.filledNodes.add(child);

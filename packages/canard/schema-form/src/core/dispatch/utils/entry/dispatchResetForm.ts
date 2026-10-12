@@ -1,8 +1,8 @@
 import type { SchemaNodeRecord } from '../../../record';
 import { resetSchemaNodeForm } from '../../../settle';
 import { SetValueOption } from '../../../types/value';
-import { enterSchemaNodeChain } from '../chain/enterSchemaNodeChain';
 import { captureChainError } from '../chain/captureChainError';
+import { enterSchemaNodeChain } from '../chain/enterSchemaNodeChain';
 import { exitSchemaNodeChain } from '../chain/exitSchemaNodeChain';
 import { clearWarningKeys } from '../report/clearWarningKeys';
 import { clearSchemaNodeFormErrors } from './utils/clearSchemaNodeFormErrors';
@@ -15,7 +15,8 @@ import { clearSchemaNodeFormErrors } from './utils/clearSchemaNodeFormErrors';
  * @returns Nothing; the outer entry delivers the load
  */
 export const dispatchResetForm = <Self extends SchemaNodeRecord<Self>>(
-  root: Self, value: unknown,
+  root: Self,
+  value: unknown,
   option: SetValueOption = SetValueOption.Overwrite,
 ): void => {
   if (!enterSchemaNodeChain(root)) return;
@@ -27,7 +28,9 @@ export const dispatchResetForm = <Self extends SchemaNodeRecord<Self>>(
   try {
     clearSchemaNodeFormErrors(root);
     resetSchemaNodeForm(root, value, option);
+  } catch (error) {
+    captureChainError(root.runtime, error);
+  } finally {
+    exitSchemaNodeChain(root);
   }
-  catch (error) { captureChainError(root.runtime, error); }
-  finally { exitSchemaNodeChain(root); }
 };

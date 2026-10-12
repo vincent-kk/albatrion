@@ -37,10 +37,13 @@ export class PathKeyedSet extends Set<string> {
         this.pathIndex.delete(move.previous);
         super.delete(move.previous);
       }
-      for (const move of moves) if (move.current !== undefined) {
-        this.pathIndex.add(move.current, [move.current]);
-        super.add(move.current);
-      }
-    } finally { this.pathIndex.endBatch(); }
+      for (const move of moves)
+        if (move.current !== undefined) {
+          this.pathIndex.add(move.current, [move.current]);
+          super.add(move.current);
+        }
+    } finally {
+      this.pathIndex.endBatch();
+    }
   }
 }

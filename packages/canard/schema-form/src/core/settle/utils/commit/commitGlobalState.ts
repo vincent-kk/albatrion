@@ -1,7 +1,12 @@
-import { SchemaNodeEventType, accumulateGlobalStateDeltas, publishGlobalStateDeltas } from '../../../record';
+import { hasOwnProperty } from '@winglet/common-utils/lib';
+
+import {
+  SchemaNodeEventType,
+  accumulateGlobalStateDeltas,
+  publishGlobalStateDeltas,
+} from '../../../record';
 import type { SchemaNodeRecord } from '../../../record';
 import type { SettlementContext } from '../../type';
-import { hasOwnProperty } from '@winglet/common-utils/lib';
 
 /**
  * Prepare ordered global-state candidates for the shared commit visitor.
@@ -27,7 +32,11 @@ export const commitGlobalState = <Self extends SchemaNodeRecord<Self>>(
   for (const node of context.entered) nodes.add(node);
   for (const node of context.changedNodes) nodes.add(node);
   for (const node of context.stateDirtyNodes) nodes.add(node);
-  if (context.kind === 'load' && context.loadScope && !context.loadScope.detached) {
+  if (
+    context.kind === 'load' &&
+    context.loadScope &&
+    !context.loadScope.detached
+  ) {
     const pending = [context.loadScope];
     const visited = new Set<Self>();
     while (pending.length) {
@@ -41,24 +50,31 @@ export const commitGlobalState = <Self extends SchemaNodeRecord<Self>>(
   return {
     nodes,
     visit(node: Self): void {
-      const previousState = (node.deliveryChanges & SchemaNodeEventType.UpdateState)
-        ? node.deliveryPreviousState ?? node.interactionState : node.interactionState;
+      const previousState =
+        node.deliveryChanges & SchemaNodeEventType.UpdateState
+          ? (node.deliveryPreviousState ?? node.interactionState)
+          : node.interactionState;
       if (departing.has(node)) {
         if (!context.entered.has(node) || node.deliveryInitialized)
-          accumulateGlobalStateDeltas(deltas,
-            previousState, {});
+          accumulateGlobalStateDeltas(deltas, previousState, {});
         if (node.detached) return;
       }
       if (node.detached) return;
       if (context.entered.has(node)) {
-        accumulateGlobalStateDeltas(deltas,
-          node.deliveryInitialized ? previousState : {}, node.interactionState);
+        accumulateGlobalStateDeltas(
+          deltas,
+          node.deliveryInitialized ? previousState : {},
+          node.interactionState,
+        );
         return;
       }
       if (!nodes.has(node)) return;
       if (!hadGlobalState) {
         for (const key in node.interactionState)
-          if (hasOwnProperty(node.interactionState, key) && node.interactionState[key])
+          if (
+            hasOwnProperty(node.interactionState, key) &&
+            node.interactionState[key]
+          )
             deltas.set(key, (deltas.get(key) ?? 0) + 1);
         return;
       }
@@ -66,6 +82,8 @@ export const commitGlobalState = <Self extends SchemaNodeRecord<Self>>(
       if (previous !== node.interactionState)
         accumulateGlobalStateDeltas(deltas, previous, node.interactionState);
     },
-    finish(): void { publishGlobalStateDeltas(context.root, deltas); },
+    finish(): void {
+      publishGlobalStateDeltas(context.root, deltas);
+    },
   };
 };

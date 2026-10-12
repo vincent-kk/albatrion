@@ -1,25 +1,25 @@
-import { captureSchemaNodeChange } from '../../../record';
 import { isArray } from '@winglet/common-utils/filter';
 
 import { getItemEntry } from '../../../blueprint';
-import { walkOwnedSchemaNodes } from '../walkOwnedSchemaNodes';
+import { captureSchemaNodeChange } from '../../../record';
 import type { ArrayArrangePlan, SchemaNodeRecord } from '../../../record';
 import { updateSchemaNodeNameAndPath } from '../../../record';
 import type { SettlementContext } from '../../type';
 import { createChildNode } from '../compute/createChildNode';
 import { captureDetachedSchemaNodeReads } from '../detached/captureDetachedSchemaNodeReads';
 import { getGateRegistry } from '../gates/getGateRegistry';
-import { readRawTree } from '../latent/readRawTree';
 import { indexEnteredLatentKey } from '../latent/indexEnteredLatentKey';
+import { readRawTree } from '../latent/readRawTree';
 import { getLoadValue } from '../load/getLoadValue';
 import { setLoadValue } from '../load/setLoadValue';
+import { prunePerishedPaths } from '../transition/prunePerishedPaths';
+import { walkOwnedSchemaNodes } from '../walkOwnedSchemaNodes';
 import { arrayExtras } from '../write/arrayExtras';
 import { markWrite } from '../write/markWrite';
-import { prunePerishedPaths } from '../transition/prunePerishedPaths';
+import { applyArrayTail } from './applyArraySlots/utils/applyArrayTail';
+import { canApplyArrayTail } from './applyArraySlots/utils/canApplyArrayTail';
 import { rekeyArrayRuntimePaths } from './rekeyArrayRuntimePaths';
 import type { ArrayPathMove } from './rekeyArrayRuntimePaths';
-import { canApplyArrayTail } from './applyArraySlots/utils/canApplyArrayTail';
-import { applyArrayTail } from './applyArraySlots/utils/applyArrayTail';
 
 /**
  * Apply a branch plan before calculation while paths are free to change.
@@ -29,7 +29,8 @@ import { applyArrayTail } from './applyArraySlots/utils/applyArrayTail';
  * @returns Last committed value of a removed position, if requested
  */
 export const applyArraySlots = <Self extends SchemaNodeRecord<Self>>(
-  host: Self, plan: Extract<ArrayArrangePlan, { kind: 'slots' }>,
+  host: Self,
+  plan: Extract<ArrayArrangePlan, { kind: 'slots' }>,
   context: SettlementContext<Self>,
 ): unknown => {
   if (canApplyArrayTail(host, plan)) return applyArrayTail(host, plan, context);
@@ -39,10 +40,15 @@ export const applyArraySlots = <Self extends SchemaNodeRecord<Self>>(
   const rawSlots = isArray(oldRaw) ? oldRaw : [];
   const snapshot = getLoadValue(host.runtime.loadSnapshot, host.path);
   const oldSnapshot = isArray(snapshot) ? snapshot : [];
-  const removedIndex = plan.result.source === 'removed' ? plan.result.index : -1;
+  const removedIndex =
+    plan.result.source === 'removed' ? plan.result.index : -1;
   const removedItem = oldItems[String(removedIndex)];
-  const removed = removedIndex < 0 ? undefined :
-    removedItem ? removedItem.local : rawSlots[removedIndex];
+  const removed =
+    removedIndex < 0
+      ? undefined
+      : removedItem
+        ? removedItem.local
+        : rawSlots[removedIndex];
   const registry = getGateRegistry(host.runtime);
   if (context.hasGates)
     for (const item of host.children ?? []) registry.remove(item);
@@ -78,14 +84,17 @@ export const applyArraySlots = <Self extends SchemaNodeRecord<Self>>(
   for (let index = 0; index < oldCount; index++) {
     const item = oldItems[String(index)];
     const current = destinations.get(index);
-    moves.push({ previous: `${host.path}/${index}`,
-      current: current === undefined ? undefined : `${host.path}/${current}` });
+    moves.push({
+      previous: `${host.path}/${index}`,
+      current: current === undefined ? undefined : `${host.path}/${current}`,
+    });
     if (!item || reused.has(item)) continue;
     context.perished.add(item);
     walkOwnedSchemaNodes(item, (departing) => {
       if (!departing.runtime.detachedReads?.has(departing))
         captureDetachedSchemaNodeReads(departing, {
-          emit: context.previousEmit, context: context.previousContext,
+          emit: context.previousEmit,
+          context: context.previousContext,
           schema: departing.schema.schema,
         });
     });
@@ -100,11 +109,16 @@ export const applyArraySlots = <Self extends SchemaNodeRecord<Self>>(
     if (!reused.has(item) || item.name === name) continue;
     walkOwnedSchemaNodes(item, (descendant) => {
       const previous = descendant.path;
-      updateSchemaNodeNameAndPath(descendant,
+      updateSchemaNodeNameAndPath(
+        descendant,
         descendant === item ? name : descendant.name,
-        descendant === item ? host : descendant.parent);
-      context.pathChanges.push({ node: descendant, previous,
-        current: descendant.path });
+        descendant === item ? host : descendant.parent,
+      );
+      context.pathChanges.push({
+        node: descendant,
+        previous,
+        current: descendant.path,
+      });
       context.dirtyPaths.add(descendant.path);
       if (descendant.behavior.strategy === 'branch')
         context.shapeDirtyPaths.add(descendant.path);
@@ -115,7 +129,11 @@ export const applyArraySlots = <Self extends SchemaNodeRecord<Self>>(
   host.raw = undefined;
   host.extras = arrayExtras(host, nextRaw);
   host.structure = nextItems;
-  host.children = captureSchemaNodeChange(host, 'children', Object.values(nextItems));
+  host.children = captureSchemaNodeChange(
+    host,
+    'children',
+    Object.values(nextItems),
+  );
   context.arrayCounts.set(host, oldCount);
   context.changedRaw.add(host.path);
   context.changedNodes.add(host);
@@ -129,7 +147,10 @@ export const applyArraySlots = <Self extends SchemaNodeRecord<Self>>(
   if (context.hasGates)
     for (const item of host.children)
       walkOwnedSchemaNodes(item, (node) => registry.register(node));
-  host.runtime.loadSnapshot = setLoadValue(host.runtime.loadSnapshot,
-    host.path, nextSnapshot);
+  host.runtime.loadSnapshot = setLoadValue(
+    host.runtime.loadSnapshot,
+    host.path,
+    nextSnapshot,
+  );
   return removed;
 };

@@ -1,5 +1,8 @@
-import { accumulateGlobalStateDeltas, publishGlobalStateDeltas,
-  SchemaNodeEventType } from '../../../record';
+import {
+  SchemaNodeEventType,
+  accumulateGlobalStateDeltas,
+  publishGlobalStateDeltas,
+} from '../../../record';
 import type { SchemaNodeRecord } from '../../../record';
 import { assertSchemaNodeWritable } from '../../../settle';
 import { flushQueuedEvents } from '../chain/flushQueuedEvents';
@@ -31,12 +34,20 @@ export const dispatchClearSubtreeState = <Self extends SchemaNodeRecord<Self>>(
     if (Object.keys(current.interactionState).length) {
       const previous = current.interactionState;
       current.interactionState = {};
-      accumulateGlobalStateDeltas(deltas, previous, current.interactionState, previous);
+      accumulateGlobalStateDeltas(
+        deltas,
+        previous,
+        current.interactionState,
+        previous,
+      );
       if (current.deliveryChanges & SchemaNodeEventType.UpdateState)
         current.deliveryPreviousState = current.interactionState;
       runtime.stateChanged = true;
-      queueNonSettleEvent(current, SchemaNodeEventType.UpdateState,
-        current.interactionState);
+      queueNonSettleEvent(
+        current,
+        SchemaNodeEventType.UpdateState,
+        current.interactionState,
+      );
     }
     for (const child of current.children ?? []) pending.push(child);
   }

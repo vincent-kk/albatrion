@@ -24,18 +24,25 @@ it('79C-01 groups repeated error paths in one pass and clears retired paths', ()
   const a = { setExternalErrors: vi.fn() };
   const b = { setExternalErrors: vi.fn() };
   const retired = { setExternalErrors: vi.fn() };
-  const nodes = new Map([['/a', a], ['/b', b], ['/retired', retired]]);
+  const nodes = new Map([
+    ['/a', a],
+    ['/b', b],
+    ['/retired', retired],
+  ]);
   const root = {
     batch: (callback: () => void) => callback(),
     setExternalErrors: vi.fn(),
-    find: vi.fn((path: string) => path === '' ? root : nodes.get(path)),
+    find: vi.fn((path: string) => (path === '' ? root : nodes.get(path))),
   };
 
   applyFormErrors(root as unknown as SchemaNode, errors, previous);
 
   expect(readPath).toHaveBeenCalledTimes(errors.length + previous.length);
   expect(root.setExternalErrors).toHaveBeenCalledExactlyOnceWith(errors);
-  expect(a.setExternalErrors).toHaveBeenCalledExactlyOnceWith([errors[0], errors[2]]);
+  expect(a.setExternalErrors).toHaveBeenCalledExactlyOnceWith([
+    errors[0],
+    errors[2],
+  ]);
   expect(b.setExternalErrors).toHaveBeenCalledExactlyOnceWith([errors[1]]);
   expect(retired.setExternalErrors).toHaveBeenCalledExactlyOnceWith([]);
   expect(root.find).toHaveBeenCalledTimes(5);

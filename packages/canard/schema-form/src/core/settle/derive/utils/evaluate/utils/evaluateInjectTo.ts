@@ -1,9 +1,13 @@
 import type { SchemaNodeRecord } from '../../../../../record';
 import { resolveDependencyPath } from '../../../../utils/paths/resolveDependencyPath';
-import type { DeriveRoundDecision, DeriveRule, DeriveWrite } from '../../../type';
+import type {
+  DeriveRoundDecision,
+  DeriveRule,
+  DeriveWrite,
+} from '../../../type';
+import { getDeriveSourceOrder } from '../../rank/getDeriveSourceOrder';
 import { KIND_RANK } from '../../rank/kindRank';
 import { LAYER_RANK } from '../../rank/layerRank';
-import { getDeriveSourceOrder } from '../../rank/getDeriveSourceOrder';
 import { getInjectEntries } from './getInjectEntries';
 import { getInjectTarget } from './getInjectTarget';
 import { getInjectToContext } from './getInjectToContext';
@@ -17,16 +21,27 @@ import { getVirtualWriteFailure } from './getVirtualWriteFailure';
  * @returns Candidates or one failure that excludes the entire rule
  */
 export const evaluateInjectTo = <Self extends SchemaNodeRecord<Self>>(
-  source: Self, root: Self, rule: DeriveRule,
-): { writes: readonly DeriveWrite<Self>[];
-  failure?: DeriveRoundDecision<Self>['failures'][number] } => {
+  source: Self,
+  root: Self,
+  rule: DeriveRule,
+): {
+  writes: readonly DeriveWrite<Self>[];
+  failure?: DeriveRoundDecision<Self>['failures'][number];
+} => {
   if (typeof rule.literal !== 'function') return { writes: [] };
   let result: unknown;
   try {
     result = rule.literal(source.emit, getInjectToContext(source, root));
   } catch (cause) {
-    return { writes: [], failure: { sourcePath: source.path,
-      schemaPath: rule.schemaPath, cause, kind: 'expression' } };
+    return {
+      writes: [],
+      failure: {
+        sourcePath: source.path,
+        schemaPath: rule.schemaPath,
+        cause,
+        kind: 'expression',
+      },
+    };
   }
   const writes: DeriveWrite<Self>[] = [];
   const entries = getInjectEntries(result);
@@ -35,16 +50,39 @@ export const evaluateInjectTo = <Self extends SchemaNodeRecord<Self>>(
     if (value === undefined) continue;
     const targetPath = resolveDependencyPath(source.path, relative);
     const resolved = getInjectTarget(root, targetPath);
-    if (!resolved) return { writes: [], failure: { sourcePath: source.path,
-      schemaPath: rule.schemaPath, cause: relative, kind: 'injectTarget', targetPath } };
-    const invalid = getVirtualWriteFailure(source.path, rule.schemaPath,
-      targetPath, resolved.template, value);
+    if (!resolved)
+      return {
+        writes: [],
+        failure: {
+          sourcePath: source.path,
+          schemaPath: rule.schemaPath,
+          cause: relative,
+          kind: 'injectTarget',
+          targetPath,
+        },
+      };
+    const invalid = getVirtualWriteFailure(
+      source.path,
+      rule.schemaPath,
+      targetPath,
+      resolved.template,
+      value,
+    );
     if (invalid) return { writes: [], failure: invalid };
-    writes.push({ target: resolved.target, targetPath,
-      template: resolved.template, siblings: resolved.siblings,
-      targetOrder: resolved.order, value, kind: 'injectTo', rank: KIND_RANK.injectTo,
-      layer: LAYER_RANK[rule.layer], sourceOrder: getDeriveSourceOrder(source),
-      ruleOrder: rule.order, returnOrder: index });
+    writes.push({
+      target: resolved.target,
+      targetPath,
+      template: resolved.template,
+      siblings: resolved.siblings,
+      targetOrder: resolved.order,
+      value,
+      kind: 'injectTo',
+      rank: KIND_RANK.injectTo,
+      layer: LAYER_RANK[rule.layer],
+      sourceOrder: getDeriveSourceOrder(source),
+      ruleOrder: rule.order,
+      returnOrder: index,
+    });
   }
   return { writes };
 };

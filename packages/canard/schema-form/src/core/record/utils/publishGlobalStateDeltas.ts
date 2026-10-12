@@ -3,7 +3,8 @@ import type { SchemaNodeRecord } from '../type';
 
 /** Publish net per-key count changes and queue one root event on a zero crossing. */
 export const publishGlobalStateDeltas = <Self extends SchemaNodeRecord<Self>>(
-  root: Self, deltas: ReadonlyMap<string, number>,
+  root: Self,
+  deltas: ReadonlyMap<string, number>,
 ): void => {
   const runtime = root.runtime;
   let nextState: Record<string, true> | undefined;
@@ -25,8 +26,10 @@ export const publishGlobalStateDeltas = <Self extends SchemaNodeRecord<Self>>(
   const previous = root.pendingNonSettleDelivery;
   root.pendingNonSettleDelivery = {
     type: (previous?.type ?? 0) | SchemaNodeEventType.UpdateGlobalState,
-    payload: { ...previous?.payload,
-      [SchemaNodeEventType.UpdateGlobalState]: nextState },
+    payload: {
+      ...previous?.payload,
+      [SchemaNodeEventType.UpdateGlobalState]: nextState,
+    },
   };
   queued.add(root);
   runtime.queuedNonSettleEvents = queued;

@@ -1,6 +1,5 @@
-import type { JSONSchemaWithVirtual } from '@/schema-form/types/jsonSchema';
-
 import { extractSchemaInfo } from '@/schema-form/helpers/jsonSchema/extractSchemaInfo';
+import type { JSONSchemaWithVirtual } from '@/schema-form/types/jsonSchema';
 
 /**
  * Type guard to check if a composition branch schema (oneOf/anyOf) is a null branch.

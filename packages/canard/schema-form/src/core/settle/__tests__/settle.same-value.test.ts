@@ -1,8 +1,8 @@
 import { describe, expect, it } from 'vitest';
 
-import { sameValue } from '../utils/compute/sameValue';
 import { SetValueOption } from '../../types/value';
 import { writeSchemaNode } from '../index';
+import { sameValue } from '../utils/compute/sameValue';
 import { createTestTree } from './fixtures/createTestTree';
 
 // filid:contract settle-derive
@@ -18,10 +18,19 @@ describe('settle value equivalence', () => {
 
   it('TEST-071 keeps a reference-equal element out of deep comparison', () => {
     let visits = 0;
-    const shared = new Proxy({ nested: { value: 1 } }, {
-      ownKeys(target) { visits++; return Reflect.ownKeys(target); },
-      get(target, key, receiver) { visits++; return Reflect.get(target, key, receiver); },
-    });
+    const shared = new Proxy(
+      { nested: { value: 1 } },
+      {
+        ownKeys(target) {
+          visits++;
+          return Reflect.ownKeys(target);
+        },
+        get(target, key, receiver) {
+          visits++;
+          return Reflect.get(target, key, receiver);
+        },
+      },
+    );
     expect(sameValue([shared, 1], [shared, 2])).toBe(false);
     expect(visits).toBe(0);
   });
@@ -30,8 +39,12 @@ describe('settle value equivalence', () => {
     const { root } = createTestTree({ type: 'string' });
     const first = { nested: { value: 1 } };
     writeSchemaNode(root, first, 'callerReplace', SetValueOption.Overwrite);
-    writeSchemaNode(root, { nested: { value: 1 } },
-      'callerReplace', SetValueOption.Overwrite);
+    writeSchemaNode(
+      root,
+      { nested: { value: 1 } },
+      'callerReplace',
+      SetValueOption.Overwrite,
+    );
     expect(root.raw).toBe(first);
   });
 });

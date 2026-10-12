@@ -16,15 +16,31 @@ it('F-B keeps the same boundary with a direct raw input child when Refresh appli
     expect(props).not.toHaveProperty('inputGeneration');
     return <input id={path} data-mount={mount} defaultValue={defaultValue} />;
   };
-  const view = render(<Form ref={ref}
-    jsonSchema={{ type: 'string' }} defaultValue="committed"
-    formTypeInputDefinitions={[{ test: { type: 'string' }, Component: Input }]}
-  />);
+  const view = render(
+    <Form
+      ref={ref}
+      jsonSchema={{ type: 'string' }}
+      defaultValue="committed"
+      formTypeInputDefinitions={[
+        { test: { type: 'string' }, Component: Input },
+      ]}
+    />,
+  );
   const initial = view.container.querySelector('input')!;
-  const fiberKey = Object.keys(initial).find((key) => key.startsWith('__reactFiber$'))!;
-  const fiber = (initial as unknown as Record<string, { return: {
-    type: unknown; return: { type: { name?: string }; stateNode: object };
-  } }>)[fiberKey];
+  const fiberKey = Object.keys(initial).find((key) =>
+    key.startsWith('__reactFiber$'),
+  )!;
+  const fiber = (
+    initial as unknown as Record<
+      string,
+      {
+        return: {
+          type: unknown;
+          return: { type: { name?: string }; stateNode: object };
+        };
+      }
+    >
+  )[fiberKey];
   expect(fiber.return.type).toBe(Input);
   expect(fiber.return.return.type.name).toBe('ErrorBoundary');
   const boundary = fiber.return.return.stateNode;
@@ -32,7 +48,9 @@ it('F-B keeps the same boundary with a direct raw input child when Refresh appli
   initial.setSelectionRange(1, 3);
   act(() => ref.current!.refresh());
   const refreshed = view.container.querySelector('input')!;
-  const next = (refreshed as unknown as typeof initial & Record<string, typeof fiber>)[fiberKey];
+  const next = (
+    refreshed as unknown as typeof initial & Record<string, typeof fiber>
+  )[fiberKey];
   expect(refreshed).not.toBe(initial);
   expect(next.return.type).toBe(Input);
   expect(next.return.return.stateNode).toBe(boundary);

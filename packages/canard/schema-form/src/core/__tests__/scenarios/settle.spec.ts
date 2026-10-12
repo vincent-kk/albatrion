@@ -1,5 +1,6 @@
-import { settleScenarios } from '@aileron/schema-form-scenarios';
 import { describe, it } from 'vitest';
+
+import { settleScenarios } from '@aileron/schema-form-scenarios';
 
 import { createCoreScenarioAdapter } from './utils/createCoreScenarioAdapter';
 import { runScenario } from './utils/runScenario';

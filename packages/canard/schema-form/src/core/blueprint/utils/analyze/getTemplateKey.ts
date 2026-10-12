@@ -47,7 +47,8 @@ export const getTemplateKey = (
         ? resolveReference(context, schema.$ref, input.schemaPath).schemaPath
         : input.schemaPath;
     const encoded = encodeLeaf(location);
-    const contribution = input.context === 'conjunction' ? CONJUNCTION : DECLARATION;
+    const contribution =
+      input.context === 'conjunction' ? CONJUNCTION : DECLARATION;
     if (index > 0) {
       key += ',';
       boundKey += ',';

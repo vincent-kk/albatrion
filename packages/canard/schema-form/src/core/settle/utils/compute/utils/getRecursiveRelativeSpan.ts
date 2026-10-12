@@ -15,7 +15,11 @@ export const getRecursiveRelativeSpan = (blueprint: Blueprint): number => {
   const templates = blueprint.nodes;
   for (let index = 0; index < templates.length; index++) {
     const declarations = templates[index].declarations;
-    for (let declarationIndex = 0; declarationIndex < declarations.length; declarationIndex++) {
+    for (
+      let declarationIndex = 0;
+      declarationIndex < declarations.length;
+      declarationIndex++
+    ) {
       const gates = declarations[declarationIndex].gates;
       for (let gateIndex = 0; gateIndex < gates.length; gateIndex++) {
         const reads = gates[gateIndex].evaluationReads;

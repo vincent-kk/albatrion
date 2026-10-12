@@ -132,7 +132,13 @@ export interface FormHandle<
   refresh: Fn<[path?: SchemaNode['path']]>;
   remount: Fn<[path?: SchemaNode['path']]>;
   /** Load committed defaults; only automatic-write flags override the Form default. */
-  reset: Fn<[option?: typeof SetValueOption.DisableAutomaticWrites | typeof SetValueOption.EnableAutomaticWrites]>;
+  reset: Fn<
+    [
+      option?:
+        | typeof SetValueOption.DisableAutomaticWrites
+        | typeof SetValueOption.EnableAutomaticWrites,
+    ]
+  >;
   findNode: Fn<[path: SchemaNode['path']], SchemaNode | null>;
   findNodes: Fn<[path: SchemaNode['path']], readonly SchemaNode[]>;
   getState: Fn<[], SchemaNode['globalState']>;

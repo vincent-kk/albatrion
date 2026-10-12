@@ -30,10 +30,22 @@ export const withdrawDetachedFills = <Self extends SchemaNodeRecord<Self>>(
     }
     for (const [key, previous] of context.latentAutomaticLog) {
       const identity: unknown = JSON.parse(key);
-      if (!isArray(identity) || typeof identity[0] !== 'string' ||
-        identity[0] !== node.path && !identity[0].startsWith(`${node.path}/`)) continue;
-      setLatentRaw(context.root.runtime, undefined, key, previous.present,
-        previous.value, undefined, undefined, context);
+      if (
+        !isArray(identity) ||
+        typeof identity[0] !== 'string' ||
+        (identity[0] !== node.path && !identity[0].startsWith(`${node.path}/`))
+      )
+        continue;
+      setLatentRaw(
+        context.root.runtime,
+        undefined,
+        key,
+        previous.present,
+        previous.value,
+        undefined,
+        undefined,
+        context,
+      );
     }
     context.writtenInputs.delete(node);
   }

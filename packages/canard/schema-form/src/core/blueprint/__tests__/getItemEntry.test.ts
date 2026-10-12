@@ -28,7 +28,10 @@ describe('getItemEntry', () => {
   });
 
   it('NODE-052 reuses the same frozen entry for one template and slot', () => {
-    const template = blueprint({ type: 'array', items: { type: 'string' } }).root;
+    const template = blueprint({
+      type: 'array',
+      items: { type: 'string' },
+    }).root;
     const first = getItemEntry(template, 2)!;
     expect(getItemEntry(template, 2)).toBe(first);
     expect(getItemEntry(template, 3)).not.toBe(first);
@@ -47,11 +50,15 @@ describe('getItemEntry', () => {
       },
     }).root;
     const entry = getItemEntry(template, 0)!;
-    const gates = template.item!.declarations.flatMap((declaration) => declaration.gates);
+    const gates = template.item!.declarations.flatMap(
+      (declaration) => declaration.gates,
+    );
     expect(gates.length).toBeGreaterThan(0);
     entry.declarations.forEach((declaration, index) =>
       declaration.gates.forEach((gate, gateIndex) =>
-        expect(gate).toBe(template.item!.declarations[index].gates[gateIndex])));
+        expect(gate).toBe(template.item!.declarations[index].gates[gateIndex]),
+      ),
+    );
   });
 
   it('NODE-052 has no entry for a blueprint-less slot', () => {

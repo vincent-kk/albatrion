@@ -6,8 +6,8 @@ import { SetValueOption } from '../../../types/value';
 import { arrangeSchemaNodeItems, writeSchemaNode } from '../../index';
 import * as tailModule from '../../utils/structure/applyArraySlots/utils/applyArrayTail';
 import * as eligibility from '../../utils/structure/applyArraySlots/utils/canApplyArrayTail';
-import { createTestTree } from './createTestTree';
 import type { PlainNode } from './createPlainNode';
+import { createTestTree } from './createTestTree';
 import { observeArraySettlement } from './observeArraySettlement';
 import { observeDetachedReads } from './observeDetachedReads';
 
@@ -22,7 +22,9 @@ import { observeDetachedReads } from './observeDetachedReads';
  * @returns Candidate and oracle for additional identity and lifecycle assertions
  */
 export const compareArrayTail = (
-  schema: BlueprintSchema, input: unknown, operation: ArrayOperation,
+  schema: BlueprintSchema,
+  input: unknown,
+  operation: ArrayOperation,
   prepare: ((root: PlainNode) => void) | undefined,
   plan: Extract<ArrayArrangePlan, { kind: 'slots' }> | undefined,
   expectTail: boolean,
@@ -38,22 +40,32 @@ export const compareArrayTail = (
   const previousChildren = actual.children;
   const previousSnapshot = actual.runtime.loadSnapshot;
   const snapshotCopy = structuredClone(previousSnapshot);
-  const former = [...actual.children ?? []];
-  const formerOracle = [...oracle.children ?? []];
-  const forceGeneral = vi.spyOn(eligibility, 'canApplyArrayTail').mockReturnValue(false);
+  const former = [...(actual.children ?? [])];
+  const formerOracle = [...(oracle.children ?? [])];
+  const forceGeneral = vi
+    .spyOn(eligibility, 'canApplyArrayTail')
+    .mockReturnValue(false);
   let expected: unknown;
-  try { expected = arrangeSchemaNodeItems(oracle, operation); }
-  finally { forceGeneral.mockRestore(); }
+  try {
+    expected = arrangeSchemaNodeItems(oracle, operation);
+  } finally {
+    forceGeneral.mockRestore();
+  }
   const spy = vi.spyOn(tailModule, 'applyArrayTail');
   let result: unknown;
-  try { result = arrangeSchemaNodeItems(actual, operation); }
-  finally {
+  try {
+    result = arrangeSchemaNodeItems(actual, operation);
+  } finally {
     expect(spy).toHaveBeenCalledTimes(expectTail ? 1 : 0);
     spy.mockRestore();
   }
   expect(result).toEqual(expected);
-  expect(observeArraySettlement(actual)).toEqual(observeArraySettlement(oracle));
-  expect(observeDetachedReads(actual, former)).toEqual(observeDetachedReads(oracle, formerOracle));
+  expect(observeArraySettlement(actual)).toEqual(
+    observeArraySettlement(oracle),
+  );
+  expect(observeDetachedReads(actual, former)).toEqual(
+    observeDetachedReads(oracle, formerOracle),
+  );
   expect(previousChildren).toEqual(former);
   expect(previousSnapshot).toEqual(snapshotCopy);
   return { actual, oracle, result, former, previousChildren };

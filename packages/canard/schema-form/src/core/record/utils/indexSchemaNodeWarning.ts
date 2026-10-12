@@ -11,16 +11,21 @@ import type { SchemaNodeRuntime } from '../type';
  * @returns Nothing; costs O(path depth), allocating only for indexed warnings
  */
 export const indexSchemaNodeWarning = <Self>(
-  runtime: SchemaNodeRuntime<Self>, key: string, path?: string,
-  record?: FormErrorRecord, remove = false,
+  runtime: SchemaNodeRuntime<Self>,
+  key: string,
+  path?: string,
+  record?: FormErrorRecord,
+  remove = false,
 ): void => {
   if (remove) {
     runtime.warningKeys?.delete(key);
     runtime.pendingWarningRecords?.delete(key);
-  } else if (record) (runtime.pendingWarningRecords ??= new Map()).set(key, record);
+  } else if (record)
+    (runtime.pendingWarningRecords ??= new Map()).set(key, record);
   if (path === undefined) return;
-  const index = remove ? runtime.warningKeysByPath :
-    runtime.warningKeysByPath ??= new Map();
+  const index = remove
+    ? runtime.warningKeysByPath
+    : (runtime.warningKeysByPath ??= new Map());
   if (!index) return;
   let ancestor = path;
   while (true) {
@@ -30,7 +35,7 @@ export const indexSchemaNodeWarning = <Self>(
       if (keys?.size === 0) index.delete(ancestor);
     } else {
       let keys = index.get(ancestor);
-      if (!keys) index.set(ancestor, keys = new Set());
+      if (!keys) index.set(ancestor, (keys = new Set()));
       keys.add(key);
     }
     if (!ancestor) break;

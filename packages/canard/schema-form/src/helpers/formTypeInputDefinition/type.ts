@@ -1,9 +1,6 @@
 import type { ComponentType } from 'react';
 
-import type {
-  FormTypeInputProps,
-  FormTypeTestFn,
-} from '@/schema-form/types';
+import type { FormTypeInputProps, FormTypeTestFn } from '@/schema-form/types';
 
 /** Private binding props; the applied Refresh generation never reaches user input props. */
 export interface FormTypeInputBindingProps extends FormTypeInputProps {

@@ -21,11 +21,14 @@ export interface EmissionSnapshot {
  * @returns The emitted value, context, or undefined for an absent path
  */
 export const readStateDependency = <Self extends SchemaNodeRecord<Self>>(
-  root: Self, hostPath: string, dependency: string,
+  root: Self,
+  hostPath: string,
+  dependency: string,
   snapshot?: EmissionSnapshot,
 ): unknown => {
   const path = resolveDependencyPath(hostPath, dependency);
-  if (path === '@') return (snapshot ? snapshot.context : root.runtime.context) ?? {};
+  if (path === '@')
+    return (snapshot ? snapshot.context : root.runtime.context) ?? {};
   let value: unknown = snapshot ? snapshot.emit : root.emit;
   for (const encoded of path.split('/').slice(1)) {
     if (value === null || typeof value !== 'object') return undefined;

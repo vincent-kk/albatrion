@@ -20,8 +20,15 @@ export const withFormTypeInputErrorBoundary = (
    * @param input - Binding props whose generation is held during composition or mounted children.
    * @returns One persistent boundary around the input, without exposing the private generation.
    */
-  return memo(function FormTypeInputBoundary({ inputGeneration, ...props }: FormTypeInputBindingProps) {
+  return memo(function FormTypeInputBoundary({
+    inputGeneration,
+    ...props
+  }: FormTypeInputBindingProps) {
     const onError = useBoundaryReporter(props.path);
-    return <ErrorBoundary onError={onError}><Component {...props} key={inputGeneration} /></ErrorBoundary>;
+    return (
+      <ErrorBoundary onError={onError}>
+        <Component {...props} key={inputGeneration} />
+      </ErrorBoundary>
+    );
   });
 };

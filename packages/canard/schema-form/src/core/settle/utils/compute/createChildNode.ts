@@ -8,7 +8,8 @@ import type { SchemaNodeRecord } from '../../../record';
  * @returns New detached-from-shape occurrence
  */
 export const createChildNode = <Self extends SchemaNodeRecord<Self>>(
-  host: Self, entry: BlueprintChildEntry,
+  host: Self,
+  entry: BlueprintChildEntry,
 ): Self => {
   const child = host.runtime.nodeFactory(entry, host, host.runtime);
   if (host.behavior.type === 'array' && host.behavior.strategy === 'branch')

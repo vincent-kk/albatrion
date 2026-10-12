@@ -7,11 +7,15 @@ import { isArray } from '@winglet/common-utils/filter';
  * @returns Distinct occurrence paths addressed by this key
  */
 export const getStoreKeyPaths = (
-  key: string, mode: 'path' | 'pair' | 'rule',
+  key: string,
+  mode: 'path' | 'pair' | 'rule',
 ): readonly string[] => {
   if (mode === 'path') return [key];
   const parts: unknown = JSON.parse(key);
   if (!isArray(parts) || typeof parts[0] !== 'string') return [];
-  return mode === 'rule' && typeof parts[5] === 'string' && parts[5] !== parts[0]
-    ? [parts[0], parts[5]] : [parts[0]];
+  return mode === 'rule' &&
+    typeof parts[5] === 'string' &&
+    parts[5] !== parts[0]
+    ? [parts[0], parts[5]]
+    : [parts[0]];
 };

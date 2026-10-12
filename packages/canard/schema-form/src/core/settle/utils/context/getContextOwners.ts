@@ -24,11 +24,18 @@ export const getContextOwners = (blueprint: Blueprint): readonly string[] => {
   const rules = getDeriveRuleTable(blueprint);
   for (const node of blueprint.nodes)
     for (const declaration of node.declarations)
-      if ((ids.includes(declaration.id) ||
-        rules.byDeclaration.get(declaration.id)?.some((rule) =>
-          rule.kind === 'derived' && rule.targetName &&
-          rule.watchDependencies.includes('@'))) &&
-        !owners.includes(declaration.path))
+      if (
+        (ids.includes(declaration.id) ||
+          rules.byDeclaration
+            .get(declaration.id)
+            ?.some(
+              (rule) =>
+                rule.kind === 'derived' &&
+                rule.targetName &&
+                rule.watchDependencies.includes('@'),
+            )) &&
+        !owners.includes(declaration.path)
+      )
         owners.push(declaration.path);
   OWNERS.set(blueprint, owners);
   return owners;

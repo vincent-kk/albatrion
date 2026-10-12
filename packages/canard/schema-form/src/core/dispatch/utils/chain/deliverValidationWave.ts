@@ -12,14 +12,23 @@ import { queueNonSettleEvent } from './queueNonSettleEvent';
  * @returns Nothing; subscriber failures are exposed by the dispatcher sink.
  */
 export const deliverValidationWave = <Self extends SchemaNodeRecord<Self>>(
-  node: Self, issues: readonly ValidationIssue[], commit: number,
+  node: Self,
+  issues: readonly ValidationIssue[],
+  commit: number,
 ): void => {
   const runtime = node.rootNode.runtime;
   if ((runtime.commitNumber ?? 0) !== commit) return;
   for (const changed of runtime.validationChangedNodes ?? [])
-    queueNonSettleEvent(changed, SchemaNodeEventType.UpdateError,
-      runtime.validationErrors?.get(changed) ?? []);
+    queueNonSettleEvent(
+      changed,
+      SchemaNodeEventType.UpdateError,
+      runtime.validationErrors?.get(changed) ?? [],
+    );
   runtime.validationChangedNodes = undefined;
-  queueNonSettleEvent(node.rootNode, SchemaNodeEventType.UpdateGlobalError, issues);
+  queueNonSettleEvent(
+    node.rootNode,
+    SchemaNodeEventType.UpdateGlobalError,
+    issues,
+  );
   flushQueuedEvents(node.rootNode, false);
 };

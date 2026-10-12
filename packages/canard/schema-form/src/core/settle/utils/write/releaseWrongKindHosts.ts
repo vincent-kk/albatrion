@@ -16,10 +16,13 @@ export const releaseWrongKindHosts = <Self extends SchemaNodeRecord<Self>>(
   do {
     cleared = false;
     const hosts = [...context.wrongKindHosts].sort(
-      (left, right) => right.depth - left.depth);
+      (left, right) => right.depth - left.depth,
+    );
     for (const host of hosts) {
-      if (host.detached || host.raw === undefined || isPlain(host.raw)) continue;
-      if (!(host.children ?? []).some((child) => child.emit !== undefined)) continue;
+      if (host.detached || host.raw === undefined || isPlain(host.raw))
+        continue;
+      if (!(host.children ?? []).some((child) => child.emit !== undefined))
+        continue;
       host.raw = undefined;
       context.changedRaw.add(host.path);
       context.changedNodes.add(host);

@@ -8,7 +8,9 @@ const NO_CHILDREN: readonly never[] = Object.freeze([]);
  * @param node - First-load occurrence whose children have completed
  * @returns Nothing; eager local/emit values are ready before delivery
  */
-export const assembleStaticFirstNode = <Self extends SchemaNodeRecord<Self>>(node: Self): void => {
+export const assembleStaticFirstNode = <Self extends SchemaNodeRecord<Self>>(
+  node: Self,
+): void => {
   const children = node.children ?? NO_CHILDREN;
   let local: unknown;
   let emit: unknown;
@@ -38,6 +40,10 @@ export const assembleStaticFirstNode = <Self extends SchemaNodeRecord<Self>>(nod
       emit = node.behavior.project(node, local);
   }
   node.local = local;
-  node.emit = node.parent === null && emit === undefined &&
-    (node.behavior.type === 'object' || node.behavior.type === 'array') ? local : emit;
+  node.emit =
+    node.parent === null &&
+    emit === undefined &&
+    (node.behavior.type === 'object' || node.behavior.type === 'array')
+      ? local
+      : emit;
 };

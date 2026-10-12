@@ -4,7 +4,10 @@ import { collectDeriveConvergenceTargets } from '../analyze/collectDeriveConverg
 /** First-write proof consumed by settle; no public Blueprint slots are added. */
 export class DeriveConvergenceTargets {
   /** Null memoizes conservative fallback for the immutable analysis lifetime. */
-  private static readonly targets = new WeakMap<Blueprint, ReadonlySet<string> | null>();
+  private static readonly targets = new WeakMap<
+    Blueprint,
+    ReadonlySet<string> | null
+  >();
 
   /**
    * Retain proven targets, or disable skipping for a reference run.
@@ -12,7 +15,10 @@ export class DeriveConvergenceTargets {
    * @param targets - Static disjoint paths; undefined restores normal confirmation
    * @returns Nothing; updates the weak compiler sidecar
    */
-  static set(blueprint: Blueprint, targets: ReadonlySet<string> | undefined): void {
+  static set(
+    blueprint: Blueprint,
+    targets: ReadonlySet<string> | undefined,
+  ): void {
     this.targets.set(blueprint, targets ?? null);
   }
 

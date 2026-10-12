@@ -1,11 +1,12 @@
 import type { Dictionary } from '@aileron/declare';
-import type { JSONSchema } from '../../../types/jsonSchema';
-import type { InferValueType } from '../../../../types/value';
+
 import type { FormErrorReporter } from '../../../../errors';
+import type { InferValueType } from '../../../../types/value';
 import { blueprint } from '../../../blueprint';
 import type { BlueprintOptions } from '../../../blueprint';
-import type { Validator } from '../../../validation';
+import type { JSONSchema } from '../../../types/jsonSchema';
 import type { ValidationMode } from '../../../types/state';
+import type { Validator } from '../../../validation';
 import type { InferSchemaNode, SchemaNode } from '../../type';
 import { schemaNodeFactory } from '../schemaNodeFactory';
 
@@ -34,16 +35,22 @@ type BuildSchemaNodeTreeProps<Schema extends JSONSchema = JSONSchema> = {
 export function buildSchemaNodeTree<Schema extends JSONSchema>(
   props: BuildSchemaNodeTreeProps<Schema>,
 ): InferSchemaNode<Schema>;
-export function buildSchemaNodeTree(props: BuildSchemaNodeTreeProps): SchemaNode {
-  return schemaNodeFactory(blueprint(props.jsonSchema, props), {
-    diagnostics: { status: 'stable' },
-    loadSnapshot: props.defaultValue,
-    context: props.context,
-    validationMode: props.validationMode,
-    onChange: props.onChange,
-    onStateChange: props.onStateChange,
-    errorReporter: props.errorReporter,
-    unsetOnInactive: props.unsetOnInactive,
-    disableAutomaticWrites: props.disableAutomaticWrites,
-  }, props.validator);
+export function buildSchemaNodeTree(
+  props: BuildSchemaNodeTreeProps,
+): SchemaNode {
+  return schemaNodeFactory(
+    blueprint(props.jsonSchema, props),
+    {
+      diagnostics: { status: 'stable' },
+      loadSnapshot: props.defaultValue,
+      context: props.context,
+      validationMode: props.validationMode,
+      onChange: props.onChange,
+      onStateChange: props.onStateChange,
+      errorReporter: props.errorReporter,
+      unsetOnInactive: props.unsetOnInactive,
+      disableAutomaticWrites: props.disableAutomaticWrites,
+    },
+    props.validator,
+  );
 }

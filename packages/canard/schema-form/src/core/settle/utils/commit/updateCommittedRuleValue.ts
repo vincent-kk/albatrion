@@ -1,7 +1,7 @@
-import { PathKeyedMap } from '../../../utils/pathIndex/PathKeyedMap';
 import { isArray } from '@winglet/common-utils/filter';
 
 import type { SchemaNodeRuntime } from '../../../record';
+import { PathKeyedMap } from '../../../utils/pathIndex/PathKeyedMap';
 
 /**
  * Mutate one committed baseline and its source and target path indexes together.
@@ -12,8 +12,10 @@ import type { SchemaNodeRuntime } from '../../../record';
  * @returns Nothing; all three runtime slots stay in sync
  */
 export const updateCommittedRuleValue = <Self>(
-  runtime: SchemaNodeRuntime<Self>, key: string,
-  operation: 'set' | 'delete', value?: unknown,
+  runtime: SchemaNodeRuntime<Self>,
+  key: string,
+  operation: 'set' | 'delete',
+  value?: unknown,
 ): void => {
   if (operation === 'delete' && !runtime.committedRuleValues?.has(key)) return;
   const parts: unknown = JSON.parse(key);
@@ -24,11 +26,13 @@ export const updateCommittedRuleValue = <Self>(
     runtime.committedRuleValues?.delete(key);
     const sourceKeys = runtime.committedRuleKeysBySource?.get(source);
     sourceKeys?.delete(key);
-    if (sourceKeys?.size === 0) runtime.committedRuleKeysBySource?.delete(source);
+    if (sourceKeys?.size === 0)
+      runtime.committedRuleKeysBySource?.delete(source);
     if (target !== undefined) {
       const targetKeys = runtime.committedRuleKeysByTarget?.get(target);
       targetKeys?.delete(key);
-      if (targetKeys?.size === 0) runtime.committedRuleKeysByTarget?.delete(target);
+      if (targetKeys?.size === 0)
+        runtime.committedRuleKeysByTarget?.delete(target);
     }
     return;
   }

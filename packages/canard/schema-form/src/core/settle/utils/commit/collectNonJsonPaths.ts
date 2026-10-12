@@ -21,9 +21,13 @@ export const collectNonJsonPaths = (value: unknown, path: string): string[] => {
     }
     const current = frame.value;
     const currentPath = frame.path;
-    if (current === undefined || typeof current === 'function' ||
-      typeof current === 'symbol' || typeof current === 'bigint' ||
-      (typeof current === 'number' && !Number.isFinite(current))) {
+    if (
+      current === undefined ||
+      typeof current === 'function' ||
+      typeof current === 'symbol' ||
+      typeof current === 'bigint' ||
+      (typeof current === 'number' && !Number.isFinite(current))
+    ) {
       found.push(currentPath);
       continue;
     }
@@ -36,13 +40,18 @@ export const collectNonJsonPaths = (value: unknown, path: string): string[] => {
     pending.push({ leave: current });
     if (isArray(current)) {
       for (let index = current.length - 1; index >= 0; index--)
-        pending.push({ value: current[index], path: `${currentPath}/${index}` });
+        pending.push({
+          value: current[index],
+          path: `${currentPath}/${index}`,
+        });
     } else {
       const keys = Object.keys(current);
       for (let index = keys.length - 1; index >= 0; index--) {
         const key = keys[index];
-        pending.push({ value: Reflect.get(current, key),
-          path: `${currentPath}/${key.replace(/~/g, '~0').replace(/\//g, '~1')}` });
+        pending.push({
+          value: Reflect.get(current, key),
+          path: `${currentPath}/${key.replace(/~/g, '~0').replace(/\//g, '~1')}`,
+        });
       }
     }
   }

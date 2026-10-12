@@ -14,7 +14,8 @@ export const collectDeriveSourcePaths = <Self extends SchemaNodeRecord<Self>>(
   for (const owner of context.contextOwners ?? []) paths.add(owner);
   const dependencies = getDependencyIndex(context.root.runtime.blueprint);
   for (const changed of context.changedRaw) {
-    for (const owner of dependencies.affected(changed, context.root)) paths.add(owner);
+    for (const owner of dependencies.affected(changed, context.root))
+      paths.add(owner);
     let path = changed;
     while (true) {
       paths.add(path);
@@ -28,9 +29,14 @@ export const collectDeriveSourcePaths = <Self extends SchemaNodeRecord<Self>>(
   }
   for (const [node, ids] of context.selectedDeclarationIds) {
     const previous = node.runtime.committedDeclarationIds?.get(
-      JSON.stringify([node.path, node.blueprintNode.kind]));
-    if (!previous || previous.length !== ids.length ||
-      previous.some((id, index) => id !== ids[index])) paths.add(node.path);
+      JSON.stringify([node.path, node.blueprintNode.kind]),
+    );
+    if (
+      !previous ||
+      previous.length !== ids.length ||
+      previous.some((id, index) => id !== ids[index])
+    )
+      paths.add(node.path);
   }
   return paths;
 };

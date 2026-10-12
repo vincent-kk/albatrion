@@ -5,10 +5,16 @@ import { createDispatchTree } from './fixtures/createDispatchTree';
 
 describe('65C-03 detached nodes keep no delivery capture', () => {
   it('resetSubtree on a perished item records no change fact and no affected path', () => {
-    const { root, runtime } = createDispatchTree({ type: 'object', properties: {
-      w: { type: 'string', controls: { watch: ['#/rows/0/v'] } },
-      rows: { type: 'array', items: { type: 'object', properties: { v: { type: 'string' } } } },
-    } });
+    const { root, runtime } = createDispatchTree({
+      type: 'object',
+      properties: {
+        w: { type: 'string', controls: { watch: ['#/rows/0/v'] } },
+        rows: {
+          type: 'array',
+          items: { type: 'object', properties: { v: { type: 'string' } } },
+        },
+      },
+    });
     dispatchMount(root, { w: 'x', rows: [{ v: 'a' }] });
     const rows = root.children?.find((child) => child.name === 'rows');
     const item = rows?.children?.[0];

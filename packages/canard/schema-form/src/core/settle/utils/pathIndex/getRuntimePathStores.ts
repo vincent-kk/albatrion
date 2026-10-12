@@ -11,11 +11,11 @@ export const getRuntimePathStores = <Self>(
   runtime: SchemaNodeRuntime<Self>,
 ): RuntimePathStores<Self> => ({
   latent: runtime.latentRaw,
-  metadata: runtime.latentRawMetadata ??= new PathKeyedMap('pair'),
-  declarations: runtime.committedDeclarationIds ??= new PathKeyedMap('pair'),
-  rules: runtime.committedRuleValues ??= new PathKeyedMap('rule'),
+  metadata: (runtime.latentRawMetadata ??= new PathKeyedMap('pair')),
+  declarations: (runtime.committedDeclarationIds ??= new PathKeyedMap('pair')),
+  rules: (runtime.committedRuleValues ??= new PathKeyedMap('rule')),
   mismatches: runtime.typeMismatchPaths,
-  mismatchMemo: runtime.typeMismatchesMemo ??= new PathKeyedMap('path'),
+  mismatchMemo: (runtime.typeMismatchesMemo ??= new PathKeyedMap('path')),
   inactiveMemo: runtime.inactiveValuesMemo,
-  inactiveEntries: runtime.inactiveValueEntries ??= new PathKeyedMap('pair'),
+  inactiveEntries: (runtime.inactiveValueEntries ??= new PathKeyedMap('pair')),
 });

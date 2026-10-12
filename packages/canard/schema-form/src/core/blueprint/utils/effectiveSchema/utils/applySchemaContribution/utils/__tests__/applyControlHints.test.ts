@@ -13,8 +13,14 @@ it('guards controls once and preserves inherited getter reads, order and ownersh
   const watch = ['a'];
   const payload = { value: 'default' };
   const source: object = Object.create({
-    get watch() { reads.push('watch'); return watch; },
-    get default() { reads.push('default'); return payload; },
+    get watch() {
+      reads.push('watch');
+      return watch;
+    },
+    get default() {
+      reads.push('default');
+      return payload;
+    },
   });
   const previous = { retained: true };
   const target: EffectiveSchemaFields = { controls: previous };
@@ -22,7 +28,11 @@ it('guards controls once and preserves inherited getter reads, order and ownersh
   expect(calls).toHaveBeenCalledExactlyOnceWith(source);
   expect(reads).toEqual(['watch', 'watch', 'default', 'default']);
   expect(target.controls).toEqual({ retained: true, watch, default: payload });
-  expect(Object.keys(target.controls ?? {})).toEqual(['retained', 'watch', 'default']);
+  expect(Object.keys(target.controls ?? {})).toEqual([
+    'retained',
+    'watch',
+    'default',
+  ]);
   expect(target.controls).not.toBe(previous);
   expect(target.controls?.watch).toBe(watch);
   expect(target.controls?.default).toBe(payload);
@@ -34,7 +44,11 @@ it('guards controls once and preserves inherited getter reads, order and ownersh
 it('rejects non-objects before target reads and retains array controls', () => {
   const calls = vi.spyOn(guards, 'isObjectRecord');
   const read = vi.fn(() => undefined);
-  const target: EffectiveSchemaFields = { get controls() { return read(); } };
+  const target: EffectiveSchemaFields = {
+    get controls() {
+      return read();
+    },
+  };
   for (const source of [undefined, null, false, 0, '', () => {}]) {
     calls.mockClear();
     applyControlHints(target, source);

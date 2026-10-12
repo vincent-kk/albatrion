@@ -1,12 +1,12 @@
 import { describe, expect, it } from 'vitest';
 
 import {
+  type SchemaNode,
+  type ValidationIssue,
   ValidationMode,
   adoptSchemaNodeTree,
   nodeFromJSONSchema,
   reloadSchemaNodeForm,
-  type SchemaNode,
-  type ValidationIssue,
 } from '../index';
 
 /**
@@ -16,13 +16,14 @@ import {
  */
 const createRoot = (
   readIssues: () => readonly ValidationIssue[] = () => [],
-): SchemaNode => nodeFromJSONSchema({
-  jsonSchema: { type: 'object', properties: { field: { type: 'string' } } },
-  defaultValue: { field: 'text' },
-  validationMode: ValidationMode.OnRequest,
-  deferMountValidation: true,
-  validator: { compile: () => readIssues, compileGuard: () => () => true },
-});
+): SchemaNode =>
+  nodeFromJSONSchema({
+    jsonSchema: { type: 'object', properties: { field: { type: 'string' } } },
+    defaultValue: { field: 'text' },
+    validationMode: ValidationMode.OnRequest,
+    deferMountValidation: true,
+    validator: { compile: () => readIssues, compileGuard: () => () => true },
+  });
 
 describe('form-level external and validation errors', () => {
   it('SURFACE-053 VALIDATE-043 79C-01 places root external errors before every routed validation issue', async () => {
@@ -87,7 +88,9 @@ describe('form-level external and validation errors', () => {
   });
 
   it('SURFACE-053 VALIDATE-043 79C-01 preserves each channel when the other one changes', async () => {
-    let validation: readonly ValidationIssue[] = [{ dataPath: '/field', message: 'validator' }];
+    let validation: readonly ValidationIssue[] = [
+      { dataPath: '/field', message: 'validator' },
+    ];
     const root = createRoot(() => validation);
     const external = [{ dataPath: '', message: 'server' }];
     root.setExternalErrors(external);
@@ -107,7 +110,9 @@ describe('form-level external and validation errors', () => {
   });
 
   it('SURFACE-053 VALIDATE-043 WRITE-045 79C-01 clears both form error channels on reset', async () => {
-    const root = createRoot(() => [{ dataPath: '/field', message: 'validator' }]);
+    const root = createRoot(() => [
+      { dataPath: '/field', message: 'validator' },
+    ]);
     root.setExternalErrors([{ dataPath: '', message: 'server' }]);
     await root.validate();
     expect(root.globalErrors).toHaveLength(2);

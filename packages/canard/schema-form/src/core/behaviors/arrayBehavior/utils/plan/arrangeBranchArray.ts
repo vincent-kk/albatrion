@@ -13,26 +13,42 @@ export const arrangeBranchArray: Behavior['arrange'] = (node, operation) => {
   const count = node.itemCount;
   switch (operation.kind) {
     case 'push':
-      return { kind: 'slots',
+      return {
+        kind: 'slots',
         slots: [...copyArraySlots(count), { value: operation.value }],
-        result: { source: 'length' } };
+        result: { source: 'length' },
+      };
     case 'pop':
-      return count === 0 ? { kind: 'noop' } : {
-        kind: 'slots', slots: copyArraySlots(count - 1),
-        result: { source: 'removed', index: count - 1 },
-      };
+      return count === 0
+        ? { kind: 'noop' }
+        : {
+            kind: 'slots',
+            slots: copyArraySlots(count - 1),
+            result: { source: 'removed', index: count - 1 },
+          };
     case 'remove':
-      return isValidArrayIndex(operation.index, count) ? {
-        kind: 'slots', slots: copyArraySlots(count, operation.index),
-        result: { source: 'removed', index: operation.index },
-      } : { kind: 'noop' };
+      return isValidArrayIndex(operation.index, count)
+        ? {
+            kind: 'slots',
+            slots: copyArraySlots(count, operation.index),
+            result: { source: 'removed', index: operation.index },
+          }
+        : { kind: 'noop' };
     case 'update':
-      return isValidArrayIndex(operation.index, count) ? {
-        kind: 'update', index: operation.index, value: operation.value,
-      } : { kind: 'noop' };
+      return isValidArrayIndex(operation.index, count)
+        ? {
+            kind: 'update',
+            index: operation.index,
+            value: operation.value,
+          }
+        : { kind: 'noop' };
     case 'clear':
-      return count === 0 ? { kind: 'noop' } : {
-        kind: 'slots', slots: [], result: { source: 'void' },
-      };
+      return count === 0
+        ? { kind: 'noop' }
+        : {
+            kind: 'slots',
+            slots: [],
+            result: { source: 'void' },
+          };
   }
 };

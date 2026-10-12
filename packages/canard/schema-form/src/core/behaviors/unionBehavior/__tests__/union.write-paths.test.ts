@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 
+import { SetValueOption, isUnionNode } from '../../../SchemaNode';
 import { makeSchemaNodeTree } from '../../../__tests__/makeSchemaNodeTree';
-import { isUnionNode, SetValueOption } from '../../../SchemaNode';
 
 // filid:contract union-rule-a
 describe('TEST-077 union write paths', () => {
@@ -15,9 +15,13 @@ describe('TEST-077 union write paths', () => {
   });
 
   it('interprets a nested node write without replacing its sibling', () => {
-    const { root } = makeSchemaNodeTree({ type: 'object', properties: {
-      a: { type: ['number', 'boolean'] }, keep: { type: 'string' },
-    } });
+    const { root } = makeSchemaNodeTree({
+      type: 'object',
+      properties: {
+        a: { type: ['number', 'boolean'] },
+        keep: { type: 'string' },
+      },
+    });
     root.setValue({ a: 1, keep: 'retained' });
     root.find('/a')?.setValue('false');
     expect(root.find('/a')?.raw).toBe(false);
@@ -25,9 +29,15 @@ describe('TEST-077 union write paths', () => {
   });
 
   it('resetSubtree reinterprets its saved load value', () => {
-    const { root } = makeSchemaNodeTree({ type: 'object', properties: {
-      a: { type: ['number', 'boolean'] },
-    } }, { snapshot: { a: '42' } });
+    const { root } = makeSchemaNodeTree(
+      {
+        type: 'object',
+        properties: {
+          a: { type: ['number', 'boolean'] },
+        },
+      },
+      { snapshot: { a: '42' } },
+    );
     root.setValue({ a: false });
     root.find('/a')?.resetSubtree();
     expect(root.find('/a')?.raw).toBe(42);
@@ -56,8 +66,10 @@ describe('TEST-077 union write paths', () => {
   });
 
   it('keeps a string draft unchanged during a direct union write', () => {
-    const { root } = makeSchemaNodeTree({ type: ['string', 'boolean'],
-      options: { trim: true } });
+    const { root } = makeSchemaNodeTree({
+      type: ['string', 'boolean'],
+      options: { trim: true },
+    });
     root.setValue('  text  ');
     expect(root.raw).toBe('  text  ');
     expect(root.outputValue).toBe('  text  ');
@@ -66,50 +78,104 @@ describe('TEST-077 union write paths', () => {
   });
 
   it('25C-11 exposes the seven PR-2 runtime node.type values including virtual', () => {
-    const { root } = makeSchemaNodeTree({ type: 'object', properties: {
-      s: { type: 'string' }, n: { type: 'number' },
-      b: { type: 'boolean' }, z: { type: 'null' },
-      o: { type: 'object' }, u: { type: ['string', 'number'] },
-    }, options: { virtual: { v: { fields: ['s'] } } } });
+    const { root } = makeSchemaNodeTree({
+      type: 'object',
+      properties: {
+        s: { type: 'string' },
+        n: { type: 'number' },
+        b: { type: 'boolean' },
+        z: { type: 'null' },
+        o: { type: 'object' },
+        u: { type: ['string', 'number'] },
+      },
+      options: { virtual: { v: { fields: ['s'] } } },
+    });
     root.setValue({ s: 'text', n: 1, b: true, z: null, o: {}, u: 'value' });
-    expect(['', '/s', '/n', '/b', '/z', '/u', '/v'].map(path =>
-      root.find(path)?.type)).toEqual([
-      'object', 'string', 'number', 'boolean', 'null', 'union', 'virtual',
+    expect(
+      ['', '/s', '/n', '/b', '/z', '/u', '/v'].map(
+        (path) => root.find(path)?.type,
+      ),
+    ).toEqual([
+      'object',
+      'string',
+      'number',
+      'boolean',
+      'null',
+      'union',
+      'virtual',
     ]);
   });
 
   it('TEST-077 derived writes through the effective union list', () => {
-    const { root } = makeSchemaNodeTree({ type: 'object', properties: {
-      source: { type: 'string' },
-      target: { type: ['number', 'boolean'], controls: { derived: '../source' } },
-    } });
+    const { root } = makeSchemaNodeTree({
+      type: 'object',
+      properties: {
+        source: { type: 'string' },
+        target: {
+          type: ['number', 'boolean'],
+          controls: { derived: '../source' },
+        },
+      },
+    });
     root.setValue({ source: '42' });
     expect(root.find('/target')?.raw).toBe(42);
     expect(root.find('/target')?.typeMismatch).toBe(false);
   });
 
   it('TEST-077 injectTo writes through the effective union list', () => {
-    const { root } = makeSchemaNodeTree({ type: 'object', properties: {
-      source: { type: 'string', controls: {
-        injectTo: (value: unknown) => ({ '../target': value }),
-      } }, target: { type: ['number', 'boolean'] },
-    } });
+    const { root } = makeSchemaNodeTree({
+      type: 'object',
+      properties: {
+        source: {
+          type: 'string',
+          controls: {
+            injectTo: (value: unknown) => ({ '../target': value }),
+          },
+        },
+        target: { type: ['number', 'boolean'] },
+      },
+    });
     root.setValue({ source: '42' });
     expect(root.find('/target')?.raw).toBe(42);
     expect(root.find('/target')?.typeMismatch).toBe(false);
   });
   it.todo('TEST-077 stage 07 (PR-7): finished string input applies trim');
   it('25C-11 completes all eight node.type values with the array node', () => {
-    const { root } = makeSchemaNodeTree({ type: 'object', properties: {
-      s: { type: 'string' }, n: { type: 'number' },
-      b: { type: 'boolean' }, z: { type: 'null' },
-      o: { type: 'object' }, u: { type: ['string', 'number'] },
-      a: { type: 'array', items: { type: 'string' } },
-    }, options: { virtual: { v: { fields: ['s'] } } } });
-    root.setValue({ s: 'text', n: 1, b: true, z: null, o: {}, u: 'value', a: ['x'] });
-    expect(['', '/s', '/n', '/b', '/z', '/u', '/v', '/a'].map(path =>
-      root.find(path)?.type)).toEqual([
-      'object', 'string', 'number', 'boolean', 'null', 'union', 'virtual', 'array',
+    const { root } = makeSchemaNodeTree({
+      type: 'object',
+      properties: {
+        s: { type: 'string' },
+        n: { type: 'number' },
+        b: { type: 'boolean' },
+        z: { type: 'null' },
+        o: { type: 'object' },
+        u: { type: ['string', 'number'] },
+        a: { type: 'array', items: { type: 'string' } },
+      },
+      options: { virtual: { v: { fields: ['s'] } } },
+    });
+    root.setValue({
+      s: 'text',
+      n: 1,
+      b: true,
+      z: null,
+      o: {},
+      u: 'value',
+      a: ['x'],
+    });
+    expect(
+      ['', '/s', '/n', '/b', '/z', '/u', '/v', '/a'].map(
+        (path) => root.find(path)?.type,
+      ),
+    ).toEqual([
+      'object',
+      'string',
+      'number',
+      'boolean',
+      'null',
+      'union',
+      'virtual',
+      'array',
     ]);
   });
 });

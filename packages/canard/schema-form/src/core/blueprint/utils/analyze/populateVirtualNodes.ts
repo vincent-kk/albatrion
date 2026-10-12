@@ -138,8 +138,6 @@ export const populateVirtualNodes = (
       declarations: copyBlueprintDeclarations(node.declarations),
       hostPath: host.path,
     };
-    (host.childEntries).push(
-      DEVELOPMENT ? Object.freeze(entry) : entry,
-    );
+    host.childEntries.push(DEVELOPMENT ? Object.freeze(entry) : entry);
   }
 };

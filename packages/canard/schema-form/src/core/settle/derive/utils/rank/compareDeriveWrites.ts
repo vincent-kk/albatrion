@@ -8,7 +8,8 @@ import { KIND_RANK } from './kindRank';
  * @returns Positive when the new candidate has precedence
  */
 export const compareDeriveWrites = <Self>(
-  left: DeriveWrite<Self>, right: DeriveWrite<Self>,
+  left: DeriveWrite<Self>,
+  right: DeriveWrite<Self>,
 ): number => {
   const kind = KIND_RANK[left.kind] - KIND_RANK[right.kind];
   if (kind) return kind;
@@ -19,6 +20,9 @@ export const compareDeriveWrites = <Self>(
   }
   const source = left.sourceOrder.length - right.sourceOrder.length;
   if (source) return source;
-  return left.layer - right.layer || left.ruleOrder - right.ruleOrder ||
-    left.returnOrder - right.returnOrder;
+  return (
+    left.layer - right.layer ||
+    left.ruleOrder - right.ruleOrder ||
+    left.returnOrder - right.returnOrder
+  );
 };

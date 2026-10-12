@@ -86,7 +86,10 @@ describe('formType-resolution — selection priority', () => {
     const schema = {
       type: 'object',
       properties: {
-        name: { type: 'string', presentation: { FormTypeInput: makeInput('inline') } },
+        name: {
+          type: 'string',
+          presentation: { FormTypeInput: makeInput('inline') },
+        },
       },
     } satisfies JSONSchema;
 

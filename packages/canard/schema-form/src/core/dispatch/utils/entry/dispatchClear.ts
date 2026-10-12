@@ -1,7 +1,7 @@
 import type { SchemaNodeRecord } from '../../../record';
 import { arrangeSchemaNodeItems } from '../../../settle';
-import { enterSchemaNodeChain } from '../chain/enterSchemaNodeChain';
 import { captureChainError } from '../chain/captureChainError';
+import { enterSchemaNodeChain } from '../chain/enterSchemaNodeChain';
 import { exitSchemaNodeChain } from '../chain/exitSchemaNodeChain';
 import { markBatchArrayOperation } from '../chain/markBatchArrayOperation';
 

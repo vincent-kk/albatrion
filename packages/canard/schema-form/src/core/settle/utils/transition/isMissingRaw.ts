@@ -9,10 +9,12 @@ import { hasLatentUnder } from '../latent/hasLatentUnder';
  * @returns Whether a default may populate this occurrence
  */
 export const isMissingRaw = <Self extends SchemaNodeRecord<Self>>(
-  node: Self, context: SettlementContext<Self>,
+  node: Self,
+  context: SettlementContext<Self>,
 ): boolean => {
   if (node.raw !== undefined) return false;
   if (node.behavior.strategy !== 'branch') return true;
-  if (node.extras !== undefined || hasLatentUnder(context, node.path)) return false;
+  if (node.extras !== undefined || hasLatentUnder(context, node.path))
+    return false;
   return (node.children ?? []).every((child) => isMissingRaw(child, context));
 };

@@ -14,15 +14,27 @@ let nextTargetId = 0;
  * @returns Stable key for committed and consumed values
  */
 export const getDeriveRuleKey = (
-  path: string, kind: string, rule: DeriveRule,
-  target: { readonly path: string; readonly blueprintNode: { readonly kind: string } },
+  path: string,
+  kind: string,
+  rule: DeriveRule,
+  target: {
+    readonly path: string;
+    readonly blueprintNode: { readonly kind: string };
+  },
 ): string => {
   let targetId = TARGET_IDS.get(target);
   if (targetId === undefined) {
     targetId = ++nextTargetId;
     TARGET_IDS.set(target, targetId);
   }
-  return JSON.stringify([path, kind, rule.declarationId,
-    rule.schemaPath, rule.targetName, target.path, target.blueprintNode.kind,
-    targetId]);
+  return JSON.stringify([
+    path,
+    kind,
+    rule.declarationId,
+    rule.schemaPath,
+    rule.targetName,
+    target.path,
+    target.blueprintNode.kind,
+    targetId,
+  ]);
 };

@@ -4,58 +4,112 @@ import { SetValueOption } from '../../SchemaNode';
 import { makeSchemaNodeTree } from '../makeSchemaNodeTree';
 
 const clearTree = () => {
-  const { root } = makeSchemaNodeTree({ type: 'object', properties: {
-    clear: { type: 'boolean' }, note: { type: 'string' },
-    x: { type: 'string', default: 'D', controls: { unsetValue: '../clear === true' } },
-  } });
+  const { root } = makeSchemaNodeTree({
+    type: 'object',
+    properties: {
+      clear: { type: 'boolean' },
+      note: { type: 'string' },
+      x: {
+        type: 'string',
+        default: 'D',
+        controls: { unsetValue: '../clear === true' },
+      },
+    },
+  });
   root.setValue({ clear: false });
   root.find('/clear')?.setValue(true);
   return root;
 };
 
 const conflictTree = () => {
-  const { root } = makeSchemaNodeTree({ type: 'object', properties: {
-    dep: { type: 'number' },
-    src: { type: 'number', controls: {
-      injectTo: (value: unknown) => ({ '../target': `I:${value}` }),
-    } },
-    target: { type: 'string', controls: { derived: '"D:" + ../dep' } },
-  } });
+  const { root } = makeSchemaNodeTree({
+    type: 'object',
+    properties: {
+      dep: { type: 'number' },
+      src: {
+        type: 'number',
+        controls: {
+          injectTo: (value: unknown) => ({ '../target': `I:${value}` }),
+        },
+      },
+      target: { type: 'string', controls: { derived: '"D:" + ../dep' } },
+    },
+  });
   root.setValue({ dep: 1, src: 2 });
   return root;
 };
 
 const suppressionTree = () => {
-  const initialInput = { src: 2, derived: 90, injected: 80,
-    erased: 'loaded', clear: true, hidden: 'raw', on: false };
-  const { root } = makeSchemaNodeTree({ type: 'object', properties: {
-    src: { type: 'number', controls: {
-      injectTo: (value: unknown) => ({ '../injected': Number(value) * 10 }),
-    } },
-    filled: { type: 'string', default: 'D' },
-    expression: { type: 'string', controls: { default: 'E' } },
-    derived: { type: 'number', controls: { derived: '../src * 2' } },
-    injected: { type: 'number' }, clear: { type: 'boolean' },
-    erased: { type: 'string', controls: { unsetValue: '../clear === true' } },
-    hidden: { type: 'string', controls: { active: false } },
-    on: { type: 'boolean' },
-  }, allOf: [{ controls: { active: './on === true' }, properties: {
-    later: { type: 'string', default: 'L' },
-  } }] }, { snapshot: initialInput });
-  (Reflect.get(root, 'runtime') as { disableAutomaticWrites: boolean })
-    .disableAutomaticWrites = true;
+  const initialInput = {
+    src: 2,
+    derived: 90,
+    injected: 80,
+    erased: 'loaded',
+    clear: true,
+    hidden: 'raw',
+    on: false,
+  };
+  const { root } = makeSchemaNodeTree(
+    {
+      type: 'object',
+      properties: {
+        src: {
+          type: 'number',
+          controls: {
+            injectTo: (value: unknown) => ({
+              '../injected': Number(value) * 10,
+            }),
+          },
+        },
+        filled: { type: 'string', default: 'D' },
+        expression: { type: 'string', controls: { default: 'E' } },
+        derived: { type: 'number', controls: { derived: '../src * 2' } },
+        injected: { type: 'number' },
+        clear: { type: 'boolean' },
+        erased: {
+          type: 'string',
+          controls: { unsetValue: '../clear === true' },
+        },
+        hidden: { type: 'string', controls: { active: false } },
+        on: { type: 'boolean' },
+      },
+      allOf: [
+        {
+          controls: { active: './on === true' },
+          properties: {
+            later: { type: 'string', default: 'L' },
+          },
+        },
+      ],
+    },
+    { snapshot: initialInput },
+  );
+  (
+    Reflect.get(root, 'runtime') as { disableAutomaticWrites: boolean }
+  ).disableAutomaticWrites = true;
   root.setValue(initialInput);
   return root;
 };
 
 const budgetTree = () => {
-  const { root } = makeSchemaNodeTree({ type: 'object', properties: {
-    a: { type: 'number', controls: {
-      derived: '../b + 1',
-      injectTo: (value: unknown) => ({ '../b': Number(value) + 1 }),
-    } }, b: { type: 'number' },
-  } });
-  try { root.setValue({ a: 0, b: 0 }); } catch { /* expected budget error */ }
+  const { root } = makeSchemaNodeTree({
+    type: 'object',
+    properties: {
+      a: {
+        type: 'number',
+        controls: {
+          derived: '../b + 1',
+          injectTo: (value: unknown) => ({ '../b': Number(value) + 1 }),
+        },
+      },
+      b: { type: 'number' },
+    },
+  });
+  try {
+    root.setValue({ a: 0, b: 0 });
+  } catch {
+    /* expected budget error */
+  }
   return root;
 };
 
@@ -87,9 +141,12 @@ describe('round9 PR-3 derive regression', () => {
     expect(root.find('/x')?.raw).toBeUndefined();
   });
   it('r9.mjs:63 unsetValue suppresses a same-settle birth default', () => {
-    const { root } = makeSchemaNodeTree({ type: 'object', properties: {
-      x: { type: 'string', default: 'D', controls: { unsetValue: 'true' } },
-    } });
+    const { root } = makeSchemaNodeTree({
+      type: 'object',
+      properties: {
+        x: { type: 'string', default: 'D', controls: { unsetValue: 'true' } },
+      },
+    });
     root.setValue({});
     expect(root.find('/x')?.raw).toBeUndefined();
   });
@@ -114,18 +171,36 @@ describe('round9 PR-3 derive regression', () => {
   });
 
   for (const [title, check] of [
-    ['r9.mjs:151 WRITE-015 suppresses ordinary default', (root: ReturnType<typeof suppressionTree>) =>
-      expect(root.find('/filled')?.raw).toBeUndefined()],
-    ['r9.mjs:152 WRITE-015 suppresses controls.default', (root: ReturnType<typeof suppressionTree>) =>
-      expect(root.find('/expression')?.raw).toBeUndefined()],
-    ['r9.mjs:153 WRITE-015 preserves caller derived raw', (root: ReturnType<typeof suppressionTree>) =>
-      expect(root.find('/derived')?.raw).toBe(90)],
-    ['r9.mjs:154 WRITE-015 preserves caller injectTo target', (root: ReturnType<typeof suppressionTree>) =>
-      expect(root.find('/injected')?.raw).toBe(80)],
-    ['r9.mjs:155 WRITE-015 preserves caller data under unsetValue', (root: ReturnType<typeof suppressionTree>) =>
-      expect(root.find('/erased')?.raw).toBe('loaded')],
-    ['r9.mjs:156 WRITE-015 still projects inactive nodes out', (root: ReturnType<typeof suppressionTree>) =>
-      expect(root.outputValue).not.toHaveProperty('hidden')],
+    [
+      'r9.mjs:151 WRITE-015 suppresses ordinary default',
+      (root: ReturnType<typeof suppressionTree>) =>
+        expect(root.find('/filled')?.raw).toBeUndefined(),
+    ],
+    [
+      'r9.mjs:152 WRITE-015 suppresses controls.default',
+      (root: ReturnType<typeof suppressionTree>) =>
+        expect(root.find('/expression')?.raw).toBeUndefined(),
+    ],
+    [
+      'r9.mjs:153 WRITE-015 preserves caller derived raw',
+      (root: ReturnType<typeof suppressionTree>) =>
+        expect(root.find('/derived')?.raw).toBe(90),
+    ],
+    [
+      'r9.mjs:154 WRITE-015 preserves caller injectTo target',
+      (root: ReturnType<typeof suppressionTree>) =>
+        expect(root.find('/injected')?.raw).toBe(80),
+    ],
+    [
+      'r9.mjs:155 WRITE-015 preserves caller data under unsetValue',
+      (root: ReturnType<typeof suppressionTree>) =>
+        expect(root.find('/erased')?.raw).toBe('loaded'),
+    ],
+    [
+      'r9.mjs:156 WRITE-015 still projects inactive nodes out',
+      (root: ReturnType<typeof suppressionTree>) =>
+        expect(root.outputValue).not.toHaveProperty('hidden'),
+    ],
   ] as const) {
     it(title, () => check(suppressionTree()));
   }
@@ -150,12 +225,16 @@ describe('round9 PR-3 derive regression', () => {
   });
   it('r9.mjs:164 WRITE-015 per-load enable overrides Form suppression', () => {
     const root = suppressionTree();
-    root.resetSubtree(SetValueOption.Overwrite | SetValueOption.EnableAutomaticWrites);
+    root.resetSubtree(
+      SetValueOption.Overwrite | SetValueOption.EnableAutomaticWrites,
+    );
     expect(root.find('/filled')?.raw).toBe('D');
   });
   it('r9.mjs:165 CONTROLS-028 reset load re-evaluates true unsetValue', () => {
     const root = suppressionTree();
-    root.resetSubtree(SetValueOption.Overwrite | SetValueOption.EnableAutomaticWrites);
+    root.resetSubtree(
+      SetValueOption.Overwrite | SetValueOption.EnableAutomaticWrites,
+    );
     expect(root.find('/erased')?.raw).toBeUndefined();
   });
 
@@ -170,7 +249,10 @@ describe('round9 PR-3 derive regression', () => {
   });
   it('r9.mjs:179 SETTLE-011 emit agrees with committed raw', () => {
     const root = budgetTree();
-    expect(root.outputValue).toEqual({ a: root.find('/a')?.raw, b: root.find('/b')?.raw });
+    expect(root.outputValue).toEqual({
+      a: root.find('/a')?.raw,
+      b: root.find('/b')?.raw,
+    });
   });
   it('r9.mjs:180 SETTLE-011 retains no automatic feedback writes', () => {
     const root = budgetTree();

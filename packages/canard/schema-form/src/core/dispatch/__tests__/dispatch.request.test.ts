@@ -2,16 +2,27 @@ import { describe, expect, it, vi } from 'vitest';
 
 import { SchemaNodeEventType, SchemaNodeRequestType } from '../../record';
 import { ValidationMode } from '../../types/state';
-import { dispatchBatch, dispatchRequest, dispatchSetValue, readSchemaNodeRevision,
-  subscribeSchemaNode } from '../index';
+import {
+  dispatchBatch,
+  dispatchRequest,
+  dispatchSetValue,
+  readSchemaNodeRevision,
+  subscribeSchemaNode,
+} from '../index';
 import { createDispatchTree } from './fixtures/createDispatchTree';
 
 describe('dispatcher commands', () => {
   it('EVENT-037 EVENT-073 aliases all four request kinds to event bits', () => {
     expect(SchemaNodeRequestType.Focus).toBe(SchemaNodeEventType.RequestFocus);
-    expect(SchemaNodeRequestType.Select).toBe(SchemaNodeEventType.RequestSelect);
-    expect(SchemaNodeRequestType.Refresh).toBe(SchemaNodeEventType.RequestRefresh);
-    expect(SchemaNodeRequestType.Remount).toBe(SchemaNodeEventType.RequestRemount);
+    expect(SchemaNodeRequestType.Select).toBe(
+      SchemaNodeEventType.RequestSelect,
+    );
+    expect(SchemaNodeRequestType.Refresh).toBe(
+      SchemaNodeEventType.RequestRefresh,
+    );
+    expect(SchemaNodeRequestType.Remount).toBe(
+      SchemaNodeEventType.RequestRemount,
+    );
   });
 
   it('EVENT-063 31C-01 delivers one command synchronously without a value entry', () => {
@@ -31,7 +42,9 @@ describe('dispatcher commands', () => {
     expect(root.emit).toBeUndefined();
     expect(runtime.commitNumber).toBe(before);
     expect(runtime.entryDepth).toBe(0);
-    expect(readSchemaNodeRevision(root, SchemaNodeEventType.RequestRemount)).toBe(1);
+    expect(
+      readSchemaNodeRevision(root, SchemaNodeEventType.RequestRemount),
+    ).toBe(1);
     expect(onChange).not.toHaveBeenCalled();
     expect(runtime.validationStamp).toBe(validationStamp);
   });
@@ -49,8 +62,12 @@ describe('dispatcher commands', () => {
     expect(seen).toEqual([
       SchemaNodeEventType.RequestFocus | SchemaNodeEventType.RequestSelect,
     ]);
-    expect(readSchemaNodeRevision(root, SchemaNodeEventType.RequestFocus)).toBe(1);
-    expect(readSchemaNodeRevision(root, SchemaNodeEventType.RequestSelect)).toBe(1);
+    expect(readSchemaNodeRevision(root, SchemaNodeEventType.RequestFocus)).toBe(
+      1,
+    );
+    expect(
+      readSchemaNodeRevision(root, SchemaNodeEventType.RequestSelect),
+    ).toBe(1);
   });
 
   it('EVENT-073 ignores an OR-ed command input', () => {
@@ -74,17 +91,24 @@ describe('dispatcher commands', () => {
   it('ERROR-029 refuses commands while the error observer is active', () => {
     const { root, runtime } = createDispatchTree({ type: 'string' });
     runtime.reportingErrors = true;
-    expect(() => dispatchRequest(root, SchemaNodeRequestType.Focus))
-      .toThrowError(expect.objectContaining({ code: 'SCHEMA_FORM_ERROR.WRITE_IN_OBSERVER' }));
+    expect(() =>
+      dispatchRequest(root, SchemaNodeRequestType.Focus),
+    ).toThrowError(
+      expect.objectContaining({ code: 'SCHEMA_FORM_ERROR.WRITE_IN_OBSERVER' }),
+    );
   });
 
   it('EVENT-010 keeps delivering a synchronous command before throwing a listener failure', () => {
     const { root } = createDispatchTree({ type: 'string' });
     const failure = new Error('command listener');
     const seen = vi.fn();
-    subscribeSchemaNode(root, () => { throw failure; });
+    subscribeSchemaNode(root, () => {
+      throw failure;
+    });
     subscribeSchemaNode(root, seen);
-    expect(() => dispatchRequest(root, SchemaNodeRequestType.Focus)).toThrow(failure);
+    expect(() => dispatchRequest(root, SchemaNodeRequestType.Focus)).toThrow(
+      failure,
+    );
     expect(seen).toHaveBeenCalledTimes(1);
   });
 
@@ -98,7 +122,9 @@ describe('dispatcher commands', () => {
       }
       if (event.type & SchemaNodeEventType.UpdateValue) seen.push('value');
     });
-    dispatchBatch(root, () => dispatchRequest(root, SchemaNodeRequestType.Focus));
+    dispatchBatch(root, () =>
+      dispatchRequest(root, SchemaNodeRequestType.Focus),
+    );
     expect(seen).toEqual(['command', 'value']);
   });
 

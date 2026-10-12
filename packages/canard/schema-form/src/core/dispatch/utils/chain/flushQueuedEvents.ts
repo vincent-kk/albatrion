@@ -1,10 +1,10 @@
 import { FEEDBACK_LIMIT_EXCEEDED, SchemaFormError } from '../../../../errors';
 import { SchemaNodeRevisionLedger } from '../../../record';
 import type { SchemaNodeDelivery, SchemaNodeRecord } from '../../../record';
-import { deliverWave } from './deliverWave';
-import { captureChainError } from './captureChainError';
-import { runDeliveryWaves } from './runDeliveryWaves';
 import { finishQueuedErrors } from '../report/finishQueuedErrors';
+import { captureChainError } from './captureChainError';
+import { deliverWave } from './deliverWave';
+import { runDeliveryWaves } from './runDeliveryWaves';
 
 /**
  * Accept only live records from this runtime for revision accounting.
@@ -13,8 +13,11 @@ import { finishQueuedErrors } from '../report/finishQueuedErrors';
  * @returns Whether the key is a live node of this tree
  */
 const isQueuedNode = <Self extends SchemaNodeRecord<Self>>(
-  candidate: unknown, runtime: Self['runtime'],
-): candidate is Self => candidate !== null && typeof candidate === 'object' &&
+  candidate: unknown,
+  runtime: Self['runtime'],
+): candidate is Self =>
+  candidate !== null &&
+  typeof candidate === 'object' &&
   Reflect.get(candidate, 'runtime') === runtime &&
   Reflect.get(candidate, 'detached') === false;
 
@@ -25,7 +28,8 @@ const isQueuedNode = <Self extends SchemaNodeRecord<Self>>(
  * @returns Nothing; standalone failures are exposed after all deliveries
  */
 export const flushQueuedEvents = <Self extends SchemaNodeRecord<Self>>(
-  root: Self, caller = true,
+  root: Self,
+  caller = true,
 ): void => {
   const runtime = root.runtime;
   if (runtime.flushingQueuedEvents) return;
@@ -40,8 +44,11 @@ export const flushQueuedEvents = <Self extends SchemaNodeRecord<Self>>(
     runtime.chainOccurrences = [];
   }
   try {
-    while (runtime.queuedNonSettleEvents?.size || runtime.deliveries?.size ||
-      (!runtime.entryDepth && runtime.stateChanged)) {
+    while (
+      runtime.queuedNonSettleEvents?.size ||
+      runtime.deliveries?.size ||
+      (!runtime.entryDepth && runtime.stateChanged)
+    ) {
       if (runtime.deliveries?.size) {
         runDeliveryWaves(root);
         continue;
@@ -53,8 +60,13 @@ export const flushQueuedEvents = <Self extends SchemaNodeRecord<Self>>(
             node.pendingNonSettleDelivery = undefined;
           runtime.queuedNonSettleEvents = undefined;
           if (!budgetReported)
-            captureChainError(runtime, new SchemaFormError(FEEDBACK_LIMIT_EXCEEDED,
-              'Non-settlement feedback exceeded 25 waves'));
+            captureChainError(
+              runtime,
+              new SchemaFormError(
+                FEEDBACK_LIMIT_EXCEEDED,
+                'Non-settlement feedback exceeded 25 waves',
+              ),
+            );
           budgetReported = true;
           continue;
         }
@@ -67,18 +79,28 @@ export const flushQueuedEvents = <Self extends SchemaNodeRecord<Self>>(
           const node = candidate;
           pending.push([node, delivery]);
           node.revisionLedger = new SchemaNodeRevisionLedger(
-            node.revisionLedger, delivery.type);
+            node.revisionLedger,
+            delivery.type,
+          );
         }
         runtime.queuedNonSettleEvents = undefined;
         deliverWave(root, pending);
         continue;
       }
       runtime.stateChanged = false;
-      try { runtime.onStateChange?.(); }
-      catch (error) { captureChainError(runtime, error); }
+      try {
+        runtime.onStateChange?.();
+      } catch (error) {
+        captureChainError(runtime, error);
+      }
     }
-    if (standalone) finishQueuedErrors(runtime, runtime.chainErrors ?? [],
-      runtime.chainOccurrences ?? [], caller);
+    if (standalone)
+      finishQueuedErrors(
+        runtime,
+        runtime.chainErrors ?? [],
+        runtime.chainOccurrences ?? [],
+        caller,
+      );
   } finally {
     runtime.flushingQueuedEvents = false;
     if (standalone) {

@@ -8,7 +8,8 @@ import { hasOwnProperty } from '@winglet/common-utils/lib';
  * @returns Changed schema pointers, or empty when JSON data also differs
  */
 export const readReferenceOnlySchemaPaths = (
-  previous: unknown, next: unknown,
+  previous: unknown,
+  next: unknown,
 ): readonly string[] => {
   const pending = [{ previous, next, path: '#' }];
   const paths: string[] = [];
@@ -20,8 +21,11 @@ export const readReferenceOnlySchemaPaths = (
     const right = item.next;
     if (typeof left !== typeof right || left === null || right === null)
       return [];
-    if (typeof left === 'function' || typeof left === 'symbol' ||
-      typeof left === 'bigint') {
+    if (
+      typeof left === 'function' ||
+      typeof left === 'symbol' ||
+      typeof left === 'bigint'
+    ) {
       paths.push(item.path);
       continue;
     }
@@ -43,13 +47,19 @@ export const readReferenceOnlySchemaPaths = (
     seen.set(left, seenRight);
     const leftKeys = Object.keys(left);
     const rightKeys = Object.keys(right);
-    if (leftKeys.length !== rightKeys.length ||
-      leftKeys.some((key) => !hasOwnProperty(right, key))) return [];
+    if (
+      leftKeys.length !== rightKeys.length ||
+      leftKeys.some((key) => !hasOwnProperty(right, key))
+    )
+      return [];
     for (let index = leftKeys.length - 1; index >= 0; index -= 1) {
       const key = leftKeys[index];
       const escaped = key.replace(/~/g, '~0').replace(/\//g, '~1');
-      pending.push({ previous: Reflect.get(left, key),
-        next: Reflect.get(right, key), path: `${item.path}/${escaped}` });
+      pending.push({
+        previous: Reflect.get(left, key),
+        next: Reflect.get(right, key),
+        path: `${item.path}/${escaped}`,
+      });
     }
   }
   return paths;

@@ -18,9 +18,11 @@ export const resolveArrayLimits = (
 ): ArrayLimits => {
   const minItems = typeof schema === 'object' ? schema.minItems : undefined;
   const maxItems = typeof schema === 'object' ? schema.maxItems : undefined;
-  const prefixItems = typeof schema === 'object' ? schema.prefixItems : undefined;
+  const prefixItems =
+    typeof schema === 'object' ? schema.prefixItems : undefined;
   const items = typeof schema === 'object' ? schema.items : undefined;
-  const tupleLimit = !items && isArray(prefixItems) ? prefixItems.length : Infinity;
+  const tupleLimit =
+    !items && isArray(prefixItems) ? prefixItems.length : Infinity;
 
   return {
     min: typeof minItems === 'number' ? minItems : 0,

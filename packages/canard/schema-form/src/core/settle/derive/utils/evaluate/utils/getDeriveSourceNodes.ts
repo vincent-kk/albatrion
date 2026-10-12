@@ -11,7 +11,8 @@ import type { DeriveState } from '../../../type';
  * @returns Roots for a full load scan or exact affected live sources
  */
 export const getDeriveSourceNodes = <Self extends SchemaNodeRecord<Self>>(
-  root: Self, state: Pick<DeriveState<Self>, 'sourcePaths'>,
+  root: Self,
+  state: Pick<DeriveState<Self>, 'sourcePaths'>,
 ): Self[] => {
   if (!state.sourcePaths) return [root];
   const nodes: Self[] = [];
@@ -21,7 +22,8 @@ export const getDeriveSourceNodes = <Self extends SchemaNodeRecord<Self>>(
     for (const encoded of path.split('/').slice(1)) {
       const name = unescapeSegment(encoded);
       const children: Record<string, Self> | null = node?.structure ?? null;
-      node = children && hasOwnProperty(children, name) ? children[name] : undefined;
+      node =
+        children && hasOwnProperty(children, name) ? children[name] : undefined;
       if (!node) break;
     }
     if (node && !seen.has(node)) {

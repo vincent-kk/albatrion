@@ -12,9 +12,12 @@ export const getWatchDeliveryPaths = <Self extends SchemaNodeRecord<Self>>(
   node: Self,
 ): readonly string[] => {
   const schema = node.schema.schema;
-  const controls: unknown = typeof schema === 'object' ? schema.controls : undefined;
-  const watch: unknown = controls && typeof controls === 'object' ?
-    Reflect.get(controls, 'watch') : undefined;
+  const controls: unknown =
+    typeof schema === 'object' ? schema.controls : undefined;
+  const watch: unknown =
+    controls && typeof controls === 'object'
+      ? Reflect.get(controls, 'watch')
+      : undefined;
   if (!isArray(watch)) return [];
   const paths: string[] = [];
   for (const path of watch)

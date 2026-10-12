@@ -1,20 +1,47 @@
-import type { BlueprintNode, BlueprintSchemaType, EffectiveSchema } from '../blueprint';
-import { find, findNodes } from '../navigation';
-import { dispatchBatch, dispatchClearExternalErrors, dispatchClearSubtreeState,
-  dispatchPush, dispatchPop, dispatchUpdate, dispatchRemove, dispatchClear,
-  dispatchRequest, dispatchResetSubtree, dispatchSetExternalErrors,
-  dispatchSetState, dispatchSetSubtreeState, dispatchSetValue, dispatchValidate,
-  readSchemaNodeRevision, subscribeSchemaNode } from '../dispatch';
+import type {
+  BlueprintNode,
+  BlueprintSchemaType,
+  EffectiveSchema,
+} from '../blueprint';
+import {
+  dispatchBatch,
+  dispatchClear,
+  dispatchClearExternalErrors,
+  dispatchClearSubtreeState,
+  dispatchPop,
+  dispatchPush,
+  dispatchRemove,
+  dispatchRequest,
+  dispatchResetSubtree,
+  dispatchSetExternalErrors,
+  dispatchSetState,
+  dispatchSetSubtreeState,
+  dispatchSetValue,
+  dispatchUpdate,
+  dispatchValidate,
+  readSchemaNodeRevision,
+  subscribeSchemaNode,
+} from '../dispatch';
 import type { SchemaNodeListener } from '../dispatch';
+import { find, findNodes } from '../navigation';
 import { EMPTY_REVISION_LEDGER } from '../record';
-import type { Behavior, SchemaNodeEventType, SchemaNodeRecord,
-  SchemaNodeRequestType, SchemaNodeRuntime } from '../record';
-import { readSchemaNodeDefaultValue,
-  readSchemaNodeInactiveValues, readSchemaNodeTypeMismatch,
-  readSchemaNodeTypeMismatches, readSchemaNodeWatchValues } from '../settle';
+import type {
+  Behavior,
+  SchemaNodeEventType,
+  SchemaNodeRecord,
+  SchemaNodeRequestType,
+  SchemaNodeRuntime,
+} from '../record';
+import {
+  readSchemaNodeDefaultValue,
+  readSchemaNodeInactiveValues,
+  readSchemaNodeTypeMismatch,
+  readSchemaNodeTypeMismatches,
+  readSchemaNodeWatchValues,
+} from '../settle';
+import type { NodeStateFlags } from '../types/state';
 import { readSchemaNodeErrors } from '../validation';
 import type { ValidationIssue } from '../validation';
-import type { NodeStateFlags } from '../types/state';
 import { SetValueOption } from './type';
 
 /** Shared empty whole-form issue list before a validation result exists. */
@@ -69,11 +96,17 @@ export class SchemaNode implements SchemaNodeRecord<SchemaNode> {
   interactionReset: number;
 
   constructor(
-    behavior: Behavior<SchemaNode>, runtime: SchemaNodeRuntime<SchemaNode>,
-    blueprintNode: BlueprintNode, parent: SchemaNode | null,
-    name: string, escapedName: string, path: string, depth: number,
+    behavior: Behavior<SchemaNode>,
+    runtime: SchemaNodeRuntime<SchemaNode>,
+    blueprintNode: BlueprintNode,
+    parent: SchemaNode | null,
+    name: string,
+    escapedName: string,
+    path: string,
+    depth: number,
     structure: Record<string, SchemaNode> | null,
-    children: readonly SchemaNode[] | null, schema: EffectiveSchema,
+    children: readonly SchemaNode[] | null,
+    schema: EffectiveSchema,
     state: SchemaNodeRecord<SchemaNode>['interactionState'],
   ) {
     this.behavior = behavior;
@@ -123,79 +156,161 @@ export class SchemaNode implements SchemaNodeRecord<SchemaNode> {
   }
 
   /** {@inheritDoc NodeSurface.type} */
-  get type() { return this.behavior.type; }
+  get type() {
+    return this.behavior.type;
+  }
   /** {@inheritDoc NodeSurface.strategy} */
-  get strategy() { return this.behavior.strategy; }
+  get strategy() {
+    return this.behavior.strategy;
+  }
   /** {@inheritDoc NodeSurface.schemaType} */
-  get schemaType() { return this.storedSchemaType; }
+  get schemaType() {
+    return this.storedSchemaType;
+  }
   /** {@inheritDoc NodeSurface.jsonSchema} */
-  get jsonSchema() { return this.schema.schema; }
+  get jsonSchema() {
+    return this.schema.schema;
+  }
   /** {@inheritDoc NodeSurface.required} */
-  get required() { return this.storedRequired; }
-  set required(value: boolean) { this.storedRequired = value; }
+  get required() {
+    return this.storedRequired;
+  }
+  set required(value: boolean) {
+    this.storedRequired = value;
+  }
   /** {@inheritDoc NodeSurface.nullable} */
-  get nullable() { return this.storedNullable; }
+  get nullable() {
+    return this.storedNullable;
+  }
   /** {@inheritDoc NodeSurface.depth} */
-  get depth() { return this.storedDepth; }
-  set depth(value: number) { this.storedDepth = value; }
+  get depth() {
+    return this.storedDepth;
+  }
+  set depth(value: number) {
+    this.storedDepth = value;
+  }
   /** {@inheritDoc NodeSurface.isRoot} */
-  get isRoot() { return this.parent === null; }
+  get isRoot() {
+    return this.parent === null;
+  }
   /** {@inheritDoc NodeSurface.rootNode} */
-  get rootNode() { return this.root; }
+  get rootNode() {
+    return this.root;
+  }
   /** {@inheritDoc NodeSurface.parentNode} */
-  get parentNode() { return this.parent; }
+  get parentNode() {
+    return this.parent;
+  }
   /** {@inheritDoc NodeSurface.name} */
-  get name() { return this.storedName; }
-  set name(value: string) { this.storedName = value; }
+  get name() {
+    return this.storedName;
+  }
+  set name(value: string) {
+    this.storedName = value;
+  }
   /** {@inheritDoc NodeSurface.escapedName} */
-  get escapedName() { return this.storedEscapedName; }
-  set escapedName(value: string) { this.storedEscapedName = value; }
+  get escapedName() {
+    return this.storedEscapedName;
+  }
+  set escapedName(value: string) {
+    this.storedEscapedName = value;
+  }
   /** {@inheritDoc NodeSurface.path} */
-  get path() { return this.storedPath; }
-  set path(value: string) { this.storedPath = value; }
+  get path() {
+    return this.storedPath;
+  }
+  set path(value: string) {
+    this.storedPath = value;
+  }
   /** {@inheritDoc NodeSurface.children} */
-  get children() { return this.storedChildren; }
-  set children(value: readonly SchemaNode[] | null) { this.storedChildren = value; }
+  get children() {
+    return this.storedChildren;
+  }
+  set children(value: readonly SchemaNode[] | null) {
+    this.storedChildren = value;
+  }
   /** {@inheritDoc NodeSurface.raw} */
-  get raw() { return this.storedRaw; }
-  set raw(value: unknown) { this.storedRaw = value; }
+  get raw() {
+    return this.storedRaw;
+  }
+  set raw(value: unknown) {
+    this.storedRaw = value;
+  }
   /** {@inheritDoc NodeSurface.extras} */
-  get extras() { return this.storedExtras; }
-  set extras(value: unknown) { this.storedExtras = value; }
+  get extras() {
+    return this.storedExtras;
+  }
+  set extras(value: unknown) {
+    this.storedExtras = value;
+  }
   /** {@inheritDoc NodeSurface.value} */
-  get value() { return this.local; }
+  get value() {
+    return this.local;
+  }
   /** {@inheritDoc NodeSurface.outputValue} */
-  get outputValue() { return this.emit; }
+  get outputValue() {
+    return this.emit;
+  }
   /** {@inheritDoc NodeSurface.inactiveValues} */
-  get inactiveValues() { return readSchemaNodeInactiveValues<SchemaNode>(this); }
+  get inactiveValues() {
+    return readSchemaNodeInactiveValues<SchemaNode>(this);
+  }
   /** {@inheritDoc NodeSurface.active} */
-  get active() { return this.storedActive; }
-  set active(value: boolean) { this.storedActive = value; }
+  get active() {
+    return this.storedActive;
+  }
+  set active(value: boolean) {
+    this.storedActive = value;
+  }
   /** {@inheritDoc NodeSurface.visible} */
-  get visible() { return this.storedVisible; }
-  set visible(value: boolean) { this.storedVisible = value; }
+  get visible() {
+    return this.storedVisible;
+  }
+  set visible(value: boolean) {
+    this.storedVisible = value;
+  }
   /** {@inheritDoc NodeSurface.enabled} */
-  get enabled() { return this.active && this.visible; }
+  get enabled() {
+    return this.active && this.visible;
+  }
   /** {@inheritDoc NodeSurface.readOnly} */
-  get readOnly() { return this.storedReadOnly; }
-  set readOnly(value: boolean) { this.storedReadOnly = value; }
+  get readOnly() {
+    return this.storedReadOnly;
+  }
+  set readOnly(value: boolean) {
+    this.storedReadOnly = value;
+  }
   /** {@inheritDoc NodeSurface.disabled} */
-  get disabled() { return this.storedDisabled; }
-  set disabled(value: boolean) { this.storedDisabled = value; }
+  get disabled() {
+    return this.storedDisabled;
+  }
+  set disabled(value: boolean) {
+    this.storedDisabled = value;
+  }
   /** {@inheritDoc NodeSurface.watchValues} */
-  get watchValues() { return readSchemaNodeWatchValues<SchemaNode>(this); }
+  get watchValues() {
+    return readSchemaNodeWatchValues<SchemaNode>(this);
+  }
   /** {@inheritDoc NodeSurface.context} */
-  get context() { return this.runtime.context; }
+  get context() {
+    return this.runtime.context;
+  }
   /** {@inheritDoc NodeSurface.typeMismatch} */
-  get typeMismatch() { return readSchemaNodeTypeMismatch<SchemaNode>(this); }
+  get typeMismatch() {
+    return readSchemaNodeTypeMismatch<SchemaNode>(this);
+  }
   /** {@inheritDoc NodeSurface.typeMismatches} */
-  get typeMismatches() { return readSchemaNodeTypeMismatches<SchemaNode>(this); }
+  get typeMismatches() {
+    return readSchemaNodeTypeMismatches<SchemaNode>(this);
+  }
   /** {@inheritDoc NodeSurface.diagnostics} */
   get diagnostics(): SchemaNodeRuntime<SchemaNode>['diagnostics'] {
     return this.runtime.diagnostics;
   }
   /** {@inheritDoc NodeSurface.defaultValue} */
-  get defaultValue() { return readSchemaNodeDefaultValue<SchemaNode>(this); }
+  get defaultValue() {
+    return readSchemaNodeDefaultValue<SchemaNode>(this);
+  }
   /** {@inheritDoc NodeSurface.find} */
   find(pointer?: string | readonly string[] | null) {
     return find<SchemaNode>(this, pointer);
@@ -209,47 +324,73 @@ export class SchemaNode implements SchemaNodeRecord<SchemaNode> {
     return dispatchSetValue<SchemaNode>(this, value, option);
   }
   /** {@inheritDoc ArrayNode.push} */
-  push(value?: unknown) { return dispatchPush<SchemaNode>(this, value); }
+  push(value?: unknown) {
+    return dispatchPush<SchemaNode>(this, value);
+  }
   /** {@inheritDoc ArrayNode.pop} */
-  pop() { return dispatchPop<SchemaNode>(this); }
+  pop() {
+    return dispatchPop<SchemaNode>(this);
+  }
   /** {@inheritDoc ArrayNode.update} */
   update(index: number, value: unknown) {
     return dispatchUpdate<SchemaNode>(this, index, value);
   }
   /** {@inheritDoc ArrayNode.remove} */
-  remove(index: number) { return dispatchRemove<SchemaNode>(this, index); }
+  remove(index: number) {
+    return dispatchRemove<SchemaNode>(this, index);
+  }
   /** {@inheritDoc ArrayNode.clear} */
-  clear() { return dispatchClear<SchemaNode>(this); }
+  clear() {
+    return dispatchClear<SchemaNode>(this);
+  }
   /** {@inheritDoc NodeSurface.resetSubtree} */
   resetSubtree(option: SetValueOption = SetValueOption.Overwrite) {
     return dispatchResetSubtree<SchemaNode>(this, option);
   }
   /** {@inheritDoc NodeSurface.state} */
-  get state() { return this.interactionState; }
+  get state() {
+    return this.interactionState;
+  }
   /** {@inheritDoc NodeSurface.state} */
-  set state(value: NodeStateFlags) { dispatchSetState<SchemaNode>(this, value); }
+  set state(value: NodeStateFlags) {
+    dispatchSetState<SchemaNode>(this, value);
+  }
   /** {@inheritDoc NodeSurface.setState} */
-  setState(state: NodeStateFlags) { return dispatchSetState<SchemaNode>(this, state); }
+  setState(state: NodeStateFlags) {
+    return dispatchSetState<SchemaNode>(this, state);
+  }
   /** {@inheritDoc NodeSurface.globalState} */
-  get globalState() { return this.runtime.globalState; }
+  get globalState() {
+    return this.runtime.globalState;
+  }
   /** {@inheritDoc NodeSurface.setSubtreeState} */
   setSubtreeState(state: NodeStateFlags) {
     return dispatchSetSubtreeState<SchemaNode>(this, state);
   }
   /** {@inheritDoc NodeSurface.clearSubtreeState} */
-  clearSubtreeState() { return dispatchClearSubtreeState<SchemaNode>(this); }
+  clearSubtreeState() {
+    return dispatchClearSubtreeState<SchemaNode>(this);
+  }
   /** {@inheritDoc NodeSurface.errors} */
-  get errors() { return readSchemaNodeErrors<SchemaNode>(this); }
+  get errors() {
+    return readSchemaNodeErrors<SchemaNode>(this);
+  }
   /** {@inheritDoc NodeSurface.globalErrors} */
-  get globalErrors() { return this.runtime.globalErrors ?? EMPTY_GLOBAL_ERRORS; }
+  get globalErrors() {
+    return this.runtime.globalErrors ?? EMPTY_GLOBAL_ERRORS;
+  }
   /** {@inheritDoc NodeSurface.setExternalErrors} */
   setExternalErrors(errors: readonly ValidationIssue[]) {
     return dispatchSetExternalErrors<SchemaNode>(this, errors);
   }
   /** {@inheritDoc NodeSurface.clearExternalErrors} */
-  clearExternalErrors() { return dispatchClearExternalErrors<SchemaNode>(this); }
+  clearExternalErrors() {
+    return dispatchClearExternalErrors<SchemaNode>(this);
+  }
   /** {@inheritDoc NodeSurface.validate} */
-  validate() { return dispatchValidate<SchemaNode>(this); }
+  validate() {
+    return dispatchValidate<SchemaNode>(this);
+  }
   /** {@inheritDoc NodeSurface.subscribe} */
   subscribe(listener: SchemaNodeListener) {
     return subscribeSchemaNode<SchemaNode>(this, listener);
@@ -259,7 +400,11 @@ export class SchemaNode implements SchemaNodeRecord<SchemaNode> {
     return readSchemaNodeRevision<SchemaNode>(this, mask);
   }
   /** {@inheritDoc NodeSurface.request} */
-  request(kind: SchemaNodeRequestType) { return dispatchRequest<SchemaNode>(this, kind); }
+  request(kind: SchemaNodeRequestType) {
+    return dispatchRequest<SchemaNode>(this, kind);
+  }
   /** {@inheritDoc NodeSurface.batch} */
-  batch(fn: () => void) { return dispatchBatch<SchemaNode>(this, fn); }
+  batch(fn: () => void) {
+    return dispatchBatch<SchemaNode>(this, fn);
+  }
 }

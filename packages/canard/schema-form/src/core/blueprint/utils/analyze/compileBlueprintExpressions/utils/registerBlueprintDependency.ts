@@ -28,7 +28,7 @@ export const registerBlueprintDependency = (
       },
       context.options,
     );
-  const dependencies = context.dependencies ??= Object.create(null);
+  const dependencies = (context.dependencies ??= Object.create(null));
   context.capabilities.hasDependencies = true;
   const ids = dependencies[path] ?? (dependencies[path] = []);
   if (!ids.includes(declaration.id)) ids.push(declaration.id);

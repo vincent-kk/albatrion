@@ -5,9 +5,14 @@ import { mountSchemaNode } from '../mountSchemaNode';
 import { observeSchemaNodeReports } from '../observeSchemaNodeReports';
 
 it('ERROR-113 rejects writes throughout nested report scopes and restores them afterwards', () => {
-  const root = buildSchemaNodeTree({ jsonSchema: { type: 'string' }, defaultValue: 'kept' });
+  const root = buildSchemaNodeTree({
+    jsonSchema: { type: 'string' },
+    defaultValue: 'kept',
+  });
   mountSchemaNode(root);
-  const refusal = expect.objectContaining({ code: 'SCHEMA_FORM_ERROR.WRITE_IN_OBSERVER' });
+  const refusal = expect.objectContaining({
+    code: 'SCHEMA_FORM_ERROR.WRITE_IN_OBSERVER',
+  });
   observeSchemaNodeReports(root, () => {
     expect(() => root.setValue('outer')).toThrowError(refusal);
     observeSchemaNodeReports(root, () => {
@@ -25,11 +30,20 @@ it('ERROR-113 restores the previous report scope when delivery throws', () => {
   mountSchemaNode(root);
   const failure = new Error('delivery');
   observeSchemaNodeReports(root, () => {
-    expect(() => observeSchemaNodeReports(root, () => { throw failure; })).toThrow(failure);
+    expect(() =>
+      observeSchemaNodeReports(root, () => {
+        throw failure;
+      }),
+    ).toThrow(failure);
     expect(() => root.setState({ 1: true })).toThrowError(
-      expect.objectContaining({ code: 'SCHEMA_FORM_ERROR.WRITE_IN_OBSERVER' }));
+      expect.objectContaining({ code: 'SCHEMA_FORM_ERROR.WRITE_IN_OBSERVER' }),
+    );
   });
-  expect(() => observeSchemaNodeReports(root, () => { throw failure; })).toThrow(failure);
+  expect(() =>
+    observeSchemaNodeReports(root, () => {
+      throw failure;
+    }),
+  ).toThrow(failure);
   root.setValue('after');
   expect(root.value).toBe('after');
 });
@@ -44,7 +58,10 @@ it('ERROR-113 retains the core reporter scope after a nested binding delivery', 
       report: () => {
         observeSchemaNodeReports(root, () => {});
         expect(() => root.setValue(3)).toThrowError(
-          expect.objectContaining({ code: 'SCHEMA_FORM_ERROR.WRITE_IN_OBSERVER' }));
+          expect.objectContaining({
+            code: 'SCHEMA_FORM_ERROR.WRITE_IN_OBSERVER',
+          }),
+        );
         failures++;
       },
     },

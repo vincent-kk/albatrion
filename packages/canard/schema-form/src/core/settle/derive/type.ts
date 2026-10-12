@@ -1,8 +1,16 @@
-import type { BlueprintChildEntry, BlueprintExpression, BlueprintNode } from '../../blueprint';
+import type {
+  BlueprintChildEntry,
+  BlueprintExpression,
+  BlueprintNode,
+} from '../../blueprint';
 import type { SchemaNodeRecord } from '../../record';
 
 /** Authored automatic rule kinds, including the later injection rule. */
-export type DeriveRuleKind = 'derived' | 'unsetValue' | 'resetInteraction' | 'injectTo';
+export type DeriveRuleKind =
+  | 'derived'
+  | 'unsetValue'
+  | 'resetInteraction'
+  | 'injectTo';
 
 /** One static authored rule rebound to a live record during settlement. */
 export interface DeriveRule {
@@ -53,7 +61,12 @@ export interface DeriveTraceEntry {
   /** Candidate value after evaluation. */
   readonly nextValue: unknown;
   /** Why the candidate did or did not write. */
-  readonly result: 'applied' | 'lost' | 'undefined' | 'suppressed' | 'withdrawn';
+  readonly result:
+    | 'applied'
+    | 'lost'
+    | 'undefined'
+    | 'suppressed'
+    | 'withdrawn';
 }
 
 /** Tree and edge baselines supplied by settle without a reverse dependency. */
@@ -125,9 +138,14 @@ export interface DeriveRoundDecision<Self> {
   /** Development-only decisions, absent in production. */
   readonly trace: readonly DeriveTraceEntry[];
   /** Authored failures in evaluation order. */
-  readonly failures: readonly { readonly sourcePath: string; readonly schemaPath: string;
-    readonly cause: unknown; readonly kind: 'expression' | 'injectTarget' | 'writeShape';
-    readonly targetPath?: string; readonly expectedLength?: number }[];
+  readonly failures: readonly {
+    readonly sourcePath: string;
+    readonly schemaPath: string;
+    readonly cause: unknown;
+    readonly kind: 'expression' | 'injectTarget' | 'writeShape';
+    readonly targetPath?: string;
+    readonly expectedLength?: number;
+  }[];
 }
 
 /** Final interaction reset decision made before the commit publishes revisions. */
@@ -137,6 +155,9 @@ export interface DeriveResetInteractionDecision<Self> {
   /** Development-only decisions, absent in production. */
   readonly trace: readonly DeriveTraceEntry[];
   /** Authored failures in evaluation order. */
-  readonly failures: readonly { readonly sourcePath: string; readonly schemaPath: string;
-    readonly cause: unknown }[];
+  readonly failures: readonly {
+    readonly sourcePath: string;
+    readonly schemaPath: string;
+    readonly cause: unknown;
+  }[];
 }

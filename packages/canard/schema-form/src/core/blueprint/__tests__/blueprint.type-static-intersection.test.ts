@@ -150,9 +150,7 @@ describe('blueprint static type conjunction', () => {
         return {
           kind,
           nullable,
-          schemaType: isArray(schemaType)
-            ? [...schemaType].sort()
-            : schemaType,
+          schemaType: isArray(schemaType) ? [...schemaType].sort() : schemaType,
         };
       } catch (error: any) {
         return { error: error.specific };

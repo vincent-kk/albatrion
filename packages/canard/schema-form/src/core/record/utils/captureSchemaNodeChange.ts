@@ -22,11 +22,17 @@ const CHANGE_BITS = {
  * @param value - Final field value to return for assignment
  * @returns The supplied value without changing any public value itself
  */
-export const captureSchemaNodeChange = <Self, Key extends keyof typeof CHANGE_BITS,
-  Value extends SchemaNodeRecord<Self>[Key]>(
-  node: SchemaNodeRecord<Self>, field: Key, value: Value,
+export const captureSchemaNodeChange = <
+  Self,
+  Key extends keyof typeof CHANGE_BITS,
+  Value extends SchemaNodeRecord<Self>[Key],
+>(
+  node: SchemaNodeRecord<Self>,
+  field: Key,
+  value: Value,
 ): Value => {
-  if (node[field] === value || !node.deliveryInitialized || node.detached) return value;
+  if (node[field] === value || !node.deliveryInitialized || node.detached)
+    return value;
   const bit = CHANGE_BITS[field];
   if (!(node.deliveryChanges & bit)) {
     switch (bit) {
@@ -41,8 +47,11 @@ export const captureSchemaNodeChange = <Self, Key extends keyof typeof CHANGE_BI
         node.deliveryPreviousChildren = node.children;
         break;
       case SchemaNodeEventType.UpdateComputedProperties:
-        node.deliveryPreviousComputed = +node.active | +node.visible << 1 |
-          +node.readOnly << 2 | +node.disabled << 3;
+        node.deliveryPreviousComputed =
+          +node.active |
+          (+node.visible << 1) |
+          (+node.readOnly << 2) |
+          (+node.disabled << 3);
         break;
       case SchemaNodeEventType.UpdateJsonSchema:
         node.deliveryPreviousSchema = node.schema;
@@ -52,9 +61,12 @@ export const captureSchemaNodeChange = <Self, Key extends keyof typeof CHANGE_BI
     }
     node.deliveryChanges |= bit;
   }
-  if (node.runtime.deliveryWatchIndex?.allNodes.size &&
-    (bit === SchemaNodeEventType.UpdateValue || bit === SchemaNodeEventType.UpdateState ||
-      bit === SchemaNodeEventType.UpdateComputedProperties))
+  if (
+    node.runtime.deliveryWatchIndex?.allNodes.size &&
+    (bit === SchemaNodeEventType.UpdateValue ||
+      bit === SchemaNodeEventType.UpdateState ||
+      bit === SchemaNodeEventType.UpdateComputedProperties)
+  )
     (node.runtime.deliveryAffectedPaths ??= new Set()).add(node.path);
   return value;
 };

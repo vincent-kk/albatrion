@@ -12,8 +12,10 @@ import type { BlueprintDiagnostic } from '../../../blueprint';
  * @returns The formatted record, or no allocation without a consumer
  */
 export function createFormErrorRecord(
-  consumed: boolean, code: FormErrorCode,
-  level: FormErrorRecord['level'], format: () => string,
+  consumed: boolean,
+  code: FormErrorCode,
+  level: FormErrorRecord['level'],
+  format: () => string,
   fields?: Partial<Omit<FormErrorRecord, 'code' | 'level' | 'message'>>,
 ): FormErrorRecord | undefined;
 /**
@@ -24,10 +26,13 @@ export function createFormErrorRecord(
  * @returns One record with the original error and details reference
  */
 export function createFormErrorRecord(
-  consumed: boolean, diagnostic: BlueprintDiagnostic, error?: unknown,
+  consumed: boolean,
+  diagnostic: BlueprintDiagnostic,
+  error?: unknown,
 ): FormErrorRecord | undefined;
 export function createFormErrorRecord(
-  consumed: boolean, code: FormErrorCode | BlueprintDiagnostic,
+  consumed: boolean,
+  code: FormErrorCode | BlueprintDiagnostic,
   levelOrError?: FormErrorRecord['level'] | unknown,
   format?: () => string,
   fields?: Partial<Omit<FormErrorRecord, 'code' | 'level' | 'message'>>,
@@ -38,17 +43,34 @@ export function createFormErrorRecord(
       return undefined;
     return { level: levelOrError, code, message: format(), ...fields };
   }
-  const fullCode = FORM_ERROR_CODE_TABLE.find(([candidate]) => candidate ===
-    `${code.level === 'error' ? 'JSON_SCHEMA_ERROR' : 'SCHEMA_FORM_WARNING'}.${code.code}`)?.[0];
+  const fullCode = FORM_ERROR_CODE_TABLE.find(
+    ([candidate]) =>
+      candidate ===
+      `${code.level === 'error' ? 'JSON_SCHEMA_ERROR' : 'SCHEMA_FORM_WARNING'}.${code.code}`,
+  )?.[0];
   if (!fullCode) return undefined;
   const error = levelOrError;
-  const message = error instanceof Error ? error.message :
-    `${code.code} at ${code.schemaPath}`;
-  const details = error instanceof JSONSchemaError ? error.details :
-    { ...code.details };
+  const message =
+    error instanceof Error
+      ? error.message
+      : `${code.code} at ${code.schemaPath}`;
+  const details =
+    error instanceof JSONSchemaError ? error.details : { ...code.details };
   if (code.level === 'error')
-    return { level: 'error', code: fullCode, message,
-      schemaPath: code.schemaPath, details, error, surface: 'sink' };
-  return { level: 'warning', code: fullCode, message,
-    schemaPath: code.schemaPath, details };
+    return {
+      level: 'error',
+      code: fullCode,
+      message,
+      schemaPath: code.schemaPath,
+      details,
+      error,
+      surface: 'sink',
+    };
+  return {
+    level: 'warning',
+    code: fullCode,
+    message,
+    schemaPath: code.schemaPath,
+    details,
+  };
 }

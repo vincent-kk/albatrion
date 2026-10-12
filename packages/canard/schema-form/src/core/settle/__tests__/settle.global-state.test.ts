@@ -8,10 +8,13 @@ import { createTestTree } from './fixtures/createTestTree';
 // filid:contract settle-write
 describe('EVENT-062 43C-01 settlement shape counts', () => {
   it('adds a true key on entry, removes it on exit, and adds it on re-entry', () => {
-    const { root } = createTestTree({ type: 'object', properties: {
-      flag: { type: 'boolean' },
-      target: { type: 'string', controls: { active: '../flag' } },
-    } });
+    const { root } = createTestTree({
+      type: 'object',
+      properties: {
+        flag: { type: 'boolean' },
+        target: { type: 'string', controls: { active: '../flag' } },
+      },
+    });
     const createNode = root.runtime.nodeFactory;
     root.runtime.nodeFactory = (entry, parent, runtime) => {
       const node = createNode(entry, parent, runtime);
@@ -19,14 +22,26 @@ describe('EVENT-062 43C-01 settlement shape counts', () => {
         node.interactionState = { [SchemaNodeState.Dirty]: true };
       return node;
     };
-    writeSchemaNode(root, { flag: true, target: 'value' },
-      'callerReplace', SetValueOption.Overwrite);
+    writeSchemaNode(
+      root,
+      { flag: true, target: 'value' },
+      'callerReplace',
+      SetValueOption.Overwrite,
+    );
     expect(root.runtime.globalState).toEqual({ [SchemaNodeState.Dirty]: true });
-    writeSchemaNode(root.structure!.flag, false, 'callerReplace',
-      SetValueOption.Overwrite);
+    writeSchemaNode(
+      root.structure!.flag,
+      false,
+      'callerReplace',
+      SetValueOption.Overwrite,
+    );
     expect(root.runtime.globalState).toEqual({});
-    writeSchemaNode(root.structure!.flag, true, 'callerReplace',
-      SetValueOption.Overwrite);
+    writeSchemaNode(
+      root.structure!.flag,
+      true,
+      'callerReplace',
+      SetValueOption.Overwrite,
+    );
     expect(root.runtime.globalState).toEqual({ [SchemaNodeState.Dirty]: true });
   });
 });

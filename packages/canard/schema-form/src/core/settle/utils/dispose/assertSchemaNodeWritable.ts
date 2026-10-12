@@ -11,6 +11,9 @@ export const assertSchemaNodeWritable = <Self extends SchemaNodeRecord<Self>>(
   node: Self,
 ): void => {
   if (node.disposed || node.rootNode.disposed)
-    throw new SchemaFormError(DISPOSED_NODE_WRITE,
-      `Cannot write disposed node at ${node.path}`, { path: node.path });
+    throw new SchemaFormError(
+      DISPOSED_NODE_WRITE,
+      `Cannot write disposed node at ${node.path}`,
+      { path: node.path },
+    );
 };

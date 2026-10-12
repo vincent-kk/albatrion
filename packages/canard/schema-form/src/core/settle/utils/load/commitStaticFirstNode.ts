@@ -11,15 +11,29 @@ const DEVELOPMENT = process.env.NODE_ENV !== 'production';
  * @returns Nothing; all revisions are committed before the dispatcher runs
  */
 export const commitStaticFirstNode = <Self extends SchemaNodeRecord<Self>>(
-  node: Self, automatic: boolean,
+  node: Self,
+  automatic: boolean,
 ): void => {
-  const current = node.behavior.strategy === 'branch' ?
-    { local: node.local, emit: node.emit } : node.local;
+  const current =
+    node.behavior.strategy === 'branch'
+      ? { local: node.local, emit: node.emit }
+      : node.local;
   const payload = { previous: undefined, current };
-  const type = SchemaNodeEventType.UpdateValue | SchemaNodeEventType.RequestRefresh;
-  node.pendingDelivery = { type,
-    payload: { [SchemaNodeEventType.UpdateValue]: DEVELOPMENT ? Object.freeze(payload) : payload },
-    options: { [SchemaNodeEventType.UpdateValue]: { source: automatic ? 'automatic' : 'load' } } };
+  const type =
+    SchemaNodeEventType.UpdateValue | SchemaNodeEventType.RequestRefresh;
+  node.pendingDelivery = {
+    type,
+    payload: {
+      [SchemaNodeEventType.UpdateValue]: DEVELOPMENT
+        ? Object.freeze(payload)
+        : payload,
+    },
+    options: {
+      [SchemaNodeEventType.UpdateValue]: {
+        source: automatic ? 'automatic' : 'load',
+      },
+    },
+  };
   node.deliveryInitialized = true;
   node.revisionLedger = new SchemaNodeRevisionLedger(node.revisionLedger, type);
   node.pendingRevision = 0;

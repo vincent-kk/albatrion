@@ -1,11 +1,11 @@
 import type { SchemaNodeRecord } from '../../../record';
-import { captureOwnLatent } from '../latent/captureOwnLatent';
-import { readUnsetPolicy } from './readUnsetPolicy';
 import type { SettlementContext } from '../../type';
-import { writeLatentRaw } from './writeLatentRaw';
-import { isReplacedLivePath } from './isReplacedLivePath';
 import { captureArrayLatent } from '../latent/captureArrayLatent';
+import { captureOwnLatent } from '../latent/captureOwnLatent';
 import { pruneLatentRaw } from '../write/pruneLatentRaw';
+import { isReplacedLivePath } from './isReplacedLivePath';
+import { readUnsetPolicy } from './readUnsetPolicy';
+import { writeLatentRaw } from './writeLatentRaw';
 
 /**
  * Capture each departing occurrence's own source under its resolved policy.
@@ -17,27 +17,51 @@ import { pruneLatentRaw } from '../write/pruneLatentRaw';
  * @returns Nothing; each descendant receives its own latent entry
  */
 export const captureExitedRaw = <Self extends SchemaNodeRecord<Self>>(
-  node: Self, inherited: boolean, context: SettlementContext<Self>,
-  policy: boolean, order: readonly number[],
+  node: Self,
+  inherited: boolean,
+  context: SettlementContext<Self>,
+  policy: boolean,
+  order: readonly number[],
 ): void => {
   const clear = policy && readUnsetPolicy(node, inherited);
-  for (const child of node.behavior.type === 'array' ? [] : node.children ?? []) {
+  for (const child of node.behavior.type === 'array'
+    ? []
+    : (node.children ?? [])) {
     if (child.parent !== node) continue;
     const entries = node.blueprintNode.childEntries;
-    const exact = entries.findIndex((entry) =>
-      entry.name === child.name && entry.node === child.blueprintNode);
-    const index = exact >= 0 ? exact : entries.findIndex((entry) =>
-      entry.name === child.name && entry.node.kind === child.blueprintNode.kind);
-    captureExitedRaw(child, clear, context, policy,
-      [...order, index >= 0 ? index : 0]);
+    const exact = entries.findIndex(
+      (entry) =>
+        entry.name === child.name && entry.node === child.blueprintNode,
+    );
+    const index =
+      exact >= 0
+        ? exact
+        : entries.findIndex(
+            (entry) =>
+              entry.name === child.name &&
+              entry.node.kind === child.blueprintNode.kind,
+          );
+    captureExitedRaw(child, clear, context, policy, [
+      ...order,
+      index >= 0 ? index : 0,
+    ]);
   }
   const key = JSON.stringify([node.path, node.blueprintNode.kind]);
-  const value = clear ? undefined :
-    node.behavior.type === 'array' && node.behavior.strategy === 'branch' &&
-      node.raw === undefined ? captureArrayLatent(node, context) :
-      captureOwnLatent(node, context.root.runtime.latentRaw.get(key));
+  const value = clear
+    ? undefined
+    : node.behavior.type === 'array' &&
+        node.behavior.strategy === 'branch' &&
+        node.raw === undefined
+      ? captureArrayLatent(node, context)
+      : captureOwnLatent(node, context.root.runtime.latentRaw.get(key));
   if (node.behavior.type === 'array' && node.behavior.strategy === 'branch')
     pruneLatentRaw(node.runtime, node.path, undefined, context);
-  writeLatentRaw(context, key, value !== undefined &&
-    !isReplacedLivePath(context, node.path), value, node.blueprintNode, order);
+  writeLatentRaw(
+    context,
+    key,
+    value !== undefined && !isReplacedLivePath(context, node.path),
+    value,
+    node.blueprintNode,
+    order,
+  );
 };

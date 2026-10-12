@@ -1,10 +1,10 @@
 import { expect, it } from 'vitest';
 
+import fixtures from '../../../__tests__/fixtures/ownedInlineMounts.json';
 import { blueprint } from '../../../blueprint';
 import type { BlueprintSchema } from '../../../type';
-import fixtures from '../../../__tests__/fixtures/ownedInlineMounts.json';
-import type { AnalysisContext } from '../type';
 import { populateNodeChildren } from '../populateNodeChildren';
+import type { AnalysisContext } from '../type';
 import { countChildEnumeration } from './fixtures/countChildEnumeration';
 
 it.each([
@@ -33,7 +33,9 @@ it.each([
     );
     expect(result.inputs.every((row) => row.inputs.length === 1)).toBe(true);
   }
-  console.log(`CHILD105 ${expected.name} hosts=${hosts.length} visits=${visits} maps=${allocations}`);
+  console.log(
+    `CHILD105 ${expected.name} hosts=${hosts.length} visits=${visits} maps=${allocations}`,
+  );
   expect(visits).toBe(expected.children);
   // Virtual grouping keeps its existing empty Map; property and tuple Maps disappear.
   expect(allocations).toBe(expected.objects);
@@ -48,9 +50,21 @@ it.each([
 
 it('keeps gated and multiple-contribution hosts on the existing aggregation path', () => {
   for (const schema of [
-    { type: 'object', properties: { a: { type: 'string' } }, controls: { children: [{ targets: ['a'], controls: { active: true } }] } },
-    { type: 'object', properties: { a: { type: 'string' } }, allOf: [{ properties: { b: { type: 'number' } } }] },
-    { type: 'object', controls: { active: true }, properties: { a: { type: 'string' } } },
+    {
+      type: 'object',
+      properties: { a: { type: 'string' } },
+      controls: { children: [{ targets: ['a'], controls: { active: true } }] },
+    },
+    {
+      type: 'object',
+      properties: { a: { type: 'string' } },
+      allOf: [{ properties: { b: { type: 'number' } } }],
+    },
+    {
+      type: 'object',
+      controls: { active: true },
+      properties: { a: { type: 'string' } },
+    },
   ]) {
     const graph = blueprint(schema as BlueprintSchema);
     const result = countChildEnumeration(

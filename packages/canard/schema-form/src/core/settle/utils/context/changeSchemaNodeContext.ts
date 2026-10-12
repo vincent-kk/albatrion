@@ -1,13 +1,13 @@
 import type { SchemaNodeRecord } from '../../../record';
 import { SetValueOption } from '../../../types/value';
-import { sameValue } from '../compute/sameValue';
 import { computeNode } from '../compute/computeNode';
+import { sameValue } from '../compute/sameValue';
 import { getGateRegistry } from '../gates/getGateRegistry';
+import { expandTemplatePaths } from '../paths/expandTemplatePaths';
 import { createSettlementContext } from '../settlement/createSettlementContext';
 import { finishSettlement } from '../settlement/finishSettlement';
 import { getSettlementScratch } from '../write/getSettlementScratch';
 import { releaseSettlementScratch } from '../write/releaseSettlementScratch';
-import { expandTemplatePaths } from '../paths/expandTemplatePaths';
 import { getContextOwners } from './getContextOwners';
 
 /**
@@ -17,16 +17,22 @@ import { getContextOwners } from './getContextOwners';
  * @returns Nothing; equal values preserve the slot and skip settlement
  */
 export const changeSchemaNodeContext = <Self extends SchemaNodeRecord<Self>>(
-  root: Self, contextValue: Readonly<Record<string, unknown>>,
+  root: Self,
+  contextValue: Readonly<Record<string, unknown>>,
 ): void => {
   if (sameValue(root.runtime.context, contextValue)) return;
   const scratch = getSettlementScratch(root.runtime);
-  const context = createSettlementContext(root, 'automatic',
-    SetValueOption.Overwrite, scratch);
+  const context = createSettlementContext(
+    root,
+    'automatic',
+    SetValueOption.Overwrite,
+    scratch,
+  );
   context.entryApi = 'setContext';
   const owners = getContextOwners(root.runtime.blueprint);
   context.contextOwners = owners.some((owner) => owner.includes('/*'))
-    ? owners.flatMap((owner) => expandTemplatePaths(root, owner)) : owners;
+    ? owners.flatMap((owner) => expandTemplatePaths(root, owner))
+    : owners;
   root.runtime.context = contextValue;
   context.changedNodes.add(root);
   try {

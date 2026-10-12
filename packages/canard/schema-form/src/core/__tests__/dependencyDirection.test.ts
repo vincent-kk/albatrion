@@ -6,13 +6,35 @@ import { describe, expect, it } from 'vitest';
 
 /** Loaded by the unit suite; every non-test source edge is checked on each run. */
 const CORE = fileURLToPath(new URL('..', import.meta.url));
-const FRACTALS = ['blueprint', 'record', 'behaviors', 'navigation',
-  'validation', 'settle', 'dispatch', 'SchemaNode'];
-const BEHAVIOR_KINDS = ['stringBehavior', 'numberBehavior', 'booleanBehavior',
-  'nullBehavior', 'objectBehavior', 'arrayBehavior', 'virtualBehavior', 'unionBehavior'];
+const FRACTALS = [
+  'blueprint',
+  'record',
+  'behaviors',
+  'navigation',
+  'validation',
+  'settle',
+  'dispatch',
+  'SchemaNode',
+];
+const BEHAVIOR_KINDS = [
+  'stringBehavior',
+  'numberBehavior',
+  'booleanBehavior',
+  'nullBehavior',
+  'objectBehavior',
+  'arrayBehavior',
+  'virtualBehavior',
+  'unionBehavior',
+];
 const ORDER: Readonly<Record<string, number>> = {
-  blueprint: 0, record: 1, behaviors: 2, navigation: 2,
-  validation: 3, settle: 4, dispatch: 5, SchemaNode: 6,
+  blueprint: 0,
+  record: 1,
+  behaviors: 2,
+  navigation: 2,
+  validation: 3,
+  settle: 4,
+  dispatch: 5,
+  SchemaNode: 6,
 };
 
 interface Edge {
@@ -27,15 +49,19 @@ const sourceFiles = (directory: string): string[] =>
     if (entry.name === '__tests__') return [];
     const path = join(directory, entry.name);
     if (entry.isDirectory()) return sourceFiles(path);
-    return entry.name.endsWith('.ts') && !/\.(?:test|spec)\.ts$/.test(entry.name)
-      ? [path] : [];
+    return entry.name.endsWith('.ts') &&
+      !/\.(?:test|spec)\.ts$/.test(entry.name)
+      ? [path]
+      : [];
   });
 
 /** Resolve local imports, including directory entry points and type-only edges. */
 const resolveImport = (source: string, specifier: string): string | null => {
   const base = specifier.startsWith('@/schema-form/')
     ? resolve(CORE, '..', specifier.slice('@/schema-form/'.length))
-    : specifier.startsWith('.') ? resolve(dirname(source), specifier) : null;
+    : specifier.startsWith('.')
+      ? resolve(dirname(source), specifier)
+      : null;
   if (!base) return null;
   if (existsSync(`${base}.ts`)) return `${base}.ts`;
   if (existsSync(join(base, 'index.ts'))) return join(base, 'index.ts');
@@ -45,11 +71,19 @@ const resolveImport = (source: string, specifier: string): string | null => {
 /** Parse static imports and re-exports rather than matching comments or strings. */
 const importsIn = (source: string): Edge[] => {
   const text = readFileSync(source, 'utf8');
-  const syntax = ts.createSourceFile(source, text, ts.ScriptTarget.Latest, true);
+  const syntax = ts.createSourceFile(
+    source,
+    text,
+    ts.ScriptTarget.Latest,
+    true,
+  );
   return syntax.statements.flatMap((statement) => {
-    if ((!ts.isImportDeclaration(statement) &&
-      !ts.isExportDeclaration(statement)) ||
-      !statement.moduleSpecifier || !ts.isStringLiteral(statement.moduleSpecifier))
+    if (
+      (!ts.isImportDeclaration(statement) &&
+        !ts.isExportDeclaration(statement)) ||
+      !statement.moduleSpecifier ||
+      !ts.isStringLiteral(statement.moduleSpecifier)
+    )
       return [];
     const specifier = statement.moduleSpecifier.text;
     const target = resolveImport(source, specifier) ?? specifier;
@@ -78,15 +112,19 @@ describe('NODE-016 and NODE-045 dependency direction', () => {
     const binding = join(CORE, 'SchemaNode', 'utils', 'binding') + sep;
     const bindings = files.filter((file) => file.startsWith(binding));
     expect(bindings.length).toBeGreaterThanOrEqual(7);
-    const forbidden = edges.filter(({ source, target }) => source.startsWith(binding) &&
-      owner(target) !== 'SchemaNode' &&
-      !['blueprint', 'behaviors', 'dispatch', 'record', 'validation'].some((name) =>
-        target === join(CORE, name, 'index.ts')) &&
-      !target.startsWith(join(CORE, 'types') + sep) &&
-      !target.startsWith(join(CORE, '..', 'types') + sep) &&
-      target !== join(CORE, '..', 'errors', 'index.ts') &&
-      target !== '@winglet/common-utils/filter' &&
-      !target.startsWith('@aileron/'));
+    const forbidden = edges.filter(
+      ({ source, target }) =>
+        source.startsWith(binding) &&
+        owner(target) !== 'SchemaNode' &&
+        !['blueprint', 'behaviors', 'dispatch', 'record', 'validation'].some(
+          (name) => target === join(CORE, name, 'index.ts'),
+        ) &&
+        !target.startsWith(join(CORE, 'types') + sep) &&
+        !target.startsWith(join(CORE, '..', 'types') + sep) &&
+        target !== join(CORE, '..', 'errors', 'index.ts') &&
+        target !== '@winglet/common-utils/filter' &&
+        !target.startsWith('@aileron/'),
+    );
     expect(forbidden.map(({ specifier }) => specifier)).toEqual([]);
   });
 
@@ -104,12 +142,20 @@ describe('NODE-016 and NODE-045 dependency direction', () => {
   });
 
   it('includes type-only imports and export-from edges in the parsed graph', () => {
-    expect(edges.some(({ source, specifier }) =>
-      source.endsWith(`${sep}record${sep}type.ts`) &&
-      specifier === '../blueprint')).toBe(true);
-    expect(edges.some(({ source, specifier }) =>
-      source.endsWith(`${sep}SchemaNode${sep}index.ts`) &&
-      specifier === './type')).toBe(true);
+    expect(
+      edges.some(
+        ({ source, specifier }) =>
+          source.endsWith(`${sep}record${sep}type.ts`) &&
+          specifier === '../blueprint',
+      ),
+    ).toBe(true);
+    expect(
+      edges.some(
+        ({ source, specifier }) =>
+          source.endsWith(`${sep}SchemaNode${sep}index.ts`) &&
+          specifier === './type',
+      ),
+    ).toBe(true);
   });
 
   it('orders imports and type imports from blueprint through SchemaNode', () => {
@@ -118,17 +164,26 @@ describe('NODE-016 and NODE-045 dependency direction', () => {
       const to = owner(target);
       return from && to && from !== to && ORDER[from] <= ORDER[to];
     });
-    expect(reversed.map(({ source, specifier }) =>
-      `${relative(CORE, source)} -> ${specifier}`)).toEqual([]);
+    expect(
+      reversed.map(
+        ({ source, specifier }) => `${relative(CORE, source)} -> ${specifier}`,
+      ),
+    ).toEqual([]);
   });
 
   it('blocks record imports of settle, SchemaNode, dispatch, validation, app/plugin, and legacy', () => {
-    const forbidden = edges.filter(({ source, target, specifier }) =>
-      owner(source) === 'record' &&
-      /(?:^|\/)(?:settle|SchemaNode|dispatch|validation|__legacy__)(?:\/|$)|(?:^|\/)app\/plugin(?:\/|$)/
-        .test(`${target} ${specifier}`));
-    expect(forbidden.map(({ source, specifier }) =>
-      `${relative(CORE, source)} -> ${specifier}`)).toEqual([]);
+    const forbidden = edges.filter(
+      ({ source, target, specifier }) =>
+        owner(source) === 'record' &&
+        /(?:^|\/)(?:settle|SchemaNode|dispatch|validation|__legacy__)(?:\/|$)|(?:^|\/)app\/plugin(?:\/|$)/.test(
+          `${target} ${specifier}`,
+        ),
+    );
+    expect(
+      forbidden.map(
+        ({ source, specifier }) => `${relative(CORE, source)} -> ${specifier}`,
+      ),
+    ).toEqual([]);
   });
 
   it('crosses sibling fractals only through their index.ts entry points', () => {
@@ -138,51 +193,87 @@ describe('NODE-016 and NODE-045 dependency direction', () => {
       if (!from || !to) return false;
       if (from !== to) return target !== join(CORE, to, 'index.ts');
       const targetKind = behaviorKind(target);
-      return targetKind !== null && behaviorKind(source) !== targetKind &&
-        target !== join(CORE, 'behaviors', targetKind, 'index.ts');
+      return (
+        targetKind !== null &&
+        behaviorKind(source) !== targetKind &&
+        target !== join(CORE, 'behaviors', targetKind, 'index.ts')
+      );
     });
-    expect(direct.map(({ source, specifier }) =>
-      `${relative(CORE, source)} -> ${specifier}`)).toEqual([]);
+    expect(
+      direct.map(
+        ({ source, specifier }) => `${relative(CORE, source)} -> ${specifier}`,
+      ),
+    ).toEqual([]);
   });
 
   it('keeps every new fractal independent of the legacy engine', () => {
-    expect(edges.filter(({ target, specifier }) =>
-      target.includes(`${sep}__legacy__${sep}`) ||
-      specifier.includes('/__legacy__/')).map(({ source, specifier }) =>
-      `${relative(CORE, source)} -> ${specifier}`)).toEqual([]);
+    expect(
+      edges
+        .filter(
+          ({ target, specifier }) =>
+            target.includes(`${sep}__legacy__${sep}`) ||
+            specifier.includes('/__legacy__/'),
+        )
+        .map(
+          ({ source, specifier }) =>
+            `${relative(CORE, source)} -> ${specifier}`,
+        ),
+    ).toEqual([]);
   });
 
   it('keeps derive below settle without importing its orchestration or type', () => {
     const deriveRoot = join(CORE, 'settle', 'derive') + sep;
     const settleRoot = join(CORE, 'settle') + sep;
     const sameValue = join(CORE, 'settle', 'utils', 'compute', 'sameValue.ts');
-    const resolveDependencyPath = join(CORE, 'settle', 'utils', 'paths',
-      'resolveDependencyPath.ts');
-    const forbidden = edges.filter(({ source, target }) =>
-      source.startsWith(deriveRoot) && target.startsWith(settleRoot) &&
-      !target.startsWith(deriveRoot) && target !== sameValue &&
-      target !== resolveDependencyPath &&
-      !target.startsWith(join(CORE, 'settle', 'utils', 'controls') + sep));
-    expect(forbidden.map(({ source, specifier }) =>
-      `${relative(CORE, source)} -> ${specifier}`)).toEqual([]);
+    const resolveDependencyPath = join(
+      CORE,
+      'settle',
+      'utils',
+      'paths',
+      'resolveDependencyPath.ts',
+    );
+    const forbidden = edges.filter(
+      ({ source, target }) =>
+        source.startsWith(deriveRoot) &&
+        target.startsWith(settleRoot) &&
+        !target.startsWith(deriveRoot) &&
+        target !== sameValue &&
+        target !== resolveDependencyPath &&
+        !target.startsWith(join(CORE, 'settle', 'utils', 'controls') + sep),
+    );
+    expect(
+      forbidden.map(
+        ({ source, specifier }) => `${relative(CORE, source)} -> ${specifier}`,
+      ),
+    ).toEqual([]);
   });
 
   it('routes settle organ imports of derive through its index.ts', () => {
     const deriveRoot = join(CORE, 'settle', 'derive') + sep;
-    const direct = edges.filter(({ source, target }) =>
-      source.startsWith(join(CORE, 'settle', 'utils') + sep) &&
-      target.startsWith(deriveRoot) &&
-      target !== join(CORE, 'settle', 'derive', 'index.ts'));
-    expect(direct.map(({ source, specifier }) =>
-      `${relative(CORE, source)} -> ${specifier}`)).toEqual([]);
+    const direct = edges.filter(
+      ({ source, target }) =>
+        source.startsWith(join(CORE, 'settle', 'utils') + sep) &&
+        target.startsWith(deriveRoot) &&
+        target !== join(CORE, 'settle', 'derive', 'index.ts'),
+    );
+    expect(
+      direct.map(
+        ({ source, specifier }) => `${relative(CORE, source)} -> ${specifier}`,
+      ),
+    ).toEqual([]);
   });
 
   it('keeps shared controls interpretation independent of settle orchestration types', () => {
     const controlsRoot = join(CORE, 'settle', 'utils', 'controls') + sep;
-    const direct = edges.filter(({ source, target }) =>
-      source.startsWith(controlsRoot) &&
-      target === join(CORE, 'settle', 'type.ts'));
-    expect(direct.map(({ source, specifier }) =>
-      `${relative(CORE, source)} -> ${specifier}`)).toEqual([]);
+    const direct = edges.filter(
+      ({ source, target }) =>
+        source.startsWith(controlsRoot) &&
+        target === join(CORE, 'settle', 'type.ts'),
+    );
+    expect(
+      direct.map(
+        ({ source, specifier }) => `${relative(CORE, source)} -> ${specifier}`,
+      ),
+    ).toEqual([]);
   });
 });

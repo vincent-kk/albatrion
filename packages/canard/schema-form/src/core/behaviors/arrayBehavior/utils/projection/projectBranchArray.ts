@@ -1,4 +1,5 @@
 import { isArray } from '@winglet/common-utils/filter';
+
 import type { Behavior } from '../../../../record';
 import { getStaticChoices } from '../../../utils/options/getStaticChoices';
 import { omitEmptyArray } from './omitEmptyArray';
@@ -14,6 +15,8 @@ export const projectBranchArray: Behavior['project'] = (node, local) => {
   if (node.raw !== undefined && !isArray(node.raw)) return node.raw;
   if (!isArray(local)) return undefined;
   const choices = getStaticChoices(node.schema);
-  const projected = choices.omitTrailing ? omitTrailingArray(local, node) : local;
+  const projected = choices.omitTrailing
+    ? omitTrailingArray(local, node)
+    : local;
   return choices.omitEmpty ? omitEmptyArray(projected) : projected;
 };

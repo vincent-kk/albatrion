@@ -1,5 +1,6 @@
-import { act, render } from '@testing-library/react';
 import { StrictMode } from 'react';
+
+import { act, render } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
 
 import { useSchemaNodeSubscribe } from '../useSchemaNodeSubscribe';
@@ -43,7 +44,11 @@ describe('useSchemaNodeSubscribe with a new-engine node', () => {
       return null;
     };
 
-    const view = render(<StrictMode><Probe /></StrictMode>);
+    const view = render(
+      <StrictMode>
+        <Probe />
+      </StrictMode>,
+    );
     expect(active).toBe(1);
     act(() => node.setValue('written'));
     expect(listener).toHaveBeenCalledTimes(1);

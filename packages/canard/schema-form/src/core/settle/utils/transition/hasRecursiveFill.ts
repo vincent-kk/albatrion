@@ -10,6 +10,16 @@ import { hasRecursiveExpansion } from '../compute/hasRecursiveExpansion';
  * @returns Whether filling repeats an origin-less effective template chain
  */
 export const hasRecursiveFill = <Self extends SchemaNodeRecord<Self>>(
-  node: Self, hosts: ReadonlySet<Self>, context: SettlementContext<Self>,
-): boolean => node.parent !== null && hasRecursiveExpansion(node.parent,
-  node.blueprintNode, undefined, context, node.schema, hosts);
+  node: Self,
+  hosts: ReadonlySet<Self>,
+  context: SettlementContext<Self>,
+): boolean =>
+  node.parent !== null &&
+  hasRecursiveExpansion(
+    node.parent,
+    node.blueprintNode,
+    undefined,
+    context,
+    node.schema,
+    hosts,
+  );

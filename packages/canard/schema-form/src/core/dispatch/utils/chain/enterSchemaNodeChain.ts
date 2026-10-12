@@ -15,9 +15,14 @@ export const enterSchemaNodeChain = <Self extends SchemaNodeRecord<Self>>(
   const runtime = node.rootNode.runtime;
   assertNotInDelivery(runtime);
   if (!runtime.entryDepth) {
-    runtime.enclosingChain = runtime.chainErrors && runtime.chainOccurrences ?
-      { errors: runtime.chainErrors, occurrences: runtime.chainOccurrences,
-        outer: runtime.enclosingChain } : undefined;
+    runtime.enclosingChain =
+      runtime.chainErrors && runtime.chainOccurrences
+        ? {
+            errors: runtime.chainErrors,
+            occurrences: runtime.chainOccurrences,
+            outer: runtime.enclosingChain,
+          }
+        : undefined;
     runtime.chainRoot = node.rootNode;
     runtime.chainInitialEmit = node.rootNode.emit;
     runtime.chainErrors = [];

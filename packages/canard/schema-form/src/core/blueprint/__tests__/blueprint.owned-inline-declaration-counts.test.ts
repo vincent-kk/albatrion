@@ -12,14 +12,19 @@ const counts = vi.hoisted(() => ({
 }));
 
 vi.mock('../utils/analyze/collectDeclarations', async (importOriginal) => {
-  const original = await importOriginal<
-    typeof import('../utils/analyze/collectDeclarations')
-  >();
+  const original =
+    await importOriginal<
+      typeof import('../utils/analyze/collectDeclarations')
+    >();
   return {
     collectDeclarations: (...args: unknown[]) => {
       const sink = args[5] as PropertyDeclaration[] | undefined;
       const previous = sink?.length ?? 0;
-      const result = Reflect.apply(original.collectDeclarations, undefined, args);
+      const result = Reflect.apply(
+        original.collectDeclarations,
+        undefined,
+        args,
+      );
       counts.calls++;
       counts.arrays += result === sink ? 0 : 1;
       counts.declarations += result.length - previous;
@@ -39,7 +44,9 @@ it('counts collection boundaries and temporary result arrays per fixture node', 
     counts.calls = 0;
     counts.arrays = 0;
     counts.declarations = 0;
-    const result = blueprint(structuredClone(fixture.schema) as BlueprintSchema);
+    const result = blueprint(
+      structuredClone(fixture.schema) as BlueprintSchema,
+    );
     const declarations = result.nodes.reduce(
       (total, node) => total + node.declarations.length,
       0,

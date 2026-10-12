@@ -1,8 +1,7 @@
-import type { PathKeyedMap } from '../utils/pathIndex/PathKeyedMap';
-import type { PathKeyedSet } from '../utils/pathIndex/PathKeyedSet';
+import type { FormErrorRecord, FormErrorReporter } from '../../errors';
 import type {
-  BlueprintChildEntry,
   Blueprint,
+  BlueprintChildEntry,
   BlueprintNode,
   BlueprintNodeKind,
   BlueprintSchemaType,
@@ -11,10 +10,12 @@ import type {
 } from '../blueprint';
 import type { NodeStateFlags, ValidationMode } from '../types/state';
 import type { SetValueOption } from '../types/value';
-import type { FormErrorRecord, FormErrorReporter } from '../../errors';
+import type { PathKeyedMap } from '../utils/pathIndex/PathKeyedMap';
+import type { PathKeyedSet } from '../utils/pathIndex/PathKeyedSet';
 
 /** Shared ledger until an occurrence first receives a committed event. */
-export const EMPTY_REVISION_LEDGER: Readonly<Record<number, number>> = Object.freeze({});
+export const EMPTY_REVISION_LEDGER: Readonly<Record<number, number>> =
+  Object.freeze({});
 
 /** One pending node event with values indexed by their event bits. */
 export interface SchemaNodeDelivery {
@@ -161,8 +162,11 @@ export type ArrayArrangeResult =
 /** Pure structural proposal for a branch or a whole-value terminal array. */
 export type ArrayArrangePlan =
   | { kind: 'noop' }
-  | { kind: 'slots'; slots: readonly ({ from: number } | { value: unknown })[];
-      result: ArrayArrangeResult }
+  | {
+      kind: 'slots';
+      slots: readonly ({ from: number } | { value: unknown })[];
+      result: ArrayArrangeResult;
+    }
   | { kind: 'update'; index: number; value: unknown }
   | { kind: 'raw'; raw: readonly unknown[]; result: ArrayArrangeResult };
 
@@ -171,16 +175,30 @@ export interface Behavior<Self = unknown> {
   /** Interpret caller input under the current allowed types. */
   interpret(input: unknown, spec: UnionSpec): unknown;
   /** Assemble the current child values without committing them. */
-  assemble<Node extends Self>(node: SchemaNodeRecord<Node>, children: readonly Node[],
-    recalculated?: readonly Node[], hint?: { incremental: boolean }): unknown;
+  assemble<Node extends Self>(
+    node: SchemaNodeRecord<Node>,
+    children: readonly Node[],
+    recalculated?: readonly Node[],
+    hint?: { incremental: boolean },
+  ): unknown;
   /** Project a local value into the outgoing value. */
-  project<Node extends Self>(node: SchemaNodeRecord<Node>, local: unknown): unknown;
+  project<Node extends Self>(
+    node: SchemaNodeRecord<Node>,
+    local: unknown,
+  ): unknown;
   /** Return a completed input string, or undefined when there is no write. */
-  finishInput<Node extends Self>(node: SchemaNodeRecord<Node>): string | undefined;
+  finishInput<Node extends Self>(
+    node: SchemaNodeRecord<Node>,
+  ): string | undefined;
   /** Describe children to be created by the caller. */
-  declareChildren<Node extends Self>(node: SchemaNodeRecord<Node>): readonly BlueprintChildEntry[];
+  declareChildren<Node extends Self>(
+    node: SchemaNodeRecord<Node>,
+  ): readonly BlueprintChildEntry[];
   /** Propose an array verb without writing source, shape, or notifications. */
-  arrange<Node extends Self>(node: SchemaNodeRecord<Node>, operation: ArrayOperation): ArrayArrangePlan;
+  arrange<Node extends Self>(
+    node: SchemaNodeRecord<Node>,
+    operation: ArrayOperation,
+  ): ArrayArrangePlan;
   /** Stable dispatch kind of this row. */
   readonly type: BlueprintNodeKind;
   /** Fixed branch or terminal shape of this row. */
@@ -199,7 +217,12 @@ interface SchemaNodeDiagnostics {
   /** Current settlement health. */
   status: 'stable' | 'degraded';
   /** Reason for a degraded commit. */
-  cause?: 'budget' | 'expression' | 'injectTarget' | 'writeShape' | 'sharedConflict';
+  cause?:
+    | 'budget'
+    | 'expression'
+    | 'injectTarget'
+    | 'writeShape'
+    | 'sharedConflict';
   /** Budget whose limit stopped settlement. */
   exceededBudget?: 'hostWheel' | 'derive' | 'transition' | 'recursion';
   /** Number of iterations at the exceeded limit. */
@@ -267,8 +290,16 @@ export interface TypeMismatchRecord {
     readonly nullable: boolean;
     readonly effective: BlueprintSchemaType;
   };
-  readonly received: 'string' | 'number' | 'integer' | 'nonFinite' | 'boolean' |
-    'null' | 'object' | 'array' | 'other';
+  readonly received:
+    | 'string'
+    | 'number'
+    | 'integer'
+    | 'nonFinite'
+    | 'boolean'
+    | 'null'
+    | 'object'
+    | 'array'
+    | 'other';
   readonly reason: 'unconvertible' | 'ambiguous';
   readonly candidates?: readonly string[];
   readonly source: string;
@@ -307,11 +338,20 @@ export interface SettlementScratch<Self> {
   /** Wrong-kind hosts considered for conditional caller clearing. */
   wrongKindHosts: Set<Self>;
   /** Previous state of each reversible automatic node write. */
-  automaticLog: { node: Self; previousRaw: unknown; previousExtras: unknown;
-    previousDistributed?: Distribution }[];
+  automaticLog: {
+    node: Self;
+    previousRaw: unknown;
+    previousExtras: unknown;
+    previousDistributed?: Distribution;
+  }[];
   /** Ordered array shapes before reversible automatic writes. */
-  arrayStructureLog: { host: Self; previousItems: Self[];
-    previousItemCount: number; previousExtras: unknown; restored?: boolean }[];
+  arrayStructureLog: {
+    host: Self;
+    previousItems: Self[];
+    previousItemCount: number;
+    previousExtras: unknown;
+    restored?: boolean;
+  }[];
   /** First array length observed in this settlement for snapshot alignment. */
   arrayCounts: Map<Self, number>;
   /** Paths changed before settlement, retained for later UpdatePath delivery. */
@@ -374,15 +414,20 @@ export interface SchemaNodeRuntime<Self> extends SchemaNodeRootRuntimeState {
   chainErrors?: unknown[];
   /** Error and warning occurrences in their actual chain order. */
   chainOccurrences?: (
-    { kind: 'error'; error: unknown } | { kind: 'record'; record: FormErrorRecord }
+    | { kind: 'error'; error: unknown }
+    | { kind: 'record'; record: FormErrorRecord }
   )[];
   /**
    * Stack of enclosing chains' failure collections, innermost first; `outer` links the next.
    * A nested entry pushes on enter and pops on exit, so each failure is recorded once at its chain head.
    */
-  enclosingChain?: { readonly errors: unknown[];
-    readonly occurrences: NonNullable<SchemaNodeRuntime<Self>['chainOccurrences']>;
-    readonly outer?: SchemaNodeRuntime<Self>['enclosingChain'] };
+  enclosingChain?: {
+    readonly errors: unknown[];
+    readonly occurrences: NonNullable<
+      SchemaNodeRuntime<Self>['chainOccurrences']
+    >;
+    readonly outer?: SchemaNodeRuntime<Self>['enclosingChain'];
+  };
   /** True only while this form invokes its error reporter. */
   reportingErrors?: boolean;
   /** Schema locations supplied by a binding after reference-only reset rebuilding. */
@@ -398,8 +443,12 @@ export interface SchemaNodeRuntime<Self> extends SchemaNodeRootRuntimeState {
   /** Number of active nested batch callbacks. */
   batchDepth?: number;
   /** Caller writes postponed until the outer batch callback finishes. */
-  batchWrites?: { node: Self; value: unknown; option: SetValueOption;
-    source?: 'input' | 'automatic' }[];
+  batchWrites?: {
+    node: Self;
+    value: unknown;
+    option: SetValueOption;
+    source?: 'input' | 'automatic';
+  }[];
   /** Mount defers validation until the binding's ready effect. */
   deferMountValidation?: boolean;
   /** External errors awaiting the replacement tree's first committed shape. */
@@ -457,13 +506,19 @@ export interface SchemaNodeRuntime<Self> extends SchemaNodeRootRuntimeState {
   /** Subtree scopes merged into the next one-per-commit validation run. */
   validationPendingTargets?: Set<Self>;
   /** Most recent result and its commit number. */
-  validationResult?: { readonly commit: number; readonly issues: readonly unknown[] };
+  validationResult?: {
+    readonly commit: number;
+    readonly issues: readonly unknown[];
+  };
   /** Stable merged reads of validator and external issues. */
-  combinedErrors?: Map<unknown, {
-    readonly external?: readonly unknown[];
-    readonly validation?: readonly unknown[];
-    readonly errors: readonly unknown[];
-  }>;
+  combinedErrors?: Map<
+    unknown,
+    {
+      readonly external?: readonly unknown[];
+      readonly validation?: readonly unknown[];
+      readonly errors: readonly unknown[];
+    }
+  >;
   /** External issues keyed by live node. */
   nodeErrors?: Map<unknown, readonly { dataPath: string }[]>;
   /** Form context shared by every occurrence and expression in this tree. */
@@ -511,11 +566,17 @@ export interface SchemaNodeRuntime<Self> extends SchemaNodeRootRuntimeState {
   /** Newly lit mismatch records in the last committed batch. */
   typeMismatchRecords?: readonly TypeMismatchRecord[];
   /** Commit-scoped subtree mismatch path lists. */
-  typeMismatchesMemo?: PathKeyedMap<{ commit: number; paths: readonly string[] }>;
+  typeMismatchesMemo?: PathKeyedMap<{
+    commit: number;
+    paths: readonly string[];
+  }>;
   /** Frozen last-commit reads for departed references, allocated on first exit. */
   detachedReads?: WeakMap<object, DetachedSchemaNodeReads>;
   /** Stable watch path results for each node within one completed commit. */
-  watchValuesMemo?: WeakMap<object, { commit: number; values: readonly unknown[] }>;
+  watchValuesMemo?: WeakMap<
+    object,
+    { commit: number; values: readonly unknown[] }
+  >;
   /** Settlement health retained until a form-level load. */
   diagnostics: SchemaNodeDiagnostics;
   /** Single node creator used throughout this tree. */

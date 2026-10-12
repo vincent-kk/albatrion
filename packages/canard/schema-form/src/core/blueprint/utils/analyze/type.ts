@@ -11,7 +11,10 @@ import type {
 
 /** Writable construction view; public arrays and records are frozen at publication. */
 export type MutableNode = {
-  -readonly [Key in keyof Omit<BlueprintNode, 'childEntries'>]: BlueprintNode[Key];
+  -readonly [Key in keyof Omit<
+    BlueprintNode,
+    'childEntries'
+  >]: BlueprintNode[Key];
 } & { childEntries: BlueprintChildEntry[] };
 /** Writable fragment ownership lists during one analysis. */
 export type MutableFragment = Omit<

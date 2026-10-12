@@ -52,7 +52,9 @@ const credentialsSchema = {
     email: {
       type: 'string',
       pattern: '^[^@\\s]+@[^@\\s]+$',
-      presentation: { errorMessages: { pattern: 'BAD_EMAIL', required: 'EMAIL_REQUIRED' } },
+      presentation: {
+        errorMessages: { pattern: 'BAD_EMAIL', required: 'EMAIL_REQUIRED' },
+      },
     },
   },
   required: ['email'],
@@ -66,7 +68,9 @@ const ageSchema = {
       type: 'number',
       minimum: 18,
       maximum: 99,
-      presentation: { errorMessages: { minimum: 'AGE_TOO_LOW', maximum: 'AGE_TOO_HIGH' } },
+      presentation: {
+        errorMessages: { minimum: 'AGE_TOO_LOW', maximum: 'AGE_TOO_HIGH' },
+      },
     },
   },
 } satisfies JSONSchema;

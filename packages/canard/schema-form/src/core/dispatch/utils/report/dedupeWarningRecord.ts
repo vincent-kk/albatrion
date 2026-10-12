@@ -12,8 +12,11 @@ import { createFormErrorRecord } from './createFormErrorRecord';
  * @returns New warning record, or undefined for a duplicate
  */
 export const dedupeWarningRecord = (
-  keys: Set<string>, code: FormErrorCode, location: string,
-  discriminator: unknown, format: () => string,
+  keys: Set<string>,
+  code: FormErrorCode,
+  location: string,
+  discriminator: unknown,
+  format: () => string,
   fields?: Partial<Omit<FormErrorRecord, 'code' | 'level' | 'message'>>,
 ): FormErrorRecord | undefined => {
   const key = JSON.stringify([code, location, discriminator]);

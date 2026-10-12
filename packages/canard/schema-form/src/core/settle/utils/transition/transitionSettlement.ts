@@ -1,24 +1,23 @@
-import { recordSettlementFailure } from '../errors/recordSettlementFailure';
-
 import { SchemaFormError } from '../../../../errors';
 import type { SchemaNodeRecord } from '../../../record';
 import type { SettlementContext } from '../../type';
 import { effectiveType } from '../commit/effectiveType';
-import { BUDGET_EXCEEDED } from '../errors/settleErrorCode';
 import { computeNode } from '../compute/computeNode';
+import { updateOutput } from '../compute/updateOutput';
+import { runDeriveRounds } from '../derivation/runDeriveRounds';
+import { recordSettlementFailure } from '../errors/recordSettlementFailure';
+import { BUDGET_EXCEEDED } from '../errors/settleErrorCode';
+import { RECURSIVE_SHAPE_DIVERGED } from '../errors/settleErrorCode';
 import { markWrite } from '../write/markWrite';
 import { registerRecalculation } from '../write/registerRecalculation';
 import { staticSpec } from '../write/staticSpec';
+import { collectFillDescendants } from './collectFillDescendants';
+import { getTransitionCap } from './getTransitionCap';
+import { hasRecursiveFill } from './hasRecursiveFill';
+import { hasWrongKindBranchAncestor } from './hasWrongKindBranchAncestor';
 import { isMissingRaw } from './isMissingRaw';
 import { readDefault } from './readDefault';
-import { getTransitionCap } from './getTransitionCap';
 import { withdrawDetachedFills } from './withdrawDetachedFills';
-import { runDeriveRounds } from '../derivation/runDeriveRounds';
-import { hasWrongKindBranchAncestor } from './hasWrongKindBranchAncestor';
-import { updateOutput } from '../compute/updateOutput';
-import { collectFillDescendants } from './collectFillDescendants';
-import { hasRecursiveFill } from './hasRecursiveFill';
-import { RECURSIVE_SHAPE_DIVERGED } from '../errors/settleErrorCode';
 
 /**
  * Apply appearance fills and final-list interpretation within a bounded round.
@@ -29,7 +28,11 @@ export const transitionSettlement = <Self extends SchemaNodeRecord<Self>>(
   context: SettlementContext<Self>,
 ): void => {
   if (context.suppressAutomaticWrites || context.exceededBudget) return;
-  if (!context.hasGates && context.entered.size === 0 && context.exited.size === 0) {
+  if (
+    !context.hasGates &&
+    context.entered.size === 0 &&
+    context.exited.size === 0
+  ) {
     let narrowed = false;
     for (const node of context.writtenInputs.keys())
       if (!node.detached && effectiveType(node) !== node.schemaType) {
@@ -68,9 +71,14 @@ export const transitionSettlement = <Self extends SchemaNodeRecord<Self>>(
       if (!entered) continue;
       for (let index = 0; index < entered.length; index++) {
         const node = entered[index];
-        if (node.detached || context.pendingExits.size !== 0 &&
-          context.pendingExits.has(JSON.stringify([
-            node.path, node.blueprintNode.kind]))) continue;
+        if (
+          node.detached ||
+          (context.pendingExits.size !== 0 &&
+            context.pendingExits.has(
+              JSON.stringify([node.path, node.blueprintNode.kind]),
+            ))
+        )
+          continue;
         if (filledNodes) {
           if (filledNodes.has(node)) continue;
           filledNodes.add(node);
@@ -79,17 +87,28 @@ export const transitionSettlement = <Self extends SchemaNodeRecord<Self>>(
           if (filled.has(key)) continue;
           filled.add(key);
         }
-        if (context.kind !== 'load' && hasWrongKindBranchAncestor(node)) continue;
+        if (context.kind !== 'load' && hasWrongKindBranchAncestor(node))
+          continue;
         if (context.deriveState?.activeUnsetTargets.has(node)) continue;
         if (node.raw !== undefined) continue;
-        if (node.behavior.type === 'array' &&
-          context.distributedInputs.get(node)?.input !== undefined) continue;
+        if (
+          node.behavior.type === 'array' &&
+          context.distributedInputs.get(node)?.input !== undefined
+        )
+          continue;
         const value = readDefault(node, context.selectedDeclarationIds);
         if (value === undefined || !isMissingRaw(node, context)) continue;
         if (node.behavior.strategy === 'branch') {
           if (fillHosts && hasRecursiveFill(node, fillHosts, context)) {
-            recordSettlementFailure(context, new SchemaFormError(RECURSIVE_SHAPE_DIVERGED,
-              `Recursive shape diverged at ${node.path}`, { path: node.path }), 'budget');
+            recordSettlementFailure(
+              context,
+              new SchemaFormError(
+                RECURSIVE_SHAPE_DIVERGED,
+                `Recursive shape diverged at ${node.path}`,
+                { path: node.path },
+              ),
+              'budget',
+            );
             context.exceededBudget = 'recursion';
             context.inTransition = false;
             return;
@@ -103,24 +122,43 @@ export const transitionSettlement = <Self extends SchemaNodeRecord<Self>>(
         context.automatic = true;
         context.writtenInputs.set(node, value);
         // markWrite logs array structure only for branch hosts and array nodes.
-        const logsStructure = node.behavior.strategy === 'branch' || node.behavior.type === 'array';
-        const arrayLogStart = logsStructure ? context.arrayStructureLog.length : 0;
+        const logsStructure =
+          node.behavior.strategy === 'branch' || node.behavior.type === 'array';
+        const arrayLogStart = logsStructure
+          ? context.arrayStructureLog.length
+          : 0;
         markWrite(node, value, context);
         context.automatic = false;
-        if (logsStructure) for (let logIndex = arrayLogStart; logIndex < context.arrayStructureLog.length; logIndex++) {
-          const entry = context.arrayStructureLog[logIndex];
-          if (fillAncestors && (!fillAncestors.has(entry.host) ||
-            fillAncestors.get(entry.host) === -1))
-            fillAncestors.set(entry.host, entry.previousItemCount);
-          if (context.hasGates && entry.host.itemCount > entry.previousItemCount)
-            (newArrayHosts ??= new Set()).add(entry.host);
-        }
+        if (logsStructure)
+          for (
+            let logIndex = arrayLogStart;
+            logIndex < context.arrayStructureLog.length;
+            logIndex++
+          ) {
+            const entry = context.arrayStructureLog[logIndex];
+            if (
+              fillAncestors &&
+              (!fillAncestors.has(entry.host) ||
+                fillAncestors.get(entry.host) === -1)
+            )
+              fillAncestors.set(entry.host, entry.previousItemCount);
+            if (
+              context.hasGates &&
+              entry.host.itemCount > entry.previousItemCount
+            )
+              (newArrayHosts ??= new Set()).add(entry.host);
+          }
       }
     }
     for (const [node, original] of context.writtenInputs) {
-      if (node.detached || context.pendingExits.size !== 0 &&
-        context.pendingExits.has(JSON.stringify([
-        node.path, node.blueprintNode.kind]))) continue;
+      if (
+        node.detached ||
+        (context.pendingExits.size !== 0 &&
+          context.pendingExits.has(
+            JSON.stringify([node.path, node.blueprintNode.kind]),
+          ))
+      )
+        continue;
       const effective = effectiveType(node);
       if (effective === node.schemaType) continue;
       context.automatic = true;
@@ -144,9 +182,15 @@ export const transitionSettlement = <Self extends SchemaNodeRecord<Self>>(
     }
     if (!continuingFill) rounds++;
     if (rounds > cap) {
-      recordSettlementFailure(context, new SchemaFormError(BUDGET_EXCEEDED,
-        `Transition budget exceeded at ${context.target.path}`,
-        { path: context.target.path }), 'budget');
+      recordSettlementFailure(
+        context,
+        new SchemaFormError(
+          BUDGET_EXCEEDED,
+          `Transition budget exceeded at ${context.target.path}`,
+          { path: context.target.path },
+        ),
+        'budget',
+      );
       context.exceededBudget = 'transition';
       context.iterations = cap;
       context.inTransition = false;
@@ -156,9 +200,15 @@ export const transitionSettlement = <Self extends SchemaNodeRecord<Self>>(
     context.hostWheelExceeded = undefined;
     computeNode(context.root, context);
     if (context.hostWheelExceeded !== undefined && !context.exceededBudget) {
-      recordSettlementFailure(context, new SchemaFormError(BUDGET_EXCEEDED,
-        `Host wheel budget exceeded at ${context.target.path}`,
-        { path: context.target.path }), 'budget');
+      recordSettlementFailure(
+        context,
+        new SchemaFormError(
+          BUDGET_EXCEEDED,
+          `Host wheel budget exceeded at ${context.target.path}`,
+          { path: context.target.path },
+        ),
+        'budget',
+      );
       context.exceededBudget = 'hostWheel';
       context.iterations = context.hostWheelExceeded;
     }
@@ -174,8 +224,13 @@ export const transitionSettlement = <Self extends SchemaNodeRecord<Self>>(
     }
     if (fillAncestors && context.entered.size > appearanceCount) {
       const count = context.entered.size;
-      descendantsByDepth = collectFillDescendants(context, appearances!,
-        count - appearanceCount, fillAncestors, newArrayHosts);
+      descendantsByDepth = collectFillDescendants(
+        context,
+        appearances!,
+        count - appearanceCount,
+        fillAncestors,
+        newArrayHosts,
+      );
       appearanceCount = count;
     }
   }

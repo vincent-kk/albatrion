@@ -4,16 +4,28 @@ import { makeSchemaNodeTree } from '../makeSchemaNodeTree';
 
 // filid:contract factory-single-path
 describe('selfcheck-v5 PR-2 regression', () => {
-  const sharedDefault = () => makeSchemaNodeTree({ type: 'object', properties: {
-    a: { type: 'string' }, b: { type: 'string' },
-  }, allOf: [
-    { controls: { active: './a !== undefined' }, properties: {
-      x: { type: 'number', default: 1 },
-    } },
-    { controls: { active: './b !== undefined' }, properties: {
-      x: { type: 'number', default: 2 },
-    } },
-  ] }).root;
+  const sharedDefault = () =>
+    makeSchemaNodeTree({
+      type: 'object',
+      properties: {
+        a: { type: 'string' },
+        b: { type: 'string' },
+      },
+      allOf: [
+        {
+          controls: { active: './a !== undefined' },
+          properties: {
+            x: { type: 'number', default: 1 },
+          },
+        },
+        {
+          controls: { active: './b !== undefined' },
+          properties: {
+            x: { type: 'number', default: 2 },
+          },
+        },
+      ],
+    }).root;
 
   it('selfcheck-v5.mjs:93 emits the stored default in either history and uses the last declaration on replacement', () => {
     const first = sharedDefault();
@@ -32,11 +44,22 @@ describe('selfcheck-v5 PR-2 regression', () => {
     expect(replaced.outputValue).toHaveProperty('x', 2);
   });
 
-  const oneFragment = () => makeSchemaNodeTree({ type: 'object', properties: {
-    a: { type: 'string' }, z: { type: 'string' },
-  }, allOf: [{ controls: { active: './a !== undefined' }, properties: {
-    x: { type: 'number', default: 1 },
-  } }] }).root;
+  const oneFragment = () =>
+    makeSchemaNodeTree({
+      type: 'object',
+      properties: {
+        a: { type: 'string' },
+        z: { type: 'string' },
+      },
+      allOf: [
+        {
+          controls: { active: './a !== undefined' },
+          properties: {
+            x: { type: 'number', default: 1 },
+          },
+        },
+      ],
+    }).root;
 
   it('selfcheck-v5.mjs:107 does not refill after an unrelated partial write', () => {
     const root = oneFragment();
@@ -58,16 +81,28 @@ describe('selfcheck-v5 PR-2 regression', () => {
     expect(root.find('/x')?.raw).toBeUndefined();
   });
 
-  const nullHost = () => makeSchemaNodeTree({ type: 'object', properties: {
-    target: { type: ['object', 'null'], properties: {
-      note: { type: 'string' }, reason: { type: 'string', default: 'because' },
-    } },
-  } }).root;
+  const nullHost = () =>
+    makeSchemaNodeTree({
+      type: 'object',
+      properties: {
+        target: {
+          type: ['object', 'null'],
+          properties: {
+            note: { type: 'string' },
+            reason: { type: 'string', default: 'because' },
+          },
+        },
+      },
+    }).root;
 
   it('selfcheck-v5.mjs:318 replaces a null host and revives only new child data', () => {
-    const { root } = makeSchemaNodeTree({ type: 'object', properties: {
-      note: { type: 'string', default: 'D' }, keep: { type: 'string' },
-    } });
+    const { root } = makeSchemaNodeTree({
+      type: 'object',
+      properties: {
+        note: { type: 'string', default: 'D' },
+        keep: { type: 'string' },
+      },
+    });
     root.setValue({ note: 'typed', keep: 'K1' });
     const note = root.find('/note');
     root.setValue(null);
@@ -78,11 +113,23 @@ describe('selfcheck-v5 PR-2 regression', () => {
   });
 
   it('selfcheck-v5.mjs:328 fills under null while a later partial write restores the host', () => {
-    const { root } = makeSchemaNodeTree({ type: 'object', properties: {
-      a: { type: 'string' },
-    }, allOf: [{ controls: { active: './a === undefined' }, properties: {
-      d: { type: 'string', default: 'D' },
-    } }] }, { snapshot: null });
+    const { root } = makeSchemaNodeTree(
+      {
+        type: 'object',
+        properties: {
+          a: { type: 'string' },
+        },
+        allOf: [
+          {
+            controls: { active: './a === undefined' },
+            properties: {
+              d: { type: 'string', default: 'D' },
+            },
+          },
+        ],
+      },
+      { snapshot: null },
+    );
     root.resetSubtree();
     expect(root.find('/d')?.raw).toBe('D');
     root.find('/a')?.setValue('A');
@@ -90,11 +137,20 @@ describe('selfcheck-v5 PR-2 regression', () => {
   });
 
   it('selfcheck-v5.mjs:388 keeps a dormant declared key outside extras', () => {
-    const { root } = makeSchemaNodeTree({ type: 'object', properties: {
-      kind: { type: 'string' },
-    }, allOf: [{ controls: { active: './kind === "b"' }, properties: {
-      e: { type: 'string', default: 'DEF' },
-    } }] });
+    const { root } = makeSchemaNodeTree({
+      type: 'object',
+      properties: {
+        kind: { type: 'string' },
+      },
+      allOf: [
+        {
+          controls: { active: './kind === "b"' },
+          properties: {
+            e: { type: 'string', default: 'DEF' },
+          },
+        },
+      ],
+    });
     root.setValue({ kind: 'a', e: 'EXTRA' });
     expect(JSON.stringify(root.outputValue)).toBe('{"kind":"a"}');
     expect(root.extras).toBeUndefined();
@@ -104,13 +160,20 @@ describe('selfcheck-v5 PR-2 regression', () => {
   });
 
   for (const [name, value] of [
-    ['selfcheck-v5.mjs:405 wrong string host recovers on child write', 'broken'],
+    [
+      'selfcheck-v5.mjs:405 wrong string host recovers on child write',
+      'broken',
+    ],
     ['selfcheck-v5.mjs:405 wrong array host recovers on child write', []],
   ] as const) {
     it(name, () => {
-      const { root } = makeSchemaNodeTree({ type: 'object', properties: {
-        note: { type: 'string' }, keep: { type: 'string' },
-      } });
+      const { root } = makeSchemaNodeTree({
+        type: 'object',
+        properties: {
+          note: { type: 'string' },
+          keep: { type: 'string' },
+        },
+      });
       root.setValue({ keep: 'OLD' });
       const note = root.find('/note');
       root.setValue(value);
@@ -121,10 +184,13 @@ describe('selfcheck-v5 PR-2 regression', () => {
   }
 
   it('selfcheck-v5.mjs:444 retains both pure branch values after replacement', () => {
-    const { root } = makeSchemaNodeTree({ type: 'object', oneOf: [
-      { properties: { a: { type: 'number' } } },
-      { properties: { b: { type: 'number' } } },
-    ] });
+    const { root } = makeSchemaNodeTree({
+      type: 'object',
+      oneOf: [
+        { properties: { a: { type: 'number' } } },
+        { properties: { b: { type: 'number' } } },
+      ],
+    });
     root.setValue({ a: 1, b: 2 });
     const first = JSON.stringify(root.outputValue);
     root.setValue({ a: 1, b: 2 });
@@ -135,11 +201,24 @@ describe('selfcheck-v5 PR-2 regression', () => {
   });
 
   it('selfcheck-v5.mjs:515 keeps extras and treats present falsy values as present', () => {
-    const values = [{}, { n: '' }, { n: null }, { n: {} }, { n: 0 }, { n: false }];
+    const values = [
+      {},
+      { n: '' },
+      { n: null },
+      { n: {} },
+      { n: 0 },
+      { n: false },
+    ];
     for (const input of values) {
-      const { root } = makeSchemaNodeTree({ type: 'object', properties: {
-        n: { type: ['string', 'number', 'boolean', 'object', 'null'], default: 'D' },
-      } });
+      const { root } = makeSchemaNodeTree({
+        type: 'object',
+        properties: {
+          n: {
+            type: ['string', 'number', 'boolean', 'object', 'null'],
+            default: 'D',
+          },
+        },
+      });
       root.setValue({ ...input, extra: 42 });
       expect(root.outputValue).toHaveProperty('extra', 42);
       expect(root.find('/n')?.raw).toEqual('n' in input ? input.n : 'D');
@@ -147,11 +226,20 @@ describe('selfcheck-v5 PR-2 regression', () => {
   });
 
   it('selfcheck-v5.mjs:527 fills a new fragment after a partial activation', () => {
-    const { root } = makeSchemaNodeTree({ type: 'object', properties: {
-      on: { type: 'boolean' },
-    }, allOf: [{ controls: { active: './on === true' }, properties: {
-      child: { type: 'string', default: 'D' },
-    } }] });
+    const { root } = makeSchemaNodeTree({
+      type: 'object',
+      properties: {
+        on: { type: 'boolean' },
+      },
+      allOf: [
+        {
+          controls: { active: './on === true' },
+          properties: {
+            child: { type: 'string', default: 'D' },
+          },
+        },
+      ],
+    });
     root.setValue({ on: false });
     root.find('/on')?.setValue(true);
     expect(root.find('/child')?.raw).toBe('D');
@@ -159,14 +247,20 @@ describe('selfcheck-v5 PR-2 regression', () => {
   });
 
   it('selfcheck-v5.mjs:554 serializes the same declared order across write histories', () => {
-    const schema = { type: 'object', properties: {
-      a: { type: 'string' }, b: { type: 'string' },
-      c: { type: 'string' }, d: { type: 'string' },
-    } } as const;
+    const schema = {
+      type: 'object',
+      properties: {
+        a: { type: 'string' },
+        b: { type: 'string' },
+        c: { type: 'string' },
+        d: { type: 'string' },
+      },
+    } as const;
     const histories = [
-      ['d', 'b', 'c', 'a'], ['a', 'c', 'b', 'd'],
+      ['d', 'b', 'c', 'a'],
+      ['a', 'c', 'b', 'd'],
     ];
-    const outputs = histories.map(history => {
+    const outputs = histories.map((history) => {
       const { root } = makeSchemaNodeTree(schema);
       root.setValue({});
       for (const key of history) root.find(`/${key}`)?.setValue(`v${key}`);
@@ -175,13 +269,18 @@ describe('selfcheck-v5 PR-2 regression', () => {
     const { root } = makeSchemaNodeTree(schema);
     root.setValue({ d: 'vd', c: 'vc', b: 'vb', a: 'va' });
     outputs.push(JSON.stringify(root.outputValue));
-    expect(outputs).toEqual(Array(3).fill('{"a":"va","b":"vb","c":"vc","d":"vd"}'));
+    expect(outputs).toEqual(
+      Array(3).fill('{"a":"va","b":"vb","c":"vc","d":"vd"}'),
+    );
   });
 
   it('selfcheck-v5.mjs:557 serializes extras after declarations in insertion order', () => {
-    const { root } = makeSchemaNodeTree({ type: 'object', properties: {
-      a: { type: 'string' },
-    } });
+    const { root } = makeSchemaNodeTree({
+      type: 'object',
+      properties: {
+        a: { type: 'string' },
+      },
+    });
     root.setValue({ z: 2, a: 'va', y: 1 });
     expect(JSON.stringify(root.outputValue)).toBe('{"a":"va","z":2,"y":1}');
   });
@@ -192,8 +291,10 @@ describe('selfcheck-v5 PR-2 regression', () => {
     root.setValue({ target: null });
     expect(root.outputValue).toEqual({ target: null });
     expect(root.find('/target')?.raw).toBeNull();
-    expect(root.find('/target')?.children?.map(child => child.raw))
-      .toEqual([undefined, undefined]);
+    expect(root.find('/target')?.children?.map((child) => child.raw)).toEqual([
+      undefined,
+      undefined,
+    ]);
   });
 
   it('selfcheck-v5.mjs:606 does not leak values from the object replaced by null', () => {

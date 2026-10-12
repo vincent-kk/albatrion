@@ -1,9 +1,9 @@
-import type { SchemaNodeRecord, SettlementScratch } from '../../../record';
 import { StaticFirstLoadCapability } from '../../../blueprint';
+import type { SchemaNodeRecord, SettlementScratch } from '../../../record';
 import { SetValueOption } from '../../../types/value';
 import type { SchemaNodeWriteKind, SettlementContext } from '../../type';
-import { getTransitionCap } from '../transition/getTransitionCap';
 import { getVirtualReferenceIndex } from '../compute/getVirtualReferenceIndex';
+import { getTransitionCap } from '../transition/getTransitionCap';
 
 /**
  * Bind reusable call containers to one synchronous settlement entry.
@@ -15,8 +15,11 @@ import { getVirtualReferenceIndex } from '../compute/getVirtualReferenceIndex';
  * @returns Call-local state without preparing statically absent capabilities
  */
 export const createSettlementContext = <Self extends SchemaNodeRecord<Self>>(
-  node: Self, kind: SchemaNodeWriteKind, option: SetValueOption,
-  scratch: SettlementScratch<Self>, replaces = false,
+  node: Self,
+  kind: SchemaNodeWriteKind,
+  option: SetValueOption,
+  scratch: SettlementScratch<Self>,
+  replaces = false,
 ): SettlementContext<Self> => {
   const root = node.rootNode;
   const runtime = root.runtime;
@@ -30,11 +33,13 @@ export const createSettlementContext = <Self extends SchemaNodeRecord<Self>>(
     target: node,
     kind,
     option,
-    hasGates: !blueprint.capabilities.branchless && getTransitionCap(blueprint) > 1,
-    virtualReferenceIndex: StaticFirstLoadCapability.has(blueprint) ? null :
-      getVirtualReferenceIndex(blueprint),
-    suppressAutomaticWrites: disable || (!enable &&
-      runtime.disableAutomaticWrites === true),
+    hasGates:
+      !blueprint.capabilities.branchless && getTransitionCap(blueprint) > 1,
+    virtualReferenceIndex: StaticFirstLoadCapability.has(blueprint)
+      ? null
+      : getVirtualReferenceIndex(blueprint),
+    suppressAutomaticWrites:
+      disable || (!enable && runtime.disableAutomaticWrites === true),
     loadScope: kind === 'load' ? node : undefined,
     replaceScope: replaces ? node : undefined,
     entered: scratch.entered,

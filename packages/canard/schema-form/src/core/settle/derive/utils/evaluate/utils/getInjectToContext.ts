@@ -7,7 +7,8 @@ import type { SchemaNodeRecord } from '../../../../../record';
  * @returns Context passed unchanged to the authored handler
  */
 export const getInjectToContext = <Self extends SchemaNodeRecord<Self>>(
-  source: Self, root: Self,
+  source: Self,
+  root: Self,
 ) => ({
   dataPath: source.path,
   schemaPath: source.blueprintNode.schemaPath,

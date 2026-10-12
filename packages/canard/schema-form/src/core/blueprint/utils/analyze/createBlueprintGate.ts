@@ -14,9 +14,7 @@ type BlueprintGateInput = {
  * @param gate - Kind-specific condition and authored fields with their first template host
  * @returns Frozen gate retaining its condition contract and expression read metadata
  */
-export const createBlueprintGate = (
-  gate: BlueprintGateInput,
-): BlueprintGate =>
+export const createBlueprintGate = (gate: BlueprintGateInput): BlueprintGate =>
   Object.freeze({
     ...gate,
     ...(gate.appliesWhen === undefined

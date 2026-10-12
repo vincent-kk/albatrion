@@ -2,39 +2,59 @@ import { afterEach, expect, it, vi } from 'vitest';
 
 import { SetValueOption } from '../../types/value';
 import { loadSchemaNodeAtMount, writeSchemaNode } from '../index';
-import * as derive from '../utils/derivation/runDeriveRounds';
-import * as transition from '../utils/transition/transitionSettlement';
-import * as exits from '../utils/transition/finalizeExits';
-import * as policies from '../utils/commit/snapshotExitedPolicies';
 import * as rules from '../utils/commit/commitDeriveRules';
 import * as exitRules from '../utils/commit/commitExitPolicyValues';
 import * as trace from '../utils/commit/finalizeDeriveTrace';
+import * as policies from '../utils/commit/snapshotExitedPolicies';
+import * as derive from '../utils/derivation/runDeriveRounds';
 import * as alignment from '../utils/load/alignArraySnapshotSlots';
+import * as exits from '../utils/transition/finalizeExits';
+import * as transition from '../utils/transition/transitionSettlement';
 import { createTestTree } from './fixtures/createTestTree';
 
 afterEach(() => vi.restoreAllMocks());
 
 it('does not enter any empty phase on first or later singleton writes', () => {
-  const { root } = createTestTree({ type: 'object', properties: {
-    value: { type: 'string' }, sibling: { type: 'number', default: 3 },
-  } });
+  const { root } = createTestTree({
+    type: 'object',
+    properties: {
+      value: { type: 'string' },
+      sibling: { type: 'number', default: 3 },
+    },
+  });
   loadSchemaNodeAtMount(root, { value: 'before' }, SetValueOption.Overwrite);
-  const spies = [vi.spyOn(derive, 'runDeriveRounds'),
-    vi.spyOn(transition, 'transitionSettlement'), vi.spyOn(exits, 'finalizeExits'),
-    vi.spyOn(policies, 'snapshotExitedPolicies'), vi.spyOn(rules, 'commitDeriveRules'),
-    vi.spyOn(exitRules, 'commitExitPolicyValues'), vi.spyOn(trace, 'finalizeDeriveTrace'),
-    vi.spyOn(alignment, 'alignArraySnapshotSlots')];
+  const spies = [
+    vi.spyOn(derive, 'runDeriveRounds'),
+    vi.spyOn(transition, 'transitionSettlement'),
+    vi.spyOn(exits, 'finalizeExits'),
+    vi.spyOn(policies, 'snapshotExitedPolicies'),
+    vi.spyOn(rules, 'commitDeriveRules'),
+    vi.spyOn(exitRules, 'commitExitPolicyValues'),
+    vi.spyOn(trace, 'finalizeDeriveTrace'),
+    vi.spyOn(alignment, 'alignArraySnapshotSlots'),
+  ];
   for (const value of ['first', 'later']) {
-    writeSchemaNode(root.structure!.value, value, 'input', SetValueOption.Overwrite);
+    writeSchemaNode(
+      root.structure!.value,
+      value,
+      'input',
+      SetValueOption.Overwrite,
+    );
     expect(root.emit).toEqual({ value, sibling: 3 });
-    expect(spies.map(spy => spy.mock.calls.length)).toEqual([0, 0, 0, 0, 0, 0, 0, 0]);
+    expect(spies.map((spy) => spy.mock.calls.length)).toEqual([
+      0, 0, 0, 0, 0, 0, 0, 0,
+    ]);
   }
 });
 
 it('keeps appearance fills and array finalization when their inputs exist', () => {
-  const { root } = createTestTree({ type: 'array', items: {
-    type: 'object', properties: { value: { type: 'string', default: 'filled' } },
-  } });
+  const { root } = createTestTree({
+    type: 'array',
+    items: {
+      type: 'object',
+      properties: { value: { type: 'string', default: 'filled' } },
+    },
+  });
   const fill = vi.spyOn(transition, 'transitionSettlement');
   const exit = vi.spyOn(exits, 'finalizeExits');
   const align = vi.spyOn(alignment, 'alignArraySnapshotSlots');
@@ -54,13 +74,21 @@ it('keeps appearance fills and array finalization when their inputs exist', () =
 });
 
 it('does not skip gates, rule evaluation or rule commits with actual work', () => {
-  const { root } = createTestTree({ type: 'object', properties: {
-    source: { type: 'number' },
-    target: { type: 'number', controls: { derived: '../source + 1' } },
-    gated: { type: 'string', default: 'filled', controls: {
-      active: '../source > 0', unsetOnInactive: '../source === 0',
-    } },
-  } });
+  const { root } = createTestTree({
+    type: 'object',
+    properties: {
+      source: { type: 'number' },
+      target: { type: 'number', controls: { derived: '../source + 1' } },
+      gated: {
+        type: 'string',
+        default: 'filled',
+        controls: {
+          active: '../source > 0',
+          unsetOnInactive: '../source === 0',
+        },
+      },
+    },
+  });
   loadSchemaNodeAtMount(root, { source: 1 }, SetValueOption.Overwrite);
   const run = vi.spyOn(derive, 'runDeriveRounds');
   const commit = vi.spyOn(rules, 'commitDeriveRules');

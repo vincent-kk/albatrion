@@ -5,17 +5,33 @@ import { makeSchemaNodeTree } from '../../__tests__/makeSchemaNodeTree';
 describe('49C-01 SETTLE-017 latent occurrence scaling', () => {
   it('bounds key encoding when an absent-slot array exits as its sibling enters', () => {
     const count = 1000;
-    const { root } = makeSchemaNodeTree({ type: 'object', properties: {
-      flag: { type: 'boolean' },
-      b: { type: 'array', controls: { active: '#/flag === false' },
-        items: { type: 'object', properties: { x: { type: 'string' } } } },
-      a: { type: 'array', controls: { active: '#/flag' },
-        items: { type: 'object', controls: { active: './on === true' },
-          properties: { on: { type: 'boolean' }, v: { type: 'string' } } } },
-    } });
-    const b = Array.from({ length: count }, (_, index) => ({ x: String(index) }));
-    const a = Array.from({ length: count }, (_, index) =>
-      ({ on: false, v: String(index) }));
+    const { root } = makeSchemaNodeTree({
+      type: 'object',
+      properties: {
+        flag: { type: 'boolean' },
+        b: {
+          type: 'array',
+          controls: { active: '#/flag === false' },
+          items: { type: 'object', properties: { x: { type: 'string' } } },
+        },
+        a: {
+          type: 'array',
+          controls: { active: '#/flag' },
+          items: {
+            type: 'object',
+            controls: { active: './on === true' },
+            properties: { on: { type: 'boolean' }, v: { type: 'string' } },
+          },
+        },
+      },
+    });
+    const b = Array.from({ length: count }, (_, index) => ({
+      x: String(index),
+    }));
+    const a = Array.from({ length: count }, (_, index) => ({
+      on: false,
+      v: String(index),
+    }));
     root.setValue({ flag: true, b, a });
     const stringify = JSON.stringify;
     let encodings = 0;

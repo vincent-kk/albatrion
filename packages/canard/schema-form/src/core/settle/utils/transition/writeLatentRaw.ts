@@ -14,8 +14,20 @@ import { setLatentRaw } from '../latent/setLatentRaw';
  * @returns Nothing; the root latent map is updated
  */
 export const writeLatentRaw = <Self extends SchemaNodeRecord<Self>>(
-  context: SettlementContext<Self>, key: string, present: boolean, value: unknown,
-  template?: BlueprintNode, order?: readonly number[],
-): void => setLatentRaw(context.root.runtime,
-  context.inTransition ? context.latentAutomaticLog : undefined,
-  key, present, value, template, order, context);
+  context: SettlementContext<Self>,
+  key: string,
+  present: boolean,
+  value: unknown,
+  template?: BlueprintNode,
+  order?: readonly number[],
+): void =>
+  setLatentRaw(
+    context.root.runtime,
+    context.inTransition ? context.latentAutomaticLog : undefined,
+    key,
+    present,
+    value,
+    template,
+    order,
+    context,
+  );

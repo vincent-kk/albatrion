@@ -1,6 +1,6 @@
 import {
-  type ForwardedRef,
   type FormEvent,
+  type ForwardedRef,
   useCallback,
   useImperativeHandle,
   useMemo,
@@ -50,14 +50,17 @@ export const FormContents = (
     ),
   );
   const handleSubmit = useMemo(() => getTrackableHandler(submit), [submit]);
-  const handleNativeSubmit = useCallback(async (event: FormEvent) => {
-    event.preventDefault();
-    try {
-      await handleSubmit(true);
-    } catch (error) {
-      reportErrorToHost(error);
-    }
-  }, [handleSubmit]);
+  const handleNativeSubmit = useCallback(
+    async (event: FormEvent) => {
+      event.preventDefault();
+      try {
+        await handleSubmit(true);
+      } catch (error) {
+        reportErrorToHost(error);
+      }
+    },
+    [handleSubmit],
+  );
   useImperativeHandle(
     ref,
     () => ({

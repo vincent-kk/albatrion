@@ -1,7 +1,7 @@
 import type { SchemaNodeRecord } from '../../../record';
 import { changeSchemaNodeContext } from '../../../settle';
-import { enterSchemaNodeChain } from '../chain/enterSchemaNodeChain';
 import { captureChainError } from '../chain/captureChainError';
+import { enterSchemaNodeChain } from '../chain/enterSchemaNodeChain';
 import { exitSchemaNodeChain } from '../chain/exitSchemaNodeChain';
 
 /**
@@ -11,10 +11,15 @@ import { exitSchemaNodeChain } from '../chain/exitSchemaNodeChain';
  * @returns Nothing; any changed emit is delivered before returning
  */
 export const dispatchContextChange = <Self extends SchemaNodeRecord<Self>>(
-  root: Self, context: Readonly<Record<string, unknown>>,
+  root: Self,
+  context: Readonly<Record<string, unknown>>,
 ): void => {
   if (!enterSchemaNodeChain(root)) return;
-  try { changeSchemaNodeContext(root, context); }
-  catch (error) { captureChainError(root.runtime, error); }
-  finally { exitSchemaNodeChain(root); }
+  try {
+    changeSchemaNodeContext(root, context);
+  } catch (error) {
+    captureChainError(root.runtime, error);
+  } finally {
+    exitSchemaNodeChain(root);
+  }
 };

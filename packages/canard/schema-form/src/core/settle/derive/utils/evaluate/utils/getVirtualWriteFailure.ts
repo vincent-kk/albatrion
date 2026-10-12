@@ -13,11 +13,24 @@ import type { DeriveRoundDecision } from '../../../type';
  * @returns Deferred write-shape failure, or none for an admissible value
  */
 export const getVirtualWriteFailure = (
-  sourcePath: string, schemaPath: string, targetPath: string,
-  template: BlueprintNode, value: unknown,
+  sourcePath: string,
+  schemaPath: string,
+  targetPath: string,
+  template: BlueprintNode,
+  value: unknown,
 ): DeriveRoundDecision<unknown>['failures'][number] | undefined => {
-  if (template.kind !== 'virtual' || value === undefined ||
-    isArray(value) && value.length === template.fields?.length) return undefined;
-  return { sourcePath, schemaPath, targetPath, cause: value,
-    kind: 'writeShape', expectedLength: template.fields?.length };
+  if (
+    template.kind !== 'virtual' ||
+    value === undefined ||
+    (isArray(value) && value.length === template.fields?.length)
+  )
+    return undefined;
+  return {
+    sourcePath,
+    schemaPath,
+    targetPath,
+    cause: value,
+    kind: 'writeShape',
+    expectedLength: template.fields?.length,
+  };
 };

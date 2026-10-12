@@ -1,5 +1,6 @@
-import { unionScenarios, playScenario } from '@aileron/schema-form-scenarios';
 import { describe, expect, it } from 'vitest';
+
+import { playScenario, unionScenarios } from '@aileron/schema-form-scenarios';
 
 import type { JSONSchema } from '@/schema-form';
 
@@ -15,7 +16,7 @@ const run = async (name: string) => {
   expect(scenario, name).toBeDefined();
   if (!scenario) throw new Error(`Missing scenario: ${name}`);
   const form = await renderForm(scenario.schema as JSONSchema, {
-    defaultValue: scenario.initialValue, 
+    defaultValue: scenario.initialValue,
   });
   try {
     await playScenario(scenario, form.container);
@@ -31,35 +32,35 @@ const run = async (name: string) => {
 };
 
 describe('union — TEST-011 / TEST-023 shared screen runner', () => {
-  it("LANDING-004 first screen exposes the explicitly active branch and defaults", async () => {
-    await run("union.first-screen-active-defaults");
+  it('LANDING-004 first screen exposes the explicitly active branch and defaults', async () => {
+    await run('union.first-screen-active-defaults');
   });
 
-  it("LANDING-032 branch round trips retain shared nodes and edited raw values", async () => {
-    await run("union.branch-round-trip-shared-values");
+  it('LANDING-032 branch round trips retain shared nodes and edited raw values', async () => {
+    await run('union.branch-round-trip-shared-values');
   });
 
-  it("LANDING-038 multiple active anyOf fragments merge shared fields", async () => {
-    await run("union.active-anyof-shared-fields");
+  it('LANDING-038 multiple active anyOf fragments merge shared fields', async () => {
+    await run('union.active-anyof-shared-fields');
   });
 
-  it("LANDING-018 nested branches preserve inner edits across outer activation", async () => {
-    await run("union.nested-branch-round-trip");
+  it('LANDING-018 nested branches preserve inner edits across outer activation', async () => {
+    await run('union.nested-branch-round-trip');
   });
 
-  it("LANDING-139 null ancestors do not fill branch defaults before input promotion", async () => {
-    await run("union.null-ancestor-input-promotion");
+  it('LANDING-139 null ancestors do not fill branch defaults before input promotion', async () => {
+    await run('union.null-ancestor-input-promotion');
   });
 
-  it("LANDING-004 nullable-conditional-account", async () => {
-    await run("union.nullable-conditional-account");
+  it('LANDING-004 nullable-conditional-account', async () => {
+    await run('union.nullable-conditional-account');
   });
 
-  it("LANDING-207 typeless object branches render successfully", async () => {
-    await run("union.typeless-object-branches");
+  it('LANDING-207 typeless object branches render successfully', async () => {
+    await run('union.typeless-object-branches');
   });
 
-  it("LANDING-208 typeless literal properties render primitive leaves", async () => {
-    await run("union.typeless-literal-properties");
+  it('LANDING-208 typeless literal properties render primitive leaves', async () => {
+    await run('union.typeless-literal-properties');
   });
 });

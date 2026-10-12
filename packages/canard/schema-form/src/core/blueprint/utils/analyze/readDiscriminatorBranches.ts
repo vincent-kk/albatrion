@@ -78,9 +78,7 @@ export const readDiscriminatorBranches = (
           const record = readSchemaObject(tag.schema);
           const restrictions = [
             record.enum,
-            hasOwnProperty(record, 'const')
-              ? [record.const]
-              : undefined,
+            hasOwnProperty(record, 'const') ? [record.const] : undefined,
           ];
           for (const restriction of restrictions) {
             if (!isArray(restriction)) continue;

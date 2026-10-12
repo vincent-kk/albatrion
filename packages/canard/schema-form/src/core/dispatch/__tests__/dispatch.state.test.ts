@@ -2,27 +2,49 @@ import { describe, expect, it, vi } from 'vitest';
 
 import { SchemaNodeEventType } from '../../record';
 import { SchemaNodeState, ValidationMode } from '../../types/state';
-import { dispatchBatch, dispatchClearSubtreeState, dispatchResetSubtree, dispatchSetState,
-  dispatchSetSubtreeState, dispatchSetValue, readSchemaNodeRevision,
-  subscribeSchemaNode } from '../index';
+import {
+  dispatchBatch,
+  dispatchClearSubtreeState,
+  dispatchResetSubtree,
+  dispatchSetState,
+  dispatchSetSubtreeState,
+  dispatchSetValue,
+  readSchemaNodeRevision,
+  subscribeSchemaNode,
+} from '../index';
 import { createDispatchTree } from './fixtures/createDispatchTree';
 import { getDispatchChild } from './fixtures/getDispatchChild';
 
 // filid:contract dispatch-observers
 describe('dispatcher state events', () => {
   it.each(['node', 'subtree', 'clear'] as const)(
-    'keeps immediate %s state writes during reset out of the settlement delta', (kind) => {
+    'keeps immediate %s state writes during reset out of the settlement delta',
+    (kind) => {
       let duringReset: (() => void) | undefined;
-      const { root, runtime } = createDispatchTree({ type: 'object', properties: {
-        source: { type: 'string', controls: { injectTo: () => {
-          const callback = duringReset;
-          duringReset = undefined;
-          callback?.();
-          return {};
-        } } },
-      } }, { source: 'a' });
+      const { root, runtime } = createDispatchTree(
+        {
+          type: 'object',
+          properties: {
+            source: {
+              type: 'string',
+              controls: {
+                injectTo: () => {
+                  const callback = duringReset;
+                  duringReset = undefined;
+                  callback?.();
+                  return {};
+                },
+              },
+            },
+          },
+        },
+        { source: 'a' },
+      );
       dispatchSetValue(root, { source: 'a' });
-      const before = readSchemaNodeRevision(root, SchemaNodeEventType.UpdateState);
+      const before = readSchemaNodeRevision(
+        root,
+        SchemaNodeEventType.UpdateState,
+      );
       duringReset = () => {
         if (kind === 'subtree') dispatchSetSubtreeState(root, { custom: true });
         else dispatchSetState(root, { custom: true });
@@ -31,9 +53,12 @@ describe('dispatcher state events', () => {
 
       dispatchResetSubtree(root);
 
-      expect(runtime.globalStateCounts.get('custom') ?? 0)
-        .toBe(kind === 'subtree' ? 2 : kind === 'clear' ? 0 : 1);
-      expect(readSchemaNodeRevision(root, SchemaNodeEventType.UpdateState) - before).toBe(1);
+      expect(runtime.globalStateCounts.get('custom') ?? 0).toBe(
+        kind === 'subtree' ? 2 : kind === 'clear' ? 0 : 1,
+      );
+      expect(
+        readSchemaNodeRevision(root, SchemaNodeEventType.UpdateState) - before,
+      ).toBe(1);
       dispatchClearSubtreeState(root);
       expect(runtime.globalStateCounts.has('custom')).toBe(false);
       expect(runtime.globalState).toEqual({});
@@ -61,17 +86,24 @@ describe('dispatcher state events', () => {
     expect(seen).toEqual([
       SchemaNodeEventType.UpdateState | SchemaNodeEventType.UpdateGlobalState,
     ]);
-    expect(readSchemaNodeRevision(root, SchemaNodeEventType.UpdateState)).toBe(1);
-    expect(readSchemaNodeRevision(root, SchemaNodeEventType.UpdateGlobalState)).toBe(1);
+    expect(readSchemaNodeRevision(root, SchemaNodeEventType.UpdateState)).toBe(
+      1,
+    );
+    expect(
+      readSchemaNodeRevision(root, SchemaNodeEventType.UpdateGlobalState),
+    ).toBe(1);
     expect(onStateChange).toHaveBeenCalledTimes(1);
     expect(onChange).not.toHaveBeenCalled();
     expect(runtime.validationStamp).toBe(validationStamp);
   });
 
   it('EVENT-045 EVENT-067 31C-01 flushes one state event after the settle wave', () => {
-    const { root, runtime } = createDispatchTree({ type: 'object', properties: {
-      child: { type: 'string' },
-    } });
+    const { root, runtime } = createDispatchTree({
+      type: 'object',
+      properties: {
+        child: { type: 'string' },
+      },
+    });
     dispatchSetValue(root, { child: 'old' });
     const child = getDispatchChild(root, 'child');
     const seen: string[] = [];
@@ -93,13 +125,19 @@ describe('dispatcher state events', () => {
 
     expect(seen).toEqual(['settle', 'state']);
     expect(onStateChange).toHaveBeenCalledTimes(1);
-    expect(readSchemaNodeRevision(child, SchemaNodeEventType.UpdateState)).toBe(1);
+    expect(readSchemaNodeRevision(child, SchemaNodeEventType.UpdateState)).toBe(
+      1,
+    );
   });
 
   it('SURFACE-053 patches and clears only a live subtree', () => {
-    const { root } = createDispatchTree({ type: 'object', properties: {
-      first: { type: 'string' }, second: { type: 'string' },
-    } });
+    const { root } = createDispatchTree({
+      type: 'object',
+      properties: {
+        first: { type: 'string' },
+        second: { type: 'string' },
+      },
+    });
     dispatchSetValue(root, { first: 'a', second: 'b' });
     const first = getDispatchChild(root, 'first');
     const second = getDispatchChild(root, 'second');
@@ -119,14 +157,18 @@ describe('dispatcher state events', () => {
     dispatchSetSubtreeState(root, { [SchemaNodeState.Touched]: true });
     dispatchClearSubtreeState(root);
     expect(root.interactionState).toBe(before);
-    expect(readSchemaNodeRevision(root, SchemaNodeEventType.UpdateState)).toBe(0);
+    expect(readSchemaNodeRevision(root, SchemaNodeEventType.UpdateState)).toBe(
+      0,
+    );
   });
 
   it('NODE-044 treats a detached target as a no-op during report delivery', () => {
     const { root, runtime } = createDispatchTree({ type: 'string' });
     root.detached = true;
     runtime.reportingErrors = true;
-    expect(() => dispatchSetState(root, { [SchemaNodeState.Dirty]: true })).not.toThrow();
+    expect(() =>
+      dispatchSetState(root, { [SchemaNodeState.Dirty]: true }),
+    ).not.toThrow();
     expect(() => dispatchClearSubtreeState(root)).not.toThrow();
     expect(root.interactionState[SchemaNodeState.Dirty]).toBeUndefined();
   });
@@ -134,8 +176,11 @@ describe('dispatcher state events', () => {
   it('ERROR-029 refuses state writes while the error observer is active', () => {
     const { root, runtime } = createDispatchTree({ type: 'string' });
     runtime.reportingErrors = true;
-    expect(() => dispatchSetState(root, { [SchemaNodeState.Dirty]: true }))
-      .toThrowError(expect.objectContaining({ code: 'SCHEMA_FORM_ERROR.WRITE_IN_OBSERVER' }));
+    expect(() =>
+      dispatchSetState(root, { [SchemaNodeState.Dirty]: true }),
+    ).toThrowError(
+      expect.objectContaining({ code: 'SCHEMA_FORM_ERROR.WRITE_IN_OBSERVER' }),
+    );
     expect(root.interactionState[SchemaNodeState.Dirty]).toBeUndefined();
   });
 
@@ -144,8 +189,12 @@ describe('dispatcher state events', () => {
     const failure = new Error('state observer');
     const seen = vi.fn();
     subscribeSchemaNode(root, seen);
-    runtime.onStateChange = () => { throw failure; };
-    expect(() => dispatchSetState(root, { [SchemaNodeState.Dirty]: true })).toThrow(failure);
+    runtime.onStateChange = () => {
+      throw failure;
+    };
+    expect(() =>
+      dispatchSetState(root, { [SchemaNodeState.Dirty]: true }),
+    ).toThrow(failure);
     expect(seen).toHaveBeenCalledTimes(1);
   });
 
@@ -162,7 +211,9 @@ describe('dispatcher state events', () => {
       if (callbacks === 1)
         dispatchSetState(root, { [SchemaNodeState.Touched]: true });
     };
-    dispatchBatch(root, () => dispatchSetState(root, { [SchemaNodeState.Dirty]: true }));
+    dispatchBatch(root, () =>
+      dispatchSetState(root, { [SchemaNodeState.Dirty]: true }),
+    );
     expect(seen).toEqual([false, true]);
     expect(callbacks).toBe(2);
     expect(runtime.entryDepth).toBe(0);

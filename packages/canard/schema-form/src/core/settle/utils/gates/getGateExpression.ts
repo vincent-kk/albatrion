@@ -1,8 +1,10 @@
 import type { Blueprint, BlueprintExpression } from '../../../blueprint';
 
 /** Active gate expressions indexed by authored path for each analysis. */
-const GATE_EXPRESSIONS = new WeakMap<Blueprint,
-  ReadonlyMap<string, BlueprintExpression>>();
+const GATE_EXPRESSIONS = new WeakMap<
+  Blueprint,
+  ReadonlyMap<string, BlueprintExpression>
+>();
 
 /**
  * Find the first compiled active gate at an authored schema path.
@@ -11,7 +13,8 @@ const GATE_EXPRESSIONS = new WeakMap<Blueprint,
  * @returns First matching active expression, or undefined when absent
  */
 export const getGateExpression = (
-  blueprint: Blueprint, schemaPath: string,
+  blueprint: Blueprint,
+  schemaPath: string,
 ): BlueprintExpression | undefined => {
   if (blueprint.capabilities.branchless) return undefined;
   let expressions = GATE_EXPRESSIONS.get(blueprint);

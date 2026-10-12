@@ -1,8 +1,13 @@
 import { describe, expect, it } from 'vitest';
 
-import { dispatchBatch, dispatchMount, dispatchResetForm,
-  dispatchSetValue, subscribeSchemaNode } from '../index';
 import { ValidationMode } from '../../types/state';
+import {
+  dispatchBatch,
+  dispatchMount,
+  dispatchResetForm,
+  dispatchSetValue,
+  subscribeSchemaNode,
+} from '../index';
 import { createDispatchTree } from './fixtures/createDispatchTree';
 
 // filid:contract dispatch-onchange

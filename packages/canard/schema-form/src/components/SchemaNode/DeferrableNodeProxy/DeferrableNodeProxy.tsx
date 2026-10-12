@@ -37,7 +37,8 @@ export const DeferrableNodeProxy = ({
 
   useSchemaNodeTracker(
     node,
-    SchemaNodeEventType.UpdateComputedProperties | SchemaNodeEventType.UpdatePath,
+    SchemaNodeEventType.UpdateComputedProperties |
+      SchemaNodeEventType.UpdatePath,
   );
 
   useSchemaNodeSubscribe(revealed ? null : node, ({ type }) => {

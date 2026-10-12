@@ -1,8 +1,9 @@
+import { hasOwnProperty } from '@winglet/common-utils/lib';
+
 import type { SchemaNodeRecord } from '../../../record';
 import type { SettlementContext } from '../../type';
-import { hasOwnProperty } from '@winglet/common-utils/lib';
-import { getDeclaredChildNames } from '../declarations/getDeclaredChildNames';
 import { flushPendingOutput } from '../compute/flushPendingOutput';
+import { getDeclaredChildNames } from '../declarations/getDeclaredChildNames';
 import { getGateRegistry } from './getGateRegistry';
 
 /**
@@ -12,10 +13,13 @@ import { getGateRegistry } from './getGateRegistry';
  * @returns Published emission, or undefined while its changed raw is pending
  */
 const projectedEmission = <Self extends SchemaNodeRecord<Self>>(
-  node: Self, context: SettlementContext<Self>,
-): unknown => node.emit === undefined ||
+  node: Self,
+  context: SettlementContext<Self>,
+): unknown =>
+  node.emit === undefined ||
   (context.changedRaw.has(node.path) && !context.changedNodes.has(node))
-  ? undefined : node.emit;
+    ? undefined
+    : node.emit;
 
 /**
  * Read a path only from the current projected value and undeclared extras.
@@ -35,31 +39,53 @@ export const readProjectedValue = <Self extends SchemaNodeRecord<Self>>(
   const segments = getGateRegistry(node.runtime).pathSegments(path);
   for (let index = 0; index < segments.length; index++) {
     const name = segments[index];
-    if (node.behavior.strategy === 'branch' && node.raw !== undefined &&
-      flushPendingOutput(node, context)) value = projectedEmission(node, context);
-    if (node.behavior.strategy === 'branch' && node.raw !== undefined &&
-      (node.parent !== null || value === null || typeof value !== 'object' ||
-        !hasOwnProperty(value, name))) return undefined;
-    const child = node.structure && hasOwnProperty(node.structure, name)
-      ? node.structure[name] : undefined;
+    if (
+      node.behavior.strategy === 'branch' &&
+      node.raw !== undefined &&
+      flushPendingOutput(node, context)
+    )
+      value = projectedEmission(node, context);
+    if (
+      node.behavior.strategy === 'branch' &&
+      node.raw !== undefined &&
+      (node.parent !== null ||
+        value === null ||
+        typeof value !== 'object' ||
+        !hasOwnProperty(value, name))
+    )
+      return undefined;
+    const child =
+      node.structure && hasOwnProperty(node.structure, name)
+        ? node.structure[name]
+        : undefined;
     if (child) {
       node = child;
       atNode = true;
       value = projectedEmission(node, context);
     } else {
-      if (flushPendingOutput(node, context)) value = projectedEmission(node, context);
+      if (flushPendingOutput(node, context))
+        value = projectedEmission(node, context);
       atNode = false;
-      if (value !== null && typeof value === 'object' && hasOwnProperty(value, name))
+      if (
+        value !== null &&
+        typeof value === 'object' &&
+        hasOwnProperty(value, name)
+      )
         value = Reflect.get(value, name);
       else {
         const declared = getDeclaredChildNames(node.blueprintNode);
-        if (!declared.has(name) && node.extras !== null &&
-          typeof node.extras === 'object' && hasOwnProperty(node.extras, name))
+        if (
+          !declared.has(name) &&
+          node.extras !== null &&
+          typeof node.extras === 'object' &&
+          hasOwnProperty(node.extras, name)
+        )
           value = Reflect.get(node.extras, name);
         else return undefined;
       }
     }
   }
-  if (atNode && flushPendingOutput(node, context)) value = projectedEmission(node, context);
+  if (atNode && flushPendingOutput(node, context))
+    value = projectedEmission(node, context);
   return value;
 };

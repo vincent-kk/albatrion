@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 
 import { find, findNodes, walkSchemaNodes } from '../index';
-import { createNode, type TestNode } from './fixtures/createNode';
+import { type TestNode, createNode } from './fixtures/createNode';
 
 // filid:contract navigation-shape
 describe('navigation over the committed shape', () => {

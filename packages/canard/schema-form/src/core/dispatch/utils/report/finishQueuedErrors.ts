@@ -14,21 +14,32 @@ import { deliverChainRecords } from './deliverChainRecords';
  * @returns Nothing when the wave had no failures
  */
 export const finishQueuedErrors = (
-  runtime: Pick<SchemaNodeRuntime<unknown>,
-    'errorReporter' | 'reportingErrors' | 'reportedGuardFailures'>,
+  runtime: Pick<
+    SchemaNodeRuntime<unknown>,
+    'errorReporter' | 'reportingErrors' | 'reportedGuardFailures'
+  >,
   errors: readonly unknown[],
   occurrences: NonNullable<SchemaNodeRuntime<unknown>['chainOccurrences']>,
   caller: boolean,
 ): void => {
   const original = bundleChainErrors(errors);
-  const aggregate = errors.length > 1 && original instanceof SchemaFormError ?
-    original : undefined;
+  const aggregate =
+    errors.length > 1 && original instanceof SchemaFormError
+      ? original
+      : undefined;
   const pending: FormErrorRecord[] = [];
-  collectChainRecords(pending, occurrences, aggregate, caller ? 'thrown' : 'sink',
-    runtime.reportedGuardFailures);
+  collectChainRecords(
+    pending,
+    occurrences,
+    aggregate,
+    caller ? 'thrown' : 'sink',
+    runtime.reportedGuardFailures,
+  );
   const handlerErrors = deliverChainRecords(runtime, pending, original, caller);
   if (caller && (errors.length || handlerErrors.length))
-    throw errors.length && handlerErrors.length ?
-      bundleChainErrors([original, ...handlerErrors]) :
-      errors.length ? original : bundleChainErrors(handlerErrors);
+    throw errors.length && handlerErrors.length
+      ? bundleChainErrors([original, ...handlerErrors])
+      : errors.length
+        ? original
+        : bundleChainErrors(handlerErrors);
 };

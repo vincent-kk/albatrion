@@ -5,13 +5,16 @@ import type { SettlementScratch } from '../../../record';
  * @param scratch - Reserved work containers from one completed settlement
  * @returns Nothing; another synchronous write may reuse the containers
  */
-export const releaseSettlementScratch = <Self>(scratch: SettlementScratch<Self>): void => {
+export const releaseSettlementScratch = <Self>(
+  scratch: SettlementScratch<Self>,
+): void => {
   if (scratch.entered.size) scratch.entered.clear();
   if (scratch.revived.size) scratch.revived.clear();
   if (scratch.exited.size) scratch.exited.clear();
   if (scratch.pendingExits.size) scratch.pendingExits.clear();
   if (scratch.perished.size) scratch.perished.clear();
-  if (scratch.selectedDeclarationIds.size) scratch.selectedDeclarationIds.clear();
+  if (scratch.selectedDeclarationIds.size)
+    scratch.selectedDeclarationIds.clear();
   if (scratch.writtenInputs.size) scratch.writtenInputs.clear();
   if (scratch.distributedInputs.size) scratch.distributedInputs.clear();
   if (scratch.wrongKindHosts.size) scratch.wrongKindHosts.clear();

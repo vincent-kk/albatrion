@@ -1,6 +1,6 @@
 import type { SchemaNodeRecord } from '../../../record';
-import { enterSchemaNodeChain } from '../chain/enterSchemaNodeChain';
 import { captureChainError } from '../chain/captureChainError';
+import { enterSchemaNodeChain } from '../chain/enterSchemaNodeChain';
 import { exitSchemaNodeChain } from '../chain/exitSchemaNodeChain';
 import { flushBatchWrites } from '../chain/flushBatchWrites';
 import { resolveSchemaNodeChainRoot } from '../chain/resolveSchemaNodeChainRoot';
@@ -15,17 +15,18 @@ import { resolveSchemaNodeChainRoot } from '../chain/resolveSchemaNodeChainRoot'
  * @returns Nothing; a thrown callback is rethrown after marked work commits
  */
 export const dispatchBatch = <Self extends SchemaNodeRecord<Self>>(
-  node: Self, fn: () => void,
+  node: Self,
+  fn: () => void,
 ): void => {
   if (!enterSchemaNodeChain(node)) return;
   const runtime = node.rootNode.runtime;
   runtime.batchDepth = (runtime.batchDepth ?? 0) + 1;
-  try { fn(); }
-  catch (error) {
+  try {
+    fn();
+  } catch (error) {
     if ((runtime.batchDepth ?? 0) > 1) throw error;
     captureChainError(runtime, error);
-  }
-  finally {
+  } finally {
     const activeRoot = resolveSchemaNodeChainRoot(node.rootNode);
     const active = activeRoot.runtime;
     active.batchDepth = (active.batchDepth ?? 1) - 1;

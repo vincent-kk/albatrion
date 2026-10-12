@@ -11,10 +11,13 @@ describe('round18 root output regression', () => {
   });
 
   it('rootOutput.test.mjs:19 omits an empty nested object unless opted out', () => {
-    const { root } = makeSchemaNodeTree({ type: 'object', properties: {
-      hidden: { type: 'object' },
-      kept: { type: 'object', options: { omitEmpty: false } },
-    } });
+    const { root } = makeSchemaNodeTree({
+      type: 'object',
+      properties: {
+        hidden: { type: 'object' },
+        kept: { type: 'object', options: { omitEmpty: false } },
+      },
+    });
     root.setValue({ hidden: {}, kept: {} });
     expect(root.outputValue).toEqual({ kept: {} });
     expect(root.find('/hidden')?.raw).toBeUndefined();

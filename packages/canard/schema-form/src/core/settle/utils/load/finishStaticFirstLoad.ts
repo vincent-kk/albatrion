@@ -17,7 +17,8 @@ const EMPTY_PATHS: readonly string[] = Object.freeze([]);
  * @returns Nothing; dispatcher owns subsequent delivery and reporter calls
  */
 export const finishStaticFirstLoad = <Self extends SchemaNodeRecord<Self>>(
-  root: Self, option: SetValueOption,
+  root: Self,
+  option: SetValueOption,
   warnings?: { order: number; warning: TypeMismatchRecord }[],
 ): void => {
   const runtime = root.runtime;
@@ -36,20 +37,36 @@ export const finishStaticFirstLoad = <Self extends SchemaNodeRecord<Self>>(
       runtime.typeMismatchPaths.add(warning.path);
       if (!runtime.errorReporter?.hasConsumer()) continue;
       const code = `SCHEMA_FORM_WARNING.${TYPE_MISMATCH}` as const;
-      const record = { level: 'warning', code, path: warning.path,
+      const record = {
+        level: 'warning',
+        code,
+        path: warning.path,
         message: `Type mismatch at ${warning.path} (commit ${commit})`,
-        details: { path: warning.path, expected: warning.expected,
-          received: warning.received, reason: warning.reason,
+        details: {
+          path: warning.path,
+          expected: warning.expected,
+          received: warning.received,
+          reason: warning.reason,
           ...(warning.candidates ? { candidates: warning.candidates } : {}),
-          source: warning.source } } as const;
-      indexSchemaNodeWarning(runtime, JSON.stringify([code, warning.path, commit]), warning.path, record);
+          source: warning.source,
+        },
+      } as const;
+      indexSchemaNodeWarning(
+        runtime,
+        JSON.stringify([code, warning.path, commit]),
+        warning.path,
+        record,
+      );
       runtime.chainOccurrences?.push({ kind: 'record', record });
     }
   }
-  runtime.typeMismatchRecords = records ? Object.freeze(records) : EMPTY_WARNINGS;
-  const memo = runtime.typeMismatchesMemo ??= new PathKeyedMap('path');
+  runtime.typeMismatchRecords = records
+    ? Object.freeze(records)
+    : EMPTY_WARNINGS;
+  const memo = (runtime.typeMismatchesMemo ??= new PathKeyedMap('path'));
   memo.clear();
-  if (!runtime.typeMismatchPaths.size) memo.set('', { commit, paths: EMPTY_PATHS });
+  if (!runtime.typeMismatchPaths.size)
+    memo.set('', { commit, paths: EMPTY_PATHS });
   else {
     const paths = [...runtime.typeMismatchPaths].sort();
     memo.set('', { commit, paths: Object.freeze(paths) });
@@ -59,7 +76,10 @@ export const finishStaticFirstLoad = <Self extends SchemaNodeRecord<Self>>(
       let ancestor = path;
       while (ancestor) {
         let children = byAncestor.get(ancestor);
-        if (!children) { children = []; byAncestor.set(ancestor, children); }
+        if (!children) {
+          children = [];
+          byAncestor.set(ancestor, children);
+        }
         children.push(path);
         ancestor = ancestor.slice(0, ancestor.lastIndexOf('/'));
       }

@@ -1,8 +1,9 @@
+import { isArray } from '@winglet/common-utils/filter';
+
 import type { SchemaNodeRecord } from '../../../record';
 import type { SettlementContext } from '../../type';
 import { markWrite } from '../write/markWrite';
 import { HostLatent } from './HostLatent';
-import { isArray } from '@winglet/common-utils/filter';
 
 /**
  * Restore only one entering node's own latent state.
@@ -12,7 +13,9 @@ import { isArray } from '@winglet/common-utils/filter';
  * @returns Nothing; descendants restore their own entries separately
  */
 export const restoreLatentState = <Self extends SchemaNodeRecord<Self>>(
-  node: Self, value: unknown, context: SettlementContext<Self>,
+  node: Self,
+  value: unknown,
+  context: SettlementContext<Self>,
 ): void => {
   if (node.behavior.strategy === 'terminal') {
     markWrite(node, value, context);

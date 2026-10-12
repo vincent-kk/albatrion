@@ -75,7 +75,12 @@ export const useFormTypeInputControl = <Node extends SchemaNode>(
     });
     return unsubscribe;
   }, [node, ref]);
-  return [ref, generation.current, handleCompositionStart, handleCompositionEnd] as const;
+  return [
+    ref,
+    generation.current,
+    handleCompositionStart,
+    handleCompositionEnd,
+  ] as const;
 };
 
 const FOCUS_SELECT_SELECTOR = 'input, textarea, button' as const;

@@ -1,4 +1,10 @@
-import { type CSSProperties, type MouseEventHandler, type ReactElement, memo, useCallback } from 'react';
+import {
+  type CSSProperties,
+  type MouseEventHandler,
+  type ReactElement,
+  memo,
+  useCallback,
+} from 'react';
 
 import type {
   FormTypeInputDefinition,
@@ -6,11 +12,23 @@ import type {
 } from '@/schema-form/types';
 
 /** Forward list-affecting props while each child retains its own value subscription. */
-const FormTypeInputArray = ({ node, jsonSchema, readOnly, disabled,
-  ChildNodeComponents, style }: FormTypeInputProps<any[]>) => (
-  <ArrayItems node={node} jsonSchema={jsonSchema} readOnly={readOnly}
-    disabled={disabled} ChildNodeComponents={ChildNodeComponents} style={style}
-    childCount={node.children?.length ?? 0} />
+const FormTypeInputArray = ({
+  node,
+  jsonSchema,
+  readOnly,
+  disabled,
+  ChildNodeComponents,
+  style,
+}: FormTypeInputProps<any[]>) => (
+  <ArrayItems
+    node={node}
+    jsonSchema={jsonSchema}
+    readOnly={readOnly}
+    disabled={disabled}
+    ChildNodeComponents={ChildNodeComponents}
+    style={style}
+    childCount={node.children?.length ?? 0}
+  />
 );
 
 /** Rebuild rows only when their identity, structure or presentation changes. */
@@ -22,8 +40,15 @@ const ArrayItems = memo(function ArrayItems({
   ChildNodeComponents,
   style,
   childCount,
-}: Pick<FormTypeInputProps<any[]>, 'node' | 'jsonSchema' | 'readOnly' |
-  'disabled' | 'ChildNodeComponents' | 'style'> & { childCount: number }) {
+}: Pick<
+  FormTypeInputProps<any[]>,
+  | 'node'
+  | 'jsonSchema'
+  | 'readOnly'
+  | 'disabled'
+  | 'ChildNodeComponents'
+  | 'style'
+> & { childCount: number }) {
   const handleClick = useCallback(() => {
     node.push();
   }, [node]);
@@ -31,20 +56,31 @@ const ArrayItems = memo(function ArrayItems({
   const handleRemoveClick = useCallback(
     (event: React.MouseEvent<HTMLButtonElement>) => {
       const row = event.currentTarget.parentElement!;
-      node.remove(Array.prototype.indexOf.call(row.parentElement!.children, row));
+      node.remove(
+        Array.prototype.indexOf.call(row.parentElement!.children, row),
+      );
     },
     [node],
   );
   const rows: ReactElement[] = [];
-  for (let index = 0; ChildNodeComponents && index < ChildNodeComponents.length; index++) {
+  for (
+    let index = 0;
+    ChildNodeComponents && index < ChildNodeComponents.length;
+    index++
+  ) {
     const ChildNodeComponent = ChildNodeComponents[index];
     const key = ChildNodeComponent.key;
     rows.push(
       <div key={key} style={{ display: 'flex' }}>
         <ChildNodeComponent key={key} />
         {!readOnly && (
-          <Button title="remove item" label="x" disabled={disabled}
-            index={index} onClick={handleRemoveClick} />
+          <Button
+            title="remove item"
+            label="x"
+            disabled={disabled}
+            index={index}
+            onClick={handleRemoveClick}
+          />
         )}
       </div>,
     );
@@ -52,27 +88,26 @@ const ArrayItems = memo(function ArrayItems({
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 5, ...style }}>
       {rows}
-      {!readOnly &&
-        (jsonSchema.maxItems ?? Infinity) > childCount && (
-          <label
-            style={{
-              display: 'flex',
-              justifyContent: 'flex-end',
-              alignItems: 'center',
-              cursor: 'pointer',
-              marginBottom: 5,
-            }}
-          >
-            <div style={{ marginRight: 10 }}>Add New Item</div>
-            <Button
-              title="add item"
-              label="+"
-              disabled={disabled}
-              onClick={handleClick}
-              fontSize="1rem"
-            />
-          </label>
-        )}
+      {!readOnly && (jsonSchema.maxItems ?? Infinity) > childCount && (
+        <label
+          style={{
+            display: 'flex',
+            justifyContent: 'flex-end',
+            alignItems: 'center',
+            cursor: 'pointer',
+            marginBottom: 5,
+          }}
+        >
+          <div style={{ marginRight: 10 }}>Add New Item</div>
+          <Button
+            title="add item"
+            label="+"
+            disabled={disabled}
+            onClick={handleClick}
+            fontSize="1rem"
+          />
+        </label>
+      )}
     </div>
   );
 });

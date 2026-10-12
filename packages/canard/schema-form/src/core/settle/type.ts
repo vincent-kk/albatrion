@@ -1,6 +1,6 @@
-import type { Distribution, SchemaNodeRecord } from '../record';
-import type { BlueprintNode, EffectiveSchema } from '../blueprint';
 import type { SchemaFormError } from '../../errors';
+import type { BlueprintNode, EffectiveSchema } from '../blueprint';
+import type { Distribution, SchemaNodeRecord } from '../record';
 import type { DeriveState, DeriveTraceEntry } from './derive';
 
 /** Origin of a write before calculation and transition phases. */
@@ -12,8 +12,10 @@ export type SchemaNodeWriteKind =
   | 'automatic';
 
 /** Virtual child names indexed by their real sibling's host template and field. */
-export type VirtualReferenceIndex = ReadonlyMap<BlueprintNode,
-  ReadonlyMap<string, readonly string[]>>;
+export type VirtualReferenceIndex = ReadonlyMap<
+  BlueprintNode,
+  ReadonlyMap<string, readonly string[]>
+>;
 
 /** One synchronous write's work list and deferred failures. */
 export interface SettlementContext<Self extends SchemaNodeRecord<Self>> {
@@ -30,8 +32,11 @@ export interface SettlementContext<Self extends SchemaNodeRecord<Self>> {
   /** Binding delivery origin, independent of replacement or merge semantics. */
   source?: SchemaNodeWriteKind;
   /** Call-ordered origins, resolved by the final write covering each path. */
-  writeOrigins?: readonly { path: string; source: SchemaNodeWriteKind;
-    keys?: readonly string[] }[];
+  writeOrigins?: readonly {
+    path: string;
+    source: SchemaNodeWriteKind;
+    keys?: readonly string[];
+  }[];
   /** Public bit mask retained for the development trace entry. */
   option: number;
   /** Binding entry name when the settlement has no public write kind. */
@@ -77,11 +82,20 @@ export interface SettlementContext<Self extends SchemaNodeRecord<Self>> {
   /** Wrong-kind branch hosts eligible for conditional caller clearing. */
   wrongKindHosts: Set<Self>;
   /** Previous state for each automatic write, restored in reverse order. */
-  automaticLog: { node: Self; previousRaw: unknown; previousExtras: unknown;
-    previousDistributed?: Distribution }[];
+  automaticLog: {
+    node: Self;
+    previousRaw: unknown;
+    previousExtras: unknown;
+    previousDistributed?: Distribution;
+  }[];
   /** Reversible array shape changes made by automatic writes. */
-  arrayStructureLog: { host: Self; previousItems: Self[];
-    previousItemCount: number; previousExtras: unknown; restored?: boolean }[];
+  arrayStructureLog: {
+    host: Self;
+    previousItems: Self[];
+    previousItemCount: number;
+    previousExtras: unknown;
+    restored?: boolean;
+  }[];
   /** Initial array lengths for non-load snapshot alignment. */
   arrayCounts: Map<Self, number>;
   /** Reindexed node and descendant paths, without event delivery. */
@@ -131,7 +145,12 @@ export interface SettlementContext<Self extends SchemaNodeRecord<Self>> {
   /** Recorded occurrence identities; only recomputation of one identity is merged. */
   failureKeys?: Set<string>;
   /** First failure's cause, independent of later budget exhaustion. */
-  cause?: 'expression' | 'injectTarget' | 'writeShape' | 'sharedConflict' | 'budget';
+  cause?:
+    | 'expression'
+    | 'injectTarget'
+    | 'writeShape'
+    | 'sharedConflict'
+    | 'budget';
   /** Exhausted host rounds handed to the later budget phase. */
   hostWheelExceeded?: number;
   /** The exhausted transition or recursion budget, when applicable. */

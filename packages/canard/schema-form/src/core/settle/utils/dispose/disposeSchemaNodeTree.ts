@@ -15,13 +15,16 @@ export const disposeSchemaNodeTree = <Self extends SchemaNodeRecord<Self>>(
     if (node.disposed) return;
     node.disposed = true;
     node.interactionReset += 1;
-    node.revisionLedger = new SchemaNodeRevisionLedger(node.revisionLedger,
-      SchemaNodeEventType.RequestRefresh);
+    node.revisionLedger = new SchemaNodeRevisionLedger(
+      node.revisionLedger,
+      SchemaNodeEventType.RequestRefresh,
+    );
     node.pendingDelivery = undefined;
     node.pendingRevision = 0;
     node.pendingNonSettleDelivery = undefined;
   });
-  for (const subscriptions of runtime.listeners?.values() ?? []) subscriptions.clear();
+  for (const subscriptions of runtime.listeners?.values() ?? [])
+    subscriptions.clear();
   runtime.listeners?.clear();
   runtime.validationStamp = (runtime.validationStamp ?? 0) + 1;
   runtime.validationPendingTargets = undefined;

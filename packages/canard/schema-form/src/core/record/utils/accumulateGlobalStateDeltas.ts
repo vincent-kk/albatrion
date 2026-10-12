@@ -1,9 +1,12 @@
 import { hasOwnProperty } from '@winglet/common-utils/lib';
+
 import type { NodeStateFlags } from '../../types/state';
 
 /** Add only truth-value transitions from one occurrence to the current key deltas. */
 export const accumulateGlobalStateDeltas = (
-  deltas: Map<string, number>, previous: NodeStateFlags, next: NodeStateFlags,
+  deltas: Map<string, number>,
+  previous: NodeStateFlags,
+  next: NodeStateFlags,
   changedKeys?: NodeStateFlags,
 ): void => {
   if (changedKeys) {

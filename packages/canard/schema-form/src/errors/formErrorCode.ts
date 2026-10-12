@@ -20,7 +20,8 @@ export const EMPTY_ENUM_INTERSECTION = 'EMPTY_ENUM_INTERSECTION';
 export const VIRTUAL_FIELDS_NOT_VALID = 'VIRTUAL_FIELDS_NOT_VALID';
 
 /** Level: error; class: JSONSchemaError; when: virtual fields are absent from declared properties. */
-export const VIRTUAL_FIELDS_NOT_IN_PROPERTIES = 'VIRTUAL_FIELDS_NOT_IN_PROPERTIES';
+export const VIRTUAL_FIELDS_NOT_IN_PROPERTIES =
+  'VIRTUAL_FIELDS_NOT_IN_PROPERTIES';
 
 /** Level: error; class: JSONSchemaError; when: a controls expression cannot be compiled. */
 export const CREATE_DYNAMIC_FUNCTION = 'CREATE_DYNAMIC_FUNCTION';
@@ -98,13 +99,15 @@ export const VALIDATOR_THREW = 'VALIDATOR_THREW';
 export const RENDER_FAILED = 'RENDER_FAILED';
 
 /** Level: warning; class: warning record; when: schema analysis ignores an allOf keyword for rendering. */
-export const ALL_OF_KEYWORD_IGNORED_FOR_FORM = 'ALL_OF_KEYWORD_IGNORED_FOR_FORM';
+export const ALL_OF_KEYWORD_IGNORED_FOR_FORM =
+  'ALL_OF_KEYWORD_IGNORED_FOR_FORM';
 
 /** Level: warning; class: warning record; when: schema analysis ignores a null branch for rendering. */
 export const NULL_BRANCH_IGNORED_FOR_FORM = 'NULL_BRANCH_IGNORED_FOR_FORM';
 
 /** Level: warning; class: warning record; when: render virtualization lacks IntersectionObserver. */
-export const VIRTUALIZATION_DISABLED_FOR_FORM = 'VIRTUALIZATION_DISABLED_FOR_FORM';
+export const VIRTUALIZATION_DISABLED_FOR_FORM =
+  'VIRTUALIZATION_DISABLED_FOR_FORM';
 
 /** Level: warning; class: warning record; when: a conditional branch has if without else false. */
 export const IF_WITHOUT_ELSE_FALSE = 'IF_WITHOUT_ELSE_FALSE';
@@ -113,7 +116,8 @@ export const IF_WITHOUT_ELSE_FALSE = 'IF_WITHOUT_ELSE_FALSE';
 export const LOCK_ON_NON_TERMINAL_OBJECT = 'LOCK_ON_NON_TERMINAL_OBJECT';
 
 /** Level: warning; class: warning record; when: an if gate exists without a validator. */
-export const CONDITIONAL_SCHEMA_WITHOUT_VALIDATOR = 'CONDITIONAL_SCHEMA_WITHOUT_VALIDATOR';
+export const CONDITIONAL_SCHEMA_WITHOUT_VALIDATOR =
+  'CONDITIONAL_SCHEMA_WITHOUT_VALIDATOR';
 
 /** Level: warning; class: warning record; when: a tree requests validation but no validator is selected. */
 export const VALIDATOR_MISSING = 'VALIDATOR_MISSING';
@@ -140,7 +144,8 @@ export const RECURSIVE_SHAPE_UNBOUNDED = 'RECURSIVE_SHAPE_UNBOUNDED';
 export const RECURSIVE_SHAPE_DIVERGED = 'RECURSIVE_SHAPE_DIVERGED';
 
 /** Level: warning; class: warning record; when: dependentSchemas is unsupported for form shape. */
-export const DEPENDENT_SCHEMAS_IGNORED_FOR_FORM = 'DEPENDENT_SCHEMAS_IGNORED_FOR_FORM';
+export const DEPENDENT_SCHEMAS_IGNORED_FOR_FORM =
+  'DEPENDENT_SCHEMAS_IGNORED_FOR_FORM';
 
 /** Level: error; class: JSONSchemaError; when: declarations disagree on virtual fields. */
 export const VIRTUAL_FIELDS_MISMATCH = 'VIRTUAL_FIELDS_MISMATCH';
@@ -152,13 +157,16 @@ export const CHILDREN_TARGET_NOT_FOUND = 'CHILDREN_TARGET_NOT_FOUND';
 export const TERMINAL_OPTION_UNSUPPORTED = 'TERMINAL_OPTION_UNSUPPORTED';
 
 /** Level: warning; class: warning record; when: a terminal input reads empty child-node components. */
-export const CHILD_NODE_COMPONENTS_ON_TERMINAL = 'CHILD_NODE_COMPONENTS_ON_TERMINAL';
+export const CHILD_NODE_COMPONENTS_ON_TERMINAL =
+  'CHILD_NODE_COMPONENTS_ON_TERMINAL';
 
 /** Level: warning; class: warning record; when: a terminal subtree declares a reserved key ignored by the form. */
-export const TERMINAL_SUBTREE_KEY_IGNORED_FOR_FORM = 'TERMINAL_SUBTREE_KEY_IGNORED_FOR_FORM';
+export const TERMINAL_SUBTREE_KEY_IGNORED_FOR_FORM =
+  'TERMINAL_SUBTREE_KEY_IGNORED_FOR_FORM';
 
 /** Level: warning; class: warning record; when: a branch discriminator literal is outside the allowed list. */
-export const DISCRIMINATOR_BRANCH_UNREACHABLE = 'DISCRIMINATOR_BRANCH_UNREACHABLE';
+export const DISCRIMINATOR_BRANCH_UNREACHABLE =
+  'DISCRIMINATOR_BRANCH_UNREACHABLE';
 
 /** Level: warning; class: warning record; when: a development-mode whole value is not JSON-compatible. */
 export const NON_JSON_WHOLE_VALUE = 'NON_JSON_WHOLE_VALUE';

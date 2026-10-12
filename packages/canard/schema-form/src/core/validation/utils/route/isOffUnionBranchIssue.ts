@@ -9,16 +9,23 @@ import type { ValidationIssue } from '../../type';
  * @returns True only when attribution is unique and a sibling is active.
  */
 export const isOffUnionBranchIssue = (
-  issue: ValidationIssue, blueprint: Blueprint,
+  issue: ValidationIssue,
+  blueprint: Blueprint,
   activeIds?: ReadonlySet<number>,
 ): boolean => {
   if (!issue.schemaPath || !activeIds) return false;
-  const matches = blueprint.fragments.filter((fragment) =>
-    issue.schemaPath === fragment.schemaPath ||
-    issue.schemaPath?.startsWith(`${fragment.schemaPath}/`));
+  const matches = blueprint.fragments.filter(
+    (fragment) =>
+      issue.schemaPath === fragment.schemaPath ||
+      issue.schemaPath?.startsWith(`${fragment.schemaPath}/`),
+  );
   if (!matches.length) return false;
-  const longest = Math.max(...matches.map((fragment) => fragment.schemaPath.length));
-  const owners = matches.filter((fragment) => fragment.schemaPath.length === longest);
+  const longest = Math.max(
+    ...matches.map((fragment) => fragment.schemaPath.length),
+  );
+  const owners = matches.filter(
+    (fragment) => fragment.schemaPath.length === longest,
+  );
   const branches: SchemaFragment[] = [];
   for (const fragment of blueprint.fragments) {
     if (!/^.*\/(?:oneOf|anyOf)\/\d+$/.test(fragment.schemaPath)) continue;
@@ -33,16 +40,25 @@ export const isOffUnionBranchIssue = (
     if (owners.some((owner) => visited.has(owner.id))) branches.push(fragment);
   }
   if (!branches.length) return false;
-  const nearest = Math.max(...branches.map((fragment) => fragment.schemaPath.length));
-  const candidates = branches.filter((fragment) => fragment.schemaPath.length === nearest);
+  const nearest = Math.max(
+    ...branches.map((fragment) => fragment.schemaPath.length),
+  );
+  const candidates = branches.filter(
+    (fragment) => fragment.schemaPath.length === nearest,
+  );
   if (candidates.length !== 1) return false;
   const owner = candidates[0];
   if (!owner.gates.length) return false;
-  const unionPath = owner.schemaPath.slice(0, owner.schemaPath.lastIndexOf('/'));
-  const siblings = blueprint.fragments.filter((fragment) =>
-    fragment.id !== owner.id &&
-    /^\d+$/.test(fragment.schemaPath.slice(unionPath.length + 1)) &&
-    fragment.schemaPath.startsWith(`${unionPath}/`));
+  const unionPath = owner.schemaPath.slice(
+    0,
+    owner.schemaPath.lastIndexOf('/'),
+  );
+  const siblings = blueprint.fragments.filter(
+    (fragment) =>
+      fragment.id !== owner.id &&
+      /^\d+$/.test(fragment.schemaPath.slice(unionPath.length + 1)) &&
+      fragment.schemaPath.startsWith(`${unionPath}/`),
+  );
   const isActive = (fragment: SchemaFragment): boolean =>
     fragment.declares.some((id) => activeIds.has(id)) ||
     fragment.overlays.some((id) => activeIds.has(id));

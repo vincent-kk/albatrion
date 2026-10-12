@@ -3,8 +3,8 @@ import { hasOwnProperty } from '@winglet/common-utils/lib';
 
 import { getItemEntry } from '../../../blueprint';
 import type { BlueprintNode } from '../../../blueprint';
-import { isPlain } from '../write/isPlain';
 import { getDeclaredChildNames } from '../declarations/getDeclaredChildNames';
+import { isPlain } from '../write/isPlain';
 
 /**
  * Test pre-fill raw absence only when a container's own default is a candidate.
@@ -12,14 +12,18 @@ import { getDeclaredChildNames } from '../declarations/getDeclaredChildNames';
  * @param value - Literal source before any descendant default is applied
  * @returns The same raw/extras absence used by generic isMissingRaw
  */
-export const isMissingStaticInput = (template: BlueprintNode, value: unknown): boolean => {
+export const isMissingStaticInput = (
+  template: BlueprintNode,
+  value: unknown,
+): boolean => {
   if (value === undefined) return true;
   if (template.strategy !== 'branch') return false;
   if (template.kind === 'array') {
     if (!isArray(value)) return false;
     for (let index = 0; index < value.length; index++) {
       const entry = getItemEntry(template, index);
-      if (!entry || !isMissingStaticInput(entry.node, value[index])) return false;
+      if (!entry || !isMissingStaticInput(entry.node, value[index]))
+        return false;
     }
     return true;
   }
@@ -31,8 +35,11 @@ export const isMissingStaticInput = (template: BlueprintNode, value: unknown): b
   const entries = template.childEntries;
   for (let index = 0; index < entries.length; index++) {
     const entry = entries[index];
-    if (hasOwnProperty(value, entry.name) &&
-      !isMissingStaticInput(entry.node, Reflect.get(value, entry.name))) return false;
+    if (
+      hasOwnProperty(value, entry.name) &&
+      !isMissingStaticInput(entry.node, Reflect.get(value, entry.name))
+    )
+      return false;
   }
   return true;
 };

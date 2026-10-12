@@ -8,6 +8,7 @@ import { requireRuntimeSchemaNode } from './requireRuntimeSchemaNode';
  * @param context - Already merged Form and provider context
  * @returns Nothing; the runtime slot and tree settle together
  */
-export const setContext = (root: SchemaNode,
-  context: Readonly<Record<string, unknown>>): void =>
-  dispatchContextChange(requireRuntimeSchemaNode(root, true), context);
+export const setContext = (
+  root: SchemaNode,
+  context: Readonly<Record<string, unknown>>,
+): void => dispatchContextChange(requireRuntimeSchemaNode(root, true), context);

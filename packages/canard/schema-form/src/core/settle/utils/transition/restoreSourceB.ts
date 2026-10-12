@@ -1,10 +1,10 @@
 import type { SchemaNodeRecord } from '../../../record';
 import type { SettlementContext } from '../../type';
 import { computeNode } from '../compute/computeNode';
-import { registerRecalculation } from '../write/registerRecalculation';
-import { withdrawDetachedFills } from './withdrawDetachedFills';
 import { setLatentRaw } from '../latent/setLatentRaw';
+import { registerRecalculation } from '../write/registerRecalculation';
 import { restoreArrayStructure } from './restoreArrayStructure';
+import { withdrawDetachedFills } from './withdrawDetachedFills';
 
 /**
  * Restore write-boundary raw and extras before one final shape calculation.
@@ -29,8 +29,16 @@ export const restoreSourceB = <Self extends SchemaNodeRecord<Self>>(
   }
   restoreArrayStructure(context);
   for (const [key, previous] of context.latentAutomaticLog)
-    setLatentRaw(context.root.runtime, undefined, key, previous.present,
-      previous.value, undefined, undefined, context);
+    setLatentRaw(
+      context.root.runtime,
+      undefined,
+      key,
+      previous.present,
+      previous.value,
+      undefined,
+      undefined,
+      context,
+    );
   withdrawDetachedFills(context);
   for (const node of context.filledNodes) context.writtenInputs.delete(node);
   context.selectedDeclarationIds.clear();

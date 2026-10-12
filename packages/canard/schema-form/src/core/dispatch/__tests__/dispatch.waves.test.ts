@@ -10,41 +10,62 @@ import { getDispatchChild } from './fixtures/getDispatchChild';
 // filid:contract dispatch-waves
 describe('dispatcher delivery waves', () => {
   it('SETTLE-007 and EVENT-004 visit root and children in document order', () => {
-    const { root } = createDispatchTree({ type: 'object', properties: {
-      first: { type: 'string' }, second: { type: 'string' },
-    } });
+    const { root } = createDispatchTree({
+      type: 'object',
+      properties: {
+        first: { type: 'string' },
+        second: { type: 'string' },
+      },
+    });
     dispatchSetValue(root, { first: 'a', second: 'b' });
     const seen: string[] = [];
-    for (const node of [root, getDispatchChild(root, 'first'), getDispatchChild(root, 'second')])
+    for (const node of [
+      root,
+      getDispatchChild(root, 'first'),
+      getDispatchChild(root, 'second'),
+    ])
       subscribeSchemaNode(node, () => seen.push(node.path));
     dispatchSetValue(root, { first: 'c', second: 'd' });
     expect(seen).toEqual(['', '/first', '/second']);
   });
 
   it('EVENT-004 44C-01 orders listeners without comparing unobserved siblings', () => {
-    const { root } = createDispatchTree({ type: 'object', properties: {
-      a: { type: 'string' }, b: { type: 'string' }, c: { type: 'string' },
-      d: { type: 'string' }, e: { type: 'string' },
-    } });
+    const { root } = createDispatchTree({
+      type: 'object',
+      properties: {
+        a: { type: 'string' },
+        b: { type: 'string' },
+        c: { type: 'string' },
+        d: { type: 'string' },
+        e: { type: 'string' },
+      },
+    });
     dispatchSetValue(root, { a: 'a', b: 'b', c: 'c', d: 'd', e: 'e' });
-    const [a, b, c, d, e] = ['a', 'b', 'c', 'd', 'e'].map(
-      (name) => getDispatchChild(root, name));
+    const [a, b, c, d, e] = ['a', 'b', 'c', 'd', 'e'].map((name) =>
+      getDispatchChild(root, name),
+    );
     const seen: string[] = [];
     for (const node of [root, b, c, d, e])
       subscribeSchemaNode(node, () => seen.push(node.path));
 
     let unobservedParentReads = 0;
     const parent = a.parent;
-    Object.defineProperty(a, 'parent', { configurable: true, get() {
-      unobservedParentReads += 1;
-      return parent;
-    } });
+    Object.defineProperty(a, 'parent', {
+      configurable: true,
+      get() {
+        unobservedParentReads += 1;
+        return parent;
+      },
+    });
     let siblingReads = 0;
     const siblings = root.children;
-    Object.defineProperty(root, 'children', { configurable: true, get() {
-      siblingReads += 1;
-      return siblings;
-    } });
+    Object.defineProperty(root, 'children', {
+      configurable: true,
+      get() {
+        siblingReads += 1;
+        return siblings;
+      },
+    });
 
     const pending: [typeof root, SchemaNodeDelivery][] = [];
     for (const node of [e, d, c, b, a, root])
@@ -86,7 +107,9 @@ describe('dispatcher delivery waves', () => {
     const { root } = createDispatchTree({ type: 'string' });
     const failure = new Error('listener failure');
     const seen: string[] = [];
-    subscribeSchemaNode(root, () => { throw failure; });
+    subscribeSchemaNode(root, () => {
+      throw failure;
+    });
     subscribeSchemaNode(root, () => seen.push('delivered'));
     expect(() => dispatchSetValue(root, 'a')).toThrow(failure);
     expect(seen).toEqual(['delivered']);
@@ -96,21 +119,33 @@ describe('dispatcher delivery waves', () => {
     const { root } = createDispatchTree({ type: 'string' });
     const first = new Error('first');
     const second = new Error('second');
-    subscribeSchemaNode(root, () => { throw first; });
-    subscribeSchemaNode(root, () => { throw second; });
-    expect(() => dispatchSetValue(root, 'a')).toThrowError(expect.objectContaining({
-      code: 'SCHEMA_FORM_ERROR.MULTIPLE_ERRORS', details: { errors: [first, second] },
-    }));
+    subscribeSchemaNode(root, () => {
+      throw first;
+    });
+    subscribeSchemaNode(root, () => {
+      throw second;
+    });
+    expect(() => dispatchSetValue(root, 'a')).toThrowError(
+      expect.objectContaining({
+        code: 'SCHEMA_FORM_ERROR.MULTIPLE_ERRORS',
+        details: { errors: [first, second] },
+      }),
+    );
   });
 
   it('EVENT-009 skips a detached node queued for delivery', () => {
-    const { root, runtime } = createDispatchTree({ type: 'object', properties: {
-      child: { type: 'string' },
-    } });
+    const { root, runtime } = createDispatchTree({
+      type: 'object',
+      properties: {
+        child: { type: 'string' },
+      },
+    });
     dispatchSetValue(root, { child: 'a' });
     const child = getDispatchChild(root, 'child');
     let calls = 0;
-    subscribeSchemaNode(child, () => { calls += 1; });
+    subscribeSchemaNode(child, () => {
+      calls += 1;
+    });
     child.detached = true;
     runtime.deliveries?.add(child);
     child.pendingDelivery = { type: SchemaNodeEventType.UpdateValue };

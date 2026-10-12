@@ -8,8 +8,5 @@ import { requireRuntimeSchemaNode } from '../requireRuntimeSchemaNode';
  * @param node - Public occurrence whose behavior finishes input
  * @returns Nothing; the dispatcher completes the operation synchronously
  */
-export const finishSchemaNodeInput = (
-  node: SchemaNode,
-): void =>
+export const finishSchemaNodeInput = (node: SchemaNode): void =>
   dispatchFinishInput(requireRuntimeSchemaNode(node));
-

@@ -9,11 +9,15 @@ export class NumericPathIndex {
   private readonly lengths = new Map<number, NumericNode>();
 
   /** Whether no slots remain registered. */
-  get empty(): boolean { return this.lengths.size === 0; }
+  get empty(): boolean {
+    return this.lengths.size === 0;
+  }
 
   /** Register one slot prefix. */
   add(segment: string, path: string): void {
-    const root = this.lengths.get(segment.length) ?? { children: new Map<string, NumericNode>() };
+    const root = this.lengths.get(segment.length) ?? {
+      children: new Map<string, NumericNode>(),
+    };
     this.lengths.set(segment.length, root);
     let node: NumericNode = root;
     for (const digit of segment) {
@@ -57,7 +61,8 @@ export class NumericPathIndex {
         if (node.path !== undefined) yield node.path;
         for (const [digit, child] of node.children) {
           const next = prefix + digit;
-          if (length === lower.length && next < lower.slice(0, next.length)) continue;
+          if (length === lower.length && next < lower.slice(0, next.length))
+            continue;
           pending.push({ node: child, prefix: next });
         }
       }
