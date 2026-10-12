@@ -337,7 +337,7 @@ export interface SchemaNodeRuntime<Self> extends SchemaNodeRootRuntimeState {
   nodeErrors?: Map<unknown, readonly { dataPath: string }[]>;
   /** Non-root nodes whose external issues changed since the last root rebuild; rebuilt once at exit or before the next delivery wave. */
   pendingExternalErrorNodes?: Set<unknown>;
-  /** Issue references each non-root node last contributed to the root list; not carried across adoption. */
+  /** Issue references each non-root node last contributed to the root list; adoption fills it from the handed-over lists. */
   externalContributions?: Map<unknown, readonly { dataPath: string }[]>;
   /** Form context shared by every occurrence and expression in this tree. */
   context?: Readonly<Record<string, unknown>>;

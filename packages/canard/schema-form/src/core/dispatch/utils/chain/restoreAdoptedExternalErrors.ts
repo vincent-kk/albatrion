@@ -20,6 +20,7 @@ export const restoreAdoptedExternalErrors = <
     if (!node) continue;
     (runtime.nodeErrors ??= new Map()).set(node, errors);
     if (node === root) updateSchemaNodeGlobalErrors(root);
+    else (runtime.externalContributions ??= new Map()).set(node, errors);
     runtime.adoptedExternalErrors?.delete(path);
     queueNonSettleEvent(node, SchemaNodeEventType.UpdateError, errors);
   }
