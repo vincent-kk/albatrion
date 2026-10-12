@@ -1,5 +1,5 @@
 import {
-  type MutableRefObject,
+  type RefObject,
   useCallback,
   useLayoutEffect,
   useReducer,
@@ -50,7 +50,7 @@ const MOUNTED_CHILDREN = 2;
  */
 export const useFormTypeInputControl = <Node extends SchemaNode>(
   node: Node,
-  mountedChildren: MutableRefObject<number>,
+  mountedChildren: RefObject<number>,
   commitTerminalChildren: () => void,
 ) => {
   const generation = useRef(node.revision(SchemaNodeEventType.RequestRefresh));

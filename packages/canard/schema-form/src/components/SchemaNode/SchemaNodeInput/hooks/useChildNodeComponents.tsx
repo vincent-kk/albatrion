@@ -1,7 +1,7 @@
 import {
   type ComponentType,
   type MemoExoticComponent,
-  type MutableRefObject,
+  type RefObject,
   memo,
   useLayoutEffect,
   useMemo,
@@ -42,7 +42,7 @@ import type {
 export const useChildNodeComponents = (
   node: SchemaNode,
   NodeProxy: ComponentType<SchemaNodeProxyProps>,
-  mountedChildren: MutableRefObject<number>,
+  mountedChildren: RefObject<number>,
   terminalChildren: ChildNodeComponent[],
 ): ChildNodeComponent[] => {
   const children = node.children;

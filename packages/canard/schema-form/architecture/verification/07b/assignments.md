@@ -19,7 +19,15 @@
 | 별도 | 감사 차이 2 | `formatError`의 `node.value`를 `unknown`으로 유지합니다. 새 엔진은 해석할 수 없는 입력을 보존하므로 0.16.0의 허용 값 union을 런타임이 보장하지 않습니다(164C-01) | 코드 고침 없음 | 새 판 유지로 닫음 |
 | 별도 | 감사 차이 1 | `onValidate` 오류 배열을 readonly 형으로 유지합니다(166라운드 소유자 답) | 고침 없음 | 새 판 유지로 닫음 |
 | 별도 | 감사 차이 4 | `SchemaNode.globalState`를 `Readonly<Record<string, boolean \| undefined>>`로 되돌립니다. 두 판 모두 발행 값은 true 또는 없음이라 형만 바꿉니다(166라운드 소유자 답, 167C-01) | d.ts 차분 한 곳, 감사 runner H18, 세 값 전이 시험, 판정 세션 없음 | 완료(이 표를 담은 커밋) |
+| 별도 | 개선-37 | 지원 종료(`@deprecated`) React 형을 같은 뜻의 형으로 바꿉니다. `MutableRefObject` 4곳은 `RefObject`로, `FormEvent` 1곳은 정의가 같은 `SyntheticEvent`로 바꿨고, `src`(레거시 제외)에 남은 deprecated 참조는 0건입니다(소유자 직접 지시) | 공개 d.ts 차분 0(바뀐 d.ts 4개는 모두 진입점에서 내보내지 않음), JS 출력 동일(한 파일은 줄바꿈 공백만 다름), 전체 시험, 판정 세션 없음 | 완료(이 표를 담은 커밋). @types/react 18로 돌린 참고 검사는 이 교체로 오류가 3건에서 11건이 됩니다. 18의 `RefObject`는 읽기 전용이기 때문이며, 패키지 빌드는 @types/react 19만 씁니다 |
 | 문서 | 개선-36 | 두 판이 똑같이 느슨한 곳을 문서로 안내합니다. ref와 구체 `defaultValue`를 함께 쓰면 `Value` 주입이 필요하다는 점, 무인자 `FormHandle`이 `any`라는 점, 스키마와 맞지 않는 `defaultValue`도 받아들인다는 점입니다. `formatError`에서는 `node.value`가 `unknown`이므로 좁혀서 써야 한다는 점도 안내합니다(164C-01). global state 키는 그 flag를 가진 마지막 노드가 끄거나 형상에서 빠지면 바로 사라진다는 점도 안내합니다. 0.16.0은 루트를 통째로 비울 때까지 키가 남았습니다(167C-01). 또 `as const` 대신 `satisfies JSONSchema`로도 kind literal이 보존됩니다(감사 관찰, CLAUDE.md 문구가 필요조건을 좁게 적음). | 문서 항목이며 고침이 아닙니다. CLAUDE.md 편집은 소유자 직접 승인 뒤에 합니다(163C-01) | 대기 |
+
+## 07b 정리 목록(비차단 발견)
+
+| 발견 | 내용 | 출처 |
+| --- | --- | --- |
+| 내부 형 검사가 @types/react 19 전용 | 패키지 형 검사는 @types/react 19로만 돕니다. 저장소의 @types/react 18.3.23을 연결한 참고 검사에서는 교체 전에도 3건이 실패했습니다(`FormRootProxy`의 `SubmitEvent` 1건, `SchemaNodeInputWrapper`의 `RefObject` 2건). 개선-37 뒤에는 11건입니다. 공개 d.ts는 바뀌지 않아 React 18 소비자가 컴파일하는 표면은 같습니다 | 개선-37, 179라운드 덧붙임 |
+| 패키지 `storybook` 스크립트 | 패키지 디렉토리의 `yarn storybook`이 "Command not found: storybook"(exit 127)으로 실패합니다. storybook은 루트에만 선언되어 있고(2025-08-15 `f8179f1f4`), Yarn 4는 워크스페이스 스크립트에 그 워크스페이스가 선언한 bin만 넣기 때문입니다. 같은 스크립트를 가진 9개 패키지가 모두 해당합니다. 권한 안은 스크립트를 `yarn run -T storybook …`으로 바꾸는 것이며 저장소 공통 사안이라 소유자 결정을 기다립니다 | 174C-01 (3) |
 
 ## 다른 단계로 넘긴 항목
 

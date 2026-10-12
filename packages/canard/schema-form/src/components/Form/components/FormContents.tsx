@@ -1,6 +1,6 @@
 import {
-  type FormEvent,
   type ForwardedRef,
+  type SyntheticEvent,
   useCallback,
   useImperativeHandle,
   useMemo,
@@ -51,7 +51,7 @@ export const FormContents = (
   );
   const handleSubmit = useMemo(() => getTrackableHandler(submit), [submit]);
   const handleNativeSubmit = useCallback(
-    async (event: FormEvent) => {
+    async (event: SyntheticEvent) => {
       event.preventDefault();
       try {
         await handleSubmit(true);
