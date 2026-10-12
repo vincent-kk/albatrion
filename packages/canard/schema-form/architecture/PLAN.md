@@ -82,4 +82,4 @@
 
 | 날짜 | 무엇 | 어디 |
 | --- | --- | --- |
-| 2026-10-13 | 188라운드(닫기): 외부 오류 변경이 UpdateGlobalError를 올려 onValidate가 집계를 받게 한다(0.16.0 복원, reviewer 구현). 보충 2줄 | `reviews/round-188-closing.md` |
+| 2026-10-13 | 191라운드(닫기): 07c G3 완료(26 스토리); batch 가지치기 제품 결함 → reviewer 리뷰 2라운드로 #354 머지 전 고침; ajv8 플러그인 typecheck는 08 몫; 복합 설계 공통 결정 넷 확정, 사례 24건 소유자 검토. 보충 3줄 | `reviews/round-191-closing.md` |
