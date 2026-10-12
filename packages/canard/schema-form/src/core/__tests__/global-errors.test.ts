@@ -234,6 +234,33 @@ describe('form-level external and validation errors', () => {
     expect(root.errors).toEqual([]);
   });
 
+  it('195C-01 folds a pending child change into the root list before adoption hands it over', () => {
+    const root = createRoot();
+    const issue = { dataPath: '/field', message: 'server' };
+    const replacement = createRoot();
+    root.batch(() => {
+      root.find('/field')!.setExternalErrors([issue]);
+      adoptSchemaNodeTree(root, replacement);
+    });
+    expect(replacement.errors).toEqual([issue]);
+    expect(replacement.globalErrors).toEqual([issue]);
+  });
+
+  it('195C-01 removes the root entry when a child clear empties the list so a root clear is silent', () => {
+    const root = createRoot();
+    const field = root.find('/field')!;
+    const issue = { dataPath: '/field', message: 'server' };
+    field.setExternalErrors([issue]);
+    field.clearExternalErrors();
+    expect(root.errors).toEqual([]);
+    let aggregates = 0;
+    root.subscribe(({ type }) => {
+      if (type & SchemaNodeEventType.UpdateGlobalError) aggregates++;
+    });
+    root.clearExternalErrors();
+    expect(aggregates).toBe(0);
+  });
+
   it('SURFACE-053 VALIDATE-043 WRITE-045 79C-01 restores adopted root external errors by path', () => {
     const root = createRoot();
     const external = [{ dataPath: '/field', message: 'server' }];

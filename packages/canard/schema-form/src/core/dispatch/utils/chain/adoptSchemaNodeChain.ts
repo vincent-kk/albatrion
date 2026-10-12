@@ -5,6 +5,7 @@ import type { SchemaNodeRecord } from '../../../record';
 import { indexSchemaNodeWarning } from '../../../record';
 import { disposeSchemaNodeTree } from '../../../settle';
 import { assertValidationRootReady } from '../../../validation';
+import { rebuildRootExternalErrors } from '../entry/utils/propagateExternalErrorsToRoot';
 import { dedupeWarningRecord } from '../report/dedupeWarningRecord';
 import { readReferenceOnlySchemaPaths } from '../report/readReferenceOnlySchemaPaths';
 import { restoreAdoptedExternalErrors } from './restoreAdoptedExternalErrors';
@@ -20,6 +21,7 @@ export const adoptSchemaNodeChain = <Self extends SchemaNodeRecord<Self>>(
   nextRoot: Self,
 ): void => {
   assertValidationRootReady(nextRoot);
+  rebuildRootExternalErrors(previousRoot);
   const previous = previousRoot.runtime;
   const next = nextRoot.runtime;
   next.entryDepth = previous.entryDepth;

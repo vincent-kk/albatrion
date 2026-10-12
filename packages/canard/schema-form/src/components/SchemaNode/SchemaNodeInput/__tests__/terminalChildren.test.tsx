@@ -51,7 +51,23 @@ it('round 180 hands a production build a plain empty list even with an error han
   await act(async () => {
     await Promise.resolve();
   });
-  expect(Object.isFrozen(lists[0])).toBe(true);
+  environment.development = true;
+  const plain: unknown[] = [];
+  const PlainInput = ({ ChildNodeComponents }: FormTypeInputProps) => {
+    plain.push(ChildNodeComponents);
+    return <input data-count={ChildNodeComponents.length} />;
+  };
+  render(
+    <Form
+      validationMode={0}
+      jsonSchema={{
+        type: 'string',
+        presentation: { FormTypeInput: PlainInput },
+      }}
+      onError={onError}
+    />,
+  );
+  expect(lists[0]).toBe(plain[0]);
   expect(onError).not.toHaveBeenCalled();
 });
 
