@@ -243,3 +243,55 @@ G4·G13b·G17b·G19b·G20·G30·G33도 원장 CHECK 원문을 실행했습니다
 ```text
 ?? packages/canard/schema-form/architecture/verification/07-switch/g27-phase4.md
 ```
+
+## 범위 재확인(2026-10-12, HEAD `940b7e792`)
+
+### 방법과 범위
+
+- 검증 엔진은 Codex(GPT-6)입니다. 이전 검증에 참여하지 않은 새 세션에서 이 보고서를 먼저 읽고, `seiri:verify`를 적용하여 B2·B3·N1만 재확인했습니다. 새로운 전체 리뷰나 제품 시험은 수행하지 않았습니다.
+- 작업 자리는 `/Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07`, 브랜치는 `feat/schema-form-switch`입니다. 시작 및 추가 작성 직전 HEAD는 `940b7e792ae6d50c56c64cf28f6f085594cc71a6`이며 `git status --porcelain=v1` 출력은 비어 있었습니다.
+- `git diff ee3b730c0 940b7e792 -- packages/canard/schema-form/src` 출력은 비어 있습니다. 두 커밋의 src tree는 모두 `8b2586417a850450c32c23b0dd2b278725007811`이며, 후속 커밋의 변경 파일 다섯은 모두 architecture 문서입니다. 따라서 `ee3b730c0`의 소스에 대한 새 증거를 현재 HEAD에 재사용할 수 있습니다.
+- gitignored 원장은 워크트리의 `.seiri/tasks/schema-form-switch/gates.md`를 직접 읽었습니다. 이 절만 추가하며 소스·시험·다른 문서를 수정하지 않았고, commit·stash·checkout·switch 및 yarn·npm·gh를 실행하지 않았습니다.
+
+### B2 — 해소
+
+`g32-recheck.md:72`의 새 절은 대상 HEAD `ee3b730c0`, 범위 `a76ebf44a..ee3b730c0`, 제품 커밋 `34b370eed`, `62e140d8d`, `0eb8e3ada`, `e1d3a8914`, `e9c408980`을 명시하고 담당을 antigravity(티어 high)로 기록합니다(`:74`). 원장 `gates.md:194`의 담당은 `antigravity(멈추면 Claude verifier)`이며, `:195`의 범위·담당·G32 PASS·차단 0건은 이 새 절과 일치합니다. 커밋별 원장·소유자 라운드·구현 대조가 `g32-recheck.md:94`부터 `:98`까지 다섯 행으로 존재하고, 판정은 `:80`과 `:82`에 기록되어 있습니다. 이전 범위의 PASS를 확대하거나 이번 검증자가 지정 담당자의 대조를 대신한 기록이 아닙니다.
+
+다음 인용 8곳을 해당 파일에서 직접 열어 확인했습니다. 경로는 `packages/canard/schema-form/` 기준입니다.
+
+| 인용 | 직접 확인한 내용 |
+| --- | --- |
+| `src/core/blueprint/type.ts:48` | `BlueprintGate`의 kind별 판별 합집합 선언이 49–69행에 있습니다. |
+| `src/core/blueprint/utils/analyze/buildNodes.ts:64` | `isArray(schemaType)`를 통한 종류 좁히기가 64–68행에 있습니다. |
+| `src/core/blueprint/utils/analyze/resolveReference.ts:48` | `isBlueprintSchema` 가드와 `UnknownJsonSchema` 오류 반환이 있습니다. |
+| `src/core/settle/utils/structure/applyArraySlots.ts:35` | `canApplyArrayTail` 검사 후 `applyArrayTail`을 호출합니다. |
+| `src/core/settle/utils/compute/selectChildren.ts:81` | 배열 재사용 자격 검사 후 `reuseArrayChildren`을 호출하고 반환합니다. |
+| `architecture/ledger/test.md:548` | `TEST-027` 표제와 벤치 소유자 수용 계약이 있습니다. |
+| `architecture/ledger/test.md:1276` | `TEST-070` 표제가 있습니다. |
+| `architecture/ledger/node.md:782` | `NODE-046` 표제와 형 단언 없는 공개 판별 합집합 계약이 있습니다. |
+
+지정 담당자의 후속 다섯 제품 커밋 전체 대조가 보충되었으므로 B2의 증거 공백은 닫혔습니다. 그 담당자가 기록한 typecheck·시험 결과를 이번 세션에서 다시 실행했다고 주장하지 않습니다.
+
+### B3 — 기록 근거로 해소, 직접 재현에는 한계
+
+원장 `gates.md:191`–`:192`와 `log.md:519`의 「2026-10-12 G27 4단계와 G31·G32 재확인」 절(`:526`–`:528`)은 현재 src tree에서 facts를 새로 추출·제출한 결과 **1,108 files accepted, 0 rejected**, 이어 `fractal_inspect validate`의 scopes `boundaries`·`dag` 결과 **status `ok`, 0 findings, 266 passed, 0 failed, snapshot `26c2268d…`**를 일치하게 기록합니다. 문서 계약 진단 10건은 이 게이트의 범위 밖으로 구분되어 있습니다. 위에서 확인한 src tree 동일성으로 이 증거의 소스 범위는 현재 HEAD와 일치합니다.
+
+이번 세션에서도 filid 도구를 직접 호출했습니다. 인자는 action `validate`, path `/Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/packages/canard/schema-form/src`, scopes `["boundaries", "dag"]`입니다. 제 실행 결과는 **status `indeterminate`, 2 findings, 264 passed, 2 failed, 0 skipped, snapshot `ba4883230164fc94c582cbf55cf2c630ba1a09b6cb9169df990fddca56046805`**입니다. 이 실행은 기록의 `ok` 결과를 재현하지 못했으며, PASS로 바꾸어 적지 않습니다.
+
+기록 당시 저장 facts의 유효한 로딩을 현재 도구 환경에서 확인할 수 없었습니다. 도구가 상세 진단을 외부 artifact로 돌렸고, 해당 artifact 읽기도 context-mode의 workspace 경계 제한으로 거부되어 이번 실행의 상세 사유를 직접 확인하지 못했습니다. facts 추출·제출이나 설정 변경은 수행하지 않았습니다. 따라서 B3 해소 판단은 **이번 직접 실행의 통과가 아니라, 동일한 현재 소스에 대한 원장·log의 새 facts 및 통과 기록**에 근거합니다. 현재의 `indeterminate`를 실제 경계 위반이나 순환 발견으로 해석하지 않았습니다.
+
+### N1 — 사본 일치, 재개 안내에 비차단 문구 잔존
+
+`gates-snapshot.md`와 실제 원장의 G1–G33 블록을 비교한 결과 33개 모두 내용이 일치했습니다. G26 닫힘, G27 범위 재확인 대기, G31·G32의 새 증거도 일치합니다(`gates-snapshot.md:169`, `:176`–`:177`, `:195`–`:199`; `gates.md:165`, `:172`–`:173`, `:191`–`:195`).
+
+`log.md` §0의 `:12`–`:15`는 157라운드, 단언 11개 제거·이유 있는 잔존 3개, G26 수용, G31·G32 보충, 다음 행동인 G27 범위 재확인, 다음 라운드 158을 반영합니다. 이전의 core 단언 승인 대기 및 144라운드 안내는 사라졌습니다. 다만 `:12`의 「열린 것은 소유자의 브라우저 실행을 기다리는 G23입니다」는 작성 전 원장에서 G23(`gates.md:145`)과 G27(`:172`)이 모두 미체크인 상태를 완전히 표현하지 않습니다. `log.md:14`는 G27 후속 행동을 올바르게 안내하므로 이 잔존 문구는 비차단이며, 재개 지점이 원장과 완전히 일치한다고 판정하지 않습니다.
+
+B2·B3의 차단 증거 공백은 위 근거와 재현 한계를 명시하여 해소로 판정했습니다. N1의 잔존 문구 및 이 재확인 범위 밖의 기존 비차단 지적은 차단 건수에 추가하지 않았습니다. 원장의 G27 상태를 변경하지 않았으며, 이번 판정은 보고서에만 기록합니다.
+
+G27 최종 판정: PASS
+
+### 주 세션 보충: B3 실행 차이
+
+범위 재확인 뒤 주 세션이 같은 HEAD `940b7e792`에서 같은 인자(path `packages/canard/schema-form/src`, scopes `boundaries`·`dag`)로 `fractal_inspect validate`를 다시 실행했습니다. 결과는 status `ok`, 지적 0건, 통과 266, 실패 0, snapshot `26c2268dab3d9c593e4c5a86f66b81c890fa85610c99dea298d8ce084f10de63`이며 기록과 같습니다.
+
+Codex 세션의 결과(`indeterminate`, 통과 264·실패 2, snapshot `ba4883230164…`)는 4단계 본 검증의 실행과 snapshot이 같습니다. 그 실행의 진단은 `entry-point-facts-unavailable` 69개와 `verification-facts-unavailable` 400개였습니다(위 B3). Codex 쪽 filid는 별도의 facts 저장소(`~/.codex/plugins/filid/`)를 읽으며, 그곳에는 이번 추출이 제출되지 않았습니다. 두 결과의 차이는 facts 저장소의 차이이며, 같은 src tree에 대해 exact facts로 판정한 결과는 `ok`입니다.

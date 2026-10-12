@@ -1,4 +1,4 @@
-# 07 게이트 원장 사본(2026-10-12, 157라운드와 G27 4단계 재확인 뒤)
+# 07 게이트 원장 사본(2026-10-12, G27 닫힘 뒤)
 
 정본은 워크트리의 `.seiri/tasks/schema-form-switch/gates.md`(gitignore)다. 이 사본은 72시간 유휴 삭제에 대비한 기록이며, 정본이 없으면 이 파일을 정본 자리로 복사해 쓴다.
 
@@ -173,8 +173,8 @@ Plan: ../../../packages/canard/schema-form/architecture/plan/07-switch/execution
 
 ## Final
 
-- [ ] G27: 새 컨텍스트 verifier의 `seiri:verify`가 최초 기준선·원장·계획 대비 통과 판정을 냈다
-      EVIDENCE: 미충족(최종 verify 대기). B1 (14 core type assertions) is resolved under rounds 146, 149 and 150: 11 removed (#1, #2, #5, #6, #10, #14 by zero-JS type fixes in 34b370eed and 62e140d8d with byte-identical bundles; #4, #8, #9, #11, #13 by runtime guards in 0eb8e3ada, verdict session 153 React ADOPT and core ADOPT, 0 regressions, verification/07-switch/g27-runtime-guards-153.md), and 3 kept as reasoned assertions (#3, #7, #12; round 150 principle 3). Earlier third-pass verify (HEAD a76ebf44a, g27-phase3.md): B2, B4, B5, B6, N1 resolved; N2 open (non-blocking). Phase 4 (2026-10-12, HEAD ee3b730c0, codex high, g27-phase4.md): FAIL with 2 blocking, both evidence gaps (B2 G32 range, B3 G31 stale facts), B1 resolved; both gaps refilled on 2026-10-12 (G31, G32 evidence above). Remaining: the phase-4 scoped recheck of B2 and B3.
+- [x] G27: 새 컨텍스트 verifier의 `seiri:verify`가 최초 기준선·원장·계획 대비 통과 판정을 냈다
+      EVIDENCE: PASS (2026-10-12): phase-4 scoped recheck at HEAD 940b7e792 by a fresh codex high session (cb1e1fea), appended to verification/07-switch/g27-phase4.md, "G27 최종 판정: PASS"; B2 closed by the G32 range cross-check, B3 closed by the fresh G31 facts and boundaries+dag ok (main-session re-run at 940b7e792: ok, 266 passed, 0 failed, snapshot 26c2268d…; the codex-side indeterminate run read a separate facts store). Non-blocking: N2 (fixed scratch path in a count test), N3–N5 as listed in g27-phase4.md. History: 미충족(최종 verify 대기). B1 (14 core type assertions) is resolved under rounds 146, 149 and 150: 11 removed (#1, #2, #5, #6, #10, #14 by zero-JS type fixes in 34b370eed and 62e140d8d with byte-identical bundles; #4, #8, #9, #11, #13 by runtime guards in 0eb8e3ada, verdict session 153 React ADOPT and core ADOPT, 0 regressions, verification/07-switch/g27-runtime-guards-153.md), and 3 kept as reasoned assertions (#3, #7, #12; round 150 principle 3). Earlier third-pass verify (HEAD a76ebf44a, g27-phase3.md): B2, B4, B5, B6, N1 resolved; N2 open (non-blocking). Phase 4 (2026-10-12, HEAD ee3b730c0, codex high, g27-phase4.md): FAIL with 2 blocking, both evidence gaps (B2 G32 range, B3 G31 stale facts), B1 resolved; both gaps refilled on 2026-10-12 (G31, G32 evidence above). Phase-4 scoped recheck: PASS.
 
 - [x] G28: 패키지 lint와 typecheck가 초록이다
       CHECK: `(cd packages/canard/schema-form && npx eslint "src/**/*.{ts,tsx}" && npx tsc --noEmit --composite false --rootDir . -p tsconfig.json) && echo LINT_TYPECHECK_OK`
