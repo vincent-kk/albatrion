@@ -235,3 +235,26 @@ describe('binding input entries', () => {
     ).toBe(true);
   });
 });
+
+describe('binding input of a virtual node (R2)', () => {
+  it('rejects an invalid virtual shape at the value mark and leaves external errors, state and value untouched', () => {
+    const { root, runtime } = createDispatchTree({
+      type: 'object',
+      properties: {
+        startDate: { type: 'string' },
+        endDate: { type: 'string' },
+      },
+      options: { virtual: { period: { fields: ['startDate', 'endDate'] } } },
+    });
+    dispatch.dispatchMount(root, { startDate: 's0', endDate: 'e0' });
+    const period = getDispatchChild(root, 'period');
+    const issue = { dataPath: '/period', message: 'server' };
+    dispatch.dispatchSetExternalErrors(period, [issue]);
+    expect(() => dispatch.dispatchWriteInput(period, 'bad')).toThrow(
+      'Invalid virtual node values at /period',
+    );
+    expect(runtime.nodeErrors?.get(period)).toEqual([issue]);
+    expect(period.interactionState).toEqual({});
+    expect(root.emit).toEqual({ startDate: 's0', endDate: 'e0' });
+  });
+});

@@ -586,7 +586,7 @@ describe('other-kind re-entry inside a batch (R1, 195C-01 F2)', () => {
     expect(batched).toEqual(sequential);
   });
 
-  it('values a batch like one whole root write of the composed value, unlike two sequential writes (GOAL-010, 62C-01)', () => {
+  it('values a batch inside its replace paths like one whole root write of the composed value, unlike two sequential writes (GOAL-010, 62C-01)', () => {
     const schema = {
       type: 'object',
       properties: { k: { type: 'string' }, endDate: { type: 'string' } },
