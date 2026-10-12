@@ -11,6 +11,7 @@ schema-form 패키지에 의존하지 않고 schema-form 검증을 지원합니�
 - 시나리오 모듈에는 순수 데이터만 두며, 실행은 어댑터가 소유합니다.
 - 스키마·노드·핸들·주입된 폼에 구조적 계약을 사용합니다.
 - 부류는 value, settle, fill, exit, union, derive, controls, array, notify, validation 동작을 이름으로 나타냅니다.
+- `src/features/<group>/`은 기능 카탈로그 스토리가 새로 쓰는 기능 부류(composition, structure 등)를 담는 상자이며, 기존 엔진 부류의 장면은 복사하지 않고 소비자가 가져옵니다.
 
 ## Boundaries
 

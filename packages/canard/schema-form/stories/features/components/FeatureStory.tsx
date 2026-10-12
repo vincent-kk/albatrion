@@ -2,15 +2,15 @@ import { useEffect, useRef, useState } from 'react';
 
 import type { FormScenario } from '@aileron/schema-form-scenarios';
 import { registerScenarioHandle } from '@aileron/schema-form-scenarios';
-import { plugin as ajv8Plugin } from '@canard/schema-form-ajv8-plugin';
 
 import { Form, ValidationMode, registerPlugin, type FormHandle, type JSONSchema } from '../../../src';
 
 import { createStoryScenarioAdapter } from '../../components/scenario/createStoryScenarioAdapter';
 import type { StoryObservations } from '../../components/scenario/types';
+import { ajv8ValidationRequests, countedAjv8Plugin } from './countedAjv8Plugin';
 
 // Feature and composite stories validate through the registered ajv8 plugin, not a validatorFactory prop.
-registerPlugin(ajv8Plugin);
+registerPlugin(countedAjv8Plugin);
 
 /**
  * Render shared scenario data with the public Form and show its schema for the docs catalog.
@@ -20,7 +20,9 @@ registerPlugin(ajv8Plugin);
 export function FeatureStory({ scenario }: { scenario: FormScenario }) {
   const root = useRef<HTMLDivElement>(null);
   const [handle, setHandle] = useState<FormHandle | null>(null);
-  const [observations] = useState<StoryObservations>(() => ({ changes: [], errorCodes: [], validationRequests: 0 }));
+  const [observations] = useState<StoryObservations>(() => ({
+    changes: [], errorCodes: [], get validationRequests() { return ajv8ValidationRequests.count; },
+  }));
   useEffect(() => {
     const element = root.current;
     if (!element || !handle) return;

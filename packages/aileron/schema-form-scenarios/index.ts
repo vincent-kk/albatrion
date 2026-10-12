@@ -13,6 +13,7 @@ export { arrayScenarios } from './src/array/index';
 export { notifyScenarios } from './src/notify/index';
 export { validationScenarios } from './src/validation/index';
 export { compositionFeatureScenarios, compositionFindingScenarios } from './src/features/composition/index';
+export { structureFeatureScenarios } from './src/features/structure/index';
 export { findScenarioHandle } from './src/utils/findScenarioHandle';
 export { playScenario } from './src/utils/playScenario';
 export { registerScenarioHandle } from './src/utils/registerScenarioHandle';
