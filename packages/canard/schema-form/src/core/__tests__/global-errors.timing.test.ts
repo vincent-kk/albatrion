@@ -9,14 +9,23 @@ import {
 
 const FIELDS = 100;
 const ISSUES = 1000;
+/** Floor for the small measurement so timer noise cannot fail the ratio (ms). */
+const NOISE_FLOOR = 5;
+/** Allowed ratio between the 4n and n timings; linear work gives 4. */
+const LINEAR_RATIO = 8;
 
 /**
- * Build a flat object tree whose root holds 1,000 external issues spread over 100 fields.
+ * Build a flat object tree whose root holds external issues spread over its fields.
+ * @param fields - Number of string fields
+ * @param issues - Number of external issues spread round-robin over the fields
  * @returns The root, its field nodes, and the external list placed at the root and by path.
  */
-const createLoadedRoot = (): { root: SchemaNode; fields: SchemaNode[] } => {
+const createLoadedRoot = (
+  fields: number,
+  issues: number,
+): { root: SchemaNode; fields: SchemaNode[] } => {
   const properties: Record<string, { type: 'string' }> = {};
-  for (let index = 0; index < FIELDS; index++)
+  for (let index = 0; index < fields; index++)
     properties[`f${index}`] = { type: 'string' };
   const root = nodeFromJSONSchema({
     jsonSchema: { type: 'object', properties },
@@ -24,43 +33,58 @@ const createLoadedRoot = (): { root: SchemaNode; fields: SchemaNode[] } => {
   });
   const external: ValidationIssue[] = [];
   const groups = new Map<string, ValidationIssue[]>();
-  for (let index = 0; index < ISSUES; index++) {
-    const path = `/f${index % FIELDS}`;
+  for (let index = 0; index < issues; index++) {
+    const path = `/f${index % fields}`;
     const issue = { dataPath: path, message: `issue ${index}` };
     external.push(issue);
     (groups.get(path) ?? groups.set(path, []).get(path)!).push(issue);
   }
-  const fields: SchemaNode[] = [];
+  const nodes: SchemaNode[] = [];
   root.batch(() => {
     root.setExternalErrors(external);
     for (const [path, group] of groups) {
       const field = root.find(path)!;
-      fields.push(field);
+      nodes.push(field);
       field.setExternalErrors(group);
     }
   });
   expect(root.errors).toBe(external);
-  return { root, fields };
+  return { root, fields: nodes };
+};
+
+/**
+ * Time one clearing strategy at n and 4n and return the elapsed pair.
+ * @param clear - Clears every field of a loaded root
+ * @returns Elapsed milliseconds for the n and the 4n tree
+ */
+const measure = (
+  clear: (root: SchemaNode, fields: SchemaNode[]) => void,
+): { small: number; large: number } => {
+  const time = (scale: number): number => {
+    const { root, fields } = createLoadedRoot(FIELDS * scale, ISSUES * scale);
+    const start = performance.now();
+    clear(root, fields);
+    const elapsed = performance.now() - start;
+    expect(root.errors).toEqual([]);
+    return elapsed;
+  };
+  return { small: time(1), large: time(4) };
 };
 
 describe('external error propagation timing (188C-01 record)', () => {
-  it('clears 100 fields holding 1,000 root issues inside one batch in linear time', () => {
-    const { root, fields } = createLoadedRoot();
-    const start = performance.now();
-    root.batch(() => {
-      for (const field of fields) field.clearExternalErrors();
+  it('clears fields holding root issues inside one batch in linear time', () => {
+    const { small, large } = measure((root, fields) => {
+      root.batch(() => {
+        for (const field of fields) field.clearExternalErrors();
+      });
     });
-    const elapsed = performance.now() - start;
-    expect(root.errors).toEqual([]);
-    expect(elapsed).toBeLessThan(500);
+    expect(large).toBeLessThan(Math.max(small, NOISE_FLOOR) * LINEAR_RATIO);
   });
 
-  it('clears 100 fields holding 1,000 root issues one call at a time within the same bound', () => {
-    const { root, fields } = createLoadedRoot();
-    const start = performance.now();
-    for (const field of fields) field.clearExternalErrors();
-    const elapsed = performance.now() - start;
-    expect(root.errors).toEqual([]);
-    expect(elapsed).toBeLessThan(500);
+  it('clears fields holding root issues one call at a time in linear time', () => {
+    const { small, large } = measure((_root, fields) => {
+      for (const field of fields) field.clearExternalErrors();
+    });
+    expect(large).toBeLessThan(Math.max(small, NOISE_FLOOR) * LINEAR_RATIO);
   });
 });
