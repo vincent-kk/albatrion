@@ -21,6 +21,8 @@ export interface FeaturePropStage {
   readonly errors?: unknown;
   /** context prop for this stage. */
   readonly context?: FormProps['context'];
+  /** showError prop for this stage. */
+  readonly showError?: FormProps['showError'];
   /** jsonSchema prop for this stage, replacing the scenario schema. */
   readonly jsonSchema?: unknown;
   /** defaultValue prop for this stage, replacing the scenario initial value. */
@@ -61,6 +63,7 @@ export function FeatureStory({ scenario, formProps, propStages, providerProps, l
   const staged: Readonly<Record<string, unknown>> = {
     ...(current && 'errors' in current && { errors: current.errors }),
     ...(current?.context && { context: current.context }),
+    ...(current && 'showError' in current && { showError: current.showError }),
     ...(current && 'jsonSchema' in current && { jsonSchema: current.jsonSchema }),
     ...(current && 'defaultValue' in current && { defaultValue: current.defaultValue }),
   };
