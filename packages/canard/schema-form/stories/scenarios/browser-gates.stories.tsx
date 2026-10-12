@@ -1,7 +1,6 @@
 // Loaded by Storybook CSF; named exports are the U11 Chromium gates.
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { expect, userEvent, waitFor } from 'storybook/test';
-import { cdp, page as browserPage } from '@vitest/browser/context';
 import type {} from '@vitest/browser/providers/playwright';
 
 import { BrowserGateForm } from '../components/gates/BrowserGateForm';
@@ -9,6 +8,12 @@ import type { BrowserGateElement } from '../components/gates/types';
 
 export default { title: 'Scenarios/Browser gates', component: BrowserGateForm } satisfies Meta<typeof BrowserGateForm>;
 type Story = StoryObj<typeof BrowserGateForm>;
+
+/**
+ * Load Vitest Browser Mode's CDP and locator API at play time. The module throws when evaluated
+ * outside Browser Mode, so a static import would keep plain `storybook dev` from rendering these stories.
+ */
+const browserContext = () => import('@vitest/browser/context');
 
 /** Wait for the browser's React commit without replacing real input events. */
 const committed = () => new Promise<void>((resolve) => requestAnimationFrame(() => resolve()));
@@ -25,6 +30,7 @@ export const ImeComposition: Story = {
   name: 'EVENT-065 Korean IME plain, caret formatter and Refresh during composition',
   args: { mode: 'ime' },
   play: async ({ canvasElement }) => {
+    const { cdp, page: browserPage } = await browserContext();
     const { handle, observations } = fixture(canvasElement);
     const session = cdp();
     for (const path of ['/plain', '/formatter', '/refresh']) {
@@ -90,6 +96,7 @@ export const NumberBadInput: Story = {
   name: 'REACT-027 number badInput stays local and blur restores node display',
   args: { mode: 'number' },
   play: async ({ canvasElement }) => {
+    const { cdp } = await browserContext();
     const { handle } = fixture(canvasElement);
     const input = canvasElement.querySelector<HTMLInputElement>('input[type="number"]')!;
     await userEvent.clear(input);

@@ -23,3 +23,5 @@ yarn vitest run --project storybook
 | 한국어 IME ㄱ→가→각, 조합 중 Refresh | 조합 표시 유지 및 DOM 쓰기 지연, 대체 입력의 늦은 쓰기가 노드에 닿지 않음 | 미확인 | 미확인 |
 
 측정 비용은 스토리의 `ChildNodeComponents detection timing` 출력과 로그에 표시됩니다. 2026-10-03 U11 자동 실행에서 각각 100,000회 읽기에 감지 배열 약 2.80ms, 보통의 동결 빈 배열 약 0.40ms가 관측되었습니다. 단일 실행 수치이며 승인된 비용 한도는 원장에 없으므로 소유자가 판단합니다.
+
+2026-10-12 174라운드 실행에서 자동 게이트(`yarn vitest run --project storybook`)는 네 스토리 모두 통과했지만, 일반 스토리북(`storybook dev`)에서는 네 스토리가 "@vitest/browser/context can be imported only inside the Browser Mode" 오류로 렌더되지 않아 사람 확인을 할 수 없었습니다. 원인은 스토리 파일 최상위의 `@vitest/browser/context` import이며, 이 모듈은 Browser Mode 밖에서 평가되면 예외를 던집니다. 이 import를 CDP가 필요한 두 play 안의 동적 import로 옮겨 네 스토리가 일반 스토리북에서 렌더되고, 고친 뒤 자동 게이트는 15파일 54건이 그대로 통과했습니다. 일반 스토리북에서 EVENT-065와 REACT-027의 play는 폼을 건드리기 전에 같은 오류로 멈추므로, 사람 확인은 렌더된 폼에 직접 입력해 진행합니다.
