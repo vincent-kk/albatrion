@@ -209,6 +209,14 @@ D03·D20은 스키마의 키가 optional로 추론되더라도 구체 default의
 
 커밋·stash·checkout·브랜치 전환, yarn·npm·gh 실행, 제품 소스·패키지 tsconfig·vitest 설정 변경을 수행하지 않았습니다. 감사 산출물 8개만 작성했습니다.
 
+## 처분 (163C-01, 164C-01, 166라운드, 167C-01)
+
+아홉 차이의 처분입니다. 새 판 유지는 8건(1·2·3·5·6·7·8·9)이고, 형을 0.16.0대로 되돌리는 것이 1건(4)입니다.
+
+- 2번은 163C-01에서 0.16.0대로 되돌리기로 했다가 164C-01에서 새 판 유지로 바꿨습니다. 새 엔진은 해석할 수 없는 입력을 그대로 보존하므로 `formatError`가 받는 `node.value`가 허용 값 union이라는 약속을 런타임이 보장하지 않습니다. 함수·symbol·bigint 입력이 그 예이며, `formatError`는 오류가 있는 노드에서만 불립니다. 되돌리려면 내부 호출 자리 두 곳(`src/components/SchemaNode/SchemaNodeProxy/SchemaNodeProxy.tsx:69`, `src/hooks/useChildNodeErrors.ts:64`)에 사실과 다른 단언이 필요했습니다. 소비자 안내는 [개선-36](assignments.md)에 둡니다.
+- 1번은 소유자 답으로 readonly 형을 유지합니다. 런타임이 공유 배열을 넘기므로 형만 mutable로 되돌리면 쓰기가 저장 상태를 바꾸거나 예외를 냅니다.
+- 4번은 소유자 답("state에 대해서는 false도 유효값")에 따라 `SchemaNode.globalState`의 형을 `Readonly<Record<string, boolean | undefined>>`로 되돌립니다. 두 판 모두 global state에 false를 발행하지 않으므로(0.16.0은 truthy 값만 쓰는 additive 갱신, 새 판은 계수가 0이 되면 키 삭제) 런타임은 바꾸지 않습니다. 키가 사라지는 시점은 새 판을 유지합니다(167C-01).
+
 ## 종료 시 git status --porcelain
 
 ```text
@@ -228,3 +236,11 @@ D03·D20은 스키마의 키가 optional로 추론되더라도 구체 default의
 ?? packages/canard/schema-form/architecture/verification/07b/type-inference-audit/runner.cjs
 ?? packages/canard/schema-form/architecture/verification/07b/type-inference-audit/tsconfig.json
 ```
+
+## 167C-01 형 되돌림 뒤 재실행
+
+`SchemaNode['globalState']`의 공개 선언을 `Readonly<Record<string, boolean | undefined>>`로 되돌린 뒤 `runner.cjs`를 다시 실행했습니다. 런타임은 바뀌지 않았고, 값은 여전히 `true` 아니면 부재입니다.
+
+- 변경된 사례 ID: H01, H02, H03, H04, H05, H06, H07, H10, H11, H12, H13, H18 (73건 중 12건). H18을 뺀 11건은 출력되는 `state` 형 문자열만 `{ readonly [x: string]: true; }`에서 `{ readonly [x: string]: boolean | undefined; }`로 바뀌었고 수용 여부는 그대로입니다.
+- H18: `inspect('stateFlag', state[1])`의 값 형이 `true`에서 `boolean | undefined`로 돌아와 레거시 열과 같아졌고, `state[1] = false`의 TS2322(값 형) 오류는 사라졌습니다. TS2542(읽기 전용 인덱스 시그니처)는 남아 있어 새 쪽은 여전히 거부됩니다. 이 쓰기는 런타임이 돌려준 공유 객체를 직접 바꾸는 것이므로 거부가 의도이며, H18은 변이 가능성 때문에 남는 의도된 차이로 기록합니다.
+- 새 사례 다이제스트: `9c539febba50f72c4e797189ee254595f2dcc7cd8493bab59ae20cbaa92f09de` (이전 `2997376a5271d44f41fe7288f880443d5155c8a8c1e8d668327552052df43fa6`).
