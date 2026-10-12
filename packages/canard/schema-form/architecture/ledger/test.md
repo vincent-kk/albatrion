@@ -477,6 +477,7 @@
 - 보충:
   > "`architecture/spikes/**`의 실험 시험 4파일은 새 vitest 프로젝트에 넣지 않는다(3차 게이트 뒤)." (`reviews/round-16-owner-review.md:61`)
   > "`architecture/spikes/**`의 실험 시험은 새 vitest 프로젝트에 넣지 않는다(§5.3)." (`09-landing-and-test-strategy.md:279`)
+  > 편집자 결정(174C-01): "【추론】 자동 게이트는 통과했지만 G23의 정의는 "실제 브라우저에서 소유자가 직접 확인"이므로 자동 통과만으로 닫을 수 없다. 스토리가 일반 스토리북에서 렌더되지 않는 것은 게이트가 사람 확인을 전제로 만들어졌는데 그 전제가 깨진 결함이라 고쳐야 하고, 고침이 src/ 밖의 스토리 파일에 그치면 제품 코드 증거(G27·G32)는 유효하다. 실제 OS IME는 어떤 에이전트도 칠 수 없으므로 그 3행은 처음부터 소유자 몫이었고, 에이전트가 할 수 있는 것은 CDP 합성으로 같은 경로를 실제 창에서 보여 주는 것까지다." (`reviews/round-174-closing.md:9`)
 - 상태: 현행
 - 출처: `09-landing-and-test-strategy.md:203-206`(정본), `09-landing-and-test-strategy.md:278`, `reviews/round-16-owner-review.md:36,61`, `reviews/round-16-owner-answers.md:16`
 - 닫은 사람: 편집자 결정(16라운드, `09-landing-and-test-strategy.md:201`), 소유자 답(`reviews/round-16-owner-answers.md:16` 답 10)
