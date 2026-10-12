@@ -9,10 +9,10 @@ import { publishRootExternalErrors } from './publishRootExternalErrors';
 const NO_ISSUES: readonly ValidationIssue[] = [];
 
 /**
- * Accept only live records of this tree from the pending set.
+ * Accept only records of this tree from the pending set.
  * @param candidate - Key held by the pending set
  * @param runtime - Runtime that owns the pending set
- * @returns Whether the key is a live, attached node of this tree
+ * @returns Whether the key is a node of this tree; a detached one only retires its contribution
  */
 const isPendingNode = <Self extends SchemaNodeRecord<Self>>(
   candidate: unknown,
@@ -20,17 +20,16 @@ const isPendingNode = <Self extends SchemaNodeRecord<Self>>(
 ): candidate is Self =>
   candidate !== null &&
   typeof candidate === 'object' &&
-  Reflect.get(candidate, 'runtime') === runtime &&
-  Reflect.get(candidate, 'detached') === false;
+  Reflect.get(candidate, 'runtime') === runtime;
 
 /**
  * Rebuild the root's external list once from every non-root node changed since the last rebuild
  * (round 185, 188C-01, 195C-01). Attribution is by node: an entry leaves the root list when the
  * node contributed that reference before or when its dataPath resolves to the node's path; an
  * entry of the node's current list already present by reference keeps its place and the rest
- * are appended in first-change order. When nothing changes no event is queued, so a form-level
- * apply that placed the same references at the root costs one pass. An empty result removes
- * the root entry.
+ * are appended in first-change order. A node detached since its change only retires what it
+ * contributed. When nothing changes no event is queued, so a form-level apply that placed the
+ * same references at the root costs one pass. An empty result removes the root entry.
  * @param root - Live form root owning the aggregate external list and the pending set
  * @returns Nothing; a changed root list queues UpdateError and UpdateGlobalError on the root
  */
@@ -51,12 +50,16 @@ export const rebuildRootExternalErrors = <Self extends SchemaNodeRecord<Self>>(
   const paths = new Set<string>();
   for (let index = 0; index < nodes.length; index++) {
     const node = nodes[index];
-    paths.add(node.path);
-    const list = runtime.nodeErrors?.get(node);
-    if (list) for (let at = 0; at < list.length; at++) placed.add(list[at]);
     const previous = contributions.get(node);
     if (previous)
       for (let at = 0; at < previous.length; at++) retired.add(previous[at]);
+    if (node.detached) {
+      contributions.delete(node);
+      continue;
+    }
+    paths.add(node.path);
+    const list = runtime.nodeErrors?.get(node);
+    if (list) for (let at = 0; at < list.length; at++) placed.add(list[at]);
   }
   const resolved = new Map<string, string>();
   const canonical = (dataPath: string): string => {
@@ -83,6 +86,7 @@ export const rebuildRootExternalErrors = <Self extends SchemaNodeRecord<Self>>(
   }
   for (let index = 0; index < nodes.length; index++) {
     const node = nodes[index];
+    if (node.detached) continue;
     const list = runtime.nodeErrors?.get(node);
     if (list) {
       for (let at = 0; at < list.length; at++)

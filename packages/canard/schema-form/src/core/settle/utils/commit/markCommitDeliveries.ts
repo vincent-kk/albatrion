@@ -322,6 +322,8 @@ export const markCommitDeliveries = <Self extends SchemaNodeRecord<Self>>(
     runtime.queuedNonSettleEvents?.delete(node);
     runtime.validationErrors?.delete(node);
     runtime.nodeErrors?.delete(node);
+    if (runtime.externalContributions?.has(node))
+      (runtime.pendingExternalErrorNodes ??= new Set()).add(node);
     runtime.combinedErrors?.delete(node);
     runtime.validationChangedNodes?.delete(node);
     runtime.validationTargets?.delete(node);
