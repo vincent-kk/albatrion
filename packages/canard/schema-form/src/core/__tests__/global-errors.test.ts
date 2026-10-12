@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 
 import {
   type SchemaNode,
+  SchemaNodeEventType,
   type ValidationIssue,
   ValidationMode,
   adoptSchemaNodeTree,
@@ -55,20 +56,47 @@ describe('form-level external and validation errors', () => {
     expect(root.globalErrors).toBe(errors);
   });
 
-  it('SURFACE-053 VALIDATE-043 79C-01 keeps direct non-root external errors only on that node', async () => {
+  it('SURFACE-053 round 185 reflects a non-root external write and clear in the root list by path', async () => {
     const validation = [{ dataPath: '/field', message: 'validator' }];
     const root = createRoot(() => validation);
     await root.validate();
-    const errors = root.globalErrors;
+    const before = root.globalErrors;
     const field = root.find('/field')!;
     const external = [{ dataPath: '/field', message: 'server' }];
     field.setExternalErrors(external);
     expect(field.errors).toEqual([...external, ...validation]);
-    expect(root.globalErrors).toBe(errors);
-    expect(root.globalErrors).toEqual(validation);
+    expect(root.errors).toEqual(external);
+    expect(root.globalErrors).toEqual([...external, ...validation]);
+    expect(root.globalErrors).not.toBe(before);
+    const replacement = [{ dataPath: '/field', message: 'replaced' }];
+    field.setExternalErrors(replacement);
+    expect(root.errors).toEqual(replacement);
+    expect(root.globalErrors).toEqual([...replacement, ...validation]);
     field.clearExternalErrors();
     expect(field.errors).toEqual(validation);
-    expect(root.globalErrors).toBe(errors);
+    expect(root.errors).toEqual([]);
+    expect(root.globalErrors).toEqual(validation);
+  });
+
+  it('SURFACE-053 round 185 leaves the root list untouched when a form-level apply already placed the same references', async () => {
+    const root = createRoot();
+    const field = root.find('/field')!;
+    const shared = { dataPath: '/field', message: 'server' };
+    const other = { dataPath: '', message: 'form' };
+    let rootEvents = 0;
+    root.subscribe(({ type }) => {
+      if (type & SchemaNodeEventType.UpdateError) rootEvents++;
+    });
+    root.batch(() => {
+      root.setExternalErrors([other, shared]);
+      field.setExternalErrors([shared]);
+    });
+    expect(root.errors).toEqual([other, shared]);
+    expect(rootEvents).toBe(1);
+    const list = root.errors;
+    field.setExternalErrors([shared]);
+    expect(root.errors).toBe(list);
+    expect(rootEvents).toBe(1);
   });
 
   it('SURFACE-053 VALIDATE-043 79C-01 rebuilds the form list when root external errors are cleared', async () => {

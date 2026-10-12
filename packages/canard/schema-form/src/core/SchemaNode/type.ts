@@ -108,9 +108,9 @@ export interface NodeSurface<
   readonly errors: readonly ValidationIssue[];
   /** Ordered whole-tree validator issues. */
   readonly globalErrors: readonly ValidationIssue[];
-  /** Replace this occurrence's external issues. */
+  /** Replace this occurrence's external issues; a non-root write also replaces the root list's issues at this path. */
   setExternalErrors(errors: readonly ValidationIssue[]): void;
-  /** Clear this occurrence's external issues. */
+  /** Clear this occurrence's external issues; a non-root clear also removes the root list's issues at this path. */
   clearExternalErrors(): void;
   /** Request a fresh whole-schema validation verdict. */
   validate(): Promise<readonly ValidationIssue[]>;

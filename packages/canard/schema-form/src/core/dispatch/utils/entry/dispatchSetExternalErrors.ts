@@ -7,6 +7,7 @@ import { flushQueuedEvents } from '../chain/flushQueuedEvents';
 import { queueNonSettleEvent } from '../chain/queueNonSettleEvent';
 import { refuseListenerFeedback } from '../chain/refuseListenerFeedback';
 import { assertNotInDelivery } from '../report/assertNotInDelivery';
+import { propagateExternalErrorsToRoot } from './utils/propagateExternalErrorsToRoot';
 
 /**
  * Replace a live node's external issues without changing its source.
@@ -26,6 +27,7 @@ export const dispatchSetExternalErrors = <Self extends SchemaNodeRecord<Self>>(
   if (runtime.nodeErrors?.get(node) === errors) return;
   (runtime.nodeErrors ??= new Map()).set(node, errors);
   if (node === node.rootNode) updateSchemaNodeGlobalErrors(node);
+  else propagateExternalErrorsToRoot(node.rootNode, node.path, errors);
   queueNonSettleEvent(node, SchemaNodeEventType.UpdateError, errors);
   if (!runtime.entryDepth) flushQueuedEvents(node.rootNode);
 };
