@@ -9,3 +9,7 @@
   - 【추론】 batch 결함은 소유자가 복합 동작에 힘을 실으라고 한 바로 그 종류이고, 단일 쓰기에서는 보이지 않으니 지금까지의 시험이 놓친 것이다. 원장 계약을 어기는 제품 결함은 머지 전에 고쳐야 하고, 고칠 자리(dispatch)는 reviewer가 지금 쥔 브랜치라 그쪽에 두는 것이 가장 빠르다. 복합 설계의 공통 결정 넷은 시나리오 패키지의 경계(형을 넓히면 모든 소비자에 닿음)를 지키는 쪽이 맞고 소유자가 정할 성격이 아니다. 사례 목록은 소유자가 "치밀하게"를 요구했으니 소유자가 본다.
 - 근거: fairy07의 G3 보고와 설계안; 186라운드 소유자 답; 187C-01; LANDING-011·018·032; 26C-10; SCHEMA-045·25C-03; 160C-01; filid code-placement §5.
 - 다음: 원장 관리자가 reviewer에 (2)를, fairy07에 (1)·(3)·(4)·(5)·(6)을 알리고 소유자에게 설계안 검토를 청한다.
+
+## 덧붙임 (2026-10-13, reviewer 진단과 게이트 바로잡음)
+
+reviewer의 진단(확인됨): flushBatchWrites.ts:27-30, :68-72가 두 쓰기 이상의 batch(같은 노드에 두 번 써도)를 target=root, kind='callerReplace'로 바꾸고, writeSchemaNode.ts:118-119가 경로 ''에서 잠복 원본을 가지치며(모든 잠복 키), markWrite.ts:107-108이 루트에서 모든 plain object 호스트로 whole=true를 뿌려 다시 들어오는 자식이 잠복 원본 대신 undefined를 받고, isReplacedLivePath.ts도 모든 exit를 교체 범위 안으로 본다. 탐침 표: 단일 쓰기 batch는 잠복 /vat 유지; 두 쓰기 batch는 /note에 써도 손실; batch 세 번 토글은 'VAT-0' 재채움; push+setValue, 형제 setValue 둘, push 둘 모두 무관한 잠복 /extra 손실. 가지치기만 좁히면 /note 경우는 고쳐지지만 토글 경우는 아님 → 고침은 셋(가지치기, whole 분배, replaced-exit 판정)을 쓰인 경로들의 합집합으로 한정하는 SettlementContext 필드 하나로 하고, 루트 정착 한 번·composeBatchValue 입력·writeOrigins·commitNumber 1회 증가는 유지. 계획·게이트·ADR이 뒤따르며 원장 관리자가 review-plan을 본다. 바로잡음: 191C-01 (2)에 적은 "160C-01 정규화 비교"는 동작을 바꾸지 않는 구조 변경용 기준이라 이 고침에는 맞지 않는다 — 게이트는 전체 시험 + 새 사례(발견 둘 통과, push+setValue·형제 setValue·push 둘의 잠복 유지, 단일 쓰기 batch 불변), 빌드 재현성(개선-31 절차)과 번들 크기 기록, 그리고 fixy07의 batch 행 방향 확인으로 대체한다. 소유자가 "reviewer는 저것에 집중"이라고 했으므로 다른 리뷰 항목(예: SchemaNode 클래스의 inheritDoc 태그 정리)은 그 뒤에 보낸다.
