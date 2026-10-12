@@ -6,13 +6,13 @@ Planning method: 저장소 지침 — `PLAN.md` §2와 `plan/prompts.md`의 단�
 
 ## 0. 재개 지점
 
-- 단계: 07 전환(PR-7). 브랜치 `feat/schema-form-switch`, 작업 자리는 워크트리 `.claude/worktrees/stage-07`(`.claude/commands/`·`.vscode/`는 sparse-checkout으로 뺌). 2026-10-11 원장 관리자가 `1.0.0-beta`를 14개 커밋으로 묶고(`351ece24e`) 이 가지를 그 위의 커밋 하나(`f8a39d65e`)로 다시 세웠습니다. 측정 원자료는 브랜치 `archive/stage-07-verification-raw`와 태그 `archive/stage-07-pre-rebase-20261011`(둘 다 `98227ab19`)에 있습니다(140라운드).
-- PR: [#354](https://github.com/vincent-kk/albatrion/pull/354), base `1.0.0-beta`, 리뷰 중입니다. G23·G27이 닫힐 때까지 머지하지 않습니다.
-- seiri 작업 `schema-form-switch`, 단계 execute. 게이트 원장은 워크트리의 `.seiri/tasks/schema-form-switch/gates.md`(gitignore)이며, seiri `gates status`는 메인 체크아웃 경로를 읽어 원장이 없다고 답합니다. 워크트리 파일을 직접 읽습니다. 72시간 유휴 삭제에 대비한 사본은 [gates-snapshot.md](gates-snapshot.md).
-- 게이트 상태(2026-10-11, 142라운드 반영): 원장 36개 가운데 33개 충족, 열린 것은 셋입니다. G23은 브라우저 게이트(`packages/canard/schema-form`에서 `yarn vitest run --project storybook`)이며 142라운드 답대로 소유자가 따로 지시할 때 진행합니다. G26은 142라운드 답(느린 행 9행 수용, 기준 ①은 성능 개선 단계로 이월)을 반영해 닫혔다가, 143라운드 답으로 화면 배열 갱신 3행(array-push-100·array-replace-200·array-push-remove-100)의 수용이 거두어져 다시 열렸습니다. 그 3행은 구간별 귀속(1단계, 읽기 전용 측정)과 고침 시도(2단계, 고침마다 판정 세션) 뒤 다시 판정합니다. G27은 core 형 단언 14개 때문에 미충족이며, 142라운드에서 소유자가 승인을 보류하고 하나씩 다시 검토하라고 했습니다. 그 밖의 차단 항목은 모두 닫혔고, 그 밖의 차단 항목은 모두 닫혔습니다([3단계 보충 검증](../../verification/07-switch/g27-phase3.md), [G32 재검증](../../verification/07-switch/g32-recheck.md)). 이 가지가 core 밖에 더한 형 단언 최대 17개는 원장 관리자가 질의 4항의 덧붙임으로 올렸고, 없애는 제안은 07b입니다.
-- 139C-01 판정 세션: [139a](../../verification/07-switch/profile-139a-session.md)와 [139b](../../verification/07-switch/profile-139b-session.md) 모두 ADOPT, 회귀 0행입니다.
-- 다음 행동: 배열 3행의 1단계 구간별 표를 원장 관리자에게 먼저 보냅니다. 동시에 core 형 단언 14건의 재검토 표(건, 제거 길, 비용, 제안)를 커밋 전에 원장 관리자에게 보내고, 소유자 답에 따라 제거합니다. 코드가 바뀌면 134C-01·139C-01대로 판정 세션이 필요합니다. 개선 항목 여섯의 배정(질의 2항)은 열려 있습니다. G27 검증의 N2(계수 시험의 고정 스크래치 경로)는 비차단으로 열려 있습니다.
-- 원장 관리자 다음 라운드 번호: 144. 측정은 직렬(135라운드)이며 세션은 2시간 이내(129라운드)입니다.
+- 단계: 07 전환(PR-7). 브랜치 `feat/schema-form-switch`, 작업 자리는 워크트리 `.claude/worktrees/stage-07`(`.claude/commands/`·`.vscode/`는 sparse-checkout으로 뺌). 2026-10-11 원장 관리자가 `1.0.0-beta`를 14개 커밋으로 묶고(`351ece24e`) 이 가지를 그 위의 커밋 하나(`f8a39d65e`)로 다시 세웠으며, 그 뒤 리뷰 기간의 커밋을 위에 쌓았습니다. 측정 원자료는 브랜치 `archive/stage-07-verification-raw`와 태그 `archive/stage-07-pre-rebase-20261011`(둘 다 `98227ab19`)에 있습니다(140라운드).
+- PR: [#354](https://github.com/vincent-kk/albatrion/pull/354), base `1.0.0-beta`, 리뷰 중입니다. G23이 닫힐 때까지 머지하지 않으며, 머지는 소유자가 정합니다.
+- seiri 작업 `schema-form-switch`, 단계 execute. 게이트 원장은 워크트리의 `.seiri/tasks/schema-form-switch/gates.md`(gitignore)입니다. seiri `gates status`는 메인 체크아웃 경로를 읽어 원장이 없다고 답하므로 워크트리 파일을 직접 읽습니다. 72시간 유휴 삭제에 대비한 사본은 [gates-snapshot.md](gates-snapshot.md)입니다.
+- 게이트 상태(2026-10-12, 157라운드 반영): G26은 157라운드 소유자 답으로 배열 3행을 수용해 닫혔습니다. 최종 수치는 [156 최종 재측정](../../verification/07-switch/profile-156-final.md)이며 update-wall 격차는 array-push-100 +7.08→+1.53 ms, array-replace-200 +8.84→+9.96 ms(개선-32로 이월), array-push-remove-100 +9.85→−2.67 ms입니다. G27은 core 형 단언 14개를 11개 제거와 이유를 적은 단언 3개(#3, #7, #12)로 정리했고, [4단계 검증](../../verification/07-switch/g27-phase4.md)의 차단 둘(G32·G31 증거 공백)은 2026-10-12 재확인으로 채웠습니다(아래 §6 끝). 열린 것은 소유자의 브라우저 실행을 기다리는 G23입니다.
+- 리뷰 기간 커밋: 형 단언 제거 `34b370eed`·`62e140d8d`(146·149라운드), 런타임 가드 `0eb8e3ada`(153라운드, [판정](../../verification/07-switch/g27-runtime-guards-153.md)), 배열 2단계 고침 ① `e1d3a8914`(154라운드, [판정](../../verification/07-switch/array-fix1-154.md)), 고침 ② `e9c408980`(155라운드, [판정](../../verification/07-switch/array-fix2-155.md)), 최종 재측정 `ee3b730c0`(156라운드). 판정 세션은 모두 React·core 채택, 회귀 0입니다.
+- 다음 행동: G27 4단계 차단 둘의 범위 재확인 결과를 원장 관리자에게 올리고, PR 본문을 갱신합니다. 07b 개선 목록은 개선-30(공개 형 추론 감사), 개선-31(판정용 번들 빌드 재현성), 개선-32(array-replace-200 렌더 쪽 격차)까지입니다. G27 검증의 N2(계수 시험의 고정 스크래치 경로)는 비차단으로 열려 있습니다.
+- 원장 관리자 다음 라운드 번호: 158. 측정은 직렬(135라운드)이며 세션은 2시간 이내(129라운드)입니다.
 
 ## 1. 최초 기준선
 
@@ -515,3 +515,14 @@ G26 보고서 머리에 원자료 보관 위치의 한 문단을 넣었습니다
 ```
 
 `PLAN.md` §3의 07 행을 `리뷰`와 [#354](https://github.com/vincent-kk/albatrion/pull/354)로 바꿨습니다.
+
+### 2026-10-12 G27 4단계와 G31·G32 재확인(HEAD `ee3b730c0`)
+
+[G27 4단계 검증](../../verification/07-switch/g27-phase4.md)(codex high, 세션 `c7d3d700-1bdb-4d15-ac46-e73ee3de6d5f`)은 FAIL, 차단 2건이었습니다. 두 건 모두 제품 결함이 아니라 게이트 증거가 리뷰 기간 커밋을 덮지 않는다는 지적입니다. B1(core 형 단언)은 해결로 판정되었고, lint·typecheck·unit·render·react18·SCN·레거시 격리는 통과했습니다.
+
+| 지적 | 재확인 | 결과 |
+| --- | --- | --- |
+| B2: G32 증거가 `a76ebf44a` 뒤의 제품 커밋 다섯을 덮지 않음 | antigravity(티어 high, 세션 `e879ebb3-c217-45e1-95d9-5f2c7af70c82`)의 `a76ebf44a..ee3b730c0` 원장 대 구현 대조 | G32 PASS, 차단 0건, 비차단 4건. 공개 표면 차분 0건. 인용 원장 머리 일곱을 주 세션이 직접 확인했습니다([g32-recheck.md](../../verification/07-switch/g32-recheck.md)의 2026-10-12 절) |
+| B3: G31의 통과 증거가 옛 src tree(`f8a39d65e`)의 것이며 현재 실행은 facts 부재로 `indeterminate` | 현재 src tree `8b2586417…`에서 facts를 다시 추출·제출한 뒤 `fractal_inspect validate`의 boundaries·dag | facts 1,108파일 accepted(거부 0), status ok, 지적 0건, 통과 266, 실패 0(snapshot `26c2268d…`) |
+
+G31 실행의 진단 10건은 `src`를 뿌리로 스캔할 때 DETAIL·INTENT의 `src/…` 경로 토큰이 풀리지 않는다는 문서 계약 경고이며, 이 게이트의 범위(boundaries·dag) 밖입니다.
