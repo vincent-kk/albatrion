@@ -197,3 +197,81 @@ describe('nested array growth in the write that closes its branch (211C-01 A)', 
     });
   });
 });
+
+describe('object child first written in the write that closes its ancestor (211C-01 A′)', () => {
+  const infoSchema = {
+    type: 'object',
+    controls: { discriminator: 'kind' },
+    required: ['kind'],
+    oneOf: [
+      {
+        properties: {
+          kind: { const: 'list' },
+          info: {
+            type: 'object',
+            properties: { a: { type: 'string' }, mode: { type: 'string' } },
+            if: { properties: { mode: { const: 'b' } }, required: ['mode'] },
+            then: {
+              properties: {
+                b: { type: 'string' },
+                obj: { type: 'object', properties: { c: { type: 'string' } } },
+                arr: { type: 'array', items: { type: 'string' } },
+              },
+            },
+          },
+        },
+      },
+      { properties: { kind: { const: 'single' } } },
+    ],
+  } as const;
+  const written = {
+    a: '1',
+    mode: 'b',
+    b: 'B',
+    obj: { c: 'C' },
+    arr: ['x'],
+  };
+  const mountInfo = () => {
+    const tree = createDispatchTree(
+      infoSchema,
+      undefined,
+      createTestValidator(),
+    );
+    dispatchMount(tree.root, { kind: 'list', info: { a: '0', mode: 'a' } });
+    return tree;
+  };
+  const reopen = (root: DispatchTestNode) => {
+    dispatchSetValue(getDispatchChild(root, 'kind'), 'list');
+    const info = getDispatchChild(root, 'info');
+    return {
+      emit: info.emit,
+      b: info.structure?.b !== undefined,
+      c: getDispatchChild(info, 'obj').structure?.c !== undefined,
+      x: getDispatchChild(info, 'arr').structure?.['0'] !== undefined,
+    };
+  };
+  const restored = { emit: written, b: true, c: true, x: true };
+
+  it('keeps string, object and array children on a whole write that closes the ancestor', () => {
+    const { root, runtime } = mountInfo();
+    dispatchSetValue(root, { kind: 'single', info: written });
+    expect(runtime.latentRaw.has(latent('/info/b', 'string'))).toBe(true);
+    expect(reopen(root)).toEqual(restored);
+  });
+
+  it('keeps the children when a batch writes them and closes the ancestor', () => {
+    const { root } = mountInfo();
+    dispatchBatch(root, () => {
+      dispatchSetValue(getDispatchChild(root, 'info'), written);
+      dispatchSetValue(getDispatchChild(root, 'kind'), 'single');
+    });
+    expect(reopen(root)).toEqual(restored);
+  });
+
+  it('restores the children when the info write settled before the switch (control)', () => {
+    const { root } = mountInfo();
+    dispatchSetValue(getDispatchChild(root, 'info'), written);
+    dispatchSetValue(getDispatchChild(root, 'kind'), 'single');
+    expect(reopen(root)).toEqual(restored);
+  });
+});

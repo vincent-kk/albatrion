@@ -3,6 +3,7 @@ import type { SettlementContext } from '../../type';
 import { captureArrayLatent } from '../latent/captureArrayLatent';
 import { captureOwnLatent } from '../latent/captureOwnLatent';
 import { pruneLatentRaw } from '../write/pruneLatentRaw';
+import { distributeAbsentChildInputs } from './distributeAbsentChildInputs';
 import { isReplacedLivePath } from './isReplacedLivePath';
 import { readUnsetPolicy } from './readUnsetPolicy';
 import { writeLatentRaw } from './writeLatentRaw';
@@ -14,7 +15,8 @@ import { writeLatentRaw } from './writeLatentRaw';
  * @param context - Settlement whose latent changes may need rollback
  * @param policy - Whether exit clearing applies to this subtree
  * @param order - This occurrence's blueprint document order
- * @returns Nothing; each descendant receives its own latent entry
+ * @returns Nothing; each descendant receives its own latent entry, and a declared child
+ * this settlement's write supplied without a node is distributed as latent too (211C-01)
  */
 export const captureExitedRaw = <Self extends SchemaNodeRecord<Self>>(
   node: Self,
@@ -46,6 +48,13 @@ export const captureExitedRaw = <Self extends SchemaNodeRecord<Self>>(
       index >= 0 ? index : 0,
     ]);
   }
+  if (
+    !clear &&
+    node.behavior.type !== 'array' &&
+    node.behavior.type !== 'virtual' &&
+    node.behavior.strategy === 'branch'
+  )
+    distributeAbsentChildInputs(node, context, order);
   const key = JSON.stringify([node.path, node.blueprintNode.kind]);
   const value = clear
     ? undefined
