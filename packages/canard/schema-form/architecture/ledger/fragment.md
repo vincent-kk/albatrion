@@ -184,6 +184,7 @@
   > 편집자 결정(26C-04): "【추론】 판별 게이트(`{ kind: 'discriminator' }`)는 PR-2가 `./<key>`의 값이 `values`에 드는가로 평가하고 분기의 `controls.active`와 AND 하나로 묶는다(25C-06)." (`reviews/round-26-closing.md:44`)
   > 편집자 결정(26C-04): "【추론】 `controls.active` 게이트(노드 게이트·조각 게이트)는 PR-2가 청사진이 컴파일한 식(`BlueprintExpression.evaluate`)으로 호스트 바퀴에서 실제로 평가하며, 술어 인터페이스 뒤의 대역으로 두지 않는다." (`reviews/round-26-closing.md:45`)
   > 편집자 결정(26C-04): "【추론】 `if` 게이트만 `record/`가 선언한 술어 인터페이스 뒤에 두고 시험은 대역 하나를 쓰며, 실제 술어는 PR-4의 `compileGuard`가 넣는다." (`reviews/round-26-closing.md:46`)
+  > 편집자 결정(211C-01): "【추론】 A는 대조군이 명확해(순차는 되고 통째·batch만 안 됨) 잠복 기록 시점의 결함이고, B는 평평한 경우와 단일 $ref가 되는데 재귀 중첩만 안 되니 전개 쪽 결함이다. 둘 다 소비자가 바로 만나는 모양이라 머지 전에 고친다." (`reviews/round-211-closing.md:9`)
 - 상태: 현행
 - 출처: `adr/0002-guard-fragment-model.md:48-51`(정본), `adr/0002-guard-fragment-model.md:33`, `adr/0002-guard-fragment-model.md:190`
 - 닫은 사람: 소유자 답(`reviews/round-9-spec.md:19` 축1), 편집자 결정(10라운드 5차 본문, `adr/0002-guard-fragment-model.md:14`)
