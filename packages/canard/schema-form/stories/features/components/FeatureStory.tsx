@@ -13,7 +13,7 @@ import { ajv8ValidationRequests, countedAjv8Plugin } from './countedAjv8Plugin';
 registerPlugin(countedAjv8Plugin);
 
 /** Form props a feature story maps from scenario case constants; the scenario type itself stays unchanged. */
-export type FeatureFormProps = Pick<FormProps, 'validationMode' | 'showError' | 'errors' | 'formatError' | 'onStateChange' | 'onSubmit' | 'context' | 'formTypeInputDefinitions' | 'formTypeInputMap' | 'validatorFactory' | 'FormTypeGroupRenderer' | 'FormTypeLabelRenderer' | 'FormTypeErrorRenderer'>;
+export type FeatureFormProps = Pick<FormProps, 'validationMode' | 'showError' | 'errors' | 'formatError' | 'onStateChange' | 'onSubmit' | 'context' | 'formTypeInputDefinitions' | 'formTypeInputMap' | 'validatorFactory' | 'FormTypeGroupRenderer' | 'FormTypeLabelRenderer' | 'FormTypeErrorRenderer' | 'virtualization'>;
 
 /** One staged set of Form props; a key that is absent leaves that prop to formProps. */
 export interface FeaturePropStage {

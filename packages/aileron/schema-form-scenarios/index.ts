@@ -37,6 +37,8 @@ export {
 } from './src/features/handle-layout/index';
 export { eventsFeatureScenarios, renderCommitStages, subscriptionStages } from './src/features/events/index';
 export { isolationTrigger, pluginsFeatureScenarios, rendererCases, validatorSourceCases } from './src/features/plugins/index';
+export { deferredMountOptions, deferredMountStages, largeArrayTyped, scaleFeatureScenarios } from './src/features/scale/index';
+export type { DeferredMountStage } from './src/features/scale/index';
 export type { RendererCase, RendererSlot, ValidatorSourceCase } from './src/features/plugins/index';
 export type { RenderCommitStage, SubscriptionStage } from './src/features/events/index';
 export type { HandleCommandStage, PropReplacementStage } from './src/features/handle-layout/index';
