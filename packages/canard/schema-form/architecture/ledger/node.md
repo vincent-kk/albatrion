@@ -518,6 +518,7 @@
   > (3) 참조 그룹 노드와 `&virtual`(D-6)은 하지 않는다 — `options.virtual`은 현행 유지(소유자 답 4), 검증기 처리는 12라운드에 닫힘: `options.virtual`은 검증기 앞 제거 목록에 들고 `required` 재작성은 버린다(원장 §1.4).
 - 보충:
   > "`virtual`을 D-6의 참조 그룹 노드로 바꾸고 `type: 'virtual'`을 값으로 남기는가" (`reviews/round-10-spec.md:47`, 소유자 답 E-4가 답한 물음)
+  > 편집자 결정(215C-02): "【추론】 런타임이 거부하는 키를 공개 형이 광고하는 것은 형 함정이고 원장이 이미 별칭 없음을 정했으므로 삭제는 결정된 일의 집행이다. 다만 공개 형 차분은 소유자가 본 적 없는 표면 변화이므로 귀환 때 확인 항목으로 남긴다." (`reviews/round-215-closing.md:29`)
 - 상태: 중복(→ VALIDATE-034, WRITE-026)
 - 출처: `adr/0011-branch-node-composition.md:3#4`(정본), `adr/0011-branch-node-composition.md:3`(열다섯째 문장), `open-questions.md:31`, `adr/0001-validator-input-invariant.md:3`
 - 닫은 사람: 소유자 답(`reviews/round-10-owner-answers.md:31` E-4), 소유자 답(`reviews/round-12-owner-answers.md:16` 8 `virtual`)
