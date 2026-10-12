@@ -111,6 +111,54 @@ describe('form-level external and validation errors', () => {
     expect(aggregateEvents).toBe(2);
   });
 
+  it('195C-01 rebuilds the root list for a child clear made by a listener during delivery', () => {
+    const root = createRoot();
+    const field = root.find('/field')!;
+    const issue = { dataPath: '/field', message: 'server' };
+    root.setExternalErrors([issue]);
+    field.setExternalErrors([issue]);
+    expect(root.errors).toEqual([issue]);
+    let aggregates = 0;
+    root.subscribe(({ type }) => {
+      if (type & SchemaNodeEventType.UpdateGlobalError) aggregates++;
+    });
+    field.subscribe(({ type }) => {
+      if (type & SchemaNodeEventType.UpdateValue) field.clearExternalErrors();
+    });
+    field.setValue('next');
+    expect(field.errors).toEqual([]);
+    expect(root.errors).toEqual([]);
+    expect(root.globalErrors).toEqual([]);
+    expect(aggregates).toBe(1);
+  });
+
+  it('195C-01 ends a listener that keeps rewriting child external errors with the feedback limit', () => {
+    const root = createRoot();
+    const field = root.find('/field')!;
+    let rounds = 0;
+    const rewrite = () =>
+      field.setExternalErrors([
+        { dataPath: '/field', message: `r${rounds++}` },
+      ]);
+    field.subscribe(({ type }) => {
+      if (type & SchemaNodeEventType.UpdateValue) rewrite();
+    });
+    root.subscribe(({ type }) => {
+      if (type & SchemaNodeEventType.UpdateGlobalError) rewrite();
+    });
+    let failure: unknown;
+    try {
+      field.setValue('next');
+    } catch (error) {
+      failure = error;
+    }
+    expect(failure).toMatchObject({
+      code: 'SCHEMA_FORM_ERROR.FEEDBACK_LIMIT_EXCEEDED',
+    });
+    expect(rounds).toBeGreaterThan(0);
+    expect(rounds).toBeLessThanOrEqual(26);
+  });
+
   it('SURFACE-053 VALIDATE-043 79C-01 rebuilds the form list when root external errors are cleared', async () => {
     const external = [{ dataPath: '', message: 'server' }];
     const validation = [{ dataPath: '/field', message: 'validator' }];

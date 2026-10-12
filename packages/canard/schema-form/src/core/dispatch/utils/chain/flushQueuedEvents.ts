@@ -1,6 +1,7 @@
 import { FEEDBACK_LIMIT_EXCEEDED, SchemaFormError } from '../../../../errors';
 import { SchemaNodeRevisionLedger } from '../../../record';
 import type { SchemaNodeDelivery, SchemaNodeRecord } from '../../../record';
+import { rebuildRootExternalErrors } from '../entry/utils/propagateExternalErrorsToRoot';
 import { finishQueuedErrors } from '../report/finishQueuedErrors';
 import { captureChainError } from './captureChainError';
 import { deliverWave } from './deliverWave';
@@ -22,7 +23,9 @@ const isQueuedNode = <Self extends SchemaNodeRecord<Self>>(
   Reflect.get(candidate, 'detached') === false;
 
 /**
- * Deliver merged non-settlement bits in waves after committed events.
+ * Deliver merged non-settlement bits in waves after committed events; a non-root
+ * external-error change made by a listener is folded into the root list before the
+ * next wave and counts against the same feedback budget (195C-01).
  * @param root - Live root owning the queued event table and observers
  * @param caller - Whether a synchronous caller receives standalone failures
  * @returns Nothing; standalone failures are exposed after all deliveries
@@ -45,10 +48,15 @@ export const flushQueuedEvents = <Self extends SchemaNodeRecord<Self>>(
   }
   try {
     while (
+      runtime.pendingExternalErrorPaths?.size ||
       runtime.queuedNonSettleEvents?.size ||
       runtime.deliveries?.size ||
       (!runtime.entryDepth && runtime.stateChanged)
     ) {
+      if (runtime.pendingExternalErrorPaths?.size) {
+        rebuildRootExternalErrors(root);
+        continue;
+      }
       if (runtime.deliveries?.size) {
         runDeliveryWaves(root);
         continue;
