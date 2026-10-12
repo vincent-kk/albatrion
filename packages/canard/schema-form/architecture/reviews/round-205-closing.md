@@ -9,3 +9,7 @@
   - 【추론】 변이 탐침은 verifier가 하던 핵심 검사(적재 하중 확인)를 같은 세션이 직접 한 것이라 증거 등급이 조금 낮지만 PR 전체 독립 검증이 남아 있다. 07b-1에 코드가 들어왔으니 이번 rebase 뒤에는 게이트 재실행이 필요하다.
 - 근거: fairy07의 G7 보고; EVENT-042·REACT-027; 203C-01; fixy07의 rebase 보고.
 - 다음: 원장 관리자가 fairy07·fixy07에 알린다.
+
+## 덧붙임 (2026-10-13, 07c rebase와 G3 발견 뒤집기)
+
+fairy07이 07c의 일곱 커밋만 `git rebase --onto 79470890a f820a37ee`로 옮겼다(보통 rebase는 옛 07b 커밋을 다시 재생하려다 src/에서 충돌해 중단; src/ 불변). 새 스택: G3 ec1a9e170, G2 ec604fd3a, G1 d60f199ee, G5 07128a343, G4 e402f1c6c, G6 d7b0e6a87, G7 f2191ff7b, 그 위에 G3 뒤집기 커밋. G3의 it.fails 둘이 518612e36으로 통과하게 되어 보통 회귀 사례로 바꿈: e2e는 plain it, 스토리는 !test 태그를 떼고 Features/Composition/BatchRetention 아래로, 시나리오는 compositionFeatureScenarios로 옮겨 composition.batch-keeps-inactive-raw·composition.batched-toggle-keeps-edit로 개명, compositionFindingScenarios 제거, DETAIL 표는 coverage 절로. 새 head 게이트: 스토리북 198/198(196 + 제외됐던 둘), e2e 277/277, 두 패키지 typecheck·lint, 시나리오 37/37(발견 행 하나 사라짐), 실제 창 2/2(/tmp/claude-501/07c-g3-flip). 남은 열린 발견은 G1 소유자 질의(큐 9번)뿐. 다음 G9.
