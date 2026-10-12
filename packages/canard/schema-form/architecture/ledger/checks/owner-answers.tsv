@@ -321,3 +321,4 @@ reviews/round-159-owner-answers.md:7	159	쌓은 브랜치로 07b 시작	"흠... 
 reviews/round-159-owner-answers.md:8	159	순서와 F-E 해제	"그래 그렇게 하자" (2026-10-12, 원장 세션)
 reviews/round-162-owner-answers.md:7	162	개선 항목 배정	"아 그래 그렇게 진행해봐" (2026-10-12, 원장 세션)
 reviews/round-166-owner-answers.md:7	166	오류 배열 readonly, state flag의 값 범위, INTENT 예외	"직접 결정한건 문제없고, 두가지에 대해서인데, error는 readOnly로 해도 되는데, state에 대해서는 false도 유효값이야. undefined이거나 true 이거나 false거나. 그렇지 않나? 네가 판단 못할만한 문제는 아닌데. 어떤것때문에 결정을 미룬거지?" (2026-10-12, 원장 세션)
+reviews/round-169-owner-answers.md:7	169	32a 뒤 멈춤, 배열 확인 측정 축소 또는 생략	"32a 까지만 하고 잠시 멈춰줘. 배열 라운드는 좀 짧게 검증해보던가 아니면 일단 생략 브라우저 검토랑 코드리뷰를 해야되거든" (2026-10-12, 원장 세션)
