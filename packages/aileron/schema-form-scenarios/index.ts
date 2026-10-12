@@ -25,6 +25,13 @@ export type {
 } from './src/features/validation-state/index';
 export { contextStages, derivationFeatureScenarios, resetInteractionStages } from './src/features/derivation/index';
 export type { ContextStage, ResetInteractionStage } from './src/features/derivation/index';
+export {
+  childComponentStages, fileAttachStages, mapEntryStages, inputComponentsFeatureScenarios, inputMapCase, inputResolutionCases,
+  inputResolutionPluginDefinition, propsFlowAttributes, trimStages,
+} from './src/features/input-components/index';
+export type {
+  ChildComponentStage, FileAttachStage, MapEntryStage, InputResolutionCase, InputWinner, LabeledDefinition, TrimStage,
+} from './src/features/input-components/index';
 export { findScenarioHandle } from './src/utils/findScenarioHandle';
 export { playScenario } from './src/utils/playScenario';
 export { registerScenarioHandle } from './src/utils/registerScenarioHandle';

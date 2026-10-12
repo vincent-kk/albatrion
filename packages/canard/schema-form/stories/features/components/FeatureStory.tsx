@@ -3,7 +3,7 @@ import { useEffect, useRef, useState } from 'react';
 import type { FormScenario } from '@aileron/schema-form-scenarios';
 import { registerScenarioHandle } from '@aileron/schema-form-scenarios';
 
-import { Form, ValidationMode, registerPlugin, type FormHandle, type FormProps, type JSONSchema } from '../../../src';
+import { Form, FormProvider, ValidationMode, registerPlugin, type FormHandle, type FormProps, type FormProviderProps, type JSONSchema } from '../../../src';
 
 import { createStoryScenarioAdapter } from '../../components/scenario/createStoryScenarioAdapter';
 import type { StoryObservations } from '../../components/scenario/types';
@@ -13,7 +13,7 @@ import { ajv8ValidationRequests, countedAjv8Plugin } from './countedAjv8Plugin';
 registerPlugin(countedAjv8Plugin);
 
 /** Form props a feature story maps from scenario case constants; the scenario type itself stays unchanged. */
-export type FeatureFormProps = Pick<FormProps, 'validationMode' | 'showError' | 'errors' | 'formatError' | 'onStateChange' | 'onSubmit' | 'context'>;
+export type FeatureFormProps = Pick<FormProps, 'validationMode' | 'showError' | 'errors' | 'formatError' | 'onStateChange' | 'onSubmit' | 'context' | 'formTypeInputDefinitions' | 'formTypeInputMap'>;
 
 /** One staged set of Form props; a key that is absent leaves that prop to formProps. */
 export interface FeaturePropStage {
@@ -34,6 +34,8 @@ export interface FeatureStoryProps {
    * errors stays untyped so a story can stage input the prop type forbids (178C-01), as an untyped JavaScript caller would.
    */
   propStages?: readonly FeaturePropStage[];
+  /** FormProvider-level definitions; when present the Form renders inside a FormProvider. */
+  providerDefinitions?: FormProviderProps['formTypeInputDefinitions'];
   /** Called with each whole-form value after the story records it. */
   onChange?: (value: unknown) => void;
   /** Receives the mounted handle and its registration element so a play can drive consumer-only interactions. */
@@ -45,7 +47,7 @@ export interface FeatureStoryProps {
  * @param props - Shared scenario data plus optional form props; React owns the handle and its DOM registration.
  * @returns The described form, a live output readout, and the authored schema and initial value.
  */
-export function FeatureStory({ scenario, formProps, propStages, onChange, onHandle }: FeatureStoryProps) {
+export function FeatureStory({ scenario, formProps, propStages, providerDefinitions, onChange, onHandle }: FeatureStoryProps) {
   const root = useRef<HTMLDivElement>(null);
   const [handle, setHandle] = useState<FormHandle | null>(null);
   const [stage, setStage] = useState(0);
@@ -63,16 +65,17 @@ export function FeatureStory({ scenario, formProps, propStages, onChange, onHand
     onHandle?.(handle, element);
     return registerScenarioHandle(element, handle, createStoryScenarioAdapter({ handle, element, observations }));
   }, [handle, observations, onHandle]);
+  const form = <Form key={scenario.name} ref={setHandle} jsonSchema={scenario.schema as JSONSchema} defaultValue={scenario.initialValue}
+    validationMode={ValidationMode.OnChange | ValidationMode.OnRequest} {...formProps} {...staged}
+    onChange={(value) => { observations.changes.push(value); onChange?.(value); }} onError={({ code }) => { observations.errorCodes.push(code); }}>
+    {({ value }) => <><Form.Group /><output aria-label="Form output">{JSON.stringify(value)}</output></>}
+  </Form>;
   return <section data-feature-story={scenario.name}>
     {scenario.description && <p>{scenario.description}</p>}
     {propStages && <button type="button" aria-label="Apply next form props" disabled={stage + 1 >= propStages.length}
       onClick={() => setStage(stage + 1)}>Form props stage {stage + 1} / {propStages.length}</button>}
     <div ref={root} data-scenario-name={scenario.name}>
-      <Form key={scenario.name} ref={setHandle} jsonSchema={scenario.schema as JSONSchema} defaultValue={scenario.initialValue}
-        validationMode={ValidationMode.OnChange | ValidationMode.OnRequest} {...formProps} {...staged}
-        onChange={(value) => { observations.changes.push(value); onChange?.(value); }} onError={({ code }) => { observations.errorCodes.push(code); }}>
-        {({ value }) => <><Form.Group /><output aria-label="Form output">{JSON.stringify(value)}</output></>}
-      </Form>
+      {providerDefinitions ? <FormProvider formTypeInputDefinitions={providerDefinitions}>{form}</FormProvider> : form}
     </div>
     <details>
       <summary>Schema and initial value</summary>
