@@ -2,9 +2,8 @@
 
 개발의 진행 상황과 다음 할 일은 `PLAN.md`가 단일 진입점으로 든다. 다음 세션이 바로 이어서 일하기 위한 문서다. 이력은 `git log`와 `reviews/`에 있으므로 여기에는 지금 상태, 다음 할 일, 일하는 법만 적는다. 소유자는 Vincent다.
 
-## 1. 지금 어디인가 (2026-10-12, 166라운드 닫힘; 07 전환 진행 중)
+## 1. 지금 어디인가 (2026-10-12, 167라운드 닫힘; 07 전환 진행 중)
 
-- **152라운드(2026-10-11, 소유자).** 레거시 다섯 파일의 형 넓히기는 문제없다. 남은 일은 끝까지 자율로 진행해 PR을 갱신하고, 소유자 결정은 끝에 묶어 올린다(reviews/round-152-owner-answers.md).
 - **153라운드(2026-10-12, 닫기).** 런타임 가드 다섯 건의 번들 판정은 React·코어 모두 채택이고 회귀가 없어 다섯 가드를 모두 유지한다. 형 단언 열네 건의 최종 셈은 제거 열한 건과 이유 적힌 단언 세 건이며, G27은 배열 2단계 뒤 새 문맥 verify로 닫는다(reviews/round-153-closing.md).
 - **154라운드(2026-10-12, 닫기).** 배열 2단계 코어 ① 고침의 판정은 React·코어 모두 채택이고 회귀가 없다. push 계열 두 행은 출발 격차보다 크게 줄었고 replace-200은 이 고침의 대상이 아니라 변화가 없다. 고침 ①을 채택하고 코어 ②로 간다(reviews/round-154-closing.md).
 - **155라운드(2026-10-12, 닫기).** 배열 2단계 코어 ② 고침의 판정은 React·코어 모두 채택이고 회귀가 없다. push-remove-100에 유의한 이득이 있고 push-100도 빠른 쪽이며, replace-200은 닿지 않는 행이라 변화가 없다. 고침 ②를 채택하고 최종 세 행 재측정과 G27 새 문맥 verify, PR 갱신으로 간다(reviews/round-155-closing.md).
@@ -18,7 +17,8 @@
 - **163라운드(2026-10-12, 닫기).** 공개 형 추론 감사가 끝났다. 네 경로의 핵심 값 추론은 두 판 모두 정확하고, 차이 아홉 가운데 여섯은 새 판이 더 정확하거나 엄격해 유지하며, formatError의 값 형이 넓어진 하나는 옛 판대로 되돌린다. 핸들러 안의 쓰기를 막는 둘은 소유자 결정으로 올린다(reviews/round-163-closing.md).
 - **164라운드(2026-10-12, 닫기).** 앞 라운드의 formatError 되돌림 결정을 뒤집었다. 새 엔진은 해석할 수 없는 입력을 보존하므로 오류 노드의 값 형은 unknown이 사실과 맞고, 옛 판의 넓은 union은 런타임이 보장한 적 없는 약속이었다. 감사 차이 아홉의 최종 처분은 새 판 유지 일곱과 소유자 결정 둘이며 코드 고침은 없다(reviews/round-164-closing.md).
 - **165라운드(2026-10-12, 닫기).** 개선-32 커밋 1은 독립 리뷰를 통과했고 계약 여섯이 모두 유지된다. 입력 제어 훅이 구독 셋을 하나의 스냅숏으로 합치려고 useSyncExternalStore를 직접 쓰는 것은 그대로 두고, SchemaNode INTENT의 구독 규약에 그 훅을 예외로 적는다(reviews/round-165-closing.md).
-- **166라운드(2026-10-12, 소유자).** onValidate의 오류 배열은 readonly로 두고, onStateChange의 state flag는 false도 유효값이므로 세 값을 모두 내도록 형과 런타임을 옛 판 의미로 맞춘다. INTENT 예외는 문제없다(reviews/round-166-owner-answers.md). 다음 라운드 번호는 167.
+- **166라운드(2026-10-12, 소유자).** onValidate의 오류 배열은 readonly로 두고, onStateChange의 state flag는 false도 유효값이므로 세 값을 모두 내도록 형과 런타임을 옛 판 의미로 맞춘다. INTENT 예외는 문제없다(reviews/round-166-owner-answers.md).
+- **167라운드(2026-10-12, 닫기).** global state flag는 두 판 모두 런타임이 false를 쓴 적이 없으므로 형만 옛 판과 같게 되돌린다. 꺼진 flag의 키가 사라지는 시점은 새 판(마지막 노드가 끄면 바로)을 유지하며 소유자에게 보고한다(reviews/round-167-closing.md). 다음 라운드 번호는 168.
 - **그 앞의 라운드 요지(19라운드부터)는 PLAN-LOG.md 2절에 있다.** 라운드마다 한 문단이며, 1절의 기록 표와 같은 순서다.
 - **설계의 정본은 단일 원장 `ledger/`다.** 영역 17개, 항목 1,350개(80라운드 뒤, 24라운드 뒤 1,348; 현행 1,076(부정 결정·기록 포함), 대체됨 199, 분할됨 49, 중복 24, 열림 0). 형식과 규칙은 `ledger/README.md`.
 - **옛 설계 문서(`00`–`09`, `adr/`, `open-questions.md`)는 동결됐다.** 더 고치지 않는다. 어긋남은 원장의 충돌 칸에 적는다. 원장이 인용하는 옛 문서의 `path:line`은 모두 커밋 `ba398c330` 기준 줄 번호다(그 뒤 옛 문서는 바뀌지 않았다).
@@ -285,6 +285,7 @@ node ledger/checks/doc-coverage.mjs design/*.md adr/*.md -- ledger/*.md   # 설�
 | `reviews/round-164-closing.md` | 164라운드 편집자 결정 하나: formatError 되돌림 철회 |
 | `reviews/round-165-closing.md` | 165라운드 편집자 결정 하나: F-E의 구독 규약 예외 |
 | `reviews/round-166-owner-answers.md` | 166라운드 소유자 답 하나: 오류 배열 readonly, state flag 세 값, INTENT 예외 |
+| `reviews/round-167-closing.md` | 167라운드 편집자 결정 하나: global state flag 형 복원과 키 소멸 시점 |
 | reviews/raw-round97-gate-selection/ | 97라운드 원자료: 게이트 선택 설계안의 독립 검증 보고 |
 | `reviews/round-28-closing.md` | 28라운드 편집자 결정의 정본(28C-01~08: 04(PR-3+PR-6) 실행 계획 초안의 해석 일곱 건과 후속 둘 — 개발 모드 정착 기록의 자리, `enabled`와 떼어진 노드의 상태 게터, `@` 맥락과 `setContext`의 PR, 억제 비트와 `resetInteraction`, `unsetOnInactive` 식의 throw, TEST-071의 값 크기, `watchValues`의 PR, `node.context`의 PR과 맥락 변경 정착). 보충 줄만 |
 | `reviews/round-29-closing.md` | 29라운드 편집자 결정의 정본(29C-01~04: 생긴·로드된 노드의 파생 규칙은 원천이 `undefined`여도 발화, 채움 뒤의 값 변화는 새 에지, v7의 모형 선택은 이식하지 않음; 식이 던진 정착의 채움·나감 비움은 진행, 03의 전이 전체 생략은 결함; 공유 충돌 정착도 진행하고 원본 B는 예산 초과에만; 조각 `controls`의 `injectTo`는 불허). 보충 줄만 |

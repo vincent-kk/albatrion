@@ -82,4 +82,4 @@
 
 | 날짜 | 무엇 | 어디 |
 | --- | --- | --- |
-| 2026-10-12 | 165라운드(닫기): 개선-32 커밋 1은 입력 제어 훅의 useSyncExternalStore 직접 사용 유지, INTENT 구독 규약에 예외 한 줄; tracker 훅 확장은 받지 않음. 보충 1줄 | `reviews/round-165-closing.md` |
+| 2026-10-12 | 167라운드(닫기): global state flag 형만 boolean | undefined로 복원(두 판 모두 false를 낸 적 없음, 런타임 불변); 키 소멸 시점은 새 판 유지(보고). 보충 2줄 | `reviews/round-167-closing.md` |
