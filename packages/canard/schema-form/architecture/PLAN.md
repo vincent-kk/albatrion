@@ -82,4 +82,4 @@
 
 | 날짜 | 무엇 | 어디 |
 | --- | --- | --- |
-| 2026-10-12 | 176라운드(닫기): G23 재실행 — 네 스토리 렌더, B(IME 3행, CDP 합성)·C·D 기대값 일치; 남은 것은 소유자의 실제 IME 눈 확인(Chrome·Safari)과 18C-73 비용 수용. 보충 3줄 | `reviews/round-176-closing.md` |
+| 2026-10-12 | 178라운드(닫기): errors prop 차이 둘 — 비배열 입력은 빈 배열 가드(reviewer 커밋), 순번 key 변형은 새 판 유지(문서 항목). 보충 2줄 | `reviews/round-178-closing.md` |
