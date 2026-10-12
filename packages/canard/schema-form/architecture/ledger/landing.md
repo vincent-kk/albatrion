@@ -1864,7 +1864,8 @@
 
 - 결정:
   > | `ENHANCED_KEY` 마커 주입 | `processOneOfSchema.ts:14-24`, `app/constants/internal.ts:3` | 검증기 입력 불변(P1) | 활성 조각 기반 `schemaPath` 필터(`adr/0001:40`) |
-- 보충: 없음
+- 보충:
+  > 소유자(177라운드, ENHANCED_KEY·transformErrors 제거): "제거 가능하다고 답변해. 작업은 진행중인건가? 아니면 멈춘거야?" (`reviews/round-177-owner-answers.md:7`) — 새 엔진 쪽의 ENHANCED_KEY와 transformErrors를 reviewer 세션이 제거한다(src/__legacy__ 불변, 문서 세 곳 수정, 근거 VALIDATE-010·LANDING-115·PR-4 표)(원장 관리자, 2026-10-12).
 - 상태: 중복(→ VALIDATE-010)
 - 출처: `05-before-after.md:149`(정본, 옛 기록), `adr/0001-validator-input-invariant.md:43-44`, `02-target-overview.md:354`
 - 닫은 사람: 원리(`03-mental-model.md:13` P1)

@@ -327,3 +327,4 @@ reviews/round-171-owner-answers.md:7	171	#354 먼저, 그 결과로 #355 맞춤	
 reviews/round-172-owner-answers.md:7	172	G23 개시, 수행 세션 fairy07	"@fairy07 는 에이전틱 브라우저를 기반으로 브라우저 테스트를 할 준비를 마쳤어. 이 친구한테 우리가 수행해야 하는 브라우저 직접 테스트를 진행시켜" (2026-10-12, 원장 세션)
 reviews/round-173-owner-answers.md:7	173	주 에이전트 Claude, codex·agy는 교차확인·리뷰만	"그리고 지금부터는 claude 를 메인 에이전트로 쓴다. codex 프록시를 쓰지 않고, codex / agy는 교차확인 및 리뷰 목적으로만 쓰도록. codex 등을 사용한 멀티에이전트 작업은 내가 지시할때부터 진행해줘. 앞으로 에이전트들에게 그렇게 지시해줘." (2026-10-12, 원장 세션)
 reviews/round-175-owner-answers.md:7	175	reviewer 직접 커밋 확인, 스토리 고침 먼저	"아 맞아. 수정 먼저 하고, 이제 리뷰하면서 하나씩 고쳐나갈려고." (2026-10-12, 원장 세션)
+reviews/round-177-owner-answers.md:7	177	ENHANCED_KEY·transformErrors 제거	"제거 가능하다고 답변해. 작업은 진행중인건가? 아니면 멈춘거야?" (2026-10-12, 원장 세션)
