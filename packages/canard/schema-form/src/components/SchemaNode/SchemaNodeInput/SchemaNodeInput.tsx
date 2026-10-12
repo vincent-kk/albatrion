@@ -11,7 +11,6 @@ import {
   readSchemaNodeInteractionReset,
   writeSchemaNodeInput,
 } from '@/schema-form/core';
-import { useSchemaNodeTracker } from '@/schema-form/hooks/useSchemaNodeTracker';
 import {
   useFormTypeRendererContext,
   useInputControlContext,
@@ -23,7 +22,7 @@ import type { JSONSchema, SetStateFnWithOptions } from '@/schema-form/types';
 import { useChildNodeComponents } from './hooks/useChildNodeComponents';
 import { useFormTypeInput } from './hooks/useFormTypeInput';
 import { useFormTypeInputControl } from './hooks/useFormTypeInputControl';
-import { REACTIVE_RERENDERING_EVENTS, type SchemaNodeInputProps } from './type';
+import type { SchemaNodeInputProps } from './type';
 
 /** Bind one input draft to the live node without treating typing as a caller refresh. */
 export const SchemaNodeInput = memo(
@@ -113,7 +112,6 @@ export const SchemaNodeInput = memo(
       if (requestId.current !== undefined)
         cancelAnimationFrame(requestId.current);
     });
-    useSchemaNodeTracker(node, REACTIVE_RERENDERING_EVENTS);
     if (!FormTypeInput) return null;
     return (
       <div

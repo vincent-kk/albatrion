@@ -16,12 +16,7 @@ import {
 
 import { DeferrableNodeProxy } from '@/schema-form/components/SchemaNode/DeferrableNodeProxy';
 import type { SchemaNodeProxyProps } from '@/schema-form/components/SchemaNode/SchemaNodeProxy';
-import {
-  type SchemaNode,
-  SchemaNodeEventType,
-  isTerminalNode,
-} from '@/schema-form/core';
-import { useSchemaNodeTracker } from '@/schema-form/hooks/useSchemaNodeTracker';
+import { type SchemaNode, isTerminalNode } from '@/schema-form/core';
 import { useVirtualizationContext } from '@/schema-form/providers';
 import type { ChildNodeComponentProps } from '@/schema-form/types';
 
@@ -38,7 +33,7 @@ import { useTerminalChildren } from './useTerminalChildren';
  * @returns ChildNodeComponent[]
  *
  * @remarks `node.children` is read during render and kept consistent by the
- *          tracker: `useSchemaNodeTracker` is `useSyncExternalStore`-based, so
+ *          input's combined `useSyncExternalStore` tracker, so
  *          `UpdateChildren` deliveries landing between render and commit
  *          (concurrent mount gap) still force a resync render instead of
  *          being lost.
@@ -48,10 +43,6 @@ export const useChildNodeComponents = (
   NodeProxy: ComponentType<SchemaNodeProxyProps>,
   mountedChildren: MutableRefObject<number>,
 ): ChildNodeComponent[] => {
-  useSchemaNodeTracker(
-    node,
-    SchemaNodeEventType.UpdateChildren | SchemaNodeEventType.UpdatePath,
-  );
   const children = node.children;
   const terminalChildren = useTerminalChildren(node);
 
