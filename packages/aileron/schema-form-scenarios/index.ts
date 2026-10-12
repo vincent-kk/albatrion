@@ -32,6 +32,10 @@ export {
 export type {
   ChildComponentStage, FileAttachStage, MapEntryStage, InputResolutionCase, InputWinner, LabeledDefinition, TrimStage,
 } from './src/features/input-components/index';
+export {
+  handleCommandStages, handleLayoutFeatureScenarios, handleRoundTripIssues, layoutPlan, propReplacementStages, providerLayers,
+} from './src/features/handle-layout/index';
+export type { HandleCommandStage, PropReplacementStage } from './src/features/handle-layout/index';
 export { findScenarioHandle } from './src/utils/findScenarioHandle';
 export { playScenario } from './src/utils/playScenario';
 export { registerScenarioHandle } from './src/utils/registerScenarioHandle';

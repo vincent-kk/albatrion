@@ -36,7 +36,7 @@ const resolutionStory = (label: string): Story => {
         ...(item.map && { formTypeInputMap: toInputMap(item.map) }),
         ...(item.form && { formTypeInputDefinitions: toDefinitions(item.form) }),
       },
-      ...(item.provider && { providerDefinitions: toDefinitions(item.provider) }),
+      ...(item.provider && { providerProps: { formTypeInputDefinitions: toDefinitions(item.provider) } }),
     },
     parameters: { docs: { description: { story: `${scenario.description} Case: ${label}.` } } },
     async play({ args, canvasElement }) {

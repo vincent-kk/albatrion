@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { type ReactNode, useEffect, useRef, useState } from 'react';
 
 import type { FormScenario } from '@aileron/schema-form-scenarios';
 import { registerScenarioHandle } from '@aileron/schema-form-scenarios';
@@ -21,6 +21,10 @@ export interface FeaturePropStage {
   readonly errors?: unknown;
   /** context prop for this stage. */
   readonly context?: FormProps['context'];
+  /** jsonSchema prop for this stage, replacing the scenario schema. */
+  readonly jsonSchema?: unknown;
+  /** defaultValue prop for this stage, replacing the scenario initial value. */
+  readonly defaultValue?: unknown;
 }
 
 /** Props of the feature catalog story; everything beyond the scenario is optional. */
@@ -34,8 +38,10 @@ export interface FeatureStoryProps {
    * errors stays untyped so a story can stage input the prop type forbids (178C-01), as an untyped JavaScript caller would.
    */
   propStages?: readonly FeaturePropStage[];
-  /** FormProvider-level definitions; when present the Form renders inside a FormProvider. */
-  providerDefinitions?: FormProviderProps['formTypeInputDefinitions'];
+  /** FormProvider props; when present the Form renders inside a FormProvider. */
+  providerProps?: Omit<FormProviderProps, 'children'>;
+  /** Layout drawn by the Form children function instead of Form.Group; it receives the current value. */
+  layout?: (props: { value: unknown }) => ReactNode;
   /** Called with each whole-form value after the story records it. */
   onChange?: (value: unknown) => void;
   /** Receives the mounted handle and its registration element so a play can drive consumer-only interactions. */
@@ -47,7 +53,7 @@ export interface FeatureStoryProps {
  * @param props - Shared scenario data plus optional form props; React owns the handle and its DOM registration.
  * @returns The described form, a live output readout, and the authored schema and initial value.
  */
-export function FeatureStory({ scenario, formProps, propStages, providerDefinitions, onChange, onHandle }: FeatureStoryProps) {
+export function FeatureStory({ scenario, formProps, propStages, providerProps, layout, onChange, onHandle }: FeatureStoryProps) {
   const root = useRef<HTMLDivElement>(null);
   const [handle, setHandle] = useState<FormHandle | null>(null);
   const [stage, setStage] = useState(0);
@@ -55,6 +61,8 @@ export function FeatureStory({ scenario, formProps, propStages, providerDefiniti
   const staged: Readonly<Record<string, unknown>> = {
     ...(current && 'errors' in current && { errors: current.errors }),
     ...(current?.context && { context: current.context }),
+    ...(current && 'jsonSchema' in current && { jsonSchema: current.jsonSchema }),
+    ...(current && 'defaultValue' in current && { defaultValue: current.defaultValue }),
   };
   const [observations] = useState<StoryObservations>(() => ({
     changes: [], errorCodes: [], get validationRequests() { return ajv8ValidationRequests.count; },
@@ -68,14 +76,14 @@ export function FeatureStory({ scenario, formProps, propStages, providerDefiniti
   const form = <Form key={scenario.name} ref={setHandle} jsonSchema={scenario.schema as JSONSchema} defaultValue={scenario.initialValue}
     validationMode={ValidationMode.OnChange | ValidationMode.OnRequest} {...formProps} {...staged}
     onChange={(value) => { observations.changes.push(value); onChange?.(value); }} onError={({ code }) => { observations.errorCodes.push(code); }}>
-    {({ value }) => <><Form.Group /><output aria-label="Form output">{JSON.stringify(value)}</output></>}
+    {({ value }) => <>{layout ? layout({ value }) : <Form.Group />}<output aria-label="Form output">{JSON.stringify(value)}</output></>}
   </Form>;
   return <section data-feature-story={scenario.name}>
     {scenario.description && <p>{scenario.description}</p>}
     {propStages && <button type="button" aria-label="Apply next form props" disabled={stage + 1 >= propStages.length}
       onClick={() => setStage(stage + 1)}>Form props stage {stage + 1} / {propStages.length}</button>}
     <div ref={root} data-scenario-name={scenario.name}>
-      {providerDefinitions ? <FormProvider formTypeInputDefinitions={providerDefinitions}>{form}</FormProvider> : form}
+      {providerProps ? <FormProvider {...providerProps}>{form}</FormProvider> : form}
     </div>
     <details>
       <summary>Schema and initial value</summary>
