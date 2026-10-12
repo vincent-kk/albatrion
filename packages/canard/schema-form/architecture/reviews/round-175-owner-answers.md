@@ -15,3 +15,5 @@ fixy07이 174C-01의 스토리 전용 고침을 PR #354에 올렸다 — 새 hea
 ## 리뷰 고침 히스토리 (reviewer 세션의 커밋, origin/feat/schema-form-switch 기준; 원장 관리자가 따라 적음)
 
 - 2cc4a2572 (2026-10-12) style(schema-form): src 678개 파일(레거시 제외)을 패키지 prettier 설정으로 포매팅 — 포매팅만. reviewer 보고: typecheck·lint·전체 시험(504 파일, 3,549건) 통과. #355는 이 위로 rebase(원장 관리자가 fixy07에 지시). 다음 커밋 예정: 잔재 제거(177라운드), errors prop 가드(178C-01).
+- 4f4f30403 (2026-10-13) refactor(schema-form): ENHANCED_KEY 마커와 transformErrors 잔재 제거(177라운드, VALIDATE-010, LANDING-115) — helpers/error/transformErrors(모듈·INTENT·DETAIL·시험)와 app/constants/internal.ts 삭제; RootNodeContext·helpers/error 문서, app/INTENT, 검증기 플러그인 JSDoc 예시 갱신. reviewer 보고: typecheck와 helpers/error·app 단위 시험 97건 통과.
+- f93e38d95 (2026-10-13) fix(schema-form): 배열이 아닌 errors prop을 0.16.0처럼 빈 목록으로(178C-01) — applyFormErrors가 errors와 previous를 isArray로 가드; 새 단위 시험 3건(null errors, 객체 errors, null previous)이 고치기 전 TypeError로 실패하고 고친 뒤 통과; RootNodeContext DETAIL에 규칙 기재. 다음: SchemaNodeProxyProps를 SchemaNodeProxy로 접기.
