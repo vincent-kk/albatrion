@@ -82,4 +82,4 @@
 
 | 날짜 | 무엇 | 어디 |
 | --- | --- | --- |
-| 2026-10-13 | 187라운드(닫기): 07c G3 — ajv8 플러그인 storybook alias·tsconfig paths 허용; 문서가 가르치는 옛 문법(&if·computed)은 15라운드로 사라진 것이라 스토리는 코드를 따르고 문서 정합은 07b 정리 항목; 검증기 분기 제어 범위 확정. 보충 2줄 | `reviews/round-187-closing.md` |
+| 2026-10-13 | 188라운드(닫기): 외부 오류 변경이 UpdateGlobalError를 올려 onValidate가 집계를 받게 한다(0.16.0 복원, reviewer 구현). 보충 2줄 | `reviews/round-188-closing.md` |
