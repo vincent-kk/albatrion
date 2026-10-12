@@ -12,7 +12,7 @@
 `CompositeTailStep`의 `write`는 핸들 쓰기라 상호작용 상태를 바꾸지 않고, `type`은 마운트된 입력에 사용자처럼 입력한다. `merge`는 루트 Merge 쓰기, `batch`는 한 batch 안의 경로 쓰기들이다.
 `mounted`의 `browserOnly`는 실제 뷰포트에서만 단언한다. jsdom의 e2e는 관찰자를 비활성 대역으로 바꾸므로 그 단계를 건너뛴다.
 `reentryTail`의 197C-01 R1은 Merge 쓰기 뒤의 batch 재진입이다. 경로 쓰기는 그 경로의 통째 교체라 다른 종류의 잠복 raw를 지우므로(WRITE-094) R1의 전제가 되지 않는다(211라운드 확인).
-`compositeFindingScenarios`는 결함 장면 목록이다: 닫히는 분기에서 배열을 늘리는 쓰기가 새 항목 값을 잃는 것, 재귀 $ref의 중첩 인스턴스가 if/then/else 게이트를 무시하는 것(211라운드 제품 결함 접수).
+`compositeRegressionScenarios`는 CX-08과 CX-14에서 갈라 낸 회귀 장면 목록이다. 211라운드에 결함으로 접수되고 214라운드 고침 뒤 보통 사례가 되었다: 닫히는 분기에서 배열을 늘리는 쓰기가 새 항목 값을 지키는 것, 재귀 $ref의 중첩 인스턴스마다 if/then/else 게이트가 걸리는 것.
 `amountInputPlan`, `pluginFormPlan`, `imeSwitchPlan`은 스토리가 브라우저에서 수행하는 입력과 그 기대값이다.
 
 ## Acceptance Criteria
@@ -20,7 +20,7 @@
 ### composite-scene-data — Shared data boundary
 
 - 사례는 번호 순서로 스물네 개이며 이름이 겹치지 않고, 모든 최상위 단계에 기대값을 둔다.
-- `tailStart`를 둔 사례는 꼬리 단계를 갖고, 결함 장면은 `composite.finding-` 접두사로 사례와 이름이 겹치지 않는다.
+- `tailStart`를 둔 사례는 꼬리 단계를 갖고, 회귀 장면은 `composite.` 접두사를 쓰되 번호 사례와 이름이 겹치지 않으며 모든 최상위 단계에 기대값을 둔다.
 
 ### composite-scene-coverage — Scene evidence
 
@@ -50,8 +50,8 @@
 | `cx22-visible-versus-active-in-branch.scenario.ts` | `composite.cx22-visible-versus-active-in-branch` | 분기 안에서 visible false는 숨기기만 해 값과 검증이 남고, active false는 노드와 값을 지운다. | CONTROLS-021, CONTROLS-022 |
 | `cx23-nullable-branch-object.scenario.ts` | `composite.cx23-nullable-branch-object` | null 연락처에서는 채널 분기가 꺼져 있고, 객체 쓰기가 승격하며, 안쪽 채널 전환이 비활성 raw를 지키고 null 쓰기가 다시 내린다. | VALUE-015, LANDING-018 |
 | `cx24-enter-submit-and-branch.scenario.ts` | `composite.cx24-enter-submit-and-branch` | 제출은 활성 분기만 판정해 필수 값이 빠진 분기는 거부되고 전환 뒤에는 통과하며, 스토리는 Enter로 제출한다. | VALIDATE-043, ERROR-139 |
-| `finding-batch-push.scenario.ts` | `composite.finding-batch-push-into-closing-branch` | 발견: 닫히는 분기에서 배열을 늘리는 한 쓰기가 돌아올 때 새 항목을 null로 되살린다. | EVENT-013, LANDING-018 |
-| `finding-recursive-nested-gate.scenario.ts` | `composite.finding-recursive-nested-gate` | 발견: 재귀 $ref의 중첩 인스턴스가 then과 else를 함께 그린다. | FRAGMENT-009, FRAGMENT-003, LANDING-018 |
+| `batch-push-into-closing-branch.scenario.ts` | `composite.batch-push-into-closing-branch` | 닫히는 분기에서 배열을 늘리는 한 쓰기와 그 같은 값의 전체 쓰기가, 분기가 돌아올 때 새 항목까지 되살린다. | EVENT-013, LANDING-018 |
+| `recursive-nested-gate.scenario.ts` | `composite.recursive-nested-gate` | 재귀 $ref의 중첩 인스턴스도 제 if/then/else 게이트를 따라 children과 size 가운데 하나만 그린다. | FRAGMENT-009, FRAGMENT-003, LANDING-018 |
 
 ## Last Updated
 

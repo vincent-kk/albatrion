@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { compositeCases, compositeFindingScenarios } from '../index';
+import { compositeCases, compositeRegressionScenarios } from '../index';
 
 // filid:contract composite-scene-data
 describe('composite cases', () => {
@@ -14,10 +14,13 @@ describe('composite cases', () => {
     }
   });
 
-  it('give a tail a start value whenever it does not continue from the shared steps, and keep findings apart', () => {
+  it('give a tail a start value whenever it does not continue from the shared steps, and keep regressions apart', () => {
     for (const item of compositeCases) if (item.tailStart !== undefined) expect(item.tail?.length, item.scenario.name).toBeGreaterThan(0);
-    for (const scenario of compositeFindingScenarios) expect(scenario.name.startsWith('composite.finding-'), scenario.name).toBe(true);
     const caseNames = new Set(compositeCases.map((item) => item.scenario.name));
-    expect(compositeFindingScenarios.some((scenario) => caseNames.has(scenario.name))).toBe(false);
+    for (const scenario of compositeRegressionScenarios) {
+      expect(scenario.name.startsWith('composite.') && !scenario.name.startsWith('composite.cx'), scenario.name).toBe(true);
+      expect(scenario.steps.every((step) => step.expect !== undefined), scenario.name).toBe(true);
+    }
+    expect(compositeRegressionScenarios.some((scenario) => caseNames.has(scenario.name))).toBe(false);
   });
 });

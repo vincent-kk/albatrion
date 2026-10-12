@@ -38,7 +38,7 @@ export {
 export { eventsFeatureScenarios, renderCommitStages, subscriptionStages } from './src/features/events/index';
 export { isolationTrigger, pluginsFeatureScenarios, rendererCases, validatorSourceCases } from './src/features/plugins/index';
 export { deferredMountOptions, deferredMountStages, largeArrayTyped, scaleFeatureScenarios } from './src/features/scale/index';
-export { amountInputPlan, compositeCases, compositeFindingScenarios, imeSwitchPlan, pluginFormPlan } from './src/features/composite/index';
+export { amountInputPlan, compositeCases, compositeRegressionScenarios, imeSwitchPlan, pluginFormPlan } from './src/features/composite/index';
 export type { CompositeCase, CompositeNodeState, CompositePropStage, CompositeTailStep } from './src/features/composite/index';
 export type { DeferredMountStage } from './src/features/scale/index';
 export type { RendererCase, RendererSlot, ValidatorSourceCase } from './src/features/plugins/index';

@@ -25,8 +25,8 @@ import { cx22VisibleVersusActiveInBranch } from './cx22-visible-versus-active-in
 import { cx23NullableBranchObject } from './cx23-nullable-branch-object.scenario';
 import { cx24EnterSubmitAndBranch } from './cx24-enter-submit-and-branch.scenario';
 
-import { batchPushFindingScenario } from './finding-batch-push.scenario';
-import { recursiveNestedGateFindingScenario } from './finding-recursive-nested-gate.scenario';
+import { batchPushIntoClosingBranchScenario } from './batch-push-into-closing-branch.scenario';
+import { recursiveNestedGateScenario } from './recursive-nested-gate.scenario';
 
 export { amountInputPlan } from './cx04-amount-input.scenario';
 export { pluginFormPlan } from './cx06-plugin-form.scenario';
@@ -38,5 +38,5 @@ export const compositeCases: readonly CompositeCase[] = [
   cx01OrderForm, cx02OrgChart, cx03Profile, cx04AmountInput, cx05Permissions, cx06PluginForm, cx07SetupWizard, cx08SwitchWithArrayVerbs, cx09ResetDuringValidation, cx10InjectChainInBatch, cx11ImeDuringSwitch, cx12DeferredDirtyTouched, cx13NestedOneofAnyof, cx14RecursiveConditions, cx15ExternalAndValidationErrors, cx16RapidMixedToggles, cx17BranchArrayItemErrors, cx18SwitchRecomputesDerived, cx19BranchDefaultsAndReset, cx20ArrayOfOneofItems, cx21GuardInsideArrayItems, cx22VisibleVersusActiveInBranch, cx23NullableBranchObject, cx24EnterSubmitAndBranch,
 ];
 
-/** Composite findings: expectations state the ledger contract and fail against the current engine. */
-export const compositeFindingScenarios: readonly FormScenario[] = [batchPushFindingScenario, recursiveNestedGateFindingScenario];
+/** Composite regression scenarios split out of CX-08 and CX-14 after their defects were fixed (round 214). */
+export const compositeRegressionScenarios: readonly FormScenario[] = [batchPushIntoClosingBranchScenario, recursiveNestedGateScenario];

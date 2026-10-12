@@ -5,7 +5,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import {
   type CompositeCase,
   compositeCases,
-  compositeFindingScenarios,
+  compositeRegressionScenarios,
   findScenarioHandle,
   playScenario,
   pluginFormPlan,
@@ -50,7 +50,7 @@ const toFormProps = (props: CompositeCase['props']) => ({
 /**
  * Run one composite case's shared steps through the registered screen adapter with the harness validator.
  * Error expectations are partial issue contracts, matched by count and shape as in validation.test.tsx.
- * @param item - Composite case, or a bare finding scenario.
+ * @param item - Composite case, or a bare regression scenario.
  * @returns Completion after every step expectation has been checked.
  */
 const run = async (item: Pick<CompositeCase, 'scenario' | 'props'>) => {
@@ -89,16 +89,16 @@ describe('features — composite shared steps CX-13 to CX-24 (TEST-025)', () => 
   });
 });
 
-// it.fails passes on any throw, so a renamed or dropped finding must fail loudly here instead.
-for (const name of ['composite.finding-batch-push-into-closing-branch', 'composite.finding-recursive-nested-gate'])
-  if (!compositeFindingScenarios.some((item) => item.name === name)) throw new Error(`Missing finding scenario: ${name}`);
+// A renamed or dropped regression scenario must fail loudly here instead of skipping its case.
+for (const name of ['composite.batch-push-into-closing-branch', 'composite.recursive-nested-gate'])
+  if (!compositeRegressionScenarios.some((item) => item.name === name)) throw new Error(`Missing regression scenario: ${name}`);
 
-describe('features — composite findings', () => {
-  it.fails('Finding: a write that grows an array while closing its branch loses the new item value (LANDING-018, EVENT-013)', async () => {
-    await run({ scenario: compositeFindingScenarios.find((item) => item.name === 'composite.finding-batch-push-into-closing-branch')! });
+describe('features — composite regressions (fixed in round 214)', () => {
+  it('LANDING-018 and EVENT-013 a write that grows an array while closing its branch keeps the new item value', async () => {
+    await run({ scenario: compositeRegressionScenarios.find((item) => item.name === 'composite.batch-push-into-closing-branch')! });
   });
 
-  it.fails('Finding: a nested instance of a recursive $ref ignores its if/then/else gate (FRAGMENT-009, LANDING-018)', async () => {
-    await run({ scenario: compositeFindingScenarios.find((item) => item.name === 'composite.finding-recursive-nested-gate')! });
+  it('FRAGMENT-009 and LANDING-018 every instance of a recursive $ref applies its own if/then/else gate', async () => {
+    await run({ scenario: compositeRegressionScenarios.find((item) => item.name === 'composite.recursive-nested-gate')! });
   });
 });
