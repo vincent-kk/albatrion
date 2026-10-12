@@ -24,31 +24,18 @@ import { indexEnteredLatentKey } from '../latent/indexEnteredLatentKey';
 import {
   DIRECT_CHILD_SELECTION_PLANS, getDirectChildSelectionPlan,
 } from './selectChildren/utils/getDirectChildSelectionPlan';
+import { canReuseArrayChildren } from './selectChildren/utils/canReuseArrayChildren';
+import { reuseArrayChildren } from './selectChildren/utils/reuseArrayChildren';
+import { staticIds } from './selectChildren/utils/staticIds';
 
 /** Ungated declarations are included by the effective-schema merger itself. */
 const NO_ACTIVE_IDS: readonly number[] = Object.freeze([]);
 /** Rejected single-declaration positions share an empty selection. */
 const NO_DECLARATIONS: BlueprintChildEntry['declarations'] = [];
-/** Static selection IDs belong to the analyzed child edge. */
-const STATIC_IDS = new WeakMap<BlueprintChildEntry, readonly number[]>();
-
 /** Immutable, ungated object shapes shared by occurrences of one blueprint host. */
 const STATIC_SHAPES = new WeakMap<BlueprintNode, readonly {
   entry: BlueprintChildEntry; ids: readonly number[]; schema: EffectiveSchema;
 }[] | null>();
-
-/** Return one stable active-ID list for an ungated child edge. */
-const staticIds = (entry: BlueprintChildEntry): readonly number[] => {
-  let ids = STATIC_IDS.get(entry);
-  if (!ids) {
-    const collected: number[] = [];
-    for (let index = 0; index < entry.declarations.length; index++)
-      collected.push(entry.declarations[index].id);
-    ids = Object.freeze(collected);
-    STATIC_IDS.set(entry, ids);
-  }
-  return ids;
-};
 
 /** Memoize an unambiguous static host in the structure's property order. */
 const staticShape = (host: BlueprintNode, isAtomic: BlueprintOptions['isAtomic']) => {
@@ -91,6 +78,10 @@ export const selectChildren = <Self extends SchemaNodeRecord<Self>>(
   computeChild: (child: Self) => void,
   immediate: boolean,
 ): boolean => {
+  if (node.behavior.type === 'array' && canReuseArrayChildren(node, context, prior)) {
+    reuseArrayChildren(node, context, prior, computeChild);
+    return false;
+  }
   if (!context.hasGates && node.behavior.type === 'object') {
     const shape = staticShape(node.blueprintNode, node.runtime.blueprint?.isAtomic);
     const children = node.children;
