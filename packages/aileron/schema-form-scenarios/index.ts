@@ -36,6 +36,8 @@ export {
   handleCommandStages, handleLayoutFeatureScenarios, handleRoundTripIssues, layoutPlan, propReplacementStages, providerLayers,
 } from './src/features/handle-layout/index';
 export { eventsFeatureScenarios, renderCommitStages, subscriptionStages } from './src/features/events/index';
+export { isolationTrigger, pluginsFeatureScenarios, rendererCases, validatorSourceCases } from './src/features/plugins/index';
+export type { RendererCase, RendererSlot, ValidatorSourceCase } from './src/features/plugins/index';
 export type { RenderCommitStage, SubscriptionStage } from './src/features/events/index';
 export type { HandleCommandStage, PropReplacementStage } from './src/features/handle-layout/index';
 export { findScenarioHandle } from './src/utils/findScenarioHandle';
