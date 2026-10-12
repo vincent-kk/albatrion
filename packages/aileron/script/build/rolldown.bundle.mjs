@@ -14,6 +14,7 @@
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
+import { BUILD_PLATFORM } from './utils/buildPlatform.mjs';
 import { createClearDir } from './utils/createClearDir.mjs';
 import { createCopyDeclarations } from './utils/createCopyDeclarations.mjs';
 import {
@@ -92,6 +93,7 @@ const createBundleBuildOptions = (callerUrl) => async (options) => {
   return {
     input: inputConfig,
     external: external || isExternalModule,
+    platform: BUILD_PLATFORM,
     tsconfig: tsconfig || join(callerDir, 'tsconfig.json'),
     transform: { target: TRANSFORM_TARGET },
     plugins: [
