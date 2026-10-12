@@ -196,7 +196,9 @@
 - 결정:
   > - `ENHANCED_KEY`, enhancer, `preprocessSchema`의 마커 주입, `__processCompositionValue__`의 마커 기록, `transformErrors`의 마커 필터가 모두 사라진다. 이슈 #342 §3.1·§3.3·§3.4가 함께 사라진다.
   > - `nodeFromJSONSchema`를 직접 부르는 경로와 `<Form>` 경로가 같은 계약을 갖게 된다(지금은 다르다).
-- 보충: 없음
+- 보충:
+  > 편집자 결정(70C-01): "【추론】 서명은 `nodeFromJSONSchema<Schema extends JSONSchema>(props: { jsonSchema: Schema; defaultValue?: InferValueType<Schema>; validator?: Validator; validationMode?: ValidationMode; context?: Dictionary; onChange?: (value: InferValueType<Schema> | undefined) => void; onStateChange?: () => void; errorReporter?: FormErrorReporter; unsetOnInactive?: boolean; disableAutomaticWrites?: boolean; isTerminal?: (schema: JSONSchema) => boolean | undefined; isAtomic?: (value: unknown) => boolean; deferMountValidation?: boolean }): InferSchemaNode<Schema>`이고 돌려주는 것은 마운트가 끝난 루트다. 칸마다 근거가 있다: `validator`는 함수 `validatorFactory`가 `{ compile, compileGuard, … }` 객체로 바뀌는 32C-01과 같은 방향이며 형은 새 엔진 쪽 `core/validation/type.ts`의 `Validator`다(공개 index가 아닌 모듈에서 내보냄, 32C-01); `context`는 옛 `contextNode`(`contextNodeFactory`의 노드)를 값으로 바꾼 것으로 `SchemaNode/`의 `setContext`가 받는 값이다; `errorReporter`는 05가 core 인자로 둔 보고기(`report`·`hasConsumer`, LANDING-064 PR-4 행)이고 `isTerminal`·`isAtomic`은 REACT-003이 렌더 계층이 넘긴다고 한 판정 둘이며 core만 쓰는 호스트가 주지 않으면 판정이 없다; `deferMountValidation`은 69C-05의 미룸 선택으로 기본은 꺼짐이라 켜지 않은 호출은 오늘대로 사슬 끝에서 검증을 요청한다. 안에서는 69C-01의 바인딩 전용 통로 가운데 "트리 생성(마운트 없음)"과 "마운트"를 차례로 부르고, `<Form>`은 첫 마운트에서 이 함수를(`deferMountValidation: true`, 버퍼형 보고기) 부르며 재생성 reset은 같은 트리 생성 통로 → 인계 → 마운트를 부르므로 두 경로가 같은 생성 함수를 지난다 — VALIDATE-010 "직접 부르는 경로와 `<Form>` 경로가 같은 계약"의 구현이다." (`reviews/round-70-closing.md:9`)
+  > 소유자(177라운드, ENHANCED_KEY·transformErrors 제거): "제거 가능하다고 답변해. 작업은 진행중인건가? 아니면 멈춘거야?" (`reviews/round-177-owner-answers.md:7`) — 새 엔진 쪽의 ENHANCED_KEY와 transformErrors를 reviewer 세션이 제거한다(src/__legacy__ 불변, 문서 세 곳 수정, 근거 VALIDATE-010·LANDING-115·PR-4 표)(원장 관리자, 2026-10-12).
 - 상태: 현행
 - 출처: `adr/0001-validator-input-invariant.md:43,46`(정본), `adr/0001-validator-input-invariant.md:44`
 - 닫은 사람: 원리(`03-mental-model.md:13` P1)
@@ -645,7 +647,8 @@
   > 【추론】 새 코드는 없다(검증 결과는 `onError` 밖).
   > PR: PR-4 시험.
   > 무엇: 규칙 (5)의 귀속이 플러그인마다 다른 `$ref` 아래 `schemaPath` 모양에서 맞는지 ajv6·7·8 사례로 본다.
-- 보충: 없음
+- 보충:
+  > 편집자 결정(79C-01): "【추론】 SURFACE-053은 `globalErrors` 게터를 "트리 전체의 값을 든 런타임을 읽는 문장 하나, 어느 노드에서 읽어도 같다(오늘과 같음)"로 두었고 `FormHandle.getErrors`는 루트에 위임하며, VALIDATE-043 (1)의 "모든 에러는 순서대로 폼 수준 목록에 남는다"는 검증기가 낸 에러의 라우팅이 판정을 바꾸지 않는다는 뜻이지 외부 오류의 포함 여부를 정한 문장이 아니다. 원장이 `globalErrors`의 내용을 바꾸는 이주 행을 두지 않았으므로 내용은 오늘과 같다: 옛 엔진의 `globalErrors`는 루트의 외부 오류를 앞에, 검증의 전역 목록을 뒤에 합친 것이고, Form `errors` 속성은 변환한 목록을 통째로 루트에 걸고 경로마다 해당 노드에도 걸므로 `errors` 속성으로 준 오류는 `getErrors()`에 나오며, 루트 아닌 노드에 `node.setExternalErrors`로 직접 건 외부 오류는 그 노드의 `errors`에만 남고 `getErrors()`에는 나오지 않는다. 그러므로 (가)도 (나)도 아니다: 코어는 런타임의 폼 수준 목록을 "루트의 외부 오류 + 라우팅 목록"으로 만들되 읽을 때가 아니라 둘 가운데 하나가 바뀔 때(루트의 `setExternalErrors`·`clearExternalErrors`, 검증 라우팅) 합친 배열을 다시 만들어 같은 값은 같은 참조로 돌려주고(패키지의 "같은 값을 두 번 읽으면 같은 참조" 규칙), 바인딩은 오늘처럼 `errors` 속성을 루트에 통째로, 경로마다 노드에도 건다(69C-03의 경로 키 재적용은 노드 쪽이고 루트에 거는 것이 함께 간다). 07의 세 사례는 외부 오류를 Form `errors` 속성(또는 루트)으로 걸었으면 `getErrors()` 포함을 단언하고, 루트 아닌 노드에 직접 걸었으면 그 노드의 `errors`만 단언하며 `getErrors()` 단언은 지운다; 사례마다 어느 쪽인지 머리에 적는다. 이주 점검표에는 "`globalErrors`·`getErrors()`의 내용: 변경 없음(루트 외부 오류 + 검증 목록)"으로 한 줄 적어 소비자가 확인할 수 있게 한다." (`reviews/round-79-closing.md:9`)
 - 상태: 현행
 - 출처: `reviews/round-18-closing.md:1471-1495,1502-1503`(정본)
 - 닫은 사람: 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-53)

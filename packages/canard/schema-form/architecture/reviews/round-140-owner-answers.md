@@ -1,0 +1,11 @@
+# 140라운드 — Vincent의 답 (7단계 측정 원자료는 보관 브랜치로, PR에는 보고서만)
+
+2026-10-11. 07이 "G27 완료, 작업 트리 깨끗함"(07 브랜치 98227ab19)을 알려 원장 관리자가 우산 브랜치 정리와 07 브랜치 리베이스에 들어가기 전에, 07 브랜치의 `verification/07-switch`가 21,595파일 1,192 MB(json 20,759파일 1,158 MB, gz 202파일 11.7 MB, cpuprofile 48파일 5.5 MB; 5 MB 상한(88C-02)을 넘는 파일이 둘 — `branchless-phase-render-traced.json` 45.4 MB, `branchless-phase-core-traced.json` 37.4 MB)이고 저장소 pack이 221 MB임을 확인했다. 그대로 squash 병합하면 원자료가 우산 브랜치 역사에 영구히 남으므로 진행을 막는 소유자 결정으로 보아 바로 물었다(선택지 셋: 보관 브랜치로 옮기고 PR에는 보고서만 / 모두 PR에 넣음 / 5 MB 초과 둘만 뺌).
+
+| 확인 | 물음(요지) | 답 원문 | 반영 |
+| --- | --- | --- | --- |
+| 측정 원자료의 처분 | 7단계 측정 원자료를 PR과 우산 브랜치에 어떻게 넣을지 | "원자료는 보관 브랜치로, PR에는 보고서만 (Recommended)" (2026-10-11, 원장 세션의 선택지 답) | 확정. (1) 07 브랜치의 지금 tip(98227ab19)을 태그 `archive/stage-07-pre-rebase-20261011`과 브랜치 `archive/stage-07-verification-raw`로 그대로 보존해 푸시한다 — 원자료 전부와 그 SHA-256 목록(`profile-*/raw-sha256.txt`)이 거기 남는다. (2) PR 트리에서는 `verification/07-switch` 아래 `.json`·`.gz`·`.cpuprofile`을 지우되, 코드(시험·게이트 검사·측정 도구)가 실행 때 읽는 파일은 남긴다(그 목록은 읽기 전용 조사로 가린다). 보고서(md)·도구(mjs)·patch·csv·diff·txt는 남긴다. (3) 보고서의 원자료 인용은 보관 브랜치를 가리킨다고 원장(TEST-026 보충)과 PR 본문에 적는다. (4) 코드와 게이트 결과는 바뀌지 않는다; G27·G31·G32는 소스 대상이고 원자료는 소스가 아니다. |
+
+다음 라운드 번호는 141이다.
+
+덧붙임(2026-10-11, 정리 실행). 원장 관리자가 133·140라운드대로 실행했다. (1) 보존: 태그 `archive/umbrella-pre-squash-20261011`(옛 우산 tip 4b26edf68), 태그 `archive/stage-07-pre-rebase-20261011`과 브랜치 `archive/stage-07-verification-raw`(07 tip 98227ab19, 원자료 전부)를 푸시했다. (2) 우산: `ledger/checks/squash-umbrella-docs.mjs --write`로 `docs(schema-form)` 연속 커밋을 묶어 1.0.0-beta를 351ece24e로 다시 세웠다(끝의 트리 동일 d6e74c625; 213 → 14 커밋), `--force-with-lease`로 푸시. (3) 07 브랜치: 98227ab19에 옛 우산 tip을 병합한 트리(532913a98, 충돌 없음)에서 `verification/07-switch` 아래 json·gz·cpuprofile 20,972개(약 1,170 MB)를 임시 색인으로 지운 트리 aa5fbe58d를 만들고(도구가 실행 때 읽는 json 37개는 남김 — ablations, if-then, bundles·manifest, 100c01 요약, round-88 quiet 기준선, 110-event base, bundle-source.metafile; 조사는 읽기 전용 scout, 시험·게이트 검사·CI는 어느 원자료도 읽지 않음), 새 우산 tip을 부모로 한 커밋 하나 f8a39d65e로 다시 세워 푸시했다 — 병합 트리와의 차이는 그 삭제 20,972건뿐이고 `src` 트리는 98227ab19와 같으며 `ledger`는 우산과 같다; 남은 07-switch는 623파일 24.0 MB. (4) 검사: 07 트리에서 원장 검사 여섯 통과(토큰 잔여는 HANDOFF의 새 줄 하나 때문에 480이 되어 표현을 고쳐 479로 되돌림). 패키지 시험은 같은 `src` 트리에서 07이 G29로 방금 통과시켰고, 리베이스 뒤 한 번 더 돌린다.
