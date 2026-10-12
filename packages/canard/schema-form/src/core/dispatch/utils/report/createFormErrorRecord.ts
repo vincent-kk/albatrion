@@ -1,3 +1,5 @@
+import type { OmitPartial } from '@aileron/declare';
+
 import { FORM_ERROR_CODE_TABLE, JSONSchemaError } from '../../../../errors';
 import type { FormErrorCode, FormErrorRecord } from '../../../../errors';
 import type { BlueprintDiagnostic } from '../../../blueprint';
@@ -16,7 +18,7 @@ export function createFormErrorRecord(
   code: FormErrorCode,
   level: FormErrorRecord['level'],
   format: () => string,
-  fields?: Partial<Omit<FormErrorRecord, 'code' | 'level' | 'message'>>,
+  fields?: OmitPartial<FormErrorRecord, 'code' | 'level' | 'message'>,
 ): FormErrorRecord | undefined;
 /**
  * Convert PR-1 diagnostic data into the same record shape after collection.
@@ -35,7 +37,7 @@ export function createFormErrorRecord(
   code: FormErrorCode | BlueprintDiagnostic,
   levelOrError?: FormErrorRecord['level'] | unknown,
   format?: () => string,
-  fields?: Partial<Omit<FormErrorRecord, 'code' | 'level' | 'message'>>,
+  fields?: OmitPartial<FormErrorRecord, 'code' | 'level' | 'message'>,
 ): FormErrorRecord | undefined {
   if (!consumed) return undefined;
   if (typeof code === 'string') {

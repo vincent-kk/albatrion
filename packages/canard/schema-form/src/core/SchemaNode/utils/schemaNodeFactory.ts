@@ -1,3 +1,5 @@
+import type { PartialBy } from '@aileron/declare';
+
 import { DIALECT_MISMATCH } from '../../../errors';
 import { BEHAVIORS } from '../../behaviors';
 import {
@@ -26,25 +28,26 @@ type SeededPathStores =
   | 'inactiveValuesMemo';
 
 /** Tree inputs before the factory attaches its analysis and real creator. */
-export type SchemaNodeRuntimeSeed = Omit<
-  SchemaNodeRuntime<unknown>,
-  | 'blueprint'
-  | 'nodeFactory'
-  | 'settlementScratch'
-  | 'chainRoot'
-  | 'batchWrites'
-  | 'validationTargets'
-  | 'validationChangedNodes'
-  | 'globalStateCounts'
-  | 'globalState'
-  | 'deliveries'
-  | 'revisionNodes'
-  | 'queuedNonSettleEvents'
-  | 'validationPendingTargets'
-  | 'validator'
-  | SeededPathStores
-> &
-  Partial<Pick<SchemaNodeRuntime<unknown>, SeededPathStores>>;
+export type SchemaNodeRuntimeSeed = PartialBy<
+  Omit<
+    SchemaNodeRuntime<unknown>,
+    | 'blueprint'
+    | 'nodeFactory'
+    | 'settlementScratch'
+    | 'chainRoot'
+    | 'batchWrites'
+    | 'validationTargets'
+    | 'validationChangedNodes'
+    | 'globalStateCounts'
+    | 'globalState'
+    | 'deliveries'
+    | 'revisionNodes'
+    | 'queuedNonSettleEvents'
+    | 'validationPendingTargets'
+    | 'validator'
+  >,
+  SeededPathStores
+>;
 
 /** Create one record from a bound child or the root template. */
 const createSchemaNode = (
