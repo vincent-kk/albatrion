@@ -37,7 +37,8 @@ export const buildNodes = (
   if (context.constructing.has(key)) context.staticFirstLoad = false;
   if (cached) return cached;
   const declarations: PropertyDeclaration[] = [];
-  for (let index = 0; index < inputs.length; index++)
+  for (let index = 0; index < inputs.length; index++) {
+    const start = declarations.length;
     collectDeclarations(
       context,
       inputs[index],
@@ -46,6 +47,9 @@ export const buildNodes = (
       undefined,
       declarations,
     );
+    for (let item = start; item < declarations.length; item++)
+      context.declarationInputs.set(declarations[item].id, index);
+  }
   const groups = resolveNodeTypes(context, declarations);
   const nodes: MutableNode[] = [];
   for (let index = 0; index < groups.length; index++) {

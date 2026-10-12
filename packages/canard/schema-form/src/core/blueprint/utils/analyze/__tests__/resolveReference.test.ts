@@ -7,29 +7,35 @@ import type { AnalysisContext } from '../type';
 
 afterEach(() => vi.restoreAllMocks());
 
+/** Build a bare analysis context; every context slot is initialized here once. */
+const createContext = (
+  options: AnalysisContext['options'],
+): AnalysisContext => ({
+  staticFirstLoad: true,
+  capabilities: {
+    branchless: true,
+    hasExpressions: false,
+    hasDerive: false,
+    hasWatch: false,
+    hasState: false,
+    hasDependencies: false,
+  },
+  schema: {},
+  options,
+  nodes: [],
+  fragments: [],
+  declarationId: 0,
+  declarationOwners: undefined,
+  templates: new Map(),
+  constructing: new Map(),
+  declarationInputs: new Map(),
+  dependencies: undefined,
+});
+
 it('guards each resolved value once with the existing schema acceptance and diagnostics', () => {
   const calls = vi.spyOn(guards, 'isBlueprintSchema');
   const collect = vi.fn();
-  const context: AnalysisContext = {
-    staticFirstLoad: true,
-    capabilities: {
-      branchless: true,
-      hasExpressions: false,
-      hasDerive: false,
-      hasWatch: false,
-      hasState: false,
-      hasDependencies: false,
-    },
-    schema: {},
-    options: { collect },
-    nodes: [],
-    fragments: [],
-    declarationId: 0,
-    declarationOwners: undefined,
-    templates: new Map(),
-    constructing: new Map(),
-    dependencies: undefined,
-  };
+  const context = createContext({ collect });
   for (const target of [true, false, {}, [], new Date(0)]) {
     context.schema = { target };
     calls.mockClear();
@@ -63,26 +69,7 @@ it('guards each resolved value once with the existing schema acceptance and diag
 
 it('keeps pointer failures before the result guard', () => {
   const calls = vi.spyOn(guards, 'isBlueprintSchema');
-  const context: AnalysisContext = {
-    staticFirstLoad: true,
-    capabilities: {
-      branchless: true,
-      hasExpressions: false,
-      hasDerive: false,
-      hasWatch: false,
-      hasState: false,
-      hasDependencies: false,
-    },
-    schema: {},
-    options: {},
-    nodes: [],
-    fragments: [],
-    declarationId: 0,
-    declarationOwners: undefined,
-    templates: new Map(),
-    constructing: new Map(),
-    dependencies: undefined,
-  };
+  const context = createContext({});
   expect(() => resolveReference(context, '#/%', '#')).toThrow(
     expect.objectContaining({ specific: BlueprintErrorCode.UnknownJsonSchema }),
   );

@@ -49,6 +49,7 @@ export const blueprint = (
     declarationOwners: undefined,
     templates: new Map(),
     constructing: new Map(),
+    declarationInputs: new Map(),
     dependencies: undefined,
   };
   const [root] = buildNodes(

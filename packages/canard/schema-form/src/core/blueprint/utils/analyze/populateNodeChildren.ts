@@ -68,6 +68,8 @@ export const populateNodeChildren = (
           path,
           input.schemaPath,
           build(context, [input], path),
+          [input],
+          context.declarationInputs,
         );
       }
       populateVirtualNodes(context, node);
@@ -219,7 +221,15 @@ export const populateNodeChildren = (
   for (const [name, entry] of properties) {
     const { inputs, path } = entry;
     const children = build(context, inputs, path);
-    appendChildEntries(node, name, path, inputs[0].schemaPath, children);
+    appendChildEntries(
+      node,
+      name,
+      path,
+      inputs[0].schemaPath,
+      children,
+      inputs,
+      context.declarationInputs,
+    );
   }
   if (itemInputs.length)
     node.item = build(context, itemInputs, `${node.path}/*`)[0];
