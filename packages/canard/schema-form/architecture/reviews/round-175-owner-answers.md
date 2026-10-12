@@ -11,3 +11,7 @@
 ## 덧붙임 (2026-10-12, 순서 (2) 완료)
 
 fixy07이 174C-01의 스토리 전용 고침을 PR #354에 올렸다 — 새 head a919ab7ae(6ff558fa9에서 fast-forward). feat/schema-form-07b-1은 그 위로 rebase해 741f7a74c로 푸시했다(--force-with-lease로 4ccfd3417 확인; rebase된 다섯 커밋 eb478aabd 개선-34, f56d470b3 개선-30·배정 표, 4990f0256 개선-28·33, dcb01f3e8 감사 차이 4, 741f7a74c 개선-32 커밋 1; 충돌 없음). 이제 feat/schema-form-switch에는 reviewer 세션만 커밋한다. 원장 관리자가 reviewer에 시작을, fairy07에 B·C·D 재실행을 알렸다. fixy07은 개선-32 커밋 2 구현(테스트·opus verifier 리뷰까지)으로 넘어가되 측정은 하지 않는다 — 같은 기기에서 리뷰 세션의 빌드·테스트와 브라우저 세션이 돌아 타이밍이 오염되므로, 방향 확인과 판정 세션의 시점은 소유자가 정한다(소유자 물음 "그동안 fixy7랑 밴치마크 마저 돌리고있을래? 근데 컴퓨트자원을 공유할거라 어떠려나 모르겠군"에 대한 원장 관리자의 답). fairy07은 6006의 스토리북을 직접 띄워 관리한다(기존 프로세스는 내려가 있었음).
+
+## 리뷰 고침 히스토리 (reviewer 세션의 커밋, origin/feat/schema-form-switch 기준; 원장 관리자가 따라 적음)
+
+- 2cc4a2572 (2026-10-12) style(schema-form): src 678개 파일(레거시 제외)을 패키지 prettier 설정으로 포매팅 — 포매팅만. reviewer 보고: typecheck·lint·전체 시험(504 파일, 3,549건) 통과. #355는 이 위로 rebase(원장 관리자가 fixy07에 지시). 다음 커밋 예정: 잔재 제거(177라운드), errors prop 가드(178C-01).
