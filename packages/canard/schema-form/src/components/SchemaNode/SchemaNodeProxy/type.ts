@@ -1,1 +1,23 @@
-export type { SchemaNodeProxyProps } from '../SchemaNodeProxyProps';
+import type { ComponentType, PropsWithChildren, RefObject } from 'react';
+
+import type { Dictionary } from '@aileron/declare';
+
+import type { SchemaNode } from '@/schema-form/core';
+import type {
+  ChildNodeComponentProps,
+  FormTypeInputProps,
+  FormTypeRendererProps,
+  OverridableFormTypeInputProps,
+} from '@/schema-form/types';
+
+/** Recursive render props shared by the proxy, the input layer, and the deferred-render gate. */
+export interface SchemaNodeProxyProps {
+  path?: string;
+  node?: SchemaNode;
+  onChangeRef?: RefObject<ChildNodeComponentProps['onChange']>;
+  onFileAttachRef?: RefObject<ChildNodeComponentProps['onFileAttach']>;
+  overridePropsRef?: RefObject<OverridableFormTypeInputProps>;
+  FormTypeInput?: ComponentType<FormTypeInputProps>;
+  FormTypeGroupRenderer?: ComponentType<FormTypeRendererProps>;
+  Wrapper?: ComponentType<PropsWithChildren<Dictionary>>;
+}

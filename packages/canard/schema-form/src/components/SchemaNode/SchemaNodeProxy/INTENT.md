@@ -29,3 +29,4 @@ Resolve one schema node and own its subscriptions, renderer selection, and input
 - Create or mutate schema nodes in the proxy.
 - Override essential node identity props with consumer props.
 - Add a second boundary around the entire field.
+- Import a rendering component implementation into the `SchemaNodeProxyProps` contract in `type.ts`; siblings read it type-only.

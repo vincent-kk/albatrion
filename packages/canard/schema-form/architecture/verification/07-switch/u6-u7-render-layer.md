@@ -217,7 +217,7 @@ grep -rnE --include='*.ts' --include='*.tsx' "from ['\"][^'\"]*__legacy__" src -
 - `src/components/SchemaNode/SchemaNodeInput/hooks/useFormTypeInputControl.ts`
 - `src/components/SchemaNode/SchemaNodeInput/type.ts`
 - `src/components/SchemaNode/SchemaNodeProxy/SchemaNodeProxy.tsx`
-- `src/components/SchemaNode/SchemaNodeProxyProps/SchemaNodeProxyProps.ts`
+- `src/components/SchemaNode/SchemaNodeProxy/type.ts`
 - `src/components/SchemaNode/__tests__/SchemaNodePropsFlow.fixtures.tsx`
 - `src/components/SchemaNode/__tests__/SchemaNodePropsFlow.helpers.tsx`
 - `src/components/SchemaNode/__tests__/SchemaNodePropsFlow.test.tsx`
@@ -227,7 +227,6 @@ grep -rnE --include='*.ts' --include='*.tsx' "from ['\"][^'\"]*__legacy__" src -
 - `src/components/SchemaNode/SchemaNodeInput/__tests__/selection.test.tsx`
 - `src/components/SchemaNode/SchemaNodeInput/hooks/useTerminalChildren.ts`
 - `src/components/SchemaNode/SchemaNodeProxy/__tests__/effectiveSchema.test.tsx`
-- `src/components/SchemaNode/SchemaNodeProxy/components/SchemaNodeField.tsx`
 
 ### U7 — 기본 입력
 

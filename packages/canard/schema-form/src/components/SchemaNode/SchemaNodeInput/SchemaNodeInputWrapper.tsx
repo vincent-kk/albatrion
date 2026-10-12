@@ -16,7 +16,7 @@ import type {
   OverridableFormTypeInputProps,
 } from '@/schema-form/types';
 
-import type { SchemaNodeProxyProps } from '../SchemaNodeProxyProps';
+import type { SchemaNodeProxyProps } from '../SchemaNodeProxy';
 import { SchemaNodeInput } from './SchemaNodeInput';
 
 export const SchemaNodeInputWrapper = (

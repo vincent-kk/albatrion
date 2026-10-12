@@ -8,7 +8,7 @@ import type {
   OverridableFormTypeInputProps,
 } from '@/schema-form/types';
 
-import type { SchemaNodeProxyProps } from '../SchemaNodeProxyProps';
+import type { SchemaNodeProxyProps } from '../SchemaNodeProxy';
 
 export interface SchemaNodeInputProps {
   node: SchemaNode;

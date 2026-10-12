@@ -20,7 +20,7 @@
 - 터미널 입력의 `ChildNodeComponents`는 빈 배열입니다. 개발 모드 또는 오류 핸들러가 있는 경우 읽기를 감지하는 동결 빈 배열을 전달하여 첫 색인·length·순회 읽기를 `CHILD_NODE_COMPONENTS_ON_TERMINAL`로 기록합니다. 필드 커밋 뒤 이펙트에서 보고하고 로드마다 `(code, path)`로 한 번만 전달하며, 핸들러가 없는 프로덕션은 보통의 빈 배열을 사용합니다(ERROR-202).
 - 자식 읽기 탐침은 terminal 전략에서만 만들며 의존성이 같은 쓰기는 보고 layout effect를 재실행하지 않습니다. 커밋 이후 최초 읽기는 기존 Proxy getter를 microtask로 재사용하여 경고를 전달하므로 입력 자체의 늦은 렌더·layout·이벤트 읽기도 놓치지 않습니다. 탐침의 첫 읽기 표시는 보고기의 로드 번호에 묶여, 같은 root를 유지하는 reset이 새 로드를 시작하면 그 로드의 첫 읽기를 다시 한 번 전달합니다. 필드별 훅·보유 객체를 늘리지 않습니다(121C-01 F-F, ERROR-202).
 - 같은 브랜치에 매칭한 입력 맵과 정의 목록의 입력은 같은 ChildNodeComponents를 받으며 부모 입력 인스턴스를 유지합니다. 맵의 정규식이 터미널 자식에도 매칭하면 그 자식의 동일 컴포넌트 호출에는 빈 ChildNodeComponents를 전달합니다(REACT-019·028, ERROR-202).
-- 재귀 NodeProxy의 props는 형제 SchemaNodeProxyProps 계약을 통해 공유하며, 입력 계층은 SchemaNodeProxy 구현에 의존하지 않습니다.
+- 재귀 NodeProxy의 props는 `SchemaNodeProxy`가 소유한 `SchemaNodeProxyProps` 계약을 타입 전용 import로 읽으며, 입력 계층은 SchemaNodeProxy 구현을 값으로 의존하지 않습니다.
 
 ## Acceptance Criteria
 

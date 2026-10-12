@@ -6,7 +6,7 @@
 
 ## API Contracts
 
-- 재귀 렌더 props는 형제 SchemaNodeProxyProps 계약에서 가져오며 기존 SchemaNodeProxyProps 공개 타입 경로를 유지합니다. 입력 구현은 이 조율 구현을 역참조하지 않습니다.
+- 재귀 렌더 props 계약 `SchemaNodeProxyProps`는 이 모듈이 소유하고 `type.ts`에 선언하며 진입점이 이름으로 내보냅니다. 형제 `SchemaNodeInput`·`DeferrableNodeProxy`는 이 진입점에서 타입 전용 import로만 읽고, 입력 구현은 이 조율 구현을 값으로 역참조하지 않습니다.
 - 노드가 없거나 비활성이면 null을 반환합니다. 오류 표시가 꺼져 있으면 오류 포맷 함수의 결과를 노출하지 않습니다.
 - `UpdateJsonSchema`를 구독하여 유효 스키마가 바뀌면 렌더 props와 입력 선택을 갱신합니다. 프록시 하나가 구독·메모·스냅샷 ref를 소유하며 별도 필드 컴포넌트나 필드별 경로 Provider를 만들지 않습니다(REACT-012, 119라운드, 121C-01 F-A).
 - 렌더러 경계는 ErrorBoundary를 직접 씁니다. children이 렌더마다 새 엘리먼트라 memo 비교가 항상 실패하므로 memo로 감싸지 않습니다. 소유 지점에서 한 번 선택한 렌더러가 그 내부에서 errorMessage를 계산합니다. formatError와 렌더러 예외는 원래 오류 identity·현재 path·componentStack·surface sink를 같은 폼 보고기로 전달하고 같은 fallback과 console.error를 유지합니다(ERROR-044·090·114).
