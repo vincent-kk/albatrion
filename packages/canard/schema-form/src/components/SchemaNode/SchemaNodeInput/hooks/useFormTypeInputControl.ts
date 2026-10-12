@@ -44,11 +44,14 @@ const MOUNTED_CHILDREN = 2;
  *
  * @param node - The SchemaNode instance to subscribe to for events
  * @param mountedChildren - Count of committed child proxies owned by the input
+ * @param commitTerminalChildren - Commit marker from `useTerminalChildren`; the focus/select layout
+ *        effect calls it first, so the input keeps a single layout effect of its own
  * @returns Container ref, input key and composition handlers that preserve the composing input
  */
 export const useFormTypeInputControl = <Node extends SchemaNode>(
   node: Node,
   mountedChildren: MutableRefObject<number>,
+  commitTerminalChildren: () => void,
 ) => {
   const generation = useRef(node.revision(SchemaNodeEventType.RequestRefresh));
   const [, releaseComposition] = useReducer((value: number) => value + 1, 0);
@@ -96,6 +99,7 @@ export const useFormTypeInputControl = <Node extends SchemaNode>(
       releaseComposition();
   }, [node, mountedChildren]);
   useLayoutEffect(() => {
+    commitTerminalChildren();
     if (!node) return;
     const unsubscribe = node.subscribe(({ type }) => {
       if (type & SchemaNodeEventType.RequestFocus)
@@ -106,7 +110,7 @@ export const useFormTypeInputControl = <Node extends SchemaNode>(
       }
     });
     return unsubscribe;
-  }, [node, ref]);
+  }, [node, ref, commitTerminalChildren]);
   return [
     ref,
     generation.current,

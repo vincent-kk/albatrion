@@ -24,12 +24,13 @@ import type {
   AdditionalChildNodeProperties,
   ChildNodeComponent,
 } from '../type';
-import { useTerminalChildren } from './useTerminalChildren';
 
 /**
  * Create child node components for the given SchemaNode
  * @param node - SchemaNode
  * @param NodeProxy - SchemaNodeProxy
+ * @param mountedChildren - Count of committed child proxies, kept by each child's layout effect
+ * @param terminalChildren - List from `useTerminalChildren`, returned as is for terminal nodes and empty branches
  * @returns ChildNodeComponent[]
  *
  * @remarks `node.children` is read during render and kept consistent by the
@@ -42,9 +43,9 @@ export const useChildNodeComponents = (
   node: SchemaNode,
   NodeProxy: ComponentType<SchemaNodeProxyProps>,
   mountedChildren: MutableRefObject<number>,
+  terminalChildren: ChildNodeComponent[],
 ): ChildNodeComponent[] => {
   const children = node.children;
-  const terminalChildren = useTerminalChildren(node);
 
   const { manager } = useVirtualizationContext();
 
