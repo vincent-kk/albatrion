@@ -8,14 +8,11 @@ const noteSchema = {
   then: { properties: { vat: { type: 'string' } } },
 };
 
-/**
- * Finding (07c G3): a batch with two or more writes settles as a caller replacement of the root and prunes every
- * retained inactive raw value. The expectations state the ledger contract, so these scenarios fail until fixed.
- */
-export const batchFindingScenarios: readonly FormScenario[] = [
+/** Multi-write batches keep retained inactive raw values: replacement is bounded to the paths the batch wrote. */
+export const batchRetentionScenarios: readonly FormScenario[] = [
   {
-    name: 'composition.finding-batch-prunes-inactive-raw',
-    description: 'Finding: LANDING-018 and LANDING-032 keep inactive raw values and 26C-10 clears them only under a replaced path, but a two-write batch on an unrelated field drops the hidden /vat value.',
+    name: 'composition.batch-keeps-inactive-raw',
+    description: 'LANDING-018 and LANDING-032 keep inactive raw values and 26C-10 clears them only under a replaced path, so a two-write batch on an unrelated field keeps the hidden /vat value and reopening the branch restores it.',
     schema: noteSchema,
     initialValue: { company: true, vat: 'VAT-9' },
     steps: [
@@ -30,8 +27,8 @@ export const batchFindingScenarios: readonly FormScenario[] = [
     ],
   },
   {
-    name: 'composition.finding-batched-toggle-refills-default',
-    description: 'Finding: EVENT-013 a batch settles once, and LANDING-011 does not refill an existing node, but a batched triple toggle that reopens a hidden then branch replaces its edited value with the default.',
+    name: 'composition.batched-toggle-keeps-edit',
+    description: 'EVENT-013 a batch settles once and LANDING-011 does not refill an existing node, so a batched triple toggle that reopens a hidden then branch restores its edited value instead of the default.',
     schema: companySchema,
     initialValue: { company: true, vat: 'VAT-9' },
     steps: [

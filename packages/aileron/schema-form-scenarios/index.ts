@@ -12,7 +12,7 @@ export { virtualizationScenario } from './src/controls/index';
 export { arrayScenarios } from './src/array/index';
 export { notifyScenarios } from './src/notify/index';
 export { validationScenarios } from './src/validation/index';
-export { compositionFeatureScenarios, compositionFindingScenarios } from './src/features/composition/index';
+export { compositionFeatureScenarios } from './src/features/composition/index';
 export { structureFeatureScenarios } from './src/features/structure/index';
 export { valuesFeatureScenarios, valuesFindingScenarios } from './src/features/values/index';
 export {

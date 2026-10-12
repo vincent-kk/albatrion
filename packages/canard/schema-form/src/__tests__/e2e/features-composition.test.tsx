@@ -2,7 +2,6 @@ import { describe, expect, it } from 'vitest';
 
 import {
   compositionFeatureScenarios,
-  compositionFindingScenarios,
   findScenarioHandle,
   playScenario,
   registerScenarioHandle,
@@ -19,7 +18,7 @@ import { renderForm } from '../renderForm';
  * @returns Completion after every step expectation has been checked.
  */
 const run = async (name: string) => {
-  const scenario = [...compositionFeatureScenarios, ...compositionFindingScenarios].find((item) => item.name === name);
+  const scenario = compositionFeatureScenarios.find((item) => item.name === name);
   expect(scenario, name).toBeDefined();
   if (!scenario) throw new Error(`Missing scenario: ${name}`);
   const form = await renderForm(scenario.schema as JSONSchema, { defaultValue: scenario.initialValue, validator: true });
@@ -46,10 +45,6 @@ const run = async (name: string) => {
     form.unmount();
   }
 };
-
-// it.fails passes on any throw, so a renamed or dropped finding must fail loudly here instead.
-for (const name of ['composition.finding-batch-prunes-inactive-raw', 'composition.finding-batched-toggle-refills-default'])
-  if (!compositionFindingScenarios.some((item) => item.name === name)) throw new Error(`Missing finding scenario: ${name}`);
 
 describe('features — composition shared screen runner (TEST-025)', () => {
   it('FRAGMENT-006 explicit discriminator switches branches and reports an unmatched tag on the tag node', async () => {
@@ -100,11 +95,11 @@ describe('features — composition shared screen runner (TEST-025)', () => {
     await run('composition.guard-pattern-reveal');
   });
 
-  it.fails('Finding: a two-write batch on an unrelated field prunes a retained inactive raw value (LANDING-018)', async () => {
-    await run('composition.finding-batch-prunes-inactive-raw');
+  it('LANDING-018 a two-write batch on an unrelated field keeps a retained inactive raw value', async () => {
+    await run('composition.batch-keeps-inactive-raw');
   });
 
-  it.fails('Finding: a batched triple toggle that reopens a hidden then branch refills its edited value (LANDING-011)', async () => {
-    await run('composition.finding-batched-toggle-refills-default');
+  it('LANDING-011 a batched triple toggle that reopens a hidden then branch restores its edited value', async () => {
+    await run('composition.batched-toggle-keeps-edit');
   });
 });

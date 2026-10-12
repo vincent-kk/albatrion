@@ -74,7 +74,7 @@ export const ifThenElseScenarios: readonly FormScenario[] = [
   },
   {
     name: 'composition.if-else-screen-rapid-toggle',
-    description: 'FRAGMENT-009 boolean guard with else; LANDING-011 then defaults fill once; LANDING-018 both sides keep raw values across four screen toggles and a single-write batch. The multi-write batch case is composition.finding-batched-toggle-refills-default.',
+    description: 'FRAGMENT-009 boolean guard with else; LANDING-011 then defaults fill once; LANDING-018 both sides keep raw values across four screen toggles and a single-write batch. The multi-write batch case is composition.batched-toggle-keeps-edit.',
     schema: companySchema,
     initialValue: { company: false, personalId: 'P1' },
     steps: [

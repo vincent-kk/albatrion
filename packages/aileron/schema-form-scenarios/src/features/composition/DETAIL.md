@@ -10,7 +10,7 @@
 `compositionFeatureScenarios`는 `index.ts`를 통해 이 부류의 순서 있는 장면 목록을 내보낸다.
 스토리와 e2e 실행기는 같은 장면을 등록된 검증기와 함께 실행한다(스토리는 ajv8 플러그인, e2e는 하네스 검증기).
 `errors` 기대값은 부분 계약이며 소비자는 개수와 `toMatchObject`로 대조한다.
-`compositionFindingScenarios`는 원장 계약을 기대값으로 적은 발견 장면이다. 지금 엔진에서 실패하므로 e2e는 `it.fails`로 고정하고 스토리는 시험 실행에서 뺀다.
+`batch-retention.scenario.ts`의 두 장면은 쓰기 여럿을 담은 batch가 쓴 경로 밖의 꺼진 raw 값을 지우지 않는다는 회귀 계약이다.
 
 ## Acceptance Criteria
 
@@ -35,13 +35,8 @@
 | `validator-branch.scenario.ts` | `composition.oneof-active-with-const-required` | 판별 키의 const와 required가 분기 하나만 통과시키고, 맞지 않는 값은 판별 노드에 const 오류를 둘 남긴다. | FRAGMENT-031, VALIDATE-043 |
 | `validator-branch.scenario.ts` | `composition.off-branch-error-filter` | 꺼진 oneOf 분기 안의 오류는 노드에 실리지 않고, 전환 뒤에는 새로 켜진 분기를 따라 거른다. | VALIDATE-043 |
 | `validator-branch.scenario.ts` | `composition.guard-pattern-reveal` | 입력마다 검증기 guard가 pattern을 판정해 의존 필드를 드러내고, 숨은 동안 그 raw 값을 지킨다. | FRAGMENT-009, GOAL-034, LANDING-018 |
-
-### composition-findings — Recorded defects
-
-| Scene file | Scene name | Contract the engine breaks | Ledger evidence |
-| --- | --- | --- | --- |
-| `finding-batch.scenario.ts` | `composition.finding-batch-prunes-inactive-raw` | 관계없는 필드에 쓰기 둘을 담은 batch가 꺼진 then 분기의 raw 값을 지운다. | LANDING-018, LANDING-032, EVENT-013 |
-| `finding-batch.scenario.ts` | `composition.finding-batched-toggle-refills-default` | 숨은 then 분기를 한 batch 안의 세 번 토글로 다시 열면 편집한 값이 기본값으로 다시 채워진다. | LANDING-011, LANDING-018, EVENT-013 |
+| `batch-retention.scenario.ts` | `composition.batch-keeps-inactive-raw` | 관계없는 필드에 쓰기 둘을 담은 batch 뒤에도 꺼진 then 분기의 raw 값이 남고, 분기를 다시 열면 돌아온다. | LANDING-018, LANDING-032, 26C-10, EVENT-013 |
+| `batch-retention.scenario.ts` | `composition.batched-toggle-keeps-edit` | 숨은 then 분기를 한 batch 안의 세 번 토글로 다시 열어도 편집한 값이 돌아오고 기본값으로 다시 채워지지 않는다. | LANDING-011, LANDING-018, EVENT-013 |
 
 ## Last Updated
 
