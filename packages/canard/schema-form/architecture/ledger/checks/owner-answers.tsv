@@ -339,3 +339,4 @@ reviews/round-190-owner-answers.md:7	190	제한된 `as unknown as` 허용, 한 �
 reviews/round-192-owner-answers.md:7	192	복합 설계 수용, 측정 시점, 07c 위임, 역할	"복합사례 예정대로 하자. \n측정은 지금 작업들 끝나는대로 픽시한테 지시해. \n\n스토리 복원은 별도 pr 로 올려. \n검증과 측정까지 페어리에게 위임한다.\n너는 관리 및 관제, 기록을 담당하렴. \n\n리뷰어 작업 끝나면 진행하는거지? \n리뷰어는 지금 문제점 발견 후 수정중인거같은데" (2026-10-13, 원장 세션)
 reviews/round-193-owner-answers.md:7	193	주석 고침, core·SchemaNode 위계 재고찰, 현 구조 불수용	"가도 되는데, core 와 schemaNode 의 관계, 그리고 위계에 대해서 충분히 고찰을 하고 고치도록 해. filid 구조검사만으론 통과가 가능할 수도 있는데, 난 지금 구조는 용납하지 않아" (2026-10-13, 원장 세션)
 reviews/round-193-owner-answers.md:13	193	위계 고찰 범위를 패키지 전체로	"그래. 그리고 위계에 대해 고찰하여 fca 구조를 재구성할때, 이 core 뿐만 아니라 다른 프랙탈이나 organ 도 검토를 하도록 해라.\n지금 보니까 위계 구조에 문제가 좀 있어보이는군" (2026-10-13, 원장 세션)
+reviews/round-196-owner-answers.md:7	196	isDevelopment 형태	"2안으로 가자. 리뷰어한테 전해줘." (2026-10-13, 원장 세션)
