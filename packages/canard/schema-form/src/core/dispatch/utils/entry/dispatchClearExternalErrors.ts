@@ -2,12 +2,12 @@ import { SchemaNodeEventType } from '../../../record';
 import type { SchemaNodeRecord } from '../../../record';
 import { assertSchemaNodeWritable } from '../../../settle';
 import type { ValidationIssue } from '../../../validation';
-import { updateSchemaNodeGlobalErrors } from '../../../validation';
 import { flushQueuedEvents } from '../chain/flushQueuedEvents';
 import { queueNonSettleEvent } from '../chain/queueNonSettleEvent';
 import { refuseListenerFeedback } from '../chain/refuseListenerFeedback';
 import { assertNotInDelivery } from '../report/assertNotInDelivery';
 import { propagateExternalErrorsToRoot } from './utils/propagateExternalErrorsToRoot';
+import { publishRootExternalErrors } from './utils/publishRootExternalErrors';
 
 /** Shared empty payload for a cleared node; the root list is rebuilt without this path. */
 const NO_ISSUES: readonly ValidationIssue[] = [];
@@ -28,8 +28,8 @@ export const dispatchClearExternalErrors = <
   assertNotInDelivery(runtime);
   if (refuseListenerFeedback(runtime)) return;
   if (!runtime.nodeErrors?.delete(node)) return;
-  if (node === node.rootNode) updateSchemaNodeGlobalErrors(node);
-  else propagateExternalErrorsToRoot(node.rootNode, node.path, NO_ISSUES);
+  if (node === node.rootNode) publishRootExternalErrors(node);
+  else propagateExternalErrorsToRoot(node);
   queueNonSettleEvent(node, SchemaNodeEventType.UpdateError, NO_ISSUES);
   if (!runtime.entryDepth) flushQueuedEvents(node.rootNode);
 };

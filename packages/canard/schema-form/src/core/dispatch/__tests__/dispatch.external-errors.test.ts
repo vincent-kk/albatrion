@@ -29,7 +29,9 @@ describe('dispatcher external errors', () => {
     dispatchSetExternalErrors(root, issues);
 
     expect(runtime.nodeErrors?.get(root)).toBe(issues);
-    expect(seen).toEqual([SchemaNodeEventType.UpdateError]);
+    expect(seen).toEqual([
+      SchemaNodeEventType.UpdateError | SchemaNodeEventType.UpdateGlobalError,
+    ]);
     expect(readSchemaNodeRevision(root, SchemaNodeEventType.UpdateError)).toBe(
       1,
     );
@@ -41,8 +43,8 @@ describe('dispatcher external errors', () => {
     dispatchClearExternalErrors(root);
     expect(runtime.nodeErrors?.has(root) ?? false).toBe(false);
     expect(seen).toEqual([
-      SchemaNodeEventType.UpdateError,
-      SchemaNodeEventType.UpdateError,
+      SchemaNodeEventType.UpdateError | SchemaNodeEventType.UpdateGlobalError,
+      SchemaNodeEventType.UpdateError | SchemaNodeEventType.UpdateGlobalError,
     ]);
   });
 
@@ -55,7 +57,9 @@ describe('dispatcher external errors', () => {
       dispatchSetExternalErrors(root, [{ dataPath: '', message: 'last' }]);
       expect(seen).toEqual([]);
     });
-    expect(seen).toEqual([SchemaNodeEventType.UpdateError]);
+    expect(seen).toEqual([
+      SchemaNodeEventType.UpdateError | SchemaNodeEventType.UpdateGlobalError,
+    ]);
     expect(runtime.nodeErrors?.get(root)).toEqual([
       { dataPath: '', message: 'last' },
     ]);

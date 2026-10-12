@@ -335,6 +335,8 @@ export interface SchemaNodeRuntime<Self> extends SchemaNodeRootRuntimeState {
   >;
   /** External issues keyed by live node. */
   nodeErrors?: Map<unknown, readonly { dataPath: string }[]>;
+  /** Non-root paths whose external issues changed inside the open entry; the root list is rebuilt once at exit. */
+  pendingExternalErrorPaths?: Map<string, unknown>;
   /** Form context shared by every occurrence and expression in this tree. */
   context?: Readonly<Record<string, unknown>>;
   /** Last committed expression inputs, keyed by live authored rule occurrence. */

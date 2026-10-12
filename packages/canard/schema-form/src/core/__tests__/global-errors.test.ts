@@ -84,8 +84,15 @@ describe('form-level external and validation errors', () => {
     const shared = { dataPath: '/field', message: 'server' };
     const other = { dataPath: '', message: 'form' };
     let rootEvents = 0;
-    root.subscribe(({ type }) => {
+    let aggregateEvents = 0;
+    root.subscribe(({ type, payload }) => {
       if (type & SchemaNodeEventType.UpdateError) rootEvents++;
+      if (type & SchemaNodeEventType.UpdateGlobalError) {
+        aggregateEvents++;
+        expect(payload?.[SchemaNodeEventType.UpdateGlobalError]).toBe(
+          root.globalErrors,
+        );
+      }
     });
     root.batch(() => {
       root.setExternalErrors([other, shared]);
@@ -93,10 +100,15 @@ describe('form-level external and validation errors', () => {
     });
     expect(root.errors).toEqual([other, shared]);
     expect(rootEvents).toBe(1);
+    expect(aggregateEvents).toBe(1);
     const list = root.errors;
     field.setExternalErrors([shared]);
     expect(root.errors).toBe(list);
     expect(rootEvents).toBe(1);
+    expect(aggregateEvents).toBe(1);
+    field.clearExternalErrors();
+    expect(root.errors).toEqual([other]);
+    expect(aggregateEvents).toBe(2);
   });
 
   it('SURFACE-053 VALIDATE-043 79C-01 rebuilds the form list when root external errors are cleared', async () => {

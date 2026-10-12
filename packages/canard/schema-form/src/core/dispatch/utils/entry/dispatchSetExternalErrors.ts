@@ -2,12 +2,12 @@ import { SchemaNodeEventType } from '../../../record';
 import type { SchemaNodeRecord } from '../../../record';
 import { assertSchemaNodeWritable } from '../../../settle';
 import type { ValidationIssue } from '../../../validation';
-import { updateSchemaNodeGlobalErrors } from '../../../validation';
 import { flushQueuedEvents } from '../chain/flushQueuedEvents';
 import { queueNonSettleEvent } from '../chain/queueNonSettleEvent';
 import { refuseListenerFeedback } from '../chain/refuseListenerFeedback';
 import { assertNotInDelivery } from '../report/assertNotInDelivery';
 import { propagateExternalErrorsToRoot } from './utils/propagateExternalErrorsToRoot';
+import { publishRootExternalErrors } from './utils/publishRootExternalErrors';
 
 /**
  * Replace a live node's external issues without changing its source.
@@ -26,8 +26,8 @@ export const dispatchSetExternalErrors = <Self extends SchemaNodeRecord<Self>>(
   if (refuseListenerFeedback(runtime)) return;
   if (runtime.nodeErrors?.get(node) === errors) return;
   (runtime.nodeErrors ??= new Map()).set(node, errors);
-  if (node === node.rootNode) updateSchemaNodeGlobalErrors(node);
-  else propagateExternalErrorsToRoot(node.rootNode, node.path, errors);
+  if (node === node.rootNode) publishRootExternalErrors(node);
+  else propagateExternalErrorsToRoot(node);
   queueNonSettleEvent(node, SchemaNodeEventType.UpdateError, errors);
   if (!runtime.entryDepth) flushQueuedEvents(node.rootNode);
 };

@@ -6,6 +6,7 @@ import type { SchemaNodeRecord } from '../../../record';
 import { indexSchemaNodeWarning } from '../../../record';
 import { ValidationMode } from '../../../types/state';
 import { requestSchemaNodeValidation } from '../../../validation';
+import { rebuildRootExternalErrors } from '../entry/utils/propagateExternalErrorsToRoot';
 import { bundleChainErrors } from '../report/bundleChainErrors';
 import { collectChainRecords } from '../report/collectChainRecords';
 import { deliverChainRecords } from '../report/deliverChainRecords';
@@ -34,6 +35,7 @@ export const exitSchemaNodeChain = <Self extends SchemaNodeRecord<Self>>(
     return;
   }
   const root = runtime.chainRoot ?? activeRoot;
+  rebuildRootExternalErrors(root);
   runDeliveryWaves(root);
   flushQueuedEvents(root);
   const occurrences = runtime.chainOccurrences ?? [];

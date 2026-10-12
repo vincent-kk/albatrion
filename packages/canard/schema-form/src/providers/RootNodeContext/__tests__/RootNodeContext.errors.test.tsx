@@ -127,10 +127,21 @@ it('WRITE-045 69C-03 79C-01 reapplies errors by path to the replacement root bef
   });
 });
 
-it('SURFACE-053 round 185 drops a cleared child path from the root list and keeps the other paths', () => {
+it('SURFACE-053 round 185 188C-01 drops a cleared child path from the root list and reports each aggregate change once', () => {
   const ref = createRef<FormHandle>();
   const onValidate = vi.fn();
-  render(
+  const view = render(
+    <Form
+      ref={ref}
+      jsonSchema={schema}
+      validationMode={ValidationMode.None}
+      onValidate={onValidate}
+    >
+      <span />
+    </Form>,
+  );
+  onValidate.mockClear();
+  view.rerender(
     <Form
       ref={ref}
       jsonSchema={schema}
@@ -141,11 +152,15 @@ it('SURFACE-053 round 185 drops a cleared child path from the root list and keep
       <span />
     </Form>,
   );
+  expect(onValidate).toHaveBeenCalledTimes(1);
+  expect(onValidate).toHaveBeenLastCalledWith(external);
   const field = ref.current!.findNode('/field')!;
   act(() => field.clearExternalErrors());
   expect(field.errors).toEqual([]);
   expect(ref.current!.node!.errors).toEqual([external[1], external[2]]);
   expect(ref.current!.getErrors()).toEqual([external[1], external[2]]);
+  expect(onValidate).toHaveBeenCalledTimes(2);
+  expect(onValidate).toHaveBeenLastCalledWith([external[1], external[2]]);
   const replacement = [{ dataPath: '/field', message: 'replaced' }];
   act(() => field.setExternalErrors(replacement));
   expect(ref.current!.getErrors()).toEqual([
@@ -153,5 +168,7 @@ it('SURFACE-053 round 185 drops a cleared child path from the root list and keep
     external[2],
     replacement[0],
   ]);
-  expect(onValidate).not.toHaveBeenCalled();
+  expect(onValidate).toHaveBeenCalledTimes(3);
+  act(() => field.setExternalErrors(replacement));
+  expect(onValidate).toHaveBeenCalledTimes(3);
 });

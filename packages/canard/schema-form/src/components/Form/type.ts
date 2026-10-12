@@ -52,7 +52,7 @@ export interface FormProps<
   disabled?: boolean;
   /** Function called when the value of this SchemaForm changes */
   onChange?: Fn<[value: Value]>;
-  /** Function called when the value of this SchemaForm is validated */
+  /** Function called with the form error list when validation settles or the external error list changes (errors prop, node-level external writes) */
   onValidate?: Fn<[errors: SchemaNode['globalErrors']]>;
   /** Function called when the form is submitted */
   onSubmit?: Fn<[value: Value], Promise<void> | void>;
