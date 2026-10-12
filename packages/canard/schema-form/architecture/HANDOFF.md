@@ -32,7 +32,8 @@
 - **186라운드(2026-10-13, 소유자).** 스토리 재구성은 검토안대로 간다. fairy07이 별도 워크트리에서 지금 병렬로 시작해 브라우저 테스트까지 하고 PR로 머지하며, 복합·중첩 동작과 검증기 기반 분기 제어에 힘을 싣는다(reviews/round-186-owner-answers.md).
 - **187라운드(2026-10-13, 닫기).** 스토리에서 실제 ajv8 플러그인을 쓰기 위한 스토리북 설정 수정을 허용했다. 소비자 문서가 아직 가르치는 옛 작성 문법은 설계 단계에서 사라진 것이라 스토리는 코드를 따르고, 문서 정합은 정리 항목으로 두어 소유자에게 보고한다(reviews/round-187-closing.md).
 - **188라운드(2026-10-13, 닫기).** 외부 오류가 바뀌면 onValidate가 집계를 받도록 통지를 되찾는다. 옛 판은 errors prop 변경에 onValidate를 불렀고 새 판은 검증 때만 불렀다(reviews/round-188-closing.md).
-- **189라운드(2026-10-13, 소유자).** 개발 모드 판정 함수는 process.env.NODE_ENV 토큰을 그대로 읽고 첫 결과를 캐시한다. 소비자 번들러의 치환을 지키기 위해서다(reviews/round-189-owner-answers.md). 다음 라운드 번호는 190.
+- **189라운드(2026-10-13, 소유자).** 개발 모드 판정 함수는 process.env.NODE_ENV 토큰을 그대로 읽고 첫 결과를 캐시한다. 소비자 번들러의 치환을 지키기 위해서다(reviews/round-189-owner-answers.md).
+- **190라운드(2026-10-13, 소유자).** 공개 형이 readonly를 허용하지 않는 동결 상수처럼 제한된 자리에서는 unknown을 거친 단언을 허용한다. useTerminalChildren의 빈 자식 목록 상수는 한 줄로 정리하며 reviewer가 처리한다(reviews/round-190-owner-answers.md). 다음 라운드 번호는 191.
 - **그 앞의 라운드 요지(19라운드부터)는 PLAN-LOG.md 2절에 있다.** 라운드마다 한 문단이며, 1절의 기록 표와 같은 순서다.
 - **설계의 정본은 단일 원장 `ledger/`다.** 영역 17개, 항목 1,350개(80라운드 뒤, 24라운드 뒤 1,348; 현행 1,076(부정 결정·기록 포함), 대체됨 199, 분할됨 49, 중복 24, 열림 0). 형식과 규칙은 `ledger/README.md`.
 - **옛 설계 문서(`00`–`09`, `adr/`, `open-questions.md`)는 동결됐다.** 더 고치지 않는다. 어긋남은 원장의 충돌 칸에 적는다. 원장이 인용하는 옛 문서의 `path:line`은 모두 커밋 `ba398c330` 기준 줄 번호다(그 뒤 옛 문서는 바뀌지 않았다).
@@ -322,6 +323,7 @@ node ledger/checks/doc-coverage.mjs design/*.md adr/*.md -- ledger/*.md   # 설�
 | `reviews/round-187-closing.md` | 187라운드 편집자 결정 하나: 07c G3의 플러그인 alias 허용, 문서 정합 항목, 검증기 분기 범위 |
 | `reviews/round-188-closing.md` | 188라운드 편집자 결정 하나: 외부 오류 변경의 onValidate 통지 복원 |
 | `reviews/round-189-owner-answers.md` | 189라운드 소유자 답 하나: bare NODE_ENV 토큰 유지 |
+| `reviews/round-190-owner-answers.md` | 190라운드 소유자 답 하나: 제한된 unknown 단언 허용, 동결 상수 한 줄 |
 | reviews/raw-round97-gate-selection/ | 97라운드 원자료: 게이트 선택 설계안의 독립 검증 보고 |
 | `reviews/round-28-closing.md` | 28라운드 편집자 결정의 정본(28C-01~08: 04(PR-3+PR-6) 실행 계획 초안의 해석 일곱 건과 후속 둘 — 개발 모드 정착 기록의 자리, `enabled`와 떼어진 노드의 상태 게터, `@` 맥락과 `setContext`의 PR, 억제 비트와 `resetInteraction`, `unsetOnInactive` 식의 throw, TEST-071의 값 크기, `watchValues`의 PR, `node.context`의 PR과 맥락 변경 정착). 보충 줄만 |
 | `reviews/round-29-closing.md` | 29라운드 편집자 결정의 정본(29C-01~04: 생긴·로드된 노드의 파생 규칙은 원천이 `undefined`여도 발화, 채움 뒤의 값 변화는 새 에지, v7의 모형 선택은 이식하지 않음; 식이 던진 정착의 채움·나감 비움은 진행, 03의 전이 전체 생략은 결함; 공유 충돌 정착도 진행하고 원본 B는 예산 초과에만; 조각 `controls`의 `injectTo`는 불허). 보충 줄만 |
