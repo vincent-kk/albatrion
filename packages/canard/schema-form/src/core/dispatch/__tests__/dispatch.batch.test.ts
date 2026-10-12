@@ -1,15 +1,79 @@
 import { describe, expect, it } from 'vitest';
 
+import { createTestValidator } from '../../__tests__/fixtures/createTestValidator';
 import { SetValueOption } from '../../types/value';
 import {
   dispatchBatch,
+  dispatchFinishInput,
   dispatchMount,
+  dispatchPush,
+  dispatchRemove,
   dispatchResetSubtree,
   dispatchSetValue,
+  dispatchUpdate,
   subscribeSchemaNode,
 } from '../index';
 import { createDispatchTree } from './fixtures/createDispatchTree';
 import { getDispatchChild } from './fixtures/getDispatchChild';
+
+/** A guarded then branch plus an unrelated field, mirrored from the 07c finding scenario. */
+const noteSchema = {
+  type: 'object',
+  properties: { company: { type: 'boolean' }, note: { type: 'string' } },
+  if: { properties: { company: { const: true } }, required: ['company'] },
+  then: { properties: { vat: { type: 'string' } } },
+} as const;
+
+/** The then branch carries a default, so a refill is observable as 'VAT-0'. */
+const companySchema = {
+  type: 'object',
+  properties: { company: { type: 'boolean' } },
+  if: { properties: { company: { const: true } }, required: ['company'] },
+  then: { properties: { vat: { type: 'string', default: 'VAT-0' } } },
+  else: { properties: { personalId: { type: 'string' } } },
+} as const;
+
+/** A guarded extra beside an array and an object host. */
+const hostSchema = {
+  type: 'object',
+  properties: {
+    mode: { type: 'boolean' },
+    list: { type: 'array', items: { type: 'string' } },
+    obj: {
+      type: 'object',
+      properties: { a: { type: 'string' }, b: { type: 'string' } },
+    },
+  },
+  if: { properties: { mode: { const: true } }, required: ['mode'] },
+  then: { properties: { extra: { type: 'string' } } },
+} as const;
+
+/** The same path holds a string in one branch and a number in the other. */
+const kindSchema = (other: boolean) =>
+  ({
+    type: 'object',
+    properties: {
+      k: { type: 'string' },
+      ...(other ? { other: { type: 'string' } } : {}),
+    },
+    if: { properties: { k: { const: 'a' } }, required: ['k'] },
+    then: {
+      properties: { value: { type: 'string', options: { trim: true } } },
+    },
+    else: { properties: { value: { type: 'number' } } },
+  }) as const;
+
+/** Latent raw key for a path and kind, as the path-keyed store writes it. */
+const latent = (path: string, kind: string) => JSON.stringify([path, kind]);
+
+/** Mount a guarded tree, close the branch, and return the root with its latent raw retained. */
+const hideVat = (schema: typeof noteSchema | typeof companySchema) => {
+  const tree = createDispatchTree(schema, undefined, createTestValidator());
+  dispatchMount(tree.root, { company: true, vat: 'VAT-9' });
+  dispatchSetValue(getDispatchChild(tree.root, 'company'), false);
+  expect(tree.root.runtime.latentRaw.has(latent('/vat', 'string'))).toBe(true);
+  return tree;
+};
 
 // filid:contract dispatch-batch
 describe('dispatcher batch', () => {
@@ -169,5 +233,220 @@ describe('dispatcher batch', () => {
       SetValueOption.EnableAutomaticWrites;
     dispatchBatch(root, () => dispatchSetValue(root, {}, both));
     expect(root.structure?.name?.raw).toBeUndefined();
+  });
+
+  it('191C-01 LANDING-018 LANDING-032 keeps latent raw outside a two-write batch', () => {
+    const { root, runtime } = hideVat(noteSchema);
+    const note = getDispatchChild(root, 'note');
+    dispatchBatch(root, () => {
+      dispatchSetValue(note, 'x');
+      dispatchSetValue(note, 'y');
+    });
+    expect(root.emit).toEqual({ company: false, note: 'y' });
+    expect(runtime.latentRaw.has(latent('/vat', 'string'))).toBe(true);
+    dispatchSetValue(getDispatchChild(root, 'company'), true);
+    expect(root.emit).toEqual({ company: true, note: 'y', vat: 'VAT-9' });
+  });
+
+  it('191C-01 LANDING-011 EVENT-013 restores the edited value after a batched triple toggle', () => {
+    const { root, runtime } = hideVat(companySchema);
+    const company = getDispatchChild(root, 'company');
+    const before = runtime.commitNumber;
+    dispatchBatch(root, () => {
+      dispatchSetValue(company, true);
+      dispatchSetValue(company, false);
+      dispatchSetValue(company, true);
+    });
+    expect(root.emit).toEqual({ company: true, vat: 'VAT-9' });
+    expect(runtime.commitNumber).toBe((before ?? 0) + 1);
+  });
+
+  it.each([
+    [
+      'push then setValue',
+      (root: ReturnType<typeof createDispatchTree>['root']) => {
+        dispatchPush(getDispatchChild(root, 'list'), 'p');
+        dispatchSetValue(
+          getDispatchChild(getDispatchChild(root, 'obj'), 'a'),
+          'A2',
+        );
+      },
+    ],
+    [
+      'two sibling setValue',
+      (root: ReturnType<typeof createDispatchTree>['root']) => {
+        dispatchSetValue(
+          getDispatchChild(getDispatchChild(root, 'obj'), 'a'),
+          'A2',
+        );
+        dispatchSetValue(
+          getDispatchChild(getDispatchChild(root, 'obj'), 'b'),
+          'B2',
+        );
+      },
+    ],
+    [
+      'two pushes',
+      (root: ReturnType<typeof createDispatchTree>['root']) => {
+        dispatchPush(getDispatchChild(root, 'list'), 'p');
+        dispatchPush(getDispatchChild(root, 'list'), 'q');
+      },
+    ],
+  ])(
+    '191C-01 keeps latent raw outside array and object batches: %s',
+    (_, writes) => {
+      const { root, runtime } = createDispatchTree(
+        hostSchema,
+        undefined,
+        createTestValidator(),
+      );
+      dispatchMount(root, {
+        mode: true,
+        extra: 'E',
+        list: ['l'],
+        obj: { a: 'A', b: 'B' },
+      });
+      dispatchSetValue(getDispatchChild(root, 'mode'), false);
+      expect(runtime.latentRaw.has(latent('/extra', 'string'))).toBe(true);
+      dispatchBatch(root, () => writes(root));
+      expect(runtime.latentRaw.has(latent('/extra', 'string'))).toBe(true);
+      dispatchSetValue(getDispatchChild(root, 'mode'), true);
+      expect(getDispatchChild(root, 'extra').emit).toBe('E');
+    },
+  );
+
+  it('26C-10 clears latent raw under a root write inside a batch', () => {
+    const { root, runtime } = hideVat(noteSchema);
+    dispatchBatch(root, () => {
+      dispatchSetValue(getDispatchChild(root, 'note'), 'x');
+      dispatchSetValue(root, { company: false });
+    });
+    expect(runtime.latentRaw.has(latent('/vat', 'string'))).toBe(false);
+    dispatchSetValue(getDispatchChild(root, 'company'), true);
+    expect(root.emit).toEqual({ company: true });
+  });
+
+  it('191C-01 keeps latent raw under a shallow Merge batch', () => {
+    const { root, runtime } = hideVat(noteSchema);
+    dispatchBatch(root, () => {
+      dispatchSetValue(root, { note: 'z' }, SetValueOption.Merge);
+      dispatchSetValue(getDispatchChild(root, 'note'), 'w');
+    });
+    expect(root.emit).toEqual({ company: false, note: 'w' });
+    expect(runtime.latentRaw.has(latent('/vat', 'string'))).toBe(true);
+  });
+
+  it('191C-01 keeps a single-write batch unchanged', () => {
+    const { root, runtime } = hideVat(noteSchema);
+    const before = runtime.commitNumber;
+    dispatchBatch(root, () =>
+      dispatchSetValue(getDispatchChild(root, 'note'), 'x'),
+    );
+    expect(runtime.commitNumber).toBe((before ?? 0) + 1);
+    expect(runtime.latentRaw.has(latent('/vat', 'string'))).toBe(true);
+    dispatchSetValue(getDispatchChild(root, 'company'), true);
+    expect(root.emit).toEqual({ company: true, note: 'x', vat: 'VAT-9' });
+  });
+
+  it('191C-01 keeps an unwritten sibling object intact across a two-write batch', () => {
+    const { root, runtime } = createDispatchTree(
+      {
+        type: 'object',
+        properties: {
+          a: { type: 'string' },
+          b: { type: 'string' },
+          side: {
+            type: 'object',
+            properties: { flag: { type: 'boolean' }, text: { type: 'string' } },
+            if: { properties: { flag: { const: true } }, required: ['flag'] },
+            then: { properties: { nested: { type: 'string' } } },
+          },
+        },
+      },
+      undefined,
+      createTestValidator(),
+    );
+    dispatchMount(root, { a: '1', b: '2', side: { flag: true, nested: 'N' } });
+    const side = getDispatchChild(root, 'side');
+    dispatchSetValue(getDispatchChild(side, 'flag'), false);
+    expect(runtime.latentRaw.has(latent('/side/nested', 'string'))).toBe(true);
+    const text = getDispatchChild(side, 'text');
+    const value = side.emit;
+    dispatchBatch(root, () => {
+      dispatchSetValue(getDispatchChild(root, 'a'), 'x');
+      dispatchSetValue(getDispatchChild(root, 'b'), 'y');
+    });
+    expect(getDispatchChild(root, 'side')).toBe(side);
+    expect(getDispatchChild(side, 'text')).toBe(text);
+    expect(text.emit).toBeUndefined();
+    expect(side.emit).toEqual(value);
+    expect(runtime.latentRaw.has(latent('/side/nested', 'string'))).toBe(true);
+    dispatchSetValue(getDispatchChild(side, 'flag'), true);
+    expect(getDispatchChild(side, 'nested').emit).toBe('N');
+  });
+
+  it('62C-01 NODE-051 keeps positional item identity for batched array verbs', () => {
+    const { root } = createDispatchTree({
+      type: 'array',
+      items: { type: 'object', properties: { name: { type: 'string' } } },
+    });
+    dispatchMount(root, [{ name: 'a' }, { name: 'b' }, { name: 'c' }]);
+    const first = root.children![0];
+    const third = root.children![2];
+    dispatchBatch(root, () => {
+      dispatchRemove(root, 0);
+      dispatchUpdate(root, 1, { name: 'C2' });
+    });
+    expect(root.emit).toEqual([{ name: 'b' }, { name: 'C2' }]);
+    expect(root.children![0]).toBe(first);
+    expect(third.detached).toBe(true);
+  });
+
+  it('191C-01 pins the replaced-exit clause for a written path inside a batch', () => {
+    const { root, runtime } = createDispatchTree(
+      kindSchema(false),
+      undefined,
+      createTestValidator(),
+    );
+    dispatchMount(root, { k: 'a', value: 's' });
+    dispatchBatch(root, () => {
+      dispatchSetValue(getDispatchChild(root, 'k'), 'b');
+      dispatchSetValue(getDispatchChild(root, 'value'), 5);
+    });
+    expect(root.emit).toEqual({ k: 'b', value: 5 });
+    expect(runtime.latentRaw.has(latent('/value', 'string'))).toBe(false);
+  });
+
+  it('191C-01 pins the automatic-origin skip: a batched trim keeps the other-kind latent raw', () => {
+    const { root, runtime } = createDispatchTree(
+      kindSchema(true),
+      undefined,
+      createTestValidator(),
+    );
+    dispatchMount(root, { k: 'b', value: 5 });
+    dispatchSetValue(getDispatchChild(root, 'k'), 'a');
+    dispatchSetValue(root, { value: ' s ' }, SetValueOption.Merge);
+    expect(runtime.latentRaw.has(latent('/value', 'number'))).toBe(true);
+    dispatchBatch(root, () => {
+      dispatchFinishInput(getDispatchChild(root, 'value'));
+      dispatchSetValue(getDispatchChild(root, 'other'), 'x');
+    });
+    expect(root.emit).toEqual({ k: 'a', value: 's', other: 'x' });
+    expect(runtime.latentRaw.has(latent('/value', 'number'))).toBe(true);
+  });
+
+  it('191C-01 pins replacement without a root scope: a batched same-node double write keeps latent raw', () => {
+    const { root, runtime } = createDispatchTree(
+      kindSchema(false),
+      undefined,
+      createTestValidator(),
+    );
+    dispatchMount(root, { k: 'a', value: 's' });
+    const k = getDispatchChild(root, 'k');
+    dispatchBatch(root, () => {
+      dispatchSetValue(k, 'b');
+      dispatchSetValue(k, 'b');
+    });
+    expect(runtime.latentRaw.has(latent('/value', 'string'))).toBe(true);
   });
 });

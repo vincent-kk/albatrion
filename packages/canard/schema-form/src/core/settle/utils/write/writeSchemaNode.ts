@@ -12,6 +12,7 @@ import { getLatentOrder } from '../latent/getLatentOrder';
 import { createSettlementContext } from '../settlement/createSettlementContext';
 import { finishSettlement } from '../settlement/finishSettlement';
 import { assertVirtualWriteShape } from './assertVirtualWriteShape';
+import { collectReplacePaths } from './collectReplacePaths';
 import { getSettlementScratch } from './getSettlementScratch';
 import { isPlain } from './isPlain';
 import { markWrite } from './markWrite';
@@ -23,6 +24,8 @@ import { releaseWrongKindHosts } from './releaseWrongKindHosts';
 
 /**
  * Apply a live write or an own-kind detached latent write (26C-14).
+ * A multi-write batch arrives as one root write whose replacement scope is the union of
+ * its origins' paths, not the root (191C-01).
  * @param node - Live target or detached reference in a tree with a node factory
  * @param input - Caller-owned value interpreted first under static types
  * @param kind - Input origin retained for warning and transition semantics
@@ -103,20 +106,29 @@ export const writeSchemaNode = <Self extends SchemaNodeRecord<Self>>(
           typeof input !== 'object' ||
           isArray(input) ||
           node.behavior.strategy !== 'branch'));
+  const batch = writeOrigins !== undefined && writeOrigins.length > 1;
   const context = createSettlementContext(
     node,
     kind,
     option,
     scratch,
-    replaces,
+    replaces && !batch,
   );
   context.source = source;
   context.writeOrigins = writeOrigins;
+  if (batch) context.replacePaths = collectReplacePaths(writeOrigins);
   try {
     if (context.hasGates)
       getGateRegistry(context.root.runtime).register(context.root);
-    if (!scalarWrite && (replaces || kind === 'load'))
-      pruneLatentRaw(node.runtime, node.path, undefined, context);
+    if (!scalarWrite && (replaces || kind === 'load')) {
+      if (batch) {
+        for (let index = 0; index < writeOrigins.length; index++) {
+          const origin = writeOrigins[index];
+          if (origin.source !== 'automatic')
+            pruneLatentRaw(node.runtime, origin.path, origin.keys, context);
+        }
+      } else pruneLatentRaw(node.runtime, node.path, undefined, context);
+    }
     markWrite(node, input, context);
     if (kind !== 'load' && kind !== 'automatic')
       markWrongKindAncestors(node, context);

@@ -55,6 +55,8 @@ export interface SettlementContext<Self extends SchemaNodeRecord<Self>> {
   loadScope?: Self;
   /** Whole-replacement boundary whose subtree keeps only the written raw per path. */
   replaceScope?: Self;
+  /** Multi-write batch scopes: each marked path, or each received key's child path of a shallow Merge; bounds replacement instead of replaceScope (191C-01). */
+  replacePaths?: readonly string[];
   /** Real sibling paths replaced by a caller write through a virtual node. */
   virtualReplacePaths?: string[];
   /** Nodes newly present after calculation or reset by this load. */

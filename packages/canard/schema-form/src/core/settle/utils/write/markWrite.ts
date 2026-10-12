@@ -15,6 +15,8 @@ import { staticSpec } from './staticSpec';
 
 /**
  * Mark a terminal source or distribute an object host write by declared key.
+ * An object host is written whole only inside the context's replacement scope; under a
+ * multi-write batch that scope is the union of the written paths (191C-01).
  * @param node - Caller target or descendant reached by a whole host write
  * @param input - Value received at this occurrence's write boundary
  * @param context - Work list recording source, shape, and automatic changes
@@ -105,7 +107,12 @@ export const markWrite = <Self extends SchemaNodeRecord<Self>>(
       pruneLatentRaw(node.runtime, node.path, undefined, context);
   } else {
     const declared = getDeclaredChildNames(node.blueprintNode);
-    whole = !isMerge;
+    whole =
+      !isMerge &&
+      (context.replacePaths === undefined ||
+        context.replacePaths.some(
+          (path) => node.path === path || node.path.startsWith(`${path}/`),
+        ));
     nextRaw = isMerge ? node.raw : undefined;
     if (isMerge && nextRaw !== undefined) context.wrongKindHosts.add(node);
     extras = nextExtras(node.extras, value, declared, isMerge);
