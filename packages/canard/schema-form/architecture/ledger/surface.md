@@ -403,6 +403,7 @@
   > 평면 `&` 축약과 `computed` 별칭은 없다(15라운드).
 - 보충:
   > 소유자(15라운드 5): "숏컷을 모두 없애고 중첩 객체로 하는 게 빼기도 편하고 나중에 서버 스키마랑 클라이언트 스키마를 병합하기도 편하겠지" (`reviews/round-15-decisions.md:13`)
+  > 편집자 결정(187C-01): "【추론】 alias와 paths는 스토리북 실행 설정이지 제품 코드가 아니고 lockfile을 건드리지 않으므로 07c의 공유 파일 한계 안에 둘 수 있다. 문서가 옛 문법을 가르치는 것은 스토리 작업의 범위 밖이지만 소비자가 보는 계약이라 정리 항목으로 남기고 소유자가 알아야 한다. 작성 표면 변경이 의도된 것임을 reviewer 개괄에서 빠뜨린 것은 원장 관리자의 누락이다." (`reviews/round-187-closing.md:9`)
 - 상태: 중복(→ CONTROLS-016)
 - 출처: `02-target-overview.md:319#4`(정본), `reviews/round-15-decisions.md:13`, `reviews/round-15-apply-spec.md:46,79`, `03-mental-model.md:37` (같은 규칙: CONTROLS-016)
 - 닫은 사람: 소유자 답(`reviews/round-15-decisions.md:13` 5)
