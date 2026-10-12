@@ -9,3 +9,7 @@
   - 【추론】 (a)는 두 항목이 서로 다른 층(발생·전달)을 적은 것이라 모순이 아니다. (b)는 설계 가치가 분명히 정한 방향(같은 값은 같은 참조)이고 성능에 직접 닿으므로 07b가 맞는 자리다.
 - 근거: fairy07의 G9 보고; ERROR-186·024·204; EVENT-046; GOAL-011; 패키지 CLAUDE.md 설계 가치.
 - 다음: 원장 관리자가 fairy07·fixy07에 알린다.
+
+## 덧붙임 (2026-10-13, (b)를 발견으로 고정)
+
+fairy07이 207C-01 (3)에 맞춰 G9의 (b)를 발견으로 바꿨다(feat/schema-form-07c-stories 398839822): renderCommitStages는 GOAL-011 계약대로 commitsWithValidation 1을 적고, e2e OnChange 사례는 it.fails(시나리오 이름 변경 때 모듈 가드), 스토리는 Features/Events/Findings의 !test로 옮김(실제 창에서는 1단계에서 의도대로 실패). fixy07의 고침이 오르면 it.fails를 뒤집고 스토리를 RenderCommits로 되돌린다. 07c의 열린 발견은 이것과 소유자 질의 9번 둘.
