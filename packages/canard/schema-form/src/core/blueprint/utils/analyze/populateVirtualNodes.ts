@@ -1,7 +1,7 @@
 import { isArray } from '@winglet/common-utils/filter';
 import { escapeSegment } from '@winglet/json/pointer';
 
-import { isDevelopment } from '@/schema-form/app/environment';
+import { DEVELOPMENT } from '@/schema-form/app/environment';
 
 import type { BlueprintChildEntry, PropertyDeclaration } from '../../type';
 import { copyBlueprintDeclarations } from '../declarations/copyBlueprintDeclarations';
@@ -100,7 +100,7 @@ export const populateVirtualNodes = (
       if (group) group.declarations.push(...declarations);
       else
         groups.set(name, {
-          fields: isDevelopment() ? Object.freeze([...fields]) : [...fields],
+          fields: DEVELOPMENT ? Object.freeze([...fields]) : [...fields],
           declarations,
         });
     }
@@ -115,7 +115,7 @@ export const populateVirtualNodes = (
           ...edge,
           declarations: copyBlueprintDeclarations(edge.declarations),
         };
-        childEntries.push(isDevelopment() ? Object.freeze(copy) : copy);
+        childEntries.push(DEVELOPMENT ? Object.freeze(copy) : copy);
       }
     }
     const node: MutableNode = {
@@ -126,7 +126,7 @@ export const populateVirtualNodes = (
       schemaType: 'virtual',
       nullable: false,
       strategy: resolveNodeStrategy(context, 'virtual', group.declarations),
-      declarations: isDevelopment()
+      declarations: DEVELOPMENT
         ? Object.freeze(group.declarations)
         : group.declarations,
       childEntries,
@@ -139,6 +139,6 @@ export const populateVirtualNodes = (
       declarations: copyBlueprintDeclarations(node.declarations),
       hostPath: host.path,
     };
-    host.childEntries.push(isDevelopment() ? Object.freeze(entry) : entry);
+    host.childEntries.push(DEVELOPMENT ? Object.freeze(entry) : entry);
   }
 };

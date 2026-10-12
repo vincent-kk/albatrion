@@ -1,4 +1,4 @@
-import { isDevelopment } from '@/schema-form/app/environment';
+import { DEVELOPMENT } from '@/schema-form/app/environment';
 
 import { createBlueprintGate } from '../../createBlueprintGate';
 import type { MutableNode } from '../../type';
@@ -50,7 +50,7 @@ export const appendChildEntries = (
             : declaration.schemaPath,
         gates,
       };
-      if (isDevelopment()) {
+      if (DEVELOPMENT) {
         Object.freeze(binding.order);
         Object.freeze(gates);
         Object.freeze(binding);
@@ -63,7 +63,7 @@ export const appendChildEntries = (
       hostPath: node.path,
       declarations,
     };
-    if (isDevelopment()) {
+    if (DEVELOPMENT) {
       Object.freeze(declarations);
       Object.freeze(entry);
     }

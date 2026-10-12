@@ -1,4 +1,4 @@
-import { isDevelopment } from '@/schema-form/app/environment';
+import { DEVELOPMENT } from '@/schema-form/app/environment';
 
 import type { Blueprint, BlueprintOptions, BlueprintSchema } from './type';
 import { buildNodes } from './utils/analyze/buildNodes';
@@ -84,12 +84,12 @@ export const blueprint = (
         node.strategy !== 'branch')
     )
       context.staticFirstLoad = false;
-    if (isDevelopment()) {
+    if (DEVELOPMENT) {
       Object.freeze(node.childEntries);
       Object.freeze(node);
     }
   }
-  if (isDevelopment())
+  if (DEVELOPMENT)
     for (let index = 0; index < context.fragments.length; index++) {
       const fragment = context.fragments[index];
       Object.freeze(fragment.declares);
@@ -109,7 +109,7 @@ export const blueprint = (
     dependencies: context.dependencies ?? Object.create(null),
     expressions,
   };
-  if (isDevelopment()) {
+  if (DEVELOPMENT) {
     Object.freeze(context.capabilities);
     Object.freeze(context.nodes);
     Object.freeze(context.fragments);

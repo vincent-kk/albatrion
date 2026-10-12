@@ -1,6 +1,6 @@
 import { isArray } from '@winglet/common-utils/filter';
 
-import { isDevelopment } from '@/schema-form/app/environment';
+import { DEVELOPMENT } from '@/schema-form/app/environment';
 
 import { getFeatureNodeIndex } from '../../../blueprint';
 import {
@@ -199,7 +199,7 @@ export const markCommitDeliveries = <Self extends SchemaNodeRecord<Self>>(
         mark(
           node,
           SchemaNodeEventType.UpdateValue,
-          isDevelopment() ? Object.freeze(payload) : payload,
+          DEVELOPMENT ? Object.freeze(payload) : payload,
           { source },
         );
       }
@@ -216,7 +216,7 @@ export const markCommitDeliveries = <Self extends SchemaNodeRecord<Self>>(
         mark(
           node,
           SchemaNodeEventType.UpdatePath,
-          isDevelopment() ? Object.freeze(payload) : payload,
+          DEVELOPMENT ? Object.freeze(payload) : payload,
         );
       }
       if (
@@ -260,7 +260,7 @@ export const markCommitDeliveries = <Self extends SchemaNodeRecord<Self>>(
         mark(
           node,
           SchemaNodeEventType.UpdateJsonSchema,
-          isDevelopment() ? Object.freeze(payload) : payload,
+          DEVELOPMENT ? Object.freeze(payload) : payload,
         );
       }
     } else if (context.changedNodes.has(node)) {
@@ -276,7 +276,7 @@ export const markCommitDeliveries = <Self extends SchemaNodeRecord<Self>>(
       mark(
         node,
         SchemaNodeEventType.UpdateValue,
-        isDevelopment() ? Object.freeze(payload) : payload,
+        DEVELOPMENT ? Object.freeze(payload) : payload,
         { source },
       );
     }

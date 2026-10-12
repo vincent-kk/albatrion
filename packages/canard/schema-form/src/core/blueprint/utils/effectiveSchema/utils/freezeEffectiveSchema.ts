@@ -1,6 +1,6 @@
 import { isArray } from '@winglet/common-utils/filter';
 
-import { isDevelopment } from '@/schema-form/app/environment';
+import { DEVELOPMENT } from '@/schema-form/app/environment';
 
 import type { EffectiveSchema } from '../../../type';
 import { OwnedSchemaValues } from './OwnedSchemaValues';
@@ -68,6 +68,6 @@ export const freezeEffectiveSchema = (
       }
     Object.freeze(schema);
   }
-  if (isDevelopment()) Object.freeze(result);
+  if (DEVELOPMENT) Object.freeze(result);
   return result;
 };

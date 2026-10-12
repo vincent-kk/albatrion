@@ -2,7 +2,7 @@ import { printWarning } from '@winglet/common-utils/console';
 import type { ErrorDetails } from '@winglet/common-utils/error';
 import { isEmptyObject } from '@winglet/common-utils/filter';
 
-import { isDevelopment } from '@/schema-form/app/environment';
+import { DEVELOPMENT } from '@/schema-form/app/environment';
 
 export interface DevelopmentIssue {
   code: string;
@@ -18,14 +18,14 @@ const emittedWarnings = new Set<string>();
  * `code + formatted message + details` structure.
  *
  * @remarks
- * - Silent when `isDevelopment()` (app/environment) is false; that function keeps
+ * - Silent when `DEVELOPMENT` (app/environment) is false; that function keeps
  *   the bare environment token so consumer bundlers can replace it statically.
  * - Deduplicated per session by `code + message`, so warnings raised from
  *   per-node pipelines (e.g. schema merging) cannot flood the console.
  * @param issue - The diagnostic to report, carrying code, message, and details
  */
 export const warnDevelopmentIssue = (issue: DevelopmentIssue): void => {
-  if (!isDevelopment()) return;
+  if (!DEVELOPMENT) return;
   const signature = `${issue.code}\n${issue.message}`;
   if (emittedWarnings.has(signature)) return;
   emittedWarnings.add(signature);

@@ -1,6 +1,6 @@
 import { isArray } from '@winglet/common-utils/filter';
 
-import { isDevelopment } from '@/schema-form/app/environment';
+import { DEVELOPMENT } from '@/schema-form/app/environment';
 
 import type {
   BlueprintNodeKind,
@@ -82,7 +82,7 @@ export const buildNodes = (
               validationOnly: true,
             }
           : declaration;
-      if (isDevelopment() && owned !== declaration) {
+      if (DEVELOPMENT && owned !== declaration) {
         Object.freeze(owned.order);
         Object.freeze(owned.gates);
         Object.freeze(owned);
@@ -98,7 +98,7 @@ export const buildNodes = (
       schemaType,
       nullable,
       strategy: resolveNodeStrategy(context, kind, group.declarations),
-      declarations: isDevelopment()
+      declarations: DEVELOPMENT
         ? Object.freeze(ownedDeclarations)
         : ownedDeclarations,
       childEntries: [],

@@ -14,7 +14,9 @@ import type { FormTypeInputProps, JSONSchema } from '@/schema-form/types';
 const environment = vi.hoisted(() => ({ development: true }));
 
 vi.mock('@/schema-form/app/environment', () => ({
-  isDevelopment: () => environment.development,
+  get DEVELOPMENT() {
+    return environment.development;
+  },
 }));
 
 /** An object made terminal by an inline input: the one shape whose empty child list is a mistake to read (round 180). */

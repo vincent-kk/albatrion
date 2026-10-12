@@ -1,4 +1,4 @@
-import { isDevelopment } from '@/schema-form/app/environment';
+import { DEVELOPMENT } from '@/schema-form/app/environment';
 
 import type { PropertyDeclaration } from '../../type';
 
@@ -18,12 +18,12 @@ export const copyBlueprintDeclarations = (
       order: [...declaration.order],
       gates: [...declaration.gates],
     };
-    if (isDevelopment()) {
+    if (DEVELOPMENT) {
       Object.freeze(copy.order);
       Object.freeze(copy.gates);
       Object.freeze(copy);
     }
     result.push(copy);
   }
-  return isDevelopment() ? Object.freeze(result) : result;
+  return DEVELOPMENT ? Object.freeze(result) : result;
 };

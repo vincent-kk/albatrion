@@ -1,4 +1,4 @@
-import { isDevelopment } from '@/schema-form/app/environment';
+import { DEVELOPMENT } from '@/schema-form/app/environment';
 
 import { SchemaNodeEventType, SchemaNodeRevisionLedger } from '../../../record';
 import type { SchemaNodeRecord } from '../../../record';
@@ -23,7 +23,7 @@ export const commitStaticFirstNode = <Self extends SchemaNodeRecord<Self>>(
   node.pendingDelivery = {
     type,
     payload: {
-      [SchemaNodeEventType.UpdateValue]: isDevelopment()
+      [SchemaNodeEventType.UpdateValue]: DEVELOPMENT
         ? Object.freeze(payload)
         : payload,
     },

@@ -1,6 +1,6 @@
 import { useLayoutEffect, useMemo, useRef } from 'react';
 
-import { isDevelopment } from '@/schema-form/app/environment';
+import { DEVELOPMENT } from '@/schema-form/app/environment';
 import type { SchemaNode } from '@/schema-form/core';
 import { useFormErrorContext } from '@/schema-form/providers/FormErrorContext';
 
@@ -25,7 +25,7 @@ export const useTerminalChildren = (node: SchemaNode): ChildNodeComponent[] => {
   const accessed = useRef(0);
   const children = useMemo(() => {
     accessed.current = 0;
-    if (!isDevelopment() || !reporter || !isDetectableTerminal(node))
+    if (!DEVELOPMENT || !reporter || !isDetectableTerminal(node))
       return EMPTY_CHILDREN;
     let readLoad = reporter.load;
     const get = (

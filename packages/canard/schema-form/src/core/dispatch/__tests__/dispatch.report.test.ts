@@ -13,7 +13,9 @@ import { createDispatchTree } from './fixtures/createDispatchTree';
 const environment = vi.hoisted(() => ({ development: true }));
 
 vi.mock('@/schema-form/app/environment', () => ({
-  isDevelopment: () => environment.development,
+  get DEVELOPMENT() {
+    return environment.development;
+  },
 }));
 
 // filid:contract dispatch-report

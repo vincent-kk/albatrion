@@ -8,7 +8,9 @@ import { createTestTree } from './fixtures/createTestTree';
 const environment = vi.hoisted(() => ({ development: true }));
 
 vi.mock('@/schema-form/app/environment', () => ({
-  isDevelopment: () => environment.development,
+  get DEVELOPMENT() {
+    return environment.development;
+  },
 }));
 
 // filid:contract settle-write

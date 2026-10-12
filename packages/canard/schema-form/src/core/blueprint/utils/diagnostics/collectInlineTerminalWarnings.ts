@@ -1,7 +1,7 @@
 import { isArray } from '@winglet/common-utils/filter';
 import { escapeSegment } from '@winglet/json/pointer';
 
-import { isDevelopment } from '@/schema-form/app/environment';
+import { DEVELOPMENT } from '@/schema-form/app/environment';
 
 import type {
   BlueprintDiagnostic,
@@ -118,8 +118,8 @@ export const collectInlineTerminalWarnings = (
       level: 'warning',
       schemaPath: node.schemaPath,
       details: {
-        keys: isDevelopment() ? Object.freeze(keys.sort()) : keys.sort(),
-        paths: isDevelopment() ? Object.freeze(paths.sort()) : paths.sort(),
+        keys: DEVELOPMENT ? Object.freeze(keys.sort()) : keys.sort(),
+        paths: DEVELOPMENT ? Object.freeze(paths.sort()) : paths.sort(),
       },
     });
 };

@@ -9,7 +9,9 @@ import { createTestValidator } from './fixtures/createTestValidator';
 const environment = vi.hoisted(() => ({ development: true }));
 
 vi.mock('@/schema-form/app/environment', () => ({
-  isDevelopment: () => environment.development,
+  get DEVELOPMENT() {
+    return environment.development;
+  },
 }));
 
 /** One conditional tree whose guard can be evaluated at mount or later. */

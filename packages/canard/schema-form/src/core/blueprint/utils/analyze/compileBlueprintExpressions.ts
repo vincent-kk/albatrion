@@ -1,6 +1,6 @@
 import { isArray } from '@winglet/common-utils/filter';
 
-import { isDevelopment } from '@/schema-form/app/environment';
+import { DEVELOPMENT } from '@/schema-form/app/environment';
 
 import type { BlueprintExpression } from '../../type';
 import { BlueprintErrorCode } from '../diagnostics/constant';
@@ -108,7 +108,7 @@ export const compileBlueprintExpressions = (
             dependencies,
             evaluate,
           };
-          if (isDevelopment()) {
+          if (DEVELOPMENT) {
             Object.freeze(dependencies);
             Object.freeze(compiled);
           }
@@ -122,7 +122,7 @@ export const compileBlueprintExpressions = (
       }
     }
   }
-  if (isDevelopment() && context.dependencies)
+  if (DEVELOPMENT && context.dependencies)
     for (const ids of Object.values(context.dependencies)) Object.freeze(ids);
-  return isDevelopment() ? Object.freeze(expressions) : expressions;
+  return DEVELOPMENT ? Object.freeze(expressions) : expressions;
 };

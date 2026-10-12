@@ -1,6 +1,6 @@
 import { isArray } from '@winglet/common-utils/filter';
 
-import { isDevelopment } from '@/schema-form/app/environment';
+import { DEVELOPMENT } from '@/schema-form/app/environment';
 
 import type {
   Blueprint,
@@ -27,7 +27,7 @@ export const collectBlueprintWarnings = (
     const key = `${diagnostic.code}:${diagnostic.schemaPath}:${diagnostic.details.keyword ?? ''}`;
     if (seen.has(key)) return;
     seen.add(key);
-    collect(isDevelopment() ? Object.freeze(diagnostic) : diagnostic);
+    collect(DEVELOPMENT ? Object.freeze(diagnostic) : diagnostic);
   };
   for (const node of blueprint.nodes) {
     if (node.strategy === 'terminal') collectInlineTerminalWarnings(node, emit);
