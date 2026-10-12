@@ -4,13 +4,14 @@ import { getItemEntry } from '../../../blueprint';
 import type { SchemaNodeRecord } from '../../../record';
 import type { SettlementContext } from '../../type';
 import { HostLatent } from './HostLatent';
-import { readLatentSlotSource } from './readLatentSlotSource';
+import { readAbsentSlotSource } from './readAbsentSlotSource';
 import { readRawTree } from './readRawTree';
 
 /**
  * Capture one array host as one frozen raw array.
  * A templated slot uses its item's raw tree, including empty-source array slots;
- * a gated-out slot uses its retained own-kind latent source before host capture;
+ * a gated-out slot uses its retained own-kind latent source before host capture, and a
+ * written slot without a node uses this call's distributed input (211C-01);
  * an untemplated tail slot uses extras at the matching tail position.
  * @param node - Departing array branch with its final slot nodes
  * @param context - Latent-aware source test for templated item slots
@@ -36,9 +37,7 @@ export const captureArrayLatent = <Self extends SchemaNodeRecord<Self>>(
       slots.push(readRawTree(item, context));
       continue;
     }
-    slots.push(
-      readLatentSlotSource(context, `${node.path}/${index}`, entry.node),
-    );
+    slots.push(readAbsentSlotSource(node, index, entry.node, context));
   }
   return new HostLatent(Object.freeze(slots), undefined);
 };

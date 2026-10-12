@@ -6,6 +6,7 @@ import { getItemEntry } from '../../../blueprint';
 import type { SchemaNodeRecord } from '../../../record';
 import type { SettlementContext } from '../../type';
 import { isPlain } from '../write/isPlain';
+import { readAbsentSlotSource } from './readAbsentSlotSource';
 import { readLatentSlotSource } from './readLatentSlotSource';
 
 /**
@@ -36,7 +37,7 @@ export const readRawTree = <Self extends SchemaNodeRecord<Self>>(
         const item = node.structure?.[String(index)];
         value = item
           ? readRawTree(item, context)
-          : readLatentSlotSource(context, `${node.path}/${index}`, entry.node);
+          : readAbsentSlotSource(node, index, entry.node, context);
       }
       slots.push(value);
     }
