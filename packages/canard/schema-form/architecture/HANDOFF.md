@@ -314,7 +314,7 @@ node ledger/checks/doc-coverage.mjs design/*.md adr/*.md -- ledger/*.md   # 설�
 | `reviews/round-181-owner-answers.md` | 181라운드 소유자 답 하나: 한쪽 지시를 다른 쪽이 따름 |
 | `reviews/round-182-closing.md` | 182라운드 편집자 결정 하나: PR-4 표 인용 바로잡음, ESM NODE_ENV 결함 상신 |
 | `reviews/round-183-owner-answers.md` | 183라운드 소유자 답 하나: ESM NODE_ENV 고침, 스토리 재구성 검토 |
-| `reviews/round-184-closing.md` | 184라운드 편집자 결정 하나: 스토리 재구성 검토안 제출(`reviews/story-regroup-proposal-184.md`) |
+| `reviews/round-184-closing.md` | 184라운드 편집자 결정 하나: 스토리 재구성 검토안 제출(검토안은 같은 디렉토리의 story-regroup-proposal 문서) |
 | `reviews/round-185-owner-answers.md` | 185라운드 소유자 답 하나: 자식 외부 오류의 루트 전파를 경로로 |
 | reviews/raw-round97-gate-selection/ | 97라운드 원자료: 게이트 선택 설계안의 독립 검증 보고 |
 | `reviews/round-28-closing.md` | 28라운드 편집자 결정의 정본(28C-01~08: 04(PR-3+PR-6) 실행 계획 초안의 해석 일곱 건과 후속 둘 — 개발 모드 정착 기록의 자리, `enabled`와 떼어진 노드의 상태 게터, `@` 맥락과 `setContext`의 PR, 억제 비트와 `resetInteraction`, `unsetOnInactive` 식의 throw, TEST-071의 값 크기, `watchValues`의 PR, `node.context`의 PR과 맥락 변경 정착). 보충 줄만 |
