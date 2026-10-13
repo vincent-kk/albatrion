@@ -82,4 +82,4 @@
 
 | 날짜 | 무엇 | 어디 |
 | --- | --- | --- |
-| 2026-10-13 | 241라운드(소유자): FieldRendererProps의 Label·Error 추가는 보류, 매개변수 재설계 검토 요청. 보충 1줄 | `reviews/round-241-owner-answers.md` |
+| 2026-10-13 | 242라운드(소유자): 이름 치환을 CLAUDE.md 여섯과 docs 포함 모든 영역에서 허용. 보충 1줄 | `reviews/round-242-owner-answers.md` |
