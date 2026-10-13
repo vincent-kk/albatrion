@@ -21,16 +21,21 @@ interface FormTypeInputMonthProps
     { size?: SizeType }
   > {
   size?: SizeType;
+  /** Earliest selectable value, from `presentation.FormTypeInputProps.minimum`. */
+  minimum?: string;
+  /** Latest selectable value, from `presentation.FormTypeInputProps.maximum`. */
+  maximum?: string;
 }
 
 const FormTypeInputMonth = ({
   path,
   name,
-  jsonSchema,
   defaultValue,
   onChange,
   context,
   size,
+  minimum,
+  maximum,
 }: FormTypeInputMonthProps) => {
   const handleChange = useHandle((value: Dayjs | null) => {
     onChange(value?.format(DATA_FORMAT) || '');
@@ -40,7 +45,6 @@ const FormTypeInputMonth = ({
     [defaultValue],
   );
   const disabledDate = useMemo(() => {
-    const { minimum, maximum } = jsonSchema.options || {};
     return (date: Dayjs | null) => {
       if (!date) return false;
       if (!minimum && !maximum) return false;
@@ -50,7 +54,7 @@ const FormTypeInputMonth = ({
         return true;
       return false;
     };
-  }, [jsonSchema?.options]);
+  }, [minimum, maximum]);
 
   return (
     <DatePicker

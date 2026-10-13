@@ -35,18 +35,23 @@ interface FormTypeInputDateRangeProps
     { size?: SizeType }
   > {
   size?: SizeType;
+  /** Earliest selectable value, from `presentation.FormTypeInputProps.minimum`. */
+  minimum?: string;
+  /** Latest selectable value, from `presentation.FormTypeInputProps.maximum`. */
+  maximum?: string;
 }
 
 const FormTypeInputDateRange = ({
   path,
   name,
-  jsonSchema,
   readOnly,
   disabled,
   defaultValue,
   onChange,
   context,
   size,
+  minimum,
+  maximum,
 }: FormTypeInputDateRangeProps) => {
   const handleChange = useHandle((range: OnChangeRangeValueType<Dayjs>) => {
     const [start, end] = range || [];
@@ -65,7 +70,6 @@ const FormTypeInputDateRange = ({
     [defaultValue],
   );
   const disabledDate = useMemo(() => {
-    const { minimum, maximum } = jsonSchema.options || {};
     return (date: Dayjs | null) => {
       if (!date) return false;
       if (!minimum && !maximum) return false;
@@ -75,7 +79,7 @@ const FormTypeInputDateRange = ({
         return true;
       return false;
     };
-  }, [jsonSchema?.options]);
+  }, [minimum, maximum]);
 
   return (
     <DatePicker.RangePicker
