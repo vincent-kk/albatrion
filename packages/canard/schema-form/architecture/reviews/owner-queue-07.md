@@ -30,5 +30,6 @@
 | 24 (귀환 때 확인) | schema-form `test --run --reporter=json --outputFile` 실행이 보고서는 success true·0 실패인데 종료 코드 1을 냄(두 번 재현; 같은 기준의 dot 실행은 0; fixy07 ④ G3) | 시험 도구 설정 문제라 제품 동작과 무관하고 CI 사용 여부는 소유자 몫 | 게이트는 dot 실행 종료 코드로 판정했으므로 영향 없음 | 222라운드 뒤 fixy07 보고 |
 | 25 (귀환 때 결정) | IME 조합 스토리의 흔들림(202C-01 (4)) — ImeComposition(browser-gates.stories.tsx:32)은 즉시 단언이라 "5초 제한 대기"를 적용하려면 제한 시간 있는 대기로 바꾸는 새 타이밍 변경이 필요(fixy07 ⑤) | 닫힌 범위 밖의 시험 타이밍 변경 | CDP 전용 스토리라 headless 게이트에서만 돌고 지금 통과하므로 머지와 무관 | 222라운드 뒤 fixy07 보고 |
 | 26 (귀환 때 결정) | ajv 플러그인 가드 포인터 거부(#360)의 비차단 셋: ajv6·7에서 `#` 접두 퍼센트 인코딩 포인터(`#/properties/a%20b`)가 이제 거부됨(코어는 `#`을 떼고 디코딩된 포인터만 넘겨 도달 불가) — 고칠지(`#` 접두일 때만 decodeURIComponent) 계약 밖으로 문서화할지; resolveGuardSchema @returns의 "non-schema value면 undefined"는 과장(배열 아닌 객체 — properties 맵, enum 안 객체 — 는 여전히 늘 true인 게이트, 모양만으로 구분 불가); resolveGuardSchema.ts 셋은 기반부터 prettier 미적용 | 플러그인 공개 계약의 가장자리 결정 | 코어 경로에서는 나오지 않는 포인터라 제품 영향 없음 | 223라운드 |
+| 27 (귀환 때 결정) | `global-errors.timing.test.ts`의 "one call at a time in linear time" 사례가 load1 24 안팎에서 한 번 실패(113.5 < 81.1 단언; 단독 5회와 다음 전체 실행은 통과; fixy07 ⑤ 게이트) — n과 4n의 단발 벽시계 비교라 부하에 약함; 반복 중앙값으로 바꿀지 그대로 둘지 | 닫힌 범위 밖의 시험 타이밍 변경 | 제품 동작과 무관, 부하 없는 창에서는 통과 | 226라운드 덧붙임 |
 
 (추가되는 항목은 아래에 번호를 이어 적는다.)

@@ -11,3 +11,7 @@ render-update-wall 풀 중앙값 ms(B → C, 변화량, 세 라운드 같은 부
   - 【추론】 방향 확인은 "회귀 방향이 없다"를 보는 문턱이고, 같은 부호 행이 모두 후보가 빠른 쪽이면 문턱을 넘은 것이다. 순회를 ⑤ head 위에서 하는 것이 ⑥ 뒤 재순회를 피하는 길이다.
 - 근거: fixy07의 보고; 212C-01 절차; 224C-01; 225라운드 소유자 답.
 - 다음: fixy07의 ⑤ head를 받아 fairy07에 전달한다.
+
+## 덧붙임 (2026-10-13, ⑤ push와 fairy07 순회 시작)
+
+fixy07 ⑤ push: origin/feat/schema-form-07b-1 head 5ca91762f(c343a93b8 위 커밋 하나, force 없음; 원장 관리자 확인: 부모 c343a93b8, 세션 ID·co-author 0, 46 파일 +454/−85 모두 schema-form 패키지 안). 내용: CDP·비포커스 user-event 스토리의 play를 Vitest Browser Mode 밖에서 단언 전에 한 단계 "Skipped"로 건너뜀(174C-01 (2)). 수치: storybook 프로젝트 전 240 통과·0 실패(ab1535d12) → 후 240 통과·0 실패(5ca91762f), 시험 이름별 상태 전후 동일(파일 101, JSON 기준); typecheck 0, stories eslint 0, 전체 스위트 4116 통과·0 실패·1 todo; verifier PASS(일곱 조건), 비차단 다섯 중 셋은 커밋 안에서 정리. 비차단 하나는 대기열 27(global-errors.timing의 단발 벽시계 비교가 load1 24 안팎에서 한 번 실패). 226C-01 (2)대로 fairy07에 이 head 위의 전체 순회(221C-01)를 시작시켰다. ⑥은 순회 판정 뒤.
