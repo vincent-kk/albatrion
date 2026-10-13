@@ -36,7 +36,7 @@ Item type picks the strategy automatically; `terminal` is a schema key (not in s
 | Strategy | Applies when                            | Trade-off                                                 |
 | -------- | --------------------------------------- | --------------------------------------------------------- |
 | Terminal | Primitive items (string/number/boolean) | Values only, no per-item node tree — fast, memory-light   |
-| Branch   | Object/array items                      | Per-item node tree — per-item state, validation, computed |
+| Branch   | Object/array items                      | Per-item node tree — per-item state, validation, controls |
 
 ```typescript
 { type: 'array', terminal: false, items: { type: 'string' } }
@@ -127,4 +127,4 @@ For a single huge array field (not a huge form), window it manually with a list-
 
 ## Expression Cost at Scale
 
-Heavy computed expressions run on every dependency tick. Move reductions out of expressions: watch the source array and compute inside the component (`expressions.md` § watch and derived), and keep `watch` lists down to the paths the expression actually reads.
+Heavy controls expressions run on every dependency tick. Move reductions out of expressions: watch the source array and compute inside the component (`expressions.md` § watch and derived), and keep `watch` lists down to the paths the expression actually reads.

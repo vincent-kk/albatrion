@@ -1,7 +1,7 @@
 import {
   type ComponentType,
   type MemoExoticComponent,
-  type MutableRefObject,
+  type RefObject,
   memo,
   useLayoutEffect,
   useMemo,
@@ -16,12 +16,7 @@ import {
 
 import { DeferrableNodeProxy } from '@/schema-form/components/SchemaNode/DeferrableNodeProxy';
 import type { SchemaNodeProxyProps } from '@/schema-form/components/SchemaNode/SchemaNodeProxy';
-import {
-  type SchemaNode,
-  SchemaNodeEventType,
-  isTerminalNode,
-} from '@/schema-form/core';
-import { useSchemaNodeTracker } from '@/schema-form/hooks/useSchemaNodeTracker';
+import { type SchemaNode, isTerminalNode } from '@/schema-form/core';
 import { useVirtualizationContext } from '@/schema-form/providers';
 import type { ChildNodeComponentProps } from '@/schema-form/types';
 
@@ -29,16 +24,17 @@ import type {
   AdditionalChildNodeProperties,
   ChildNodeComponent,
 } from '../type';
-import { useTerminalChildren } from './useTerminalChildren';
 
 /**
  * Create child node components for the given SchemaNode
  * @param node - SchemaNode
  * @param NodeProxy - SchemaNodeProxy
+ * @param mountedChildren - Count of committed child proxies, kept by each child's layout effect
+ * @param terminalChildren - List from `useTerminalChildren`, returned as is for terminal nodes and empty branches
  * @returns ChildNodeComponent[]
  *
  * @remarks `node.children` is read during render and kept consistent by the
- *          tracker: `useSchemaNodeTracker` is `useSyncExternalStore`-based, so
+ *          input's combined `useSyncExternalStore` tracker, so
  *          `UpdateChildren` deliveries landing between render and commit
  *          (concurrent mount gap) still force a resync render instead of
  *          being lost.
@@ -46,14 +42,10 @@ import { useTerminalChildren } from './useTerminalChildren';
 export const useChildNodeComponents = (
   node: SchemaNode,
   NodeProxy: ComponentType<SchemaNodeProxyProps>,
-  mountedChildren: MutableRefObject<number>,
+  mountedChildren: RefObject<number>,
+  terminalChildren: ChildNodeComponent[],
 ): ChildNodeComponent[] => {
-  useSchemaNodeTracker(
-    node,
-    SchemaNodeEventType.UpdateChildren | SchemaNodeEventType.UpdatePath,
-  );
   const children = node.children;
-  const terminalChildren = useTerminalChildren(node);
 
   const { manager } = useVirtualizationContext();
 

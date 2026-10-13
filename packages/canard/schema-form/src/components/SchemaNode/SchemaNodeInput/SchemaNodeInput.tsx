@@ -11,7 +11,6 @@ import {
   readSchemaNodeInteractionReset,
   writeSchemaNodeInput,
 } from '@/schema-form/core';
-import { useSchemaNodeTracker } from '@/schema-form/hooks/useSchemaNodeTracker';
 import {
   useFormTypeRendererContext,
   useInputControlContext,
@@ -23,7 +22,8 @@ import type { JSONSchema, SetStateFnWithOptions } from '@/schema-form/types';
 import { useChildNodeComponents } from './hooks/useChildNodeComponents';
 import { useFormTypeInput } from './hooks/useFormTypeInput';
 import { useFormTypeInputControl } from './hooks/useFormTypeInputControl';
-import { REACTIVE_RERENDERING_EVENTS, type SchemaNodeInputProps } from './type';
+import { useTerminalChildren } from './hooks/useTerminalChildren';
+import type { SchemaNodeInputProps } from './type';
 
 /** Bind one input draft to the live node without treating typing as a caller refresh. */
 export const SchemaNodeInput = memo(
@@ -38,10 +38,13 @@ export const SchemaNodeInput = memo(
     const selected = useFormTypeInput(node, PreferredFormTypeInput !== null);
     const FormTypeInput = PreferredFormTypeInput || selected;
     const mountedChildren = useRef(0);
+    const [terminalChildren, commitTerminalChildren] =
+      useTerminalChildren(node);
     const ChildNodeComponents = useChildNodeComponents(
       node,
       NodeProxy,
       mountedChildren,
+      terminalChildren,
     );
     const { checkShowError } = useFormTypeRendererContext();
     const { attachedFilesMap, context } = useWorkspaceContext();
@@ -49,7 +52,7 @@ export const SchemaNodeInput = memo(
       useInputControlContext();
     const isLive = useLiveNode(node);
     const [ref, generation, handleCompositionStart, handleCompositionEnd] =
-      useFormTypeInputControl(node, mountedChildren);
+      useFormTypeInputControl(node, mountedChildren, commitTerminalChildren);
     const defaultValue = useMemorize(() => node.value, [node, generation]);
     const accepts = useCallback(
       () =>
@@ -113,7 +116,6 @@ export const SchemaNodeInput = memo(
       if (requestId.current !== undefined)
         cancelAnimationFrame(requestId.current);
     });
-    useSchemaNodeTracker(node, REACTIVE_RERENDERING_EVENTS);
     if (!FormTypeInput) return null;
     return (
       <div

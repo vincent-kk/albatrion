@@ -3,6 +3,7 @@ import { describe, expect, it } from 'vitest';
 import { makeSchemaNodeTree } from '../../__tests__/makeSchemaNodeTree';
 import { SchemaNodeEventType } from '../../record';
 import { SchemaNodeState } from '../../types/state';
+import type { SchemaNode } from '../type';
 
 // filid:contract surface-members
 describe('EVENT-062 43C-01 globalState surface', () => {
@@ -153,5 +154,52 @@ describe('EVENT-062 43C-01 globalState surface', () => {
     current.setState({ [SchemaNodeState.Dirty]: true });
     expect(root.globalState).toEqual({ [SchemaNodeState.Dirty]: true });
     expect(old.globalState).toBe(root.globalState);
+  });
+
+  it('publishes a flag as absent, then true, then absent again and never false', () => {
+    const { root } = makeSchemaNodeTree({
+      type: 'object',
+      properties: {
+        first: { type: 'string' },
+        second: { type: 'string' },
+      },
+    });
+    root.setValue({ first: 'a', second: 'b' });
+    const first = root.find('/first');
+    const second = root.find('/second');
+    if (!first || !second) throw new Error('Expected both children');
+    const dirty = SchemaNodeState.Dirty;
+    expect(dirty in root.globalState).toBe(false);
+    first.setState({ [dirty]: true });
+    second.setState({ [dirty]: true });
+    expect(root.globalState[dirty]).toBe(true);
+    first.setState({ [dirty]: false });
+    expect(root.globalState[dirty]).toBe(true);
+    second.setState({ [dirty]: false });
+    expect(dirty in root.globalState).toBe(false);
+    expect(root.globalState[dirty]).toBeUndefined();
+    expect(Object.values(root.globalState)).not.toContain(false);
+  });
+
+  it('lets a globalState consumer such as onStateChange keep a boolean | undefined copy', () => {
+    const copies: Record<string, boolean | undefined>[] = [];
+    const onStateChange = (state: SchemaNode['globalState']) => {
+      const copy: Record<string, boolean | undefined> = { ...state };
+      copy[SchemaNodeState.Dirty] = false;
+      copy[SchemaNodeState.Touched] = undefined;
+      const spread: Record<string, boolean | undefined> = {
+        ...state,
+        [SchemaNodeState.Dirty]: false,
+      };
+      expect(spread[SchemaNodeState.Dirty]).toBe(false);
+      copies.push(copy);
+      const shared: SchemaNode['globalState'] = copy;
+      expect(shared).toBe(copy);
+    };
+    const { root } = makeSchemaNodeTree({ type: 'string' });
+    onStateChange(root.globalState);
+    expect(copies).toEqual([
+      { [SchemaNodeState.Dirty]: false, [SchemaNodeState.Touched]: undefined },
+    ]);
   });
 });

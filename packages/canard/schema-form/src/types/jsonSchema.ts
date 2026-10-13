@@ -18,8 +18,8 @@ import type {
 
 import type { Dictionary, IsNullable } from '@aileron/declare';
 
+import type { SchemaControls } from '../core/types/controls';
 import type { UnknownFormTypeInputProps } from './formTypeInput';
-import type { InjectToHandler } from './injectTo';
 import type {
   AllowedValue,
   ArrayValue,
@@ -234,30 +234,15 @@ export type NullableArraySchema<Options extends Dictionary = object> =
 export type ObjectSchema<Options extends Dictionary = object> =
   | NonNullableObjectSchema<Options>
   | NullableObjectSchema<Options>;
-/** Non-nullable object schema with optional property ordering and virtual properties */
+/** Non-nullable object schema */
 export type NonNullableObjectSchema<Options extends Dictionary = object> =
   BasicSchema &
-    BaseNonNullableObjectSchema<Options, JSONSchemaChildren<Options>> & {
-      /** Property keys order for rendering */
-      propertyKeys?: readonly string[];
-      /** Virtual property definitions for conditional fields */
-      virtual?: VirtualSchemaProperties;
-    };
-/** Nullable object schema (type: ['object', 'null']) with optional property ordering and virtual properties */
+    BaseNonNullableObjectSchema<Options, JSONSchemaChildren<Options>>;
+/** Nullable object schema (type: ['object', 'null']) */
 export type NullableObjectSchema<Options extends Dictionary = object> =
-  BasicSchema &
-    BaseNullableObjectSchema<Options, JSONSchemaChildren<Options>> & {
-      /** Property keys order for rendering */
-      propertyKeys?: readonly string[];
-      /** Virtual property definitions for conditional fields */
-      virtual?: VirtualSchemaProperties;
-    };
-/** Virtual schema property definitions (cannot be nullable) */
-type VirtualSchemaProperties = Dictionary<
-  { fields: readonly string[]; nullable?: never } & BasicSchema
->;
+  BasicSchema & BaseNullableObjectSchema<Options, JSONSchemaChildren<Options>>;
 
-/** Virtual node schema for non-schema computed fields */
+/** Virtual node schema for a field group declared in `options.virtual` */
 export type VirtualSchema<Options extends Dictionary = object> = {
   type: 'virtual';
   /** Dependent field paths for reactivity */
@@ -274,6 +259,8 @@ export type NullSchema<Options extends Dictionary = object> = BasicSchema &
 export type BasicSchema = {
   /** Renderer data belongs to the binding and stays typed in per-kind schemas. */
   presentation?: SchemaPresentation;
+  /** Rules and policies that change value and shape over time; any other key is a blueprint error */
+  controls?: SchemaControls<JSONSchemaWithVirtual>;
   /** Custom React component for input rendering */
   FormTypeInput?: ComponentType<UnknownFormTypeInputProps> | null;
   /** Props passed to FormTypeInput component */
@@ -302,8 +289,6 @@ export type BasicSchema = {
   };
   /** Form type identifier for component selection */
   formType?: string;
-  /** Whether node is a terminal (leaf) node (default: inferred — `object`/`array` are branch unless `FormTypeInput` is a component, every other type is terminal) */
-  terminal?: boolean;
   /** Custom error messages per validation rule */
   errorMessages?: {
     [key: string]: string | Dictionary<string> | undefined;
@@ -314,92 +299,6 @@ export type BasicSchema = {
     /** Omit empty values from form data (default: true) */
     omitEmpty?: boolean;
     [alt: string]: any;
-  };
-  /**
-   * Handler to propagate this node's value to other nodes in the form tree.
-   *
-   * Called whenever this node's value changes. The handler receives the current value
-   * and a context object containing node info, parent info, root value, and shared context.
-   *
-   * @example
-   * ```typescript
-   * // Sync derived field when source changes
-   * injectTo: (value) => ({ '/derived/uppercase': value?.toUpperCase() })
-   *
-   * // Access root value for calculations
-   * injectTo: (value, ctx) => ({
-   *   '/total': ctx.rootValue.price * value
-   * })
-   * ```
-   *
-   * @see InjectToHandler for full documentation and examples
-   */
-  injectTo?: InjectToHandler;
-  /** Alias for computed.if */
-  '&if'?: boolean | string;
-  /** Alias for computed.active */
-  '&active'?: boolean | string;
-  /** Alias for computed.visible */
-  '&visible'?: boolean | string;
-  /** Alias for computed.pristine */
-  '&pristine'?: boolean | string;
-  /** Alias for computed.readOnly */
-  '&readOnly'?: boolean | string;
-  /** Alias for computed.disabled */
-  '&disabled'?: boolean | string;
-  /** Alias for computed.watch */
-  '&watch'?: string | readonly string[];
-  /** Alias for computed.derived */
-  '&derived'?: string;
-  /** Computed properties with JSONPointer expressions */
-  computed?: {
-    /**
-     * Conditional rendering expression
-     * @warning This expression only works with oneOf/anyOf branches in ObjectNode.
-     * @note If expression is true, the corresponding branch will be rendered.
-     * */
-    if?: boolean | string;
-    /**
-     * Active state expression (default: true)
-     * @warning When active is false, the node cannot write values and will be excluded from the final output. In this case, derived values are also not calculated.
-     * @note If expression is false, the FormTypeInput component will be hidden.
-     */
-    active?: boolean | string;
-    /**
-     * Visibility state expression (default: true)
-     * @warning Even when visible is false, the node can still write values and will be included in the final output.
-     * @note If expression is false, the FormTypeInput component will be hidden.
-     */
-    visible?: boolean | string;
-    /**
-     * Expression to initialize the node's state
-     * @note If expression is true, the node's state (dirty, touched, etc.) will be reset.
-     * */
-    pristine?: boolean | string;
-    /**
-     * Read-only state expression (default: false)
-     * @warning Even in readOnly state, values can still be changed programmatically via setValue().
-     * @note This field only passes the property to the node; each FormTypeInput must implement the readOnly behavior.
-     */
-    readOnly?: boolean | string;
-    /**
-     * Disabled state expression (default: false)
-     * @warning Even in disabled state, values can still be changed programmatically via setValue().
-     * @note This field only passes the property to the node; each FormTypeInput must implement the disabled behavior.
-     */
-    disabled?: boolean | string;
-    /**
-     * Watched field paths for reactivity
-     * @warning The watchValues passed to this field returns a new array reference even when internal values haven't changed, so do not use it directly in dependency arrays.
-     * @note If field path is changed, the node's `watchValues` will be updated.
-     */
-    watch?: string | readonly string[];
-    /**
-     * Value expression for auto update value
-     * @warning This expression can cause infinite loop if not used correctly
-     * @note Don't use this expression with circular reference
-     * */
-    derived?: string;
   };
   [alt: string]: any;
 };

@@ -66,7 +66,7 @@ registerPlugin(plugin);
 
 - **역할**: URI 입력을 위한 특수 입력 필드 (프로토콜 드롭다운 포함)
 - **적용 조건**: `type`이 `"string"`이고 `format` 또는 `formType`이 `"uri"`인 경우
-- **추가 사항**: 프로토콜 선택 드롭다운, 기본 프로토콜 목록 지원 (http, https), 커스텀 프로토콜 목록 설정 가능, mailto/tel 등 단일 콜론 형태 프로토콜 지원
+- **추가 사항**: 프로토콜 선택 드롭다운, 기본 프로토콜 목록 지원 (http, https), `presentation.FormTypeInputProps.protocols`로 커스텀 프로토콜 목록 설정, mailto/tel 등 단일 콜론 형태 프로토콜 지원
 
 ### **[`FormTypeInputMonth.tsx`](./src/formTypeInputs/FormTypeInputMonth.tsx)**
 
@@ -135,6 +135,25 @@ registerPlugin(plugin);
 - **추가 사항**: `undefined` 값에 대한 `indeterminate` 상태 지원, FormControlLabel 사용
 
 ---
+
+## 입력 설정
+
+위의 `protocols` 같은 입력별 설정은 `presentation.FormTypeInputProps`에 둡니다. 폼이 이 객체를 입력 props로 펼쳐 넘깁니다.
+
+```ts
+const jsonSchema = {
+  type: 'object',
+  properties: {
+    homepage: {
+      type: 'string',
+      format: 'uri',
+      presentation: { FormTypeInputProps: { protocols: ['https'] } },
+    },
+  },
+};
+```
+
+0.16.0까지 Uri 입력은 `protocols` prop이 없으면 `options.protocols`를 읽었습니다. 1.0.0-beta부터 `options`는 닫힌 목록이고 입력별 설정은 `presentation.FormTypeInputProps`에 두면 입력 props로 펼쳐집니다. 옛 자리는 청사진 오류 `UNKNOWN_GROUP_KEY`가 됩니다.
 
 ## 컴포넌트 우선순위
 

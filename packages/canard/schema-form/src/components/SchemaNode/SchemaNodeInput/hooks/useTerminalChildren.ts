@@ -1,4 +1,4 @@
-import { useLayoutEffect, useMemo, useRef } from 'react';
+import { useMemo, useRef } from 'react';
 
 import type { SchemaNode } from '@/schema-form/core';
 import { useFormErrorContext } from '@/schema-form/providers/FormErrorContext';
@@ -15,14 +15,30 @@ const COMMITTED = 1;
 const ACCESSED = 2;
 
 /**
- * Detect terminal child-list reads using React's committed effect and a post-commit microtask.
- * @param node - Live node whose terminal strategy has no child components.
- * @returns A stable empty list; only development builds of an object or array made terminal by an inline input receive a read detector (round 180).
+ * The input's child list and the marker its owning layout effect calls on every commit
+ * where the pair changes; the marker reports a child read made before that commit.
  */
-export const useTerminalChildren = (node: SchemaNode): ChildNodeComponent[] => {
+type TerminalChildren = readonly [
+  children: ChildNodeComponent[],
+  commit: () => void,
+];
+
+/** Child list and commit marker of an input whose children need no read detector. */
+const UNDETECTED: TerminalChildren = [EMPTY_CHILDREN, () => {}];
+Object.freeze(UNDETECTED);
+
+/**
+ * Detect terminal child-list reads using the input's committed layout effect and a post-commit microtask.
+ * @param node - Live node whose terminal strategy has no child components.
+ * @returns A pair that stays the same object until the node or error reporter changes: a stable
+ *          empty list (only development builds of an object or array made terminal by an inline
+ *          input receive a read detector, round 180) and the commit marker that
+ *          the input's layout effect must call before any other work, in place of an effect of its own.
+ */
+export const useTerminalChildren = (node: SchemaNode): TerminalChildren => {
   const reporter = useFormErrorContext();
   const accessed = useRef(0);
-  const children = useMemo(() => {
+  return useMemo(() => {
     accessed.current = 0;
     if (
       process.env.NODE_ENV !== 'production' &&
@@ -59,23 +75,21 @@ export const useTerminalChildren = (node: SchemaNode): ChildNodeComponent[] => {
         }
         return Reflect.get(target, key, receiver);
       };
-      return new Proxy<ChildNodeComponent[]>(EMPTY_CHILDREN, { get });
+      const commit = () => {
+        accessed.current |= COMMITTED;
+        if (accessed.current & ACCESSED)
+          reporter.report({
+            level: 'warning',
+            code: 'SCHEMA_FORM_WARNING.CHILD_NODE_COMPONENTS_ON_TERMINAL',
+            message: 'Terminal inputs have no child components',
+            path: node.path,
+          });
+      };
+      return [
+        new Proxy<ChildNodeComponent[]>(EMPTY_CHILDREN, { get }),
+        commit,
+      ] as const;
     }
-    return EMPTY_CHILDREN;
+    return UNDETECTED;
   }, [node, reporter]);
-  useLayoutEffect(() => {
-    accessed.current |= COMMITTED;
-    if (
-      process.env.NODE_ENV !== 'production' &&
-      node.strategy === 'terminal' &&
-      accessed.current & ACCESSED
-    )
-      reporter?.report({
-        level: 'warning',
-        code: 'SCHEMA_FORM_WARNING.CHILD_NODE_COMPONENTS_ON_TERMINAL',
-        message: 'Terminal inputs have no child components',
-        path: node.path,
-      });
-  }, [node, reporter, children]);
-  return children;
 };

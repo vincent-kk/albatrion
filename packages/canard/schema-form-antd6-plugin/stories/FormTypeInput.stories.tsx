@@ -99,11 +99,14 @@ export const Uri = Template.bind({});
 Uri.args = {
   jsonSchema: {
     type: 'string',
-    FormTypeInput: FormTypeInputUriDefinition.Component,
-    options: {
-      protocols: ['http://', 'https://', 'ftp://', 'mailto:'],
+    format: 'uri',
+    presentation: {
+      FormTypeInputProps: {
+        protocols: ['http://', 'https://', 'ftp://', 'mailto:'],
+      },
     },
   },
+  formTypeInputDefinitions: [FormTypeInputUriDefinition],
 };
 
 export const StringCheckbox = Template.bind({});
@@ -262,11 +265,14 @@ NumberSlider.args = {
     default: 50,
     minimum: 20,
     maximum: 80,
-    FormTypeInput: FormTypeInputSliderDefinition.Component,
-    options: {
-      lazy: false,
+    presentation: {
+      formType: 'slider',
+      FormTypeInputProps: {
+        lazy: false,
+      },
     },
   },
+  formTypeInputDefinitions: [FormTypeInputSliderDefinition],
 };
 
 export const Array = Template.bind({});

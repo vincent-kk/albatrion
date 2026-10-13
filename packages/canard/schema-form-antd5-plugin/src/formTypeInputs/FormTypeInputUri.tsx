@@ -18,9 +18,7 @@ import type {
   StringSchema,
 } from '@canard/schema-form';
 
-type StringJSONSchema = StringSchema<{
-  protocols?: string[];
-}> & {
+type StringJSONSchema = StringSchema & {
   format?: 'uri';
   formType?: 'uri';
 };
@@ -76,12 +74,13 @@ interface FormTypeInputUriProps
     { size?: SizeType }
   > {
   size?: SizeType;
+  /** Selectable protocols, from `presentation.FormTypeInputProps.protocols`. */
+  protocols?: string[];
 }
 
 const FormTypeInputUri = ({
   path,
   name,
-  jsonSchema,
   readOnly,
   disabled,
   defaultValue,
@@ -89,12 +88,13 @@ const FormTypeInputUri = ({
   context,
   placeholder,
   size,
+  protocols,
 }: FormTypeInputUriProps) => {
   // 프로토콜 배열 정규화 및 준비
   const normalizedProtocols = useMemo(() => {
-    const rawProtocols = jsonSchema.options?.protocols || DEFAULT_PROTOCOLS;
+    const rawProtocols = protocols || DEFAULT_PROTOCOLS;
     return rawProtocols.map(normalizeProtocol);
-  }, [jsonSchema]);
+  }, [protocols]);
 
   // Input 참조를 위한 ref
   const inputRef = useRef<any>(null);

@@ -1,26 +1,47 @@
-// Moved from the round-121 scratch proxy-audit/ra.mjs; runtime instrumentation never edits React on disk.
-// Usage: node tools/measure-react-render-counts.mjs <head|change|current> [output.json|--counts-only] [--bundle=<file.cjs>]
-// --bundle measures a prepared bundle (for example S/bundles/fap-base.cjs) in place of fa-head/fa-change.
+/**
+ * Diagnostic CLI invoked by runtimeCounts.mjs; runtime instrumentation never edits React on disk.
+ * Usage: node tools/measure-react-render-counts.mjs <head|change|current> [output.json] [options]
+ * --counts-only measures flat-form counts without latency samples.
+ * --all-writes includes showError, context, onChange, readOnly and reset in counts-only mode.
+ * --layout-effects counts layout-effect calls and adds layoutEffects to each write.
+ * --output-dir=<directory> selects the bundle directory, including current's rebuild.
+ * Without --output-dir, head/change/current retain the historical scratch directory;
+ * count tests supply a private temporary directory and remove it when the run ends.
+ * --bundle=<file.cjs> measures a prepared bundle instead of fa-head/fa-change (not with current).
+ */
 import assert from 'node:assert/strict';
 import { createHash } from 'node:crypto';
 import { readFileSync, writeFileSync } from 'node:fs';
 import Module, { createRequire } from 'node:module';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { parseArgs } from 'node:util';
 
 import { prepareReactBundles } from './prepare-react-bundles.mjs';
 
 const packageRoot = resolve(dirname(fileURLToPath(import.meta.url)), '../../../..');
 const scratch = '/private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles';
 const require = createRequire(resolve(packageRoot, 'package.json'));
-const bundleOverride = process.argv.find(value => value.startsWith('--bundle='))?.slice(9);
-const [version = 'change', output] = process.argv.slice(2).filter(value => !value.startsWith('--bundle='));
+const { values: options, positionals: [version = 'change', output] } = parseArgs({
+  allowPositionals: true,
+  options: {
+    'counts-only': { type: 'boolean' },
+    'all-writes': { type: 'boolean' },
+    'layout-effects': { type: 'boolean' },
+    'output-dir': { type: 'string' },
+    bundle: { type: 'string' },
+  },
+});
+const bundleOverride = options.bundle;
+const outputDirectory = options['output-dir'] ? resolve(options['output-dir']) : scratch;
 assert(['head', 'change', 'current'].includes(version));
 process.env.NODE_ENV = 'production';
-const countsOnly = output === '--counts-only';
-if (version === 'current') await prepareReactBundles(packageRoot, scratch, 'change');
+const countsOnly = options['counts-only'] === true;
+const allWrites = options['all-writes'] === true;
+const layoutEffects = options['layout-effects'] === true;
+if (version === 'current') await prepareReactBundles(packageRoot, outputDirectory, 'change');
 assert(!bundleOverride || version !== 'current', '--bundle measures an existing bundle; current rebuilds fa-change');
-const file = bundleOverride ? resolve(bundleOverride) : resolve(scratch, `fa-${version === 'head' ? 'head' : 'change'}.cjs`);
+const file = bundleOverride ? resolve(bundleOverride) : resolve(outputDirectory, `fa-${version === 'head' ? 'head' : 'change'}.cjs`);
 
 const nameOf = (type) => {
   if (!type) return 'root';
@@ -54,6 +75,7 @@ globalThis.__faBegin = (fiber, current) => {
   if (counting) log.push({ kind: 'visit', component: nameOf(fiber.type),
     path: pathOf(fiber), mount: !current });
 };
+if (layoutEffects) globalThis.__faLayout = () => { if (counting) log.push({ kind: 'layout' }); };
 globalThis.__faCommit = () => { if (counting) log.push({ kind: 'commit' }); };
 const originalLoader = Module._extensions['.js'];
 const replaceOnce = (source, before, after) => {
@@ -71,6 +93,8 @@ Module._extensions['.js'] = (module, filename) => {
     'function beginWork(current, workInProgress, renderLanes) {\n  globalThis.__faBegin(workInProgress, current);');
   source = replaceOnce(source, '\nfunction commitRoot(',
     '\nfunction commitRoot(...args) { globalThis.__faCommit(); return commitRoot$fa(...args); }\nfunction commitRoot$fa(');
+  if (layoutEffects) source = replaceOnce(source, '          lastEffect = create();',
+    '          if (flags & 4) globalThis.__faLayout();\n          lastEffect = create();');
   module._compile(source, filename);
 };
 const { JSDOM } = require('jsdom');
@@ -128,7 +152,7 @@ for (const scenario of countsOnly ? ['flat'] : ['flat', 'array']) {
       write('parent setValue /o (x only)', '/o/x', () => handle().findNode('/o').setValue({ x: 'x1', y: 'y0' })),
       write('whole setValue (a only)', '/a', () => handle().setValue({ ...handle().getValue(), a: 'aw' })),
       write('refresh /a', '/a', () => handle().refresh('/a')),
-      ...(countsOnly ? [] : [
+      ...(countsOnly && !allWrites ? [] : [
         write('showError(true)', null, () => handle().showError(true)),
         write('Form context prop change', null, () => api.setHostProps({ context: { k: 2 } })),
         write('Form re-render, new inline onChange', null, () => api.setHostProps({ onChange: () => {} })),
@@ -161,6 +185,7 @@ for (const scenario of countsOnly ? ['flat'] : ['flat', 'array']) {
       results.push({ write: operation.label, target: operation.target,
         commits: log.filter(event => event.kind === 'commit').length,
         renders: { total: renders.length, byPath, byComponent },
+        ...(layoutEffects ? { layoutEffects: log.filter(event => event.kind === 'layout').length } : {}),
         fibersVisited: log.filter(event => event.kind === 'visit').length,
         fibersCreated: log.filter(event => event.kind === 'visit' && event.mount).length,
         remounts: rawMounts.filter(event => before.includes(event.path)).map(event => event.path),

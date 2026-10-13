@@ -87,6 +87,7 @@ The guard instance retains the bound dialect, formats and keywords with
 #### **`compileGuard(root, pointer)` and `release(root)`**
 
 - `compileGuard` returns a synchronous boolean guard for a pointer in the registered root.
+- `compileGuard` throws a native `GuardPointerNotSchemaError` when the pointer does not locate a schema (an object or boolean): a missing location, or a value such as `/type` or `/required`. Callers discriminate it by `group` (`'UNHANDLED_ERROR'`) and `code` (`'GUARD_POINTER_NOT_SCHEMA'`); `details` carries the root's `$id` (or `''`) and the pointer.
 - `compile`, `compileGuard`, and `release` share one registration when given the same engine-owned copy object.
 - `release` removes that registration and its compiled functions. A second live root with the same `$id` remains independent.
 - VALIDATE-047 case (iv), one schema location reached from several dynamic scopes through `$dynamicRef` or `$recursiveRef`, is unsupported. There is one guard per location, and it answers for the first-compiled dynamic scope.
@@ -113,6 +114,8 @@ The `createValidatorFactory` function provides:
 - **Performance Optimization**: Caches compiled validators for reuse
 - **Detailed Error Messages**: Rich error information for better user experience
 - **Type Safety**: Full TypeScript support with proper type inference
+
+`createValidator(ajv)` returns a per-instance `{ compile, compileGuard }` object for a Form's `validatorFactory`: create it once outside render (`const validator = createValidator(customAjv);` then `<Form validatorFactory={validator} />`), because a new object makes the Form rebuild its tree; several validators may share one AJV instance, which must not modify values (`coerceTypes`, `useDefaults`, `removeAdditional` off).
 
 ---
 

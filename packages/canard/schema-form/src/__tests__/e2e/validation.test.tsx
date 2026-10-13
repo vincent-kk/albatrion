@@ -146,6 +146,35 @@ it('LANDING-115 active conditional required and maxItems errors exclude inactive
   expect(form.exists('/rows')).toBe(false);
 });
 
+it('a closed host receives its rejected extra key as rejectedKey', async () => {
+  form = await renderForm(
+    {
+      type: 'object',
+      properties: {
+        profile: {
+          type: 'object',
+          properties: { name: { type: 'string' } },
+          additionalProperties: false,
+        },
+      },
+    },
+    {
+      defaultValue: { profile: { name: 'a', nick: 'b' } },
+      validator: true,
+      showError: true,
+    },
+  );
+  await form.validate();
+  expect(form.node('/profile')?.errors).toEqual([
+    expect.objectContaining({
+      dataPath: '/profile',
+      keyword: 'additionalProperties',
+      rejectedKey: 'nick',
+    }),
+  ]);
+  expect(form.node('')?.errors ?? []).toEqual([]);
+});
+
 it('TEST-005 nullable price rejects values outside minimum and maximum', async () => {
   form = await renderForm(
     {

@@ -23,7 +23,7 @@ These rules apply when authoring application code that imports from `@canard/sch
 
 ### skill-for-depth
 
-- Before writing code in an unfamiliar area — layout, custom inputs, computed/conditional schemas, validation and error display, imperative control, arrays, virtual fields, path expressions, events, performance, tests — invoke the `schema-form-skill` skill and let its router pick the knowledge to read.
+- Before writing code in an unfamiliar area — layout, custom inputs, controls/conditional schemas, validation and error display, imperative control, arrays, virtual fields, path expressions, events, performance, tests — invoke the `schema-form-skill` skill and let its router pick the knowledge to read.
 - Do not guess API shapes from memory; the skill routes to `dist/index.d.ts` for exact shapes.
 
 ---
@@ -90,23 +90,23 @@ Each rule is a single hard requirement. Violations typically produce silent bugs
 
 ### jsonpointer-is-context-sensitive
 
-- `formTypeInputMap` supports absolute paths and `*`; computed expressions support absolute/relative paths plus `@`; `node.find()` supports absolute/relative paths. Escape `~` as `~0` and `/` as `~1`.
+- `formTypeInputMap` supports absolute paths and `*`; `controls` expressions support absolute/relative paths plus `@`; `node.find()` supports absolute/relative paths. Escape `~` as `~0` and `/` as `~1`.
 - Why: a token valid in one context silently fails to match in another.
 
 ### conditional-choice
 
-- `oneOf` → mutually exclusive; inactive branch values are dropped. `anyOf` → non-exclusive; branches coexist. `allOf` → merged, always applied. `if/then/else` → conditional validation and `required`, not branch value mutation.
+- `oneOf` → mutually exclusive; inactive branch values are dropped. `anyOf` → non-exclusive; branches coexist. `allOf` → merged, always applied. `if/then/else` → gates fragments: `then` properties exist only while the `if` guard passes, `else` properties only while it fails, and with no validator selected (no `validatorFactory` on the Form or a FormProvider, and no validator plugin) both stay off.
 - Why: the four constructs differ in value retention; misuse produces phantom or lost data.
 
 ### active-vs-visible
 
-- `computed.active: false` removes the value from form data; `computed.visible: false` hides UI but keeps the value.
+- `controls.active: false` removes the value from form data; `controls.visible: false` hides UI but keeps the value.
 - Why: choosing wrong causes silent data loss or phantom state.
 
-### no-complex-computed
+### no-complex-controls
 
-- Keep `computed` expressions limited to boolean, arithmetic, and comparison. Move list reductions into a component reading `watchValues`.
-- Why: `computed` is evaluated on every dependency tick; complex expressions become hotspots.
+- Keep `controls` expressions limited to boolean, arithmetic, and comparison. Move list reductions into a component reading `watchValues`.
+- Why: `controls` expressions are evaluated on every dependency tick; complex expressions become hotspots.
 
 ### validation-mode-explicit
 
@@ -147,7 +147,7 @@ Reject these on sight.
 - `import` from `@canard/schema-form/dist/**` or any subpath → violates `public-api-only`.
 - Mirroring the form value into a parallel `useState` → violates `node-tree-owns-state`.
 - `<Form.Input path="/x" />` inside a `<Form>` that already auto-renders `/x` → duplicate render; drop one surface.
-- `computed: { visible: 'A', active: 'B' }` on the same field with overlapping conditions → pick one based on value-retention intent.
+- `controls: { visible: 'A', active: 'B' }` on the same field with overlapping conditions → pick one based on value-retention intent.
 - A custom `FormTypeInput` that reads `value` and also sets `defaultValue` on the underlying DOM input → pick controlled or uncontrolled, not both.
 - Per-input `if (errors.length > 0)` branches → use `showError` / `errorVisible` instead.
 - `for` loop calling `arrayNode.push` N times → batch via a single `setValue`.

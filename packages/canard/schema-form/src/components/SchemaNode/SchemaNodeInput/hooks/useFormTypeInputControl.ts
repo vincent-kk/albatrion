@@ -1,19 +1,36 @@
 import {
-  type MutableRefObject,
+  type RefObject,
   useCallback,
   useLayoutEffect,
-  useMemo,
   useReducer,
   useRef,
+  useSyncExternalStore,
 } from 'react';
 
 import { type SchemaNode, SchemaNodeEventType } from '@/schema-form/core';
-import { useSchemaNodeTracker } from '@/schema-form/hooks/useSchemaNodeTracker';
+
+import { REACTIVE_RERENDERING_EVENTS } from '../type';
+
+/** Input props, child lists and applied Refresh share one delivery snapshot. */
+const INPUT_TRACKING_EVENTS =
+  REACTIVE_RERENDERING_EVENTS |
+  SchemaNodeEventType.UpdateChildren |
+  SchemaNodeEventType.RequestRefresh;
+
+/** Keep input props and children current while the applied Refresh generation is deferred. */
+const INPUT_TRACKING_EVENTS_WITHOUT_REFRESH =
+  INPUT_TRACKING_EVENTS & ~SchemaNodeEventType.RequestRefresh;
+
+/** Refresh waits while the raw input owns an active IME composition. */
+const COMPOSING = 1;
+/** Refresh waits for the child ownership observed by render, subscribe or delivery. */
+const MOUNTED_CHILDREN = 2;
 
 /**
  * Controls rendering and focus/select behavior for form-type inputs based on SchemaNode events.
  *
  * Event Handling:
+ * - `REACTIVE_RERENDERING_EVENTS | UpdateChildren`: Re-renders the caller through the shared snapshot
  * - `RequestRefresh`: Tracks the node revision, deferring replacement until composition ends
  * - `RequestFocus`: Focuses the first focusable element (input, textarea, button) in container
  * - `RequestSelect`: Selects text in the first selectable element (input, textarea) in container
@@ -27,36 +44,54 @@ import { useSchemaNodeTracker } from '@/schema-form/hooks/useSchemaNodeTracker';
  *
  * @param node - The SchemaNode instance to subscribe to for events
  * @param mountedChildren - Count of committed child proxies owned by the input
+ * @param commitTerminalChildren - Commit marker from `useTerminalChildren`; the focus/select layout
+ *        effect calls it first, so the input keeps a single layout effect of its own
  * @returns Container ref, input key and composition handlers that preserve the composing input
  */
 export const useFormTypeInputControl = <Node extends SchemaNode>(
   node: Node,
-  mountedChildren: MutableRefObject<number>,
+  mountedChildren: RefObject<number>,
+  commitTerminalChildren: () => void,
 ) => {
   const generation = useRef(node.revision(SchemaNodeEventType.RequestRefresh));
   const [, releaseComposition] = useReducer((value: number) => value + 1, 0);
   const ref = useRef<HTMLDivElement>(null);
-  const composing = useRef(false);
-  const refreshSource = useMemo(
-    () => ({
-      subscribe: (listener: Parameters<Node['subscribe']>[0]) =>
-        node.subscribe(listener),
-      revision: (tracking?: number) =>
-        composing.current || mountedChildren.current > 0
-          ? generation.current
-          : node.revision(tracking),
-    }),
+  const refreshDeferral = useRef(0);
+  refreshDeferral.current =
+    (refreshDeferral.current & COMPOSING) |
+    (mountedChildren.current > 0 ? MOUNTED_CHILDREN : 0);
+  const subscribe = useCallback(
+    (onStoreChange: () => void) => {
+      refreshDeferral.current =
+        (refreshDeferral.current & COMPOSING) |
+        (mountedChildren.current > 0 ? MOUNTED_CHILDREN : 0);
+      return node.subscribe(({ type }) => {
+        if (!(type & INPUT_TRACKING_EVENTS)) return;
+        refreshDeferral.current =
+          (refreshDeferral.current & COMPOSING) |
+          (mountedChildren.current > 0 ? MOUNTED_CHILDREN : 0);
+        onStoreChange();
+      });
+    },
     [node, mountedChildren],
   );
-  generation.current = useSchemaNodeTracker(
-    refreshSource,
-    SchemaNodeEventType.RequestRefresh,
-  );
+  const getRevision = useCallback(() => {
+    // revision(mask) sums per-bit delivery counts, so the combined read equals
+    // the Refresh-excluded revision plus the current Refresh revision.
+    if (refreshDeferral.current === 0)
+      return node.revision(INPUT_TRACKING_EVENTS);
+    return (
+      node.revision(INPUT_TRACKING_EVENTS_WITHOUT_REFRESH) + generation.current
+    );
+  }, [node]);
+  useSyncExternalStore(subscribe, getRevision, getRevision);
+  if (refreshDeferral.current === 0)
+    generation.current = node.revision(SchemaNodeEventType.RequestRefresh);
   const handleCompositionStart = useCallback(() => {
-    composing.current = true;
+    refreshDeferral.current |= COMPOSING;
   }, []);
   const handleCompositionEnd = useCallback(() => {
-    composing.current = false;
+    refreshDeferral.current &= ~COMPOSING;
     if (
       mountedChildren.current === 0 &&
       generation.current !== node.revision(SchemaNodeEventType.RequestRefresh)
@@ -64,6 +99,7 @@ export const useFormTypeInputControl = <Node extends SchemaNode>(
       releaseComposition();
   }, [node, mountedChildren]);
   useLayoutEffect(() => {
+    commitTerminalChildren();
     if (!node) return;
     const unsubscribe = node.subscribe(({ type }) => {
       if (type & SchemaNodeEventType.RequestFocus)
@@ -74,7 +110,7 @@ export const useFormTypeInputControl = <Node extends SchemaNode>(
       }
     });
     return unsubscribe;
-  }, [node, ref]);
+  }, [node, ref, commitTerminalChildren]);
   return [
     ref,
     generation.current,

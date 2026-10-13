@@ -6,7 +6,7 @@ import {
   type FormTypeRendererProps,
   type JSONSchema,
   type ValidationIssue,
-  NodeState,
+  SchemaNodeState,
   ShowError,
   ValidationMode,
   registerPlugin,
@@ -49,9 +49,9 @@ export const DirtyTouched = () => {
     errorMessage,
   }: FormTypeRendererProps) => {
     const {
-      [NodeState.Dirty]: dirty,
-      [NodeState.Touched]: touched,
-      [NodeState.ShowError]: showError,
+      [SchemaNodeState.Dirty]: dirty,
+      [SchemaNodeState.Touched]: touched,
+      [SchemaNodeState.ShowError]: showError,
     } = node.state || {};
     return depth === 0 ? (
       <Input />
@@ -63,8 +63,8 @@ export const DirtyTouched = () => {
           <button
             onClick={() =>
               showError !== true
-                ? node.setState({ [NodeState.ShowError]: true })
-                : node.setState({ [NodeState.ShowError]: undefined })
+                ? node.setState({ [SchemaNodeState.ShowError]: true })
+                : node.setState({ [SchemaNodeState.ShowError]: undefined })
             }
           >
             Show Error
@@ -72,8 +72,8 @@ export const DirtyTouched = () => {
           <button
             onClick={() =>
               showError !== false
-                ? node.setState({ [NodeState.ShowError]: false })
-                : node.setState({ [NodeState.ShowError]: undefined })
+                ? node.setState({ [SchemaNodeState.ShowError]: false })
+                : node.setState({ [SchemaNodeState.ShowError]: undefined })
             }
           >
             Hide Error
@@ -229,7 +229,7 @@ export const DirtyTouched = () => {
           ref={refHandle}
           jsonSchema={jsonSchema}
           showError={showError}
-          CustomFormTypeRenderer={Renderer}
+          FormTypeGroupRenderer={Renderer}
         />
       </StoryLayout>
     </div>
@@ -250,7 +250,7 @@ export const NoValidate = () => {
     setValue(val);
   };
 
-  const [errors, setErrors] = useState<ValidationIssue[]>([]);
+  const [errors, setErrors] = useState<readonly ValidationIssue[]>([]);
 
   const refHandle = useRef<FormHandle<typeof schema>>(null);
 
@@ -282,7 +282,7 @@ export const ValidateOnRequest = () => {
     setValue(val);
   };
 
-  const [errors, setErrors] = useState<ValidationIssue[]>([]);
+  const [errors, setErrors] = useState<readonly ValidationIssue[]>([]);
 
   const refHandle = useRef<FormHandle<typeof schema>>(null);
 
@@ -320,7 +320,7 @@ export const ExternalErrors = () => {
     setValue(val);
   };
 
-  const [errors, setErrors] = useState<ValidationIssue[]>([
+  const [errors, setErrors] = useState<readonly ValidationIssue[]>([
     {
       keyword: 'maxLength',
       dataPath: '/message',
@@ -331,7 +331,7 @@ export const ExternalErrors = () => {
     },
   ]);
 
-  const [_errors, _setErrors] = useState<ValidationIssue[]>([]);
+  const [_errors, _setErrors] = useState<readonly ValidationIssue[]>([]);
   const refHandle = useRef<FormHandle<typeof schema>>(null);
 
   const clearErrors = () => {

@@ -113,7 +113,7 @@ describe('new SchemaNode public types', () => {
       Promise<readonly ValidationIssue[]>
     >();
     expectTypeOf<SchemaNode['globalState']>().toEqualTypeOf<
-      Readonly<Record<string, true>>
+      Readonly<Record<string, boolean | undefined>>
     >();
     expectTypeOf<Parameters<SchemaNode['batch']>[0]>().toEqualTypeOf<
       () => void

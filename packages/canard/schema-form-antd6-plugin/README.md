@@ -103,19 +103,19 @@ This plugin provides the following Ant Design v6 components:
 
 - **Role**: Special input field for URI entry (with protocol dropdown)
 - **Applied when**: `type` is `"string"` and `format` or `formType` is `"uri"`
-- **Additional features**: Protocol selection dropdown, default protocol list support (http, https, ftp, mailto, tel), configurable custom protocol list
+- **Additional features**: Protocol selection dropdown, default protocol list support (http, https, ftp, mailto, tel), custom protocol list via `presentation.FormTypeInputProps.protocols`
 
 ### **[`FormTypeInputMonth.tsx`](./src/formTypeInputs/FormTypeInputMonth.tsx)**
 
 - **Role**: DatePicker for month selection (month mode)
 - **Applied when**: `type` is `"string"` and `format` is `"month"`
-- **Additional features**: Support for `minimum`, `maximum` range limits, YYYY-MM format
+- **Additional features**: `presentation.FormTypeInputProps.minimum` and `maximum` (YYYY-MM) limit the selectable months, YYYY-MM format
 
 ### **[`FormTypeInputDate.tsx`](./src/formTypeInputs/FormTypeInputDate.tsx)**
 
 - **Role**: DatePicker for date selection
 - **Applied when**: `type` is `"string"` and `format` is `"date"`
-- **Additional features**: Support for `minimum`, `maximum` date range limits, YYYY-MM-DD format
+- **Additional features**: `presentation.FormTypeInputProps.minimum` and `maximum` (YYYY-MM-DD) limit the selectable dates, YYYY-MM-DD format
 
 ### **[`FormTypeInputTime.tsx`](./src/formTypeInputs/FormTypeInputTime.tsx)**
 
@@ -127,19 +127,19 @@ This plugin provides the following Ant Design v6 components:
 
 - **Role**: DatePicker RangePicker for month range selection (month mode)
 - **Applied when**: `type` is `"array"`, `format` is `"month-range"` or `formType` is `"monthRange"`, and `items.type` is `"string"`
-- **Additional features**: Support for month range limits, returns array in [start month, end month] format
+- **Additional features**: `presentation.FormTypeInputProps.minimum` and `maximum` (YYYY-MM) limit the selectable months, returns array in [start month, end month] format
 
 ### **[`FormTypeInputDateRange.tsx`](./src/formTypeInputs/FormTypeInputDateRange.tsx)**
 
 - **Role**: DatePicker RangePicker for date range selection
 - **Applied when**: `type` is `"array"`, `format` is `"date-range"` or `formType` is `"dateRange"`, and `items.type` is `"string"`
-- **Additional features**: Support for date range limits, returns array in [start date, end date] format
+- **Additional features**: `presentation.FormTypeInputProps.minimum` and `maximum` (YYYY-MM-DD) limit the selectable dates, returns array in [start date, end date] format
 
 ### **[`FormTypeInputTimeRange.tsx`](./src/formTypeInputs/FormTypeInputTimeRange.tsx)**
 
 - **Role**: DatePicker RangePicker for time range selection (time mode)
 - **Applied when**: `type` is `"array"`, `format` is `"time-range"` or `formType` is `"timeRange"`, and `items.type` is `"string"`
-- **Additional features**: Support for time range limits, returns array in [start time, end time] format
+- **Additional features**: `presentation.FormTypeInputProps.minimum` and `maximum` (HH:mm:00Z) limit the selectable times, returns array in [start time, end time] format
 
 ### **[`FormTypeInputRadioGroup.tsx`](./src/formTypeInputs/FormTypeInputRadioGroup.tsx)**
 
@@ -165,7 +165,7 @@ This plugin provides the following Ant Design v6 components:
 
 - **Role**: Input numeric values using a slider
 - **Applied when**: `type` is `"number"` or `"integer"` and `formType` is `"slider"`
-- **Additional features**: Support for `minimum`, `maximum`, `multipleOf` schema properties, lazy update option
+- **Additional features**: Support for `minimum`, `maximum`, `multipleOf` schema properties; `presentation.FormTypeInputProps.lazy: false` publishes on every move instead of on release
 
 ### **[`FormTypeInputTextarea.tsx`](./src/formTypeInputs/FormTypeInputTextarea.tsx)**
 
@@ -192,6 +192,25 @@ This plugin provides the following Ant Design v6 components:
 - **Additional features**: Support for `indeterminate` state for `undefined` values
 
 ---
+
+## Input Settings
+
+Per-input settings such as `protocols`, `lazy`, `minimum` and `maximum` above go in `presentation.FormTypeInputProps`; the form spreads that object into the input's props.
+
+```ts
+const jsonSchema = {
+  type: 'object',
+  properties: {
+    homepage: {
+      type: 'string',
+      format: 'uri',
+      presentation: { FormTypeInputProps: { protocols: ['https'] } },
+    },
+  },
+};
+```
+
+Up to 0.16.0 the built-in inputs read `options.minimum`, `maximum`, `lazy` and `protocols`. From 1.0.0-beta `options` is a closed list, so these keys belong in `presentation.FormTypeInputProps`; under `options` they fail the schema with the blueprint error `UNKNOWN_GROUP_KEY`.
 
 ## Component Priority
 

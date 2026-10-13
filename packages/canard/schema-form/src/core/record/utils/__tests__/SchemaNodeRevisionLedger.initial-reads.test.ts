@@ -36,6 +36,19 @@ describe('SchemaNodeRevisionLedger initial previous reads', () => {
     expect(reads.bits / nodes).toBe(0);
   });
 
+  it('counts all 17 bit reads through the mocked constant for a distinct record inheriting it', () => {
+    reads.bits = 0;
+    const previous: Readonly<Record<number, number>> = Object.create(
+      EMPTY_REVISION_LEDGER,
+    );
+    const ledger = new SchemaNodeRevisionLedger(
+      previous,
+      SchemaNodeEventType.UpdateValue,
+    );
+    expect(reads.bits).toBe(17);
+    expect(ledger.read(-1)).toBe(1);
+  });
+
   it('still reads all 17 bits from a distinct plain previous record', () => {
     let count = 0;
     const previous = new Proxy(

@@ -2,6 +2,7 @@ import { VALIDATOR_COMPILE_FAILED } from '../../../../errors';
 import type { SchemaNodeRecord } from '../../../record';
 import { ValidationMode } from '../../../types/state';
 import type { ValidationIssue } from '../../type';
+import { retainEqualValidationIssues } from '../route/retainEqualValidationIssues';
 import { routeValidationIssues } from '../route/routeValidationIssues';
 import { runSchemaNodeValidation } from './runSchemaNodeValidation';
 
@@ -39,13 +40,14 @@ export const requestSchemaNodeValidation = <
     const stamp = runtime.validationStamp;
     const commit = runtime.commitNumber ?? 0;
     void runSchemaNodeValidation(node)
-      .then((issues) => {
-        if (issues === null) return;
+      .then((result) => {
+        if (result === null) return;
         if (
           runtime.validationStamp !== stamp ||
           (runtime.commitNumber ?? 0) !== commit
         )
           return;
+        const issues = retainEqualValidationIssues(node, result);
         for (const target of targets) routeValidationIssues(target, issues);
         runtime.validationResult = { commit, issues };
         deliver(issues, commit);

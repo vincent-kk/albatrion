@@ -98,8 +98,12 @@ export interface NodeSurface<
   state: NodeStateFlags;
   /** Patch this occurrence's interaction flags. */
   setState(state: NodeStateFlags): void;
-  /** True keys present on at least one node in the current tree shape. */
-  readonly globalState: Readonly<Record<string, true>>;
+  /**
+   * Interaction flags present on at least one node in the current tree shape.
+   * Published values are `true` or absent; `false` is never emitted, and the
+   * type admits `boolean | undefined` so consumers may keep a wider copy.
+   */
+  readonly globalState: Readonly<Record<string, boolean | undefined>>;
   /** Patch interaction flags throughout this live subtree. */
   setSubtreeState(state: NodeStateFlags): void;
   /** Clear interaction flags throughout this live subtree. */

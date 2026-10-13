@@ -1,6 +1,6 @@
 import {
-  type MutableRefObject,
   type PropsWithChildren,
+  type RefObject,
   useLayoutEffect,
   useMemo,
   useRef,
@@ -40,7 +40,7 @@ export const RootNodeContextProvider = ({
   ...props
 }: PropsWithChildren<
   FormProps & {
-    binding: MutableRefObject<RootBinding>;
+    binding: RefObject<RootBinding>;
     onReset: () => void;
   }
 >) => {

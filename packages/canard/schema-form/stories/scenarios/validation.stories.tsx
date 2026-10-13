@@ -2,6 +2,10 @@
 import { validationScenarios, submitScenario, playScenario } from '@aileron/schema-form-scenarios';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 
+import { shouldSkipUnfocusedPlay } from '../components/play/shouldSkipUnfocusedPlay';
+import { skipPlay } from '../components/play/skipPlay';
+import { unfocusedPlayReason } from '../components/play/unfocusedPlayReason';
+
 import { ScenarioStory } from '../components/scenario/ScenarioStory';
 
 export default { title: 'Scenarios/validation', component: ScenarioStory } satisfies Meta<typeof ScenarioStory>;
@@ -11,27 +15,39 @@ type Story = StoryObj<typeof ScenarioStory>;
 export const FormErrors: Story = {
   name: 'form-errors',
   args: { scenario: validationScenarios[1] },
-  play: async ({ args, canvasElement }) => { await playScenario(args.scenario, canvasElement); },
+  play: async ({ args, canvasElement, step }) => {
+    if (shouldSkipUnfocusedPlay()) return skipPlay(step, unfocusedPlayReason);
+    await playScenario(args.scenario, canvasElement);
+  },
 };
 
 /** TEST-025: submit mirrors shared SCN data in the browser. */
 export const Submit: Story = {
   name: 'submit',
   args: { scenario: submitScenario },
-  play: async ({ args, canvasElement }) => { await playScenario(args.scenario, canvasElement); },
+  play: async ({ args, canvasElement, step }) => {
+    if (shouldSkipUnfocusedPlay()) return skipPlay(step, unfocusedPlayReason);
+    await playScenario(args.scenario, canvasElement);
+  },
 };
 
 /** TEST-025: validation mirrors shared SCN data in the browser. */
 export const Validation: Story = {
   name: 'validation',
   args: { scenario: validationScenarios[0] },
-  play: async ({ args, canvasElement }) => { await playScenario(args.scenario, canvasElement); },
+  play: async ({ args, canvasElement, step }) => {
+    if (shouldSkipUnfocusedPlay()) return skipPlay(step, unfocusedPlayReason);
+    await playScenario(args.scenario, canvasElement);
+  },
 };
 
 /** TEST-025: validation-display mirrors shared SCN data in the browser. */
 export const ValidationDisplay: Story = {
   name: 'validation-display',
   args: { scenario: validationScenarios[1] },
-  play: async ({ args, canvasElement }) => { await playScenario(args.scenario, canvasElement); },
+  play: async ({ args, canvasElement, step }) => {
+    if (shouldSkipUnfocusedPlay()) return skipPlay(step, unfocusedPlayReason);
+    await playScenario(args.scenario, canvasElement);
+  },
 };
 

@@ -86,12 +86,9 @@ export const routeValidationIssues = <Self extends SchemaNodeRecord<Self>>(
     const oldIssues = before.get(node) ?? [];
     const newIssues = next.get(node) ?? [];
     if (oldIssues.length !== newIssues.length) changed.add(current);
-    else
-      for (let index = 0; index < oldIssues.length; index++)
-        if (oldIssues[index] !== newIssues[index]) {
-          changed.add(current);
-          break;
-        }
+    else if (isSameItems(oldIssues, newIssues)) {
+      if (newIssues.length) next.set(node, oldIssues);
+    } else changed.add(current);
   }
   runtime.validationErrors = next;
   if (runtime.validationChangedNodes)
@@ -99,8 +96,24 @@ export const routeValidationIssues = <Self extends SchemaNodeRecord<Self>>(
   else runtime.validationChangedNodes = changed;
   if (runtime.routedValidationErrors !== issues) {
     runtime.routedValidationErrors = issues;
+    runtime.validationListChanged = true;
     updateSchemaNodeGlobalErrors(root);
   }
-  runtime.combinedErrors?.clear();
+  for (const node of changed) runtime.combinedErrors?.delete(node);
   return changed;
+};
+
+/**
+ * Compare two routed issue lists of equal length by item identity.
+ * @param before - Issues the node held after the previous routing.
+ * @param after - Issues routed to the node now.
+ * @returns True when every position holds the same issue object.
+ */
+const isSameItems = (
+  before: readonly unknown[],
+  after: readonly unknown[],
+): boolean => {
+  for (let index = 0; index < before.length; index++)
+    if (before[index] !== after[index]) return false;
+  return true;
 };

@@ -3,12 +3,7 @@ import { escapeSegment } from '@winglet/json/pointer';
 
 import { SchemaFormError } from '../../../../errors';
 import { mergeEffectiveSchema } from '../../../blueprint';
-import type {
-  BlueprintChildEntry,
-  BlueprintNode,
-  BlueprintOptions,
-  EffectiveSchema,
-} from '../../../blueprint';
+import type { BlueprintChildEntry } from '../../../blueprint';
 import { captureSchemaNodeChange } from '../../../record';
 import type { SchemaNodeRecord } from '../../../record';
 import type { SettlementContext } from '../../type';
@@ -35,68 +30,12 @@ import {
 } from './selectChildren/utils/getDirectChildSelectionPlan';
 import { reuseArrayChildren } from './selectChildren/utils/reuseArrayChildren';
 import { staticIds } from './selectChildren/utils/staticIds';
+import { staticShape } from './selectChildren/utils/staticShape';
 
 /** Ungated declarations are included by the effective-schema merger itself. */
 const NO_ACTIVE_IDS: readonly number[] = Object.freeze([]);
 /** Rejected single-declaration positions share an empty selection. */
 const NO_DECLARATIONS: BlueprintChildEntry['declarations'] = [];
-/** Immutable, ungated object shapes shared by occurrences of one blueprint host. */
-const STATIC_SHAPES = new WeakMap<
-  BlueprintNode,
-  | readonly {
-      entry: BlueprintChildEntry;
-      ids: readonly number[];
-      schema: EffectiveSchema;
-    }[]
-  | null
->();
-
-/** Memoize an unambiguous static host in the structure's property order. */
-const staticShape = (
-  host: BlueprintNode,
-  isAtomic: BlueprintOptions['isAtomic'],
-) => {
-  if (STATIC_SHAPES.has(host)) return STATIC_SHAPES.get(host);
-  const selected: Record<
-    string,
-    {
-      entry: BlueprintChildEntry;
-      ids: readonly number[];
-      schema: EffectiveSchema;
-    }
-  > = Object.create(null);
-  for (let index = 0; index < host.childEntries.length; index++) {
-    const entry = host.childEntries[index];
-    const schema = mergeEffectiveSchema(entry.node, NO_ACTIVE_IDS, {
-      mode: 'runtime',
-      isAtomic,
-    });
-    let hasGate = false;
-    for (
-      let declarationIndex = 0;
-      declarationIndex < entry.declarations.length;
-      declarationIndex++
-    )
-      if (entry.declarations[declarationIndex].gates.length > 0) {
-        hasGate = true;
-        break;
-      }
-    if (
-      hasOwnProperty(selected, entry.name) ||
-      entry.node.kind === 'virtual' ||
-      !entry.declarations.length ||
-      schema.typeConflict ||
-      hasGate
-    ) {
-      STATIC_SHAPES.set(host, null);
-      return null;
-    }
-    selected[entry.name] = { entry, ids: staticIds(entry), schema };
-  }
-  const shape = Object.values(selected);
-  STATIC_SHAPES.set(host, shape);
-  return shape;
-};
 
 /**
  * Select all declared direct children in authored order for one host round.

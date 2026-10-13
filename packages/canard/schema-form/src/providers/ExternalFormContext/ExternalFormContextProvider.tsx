@@ -125,24 +125,11 @@ export interface ExternalFormContextProviderProps {
  * @example
  * Custom validation with external validator:
  * ```tsx
- * import Ajv from 'ajv';
- * import addFormats from 'ajv-formats';
- *
- * const ajv = new Ajv({ allErrors: true });
- * addFormats(ajv);
- *
- * const validatorFactory = (jsonSchema) => {
- *   const validate = ajv.compile(jsonSchema);
- *   return (value) => {
- *     validate(value);
- *     return validate.errors?.map(err => ({
- *       dataPath: err.instancePath,
- *       keyword: err.keyword,
- *       message: err.message,
- *       details: err.params,
- *       source: err,
- *     })) || [];
- *   };
+ * // A validator object declares both `compile` and `compileGuard`.
+ * // Declare it once outside components: changing the reference rebuilds the tree.
+ * const validatorFactory: ValidatorFactory = {
+ *   compile: (copy) => compileWithMyEngine(copy),
+ *   compileGuard: (root, pointer) => compileGuardWithMyEngine(root, pointer),
  * };
  *
  * <FormProvider
