@@ -28,7 +28,7 @@ enum ShowError {
 ```
 
 2. **`FormHandle.showError(visible)`** — imperative override, e.g. force-show all errors on submit.
-3. **`errorVisible` inside a `FormTypeInput`** — the resolved per-field verdict. Render errors behind `errorVisible`, not behind ad-hoc `errors.length > 0` checks; the policy stays centralized.
+3. **`errorVisible` inside a `FieldInput`** — the resolved per-field verdict. Render errors behind `errorVisible`, not behind ad-hoc `errors.length > 0` checks; the policy stays centralized.
 
 ## Custom Error Messages
 

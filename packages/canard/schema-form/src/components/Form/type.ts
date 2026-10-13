@@ -70,7 +70,7 @@ export interface FormProps<
   fieldInputDefinitions?: FieldInputDefinition[];
   /** FieldInput path mapping */
   fieldInputMap?: FieldInputMap;
-  /** Custom form type renderer component */
+  /** Custom field renderer component */
   FieldRenderer?: ComponentType<FieldRendererProps>;
   /** Label renderer shared by Form.Label instances. */
   FormLabelRenderer?: ComponentType<FieldRendererProps>;

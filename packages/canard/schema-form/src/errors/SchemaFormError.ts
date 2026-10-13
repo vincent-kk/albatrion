@@ -4,7 +4,7 @@ import { BaseError, type ErrorDetails } from '@winglet/common-utils/error';
  * Error class for schema form construction errors.
  *
  * Thrown when there are issues during the form building process,
- * particularly when mapping form types to input components fails.
+ * particularly when mapping input types to input components fails.
  *
  * Currently used for:
  * - Invalid key patterns in FieldInputMap configuration

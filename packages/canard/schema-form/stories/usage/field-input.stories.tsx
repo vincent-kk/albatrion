@@ -9,7 +9,7 @@ function TextInput({ path, value, onChange, readOnly, disabled, placeholder, cla
   return <textarea id={path} value={value ?? ''} readOnly={readOnly} disabled={disabled} placeholder={placeholder} className={className} onChange={(event) => onChange(event.target.value || undefined)} />;
 }
 
-export default { title: 'Usage/Form type input', component: Form } satisfies Meta<typeof Form>;
+export default { title: 'Usage/Field input', component: Form } satisfies Meta<typeof Form>;
 type Story = StoryObj<typeof Form>;
 
 /** Definitions select by schema type and consume presentation props. */

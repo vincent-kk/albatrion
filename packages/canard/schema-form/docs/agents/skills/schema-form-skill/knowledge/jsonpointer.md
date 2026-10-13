@@ -17,11 +17,11 @@ formRef.current?.findNodes('/items/*'); // wildcard needs the PLURAL form
 
 ## Escaping
 
-`~` → `~0`, `/` → `~1` (RFC 6901) — applies everywhere a pointer names a literal key, including `formTypeInputMap` keys:
+`~` → `~0`, `/` → `~1` (RFC 6901) — applies everywhere a pointer names a literal key, including `fieldInputMap` keys:
 
 ```typescript
 // property name: 'object/Node'
-formTypeInputMap: { '/object~1Node': SpecialInput }
+fieldInputMap: { '/object~1Node': SpecialInput }
 // property name: 'tilde~here'
 rootNode.find('/tilde~0here');
 ```
@@ -30,4 +30,4 @@ rootNode.find('/tilde~0here');
 
 - `Form.Render` / `Form.Input` `path` props: standard RFC 6901 only (`imperative-and-layout.md`).
 - `getAttachedFilesMap()` keys: standard paths only.
-- Expressions cannot use `*`; `formTypeInputMap` cannot use `..`/`.`/`@` (see the SKILL.md matrix).
+- Expressions cannot use `*`; `fieldInputMap` cannot use `..`/`.`/`@` (see the SKILL.md matrix).

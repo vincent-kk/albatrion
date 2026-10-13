@@ -8,7 +8,7 @@
 
 - **JSON Schema 기반 렌더링**: JSON Schema를 기반으로 자동 폼 생성
 - **플러그인 기반 검증**: AJV 6/7/8 플러그인을 통한 유연한 검증 시스템
-- **FormTypeInput 시스템**: 우선순위 기반 컴포넌트 선택
+- **FieldInput 시스템**: 우선순위 기반 컴포넌트 선택
 - **Controls**: 조건부 필드, 파생 값, 반응형 로직
 - **조건부 스키마**: oneOf, anyOf, allOf, if-then-else 지원
 - **TypeScript 지원**: 완전한 타입 추론 및 타입 안전성
@@ -24,7 +24,7 @@
    - [FormProps](#formprops)
    - [FormHandle](#formhandle)
 5. [노드 시스템](#노드-시스템)
-6. [FormTypeInput 시스템](#formtypeinput-시스템)
+6. [FieldInput 시스템](#fieldinput-시스템)
 7. [Controls](#controls)
 8. [조건부 스키마](#조건부-스키마)
 9. [JSONPointer 시스템](#jsonpointer-시스템)
@@ -115,7 +115,7 @@ export const App = () => {
 │  ├── Branch Nodes (Object, Array)                           │
 │  └── Virtual Node (options.virtual 필드 묶음)                 │
 ├─────────────────────────────────────────────────────────────┤
-│  FormTypeInput System                                       │
+│  FieldInput System                                       │
 │  └── 우선순위 기반 컴포넌트 선택                               │
 ├─────────────────────────────────────────────────────────────┤
 │  Plugin System                                              │
@@ -148,9 +148,9 @@ interface FormProps<
   jsonSchema: Schema;
   /** 이 SchemaForm의 기본값 */
   defaultValue?: Value;
-  /** 모든 FormTypeInput 컴포넌트에 readOnly 속성 적용 */
+  /** 모든 FieldInput 컴포넌트에 readOnly 속성 적용 */
   readOnly?: boolean;
-  /** 모든 FormTypeInput 컴포넌트에 disabled 속성 적용 */
+  /** 모든 FieldInput 컴포넌트에 disabled 속성 적용 */
   disabled?: boolean;
   /** 이 SchemaForm의 값이 변경될 때 호출되는 함수 */
   onChange?: SetStateFn<Value>;
@@ -160,22 +160,22 @@ interface FormProps<
   onSubmit?: Fn<[value: Value], Promise<void> | void>;
   /** 이 SchemaForm의 상태가 변경될 때 호출되는 함수 */
   onStateChange?: Fn<[state: NodeStateFlags]>;
-  /** FormTypeInput 정의 목록 */
-  formTypeInputDefinitions?: FormTypeInputDefinition[];
-  /** FormTypeInput 경로 매핑 */
-  formTypeInputMap?: FormTypeInputMap;
+  /** FieldInput 정의 목록 */
+  fieldInputDefinitions?: FieldInputDefinition[];
+  /** FieldInput 경로 매핑 */
+  fieldInputMap?: FieldInputMap;
   /** 그룹 렌더러 컴포넌트 */
-  FormTypeGroupRenderer?: ComponentType<FormTypeRendererProps>;
+  FieldRenderer?: ComponentType<FieldRendererProps>;
   /** 레이블 렌더러 컴포넌트 */
-  FormTypeLabelRenderer?: ComponentType<FormTypeRendererProps>;
+  FormLabelRenderer?: ComponentType<FieldRendererProps>;
   /** 입력 렌더러 컴포넌트 */
-  FormTypeInputRenderer?: ComponentType<FormTypeRendererProps>;
+  FormInputRenderer?: ComponentType<FieldRendererProps>;
   /** 오류 렌더러 컴포넌트 */
-  FormTypeErrorRenderer?: ComponentType<FormTypeRendererProps>;
+  FormErrorRenderer?: ComponentType<FieldRendererProps>;
   /** 초기 검증 오류, 기본값은 undefined */
   errors?: readonly ValidationIssue[];
   /** 커스텀 오류 포맷 함수 */
-  formatError?: FormTypeRendererProps['formatError'];
+  formatError?: FieldRendererProps['formatError'];
   /**
    * 오류 표시 조건 (기본값: ShowError.DirtyTouched)
    *   - `true`: 항상 표시
@@ -331,14 +331,14 @@ node.initialized; // 노드가 초기화를 완료했는가?
 
 ---
 
-## FormTypeInput 시스템
+## FieldInput 시스템
 
-### FormTypeInputDefinition
+### FieldInputDefinition
 
 ```typescript
-type FormTypeInputDefinition<T = unknown> = {
-  test: FormTypeTestFn | FormTypeTestObject;
-  Component: ComponentType<InferFormTypeInputProps<T>>;
+type FieldInputDefinition<T = unknown> = {
+  test: FieldInputTestFn | FieldInputTestObject;
+  Component: ComponentType<InferFieldInputProps<T>>;
 };
 ```
 
@@ -346,14 +346,14 @@ type FormTypeInputDefinition<T = unknown> = {
 
 ```typescript
 // 함수 형태
-type FormTypeTestFn = Fn<[hint: Hint], boolean>;
+type FieldInputTestFn = Fn<[hint: Hint], boolean>;
 
 // 객체 형태
-type FormTypeTestObject = Partial<{
+type FieldInputTestObject = Partial<{
   type: Array<string>;
   jsonSchema: JSONSchema;
   format: Array<string>;
-  formType: Array<string>;
+  inputType: Array<string>;
   nullable: boolean;
   [alt: string]: any;
 }>;
@@ -363,24 +363,26 @@ type Hint = {
   jsonSchema: JSONSchema;
   type: string;
   format: string;
-  formType: string;
+  inputType: string;
   path: string;
   nullable: boolean;
   [alt: string]: any;
 };
 ```
 
-### FormTypeInputProps
+inputType은 정의의 test가 해석하는 문자열 힌트이며 HTML input type과 같지 않습니다.
+
+### FieldInputProps
 
 ```typescript
-interface FormTypeInputProps<
+interface FieldInputProps<
   Value extends AllowedValue = any,
   Context extends Dictionary = object,
   WatchValues extends Array<any> = Array<any>,
   Schema extends JSONSchemaWithVirtual = InferJSONSchema<Value>,
   Node extends SchemaNode = InferSchemaNode<Schema>,
 > {
-  jsonSchema: Schema; // FormTypeInput 컴포넌트의 JSON Schema
+  jsonSchema: Schema; // FieldInput 컴포넌트의 JSON Schema
   readOnly: boolean; // 읽기 전용 상태
   disabled: boolean; // 비활성화 상태
   required: boolean; // 필수 여부
@@ -407,42 +409,42 @@ interface FormTypeInputProps<
 
 ### 선택 우선순위
 
-FormTypeInput은 다음 우선순위로 선택됩니다 (높은 순):
+FieldInput은 다음 우선순위로 선택됩니다 (높은 순):
 
-1. **JSON Schema의 presentation.FormTypeInput 직접 할당**
-
-   ```tsx
-   { type: 'string', presentation: { FormTypeInput: CustomInput } }
-   ```
-
-2. **formTypeInputMap** (경로 기반)
+1. **JSON Schema의 presentation.FieldInput 직접 할당**
 
    ```tsx
-   <Form formTypeInputMap={{ '/email': EmailInput }} />
+   { type: 'string', presentation: { FieldInput: CustomInput } }
    ```
 
-3. **Form의 formTypeInputDefinitions**
+2. **fieldInputMap** (경로 기반)
 
    ```tsx
-   <Form formTypeInputDefinitions={[...]} />
+   <Form fieldInputMap={{ '/email': EmailInput }} />
    ```
 
-4. **FormProvider의 formTypeInputDefinitions**
+3. **Form의 fieldInputDefinitions**
 
    ```tsx
-   <FormProvider formTypeInputDefinitions={[...]} />
+   <Form fieldInputDefinitions={[...]} />
    ```
 
-5. **플러그인의 formTypeInputDefinitions**
+4. **FormProvider의 fieldInputDefinitions**
+
    ```tsx
-   registerPlugin({ formTypeInputDefinitions: [...] })
+   <FormProvider fieldInputDefinitions={[...]} />
    ```
 
-### FormTypeInputMap
+5. **플러그인의 fieldInputDefinitions**
+   ```tsx
+   registerPlugin({ fieldInputDefinitions: [...] })
+   ```
+
+### FieldInputMap
 
 ```typescript
-type FormTypeInputMap = {
-  [path: string]: ComponentType<FormTypeInputProps>;
+type FieldInputMap = {
+  [path: string]: ComponentType<FieldInputProps>;
 };
 
 // 와일드카드 지원
@@ -593,7 +595,7 @@ const jsonSchema = {
 
 분기 자신의 `nullable: true` 플래그는 부모와 비교하지 않으므로 `'object'` + `nullable: true`는 어떤 객체 아래에서도 허용됩니다. 그 밖의 선언 — nullable이 아닌 객체 아래의 `'null'`·`['object', 'null']` 분기, `'string'`, `'array'` — 은 `COMPOSITION_TYPE_REDEFINITION`을 던집니다.
 
-이 규칙과 아래 두 개발 환경 경고는 객체가 자식 노드를 만드는 경우에만 실행됩니다. 객체 전체를 하나의 입력으로 다루는 경우 — `terminal: true`이거나 객체 스키마에 `presentation.FormTypeInput` 컴포넌트를 지정한 경우 — 에는 분기를 만들지 않으므로 분기 type을 검사하지 않고 두 경고도 나오지 않습니다. 검증기는 그때도 작성된 스키마를 그대로 봅니다.
+이 규칙과 아래 두 개발 환경 경고는 객체가 자식 노드를 만드는 경우에만 실행됩니다. 객체 전체를 하나의 입력으로 다루는 경우 — `terminal: true`이거나 객체 스키마에 `presentation.FieldInput` 컴포넌트를 지정한 경우 — 에는 분기를 만들지 않으므로 분기 type을 검사하지 않고 두 경고도 나오지 않습니다. 검증기는 그때도 작성된 스키마를 그대로 봅니다.
 
 분기의 `properties` 안에서 `type`이 **있는** 항목은 필드이고, `type` 없이 `const`나 `enum`만 가진 항목은 호스트의 `controls.discriminator`가 읽어 그 분기를 고르는 태그입니다. 이런 판별자에 `type`을 붙이면 필드가 되어 부모의 같은 이름 프로퍼티와 충돌합니다(`COMPOSITION_PROPERTY_REDEFINITION`).
 
@@ -674,7 +676,7 @@ node.find('./childField'); // 현재 노드에서 상대 경로
 | ---- | ------------ | ---------------------------- |
 | `..` | 부모 탐색    | controls 표현식, node.find() |
 | `.`  | 현재 노드    | controls 표현식, node.find() |
-| `*`  | 와일드카드   | FormTypeInputMap만           |
+| `*`  | 와일드카드   | FieldInputMap만              |
 | `@`  | context 참조 | controls 표현식만            |
 
 ### 이스케이프 규칙
@@ -776,11 +778,11 @@ registerPlugin(ajvValidatorPlugin);
 
 ```typescript
 interface SchemaFormPlugin {
-  FormTypeGroupRenderer?: ComponentType<FormTypeRendererProps>;
-  FormTypeLabelRenderer?: ComponentType<FormTypeRendererProps>;
-  FormTypeInputRenderer?: ComponentType<FormTypeRendererProps>;
-  FormTypeErrorRenderer?: ComponentType<FormTypeRendererProps>;
-  formTypeInputDefinitions?: FormTypeInputDefinition[];
+  FieldRenderer?: ComponentType<FieldRendererProps>;
+  FormLabelRenderer?: ComponentType<FieldRendererProps>;
+  FormInputRenderer?: ComponentType<FieldRendererProps>;
+  FormErrorRenderer?: ComponentType<FieldRendererProps>;
+  fieldInputDefinitions?: FieldInputDefinition[];
   validator?: ValidatorPlugin;
   formatError?: FormatError;
 }
@@ -794,7 +796,7 @@ interface ValidatorPlugin {
 }
 ```
 
-기본 그룹 렌더러는 자체 레이블과 메시지를 그리므로 `FormTypeLabelRenderer`와 `FormTypeErrorRenderer`는 컴포지션 API(`Form.Label`, `Form.Error`)나 이를 호출하는 사용자 그룹 렌더러를 통해서만 나타납니다.
+기본 그룹 렌더러는 자체 레이블과 메시지를 그리므로 `FormLabelRenderer`와 `FormErrorRenderer`는 컴포지션 API(`Form.Label`, `Form.Error`)나 이를 호출하는 사용자 그룹 렌더러를 통해서만 나타납니다.
 
 렌더러 속성은 폼이 마운트될 때 한 번 읽히므로, 마운트 이후에 렌더러를 교체해도 반영된다고 보장하지 않습니다.
 
@@ -804,7 +806,7 @@ interface ValidatorPlugin {
 
 ### 렌더 가상화 (Virtualization)
 
-수백 개 이상 필드를 가진 폼에서는 초기 React 마운트가 지배적 비용이다(node tree 자체는 저렴). `virtualization` prop은 화면 밖 필드의 마운트를 지연한다 — 경량 placeholder로 렌더하다가 뷰포트에 근접하거나, 브라우저 idle 시간, 또는 focus/select 명령 시 실제 컴포넌트로 교체한다(한 번 reveal되면 되돌아가지 않음, defer-once). node tree는 항상 전량 생성되므로 `value`·검증·`getValue()`/`setValue()`·제출은 마운트 여부와 무관하게 동일하다. 모든 FormTypeInput 플러그인과 호환된다(게이트가 레이아웃 아래에 위치).
+수백 개 이상 필드를 가진 폼에서는 초기 React 마운트가 지배적 비용이다(node tree 자체는 저렴). `virtualization` prop은 화면 밖 필드의 마운트를 지연한다 — 경량 placeholder로 렌더하다가 뷰포트에 근접하거나, 브라우저 idle 시간, 또는 focus/select 명령 시 실제 컴포넌트로 교체한다(한 번 reveal되면 되돌아가지 않음, defer-once). node tree는 항상 전량 생성되므로 `value`·검증·`getValue()`/`setValue()`·제출은 마운트 여부와 무관하게 동일하다. 모든 FieldInput 플러그인과 호환된다(게이트가 레이아웃 아래에 위치).
 
 ```tsx
 import { Form, VirtualizationBackfill } from '@canard/schema-form';
@@ -1061,7 +1063,7 @@ const schema = {
   },
 };
 
-// FormTypeInput에서 nullable 조건
+// FieldInput에서 nullable 조건
 const definitions = [
   { test: { type: 'string', nullable: true }, component: NullableInput },
   { test: { type: 'string', nullable: false }, component: RequiredInput },
@@ -1131,7 +1133,7 @@ if (isArrayNode(node)) {
 ## 모범 사례
 
 1. **플러그인을 앱 시작 시 등록** - 최상위 레벨에서 한 번만
-2. **FormTypeInputDefinitions 캐싱** - 컴포넌트 외부에서 정의
+2. **FieldInputDefinitions 캐싱** - 컴포넌트 외부에서 정의
 3. **ValidationMode 최적화** - 필요에 따라 OnChange 또는 OnRequest 선택
 4. **TypeScript as const 사용** - 스키마 타입 추론을 위해
 5. **controls.watch 활용** - 반응형 폼 로직 구현

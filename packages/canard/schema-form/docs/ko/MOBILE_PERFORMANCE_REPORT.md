@@ -31,23 +31,23 @@
 ```
 SchemaNodeProxy (memo 없음)
   ├─ useMemo: Input (SchemaNodeInputWrapper) — node 참조 기반 캐시
-  ├─ useMemorize: FormTypeRenderer — memo(withErrorBoundary()) 래핑
+  ├─ useMemorize: FieldRenderer — memo(withErrorBoundary()) 래핑
   ├─ useConstant: Wrapper — 최초 1회만 생성
   ├─ useMemo: errorMessage — refresh 기반 재계산
   │
   └─ SchemaNodeInput (memo) ← 실제 렌더링 비용의 대부분
-       ├─ useFormTypeInput: useMemo 캐시
+       ├─ useFieldInput: useMemo 캐시
        ├─ useChildNodeComponents: Map 캐시 + memo 래핑된 자식
        ├─ useCallback: handleChange, handleFileAttach, handleFocus, handleBlur
-       ├─ useFormTypeInputControl: ref + version
-       └─ FormTypeInput (plugin) ← 실제 DOM 생성
+       ├─ useFieldInputControl: ref + version
+       └─ FieldInput (plugin) ← 실제 DOM 생성
 ```
 
 ### SchemaNodeProxy가 re-render되더라도 발생하는 비용
 
 1. `useSchemaNodeTracker` — 비트마스크 비교 1회 (O(1))
 2. `useMemo(Input)` — deps 비교 (node 참조 동일 → skip)
-3. `useMemorize(FormTypeRenderer)` — 이미 생성된 인스턴스 반환
+3. `useMemorize(FieldRenderer)` — 이미 생성된 인스턴스 반환
 4. `useConstant(Wrapper)` — 캐시된 값 반환
 5. `useMemo(errorMessage)` — deps 비교 (refresh 미변경 → skip)
 6. `SchemaNodeInput` — **`memo`로 래핑**, props 동일 시 완전 skip
@@ -211,7 +211,7 @@ employmentType 변경: 'full_time' → 'part_time'
 ```
 
 - 분기 전환 시 비활성 노드는 `if (!node?.enabled) return null` (`SchemaNodeProxy.tsx:85`)로 빠르게 반환
-- 새 분기 노드의 마운트 비용: 2-4개 필드 × (Proxy + Input + FormTypeInput) ≈ 6-12개 컴포넌트
+- 새 분기 노드의 마운트 비용: 2-4개 필드 × (Proxy + Input + FieldInput) ≈ 6-12개 컴포넌트
 - full_time 분기의 `benefits` object는 중첩 ObjectNode + 2개 Boolean — 추가 깊이지만 부담 없는 수준
 
 **computed 연쇄 반응**:
@@ -391,7 +391,7 @@ userType 변경: 'guest' → 'admin'
 
 - **최대 동시 re-render**: userType 1개 + 의존 필드 6개 = **7개 Proxy re-render**
 - 이 중 visible=false가 되는 필드: `if (!node?.enabled) return null` → 즉시 반환
-- visible=true가 되는 필드: SchemaNodeInput `memo` 통과 시 FormTypeInput 마운트
+- visible=true가 되는 필드: SchemaNodeInput `memo` 통과 시 FieldInput 마운트
 
 **이것이 모바일에서 문제가 되는가?**
 
@@ -472,7 +472,7 @@ userType 변경: 'guest' → 'admin'
 
 3. **내부 memo 방어**:
    - `SchemaNodeInput`: `memo` 래핑 — props 동일 시 완전 skip
-   - `FormTypeRenderer`: `useMemorize(() => memo(withErrorBoundary(...)))` — 최초 1회만 생성
+   - `FieldRenderer`: `useMemorize(() => memo(withErrorBoundary(...)))` — 최초 1회만 생성
    - `useChildNodeComponents`: `Map` 캐시 + 각 child를 `memo` 래핑
    - `SchemaNodeInputWrapper` 내부: `useReference`로 ref 안정화
 
@@ -521,12 +521,12 @@ userType 변경: 'guest' → 'admin'
 | `src/components/SchemaNode/SchemaNodeProxy/SchemaNodeProxy.tsx:19-23`                                                 | `RERENDERING_EVENT` 4중 마스크            |
 | `src/components/SchemaNode/SchemaNodeProxy/SchemaNodeProxy.tsx:25`                                                    | Proxy `memo` 미적용                       |
 | `src/components/SchemaNode/SchemaNodeProxy/SchemaNodeProxy.tsx:38-48`                                                 | Input `useMemo` 캐시                      |
-| `src/components/SchemaNode/SchemaNodeProxy/SchemaNodeProxy.tsx:57-59`                                                 | FormTypeRenderer `memo` 래핑              |
+| `src/components/SchemaNode/SchemaNodeProxy/SchemaNodeProxy.tsx:57-59`                                                 | FieldRenderer `memo` 래핑                 |
 | `src/components/SchemaNode/SchemaNodeProxy/SchemaNodeProxy.tsx:85`                                                    | `enabled=false` 시 null 반환              |
 | `src/components/SchemaNode/SchemaNodeInput/SchemaNodeInput.tsx:24`                                                    | SchemaNodeInput `memo` 래핑               |
 | `src/components/SchemaNode/SchemaNodeInput/SchemaNodeInputWrapper.tsx:42-51`                                          | `useReference` ref 안정화                 |
 | `src/components/SchemaNode/SchemaNodeInput/hooks/useChildNodeComponents.tsx:45-91`                                    | `Map` 캐시 + child `memo` 래핑            |
-| `src/components/SchemaNode/SchemaNodeInput/hooks/useFormTypeInputControl.ts:29-46`                                    | RequestRefresh/Focus/Select 구독          |
+| `src/components/SchemaNode/SchemaNodeInput/hooks/useFieldInputControl.ts:29-46`                                       | RequestRefresh/Focus/Select 구독          |
 | `src/components/SchemaNode/SchemaNodeInput/type.ts:39-43`                                                             | `REACTIVE_RERENDERING_EVENTS`             |
 | `src/hooks/useSchemaNodeTracker.ts:13-26`                                                                             | 노드별 독립 구독 메커니즘                 |
 | `src/core/nodes/AbstractNode/utils/EventCascadeManager/EventCascadeManager.ts:106-110`                                | microtask 배칭                            |

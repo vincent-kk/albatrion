@@ -19,18 +19,18 @@ Every property is optional — a plugin customizes only what it needs:
 
 ```typescript
 interface SchemaFormPlugin {
-  FormTypeGroupRenderer?: ComponentType<FormTypeRendererProps>;
-  FormTypeLabelRenderer?: ComponentType<FormTypeRendererProps>;
-  FormTypeInputRenderer?: ComponentType<FormTypeRendererProps>;
-  FormTypeErrorRenderer?: ComponentType<FormTypeRendererProps>;
-  formTypeInputDefinitions?: FormTypeInputDefinition[];
+  FieldRenderer?: ComponentType<FieldRendererProps>;
+  FormLabelRenderer?: ComponentType<FieldRendererProps>;
+  FormInputRenderer?: ComponentType<FieldRendererProps>;
+  FormErrorRenderer?: ComponentType<FieldRendererProps>;
+  fieldInputDefinitions?: FieldInputDefinition[];
   validator?: ValidatorPlugin;
   formatError?: FormatError;
 }
 ```
 
 - When multiple registered plugins define the same property, **the last one wins**.
-- Plugin-provided `formTypeInputDefinitions` sit at the BOTTOM of the resolution priority — `Form`/`FormProvider` props always override them (see SKILL.md's priority list).
+- Plugin-provided `fieldInputDefinitions` sit at the BOTTOM of the resolution priority — `Form`/`FormProvider` props always override them (see SKILL.md's priority list).
 - Plugins can also be applied locally (per-subtree) via `ExternalFormContextProvider` instead of globally.
 
 ## Custom Validator

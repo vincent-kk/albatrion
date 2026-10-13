@@ -9,9 +9,9 @@ import { pathExactMatchFnFactory } from './utils/pathExactMatchFnFactory';
 import { withFieldInputErrorBoundary } from './utils/withFieldInputErrorBoundary';
 
 /**
- * Normalizes form type input map.
- * @param fieldInputMap - Form type input map
- * @returns Normalized form type input definitions
+ * Normalizes field input map.
+ * @param fieldInputMap - Field input map
+ * @returns Normalized field input definitions
  */
 export const normalizeFieldInputMap = (
   fieldInputMap?: FieldInputMap,

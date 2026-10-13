@@ -76,7 +76,7 @@ export interface ExternalFormContextProviderProps {
  * ```
  *
  * @example
- * Custom form type definitions:
+ * Custom field input definitions:
  * ```tsx
  * const customInputTypes = [
  *   {

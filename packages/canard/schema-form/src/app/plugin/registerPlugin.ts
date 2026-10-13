@@ -35,7 +35,7 @@ const getPluginKey = createFingerprintFactory();
  * ```
  *
  * @example
- * Register custom form type definitions:
+ * Register custom field input definitions:
  * ```typescript
  * const datePickerDefinition = {
  *   test: { type: 'string', format: 'date' },

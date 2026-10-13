@@ -8,7 +8,7 @@
 
 - **JSON Schema based rendering**: Automatic form generation from JSON Schema
 - **Plugin-based validation**: Flexible validation system through AJV 6/7/8 plugins
-- **FormTypeInput system**: Priority-based component selection
+- **FieldInput system**: Priority-based component selection
 - **Controls**: Conditional fields, derived values, reactive logic
 - **Conditional schemas**: oneOf, anyOf, allOf, if-then-else support
 - **TypeScript support**: Full type inference and type safety
@@ -24,7 +24,7 @@
    - [FormProps](#formprops)
    - [FormHandle](#formhandle)
 5. [Node System](#node-system)
-6. [FormTypeInput System](#formtypeinput-system)
+6. [FieldInput System](#fieldinput-system)
 7. [Controls](#controls)
 8. [Conditional Schemas](#conditional-schemas)
 9. [JSONPointer System](#jsonpointer-system)
@@ -115,7 +115,7 @@ export const App = () => {
 │  ├── Branch Nodes (Object, Array)                           │
 │  └── Virtual Node (options.virtual field groups)             │
 ├─────────────────────────────────────────────────────────────┤
-│  FormTypeInput System                                       │
+│  FieldInput System                                       │
 │  └── Priority-based component selection                      │
 ├─────────────────────────────────────────────────────────────┤
 │  Plugin System                                              │
@@ -148,9 +148,9 @@ interface FormProps<
   jsonSchema: Schema;
   /** Default value for this SchemaForm */
   defaultValue?: Value;
-  /** Apply readOnly property to all FormTypeInput components */
+  /** Apply readOnly property to all FieldInput components */
   readOnly?: boolean;
-  /** Apply disabled property to all FormTypeInput components */
+  /** Apply disabled property to all FieldInput components */
   disabled?: boolean;
   /** Function called when the value of this SchemaForm changes */
   onChange?: SetStateFn<Value>;
@@ -160,22 +160,22 @@ interface FormProps<
   onSubmit?: Fn<[value: Value], Promise<void> | void>;
   /** Function called when the state of this SchemaForm changes */
   onStateChange?: Fn<[state: NodeStateFlags]>;
-  /** FormTypeInput definition list */
-  formTypeInputDefinitions?: FormTypeInputDefinition[];
-  /** FormTypeInput path mapping */
-  formTypeInputMap?: FormTypeInputMap;
+  /** FieldInput definition list */
+  fieldInputDefinitions?: FieldInputDefinition[];
+  /** FieldInput path mapping */
+  fieldInputMap?: FieldInputMap;
   /** Group renderer component */
-  FormTypeGroupRenderer?: ComponentType<FormTypeRendererProps>;
+  FieldRenderer?: ComponentType<FieldRendererProps>;
   /** Label renderer component */
-  FormTypeLabelRenderer?: ComponentType<FormTypeRendererProps>;
+  FormLabelRenderer?: ComponentType<FieldRendererProps>;
   /** Input renderer component */
-  FormTypeInputRenderer?: ComponentType<FormTypeRendererProps>;
+  FormInputRenderer?: ComponentType<FieldRendererProps>;
   /** Error renderer component */
-  FormTypeErrorRenderer?: ComponentType<FormTypeRendererProps>;
+  FormErrorRenderer?: ComponentType<FieldRendererProps>;
   /** Initial validation errors, default is undefined */
   errors?: readonly ValidationIssue[];
   /** Custom format error function */
-  formatError?: FormTypeRendererProps['formatError'];
+  formatError?: FieldRendererProps['formatError'];
   /**
    * Error display condition (default: ShowError.DirtyTouched)
    *   - `true`: Always show
@@ -333,14 +333,14 @@ node.initialized; // Has node completed initialization?
 
 ---
 
-## FormTypeInput System
+## FieldInput System
 
-### FormTypeInputDefinition
+### FieldInputDefinition
 
 ```typescript
-type FormTypeInputDefinition<T = unknown> = {
-  test: FormTypeTestFn | FormTypeTestObject;
-  Component: ComponentType<InferFormTypeInputProps<T>>;
+type FieldInputDefinition<T = unknown> = {
+  test: FieldInputTestFn | FieldInputTestObject;
+  Component: ComponentType<InferFieldInputProps<T>>;
 };
 ```
 
@@ -348,14 +348,14 @@ type FormTypeInputDefinition<T = unknown> = {
 
 ```typescript
 // Function form
-type FormTypeTestFn = Fn<[hint: Hint], boolean>;
+type FieldInputTestFn = Fn<[hint: Hint], boolean>;
 
 // Object form
-type FormTypeTestObject = Partial<{
+type FieldInputTestObject = Partial<{
   type: Array<string>;
   jsonSchema: JSONSchema;
   format: Array<string>;
-  formType: Array<string>;
+  inputType: Array<string>;
   nullable: boolean;
   [alt: string]: any;
 }>;
@@ -365,24 +365,26 @@ type Hint = {
   jsonSchema: JSONSchema;
   type: string;
   format: string;
-  formType: string;
+  inputType: string;
   path: string;
   nullable: boolean;
   [alt: string]: any;
 };
 ```
 
-### FormTypeInputProps
+inputType is a string hint that a definition's test interprets; it is not the HTML input type.
+
+### FieldInputProps
 
 ```typescript
-interface FormTypeInputProps<
+interface FieldInputProps<
   Value extends AllowedValue = any,
   Context extends Dictionary = object,
   WatchValues extends Array<any> = Array<any>,
   Schema extends JSONSchemaWithVirtual = InferJSONSchema<Value>,
   Node extends SchemaNode = InferSchemaNode<Schema>,
 > {
-  jsonSchema: Schema; // JSON Schema for FormTypeInput component
+  jsonSchema: Schema; // JSON Schema for FieldInput component
   readOnly: boolean; // Read-only state
   disabled: boolean; // Disabled state
   required: boolean; // Required field
@@ -409,42 +411,42 @@ interface FormTypeInputProps<
 
 ### Selection Priority
 
-FormTypeInput is selected with the following priority (highest first):
+FieldInput is selected with the following priority (highest first):
 
-1. **Directly assigned presentation.FormTypeInput in JSON Schema**
-
-   ```tsx
-   { type: 'string', presentation: { FormTypeInput: CustomInput } }
-   ```
-
-2. **formTypeInputMap** (path-based)
+1. **Directly assigned presentation.FieldInput in JSON Schema**
 
    ```tsx
-   <Form formTypeInputMap={{ '/email': EmailInput }} />
+   { type: 'string', presentation: { FieldInput: CustomInput } }
    ```
 
-3. **Form's formTypeInputDefinitions**
+2. **fieldInputMap** (path-based)
 
    ```tsx
-   <Form formTypeInputDefinitions={[...]} />
+   <Form fieldInputMap={{ '/email': EmailInput }} />
    ```
 
-4. **FormProvider's formTypeInputDefinitions**
+3. **Form's fieldInputDefinitions**
 
    ```tsx
-   <FormProvider formTypeInputDefinitions={[...]} />
+   <Form fieldInputDefinitions={[...]} />
    ```
 
-5. **Plugin's formTypeInputDefinitions**
+4. **FormProvider's fieldInputDefinitions**
+
    ```tsx
-   registerPlugin({ formTypeInputDefinitions: [...] })
+   <FormProvider fieldInputDefinitions={[...]} />
    ```
 
-### FormTypeInputMap
+5. **Plugin's fieldInputDefinitions**
+   ```tsx
+   registerPlugin({ fieldInputDefinitions: [...] })
+   ```
+
+### FieldInputMap
 
 ```typescript
-type FormTypeInputMap = {
-  [path: string]: ComponentType<FormTypeInputProps>;
+type FieldInputMap = {
+  [path: string]: ComponentType<FieldInputProps>;
 };
 
 // Wildcard support
@@ -595,7 +597,7 @@ A branch usually omits `type` and takes its parent's. When it declares one, it m
 
 A branch's own `nullable: true` flag is not compared with the parent's, so `'object'` + `nullable: true` is accepted under any object. Anything else — a `'null'` or `['object', 'null']` branch under a non-nullable object, `'string'`, `'array'` — throws `COMPOSITION_TYPE_REDEFINITION`.
 
-This rule, and the two development warnings below, run only where the object builds child nodes. An object handled as a single input — `terminal: true`, or a `presentation.FormTypeInput` component set on the object's schema — builds no branches, so its branch types are not checked and neither warning is printed; the validator still sees the schema as written.
+This rule, and the two development warnings below, run only where the object builds child nodes. An object handled as a single input — `terminal: true`, or a `presentation.FieldInput` component set on the object's schema — builds no branches, so its branch types are not checked and neither warning is printed; the validator still sees the schema as written.
 
 Inside a branch's `properties`, an entry **with** a `type` is a field; an entry **without** one, carrying only `const` or `enum`, is a tag that the host's `controls.discriminator` reads to select the branch. Giving such a discriminator a `type` turns it into a field that collides with the parent's property of the same name (`COMPOSITION_PROPERTY_REDEFINITION`).
 
@@ -676,7 +678,7 @@ node.find('./childField'); // Relative path from current node
 | ------ | ----------------- | --------------------------------- |
 | `..`   | Parent navigation | controls expressions, node.find() |
 | `.`    | Current node      | controls expressions, node.find() |
-| `*`    | Wildcard          | FormTypeInputMap only             |
+| `*`    | Wildcard          | FieldInputMap only                |
 | `@`    | Context reference | controls expressions only         |
 
 ### Escape Rules
@@ -778,11 +780,11 @@ registerPlugin(ajvValidatorPlugin);
 
 ```typescript
 interface SchemaFormPlugin {
-  FormTypeGroupRenderer?: ComponentType<FormTypeRendererProps>;
-  FormTypeLabelRenderer?: ComponentType<FormTypeRendererProps>;
-  FormTypeInputRenderer?: ComponentType<FormTypeRendererProps>;
-  FormTypeErrorRenderer?: ComponentType<FormTypeRendererProps>;
-  formTypeInputDefinitions?: FormTypeInputDefinition[];
+  FieldRenderer?: ComponentType<FieldRendererProps>;
+  FormLabelRenderer?: ComponentType<FieldRendererProps>;
+  FormInputRenderer?: ComponentType<FieldRendererProps>;
+  FormErrorRenderer?: ComponentType<FieldRendererProps>;
+  fieldInputDefinitions?: FieldInputDefinition[];
   validator?: ValidatorPlugin;
   formatError?: FormatError;
 }
@@ -796,7 +798,7 @@ interface ValidatorPlugin {
 }
 ```
 
-The default group renderer draws its own label and messages, so `FormTypeLabelRenderer` and `FormTypeErrorRenderer` appear only through the composition API (`Form.Label`, `Form.Error`) or a user group renderer that calls them.
+The default group renderer draws its own label and messages, so `FormLabelRenderer` and `FormErrorRenderer` appear only through the composition API (`Form.Label`, `Form.Error`) or a user group renderer that calls them.
 
 Renderer props are read once when the form mounts; replacing a renderer after mount is not guaranteed to take effect.
 
@@ -806,7 +808,7 @@ Renderer props are read once when the form mounts; replacing a renderer after mo
 
 ### Render-Level Virtualization
 
-For forms with hundreds of fields the initial React mount is the dominant cost (the node tree itself is cheap). The `virtualization` prop defers mounting of off-screen fields — they render as lightweight placeholders and are replaced by the real components when they approach the viewport, during browser idle time, or on focus/select commands (once revealed, a field never returns to a placeholder — defer-once). The node tree is always fully built, so `value`, validation, `getValue()`/`setValue()` and submit behave identically regardless of mount state. Works with every FormTypeInput plugin (the gate sits below the layout).
+For forms with hundreds of fields the initial React mount is the dominant cost (the node tree itself is cheap). The `virtualization` prop defers mounting of off-screen fields — they render as lightweight placeholders and are replaced by the real components when they approach the viewport, during browser idle time, or on focus/select commands (once revealed, a field never returns to a placeholder — defer-once). The node tree is always fully built, so `value`, validation, `getValue()`/`setValue()` and submit behave identically regardless of mount state. Works with every FieldInput plugin (the gate sits below the layout).
 
 ```tsx
 import { Form, VirtualizationBackfill } from '@canard/schema-form';
@@ -1063,7 +1065,7 @@ const schema = {
   },
 };
 
-// Nullable condition in FormTypeInput
+// Nullable condition in FieldInput
 const definitions = [
   { test: { type: 'string', nullable: true }, component: NullableInput },
   { test: { type: 'string', nullable: false }, component: RequiredInput },
@@ -1133,7 +1135,7 @@ if (isArrayNode(node)) {
 ## Best Practices
 
 1. **Register plugins at app startup** - Once at the top level
-2. **Cache FormTypeInputDefinitions** - Define outside components
+2. **Cache FieldInputDefinitions** - Define outside components
 3. **Optimize ValidationMode** - Choose OnChange or OnRequest based on needs
 4. **Use TypeScript as const** - For schema type inference
 5. **Leverage controls.watch** - Implement reactive form logic

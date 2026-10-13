@@ -18,7 +18,7 @@ FallbackComponents/
 ## Conventions
 
 - TypeScript + React (TSX), 함수형 컴포넌트
-- 모든 컴포넌트는 `FormTypeRendererProps`를 props 타입으로 사용
+- 모든 컴포넌트는 `FieldRendererProps`를 props 타입으로 사용
 - 스타일은 인라인 style 객체로 최소한만 적용 (depth 기반 들여쓰기)
 - `FormGroupRenderer`는 `node.group === 'branch'`에 따라 fieldset/div를 분기
 - 배열 항목의 경우 label을 숨김 (`isArraySchema(node.parentNode)` 체크)
@@ -27,7 +27,7 @@ FallbackComponents/
 
 ### Always do
 
-- `FormTypeRendererProps` 타입을 props 인터페이스로 준수
+- `FieldRendererProps` 타입을 props 인터페이스로 준수
 - `Input` prop을 `<Input />`으로 렌더링하여 실제 입력 위임
 - depth 0(루트)인 경우 `<Input />`만 렌더링 (FormGroupRenderer)
 
@@ -39,5 +39,5 @@ FallbackComponents/
 ### Never do
 
 - 플러그인 시스템이나 PluginManager에 직접 의존
-- `FormTypeRendererProps` 외의 props 추가
+- `FieldRendererProps` 외의 props 추가
 - 이 컴포넌트에 비즈니스 로직 또는 상태(state) 도입

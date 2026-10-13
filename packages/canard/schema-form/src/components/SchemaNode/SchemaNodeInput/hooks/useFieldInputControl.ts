@@ -27,7 +27,7 @@ const COMPOSING = 1;
 const MOUNTED_CHILDREN = 2;
 
 /**
- * Controls rendering and focus/select behavior for form-type inputs based on SchemaNode events.
+ * Controls rendering and focus/select behavior for field inputs based on SchemaNode events.
  *
  * Event Handling:
  * - `REACTIVE_RERENDERING_EVENTS | UpdateChildren`: Re-renders the caller through the shared snapshot

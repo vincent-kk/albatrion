@@ -13,7 +13,7 @@ import { FieldRendererContext } from './FieldRendererContext';
 const DEFAULT_SHOW_ERROR = ShowError.DirtyTouched;
 
 interface FieldRendererContextProviderProps {
-  /** Custom form type renderer component */
+  /** Custom field renderer component */
   FieldRenderer?: FormProps['FieldRenderer'];
   FormLabelRenderer?: FormProps['FormLabelRenderer'];
   FormInputRenderer?: FormProps['FormInputRenderer'];

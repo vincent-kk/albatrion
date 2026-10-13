@@ -2,14 +2,14 @@
 
 ## Purpose
 
-전역 플러그인 등록 및 상태 관리 모듈. `registerPlugin()` 함수로 렌더 컴포넌트, FormTypeInput 정의, 유효성 검사기, 에러 포매터를 전역적으로 확장한다.
+전역 플러그인 등록 및 상태 관리 모듈. `registerPlugin()` 함수로 렌더 컴포넌트, FieldInput 정의, 유효성 검사기, 에러 포매터를 전역적으로 확장한다.
 
 ## Conventions
 
 - `SchemaFormPlugin` 의 모든 필드는 선택적(optional)
 - `ValidatorPlugin` 은 `compile(jsonSchema)` 필수, `bind(instance)` 는 선택 — 소비자가 등록 전 커스텀 인스턴스를 주입하는 훅(코어는 호출하지 않음)
-- 렌더 컴포넌트는 `ComponentType<FormTypeRendererProps>` 타입 준수
-- 플러그인 머지 규칙: 렌더 컴포넌트는 마지막 우선, `formTypeInputDefinitions` 는 선입 우선(prepend)
+- 렌더 컴포넌트는 `ComponentType<FieldRendererProps>` 타입 준수
+- 플러그인 머지 규칙: 렌더 컴포넌트는 마지막 우선, `fieldInputDefinitions` 는 선입 우선(prepend)
 
 ## Boundaries
 

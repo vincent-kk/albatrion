@@ -1,13 +1,13 @@
-# FormTypeInput Selection
+# FieldInput Selection
 
-How the engine decides which input component renders a field, and the contract a custom input must honor. The props interface (`FormTypeInputProps`) is fully typed — enumerate it from `dist/*.d.ts`; the resolution priority list lives in SKILL.md.
+How the engine decides which input component renders a field, and the contract a custom input must honor. The props interface (`FieldInputProps`) is fully typed — enumerate it from `dist/*.d.ts`; the resolution priority list lives in SKILL.md.
 
 ## Definition Matching (`test`)
 
-A `FormTypeInputDefinition` matches via `test`: either a partial-match object or a predicate over `FormTypeInputHint`:
+A `FieldInputDefinition` matches via `test`: either a partial-match object or a predicate over `Hint`:
 
 ```typescript
-const definitions: FormTypeInputDefinition[] = [
+const definitions: FieldInputDefinition[] = [
   { test: { type: 'string', format: 'password' }, Component: PasswordInput },
   {
     test: (hint) => hint.type === 'string' && !!hint.jsonSchema.enum,
@@ -16,12 +16,12 @@ const definitions: FormTypeInputDefinition[] = [
 ];
 ```
 
-`FormTypeInputHint` carries `type`, `format`, `path`, `nullable`, `jsonSchema`, and `formType` — a **custom discriminator you place under the schema node's `presentation`** (`{ type: 'string', presentation: { formType: 'markdown' } }`) precisely to target it from `test`. Without knowing `formType` exists, schema-targeted custom inputs devolve into brittle path matching.
+`Hint` carries `type`, `format`, `path`, `nullable`, `jsonSchema`, and `inputType` — a **custom discriminator you place under the schema node's `presentation`** (`{ type: 'string', presentation: { inputType: 'markdown' } }`) precisely to target it from `test`. Without knowing `inputType` exists, schema-targeted custom inputs devolve into brittle path matching.
 
-## Path Matching (`formTypeInputMap`)
+## Path Matching (`fieldInputMap`)
 
 ```typescript
-formTypeInputMap: {
+fieldInputMap: {
   '/items/*/name': ItemNameInput,
   '/metadata/*': MetadataValueInput,
 }
@@ -37,7 +37,7 @@ formTypeInputMap: {
 - A custom input on a non-terminal object/array **must render `ChildNodeComponents`** — otherwise its children silently vanish:
 
 ```tsx
-const ObjectLayout: FC<FormTypeInputProps<Record<string, any>>> = ({
+const ObjectLayout: FC<FieldInputProps<Record<string, any>>> = ({
   ChildNodeComponents,
 }) => (
   <div className="grid">

@@ -1,15 +1,15 @@
-# schema-form/src/formTypeDefinitions
+# schema-form/src/fieldInputs
 
 ## Purpose
 
-JSON Schema 타입과 속성에 따라 렌더링할 React 입력 컴포넌트를 매핑하는 기본 FormTypeInput 정의 모음. 플러그인으로 확장 가능한 우선순위 기반 매칭 시스템의 폴백 기본값이다.
+JSON Schema 타입과 속성에 따라 렌더링할 React 입력 컴포넌트를 매핑하는 기본 FieldInput 정의 모음. 플러그인으로 확장 가능한 우선순위 기반 매칭 시스템의 폴백 기본값이다.
 
 ## Conventions
 
 - 배열 순서가 매칭 우선순위: 앞쪽이 높은 우선순위 (DateFormat > Checkbox > Radio > Enum > Virtual > Array > Object > Boolean > String > Number)
-- 각 파일은 `Definition` suffix로 named export (`FormTypeInputStringDefinition` 등)
+- 각 파일은 `Definition` suffix로 named export (`FieldInputStringDefinition` 등)
 - `test` 조건: 객체 형태 `{ type, format, nullable }` 또는 함수 `(hint) => boolean`
-- 컴포넌트는 `FormTypeInputProps` 인터페이스 구현
+- 컴포넌트는 `FieldInputProps` 인터페이스 구현
 
 ## Boundaries
 
@@ -27,10 +27,10 @@ JSON Schema 타입과 속성에 따라 렌더링할 React 입력 컴포넌트를
 
 ### Never do
 
-- `formTypeDefinitions` 배열에 UI 라이브러리 의존 컴포넌트 포함 (플러그인으로 분리해야 함)
+- `builtinFieldInputDefinitions` 배열에 UI 라이브러리 의존 컴포넌트 포함 (플러그인으로 분리해야 함)
 - `test` 함수에서 사이드 이펙트 발생
 
 ## Dependencies
 
-- `@/schema-form/types` — `FormTypeInputDefinition`, `FormTypeInputProps`
+- `@/schema-form/types` — `FieldInputDefinition`, `FieldInputProps`
 - React (JSX)

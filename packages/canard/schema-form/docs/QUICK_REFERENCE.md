@@ -11,7 +11,7 @@
 3. [Controls](#controls)
 4. [조건부 스키마](#조건부-스키마)
 5. [FormHandle API](#formhandle-api)
-6. [FormTypeInput](#formtypeinput)
+6. [FieldInput](#fieldinput)
 7. [ValidationMode](#validationmode)
 8. [Virtualization](#virtualization-대형-폼)
 9. [노드 타입](#노드-타입)
@@ -55,11 +55,11 @@ registerPlugin(ajvValidatorPlugin);
 
 ### 특수 문법
 
-| 문법     | 의미              | 사용 가능 컨텍스트   |
-| -------- | ----------------- | -------------------- |
-| `*`      | 와일드카드        | `formTypeInputMap`만 |
-| `@.prop` | context 속성 참조 | `controls` 표현식만  |
-| `.`      | 현재 노드         | `controls` 표현식    |
+| 문법     | 의미              | 사용 가능 컨텍스트  |
+| -------- | ----------------- | ------------------- |
+| `*`      | 와일드카드        | `fieldInputMap`만   |
+| `@.prop` | context 속성 참조 | `controls` 표현식만 |
+| `.`      | 현재 노드         | `controls` 표현식   |
 
 ### 이스케이프 규칙
 
@@ -71,8 +71,8 @@ registerPlugin(ajvValidatorPlugin);
 ### 예시
 
 ```typescript
-// formTypeInputMap에서 와일드카드 사용
-formTypeInputMap: {
+// fieldInputMap에서 와일드카드 사용
+fieldInputMap: {
   '/users/*/name': UserNameInput,     // /users/0/name, /users/1/name 매칭
   '/config/*/value': ConfigValueInput, // /config/theme/value 매칭
 }
@@ -261,33 +261,33 @@ nameNode?.setValue('Charlie');
 
 ---
 
-## FormTypeInput
+## FieldInput
 
 ### 우선순위 (높은 순)
 
-1. JSON Schema의 `presentation.FormTypeInput` 속성
-2. `formTypeInputMap` (경로 기반)
-3. Form의 `formTypeInputDefinitions`
-4. FormProvider의 `formTypeInputDefinitions`
-5. 플러그인의 `formTypeInputDefinitions`
+1. JSON Schema의 `presentation.FieldInput` 속성
+2. `fieldInputMap` (경로 기반)
+3. Form의 `fieldInputDefinitions`
+4. FormProvider의 `fieldInputDefinitions`
+5. 플러그인의 `fieldInputDefinitions`
 
 ### 정의 방법
 
 ```typescript
 // 1. 스키마에 직접 지정
-{ type: 'string', presentation: { FormTypeInput: CustomInput } }
+{ type: 'string', presentation: { FieldInput: CustomInput } }
 
 // 2. 경로 기반 매핑
-<Form formTypeInputMap={{ '/email': EmailInput }} />
+<Form fieldInputMap={{ '/email': EmailInput }} />
 
 // 3. 정의 배열
-const definitions: FormTypeInputDefinition[] = [
+const definitions: FieldInputDefinition[] = [
   { test: { type: 'string', format: 'email' }, Component: EmailInput },
   { test: (hint) => hint.type === 'number', Component: NumberInput },
 ];
 ```
 
-### FormTypeInputProps 주요 속성
+### FieldInputProps 주요 속성
 
 | 속성                  | 타입          | 설명            |
 | --------------------- | ------------- | --------------- |

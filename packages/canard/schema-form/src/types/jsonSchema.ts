@@ -144,7 +144,7 @@ export type SchemaPresentation = {
     /** Additional custom props */
     [alt: string]: any;
   };
-  /** Form type identifier for component selection */
+  /** Input type identifier for component selection */
   inputType?: string;
   /** Custom error messages per validation rule */
   errorMessages?: {

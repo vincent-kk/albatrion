@@ -10,8 +10,8 @@ React 컴포넌트·정의·File 객체는 소비자가 만들고, 이 부류는
 ## API Contracts
 
 `inputComponentsFeatureScenarios`는 `index.ts`를 통해 이 부류의 순서 있는 장면 목록을 내보낸다.
-`LabeledDefinition`은 엔진 없는 test 부분집합(`formType`, `path`)과 라벨이며, 소비자의 컴포넌트는 `data-winner`에 그 라벨을 그린다. `InputWinner`는 라벨, 내장 입력 `default`, 입력 없음 `none` 가운데 하나다.
-`inputResolutionPluginDefinition`은 소비자가 한 번 등록하는 플러그인 정의다. 등록은 전역이고 누적되므로 test는 이 부류의 probe formType만 맞춘다.
+`LabeledDefinition`은 엔진 없는 test 부분집합(`inputType`, `path`)과 라벨이며, 소비자의 컴포넌트는 `data-winner`에 그 라벨을 그린다. `InputWinner`는 라벨, 내장 입력 `default`, 입력 없음 `none` 가운데 하나다.
+`inputResolutionPluginDefinition`은 소비자가 한 번 등록하는 플러그인 정의다. 등록은 전역이고 누적되므로 test는 이 부류의 probe inputType만 맞춘다.
 `trimStages`, `fileAttachStages`, `childComponentStages`, `mapEntryStages`는 소비자 상호작용의 순서와 그 뒤의 값·첨부·자식 표시를 적는다.
 
 ## Acceptance Criteria

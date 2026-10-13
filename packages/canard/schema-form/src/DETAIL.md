@@ -46,7 +46,7 @@
 
 ### 값 채널
 
-읽기 전용 `type` 튜플의 리터럴 원소는 `InferValueType` 정규화 과정에서 보존합니다. 그 결과를 사용하는 `FormTypeInputProps`의 `onChange`는 선언한 종류의 값과 undefined·함수 갱신 표면을 허용합니다.
+읽기 전용 `type` 튜플의 리터럴 원소는 `InferValueType` 정규화 과정에서 보존합니다. 그 결과를 사용하는 `FieldInputProps`의 `onChange`는 선언한 종류의 값과 undefined·함수 갱신 표면을 허용합니다.
 
 NODE-059의 형 없는 인라인 객체·배열 oneOf·anyOf는 분기 값 형의 합으로, null 분기가 있으면 null까지 포함해 추론합니다. `$ref`, 게이트 분기, 두 키워드의 동시 사용, 본체 `allOf`는 넓은 값 형을 유지합니다. 분기 없는 `const`·`enum` 칸은 리터럴 또는 enum 원소의 합을 보존합니다. 형 추론은 작성 스키마를 바꾸지 않습니다.
 
@@ -84,7 +84,7 @@ NODE-059의 형 없는 인라인 객체·배열 oneOf·anyOf는 분기 값 형�
 
 ### union-input-types — 읽기 전용 종류 튜플은 값 합집합을 보존한다
 
-- 실제 공개 `InferValueType`과 `FormTypeInputProps`를 사용한 시험에서 선언한 종류의 값은 허용하고 목록 밖 값은 타입 오류로 거부합니다.
+- 실제 공개 `InferValueType`과 `FieldInputProps`를 사용한 시험에서 선언한 종류의 값은 허용하고 목록 밖 값은 타입 오류로 거부합니다.
 - `InferJSONSchema`는 서로 다른 비-null 종류의 값 합집합을 하나의 type 튜플로 추론하며, 이에 대응하는 입력 노드는 `UnionNode`입니다(LANDING-190). 같은 종류의 리터럴 합집합과 nullable 단일 종류는 기존 종류 노드를 유지합니다.
 - 정규화는 튜플 원소와 원래 type 프로퍼티의 필수·선택 여부를 보존합니다.
 
