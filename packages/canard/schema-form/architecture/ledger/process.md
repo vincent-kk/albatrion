@@ -854,6 +854,7 @@
 - 보충:
   > 다음 세션 5: "18라운드가 닫힌 뒤 codex와 antigravity로 교차검증한다(`reviews/round-18-agenda.md` §10)." (`HANDOFF.md:154`)
   > 소유자(217라운드, codex·agy 정책 재활성화, codex의 개발 작업): "좋아. 그리고 지금부터 다음 작업은 codex와 agy를 사용하는 멀티에이전트 정책을 다시 활성화한다.\n이전 정책 기억하나?" / "codex가 원래 코드작성 작업까지 하지 않았나? 개발작업도 codex가 했으면 해. claude는 검증 작업을 주로 하고. 물론 개발 퀄리티가 떨어지면 안되겠지" (`reviews/round-217-owner-answers.md:7`)
+  > 편집자 결정(218C-01): "【추론】 소유자의 지시는 "개발은 codex"와 "세션이 멈춰 있지 않기"를 함께 담고 있고, 도구 장애는 품질 규칙이 아니라 환경 문제이므로 대체 규칙이 맞다. 설정·CLI는 Claude 세션이 손댈 수 없다." (`reviews/round-218-closing.md:9`)
 - 상태: 현행
 - 출처: `reviews/round-18-agenda.md:116-124`(정본), `HANDOFF.md:154`
 - 닫은 사람: 소유자 답(`HANDOFF.md:148` 소유자 지시 "교차검증까지 모두 끝내서 설계완료를 확정하면"), 편집자 결정(17라운드, `reviews/round-18-agenda.md:114-124`)

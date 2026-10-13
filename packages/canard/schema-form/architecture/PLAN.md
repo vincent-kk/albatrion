@@ -82,4 +82,4 @@
 
 | 날짜 | 무엇 | 어디 |
 | --- | --- | --- |
-| 2026-10-13 | 217라운드(소유자): codex·agy 멀티에이전트 정책 재활성화 — 개발은 codex, Claude 세션은 검증 주로, 품질 게이트 그대로. 보충 2줄 | `reviews/round-217-owner-answers.md` |
+| 2026-10-13 | 218라운드(닫기): codex 위임이 code-mode host 장애로 막혀 대체 규칙 적용(대기열 21); ④ 위험 4 설계 변경 승인. 보충 3줄 | `reviews/round-218-closing.md` |
