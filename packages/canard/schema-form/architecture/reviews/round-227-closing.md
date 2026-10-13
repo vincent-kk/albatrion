@@ -17,3 +17,11 @@ CDP 전용 넷(EVENT-065 IME, REACT-027 badInput, CX04, CX11): fairy07의 임시
   - 【추론】 소유자가 221라운드에 요구한 것은 기계적 동작의 검증이고, 실제 창에서 클릭·입력이 모두 통과했으며 CDP가 필요한 넷은 실제 Chromium 실행으로 덮였으므로 요구가 충족됐다. 열린 질문 스토리의 실패는 스토리 자체가 선언한 결과다.
 - 근거: fairy07의 최종 보고와 기록 파일(원장 관리자 직접 확인); fixy07의 storybook-after.json; 221라운드 소유자 답; 226C-01.
 - 다음: fixy07 ⑥ → 원장 관리자 검증·머지.
+
+## 덧붙임 (2026-10-13, ⑥ 완료와 원장 관리자의 #355 직접 검증; 병합은 소유자 실행 대기)
+
+fixy07 ⑥: feat/schema-form-switch의 원격 tip de7f56499가 이미 5ca91762f의 조상이라 rebase·push 불필요(커밋 24개); 게이트는 head 5ca91762f에서 전체 시험 파일 646 통과·1 건너뜀, 시험 4116 통과·0 실패·1 todo, storybook 프로젝트 240/240, typecheck 0, lint 0, stories eslint 0, G16 CONSUMER_BUNDLE_OK; #355 본문 86줄 갱신(gh pr edit --body-file 단독 호출; 세션 ID·공동 저자 0), 본문 파일 /tmp/claude-501/pr-355-body.md.
+
+원장 관리자 직접 검증(fixy07 워크트리 W, 깨끗한 트리, head 5ca91762f): (1) 원격 07b-1 = 5ca91762f, switch = de7f56499, 조상 관계 참, 커밋 24개, 커밋 메시지에 세션 ID·공동 저자·claude.ai 0건; 변경 469 파일 +17,468/−1,286, 모두 canard 패키지 아홉(schema-form 236, scenarios 124, ajv6·7·8 18·19·24, antd5·6 18·18, antd-mobile·mui 6·6) 안; (2) #355 메타: OPEN, draft 아님, base feat/schema-form-switch, head 5ca91762f, MERGEABLE, 본문 86줄에 금지 문자열 0; (3) 시험(unit·render·react18·production 네 프로젝트, storybook 제외 — 샌드박스가 Chromium을 띄우지 못함): 파일 547 통과, 시험 3876 통과·0 실패·1 todo(3876 + storybook 240 = 4116, fixy07 수치와 일치; storybook은 fixy07의 storybook-after.json으로 확인); (4) typecheck 0, lint 0; (5) G16: 16:17 빌드 dist/index.mjs로 만든 소비자 번들에서 production의 'Terminal inputs have no child' 0·'differs from schema' 0, development 1 — 통과. 플러그인 패키지는 #358·#359·#360 검증 뒤 변경 없음.
+
+병합: `gh pr merge 355 --squash --subject '…' --body-file /tmp/claude-501/pr355-squash.md`가 자동 모드 분류기에서 "리뷰 없는 병합"으로 거부됨(세 번 시도, 명령 모양은 bare). 우회하지 않고 소유자에게 병합 실행을 요청한다. squash 본문 파일 /tmp/claude-501/pr355-squash.md. 병합 뒤 할 일: 원격 feat/schema-form-07b-1 삭제, fixy07 워크트리 정리 지시, #354 초안만 남김.
