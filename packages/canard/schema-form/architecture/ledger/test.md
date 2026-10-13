@@ -648,6 +648,7 @@
   > 소유자(225라운드, 방향 확인 실행): "지금 돌려. 보류 요청은 어제 한거고 이제 상황이 달라졌으니까" (`reviews/round-225-owner-answers.md:7`)
   > 편집자 결정(226C-01): "【추론】 방향 확인은 "회귀 방향이 없다"를 보는 문턱이고, 같은 부호 행이 모두 후보가 빠른 쪽이면 문턱을 넘은 것이다. 순회를 ⑤ head 위에서 하는 것이 ⑥ 뒤 재순회를 피하는 길이다." (`reviews/round-226-closing.md:11`)
   > 편집자 결정(229C-01): "【추론】 220라운드가 닫은 범위(진행 중 셋만 마무리)는 이 병합으로 다 채워졌고, 그 뒤의 일은 모두 소유자 결정이 먼저다." (`reviews/round-229-closing.md:9`)
+  > 소유자(230라운드, 대기열 25·27 시험 타이밍): "변경 허용" (`reviews/round-230-owner-answers.md:13`)
 - 상태: 현행
 - 출처: `09-landing-and-test-strategy.md:223`(정본), `adr/0009-performance-budget-and-benchmarks.md:9,92`, `08-design-a-to-z.md:609`, `reviews/round-16-owner-answers.md:12`, `reviews/round-16-owner-review.md:57`, `reviews/round-18-agenda.md:68`
 - 닫은 사람: 소유자 답(`reviews/round-16-owner-answers.md:12` 답 6), 편집자 결정(16라운드 도출, '통제 가능'의 뜻, `09-landing-and-test-strategy.md:223`)

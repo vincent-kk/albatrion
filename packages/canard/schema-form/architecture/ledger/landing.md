@@ -2723,7 +2723,8 @@
 
 - 결정:
   > 이주(LANDING-181): `Hint.type`·`FormTypeInputProps.type`은 오늘 `node.schemaType`이고(`src/components/SchemaNode/SchemaNodeInput/hooks/useFormTypeInput.ts:70`, `src/components/SchemaNode/SchemaNodeInput/SchemaNodeInput.tsx:124`), 새 설계에서는 `node.type`이며 정수 노드는 `'integer'`에서 `'number'`로 바뀌고 새 칸 `schemaType`이 생긴다(`reviews/round-18-owner-answers.md:36`).
-- 보충: 없음
+- 보충:
+  > 소유자(230라운드, 대기열 23 type 좁힘): "좁힌 채 유지. 단, 타입추론을 방해하거나 타입단언을 강제해야 한다면 고려 필요." (`reviews/round-230-owner-answers.md:12`)
 - 상태: 현행
 - 출처: `reviews/round-18-closing.md:2647`(정본)
 - 닫은 사람: 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-93)
@@ -3057,6 +3058,9 @@
   > 편집자 결정(226C-01): "【추론】 방향 확인은 "회귀 방향이 없다"를 보는 문턱이고, 같은 부호 행이 모두 후보가 빠른 쪽이면 문턱을 넘은 것이다. 순회를 ⑤ head 위에서 하는 것이 ⑥ 뒤 재순회를 피하는 길이다." (`reviews/round-226-closing.md:11`)
   > 소유자(228라운드, #355 병합 허가): "내가 명시적으로 허가한다. 병합을 해도 된다" (`reviews/round-228-owner-answers.md:7`)
   > 편집자 결정(229C-01): "【추론】 220라운드가 닫은 범위(진행 중 셋만 마무리)는 이 병합으로 다 채워졌고, 그 뒤의 일은 모두 소유자 결정이 먼저다." (`reviews/round-229-closing.md:9`)
+  > 소유자(230라운드, 대기열 10 CLAUDE.md): "업데이트 승인" (`reviews/round-230-owner-answers.md:7`)
+  > 소유자(230라운드, 대기열 17 문서 사이트): "승인" (`reviews/round-230-owner-answers.md:8`)
+  > 편집자 결정(231C-01): "【추론】 승인된 다섯 변경은 모두 패키지 안의 문서·스토리·플러그인 형·시험이라 한 PR로 묶어도 검증 비용이 작고, 문서 사이트는 패키지 밖이라 따로 둔다." (`reviews/round-231-closing.md:9`)
 - 상태: 현행
 - 출처: `reviews/round-18-owner-answers.md:44`(정본, 반영 칸), `reviews/round-18-owner-answers.md:45`
 - 닫은 사람: 소유자 답(`reviews/round-18-owner-answers.md:44` 개발계획 P3·P4), 소유자 답(`reviews/round-18-owner-answers.md:45` 개발계획 1-가)
@@ -3142,7 +3146,8 @@
 
 - 결정:
   > 【추론】 이주(LANDING-210): 공개 표면의 배열(`FormProps.errors`와 `onValidate`의 인자, `FormHandle.getErrors()`·`validate()`·`findNodes()`의 반환, `useChildNodeErrors`의 `errorMatrix` 안 배열)은 오늘 변경 가능한 배열 형이고, 새 설계에서는 `readonly` 배열이다 — 돌려준 배열은 코어가 같은 값을 같은 참조로 드는 것이라 소비자가 제자리에서 고치면 안 되며, 받는 배열은 `readonly`가 더 넓은 형이라 오늘의 호출이 그대로 컴파일된다; 옛 배열을 제자리에서 고치거나 변경 가능한 형에 대입하던 소비자는 형 오류를 보며 복사(`[...arr]`)로 고친다.
-- 보충: 없음
+- 보충:
+  > 소유자(230라운드, 대기열 22 onValidate 두 번): "그대로 둬. 아마 그거 프로덕션 리엑트에서는 1번만 나가지않아? 그랬던거같은데" (`reviews/round-230-owner-answers.md:11`)
 - 상태: 현행
 - 출처: `reviews/round-80-closing.md:17`(정본)
 - 닫은 사람: 편집자 결정(80라운드, `reviews/round-80-closing.md` 80C-02)
