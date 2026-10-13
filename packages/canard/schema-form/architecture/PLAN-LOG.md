@@ -227,6 +227,7 @@
 | 2026-10-13 | 242라운드(소유자): 이름 치환을 CLAUDE.md 여섯과 docs 포함 모든 영역에서 허용. 보충 1줄 | `reviews/round-242-owner-answers.md` |
 | 2026-10-13 | 243라운드(소유자): 대기열 31 무방(열린 형); 32는 설명 요구. 보충 2줄 | `reviews/round-243-owner-answers.md` |
 | 244 | 소유자 답: 대기열 33(production-test implicit any 12건 고침)·34(최상위 FieldInput을 presentation으로) 승인, 07b-2 뒤 한 작업 | 2026-10-13 |
+| 245 | 닫기: ②-3 9bbabf211 확인; ⑨ 통지 규칙 (가) — onValidate는 보고 목록이 바뀔 때만(245C-01) | 2026-10-13 |
 
 ## 2. 라운드별 요지
 

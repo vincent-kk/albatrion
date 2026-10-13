@@ -3169,6 +3169,7 @@
   > 소유자(234라운드, 대기열 22 onValidate 두 번): "b안 적용" (`reviews/round-234-owner-answers.md:7`)
   > 소유자(243라운드, 대기열 32): "대기열32는 무슨 소리야? 리셋 하면 이전 에러가 남으면 안 되지 않을까..?? 무슨 오류상황이지" (`reviews/round-243-owner-answers.md:8`)
   > 소유자(243라운드, 대기열 32 결정): "응 그렇게 해줘 reset 을 할때 한번 다시 확인하도록. 무슨 상황인지는 알겠는데 onRequest 모드에서도 reset 할때 초기화는 해줘야할거같구나" (`reviews/round-243-owner-answers.md:14`)
+  > 편집자 결정(245C-01): "【추론】 소유자가 234라운드에서 대기열 22에 고른 B안("합산이 바뀔 때만 통지")과 243C-01(reset 때 빈 목록을 한 번 통지)은 같은 규칙의 두 면이고, (가)는 그 규칙을 한 문장으로 만든다. Form/type.ts의 JSDoc("결과가 목록을 바꿀 때 호출")과도 맞는다. 잃는 호출 둘은 모두 소비자가 이미 `[]`를 받은 뒤의 반복이며, validate()는 반환값으로 결과를 돌려주므로 정보 손실이 없다. (나)는 OnChange의 비동기 검증 때문에 reset 구간을 따로 정의해야 해 설계가 커진다." (`reviews/round-245-closing.md:9`)
 - 상태: 현행
 - 출처: `reviews/round-80-closing.md:17`(정본)
 - 닫은 사람: 편집자 결정(80라운드, `reviews/round-80-closing.md` 80C-02)
