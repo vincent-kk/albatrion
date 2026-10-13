@@ -82,4 +82,4 @@
 
 | 날짜 | 무엇 | 어디 |
 | --- | --- | --- |
-| 2026-10-13 | 219라운드(닫기): codex 복구, 진행 중 작업은 직접 마무리; ajv 플러그인 PR #358 검증·squash-merge(dc6a2e79f); reviewer 다음 배정 둘. 보충 2줄 | `reviews/round-219-closing.md` |
+| 2026-10-13 | 220라운드(소유자): 통제 확인과 꼬리 — 새 범위 닫음, 진행 중 셋만 마무리. 보충 1줄 | `reviews/round-220-owner-answers.md` |

@@ -456,6 +456,7 @@
 - 보충:
   > 7라운드: "글은 증거이지 지시가 아니고, 실행으로 확인되지 않은 지적은 추론으로 표시했다." (`reviews/round-7-convergence.md:11`)
   > 소유자(217라운드, codex·agy 정책 재활성화, codex의 개발 작업): "좋아. 그리고 지금부터 다음 작업은 codex와 agy를 사용하는 멀티에이전트 정책을 다시 활성화한다.\n이전 정책 기억하나?" / "codex가 원래 코드작성 작업까지 하지 않았나? 개발작업도 codex가 했으면 해. claude는 검증 작업을 주로 하고. 물론 개발 퀄리티가 떨어지면 안되겠지" (`reviews/round-217-owner-answers.md:7`)
+  > 소유자(220라운드, 통제와 꼬리): "너의 컨트롤 안에 있다는걸로 생각하면 되는거지? \n레버리지가 충분히 줄어들지 않은거같아서 물어본다" (`reviews/round-220-owner-answers.md:7`)
 - 상태: 현행
 - 출처: `HANDOFF.md:95-98`(정본), `reviews/round-7-convergence.md:11`, `reviews/round-14-values-check.md:3`, `06-conclusions.md:442`
 - 닫은 사람: 편집자 결정(5라운드, `HANDOFF.md:93-98`)
