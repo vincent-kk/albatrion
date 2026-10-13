@@ -5,13 +5,13 @@ import type {
   ScenarioAdapter,
 } from '@aileron/schema-form-scenarios';
 
-import { SetValueOption, fieldNodeFactory } from '../../../FieldNode';
-import type { FieldNode as RuntimeFieldNode } from '../../../FieldNode/FieldNode';
-import { blueprint } from '../../../blueprint';
-import type { BlueprintSchema } from '../../../blueprint';
-import { loadFieldNodeAtMount } from '../../../settle';
-import { PathKeyedMap } from '../../../utils/pathIndex/PathKeyedMap';
-import { PathKeyedSet } from '../../../utils/pathIndex/PathKeyedSet';
+import { blueprint } from '../../../engine/blueprint';
+import type { BlueprintSchema } from '../../../engine/blueprint';
+import { loadFieldNodeAtMount } from '../../../engine/settle';
+import { PathKeyedMap } from '../../../engine/utils/pathIndex/PathKeyedMap';
+import { PathKeyedSet } from '../../../engine/utils/pathIndex/PathKeyedSet';
+import { SetValueOption, fieldNodeFactory } from '../../../surface';
+import type { FieldNode as RuntimeFieldNode } from '../../../surface/FieldNode';
 import { createTestValidator } from '../../fixtures/createTestValidator';
 import { assertCoreScenarioExpectation } from './assertCoreScenarioExpectation';
 import { executeCoreScenarioStep } from './executeCoreScenarioStep';

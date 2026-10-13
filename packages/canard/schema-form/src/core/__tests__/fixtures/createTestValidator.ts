@@ -1,8 +1,8 @@
 import Ajv from 'ajv';
 import type { AnySchema } from 'ajv';
 
-import type { BlueprintSchema } from '../../blueprint';
-import type { GuardFunction, Validator } from '../../validation';
+import type { BlueprintSchema } from '../../engine/blueprint';
+import type { GuardFunction, Validator } from '../../engine/validation';
 
 /** Behavior selected for the guard error cases shared by core tests. */
 export type TestGuardMode = 'normal' | 'throw' | 'promise';

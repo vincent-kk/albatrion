@@ -1,5 +1,5 @@
-import { PathKeyedMap } from '../src/core/utils/pathIndex/PathKeyedMap';
-import { PathKeyedSet } from '../src/core/utils/pathIndex/PathKeyedSet';
+import { PathKeyedMap } from '../src/core/engine';
+import { PathKeyedSet } from '../src/core/engine';
 /**
  * TEST-032: compare array input, whole writes, and retained heap with the legacy engine.
  * Run under Node/V8 and Bun/JSC without overlapping other benchmarks.
@@ -11,11 +11,11 @@ import { performance } from 'node:perf_hooks';
 
 import { scheduleMacrotaskSafe } from '@winglet/common-utils/scheduler';
 
-import { blueprint } from '../src/core/blueprint';
+import { blueprint } from '../src/core';
 import { createTestValidator } from '../src/core/__tests__/fixtures/createTestValidator';
-import { fieldNodeFactory, SetValueOption } from '../src/core/FieldNode';
-import type { FieldNode as RuntimeFieldNode } from '../src/core/FieldNode/FieldNode';
-import { loadFieldNodeAtMount } from '../src/core/settle';
+import { fieldNodeFactory, SetValueOption } from '../src/core';
+import type { FieldNode as RuntimeFieldNode } from '../src/core/surface/FieldNode';
+import { loadFieldNodeAtMount } from '../src/core/engine';
 import { nodeFromJSONSchema } from '../src/__legacy__/core/nodeFromJSONSchema';
 
 const schema = { type: 'array' as const, items: {

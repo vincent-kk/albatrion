@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { SetValueOption } from '../../FieldNode';
+import { SetValueOption } from '../../surface';
 import { makeFieldNodeTree } from '../makeFieldNodeTree';
 
 const clearTree = () => {

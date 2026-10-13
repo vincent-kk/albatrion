@@ -1,9 +1,9 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
-import { dispatchMount, dispatchSetValue } from '../dispatch';
-import { createDispatchTree } from '../dispatch/__tests__/fixtures/createDispatchTree';
-import { ValidationMode } from '../types/state';
-import type { Validator } from '../validation';
+import { ValidationMode } from '../engine/types/state';
+import type { Validator } from '../engine/validation';
+import { dispatchMount, dispatchSetValue } from '../engine/write';
+import { createDispatchTree } from '../engine/write/__tests__/fixtures/createDispatchTree';
 import { createTestValidator } from './fixtures/createTestValidator';
 
 /** One conditional tree whose guard can be evaluated at mount or later. */

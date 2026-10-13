@@ -1,5 +1,5 @@
-import { PathKeyedMap } from '../src/core/utils/pathIndex/PathKeyedMap';
-import { PathKeyedSet } from '../src/core/utils/pathIndex/PathKeyedSet';
+import { PathKeyedMap } from '../src/core/engine';
+import { PathKeyedSet } from '../src/core/engine';
 /**
  * Standalone U9 measurements. Run once under Node/V8 and once under Bun/JSC.
  * Each timed sample receives the same schema and input in both runtimes.
@@ -7,13 +7,13 @@ import { PathKeyedSet } from '../src/core/utils/pathIndex/PathKeyedSet';
 import { performance } from 'node:perf_hooks';
 import { spawnSync } from 'node:child_process';
 
-import { blueprint } from '../src/core/blueprint';
-import type { BlueprintSchema } from '../src/core/blueprint';
-import { BEHAVIORS } from '../src/core/behaviors';
-import { fieldNodeFactory, SetValueOption } from '../src/core/FieldNode';
-import type { FieldNode as RuntimeFieldNode } from '../src/core/FieldNode/FieldNode';
-import { loadFieldNodeAtMount } from '../src/core/settle';
-import { getGateRegistry } from '../src/core/settle/utils/gates/getGateRegistry';
+import { blueprint } from '../src/core';
+import type { BlueprintSchema } from '../src/core/engine';
+import { BEHAVIORS } from '../src/core/engine';
+import { fieldNodeFactory, SetValueOption } from '../src/core';
+import type { FieldNode as RuntimeFieldNode } from '../src/core/surface/FieldNode';
+import { loadFieldNodeAtMount } from '../src/core/engine';
+import { getGateRegistry } from '../src/core/engine/settle/utils/gates/getGateRegistry';
 import { nodeFromJSONSchema } from '../src/__legacy__/core/nodeFromJSONSchema';
 import type { JSONSchema } from '../src/__legacy__/types';
 

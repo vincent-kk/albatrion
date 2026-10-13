@@ -1,9 +1,9 @@
 import { describe, expect, it, vi } from 'vitest';
 
 import { releaseValidationRoot, retainValidationRoot } from '../../../core';
-import { blueprint } from '../../../core/blueprint';
-import type { Validator } from '../../../core/validation';
-import { readFieldNodeGuard } from '../../../core/validation';
+import { blueprint } from '../../../core';
+import type { Validator } from '../../../core';
+import { readFieldNodeGuard } from '../../../core';
 import type { ValidatorPlugin } from '../../../index';
 
 describe('validator plugin contract', () => {

@@ -7,14 +7,14 @@ import { describe, expect, it } from 'vitest';
 /** Loaded by the unit suite; every non-test source edge is checked on each run. */
 const CORE = fileURLToPath(new URL('..', import.meta.url));
 const FRACTALS = [
-  'blueprint',
-  'record',
-  'behaviors',
-  'navigation',
-  'validation',
-  'settle',
-  'dispatch',
-  'FieldNode',
+  'engine/blueprint',
+  'engine/record',
+  'engine/behaviors',
+  'engine/navigation',
+  'engine/validation',
+  'engine/settle',
+  'engine/write',
+  'surface',
 ];
 const BEHAVIOR_KINDS = [
   'stringBehavior',
@@ -27,20 +27,37 @@ const BEHAVIOR_KINDS = [
   'unionBehavior',
 ];
 const ORDER: Readonly<Record<string, number>> = {
-  blueprint: 0,
-  record: 1,
-  behaviors: 2,
-  navigation: 2,
-  validation: 3,
-  settle: 4,
-  dispatch: 5,
-  FieldNode: 6,
+  'engine/blueprint': 0,
+  'engine/record': 1,
+  'engine/behaviors': 2,
+  'engine/navigation': 2,
+  'engine/validation': 3,
+  'engine/settle': 4,
+  'engine/write': 5,
+  surface: 6,
 };
+
+const BINDING_FORBIDDEN_ENGINE_NAMES = [
+  'readFieldNodeDefaultValue',
+  'readFieldNodeInactiveValues',
+  'readFieldNodeTypeMismatch',
+  'readFieldNodeTypeMismatches',
+  'readFieldNodeWatchValues',
+  'loadFieldNodeAtMount',
+  'resetFieldNodeForm',
+  'find',
+  'findNodes',
+  'PathKeyedMap',
+  'PathKeyedSet',
+  '*',
+];
 
 interface Edge {
   readonly source: string;
   readonly target: string;
   readonly specifier: string;
+  /** Source export names before local aliasing; '*' denotes an unbounded import. */
+  readonly names: readonly string[];
 }
 
 /** Walk the declared source roots, excluding verification files. */
@@ -87,20 +104,35 @@ const importsIn = (source: string): Edge[] => {
       return [];
     const specifier = statement.moduleSpecifier.text;
     const target = resolveImport(source, specifier) ?? specifier;
-    return [{ source, target, specifier }];
+    const bindings = ts.isImportDeclaration(statement)
+      ? statement.importClause?.namedBindings
+      : statement.exportClause;
+    const names =
+      bindings && (ts.isNamedImports(bindings) || ts.isNamedExports(bindings))
+        ? bindings.elements.map(
+            ({ propertyName, name }) => (propertyName ?? name).text,
+          )
+        : ['*'];
+    if (
+      ts.isImportDeclaration(statement) &&
+      statement.importClause?.name &&
+      names[0] !== '*'
+    )
+      names.unshift('*');
+    return [{ source, target, specifier, names }];
   });
 };
 
 /** Classify by the first new-fractal path segment. */
 const owner = (file: string): string | null => {
-  const first = relative(CORE, file).split(sep)[0];
-  return FRACTALS.includes(first) ? first : null;
+  const path = relative(CORE, file);
+  return FRACTALS.find((name) => path.startsWith(name + sep)) ?? null;
 };
 
 /** Kind modules are child fractals; the root behavior table consumes their entries. */
 const behaviorKind = (file: string): string | null => {
-  if (owner(file) !== 'behaviors') return null;
-  const first = relative(join(CORE, 'behaviors'), file).split(sep)[0];
+  if (owner(file) !== 'engine/behaviors') return null;
+  const first = relative(join(CORE, 'engine', 'behaviors'), file).split(sep)[0];
   return BEHAVIOR_KINDS.includes(first) ? first : null;
 };
 
@@ -109,21 +141,21 @@ const edges = files.flatMap(importsIn);
 
 describe('NODE-016 and NODE-045 dependency direction', () => {
   it('REACT-009 binding organ depends only on its owner and lower core entry points', () => {
-    const binding = join(CORE, 'FieldNode', 'utils', 'binding') + sep;
+    const binding = join(CORE, 'surface', 'utils', 'binding') + sep;
     const bindings = files.filter((file) => file.startsWith(binding));
     expect(bindings.length).toBeGreaterThanOrEqual(7);
+    const engineEntry = join(CORE, 'engine', 'index.ts');
     const forbidden = edges.filter(
-      ({ source, target }) =>
+      ({ source, target, names }) =>
         source.startsWith(binding) &&
-        owner(target) !== 'FieldNode' &&
-        !['blueprint', 'behaviors', 'dispatch', 'record', 'validation'].some(
-          (name) => target === join(CORE, name, 'index.ts'),
-        ) &&
-        !target.startsWith(join(CORE, 'types') + sep) &&
-        !target.startsWith(join(CORE, '..', 'types') + sep) &&
-        target !== join(CORE, '..', 'errors', 'index.ts') &&
-        target !== '@winglet/common-utils/filter' &&
-        !target.startsWith('@aileron/'),
+        owner(target) !== 'surface' &&
+        (target === engineEntry
+          ? names.some((name) => BINDING_FORBIDDEN_ENGINE_NAMES.includes(name))
+          : !target.startsWith(join(CORE, 'engine', 'types') + sep) &&
+            !target.startsWith(join(CORE, '..', 'types') + sep) &&
+            target !== join(CORE, '..', 'errors', 'index.ts') &&
+            target !== '@winglet/common-utils/filter' &&
+            !target.startsWith('@aileron/')),
     );
     expect(forbidden.map(({ specifier }) => specifier)).toEqual([]);
   });
@@ -132,10 +164,10 @@ describe('NODE-016 and NODE-045 dependency direction', () => {
     for (const name of FRACTALS)
       expect(files.some((file) => owner(file) === name)).toBe(true);
     for (const nested of [
-      'record/types/runtime.ts',
-      'FieldNode/utils/guards.ts',
-      'settle/utils/write/writeFieldNode.ts',
-      'behaviors/utils/parse/utils/number/parseNumber.ts',
+      'engine/record/types/runtime.ts',
+      'surface/utils/guards.ts',
+      'engine/settle/utils/write/writeFieldNode.ts',
+      'engine/behaviors/utils/parse/utils/number/parseNumber.ts',
     ])
       expect(files).toContain(join(CORE, ...nested.split('/')));
     expect(files).not.toContainEqual(expect.stringContaining('__tests__'));
@@ -152,13 +184,13 @@ describe('NODE-016 and NODE-045 dependency direction', () => {
     expect(
       edges.some(
         ({ source, specifier }) =>
-          source.endsWith(`${sep}FieldNode${sep}index.ts`) &&
+          source.endsWith(`${sep}surface${sep}index.ts`) &&
           specifier === './type',
       ),
     ).toBe(true);
   });
 
-  it('orders imports and type imports from blueprint through FieldNode', () => {
+  it('orders imports and type imports from blueprint through surface', () => {
     const reversed = edges.filter(({ source, target }) => {
       const from = owner(source);
       const to = owner(target);
@@ -171,11 +203,11 @@ describe('NODE-016 and NODE-045 dependency direction', () => {
     ).toEqual([]);
   });
 
-  it('blocks record imports of settle, FieldNode, dispatch, validation, app/plugin, and legacy', () => {
+  it('blocks record imports of settle, surface, write, validation, app/plugin, and legacy', () => {
     const forbidden = edges.filter(
       ({ source, target, specifier }) =>
-        owner(source) === 'record' &&
-        /(?:^|\/)(?:settle|FieldNode|dispatch|validation|__legacy__)(?:\/|$)|(?:^|\/)app\/plugin(?:\/|$)/.test(
+        owner(source) === 'engine/record' &&
+        /(?:^|\/)(?:settle|FieldNode|dispatch|write|surface|validation|__legacy__)(?:\/|$)|(?:^|\/)app\/plugin(?:\/|$)/.test(
           `${target} ${specifier}`,
         ),
     );
@@ -196,11 +228,45 @@ describe('NODE-016 and NODE-045 dependency direction', () => {
       return (
         targetKind !== null &&
         behaviorKind(source) !== targetKind &&
-        target !== join(CORE, 'behaviors', targetKind, 'index.ts')
+        target !== join(CORE, 'engine', 'behaviors', targetKind, 'index.ts')
       );
     });
     expect(
       direct.map(
+        ({ source, specifier }) => `${relative(CORE, source)} -> ${specifier}`,
+      ),
+    ).toEqual([]);
+  });
+
+  it('surface reaches engine only through engine/index.ts', () => {
+    const surfaceRoot = join(CORE, 'surface') + sep;
+    const engineRoot = join(CORE, 'engine') + sep;
+    const direct = edges.filter(
+      ({ source, target }) =>
+        source.startsWith(surfaceRoot) &&
+        target.startsWith(engineRoot) &&
+        target !== join(CORE, 'engine', 'index.ts'),
+    );
+    expect(
+      direct.map(
+        ({ source, specifier }) => `${relative(CORE, source)} -> ${specifier}`,
+      ),
+    ).toEqual([]);
+  });
+
+  it('engine source files never import the engine barrel, core barrel or surface', () => {
+    const engineFiles = sourceFiles(join(CORE, 'engine'));
+    expect(engineFiles).toContain(join(CORE, 'engine', 'index.ts'));
+    const forbidden = engineFiles
+      .flatMap(importsIn)
+      .filter(
+        ({ target }) =>
+          target === join(CORE, 'engine', 'index.ts') ||
+          target === join(CORE, 'index.ts') ||
+          target.startsWith(join(CORE, 'surface') + sep),
+      );
+    expect(
+      forbidden.map(
         ({ source, specifier }) => `${relative(CORE, source)} -> ${specifier}`,
       ),
     ).toEqual([]);
@@ -222,11 +288,19 @@ describe('NODE-016 and NODE-045 dependency direction', () => {
   });
 
   it('keeps derive below settle without importing its orchestration or type', () => {
-    const deriveRoot = join(CORE, 'settle', 'derive') + sep;
-    const settleRoot = join(CORE, 'settle') + sep;
-    const sameValue = join(CORE, 'settle', 'utils', 'compute', 'sameValue.ts');
+    const deriveRoot = join(CORE, 'engine', 'settle', 'derive') + sep;
+    const settleRoot = join(CORE, 'engine', 'settle') + sep;
+    const sameValue = join(
+      CORE,
+      'engine',
+      'settle',
+      'utils',
+      'compute',
+      'sameValue.ts',
+    );
     const resolveDependencyPath = join(
       CORE,
+      'engine',
       'settle',
       'utils',
       'paths',
@@ -239,7 +313,9 @@ describe('NODE-016 and NODE-045 dependency direction', () => {
         !target.startsWith(deriveRoot) &&
         target !== sameValue &&
         target !== resolveDependencyPath &&
-        !target.startsWith(join(CORE, 'settle', 'utils', 'controls') + sep),
+        !target.startsWith(
+          join(CORE, 'engine', 'settle', 'utils', 'controls') + sep,
+        ),
     );
     expect(
       forbidden.map(
@@ -249,12 +325,12 @@ describe('NODE-016 and NODE-045 dependency direction', () => {
   });
 
   it('routes settle organ imports of derive through its index.ts', () => {
-    const deriveRoot = join(CORE, 'settle', 'derive') + sep;
+    const deriveRoot = join(CORE, 'engine', 'settle', 'derive') + sep;
     const direct = edges.filter(
       ({ source, target }) =>
-        source.startsWith(join(CORE, 'settle', 'utils') + sep) &&
+        source.startsWith(join(CORE, 'engine', 'settle', 'utils') + sep) &&
         target.startsWith(deriveRoot) &&
-        target !== join(CORE, 'settle', 'derive', 'index.ts'),
+        target !== join(CORE, 'engine', 'settle', 'derive', 'index.ts'),
     );
     expect(
       direct.map(
@@ -264,11 +340,12 @@ describe('NODE-016 and NODE-045 dependency direction', () => {
   });
 
   it('keeps shared controls interpretation independent of settle orchestration types', () => {
-    const controlsRoot = join(CORE, 'settle', 'utils', 'controls') + sep;
+    const controlsRoot =
+      join(CORE, 'engine', 'settle', 'utils', 'controls') + sep;
     const direct = edges.filter(
       ({ source, target }) =>
         source.startsWith(controlsRoot) &&
-        target === join(CORE, 'settle', 'type.ts'),
+        target === join(CORE, 'engine', 'settle', 'type.ts'),
     );
     expect(
       direct.map(

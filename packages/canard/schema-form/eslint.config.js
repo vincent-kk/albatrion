@@ -72,13 +72,13 @@ export default [
   },
   {
     files: [
-      'src/core/record/**/*.ts',
-      'src/core/behaviors/**/*.ts',
-      'src/core/navigation/**/*.ts',
-      'src/core/settle/**/*.ts',
-      'src/core/dispatch/**',
-      'src/core/validation/**',
-      'src/core/FieldNode/**/*.ts',
+      'src/core/engine/record/**/*.ts',
+      'src/core/engine/behaviors/**/*.ts',
+      'src/core/engine/navigation/**/*.ts',
+      'src/core/engine/settle/**/*.ts',
+      'src/core/engine/write/**',
+      'src/core/engine/validation/**',
+      'src/core/surface/**/*.ts',
     ],
     ignores: ['**/__tests__/**'],
     rules: {
@@ -90,7 +90,7 @@ export default [
     },
   },
   {
-    files: ['src/core/blueprint/**/*.ts', 'src/core/nodeFromJSONSchema.ts'],
+    files: ['src/core/engine/blueprint/**/*.ts', 'src/core/surface/nodeFromJSONSchema.ts'],
     ignores: ['**/__tests__/**'],
     rules: {
       '@typescript-eslint/consistent-type-assertions': [
@@ -100,7 +100,7 @@ export default [
     },
   },
   {
-    files: ['src/core/FieldNode/FieldNode.ts'],
+    files: ['src/core/surface/FieldNode.ts'],
     rules: {
       'no-restricted-syntax': [
         'error',
@@ -173,7 +173,7 @@ export default [
       'src/errors/**/*.{ts,tsx}',
       'src/index.ts',
     ],
-    ignores: ['src/core/FieldNode/FieldNode.ts', '**/__tests__/**'],
+    ignores: ['src/core/surface/FieldNode.ts', '**/__tests__/**'],
     rules: {
       'no-restricted-syntax': [
         'error',

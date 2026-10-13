@@ -1,4 +1,4 @@
-import type { Blueprint } from '../../blueprint';
+import type { Blueprint } from '../../engine/blueprint';
 
 /**
  * Capture finite authored structure while excluding optimization capabilities.

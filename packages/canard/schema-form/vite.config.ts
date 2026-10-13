@@ -40,7 +40,7 @@ export default defineConfig({
         extends: true,
         test: {
           name: 'unit',
-          setupFiles: ['src/core/settle/__tests__/setupDeriveShadowEvaluation.ts'],
+          setupFiles: ['src/core/engine/settle/__tests__/setupDeriveShadowEvaluation.ts'],
           environment: 'node',
           include: ['src/**/*.{spec,test}.ts'],
           exclude: [...renderTests, 'src/__legacy__/**'],
@@ -50,7 +50,7 @@ export default defineConfig({
         extends: true,
         test: {
           name: 'render',
-          setupFiles: ['src/core/settle/__tests__/setupDeriveShadowEvaluation.ts'],
+          setupFiles: ['src/core/engine/settle/__tests__/setupDeriveShadowEvaluation.ts'],
           environment: 'jsdom',
           include: renderTests,
           exclude: ['src/__legacy__/**'],
@@ -77,7 +77,7 @@ export default defineConfig({
         },
         test: {
           name: 'react18',
-          setupFiles: ['src/core/settle/__tests__/setupDeriveShadowEvaluation.ts'],
+          setupFiles: ['src/core/engine/settle/__tests__/setupDeriveShadowEvaluation.ts'],
           environment: 'jsdom',
           include: renderTests,
           exclude: ['src/__legacy__/**'],
@@ -107,7 +107,7 @@ export default defineConfig({
           name: 'production',
           environment: 'jsdom',
           transformMode: { ssr: [/\.ts$/], web: [/\.tsx$/] },
-          include: ['src/core/blueprint/__tests__/*.owned-inline*.test.{ts,tsx}'],
+          include: ['src/core/engine/blueprint/__tests__/*.owned-inline*.test.{ts,tsx}'],
           provide: { reactMajor: '19' },
         },
       },

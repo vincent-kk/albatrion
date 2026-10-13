@@ -6,11 +6,11 @@ import { describe, expect, it } from 'vitest';
 
 import { validationScenarios } from '@aileron/schema-form-scenarios';
 
-import { SetValueOption } from '../../FieldNode';
-import type { FieldNode as RuntimeFieldNode } from '../../FieldNode/FieldNode';
-import type { BlueprintSchema } from '../../blueprint';
-import { loadFieldNodeAtMount } from '../../settle';
-import { ValidationMode } from '../../types/state';
+import type { BlueprintSchema } from '../../engine/blueprint';
+import { loadFieldNodeAtMount } from '../../engine/settle';
+import { ValidationMode } from '../../engine/types/state';
+import { SetValueOption } from '../../surface';
+import type { FieldNode as RuntimeFieldNode } from '../../surface/FieldNode';
 import { makeFieldNodeTree } from '../makeFieldNodeTree';
 
 const uniquePaths = (paths: string[]): string[] =>

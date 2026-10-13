@@ -5,7 +5,7 @@ import {
   BIT_FLAG_03,
   BIT_FLAG_04,
 } from '@/schema-form/app/constants';
-import type { ValidationIssue } from '@/schema-form/core/validation';
+import type { ValidationIssue } from '@/schema-form/core';
 
 export enum ShowError {
   /** Always show error */
@@ -24,10 +24,10 @@ export enum ShowError {
 export type {
   Validator as ValidatorFactory,
   ValidateFunction,
-} from '@/schema-form/core/validation';
+} from '@/schema-form/core';
 
 /** Normalized validation results belong to the engine contract. */
-export type { ValidationIssue } from '@/schema-form/core/validation';
+export type { ValidationIssue } from '@/schema-form/core';
 
 /**
  * Renderer errors extend ValidationIssue with an internally managed array item key.
