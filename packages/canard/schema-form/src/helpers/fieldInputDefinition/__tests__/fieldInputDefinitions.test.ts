@@ -708,7 +708,10 @@ describe('fieldInputTestFnFactory (fieldInputTestObject를 통한 간접 테스�
       const customSelectHint = createTestHint({
         type: 'string',
         inputType: 'custom-select',
-        jsonSchema: { type: 'string', inputType: 'custom-select' },
+        jsonSchema: {
+          type: 'string',
+          presentation: { inputType: 'custom-select' },
+        },
       });
 
       expect(normalized[0].test(customSelectHint)).toBe(true);

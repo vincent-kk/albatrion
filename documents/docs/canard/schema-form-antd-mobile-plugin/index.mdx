@@ -99,11 +99,11 @@ const schema = {
   properties: {
     name:    { type: 'string' },
     count:   { type: 'integer' },
-    active:  { type: 'boolean', inputType: 'switch' },
+    active:  { type: 'boolean', presentation: { inputType: 'switch' } },
     rating:  { type: 'number', format: 'slider', minimum: 0, maximum: 5 },
     tags:    {
       type: 'array',
-      inputType: 'checkbox',
+      presentation: { inputType: 'checkbox' },
       items: { type: 'string', enum: ['js', 'ts', 'react'] },
     },
   },

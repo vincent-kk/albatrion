@@ -348,7 +348,7 @@ interface FieldInputProps<Value, Context, WatchValues, Schema, Node> {
   onChange:           SetStateFnWithOptions<Value | undefined>;
   errors:             JSONSchemaError[];
   errorVisible:       boolean;
-  watchValues:        WatchValues;        // values from computed.watch paths
+  watchValues:        WatchValues;        // values from controls.watch paths
   onFileAttach:       (file: File | File[] | undefined) => void;
   ChildNodeComponents: ChildNodeComponent[];
   placeholder?:       string;

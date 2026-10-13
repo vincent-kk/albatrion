@@ -24,7 +24,7 @@ export const formatCreateDynamicFunctionError = (
   const errorMessage = getErrorMessage(error);
 
   return `
-Failed to create dynamic function for computed property.
+Failed to create dynamic function for a controls expression.
 
   ╭${divider}
   │  Field:       ${fieldName}
@@ -37,7 +37,7 @@ Failed to create dynamic function for computed property.
   ╰${divider}
 
 The expression could not be compiled into a valid JavaScript function.
-This usually indicates a syntax error in the computed property expression.
+This usually indicates a syntax error in the controls expression.
 
 How to fix:
   1. Check the expression syntax for typos or invalid JavaScript
@@ -81,10 +81,11 @@ ${linesSection}
   ╰${divider}
 
 The condition expressions could not be compiled into a valid function.
-This typically occurs when '&if' expressions contain invalid syntax.
+This typically occurs when a branch condition ('controls.active') contains
+invalid syntax.
 
 How to fix:
-  1. Check each '&if' expression for valid JavaScript syntax
+  1. Check each branch condition for valid JavaScript syntax
   2. Ensure JSONPointer paths in conditions are correct
   3. Verify that comparison operators are properly used
   4. Look for missing quotes around string comparisons
@@ -174,7 +175,7 @@ returns all matching indices. This is used for anyOf/allOf conditions
 where multiple schemas can be active simultaneously.
 
 How to fix:
-  1. Check each '&if' expression for valid JavaScript syntax
+  1. Check each branch condition for valid JavaScript syntax
   2. Ensure JSONPointer paths in conditions are correct
   3. Verify that comparison operators are properly used
   4. Look for missing quotes around string comparisons

@@ -6,7 +6,7 @@ import type { JSONSchema } from '@winglet/json-schema';
 import { renderForm } from '../renderForm';
 
 /**
- * GAP-10 — Computed visibility (`computed.visible` / `&active`) proxy null-gating.
+ * GAP-10 — Visibility controls (`controls.visible` / `controls.active`) proxy null-gating.
  *
  * `FieldProxy` renders `null` when `!node.enabled`
  * (`enabled = __scoped__ && active && visible`). A hidden child stays in the
@@ -27,7 +27,7 @@ import { renderForm } from '../renderForm';
 // Schemas (mirrored from stories/29.VisibleUsecase + 11.ComputedProps)
 // ---------------------------------------------------------------------------
 
-/** showOptional (boolean) toggles a `&visible` string whose value is preserved. */
+/** showOptional (boolean) toggles a `controls.visible` string whose value is preserved. */
 const visiblePreserveSchema = {
   type: 'object',
   properties: {
@@ -41,7 +41,7 @@ const visiblePreserveSchema = {
   },
 } satisfies JSONSchema;
 
-/** enableOptional (boolean) toggles an `&active` string whose value is removed. */
+/** enableOptional (boolean) toggles an `controls.active` string whose value is removed. */
 const activeRemoveSchema = {
   type: 'object',
   properties: {
@@ -54,7 +54,7 @@ const activeRemoveSchema = {
   },
 } satisfies JSONSchema;
 
-/** enum discriminator switches which `&visible` date field is shown. */
+/** enum discriminator switches which `controls.visible` date field is shown. */
 const discriminatorSchema = {
   type: 'object',
   properties: {
@@ -70,7 +70,7 @@ const discriminatorSchema = {
   },
 } satisfies JSONSchema;
 
-/** `computed.visible` with an explicit `watch` dependency list. */
+/** `controls.visible` with an explicit `watch` dependency list. */
 const watchVisibleSchema = {
   type: 'object',
   properties: {
@@ -102,7 +102,7 @@ const visibleVsActiveSchema = {
   },
 } satisfies JSONSchema;
 
-describe('GAP-10 computed.visible — value preserved when hidden by sibling', () => {
+describe('GAP-10 controls.visible — value preserved when hidden by sibling', () => {
   it('renders the gated field with its default when the sibling enables it', async () => {
     const form = await renderForm(visiblePreserveSchema);
 
@@ -166,7 +166,7 @@ describe('GAP-10 computed.visible — value preserved when hidden by sibling', (
   });
 });
 
-describe('GAP-10 computed.active — value omitted from parent when deactivated', () => {
+describe('GAP-10 controls.active — value omitted from parent when deactivated', () => {
   it('renders the active field with its default while the sibling enables it', async () => {
     const form = await renderForm(activeRemoveSchema);
 
@@ -231,7 +231,7 @@ describe('GAP-10 enum discriminator switches the visible field', () => {
   });
 });
 
-describe('GAP-10 computed.visible with explicit watch dependency', () => {
+describe('GAP-10 controls.visible with explicit watch dependency', () => {
   it('toggles visibility when the watched sibling changes', async () => {
     const form = await renderForm(watchVisibleSchema);
 

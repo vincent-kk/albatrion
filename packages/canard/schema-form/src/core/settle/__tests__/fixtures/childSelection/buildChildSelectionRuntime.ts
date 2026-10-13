@@ -12,6 +12,7 @@ import type { SettlementContext } from '../../../type';
 import type { ChildSelectionRuntimeNode } from './ChildSelectionRuntimeNode';
 import { normalizeSelectionObservation } from './normalizeSelectionObservation';
 import { renameFieldNodeNames } from './renameFieldNodeNames';
+import { rewordControlsMessages } from './rewordControlsMessages';
 import type { ChildSelectionHistory } from './runChildSelectionHistory';
 
 /** Runtime entry observed by the same authored history in both source revisions. */
@@ -153,14 +154,16 @@ export const buildChildSelectionRuntime = async (
               let contents = overrides[path]
                 ? readFileSync(overrides[path], 'utf8')
                 : revision && !path.includes('/__tests__/')
-                  ? renameFieldNodeNames(
-                      childProcess.execFileSync(
-                        'git',
-                        [
-                          'show',
-                          `${revision}:${pinnedPaths?.get(path) ?? path}`,
-                        ],
-                        { cwd: worktree, encoding: 'utf8', timeout: 10000 },
+                  ? rewordControlsMessages(
+                      renameFieldNodeNames(
+                        childProcess.execFileSync(
+                          'git',
+                          [
+                            'show',
+                            `${revision}:${pinnedPaths?.get(path) ?? path}`,
+                          ],
+                          { cwd: worktree, encoding: 'utf8', timeout: 10000 },
+                        ),
                       ),
                     )
                   : readFileSync(args.path, 'utf8');

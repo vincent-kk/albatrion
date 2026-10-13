@@ -25,7 +25,7 @@ import { renderForm } from '../renderForm';
  *   - A `$ref` (to `$defs` or to a sibling subschema) resolves so the referenced
  *     subschema's fields RENDER (`[data-path]` / `id={path}`) and carry value.
  *   - The Form `context` prop reaches a FieldInput (`props.context`) and drives
- *     `computed.active` / `computed.readOnly` expressions that use `@`.
+ *     `controls.active` / `controls.readOnly` expressions that use `@`.
  *   - `FormProvider.fieldInputDefinitions` are consumed by a nested Form, and
  *     `FormProvider.context` reaches the form (Form-level context overriding it
  *     key-by-key per WorkspaceContextProvider's `{...external, ...form}` merge).
@@ -328,7 +328,7 @@ describe('context passed via Form context prop reaches FieldInput', () => {
     expect(view.contextOf('/greeting')).toEqual({});
   });
 
-  it('hides a context-gated `&active` field when the context disables it', async () => {
+  it('hides a context-gated `controls.active` field when the context disables it', async () => {
     const form = await renderForm(contextActiveSchema, {
       context: { userRole: 'user' },
       defaultValue: { publicField: 'p', adminField: 'secret' },
@@ -343,7 +343,7 @@ describe('context passed via Form context prop reaches FieldInput', () => {
     expect(value?.adminField).toBeUndefined();
   });
 
-  it('shows the context-gated `&active` field when the context enables it', async () => {
+  it('shows the context-gated `controls.active` field when the context enables it', async () => {
     const form = await renderForm(contextActiveSchema, {
       context: { userRole: 'admin' },
       defaultValue: { publicField: 'p', adminField: 'secret' },
@@ -357,7 +357,7 @@ describe('context passed via Form context prop reaches FieldInput', () => {
     expect(form.getValue()?.adminField).toBe('secret');
   });
 
-  it('drives computed.readOnly from context both ways (@.mode)', async () => {
+  it('drives controls.readOnly from context both ways (@.mode)', async () => {
     const viewForm = await renderForm(contextReadOnlySchema, {
       context: { mode: 'view' },
       fieldInputDefinitions: probeDefs,
@@ -413,14 +413,14 @@ describe('FormProvider supplies definitions/context to a nested Form', () => {
     expect(form.node('/number')?.value).toBe(10);
   });
 
-  it('reaches computed expressions through FormProvider.context alone', async () => {
+  it('reaches controls expressions through FormProvider.context alone', async () => {
     const form = await renderWithProvider(
       { context: { userRole: 'admin' } },
       contextActiveSchema,
       { defaultValue: { publicField: 'p', adminField: 'secret' } },
     );
 
-    // DOM: provider context (no Form-level context) enables the &active field.
+    // DOM: provider context (no Form-level context) enables the controls.active field.
     expect(form.exists('/adminField')).toBe(true);
     expect(form.value('/adminField')).toBe('secret');
     // Tree agrees.

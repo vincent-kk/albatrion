@@ -53,7 +53,7 @@ const computedSchema = {
   },
 } satisfies JSONSchema;
 
-/** enum select whose computed.readOnly is driven by a sibling boolean. */
+/** enum select whose controls.readOnly is driven by a sibling boolean. */
 const selectReadOnlySchema = {
   type: 'object',
   properties: {
@@ -71,7 +71,7 @@ const isReadOnly = (el: Element | null): boolean =>
 
 // ---------------------------------------------------------------------------
 
-describe('GAP-10 computed.readOnly driven by a sibling value', () => {
+describe('GAP-10 controls.readOnly driven by a sibling value', () => {
   it('marks the field readOnly when the controlling sibling is falsy (DOM + tree)', async () => {
     const form = await renderForm(computedSchema);
 
@@ -115,7 +115,7 @@ describe('GAP-10 computed.readOnly driven by a sibling value', () => {
   });
 });
 
-describe('GAP-10 computed.disabled driven by a sibling value', () => {
+describe('GAP-10 controls.disabled driven by a sibling value', () => {
   it('disables dependents while their controlling siblings are unset (DOM + tree)', async () => {
     const form = await renderForm(computedSchema);
 
@@ -178,7 +178,7 @@ describe('GAP-10 form-level readOnly prop overrides computed state', () => {
 
   it('maps form-level readOnly onto the enum select disabled attribute while node flags stay false', async () => {
     const form = await renderForm(computedSchema, { readOnly: true });
-    // age >= 10 so nationality computed.disabled is false.
+    // age >= 10 so nationality controls.disabled is false.
     await form.setValue({ prepared: true, name: 'Vincent', age: 20 });
 
     // select has no readonly attr; readOnly maps to disabled (disabled||readOnly).
@@ -193,7 +193,7 @@ describe('GAP-10 form-level disabled prop overrides computed state', () => {
   it('forces inputs disabled even when their computed disabled is false', async () => {
     const form = await renderForm(computedSchema, { disabled: true });
 
-    // prepared has no computed.disabled, yet the DOM input is disabled.
+    // prepared has no controls.disabled, yet the DOM input is disabled.
     expect(form.field('/prepared')).toBeDisabled();
     expect(form.node('/prepared')?.disabled).toBe(false);
     // name likewise: computed flag false, DOM disabled via rootDisabled.
@@ -203,7 +203,7 @@ describe('GAP-10 form-level disabled prop overrides computed state', () => {
   });
 });
 
-describe('GAP-10 enum select maps computed.readOnly to the disabled attribute', () => {
+describe('GAP-10 enum select maps controls.readOnly to the disabled attribute', () => {
   it('disables the select when readOnly is computed true and re-enables it on flip', async () => {
     const form = await renderForm(selectReadOnlySchema);
 

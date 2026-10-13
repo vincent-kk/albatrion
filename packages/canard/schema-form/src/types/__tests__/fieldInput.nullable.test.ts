@@ -598,7 +598,7 @@ describe('FieldInput - Nullable Type Matching', () => {
         inputType: 'custom-input',
         jsonSchema: {
           type: ['string', 'null'],
-          inputType: 'custom-input',
+          presentation: { inputType: 'custom-input' },
         },
       };
 

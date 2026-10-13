@@ -4,7 +4,7 @@ import type { FormScenario } from '../types';
 export const deriveRenderScenarios: readonly FormScenario[] = [
   {
     name: 'derive.active-dependency-preserves-derived-edit',
-    description: 'computed.derived: LANDING-163 tracks each expression separately; LANDING-014 only changed derived dependencies trigger writes.',
+    description: 'controls.derived: LANDING-163 tracks each expression separately; LANDING-014 only changed derived dependencies trigger writes.',
     schema: { type: 'object', properties: {
       source: { type: 'string' }, gate: { type: 'number' },
       target: { type: 'string', controls: { active: '../gate >= 0', derived: '../source' } },
@@ -17,7 +17,7 @@ export const deriveRenderScenarios: readonly FormScenario[] = [
   },
   {
     name: 'derive.derived-chain-manual-edits',
-    description: 'computed.derived: LANDING-014 derived is edge-triggered; LANDING-022 settles at synchronous entry.',
+    description: 'controls.derived: LANDING-014 derived is edge-triggered; LANDING-022 settles at synchronous entry.',
     schema: { type: 'object', properties: {
       source: { type: 'number' },
       twice: { type: 'number', controls: { derived: '../source * 2' } },
