@@ -11,3 +11,7 @@
 ## 220C-01 (원장 관리자의 반영)
 
 원인: 198라운드의 "발견되는 문제는 바로 고친다"를 따라 문서 정합·형 정리처럼 코드를 깊이 읽는 작업마다 이주 미완 부분이 한두 개씩 더 나와 새 일을 계속 열었다. 조치: 진행 중인 셋(fixy07 ④·⑤·⑥, fairy07 입력 17개 PR, reviewer 가드 포인터 PR)만 끝내고 새 범위는 열지 않는다; 발견되는 것은 #355 머지를 막는 결함(시험·빌드 실패)이 아니면 고치지 않고 소유자 대기열에 적는다; options 기본값 변경(③-② 후속)과 07b 정리 목록의 남은 항목은 보고만 하고 건너뛴다; 셋이 끝나면 #355를 검증해 합치고 세 세션을 정리한다. 세 세션에 전달했다.
+
+## 덧붙임 (2026-10-13, ④ 검증 결과와 실행 편차)
+
+fixy07 ④: 구현 완료, verifier 검토 중. G1 빨강(core 2, e2e 4), G2 typecheck·eslint 0(schema-form·scenarios), G3 전체 4,111 통과·0 실패·todo 1, G4 onValidate 누적 횟수(마운트, ac, ad, ae, abcd, abcde) 새 엔진 [2,2,2,2,3,3] = 0.16.0 [2,2,2,2,3,3]. 실행 편차 셋: (1) 새 칸 대신 기존 runtime.validationResult.issues를 기준으로(첫 검증 전 없음, reset이 비움 → 조건 (1) 성립); (2) 배정을 항상 돌리므로 하위 대상이 칸을 비울 필요 없음; (3) 공유 시나리오 events.subscription-kinds 수정 — 0단계(결과가 바뀌는 setValue)는 UpdateError 포함, 2단계(같은 결과의 validate)는 UpdateError 제외(기존 2단계 기대가 이번 수정·0.16.0과 어긋나 3건 실패; DETAIL 행에 EVENT-046). 보고만: 마운트 때 onValidate 두 번(새 엔진 [] 다음 1건, 0.16.0 1건 두 번) → 소유자 대기열 22. verifier PASS 뒤 dc6a2e79f 위로 rebase·커밋·push.
