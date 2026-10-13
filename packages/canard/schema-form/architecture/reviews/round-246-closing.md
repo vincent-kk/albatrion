@@ -9,3 +9,7 @@
   - 【추론】 245C-01의 규칙("보고된 목록이 바뀔 때만")을 구현이 절반만 따른 것이고, 소유자가 대기열 22에서 바란 것은 같은 결과의 중복 호출을 없애는 것이다. 참조 비교 한 줄이 규칙을 그대로 코드로 옮기며, 바뀌는 관찰 가능 동작은 errors prop 마운트의 중복 호출 하나뿐이다.
 - 근거: verifier 보고(reportRootLoadValidation.ts:16, validation-mount-calls.test.tsx:58-62, RootNodeContextProvider.tsx:103-109); 234라운드 소유자 답(대기열 22); 245C-01.
 - 다음: fixy07이 보강 커밋 하나를 07b-2에 더하고 게이트를 다시 돌려 push; 원장 관리자가 그 커밋만 재검증한 뒤 소유자에게 병합 허가를 묻는다.
+
+## 덧붙임 (2026-10-14, 보강 커밋 재검증)
+
+fixy07의 246C-01 보강 커밋 cf3f5f7ff(a723e2f18 위 하나; reportRootLoadValidation의 참조 비교, reset 보충 보고에서 load.error 우선, 시험 둘, DETAIL 둘, 세션 줄 0)를 원장 관리자가 재검증했다: 비브라우저 시험 3931 통과·0 실패·1 todo, storybook 241 통과, typecheck 0, lint 0. errors prop 마운트의 onValidate는 2 → 1. PR #362 본문 갱신 확인. 병합은 소유자 허가 대기.
