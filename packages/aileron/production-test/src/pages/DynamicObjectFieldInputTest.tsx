@@ -17,7 +17,7 @@ import {
 export default function DynamicObjectFieldInputTest() {
   const schema = {
     type: "object",
-    FieldInput: CustomObjectFieldInput,
+    presentation: { FieldInput: CustomObjectFieldInput },
     terminal: false,
     properties: {
       name: { type: "string", default: "John Smith" },

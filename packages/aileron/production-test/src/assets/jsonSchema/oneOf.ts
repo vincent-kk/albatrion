@@ -31,7 +31,7 @@ export const oneOfSchema = {
             },
             platforms: {
               type: "array",
-              inputType: "checkbox",
+              presentation: { inputType: "checkbox" },
               items: {
                 type: "string",
                 enum: ["pc", "console", "mobile"],
@@ -73,7 +73,7 @@ export const oneOfSchema = {
             },
             platforms: {
               type: "array",
-              inputType: "checkbox",
+              presentation: { inputType: "checkbox" },
               items: {
                 type: "string",
                 enum: ["theater", "streaming"],

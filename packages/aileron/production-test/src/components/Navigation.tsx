@@ -86,7 +86,7 @@ const Navigation = () => {
         </li>
         <li>
           <NavLink
-            to="/dynamic-object-formtype"
+            to="/dynamic-object-field-input"
             className={({ isActive }) => (isActive ? "active" : "")}
           >
             Dynamic Object FieldInput
