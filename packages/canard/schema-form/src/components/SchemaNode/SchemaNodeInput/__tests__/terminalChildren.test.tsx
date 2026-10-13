@@ -9,14 +9,14 @@ import { act, cleanup, fireEvent, render } from '@testing-library/react';
 import { afterEach, expect, it, vi } from 'vitest';
 
 import { Form, type FormHandle } from '@/schema-form/components/Form';
-import type { FormTypeInputProps, JSONSchema } from '@/schema-form/types';
+import type { FieldInputProps, JSONSchema } from '@/schema-form/types';
 
 /** An object made terminal by an inline input: the one shape whose empty child list is a mistake to read (round 180). */
-const detectable = (Input: ComponentType<FormTypeInputProps>) =>
+const detectable = (Input: ComponentType<FieldInputProps>) =>
   ({
     type: 'object',
     properties: { leaf: { type: 'string' } },
-    presentation: { FormTypeInput: Input },
+    presentation: { FieldInput: Input },
   }) satisfies JSONSchema;
 
 afterEach(() => {
@@ -29,7 +29,7 @@ it('round 180 hands a production build a plain empty list even with an error han
   vi.stubEnv('NODE_ENV', 'production');
   const onError = vi.fn();
   const lists: unknown[] = [];
-  const Input = ({ ChildNodeComponents }: FormTypeInputProps) => {
+  const Input = ({ ChildNodeComponents }: FieldInputProps) => {
     lists.push(ChildNodeComponents);
     return <input data-count={ChildNodeComponents.length} />;
   };
@@ -45,7 +45,7 @@ it('round 180 hands a production build a plain empty list even with an error han
   });
   vi.unstubAllEnvs();
   const plain: unknown[] = [];
-  const PlainInput = ({ ChildNodeComponents }: FormTypeInputProps) => {
+  const PlainInput = ({ ChildNodeComponents }: FieldInputProps) => {
     plain.push(ChildNodeComponents);
     return <input data-count={ChildNodeComponents.length} />;
   };
@@ -54,7 +54,7 @@ it('round 180 hands a production build a plain empty list even with an error han
       validationMode={0}
       jsonSchema={{
         type: 'string',
-        presentation: { FormTypeInput: PlainInput },
+        presentation: { FieldInput: PlainInput },
       }}
       onError={onError}
     />,
@@ -65,13 +65,13 @@ it('round 180 hands a production build a plain empty list even with an error han
 
 it('round 180 hands a string node a plain empty list in development', async () => {
   const onError = vi.fn();
-  const Input = ({ ChildNodeComponents }: FormTypeInputProps) => (
+  const Input = ({ ChildNodeComponents }: FieldInputProps) => (
     <input data-count={ChildNodeComponents.length} />
   );
   render(
     <Form
       validationMode={0}
-      jsonSchema={{ type: 'string', presentation: { FormTypeInput: Input } }}
+      jsonSchema={{ type: 'string', presentation: { FieldInput: Input } }}
       onError={onError}
     />,
   );
@@ -84,7 +84,7 @@ it('round 180 hands a string node a plain empty list in development', async () =
 it('ERROR-202 reports a terminal input first reading children in an event after mount', async () => {
   const onError = vi.fn();
   const warning = vi.spyOn(console, 'warn').mockImplementation(() => {});
-  const Input = ({ ChildNodeComponents }: FormTypeInputProps) => (
+  const Input = ({ ChildNodeComponents }: FieldInputProps) => (
     <button
       onClick={() => {
         void ChildNodeComponents.length;
@@ -121,7 +121,7 @@ it('ERROR-202 reports a terminal input first reading children in an event after 
 
 it('ERROR-202 reports a child layout read after the initial render', () => {
   const onError = vi.fn();
-  const Input = ({ ChildNodeComponents }: FormTypeInputProps) => {
+  const Input = ({ ChildNodeComponents }: FieldInputProps) => {
     useLayoutEffect(() => {
       void ChildNodeComponents[0];
     }, [ChildNodeComponents]);
@@ -142,7 +142,7 @@ it('ERROR-202 reports a child layout read after the initial render', () => {
 it('ERROR-202 keeps the terminal empty list stable across a late render read', async () => {
   const onError = vi.fn();
   const lists: unknown[] = [];
-  const Input = ({ ChildNodeComponents }: FormTypeInputProps) => {
+  const Input = ({ ChildNodeComponents }: FieldInputProps) => {
     const [read, setRead] = useState(false);
     lists.push(ChildNodeComponents);
     return (
@@ -171,7 +171,7 @@ it('ERROR-202 keeps the terminal empty list stable across a late render read', a
 it('ERROR-202 reports the first terminal child read again after a retained-root reset starts a new load', async () => {
   const ref = createRef<FormHandle>();
   const onError = vi.fn();
-  const Input = ({ ChildNodeComponents }: FormTypeInputProps) => (
+  const Input = ({ ChildNodeComponents }: FieldInputProps) => (
     <input data-count={ChildNodeComponents.length} />
   );
   render(

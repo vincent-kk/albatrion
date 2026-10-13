@@ -209,7 +209,7 @@ describe('blueprint fragment ownership and strategies', () => {
 
   it('allows a sole gated declaration to select an inline or explicit terminal strategy', () => {
     for (const schema of [
-      { type: 'object', presentation: { FormTypeInput: 'inline' } },
+      { type: 'object', presentation: { FieldInput: 'inline' } },
       { type: 'object', options: { terminal: true } },
     ]) {
       const root = blueprint(
@@ -233,7 +233,7 @@ describe('blueprint fragment ownership and strategies', () => {
         if: {},
         then: {
           properties: {
-            a: { type: 'object', presentation: { FormTypeInput: 'inline' } },
+            a: { type: 'object', presentation: { FieldInput: 'inline' } },
           },
         },
       },
@@ -249,7 +249,7 @@ describe('blueprint fragment ownership and strategies', () => {
     const root = blueprint(
       {
         type: 'object',
-        presentation: { FormTypeInput: 'inline' },
+        presentation: { FieldInput: 'inline' },
         allOf: [{ title: 'later' }],
       },
       {

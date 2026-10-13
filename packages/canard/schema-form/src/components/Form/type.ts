@@ -15,9 +15,9 @@ import type { VirtualizationOptions } from '@/schema-form/helpers/virtualization
 import type {
   AllowedValue,
   AttachedFilesMap,
-  FormTypeInputDefinition,
-  FormTypeInputMap,
-  FormTypeRendererProps,
+  FieldInputDefinition,
+  FieldInputMap,
+  FieldRendererProps,
   InferValueType,
   JSONSchema,
   SetStateFnWithOptions,
@@ -46,9 +46,9 @@ export interface FormProps<
   jsonSchema: Schema;
   /** Default value for this SchemaForm */
   defaultValue?: Value;
-  /** Apply readOnly property to all FormTypeInputs (default: false) */
+  /** Apply readOnly property to all FieldInputs (default: false) */
   readOnly?: boolean;
-  /** Apply disabled property to all FormTypeInputs (default: false) */
+  /** Apply disabled property to all FieldInputs (default: false) */
   disabled?: boolean;
   /** Function called when the value of this SchemaForm changes */
   onChange?: Fn<[value: Value]>;
@@ -66,22 +66,22 @@ export interface FormProps<
   unsetOnInactive?: boolean;
   /** Suppress automatic writes without blocking imperative writes. */
   disableAutomaticWrites?: boolean;
-  /** List of FormTypeInput definitions */
-  formTypeInputDefinitions?: FormTypeInputDefinition[];
-  /** FormTypeInput path mapping */
-  formTypeInputMap?: FormTypeInputMap;
+  /** List of FieldInput definitions */
+  fieldInputDefinitions?: FieldInputDefinition[];
+  /** FieldInput path mapping */
+  fieldInputMap?: FieldInputMap;
   /** Custom form type renderer component */
-  FormTypeGroupRenderer?: ComponentType<FormTypeRendererProps>;
+  FieldRenderer?: ComponentType<FieldRendererProps>;
   /** Label renderer shared by Form.Label instances. */
-  FormTypeLabelRenderer?: ComponentType<FormTypeRendererProps>;
+  FormLabelRenderer?: ComponentType<FieldRendererProps>;
   /** Input renderer shared by Form.Input instances. */
-  FormTypeInputRenderer?: ComponentType<FormTypeRendererProps>;
+  FormInputRenderer?: ComponentType<FieldRendererProps>;
   /** Error renderer shared by Form.Error instances. */
-  FormTypeErrorRenderer?: ComponentType<FormTypeRendererProps>;
+  FormErrorRenderer?: ComponentType<FieldRendererProps>;
   /** Initial validation errors, default is undefined */
   errors?: SchemaNode['globalErrors'];
   /** Custom format error function */
-  formatError?: FormTypeRendererProps['formatError'];
+  formatError?: FieldRendererProps['formatError'];
   /**
    * Error display condition (default: ShowError.DirtyTouched)
    *   - `true`: Always show

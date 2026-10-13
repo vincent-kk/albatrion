@@ -12,7 +12,7 @@ import { afterEach, expect, it, vi } from 'vitest';
 import { Form, type FormHandle } from '@/schema-form/components/Form';
 import { ValidationMode, type Validator } from '@/schema-form/core';
 import { ExternalFormContextProvider } from '@/schema-form/providers/ExternalFormContext';
-import type { FormTypeInputProps } from '@/schema-form/types';
+import type { FieldInputProps } from '@/schema-form/types';
 
 import { FormError } from '../components/FormError';
 
@@ -23,8 +23,8 @@ afterEach(() => {
 
 it('LANDING-067 REACT-009 combines root locks without blocking imperative writes', () => {
   const ref = createRef<FormHandle>();
-  let input: FormTypeInputProps;
-  const Component = (props: FormTypeInputProps) => {
+  let input: FieldInputProps;
+  const Component = (props: FieldInputProps) => {
     input = props;
     return <input disabled={props.disabled} />;
   };
@@ -34,7 +34,7 @@ it('LANDING-067 REACT-009 combines root locks without blocking imperative writes
       readOnly
       disabled
       jsonSchema={{ type: 'string' }}
-      formTypeInputDefinitions={[{ test: () => true, Component }]}
+      fieldInputDefinitions={[{ test: () => true, Component }]}
     />,
   );
   act(() => input!.onChange('blocked'));
@@ -102,7 +102,7 @@ it('LANDING-067 resolves specialized renderers through Form then FormProvider', 
   const ProviderError = () => <span>provider-error</span>;
   const FormErrorRenderer = () => <span>form-error</span>;
   const view = render(
-    <ExternalFormContextProvider FormTypeErrorRenderer={ProviderError}>
+    <ExternalFormContextProvider FormErrorRenderer={ProviderError}>
       <Form jsonSchema={{ type: 'string' }}>
         <FormError />
       </Form>
@@ -111,10 +111,10 @@ it('LANDING-067 resolves specialized renderers through Form then FormProvider', 
   expect(view.container.textContent).toContain('provider-error');
   view.unmount();
   const form = render(
-    <ExternalFormContextProvider FormTypeErrorRenderer={ProviderError}>
+    <ExternalFormContextProvider FormErrorRenderer={ProviderError}>
       <Form
         jsonSchema={{ type: 'string' }}
-        FormTypeErrorRenderer={FormErrorRenderer}
+        FormErrorRenderer={FormErrorRenderer}
       >
         <FormError />
       </Form>

@@ -5,7 +5,7 @@ import { describe, expect, it } from 'vitest';
 import type { JSONSchema } from '@winglet/json-schema';
 
 import {
-  type FormTypeRendererProps,
+  type FieldRendererProps,
   SchemaNodeEventType,
   SchemaNodeState,
   useSchemaNodeTracker,
@@ -26,7 +26,7 @@ import { type FormHarness, renderForm } from '../renderForm';
  *     assertion needs a focus-out + a macrotask drain (`flush(>16ms)`).
  *   - `handle.setState(s)` → `rootNode.setSubtreeState(s)`; `handle.clearState()`
  *     → `rootNode.clearSubtreeState()`; `handle.getState()` → `rootNode.globalState`.
- *   - `checkShowError` (FormTypeRendererProvider) evaluates the per-node
+ *   - `checkShowError` (FieldRendererProvider) evaluates the per-node
  *     `SchemaNodeState.ShowError` flag FIRST: when present it overrides the form-level
  *     `showError` mode. Default mode is `ShowError.DirtyTouched`, so an invalid
  *     value is hidden until dirty&touched OR an explicit `ShowError` flag.
@@ -36,7 +36,7 @@ import { type FormHarness, renderForm } from '../renderForm';
  *     values to defaults and clears its subtree state.
  *   - `SchemaNodeState.Dirty=1, Touched=2, ShowError=4`; `node.state` is keyed by these
  *     numeric flags. The default renderer shows NO dirty/touched indicator, so a
- *     `FormTypeGroupRenderer` exposes one as `[data-indicator]` data-attributes
+ *     `FieldRenderer` exposes one as `[data-indicator]` data-attributes
  *     while still rendering the uncontrolled `<Input/>` and the error `<em>`.
  *
  * Schemas mirror stories/38.StateManagement and stories/15.SchemaNodeState.
@@ -54,7 +54,7 @@ const StateRenderer = ({
   path,
   Input,
   errorMessage,
-}: FormTypeRendererProps) => {
+}: FieldRendererProps) => {
   useSchemaNodeTracker(
     node,
     SchemaNodeEventType.UpdateState | SchemaNodeEventType.UpdateError,
@@ -153,7 +153,7 @@ const listSchema = {
 describe('state-management — interaction sets Dirty/Touched (tree + indicator)', () => {
   it('typing sets Dirty on the edited node and renders the dirty indicator', async () => {
     const form = await renderForm(profileSchema, {
-      FormTypeGroupRenderer: StateRenderer,
+      FieldRenderer: StateRenderer,
     });
 
     await form.type('/name', 'Jane');
@@ -171,7 +171,7 @@ describe('state-management — interaction sets Dirty/Touched (tree + indicator)
 
   it('blurring a typed field sets Touched in the tree and the indicator', async () => {
     const form = await renderForm(profileSchema, {
-      FormTypeGroupRenderer: StateRenderer,
+      FieldRenderer: StateRenderer,
     });
 
     await form.type('/name', 'Jane');
@@ -186,7 +186,7 @@ describe('state-management — interaction sets Dirty/Touched (tree + indicator)
 
   it('leaves an untouched sibling clean in both layers', async () => {
     const form = await renderForm(profileSchema, {
-      FormTypeGroupRenderer: StateRenderer,
+      FieldRenderer: StateRenderer,
     });
 
     await form.type('/name', 'Jane');
@@ -204,7 +204,7 @@ describe('state-management — interaction sets Dirty/Touched (tree + indicator)
 describe('state-management — clearState clears flags but keeps values', () => {
   it('clears Dirty flags across the tree while preserving DOM and tree values', async () => {
     const form = await renderForm(profileSchema, {
-      FormTypeGroupRenderer: StateRenderer,
+      FieldRenderer: StateRenderer,
     });
 
     await form.type('/name', 'Jane');
@@ -230,7 +230,7 @@ describe('state-management — clearState clears flags but keeps values', () => 
 
   it('reflects global Dirty via getState() then empties it after clearState()', async () => {
     const form = await renderForm(profileSchema, {
-      FormTypeGroupRenderer: StateRenderer,
+      FieldRenderer: StateRenderer,
     });
 
     await form.type('/name', 'Jane');
@@ -250,7 +250,7 @@ describe('state-management — setState drives error visibility, not value', () 
     const form = await renderForm(validatedSchema, {
       validator: true,
       validationMode: ValidationMode.OnChange,
-      FormTypeGroupRenderer: StateRenderer,
+      FieldRenderer: StateRenderer,
       defaultValue: { name: 'ab' },
     });
     await form.flush();
@@ -280,7 +280,7 @@ describe('state-management — setState drives error visibility, not value', () 
     const form = await renderForm(validatedSchema, {
       validator: true,
       validationMode: ValidationMode.OnChange,
-      FormTypeGroupRenderer: StateRenderer,
+      FieldRenderer: StateRenderer,
       defaultValue: { name: 'ab' },
     });
     await form.flush();
@@ -300,7 +300,7 @@ describe('state-management — setState drives error visibility, not value', () 
     const form = await renderForm(validatedSchema, {
       validator: true,
       validationMode: ValidationMode.OnChange,
-      FormTypeGroupRenderer: StateRenderer,
+      FieldRenderer: StateRenderer,
       defaultValue: { name: 'ab' },
     });
     await form.flush();
@@ -328,7 +328,7 @@ describe('state-management — setState drives error visibility, not value', () 
 describe('state-management — subtree ops affect only the target subtree', () => {
   it('setSubtreeState on /address flags only that subtree (tree + indicator)', async () => {
     const form = await renderForm(profileSchema, {
-      FormTypeGroupRenderer: StateRenderer,
+      FieldRenderer: StateRenderer,
     });
 
     await runImperative(form, () =>
@@ -345,7 +345,7 @@ describe('state-management — subtree ops affect only the target subtree', () =
 
   it('clearSubtreeState on /address clears only that subtree, keeping siblings', async () => {
     const form = await renderForm(profileSchema, {
-      FormTypeGroupRenderer: StateRenderer,
+      FieldRenderer: StateRenderer,
     });
 
     // mark the whole tree dirty via the handle, then clear just /address
@@ -431,7 +431,7 @@ describe('state-management — reset vs clearState vs resetSubtree (values)', ()
 describe('state-management — array item subtree state by index', () => {
   it('setSubtreeState on a pushed item flags only that item subtree', async () => {
     const form = await renderForm(listSchema, {
-      FormTypeGroupRenderer: StateRenderer,
+      FieldRenderer: StateRenderer,
       defaultValue: { items: [{ label: 'first' }] },
     });
 

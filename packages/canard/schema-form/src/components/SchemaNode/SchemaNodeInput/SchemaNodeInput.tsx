@@ -12,7 +12,7 @@ import {
   writeSchemaNodeInput,
 } from '@/schema-form/core';
 import {
-  useFormTypeRendererContext,
+  useFieldRendererContext,
   useInputControlContext,
   useWorkspaceContext,
 } from '@/schema-form/providers';
@@ -20,8 +20,8 @@ import { useLiveNode } from '@/schema-form/providers/RootNodeContext';
 import type { JSONSchema, SetStateFnWithOptions } from '@/schema-form/types';
 
 import { useChildNodeComponents } from './hooks/useChildNodeComponents';
-import { useFormTypeInput } from './hooks/useFormTypeInput';
-import { useFormTypeInputControl } from './hooks/useFormTypeInputControl';
+import { useFieldInput } from './hooks/useFieldInput';
+import { useFieldInputControl } from './hooks/useFieldInputControl';
 import { useTerminalChildren } from './hooks/useTerminalChildren';
 import type { SchemaNodeInputProps } from './type';
 
@@ -32,11 +32,11 @@ export const SchemaNodeInput = memo(
     onChangeRef,
     onFileAttachRef,
     overrideProps,
-    PreferredFormTypeInput,
+    PreferredFieldInput,
     NodeProxy,
   }: SchemaNodeInputProps) => {
-    const selected = useFormTypeInput(node, PreferredFormTypeInput !== null);
-    const FormTypeInput = PreferredFormTypeInput || selected;
+    const selected = useFieldInput(node, PreferredFieldInput !== null);
+    const FieldInput = PreferredFieldInput || selected;
     const mountedChildren = useRef(0);
     const [terminalChildren, commitTerminalChildren] =
       useTerminalChildren(node);
@@ -46,13 +46,13 @@ export const SchemaNodeInput = memo(
       mountedChildren,
       terminalChildren,
     );
-    const { checkShowError } = useFormTypeRendererContext();
+    const { checkShowError } = useFieldRendererContext();
     const { attachedFilesMap, context } = useWorkspaceContext();
     const { readOnly: rootReadOnly, disabled: rootDisabled } =
       useInputControlContext();
     const isLive = useLiveNode(node);
     const [ref, generation, handleCompositionStart, handleCompositionEnd] =
-      useFormTypeInputControl(node, mountedChildren, commitTerminalChildren);
+      useFieldInputControl(node, mountedChildren, commitTerminalChildren);
     const defaultValue = useMemorize(() => node.value, [node, generation]);
     const accepts = useCallback(
       () =>
@@ -116,7 +116,7 @@ export const SchemaNodeInput = memo(
       if (requestId.current !== undefined)
         cancelAnimationFrame(requestId.current);
     });
-    if (!FormTypeInput) return null;
+    if (!FieldInput) return null;
     return (
       <div
         ref={ref}
@@ -127,12 +127,12 @@ export const SchemaNodeInput = memo(
         onCompositionStartCapture={handleCompositionStart}
         onCompositionEnd={handleCompositionEnd}
       >
-        <FormTypeInput
+        <FieldInput
           required={node.required}
           placeholder={undefined}
           style={undefined}
           className={undefined}
-          {...(node.jsonSchema as JSONSchema).presentation?.FormTypeInputProps}
+          {...(node.jsonSchema as JSONSchema).presentation?.FieldInputProps}
           defaultValue={defaultValue}
           value={node.value}
           onChange={handleChange}

@@ -5,7 +5,7 @@ import { afterEach, expect, it, vi } from 'vitest';
 
 import { Form, type FormHandle } from '@/schema-form/components/Form';
 import { SchemaNodeEventType, ValidationMode } from '@/schema-form/core';
-import type { FormTypeInputProps } from '@/schema-form/types';
+import type { FieldInputProps } from '@/schema-form/types';
 
 afterEach(() => {
   cleanup();
@@ -13,7 +13,7 @@ afterEach(() => {
 });
 
 it('REACT-024 catches up a mount-time Refresh before two user changes', () => {
-  const Input = ({ node, value, onChange }: FormTypeInputProps) => {
+  const Input = ({ node, value, onChange }: FieldInputProps) => {
     useLayoutEffect(() => {
       node.setValue('normalized');
     }, [node]);
@@ -31,7 +31,7 @@ it('REACT-024 catches up a mount-time Refresh before two user changes', () => {
       jsonSchema={{
         type: 'object',
         properties: {
-          s: { type: 'string', presentation: { FormTypeInput: Input } },
+          s: { type: 'string', presentation: { FieldInput: Input } },
         },
       }}
       validationMode={ValidationMode.None}
@@ -52,7 +52,7 @@ it.each([
 ] as const)(
   'WRITE-046 accepts mount-time onChange before root binding (%s)',
   (_, useMountEffect) => {
-    const Input = ({ value, onChange }: FormTypeInputProps) => {
+    const Input = ({ value, onChange }: FieldInputProps) => {
       useMountEffect(() => {
         if (value === undefined) onChange('normalized');
         // eslint-disable-next-line react-hooks/exhaustive-deps -- Reproduce an input's mount-only normalization.
@@ -66,7 +66,7 @@ it.each([
         jsonSchema={{
           type: 'object',
           properties: {
-            s: { type: 'string', presentation: { FormTypeInput: Input } },
+            s: { type: 'string', presentation: { FieldInput: Input } },
           },
         }}
         validationMode={ValidationMode.None}
@@ -77,8 +77,8 @@ it.each([
 );
 
 it('REACT-009 REACT-011 batches input write, error clear and dirty without refreshing itself', () => {
-  let props: FormTypeInputProps;
-  const Input = (input: FormTypeInputProps) => {
+  let props: FieldInputProps;
+  const Input = (input: FieldInputProps) => {
     props = input;
     return <input />;
   };
@@ -86,7 +86,7 @@ it('REACT-009 REACT-011 batches input write, error clear and dirty without refre
   render(
     <Form
       ref={ref}
-      jsonSchema={{ type: 'string', presentation: { FormTypeInput: Input } }}
+      jsonSchema={{ type: 'string', presentation: { FieldInput: Input } }}
       errors={[{ dataPath: '', keyword: 'external', message: 'server' }]}
     />,
   );
@@ -106,8 +106,8 @@ it('REACT-009 REACT-011 batches input write, error clear and dirty without refre
 });
 
 it('REACT-024 rejects old change and file callbacks immediately after refresh', () => {
-  let props: FormTypeInputProps;
-  const Input = (input: FormTypeInputProps) => {
+  let props: FieldInputProps;
+  const Input = (input: FieldInputProps) => {
     props = input;
     return <input />;
   };
@@ -115,7 +115,7 @@ it('REACT-024 rejects old change and file callbacks immediately after refresh', 
   render(
     <Form
       ref={ref}
-      jsonSchema={{ type: 'string', presentation: { FormTypeInput: Input } }}
+      jsonSchema={{ type: 'string', presentation: { FieldInput: Input } }}
     />,
   );
   const old = props!;
@@ -152,15 +152,15 @@ it('REACT-024 ignores deferred touched after reset and trims at blur', () => {
 });
 
 it('ERROR-202 reports terminal child access once with a frozen empty array', () => {
-  let children: FormTypeInputProps['ChildNodeComponents'];
-  const Input = (props: FormTypeInputProps) => {
+  let children: FieldInputProps['ChildNodeComponents'];
+  const Input = (props: FieldInputProps) => {
     children = props.ChildNodeComponents;
     return <span>{children.length}</span>;
   };
   const onError = vi.fn();
   render(
     <Form
-      jsonSchema={{ type: 'object', presentation: { FormTypeInput: Input } }}
+      jsonSchema={{ type: 'object', presentation: { FieldInput: Input } }}
       onError={onError}
     />,
   );
@@ -175,7 +175,7 @@ it('ERROR-202 reports terminal child access once with a frozen empty array', () 
 
 it('REACT-028 preserves a branch input with mounted child proxies on refresh', () => {
   let mounts = 0;
-  const Container = ({ ChildNodeComponents }: FormTypeInputProps) => {
+  const Container = ({ ChildNodeComponents }: FieldInputProps) => {
     mounts++;
     return (
       <>
@@ -190,7 +190,7 @@ it('REACT-028 preserves a branch input with mounted child proxies on refresh', (
     <Form
       ref={ref}
       jsonSchema={{ type: 'object', properties: { name: { type: 'string' } } }}
-      formTypeInputDefinitions={[
+      fieldInputDefinitions={[
         { test: { type: 'object' }, Component: Container },
       ]}
     />,
@@ -204,7 +204,7 @@ it('REACT-028 preserves a branch input with mounted child proxies on refresh', (
 
 it('REACT-019 ERROR-202 an unanchored input map also matches terminal descendants', () => {
   const counts = new Map<string, number>();
-  const Container = ({ path, ChildNodeComponents }: FormTypeInputProps) => {
+  const Container = ({ path, ChildNodeComponents }: FieldInputProps) => {
     counts.set(path, ChildNodeComponents.length);
     return (
       <>
@@ -222,7 +222,7 @@ it('REACT-019 ERROR-202 an unanchored input map also matches terminal descendant
           o: { type: 'object', properties: { s: { type: 'string' } } },
         },
       }}
-      formTypeInputMap={{ '/o': Container }}
+      fieldInputMap={{ '/o': Container }}
       validationMode={ValidationMode.None}
       onError={vi.fn()}
     />,
@@ -239,7 +239,7 @@ it.each(['anchored map', 'definitions'] as const)(
       value,
       onChange,
       ChildNodeComponents,
-    }: FormTypeInputProps) => {
+    }: FieldInputProps) => {
       childCount = ChildNodeComponents.length;
       return (
         <div data-testid="container">
@@ -264,10 +264,10 @@ it.each(['anchored map', 'definitions'] as const)(
         }}
         defaultValue={{ o: { s: 'a' } }}
         validationMode={ValidationMode.None}
-        formTypeInputMap={
+        fieldInputMap={
           selection === 'anchored map' ? { '^/o$': Container } : undefined
         }
-        formTypeInputDefinitions={
+        fieldInputDefinitions={
           selection === 'definitions'
             ? [{ test: { path: '/o' }, Component: Container }]
             : undefined

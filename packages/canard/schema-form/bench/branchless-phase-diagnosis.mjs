@@ -31,7 +31,7 @@ const candidateFiles = {
   i: ['core/settle/utils/compute/selectChildren.ts', 'core/settle/utils/compute/enterSchemaNode.ts'],
   ii: ['core/settle/utils/commit/commitSettlement.ts', 'core/settle/utils/controls/getControlLayers.ts', 'core/validation/utils/route/routeValidationIssues.ts'],
   iii: ['core/settle/utils/commit/markCommitDeliveries.ts'],
-  iv: ['formTypeDefinitions/FormTypeInputArray.tsx'],
+  iv: ['fieldInputs/FieldInputArray.tsx'],
   v: ['core/settle/type.ts', 'core/settle/utils/compute/computeNode.ts',
     'core/settle/utils/compute/utils/hasIndependentLeafDefaults.ts', 'core/settle/utils/transition/transitionSettlement.ts'],
 };
@@ -72,7 +72,7 @@ globalThis.__phaseExit = (frame) => {
 
 /** Classify boundaries, without changing the operation or its arguments. */
 function phaseFor(file, name, node) {
-  if (componentProbe && (file.includes('/formTypeDefinitions/FormTypeInputArray.tsx') ||
+  if (componentProbe && (file.includes('/fieldInputs/FieldInputArray.tsx') ||
     file.endsWith('/useChildNodeComponents.tsx') || file.endsWith('/SchemaNodeInput.tsx'))) return 'react-render';
   if (name === 'nodeFromJSONSchema') return 'other';
   if (/react-dom-(client\.development|profiling\.profiling)\.js$/.test(file)) {

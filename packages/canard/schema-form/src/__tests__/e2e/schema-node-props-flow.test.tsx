@@ -2,7 +2,7 @@ import { act, waitFor } from '@testing-library/react';
 import { afterEach, expect, it } from 'vitest';
 
 import {
-  type FormTypeInputProps,
+  type FieldInputProps,
   SchemaNodeState,
   SetValueOption,
   ValidationMode,
@@ -11,12 +11,12 @@ import {
 import { type FormHarness, renderForm } from '../renderForm';
 
 let form: FormHarness;
-let input: FormTypeInputProps;
+let input: FieldInputProps;
 const external = [{ dataPath: '', keyword: 'external', message: 'server' }];
 afterEach(() => form?.unmount());
 
 /** Capture consumer callbacks while exposing the real input's draft in the DOM. */
-const Probe = (props: FormTypeInputProps) => {
+const Probe = (props: FieldInputProps) => {
   input = props;
   return (
     <input
@@ -37,7 +37,7 @@ it('WRITE-083 input value dirty and external-error clearing commit together', as
       validationMode: ValidationMode.None,
       defaultValue: 'before',
       errors: external,
-      formTypeInputDefinitions: [{ test: () => true, Component: Probe }],
+      fieldInputDefinitions: [{ test: () => true, Component: Probe }],
     },
   );
   expect(
@@ -67,7 +67,7 @@ it('LANDING-168 root readOnly rejects input value dirty and error changes', asyn
       readOnly: true,
       defaultValue: 'before',
       errors: external,
-      formTypeInputDefinitions: [{ test: () => true, Component: Probe }],
+      fieldInputDefinitions: [{ test: () => true, Component: Probe }],
     },
   );
   expect(
@@ -92,7 +92,7 @@ it('LANDING-168 root disabled rejects input callbacks', async () => {
     {
       disabled: true,
       defaultValue: 'before',
-      formTypeInputDefinitions: [{ test: () => true, Component: Probe }],
+      fieldInputDefinitions: [{ test: () => true, Component: Probe }],
     },
   );
   await act(async () => input.onChange('blocked'));
@@ -105,7 +105,7 @@ it('LANDING-201 input Overwrite retains its own DOM and caret', async () => {
     { type: 'string' },
     {
       defaultValue: '',
-      formTypeInputDefinitions: [{ test: () => true, Component: Probe }],
+      fieldInputDefinitions: [{ test: () => true, Component: Probe }],
     },
   );
   const field = form.field('');
@@ -123,7 +123,7 @@ it('TEST-020 replaced input late onChange cannot mutate value dirty or external 
       validationMode: ValidationMode.None,
       defaultValue: 'loaded',
       errors: external,
-      formTypeInputDefinitions: [{ test: () => true, Component: Probe }],
+      fieldInputDefinitions: [{ test: () => true, Component: Probe }],
     },
   );
   expect(

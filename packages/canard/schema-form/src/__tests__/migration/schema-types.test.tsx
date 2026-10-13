@@ -1,7 +1,7 @@
 import { afterEach, expect, expectTypeOf, it } from 'vitest';
 
 import {
-  type FormTypeInputProps,
+  type FieldInputProps,
   type InferValueType,
   isTerminalNode,
 } from '@/schema-form';
@@ -52,7 +52,7 @@ it('LANDING-189 readonly type arrays infer the precise public value union', asyn
 });
 
 it('LANDING-149 inline virtual inputs remain branches with referenced children', async () => {
-  const Virtual = ({ ChildNodeComponents }: FormTypeInputProps) => (
+  const Virtual = ({ ChildNodeComponents }: FieldInputProps) => (
     <section data-virtual>
       {ChildNodeComponents.map((Child) => (
         <Child key={Child.key} />
@@ -65,7 +65,7 @@ it('LANDING-149 inline virtual inputs remain branches with referenced children',
       properties: { name: { type: 'string' } },
       options: {
         virtual: {
-          group: { fields: ['name'], presentation: { FormTypeInput: Virtual } },
+          group: { fields: ['name'], presentation: { FieldInput: Virtual } },
         },
       },
     },

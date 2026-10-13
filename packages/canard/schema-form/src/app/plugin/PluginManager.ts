@@ -8,51 +8,52 @@ import {
   FormInputRenderer,
   FormLabelRenderer,
 } from '@/schema-form/components/FallbackComponents';
-import { formTypeDefinitions } from '@/schema-form/formTypeDefinitions';
+import { builtinFieldInputDefinitions } from '@/schema-form/fieldInputs';
 import { formatValidationError } from '@/schema-form/helpers/error';
 import {
-  type NormalizedFormTypeInputDefinition,
-  normalizeFormTypeInputDefinitions,
-} from '@/schema-form/helpers/formTypeInputDefinition';
+  type NormalizedFieldInputDefinition,
+  normalizeFieldInputDefinitions,
+} from '@/schema-form/helpers/fieldInputDefinition';
 import type {
-  FormTypeInputDefinition,
-  FormTypeRendererProps,
+  FieldInputDefinition,
+  FieldRendererProps,
   FormatError,
 } from '@/schema-form/types';
 
 import type { ValidatorPlugin } from './type';
 
 interface RenderKit {
-  FormTypeGroupRenderer: ComponentType<FormTypeRendererProps>;
-  FormTypeLabelRenderer: ComponentType<FormTypeRendererProps>;
-  FormTypeInputRenderer: ComponentType<FormTypeRendererProps>;
-  FormTypeErrorRenderer: ComponentType<FormTypeRendererProps>;
+  FieldRenderer: ComponentType<FieldRendererProps>;
+  FormLabelRenderer: ComponentType<FieldRendererProps>;
+  FormInputRenderer: ComponentType<FieldRendererProps>;
+  FormErrorRenderer: ComponentType<FieldRendererProps>;
 }
 
 const defaultRenderKit = {
-  FormTypeGroupRenderer: FormGroupRenderer,
-  FormTypeLabelRenderer: FormLabelRenderer,
-  FormTypeInputRenderer: FormInputRenderer,
-  FormTypeErrorRenderer: FormErrorRenderer,
+  FieldRenderer: FormGroupRenderer,
+  FormLabelRenderer: FormLabelRenderer,
+  FormInputRenderer: FormInputRenderer,
+  FormErrorRenderer: FormErrorRenderer,
 } as const;
 
-const defaultFormTypeInputDefinitions =
-  normalizeFormTypeInputDefinitions(formTypeDefinitions);
+const defaultFieldInputDefinitions = normalizeFieldInputDefinitions(
+  builtinFieldInputDefinitions,
+);
 
 export class PluginManager {
   private static __renderKit__: RenderKit = defaultRenderKit;
 
-  static get FormTypeGroupRenderer() {
-    return PluginManager.__renderKit__.FormTypeGroupRenderer;
+  static get FieldRenderer() {
+    return PluginManager.__renderKit__.FieldRenderer;
   }
-  static get FormTypeLabelRenderer() {
-    return PluginManager.__renderKit__.FormTypeLabelRenderer;
+  static get FormLabelRenderer() {
+    return PluginManager.__renderKit__.FormLabelRenderer;
   }
-  static get FormTypeInputRenderer() {
-    return PluginManager.__renderKit__.FormTypeInputRenderer;
+  static get FormInputRenderer() {
+    return PluginManager.__renderKit__.FormInputRenderer;
   }
-  static get FormTypeErrorRenderer() {
-    return PluginManager.__renderKit__.FormTypeErrorRenderer;
+  static get FormErrorRenderer() {
+    return PluginManager.__renderKit__.FormErrorRenderer;
   }
 
   static appendRenderKit(renderKit: Partial<RenderKit> | undefined) {
@@ -63,20 +64,20 @@ export class PluginManager {
     };
   }
 
-  private static __formTypeInputDefinitions__: NormalizedFormTypeInputDefinition[] =
-    defaultFormTypeInputDefinitions;
+  private static __fieldInputDefinitions__: NormalizedFieldInputDefinition[] =
+    defaultFieldInputDefinitions;
 
-  static get formTypeInputDefinitions() {
-    return PluginManager.__formTypeInputDefinitions__;
+  static get fieldInputDefinitions() {
+    return PluginManager.__fieldInputDefinitions__;
   }
 
-  static appendFormTypeInputDefinitions(
-    formTypeInputDefinitions: FormTypeInputDefinition[] | undefined,
+  static appendFieldInputDefinitions(
+    fieldInputDefinitions: FieldInputDefinition[] | undefined,
   ) {
-    if (!formTypeInputDefinitions) return;
-    PluginManager.__formTypeInputDefinitions__ = [
-      ...normalizeFormTypeInputDefinitions(formTypeInputDefinitions),
-      ...PluginManager.__formTypeInputDefinitions__,
+    if (!fieldInputDefinitions) return;
+    PluginManager.__fieldInputDefinitions__ = [
+      ...normalizeFieldInputDefinitions(fieldInputDefinitions),
+      ...PluginManager.__fieldInputDefinitions__,
     ];
   }
 
@@ -102,8 +103,7 @@ export class PluginManager {
 
   static reset() {
     PluginManager.__renderKit__ = defaultRenderKit;
-    PluginManager.__formTypeInputDefinitions__ =
-      defaultFormTypeInputDefinitions;
+    PluginManager.__fieldInputDefinitions__ = defaultFieldInputDefinitions;
     PluginManager.__validator__ = undefined;
     PluginManager.__formatError__ = formatValidationError;
   }

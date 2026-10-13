@@ -26,15 +26,15 @@ it('REACT-012 changes input selection when an active fragment changes only prese
             allOf: [
               {
                 controls: { active: '#/flag' },
-                presentation: { formType: 'mail' },
+                presentation: { inputType: 'mail' },
               },
             ],
           },
         },
       }}
       defaultValue={{ flag: false, field: 'a' }}
-      formTypeInputDefinitions={[
-        { test: { formType: 'mail' }, Component: Mail },
+      fieldInputDefinitions={[
+        { test: { inputType: 'mail' }, Component: Mail },
         { test: { type: 'string' }, Component: Plain },
       ]}
     />,

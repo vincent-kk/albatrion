@@ -40,7 +40,7 @@ export type {
   UnionMemberType,
   UnionSchemaType,
   InferSchemaNode,
-  FormTypeInputProps,
+  FieldInputProps,
 } from './SchemaNode';
 export { SchemaNodeState, ValidationMode } from './types/state';
 export type { JSONSchema } from './types/jsonSchema';

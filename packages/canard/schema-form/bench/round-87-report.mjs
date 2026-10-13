@@ -61,7 +61,7 @@ console.log(`
 | declarationIds, getControlLayers, selected | declaration ID/fragment 검색 인덱스 for; selected는 루프 없음 | 불변 ID 참조/약한 메모 동일, 영구 증가 없음 |
 | transitionSettlement | 깊이 bucket의 nested for로 부모 우선 순서 유지; flat 제거 | O(생긴 노드 수) 펼침 배열 하나 제거, 기존 bucket 유지 |
 | isOwnedNode, routeValidationIssues | isOwnedNode는 루프 없음; active ID/오류 비교/경로 인덱스 for | 펼침 ID 배열·before/next 키 합성 배열 제거, 조회용 Set은 반복 membership에 사용 |
-| FormTypeInputArray, ArrayItems, 클릭 handler | wrapper/handler는 루프 없음; ArrayItems의 JSX 행을 for 한 번으로 생성 | O(행 수) 결과 JSX는 동일, memo/value-only 재사용 유지 |
+| FieldInputArray, ArrayItems, 클릭 handler | wrapper/handler는 루프 없음; ArrayItems의 JSX 행을 for 한 번으로 생성 | O(행 수) 결과 JSX는 동일, memo/value-only 재사용 유지 |
 
 iii의 allocation 상한 assertion은 되돌린 내부 구현에만 해당하므로 제거했고, 같은 빈 커밋의 값·배달 없음·revision 참조 보존 검증은 유지·보강했습니다. integer property 순서와 미변경 형제 참조를 고정한 loop-order characterization을 구현 전에 추가했습니다. 변경 전 관련 테스트 71파일/463사례 통과를 확인했습니다.
 

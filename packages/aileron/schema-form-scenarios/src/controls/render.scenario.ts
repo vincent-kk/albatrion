@@ -6,8 +6,8 @@ export const controlsRenderScenarios: readonly FormScenario[] = [
     name: 'controls.empty-default-inputs',
     description: 'schema-props-renderer: LANDING-034 presentation namespace; LANDING-196 empty primitive inputs write undefined.',
     schema: { type: 'object', options: { omitEmpty: false }, properties: {
-      name: { type: 'string', presentation: { FormTypeInputProps: { placeholder: 'Enter name', className: 'named-input' } } },
-      count: { type: 'number', presentation: { FormTypeInputProps: { placeholder: 'Enter count' } } },
+      name: { type: 'string', presentation: { FieldInputProps: { placeholder: 'Enter name', className: 'named-input' } } },
+      count: { type: 'number', presentation: { FieldInputProps: { placeholder: 'Enter count' } } },
     } }, initialValue: { name: 'loaded', count: 2 },
     steps: [
       { action: 'clear', path: '/name', expect: { values: { '/name': undefined }, outputValue: { count: 2 } } },

@@ -5,8 +5,8 @@ import { afterEach, expect, it, vi } from 'vitest';
 
 import { Form, type FormHandle } from '@/schema-form/components/Form';
 import type {
-  FormTypeInputDefinition,
-  FormTypeInputProps,
+  FieldInputDefinition,
+  FieldInputProps,
   Hint,
 } from '@/schema-form/types';
 
@@ -17,7 +17,7 @@ afterEach(() => {
 
 it('REACT-012 REACT-032 passes integer kind and effective schema through Hint and input props', () => {
   const test = vi.fn((_hint: Hint) => true);
-  const Input = vi.fn((props: FormTypeInputProps) => (
+  const Input = vi.fn((props: FieldInputProps) => (
     <span>
       {props.type}:{String(props.schemaType)}
     </span>
@@ -27,7 +27,7 @@ it('REACT-012 REACT-032 passes integer kind and effective schema through Hint an
     <Form
       ref={ref}
       jsonSchema={{ type: 'integer' }}
-      formTypeInputDefinitions={[{ test, Component: Input }]}
+      fieldInputDefinitions={[{ test, Component: Input }]}
     />,
   );
   expect(test.mock.calls[0][0]).toMatchObject({
@@ -44,11 +44,11 @@ it('REACT-033 ignores unknown test keys and warns once per definition', () => {
   const definition = {
     test: { type: 'string', typo: 'ignored' },
     Component,
-  } as FormTypeInputDefinition;
+  } as FieldInputDefinition;
   const view = render(
     <Form
       jsonSchema={{ type: 'string' }}
-      formTypeInputDefinitions={[definition]}
+      fieldInputDefinitions={[definition]}
     />,
   );
   expect(view.container.textContent).toContain('selected');
@@ -56,7 +56,7 @@ it('REACT-033 ignores unknown test keys and warns once per definition', () => {
   render(
     <Form
       jsonSchema={{ type: 'string' }}
-      formTypeInputDefinitions={[definition]}
+      fieldInputDefinitions={[definition]}
     />,
   );
   expect(

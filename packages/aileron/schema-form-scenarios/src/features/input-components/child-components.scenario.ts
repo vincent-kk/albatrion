@@ -5,10 +5,10 @@ const childSchema = {
   type: 'object',
   properties: {
     address: {
-      type: 'object', presentation: { formType: 'input-components.card' },
+      type: 'object', presentation: { inputType: 'input-components.card' },
       properties: { street: { type: 'string', minLength: 3 }, zip: { type: 'string', pattern: '^[0-9]{5}$' } },
     },
-    labels: { type: 'object', presentation: { formType: 'input-components.map' }, additionalProperties: { type: 'string' } },
+    labels: { type: 'object', presentation: { inputType: 'input-components.map' }, additionalProperties: { type: 'string' } },
   },
 };
 

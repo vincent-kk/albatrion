@@ -3,7 +3,7 @@ import { Suspense, lazy, startTransition } from 'react';
 import { act } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
 
-import type { FormTypeInputProps, JSONSchema } from '@/schema-form';
+import type { FieldInputProps, JSONSchema } from '@/schema-form';
 
 import { renderForm } from '../renderForm';
 
@@ -17,7 +17,7 @@ const run = async (strictMode: boolean, transition: boolean) => {
         release = () => resolve({ default: Input });
       }),
   );
-  const Input = ({ path, value, onChange }: FormTypeInputProps) => {
+  const Input = ({ path, value, onChange }: FieldInputProps) => {
     attempts.push(path);
     return (
       <input
@@ -27,7 +27,7 @@ const run = async (strictMode: boolean, transition: boolean) => {
       />
     );
   };
-  const DeferredInput = (props: FormTypeInputProps) => (
+  const DeferredInput = (props: FieldInputProps) => (
     <Suspense fallback={<span data-pending>pending</span>}>
       <LazyInput {...props} />
     </Suspense>
@@ -42,7 +42,7 @@ const run = async (strictMode: boolean, transition: boolean) => {
           a: {
             type: 'string',
             default: 'A',
-            presentation: { FormTypeInput: DeferredInput },
+            presentation: { FieldInput: DeferredInput },
           },
         },
       },

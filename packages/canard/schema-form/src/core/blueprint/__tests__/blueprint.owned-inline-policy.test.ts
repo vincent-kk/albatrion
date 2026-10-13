@@ -233,14 +233,14 @@ describe('owned-inline ownership and protection', () => {
     const schema = {
       type: 'string',
       options: { virtual: {} },
-      presentation: { FormTypeInputProps: left, borrowed: authoredStyle },
-      allOf: [{ presentation: { FormTypeInputProps: right } }],
+      presentation: { FieldInputProps: left, borrowed: authoredStyle },
+      allOf: [{ presentation: { FieldInputProps: right } }],
     };
     const result = mergeEffectiveSchema(blueprint(schema).root, []);
     const publicSchema = result.schema as Record<string, any>;
     expect(Object.isFrozen(publicSchema.options)).toBe(true);
     expect(Object.isFrozen(publicSchema.presentation)).toBe(true);
-    const props = publicSchema.presentation.FormTypeInputProps;
+    const props = publicSchema.presentation.FieldInputProps;
     for (const value of [props, props.style, props.style.deep])
       expect(Object.isFrozen(value)).toBe(true);
     expect(props.element).toBe(element);

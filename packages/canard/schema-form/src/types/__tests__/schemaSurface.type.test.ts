@@ -28,10 +28,10 @@ type RemovedSchemaKeys =
   | '&derived'
   | 'injectTo'
   | 'terminal'
-  | 'FormTypeInput'
-  | 'FormTypeInputProps'
-  | 'FormTypeRendererProps'
-  | 'formType'
+  | 'FieldInput'
+  | 'FieldInputProps'
+  | 'FieldRendererProps'
+  | 'inputType'
   | 'errorMessages';
 
 /** Object-only keys that moved under `options` (CONTROLS-051). */

@@ -2,7 +2,7 @@ import { act } from '@testing-library/react';
 import { afterEach, expect, expectTypeOf, it } from 'vitest';
 
 import {
-  type FormTypeInputProps,
+  type FieldInputProps,
   type InferSchemaNode,
   type SchemaNode,
   SchemaNodeEventType,
@@ -148,13 +148,13 @@ it('LANDING-147 same-length strings cannot be split into virtual field writes', 
 
 it('LANDING-188 LANDING-190 union narrowing reaches the terminal union node', async () => {
   expectTypeOf<
-    FormTypeInputProps<string | number>['node']
+    FieldInputProps<string | number>['node']
   >().toExtend<UnionNode>();
+  expectTypeOf<FieldInputProps<string | number | null>['node']>().toEqualTypeOf<
+    UnionNode<readonly ['string', 'number'], true>
+  >();
   expectTypeOf<
-    FormTypeInputProps<string | number | null>['node']
-  >().toEqualTypeOf<UnionNode<readonly ['string', 'number'], true>>();
-  expectTypeOf<
-    FormTypeInputProps<'a' | 'b'>['node']['type']
+    FieldInputProps<'a' | 'b'>['node']['type']
   >().toEqualTypeOf<'string'>();
   expectTypeOf<
     InferSchemaNode<{ type: readonly ['string', 'number'] }>

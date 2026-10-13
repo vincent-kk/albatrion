@@ -5,13 +5,47 @@ import { tmpdir } from 'node:os';
 import { join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-const packageRoot = fileURLToPath(new URL('../../../../../../', import.meta.url));
-const tool = resolve(packageRoot, 'architecture/verification/07-switch/tools/measure-react-render-counts.mjs');
-const outputDirectory = mkdtempSync(join(tmpdir(), `schema-form-react-counts-${process.pid}-`));
+import { prepareReactBundles } from '../../../../../../architecture/verification/07-switch/tools/prepare-react-bundles.mjs';
+
+const packageRoot = fileURLToPath(
+  new URL('../../../../../../', import.meta.url),
+);
+const tool = resolve(
+  packageRoot,
+  'architecture/verification/07-switch/tools/measure-react-render-counts.mjs',
+);
+const outputDirectory = mkdtempSync(
+  join(tmpdir(), `schema-form-react-counts-${process.pid}-`),
+);
 try {
-  const result = spawnSync(process.execPath, [tool, ...process.argv.slice(2),
-    '--counts-only', '--all-writes', '--layout-effects', `--output-dir=${outputDirectory}`],
-  { stdio: 'inherit' });
+  const args = process.argv.slice(2);
+  if (args[0] === 'current') {
+    const [bundle] = await prepareReactBundles(
+      packageRoot,
+      outputDirectory,
+      'change',
+      {
+        entry: resolve(
+          packageRoot,
+          'src/__tests__/fixtures/runtimeCounts.entry.tsx',
+        ),
+      },
+    );
+    args[0] = 'change';
+    args.push(`--bundle=${bundle.file}`);
+  }
+  const result = spawnSync(
+    process.execPath,
+    [
+      tool,
+      ...args,
+      '--counts-only',
+      '--all-writes',
+      '--layout-effects',
+      `--output-dir=${outputDirectory}`,
+    ],
+    { stdio: 'inherit' },
+  );
   if (result.error) throw result.error;
   process.exitCode = result.status ?? 1;
 } finally {

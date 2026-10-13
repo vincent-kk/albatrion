@@ -191,7 +191,7 @@ describe('blueprint diagnostic data and late collection', () => {
                 properties: {
                   deep: {
                     type: 'string',
-                    presentation: { FormTypeInput: 'inline' },
+                    presentation: { FieldInput: 'inline' },
                   },
                 },
               },

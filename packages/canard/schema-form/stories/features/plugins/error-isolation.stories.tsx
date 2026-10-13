@@ -18,7 +18,7 @@ const scenario = findScenario(pluginsFeatureScenarios, 'plugins.error-isolation'
 
 /** Shared scenario `plugins.error-isolation` with /broken mapped to an input that throws on the trigger value. */
 export const ThrowingInputFallsBackAlone: Story = {
-  args: { scenario, formProps: { formTypeInputMap: { '/broken': ThrowOnTriggerInput } } },
+  args: { scenario, formProps: { fieldInputMap: { '/broken': ThrowOnTriggerInput } } },
   parameters: { docs: { description: { story: scenario.description } } },
   async play({ args, canvasElement, step }) {
     if (shouldSkipUnfocusedPlay()) return skipPlay(step, unfocusedPlayReason);

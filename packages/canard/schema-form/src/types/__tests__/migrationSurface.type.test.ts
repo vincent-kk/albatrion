@@ -6,14 +6,14 @@ import type { TrackableHandlerFunction } from '@winglet/common-utils/function';
 
 import type { FormErrorRecord } from '../../errors';
 import {
+  type FieldInputDefinition,
+  type FieldInputMap,
+  type FieldInputProps,
+  type FieldRendererProps,
   type Form,
   type FormChildrenProps,
   type FormHandle,
   type FormProps,
-  type FormTypeInputDefinition,
-  type FormTypeInputMap,
-  type FormTypeInputProps,
-  type FormTypeRendererProps,
   type InferSchemaNode,
   type SchemaNode,
   SchemaNodeEventType,
@@ -45,11 +45,11 @@ it('SURFACE-059 FormProps retains nineteen baseline fields with declared replace
     onValidate?: (errors: readonly ValidationIssue[]) => void;
     onSubmit?: (value: string) => Promise<void> | void;
     onStateChange?: (state: SchemaNode['globalState']) => void;
-    formTypeInputDefinitions?: FormTypeInputDefinition[];
-    formTypeInputMap?: FormTypeInputMap;
-    FormTypeGroupRenderer?: ComponentType<FormTypeRendererProps>;
+    fieldInputDefinitions?: FieldInputDefinition[];
+    fieldInputMap?: FieldInputMap;
+    FieldRenderer?: ComponentType<FieldRendererProps>;
     errors?: readonly ValidationIssue[];
-    formatError?: FormTypeRendererProps['formatError'];
+    formatError?: FieldRendererProps['formatError'];
     showError?: boolean | ShowError;
     validationMode?: ValidationMode;
     validatorFactory?: ValidatorFactory;
@@ -62,13 +62,14 @@ it('SURFACE-059 FormProps retains nineteen baseline fields with declared replace
     unsetOnInactive?: boolean;
     disableAutomaticWrites?: boolean;
     onDiagnosticsChange?: (diagnostics: SchemaNode['diagnostics']) => void;
-    FormTypeLabelRenderer?: ComponentType<FormTypeRendererProps>;
-    FormTypeInputRenderer?: ComponentType<FormTypeRendererProps>;
-    FormTypeErrorRenderer?: ComponentType<FormTypeRendererProps>;
+    FormLabelRenderer?: ComponentType<FieldRendererProps>;
+    FormInputRenderer?: ComponentType<FieldRendererProps>;
+    FormErrorRenderer?: ComponentType<FieldRendererProps>;
   };
   expectTypeOf<Props>().toEqualTypeOf<Expected>();
+  expectTypeOf<Props>().toHaveProperty('FieldRenderer');
   expectTypeOf<
-    Extract<keyof Props, 'CustomFormTypeRenderer' | 'FormTypeRenderer'>
+    Extract<keyof Props, 'CustomFieldRenderer'>
   >().toEqualTypeOf<never>();
 });
 
@@ -179,7 +180,7 @@ it('SURFACE-059 five public hooks retain their callable contracts', () => {
     errorMatrix: (readonly ValidationIssue[])[];
   }>();
   expectTypeOf<Parameters<typeof useChildNodeComponentMap>[0]>().toEqualTypeOf<
-    FormTypeInputProps['ChildNodeComponents']
+    FieldInputProps['ChildNodeComponents']
   >();
   expectTypeOf<
     keyof ReturnType<typeof useChildNodeComponentMap<{ name: string }>>

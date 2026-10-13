@@ -11,7 +11,7 @@ import {
   type ValidationIssue,
 } from '@/schema-form/core';
 import {
-  useFormTypeRendererContext,
+  useFieldRendererContext,
   useWorkspaceContext,
 } from '@/schema-form/providers';
 
@@ -27,7 +27,7 @@ export const useChildNodeErrors = (
   formattedErrors: ReactNode[];
   errorMatrix: (readonly ValidationIssue[])[];
 } => {
-  const { formatError, checkShowError } = useFormTypeRendererContext();
+  const { formatError, checkShowError } = useFieldRendererContext();
   const { context } = useWorkspaceContext();
   const mask =
     SchemaNodeEventType.UpdateChildren |

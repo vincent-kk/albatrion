@@ -12,11 +12,11 @@ import userEvent from '@testing-library/user-event';
 import { registerScenarioHandle } from '@aileron/schema-form-scenarios';
 
 import {
+  type FieldInputDefinition,
+  type FieldInputProps,
   Form,
   type FormHandle,
   type FormProps,
-  type FormTypeInputDefinition,
-  type FormTypeInputProps,
   type JSONSchema,
   type SchemaNode,
   type ValidationIssue,
@@ -38,20 +38,20 @@ export const setupValidatorPlugin = (): void => {
 // ---------------------------------------------------------------------------
 
 /**
- * Build type-aware instrumented FormTypeInput definitions that close over a
+ * Build type-aware instrumented FieldInput definitions that close over a
  * per-render mount map. Each input renders `data-mount={ordinal}` so tests can
  * detect a re-mount (ordinal increases) versus a re-render/reuse (unchanged).
  * Run instrument tests WITHOUT strictMode (StrictMode double-invokes mounts).
  */
 const buildInstrumentedDefinitions = (
   mountMap: Map<string, number>,
-): FormTypeInputDefinition[] => {
+): FieldInputDefinition[] => {
   const bump = (path: string) => {
     const next = (mountMap.get(path) ?? 0) + 1;
     mountMap.set(path, next);
     return next;
   };
-  const Text: FC<FormTypeInputProps<any>> = (props) => {
+  const Text: FC<FieldInputProps<any>> = (props) => {
     const [ordinal] = useState(() => bump(props.path));
     return (
       <input
@@ -62,7 +62,7 @@ const buildInstrumentedDefinitions = (
       />
     );
   };
-  const Numeric: FC<FormTypeInputProps<any>> = (props) => {
+  const Numeric: FC<FieldInputProps<any>> = (props) => {
     const [ordinal] = useState(() => bump(props.path));
     return (
       <input
@@ -74,7 +74,7 @@ const buildInstrumentedDefinitions = (
       />
     );
   };
-  const Check: FC<FormTypeInputProps<any>> = (props) => {
+  const Check: FC<FieldInputProps<any>> = (props) => {
     const [ordinal] = useState(() => bump(props.path));
     return (
       <input
@@ -234,7 +234,7 @@ export const renderForm = async (
     initialFlushMs = 0,
     onChange,
     onError,
-    formTypeInputDefinitions,
+    fieldInputDefinitions,
     ...formProps
   } = options;
   if (validator) setupValidatorPlugin();
@@ -246,8 +246,8 @@ export const renderForm = async (
   const records: FormErrorRecord[] = [];
   const mountMap = new Map<string, number>();
 
-  const defs: FormTypeInputDefinition[] = [
-    ...(formTypeInputDefinitions ?? []),
+  const defs: FieldInputDefinition[] = [
+    ...(fieldInputDefinitions ?? []),
     ...(instrument ? buildInstrumentedDefinitions(mountMap) : []),
   ];
 
@@ -263,7 +263,7 @@ export const renderForm = async (
         records.push(record);
         onError?.(record);
       }}
-      formTypeInputDefinitions={defs.length ? defs : undefined}
+      fieldInputDefinitions={defs.length ? defs : undefined}
       {...formProps}
     />
   );

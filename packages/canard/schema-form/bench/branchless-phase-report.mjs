@@ -48,7 +48,7 @@ const hot = (fixture, needle) => {
 };
 const arrayProbeNew = componentProbe.rows.find(r => r.fixture === 'array-1000' && r.version === 'new');
 const arrayListCost = median(arrayProbeNew.samples.map(s => Object.entries(s.details)
-  .filter(([site]) => /FormTypeInputArray.tsx:(30:callback|71:Button)/.test(site))
+  .filter(([site]) => /FieldInputArray.tsx:(30:callback|71:Button)/.test(site))
   .reduce((sum, [, item]) => sum + item.ms, 0)));
 const arrayProbeRender = median(arrayProbeNew.samples.map(s => s.phases['react-render'] ?? 0));
 const text = [];
@@ -168,12 +168,12 @@ table(['크기', 'retained render old median/p99', 'retained render new median/p
   const time = r => summary(r.samples.map(s => s.phases['react-render'] ?? 0));
   const count = (r, pattern) => median(r.samples.map(s => Object.entries(s.details).filter(([site]) => pattern.test(site)).reduce((sum, [, value]) => sum + value.calls, 0)));
   const ot = time(o), nt = time(n);
-  return [f, `${ms(ot.median)}/${ms(ot.p99)}`, `${ms(nt.median)}/${ms(nt.p99)}`, ratio(nt.median, ot.median), `${count(o, /FormTypeInputArray.tsx:29:callback/)}/${count(n, /FormTypeInputArray.tsx:30:callback/)}`, `${count(o, /FormTypeInputArray.tsx:69:Button/)}/${count(n, /FormTypeInputArray.tsx:71:Button/)}`, `${count(o, /SchemaNodeInput.tsx:26:callback/)}/${count(n, /SchemaNodeInput.tsx:30:callback/)}`];
+  return [f, `${ms(ot.median)}/${ms(ot.p99)}`, `${ms(nt.median)}/${ms(nt.p99)}`, ratio(nt.median, ot.median), `${count(o, /FieldInputArray.tsx:29:callback/)}/${count(n, /FieldInputArray.tsx:30:callback/)}`, `${count(o, /FieldInputArray.tsx:69:Button/)}/${count(n, /FieldInputArray.tsx:71:Button/)}`, `${count(o, /SchemaNodeInput.tsx:26:callback/)}/${count(n, /SchemaNodeInput.tsx:30:callback/)}`];
 }));
 const arrayPlainOld = row(renderPlain, 'array-1000', 'update', 'old');
 const arrayPlainNew = row(renderPlain, 'array-1000', 'update', 'new');
 add(`비계측 fresh 행의 Profiler actualDuration은 ${ms(arrayPlainOld.profiler.median)}→${ms(arrayPlainNew.profiler.median)} ms(${ratio(arrayPlainNew.profiler.median, arrayPlainOld.profiler.median)})다. 이 값과 위 retained probe를 함께 봐야 한다.`,
-  '공통으로 확인된 경로는 `components/SchemaNode/SchemaNodeInput/type.ts:33`의 UpdateValue 구독 → `SchemaNodeInput.tsx:121` → `formTypeDefinitions/FormTypeInputArray.tsx:29`의 전체 map과 `:71` Button이다. 1,000개 input을 모두 다시 그린 것은 아니며 SchemaNodeInput 호출은 old 5회/new 4회다. 아이템 목록·버튼의 O(N) 재생성은 양쪽 공통이고 기본 렌더러의 memo/안정된 row props로 줄일 (a) 후보다.',
+  '공통으로 확인된 경로는 `components/SchemaNode/SchemaNodeInput/type.ts:33`의 UpdateValue 구독 → `SchemaNodeInput.tsx:121` → `fieldInputs/FieldInputArray.tsx:29`의 전체 map과 `:71` Button이다. 1,000개 input을 모두 다시 그린 것은 아니며 SchemaNodeInput 호출은 old 5회/new 4회다. 아이템 목록·버튼의 O(N) 재생성은 양쪽 공통이고 기본 렌더러의 memo/안정된 row props로 줄일 (a) 후보다.',
   '이 공통 map/버튼 호출 수만으로 최초 계측 fresh 행의 추가 약 29 ms를 설명할 수 없어, 아래에서 React의 개발용 owner stack 수집 분기를 별도로 측정했다.');
 
 add('### fresh 갱신의 초과: React 19 개발용 owner stack 예산',
@@ -194,7 +194,7 @@ add('## 원인과 (a)/(b) 분류',
 
 table(['항목', '근거와 제안', '코드 (src/core 기준)', '원장 영향', '최대 크기 절감 예산'], [
   ['(a) React 개발 진단의 비교 조건 통제', 'fresh array-1000에서 old는 101/101 비수집, new는 101/101 owner stack 수집이었다. 같은 React 진단 조건 또는 production profiling으로 비교한다. 제품 동작을 바꾸는 개선은 아니다.', 'node_modules/react/cjs/react-jsx-runtime.development.js:324; node_modules/react-dom/cjs/react-dom-client.development.js:17306', 'TEST-026 준수 방식의 개선; NODE/SETTLE/EVENT 계약 변경 없음.', 'JSX 진단 경로 차이 약 27.57 ms가 render 초과 약 26.99 ms를 설명. 제품 절감량으로 합산하지 않음'],
-  ['(a) 기본 배열 렌더러의 값 변경과 목록 재생성 분리', '양쪽 모두 잎 하나의 값 쓰기에 N개 row element와 N+1개 Button을 다시 만든다. 기본 배열 입력은 value prop을 쓰지 않으므로 자식 identity/구조·readOnly·disabled·schema·style을 보존하는 memo 경계를 검토한다. 사용자 입력 컴포넌트의 UpdateValue 구독을 통째로 없애는 제안은 아니다.', '../formTypeDefinitions/FormTypeInputArray.tsx:29, 71; ../components/SchemaNode/SchemaNodeInput/SchemaNodeInput.tsx:121', '계약 변경 없음. GOAL-011 유지, 사용자 FormTypeInput의 최신 값 관측은 유지.', `retained array-1000의 new map+Button 배타 합 ${ms(arrayListCost)} ms(활성 render ${ms(arrayProbeRender)} ms의 ${(100 * arrayListCost / arrayProbeRender).toFixed(1)}%); reconciliation 절감은 별도. fresh 진단 예산 차이와 합산하지 않음`],
+  ['(a) 기본 배열 렌더러의 값 변경과 목록 재생성 분리', '양쪽 모두 잎 하나의 값 쓰기에 N개 row element와 N+1개 Button을 다시 만든다. 기본 배열 입력은 value prop을 쓰지 않으므로 자식 identity/구조·readOnly·disabled·schema·style을 보존하는 memo 경계를 검토한다. 사용자 입력 컴포넌트의 UpdateValue 구독을 통째로 없애는 제안은 아니다.', '../fieldInputs/FieldInputArray.tsx:29, 71; ../components/SchemaNode/SchemaNodeInput/SchemaNodeInput.tsx:121', '계약 변경 없음. GOAL-011 유지, 사용자 FieldInput의 최신 값 관측은 유지.', `retained array-1000의 new map+Button 배타 합 ${ms(arrayListCost)} ms(활성 render ${ms(arrayProbeRender)} ms의 ${(100 * arrayListCost / arrayProbeRender).toFixed(1)}%); reconciliation 절감은 별도. fresh 진단 예산 차이와 합산하지 않음`],
   ['(a) 정적 첫 로드 fast path', '게이트·잠복·pending exit가 없는 최초 로드도 일반 자식 선택의 key 직렬화, pendingExits 조회, entered·selectedDeclarationIds 등록을 한다. 정적 템플릿과 검증된 조건으로 불필요한 장부만 생략/축소한다.', 'settle/utils/compute/selectChildren.ts:118, 200, 214, 225; computeNode.ts:46', '계약 변경 없음. NODE-006의 정적 선택 메모, GOAL-011을 유지. 단순히 node를 생략하지 않는다.', largest.slice(0, 3).map(f => `${f}: selectChildren ≤${ms(hot(f, '/selectChildren.ts:'))} ms`).join('; ')],
   ['(a) 정적 선언의 재등록·경로 색인', '분기 없는 선택 ID를 각 커밋의 path-keyed 저장소에 복제한다. 검증 라우팅/derived 등 실제 소비자의 동일한 관측을 유지하면서 정적 선택은 blueprint 조회로 공유하는 후보.', 'settle/utils/commit/commitSettlement.ts:48–52; validation/utils/route/routeValidationIssues.ts:28; settle/utils/controls/getControlLayers.ts:44', 'NODE-006·SETTLE-017·VALIDATE-048 보존. 오류 경로와 source selection을 지키면 ledger 변경 없음.', `array-1000: commitSettlement 배타 전체 ≤${ms(hot('array-1000', '/commitSettlement.ts:'))} ms; 이 중 선언 색인만의 몫은 미분리`],
   ['(a) 빈 배달 작업 집합', 'automaticLog가 비었어도 Set을 만들고 changed/entered/stateDirty/revision 후보를 모아 또 ordered Set으로 합친다. 기존 65C-03의 한 방문·기존 필드 사용 원칙 안에서 재사용/조건부 할당을 검토한다.', 'settle/utils/commit/markCommitDeliveries.ts:33, 56, 74, 98', 'EVENT-001/007/024 및 SETTLE-006은 그대로. 구독 없는 노드의 revision을 생략하면 (b)로 넘어간다.', `array-1000: markCommitDeliveries 배타 전체 ≤${ms(hot('array-1000', '/markCommitDeliveries.ts:'))} ms; 빈 집합만의 몫은 이보다 작고 미분리`],

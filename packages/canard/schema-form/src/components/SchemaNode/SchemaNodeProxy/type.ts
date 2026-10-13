@@ -5,9 +5,9 @@ import type { Dictionary } from '@aileron/declare';
 import type { SchemaNode } from '@/schema-form/core';
 import type {
   ChildNodeComponentProps,
-  FormTypeInputProps,
-  FormTypeRendererProps,
-  OverridableFormTypeInputProps,
+  FieldInputProps,
+  FieldRendererProps,
+  OverridableFieldInputProps,
 } from '@/schema-form/types';
 
 /** Recursive render props shared by the proxy, the input layer, and the deferred-render gate. */
@@ -16,8 +16,8 @@ export interface SchemaNodeProxyProps {
   node?: SchemaNode;
   onChangeRef?: RefObject<ChildNodeComponentProps['onChange']>;
   onFileAttachRef?: RefObject<ChildNodeComponentProps['onFileAttach']>;
-  overridePropsRef?: RefObject<OverridableFormTypeInputProps>;
-  FormTypeInput?: ComponentType<FormTypeInputProps>;
-  FormTypeGroupRenderer?: ComponentType<FormTypeRendererProps>;
+  overridePropsRef?: RefObject<OverridableFieldInputProps>;
+  FieldInput?: ComponentType<FieldInputProps>;
+  FieldRenderer?: ComponentType<FieldRendererProps>;
   Wrapper?: ComponentType<PropsWithChildren<Dictionary>>;
 }

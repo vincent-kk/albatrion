@@ -3,7 +3,7 @@ import { pluginFormPlan } from '@aileron/schema-form-scenarios';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { userEvent } from 'storybook/test';
 
-import type { FormHandle, FormTypeRendererProps } from '../../src';
+import type { FormHandle, FieldRendererProps } from '../../src';
 
 import { FeatureStory } from '../features/components/FeatureStory';
 import { expectEventually } from '../features/components/expectEventually';
@@ -18,7 +18,7 @@ type Story = StoryObj<typeof FeatureStory>;
  * @param props - Renderer props of one node.
  * @returns The field's Input inside a marked box.
  */
-const MarkedGroup = ({ Input, path }: FormTypeRendererProps) => <div data-renderer="consumer-group" data-field={path}><Input /></div>;
+const MarkedGroup = ({ Input, path }: FieldRendererProps) => <div data-renderer="consumer-group" data-field={path}><Input /></div>;
 
 /**
  * Read attached file names by path.
@@ -31,9 +31,9 @@ const readAttached = (map: ReturnType<FormHandle['getAttachedFilesMap']>) =>
 /** Shared composite case `composite.cx06-plugin-form` with a consumer renderer, a multi-file input, and a throwing input. */
 export const Case: Story = createCompositeStory('composite.cx06-plugin-form', {
   formProps: {
-    FormTypeGroupRenderer: MarkedGroup,
-    formTypeInputMap: { '/broken': ThrowOnTriggerInput },
-    formTypeInputDefinitions: [{ test: { formType: 'composite.files' }, Component: MultipleFileInput }],
+    FieldRenderer: MarkedGroup,
+    fieldInputMap: { '/broken': ThrowOnTriggerInput },
+    fieldInputDefinitions: [{ test: { inputType: 'composite.files' }, Component: MultipleFileInput }],
   },
   async before({ canvasElement, handle }) {
     const files = pluginFormPlan.fileNames.map((name) => new File(['x'], name, { type: 'application/pdf' }));

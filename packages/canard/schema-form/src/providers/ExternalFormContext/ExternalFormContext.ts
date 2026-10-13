@@ -3,25 +3,25 @@ import { type ComponentType, createContext } from 'react';
 import type { Dictionary } from '@aileron/declare';
 
 import type { ValidationMode } from '@/schema-form/core';
-import type { NormalizedFormTypeInputDefinition } from '@/schema-form/helpers/formTypeInputDefinition';
+import type { NormalizedFieldInputDefinition } from '@/schema-form/helpers/fieldInputDefinition';
 import type {
-  FormTypeRendererProps,
+  FieldRendererProps,
   FormatError,
   ShowError,
   ValidatorFactory,
 } from '@/schema-form/types';
 
 export interface ExternalFormContext {
-  /** List of FormTypeInputDefinition declared externally */
-  fromExternalFormTypeInputDefinitions?: NormalizedFormTypeInputDefinition[];
-  /** FormTypeGroupRenderer component declared externally */
-  FormTypeGroupRenderer?: ComponentType<FormTypeRendererProps>;
-  /** FormTypeLabelRenderer component declared externally */
-  FormTypeLabelRenderer?: ComponentType<FormTypeRendererProps>;
-  /** FormTypeInputRenderer component declared externally */
-  FormTypeInputRenderer?: ComponentType<FormTypeRendererProps>;
-  /** FormTypeErrorRenderer component declared externally */
-  FormTypeErrorRenderer?: ComponentType<FormTypeRendererProps>;
+  /** List of FieldInputDefinition declared externally */
+  fromExternalFieldInputDefinitions?: NormalizedFieldInputDefinition[];
+  /** FieldRenderer component declared externally */
+  FieldRenderer?: ComponentType<FieldRendererProps>;
+  /** FormLabelRenderer component declared externally */
+  FormLabelRenderer?: ComponentType<FieldRendererProps>;
+  /** FormInputRenderer component declared externally */
+  FormInputRenderer?: ComponentType<FieldRendererProps>;
+  /** FormErrorRenderer component declared externally */
+  FormErrorRenderer?: ComponentType<FieldRendererProps>;
   /** FormatError function declared externally */
   formatError?: FormatError;
   /** Error display condition (default: ShowError.DirtyTouched) */

@@ -5,7 +5,7 @@ import { afterEach, expect, it, vi } from 'vitest';
 
 import { Form, type FormHandle } from '@/schema-form/components/Form';
 import { type SchemaNode, ValidationMode } from '@/schema-form/core';
-import type { FormTypeInputProps } from '@/schema-form/types';
+import type { FieldInputProps } from '@/schema-form/types';
 
 afterEach(() => {
   cleanup();
@@ -40,13 +40,13 @@ it('ERROR-113 refuses core writes during committed buffered onError delivery', (
   vi.stubGlobal('reportError', vi.fn());
   let node: SchemaNode;
   let failure: unknown;
-  const Input = (props: FormTypeInputProps) => {
+  const Input = (props: FieldInputProps) => {
     node = props.node;
     return <input />;
   };
   render(
     <Form
-      jsonSchema={{ type: 'number', presentation: { FormTypeInput: Input } }}
+      jsonSchema={{ type: 'number', presentation: { FieldInput: Input } }}
       defaultValue="invalid"
       validationMode={ValidationMode.None}
       onError={() => {

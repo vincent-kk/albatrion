@@ -12,8 +12,8 @@ import {
 } from '@aileron/schema-form-scenarios';
 
 import {
+  type FieldInputProps,
   Form,
-  type FormTypeInputProps,
   type JSONSchema,
   SchemaNodeEventType,
   ValidationMode,
@@ -83,7 +83,7 @@ async function mountSubscribers(count: number) {
     bump = () => setValue((old) => old + 1);
     return <output data-sibling>{value}</output>;
   };
-  const Input = ({ path, value }: FormTypeInputProps) => (
+  const Input = ({ path, value }: FieldInputProps) => (
     <input id={path} value={value ?? ''} readOnly />
   );
   const properties = Object.fromEntries(
@@ -97,7 +97,7 @@ async function mountSubscribers(count: number) {
   );
   form = await renderForm({ type: 'object', properties } as JSONSchema, {
     defaultValue: initial,
-    formTypeInputDefinitions: [{ test: { type: 'number' }, Component: Input }],
+    fieldInputDefinitions: [{ test: { type: 'number' }, Component: Input }],
     children: (
       <Profiler
         id="subscribers"

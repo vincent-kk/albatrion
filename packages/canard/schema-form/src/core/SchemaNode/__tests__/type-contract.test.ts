@@ -7,7 +7,7 @@ import { isObjectNode, isTerminalNode } from '../index';
 import type { SchemaNodeEventType, SchemaNodeRequestType } from '../index';
 import type {
   ArrayNode,
-  FormTypeInputProps,
+  FieldInputProps,
   InferSchemaNode,
   NullNode,
   NumberNode,
@@ -168,10 +168,10 @@ describe('new SchemaNode public types', () => {
     >();
     expectTypeOf<Mismatched['value']>().toEqualTypeOf<unknown>();
     expectTypeOf<
-      Parameters<FormTypeInputProps<Types, false>['onChange']>[0]
+      Parameters<FieldInputProps<Types, false>['onChange']>[0]
     >().toEqualTypeOf<string | number | undefined>();
     expectTypeOf<
-      Parameters<FormTypeInputProps<Types, true>['onChange']>[0]
+      Parameters<FieldInputProps<Types, true>['onChange']>[0]
     >().toEqualTypeOf<string | number | null | undefined>();
   });
 

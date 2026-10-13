@@ -1,13 +1,13 @@
 import { useLayoutEffect, useRef, useState } from 'react';
 
-import type { FormTypeInputProps } from '../../../src';
+import type { FieldInputProps } from '../../../src';
 
 /**
  * Keep the IME draft local; publish only the completed text through the binding.
  * @param props - The node binding; format selects the caret-preserving formatter.
  * @returns A controlled text input with composition-aware publication.
  */
-export function CompositionInput({ value, onChange, path, jsonSchema }: FormTypeInputProps) {
+export function CompositionInput({ value, onChange, path, jsonSchema }: FieldInputProps) {
   const [draft, setDraft] = useState(String(value ?? ''));
   const composing = useRef(false);
   useLayoutEffect(() => {

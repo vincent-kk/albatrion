@@ -6,7 +6,7 @@ import {
   playScenario,
 } from '@aileron/schema-form-scenarios';
 
-import type { FormTypeInputProps, JSONSchema } from '@/schema-form';
+import type { FieldInputProps, JSONSchema } from '@/schema-form';
 
 import { type FormHarness, renderForm } from '../renderForm';
 
@@ -35,7 +35,7 @@ for (const scenario of nestedFillScenarios)
   });
 
 /** Terminal objects render their whole value, without drawing child proxies. */
-const Terminal = ({ value }: FormTypeInputProps) => (
+const Terminal = ({ value }: FieldInputProps) => (
   <output data-testid="terminal">{JSON.stringify(value)}</output>
 );
 
@@ -52,7 +52,7 @@ it('WRITE-071 caller defaultValue remains immutable without terminal child filli
             given: { type: 'string' },
             added: { type: 'string', default: 'forbidden' },
           },
-          presentation: { FormTypeInput: Terminal },
+          presentation: { FieldInput: Terminal },
         },
       },
     },
@@ -79,7 +79,7 @@ it('NODE-005 frozen terminal defaults render without child default filling', asy
             given: { type: 'string' },
             added: { type: 'string', default: 'forbidden' },
           },
-          presentation: { FormTypeInput: Terminal },
+          presentation: { FieldInput: Terminal },
         },
       },
     },

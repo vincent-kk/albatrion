@@ -318,8 +318,8 @@ How to fix:
      }"
 `;
 
-exports[`formatErrorMessage > 에러 메시지 스냅샷 > formatFormTypeInputMapError 스냅샷 1`] = `
-"Invalid key pattern in FormTypeInputMap.
+exports[`formatErrorMessage > 에러 메시지 스냅샷 > formatFieldInputMapError 스냅샷 1`] = `
+"Invalid key pattern in FieldInputMap.
 
   ╭──────────────────────────────────────────────────
   │  Pattern:  '/users/*/profile/[invalid'
@@ -327,7 +327,7 @@ exports[`formatErrorMessage > 에러 메시지 스냅샷 > formatFormTypeInputMa
   │  Error:  Invalid regular expression: /\\/users\\/.*\\/profile\\/[invalid/: Unterminated character class
   ╰──────────────────────────────────────────────────
 
-FormTypeInputMap keys must be valid JSONPointer paths or patterns.
+FieldInputMap keys must be valid JSONPointer paths or patterns.
 The provided pattern could not be compiled into a valid path matcher.
 
 Valid patterns:
@@ -617,10 +617,10 @@ exports[`formatErrorMessage > 에러 메시지 스냅샷 > formatRegisterPluginE
   │  Plugin Features:
   │    • FormInput
   │    • FormLabel
-  │    • formTypeInputDefinitions
+  │    • fieldInputDefinitions
   │    • validator
   ├──────────────────────────────────────────────────
-  │  Error:  Plugin conflict: formTypeInputDefinitions[0] conflicts with existing definition
+  │  Error:  Plugin conflict: fieldInputDefinitions[0] conflicts with existing definition
   ╰──────────────────────────────────────────────────
 
 The plugin could not be registered with the form system.
@@ -631,7 +631,7 @@ How to fix:
   1. Check that the plugin exports are correctly structured:
      {
        renderKit?: { ... },
-       formTypeInputDefinitions?: [...],
+       fieldInputDefinitions?: [...],
        validator?: ValidatorFactory,
        formatError?: ErrorFormatter
      }

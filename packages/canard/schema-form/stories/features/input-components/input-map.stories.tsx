@@ -19,7 +19,7 @@ const scenario = findScenario(inputComponentsFeatureScenarios, 'input-components
 
 /** Shared scenario `input-components.input-map` with exact, pattern, and wildcard keys from inputMapCase. */
 export const ExactPatternAndWildcard: Story = {
-  args: { scenario, formProps: { formTypeInputMap: toInputMap(inputMapCase.map) } },
+  args: { scenario, formProps: { fieldInputMap: toInputMap(inputMapCase.map) } },
   parameters: { docs: { description: { story: `${scenario.description} Map: ${JSON.stringify(inputMapCase.map)}.` } } },
   async play({ args, canvasElement, step }) {
     if (shouldSkipUnfocusedPlay()) return skipPlay(step, unfocusedPlayReason);

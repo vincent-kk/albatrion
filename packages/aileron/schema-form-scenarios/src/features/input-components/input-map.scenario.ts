@@ -11,10 +11,10 @@ const mapSchema = {
   },
 };
 
-/** formTypeInputMap keys: an exact pointer, a regular expression, and `*` wildcards over array items and declared object children. */
+/** fieldInputMap keys: an exact pointer, a regular expression, and `*` wildcards over array items and declared object children. */
 export const inputMapScenario: FormScenario = {
   name: 'input-components.input-map',
-  description: 'formTypeInputMap keys are JSON pointers: an exact pointer matches one node, a key with a standalone `*` segment matches exactly one segment there, and any other key also matches as an unanchored regular expression (CONTROLS-080 keeps `*` only for findNodes and map keys); dynamic keys are not nodes (SCHEMA-040), so a wildcard reaches only declared children. Keys and winners come from inputMapCase.',
+  description: 'fieldInputMap keys are JSON pointers: an exact pointer matches one node, a key with a standalone `*` segment matches exactly one segment there, and any other key also matches as an unanchored regular expression (CONTROLS-080 keeps `*` only for findNodes and map keys); dynamic keys are not nodes (SCHEMA-040), so a wildcard reaches only declared children. Keys and winners come from inputMapCase.',
   schema: mapSchema,
   initialValue: { profile: { name: 'Kim', nickname: 'K' }, tags: ['a', 'b'], meta: { color: 'red', size: 'M' } },
   steps: [{ action: 'batch', steps: [], expect: { shape: { '/profile/name': 'present', '/tags/1': 'present', '/meta/color': 'present' } } }],

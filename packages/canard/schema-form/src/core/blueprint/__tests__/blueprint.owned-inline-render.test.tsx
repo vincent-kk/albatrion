@@ -8,19 +8,19 @@ import { expect, it } from 'vitest';
 import { hasOwnProperty } from '@winglet/common-utils/lib';
 
 import {
+  type FieldInputProps,
+  type FieldRendererProps,
   Form,
-  type FormTypeInputProps,
-  type FormTypeRendererProps,
 } from '@/schema-form';
 
 it('loads the selected React build and renders authored lazy input and inline JSX labels', async () => {
   const production = process.env.NODE_ENV === 'production';
   expect(hasOwnProperty(createElement('div'), '_store')).toBe(!production);
   const errors: unknown[] = [];
-  const input = (props: FormTypeInputProps) => (
+  const input = (props: FieldInputProps) => (
     <input data-owned-input value={String(props.value ?? '')} readOnly />
   );
-  const Renderer = ({ Input, label }: FormTypeRendererProps) => (
+  const Renderer = ({ Input, label }: FieldRendererProps) => (
     <div>
       {label}
       <Input />
@@ -41,9 +41,9 @@ it('loads the selected React build and renders authored lazy input and inline JS
           type: 'string' as const,
           default: 'ready',
           presentation: {
-            FormTypeInput: LazyInput,
-            FormTypeInputProps: authoredProps,
-            FormTypeRendererProps: {
+            FieldInput: LazyInput,
+            FieldInputProps: authoredProps,
+            FieldRendererProps: {
               label: <span data-owned-label>{label}</span>,
             },
           },
@@ -57,7 +57,7 @@ it('loads the selected React build and renders authored lazy input and inline JS
           key={label}
           jsonSchema={schema}
           validationMode={0}
-          FormTypeGroupRenderer={Renderer}
+          FieldRenderer={Renderer}
           onError={(error) => {
             if (error.code !== 'SCHEMA_FORM_WARNING.VALIDATOR_MISSING')
               errors.push(error);

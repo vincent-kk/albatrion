@@ -4,7 +4,7 @@ import { cleanup, render } from '@testing-library/react';
 import { afterEach, expect, it, vi } from 'vitest';
 
 import { Form } from '@/schema-form/components/Form';
-import type { FormTypeInputProps } from '@/schema-form/types';
+import type { FieldInputProps } from '@/schema-form/types';
 
 /** Layout-effect runs of every module that imports `useLayoutEffect` from React in this file's graph. */
 const layoutRuns = vi.hoisted(() => ({ count: 0 }));
@@ -31,7 +31,7 @@ vi.mock('react', async (importOriginal) => {
 
 afterEach(cleanup);
 
-const Input = ({ defaultValue, path }: FormTypeInputProps) => (
+const Input = ({ defaultValue, path }: FieldInputProps) => (
   <input defaultValue={defaultValue as string | undefined} id={path} />
 );
 
@@ -47,9 +47,7 @@ const mountLayoutRuns = (length: number) => {
       defaultValue={{
         items: Array.from({ length }, (_, index) => `v${index}`),
       }}
-      formTypeInputDefinitions={[
-        { test: { type: 'string' }, Component: Input },
-      ]}
+      fieldInputDefinitions={[{ test: { type: 'string' }, Component: Input }]}
     />,
   );
   const runs = layoutRuns.count;

@@ -14,11 +14,11 @@ import { SchemaNodeEventType } from '@/schema-form/core';
 import { useSchemaNode } from '@/schema-form/hooks/useSchemaNode';
 import { useSchemaNodeTracker } from '@/schema-form/hooks/useSchemaNodeTracker';
 import {
-  useFormTypeRendererContext,
+  useFieldRendererContext,
   useWorkspaceContext,
 } from '@/schema-form/providers';
 import { useBoundaryReporter } from '@/schema-form/providers/FormErrorContext';
-import type { FormTypeRendererProps, JSONSchema } from '@/schema-form/types';
+import type { FieldRendererProps, JSONSchema } from '@/schema-form/types';
 
 import { SchemaNodeInputWrapper } from '../SchemaNodeInput';
 import type { SchemaNodeProxyProps } from './type';
@@ -38,8 +38,8 @@ export const SchemaNodeProxy = ({
   onChangeRef,
   onFileAttachRef,
   overridePropsRef,
-  FormTypeInput,
-  FormTypeGroupRenderer: InputFormTypeRenderer,
+  FieldInput,
+  FieldRenderer: InputFieldRenderer,
   Wrapper: InputWrapper,
 }: SchemaNodeProxyProps) => {
   const node = useSchemaNode(inputNode || path);
@@ -47,31 +47,31 @@ export const SchemaNodeProxy = ({
   const refreshRef = useReference(refresh);
   const onError = useBoundaryReporter(node?.path);
 
-  const Input = useMemo<FormTypeRendererProps['Input']>(
+  const Input = useMemo<FieldRendererProps['Input']>(
     () =>
       SchemaNodeInputWrapper(
         node,
         onChangeRef,
         onFileAttachRef,
         overridePropsRef,
-        FormTypeInput,
+        FieldInput,
         SchemaNodeProxy,
       ),
-    [node, onChangeRef, onFileAttachRef, overridePropsRef, FormTypeInput],
+    [node, onChangeRef, onFileAttachRef, overridePropsRef, FieldInput],
   );
 
   const {
-    FormTypeGroupRenderer: ContextFormTypeRenderer,
+    FieldRenderer: ContextFieldRenderer,
     formatError: contextFormatError,
     checkShowError,
-  } = useFormTypeRendererContext();
+  } = useFieldRendererContext();
 
-  const FormTypeGroupRenderer = useLazyConstant(() => {
-    const Component = InputFormTypeRenderer || ContextFormTypeRenderer;
+  const FieldRenderer = useLazyConstant(() => {
+    const Component = InputFieldRenderer || ContextFieldRenderer;
     const Renderer = isMemoComponent(Component) ? Component : memo(Component);
     /** Compute the message below the owning boundary without leaking extra props to the renderer. */
     return function RendererWithErrorMessage(
-      props: Omit<FormTypeRendererProps, 'errorMessage'>,
+      props: Omit<FieldRendererProps, 'errorMessage'>,
     ) {
       const { node, context, formatError } = props;
       const errorMessage = useMemo(() => {
@@ -103,9 +103,9 @@ export const SchemaNodeProxy = ({
     <Wrapper key={version}>
       <div data-path={node.path} role={NONE_ROLE} style={DISPLAY_CONTENT}>
         <ErrorBoundary onError={onError}>
-          <FormTypeGroupRenderer
+          <FieldRenderer
             {...(node.jsonSchema as JSONSchema).presentation
-              ?.FormTypeRendererProps}
+              ?.FieldRendererProps}
             {...overridePropsRef?.current}
             // Essential node properties are owned by the binding.
             node={node}

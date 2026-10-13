@@ -5,7 +5,7 @@ import { afterEach, expect, it, vi } from 'vitest';
 
 import { Form, type FormHandle } from '@/schema-form/components/Form';
 import { ValidationMode } from '@/schema-form/core';
-import type { FormTypeInputProps } from '@/schema-form/types';
+import type { FieldInputProps } from '@/schema-form/types';
 
 afterEach(() => {
   cleanup();
@@ -17,14 +17,14 @@ it('ERROR-113 guards an initial field boundary report under StrictMode', () => {
   const failure = new Error('initial field render');
   let root: FormHandle['node'];
   let refusal: unknown;
-  const Input = (props: FormTypeInputProps) => {
+  const Input = (props: FieldInputProps) => {
     root = props.node.rootNode;
     throw failure;
   };
   render(
     <StrictMode>
       <Form
-        jsonSchema={{ type: 'string', presentation: { FormTypeInput: Input } }}
+        jsonSchema={{ type: 'string', presentation: { FieldInput: Input } }}
         defaultValue="kept"
         validationMode={ValidationMode.None}
         onError={(record) => {
@@ -49,7 +49,7 @@ it('ERROR-113 rejects writes in the field boundary reporter after commit', () =>
   const ref = createRef<FormHandle>();
   const failure = new Error('field render');
   let refusal: unknown;
-  const Input = ({ value }: FormTypeInputProps) => {
+  const Input = ({ value }: FieldInputProps) => {
     if (value === 'throw') throw failure;
     return <input />;
   };
@@ -59,7 +59,7 @@ it('ERROR-113 rejects writes in the field boundary reporter after commit', () =>
       jsonSchema={{
         type: 'object',
         properties: {
-          field: { type: 'string', presentation: { FormTypeInput: Input } },
+          field: { type: 'string', presentation: { FieldInput: Input } },
         },
       }}
       validationMode={ValidationMode.None}
@@ -132,7 +132,7 @@ it('ERROR-113 scopes reports to a replacement root after schema reset', () => {
   const ref = createRef<FormHandle>();
   let refusal: unknown;
   let root: FormHandle['node'];
-  const Input = (props: FormTypeInputProps) => {
+  const Input = (props: FieldInputProps) => {
     root = props.node;
     return <input />;
   };
@@ -154,7 +154,7 @@ it('ERROR-113 scopes reports to a replacement root after schema reset', () => {
   view.rerender(
     <Form
       ref={ref}
-      jsonSchema={{ type: 'number', presentation: { FormTypeInput: Input } }}
+      jsonSchema={{ type: 'number', presentation: { FieldInput: Input } }}
       defaultValue={3}
       validationMode={ValidationMode.None}
       onError={onError}

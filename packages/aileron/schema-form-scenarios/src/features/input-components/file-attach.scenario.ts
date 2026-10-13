@@ -4,9 +4,9 @@ import type { FormScenario } from '../../types';
 const uploadSchema = {
   type: 'object',
   properties: {
-    avatar: { type: 'string', presentation: { formType: 'input-components.file' } },
+    avatar: { type: 'string', presentation: { inputType: 'input-components.file' } },
     showGallery: { type: 'boolean' },
-    gallery: { type: 'array', items: { type: 'string' }, presentation: { formType: 'input-components.files' }, controls: { active: '../showGallery' } },
+    gallery: { type: 'array', items: { type: 'string' }, presentation: { inputType: 'input-components.files' }, controls: { active: '../showGallery' } },
   },
 };
 

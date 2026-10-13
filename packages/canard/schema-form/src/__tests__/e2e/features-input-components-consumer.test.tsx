@@ -20,9 +20,9 @@ import {
 } from '@aileron/schema-form-scenarios';
 
 import {
-  type FormTypeInputDefinition,
-  type FormTypeInputMap,
-  type FormTypeInputProps,
+  type FieldInputDefinition,
+  type FieldInputMap,
+  type FieldInputProps,
   type JSONSchema,
   Form,
   FormProvider,
@@ -37,7 +37,7 @@ const BLUR_FRAME_MS = 50;
 
 // Consumer-only checks for input-components cases; components mirror the story utilities so the two consumers stay independent.
 
-const labelled = new Map<string, ComponentType<FormTypeInputProps>>();
+const labelled = new Map<string, ComponentType<FieldInputProps>>();
 
 /**
  * Return one stable text input per label that marks itself with data-winner.
@@ -46,7 +46,7 @@ const labelled = new Map<string, ComponentType<FormTypeInputProps>>();
  */
 const labelledInput = (label: string) => {
   if (!labelled.has(label))
-    labelled.set(label, ({ path, value, onChange }: FormTypeInputProps) => (
+    labelled.set(label, ({ path, value, onChange }: FieldInputProps) => (
       <input id={path} data-winner={label} defaultValue={typeof value === 'string' ? value : ''} onChange={(event) => onChange(event.target.value)} />
     ));
   return labelled.get(label)!;
@@ -57,14 +57,14 @@ const labelledInput = (label: string) => {
  * @param list - Labelled definitions in priority order.
  * @returns Real definitions.
  */
-const definitions = (list: readonly LabeledDefinition[]): FormTypeInputDefinition[] => list.map(({ test, label }) => ({ test, Component: labelledInput(label) }));
+const definitions = (list: readonly LabeledDefinition[]): FieldInputDefinition[] => list.map(({ test, label }) => ({ test, Component: labelledInput(label) }));
 
 /**
- * Build a formTypeInputMap from labels.
+ * Build a fieldInputMap from labels.
  * @param map - Keys to labels.
  * @returns Keys to labelled components.
  */
-const inputMap = (map: Readonly<Record<string, string>>): FormTypeInputMap => Object.fromEntries(Object.entries(map).map(([key, label]) => [key, labelledInput(label)]));
+const inputMap = (map: Readonly<Record<string, string>>): FieldInputMap => Object.fromEntries(Object.entries(map).map(([key, label]) => [key, labelledInput(label)]));
 
 /**
  * Read which input rendered at a leaf path.
@@ -97,7 +97,7 @@ const scenarioNamed = (name: string): FormScenario => {
  */
 const settle = (ms = 0) => act(async () => { await new Promise((resolve) => setTimeout(resolve, ms)); });
 
-registerPlugin({ formTypeInputDefinitions: definitions([inputResolutionPluginDefinition]) });
+registerPlugin({ fieldInputDefinitions: definitions([inputResolutionPluginDefinition]) });
 
 describe('features — input-components consumer-only', () => {
   it.each(inputResolutionCases)('input resolution $label picks the winner at each probe field', async (item) => {
@@ -107,12 +107,12 @@ describe('features — input-components consumer-only', () => {
     for (const [path, label] of Object.entries(item.inline ?? {})) {
       const property = isPlainObject<Record<string, unknown>>(properties) ? properties[path.slice(1)] : undefined;
       if (!isPlainObject<Record<string, unknown>>(property)) throw new Error(`Inline input needs a top-level property: ${path}`);
-      property.presentation = { ...(isPlainObject(property.presentation) ? property.presentation : {}), FormTypeInput: label === null ? null : labelledInput(label) };
+      property.presentation = { ...(isPlainObject(property.presentation) ? property.presentation : {}), FieldInput: label === null ? null : labelledInput(label) };
     }
     setupValidatorPlugin();
     const form = <Form<JSONSchema> jsonSchema={schema as JSONSchema} defaultValue={base.initialValue}
-      formTypeInputMap={item.map && inputMap(item.map)} formTypeInputDefinitions={item.form && definitions(item.form)} />;
-    const { container, unmount } = render(item.provider ? <FormProvider formTypeInputDefinitions={definitions(item.provider)}>{form}</FormProvider> : form);
+      fieldInputMap={item.map && inputMap(item.map)} fieldInputDefinitions={item.form && definitions(item.form)} />;
+    const { container, unmount } = render(item.provider ? <FormProvider fieldInputDefinitions={definitions(item.provider)}>{form}</FormProvider> : form);
     try {
       await settle();
       expect(Object.fromEntries(Object.keys(item.winners).map((path) => [path, winner(container, path)]))).toEqual(item.winners);
@@ -121,9 +121,9 @@ describe('features — input-components consumer-only', () => {
     }
   });
 
-  it('formTypeInputMap matches an exact pointer, an unanchored pattern, and `*` over items and declared children', async () => {
+  it('fieldInputMap matches an exact pointer, an unanchored pattern, and `*` over items and declared children', async () => {
     const scenario = scenarioNamed('input-components.input-map');
-    const form = await renderForm(scenario.schema as JSONSchema, { defaultValue: scenario.initialValue, validator: true, formTypeInputMap: inputMap(inputMapCase.map) });
+    const form = await renderForm(scenario.schema as JSONSchema, { defaultValue: scenario.initialValue, validator: true, fieldInputMap: inputMap(inputMapCase.map) });
     try {
       expect(Object.fromEntries(Object.keys(inputMapCase.winners).map((path) => [path, winner(form.container, path)]))).toEqual(inputMapCase.winners);
     } finally {
@@ -148,16 +148,16 @@ describe('features — input-components consumer-only', () => {
 
   it('attached files follow the input: one or many by path, removed on unmount, cleared on reset', async () => {
     const scenario = scenarioNamed('input-components.file-attach');
-    const fileInput = (multiple: boolean) => ({ path, onChange, onFileAttach }: FormTypeInputProps) => (
+    const fileInput = (multiple: boolean) => ({ path, onChange, onFileAttach }: FieldInputProps) => (
       <input id={path} type="file" multiple={multiple} onChange={(event) => {
         const files = Array.from(event.target.files ?? []);
         onFileAttach(multiple ? files : files[0]);
         onChange(multiple ? files.map((file) => file.name) : files[0]?.name);
       }} />
     );
-    const form = await renderForm(scenario.schema as JSONSchema, { defaultValue: scenario.initialValue, validator: true, formTypeInputDefinitions: [
-      { test: { formType: 'input-components.file' }, Component: fileInput(false) },
-      { test: { formType: 'input-components.files' }, Component: fileInput(true) },
+    const form = await renderForm(scenario.schema as JSONSchema, { defaultValue: scenario.initialValue, validator: true, fieldInputDefinitions: [
+      { test: { inputType: 'input-components.file' }, Component: fileInput(false) },
+      { test: { inputType: 'input-components.files' }, Component: fileInput(true) },
     ] });
     try {
       for (const [index, stage] of fileAttachStages.entries()) {
@@ -189,7 +189,7 @@ describe('features — input-components consumer-only', () => {
 
   it('a card input draws ChildNodeComponents and useChildNodeErrors reports showErrors by child state', async () => {
     const scenario = scenarioNamed('input-components.child-components');
-    const Card = ({ path, node, ChildNodeComponents }: FormTypeInputProps) => {
+    const Card = ({ path, node, ChildNodeComponents }: FieldInputProps) => {
       const { showErrors, errorMatrix } = useChildNodeErrors(node);
       return <div id={path} data-card-fields={ChildNodeComponents.map((Child) => Child.field).join(',')}
         data-show-errors={JSON.stringify(showErrors)} data-error-counts={JSON.stringify(errorMatrix.map((errors) => errors.length))}>
@@ -197,7 +197,7 @@ describe('features — input-components consumer-only', () => {
       </div>;
     };
     const form = await renderForm(scenario.schema as JSONSchema, { defaultValue: scenario.initialValue, validator: true,
-      formTypeInputDefinitions: [{ test: { formType: 'input-components.card' }, Component: Card }] });
+      fieldInputDefinitions: [{ test: { inputType: 'input-components.card' }, Component: Card }] });
     try {
       await form.validate();
       for (const [index, stage] of childComponentStages.entries()) {
@@ -217,7 +217,7 @@ describe('features — input-components consumer-only', () => {
 
   it('SCHEMA-040 an open object stays one node edited as a whole by a terminal input', async () => {
     const scenario = scenarioNamed('input-components.child-components');
-    const MapEntry = ({ path, value, onChange }: FormTypeInputProps) => (
+    const MapEntry = ({ path, value, onChange }: FieldInputProps) => (
       <input id={path} onBlur={(event) => {
         const [key, ...rest] = event.target.value.split('=');
         if (key && rest.length) onChange({ ...(isPlainObject(value) ? value : {}), [key]: rest.join('=') });
@@ -225,7 +225,7 @@ describe('features — input-components consumer-only', () => {
       }} />
     );
     const form = await renderForm(scenario.schema as JSONSchema, { defaultValue: { labels: { a: 'A', b: 'B' } }, validator: true,
-      formTypeInputDefinitions: [{ test: { formType: 'input-components.map' }, Component: MapEntry }] });
+      fieldInputDefinitions: [{ test: { inputType: 'input-components.map' }, Component: MapEntry }] });
     try {
       for (const [index, stage] of mapEntryStages.entries()) {
         await form.user.type(form.field('/labels')!, stage.entry);

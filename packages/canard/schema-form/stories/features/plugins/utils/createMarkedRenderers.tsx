@@ -1,10 +1,10 @@
 import type { RendererSlot } from '@aileron/schema-form-scenarios';
 import type { ComponentType } from 'react';
 
-import type { FormTypeRendererProps } from '../../../../src';
+import type { FieldRendererProps } from '../../../../src';
 
 /** Consumer renderers keyed by slot; each draws data-renderer="<source>-<slot>". */
-export type MarkedRenderers = Record<RendererSlot, ComponentType<FormTypeRendererProps>>;
+export type MarkedRenderers = Record<RendererSlot, ComponentType<FieldRendererProps>>;
 
 /**
  * Build consumer renderers that mark which source drew them.

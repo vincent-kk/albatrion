@@ -1,11 +1,7 @@
 import { act } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
 
-import {
-  Form,
-  type FormTypeRendererProps,
-  type JSONSchema,
-} from '@/schema-form';
+import { type FieldRendererProps, Form, type JSONSchema } from '@/schema-form';
 
 import { renderForm } from '../renderForm';
 
@@ -24,7 +20,7 @@ const Views = () => (
       <Form.Error path="/name" />
     </section>
     <Form.Render>
-      {({ value }: FormTypeRendererProps) => (
+      {({ value }: FieldRendererProps) => (
         <output>{JSON.stringify(value)}</output>
       )}
     </Form.Render>

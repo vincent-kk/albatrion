@@ -4,7 +4,7 @@ import { expectTypeOf } from 'vitest';
 import type { JSONSchema as CoreJSONSchema, Validator } from '../core';
 import { SchemaNodeEventType, ValidationMode, isUnionNode } from '../index';
 import type {
-  FormTypeInputProps,
+  FieldInputProps,
   Hint,
   InferSchemaNode,
   JSONSchema,
@@ -35,16 +35,16 @@ expectTypeOf<Hint['type']>().toEqualTypeOf<SchemaNode['type']>();
 expectTypeOf<Hint['schemaType']>().toEqualTypeOf<SchemaNode['schemaType']>();
 expectTypeOf<Hint['nullable']>().toEqualTypeOf<boolean>();
 expectTypeOf<Hint['typeMismatch']>().toEqualTypeOf<boolean>();
-expectTypeOf<FormTypeInputProps<number>['type']>().toEqualTypeOf<
+expectTypeOf<FieldInputProps<number>['type']>().toEqualTypeOf<
   NumberNode['type']
 >();
-expectTypeOf<FormTypeInputProps<number>['schemaType']>().toEqualTypeOf<
+expectTypeOf<FieldInputProps<number>['schemaType']>().toEqualTypeOf<
   NumberNode['schemaType']
 >();
 expectTypeOf<
-  FormTypeInputProps<number>['typeMismatch']
+  FieldInputProps<number>['typeMismatch']
 >().toEqualTypeOf<boolean>();
-expectTypeOf<FormTypeInputProps<number>['nullable']>().toEqualTypeOf<boolean>();
+expectTypeOf<FieldInputProps<number>['nullable']>().toEqualTypeOf<boolean>();
 
 const events: SchemaNodeEventType[] = [
   SchemaNodeEventType.UpdateValue,
@@ -63,7 +63,7 @@ void events;
 void modes;
 
 expectTypeOf<
-  NonNullable<JSONSchema['presentation']>['formType']
+  NonNullable<JSONSchema['presentation']>['inputType']
 >().toEqualTypeOf<string | undefined>();
 
 expectTypeOf<JSONSchema>().toEqualTypeOf<
@@ -83,7 +83,7 @@ const invalidNestedPresentation: JSONSchema = {
     field: {
       presentation: {
         // @ts-expect-error Recursive schema keywords retain the binding presentation shape.
-        formType: 123,
+        inputType: 123,
       },
     },
   },
@@ -92,7 +92,7 @@ const invalidStringPresentation: import('../index').StringSchema = {
   type: 'string',
   presentation: {
     // @ts-expect-error Per-kind public aliases retain the same presentation shape.
-    formType: 123,
+    inputType: 123,
   },
 };
 void invalidNumericConstraint;

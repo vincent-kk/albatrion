@@ -2,9 +2,9 @@ import { act } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
 
 import {
+  type FieldInputProps,
+  type FieldRendererProps,
   Form,
-  type FormTypeInputProps,
-  type FormTypeRendererProps,
   SchemaNodeEventType,
   SchemaNodeState,
 } from '@/schema-form';
@@ -12,7 +12,7 @@ import {
 import { renderForm } from '../renderForm';
 
 /** Ordinary controlled consumer; the binding owns finishInput on focus out. */
-const Controlled = ({ path, value, onChange }: FormTypeInputProps) => (
+const Controlled = ({ path, value, onChange }: FieldInputProps) => (
   <input
     id={path}
     value={value ?? ''}
@@ -21,7 +21,7 @@ const Controlled = ({ path, value, onChange }: FormTypeInputProps) => (
 );
 
 /** Render virtual branch children using the component contract, not node internals. */
-const Virtual = ({ ChildNodeComponents }: FormTypeInputProps) => (
+const Virtual = ({ ChildNodeComponents }: FieldInputProps) => (
   <section data-virtual>
     {ChildNodeComponents.map((Component) => (
       <Component key={Component.key} />
@@ -60,7 +60,7 @@ describe('TEST-020 — finishInput and consumer presentation', () => {
         text: {
           type: 'string',
           options: { trim: true },
-          presentation: { FormTypeInput: Controlled },
+          presentation: { FieldInput: Controlled },
         },
       },
     });
@@ -122,7 +122,7 @@ describe('TEST-020 — finishInput and consumer presentation', () => {
           name: {
             type: 'string',
             presentation: {
-              FormTypeInputProps: {
+              FieldInputProps: {
                 placeholder: 'Name',
                 className: 'custom-name',
               },
@@ -134,7 +134,7 @@ describe('TEST-020 — finishInput and consumer presentation', () => {
         defaultValue: { name: 'loaded' },
         children: (
           <Form.Render path="/name">
-            {({ Input, value }: FormTypeRendererProps) => (
+            {({ Input, value }: FieldRendererProps) => (
               <section>
                 <output>{String(value ?? '')}</output>
                 <Input />
@@ -166,7 +166,7 @@ describe('TEST-020 — finishInput and consumer presentation', () => {
           virtual: {
             group: {
               fields: ['name'],
-              presentation: { FormTypeInput: Virtual },
+              presentation: { FieldInput: Virtual },
             },
           },
         },

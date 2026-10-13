@@ -3,8 +3,8 @@ import type { ComponentType } from 'react';
 import type { Fn } from '@aileron/declare';
 
 import type {
-  FormTypeInputDefinition,
-  FormTypeRendererProps,
+  FieldInputDefinition,
+  FieldRendererProps,
   FormatError,
   ValidateFunction,
 } from '@/schema-form/types';
@@ -21,8 +21,8 @@ import type { JSONSchema } from '@/schema-form/types/jsonSchema';
  * Minimal plugin with custom components:
  * ```typescript
  * const myPlugin: SchemaFormPlugin = {
- *   FormTypeGroupRenderer: CustomFormGroup,
- *   FormTypeLabelRenderer: CustomFormLabel,
+ *   FieldRenderer: CustomFormGroup,
+ *   FormLabelRenderer: CustomFormLabel,
  * };
  * ```
  *
@@ -33,17 +33,17 @@ import type { JSONSchema } from '@/schema-form/types/jsonSchema';
  *
  * const antdPlugin: SchemaFormPlugin = {
  *   // Custom render components
- *   FormTypeGroupRenderer: ({ Input, errorMessage }) => (
+ *   FieldRenderer: ({ Input, errorMessage }) => (
  *     <Form.Item help={errorMessage}>
  *       <Input />
  *     </Form.Item>
  *   ),
- *   FormTypeLabelRenderer: ({ jsonSchema }) => (
+ *   FormLabelRenderer: ({ jsonSchema }) => (
  *     <span>{jsonSchema.title || jsonSchema.name}</span>
  *   ),
  *
  *   // Custom input types for Ant Design
- *   formTypeInputDefinitions: [
+ *   fieldInputDefinitions: [
  *     {
  *       test: { type: 'string', format: 'date' },
  *       Component: ({ value, onChange }) => (
@@ -72,13 +72,13 @@ import type { JSONSchema } from '@/schema-form/types/jsonSchema';
  * ```typescript
  * const fullPlugin: SchemaFormPlugin = {
  *   // Render components
- *   FormTypeGroupRenderer: CustomFormGroup,
- *   FormTypeLabelRenderer: CustomFormLabel,
- *   FormTypeInputRenderer: CustomFormInput,
- *   FormTypeErrorRenderer: CustomFormError,
+ *   FieldRenderer: CustomFormGroup,
+ *   FormLabelRenderer: CustomFormLabel,
+ *   FormInputRenderer: CustomFormInput,
+ *   FormErrorRenderer: CustomFormError,
  *
  *   // Input type definitions
- *   formTypeInputDefinitions: [
+ *   fieldInputDefinitions: [
  *     {
  *       test: { format: 'color' },
  *       Component: ColorPickerInput,
@@ -110,15 +110,15 @@ import type { JSONSchema } from '@/schema-form/types/jsonSchema';
  */
 export interface SchemaFormPlugin {
   /** Form.Group Component */
-  FormTypeGroupRenderer?: ComponentType<FormTypeRendererProps>;
+  FieldRenderer?: ComponentType<FieldRendererProps>;
   /** Form.Label Component */
-  FormTypeLabelRenderer?: ComponentType<FormTypeRendererProps>;
+  FormLabelRenderer?: ComponentType<FieldRendererProps>;
   /** Form.Input Component */
-  FormTypeInputRenderer?: ComponentType<FormTypeRendererProps>;
+  FormInputRenderer?: ComponentType<FieldRendererProps>;
   /** Form.Error Component */
-  FormTypeErrorRenderer?: ComponentType<FormTypeRendererProps>;
-  /** FormTypeInputDefinition */
-  formTypeInputDefinitions?: FormTypeInputDefinition[];
+  FormErrorRenderer?: ComponentType<FieldRendererProps>;
+  /** FieldInputDefinition */
+  fieldInputDefinitions?: FieldInputDefinition[];
   /** Validator Plugin */
   validator?: ValidatorPlugin;
   /** Formatting Error Function */

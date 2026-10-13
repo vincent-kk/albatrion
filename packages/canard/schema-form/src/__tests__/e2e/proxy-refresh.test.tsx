@@ -2,9 +2,9 @@ import { act } from '@testing-library/react';
 import { afterEach, expect, it } from 'vitest';
 
 import {
+  type FieldInputProps,
+  type FieldRendererProps,
   Form,
-  type FormTypeInputProps,
-  type FormTypeRendererProps,
   SchemaNodeEventType,
 } from '@/schema-form';
 
@@ -61,14 +61,14 @@ it('EVENT-002 unchanged content produces no phantom UpdateValue delivery', async
 });
 
 it('LANDING-042 a terminal object refreshes while the ordinary object wrapper remains', async () => {
-  const Terminal = ({ value }: FormTypeInputProps) => (
+  const Terminal = ({ value }: FieldInputProps) => (
     <input id="/box" defaultValue={JSON.stringify(value)} />
   );
   form = await renderForm(
     {
       type: 'object',
       properties: {
-        box: { type: 'object', presentation: { FormTypeInput: Terminal } },
+        box: { type: 'object', presentation: { FieldInput: Terminal } },
       },
     },
     { defaultValue: { box: { n: 1 } } },
@@ -95,7 +95,7 @@ it('EVENT-073 refresh remounts the addressed input and retains its node', async 
 });
 
 it('TEST-020 FormGroupRenderer consumes node.strategy for branch and terminal rendering', async () => {
-  const Group = ({ node, Input }: FormTypeRendererProps) => (
+  const Group = ({ node, Input }: FieldRendererProps) => (
     <section data-strategy={node.strategy}>
       <Input />
     </section>
@@ -110,7 +110,7 @@ it('TEST-020 FormGroupRenderer consumes node.strategy for branch and terminal re
     },
     {
       defaultValue: { text: 'ok', list: ['one'] },
-      FormTypeGroupRenderer: Group,
+      FieldRenderer: Group,
     },
   );
   expect(

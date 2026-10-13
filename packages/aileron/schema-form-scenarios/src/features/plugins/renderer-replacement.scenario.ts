@@ -9,7 +9,7 @@ const rendererSchema = {
 /** Form renderer props replace the plugin's renderers; a FormProvider group renderer applies when the Form sets none. */
 export const rendererReplacementScenario: FormScenario = {
   name: 'plugins.renderer-replacement',
-  description: 'SURFACE-002 and LANDING-035 the four renderers FormTypeGroupRenderer, FormTypeLabelRenderer, FormTypeInputRenderer and FormTypeErrorRenderer are Form props with the plugin key names; a Form renderer replaces the plugin one for that slot, and a FormProvider group renderer applies when the Form sets none; SURFACE-003 Form.Label and Form.Error call the label and error renderers, while the default group draws its own label and message, so those two slots show only in a composition layout. Renderer cases come from rendererCases; each consumer renderer marks itself with data-renderer="<source>-<slot>".',
+  description: 'SURFACE-002 and LANDING-035 the four renderers FieldRenderer, FormLabelRenderer, FormInputRenderer and FormErrorRenderer are Form props with the plugin key names; a Form renderer replaces the plugin one for that slot, and a FormProvider group renderer applies when the Form sets none; SURFACE-003 Form.Label and Form.Error call the label and error renderers, while the default group draws its own label and message, so those two slots show only in a composition layout. Renderer cases come from rendererCases; each consumer renderer marks itself with data-renderer="<source>-<slot>".',
   schema: rendererSchema,
   initialValue: { title: 'a', count: 1 },
   steps: [{ action: 'setValue', path: '/count', value: 2, expect: { values: { '/count': 2 }, errors: { '/title': [{ keyword: 'minLength' }] } } }],

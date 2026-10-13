@@ -19,7 +19,7 @@ import type {
 import type { Dictionary, IsNullable } from '@aileron/declare';
 
 import type { SchemaControls } from '../core/types/controls';
-import type { FormTypeInputProps } from './formTypeInput';
+import type { FieldInputProps } from './fieldInput';
 import type {
   AllowedValue,
   ArrayValue,
@@ -119,11 +119,9 @@ export type InferJSONSchema<
 /** Binding presentation payload; core treats these fields as opaque data. */
 export type SchemaPresentation = {
   /** Custom React component for input rendering */
-  FormTypeInput?: ComponentType<
-    FormTypeInputProps<any, any, any, any, any>
-  > | null;
-  /** Props passed to FormTypeInput component */
-  FormTypeInputProps?: {
+  FieldInput?: ComponentType<FieldInputProps<any, any, any, any, any>> | null;
+  /** Props passed to FieldInput component */
+  FieldInputProps?: {
     /** Placeholder text for input fields */
     placeholder?: string;
     /** Display name aliases for enum values */
@@ -135,8 +133,8 @@ export type SchemaPresentation = {
     /** Additional custom props */
     [alt: string]: any;
   };
-  /** Props passed to FormTypeRenderer component */
-  FormTypeRendererProps?: {
+  /** Props passed to FieldRenderer component */
+  FieldRendererProps?: {
     /** Field label text or element */
     label?: ReactNode;
     /** CSS class name for styling */
@@ -147,7 +145,7 @@ export type SchemaPresentation = {
     [alt: string]: any;
   };
   /** Form type identifier for component selection */
-  formType?: string;
+  inputType?: string;
   /** Custom error messages per validation rule */
   errorMessages?: {
     [key: string]: string | Dictionary<string> | undefined;

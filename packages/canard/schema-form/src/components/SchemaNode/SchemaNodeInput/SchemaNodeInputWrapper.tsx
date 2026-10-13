@@ -9,11 +9,11 @@ import {
 } from '@winglet/react-utils/hook';
 
 import type { SchemaNode } from '@/schema-form/core';
-import { withFormTypeInputErrorBoundary } from '@/schema-form/helpers/formTypeInputDefinition';
+import { withFieldInputErrorBoundary } from '@/schema-form/helpers/fieldInputDefinition';
 import type {
   ChildNodeComponentProps,
-  FormTypeInputProps,
-  OverridableFormTypeInputProps,
+  FieldInputProps,
+  OverridableFieldInputProps,
 } from '@/schema-form/types';
 
 import type { SchemaNodeProxyProps } from '../SchemaNodeProxy';
@@ -27,10 +27,8 @@ export const SchemaNodeInputWrapper = (
   overrideOnFileAttachRef:
     | RefObject<ChildNodeComponentProps['onFileAttach']>
     | undefined,
-  overrideFormTypeInputPropsRef:
-    | RefObject<OverridableFormTypeInputProps>
-    | undefined,
-  OverridePreferredFormTypeInput: ComponentType<FormTypeInputProps> | undefined,
+  overrideFieldInputPropsRef: RefObject<OverridableFieldInputProps> | undefined,
+  OverridePreferredFieldInput: ComponentType<FieldInputProps> | undefined,
   NodeProxy: ComponentType<SchemaNodeProxyProps>,
 ): ComponentType<ChildNodeComponentProps> => {
   if (!node) return NULL_FUNCTION;
@@ -46,15 +44,15 @@ export const SchemaNodeInputWrapper = (
       preferredOnFileAttach || overrideOnFileAttachRef?.current,
     );
     const overrideProps = useSnapshot({
-      ...overrideFormTypeInputPropsRef?.current,
+      ...overrideFieldInputPropsRef?.current,
       ...preferredOverrideProps,
     });
-    const PreferredFormTypeInput = useLazyConstant(() =>
-      OverridePreferredFormTypeInput &&
-      isReactComponent(OverridePreferredFormTypeInput)
-        ? isMemoComponent(OverridePreferredFormTypeInput)
-          ? withFormTypeInputErrorBoundary(OverridePreferredFormTypeInput)
-          : memo(withFormTypeInputErrorBoundary(OverridePreferredFormTypeInput))
+    const PreferredFieldInput = useLazyConstant(() =>
+      OverridePreferredFieldInput &&
+      isReactComponent(OverridePreferredFieldInput)
+        ? isMemoComponent(OverridePreferredFieldInput)
+          ? withFieldInputErrorBoundary(OverridePreferredFieldInput)
+          : memo(withFieldInputErrorBoundary(OverridePreferredFieldInput))
         : null,
     );
     return (
@@ -63,7 +61,7 @@ export const SchemaNodeInputWrapper = (
         onChangeRef={onChangeRef}
         onFileAttachRef={onFileAttachRef}
         overrideProps={overrideProps}
-        PreferredFormTypeInput={PreferredFormTypeInput}
+        PreferredFieldInput={PreferredFieldInput}
         NodeProxy={NodeProxy}
       />
     );

@@ -9,6 +9,6 @@ export const isRenderTerminal = (
 ): boolean | undefined =>
   schema &&
   typeof schema === 'object' &&
-  isReactComponent((schema as JSONSchema).presentation?.FormTypeInput)
+  isReactComponent((schema as JSONSchema).presentation?.FieldInput)
     ? true
     : undefined;

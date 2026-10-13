@@ -7,7 +7,7 @@ import { BaseError, type ErrorDetails } from '@winglet/common-utils/error';
  * particularly when mapping form types to input components fails.
  *
  * Currently used for:
- * - Invalid key patterns in FormTypeInputMap configuration
+ * - Invalid key patterns in FieldInputMap configuration
  *
  * @remarks
  * Error details typically include:

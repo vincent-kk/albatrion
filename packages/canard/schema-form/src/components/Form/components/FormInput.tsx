@@ -4,16 +4,16 @@ import { useConstant, useReference } from '@winglet/react-utils/hook';
 
 import { PluginManager } from '@/schema-form/app/plugin';
 import { SchemaNodeProxy } from '@/schema-form/components/SchemaNode';
-import { useFormTypeRendererContext } from '@/schema-form/providers';
+import { useFieldRendererContext } from '@/schema-form/providers';
 import type {
   AllowedValue,
   ChildNodeComponentProps,
-  FormTypeInputProps,
+  FieldInputProps,
 } from '@/schema-form/types';
 
 export type FormInputProps<Value extends AllowedValue> = {
   path?: string;
-  FormTypeInput?: ComponentType<FormTypeInputProps<Value>>;
+  FieldInput?: ComponentType<FieldInputProps<Value>>;
 } & ChildNodeComponentProps;
 
 /**
@@ -59,7 +59,7 @@ export type FormInputProps<Value extends AllowedValue> = {
  *
  * <Form.Input
  *   path="/theme/primaryColor"
- *   FormTypeInput={ColorPicker}
+ *   FieldInput={ColorPicker}
  * />
  * ```
  *
@@ -80,22 +80,20 @@ export type FormInputProps<Value extends AllowedValue> = {
 export const FormInput = memo(
   ({
     path,
-    FormTypeInput: InputFormTypeInput,
+    FieldInput: InputFieldInput,
     ...restProps
   }: FormInputProps<AllowedValue>) => {
-    const { FormTypeInputRenderer } = useFormTypeRendererContext();
+    const { FormInputRenderer } = useFieldRendererContext();
     const overridePropsRef = useReference(restProps);
-    const FormTypeInput = useConstant(
-      InputFormTypeInput as ComponentType<FormTypeInputProps>,
+    const FieldInput = useConstant(
+      InputFieldInput as ComponentType<FieldInputProps>,
     );
     return (
       <SchemaNodeProxy
         path={path}
         overridePropsRef={overridePropsRef}
-        FormTypeInput={FormTypeInput}
-        FormTypeGroupRenderer={
-          FormTypeInputRenderer || PluginManager.FormTypeInputRenderer
-        }
+        FieldInput={FieldInput}
+        FieldRenderer={FormInputRenderer || PluginManager.FormInputRenderer}
       />
     );
   },

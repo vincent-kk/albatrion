@@ -9,9 +9,9 @@ import type { JSONSchemaWithVirtual } from '@/schema-form/types';
 export const hasExtensionKeys = (
   schema: Partial<JSONSchemaWithVirtual>,
 ): boolean =>
-  schema.FormTypeInput !== undefined ||
-  schema.FormTypeInputProps !== undefined ||
-  schema.FormTypeRendererProps !== undefined ||
+  schema.FieldInput !== undefined ||
+  schema.FieldInputProps !== undefined ||
+  schema.FieldRendererProps !== undefined ||
   schema.errorMessages !== undefined ||
   schema.options !== undefined ||
   schema.injectTo !== undefined;
