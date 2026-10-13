@@ -13,8 +13,8 @@ const req = createRequire(path.join(pkg, 'package.json'));
 const { build } = req('esbuild');
 const src = path.join(pkg, 'src');
 const out = path.join(pkg, 'architecture/verification/07-switch');
-const delivery = 'core/settle/utils/commit/markCommitDeliveries.ts';
-const beforeV = ['core/settle/utils/compute/computeNode.ts', 'core/settle/utils/transition/transitionSettlement.ts'];
+const delivery = 'core/engine/settle/utils/commit/markCommitDeliveries.ts';
+const beforeV = ['core/engine/settle/utils/compute/computeNode.ts', 'core/engine/settle/utils/transition/transitionSettlement.ts'];
 const count = 101;
 const warmup = 20;
 const gitSource = (ref, file) => execFileSync('git', ['show', `${ref}:packages/canard/schema-form/src/${file}`], { cwd: repo, encoding: 'utf8' });
@@ -66,12 +66,12 @@ globalThis.__round87 = (kind, node, context) => {
 /** Compile variants in isolation, replacing only specified source in memory. */
 async function engine(variant, traced = false) {
   const result = await build({
-    stdin: { contents: `export { nodeFromJSONSchema } from './src/core/nodeFromJSONSchema';
-      export { createTestTree } from './src/core/settle/__tests__/fixtures/createTestTree';
-      export { loadFieldNodeAtMount } from './src/core/settle';
+    stdin: { contents: `export { nodeFromJSONSchema } from './src/core/surface/nodeFromJSONSchema';
+      export { createTestTree } from './src/core/engine/settle/__tests__/fixtures/createTestTree';
+      export { loadFieldNodeAtMount } from './src/core/engine/settle';
       export { markCommitDeliveries } from './src/${delivery}';
-      export { createSettlementContext } from './src/core/settle/utils/settlement/createSettlementContext';
-      export { getSettlementScratch } from './src/core/settle/utils/write/getSettlementScratch';
+      export { createSettlementContext } from './src/core/engine/settle/utils/settlement/createSettlementContext';
+      export { getSettlementScratch } from './src/core/engine/settle/utils/write/getSettlementScratch';
       export { equivalentFixtures } from '../../aileron/benchmark-form/fixtures/equivalent';`,
       resolveDir: pkg, loader: 'ts' },
     write: false, bundle: true, packages: 'external', platform: 'node', format: 'cjs',

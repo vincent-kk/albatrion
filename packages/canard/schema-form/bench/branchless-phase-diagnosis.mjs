@@ -28,12 +28,12 @@ const production = process.argv.includes('--production');
 process.env.NODE_ENV = production ? 'production' : 'development';
 const sourceRef = process.env.PHASE_SOURCE_REF;
 const candidateFiles = {
-  i: ['core/settle/utils/compute/selectChildren.ts', 'core/settle/utils/compute/enterFieldNode.ts'],
-  ii: ['core/settle/utils/commit/commitSettlement.ts', 'core/settle/utils/controls/getControlLayers.ts', 'core/validation/utils/route/routeValidationIssues.ts'],
-  iii: ['core/settle/utils/commit/markCommitDeliveries.ts'],
+  i: ['core/engine/settle/utils/compute/selectChildren.ts', 'core/engine/settle/utils/compute/enterFieldNode.ts'],
+  ii: ['core/engine/settle/utils/commit/commitSettlement.ts', 'core/engine/settle/utils/controls/getControlLayers.ts', 'core/engine/validation/utils/route/routeValidationIssues.ts'],
+  iii: ['core/engine/settle/utils/commit/markCommitDeliveries.ts'],
   iv: ['fieldInputs/FieldInputArray.tsx'],
-  v: ['core/settle/type.ts', 'core/settle/utils/compute/computeNode.ts',
-    'core/settle/utils/compute/utils/hasIndependentLeafDefaults.ts', 'core/settle/utils/transition/transitionSettlement.ts'],
+  v: ['core/engine/settle/type.ts', 'core/engine/settle/utils/compute/computeNode.ts',
+    'core/engine/settle/utils/compute/utils/hasIndependentLeafDefaults.ts', 'core/engine/settle/utils/transition/transitionSettlement.ts'],
 };
 const selectedCandidateFiles = (process.env.PHASE_CANDIDATES?.split(',') ?? [])
   .flatMap(candidate => {
@@ -145,7 +145,7 @@ function localResolve(base) {
 
 /** Build source-only engines and fixtures; generated JS is evaluated without a disk bundle. */
 async function bundle(version) {
-  const core = version === 'old' ? 'src/__legacy__/core/nodeFromJSONSchema.ts' : 'src/core/nodeFromJSONSchema.ts';
+  const core = version === 'old' ? 'src/__legacy__/core/nodeFromJSONSchema.ts' : 'src/core/surface/nodeFromJSONSchema.ts';
   const result = await build({
     stdin: { contents: `export {nodeFromJSONSchema} from ${JSON.stringify(path.join(pkg, core))};
       export {equivalentFixtures} from ${JSON.stringify(path.join(bf, 'fixtures/equivalent/index.ts'))};

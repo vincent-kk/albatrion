@@ -1,31 +1,31 @@
-# core — 노드 엔진과 겉면의 조합 경계
+# core — Node engine and surface composition boundary
 
 ## Purpose
 
-엔진과 노드 겉면의 계약을 이름으로 조합하여 렌더 바인딩과 core 호스트에 제공합니다. 실행 규칙은 engine이, 공개 노드 형·가드와 생성 통로는 surface가 소유합니다.
+Compose engine and node surface contracts for render bindings and core hosts. The engine owns execution rules; the surface owns public node types, guards and build channels.
 
 ## Conventions
 
-- 진입점은 이름 있는 재수출만 두며 구현은 소유 모듈에 둡니다.
-- core 호스트와 React 바인딩은 같은 트리 생성·마운트 통로를 사용합니다.
-- 원본 입력과 방출 값을 구별하고 형 불일치를 명시적으로 보고합니다.
-- 렌더러 presentation은 불투명한 형 매개변수로 전달하며 엔진 스키마 형은 React를 가져오지 않습니다.
+- Keep only named re-exports at the entry point and leave implementation with its owning module.
+- Use the same tree construction and mounting channels for core hosts and React bindings.
+- Store raw input separately from emitted output and report type mismatches explicitly.
+- Pass renderer presentation as opaque type parameters; engine schema types never import React.
 
 ## Boundaries
 
 ### Always do
 
-- 공개 계약과 바인딩 전용 통로를 진입점에서 이름으로 재수출합니다.
-- 트리 생성과 마운트 사이에서 호스트 판정 함수의 참조를 보존합니다.
-- 값 변경은 공개 쓰기 계약과 이름 붙은 바인딩 통로를 경유합니다.
+- Re-export public contracts and binding-only channels by name through the entry point.
+- Preserve host predicate references across tree construction and mounting.
+- Change node values through the public write contract and named binding channels.
 
 ### Ask first
 
-- 사건 배달 시점이나 공개 옵션 비트를 바꿀 때
-- 공개 노드 멤버나 바인딩 전용 작업을 늘릴 때
+- Changing event delivery timing or public option bits.
+- Adding public node members or binding-only operations.
 
 ### Never do
 
-- 보존한 레거시 엔진이나 애플리케이션 플러그인 등록소를 가져오지 않습니다.
-- 바인딩 전용 함수를 패키지 진입점으로 공개하지 않습니다.
-- 렌더러 presentation을 읽거나 호출자 소유 스키마를 변경하지 않습니다.
+- Import the preserved legacy engine or the application plugin registry.
+- Expose binding-only functions through the package entry.
+- Read renderer presentation or mutate caller-owned schema data.
