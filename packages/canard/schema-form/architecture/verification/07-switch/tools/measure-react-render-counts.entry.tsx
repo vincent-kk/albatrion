@@ -5,8 +5,7 @@ import { createRoot } from 'react-dom/profiling';
 
 import { Form } from '../../../../src/index';
 export { Form };
-export { nodeFromJSONSchema } from '../../../../src/core/nodeFromJSONSchema';
-export { blueprint } from '../../../../src/core/blueprint';
+export { blueprint, nodeFromJSONSchema } from '../../../../src/core';
 export { equivalentFixtures } from '../../../../../../aileron/benchmark-form/fixtures/equivalent';
 
 export const registry = new Map<string, (value: unknown) => void>();
