@@ -723,18 +723,22 @@ How to fix:
          "fax": { "type": "string" },
          "telegram": { "type": "string" }
        },
-       "virtual": {
-         "contactInfo": {
-           "fields": ["fax", "telegram"]
+       "options": {
+         "virtual": {
+           "contactInfo": {
+             "fields": ["fax", "telegram"]
+           }
          }
        }
      }
 
   2. Or correct the field names in virtual.fields:
      {
-       "virtual": {
-         "contactInfo": {
-           "fields": ["existingField1", "existingField2"]
+       "options": {
+         "virtual": {
+           "contactInfo": {
+             "fields": ["existingField1", "existingField2"]
+           }
          }
        }
      }
@@ -758,18 +762,22 @@ of properties that this virtual node references.
 How to fix:
   1. Provide an array of field names:
      {
-       "virtual": {
-         "fullAddress": {
-           "fields": ["field1", "field2"]
+       "options": {
+         "virtual": {
+           "fullAddress": {
+             "fields": ["field1", "field2"]
+           }
          }
        }
      }
 
   2. If only one field, still use an array:
      {
-       "virtual": {
-         "fullAddress": {
-           "fields": ["singleField"]
+       "options": {
+         "virtual": {
+           "fullAddress": {
+             "fields": ["singleField"]
+           }
          }
        }
      }"

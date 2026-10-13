@@ -649,7 +649,7 @@ Inside a branch's `properties`, an entry **with** a `type` is a field; an entry 
 ```
 
 - The null branch is for the validator only. It has no fields and is never the active branch; a condition or `properties` on it is ignored with the development warning `NULL_BRANCH_IGNORED_FOR_FORM`.
-- Whether the object is `null` is decided by its value, and which object branch is shown by the branch conditions. While the value is `null` the children show the blank form of the branch the conditions select (see [Nullable Objects and Arrays](#nullable-objects-and-arrays)).
+- Whether the object is `null` is decided by its value, and which object branch is shown by the branch conditions. While the value is `null`, the children of the selected branch are shown without their defaults (see [Nullable Objects and Arrays](#nullable-objects-and-arrays)). The same holds while an object or array field holds a value of the wrong kind, for example a string loaded into an object: its children receive no defaults until a child is given a value.
 - Where the null branch sits does not matter; errors of the branch in use reach their fields. When the object value fails its `oneOf`, the null branch reports its own mismatch ("must be null") on the object like any other branch that did not match, next to the `oneOf` error.
 - A nullable object whose `oneOf` cannot validate `null` — no branch accepts it, or several do — prints the development warning `NULLABLE_ONE_OF_NULL_UNREACHABLE`. `anyOf` needs no such care: one null branch, or untyped branches, already satisfy it.
 
@@ -1115,6 +1115,8 @@ const definitions = [
 ];
 ```
 
+`nullable: true` is the OpenAPI 3.0 compatible notation and is officially supported. It is equivalent to adding `'null'` to `type`: `{ type: 'string', nullable: true }` means `{ type: ['string', 'null'] }`. No warning or error is raised for this notation.
+
 ### Nullable Objects and Arrays
 
 A nullable object or array (`type: ['object', 'null']`, `type: ['array', 'null']`) has three distinct states, and the form never turns one into another by itself.
@@ -1136,9 +1138,9 @@ A field is _emptied_ when its node emits `undefined`. Under the default `omitEmp
 
 A reset restores the default, whatever the node holds: back to `null` when the default is `null`, to the default object otherwise.
 
-**While it is `null`**, the emitted value is `null` whatever the schema holds — arrays, defaults, derived values, `oneOf`/`anyOf`, controls-gated or virtual fields. An object's child fields stay rendered and show a blank form: what the form builds for them when it is given no `defaultValue` for this node — the node's own object `default` if it has one, otherwise each child's own `default`, with derived values applied and array children filled up to their `minItems`. It is identical whichever way the object became `null`, and data discarded by `null` does not come back. One thing is not part of the blank form: a value that reached a field through `injectTo`. A node that becomes `null` after mount loses it until its source changes again. A nullable **array** that is itself `null` has no items and no `minItems` fill.
+**While it is `null`**, the emitted value is `null` whatever the schema holds — arrays, defaults, derived values, `oneOf`/`anyOf`, controls-gated or virtual fields. An object's child fields stay rendered, and no child default, object default or `minItems` fill appears in them while it is `null`; a value written by `controls.derived` or `injectTo` still shows in its field without creating the object. This is the same however the object became `null` (load, reset or write); data discarded by `null` does not come back. A nullable **array** that is itself `null` has no items and no `minItems` fill.
 
-**What it becomes** is exactly what the same write produces on a form given no `defaultValue` for this node (for an array: on an empty array), so the value always matches what the fields show. An array has no merge semantics: `setValue([], SetValueOption.Merge)` is an assignment and creates `[]`.
+**What it becomes:** typing into a child field promotes the object to an object holding that value. Only fields created by the promotion (for example a branch the new value opens) receive their defaults; fields that already existed stay empty until filled. For an array, the write acts on an empty array. An array has no merge semantics: `setValue([], SetValueOption.Merge)` is an assignment and creates `[]`.
 
 ```tsx
 const jsonSchema = {
@@ -1154,9 +1156,9 @@ const jsonSchema = {
   },
 };
 // <Form jsonSchema={jsonSchema} defaultValue={{ closed: null }} />
-// getValue()                     → { closed: null }   ('completed' is shown, not emitted)
-// user types "done" into note    → { closed: { reason: 'completed', note: 'done' } }
-// setValue({ closed: null })     → { closed: null }   (the fields show the blank form again)
+// getValue()                     → { closed: null }   (the fields show no defaults)
+// user types "done" into note    → { closed: { note: 'done' } }
+// setValue({ closed: null })     → { closed: null }   (the fields show no defaults again)
 ```
 
 - A **non-nullable** object assigned `null` becomes `{}`.

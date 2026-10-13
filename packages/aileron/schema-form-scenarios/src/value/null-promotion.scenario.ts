@@ -1,14 +1,14 @@
 import type { FormScenario } from '../types';
 
-/** VALUE-036 distinguishes load filling from non-load null writes (LANDING-200). */
+/** VALUE-036 treats a loaded null like a non-load null write (LANDING-200). */
 export const nullPromotionScenarios = [
   {
-    name: 'VALUE-036 loaded null retains child defaults for later input promotion',
+    name: 'VALUE-036 loaded null leaves children unfilled until input promotion',
     schema: { type: ['object', 'null'], properties: { first: { type: 'string', default: 'hidden' }, second: { type: 'string', default: 'sibling' } } },
     initialValue: null,
     steps: [
-      { action: 'batch', steps: [], expect: { outputValue: null, values: { '/first': 'hidden', '/second': 'sibling' } } },
-      { action: 'setValue', path: '/first', value: 'typed', expect: { outputValue: { first: 'typed', second: 'sibling' }, values: { '/second': 'sibling' } } },
+      { action: 'batch', steps: [], expect: { outputValue: null, values: { '/first': undefined, '/second': undefined } } },
+      { action: 'setValue', path: '/first', value: 'typed', expect: { outputValue: { first: 'typed' }, values: { '/second': undefined } } },
     ],
   },
   {

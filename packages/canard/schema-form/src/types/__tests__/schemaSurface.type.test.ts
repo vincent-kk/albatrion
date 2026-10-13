@@ -41,6 +41,16 @@ type RemovedSchemaKeys =
 type RemovedObjectKeys = 'virtual' | 'propertyKeys';
 
 describe('schema authoring surface', () => {
+  it('declares nullable as a boolean on object schemas and JSONSchema', () => {
+    expectTypeOf<NonNullableObjectSchema['nullable']>().toEqualTypeOf<
+      boolean | undefined
+    >();
+    expectTypeOf<NullableObjectSchema['nullable']>().toEqualTypeOf<
+      boolean | undefined
+    >();
+    expectTypeOf<JSONSchema['nullable']>().toEqualTypeOf<boolean | undefined>();
+  });
+
   it('declares none of the removed schema-level keys', () => {
     expectTypeOf<
       Extract<NamedKeys<BasicSchema>, RemovedSchemaKeys>

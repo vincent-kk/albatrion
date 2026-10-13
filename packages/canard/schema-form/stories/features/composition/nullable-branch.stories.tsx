@@ -15,8 +15,8 @@ export const NullAncestorPromotion: Story = createFeatureStory(findScenario(unio
 /** Shared scenario `union.nullable-conditional-account`. */
 export const ConditionalAccount: Story = createFeatureStory(findScenario(unionScenarios, 'union.nullable-conditional-account'));
 
-/** Shared scenario `VALUE-036 loaded null retains child defaults for later input promotion`. */
-export const LoadedNullDefaults: Story = createFeatureStory(findScenario(nullPromotionScenarios, 'VALUE-036 loaded null retains child defaults for later input promotion'));
+/** Shared scenario `VALUE-036 loaded null leaves children unfilled until input promotion`. */
+export const LoadedNullUnfilled: Story = createFeatureStory(findScenario(nullPromotionScenarios, 'VALUE-036 loaded null leaves children unfilled until input promotion'));
 
 /** Shared scenario `LANDING-200 child input promotes caller null without sibling filling`. */
 export const NullWritePromotion: Story = createFeatureStory(findScenario(nullPromotionScenarios, 'LANDING-200 child input promotes caller null without sibling filling'));

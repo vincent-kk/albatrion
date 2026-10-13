@@ -197,7 +197,7 @@ describe('settle transitions and loads', () => {
     expect(root.runtime.diagnostics).toEqual({ status: 'stable' });
   });
 
-  it('WRITE-096 distinguishes null replacement from null load', () => {
+  it('WRITE-096 null replacement and null load both leave children unfilled', () => {
     const { root } = createTestTree({
       type: 'object',
       properties: {
@@ -216,8 +216,47 @@ describe('settle transitions and loads', () => {
     );
     expect(root.structure?.user?.structure?.name?.raw).toBeUndefined();
     resetFieldNodeForm(root, { user: null }, WriteOption.Overwrite);
-    expect(root.structure?.user?.structure?.name?.raw).toBe('N');
+    expect(root.structure?.user?.structure?.name?.raw).toBeUndefined();
     expect(root.emit).toEqual({ user: null });
+  });
+
+  it('VALUE-036 a loaded null object leaves its children unfilled exactly like a written null', () => {
+    const tree = () =>
+      createTestTree({
+        type: 'object',
+        properties: {
+          account: {
+            type: ['object', 'null'],
+            properties: {
+              first: { type: 'string', default: 'hidden' },
+              second: { type: 'string', default: 'sibling' },
+            },
+          },
+        },
+      }).root;
+    const loaded = tree();
+    loadFieldNodeAtMount(loaded, { account: null }, WriteOption.Overwrite);
+    const written = tree();
+    loadFieldNodeAtMount(written, {}, WriteOption.Overwrite);
+    writeFieldNode(
+      written,
+      { account: null },
+      'callerReplace',
+      WriteOption.Overwrite,
+    );
+    for (const root of [loaded, written]) {
+      const account = root.structure!.account!;
+      expect(root.emit).toEqual({ account: null });
+      expect(account.structure?.first?.raw).toBeUndefined();
+      expect(account.structure?.second?.raw).toBeUndefined();
+      writeFieldNode(
+        account.structure!.first!,
+        'typed',
+        'input',
+        WriteOption.Overwrite,
+      );
+      expect(root.emit).toEqual({ account: { first: 'typed' } });
+    }
   });
 
   it('WRITE-094 whole replacement clears latent raw and is idempotent on a second call', () => {

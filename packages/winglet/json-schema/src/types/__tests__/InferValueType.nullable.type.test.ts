@@ -12,14 +12,14 @@ import type {
 } from '../value';
 
 /**
- * `nullable: true` 는 `type` 배열(`['string', 'null']`)로 대체된 deprecated 키워드지만,
- * 소비자 런타임(@canard/schema-form 의 BranchStrategy·validateSchemaType)은 여전히
- * 이를 해석해 null 을 허용한다. 값 타입 추론이 같은 계약을 따르지 않으면
+ * `nullable: true` 는 공식 지원하는 OpenAPI 3.0 호환 표기이며,
+ * `type` 배열(`['string', 'null']`)과 동등하다. @canard/schema-form 런타임은
+ * 두 표기 모두 null 을 허용한다. 값 타입 추론이 같은 계약을 따르지 않으면
  * `nullable: true` 스키마에 null 을 넣는 코드가 타입 오류가 되므로 그 대응을 고정한다.
  *
  * 배열 형태(`type: [..., 'null']`)의 커버리지는 InferValueType.type.test.ts 가 담당한다.
  */
-describe('InferValueType — deprecated nullable 키워드', () => {
+describe('InferValueType — 공식 지원 OpenAPI 3.0 nullable 표기', () => {
   describe('단일 type + nullable: true', () => {
     it('{ type: "string", nullable: true } → StringValue | NullValue', () => {
       expectTypeOf<

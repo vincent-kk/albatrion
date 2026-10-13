@@ -288,6 +288,22 @@ it('matches root container defaults, empty distributed objects, tuple tails and 
   });
 });
 
+it('matches a literal null container default without filling its children', () => {
+  const { actual, eligible } = compare({
+    type: 'object',
+    properties: {
+      account: {
+        type: ['object', 'null'],
+        default: null,
+        properties: { kind: { type: 'string', default: 'a' } },
+      },
+    },
+  });
+  expect(eligible).toBe(!genericFirstLoad);
+  expect(actual.emit).toEqual({ account: null });
+  expect(actual.structure?.account?.structure?.kind?.raw).toBeUndefined();
+});
+
 it('matches literal null and wrong-kind defaults with ordered warning records', () => {
   compare({
     type: 'object',

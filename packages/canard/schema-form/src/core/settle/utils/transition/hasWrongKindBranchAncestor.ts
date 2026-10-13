@@ -3,7 +3,7 @@ import { isArray } from '@winglet/common-utils/filter';
 import type { FieldNodeRecord } from '../../../record';
 
 /**
- * Block non-load fills beneath a branch holding the wrong raw kind.
+ * Block load and non-load fills beneath a branch holding a wrong-kind raw.
  * @param node - Candidate descendant being considered for default filling
  * @returns Whether an object or array ancestor has a wrong-kind raw
  */

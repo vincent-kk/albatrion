@@ -79,9 +79,9 @@ describe('selfcheck-v5 derive regression', () => {
       { snapshot: { src: 'go', host: { a: 'A', b: 'B' } } },
     );
     root.resetSubtree();
-    expect(root.find('/host/b')?.raw).toBe('BD');
+    expect(root.find('/host/b')?.raw).toBeUndefined();
     root.find('/host/a')?.setValue('A2');
-    expect(root.outputValue).toEqual({ src: 'go', host: { a: 'A2', b: 'BD' } });
+    expect(root.outputValue).toEqual({ src: 'go', host: { a: 'A2' } });
   });
 
   it('selfcheck-v5.mjs:493 A4-cap same-value source write costs one round', () => {
