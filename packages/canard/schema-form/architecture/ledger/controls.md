@@ -292,7 +292,8 @@
 
 - 결정:
   > - 제어 키는 `controls` 안에만 적는다. 평면 `&키` 축약과 `computed` 별칭은 없다(15라운드). 그룹이 "이 키는 폼의 것"이라는 표시를 하므로 `&`가 하던 둘째 일은 사라졌고, 남은 평평한 철자 하나를 위해 우선순위 규칙·이중 타입·이중 문서를 치르는 것은 G4(하나의 개념에 하나의 장치)에 걸린다. 서버 스키마에 넘길 때는 그룹 셋을 지우면 끝이고, 서버 스키마와 클라이언트 스키마를 합칠 때는 그룹 셋만 덧붙이면 된다.
-- 보충: 없음
+- 보충:
+  > 편집자 결정(216C-03): "【추론】 형은 런타임이 받는 것만 광고해야 하고, 런타임이 옛 키를 조용히 무시하는 것은 원장이 정한 "맨 키는 검증기로"의 결과이므로 형 삭제와 별개의 제품 질문이다." (`reviews/round-216-closing.md:42`)
 - 상태: 현행
 - 출처: `adr/0003-group-namespace.md:50`(정본), `08-design-a-to-z.md:93`, `08-design-a-to-z.md:338`, `03-mental-model.md:53`, `02-target-overview.md:319#3`(SURFACE-021의 정본 위치), `02-target-overview.md:319#4`(SURFACE-022의 정본 위치)
 - 닫은 사람: 소유자 답(`reviews/round-15-decisions.md:12` 4), 소유자 답(`reviews/round-15-decisions.md:13` 5), 소유자 답(`reviews/round-15-apply-spec.md:46` 숏컷 폐지), 소유자 답(`reviews/round-15-apply-spec.md:79` 숏컷 폐지), 소유자 답(`03-mental-model.md:37` 숏컷 폐지)
@@ -761,7 +762,8 @@
 
 - 결정:
   > - **이주 항목:** `computed` → `controls`(별칭 없음), `&X` → `controls.X`, `&if`·`computed.if` → 분기 객체의 `controls.active`, 판별식 자동 감지 → `controls.discriminator` 또는 분기별 `controls.active`, `&pristine`·맨 키 `pristine` → `controls.resetInteraction`, `injectTo` → `controls.injectTo`, 맨 키 `disabled`·`visible`·`active` → `controls.*`, 루트 스키마 키 다섯의 특수 처리 제거, 맨 키 `terminal`·`virtual`·`propertyKeys` → `options.*`, 맨 키 `formType`·`FormTypeInput`·`FormTypeInputProps`·`FormTypeRendererProps`·`errorMessages`와 `options`의 플러그인 자유 칸 → `presentation.*`, `options.trim`은 `options`에 남고 포커스 아웃 때 문자열 동작 행이 자른다(17라운드 소유자 답 R17-3), 자식의 식을 `controls.children`으로 옮길 때 `../x` → `./x`, 플러그인 키 `FormGroup`·`FormLabel`·`FormInput`·`FormError` → `FormTypeGroupRenderer`·`FormTypeLabelRenderer`·`FormTypeInputRenderer`·`FormTypeErrorRenderer`, Form 속성 `CustomFormTypeRenderer` → `FormTypeGroupRenderer`(같은 이름의 Form 속성 셋이 새로 생긴다), `ChildNodeComponentProps`와 `FormGroupProps`의 prop `FormTypeRenderer`(와 `OverridableFormTypeInputProps`의 Omit 목록) → `FormTypeGroupRenderer`.
-- 보충: 없음
+- 보충:
+  > 편집자 결정(216C-03): "【추론】 형은 런타임이 받는 것만 광고해야 하고, 런타임이 옛 키를 조용히 무시하는 것은 원장이 정한 "맨 키는 검증기로"의 결과이므로 형 삭제와 별개의 제품 질문이다." (`reviews/round-216-closing.md:42`)
 - 상태: 현행
 - 출처: `adr/0003-group-namespace.md:139`(정본), `08-design-a-to-z.md:130`, `03-mental-model.md:53`, `adr/0003-group-namespace.md:125`
 - 닫은 사람: 소유자 답(`reviews/round-15-decisions.md:13` 5), 소유자 답(`reviews/round-15-decisions.md:21` 8), 소유자 답(`reviews/round-10-owner-answers.md:32` E-5), 소유자 답(`reviews/round-13-owner-answers.md:7` 1 잠금 규칙), 소유자 답(`reviews/round-17-owner-answers.md:11` R17-3)

@@ -28,3 +28,18 @@
 - 결정:
   - 【추론】 Form 속성이 객체 계약으로 바뀌었는데 플러그인이 그 객체를 만들어 주지 않으면 소비자는 문서가 약속한 인스턴스별 검증을 잃는다. 추가 export만이라 기존 계약은 그대로다.
 - 근거: fixy07의 ② 보고; LANDING-036; LANDING-192; ajv8 플러그인 createValidatorFactory.ts·validatorPlugin.ts 직접 확인.
+
+## 덧붙임 2 (2026-10-13, ② 완료; ③ 사용례 조사와 판단; reviewer createValidator 계획 승인)
+
+② 완료 3d14602b3 docs: 17파일(README 둘, SPECIFICATION 둘, QUICK_REFERENCE, docs/agents 11, ExternalFormContextProvider JSDoc). verifier 재대조 3에서 차단 1(X1: "검증기 플러그인이 없으면 then/else 꺼짐" → "선택된 검증기가 없으면(Form·FormProvider의 validatorFactory도 플러그인도 없으면)", RootNodeContextProvider.tsx:53-56; 다섯 곳) 정정. 예시 tsc 0, eslint 0, 옛 문법 0. 커밋 메시지 근거 LANDING-036·192·032, NODE-032, FRAGMENT-003·005·006·009. 비차단 넷(Form 속성 표의 `JSONSchemaError[]` → readonly ValidationIssue[], 비공개 BlueprintSchema 스케치, 아홉 키 목록의 allOf 조각, 깨진 `./claude/skills/` 링크)은 ③ 뒤 작은 문서 커밋으로.
+
+③ 사용례 조사(fixy07): 형 추론 감사 73건 0건; 0.16.0은 네 종류 모두를 공식 키로 선언(dist/types/jsonSchema.d.ts:81,88 virtual, :166 injectTo, :168-182 `&` 별칭 여덟, :184 computed; README.md:1622-1623·1745; QUICK_REFERENCE.md:123-137·163-180). 사실 넷: (1) BasicSchema 끝의 `[alt: string]: any` 때문에 키를 지워도 작성자의 computed·'&if'는 형 검사를 통과 — 삭제는 문서·자동 완성에서만 사라지고 형 시험은 색인 서명을 뺀 키 목록으로 증명; 색인 서명은 검증기 사용자 키워드 때문에 유지; (2) 런타임은 옛 키를 조용히 무시(읽는 곳도 진단도 없음) → 0.16.0 스키마는 조건만 빠진 채 렌더되는 이주 위험; (3) 스키마 수준 injectTo의 유일한 런타임 독자는 helpers/jsonSchema(개선-38 결정 3); (4) 최상위 terminal?·propertyKeys?도 같은 낡은 키. 커밋 ②: validateControlGroups.ts:95-113의 13키로 controls? 명시(children은 앞 아홉), 명시 멤버가 색인 서명을 덮어 모르는 키는 형 오류(런타임 UNKNOWN_GROUP_KEY와 일치); 한계: 조각 자리(oneOf·then)는 같은 JSONSchema 형이라 아홉 키 제한 불가.
+
+### 216C-03 (가) 커밋 ①(삭제)은 진행한다 — 215C-02 조건의 뜻은 새 판 소비 흔적이고 감사 0건이 그것이며, 0.16.0이 네 종류를 공식 키로 담은 것은 이주의 전제로서 CONTROLS-016·CONTROLS-051이 이미 삭제를 정했다; 커밋 메시지에 둘과 0.16.0 선언 위치를 적고 형 차분 목록은 대기열 16에; (나) 최상위 terminal·propertyKeys도 포함(CONTROLS-051 같은 줄); (다) 지워진 키의 런타임 진단은 지금 하지 않는다 — 원장은 맨 모르는 키를 폼이 진단하지 않고 검증기로 넘긴다고 정했고(CONTROLS-078·081) 전용 진단은 새 제품 결정이라 소유자 대기열 19로; (라) options도 OPTION_KEYS 여섯으로 닫는다(CONTROLS-051이 플러그인 자유 칸을 presentation으로 옮겼고 런타임이 다른 키를 거부). 색인 서명 유지, 형 시험은 키 목록 expectTypeOf와 @ts-expect-error
+
+- 닫는 항목: CONTROLS-051(보충), CONTROLS-016(보충)
+- 결정:
+  - 【추론】 형은 런타임이 받는 것만 광고해야 하고, 런타임이 옛 키를 조용히 무시하는 것은 원장이 정한 "맨 키는 검증기로"의 결과이므로 형 삭제와 별개의 제품 질문이다.
+- 근거: fixy07의 ③ 조사; CONTROLS-016·051·078·081; 215C-02.
+
+reviewer의 createValidator 계획(.seiri/tasks/ajv-plugin-create-validator/plan.md; 워크트리 /private/tmp/claude-501/ajv-validator, 브랜치 feat/ajv-create-validator, 기반 454531b7d): 세 플러그인(ajv8은 default/2019/2020) `createValidator(ajv, options?: { directGuardCompile?: boolean })` → `{ compile, compileGuard, release, dialect } satisfies ValidatorFactory`; 생성 시 assertBindableInstance; 반환 객체가 자기 등록소 소유; 플러그인 객체·createValidatorFactory 불변; 플러그인마다 커밋 하나(시험 먼저; export 부재로 수집 실패가 사전 실패 증거), 시험 5(형·폼 경로 검증+가드·인스턴스 분리·거부·해제), publicApi.build 단언, README 한 줄, ajv8 CLAUDE.md 아키텍처 줄. 원장 관리자 답: 승인; 버전 0.17.0(공개 API 추가 = minor; 최종 릴리스 번호는 소유자), 시험 2의 코어 런타임은 de7f56499..07b-1 head의 plugin/type.ts·core/validation·types/error.ts diff가 비어 있음을 확인하고 쓰며, 코어 README 예시 복원은 머지 뒤 fixy07 한 줄 커밋.
