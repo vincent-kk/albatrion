@@ -48,7 +48,7 @@ function App() {
             <Route path="/promise-modal" element={<PromiseModalTest />} />
             <Route path="/modal-lifecycle" element={<ModalLifecycleTest />} />
             <Route
-              path="/dynamic-object-formtype"
+              path="/dynamic-object-field-input"
               element={<DynamicObjectFieldInputTest />}
             />
             <Route path="/about" element={<About />} />

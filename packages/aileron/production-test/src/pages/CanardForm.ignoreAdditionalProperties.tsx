@@ -17,7 +17,7 @@ const schema = {
   },
   oneOf: [
     {
-      "&if": "./mode === 'A'",
+      controls: { active: "./mode === 'A'" },
       properties: {
         branch: {
           type: "object",
@@ -27,33 +27,35 @@ const schema = {
             A_value2: { type: "number" },
             A_value3: { type: "boolean" },
           },
-          terminal: false,
-          FieldInput: ({ value, ChildNodeComponents, onChange }) => {
-            return (
-              <div>
-                <pre>{JSON.stringify(value, null, 2)}</pre>
-                <button
-                  onClick={() =>
-                    onChange({
-                      value: "valueA",
-                      A_value: "valueA",
-                      A_value2: 100,
-                      A_value3: true,
-                      B_value: "valueB",
-                      B_value2: 100,
-                      B_value3: true,
-                    })
-                  }
-                >
-                  set
-                </button>
+          options: { terminal: false },
+          presentation: {
+            FieldInput: ({ value, ChildNodeComponents, onChange }) => {
+              return (
                 <div>
-                  {ChildNodeComponents.map((ChildNodeComponent) => (
-                    <ChildNodeComponent key={ChildNodeComponent.key} />
-                  ))}
+                  <pre>{JSON.stringify(value, null, 2)}</pre>
+                  <button
+                    onClick={() =>
+                      onChange({
+                        value: "valueA",
+                        A_value: "valueA",
+                        A_value2: 100,
+                        A_value3: true,
+                        B_value: "valueB",
+                        B_value2: 100,
+                        B_value3: true,
+                      })
+                    }
+                  >
+                    set
+                  </button>
+                  <div>
+                    {ChildNodeComponents.map((ChildNodeComponent) => (
+                      <ChildNodeComponent key={ChildNodeComponent.key} />
+                    ))}
+                  </div>
                 </div>
-              </div>
-            );
+              );
+            },
           },
         },
         terminal: {
@@ -64,33 +66,35 @@ const schema = {
             A_value2: { type: "number" },
             A_value3: { type: "boolean" },
           },
-          FieldInput: ({ value, onChange }) => {
-            return (
-              <div>
-                <pre>{JSON.stringify(value, null, 2)}</pre>
-                <button
-                  onClick={() =>
-                    onChange({
-                      value: "valueA",
-                      A_value: "valueA",
-                      A_value2: 100,
-                      A_value3: true,
-                      B_value: "valueB",
-                      B_value2: 100,
-                      B_value3: true,
-                    })
-                  }
-                >
-                  set
-                </button>
-              </div>
-            );
+          presentation: {
+            FieldInput: ({ value, onChange }) => {
+              return (
+                <div>
+                  <pre>{JSON.stringify(value, null, 2)}</pre>
+                  <button
+                    onClick={() =>
+                      onChange({
+                        value: "valueA",
+                        A_value: "valueA",
+                        A_value2: 100,
+                        A_value3: true,
+                        B_value: "valueB",
+                        B_value2: 100,
+                        B_value3: true,
+                      })
+                    }
+                  >
+                    set
+                  </button>
+                </div>
+              );
+            },
           },
         },
       },
     },
     {
-      "&if": "./mode === 'B'",
+      controls: { active: "./mode === 'B'" },
       properties: {
         branch: {
           type: "object",
@@ -100,34 +104,36 @@ const schema = {
             B_value2: { type: "number" },
             B_value3: { type: "boolean" },
           },
-          terminal: false,
+          options: { terminal: false },
           additionalProperties: false,
-          FieldInput: ({ value, ChildNodeComponents, onChange }) => {
-            return (
-              <div>
-                <pre>{JSON.stringify(value, null, 2)}</pre>
-                <button
-                  onClick={() =>
-                    onChange({
-                      value: "valueA",
-                      A_value: "valueA",
-                      A_value2: 100,
-                      A_value3: true,
-                      B_value: "valueB",
-                      B_value2: 100,
-                      B_value3: true,
-                    })
-                  }
-                >
-                  set
-                </button>
+          presentation: {
+            FieldInput: ({ value, ChildNodeComponents, onChange }) => {
+              return (
                 <div>
-                  {ChildNodeComponents.map((ChildNodeComponent) => (
-                    <ChildNodeComponent key={ChildNodeComponent.key} />
-                  ))}
+                  <pre>{JSON.stringify(value, null, 2)}</pre>
+                  <button
+                    onClick={() =>
+                      onChange({
+                        value: "valueA",
+                        A_value: "valueA",
+                        A_value2: 100,
+                        A_value3: true,
+                        B_value: "valueB",
+                        B_value2: 100,
+                        B_value3: true,
+                      })
+                    }
+                  >
+                    set
+                  </button>
+                  <div>
+                    {ChildNodeComponents.map((ChildNodeComponent) => (
+                      <ChildNodeComponent key={ChildNodeComponent.key} />
+                    ))}
+                  </div>
                 </div>
-              </div>
-            );
+              );
+            },
           },
         },
         terminal: {
@@ -139,27 +145,29 @@ const schema = {
             B_value3: { type: "boolean" },
           },
           additionalProperties: false,
-          FieldInput: ({ value, onChange }) => {
-            return (
-              <div>
-                <pre>{JSON.stringify(value, null, 2)}</pre>
-                <button
-                  onClick={() =>
-                    onChange({
-                      value: "valueA",
-                      A_value: "valueA",
-                      A_value2: 100,
-                      A_value3: true,
-                      B_value: "valueB",
-                      B_value2: 100,
-                      B_value3: true,
-                    })
-                  }
-                >
-                  set
-                </button>
-              </div>
-            );
+          presentation: {
+            FieldInput: ({ value, onChange }) => {
+              return (
+                <div>
+                  <pre>{JSON.stringify(value, null, 2)}</pre>
+                  <button
+                    onClick={() =>
+                      onChange({
+                        value: "valueA",
+                        A_value: "valueA",
+                        A_value2: 100,
+                        A_value3: true,
+                        B_value: "valueB",
+                        B_value2: 100,
+                        B_value3: true,
+                      })
+                    }
+                  >
+                    set
+                  </button>
+                </div>
+              );
+            },
           },
         },
       },
