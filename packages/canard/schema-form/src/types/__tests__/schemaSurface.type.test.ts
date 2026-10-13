@@ -2,7 +2,9 @@ import { describe, expectTypeOf, it } from 'vitest';
 
 import type {
   BasicSchema,
+  NonNullableArraySchema,
   NonNullableObjectSchema,
+  NullableArraySchema,
   NullableObjectSchema,
 } from '../jsonSchema';
 
@@ -57,5 +59,22 @@ describe('schema authoring surface', () => {
         RemovedSchemaKeys | RemovedObjectKeys
       >
     >().toBeNever();
+  });
+
+  it('declares options.terminal as a boolean on object and array schemas', () => {
+    type Terminal<Schema extends { options?: { terminal?: unknown } }> =
+      NonNullable<Schema['options']>['terminal'];
+    expectTypeOf<Terminal<NonNullableObjectSchema>>().toEqualTypeOf<
+      boolean | undefined
+    >();
+    expectTypeOf<Terminal<NullableObjectSchema>>().toEqualTypeOf<
+      boolean | undefined
+    >();
+    expectTypeOf<Terminal<NonNullableArraySchema>>().toEqualTypeOf<
+      boolean | undefined
+    >();
+    expectTypeOf<Terminal<NullableArraySchema>>().toEqualTypeOf<
+      boolean | undefined
+    >();
   });
 });

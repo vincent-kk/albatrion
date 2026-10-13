@@ -306,6 +306,27 @@ type AttachedFilesMap = Map<string, File[]>;
 | ------------- | ------------------------------------------------------------------------ |
 | `VirtualNode` | Non-schema node that groups sibling fields declared in `options.virtual` |
 
+### Branch or Terminal (`options.terminal`)
+
+An `object` or `array` node is a branch by default: it builds a child node for each property or item. With `options.terminal: true` it is a terminal instead: one input reads and writes the whole value, and no child nodes are built. The strategy is decided once, from the schema, in this order:
+
+1. `options.terminal`, `true` or `false`, overrides everything below.
+2. A `presentation.FieldInput` component on the schema makes the node a terminal.
+3. Otherwise the node is a branch.
+
+```typescript
+{
+  type: 'object',
+  properties: { lat: { type: 'number' }, lng: { type: 'number' } },
+  options: { terminal: true }, // one map picker writes { lat, lng }
+}
+```
+
+- Every other kind has a fixed strategy: `string`, `number`, `integer`, `boolean`, `null` and a multi-kind `type` are terminals, and `virtual` is a branch. An `options.terminal` that contradicts the fixed strategy throws `TERMINAL_OPTION_UNSUPPORTED`; one that restates it is accepted.
+- Ungated declarations are the node's own schema, its `$ref` target and its `allOf` parts, as long as they carry no `controls.active`. Among them the later `options.terminal` wins, and a `$ref` target counts as later than the schema that refers to it.
+- The strategy cannot change at run time. When gated declarations (`then` / `else`, any part carrying `controls.active`, a parent's `controls.children` entry with `active` for the children it targets, or a `oneOf` / `anyOf` branch selected by `controls.active` or the host's `controls.discriminator`) would make the node a branch in one case and a terminal in another, the schema throws `TERMINAL_STRATEGY_MISMATCH`.
+- A `oneOf` / `anyOf` branch without such a gate does not set its host's strategy; its `options.terminal` is ignored.
+
 ### Node Initialization
 
 ```typescript
@@ -597,7 +618,7 @@ A branch usually omits `type` and takes its parent's. When it declares one, it m
 
 A branch's own `nullable: true` flag is not compared with the parent's, so `'object'` + `nullable: true` is accepted under any object. Anything else — a `'null'` or `['object', 'null']` branch under a non-nullable object, `'string'`, `'array'` — throws `COMPOSITION_TYPE_REDEFINITION`.
 
-This rule, and the two development warnings below, run only where the object builds child nodes. An object handled as a single input — `terminal: true`, or a `presentation.FieldInput` component set on the object's schema — builds no branches, so its branch types are not checked and neither warning is printed; the validator still sees the schema as written.
+This rule, and the two development warnings below, run only where the object builds child nodes. An object handled as a single input — `options.terminal: true`, or a `presentation.FieldInput` component set on the object's schema — builds no branches, so its branch types are not checked and neither warning is printed; the validator still sees the schema as written.
 
 Inside a branch's `properties`, an entry **with** a `type` is a field; an entry **without** one, carrying only `const` or `enum`, is a tag that the host's `controls.discriminator` reads to select the branch. Giving such a discriminator a `type` turns it into a field that collides with the parent's property of the same name (`COMPOSITION_PROPERTY_REDEFINITION`).
 

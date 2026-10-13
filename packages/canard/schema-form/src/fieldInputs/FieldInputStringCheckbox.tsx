@@ -64,21 +64,29 @@ const FieldInputStringCheckbox = ({
   });
   return (
     <div>
-      {map(checkboxOptions, ({ value, rawValue, label }) => (
-        <label key={value} style={style} className={className}>
-          <input
-            type="checkbox"
-            id={path}
-            name={name}
-            readOnly={readOnly}
-            disabled={disabled}
-            value={value}
-            defaultChecked={defaultValue?.includes(rawValue)}
-            onChange={handleChange}
-          />
-          {label}
-        </label>
-      ))}
+      {map(checkboxOptions, ({ value, rawValue, label }, index) => {
+        const id = `${path}-${index}`;
+        return (
+          <label
+            key={value}
+            htmlFor={id}
+            style={style}
+            className={className}
+          >
+            <input
+              type="checkbox"
+              id={id}
+              name={name}
+              readOnly={readOnly}
+              disabled={disabled}
+              value={value}
+              defaultChecked={defaultValue?.includes(rawValue)}
+              onChange={handleChange}
+            />
+            {label}
+          </label>
+        );
+      })}
     </div>
   );
 };

@@ -601,7 +601,7 @@ exports[`formatErrorMessage > 에러 메시지 스냅샷 > formatObservedValuesE
   ╰──────────────────────────────────────────────────
 
 The watch configuration could not be compiled into a valid function.
-This monitors dependencies defined in 'computed.watch' or '&watch'.
+This monitors dependencies defined in 'controls.watch'.
 
 How to fix:
   1. Verify that all watch paths are valid JSONPointer paths

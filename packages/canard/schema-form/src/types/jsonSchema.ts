@@ -245,6 +245,8 @@ export type NonNullableArraySchema<Options extends Dictionary = object> =
       options?: {
         /** Remove trailing `undefined` items from the array's normalized value (parent propagation, root validation, external emission); child nodes keep the raw array (default: false) */
         omitTrailing?: boolean;
+        /** Build the node as one input over the whole value (`true`) or as child nodes (`false`); overrides the renderer's choice (default: terminal when `presentation.FieldInput` is a component, branch otherwise) */
+        terminal?: boolean;
       };
     };
 /** Nullable array schema (type: ['array', 'null']) */
@@ -254,6 +256,8 @@ export type NullableArraySchema<Options extends Dictionary = object> =
       options?: {
         /** Remove trailing `undefined` items from the array's normalized value (parent propagation, root validation, external emission); child nodes keep the raw array (default: false) */
         omitTrailing?: boolean;
+        /** Build the node as one input over the whole value (`true`) or as child nodes (`false`); overrides the renderer's choice (default: terminal when `presentation.FieldInput` is a component, branch otherwise) */
+        terminal?: boolean;
       };
     };
 
@@ -264,10 +268,21 @@ export type ObjectSchema<Options extends Dictionary = object> =
 /** Non-nullable object schema */
 export type NonNullableObjectSchema<Options extends Dictionary = object> =
   BasicSchema &
-    BaseNonNullableObjectSchema<Options, JSONSchemaChildren<Options>>;
+    BaseNonNullableObjectSchema<Options, JSONSchemaChildren<Options>> & {
+      options?: {
+        /** Build the node as one input over the whole value (`true`) or as child nodes (`false`); overrides the renderer's choice (default: terminal when `presentation.FieldInput` is a component, branch otherwise) */
+        terminal?: boolean;
+      };
+    };
 /** Nullable object schema (type: ['object', 'null']) */
 export type NullableObjectSchema<Options extends Dictionary = object> =
-  BasicSchema & BaseNullableObjectSchema<Options, JSONSchemaChildren<Options>>;
+  BasicSchema &
+    BaseNullableObjectSchema<Options, JSONSchemaChildren<Options>> & {
+      options?: {
+        /** Build the node as one input over the whole value (`true`) or as child nodes (`false`); overrides the renderer's choice (default: terminal when `presentation.FieldInput` is a component, branch otherwise) */
+        terminal?: boolean;
+      };
+    };
 
 /** Virtual node schema for a field group declared in `options.virtual` */
 export type VirtualSchema<Options extends Dictionary = object> = {
