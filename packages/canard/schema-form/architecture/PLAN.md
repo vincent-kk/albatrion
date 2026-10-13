@@ -82,4 +82,4 @@
 
 | 날짜 | 무엇 | 어디 |
 | --- | --- | --- |
-| 2026-10-13 | 243라운드(소유자): 대기열 31 무방(열린 형); 32는 설명 요구. 보충 2줄 | `reviews/round-243-owner-answers.md` |
+| 244 | 소유자 답: 대기열 33(production-test implicit any 12건 고침)·34(최상위 FieldInput을 presentation으로) 승인, 07b-2 뒤 한 작업 | 2026-10-13 |

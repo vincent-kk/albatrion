@@ -933,7 +933,9 @@
   > - 판은 손으로 올린다(`yarn version`). `@canard/schema-form` 계열 여덟(본체, ajv6·ajv7·ajv8 플러그인, antd5·antd6·antd-mobile·mui 플러그인)은 같은 판(0.16.0)으로 움직인다.
   > - changesets는 `@changesets/cli`·`@changesets/changelog-github`와 루트 스크립트만 있고 `.changeset/`이 없다. 루트 `CLAUDE.md`는 changesets를 쓰지 않는다고 적는다.
   > - 릴리스 전 점검이 없다. `@aileron/production-testbed`와 가져오기 시험 스크립트(`scripts/test-package-import.sh` 등)는 어느 워크플로도 부르지 않는다.
-- 보충: 없음
+- 보충:
+  > 소유자(244라운드, 대기열 33): "질문1: 타입처리는 해결하고 가. 귀찮아서 any 로 그냥 넘어간걸거야. 7b-2 뒤에 질문2 항목과 함께 처리해. " (`reviews/round-244-owner-answers.md:7`)
+  > 소유자(244라운드, 대기열 34): "질문2: 옮겨" (`reviews/round-244-owner-answers.md:8`)
 - 상태: 현행(기록)
 - 출처: `09-landing-and-test-strategy.md:227,229-233`(정본)
 - 닫은 사람: 편집자 결정(16라운드 조사, `09-landing-and-test-strategy.md:227`)
