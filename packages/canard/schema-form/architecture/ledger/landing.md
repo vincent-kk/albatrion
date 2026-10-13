@@ -3167,6 +3167,7 @@
   > 소유자(232라운드, 대기열 22 onValidate 두 번): "그럼 한번으로 줄이는게 낫지 않을까? 두번 호출되는게 구조적으로 필수적인지 검토해봐" (`reviews/round-232-owner-answers.md:9`)
   > 소유자(234라운드, 대기열 22 onValidate 두 번): "b안 적용" (`reviews/round-234-owner-answers.md:7`)
   > 소유자(243라운드, 대기열 32): "대기열32는 무슨 소리야? 리셋 하면 이전 에러가 남으면 안 되지 않을까..?? 무슨 오류상황이지" (`reviews/round-243-owner-answers.md:8`)
+  > 소유자(243라운드, 대기열 32 결정): "응 그렇게 해줘 reset 을 할때 한번 다시 확인하도록. 무슨 상황인지는 알겠는데 onRequest 모드에서도 reset 할때 초기화는 해줘야할거같구나" (`reviews/round-243-owner-answers.md:13`)
 - 상태: 현행
 - 출처: `reviews/round-80-closing.md:17`(정본)
 - 닫은 사람: 편집자 결정(80라운드, `reviews/round-80-closing.md` 80C-02)
