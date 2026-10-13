@@ -130,7 +130,7 @@ type Hint = {
   nullable: boolean;
   jsonSchema: JSONSchema;
   format?: string;
-  formType?: string;          // custom jsonSchema.formType field
+  formType?: string;          // jsonSchema.presentation.formType
 };
 ```
 
@@ -146,11 +146,12 @@ const formTypeInputMap: FormTypeInputMap = {
 <Form jsonSchema={schema} formTypeInputMap={formTypeInputMap} />
 ```
 
-## Computed Properties
+## Controls
 
 Fields can react to sibling or parent values using JSONPointer expressions in
-the `computed` (or `&computed`) key. Dependencies are
-tracked automatically from the expression, or declared explicitly via `watch`.
+the `controls` key. Dependencies are tracked automatically from the paths in
+each expression; `watch` subscribes the input to other values and passes them
+as the `watchValues` prop.
 
 ```ts
 {
@@ -159,19 +160,21 @@ tracked automatically from the expression, or declared explicitly via `watch`.
     isPremium: { type: 'boolean' },
     discount: {
       type: 'number',
-      computed: {
+      controls: {
         visible:  '../isPremium === true',   // show only for premium
         readOnly: '../isPremium === false',  // lock if not premium
-        watch: ['../isPremium'],             // explicit dep (optional)
+        watch: ['../isPremium'],             // passed as watchValues (optional)
       },
     },
   },
 }
 ```
 
-Supported computed keys: `visible`, `active`, `readOnly`, `disabled`, `watch`.
+Common `controls` keys: `active`, `visible`, `readOnly`, `disabled`, `derived`,
+`watch`. The key list is closed: an unknown key makes the schema fail with the
+schema error `UNKNOWN_GROUP_KEY`.
 
-### JSONPointer Extensions (computed scope only)
+### JSONPointer Extensions (controls expressions)
 
 | Syntax     | Meaning                                        |
 | ---------- | ---------------------------------------------- |
@@ -183,8 +186,9 @@ Supported computed keys: `visible`, `active`, `readOnly`, `disabled`, `watch`.
 ## Schema Composition
 
 The library supports all standard JSON Schema composition keywords.
-`oneOf` and `anyOf` branches can use the custom
-`&if` expression to bind activation to a field value.
+A `oneOf` or `anyOf` branch takes part only while its gate passes: a
+`controls.active` expression on the branch, or `controls.discriminator` on the
+host with a `const`/`enum` tag on each branch. Without a gate, every branch is on.
 
 ```ts
 // Standard if/then/else
@@ -194,19 +198,19 @@ The library supports all standard JSON Schema composition keywords.
   else: { properties: { version:     { type: 'string' } } },
 }
 
-// oneOf with &if expression (exclusive branches)
+// oneOf with controls.active (exclusive branches)
 {
   oneOf: [
-    { '&if': "./type === 'movie'", properties: { director: { type: 'string' } } },
-    { '&if': "./type === 'game'",  properties: { platform: { type: 'string' } } },
+    { controls: { active: "./type === 'movie'" }, properties: { director: { type: 'string' } } },
+    { controls: { active: "./type === 'game'" },  properties: { platform: { type: 'string' } } },
   ],
 }
 
-// anyOf with &if (non-exclusive, multiple can be active)
+// anyOf with controls.active (non-exclusive, multiple can be active)
 {
   anyOf: [
-    { '&if': './flag1 === true', properties: { field1: { type: 'string' } } },
-    { '&if': './flag2 === true', properties: { field2: { type: 'string' } } },
+    { controls: { active: './flag1 === true' }, properties: { field1: { type: 'string' } } },
+    { controls: { active: './flag2 === true' }, properties: { field2: { type: 'string' } } },
   ],
 }
 
@@ -333,8 +337,8 @@ RequestRemount; // external: force full component remount
 | `SchemaFormPlugin`                                       | Plugin object with optional renderer components + `formTypeInputDefinitions` + `validator` + `formatError` |
 | `ValidatorPlugin`                                        | `{ bind(instance), compile(jsonSchema) → ValidateFunction }`                                               |
 | `ValidateFunction`                                       | `(value) => JSONSchemaError[] \| null \| Promise<...>`                                                     |
-| `computed` / `&computed`                                 | JSON Schema extension for reactive field properties                                                        |
-| `&if`                                                    | JSON Schema extension — expression to activate a `oneOf`/`anyOf` branch                                    |
+| `controls`                                               | JSON Schema extension for reactive field properties (closed key list)                                      |
+| `controls.active` on a branch                            | Expression that activates a `oneOf`/`anyOf` branch                                                         |
 | `enhancedValue`                                          | Value including virtual/conditional field values — used for validation                                     |
 | `ShowError`                                              | Enum controlling when validation errors are displayed                                                      |
 | `ValidationMode`                                         | Enum controlling when validation runs                                                                      |
