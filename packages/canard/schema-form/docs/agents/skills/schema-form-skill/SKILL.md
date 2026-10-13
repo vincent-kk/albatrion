@@ -56,7 +56,7 @@ Knowledge base for `@canard/schema-form`. Answer questions, show usage examples,
 
 ### Controls
 
-Keys of the `controls` object (closed list, no aliases; an unknown key throws a `JSONSchemaError` with code `UNKNOWN_GROUP_KEY` when the blueprint is built): `active` | `visible` | `readOnly` | `disabled` | `default` | `derived` | `unsetValue` | `resetInteraction` | `unsetOnInactive` | `children` | `injectTo` | `discriminator` | `watch` (array of paths). Inside `controls.children[].controls` and on fragment `controls` (branches, `then`, `else`), only the first nine are allowed; the other four throw.
+Keys of the `controls` object (closed list, no aliases; an unknown key throws a schema error (recognized by `isJSONSchemaError`) with code `UNKNOWN_GROUP_KEY` when the blueprint is built): `active` | `visible` | `readOnly` | `disabled` | `default` | `derived` | `unsetValue` | `resetInteraction` | `unsetOnInactive` | `children` | `injectTo` | `discriminator` | `watch` (array of paths). Inside `controls.children[].controls` and on fragment `controls` (`oneOf`/`anyOf`/`allOf` branches, `then`, `else`), only the first nine are allowed; the other four throw.
 
 **active vs visible** — `active: false` removes the value from form data; `visible: false` hides UI but keeps the value. Full decision table: `knowledge/expressions.md`.
 

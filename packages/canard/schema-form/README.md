@@ -69,7 +69,7 @@ interface FormProps<
   /** Function called when the value of this SchemaForm changes */
   onChange?: SetStateFn<Value>;
   /** Function called when this SchemaForm is validated */
-  onValidate?: Fn<[jsonSchemaError: JSONSchemaError[]]>;
+  onValidate?: Fn<[errors: readonly ValidationIssue[]]>;
   /** Function called when the form is submitted */
   onSubmit?: Fn<[value: Value], Promise<void> | void>;
   /** Function called when the state of this SchemaForm changes */
@@ -87,7 +87,7 @@ interface FormProps<
   /** Error renderer component */
   FormTypeErrorRenderer?: ComponentType<FormTypeRendererProps>;
   /** Initial validation errors, default is undefined */
-  errors?: JSONSchemaError[];
+  errors?: readonly ValidationIssue[];
   /** Custom format error function */
   formatError?: FormTypeRendererProps['formatError'];
   /**
@@ -142,9 +142,9 @@ interface FormHandle<
   clearState: Fn;
   getValue: Fn<[], Value>;
   setValue: SetStateFnWithOptions<Value>;
-  getErrors: Fn<[], JSONSchemaError[]>;
+  getErrors: Fn<[], readonly ValidationIssue[]>;
   getAttachedFilesMap: Fn<[], AttachedFilesMap>;
-  validate: Fn<[], Promise<JSONSchemaError[]>>;
+  validate: Fn<[], Promise<readonly ValidationIssue[]>>;
   showError: Fn<[visible: boolean]>;
   submit: TrackableHandlerFunction<[], void, { loading: boolean }>;
 }
@@ -168,7 +168,7 @@ interface FormChildrenProps<
   jsonSchema: Schema;
   defaultValue?: Value;
   value?: Value;
-  errors?: JSONSchemaError[];
+  errors?: readonly ValidationIssue[];
 }
 ```
 
@@ -225,13 +225,11 @@ export const App = () => {
 ValidatorFactory is an object with two required methods, `compile` for the schema and `compileGuard` for the synchronous guard behind `if/then/else`, plus optional `release` and `dialect`:
 
 ```ts
+// The engine passes its own copy of the schema; it is typed as JSONSchema here.
 interface ValidatorFactory {
-  compile(copy: BlueprintSchema): ValidateFunction;
-  compileGuard(
-    root: BlueprintSchema,
-    pointer: string,
-  ): (value: unknown) => boolean;
-  release?(root: BlueprintSchema): void;
+  compile(copy: JSONSchema): ValidateFunction;
+  compileGuard(root: JSONSchema, pointer: string): (value: unknown) => boolean;
+  release?(root: JSONSchema): void;
   readonly dialect?: string;
 }
 
@@ -1996,7 +1994,11 @@ You can define form submission logic using the `onSubmit` prop:
 ```tsx
 import React, { useState } from 'react';
 
-import { Form, JSONSchemaError, isValidationError } from '@canard/schema-form';
+import {
+  Form,
+  type ValidationIssue,
+  isValidationError,
+} from '@canard/schema-form';
 
 export const FormWithSubmit = () => {
   const jsonSchema = {
@@ -2008,7 +2010,7 @@ export const FormWithSubmit = () => {
     required: ['name', 'email'],
   };
 
-  const [errors, setErrors] = useState<JSONSchemaError[]>([]);
+  const [errors, setErrors] = useState<readonly ValidationIssue[]>([]);
 
   const handleSubmit = async (value: any) => {
     try {
@@ -2050,7 +2052,7 @@ import React, { useRef, useState } from 'react';
 import {
   Form,
   FormHandle,
-  JSONSchemaError,
+  type ValidationIssue,
   isValidationError,
   useFormSubmit,
 } from '@canard/schema-form';
@@ -2067,7 +2069,7 @@ export const AdvancedSubmitForm = () => {
   };
 
   const formRef = useRef<FormHandle<typeof jsonSchema>>(null);
-  const [errors, setErrors] = useState<JSONSchemaError[]>([]);
+  const [errors, setErrors] = useState<readonly ValidationIssue[]>([]);
 
   // Async submission handler
   const handleSubmit = async (value: any) => {

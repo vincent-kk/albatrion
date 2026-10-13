@@ -155,7 +155,7 @@ interface FormProps<
   /** Function called when the value of this SchemaForm changes */
   onChange?: SetStateFn<Value>;
   /** Function called when this SchemaForm is validated */
-  onValidate?: Fn<[jsonSchemaError: JSONSchemaError[]]>;
+  onValidate?: Fn<[errors: readonly ValidationIssue[]]>;
   /** Function called when the form is submitted */
   onSubmit?: Fn<[value: Value], Promise<void> | void>;
   /** Function called when the state of this SchemaForm changes */
@@ -173,7 +173,7 @@ interface FormProps<
   /** Error renderer component */
   FormTypeErrorRenderer?: ComponentType<FormTypeRendererProps>;
   /** Initial validation errors, default is undefined */
-  errors?: JSONSchemaError[];
+  errors?: readonly ValidationIssue[];
   /** Custom format error function */
   formatError?: FormTypeRendererProps['formatError'];
   /**
@@ -244,11 +244,11 @@ interface FormHandle<
   /** Set value */
   setValue: SetStateFnWithOptions<Value>;
   /** Get current errors */
-  getErrors: Fn<[], JSONSchemaError[]>;
+  getErrors: Fn<[], readonly ValidationIssue[]>;
   /** Get attached files map */
   getAttachedFilesMap: Fn<[], AttachedFilesMap>;
   /** Run validation */
-  validate: Fn<[], Promise<JSONSchemaError[]>>;
+  validate: Fn<[], Promise<readonly ValidationIssue[]>>;
   /** Set error visibility */
   showError: Fn<[visible: boolean]>;
   /** Submit form */
@@ -267,7 +267,7 @@ interface FormChildrenProps<
   jsonSchema: Schema;
   defaultValue?: Value;
   value?: Value;
-  errors?: JSONSchemaError[];
+  errors?: readonly ValidationIssue[];
 }
 ```
 
@@ -481,7 +481,7 @@ const formInputMap = {
 }
 ```
 
-The key list is closed: an unknown key makes the blueprint build throw a `JSONSchemaError` with code `UNKNOWN_GROUP_KEY`. Inside `controls.children[].controls` and on the `controls` of a fragment (`oneOf`/`anyOf`/`allOf` branches, `then`, `else`), only the first nine keys (`active` through `unsetOnInactive`) are allowed; any of the other four throws.
+The key list is closed: an unknown key makes the blueprint build throw a schema error (recognized by `isJSONSchemaError`) with code `UNKNOWN_GROUP_KEY`. Inside `controls.children[].controls` and on the `controls` of a fragment (`oneOf`/`anyOf`/`allOf` branches, `then`, `else`), only the first nine keys (`active` through `unsetOnInactive`) are allowed; any of the other four throws.
 
 ### Nested Controls
 
@@ -989,11 +989,11 @@ Pass `children` as a function to `Form` component to access form state and node.
 
 **children function props:**
 
-| prop     | Type                      | Description                         |
-| -------- | ------------------------- | ----------------------------------- |
-| `value`  | `InferValueType<Schema>`  | Current form value                  |
-| `errors` | `JSONSchemaError[]`       | List of all validation errors       |
-| `node`   | `InferSchemaNode<Schema>` | Root node (for programmatic access) |
+| prop     | Type                         | Description                         |
+| -------- | ---------------------------- | ----------------------------------- |
+| `value`  | `InferValueType<Schema>`     | Current form value                  |
+| `errors` | `readonly ValidationIssue[]` | List of all validation errors       |
+| `node`   | `InferSchemaNode<Schema>`    | Root node (for programmatic access) |
 
 ---
 

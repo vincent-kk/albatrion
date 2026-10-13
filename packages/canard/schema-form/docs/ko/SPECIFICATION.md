@@ -155,7 +155,7 @@ interface FormProps<
   /** 이 SchemaForm의 값이 변경될 때 호출되는 함수 */
   onChange?: SetStateFn<Value>;
   /** 이 SchemaForm이 검증될 때 호출되는 함수 */
-  onValidate?: Fn<[jsonSchemaError: JSONSchemaError[]]>;
+  onValidate?: Fn<[errors: readonly ValidationIssue[]]>;
   /** 폼이 제출될 때 호출되는 함수 */
   onSubmit?: Fn<[value: Value], Promise<void> | void>;
   /** 이 SchemaForm의 상태가 변경될 때 호출되는 함수 */
@@ -173,7 +173,7 @@ interface FormProps<
   /** 오류 렌더러 컴포넌트 */
   FormTypeErrorRenderer?: ComponentType<FormTypeRendererProps>;
   /** 초기 검증 오류, 기본값은 undefined */
-  errors?: JSONSchemaError[];
+  errors?: readonly ValidationIssue[];
   /** 커스텀 오류 포맷 함수 */
   formatError?: FormTypeRendererProps['formatError'];
   /**
@@ -242,11 +242,11 @@ interface FormHandle<
   /** 값 설정 */
   setValue: SetStateFnWithOptions<Value>;
   /** 현재 오류 가져오기 */
-  getErrors: Fn<[], JSONSchemaError[]>;
+  getErrors: Fn<[], readonly ValidationIssue[]>;
   /** 첨부 파일 맵 가져오기 */
   getAttachedFilesMap: Fn<[], AttachedFilesMap>;
   /** 검증 실행 */
-  validate: Fn<[], Promise<JSONSchemaError[]>>;
+  validate: Fn<[], Promise<readonly ValidationIssue[]>>;
   /** 오류 표시 설정 */
   showError: Fn<[visible: boolean]>;
   /** 폼 제출 */
@@ -265,7 +265,7 @@ interface FormChildrenProps<
   jsonSchema: Schema;
   defaultValue?: Value;
   value?: Value;
-  errors?: JSONSchemaError[];
+  errors?: readonly ValidationIssue[];
 }
 ```
 
@@ -479,7 +479,7 @@ const formInputMap = {
 }
 ```
 
-키 목록은 닫혀 있어서 알 수 없는 키가 있으면 청사진 빌드가 코드 `UNKNOWN_GROUP_KEY`인 `JSONSchemaError`를 던집니다. `controls.children[].controls`와 조각(`oneOf`/`anyOf`/`allOf` 분기, `then`, `else`)의 `controls` 안에서는 앞의 아홉 키(`active`부터 `unsetOnInactive`까지)만 허용되며, 나머지 네 키는 던집니다.
+키 목록은 닫혀 있어서 알 수 없는 키가 있으면 청사진 빌드가 코드 `UNKNOWN_GROUP_KEY`인 스키마 오류(`isJSONSchemaError`로 판별)를 던집니다. `controls.children[].controls`와 조각(`oneOf`/`anyOf`/`allOf` 분기, `then`, `else`)의 `controls` 안에서는 앞의 아홉 키(`active`부터 `unsetOnInactive`까지)만 허용되며, 나머지 네 키는 던집니다.
 
 ### 중첩 controls
 
@@ -987,11 +987,11 @@ Enter는 Form의 `form` 요소를 통해 제출합니다. 텍스트류 필드가
 
 **children 함수 props:**
 
-| prop     | 타입                      | 설명                            |
-| -------- | ------------------------- | ------------------------------- |
-| `value`  | `InferValueType<Schema>`  | 현재 폼 값                      |
-| `errors` | `JSONSchemaError[]`       | 전체 검증 에러 목록             |
-| `node`   | `InferSchemaNode<Schema>` | 루트 노드 (프로그래매틱 접근용) |
+| prop     | 타입                         | 설명                            |
+| -------- | ---------------------------- | ------------------------------- |
+| `value`  | `InferValueType<Schema>`     | 현재 폼 값                      |
+| `errors` | `readonly ValidationIssue[]` | 전체 검증 에러 목록             |
+| `node`   | `InferSchemaNode<Schema>`    | 루트 노드 (프로그래매틱 접근용) |
 
 ---
 

@@ -71,7 +71,7 @@ interface FormProps<
   /** 이 SchemaForm의 값이 변경될 때 호출되는 함수 */
   onChange?: SetStateFn<Value>;
   /** 이 SchemaForm이 유효성 검사를 통과했을 때 호출되는 함수 */
-  onValidate?: Fn<[jsonSchemaError: JSONSchemaError[]]>;
+  onValidate?: Fn<[errors: readonly ValidationIssue[]]>;
   /** 폼이 제출될 때 호출되는 함수 (검증 통과 후 실행) */
   onSubmit?: Fn<[value: Value], Promise<void> | void>;
   /** 이 SchemaForm의 상태가 변경될 때 호출되는 함수 */
@@ -89,7 +89,7 @@ interface FormProps<
   /** 오류 렌더러 컴포넌트 */
   FormTypeErrorRenderer?: ComponentType<FormTypeRendererProps>;
   /** 초기 검증 오류, 기본값은 undefined */
-  errors?: JSONSchemaError[];
+  errors?: readonly ValidationIssue[];
   /** 사용자 정의 오류 형식 함수 */
   formatError?: FormTypeRendererProps['formatError'];
   /**
@@ -138,10 +138,10 @@ interface FormHandle<
   getValue: Fn<[], Value>;
   setValue: SetStateFnWithOptions<Value>;
   /** 폼 전역 오류를 반환합니다 */
-  getErrors: Fn<[], JSONSchemaError[]>;
+  getErrors: Fn<[], readonly ValidationIssue[]>;
   /** onFileAttach로 첨부된 파일 맵을 반환합니다 */
   getAttachedFilesMap: Fn<[], AttachedFilesMap>;
-  validate: Fn<[], Promise<JSONSchemaError[]>>;
+  validate: Fn<[], Promise<readonly ValidationIssue[]>>;
   showError: Fn<[visible: boolean]>;
   submit: TrackableHandlerFunction<[], void, { loading: boolean }>;
 }
@@ -165,7 +165,7 @@ interface FormChildrenProps<
   jsonSchema: Schema;
   defaultValue?: Value;
   value?: Value;
-  errors?: JSONSchemaError[];
+  errors?: readonly ValidationIssue[];
 }
 ```
 
@@ -222,13 +222,11 @@ export const App = () => {
 ValidatorFactory는 스키마를 컴파일하는 `compile`과 `if/then/else`가 쓰는 동기 가드를 컴파일하는 `compileGuard`를 필수로 갖고, `release`와 `dialect`를 선택으로 갖는 객체입니다:
 
 ```ts
+// The engine passes its own copy of the schema; it is typed as JSONSchema here.
 interface ValidatorFactory {
-  compile(copy: BlueprintSchema): ValidateFunction;
-  compileGuard(
-    root: BlueprintSchema,
-    pointer: string,
-  ): (value: unknown) => boolean;
-  release?(root: BlueprintSchema): void;
+  compile(copy: JSONSchema): ValidateFunction;
+  compileGuard(root: JSONSchema, pointer: string): (value: unknown) => boolean;
+  release?(root: JSONSchema): void;
   readonly dialect?: string;
 }
 
@@ -1982,7 +1980,11 @@ const typedHandler: InjectToHandler<
 ```tsx
 import React, { useState } from 'react';
 
-import { Form, JSONSchemaError, isValidationError } from '@canard/schema-form';
+import {
+  Form,
+  type ValidationIssue,
+  isValidationError,
+} from '@canard/schema-form';
 
 export const FormWithSubmit = () => {
   const jsonSchema = {
@@ -1994,7 +1996,7 @@ export const FormWithSubmit = () => {
     required: ['name', 'email'],
   };
 
-  const [errors, setErrors] = useState<JSONSchemaError[]>([]);
+  const [errors, setErrors] = useState<readonly ValidationIssue[]>([]);
 
   const handleSubmit = async (value: any) => {
     try {
@@ -2036,7 +2038,7 @@ import React, { useRef, useState } from 'react';
 import {
   Form,
   FormHandle,
-  JSONSchemaError,
+  type ValidationIssue,
   isValidationError,
   useFormSubmit,
 } from '@canard/schema-form';
@@ -2053,7 +2055,7 @@ export const AdvancedSubmitForm = () => {
   };
 
   const formRef = useRef<FormHandle<typeof jsonSchema>>(null);
-  const [errors, setErrors] = useState<JSONSchemaError[]>([]);
+  const [errors, setErrors] = useState<readonly ValidationIssue[]>([]);
 
   // 비동기 제출 핸들러
   const handleSubmit = async (value: any) => {

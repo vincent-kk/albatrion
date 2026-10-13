@@ -108,7 +108,7 @@ controls: { active: "./type === 'A'" }
 | `discriminator`    | `string`                  | oneOf/anyOf 호스트의 분기 태그 속성          | -       |
 | `watch`            | `string[]`                | 값 구독 (경로 배열만)                        | -       |
 
-`controls.children[].controls`와 조각(분기, `then`, `else`)의 `controls`에는 앞의 아홉 키(`active`부터 `unsetOnInactive`까지)만 허용됩니다.
+`controls.children[].controls`와 조각(`oneOf`/`anyOf`/`allOf` 분기, `then`, `else`)의 `controls`에는 앞의 아홉 키(`active`부터 `unsetOnInactive`까지)만 허용됩니다.
 
 ### active vs visible 선택
 
@@ -524,4 +524,4 @@ arrayNode.children; // 자식 노드 배열
 
 - [한국어 스펙](./ko/SPECIFICATION.md)
 - [영어 스펙](./en/SPECIFICATION.md)
-- [Claude 스킬](./claude/skills/)
+- [Claude 스킬](./agents/skills/schema-form-skill/SKILL.md)
