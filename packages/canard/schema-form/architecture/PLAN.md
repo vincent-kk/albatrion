@@ -82,4 +82,4 @@
 
 | 날짜 | 무엇 | 어디 |
 | --- | --- | --- |
-| 2026-10-13 | 235라운드(소유자): formType 계열 이름 재구성 동의 — 현재 이름 포함 이름 쌍 공모(crosscheck) 뒤 결정. 보충 1줄 | `reviews/round-235-owner-answers.md` |
+| 2026-10-13 | 236라운드(닫기): 이름 공모 결과 — 힌트 widget·렌더러 FieldRenderer 합의, 입력 컴포넌트 Widget* 대 FieldInput* 갈림, 권고 Widget*; 소유자 결정 대기. 보충 1줄 | `reviews/round-236-closing.md` |
