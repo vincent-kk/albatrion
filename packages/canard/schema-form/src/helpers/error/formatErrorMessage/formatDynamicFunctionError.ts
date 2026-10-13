@@ -126,7 +126,7 @@ ${watchSection}
   ╰${divider}
 
 The watch configuration could not be compiled into a valid function.
-This monitors dependencies defined in 'computed.watch' or '&watch'.
+This monitors dependencies defined in 'controls.watch'.
 
 How to fix:
   1. Verify that all watch paths are valid JSONPointer paths
