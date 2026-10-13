@@ -63,7 +63,7 @@ export interface FieldInputProps<
   errors: Node['errors'];
   /** Whether to show errors for this field */
   errorVisible: boolean;
-  /** Values subscribed according to `computed.watch`(=`&watch`) property defined in JSONSchema */
+  /** Values of the paths listed in the schema's `controls.watch`, in order */
   watchValues: WatchValues;
   /** Default value of FieldInput Component */
   defaultValue: Value | undefined;
