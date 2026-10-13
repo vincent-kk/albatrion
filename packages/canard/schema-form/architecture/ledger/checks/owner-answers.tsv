@@ -374,4 +374,4 @@ reviews/round-241-owner-answers.md:13	241	설계 초안 시점	"끝난 다음에
 reviews/round-242-owner-answers.md:7	242	CLAUDE.md 치환	"어 치환 허용. docs 를 포함해서 모든 영역에 대한 수정 허용" (2026-10-13, 원장 세션)
 reviews/round-243-owner-answers.md:7	243	대기열 31	"아 저건 괜찮아. 스키마가 열린 타입이라 그래. 저정도면 무방하다" (2026-10-13, 원장 세션)
 reviews/round-243-owner-answers.md:8	243	대기열 32	"대기열32는 무슨 소리야? 리셋 하면 이전 에러가 남으면 안 되지 않을까..?? 무슨 오류상황이지" (2026-10-13, 원장 세션)
-reviews/round-243-owner-answers.md:13	243	대기열 32 결정	"응 그렇게 해줘 reset 을 할때 한번 다시 확인하도록. 무슨 상황인지는 알겠는데 onRequest 모드에서도 reset 할때 초기화는 해줘야할거같구나" (2026-10-13, 원장 세션)
+reviews/round-243-owner-answers.md:14	243	대기열 32 결정	"응 그렇게 해줘 reset 을 할때 한번 다시 확인하도록. 무슨 상황인지는 알겠는데 onRequest 모드에서도 reset 할때 초기화는 해줘야할거같구나" (2026-10-13, 원장 세션)
