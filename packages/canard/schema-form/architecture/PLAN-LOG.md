@@ -207,6 +207,7 @@
 | 2026-10-13 | 222라운드(닫기): 입력 17개 이주 PR #359 검증·squash-merge(12aa201d9); 남은 순서 명시. 보충 2줄 | `reviews/round-222-closing.md` |
 | 2026-10-13 | 223라운드(닫기): 가드 포인터 PR #360 검증·squash-merge(c343a93b8); reviewer 배정 종료. 보충 1줄 | `reviews/round-223-closing.md` |
 | 2026-10-13 | 224라운드(소유자): 속도 게이트 현황 답; 3라운드·④를 덮는 방향 확인을 #355 선행 조건으로(codex ⑤와 겹쳐 추가 시간 0). 보충 2줄 | `reviews/round-224-owner-answers.md` |
+| 2026-10-13 | 225라운드(소유자): 방향 확인을 지금 돌린다 — 어제의 보류 해제. 보충 1줄 | `reviews/round-225-owner-answers.md` |
 
 ## 2. 라운드별 요지
 
@@ -384,3 +385,4 @@
 - **188라운드(2026-10-13, 닫기).** 외부 오류가 바뀌면 onValidate가 집계를 받도록 통지를 되찾는다. 옛 판은 errors prop 변경에 onValidate를 불렀고 새 판은 검증 때만 불렀다(reviews/round-188-closing.md).
 - **189라운드(2026-10-13, 소유자).** 개발 모드 판정 함수는 process.env.NODE_ENV 토큰을 그대로 읽고 첫 결과를 캐시한다. 소비자 번들러의 치환을 지키기 위해서다(reviews/round-189-owner-answers.md).
 - **190라운드(2026-10-13, 소유자).** 공개 형이 readonly를 허용하지 않는 동결 상수처럼 제한된 자리에서는 unknown을 거친 단언을 허용한다. useTerminalChildren의 빈 자식 목록 상수는 한 줄로 정리하며 reviewer가 처리한다(reviews/round-190-owner-answers.md).
+- **191라운드(2026-10-13, 닫기).** 스토리 재구성 첫 그룹(합성)이 끝났고, 그 과정에서 두 쓰기 이상의 batch가 숨은 분기 값을 모두 지우는 제품 결함을 찾았다. reviewer가 07 브랜치에서 머지 전에 고친다. 복합 사례 설계안의 공통 결정 넷은 편집자가 정했고 사례 목록은 소유자 검토에 올린다(reviews/round-191-closing.md).

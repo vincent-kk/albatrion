@@ -643,6 +643,7 @@
   > 편집자 결정(212C-01): "【추론】 방향 확인은 판정이 아니라 "회귀 방향이 없다"를 보는 문턱이고 그 문턱을 넘었다. rebase를 두 번 하지 않도록 3라운드 push를 먼저 기다리는 것이 싸다." (`reviews/round-212-closing.md:13`)
   > 편집자 결정(216C-01): "【추론】 다섯 부분에 판정된 이득도 차단 회귀도 없으면 커밋 2는 "손해 없는 정리"로 ADOPT가 맞고, 그 위에서 07b의 나머지는 측정과 무관한 정리·형·문서다." (`reviews/round-216-closing.md:17`)
   > 소유자(224라운드, 속도 게이트 현황과 추가 측정의 시간): "그러고보니 속도 게이트는 어떻게됬어? 측정 및 개선 다 했어?" / "그래 좋긴 한데 시간이 엄청 더 걸리는거 아닌가 그럼?? 좀 걱정인데" (`reviews/round-224-owner-answers.md:7`)
+  > 소유자(225라운드, 방향 확인 실행): "지금 돌려. 보류 요청은 어제 한거고 이제 상황이 달라졌으니까" (`reviews/round-225-owner-answers.md:7`)
 - 상태: 현행
 - 출처: `09-landing-and-test-strategy.md:223`(정본), `adr/0009-performance-budget-and-benchmarks.md:9,92`, `08-design-a-to-z.md:609`, `reviews/round-16-owner-answers.md:12`, `reviews/round-16-owner-review.md:57`, `reviews/round-18-agenda.md:68`
 - 닫은 사람: 소유자 답(`reviews/round-16-owner-answers.md:12` 답 6), 편집자 결정(16라운드 도출, '통제 가능'의 뜻, `09-landing-and-test-strategy.md:223`)
