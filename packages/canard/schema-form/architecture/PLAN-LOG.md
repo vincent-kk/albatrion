@@ -250,6 +250,7 @@
 | 2026-10-14 | 264라운드(소유자): 후보 15 중 11개 권고대로 승인; 2·12·13·14 추가 논의; 잔여 비표준 키 점검 요구. 보충 1줄 | `reviews/round-264-owner-answers.md` |
 | 2026-10-14 | 265라운드(소유자): ChildFields·controls.fields·options.propertyOrder·options.virtual 형·VirtualSchema 비공개·nullable: true 제거 승인(265C-01 후속 대응표). 보충 1줄 | `reviews/round-265-owner-answers.md` |
 | 2026-10-14 | 266라운드(소유자): 스토리북 관찰 셋 → 대기열 40(docs 직렬화)·41(nullable 분기 화면·값 불일치)·42(스토리 가독성). 보충 1줄 | `reviews/round-266-owner-answers.md` |
+| 2026-10-14 | 267라운드(소유자): 중지 없이 끝까지(PR 병합 사전 허가, 구조 변경·추가 요청 전부, 결정은 대기열) — 267C-01 계획. 보충 1줄 | `reviews/round-267-owner-answers.md` |
 
 ## 2. 라운드별 요지
 
@@ -469,3 +470,4 @@
 - **230라운드(2026-10-13, 소유자).** 대기열 결정 항목 가운데 일곱에 답했다: CLAUDE.md 절 갱신(10)·문서 사이트 PR(17)·플러그인 잔여 넷 정리(20)·시험 타이밍 둘(25·27)은 승인, 옛 키 진단(19)과 onValidate 두 번(22)은 현행 유지, type 좁힘(23)은 조건부 유지; 대기열 9와 26은 설명을 요구해 보류(reviews/round-230-owner-answers.md).
 - **231라운드(2026-10-13, 닫기).** 230라운드 답을 배분했다: fixy07이 feat/schema-form-07b-2에서 CLAUDE.md 절 갱신·플러그인 잔여 넷·시험 타이밍 둘을 세 커밋으로(codex 구현, 직접 검증), fairy07이 문서 사이트 PR 하나; 대기열 19·22는 닫힘, 23은 조건부, 9·26은 설명 뒤 결정(reviews/round-231-closing.md).
 - **232라운드(2026-10-13, 소유자).** 대기열 9(내장 입력이 영역 밖 값을 원문으로 보이게, 내장 컴포넌트 안에서)와 26(ajv6·7 가드 포인터 퍼센트 디코딩)은 고치기로 해 07b-2 ④·⑤로 배정했고, 22(마운트 때 onValidate 두 번)는 구조적으로 필수인지 원장 관리자가 검토해 보고한 뒤 결정한다; 대기열 15의 정리 명령은 모든 작업 뒤에 한 번(reviews/round-232-owner-answers.md).
+- **233라운드(2026-10-13, 닫기).** 07b-2에 ②-b(맨 formType 105곳 → presentation.formType), ①의 README·명세 errorMessages 자리, ⑥(내장 checkbox·radio가 맨 formType을 검사해 새 문법으로 도달 불가한 결함 고침)을 더했고, #361은 데모 코드 7개와 API 이름 어긋남까지 넓혔다. 대기열 22의 진단: 첫 빈 목록 호출은 제공자 마운트 효과의 외부 오류 적용이 변경 검사 없이 발행되는 우연이고 둘째는 규칙; A·B안과 None 모드 호출 0번 수용 여부를 소유자에게 올림(reviews/round-233-closing.md).
