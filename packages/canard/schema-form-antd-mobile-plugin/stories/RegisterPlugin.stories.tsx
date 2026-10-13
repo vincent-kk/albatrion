@@ -251,14 +251,14 @@ export const OneOf = () => {
       openingDate: {
         type: 'string',
         format: 'date',
-        computed: {
+        controls: {
           active: '../title === "wow"',
         },
       },
       releaseDate: {
         type: 'string',
         format: 'date',
-        computed: {
+        controls: {
           active: '../title === "wow"',
         },
       },
@@ -323,7 +323,7 @@ export const ComplexOneOf = () => {
               gender: {
                 type: 'string',
                 enum: ['male', 'female', 'other'],
-                computed: {
+                controls: {
                   active: '../age >= 18',
                 },
               },
@@ -565,7 +565,7 @@ export const Watch = () => {
       },
       greeting: {
         type: 'string',
-        computed: {
+        controls: {
           watch: ['#/profile/name', '#/profile/age', '#/profile'],
         },
         presentation: {
@@ -620,9 +620,11 @@ export const VirtualSchema = () => {
         format: 'date',
       },
     },
-    virtual: {
-      period: {
-        fields: ['startDate', 'endDate'],
+    options: {
+      virtual: {
+        period: {
+          fields: ['startDate', 'endDate'],
+        },
       },
     },
   } satisfies JSONSchema;
@@ -779,7 +781,7 @@ export const ComputedProps = () => {
       },
       name: {
         type: 'string',
-        computed: {
+        controls: {
           readOnly: '!../prepared',
         },
         presentation: {
@@ -790,7 +792,7 @@ export const ComputedProps = () => {
       },
       age: {
         type: 'number',
-        computed: {
+        controls: {
           disabled: '(../name)===undefined||(../name).length<5',
         },
         presentation: {
@@ -802,7 +804,7 @@ export const ComputedProps = () => {
       nationality: {
         type: 'string',
         enum: ['', 'US', 'UK', 'JP', 'KR'],
-        computed: {
+        controls: {
           disabled: '(../age)===undefined||(../age<10)',
         },
         presentation: {

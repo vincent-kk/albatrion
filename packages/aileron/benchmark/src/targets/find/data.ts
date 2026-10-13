@@ -15,7 +15,7 @@ const schema = {
       type: 'object',
       oneOf: [
         {
-          '&if': "../type==='game'",
+          controls: { active: "../type==='game'" },
           properties: {
             stages: {
               type: 'array',
@@ -35,7 +35,7 @@ const schema = {
             },
             platforms: {
               type: 'array',
-              inputType: 'checkbox',
+              presentation: { inputType: 'checkbox' },
               items: {
                 type: 'string',
                 enum: ['pc', 'console', 'mobile'],
@@ -57,7 +57,7 @@ const schema = {
           },
         },
         {
-          '&if': "../type==='movie'",
+          controls: { active: "../type==='movie'" },
           properties: {
             genres: {
               type: 'array',
@@ -76,7 +76,7 @@ const schema = {
             },
             platforms: {
               type: 'array',
-              inputType: 'checkbox',
+              presentation: { inputType: 'checkbox' },
               items: {
                 type: 'string',
                 enum: ['theater', 'streaming'],
@@ -96,15 +96,25 @@ const schema = {
   },
   oneOf: [
     {
-      '&if': "./type==='game'",
+      controls: { active: "./type==='game'" },
       properties: {
-        owner: { type: 'string', placeholder: 'developer of the game' },
+        owner: {
+          type: 'string',
+          presentation: {
+            FieldInputProps: { placeholder: 'developer of the game' },
+          },
+        },
       },
     },
     {
-      '&if': "./type==='movie'",
+      controls: { active: "./type==='movie'" },
       properties: {
-        owner: { type: 'string', placeholder: 'director of the movie' },
+        owner: {
+          type: 'string',
+          presentation: {
+            FieldInputProps: { placeholder: 'director of the movie' },
+          },
+        },
       },
     },
   ],
