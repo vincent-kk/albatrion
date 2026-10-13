@@ -3199,6 +3199,7 @@
   > 소유자(267라운드, 병합은 보고만): "병합도 보고만 하고 직접 병합하도록." (`reviews/round-267-owner-answers.md:27`)
   > 소유자(268라운드, 멀티에이전트 재개): "지금부터는 codex 와 agy 를 사용한 멀티에이전트 작업을 하도록 해.\n내가 이전에 claude 로 하자고 했던거같아서.\n이제 명시적으로 멀티에이전트 작업을 진행하도록.\n규칙은 이전과 같아.\n\n이해했으면 마무리된 작업 처리하고, 멀티에이전트 규칙을 한번 다시 말해줘" (`reviews/round-268-owner-answers.md:7`)
   > 소유자(268라운드, nullable 잔류): "아 그리고 nullable는 제거가 아니라 잔류야. 가끔 이걸 쓰는 경우도 있어서. 위 계획에서 정정이 필요해" (`reviews/round-268-owner-answers.md:19`)
+  > 소유자(269라운드, 07b-6 결정·nullable): "맞다고 생각하는 방향으로 가도록\nnullable 은 좀만 더 이야기해보자.\n남겨두는게 딱히 비용도 아니고 느려지는것도 별로 없지? ajv도 공식 허용하고. 우리가 jsonSchema 비표준 필드도 많이 쓰는 마당이라 막는 당위성도 좀 애매하네" (`reviews/round-269-owner-answers.md:7`)
 - 상태: 현행
 - 출처: `reviews/round-80-closing.md:17`(정본)
 - 닫은 사람: 편집자 결정(80라운드, `reviews/round-80-closing.md` 80C-02)
