@@ -122,7 +122,7 @@ product projects. Run `yarn test --run --project <name>` to select a project.
   `playScenario` searches the received element and descendants, so story and
   render contexts share the same call shape.
 - Scenario stories render the current public Form entry, mirror the same data,
-  and call `playScenario` from `play`; usage stories are documentation-only.
+  and call `playScenario` from `play`; usage stories assert only their own readouts, never engine behavior; shared scenarios own behavior assertions.
 - Final observable behavior needs a render scenario; a core test alone does not
   verify DOM behavior. Harness skeleton tests and empty families claim no engine
   behavior coverage.

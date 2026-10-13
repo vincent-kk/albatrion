@@ -1,8 +1,8 @@
-import { expect, fn, waitFor } from 'storybook/test';
+import { expect, waitFor } from 'storybook/test';
 
 import type { FormHandle } from '../../../src';
 
-/** A per-story spy that captures mounted handles for consumer-only play steps. */
+/** A per-story recorder that captures mounted handles for consumer-only play steps. */
 export interface HandleProbe {
   /** Passed as FeatureStory's onHandle arg. */
   readonly onHandle: (handle: FormHandle, element: HTMLElement) => void;
@@ -20,9 +20,14 @@ export interface HandleProbe {
  * @throws From handle() when no form mounts inside the canvas within the waitFor timeout.
  */
 export function createHandleProbe(): HandleProbe {
-  const onHandle = fn<(handle: FormHandle, element: HTMLElement) => void>();
+  const calls: [FormHandle, HTMLElement][] = [];
+  const onHandle = (handle: FormHandle, element: HTMLElement) => {
+    for (let index = calls.length - 1; index >= 0; index--) {
+      if (!calls[index][1].isConnected) calls.splice(index, 1);
+    }
+    calls.push([handle, element]);
+  };
   const current = (canvas: HTMLElement) => {
-    const calls = onHandle.mock.calls;
     for (let index = calls.length - 1; index >= 0; index--) {
       const [handle, element] = calls[index];
       if (element.isConnected && canvas.contains(element)) return handle;
