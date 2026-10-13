@@ -35,7 +35,7 @@ const schema = {
             },
             platforms: {
               type: 'array',
-              formType: 'checkbox',
+              inputType: 'checkbox',
               items: {
                 type: 'string',
                 enum: ['pc', 'console', 'mobile'],
@@ -76,7 +76,7 @@ const schema = {
             },
             platforms: {
               type: 'array',
-              formType: 'checkbox',
+              inputType: 'checkbox',
               items: {
                 type: 'string',
                 enum: ['theater', 'streaming'],

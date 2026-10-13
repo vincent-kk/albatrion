@@ -14,7 +14,7 @@ import CanardFormComputed from "./pages/CanardForm.computed";
 import CanardFormIgnoreAdditionalProperties from "./pages/CanardForm.ignoreAdditionalProperties";
 import PromiseModalTest from "./pages/PromiseModalTest";
 import ModalLifecycleTest from "./pages/ModalLifecycleTest";
-import DynamicObjectFormTypeTest from "./pages/DynamicObjectFormTypeTest";
+import DynamicObjectFieldInputTest from "./pages/DynamicObjectFieldInputTest";
 
 function App() {
   return (
@@ -49,7 +49,7 @@ function App() {
             <Route path="/modal-lifecycle" element={<ModalLifecycleTest />} />
             <Route
               path="/dynamic-object-formtype"
-              element={<DynamicObjectFormTypeTest />}
+              element={<DynamicObjectFieldInputTest />}
             />
             <Route path="/about" element={<About />} />
           </Routes>

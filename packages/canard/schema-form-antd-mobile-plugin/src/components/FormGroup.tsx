@@ -2,7 +2,7 @@ import { Space } from 'antd-mobile';
 
 import { isArraySchema } from '@winglet/json-schema/filter';
 
-import type { FormTypeRendererProps } from '@canard/schema-form';
+import type { FieldRendererProps } from '@canard/schema-form';
 
 export const FormGroup = ({
   node,
@@ -12,7 +12,7 @@ export const FormGroup = ({
   required,
   Input,
   errorMessage,
-}: FormTypeRendererProps) => {
+}: FieldRendererProps) => {
   if (depth === 0) return <Input />;
 
   if (node.strategy === 'branch') {

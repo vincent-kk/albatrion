@@ -3,7 +3,7 @@ import { useRef, useState } from 'react';
 import {
   Form,
   type FormHandle,
-  type FormTypeRendererProps,
+  type FieldRendererProps,
   type JSONSchema,
   type ValidationIssue,
   SchemaNodeState,
@@ -47,7 +47,7 @@ export const DirtyTouched = () => {
     node,
     Input,
     errorMessage,
-  }: FormTypeRendererProps) => {
+  }: FieldRendererProps) => {
     const {
       [SchemaNodeState.Dirty]: dirty,
       [SchemaNodeState.Touched]: touched,
@@ -229,7 +229,7 @@ export const DirtyTouched = () => {
           ref={refHandle}
           jsonSchema={jsonSchema}
           showError={showError}
-          FormTypeGroupRenderer={Renderer}
+          FieldRenderer={Renderer}
         />
       </StoryLayout>
     </div>
@@ -400,7 +400,7 @@ export const ErrorBoundary = () => {
         <div>
           <Form.Group
             path="#/name"
-            FormTypeInput={() => {
+            FieldInput={() => {
               throw new Error('Error accord from Input');
               // eslint-disable-next-line no-unreachable
               return <div>Input</div>;

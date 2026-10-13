@@ -4,12 +4,12 @@ import { FormError } from './components/FormError';
 import { FormGroup } from './components/FormGroup';
 import { FormInput } from './components/FormInput';
 import { FormLabel } from './components/FormLabel';
-import { formTypeInputDefinitions } from './formTypeInputs';
+import { fieldInputDefinitions } from './fieldInputs';
 
 export const plugin = {
-  FormTypeGroupRenderer: FormGroup,
-  FormTypeLabelRenderer: FormLabel,
-  FormTypeInputRenderer: FormInput,
-  FormTypeErrorRenderer: FormError,
-  formTypeInputDefinitions,
+  FieldRenderer: FormGroup,
+  FormLabelRenderer: FormLabel,
+  FormInputRenderer: FormInput,
+  FormErrorRenderer: FormError,
+  fieldInputDefinitions,
 } satisfies SchemaFormPlugin;
