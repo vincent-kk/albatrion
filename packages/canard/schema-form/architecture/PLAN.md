@@ -82,4 +82,4 @@
 
 | 날짜 | 무엇 | 어디 |
 | --- | --- | --- |
-| 2026-10-14 | 258라운드(소유자): 개선-38 다섯 결정(core 유지, engine 수출+core 재수출, helpers 셋 삭제, helpers·components fractal, src/constants)과 후보 C 확정; 추가 논의 셋(factory 본체, components/SchemaNode 이름, SchemaNode→FieldNode). 보충 1줄 | `reviews/round-258-owner-answers.md` |
+| 2026-10-14 | 259라운드(소유자): SchemaNode → FieldNode 확정, components/Field 이름 셋, 이름 먼저 구조 다음, 레거시 제외(259C-01 대응표). 보충 1줄 | `reviews/round-259-owner-answers.md` |

@@ -242,6 +242,7 @@
 | 2026-10-14 | 256라운드(소유자): 대기열 36·37·16·11·18 권고대로 승인, 12·21·13·14·24·28 확인; 명세·동작 차이 설명 요구. 보충 1줄 | `reviews/round-256-owner-answers.md` |
 | 2026-10-14 | 257라운드(소유자): 07b-4(36·37·16·18) 바로 시작, 이번에 한해 codex 위임 없이 Claude 구현; 원장 관리자는 개선-38 문서 갱신. 보충 1줄 | `reviews/round-257-owner-answers.md` |
 | 2026-10-14 | 258라운드(소유자): 개선-38 다섯 결정(core 유지, engine 수출+core 재수출, helpers 셋 삭제, helpers·components fractal, src/constants)과 후보 C 확정; 추가 논의 셋(factory 본체, components/SchemaNode 이름, SchemaNode→FieldNode). 보충 1줄 | `reviews/round-258-owner-answers.md` |
+| 2026-10-14 | 259라운드(소유자): SchemaNode → FieldNode 확정, components/Field 이름 셋, 이름 먼저 구조 다음, 레거시 제외(259C-01 대응표). 보충 1줄 | `reviews/round-259-owner-answers.md` |
 
 ## 2. 라운드별 요지
 
@@ -453,3 +454,4 @@
 - **222라운드(2026-10-13, 닫기).** 내장 입력 열일곱의 설정 자리를 옮긴 PR을 직접 검증해 07b 브랜치에 합쳤다. 남은 것은 플러그인 가드 PR, 검증 파동과 브라우저 가드 커밋, 전체 스토리 순회, 마지막 게이트다(reviews/round-222-closing.md).
 - **223라운드(2026-10-13, 닫기).** 플러그인 가드 포인터 PR을 직접 검증해 07b 브랜치에 합쳤고 reviewer의 배정은 끝났다. 남은 것은 브라우저 가드 커밋, 전체 스토리 순회, 마지막 게이트와 머지다(reviews/round-223-closing.md).
 - **224라운드(2026-10-13, 소유자).** 속도 게이트는 전환 수치 수용, 개선 커밋 둘 채택(효과 작음), 둘째 라운드 회귀 없음이고, 셋째 라운드와 검증 파동 고침만 미측정이라 방향 확인을 머지 선행 조건으로 더했다. 브라우저 가드 구현과 겹쳐 돌려 시간은 더 들지 않는다(reviews/round-224-owner-answers.md).
+- **225라운드(2026-10-13, 소유자).** 어제의 측정 보류는 해제됐고, 셋째 라운드와 검증 파동 고침을 덮는 방향 확인을 지금 돌린다(reviews/round-225-owner-answers.md).
