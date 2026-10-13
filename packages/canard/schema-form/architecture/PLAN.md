@@ -82,4 +82,4 @@
 
 | 날짜 | 무엇 | 어디 |
 | --- | --- | --- |
-| 2026-10-14 | 261라운드(닫기): 핵심 고유명사 재검토 후보 15(261C-01), 사실 확인 셋(extras·Form.Group·options.virtual/propertyKeys); 소유자 결정 대기. 보충 1줄 | `reviews/round-261-closing.md` |
+| 2026-10-14 | 262라운드(닫기): PR #364(07b-4, c711f3d17) 직접 검증 통과, 병합 허가 대기(262C-01). 보충 1줄 | `reviews/round-262-closing.md` |
