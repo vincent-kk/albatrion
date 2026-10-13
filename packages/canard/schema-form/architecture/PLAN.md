@@ -82,4 +82,4 @@
 
 | 날짜 | 무엇 | 어디 |
 | --- | --- | --- |
-| 244 | 소유자 답: 대기열 33(production-test implicit any 12건 고침)·34(최상위 FieldInput을 presentation으로) 승인, 07b-2 뒤 한 작업 | 2026-10-13 |
+| 2026-10-13 | 245라운드(닫기): ②-3 9bbabf211 확인; ⑨ 통지 규칙 (가) — onValidate는 보고 목록이 바뀔 때만(245C-01). 보충 1줄 | `reviews/round-245-closing.md` |
