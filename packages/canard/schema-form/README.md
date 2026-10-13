@@ -2407,6 +2407,106 @@ Passing `defaultValue` infers `Value` from it as well, so an explicit type argum
 
 ---
 
+## Migration (1.0.0)
+
+1.0.0 moves every schema setting into three groups (`presentation`, `controls`, `options`), renames the public API around "field", and replaces the node engine. No old name is kept as an alias. Update in this order: schemas, then component and type imports, then any code that reads node state or validation errors.
+
+> **Old schema keys fail silently.** The removed top-level keys (`formType`, `FormTypeInput`, `FormTypeInputProps`, `FormTypeRendererProps`, `computed`, the `&`-prefixed keys, `terminal`, `virtual`, `propertyKeys`, `injectTo`, `errorMessages`, `placeholder`) are ignored with no error or warning. A schema that still uses them renders, but its conditions, derived values and input choices do nothing, so search your schemas for each key in the table below. Inside the new groups the rule differs: an unknown key in `controls` or `options` throws `UNKNOWN_GROUP_KEY` when the form builds, while `presentation` is open and accepts any key.
+
+### Schema keys
+
+| 0.16                                                                   | 1.0.0                                                                                |
+| ---------------------------------------------------------------------- | ------------------------------------------------------------------------------------ |
+| `formType`                                                             | `presentation.inputType`                                                             |
+| `FormTypeInput`                                                        | `presentation.FieldInput`                                                            |
+| `FormTypeInputProps` (`placeholder`, `alias`, `className`, `style`, …) | `presentation.FieldInputProps`                                                       |
+| `FormTypeRendererProps` (`label`, `className`, `style`, …)             | `presentation.FieldRendererProps`                                                    |
+| `errorMessages`                                                        | `presentation.errorMessages`                                                         |
+| `computed.active` / `&active`                                          | `controls.active`                                                                    |
+| `computed.visible` / `&visible`                                        | `controls.visible`                                                                   |
+| `computed.readOnly` / `&readOnly`                                      | `controls.readOnly`                                                                  |
+| `computed.disabled` / `&disabled`                                      | `controls.disabled`                                                                  |
+| `computed.derived` / `&derived`                                        | `controls.derived`                                                                   |
+| `computed.watch` / `&watch` (string or array)                          | `controls.watch` (array only)                                                        |
+| `computed.pristine` / `&pristine`                                      | `controls.resetInteraction` (resets dirty and touched when the condition turns true) |
+| `computed.if` / `&if` on a `oneOf` / `anyOf` branch                    | `controls.active` on that branch                                                     |
+| `injectTo`                                                             | `controls.injectTo` (same handler shape)                                             |
+| `terminal`                                                             | `options.terminal` (object and array schemas)                                        |
+| `propertyKeys` (object)                                                | `options.propertyOrder` (order of keys in the emitted value)                         |
+| `virtual` (object) and `type: 'virtual'`                               | `options.virtual: { <name>: { fields: [...] } }` (object schemas)                    |
+
+```ts
+// 0.16
+{
+  type: 'object',
+  properties: {
+    kind: { type: 'string', enum: ['a', 'b'], formType: 'radio' },
+    note: {
+      type: 'string',
+      FormTypeInputProps: { placeholder: 'Note' },
+      computed: { visible: '../kind === "b"' },
+    },
+  },
+}
+
+// 1.0.0
+{
+  type: 'object',
+  properties: {
+    kind: { type: 'string', enum: ['a', 'b'], presentation: { inputType: 'radio' } },
+    note: {
+      type: 'string',
+      presentation: { FieldInputProps: { placeholder: 'Note' } },
+      controls: { visible: '../kind === "b"' },
+    },
+  },
+}
+```
+
+- `controls` also adds keys that had no 0.16 form: `default`, `unsetValue`, `unsetOnInactive`, `fields` (controls for named descendants) and `discriminator`.
+- `options` accepts only `omitEmpty`, `trim` (string), `omitTrailing` (array), `terminal` (object and array), `propertyOrder` and `virtual` (object). Keep input settings such as `min` and `max` in `presentation.FieldInputProps`.
+
+### Renamed API
+
+| 0.16                                                                                                                                                                      | 1.0.0                                                                                                                                                          |
+| ------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Form prop `formTypeInputDefinitions`                                                                                                                                      | `fieldInputDefinitions`                                                                                                                                        |
+| Form prop `formTypeInputMap`                                                                                                                                              | `fieldInputMap`                                                                                                                                                |
+| Form prop `CustomFormTypeRenderer`                                                                                                                                        | `FieldRenderer` (Form also takes `FormLabelRenderer`, `FormInputRenderer`, `FormErrorRenderer`)                                                                |
+| Plugin keys `FormGroup`, `FormLabel`, `FormInput`, `FormError`                                                                                                            | `FieldRenderer`, `FormLabelRenderer`, `FormInputRenderer`, `FormErrorRenderer`                                                                                 |
+| Plugin key `formTypeInputDefinitions`                                                                                                                                     | `fieldInputDefinitions`                                                                                                                                        |
+| `Form.Group`, `FormGroupProps`                                                                                                                                            | `Form.Field`, `FormFieldProps`                                                                                                                                 |
+| `FormTypeInputDefinition`, `FormTypeInputMap`, `FormTypeInputProps`, `FormTypeInputPropsWithNode`, `FormTypeInputPropsWithSchema`, `FormTypeTestFn`, `FormTypeTestObject` | `FieldInputDefinition`, `FieldInputMap`, `FieldInputProps`, `FieldInputPropsWithNode`, `FieldInputPropsWithSchema`, `FieldInputTestFn`, `FieldInputTestObject` |
+| `FormTypeRendererProps`                                                                                                                                                   | `FieldRendererProps`                                                                                                                                           |
+| `Hint`                                                                                                                                                                    | `FieldInputHint` (its key is `inputType`)                                                                                                                      |
+| `FormTypeInputProps.FormTypeRenderer`                                                                                                                                     | `FieldInputProps.FieldRenderer`                                                                                                                                |
+| `FormTypeInputProps.ChildNodeComponents`                                                                                                                                  | `FieldInputProps.ChildFields` (each item is a `ChildField`)                                                                                                    |
+| `ChildNodeComponentProps`, `useChildNodeComponentMap`, `useChildNodeErrors`                                                                                               | `ChildFieldProps`, `useChildFieldMap`, `useChildFieldErrors`                                                                                                   |
+| `SchemaNode`, `InferSchemaNode`, `isSchemaNode`                                                                                                                           | `FieldNode`, `InferFieldNode`, `isFieldNode`                                                                                                                   |
+| `NodeState`                                                                                                                                                               | `FieldNodeState`                                                                                                                                               |
+| `NodeState.ShowError`                                                                                                                                                     | `FieldNodeState.ErrorVisible` (same bit)                                                                                                                       |
+| `NodeEventType`                                                                                                                                                           | `FieldNodeEventType` (keeps `UpdateValue`, `UpdateState`, `UpdateError`, `RequestFocus`, `RequestSelect`, `RequestRemount`, and exposes more events)           |
+| `useSchemaNodeTracker`, `useSchemaNodeSubscribe`, `SchemaNodeSubscribeOptions`                                                                                            | `useFieldNodeTracker`, `useFieldNodeSubscribe`, `FieldNodeSubscribeOptions`                                                                                    |
+| type `JSONSchemaError` (the `errors` prop and `onValidate` payload)                                                                                                       | `ValidationIssue` (same fields, plus optional `rejectedKey`; `isJSONSchemaError` stays)                                                                        |
+
+- Only the node-state bit was renamed. The `ShowError` policy enum (`Dirty`, `Touched`, `DirtyTouched`, …), the Form `showError` prop and `FormHandle.showError()` keep their names.
+
+### Behavior changes
+
+- **A loaded `null` or wrong-kind value leaves child fields unfilled.** When an object or array field receives `null`, or a value of the wrong kind (for example a string for an object), from `defaultValue`, a load, `reset` or `resetSubtree`, its child fields get no defaults, exactly as when you write `null`. Typing into a child promotes the parent to an object, and only the fields that the promotion creates receive their defaults. `derived` and `injectTo` values still show. To keep defaults, load the object with values instead of `null`, or give the object its own `default`. The same applies to `<Form defaultValue={null}>` on an object schema.
+- **Enum select shows `undefined` as no selection.** The built-in string enum select shows a leading, selected, empty and disabled option when the value is `undefined`, also when the enum contains `''`. A value outside the enum keeps its leading disabled option.
+- **Checkbox and radio option ids include the index.** Each option's `id` is now `${path}-${index}`, with a matching `htmlFor` on its label. Selectors that targeted `#<path>` on these inputs must change.
+- **`oneOf` / `anyOf` branches are no longer chosen from `const` tags.** When branches differ only by a `const` tag, declare `controls.discriminator: '<property>'` on the host, or `controls.active` on each branch. Without either, every branch stays active.
+- **Custom validator plugins must implement `compileGuard`.** A `ValidatorPlugin` now needs `compileGuard(root, pointer)` next to `compile`; `release(root)` is optional. The official ajv6, ajv7 and ajv8 plugins already implement it.
+
+`onValidate` behaves as in 0.16: it fires when the reported error list or the `errors` prop changes, and a re-validation with the same result does not fire it.
+
+### `nullable: true`
+
+`nullable: true` is officially supported. It is the OpenAPI 3.0 notation and is equivalent to adding `'null'` to `type` (`type: ['string', 'null']`). It raises no warning.
+
+---
+
 ## Migration (0.16.0)
 
 0.16.0 removes the deprecated aliases that 0.15.0 kept for the previous mixed-case names. Use `JSONSchemaError`, `isJSONSchemaError`, `JSONSchema` and `InferJSONSchema`. `injectTo` handlers receive the schemas only as `parentJSONSchema` and `rootJSONSchema`.

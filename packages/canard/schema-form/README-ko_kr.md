@@ -2350,6 +2350,106 @@ const formRef = useRef<FormHandle<typeof jsonSchema, SignUpValue>>(null);
 
 ---
 
+## 마이그레이션 (1.0.0)
+
+1.0.0은 스키마 설정을 `presentation`·`controls`·`options` 세 묶음으로 옮기고, 공개 API 이름을 "field" 중심으로 다시 짓고, 노드 엔진을 교체합니다. 옛 이름은 별칭으로도 남지 않습니다. 스키마, 컴포넌트와 형 import, 노드 상태나 검증 오류를 읽는 코드 순서로 고치세요.
+
+> **옛 스키마 키는 오류 없이 무시됩니다.** 제거된 최상위 키(`formType`, `FormTypeInput`, `FormTypeInputProps`, `FormTypeRendererProps`, `computed`, `&` 접두어 키, `terminal`, `virtual`, `propertyKeys`, `injectTo`, `errorMessages`, `placeholder`)는 오류도 경고도 없이 무시됩니다. 이런 키가 남은 스키마도 화면은 그려지지만 조건, 파생 값, 입력 선택이 동작하지 않으니, 아래 표의 키를 스키마에서 모두 찾아 바꾸세요. 새 묶음 안에서는 규칙이 다릅니다. `controls`와 `options` 안의 모르는 키는 폼을 만들 때 `UNKNOWN_GROUP_KEY`를 던지고, `presentation`은 어떤 키든 받는 열린 묶음입니다.
+
+### 스키마 키
+
+| 0.16                                                                   | 1.0.0                                                                    |
+| ---------------------------------------------------------------------- | ------------------------------------------------------------------------ |
+| `formType`                                                             | `presentation.inputType`                                                 |
+| `FormTypeInput`                                                        | `presentation.FieldInput`                                                |
+| `FormTypeInputProps` (`placeholder`, `alias`, `className`, `style` 등) | `presentation.FieldInputProps`                                           |
+| `FormTypeRendererProps` (`label`, `className`, `style` 등)             | `presentation.FieldRendererProps`                                        |
+| `errorMessages`                                                        | `presentation.errorMessages`                                             |
+| `computed.active` / `&active`                                          | `controls.active`                                                        |
+| `computed.visible` / `&visible`                                        | `controls.visible`                                                       |
+| `computed.readOnly` / `&readOnly`                                      | `controls.readOnly`                                                      |
+| `computed.disabled` / `&disabled`                                      | `controls.disabled`                                                      |
+| `computed.derived` / `&derived`                                        | `controls.derived`                                                       |
+| `computed.watch` / `&watch` (문자열 또는 배열)                         | `controls.watch` (배열만)                                                |
+| `computed.pristine` / `&pristine`                                      | `controls.resetInteraction` (조건이 참으로 바뀔 때 dirty·touched 초기화) |
+| `oneOf` / `anyOf` 분기의 `computed.if` / `&if`                         | 그 분기의 `controls.active`                                              |
+| `injectTo`                                                             | `controls.injectTo` (핸들러 모양은 같음)                                 |
+| `terminal`                                                             | `options.terminal` (객체·배열 스키마)                                    |
+| `propertyKeys` (객체)                                                  | `options.propertyOrder` (출력 값의 키 순서)                              |
+| `virtual` (객체)와 `type: 'virtual'`                                   | `options.virtual: { <이름>: { fields: [...] } }` (객체 스키마)           |
+
+```ts
+// 0.16
+{
+  type: 'object',
+  properties: {
+    kind: { type: 'string', enum: ['a', 'b'], formType: 'radio' },
+    note: {
+      type: 'string',
+      FormTypeInputProps: { placeholder: 'Note' },
+      computed: { visible: '../kind === "b"' },
+    },
+  },
+}
+
+// 1.0.0
+{
+  type: 'object',
+  properties: {
+    kind: { type: 'string', enum: ['a', 'b'], presentation: { inputType: 'radio' } },
+    note: {
+      type: 'string',
+      presentation: { FieldInputProps: { placeholder: 'Note' } },
+      controls: { visible: '../kind === "b"' },
+    },
+  },
+}
+```
+
+- `controls`에는 0.16에 없던 키도 있습니다: `default`, `unsetValue`, `unsetOnInactive`, `fields`(이름으로 지정한 하위 필드의 controls), `discriminator`.
+- `options`는 `omitEmpty`, `trim`(문자열), `omitTrailing`(배열), `terminal`(객체·배열), `propertyOrder`·`virtual`(객체)만 받습니다. `min`·`max` 같은 입력 설정은 `presentation.FieldInputProps`에 두세요.
+
+### 이름이 바뀐 API
+
+| 0.16                                                                                                                                                                      | 1.0.0                                                                                                                                                          |
+| ------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Form prop `formTypeInputDefinitions`                                                                                                                                      | `fieldInputDefinitions`                                                                                                                                        |
+| Form prop `formTypeInputMap`                                                                                                                                              | `fieldInputMap`                                                                                                                                                |
+| Form prop `CustomFormTypeRenderer`                                                                                                                                        | `FieldRenderer` (Form은 `FormLabelRenderer`, `FormInputRenderer`, `FormErrorRenderer`도 받음)                                                                  |
+| 플러그인 키 `FormGroup`, `FormLabel`, `FormInput`, `FormError`                                                                                                            | `FieldRenderer`, `FormLabelRenderer`, `FormInputRenderer`, `FormErrorRenderer`                                                                                 |
+| 플러그인 키 `formTypeInputDefinitions`                                                                                                                                    | `fieldInputDefinitions`                                                                                                                                        |
+| `Form.Group`, `FormGroupProps`                                                                                                                                            | `Form.Field`, `FormFieldProps`                                                                                                                                 |
+| `FormTypeInputDefinition`, `FormTypeInputMap`, `FormTypeInputProps`, `FormTypeInputPropsWithNode`, `FormTypeInputPropsWithSchema`, `FormTypeTestFn`, `FormTypeTestObject` | `FieldInputDefinition`, `FieldInputMap`, `FieldInputProps`, `FieldInputPropsWithNode`, `FieldInputPropsWithSchema`, `FieldInputTestFn`, `FieldInputTestObject` |
+| `FormTypeRendererProps`                                                                                                                                                   | `FieldRendererProps`                                                                                                                                           |
+| `Hint`                                                                                                                                                                    | `FieldInputHint` (키는 `inputType`)                                                                                                                            |
+| `FormTypeInputProps.FormTypeRenderer`                                                                                                                                     | `FieldInputProps.FieldRenderer`                                                                                                                                |
+| `FormTypeInputProps.ChildNodeComponents`                                                                                                                                  | `FieldInputProps.ChildFields` (각 항목은 `ChildField`)                                                                                                         |
+| `ChildNodeComponentProps`, `useChildNodeComponentMap`, `useChildNodeErrors`                                                                                               | `ChildFieldProps`, `useChildFieldMap`, `useChildFieldErrors`                                                                                                   |
+| `SchemaNode`, `InferSchemaNode`, `isSchemaNode`                                                                                                                           | `FieldNode`, `InferFieldNode`, `isFieldNode`                                                                                                                   |
+| `NodeState`                                                                                                                                                               | `FieldNodeState`                                                                                                                                               |
+| `NodeState.ShowError`                                                                                                                                                     | `FieldNodeState.ErrorVisible` (같은 비트)                                                                                                                      |
+| `NodeEventType`                                                                                                                                                           | `FieldNodeEventType` (`UpdateValue`, `UpdateState`, `UpdateError`, `RequestFocus`, `RequestSelect`, `RequestRemount`는 그대로이고 이벤트가 더 공개됨)          |
+| `useSchemaNodeTracker`, `useSchemaNodeSubscribe`, `SchemaNodeSubscribeOptions`                                                                                            | `useFieldNodeTracker`, `useFieldNodeSubscribe`, `FieldNodeSubscribeOptions`                                                                                    |
+| 형 `JSONSchemaError` (`errors` prop과 `onValidate` 인자)                                                                                                                  | `ValidationIssue` (필드는 같고 선택 필드 `rejectedKey` 추가, `isJSONSchemaError`는 유지)                                                                       |
+
+- 이름이 바뀐 것은 노드 상태 비트뿐입니다. `ShowError` 정책 enum(`Dirty`, `Touched`, `DirtyTouched` 등), Form의 `showError` prop, `FormHandle.showError()`는 이름이 그대로입니다.
+
+### 동작 변경
+
+- **불러온 `null`이나 종류가 다른 값 아래의 자식 필드는 채워지지 않습니다.** 객체나 배열 필드가 `defaultValue`, 불러오기, `reset`, `resetSubtree`로 `null`이나 종류가 다른 값(예: 객체 자리에 문자열)을 받으면, 직접 `null`을 쓸 때와 똑같이 자식 필드에 기본값이 채워지지 않습니다. 자식에 입력하면 부모가 객체로 승격되고, 그 승격으로 새로 생긴 필드만 기본값을 받습니다. `derived`와 `injectTo` 값은 그대로 보입니다. 기본값이 필요하면 `null` 대신 값이 든 객체를 불러오거나 객체 자체에 `default`를 주세요. 객체 스키마에 `<Form defaultValue={null}>`을 줄 때도 같습니다.
+- **enum select는 `undefined`를 선택 없음으로 보여 줍니다.** 기본 문자열 enum select는 값이 `undefined`이면 맨 앞에 선택된 빈 비활성 선택지를 보여 주며, enum에 `''`가 있어도 같습니다. enum 밖의 값은 지금처럼 맨 앞 비활성 선택지로 보입니다.
+- **체크박스와 라디오 선택지 id에 순번이 붙습니다.** 각 선택지의 `id`는 이제 `${path}-${index}`이고, 레이블의 `htmlFor`도 같이 바뀝니다. 이 입력을 `#<path>`로 찾던 선택자는 고쳐야 합니다.
+- **`oneOf` / `anyOf` 분기를 더 이상 `const` 태그로 고르지 않습니다.** 분기끼리 `const` 태그만 다르면 호스트에 `controls.discriminator: '<속성>'`을 선언하거나 각 분기에 `controls.active`를 선언하세요. 둘 다 없으면 모든 분기가 활성 상태로 남습니다.
+- **직접 만든 검증기 플러그인은 `compileGuard`를 구현해야 합니다.** `ValidatorPlugin`은 이제 `compile` 옆에 `compileGuard(root, pointer)`가 필요하고, `release(root)`는 선택입니다. 공식 ajv6·ajv7·ajv8 플러그인은 이미 구현되어 있습니다.
+
+`onValidate`는 0.16과 같이 동작합니다. 보고할 오류 목록이나 `errors` prop이 바뀔 때 호출되고, 결과가 같은 재검증에서는 호출되지 않습니다.
+
+### `nullable: true`
+
+`nullable: true`는 공식 지원 표기입니다. OpenAPI 3.0 표기이며 `type`에 `'null'`을 더한 것(`type: ['string', 'null']`)과 같습니다. 경고도 나지 않습니다.
+
+---
+
 ## 마이그레이션 (0.16.0)
 
 0.16.0은 0.15.0이 이전 대소문자 혼용 이름을 위해 남겨 둔 deprecated 별칭을 제거합니다. `JSONSchemaError`, `isJSONSchemaError`, `JSONSchema`, `InferJSONSchema`를 사용하세요. `injectTo` 핸들러는 스키마를 `parentJSONSchema`, `rootJSONSchema`로만 받습니다.
