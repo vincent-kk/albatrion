@@ -82,4 +82,4 @@
 
 | 날짜 | 무엇 | 어디 |
 | --- | --- | --- |
-| 2026-10-14 | 264라운드(소유자): 후보 15 중 11개 권고대로 승인; 2·12·13·14 추가 논의; 잔여 비표준 키 점검 요구. 보충 1줄 | `reviews/round-264-owner-answers.md` |
+| 2026-10-14 | 265라운드(소유자): ChildFields·controls.fields·options.propertyOrder·options.virtual 형·VirtualSchema 비공개·nullable: true 제거 승인(265C-01 후속 대응표). 보충 1줄 | `reviews/round-265-owner-answers.md` |

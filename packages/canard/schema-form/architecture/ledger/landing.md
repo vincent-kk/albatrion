@@ -3189,6 +3189,7 @@
   > 편집자 결정(262C-01): "【추론】 범위가 승인된 36·37과 그 주변 문서에 한정되고 게이트가 모두 통과했으며, 런타임 변경 둘은 고치기 전 실패하는 시험을 동반한다." (`reviews/round-262-closing.md:9`)
   > 소유자(263라운드, #364 병합): "내가 명시적으로 허가한다. 병합해도 된다." (`reviews/round-263-owner-answers.md:7`)
   > 소유자(264라운드, 후보 15): "나머지는 권고대로.\n\n2. 이건 명확하게, 현재 노드의 자식 노드라는 의미라, ChildFieldNodes 가 맞긴 한데, 너무 길어지지 않겠나? 어떻게 바꾸는걸 고려하는가?\n\n12. 지당한 지적이다. 변경을 할 수 있겠나? 근데 마땅한 이름이 없어서 이렇게 하긴 했는데... 추천해보거라. 원장에도 고민의 흔적이 있을거다. \n\n13. 공개해야지. 그리고 이건 options 보단 presentation 에 있어야 할 수도 있다. propertyKeyOrder 이런 이름이 더 적절하려나? 그리고 이건 object 타입 노드에만 존재해야 하는거고... \n\n14. 그말은 지당하다. 그래서 form 외부에 jsonSchema 같은 곳에서는 virtual 같은 키가 노출되지 않기를 바란다. 실제로 object 타입 노드의 특수 키로 정의하는 구조일 것이라. \n\n추가로 jsonSchema 에서도 jsonSchema 공식 문법이 아닌 form 전용 키들은 options / controls / presentation 같은 객체 내부로 이동했다. \n혹시 남은 잔여 설정이 있지는 않은가? \n예컨대 object 타입에서 virtual 은 이제 어떻게 선언하게 되는가?" (`reviews/round-264-owner-answers.md:7`)
+  > 소유자(265라운드, 2·12·13·14·nullable): "11, 12 제안대로.  13은 나머지는 모두 수용, 필드 이름만 한번 더 고민을 해줘. propertyOrder 같이 하거나 할 수는 없나? 너무 안예쁘군. \n\nnullable: true 는 수용, 14번 전부 제안대로." (`reviews/round-265-owner-answers.md:7`)
 - 상태: 현행
 - 출처: `reviews/round-80-closing.md:17`(정본)
 - 닫은 사람: 편집자 결정(80라운드, `reviews/round-80-closing.md` 80C-02)
