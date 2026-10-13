@@ -257,6 +257,7 @@
 | 2026-10-14 | 271라운드 소유자 답: 대기열 46 승인 — helpers·components는 fractal이 아닌 compartment로(264라운드 결정 4 번복). 보충 1줄 | `reviews/round-271-owner-answers.md` |
 | 2026-10-14 | 272라운드 닫기: 07b-7 #366 검증·병합(c0ddd4b51; 대기열 41·44·45, 269C-02, #365 후속 여섯), 07c 재배치 브리프 발송. 보충 2줄 | `reviews/round-272-closing.md` |
 | 2026-10-14 | 273라운드 닫기: 07b-6 #367 검증·병합(beff4b5ec; 대기열 40·42·43, 269C-01 CLAUDE.md 문장 확정), README 1.0.0 이주 절 조사 배정. 보충 1줄 | `reviews/round-273-closing.md` |
+| 2026-10-14 | 274라운드 닫기: README Migration (1.0.0) 절 #368 검증·병합(e5f7f9fa3), 옛 최상위 키 조용한 무시는 대기열 47. 보충 1줄 | `reviews/round-274-closing.md` |
 
 ## 2. 라운드별 요지
 
@@ -483,3 +484,4 @@
 - **237라운드(2026-10-13, 소유자).** 공모 결과에 대해 소유자는 `Widget*`가 아니라 Field 시리즈(`FieldInput*`·`FieldRenderer*`)를 택했고, 옛 `formType` 힌트의 새 이름(`inputType`의 겹침 여부)은 고민 중이다(reviews/round-237-owner-answers.md).
 - **238라운드(2026-10-13, 소유자).** 힌트는 `inputType`으로 잠정 결정했고, 필드 전체 렌더러(옛 FormTypeGroupRenderer)는 `FieldRenderer`여야 한다고 짚었다; 슬롯 셋은 `Form{Label,Input,Error}Renderer`로 제안해 확정 대기(reviews/round-238-owner-answers.md).
 - **239라운드(2026-10-13, 소유자).** 이름 체계를 확정했다: 힌트 `inputType`, 입력 `FieldInput*`, 필드 렌더러 `FieldRenderer`, 슬롯 `Form{Label,Input,Error}Renderer`, `Renderer` 접미어 유지, 별칭 없음; 대응표는 reviews/round-239-owner-answers.md. 07b-2 ②-a·②-b를 새 이름으로 재계획한다.
+- **240라운드(2026-10-13, 닫기).** 이름 재구성 범위는 파일 119개·디렉터리 9개·옛 식별자 161개이고, 표 밖 이름의 규칙·내장 배열 `builtinFieldInputDefinitions`·문서 사이트는 #361·측정 산출물 제외·커밋 셋에 게이트는 ②-2 뒤로 정했다; 패키지 CLAUDE.md 여섯 파일의 이름 치환은 소유자 승인을 묻는다(reviews/round-240-closing.md).

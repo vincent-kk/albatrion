@@ -2,9 +2,8 @@
 
 개발의 진행 상황과 다음 할 일은 `PLAN.md`가 단일 진입점으로 든다. 다음 세션이 바로 이어서 일하기 위한 문서다. 이력은 `git log`와 `reviews/`에 있으므로 여기에는 지금 상태, 다음 할 일, 일하는 법만 적는다. 소유자는 Vincent다.
 
-## 1. 지금 어디인가 (2026-10-13, 273라운드 닫힘; 07 전환 진행 중)
+## 1. 지금 어디인가 (2026-10-13, 274라운드 닫힘; 07 전환 진행 중)
 
-- **240라운드(2026-10-13, 닫기).** 이름 재구성 범위는 파일 119개·디렉터리 9개·옛 식별자 161개이고, 표 밖 이름의 규칙·내장 배열 `builtinFieldInputDefinitions`·문서 사이트는 #361·측정 산출물 제외·커밋 셋에 게이트는 ②-2 뒤로 정했다; 패키지 CLAUDE.md 여섯 파일의 이름 치환은 소유자 승인을 묻는다(reviews/round-240-closing.md).
 - **241라운드(2026-10-13, 소유자).** `FieldRendererProps`에 Label·Error를 더하는 안은 바로 적용하지 않고, Label·Error가 목적에 따라 다른 값(이름·다국어·툴팁, 오류 형식)을 받아야 하므로 매개변수 재설계를 검토하기로 했다; 원장 관리자가 현재 패턴과 의견을 보고한다(reviews/round-241-owner-answers.md).
 - **242라운드(2026-10-13, 소유자).** 239라운드 대응표에 따른 이름 치환을 패키지 CLAUDE.md 여섯 파일과 docs·문서 사이트를 포함한 모든 영역에서 허용했다(이름 치환에 한함); 07b-2 ②-3의 grep 게이트에서 CLAUDE.md 제외를 해제한다(reviews/round-242-owner-answers.md).
 - **243라운드(2026-10-13, 소유자).** 대기열 31(색인 서명으로 최상위 옛 키가 컴파일됨)은 열린 형이라 무방하다고 닫았고, 대기열 32(reset 뒤 onValidate 값 잔류)는 상황 설명을 요구했다(reviews/round-243-owner-answers.md).
@@ -37,7 +36,8 @@
 - **270라운드(2026-10-14, 닫기/원장 관리자).** 07b-5 #365를 직접 검증(시험 3943·storybook 241·typecheck·lint·플러그인 일곱·documents·G16·verifier·agy)하고 squash 병합(17414cd4a); fixy07 판단 셋 승인; 지적 일곱은 07b-7로 이월(270C-01, reviews/round-270-closing.md); fairy07 07b-6·fixy07 07b-7을 17414cd4a에서 병렬 착수(codex 구현).
 - **271라운드(2026-10-14, 소유자).** 대기열 46 승인: `src/helpers`·`src/components`는 INTENT/DETAIL/index 없는 compartment로 두고 자식 fractal은 그대로(271C-01, reviews/round-271-owner-answers.md; 264라운드 결정 4 번복). 07c 계획 확정.
 - **272라운드(2026-10-14, 닫기/원장 관리자).** 07b-7 #366을 직접 검증(시험 3950·storybook 241·typecheck·lint·json-schema·플러그인 일곱·documents·G16·verifier·agy)하고 squash 병합(c0ddd4b51): 로드 null·종류 틀린 원본 아래 자식 미채움(41·45), enum select undefined 표시(44), nullable 공식 지원 문구(269C-02), #365 후속 여섯(272C-01, reviews/round-272-closing.md). 07c 재배치 브리프를 fixy07에게 발송(codex 구현), 07b-6은 c0ddd4b51에 rebase 뒤 PR.
-- **273라운드(2026-10-14, 닫기/원장 관리자).** 07b-6 #367을 직접 검증(storybook 251·시험 3949·typecheck·lint·documents·verifier)하고 squash 병합(beff4b5ec): 패널 데코레이터(42), FormHandle 스토리 10개(43), docs 직렬화 방어 수정(40, 재현 불가로 소유자 재확인), CLAUDE.md:125 문장 확정(273C-01, reviews/round-273-closing.md). fairy07은 README 1.0.0 이주 절 초안, fixy07은 07c 재배치 진행 중. 다음 라운드 번호는 274.
+- **273라운드(2026-10-14, 닫기/원장 관리자).** 07b-6 #367을 직접 검증(storybook 251·시험 3949·typecheck·lint·documents·verifier)하고 squash 병합(beff4b5ec): 패널 데코레이터(42), FormHandle 스토리 10개(43), docs 직렬화 방어 수정(40, 재현 불가로 소유자 재확인), CLAUDE.md:125 문장 확정(273C-01, reviews/round-273-closing.md). fairy07은 README 1.0.0 이주 절 초안, fixy07은 07c 재배치 진행 중.
+- **274라운드(2026-10-14, 닫기/원장 관리자).** README 두 파일의 Migration (1.0.0) 절 #368을 agy·직접 대조로 검증하고 squash 병합(e5f7f9fa3)(274C-01, reviews/round-274-closing.md); 옛 최상위 키 조용한 무시의 개발 빌드 경고는 대기열 47; fairy07은 #354 본문 갱신 초안, fixy07은 07c 재배치 진행 중. 다음 라운드 번호는 275.
 - **그 앞의 라운드 요지(19라운드부터)는 PLAN-LOG.md 2절에 있다.** 라운드마다 한 문단이며, 1절의 기록 표와 같은 순서다.
 - **설계의 정본은 단일 원장 `ledger/`다.** 영역 17개, 항목 1,350개(80라운드 뒤, 24라운드 뒤 1,348; 현행 1,076(부정 결정·기록 포함), 대체됨 199, 분할됨 49, 중복 24, 열림 0). 형식과 규칙은 `ledger/README.md`.
 - **옛 설계 문서(`00`–`09`, `adr/`, `open-questions.md`)는 동결됐다.** 더 고치지 않는다. 어긋남은 원장의 충돌 칸에 적는다. 원장이 인용하는 옛 문서의 `path:line`은 모두 커밋 `ba398c330` 기준 줄 번호다(그 뒤 옛 문서는 바뀌지 않았다).
@@ -411,6 +411,7 @@ node ledger/checks/doc-coverage.mjs design/*.md adr/*.md -- ledger/*.md   # 설�
 | `reviews/round-271-owner-answers.md` | 271라운드 소유자 답: 대기열 46 승인(helpers·components는 compartment) |
 | `reviews/round-272-closing.md` | 272라운드 닫기: #366 병합(c0ddd4b51), 07c 착수 |
 | `reviews/round-273-closing.md` | 273라운드 닫기: #367 병합(beff4b5ec), README 이주 절 조사 배정 |
+| `reviews/round-274-closing.md` | 274라운드 닫기: #368 병합(e5f7f9fa3), 대기열 47 |
 | reviews 아래 improvement-38-explain.html | 개선-38 소유자용 설명(seiri:explain) |
 | reviews 아래 improvement-38-fractal-map.md | 개선-38 고찰 문서(reviewer, verifier 대조판) |
 | reviews 아래 raw-improvement-38 디렉터리 | 개선-38 근거: 소비자 증거 표, filid 요약 |
