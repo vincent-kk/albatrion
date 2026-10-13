@@ -3,6 +3,10 @@ import { fileAttachStages, inputComponentsFeatureScenarios, playScenario } from 
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { userEvent } from 'storybook/test';
 
+import { shouldSkipUnfocusedPlay } from '../../components/play/shouldSkipUnfocusedPlay';
+import { skipPlay } from '../../components/play/skipPlay';
+import { unfocusedPlayReason } from '../../components/play/unfocusedPlayReason';
+
 import { FeatureStory } from '../components/FeatureStory';
 import { createHandleProbe } from '../components/createHandleProbe';
 import { expectEventually } from '../components/expectEventually';
@@ -23,7 +27,8 @@ const fileDefinitions = [
 export const AttachUnmountAndReset: Story = {
   args: { scenario, formProps: { formTypeInputDefinitions: fileDefinitions }, onHandle: probe.onHandle },
   parameters: { docs: { description: { story: scenario.description } } },
-  async play({ args, canvasElement }) {
+  async play({ args, canvasElement, step }) {
+    if (shouldSkipUnfocusedPlay()) return skipPlay(step, unfocusedPlayReason);
     await playScenario(args.scenario, canvasElement);
     const handle = await probe.handle(canvasElement);
     for (const [index, stage] of fileAttachStages.entries()) {

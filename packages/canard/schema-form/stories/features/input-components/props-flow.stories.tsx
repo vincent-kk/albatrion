@@ -2,6 +2,10 @@
 import { inputComponentsFeatureScenarios, playScenario, propsFlowAttributes } from '@aileron/schema-form-scenarios';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 
+import { shouldSkipUnfocusedPlay } from '../../components/play/shouldSkipUnfocusedPlay';
+import { skipPlay } from '../../components/play/skipPlay';
+import { unfocusedPlayReason } from '../../components/play/unfocusedPlayReason';
+
 import { FeatureStory } from '../components/FeatureStory';
 import { expectEventually } from '../components/expectEventually';
 import { findScenario } from '../components/findScenario';
@@ -15,7 +19,8 @@ const scenario = findScenario(inputComponentsFeatureScenarios, 'input-components
 export const PresentationAndStates: Story = {
   args: { scenario },
   parameters: { docs: { description: { story: scenario.description } } },
-  async play({ args, canvasElement }) {
+  async play({ args, canvasElement, step }) {
+    if (shouldSkipUnfocusedPlay()) return skipPlay(step, unfocusedPlayReason);
     await playScenario(args.scenario, canvasElement);
     for (const [path, expected] of Object.entries(propsFlowAttributes)) {
       const read = () => {

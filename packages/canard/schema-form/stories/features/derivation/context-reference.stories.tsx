@@ -3,6 +3,10 @@ import { contextStages, derivationFeatureScenarios, playScenario } from '@ailero
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { fn, userEvent } from 'storybook/test';
 
+import { shouldSkipUnfocusedPlay } from '../../components/play/shouldSkipUnfocusedPlay';
+import { skipPlay } from '../../components/play/skipPlay';
+import { unfocusedPlayReason } from '../../components/play/unfocusedPlayReason';
+
 import { FeatureStory } from '../components/FeatureStory';
 import { createHandleProbe } from '../components/createHandleProbe';
 import { expectEventually } from '../components/expectEventually';
@@ -19,7 +23,8 @@ const onChange = fn();
 export const ContextStages: Story = {
   args: { scenario, propStages: contextStages.map((stage) => ({ context: stage.context })), onChange, onHandle: probe.onHandle },
   parameters: { docs: { description: { story: scenario.description } } },
-  async play({ args, canvasElement }) {
+  async play({ args, canvasElement, step }) {
+    if (shouldSkipUnfocusedPlay()) return skipPlay(step, unfocusedPlayReason);
     await playScenario(args.scenario, canvasElement);
     const handle = await probe.handle(canvasElement);
     for (const [index, stage] of contextStages.entries()) {

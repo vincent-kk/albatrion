@@ -3,6 +3,10 @@ import { interactionStateStages, playScenario, validationStateFeatureScenarios }
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { expect, fn, userEvent } from 'storybook/test';
 
+import { shouldSkipUnfocusedPlay } from '../../components/play/shouldSkipUnfocusedPlay';
+import { skipPlay } from '../../components/play/skipPlay';
+import { unfocusedPlayReason } from '../../components/play/unfocusedPlayReason';
+
 import { SchemaNodeState } from '../../../src';
 
 import { FeatureStory } from '../components/FeatureStory';
@@ -22,7 +26,8 @@ const onStateChange = fn();
 export const DirtyTouchedAndNotifications: Story = {
   args: { scenario, formProps: { onStateChange }, onHandle: probe.onHandle },
   parameters: { docs: { description: { story: scenario.description } } },
-  async play({ args, canvasElement }) {
+  async play({ args, canvasElement, step }) {
+    if (shouldSkipUnfocusedPlay()) return skipPlay(step, unfocusedPlayReason);
     onStateChange.mockClear();
     await playScenario(args.scenario, canvasElement);
     const handle = await probe.handle(canvasElement);

@@ -7,7 +7,10 @@ import { FeatureStory } from '../features/components/FeatureStory';
 import { expectEventually } from '../features/components/expectEventually';
 import { createCompositeStory } from './utils/createCompositeStory';
 
-/** Load Vitest Browser Mode's CDP and locators at play time; the module throws outside Browser Mode, so plain storybook dev cannot run this play. */
+/**
+ * Load Vitest's runtime-owned CDP context after the composite play's Browser Mode guard.
+ * @returns The Browser Mode context used for native composition and input locators.
+ */
 const browserContext = () => import('@vitest/browser/context');
 
 export default { title: 'Composite/CX11ImeDuringSwitch', component: FeatureStory, tags: ['autodocs'] } satisfies Meta<typeof FeatureStory>;
@@ -15,6 +18,7 @@ type Story = StoryObj<typeof FeatureStory>;
 
 /** Shared composite case `composite.cx11-ime-during-switch`, then a CDP composition interrupted by a handle branch switch. */
 export const Case: Story = createCompositeStory('composite.cx11-ime-during-switch', {
+  cdpSkipReason: 'CDP is unavailable in ordinary Storybook; compose Korean with an IME in /text, switch /kind to b before composition ends, then switch back to a and confirm no late composition edit reached the closed branch; this play runs in Vitest Browser Mode (yarn workspace @canard/schema-form test --run --project storybook)',
   async after({ canvasElement, handle }) {
     const { cdp, page } = await browserContext();
     const session = cdp();

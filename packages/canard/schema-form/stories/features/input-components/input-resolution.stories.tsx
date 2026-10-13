@@ -4,6 +4,10 @@ import {
 } from '@aileron/schema-form-scenarios';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 
+import { shouldSkipUnfocusedPlay } from '../../components/play/shouldSkipUnfocusedPlay';
+import { skipPlay } from '../../components/play/skipPlay';
+import { unfocusedPlayReason } from '../../components/play/unfocusedPlayReason';
+
 import { registerPlugin } from '../../../src';
 
 import { FeatureStory } from '../components/FeatureStory';
@@ -39,7 +43,8 @@ const resolutionStory = (label: string): Story => {
       ...(item.provider && { providerProps: { formTypeInputDefinitions: toDefinitions(item.provider) } }),
     },
     parameters: { docs: { description: { story: `${scenario.description} Case: ${label}.` } } },
-    async play({ args, canvasElement }) {
+    async play({ args, canvasElement, step }) {
+      if (shouldSkipUnfocusedPlay()) return skipPlay(step, unfocusedPlayReason);
       await playScenario(args.scenario, canvasElement);
       await expectEventually(
         () => Object.fromEntries(Object.keys(item.winners).map((path) => [path, readWinner(canvasElement, path)])),

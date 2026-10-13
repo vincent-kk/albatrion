@@ -9,7 +9,10 @@ import { FormattedAmountInput } from './utils/consumerInputs';
 import { createCompositeStory } from './utils/createCompositeStory';
 import { submitButtonLayout } from './utils/submitButtonLayout';
 
-/** Load Vitest Browser Mode's CDP at play time; the module throws outside Browser Mode, so plain storybook dev cannot run this play. */
+/**
+ * Load Vitest's runtime-owned CDP context after the composite play's Browser Mode guard.
+ * @returns The Browser Mode context used for native number-input drafts.
+ */
 const browserContext = () => import('@vitest/browser/context');
 
 export default { title: 'Composite/CX04AmountInput', component: FeatureStory, tags: ['autodocs'] } satisfies Meta<typeof FeatureStory>;
@@ -17,6 +20,7 @@ type Story = StoryObj<typeof FeatureStory>;
 
 /** Shared composite case `composite.cx04-amount-input`, then formatter typing into /price, a native badInput draft, and an Enter submit. */
 export const Case: Story = createCompositeStory('composite.cx04-amount-input', {
+  cdpSkipReason: 'CDP is unavailable in ordinary Storybook; type into /price to check formatting, enter an incomplete exponent into /count to confirm the committed count is kept, and press Enter in /memo to confirm one submission; this play runs in Vitest Browser Mode (yarn workspace @canard/schema-form test --run --project storybook)',
   layout: submitButtonLayout,
   formProps: { formTypeInputMap: { '/price': FormattedAmountInput } },
   async after({ canvasElement, handle, submitted }) {

@@ -4,6 +4,10 @@ import { userEvent } from 'storybook/test';
 
 import { type FormHandle, ShowError, ValidationMode, VirtualizationBackfill } from '../../../src';
 
+import { isVitestBrowserMode } from '../../components/play/isVitestBrowserMode';
+import { shouldSkipUnfocusedPlay } from '../../components/play/shouldSkipUnfocusedPlay';
+import { skipPlay } from '../../components/play/skipPlay';
+import { unfocusedPlayReason } from '../../components/play/unfocusedPlayReason';
 import type { FeatureFormProps, FeaturePropStage, FeatureStory, FeatureStoryProps } from '../../features/components/FeatureStory';
 import { createHandleProbe } from '../../features/components/createHandleProbe';
 import { createHeldValidator } from './createHeldValidator';
@@ -11,6 +15,8 @@ import { runStoryTail } from './runStoryTail';
 
 /** Extra wiring a case's story adds around the shared steps and tail. */
 export interface CompositeStoryOptions {
+  /** Skip guidance for a CDP-dependent play, including its manual check and Browser Mode command. */
+  readonly cdpSkipReason?: string;
   /** Form props the case needs beyond its plain props, such as consumer inputs. */
   readonly formProps?: FeatureFormProps;
   /** Layout drawn inside the Form instead of the default group. */
@@ -95,7 +101,9 @@ export const createCompositeStory = (name: string, options: CompositeStoryOption
       formProps: { ...mountProps, ...(held && { validatorFactory: held.factory }), onSubmit: (value) => { submitted.push(value); }, ...options.formProps },
     },
     parameters: { docs: { description: { story: item.scenario.description } } },
-    async play({ args, canvasElement }) {
+    async play({ args, canvasElement, step }) {
+      if (options.cdpSkipReason && !isVitestBrowserMode()) return skipPlay(step, options.cdpSkipReason);
+      if (shouldSkipUnfocusedPlay()) return skipPlay(step, unfocusedPlayReason);
       const handle = await probe.handle(canvasElement);
       await options.before?.({ canvasElement, handle });
       await playScenario(args.scenario, canvasElement);

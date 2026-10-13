@@ -5,13 +5,15 @@ import type {} from '@vitest/browser/providers/playwright';
 
 import { BrowserGateForm } from '../components/gates/BrowserGateForm';
 import type { BrowserGateElement } from '../components/gates/types';
+import { isVitestBrowserMode } from '../components/play/isVitestBrowserMode';
+import { skipPlay } from '../components/play/skipPlay';
 
 export default { title: 'Scenarios/Browser gates', component: BrowserGateForm } satisfies Meta<typeof BrowserGateForm>;
 type Story = StoryObj<typeof BrowserGateForm>;
 
 /**
- * Load Vitest Browser Mode's CDP and locator API at play time. The module throws when evaluated
- * outside Browser Mode, so a static import would keep plain `storybook dev` from rendering these stories.
+ * Load Vitest's runtime-owned CDP and locator API after the play's Browser Mode guard.
+ * @returns The Browser Mode context; importing it outside that mode throws.
  */
 const browserContext = () => import('@vitest/browser/context');
 
@@ -29,7 +31,8 @@ const fixture = (canvas: HTMLElement) => {
 export const ImeComposition: Story = {
   name: 'EVENT-065 Korean IME plain, caret formatter and Refresh during composition',
   args: { mode: 'ime' },
-  play: async ({ canvasElement }) => {
+  play: async ({ canvasElement, step }) => {
+    if (!isVitestBrowserMode()) return skipPlay(step, 'CDP is unavailable in ordinary Storybook; type Korean with an IME into /plain, /formatter and /refresh, refresh /refresh during composition, and confirm one composition-end commit with the stale refresh binding unchanged; this play runs in Vitest Browser Mode (yarn workspace @canard/schema-form test --run --project storybook)');
     const { cdp, page: browserPage } = await browserContext();
     const { handle, observations } = fixture(canvasElement);
     const session = cdp();
@@ -95,7 +98,8 @@ export const ImeComposition: Story = {
 export const NumberBadInput: Story = {
   name: 'REACT-027 number badInput stays local and blur restores node display',
   args: { mode: 'number' },
-  play: async ({ canvasElement }) => {
+  play: async ({ canvasElement, step }) => {
+    if (!isVitestBrowserMode()) return skipPlay(step, 'CDP is unavailable in ordinary Storybook; type 1 then e into the number input, confirm the incomplete exponent stays local, and blur to restore 1; this play runs in Vitest Browser Mode (yarn workspace @canard/schema-form test --run --project storybook)');
     const { cdp } = await browserContext();
     const { handle } = fixture(canvasElement);
     const input = canvasElement.querySelector<HTMLInputElement>('input[type="number"]')!;

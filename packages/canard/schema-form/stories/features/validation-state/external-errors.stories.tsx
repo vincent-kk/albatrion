@@ -5,6 +5,10 @@ import {
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { userEvent } from 'storybook/test';
 
+import { shouldSkipUnfocusedPlay } from '../../components/play/shouldSkipUnfocusedPlay';
+import { skipPlay } from '../../components/play/skipPlay';
+import { unfocusedPlayReason } from '../../components/play/unfocusedPlayReason';
+
 import { FeatureStory } from '../components/FeatureStory';
 import { findScenario } from '../components/findScenario';
 import { createHandleProbe } from '../components/createHandleProbe';
@@ -23,7 +27,8 @@ const nodeProbe = createHandleProbe();
 export const ErrorsPropStages: Story = {
   args: { scenario, formProps: { showError: true }, propStages: externalErrorStages.map((stage) => ({ errors: stage.errors })), onHandle: errorsPropProbe.onHandle },
   parameters: { docs: { description: { story: scenario.description } } },
-  async play({ args, canvasElement }) {
+  async play({ args, canvasElement, step }) {
+    if (shouldSkipUnfocusedPlay()) return skipPlay(step, unfocusedPlayReason);
     await playScenario(args.scenario, canvasElement);
     const handle = await errorsPropProbe.handle(canvasElement);
     for (const [index, stage] of externalErrorStages.entries()) {
@@ -38,7 +43,8 @@ export const ErrorsPropStages: Story = {
 export const NodeSetAndClear: Story = {
   args: { scenario, formProps: { showError: true }, onHandle: nodeProbe.onHandle },
   parameters: { docs: { description: { story: 'A consumer sets external issues on one node and clears them; only that node changes.' } } },
-  async play({ args, canvasElement }) {
+  async play({ args, canvasElement, step }) {
+    if (shouldSkipUnfocusedPlay()) return skipPlay(step, unfocusedPlayReason);
     await playScenario(args.scenario, canvasElement);
     const handle = await nodeProbe.handle(canvasElement);
     const node = handle.findNode(nodeExternalError.path)!;

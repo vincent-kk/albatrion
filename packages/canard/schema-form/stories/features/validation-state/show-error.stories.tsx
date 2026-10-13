@@ -5,6 +5,10 @@ import {
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { userEvent } from 'storybook/test';
 
+import { shouldSkipUnfocusedPlay } from '../../components/play/shouldSkipUnfocusedPlay';
+import { skipPlay } from '../../components/play/skipPlay';
+import { unfocusedPlayReason } from '../../components/play/unfocusedPlayReason';
+
 import { FeatureStory } from '../components/FeatureStory';
 import { findScenario } from '../components/findScenario';
 import { createHandleProbe } from '../components/createHandleProbe';
@@ -27,7 +31,8 @@ const policyStory = (policy: ShowErrorName): Story => {
   return {
     args: { scenario, formProps: { showError: toShowError(policy) } },
     parameters: { docs: { description: { story: `${scenario.description} Policy: ${policy}.` } } },
-    async play({ args, canvasElement }) {
+    async play({ args, canvasElement, step }) {
+      if (shouldSkipUnfocusedPlay()) return skipPlay(step, unfocusedPlayReason);
       await playScenario(args.scenario, canvasElement);
       const shown = () => readShownMessage(canvasElement, '/code') !== '';
       await expectEventually(shown, item.atLoad, 'message on load');
@@ -58,7 +63,8 @@ const forcedProbe = createHandleProbe();
 export const HandleOverridesPolicy: Story = {
   args: { scenario, formProps: { showError: toShowError(forcedShowErrorCase.policy) }, onHandle: forcedProbe.onHandle },
   parameters: { docs: { description: { story: `${scenario.description} Policy: ${forcedShowErrorCase.policy}, then the handle's showError.` } } },
-  async play({ args, canvasElement }) {
+  async play({ args, canvasElement, step }) {
+    if (shouldSkipUnfocusedPlay()) return skipPlay(step, unfocusedPlayReason);
     await playScenario(args.scenario, canvasElement);
     const handle = await forcedProbe.handle(canvasElement);
     const shown = () => readShownMessage(canvasElement, '/code') !== '';

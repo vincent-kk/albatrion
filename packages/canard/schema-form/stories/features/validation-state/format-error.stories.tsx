@@ -3,6 +3,10 @@ import { formatErrorCases, playScenario, validationStateFeatureScenarios } from 
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { expect } from 'storybook/test';
 
+import { shouldSkipUnfocusedPlay } from '../../components/play/shouldSkipUnfocusedPlay';
+import { skipPlay } from '../../components/play/skipPlay';
+import { unfocusedPlayReason } from '../../components/play/unfocusedPlayReason';
+
 import { FeatureStory } from '../components/FeatureStory';
 import { findScenario } from '../components/findScenario';
 import { createCatalogFormatError } from './utils/createCatalogFormatError';
@@ -25,7 +29,8 @@ const catalogStory = (label: string): Story => {
   return {
     args: { scenario, formProps: { showError: true, formatError: createCatalogFormatError(item.catalog) } },
     parameters: { docs: { description: { story: `${scenario.description} Catalog: ${JSON.stringify(item.catalog)}.` } } },
-    async play({ args, canvasElement }) {
+    async play({ args, canvasElement, step }) {
+      if (shouldSkipUnfocusedPlay()) return skipPlay(step, unfocusedPlayReason);
       await playScenario(args.scenario, canvasElement);
       await expectEventually(() => readShownMessage(canvasElement, '/nickname'), item.shown, 'message under /nickname');
     },
@@ -45,7 +50,8 @@ const defaultProbe = createHandleProbe();
 export const DefaultMessage: Story = {
   args: { scenario, formProps: { showError: true }, onHandle: defaultProbe.onHandle },
   parameters: { docs: { description: { story: `${scenario.description} No formatError: the default formatter draws the validator message.` } } },
-  async play({ args, canvasElement }) {
+  async play({ args, canvasElement, step }) {
+    if (shouldSkipUnfocusedPlay()) return skipPlay(step, unfocusedPlayReason);
     await playScenario(args.scenario, canvasElement);
     const handle = await defaultProbe.handle(canvasElement);
     const first = handle.findNode('/nickname')!.errors![0];

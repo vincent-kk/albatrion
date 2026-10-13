@@ -2,6 +2,10 @@
 import { type RendererCase, playScenario, pluginsFeatureScenarios, rendererCases } from '@aileron/schema-form-scenarios';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 
+import { shouldSkipUnfocusedPlay } from '../../components/play/shouldSkipUnfocusedPlay';
+import { skipPlay } from '../../components/play/skipPlay';
+import { unfocusedPlayReason } from '../../components/play/unfocusedPlayReason';
+
 import { Form } from '../../../src';
 
 import { FeatureStory } from '../components/FeatureStory';
@@ -39,7 +43,8 @@ const createRendererStory = (label: string): Story => {
       ...(item.provider.length > 0 && { providerProps: toRendererProps(item.provider, providerRenderers) }),
     },
     parameters: { docs: { description: { story: `${scenario.description} Case: ${item.label}.` } } },
-    async play({ args, canvasElement }) {
+    async play({ args, canvasElement, step }) {
+      if (shouldSkipUnfocusedPlay()) return skipPlay(step, unfocusedPlayReason);
       await playScenario(args.scenario, canvasElement);
       await expectEventually(() => {
         const drawn = new Set(Array.from(canvasElement.querySelectorAll<HTMLElement>('[data-renderer]')).map((element) => element.dataset.renderer));

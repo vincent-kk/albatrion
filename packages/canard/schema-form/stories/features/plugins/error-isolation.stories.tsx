@@ -3,6 +3,10 @@ import { playScenario, pluginsFeatureScenarios } from '@aileron/schema-form-scen
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { expect } from 'storybook/test';
 
+import { shouldSkipUnfocusedPlay } from '../../components/play/shouldSkipUnfocusedPlay';
+import { skipPlay } from '../../components/play/skipPlay';
+import { unfocusedPlayReason } from '../../components/play/unfocusedPlayReason';
+
 import { FeatureStory } from '../components/FeatureStory';
 import { findScenario } from '../components/findScenario';
 import { ThrowOnTriggerInput } from './utils/ThrowOnTriggerInput';
@@ -16,7 +20,8 @@ const scenario = findScenario(pluginsFeatureScenarios, 'plugins.error-isolation'
 export const ThrowingInputFallsBackAlone: Story = {
   args: { scenario, formProps: { formTypeInputMap: { '/broken': ThrowOnTriggerInput } } },
   parameters: { docs: { description: { story: scenario.description } } },
-  async play({ args, canvasElement }) {
+  async play({ args, canvasElement, step }) {
+    if (shouldSkipUnfocusedPlay()) return skipPlay(step, unfocusedPlayReason);
     await playScenario(args.scenario, canvasElement);
     expect(canvasElement.querySelector('input[id="/broken"]'), 'the throwing input is replaced by the fallback').toBeNull();
     expect(canvasElement.querySelector<HTMLInputElement>('input[id="/sibling"]')?.value, 'the sibling input still edits').toBe('typed');

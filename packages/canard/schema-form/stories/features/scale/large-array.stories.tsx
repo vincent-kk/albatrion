@@ -3,6 +3,10 @@ import { largeArrayTyped, playScenario, scaleFeatureScenarios } from '@aileron/s
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { userEvent } from 'storybook/test';
 
+import { shouldSkipUnfocusedPlay } from '../../components/play/shouldSkipUnfocusedPlay';
+import { skipPlay } from '../../components/play/skipPlay';
+import { unfocusedPlayReason } from '../../components/play/unfocusedPlayReason';
+
 import { FeatureStory } from '../components/FeatureStory';
 import { createHandleProbe } from '../components/createHandleProbe';
 import { expectEventually } from '../components/expectEventually';
@@ -18,7 +22,8 @@ const probe = createHandleProbe();
 export const EditAtBothEnds: Story = {
   args: { scenario, formProps: { virtualization: true }, onHandle: probe.onHandle },
   parameters: { docs: { description: { story: scenario.description } } },
-  async play({ args, canvasElement }) {
+  async play({ args, canvasElement, step }) {
+    if (shouldSkipUnfocusedPlay()) return skipPlay(step, unfocusedPlayReason);
     await playScenario(args.scenario, canvasElement);
     const handle = await probe.handle(canvasElement);
     const lastPath = `/items/${handle.findNode('/items')!.children!.length - 1}`;

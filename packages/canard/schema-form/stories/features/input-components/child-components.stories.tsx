@@ -3,6 +3,10 @@ import { childComponentStages, controlsScenarios, inputComponentsFeatureScenario
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { userEvent } from 'storybook/test';
 
+import { shouldSkipUnfocusedPlay } from '../../components/play/shouldSkipUnfocusedPlay';
+import { skipPlay } from '../../components/play/skipPlay';
+import { unfocusedPlayReason } from '../../components/play/unfocusedPlayReason';
+
 import { FeatureStory } from '../components/FeatureStory';
 import { createFeatureStory } from '../components/createFeatureStory';
 import { createHandleProbe } from '../components/createHandleProbe';
@@ -25,7 +29,8 @@ const scenario = findScenario(inputComponentsFeatureScenarios, 'input-components
 export const CardWithChildErrors: Story = {
   args: { scenario, formProps: { formTypeInputDefinitions: childDefinitions } },
   parameters: { docs: { description: { story: scenario.description } } },
-  async play({ args, canvasElement }) {
+  async play({ args, canvasElement, step }) {
+    if (shouldSkipUnfocusedPlay()) return skipPlay(step, unfocusedPlayReason);
     await playScenario(args.scenario, canvasElement);
     const card = () => canvasElement.querySelector<HTMLElement>('[id="/address"][data-card-fields]')!;
     for (const [index, stage] of childComponentStages.entries()) {
@@ -48,7 +53,8 @@ const mapProbe = createHandleProbe();
 export const OpenObjectAsTerminal: Story = {
   args: { scenario, formProps: { formTypeInputDefinitions: childDefinitions }, onHandle: mapProbe.onHandle },
   parameters: { docs: { description: { story: scenario.description } } },
-  async play({ args, canvasElement }) {
+  async play({ args, canvasElement, step }) {
+    if (shouldSkipUnfocusedPlay()) return skipPlay(step, unfocusedPlayReason);
     await playScenario(args.scenario, canvasElement);
     const handle = await mapProbe.handle(canvasElement);
     for (const [index, stage] of mapEntryStages.entries()) {

@@ -5,6 +5,10 @@ import {
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { expect, fn, spyOn, userEvent, waitFor } from 'storybook/test';
 
+import { shouldSkipUnfocusedPlay } from '../../components/play/shouldSkipUnfocusedPlay';
+import { skipPlay } from '../../components/play/skipPlay';
+import { unfocusedPlayReason } from '../../components/play/unfocusedPlayReason';
+
 import { FeatureStory } from '../components/FeatureStory';
 import { findScenario } from '../components/findScenario';
 import { createHandleProbe } from '../components/createHandleProbe';
@@ -23,7 +27,8 @@ const rejectedProbe = createHandleProbe();
 export const SubmitSuccess: Story = {
   args: { scenario: submitScenario, formProps: { onSubmit: successSubmit } },
   parameters: { docs: { description: { story: submitScenario.description ?? submitScenario.name } } },
-  async play({ args, canvasElement }) {
+  async play({ args, canvasElement, step }) {
+    if (shouldSkipUnfocusedPlay()) return skipPlay(step, unfocusedPlayReason);
     successSubmit.mockClear();
     await playScenario(args.scenario, canvasElement);
     expect(successSubmit).toHaveBeenCalledTimes(1);
@@ -34,7 +39,8 @@ export const SubmitSuccess: Story = {
 export const SubmitRejected: Story = {
   args: { scenario: rejected, formProps: { onSubmit: rejectedSubmit }, onHandle: rejectedProbe.onHandle },
   parameters: { docs: { description: { story: rejected.description } } },
-  async play({ args, canvasElement }) {
+  async play({ args, canvasElement, step }) {
+    if (shouldSkipUnfocusedPlay()) return skipPlay(step, unfocusedPlayReason);
     rejectedSubmit.mockClear();
     await playScenario(args.scenario, canvasElement);
     const handle = await rejectedProbe.handle(canvasElement);
@@ -47,7 +53,8 @@ export const SubmitRejected: Story = {
 export const EnterSubmit: Story = {
   args: { scenario: rejected, formProps: { onSubmit: enterSubmit } },
   parameters: { docs: { description: { story: 'Enter in a field submits the native form; a valid value reaches onSubmit once.' } } },
-  async play({ args, canvasElement }) {
+  async play({ args, canvasElement, step }) {
+    if (shouldSkipUnfocusedPlay()) return skipPlay(step, unfocusedPlayReason);
     enterSubmit.mockClear();
     await playScenario(args.scenario, canvasElement);
     const email = canvasElement.querySelector<HTMLInputElement>('input[id="/email"]')!;
@@ -62,7 +69,8 @@ export const EnterSubmit: Story = {
 export const EnterRejected: Story = {
   args: { scenario: rejected, formProps: { onSubmit: enterRejectedSubmit } },
   parameters: { docs: { description: { story: 'ERROR-139 nobody awaits a native submit, so its rejection goes to the host sink (globalThis.reportError); onSubmit is not called.' } } },
-  async play({ args, canvasElement }) {
+  async play({ args, canvasElement, step }) {
+    if (shouldSkipUnfocusedPlay()) return skipPlay(step, unfocusedPlayReason);
     enterRejectedSubmit.mockClear();
     const sink: unknown[] = [];
     // The play stands in for the host: spying on reportError receives the sink delivery without dispatching an error event.

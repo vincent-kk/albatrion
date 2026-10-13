@@ -2,6 +2,10 @@
 import { exitScenarios, branchExitScenario, playScenario } from '@aileron/schema-form-scenarios';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 
+import { shouldSkipUnfocusedPlay } from '../components/play/shouldSkipUnfocusedPlay';
+import { skipPlay } from '../components/play/skipPlay';
+import { unfocusedPlayReason } from '../components/play/unfocusedPlayReason';
+
 import { ScenarioStory } from '../components/scenario/ScenarioStory';
 
 export default { title: 'Scenarios/exit', component: ScenarioStory } satisfies Meta<typeof ScenarioStory>;
@@ -11,20 +15,29 @@ type Story = StoryObj<typeof ScenarioStory>;
 export const RetainInactive: Story = {
   name: 'retain-inactive',
   args: { scenario: exitScenarios[1] },
-  play: async ({ args, canvasElement }) => { await playScenario(args.scenario, canvasElement); },
+  play: async ({ args, canvasElement, step }) => {
+    if (shouldSkipUnfocusedPlay()) return skipPlay(step, unfocusedPlayReason);
+    await playScenario(args.scenario, canvasElement);
+  },
 };
 
 /** TEST-025: unset-inactive mirrors shared SCN data in the browser. */
 export const UnsetInactive: Story = {
   name: 'unset-inactive',
   args: { scenario: exitScenarios[0] },
-  play: async ({ args, canvasElement }) => { await playScenario(args.scenario, canvasElement); },
+  play: async ({ args, canvasElement, step }) => {
+    if (shouldSkipUnfocusedPlay()) return skipPlay(step, unfocusedPlayReason);
+    await playScenario(args.scenario, canvasElement);
+  },
 };
 
 /** TEST-025: branch-exit mirrors shared SCN data in the browser. */
 export const BranchExit: Story = {
   name: 'branch-exit',
   args: { scenario: branchExitScenario },
-  play: async ({ args, canvasElement }) => { await playScenario(args.scenario, canvasElement); },
+  play: async ({ args, canvasElement, step }) => {
+    if (shouldSkipUnfocusedPlay()) return skipPlay(step, unfocusedPlayReason);
+    await playScenario(args.scenario, canvasElement);
+  },
 };
 

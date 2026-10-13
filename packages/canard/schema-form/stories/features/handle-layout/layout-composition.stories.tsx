@@ -3,6 +3,10 @@ import { handleLayoutFeatureScenarios, layoutPlan, playScenario } from '@aileron
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { userEvent } from 'storybook/test';
 
+import { shouldSkipUnfocusedPlay } from '../../components/play/shouldSkipUnfocusedPlay';
+import { skipPlay } from '../../components/play/skipPlay';
+import { unfocusedPlayReason } from '../../components/play/unfocusedPlayReason';
+
 import { Form } from '../../../src';
 
 import { FeatureStory } from '../components/FeatureStory';
@@ -31,7 +35,8 @@ const layout = () => <>
 export const PathLayout: Story = {
   args: { scenario, layout, formProps: { showError: true }, onHandle: probe.onHandle },
   parameters: { docs: { description: { story: scenario.description } } },
-  async play({ args, canvasElement }) {
+  async play({ args, canvasElement, step }) {
+    if (shouldSkipUnfocusedPlay()) return skipPlay(step, unfocusedPlayReason);
     await playScenario(args.scenario, canvasElement);
     const handle = await probe.handle(canvasElement);
     const copies = () => Array.from(canvasElement.querySelectorAll<HTMLInputElement>(`input[id="${layoutPlan.repeated}"]`));

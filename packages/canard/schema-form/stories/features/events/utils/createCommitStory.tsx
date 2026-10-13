@@ -3,6 +3,10 @@ import type { StoryObj } from '@storybook/react-vite';
 import { Profiler } from 'react';
 import { expect } from 'storybook/test';
 
+import { shouldSkipUnfocusedPlay } from '../../../components/play/shouldSkipUnfocusedPlay';
+import { skipPlay } from '../../../components/play/skipPlay';
+import { unfocusedPlayReason } from '../../../components/play/unfocusedPlayReason';
+
 import { Form, ValidationMode } from '../../../../src';
 
 import type { FeatureStory } from '../../components/FeatureStory';
@@ -28,7 +32,8 @@ export const createCommitStory = (validated: boolean): StoryObj<typeof FeatureSt
   return {
     args: { scenario, layout, onHandle: probe.onHandle, ...(!validated && { formProps: { validationMode: ValidationMode.None } }) },
     parameters: { docs: { description: { story: scenario.description } } },
-    async play({ args, canvasElement }) {
+    async play({ args, canvasElement, step }) {
+      if (shouldSkipUnfocusedPlay()) return skipPlay(step, unfocusedPlayReason);
       await playScenario(args.scenario, canvasElement);
       const handle = await probe.handle(canvasElement);
       for (const stage of renderCommitStages) {

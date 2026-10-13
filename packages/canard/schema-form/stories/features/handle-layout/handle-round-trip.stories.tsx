@@ -3,6 +3,10 @@ import { handleLayoutFeatureScenarios, handleRoundTripIssues, playScenario, sett
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { expect } from 'storybook/test';
 
+import { shouldSkipUnfocusedPlay } from '../../components/play/shouldSkipUnfocusedPlay';
+import { skipPlay } from '../../components/play/skipPlay';
+import { unfocusedPlayReason } from '../../components/play/unfocusedPlayReason';
+
 import { FeatureStory } from '../components/FeatureStory';
 import { createFeatureStory } from '../components/createFeatureStory';
 import { createHandleProbe } from '../components/createHandleProbe';
@@ -18,7 +22,8 @@ const probe = createHandleProbe();
 export const SetValidateReset: Story = {
   args: { scenario, onHandle: probe.onHandle },
   parameters: { docs: { description: { story: scenario.description } } },
-  async play({ args, canvasElement }) {
+  async play({ args, canvasElement, step }) {
+    if (shouldSkipUnfocusedPlay()) return skipPlay(step, unfocusedPlayReason);
     await playScenario(args.scenario, canvasElement);
     const handle = await probe.handle(canvasElement);
     handle.setValue({ name: 'a', age: -1 });

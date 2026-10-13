@@ -3,6 +3,10 @@ import { deriveScenarios, findScenarioHandle, playScenario, registerScenarioHand
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { expect } from 'storybook/test';
 
+import { shouldSkipUnfocusedPlay } from '../../components/play/shouldSkipUnfocusedPlay';
+import { skipPlay } from '../../components/play/skipPlay';
+import { unfocusedPlayReason } from '../../components/play/unfocusedPlayReason';
+
 import { executeStoryStep } from '../../components/scenario/executeStoryStep';
 import { FeatureStory } from '../components/FeatureStory';
 import { createHandleProbe } from '../components/createHandleProbe';
@@ -23,7 +27,8 @@ const budgetProbe = createHandleProbe();
 export const DeriveBudgetDegrades: Story = {
   args: { scenario: budget, onHandle: budgetProbe.onHandle },
   parameters: { docs: { description: { story: budget.description ?? budget.name } } },
-  async play({ args, canvasElement }) {
+  async play({ args, canvasElement, step }) {
+    if (shouldSkipUnfocusedPlay()) return skipPlay(step, unfocusedPlayReason);
     const handle = await budgetProbe.handle(canvasElement);
     const base = findScenarioHandle(canvasElement).adapter;
     const thrown: unknown[] = [];

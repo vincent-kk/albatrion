@@ -2,6 +2,10 @@
 import { inputComponentsFeatureScenarios, inputMapCase, playScenario } from '@aileron/schema-form-scenarios';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 
+import { shouldSkipUnfocusedPlay } from '../../components/play/shouldSkipUnfocusedPlay';
+import { skipPlay } from '../../components/play/skipPlay';
+import { unfocusedPlayReason } from '../../components/play/unfocusedPlayReason';
+
 import { FeatureStory } from '../components/FeatureStory';
 import { expectEventually } from '../components/expectEventually';
 import { findScenario } from '../components/findScenario';
@@ -17,7 +21,8 @@ const scenario = findScenario(inputComponentsFeatureScenarios, 'input-components
 export const ExactPatternAndWildcard: Story = {
   args: { scenario, formProps: { formTypeInputMap: toInputMap(inputMapCase.map) } },
   parameters: { docs: { description: { story: `${scenario.description} Map: ${JSON.stringify(inputMapCase.map)}.` } } },
-  async play({ args, canvasElement }) {
+  async play({ args, canvasElement, step }) {
+    if (shouldSkipUnfocusedPlay()) return skipPlay(step, unfocusedPlayReason);
     await playScenario(args.scenario, canvasElement);
     await expectEventually(
       () => Object.fromEntries(Object.keys(inputMapCase.winners).map((path) => [path, readWinner(canvasElement, path)])),
