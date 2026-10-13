@@ -2736,7 +2736,7 @@
   > 소유자(239라운드, 확정): "오케이 그럼 지금으로 확정. \n이어지는 질문 하나 더 있어" (`reviews/round-239-owner-answers.md:9`)
   > 편집자 결정(240C-01): "【추론】 표 밖 이름은 표의 규칙을 기계적으로 넓힌 것이고, 유일하게 규칙으로 정할 수 없는 내장 배열은 "내장"을 접두어로 붙여 공개 이름과 겹치지 않게 한다. CLAUDE.md는 규칙상 소유자 승인이 먼저다." (`reviews/round-240-closing.md:9`)
   > 소유자(241라운드, Label·Error 전달): "열린 질문은 바로 적용하지 말고 좀 더 고려해 보자.\n이게 Label Error 같은게 Input이랑 좀 다르게 목적에 따라 다른 값이 들어가야돼. 예컨대 Label은 name 일 수도, 아니면 다국어 변환이나 툴팁 등이 있을 수 있으니까. error도 그렇고. 그러니까 기존 설정을 그대로 쓸게 아니라 Label, Error 매개변수 등을 재설계해야 할 수도 있어. 이건 어떻게 생각해? 지금은 어떤 패턴으로 전달받니?" (`reviews/round-241-owner-answers.md:7`)
-  > 소유자(241라운드, 설계 초안 시점): "끝난 다음에 하자." (`reviews/round-241-owner-answers.md:14`)
+  > 소유자(241라운드, 설계 초안 시점): "끝난 다음에 하자." (`reviews/round-241-owner-answers.md:13`)
 - 상태: 현행
 - 출처: `reviews/round-18-closing.md:2647`(정본)
 - 닫은 사람: 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-93)
