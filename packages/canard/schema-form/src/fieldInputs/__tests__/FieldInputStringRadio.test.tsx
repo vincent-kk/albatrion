@@ -24,6 +24,22 @@ it.each(['radio', 'radiogroup'])(
   },
 );
 
+it('gives each option a unique id that its label points to', () => {
+  render(
+    <Form
+      jsonSchema={{
+        type: 'string',
+        enum: ['S', 'M', 'L'],
+        presentation: { inputType: 'radio' },
+      }}
+    />,
+  );
+  const inputs = screen.getAllByRole<HTMLInputElement>('radio');
+  const ids = inputs.map((input) => input.id);
+  expect(new Set(ids).size).toBe(3);
+  expect(inputs.map((input) => input.closest('label')?.htmlFor)).toEqual(ids);
+});
+
 it('does not select radio inputs from a top-level inputType alone', () => {
   render(
     <Form

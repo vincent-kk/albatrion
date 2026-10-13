@@ -55,21 +55,29 @@ const FieldInputStringRadio = ({
   });
   return (
     <Fragment>
-      {map(radioOptions, ({ value, rawValue, label }) => (
-        <label key={value} style={style} className={className}>
-          <input
-            type="radio"
-            id={path}
-            name={name}
-            readOnly={readOnly}
-            disabled={disabled}
-            value={value}
-            defaultChecked={rawValue === defaultValue}
-            onChange={handleChange}
-          />
-          {label}
-        </label>
-      ))}
+      {map(radioOptions, ({ value, rawValue, label }, index) => {
+        const id = `${path}-${index}`;
+        return (
+          <label
+            key={value}
+            htmlFor={id}
+            style={style}
+            className={className}
+          >
+            <input
+              type="radio"
+              id={id}
+              name={name}
+              readOnly={readOnly}
+              disabled={disabled}
+              value={value}
+              defaultChecked={rawValue === defaultValue}
+              onChange={handleChange}
+            />
+            {label}
+          </label>
+        );
+      })}
     </Fragment>
   );
 };
