@@ -12,12 +12,12 @@ const sections = [
     title: 'Text Inputs',
     items: [
       {
-        name: 'FormTypeInputString',
+        name: 'FieldInputString',
         trigger: 'type: "string"',
         schema: { type: 'string', title: 'Text Input' },
       },
       {
-        name: 'FormTypeInputTextarea',
+        name: 'FieldInputTextarea',
         trigger: 'format: "textarea"',
         schema: { type: 'string', title: 'Textarea', format: 'textarea' },
       },
@@ -27,12 +27,12 @@ const sections = [
     title: 'Numbers',
     items: [
       {
-        name: 'FormTypeInputNumber',
+        name: 'FieldInputNumber',
         trigger: 'type: "number" | "integer"',
         schema: { type: 'number', title: 'Stepper' },
       },
       {
-        name: 'FormTypeInputSlider',
+        name: 'FieldInputSlider',
         trigger: 'format: "slider"',
         schema: {
           type: 'number',
@@ -48,17 +48,17 @@ const sections = [
     title: 'Booleans',
     items: [
       {
-        name: 'FormTypeInputBoolean',
+        name: 'FieldInputBoolean',
         trigger: 'type: "boolean"',
         schema: { type: 'boolean', title: 'Checkbox' },
       },
       {
-        name: 'FormTypeInputBooleanSwitch',
+        name: 'FieldInputBooleanSwitch',
         trigger: 'type: "boolean", presentation.inputType: "switch"',
         schema: { type: 'boolean', title: 'Switch', presentation: { inputType: 'switch' } },
       },
       {
-        name: 'FormTypeInputStringSwitch',
+        name: 'FieldInputStringSwitch',
         trigger: 'type: "string", presentation.inputType: "switch", enum (2 values)',
         schema: {
           type: 'string',
@@ -73,7 +73,7 @@ const sections = [
     title: 'Selections',
     items: [
       {
-        name: 'FormTypeInputRadioGroup',
+        name: 'FieldInputRadioGroup',
         trigger: 'presentation.inputType: "radio", enum',
         schema: {
           type: 'string',
@@ -83,7 +83,7 @@ const sections = [
         },
       },
       {
-        name: 'FormTypeInputStringCheckbox',
+        name: 'FieldInputStringCheckbox',
         trigger: 'type: "array", presentation.inputType: "checkbox", items.enum',
         schema: {
           type: 'array',
@@ -101,7 +101,7 @@ const sections = [
     title: 'Collections',
     items: [
       {
-        name: 'FormTypeInputArray',
+        name: 'FieldInputArray',
         trigger: 'type: "array"',
         schema: {
           type: 'array',

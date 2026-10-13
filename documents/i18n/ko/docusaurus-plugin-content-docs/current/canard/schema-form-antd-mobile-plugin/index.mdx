@@ -51,22 +51,22 @@ registerPlugin(plugin);
 
 Components are selected automatically based on JSON Schema properties. Priority order matches the list below (top = highest priority).
 
-| Component | type | format | formType | enum | Notes |
+| Component | type | format | inputType | enum | Notes |
 |---|---|---|---|---|---|
-| `FormTypeInputBooleanSwitch` | `boolean` | — | `"switch"` | — | Switch toggle with custom labels |
-| `FormTypeInputStringCheckbox` | `array` | — | `"checkbox"` | items.enum | Checkbox group; items must be string schema |
-| `FormTypeInputStringSwitch` | `string` | — | `"switch"` | 2 values | Toggle between two enum values |
-| `FormTypeInputRadioGroup` | `string` \| `number` \| `integer` | — | `"radio"` or `"radiogroup"` | required | Radio group |
-| `FormTypeInputArray` | `array` | — | — | — | Dynamic list with add/remove |
-| `FormTypeInputSlider` | `number` \| `integer` | `"slider"` | — | — | Slider; also supports range slider for numeric-item arrays |
-| `FormTypeInputTextarea` | `string` | `"textarea"` or formType `"textarea"` | — | — | Multi-line textarea |
-| `FormTypeInputString` | `string` | — | — | — | Default text input (password supported via `format: "password"`) |
-| `FormTypeInputNumber` | `number` \| `integer` | — | — | — | Stepper component |
-| `FormTypeInputBoolean` | `boolean` | — | — | — | Checkbox with indeterminate state |
+| `FieldInputBooleanSwitch` | `boolean` | — | `"switch"` | — | Switch toggle with custom labels |
+| `FieldInputStringCheckbox` | `array` | — | `"checkbox"` | items.enum | Checkbox group; items must be string schema |
+| `FieldInputStringSwitch` | `string` | — | `"switch"` | 2 values | Toggle between two enum values |
+| `FieldInputRadioGroup` | `string` \| `number` \| `integer` | — | `"radio"` or `"radiogroup"` | required | Radio group |
+| `FieldInputArray` | `array` | — | — | — | Dynamic list with add/remove |
+| `FieldInputSlider` | `number` \| `integer` | `"slider"` | — | — | Slider; also supports range slider for numeric-item arrays |
+| `FieldInputTextarea` | `string` | `"textarea"` or inputType `"textarea"` | — | — | Multi-line textarea |
+| `FieldInputString` | `string` | — | — | — | Default text input (password supported via `format: "password"`) |
+| `FieldInputNumber` | `number` \| `integer` | — | — | — | Stepper component |
+| `FieldInputBoolean` | `boolean` | — | — | — | Checkbox with indeterminate state |
 
 ### Slider Range Support
 
-`FormTypeInputSlider` activates for numeric range arrays:
+`FieldInputSlider` activates for numeric range arrays:
 
 ```ts
 // Single value slider
@@ -84,7 +84,7 @@ Components are selected automatically based on JSON Schema properties. Priority 
 
 ```ts
 {
-  formType?: 'switch' | 'radio' | 'radiogroup' | 'checkbox' | 'textarea',
+  inputType?: 'switch' | 'radio' | 'radiogroup' | 'checkbox' | 'textarea',
   format?:   'slider' | 'textarea' | 'password',
 }
 ```
@@ -99,11 +99,11 @@ const schema = {
   properties: {
     name:    { type: 'string' },
     count:   { type: 'integer' },
-    active:  { type: 'boolean', formType: 'switch' },
+    active:  { type: 'boolean', inputType: 'switch' },
     rating:  { type: 'number', format: 'slider', minimum: 0, maximum: 5 },
     tags:    {
       type: 'array',
-      formType: 'checkbox',
+      inputType: 'checkbox',
       items: { type: 'string', enum: ['js', 'ts', 'react'] },
     },
   },
@@ -140,10 +140,10 @@ import { plugin } from '@canard/schema-form-antd-mobile-plugin';
 ### Component mapping (priority order, high → low)
 | Component | Trigger |
 |---|---|
-| BooleanSwitch | `boolean` + `formType: "switch"` |
-| StringCheckbox | `array` + `formType: "checkbox"` + items.enum |
-| StringSwitch | `string` + `formType: "switch"` + 2 enum values |
-| RadioGroup | `string\|number` + `formType: "radio"` + enum |
+| BooleanSwitch | `boolean` + `inputType: "switch"` |
+| StringCheckbox | `array` + `inputType: "checkbox"` + items.enum |
+| StringSwitch | `string` + `inputType: "switch"` + 2 enum values |
+| RadioGroup | `string\|number` + `inputType: "radio"` + enum |
 | Array | `array` (dynamic list) |
 | Slider | `number` + `format: "slider"` (also supports range arrays) |
 | Textarea | `string` + `format: "textarea"` |

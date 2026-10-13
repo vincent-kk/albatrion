@@ -79,9 +79,9 @@ any validator with any UI library.
 ┌─────────────────────────────────────────────────────┐
 │                  SchemaFormPlugin                    │
 │                                                      │
-│  FormTypeGroupRenderer   FormTypeLabelRenderer       │  ← UI layer
-│  FormTypeInputRenderer   FormTypeErrorRenderer       │
-│  formTypeInputDefinitions                            │
+│  FieldRenderer   FormLabelRenderer       │  ← UI layer
+│  FormInputRenderer   FormErrorRenderer       │
+│  fieldInputDefinitions                            │
 ├─────────────────────────────────────────────────────┤
 │                  ValidatorPlugin                     │
 │                                                      │
@@ -97,14 +97,14 @@ When multiple plugins are registered, the merge rules are:
 
 | Property                                                                                           | Merge strategy               |
 | -------------------------------------------------------------------------------------------------- | ---------------------------- |
-| `FormTypeGroupRenderer`, `FormTypeLabelRenderer`, `FormTypeInputRenderer`, `FormTypeErrorRenderer` | Last wins                    |
-| `formTypeInputDefinitions`                                                                         | Prepended (first match wins) |
+| `FieldRenderer`, `FormLabelRenderer`, `FormInputRenderer`, `FormErrorRenderer` | Last wins                    |
+| `fieldInputDefinitions`                                                                         | Prepended (first match wins) |
 | `validator`                                                                                        | Last wins                    |
 | `formatError`                                                                                      | Last wins                    |
 
-## FormType System
+## FieldInput System
 
-A `FormTypeInputDefinition` pairs a **test condition** with
+A `FieldInputDefinition` pairs a **test condition** with
 a **React component**. The library evaluates all registered definitions
 in priority order and uses the first matching component to render a field.
 
@@ -112,13 +112,13 @@ The test can be a plain object (declarative) or a function (imperative):
 
 ```ts
 // Object test — declarative
-const definition: FormTypeInputDefinition = {
+const definition: FieldInputDefinition = {
   test: { type: 'string', format: 'date' },  // matches date fields
   Component: DatePickerInput,
 };
 
 // Function test — imperative
-const definition: FormTypeInputDefinition = {
+const definition: FieldInputDefinition = {
   test: (hint) => hint.jsonSchema.widget === 'richtext',
   Component: RichTextEditor,
 };
@@ -131,20 +131,22 @@ type Hint = {
   nullable: boolean;
   jsonSchema: JSONSchema;
   format?: string;
-  formType?: string;          // jsonSchema.presentation.formType
+  inputType?: string;         // jsonSchema.presentation.inputType
 };
 ```
 
-### FormTypeInputMap (path-based override)
+inputType is a string hint that a definition's test interprets; it is not the HTML input type.
+
+### FieldInputMap (path-based override)
 
 ```ts
 // Map specific paths to specific components
-const formTypeInputMap: FormTypeInputMap = {
+const fieldInputMap: FieldInputMap = {
   '/user/avatar':     AvatarUploader,
   '/items/*/price':   CurrencyInput,   // * matches any segment
 };
 
-<Form jsonSchema={schema} formTypeInputMap={formTypeInputMap} />
+<Form jsonSchema={schema} fieldInputMap={fieldInputMap} />
 ```
 
 ## Controls
@@ -182,7 +184,7 @@ schema error `UNKNOWN_GROUP_KEY`.
 | `../field` | Parent node's `field`                          |
 | `./field`  | Current node's `field` (relative)              |
 | `..`       | Navigate to parent                             |
-| `*`        | Wildcard — any segment (FormTypeInputMap only) |
+| `*`        | Wildcard — any segment (FieldInputMap only) |
 
 ## Schema Composition
 
@@ -257,7 +259,7 @@ const jsonSchema = {
 - **`omitEmpty`** (on by default) converts an empty array to `undefined` on the
   parent-propagation path. Filter order is `omitTrailing → omitEmpty`.
 - The refined output is exposed as `node.outputValue`; `node.value` stays
-  raw. In a custom array `FormTypeInput`, count rows from `node.children`,
+  raw. In a custom array `FieldInput`, count rows from `node.children`,
   never `value.length`.
 
 ## Validation System
@@ -334,11 +336,11 @@ RequestRemount; // external: force full component remount
 | `ObjectNode` / `ArrayNode`                               | Branch nodes — have children                                                                                             |
 | `VirtualNode`                                            | Groups sibling fields declared in `options.virtual` into one input                                                       |
 | `node.strategy`                                          | `'branch'` (has child nodes) or `'terminal'` (one input, `children: null`); narrowed by `BranchNode` / `TerminalNode`    |
-| `FormTypeInputDefinition`                                | `{ test, Component }` pair — maps a schema pattern to a React component                                                  |
-| `FormTypeInputMap`                                       | `{ [jsonPointerPath]: Component }` — path-based component override                                                       |
-| `FormTypeInputProps`                                     | Props interface all custom input components must satisfy                                                                 |
-| `FormTypeRendererProps`                                  | Props for the `FormTypeGroupRenderer`/`FormTypeLabelRenderer`/`FormTypeInputRenderer`/`FormTypeErrorRenderer` components |
-| `SchemaFormPlugin`                                       | Plugin object with optional renderer components + `formTypeInputDefinitions` + `validator` + `formatError`               |
+| `FieldInputDefinition`                                | `{ test, Component }` pair — maps a schema pattern to a React component                                                  |
+| `FieldInputMap`                                       | `{ [jsonPointerPath]: Component }` — path-based component override                                                       |
+| `FieldInputProps`                                     | Props interface all custom input components must satisfy                                                                 |
+| `FieldRendererProps`                                  | Props for the `FieldRenderer`/`FormLabelRenderer`/`FormInputRenderer`/`FormErrorRenderer` components |
+| `SchemaFormPlugin`                                       | Plugin object with optional renderer components + `fieldInputDefinitions` + `validator` + `formatError`               |
 | `ValidatorPlugin`                                        | `{ bind?(instance), compile(jsonSchema) → ValidateFunction, compileGuard(root, pointer) → guard, release?(root) }`       |
 | `ValidateFunction`                                       | `(value) => ValidationIssue[] \| null \| Promise<...>`                                                                   |
 | `controls`                                               | JSON Schema extension for reactive field properties (closed key list)                                                    |

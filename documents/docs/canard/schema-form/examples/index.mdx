@@ -79,7 +79,7 @@ const schema = {
 } as const;
 
 // Custom input that handles null
-const NullableTextInput: FC<FormTypeInputProps<string | null>> = ({
+const NullableTextInput: FC<FieldInputProps<string | null>> = ({
   value,
   onChange,
   nullable,
@@ -317,15 +317,15 @@ const schema = {
 } as const;
 ```
 
-## Custom FormTypeInput Component
+## Custom FieldInput Component
 
 ```tsx
 import type { FC } from 'react';
 
-import type { FormTypeInputProps } from '@canard/schema-form';
+import type { FieldInputProps } from '@canard/schema-form';
 
-// Custom rating input for { type: 'number', presentation: { formType: 'rating' } }
-const RatingInput: FC<FormTypeInputProps<number>> = ({
+// Custom rating input for { type: 'number', presentation: { inputType: 'rating' } }
+const RatingInput: FC<FieldInputProps<number>> = ({
   value,
   onChange,
   readOnly,
@@ -352,9 +352,9 @@ const RatingInput: FC<FormTypeInputProps<number>> = ({
 
 // Register
 registerPlugin({
-  formTypeInputDefinitions: [
+  fieldInputDefinitions: [
     {
-      test: (hint) => hint.formType === 'rating',
+      test: (hint) => hint.inputType === 'rating',
       Component: RatingInput,
     },
   ],
@@ -364,7 +364,7 @@ registerPlugin({
 const schema = {
   type: 'object',
   properties: {
-    rating: { type: 'number', presentation: { formType: 'rating' }, minimum: 1, maximum: 5 },
+    rating: { type: 'number', presentation: { inputType: 'rating' }, minimum: 1, maximum: 5 },
   },
 };
 ```
@@ -486,7 +486,7 @@ formRef.current?.setValue({ address: { city: 'Seoul' } }, SetValueOption.Merge);
 const profileSchema = {
   type: 'object',
   properties: {
-    avatar: { type: 'string', title: 'Avatar', presentation: { formType: 'image-upload' } },
+    avatar: { type: 'string', title: 'Avatar', presentation: { inputType: 'image-upload' } },
     firstName: { type: 'string', title: 'First Name', minLength: 1 },
     lastName: { type: 'string', title: 'Last Name', minLength: 1 },
     bio: { type: 'string', title: 'Bio', maxLength: 500 },
@@ -620,10 +620,10 @@ const { submit, pending } = useFormSubmit(ref);
 <button onClick={submit} disabled={pending}>Submit</button>
 
 // Pattern: custom input component
-const MyInput: FC<FormTypeInputProps<string>> = ({ value, onChange, errors }) => (
+const MyInput: FC<FieldInputProps<string>> = ({ value, onChange, errors }) => (
   <input value={value ?? ''} onChange={e => onChange(e.target.value)} />
 );
-registerPlugin({ formTypeInputDefinitions: [{ test: { type: 'string' }, Component: MyInput }] });
+registerPlugin({ fieldInputDefinitions: [{ test: { type: 'string' }, Component: MyInput }] });
 
 // Pattern: conditional field (oneOf with controls.active)
 oneOf: [
@@ -642,7 +642,7 @@ if (isArrayNode(node)) { node.push(); node.remove(0); node.clear(); }
 <Form errors={serverErrors} showError={true} />
 
 // Pattern: path-based component override
-<Form formTypeInputMap={{ '/profile/photo': ImageUploader, '/items/*/sku': SkuInput }} />
+<Form fieldInputMap={{ '/profile/photo': ImageUploader, '/items/*/sku': SkuInput }} />
 ```
 
 </ForAI>

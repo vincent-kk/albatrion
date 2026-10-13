@@ -29,9 +29,9 @@ import ForAI from '@site/src/components/ForAI';
 | `readOnly` | `boolean` | `false` | Apply `readOnly` to all inputs |
 | `disabled` | `boolean` | `false` | Apply `disabled` to all inputs |
 | `errors` | `JSONSchemaError[]` | `undefined` | Inject external validation errors |
-| `formTypeInputDefinitions` | `FormTypeInputDefinition[]` | `[]` | Form-level input component definitions |
-| `formTypeInputMap` | `FormTypeInputMap` | `{}` | Path-based input component overrides |
-| `CustomFormTypeRenderer` | `ComponentType<FormTypeRendererProps>` | plugin default | Override the entire field renderer |
+| `fieldInputDefinitions` | `FieldInputDefinition[]` | `[]` | Form-level input component definitions |
+| `fieldInputMap` | `FieldInputMap` | `{}` | Path-based input component overrides |
+| `FieldRenderer` | `ComponentType<FieldRendererProps>` | plugin default | Override the entire field renderer |
 | `formatError` | `FormatError` | plugin default | Custom error message formatter |
 | `virtualization` | `boolean \| VirtualizationOptions` | off | 초대형 폼을 위한 렌더 레벨 가상화(지연 마운트) |
 | `context` | `Dictionary` | `{}` | User-defined context, available in all input components |
@@ -156,8 +156,8 @@ All sub-components require a `<Form>` ancestor and use its internal context.
 ```ts
 interface FormGroupProps<Value> extends ChildNodeComponentProps {
   path?:              string;
-  FormTypeInput?:     ComponentType<FormTypeInputProps<Value>>;
-  FormTypeRenderer?:  ComponentType<FormTypeRendererProps>;
+  FieldInput?:     ComponentType<FieldInputProps<Value>>;
+  FieldRenderer?:  ComponentType<FieldRendererProps>;
   Wrapper?:           ComponentType<PropsWithChildren<Dictionary>>;
   // + any extra props forwarded to the input component
   className?: string;
@@ -170,7 +170,7 @@ interface FormGroupProps<Value> extends ChildNodeComponentProps {
 
 ```tsx
 <Form.Group path="/email" />
-<Form.Group path="/birthDate" FormTypeInput={DatePicker} />
+<Form.Group path="/birthDate" FieldInput={DatePicker} />
 <Form.Group path="/address" Wrapper={({ children }) => <fieldset>{children}</fieldset>} />
 ```
 
@@ -200,7 +200,7 @@ Renders only the error message using the plugin's `FormError` component.
 
 ### `Form.Render`
 
-커스텀 렌더링을 위한 저수준 슬롯. 렌더 prop 또는 컴포넌트에 원시 `FormTypeRendererProps`를 전달합니다. 필드가 표시되는 방식을 완전히 제어할 때 사용합니다.
+커스텀 렌더링을 위한 저수준 슬롯. 렌더 prop 또는 컴포넌트에 원시 `FieldRendererProps`를 전달합니다. 필드가 표시되는 방식을 완전히 제어할 때 사용합니다.
 
 ```tsx
 <Form.Render path="/status">
@@ -221,8 +221,8 @@ Renders only the error message using the plugin's `FormError` component.
 import { FormProvider } from '@canard/schema-form';
 
 <FormProvider
-  formTypeInputDefinitions={customDefinitions}
-  CustomFormTypeRenderer={MyRenderer}
+  fieldInputDefinitions={customDefinitions}
+  FieldRenderer={MyRenderer}
   formatError={myFormatError}
 >
   <Form jsonSchema={schema} />
@@ -281,7 +281,7 @@ useSchemaNodeSubscribe(node, (event) => {
 ```ts
 const componentMap = useChildNodeComponentMap(objectNode);
 // Returns a Map<string, ChildNodeComponent> keyed by field name.
-// Use inside custom FormTypeInput components to render child fields.
+// Use inside custom FieldInput components to render child fields.
 ```
 
 ### `useChildNodeErrors`
@@ -305,11 +305,11 @@ registerPlugin(plugin: SchemaFormPlugin | null): void
 
 ```ts
 interface SchemaFormPlugin {
-  FormGroup?:               ComponentType<FormTypeRendererProps>;
-  FormLabel?:               ComponentType<FormTypeRendererProps>;
-  FormInput?:               ComponentType<FormTypeRendererProps>;
-  FormError?:               ComponentType<FormTypeRendererProps>;
-  formTypeInputDefinitions?: FormTypeInputDefinition[];
+  FormGroup?:               ComponentType<FieldRendererProps>;
+  FormLabel?:               ComponentType<FieldRendererProps>;
+  FormInput?:               ComponentType<FieldRendererProps>;
+  FormError?:               ComponentType<FieldRendererProps>;
+  fieldInputDefinitions?: FieldInputDefinition[];
   validator?:               ValidatorPlugin;
   formatError?:             FormatError;
 }
@@ -328,12 +328,12 @@ type ValidateFunction = (
 ) => JSONSchemaError[] | null | Promise<JSONSchemaError[] | null>;
 ```
 
-## `FormTypeInputProps` Interface
+## `FieldInputProps` Interface
 
-`formTypeInputDefinitions`를 통해 등록된 모든 커스텀 입력 컴포넌트는 이 props를 받습니다.
+`fieldInputDefinitions`를 통해 등록된 모든 커스텀 입력 컴포넌트는 이 props를 받습니다.
 
 ```ts
-interface FormTypeInputProps<Value, Context, WatchValues, Schema, Node> {
+interface FieldInputProps<Value, Context, WatchValues, Schema, Node> {
   jsonSchema:         Schema;
   node:               Node;
   type:               JSONSchemaType;     // 'string' | 'number' | 'boolean' | ...
@@ -498,9 +498,9 @@ validationMode?:           ValidationMode                  // default: OnChange|
 readOnly?:                 boolean
 disabled?:                 boolean
 errors?:                   JSONSchemaError[]
-formTypeInputDefinitions?: FormTypeInputDefinition[]
-formTypeInputMap?:         FormTypeInputMap
-CustomFormTypeRenderer?:   ComponentType<FormTypeRendererProps>
+fieldInputDefinitions?: FieldInputDefinition[]
+fieldInputMap?:         FieldInputMap
+FieldRenderer?:   ComponentType<FieldRendererProps>
 formatError?:              FormatError
 validatorFactory?:         ValidatorFactory
 context?:                  Dictionary
