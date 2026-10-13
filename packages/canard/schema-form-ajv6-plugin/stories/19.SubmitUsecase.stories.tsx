@@ -47,7 +47,7 @@ export const UseSubmitHandler = () => {
   } satisfies JSONSchema;
 
   const [value, setValue] = useState<Record<string, unknown>>();
-  const [errors, setErrors] = useState<ValidationIssue[]>();
+  const [errors, setErrors] = useState<readonly ValidationIssue[]>();
 
   const handleSubmit = useCallback((value?: Record<string, unknown>) => {
     return new Promise<void>((resolve) => {
@@ -136,7 +136,7 @@ export const UseSubmitHandlerWithNoValidation = () => {
   } satisfies JSONSchema;
 
   const [value, setValue] = useState<Record<string, unknown>>();
-  const [errors, setErrors] = useState<ValidationIssue[]>();
+  const [errors, setErrors] = useState<readonly ValidationIssue[]>();
 
   const handleSubmit = useCallback((value?: Record<string, unknown>) => {
     return new Promise<void>((resolve) => {
@@ -206,7 +206,7 @@ export const UseSubmitHandlerWithOnRequestValidation = () => {
   } satisfies JSONSchema;
 
   const [value, setValue] = useState<Record<string, unknown>>();
-  const [errors, setErrors] = useState<ValidationIssue[]>();
+  const [errors, setErrors] = useState<readonly ValidationIssue[]>();
 
   const handleSubmit = useCallback((value?: Record<string, unknown>) => {
     return new Promise<void>((resolve) => {

@@ -37,7 +37,8 @@ export const createGuardCompiler = (
     return (value) => Boolean(validate(value));
   }
   if (pointer === '/if' && ('$dynamicAnchor' in root || '$recursiveAnchor' in root)) {
-    const probe = { ...structuredClone(root), then: false, else: true } as JSONSchema;
+    // Boolean subschemas are valid JSON Schema but not expressible in the public JSONSchema type.
+    const probe = { ...structuredClone(root), then: false, else: true } as unknown as JSONSchema;
     const probeRegistry = createSchemaRootRegistry();
     probeRegistry.active.push(new WeakRef(registration));
     const probeRegistration = registerSchemaRoot(probeRegistry, ajv, probe);
