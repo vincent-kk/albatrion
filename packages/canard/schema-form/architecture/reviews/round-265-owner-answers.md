@@ -34,3 +34,7 @@
 ## 덧붙임 (2026-10-14, 12번의 내부 계층 id)
 
 fixy07 질문: `controls.children` → `controls.fields`에 맞춰 내부 제어 계층 id `'children'`(core/record/types/runtime.ts:55, readDefault.ts:7, readExitLayerPolicy.ts:7, readLatentExitPolicy.ts:2, settle/derive/type.ts:24 등)도 `'fields'`로 바꿀지. 편집자 결정: 바꾼다 — 작성 키와 계층 이름이 어긋나면 다른 개념으로 읽힌다. 오류 경로 `/controls/fields/...`와 INVALID_CONTROL_SHAPE detail의 `key: 'fields'`는 작성 키를 비추는 값이라 따라 바뀌며 PR 본문의 공개 차이 목록에 적는다. 계층 id가 enum 문자열 값이나 DOM 속성에 들어가면 보고 뒤 정지.
+
+## 덧붙임 (2026-10-14, 8번과 7·9·5의 구체 이름)
+
+fixy07 제안을 편집자가 받음: 8번 core의 `JSONSchema` 인터페이스(core/types/jsonSchema.ts:8, Options·Presentation 제네릭)는 `AuthoredSchema`로(기존 `BlueprintSchema`는 날 스키마 형이라 통일 불가), rolled의 `JSONSchema` 합집합(types/rolled/jsonSchema.ts:100, 지금도 index.ts:76의 명시 export에 가려 닿지 않음)은 내보내지 않는 지역 형으로(안 쓰면 삭제) — `export type *`로 새 공개 이름이 생기지 않도록. 7번 내부 enum은 `WriteOption`, 미사용 `PublicSetValueOption`·`UnionSetValueOption` 삭제. 9번 core의 `FieldInputProps`는 `FieldNodeInputProps`. 5번 `FieldInputTestObject`는 Pick/Omit으로 표현되지 않아(다섯 칸에 배열 형이 더해짐) `FieldInputHint`에서 뽑는 매핑 형으로 정의하고 형 시험으로 고정.
