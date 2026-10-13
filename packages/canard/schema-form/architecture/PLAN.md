@@ -82,4 +82,4 @@
 
 | 날짜 | 무엇 | 어디 |
 | --- | --- | --- |
-| 2026-10-13 | 222라운드(닫기): 입력 17개 이주 PR #359 검증·squash-merge(12aa201d9); 남은 순서 명시. 보충 2줄 | `reviews/round-222-closing.md` |
+| 2026-10-13 | 223라운드(닫기): 가드 포인터 PR #360 검증·squash-merge(c343a93b8); reviewer 배정 종료. 보충 1줄 | `reviews/round-223-closing.md` |

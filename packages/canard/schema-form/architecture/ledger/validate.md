@@ -261,6 +261,7 @@
   > ```
 - 보충:
   > 편집자 결정(219C-02): "【추론】 플러그인 계약 `compileGuard(root, pointer)`의 pointer는 스키마 위치를 뜻하므로, 스키마가 아닌 곳을 가리키는 호출은 계약 위반이고 세 플러그인이 같은 방식으로 거부해야 호출자 버그가 보인다." (`reviews/round-219-closing.md:28`)
+  > 편집자 결정(223C-01): "【추론】 세 플러그인이 같은 코드로 같은 자리에서 거부하므로 호출자 버그가 세 플러그인에서 같은 모양으로 보인다." (`reviews/round-223-closing.md:9`)
 - 상태: 현행
 - 출처: `adr/0004-validator-plugin-compile-guard.md:27-30`(정본), `adr/0004-validator-plugin-compile-guard.md:10,25`, `08-design-a-to-z.md:345,419,466`, `02-target-overview.md:175`
 - 닫은 사람: 편집자 결정(16라운드, `09-landing-and-test-strategy.md:19` 조건 1)
