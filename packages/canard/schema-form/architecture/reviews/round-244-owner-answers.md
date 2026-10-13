@@ -10,3 +10,7 @@
 244C-01(편집자 정리): 07b-2 병합 뒤 별도 가지에서 production-test의 implicit any 12건을 선언 자리에서 고치고(`any` 단언 금지), CanardForm.ignoreAdditionalProperties.tsx·DynamicObjectFieldInputTest.tsx의 최상위 `FieldInput`을 `presentation.FieldInput`으로 옮긴다. 옮긴 뒤 두 화면의 렌더가 바뀌면 그 차이를 보고에 적는다. 담당은 fixy07, 07b-2 보고 뒤 브리프.
 
 다음 라운드 번호는 245이다.
+
+## 덧붙임 (2026-10-13, 순서)
+
+소유자: "그래 다 하면 알려줘.\n파일구조 변경도 해야되니까 그 다음에" → 07b-2·#361·244C-01이 끝나면 보고하고, 그 다음에 개선-38 파일 구조 변경(fractal 재구성, 다섯 결정)을 진행한다.

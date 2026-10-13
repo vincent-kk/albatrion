@@ -3077,6 +3077,7 @@
   > 소유자(232라운드, 정리 명령 시점): "마지막으로 정리하는 커멘드는 다 하고 하자" (`reviews/round-232-owner-answers.md:10`)
   > 소유자(234라운드, CLAUDE.md 76·138행): "승인" (`reviews/round-234-owner-answers.md:10`)
   > 소유자(242라운드, CLAUDE.md 치환): "어 치환 허용. docs 를 포함해서 모든 영역에 대한 수정 허용" (`reviews/round-242-owner-answers.md:7`)
+  > 소유자(244라운드, 순서): "그래 다 하면 알려줘.\n파일구조 변경도 해야되니까 그 다음에" (`reviews/round-244-owner-answers.md:16`)
 - 상태: 현행
 - 출처: `reviews/round-18-owner-answers.md:44`(정본, 반영 칸), `reviews/round-18-owner-answers.md:45`
 - 닫은 사람: 소유자 답(`reviews/round-18-owner-answers.md:44` 개발계획 P3·P4), 소유자 답(`reviews/round-18-owner-answers.md:45` 개발계획 1-가)
