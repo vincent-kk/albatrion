@@ -11,3 +11,7 @@
   - 【추론】 엔진이 presentation.formType만 읽기로 정해진 뒤 내장 정의가 최상위 키를 검사하는 것은 새 범위가 아니라 전환이 남긴 어긋남이고, 고치지 않으면 내장 checkbox·radio가 공개 문법으로 쓸 수 없다. 데모 코드의 옛 문법은 문서가 가르치는 것과 돌아가는 것이 달라지는 문제라 문서 PR의 범위다.
 - 근거: fixy07의 ② 범위 보고와 AST 집계; fairy07의 #361 보고와 감사(/private/tmp/claude-501/authoring-syntax-audit.md); 진단 보고(원장 관리자 debugger, 읽기 전용); 216C-04; CONTROLS-081; 230·232라운드 소유자 답.
 - 다음: fixy07 ⑥ 시작; fairy07 #361 두 커밋; 소유자의 22 결정.
+
+## 덧붙임 (2026-10-13, 07b-2 계획 검토에서 나온 잔여 셋 수용)
+
+fixy07의 verifier 계획 검토에서 같은 규칙에 드는 잔여 셋이 더 나와 편집자가 받아들였다: (가) ②-a에 플러그인 스토리의 맨 `FormTypeInputProps` 112곳(mui 26, antd5 30, antd6 30, antd-mobile 26, AST 집계) → `presentation.FormTypeInputProps`(엔진은 SchemaNodeInput.tsx:135에서 presentation 아래만 읽어 맨 FormTypeInput만 옮기면 alias·placeholder가 입력에 닿지 않음; 230라운드 "일관성"); (나) ②-a에 mui FormTypeInput.stories.tsx:135-141의 `options: { alias }` → `presentation.FormTypeInputProps.alias`(지금 UNKNOWN_GROUP_KEY로 스토리 실패); (다) ②-b에 플러그인 런타임 변경 — antd5·antd6 FormTypeInputString.tsx:41과 mui FormTypeInputString.tsx:74가 `jsonSchema.formType === 'password'`를 검사해 새 문법으로 password 입력을 고를 수 없음(⑥과 같은 결함, 233C-01 (3)과 같은 근거): `jsonSchema.presentation?.formType`으로 바꾸고 플러그인마다 고치기 전 실패하는 시험, 맨 formType 형 선언 여덟 곳(String·Uri·Textarea) 삭제. mui NullHandling의 맨 `marks`는 지우기만(라벨 있는 marks와 boolean showMarks는 같지 않음). codex 위임은 세 묶음(①+②-a, ②-b, ③④⑤⑥), 커밋은 따로.
