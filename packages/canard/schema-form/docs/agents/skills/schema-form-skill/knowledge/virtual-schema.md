@@ -13,7 +13,7 @@
     virtual: {
       period: {
         fields: ['startDate', 'endDate'],
-        FormTypeInput: DateRangeInput,  // optional
+        presentation: { FormTypeInput: DateRangeInput },  // optional
         controls: { /* … */ },          // optional
       },
     },

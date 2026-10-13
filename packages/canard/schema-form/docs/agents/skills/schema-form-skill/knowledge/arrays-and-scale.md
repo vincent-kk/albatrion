@@ -16,10 +16,10 @@ Obtain the node via `formRef.current?.findNode('/items') as ArrayNode`, or recei
 
 Where the filters apply — and where they never do:
 
-| Surface                                                                   | Value                             |
-| ------------------------------------------------------------------------- | --------------------------------- |
-| Parent propagation, root validation, `getValue()` / `submit` / `onChange` | filtered (`node.normalizedValue`) |
-| `node.value`, `node.children`, rendered inputs                            | raw — every item node stays       |
+| Surface                                                                   | Value                         |
+| ------------------------------------------------------------------------- | ----------------------------- |
+| Parent propagation, root validation, `getValue()` / `submit` / `onChange` | filtered (`node.outputValue`) |
+| `node.value`, `node.children`, rendered inputs                            | raw — every item node stays   |
 
 Rules of thumb:
 

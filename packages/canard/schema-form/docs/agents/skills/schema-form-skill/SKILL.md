@@ -1,6 +1,6 @@
 ---
 name: schema-form-skill
-description: 'Expert knowledge base for @canard/schema-form. Triggers on FormTypeInput, controls (controls.active/visible/readOnly/derived/watch/resetInteraction), conditional schemas (oneOf/anyOf/allOf/if-then-else), JSONPointer (.., ., *, @), FormHandle, ShowError, virtual schemas, plugins (AJV/Antd/MUI), validation, state, injectTo, arrays, array output filters (omitTrailing/omitEmpty/normalizedValue), virtualization, context, events, troubleshooting.'
+description: 'Expert knowledge base for @canard/schema-form. Triggers on FormTypeInput, controls (controls.active/visible/readOnly/derived/watch/resetInteraction), conditional schemas (oneOf/anyOf/allOf/if-then-else), JSONPointer (.., ., *, @), FormHandle, ShowError, virtual schemas, plugins (AJV/Antd/MUI), validation, state, injectTo, arrays, array output filters (omitTrailing/omitEmpty/outputValue), virtualization, context, events, troubleshooting.'
 ---
 
 # Schema Form Expert
@@ -18,7 +18,7 @@ Knowledge base for `@canard/schema-form`. Answer questions, show usage examples,
 | Topic keywords                                                                                                                                                                                                                | Knowledge file                       |
 | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------ |
 | `controls`, `watch`, `active`, `visible`, `readOnly`, `disabled`, `resetInteraction`, `derived`, `discriminator`, expression syntax, `oneOf`, `anyOf`, `allOf`, `if/then/else`, conditional fields, `context`, `@` references | `knowledge/expressions.md`           |
-| `ArrayNode`, `push`, `remove`, `clear`, `minItems`, `maxItems`, `prefixItems`, tuple, `terminal`, strategy, `omitTrailing`, `omitEmpty`, `normalizedValue`, performance, slow, large forms, `virtualization`                  | `knowledge/arrays-and-scale.md`      |
+| `ArrayNode`, `push`, `remove`, `clear`, `minItems`, `maxItems`, `prefixItems`, tuple, `terminal`, strategy, `omitTrailing`, `omitEmpty`, `outputValue`, performance, slow, large forms, `virtualization`                      | `knowledge/arrays-and-scale.md`      |
 | `validate`, `ValidationMode`, `errorMessages`, `formatError`, `ShowError`, `showError`, `NodeState`, `dirty`, `touched`, `globalState`, `onStateChange`, `clearState`, `useChildNodeErrors`                                   | `knowledge/validation-and-state.md`  |
 | `FormHandle`, `getValue`, `setValue`, `reset`, `submit`, `focus`, `getAttachedFilesMap`, `Form.Render`, `Form.Input`, `Form.Label`, custom layout                                                                             | `knowledge/imperative-and-layout.md` |
 | `FormTypeInput`, `formTypeInputDefinitions`, `formTypeInputMap`, `formType`, custom input, `ChildNodeComponents`                                                                                                              | `knowledge/formtype-input.md`        |
@@ -39,7 +39,7 @@ Knowledge base for `@canard/schema-form`. Answer questions, show usage examples,
 
 ### FormTypeInput Resolution Priority (highest → lowest)
 
-1. `FormTypeInput` set directly on a schema node
+1. `presentation.FormTypeInput` set directly on a schema node
 2. `formTypeInputMap` path mapping
 3. `Form`-level `formTypeInputDefinitions`
 4. `FormProvider`-level `formTypeInputDefinitions`

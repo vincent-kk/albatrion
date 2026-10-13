@@ -16,7 +16,7 @@ const definitions: FormTypeInputDefinition[] = [
 ];
 ```
 
-`FormTypeInputHint` carries `type`, `format`, `path`, `nullable`, `jsonSchema`, and `formType` — a **custom discriminator you place on the schema node** (`{ type: 'string', formType: 'markdown' }`) precisely to target it from `test`. Without knowing `formType` exists, schema-targeted custom inputs devolve into brittle path matching.
+`FormTypeInputHint` carries `type`, `format`, `path`, `nullable`, `jsonSchema`, and `formType` — a **custom discriminator you place under the schema node's `presentation`** (`{ type: 'string', presentation: { formType: 'markdown' } }`) precisely to target it from `test`. Without knowing `formType` exists, schema-targeted custom inputs devolve into brittle path matching.
 
 ## Path Matching (`formTypeInputMap`)
 

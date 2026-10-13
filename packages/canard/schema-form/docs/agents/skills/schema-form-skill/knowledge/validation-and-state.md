@@ -32,15 +32,17 @@ enum ShowError {
 
 ## Custom Error Messages
 
-`errorMessages` on a schema node maps validation keywords to messages; placeholders substitute from `error.details` plus `{value}`:
+`presentation.errorMessages` on a schema node maps validation keywords to messages; placeholders substitute from `error.details` plus `{value}`:
 
 ```typescript
 zipCode: {
   type: 'string',
   pattern: '^[0-9]{5}$',
-  errorMessages: {
-    pattern: 'must be a 5-digit zip code',
-    maxLength: 'up to {limit} characters',   // {limit} comes from error.details
+  presentation: {
+    errorMessages: {
+      pattern: 'must be a 5-digit zip code',
+      maxLength: 'up to {limit} characters',   // {limit} comes from error.details
+    },
   },
 }
 ```

@@ -265,7 +265,7 @@ nameNode?.setValue('Charlie');
 
 ### 우선순위 (높은 순)
 
-1. JSON Schema의 `FormTypeInput` 속성
+1. JSON Schema의 `presentation.FormTypeInput` 속성
 2. `formTypeInputMap` (경로 기반)
 3. Form의 `formTypeInputDefinitions`
 4. FormProvider의 `formTypeInputDefinitions`
@@ -275,7 +275,7 @@ nameNode?.setValue('Charlie');
 
 ```typescript
 // 1. 스키마에 직접 지정
-{ type: 'string', FormTypeInput: CustomInput }
+{ type: 'string', presentation: { FormTypeInput: CustomInput } }
 
 // 2. 경로 기반 매핑
 <Form formTypeInputMap={{ '/email': EmailInput }} />
@@ -440,18 +440,22 @@ unsubscribe();
 {
   type: 'string',
   minLength: 3,
-  errorMessages: {
-    minLength: '최소 {limit}자 이상이어야 합니다. 현재: {value}',
-    required: '필수 입력 항목입니다',
+  presentation: {
+    errorMessages: {
+      minLength: '최소 {limit}자 이상이어야 합니다. 현재: {value}',
+      required: '필수 입력 항목입니다',
+    },
   },
 }
 
 // 다국어 지원
 {
-  errorMessages: {
-    minLength: {
-      ko_KR: '최소 {limit}자 이상',
-      en_US: 'At least {limit} characters',
+  presentation: {
+    errorMessages: {
+      minLength: {
+        ko_KR: '최소 {limit}자 이상',
+        en_US: 'At least {limit} characters',
+      },
     },
   },
 }
