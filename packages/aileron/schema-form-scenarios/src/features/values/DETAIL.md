@@ -10,7 +10,7 @@
 `valuesFeatureScenarios`는 `index.ts`를 통해 이 부류의 순서 있는 장면 목록을 내보낸다.
 스토리와 e2e 실행기는 같은 장면을 등록된 검증기와 함께 실행한다(스토리는 ajv8 플러그인, e2e는 하네스 검증기).
 `errors` 기대값은 부분 계약이며 소비자는 개수와 `toMatchObject`로 대조한다.
-`valuesFindingScenarios`는 원장이 정하지 않은 사용성 간극을 소유자 질문으로 적은 장면이다. 기대값은 화면이 보여야 할 값이며 지금 기본 입력에서 실패하므로, 스토리는 시험 실행에서 빼고 e2e는 입력 요소를 직접 대조하는 `it.fails`로 고정한다.
+`valuesFindingScenarios`는 소유자 질문으로 시작해 소유자 결정(232라운드)으로 닫힌 사용성 간극의 장면이다. 기대값은 화면이 보여야 할 값이며, 스토리는 시험 실행에서 돌고 e2e는 입력 요소를 직접 대조하는 보통 사례로 고정한다.
 
 ## Acceptance Criteria
 
@@ -28,11 +28,11 @@
 | `default-layers.scenario.ts` | `values.default-layers` | `controls.default`가 `default`보다 앞서고, 로드된 `{}`가 호스트 default를 막지 않으며, 채움은 로드·reset·resetSubtree에서만 일어난다. | CONTROLS-025, SCHEMA-002, LANDING-144, WRITE-090, SETTLE-049 |
 | `recursive-tree.scenario.ts` | `values.recursive-tree` | 재귀 `$ref` 트리가 값의 깊이만큼 펼쳐지고, 깊은 곳에서도 경로·순차 배열 동사의 동일성·오류 귀속이 유지된다. | TEST-025, 62C-01, VALIDATE-043 |
 
-### values-open-questions — Usability gaps the ledger does not decide
+### values-owner-decisions — Usability gaps closed by owner decision (232 round)
 
-| Scene file | Scene name | Gap observed | Why the ledger does not decide it |
+| Scene file | Scene name | Behavior verified | Why the ledger did not decide it |
 | --- | --- | --- | --- |
-| `finding-restricted-input.scenario.ts` | `values.finding-restricted-input-out-of-domain` | 문자열 enum 선택 상자는 빈 선택지가 없어 집합 밖 값을 첫 선택지로 그리고, 날짜 입력은 형식에 맞지 않는 문자열을 빈 칸으로 그린다. | REACT-027은 형이 어긋난 값만 다루고(여기서 typeMismatch는 거짓), REACT-033은 기본 입력이 enum·format의 뜻을 약속하지 않는다고 적는다. |
+| `finding-restricted-input.scenario.ts` | `values.finding-restricted-input-out-of-domain` | 문자열 enum 선택 상자는 집합 밖 값을 맨 앞의 비활성 선택지로 그대로 보이고, 날짜 입력은 형식에 맞지 않는 문자열을 고칠 수 있는 text 입력으로 그대로 보인다. | REACT-027은 형이 어긋난 값만 다루고(여기서 typeMismatch는 거짓), REACT-033은 기본 입력이 enum·format의 뜻을 약속하지 않는다고 적는다. |
 
 ## Last Updated
 

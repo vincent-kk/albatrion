@@ -21,11 +21,18 @@ import { type FormHarness, renderForm } from '../renderForm';
  * @param inspect - Extra assertions on the settled screen, run after every step passed.
  * @returns Completion after every step expectation has been checked.
  */
-const run = async (scenarios: readonly FormScenario[], name: string, inspect?: (form: FormHarness) => void) => {
+const run = async (
+  scenarios: readonly FormScenario[],
+  name: string,
+  inspect?: (form: FormHarness) => void,
+) => {
   const scenario = scenarios.find((item) => item.name === name);
   expect(scenario, name).toBeDefined();
   if (!scenario) throw new Error(`Missing scenario: ${name}`);
-  const form = await renderForm(scenario.schema as JSONSchema, { defaultValue: scenario.initialValue, validator: true });
+  const form = await renderForm(scenario.schema as JSONSchema, {
+    defaultValue: scenario.initialValue,
+    validator: true,
+  });
   const base = findScenarioHandle(form.container).adapter;
   const unregister = registerScenarioHandle(form.container, form.handle, {
     execute: base.execute,
@@ -37,8 +44,12 @@ const run = async (scenarios: readonly FormScenario[], name: string, inspect?: (
       await form.validate();
       for (const [path, expected] of Object.entries(errors)) {
         const actual = form.node(path)?.errors;
-        expect(actual, `validation issue count at ${path}`).toHaveLength(expected.length);
-        expect(actual, `validation issue contract at ${path}`).toMatchObject(expected);
+        expect(actual, `validation issue count at ${path}`).toHaveLength(
+          expected.length,
+        );
+        expect(actual, `validation issue contract at ${path}`).toMatchObject(
+          expected,
+        );
       }
     },
   });
@@ -50,10 +61,6 @@ const run = async (scenarios: readonly FormScenario[], name: string, inspect?: (
     form.unmount();
   }
 };
-
-// it.fails passes on any throw, so a renamed or dropped open question must fail loudly here instead.
-if (!valuesFindingScenarios.some((item) => item.name === 'values.finding-restricted-input-out-of-domain'))
-  throw new Error('Missing finding scenario: values.finding-restricted-input-out-of-domain');
 
 describe('features — values shared screen runner (TEST-025)', () => {
   it('LANDING-196 built-in inputs for the five primitive kinds reach node values and output', async () => {
@@ -72,11 +79,20 @@ describe('features — values shared screen runner (TEST-025)', () => {
     await run(valuesFeatureScenarios, 'values.recursive-tree');
   });
 
-  // Open question, not a ledger defect: the jsdom adapter does not compare select or date text with node values.
-  it.fails('Open question: the enum select and the date input draw an out-of-domain value as a valid state', async () => {
-    await run(valuesFindingScenarios, 'values.finding-restricted-input-out-of-domain', (form) => {
-      expect(form.field('/size')?.value, 'select shows the node value').toBe(form.node('/size')?.value);
-      expect(form.field('/released')?.value, 'date input shows the node value').toBe(form.node('/released')?.value);
-    });
+  // The adapter checks node values; these assertions also verify the settled input display.
+  it('the enum select and date input display out-of-domain node values verbatim', async () => {
+    await run(
+      valuesFindingScenarios,
+      'values.finding-restricted-input-out-of-domain',
+      (form) => {
+        expect(form.field('/size')?.value, 'select shows the node value').toBe(
+          form.node('/size')?.value,
+        );
+        expect(
+          form.field('/released')?.value,
+          'date input shows the node value',
+        ).toBe(form.node('/released')?.value);
+      },
+    );
   });
 });

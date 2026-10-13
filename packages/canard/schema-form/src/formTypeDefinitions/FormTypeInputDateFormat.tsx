@@ -1,4 +1,4 @@
-import type { ChangeEvent } from 'react';
+import { type ChangeEvent, useState } from 'react';
 
 import { useHandle } from '@winglet/react-utils/hook';
 
@@ -7,6 +7,8 @@ import type {
   FormTypeInputPropsWithSchema,
   StringSchema,
 } from '@/schema-form/types';
+
+import { isRenderableDateInputValue } from './utils/isRenderableDateInputValue';
 
 type DateFormatJSONSchema = {
   format: 'month' | 'week' | 'date' | 'date-time' | 'time';
@@ -35,7 +37,11 @@ const FormTypeInputDateFormat = ({
   minimum,
   maximum,
 }: FormTypeInputDateFormatProps) => {
-  const type = jsonSchema.format;
+  const [type] = useState(() =>
+    isRenderableDateInputValue(jsonSchema.format, defaultValue)
+      ? jsonSchema.format
+      : 'text',
+  );
   const handleChange = useHandle((event: ChangeEvent<HTMLInputElement>) => {
     onChange(event.target.value);
   });

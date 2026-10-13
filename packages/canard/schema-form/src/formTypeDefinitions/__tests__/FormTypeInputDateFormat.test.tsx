@@ -1,12 +1,54 @@
-import { cleanup, render, screen } from '@testing-library/react';
+import { createRef } from 'react';
+
+import { cleanup, fireEvent, render, screen } from '@testing-library/react';
 import { afterEach, expect, it, vi } from 'vitest';
 
-import { Form } from '@/schema-form/components/Form';
+import { Form, type FormHandle } from '@/schema-form/components/Form';
 import type { FormErrorRecord } from '@/schema-form/errors';
 
 import { observeErrorSink } from '../../__tests__/helpers/observeErrorSink';
 
 afterEach(cleanup);
+
+it.each(['date', 'month', 'week', 'time', 'datetime-local'])(
+  'shows a malformed %s value as editable text',
+  (format) => {
+    const ref = createRef<FormHandle>();
+    const view = render(
+      <Form
+        ref={ref}
+        jsonSchema={{ type: 'string', format }}
+        defaultValue="not-a-date"
+      />,
+    );
+    const input = view.container.querySelector('input')!;
+    expect(input.type).toBe('text');
+    expect(input.value).toBe('not-a-date');
+    fireEvent.change(input, { target: { value: '2024-02-29' } });
+    expect(ref.current!.getValue()).toBe('2024-02-29');
+    expect(view.container.querySelector('input')).toBe(input);
+    expect(input.type).toBe('text');
+  },
+);
+
+it('keeps a valid date in the native date input', () => {
+  const view = render(
+    <Form
+      jsonSchema={{ type: 'string', format: 'date' }}
+      defaultValue="2024-02-29"
+    />,
+  );
+  const input = view.container.querySelector('input')!;
+  expect(input.type).toBe('date');
+  expect(input.value).toBe('2024-02-29');
+});
+
+it('keeps an empty date in the native date input', () => {
+  const view = render(<Form jsonSchema={{ type: 'string', format: 'date' }} />);
+  const input = view.container.querySelector('input')!;
+  expect(input.type).toBe('date');
+  expect(input.value).toBe('');
+});
 
 it('CONTROLS-081 reads minimum and maximum from presentation.FormTypeInputProps', () => {
   const view = render(

@@ -51,6 +51,12 @@ const FormTypeInputStringEnum = ({
     if (defaultValue === null) return '' + null;
     return defaultValue;
   }, [defaultValue]);
+  const outOfDomainValue =
+    defaultValue !== undefined &&
+    defaultValue !== null &&
+    !enumOptions.some((option) => option.value === '' + defaultValue)
+      ? '' + defaultValue
+      : undefined;
   const handleChange = useHandle((event: ChangeEvent<HTMLSelectElement>) => {
     const rawValue = enumOptions.find(
       (option) => option.value === event.target.value,
@@ -68,6 +74,11 @@ const FormTypeInputStringEnum = ({
       style={style}
       className={className}
     >
+      {outOfDomainValue !== undefined && (
+        <option disabled value={outOfDomainValue}>
+          {outOfDomainValue}
+        </option>
+      )}
       {map(enumOptions, ({ value, label }) => (
         <option key={value} value={value}>
           {label}
