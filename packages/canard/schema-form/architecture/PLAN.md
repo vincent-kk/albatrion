@@ -82,4 +82,4 @@
 
 | 날짜 | 무엇 | 어디 |
 | --- | --- | --- |
-| 2026-10-13 | 234라운드(소유자): 22 B안, 29 삭제, 23 정공법 뒤 any 허용, CLAUDE.md 두 줄 승인 → 07b-2 ⑦·⑧; formType 이름 재구성 의견 요청. 보충 4줄 | `reviews/round-234-owner-answers.md` |
+| 2026-10-13 | 235라운드(소유자): formType 계열 이름 재구성 동의 — 현재 이름 포함 이름 쌍 공모(crosscheck) 뒤 결정. 보충 1줄 | `reviews/round-235-owner-answers.md` |
