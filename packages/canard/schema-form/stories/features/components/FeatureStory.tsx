@@ -93,7 +93,7 @@ export function FeatureStory({ scenario, formProps, propStages, providerProps, l
         fieldInputMap: Object.keys(formProps?.fieldInputMap ?? {}),
         fieldInputDefinitions: (formProps?.fieldInputDefinitions ?? providerProps?.fieldInputDefinitions ?? []).map((definition) => typeof definition.test === 'function' ? definition.test.name || 'anonymous' : Object.keys(definition.test)),
       },
-      stage: { current: stage + 1, total: propStages?.length ?? 1, schema: (current?.jsonSchema ?? scenario.schema) as FormScenario['schema'] },
+      stage: { current: stage + 1, total: propStages?.length ?? 1, schema: current?.jsonSchema ?? scenario.schema },
     });
   }, [report, handle, scenario, current, stage, propStages, formProps, providerProps]);
   const form = <Form key={scenario.name} ref={setHandle} jsonSchema={scenario.schema as JSONSchema} defaultValue={scenario.initialValue}

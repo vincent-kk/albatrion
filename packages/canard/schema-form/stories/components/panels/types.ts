@@ -1,4 +1,4 @@
-import type { CompositeTailStep, FormScenario } from '@aileron/schema-form-scenarios';
+import type { CompositeTailStep } from '@aileron/schema-form-scenarios';
 
 import type { FormHandle } from '../../../src';
 
@@ -22,8 +22,8 @@ export interface StoryPanelsState {
   errors: ReturnType<FormHandle['getErrors']>;
   /** Effective consumer configuration, displayed without engine inspection. */
   settings: Readonly<Record<string, unknown>>;
-  /** Current prop stage and its authored schema. */
-  stage: { readonly current: number; readonly total: number; readonly schema: FormScenario['schema'] };
+  /** Current prop stage and its authored schema value, including untyped stage inputs. */
+  stage: { readonly current: number; readonly total: number; readonly schema: unknown };
 }
 
 /** React external-store contract scoped to one decorated story instance. */

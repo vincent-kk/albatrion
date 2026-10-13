@@ -1,7 +1,7 @@
 // Loaded by Storybook CSF; each named export documents the current public handle.
 import { useRef, useState } from 'react';
 
-import { inputComponentsFeatureScenarios, packageEntryRenderScenario, validationStateFeatureScenarios } from '@aileron/schema-form-scenarios';
+import { inputComponentsFeatureScenarios, packageEntryRenderScenario, submitOutcomes, validationStateFeatureScenarios } from '@aileron/schema-form-scenarios';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { expect, userEvent, within } from 'storybook/test';
 
@@ -175,12 +175,12 @@ export const Submit: Story = {
     await userEvent.click(canvas.getByRole('button', { name: 'Submit invalid value' }));
     const failed = await readHandleCall(canvasElement, 'submit');
     await expect(failed.kind).toBe('throw');
-    await expect(failed.result.code).toContain('SCHEMA_VALIDATION_FAILED');
+    await expect(failed.result.code).toBe(submitOutcomes.rejectionCode);
     await expect(within(canvas.getByRole('table', { name: 'Call log' })).queryByText('onSubmit', { exact: true })).toBeNull();
     await userEvent.click(canvas.getByRole('button', { name: 'Write valid value' }));
     await readHandleCall(canvasElement, 'setValue');
     await userEvent.click(canvas.getByRole('button', { name: 'Submit valid value' }));
-    await expect((await readHandleCall(canvasElement, 'onSubmit')).result).toEqual({ email: 'abc' });
+    await expect((await readHandleCall(canvasElement, 'onSubmit')).result).toEqual({ email: submitOutcomes.validEmail });
     await expect((await readHandleCall(canvasElement, 'submit', 1)).kind).toBe('async');
   },
 };

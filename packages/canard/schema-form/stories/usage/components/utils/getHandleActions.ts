@@ -1,3 +1,5 @@
+import { submitOutcomes } from '@aileron/schema-form-scenarios';
+
 import { FieldNodeState, SetValueOption } from '../../../../src';
 
 import type { HandleAction, HandleExampleName } from '../types';
@@ -101,7 +103,7 @@ export function getHandleActions(example: HandleExampleName): readonly HandleAct
     ];
     case 'Submit': return [
       { label: 'Submit invalid value', method: 'submit', args: [], run: (handle) => handle.submit() },
-      { label: 'Write valid value', method: 'setValue', args: [{ email: 'abc' }], run: (handle) => { handle.setValue({ email: 'abc' }); return handle.getValue(); } },
+      { label: 'Write valid value', method: 'setValue', args: [{ email: submitOutcomes.validEmail }], run: (handle) => { handle.setValue({ email: submitOutcomes.validEmail }); return handle.getValue(); } },
       { label: 'Submit valid value', method: 'submit', args: [], run: (handle) => handle.submit() },
     ];
     case 'AttachedFiles': return [{ label: 'Read attached files', method: 'getAttachedFilesMap', args: [], run: (handle) => {
