@@ -2737,6 +2737,7 @@
   > 편집자 결정(240C-01): "【추론】 표 밖 이름은 표의 규칙을 기계적으로 넓힌 것이고, 유일하게 규칙으로 정할 수 없는 내장 배열은 "내장"을 접두어로 붙여 공개 이름과 겹치지 않게 한다. CLAUDE.md는 규칙상 소유자 승인이 먼저다." (`reviews/round-240-closing.md:9`)
   > 소유자(241라운드, Label·Error 전달): "열린 질문은 바로 적용하지 말고 좀 더 고려해 보자.\n이게 Label Error 같은게 Input이랑 좀 다르게 목적에 따라 다른 값이 들어가야돼. 예컨대 Label은 name 일 수도, 아니면 다국어 변환이나 툴팁 등이 있을 수 있으니까. error도 그렇고. 그러니까 기존 설정을 그대로 쓸게 아니라 Label, Error 매개변수 등을 재설계해야 할 수도 있어. 이건 어떻게 생각해? 지금은 어떤 패턴으로 전달받니?" (`reviews/round-241-owner-answers.md:7`)
   > 소유자(241라운드, 설계 초안 시점): "끝난 다음에 하자." (`reviews/round-241-owner-answers.md:13`)
+  > 소유자(243라운드, 대기열 31): "아 저건 괜찮아. 스키마가 열린 타입이라 그래. 저정도면 무방하다" (`reviews/round-243-owner-answers.md:7`)
 - 상태: 현행
 - 출처: `reviews/round-18-closing.md:2647`(정본)
 - 닫은 사람: 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-93)
@@ -3165,6 +3166,7 @@
   > 소유자(230라운드, 대기열 22 onValidate 두 번): "그대로 둬. 아마 그거 프로덕션 리엑트에서는 1번만 나가지않아? 그랬던거같은데" (`reviews/round-230-owner-answers.md:11`)
   > 소유자(232라운드, 대기열 22 onValidate 두 번): "그럼 한번으로 줄이는게 낫지 않을까? 두번 호출되는게 구조적으로 필수적인지 검토해봐" (`reviews/round-232-owner-answers.md:9`)
   > 소유자(234라운드, 대기열 22 onValidate 두 번): "b안 적용" (`reviews/round-234-owner-answers.md:7`)
+  > 소유자(243라운드, 대기열 32): "대기열32는 무슨 소리야? 리셋 하면 이전 에러가 남으면 안 되지 않을까..?? 무슨 오류상황이지" (`reviews/round-243-owner-answers.md:8`)
 - 상태: 현행
 - 출처: `reviews/round-80-closing.md:17`(정본)
 - 닫은 사람: 편집자 결정(80라운드, `reviews/round-80-closing.md` 80C-02)
