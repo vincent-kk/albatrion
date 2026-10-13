@@ -25,10 +25,11 @@ import { useFormErrorContext } from '../FormErrorContext';
 import { useWorkspaceContext } from '../WorkspaceContext';
 import { RootBindingContext } from './RootBindingContext';
 import { RootNodeContext } from './RootNodeContext';
-import type { RootBinding, RootLoadProps } from './type';
+import type { RootBinding, RootLoadProps, RootLoadStore } from './type';
 import { applyFormErrors } from './utils/applyFormErrors';
 import { createRootLoad } from './utils/createRootLoad';
 import { flushRootLoad } from './utils/flushRootLoad';
+import { reportRootLoadValidation } from './utils/reportRootLoadValidation';
 import { resetRootLoad } from './utils/resetRootLoad';
 import { subscribeRootLoad } from './utils/subscribeRootLoad';
 
@@ -63,7 +64,7 @@ export const RootNodeContextProvider = ({
   // Construction belongs to the speculative render; only committed loads are prepared.
   // eslint-disable-next-line react-hooks/exhaustive-deps -- Schema/default props are consumed again only by reset.
   const initial = useMemo(() => createRootLoad(current, reporter), []);
-  const store = useRef({
+  const store = useRef<RootLoadStore>({
     load: initial,
     listeners: new Set<() => void>(),
     unsubscribe: () => {},
@@ -92,13 +93,19 @@ export const RootNodeContextProvider = ({
     const used = committed.current;
     store.load = resetRootLoad(store.load, used, option);
     store.unsubscribe();
-    store.unsubscribe = subscribeRootLoad(store.load);
+    store.unsubscribe = subscribeRootLoad(store.load, store);
     binding.current.root = store.load.root;
     attachedFilesMap.clear();
     onReset();
     pending.current = { props: used, option };
     schedule((version) => version + 1);
     for (const listener of store.listeners) listener();
+    if (
+      store.load.root &&
+      !store.load.root.globalErrors.length &&
+      store.lastReportedErrors?.length
+    )
+      reportRootLoadValidation(store.load, store);
     if (store.load.error) throw store.load.error;
   });
 
@@ -131,7 +138,7 @@ export const RootNodeContextProvider = ({
   });
 
   useLayoutEffect(() => {
-    store.unsubscribe = subscribeRootLoad(load);
+    store.unsubscribe = subscribeRootLoad(load, store);
     load.ready = true;
     const root = load.root;
     const validator = load.props.validator;
