@@ -2,9 +2,8 @@
 
 개발의 진행 상황과 다음 할 일은 `PLAN.md`가 단일 진입점으로 든다. 다음 세션이 바로 이어서 일하기 위한 문서다. 이력은 `git log`와 `reviews/`에 있으므로 여기에는 지금 상태, 다음 할 일, 일하는 법만 적는다. 소유자는 Vincent다.
 
-## 1. 지금 어디인가 (2026-10-13, 267라운드 닫힘; 07 전환 진행 중)
+## 1. 지금 어디인가 (2026-10-13, 268라운드 닫힘; 07 전환 진행 중)
 
-- **234라운드(2026-10-13, 소유자).** 대기열 22는 B안(합산이 바뀐 때만 발행), 29는 최상위 선언 다섯 삭제, 23은 반공변의 정공법을 먼저 찾고 안 되면 any, CLAUDE.md 76·138행은 승인 — 모두 07b-2에 배정(⑦·⑧, ②-a 재개); 소유자가 formType 계열 이름의 재구성에 대한 의견을 물었다(reviews/round-234-owner-answers.md).
 - **235라운드(2026-10-13, 소유자).** formType·FormTypeInput·FormTypeRenderer 계열 이름의 재구성에 동의하되, 현재 이름을 후보에 넣고 이름 쌍을 공모해 가장 적절한 이름을 구성하기로 했다(crosscheck 사용). 결정 뒤 07b-2 ②-a·②-b를 새 이름으로 진행한다(reviews/round-235-owner-answers.md).
 - **236라운드(2026-10-13, 닫기).** 이름 공모(crosscheck 셋, 수렴 한 라운드): 힌트 `widget`과 렌더러 `FieldRenderer*`·`Field{Group,Label,Input,Error}Renderer`는 합의, 입력 컴포넌트는 `Widget*`(codex·claude) 대 `FieldInput*`(antigravity)로 갈렸고 원장 관리자는 `Widget*`를 권고했다; 소유자 결정 뒤 07b-2 ②-a·②-b를 새 이름으로(reviews/round-236-closing.md).
 - **237라운드(2026-10-13, 소유자).** 공모 결과에 대해 소유자는 `Widget*`가 아니라 Field 시리즈(`FieldInput*`·`FieldRenderer*`)를 택했고, 옛 `formType` 힌트의 새 이름(`inputType`의 겹침 여부)은 고민 중이다(reviews/round-237-owner-answers.md).
@@ -37,7 +36,8 @@
 - **264라운드(2026-10-14, 소유자).** 고유명사 후보 15 중 1·3·4·5·6·7·8·9·10·11·15를 권고대로 승인했고, 2(ChildField 이름 길이)·12(controls.children 대체 이름)·13(propertyKeys 공개 자리·이름)·14(virtual을 object 전용 키로)는 추가 논의, 비표준 최상위 키의 잔여 점검을 요구했다(reviews/round-264-owner-answers.md).
 - **265라운드(2026-10-14, 소유자).** 추가 논의 넷을 닫았다: ChildFields, controls.fields, options.propertyOrder(object 전용), options.virtual 형 선언과 VirtualSchema 비공개화, nullable: true 제거(265C-01 후속 대응표, reviews/round-265-owner-answers.md). 07b-5 후속 커밋으로 fixy07에게.
 - **266라운드(2026-10-14, 소유자).** 스토리북 관찰 셋을 기록해 대기열 40·41·42로 올렸다: docs 페이지의 jsonSchema 순환참조 직렬화 오류, nullable 분기 스토리의 화면·값 불일치(설계 판단 필요), 스토리 가독성(설명·값·오류·스키마·설정 수록)(reviews/round-266-owner-answers.md).
-- **267라운드(2026-10-14, 소유자).** 중지 없이 끝까지 진행하라는 지시: PR 병합 포함, C 재배치와 스토리·런타임 묶음까지, 결정은 대기열에 모아 끝에 한 번에(267C-01 계획, reviews/round-267-owner-answers.md). 다음 라운드 번호는 268.
+- **267라운드(2026-10-14, 소유자).** 중지 없이 끝까지 진행하라는 지시: PR 병합 포함, C 재배치와 스토리·런타임 묶음까지, 결정은 대기열에 모아 끝에 한 번에(267C-01 계획, reviews/round-267-owner-answers.md).
+- **268라운드(2026-10-14, 소유자).** codex·agy 멀티에이전트 작업 재개: 257라운드의 "이번에 한해 claude 직접" 예외를 끝내고 217C-01 규칙으로 복귀(268C-01, reviews/round-268-owner-answers.md); 07b-5 후속은 fixy07이 마무리, 07b-6·07b-7·07c부터 codex 구현. 다음 라운드 번호는 269.
 - **그 앞의 라운드 요지(19라운드부터)는 PLAN-LOG.md 2절에 있다.** 라운드마다 한 문단이며, 1절의 기록 표와 같은 순서다.
 - **설계의 정본은 단일 원장 `ledger/`다.** 영역 17개, 항목 1,350개(80라운드 뒤, 24라운드 뒤 1,348; 현행 1,076(부정 결정·기록 포함), 대체됨 199, 분할됨 49, 중복 24, 열림 0). 형식과 규칙은 `ledger/README.md`.
 - **옛 설계 문서(`00`–`09`, `adr/`, `open-questions.md`)는 동결됐다.** 더 고치지 않는다. 어긋남은 원장의 충돌 칸에 적는다. 원장이 인용하는 옛 문서의 `path:line`은 모두 커밋 `ba398c330` 기준 줄 번호다(그 뒤 옛 문서는 바뀌지 않았다).
@@ -405,6 +405,7 @@ node ledger/checks/doc-coverage.mjs design/*.md adr/*.md -- ledger/*.md   # 설�
 | `reviews/round-265-owner-answers.md` | 265라운드 소유자 답: 후속 대응표 265C-01 |
 | `reviews/round-266-owner-answers.md` | 266라운드 소유자 관찰: 스토리북 문제 셋 |
 | `reviews/round-267-owner-answers.md` | 267라운드 소유자 지시: 중지 없이 진행, 계획 267C-01 |
+| `reviews/round-268-owner-answers.md` | 268라운드 소유자 지시: codex·agy 멀티에이전트 작업 재개(217C-01 복귀) |
 | reviews 아래 improvement-38-explain.html | 개선-38 소유자용 설명(seiri:explain) |
 | reviews 아래 improvement-38-fractal-map.md | 개선-38 고찰 문서(reviewer, verifier 대조판) |
 | reviews 아래 raw-improvement-38 디렉터리 | 개선-38 근거: 소비자 증거 표, filid 요약 |
