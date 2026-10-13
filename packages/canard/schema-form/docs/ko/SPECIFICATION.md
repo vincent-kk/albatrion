@@ -304,6 +304,27 @@ type AttachedFilesMap = Map<string, File[]>;
 | ------------- | --------------------------------------------------------- |
 | `VirtualNode` | `options.virtual`에 선언한 형제 필드를 묶는 비스키마 노드 |
 
+### Branch와 Terminal (`options.terminal`)
+
+`object`와 `array` 노드는 기본적으로 branch입니다. 속성이나 항목마다 자식 노드를 만듭니다. `options.terminal: true`를 주면 terminal이 됩니다. 입력 하나가 값 전체를 읽고 쓰며, 자식 노드는 만들지 않습니다. 전략은 스키마에서 한 번, 다음 순서로 정해집니다.
+
+1. `options.terminal`이 `true`든 `false`든 있으면 아래 항목보다 우선합니다.
+2. 스키마에 `presentation.FieldInput` 컴포넌트가 있으면 terminal입니다.
+3. 그 밖에는 branch입니다.
+
+```typescript
+{
+  type: 'object',
+  properties: { lat: { type: 'number' }, lng: { type: 'number' } },
+  options: { terminal: true }, // 지도 선택기 하나가 { lat, lng }를 씁니다
+}
+```
+
+- 다른 종류는 전략이 고정되어 있습니다. `string`, `number`, `integer`, `boolean`, `null`과 여러 종류를 담은 `type`은 terminal이고, `virtual`은 branch입니다. 고정된 전략과 어긋나는 `options.terminal`은 `TERMINAL_OPTION_UNSUPPORTED`를 던지고, 같은 값을 다시 적은 것은 받아들입니다.
+- 게이트 없는 선언은 `controls.active`를 지니지 않은 노드 자신의 스키마, 그 `$ref` 대상, 그 `allOf` 조각입니다. 이들 사이에서는 나중의 `options.terminal`이 이기며, `$ref` 대상은 그것을 가리키는 스키마보다 나중으로 칩니다.
+- 전략은 실행 중에 바뀔 수 없습니다. 게이트가 걸린 선언(`then` / `else`, `controls.active`를 지닌 조각, 부모의 `controls.children` 항목 중 `active`를 지닌 것이 가리키는 자식, `controls.active`나 호스트의 `controls.discriminator`로 고르는 `oneOf` / `anyOf` 분기) 때문에 노드가 어떤 경우에는 branch, 다른 경우에는 terminal이 된다면 스키마가 `TERMINAL_STRATEGY_MISMATCH`를 던집니다.
+- 그런 게이트가 없는 `oneOf` / `anyOf` 분기는 호스트의 전략을 정하지 않으며, 그 분기의 `options.terminal`은 무시됩니다.
+
 ### 노드 초기화
 
 ```typescript
@@ -595,7 +616,7 @@ const jsonSchema = {
 
 분기 자신의 `nullable: true` 플래그는 부모와 비교하지 않으므로 `'object'` + `nullable: true`는 어떤 객체 아래에서도 허용됩니다. 그 밖의 선언 — nullable이 아닌 객체 아래의 `'null'`·`['object', 'null']` 분기, `'string'`, `'array'` — 은 `COMPOSITION_TYPE_REDEFINITION`을 던집니다.
 
-이 규칙과 아래 두 개발 환경 경고는 객체가 자식 노드를 만드는 경우에만 실행됩니다. 객체 전체를 하나의 입력으로 다루는 경우 — `terminal: true`이거나 객체 스키마에 `presentation.FieldInput` 컴포넌트를 지정한 경우 — 에는 분기를 만들지 않으므로 분기 type을 검사하지 않고 두 경고도 나오지 않습니다. 검증기는 그때도 작성된 스키마를 그대로 봅니다.
+이 규칙과 아래 두 개발 환경 경고는 객체가 자식 노드를 만드는 경우에만 실행됩니다. 객체 전체를 하나의 입력으로 다루는 경우 — `options.terminal: true`이거나 객체 스키마에 `presentation.FieldInput` 컴포넌트를 지정한 경우 — 에는 분기를 만들지 않으므로 분기 type을 검사하지 않고 두 경고도 나오지 않습니다. 검증기는 그때도 작성된 스키마를 그대로 봅니다.
 
 분기의 `properties` 안에서 `type`이 **있는** 항목은 필드이고, `type` 없이 `const`나 `enum`만 가진 항목은 호스트의 `controls.discriminator`가 읽어 그 분기를 고르는 태그입니다. 이런 판별자에 `type`을 붙이면 필드가 되어 부모의 같은 이름 프로퍼티와 충돌합니다(`COMPOSITION_PROPERTY_REDEFINITION`).
 
