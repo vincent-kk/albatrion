@@ -82,4 +82,4 @@
 
 | 날짜 | 무엇 | 어디 |
 | --- | --- | --- |
-| 2026-10-13 | 237라운드(소유자): 입력 컴포넌트는 FieldInput*(Field 시리즈), 힌트 이름은 미정. 보충 1줄 | `reviews/round-237-owner-answers.md` |
+| 2026-10-13 | 238라운드(소유자): 힌트 inputType 잠정 결정; 필드 전체 렌더러는 FieldRenderer. 보충 1줄 | `reviews/round-238-owner-answers.md` |

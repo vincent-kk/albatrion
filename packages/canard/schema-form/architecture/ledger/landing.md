@@ -2730,6 +2730,7 @@
   > 소유자(235라운드, 이름 재구성): "이름 재구성에 동의함. 단, 지금 이름을 후보로 넣고, 이름 쌍을 공모한다. 그리고 이들 중 가장 적절한 이름을 구성해보자. 이 동작에 /cennad:crosscheck 사용을 요구한다" (`reviews/round-235-owner-answers.md:7`)
   > 편집자 결정(236C-01): "【추론】 셋 가운데 둘이 수렴 뒤에도 이유를 들어 `Widget*`에 섰고, 남은 반대의 해결책은 이름을 하나 더 들여오는 것이라 비용이 크다. 공개 API 안의 혼동은 1.0.0 뒤 가장 오래 남는 비용이다." (`reviews/round-236-closing.md:13`)
   > 소유자(237라운드, 역할 2 이름): "widget 은 아닌거같아. fieldInput 이 더 마음에 드는구나 \n\nField~ 시리즈로 가는 게 더 난 와닿는데.\n문제는  구 formType 키워드로군... inputType 이 겹치는건 예상 못했는데... 겹치면 안될건 없지만 혼란스러우려나.... widget으로 모일건 예상 못했는데 말이야" (`reviews/round-237-owner-answers.md:7`)
+  > 소유자(238라운드, 힌트 이름과 렌더러): "FieldInputRenderer가 아니라 FieldRenderer 아니야? input만 랜더링하는게 아닐거라서.... \ninputType으로 잠정 결정하자." (`reviews/round-238-owner-answers.md:7`)
 - 상태: 현행
 - 출처: `reviews/round-18-closing.md:2647`(정본)
 - 닫은 사람: 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-93)
