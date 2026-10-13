@@ -20,9 +20,7 @@ import type {
 
 import type { MuiContext } from '../type';
 
-type UriJSONSchema = StringSchema<{
-  protocols?: string[];
-}> & { format?: 'uri'; formType?: 'uri' };
+type UriJSONSchema = StringSchema & { format?: 'uri'; formType?: 'uri' };
 
 interface FormTypeInputUriProps
   extends FormTypeInputPropsWithSchema<
@@ -32,6 +30,7 @@ interface FormTypeInputUriProps
     >,
     MuiContext {
   label?: ReactNode;
+  /** Selectable protocols, from `presentation.FormTypeInputProps.protocols`. */
   protocols?: string[];
   hideLabel?: boolean;
 }
@@ -83,7 +82,6 @@ const parseUri = (uri: string) => {
 const FormTypeInputUri = ({
   path,
   name,
-  jsonSchema,
   required,
   readOnly,
   disabled,
@@ -124,10 +122,9 @@ const FormTypeInputUri = ({
 
   // 프로토콜 배열 정규화 및 준비
   const normalizedProtocols = useMemo(() => {
-    const rawProtocols =
-      protocolsProp || jsonSchema.options?.protocols || DEFAULT_PROTOCOLS;
+    const rawProtocols = protocolsProp || DEFAULT_PROTOCOLS;
     return rawProtocols.map(normalizeProtocol);
-  }, [protocolsProp, jsonSchema]);
+  }, [protocolsProp]);
 
   // TextField 참조를 위한 ref
   const textFieldRef = useRef<HTMLInputElement>(null);

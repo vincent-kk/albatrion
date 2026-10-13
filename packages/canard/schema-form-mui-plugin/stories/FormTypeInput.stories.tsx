@@ -96,11 +96,14 @@ export const Uri = Template.bind({});
 Uri.args = {
   jsonSchema: {
     type: 'string',
-    FormTypeInput: FormTypeInputUriDefinition.Component,
-    options: {
-      protocols: ['http://', 'https://', 'ftp://', 'mailto:'],
+    format: 'uri',
+    presentation: {
+      FormTypeInputProps: {
+        protocols: ['http://', 'https://', 'ftp://', 'mailto:'],
+      },
     },
   },
+  formTypeInputDefinitions: [FormTypeInputUriDefinition],
 };
 
 export const StringCheckbox = Template.bind({});

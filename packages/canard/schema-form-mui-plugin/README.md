@@ -66,7 +66,7 @@ This plugin provides the following Material-UI components:
 
 - **Role**: Special input field for URI entry (with protocol dropdown)
 - **Applied when**: `type` is `"string"` and `format` or `formType` is `"uri"`
-- **Additional features**: Protocol selection dropdown, default protocol list support (http, https), configurable custom protocol list, support for single-colon protocols like mailto/tel
+- **Additional features**: Protocol selection dropdown, default protocol list support (http, https), custom protocol list via `presentation.FormTypeInputProps.protocols`, support for single-colon protocols like mailto/tel
 
 ### **[`FormTypeInputMonth.tsx`](./src/formTypeInputs/FormTypeInputMonth.tsx)**
 
@@ -135,6 +135,25 @@ This plugin provides the following Material-UI components:
 - **Additional features**: Support for `indeterminate` state for `undefined` values, uses FormControlLabel
 
 ---
+
+## Input Settings
+
+Per-input settings such as `protocols` above go in `presentation.FormTypeInputProps`; the form spreads that object into the input's props.
+
+```ts
+const jsonSchema = {
+  type: 'object',
+  properties: {
+    homepage: {
+      type: 'string',
+      format: 'uri',
+      presentation: { FormTypeInputProps: { protocols: ['https'] } },
+    },
+  },
+};
+```
+
+Up to 0.16.0 the Uri input fell back to `options.protocols` when the `protocols` prop was absent. From 1.0.0-beta `options` is a closed list, so this key belongs in `presentation.FormTypeInputProps`; under `options` it fails the schema with the blueprint error `UNKNOWN_GROUP_KEY`.
 
 ## Component Priority
 
