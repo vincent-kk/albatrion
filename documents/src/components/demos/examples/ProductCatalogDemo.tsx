@@ -22,7 +22,7 @@ const schema = {
       title: 'Product Details',
       oneOf: [
         {
-          computed: { if: "../productType === 'physical'" },
+          controls: { active: "../productType === 'physical'" },
           properties: {
             name: {
               type: 'string',
@@ -74,7 +74,7 @@ const schema = {
               },
               oneOf: [
                 {
-                  computed: { if: "./method === 'standard'" },
+                  controls: { active: "./method === 'standard'" },
                   properties: {
                     cost: {
                       type: 'number',
@@ -92,7 +92,7 @@ const schema = {
                   },
                 },
                 {
-                  computed: { if: "./method === 'express'" },
+                  controls: { active: "./method === 'express'" },
                   properties: {
                     cost: {
                       type: 'number',
@@ -115,7 +115,7 @@ const schema = {
           required: ['name', 'weight'],
         },
         {
-          computed: { if: "../productType === 'digital'" },
+          controls: { active: "../productType === 'digital'" },
           properties: {
             name: {
               type: 'string',
@@ -146,7 +146,7 @@ const schema = {
           required: ['name', 'fileSize', 'format'],
         },
         {
-          computed: { if: "../productType === 'service'" },
+          controls: { active: "../productType === 'service'" },
           properties: {
             name: {
               type: 'string',

@@ -54,7 +54,7 @@ const schema = {
               enum: ['male', 'female', 'other'],
               default: 'female',
               description: 'Active only when age >= 18',
-              computed: { active: '../age >= 18' },
+              controls: { active: '../age >= 18' },
             },
             preferences: {
               type: 'object',

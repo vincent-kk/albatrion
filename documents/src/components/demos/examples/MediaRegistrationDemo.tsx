@@ -28,7 +28,7 @@ const schema = {
       title: 'Details',
       oneOf: [
         {
-          '&if': "../type === 'game'",
+          controls: { active: "../type === 'game'" },
           properties: {
             stages: {
               type: 'array',
@@ -88,7 +88,7 @@ const schema = {
           },
         },
         {
-          '&if': "../type === 'movie'",
+          controls: { active: "../type === 'movie'" },
           properties: {
             genres: {
               type: 'array',
@@ -131,7 +131,7 @@ const schema = {
   },
   oneOf: [
     {
-      '&if': "./type === 'game'",
+      controls: { active: "./type === 'game'" },
       properties: {
         owner: {
           type: 'string',
@@ -142,7 +142,7 @@ const schema = {
       },
     },
     {
-      '&if': "./type === 'movie'",
+      controls: { active: "./type === 'movie'" },
       properties: {
         owner: {
           type: 'string',

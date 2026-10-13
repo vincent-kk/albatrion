@@ -33,20 +33,20 @@ const schema = {
       type: 'string',
       title: 'Talk Topic',
       placeholder: 'e.g. Building Scalable Forms',
-      computed: { visible: "../participantType === 'speaker'" },
+      controls: { visible: "../participantType === 'speaker'" },
     },
     bio: {
       type: 'string',
       title: 'Speaker Bio',
       format: 'textarea',
       placeholder: 'Brief introduction about the speaker...',
-      computed: { visible: "../participantType === 'speaker'" },
+      controls: { visible: "../participantType === 'speaker'" },
     },
     companyName: {
       type: 'string',
       title: 'Company Name',
       placeholder: 'e.g. Acme Corp',
-      computed: { visible: "../participantType === 'sponsor'" },
+      controls: { visible: "../participantType === 'sponsor'" },
     },
     sponsorTier: {
       type: 'string',
@@ -54,7 +54,7 @@ const schema = {
       formType: 'radio',
       enum: ['gold', 'silver', 'bronze'],
       default: 'silver',
-      computed: { visible: "../participantType === 'sponsor'" },
+      controls: { visible: "../participantType === 'sponsor'" },
     },
     ticketCount: {
       type: 'integer',
@@ -73,7 +73,7 @@ const schema = {
       type: 'number',
       title: 'Total Amount ($)',
       description: 'Auto-calculated: Tickets × Price',
-      computed: {
+      controls: {
         derived: '../ticketCount * ../ticketPrice',
       },
     },
@@ -105,7 +105,7 @@ const schema = {
       title: 'Company Website',
       format: 'uri',
       placeholder: 'https://example.com',
-      computed: { visible: "../participantType === 'sponsor'" },
+      controls: { visible: "../participantType === 'sponsor'" },
     },
   },
   required: ['name', 'email', 'participantType'],

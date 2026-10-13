@@ -21,7 +21,7 @@ const schema = {
       type: 'string',
       title: 'Employee Name',
       placeholder: 'e.g. Jane Smith',
-      computed: {
+      controls: {
         watch: '../employmentType',
         active: '../employmentType !== null',
         visible: '../employmentType !== null',
@@ -107,7 +107,7 @@ const schema = {
           maximum: 168,
           default: 45,
           description: 'Hours per week (visible for hourly contracts)',
-          computed: {
+          controls: {
             active: '../contractType === "hourly_rate"',
           },
         },
