@@ -17,7 +17,7 @@ const schema = {
   },
   oneOf: [
     {
-      "&if": "./mode === 'A'",
+      controls: { active: "./mode === 'A'" },
       properties: {
         branch: {
           type: "object",
@@ -27,7 +27,7 @@ const schema = {
             A_value2: { type: "number" },
             A_value3: { type: "boolean" },
           },
-          terminal: false,
+          options: { terminal: false },
           presentation: {
             FieldInput: ({ value, ChildNodeComponents, onChange }) => {
               return (
@@ -94,7 +94,7 @@ const schema = {
       },
     },
     {
-      "&if": "./mode === 'B'",
+      controls: { active: "./mode === 'B'" },
       properties: {
         branch: {
           type: "object",
@@ -104,7 +104,7 @@ const schema = {
             B_value2: { type: "number" },
             B_value3: { type: "boolean" },
           },
-          terminal: false,
+          options: { terminal: false },
           additionalProperties: false,
           presentation: {
             FieldInput: ({ value, ChildNodeComponents, onChange }) => {
