@@ -1,6 +1,6 @@
-import { SchemaNodeEventType } from '../../../record';
-import type { SchemaNodeRecord } from '../../../record';
-import { assertSchemaNodeWritable } from '../../../settle';
+import { FieldNodeEventType } from '../../../record';
+import type { FieldNodeRecord } from '../../../record';
+import { assertFieldNodeWritable } from '../../../settle';
 import type { ValidationIssue } from '../../../validation';
 import { flushQueuedEvents } from '../chain/flushQueuedEvents';
 import { queueNonSettleEvent } from '../chain/queueNonSettleEvent';
@@ -15,11 +15,11 @@ import { publishRootExternalErrors } from './utils/publishRootExternalErrors';
  * @param errors - Ordered issues retained by reference in the tree runtime
  * @returns Nothing; delivery is synchronous outside a public write
  */
-export const dispatchSetExternalErrors = <Self extends SchemaNodeRecord<Self>>(
+export const dispatchSetExternalErrors = <Self extends FieldNodeRecord<Self>>(
   node: Self,
   errors: readonly ValidationIssue[],
 ): void => {
-  assertSchemaNodeWritable(node);
+  assertFieldNodeWritable(node);
   if (node.detached) return;
   const runtime = node.rootNode.runtime;
   assertNotInDelivery(runtime);
@@ -28,6 +28,6 @@ export const dispatchSetExternalErrors = <Self extends SchemaNodeRecord<Self>>(
   (runtime.nodeErrors ??= new Map()).set(node, errors);
   if (node === node.rootNode) publishRootExternalErrors(node);
   else propagateExternalErrorsToRoot(node);
-  queueNonSettleEvent(node, SchemaNodeEventType.UpdateError, errors);
+  queueNonSettleEvent(node, FieldNodeEventType.UpdateError, errors);
   if (!runtime.entryDepth) flushQueuedEvents(node.rootNode);
 };

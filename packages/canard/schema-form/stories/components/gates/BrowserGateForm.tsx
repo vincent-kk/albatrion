@@ -8,13 +8,13 @@ import type { BrowserGateElement, BrowserGateObservations } from './types';
 /** Instrument actual input commits; render counts do not identify remounts. */
 function TrackedInput(props: FieldInputProps) {
   const observations = props.context as unknown as BrowserGateObservations;
-  const { path, ChildNodeComponents, jsonSchema } = props;
+  const { path, ChildFields, jsonSchema } = props;
   useLayoutEffect(() => {
     observations.mounts[path] = (observations.mounts[path] ?? 0) + 1;
   }, [observations, path]);
   observations.inputs[path] = props;
   if (jsonSchema.format === 'children') return <div data-container={path}>
-    {ChildNodeComponents.map((Child) => <Child key={Child.key} />)}
+    {ChildFields.map((Child) => <Child key={Child.key} />)}
   </div>;
   return <input id={path} defaultValue={typeof props.value === 'string' ? props.value : JSON.stringify(props.value ?? '')}
     onChange={(event) => props.onChange(event.currentTarget.value)} />;
@@ -31,11 +31,11 @@ function MeasuredChildren(props: FieldInputProps) {
     for (let index = 0; index < reads; index++) checksum += plain.length;
     const plainMs = performance.now() - plainStart;
     const detectedStart = performance.now();
-    for (let index = 0; index < reads; index++) checksum += props.ChildNodeComponents.length;
+    for (let index = 0; index < reads; index++) checksum += props.ChildFields.length;
     observations.childReads.push({ detectedMs: performance.now() - detectedStart, plainMs, reads });
     if (checksum !== 0) throw new Error('Terminal child list must be empty');
-  }, [observations, props.ChildNodeComponents]);
-  return <span>{props.ChildNodeComponents.length}</span>;
+  }, [observations, props.ChildFields]);
+  return <span>{props.ChildFields.length}</span>;
 }
 
 /**

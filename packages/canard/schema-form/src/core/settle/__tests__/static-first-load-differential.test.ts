@@ -4,11 +4,11 @@ import type { BlueprintOptions, BlueprintSchema } from '../../blueprint';
 import {
   dispatchMount,
   dispatchSetValue,
-  subscribeSchemaNode,
+  subscribeFieldNode,
 } from '../../dispatch';
-import { SchemaNodeEventType } from '../../record';
-import { SetValueOption } from '../../types/value';
-import { loadSchemaNodeAtMount, writeSchemaNode } from '../index';
+import { FieldNodeEventType } from '../../record';
+import { WriteOption } from '../../types/value';
+import { loadFieldNodeAtMount, writeFieldNode } from '../index';
 import * as independentDefaults from '../utils/compute/utils/hasIndependentLeafDefaults';
 import * as staticFirstLoad from '../utils/load/canLoadStaticFirstTree';
 import type { PlainNode } from './fixtures/createPlainNode';
@@ -32,7 +32,7 @@ const observe = (root: PlainNode) => {
     nodes.push({
       path: node.path,
       raw: node.raw,
-      extras: node.extras,
+      undeclaredValues: node.undeclaredValues,
       local: node.local,
       emit: node.emit,
       required: node.required,
@@ -73,7 +73,7 @@ const observe = (root: PlainNode) => {
 const compare = (
   schema: BlueprintSchema,
   input?: unknown,
-  option = SetValueOption.Overwrite,
+  option = WriteOption.Overwrite,
   options: BlueprintOptions = {},
 ) => {
   const oracle = createTestTree(schema, undefined, options).root;
@@ -85,14 +85,14 @@ const compare = (
   let oracleError: unknown;
   let actualError: unknown;
   try {
-    writeSchemaNode(oracle, input, 'load', option);
+    writeFieldNode(oracle, input, 'load', option);
   } catch (error) {
     oracleError = error;
   }
   oracle.runtime.loadSnapshot = input;
   forceGeneric.mockRestore();
   try {
-    loadSchemaNodeAtMount(actual, input, option);
+    loadFieldNodeAtMount(actual, input, option);
   } catch (error) {
     actualError = error;
   }
@@ -101,7 +101,7 @@ const compare = (
   expect(actual.runtime.commitNumber).toBe(1);
   for (const node of actual.runtime.deliveries ?? []) {
     expect(node.deliveryInitialized).toBe(true);
-    expect(node.revisionLedger[SchemaNodeEventType.RequestRefresh]).toBe(1);
+    expect(node.revisionLedger[FieldNodeEventType.RequestRefresh]).toBe(1);
   }
   return { actual, oracle, actualError, eligible };
 };
@@ -119,17 +119,17 @@ it('matches flat defaults, integer and escaped names, required and subsequent wr
   });
   const sibling = actual.structure!['2'];
   for (const value of ['b', 'a', 'a']) {
-    writeSchemaNode(
+    writeFieldNode(
       actual.structure!['a/b'],
       value,
       'input',
-      SetValueOption.Overwrite,
+      WriteOption.Overwrite,
     );
-    writeSchemaNode(
+    writeFieldNode(
       oracle.structure!['a/b'],
       value,
       'input',
-      SetValueOption.Overwrite,
+      WriteOption.Overwrite,
     );
     expect(observe(actual)).toEqual(observe(oracle));
     expect(actual.structure!['2']).toBe(sibling);
@@ -199,7 +199,7 @@ it('matches disabled automatic writes', () => {
       },
     },
     undefined,
-    SetValueOption.DisableAutomaticWrites,
+    WriteOption.DisableAutomaticWrites,
   );
 });
 
@@ -262,7 +262,7 @@ it('finishes every revision before any queued delivery can be observed', () => {
     for (const node of nodes) {
       expect(node.deliveryInitialized).toBe(true);
       expect(node.pendingRevision).toBe(0);
-      expect(node.revisionLedger[SchemaNodeEventType.UpdateValue]).toBe(1);
+      expect(node.revisionLedger[FieldNodeEventType.UpdateValue]).toBe(1);
     }
 });
 
@@ -329,7 +329,7 @@ it('matches virtual and whole-value fallback', () => {
   compare(
     { type: 'object', default: { value: 'whole' } },
     undefined,
-    SetValueOption.Overwrite,
+    WriteOption.Overwrite,
     { isTerminal: () => true },
   );
 });
@@ -375,7 +375,7 @@ it('does not expose intermediate values to a synchronous reporter during first l
   );
   root.runtime.errorReporter = { hasConsumer: () => true, report };
   const warning = vi.spyOn(console, 'warn').mockImplementation(() => undefined);
-  loadSchemaNodeAtMount(root, undefined, SetValueOption.Overwrite);
+  loadFieldNodeAtMount(root, undefined, WriteOption.Overwrite);
   expect(report).not.toHaveBeenCalled();
   expect(warning).not.toHaveBeenCalled();
   expect(observed).toEqual([]);
@@ -405,14 +405,14 @@ it('delivers the same listener payloads after all nodes and global state are fin
     root.interactionState = { touched: true };
     const delivered: unknown[] = [];
     const listen = (node: PlainNode) =>
-      subscribeSchemaNode(node, (event) => {
+      subscribeFieldNode(node, (event) => {
         const pending = root.runtime.commitNumber === 1 ? [root] : [];
         while (pending.length) {
           const current = pending.pop()!;
           expect(current.deliveryInitialized).toBe(true);
           expect(current.pendingRevision).toBe(0);
           expect(
-            current.revisionLedger[SchemaNodeEventType.RequestRefresh],
+            current.revisionLedger[FieldNodeEventType.RequestRefresh],
           ).toBe(1);
           for (const child of current.children ?? []) pending.push(child);
         }
@@ -436,7 +436,7 @@ it('delivers the same listener payloads after all nodes and global state are fin
           .spyOn(staticFirstLoad, 'canLoadStaticFirstTree')
           .mockReturnValue(false)
       : undefined;
-    dispatchMount(root, undefined, SetValueOption.Overwrite, {
+    dispatchMount(root, undefined, WriteOption.Overwrite, {
       deferValidation: true,
     });
     forceGeneric?.mockRestore();
@@ -445,7 +445,7 @@ it('delivers the same listener payloads after all nodes and global state are fin
       dispatchSetValue(
         root.structure!.nested.structure!.leaf,
         value,
-        SetValueOption.Overwrite,
+        WriteOption.Overwrite,
       );
     return { delivered, observations: observe(root) };
   };

@@ -1,14 +1,14 @@
 import { isArray } from '@winglet/common-utils/filter';
 
 import type { BlueprintSchemaType, SchemaTypeName } from '../../../blueprint';
-import type { SchemaNodeRecord } from '../../../record';
+import type { FieldNodeRecord } from '../../../record';
 
 /**
  * Read an active schema's type restriction with the static list as fallback.
  * @param node - Node whose effective schema was chosen in the host wheel
  * @returns Current declared JSON types in their authored representation
  */
-export const effectiveType = <Self extends SchemaNodeRecord<Self>>(
+export const effectiveType = <Self extends FieldNodeRecord<Self>>(
   node: Self,
 ): BlueprintSchemaType => {
   const schema = node.schema.schema;

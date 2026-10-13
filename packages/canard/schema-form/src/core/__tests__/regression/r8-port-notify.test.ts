@@ -1,9 +1,9 @@
 import { describe, expect, it } from 'vitest';
 
-import { makeSchemaNodeTree } from '../makeSchemaNodeTree';
+import { makeFieldNodeTree } from '../makeFieldNodeTree';
 
 const derivedTree = () => {
-  const { root } = makeSchemaNodeTree({
+  const { root } = makeFieldNodeTree({
     type: 'object',
     properties: {
       a: { type: 'number' },

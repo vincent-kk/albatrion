@@ -35,7 +35,7 @@ export function ScenarioStory({ scenario }: { scenario: FormScenario }) {
       validatorFactory={validatorFactory} validationMode={ValidationMode.OnChange | ValidationMode.OnRequest}
       virtualization={scenario.name === 'controls.virtualization'}
       onChange={(value) => { observations.changes.push(value); }} onError={({ code }) => { observations.errorCodes.push(code); }}>
-      {({ value }) => <><Form.Group /><output aria-label="Form output">{JSON.stringify(value)}</output></>}
+      {({ value }) => <><Form.Field /><output aria-label="Form output">{JSON.stringify(value)}</output></>}
     </Form>
   </div>;
 }

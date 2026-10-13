@@ -1,4 +1,4 @@
-import type { SchemaNodeRecord } from '../../../../../record';
+import type { FieldNodeRecord } from '../../../../../record';
 import { getCommittedDeclarationKey } from '../../../../utils/controls/getCommittedDeclarationKey';
 import type { DeriveState } from '../../../type';
 
@@ -8,7 +8,7 @@ import type { DeriveState } from '../../../type';
  * @param state - Current selections with last-commit fallback on untouched nodes
  * @returns Selected IDs, or all authored IDs before an occurrence has a commit
  */
-export const getSelectedDeclarationIds = <Self extends SchemaNodeRecord<Self>>(
+export const getSelectedDeclarationIds = <Self extends FieldNodeRecord<Self>>(
   node: Self,
   state: DeriveState<Self>,
 ): readonly number[] =>

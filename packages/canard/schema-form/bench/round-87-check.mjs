@@ -11,8 +11,8 @@ const repo = path.resolve(pkg, '../../..');
 const out = path.join(pkg, 'architecture/verification/07-switch');
 const reserved = ['providers/RootNodeContext/RootNodeContextProvider.tsx',
   'providers/RootNodeContext/useLiveNode.ts', 'providers/RootNodeContext/utils/applyFormErrors.ts',
-  'components/SchemaNode/SchemaNodeInput/SchemaNodeInput.tsx',
-  'components/SchemaNode/SchemaNodeInput/hooks/useFieldInputControl.ts', 'core/types/index.ts'];
+  'components/Field/FieldInputSlot/FieldInputSlot.tsx',
+  'components/Field/FieldInputSlot/hooks/useFieldInputControl.ts', 'core/types/index.ts'];
 const changed = execFileSync('git', ['diff', '--name-only'], { cwd: repo, encoding: 'utf8' }).trim().split('\n');
 const baseline = '0189c443b068fbb26fb6a7de795d40a3e01a40d8';
 const currentHead = execFileSync('git', ['rev-parse', 'HEAD'], { cwd: repo, encoding: 'utf8' }).trim();

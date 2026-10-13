@@ -1,4 +1,4 @@
-import type { SchemaNodeRecord } from '../../../record';
+import type { FieldNodeRecord } from '../../../record';
 import type { SettlementContext } from '../../type';
 import { computeNode } from '../compute/computeNode';
 import { setLatentRaw } from '../latent/setLatentRaw';
@@ -12,14 +12,14 @@ import { withdrawDetachedFills } from './withdrawDetachedFills';
  * @param explicitRaw - Paths actually changed by the caller at the write boundary
  * @returns Nothing; the root carries Source B's calculated shape
  */
-export const restoreSourceB = <Self extends SchemaNodeRecord<Self>>(
+export const restoreSourceB = <Self extends FieldNodeRecord<Self>>(
   context: SettlementContext<Self>,
   explicitRaw: ReadonlySet<string>,
 ): void => {
   for (let index = context.automaticLog.length - 1; index >= 0; index--) {
     const entry = context.automaticLog[index];
     entry.node.raw = entry.previousRaw;
-    entry.node.extras = entry.previousExtras;
+    entry.node.undeclaredValues = entry.previousExtras;
     if (entry.previousDistributed)
       context.distributedInputs.set(entry.node, entry.previousDistributed);
     else context.distributedInputs.delete(entry.node);

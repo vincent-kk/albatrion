@@ -6,12 +6,12 @@ import { describe, expect, it } from 'vitest';
 
 import { validationScenarios } from '@aileron/schema-form-scenarios';
 
-import { SetValueOption } from '../../SchemaNode';
-import type { SchemaNode as RuntimeSchemaNode } from '../../SchemaNode/SchemaNode';
+import { SetValueOption } from '../../FieldNode';
+import type { FieldNode as RuntimeFieldNode } from '../../FieldNode/FieldNode';
 import type { BlueprintSchema } from '../../blueprint';
-import { loadSchemaNodeAtMount } from '../../settle';
+import { loadFieldNodeAtMount } from '../../settle';
 import { ValidationMode } from '../../types/state';
-import { makeSchemaNodeTree } from '../makeSchemaNodeTree';
+import { makeFieldNodeTree } from '../makeFieldNodeTree';
 
 const uniquePaths = (paths: string[]): string[] =>
   paths.filter((path, index) => paths.indexOf(path) === index).sort();
@@ -25,12 +25,12 @@ describe('same-ajv path comparison on the core node tree', () => {
       validateSchema: false,
     });
     const validateDirect = direct.compile(scenario.schema as AnySchema);
-    const { root, runtime } = makeSchemaNodeTree(
+    const { root, runtime } = makeFieldNodeTree(
       scenario.schema as BlueprintSchema,
     );
     Reflect.set(runtime, 'validationMode', ValidationMode.OnRequest);
-    loadSchemaNodeAtMount(
-      root as RuntimeSchemaNode,
+    loadFieldNodeAtMount(
+      root as RuntimeFieldNode,
       scenario.initialValue,
       SetValueOption.Overwrite,
     );

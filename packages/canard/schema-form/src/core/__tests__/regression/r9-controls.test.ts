@@ -1,13 +1,13 @@
 import { describe, expect, it } from 'vitest';
 
-import { makeSchemaNodeTree } from '../makeSchemaNodeTree';
+import { makeFieldNodeTree } from '../makeFieldNodeTree';
 
 const controlsTree = () => {
-  const { root } = makeSchemaNodeTree({
+  const { root } = makeFieldNodeTree({
     type: 'object',
     readOnly: true,
     controls: {
-      children: [
+      fields: [
         {
           targets: ['x'],
           controls: {

@@ -24,7 +24,7 @@ export const VirtualFields: Story = {
 /** TEST-025: computed-controls mirrors shared SCN data in the browser. */
 export const ComputedControls: Story = {
   name: 'computed-controls',
-  args: { scenario: controlsScenarios.find((scenario) => scenario.name === 'controls.children-host-expression')! },
+  args: { scenario: controlsScenarios.find((scenario) => scenario.name === 'controls.fields-host-expression')! },
   play: async ({ args, canvasElement, step }) => {
     if (shouldSkipUnfocusedPlay()) return skipPlay(step, unfocusedPlayReason);
     await playScenario(args.scenario, canvasElement);
@@ -54,7 +54,7 @@ export const Visibility: Story = {
 /** TEST-025: pristine mirrors shared SCN data in the browser. */
 export const Pristine: Story = {
   name: 'pristine',
-  args: { scenario: controlsScenarios.find((scenario) => scenario.name === 'controls.children-value-layer')! },
+  args: { scenario: controlsScenarios.find((scenario) => scenario.name === 'controls.fields-value-layer')! },
   play: async ({ args, canvasElement, step }) => {
     if (shouldSkipUnfocusedPlay()) return skipPlay(step, unfocusedPlayReason);
     await playScenario(args.scenario, canvasElement);
@@ -64,7 +64,7 @@ export const Pristine: Story = {
 /** TEST-025: state-management mirrors shared SCN data in the browser. */
 export const StateManagement: Story = {
   name: 'state-management',
-  args: { scenario: controlsScenarios.find((scenario) => scenario.name === 'controls.children-host-expression')! },
+  args: { scenario: controlsScenarios.find((scenario) => scenario.name === 'controls.fields-host-expression')! },
   play: async ({ args, canvasElement, step }) => {
     if (shouldSkipUnfocusedPlay()) return skipPlay(step, unfocusedPlayReason);
     await playScenario(args.scenario, canvasElement);

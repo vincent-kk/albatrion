@@ -3,7 +3,7 @@ import { afterEach, beforeEach, expect, it, vi } from 'vitest';
 import type { mergeEffectiveSchema } from '../blueprint/utils/effectiveSchema/mergeEffectiveSchema';
 import type { mergeSchemaContributions } from '../blueprint/utils/effectiveSchema/utils/mergeSchemaContributions';
 import { nodeFromJSONSchema } from '../nodeFromJSONSchema';
-import type { JSONSchema } from '../types/jsonSchema';
+import type { AuthoredSchema } from '../types/jsonSchema';
 import { captureBranchlessNodeTree } from './fixtures/captureBranchlessNodeTree';
 
 const counts = vi.hoisted(() => ({
@@ -66,7 +66,7 @@ it('removes runtime remerges per cold mount while retaining every static check',
     },
   } as const;
   counts.fallback = true;
-  const oracle = nodeFromJSONSchema<JSONSchema>({
+  const oracle = nodeFromJSONSchema<AuthoredSchema>({
     jsonSchema: schema,
     validationMode: 0,
   });
@@ -74,7 +74,7 @@ it('removes runtime remerges per cold mount while retaining every static check',
   counts.fallback = false;
   counts.runtime = 0;
   counts.static = 0;
-  const root = nodeFromJSONSchema<JSONSchema>({
+  const root = nodeFromJSONSchema<AuthoredSchema>({
     jsonSchema: structuredClone(schema),
     validationMode: 0,
   });
@@ -111,12 +111,12 @@ it('preserves node values, schemas, revisions, warning and event order through l
     },
   } as const;
   counts.fallback = true;
-  const oracle = nodeFromJSONSchema<JSONSchema>({
+  const oracle = nodeFromJSONSchema<AuthoredSchema>({
     jsonSchema: schema,
     validationMode: 0,
   });
   counts.fallback = false;
-  const root = nodeFromJSONSchema<JSONSchema>({
+  const root = nodeFromJSONSchema<AuthoredSchema>({
     jsonSchema: structuredClone(schema),
     validationMode: 0,
   });

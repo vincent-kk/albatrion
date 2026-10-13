@@ -6,7 +6,7 @@ import type {
   ScenarioAdapter,
 } from '@aileron/schema-form-scenarios';
 
-import type { SchemaNode } from '@/schema-form';
+import type { FieldNode } from '@/schema-form';
 
 import type { FormHarness } from '../renderForm';
 
@@ -21,7 +21,7 @@ export const createRenderScenarioAdapter = (
   let result: unknown;
   let changeStart = 0;
   let errorStart = 0;
-  const priorNodes = new Map<string, SchemaNode | null>();
+  const priorNodes = new Map<string, FieldNode | null>();
   const imperative = (step: FormScenarioStep): unknown => {
     if (step.action === 'submit') return form.handle.submit();
     if (step.action === 'reset') {
@@ -121,14 +121,18 @@ export const createRenderScenarioAdapter = (
         expect(form.node(path), `identity ${path}`).toBe(
           priorNodes.get(source),
         );
-      for (const key of ['defaultValues', 'schemaTypes', 'extras'] as const)
+      for (const key of [
+        'defaultValues',
+        'schemaTypes',
+        'undeclaredValues',
+      ] as const)
         for (const [path, value] of Object.entries(observation[key] ?? {})) {
           const property =
             key === 'defaultValues'
               ? 'defaultValue'
               : key === 'schemaTypes'
                 ? 'schemaType'
-                : 'extras';
+                : 'undeclaredValues';
           expect(form.node(path)?.[property], `${property} ${path}`).toEqual(
             value,
           );

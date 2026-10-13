@@ -7,14 +7,12 @@ import type {
   FieldInputProps,
 } from '@/schema-form/types';
 
-const FieldInputObject = ({ ChildNodeComponents }: FieldInputProps<object>) => {
+const FieldInputObject = ({ ChildFields }: FieldInputProps<object>) => {
   const children = useMemo(() => {
-    return ChildNodeComponents
-      ? map(ChildNodeComponents, (ChildNodeComponent) => (
-          <ChildNodeComponent key={ChildNodeComponent.key} />
-        ))
+    return ChildFields
+      ? map(ChildFields, (ChildField) => <ChildField key={ChildField.key} />)
       : null;
-  }, [ChildNodeComponents]);
+  }, [ChildFields]);
 
   return <Fragment>{children}</Fragment>;
 };

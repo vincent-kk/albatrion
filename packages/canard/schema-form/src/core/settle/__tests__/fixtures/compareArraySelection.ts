@@ -1,8 +1,8 @@
 import { expect, vi } from 'vitest';
 
 import type { BlueprintSchema } from '../../../blueprint';
-import { dispatchMount, subscribeSchemaNode } from '../../../dispatch';
-import { SetValueOption } from '../../../types/value';
+import { dispatchMount, subscribeFieldNode } from '../../../dispatch';
+import { WriteOption } from '../../../types/value';
 import * as selection from '../../utils/compute/selectChildren/utils/canReuseArrayChildren';
 import type { PlainNode } from './createPlainNode';
 import { createTestTree } from './createTestTree';
@@ -30,7 +30,7 @@ export const compareArraySelection = (
     root.runtime.validationMode = 0;
     root.runtime.errorReporter = { hasConsumer: () => true, report };
     const listen = (node: PlainNode) =>
-      subscribeSchemaNode(node, (event) => {
+      subscribeFieldNode(node, (event) => {
         delivered.push({ path: node.path, event });
       });
     listen(root);
@@ -40,7 +40,7 @@ export const compareArraySelection = (
       listen(node);
       return node;
     };
-    dispatchMount(root, input, SetValueOption.Overwrite, {
+    dispatchMount(root, input, WriteOption.Overwrite, {
       deferValidation: true,
     });
     const history: unknown[] = [];

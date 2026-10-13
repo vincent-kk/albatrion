@@ -1,11 +1,11 @@
 import { hasOwnProperty } from '@winglet/common-utils/lib';
 
 import {
-  SchemaNodeEventType,
+  FieldNodeEventType,
   accumulateGlobalStateDeltas,
   publishGlobalStateDeltas,
 } from '../../../record';
-import type { SchemaNodeRecord } from '../../../record';
+import type { FieldNodeRecord } from '../../../record';
 import type { SettlementContext } from '../../type';
 
 /**
@@ -13,7 +13,7 @@ import type { SettlementContext } from '../../type';
  * @param context - Final shape facts, including revived perished candidates
  * @returns Candidate order, per-record delta accumulation and final publication
  */
-export const commitGlobalState = <Self extends SchemaNodeRecord<Self>>(
+export const commitGlobalState = <Self extends FieldNodeRecord<Self>>(
   context: SettlementContext<Self>,
 ) => {
   const runtime = context.root.runtime;
@@ -51,7 +51,7 @@ export const commitGlobalState = <Self extends SchemaNodeRecord<Self>>(
     nodes,
     visit(node: Self): void {
       const previousState =
-        node.deliveryChanges & SchemaNodeEventType.UpdateState
+        node.deliveryChanges & FieldNodeEventType.UpdateState
           ? (node.deliveryPreviousState ?? node.interactionState)
           : node.interactionState;
       if (departing.has(node)) {

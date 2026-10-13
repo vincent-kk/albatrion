@@ -1,6 +1,6 @@
 import { equals } from '@winglet/common-utils/object';
 
-import type { SchemaNodeRecord } from '../../../record';
+import type { FieldNodeRecord } from '../../../record';
 import type { ValidationIssue } from '../../type';
 
 /**
@@ -10,9 +10,7 @@ import type { ValidationIssue } from '../../type';
  * @returns The previous list when both have the same length and every item deep-equals in order
  *   (including `details` and `source`); otherwise `issues`.
  */
-export const retainEqualValidationIssues = <
-  Self extends SchemaNodeRecord<Self>,
->(
+export const retainEqualValidationIssues = <Self extends FieldNodeRecord<Self>>(
   node: Self,
   issues: readonly ValidationIssue[],
 ): readonly ValidationIssue[] => {

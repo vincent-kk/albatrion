@@ -1,9 +1,9 @@
 import { describe, expect, it } from 'vitest';
 
-import { makeSchemaNodeTree } from '../../__tests__/makeSchemaNodeTree';
-import { patchSchemaNodeInteractionState } from '../../record';
-import { SetValueOption } from '../../types/value';
-import { writeSchemaNode } from '../index';
+import { makeFieldNodeTree } from '../../__tests__/makeFieldNodeTree';
+import { patchFieldNodeInteractionState } from '../../record';
+import { WriteOption } from '../../types/value';
+import { writeFieldNode } from '../index';
 import { createSettlementContext } from '../utils/settlement/createSettlementContext';
 import { hasWrongKindBranchAncestor } from '../utils/transition/hasWrongKindBranchAncestor';
 import { transitionSettlement } from '../utils/transition/transitionSettlement';
@@ -18,20 +18,15 @@ describe('array settlement writes', () => {
       type: 'array',
       items: { type: 'string' },
     });
-    writeSchemaNode(
-      root,
-      ['a', 'b'],
-      'callerReplace',
-      SetValueOption.Overwrite,
-    );
+    writeFieldNode(root, ['a', 'b'], 'callerReplace', WriteOption.Overwrite);
     const first = root.children![0];
     const second = root.children![1];
-    patchSchemaNodeInteractionState(second, { touched: true, dirty: true });
-    writeSchemaNode(
+    patchFieldNodeInteractionState(second, { touched: true, dirty: true });
+    writeFieldNode(
       root,
       ['x', 'y', 'z'],
       'callerReplace',
-      SetValueOption.Overwrite,
+      WriteOption.Overwrite,
     );
     expect(root.children![0]).toBe(first);
     expect(root.children![1]).toBe(second);
@@ -44,7 +39,7 @@ describe('array settlement writes', () => {
   });
 
   it('WRITE-090 and LANDING-202 fill only a new tail on a non-load write', () => {
-    const { root } = makeSchemaNodeTree({
+    const { root } = makeFieldNodeTree({
       type: 'array',
       items: {
         type: 'object',
@@ -59,7 +54,7 @@ describe('array settlement writes', () => {
   });
 
   it('WRITE-048 resets by load while retaining surviving item identity', () => {
-    const { root } = makeSchemaNodeTree(
+    const { root } = makeFieldNodeTree(
       { type: 'array', items: { type: 'string' } },
       { snapshot: ['a', 'b'] },
     );
@@ -72,7 +67,7 @@ describe('array settlement writes', () => {
   });
 
   it('WRITE-095 aligns snapshot slots after replacement and Merge', () => {
-    const { root } = makeSchemaNodeTree(
+    const { root } = makeFieldNodeTree(
       {
         type: 'object',
         properties: {
@@ -88,20 +83,20 @@ describe('array settlement writes', () => {
     expect(items.children![1].defaultValue).toBeUndefined();
     items.resetSubtree();
     expect(items.value).toEqual(['a', 'fill']);
-    items.setValue(['q'], SetValueOption.Merge);
+    items.setValue(['q'], WriteOption.Merge);
     expect(items.value).toEqual(['q']);
     expect(items.children).toHaveLength(1);
   });
 
   it('NODE-044 and WRITE-007 Merge whole-replaces an array and perishes its tail', () => {
-    const { root, runtime } = makeSchemaNodeTree({
+    const { root, runtime } = makeFieldNodeTree({
       type: 'array',
       items: { type: 'string' },
     });
     root.setValue(['a', 'b']);
     const first = root.children![0];
     const perished = root.children![1];
-    root.setValue(['x'], SetValueOption.Merge);
+    root.setValue(['x'], WriteOption.Merge);
     expect(root.value).toEqual(['x']);
     expect(root.children).toEqual([first]);
     expect(Reflect.get(perished, 'detached')).toBe(true);
@@ -116,15 +111,15 @@ describe('array settlement writes', () => {
       prefixItems: [{ type: 'string' }, { type: 'number' }],
       items: false,
     });
-    writeSchemaNode(
+    writeFieldNode(
       root,
       ['a', 2, 'c', 'd'],
       'callerReplace',
-      SetValueOption.Overwrite,
+      WriteOption.Overwrite,
     );
     expect(root.itemCount).toBe(4);
     expect(root.children).toHaveLength(2);
-    expect(root.extras).toEqual(['c', 'd']);
+    expect(root.undeclaredValues).toEqual(['c', 'd']);
     expect(root.local).toEqual(['a', 2, 'c', 'd']);
     expect(root.children![0].schemaType).toBe(
       root.blueprintNode.prefixItems![0].schemaType,
@@ -132,7 +127,7 @@ describe('array settlement writes', () => {
   });
 
   it('VALUE-034 supports an empty root and holes in slot output', () => {
-    const { root } = makeSchemaNodeTree({
+    const { root } = makeFieldNodeTree({
       type: 'array',
       items: { type: 'string' },
     });
@@ -145,7 +140,7 @@ describe('array settlement writes', () => {
   });
 
   it('38C-01 emits wrong-kind array raw at the root without item nodes', () => {
-    const { root } = makeSchemaNodeTree({
+    const { root } = makeFieldNodeTree({
       type: 'array',
       items: { type: 'string' },
     });
@@ -159,7 +154,7 @@ describe('array settlement writes', () => {
   });
 
   it('39C-01 emits a wrong-kind object item raw instead of an object hole', () => {
-    const { root } = makeSchemaNodeTree({
+    const { root } = makeFieldNodeTree({
       type: 'array',
       items: {
         type: 'object',
@@ -178,25 +173,25 @@ describe('array settlement writes', () => {
       type: 'array',
       items: { type: 'string' },
     });
-    writeSchemaNode(root, ['a'], 'callerReplace', SetValueOption.Overwrite);
+    writeFieldNode(root, ['a'], 'callerReplace', WriteOption.Overwrite);
     const old = root.children![0];
-    writeSchemaNode(
+    writeFieldNode(
       root,
       { 0: 'wrong' },
       'callerReplace',
-      SetValueOption.Overwrite,
+      WriteOption.Overwrite,
     );
     expect(root.raw).toEqual({ 0: 'wrong' });
     expect(root.itemCount).toBe(0);
     expect(root.children).toEqual([]);
-    expect(root.extras).toBeUndefined();
+    expect(root.undeclaredValues).toBeUndefined();
     expect(old.detached).toBe(true);
-    writeSchemaNode(root, ['b'], 'callerReplace', SetValueOption.Overwrite);
+    writeFieldNode(root, ['b'], 'callerReplace', WriteOption.Overwrite);
     expect(root.children![0].itemKey).toBeGreaterThan(old.itemKey!);
   });
 
   it('WRITE-090 blocks non-load descendant fills below wrong-kind array raw', () => {
-    const { root } = makeSchemaNodeTree({
+    const { root } = makeFieldNodeTree({
       type: 'array',
       items: { type: 'string', default: 'fill' },
     });
@@ -210,18 +205,18 @@ describe('array settlement writes', () => {
       type: 'array',
       items: { type: 'string', default: 'fill' },
     });
-    writeSchemaNode(
+    writeFieldNode(
       transient.root,
       [undefined],
       'callerReplace',
-      SetValueOption.DisableAutomaticWrites,
+      WriteOption.DisableAutomaticWrites,
     );
     const pending = transient.root.children![0];
     const scratch = getSettlementScratch(transient.root.runtime);
     const context = createSettlementContext(
       transient.root,
       'callerReplace',
-      SetValueOption.Overwrite,
+      WriteOption.Overwrite,
       scratch,
     );
     transient.root.raw = 7;
@@ -237,7 +232,7 @@ describe('array settlement writes', () => {
   });
 
   it('WRITE-090 recalculates an array created by an automatic default', () => {
-    const { root } = makeSchemaNodeTree({
+    const { root } = makeFieldNodeTree({
       type: 'object',
       properties: {
         items: { type: 'array', default: ['x'], items: { type: 'string' } },

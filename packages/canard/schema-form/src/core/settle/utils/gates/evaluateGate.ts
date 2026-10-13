@@ -7,9 +7,9 @@ import {
   VALIDATOR_MISSING,
 } from '../../../../errors';
 import type { BlueprintGate } from '../../../blueprint';
-import type { SchemaNodeRecord } from '../../../record';
+import type { FieldNodeRecord } from '../../../record';
 import { ValidationMode } from '../../../types/state';
-import { readSchemaNodeGuard } from '../../../validation';
+import { readFieldNodeGuard } from '../../../validation';
 import type { SettlementContext } from '../../type';
 import { recordSettlementFailure } from '../errors/recordSettlementFailure';
 import { EXPRESSION_THREW, GUARD_FAILED } from '../errors/settleErrorCode';
@@ -25,7 +25,7 @@ import { readProjectedValue } from './readProjectedValue';
  * @param edgeName - Direct child whose own active gate is being evaluated
  * @returns Whether the condition currently admits its declaration
  */
-export const evaluateGate = <Self extends SchemaNodeRecord<Self>>(
+export const evaluateGate = <Self extends FieldNodeRecord<Self>>(
   gate: BlueprintGate,
   context: SettlementContext<Self>,
   owner: Self,
@@ -62,7 +62,7 @@ export const evaluateGate = <Self extends SchemaNodeRecord<Self>>(
       }
     }
   }
-  const extra = hostNode?.extras;
+  const extra = hostNode?.undeclaredValues;
   let projectedHost = hostNode !== undefined;
   for (
     let ancestor: Self | null | undefined = hostNode;
@@ -108,7 +108,7 @@ export const evaluateGate = <Self extends SchemaNodeRecord<Self>>(
     }
     if (gate.kind === 'if') {
       const runtime = context.root.runtime;
-      const guard = readSchemaNodeGuard(runtime, gate);
+      const guard = readFieldNodeGuard(runtime, gate);
       if (!guard) {
         const keys = runtime.errorReporter?.hasConsumer()
           ? (runtime.warningKeys ??= new Set())

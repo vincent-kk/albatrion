@@ -3,7 +3,7 @@ export class HostLatent {
   /** Non-plain source retained at this host. */
   readonly raw: unknown;
   /** Undeclared keys retained in received order. */
-  readonly extras: unknown;
+  readonly undeclaredValues: unknown;
 
   /**
    * Freeze one host source so later distribution cannot mutate its history.
@@ -12,7 +12,7 @@ export class HostLatent {
    */
   constructor(raw: unknown, extras: unknown) {
     this.raw = raw;
-    this.extras = extras;
+    this.undeclaredValues = extras;
     Object.freeze(this);
   }
 }

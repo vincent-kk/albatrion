@@ -427,6 +427,16 @@ describe('formatErrorMessage', () => {
       expect(result).toContain('How to fix');
     });
 
+    it('lists a plugin FieldRenderer as FormField', () => {
+      const result = formatRegisterPluginError(
+        { FieldRenderer: () => null } as SchemaFormPlugin,
+        new Error('Invalid component'),
+      );
+
+      expect(result).toContain('FormField');
+      expect(result).not.toContain('FormGroup');
+    });
+
     it('빈 플러그인도 처리해야 합니다', () => {
       const result = formatRegisterPluginError(
         {} as SchemaFormPlugin,
@@ -608,7 +618,7 @@ describe('formatErrorMessage', () => {
 
     it('formatCreateDynamicFunctionError 스냅샷', () => {
       const result = formatCreateDynamicFunctionError(
-        'computed.visible',
+        'controls.visible',
         "../category === 'premium' && ../price > 100",
         "return values[0] === 'premium' && values[1] > 100",
         new SyntaxError("Unexpected token '>'"),
@@ -889,7 +899,9 @@ describe('formatErrorMessage', () => {
         jsonSchema: {
           type: 'string',
           title: 'Source Field',
-          injectTo: () => ({ '/targetField': 'injected-value' }),
+          controls: {
+            injectTo: () => ({ '/targetField': 'injected-value' }),
+          },
         },
         parentValue: {
           sourceField: 'current-value',

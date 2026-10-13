@@ -1,4 +1,4 @@
-import type { SchemaNodeRecord } from '../../../../record';
+import type { FieldNodeRecord } from '../../../../record';
 import { sameValue } from '../../../utils/compute/sameValue';
 import type {
   DeriveRoundDecision,
@@ -32,7 +32,7 @@ const NO_FAILURES: readonly [] = Object.freeze([]);
  * @param state - Commit and call-local rule baselines without settlement imports
  * @returns Candidate writes, optional trace entries, and all authored failures
  */
-export const evaluateDeriveRound = <Self extends SchemaNodeRecord<Self>>(
+export const evaluateDeriveRound = <Self extends FieldNodeRecord<Self>>(
   root: Self,
   state: DeriveState<Self>,
 ): DeriveRoundDecision<Self> => {

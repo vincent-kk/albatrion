@@ -1,12 +1,12 @@
 import { isArray } from '@winglet/common-utils/filter';
 
-import type { SchemaNodeRecord } from '../../../record';
+import type { FieldNodeRecord } from '../../../record';
 import type { SettlementContext } from '../../type';
 import { getControlLayers } from '../controls/getControlLayers';
 import { readExitLayerPolicy } from '../controls/readExitLayerPolicy';
 import { readLatentExitPolicy } from '../controls/readLatentExitPolicy';
 import { getLatentPathIndex } from '../latent/getLatentPathIndex';
-import { walkOwnedSchemaNodes } from '../walkOwnedSchemaNodes';
+import { walkOwnedFieldNodes } from '../walkOwnedFieldNodes';
 import { writeLatentRaw } from './writeLatentRaw';
 
 /** One stored source and its last-live exit decisions. */
@@ -19,7 +19,7 @@ interface LatentEntry {
   readonly order: readonly number[];
   /** Explicit decisions saved when the occurrence left the shape. */
   readonly exitLayers?: readonly {
-    layer: 'node' | 'children' | 'fragment';
+    layer: 'node' | 'fields' | 'fragment';
     clear: boolean;
   }[];
 }
@@ -41,7 +41,7 @@ interface ResolvedAncestor {
  * @param inherited - Resolved policy at the departing host
  * @returns Nothing; cleared nodes lose raw and extras together
  */
-export const captureLatentDescendants = <Self extends SchemaNodeRecord<Self>>(
+export const captureLatentDescendants = <Self extends FieldNodeRecord<Self>>(
   context: SettlementContext<Self>,
   node: Self,
   inherited: boolean,
@@ -65,7 +65,7 @@ export const captureLatentDescendants = <Self extends SchemaNodeRecord<Self>>(
   }
   entries.sort((left, right) => left.path.length - right.path.length);
   const live = new Map<string, Self>();
-  walkOwnedSchemaNodes(node, (current) =>
+  walkOwnedFieldNodes(node, (current) =>
     live.set(
       JSON.stringify([current.path, current.blueprintNode.kind]),
       current,

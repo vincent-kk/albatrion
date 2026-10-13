@@ -61,16 +61,16 @@ export const validateControlGroups = (
       { group: 'controls', key: 'injectTo', expected: 'function' },
       context.options,
     );
-  if (controls?.children !== undefined) {
-    if (!isArray(controls.children))
+  if (controls?.fields !== undefined) {
+    if (!isArray(controls.fields))
       throwBlueprintError(
         BlueprintErrorCode.InvalidControlShape,
-        `${schemaPath}/controls/children`,
-        { group: 'controls', key: 'children', expected: 'array' },
+        `${schemaPath}/controls/fields`,
+        { group: 'controls', key: 'fields', expected: 'array' },
         context.options,
       );
-    controls.children.forEach((entry: any, index: number) => {
-      const path = `${schemaPath}/controls/children/${index}`;
+    controls.fields.forEach((entry: any, index: number) => {
+      const path = `${schemaPath}/controls/fields/${index}`;
       if (
         !entry ||
         typeof entry !== 'object' ||
@@ -85,7 +85,7 @@ export const validateControlGroups = (
           path,
           {
             group: 'controls',
-            key: 'children',
+            key: 'fields',
             expected: '{ targets: string[], controls? }',
           },
           context.options,
@@ -110,7 +110,7 @@ const CHILD_CONTROL_KEY_SET = {
 /** Node-owned controls add declarations and cross-node injection. */
 const CONTROL_KEY_SET = {
   ...CHILD_CONTROL_KEY_SET,
-  children: true,
+  fields: true,
   injectTo: true,
   discriminator: true,
   watch: true,
@@ -123,7 +123,7 @@ const CONTROL_KEYS: readonly string[] = Object.keys(CONTROL_KEY_SET);
 const OPTION_KEYS = [
   'terminal',
   'virtual',
-  'propertyKeys',
+  'propertyOrder',
   'omitEmpty',
   'omitTrailing',
   'trim',

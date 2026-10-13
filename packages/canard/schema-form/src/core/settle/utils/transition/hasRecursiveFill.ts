@@ -1,4 +1,4 @@
-import type { SchemaNodeRecord } from '../../../record';
+import type { FieldNodeRecord } from '../../../record';
 import type { SettlementContext } from '../../type';
 import { hasRecursiveExpansion } from '../compute/hasRecursiveExpansion';
 
@@ -9,7 +9,7 @@ import { hasRecursiveExpansion } from '../compute/hasRecursiveExpansion';
  * @param context - Caller and automatic distribution provenance
  * @returns Whether filling repeats an origin-less effective template chain
  */
-export const hasRecursiveFill = <Self extends SchemaNodeRecord<Self>>(
+export const hasRecursiveFill = <Self extends FieldNodeRecord<Self>>(
   node: Self,
   hosts: ReadonlySet<Self>,
   context: SettlementContext<Self>,

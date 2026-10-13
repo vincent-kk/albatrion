@@ -7,9 +7,9 @@ import { PathKeyedSet } from '../src/core/utils/pathIndex/PathKeyedSet';
 import { performance } from 'node:perf_hooks';
 
 import { blueprint } from '../src/core/blueprint';
-import { schemaNodeFactory, SetValueOption } from '../src/core/SchemaNode';
-import type { SchemaNode } from '../src/core/SchemaNode/SchemaNode';
-import { loadSchemaNodeAtMount } from '../src/core/settle';
+import { fieldNodeFactory, SetValueOption } from '../src/core/FieldNode';
+import type { FieldNode } from '../src/core/FieldNode/FieldNode';
+import { loadFieldNodeAtMount } from '../src/core/settle';
 import { sameValue } from '../src/core/settle/utils/compute/sameValue';
 
 const elementCount = 10_000;
@@ -70,12 +70,12 @@ function makeTree(kind: Kind, initial: SourceValue) {
       } } },
     target: { type: 'number' as const },
   } };
-  const root = schemaNodeFactory(blueprint(schema), {
+  const root = fieldNodeFactory(blueprint(schema), {
     diagnostics: { status: 'stable' },
     loadSnapshot: undefined, latentRaw: new PathKeyedMap('pair'),
     typeMismatchPaths: new PathKeyedSet(), inactiveValuesMemo: new PathKeyedMap<readonly { path: string; value: unknown }[]>('path'),
-  }) as SchemaNode;
-  loadSchemaNodeAtMount(root, { source: initial }, SetValueOption.Overwrite);
+  }) as FieldNode;
+  loadFieldNodeAtMount(root, { source: initial }, SetValueOption.Overwrite);
   const source = root.find('/source');
   const target = root.find('/target');
   if (!source || !target || markerOf(source.value, kind) !== 1 ||

@@ -1,18 +1,18 @@
 import { describe, expect, it } from 'vitest';
 
-import { SchemaNodeEventType, SetValueOption } from '../../SchemaNode';
-import type { SchemaNode } from '../../SchemaNode';
-import { SchemaNodeState, ValidationMode } from '../../types/state';
-import { makeSchemaNodeTree } from '../makeSchemaNodeTree';
+import { FieldNodeEventType, SetValueOption } from '../../FieldNode';
+import type { FieldNode } from '../../FieldNode';
+import { FieldNodeState, ValidationMode } from '../../types/state';
+import { makeFieldNodeTree } from '../makeFieldNodeTree';
 
-const requireNode = (root: SchemaNode, path: string): SchemaNode => {
+const requireNode = (root: FieldNode, path: string): FieldNode => {
   const node = root.find(path);
   if (!node) throw new Error(`Missing test node ${path}`);
   return node;
 };
 
 const injectionTree = () => {
-  const { root } = makeSchemaNodeTree({
+  const { root } = makeFieldNodeTree({
     type: 'object',
     properties: {
       src: {
@@ -41,7 +41,7 @@ const injectionBatch = () => {
 // filid:contract factory-single-path
 describe('round7 dispatch and notification ports', () => {
   it('r7-port.mjs:478 EVENT-008 resets feedback budget for each of 30 caller writes', () => {
-    const { root } = makeSchemaNodeTree({
+    const { root } = makeFieldNodeTree({
       type: 'object',
       properties: {
         a: { type: 'string' },
@@ -57,7 +57,7 @@ describe('round7 dispatch and notification ports', () => {
     for (let i = 1; i <= 30; i += 1) a.setValue(`v${i}`);
     expect(root.outputValue).toEqual({ a: 'v30', b: 'derived:v30' });
     expect(root.diagnostics.status).toBe('stable');
-    const { root: feedbackRoot } = makeSchemaNodeTree({ type: 'string' });
+    const { root: feedbackRoot } = makeFieldNodeTree({ type: 'string' });
     let calls = 0;
     feedbackRoot.subscribe(() => {
       if (calls < 30) feedbackRoot.setValue(`c${++calls}`);
@@ -70,7 +70,7 @@ describe('round7 dispatch and notification ports', () => {
   });
 
   it('r7-port.mjs:296 X2 batch chooses the final b fragment', () => {
-    const { root } = makeSchemaNodeTree({
+    const { root } = makeFieldNodeTree({
       type: 'object',
       properties: {
         kind: { type: 'string' },
@@ -103,7 +103,7 @@ describe('round7 dispatch and notification ports', () => {
   });
 
   it('r7-port.mjs:129 E4 requests validation once after listener write-back', () => {
-    const { root, runtime } = makeSchemaNodeTree({
+    const { root, runtime } = makeFieldNodeTree({
       type: 'object',
       properties: {
         a: { type: 'string' },
@@ -126,7 +126,7 @@ describe('round7 dispatch and notification ports', () => {
       (Reflect.get(runtime, 'validationStamp') ?? 0) - before,
       root.outputValue,
     ]).toEqual([1, 1, { a: 'orig' }]);
-    const batched = makeSchemaNodeTree({
+    const batched = makeFieldNodeTree({
       type: 'object',
       properties: {
         a: { type: 'string' },
@@ -152,7 +152,7 @@ describe('round7 dispatch and notification ports', () => {
   });
 
   it('r7-port.mjs:163 EVENT-008 permits 30 independent writes with a store listener', () => {
-    const { root } = makeSchemaNodeTree({
+    const { root } = makeFieldNodeTree({
       type: 'object',
       properties: {
         a: { type: 'string' },
@@ -183,7 +183,7 @@ describe('round7 dispatch and notification ports', () => {
   });
 
   it('WRITE-015 applies batch-wide automatic-write suppression', () => {
-    const { root } = makeSchemaNodeTree({
+    const { root } = makeFieldNodeTree({
       type: 'object',
       properties: {
         src: { type: 'string' },
@@ -211,8 +211,8 @@ describe('round7 dispatch and notification ports', () => {
   });
 
   it('CONTROLS-079 treats injectTo callback public writes as nested feedback', () => {
-    let root: SchemaNode | undefined;
-    const created = makeSchemaNodeTree({
+    let root: FieldNode | undefined;
+    const created = makeFieldNodeTree({
       type: 'object',
       properties: {
         src: {
@@ -233,7 +233,7 @@ describe('round7 dispatch and notification ports', () => {
   });
 
   it('EVENT-066 delivers resetInteraction state changes in the same commit', () => {
-    const { root } = makeSchemaNodeTree({
+    const { root } = makeFieldNodeTree({
       type: 'object',
       properties: {
         clear: { type: 'boolean' },
@@ -243,8 +243,8 @@ describe('round7 dispatch and notification ports', () => {
     root.setValue({ clear: false, target: 'X' });
     const target = requireNode(root, '/target');
     target.setState({
-      [SchemaNodeState.Dirty]: true,
-      [SchemaNodeState.Touched]: true,
+      [FieldNodeState.Dirty]: true,
+      [FieldNodeState.Touched]: true,
     });
     const delivered: number[] = [];
     target.subscribe((event) => {
@@ -252,16 +252,16 @@ describe('round7 dispatch and notification ports', () => {
     });
     requireNode(root, '/clear').setValue(true);
     expect(target.state).toMatchObject({
-      [SchemaNodeState.Dirty]: false,
-      [SchemaNodeState.Touched]: false,
+      [FieldNodeState.Dirty]: false,
+      [FieldNodeState.Touched]: false,
     });
     expect(
-      delivered.some((type) => !!(type & SchemaNodeEventType.UpdateState)),
+      delivered.some((type) => !!(type & FieldNodeEventType.UpdateState)),
     ).toBe(true);
   });
 
   it('WRITE-096 marks whole replacement UpdateValue with callerReplace source', () => {
-    const { root } = makeSchemaNodeTree({
+    const { root } = makeFieldNodeTree({
       type: 'object',
       properties: {
         a: { type: 'string' },
@@ -270,15 +270,15 @@ describe('round7 dispatch and notification ports', () => {
     root.setValue({ a: 'old' });
     const sources: unknown[] = [];
     root.subscribe((event) => {
-      if (event.type & SchemaNodeEventType.UpdateValue)
-        sources.push(event.options?.[SchemaNodeEventType.UpdateValue]);
+      if (event.type & FieldNodeEventType.UpdateValue)
+        sources.push(event.options?.[FieldNodeEventType.UpdateValue]);
     });
     root.setValue({ a: 'new' });
     expect(sources).toEqual([{ source: 'callerReplace' }]);
   });
 
   it('EVENT-064 separates calculated-state and effective-schema event bits', () => {
-    const { root } = makeSchemaNodeTree({
+    const { root } = makeFieldNodeTree({
       type: 'object',
       properties: {
         show: { type: 'boolean' },
@@ -295,11 +295,11 @@ describe('round7 dispatch and notification ports', () => {
     expect(target.visible).toBe(true);
     expect(
       delivered.some(
-        (type) => !!(type & SchemaNodeEventType.UpdateComputedProperties),
+        (type) => !!(type & FieldNodeEventType.UpdateControlledProperties),
       ),
     ).toBe(true);
     expect(
-      delivered.every((type) => !(type & SchemaNodeEventType.UpdateJsonSchema)),
+      delivered.every((type) => !(type & FieldNodeEventType.UpdateJsonSchema)),
     ).toBe(true);
   });
 });

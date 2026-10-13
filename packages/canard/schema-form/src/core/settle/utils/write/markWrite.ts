@@ -1,6 +1,6 @@
 import { isArray } from '@winglet/common-utils/filter';
 
-import type { SchemaNodeRecord, UnionSpec } from '../../../record';
+import type { FieldNodeRecord, UnionSpec } from '../../../record';
 import type { SettlementContext } from '../../type';
 import { sameValue } from '../compute/sameValue';
 import { getDeclaredChildNames } from '../declarations/getDeclaredChildNames';
@@ -23,7 +23,7 @@ import { staticSpec } from './staticSpec';
  * @param spec - Static or narrowed type restriction used for interpretation
  * @returns Nothing; only this node's own state channels are stored here
  */
-export const markWrite = <Self extends SchemaNodeRecord<Self>>(
+export const markWrite = <Self extends FieldNodeRecord<Self>>(
   node: Self,
   input: unknown,
   context: SettlementContext<Self>,
@@ -48,7 +48,7 @@ export const markWrite = <Self extends SchemaNodeRecord<Self>>(
     context.automaticLog.push({
       node,
       previousRaw: node.raw,
-      previousExtras: node.extras,
+      previousExtras: node.undeclaredValues,
       previousDistributed: context.distributedInputs.get(node),
     });
   const value = node.behavior.interpret(input, spec);
@@ -88,7 +88,7 @@ export const markWrite = <Self extends SchemaNodeRecord<Self>>(
         host: node,
         previousItems: [...(node.children ?? [])],
         previousItemCount,
-        previousExtras: node.extras,
+        previousExtras: node.undeclaredValues,
       });
     if (!context.arrayCounts.has(node))
       context.arrayCounts.set(node, previousItemCount);
@@ -115,13 +115,13 @@ export const markWrite = <Self extends SchemaNodeRecord<Self>>(
         ));
     nextRaw = isMerge ? node.raw : undefined;
     if (isMerge && nextRaw !== undefined) context.wrongKindHosts.add(node);
-    extras = nextExtras(node.extras, value, declared, isMerge);
+    extras = nextExtras(node.undeclaredValues, value, declared, isMerge);
   }
   const rawChanged = !sameValue(node.raw, nextRaw);
-  const extrasChanged = !sameValue(node.extras, extras);
+  const extrasChanged = !sameValue(node.undeclaredValues, extras);
   if (rawChanged || extrasChanged || countChanged) {
     node.raw = nextRaw;
-    node.extras = extras;
+    node.undeclaredValues = extras;
     context.changedRaw.add(node.path);
     context.changedNodes.add(node);
     if (context.automatic) context.automaticChanged = true;

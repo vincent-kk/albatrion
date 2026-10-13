@@ -1,4 +1,4 @@
-import type { SchemaNodeRecord } from '../../../../record';
+import type { FieldNodeRecord } from '../../../../record';
 import type { SettlementContext } from '../../../type';
 import { dirtyChildren } from '../dirtyChildren';
 import { selectNodeSchema } from '../selectNodeSchema';
@@ -10,7 +10,7 @@ import { updateOutput } from '../updateOutput';
  * @param context - Call with empty entered and shapeDirtyPaths containers
  * @returns Nothing; updates records in child post-order and consumes dirty paths
  */
-export const computeStableNode = <Self extends SchemaNodeRecord<Self>>(
+export const computeStableNode = <Self extends FieldNodeRecord<Self>>(
   node: Self,
   context: SettlementContext<Self>,
 ): void => {

@@ -46,8 +46,8 @@ describe('controls — TEST-011 / TEST-023 shared screen runner', () => {
     await run('controls.standard-read-only');
   });
 
-  it('CONTROLS-073 controls.children-host-expression', async () => {
-    await run('controls.children-host-expression');
+  it('CONTROLS-073 controls.fields-host-expression', async () => {
+    await run('controls.fields-host-expression');
   });
 
   it('CONTROLS-044 controls.fragment-scope', async () => {
@@ -58,12 +58,12 @@ describe('controls — TEST-011 / TEST-023 shared screen runner', () => {
     await run('controls.root-keys-do-not-inherit');
   });
 
-  it('CONTROLS-073 controls.children-value-layer', async () => {
-    await run('controls.children-value-layer');
+  it('CONTROLS-073 controls.fields-value-layer', async () => {
+    await run('controls.fields-value-layer');
   });
 
-  it('WRITE-031 controls.children-exit-policy-layer', async () => {
-    await run('controls.children-exit-policy-layer');
+  it('WRITE-031 controls.fields-exit-policy-layer', async () => {
+    await run('controls.fields-exit-policy-layer');
   });
 
   it('WRITE-031 controls.fragment-exit-policy-layer', async () => {

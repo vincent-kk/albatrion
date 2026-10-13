@@ -1,5 +1,5 @@
 import { FEEDBACK_LIMIT_EXCEEDED, SchemaFormError } from '../../../../errors';
-import type { SchemaNodeRuntime } from '../../../record';
+import type { FieldNodeRuntime } from '../../../record';
 import { captureChainError } from './captureChainError';
 
 /**
@@ -8,7 +8,7 @@ import { captureChainError } from './captureChainError';
  * @returns Whether the caller must skip the entire write without entering a chain
  */
 export const refuseListenerFeedback = <Self>(
-  runtime: SchemaNodeRuntime<Self>,
+  runtime: FieldNodeRuntime<Self>,
 ): boolean => {
   if (
     !runtime.entryDepth ||

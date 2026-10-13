@@ -1,8 +1,8 @@
 import { describe, expect, it } from 'vitest';
 
-import { SchemaNodeState } from '../../types/state';
-import { SetValueOption } from '../../types/value';
-import { writeSchemaNode } from '../index';
+import { FieldNodeState } from '../../types/state';
+import { WriteOption } from '../../types/value';
+import { writeFieldNode } from '../index';
 import { createTestTree } from './fixtures/createTestTree';
 
 // filid:contract settle-write
@@ -19,29 +19,29 @@ describe('EVENT-062 43C-01 settlement shape counts', () => {
     root.runtime.nodeFactory = (entry, parent, runtime) => {
       const node = createNode(entry, parent, runtime);
       if ('name' in entry && entry.name === 'target')
-        node.interactionState = { [SchemaNodeState.Dirty]: true };
+        node.interactionState = { [FieldNodeState.Dirty]: true };
       return node;
     };
-    writeSchemaNode(
+    writeFieldNode(
       root,
       { flag: true, target: 'value' },
       'callerReplace',
-      SetValueOption.Overwrite,
+      WriteOption.Overwrite,
     );
-    expect(root.runtime.globalState).toEqual({ [SchemaNodeState.Dirty]: true });
-    writeSchemaNode(
+    expect(root.runtime.globalState).toEqual({ [FieldNodeState.Dirty]: true });
+    writeFieldNode(
       root.structure!.flag,
       false,
       'callerReplace',
-      SetValueOption.Overwrite,
+      WriteOption.Overwrite,
     );
     expect(root.runtime.globalState).toEqual({});
-    writeSchemaNode(
+    writeFieldNode(
       root.structure!.flag,
       true,
       'callerReplace',
-      SetValueOption.Overwrite,
+      WriteOption.Overwrite,
     );
-    expect(root.runtime.globalState).toEqual({ [SchemaNodeState.Dirty]: true });
+    expect(root.runtime.globalState).toEqual({ [FieldNodeState.Dirty]: true });
   });
 });

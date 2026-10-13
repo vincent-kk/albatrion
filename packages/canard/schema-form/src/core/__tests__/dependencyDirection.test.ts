@@ -14,7 +14,7 @@ const FRACTALS = [
   'validation',
   'settle',
   'dispatch',
-  'SchemaNode',
+  'FieldNode',
 ];
 const BEHAVIOR_KINDS = [
   'stringBehavior',
@@ -34,7 +34,7 @@ const ORDER: Readonly<Record<string, number>> = {
   validation: 3,
   settle: 4,
   dispatch: 5,
-  SchemaNode: 6,
+  FieldNode: 6,
 };
 
 interface Edge {
@@ -109,13 +109,13 @@ const edges = files.flatMap(importsIn);
 
 describe('NODE-016 and NODE-045 dependency direction', () => {
   it('REACT-009 binding organ depends only on its owner and lower core entry points', () => {
-    const binding = join(CORE, 'SchemaNode', 'utils', 'binding') + sep;
+    const binding = join(CORE, 'FieldNode', 'utils', 'binding') + sep;
     const bindings = files.filter((file) => file.startsWith(binding));
     expect(bindings.length).toBeGreaterThanOrEqual(7);
     const forbidden = edges.filter(
       ({ source, target }) =>
         source.startsWith(binding) &&
-        owner(target) !== 'SchemaNode' &&
+        owner(target) !== 'FieldNode' &&
         !['blueprint', 'behaviors', 'dispatch', 'record', 'validation'].some(
           (name) => target === join(CORE, name, 'index.ts'),
         ) &&
@@ -133,8 +133,8 @@ describe('NODE-016 and NODE-045 dependency direction', () => {
       expect(files.some((file) => owner(file) === name)).toBe(true);
     for (const nested of [
       'record/types/runtime.ts',
-      'SchemaNode/utils/guards.ts',
-      'settle/utils/write/writeSchemaNode.ts',
+      'FieldNode/utils/guards.ts',
+      'settle/utils/write/writeFieldNode.ts',
       'behaviors/utils/parse/utils/number/parseNumber.ts',
     ])
       expect(files).toContain(join(CORE, ...nested.split('/')));
@@ -152,13 +152,13 @@ describe('NODE-016 and NODE-045 dependency direction', () => {
     expect(
       edges.some(
         ({ source, specifier }) =>
-          source.endsWith(`${sep}SchemaNode${sep}index.ts`) &&
+          source.endsWith(`${sep}FieldNode${sep}index.ts`) &&
           specifier === './type',
       ),
     ).toBe(true);
   });
 
-  it('orders imports and type imports from blueprint through SchemaNode', () => {
+  it('orders imports and type imports from blueprint through FieldNode', () => {
     const reversed = edges.filter(({ source, target }) => {
       const from = owner(source);
       const to = owner(target);
@@ -171,11 +171,11 @@ describe('NODE-016 and NODE-045 dependency direction', () => {
     ).toEqual([]);
   });
 
-  it('blocks record imports of settle, SchemaNode, dispatch, validation, app/plugin, and legacy', () => {
+  it('blocks record imports of settle, FieldNode, dispatch, validation, app/plugin, and legacy', () => {
     const forbidden = edges.filter(
       ({ source, target, specifier }) =>
         owner(source) === 'record' &&
-        /(?:^|\/)(?:settle|SchemaNode|dispatch|validation|__legacy__)(?:\/|$)|(?:^|\/)app\/plugin(?:\/|$)/.test(
+        /(?:^|\/)(?:settle|FieldNode|dispatch|validation|__legacy__)(?:\/|$)|(?:^|\/)app\/plugin(?:\/|$)/.test(
           `${target} ${specifier}`,
         ),
     );

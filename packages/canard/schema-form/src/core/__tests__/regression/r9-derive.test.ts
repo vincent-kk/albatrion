@@ -1,10 +1,10 @@
 import { describe, expect, it } from 'vitest';
 
-import { SetValueOption } from '../../SchemaNode';
-import { makeSchemaNodeTree } from '../makeSchemaNodeTree';
+import { SetValueOption } from '../../FieldNode';
+import { makeFieldNodeTree } from '../makeFieldNodeTree';
 
 const clearTree = () => {
-  const { root } = makeSchemaNodeTree({
+  const { root } = makeFieldNodeTree({
     type: 'object',
     properties: {
       clear: { type: 'boolean' },
@@ -22,7 +22,7 @@ const clearTree = () => {
 };
 
 const conflictTree = () => {
-  const { root } = makeSchemaNodeTree({
+  const { root } = makeFieldNodeTree({
     type: 'object',
     properties: {
       dep: { type: 'number' },
@@ -49,7 +49,7 @@ const suppressionTree = () => {
     hidden: 'raw',
     on: false,
   };
-  const { root } = makeSchemaNodeTree(
+  const { root } = makeFieldNodeTree(
     {
       type: 'object',
       properties: {
@@ -92,7 +92,7 @@ const suppressionTree = () => {
 };
 
 const budgetTree = () => {
-  const { root } = makeSchemaNodeTree({
+  const { root } = makeFieldNodeTree({
     type: 'object',
     properties: {
       a: {
@@ -141,7 +141,7 @@ describe('round9 PR-3 derive regression', () => {
     expect(root.find('/x')?.raw).toBeUndefined();
   });
   it('r9.mjs:63 unsetValue suppresses a same-settle birth default', () => {
-    const { root } = makeSchemaNodeTree({
+    const { root } = makeFieldNodeTree({
       type: 'object',
       properties: {
         x: { type: 'string', default: 'D', controls: { unsetValue: 'true' } },

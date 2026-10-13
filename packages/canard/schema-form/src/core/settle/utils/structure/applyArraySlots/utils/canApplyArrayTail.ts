@@ -1,5 +1,5 @@
 import { getItemEntry } from '../../../../../blueprint';
-import type { ArrayArrangePlan, SchemaNodeRecord } from '../../../../../record';
+import type { ArrayArrangePlan, FieldNodeRecord } from '../../../../../record';
 
 /**
  * Prove that every retained position keeps its existing raw owner and path.
@@ -7,7 +7,7 @@ import type { ArrayArrangePlan, SchemaNodeRecord } from '../../../../../record';
  * @param plan - Slot proposal with a retained prefix and optional value tail
  * @returns Whether only the tail needs construction or retirement
  */
-export const canApplyArrayTail = <Self extends SchemaNodeRecord<Self>>(
+export const canApplyArrayTail = <Self extends FieldNodeRecord<Self>>(
   host: Self,
   plan: Extract<ArrayArrangePlan, { kind: 'slots' }>,
 ): boolean => {

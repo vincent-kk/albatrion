@@ -14,7 +14,7 @@ These rules apply when authoring application code that imports from `@canard/sch
 ### node-tree-owns-state
 
 - Form state lives in nodes, not in external React state.
-- Reads and writes go through `FormHandle`, `useSchemaNode*` hooks, or `onChange` inside a `FieldInput`. Mirroring values into a parallel `useState` produces drift.
+- Reads and writes go through `FormHandle`, `useFieldNode*` hooks, or `onChange` inside a `FieldInput`. Mirroring values into a parallel `useState` produces drift.
 
 ### public-api-only
 
@@ -49,8 +49,8 @@ Mixing surfaces on the same path (e.g. `<Form.Input path="/x" />` inside a `<For
 
 ### terminal-is-a-contract
 
-- On object/array schemas, `options.terminal: true` means the `FieldInput` owns the whole subtree value; `ChildNodeComponents` is not used.
-- `options.terminal: false`, or unset without a `presentation.FieldInput` component, means children render via `ChildNodeComponents`.
+- On object/array schemas, `options.terminal: true` means the `FieldInput` owns the whole subtree value; `ChildFields` is not used.
+- `options.terminal: false`, or unset without a `presentation.FieldInput` component, means children render via `ChildFields`.
 - Never mix both modes in a single node.
 
 ---
@@ -79,7 +79,7 @@ Each rule is a single hard requirement. Violations typically produce silent bugs
 - A custom `FieldInput` MUST honor `FieldInputProps`:
   - Use `value` (controlled) OR `defaultValue` (uncontrolled), never both.
   - Call `onChange` with the correct `SetValueOption`.
-  - Render children via `ChildNodeComponents` whenever the node is not `terminal`.
+  - Render children via `ChildFields` whenever the node is not `terminal`.
 - Why: violating any of these causes silent value loss or infinite re-render.
 
 ### onchange-semantics

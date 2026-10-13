@@ -28,14 +28,14 @@
 
 ### 오류 경계
 
-- 폼 바깥 감싸개가 인스턴스 보고기를 소유하고 문맥으로 전달합니다. 루트 경계는 공개 `onError` 속성으로 보고하며, 필드 경계는 컴포넌트를 해석·소유하는 자리에서 한 번 둡니다. 렌더러는 `SchemaNodeProxy`가, 입력은 사설 어댑터 `withFieldInputErrorBoundary`가 렌더 때 `useBoundaryReporter(path)`로 보고기를 읽고 `ErrorBoundary`를 직접 렌더합니다. 지연 필드의 Placeholder만 `VirtualizationManager`가 form당 한 번 `withErrorBoundary`로 감싸고 셋째 인자 보고 훅으로 경로 문맥의 보고기를 읽습니다(68C-08, ERROR-112–117, 121C-01).
+- 폼 바깥 감싸개가 인스턴스 보고기를 소유하고 문맥으로 전달합니다. 루트 경계는 공개 `onError` 속성으로 보고하며, 필드 경계는 컴포넌트를 해석·소유하는 자리에서 한 번 둡니다. 렌더러는 `FieldProxy`가, 입력은 사설 어댑터 `withFieldInputErrorBoundary`가 렌더 때 `useBoundaryReporter(path)`로 보고기를 읽고 `ErrorBoundary`를 직접 렌더합니다. 지연 필드의 Placeholder만 `VirtualizationManager`가 form당 한 번 `withErrorBoundary`로 감싸고 셋째 인자 보고 훅으로 경로 문맥의 보고기를 읽습니다(68C-08, ERROR-112–117, 121C-01).
 - 루트·필드 렌더 오류는 fallback으로 가두고 `RENDER_FAILED` 기록과 `componentStack`을 보고하며 다시 던지지 않습니다. 보고기는 루트 fallback 이후에도 살아 있고 전달 중 표지·중복 억제·경고 집합을 소유하며, 경계는 보고기를 호출합니다. 청사진 오류는 트리 생성 자리에서 포착하여 대체 화면과 커밋 뒤 보고로 연결합니다(ERROR-110–117, LANDING-067·075·095).
 
 ### `FormHandle`
 
 `FormHandle`의 멤버는 `node`·`focus`·`select`·`refresh`·`remount`·`reset`·`findNode`·`findNodes`·`getState`·`setState`·`clearState`·`getValue`·`setValue`·`getErrors`·`getAttachedFilesMap`·`validate`·`showError`·`submit`의 18개입니다. 현재 루트에 위임하며 공개 `publish`는 두지 않습니다(EVENT-063·073, SURFACE-059, 68C-03).
 
-`reset(option?)`은 같은 스키마면 `reloadSchemaNodeForm`으로 트리를 유지하고, 다르면 같은 호출 안에서 작성·인계·마운트·옛 트리 폐기·핸들 교체를 끝냅니다. 옵션은 공개 `SetValueOption.DisableAutomaticWrites`·`EnableAutomaticWrites`만 받으며 그 로드에서 Form `disableAutomaticWrites` 속성보다 우선합니다. 생략하면 속성을 따르고 둘 다 주면 억제가 이깁니다. 캐스트로 전달된 다른 비트는 무시하며 로드 의미는 바뀌지 않습니다(WRITE-015, LANDING-039, ADR 0013). 외부 오류와 검증 결과를 비우고 경로 키 `errors`를 재적용하며, 커밋된 속성 재대조는 Provider의 로드 계약을 따릅니다(WRITE-042–046, 69C-02·03).
+`reset(option?)`은 같은 스키마면 `reloadFieldNodeForm`으로 트리를 유지하고, 다르면 같은 호출 안에서 작성·인계·마운트·옛 트리 폐기·핸들 교체를 끝냅니다. 옵션은 공개 `SetValueOption.DisableAutomaticWrites`·`EnableAutomaticWrites`만 받으며 그 로드에서 Form `disableAutomaticWrites` 속성보다 우선합니다. 생략하면 속성을 따르고 둘 다 주면 억제가 이깁니다. 캐스트로 전달된 다른 비트는 무시하며 로드 의미는 바뀌지 않습니다(WRITE-015, LANDING-039, ADR 0013). 외부 오류와 검증 결과를 비우고 경로 키 `errors`를 재적용하며, 커밋된 속성 재대조는 Provider의 로드 계약을 따릅니다(WRITE-042–046, 69C-02·03).
 
 - `rootNode`가 아직 없으면 조회 계열은 예외를 던지지 않는다. `findNode`는 `null`, `findNodes`·`getErrors`·`validate`는 빈 배열, `getState`는 빈 객체, `getValue`는 런타임에서 `undefined`를 반환한다.
 - `focus(path?)`·`select(path?)`·`refresh(path?)`·`remount(path?)`는 해당 노드의 `request(kind)`를 호출합니다. 경로가 없으면 루트이고 지정 경로의 노드가 없으면 무동작입니다(EVENT-063·073, SURFACE-059).

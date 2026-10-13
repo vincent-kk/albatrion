@@ -4,12 +4,12 @@ import {
   INJECT_TARGET_MISSING,
   INVALID_VIRTUAL_NODE_VALUES,
 } from '../../../../errors';
-import { SetValueOption } from '../../../types/value';
+import { WriteOption } from '../../../types/value';
 import { createTestTree } from '../../__tests__/fixtures/createTestTree';
 import {
-  loadSchemaNodeAtMount,
-  resetSchemaNodeSubtree,
-  writeSchemaNode,
+  loadFieldNodeAtMount,
+  resetFieldNodeSubtree,
+  writeFieldNode,
 } from '../../index';
 
 // filid:contract derive-edge
@@ -25,29 +25,14 @@ describe('injectTo edge boundaries', () => {
         target: { type: 'string' },
       },
     });
-    loadSchemaNodeAtMount(root, { source: 'A' }, SetValueOption.Overwrite);
-    writeSchemaNode(
-      root.structure!.source,
-      'A',
-      'input',
-      SetValueOption.Overwrite,
-    );
+    loadFieldNodeAtMount(root, { source: 'A' }, WriteOption.Overwrite);
+    writeFieldNode(root.structure!.source, 'A', 'input', WriteOption.Overwrite);
     expect(injectTo).toHaveBeenCalledOnce();
     expect(root.structure?.target?.raw).toBeUndefined();
-    writeSchemaNode(
-      root.structure!.source,
-      'B',
-      'input',
-      SetValueOption.Overwrite,
-    );
+    writeFieldNode(root.structure!.source, 'B', 'input', WriteOption.Overwrite);
     expect(root.structure?.target?.raw).toBeUndefined();
     expect(injectTo).toHaveBeenCalledTimes(2);
-    writeSchemaNode(
-      root.structure!.source,
-      'C',
-      'input',
-      SetValueOption.Overwrite,
-    );
+    writeFieldNode(root.structure!.source, 'C', 'input', WriteOption.Overwrite);
     expect(root.structure?.target?.raw).toBe('C');
     expect(injectTo).toHaveBeenCalledTimes(3);
   });
@@ -66,7 +51,7 @@ describe('injectTo edge boundaries', () => {
     });
     let caught: unknown;
     try {
-      loadSchemaNodeAtMount(root, { source: 'A' }, SetValueOption.Overwrite);
+      loadFieldNodeAtMount(root, { source: 'A' }, WriteOption.Overwrite);
     } catch (error) {
       caught = error;
     }
@@ -87,7 +72,7 @@ describe('injectTo edge boundaries', () => {
       },
     });
     expect(() =>
-      loadSchemaNodeAtMount(root, { source: 'A' }, SetValueOption.Overwrite),
+      loadFieldNodeAtMount(root, { source: 'A' }, WriteOption.Overwrite),
     ).toThrow();
     expect(root.runtime.diagnostics.cause).toBe('injectTarget');
   });
@@ -112,10 +97,10 @@ describe('injectTo edge boundaries', () => {
       },
     });
     expect(() =>
-      loadSchemaNodeAtMount(
+      loadFieldNodeAtMount(
         root,
         { invalid: 'A', valid: 'B' },
-        SetValueOption.Overwrite,
+        WriteOption.Overwrite,
       ),
     ).toThrow();
     expect(root.structure?.target?.raw).toBe('written');
@@ -139,7 +124,7 @@ describe('injectTo edge boundaries', () => {
       },
     });
     expect(() =>
-      loadSchemaNodeAtMount(root, { source: 'A' }, SetValueOption.Overwrite),
+      loadFieldNodeAtMount(root, { source: 'A' }, WriteOption.Overwrite),
     ).toThrow();
     expect(root.structure?.target?.raw).toBeUndefined();
     expect(root.runtime.diagnostics.cause).toBe('injectTarget');
@@ -156,7 +141,7 @@ describe('injectTo edge boundaries', () => {
       },
     });
     expect(() =>
-      loadSchemaNodeAtMount(root, { source: 'A' }, SetValueOption.Overwrite),
+      loadFieldNodeAtMount(root, { source: 'A' }, WriteOption.Overwrite),
     ).toThrow('Derive expression failed');
     expect(root.structure?.source?.raw).toBe('A');
     expect(root.runtime.diagnostics).toMatchObject({
@@ -164,12 +149,7 @@ describe('injectTo edge boundaries', () => {
       cause: 'expression',
       commit: 1,
     });
-    writeSchemaNode(
-      root.structure!.source,
-      'A',
-      'input',
-      SetValueOption.Overwrite,
-    );
+    writeFieldNode(root.structure!.source, 'A', 'input', WriteOption.Overwrite);
     expect(injectTo).toHaveBeenCalledOnce();
   });
 
@@ -184,7 +164,7 @@ describe('injectTo edge boundaries', () => {
       controls: { injectTo },
       properties: { target: { type: 'string' } },
     });
-    loadSchemaNodeAtMount(root, {}, SetValueOption.Overwrite);
+    loadFieldNodeAtMount(root, {}, WriteOption.Overwrite);
     expect(injectTo).toHaveBeenCalledTimes(2);
     expect(root.structure?.target?.raw).toBe('root');
   });
@@ -198,18 +178,13 @@ describe('injectTo edge boundaries', () => {
         target: { type: 'string' },
       },
     });
-    loadSchemaNodeAtMount(
+    loadFieldNodeAtMount(
       root,
       { source: 'A', target: 'manual' },
-      SetValueOption.DisableAutomaticWrites,
+      WriteOption.DisableAutomaticWrites,
     );
     expect(root.structure?.target?.raw).toBe('manual');
-    writeSchemaNode(
-      root.structure!.source,
-      'A',
-      'input',
-      SetValueOption.Overwrite,
-    );
+    writeFieldNode(root.structure!.source, 'A', 'input', WriteOption.Overwrite);
     expect(root.structure?.target?.raw).toBe('manual');
     expect(injectTo).toHaveBeenCalledOnce();
   });
@@ -223,12 +198,12 @@ describe('injectTo edge boundaries', () => {
         group: { type: 'object', properties: { target: { type: 'string' } } },
       },
     });
-    loadSchemaNodeAtMount(
+    loadFieldNodeAtMount(
       root,
       { source: 'A', group: {} },
-      SetValueOption.Overwrite,
+      WriteOption.Overwrite,
     );
-    resetSchemaNodeSubtree(root.structure!.group, SetValueOption.Overwrite);
+    resetFieldNodeSubtree(root.structure!.group, WriteOption.Overwrite);
     expect(injectTo).toHaveBeenCalledOnce();
     expect(root.structure?.group?.structure?.target?.raw).toBeUndefined();
   });
@@ -248,27 +223,27 @@ describe('injectTo edge boundaries', () => {
         target: { type: 'string' },
       },
     });
-    loadSchemaNodeAtMount(
+    loadFieldNodeAtMount(
       root,
       { group: { child: 'A' } },
-      SetValueOption.Overwrite,
+      WriteOption.Overwrite,
     );
-    writeSchemaNode(
+    writeFieldNode(
       root.structure!.group.structure!.child,
       'B',
       'input',
-      SetValueOption.Overwrite,
+      WriteOption.Overwrite,
     );
-    writeSchemaNode(
+    writeFieldNode(
       root.structure!.target,
       'manual',
       'input',
-      SetValueOption.Overwrite,
+      WriteOption.Overwrite,
     );
     const before = injectTo.mock.calls.length;
-    resetSchemaNodeSubtree(
+    resetFieldNodeSubtree(
       root.structure!.group.structure!.child,
-      SetValueOption.Overwrite,
+      WriteOption.Overwrite,
     );
     expect(injectTo).toHaveBeenCalledTimes(before);
     expect(root.structure?.target?.raw).toBe('manual');
@@ -288,7 +263,7 @@ describe('injectTo edge boundaries', () => {
       },
       options: { virtual: { v: { fields: ['real'] } } },
     });
-    loadSchemaNodeAtMount(root, { source: 'A' }, SetValueOption.Overwrite);
+    loadFieldNodeAtMount(root, { source: 'A' }, WriteOption.Overwrite);
     expect(root.structure?.real?.raw).toBe('written');
     expect(root.runtime.diagnostics.status).toBe('stable');
   });
@@ -309,7 +284,7 @@ describe('injectTo edge boundaries', () => {
     });
     let caught: unknown;
     try {
-      loadSchemaNodeAtMount(root, { source: 'A' }, SetValueOption.Overwrite);
+      loadFieldNodeAtMount(root, { source: 'A' }, WriteOption.Overwrite);
     } catch (error) {
       caught = error;
     }
@@ -328,7 +303,7 @@ describe('injectTo edge boundaries', () => {
         t: { type: 'string' },
       },
     });
-    loadSchemaNodeAtMount(root, {}, SetValueOption.Overwrite);
+    loadFieldNodeAtMount(root, {}, WriteOption.Overwrite);
     expect(injectTo.mock.calls.map(([value]) => value)).toEqual([
       undefined,
       'C',
@@ -336,11 +311,11 @@ describe('injectTo edge boundaries', () => {
     expect(root.structure?.t?.raw).toBe('from-C');
   });
 
-  it('CONTROLS-073 reborn target kind starts its children derived edge anew', () => {
+  it('CONTROLS-073 reborn target kind starts its fields derived edge anew', () => {
     const { root } = createTestTree({
       type: 'object',
       controls: {
-        children: [{ targets: ['target'], controls: { derived: './source' } }],
+        fields: [{ targets: ['target'], controls: { derived: './source' } }],
       },
       properties: {
         enabled: { type: 'boolean' },
@@ -361,18 +336,18 @@ describe('injectTo edge boundaries', () => {
         },
       },
     });
-    loadSchemaNodeAtMount(root, { source: 10 }, SetValueOption.Overwrite);
+    loadFieldNodeAtMount(root, { source: 10 }, WriteOption.Overwrite);
     const oldTarget = root.structure!.target;
     expect(oldTarget.blueprintNode.kind).toBe('number');
     const oldKey = [...(root.runtime.committedRuleValues?.keys() ?? [])].find(
       (key) => key.includes('"/target","number"'),
     );
     expect(oldKey).toBeDefined();
-    writeSchemaNode(
+    writeFieldNode(
       root.structure!.enabled,
       true,
       'input',
-      SetValueOption.Overwrite,
+      WriteOption.Overwrite,
     );
     const newTarget = root.structure!.target;
     expect(newTarget).not.toBe(oldTarget);
@@ -392,7 +367,7 @@ describe('injectTo edge boundaries', () => {
     const { root } = createTestTree({
       type: 'object',
       controls: {
-        children: [{ targets: ['target'], controls: { derived: './source' } }],
+        fields: [{ targets: ['target'], controls: { derived: './source' } }],
       },
       properties: {
         flag: { type: 'boolean' },
@@ -412,22 +387,22 @@ describe('injectTo edge boundaries', () => {
         },
       },
     });
-    loadSchemaNodeAtMount(
+    loadFieldNodeAtMount(
       root,
       { source: 10, a: 'A', b: 'B' },
-      SetValueOption.Overwrite,
+      WriteOption.Overwrite,
     );
     const target = root.structure!.target;
     expect(target.blueprintNode.kind).toBe('number');
-    writeSchemaNode(target, 99, 'input', SetValueOption.Overwrite);
-    writeSchemaNode(
+    writeFieldNode(target, 99, 'input', WriteOption.Overwrite);
+    writeFieldNode(
       root.structure!.a,
       'changed',
       'input',
-      SetValueOption.Overwrite,
+      WriteOption.Overwrite,
     );
     expect(target.raw).toBe(99);
-    writeSchemaNode(root.structure!.b, 'C', 'input', SetValueOption.Overwrite);
+    writeFieldNode(root.structure!.b, 'C', 'input', WriteOption.Overwrite);
     expect(target.raw).toBe(10);
   });
 });

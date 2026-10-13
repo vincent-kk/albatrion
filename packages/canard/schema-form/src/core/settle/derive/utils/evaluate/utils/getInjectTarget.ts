@@ -2,7 +2,7 @@ import { hasOwnProperty } from '@winglet/common-utils/lib';
 import { unescapeSegment } from '@winglet/json/pointer';
 
 import { getItemEntry } from '../../../../../blueprint';
-import type { SchemaNodeRecord } from '../../../../../record';
+import type { FieldNodeRecord } from '../../../../../record';
 import { getDeriveChildEntry } from '../../rank/getDeriveChildEntry';
 
 /**
@@ -11,7 +11,7 @@ import { getDeriveChildEntry } from '../../rank/getDeriveChildEntry';
  * @param path - Absolute target pointer, never the context token
  * @returns Declared target and optional live occurrence
  */
-export const getInjectTarget = <Self extends SchemaNodeRecord<Self>>(
+export const getInjectTarget = <Self extends FieldNodeRecord<Self>>(
   root: Self,
   path: string,
 ) => {

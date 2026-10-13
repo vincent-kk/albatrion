@@ -13,9 +13,9 @@ import {
 
 import {
   type FieldInputProps,
+  FieldNodeEventType,
   Form,
   type JSONSchema,
-  SchemaNodeEventType,
   ValidationMode,
 } from '@/schema-form';
 
@@ -43,7 +43,7 @@ for (const scenario of notifyScenarios)
       return node
         ? [
             node.subscribe((event) => {
-              if (event.type & SchemaNodeEventType.UpdateValue)
+              if (event.type & FieldNodeEventType.UpdateValue)
                 deliveries.push(path);
             }),
           ]
@@ -105,7 +105,7 @@ async function mountSubscribers(count: number) {
           commits++;
         }}
       >
-        <Form.Group />
+        <Form.Field />
         <Sibling />
         <button type="button" onClick={() => writeAll()}>
           write
@@ -156,7 +156,7 @@ it('EVENT-004 batch의 1,000개 쓰기는 한 통지 순회와 한 React 커밋�
   const deliveries: string[] = [];
   const stops = [form.handle.node!, ...probe.nodes].map((node) =>
     node.subscribe((event) => {
-      if (event.type & SchemaNodeEventType.UpdateValue)
+      if (event.type & FieldNodeEventType.UpdateValue)
         deliveries.push(node.path);
     }),
   );
@@ -170,8 +170,7 @@ it('EVENT-004 batch의 1,000개 쓰기는 한 통지 순회와 한 React 커밋�
 it('EVENT-008 리스너 되먹임의 두 파동 뒤 최종 값이 찢어짐과 snapshot 경고 없이 반영된다', async () => {
   const probe = await mountSubscribers(2);
   const stop = probe.nodes[0].subscribe((event) => {
-    if (event.type & SchemaNodeEventType.UpdateValue)
-      probe.nodes[1].setValue(1);
+    if (event.type & FieldNodeEventType.UpdateValue) probe.nodes[1].setValue(1);
   });
   await act(async () => probe.nodes[0].setValue(1));
   stop();
@@ -192,7 +191,7 @@ it('EVENT-007 10,000개 구독 필드의 루트 전체 쓰기 뒤 DOM에 이전 
 it('EVENT-007 리스너가 다른 컴포넌트를 flushSync해도 배달 뒤 모든 필드가 최종 커밋 값을 보인다', async () => {
   const probe = await mountSubscribers(2);
   const stop = probe.nodes[0].subscribe((event) => {
-    if (event.type & SchemaNodeEventType.UpdateValue) flushSync(probe.bump);
+    if (event.type & FieldNodeEventType.UpdateValue) flushSync(probe.bump);
   });
   await act(async () => form.handle.node!.batch(probe.writeAll));
   stop();
@@ -203,7 +202,7 @@ it('EVENT-007 리스너가 다른 컴포넌트를 flushSync해도 배달 뒤 모
 it('EVENT-007 revision 일괄 증가 뒤 파동 중 flushSync에서도 1,000개 필드의 최종 DOM이 일치한다', async () => {
   const probe = await mountSubscribers(1000);
   const stop = probe.nodes[0].subscribe((event) => {
-    if (event.type & SchemaNodeEventType.UpdateValue) flushSync(probe.bump);
+    if (event.type & FieldNodeEventType.UpdateValue) flushSync(probe.bump);
   });
   await act(async () => form.handle.node!.batch(probe.writeAll));
   stop();
@@ -238,7 +237,7 @@ it('EVENT-005 루트 구독 부모와 필드 구독 자식이 같은 최종 값�
 it('EVENT-007 루트 리스너의 flushSync 뒤에도 자식 DOM이 최종 값과 일치한다', async () => {
   const probe = await mountSubscribers(2);
   const stop = form.handle.node!.subscribe((event) => {
-    if (event.type & SchemaNodeEventType.UpdateValue) flushSync(probe.bump);
+    if (event.type & FieldNodeEventType.UpdateValue) flushSync(probe.bump);
   });
   await form.setValue({ f0: 1, f1: 1 });
   stop();

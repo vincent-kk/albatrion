@@ -1,10 +1,10 @@
 import { describe, expect, it, vi } from 'vitest';
 
-import { SchemaNode } from '../../SchemaNode/SchemaNode';
-import { makeSchemaNodeTree } from '../../__tests__/makeSchemaNodeTree';
+import { FieldNode } from '../../FieldNode/FieldNode';
+import { makeFieldNodeTree } from '../../__tests__/makeFieldNodeTree';
 
 const makeWatchedTree = (count: number) => {
-  const { root } = makeSchemaNodeTree({
+  const { root } = makeFieldNodeTree({
     type: 'object',
     properties: {
       flag: { type: 'string' },
@@ -29,7 +29,7 @@ const makeWatchedTree = (count: number) => {
       },
     },
   });
-  if (!(root instanceof SchemaNode)) throw new Error('Expected runtime tree');
+  if (!(root instanceof FieldNode)) throw new Error('Expected runtime tree');
   root.setValue({
     flag: 'a',
     list: Array.from({ length: 8 }, (_, key) => ({ key, watch: 'x' })),
@@ -48,7 +48,7 @@ describe('I9 indexed array store costs', () => {
       return parse(value);
     });
     try {
-      (root.find('/list') as SchemaNode).remove(7);
+      (root.find('/list') as FieldNode).remove(7);
       expect(parses, `remove(last) JSON parses: ${parses}`).toBeLessThan(100);
     } finally {
       spy.mockRestore();

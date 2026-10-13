@@ -145,7 +145,7 @@ export interface ExternalFormContextProviderProps {
  * ```tsx
  * <FormProvider
  *   // Custom renderers
- *   FieldRenderer={MyFormGroup}
+ *   FieldRenderer={MyFormField}
  *   FormLabelRenderer={MyFormLabel}
  *   FormInputRenderer={MyFormInput}
  *   FormErrorRenderer={MyFormError}

@@ -3,9 +3,9 @@ import { afterEach, expect, it } from 'vitest';
 
 import {
   type FieldInputProps,
+  FieldNodeEventType,
   type FieldRendererProps,
   Form,
-  SchemaNodeEventType,
 } from '@/schema-form';
 
 import { type FormHarness, renderForm } from '../renderForm';
@@ -42,7 +42,7 @@ it('EVENT-002 unchanged content produces no phantom UpdateValue delivery', async
   const deliveries: string[] = [];
   const stops = ['', '/a', '/b'].map((path) =>
     form.node(path)!.subscribe((event) => {
-      if (event.type & SchemaNodeEventType.UpdateValue) deliveries.push(path);
+      if (event.type & FieldNodeEventType.UpdateValue) deliveries.push(path);
     }),
   );
   await act(async () =>
@@ -94,7 +94,7 @@ it('EVENT-073 refresh remounts the addressed input and retains its node', async 
   expect(form.value('/text')).toBe('same');
 });
 
-it('TEST-020 FormGroupRenderer consumes node.strategy for branch and terminal rendering', async () => {
+it('TEST-020 FormFieldRenderer consumes node.strategy for branch and terminal rendering', async () => {
   const Group = ({ node, Input }: FieldRendererProps) => (
     <section data-strategy={node.strategy}>
       <Input />
@@ -202,8 +202,8 @@ it('SETTLE-043 restoring source content makes no phantom watch or derived delive
     form.node(path)!.subscribe((event) => {
       if (
         event.type &
-        (SchemaNodeEventType.UpdateValue |
-          SchemaNodeEventType.UpdateComputedProperties)
+        (FieldNodeEventType.UpdateValue |
+          FieldNodeEventType.UpdateControlledProperties)
       )
         events.push({
           path,

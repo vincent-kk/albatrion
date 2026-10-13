@@ -3,7 +3,7 @@ import type {
   BlueprintNode,
   EffectiveSchema,
 } from '../../../blueprint';
-import type { SchemaNodeRecord } from '../../../record';
+import type { FieldNodeRecord } from '../../../record';
 import type { SettlementContext } from '../../type';
 import { hasLatentUnder } from '../latent/hasLatentUnder';
 import { getRecursiveRelativeSpan } from './utils/getRecursiveRelativeSpan';
@@ -44,7 +44,7 @@ const hasTemplateCycle = (
  * @param context - Distribution provenance and automatic write membership
  * @returns Whether a caller-origin value exists at or below this occurrence
  */
-const hasOriginalInput = <Self extends SchemaNodeRecord<Self>>(
+const hasOriginalInput = <Self extends FieldNodeRecord<Self>>(
   node: Self,
   context: SettlementContext<Self>,
 ): boolean => {
@@ -64,7 +64,7 @@ const hasOriginalInput = <Self extends SchemaNodeRecord<Self>>(
     return true;
   if (
     !context.filledNodes.has(node) &&
-    (node.raw !== undefined || node.extras !== undefined)
+    (node.raw !== undefined || node.undeclaredValues !== undefined)
   )
     return true;
   if (hasLatentUnder(context, node.path)) {
@@ -92,7 +92,7 @@ const hasOriginalInput = <Self extends SchemaNodeRecord<Self>>(
  * @param hosts - Automatically filled hosts, when checking a fill candidate
  * @returns Whether repeating the template would expand without a source
  */
-export const hasRecursiveExpansion = <Self extends SchemaNodeRecord<Self>>(
+export const hasRecursiveExpansion = <Self extends FieldNodeRecord<Self>>(
   parent: Self,
   template: BlueprintNode,
   input: unknown,

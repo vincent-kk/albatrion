@@ -2,7 +2,7 @@ import { afterEach, expect, it, vi } from 'vitest';
 
 import { hasOwnProperty } from '@winglet/common-utils/lib';
 
-import type { SchemaNodeRecord } from '../../../../../record';
+import type { FieldNodeRecord } from '../../../../../record';
 import { objectKeyCounts } from '../../../utils/objectKeyCounts';
 import { assembleObject } from '../assembleObject';
 
@@ -25,12 +25,12 @@ const fixture = (numeric = true) => {
   ];
   const node = {
     local: undefined,
-    extras: undefined,
+    undeclaredValues: undefined,
     schema: { schema: { type: 'object' } },
     blueprintNode: {
       childEntries: children.map((child) => ({ name: child.name })),
     },
-  } as unknown as SchemaNodeRecord<unknown>;
+  } as unknown as FieldNodeRecord<unknown>;
   const first = assembleObject(node, children) as Record<string, unknown>;
   node.local = first;
   return { node, children, first, nested };
@@ -110,7 +110,7 @@ it('rebuilds authored key order when schema identity changes', () => {
   node.schema = {
     schema: {
       type: 'object',
-      options: { propertyKeys: ['group', '01', '__proto__', 'constructor'] },
+      options: { propertyOrder: ['group', '01', '__proto__', 'constructor'] },
     },
     typeConflict: false,
   } as typeof node.schema;
@@ -134,7 +134,7 @@ it('rebuilds authored key order when schema identity changes', () => {
 
 it('rebuilds extras and key insertion/deletion through the existing path', () => {
   const { node, children } = fixture();
-  node.extras = { extra: { retained: true } };
+  node.undeclaredValues = { extra: { retained: true } };
   children[0].emit = 'changed';
   const hint = { incremental: false };
   let result = assembleObject(node, children, [children[0]], hint) as Record<
@@ -142,7 +142,9 @@ it('rebuilds extras and key insertion/deletion through the existing path', () =>
     unknown
   >;
   expect(hint.incremental).toBe(false);
-  expect(result.extra).toBe((node.extras as Record<string, unknown>).extra);
+  expect(result.extra).toBe(
+    (node.undeclaredValues as Record<string, unknown>).extra,
+  );
   node.local = result;
   children[4].emit = undefined!;
   hint.incremental = false;

@@ -1,4 +1,4 @@
-import type { SchemaNodeRecord } from '../../../../record';
+import type { FieldNodeRecord } from '../../../../record';
 
 /**
  * Compare two committed occurrences by their parent-child document positions.
@@ -7,7 +7,7 @@ import type { SchemaNodeRecord } from '../../../../record';
  * @param siblingIndexes - Parent positions shared across this wave's comparisons
  * @returns Negative when left precedes right, positive when it follows
  */
-export const compareDocumentOrder = <Self extends SchemaNodeRecord<Self>>(
+export const compareDocumentOrder = <Self extends FieldNodeRecord<Self>>(
   left: Self,
   right: Self,
   siblingIndexes: Map<Self, Map<Self, number>>,

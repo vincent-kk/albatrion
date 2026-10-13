@@ -1,6 +1,6 @@
 import { isArray } from '@winglet/common-utils/filter';
 
-import type { SchemaNodeRecord } from '../../../record';
+import type { FieldNodeRecord } from '../../../record';
 import type { SettlementContext } from '../../type';
 import { markWrite } from '../write/markWrite';
 import { HostLatent } from './HostLatent';
@@ -12,7 +12,7 @@ import { HostLatent } from './HostLatent';
  * @param context - Calculation work whose dirty paths must be updated
  * @returns Nothing; descendants restore their own entries separately
  */
-export const restoreLatentState = <Self extends SchemaNodeRecord<Self>>(
+export const restoreLatentState = <Self extends FieldNodeRecord<Self>>(
   node: Self,
   value: unknown,
   context: SettlementContext<Self>,
@@ -22,14 +22,15 @@ export const restoreLatentState = <Self extends SchemaNodeRecord<Self>>(
     return;
   }
   const raw = value instanceof HostLatent ? value.raw : undefined;
-  const extras = value instanceof HostLatent ? value.extras : undefined;
+  const extras =
+    value instanceof HostLatent ? value.undeclaredValues : undefined;
   if (node.behavior.type === 'array' && isArray(raw)) {
     markWrite(node, raw, context);
     return;
   }
-  if (!Object.is(node.raw, raw) || !Object.is(node.extras, extras)) {
+  if (!Object.is(node.raw, raw) || !Object.is(node.undeclaredValues, extras)) {
     node.raw = raw;
-    node.extras = extras;
+    node.undeclaredValues = extras;
     context.changedRaw.add(node.path);
     context.changedNodes.add(node);
   }

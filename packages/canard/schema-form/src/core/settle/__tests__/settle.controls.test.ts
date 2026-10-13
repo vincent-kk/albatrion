@@ -1,17 +1,17 @@
 import { describe, expect, it } from 'vitest';
 
-import { schemaNodeFactory } from '../../SchemaNode';
+import { fieldNodeFactory } from '../../FieldNode';
 import { blueprint } from '../../blueprint';
 import type { BlueprintSchema } from '../../blueprint';
-import { SetValueOption } from '../../types/value';
+import { WriteOption } from '../../types/value';
 import { PathKeyedMap } from '../../utils/pathIndex/PathKeyedMap';
 import { PathKeyedSet } from '../../utils/pathIndex/PathKeyedSet';
-import { loadSchemaNodeAtMount, writeSchemaNode } from '../index';
+import { loadFieldNodeAtMount, writeFieldNode } from '../index';
 import { createTestTree } from './fixtures/createTestTree';
 
 /** Create a runtime surface tree for commit-scoped getter checks. */
 const createSurfaceTree = (schema: BlueprintSchema) =>
-  schemaNodeFactory(blueprint(schema), {
+  fieldNodeFactory(blueprint(schema), {
     context: {},
     diagnostics: { status: 'stable' },
     loadSnapshot: undefined,
@@ -28,11 +28,11 @@ describe('settled controls', () => {
     const { root } = createTestTree({
       type: 'object',
       controls: {
-        children: [{ targets: ['field'], controls: { readOnly: true } }],
+        fields: [{ targets: ['field'], controls: { readOnly: true } }],
       },
       properties: { field: { type: 'string', controls: { readOnly: false } } },
     });
-    loadSchemaNodeAtMount(root, { field: 'a' }, SetValueOption.Overwrite);
+    loadFieldNodeAtMount(root, { field: 'a' }, WriteOption.Overwrite);
     expect(root.structure?.field?.readOnly).toBe(true);
   });
 
@@ -40,11 +40,11 @@ describe('settled controls', () => {
     const { root } = createTestTree({
       type: 'object',
       controls: {
-        children: [{ targets: ['field'], controls: { disabled: false } }],
+        fields: [{ targets: ['field'], controls: { disabled: false } }],
       },
       properties: { field: { type: 'string', controls: { disabled: true } } },
     });
-    loadSchemaNodeAtMount(root, { field: 'a' }, SetValueOption.Overwrite);
+    loadFieldNodeAtMount(root, { field: 'a' }, WriteOption.Overwrite);
     expect(root.structure?.field?.disabled).toBe(true);
   });
 
@@ -52,11 +52,11 @@ describe('settled controls', () => {
     const { root } = createTestTree({
       type: 'object',
       controls: {
-        children: [{ targets: ['field'], controls: { visible: false } }],
+        fields: [{ targets: ['field'], controls: { visible: false } }],
       },
       properties: { field: { type: 'string', controls: { visible: true } } },
     });
-    loadSchemaNodeAtMount(root, { field: 'a' }, SetValueOption.Overwrite);
+    loadFieldNodeAtMount(root, { field: 'a' }, WriteOption.Overwrite);
     expect(root.structure?.field?.visible).toBe(false);
   });
 
@@ -71,15 +71,15 @@ describe('settled controls', () => {
         },
       },
     });
-    loadSchemaNodeAtMount(root, { field: 'a' }, SetValueOption.Overwrite);
+    loadFieldNodeAtMount(root, { field: 'a' }, WriteOption.Overwrite);
     expect(root.structure?.field?.readOnly).toBe(true);
   });
 
-  it('CONTROLS-073 children item expression uses its host for every target', () => {
+  it('CONTROLS-073 fields entry expression uses its host for every target', () => {
     const { root } = createTestTree({
       type: 'object',
       controls: {
-        children: [{ targets: ['a', 'b'], controls: { disabled: './lock' } }],
+        fields: [{ targets: ['a', 'b'], controls: { disabled: './lock' } }],
       },
       properties: {
         lock: { type: 'boolean' },
@@ -87,10 +87,10 @@ describe('settled controls', () => {
         b: { type: 'string' },
       },
     });
-    loadSchemaNodeAtMount(
+    loadFieldNodeAtMount(
       root,
       { lock: true, a: 'a', b: 'b' },
-      SetValueOption.Overwrite,
+      WriteOption.Overwrite,
     );
     expect(root.structure?.a?.disabled).toBe(true);
     expect(root.structure?.b?.disabled).toBe(true);
@@ -100,27 +100,27 @@ describe('settled controls', () => {
     const { root } = createTestTree({
       type: 'object',
       controls: {
-        children: [{ targets: ['target'], controls: { disabled: './flag' } }],
+        fields: [{ targets: ['target'], controls: { disabled: './flag' } }],
       },
       properties: {
         flag: { type: 'boolean' },
         target: { type: 'string', controls: { visible: '../flag' } },
       },
     });
-    loadSchemaNodeAtMount(
+    loadFieldNodeAtMount(
       root,
       { flag: false, target: 't' },
-      SetValueOption.Overwrite,
+      WriteOption.Overwrite,
     );
     expect([
       root.structure?.target?.visible,
       root.structure?.target?.disabled,
     ]).toEqual([false, false]);
-    writeSchemaNode(
+    writeFieldNode(
       root.structure!.flag,
       true,
       'callerReplace',
-      SetValueOption.Overwrite,
+      WriteOption.Overwrite,
     );
     expect([
       root.structure?.target?.visible,
@@ -144,24 +144,24 @@ describe('settled controls', () => {
         },
       ],
     });
-    loadSchemaNodeAtMount(
+    loadFieldNodeAtMount(
       root,
       { x: false, unrelated: 'a', child: 'c' },
-      SetValueOption.Overwrite,
+      WriteOption.Overwrite,
     );
     expect(root.structure?.child?.visible).toBe(false);
-    writeSchemaNode(
+    writeFieldNode(
       root.structure!.x,
       true,
       'callerReplace',
-      SetValueOption.Overwrite,
+      WriteOption.Overwrite,
     );
     expect(root.structure?.child?.visible).toBe(true);
-    writeSchemaNode(
+    writeFieldNode(
       root.structure!.unrelated,
       'b',
       'callerReplace',
-      SetValueOption.Overwrite,
+      WriteOption.Overwrite,
     );
     expect(root.structure?.child?.visible).toBe(true);
   });
@@ -178,7 +178,7 @@ describe('settled controls', () => {
       },
       allOf,
     });
-    loadSchemaNodeAtMount(
+    loadFieldNodeAtMount(
       root,
       {
         unrelated: 'a',
@@ -186,7 +186,7 @@ describe('settled controls', () => {
           allOf.map((_, index) => [`fragment${index}`, 'value']),
         ),
       },
-      SetValueOption.Overwrite,
+      WriteOption.Overwrite,
     );
     let publishedChildren = 0;
     for (let index = 0; index < allOf.length; index += 1) {
@@ -202,11 +202,11 @@ describe('settled controls', () => {
         },
       });
     }
-    writeSchemaNode(
+    writeFieldNode(
       root.structure!.unrelated,
       'b',
       'callerReplace',
-      SetValueOption.Overwrite,
+      WriteOption.Overwrite,
     );
     expect(publishedChildren).toBe(0);
   });
@@ -226,10 +226,10 @@ describe('settled controls', () => {
         },
       ],
     });
-    loadSchemaNodeAtMount(
+    loadFieldNodeAtMount(
       root,
       { inside: 'i', outside: 'o' },
-      SetValueOption.Overwrite,
+      WriteOption.Overwrite,
     );
     expect(root.structure?.inside?.visible).toBe(false);
     expect(root.structure?.outside?.visible).toBe(true);
@@ -244,7 +244,7 @@ describe('settled controls', () => {
         child: { type: 'string' },
       },
     });
-    loadSchemaNodeAtMount(root, { child: 'c' }, SetValueOption.Overwrite);
+    loadFieldNodeAtMount(root, { child: 'c' }, WriteOption.Overwrite);
     expect([root.readOnly, root.disabled, root.visible]).toEqual([
       true,
       true,
@@ -272,24 +272,24 @@ describe('settled controls', () => {
         },
       },
     });
-    loadSchemaNodeAtMount(root, { source: 'a' }, SetValueOption.Overwrite);
+    loadFieldNodeAtMount(root, { source: 'a' }, WriteOption.Overwrite);
     expect([
       root.structure?.target?.readOnly,
       root.structure?.target?.disabled,
     ]).toEqual([true, true]);
     expect(root.structure?.target?.raw).toBe('a');
-    writeSchemaNode(
+    writeFieldNode(
       root.structure!.target,
       'manual',
       'callerReplace',
-      SetValueOption.Overwrite,
+      WriteOption.Overwrite,
     );
     expect(root.structure?.target?.raw).toBe('manual');
-    writeSchemaNode(
+    writeFieldNode(
       root.structure!.source,
       'b',
       'callerReplace',
-      SetValueOption.Overwrite,
+      WriteOption.Overwrite,
     );
     expect(root.structure?.target?.raw).toBe('b');
   });
@@ -350,17 +350,17 @@ describe('settled controls', () => {
         },
       },
     });
-    loadSchemaNodeAtMount(
+    loadFieldNodeAtMount(
       root,
       { shown: true, branch: { child: 'c' } },
-      SetValueOption.Overwrite,
+      WriteOption.Overwrite,
     );
     const child = root.structure!.branch.structure!.child;
-    writeSchemaNode(
+    writeFieldNode(
       root.structure!.shown,
       false,
       'callerReplace',
-      SetValueOption.Overwrite,
+      WriteOption.Overwrite,
     );
     expect(child.detached).toBe(true);
     expect([child.visible, child.readOnly, child.disabled]).toEqual([

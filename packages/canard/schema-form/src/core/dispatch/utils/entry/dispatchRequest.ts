@@ -1,6 +1,6 @@
-import { SchemaNodeRequestType } from '../../../record';
-import type { SchemaNodeRecord } from '../../../record';
-import { assertSchemaNodeWritable } from '../../../settle';
+import { FieldNodeRequestType } from '../../../record';
+import type { FieldNodeRecord } from '../../../record';
+import { assertFieldNodeWritable } from '../../../settle';
 import { flushQueuedEvents } from '../chain/flushQueuedEvents';
 import { queueNonSettleEvent } from '../chain/queueNonSettleEvent';
 import { refuseListenerFeedback } from '../chain/refuseListenerFeedback';
@@ -12,19 +12,19 @@ import { assertNotInDelivery } from '../report/assertNotInDelivery';
  * @param kind - One supported request bit, never an OR-ed combination
  * @returns Nothing; delivery is synchronous outside a public write
  */
-export const dispatchRequest = <Self extends SchemaNodeRecord<Self>>(
+export const dispatchRequest = <Self extends FieldNodeRecord<Self>>(
   node: Self,
-  kind: SchemaNodeRequestType,
+  kind: FieldNodeRequestType,
 ): void => {
-  assertSchemaNodeWritable(node);
+  assertFieldNodeWritable(node);
   if (node.detached) return;
   const runtime = node.rootNode.runtime;
   assertNotInDelivery(runtime);
   if (
-    kind !== SchemaNodeRequestType.Focus &&
-    kind !== SchemaNodeRequestType.Select &&
-    kind !== SchemaNodeRequestType.Refresh &&
-    kind !== SchemaNodeRequestType.Remount
+    kind !== FieldNodeRequestType.Focus &&
+    kind !== FieldNodeRequestType.Select &&
+    kind !== FieldNodeRequestType.Refresh &&
+    kind !== FieldNodeRequestType.Remount
   )
     return;
   if (refuseListenerFeedback(runtime)) return;

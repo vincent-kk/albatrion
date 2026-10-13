@@ -5,15 +5,15 @@ export type {
   Validator,
 } from './type';
 export { readValidationEntry } from './utils/cache/readValidationEntry';
-export { readSchemaNodeGuard } from './utils/guard/readSchemaNodeGuard';
+export { readFieldNodeGuard } from './utils/guard/readFieldNodeGuard';
 export { compileEntryGuards } from './utils/guard/compileEntryGuards';
-export { requestSchemaNodeValidation } from './utils/run/requestSchemaNodeValidation';
-export { runSchemaNodeValidation } from './utils/run/runSchemaNodeValidation';
+export { requestFieldNodeValidation } from './utils/run/requestFieldNodeValidation';
+export { runFieldNodeValidation } from './utils/run/runFieldNodeValidation';
 export { assertValidationRootReady } from './utils/run/assertValidationRootReady';
 export { routeValidationIssues } from './utils/route/routeValidationIssues';
 export { retainEqualValidationIssues } from './utils/route/retainEqualValidationIssues';
-export { updateSchemaNodeGlobalErrors } from './utils/route/updateSchemaNodeGlobalErrors';
+export { updateFieldNodeGlobalErrors } from './utils/route/updateFieldNodeGlobalErrors';
 export { EMPTY_GLOBAL_ERRORS } from './utils/route/constants';
-export { readSchemaNodeErrors } from './utils/read/readSchemaNodeErrors';
+export { readFieldNodeErrors } from './utils/read/readFieldNodeErrors';
 export { retainValidationRoot } from './utils/lifetime/retainValidationRoot';
 export { releaseValidationRoot } from './utils/lifetime/releaseValidationRoot';

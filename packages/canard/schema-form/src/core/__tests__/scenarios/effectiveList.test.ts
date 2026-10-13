@@ -3,9 +3,9 @@ import { describe, expect, it } from 'vitest';
 import type { FormScenario } from '@aileron/schema-form-scenarios';
 
 import type { BlueprintSchema } from '../../blueprint';
-import { writeSchemaNode } from '../../settle';
+import { writeFieldNode } from '../../settle';
 import { createTestTree } from '../../settle/__tests__/fixtures/createTestTree';
-import { SetValueOption } from '../../types/value';
+import { WriteOption } from '../../types/value';
 import { runScenario } from './utils/runScenario';
 
 // filid:contract scenario-runner
@@ -39,11 +39,11 @@ describe('core effective-list scenario', () => {
     const result = await runScenario(scenario, {
       execute: (step) => {
         if (step.action === 'setValue')
-          writeSchemaNode(
+          writeFieldNode(
             step.path === '' ? root : root.structure!.enabled,
             step.value,
             step.path === '' ? 'callerReplace' : 'input',
-            SetValueOption.Overwrite,
+            WriteOption.Overwrite,
           );
       },
       assert: (expected) => {

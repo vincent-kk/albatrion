@@ -3,18 +3,18 @@ import { type ComponentType, type ReactNode, memo } from 'react';
 import { useConstant, useReference } from '@winglet/react-utils/hook';
 
 import { PluginManager } from '@/schema-form/app/plugin';
-import { SchemaNodeProxy } from '@/schema-form/components/SchemaNode';
+import { FieldProxy } from '@/schema-form/components/Field';
 import { useFieldRendererContext } from '@/schema-form/providers';
 import type {
   AllowedValue,
-  ChildNodeComponentProps,
+  ChildFieldProps,
   FieldInputProps,
 } from '@/schema-form/types';
 
 export type FormInputProps<Value extends AllowedValue> = {
   path?: string;
   FieldInput?: ComponentType<FieldInputProps<Value>>;
-} & ChildNodeComponentProps;
+} & ChildFieldProps;
 
 /**
  * Renders form input fields with automatic type detection from schema.
@@ -89,7 +89,7 @@ export const FormInput = memo(
       InputFieldInput as ComponentType<FieldInputProps>,
     );
     return (
-      <SchemaNodeProxy
+      <FieldProxy
         path={path}
         overridePropsRef={overridePropsRef}
         FieldInput={FieldInput}

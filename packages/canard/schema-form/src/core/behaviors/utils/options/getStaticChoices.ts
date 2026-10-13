@@ -10,20 +10,20 @@ export interface StaticChoices {
   readonly omitTrailing: boolean;
   /** Whether completed string input loses surrounding whitespace. */
   readonly trim: boolean;
-  /** Preferred host key order ahead of authored declarations. */
-  readonly propertyKeys: readonly string[];
+  /** Emitted object key order ahead of authored declarations; it does not change the on-screen order. */
+  readonly propertyOrder: readonly string[];
 }
 
 /** Effective-schema identity owns its one computed option selection. */
 const CHOICES = new WeakMap<EffectiveSchema, StaticChoices>();
-/** Shared empty order for schemas without a propertyKeys hint. */
+/** Shared empty order for schemas without a propertyOrder option. */
 const NO_KEYS: readonly string[] = Object.freeze([]);
 /** Optionless schemas link to this producer-frozen default selection. */
 const DEFAULT_CHOICES: StaticChoices = Object.freeze({
   omitEmpty: true,
   omitTrailing: false,
   trim: false,
-  propertyKeys: NO_KEYS,
+  propertyOrder: NO_KEYS,
 });
 
 /** Read static options once for the lifetime of a merged effective schema. */
@@ -41,16 +41,16 @@ export const getStaticChoices = (effective: EffectiveSchema): StaticChoices => {
     typeof options === 'object' && options !== null && !isArray(options)
       ? options
       : undefined;
-  const propertyKeys =
-    hints && 'propertyKeys' in hints ? hints.propertyKeys : undefined;
+  const propertyOrder =
+    hints && 'propertyOrder' in hints ? hints.propertyOrder : undefined;
   const choices: StaticChoices = Object.freeze({
     omitEmpty: !hints || !('omitEmpty' in hints) || hints.omitEmpty !== false,
     omitTrailing:
       !!hints && 'omitTrailing' in hints && hints.omitTrailing === true,
     trim: !!hints && 'trim' in hints && hints.trim === true,
-    propertyKeys: isArray(propertyKeys)
+    propertyOrder: isArray(propertyOrder)
       ? Object.freeze(
-          propertyKeys.filter(
+          propertyOrder.filter(
             (key: unknown): key is string => typeof key === 'string',
           ),
         )

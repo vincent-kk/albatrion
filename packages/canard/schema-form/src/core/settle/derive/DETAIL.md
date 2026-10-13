@@ -10,9 +10,9 @@
 
 - 파생 규칙 부재가 독립 capability로 증명되면 규칙 표 수집 없이 불변 빈 표를 공유합니다. 분기 부재만으로 파생 규칙을 생략하지 않으며, 규칙이 있는 청사진은 기존 표·순서·의존 경로를 유지합니다. 기능이 선언됐으나 빈 식의 컴파일 결과로 실행 규칙이 0건인 경우에도 청사진별 표를 유지하고 부재 증명 없이 공유하지 않습니다. 규칙 없는 경우 O(S) 수집과 빈 Map 할당을 없애고 O(1) capability 조회를 더하며, 공유 조회 객체는 변경 메서드를 노출하지 않습니다(89C-03).
 
-- 조각의 대상 자식 검색은 그 조각에 `derived`·`unsetValue`·`resetInteraction`·`injectTo` 중 하나가 있을 때만 수행합니다. `active`만 있는 분기 B개에서는 파생 표 생성이 전체 자식 검색 B회 대신 O(선언 수) 시간이며 불필요한 대상 배열을 할당하지 않습니다. `children`의 별도 규칙은 계속 처리하고 규칙 순서·층·에지 의미를 바꾸지 않습니다(SETTLE-017·043, 82C-01).
+- 조각의 대상 자식 검색은 그 조각에 `derived`·`unsetValue`·`resetInteraction`·`injectTo` 중 하나가 있을 때만 수행합니다. `active`만 있는 분기 B개에서는 파생 표 생성이 전체 자식 검색 B회 대신 O(선언 수) 시간이며 불필요한 대상 배열을 할당하지 않습니다. `fields`의 별도 규칙은 계속 처리하고 규칙 순서·층·에지 의미를 바꾸지 않습니다(SETTLE-017·043, 82C-01).
 
-- `index.ts`는 `getDeriveRuleTable(blueprint: Blueprint): DeriveRuleTable`, `evaluateDeriveRound<Self>(root: SchemaNodeRecord<Self>, state: DeriveState<Self>): DeriveRoundDecision<Self>`, `evaluateResetInteraction<Self>(root: SchemaNodeRecord<Self>, state: DeriveState<Self>): DeriveResetInteractionDecision<Self>`, `DERIVE_ROUND_CAP = 25`와 `DeriveRuleTable`·`DeriveState`·`DeriveRoundDecision`·`DeriveResetInteractionDecision`·`DeriveTraceEntry` 형을 이름으로 내보냅니다. `settle/utils/derivation/`은 라운드 판정을, `settle/utils/commit/`은 상호작용 초기화 판정을 이 진입점에서 소비합니다(SETTLE-004·006·017, NODE-016, CONTROLS-029).
+- `index.ts`는 `getDeriveRuleTable(blueprint: Blueprint): DeriveRuleTable`, `evaluateDeriveRound<Self>(root: FieldNodeRecord<Self>, state: DeriveState<Self>): DeriveRoundDecision<Self>`, `evaluateResetInteraction<Self>(root: FieldNodeRecord<Self>, state: DeriveState<Self>): DeriveResetInteractionDecision<Self>`, `DERIVE_ROUND_CAP = 25`와 `DeriveRuleTable`·`DeriveState`·`DeriveRoundDecision`·`DeriveResetInteractionDecision`·`DeriveTraceEntry` 형을 이름으로 내보냅니다. `settle/utils/derivation/`은 라운드 판정을, `settle/utils/commit/`은 상호작용 초기화 판정을 이 진입점에서 소비합니다(SETTLE-004·006·017, NODE-016, CONTROLS-029).
 - `DeriveState<Self>`는 완성된 트리, 호출의 로드 범위와 억제 여부, 직전 커밋의 규칙 값, 이번 정착에서 소비한 값, 대상별 이미 적용한 종류 순위를 판정에 건넵니다. `DeriveRoundDecision<Self>`는 대상마다 승자 하나인 쓰기 후보, 승패와 무관하게 소비할 에지, 개발 모드 기록 항목을 돌려주며 원본을 바꾸지 않습니다(SETTLE-004·028·048·049, WRITE-015, ERROR-159).
 - 규칙 표의 한 발생은 선언 ID·종류·원천 발생 경로·선언 층·조각 전순서·식 기록 또는 `injectTo` 함수·`watch` 경로를 구별합니다. `derived` 의존 집합은 그 식의 경로와 같은 노드 모든 선언의 `controls.watch` 경로의 합집합이며, 같은 노드의 다른 식 경로는 제외합니다(SETTLE-043, CONTROLS-032·079·080).
 - 문자열 식은 청사진의 `BlueprintExpression.evaluate(dependencies)`를 선언 호스트 기준 경로의 방출 값으로 호출합니다. `controls.injectTo`는 컴파일하지 않은 함수 `(value, ctx)`를 원천 방출 값과 이번 라운드 트리의 `dataPath`·`schemaPath`·`jsonSchema`·`parentValue`·`parentJSONSchema`·`rootValue`·`rootJSONSchema`·`context`로 호출합니다(LANDING-083, CONTROLS-079·080, SETTLE-043).
@@ -24,13 +24,13 @@
 | `injectTo`   |   2 | 원천 방출 값이 바뀌면 함수 결과의 대상별 후보입니다(SETTLE-004·028, CONTROLS-079). |
 | 채움         |   1 | 전이 단계의 후보이며 생긴 노드의 참인 `unsetValue`보다 낮습니다(SETTLE-004·005).   |
 
-| 선언 층 순위                  |  값 | 판정                                                     |
-| ----------------------------- | --: | -------------------------------------------------------- |
-| 조각 `controls`               |   1 | 그 조각이 직접 선언한 노드에 걸립니다(CONTROLS-073·077). |
-| 부모 `controls.children` 항목 |   2 | 항목이 가리키는 자식에 걸립니다(CONTROLS-073·077).       |
-| 노드 자신                     |   3 | 그 노드의 선언이 가장 세부 층입니다(CONTROLS-073·077).   |
+| 선언 층 순위                |  값 | 판정                                                     |
+| --------------------------- | --: | -------------------------------------------------------- |
+| 조각 `controls`             |   1 | 그 조각이 직접 선언한 노드에 걸립니다(CONTROLS-073·077). |
+| 부모 `controls.fields` 항목 |   2 | 항목이 가리키는 자식에 걸립니다(CONTROLS-073·077).       |
+| 노드 자신                   |   3 | 그 노드의 선언이 가장 세부 층입니다(CONTROLS-073·077).   |
 
-- 같은 대상에서는 높은 종류 순위가 이기고, 같은 종류에서는 원천 선언 노드의 트리 전위 문서 순서상 나중이 이깁니다. 같은 노드의 선언은 높은 층이 이기며, 같은 층은 조각 전순서상 나중, 같은 `children` 배열은 뒤 항목, 한 `injectTo` 반환은 뒤 대상(객체 키 삽입 순서·배열 차례)이 이깁니다. 순위는 정착 전체에 걸쳐 유지하므로 앞 라운드의 높은 순위 적용을 뒤 라운드의 낮은 순위가 덮지 못하고, 진 규칙의 에지도 소비하며 충돌 경고는 내지 않습니다(SETTLE-004·005, FRAGMENT-049, CONTROLS-073·079).
+- 같은 대상에서는 높은 종류 순위가 이기고, 같은 종류에서는 원천 선언 노드의 트리 전위 문서 순서상 나중이 이깁니다. 같은 노드의 선언은 높은 층이 이기며, 같은 층은 조각 전순서상 나중, 같은 `fields` 배열은 뒤 항목, 한 `injectTo` 반환은 뒤 대상(객체 키 삽입 순서·배열 차례)이 이깁니다. 순위는 정착 전체에 걸쳐 유지하므로 앞 라운드의 높은 순위 적용을 뒤 라운드의 낮은 순위가 덮지 못하고, 진 규칙의 에지도 소비하며 충돌 경고는 내지 않습니다(SETTLE-004·005, FRAGMENT-049, CONTROLS-073·079).
 - `sameValue`는 원시 값의 SameValueZero, 배열의 길이와 차례, 평범한 객체의 자기 열거 키 목록 순서와 값, 나머지 객체의 참조로 비교하고 같은 참조 아래로는 내려가지 않습니다. 비교 대상은 `injectTo` 원천 방출 값, `derived` 의존 값 튜플, `unsetValue`·`resetInteraction` 식 값입니다(SETTLE-043).
 - 정착 시작 기준점은 직전 커밋이며 정착 안에서는 규칙이 마지막으로 소비한 값입니다. 로드는 범위 안 기준을 비워 발화하고 `resetSubtree()`는 원천이 하위 트리 안인 규칙만 비우며, 로드 아닌 쓰기에는 `setValue(V)`도 직전 커밋을 사용합니다. 형상 밖 발생은 평가하지 않고 재탄생하면 거짓→참으로 보며, 조각이 켜져 새로 들인 노드만 거짓→참이고 공유 노드는 기준만 잡습니다. 선언 선택이 바뀐 호스트는 게이트에 식이 없어도 그 정착에서 방문해 기준점을 잡습니다(SETTLE-004·028·046·048·049, FRAGMENT-050, CONTROLS-080).
 - `unsetValue`는 거짓→참일 때 지우고 참→거짓에는 쓰지 않으며, 참인 새 노드는 채우지 않습니다. 식이나 `injectTo` 함수가 던지거나 동적으로만 아는 `injectTo` 대상이 없으면 그 규칙을 그 라운드의 후보에서 빼고 에지를 소비하며, 정착은 `degraded`·`cause: 'expression'`(대상 없음은 `cause: 'injectTarget'`)입니다(SETTLE-004·005·028, CONTROLS-079, ERROR-122·132).

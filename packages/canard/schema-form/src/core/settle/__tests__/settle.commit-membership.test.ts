@@ -1,7 +1,7 @@
 import { describe, expect, it, vi } from 'vitest';
 
-import { SchemaNodeEventType, markSchemaNodeEvent } from '../../record';
-import { loadSchemaNodeAtMount } from '../index';
+import { FieldNodeEventType, markFieldNodeEvent } from '../../record';
+import { loadFieldNodeAtMount } from '../index';
 import { markCommitDeliveries } from '../utils/commit/markCommitDeliveries';
 import { createSettlementContext } from '../utils/settlement/createSettlementContext';
 import { getSettlementScratch } from '../utils/write/getSettlementScratch';
@@ -18,7 +18,7 @@ describe('commit candidate membership', () => {
         extra: { type: 'string' },
       },
     });
-    loadSchemaNodeAtMount(root, { a: 'a', b: 'b', extra: 'x' }, 0);
+    loadFieldNodeAtMount(root, { a: 'a', b: 'b', extra: 'x' }, 0);
     const a = root.structure!.a,
       b = root.structure!.b,
       extra = root.structure!.extra;
@@ -28,14 +28,14 @@ describe('commit candidate membership', () => {
     context.changedNodes.add(root);
     context.stateDirtyNodes.add(a);
     for (const node of [extra, b, a, root])
-      markSchemaNodeEvent(node, SchemaNodeEventType.RequestFocus);
+      markFieldNodeEvent(node, FieldNodeEventType.RequestFocus);
     const order: string[] = [];
     try {
       markCommitDeliveries(context, (node) => order.push(node.path));
       expect(order).toEqual(['/b', '', '/a', '/extra']);
       for (const node of [extra, b, a, root]) {
         expect(node.pendingRevision).toBe(0);
-        expect(node.revisionLedger[SchemaNodeEventType.RequestFocus]).toBe(1);
+        expect(node.revisionLedger[FieldNodeEventType.RequestFocus]).toBe(1);
       }
     } finally {
       releaseSettlementScratch(scratch);
@@ -44,7 +44,7 @@ describe('commit candidate membership', () => {
 
   it('allocates no nonempty Set copy while merging candidate membership', () => {
     const { root } = createTestTree({ type: 'string' });
-    loadSchemaNodeAtMount(root, 'before', 0);
+    loadFieldNodeAtMount(root, 'before', 0);
     const scratch = getSettlementScratch(root.runtime);
     const context = createSettlementContext(root, 'callerReplace', 0, scratch);
     context.changedNodes.add(root);

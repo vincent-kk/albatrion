@@ -1,15 +1,15 @@
 import { describe, expect, it, vi } from 'vitest';
 
 import { createTestValidator } from '../../__tests__/fixtures/createTestValidator';
-import { SchemaNodeEventType, SchemaNodeRequestType } from '../../record';
-import { SchemaNodeState, ValidationMode } from '../../types/state';
+import { FieldNodeEventType, FieldNodeRequestType } from '../../record';
+import { FieldNodeState, ValidationMode } from '../../types/state';
 import type { Validator } from '../../validation';
 import {
   dispatchMount,
   dispatchRequest,
   dispatchSetState,
   dispatchSetValue,
-  subscribeSchemaNode,
+  subscribeFieldNode,
 } from '../index';
 import { createDispatchTree } from './fixtures/createDispatchTree';
 import { getDispatchChild } from './fixtures/getDispatchChild';
@@ -28,12 +28,12 @@ describe('standalone wave failures', () => {
       createTestValidator('throw'),
       { hasConsumer: () => true, report },
     );
-    subscribeSchemaNode(root, (event) => {
-      if (event.type & SchemaNodeRequestType.Focus)
+    subscribeFieldNode(root, (event) => {
+      if (event.type & FieldNodeRequestType.Focus)
         dispatchSetValue(root, { enabled: true });
     });
 
-    expect(() => dispatchRequest(root, SchemaNodeRequestType.Focus)).toThrow(
+    expect(() => dispatchRequest(root, FieldNodeRequestType.Focus)).toThrow(
       expect.objectContaining({ code: 'SCHEMA_FORM_ERROR.GUARD_FAILED' }),
     );
     expect(report).toHaveBeenCalledTimes(1);
@@ -60,15 +60,15 @@ describe('standalone wave failures', () => {
     report.mockClear();
     const child = getDispatchChild(root, 'child');
     const failure = new Error('request listener');
-    subscribeSchemaNode(root, (event) => {
-      if (event.type & SchemaNodeEventType.RequestFocus)
+    subscribeFieldNode(root, (event) => {
+      if (event.type & FieldNodeEventType.RequestFocus)
         dispatchSetValue(child, 'after');
     });
-    subscribeSchemaNode(root, (event) => {
-      if (event.type & SchemaNodeEventType.RequestFocus) throw failure;
+    subscribeFieldNode(root, (event) => {
+      if (event.type & FieldNodeEventType.RequestFocus) throw failure;
     });
 
-    expect(() => dispatchRequest(root, SchemaNodeRequestType.Focus)).toThrow(
+    expect(() => dispatchRequest(root, FieldNodeRequestType.Focus)).toThrow(
       failure,
     );
     expect(child.emit).toBe('after');
@@ -97,16 +97,16 @@ describe('standalone wave failures', () => {
     report.mockClear();
     const child = getDispatchChild(root, 'child');
     const failure = new Error('state listener');
-    subscribeSchemaNode(root, (event) => {
-      if (event.type & SchemaNodeEventType.UpdateState) throw failure;
+    subscribeFieldNode(root, (event) => {
+      if (event.type & FieldNodeEventType.UpdateState) throw failure;
     });
-    subscribeSchemaNode(root, (event) => {
-      if (event.type & SchemaNodeEventType.UpdateState)
+    subscribeFieldNode(root, (event) => {
+      if (event.type & FieldNodeEventType.UpdateState)
         dispatchSetValue(child, 'after');
     });
 
     expect(() =>
-      dispatchSetState(root, { [SchemaNodeState.Dirty]: true }),
+      dispatchSetState(root, { [FieldNodeState.Dirty]: true }),
     ).toThrow(failure);
     expect(child.emit).toBe('after');
     expect(report).toHaveBeenCalledTimes(1);
@@ -134,15 +134,15 @@ describe('standalone wave failures', () => {
     report.mockClear();
     const child = getDispatchChild(root, 'child');
     const failure = new Error('nested write listener');
-    subscribeSchemaNode(root, (event) => {
-      if (event.type & SchemaNodeEventType.RequestFocus)
+    subscribeFieldNode(root, (event) => {
+      if (event.type & FieldNodeEventType.RequestFocus)
         dispatchSetValue(child, 'after');
     });
-    subscribeSchemaNode(child, (event) => {
-      if (event.type & SchemaNodeEventType.UpdateValue) throw failure;
+    subscribeFieldNode(child, (event) => {
+      if (event.type & FieldNodeEventType.UpdateValue) throw failure;
     });
 
-    expect(() => dispatchRequest(root, SchemaNodeRequestType.Focus)).toThrow(
+    expect(() => dispatchRequest(root, FieldNodeRequestType.Focus)).toThrow(
       failure,
     );
     expect(child.emit).toBe('after');
@@ -180,8 +180,8 @@ describe('standalone wave failures', () => {
         dispatchSetValue(b, 'after');
       }
     };
-    subscribeSchemaNode(b, (event) => {
-      if (event.type & SchemaNodeEventType.UpdateValue) throw failure;
+    subscribeFieldNode(b, (event) => {
+      if (event.type & FieldNodeEventType.UpdateValue) throw failure;
     });
 
     expect(() => dispatchSetValue(a, 'after')).toThrow(failure);
@@ -215,15 +215,15 @@ describe('standalone wave failures', () => {
     runtime.onChange = () => {
       if (!changed) {
         changed = true;
-        dispatchSetState(root, { [SchemaNodeState.Dirty]: true });
+        dispatchSetState(root, { [FieldNodeState.Dirty]: true });
       }
     };
-    subscribeSchemaNode(root, (event) => {
-      if (event.type & SchemaNodeEventType.UpdateState)
+    subscribeFieldNode(root, (event) => {
+      if (event.type & FieldNodeEventType.UpdateState)
         dispatchSetValue(b, 'after');
     });
-    subscribeSchemaNode(root, (event) => {
-      if (event.type & SchemaNodeEventType.UpdateState) throw failure;
+    subscribeFieldNode(root, (event) => {
+      if (event.type & FieldNodeEventType.UpdateState) throw failure;
     });
 
     expect(() => dispatchSetValue(a, 'after')).toThrow(failure);
@@ -261,15 +261,14 @@ describe('standalone wave failures', () => {
         dispatchSetValue(a, 'from onChange');
       }
     };
-    subscribeSchemaNode(root, (event) => {
-      if (event.type & SchemaNodeRequestType.Focus)
-        dispatchSetValue(b, 'after');
+    subscribeFieldNode(root, (event) => {
+      if (event.type & FieldNodeRequestType.Focus) dispatchSetValue(b, 'after');
     });
-    subscribeSchemaNode(root, (event) => {
-      if (event.type & SchemaNodeRequestType.Focus) throw failure;
+    subscribeFieldNode(root, (event) => {
+      if (event.type & FieldNodeRequestType.Focus) throw failure;
     });
 
-    expect(() => dispatchRequest(root, SchemaNodeRequestType.Focus)).toThrow(
+    expect(() => dispatchRequest(root, FieldNodeRequestType.Focus)).toThrow(
       failure,
     );
     expect(a.emit).toBe('from onChange');
@@ -329,18 +328,18 @@ describe('standalone wave failures', () => {
     const child = getDispatchChild(root, 'child');
     const first = new Error('first listener');
     const second = new Error('nested listener');
-    subscribeSchemaNode(root, (event) => {
-      if (event.type & SchemaNodeRequestType.Focus) throw first;
+    subscribeFieldNode(root, (event) => {
+      if (event.type & FieldNodeRequestType.Focus) throw first;
     });
-    subscribeSchemaNode(root, (event) => {
-      if (event.type & SchemaNodeRequestType.Focus)
+    subscribeFieldNode(root, (event) => {
+      if (event.type & FieldNodeRequestType.Focus)
         dispatchSetValue(child, 'after');
     });
-    subscribeSchemaNode(child, (event) => {
-      if (event.type & SchemaNodeEventType.UpdateValue) throw second;
+    subscribeFieldNode(child, (event) => {
+      if (event.type & FieldNodeEventType.UpdateValue) throw second;
     });
 
-    expect(() => dispatchRequest(root, SchemaNodeRequestType.Focus)).toThrow();
+    expect(() => dispatchRequest(root, FieldNodeRequestType.Focus)).toThrow();
     expect(report.mock.calls.map(([record]) => record.error)).toEqual([
       first,
       second,
@@ -374,14 +373,14 @@ describe('standalone wave failures', () => {
       const b = getDispatchChild(root, 'b');
       const failure = new Error('nested result listener');
       let written = false;
-      subscribeSchemaNode(root, (event) => {
-        if (event.type & SchemaNodeEventType.UpdateGlobalError && !written) {
+      subscribeFieldNode(root, (event) => {
+        if (event.type & FieldNodeEventType.UpdateGlobalError && !written) {
           written = true;
           dispatchSetValue(b, 'after');
         }
       });
-      subscribeSchemaNode(b, (event) => {
-        if (event.type & SchemaNodeEventType.UpdateValue) throw failure;
+      subscribeFieldNode(b, (event) => {
+        if (event.type & FieldNodeEventType.UpdateValue) throw failure;
       });
 
       dispatchSetValue(a, 'after');

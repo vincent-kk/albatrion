@@ -1,11 +1,11 @@
 import {
-  SchemaNodeEventType,
+  FieldNodeEventType,
   accumulateGlobalStateDeltas,
-  patchSchemaNodeInteractionState,
+  patchFieldNodeInteractionState,
   publishGlobalStateDeltas,
 } from '../../../record';
-import type { SchemaNodeRecord } from '../../../record';
-import { assertSchemaNodeWritable } from '../../../settle';
+import type { FieldNodeRecord } from '../../../record';
+import { assertFieldNodeWritable } from '../../../settle';
 import type { NodeStateFlags } from '../../../types/state';
 import { flushQueuedEvents } from '../chain/flushQueuedEvents';
 import { queueNonSettleEvent } from '../chain/queueNonSettleEvent';
@@ -18,27 +18,27 @@ import { assertNotInDelivery } from '../report/assertNotInDelivery';
  * @param state - Own-key flags to merge with the current state
  * @returns Nothing; delivery is synchronous outside a public write
  */
-export const dispatchSetState = <Self extends SchemaNodeRecord<Self>>(
+export const dispatchSetState = <Self extends FieldNodeRecord<Self>>(
   node: Self,
   state: NodeStateFlags,
 ): void => {
-  assertSchemaNodeWritable(node);
+  assertFieldNodeWritable(node);
   if (node.detached) return;
   const runtime = node.rootNode.runtime;
   assertNotInDelivery(runtime);
   if (refuseListenerFeedback(runtime)) return;
   const previous = node.interactionState;
-  patchSchemaNodeInteractionState(node, state);
+  patchFieldNodeInteractionState(node, state);
   if (previous === node.interactionState) return;
   const deltas = new Map<string, number>();
   accumulateGlobalStateDeltas(deltas, previous, node.interactionState, state);
   publishGlobalStateDeltas(node.rootNode, deltas);
-  if (node.deliveryChanges & SchemaNodeEventType.UpdateState)
+  if (node.deliveryChanges & FieldNodeEventType.UpdateState)
     node.deliveryPreviousState = node.interactionState;
   runtime.stateChanged = true;
   queueNonSettleEvent(
     node,
-    SchemaNodeEventType.UpdateState,
+    FieldNodeEventType.UpdateState,
     node.interactionState,
   );
   if (!runtime.entryDepth) flushQueuedEvents(node.rootNode);

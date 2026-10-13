@@ -1,8 +1,8 @@
 import { describe, expect, it } from 'vitest';
 
 import { createTestValidator } from '../../__tests__/fixtures/createTestValidator';
-import { SetValueOption } from '../../types/value';
-import { loadSchemaNodeAtMount, writeSchemaNode } from '../index';
+import { WriteOption } from '../../types/value';
+import { loadFieldNodeAtMount, writeFieldNode } from '../index';
 import { getGateRegistry } from '../utils/gates/getGateRegistry';
 import { createTestTree } from './fixtures/createTestTree';
 
@@ -16,7 +16,7 @@ describe('settle gate calculation', () => {
       },
     });
     expect(() =>
-      writeSchemaNode(root, {}, 'callerReplace', SetValueOption.Overwrite),
+      writeFieldNode(root, {}, 'callerReplace', WriteOption.Overwrite),
     ).toThrow('Gate evaluation failed');
     expect(root.raw).toBeUndefined();
     expect(root.runtime.diagnostics).toMatchObject({
@@ -38,11 +38,11 @@ describe('settle gate calculation', () => {
       createTestValidator('throw'),
     );
     expect(() =>
-      writeSchemaNode(
+      writeFieldNode(
         root,
         { enabled: true },
         'callerReplace',
-        SetValueOption.Overwrite,
+        WriteOption.Overwrite,
       ),
     ).toThrow('Gate evaluation failed');
     expect(root.runtime.diagnostics).toMatchObject({
@@ -60,20 +60,15 @@ describe('settle gate calculation', () => {
         target: { type: 'string', controls: { active: '../flag' } },
       },
     });
-    writeSchemaNode(
+    writeFieldNode(
       root,
       { flag: true, target: 'shown' },
       'callerReplace',
-      SetValueOption.Overwrite,
+      WriteOption.Overwrite,
     );
     expect(root.structure?.target?.active).toBe(true);
     expect(root.emit).toEqual({ flag: true, target: 'shown' });
-    writeSchemaNode(
-      root.structure!.flag,
-      false,
-      'input',
-      SetValueOption.Overwrite,
-    );
+    writeFieldNode(root.structure!.flag, false, 'input', WriteOption.Overwrite);
     expect(root.structure?.target).toBeUndefined();
     expect(root.emit).toEqual({ flag: false });
   });
@@ -90,20 +85,20 @@ describe('settle gate calculation', () => {
         },
       },
     });
-    writeSchemaNode(
+    writeFieldNode(
       root,
       { user: null },
       'callerReplace',
-      SetValueOption.Overwrite,
+      WriteOption.Overwrite,
     );
-    writeSchemaNode(
+    writeFieldNode(
       root,
       { user: { mode: 'on' } },
       'callerPartial',
-      SetValueOption.Merge,
+      WriteOption.Merge,
     );
     expect(root.structure?.user?.raw).toBeNull();
-    expect(root.structure?.user?.extras).toEqual({ mode: 'on' });
+    expect(root.structure?.user?.undeclaredValues).toEqual({ mode: 'on' });
     expect(root.structure?.probe).toBeUndefined();
     expect(root.emit).toEqual({ user: null });
   });
@@ -124,20 +119,20 @@ describe('settle gate calculation', () => {
         },
       },
     });
-    writeSchemaNode(
+    writeFieldNode(
       root,
       { user: null },
       'callerReplace',
-      SetValueOption.Overwrite,
+      WriteOption.Overwrite,
     );
-    writeSchemaNode(
+    writeFieldNode(
       root,
       { user: { enabled: true } },
       'callerPartial',
-      SetValueOption.Merge,
+      WriteOption.Merge,
     );
     expect(root.structure?.user?.raw).toBeNull();
-    expect(root.structure?.user?.extras).toEqual({ enabled: true });
+    expect(root.structure?.user?.undeclaredValues).toEqual({ enabled: true });
     expect(root.structure?.user?.structure?.guarded).toBeUndefined();
   });
 
@@ -157,20 +152,20 @@ describe('settle gate calculation', () => {
       },
     });
     root.runtime.context = { mode: 'on' };
-    writeSchemaNode(
+    writeFieldNode(
       root,
       { user: null },
       'callerReplace',
-      SetValueOption.Overwrite,
+      WriteOption.Overwrite,
     );
-    writeSchemaNode(
+    writeFieldNode(
       root,
       { user: { mode: 'off' } },
       'callerPartial',
-      SetValueOption.Merge,
+      WriteOption.Merge,
     );
     expect(root.structure?.user?.raw).toBeNull();
-    expect(root.structure?.user?.extras).toEqual({ mode: 'off' });
+    expect(root.structure?.user?.undeclaredValues).toEqual({ mode: 'off' });
     expect(root.structure?.user?.structure?.guarded).toBeDefined();
   });
 
@@ -186,7 +181,7 @@ describe('settle gate calculation', () => {
         },
       },
     });
-    loadSchemaNodeAtMount(root, null, SetValueOption.Overwrite);
+    loadFieldNodeAtMount(root, null, WriteOption.Overwrite);
     expect(root.raw).toBeNull();
     expect(root.emit).toBeNull();
     expect(root.structure?.child?.raw).toBe('D');
@@ -206,19 +201,14 @@ describe('settle gate calculation', () => {
         },
       ],
     });
-    writeSchemaNode(
+    writeFieldNode(
       root,
       { flag: true, gated: 'on' },
       'callerReplace',
-      SetValueOption.Overwrite,
+      WriteOption.Overwrite,
     );
     expect(root.emit).toEqual({ flag: true, gated: 'on' });
-    writeSchemaNode(
-      root.structure!.flag,
-      false,
-      'input',
-      SetValueOption.Overwrite,
-    );
+    writeFieldNode(root.structure!.flag, false, 'input', WriteOption.Overwrite);
     expect(root.emit).toEqual({ flag: false });
   });
 
@@ -238,11 +228,11 @@ describe('settle gate calculation', () => {
     const gate =
       blueprint.root.childEntries[1].node.childEntries[0].node.declarations[0]
         .gates[0];
-    writeSchemaNode(
+    writeFieldNode(
       root,
       { flag: true, p: { child: 'yes' } },
       'callerReplace',
-      SetValueOption.Overwrite,
+      WriteOption.Overwrite,
     );
     expect(
       getGateRegistry(root.runtime).locate(root.structure!.p, gate)
@@ -264,11 +254,11 @@ describe('settle gate calculation', () => {
         },
       },
     });
-    writeSchemaNode(
+    writeFieldNode(
       root,
       { p: { child: 'yes' } },
       'callerReplace',
-      SetValueOption.Overwrite,
+      WriteOption.Overwrite,
     );
     const p = root.structure!.p;
     const [child, extra] = blueprint.root.childEntries[0].node.childEntries;
@@ -296,11 +286,11 @@ describe('settle gate calculation', () => {
       },
       $ref: '#/$defs/loop',
     });
-    writeSchemaNode(
+    writeFieldNode(
       root,
       { flag: true, next: { flag: true, next: { flag: false } } },
       'callerReplace',
-      SetValueOption.Overwrite,
+      WriteOption.Overwrite,
     );
     const first = blueprint.root.childEntries[1];
     const nested = root.structure!.next;
@@ -331,19 +321,14 @@ describe('settle gate calculation', () => {
         flag: { type: 'number' },
       },
     });
-    writeSchemaNode(
+    writeFieldNode(
       root,
       { p: { child: 'yes' }, flag: 1 },
       'callerReplace',
-      SetValueOption.Overwrite,
+      WriteOption.Overwrite,
     );
     expect(root.structure?.p?.structure?.child).toBeUndefined();
-    writeSchemaNode(
-      root.structure!.flag,
-      '0',
-      'input',
-      SetValueOption.Overwrite,
-    );
+    writeFieldNode(root.structure!.flag, '0', 'input', WriteOption.Overwrite);
     expect(root.structure?.p?.structure?.child?.active).toBe(true);
     expect(root.emit).toEqual({ p: { child: 'yes' }, flag: 0 });
   });
@@ -365,14 +350,14 @@ describe('settle gate calculation', () => {
         q: { $ref: '#/$defs/branch' },
       },
     });
-    writeSchemaNode(
+    writeFieldNode(
       root,
       {
         p: { flag: false, child: 'hidden' },
         q: { flag: true, child: 'shown' },
       },
       'callerReplace',
-      SetValueOption.Overwrite,
+      WriteOption.Overwrite,
     );
     expect(root.emit).toEqual({
       p: { flag: false },
@@ -395,11 +380,11 @@ describe('settle gate calculation', () => {
         },
       },
     });
-    writeSchemaNode(
+    writeFieldNode(
       root,
       { 'p/q~r': { enabled: true, child: 'shown' } },
       'callerReplace',
-      SetValueOption.Overwrite,
+      WriteOption.Overwrite,
     );
     expect(root.structure?.['p/q~r']?.structure?.child?.emit).toBe('shown');
   });
@@ -417,25 +402,15 @@ describe('settle gate calculation', () => {
         },
       ],
     });
-    writeSchemaNode(
+    writeFieldNode(
       root,
       { flag: true, value: 'x' },
       'callerReplace',
-      SetValueOption.Overwrite,
+      WriteOption.Overwrite,
     );
     const first = root.emit;
-    writeSchemaNode(
-      root.structure!.flag,
-      false,
-      'input',
-      SetValueOption.Overwrite,
-    );
-    writeSchemaNode(
-      root.structure!.flag,
-      true,
-      'input',
-      SetValueOption.Overwrite,
-    );
+    writeFieldNode(root.structure!.flag, false, 'input', WriteOption.Overwrite);
+    writeFieldNode(root.structure!.flag, true, 'input', WriteOption.Overwrite);
     expect(root.emit).toEqual(first);
   });
 
@@ -447,11 +422,11 @@ describe('settle gate calculation', () => {
         b: { type: 'boolean', controls: { active: '../a' } },
       },
     });
-    writeSchemaNode(
+    writeFieldNode(
       root,
       { a: true, b: true },
       'callerReplace',
-      SetValueOption.Overwrite,
+      WriteOption.Overwrite,
     );
     expect(root.children).toEqual([]);
     expect(root.emit).toEqual({});
@@ -465,11 +440,11 @@ describe('settle gate calculation', () => {
         b: { type: 'boolean', controls: { active: '!../a' } },
       },
     });
-    writeSchemaNode(
+    writeFieldNode(
       root,
       { a: true, b: true },
       'callerReplace',
-      SetValueOption.Overwrite,
+      WriteOption.Overwrite,
     );
     expect(root.children?.map((child) => child.name)).toEqual(['a']);
     expect(root.emit).toEqual({ a: true });
@@ -490,18 +465,18 @@ describe('settle gate calculation', () => {
         },
       ],
     });
-    writeSchemaNode(
+    writeFieldNode(
       root,
       { kind: 'x', enabled: false, onlyX: 'value' },
       'callerReplace',
-      SetValueOption.Overwrite,
+      WriteOption.Overwrite,
     );
     expect(root.structure?.onlyX).toBeUndefined();
-    writeSchemaNode(
+    writeFieldNode(
       root.structure!.enabled,
       true,
       'input',
-      SetValueOption.Overwrite,
+      WriteOption.Overwrite,
     );
     expect(root.structure?.onlyX?.emit).toBe('value');
   });
@@ -519,18 +494,18 @@ describe('settle gate calculation', () => {
         group: { type: 'object', properties: { flag: { type: 'boolean' } } },
       },
     });
-    writeSchemaNode(
+    writeFieldNode(
       root,
       { p: { child: 'visible' }, group: { flag: true } },
       'callerReplace',
-      SetValueOption.Overwrite,
+      WriteOption.Overwrite,
     );
     expect(root.structure?.p?.structure?.child?.emit).toBe('visible');
-    writeSchemaNode(
+    writeFieldNode(
       root.structure!.group,
       { flag: false },
       'callerReplace',
-      SetValueOption.Overwrite,
+      WriteOption.Overwrite,
     );
     expect(root.structure?.p?.structure?.child).toBeUndefined();
   });

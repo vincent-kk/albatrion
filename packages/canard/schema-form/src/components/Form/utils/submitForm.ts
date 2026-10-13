@@ -1,9 +1,9 @@
-import type { SchemaNode } from '@/schema-form/core';
+import type { FieldNode } from '@/schema-form/core';
 import { SchemaFormError, ValidationError } from '@/schema-form/errors';
 
 /** Submit the emitted snapshot, rejecting degraded settlement or failed validation. */
 export const submitForm = async (
-  root: SchemaNode | undefined,
+  root: FieldNode | undefined,
   onSubmit?: (value: any) => void | Promise<void>,
   onFailure?: (error: unknown) => void,
 ): Promise<void> => {

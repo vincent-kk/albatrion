@@ -14,7 +14,7 @@ const resolutionSchema = {
 /** Three probe fields whose input source is decided by inputResolutionCases. */
 export const inputResolutionScenario: FormScenario = {
   name: 'input-components.input-resolution',
-  description: 'An input is chosen from the inline presentation.FieldInput first, then fieldInputMap, Form fieldInputDefinitions, Provider fieldInputDefinitions, and registered plugin definitions; the first matching test wins and an inline null renders no input while the node stays (SchemaNodeInput INTENT, REACT-033 priority unchanged). Cases come from inputResolutionCases.',
+  description: 'An input is chosen from the inline presentation.FieldInput first, then fieldInputMap, Form fieldInputDefinitions, Provider fieldInputDefinitions, and registered plugin definitions; the first matching test wins and an inline null renders no input while the node stays (FieldInputSlot INTENT, REACT-033 priority unchanged). Cases come from inputResolutionCases.',
   schema: resolutionSchema,
   initialValue: { title: 'T', note: 'N', code: 'C' },
   steps: [{ action: 'batch', steps: [], expect: { shape: { '/title': 'present', '/note': 'present', '/code': 'present' } } }],

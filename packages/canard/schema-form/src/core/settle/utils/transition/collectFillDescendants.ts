@@ -1,4 +1,4 @@
-import type { SchemaNodeRecord } from '../../../record';
+import type { FieldNodeRecord } from '../../../record';
 import type { SettlementContext } from '../../type';
 
 /**
@@ -10,7 +10,7 @@ import type { SettlementContext } from '../../type';
  * @param newArrayHosts - Arrays whose current fill first introduced item gate slots
  * @returns Depth buckets for the same round, or undefined when only gates produced nodes
  */
-export const collectFillDescendants = <Self extends SchemaNodeRecord<Self>>(
+export const collectFillDescendants = <Self extends FieldNodeRecord<Self>>(
   context: SettlementContext<Self>,
   appearances: Iterator<Self>,
   count: number,

@@ -1,22 +1,22 @@
 import { hasOwnProperty } from '@winglet/common-utils/lib';
 
-import type { SchemaNodeRecord } from '../../../record';
+import type { FieldNodeRecord } from '../../../record';
 import type { SettlementContext } from '../../type';
 import { getControlLayers } from '../controls/getControlLayers';
 import { readExitLayerPolicy } from '../controls/readExitLayerPolicy';
-import { walkOwnedSchemaNodes } from '../walkOwnedSchemaNodes';
+import { walkOwnedFieldNodes } from '../walkOwnedFieldNodes';
 
 /**
  * Transfer an exiting occurrence's last-live decisions to its latent source.
  * @param context - Exits and rule values from the prior completed commit
  * @returns Nothing; latent metadata keeps decisions after rule values are pruned
  */
-export const snapshotExitedPolicies = <Self extends SchemaNodeRecord<Self>>(
+export const snapshotExitedPolicies = <Self extends FieldNodeRecord<Self>>(
   context: SettlementContext<Self>,
 ): void => {
   const runtime = context.root.runtime;
   for (const exited of context.exited)
-    walkOwnedSchemaNodes(exited, (node) => {
+    walkOwnedFieldNodes(exited, (node) => {
       const key = JSON.stringify([node.path, node.blueprintNode.kind]);
       if (!runtime.latentRaw.has(key)) return;
       const metadata = runtime.latentRawMetadata?.get(key);

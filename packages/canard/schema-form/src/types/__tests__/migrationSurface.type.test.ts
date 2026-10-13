@@ -9,26 +9,26 @@ import {
   type FieldInputDefinition,
   type FieldInputMap,
   type FieldInputProps,
+  type FieldNode,
+  FieldNodeEventType,
+  FieldNodeRequestType,
   type FieldRendererProps,
   type Form,
   type FormChildrenProps,
   type FormHandle,
   type FormProps,
-  type InferSchemaNode,
-  type SchemaNode,
-  SchemaNodeEventType,
-  SchemaNodeRequestType,
+  type InferFieldNode,
   type SetValueOption,
   type ShowError,
   type ValidationIssue,
   ValidationMode,
   type ValidatorFactory,
   type VirtualizationOptions,
-  type useChildNodeComponentMap,
-  type useChildNodeErrors,
+  type useChildFieldErrors,
+  type useChildFieldMap,
+  type useFieldNodeSubscribe,
+  type useFieldNodeTracker,
   type useFormSubmit,
-  type useSchemaNodeSubscribe,
-  type useSchemaNodeTracker,
 } from '../../index';
 
 type Schema = { type: 'string' };
@@ -44,7 +44,7 @@ it('SURFACE-059 FormProps retains nineteen baseline fields with declared replace
     onChange?: (value: string) => void;
     onValidate?: (errors: readonly ValidationIssue[]) => void;
     onSubmit?: (value: string) => Promise<void> | void;
-    onStateChange?: (state: SchemaNode['globalState']) => void;
+    onStateChange?: (state: FieldNode['globalState']) => void;
     fieldInputDefinitions?: FieldInputDefinition[];
     fieldInputMap?: FieldInputMap;
     FieldRenderer?: ComponentType<FieldRendererProps>;
@@ -61,7 +61,7 @@ it('SURFACE-059 FormProps retains nineteen baseline fields with declared replace
     onError?: (record: FormErrorRecord) => void;
     unsetOnInactive?: boolean;
     disableAutomaticWrites?: boolean;
-    onDiagnosticsChange?: (diagnostics: SchemaNode['diagnostics']) => void;
+    onDiagnosticsChange?: (diagnostics: FieldNode['diagnostics']) => void;
     FormLabelRenderer?: ComponentType<FieldRendererProps>;
     FormInputRenderer?: ComponentType<FieldRendererProps>;
     FormErrorRenderer?: ComponentType<FieldRendererProps>;
@@ -75,7 +75,7 @@ it('SURFACE-059 FormProps retains nineteen baseline fields with declared replace
 
 it('SURFACE-059 FormHandle has exactly eighteen typed members', () => {
   type Expected = {
-    node?: InferSchemaNode<Schema>;
+    node?: InferFieldNode<Schema>;
     focus: (path?: string) => void;
     select: (path?: string) => void;
     refresh: (path?: string) => void;
@@ -85,10 +85,10 @@ it('SURFACE-059 FormHandle has exactly eighteen typed members', () => {
         | typeof SetValueOption.DisableAutomaticWrites
         | typeof SetValueOption.EnableAutomaticWrites,
     ) => void;
-    findNode: (path: string) => SchemaNode | null;
-    findNodes: (path: string) => readonly SchemaNode[];
-    getState: () => SchemaNode['globalState'];
-    setState: (state: SchemaNode['state']) => void;
+    findNode: (path: string) => FieldNode | null;
+    findNodes: (path: string) => readonly FieldNode[];
+    getState: () => FieldNode['globalState'];
+    setState: (state: FieldNode['state']) => void;
     clearState: () => void;
     getValue: () => string;
     setValue: (
@@ -122,29 +122,29 @@ it('SURFACE-059 six public event names remain available after the enum rename', 
     | 'RequestSelect'
     | 'RequestRemount';
   expectTypeOf<
-    Extract<keyof typeof SchemaNodeEventType, Retained>
+    Extract<keyof typeof FieldNodeEventType, Retained>
   >().toEqualTypeOf<Retained>();
   expect([
-    SchemaNodeEventType.UpdateValue,
-    SchemaNodeEventType.UpdateState,
-    SchemaNodeEventType.UpdateError,
-    SchemaNodeEventType.RequestFocus,
-    SchemaNodeEventType.RequestSelect,
-    SchemaNodeEventType.RequestRemount,
+    FieldNodeEventType.UpdateValue,
+    FieldNodeEventType.UpdateState,
+    FieldNodeEventType.UpdateError,
+    FieldNodeEventType.RequestFocus,
+    FieldNodeEventType.RequestSelect,
+    FieldNodeEventType.RequestRemount,
   ]).toEqual([4, 8, 32, 2048, 4096, 16384]);
 });
 
 it('SURFACE-059 commands use request with four kinds and omit retired methods', () => {
-  expectTypeOf<SchemaNode['request']>().toEqualTypeOf<
-    (kind: SchemaNodeRequestType) => void
+  expectTypeOf<FieldNode['request']>().toEqualTypeOf<
+    (kind: FieldNodeRequestType) => void
   >();
   expectTypeOf<
     Extract<
-      keyof SchemaNode,
+      keyof FieldNode,
       'publish' | 'setReadOnly' | 'setDisabled' | 'setVisible'
     >
   >().toEqualTypeOf<never>();
-  expect(SchemaNodeRequestType).toMatchObject({
+  expect(FieldNodeRequestType).toMatchObject({
     Focus: 2048,
     Select: 4096,
     Refresh: 8192,
@@ -154,24 +154,24 @@ it('SURFACE-059 commands use request with four kinds and omit retired methods', 
 
 it('SURFACE-059 five public hooks retain their callable contracts', () => {
   expectTypeOf<
-    ReturnType<typeof useSchemaNodeTracker<SchemaNode>>
+    ReturnType<typeof useFieldNodeTracker<FieldNode>>
   >().toEqualTypeOf<number>();
   expectTypeOf<
-    Parameters<typeof useSchemaNodeTracker<SchemaNode>>
-  >().toEqualTypeOf<[node: SchemaNode | null, tracking?: number]>();
+    Parameters<typeof useFieldNodeTracker<FieldNode>>
+  >().toEqualTypeOf<[node: FieldNode | null, tracking?: number]>();
   expectTypeOf<
-    ReturnType<typeof useSchemaNodeSubscribe<SchemaNode>>
+    ReturnType<typeof useFieldNodeSubscribe<FieldNode>>
   >().toEqualTypeOf<void>();
   expectTypeOf<
-    Parameters<typeof useSchemaNodeSubscribe<SchemaNode>>[0]
-  >().toEqualTypeOf<SchemaNode | null>();
+    Parameters<typeof useFieldNodeSubscribe<FieldNode>>[0]
+  >().toEqualTypeOf<FieldNode | null>();
   expectTypeOf<
-    Parameters<typeof useSchemaNodeSubscribe<SchemaNode>>[1]
-  >().toEqualTypeOf<Parameters<SchemaNode['subscribe']>[0]>();
-  expectTypeOf<Parameters<typeof useChildNodeErrors>>().toEqualTypeOf<
-    [node: SchemaNode, disabled?: boolean]
+    Parameters<typeof useFieldNodeSubscribe<FieldNode>>[1]
+  >().toEqualTypeOf<Parameters<FieldNode['subscribe']>[0]>();
+  expectTypeOf<Parameters<typeof useChildFieldErrors>>().toEqualTypeOf<
+    [node: FieldNode, disabled?: boolean]
   >();
-  expectTypeOf<ReturnType<typeof useChildNodeErrors>>().toEqualTypeOf<{
+  expectTypeOf<ReturnType<typeof useChildFieldErrors>>().toEqualTypeOf<{
     errorMessage: ReactNode;
     showError: boolean;
     formattedError: ReactNode;
@@ -179,11 +179,11 @@ it('SURFACE-059 five public hooks retain their callable contracts', () => {
     formattedErrors: ReactNode[];
     errorMatrix: (readonly ValidationIssue[])[];
   }>();
-  expectTypeOf<Parameters<typeof useChildNodeComponentMap>[0]>().toEqualTypeOf<
-    FieldInputProps['ChildNodeComponents']
+  expectTypeOf<Parameters<typeof useChildFieldMap>[0]>().toEqualTypeOf<
+    FieldInputProps['ChildFields']
   >();
   expectTypeOf<
-    keyof ReturnType<typeof useChildNodeComponentMap<{ name: string }>>
+    keyof ReturnType<typeof useChildFieldMap<{ name: string }>>
   >().toEqualTypeOf<'name'>();
   expectTypeOf<
     Parameters<typeof useFormSubmit<Schema, string>>
@@ -191,14 +191,15 @@ it('SURFACE-059 five public hooks retain their callable contracts', () => {
   expectTypeOf<
     ReturnType<typeof useFormSubmit<Schema, string>>['pending']
   >().toEqualTypeOf<boolean | undefined>();
-  // @ts-expect-error useSchemaNode is internal and has no package export.
-  type InternalHook = typeof import('../../index').useSchemaNode;
+  // @ts-expect-error useFieldNode is internal and has no package export.
+  type InternalHook = typeof import('../../index').useFieldNode;
   expectTypeOf<InternalHook>().toBeAny();
 });
 
 it('SURFACE-059 Form compound component names remain available', () => {
   expectTypeOf<typeof Form>().toHaveProperty('Render');
-  expectTypeOf<typeof Form>().toHaveProperty('Group');
+  expectTypeOf<typeof Form>().toHaveProperty('Field');
+  expectTypeOf<typeof Form>().not.toHaveProperty('Group');
   expectTypeOf<typeof Form>().toHaveProperty('Label');
   expectTypeOf<typeof Form>().toHaveProperty('Input');
   expectTypeOf<typeof Form>().toHaveProperty('Error');

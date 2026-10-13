@@ -28,7 +28,7 @@ describe('array Source-B structure rollback', () => {
     expect(host?.itemCount).toBe(0);
     expect(host?.children).toEqual([]);
     expect(host?.raw).toBeUndefined();
-    expect(host?.extras).toBeUndefined();
+    expect(host?.undeclaredValues).toBeUndefined();
     expect(host?.value).toEqual([]);
     expect(host?.outputValue).toBeUndefined();
     expect(host?.nextItemKey).toBeGreaterThan(0);

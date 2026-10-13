@@ -1,6 +1,6 @@
 import { find } from '../../../../navigation';
-import { SchemaNodeEventType } from '../../../../record';
-import type { SchemaNodeRecord } from '../../../../record';
+import { FieldNodeEventType } from '../../../../record';
+import type { FieldNodeRecord } from '../../../../record';
 import type { ValidationIssue } from '../../../../validation';
 import { queueNonSettleEvent } from '../../chain/queueNonSettleEvent';
 import { publishRootExternalErrors } from './publishRootExternalErrors';
@@ -14,7 +14,7 @@ const NO_ISSUES: readonly ValidationIssue[] = [];
  * @param runtime - Runtime that owns the pending set
  * @returns Whether the key is a node of this tree; a detached one only retires its contribution
  */
-const isPendingNode = <Self extends SchemaNodeRecord<Self>>(
+const isPendingNode = <Self extends FieldNodeRecord<Self>>(
   candidate: unknown,
   runtime: Self['runtime'],
 ): candidate is Self =>
@@ -33,7 +33,7 @@ const isPendingNode = <Self extends SchemaNodeRecord<Self>>(
  * @param root - Live form root owning the aggregate external list and the pending set
  * @returns Nothing; a changed root list queues UpdateError and UpdateGlobalError on the root
  */
-export const rebuildRootExternalErrors = <Self extends SchemaNodeRecord<Self>>(
+export const rebuildRootExternalErrors = <Self extends FieldNodeRecord<Self>>(
   root: Self,
 ): void => {
   const runtime = root.runtime;
@@ -101,7 +101,7 @@ export const rebuildRootExternalErrors = <Self extends SchemaNodeRecord<Self>>(
   if (next.length) (runtime.nodeErrors ??= new Map()).set(root, next);
   else runtime.nodeErrors?.delete(root);
   publishRootExternalErrors(root);
-  queueNonSettleEvent(root, SchemaNodeEventType.UpdateError, next);
+  queueNonSettleEvent(root, FieldNodeEventType.UpdateError, next);
 };
 
 /**
@@ -112,7 +112,7 @@ export const rebuildRootExternalErrors = <Self extends SchemaNodeRecord<Self>>(
  * @returns Nothing; the root event joins the caller's delivery
  */
 export const propagateExternalErrorsToRoot = <
-  Self extends SchemaNodeRecord<Self>,
+  Self extends FieldNodeRecord<Self>,
 >(
   node: Self,
 ): void => {

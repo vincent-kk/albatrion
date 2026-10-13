@@ -3,10 +3,10 @@ import { afterEach, expect, expectTypeOf, it } from 'vitest';
 
 import {
   type FieldInputProps,
-  type InferSchemaNode,
-  type SchemaNode,
-  SchemaNodeEventType,
-  SchemaNodeState,
+  type FieldNode,
+  FieldNodeEventType,
+  FieldNodeState,
+  type InferFieldNode,
   SetValueOption,
   type UnionNode,
   type ValidationIssue,
@@ -51,7 +51,7 @@ it('LANDING-154 node key and schemaPath are absent from the public surface', asy
   expect(form.handle.node).not.toHaveProperty('key');
   expect(form.handle.node).not.toHaveProperty('schemaPath');
   expectTypeOf<
-    Extract<keyof SchemaNode, 'key' | 'schemaPath'>
+    Extract<keyof FieldNode, 'key' | 'schemaPath'>
   >().toEqualTypeOf<never>();
 });
 
@@ -62,20 +62,18 @@ it('LANDING-156 context is not a navigable node', async () => {
 });
 
 it('LANDING-157 LANDING-158 public state and event names have no old aliases', async () => {
-  // @ts-expect-error State exports use the SchemaNode prefix.
+  // @ts-expect-error State exports use the FieldNode prefix.
   type OldState = import('@/schema-form').NodeState;
-  // @ts-expect-error Event exports use the SchemaNode prefix.
+  // @ts-expect-error Event exports use the FieldNode prefix.
   type OldEvent = import('@/schema-form').NodeEventType;
   expectTypeOf<OldState>().toBeAny();
   expectTypeOf<OldEvent>().toBeAny();
   form = await renderForm({ type: 'string' });
   const events: number[] = [];
   const stop = form.handle.node!.subscribe(({ type }) => events.push(type));
-  await act(async () =>
-    form.handle.setState({ [SchemaNodeState.Dirty]: true }),
-  );
-  expect(form.handle.getState()[SchemaNodeState.Dirty]).toBe(true);
-  expect(events.some((type) => type & SchemaNodeEventType.UpdateState)).toBe(
+  await act(async () => form.handle.setState({ [FieldNodeState.Dirty]: true }));
+  expect(form.handle.getState()[FieldNodeState.Dirty]).toBe(true);
+  expect(events.some((type) => type & FieldNodeEventType.UpdateState)).toBe(
     true,
   );
   stop();
@@ -157,7 +155,7 @@ it('LANDING-188 LANDING-190 union narrowing reaches the terminal union node', as
     FieldInputProps<'a' | 'b'>['node']['type']
   >().toEqualTypeOf<'string'>();
   expectTypeOf<
-    InferSchemaNode<{ type: readonly ['string', 'number'] }>
+    InferFieldNode<{ type: readonly ['string', 'number'] }>
   >().toEqualTypeOf<UnionNode<readonly ['string', 'number'], false>>();
   form = await renderForm({ type: ['string', 'number'] });
   const node = form.handle.node!;

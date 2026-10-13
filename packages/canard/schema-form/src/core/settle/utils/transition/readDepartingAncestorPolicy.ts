@@ -1,6 +1,6 @@
 import { hasOwnProperty } from '@winglet/common-utils/lib';
 
-import type { SchemaNodeRecord } from '../../../record';
+import type { FieldNodeRecord } from '../../../record';
 import type { SettlementContext } from '../../type';
 import { getControlLayers } from '../controls/getControlLayers';
 import { readExitLayerPolicy } from '../controls/readExitLayerPolicy';
@@ -11,9 +11,7 @@ import { readExitLayerPolicy } from '../controls/readExitLayerPolicy';
  * @param node - Top occurrence being detached from its parent
  * @returns A departing declaration's choice or the Form fallback
  */
-export const readDepartingAncestorPolicy = <
-  Self extends SchemaNodeRecord<Self>,
->(
+export const readDepartingAncestorPolicy = <Self extends FieldNodeRecord<Self>>(
   context: SettlementContext<Self>,
   node: Self,
 ): boolean => {

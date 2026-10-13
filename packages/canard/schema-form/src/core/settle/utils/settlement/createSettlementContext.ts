@@ -1,7 +1,7 @@
 import { StaticFirstLoadCapability } from '../../../blueprint';
-import type { SchemaNodeRecord, SettlementScratch } from '../../../record';
-import { SetValueOption } from '../../../types/value';
-import type { SchemaNodeWriteKind, SettlementContext } from '../../type';
+import type { FieldNodeRecord, SettlementScratch } from '../../../record';
+import { WriteOption } from '../../../types/value';
+import type { FieldNodeWriteKind, SettlementContext } from '../../type';
 import { getVirtualReferenceIndex } from '../compute/getVirtualReferenceIndex';
 import { getTransitionCap } from '../transition/getTransitionCap';
 
@@ -14,18 +14,18 @@ import { getTransitionCap } from '../transition/getTransitionCap';
  * @param replaces - Whether a caller write replaces its subtree
  * @returns Call-local state without preparing statically absent capabilities
  */
-export const createSettlementContext = <Self extends SchemaNodeRecord<Self>>(
+export const createSettlementContext = <Self extends FieldNodeRecord<Self>>(
   node: Self,
-  kind: SchemaNodeWriteKind,
-  option: SetValueOption,
+  kind: FieldNodeWriteKind,
+  option: WriteOption,
   scratch: SettlementScratch<Self>,
   replaces = false,
 ): SettlementContext<Self> => {
   const root = node.rootNode;
   const runtime = root.runtime;
   const blueprint = runtime.blueprint;
-  const disable = (option & SetValueOption.DisableAutomaticWrites) !== 0;
-  const enable = (option & SetValueOption.EnableAutomaticWrites) !== 0;
+  const disable = (option & WriteOption.DisableAutomaticWrites) !== 0;
+  const enable = (option & WriteOption.EnableAutomaticWrites) !== 0;
   return {
     root,
     previousEmit: root.emit,

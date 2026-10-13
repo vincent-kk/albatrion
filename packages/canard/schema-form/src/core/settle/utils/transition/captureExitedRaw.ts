@@ -1,4 +1,4 @@
-import type { SchemaNodeRecord } from '../../../record';
+import type { FieldNodeRecord } from '../../../record';
 import type { SettlementContext } from '../../type';
 import { captureArrayLatent } from '../latent/captureArrayLatent';
 import { captureOwnLatent } from '../latent/captureOwnLatent';
@@ -18,7 +18,7 @@ import { writeLatentRaw } from './writeLatentRaw';
  * @returns Nothing; each descendant receives its own latent entry, and a declared child
  * this settlement's write supplied without a node is distributed as latent too (211C-01)
  */
-export const captureExitedRaw = <Self extends SchemaNodeRecord<Self>>(
+export const captureExitedRaw = <Self extends FieldNodeRecord<Self>>(
   node: Self,
   inherited: boolean,
   context: SettlementContext<Self>,

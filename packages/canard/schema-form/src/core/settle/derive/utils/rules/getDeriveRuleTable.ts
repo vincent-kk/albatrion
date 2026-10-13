@@ -92,10 +92,10 @@ export const getDeriveRuleTable = (blueprint: Blueprint): DeriveRuleTable => {
           layer: 'node',
           targetNodes: [node],
         });
-      const children: unknown = Reflect.get(controls, 'children');
-      if (isArray(children))
-        for (let index = 0; index < children.length; index++) {
-          const item: unknown = children[index];
+      const fields: unknown = Reflect.get(controls, 'fields');
+      if (isArray(fields))
+        for (let index = 0; index < fields.length; index++) {
+          const item: unknown = fields[index];
           if (!item || typeof item !== 'object') continue;
           const itemControls: unknown = Reflect.get(item, 'controls');
           const names: unknown = Reflect.get(item, 'targets');
@@ -113,8 +113,8 @@ export const getDeriveRuleTable = (blueprint: Blueprint): DeriveRuleTable => {
             if (targets.length)
               groups.push({
                 controls: itemControls,
-                schemaPath: `${declaration.schemaPath}/controls/children/${index}/controls`,
-                layer: 'children',
+                schemaPath: `${declaration.schemaPath}/controls/fields/${index}/controls`,
+                layer: 'fields',
                 targetName: name,
                 targetNodes: targets.map((target) => target.node),
               });

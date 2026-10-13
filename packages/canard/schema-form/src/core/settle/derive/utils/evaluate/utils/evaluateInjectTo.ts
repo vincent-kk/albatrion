@@ -1,4 +1,4 @@
-import type { SchemaNodeRecord } from '../../../../../record';
+import type { FieldNodeRecord } from '../../../../../record';
 import { resolveDependencyPath } from '../../../../utils/paths/resolveDependencyPath';
 import type {
   DeriveRoundDecision,
@@ -20,7 +20,7 @@ import { getVirtualWriteFailure } from './getVirtualWriteFailure';
  * @param rule - Authored function and declaration order
  * @returns Candidates or one failure that excludes the entire rule
  */
-export const evaluateInjectTo = <Self extends SchemaNodeRecord<Self>>(
+export const evaluateInjectTo = <Self extends FieldNodeRecord<Self>>(
   source: Self,
   root: Self,
   rule: DeriveRule,

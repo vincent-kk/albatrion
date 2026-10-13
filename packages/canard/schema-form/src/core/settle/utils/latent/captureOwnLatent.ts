@@ -1,4 +1,4 @@
-import type { SchemaNodeRecord } from '../../../record';
+import type { FieldNodeRecord } from '../../../record';
 import { HostLatent } from './HostLatent';
 
 /**
@@ -7,18 +7,19 @@ import { HostLatent } from './HostLatent';
  * @param previous - Existing latent entry eligible for identity reuse
  * @returns A terminal raw, frozen host source, or no entry
  */
-export const captureOwnLatent = <Self extends SchemaNodeRecord<Self>>(
+export const captureOwnLatent = <Self extends FieldNodeRecord<Self>>(
   node: Self,
   previous: unknown,
 ): unknown => {
   if (node.behavior.type === 'virtual') return undefined;
   if (node.behavior.strategy === 'terminal') return node.raw;
-  if (node.raw === undefined && node.extras === undefined) return undefined;
+  if (node.raw === undefined && node.undeclaredValues === undefined)
+    return undefined;
   if (
     previous instanceof HostLatent &&
     Object.is(previous.raw, node.raw) &&
-    Object.is(previous.extras, node.extras)
+    Object.is(previous.undeclaredValues, node.undeclaredValues)
   )
     return previous;
-  return new HostLatent(node.raw, node.extras);
+  return new HostLatent(node.raw, node.undeclaredValues);
 };

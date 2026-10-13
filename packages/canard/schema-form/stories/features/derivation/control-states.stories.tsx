@@ -15,8 +15,8 @@ export const LockOrVisibilityAnd: Story = createFeatureStory(findScenario(contro
 /** Shared scenario `controls.standard-read-only`. */
 export const StandardReadOnly: Story = createFeatureStory(findScenario(controlsScenarios, 'controls.standard-read-only'));
 
-/** Shared scenario `controls.children-host-expression`. */
-export const ChildrenHostExpression: Story = createFeatureStory(findScenario(controlsScenarios, 'controls.children-host-expression'));
+/** Shared scenario `controls.fields-host-expression`. */
+export const ChildrenHostExpression: Story = createFeatureStory(findScenario(controlsScenarios, 'controls.fields-host-expression'));
 
 /** Shared scenario `controls.fragment-scope`. */
 export const FragmentScope: Story = createFeatureStory(findScenario(controlsScenarios, 'controls.fragment-scope'));

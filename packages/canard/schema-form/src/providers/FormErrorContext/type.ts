@@ -1,4 +1,4 @@
-import type { SchemaNode } from '@/schema-form/core';
+import type { FieldNode } from '@/schema-form/core';
 import type { FormErrorRecord, FormErrorReporter } from '@/schema-form/errors';
 
 /** Mutable instance service retained outside the root boundary. */
@@ -6,7 +6,7 @@ export interface FormErrorService extends FormErrorReporter {
   /** Latest committed consumer of form records. */
   onError?: (record: FormErrorRecord) => void;
   /** Current load root retained for buffered and boundary observer scopes. */
-  root?: SchemaNode;
+  root?: FieldNode;
   /** Number of started loads; field read detectors compare it to report a first read once per load. */
   load: number;
   /** Start a load's warning lifetime and advance `load` without dropping error identities. */

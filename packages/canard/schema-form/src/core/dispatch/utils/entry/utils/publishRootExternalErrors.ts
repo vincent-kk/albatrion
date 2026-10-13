@@ -1,8 +1,8 @@
-import { SchemaNodeEventType } from '../../../../record';
-import type { SchemaNodeRecord } from '../../../../record';
+import { FieldNodeEventType } from '../../../../record';
+import type { FieldNodeRecord } from '../../../../record';
 import {
   EMPTY_GLOBAL_ERRORS,
-  updateSchemaNodeGlobalErrors,
+  updateFieldNodeGlobalErrors,
 } from '../../../../validation';
 import { queueNonSettleEvent } from '../../chain/queueNonSettleEvent';
 
@@ -13,15 +13,15 @@ import { queueNonSettleEvent } from '../../chain/queueNonSettleEvent';
  * @param root - Live form root whose stored external list was just replaced or removed
  * @returns Nothing; a changed aggregate joins the caller's delivery
  */
-export const publishRootExternalErrors = <Self extends SchemaNodeRecord<Self>>(
+export const publishRootExternalErrors = <Self extends FieldNodeRecord<Self>>(
   root: Self,
 ): void => {
   const previous = root.runtime.globalErrors ?? EMPTY_GLOBAL_ERRORS;
-  updateSchemaNodeGlobalErrors(root);
+  updateFieldNodeGlobalErrors(root);
   if (root.runtime.globalErrors !== previous)
     queueNonSettleEvent(
       root,
-      SchemaNodeEventType.UpdateGlobalError,
+      FieldNodeEventType.UpdateGlobalError,
       root.runtime.globalErrors,
     );
 };

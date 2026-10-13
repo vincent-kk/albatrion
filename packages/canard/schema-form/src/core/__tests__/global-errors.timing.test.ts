@@ -3,7 +3,7 @@ import { describe, expect, it } from 'vitest';
 import { median } from '@winglet/common-utils/math';
 
 import {
-  type SchemaNode,
+  type FieldNode,
   type ValidationIssue,
   ValidationMode,
   nodeFromJSONSchema,
@@ -27,7 +27,7 @@ const LINEAR_RATIO = 8;
 const createLoadedRoot = (
   fields: number,
   issues: number,
-): { root: SchemaNode; fields: SchemaNode[] } => {
+): { root: FieldNode; fields: FieldNode[] } => {
   const properties: Record<string, { type: 'string' }> = {};
   for (let index = 0; index < fields; index++)
     properties[`f${index}`] = { type: 'string' };
@@ -43,7 +43,7 @@ const createLoadedRoot = (
     external.push(issue);
     (groups.get(path) ?? groups.set(path, []).get(path)!).push(issue);
   }
-  const nodes: SchemaNode[] = [];
+  const nodes: FieldNode[] = [];
   root.batch(() => {
     root.setExternalErrors(external);
     for (const [path, group] of groups) {
@@ -62,7 +62,7 @@ const createLoadedRoot = (
  * @returns Median elapsed milliseconds for the n and the 4n tree
  */
 const measure = (
-  clear: (root: SchemaNode, fields: SchemaNode[]) => void,
+  clear: (root: FieldNode, fields: FieldNode[]) => void,
 ): { small: number; large: number } => {
   const time = (scale: number): number => {
     const samples: number[] = [];

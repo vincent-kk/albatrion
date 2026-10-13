@@ -1,16 +1,16 @@
 import { describe, expect, it } from 'vitest';
 
-import { SchemaNodeEventType } from '../../record';
-import { SetValueOption } from '../../types/value';
+import { FieldNodeEventType } from '../../record';
+import { WriteOption } from '../../types/value';
 import {
-  adoptSchemaNodeChain,
+  adoptFieldNodeChain,
   dispatchContextChange,
   dispatchMount,
   dispatchResetForm,
   dispatchResetSubtree,
   dispatchSetValue,
-  readSchemaNodeRevision,
-  subscribeSchemaNode,
+  readFieldNodeRevision,
+  subscribeFieldNode,
 } from '../index';
 import { createDispatchTree } from './fixtures/createDispatchTree';
 import { getDispatchChild } from './fixtures/getDispatchChild';
@@ -20,16 +20,14 @@ describe('dispatcher entry chain', () => {
   it('EVENT-027 and EVENT-004 deliver a committed write before returning', () => {
     const { root, runtime } = createDispatchTree({ type: 'string' });
     const seen: number[] = [];
-    subscribeSchemaNode(root, (event) => seen.push(event.type));
+    subscribeFieldNode(root, (event) => seen.push(event.type));
     dispatchSetValue(root, 'value');
     expect(root.emit).toBe('value');
-    expect(
-      seen.some((type) => !!(type & SchemaNodeEventType.UpdateValue)),
-    ).toBe(true);
-    expect(runtime.entryDepth).toBe(0);
-    expect(readSchemaNodeRevision(root, SchemaNodeEventType.UpdateValue)).toBe(
-      1,
+    expect(seen.some((type) => !!(type & FieldNodeEventType.UpdateValue))).toBe(
+      true,
     );
+    expect(runtime.entryDepth).toBe(0);
+    expect(readFieldNodeRevision(root, FieldNodeEventType.UpdateValue)).toBe(1);
   });
 
   it('EVENT-030 adopts an open chain and its pending records', () => {
@@ -43,12 +41,12 @@ describe('dispatcher entry chain', () => {
       {
         node: previous.root,
         value: 'pending',
-        option: SetValueOption.Overwrite,
+        option: WriteOption.Overwrite,
       },
     ];
     const failure = new Error('pending failure');
     previous.runtime.chainErrors = [failure];
-    adoptSchemaNodeChain(previous.root, next.root);
+    adoptFieldNodeChain(previous.root, next.root);
     expect(next.runtime.entryDepth).toBe(2);
     expect(next.runtime.feedbackBudget).toBe(7);
     expect(next.runtime.onChangeBudget).toBe(3);
@@ -57,7 +55,7 @@ describe('dispatcher entry chain', () => {
       {
         node: previous.root,
         value: 'pending',
-        option: SetValueOption.Overwrite,
+        option: WriteOption.Overwrite,
       },
     ]);
     expect(next.runtime.chainErrors).toEqual([failure]);

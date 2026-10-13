@@ -1,9 +1,9 @@
 import { afterEach, expect, it, vi } from 'vitest';
 
-import { SetValueOption } from '../../types/value';
-import { loadSchemaNodeAtMount, writeSchemaNode } from '../index';
+import { WriteOption } from '../../types/value';
+import { loadFieldNodeAtMount, writeFieldNode } from '../index';
 import * as types from '../utils/commit/effectiveType';
-import * as writable from '../utils/dispose/assertSchemaNodeWritable';
+import * as writable from '../utils/dispose/assertFieldNodeWritable';
 import * as latent from '../utils/write/pruneLatentRaw';
 import * as wrongKind from '../utils/write/releaseWrongKindHosts';
 import { createTestTree } from './fixtures/createTestTree';
@@ -18,14 +18,14 @@ it('removes fixed writable, latent, wrong-kind and effective-type work on normal
       sibling: { type: 'number', default: 3 },
     },
   });
-  loadSchemaNodeAtMount(root, { value: 'before' }, SetValueOption.Overwrite);
+  loadFieldNodeAtMount(root, { value: 'before' }, WriteOption.Overwrite);
   const leaf = root.structure!.value;
-  const assertWritable = vi.spyOn(writable, 'assertSchemaNodeWritable');
+  const assertWritable = vi.spyOn(writable, 'assertFieldNodeWritable');
   const prune = vi.spyOn(latent, 'pruneLatentRaw');
   const release = vi.spyOn(wrongKind, 'releaseWrongKindHosts');
   const effective = vi.spyOn(types, 'effectiveType');
   for (const value of ['first', 'later']) {
-    writeSchemaNode(leaf, value, 'callerReplace', SetValueOption.Overwrite);
+    writeFieldNode(leaf, value, 'callerReplace', WriteOption.Overwrite);
     expect(root.emit).toEqual({ value, sibling: 3 });
   }
   expect(assertWritable).not.toHaveBeenCalled();
@@ -45,17 +45,17 @@ it('retains general checks and derived writes when their inputs exist', () => {
       copy: { type: 'string', controls: { derived: '../value' } },
     },
   });
-  loadSchemaNodeAtMount(root, { value: 'before' }, SetValueOption.Overwrite);
+  loadFieldNodeAtMount(root, { value: 'before' }, WriteOption.Overwrite);
   const leaf = root.structure!.value;
-  const assertWritable = vi.spyOn(writable, 'assertSchemaNodeWritable');
+  const assertWritable = vi.spyOn(writable, 'assertFieldNodeWritable');
   const release = vi.spyOn(wrongKind, 'releaseWrongKindHosts');
-  writeSchemaNode(leaf, 'after', 'input', SetValueOption.Overwrite);
+  writeFieldNode(leaf, 'after', 'input', WriteOption.Overwrite);
   expect(assertWritable).toHaveBeenCalledTimes(1);
   expect(release).toHaveBeenCalledTimes(1);
   expect(root.emit).toEqual({ value: 'after', copy: 'after' });
   leaf.disposed = true;
   expect(() =>
-    writeSchemaNode(leaf, 'retired', 'callerReplace', SetValueOption.Overwrite),
+    writeFieldNode(leaf, 'retired', 'callerReplace', WriteOption.Overwrite),
   ).toThrow('Cannot write disposed node');
   expect(root.emit).toEqual({ value: 'after', copy: 'after' });
 });

@@ -1,6 +1,6 @@
 import { isArray } from '@winglet/common-utils/filter';
 
-import type { SchemaNodeRecord } from '../../../../record';
+import type { FieldNodeRecord } from '../../../../record';
 import { resolveDependencyPath } from '../../paths/resolveDependencyPath';
 
 /**
@@ -8,7 +8,7 @@ import { resolveDependencyPath } from '../../paths/resolveDependencyPath';
  * @param node - Live node whose effective schema declares watch paths
  * @returns Resolved paths, including the context sentinel when watched
  */
-export const getWatchDeliveryPaths = <Self extends SchemaNodeRecord<Self>>(
+export const getWatchDeliveryPaths = <Self extends FieldNodeRecord<Self>>(
   node: Self,
 ): readonly string[] => {
   const schema = node.schema.schema;

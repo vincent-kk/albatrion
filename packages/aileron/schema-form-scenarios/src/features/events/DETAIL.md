@@ -10,7 +10,7 @@
 
 `eventsFeatureScenarios`는 `index.ts`를 통해 이 부류의 순서 있는 장면 목록을 내보낸다.
 배달 순서와 검증 요청 수는 계측한 실행기가 대조한다. 스토리는 화면 어댑터가, e2e는 notify 실행기와 같은 감싸개가 맡는다.
-`subscriptionStages`의 이벤트 종류는 `SchemaNodeEventType`의 멤버 이름이며, 포함과 제외를 함께 적되 한 이름을 양쪽에 두지 않는다.
+`subscriptionStages`의 이벤트 종류는 `FieldNodeEventType`의 멤버 이름이며, 포함과 제외를 함께 적되 한 이름을 양쪽에 두지 않는다.
 `renderCommitStages`는 검증 모드 None과 OnChange 각각의 커밋 수를 적는다. OnChange의 기대값은 직전과 같은 검증 결과가 참조를 두고 파동을 생략한다는 계약(GOAL-011, EVENT-046)이다.
 
 ## Acceptance Criteria

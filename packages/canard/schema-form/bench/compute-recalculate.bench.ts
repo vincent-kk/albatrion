@@ -1,9 +1,9 @@
 import { bench, describe } from 'vitest';
 
-import { type JSONSchema, nodeFromJSONSchema } from '@/schema-form/core';
+import { type AuthoredSchema, nodeFromJSONSchema } from '@/schema-form/core';
 
 /** Creates a public-core write/settle lane; includes dispatch unlike the legacy evaluator-only lane. */
-function createRecalculation(schema: JSONSchema) {
+function createRecalculation(schema: AuthoredSchema) {
   const root = nodeFromJSONSchema({
     jsonSchema: {
       type: 'object',

@@ -1,12 +1,12 @@
 import { describe, expect, it } from 'vitest';
 
-import { SchemaNode } from '../../../SchemaNode/SchemaNode';
-import { makeSchemaNodeTree } from '../../../__tests__/makeSchemaNodeTree';
+import { FieldNode } from '../../../FieldNode/FieldNode';
+import { makeFieldNodeTree } from '../../../__tests__/makeFieldNodeTree';
 
 // filid:contract derive-rank
 describe('array item derivation', () => {
   it('35C-08 SETTLE-017 derives each item from its own sibling and new path', () => {
-    const { root } = makeSchemaNodeTree({
+    const { root } = makeFieldNodeTree({
       type: 'array',
       items: {
         type: 'object',
@@ -16,8 +16,8 @@ describe('array item derivation', () => {
         },
       },
     });
-    if (!(root instanceof SchemaNode))
-      throw new Error('Expected a runtime SchemaNode');
+    if (!(root instanceof FieldNode))
+      throw new Error('Expected a runtime FieldNode');
     const array = root;
     root.setValue([{ source: 'A' }, { source: 'B' }]);
     expect(root.value).toEqual([
@@ -35,7 +35,7 @@ describe('array item derivation', () => {
   });
 
   it('35C-08 WRITE-028 unsets only the item whose rule turns true', () => {
-    const { root } = makeSchemaNodeTree({
+    const { root } = makeFieldNodeTree({
       type: 'array',
       items: {
         type: 'object',
@@ -54,15 +54,13 @@ describe('array item derivation', () => {
     expect(root.find('/1/target')?.value).toBeUndefined();
   });
 
-  it('35C-08 CONTROLS-073 resolves children derived targets per item', () => {
-    const { root } = makeSchemaNodeTree({
+  it('35C-08 CONTROLS-073 resolves fields derived targets per item', () => {
+    const { root } = makeFieldNodeTree({
       type: 'array',
       items: {
         type: 'object',
         controls: {
-          children: [
-            { targets: ['target'], controls: { derived: './source' } },
-          ],
+          fields: [{ targets: ['target'], controls: { derived: './source' } }],
         },
         properties: {
           source: { type: 'string' },
@@ -79,7 +77,7 @@ describe('array item derivation', () => {
   });
 
   it('35C-08 CONTROLS-079 resolves injectTo targets through array slots', () => {
-    const { root } = makeSchemaNodeTree({
+    const { root } = makeFieldNodeTree({
       type: 'array',
       items: {
         type: 'object',

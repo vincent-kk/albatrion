@@ -3,8 +3,8 @@ import { hasOwnProperty } from '@winglet/common-utils/lib';
 
 import type { BlueprintChildEntry } from '../../../blueprint';
 import { publishGlobalStateDeltas } from '../../../record';
-import type { SchemaNodeRecord, TypeMismatchRecord } from '../../../record';
-import { SetValueOption } from '../../../types/value';
+import type { FieldNodeRecord, TypeMismatchRecord } from '../../../record';
+import { WriteOption } from '../../../types/value';
 import { createChildNode } from '../compute/createChildNode';
 import { getDeclaredChildNames } from '../declarations/getDeclaredChildNames';
 import { arrayExtras } from '../write/arrayExtras';
@@ -39,14 +39,14 @@ const EMPTY = Object.freeze([]);
  * @param option - Automatic-write flags interpreted exactly as the generic path
  * @returns Nothing; one reserved commit and every occurrence are eager before return
  */
-export const loadStaticFirstTree = <Self extends SchemaNodeRecord<Self>>(
+export const loadStaticFirstTree = <Self extends FieldNodeRecord<Self>>(
   root: Self,
-  option: SetValueOption,
+  option: WriteOption,
 ): void => {
   const runtime = root.runtime;
   const commit = (runtime.commitNumber ?? 0) + 1;
-  const disable = (option & SetValueOption.DisableAutomaticWrites) !== 0;
-  const enable = (option & SetValueOption.EnableAutomaticWrites) !== 0;
+  const disable = (option & WriteOption.DisableAutomaticWrites) !== 0;
+  const enable = (option & WriteOption.EnableAutomaticWrites) !== 0;
   const suppress =
     disable || (!enable && runtime.disableAutomaticWrites === true);
   const deliveries = (runtime.deliveries ??= new Set());
@@ -106,12 +106,12 @@ export const loadStaticFirstTree = <Self extends SchemaNodeRecord<Self>>(
           const array = isArray(value);
           node.itemCount = array ? value.length : 0;
           node.raw = array ? undefined : value;
-          node.extras = array ? arrayExtras(node, value) : undefined;
+          node.undeclaredValues = array ? arrayExtras(node, value) : undefined;
           frame.entries = node.behavior.declareChildren(node);
         } else {
           const object = isPlain(value);
           node.raw = object ? undefined : value;
-          node.extras = object
+          node.undeclaredValues = object
             ? nextExtras(
                 undefined,
                 value,

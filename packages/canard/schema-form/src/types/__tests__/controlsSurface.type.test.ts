@@ -14,20 +14,20 @@ type ControlKey =
   | 'unsetValue'
   | 'resetInteraction'
   | 'unsetOnInactive'
-  | 'children'
+  | 'fields'
   | 'injectTo'
   | 'discriminator'
   | 'watch';
 
-/** The nine keys accepted inside a `controls.children` entry. */
+/** The nine keys accepted inside a `controls.fields` entry. */
 type ChildControlKey = Exclude<
   ControlKey,
-  'children' | 'injectTo' | 'discriminator' | 'watch'
+  'fields' | 'injectTo' | 'discriminator' | 'watch'
 >;
 
 type Controls = NonNullable<JSONSchema['controls']>;
 type ChildControls = NonNullable<
-  NonNullable<Controls['children']>[number]['controls']
+  NonNullable<Controls['fields']>[number]['controls']
 >;
 
 describe('controls authoring surface', () => {
@@ -61,8 +61,8 @@ describe('controls authoring surface', () => {
     const childWatch: JSONSchema = {
       type: 'object',
       controls: {
-        // @ts-expect-error -- a children entry accepts the nine child keys only
-        children: [{ targets: ['a'], controls: { watch: ['../b'] } }],
+        // @ts-expect-error -- a fields entry accepts the nine child keys only
+        fields: [{ targets: ['a'], controls: { watch: ['../b'] } }],
       },
     };
     expectTypeOf([
@@ -92,7 +92,7 @@ describe('controls authoring surface', () => {
         unsetOnInactive: true,
         discriminator: 'kind',
         watch: ['../enabled'],
-        children: [{ targets: ['copy'], controls: { visible: '../shown' } }],
+        fields: [{ targets: ['copy'], controls: { visible: '../shown' } }],
         injectTo: (value, context) => {
           expectTypeOf(context.jsonSchema).toExtend<JSONSchema>();
           return value === undefined ? null : { '../copy': value };

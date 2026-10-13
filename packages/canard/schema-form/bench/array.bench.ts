@@ -13,9 +13,9 @@ import { scheduleMacrotaskSafe } from '@winglet/common-utils/scheduler';
 
 import { blueprint } from '../src/core/blueprint';
 import { createTestValidator } from '../src/core/__tests__/fixtures/createTestValidator';
-import { schemaNodeFactory, SetValueOption } from '../src/core/SchemaNode';
-import type { SchemaNode as RuntimeSchemaNode } from '../src/core/SchemaNode/SchemaNode';
-import { loadSchemaNodeAtMount } from '../src/core/settle';
+import { fieldNodeFactory, SetValueOption } from '../src/core/FieldNode';
+import type { FieldNode as RuntimeFieldNode } from '../src/core/FieldNode/FieldNode';
+import { loadFieldNodeAtMount } from '../src/core/settle';
 import { nodeFromJSONSchema } from '../src/__legacy__/core/nodeFromJSONSchema';
 
 const schema = { type: 'array' as const, items: {
@@ -51,12 +51,12 @@ function makeTree(engine: Engine, input: Item[], analysis?: ReturnType<typeof bl
   if (engine === 'legacy')
     return nodeFromJSONSchema({ jsonSchema: schema, defaultValue: input,
       onChange }) as unknown as BenchTree;
-  const root = schemaNodeFactory(analysis ?? blueprint(schema), {
+  const root = fieldNodeFactory(analysis ?? blueprint(schema), {
     diagnostics: { status: 'stable' },
     loadSnapshot: undefined, latentRaw: new PathKeyedMap('pair'),
     typeMismatchPaths: new PathKeyedSet(), inactiveValuesMemo: new PathKeyedMap<readonly { path: string; value: unknown }[]>('path'),
-  }, createTestValidator()) as RuntimeSchemaNode;
-  loadSchemaNodeAtMount(root, input, SetValueOption.Overwrite);
+  }, createTestValidator()) as RuntimeFieldNode;
+  loadFieldNodeAtMount(root, input, SetValueOption.Overwrite);
   return root as unknown as BenchTree;
 }
 

@@ -1,8 +1,8 @@
 import { describe, expect, it, vi } from 'vitest';
 
 import type { BlueprintSchema } from '../../blueprint';
-import { SetValueOption } from '../../types/value';
-import { loadSchemaNodeAtMount, writeSchemaNode } from '../index';
+import { WriteOption } from '../../types/value';
+import { loadFieldNodeAtMount, writeFieldNode } from '../index';
 import type { SettlementContext } from '../type';
 import * as gateEvaluation from '../utils/gates/evaluateGate';
 import { resolveDependencyPath } from '../utils/paths/resolveDependencyPath';
@@ -31,7 +31,7 @@ const SCHEMA: BlueprintSchema = {
 describe('gate selection original-site shadow precondition', () => {
   it('excludes an unread undefined-raw host and rejects consumed or published pending nodes', () => {
     const { root } = createTestTree(SCHEMA);
-    loadSchemaNodeAtMount(root, { kind: 'kind_0' }, SetValueOption.Overwrite);
+    loadFieldNodeAtMount(root, { kind: 'kind_0' }, WriteOption.Overwrite);
     const context = {
       root,
       changedRaw: new Set(),
@@ -58,7 +58,7 @@ describe('gate selection original-site shadow precondition', () => {
 
   it('full evaluation preserves the fixed branch transition and repeated references', () => {
     const { root } = createTestTree(SCHEMA);
-    loadSchemaNodeAtMount(root, { kind: 'kind_0' }, SetValueOption.Overwrite);
+    loadFieldNodeAtMount(root, { kind: 'kind_0' }, WriteOption.Overwrite);
     expect(root.emit).toEqual({
       common: 'shared',
       kind: 'kind_0',
@@ -66,11 +66,11 @@ describe('gate selection original-site shadow precondition', () => {
       payload_0_b: 0,
       payload_0_c: true,
     });
-    writeSchemaNode(
+    writeFieldNode(
       root.structure!.kind,
       'kind_4',
       'input',
-      SetValueOption.Overwrite,
+      WriteOption.Overwrite,
     );
     const value = root.emit;
     expect(root.emit).toBe(value);
@@ -141,13 +141,13 @@ describe('gate selection original-site shadow precondition', () => {
         return result;
       });
     try {
-      loadSchemaNodeAtMount(root, { kind: 'kind_0' }, SetValueOption.Overwrite);
+      loadFieldNodeAtMount(root, { kind: 'kind_0' }, WriteOption.Overwrite);
       phase = 'update';
-      writeSchemaNode(
+      writeFieldNode(
         root.structure!.kind,
         'kind_4',
         'input',
-        SetValueOption.Overwrite,
+        WriteOption.Overwrite,
       );
     } finally {
       spy.mockRestore();

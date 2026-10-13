@@ -1,20 +1,20 @@
 import { isArray } from '@winglet/common-utils/filter';
 
-import type { SchemaNode, ValidationIssue } from '@/schema-form/core';
+import type { FieldNode, ValidationIssue } from '@/schema-form/core';
 
 /** Shared empty list for a non-array errors prop, read as empty (178C-01). */
 const NO_ERRORS: readonly ValidationIssue[] = [];
 
 /** Apply the whole form list to the root and replace each non-root path's errors. */
 export const applyFormErrors = (
-  root: SchemaNode,
+  root: FieldNode,
   errors: readonly ValidationIssue[] = NO_ERRORS,
   previous: readonly ValidationIssue[] = NO_ERRORS,
 ): void => {
   if (!isArray(errors)) errors = NO_ERRORS;
   if (!isArray(previous)) previous = NO_ERRORS;
-  const resolved = new Map<string, SchemaNode | null>();
-  const resolve = (dataPath: string): SchemaNode | null => {
+  const resolved = new Map<string, FieldNode | null>();
+  const resolve = (dataPath: string): FieldNode | null => {
     let node = resolved.get(dataPath);
     if (node === undefined) {
       node = root.find(dataPath);
@@ -22,8 +22,8 @@ export const applyFormErrors = (
     }
     return node;
   };
-  const groups = new Map<SchemaNode, ValidationIssue[]>();
-  const nodes: SchemaNode[] = [];
+  const groups = new Map<FieldNode, ValidationIssue[]>();
+  const nodes: FieldNode[] = [];
   for (let index = 0; index < errors.length; index++) {
     const issue = errors[index];
     const node = resolve(issue.dataPath);

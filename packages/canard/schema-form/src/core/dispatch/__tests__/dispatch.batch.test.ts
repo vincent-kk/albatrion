@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 
 import { createTestValidator } from '../../__tests__/fixtures/createTestValidator';
-import { SetValueOption } from '../../types/value';
+import { WriteOption } from '../../types/value';
 import {
   dispatchBatch,
   dispatchFinishInput,
@@ -11,7 +11,7 @@ import {
   dispatchResetSubtree,
   dispatchSetValue,
   dispatchUpdate,
-  subscribeSchemaNode,
+  subscribeFieldNode,
 } from '../index';
 import {
   type DispatchTestNode,
@@ -83,7 +83,7 @@ describe('dispatcher batch', () => {
   it('EVENT-013 EVENT-014 EVENT-019 and EVENT-035 commit one outer batch', () => {
     const { root, runtime } = createDispatchTree({ type: 'string' });
     let calls = 0;
-    subscribeSchemaNode(root, () => {
+    subscribeFieldNode(root, () => {
       calls += 1;
     });
     dispatchBatch(root, () => {
@@ -182,7 +182,7 @@ describe('dispatcher batch', () => {
   it('EVENT-016 listener batch opens its own feedback batch', () => {
     const { root } = createDispatchTree({ type: 'string' });
     const seen: string[] = [];
-    subscribeSchemaNode(root, () => {
+    subscribeFieldNode(root, () => {
       seen.push(String(root.emit));
       if (root.emit === 'first')
         dispatchBatch(root, () => dispatchSetValue(root, 'second'));
@@ -213,7 +213,7 @@ describe('dispatcher batch', () => {
     dispatchMount(root, { left: 'old', right: 'kept' });
     const previous: unknown[] = [];
     dispatchBatch(root, () => {
-      dispatchSetValue(root, { left: 'new' }, SetValueOption.Merge);
+      dispatchSetValue(root, { left: 'new' }, WriteOption.Merge);
       dispatchSetValue(root, (value: unknown) => {
         previous.push(value);
         return { left: 'new', right: 'last' };
@@ -231,9 +231,9 @@ describe('dispatcher batch', () => {
       },
     });
     const both =
-      SetValueOption.Overwrite |
-      SetValueOption.DisableAutomaticWrites |
-      SetValueOption.EnableAutomaticWrites;
+      WriteOption.Overwrite |
+      WriteOption.DisableAutomaticWrites |
+      WriteOption.EnableAutomaticWrites;
     dispatchBatch(root, () => dispatchSetValue(root, {}, both));
     expect(root.structure?.name?.raw).toBeUndefined();
   });
@@ -332,7 +332,7 @@ describe('dispatcher batch', () => {
   it('191C-01 keeps latent raw under a shallow Merge batch', () => {
     const { root, runtime } = hideVat(noteSchema);
     dispatchBatch(root, () => {
-      dispatchSetValue(root, { note: 'z' }, SetValueOption.Merge);
+      dispatchSetValue(root, { note: 'z' }, WriteOption.Merge);
       dispatchSetValue(getDispatchChild(root, 'note'), 'w');
     });
     expect(root.emit).toEqual({ company: false, note: 'w' });
@@ -428,7 +428,7 @@ describe('dispatcher batch', () => {
     );
     dispatchMount(root, { k: 'b', value: 5 });
     dispatchSetValue(getDispatchChild(root, 'k'), 'a');
-    dispatchSetValue(root, { value: ' s ' }, SetValueOption.Merge);
+    dispatchSetValue(root, { value: ' s ' }, WriteOption.Merge);
     expect(runtime.latentRaw.has(latent('/value', 'number'))).toBe(true);
     dispatchBatch(root, () => {
       dispatchFinishInput(getDispatchChild(root, 'value'));
@@ -463,7 +463,7 @@ describe('other-kind re-entry inside a batch (R1, 195C-01 F2)', () => {
     );
     dispatchMount(root, { k: 'a', value: 's' });
     dispatchSetValue(getDispatchChild(root, 'k'), 'b');
-    dispatchSetValue(root, { value: 5 }, SetValueOption.Merge);
+    dispatchSetValue(root, { value: 5 }, WriteOption.Merge);
     expect(root.emit).toEqual({ k: 'b', value: 5 });
     dispatchSetValue(getDispatchChild(root, 'k'), 'a');
     expect(root.emit).toEqual({ k: 'a', value: 's' });
@@ -478,7 +478,7 @@ describe('other-kind re-entry inside a batch (R1, 195C-01 F2)', () => {
     );
     dispatchMount(root, { k: 'a', value: 's' });
     dispatchSetValue(getDispatchChild(root, 'k'), 'b');
-    dispatchSetValue(root, { value: 5 }, SetValueOption.Merge);
+    dispatchSetValue(root, { value: 5 }, WriteOption.Merge);
     dispatchBatch(root, () => {
       dispatchSetValue(getDispatchChild(root, 'k'), 'a');
       dispatchSetValue(getDispatchChild(root, 'other'), 'x');

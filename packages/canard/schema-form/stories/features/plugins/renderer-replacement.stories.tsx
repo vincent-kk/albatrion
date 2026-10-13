@@ -64,4 +64,4 @@ export const FormLabelAndError: Story = createRendererStory('form label and erro
 export const ProviderGroup: Story = createRendererStory('provider group');
 
 /** Case `form group over provider group`. */
-export const FormGroupOverProvider: Story = createRendererStory('form group over provider group');
+export const FormFieldOverProvider: Story = createRendererStory('form group over provider group');

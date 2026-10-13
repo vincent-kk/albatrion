@@ -2,7 +2,7 @@
 
 ## Requirements
 
-- 의존 방향은 `blueprint·record·behaviors/utils < stringBehavior < behaviors 뿌리 < SchemaNode`입니다. 이 종류 fractal은 뿌리·정착·겉면을 타입으로도 가져오지 않습니다(NODE-009·016).
+- 의존 방향은 `blueprint·record·behaviors/utils < stringBehavior < behaviors 뿌리 < FieldNode`입니다. 이 종류 fractal은 뿌리·정착·겉면을 타입으로도 가져오지 않습니다(NODE-009·016).
 - 외부에서 직접 소비하는 organ은 없고 경계 예외도 없습니다.
 
 ## API Contracts

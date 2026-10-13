@@ -1,5 +1,5 @@
-import type { SchemaNodeRecord } from '../../../../record';
-import type { SchemaNodeWriteKind, SettlementContext } from '../../../type';
+import type { FieldNodeRecord } from '../../../../record';
+import type { FieldNodeWriteKind, SettlementContext } from '../../../type';
 
 /**
  * Resolve the last marked write covering a committed path.
@@ -8,11 +8,11 @@ import type { SchemaNodeWriteKind, SettlementContext } from '../../../type';
  * @param exact - Only return a source when the final covering write targets this path
  * @returns The effective origin, or undefined for an indirect Refresh target
  */
-export const readSettlementSource = <Self extends SchemaNodeRecord<Self>>(
+export const readSettlementSource = <Self extends FieldNodeRecord<Self>>(
   context: SettlementContext<Self>,
   path: string,
   exact = false,
-): SchemaNodeWriteKind | undefined => {
+): FieldNodeWriteKind | undefined => {
   const origins = context.writeOrigins;
   for (let index = (origins?.length ?? 0) - 1; index >= 0; index--) {
     const origin = origins![index];

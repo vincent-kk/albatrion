@@ -4,7 +4,7 @@ import { useRef, useState } from 'react';
 import { packageEntryRenderScenario } from '@aileron/schema-form-scenarios';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 
-import { Form, SchemaNodeState, type FormHandle, type JSONSchema } from '../../src';
+import { Form, FieldNodeState, type FormHandle, type JSONSchema } from '../../src';
 
 /**
  * Demonstrate live node lookup, value and state writes, reset, and validation.
@@ -17,7 +17,7 @@ function HandleExample() {
     <Form ref={handle} jsonSchema={packageEntryRenderScenario.schema as JSONSchema} defaultValue={packageEntryRenderScenario.initialValue} />
     <button onClick={() => setSnapshot(handle.current?.getValue())}>Read output</button>
     <button onClick={() => handle.current?.findNode('/title')?.setValue('Changed by handle')}>Write title</button>
-    <button onClick={() => handle.current?.setState({ [SchemaNodeState.ShowError]: true })}>Show errors</button>
+    <button onClick={() => handle.current?.setState({ [FieldNodeState.ErrorVisible]: true })}>Show errors</button>
     <button onClick={() => handle.current?.clearState()}>Clear interaction state</button>
     <button onClick={() => handle.current?.reset()}>Reset from props</button>
     <button onClick={() => handle.current?.focus('/title')}>Focus title</button>

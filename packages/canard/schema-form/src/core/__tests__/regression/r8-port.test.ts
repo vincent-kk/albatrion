@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { makeSchemaNodeTree } from '../makeSchemaNodeTree';
+import { makeFieldNodeTree } from '../makeFieldNodeTree';
 
 const nTree = (which: 'N1' | 'N9', withDefault: boolean) => {
   const first = {
@@ -32,7 +32,7 @@ const nTree = (which: 'N1' | 'N9', withDefault: boolean) => {
             },
           },
         ];
-  const { root } = makeSchemaNodeTree({
+  const { root } = makeFieldNodeTree({
     type: 'object',
     properties: {
       x: { type: 'number' },
@@ -46,7 +46,7 @@ const nTree = (which: 'N1' | 'N9', withDefault: boolean) => {
 // filid:contract factory-single-path
 describe('round8 PR-2 observations promoted to assertions', () => {
   it('r8-port.mjs:271 chooses the last authored active default on a new node', () => {
-    const { root } = makeSchemaNodeTree({
+    const { root } = makeFieldNodeTree({
       type: 'object',
       properties: {
         a: { type: 'boolean' },
@@ -73,7 +73,7 @@ describe('round8 PR-2 observations promoted to assertions', () => {
   });
 
   it('r8-port.mjs:363 VALUE-034 X16 without automatic writes stays empty', () => {
-    const { root } = makeSchemaNodeTree({
+    const { root } = makeFieldNodeTree({
       type: 'object',
       properties: {
         t: { type: 'string' },

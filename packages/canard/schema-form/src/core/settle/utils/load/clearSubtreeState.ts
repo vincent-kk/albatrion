@@ -1,12 +1,12 @@
-import { captureSchemaNodeChange } from '../../../record';
-import type { SchemaNodeRecord } from '../../../record';
+import { captureFieldNodeChange } from '../../../record';
+import type { FieldNodeRecord } from '../../../record';
 
 /**
  * Begin a load lifetime by clearing interaction flags in its own subtree.
  * @param node - Live root of the scope being loaded
  * @returns Nothing; sibling state remains untouched
  */
-export const clearSubtreeState = <Self extends SchemaNodeRecord<Self>>(
+export const clearSubtreeState = <Self extends FieldNodeRecord<Self>>(
   node: Self,
 ): void => {
   const pending = [node];
@@ -16,7 +16,7 @@ export const clearSubtreeState = <Self extends SchemaNodeRecord<Self>>(
     if (!current || visited.has(current)) continue;
     visited.add(current);
     current.interactionReset += 1;
-    current.interactionState = captureSchemaNodeChange(
+    current.interactionState = captureFieldNodeChange(
       current,
       'interactionState',
       {},

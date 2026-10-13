@@ -11,7 +11,7 @@ it('assembles aligned first children without Map or Set allocation and preserves
   ];
   const node = {
     local: undefined,
-    extras: undefined,
+    undeclaredValues: undefined,
     schema: { schema: { type: 'object' }, typeConflict: false },
     blueprintNode: {
       childEntries: children.map((child) => ({ name: child.name })),
@@ -57,11 +57,11 @@ it('keeps declaration/preferred/extras order when first-child order needs the ge
   ];
   const node = {
     local: undefined,
-    extras: { extra: 3 },
+    undeclaredValues: { extra: 3 },
     schema: {
       schema: {
         type: 'object',
-        options: { propertyKeys: ['extra', 'second'] },
+        options: { propertyOrder: ['extra', 'second'] },
       },
       typeConflict: false,
     },
@@ -72,7 +72,7 @@ it('keeps declaration/preferred/extras order when first-child order needs the ge
     'second',
     'first',
   ]);
-  node.extras = undefined;
+  node.undeclaredValues = undefined;
   node.schema = { schema: { type: 'object' }, typeConflict: false };
   expect(Object.keys(assembleObject(node, children) as object)).toEqual([
     'first',

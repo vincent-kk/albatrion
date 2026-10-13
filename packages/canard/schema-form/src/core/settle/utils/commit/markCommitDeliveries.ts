@@ -2,14 +2,14 @@ import { isArray } from '@winglet/common-utils/filter';
 
 import { getFeatureNodeIndex } from '../../../blueprint';
 import {
-  SchemaNodeEventType,
-  SchemaNodeRevisionLedger,
-  clearSchemaNodeChanges,
-  markSchemaNodeEvent,
+  FieldNodeEventType,
+  FieldNodeRevisionLedger,
+  clearFieldNodeChanges,
+  markFieldNodeEvent,
 } from '../../../record';
-import type { SchemaNodeRecord } from '../../../record';
+import type { FieldNodeRecord } from '../../../record';
 import type { SettlementContext } from '../../type';
-import { readSchemaNodeWatchValues } from '../controls/readSchemaNodeWatchValues';
+import { readFieldNodeWatchValues } from '../controls/readFieldNodeWatchValues';
 import { commitGlobalState } from './commitGlobalState';
 import { createWatchDeliveryIndex } from './utils/createWatchDeliveryIndex';
 import { getWatchDeliveryPaths } from './utils/getWatchDeliveryPaths';
@@ -25,7 +25,7 @@ const EMPTY_WATCH_VALUES: readonly unknown[] = Object.freeze([]);
  * @param visit - Mismatch and refresh work sharing this record visit
  * @returns Nothing; records hold committed baselines and pending deliveries
  */
-export const markCommitDeliveries = <Self extends SchemaNodeRecord<Self>>(
+export const markCommitDeliveries = <Self extends FieldNodeRecord<Self>>(
   context: SettlementContext<Self>,
   visit?: (node: Self) => void,
 ): void => {
@@ -65,7 +65,7 @@ export const markCommitDeliveries = <Self extends SchemaNodeRecord<Self>>(
     if (
       host.deliveryInitialized &&
       host.deliveryPreviousSchema === undefined &&
-      !(host.deliveryChanges & SchemaNodeEventType.UpdateChildren)
+      !(host.deliveryChanges & FieldNodeEventType.UpdateChildren)
     )
       continue;
     const schema = host.schema.schema;
@@ -79,9 +79,9 @@ export const markCommitDeliveries = <Self extends SchemaNodeRecord<Self>>(
       child.required = next;
       candidates.add(child);
       if (child.deliveryInitialized)
-        markSchemaNodeEvent(
+        markFieldNodeEvent(
           child,
-          SchemaNodeEventType.UpdateComputedProperties,
+          FieldNodeEventType.UpdateControlledProperties,
         );
     }
   }
@@ -104,18 +104,18 @@ export const markCommitDeliveries = <Self extends SchemaNodeRecord<Self>>(
     Reflect.get(value, 'runtime') === runtime;
   const mark = (
     node: Self,
-    bit: SchemaNodeEventType,
+    bit: FieldNodeEventType,
     payload?: unknown,
     options?: unknown,
   ): void => {
-    markSchemaNodeEvent(node, bit, payload, options);
+    markFieldNodeEvent(node, bit, payload, options);
   };
   for (const node of runtime.revisionNodes ?? []) candidates.add(node);
   if (
     runtime.deliveredDiagnostics &&
     runtime.deliveredDiagnostics !== runtime.diagnostics
   )
-    mark(context.root, SchemaNodeEventType.UpdateDiagnostics);
+    mark(context.root, FieldNodeEventType.UpdateDiagnostics);
   runtime.deliveredDiagnostics = runtime.diagnostics;
   const globalState = commitGlobalState(context);
   const globalNodes: ReadonlySet<unknown> = globalState.nodes;
@@ -136,11 +136,11 @@ export const markCommitDeliveries = <Self extends SchemaNodeRecord<Self>>(
     visit?.(node);
     globalState.visit(node);
     if (!candidates.has(node)) {
-      clearSchemaNodeChanges(node);
+      clearFieldNodeChanges(node);
       continue;
     }
     if (node.detached) {
-      clearSchemaNodeChanges(node);
+      clearFieldNodeChanges(node);
       node.deliveryWatchValues = undefined;
       watchIndex?.remove(node);
       continue;
@@ -151,7 +151,7 @@ export const markCommitDeliveries = <Self extends SchemaNodeRecord<Self>>(
     const pending = node.pendingDelivery?.payload;
     const hasWatch = watchNodes.has(node.blueprintNode.id);
     const watched = hasWatch
-      ? readSchemaNodeWatchValues(node)
+      ? readFieldNodeWatchValues(node)
       : EMPTY_WATCH_VALUES;
     if (hasWatch) {
       if (watched.length) {
@@ -171,11 +171,11 @@ export const markCommitDeliveries = <Self extends SchemaNodeRecord<Self>>(
         watchChanged = true;
     if (initialized) {
       if (
-        changes & SchemaNodeEventType.UpdateValue &&
+        changes & FieldNodeEventType.UpdateValue &&
         (!isSameDeliveryValue(node.deliveryPreviousLocal, node.local) ||
           !isSameDeliveryValue(node.deliveryPreviousEmit, node.emit))
       ) {
-        const pendingValue = pending?.[SchemaNodeEventType.UpdateValue];
+        const pendingValue = pending?.[FieldNodeEventType.UpdateValue];
         const oldValue =
           pendingValue !== null && typeof pendingValue === 'object'
             ? Reflect.get(pendingValue, 'previous')
@@ -196,7 +196,7 @@ export const markCommitDeliveries = <Self extends SchemaNodeRecord<Self>>(
             : readSettlementSource(context, node.path);
         mark(
           node,
-          SchemaNodeEventType.UpdateValue,
+          FieldNodeEventType.UpdateValue,
           process.env.NODE_ENV !== 'production'
             ? Object.freeze(payload)
             : payload,
@@ -204,10 +204,10 @@ export const markCommitDeliveries = <Self extends SchemaNodeRecord<Self>>(
         );
       }
       if (
-        changes & SchemaNodeEventType.UpdatePath &&
+        changes & FieldNodeEventType.UpdatePath &&
         node.deliveryPreviousPath !== node.path
       ) {
-        const pendingPath = pending?.[SchemaNodeEventType.UpdatePath];
+        const pendingPath = pending?.[FieldNodeEventType.UpdatePath];
         const oldPath =
           pendingPath !== null && typeof pendingPath === 'object'
             ? Reflect.get(pendingPath, 'previous')
@@ -215,32 +215,32 @@ export const markCommitDeliveries = <Self extends SchemaNodeRecord<Self>>(
         const payload = { previous: oldPath, current: node.path };
         mark(
           node,
-          SchemaNodeEventType.UpdatePath,
+          FieldNodeEventType.UpdatePath,
           process.env.NODE_ENV !== 'production'
             ? Object.freeze(payload)
             : payload,
         );
       }
       if (
-        changes & SchemaNodeEventType.UpdateChildren &&
+        changes & FieldNodeEventType.UpdateChildren &&
         node.deliveryPreviousChildren !== node.children
       )
-        mark(node, SchemaNodeEventType.UpdateChildren);
+        mark(node, FieldNodeEventType.UpdateChildren);
       if (
-        changes & SchemaNodeEventType.UpdateState &&
+        changes & FieldNodeEventType.UpdateState &&
         node.deliveryPreviousState !== node.interactionState
       ) {
         runtime.stateChanged = true;
         if (
           !(
             (node.pendingNonSettleDelivery?.type ?? 0) &
-            SchemaNodeEventType.UpdateState
+            FieldNodeEventType.UpdateState
           )
         )
-          mark(node, SchemaNodeEventType.UpdateState);
+          mark(node, FieldNodeEventType.UpdateState);
       }
       if (
-        (changes & SchemaNodeEventType.UpdateComputedProperties &&
+        (changes & FieldNodeEventType.UpdateControlledProperties &&
           node.deliveryPreviousComputed !==
             (+node.active |
               (+node.visible << 1) |
@@ -248,12 +248,12 @@ export const markCommitDeliveries = <Self extends SchemaNodeRecord<Self>>(
               (+node.disabled << 3))) ||
         watchChanged
       )
-        mark(node, SchemaNodeEventType.UpdateComputedProperties);
+        mark(node, FieldNodeEventType.UpdateControlledProperties);
       if (
-        changes & SchemaNodeEventType.UpdateJsonSchema &&
+        changes & FieldNodeEventType.UpdateJsonSchema &&
         node.deliveryPreviousSchema !== node.schema
       ) {
-        const pendingSchema = pending?.[SchemaNodeEventType.UpdateJsonSchema];
+        const pendingSchema = pending?.[FieldNodeEventType.UpdateJsonSchema];
         const oldSchema =
           pendingSchema !== null && typeof pendingSchema === 'object'
             ? Reflect.get(pendingSchema, 'previous')
@@ -261,7 +261,7 @@ export const markCommitDeliveries = <Self extends SchemaNodeRecord<Self>>(
         const payload = { previous: oldSchema, current: node.schema.schema };
         mark(
           node,
-          SchemaNodeEventType.UpdateJsonSchema,
+          FieldNodeEventType.UpdateJsonSchema,
           process.env.NODE_ENV !== 'production'
             ? Object.freeze(payload)
             : payload,
@@ -279,7 +279,7 @@ export const markCommitDeliveries = <Self extends SchemaNodeRecord<Self>>(
           : readSettlementSource(context, node.path);
       mark(
         node,
-        SchemaNodeEventType.UpdateValue,
+        FieldNodeEventType.UpdateValue,
         process.env.NODE_ENV !== 'production'
           ? Object.freeze(payload)
           : payload,
@@ -287,14 +287,14 @@ export const markCommitDeliveries = <Self extends SchemaNodeRecord<Self>>(
       );
     }
     if (loadScope && (node === loadScope || node.path.startsWith(loadPrefix)))
-      mark(node, SchemaNodeEventType.RequestRefresh);
+      mark(node, FieldNodeEventType.RequestRefresh);
     else if (refreshTargets?.has(node.path))
-      mark(node, SchemaNodeEventType.RequestRefresh);
+      mark(node, FieldNodeEventType.RequestRefresh);
     node.deliveryInitialized = true;
     if (hasWatch) node.deliveryWatchValues = watched;
-    clearSchemaNodeChanges(node);
+    clearFieldNodeChanges(node);
     if (node.pendingRevision) {
-      node.revisionLedger = new SchemaNodeRevisionLedger(
+      node.revisionLedger = new FieldNodeRevisionLedger(
         node.revisionLedger,
         node.pendingRevision,
       );
@@ -311,7 +311,7 @@ export const markCommitDeliveries = <Self extends SchemaNodeRecord<Self>>(
     const node = departing.pop();
     if (!node || !node.detached || seenDeparting.has(node)) continue;
     seenDeparting.add(node);
-    clearSchemaNodeChanges(node);
+    clearFieldNodeChanges(node);
     node.deliveryWatchValues = undefined;
     node.pendingDelivery = undefined;
     node.pendingRevision = 0;

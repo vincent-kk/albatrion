@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 
-import { SetValueOption } from '../../types/value';
-import { loadSchemaNodeAtMount } from '../index';
+import { WriteOption } from '../../types/value';
+import { loadFieldNodeAtMount } from '../index';
 import { getTransitionCap } from '../utils/transition/getTransitionCap';
 import { createTestTree } from './fixtures/createTestTree';
 
@@ -16,8 +16,8 @@ describe('settle status parity regressions', () => {
     } as const;
     const first = createTestTree(schema).root;
     const second = createTestTree(schema).root;
-    loadSchemaNodeAtMount(first, { b: 5 }, SetValueOption.Overwrite);
-    loadSchemaNodeAtMount(second, { a: 1, b: 5 }, SetValueOption.Overwrite);
+    loadFieldNodeAtMount(first, { b: 5 }, WriteOption.Overwrite);
+    loadFieldNodeAtMount(second, { a: 1, b: 5 }, WriteOption.Overwrite);
     expect(first.structure?.b).toBeDefined();
     expect(second.structure?.b).toBeDefined();
     expect(first.emit).toEqual({ a: 1, b: 5 });
@@ -48,7 +48,7 @@ describe('settle status parity regressions', () => {
     });
     const cap = getTransitionCap(blueprint);
     expect(() =>
-      loadSchemaNodeAtMount(root, { a: 0 }, SetValueOption.Overwrite),
+      loadFieldNodeAtMount(root, { a: 0 }, WriteOption.Overwrite),
     ).toThrow();
     expect(root.raw).toBeUndefined();
     expect(root.structure?.a?.raw).toBe(0);

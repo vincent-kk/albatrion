@@ -7,8 +7,8 @@ import {
   dispatchSetValue,
 } from '../../dispatch';
 import * as records from '../../record';
-import { SetValueOption } from '../../types/value';
-import { arrangeSchemaNodeItems, writeSchemaNode } from '../index';
+import { WriteOption } from '../../types/value';
+import { arrangeFieldNodeItems, writeFieldNode } from '../index';
 import { compareArraySelection } from './fixtures/compareArraySelection';
 import { createTestTree } from './fixtures/createTestTree';
 
@@ -111,7 +111,7 @@ describe('static array selection matches the full route', () => {
             dispatchSetValue(
               node.structure!['0'].structure!.show,
               true,
-              SetValueOption.Overwrite,
+              WriteOption.Overwrite,
             ),
           reuse: false,
         },
@@ -143,7 +143,7 @@ describe('static array selection matches the full route', () => {
             dispatchSetValue(
               node.structure!['0'].structure!.source,
               4,
-              SetValueOption.Overwrite,
+              WriteOption.Overwrite,
             ),
           reuse: false,
         },
@@ -243,7 +243,7 @@ describe('static array selection matches the full route', () => {
       [
         {
           apply: (node) =>
-            dispatchSetValue(node, [3, 4, 5], SetValueOption.Overwrite),
+            dispatchSetValue(node, [3, 4, 5], WriteOption.Overwrite),
           reuse: false,
         },
       ],
@@ -283,16 +283,16 @@ describe('static array selection matches the full route', () => {
         properties: { value: { type: 'number' } },
       },
     });
-    writeSchemaNode(
+    writeFieldNode(
       root,
       Array.from({ length: 100 }, (_, value) => ({ value })),
       'callerReplace',
-      SetValueOption.Overwrite,
+      WriteOption.Overwrite,
     );
     const prefix = [...(root.children ?? [])];
-    const capture = vi.spyOn(records, 'captureSchemaNodeChange');
+    const capture = vi.spyOn(records, 'captureFieldNodeChange');
     visits.length = 0;
-    arrangeSchemaNodeItems(root, { kind: 'push', value: { value: 100 } });
+    arrangeFieldNodeItems(root, { kind: 'push', value: { value: 100 } });
     for (const child of prefix) {
       expect(
         capture.mock.calls.filter(
@@ -309,7 +309,7 @@ describe('static array selection matches the full route', () => {
     expect(visits.filter((path) => path === '/100/value')).toHaveLength(1);
     capture.mockClear();
     visits.length = 0;
-    arrangeSchemaNodeItems(root, { kind: 'remove', index: 100 });
+    arrangeFieldNodeItems(root, { kind: 'remove', index: 100 });
     expect(
       capture.mock.calls.filter(
         ([node, field]) =>

@@ -4,7 +4,7 @@ How the engine decides which input component renders a field, and the contract a
 
 ## Definition Matching (`test`)
 
-A `FieldInputDefinition` matches via `test`: either a partial-match object or a predicate over `Hint`:
+A `FieldInputDefinition` matches via `test`: either a partial-match object or a predicate over `FieldInputHint`:
 
 ```typescript
 const definitions: FieldInputDefinition[] = [
@@ -16,7 +16,7 @@ const definitions: FieldInputDefinition[] = [
 ];
 ```
 
-`Hint` carries `type`, `format`, `path`, `nullable`, `jsonSchema`, and `inputType` — a **custom discriminator you place under the schema node's `presentation`** (`{ type: 'string', presentation: { inputType: 'markdown' } }`) precisely to target it from `test`. Without knowing `inputType` exists, schema-targeted custom inputs devolve into brittle path matching.
+`FieldInputHint` carries `type`, `format`, `path`, `nullable`, `jsonSchema`, and `inputType` — a **custom discriminator you place under the schema node's `presentation`** (`{ type: 'string', presentation: { inputType: 'markdown' } }`) precisely to target it from `test`. Without knowing `inputType` exists, schema-targeted custom inputs devolve into brittle path matching.
 
 ## Path Matching (`fieldInputMap`)
 
@@ -34,14 +34,14 @@ fieldInputMap: {
 
 - `value` (controlled) XOR `defaultValue` (uncontrolled) — never both (consumer rules `form-type-input-contract`).
 - Call `onChange` with the right `SetValueOption` for objects (`Merge` vs `Overwrite`).
-- A custom input on a non-terminal object/array **must render `ChildNodeComponents`** — otherwise its children silently vanish:
+- A custom input on a non-terminal object/array **must render `ChildFields`** — otherwise its children silently vanish:
 
 ```tsx
 const ObjectLayout: FC<FieldInputProps<Record<string, any>>> = ({
-  ChildNodeComponents,
+  ChildFields,
 }) => (
   <div className="grid">
-    {ChildNodeComponents.map((Child, i) => (
+    {ChildFields.map((Child, i) => (
       <Child key={i} />
     ))}
   </div>

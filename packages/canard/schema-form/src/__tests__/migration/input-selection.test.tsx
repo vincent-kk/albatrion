@@ -1,11 +1,11 @@
 import { afterEach, expect, expectTypeOf, it, vi } from 'vitest';
 
 import {
+  type FieldInputHint,
   type FieldInputProps,
   type FieldInputTestObject,
+  type FieldNodeType,
   Form,
-  type Hint,
-  type SchemaNodeType,
 } from '@/schema-form';
 
 import { type FormHarness, renderForm } from '../renderForm';
@@ -26,7 +26,7 @@ it('LANDING-035 named renderer props drive the retained Form compound components
       FormErrorRenderer: () => <span data-renderer="error" />,
       children: (
         <>
-          <Form.Group />
+          <Form.Field />
           <Form.Label />
           <Form.Input />
           <Form.Error />
@@ -54,7 +54,7 @@ it('LANDING-129 union leaves render the default string draft input', async () =>
 });
 
 it('LANDING-181 integer hints and input props use number plus integer schemaType', async () => {
-  let hint: Hint | undefined;
+  let hint: FieldInputHint | undefined;
   let input: FieldInputProps | undefined;
   const Input = (props: FieldInputProps) => {
     input = props;
@@ -116,7 +116,7 @@ it('LANDING-182 number selection includes integer and schemaType selects integer
 
 it('LANDING-185 test objects accept node kinds and a separate schemaType', async () => {
   expectTypeOf<NonNullable<FieldInputTestObject['type']>>().toEqualTypeOf<
-    SchemaNodeType | SchemaNodeType[]
+    FieldNodeType | FieldNodeType[]
   >();
   const Input = ({ path }: FieldInputProps) => (
     <input id={path} data-union="yes" />

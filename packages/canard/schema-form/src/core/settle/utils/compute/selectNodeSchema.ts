@@ -3,9 +3,9 @@ import {
   SchemaFormError,
 } from '../../../../errors';
 import { mergeEffectiveSchema } from '../../../blueprint';
-import { captureSchemaNodeChange } from '../../../record';
-import type { SchemaNodeRecord } from '../../../record';
-import { indexSchemaNodeWarning } from '../../../record';
+import { captureFieldNodeChange } from '../../../record';
+import type { FieldNodeRecord } from '../../../record';
+import { indexFieldNodeWarning } from '../../../record';
 import type { SettlementContext } from '../../type';
 import { recordSettlementFailure } from '../errors/recordSettlementFailure';
 import { SHARED_NODE_CONFLICT } from '../errors/settleErrorCode';
@@ -17,7 +17,7 @@ import { evaluateGate } from '../gates/evaluateGate';
  * @param context - Projection and deferred failure for this settlement
  * @returns Whether the effective schema reference changed
  */
-export const selectNodeSchema = <Self extends SchemaNodeRecord<Self>>(
+export const selectNodeSchema = <Self extends FieldNodeRecord<Self>>(
   node: Self,
   context: SettlementContext<Self>,
 ): boolean => {
@@ -55,7 +55,7 @@ export const selectNodeSchema = <Self extends SchemaNodeRecord<Self>>(
         message: `Multiple gated oneOf branches are active at ${schemaPath}`,
         details: { branches: selected },
       } as const;
-      indexSchemaNodeWarning(node.runtime, key, node.path, record);
+      indexFieldNodeWarning(node.runtime, key, node.path, record);
       node.runtime.chainOccurrences?.push({ kind: 'record', record });
     }
   }
@@ -80,13 +80,13 @@ export const selectNodeSchema = <Self extends SchemaNodeRecord<Self>>(
     );
   }
   if (node.parent === null)
-    node.active = captureSchemaNodeChange(
+    node.active = captureFieldNodeChange(
       node,
       'active',
       active.some((declaration) => declaration.role === 'declaration'),
     );
   if (node.schema === effective) return false;
-  node.schema = captureSchemaNodeChange(node, 'schema', effective);
+  node.schema = captureFieldNodeChange(node, 'schema', effective);
   context.changedNodes.add(node);
   return true;
 };

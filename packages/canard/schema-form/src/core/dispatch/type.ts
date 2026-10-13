@@ -1,7 +1,7 @@
-import type { SchemaNodeDelivery } from '../record';
+import type { FieldNodeDelivery } from '../record';
 
 /** Event delivered to a node subscriber with merged bits and per-bit data. */
-export type SchemaNodeEvent = SchemaNodeDelivery;
+export type FieldNodeEvent = FieldNodeDelivery;
 
 /** Subscriber retained by the root runtime until its cleanup runs. */
-export type SchemaNodeListener = (event: SchemaNodeEvent) => void;
+export type FieldNodeListener = (event: FieldNodeEvent) => void;

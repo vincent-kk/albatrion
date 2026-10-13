@@ -1,14 +1,14 @@
 import { describe, expect, it } from 'vitest';
 
-import { makeSchemaNodeTree } from '../../__tests__/makeSchemaNodeTree';
-import { SetValueOption } from '../../types/value';
-import { writeSchemaNode } from '../index';
+import { makeFieldNodeTree } from '../../__tests__/makeFieldNodeTree';
+import { WriteOption } from '../../types/value';
+import { writeFieldNode } from '../index';
 import { createTestTree } from './fixtures/createTestTree';
 
 // filid:contract settle-array
 describe('array settlement lifecycle', () => {
   it('35C-09 and WRITE-036 perish without exit latent or inactive entries', () => {
-    const { root, runtime } = makeSchemaNodeTree(
+    const { root, runtime } = makeFieldNodeTree(
       { type: 'array', items: { type: 'string' } },
       { snapshot: ['a', 'b'] },
     );
@@ -30,7 +30,7 @@ describe('array settlement lifecycle', () => {
   });
 
   it('35C-10 captures an inactive array as one host latent and recreates items', () => {
-    const { root, runtime } = makeSchemaNodeTree({
+    const { root, runtime } = makeFieldNodeTree({
       type: 'object',
       properties: {
         flag: { type: 'boolean' },
@@ -67,7 +67,7 @@ describe('array settlement lifecycle', () => {
   });
 
   it('38C-02 captures raw item trees and folds latent children into one host', () => {
-    const { root, runtime } = makeSchemaNodeTree({
+    const { root, runtime } = makeFieldNodeTree({
       type: 'object',
       properties: {
         showHost: { type: 'boolean' },
@@ -111,7 +111,7 @@ describe('array settlement lifecycle', () => {
           {},
         ],
       },
-      SetValueOption.DisableAutomaticWrites,
+      WriteOption.DisableAutomaticWrites,
     );
     root.find('/items/0/show')?.setValue(false);
     expect(root.find('/items/0/hidden')).toBeNull();
@@ -152,7 +152,7 @@ describe('array settlement lifecycle', () => {
   });
 
   it('47C-01 keeps nested array slot counts across host exit and re-entry', () => {
-    const { root } = makeSchemaNodeTree({
+    const { root } = makeFieldNodeTree({
       type: 'object',
       properties: {
         showHost: { type: 'boolean' },
@@ -169,7 +169,7 @@ describe('array settlement lifecycle', () => {
     const items = [[{}, {}], [{ a: 'y' }]];
     root.setValue(
       { showHost: true, items },
-      SetValueOption.DisableAutomaticWrites,
+      WriteOption.DisableAutomaticWrites,
     );
     expect(root.find('/items')?.value).toEqual(items);
     root.find('/showHost')?.setValue(false);
@@ -181,7 +181,7 @@ describe('array settlement lifecycle', () => {
   });
 
   it('35C-09 drops latent and declaration paths below a perished item', () => {
-    const { root, runtime } = makeSchemaNodeTree(
+    const { root, runtime } = makeFieldNodeTree(
       {
         type: 'array',
         items: {
@@ -220,7 +220,7 @@ describe('array settlement lifecycle', () => {
   });
 
   it('35C-10 retains a gated-out item source when its array host exits', () => {
-    const { root } = makeSchemaNodeTree({
+    const { root } = makeFieldNodeTree({
       type: 'object',
       properties: {
         showItem: { type: 'boolean' },
@@ -243,7 +243,7 @@ describe('array settlement lifecycle', () => {
   });
 
   it('35C-10 preserves a gated-out object item through whole host latent', () => {
-    const { root } = makeSchemaNodeTree({
+    const { root } = makeFieldNodeTree({
       type: 'object',
       properties: {
         showItem: { type: 'boolean' },
@@ -271,7 +271,7 @@ describe('array settlement lifecycle', () => {
   });
 
   it('35C-10 bounds recursive item latent capture by stored source paths', () => {
-    const { root } = makeSchemaNodeTree({
+    const { root } = makeFieldNodeTree({
       type: 'object',
       $defs: {
         Node: {
@@ -333,12 +333,7 @@ describe('array settlement lifecycle', () => {
       ],
     });
     expect(() =>
-      writeSchemaNode(
-        root,
-        { a: 0 },
-        'callerReplace',
-        SetValueOption.Overwrite,
-      ),
+      writeFieldNode(root, { a: 0 }, 'callerReplace', WriteOption.Overwrite),
     ).toThrow();
     expect(root.runtime.diagnostics).toMatchObject({
       cause: 'budget',
@@ -388,23 +383,23 @@ describe('array settlement lifecycle', () => {
         },
       ],
     });
-    writeSchemaNode(
+    writeFieldNode(
       root,
       { a: 'stable', flag: false, items: ['before'], tuple: ['kept', 'extra'] },
       'callerReplace',
-      SetValueOption.Overwrite,
+      WriteOption.Overwrite,
     );
     const host = root.structure!.items;
     const first = host.children![0];
     const tuple = root.structure!.tuple;
     const tupleFirst = tuple.children![0];
-    const previousExtras = tuple.extras;
+    const previousExtras = tuple.undeclaredValues;
     expect(() =>
-      writeSchemaNode(
+      writeFieldNode(
         root,
         { a: 0, flag: true, items: ['before'], tuple: ['kept', 'extra'] },
         'callerReplace',
-        SetValueOption.Overwrite,
+        WriteOption.Overwrite,
       ),
     ).toThrow();
     expect(root.runtime.diagnostics).toMatchObject({
@@ -414,16 +409,16 @@ describe('array settlement lifecycle', () => {
     expect(host.children).toEqual([first]);
     expect(host.children![0]).toBe(first);
     expect(host.itemCount).toBe(1);
-    expect(host.extras).toBeUndefined();
+    expect(host.undeclaredValues).toBeUndefined();
     expect(host.nextItemKey).toBeGreaterThan(first.itemKey! + 1);
     expect(tuple.children![0]).toBe(tupleFirst);
     expect(tuple.itemCount).toBe(2);
-    expect(tuple.extras).toBe(previousExtras);
-    expect(tuple.extras).toEqual(['extra']);
+    expect(tuple.undeclaredValues).toBe(previousExtras);
+    expect(tuple.undeclaredValues).toEqual(['extra']);
   });
 
   it('35C-08 gates out an item as an exit while retaining its array slot', () => {
-    const { root, runtime } = makeSchemaNodeTree({
+    const { root, runtime } = makeFieldNodeTree({
       type: 'object',
       properties: {
         flag: { type: 'boolean' },

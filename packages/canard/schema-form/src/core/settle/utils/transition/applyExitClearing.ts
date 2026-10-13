@@ -1,4 +1,4 @@
-import type { SchemaNodeRecord } from '../../../record';
+import type { FieldNodeRecord } from '../../../record';
 import type { SettlementContext } from '../../type';
 import { getLatentOrder } from '../latent/getLatentOrder';
 import { captureExitedRaw } from './captureExitedRaw';
@@ -12,7 +12,7 @@ import { readUnsetPolicy } from './readUnsetPolicy';
  * @param skip - Exits owned by a load scope, whose sources the load already replaced
  * @returns Nothing; each departing node stores only its own latent source
  */
-export const applyExitClearing = <Self extends SchemaNodeRecord<Self>>(
+export const applyExitClearing = <Self extends FieldNodeRecord<Self>>(
   context: SettlementContext<Self>,
   skip: (node: Self) => boolean = () => false,
 ): void => {

@@ -21348,23 +21348,23 @@
       "schema": {
         "type": "object",
         "controls": {
-          "children": {}
+          "fields": {}
         }
       },
       "expected": {
         "error": {
           "name": "JSONSchemaError",
-          "message": "INVALID_CONTROL_SHAPE at #/controls/children; check the authored schema",
+          "message": "INVALID_CONTROL_SHAPE at #/controls/fields; check the authored schema",
           "data": {
             "name": "JSONSchemaError",
-            "message": "INVALID_CONTROL_SHAPE at #/controls/children; check the authored schema",
+            "message": "INVALID_CONTROL_SHAPE at #/controls/fields; check the authored schema",
             "group": "JSON_SCHEMA_ERROR",
             "specific": "INVALID_CONTROL_SHAPE",
             "code": "JSON_SCHEMA_ERROR.INVALID_CONTROL_SHAPE",
             "details": {
-              "schemaPath": "#/controls/children",
+              "schemaPath": "#/controls/fields",
               "group": "controls",
-              "key": "children",
+              "key": "fields",
               "expected": "array"
             }
           }
@@ -21373,10 +21373,10 @@
           {
             "code": "INVALID_CONTROL_SHAPE",
             "level": "error",
-            "schemaPath": "#/controls/children",
+            "schemaPath": "#/controls/fields",
             "details": {
               "group": "controls",
-              "key": "children",
+              "key": "fields",
               "expected": "array"
             }
           }
@@ -21388,7 +21388,7 @@
       "schema": {
         "type": "object",
         "controls": {
-          "children": [
+          "fields": [
             {
               "targets": "a"
             }
@@ -21398,17 +21398,17 @@
       "expected": {
         "error": {
           "name": "JSONSchemaError",
-          "message": "INVALID_CONTROL_SHAPE at #/controls/children/0; check the authored schema",
+          "message": "INVALID_CONTROL_SHAPE at #/controls/fields/0; check the authored schema",
           "data": {
             "name": "JSONSchemaError",
-            "message": "INVALID_CONTROL_SHAPE at #/controls/children/0; check the authored schema",
+            "message": "INVALID_CONTROL_SHAPE at #/controls/fields/0; check the authored schema",
             "group": "JSON_SCHEMA_ERROR",
             "specific": "INVALID_CONTROL_SHAPE",
             "code": "JSON_SCHEMA_ERROR.INVALID_CONTROL_SHAPE",
             "details": {
-              "schemaPath": "#/controls/children/0",
+              "schemaPath": "#/controls/fields/0",
               "group": "controls",
-              "key": "children",
+              "key": "fields",
               "expected": "{ targets: string[], controls? }"
             }
           }
@@ -21417,10 +21417,10 @@
           {
             "code": "INVALID_CONTROL_SHAPE",
             "level": "error",
-            "schemaPath": "#/controls/children/0",
+            "schemaPath": "#/controls/fields/0",
             "details": {
               "group": "controls",
-              "key": "children",
+              "key": "fields",
               "expected": "{ targets: string[], controls? }"
             }
           }
@@ -21432,7 +21432,7 @@
       "schema": {
         "type": "object",
         "controls": {
-          "children": [
+          "fields": [
             {
               "targets": [
                 "missing"
@@ -21445,15 +21445,15 @@
       "expected": {
         "error": {
           "name": "JSONSchemaError",
-          "message": "CHILDREN_TARGET_NOT_FOUND at #/controls/children/0; check the authored schema",
+          "message": "CHILDREN_TARGET_NOT_FOUND at #/controls/fields/0; check the authored schema",
           "data": {
             "name": "JSONSchemaError",
-            "message": "CHILDREN_TARGET_NOT_FOUND at #/controls/children/0; check the authored schema",
+            "message": "CHILDREN_TARGET_NOT_FOUND at #/controls/fields/0; check the authored schema",
             "group": "JSON_SCHEMA_ERROR",
             "specific": "CHILDREN_TARGET_NOT_FOUND",
             "code": "JSON_SCHEMA_ERROR.CHILDREN_TARGET_NOT_FOUND",
             "details": {
-              "schemaPath": "#/controls/children/0",
+              "schemaPath": "#/controls/fields/0",
               "target": "missing"
             }
           }
@@ -21462,7 +21462,7 @@
           {
             "code": "CHILDREN_TARGET_NOT_FOUND",
             "level": "error",
-            "schemaPath": "#/controls/children/0",
+            "schemaPath": "#/controls/fields/0",
             "details": {
               "target": "missing"
             }
@@ -21745,7 +21745,7 @@
                   }
                 },
                 "name": "JSONSchemaError",
-                "message": "Failed to create dynamic function for computed property.\n\n  ╭──────────────────────────────────────────────────\n  │  Field:       visible\n  │  Expression:  '(()'\n  ├──────────────────────────────────────────────────\n  │  Generated Function Body:\n  │    return !!((())\n  ├──────────────────────────────────────────────────\n  │  Error: Unexpected token ')'\n  ╰──────────────────────────────────────────────────\n\nThe expression could not be compiled into a valid JavaScript function.\nThis usually indicates a syntax error in the computed property expression.\n\nHow to fix:\n  1. Check the expression syntax for typos or invalid JavaScript\n  2. Ensure all JSONPointer paths (e.g., '../fieldName') are valid\n  3. Verify that the expression returns a valid value\n  4. Check for unbalanced parentheses or brackets"
+                "message": "Failed to create dynamic function for a controls expression.\n\n  ╭──────────────────────────────────────────────────\n  │  Field:       visible\n  │  Expression:  '(()'\n  ├──────────────────────────────────────────────────\n  │  Generated Function Body:\n  │    return !!((())\n  ├──────────────────────────────────────────────────\n  │  Error: Unexpected token ')'\n  ╰──────────────────────────────────────────────────\n\nThe expression could not be compiled into a valid JavaScript function.\nThis usually indicates a syntax error in the controls expression.\n\nHow to fix:\n  1. Check the expression syntax for typos or invalid JavaScript\n  2. Ensure all JSONPointer paths (e.g., '../fieldName') are valid\n  3. Verify that the expression returns a valid value\n  4. Check for unbalanced parentheses or brackets"
               },
               "expression": "(()"
             }
@@ -21759,7 +21759,7 @@
             "details": {
               "cause": {
                 "name": "JSONSchemaError",
-                "message": "Failed to create dynamic function for computed property.\n\n  ╭──────────────────────────────────────────────────\n  │  Field:       visible\n  │  Expression:  '(()'\n  ├──────────────────────────────────────────────────\n  │  Generated Function Body:\n  │    return !!((())\n  ├──────────────────────────────────────────────────\n  │  Error: Unexpected token ')'\n  ╰──────────────────────────────────────────────────\n\nThe expression could not be compiled into a valid JavaScript function.\nThis usually indicates a syntax error in the computed property expression.\n\nHow to fix:\n  1. Check the expression syntax for typos or invalid JavaScript\n  2. Ensure all JSONPointer paths (e.g., '../fieldName') are valid\n  3. Verify that the expression returns a valid value\n  4. Check for unbalanced parentheses or brackets",
+                "message": "Failed to create dynamic function for a controls expression.\n\n  ╭──────────────────────────────────────────────────\n  │  Field:       visible\n  │  Expression:  '(()'\n  ├──────────────────────────────────────────────────\n  │  Generated Function Body:\n  │    return !!((())\n  ├──────────────────────────────────────────────────\n  │  Error: Unexpected token ')'\n  ╰──────────────────────────────────────────────────\n\nThe expression could not be compiled into a valid JavaScript function.\nThis usually indicates a syntax error in the controls expression.\n\nHow to fix:\n  1. Check the expression syntax for typos or invalid JavaScript\n  2. Ensure all JSONPointer paths (e.g., '../fieldName') are valid\n  3. Verify that the expression returns a valid value\n  4. Check for unbalanced parentheses or brackets",
                 "group": "JSON_SCHEMA_ERROR",
                 "specific": "CREATE_DYNAMIC_FUNCTION",
                 "code": "JSON_SCHEMA_ERROR.CREATE_DYNAMIC_FUNCTION",

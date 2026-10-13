@@ -1,5 +1,5 @@
 import { getItemEntry } from '../../../../../blueprint';
-import type { SchemaNodeRecord } from '../../../../../record';
+import type { FieldNodeRecord } from '../../../../../record';
 import type { SettlementContext } from '../../../../type';
 import { staticIds } from './staticIds';
 
@@ -12,7 +12,7 @@ import { staticIds } from './staticIds';
  * @param computeChild - Existing descent for children still on the dirty frontier
  * @returns Nothing; the selection registry carries the published IDs and dirty children are computed through computeChild
  */
-export const reuseArrayChildren = <Self extends SchemaNodeRecord<Self>>(
+export const reuseArrayChildren = <Self extends FieldNodeRecord<Self>>(
   node: Self,
   context: SettlementContext<Self>,
   prior: Record<string, Self>,

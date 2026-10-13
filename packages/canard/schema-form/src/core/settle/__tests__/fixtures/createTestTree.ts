@@ -5,7 +5,7 @@ import type {
   BlueprintOptions,
   BlueprintSchema,
 } from '../../../blueprint';
-import type { SchemaNodeRuntime } from '../../../record';
+import type { FieldNodeRuntime } from '../../../record';
 import { PathKeyedMap } from '../../../utils/pathIndex/PathKeyedMap';
 import { PathKeyedSet } from '../../../utils/pathIndex/PathKeyedSet';
 import type { Validator } from '../../../validation';
@@ -26,7 +26,7 @@ export const createTestTree = (
 ): { root: PlainNode; blueprint: Blueprint; visits: string[] } => {
   const analysis = blueprint(schema, options);
   const visits: string[] = [];
-  const runtime: SchemaNodeRuntime<PlainNode> = {
+  const runtime: FieldNodeRuntime<PlainNode> = {
     deliveries: new Set(),
     blueprint: analysis,
     context: {},

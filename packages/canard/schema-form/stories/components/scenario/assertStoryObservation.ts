@@ -33,9 +33,9 @@ export async function assertStoryObservation(context: StoryScenarioContext, obse
   for (const [path, states] of Object.entries(observation.states ?? {}))
     for (const [key, value] of Object.entries(states)) expect(Reflect.get(handle.findNode(path)!, key), `state ${path}.${key}`).toBe(value);
   for (const [path, source] of Object.entries(observation.identity ?? {})) expect(handle.findNode(path), `identity ${path}`).toBe(evidence.priorNodes[source]);
-  for (const key of ['defaultValues', 'schemaTypes', 'extras'] as const)
+  for (const key of ['defaultValues', 'schemaTypes', 'undeclaredValues'] as const)
     for (const [path, value] of Object.entries(observation[key] ?? {})) {
-      const property = key === 'defaultValues' ? 'defaultValue' : key === 'schemaTypes' ? 'schemaType' : 'extras';
+      const property = key === 'defaultValues' ? 'defaultValue' : key === 'schemaTypes' ? 'schemaType' : 'undeclaredValues';
       expect(Reflect.get(handle.findNode(path)!, property), `${property} ${path}`).toEqual(value);
     }
   if (observation.diagnostics) expect(handle.node?.diagnostics).toMatchObject(observation.diagnostics);

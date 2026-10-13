@@ -1,13 +1,13 @@
 import { isArray } from '@winglet/common-utils/filter';
 
-import type { SchemaNodeRecord } from '../../../record';
+import type { FieldNodeRecord } from '../../../record';
 
 /**
  * Block non-load fills beneath a branch holding the wrong raw kind.
  * @param node - Candidate descendant being considered for default filling
  * @returns Whether an object or array ancestor has a wrong-kind raw
  */
-export const hasWrongKindBranchAncestor = <Self extends SchemaNodeRecord<Self>>(
+export const hasWrongKindBranchAncestor = <Self extends FieldNodeRecord<Self>>(
   node: Self,
 ): boolean => {
   let parent = node.parent;

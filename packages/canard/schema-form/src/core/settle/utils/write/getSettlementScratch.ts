@@ -1,4 +1,4 @@
-import type { SchemaNodeRuntime, SettlementScratch } from '../../../record';
+import type { FieldNodeRuntime, SettlementScratch } from '../../../record';
 import { DirtyPathSet } from './DirtyPathSet';
 
 /**
@@ -7,7 +7,7 @@ import { DirtyPathSet } from './DirtyPathSet';
  * @returns Containers reserved until the caller releases them
  */
 export const getSettlementScratch = <Self>(
-  runtime: SchemaNodeRuntime<Self>,
+  runtime: FieldNodeRuntime<Self>,
 ): SettlementScratch<Self> => {
   const cached = runtime.settlementScratch;
   const dirtyChildrenByParent =

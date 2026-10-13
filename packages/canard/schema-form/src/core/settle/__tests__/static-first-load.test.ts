@@ -2,9 +2,9 @@ import { afterEach, expect, it, vi } from 'vitest';
 
 import { isArray } from '@winglet/common-utils/filter';
 
-import { SchemaNodeEventType } from '../../record';
-import { SetValueOption } from '../../types/value';
-import { loadSchemaNodeAtMount, writeSchemaNode } from '../index';
+import { FieldNodeEventType } from '../../record';
+import { WriteOption } from '../../types/value';
+import { loadFieldNodeAtMount, writeFieldNode } from '../index';
 import { markCommitDeliveries } from '../utils/commit/markCommitDeliveries';
 import { createSettlementContext } from '../utils/settlement/createSettlementContext';
 import { readDefault } from '../utils/transition/readDefault';
@@ -27,7 +27,7 @@ it('assembles independent leaf defaults once while keeping authored and delivery
       last: { type: 'boolean', default: false },
     },
   });
-  loadSchemaNodeAtMount(root, undefined, SetValueOption.Overwrite);
+  loadFieldNodeAtMount(root, undefined, WriteOption.Overwrite);
   expect(root.local).toEqual({ nested: { b: 2, a: 'a' }, last: false });
   expect(root.local).toBe(root.emit);
   expect([...(root.runtime.deliveries ?? [])].map((node) => node.path)).toEqual(
@@ -45,7 +45,7 @@ it('assembles independent leaf defaults once while keeping authored and delivery
 
 it('preserves input priority, container defaults, suppression and dependent defaults', () => {
   const scalar = createTestTree({ type: 'string', default: 'scalar' }).root;
-  loadSchemaNodeAtMount(scalar, undefined, SetValueOption.Overwrite);
+  loadFieldNodeAtMount(scalar, undefined, WriteOption.Overwrite);
   expect(scalar.local).toBe('scalar');
   const schema = {
     type: 'object' as const,
@@ -61,13 +61,13 @@ it('preserves input priority, container defaults, suppression and dependent defa
     },
   };
   const { root } = createTestTree(schema);
-  loadSchemaNodeAtMount(root, { a: 9 }, SetValueOption.Overwrite);
+  loadFieldNodeAtMount(root, { a: 9 }, WriteOption.Overwrite);
   expect(root.local).toEqual({ a: 9, group: { b: 'container' } });
   const suppressed = createTestTree(schema).root;
-  loadSchemaNodeAtMount(
+  loadFieldNodeAtMount(
     suppressed,
     undefined,
-    SetValueOption.DisableAutomaticWrites,
+    WriteOption.DisableAutomaticWrites,
   );
   expect(suppressed.structure!.a.local).toBeUndefined();
   expect(suppressed.structure!.group.structure!.b.local).toBeUndefined();
@@ -78,20 +78,20 @@ it('preserves input priority, container defaults, suppression and dependent defa
       b: { type: 'number', controls: { derived: '../a + 1' } },
     },
   }).root;
-  loadSchemaNodeAtMount(dependent, undefined, SetValueOption.Overwrite);
+  loadFieldNodeAtMount(dependent, undefined, WriteOption.Overwrite);
   expect(dependent.local).toEqual({ a: 1, b: 2 });
 });
 
 it('preserves revisions and pending delivery for an empty delivery commit', () => {
   const { root } = createTestTree({ type: 'string' });
-  loadSchemaNodeAtMount(root, 'same', SetValueOption.Overwrite);
+  loadFieldNodeAtMount(root, 'same', WriteOption.Overwrite);
   root.pendingDelivery = undefined;
   root.runtime.deliveries?.clear();
   const revision = root.revisionLedger;
   const context = createSettlementContext(
     root,
     'input',
-    SetValueOption.Overwrite,
+    WriteOption.Overwrite,
     getSettlementScratch(root.runtime),
   );
   markCommitDeliveries(context);
@@ -113,19 +113,14 @@ it('shares ungated declarations without building an occurrence path index', () =
       },
     },
   });
-  loadSchemaNodeAtMount(root, { items: ['a', 'b'] }, SetValueOption.Overwrite);
+  loadFieldNodeAtMount(root, { items: ['a', 'b'] }, WriteOption.Overwrite);
   expect(root.local).toEqual({ items: ['a', 'b'], value: 'control' });
   expect(readDefault(root.structure!.value, new Map())).toBe('control');
   expect(readDefault(root.structure!.items.children![1], new Map())).toBe(
     'fallback',
   );
   expect(root.runtime.committedDeclarationIds?.size ?? 0).toBe(0);
-  writeSchemaNode(
-    root.structure!.value,
-    'next',
-    'input',
-    SetValueOption.Overwrite,
-  );
+  writeFieldNode(root.structure!.value, 'next', 'input', WriteOption.Overwrite);
   expect(readDefault(root.structure!.value, new Map())).toBe('control');
   expect(root.runtime.committedDeclarationIds?.size ?? 0).toBe(0);
 });
@@ -141,19 +136,19 @@ it('keeps static nodes, property order, defaults, references and unsubscribed re
       },
     },
   });
-  loadSchemaNodeAtMount(root, undefined, SetValueOption.Overwrite);
+  loadFieldNodeAtMount(root, undefined, WriteOption.Overwrite);
   expect(root.local).toEqual({ 'a/b': 7, group: { leaf: 'x' } });
   expect(root.children?.map((node) => node.name)).toEqual(['a/b', 'group']);
   const child = root.structure!['a/b'];
   expect(child.path).toBe('/a~1b');
   const value = root.local;
   const children = root.children;
-  const revision = child.revisionLedger[SchemaNodeEventType.UpdateValue];
-  writeSchemaNode(child, 7, 'input', SetValueOption.Overwrite);
+  const revision = child.revisionLedger[FieldNodeEventType.UpdateValue];
+  writeFieldNode(child, 7, 'input', WriteOption.Overwrite);
   expect(root.local).toBe(value);
   expect(root.children).toBe(children);
-  writeSchemaNode(child, 8, 'input', SetValueOption.Overwrite);
-  expect(child.revisionLedger[SchemaNodeEventType.UpdateValue]).toBe(
+  writeFieldNode(child, 8, 'input', WriteOption.Overwrite);
+  expect(child.revisionLedger[FieldNodeEventType.UpdateValue]).toBe(
     revision + 1,
   );
   expect(root.structure!['a/b']).toBe(child);
@@ -168,7 +163,7 @@ it('does not serialize empty pending-exit and latent lookups during static selec
     },
   });
   const stringify = vi.spyOn(JSON, 'stringify');
-  loadSchemaNodeAtMount(root, { a: 1, b: 2 }, SetValueOption.Overwrite);
+  loadFieldNodeAtMount(root, { a: 1, b: 2 }, WriteOption.Overwrite);
   const selectionCalls = stringify.mock.calls.filter(
     ([value]) =>
       isArray(value) &&

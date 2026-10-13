@@ -1,8 +1,8 @@
 import { describe, expect, it } from 'vitest';
 
-import { SchemaNodeEventType } from '../../record';
-import { SetValueOption } from '../../types/value';
-import { writeSchemaNode } from '../index';
+import { FieldNodeEventType } from '../../record';
+import { WriteOption } from '../../types/value';
+import { writeFieldNode } from '../index';
 import { createTestTree } from './fixtures/createTestTree';
 
 // filid:contract settle-write
@@ -15,13 +15,13 @@ describe('bounded settlement traversal', () => {
       ]),
     );
     const { root, visits } = createTestTree({ type: 'object', properties });
-    writeSchemaNode(root, {}, 'callerReplace', SetValueOption.Overwrite);
+    writeFieldNode(root, {}, 'callerReplace', WriteOption.Overwrite);
     visits.length = 0;
-    writeSchemaNode(
+    writeFieldNode(
       root.structure!.field0,
       'changed',
       'input',
-      SetValueOption.Overwrite,
+      WriteOption.Overwrite,
     );
     expect(visits).toEqual(['/field0', '']);
     expect(visits.filter((visit) => visit.startsWith('select:'))).toHaveLength(
@@ -45,18 +45,18 @@ describe('bounded settlement traversal', () => {
         guarded: { type: 'string', controls: { active: '../flag' } },
       },
     });
-    writeSchemaNode(
+    writeFieldNode(
       root,
       { flag: false },
       'callerReplace',
-      SetValueOption.Overwrite,
+      WriteOption.Overwrite,
     );
     visits.length = 0;
-    writeSchemaNode(
+    writeFieldNode(
       root.structure!.field49,
       'changed',
       'input',
-      SetValueOption.Overwrite,
+      WriteOption.Overwrite,
     );
     expect(visits).toEqual(['/field49', '']);
     expect(visits.filter((visit) => visit.startsWith('select:'))).toHaveLength(
@@ -78,24 +78,24 @@ describe('bounded settlement traversal', () => {
         right: { type: 'object', properties: fields },
       },
     });
-    writeSchemaNode(
+    writeFieldNode(
       root,
       { left: {}, right: {} },
       'callerReplace',
-      SetValueOption.Overwrite,
+      WriteOption.Overwrite,
     );
     visits.length = 0;
-    writeSchemaNode(
+    writeFieldNode(
       root.structure!.left,
       { field0: 'changed' },
       'callerReplace',
-      SetValueOption.Overwrite,
+      WriteOption.Overwrite,
     );
     expect(
       visits.some((visit) => visit === '/right' || visit.startsWith('/right/')),
     ).toBe(false);
     expect(
-      root.structure!.right.revisionLedger[SchemaNodeEventType.UpdateValue],
+      root.structure!.right.revisionLedger[FieldNodeEventType.UpdateValue],
     ).toBe(1);
   });
 });

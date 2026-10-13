@@ -1,8 +1,8 @@
 import { afterEach, expect, it, vi } from 'vitest';
 
 import { blueprint } from '../../blueprint';
-import { SetValueOption } from '../../types/value';
-import { loadSchemaNodeAtMount } from '../index';
+import { WriteOption } from '../../types/value';
+import { loadFieldNodeAtMount } from '../index';
 import type { SettlementContext } from '../type';
 import { hasRecursiveExpansion } from '../utils/compute/hasRecursiveExpansion';
 import { updateOutput } from '../utils/compute/updateOutput';
@@ -21,10 +21,10 @@ it('82C-01 restores equal composite children without inspecting unchanged siblin
       sibling: { type: 'string' },
     },
   });
-  loadSchemaNodeAtMount(
+  loadFieldNodeAtMount(
     root,
     { child: { value: 'same' }, sibling: 'kept' },
-    SetValueOption.Overwrite,
+    WriteOption.Overwrite,
   );
   const previous = root.local;
   const child = root.structure!.child;
@@ -131,7 +131,7 @@ it('82C-01 collects gate identities without quadratic array membership', () => {
       comparisons += this.length;
     return includes.call(this, value, from);
   });
-  loadSchemaNodeAtMount(root, undefined, SetValueOption.Overwrite);
+  loadFieldNodeAtMount(root, undefined, WriteOption.Overwrite);
   expect(root.emit).toEqual({ kind: '0', value0: 'value' });
   expect(comparisons).toBe(0);
 });
@@ -160,7 +160,7 @@ it('82C-01 fills nested mounts without sorting entered records', () => {
       sortedRecords += this.length;
     return sort.call(this, compare);
   });
-  loadSchemaNodeAtMount(root, undefined, SetValueOption.Overwrite);
+  loadFieldNodeAtMount(root, undefined, WriteOption.Overwrite);
   expect(root.emit).toEqual({ left: { value: 'a' }, right: { value: 'b' } });
   expect(sortedRecords).toBe(0);
 });

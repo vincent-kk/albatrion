@@ -22,39 +22,39 @@
 
 ---
 
-## 공통 분석: SchemaNodeProxy memo 미적용의 실제 영향
+## 공통 분석: FieldProxy memo 미적용의 실제 영향
 
-`SchemaNodeProxy`는 `memo`로 래핑되지 않았지만, 내부 컴포넌트들에 빡빡한 memo 처리가 되어 있어 실질적인 렌더링 비용이 극단적으로 낮습니다.
+`FieldProxy`는 `memo`로 래핑되지 않았지만, 내부 컴포넌트들에 빡빡한 memo 처리가 되어 있어 실질적인 렌더링 비용이 극단적으로 낮습니다.
 
 ### 방어 계층 구조
 
 ```
-SchemaNodeProxy (memo 없음)
-  ├─ useMemo: Input (SchemaNodeInputWrapper) — node 참조 기반 캐시
+FieldProxy (memo 없음)
+  ├─ useMemo: Input (FieldInputSlotWrapper) — node 참조 기반 캐시
   ├─ useMemorize: FieldRenderer — memo(withErrorBoundary()) 래핑
   ├─ useConstant: Wrapper — 최초 1회만 생성
   ├─ useMemo: errorMessage — refresh 기반 재계산
   │
-  └─ SchemaNodeInput (memo) ← 실제 렌더링 비용의 대부분
+  └─ FieldInputSlot (memo) ← 실제 렌더링 비용의 대부분
        ├─ useFieldInput: useMemo 캐시
-       ├─ useChildNodeComponents: Map 캐시 + memo 래핑된 자식
+       ├─ useChildFields: Map 캐시 + memo 래핑된 자식
        ├─ useCallback: handleChange, handleFileAttach, handleFocus, handleBlur
        ├─ useFieldInputControl: ref + version
        └─ FieldInput (plugin) ← 실제 DOM 생성
 ```
 
-### SchemaNodeProxy가 re-render되더라도 발생하는 비용
+### FieldProxy가 re-render되더라도 발생하는 비용
 
-1. `useSchemaNodeTracker` — 비트마스크 비교 1회 (O(1))
+1. `useFieldNodeTracker` — 비트마스크 비교 1회 (O(1))
 2. `useMemo(Input)` — deps 비교 (node 참조 동일 → skip)
 3. `useMemorize(FieldRenderer)` — 이미 생성된 인스턴스 반환
 4. `useConstant(Wrapper)` — 캐시된 값 반환
 5. `useMemo(errorMessage)` — deps 비교 (refresh 미변경 → skip)
-6. `SchemaNodeInput` — **`memo`로 래핑**, props 동일 시 완전 skip
+6. `FieldInputSlot` — **`memo`로 래핑**, props 동일 시 완전 skip
 
-**결론**: SchemaNodeProxy의 re-render 비용은 hooks deps 비교 5-6회 + JSX 객체 생성 1회로, **~0.01ms 수준**입니다. `SchemaNodeInput`이 `memo`로 래핑되어 있어 실제 DOM 갱신은 발생하지 않습니다.
+**결론**: FieldProxy의 re-render 비용은 hooks deps 비교 5-6회 + JSX 객체 생성 1회로, **~0.01ms 수준**입니다. `FieldInputSlot`이 `memo`로 래핑되어 있어 실제 DOM 갱신은 발생하지 않습니다.
 
-### 어떤 경우에 SchemaNodeProxy가 불필요하게 re-render되는가
+### 어떤 경우에 FieldProxy가 불필요하게 re-render되는가
 
 | 트리거                | 발생 조건                                      | 모든 Proxy에 전파?   |
 | --------------------- | ---------------------------------------------- | -------------------- |
@@ -62,7 +62,7 @@ SchemaNodeProxy (memo 없음)
 | children 함수 패턴    | `<Form>{({ value }) => ...}</Form>`            | YES                  |
 | value 변경            | `onChange` → `setValues()`                     | **NO** (Form은 memo) |
 
-일반적인 value 변경 시에는 Form-level re-render가 발생하지 않으므로, SchemaNodeProxy의 불필요한 re-render 자체가 트리거되지 않습니다. **모든 예제가 children 함수 패턴을 사용하지 않으므로 이 문제는 해당 없습니다.**
+일반적인 value 변경 시에는 Form-level re-render가 발생하지 않으므로, FieldProxy의 불필요한 re-render 자체가 트리거되지 않습니다. **모든 예제가 children 함수 패턴을 사용하지 않으므로 이 문제는 해당 없습니다.**
 
 ---
 
@@ -112,8 +112,8 @@ SchemaNodeProxy (memo 없음)
 사용자가 price 변경
   ↓ [동기] priceNode: UpdateValue (immediate)
   ↓ [microtask] objectNode: UpdateValue
-  ↓ [microtask] finalPriceNode: UpdateComputedProperties
-  ↓ finalPriceNode의 SchemaNodeProxy re-render (RERENDERING_EVENT에 UpdateComputedProperties 포함)
+  ↓ [microtask] finalPriceNode: UpdateControlledProperties
+  ↓ finalPriceNode의 FieldProxy re-render (RERENDERING_EVENT에 UpdateControlledProperties 포함)
 ```
 
 - price, quantity, taxRate, discountRate 중 하나를 변경하면 **변경 필드 1개 + finalPrice 1개 = 총 2개 Proxy re-render**
@@ -147,7 +147,7 @@ SchemaNodeProxy (memo 없음)
 
 - participantType/participantRegion 변경 시: 해당 필드 1개 re-render + 조건 평가 후 required 변경
 - required 변경은 `UpdateState` 이벤트를 발행 → 영향받는 필드의 Proxy가 re-render
-- 그러나 `SchemaNodeInput`이 `memo`이므로, required 마커 표시 변경만 일어나고 input 위젯 자체의 re-render는 최소화
+- 그러나 `FieldInputSlot`이 `memo`이므로, required 마커 표시 변경만 일어나고 input 위젯 자체의 re-render는 최소화
 
 **조건 평가 비용**: JSON Schema의 `const`/`enum` 비교는 표준 AJV 검증 경로를 따르지만, 이 예제에서는 validator 플러그인이 미등록이므로 순수 노드 레벨의 조건 평가만 수행 → < 1ms
 
@@ -176,7 +176,7 @@ SchemaNodeProxy (memo 없음)
 
 - accountType 변경 → 해당 필드 1개 re-render + required 상태 변경으로 영향받는 필드들 re-render
 - 최대 6개 필드가 required 변경 대상 (`business + invoice` → 6필드 required)
-- 각 필드의 `SchemaNodeInput`이 `memo`이므로 실제 DOM 갱신은 required 마커 변경분만
+- 각 필드의 `FieldInputSlot`이 `memo`이므로 실제 DOM 갱신은 required 마커 변경분만
 
 **판정: PASS**
 
@@ -205,12 +205,12 @@ SchemaNodeProxy (memo 없음)
 employmentType 변경: 'full_time' → 'part_time'
   ↓ [동기] employmentTypeNode: UpdateValue
   ↓ [microtask] objectNode: oneOf 조건 재평가
-  ↓ full_time 분기 노드들: enabled = false → SchemaNodeProxy에서 `return null`
+  ↓ full_time 분기 노드들: enabled = false → FieldProxy에서 `return null`
   ↓ part_time 분기 노드들: enabled = true → 렌더링 시작
-  ↓ commonField: UpdateComputedProperties (visible/active 재평가)
+  ↓ commonField: UpdateControlledProperties (visible/active 재평가)
 ```
 
-- 분기 전환 시 비활성 노드는 `if (!node?.enabled) return null` (`SchemaNodeProxy.tsx:85`)로 빠르게 반환
+- 분기 전환 시 비활성 노드는 `if (!node?.enabled) return null` (`FieldProxy.tsx:85`)로 빠르게 반환
 - 새 분기 노드의 마운트 비용: 2-4개 필드 × (Proxy + Input + FieldInput) ≈ 6-12개 컴포넌트
 - full_time 분기의 `benefits` object는 중첩 ObjectNode + 2개 Boolean — 추가 깊이지만 부담 없는 수준
 
@@ -220,7 +220,7 @@ employmentType 변경: 'full_time' → 'part_time'
 - `workingHours`는 `contractType`에 의존 → contractor 분기 내에서만 active 상태 전환
 - 의존성 체인이 단순 (1-hop)하여 연쇄 비용 < 1ms
 
-**SchemaNodeProxy 비용**: oneOf 전환 시 `UPDATE_CHILDREN_MASK`에 해당하는 이벤트가 발생할 수 있으나, `SchemaNodeInput`의 `memo`가 실질적 DOM 갱신을 방어. enabled=false 노드는 즉시 null 반환하여 비용 최소.
+**FieldProxy 비용**: oneOf 전환 시 `UPDATE_CHILDREN_MASK`에 해당하는 이벤트가 발생할 수 있으나, `FieldInputSlot`의 `memo`가 실질적 DOM 갱신을 방어. enabled=false 노드는 즉시 null 반환하여 비용 최소.
 
 **판정: PASS**
 
@@ -269,9 +269,9 @@ type 변경: 'game' → 'movie'
 - `genres`: enum 기반, 고정 7개 선택지
 - `actors`: string array, 동적 추가 가능
 
-배열 아이템 추가 시 `useChildNodeComponents`의 `Map` 캐시가 기존 아이템의 컴포넌트 참조를 유지하므로, 새 아이템만 생성됩니다.
+배열 아이템 추가 시 `useChildFields`의 `Map` 캐시가 기존 아이템의 컴포넌트 참조를 유지하므로, 새 아이템만 생성됩니다.
 
-**SchemaNodeProxy 비용**: 2중 oneOf 전환은 `UpdateChildren` 이벤트를 발생시키지만, `UPDATE_CHILDREN_MASK`에 `UpdateChildren`이 **포함되지 않으므로** Form-level re-render는 발생하지 않습니다. 각 Proxy는 자신의 노드 이벤트만 수신.
+**FieldProxy 비용**: 2중 oneOf 전환은 `UpdateChildren` 이벤트를 발생시키지만, `UPDATE_CHILDREN_MASK`에 `UpdateChildren`이 **포함되지 않으므로** Form-level re-render는 발생하지 않습니다. 각 Proxy는 자신의 노드 이벤트만 수신.
 
 **판정: PASS** — 가장 복잡한 예제이지만, 활성 필드 수가 ~12개 수준으로 모바일에서 충분히 처리 가능
 
@@ -307,13 +307,13 @@ notifications.email 변경 (depth 5)
 ```
 
 - 각 중간 ObjectNode의 UpdateValue는 해당 ObjectNode를 구독하는 Proxy만 re-render
-- 중간 ObjectNode의 Proxy는 `SchemaNodeInput`의 `memo`로 인해 실질적 DOM 갱신 없음
+- 중간 ObjectNode의 Proxy는 `FieldInputSlot`의 `memo`로 인해 실질적 DOM 갱신 없음
 - **깊이 5의 value 전파 비용**: microtask 5회 ≈ < 1ms (이벤트 배칭)
 
 **backupCodes 배열 (minItems: 5)**:
 
 - 초기화 시 5개 string input 자동 생성
-- 각 아이템은 Terminal Node → 5개 SchemaNodeProxy + SchemaNodeInput
+- 각 아이템은 Terminal Node → 5개 FieldProxy + FieldInputSlot
 - 최대 10개까지 추가 가능 (maxItems: 10)
 - 10개 아이템이어도 총 노드 ~35개 수준 — 가상화 불필요
 
@@ -356,7 +356,7 @@ notifications.email 변경 (depth 5)
 - 영향 범위가 shipping object 내부로 한정 → 2-3개 필드만 전환
 - 상위 product, root에는 re-render 전파 없음
 
-**SchemaNodeProxy 비용**: 2중 oneOf 전환이 발생해도 각 level의 Proxy는 자신의 노드만 구독. shipping 전환이 productType Proxy를 re-render시키지 않음.
+**FieldProxy 비용**: 2중 oneOf 전환이 발생해도 각 level의 Proxy는 자신의 노드만 구독. shipping 전환이 productType Proxy를 re-render시키지 않음.
 
 **판정: PASS**
 
@@ -384,26 +384,26 @@ notifications.email 변경 (depth 5)
 ```
 userType 변경: 'guest' → 'admin'
   ↓ [동기] userTypeNode: UpdateValue (immediate)
-  ↓ [microtask] 6개 의존 필드: UpdateComputedProperties (동시 발행)
-  ↓ 각 필드의 SchemaNodeProxy: RERENDERING_EVENT에 UpdateComputedProperties 포함 → re-render
+  ↓ [microtask] 6개 의존 필드: UpdateControlledProperties (동시 발행)
+  ↓ 각 필드의 FieldProxy: RERENDERING_EVENT에 UpdateControlledProperties 포함 → re-render
   ↓ visible/active 상태 변경으로 일부 필드 표시/숨김 전환
 ```
 
 - **최대 동시 re-render**: userType 1개 + 의존 필드 6개 = **7개 Proxy re-render**
 - 이 중 visible=false가 되는 필드: `if (!node?.enabled) return null` → 즉시 반환
-- visible=true가 되는 필드: SchemaNodeInput `memo` 통과 시 FieldInput 마운트
+- visible=true가 되는 필드: FieldInputSlot `memo` 통과 시 FieldInput 마운트
 
 **이것이 모바일에서 문제가 되는가?**
 
 - 7개 Proxy 동시 re-render: 7 × 0.01ms (Proxy 자체 비용) = ~0.07ms
-- SchemaNodeInput memo를 통과하는 필드 (상태 변경분): 최대 6개 × 0.5ms = ~3ms
+- FieldInputSlot memo를 통과하는 필드 (상태 변경분): 최대 6개 × 0.5ms = ~3ms
 - 총 userType 전환 비용: **< 5ms** — 모바일에서도 16ms 프레임 예산 내
 
 **RERENDERING_EVENT 4중 마스크 영향**:
 
-이 예제에서 `UpdateComputedProperties`가 6개 필드에서 동시 발생합니다. 그러나:
+이 예제에서 `UpdateControlledProperties`가 6개 필드에서 동시 발생합니다. 그러나:
 
-- 각 필드는 **자신의 노드**에서 발생한 `UpdateComputedProperties`만 수신
+- 각 필드는 **자신의 노드**에서 발생한 `UpdateControlledProperties`만 수신
 - 다른 필드의 computed 변경이 전파되지 않음
 - 4중 마스크의 "불필요한 re-render" 우려는 **단일 노드 내에서** 여러 이벤트 타입이 동시에 발생할 때만 해당
 
@@ -433,7 +433,7 @@ userType 변경: 'guest' → 'admin'
 
 - tuple 아이템은 `prefixItems`로 고정 → 동적 추가/삭제 없음
 - 각 아이템 변경 시: 해당 Terminal Node Proxy 1개 + 부모 ArrayNode Proxy 1개 re-render
-- 부모 ArrayNode의 `SchemaNodeInput`은 `memo`이므로, children이 변경되지 않으면 하위 아이템 re-render 안 됨
+- 부모 ArrayNode의 `FieldInputSlot`은 `memo`이므로, children이 변경되지 않으면 하위 아이템 re-render 안 됨
 
 **AJV 검증 비용**:
 
@@ -462,19 +462,19 @@ userType 변경: 'guest' → 'admin'
 
 ---
 
-## SchemaNodeProxy memo 미적용 — 전체 예제 종합 결론
+## FieldProxy memo 미적용 — 전체 예제 종합 결론
 
 ### 왜 memo 없이도 괜찮은가
 
 1. **Form-level 방어**: `UPDATE_CHILDREN_MASK`가 value 변경을 포함하지 않아, 일반적인 사용자 입력 시 Form → children → Proxy cascade가 발생하지 않음
 
-2. **노드별 독립 구독**: `useSchemaNodeTracker`가 각 Proxy를 자신의 노드에만 바인딩. 다른 필드의 이벤트가 전파되지 않음
+2. **노드별 독립 구독**: `useFieldNodeTracker`가 각 Proxy를 자신의 노드에만 바인딩. 다른 필드의 이벤트가 전파되지 않음
 
 3. **내부 memo 방어**:
-   - `SchemaNodeInput`: `memo` 래핑 — props 동일 시 완전 skip
+   - `FieldInputSlot`: `memo` 래핑 — props 동일 시 완전 skip
    - `FieldRenderer`: `useMemorize(() => memo(withErrorBoundary(...)))` — 최초 1회만 생성
-   - `useChildNodeComponents`: `Map` 캐시 + 각 child를 `memo` 래핑
-   - `SchemaNodeInputWrapper` 내부: `useReference`로 ref 안정화
+   - `useChildFields`: `Map` 캐시 + 각 child를 `memo` 래핑
+   - `FieldInputSlotWrapper` 내부: `useReference`로 ref 안정화
 
 4. **Proxy 자체의 re-render 비용이 극히 낮음**: hooks deps 비교 5-6회 + 조건부 null 반환. DOM 접근 없음.
 
@@ -493,7 +493,7 @@ userType 변경: 'guest' → 'admin'
 | Role-Based Access        | NO (computed는 해당 노드만)    | —            | OK   |
 | Tuple Arrays             | NO                             | —            | OK   |
 
-**모든 예제에서 SchemaNodeProxy의 memo 미적용은 성능 문제를 일으키지 않습니다.** 내부 컴포넌트의 빡빡한 memo 처리가 실질적인 렌더링 비용을 효과적으로 차단하고 있습니다.
+**모든 예제에서 FieldProxy의 memo 미적용은 성능 문제를 일으키지 않습니다.** 내부 컴포넌트의 빡빡한 memo 처리가 실질적인 렌더링 비용을 효과적으로 차단하고 있습니다.
 
 ---
 
@@ -518,17 +518,17 @@ userType 변경: 'guest' → 'admin'
 | `src/components/Form/Form.tsx:53-56`                                                                                  | `UPDATE_CHILDREN_MASK` — Form 리렌더 조건 |
 | `src/components/Form/Form.tsx:92-95`                                                                                  | 스키마 전처리 (1회)                       |
 | `src/components/Form/Form.tsx:325`                                                                                    | Form `memo` 래핑                          |
-| `src/components/SchemaNode/SchemaNodeProxy/SchemaNodeProxy.tsx:19-23`                                                 | `RERENDERING_EVENT` 4중 마스크            |
-| `src/components/SchemaNode/SchemaNodeProxy/SchemaNodeProxy.tsx:25`                                                    | Proxy `memo` 미적용                       |
-| `src/components/SchemaNode/SchemaNodeProxy/SchemaNodeProxy.tsx:38-48`                                                 | Input `useMemo` 캐시                      |
-| `src/components/SchemaNode/SchemaNodeProxy/SchemaNodeProxy.tsx:57-59`                                                 | FieldRenderer `memo` 래핑                 |
-| `src/components/SchemaNode/SchemaNodeProxy/SchemaNodeProxy.tsx:85`                                                    | `enabled=false` 시 null 반환              |
-| `src/components/SchemaNode/SchemaNodeInput/SchemaNodeInput.tsx:24`                                                    | SchemaNodeInput `memo` 래핑               |
-| `src/components/SchemaNode/SchemaNodeInput/SchemaNodeInputWrapper.tsx:42-51`                                          | `useReference` ref 안정화                 |
-| `src/components/SchemaNode/SchemaNodeInput/hooks/useChildNodeComponents.tsx:45-91`                                    | `Map` 캐시 + child `memo` 래핑            |
-| `src/components/SchemaNode/SchemaNodeInput/hooks/useFieldInputControl.ts:29-46`                                       | RequestRefresh/Focus/Select 구독          |
-| `src/components/SchemaNode/SchemaNodeInput/type.ts:39-43`                                                             | `REACTIVE_RERENDERING_EVENTS`             |
-| `src/hooks/useSchemaNodeTracker.ts:13-26`                                                                             | 노드별 독립 구독 메커니즘                 |
+| `src/components/Field/FieldProxy/FieldProxy.tsx:19-23`                                                                | `RERENDERING_EVENT` 4중 마스크            |
+| `src/components/Field/FieldProxy/FieldProxy.tsx:25`                                                                   | Proxy `memo` 미적용                       |
+| `src/components/Field/FieldProxy/FieldProxy.tsx:38-48`                                                                | Input `useMemo` 캐시                      |
+| `src/components/Field/FieldProxy/FieldProxy.tsx:57-59`                                                                | FieldRenderer `memo` 래핑                 |
+| `src/components/Field/FieldProxy/FieldProxy.tsx:85`                                                                   | `enabled=false` 시 null 반환              |
+| `src/components/Field/FieldInputSlot/FieldInputSlot.tsx:24`                                                           | FieldInputSlot `memo` 래핑                |
+| `src/components/Field/FieldInputSlot/FieldInputSlotWrapper.tsx:42-51`                                                 | `useReference` ref 안정화                 |
+| `src/components/Field/FieldInputSlot/hooks/useChildFields.tsx:45-91`                                                  | `Map` 캐시 + child `memo` 래핑            |
+| `src/components/Field/FieldInputSlot/hooks/useFieldInputControl.ts:29-46`                                             | RequestRefresh/Focus/Select 구독          |
+| `src/components/Field/FieldInputSlot/type.ts:39-43`                                                                   | `REACTIVE_RERENDERING_EVENTS`             |
+| `src/hooks/useFieldNodeTracker.ts:13-26`                                                                              | 노드별 독립 구독 메커니즘                 |
 | `src/core/nodes/AbstractNode/utils/EventCascadeManager/EventCascadeManager.ts:106-110`                                | microtask 배칭                            |
 | `src/core/nodes/AbstractNode/utils/ComputedPropertiesManager/utils/createDynamicFunction/createDynamicFunction.ts:41` | `new Function()` — CSP 관련               |
 | `rolldown.config.mjs:21`                                                                                              | `minify: false` 설정                      |

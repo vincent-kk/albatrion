@@ -2,9 +2,9 @@ import { clone } from '@winglet/common-utils/object';
 
 import {
   SetValueOption,
-  adoptSchemaNodeTree,
-  mountSchemaNode,
-  reloadSchemaNodeForm,
+  adoptFieldNodeTree,
+  mountFieldNode,
+  reloadFieldNodeForm,
 } from '@/schema-form/core';
 import { isSameSchema } from '@/schema-form/helpers/schemaIdentity';
 
@@ -46,7 +46,7 @@ export const resetRootLoad = (
     previous.error = undefined;
     try {
       root.batch(() => {
-        reloadSchemaNodeForm(root, clone(props.defaultValue), loadOption);
+        reloadFieldNodeForm(root, clone(props.defaultValue), loadOption);
         applyFormErrors(root, props.errors);
       });
     } catch (error) {
@@ -64,8 +64,8 @@ export const resetRootLoad = (
   const replacement = next.root;
   if (next.reporter) next.reporter.root = replacement;
   const load = () => {
-    if (root) adoptSchemaNodeTree(root, replacement);
-    mountSchemaNode(replacement, clone(props.defaultValue), loadOption);
+    if (root) adoptFieldNodeTree(root, replacement);
+    mountFieldNode(replacement, clone(props.defaultValue), loadOption);
     applyFormErrors(replacement, props.errors);
   };
   try {

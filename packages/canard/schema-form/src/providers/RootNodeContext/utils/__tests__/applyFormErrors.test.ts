@@ -1,6 +1,6 @@
 import { expect, it, vi } from 'vitest';
 
-import type { SchemaNode, ValidationIssue } from '@/schema-form/core';
+import type { FieldNode, ValidationIssue } from '@/schema-form/core';
 
 import { applyFormErrors } from '../applyFormErrors';
 
@@ -35,7 +35,7 @@ it('79C-01 groups repeated error paths in one pass and clears retired paths', ()
     find: vi.fn((path: string) => (path === '' ? root : nodes.get(path))),
   };
 
-  applyFormErrors(root as unknown as SchemaNode, errors, previous);
+  applyFormErrors(root as unknown as FieldNode, errors, previous);
 
   expect(readPath).toHaveBeenCalledTimes(errors.length + previous.length);
   expect(root.setExternalErrors).toHaveBeenCalledExactlyOnceWith(errors);
@@ -55,7 +55,7 @@ const rootWithChild = () => {
     setExternalErrors: vi.fn(),
     find: vi.fn((path: string) => (path === '' ? root : child)),
   };
-  return { root: root as unknown as SchemaNode, rootMock: root, child };
+  return { root: root as unknown as FieldNode, rootMock: root, child };
 };
 
 it.each([

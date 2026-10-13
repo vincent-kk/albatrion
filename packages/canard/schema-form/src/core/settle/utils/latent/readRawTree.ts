@@ -3,7 +3,7 @@ import { hasOwnProperty } from '@winglet/common-utils/lib';
 import { escapeSegment } from '@winglet/json/pointer';
 
 import { getItemEntry } from '../../../blueprint';
-import type { SchemaNodeRecord } from '../../../record';
+import type { FieldNodeRecord } from '../../../record';
 import type { SettlementContext } from '../../type';
 import { isPlain } from '../write/isPlain';
 import { readAbsentSlotSource } from './readAbsentSlotSource';
@@ -16,7 +16,7 @@ import { readLatentSlotSource } from './readLatentSlotSource';
  * @returns Raw tree, retaining every array slot; undefined for an empty-source
  * object or leaf
  */
-export const readRawTree = <Self extends SchemaNodeRecord<Self>>(
+export const readRawTree = <Self extends FieldNodeRecord<Self>>(
   node: Self,
   context: SettlementContext<Self>,
 ): unknown => {
@@ -29,8 +29,8 @@ export const readRawTree = <Self extends SchemaNodeRecord<Self>>(
       const entry = getItemEntry(node.blueprintNode, index);
       let value: unknown;
       if (!entry)
-        value = isArray(node.extras)
-          ? node.extras[index - tailStart]
+        value = isArray(node.undeclaredValues)
+          ? node.undeclaredValues[index - tailStart]
           : undefined;
       else {
         tailStart++;
@@ -43,8 +43,8 @@ export const readRawTree = <Self extends SchemaNodeRecord<Self>>(
     }
     return slots;
   }
-  const value: Record<string, unknown> = isPlain(node.extras)
-    ? { ...node.extras }
+  const value: Record<string, unknown> = isPlain(node.undeclaredValues)
+    ? { ...node.undeclaredValues }
     : {};
   let found = Object.keys(value).length > 0;
   for (const entry of node.blueprintNode.childEntries) {

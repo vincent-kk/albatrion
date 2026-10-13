@@ -7,19 +7,19 @@ import type {
   ScenarioExpectation,
 } from '@aileron/schema-form-scenarios';
 
-import { SchemaNodeEventType, SetValueOption } from '../../../SchemaNode';
-import type { SchemaNode } from '../../../SchemaNode';
-import type { SchemaNode as RuntimeSchemaNode } from '../../../SchemaNode/SchemaNode';
+import { FieldNodeEventType, SetValueOption } from '../../../FieldNode';
+import type { FieldNode } from '../../../FieldNode';
+import type { FieldNode as RuntimeFieldNode } from '../../../FieldNode/FieldNode';
 import type { BlueprintSchema } from '../../../blueprint';
-import { loadSchemaNodeAtMount } from '../../../settle';
+import { loadFieldNodeAtMount } from '../../../settle';
 import { ValidationMode } from '../../../types/state';
-import { makeSchemaNodeTree } from '../../makeSchemaNodeTree';
+import { makeFieldNodeTree } from '../../makeFieldNodeTree';
 import { assertCoreScenarioExpectation } from './assertCoreScenarioExpectation';
 import { executeCoreScenarioStep } from './executeCoreScenarioStep';
 
 /** Execute batches through the public node boundary while reusing existing actions. */
 const executeStep = (
-  root: SchemaNode,
+  root: FieldNode,
   scenario: FormScenario,
   step: FormScenarioStep,
 ): void => {
@@ -29,13 +29,13 @@ const executeStep = (
     });
     return;
   }
-  executeCoreScenarioStep(root as RuntimeSchemaNode, scenario, step);
+  executeCoreScenarioStep(root as RuntimeFieldNode, scenario, step);
 };
 
 /** Record only value deliveries; error deliveries belong to validation assertions. */
-const subscribeValueTree = (node: SchemaNode, order: string[]): void => {
+const subscribeValueTree = (node: FieldNode, order: string[]): void => {
   node.subscribe((event) => {
-    if (event.type & SchemaNodeEventType.UpdateValue) order.push(node.path);
+    if (event.type & FieldNodeEventType.UpdateValue) order.push(node.path);
   });
   for (const child of node.children ?? []) subscribeValueTree(child, order);
 };
@@ -54,7 +54,7 @@ export function createObservedCoreScenarioAdapter(
   const reported: string[] = [];
   let onChangeCount = 0;
   let validationRequestStamp = 0;
-  const { root, runtime } = makeSchemaNodeTree(
+  const { root, runtime } = makeFieldNodeTree(
     scenario.schema as BlueprintSchema,
     {
       snapshot: scenario.initialValue,
@@ -66,8 +66,8 @@ export function createObservedCoreScenarioAdapter(
       },
     },
   );
-  loadSchemaNodeAtMount(
-    root as RuntimeSchemaNode,
+  loadFieldNodeAtMount(
+    root as RuntimeFieldNode,
     scenario.initialValue,
     SetValueOption.Overwrite,
   );

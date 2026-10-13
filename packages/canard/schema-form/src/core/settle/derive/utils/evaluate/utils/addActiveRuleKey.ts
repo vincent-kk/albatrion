@@ -1,4 +1,4 @@
-import type { SchemaNodeRecord } from '../../../../../record';
+import type { FieldNodeRecord } from '../../../../../record';
 import type { DeriveState } from '../../../type';
 
 /**
@@ -8,7 +8,7 @@ import type { DeriveState } from '../../../type';
  * @param key - Stable rule key to retain for commit
  * @returns Nothing; both active indexes contain the key
  */
-export const addActiveRuleKey = <Self extends SchemaNodeRecord<Self>>(
+export const addActiveRuleKey = <Self extends FieldNodeRecord<Self>>(
   state: DeriveState<Self>,
   sourcePath: string,
   key: string,

@@ -1,12 +1,12 @@
 import { useCallback, useContext } from 'react';
 
-import type { SchemaNode } from '@/schema-form/core';
+import type { FieldNode } from '@/schema-form/core';
 
 import { RootBindingContext } from './RootBindingContext';
 import { useRootNodeContext } from './useRootNodeContext';
 
 /** Check the current root at invocation time, including the same stack as reset. */
-export const useLiveNode = (node: SchemaNode) => {
+export const useLiveNode = (node: FieldNode) => {
   const binding = useContext(RootBindingContext);
   const rootFromContext = useRootNodeContext();
   return useCallback(

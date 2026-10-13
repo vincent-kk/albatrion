@@ -73,7 +73,7 @@ const bigSchema = {
             gender: {
               type: 'string',
               enum: ['male', 'female', 'other'],
-              computed: {
+              controls: {
                 active: '../age >= 18',
               },
               presentation: {

@@ -1,15 +1,15 @@
 import { isArray } from '@winglet/common-utils/filter';
 
-import { SetValueOption } from '../../../../types/value';
+import { WriteOption } from '../../../../types/value';
 
 /** Select replacement or a shallow object merge for one marked target. */
 const markedValue = (
   previous: unknown,
   incoming: unknown,
-  option: SetValueOption,
+  option: WriteOption,
 ): unknown =>
-  (option & SetValueOption.Merge) === SetValueOption.Merge &&
-  !(option & SetValueOption.Replace) &&
+  (option & WriteOption.Merge) === WriteOption.Merge &&
+  !(option & WriteOption.Replace) &&
   previous !== null &&
   incoming !== null &&
   typeof previous === 'object' &&
@@ -31,7 +31,7 @@ export const replaceAtPath = (
   current: unknown,
   names: readonly string[],
   incoming: unknown,
-  option: SetValueOption,
+  option: WriteOption,
 ): unknown => {
   if (!names.length) return markedValue(current, incoming, option);
   const [name, ...rest] = names;

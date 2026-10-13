@@ -1,4 +1,4 @@
-import type { SchemaNodeRecord } from '../../../record';
+import type { FieldNodeRecord } from '../../../record';
 import type { SettlementContext } from '../../type';
 import { hasLatentUnder } from '../latent/hasLatentUnder';
 
@@ -8,13 +8,13 @@ import { hasLatentUnder } from '../latent/hasLatentUnder';
  * @param context - Settlement whose latent-prefix index covers all kinds
  * @returns Whether a default may populate this occurrence
  */
-export const isMissingRaw = <Self extends SchemaNodeRecord<Self>>(
+export const isMissingRaw = <Self extends FieldNodeRecord<Self>>(
   node: Self,
   context: SettlementContext<Self>,
 ): boolean => {
   if (node.raw !== undefined) return false;
   if (node.behavior.strategy !== 'branch') return true;
-  if (node.extras !== undefined || hasLatentUnder(context, node.path))
+  if (node.undeclaredValues !== undefined || hasLatentUnder(context, node.path))
     return false;
   return (node.children ?? []).every((child) => isMissingRaw(child, context));
 };

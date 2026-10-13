@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 
 import { dispatchMount } from '../../dispatch';
 import { createDispatchTree } from '../../dispatch/__tests__/fixtures/createDispatchTree';
-import { readSchemaNodeErrors, routeValidationIssues } from '../index';
+import { readFieldNodeErrors, routeValidationIssues } from '../index';
 
 // filid:contract validation-route
 describe('validation issue attribution', () => {
@@ -23,16 +23,16 @@ describe('validation issue attribution', () => {
     routeValidationIssues(root, issues);
     expect(runtime.globalErrors).toBe(issues);
     expect(
-      readSchemaNodeErrors(root.structure?.host ?? root).map(
+      readFieldNodeErrors(root.structure?.host ?? root).map(
         (issue) => issue.message,
       ),
     ).toEqual(['extra']);
     expect(
-      readSchemaNodeErrors(root.structure?.terminal ?? root).map(
+      readFieldNodeErrors(root.structure?.terminal ?? root).map(
         (issue) => issue.message,
       ),
     ).toEqual(['inner']);
-    expect(readSchemaNodeErrors(root)).toEqual([]);
+    expect(readFieldNodeErrors(root)).toEqual([]);
   });
 
   it('VALIDATE-051 keeps a union host keyword on its data node', () => {
@@ -46,7 +46,7 @@ describe('validation issue attribution', () => {
         message: 'host',
       },
     ]);
-    expect(readSchemaNodeErrors(root).map((issue) => issue.message)).toEqual([
+    expect(readFieldNodeErrors(root).map((issue) => issue.message)).toEqual([
       'host',
     ]);
   });
@@ -68,6 +68,6 @@ describe('validation issue attribution', () => {
       { dataPath: '/value', schemaPath: '#/then/properties/value/pattern' },
       { dataPath: '/value', schemaPath: '#/properties/value/controls/active' },
     ]);
-    expect(readSchemaNodeErrors(root.structure?.value ?? root)).toHaveLength(3);
+    expect(readFieldNodeErrors(root.structure?.value ?? root)).toHaveLength(3);
   });
 });

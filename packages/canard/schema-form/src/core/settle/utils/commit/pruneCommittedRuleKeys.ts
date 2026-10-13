@@ -1,6 +1,6 @@
 import { isArray } from '@winglet/common-utils/filter';
 
-import type { SchemaNodeRuntime } from '../../../record';
+import type { FieldNodeRuntime } from '../../../record';
 import { updateCommittedRuleValue } from './updateCommittedRuleValue';
 
 /**
@@ -11,7 +11,7 @@ import { updateCommittedRuleValue } from './updateCommittedRuleValue';
  * @returns Nothing; removed keys leave both indexes and the baseline store
  */
 export const pruneCommittedRuleKeys = <Self>(
-  runtime: SchemaNodeRuntime<Self>,
+  runtime: FieldNodeRuntime<Self>,
   path: string,
   scope: 'source' | 'occurrence' | 'exitPolicy',
 ): void => {

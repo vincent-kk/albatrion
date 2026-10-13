@@ -480,7 +480,7 @@ formRef.current?.setValue({ name: 'Bob' });
 formRef.current?.setValue({ address: { city: 'Seoul' } }, SetValueOption.Merge);
 ```
 
-## Custom Layout with Form.Group
+## Custom Layout with Form.Field
 
 ```tsx
 const profileSchema = {
@@ -499,14 +499,14 @@ function ProfileForm() {
   return (
     <Form jsonSchema={profileSchema} onSubmit={handleSubmit}>
       <div className="avatar-section">
-        <Form.Group path="/avatar" />
+        <Form.Field path="/avatar" />
       </div>
       <div className="name-row">
-        <Form.Group path="/firstName" placeholder="First name" />
-        <Form.Group path="/lastName" placeholder="Last name" />
+        <Form.Field path="/firstName" placeholder="First name" />
+        <Form.Field path="/lastName" placeholder="Last name" />
       </div>
-      <Form.Group path="/bio" placeholder="Tell us about yourself" />
-      <Form.Group path="/website" placeholder="https://..." />
+      <Form.Field path="/bio" placeholder="Tell us about yourself" />
+      <Form.Field path="/website" placeholder="https://..." />
     </Form>
   );
 }
@@ -515,16 +515,16 @@ function ProfileForm() {
 ## Watching Node State in Custom Components
 
 ```tsx
-import { SchemaNodeState, useSchemaNodeTracker } from '@canard/schema-form';
+import { FieldNodeState, useFieldNodeTracker } from '@canard/schema-form';
 
-function FieldStatus({ node }: { node: SchemaNode }) {
+function FieldStatus({ node }: { node: FieldNode }) {
   // Re-renders on any node event
-  useSchemaNodeTracker(node);
+  useFieldNodeTracker(node);
 
   return (
     <div>
       <span>Value: {JSON.stringify(node.value)}</span>
-      <span>Dirty: {node.state[SchemaNodeState.Dirty] ? 'yes' : 'no'}</span>
+      <span>Dirty: {node.state[FieldNodeState.Dirty] ? 'yes' : 'no'}</span>
       <span>Errors: {node.errors.length}</span>
       <span>Visible: {node.visible ? 'yes' : 'no'}</span>
     </div>

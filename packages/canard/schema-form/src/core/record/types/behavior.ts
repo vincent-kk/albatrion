@@ -4,8 +4,8 @@ import type {
   BlueprintNodeKind,
   SchemaTypeName,
 } from '../../blueprint';
-import type { SchemaNodeRecord } from './record';
-import type { SchemaNodeRuntime } from './runtime';
+import type { FieldNodeRecord } from './record';
+import type { FieldNodeRuntime } from './runtime';
 
 /** Read-only type candidates used by a calculation row. */
 export interface UnionSpec {
@@ -51,27 +51,27 @@ export interface Behavior<Self = unknown> {
   interpret(input: unknown, spec: UnionSpec): unknown;
   /** Assemble the current child values without committing them. */
   assemble<Node extends Self>(
-    node: SchemaNodeRecord<Node>,
+    node: FieldNodeRecord<Node>,
     children: readonly Node[],
     recalculated?: readonly Node[],
     hint?: { incremental: boolean },
   ): unknown;
   /** Project a local value into the outgoing value. */
   project<Node extends Self>(
-    node: SchemaNodeRecord<Node>,
+    node: FieldNodeRecord<Node>,
     local: unknown,
   ): unknown;
   /** Return a completed input string, or undefined when there is no write. */
   finishInput<Node extends Self>(
-    node: SchemaNodeRecord<Node>,
+    node: FieldNodeRecord<Node>,
   ): string | undefined;
   /** Describe children to be created by the caller. */
   declareChildren<Node extends Self>(
-    node: SchemaNodeRecord<Node>,
+    node: FieldNodeRecord<Node>,
   ): readonly BlueprintChildEntry[];
   /** Propose an array verb without writing source, shape, or notifications. */
   arrange<Node extends Self>(
-    node: SchemaNodeRecord<Node>,
+    node: FieldNodeRecord<Node>,
     operation: ArrayOperation,
   ): ArrayArrangePlan;
   /** Stable dispatch kind of this row. */
@@ -81,8 +81,8 @@ export interface Behavior<Self = unknown> {
 }
 
 /** Per-tree creation callback supplied by the composition root. */
-export type SchemaNodeFactory<Self> = (
+export type FieldNodeFactory<Self> = (
   entry: BlueprintChildEntry | BlueprintNode,
   parent: Self | null,
-  runtime: SchemaNodeRuntime<Self>,
+  runtime: FieldNodeRuntime<Self>,
 ) => Self;

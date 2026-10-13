@@ -1,7 +1,7 @@
 import { SchemaFormError } from '../../../../errors';
 import { getFeatureNodeIndex } from '../../../blueprint';
-import { captureSchemaNodeChange } from '../../../record';
-import type { SchemaNodeRecord } from '../../../record';
+import { captureFieldNodeChange } from '../../../record';
+import type { FieldNodeRecord } from '../../../record';
 import type { SettlementContext } from '../../type';
 import { calculateStateKeys } from '../controls/calculateStateKeys';
 import { recordSettlementFailure } from '../errors/recordSettlementFailure';
@@ -12,7 +12,7 @@ import { EXPRESSION_THREW } from '../errors/settleErrorCode';
  * @param context - Calculated final shape and deferred failure list
  * @returns Nothing; record fields and changed nodes carry the result
  */
-export const publishStateKeys = <Self extends SchemaNodeRecord<Self>>(
+export const publishStateKeys = <Self extends FieldNodeRecord<Self>>(
   context: SettlementContext<Self>,
 ): void => {
   const index = getFeatureNodeIndex(context.root.runtime.blueprint);
@@ -33,9 +33,9 @@ export const publishStateKeys = <Self extends SchemaNodeRecord<Self>>(
       node.disabled !== disabled
     )
       context.changedNodes.add(node);
-    node.visible = captureSchemaNodeChange(node, 'visible', visible);
-    node.readOnly = captureSchemaNodeChange(node, 'readOnly', readOnly);
-    node.disabled = captureSchemaNodeChange(node, 'disabled', disabled);
+    node.visible = captureFieldNodeChange(node, 'visible', visible);
+    node.readOnly = captureFieldNodeChange(node, 'readOnly', readOnly);
+    node.disabled = captureFieldNodeChange(node, 'disabled', disabled);
   }
   for (const failure of result.failures) {
     const { path, schemaPath, cause } = failure;

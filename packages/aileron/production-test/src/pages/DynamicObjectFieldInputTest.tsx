@@ -8,7 +8,7 @@ import {
 } from "react";
 
 import {
-  type ChildNodeComponentProps,
+  type ChildFieldProps,
   Form,
   type FieldInputProps,
   type JSONSchema,
@@ -51,8 +51,8 @@ export default function DynamicObjectFieldInputTest() {
         Dynamic Object FieldInput Test
       </h1>
       <p style={{ marginBottom: "24px", color: "#ccc" }}>
-        ChildNodeComponents를 동적으로 제어하는 테스트입니다. 레이아웃 모드를
-        변경하면 표시되는 필드가 동적으로 변경됩니다.
+        ChildFields를 동적으로 제어하는 테스트입니다. 레이아웃 모드를 변경하면
+        표시되는 필드가 동적으로 변경됩니다.
       </p>
 
       <div
@@ -123,17 +123,17 @@ const fieldGroups = {
 const CustomObjectFieldInput = ({
   onChange,
   defaultValue,
-  ChildNodeComponents,
+  ChildFields,
 }: FieldInputProps<Value | undefined>) => {
   const ChildNodeMap = useMemo(() => {
-    return ChildNodeComponents.reduce(
+    return ChildFields.reduce(
       (acc, component) => {
         acc[component.field as keyof Value] = component;
         return acc;
       },
-      {} as Record<keyof Value, (typeof ChildNodeComponents)[number]>,
+      {} as Record<keyof Value, (typeof ChildFields)[number]>,
     );
-  }, [ChildNodeComponents]);
+  }, [ChildFields]);
 
   const [layoutMode, setLayoutMode] = useState<
     "basic" | "work" | "contact" | "grid"
@@ -169,7 +169,7 @@ const CustomObjectFieldInput = ({
     const components: Partial<Record<keyof Value, ReactNode>> = {};
     Object.keys(ChildNodeMap).forEach((field) => {
       const Component = ChildNodeMap[field as keyof Value] as ComponentType<
-        ChildNodeComponentProps<Value[keyof Value]>
+        ChildFieldProps<Value[keyof Value]>
       >;
       if (Component) {
         components[field as keyof Value] = (

@@ -18,7 +18,7 @@ export const formatRegisterPluginError = (
 
   const pluginFeatures: string[] = [];
   if (plugin.FormErrorRenderer) pluginFeatures.push('FormError');
-  if (plugin.FieldRenderer) pluginFeatures.push('FormGroup');
+  if (plugin.FieldRenderer) pluginFeatures.push('FormField');
   if (plugin.FormInputRenderer) pluginFeatures.push('FormInput');
   if (plugin.FormLabelRenderer) pluginFeatures.push('FormLabel');
   if (plugin.fieldInputDefinitions?.length)

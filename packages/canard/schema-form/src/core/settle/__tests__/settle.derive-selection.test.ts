@@ -1,9 +1,9 @@
 import { describe, expect, it, vi } from 'vitest';
 
 import type { BlueprintSchema } from '../../blueprint';
-import { SchemaNodeState } from '../../types/state';
-import { SetValueOption } from '../../types/value';
-import { loadSchemaNodeAtMount, writeSchemaNode } from '../index';
+import { FieldNodeState } from '../../types/state';
+import { WriteOption } from '../../types/value';
+import { loadFieldNodeAtMount, writeFieldNode } from '../index';
 import { createTestTree } from './fixtures/createTestTree';
 
 // filid:contract settle-derive
@@ -32,17 +32,17 @@ describe('active derive declarations', () => {
         },
       },
     });
-    loadSchemaNodeAtMount(
+    loadFieldNodeAtMount(
       root,
       { H: { enabled: false, s: 'S1', x: 'own' } },
-      SetValueOption.Overwrite,
+      WriteOption.Overwrite,
     );
     expect(root.structure?.H?.structure?.x?.raw).toBe('own');
-    writeSchemaNode(
+    writeFieldNode(
       root.structure!.H.structure!.enabled,
       true,
       'input',
-      SetValueOption.Overwrite,
+      WriteOption.Overwrite,
     );
     expect(root.structure?.H?.structure?.x?.raw).toBe('own');
   });
@@ -68,24 +68,24 @@ describe('active derive declarations', () => {
         },
       },
     });
-    loadSchemaNodeAtMount(
+    loadFieldNodeAtMount(
       root,
       { H: { enabled: false, x: 'own' } },
-      SetValueOption.Overwrite,
+      WriteOption.Overwrite,
     );
     const target = root.structure!.H.structure!.x;
     target.interactionState = {
-      [SchemaNodeState.Dirty]: true,
-      [SchemaNodeState.Touched]: true,
+      [FieldNodeState.Dirty]: true,
+      [FieldNodeState.Touched]: true,
     };
-    writeSchemaNode(
+    writeFieldNode(
       root.structure!.H.structure!.enabled,
       true,
       'input',
-      SetValueOption.Overwrite,
+      WriteOption.Overwrite,
     );
-    expect(target.interactionState[SchemaNodeState.Dirty]).toBe(true);
-    expect(target.interactionState[SchemaNodeState.Touched]).toBe(true);
+    expect(target.interactionState[FieldNodeState.Dirty]).toBe(true);
+    expect(target.interactionState[FieldNodeState.Touched]).toBe(true);
   });
 
   it('FRAGMENT-050 shared node baseline only on depth-two if activation', () => {
@@ -117,16 +117,16 @@ describe('active derive declarations', () => {
         },
       },
     });
-    loadSchemaNodeAtMount(
+    loadFieldNodeAtMount(
       root,
       { G: { H: { enabled: false, s: 'S1', x: 'own' } } },
-      SetValueOption.Overwrite,
+      WriteOption.Overwrite,
     );
-    writeSchemaNode(
+    writeFieldNode(
       root.structure!.G.structure!.H.structure!.enabled,
       true,
       'input',
-      SetValueOption.Overwrite,
+      WriteOption.Overwrite,
     );
     expect(root.structure?.G?.structure?.H?.structure?.x?.raw).toBe('own');
   });
@@ -157,21 +157,21 @@ describe('active derive declarations', () => {
       },
     };
     const { root } = createTestTree(schema);
-    loadSchemaNodeAtMount(
+    loadFieldNodeAtMount(
       root,
       { H: { enabled: false, s: 'S1', x: 'own' } },
-      SetValueOption.Overwrite,
+      WriteOption.Overwrite,
     );
     const selectedKey = JSON.stringify(['/H', 'object']);
     for (const enabled of [true, false]) {
-      writeSchemaNode(
+      writeFieldNode(
         root.structure!.H.structure!.enabled,
         enabled,
         'input',
-        SetValueOption.Overwrite,
+        WriteOption.Overwrite,
       );
       const { root: fresh } = createTestTree(schema);
-      loadSchemaNodeAtMount(fresh, root.emit, SetValueOption.Overwrite);
+      loadFieldNodeAtMount(fresh, root.emit, WriteOption.Overwrite);
       expect(root.structure?.H?.schema).toEqual(fresh.structure?.H?.schema);
       expect(root.runtime.committedDeclarationIds?.get(selectedKey)).toEqual(
         fresh.runtime.committedDeclarationIds?.get(selectedKey),
@@ -198,11 +198,11 @@ describe('active derive declarations', () => {
         },
       },
     });
-    loadSchemaNodeAtMount(root, { t: 'T1' }, SetValueOption.Overwrite);
+    loadFieldNodeAtMount(root, { t: 'T1' }, WriteOption.Overwrite);
     expect(root.structure?.H?.structure?.x?.raw).toBe('T1');
-    writeSchemaNode(root.structure!.t, 'T2', 'input', SetValueOption.Overwrite);
+    writeFieldNode(root.structure!.t, 'T2', 'input', WriteOption.Overwrite);
     expect(root.structure?.H?.structure?.x?.raw).toBe('T2');
-    writeSchemaNode(root.structure!.t, 'T3', 'input', SetValueOption.Overwrite);
+    writeFieldNode(root.structure!.t, 'T3', 'input', WriteOption.Overwrite);
     expect(root.structure?.H?.structure?.x?.raw).toBe('T3');
   });
 
@@ -222,13 +222,13 @@ describe('active derive declarations', () => {
         },
       },
     });
-    loadSchemaNodeAtMount(
+    loadFieldNodeAtMount(
       root,
       { c: false, H: { x: 'v' } },
-      SetValueOption.Overwrite,
+      WriteOption.Overwrite,
     );
     expect(root.structure?.H?.structure?.x?.raw).toBe('v');
-    writeSchemaNode(root.structure!.c, true, 'input', SetValueOption.Overwrite);
+    writeFieldNode(root.structure!.c, true, 'input', WriteOption.Overwrite);
     expect(root.structure?.H?.structure?.x?.raw).toBeUndefined();
   });
 
@@ -261,16 +261,16 @@ describe('active derive declarations', () => {
     });
     const derive = vi.fn(() => ({ q: 'DQ', r: 'DR' }));
     root.runtime.context = { derive };
-    loadSchemaNodeAtMount(
+    loadFieldNodeAtMount(
       root,
       { flag: false, H: { P: { q: 'q0', r: 'r0' } } },
-      SetValueOption.Overwrite,
+      WriteOption.Overwrite,
     );
-    writeSchemaNode(
+    writeFieldNode(
       root.structure!.H.structure!.P.structure!.q,
       'user',
       'input',
-      SetValueOption.Overwrite,
+      WriteOption.Overwrite,
     );
     expect(root.structure?.H?.structure?.P?.structure?.q?.raw).toBe('user');
     expect(root.structure?.H?.structure?.P?.structure?.r?.raw).toBe('r0');
@@ -298,25 +298,20 @@ describe('active derive declarations', () => {
         },
       },
     });
-    loadSchemaNodeAtMount(
+    loadFieldNodeAtMount(
       root,
       { flag: false, H: { P: { q: 'q0' } } },
-      SetValueOption.Overwrite,
+      WriteOption.Overwrite,
     );
     const target = root.structure!.H.structure!.P;
     target.interactionState = {
-      [SchemaNodeState.Dirty]: true,
-      [SchemaNodeState.Touched]: true,
+      [FieldNodeState.Dirty]: true,
+      [FieldNodeState.Touched]: true,
     };
-    writeSchemaNode(
-      target.structure!.q,
-      'user',
-      'input',
-      SetValueOption.Overwrite,
-    );
+    writeFieldNode(target.structure!.q, 'user', 'input', WriteOption.Overwrite);
     expect(target.structure?.q?.raw).toBe('user');
-    expect(target.interactionState[SchemaNodeState.Dirty]).toBe(true);
-    expect(target.interactionState[SchemaNodeState.Touched]).toBe(true);
+    expect(target.interactionState[FieldNodeState.Dirty]).toBe(true);
+    expect(target.interactionState[FieldNodeState.Touched]).toBe(true);
   });
 
   it('FRAGMENT-050 shared node baseline only after inactive declaration reselects', () => {
@@ -336,37 +331,17 @@ describe('active derive declarations', () => {
         },
       ],
     });
-    loadSchemaNodeAtMount(
+    loadFieldNodeAtMount(
       root,
       { flag: false, source: 'A', target: 'manual' },
-      SetValueOption.Overwrite,
+      WriteOption.Overwrite,
     );
-    writeSchemaNode(
-      root.structure!.source,
-      'B',
-      'input',
-      SetValueOption.Overwrite,
-    );
+    writeFieldNode(root.structure!.source, 'B', 'input', WriteOption.Overwrite);
     expect(root.structure?.target?.raw).toBe('manual');
-    writeSchemaNode(
-      root.structure!.flag,
-      true,
-      'input',
-      SetValueOption.Overwrite,
-    );
+    writeFieldNode(root.structure!.flag, true, 'input', WriteOption.Overwrite);
     expect(root.structure?.target?.raw).toBe('manual');
-    writeSchemaNode(
-      root.structure!.flag,
-      false,
-      'input',
-      SetValueOption.Overwrite,
-    );
-    writeSchemaNode(
-      root.structure!.source,
-      'C',
-      'input',
-      SetValueOption.Overwrite,
-    );
+    writeFieldNode(root.structure!.flag, false, 'input', WriteOption.Overwrite);
+    writeFieldNode(root.structure!.source, 'C', 'input', WriteOption.Overwrite);
     expect(root.structure?.target?.raw).toBe('manual');
   });
 
@@ -387,24 +362,14 @@ describe('active derive declarations', () => {
         },
       ],
     });
-    loadSchemaNodeAtMount(
+    loadFieldNodeAtMount(
       root,
       { flag: false, source: 'A', target: 'manual' },
-      SetValueOption.Overwrite,
+      WriteOption.Overwrite,
     );
-    writeSchemaNode(
-      root.structure!.flag,
-      true,
-      'input',
-      SetValueOption.Overwrite,
-    );
+    writeFieldNode(root.structure!.flag, true, 'input', WriteOption.Overwrite);
     expect(root.structure?.target?.raw).toBe('manual');
-    writeSchemaNode(
-      root.structure!.source,
-      'B',
-      'input',
-      SetValueOption.Overwrite,
-    );
+    writeFieldNode(root.structure!.source, 'B', 'input', WriteOption.Overwrite);
     expect(root.structure?.target?.raw).toBe('B');
   });
 
@@ -424,17 +389,12 @@ describe('active derive declarations', () => {
         },
       ],
     });
-    loadSchemaNodeAtMount(
+    loadFieldNodeAtMount(
       root,
       { flag: false, source: 'A', target: 'manual' },
-      SetValueOption.Overwrite,
+      WriteOption.Overwrite,
     );
-    writeSchemaNode(
-      root.structure!.flag,
-      true,
-      'input',
-      SetValueOption.Overwrite,
-    );
+    writeFieldNode(root.structure!.flag, true, 'input', WriteOption.Overwrite);
     expect(root.structure?.target?.raw).toBe('A');
   });
 
@@ -454,19 +414,19 @@ describe('active derive declarations', () => {
         },
       },
     });
-    loadSchemaNodeAtMount(
+    loadFieldNodeAtMount(
       root,
       { enabled: false, s: 'S1', x: 'own' },
-      SetValueOption.Overwrite,
+      WriteOption.Overwrite,
     );
-    writeSchemaNode(
+    writeFieldNode(
       root.structure!.enabled,
       true,
       'input',
-      SetValueOption.Overwrite,
+      WriteOption.Overwrite,
     );
     expect(root.structure?.x?.raw).toBe('own');
-    writeSchemaNode(root.structure!.s, 'S2', 'input', SetValueOption.Overwrite);
+    writeFieldNode(root.structure!.s, 'S2', 'input', WriteOption.Overwrite);
     expect(root.structure?.x?.raw).toBe('S2');
   });
 
@@ -485,16 +445,16 @@ describe('active derive declarations', () => {
         },
       },
     });
-    loadSchemaNodeAtMount(
+    loadFieldNodeAtMount(
       root,
       { enabled: false, s: 'S1', x: 'own' },
-      SetValueOption.Overwrite,
+      WriteOption.Overwrite,
     );
-    writeSchemaNode(
+    writeFieldNode(
       root.structure!.enabled,
       true,
       'input',
-      SetValueOption.Overwrite,
+      WriteOption.Overwrite,
     );
     expect(root.structure?.x?.raw).toBe('S1');
   });
@@ -516,31 +476,21 @@ describe('active derive declarations', () => {
         },
       ],
     });
-    loadSchemaNodeAtMount(
+    loadFieldNodeAtMount(
       root,
       { flag: false, clear: true, target: 'held' },
-      SetValueOption.Overwrite,
+      WriteOption.Overwrite,
     );
-    writeSchemaNode(
-      root.structure!.flag,
-      true,
-      'input',
-      SetValueOption.Overwrite,
-    );
+    writeFieldNode(root.structure!.flag, true, 'input', WriteOption.Overwrite);
     expect(root.structure?.target?.raw).toBe('held');
-    writeSchemaNode(
+    writeFieldNode(
       root.structure!.clear,
       false,
       'input',
-      SetValueOption.Overwrite,
+      WriteOption.Overwrite,
     );
     expect(root.structure?.target?.raw).toBe('held');
-    writeSchemaNode(
-      root.structure!.clear,
-      true,
-      'input',
-      SetValueOption.Overwrite,
-    );
+    writeFieldNode(root.structure!.clear, true, 'input', WriteOption.Overwrite);
     expect(root.structure?.target?.raw).toBeUndefined();
   });
 
@@ -564,24 +514,24 @@ describe('active derive declarations', () => {
         },
       ],
     }).root;
-    loadSchemaNodeAtMount(
+    loadFieldNodeAtMount(
       shared,
       { flag: false, source: 'A', output: 'manual' },
-      SetValueOption.Overwrite,
+      WriteOption.Overwrite,
     );
-    writeSchemaNode(
+    writeFieldNode(
       shared.structure!.flag,
       true,
       'input',
-      SetValueOption.Overwrite,
+      WriteOption.Overwrite,
     );
     expect(shared.structure?.output?.raw).toBe('manual');
     expect(injectTo).not.toHaveBeenCalled();
-    writeSchemaNode(
+    writeFieldNode(
       shared.structure!.source,
       'B',
       'input',
-      SetValueOption.Overwrite,
+      WriteOption.Overwrite,
     );
     expect(injectTo).toHaveBeenCalledWith('B', expect.any(Object));
     expect(shared.structure?.output?.raw).toBe('from-B');
@@ -602,16 +552,16 @@ describe('active derive declarations', () => {
         },
       ],
     }).root;
-    loadSchemaNodeAtMount(
+    loadFieldNodeAtMount(
       entered,
       { flag: false, source: 'A' },
-      SetValueOption.Overwrite,
+      WriteOption.Overwrite,
     );
-    writeSchemaNode(
+    writeFieldNode(
       entered.structure!.flag,
       true,
       'input',
-      SetValueOption.Overwrite,
+      WriteOption.Overwrite,
     );
     expect(entered.structure?.source?.raw).toBe('A');
     expect(injectTo).toHaveBeenCalledWith('A', expect.any(Object));

@@ -40,12 +40,12 @@ describe('blueprint expression compilation', () => {
     expect(result.expressions[0].evaluate([3])).toBe(6);
     expect(result.expressions[0].hostPath).toBe('/a');
   });
-  it('keeps fragment and children expression origins on the host', () => {
+  it('keeps fragment and fields expression origins on the host', () => {
     const result = blueprint({
       type: 'object',
       properties: { a: { type: 'string' } },
       controls: {
-        children: [{ targets: ['a'], controls: { visible: './enabled' } }],
+        fields: [{ targets: ['a'], controls: { visible: './enabled' } }],
       },
       allOf: [
         {

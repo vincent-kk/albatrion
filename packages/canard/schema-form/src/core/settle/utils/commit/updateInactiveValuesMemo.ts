@@ -1,7 +1,7 @@
 import { isArray } from '@winglet/common-utils/filter';
 
 import { find } from '../../../navigation';
-import type { SchemaNodeRecord } from '../../../record';
+import type { FieldNodeRecord } from '../../../record';
 import { PathKeyedMap } from '../../../utils/pathIndex/PathKeyedMap';
 import { EMPTY_VALUES } from '../detached/emptyDetachedReads';
 import { HostLatent } from '../latent/HostLatent';
@@ -24,7 +24,7 @@ const compareOrder = (
  * @param root - Current shape and tree-local latent classification and memo
  * @returns Nothing; inactiveValuesMemo is updated at this commit boundary
  */
-export const updateInactiveValuesMemo = <Self extends SchemaNodeRecord<Self>>(
+export const updateInactiveValuesMemo = <Self extends FieldNodeRecord<Self>>(
   root: Self,
 ): void => {
   const runtime = root.runtime;

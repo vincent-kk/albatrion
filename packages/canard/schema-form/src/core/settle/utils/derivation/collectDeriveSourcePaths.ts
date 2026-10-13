@@ -1,4 +1,4 @@
-import type { SchemaNodeRecord } from '../../../record';
+import type { FieldNodeRecord } from '../../../record';
 import type { SettlementContext } from '../../type';
 import { getDependencyIndex } from '../write/getDependencyIndex';
 
@@ -7,7 +7,7 @@ import { getDependencyIndex } from '../write/getDependencyIndex';
  * @param context - Changed raw paths, entered nodes, and selected declarations
  * @returns Live source addresses for this non-load derive round
  */
-export const collectDeriveSourcePaths = <Self extends SchemaNodeRecord<Self>>(
+export const collectDeriveSourcePaths = <Self extends FieldNodeRecord<Self>>(
   context: SettlementContext<Self>,
 ): ReadonlySet<string> => {
   const paths = new Set<string>();

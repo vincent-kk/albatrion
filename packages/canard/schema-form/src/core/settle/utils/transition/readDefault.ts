@@ -1,10 +1,10 @@
 import { hasOwnProperty } from '@winglet/common-utils/lib';
 
-import type { SchemaNodeRecord } from '../../../record';
+import type { FieldNodeRecord } from '../../../record';
 import { getControlLayers } from '../controls/getControlLayers';
 
 /** Default sources from most specific to least specific. */
-const DEFAULT_LAYERS = ['node', 'children', 'fragment'] as const;
+const DEFAULT_LAYERS = ['node', 'fields', 'fragment'] as const;
 
 /**
  * Select a new occurrence's authored default by reserved-layer priority.
@@ -12,7 +12,7 @@ const DEFAULT_LAYERS = ['node', 'children', 'fragment'] as const;
  * @param selectedDeclarationIds - Declarations selected in the final shape
  * @returns The authored value or undefined when no layer supplies one
  */
-export const readDefault = <Self extends SchemaNodeRecord<Self>>(
+export const readDefault = <Self extends FieldNodeRecord<Self>>(
   node: Self,
   selectedDeclarationIds: ReadonlyMap<Self, readonly number[]>,
 ): unknown => {

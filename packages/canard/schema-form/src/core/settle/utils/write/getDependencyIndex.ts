@@ -1,7 +1,7 @@
 import { escapeSegment } from '@winglet/json/pointer';
 
 import type { Blueprint, PropertyDeclaration } from '../../../blueprint';
-import type { SchemaNodeRecord } from '../../../record';
+import type { FieldNodeRecord } from '../../../record';
 import { getDeriveRuleTable } from '../../derive';
 import { getContextOwners } from '../context/getContextOwners';
 import { getGateExpression } from '../gates/getGateExpression';
@@ -77,7 +77,7 @@ class DependencyIndex {
   }
 
   /** Return owners whose reads intersect a changed path in either direction. */
-  affected<Self extends SchemaNodeRecord<Self>>(
+  affected<Self extends FieldNodeRecord<Self>>(
     changedPath: string,
     root: Self,
   ): readonly string[] {

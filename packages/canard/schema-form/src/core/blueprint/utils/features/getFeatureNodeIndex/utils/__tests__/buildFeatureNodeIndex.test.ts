@@ -16,7 +16,7 @@ describe('static state declaration bounds replacing declaresStateKeys', () => {
     }
   });
 
-  it('addresses parent controls.children by the declared child name', () => {
+  it('addresses parent controls.fields by the declared child name', () => {
     const analysis = blueprint({
       type: 'object',
       properties: {
@@ -24,7 +24,7 @@ describe('static state declaration bounds replacing declaresStateKeys', () => {
         b: { type: 'string' },
       },
       controls: {
-        children: [{ targets: ['a'], controls: { disabled: true } }],
+        fields: [{ targets: ['a'], controls: { disabled: true } }],
       },
     });
     const index = buildFeatureNodeIndex(analysis);

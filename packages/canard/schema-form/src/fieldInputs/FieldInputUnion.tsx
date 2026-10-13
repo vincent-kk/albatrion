@@ -3,7 +3,7 @@ import { type ChangeEvent, useEffect, useMemo, useRef, useState } from 'react';
 import { isArray } from '@winglet/common-utils/filter';
 import { useHandle } from '@winglet/react-utils/hook';
 
-import { interpretSchemaNodeDraft } from '@/schema-form/core';
+import { interpretFieldNodeDraft } from '@/schema-form/core';
 import type {
   FieldInputDefinition,
   FieldInputProps,
@@ -45,7 +45,7 @@ const FieldInputUnion = (props: FieldInputProps) => {
   const publish = useHandle((next: string) => {
     if (composing.current || !editable || props.readOnly || props.disabled)
       return false;
-    const result = interpretSchemaNodeDraft(
+    const result = interpretFieldNodeDraft(
       node,
       next === '' ? undefined : next,
     );

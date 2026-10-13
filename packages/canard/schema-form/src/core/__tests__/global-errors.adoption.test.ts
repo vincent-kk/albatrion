@@ -1,13 +1,13 @@
 import { describe, expect, it } from 'vitest';
 
 import {
-  type SchemaNode,
+  type FieldNode,
   ValidationMode,
-  adoptSchemaNodeTree,
+  adoptFieldNodeTree,
   nodeFromJSONSchema,
 } from '../index';
 
-const createRoot = (): SchemaNode =>
+const createRoot = (): FieldNode =>
   nodeFromJSONSchema({
     jsonSchema: {
       type: 'object',
@@ -23,7 +23,7 @@ describe('external error attribution across adoption (208C-01)', () => {
     root.find('/field')!.setExternalErrors([cross]);
     expect(root.errors).toEqual([cross]);
     const replacement = createRoot();
-    adoptSchemaNodeTree(root, replacement);
+    adoptFieldNodeTree(root, replacement);
     expect(replacement.errors).toEqual([cross]);
     replacement.find('/field')!.clearExternalErrors();
     expect(replacement.errors).toEqual([]);
@@ -35,7 +35,7 @@ describe('external error attribution across adoption (208C-01)', () => {
     const second = { dataPath: '/elsewhere', message: 'b' };
     root.find('/field')!.setExternalErrors([first]);
     const replacement = createRoot();
-    adoptSchemaNodeTree(root, replacement);
+    adoptFieldNodeTree(root, replacement);
     replacement.find('/field')!.setExternalErrors([second]);
     expect(replacement.errors).toEqual([second]);
   });

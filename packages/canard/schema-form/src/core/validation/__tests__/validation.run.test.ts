@@ -4,12 +4,12 @@ import {
   dispatchMount,
   dispatchSetValue,
   dispatchValidate,
-  subscribeSchemaNode,
+  subscribeFieldNode,
 } from '../../dispatch';
 import { createDispatchTree } from '../../dispatch/__tests__/fixtures/createDispatchTree';
-import { SchemaNodeEventType } from '../../record';
+import { FieldNodeEventType } from '../../record';
 import { ValidationMode } from '../../types/state';
-import { readSchemaNodeErrors, requestSchemaNodeValidation } from '../index';
+import { readFieldNodeErrors, requestFieldNodeValidation } from '../index';
 import type { ValidationIssue, Validator } from '../type';
 
 // filid:contract validation-lifetime
@@ -33,16 +33,16 @@ describe('validation execution', () => {
     );
     dispatchMount(root, 'initial');
     const delivered: string[] = [];
-    requestSchemaNodeValidation(root, (issues) =>
+    requestFieldNodeValidation(root, (issues) =>
       delivered.push(issues[0]?.message ?? 'valid'),
     );
-    requestSchemaNodeValidation(root, (issues) =>
+    requestFieldNodeValidation(root, (issues) =>
       delivered.push(issues[0]?.message ?? 'valid'),
     );
     await Promise.resolve();
     expect(validate).toHaveBeenCalledTimes(1);
     dispatchSetValue(root, 'latest');
-    requestSchemaNodeValidation(root, (issues) =>
+    requestFieldNodeValidation(root, (issues) =>
       delivered.push(issues[0]?.message ?? 'valid'),
     );
     await Promise.resolve();
@@ -68,7 +68,7 @@ describe('validation execution', () => {
     );
     runtime.validationMode = ValidationMode.None;
     dispatchMount(root, 'first');
-    requestSchemaNodeValidation(root, () => {
+    requestFieldNodeValidation(root, () => {
       throw new Error('None delivered');
     });
     await Promise.resolve();
@@ -99,11 +99,11 @@ describe('validation execution', () => {
     dispatchMount(root, { name: 'a' });
     expect(await dispatchValidate(root)).toBe(issues);
     expect(runtime.globalErrors).toBe(issues);
-    expect(readSchemaNodeErrors(root).map((issue) => issue.message)).toEqual([
+    expect(readFieldNodeErrors(root).map((issue) => issue.message)).toEqual([
       'root',
     ]);
     expect(
-      readSchemaNodeErrors(root.structure?.name ?? root).map(
+      readFieldNodeErrors(root.structure?.name ?? root).map(
         (issue) => issue.message,
       ),
     ).toEqual(['child']);
@@ -123,8 +123,8 @@ describe('validation execution', () => {
     runtime.validationMode = ValidationMode.OnChange;
     const order: string[] = [];
     runtime.onChange = () => order.push('change');
-    subscribeSchemaNode(root, (event) => {
-      if (event.type & SchemaNodeEventType.UpdateGlobalError)
+    subscribeFieldNode(root, (event) => {
+      if (event.type & FieldNodeEventType.UpdateGlobalError)
         order.push('validation');
     });
     dispatchSetValue(root, 'changed');
@@ -150,8 +150,8 @@ describe('validation execution', () => {
       dispatchMount(root, 'before');
       runtime.validationMode = ValidationMode.OnChange;
       const failure = new Error('result listener');
-      subscribeSchemaNode(root, (event) => {
-        if (event.type & SchemaNodeEventType.UpdateGlobalError) throw failure;
+      subscribeFieldNode(root, (event) => {
+        if (event.type & FieldNodeEventType.UpdateGlobalError) throw failure;
       });
 
       dispatchSetValue(root, 'after');
@@ -209,16 +209,12 @@ describe('validation execution', () => {
     runtime.validationMode = ValidationMode.OnRequest;
     const a = root.structure?.a ?? root;
     const b = root.structure?.b ?? root;
-    requestSchemaNodeValidation(a, () => undefined);
-    requestSchemaNodeValidation(b, () => undefined);
+    requestFieldNodeValidation(a, () => undefined);
+    requestFieldNodeValidation(b, () => undefined);
     await new Promise((resolve) => setTimeout(resolve, 0));
     expect(validate).toHaveBeenCalledTimes(1);
-    expect(readSchemaNodeErrors(a).map((issue) => issue.message)).toEqual([
-      'A',
-    ]);
-    expect(readSchemaNodeErrors(b).map((issue) => issue.message)).toEqual([
-      'B',
-    ]);
+    expect(readFieldNodeErrors(a).map((issue) => issue.message)).toEqual(['A']);
+    expect(readFieldNodeErrors(b).map((issue) => issue.message)).toEqual(['B']);
   });
 
   it('VALIDATE-008 leaves the verdict absent when no validator is selected', async () => {
@@ -230,7 +226,7 @@ describe('validation execution', () => {
     dispatchMount(root, 'value');
     runtime.validationMode = ValidationMode.OnChange;
     const deliver = vi.fn();
-    requestSchemaNodeValidation(root, deliver);
+    requestFieldNodeValidation(root, deliver);
     await new Promise((resolve) => setTimeout(resolve, 0));
     expect(deliver).not.toHaveBeenCalled();
     expect(runtime.validationResult).toBeUndefined();

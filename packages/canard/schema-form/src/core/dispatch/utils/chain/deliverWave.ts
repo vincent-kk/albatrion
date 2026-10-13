@@ -1,4 +1,4 @@
-import type { SchemaNodeDelivery, SchemaNodeRecord } from '../../../record';
+import type { FieldNodeDelivery, FieldNodeRecord } from '../../../record';
 import { captureChainError } from './captureChainError';
 import { compareDocumentOrder } from './utils/compareDocumentOrder';
 
@@ -8,7 +8,7 @@ import { compareDocumentOrder } from './utils/compareDocumentOrder';
  * @param runtime - Runtime that owns the wave
  * @returns Whether the key can be delivered as this tree's node
  */
-const isWaveNode = <Self extends SchemaNodeRecord<Self>>(
+const isWaveNode = <Self extends FieldNodeRecord<Self>>(
   value: unknown,
   runtime: Self['runtime'],
 ): value is Self =>
@@ -22,15 +22,15 @@ const isWaveNode = <Self extends SchemaNodeRecord<Self>>(
  * @param pending - Event set removed from the runtime before callbacks run
  * @returns Nothing; callback failures append to the current chain
  */
-export const deliverWave = <Self extends SchemaNodeRecord<Self>>(
+export const deliverWave = <Self extends FieldNodeRecord<Self>>(
   root: Self,
-  pending: readonly (readonly [Self, SchemaNodeDelivery])[],
+  pending: readonly (readonly [Self, FieldNodeDelivery])[],
 ): void => {
   const runtime = root.runtime;
   const fixed: {
     node: Self;
-    event: SchemaNodeDelivery;
-    listeners: ((event: SchemaNodeDelivery) => void)[];
+    event: FieldNodeDelivery;
+    listeners: ((event: FieldNodeDelivery) => void)[];
   }[] = [];
   for (const [candidate, event] of pending) {
     if (!isWaveNode<Self>(candidate, runtime)) continue;

@@ -4,7 +4,7 @@ import { act, cleanup, render } from '@testing-library/react';
 import { afterEach, expect, it, vi } from 'vitest';
 
 import { Form, type FormHandle } from '@/schema-form/components/Form';
-import { type SchemaNode, ValidationMode } from '@/schema-form/core';
+import { type FieldNode, ValidationMode } from '@/schema-form/core';
 import type { FieldInputProps } from '@/schema-form/types';
 
 afterEach(() => {
@@ -38,7 +38,7 @@ it('WRITE-043 preserves explicit undefined when resetting a same-schema form', (
 
 it('ERROR-113 refuses core writes during committed buffered onError delivery', () => {
   vi.stubGlobal('reportError', vi.fn());
-  let node: SchemaNode;
+  let node: FieldNode;
   let failure: unknown;
   const Input = (props: FieldInputProps) => {
     node = props.node;

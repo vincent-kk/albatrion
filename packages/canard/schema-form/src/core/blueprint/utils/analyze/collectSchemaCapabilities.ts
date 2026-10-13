@@ -51,13 +51,9 @@ export const collectSchemaCapabilities = (
   const controls = record.controls;
   if (!controls) return;
   if (controls.discriminator !== undefined) capabilities.branchless = false;
-  const children = controls.children;
-  for (
-    let index = -1;
-    index < (isArray(children) ? children.length : 0);
-    index++
-  ) {
-    const group = index < 0 ? controls : children[index].controls;
+  const fields = controls.fields;
+  for (let index = -1; index < (isArray(fields) ? fields.length : 0); index++) {
+    const group = index < 0 ? controls : fields[index].controls;
     if (!group) continue;
     if (
       hasOwnProperty(group, 'default') ||

@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 
-import { SetValueOption } from '../../types/value';
-import { writeSchemaNode } from '../index';
+import { WriteOption } from '../../types/value';
+import { writeFieldNode } from '../index';
 import { createTestTree } from './fixtures/createTestTree';
 
 // filid:contract settle-discriminator-comparison
@@ -20,11 +20,11 @@ describe('판별 게이트의 엄격 비교', () => {
         },
       ],
     });
-    writeSchemaNode(
+    writeFieldNode(
       root,
       { kind: -0, payload: '선택됨' },
       'callerReplace',
-      SetValueOption.Overwrite,
+      WriteOption.Overwrite,
     );
     expect(root.structure?.kind?.emit).toBe(-0);
     expect(root.structure?.payload?.emit).toBe('선택됨');
@@ -49,11 +49,11 @@ describe('판별 게이트의 엄격 비교', () => {
         },
       ],
     });
-    writeSchemaNode(
+    writeFieldNode(
       root,
       { kind: value, payload: '선택됨' },
       'callerReplace',
-      SetValueOption.Overwrite,
+      WriteOption.Overwrite,
     );
     expect(root.structure?.payload?.emit).toBe('선택됨');
     expect(root.emit).toEqual({ kind: value, payload: '선택됨' });
@@ -80,20 +80,20 @@ describe('판별 게이트의 엄격 비교', () => {
         },
       ],
     });
-    writeSchemaNode(
+    writeFieldNode(
       root,
       { kind: 1, numeric: '수', textual: '문자열' },
       'callerReplace',
-      SetValueOption.Overwrite,
+      WriteOption.Overwrite,
     );
     expect(root.structure?.numeric?.emit).toBe('수');
     expect(root.structure?.textual).toBeUndefined();
     expect(root.emit).toEqual({ kind: 1, numeric: '수' });
-    writeSchemaNode(
+    writeFieldNode(
       root,
       { kind: '1', numeric: '수', textual: '문자열' },
       'callerReplace',
-      SetValueOption.Overwrite,
+      WriteOption.Overwrite,
     );
     expect(root.structure?.numeric).toBeUndefined();
     expect(root.structure?.textual?.emit).toBe('문자열');
@@ -121,11 +121,11 @@ describe('판별 게이트의 엄격 비교', () => {
         },
       ],
     });
-    writeSchemaNode(
+    writeFieldNode(
       root,
       { kind: NaN, nan: '숨김', finite: '숨김' },
       'callerReplace',
-      SetValueOption.Overwrite,
+      WriteOption.Overwrite,
     );
     expect(root.structure?.nan).toBeUndefined();
     expect(root.structure?.finite).toBeUndefined();

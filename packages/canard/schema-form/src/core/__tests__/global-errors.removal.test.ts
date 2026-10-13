@@ -1,13 +1,13 @@
 import { describe, expect, it } from 'vitest';
 
 import {
-  type SchemaNode,
+  type FieldNode,
   ValidationMode,
   isArrayNode,
   nodeFromJSONSchema,
 } from '../index';
 
-const createRoot = (): SchemaNode =>
+const createRoot = (): FieldNode =>
   nodeFromJSONSchema({
     jsonSchema: {
       type: 'object',

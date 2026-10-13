@@ -1,5 +1,5 @@
-import { captureSchemaNodeChange } from '../../../record';
-import type { SchemaNodeRecord } from '../../../record';
+import { captureFieldNodeChange } from '../../../record';
+import type { FieldNodeRecord } from '../../../record';
 import type { SettlementContext } from '../../type';
 import { updateOutput } from './updateOutput';
 
@@ -9,12 +9,12 @@ import { updateOutput } from './updateOutput';
  * @param context - Settlement-local deferred assembly queue
  * @returns Whether a queued host was assembled
  */
-export const flushPendingOutput = <Self extends SchemaNodeRecord<Self>>(
+export const flushPendingOutput = <Self extends FieldNodeRecord<Self>>(
   node: Self,
   context: SettlementContext<Self>,
 ): boolean => {
   if (!context.pendingOutputs?.delete(node)) return false;
-  node.children = captureSchemaNodeChange(
+  node.children = captureFieldNodeChange(
     node,
     'children',
     Object.values(node.structure ?? {}),

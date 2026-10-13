@@ -5,7 +5,7 @@ import type {
   BlueprintGate,
   BlueprintNodeKind,
 } from '../../../blueprint';
-import type { SchemaNodeRecord } from '../../../record';
+import type { FieldNodeRecord } from '../../../record';
 import { resolveDependencyPath } from '../paths/resolveDependencyPath';
 import { getGateExpression } from './getGateExpression';
 import { resolveGateOccurrence } from './resolveGateOccurrence';
@@ -91,7 +91,7 @@ class GateRegistry {
   }
 
   /** Register template and direct-edge gates when an occurrence is created. */
-  register<Self extends SchemaNodeRecord<Self>>(node: Self): void {
+  register<Self extends FieldNodeRecord<Self>>(node: Self): void {
     if (this.byPath.get(node.path)?.node === node) return;
     this.removePath(node.path);
     const memo = new Map<BlueprintGate, RegisteredGateOccurrence>();
@@ -141,7 +141,7 @@ class GateRegistry {
   }
 
   /** Find or bind a gate inherited indirectly by a declaration. */
-  locate<Self extends SchemaNodeRecord<Self>>(
+  locate<Self extends FieldNodeRecord<Self>>(
     node: Self,
     gate: BlueprintGate,
     edgeName?: string,
@@ -205,14 +205,14 @@ class GateRegistry {
   }
 
   /** Forget a detached subtree's location entries; a virtual node's referenced siblings stay. */
-  remove<Self extends SchemaNodeRecord<Self>>(node: Self): void {
+  remove<Self extends FieldNodeRecord<Self>>(node: Self): void {
     for (const child of node.children ?? [])
       if (child.parent === node) this.remove(child);
     if (this.byPath.get(node.path)?.node === node) this.removePath(node.path);
   }
 
   /** Index one gate only once for this occurrence. */
-  private add<Self extends SchemaNodeRecord<Self>>(
+  private add<Self extends FieldNodeRecord<Self>>(
     node: Self,
     gate: BlueprintGate,
     memo: Map<BlueprintGate, RegisteredGateOccurrence>,

@@ -1,8 +1,8 @@
 import { describe, expect, it, vi } from 'vitest';
 
 import type { BlueprintSchema } from '../../blueprint';
-import { SetValueOption } from '../../types/value';
-import { loadSchemaNodeAtMount } from '../index';
+import { WriteOption } from '../../types/value';
+import { loadFieldNodeAtMount } from '../index';
 import { createTestTree } from './fixtures/createTestTree';
 
 // filid:contract settle-state-keys
@@ -20,7 +20,7 @@ describe('context state keys', () => {
     const find = vi.spyOn(Array.prototype, 'find');
     const builds = vi.spyOn(Array.prototype, 'map');
     try {
-      loadSchemaNodeAtMount(root, {}, SetValueOption.Overwrite);
+      loadFieldNodeAtMount(root, {}, WriteOption.Overwrite);
       expect(
         find.mock.contexts.filter((target) => target === blueprint.expressions),
       ).toHaveLength(0);
@@ -35,19 +35,17 @@ describe('context state keys', () => {
     }
   });
 
-  it('CONTROLS-073 evaluates a children item once for all addressed siblings', () => {
+  it('CONTROLS-073 evaluates a fields entry once for all addressed siblings', () => {
     const { root } = createTestTree({
       type: 'object',
       controls: {
-        children: [
-          { targets: ['a', 'b'], controls: { readOnly: '@.locked()' } },
-        ],
+        fields: [{ targets: ['a', 'b'], controls: { readOnly: '@.locked()' } }],
       },
       properties: { a: { type: 'string' }, b: { type: 'string' } },
     });
     const locked = vi.fn(() => true);
     root.runtime.context = { locked };
-    loadSchemaNodeAtMount(root, { a: 'a', b: 'b' }, SetValueOption.Overwrite);
+    loadFieldNodeAtMount(root, { a: 'a', b: 'b' }, WriteOption.Overwrite);
     expect(locked).toHaveBeenCalledTimes(1);
     expect([root.structure?.a?.readOnly, root.structure?.b?.readOnly]).toEqual([
       true,
@@ -68,7 +66,7 @@ describe('context state keys', () => {
       },
     };
     expect(() =>
-      loadSchemaNodeAtMount(root, { child: 'c' }, SetValueOption.Overwrite),
+      loadFieldNodeAtMount(root, { child: 'c' }, WriteOption.Overwrite),
     ).toThrow();
     expect(root.runtime.diagnostics).toMatchObject({
       status: 'degraded',

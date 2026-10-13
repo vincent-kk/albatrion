@@ -27,7 +27,7 @@ import {
   Form,
   FormProvider,
   registerPlugin,
-  useChildNodeErrors,
+  useChildFieldErrors,
 } from '@/schema-form';
 
 import { renderForm, setupValidatorPlugin } from '../renderForm';
@@ -187,13 +187,13 @@ describe('features — input-components consumer-only', () => {
     }
   });
 
-  it('a card input draws ChildNodeComponents and useChildNodeErrors reports showErrors by child state', async () => {
+  it('a card input draws ChildFields and useChildFieldErrors reports showErrors by child state', async () => {
     const scenario = scenarioNamed('input-components.child-components');
-    const Card = ({ path, node, ChildNodeComponents }: FieldInputProps) => {
-      const { showErrors, errorMatrix } = useChildNodeErrors(node);
-      return <div id={path} data-card-fields={ChildNodeComponents.map((Child) => Child.field).join(',')}
+    const Card = ({ path, node, ChildFields }: FieldInputProps) => {
+      const { showErrors, errorMatrix } = useChildFieldErrors(node);
+      return <div id={path} data-card-fields={ChildFields.map((Child) => Child.field).join(',')}
         data-show-errors={JSON.stringify(showErrors)} data-error-counts={JSON.stringify(errorMatrix.map((errors) => errors.length))}>
-        {ChildNodeComponents.map((Child) => <Child key={Child.field} />)}
+        {ChildFields.map((Child) => <Child key={Child.field} />)}
       </div>;
     };
     const form = await renderForm(scenario.schema as JSONSchema, { defaultValue: scenario.initialValue, validator: true,

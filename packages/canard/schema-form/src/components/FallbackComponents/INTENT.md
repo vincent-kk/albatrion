@@ -9,7 +9,7 @@ JSON Schema 기반 폼 렌더링 시스템의 기본(fallback) 렌더러 컴포�
 ```
 FallbackComponents/
   FormErrorRenderer.tsx   — 에러 메시지를 <em>으로 표시
-  FormGroupRenderer.tsx   — fieldset/div 기반 그룹 레이아웃
+  FormFieldRenderer.tsx   — fieldset/div 기반 그룹 레이아웃
   FormInputRenderer.tsx   — Input 컴포넌트를 그대로 렌더링
   FormLabelRenderer.tsx   — 노드 이름을 텍스트로 반환
   index.ts                — 4개 컴포넌트 re-export
@@ -20,7 +20,7 @@ FallbackComponents/
 - TypeScript + React (TSX), 함수형 컴포넌트
 - 모든 컴포넌트는 `FieldRendererProps`를 props 타입으로 사용
 - 스타일은 인라인 style 객체로 최소한만 적용 (depth 기반 들여쓰기)
-- `FormGroupRenderer`는 `node.group === 'branch'`에 따라 fieldset/div를 분기
+- `FormFieldRenderer`는 `node.group === 'branch'`에 따라 fieldset/div를 분기
 - 배열 항목의 경우 label을 숨김 (`isArraySchema(node.parentNode)` 체크)
 
 ## Boundaries
@@ -29,7 +29,7 @@ FallbackComponents/
 
 - `FieldRendererProps` 타입을 props 인터페이스로 준수
 - `Input` prop을 `<Input />`으로 렌더링하여 실제 입력 위임
-- depth 0(루트)인 경우 `<Input />`만 렌더링 (FormGroupRenderer)
+- depth 0(루트)인 경우 `<Input />`만 렌더링 (FormFieldRenderer)
 
 ### Ask first
 

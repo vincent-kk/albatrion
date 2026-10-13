@@ -1,6 +1,6 @@
 import { NON_JSON_WHOLE_VALUE, TYPE_MISMATCH } from '../../../../errors';
-import type { SchemaNodeRecord, TypeMismatchRecord } from '../../../record';
-import { indexSchemaNodeWarning } from '../../../record';
+import type { FieldNodeRecord, TypeMismatchRecord } from '../../../record';
+import { indexFieldNodeWarning } from '../../../record';
 import { PathKeyedMap } from '../../../utils/pathIndex/PathKeyedMap';
 import type { SettlementContext } from '../../type';
 import { getCommittedDeclarationKey } from '../controls/getCommittedDeclarationKey';
@@ -27,7 +27,7 @@ const EMPTY_WARNINGS: readonly TypeMismatchRecord[] = Object.freeze([]);
  * @param context - Completed calculation including any deferred failure
  * @returns Nothing; all committed observations live on records and runtime
  */
-export const commitSettlement = <Self extends SchemaNodeRecord<Self>>(
+export const commitSettlement = <Self extends FieldNodeRecord<Self>>(
   context: SettlementContext<Self>,
 ): void => {
   const runtime = context.root.runtime;
@@ -146,7 +146,7 @@ export const commitSettlement = <Self extends SchemaNodeRecord<Self>>(
               source: warning.source,
             },
           } as const;
-          indexSchemaNodeWarning(
+          indexFieldNodeWarning(
             runtime,
             JSON.stringify([code, node.path, commit]),
             node.path,
@@ -175,7 +175,7 @@ export const commitSettlement = <Self extends SchemaNodeRecord<Self>>(
               message: `Whole value at ${node.path} contains non-JSON data`,
               details: { path: node.path, innerPaths },
             } as const;
-            indexSchemaNodeWarning(runtime, key, node.path, record);
+            indexFieldNodeWarning(runtime, key, node.path, record);
             runtime.chainOccurrences?.push({ kind: 'record', record });
           }
         }

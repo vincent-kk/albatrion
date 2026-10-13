@@ -1,5 +1,5 @@
 import { find } from '../../../navigation';
-import type { SchemaNodeRecord } from '../../../record';
+import type { FieldNodeRecord } from '../../../record';
 import { getGateRegistry } from '../gates/getGateRegistry';
 
 /**
@@ -7,7 +7,7 @@ import { getGateRegistry } from '../gates/getGateRegistry';
  * @param node - Detached reference rooted in the current tree runtime
  * @returns True when the current shape owns its exact path and kind
  */
-export const hasLivePathKind = <Self extends SchemaNodeRecord<Self>>(
+export const hasLivePathKind = <Self extends FieldNodeRecord<Self>>(
   node: Self,
 ): boolean => {
   const indexed = getGateRegistry(node.runtime).hasRegisteredPathKind(

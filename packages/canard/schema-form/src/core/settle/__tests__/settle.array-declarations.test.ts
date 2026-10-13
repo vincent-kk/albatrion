@@ -1,19 +1,19 @@
 import { describe, expect, it } from 'vitest';
 
-import { setContext } from '../../SchemaNode';
-import { SchemaNode } from '../../SchemaNode/SchemaNode';
+import { setContext } from '../../FieldNode';
+import { FieldNode } from '../../FieldNode/FieldNode';
 import { createTestValidator } from '../../__tests__/fixtures/createTestValidator';
-import { makeSchemaNodeTree } from '../../__tests__/makeSchemaNodeTree';
+import { makeFieldNodeTree } from '../../__tests__/makeFieldNodeTree';
 
 // filid:contract settle-array
 describe('array item declarations', () => {
-  it('35C-08 CONTROLS-073 binds visible, readOnly, and children controls to each item', () => {
-    const { root } = makeSchemaNodeTree({
+  it('35C-08 CONTROLS-073 binds visible, readOnly, and fields controls to each item', () => {
+    const { root } = makeFieldNodeTree({
       type: 'array',
       items: {
         type: 'object',
         controls: {
-          children: [{ targets: ['x'], controls: { disabled: './locked' } }],
+          fields: [{ targets: ['x'], controls: { disabled: './locked' } }],
         },
         properties: {
           kind: { type: 'string' },
@@ -48,7 +48,7 @@ describe('array item declarations', () => {
   });
 
   it('35C-08 SETTLE-045 applies an if/then gate only to the matching item', () => {
-    const { root } = makeSchemaNodeTree(
+    const { root } = makeFieldNodeTree(
       {
         type: 'array',
         items: {
@@ -72,7 +72,7 @@ describe('array item declarations', () => {
   });
 
   it('35C-08 VALUE-034 exits an inactive item but keeps its array slot', () => {
-    const { root } = makeSchemaNodeTree({
+    const { root } = makeFieldNodeTree({
       type: 'object',
       properties: {
         showSecond: { type: 'boolean' },
@@ -101,7 +101,7 @@ describe('array item declarations', () => {
   });
 
   it('35C-08 WRITE-031 binds an exiting item policy to its own slot', () => {
-    const { root } = makeSchemaNodeTree({
+    const { root } = makeFieldNodeTree({
       type: 'object',
       properties: {
         showSecond: { type: 'boolean' },
@@ -131,7 +131,7 @@ describe('array item declarations', () => {
   });
 
   it('35C-08 WRITE-031 keeps exit policy expression keys separate per item', () => {
-    const { root } = makeSchemaNodeTree({
+    const { root } = makeFieldNodeTree({
       type: 'array',
       items: {
         type: 'object',
@@ -161,7 +161,7 @@ describe('array item declarations', () => {
   });
 
   it('18C-13 35C-08 invalidates absolute and relative readers of another item', () => {
-    const { root } = makeSchemaNodeTree({
+    const { root } = makeFieldNodeTree({
       type: 'object',
       properties: {
         arr: {
@@ -199,7 +199,7 @@ describe('array item declarations', () => {
   });
 
   it('35C-08 CONTROLS-080 reads the emitted array length from an item', () => {
-    const { root } = makeSchemaNodeTree({
+    const { root } = makeFieldNodeTree({
       type: 'array',
       items: {
         type: 'object',
@@ -213,8 +213,8 @@ describe('array item declarations', () => {
         },
       },
     });
-    if (!(root instanceof SchemaNode))
-      throw new Error('Expected a runtime SchemaNode');
+    if (!(root instanceof FieldNode))
+      throw new Error('Expected a runtime FieldNode');
     const array = root;
     root.setValue([{ marker: 'a' }, { marker: 'b' }]);
     expect(root.find('/0/marker')?.visible).toBe(true);
@@ -224,7 +224,7 @@ describe('array item declarations', () => {
   });
 
   it('35C-08 CONTROLS-080 rebinds item declarations after remove and push', () => {
-    const { root } = makeSchemaNodeTree({
+    const { root } = makeFieldNodeTree({
       type: 'array',
       items: {
         type: 'object',
@@ -234,8 +234,8 @@ describe('array item declarations', () => {
         },
       },
     });
-    if (!(root instanceof SchemaNode))
-      throw new Error('Expected a runtime SchemaNode');
+    if (!(root instanceof FieldNode))
+      throw new Error('Expected a runtime FieldNode');
     const array = root;
     root.setValue([
       { kind: 'hide', x: 'A' },
@@ -254,7 +254,7 @@ describe('array item declarations', () => {
   });
 
   it('35C-08 binds each nested array template segment to its own index', () => {
-    const { root } = makeSchemaNodeTree({
+    const { root } = makeFieldNodeTree({
       type: 'array',
       items: {
         type: 'array',
@@ -281,7 +281,7 @@ describe('array item declarations', () => {
   });
 
   it('35C-08 SETTLE-045 keeps gate registrations bound after remove and push', () => {
-    const { root } = makeSchemaNodeTree({
+    const { root } = makeFieldNodeTree({
       type: 'array',
       items: {
         type: 'object',
@@ -291,8 +291,8 @@ describe('array item declarations', () => {
         },
       },
     });
-    if (!(root instanceof SchemaNode))
-      throw new Error('Expected a runtime SchemaNode');
+    if (!(root instanceof FieldNode))
+      throw new Error('Expected a runtime FieldNode');
     const array = root;
     root.setValue([
       { kind: 'off', gated: 'A' },
@@ -307,7 +307,7 @@ describe('array item declarations', () => {
   });
 
   it('35C-08 CONTROLS-080 expands @ owners for every live item', () => {
-    const { root } = makeSchemaNodeTree({
+    const { root } = makeFieldNodeTree({
       type: 'array',
       items: {
         type: 'object',

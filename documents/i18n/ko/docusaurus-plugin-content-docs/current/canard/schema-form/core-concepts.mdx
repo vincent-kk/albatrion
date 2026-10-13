@@ -34,8 +34,8 @@ const schema = {
 
 ## Node Tree
 
-각 노드는 자체 값, 검증 오류, `node.state`의 상호작용 플래그(`SchemaNodeState`
-키: `Dirty`, `Touched`, `ShowError`)를 소유하는 반응형 객체입니다. 변경 사항은 위로 전파됩니다: 리프 노드의 값이 변경되면
+각 노드는 자체 값, 검증 오류, `node.state`의 상호작용 플래그(`FieldNodeState`
+키: `Dirty`, `Touched`, `ErrorVisible`)를 소유하는 반응형 객체입니다. 변경 사항은 위로 전파됩니다: 리프 노드의 값이 변경되면
 모든 상위 노드가 `UpdateValue` 이벤트를 받고 집계된 값을 업데이트합니다.
 
 ### Node State Flags
@@ -46,7 +46,7 @@ const schema = {
 | `outputValue`  | `unknown`                    | Emitted value after output filters                                             |
 | `defaultValue` | `unknown`                    | Value at initialization                                                        |
 | `errors`       | `readonly ValidationIssue[]` | Validation issues for this node                                                |
-| `state`        | `NodeStateFlags`             | Interaction flags keyed by `SchemaNodeState` (`Dirty`, `Touched`, `ShowError`) |
+| `state`        | `NodeStateFlags`             | Interaction flags keyed by `FieldNodeState` (`Dirty`, `Touched`, `ErrorVisible`) |
 | `visible`      | `boolean`                    | From `controls.visible`                                                        |
 | `active`       | `boolean`                    | From `controls.active`                                                         |
 | `readOnly`     | `boolean`                    | From `controls.readOnly`, the standard `readOnly`, or inherited                |
@@ -118,8 +118,8 @@ const definition: FieldInputDefinition = {
   Component: RichTextEditor,
 };
 
-// Hint object available in test function:
-type Hint = {
+// FieldInputHint object available in test function:
+type FieldInputHint = {
   type: JSONSchemaType;       // 'string' | 'number' | 'boolean' | ...
   path: string;               // JSONPointer path
   required: boolean;
@@ -307,11 +307,11 @@ interface ValidationIssue {
 예외로, 초기화 완료 후 동기적으로 발생합니다(즉시 모드).
 
 ```ts
-// Key event types (SchemaNodeEventType enum)
+// Key event types (FieldNodeEventType enum)
 UpdateValue; // value changed — synchronous after init
 UpdateState; // interaction flags (node.state) changed
 UpdateError; // validation errors changed
-UpdateComputedProperties; // controls state or watched values changed
+UpdateControlledProperties; // controls state or watched values changed
 UpdateChildren; // array/object children added or removed
 RequestRefresh; // internal: sync uncontrolled component
 RequestRemount; // external: force full component remount
@@ -323,7 +323,7 @@ RequestRemount; // external: force full component remount
 
 | Term                                                     | Definition                                                                                                               |
 | -------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------ |
-| `SchemaNode`                                             | Base interface for all nodes — the public API surface                                                                    |
+| `FieldNode`                                             | Base interface for all nodes — the public API surface                                                                    |
 | `StringNode` / `NumberNode` / `BooleanNode` / `NullNode` | Terminal nodes — no children                                                                                             |
 | `ObjectNode` / `ArrayNode`                               | Branch nodes — have children                                                                                             |
 | `VirtualNode`                                            | Groups sibling fields declared in `options.virtual` into one input                                                       |
@@ -340,7 +340,7 @@ RequestRemount; // external: force full component remount
 | `outputValue`                                            | Emitted value after output filters — what parents, validation, and `onChange` see                                        |
 | `ShowError`                                              | Enum controlling when validation errors are displayed                                                                    |
 | `ValidationMode`                                         | Enum controlling when validation runs                                                                                    |
-| `SchemaNodeEventType`                                    | Enum of all events nodes can emit                                                                                        |
+| `FieldNodeEventType`                                    | Enum of all events nodes can emit                                                                                        |
 | `SetValueOption`                                         | Bitwise options for `setValue()` — `Overwrite`, `Merge`, `DisableAutomaticWrites`, `EnableAutomaticWrites`               |
 | `FormHandle`                                             | Ref interface for imperative form control                                                                                |
 | `FormProvider`                                           | Context provider for sharing plugin config across a subtree                                                              |

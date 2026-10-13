@@ -1,6 +1,6 @@
 import { JSONSchemaError, SchemaFormError } from '../../../../errors';
 import type { FormErrorRecord } from '../../../../errors';
-import type { SchemaNodeRuntime } from '../../../record';
+import type { FieldNodeRuntime } from '../../../record';
 import { createFormErrorRecord } from './createFormErrorRecord';
 import { readFormErrorCode } from './readFormErrorCode';
 
@@ -15,7 +15,7 @@ import { readFormErrorCode } from './readFormErrorCode';
  */
 export const collectChainRecords = (
   pending: FormErrorRecord[],
-  occurrences: NonNullable<SchemaNodeRuntime<unknown>['chainOccurrences']>,
+  occurrences: NonNullable<FieldNodeRuntime<unknown>['chainOccurrences']>,
   aggregate: SchemaFormError | undefined,
   surface: 'thrown' | 'sink',
   reported: ReadonlySet<string> | undefined,

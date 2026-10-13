@@ -33,7 +33,7 @@ export const populateNodeChildren = (
     if (
       declaration.context === 'conjunction' &&
       declaration.gates.length === 0 &&
-      !schema.controls?.children?.length &&
+      !schema.controls?.fields?.length &&
       schema.properties &&
       typeof schema.properties === 'object'
     ) {
@@ -82,8 +82,8 @@ export const populateNodeChildren = (
   >();
   const itemInputs: SchemaInput[] = [];
   const tuples = new Map<number, SchemaInput[]>();
-  const childrenControls = node.declarations.flatMap((owner) =>
-    (readSchemaObject(owner.schema).controls?.children ?? []).map(
+  const fieldControls = node.declarations.flatMap((owner) =>
+    (readSchemaObject(owner.schema).controls?.fields ?? []).map(
       (
         entry: { targets: string[]; controls?: Record<string, unknown> },
         index: number,
@@ -94,7 +94,7 @@ export const populateNodeChildren = (
             ? undefined
             : createBlueprintGate({
                 kind: 'active' as const,
-                schemaPath: `${owner.schemaPath}/controls/children/${index}/controls/active`,
+                schemaPath: `${owner.schemaPath}/controls/fields/${index}/controls/active`,
                 hostPath: node.path,
                 condition: entry.controls.active,
                 ...(owner.gates.length ? { appliesWhen: owner.gates } : {}),
@@ -135,7 +135,7 @@ export const populateNodeChildren = (
           schemaPath: `${declaration.schemaPath}/properties/${escapedName}`,
           order: [...declaration.order, 0, index],
         };
-        const entryGates = childrenControls
+        const entryGates = fieldControls
           .filter(
             ({ entry, gate }) =>
               entry.targets.includes(name) && gate !== undefined,

@@ -1,5 +1,5 @@
 import { SchemaFormError, WRITE_IN_OBSERVER } from '../../../../errors';
-import type { SchemaNodeRuntime } from '../../../record';
+import type { FieldNodeRuntime } from '../../../record';
 
 /**
  * Refuse a synchronous write to the form whose error reporter is active.
@@ -8,7 +8,7 @@ import type { SchemaNodeRuntime } from '../../../record';
  * @throws WRITE_IN_OBSERVER before the write can join a chain
  */
 export const assertNotInDelivery = (
-  runtime: Pick<SchemaNodeRuntime<unknown>, 'reportingErrors'>,
+  runtime: Pick<FieldNodeRuntime<unknown>, 'reportingErrors'>,
 ): void => {
   if (runtime.reportingErrors)
     throw new SchemaFormError(

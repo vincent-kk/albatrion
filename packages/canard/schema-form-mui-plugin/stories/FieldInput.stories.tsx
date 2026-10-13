@@ -268,13 +268,13 @@ Array.args = {
     items: {
       type: 'string',
       default: 'ARRAY_ITEM',
-      disabled: true,
+      controls: { disabled: true },
       presentation: {
         FieldInput: FieldInputStringDefinition.Component,
       },
     },
     minItems: 3,
-    terminal: false,
+    options: { terminal: false },
     presentation: {
       FieldInput: FieldInputArrayDefinition.Component,
     },

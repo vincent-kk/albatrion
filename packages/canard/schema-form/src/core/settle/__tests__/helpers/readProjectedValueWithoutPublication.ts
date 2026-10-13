@@ -1,6 +1,6 @@
 import { hasOwnProperty } from '@winglet/common-utils/lib';
 
-import type { SchemaNodeRecord } from '../../../record';
+import type { FieldNodeRecord } from '../../../record';
 import type { SettlementContext } from '../../type';
 
 /**
@@ -11,7 +11,7 @@ import type { SettlementContext } from '../../type';
  * @throws Error when a consumed or baseline-published node has a pending output
  */
 export const readProjectedValueWithoutPublication = <
-  Self extends SchemaNodeRecord<Self>,
+  Self extends FieldNodeRecord<Self>,
 >(
   context: SettlementContext<Self>,
   path: string,
@@ -74,11 +74,11 @@ export const readProjectedValueWithoutPublication = <
         }
       if (
         !declared &&
-        node.extras !== null &&
-        typeof node.extras === 'object' &&
-        hasOwnProperty(node.extras, name)
+        node.undeclaredValues !== null &&
+        typeof node.undeclaredValues === 'object' &&
+        hasOwnProperty(node.undeclaredValues, name)
       )
-        value = Reflect.get(node.extras, name);
+        value = Reflect.get(node.undeclaredValues, name);
       else return undefined;
     }
   }

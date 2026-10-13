@@ -1,7 +1,7 @@
 import { describe, expect, it, vi } from 'vitest';
 
-import { SchemaNodeEventType } from '../../record';
-import { SchemaNodeState } from '../../types/state';
+import { FieldNodeEventType } from '../../record';
+import { FieldNodeState } from '../../types/state';
 import * as dispatch from '../index';
 import { createDispatchTree } from './fixtures/createDispatchTree';
 import { getDispatchChild } from './fixtures/getDispatchChild';
@@ -19,7 +19,7 @@ describe('binding load lifetime', () => {
     const next = createDispatchTree({ type: 'string' }, 'new');
     expect(() =>
       dispatch.dispatchWriteInput(previous.root, () => {
-        dispatch.adoptSchemaNodeChain(previous.root, next.root);
+        dispatch.adoptFieldNodeChain(previous.root, next.root);
         dispatch.dispatchMount(next.root);
         return 'late';
       }),
@@ -57,14 +57,14 @@ describe('binding load lifetime', () => {
     const previous = createDispatchTree({ type: 'string' }, 'old', validator);
     dispatch.dispatchMount(previous.root);
     const next = createDispatchTree({ type: 'string' });
-    dispatch.adoptSchemaNodeChain(previous.root, next.root);
-    const revision = dispatch.readSchemaNodeRevision(previous.root);
+    dispatch.adoptFieldNodeChain(previous.root, next.root);
+    const revision = dispatch.readFieldNodeRevision(previous.root);
     expect(await dispatch.dispatchValidate(previous.root)).toEqual([
       { dataPath: '', message: 'new error' },
     ]);
     expect(validate).toHaveBeenCalledWith('old');
     expect(previous.runtime.validationErrors?.size ?? 0).toBe(0);
-    expect(dispatch.readSchemaNodeRevision(previous.root)).toBe(revision);
+    expect(dispatch.readFieldNodeRevision(previous.root)).toBe(revision);
   });
 
   it('WRITE-045 form reset clears external and validation errors', () => {
@@ -87,7 +87,7 @@ describe('binding load lifetime', () => {
     const errors = [{ dataPath: '/child', message: 'external' }];
     dispatch.dispatchSetExternalErrors(oldChild, errors);
     const next = createDispatchTree(schema);
-    dispatch.adoptSchemaNodeChain(previous.root, next.root);
+    dispatch.adoptFieldNodeChain(previous.root, next.root);
     dispatch.dispatchMount(next.root, { child: 'new' });
     expect(next.runtime.nodeErrors?.has(oldChild)).toBe(false);
     expect(
@@ -104,25 +104,19 @@ describe('binding load lifetime', () => {
     const children = previous.root.children;
     const listener = vi.fn();
     const counters = nodes.map((node) => {
-      dispatch.subscribeSchemaNode(node, listener);
+      dispatch.subscribeFieldNode(node, listener);
       return [
-        dispatch.readSchemaNodeRevision(
-          node,
-          SchemaNodeEventType.RequestRefresh,
-        ),
+        dispatch.readFieldNodeRevision(node, FieldNodeEventType.RequestRefresh),
         node.interactionReset,
       ];
     });
     const next = createDispatchTree(schema);
-    dispatch.adoptSchemaNodeChain(previous.root, next.root);
+    dispatch.adoptFieldNodeChain(previous.root, next.root);
     for (const [index, node] of nodes.entries()) {
       expect(node.disposed).toBe(true);
       expect(node.local).toBe(values[index]);
       expect(
-        dispatch.readSchemaNodeRevision(
-          node,
-          SchemaNodeEventType.RequestRefresh,
-        ),
+        dispatch.readFieldNodeRevision(node, FieldNodeEventType.RequestRefresh),
       ).toBe(counters[index][0] + 1);
       expect(node.interactionReset).toBe(counters[index][1] + 1);
     }
@@ -140,7 +134,7 @@ describe('binding load lifetime', () => {
     const previous = createDispatchTree(schema);
     dispatch.dispatchMount(previous.root, { child: 'old' });
     const child = getDispatchChild(previous.root, 'child');
-    dispatch.adoptSchemaNodeChain(
+    dispatch.adoptFieldNodeChain(
       previous.root,
       createDispatchTree(schema).root,
     );
@@ -152,7 +146,7 @@ describe('binding load lifetime', () => {
       }),
     );
     expect(() =>
-      dispatch.dispatchSetState(child, { [SchemaNodeState.Dirty]: true }),
+      dispatch.dispatchSetState(child, { [FieldNodeState.Dirty]: true }),
     ).toThrowError(
       expect.objectContaining({
         code: expect.stringContaining('DISPOSED_NODE_WRITE'),
@@ -175,7 +169,7 @@ describe('binding load lifetime', () => {
     expect(child.interactionReset).toBe(0);
     dispatch.dispatchClearSubtreeState(child);
     expect(child.interactionReset).toBe(1);
-    dispatch.dispatchSetState(child, { [SchemaNodeState.Touched]: true });
+    dispatch.dispatchSetState(child, { [FieldNodeState.Touched]: true });
     dispatch.dispatchSetValue(getDispatchChild(root, 'clear'), true);
     expect(child.interactionReset).toBe(2);
     dispatch.dispatchResetForm(root, { clear: false, child: 'base' });

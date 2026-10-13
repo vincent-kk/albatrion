@@ -1,7 +1,7 @@
 import { describe, expect, it, vi } from 'vitest';
 
-import { SchemaNodeEventType } from '../../record';
-import { SchemaNodeState, ValidationMode } from '../../types/state';
+import { FieldNodeEventType } from '../../record';
+import { FieldNodeState, ValidationMode } from '../../types/state';
 import {
   dispatchBatch,
   dispatchClearSubtreeState,
@@ -9,8 +9,8 @@ import {
   dispatchSetState,
   dispatchSetSubtreeState,
   dispatchSetValue,
-  readSchemaNodeRevision,
-  subscribeSchemaNode,
+  readFieldNodeRevision,
+  subscribeFieldNode,
 } from '../index';
 import { createDispatchTree } from './fixtures/createDispatchTree';
 import { getDispatchChild } from './fixtures/getDispatchChild';
@@ -41,9 +41,9 @@ describe('dispatcher state events', () => {
         { source: 'a' },
       );
       dispatchSetValue(root, { source: 'a' });
-      const before = readSchemaNodeRevision(
+      const before = readFieldNodeRevision(
         root,
-        SchemaNodeEventType.UpdateState,
+        FieldNodeEventType.UpdateState,
       );
       duringReset = () => {
         if (kind === 'subtree') dispatchSetSubtreeState(root, { custom: true });
@@ -57,7 +57,7 @@ describe('dispatcher state events', () => {
         kind === 'subtree' ? 2 : kind === 'clear' ? 0 : 1,
       );
       expect(
-        readSchemaNodeRevision(root, SchemaNodeEventType.UpdateState) - before,
+        readFieldNodeRevision(root, FieldNodeEventType.UpdateState) - before,
       ).toBe(1);
       dispatchClearSubtreeState(root);
       expect(runtime.globalStateCounts.has('custom')).toBe(false);
@@ -75,22 +75,20 @@ describe('dispatcher state events', () => {
     const before = runtime.commitNumber;
     const validationStamp = runtime.validationStamp;
     const seen: number[] = [];
-    subscribeSchemaNode(root, (event) => seen.push(event.type));
+    subscribeFieldNode(root, (event) => seen.push(event.type));
 
-    dispatchSetState(root, { [SchemaNodeState.Dirty]: true });
+    dispatchSetState(root, { [FieldNodeState.Dirty]: true });
 
-    expect(root.interactionState[SchemaNodeState.Dirty]).toBe(true);
+    expect(root.interactionState[FieldNodeState.Dirty]).toBe(true);
     expect(root.raw).toBeUndefined();
     expect(root.emit).toBeUndefined();
     expect(runtime.commitNumber).toBe(before);
     expect(seen).toEqual([
-      SchemaNodeEventType.UpdateState | SchemaNodeEventType.UpdateGlobalState,
+      FieldNodeEventType.UpdateState | FieldNodeEventType.UpdateGlobalState,
     ]);
-    expect(readSchemaNodeRevision(root, SchemaNodeEventType.UpdateState)).toBe(
-      1,
-    );
+    expect(readFieldNodeRevision(root, FieldNodeEventType.UpdateState)).toBe(1);
     expect(
-      readSchemaNodeRevision(root, SchemaNodeEventType.UpdateGlobalState),
+      readFieldNodeRevision(root, FieldNodeEventType.UpdateGlobalState),
     ).toBe(1);
     expect(onStateChange).toHaveBeenCalledTimes(1);
     expect(onChange).not.toHaveBeenCalled();
@@ -109,23 +107,23 @@ describe('dispatcher state events', () => {
     const seen: string[] = [];
     const onStateChange = vi.fn();
     runtime.onStateChange = onStateChange;
-    subscribeSchemaNode(root, (event) => {
-      if (event.type & SchemaNodeEventType.UpdateValue) seen.push('settle');
+    subscribeFieldNode(root, (event) => {
+      if (event.type & FieldNodeEventType.UpdateValue) seen.push('settle');
     });
-    subscribeSchemaNode(child, (event) => {
-      if (event.type & SchemaNodeEventType.UpdateState) seen.push('state');
+    subscribeFieldNode(child, (event) => {
+      if (event.type & FieldNodeEventType.UpdateState) seen.push('state');
     });
 
     dispatchBatch(root, () => {
-      dispatchSetState(child, { [SchemaNodeState.Dirty]: true });
-      dispatchSetState(child, { [SchemaNodeState.Touched]: true });
+      dispatchSetState(child, { [FieldNodeState.Dirty]: true });
+      dispatchSetState(child, { [FieldNodeState.Touched]: true });
       dispatchSetValue(root, { child: 'new' });
       expect(seen).toEqual([]);
     });
 
     expect(seen).toEqual(['settle', 'state']);
     expect(onStateChange).toHaveBeenCalledTimes(1);
-    expect(readSchemaNodeRevision(child, SchemaNodeEventType.UpdateState)).toBe(
+    expect(readFieldNodeRevision(child, FieldNodeEventType.UpdateState)).toBe(
       1,
     );
   });
@@ -142,24 +140,22 @@ describe('dispatcher state events', () => {
     const first = getDispatchChild(root, 'first');
     const second = getDispatchChild(root, 'second');
 
-    dispatchSetSubtreeState(first, { [SchemaNodeState.Dirty]: true });
-    expect(first.interactionState[SchemaNodeState.Dirty]).toBe(true);
-    expect(second.interactionState[SchemaNodeState.Dirty]).toBeUndefined();
+    dispatchSetSubtreeState(first, { [FieldNodeState.Dirty]: true });
+    expect(first.interactionState[FieldNodeState.Dirty]).toBe(true);
+    expect(second.interactionState[FieldNodeState.Dirty]).toBeUndefined();
     dispatchClearSubtreeState(first);
-    expect(first.interactionState[SchemaNodeState.Dirty]).toBeUndefined();
+    expect(first.interactionState[FieldNodeState.Dirty]).toBeUndefined();
   });
 
   it('NODE-044 ignores state writes on a detached occurrence', () => {
     const { root } = createDispatchTree({ type: 'string' });
     root.detached = true;
     const before = root.interactionState;
-    dispatchSetState(root, { [SchemaNodeState.Dirty]: true });
-    dispatchSetSubtreeState(root, { [SchemaNodeState.Touched]: true });
+    dispatchSetState(root, { [FieldNodeState.Dirty]: true });
+    dispatchSetSubtreeState(root, { [FieldNodeState.Touched]: true });
     dispatchClearSubtreeState(root);
     expect(root.interactionState).toBe(before);
-    expect(readSchemaNodeRevision(root, SchemaNodeEventType.UpdateState)).toBe(
-      0,
-    );
+    expect(readFieldNodeRevision(root, FieldNodeEventType.UpdateState)).toBe(0);
   });
 
   it('NODE-044 treats a detached target as a no-op during report delivery', () => {
@@ -167,33 +163,33 @@ describe('dispatcher state events', () => {
     root.detached = true;
     runtime.reportingErrors = true;
     expect(() =>
-      dispatchSetState(root, { [SchemaNodeState.Dirty]: true }),
+      dispatchSetState(root, { [FieldNodeState.Dirty]: true }),
     ).not.toThrow();
     expect(() => dispatchClearSubtreeState(root)).not.toThrow();
-    expect(root.interactionState[SchemaNodeState.Dirty]).toBeUndefined();
+    expect(root.interactionState[FieldNodeState.Dirty]).toBeUndefined();
   });
 
   it('ERROR-029 refuses state writes while the error observer is active', () => {
     const { root, runtime } = createDispatchTree({ type: 'string' });
     runtime.reportingErrors = true;
     expect(() =>
-      dispatchSetState(root, { [SchemaNodeState.Dirty]: true }),
+      dispatchSetState(root, { [FieldNodeState.Dirty]: true }),
     ).toThrowError(
       expect.objectContaining({ code: 'SCHEMA_FORM_ERROR.WRITE_IN_OBSERVER' }),
     );
-    expect(root.interactionState[SchemaNodeState.Dirty]).toBeUndefined();
+    expect(root.interactionState[FieldNodeState.Dirty]).toBeUndefined();
   });
 
   it('EVENT-067 surfaces an onStateChange failure after state delivery', () => {
     const { root, runtime } = createDispatchTree({ type: 'string' });
     const failure = new Error('state observer');
     const seen = vi.fn();
-    subscribeSchemaNode(root, seen);
+    subscribeFieldNode(root, seen);
     runtime.onStateChange = () => {
       throw failure;
     };
     expect(() =>
-      dispatchSetState(root, { [SchemaNodeState.Dirty]: true }),
+      dispatchSetState(root, { [FieldNodeState.Dirty]: true }),
     ).toThrow(failure);
     expect(seen).toHaveBeenCalledTimes(1);
   });
@@ -202,17 +198,17 @@ describe('dispatcher state events', () => {
     const { root, runtime } = createDispatchTree({ type: 'string' });
     const seen: boolean[] = [];
     let callbacks = 0;
-    subscribeSchemaNode(root, (event) => {
-      if (event.type & SchemaNodeEventType.UpdateState)
-        seen.push(root.interactionState[SchemaNodeState.Touched] === true);
+    subscribeFieldNode(root, (event) => {
+      if (event.type & FieldNodeEventType.UpdateState)
+        seen.push(root.interactionState[FieldNodeState.Touched] === true);
     });
     runtime.onStateChange = () => {
       callbacks += 1;
       if (callbacks === 1)
-        dispatchSetState(root, { [SchemaNodeState.Touched]: true });
+        dispatchSetState(root, { [FieldNodeState.Touched]: true });
     };
     dispatchBatch(root, () =>
-      dispatchSetState(root, { [SchemaNodeState.Dirty]: true }),
+      dispatchSetState(root, { [FieldNodeState.Dirty]: true }),
     );
     expect(seen).toEqual([false, true]);
     expect(callbacks).toBe(2);
@@ -223,16 +219,16 @@ describe('dispatcher state events', () => {
     const { root, runtime } = createDispatchTree({ type: 'string' });
     const seen: boolean[] = [];
     let callbacks = 0;
-    subscribeSchemaNode(root, (event) => {
-      if (event.type & SchemaNodeEventType.UpdateState)
-        seen.push(root.interactionState[SchemaNodeState.Touched] === true);
+    subscribeFieldNode(root, (event) => {
+      if (event.type & FieldNodeEventType.UpdateState)
+        seen.push(root.interactionState[FieldNodeState.Touched] === true);
     });
     runtime.onStateChange = () => {
       callbacks += 1;
       if (callbacks === 1)
-        dispatchSetState(root, { [SchemaNodeState.Touched]: true });
+        dispatchSetState(root, { [FieldNodeState.Touched]: true });
     };
-    dispatchSetState(root, { [SchemaNodeState.Dirty]: true });
+    dispatchSetState(root, { [FieldNodeState.Dirty]: true });
     expect(seen).toEqual([false, true]);
     expect(callbacks).toBe(2);
   });

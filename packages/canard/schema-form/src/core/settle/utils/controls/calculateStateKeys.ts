@@ -1,5 +1,5 @@
 import { getFeatureNodeIndex } from '../../../blueprint';
-import type { SchemaNodeRecord } from '../../../record';
+import type { FieldNodeRecord } from '../../../record';
 import { getControlExpression } from './getControlExpression';
 import { getControlLayers } from './getControlLayers';
 import { readStateDependency } from './readStateDependency';
@@ -50,7 +50,7 @@ export interface CalculatedStateKeys<Self> {
  * @param expandFrom - Whether this host's declarations may affect direct children
  * @returns Local values and all expression failures, without mutating records
  */
-export const calculateStateKeys = <Self extends SchemaNodeRecord<Self>>(
+export const calculateStateKeys = <Self extends FieldNodeRecord<Self>>(
   root: Self,
   stateDirtyNodes: ReadonlySet<Self>,
   selectedDeclarationIds: ReadonlyMap<Self, readonly number[]>,

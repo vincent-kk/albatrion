@@ -2,7 +2,7 @@ import { hasOwnProperty } from '@winglet/common-utils/lib';
 import { escapeSegment } from '@winglet/json/pointer';
 
 import type { BlueprintNode } from '../../../blueprint';
-import type { SchemaNodeRecord } from '../../../record';
+import type { FieldNodeRecord } from '../../../record';
 import type { SettlementContext } from '../../type';
 import { isPlain } from '../write/isPlain';
 import { HostLatent } from './HostLatent';
@@ -16,7 +16,7 @@ import { getLatentPathIndex } from './getLatentPathIndex';
  * @param template - Blueprint kind and declared children at that position
  * @returns Its retained source value, or undefined when no source exists
  */
-export const readLatentSlotSource = <Self extends SchemaNodeRecord<Self>>(
+export const readLatentSlotSource = <Self extends FieldNodeRecord<Self>>(
   context: SettlementContext<Self>,
   path: string,
   template: BlueprintNode,
@@ -48,7 +48,9 @@ export const readLatentSlotSource = <Self extends SchemaNodeRecord<Self>>(
     if (!hasDescendant) return undefined;
   }
   const value: Record<string, unknown> =
-    own instanceof HostLatent && isPlain(own.extras) ? { ...own.extras } : {};
+    own instanceof HostLatent && isPlain(own.undeclaredValues)
+      ? { ...own.undeclaredValues }
+      : {};
   let found = Object.keys(value).length > 0;
   for (const entry of template.childEntries) {
     if (hasOwnProperty(value, entry.name)) continue;

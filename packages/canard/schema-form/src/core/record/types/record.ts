@@ -5,10 +5,10 @@ import type {
 } from '../../blueprint';
 import type { NodeStateFlags } from '../../types/state';
 import type { Behavior } from './behavior';
-import type { SchemaNodeRuntime } from './runtime';
+import type { FieldNodeRuntime } from './runtime';
 
 /** One pending node event with values indexed by their event bits. */
-export interface SchemaNodeDelivery {
+export interface FieldNodeDelivery {
   /** Combined event bits waiting for dispatch. */
   type: number;
   /** Latest event-specific values for this wave. */
@@ -18,11 +18,11 @@ export interface SchemaNodeDelivery {
 }
 
 /** The fixed node layout implemented by every node kind. */
-export interface SchemaNodeRecord<Self> {
+export interface FieldNodeRecord<Self> {
   /** Shared calculation row selected for this node's kind and strategy. */
   readonly behavior: Behavior<Self>;
   /** Per-tree services and settlement records. */
-  readonly runtime: SchemaNodeRuntime<Self>;
+  readonly runtime: FieldNodeRuntime<Self>;
   /** Immutable analysis template for this occurrence. */
   readonly blueprintNode: BlueprintNode;
   /** Current structural parent, absent only at the root. */
@@ -56,7 +56,7 @@ export interface SchemaNodeRecord<Self> {
   /** Interpreted terminal source or a branch's non-plain source. */
   raw: unknown;
   /** Undeclared object keys retained in their incoming own-key order. */
-  extras: unknown;
+  undeclaredValues: unknown;
   /** Result of the current node gate. */
   active: boolean;
   /** Local visibility after all active state declarations are combined. */
@@ -95,11 +95,11 @@ export interface SchemaNodeRecord<Self> {
   /** Last compared watch values, present only on declared watch targets. */
   deliveryWatchValues?: readonly unknown[];
   /** Event bits and immutable payloads awaiting the next settlement wave. */
-  pendingDelivery?: SchemaNodeDelivery;
+  pendingDelivery?: FieldNodeDelivery;
   /** Bits to advance once at this commit, independently of listeners. */
   pendingRevision: number;
   /** State and command events awaiting their separate wave. */
-  pendingNonSettleDelivery?: SchemaNodeDelivery;
+  pendingNonSettleDelivery?: FieldNodeDelivery;
   /** Whether this reference has left the live shape. */
   detached: boolean;
   /** Retired by binding adoption; reads retain the preceding commit. */

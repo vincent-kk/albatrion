@@ -13,16 +13,16 @@ import { renderForm } from '../renderForm';
  * GAP-18 — Event coalescing / merge dropping a coordinated re-render.
  *
  * Validation drives TWO independent React subscriptions from the same merged
- * node-event batch: `SchemaNodeProxy` (re-renders the `<em>` error text via
+ * node-event batch: `FieldProxy` (re-renders the `<em>` error text via
  * `errorMessage`, gated by `errorVisible = checkShowError(node.state)`) and
- * `SchemaNodeInput` (the uncontrolled input value). A single value change must
+ * `FieldInputSlot` (the uncontrolled input value). A single value change must
  * update BOTH the displayed value AND the error text together; the node tree's
  * `getErrors()` is the source of truth the DOM must mirror.
  *
  * Load-bearing facts (verified against src/):
  *   - Default `validationMode` is `OnChange | OnRequest`; `ValidationMode.None`
  *     disables the validator entirely (`ValidationManager.enabled === false`).
- *   - `<em>` (FormGroupRenderer) only shows non-empty text when
+ *   - `<em>` (FormFieldRenderer) only shows non-empty text when
  *     `errorVisible` is true — every test passes `showError: true`
  *     (→ `ShowError.Always`) so the DOM mirror is observable.
  *   - The default `formatValidationError` resolves `jsonSchema.errorMessages`

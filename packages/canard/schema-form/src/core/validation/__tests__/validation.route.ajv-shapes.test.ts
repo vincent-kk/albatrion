@@ -3,7 +3,7 @@ import { describe, expect, it } from 'vitest';
 import { createTestValidator } from '../../__tests__/fixtures/createTestValidator';
 import { dispatchMount } from '../../dispatch';
 import { createDispatchTree } from '../../dispatch/__tests__/fixtures/createDispatchTree';
-import { readSchemaNodeErrors, routeValidationIssues } from '../index';
+import { readFieldNodeErrors, routeValidationIssues } from '../index';
 import type { ValidationIssue } from '../type';
 import { createValidatorCopy } from '../utils/copy/createValidatorCopy';
 
@@ -38,7 +38,7 @@ describe('18C-53 reference schemaPath attribution', () => {
     const { root } = createDispatchTree(schema, undefined, validator);
     dispatchMount(root, { kind: 'x', value: 'a' });
     routeValidationIssues(root, ajv8Issues);
-    const shown = readSchemaNodeErrors(root.structure?.value ?? root);
+    const shown = readFieldNodeErrors(root.structure?.value ?? root);
     expect(
       shown.some((issue) => issue.schemaPath?.includes('$defs/xRule')),
     ).toBe(true);
@@ -65,10 +65,10 @@ describe('18C-53 reference schemaPath attribution', () => {
     ];
     routeValidationIssues(root, legacyShapes);
     expect(runtime.globalErrors).toBe(legacyShapes);
-    expect(readSchemaNodeErrors(root.structure?.value ?? root)).toContain(
+    expect(readFieldNodeErrors(root.structure?.value ?? root)).toContain(
       legacyShapes[0],
     );
-    expect(readSchemaNodeErrors(root.structure?.value ?? root)).not.toContain(
+    expect(readFieldNodeErrors(root.structure?.value ?? root)).not.toContain(
       legacyShapes[1],
     );
   });

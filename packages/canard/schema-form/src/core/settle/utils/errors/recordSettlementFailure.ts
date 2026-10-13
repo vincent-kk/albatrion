@@ -1,5 +1,5 @@
 import type { SchemaFormError } from '../../../../errors';
-import type { SchemaNodeRecord } from '../../../record';
+import type { FieldNodeRecord } from '../../../record';
 import type { SettlementContext } from '../../type';
 
 /**
@@ -10,7 +10,7 @@ import type { SettlementContext } from '../../type';
  * @param identity - Occurrence key; target-addressed errors must include their source
  * @returns Nothing; only recomputation of the same occurrence identity is deduplicated
  */
-export const recordSettlementFailure = <Self extends SchemaNodeRecord<Self>>(
+export const recordSettlementFailure = <Self extends FieldNodeRecord<Self>>(
   context: SettlementContext<Self>,
   failure: SchemaFormError,
   cause: NonNullable<SettlementContext<Self>['cause']>,

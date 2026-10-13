@@ -6,14 +6,14 @@ import {
   SchemaFormError,
 } from '../../../errors';
 import {
-  SchemaNodeEventType,
+  FieldNodeEventType,
   accumulateGlobalStateDeltas,
-  indexSchemaNodeWarning,
+  indexFieldNodeWarning,
   publishGlobalStateDeltas,
-  updateSchemaNodeNameAndPath,
+  updateFieldNodeNameAndPath,
 } from '../../record';
-import { SetValueOption } from '../../types/value';
-import { arrangeSchemaNodeItems, writeSchemaNode } from '../index';
+import { WriteOption } from '../../types/value';
+import { arrangeFieldNodeItems, writeFieldNode } from '../index';
 import { markCommitDeliveries } from '../utils/commit/markCommitDeliveries';
 import { createSettlementContext } from '../utils/settlement/createSettlementContext';
 import { rekeyArrayRuntimePaths } from '../utils/structure/rekeyArrayRuntimePaths';
@@ -50,11 +50,11 @@ describe('array integration runtime stores', () => {
     });
     let caught: unknown;
     try {
-      writeSchemaNode(
+      writeFieldNode(
         root,
         { a: 0, list: [1, 2] },
         'callerReplace',
-        SetValueOption.Overwrite,
+        WriteOption.Overwrite,
       );
     } catch (error) {
       caught = error;
@@ -83,11 +83,11 @@ describe('array integration runtime stores', () => {
         properties: { n: { type: 'number' } },
       },
     });
-    writeSchemaNode(
+    writeFieldNode(
       root,
       [{ n: 1 }, { n: 2 }],
       'callerReplace',
-      SetValueOption.Overwrite,
+      WriteOption.Overwrite,
     );
     for (const node of root.runtime.deliveries ?? [])
       node.pendingDelivery = undefined;
@@ -99,12 +99,12 @@ describe('array integration runtime stores', () => {
       const context = createSettlementContext(
         root,
         'callerReplace',
-        SetValueOption.Overwrite,
+        WriteOption.Overwrite,
         scratch,
       );
       for (const node of [item, leaf]) {
         const previous = node.path;
-        updateSchemaNodeNameAndPath(
+        updateFieldNodeNameAndPath(
           node,
           node === item ? '0' : node.name,
           node.parent,
@@ -113,10 +113,10 @@ describe('array integration runtime stores', () => {
       }
       markCommitDeliveries(context);
       expect(
-        item.pendingDelivery?.payload?.[SchemaNodeEventType.UpdatePath],
+        item.pendingDelivery?.payload?.[FieldNodeEventType.UpdatePath],
       ).toEqual({ previous: '/1', current: '/0' });
       expect(
-        leaf.pendingDelivery?.payload?.[SchemaNodeEventType.UpdatePath],
+        leaf.pendingDelivery?.payload?.[FieldNodeEventType.UpdatePath],
       ).toEqual({ previous: '/1/n', current: '/0/n' });
     } finally {
       releaseSettlementScratch(scratch);
@@ -132,11 +132,11 @@ describe('array integration runtime stores', () => {
           properties: { n: { type: 'number' } },
         },
       });
-      writeSchemaNode(
+      writeFieldNode(
         root,
         [{ n: 1 }, { n: 2 }],
         'callerReplace',
-        SetValueOption.Overwrite,
+        WriteOption.Overwrite,
       );
       const item = root.children![kind === 'pop' ? 1 : 0];
       const leaf = item.structure!.n;
@@ -146,11 +146,11 @@ describe('array integration runtime stores', () => {
       for (const node of [item, leaf]) {
         accumulateGlobalStateDeltas(deltas, {}, node.interactionState);
         node.deliveryPreviousState = node.interactionState;
-        node.deliveryChanges |= SchemaNodeEventType.UpdateState;
+        node.deliveryChanges |= FieldNodeEventType.UpdateState;
       }
       publishGlobalStateDeltas(root, deltas);
       expect(root.runtime.globalState).toEqual({ touched: true, dirty: true });
-      arrangeSchemaNodeItems(
+      arrangeFieldNodeItems(
         root,
         kind === 'pop' ? { kind } : { kind, index: 0 },
       );
@@ -168,12 +168,7 @@ describe('array integration runtime stores', () => {
         properties: { n: { type: 'number', controls: { watch: ['.'] } } },
       },
     });
-    writeSchemaNode(
-      root,
-      [{ n: 1 }],
-      'callerReplace',
-      SetValueOption.Overwrite,
-    );
+    writeFieldNode(root, [{ n: 1 }], 'callerReplace', WriteOption.Overwrite);
     const item = root.children![0];
     const leaf = item.structure!.n;
     const runtime = root.runtime;
@@ -194,7 +189,7 @@ describe('array integration runtime stores', () => {
       node.pendingDelivery = { type: 1 };
     }
     expect(runtime.deliveryWatchIndex?.allNodes.has(leaf)).toBe(true);
-    arrangeSchemaNodeItems(root, { kind: 'clear' });
+    arrangeFieldNodeItems(root, { kind: 'clear' });
     for (const node of [item, leaf]) {
       expect(node.deliveryChanges).toBe(0);
       expect(node.deliveryPreviousState).toBeUndefined();
@@ -244,8 +239,8 @@ describe('array integration runtime stores', () => {
         },
       ],
     ]);
-    indexSchemaNodeWarning(runtime, oldKey, '/1/n');
-    indexSchemaNodeWarning(runtime, removedKey, '/0/n');
+    indexFieldNodeWarning(runtime, oldKey, '/1/n');
+    indexFieldNodeWarning(runtime, removedKey, '/0/n');
     runtime.chainOccurrences = [{ kind: 'record', record }];
     rekeyArrayRuntimePaths(runtime, '', [
       { previous: '/0' },
@@ -273,12 +268,7 @@ describe('array integration runtime stores', () => {
     });
     let caught: unknown;
     try {
-      writeSchemaNode(
-        root,
-        [1, 2, 3],
-        'callerReplace',
-        SetValueOption.Overwrite,
-      );
+      writeFieldNode(root, [1, 2, 3], 'callerReplace', WriteOption.Overwrite);
     } catch (error) {
       caught = error;
     }

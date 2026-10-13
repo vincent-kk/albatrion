@@ -1,7 +1,7 @@
 import { find } from '../../../navigation';
-import type { SchemaNodeRecord } from '../../../record';
-import { SchemaNodeEventType } from '../../../record';
-import { updateSchemaNodeGlobalErrors } from '../../../validation';
+import type { FieldNodeRecord } from '../../../record';
+import { FieldNodeEventType } from '../../../record';
+import { updateFieldNodeGlobalErrors } from '../../../validation';
 import { queueNonSettleEvent } from './queueNonSettleEvent';
 
 /**
@@ -10,7 +10,7 @@ import { queueNonSettleEvent } from './queueNonSettleEvent';
  * @returns Nothing; mounted occurrences own their external error references
  */
 export const restoreAdoptedExternalErrors = <
-  Self extends SchemaNodeRecord<Self>,
+  Self extends FieldNodeRecord<Self>,
 >(
   root: Self,
 ): void => {
@@ -19,10 +19,10 @@ export const restoreAdoptedExternalErrors = <
     const node = find(root, path);
     if (!node) continue;
     (runtime.nodeErrors ??= new Map()).set(node, errors);
-    if (node === root) updateSchemaNodeGlobalErrors(root);
+    if (node === root) updateFieldNodeGlobalErrors(root);
     else (runtime.externalContributions ??= new Map()).set(node, errors);
     runtime.adoptedExternalErrors?.delete(path);
-    queueNonSettleEvent(node, SchemaNodeEventType.UpdateError, errors);
+    queueNonSettleEvent(node, FieldNodeEventType.UpdateError, errors);
   }
   if (!runtime.adoptedExternalErrors?.size)
     runtime.adoptedExternalErrors = undefined;

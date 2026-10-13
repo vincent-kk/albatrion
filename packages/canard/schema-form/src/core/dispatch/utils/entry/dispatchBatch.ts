@@ -1,9 +1,9 @@
-import type { SchemaNodeRecord } from '../../../record';
+import type { FieldNodeRecord } from '../../../record';
 import { captureChainError } from '../chain/captureChainError';
-import { enterSchemaNodeChain } from '../chain/enterSchemaNodeChain';
-import { exitSchemaNodeChain } from '../chain/exitSchemaNodeChain';
+import { enterFieldNodeChain } from '../chain/enterFieldNodeChain';
+import { exitFieldNodeChain } from '../chain/exitFieldNodeChain';
 import { flushBatchWrites } from '../chain/flushBatchWrites';
-import { resolveSchemaNodeChainRoot } from '../chain/resolveSchemaNodeChainRoot';
+import { resolveFieldNodeChainRoot } from '../chain/resolveFieldNodeChainRoot';
 
 /**
  * Group synchronous caller writes into one outer delivery boundary.
@@ -14,11 +14,11 @@ import { resolveSchemaNodeChainRoot } from '../chain/resolveSchemaNodeChainRoot'
  * @param fn - Synchronous writes to mark, including nested batches
  * @returns Nothing; a thrown callback is rethrown after marked work commits
  */
-export const dispatchBatch = <Self extends SchemaNodeRecord<Self>>(
+export const dispatchBatch = <Self extends FieldNodeRecord<Self>>(
   node: Self,
   fn: () => void,
 ): void => {
-  if (!enterSchemaNodeChain(node)) return;
+  if (!enterFieldNodeChain(node)) return;
   const runtime = node.rootNode.runtime;
   runtime.batchDepth = (runtime.batchDepth ?? 0) + 1;
   try {
@@ -27,10 +27,10 @@ export const dispatchBatch = <Self extends SchemaNodeRecord<Self>>(
     if ((runtime.batchDepth ?? 0) > 1) throw error;
     captureChainError(runtime, error);
   } finally {
-    const activeRoot = resolveSchemaNodeChainRoot(node.rootNode);
+    const activeRoot = resolveFieldNodeChainRoot(node.rootNode);
     const active = activeRoot.runtime;
     active.batchDepth = (active.batchDepth ?? 1) - 1;
     if (!active.batchDepth) flushBatchWrites(activeRoot);
-    exitSchemaNodeChain(node);
+    exitFieldNodeChain(node);
   }
 };

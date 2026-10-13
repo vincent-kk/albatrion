@@ -240,7 +240,7 @@ export const InputRemountJudgment: Story = {
 
 /** 18C-73: record the cost of repeated detected reads without inventing a budget. */
 export const EmptyChildDetectionCost: Story = {
-  name: '18C-73 empty ChildNodeComponents detection cost',
+  name: '18C-73 empty ChildFields detection cost',
   args: { mode: 'cost' },
   play: async ({ canvasElement }) => {
     const { root, observations } = fixture(canvasElement);
@@ -259,7 +259,7 @@ export const EmptyChildDetectionCost: Story = {
       await expect(Number.isFinite(sample.plainMs)).toBe(true);
     }
     const output = document.createElement('output');
-    output.setAttribute('aria-label', 'ChildNodeComponents detection timing');
+    output.setAttribute('aria-label', 'ChildFields detection timing');
     output.textContent = JSON.stringify(observations.childReads);
     root.append(output);
     console.info('18C-73 detection timing', observations.childReads);

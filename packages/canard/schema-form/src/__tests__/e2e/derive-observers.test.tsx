@@ -5,8 +5,8 @@ import { deriveScenarios, playScenario } from '@aileron/schema-form-scenarios';
 
 import {
   type FieldInputProps,
+  FieldNodeEventType,
   type JSONSchema,
-  SchemaNodeEventType,
 } from '@/schema-form';
 
 import { renderForm } from '../renderForm';
@@ -139,10 +139,10 @@ describe('LANDING-146 / LANDING-166 — committed reads and observer deliveries'
     const deliveries = vi.fn();
     const watches = vi.fn();
     const unsubscribeValue = form.node('/source')!.subscribe((event) => {
-      if (event.type & SchemaNodeEventType.UpdateValue) deliveries(event);
+      if (event.type & FieldNodeEventType.UpdateValue) deliveries(event);
     });
     const unsubscribeWatch = form.node('/observer')!.subscribe((event) => {
-      if (event.type & SchemaNodeEventType.UpdateComputedProperties)
+      if (event.type & FieldNodeEventType.UpdateControlledProperties)
         watches(event);
     });
     try {

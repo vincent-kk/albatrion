@@ -1,13 +1,13 @@
 import { SchemaFormError } from '../../../../errors';
-import { captureSchemaNodeChange, shallowPatch } from '../../../record';
-import type { SchemaNodeRecord } from '../../../record';
-import { SchemaNodeState } from '../../../types/state';
+import { captureFieldNodeChange, shallowPatch } from '../../../record';
+import type { FieldNodeRecord } from '../../../record';
+import { FieldNodeState } from '../../../types/state';
 import { evaluateResetInteraction } from '../../derive';
 import type { SettlementContext } from '../../type';
 import { getDeriveState } from '../derivation/getDeriveState';
 import { recordSettlementFailure } from '../errors/recordSettlementFailure';
 import { EXPRESSION_THREW } from '../errors/settleErrorCode';
-import { walkOwnedSchemaNodes } from '../walkOwnedSchemaNodes';
+import { walkOwnedFieldNodes } from '../walkOwnedFieldNodes';
 import { pruneCommittedRuleKeys } from './pruneCommittedRuleKeys';
 import { updateCommittedRuleValue } from './updateCommittedRuleValue';
 
@@ -16,7 +16,7 @@ import { updateCommittedRuleValue } from './updateCommittedRuleValue';
  * @param context - Final calculated shape and call-local consumed edge values
  * @returns Nothing; changed records and runtime baselines are updated
  */
-export const commitDeriveRules = <Self extends SchemaNodeRecord<Self>>(
+export const commitDeriveRules = <Self extends FieldNodeRecord<Self>>(
   context: SettlementContext<Self>,
 ): void => {
   const state = getDeriveState(context);
@@ -42,12 +42,12 @@ export const commitDeriveRules = <Self extends SchemaNodeRecord<Self>>(
   for (const node of decision.nodes) {
     node.interactionReset += 1;
     const previous = node.interactionState;
-    node.interactionState = captureSchemaNodeChange(
+    node.interactionState = captureFieldNodeChange(
       node,
       'interactionState',
       shallowPatch(node.interactionState, {
-        [SchemaNodeState.Dirty]: false,
-        [SchemaNodeState.Touched]: false,
+        [FieldNodeState.Dirty]: false,
+        [FieldNodeState.Touched]: false,
       }),
     );
     if (node.interactionState !== previous) context.changedNodes.add(node);
@@ -56,7 +56,7 @@ export const commitDeriveRules = <Self extends SchemaNodeRecord<Self>>(
   for (const path of state.visitedSourcePaths)
     pruneCommittedRuleKeys(runtime, path, 'source');
   for (const exited of context.exited)
-    walkOwnedSchemaNodes(exited, (node) =>
+    walkOwnedFieldNodes(exited, (node) =>
       pruneCommittedRuleKeys(runtime, node.path, 'occurrence'),
     );
   for (const key of state.activeRuleKeys)

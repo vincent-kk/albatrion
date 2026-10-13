@@ -1,7 +1,7 @@
 import { describe, expect, it, vi } from 'vitest';
 
-import { SetValueOption } from '../../types/value';
-import { loadSchemaNodeAtMount, writeSchemaNode } from '../index';
+import { WriteOption } from '../../types/value';
+import { loadFieldNodeAtMount, writeFieldNode } from '../index';
 import { getGateExpression } from '../utils/gates/getGateExpression';
 import * as reads from '../utils/gates/readProjectedValue';
 import { createTestTree } from './fixtures/createTestTree';
@@ -40,13 +40,13 @@ describe('gate dependency read work', () => {
     const projected = vi.spyOn(reads, 'readProjectedValue');
     const order: string[] = [];
     try {
-      loadSchemaNodeAtMount(root, { a: 'A', b: 'B' }, SetValueOption.Overwrite);
+      loadFieldNodeAtMount(root, { a: 'A', b: 'B' }, WriteOption.Overwrite);
       expect(root.emit).toEqual({ a: 'A', b: 'B', payload: 'P' });
-      writeSchemaNode(
+      writeFieldNode(
         root.structure!.a,
         'other',
         'input',
-        SetValueOption.Overwrite,
+        WriteOption.Overwrite,
       );
       expect(root.emit).toEqual({ a: 'other', b: 'B' });
       for (const [, path] of projected.mock.calls)

@@ -1,7 +1,7 @@
 import { describe, expect, it, vi } from 'vitest';
 
-import { SetValueOption } from '../../types/value';
-import { loadSchemaNodeAtMount, writeSchemaNode } from '../index';
+import { WriteOption } from '../../types/value';
+import { loadFieldNodeAtMount, writeFieldNode } from '../index';
 import { createTestTree } from './fixtures/createTestTree';
 
 describe('pure gate projection baseline', () => {
@@ -16,23 +16,13 @@ describe('pure gate projection baseline', () => {
         properties: { [kind]: { type: 'string', default: kind } },
       })),
     });
-    loadSchemaNodeAtMount(root, { kind: 'a' }, SetValueOption.Overwrite);
+    loadFieldNodeAtMount(root, { kind: 'a' }, WriteOption.Overwrite);
     expect(root.emit).toEqual({ kind: 'a', a: 'a' });
     expect(root.emit).toBe(root.emit);
-    writeSchemaNode(
-      root.structure!.kind,
-      'b',
-      'input',
-      SetValueOption.Overwrite,
-    );
+    writeFieldNode(root.structure!.kind, 'b', 'input', WriteOption.Overwrite);
     expect(root.emit).toEqual({ kind: 'b', b: 'b' });
     const emitted = root.emit;
-    writeSchemaNode(
-      root.structure!.kind,
-      'b',
-      'input',
-      SetValueOption.Overwrite,
-    );
+    writeFieldNode(root.structure!.kind, 'b', 'input', WriteOption.Overwrite);
     expect(root.emit).toBe(emitted);
   });
 
@@ -49,7 +39,7 @@ describe('pure gate projection baseline', () => {
       ],
     });
     root.runtime.context = { gate: callback };
-    loadSchemaNodeAtMount(root, { kind: 'a' }, SetValueOption.Overwrite);
+    loadFieldNodeAtMount(root, { kind: 'a' }, WriteOption.Overwrite);
     expect(root.emit).toEqual({ kind: 'a', payload: 'P' });
     expect(callback.mock.calls.length).toBeGreaterThan(1);
     const throwing = vi.fn(() => {
@@ -57,11 +47,11 @@ describe('pure gate projection baseline', () => {
     });
     root.runtime.context = { gate: throwing };
     expect(() =>
-      writeSchemaNode(
+      writeFieldNode(
         root,
         { kind: 'b' },
         'callerReplace',
-        SetValueOption.Overwrite,
+        WriteOption.Overwrite,
       ),
     ).toThrow();
     expect(throwing.mock.calls.length).toBeGreaterThan(1);
@@ -85,16 +75,16 @@ describe('pure gate projection baseline', () => {
         },
       ],
     });
-    loadSchemaNodeAtMount(
+    loadFieldNodeAtMount(
       root,
       { kind: 'a', toggle: false },
-      SetValueOption.Overwrite,
+      WriteOption.Overwrite,
     );
-    writeSchemaNode(
+    writeFieldNode(
       root.structure!.toggle,
       true,
       'input',
-      SetValueOption.Overwrite,
+      WriteOption.Overwrite,
     );
     expect(root.emit).toEqual({ kind: 'a', toggle: true, payload: 'P' });
   });
@@ -118,10 +108,10 @@ describe('pure gate projection baseline', () => {
       ],
     });
     root.runtime.context = { gate: () => true };
-    loadSchemaNodeAtMount(
+    loadFieldNodeAtMount(
       root,
       { kind: 'a', toggle: false },
-      SetValueOption.Overwrite,
+      WriteOption.Overwrite,
     );
     root.runtime.context = {
       gate: () => {
@@ -129,19 +119,19 @@ describe('pure gate projection baseline', () => {
       },
     };
     expect(() =>
-      writeSchemaNode(
+      writeFieldNode(
         root.structure!.toggle,
         true,
         'input',
-        SetValueOption.Overwrite,
+        WriteOption.Overwrite,
       ),
     ).toThrow();
     root.runtime.context = { gate: () => true };
-    writeSchemaNode(
+    writeFieldNode(
       root.structure!.toggle,
       false,
       'input',
-      SetValueOption.Overwrite,
+      WriteOption.Overwrite,
     );
     expect(root.emit).toEqual({ kind: 'a', toggle: false, payload: 'P' });
   });

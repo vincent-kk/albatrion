@@ -1,4 +1,4 @@
-import type { SchemaNode } from '../../SchemaNode';
+import type { FieldNode } from '../../FieldNode';
 import { captureBlueprintObservables } from './captureBlueprintObservables';
 
 /**
@@ -6,9 +6,9 @@ import { captureBlueprintObservables } from './captureBlueprintObservables';
  * @param root - Mounted core tree after a completed synchronous operation
  * @returns Node order, values, errors, state and settlement diagnostics
  */
-export const captureBranchlessNodeTree = (root: SchemaNode): unknown => {
+export const captureBranchlessNodeTree = (root: FieldNode): unknown => {
   const nodes = [];
-  const pending: SchemaNode[] = [root];
+  const pending: FieldNode[] = [root];
   while (pending.length) {
     const node = pending.pop()!;
     nodes.push({

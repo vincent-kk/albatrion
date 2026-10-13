@@ -4,7 +4,7 @@ import {
   INVALID_VIRTUAL_NODE_VALUES,
   SchemaFormError,
 } from '../../../../errors';
-import type { SchemaNodeRecord } from '../../../record';
+import type { FieldNodeRecord } from '../../../record';
 
 /**
  * Reject a caller's invalid virtual tuple before any settlement state changes.
@@ -12,7 +12,7 @@ import type { SchemaNodeRecord } from '../../../record';
  * @param input - Original caller value
  * @returns Nothing when the caller supplied a valid virtual shape
  */
-export const assertVirtualWriteShape = <Self extends SchemaNodeRecord<Self>>(
+export const assertVirtualWriteShape = <Self extends FieldNodeRecord<Self>>(
   node: Self,
   input: unknown,
 ): void => {

@@ -31,7 +31,7 @@ const FieldInputArray = ({
   node,
   readOnly,
   disabled,
-  ChildNodeComponents,
+  ChildFields,
   style,
 }: FieldInputProps<any[]>) => {
   const maxItems = minLite(
@@ -49,12 +49,12 @@ const FieldInputArray = ({
   });
   return (
     <div style={style}>
-      {ChildNodeComponents &&
-        map(ChildNodeComponents, (ChildNodeComponent, i) => {
-          const key = ChildNodeComponent.key;
+      {ChildFields &&
+        map(ChildFields, (ChildField, i) => {
+          const key = ChildField.key;
           return (
             <div key={key} style={{ display: 'flex' }}>
-              <ChildNodeComponent key={key} />
+              <ChildField key={key} />
               {!readOnly && (
                 <Remove
                   disabled={disabled}

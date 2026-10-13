@@ -1,11 +1,11 @@
 import { describe, expect, it, vi } from 'vitest';
 
-import { makeSchemaNodeTree } from '../makeSchemaNodeTree';
+import { makeFieldNodeTree } from '../makeFieldNodeTree';
 
 // filid:contract factory-single-path
 describe('selfcheck-v5 derive regression', () => {
   it('selfcheck-v5.mjs:274 ERROR-070 A4a commits caller raw after 25 feedback rounds', () => {
-    const { root } = makeSchemaNodeTree({
+    const { root } = makeFieldNodeTree({
       type: 'object',
       properties: {
         t: {
@@ -32,7 +32,7 @@ describe('selfcheck-v5 derive regression', () => {
   });
 
   it('selfcheck-v5.mjs:285 FRAGMENT-050 29C-01 A4b keeps the birth-edge write after c retracts', () => {
-    const { root } = makeSchemaNodeTree({
+    const { root } = makeFieldNodeTree({
       type: 'object',
       properties: {
         t: { type: 'string' },
@@ -59,7 +59,7 @@ describe('selfcheck-v5 derive regression', () => {
   });
 
   it('selfcheck-v5.mjs:297 A4c unchanged source preserves a partial host edit', () => {
-    const { root } = makeSchemaNodeTree(
+    const { root } = makeFieldNodeTree(
       {
         type: 'object',
         properties: {
@@ -88,7 +88,7 @@ describe('selfcheck-v5 derive regression', () => {
     const injectTo = vi.fn((value: unknown) => ({
       '../n': Math.min(30, Number(value) + 1),
     }));
-    const { root } = makeSchemaNodeTree({
+    const { root } = makeFieldNodeTree({
       type: 'object',
       properties: {
         n: { type: 'number', controls: { injectTo } },
@@ -109,7 +109,7 @@ describe('selfcheck-v5 derive regression', () => {
   });
 
   it('selfcheck-v5.mjs:504 VALUE-032 A6-automatic leaves a null host null', () => {
-    const { root } = makeSchemaNodeTree({
+    const { root } = makeFieldNodeTree({
       type: 'object',
       properties: {
         src: {
@@ -135,7 +135,7 @@ describe('selfcheck-v5 derive regression', () => {
   });
 
   const suppressedTree = (disabled: boolean) => {
-    const { root } = makeSchemaNodeTree({
+    const { root } = makeFieldNodeTree({
       type: 'object',
       properties: {
         id: { type: 'number' },

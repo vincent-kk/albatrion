@@ -1,8 +1,8 @@
 import { describe, expect, it, vi } from 'vitest';
 
 import * as compiler from '../../blueprint/utils/expressions/createDynamicFunction';
-import { SetValueOption } from '../../types/value';
-import { loadSchemaNodeAtMount, writeSchemaNode } from '../index';
+import { WriteOption } from '../../types/value';
+import { loadFieldNodeAtMount, writeFieldNode } from '../index';
 import * as gates from '../utils/gates/evaluateGate';
 import * as publication from '../utils/gates/flushPendingGateReads';
 import * as paths from '../utils/paths/resolveDependencyPath';
@@ -66,11 +66,7 @@ describe('gate path resolution runtime visits', () => {
       );
       try {
         const { root } = createTestTree(createFixedBranchSchema(count));
-        loadSchemaNodeAtMount(
-          root,
-          { kind: 'kind_0' },
-          SetValueOption.Overwrite,
-        );
+        loadFieldNodeAtMount(root, { kind: 'kind_0' }, WriteOption.Overwrite);
         for (const [index, kind] of [
           'kind_4',
           'kind_0',
@@ -81,11 +77,11 @@ describe('gate path resolution runtime visits', () => {
           evaluations.fill(0);
           gateVisits.fill(0);
           total = 0;
-          writeSchemaNode(
+          writeFieldNode(
             root.structure!.kind,
             kind,
             'input',
-            SetValueOption.Overwrite,
+            WriteOption.Overwrite,
           );
           expect(evaluations).toEqual(
             new Array(count).fill(index === 0 ? 16 : 8),

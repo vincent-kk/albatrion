@@ -1,10 +1,10 @@
 import { isArray } from '@winglet/common-utils/filter';
 
 import { find } from '../../../navigation';
-import type { SchemaNodeRecord } from '../../../record';
-import { writeSchemaNode } from '../../../settle';
-import type { SchemaNodeWriteKind } from '../../../settle';
-import { SetValueOption } from '../../../types/value';
+import type { FieldNodeRecord } from '../../../record';
+import { writeFieldNode } from '../../../settle';
+import type { FieldNodeWriteKind } from '../../../settle';
+import { WriteOption } from '../../../types/value';
 import { captureChainError } from './captureChainError';
 import { composeBatchValue } from './composeBatchValue';
 
@@ -13,7 +13,7 @@ import { composeBatchValue } from './composeBatchValue';
  * @param root - Tree owning marked writes
  * @returns Nothing; settlement failures stay on the current chain
  */
-export const flushBatchWrites = <Self extends SchemaNodeRecord<Self>>(
+export const flushBatchWrites = <Self extends FieldNodeRecord<Self>>(
   root: Self,
 ): void => {
   const runtime = root.runtime;
@@ -22,7 +22,7 @@ export const flushBatchWrites = <Self extends SchemaNodeRecord<Self>>(
   if (!writes.length) return;
   const option = writes.reduce(
     (flags, write) => flags | write.option,
-    SetValueOption.None,
+    WriteOption.None,
   );
   const target = writes.length === 1 ? find(root, writes[0].node.path) : root;
   if (!target) return;
@@ -30,8 +30,8 @@ export const flushBatchWrites = <Self extends SchemaNodeRecord<Self>>(
     writes.length === 1 ? writes[0].value : composeBatchValue(root, writes);
   const merge =
     writes.length === 1 &&
-    (option & SetValueOption.Merge) === SetValueOption.Merge &&
-    !(option & SetValueOption.Replace);
+    (option & WriteOption.Merge) === WriteOption.Merge &&
+    !(option & WriteOption.Replace);
   const source = writes.every((write) => write.source === 'input')
     ? 'input'
     : writes.every((write) => write.source === 'automatic')
@@ -42,13 +42,13 @@ export const flushBatchWrites = <Self extends SchemaNodeRecord<Self>>(
       write,
     ): {
       path: string;
-      source: SchemaNodeWriteKind;
+      source: FieldNodeWriteKind;
       keys?: readonly string[];
       fields?: readonly string[];
     } => {
       const partial =
-        (write.option & SetValueOption.Merge) === SetValueOption.Merge &&
-        !(write.option & SetValueOption.Replace);
+        (write.option & WriteOption.Merge) === WriteOption.Merge &&
+        !(write.option & WriteOption.Replace);
       return {
         path: write.node.path,
         source: write.source ?? (partial ? 'callerPartial' : 'callerReplace'),
@@ -70,7 +70,7 @@ export const flushBatchWrites = <Self extends SchemaNodeRecord<Self>>(
     },
   );
   try {
-    writeSchemaNode(
+    writeFieldNode(
       target,
       input,
       source === 'automatic'

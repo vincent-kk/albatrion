@@ -1,14 +1,14 @@
 import { describe, expect, it } from 'vitest';
 
-import { SchemaNode } from '../../SchemaNode/SchemaNode';
-import { makeSchemaNodeTree } from '../../__tests__/makeSchemaNodeTree';
-import { SetValueOption } from '../../types/value';
+import { FieldNode } from '../../FieldNode/FieldNode';
+import { makeFieldNodeTree } from '../../__tests__/makeFieldNodeTree';
+import { WriteOption } from '../../types/value';
 
-const makeRecordTree = (...args: Parameters<typeof makeSchemaNodeTree>) => {
-  const tree = makeSchemaNodeTree(...args);
-  if (!(tree.root instanceof SchemaNode))
-    throw new Error('Expected a runtime SchemaNode');
-  const root: SchemaNode = tree.root;
+const makeRecordTree = (...args: Parameters<typeof makeFieldNodeTree>) => {
+  const tree = makeFieldNodeTree(...args);
+  if (!(tree.root instanceof FieldNode))
+    throw new Error('Expected a runtime FieldNode');
+  const root: FieldNode = tree.root;
   return { ...tree, root };
 };
 
@@ -156,7 +156,7 @@ describe('array legacy contract ports', () => {
       { snapshot: { startDate: '2021-04-01', endDate: '2021-04-02' } },
     );
     root.resetSubtree();
-    root.find('/period')!.setValue(undefined, SetValueOption.Overwrite);
+    root.find('/period')!.setValue(undefined, WriteOption.Overwrite);
     expect(root.find('/startDate')?.value).toBeUndefined();
     expect(root.find('/endDate')?.value).toBeUndefined();
     expect(root.find('/period')?.value).toEqual([undefined, undefined]);

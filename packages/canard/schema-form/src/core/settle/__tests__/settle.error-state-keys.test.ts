@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 
-import { SetValueOption } from '../../types/value';
-import { loadSchemaNodeAtMount, writeSchemaNode } from '../index';
+import { WriteOption } from '../../types/value';
+import { loadFieldNodeAtMount, writeFieldNode } from '../index';
 import { createTestTree } from './fixtures/createTestTree';
 
 // filid:contract settle-state-keys
@@ -27,17 +27,17 @@ describe('state-key failures during settlement', () => {
         },
       },
     });
-    loadSchemaNodeAtMount(
+    loadFieldNodeAtMount(
       root,
       { flag: true, secret: 'held' },
-      SetValueOption.Overwrite,
+      WriteOption.Overwrite,
     );
     expect(() =>
-      writeSchemaNode(
+      writeFieldNode(
         root.structure!.flag,
         false,
         'input',
-        SetValueOption.Overwrite,
+        WriteOption.Overwrite,
       ),
     ).toThrow('State key expression failed');
     expect(root.structure?.secret).toBeUndefined();

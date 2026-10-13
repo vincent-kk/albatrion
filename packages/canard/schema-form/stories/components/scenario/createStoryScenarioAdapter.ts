@@ -3,7 +3,7 @@ import { flushSync } from 'react-dom';
 import type { ScenarioAdapter } from '@aileron/schema-form-scenarios';
 import { expect, userEvent } from 'storybook/test';
 
-import { SchemaNodeEventType } from '../../../src';
+import { FieldNodeEventType } from '../../../src';
 
 import { assertStoryObservation } from './assertStoryObservation';
 import { executeStoryStep } from './executeStoryStep';
@@ -28,7 +28,7 @@ export function createStoryScenarioAdapter(context: StoryScenarioContext): Scena
       const paths = step.expect?.deliveryOrder ? Array.from(element.querySelectorAll<HTMLElement>('[data-path]')).map((item) => item.dataset.path!) : [];
       const stops = paths.flatMap((path) => {
         const node = handle.findNode(path);
-        return node ? [node.subscribe((event) => { if (event.type & SchemaNodeEventType.UpdateValue) evidence.deliveries.push(path); })] : [];
+        return node ? [node.subscribe((event) => { if (event.type & FieldNodeEventType.UpdateValue) evidence.deliveries.push(path); })] : [];
       });
       try {
         const field = 'path' in step ? Array.from(element.querySelectorAll<HTMLInputElement | HTMLSelectElement>('input[id], select[id], textarea[id]')).find((item) => item.id === step.path) : undefined;

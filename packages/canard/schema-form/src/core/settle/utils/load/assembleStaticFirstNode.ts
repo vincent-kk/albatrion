@@ -1,4 +1,4 @@
-import type { SchemaNodeRecord } from '../../../record';
+import type { FieldNodeRecord } from '../../../record';
 
 /** Empty terminal children never allocate a call-local array. */
 const NO_CHILDREN: readonly never[] = Object.freeze([]);
@@ -8,7 +8,7 @@ const NO_CHILDREN: readonly never[] = Object.freeze([]);
  * @param node - First-load occurrence whose children have completed
  * @returns Nothing; eager local/emit values are ready before delivery
  */
-export const assembleStaticFirstNode = <Self extends SchemaNodeRecord<Self>>(
+export const assembleStaticFirstNode = <Self extends FieldNodeRecord<Self>>(
   node: Self,
 ): void => {
   const children = node.children ?? NO_CHILDREN;

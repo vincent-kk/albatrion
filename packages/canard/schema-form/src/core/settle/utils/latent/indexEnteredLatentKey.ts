@@ -1,4 +1,4 @@
-import type { SchemaNodeRecord } from '../../../record';
+import type { FieldNodeRecord } from '../../../record';
 import type { SettlementContext } from '../../type';
 
 /**
@@ -7,7 +7,7 @@ import type { SettlementContext } from '../../type';
  * @param node - Occurrence just added to the entered or revived set
  * @returns Nothing; an existing index gains this occurrence under its current key
  */
-export const indexEnteredLatentKey = <Self extends SchemaNodeRecord<Self>>(
+export const indexEnteredLatentKey = <Self extends FieldNodeRecord<Self>>(
   context: SettlementContext<Self>,
   node: Self,
 ): void => {

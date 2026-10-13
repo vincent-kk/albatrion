@@ -89,11 +89,11 @@ const schema = {
   properties: {
     name:     { type: 'string' },
     age:      { type: 'integer' },
-    active:   { type: 'boolean', inputType: 'switch' },
+    active:   { type: 'boolean', presentation: { inputType: 'switch' } },
     role:     { type: 'string', enum: ['admin', 'user', 'guest'] },
     birthday: { type: 'string', format: 'date' },
     bio:      { type: 'string', format: 'textarea' },
-    score:    { type: 'number', inputType: 'slider', minimum: 0, maximum: 100 },
+    score:    { type: 'number', presentation: { inputType: 'slider' }, minimum: 0, maximum: 100 },
   },
 };
 

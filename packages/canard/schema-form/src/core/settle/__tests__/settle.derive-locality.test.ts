@@ -1,8 +1,8 @@
 import { describe, expect, it, vi } from 'vitest';
 
 import type { BlueprintSchema } from '../../blueprint';
-import { SetValueOption } from '../../types/value';
-import { loadSchemaNodeAtMount, writeSchemaNode } from '../index';
+import { WriteOption } from '../../types/value';
+import { loadFieldNodeAtMount, writeFieldNode } from '../index';
 import { createTestTree } from './fixtures/createTestTree';
 
 // filid:contract settle-derive
@@ -24,32 +24,17 @@ describe('derive rule locality', () => {
         },
       ],
     });
-    loadSchemaNodeAtMount(
+    loadFieldNodeAtMount(
       root,
       { t: 'T1', flag: true, x: '' },
-      SetValueOption.Overwrite,
+      WriteOption.Overwrite,
     );
     const observed = [root.structure?.x?.raw];
-    writeSchemaNode(
-      root.structure!.x,
-      'manual',
-      'input',
-      SetValueOption.Overwrite,
-    );
+    writeFieldNode(root.structure!.x, 'manual', 'input', WriteOption.Overwrite);
     observed.push(root.structure?.x?.raw);
-    writeSchemaNode(
-      root.structure!.flag,
-      false,
-      'input',
-      SetValueOption.Overwrite,
-    );
+    writeFieldNode(root.structure!.flag, false, 'input', WriteOption.Overwrite);
     observed.push(root.structure?.x?.raw);
-    writeSchemaNode(
-      root.structure!.flag,
-      true,
-      'input',
-      SetValueOption.Overwrite,
-    );
+    writeFieldNode(root.structure!.flag, true, 'input', WriteOption.Overwrite);
     observed.push(root.structure?.x?.raw);
     expect(observed).toEqual(['T1', 'manual', 'manual', 'manual']);
   });
@@ -68,7 +53,7 @@ describe('derive rule locality', () => {
           H: {
             type: 'object',
             controls: {
-              children: [{ targets: ['x'], controls: { derived: '../t' } }],
+              fields: [{ targets: ['x'], controls: { derived: '../t' } }],
             },
             properties: {
               x: {
@@ -80,28 +65,23 @@ describe('derive rule locality', () => {
           },
         },
       });
-      loadSchemaNodeAtMount(
+      loadFieldNodeAtMount(
         root,
         { t: 'T1', s: 'a', H: { x: '', y: '' } },
-        SetValueOption.Overwrite,
+        WriteOption.Overwrite,
       );
-      writeSchemaNode(
+      writeFieldNode(
         root.structure!.H.structure!.x,
         'manual',
         'input',
-        SetValueOption.Overwrite,
+        WriteOption.Overwrite,
       );
-      writeSchemaNode(
-        root.structure!.s,
-        'b',
-        'input',
-        SetValueOption.Overwrite,
-      );
-      writeSchemaNode(
+      writeFieldNode(root.structure!.s, 'b', 'input', WriteOption.Overwrite);
+      writeFieldNode(
         root.structure!.H.structure!.y,
         'Y',
         'input',
-        SetValueOption.Overwrite,
+        WriteOption.Overwrite,
       );
       expect(root.structure?.H?.structure?.x?.raw).toBe('manual');
     },
@@ -121,19 +101,19 @@ describe('derive rule locality', () => {
           },
         };
       const { root } = createTestTree({ type: 'object', properties });
-      loadSchemaNodeAtMount(
+      loadFieldNodeAtMount(
         root,
         { source: 'A', changed: 'A' },
-        SetValueOption.Overwrite,
+        WriteOption.Overwrite,
       );
       const baselines = root.runtime.committedRuleValues;
       const parse = vi.spyOn(JSON, 'parse');
       try {
-        writeSchemaNode(
+        writeFieldNode(
           root.structure!.changed,
           'B',
           'input',
-          SetValueOption.Overwrite,
+          WriteOption.Overwrite,
         );
         expect(root.runtime.committedRuleValues).toBe(baselines);
         return parse.mock.calls.length;
@@ -166,10 +146,10 @@ describe('derive rule locality', () => {
         },
       },
     });
-    loadSchemaNodeAtMount(
+    loadFieldNodeAtMount(
       root,
       { left: { source: 'A' }, right: { value: 'R' } },
-      SetValueOption.Overwrite,
+      WriteOption.Overwrite,
     );
     const right = root.structure!.right;
     Object.defineProperty(right, 'children', {
@@ -178,11 +158,11 @@ describe('derive rule locality', () => {
         throw new Error('unrelated branch traversed');
       },
     });
-    writeSchemaNode(
+    writeFieldNode(
       root.structure!.left.structure!.source,
       'B',
       'input',
-      SetValueOption.Overwrite,
+      WriteOption.Overwrite,
     );
     expect(root.structure?.left?.structure?.target?.raw).toBe('B');
   });

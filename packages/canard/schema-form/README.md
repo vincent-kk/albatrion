@@ -131,12 +131,12 @@ interface FormHandle<
   Schema extends JSONSchema,
   Value extends AllowedValue = InferValueType<Schema>,
 > {
-  node?: InferSchemaNode<Schema>;
-  focus: Fn<[dataPath: SchemaNode['path']]>;
-  select: Fn<[dataPath: SchemaNode['path']]>;
+  node?: InferFieldNode<Schema>;
+  focus: Fn<[dataPath: FieldNode['path']]>;
+  select: Fn<[dataPath: FieldNode['path']]>;
   reset: Fn;
-  findNode: Fn<[path: SchemaNode['path']], SchemaNode | null>;
-  findNodes: Fn<[path: SchemaNode['path']], SchemaNode[]>;
+  findNode: Fn<[path: FieldNode['path']], FieldNode | null>;
+  findNodes: Fn<[path: FieldNode['path']], FieldNode[]>;
   getState: Fn<[], NodeStateFlags>;
   setState: Fn<[state: NodeStateFlags]>;
   clearState: Fn;
@@ -164,7 +164,7 @@ interface FormChildrenProps<
   Schema extends JSONSchema,
   Value extends AllowedValue = InferValueType<Schema>,
 > {
-  node?: InferSchemaNode<Schema>;
+  node?: InferFieldNode<Schema>;
   jsonSchema: Schema;
   defaultValue?: Value;
   value?: Value;
@@ -482,7 +482,7 @@ Each definition consists of two key parts:
 The conditions for a FieldInput can be defined using a function or an object:
 
 ```ts
-type Hint = {
+type FieldInputHint = {
   jsonSchema: JSONSchema;
   type: string;
   format: string;
@@ -490,7 +490,7 @@ type Hint = {
   path: string;
   [alt: string]: any;
 };
-type FieldInputTestFn = Fn<[hint: Hint], boolean>;
+type FieldInputTestFn = Fn<[hint: FieldInputHint], boolean>;
 
 type FieldInputTestObject = Partial<{
   type: Array<string>;
@@ -503,7 +503,7 @@ type FieldInputTestObject = Partial<{
 
 inputType is a string hint that a definition's test interprets; it is not the HTML input type.
 
-- **FieldInputTestFn**: A function that receives a Hint object and returns a boolean. Useful for implementing more complex conditions.
+- **FieldInputTestFn**: A function that receives a FieldInputHint object and returns a boolean. Useful for implementing more complex conditions.
 - **FieldInputTestObject**: Allows conditions to be defined simply as an object. For example, `{ type: ['string'], format: ['email'] }` matches nodes that are both string type and email format.
 
 #### FieldInput Props
@@ -516,7 +516,7 @@ interface FieldInputProps<
   Context extends Dictionary = object,
   WatchValues extends Array<any> = Array<any>,
   Schema extends JSONSchemaWithVirtual = InferJSONSchema<Value>,
-  Node extends SchemaNode = InferSchemaNode<Schema>,
+  Node extends FieldNode = InferFieldNode<Schema>,
 > {
   /** JSON Schema for the FieldInput Component */
   jsonSchema: Schema;
@@ -524,19 +524,19 @@ interface FieldInputProps<
   readOnly: boolean;
   /** disabled state for the FieldInput Component */
   disabled: boolean;
-  /** Whether the schema node assigned to the FieldInput Component is required */
+  /** Whether the field node assigned to the FieldInput Component is required */
   required: boolean;
-  /** Schema node assigned to the FieldInput Component */
+  /** Field node assigned to the FieldInput Component */
   node: Node;
   /** JSON Schema type of this field (e.g., 'string', 'number', 'object', 'array') */
   type: Node['schemaType'];
-  /** Name of the schema node assigned to the FieldInput Component */
+  /** Name of the field node assigned to the FieldInput Component */
   name: Node['name'];
-  /** Path of the schema node assigned to the FieldInput Component */
+  /** Path of the field node assigned to the FieldInput Component */
   path: Node['path'];
   /** Whether this field accepts null as a valid value (derived from schema type array including 'null') */
   nullable: Node['nullable'];
-  /** Errors of the schema node assigned to the FieldInput Component */
+  /** Errors of the field node assigned to the FieldInput Component */
   errors: Node['errors'];
   /** Whether to show errors for this field */
   errorVisible: boolean;
@@ -551,7 +551,7 @@ interface FieldInputProps<
   /** Attach or detach file(s) to the form's file store */
   onFileAttach: Fn<[file: File | File[] | undefined]>;
   /** Child FieldInput Components for this FieldInput Component */
-  ChildNodeComponents: ChildNodeComponent[];
+  ChildFields: ChildField[];
   /** Placeholder text for input fields */
   placeholder: string | undefined;
   /** CSS class name for styling */
@@ -882,7 +882,7 @@ registerPlugin(ajvValidatorPlugin);
 
 ```ts
 export interface SchemaFormPlugin {
-  /** Form.Group Component */
+  /** Form.Field Component */
   FieldRenderer?: ComponentType<FieldRendererProps>;
   /** Form.Label Component */
   FormLabelRenderer?: ComponentType<FieldRendererProps>;
@@ -1515,7 +1515,7 @@ const jsonSchema = {
 - **`omitEmpty` (on by default)**: converts an empty array to `undefined` on the parent-propagation path. Filter order is `omitTrailing → omitEmpty`, so an all-empty array collapses to `undefined` under its parent (a root-level form still emits `[]`).
 - **Two value channels**: `node.value` stays raw; the refined output is exposed as `node.outputValue`. Validation runs against the refined value, so `minItems` counts only the filled prefix.
 - **Reset semantics**: a Reset-flagged clear (form reset, oneOf/anyOf branch reactivation) refills `minItems` empty items; a plain `setValue(undefined)` clears every item.
-- **Custom inputs**: derive row count from `node.children` (or `ChildNodeComponents`), never from `value.length` — the emitted value is shorter than the rendered rows by design.
+- **Custom inputs**: derive row count from `node.children` (or `ChildFields`), never from `value.length` — the emitted value is shorter than the rendered rows by design.
 
 ### Form with Imperative Handle
 
@@ -1650,9 +1650,9 @@ Each property below is a key of the `controls` object.
 
 #### Layering Rules
 
-`controls` can be declared on the node itself, on a parent's `controls.children` entry that targets the node, and on a fragment (such as an `allOf` entry) that declares the node. The layers combine instead of overriding each other: the standard `readOnly` and the `readOnly` / `disabled` controls combine by OR, and `visible` combines by AND.
+`controls` can be declared on the node itself, on a parent's `controls.fields` entry that targets the node, and on a fragment (such as an `allOf` entry) that declares the node. The layers combine instead of overriding each other: the standard `readOnly` and the `readOnly` / `disabled` controls combine by OR, and `visible` combines by AND.
 
-For `default`, the node's own `controls.default` wins, then the parent's `children` entry, then the fragment's `controls.default`, then the standard `default`.
+For `default`, the node's own `controls.default` wins, then the parent's `fields` entry, then the fragment's `controls.default`, then the standard `default`.
 
 #### Basic Example
 
@@ -2354,7 +2354,7 @@ Measured with `compare-frameworks` (production React, 500 flat fields): mount dr
 `@canard/schema-form` is built with TypeScript and provides comprehensive type definitions. Key type utilities include:
 
 - `InferValueType<Schema>`: Infers the value type from a JSON Schema
-- `InferSchemaNode<Schema>`: Infers the schema node type from a JSON Schema
+- `InferFieldNode<Schema>`: Infers the field node type from a JSON Schema
 - `FormHandle<Schema, Value>`: Type for form ref handle with schema-specific methods
 
 ### What `InferValueType` guarantees

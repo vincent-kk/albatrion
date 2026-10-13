@@ -1,11 +1,11 @@
 export { nodeFromJSONSchema } from './nodeFromJSONSchema';
 export {
-  schemaNodeFactory,
+  fieldNodeFactory,
   setContext,
   SetValueOption,
-  SchemaNodeEventType,
-  SchemaNodeRequestType,
-  isSchemaNode,
+  FieldNodeEventType,
+  FieldNodeRequestType,
+  isFieldNode,
   isStringNode,
   isNumberNode,
   isBooleanNode,
@@ -15,18 +15,18 @@ export {
   isUnionNode,
   isBranchNode,
   isTerminalNode,
-  buildSchemaNodeTree,
-  mountSchemaNode,
-  reloadSchemaNodeForm,
-  adoptSchemaNodeTree,
-  writeSchemaNodeInput,
-  finishSchemaNodeInput,
-  readSchemaNodeInteractionReset,
-  observeSchemaNodeReports,
-  interpretSchemaNodeDraft,
-} from './SchemaNode';
+  buildFieldNodeTree,
+  mountFieldNode,
+  reloadFieldNodeForm,
+  adoptFieldNodeTree,
+  writeFieldNodeInput,
+  finishFieldNodeInput,
+  readFieldNodeInteractionReset,
+  observeFieldNodeReports,
+  interpretFieldNodeDraft,
+} from './FieldNode';
 export type {
-  SchemaNode,
+  FieldNode,
   StringNode,
   NumberNode,
   BooleanNode,
@@ -39,10 +39,10 @@ export type {
   TerminalNode,
   UnionMemberType,
   UnionSchemaType,
-  InferSchemaNode,
-  FieldInputProps,
-} from './SchemaNode';
-export { SchemaNodeState, ValidationMode } from './types/state';
-export type { JSONSchema } from './types/jsonSchema';
+  InferFieldNode,
+  FieldNodeInputProps,
+} from './FieldNode';
+export { FieldNodeState, ValidationMode } from './types/state';
+export type { AuthoredSchema } from './types/jsonSchema';
 export { retainValidationRoot, releaseValidationRoot } from './validation';
 export type { Validator, ValidationIssue } from './validation';

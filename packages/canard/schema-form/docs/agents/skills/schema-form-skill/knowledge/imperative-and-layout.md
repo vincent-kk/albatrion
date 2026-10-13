@@ -48,7 +48,7 @@ Inside `<Form>`, path-scoped primitives take over layout while the plugin still 
 </Form.Render>
 ```
 
-The render function receives `FieldRendererProps` (`node`, `value`, `errors`, `errorVisible`, `Input`, `ChildNodeComponents`, …) — enumerate them from `dist/*.d.ts`.
+The render function receives `FieldRendererProps` (`node`, `value`, `errors`, `errorVisible`, `Input`, `ChildFields`, …) — enumerate them from `dist/*.d.ts`.
 
 ## Gotchas
 

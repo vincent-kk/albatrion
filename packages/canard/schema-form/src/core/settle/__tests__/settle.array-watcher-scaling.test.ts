@@ -1,12 +1,12 @@
 import { describe, expect, it, vi } from 'vitest';
 
-import { SchemaNode } from '../../SchemaNode/SchemaNode';
-import { makeSchemaNodeTree } from '../../__tests__/makeSchemaNodeTree';
-import { SchemaNodeEventType } from '../../record';
+import { FieldNode } from '../../FieldNode/FieldNode';
+import { makeFieldNodeTree } from '../../__tests__/makeFieldNodeTree';
+import { FieldNodeEventType } from '../../record';
 import * as deliveries from '../utils/commit/markCommitDeliveries';
 
 const makeWatchedTree = (count: number) => {
-  const { root } = makeSchemaNodeTree({
+  const { root } = makeFieldNodeTree({
     type: 'object',
     properties: {
       flag: { type: 'string' },
@@ -31,7 +31,7 @@ const makeWatchedTree = (count: number) => {
       },
     },
   });
-  if (!(root instanceof SchemaNode)) throw new Error('Expected runtime tree');
+  if (!(root instanceof FieldNode)) throw new Error('Expected runtime tree');
   root.setValue({
     flag: 'a',
     list: Array.from({ length: 8 }, (_, key) => ({ key, watch: 'x' })),
@@ -56,7 +56,7 @@ describe('I9 array costs follow changed paths', () => {
         return undefined;
       });
     try {
-      (root.find('/list') as SchemaNode).remove(6);
+      (root.find('/list') as FieldNode).remove(6);
       expect(visits, `whole watcher visits: ${visits}`).toBeLessThan(16);
     } finally {
       spy.mockRestore();
@@ -64,7 +64,7 @@ describe('I9 array costs follow changed paths', () => {
   });
 
   it('44C-01 isolates indexed outside watcher deliveries after a shift', () => {
-    const { root } = makeSchemaNodeTree({
+    const { root } = makeFieldNodeTree({
       type: 'object',
       properties: {
         list: {
@@ -80,13 +80,13 @@ describe('I9 array costs follow changed paths', () => {
         hostWatcher: { type: 'string', controls: { watch: ['../list'] } },
       },
     });
-    if (!(root instanceof SchemaNode)) throw new Error('Expected runtime tree');
+    if (!(root instanceof FieldNode)) throw new Error('Expected runtime tree');
     root.setValue({ list: Array.from({ length: 5 }, (_, key) => ({ key })) });
     const watchers = [
-      root.find('/leafWatcher') as SchemaNode,
-      root.find('/hostWatcher') as SchemaNode,
+      root.find('/leafWatcher') as FieldNode,
+      root.find('/hostWatcher') as FieldNode,
     ];
-    const bit = SchemaNodeEventType.UpdateComputedProperties;
+    const bit = FieldNodeEventType.UpdateControlledProperties;
     const before = watchers.map((watcher) => watcher.revisionLedger[bit] ?? 0);
     const allNodes = root.runtime.deliveryWatchIndex!.allNodes;
     const iterate = allNodes[Symbol.iterator].bind(allNodes);
@@ -121,7 +121,7 @@ describe('I9 array costs follow changed paths', () => {
         mark(context);
       });
     try {
-      (root.find('/list') as SchemaNode).remove(1);
+      (root.find('/list') as FieldNode).remove(1);
       expect(outsideCandidates).toBe(2);
       expect(wholeVisits).toBe(0);
       expect(

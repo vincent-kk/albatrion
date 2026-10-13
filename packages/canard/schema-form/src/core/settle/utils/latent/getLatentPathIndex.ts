@@ -1,6 +1,6 @@
 import { isArray } from '@winglet/common-utils/filter';
 
-import type { SchemaNodeRecord } from '../../../record';
+import type { FieldNodeRecord } from '../../../record';
 import type { SettlementContext } from '../../type';
 import { indexLatentDescendant } from './indexLatentDescendant';
 
@@ -9,7 +9,7 @@ import { indexLatentDescendant } from './indexLatentDescendant';
  * @param context - Settlement owning the current latent store and lazy index
  * @returns Keys indexed under their own paths and every ancestor path
  */
-export const getLatentPathIndex = <Self extends SchemaNodeRecord<Self>>(
+export const getLatentPathIndex = <Self extends FieldNodeRecord<Self>>(
   context: SettlementContext<Self>,
 ): Map<string, Set<string>> => {
   let index = context.latentDescendantKeys;

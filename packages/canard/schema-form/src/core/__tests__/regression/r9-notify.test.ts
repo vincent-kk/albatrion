@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { makeSchemaNodeTree } from '../makeSchemaNodeTree';
+import { makeFieldNodeTree } from '../makeFieldNodeTree';
 
 const branchSchema = (keyword: 'oneOf' | 'anyOf', withElse: boolean) => ({
   type: 'object',
@@ -21,7 +21,7 @@ describe('round9 P3 notification and validation ports', () => {
     for (const withElse of [true, false]) {
       it(`r9.mjs:76 ${keyword} else ${withElse} reports the branch warnings`, () => {
         const codes: string[] = [];
-        const { root } = makeSchemaNodeTree(branchSchema(keyword, withElse), {
+        const { root } = makeFieldNodeTree(branchSchema(keyword, withElse), {
           errorReporter: {
             hasConsumer: () => true,
             report: (record) => {
@@ -36,7 +36,7 @@ describe('round9 P3 notification and validation ports', () => {
       });
 
       it(`r9.mjs:80 ${keyword} else ${withElse} validates the authored schema`, async () => {
-        const { root } = makeSchemaNodeTree(branchSchema(keyword, withElse));
+        const { root } = makeFieldNodeTree(branchSchema(keyword, withElse));
         const results: boolean[] = [];
         for (const value of [
           { kind: 'a', a: 'A' },

@@ -5,46 +5,46 @@ import { describe, expect, it } from 'vitest';
 import type { JSONSchema } from '@winglet/json-schema';
 
 import {
+  FieldNodeEventType,
+  FieldNodeState,
   type FieldRendererProps,
-  SchemaNodeEventType,
-  SchemaNodeState,
-  useSchemaNodeTracker,
+  useFieldNodeTracker,
 } from '@/schema-form';
 import { ValidationMode } from '@/schema-form/core';
 
 import { type FormHarness, renderForm } from '../renderForm';
 
 /**
- * State-management render suite — node *state* (Dirty / Touched / ShowError)
+ * State-management render suite — node *state* (Dirty / Touched / ErrorVisible)
  * vs node *value* separation, observed through the public `FormHandle` and the
  * node API, asserting BOTH the node tree AND the rendered DOM.
  *
  * Load-bearing facts (verified against src/):
- *   - Typing fires the input `onChange`, which sets `SchemaNodeState.Dirty` on that
- *     node (`SchemaNodeInput.handleChange`). `SchemaNodeState.Touched` is set on BLUR
+ *   - Typing fires the input `onChange`, which sets `FieldNodeState.Dirty` on that
+ *     node (`FieldInputSlot.handleChange`). `FieldNodeState.Touched` is set on BLUR
  *     via a `requestAnimationFrame` callback (`handleBlur`), so a touched
  *     assertion needs a focus-out + a macrotask drain (`flush(>16ms)`).
  *   - `handle.setState(s)` → `rootNode.setSubtreeState(s)`; `handle.clearState()`
  *     → `rootNode.clearSubtreeState()`; `handle.getState()` → `rootNode.globalState`.
  *   - `checkShowError` (FieldRendererProvider) evaluates the per-node
- *     `SchemaNodeState.ShowError` flag FIRST: when present it overrides the form-level
+ *     `FieldNodeState.ErrorVisible` flag FIRST: when present it overrides the form-level
  *     `showError` mode. Default mode is `ShowError.DirtyTouched`, so an invalid
- *     value is hidden until dirty&touched OR an explicit `ShowError` flag.
+ *     value is hidden until dirty&touched OR an explicit `ErrorVisible` flag.
  *   - `clearState()` clears flags but KEEPS values (no remount). `reset()` bumps
  *     the form version key → full remount → uncontrolled inputs revert to
  *     defaults AND flags clear. `node.resetSubtree()` resets only that subtree's
  *     values to defaults and clears its subtree state.
- *   - `SchemaNodeState.Dirty=1, Touched=2, ShowError=4`; `node.state` is keyed by these
+ *   - `FieldNodeState.Dirty=1, Touched=2, ErrorVisible=4`; `node.state` is keyed by these
  *     numeric flags. The default renderer shows NO dirty/touched indicator, so a
  *     `FieldRenderer` exposes one as `[data-indicator]` data-attributes
  *     while still rendering the uncontrolled `<Input/>` and the error `<em>`.
  *
- * Schemas mirror stories/38.StateManagement and stories/15.SchemaNodeState.
+ * Schemas mirror stories/38.StateManagement and stories/15.FieldNodeState.
  */
 
 // ---------------------------------------------------------------------------
 // Custom renderer exposing per-node state as queryable DOM data-attributes.
-// `useSchemaNodeTracker(UpdateState)` forces a re-render on state-only changes
+// `useFieldNodeTracker(UpdateState)` forces a re-render on state-only changes
 // (the memoised renderer would otherwise be skipped when value/error are equal).
 // ---------------------------------------------------------------------------
 
@@ -55,15 +55,15 @@ const StateRenderer = ({
   Input,
   errorMessage,
 }: FieldRendererProps) => {
-  useSchemaNodeTracker(
+  useFieldNodeTracker(
     node,
-    SchemaNodeEventType.UpdateState | SchemaNodeEventType.UpdateError,
+    FieldNodeEventType.UpdateState | FieldNodeEventType.UpdateError,
   );
   if (depth === 0) return <Input />;
   const state = node.state ?? {};
-  const dirty = state[SchemaNodeState.Dirty] === true;
-  const touched = state[SchemaNodeState.Touched] === true;
-  const showError = state[SchemaNodeState.ShowError] === true;
+  const dirty = state[FieldNodeState.Dirty] === true;
+  const touched = state[FieldNodeState.Touched] === true;
+  const showError = state[FieldNodeState.ErrorVisible] === true;
   return (
     <div>
       <Input />
@@ -159,8 +159,8 @@ describe('state-management — interaction sets Dirty/Touched (tree + indicator)
     await form.type('/name', 'Jane');
 
     // tree: Dirty set, Touched not yet (no blur)
-    expect(form.node('/name')?.state[SchemaNodeState.Dirty]).toBe(true);
-    expect(form.node('/name')?.state[SchemaNodeState.Touched]).toBeFalsy();
+    expect(form.node('/name')?.state[FieldNodeState.Dirty]).toBe(true);
+    expect(form.node('/name')?.state[FieldNodeState.Touched]).toBeFalsy();
     // DOM: indicator mirrors the flag and the value reflects the edit
     expect(indicatorOf(form, '/name')?.dataset.dirty).toBe('true');
     expect(indicatorOf(form, '/name')?.dataset.touched).toBe('false');
@@ -177,8 +177,8 @@ describe('state-management — interaction sets Dirty/Touched (tree + indicator)
     await form.type('/name', 'Jane');
     await blurInto(form, '/email');
 
-    expect(form.node('/name')?.state[SchemaNodeState.Touched]).toBe(true);
-    expect(form.node('/name')?.state[SchemaNodeState.Dirty]).toBe(true);
+    expect(form.node('/name')?.state[FieldNodeState.Touched]).toBe(true);
+    expect(form.node('/name')?.state[FieldNodeState.Dirty]).toBe(true);
     expect(indicatorOf(form, '/name')?.dataset.touched).toBe('true');
     // value preserved through the blur
     expect(form.value('/name')).toBe('Jane');
@@ -191,7 +191,7 @@ describe('state-management — interaction sets Dirty/Touched (tree + indicator)
 
     await form.type('/name', 'Jane');
 
-    expect(form.node('/email')?.state[SchemaNodeState.Dirty]).toBeFalsy();
+    expect(form.node('/email')?.state[FieldNodeState.Dirty]).toBeFalsy();
     expect(indicatorOf(form, '/email')?.dataset.dirty).toBe('false');
     expect(form.value('/email')).toBe('john@example.com');
   });
@@ -209,16 +209,14 @@ describe('state-management — clearState clears flags but keeps values', () => 
 
     await form.type('/name', 'Jane');
     await form.type('/address/city', 'Busan');
-    expect(form.node('/name')?.state[SchemaNodeState.Dirty]).toBe(true);
-    expect(form.node('/address/city')?.state[SchemaNodeState.Dirty]).toBe(true);
+    expect(form.node('/name')?.state[FieldNodeState.Dirty]).toBe(true);
+    expect(form.node('/address/city')?.state[FieldNodeState.Dirty]).toBe(true);
 
     await runImperative(form, () => form.handle.clearState());
 
     // flags cleared (tree + indicator)
-    expect(form.node('/name')?.state[SchemaNodeState.Dirty]).toBeFalsy();
-    expect(
-      form.node('/address/city')?.state[SchemaNodeState.Dirty],
-    ).toBeFalsy();
+    expect(form.node('/name')?.state[FieldNodeState.Dirty]).toBeFalsy();
+    expect(form.node('/address/city')?.state[FieldNodeState.Dirty]).toBeFalsy();
     expect(indicatorOf(form, '/name')?.dataset.dirty).toBe('false');
     expect(indicatorOf(form, '/address/city')?.dataset.dirty).toBe('false');
     // values KEPT (DOM + tree) — this is the clearState contract
@@ -234,7 +232,7 @@ describe('state-management — clearState clears flags but keeps values', () => 
     });
 
     await form.type('/name', 'Jane');
-    expect(form.handle.getState()[SchemaNodeState.Dirty]).toBe(true);
+    expect(form.handle.getState()[FieldNodeState.Dirty]).toBe(true);
 
     await runImperative(form, () => form.handle.clearState());
     expect(form.handle.getState()).toEqual({});
@@ -242,11 +240,11 @@ describe('state-management — clearState clears flags but keeps values', () => 
 });
 
 // ---------------------------------------------------------------------------
-// setState ShowError — error <em> appears without changing values
+// setState ErrorVisible — error <em> appears without changing values
 // ---------------------------------------------------------------------------
 
 describe('state-management — setState drives error visibility, not value', () => {
-  it('setState({Dirty,Touched,ShowError}) shows the error <em> without changing values', async () => {
+  it('setState({Dirty,Touched,ErrorVisible}) shows the error <em> without changing values', async () => {
     const form = await renderForm(validatedSchema, {
       validator: true,
       validationMode: ValidationMode.OnChange,
@@ -263,9 +261,9 @@ describe('state-management — setState drives error visibility, not value', () 
 
     await runImperative(form, () =>
       form.handle.setState({
-        [SchemaNodeState.Dirty]: true,
-        [SchemaNodeState.Touched]: true,
-        [SchemaNodeState.ShowError]: true,
+        [FieldNodeState.Dirty]: true,
+        [FieldNodeState.Touched]: true,
+        [FieldNodeState.ErrorVisible]: true,
       }),
     );
 
@@ -273,10 +271,10 @@ describe('state-management — setState drives error visibility, not value', () 
     expect(form.errorTexts()).toContain('TOO_SHORT');
     expect(form.value('/name')).toBe('ab');
     expect(form.getValue()?.name).toBe('ab');
-    expect(form.node('/name')?.state[SchemaNodeState.ShowError]).toBe(true);
+    expect(form.node('/name')?.state[FieldNodeState.ErrorVisible]).toBe(true);
   });
 
-  it('setState({ShowError}) alone forces the error visible regardless of dirty/touched', async () => {
+  it('setState({ErrorVisible}) alone forces the error visible regardless of dirty/touched', async () => {
     const form = await renderForm(validatedSchema, {
       validator: true,
       validationMode: ValidationMode.OnChange,
@@ -287,13 +285,13 @@ describe('state-management — setState drives error visibility, not value', () 
     expect(form.errorTexts()).not.toContain('TOO_SHORT');
 
     await runImperative(form, () =>
-      form.handle.setState({ [SchemaNodeState.ShowError]: true }),
+      form.handle.setState({ [FieldNodeState.ErrorVisible]: true }),
     );
 
     expect(form.errorTexts()).toContain('TOO_SHORT');
     // the override worked WITHOUT marking the node dirty or touched
-    expect(form.node('/name')?.state[SchemaNodeState.Dirty]).toBeFalsy();
-    expect(form.node('/name')?.state[SchemaNodeState.Touched]).toBeFalsy();
+    expect(form.node('/name')?.state[FieldNodeState.Dirty]).toBeFalsy();
+    expect(form.node('/name')?.state[FieldNodeState.Touched]).toBeFalsy();
   });
 
   it('clearState() hides the error <em> again while the tree error persists', async () => {
@@ -306,7 +304,7 @@ describe('state-management — setState drives error visibility, not value', () 
     await form.flush();
 
     await runImperative(form, () =>
-      form.handle.setState({ [SchemaNodeState.ShowError]: true }),
+      form.handle.setState({ [FieldNodeState.ErrorVisible]: true }),
     );
     expect(form.errorTexts()).toContain('TOO_SHORT');
 
@@ -332,12 +330,12 @@ describe('state-management — subtree ops affect only the target subtree', () =
     });
 
     await runImperative(form, () =>
-      form.node('/address')?.setSubtreeState({ [SchemaNodeState.Dirty]: true }),
+      form.node('/address')?.setSubtreeState({ [FieldNodeState.Dirty]: true }),
     );
 
-    expect(form.node('/address/city')?.state[SchemaNodeState.Dirty]).toBe(true);
-    expect(form.node('/address/zip')?.state[SchemaNodeState.Dirty]).toBe(true);
-    expect(form.node('/name')?.state[SchemaNodeState.Dirty]).toBeFalsy();
+    expect(form.node('/address/city')?.state[FieldNodeState.Dirty]).toBe(true);
+    expect(form.node('/address/zip')?.state[FieldNodeState.Dirty]).toBe(true);
+    expect(form.node('/name')?.state[FieldNodeState.Dirty]).toBeFalsy();
     // DOM
     expect(indicatorOf(form, '/address/city')?.dataset.dirty).toBe('true');
     expect(indicatorOf(form, '/name')?.dataset.dirty).toBe('false');
@@ -350,17 +348,15 @@ describe('state-management — subtree ops affect only the target subtree', () =
 
     // mark the whole tree dirty via the handle, then clear just /address
     await runImperative(form, () =>
-      form.handle.setState({ [SchemaNodeState.Dirty]: true }),
+      form.handle.setState({ [FieldNodeState.Dirty]: true }),
     );
-    expect(form.node('/name')?.state[SchemaNodeState.Dirty]).toBe(true);
-    expect(form.node('/address/city')?.state[SchemaNodeState.Dirty]).toBe(true);
+    expect(form.node('/name')?.state[FieldNodeState.Dirty]).toBe(true);
+    expect(form.node('/address/city')?.state[FieldNodeState.Dirty]).toBe(true);
 
     await runImperative(form, () => form.node('/address')?.clearSubtreeState());
 
-    expect(
-      form.node('/address/city')?.state[SchemaNodeState.Dirty],
-    ).toBeFalsy();
-    expect(form.node('/name')?.state[SchemaNodeState.Dirty]).toBe(true);
+    expect(form.node('/address/city')?.state[FieldNodeState.Dirty]).toBeFalsy();
+    expect(form.node('/name')?.state[FieldNodeState.Dirty]).toBe(true);
     // DOM mirrors the partial clear
     expect(indicatorOf(form, '/address/city')?.dataset.dirty).toBe('false');
     expect(indicatorOf(form, '/name')?.dataset.dirty).toBe('true');
@@ -378,7 +374,7 @@ describe('state-management — reset vs clearState vs resetSubtree (values)', ()
     await form.type('/name', 'Jane');
     const before = form.mountOrdinal('/name');
     expect(form.value('/name')).toBe('Jane');
-    expect(form.node('/name')?.state[SchemaNodeState.Dirty]).toBe(true);
+    expect(form.node('/name')?.state[FieldNodeState.Dirty]).toBe(true);
 
     await form.reset();
 
@@ -386,7 +382,7 @@ describe('state-management — reset vs clearState vs resetSubtree (values)', ()
     expect(form.value('/name')).toBe('John');
     expect(form.getValue()?.name).toBe('John');
     expect(form.mountOrdinal('/name')).toBeGreaterThan(before);
-    expect(form.node('/name')?.state[SchemaNodeState.Dirty]).toBeFalsy();
+    expect(form.node('/name')?.state[FieldNodeState.Dirty]).toBeFalsy();
     expect(form.caughtErrors()).toEqual([]);
   });
 
@@ -402,7 +398,7 @@ describe('state-management — reset vs clearState vs resetSubtree (values)', ()
     expect(form.value('/name')).toBe('Jane');
     expect(form.getValue()?.name).toBe('Jane');
     expect(form.mountOrdinal('/name')).toBe(before);
-    expect(form.node('/name')?.state[SchemaNodeState.Dirty]).toBeFalsy();
+    expect(form.node('/name')?.state[FieldNodeState.Dirty]).toBeFalsy();
   });
 
   it('resetSubtree() on /address resets only that subtree to defaults, keeping siblings', async () => {
@@ -418,9 +414,7 @@ describe('state-management — reset vs clearState vs resetSubtree (values)', ()
     expect(form.value('/address/city')).toBe('Seoul');
     expect(form.getValue()?.address?.city).toBe('Seoul');
     expect(form.value('/name')).toBe('Jane');
-    expect(
-      form.node('/address/city')?.state[SchemaNodeState.Dirty],
-    ).toBeFalsy();
+    expect(form.node('/address/city')?.state[FieldNodeState.Dirty]).toBeFalsy();
   });
 });
 
@@ -439,15 +433,13 @@ describe('state-management — array item subtree state by index', () => {
     expect(form.exists('/items/1')).toBe(true);
 
     await runImperative(form, () =>
-      form.node('/items/1')?.setSubtreeState({ [SchemaNodeState.Dirty]: true }),
+      form.node('/items/1')?.setSubtreeState({ [FieldNodeState.Dirty]: true }),
     );
 
     // item 1 subtree dirty, item 0 untouched (tree)
-    expect(form.node('/items/1/label')?.state[SchemaNodeState.Dirty]).toBe(
-      true,
-    );
+    expect(form.node('/items/1/label')?.state[FieldNodeState.Dirty]).toBe(true);
     expect(
-      form.node('/items/0/label')?.state[SchemaNodeState.Dirty],
+      form.node('/items/0/label')?.state[FieldNodeState.Dirty],
     ).toBeFalsy();
     // DOM indicators by index
     expect(indicatorOf(form, '/items/1/label')?.dataset.dirty).toBe('true');

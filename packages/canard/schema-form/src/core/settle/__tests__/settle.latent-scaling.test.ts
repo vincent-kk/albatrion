@@ -1,11 +1,11 @@
 import { describe, expect, it, vi } from 'vitest';
 
-import { makeSchemaNodeTree } from '../../__tests__/makeSchemaNodeTree';
+import { makeFieldNodeTree } from '../../__tests__/makeFieldNodeTree';
 
 describe('49C-01 SETTLE-017 latent occurrence scaling', () => {
   it('bounds key encoding when an absent-slot array exits as its sibling enters', () => {
     const count = 1000;
-    const { root } = makeSchemaNodeTree({
+    const { root } = makeFieldNodeTree({
       type: 'object',
       properties: {
         flag: { type: 'boolean' },

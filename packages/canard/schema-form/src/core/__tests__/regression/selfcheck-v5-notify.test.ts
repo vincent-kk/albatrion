@@ -1,17 +1,17 @@
 import { describe, expect, it } from 'vitest';
 
-import { SchemaNodeEventType, writeSchemaNodeInput } from '../../SchemaNode';
-import type { SchemaNode } from '../../SchemaNode';
-import { makeSchemaNodeTree } from '../makeSchemaNodeTree';
+import { FieldNodeEventType, writeFieldNodeInput } from '../../FieldNode';
+import type { FieldNode } from '../../FieldNode';
+import { makeFieldNodeTree } from '../makeFieldNodeTree';
 
-const requireNode = (root: SchemaNode, path: string): SchemaNode => {
+const requireNode = (root: FieldNode, path: string): FieldNode => {
   const node = root.find(path);
   if (!node) throw new Error(`Missing test node ${path}`);
   return node;
 };
 
 const nestedTree = () => {
-  const { root, runtime } = makeSchemaNodeTree({
+  const { root, runtime } = makeFieldNodeTree({
     type: 'object',
     properties: {
       mid: {
@@ -36,7 +36,7 @@ const nestedTree = () => {
 // filid:contract factory-single-path
 describe('selfcheck-v5 notification ports', () => {
   it('selfcheck-v5.mjs:348 keeps the root emit reference when an omitted nested field becomes empty', () => {
-    const { root } = makeSchemaNodeTree({
+    const { root } = makeFieldNodeTree({
       type: 'object',
       properties: {
         a: { type: 'string' },
@@ -82,16 +82,16 @@ describe('selfcheck-v5 notification ports', () => {
     const { mid, leaf } = nestedTree();
     const seen: { node: string; payload: unknown; value: unknown }[] = [];
     mid.subscribe((event) => {
-      if (!(event.type & SchemaNodeEventType.UpdateValue)) return;
-      const payload = event.payload?.[SchemaNodeEventType.UpdateValue];
+      if (!(event.type & FieldNodeEventType.UpdateValue)) return;
+      const payload = event.payload?.[FieldNodeEventType.UpdateValue];
       if (JSON.stringify(payload).includes('a2')) leaf.setValue('a3');
       seen.push({ node: 'mid', payload, value: mid.value });
     });
     leaf.subscribe((event) => {
-      if (event.type & SchemaNodeEventType.UpdateValue)
+      if (event.type & FieldNodeEventType.UpdateValue)
         seen.push({
           node: 'leaf',
-          payload: event.payload?.[SchemaNodeEventType.UpdateValue],
+          payload: event.payload?.[FieldNodeEventType.UpdateValue],
           value: leaf.value,
         });
     });
@@ -114,7 +114,7 @@ describe('selfcheck-v5 notification ports', () => {
     const properties = Object.fromEntries(
       Array.from({ length: 1000 }, (_, i) => [`f${i}`, { type: 'string' }]),
     );
-    const { root, runtime } = makeSchemaNodeTree({
+    const { root, runtime } = makeFieldNodeTree({
       type: 'object',
       properties,
     });
@@ -128,12 +128,12 @@ describe('selfcheck-v5 notification ports', () => {
       requireNode(root, `/f${i}`).subscribe(() => {
         deliveries += 1;
       });
-    const revision = root.revision(SchemaNodeEventType.UpdateValue);
+    const revision = root.revision(FieldNodeEventType.UpdateValue);
     root.batch(() => {
       for (let i = 0; i < 1000; i += 1)
         requireNode(root, `/f${i}`).setValue(`v${i}`);
     });
-    expect(root.revision(SchemaNodeEventType.UpdateValue)).toBe(revision + 1);
+    expect(root.revision(FieldNodeEventType.UpdateValue)).toBe(revision + 1);
     expect([changes, deliveries]).toEqual([1, 1000]);
     root.batch(() => {
       root.batch(() => {
@@ -183,7 +183,7 @@ describe('selfcheck-v5 notification ports', () => {
   });
 
   it('selfcheck-v5.mjs:756 refreshes the injected sibling only', () => {
-    const { root } = makeSchemaNodeTree({
+    const { root } = makeFieldNodeTree({
       type: 'object',
       properties: {
         a: {
@@ -199,15 +199,15 @@ describe('selfcheck-v5 notification ports', () => {
     const refreshed: string[] = [];
     for (const path of ['/a', '/b'])
       requireNode(root, path).subscribe((event) => {
-        if (event.type & SchemaNodeEventType.RequestRefresh)
+        if (event.type & FieldNodeEventType.RequestRefresh)
           refreshed.push(path);
       });
-    writeSchemaNodeInput(requireNode(root, '/a'), 'ab');
+    writeFieldNodeInput(requireNode(root, '/a'), 'ab');
     expect(refreshed).toEqual(['/b']);
   });
 
   it('selfcheck-v5.mjs:756 pair EVENT-071 refreshes a caller-written leaf once', () => {
-    const { root } = makeSchemaNodeTree({
+    const { root } = makeFieldNodeTree({
       type: 'object',
       properties: {
         a: { type: 'string' },
@@ -218,7 +218,7 @@ describe('selfcheck-v5 notification ports', () => {
     const refreshed: string[] = [];
     for (const path of ['/a', '/b'])
       requireNode(root, path).subscribe((event) => {
-        if (event.type & SchemaNodeEventType.RequestRefresh)
+        if (event.type & FieldNodeEventType.RequestRefresh)
           refreshed.push(path);
       });
     requireNode(root, '/a').setValue('ab');

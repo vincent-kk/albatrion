@@ -3,9 +3,9 @@ import type {
   FormScenarioStep,
 } from '@aileron/schema-form-scenarios';
 
-import { SetValueOption } from '../../../SchemaNode';
-import type { SchemaNode as RuntimeSchemaNode } from '../../../SchemaNode/SchemaNode';
-import { resetSchemaNodeForm } from '../../../settle';
+import { SetValueOption } from '../../../FieldNode';
+import type { FieldNode as RuntimeFieldNode } from '../../../FieldNode/FieldNode';
+import { resetFieldNodeForm } from '../../../settle';
 
 /**
  * Apply one core-observable action to the tree, including root form loads.
@@ -15,14 +15,14 @@ import { resetSchemaNodeForm } from '../../../settle';
  * @returns The synchronous action result after settlement
  */
 export function executeCoreScenarioStep(
-  root: RuntimeSchemaNode,
+  root: RuntimeFieldNode,
   scenario: FormScenario,
   step: FormScenarioStep,
 ): unknown {
   const previousDiagnostics = root.diagnostics;
   try {
     if (step.action === 'reset') {
-      resetSchemaNodeForm(
+      resetFieldNodeForm(
         root,
         scenario.initialValue,
         SetValueOption.Overwrite |

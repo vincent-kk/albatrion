@@ -126,12 +126,12 @@ interface FormHandle<
   Schema extends JSONSchema,
   Value extends AllowedValue = InferValueType<Schema>,
 > {
-  node?: InferSchemaNode<Schema>;
-  focus: Fn<[dataPath: SchemaNode['path']]>;
-  select: Fn<[dataPath: SchemaNode['path']]>;
+  node?: InferFieldNode<Schema>;
+  focus: Fn<[dataPath: FieldNode['path']]>;
+  select: Fn<[dataPath: FieldNode['path']]>;
   reset: Fn;
-  findNode: Fn<[path: SchemaNode['path']], SchemaNode | null>;
-  findNodes: Fn<[path: SchemaNode['path']], SchemaNode[]>;
+  findNode: Fn<[path: FieldNode['path']], FieldNode | null>;
+  findNodes: Fn<[path: FieldNode['path']], FieldNode[]>;
   getState: Fn<[], NodeStateFlags>;
   setState: Fn<[state: NodeStateFlags]>;
   clearState: Fn;
@@ -161,7 +161,7 @@ interface FormChildrenProps<
   Schema extends JSONSchema,
   Value extends AllowedValue = InferValueType<Schema>,
 > {
-  node?: InferSchemaNode<Schema>;
+  node?: InferFieldNode<Schema>;
   jsonSchema: Schema;
   defaultValue?: Value;
   value?: Value;
@@ -471,7 +471,7 @@ type FieldInputDefinition<T = unknown> = {
 FieldInput의 조건은 함수 또는 객체를 사용하여 정의할 수 있습니다:
 
 ```ts
-type Hint = {
+type FieldInputHint = {
   jsonSchema: JSONSchema;
   type: string;
   format: string;
@@ -479,7 +479,7 @@ type Hint = {
   path: string;
   [alt: string]: any;
 };
-type FieldInputTestFn = Fn<[hint: Hint], boolean>;
+type FieldInputTestFn = Fn<[hint: FieldInputHint], boolean>;
 
 type FieldInputTestObject = Partial<{
   type: Array<string>;
@@ -492,7 +492,7 @@ type FieldInputTestObject = Partial<{
 
 inputType은 정의의 test가 해석하는 문자열 힌트이며 HTML input type과 같지 않습니다.
 
-- **FieldInputTestFn**: Hint 객체를 받아 boolean을 반환하는 함수입니다. 더 복잡한 조건을 구현하는 데 유용합니다.
+- **FieldInputTestFn**: FieldInputHint 객체를 받아 boolean을 반환하는 함수입니다. 더 복잡한 조건을 구현하는 데 유용합니다.
 - **FieldInputTestObject**: 조건을 단순히 객체로 정의할 수 있습니다. 예를 들어, `{ type: ['string'], format: ['email'] }`는 문자열 유형이고 이메일 형식인 노드를 일치시킵니다.
 
 #### FieldInput 속성
@@ -505,7 +505,7 @@ interface FieldInputProps<
   Context extends Dictionary = object,
   WatchValues extends Array<any> = Array<any>,
   Schema extends JSONSchemaWithVirtual = InferJSONSchema<Value>,
-  Node extends SchemaNode = InferSchemaNode<Schema>,
+  Node extends FieldNode = InferFieldNode<Schema>,
 > {
   /** FieldInput 컴포넌트의 JSON 스키마 */
   jsonSchema: Schema;
@@ -513,19 +513,19 @@ interface FieldInputProps<
   readOnly: boolean;
   /** FieldInput 컴포넌트의 비활성화 상태 */
   disabled: boolean;
-  /** FieldInput 컴포넌트에 할당된 스키마 노드가 필수인지 여부 */
+  /** FieldInput 컴포넌트에 할당된 필드 노드가 필수인지 여부 */
   required: boolean;
-  /** FieldInput 컴포넌트에 할당된 스키마 노드 */
+  /** FieldInput 컴포넌트에 할당된 필드 노드 */
   node: Node;
   /** 이 필드의 JSON Schema 타입 (예: 'string', 'number', 'object', 'array') */
   type: Node['schemaType'];
-  /** FieldInput 컴포넌트에 할당된 스키마 노드의 이름 */
+  /** FieldInput 컴포넌트에 할당된 필드 노드의 이름 */
   name: Node['name'];
-  /** FieldInput 컴포넌트에 할당된 스키마 노드의 경로 */
+  /** FieldInput 컴포넌트에 할당된 필드 노드의 경로 */
   path: Node['path'];
   /** 이 필드가 null 값을 허용하는지 여부 (스키마 타입 배열에 'null'이 포함된 경우에서 파생) */
   nullable: Node['nullable'];
-  /** FieldInput 컴포넌트에 할당된 스키마 노드의 오류 */
+  /** FieldInput 컴포넌트에 할당된 필드 노드의 오류 */
   errors: Node['errors'];
   /** 이 필드의 에러를 표시할지 여부 */
   errorVisible: boolean;
@@ -540,7 +540,7 @@ interface FieldInputProps<
   /** 파일(들)을 폼의 파일 저장소에 첨부/해제합니다 */
   onFileAttach: Fn<[file: File | File[] | undefined]>;
   /** 이 FieldInput 컴포넌트의 자식 FieldInput 컴포넌트 */
-  ChildNodeComponents: ChildNodeComponent[];
+  ChildFields: ChildField[];
   /** 입력 필드의 placeholder 텍스트 */
   placeholder: string | undefined;
   /** 스타일링을 위한 CSS 클래스 이름 */
@@ -869,7 +869,7 @@ registerPlugin(ajvValidatorPlugin);
 
 ```ts
 export interface SchemaFormPlugin {
-  /** Form.Group 컴포넌트 */
+  /** Form.Field 컴포넌트 */
   FieldRenderer?: ComponentType<FieldRendererProps>;
   /** Form.Label 컴포넌트 */
   FormLabelRenderer?: ComponentType<FieldRendererProps>;
@@ -1502,7 +1502,7 @@ const jsonSchema = {
 - **`omitEmpty` (기본 활성)**: 빈 배열을 부모 전파 경로에서 `undefined`로 변환합니다. 필터 순서는 `omitTrailing → omitEmpty`라서 전부 빈 배열은 부모에서 `undefined`로 수렴합니다 (루트 폼은 `[]`를 방출).
 - **값 2채널**: `node.value`는 raw를 유지하고, 정제된 출력은 `node.outputValue`로 노출됩니다. validation은 정제된 값 기준이라 `minItems`는 채워진 prefix만 셉니다.
 - **Reset 의미**: Reset 계열 초기화(폼 reset, oneOf/anyOf 분기 재활성화)는 `minItems`만큼 빈 항목을 재충전하고, 일반 `setValue(undefined)`는 전부 비웁니다.
-- **커스텀 입력**: 행 수는 `value.length`가 아니라 `node.children`(또는 `ChildNodeComponents`) 기준으로 세야 합니다 — 방출 값이 렌더된 행보다 짧은 것이 설계입니다.
+- **커스텀 입력**: 행 수는 `value.length`가 아니라 `node.children`(또는 `ChildFields`) 기준으로 세야 합니다 — 방출 값이 렌더된 행보다 짧은 것이 설계입니다.
 
 ### 명령형 핸들을 사용한 양식
 
@@ -1637,9 +1637,9 @@ export const FormWithCustomInput = () => {
 
 #### 계층 규칙
 
-`controls`는 Node 자신, 그 Node를 가리키는 부모의 `controls.children` 항목, 그 Node를 선언한 조각(예: `allOf` 항목)에 선언할 수 있습니다. 계층은 서로를 덮어쓰지 않고 합쳐집니다. 표준 `readOnly`와 `readOnly` / `disabled` 제어는 OR로, `visible`은 AND로 결합합니다.
+`controls`는 Node 자신, 그 Node를 가리키는 부모의 `controls.fields` 항목, 그 Node를 선언한 조각(예: `allOf` 항목)에 선언할 수 있습니다. 계층은 서로를 덮어쓰지 않고 합쳐집니다. 표준 `readOnly`와 `readOnly` / `disabled` 제어는 OR로, `visible`은 AND로 결합합니다.
 
-`default`는 Node 자신의 `controls.default`, 부모의 `children` 항목, 조각의 `controls.default`, 표준 `default` 순으로 우선합니다.
+`default`는 Node 자신의 `controls.default`, 부모의 `fields` 항목, 조각의 `controls.default`, 표준 `default` 순으로 우선합니다.
 
 #### 기본 예제
 
@@ -2297,7 +2297,7 @@ const CUSTOM_INPUTS = [
 `@canard/schema-form`은 TypeScript로 구축되었으며 포괄적인 유형 정의를 제공합니다. 주요 유형 유틸리티에는 다음과 같습니다:
 
 - `InferValueType<Schema>`: JSON Schema에서 값 유형을 추론합니다
-- `InferSchemaNode<Schema>`: JSON Schema에서 스키마 노드 유형을 추론합니다
+- `InferFieldNode<Schema>`: JSON Schema에서 필드 노드 유형을 추론합니다
 - `FormHandle<Schema, Value>`: 스키마 특정 메서드를 가진 양식 참조 핸들러의 유형
 
 ### `InferValueType`이 보장하는 것

@@ -1,10 +1,10 @@
 import { describe, expect, it } from 'vitest';
 
-import { SetValueOption } from '../../types/value';
+import { WriteOption } from '../../types/value';
 import {
-  loadSchemaNodeAtMount,
-  resetSchemaNodeSubtree,
-  writeSchemaNode,
+  loadFieldNodeAtMount,
+  resetFieldNodeSubtree,
+  writeFieldNode,
 } from '../index';
 import { createTestTree } from './fixtures/createTestTree';
 import { sourceAt } from './fixtures/sourceAt';
@@ -25,17 +25,17 @@ describe('per-node branch sources', () => {
       ],
     };
     const nullTree = createTestTree(schema).root;
-    loadSchemaNodeAtMount(nullTree, null, SetValueOption.Overwrite);
+    loadFieldNodeAtMount(nullTree, null, WriteOption.Overwrite);
     expect(nullTree.emit).toBeNull();
     expect(nullTree.structure?.kind).toBeDefined();
     expect(nullTree.structure?.meow).toBeUndefined();
     const scalarTree = createTestTree(schema).root;
-    loadSchemaNodeAtMount(scalarTree, 17, SetValueOption.Overwrite);
+    loadFieldNodeAtMount(scalarTree, 17, WriteOption.Overwrite);
     expect(scalarTree.emit).toBe(17);
     expect(scalarTree.structure?.kind).toBeDefined();
     expect(scalarTree.structure?.meow).toBeUndefined();
     const catTree = createTestTree(schema).root;
-    loadSchemaNodeAtMount(catTree, { kind: 'cat' }, SetValueOption.Overwrite);
+    loadFieldNodeAtMount(catTree, { kind: 'cat' }, WriteOption.Overwrite);
     expect(catTree.emit).toEqual({ kind: 'cat', meow: true });
   });
 
@@ -58,7 +58,7 @@ describe('per-node branch sources', () => {
         },
       },
     });
-    loadSchemaNodeAtMount(
+    loadFieldNodeAtMount(
       root,
       {
         user: null,
@@ -67,7 +67,7 @@ describe('per-node branch sources', () => {
           reason: 'edited',
         },
       },
-      SetValueOption.Overwrite,
+      WriteOption.Overwrite,
     );
     expect(root.emit).toEqual({
       user: null,
@@ -76,11 +76,11 @@ describe('per-node branch sources', () => {
         reason: 'edited',
       },
     });
-    writeSchemaNode(
+    writeFieldNode(
       root,
       { user: null, target: null },
       'callerReplace',
-      SetValueOption.Overwrite,
+      WriteOption.Overwrite,
     );
     expect(root.emit).toEqual({ user: null, target: null });
     expect(root.structure?.target?.structure?.note?.raw).toBeUndefined();
@@ -92,20 +92,20 @@ describe('per-node branch sources', () => {
         a: { type: 'string' },
       },
     });
-    loadSchemaNodeAtMount(root, { a: 'x', z: 1 }, SetValueOption.Overwrite);
-    writeSchemaNode(root.structure!.a, 'y', 'input', SetValueOption.Overwrite);
+    loadFieldNodeAtMount(root, { a: 'x', z: 1 }, WriteOption.Overwrite);
+    writeFieldNode(root.structure!.a, 'y', 'input', WriteOption.Overwrite);
     expect(root.raw).toBeUndefined();
-    expect(root.extras).toEqual({ z: 1 });
+    expect(root.undeclaredValues).toEqual({ z: 1 });
     expect(sourceAt(root, '/a')).toBe('y');
-    writeSchemaNode(
+    writeFieldNode(
       root,
       { a: 'y', z: 1 },
       'callerReplace',
-      SetValueOption.Overwrite,
+      WriteOption.Overwrite,
     );
-    writeSchemaNode(root, { a: 'y' }, 'callerPartial', SetValueOption.Merge);
+    writeFieldNode(root, { a: 'y' }, 'callerPartial', WriteOption.Merge);
     expect(root.raw).toBeUndefined();
-    expect(root.extras).toEqual({ z: 1 });
+    expect(root.undeclaredValues).toEqual({ z: 1 });
   });
 
   it('E16/WRITE-018/O1 preserves extra key order and an equal write reference', () => {
@@ -115,14 +115,14 @@ describe('per-node branch sources', () => {
         a: { type: 'number' },
       },
     });
-    loadSchemaNodeAtMount(root, { z: 1, a: 2, m: 3 }, SetValueOption.Overwrite);
-    writeSchemaNode(root, { q: 4 }, 'callerPartial', SetValueOption.Merge);
-    writeSchemaNode(root, { z: 9 }, 'callerPartial', SetValueOption.Merge);
-    expect(Object.keys(root.extras ?? {})).toEqual(['z', 'm', 'q']);
+    loadFieldNodeAtMount(root, { z: 1, a: 2, m: 3 }, WriteOption.Overwrite);
+    writeFieldNode(root, { q: 4 }, 'callerPartial', WriteOption.Merge);
+    writeFieldNode(root, { z: 9 }, 'callerPartial', WriteOption.Merge);
+    expect(Object.keys(root.undeclaredValues ?? {})).toEqual(['z', 'm', 'q']);
     expect(Object.keys(root.emit ?? {})).toEqual(['a', 'z', 'm', 'q']);
-    const extras = root.extras;
-    writeSchemaNode(root, root.emit, 'callerReplace', SetValueOption.Overwrite);
-    expect(root.extras).toBe(extras);
+    const extras = root.undeclaredValues;
+    writeFieldNode(root, root.emit, 'callerReplace', WriteOption.Overwrite);
+    expect(root.undeclaredValues).toBe(extras);
     expect(root.runtime.refreshTargets?.size).toBe(0);
   });
 
@@ -147,38 +147,28 @@ describe('per-node branch sources', () => {
         },
       },
     });
-    loadSchemaNodeAtMount(
+    loadFieldNodeAtMount(
       root,
       { flag: true, g: { leaf: 'a', deep: { x: 1, y: 2 }, e: 1 } },
-      SetValueOption.Overwrite,
+      WriteOption.Overwrite,
     );
     const old = root.structure!.g;
-    writeSchemaNode(
-      root.structure!.flag,
-      false,
-      'input',
-      SetValueOption.Overwrite,
-    );
+    writeFieldNode(root.structure!.flag, false, 'input', WriteOption.Overwrite);
     const input = Object.freeze({
       g: Object.freeze({ deep: Object.freeze({ x: 2 }), f: 3 }),
     });
-    writeSchemaNode(root, input, 'callerPartial', SetValueOption.Merge);
+    writeFieldNode(root, input, 'callerPartial', WriteOption.Merge);
     expect(sourceAt(root, '/g/leaf', 'string')).toBe('a');
     expect(sourceAt(root, '/g/deep/x', 'number')).toBe(2);
     expect(sourceAt(root, '/g/deep/y', 'number')).toBe(2);
-    writeSchemaNode(
+    writeFieldNode(
       old,
       { deep: { x: 2 }, f: 3 },
       'callerPartial',
-      SetValueOption.Merge,
+      WriteOption.Merge,
     );
     expect(input.g.deep.x).toBe(2);
-    writeSchemaNode(
-      root.structure!.flag,
-      true,
-      'input',
-      SetValueOption.Overwrite,
-    );
+    writeFieldNode(root.structure!.flag, true, 'input', WriteOption.Overwrite);
     expect(root.emit).toEqual({
       flag: true,
       g: { leaf: 'a', deep: { x: 2, y: 2 }, e: 1, f: 3 },
@@ -201,37 +191,17 @@ describe('per-node branch sources', () => {
         },
       },
     });
-    loadSchemaNodeAtMount(
+    loadFieldNodeAtMount(
       root,
       { on: true, show: true, a: 'x', g: { secret: 'S' } },
-      SetValueOption.Overwrite,
+      WriteOption.Overwrite,
     );
-    writeSchemaNode(
-      root.structure!.show,
-      false,
-      'input',
-      SetValueOption.Overwrite,
-    );
-    writeSchemaNode(
-      root.structure!.on,
-      false,
-      'input',
-      SetValueOption.Overwrite,
-    );
-    writeSchemaNode(root, { a: 'y' }, 'callerPartial', SetValueOption.Merge);
+    writeFieldNode(root.structure!.show, false, 'input', WriteOption.Overwrite);
+    writeFieldNode(root.structure!.on, false, 'input', WriteOption.Overwrite);
+    writeFieldNode(root, { a: 'y' }, 'callerPartial', WriteOption.Merge);
     expect(sourceAt(root, '/g/secret', 'string')).toBe('S');
-    writeSchemaNode(
-      root.structure!.on,
-      true,
-      'input',
-      SetValueOption.Overwrite,
-    );
-    writeSchemaNode(
-      root.structure!.show,
-      true,
-      'input',
-      SetValueOption.Overwrite,
-    );
+    writeFieldNode(root.structure!.on, true, 'input', WriteOption.Overwrite);
+    writeFieldNode(root.structure!.show, true, 'input', WriteOption.Overwrite);
     expect(sourceAt(root, '/g/secret')).toBe('S');
   });
 
@@ -243,29 +213,24 @@ describe('per-node branch sources', () => {
         secret: { type: 'string', controls: { active: '../flag' } },
       },
     });
-    loadSchemaNodeAtMount(
+    loadFieldNodeAtMount(
       root,
       { flag: true, secret: 'old' },
-      SetValueOption.Overwrite,
+      WriteOption.Overwrite,
     );
-    writeSchemaNode(
-      root.structure!.flag,
-      false,
-      'input',
-      SetValueOption.Overwrite,
-    );
-    writeSchemaNode(
+    writeFieldNode(root.structure!.flag, false, 'input', WriteOption.Overwrite);
+    writeFieldNode(
       root,
       { flag: true, secret: 'new' },
       'callerPartial',
-      SetValueOption.Merge,
+      WriteOption.Merge,
     );
     expect(sourceAt(root, '/secret')).toBe('new');
-    writeSchemaNode(
+    writeFieldNode(
       root,
       { flag: false },
       'callerReplace',
-      SetValueOption.Overwrite,
+      WriteOption.Overwrite,
     );
     expect(sourceAt(root, '/secret', 'string')).toBeUndefined();
   });
@@ -285,27 +250,22 @@ describe('per-node branch sources', () => {
         },
       },
     });
-    loadSchemaNodeAtMount(
+    loadFieldNodeAtMount(
       root,
       { flag: true, g: { leaf: 'L', z: 1 } },
-      SetValueOption.Overwrite,
+      WriteOption.Overwrite,
     );
-    writeSchemaNode(
+    writeFieldNode(
       root.structure!.flag,
       false,
       'input',
-      SetValueOption.DisableAutomaticWrites,
+      WriteOption.DisableAutomaticWrites,
     );
     expect(sourceAt(root, '/g/leaf', 'string')).toBe('L');
     expect(
       root.runtime.latentRaw.get(JSON.stringify(['/g', 'object'])),
-    ).toMatchObject({ extras: { z: 1 } });
-    writeSchemaNode(
-      root.structure!.flag,
-      true,
-      'input',
-      SetValueOption.Overwrite,
-    );
+    ).toMatchObject({ undeclaredValues: { z: 1 } });
+    writeFieldNode(root.structure!.flag, true, 'input', WriteOption.Overwrite);
     expect(root.emit).toEqual({ flag: true, g: { leaf: 'L', z: 1 } });
   });
 
@@ -342,13 +302,13 @@ describe('per-node branch sources', () => {
         },
       ],
     });
-    loadSchemaNodeAtMount(root, { x: 'steady' }, SetValueOption.Overwrite);
+    loadFieldNodeAtMount(root, { x: 'steady' }, WriteOption.Overwrite);
     expect(() =>
-      writeSchemaNode(
+      writeFieldNode(
         root,
         { t: true, x: 0 },
         'callerReplace',
-        SetValueOption.Overwrite,
+        WriteOption.Overwrite,
       ),
     ).toThrow();
     expect(root.runtime.diagnostics).toMatchObject({ cause: 'budget' });
@@ -374,32 +334,27 @@ describe('per-node branch sources', () => {
         },
       },
     });
-    writeSchemaNode(
+    writeFieldNode(
       root,
       { user: null },
       'callerReplace',
-      SetValueOption.Overwrite,
+      WriteOption.Overwrite,
     );
     const user = root.structure!.user;
     expect(user.raw).toBeNull();
-    writeSchemaNode(
+    writeFieldNode(
       user.structure!.name,
       undefined,
       'input',
-      SetValueOption.Overwrite,
+      WriteOption.Overwrite,
     );
     expect(user.raw).toBeNull();
-    writeSchemaNode(user, {}, 'callerPartial', SetValueOption.Merge);
+    writeFieldNode(user, {}, 'callerPartial', WriteOption.Merge);
     expect(user.raw).toBeNull();
-    writeSchemaNode(user, { z: 1 }, 'callerPartial', SetValueOption.Merge);
+    writeFieldNode(user, { z: 1 }, 'callerPartial', WriteOption.Merge);
     expect(user.raw).toBeNull();
-    expect(user.extras).toEqual({ z: 1 });
-    writeSchemaNode(
-      user.structure!.name,
-      'N',
-      'input',
-      SetValueOption.Overwrite,
-    );
+    expect(user.undeclaredValues).toEqual({ z: 1 });
+    writeFieldNode(user.structure!.name, 'N', 'input', WriteOption.Overwrite);
     expect(user.raw).toBeUndefined();
     expect(user.structure?.sibling?.raw).toBeUndefined();
     expect(root.emit).toEqual({ user: { name: 'N', z: 1 } });
@@ -420,38 +375,28 @@ describe('per-node branch sources', () => {
         },
       },
     });
-    loadSchemaNodeAtMount(
+    loadFieldNodeAtMount(
       root,
       { flag: true, g: { leaf: 'a', other: 'b', z: 1 } },
-      SetValueOption.Overwrite,
+      WriteOption.Overwrite,
     );
-    writeSchemaNode(
+    writeFieldNode(
       root.structure!.g.structure!.leaf,
       'new',
       'input',
-      SetValueOption.Overwrite,
+      WriteOption.Overwrite,
     );
-    writeSchemaNode(
+    writeFieldNode(
       root.structure!.g.structure!.other,
       undefined,
       'input',
-      SetValueOption.Overwrite,
+      WriteOption.Overwrite,
     );
-    writeSchemaNode(
-      root.structure!.flag,
-      false,
-      'input',
-      SetValueOption.Overwrite,
-    );
-    writeSchemaNode(
-      root.structure!.flag,
-      true,
-      'input',
-      SetValueOption.Overwrite,
-    );
+    writeFieldNode(root.structure!.flag, false, 'input', WriteOption.Overwrite);
+    writeFieldNode(root.structure!.flag, true, 'input', WriteOption.Overwrite);
     expect(root.structure?.g?.structure?.leaf?.raw).toBe('new');
     expect(root.structure?.g?.structure?.other?.raw).toBeUndefined();
-    expect(root.structure?.g?.extras).toEqual({ z: 1 });
+    expect(root.structure?.g?.undeclaredValues).toEqual({ z: 1 });
   });
 
   it('TEST-069 lets a gate read an undeclared key from extras', () => {
@@ -461,13 +406,13 @@ describe('per-node branch sources', () => {
         visible: { type: 'string', controls: { active: '../mode === "on"' } },
       },
     });
-    loadSchemaNodeAtMount(
+    loadFieldNodeAtMount(
       root,
       { mode: 'on', visible: 'V' },
-      SetValueOption.Overwrite,
+      WriteOption.Overwrite,
     );
     expect(root.structure?.visible?.raw).toBe('V');
-    writeSchemaNode(root, {}, 'callerReplace', SetValueOption.Overwrite);
+    writeFieldNode(root, {}, 'callerReplace', WriteOption.Overwrite);
     expect(root.structure?.visible).toBeUndefined();
   });
 
@@ -494,17 +439,12 @@ describe('per-node branch sources', () => {
         },
       ],
     });
-    loadSchemaNodeAtMount(
+    loadFieldNodeAtMount(
       root,
       { kind: 'a', group: { leaf: 'kept' } },
-      SetValueOption.Overwrite,
+      WriteOption.Overwrite,
     );
-    writeSchemaNode(
-      root.structure!.kind,
-      'b',
-      'input',
-      SetValueOption.Overwrite,
-    );
+    writeFieldNode(root.structure!.kind, 'b', 'input', WriteOption.Overwrite);
     expect(
       root.runtime.latentRaw.has(JSON.stringify(['/group', 'object'])),
     ).toBe(false);
@@ -521,18 +461,9 @@ describe('per-node branch sources', () => {
         n: { type: 'number', controls: { active: '../flag' } },
       },
     });
-    loadSchemaNodeAtMount(
-      root,
-      { flag: false, n: '3' },
-      SetValueOption.Overwrite,
-    );
+    loadFieldNodeAtMount(root, { flag: false, n: '3' }, WriteOption.Overwrite);
     expect(sourceAt(root, '/n', 'number')).toBe(3);
-    writeSchemaNode(
-      root.structure!.flag,
-      true,
-      'input',
-      SetValueOption.Overwrite,
-    );
+    writeFieldNode(root.structure!.flag, true, 'input', WriteOption.Overwrite);
     expect(sourceAt(root, '/n')).toBe(3);
   });
 
@@ -554,10 +485,10 @@ describe('per-node branch sources', () => {
     };
     const { root } = createTestTree(schema);
     expect(() =>
-      loadSchemaNodeAtMount(
+      loadFieldNodeAtMount(
         root,
         { hasChild: true, child: { hasChild: false } },
-        SetValueOption.Overwrite,
+        WriteOption.Overwrite,
       ),
     ).not.toThrow();
     expect(root.structure?.child?.structure?.hasChild?.raw).toBe(false);
@@ -577,29 +508,19 @@ describe('per-node branch sources', () => {
         },
       },
     });
-    loadSchemaNodeAtMount(
+    loadFieldNodeAtMount(
       root,
       { flag: false, g: { leaf: 'L' } },
-      SetValueOption.Overwrite,
+      WriteOption.Overwrite,
     );
-    writeSchemaNode(
-      root.structure!.flag,
-      true,
-      'input',
-      SetValueOption.Overwrite,
-    );
+    writeFieldNode(root.structure!.flag, true, 'input', WriteOption.Overwrite);
     expect(root.structure?.g?.structure?.leaf?.raw).toBe('L');
-    writeSchemaNode(
-      root.structure!.flag,
-      false,
-      'input',
-      SetValueOption.Overwrite,
-    );
-    writeSchemaNode(
+    writeFieldNode(root.structure!.flag, false, 'input', WriteOption.Overwrite);
+    writeFieldNode(
       root,
       { flag: true },
       'callerReplace',
-      SetValueOption.Overwrite,
+      WriteOption.Overwrite,
     );
     expect(root.structure?.g?.structure?.leaf?.raw).toBe('D');
   });
@@ -619,17 +540,12 @@ describe('per-node branch sources', () => {
         },
       },
     });
-    loadSchemaNodeAtMount(
+    loadFieldNodeAtMount(
       root,
       { flag: true, branch: { kept: 'K', z: 1 } },
-      SetValueOption.Overwrite,
+      WriteOption.Overwrite,
     );
-    writeSchemaNode(
-      root.structure!.flag,
-      false,
-      'input',
-      SetValueOption.Overwrite,
-    );
+    writeFieldNode(root.structure!.flag, false, 'input', WriteOption.Overwrite);
     expect(
       root.runtime.latentRaw.has(JSON.stringify(['/branch', 'object'])),
     ).toBe(false);
@@ -650,16 +566,16 @@ describe('per-node branch sources', () => {
         },
       },
     });
-    loadSchemaNodeAtMount(
+    loadFieldNodeAtMount(
       root,
       { flag: false, secret: 'old' },
-      SetValueOption.Overwrite,
+      WriteOption.Overwrite,
     );
-    writeSchemaNode(
+    writeFieldNode(
       root,
       { flag: true, secret: 'new' },
       'callerPartial',
-      SetValueOption.Merge,
+      WriteOption.Merge,
     );
     expect(sourceAt(root, '/secret', 'string')).toBe('new');
   });
@@ -690,35 +606,30 @@ describe('per-node branch sources', () => {
         },
       ],
     });
-    loadSchemaNodeAtMount(
+    loadFieldNodeAtMount(
       root,
       { mode: 'string', item: 'old' },
-      SetValueOption.Overwrite,
+      WriteOption.Overwrite,
     );
     const detachedString = root.structure!.item;
-    writeSchemaNode(
-      root.structure!.mode,
-      'off',
-      'input',
-      SetValueOption.Overwrite,
-    );
+    writeFieldNode(root.structure!.mode, 'off', 'input', WriteOption.Overwrite);
     expect(sourceAt(root, '/item', 'string')).toBe('old');
-    writeSchemaNode(
+    writeFieldNode(
       root,
       { item: { leaf: 'new' } },
       'callerPartial',
-      SetValueOption.Merge,
+      WriteOption.Merge,
     );
     expect(sourceAt(root, '/item/leaf', 'string')).toBe('new');
     expect(
       root.runtime.latentRaw.has(JSON.stringify(['/item', 'string'])),
     ).toBe(false);
     expect(detachedString.detached).toBe(true);
-    writeSchemaNode(
+    writeFieldNode(
       detachedString,
       'late',
       'callerReplace',
-      SetValueOption.Overwrite,
+      WriteOption.Overwrite,
     );
     expect(
       root.runtime.latentRaw.get(JSON.stringify(['/item', 'string'])),
@@ -745,25 +656,21 @@ describe('per-node branch sources', () => {
         },
       },
     });
-    loadSchemaNodeAtMount(
-      root,
-      { flag: false, g: null },
-      SetValueOption.Overwrite,
-    );
-    writeSchemaNode(
+    loadFieldNodeAtMount(root, { flag: false, g: null }, WriteOption.Overwrite);
+    writeFieldNode(
       root,
       { g: { leaf: '' } },
       'callerPartial',
-      SetValueOption.Merge,
+      WriteOption.Merge,
     );
     expect(
       root.runtime.latentRaw.get(JSON.stringify(['/g', 'object'])),
     ).toMatchObject({ raw: null });
-    writeSchemaNode(
+    writeFieldNode(
       root,
       { g: { leaf: 'shown' } },
       'callerPartial',
-      SetValueOption.Merge,
+      WriteOption.Merge,
     );
     const host = root.runtime.latentRaw.get(JSON.stringify(['/g', 'object']));
     expect(
@@ -807,30 +714,20 @@ describe('per-node branch sources', () => {
         },
       },
     });
-    loadSchemaNodeAtMount(
+    loadFieldNodeAtMount(
       root,
       { flag: true, mode: 'string', g: { value: 'old' } },
-      SetValueOption.Overwrite,
+      WriteOption.Overwrite,
     );
-    writeSchemaNode(
-      root.structure!.flag,
-      false,
-      'input',
-      SetValueOption.Overwrite,
-    );
-    writeSchemaNode(
+    writeFieldNode(root.structure!.flag, false, 'input', WriteOption.Overwrite);
+    writeFieldNode(
       root.structure!.mode,
       'number',
       'input',
-      SetValueOption.Overwrite,
+      WriteOption.Overwrite,
     );
     expect(sourceAt(root, '/g/value', 'string')).toBe('old');
-    writeSchemaNode(
-      root.structure!.flag,
-      true,
-      'input',
-      SetValueOption.Overwrite,
-    );
+    writeFieldNode(root.structure!.flag, true, 'input', WriteOption.Overwrite);
     expect(root.structure?.g?.structure?.value?.raw).toBe(7);
     expect(
       root.runtime.latentRaw.get(JSON.stringify(['/g/value', 'string'])),
@@ -856,13 +753,8 @@ describe('per-node branch sources', () => {
         },
       },
     });
-    loadSchemaNodeAtMount(root, { flag: false }, SetValueOption.Overwrite);
-    writeSchemaNode(
-      root.structure!.flag,
-      true,
-      'input',
-      SetValueOption.Overwrite,
-    );
+    loadFieldNodeAtMount(root, { flag: false }, WriteOption.Overwrite);
+    writeFieldNode(root.structure!.flag, true, 'input', WriteOption.Overwrite);
     expect(root.structure?.g?.structure?.secret).toBeUndefined();
     expect(
       root.runtime.latentRaw.has(JSON.stringify(['/g/secret', 'string'])),
@@ -882,36 +774,36 @@ describe('per-node branch sources', () => {
         },
       },
     });
-    loadSchemaNodeAtMount(
+    loadFieldNodeAtMount(
       root,
       { box: {}, secret: 'held' },
-      SetValueOption.Overwrite,
+      WriteOption.Overwrite,
     );
-    writeSchemaNode(
+    writeFieldNode(
       root.structure!.box.structure!.b,
       true,
       'input',
-      SetValueOption.Overwrite,
+      WriteOption.Overwrite,
     );
     expect(root.structure?.secret?.raw).toBe('held');
-    writeSchemaNode(
+    writeFieldNode(
       root.structure!.grp.structure!.x,
       'typed',
       'input',
-      SetValueOption.Overwrite,
+      WriteOption.Overwrite,
     );
-    resetSchemaNodeSubtree(root.structure!.box, SetValueOption.Overwrite);
+    resetFieldNodeSubtree(root.structure!.box, WriteOption.Overwrite);
     expect(root.structure?.secret).toBeUndefined();
     expect(root.structure?.grp).toBeUndefined();
     expect(sourceAt(root, '/secret', 'string')).toBe('held');
     expect(
       root.runtime.latentRaw.get(JSON.stringify(['/grp/x', 'string'])),
     ).toBe('typed');
-    writeSchemaNode(
+    writeFieldNode(
       root.structure!.box.structure!.b,
       true,
       'input',
-      SetValueOption.Overwrite,
+      WriteOption.Overwrite,
     );
     expect(root.structure?.secret?.raw).toBe('held');
     expect(root.structure?.grp?.structure?.x?.raw).toBe('typed');

@@ -1,4 +1,4 @@
-import type { SchemaNodeRuntime } from '../../../../record';
+import type { FieldNodeRuntime } from '../../../../record';
 
 /**
  * Adjust latent occurrence order together with its moved absolute path.
@@ -10,7 +10,7 @@ import type { SchemaNodeRuntime } from '../../../../record';
  */
 export const rekeyLatentMetadata = <Self>(
   metadata: NonNullable<
-    SchemaNodeRuntime<Self>['latentRawMetadata']
+    FieldNodeRuntime<Self>['latentRawMetadata']
   > extends Map<string, infer Value>
     ? Value
     : never,

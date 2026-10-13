@@ -3,9 +3,9 @@ import { describe, expect, it } from 'vitest';
 import type { FormScenario } from '@aileron/schema-form-scenarios';
 
 import type { BlueprintSchema } from '../../blueprint';
-import { loadSchemaNodeAtMount, writeSchemaNode } from '../../settle';
+import { loadFieldNodeAtMount, writeFieldNode } from '../../settle';
 import { createTestTree } from '../../settle/__tests__/fixtures/createTestTree';
-import { SetValueOption } from '../../types/value';
+import { WriteOption } from '../../types/value';
 import { runScenario } from './utils/runScenario';
 
 // filid:contract scenario-runner
@@ -54,11 +54,11 @@ describe('union.entry-two-step', () => {
     const result = await runScenario(scenario, {
       execute: (step) => {
         if (step.action === 'setValue')
-          writeSchemaNode(
+          writeFieldNode(
             root,
             step.value,
             'callerReplace',
-            SetValueOption.Overwrite,
+            WriteOption.Overwrite,
           );
       },
       assert: (expected) => {
@@ -74,11 +74,7 @@ describe('union.entry-two-step', () => {
     });
     expect(result.executedSteps).toBe(2);
     const loaded = createTestTree(schema).root;
-    loadSchemaNodeAtMount(
-      loaded,
-      { kind: 'flag', a: 0 },
-      SetValueOption.Overwrite,
-    );
+    loadFieldNodeAtMount(loaded, { kind: 'flag', a: 0 }, WriteOption.Overwrite);
     expect(loaded.structure?.a?.raw).toBe(false);
   });
 
@@ -115,11 +111,11 @@ describe('union.entry-two-step', () => {
     const result = await runScenario(scenario, {
       execute: (step) => {
         if (step.action === 'setValue')
-          writeSchemaNode(
+          writeFieldNode(
             root,
             step.value,
             'callerReplace',
-            SetValueOption.Overwrite,
+            WriteOption.Overwrite,
           );
       },
       assert: (expected) => {
@@ -168,11 +164,11 @@ describe('union.entry-two-step', () => {
       execute: (step) => {
         if (step.action === 'setValue')
           expect(() =>
-            writeSchemaNode(
+            writeFieldNode(
               root,
               step.value,
               'callerReplace',
-              SetValueOption.Overwrite,
+              WriteOption.Overwrite,
             ),
           ).toThrow();
       },

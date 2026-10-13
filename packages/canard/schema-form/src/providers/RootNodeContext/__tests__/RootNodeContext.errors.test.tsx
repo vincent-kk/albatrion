@@ -5,7 +5,7 @@ import { afterEach, expect, it, vi } from 'vitest';
 
 import { Form } from '@/schema-form/components/Form';
 import type { FormHandle } from '@/schema-form/components/Form';
-import { type JSONSchema, ValidationMode } from '@/schema-form/core';
+import { type AuthoredSchema, ValidationMode } from '@/schema-form/core';
 
 afterEach(cleanup);
 
@@ -134,7 +134,7 @@ it('WRITE-045 69C-03 79C-01 reapplies errors by path to the replacement root bef
   );
   const root = ref.current!.node!;
   const field = ref.current!.findNode('/field')!;
-  const replacement: JSONSchema = {
+  const replacement: AuthoredSchema = {
     type: 'object',
     properties: { field: { type: 'string', minLength: 2 } },
   };

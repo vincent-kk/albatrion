@@ -6,7 +6,7 @@ import {
   type FieldRendererProps,
   type JSONSchema,
   type ValidationIssue,
-  SchemaNodeState,
+  FieldNodeState,
   ShowError,
   ValidationMode,
   registerPlugin,
@@ -49,9 +49,9 @@ export const DirtyTouched = () => {
     errorMessage,
   }: FieldRendererProps) => {
     const {
-      [SchemaNodeState.Dirty]: dirty,
-      [SchemaNodeState.Touched]: touched,
-      [SchemaNodeState.ShowError]: showError,
+      [FieldNodeState.Dirty]: dirty,
+      [FieldNodeState.Touched]: touched,
+      [FieldNodeState.ErrorVisible]: showError,
     } = node.state || {};
     return depth === 0 ? (
       <Input />
@@ -63,8 +63,8 @@ export const DirtyTouched = () => {
           <button
             onClick={() =>
               showError !== true
-                ? node.setState({ [SchemaNodeState.ShowError]: true })
-                : node.setState({ [SchemaNodeState.ShowError]: undefined })
+                ? node.setState({ [FieldNodeState.ErrorVisible]: true })
+                : node.setState({ [FieldNodeState.ErrorVisible]: undefined })
             }
           >
             Show Error
@@ -72,8 +72,8 @@ export const DirtyTouched = () => {
           <button
             onClick={() =>
               showError !== false
-                ? node.setState({ [SchemaNodeState.ShowError]: false })
-                : node.setState({ [SchemaNodeState.ShowError]: undefined })
+                ? node.setState({ [FieldNodeState.ErrorVisible]: false })
+                : node.setState({ [FieldNodeState.ErrorVisible]: undefined })
             }
           >
             Hide Error
@@ -398,7 +398,7 @@ export const ErrorBoundary = () => {
         onChange={setValue}
       >
         <div>
-          <Form.Group
+          <Form.Field
             path="#/name"
             FieldInput={() => {
               throw new Error('Error accord from Input');

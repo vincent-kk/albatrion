@@ -1,8 +1,8 @@
-import type { SchemaNodeRecord } from '../../../record';
-import { arrangeSchemaNodeItems } from '../../../settle';
+import type { FieldNodeRecord } from '../../../record';
+import { arrangeFieldNodeItems } from '../../../settle';
 import { captureChainError } from '../chain/captureChainError';
-import { enterSchemaNodeChain } from '../chain/enterSchemaNodeChain';
-import { exitSchemaNodeChain } from '../chain/exitSchemaNodeChain';
+import { enterFieldNodeChain } from '../chain/enterFieldNodeChain';
+import { exitFieldNodeChain } from '../chain/exitFieldNodeChain';
 import { markBatchArrayOperation } from '../chain/markBatchArrayOperation';
 
 /**
@@ -11,19 +11,19 @@ import { markBatchArrayOperation } from '../chain/markBatchArrayOperation';
  * @returns Removed marked raw in a batch, otherwise the settled removed value; undefined when entry is refused
  * @throws Non-array or settlement failures at the outer chain end
  */
-export const dispatchPop = <Self extends SchemaNodeRecord<Self>>(
+export const dispatchPop = <Self extends FieldNodeRecord<Self>>(
   node: Self,
 ): unknown => {
-  if (!enterSchemaNodeChain(node)) return;
+  if (!enterFieldNodeChain(node)) return;
   try {
     return node.rootNode.runtime.batchDepth
       ? markBatchArrayOperation(node, { kind: 'pop' })
-      : arrangeSchemaNodeItems(node, { kind: 'pop' });
+      : arrangeFieldNodeItems(node, { kind: 'pop' });
   } catch (error) {
     if (node.rootNode.runtime.batchDepth) throw error;
     captureChainError(node.rootNode.runtime, error);
   } finally {
-    exitSchemaNodeChain(node);
+    exitFieldNodeChain(node);
   }
   return undefined;
 };

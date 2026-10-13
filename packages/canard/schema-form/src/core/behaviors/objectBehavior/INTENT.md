@@ -14,7 +14,7 @@
 ### Always do
 
 - branch는 현재 형상의 자식만 합성하고 terminal은 자식 없이 원본 참조를 유지합니다(NODE-043, VALUE-002).
-- 키 순서는 청사진 전순서와 `propertyKeys`·`extras`의 계약을 지킵니다(SETTLE-042).
+- 키 순서는 청사진 전순서와 `propertyOrder`·`undeclaredValues`의 계약을 지킵니다(SETTLE-042).
 
 ### Ask first
 
@@ -23,4 +23,4 @@
 ### Never do
 
 - branch와 terminal을 별개 종류 fractal로 나누거나 행에서 자식 생성·원본 쓰기를 하지 않습니다(NODE-006·009).
-- behaviors 뿌리·settle·SchemaNode·레거시를 가져오지 않습니다(NODE-009, LANDING-159).
+- behaviors 뿌리·settle·FieldNode·레거시를 가져오지 않습니다(NODE-009, LANDING-159).

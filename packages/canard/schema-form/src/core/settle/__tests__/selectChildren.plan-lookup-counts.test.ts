@@ -1,7 +1,7 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
-import { SetValueOption } from '../../types/value';
-import { loadSchemaNodeAtMount, writeSchemaNode } from '../index';
+import { WriteOption } from '../../types/value';
+import { loadFieldNodeAtMount, writeFieldNode } from '../index';
 import * as priming from '../utils/compute/primeHost';
 import * as selection from '../utils/compute/selectChildren';
 import * as planning from '../utils/compute/selectChildren/utils/getDirectChildSelectionPlan';
@@ -58,16 +58,16 @@ describe('child selection plan lookup runtime counts', () => {
         then: { properties: { detail: { type: 'string', default: 'shown' } } },
       });
       const option =
-        SetValueOption.Overwrite |
-        (disabled ? SetValueOption.DisableAutomaticWrites : 0);
+        WriteOption.Overwrite |
+        (disabled ? WriteOption.DisableAutomaticWrites : 0);
       const calls = countPlanCalls();
       const flushes = countFlushCalls();
-      loadSchemaNodeAtMount(root, { kind: 'off' }, option);
+      loadFieldNodeAtMount(root, { kind: 'off' }, option);
       expect(calls.count).toBe(0);
       const perWrite: number[] = [];
       for (const kind of ['on', 'off', 'on', 'off', 'on']) {
         calls.count = 0;
-        writeSchemaNode(root.structure!.kind, kind, 'input', option);
+        writeFieldNode(root.structure!.kind, kind, 'input', option);
         perWrite.push(calls.count);
       }
       expect(perWrite[0]).toBeGreaterThan(0);
@@ -91,7 +91,7 @@ describe('child selection plan lookup runtime counts', () => {
     (count, pending) => {
       const { root } = createTestTree(createFixedBranchSchema(count));
       const calls = countFlushCalls();
-      loadSchemaNodeAtMount(root, { kind: 'kind_0' }, SetValueOption.Overwrite);
+      loadFieldNodeAtMount(root, { kind: 'kind_0' }, WriteOption.Overwrite);
       expect(calls).toEqual({ empty: 0, pending });
       expect(root.children).toHaveLength(5);
       expect(root.runtime.diagnostics.status).toBe('stable');
@@ -136,7 +136,7 @@ describe('child selection plan lookup runtime counts', () => {
       });
       root.behavior.declareChildren = () => candidates;
       const calls = countPlanCalls();
-      loadSchemaNodeAtMount(root, { kind: 'kind_0' }, SetValueOption.Overwrite);
+      loadFieldNodeAtMount(root, { kind: 'kind_0' }, WriteOption.Overwrite);
       const perWrite: number[] = [];
       for (const [index, kind] of [
         'kind_4',
@@ -146,11 +146,11 @@ describe('child selection plan lookup runtime counts', () => {
       ].entries()) {
         calls.count = 0;
         candidateVisits.fill(0);
-        writeSchemaNode(
+        writeFieldNode(
           root.structure!.kind,
           kind,
           'input',
-          SetValueOption.Overwrite,
+          WriteOption.Overwrite,
         );
         perWrite.push(calls.count);
         for (let branch = 0; branch < count; branch++) {

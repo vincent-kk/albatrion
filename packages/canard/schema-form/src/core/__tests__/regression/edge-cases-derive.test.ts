@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { makeSchemaNodeTree } from '../makeSchemaNodeTree';
+import { makeFieldNodeTree } from '../makeFieldNodeTree';
 
 // filid:contract factory-single-path
 describe('round9 derive edge cases', () => {
@@ -17,7 +17,7 @@ describe('round9 derive edge cases', () => {
     ],
   ] as const) {
     it(name, () => {
-      const { root } = makeSchemaNodeTree({
+      const { root } = makeFieldNodeTree({
         type: 'object',
         properties: {
           x: {
@@ -31,7 +31,7 @@ describe('round9 derive edge cases', () => {
       expect(root.diagnostics.status).toBe('stable');
     });
     it(missingTitle, () => {
-      const { root } = makeSchemaNodeTree({
+      const { root } = makeFieldNodeTree({
         type: 'object',
         properties: {
           x: {
@@ -47,7 +47,7 @@ describe('round9 derive edge cases', () => {
   }
 
   const clearedObject = () => {
-    const { root } = makeSchemaNodeTree({
+    const { root } = makeFieldNodeTree({
       type: 'object',
       properties: {
         clear: { type: 'boolean' },
@@ -70,7 +70,7 @@ describe('round9 derive edge cases', () => {
     expect(clearedObject().outputValue).toEqual({ clear: true });
   });
   it('edge-cases.mjs:40 automatic injectTo overwrite does not refill a child', () => {
-    const { root } = makeSchemaNodeTree({
+    const { root } = makeFieldNodeTree({
       type: 'object',
       properties: {
         src: {
@@ -99,7 +99,7 @@ describe('round9 derive edge cases', () => {
     ],
   ] as const) {
     it(name, () => {
-      const { root } = makeSchemaNodeTree({
+      const { root } = makeFieldNodeTree({
         type: 'object',
         properties: {
           src: { type: 'number' },
@@ -112,7 +112,7 @@ describe('round9 derive edge cases', () => {
   }
 
   const budgetTree = () =>
-    makeSchemaNodeTree({
+    makeFieldNodeTree({
       type: 'object',
       properties: {
         a: {

@@ -103,12 +103,12 @@ controls: { active: "./type === 'A'" }
 | `unsetValue`       | `string`                  | false에서 true로 바뀌면 값을 비움            | -       |
 | `resetInteraction` | `string`                  | false에서 true로 바뀌면 dirty/touched 초기화 | -       |
 | `unsetOnInactive`  | `boolean \| string`       | 형상을 떠날 때 유지된 값을 버림              | -       |
-| `children`         | `{ targets, controls }[]` | 부모가 자식에게 앞의 아홉 키를 지정          | -       |
+| `fields`           | `{ targets, controls }[]` | 부모가 자식에게 앞의 아홉 키를 지정          | -       |
 | `injectTo`         | `(value, ctx) => 대상 맵` | 값이 바뀔 때마다 다른 노드로 주입            | -       |
 | `discriminator`    | `string`                  | oneOf/anyOf 호스트의 분기 태그 속성          | -       |
 | `watch`            | `string[]`                | 값 구독 (경로 배열만)                        | -       |
 
-`controls.children[].controls`와 조각(`oneOf`/`anyOf`/`allOf` 분기, `then`, `else`)의 `controls`에는 앞의 아홉 키(`active`부터 `unsetOnInactive`까지)만 허용됩니다.
+`controls.fields[].controls`와 조각(`oneOf`/`anyOf`/`allOf` 분기, `then`, `else`)의 `controls`에는 앞의 아홉 키(`active`부터 `unsetOnInactive`까지)만 허용됩니다.
 
 ### active vs visible 선택
 
@@ -219,22 +219,22 @@ const formRef = useRef<FormHandle<typeof schema>>(null);
 
 ### 메서드 요약
 
-| 메서드                  | 반환 타입            | 설명            |
-| ----------------------- | -------------------- | --------------- |
-| `getValue()`            | `Value`              | 현재 폼 값      |
-| `setValue(v)`           | `void`               | 폼 값 설정      |
-| `reset()`               | `void`               | 초기값으로 리셋 |
-| `validate()`            | `Promise<Error[]>`   | 검증 실행       |
-| `getErrors()`           | `Error[]`            | 현재 에러 목록  |
-| `showError(bool)`       | `void`               | 에러 표시 제어  |
-| `findNode(path)`        | `SchemaNode \| null` | 노드 탐색       |
-| `findNodes(path)`       | `SchemaNode[]`       | 와일드카드 탐색 |
-| `focus(path)`           | `void`               | 필드 포커스     |
-| `getState()`            | `NodeStateFlags`     | 폼 상태         |
-| `setState(s)`           | `void`               | 상태 설정       |
-| `clearState()`          | `void`               | 상태 초기화     |
-| `submit()`              | `void`               | 폼 제출         |
-| `getAttachedFilesMap()` | `Map`                | 첨부 파일       |
+| 메서드                  | 반환 타입           | 설명            |
+| ----------------------- | ------------------- | --------------- |
+| `getValue()`            | `Value`             | 현재 폼 값      |
+| `setValue(v)`           | `void`              | 폼 값 설정      |
+| `reset()`               | `void`              | 초기값으로 리셋 |
+| `validate()`            | `Promise<Error[]>`  | 검증 실행       |
+| `getErrors()`           | `Error[]`           | 현재 에러 목록  |
+| `showError(bool)`       | `void`              | 에러 표시 제어  |
+| `findNode(path)`        | `FieldNode \| null` | 노드 탐색       |
+| `findNodes(path)`       | `FieldNode[]`       | 와일드카드 탐색 |
+| `focus(path)`           | `void`              | 필드 포커스     |
+| `getState()`            | `NodeStateFlags`    | 폼 상태         |
+| `setState(s)`           | `void`              | 상태 설정       |
+| `clearState()`          | `void`              | 상태 초기화     |
+| `submit()`              | `void`              | 폼 제출         |
+| `getAttachedFilesMap()` | `Map`               | 첨부 파일       |
 
 ### 일반적인 패턴
 
@@ -294,7 +294,7 @@ const definitions: FieldInputDefinition[] = [
 | `value`               | `Value`       | 현재 값         |
 | `defaultValue`        | `Value`       | 기본값          |
 | `onChange`            | `(v) => void` | 값 변경 핸들러  |
-| `node`                | `SchemaNode`  | 스키마 노드     |
+| `node`                | `FieldNode`   | 필드 노드     |
 | `errors`              | `Error[]`     | 검증 에러       |
 | `errorVisible`        | `boolean`     | 에러 표시 여부  |
 | `readOnly`            | `boolean`     | 읽기 전용       |
@@ -303,7 +303,7 @@ const definitions: FieldInputDefinition[] = [
 | `nullable`            | `boolean`     | null 허용       |
 | `watchValues`         | `any[]`       | 구독 값         |
 | `context`             | `object`      | 사용자 컨텍스트 |
-| `ChildNodeComponents` | `FC[]`        | 자식 컴포넌트   |
+| `ChildFields` | `FC[]`        | 자식 컴포넌트   |
 
 ---
 
@@ -415,7 +415,7 @@ if (isArrayNode(node)) {
 | `UpdateValue`              | 값 변경                     |
 | `UpdateState`              | 상태 변경 (dirty, touched)  |
 | `UpdateError`              | 검증 에러 변경              |
-| `UpdateComputedProperties` | controls 상태·watch 값 변경 |
+| `UpdateControlledProperties` | controls 상태·watch 값 변경 |
 | `UpdateChildren`           | 자식 노드 변경              |
 | `UpdatePath`               | 경로 변경 (배열 재정렬)     |
 | `RequestRefresh`           | UI 동기화 요청              |

@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { makeSchemaNodeTree } from '../makeSchemaNodeTree';
+import { makeFieldNodeTree } from '../makeFieldNodeTree';
 
 const heldNode = (base: 'none' | 'unconditional' | 'default') => {
   const properties = {
@@ -8,7 +8,7 @@ const heldNode = (base: 'none' | 'unconditional' | 'default') => {
     ...(base === 'none' ? { x: { type: 'string' } } : {}),
     ...(base === 'default' ? { x: { type: 'string', default: 'B' } } : {}),
   };
-  const { root } = makeSchemaNodeTree({
+  const { root } = makeFieldNodeTree({
     type: 'object',
     properties,
     ...(base === 'unconditional'
@@ -32,7 +32,7 @@ const heldNode = (base: 'none' | 'unconditional' | 'default') => {
 // filid:contract factory-single-path
 describe('round9b fragment retention regression', () => {
   it('r9b.mjs:18 keeps a shared node alive as another holder activates', () => {
-    const { root } = makeSchemaNodeTree({
+    const { root } = makeFieldNodeTree({
       type: 'object',
       properties: {
         a: { type: 'number' },
@@ -87,7 +87,7 @@ describe('round9b fragment retention regression', () => {
   });
 
   it('r9b.mjs:50 gates birth by final shape and retains inactive raw', () => {
-    const { root } = makeSchemaNodeTree({
+    const { root } = makeFieldNodeTree({
       type: 'object',
       properties: {
         show: { type: 'boolean' },
@@ -120,7 +120,7 @@ describe('round9b fragment retention regression', () => {
   });
 
   it('r9b.mjs:50 TEST-069 replaces historical raw-unit birth with shape-unit birth', () => {
-    const { root } = makeSchemaNodeTree({
+    const { root } = makeFieldNodeTree({
       type: 'object',
       properties: {
         show: { type: 'boolean' },
@@ -139,7 +139,7 @@ describe('round9b fragment retention regression', () => {
   });
 
   it('r9b.mjs:73 rebirths a gated object descendant on the next lifetime', () => {
-    const { root } = makeSchemaNodeTree({
+    const { root } = makeFieldNodeTree({
       type: 'object',
       properties: {
         show: { type: 'boolean' },
@@ -169,7 +169,7 @@ describe('round9b fragment retention regression', () => {
         { properties: { kind: { const: 'a' }, x: { type: 'string' } } },
         { properties: { kind: { const: 'b' }, y: { type: 'number' } } },
       ];
-      const { root } = makeSchemaNodeTree({
+      const { root } = makeFieldNodeTree({
         type: 'object',
         [keyword]: branches,
       });

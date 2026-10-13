@@ -21,4 +21,4 @@
 
 ### Never do
 
-- 원본을 직접 쓰거나 behaviors 뿌리·settle·SchemaNode·레거시를 가져오지 않습니다(NODE-006·009).
+- 원본을 직접 쓰거나 behaviors 뿌리·settle·FieldNode·레거시를 가져오지 않습니다(NODE-006·009).

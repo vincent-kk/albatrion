@@ -1,6 +1,6 @@
 import { escapeSegment } from '@winglet/json/pointer';
 
-import type { SchemaNodeRecord } from '../../../record';
+import type { FieldNodeRecord } from '../../../record';
 import type { SettlementContext } from '../../type';
 import { distributeLatentValue } from '../latent/distributeLatentValue';
 import { hasDistributedChildInput } from '../write/hasDistributedChildInput';
@@ -18,9 +18,7 @@ import { isWithinReplacePaths } from '../write/isWithinReplacePaths';
  * @param order - The host's blueprint document order
  * @returns Nothing; the root latent map receives one entry per written absent child
  */
-export const distributeAbsentChildInputs = <
-  Self extends SchemaNodeRecord<Self>,
->(
+export const distributeAbsentChildInputs = <Self extends FieldNodeRecord<Self>>(
   node: Self,
   context: SettlementContext<Self>,
   order: readonly number[],

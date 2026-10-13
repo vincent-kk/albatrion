@@ -1,4 +1,4 @@
-import type { SchemaNodeRecord } from '../../../record';
+import type { FieldNodeRecord } from '../../../record';
 import type { SettlementContext } from '../../type';
 import type { GateOccurrence } from '../gates/type';
 
@@ -8,7 +8,7 @@ import type { GateOccurrence } from '../gates/type';
  * @param context - Dirty-path set for this synchronous descent
  * @returns Nothing; later wheel rounds recompute affected descendants
  */
-export const scheduleRelocatedGates = <Self extends SchemaNodeRecord<Self>>(
+export const scheduleRelocatedGates = <Self extends FieldNodeRecord<Self>>(
   gates: readonly GateOccurrence[],
   context: SettlementContext<Self>,
 ): void => {

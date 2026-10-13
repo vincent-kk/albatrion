@@ -1,7 +1,7 @@
 import { isArray } from '@winglet/common-utils/filter';
 
 import type { BlueprintNode } from '../../../blueprint';
-import type { SchemaNodeRecord, SchemaNodeRuntime } from '../../../record';
+import type { FieldNodeRecord, FieldNodeRuntime } from '../../../record';
 import { PathKeyedMap } from '../../../utils/pathIndex/PathKeyedMap';
 import type { SettlementContext } from '../../type';
 import { indexLatentDescendant } from './indexLatentDescendant';
@@ -18,8 +18,8 @@ import { indexLatentDescendant } from './indexLatentDescendant';
  * @param context - Settlement whose path index and prefix memo track this write
  * @returns Nothing; the tree's latent map changes in place
  */
-export const setLatentRaw = <Self extends SchemaNodeRecord<Self>>(
-  runtime: SchemaNodeRuntime<Self>,
+export const setLatentRaw = <Self extends FieldNodeRecord<Self>>(
+  runtime: FieldNodeRuntime<Self>,
   log: Map<string, { present: boolean; value: unknown }> | undefined,
   key: string,
   present: boolean,

@@ -222,17 +222,17 @@ interface FormHandle<
   Value extends AllowedValue = InferValueType<Schema>,
 > {
   /** Root node */
-  node?: InferSchemaNode<Schema>;
+  node?: InferFieldNode<Schema>;
   /** Focus input field at specific path */
-  focus: Fn<[dataPath: SchemaNode['path']]>;
+  focus: Fn<[dataPath: FieldNode['path']]>;
   /** Select input field at specific path */
-  select: Fn<[dataPath: SchemaNode['path']]>;
+  select: Fn<[dataPath: FieldNode['path']]>;
   /** Reset form */
   reset: Fn;
   /** Find node by path */
-  findNode: Fn<[path: SchemaNode['path']], SchemaNode | null>;
+  findNode: Fn<[path: FieldNode['path']], FieldNode | null>;
   /** Find multiple nodes by path */
-  findNodes: Fn<[path: SchemaNode['path']], SchemaNode[]>;
+  findNodes: Fn<[path: FieldNode['path']], FieldNode[]>;
   /** Get current state */
   getState: Fn<[], NodeStateFlags>;
   /** Set state */
@@ -263,7 +263,7 @@ interface FormChildrenProps<
   Schema extends JSONSchema,
   Value extends AllowedValue = InferValueType<Schema>,
 > {
-  node?: InferSchemaNode<Schema>;
+  node?: InferFieldNode<Schema>;
   jsonSchema: Schema;
   defaultValue?: Value;
   value?: Value;
@@ -324,7 +324,7 @@ An `object` or `array` node is a branch by default: it builds a child node for e
 
 - Every other kind has a fixed strategy: `string`, `number`, `integer`, `boolean`, `null` and a multi-kind `type` are terminals, and `virtual` is a branch. An `options.terminal` that contradicts the fixed strategy throws `TERMINAL_OPTION_UNSUPPORTED`; one that restates it is accepted.
 - Ungated declarations are the node's own schema, its `$ref` target and its `allOf` parts, as long as they carry no `controls.active`. Among them the later `options.terminal` wins, and a `$ref` target counts as later than the schema that refers to it.
-- The strategy cannot change at run time. When gated declarations (`then` / `else`, any part carrying `controls.active`, a parent's `controls.children` entry with `active` for the children it targets, or a `oneOf` / `anyOf` branch selected by `controls.active` or the host's `controls.discriminator`) would make the node a branch in one case and a terminal in another, the schema throws `TERMINAL_STRATEGY_MISMATCH`.
+- The strategy cannot change at run time. When gated declarations (`then` / `else`, any part carrying `controls.active`, a parent's `controls.fields` entry with `active` for the children it targets, or a `oneOf` / `anyOf` branch selected by `controls.active` or the host's `controls.discriminator`) would make the node a branch in one case and a terminal in another, the schema throws `TERMINAL_STRATEGY_MISMATCH`.
 - A `oneOf` / `anyOf` branch without such a gate does not set its host's strategy; its `options.terminal` is ignored.
 
 ### Node Initialization
@@ -369,7 +369,7 @@ type FieldInputDefinition<T = unknown> = {
 
 ```typescript
 // Function form
-type FieldInputTestFn = Fn<[hint: Hint], boolean>;
+type FieldInputTestFn = Fn<[hint: FieldInputHint], boolean>;
 
 // Object form
 type FieldInputTestObject = Partial<{
@@ -381,8 +381,8 @@ type FieldInputTestObject = Partial<{
   [alt: string]: any;
 }>;
 
-// Hint object
-type Hint = {
+// FieldInputHint object
+type FieldInputHint = {
   jsonSchema: JSONSchema;
   type: string;
   format: string;
@@ -403,13 +403,13 @@ interface FieldInputProps<
   Context extends Dictionary = object,
   WatchValues extends Array<any> = Array<any>,
   Schema extends JSONSchemaWithVirtual = InferJSONSchema<Value>,
-  Node extends SchemaNode = InferSchemaNode<Schema>,
+  Node extends FieldNode = InferFieldNode<Schema>,
 > {
   jsonSchema: Schema; // JSON Schema for FieldInput component
   readOnly: boolean; // Read-only state
   disabled: boolean; // Disabled state
   required: boolean; // Required field
-  node: Node; // Schema node
+  node: Node; // Field node
   type: Node['schemaType']; // JSON Schema type
   name: Node['name']; // Node name
   path: Node['path']; // Node path
@@ -421,7 +421,7 @@ interface FieldInputProps<
   value: Value | undefined;
   onChange: SetStateFnWithOptions<Value | undefined>;
   onFileAttach: Fn<[file: File | File[] | undefined]>;
-  ChildNodeComponents: ChildNodeComponent[];
+  ChildFields: ChildField[];
   placeholder: string | undefined;
   className: string | undefined;
   style: CSSProperties | undefined;
@@ -496,7 +496,7 @@ const formInputMap = {
     unsetValue: string;                  // Clears the value when it turns from false to true
     resetInteraction: string;            // Clears dirty/touched when it turns from false to true
     unsetOnInactive: boolean | string;   // Drops the retained value when the node leaves the shape
-    children: { targets: string[]; controls: { /* first nine keys */ } }[];
+    fields: { targets: string[]; controls: { /* first nine keys */ } }[];
     injectTo: (value, ctx) => ...;       // Pushes values to other nodes whenever this node's value changes
     discriminator: string;               // oneOf/anyOf host: branch tag property
     watch: string[];                     // Value subscription (array of paths)
@@ -504,7 +504,7 @@ const formInputMap = {
 }
 ```
 
-The key list is closed: an unknown key makes the blueprint build throw a schema error (recognized by `isJSONSchemaError`) with code `UNKNOWN_GROUP_KEY`. Inside `controls.children[].controls` and on the `controls` of a fragment (`oneOf`/`anyOf`/`allOf` branches, `then`, `else`), only the first nine keys (`active` through `unsetOnInactive`) are allowed; any of the other four throws.
+The key list is closed: an unknown key makes the blueprint build throw a schema error (recognized by `isJSONSchemaError`) with code `UNKNOWN_GROUP_KEY`. Inside `controls.fields[].controls` and on the `controls` of a fragment (`oneOf`/`anyOf`/`allOf` branches, `then`, `else`), only the first nine keys (`active` through `unsetOnInactive`) are allowed; any of the other four throws.
 
 ### Nested Controls
 
@@ -916,6 +916,28 @@ const jsonSchema = {
 - `node.value` stays raw; the refined output is exposed as `node.outputValue`. Validation runs against the refined value, so `minItems` counts only the filled prefix.
 - A Reset-flagged clear (form reset, branch reactivation) refills `minItems` empty items; a plain `setValue(undefined)` clears every item — and so does a replace-style write on the parent that omits the array: `setValue({ other: 1 })` empties it, `SetValueOption.Merge` leaves it untouched. An array whose default is `null` resets to `null`, with no fill.
 
+### Object Options (`propertyOrder` / `virtual`)
+
+Object schemas accept two more keys under `options`.
+
+```typescript
+{
+  type: 'object',
+  properties: {
+    name: { type: 'string' },
+    startDate: { type: 'string', format: 'date' },
+    endDate: { type: 'string', format: 'date' },
+  },
+  options: {
+    propertyOrder: ['endDate', 'startDate'], // emitted as { endDate, startDate, name }
+    virtual: { period: { fields: ['startDate', 'endDate'] } },
+  },
+}
+```
+
+- `propertyOrder` is the key order of the emitted object value, not the on-screen order. Listed keys come first, then the other declared properties in declaration order, then undeclared keys in the order they arrived. Listed keys the value does not hold are skipped, and JavaScript always puts integer-like keys first.
+- `virtual` names virtual field groups. Each entry lists in `fields` the sibling properties it gathers into one virtual node, and may carry that node's own keys such as `presentation` and `controls`. A virtual node is never authored as a schema with `type: 'virtual'`.
+
 ### Value Injection (injectTo)
 
 ```tsx
@@ -1021,7 +1043,7 @@ Pass `children` as a function to `Form` component to access form state and node.
 | -------- | ---------------------------- | ----------------------------------- |
 | `value`  | `InferValueType<Schema>`     | Current form value                  |
 | `errors` | `readonly ValidationIssue[]` | List of all validation errors       |
-| `node`   | `InferSchemaNode<Schema>`    | Root node (for programmatic access) |
+| `node`   | `InferFieldNode<Schema>`     | Root node (for programmatic access) |
 
 ---
 
@@ -1032,7 +1054,7 @@ Pass `children` as a function to `Form` component to access form state and node.
 ```typescript
 import {
   FormHandle,
-  InferSchemaNode,
+  InferFieldNode,
   InferValueType,
 } from '@canard/schema-form';
 
@@ -1040,7 +1062,7 @@ import {
 type FormValue = InferValueType<typeof jsonSchema>;
 
 // Infer node type from schema
-type RootNode = InferSchemaNode<typeof jsonSchema>;
+type RootNode = InferFieldNode<typeof jsonSchema>;
 
 // Type-safe form handle
 const formRef = useRef<FormHandle<typeof jsonSchema>>(null);

@@ -9,7 +9,7 @@ const STABLE_SHAPES = new WeakMap<
   {
     children: readonly unknown[];
     schema: unknown;
-    extras: unknown;
+    undeclaredValues: unknown;
     raw: unknown;
     itemCount: number;
   }
@@ -36,7 +36,7 @@ export const assembleArray: Behavior['assemble'] = (
     previous?.length === node.itemCount &&
     stable?.children === children &&
     stable.schema === node.schema &&
-    stable.extras === node.extras &&
+    stable.undeclaredValues === node.undeclaredValues &&
     stable.raw === node.raw &&
     stable.itemCount === node.itemCount
   ) {
@@ -84,7 +84,7 @@ export const assembleArray: Behavior['assemble'] = (
       return patch ?? previous;
     }
   }
-  const extras = isArray(node.extras) ? node.extras : [];
+  const extras = isArray(node.undeclaredValues) ? node.undeclaredValues : [];
   const result: unknown[] = [];
   let tailStart = 0;
   for (let index = 0; index < node.itemCount; index++) {
@@ -109,7 +109,7 @@ export const assembleArray: Behavior['assemble'] = (
   STABLE_SHAPES.set(node, {
     children,
     schema: node.schema,
-    extras: node.extras,
+    undeclaredValues: node.undeclaredValues,
     raw: node.raw,
     itemCount: node.itemCount,
   });

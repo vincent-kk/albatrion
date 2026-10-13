@@ -1,4 +1,4 @@
-import type { SchemaNodeDelivery, SchemaNodeRecord } from '../../../record';
+import type { FieldNodeDelivery, FieldNodeRecord } from '../../../record';
 import { deliverWave } from './deliverWave';
 
 /**
@@ -6,13 +6,13 @@ import { deliverWave } from './deliverWave';
  * @param root - Live tree root retaining the event table
  * @returns Nothing; failures remain on the chain until exit
  */
-export const runDeliveryWaves = <Self extends SchemaNodeRecord<Self>>(
+export const runDeliveryWaves = <Self extends FieldNodeRecord<Self>>(
   root: Self,
 ): void => {
   const runtime = root.runtime;
   let waves = 0;
   while (runtime.deliveries?.size) {
-    const pending: [Self, SchemaNodeDelivery][] = [];
+    const pending: [Self, FieldNodeDelivery][] = [];
     for (const node of runtime.deliveries) {
       if (node.pendingDelivery) pending.push([node, node.pendingDelivery]);
       node.pendingDelivery = undefined;

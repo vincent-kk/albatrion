@@ -1,5 +1,5 @@
 import { StaticFirstLoadCapability } from '../../../blueprint';
-import type { SchemaNodeRecord } from '../../../record';
+import type { FieldNodeRecord } from '../../../record';
 
 /**
  * Select the literal-default first-load path before any record or commit changes.
@@ -7,7 +7,7 @@ import type { SchemaNodeRecord } from '../../../record';
  * @param value - Caller source; explicit inputs remain on the generic path
  * @returns Whether the compiler proved the approved, narrow first-load scope
  */
-export const canLoadStaticFirstTree = <Self extends SchemaNodeRecord<Self>>(
+export const canLoadStaticFirstTree = <Self extends FieldNodeRecord<Self>>(
   root: Self,
   value: unknown,
 ): boolean =>
@@ -21,7 +21,7 @@ export const canLoadStaticFirstTree = <Self extends SchemaNodeRecord<Self>>(
   !root.pendingDelivery &&
   !root.pendingRevision &&
   root.raw === undefined &&
-  root.extras === undefined &&
+  root.undeclaredValues === undefined &&
   !root.runtime.deliveries?.size &&
   root.runtime.latentRaw.size === 0 &&
   root.runtime.globalStateCounts.size === 0 &&

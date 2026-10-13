@@ -4,8 +4,8 @@ import { escapeSegment } from '@winglet/json/pointer';
 import { SchemaFormError } from '../../../../errors';
 import { mergeEffectiveSchema } from '../../../blueprint';
 import type { BlueprintChildEntry } from '../../../blueprint';
-import { captureSchemaNodeChange } from '../../../record';
-import type { SchemaNodeRecord } from '../../../record';
+import { captureFieldNodeChange } from '../../../record';
+import type { FieldNodeRecord } from '../../../record';
 import type { SettlementContext } from '../../type';
 import { recordSettlementFailure } from '../errors/recordSettlementFailure';
 import { SHARED_NODE_CONFLICT } from '../errors/settleErrorCode';
@@ -19,7 +19,7 @@ import { indexEnteredLatentKey } from '../latent/indexEnteredLatentKey';
 import { hasDistributedChildInput } from '../write/hasDistributedChildInput';
 import { isWithinReplacePaths } from '../write/isWithinReplacePaths';
 import { createChildNode } from './createChildNode';
-import { enterSchemaNode } from './enterSchemaNode';
+import { enterFieldNode } from './enterFieldNode';
 import { flushPendingOutput } from './flushPendingOutput';
 import { hasRecursiveExpansion } from './hasRecursiveExpansion';
 import { hasSharedConflict } from './hasSharedConflict';
@@ -46,7 +46,7 @@ const NO_DECLARATIONS: BlueprintChildEntry['declarations'] = [];
  * @param immediate - Whether later gates must see each earlier projection
  * @returns Whether shape or effective schemas changed during this round
  */
-export const selectChildren = <Self extends SchemaNodeRecord<Self>>(
+export const selectChildren = <Self extends FieldNodeRecord<Self>>(
   node: Self,
   context: SettlementContext<Self>,
   prior: Record<string, Self>,
@@ -109,7 +109,7 @@ export const selectChildren = <Self extends SchemaNodeRecord<Self>>(
     for (let index = 0; !changed && index < children.length; index++)
       if (children[index] !== before[index]) changed = true;
     node.structure = next;
-    node.children = captureSchemaNodeChange(
+    node.children = captureFieldNodeChange(
       node,
       'children',
       changed ? children : before,
@@ -331,7 +331,7 @@ export const selectChildren = <Self extends SchemaNodeRecord<Self>>(
       context.entered.add(child);
       indexEnteredLatentKey(context, child);
       if (child.behavior.type === 'virtual') context.dirtyPaths.add(child.path);
-      else enterSchemaNode(node, child, entry.name, context);
+      else enterFieldNode(node, child, entry.name, context);
       if (child.behavior.strategy === 'branch')
         context.shapeDirtyPaths.add(child.path);
       changed = true;
@@ -348,7 +348,7 @@ export const selectChildren = <Self extends SchemaNodeRecord<Self>>(
     if (child.schema !== effective) {
       if (!context.originalSchemas.has(child.path))
         context.originalSchemas.set(child.path, child.schema);
-      child.schema = captureSchemaNodeChange(child, 'schema', effective);
+      child.schema = captureFieldNodeChange(child, 'schema', effective);
       context.dirtyPaths.add(child.path);
       if (child.behavior.strategy === 'branch')
         context.shapeDirtyPaths.add(child.path);
@@ -367,7 +367,7 @@ export const selectChildren = <Self extends SchemaNodeRecord<Self>>(
         'sharedConflict',
       );
     }
-    child.active = captureSchemaNodeChange(child, 'active', true);
+    child.active = captureFieldNodeChange(child, 'active', true);
     child.detached = false;
     if (next[entry.name] !== child) {
       changed = true;
@@ -439,7 +439,7 @@ export const selectChildren = <Self extends SchemaNodeRecord<Self>>(
   if (nextChildren.length !== before.length) changed = true;
   for (let index = 0; !changed && index < nextChildren.length; index++)
     if (nextChildren[index] !== before[index]) changed = true;
-  node.children = captureSchemaNodeChange(node, 'children', nextChildren);
+  node.children = captureFieldNodeChange(node, 'children', nextChildren);
   if (changed) context.changedNodes.add(node);
   return changed;
 };

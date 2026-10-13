@@ -1,10 +1,10 @@
 import type { SchemaFormError } from '../../errors';
 import type { BlueprintNode, EffectiveSchema } from '../blueprint';
-import type { Distribution, SchemaNodeRecord } from '../record';
+import type { Distribution, FieldNodeRecord } from '../record';
 import type { DeriveState, DeriveTraceEntry } from './derive';
 
 /** Origin of a write before calculation and transition phases. */
-export type SchemaNodeWriteKind =
+export type FieldNodeWriteKind =
   | 'input'
   | 'callerPartial'
   | 'callerReplace'
@@ -18,7 +18,7 @@ export type VirtualReferenceIndex = ReadonlyMap<
 >;
 
 /** One synchronous write's work list and deferred failures. */
-export interface SettlementContext<Self extends SchemaNodeRecord<Self>> {
+export interface SettlementContext<Self extends FieldNodeRecord<Self>> {
   /** Live root reached through the record boundary. */
   root: Self;
   /** Emitted root reference from the preceding committed shape. */
@@ -28,13 +28,13 @@ export interface SettlementContext<Self extends SchemaNodeRecord<Self>> {
   /** Original caller target, excluded from refresh targets. */
   target: Self;
   /** Entry origin retained for later transition rules. */
-  kind: SchemaNodeWriteKind;
+  kind: FieldNodeWriteKind;
   /** Binding delivery origin, independent of replacement or merge semantics. */
-  source?: SchemaNodeWriteKind;
+  source?: FieldNodeWriteKind;
   /** Call-ordered origins, resolved by the final write covering each path. */
   writeOrigins?: readonly {
     path: string;
-    source: SchemaNodeWriteKind;
+    source: FieldNodeWriteKind;
     keys?: readonly string[];
     /** Sibling paths an overwriting virtual write replaces; the batch form of virtualReplacePaths. */
     fields?: readonly string[];

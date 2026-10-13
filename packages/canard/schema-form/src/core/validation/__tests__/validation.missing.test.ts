@@ -1,6 +1,6 @@
 import { describe, expect, it, vi } from 'vitest';
 
-import { makeSchemaNodeTree } from '../../__tests__/makeSchemaNodeTree';
+import { makeFieldNodeTree } from '../../__tests__/makeFieldNodeTree';
 
 describe('missing validator', () => {
   it('ERROR-146 ERROR-153 disables an if fragment and warns once per tree', () => {
@@ -11,7 +11,7 @@ describe('missing validator', () => {
       then: { properties: { guarded: { type: 'string' } } },
     };
     const report = vi.fn();
-    const { root } = makeSchemaNodeTree(schema, {
+    const { root } = makeFieldNodeTree(schema, {
       validator: undefined,
       errorReporter: { report, hasConsumer: () => true },
     });

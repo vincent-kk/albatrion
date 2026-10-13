@@ -1,4 +1,4 @@
-import type { SchemaNodeRecord } from '../../../record';
+import type { FieldNodeRecord } from '../../../record';
 import { getDeriveRuleTable } from '../../derive';
 import type { DeriveState } from '../../derive';
 import type { SettlementContext } from '../../type';
@@ -8,7 +8,7 @@ import type { SettlementContext } from '../../type';
  * @param context - Current settlement and its previous committed runtime
  * @returns Reused call state, or undefined for a rule-free blueprint
  */
-export const getDeriveState = <Self extends SchemaNodeRecord<Self>>(
+export const getDeriveState = <Self extends FieldNodeRecord<Self>>(
   context: SettlementContext<Self>,
 ): DeriveState<Self> | undefined => {
   if (context.deriveState) return context.deriveState;

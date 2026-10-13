@@ -1,7 +1,7 @@
 import { describe, expect, it, vi } from 'vitest';
 
 import { MULTIPLE_ERRORS, SchemaFormError } from '../../../errors';
-import { dispatchSetValue, subscribeSchemaNode } from '../index';
+import { dispatchSetValue, subscribeFieldNode } from '../index';
 import { bundleChainErrors } from '../utils/report/bundleChainErrors';
 import { deliverChainRecords } from '../utils/report/deliverChainRecords';
 import { createDispatchTree } from './fixtures/createDispatchTree';
@@ -36,10 +36,10 @@ describe('chain failure bundles', () => {
         },
       },
     );
-    subscribeSchemaNode(root, () => {
+    subscribeFieldNode(root, () => {
       throw first;
     });
-    subscribeSchemaNode(root, () => {
+    subscribeFieldNode(root, () => {
       throw new Error('second');
     });
     let caught: unknown;
@@ -142,10 +142,10 @@ describe('chain failure bundles', () => {
       undefined,
       { hasConsumer: () => true, report: (record) => records.push(record) },
     );
-    subscribeSchemaNode(root, () => {
+    subscribeFieldNode(root, () => {
       throw first;
     });
-    subscribeSchemaNode(root, () => {
+    subscribeFieldNode(root, () => {
       throw second;
     });
     let thrown: unknown;

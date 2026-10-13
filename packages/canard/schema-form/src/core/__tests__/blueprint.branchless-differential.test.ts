@@ -12,7 +12,7 @@ import type { collectSchemaCapabilities } from '../blueprint/utils/analyze/colle
 import { nodeFromJSONSchema } from '../nodeFromJSONSchema';
 import { getDeriveRuleTable } from '../settle/derive';
 import { getDependencyIndex } from '../settle/utils/write/getDependencyIndex';
-import type { JSONSchema } from '../types/jsonSchema';
+import type { AuthoredSchema } from '../types/jsonSchema';
 import { captureBlueprintObservables } from './fixtures/captureBlueprintObservables';
 import { captureBranchlessNodeTree } from './fixtures/captureBranchlessNodeTree';
 
@@ -22,7 +22,7 @@ const fixturePath =
 const { equivalentFixtures } = (await import(fixturePath)) as {
   equivalentFixtures: readonly {
     name: string;
-    workspace: JSONSchema;
+    workspace: AuthoredSchema;
     interactions: readonly unknown[];
   }[];
 };
@@ -181,11 +181,11 @@ describe('branchless and generic observable equivalence', () => {
       { type: 'string', controls: 'x' },
       { type: 'string', controls: { typo: true } },
       { type: 'string', options: { unknown: true } },
-      { type: 'object', controls: { children: {} } },
-      { type: 'object', controls: { children: [{ targets: 'a' }] } },
+      { type: 'object', controls: { fields: {} } },
+      { type: 'object', controls: { fields: [{ targets: 'a' }] } },
       {
         type: 'object',
-        controls: { children: [{ targets: ['missing'], controls: {} }] },
+        controls: { fields: [{ targets: ['missing'], controls: {} }] },
       },
       { type: 'object', controls: { discriminator: 3 }, oneOf: [{}] },
       { type: 'string', controls: { injectTo: { '/missing': 1 } } },

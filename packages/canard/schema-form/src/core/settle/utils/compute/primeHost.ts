@@ -2,13 +2,13 @@ import { hasOwnProperty } from '@winglet/common-utils/lib';
 import { escapeSegment } from '@winglet/json/pointer';
 
 import { mergeEffectiveSchema } from '../../../blueprint';
-import { captureSchemaNodeChange } from '../../../record';
-import type { SchemaNodeRecord } from '../../../record';
+import { captureFieldNodeChange } from '../../../record';
+import type { FieldNodeRecord } from '../../../record';
 import type { SettlementContext } from '../../type';
 import { getGateRegistry } from '../gates/getGateRegistry';
 import { indexEnteredLatentKey } from '../latent/indexEnteredLatentKey';
 import { createChildNode } from './createChildNode';
-import { enterSchemaNode } from './enterSchemaNode';
+import { enterFieldNode } from './enterFieldNode';
 import {
   DIRECT_CHILD_SELECTION_PLANS,
   getDirectChildSelectionPlan,
@@ -21,7 +21,7 @@ import {
  * @param context - Current write and its record factory
  * @returns Nothing; the host now exposes the fixed baseline shape
  */
-export const primeHost = <Self extends SchemaNodeRecord<Self>>(
+export const primeHost = <Self extends FieldNodeRecord<Self>>(
   node: Self,
   prior: Record<string, Self>,
   context: SettlementContext<Self>,
@@ -71,7 +71,7 @@ export const primeHost = <Self extends SchemaNodeRecord<Self>>(
       context.entered.add(child);
       indexEnteredLatentKey(context, child);
       if (child.behavior.type === 'virtual') context.dirtyPaths.add(child.path);
-      else enterSchemaNode(node, child, entry.name, context);
+      else enterFieldNode(node, child, entry.name, context);
       if (child.behavior.strategy === 'branch')
         context.shapeDirtyPaths.add(child.path);
     }
@@ -82,16 +82,16 @@ export const primeHost = <Self extends SchemaNodeRecord<Self>>(
     if (child.schema !== schema) {
       if (!context.originalSchemas.has(child.path))
         context.originalSchemas.set(child.path, child.schema);
-      child.schema = captureSchemaNodeChange(child, 'schema', schema);
+      child.schema = captureFieldNodeChange(child, 'schema', schema);
       context.dirtyPaths.add(child.path);
       context.changedNodes.add(child);
     }
-    child.active = captureSchemaNodeChange(child, 'active', true);
+    child.active = captureFieldNodeChange(child, 'active', true);
     child.detached = false;
     baseline[entry.name] = child;
   }
   node.structure = baseline;
-  node.children = captureSchemaNodeChange(
+  node.children = captureFieldNodeChange(
     node,
     'children',
     Object.values(baseline),

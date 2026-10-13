@@ -190,10 +190,11 @@ exports[`formatErrorMessage > 에러 메시지 스냅샷 > formatConditionIndexE
   ╰──────────────────────────────────────────────────
 
 The condition expressions could not be compiled into a valid function.
-This typically occurs when '&if' expressions contain invalid syntax.
+This typically occurs when a branch condition ('controls.active') contains
+invalid syntax.
 
 How to fix:
-  1. Check each '&if' expression for valid JavaScript syntax
+  1. Check each branch condition for valid JavaScript syntax
   2. Ensure JSONPointer paths in conditions are correct
   3. Verify that comparison operators are properly used
   4. Look for missing quotes around string comparisons"
@@ -225,7 +226,7 @@ returns all matching indices. This is used for anyOf/allOf conditions
 where multiple schemas can be active simultaneously.
 
 How to fix:
-  1. Check each '&if' expression for valid JavaScript syntax
+  1. Check each branch condition for valid JavaScript syntax
   2. Ensure JSONPointer paths in conditions are correct
   3. Verify that comparison operators are properly used
   4. Look for missing quotes around string comparisons"
@@ -261,10 +262,10 @@ How to fix:
 `;
 
 exports[`formatErrorMessage > 에러 메시지 스냅샷 > formatCreateDynamicFunctionError 스냅샷 1`] = `
-"Failed to create dynamic function for computed property.
+"Failed to create dynamic function for a controls expression.
 
   ╭──────────────────────────────────────────────────
-  │  Field:       computed.visible
+  │  Field:       controls.visible
   │  Expression:  '../category === 'premium' && ../price > 100'
   ├──────────────────────────────────────────────────
   │  Generated Function Body:
@@ -274,7 +275,7 @@ exports[`formatErrorMessage > 에러 메시지 스냅샷 > formatCreateDynamicFu
   ╰──────────────────────────────────────────────────
 
 The expression could not be compiled into a valid JavaScript function.
-This usually indicates a syntax error in the computed property expression.
+This usually indicates a syntax error in the controls expression.
 
 How to fix:
   1. Check the expression syntax for typos or invalid JavaScript
@@ -367,7 +368,7 @@ This indicates a circular dependency where derived values reference each other
 in a loop (e.g., A depends on B, B depends on A).
 
 How to fix:
-  1. Check the 'computed.derived' expression in the node above
+  1. Check the 'controls.derived' expression in the node above
   2. Look for circular references among the listed dependencies
   3. Break the cycle by removing or restructuring one dependency"
 `;
@@ -386,7 +387,8 @@ exports[`formatErrorMessage > 에러 메시지 스냅샷 > formatInjectToError �
   │  Schema Preview:
   │    {
   │      "type": "string",
-  │      "title": "Source Field"
+  │      "title": "Source Field",
+  │      "controls": {}
   │    }
   ├──────────────────────────────────────────────────
   │  Error: Cannot read properties of undefined (reading 'map')

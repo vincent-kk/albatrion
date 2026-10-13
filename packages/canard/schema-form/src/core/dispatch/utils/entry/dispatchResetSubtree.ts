@@ -1,9 +1,9 @@
-import type { SchemaNodeRecord } from '../../../record';
-import { resetSchemaNodeSubtree } from '../../../settle';
-import { SetValueOption } from '../../../types/value';
+import type { FieldNodeRecord } from '../../../record';
+import { resetFieldNodeSubtree } from '../../../settle';
+import { WriteOption } from '../../../types/value';
 import { captureChainError } from '../chain/captureChainError';
-import { enterSchemaNodeChain } from '../chain/enterSchemaNodeChain';
-import { exitSchemaNodeChain } from '../chain/exitSchemaNodeChain';
+import { enterFieldNodeChain } from '../chain/enterFieldNodeChain';
+import { exitFieldNodeChain } from '../chain/exitFieldNodeChain';
 
 /**
  * Reload one subtree immediately, including when a batch is open.
@@ -11,11 +11,11 @@ import { exitSchemaNodeChain } from '../chain/exitSchemaNodeChain';
  * @param option - Automatic-write selection for this load
  * @returns Nothing; the outer entry delivers its committed bits
  */
-export const dispatchResetSubtree = <Self extends SchemaNodeRecord<Self>>(
+export const dispatchResetSubtree = <Self extends FieldNodeRecord<Self>>(
   node: Self,
-  option: SetValueOption = SetValueOption.Overwrite,
+  option: WriteOption = WriteOption.Overwrite,
 ): void => {
-  if (!enterSchemaNodeChain(node)) return;
+  if (!enterFieldNodeChain(node)) return;
   const runtime = node.rootNode.runtime;
   if (runtime.batchWrites)
     runtime.batchWrites = runtime.batchWrites.filter(
@@ -24,10 +24,10 @@ export const dispatchResetSubtree = <Self extends SchemaNodeRecord<Self>>(
     );
   (runtime.validationTargets ??= new Set()).add(node);
   try {
-    resetSchemaNodeSubtree(node, option);
+    resetFieldNodeSubtree(node, option);
   } catch (error) {
     captureChainError(runtime, error);
   } finally {
-    exitSchemaNodeChain(node);
+    exitFieldNodeChain(node);
   }
 };

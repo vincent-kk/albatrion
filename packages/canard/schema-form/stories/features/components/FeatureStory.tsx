@@ -42,7 +42,7 @@ export interface FeatureStoryProps {
   propStages?: readonly FeaturePropStage[];
   /** FormProvider props; when present the Form renders inside a FormProvider. */
   providerProps?: Omit<FormProviderProps, 'children'>;
-  /** Layout drawn by the Form children function instead of Form.Group; it receives the current value. */
+  /** Layout drawn by the Form children function instead of Form.Field; it receives the current value. */
   layout?: (props: { value: unknown }) => ReactNode;
   /** Called with each whole-form value after the story records it. */
   onChange?: (value: unknown) => void;
@@ -79,7 +79,7 @@ export function FeatureStory({ scenario, formProps, propStages, providerProps, l
   const form = <Form key={scenario.name} ref={setHandle} jsonSchema={scenario.schema as JSONSchema} defaultValue={scenario.initialValue}
     validationMode={ValidationMode.OnChange | ValidationMode.OnRequest} {...formProps} {...staged}
     onChange={(value) => { observations.changes.push(value); onChange?.(value); }} onError={({ code }) => { observations.errorCodes.push(code); }}>
-    {({ value }) => <>{layout ? layout({ value }) : <Form.Group />}<output aria-label="Form output">{JSON.stringify(value)}</output></>}
+    {({ value }) => <>{layout ? layout({ value }) : <Form.Field />}<output aria-label="Form output">{JSON.stringify(value)}</output></>}
   </Form>;
   return <section data-feature-story={scenario.name}>
     {scenario.description && <p>{scenario.description}</p>}

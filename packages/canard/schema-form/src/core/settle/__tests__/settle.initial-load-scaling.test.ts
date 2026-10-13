@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 
-import { SetValueOption } from '../../types/value';
-import { loadSchemaNodeAtMount } from '../index';
+import { WriteOption } from '../../types/value';
+import { loadFieldNodeAtMount } from '../index';
 import { createTestTree } from './fixtures/createTestTree';
 
 /** Count declaration-name reads across a real mount load without a timer. */
@@ -25,7 +25,7 @@ const initialLoadNameReads = (count: number): number => {
   Object.defineProperty(root, 'blueprintNode', {
     value: { ...root.blueprintNode, childEntries },
   });
-  loadSchemaNodeAtMount(root, value, SetValueOption.Overwrite);
+  loadFieldNodeAtMount(root, value, WriteOption.Overwrite);
   expect(root.children).toHaveLength(count);
   return reads;
 };

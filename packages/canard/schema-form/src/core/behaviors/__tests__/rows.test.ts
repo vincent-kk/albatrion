@@ -3,7 +3,7 @@ import { describe, expect, it } from 'vitest';
 import { blueprint } from '../../blueprint';
 import type { BlueprintNode } from '../../blueprint';
 import { EMPTY_REVISION_LEDGER } from '../../record';
-import type { Behavior, SchemaNodeRecord, UnionSpec } from '../../record';
+import type { Behavior, FieldNodeRecord, UnionSpec } from '../../record';
 import { PathKeyedMap } from '../../utils/pathIndex/PathKeyedMap';
 import { PathKeyedSet } from '../../utils/pathIndex/PathKeyedSet';
 import { booleanBehavior } from '../booleanBehavior';
@@ -30,7 +30,7 @@ const makeRecord = (
   raw: unknown,
   options: Record<string, unknown> = {},
   blueprintNode: BlueprintNode = OBJECT_TEMPLATE,
-): SchemaNodeRecord<unknown> => ({
+): FieldNodeRecord<unknown> => ({
   behavior,
   runtime: {
     blueprint: OBJECT_ANALYSIS,
@@ -61,7 +61,7 @@ const makeRecord = (
   itemCount: 0,
   nextItemKey: 0,
   raw,
-  extras: undefined,
+  undeclaredValues: undefined,
   active: true,
   visible: true,
   readOnly: false,
@@ -224,13 +224,13 @@ describe('behavior rows', () => {
 
   it('assembles current object children in preferred, declaration, extras order', () => {
     const node = makeRecord(objectBehavior.branch, undefined, {
-      propertyKeys: ['second'],
+      propertyOrder: ['second'],
     });
     const children = [
       { name: 'first', emit: 1 },
       { name: 'second', emit: 2 },
     ];
-    node.extras = { other: 3 };
+    node.undeclaredValues = { other: 3 };
     const local = objectBehavior.branch.assemble(node, children);
     if (local === null || typeof local !== 'object')
       throw new Error('object assembly returned a scalar');
@@ -243,7 +243,7 @@ describe('behavior rows', () => {
     expect(changed).not.toBe(local);
     expect(changed).toEqual({ second: 2, first: 4, other: 3 });
     node.local = changed;
-    node.extras = { other: 3, last: 5 };
+    node.undeclaredValues = { other: 3, last: 5 };
     const expanded = objectBehavior.branch.assemble(node, children);
     if (expanded === null || typeof expanded !== 'object')
       throw new Error('object assembly returned a scalar');

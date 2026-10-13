@@ -16,7 +16,7 @@ export const controlsRenderScenarios: readonly FormScenario[] = [
   },
   {
     name: 'controls.virtual-branch-round-trip',
-    description: 'virtual.render: LANDING-167 virtual uses branch ChildNodeComponents; LANDING-018 inactive raw survives.',
+    description: 'virtual.render: LANDING-167 virtual uses branch ChildFields; LANDING-018 inactive raw survives.',
     schema: { type: 'object', properties: {
       shown: { type: 'boolean' },
       name: { type: 'string', controls: { active: '../shown' } },

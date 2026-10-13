@@ -44,7 +44,7 @@ const getIndex = (blueprint: Blueprint): GateBudgetIndex => {
     for (const gate of declaration.gates) {
       if (gate.kind !== 'active') continue;
       if (
-        gate.schemaPath.includes('/controls/children/') &&
+        gate.schemaPath.includes('/controls/fields/') &&
         gate.schemaPath.endsWith('/controls/active')
       )
         add(gate, `node:${gate.schemaPath}`);

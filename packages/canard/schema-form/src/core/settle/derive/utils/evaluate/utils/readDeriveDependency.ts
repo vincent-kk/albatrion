@@ -1,7 +1,7 @@
 import { hasOwnProperty } from '@winglet/common-utils/lib';
 import { unescapeSegment } from '@winglet/json/pointer';
 
-import type { SchemaNodeRecord } from '../../../../../record';
+import type { FieldNodeRecord } from '../../../../../record';
 import { resolveDependencyPath } from '../../../../utils/paths/resolveDependencyPath';
 
 /**
@@ -11,7 +11,7 @@ import { resolveDependencyPath } from '../../../../utils/paths/resolveDependency
  * @param dependency - Authored path or the context token
  * @returns Projected value, context object, or undefined for an absent path
  */
-export const readDeriveDependency = <Self extends SchemaNodeRecord<Self>>(
+export const readDeriveDependency = <Self extends FieldNodeRecord<Self>>(
   root: Self,
   hostPath: string,
   dependency: string,

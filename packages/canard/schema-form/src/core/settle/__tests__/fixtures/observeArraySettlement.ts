@@ -17,7 +17,7 @@ export const observeArraySettlement = (root: PlainNode): unknown => {
       count: node.itemCount,
       nextKey: node.nextItemKey,
       raw: node.raw,
-      extras: node.extras,
+      undeclaredValues: node.undeclaredValues,
       value: node.local,
       output: node.emit,
       schema: node.schema.schema,

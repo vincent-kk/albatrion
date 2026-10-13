@@ -1,16 +1,16 @@
 import { describe, expect, it, vi } from 'vitest';
 
-import { SchemaNodeState } from '../../types/state';
-import { SetValueOption } from '../../types/value';
-import { loadSchemaNodeAtMount, writeSchemaNode } from '../index';
+import { FieldNodeState } from '../../types/state';
+import { WriteOption } from '../../types/value';
+import { loadFieldNodeAtMount, writeFieldNode } from '../index';
 import { createTestTree } from './fixtures/createTestTree';
 
 describe('settled value rule layers', () => {
-  it('CONTROLS-073 children derived reaches each addressed target', () => {
+  it('CONTROLS-073 fields derived reaches each addressed target', () => {
     const { root } = createTestTree({
       type: 'object',
       controls: {
-        children: [{ targets: ['a', 'b'], controls: { derived: './source' } }],
+        fields: [{ targets: ['a', 'b'], controls: { derived: './source' } }],
       },
       properties: {
         source: { type: 'string' },
@@ -18,16 +18,16 @@ describe('settled value rule layers', () => {
         b: { type: 'string' },
       },
     });
-    loadSchemaNodeAtMount(root, { source: 'first' }, SetValueOption.Overwrite);
+    loadFieldNodeAtMount(root, { source: 'first' }, WriteOption.Overwrite);
     expect([root.structure?.a?.raw, root.structure?.b?.raw]).toEqual([
       'first',
       'first',
     ]);
-    writeSchemaNode(
+    writeFieldNode(
       root.structure!.source,
       'second',
       'input',
-      SetValueOption.Overwrite,
+      WriteOption.Overwrite,
     );
     expect([root.structure?.a?.raw, root.structure?.b?.raw]).toEqual([
       'second',
@@ -51,28 +51,26 @@ describe('settled value rule layers', () => {
         },
       ],
     });
-    loadSchemaNodeAtMount(
+    loadFieldNodeAtMount(
       root,
       { source: 'from-source' },
-      SetValueOption.Overwrite,
+      WriteOption.Overwrite,
     );
     expect(root.structure?.inside?.raw).toBe('from-source');
     expect(root.structure?.outside?.raw).toBeUndefined();
   });
 
-  it('CONTROLS-073 children derived evaluates once for all targets', () => {
+  it('CONTROLS-073 fields derived evaluates once for all targets', () => {
     const { root } = createTestTree({
       type: 'object',
       controls: {
-        children: [
-          { targets: ['a', 'b'], controls: { derived: '@.derive()' } },
-        ],
+        fields: [{ targets: ['a', 'b'], controls: { derived: '@.derive()' } }],
       },
       properties: { a: { type: 'string' }, b: { type: 'string' } },
     });
     const derive = vi.fn(() => 'shared');
     root.runtime.context = { derive };
-    loadSchemaNodeAtMount(root, {}, SetValueOption.Overwrite);
+    loadFieldNodeAtMount(root, {}, WriteOption.Overwrite);
     expect(derive).toHaveBeenCalledTimes(1);
     expect([root.structure?.a?.raw, root.structure?.b?.raw]).toEqual([
       'shared',
@@ -80,11 +78,11 @@ describe('settled value rule layers', () => {
     ]);
   });
 
-  it('CONTROLS-073 children unsetValue evaluates one expression for all targets', () => {
+  it('CONTROLS-073 fields unsetValue evaluates one expression for all targets', () => {
     const { root } = createTestTree({
       type: 'object',
       controls: {
-        children: [
+        fields: [
           { targets: ['a', 'b'], controls: { unsetValue: '@.clear()' } },
         ],
       },
@@ -92,7 +90,7 @@ describe('settled value rule layers', () => {
     });
     const clear = vi.fn(() => true);
     root.runtime.context = { clear };
-    loadSchemaNodeAtMount(root, { a: 'A', b: 'B' }, SetValueOption.Overwrite);
+    loadFieldNodeAtMount(root, { a: 'A', b: 'B' }, WriteOption.Overwrite);
     expect(clear).toHaveBeenCalledTimes(2);
     expect([root.structure?.a?.raw, root.structure?.b?.raw]).toEqual([
       undefined,
@@ -100,11 +98,11 @@ describe('settled value rule layers', () => {
     ]);
   });
 
-  it('CONTROLS-073 children resetInteraction evaluates once for all targets', () => {
+  it('CONTROLS-073 fields resetInteraction evaluates once for all targets', () => {
     const { root } = createTestTree({
       type: 'object',
       controls: {
-        children: [
+        fields: [
           {
             targets: ['a', 'b'],
             controls: { resetInteraction: './trigger && @.reset()' },
@@ -119,36 +117,36 @@ describe('settled value rule layers', () => {
     });
     const reset = vi.fn(() => true);
     root.runtime.context = { reset };
-    loadSchemaNodeAtMount(
+    loadFieldNodeAtMount(
       root,
       { trigger: false, a: 'A', b: 'B' },
-      SetValueOption.Overwrite,
+      WriteOption.Overwrite,
     );
     root.structure!.a.interactionState = {
-      [SchemaNodeState.Dirty]: true,
-      [SchemaNodeState.Touched]: true,
+      [FieldNodeState.Dirty]: true,
+      [FieldNodeState.Touched]: true,
     };
     root.structure!.b.interactionState = {
-      [SchemaNodeState.Dirty]: true,
-      [SchemaNodeState.Touched]: true,
+      [FieldNodeState.Dirty]: true,
+      [FieldNodeState.Touched]: true,
     };
-    writeSchemaNode(
+    writeFieldNode(
       root.structure!.trigger,
       true,
       'input',
-      SetValueOption.Overwrite,
+      WriteOption.Overwrite,
     );
     expect(reset).toHaveBeenCalledTimes(1);
-    expect(root.structure?.a?.interactionState[SchemaNodeState.Dirty]).toBe(
+    expect(root.structure?.a?.interactionState[FieldNodeState.Dirty]).toBe(
       false,
     );
-    expect(root.structure?.a?.interactionState[SchemaNodeState.Touched]).toBe(
+    expect(root.structure?.a?.interactionState[FieldNodeState.Touched]).toBe(
       false,
     );
-    expect(root.structure?.b?.interactionState[SchemaNodeState.Dirty]).toBe(
+    expect(root.structure?.b?.interactionState[FieldNodeState.Dirty]).toBe(
       false,
     );
-    expect(root.structure?.b?.interactionState[SchemaNodeState.Touched]).toBe(
+    expect(root.structure?.b?.interactionState[FieldNodeState.Touched]).toBe(
       false,
     );
   });

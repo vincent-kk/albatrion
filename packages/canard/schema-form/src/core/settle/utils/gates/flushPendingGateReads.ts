@@ -2,7 +2,7 @@ import { hasOwnProperty } from '@winglet/common-utils/lib';
 import { escapeSegment, unescapeSegment } from '@winglet/json/pointer';
 
 import type { BlueprintGate, BlueprintNode } from '../../../blueprint';
-import type { SchemaNodeRecord } from '../../../record';
+import type { FieldNodeRecord } from '../../../record';
 import type { SettlementContext } from '../../type';
 import { flushPendingOutput } from '../compute/flushPendingOutput';
 import { bindGateHostPath } from './bindGateHostPath';
@@ -32,7 +32,7 @@ const READ_PLANS = new WeakMap<BlueprintNode, GateReadPlan>();
  * @param context - Pending ancestor outputs and this tree's compiled gates
  * @returns Nothing; ancestor reads retain the preceding completed-entry value
  */
-export const flushPendingGateReads = <Self extends SchemaNodeRecord<Self>>(
+export const flushPendingGateReads = <Self extends FieldNodeRecord<Self>>(
   template: BlueprintNode,
   path: string,
   context: SettlementContext<Self>,

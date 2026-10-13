@@ -1,8 +1,8 @@
 import { describe, expect, it } from 'vitest';
 
-import { SchemaNodeState } from '../../types/state';
-import { SetValueOption } from '../../types/value';
-import { loadSchemaNodeAtMount, writeSchemaNode } from '../index';
+import { FieldNodeState } from '../../types/state';
+import { WriteOption } from '../../types/value';
+import { loadFieldNodeAtMount, writeFieldNode } from '../index';
 import { createTestTree } from './fixtures/createTestTree';
 
 // filid:contract settle-derive
@@ -23,18 +23,18 @@ describe('derive baseline alongside exit policy', () => {
         target: { type: 'string', controls: { resetInteraction: '../clear' } },
       },
     });
-    loadSchemaNodeAtMount(
+    loadFieldNodeAtMount(
       root,
       { clear: true, f: true, target: 'a' },
-      SetValueOption.Overwrite,
+      WriteOption.Overwrite,
     );
     const target = root.structure!.target;
     target.interactionState = {
-      [SchemaNodeState.Dirty]: true,
-      [SchemaNodeState.Touched]: true,
+      [FieldNodeState.Dirty]: true,
+      [FieldNodeState.Touched]: true,
     };
-    writeSchemaNode(target, 'b', 'input', SetValueOption.Overwrite);
+    writeFieldNode(target, 'b', 'input', WriteOption.Overwrite);
     expect(target.raw).toBe('b');
-    expect(target.interactionState[SchemaNodeState.Dirty]).toBe(true);
+    expect(target.interactionState[FieldNodeState.Dirty]).toBe(true);
   });
 });

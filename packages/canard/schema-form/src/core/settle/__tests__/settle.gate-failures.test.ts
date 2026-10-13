@@ -3,9 +3,9 @@ import { describe, expect, it } from 'vitest';
 import { isArray } from '@winglet/common-utils/filter';
 
 import { SchemaFormError } from '../../../errors';
-import { SetValueOption } from '../../types/value';
+import { WriteOption } from '../../types/value';
 import type { Validator } from '../../validation';
-import { writeSchemaNode } from '../index';
+import { writeFieldNode } from '../index';
 import { createTestTree } from './fixtures/createTestTree';
 
 describe('round 55 direct settlement regression', () => {
@@ -32,11 +32,11 @@ describe('round 55 direct settlement regression', () => {
     );
     let caught: unknown;
     try {
-      writeSchemaNode(
+      writeFieldNode(
         root,
         { left: 0, right: 0 },
         'callerReplace',
-        SetValueOption.Overwrite,
+        WriteOption.Overwrite,
       );
     } catch (error) {
       caught = error;
@@ -71,11 +71,11 @@ describe('round 55 direct settlement regression', () => {
     );
     let caught: unknown;
     try {
-      writeSchemaNode(
+      writeFieldNode(
         root,
         { input: 'value' },
         'callerReplace',
-        SetValueOption.Overwrite,
+        WriteOption.Overwrite,
       );
     } catch (error) {
       caught = error;
@@ -123,11 +123,11 @@ describe('round 55 direct settlement regression', () => {
       validator,
     );
     expect(() =>
-      writeSchemaNode(
+      writeFieldNode(
         root,
         { input: 'value' },
         'callerReplace',
-        SetValueOption.Overwrite,
+        WriteOption.Overwrite,
       ),
     ).toThrow(
       expect.objectContaining({

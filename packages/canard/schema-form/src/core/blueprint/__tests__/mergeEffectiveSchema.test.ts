@@ -6,7 +6,7 @@ import type {
   EffectiveSchemaMemo,
 } from '../type';
 import { mergeEffectiveSchema } from '../utils/effectiveSchema/mergeEffectiveSchema';
-import { createEffectiveSchemaNode } from './fixtures/createEffectiveSchemaNode';
+import { createEffectiveFieldNode } from './fixtures/createEffectiveFieldNode';
 
 /** A stored condition descriptor; these tests select IDs without evaluating it. */
 const gate: BlueprintGate = {
@@ -20,7 +20,7 @@ const gate: BlueprintGate = {
 // filid:contract effective-schema
 describe('mergeEffectiveSchema', () => {
   it('selects gates and sorts contributions, ignoring shared declaration-only branches', () => {
-    const node = createEffectiveSchemaNode(
+    const node = createEffectiveFieldNode(
       [
         { title: 'later' },
         { title: 'earlier' },
@@ -41,7 +41,7 @@ describe('mergeEffectiveSchema', () => {
     expect(mergeEffectiveSchema(node, [2]).schema).toMatchObject({
       title: 'gated',
     });
-    const sole = createEffectiveSchemaNode(
+    const sole = createEffectiveFieldNode(
       [
         { title: 'branch' },
         { description: 'overlay' },
@@ -58,7 +58,7 @@ describe('mergeEffectiveSchema', () => {
       title: 'branch',
       description: 'overlay',
     });
-    const host = createEffectiveSchemaNode(
+    const host = createEffectiveFieldNode(
       [{ title: 'host' }, { type: 'string' }, { type: 'number' }],
       { kind: 'union', schemaType: ['string', 'number'] },
       [
@@ -73,7 +73,7 @@ describe('mergeEffectiveSchema', () => {
       title: 'host',
       type: ['string', 'number'],
     });
-    const validationOnly = createEffectiveSchemaNode(
+    const validationOnly = createEffectiveFieldNode(
       [{ title: 'host' }, { title: 'validator only', type: 'number' }],
       {},
       [{}, { role: 'overlay', validationOnly: true }],
@@ -84,7 +84,7 @@ describe('mergeEffectiveSchema', () => {
   });
 
   it('intersects numeric, length, item and property bounds with multipleOf', () => {
-    const node = createEffectiveSchemaNode([
+    const node = createEffectiveFieldNode([
       {
         minimum: 1,
         maximum: 20,
@@ -122,7 +122,7 @@ describe('mergeEffectiveSchema', () => {
   });
 
   it('unions required, overwrites annotations, and combines standard readOnly locally', () => {
-    const node = createEffectiveSchemaNode([
+    const node = createEffectiveFieldNode([
       { required: ['a'], title: 'first', readOnly: true },
       { required: ['a', 'b'], title: 'last', default: 3, readOnly: false },
     ]);
@@ -136,7 +136,7 @@ describe('mergeEffectiveSchema', () => {
 
   it('intersects enum and const by deep equality without conflating keywords', () => {
     const value = { x: 1 };
-    const node = createEffectiveSchemaNode([
+    const node = createEffectiveFieldNode([
       { enum: [value, { x: 2 }], const: value },
       { enum: [{ x: 1 }], const: { x: 1 } },
     ]);
@@ -148,7 +148,7 @@ describe('mergeEffectiveSchema', () => {
     expect(result.const).toBe(value);
     expect(
       mergeEffectiveSchema(
-        createEffectiveSchemaNode([{ const: 1 }, { enum: [2] }]),
+        createEffectiveFieldNode([{ const: 1 }, { enum: [2] }]),
         [],
         { mode: 'static' },
       ).schema,
@@ -165,7 +165,7 @@ describe('mergeEffectiveSchema', () => {
       const diagnostics: unknown[] = [];
       expect(
         () =>
-          mergeEffectiveSchema(createEffectiveSchemaNode([left, right]), [], {
+          mergeEffectiveSchema(createEffectiveFieldNode([left, right]), [], {
             mode: 'static',
             collect: (d) => diagnostics.push(d),
           }).schema,
@@ -179,26 +179,26 @@ describe('mergeEffectiveSchema', () => {
   it('keeps runtime impossibility as enum empty or inverted ranges, with const removed', () => {
     expect(
       mergeEffectiveSchema(
-        createEffectiveSchemaNode([{ enum: [1] }, { enum: [2] }]),
+        createEffectiveFieldNode([{ enum: [1] }, { enum: [2] }]),
         [],
       ).schema,
     ).toMatchObject({ enum: [] });
     const result = mergeEffectiveSchema(
-      createEffectiveSchemaNode([{ const: 1 }, { const: 2 }, { const: 3 }]),
+      createEffectiveFieldNode([{ const: 1 }, { const: 2 }, { const: 3 }]),
       [],
     ).schema as Record<string, unknown>;
     expect(result.enum).toEqual([]);
     expect(result).not.toHaveProperty('const');
     expect(
       mergeEffectiveSchema(
-        createEffectiveSchemaNode([{ minimum: 5 }, { maximum: 2 }]),
+        createEffectiveFieldNode([{ minimum: 5 }, { maximum: 2 }]),
         [],
       ).schema,
     ).toMatchObject({ minimum: 5, maximum: 2 });
   });
 
   it('preserves the first pattern and appends other distinct patterns as allOf', () => {
-    const node = createEffectiveSchemaNode([
+    const node = createEffectiveFieldNode([
       { pattern: '^a', allOf: [{ format: 'opaque' }] },
       { pattern: 'z$' },
       { pattern: '^a' },
@@ -213,7 +213,7 @@ describe('mergeEffectiveSchema', () => {
     const shared = { deep: true },
       list = [2];
     const options = { nested: { first: 1 }, shared, list: [1] };
-    const node = createEffectiveSchemaNode([
+    const node = createEffectiveFieldNode([
       { options },
       { options: { nested: { second: 2 }, shared: undefined, list } },
     ]);
@@ -228,7 +228,7 @@ describe('mergeEffectiveSchema', () => {
     expect(options).toEqual({ nested: { first: 1 }, shared, list: [1] });
     expect(
       (
-        mergeEffectiveSchema(createEffectiveSchemaNode([{ options }]), [])
+        mergeEffectiveSchema(createEffectiveFieldNode([{ options }]), [])
           .schema as Record<string, unknown>
       ).options,
     ).toBe(options);
@@ -244,7 +244,7 @@ describe('mergeEffectiveSchema', () => {
       default: 1,
     };
     const virtual = [{ name: 'group', fields: ['a'] }];
-    const node = createEffectiveSchemaNode([
+    const node = createEffectiveFieldNode([
       { controls, options: { virtual, omitEmpty: true } },
       { controls: { watch: ['./b'], default: 2 } },
     ]);
@@ -262,7 +262,7 @@ describe('mergeEffectiveSchema', () => {
     expect(
       (mergeEffectiveSchema(node, []).schema as Record<string, any>).options,
     ).not.toHaveProperty('virtual');
-    const fragment = createEffectiveSchemaNode(
+    const fragment = createEffectiveFieldNode(
       [
         { controls: { watch: ['./node'], default: 1 } },
         { controls: { watch: ['./fragment'], default: 2 } },
@@ -277,7 +277,7 @@ describe('mergeEffectiveSchema', () => {
 
   it('narrows integer subsets and preserves scalar or shared static type identity', () => {
     const schemaType = Object.freeze(['string', 'number'] as const);
-    const node = createEffectiveSchemaNode(
+    const node = createEffectiveFieldNode(
       [{ type: schemaType }, { type: 'integer' }],
       { kind: 'union', schemaType },
       [{}, { gates: [gate] }],
@@ -288,7 +288,7 @@ describe('mergeEffectiveSchema', () => {
     expect(mergeEffectiveSchema(node, [1]).schema).toMatchObject({
       type: ['integer'],
     });
-    const scalar = createEffectiveSchemaNode(
+    const scalar = createEffectiveFieldNode(
       [{ type: 'number' }, { type: 'number' }],
       { kind: 'number', schemaType: 'number' },
       [{}, { gates: [gate] }],
@@ -296,7 +296,7 @@ describe('mergeEffectiveSchema', () => {
     expect(mergeEffectiveSchema(scalar, [1]).schema).toMatchObject({
       type: 'number',
     });
-    const nullable = createEffectiveSchemaNode(
+    const nullable = createEffectiveFieldNode(
       [{ type: ['number', 'null'] }, { type: 'number' }],
       { kind: 'number', schemaType: 'number', nullable: true },
     );
@@ -304,7 +304,7 @@ describe('mergeEffectiveSchema', () => {
       type: 'number',
       nullable: false,
     });
-    const nullOnly = createEffectiveSchemaNode(
+    const nullOnly = createEffectiveFieldNode(
       [{ type: ['number', 'null'] }, { type: 'null' }],
       { kind: 'number', schemaType: 'number', nullable: true },
     );
@@ -315,7 +315,7 @@ describe('mergeEffectiveSchema', () => {
   });
 
   it('represents runtime gated type conflict without throwing or creating type empty', () => {
-    const node = createEffectiveSchemaNode(
+    const node = createEffectiveFieldNode(
       [{ type: 'string' }, { type: 'number' }],
       {},
       [{}, { gates: [gate] }],
@@ -331,7 +331,7 @@ describe('mergeEffectiveSchema', () => {
   });
 
   it('memoizes normalized active sets and separates static from runtime checks', () => {
-    const node = createEffectiveSchemaNode([{ const: 1 }, { const: 2 }], {}, [
+    const node = createEffectiveFieldNode([{ const: 1 }, { const: 2 }], {}, [
       {},
       { gates: [gate] },
     ]);
@@ -346,7 +346,7 @@ describe('mergeEffectiveSchema', () => {
   it('separates memo contexts by atomic predicate and accepts a caller-owned memo', () => {
     const earlier = { opaque: true, a: 1 },
       later = { opaque: true, b: 2 };
-    const node = createEffectiveSchemaNode([
+    const node = createEffectiveFieldNode([
       { presentation: { input: earlier } },
       { presentation: { input: later } },
     ]);
@@ -367,11 +367,11 @@ describe('mergeEffectiveSchema', () => {
 
   it('keeps boolean false schemas and ignores boolean true overlays', () => {
     expect(
-      mergeEffectiveSchema(createEffectiveSchemaNode([false]), []).schema,
+      mergeEffectiveSchema(createEffectiveFieldNode([false]), []).schema,
     ).toBe(false);
     expect(
       mergeEffectiveSchema(
-        createEffectiveSchemaNode([true, { title: 'hint' }]),
+        createEffectiveFieldNode([true, { title: 'hint' }]),
         [],
       ).schema,
     ).toMatchObject({ title: 'hint' });
@@ -379,7 +379,7 @@ describe('mergeEffectiveSchema', () => {
 
   it('preserves draft-04 boolean exclusivity with its authored bound in allOf', () => {
     const relaxed = mergeEffectiveSchema(
-      createEffectiveSchemaNode([
+      createEffectiveFieldNode([
         { minimum: 1, exclusiveMinimum: true },
         { minimum: 2, exclusiveMinimum: false },
       ]),
@@ -394,7 +394,7 @@ describe('mergeEffectiveSchema', () => {
     });
     expect(relaxed).not.toHaveProperty('exclusiveMinimum');
     const strict = mergeEffectiveSchema(
-      createEffectiveSchemaNode([
+      createEffectiveFieldNode([
         { minimum: 2, exclusiveMinimum: true },
         { minimum: 2, exclusiveMinimum: false },
       ]),
@@ -415,28 +415,28 @@ describe('mergeEffectiveSchema', () => {
     it('leaves a single contribution inverted range and literal empty enum to the validator', () => {
       expect(() =>
         mergeEffectiveSchema(
-          createEffectiveSchemaNode([{ minimum: 5, maximum: 3 }]),
+          createEffectiveFieldNode([{ minimum: 5, maximum: 3 }]),
           [],
           staticMode,
         ),
       ).not.toThrow();
       expect(
         mergeEffectiveSchema(
-          createEffectiveSchemaNode([{ minimum: 5, maximum: 3 }]),
+          createEffectiveFieldNode([{ minimum: 5, maximum: 3 }]),
           [],
           staticMode,
         ).schema,
       ).toMatchObject({ minimum: 5, maximum: 3 });
       expect(() =>
         mergeEffectiveSchema(
-          createEffectiveSchemaNode([{ enum: [] }]),
+          createEffectiveFieldNode([{ enum: [] }]),
           [],
           staticMode,
         ),
       ).not.toThrow();
       expect(
         mergeEffectiveSchema(
-          createEffectiveSchemaNode([{ enum: [] }]),
+          createEffectiveFieldNode([{ enum: [] }]),
           [],
           staticMode,
         ).schema,
@@ -446,7 +446,7 @@ describe('mergeEffectiveSchema', () => {
     it('throws only when the contribution writes the pair after the target already held one', () => {
       expect(() =>
         mergeEffectiveSchema(
-          createEffectiveSchemaNode([
+          createEffectiveFieldNode([
             { minimum: 5, maximum: 3 },
             { description: 'x' },
           ]),
@@ -456,7 +456,7 @@ describe('mergeEffectiveSchema', () => {
       ).not.toThrow();
       expect(() =>
         mergeEffectiveSchema(
-          createEffectiveSchemaNode([
+          createEffectiveFieldNode([
             { minimum: 5, maximum: 3 },
             { minimum: 1 },
           ]),
@@ -475,14 +475,14 @@ describe('mergeEffectiveSchema', () => {
     ] as const)('judges the %s/%s pair on its own', (lower, upper) => {
       expect(() =>
         mergeEffectiveSchema(
-          createEffectiveSchemaNode([{ [lower]: 5 }, { [upper]: 2 }]),
+          createEffectiveFieldNode([{ [lower]: 5 }, { [upper]: 2 }]),
           [],
           staticMode,
         ),
       ).toThrow('INVALID_RANGE');
       expect(() =>
         mergeEffectiveSchema(
-          createEffectiveSchemaNode([{ [lower]: 5, [upper]: 2 }]),
+          createEffectiveFieldNode([{ [lower]: 5, [upper]: 2 }]),
           [],
           staticMode,
         ),
@@ -495,13 +495,13 @@ describe('mergeEffectiveSchema', () => {
         [{ minContains: 5 }, { maxContains: 2 }],
       ])
         expect(() =>
-          mergeEffectiveSchema(createEffectiveSchemaNode(pair), [], staticMode),
+          mergeEffectiveSchema(createEffectiveFieldNode(pair), [], staticMode),
         ).not.toThrow();
     });
 
     it('passes minContains/maxContains through to the merged schema unchanged', () => {
       const schema = mergeEffectiveSchema(
-        createEffectiveSchemaNode([{ minContains: 5, maxContains: 2 }]),
+        createEffectiveFieldNode([{ minContains: 5, maxContains: 2 }]),
         [],
         staticMode,
       ).schema;
@@ -514,14 +514,14 @@ describe('mergeEffectiveSchema', () => {
         [{ enum: [] }, { enum: ['a'] }],
       ])
         expect(() =>
-          mergeEffectiveSchema(createEffectiveSchemaNode(pair), [], staticMode),
+          mergeEffectiveSchema(createEffectiveFieldNode(pair), [], staticMode),
         ).toThrow('EMPTY_ENUM_INTERSECTION');
     });
   });
 
   describe('result record', () => {
     it('signals a gated type conflict without writing enum empty', () => {
-      const node = createEffectiveSchemaNode(
+      const node = createEffectiveFieldNode(
         [{ type: 'string' }, { type: 'number' }],
         {},
         [{}, { gates: [gate] }],
@@ -534,7 +534,7 @@ describe('mergeEffectiveSchema', () => {
     });
 
     it('keeps const conflicts as enum empty without a type conflict', () => {
-      const node = createEffectiveSchemaNode([{ const: 1 }, { const: 2 }], {}, [
+      const node = createEffectiveFieldNode([{ const: 1 }, { const: 2 }], {}, [
         {},
         { gates: [gate] },
       ]);
@@ -544,7 +544,7 @@ describe('mergeEffectiveSchema', () => {
     });
 
     it('returns the same frozen record for the same active set, including false schemas', () => {
-      const node = createEffectiveSchemaNode(
+      const node = createEffectiveFieldNode(
         [{ type: 'string' }, { type: 'number' }],
         {},
         [{}, { gates: [gate] }],
@@ -554,12 +554,12 @@ describe('mergeEffectiveSchema', () => {
       expect(Object.isFrozen(first)).toBe(true);
       expect(Object.isFrozen(first.schema)).toBe(true);
       const forbidden = mergeEffectiveSchema(
-        createEffectiveSchemaNode([false]),
+        createEffectiveFieldNode([false]),
         [],
       );
       expect(forbidden).toEqual({ schema: false, typeConflict: false });
       expect(
-        mergeEffectiveSchema(createEffectiveSchemaNode([false, {}]), []),
+        mergeEffectiveSchema(createEffectiveFieldNode([false, {}]), []),
       ).not.toBe(forbidden);
     });
   });

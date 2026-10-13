@@ -6,9 +6,9 @@ import type { FieldInputProps } from '@/schema-form';
 import { renderForm } from '../renderForm';
 
 /** Expose the stable React item key supplied to a branch input consumer. */
-const Items = ({ ChildNodeComponents }: FieldInputProps) => (
+const Items = ({ ChildFields }: FieldInputProps) => (
   <>
-    {ChildNodeComponents.map((Child) => (
+    {ChildFields.map((Child) => (
       <section
         key={Child.key}
         data-item-key={Child.key}

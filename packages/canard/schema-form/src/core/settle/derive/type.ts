@@ -3,7 +3,7 @@ import type {
   BlueprintExpression,
   BlueprintNode,
 } from '../../blueprint';
-import type { SchemaNodeRecord } from '../../record';
+import type { FieldNodeRecord } from '../../record';
 
 /** Authored automatic rule kinds, including the later injection rule. */
 export type DeriveRuleKind =
@@ -21,7 +21,7 @@ export interface DeriveRule {
   /** Original expression position, unique within the analysis. */
   readonly schemaPath: string;
   /** Declaration layer that chooses the addressed value target. */
-  readonly layer: 'fragment' | 'children' | 'node';
+  readonly layer: 'fragment' | 'fields' | 'node';
   /** Direct child name for a scoped rule; absent for a node's own control. */
   readonly targetName?: string;
   /** Direct child declarations contributed by this fragment. */
@@ -70,7 +70,7 @@ export interface DeriveTraceEntry {
 }
 
 /** Tree and edge baselines supplied by settle without a reverse dependency. */
-export interface DeriveState<Self extends SchemaNodeRecord<Self>> {
+export interface DeriveState<Self extends FieldNodeRecord<Self>> {
   /** Active root whose output supplies all dependency reads. */
   readonly root: Self;
   /** Current gate selections for this complete shape. */

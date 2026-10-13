@@ -3,8 +3,8 @@ import { describe, expect, it } from 'vitest';
 import { hasOwnProperty } from '@winglet/common-utils/lib';
 
 import { blueprint } from '../../blueprint';
-import { SetValueOption } from '../../types/value';
-import { loadSchemaNodeAtMount, writeSchemaNode } from '../index';
+import { WriteOption } from '../../types/value';
+import { loadFieldNodeAtMount, writeFieldNode } from '../index';
 import { createTestTree } from './fixtures/createTestTree';
 
 const isAtomic = (value: unknown): boolean =>
@@ -47,16 +47,16 @@ const schema = {
 describe('runtime hint atomicity', () => {
   it('REACT-003 gate-enabled options and presentation retain the last atomic element and ref', () => {
     const { root } = createTestTree(schema, undefined, { isAtomic });
-    loadSchemaNodeAtMount(
+    loadFieldNodeAtMount(
       root,
       { enabled: false, field: 'value' },
-      SetValueOption.Overwrite,
+      WriteOption.Overwrite,
     );
-    writeSchemaNode(
+    writeFieldNode(
       root.structure!.enabled,
       true,
       'input',
-      SetValueOption.Overwrite,
+      WriteOption.Overwrite,
     );
     const effective = root.structure!.field.schema.schema;
     if (typeof effective === 'boolean')
@@ -73,10 +73,10 @@ describe('runtime hint atomicity', () => {
 
   it('REACT-003 hosts without a predicate retain recursive hint merging', () => {
     const { root } = createTestTree(schema);
-    loadSchemaNodeAtMount(
+    loadFieldNodeAtMount(
       root,
       { enabled: true, field: 'value' },
-      SetValueOption.Overwrite,
+      WriteOption.Overwrite,
     );
     const effective = root.structure!.field.schema.schema;
     if (typeof effective === 'boolean')

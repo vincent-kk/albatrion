@@ -1,6 +1,6 @@
 # Expressions
 
-One expression language drives every dynamic schema behavior. The same syntax — JavaScript-like expressions over JSONPointer references — is applied through the keys of the schema's `controls` object that take expressions: `active`, `visible`, `readOnly`, `disabled`, `derived`, `unsetValue`, `resetInteraction`, `unsetOnInactive` (boolean or expression). The other keys are not expressions: `default` is a literal, `watch` an array of paths, `children` an array of `{ targets, controls }`, `injectTo` a function, `discriminator` a property name. The key list is closed and there are no aliases: an unknown key makes the blueprint build throw a schema error recognized by `isJSONSchemaError` (`UNKNOWN_GROUP_KEY`).
+One expression language drives every dynamic schema behavior. The same syntax — JavaScript-like expressions over JSONPointer references — is applied through the keys of the schema's `controls` object that take expressions: `active`, `visible`, `readOnly`, `disabled`, `derived`, `unsetValue`, `resetInteraction`, `unsetOnInactive` (boolean or expression). The other keys are not expressions: `default` is a literal, `watch` an array of paths, `fields` an array of `{ targets, controls }`, `injectTo` a function, `discriminator` a property name. The key list is closed and there are no aliases: an unknown key makes the blueprint build throw a schema error recognized by `isJSONSchemaError` (`UNKNOWN_GROUP_KEY`).
 
 ```typescript
 conditionalField: {
@@ -53,7 +53,7 @@ total: { type: 'number', controls: { watch: ['../items'] } },
 
 ## Evaluation Timing
 
-Expressions are evaluated synchronously while a write settles, so controls state (`active`, `visible`, `readOnly`, `disabled`, derived values, `watchValues`) is current as soon as `setValue()` returns, on a parent or a leaf alike. Listeners receive `UpdateComputedProperties` when the outermost write finishes; only validation runs later, on a microtask (see `event-system.md`).
+Expressions are evaluated synchronously while a write settles, so controls state (`active`, `visible`, `readOnly`, `disabled`, derived values, `watchValues`) is current as soon as `setValue()` returns, on a parent or a leaf alike. Listeners receive `UpdateControlledProperties` when the outermost write finishes; only validation runs later, on a microtask (see `event-system.md`).
 
 ## Context (`@`)
 

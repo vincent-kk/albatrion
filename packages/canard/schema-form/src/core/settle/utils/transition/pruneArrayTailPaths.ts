@@ -1,6 +1,6 @@
 import { isArray } from '@winglet/common-utils/filter';
 
-import type { SchemaNodeRuntime } from '../../../record';
+import type { FieldNodeRuntime } from '../../../record';
 import { getRuntimePathStores } from '../pathIndex/getRuntimePathStores';
 import { prunePerishedPaths } from './prunePerishedPaths';
 
@@ -11,7 +11,7 @@ import { prunePerishedPaths } from './prunePerishedPaths';
  * @returns Nothing; only removed slot roots reach the subtree pruner
  */
 export const pruneArrayTailPaths = <Self>(
-  runtime: SchemaNodeRuntime<Self>,
+  runtime: FieldNodeRuntime<Self>,
   hosts: ReadonlyMap<string, number>,
 ): void => {
   if (hosts.size === 0) return;

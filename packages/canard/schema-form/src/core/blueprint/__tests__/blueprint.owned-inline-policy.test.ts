@@ -4,7 +4,7 @@ import { createElement } from 'react';
 
 import { describe, expect, it } from 'vitest';
 
-import { type JSONSchema, nodeFromJSONSchema } from '../../index';
+import { type AuthoredSchema, nodeFromJSONSchema } from '../../index';
 import { blueprint } from '../blueprint';
 import type { BlueprintSchema } from '../type';
 import { createBlueprintGate } from '../utils/analyze/createBlueprintGate';
@@ -13,7 +13,7 @@ import { mergeSchemaContributions } from '../utils/effectiveSchema/utils/mergeSc
 import { getFeatureNodeIndex } from '../utils/features/getFeatureNodeIndex/getFeatureNodeIndex';
 import { getItemEntry } from '../utils/itemEntry/getItemEntry';
 import { collectOwnedInlineRecords } from './fixtures/collectOwnedInlineRecords';
-import { createEffectiveSchemaNode } from './fixtures/createEffectiveSchemaNode';
+import { createEffectiveFieldNode } from './fixtures/createEffectiveFieldNode';
 import corpus from './fixtures/ownedInlineHead.json';
 
 /** Module selection matches producer environment selection. */
@@ -26,7 +26,7 @@ describe('owned-inline ownership and protection', () => {
         type: 'object',
         controls: {
           active: true,
-          children: [{ targets: ['a'], controls: { active: false } }],
+          fields: [{ targets: ['a'], controls: { active: false } }],
         },
         properties: {
           a: { type: 'string' },
@@ -50,7 +50,7 @@ describe('owned-inline ownership and protection', () => {
             },
             controls: {
               active: true,
-              children: [{ targets: ['leaf'], controls: { active: '../on' } }],
+              fields: [{ targets: ['leaf'], controls: { active: '../on' } }],
             },
           },
         },
@@ -158,7 +158,7 @@ describe('owned-inline ownership and protection', () => {
     const union = blueprint({ type: ['string', 'number'] }).root;
     expect(Object.isFrozen(union.schemaType)).toBe(true);
     const objects = [{ value: 1 }, { value: 2 }];
-    const enumNode = createEffectiveSchemaNode([
+    const enumNode = createEffectiveFieldNode([
       { enum: objects },
       { enum: [objects[0]] },
     ]);
@@ -181,7 +181,7 @@ describe('owned-inline ownership and protection', () => {
     expect(
       Object.isFrozen(patternSchema.allOf[patternSchema.allOf.length - 1]),
     ).toBe(true);
-    const exclusive = createEffectiveSchemaNode(
+    const exclusive = createEffectiveFieldNode(
       [{ minimum: 1, exclusiveMinimum: true }],
       { kind: 'number', schemaType: 'number' },
     );
@@ -196,7 +196,7 @@ describe('owned-inline ownership and protection', () => {
       hostPath: '',
       condition: true,
     });
-    const narrowed = createEffectiveSchemaNode(
+    const narrowed = createEffectiveFieldNode(
       [{ type: ['string', 'number'] }, { type: 'string' }],
       { kind: 'union', schemaType: union.schemaType },
       [{}, { gates: [gate] }],
@@ -207,7 +207,7 @@ describe('owned-inline ownership and protection', () => {
           .type,
       ),
     ).toBe(true);
-    const conflict = createEffectiveSchemaNode(
+    const conflict = createEffectiveFieldNode(
       [{ const: 1 }, { const: 2 }],
       {},
       [{}, { gates: [gate] }],
@@ -300,11 +300,11 @@ describe('owned-inline ownership and protection', () => {
   });
 
   it('owns false envelopes per node and preserves same-node memo identity', () => {
-    const firstNode = createEffectiveSchemaNode([false]);
+    const firstNode = createEffectiveFieldNode([false]);
     const first = mergeEffectiveSchema(firstNode, []);
     expect(mergeEffectiveSchema(firstNode, [])).toBe(first);
     expect(
-      mergeEffectiveSchema(createEffectiveSchemaNode([false]), []),
+      mergeEffectiveSchema(createEffectiveFieldNode([false]), []),
     ).not.toBe(first);
     expect(first).toEqual({ schema: false, typeConflict: false });
     expect(Object.isFrozen(first)).toBe(DEVELOPMENT);
@@ -382,11 +382,11 @@ describe('owned-inline ownership and protection', () => {
       extension: { opaque: true },
     };
     const first = nodeFromJSONSchema({
-      jsonSchema: schema as JSONSchema,
+      jsonSchema: schema as AuthoredSchema,
       validationMode: 0,
     });
     const second = nodeFromJSONSchema({
-      jsonSchema: schema as JSONSchema,
+      jsonSchema: schema as AuthoredSchema,
       validationMode: 0,
     });
     first.find('/nested/count')!.setValue(2);

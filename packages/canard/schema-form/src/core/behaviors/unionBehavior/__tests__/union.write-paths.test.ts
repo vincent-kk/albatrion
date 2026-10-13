@@ -1,12 +1,12 @@
 import { describe, expect, it } from 'vitest';
 
-import { SetValueOption, isUnionNode } from '../../../SchemaNode';
-import { makeSchemaNodeTree } from '../../../__tests__/makeSchemaNodeTree';
+import { SetValueOption, isUnionNode } from '../../../FieldNode';
+import { makeFieldNodeTree } from '../../../__tests__/makeFieldNodeTree';
 
 // filid:contract union-rule-a
 describe('TEST-077 union write paths', () => {
   it('interprets a root caller replacement through the unordered static list', () => {
-    const { root } = makeSchemaNodeTree({ type: ['number', 'boolean'] });
+    const { root } = makeFieldNodeTree({ type: ['number', 'boolean'] });
     root.setValue('42');
     expect(isUnionNode(root)).toBe(true);
     expect(root.value).toBe(42);
@@ -15,7 +15,7 @@ describe('TEST-077 union write paths', () => {
   });
 
   it('interprets a nested node write without replacing its sibling', () => {
-    const { root } = makeSchemaNodeTree({
+    const { root } = makeFieldNodeTree({
       type: 'object',
       properties: {
         a: { type: ['number', 'boolean'] },
@@ -29,7 +29,7 @@ describe('TEST-077 union write paths', () => {
   });
 
   it('resetSubtree reinterprets its saved load value', () => {
-    const { root } = makeSchemaNodeTree(
+    const { root } = makeFieldNodeTree(
       {
         type: 'object',
         properties: {
@@ -47,7 +47,7 @@ describe('TEST-077 union write paths', () => {
   it('Merge writes an object-valued union as one replacement', () => {
     const first = { old: 1 };
     const second = { next: 2 };
-    const { root } = makeSchemaNodeTree({ type: ['object', 'string'] });
+    const { root } = makeFieldNodeTree({ type: ['object', 'string'] });
     root.setValue(first);
     root.setValue(second, SetValueOption.Merge);
     expect(root.raw).toBe(second);
@@ -58,7 +58,7 @@ describe('TEST-077 union write paths', () => {
 
   it('keeps an array member by reference as a terminal whole value', () => {
     const value = [1, { a: 2 }];
-    const { root } = makeSchemaNodeTree({ type: ['array', 'string'] });
+    const { root } = makeFieldNodeTree({ type: ['array', 'string'] });
     root.setValue(value);
     expect(root.raw).toBe(value);
     expect(root.outputValue).toBe(value);
@@ -66,7 +66,7 @@ describe('TEST-077 union write paths', () => {
   });
 
   it('keeps a string draft unchanged during a direct union write', () => {
-    const { root } = makeSchemaNodeTree({
+    const { root } = makeFieldNodeTree({
       type: ['string', 'boolean'],
       options: { trim: true },
     });
@@ -78,7 +78,7 @@ describe('TEST-077 union write paths', () => {
   });
 
   it('25C-11 exposes the seven PR-2 runtime node.type values including virtual', () => {
-    const { root } = makeSchemaNodeTree({
+    const { root } = makeFieldNodeTree({
       type: 'object',
       properties: {
         s: { type: 'string' },
@@ -107,7 +107,7 @@ describe('TEST-077 union write paths', () => {
   });
 
   it('TEST-077 derived writes through the effective union list', () => {
-    const { root } = makeSchemaNodeTree({
+    const { root } = makeFieldNodeTree({
       type: 'object',
       properties: {
         source: { type: 'string' },
@@ -123,7 +123,7 @@ describe('TEST-077 union write paths', () => {
   });
 
   it('TEST-077 injectTo writes through the effective union list', () => {
-    const { root } = makeSchemaNodeTree({
+    const { root } = makeFieldNodeTree({
       type: 'object',
       properties: {
         source: {
@@ -141,7 +141,7 @@ describe('TEST-077 union write paths', () => {
   });
   it.todo('TEST-077 stage 07 (PR-7): finished string input applies trim');
   it('25C-11 completes all eight node.type values with the array node', () => {
-    const { root } = makeSchemaNodeTree({
+    const { root } = makeFieldNodeTree({
       type: 'object',
       properties: {
         s: { type: 'string' },

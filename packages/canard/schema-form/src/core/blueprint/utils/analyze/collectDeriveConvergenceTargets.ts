@@ -126,17 +126,17 @@ export const collectDeriveConvergenceTargets = (
       if (controls && typeof controls === 'object') {
         if (typeof Reflect.get(controls, 'injectTo') === 'function')
           reads.add(node.path);
-        const children = Reflect.get(controls, 'children');
-        if (isArray(children))
-          for (let child = 0; child < children.length; child++) {
-            const childControls = children[child]?.controls;
+        const fields = Reflect.get(controls, 'fields');
+        if (isArray(fields))
+          for (let child = 0; child < fields.length; child++) {
+            const childControls = fields[child]?.controls;
             if (!childControls || typeof childControls !== 'object') continue;
             if (typeof childControls.injectTo === 'function')
               reads.add(node.path);
             const watches = childControls.watch;
             if (watches === undefined) continue;
             const paths = isArray(watches) ? watches : [watches];
-            const targets = children[child].targets;
+            const targets = fields[child].targets;
             if (!isArray(targets)) return undefined;
             for (let target = 0; target < targets.length; target++) {
               const targetPath = `${node.path}/${escapeSegment(targets[target])}`;

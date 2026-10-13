@@ -68,7 +68,7 @@ async function engine(variant, traced = false) {
   const result = await build({
     stdin: { contents: `export { nodeFromJSONSchema } from './src/core/nodeFromJSONSchema';
       export { createTestTree } from './src/core/settle/__tests__/fixtures/createTestTree';
-      export { loadSchemaNodeAtMount } from './src/core/settle';
+      export { loadFieldNodeAtMount } from './src/core/settle';
       export { markCommitDeliveries } from './src/${delivery}';
       export { createSettlementContext } from './src/core/settle/utils/settlement/createSettlementContext';
       export { getSettlementScratch } from './src/core/settle/utils/write/getSettlementScratch';
@@ -174,7 +174,7 @@ const contexts = {};
 for (const variant of variants) {
   const api = engines[variant];
   const { root } = api.createTestTree({ type: 'string' });
-  api.loadSchemaNodeAtMount(root, 'same', 1);
+  api.loadFieldNodeAtMount(root, 'same', 1);
   root.pendingDelivery = undefined;
   root.runtime.deliveries.clear();
   contexts[variant] = api.createSettlementContext(root, 'input', 1, api.getSettlementScratch(root.runtime));

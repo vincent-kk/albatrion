@@ -1,6 +1,6 @@
 import { clone } from '@winglet/common-utils/object';
 
-import { buildSchemaNodeTree, mountSchemaNode } from '@/schema-form/core';
+import { buildFieldNodeTree, mountFieldNode } from '@/schema-form/core';
 import {
   isRenderAtomic,
   isRenderTerminal,
@@ -28,7 +28,7 @@ export const createRootLoad = (
     reporter,
   };
   try {
-    load.root = buildSchemaNodeTree({
+    load.root = buildFieldNodeTree({
       ...props,
       defaultValue: clone(props.defaultValue),
       isTerminal: isRenderTerminal,
@@ -52,7 +52,7 @@ export const createRootLoad = (
       },
     });
     if (mount)
-      mountSchemaNode(load.root, undefined, undefined, {
+      mountFieldNode(load.root, undefined, undefined, {
         deferValidation: true,
       });
   } catch (error) {

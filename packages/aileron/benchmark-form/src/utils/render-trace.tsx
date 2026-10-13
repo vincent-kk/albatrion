@@ -22,7 +22,7 @@ setupJsdom();
  * Render-count instrumentation for the React layer.
  *
  * A `CustomFieldRenderer` increments a per-path counter on every commit.
- * Because `SchemaNodeProxy` wraps the renderer in `memo`, a count only
+ * Because `FieldProxy` wraps the renderer in `memo`, a count only
  * increases when React actually re-renders that node — memo-skipped nodes
  * are NOT counted. So `renderCounts` is the exact set of nodes React
  * committed, keyed by JSON Pointer path.

@@ -1,16 +1,16 @@
 import { describe, expect, it } from 'vitest';
 
 import { createTestValidator } from '../../__tests__/fixtures/createTestValidator';
-import { SchemaNodeEventType as E } from '../../record';
-import type { SchemaNodeDelivery } from '../../record';
-import { writeSchemaNode } from '../../settle';
-import { SetValueOption } from '../../types/value';
+import { FieldNodeEventType as E } from '../../record';
+import type { FieldNodeDelivery } from '../../record';
+import { writeFieldNode } from '../../settle';
+import { WriteOption } from '../../types/value';
 import {
   dispatchRemove,
   dispatchSetState,
   dispatchSetValue,
-  readSchemaNodeRevision,
-  subscribeSchemaNode,
+  readFieldNodeRevision,
+  subscribeFieldNode,
 } from '../index';
 import { runDeliveryWaves } from '../utils/chain/runDeliveryWaves';
 import { createDispatchTree } from './fixtures/createDispatchTree';
@@ -19,10 +19,10 @@ import { getDispatchChild } from './fixtures/getDispatchChild';
 
 /** Commit without draining, reproducing multiple commits inside one delivery boundary. */
 const commit = (node: DispatchTestNode, value: unknown) =>
-  writeSchemaNode(node, value, 'callerReplace', SetValueOption.Overwrite);
+  writeFieldNode(node, value, 'callerReplace', WriteOption.Overwrite);
 
 /** Observe the public value payload without depending on pending envelope layout. */
-const value = (event: SchemaNodeDelivery) => event.payload?.[E.UpdateValue];
+const value = (event: FieldNodeDelivery) => event.payload?.[E.UpdateValue];
 
 // Regression characterization: the same assertions run against the archived baseline.
 describe('payload boundary differential characterization', () => {
@@ -31,14 +31,14 @@ describe('payload boundary differential characterization', () => {
     commit(root, 'A');
     commit(root, 'B');
     const seen: unknown[] = [];
-    const unsubscribe = subscribeSchemaNode(root, (event) =>
+    const unsubscribe = subscribeFieldNode(root, (event) =>
       seen.push(value(event)),
     );
     runDeliveryWaves(root);
     expect(seen).toEqual([{ previous: undefined, current: 'B' }]);
     unsubscribe();
     dispatchSetValue(root, 'C');
-    subscribeSchemaNode(root, (event) => seen.push(value(event)));
+    subscribeFieldNode(root, (event) => seen.push(value(event)));
     expect(seen).toHaveLength(1);
     dispatchSetValue(root, 'D');
     expect(seen[1]).toEqual({ previous: 'C', current: 'D' });
@@ -46,15 +46,15 @@ describe('payload boundary differential characterization', () => {
     const late = createDispatchTree({ type: 'string' }).root;
     dispatchSetValue(late, 'A');
     commit(late, 'B');
-    const lateEvents: SchemaNodeDelivery[] = [];
-    const remove = subscribeSchemaNode(late, (event) => lateEvents.push(event));
+    const lateEvents: FieldNodeDelivery[] = [];
+    const remove = subscribeFieldNode(late, (event) => lateEvents.push(event));
     expect(lateEvents).toHaveLength(0);
     runDeliveryWaves(late);
     expect(value(lateEvents[0])).toEqual({ previous: 'A', current: 'B' });
     commit(late, 'C');
     remove();
     runDeliveryWaves(late);
-    subscribeSchemaNode(late, (event) => lateEvents.push(event));
+    subscribeFieldNode(late, (event) => lateEvents.push(event));
     dispatchSetValue(late, 'D');
     expect(value(lateEvents[1])).toEqual({ previous: 'C', current: 'D' });
   });
@@ -62,13 +62,13 @@ describe('payload boundary differential characterization', () => {
   it('02 merges two committed values into one wave without merging revisions', () => {
     const { root, runtime } = createDispatchTree({ type: 'string' });
     dispatchSetValue(root, 'A');
-    const revision = readSchemaNodeRevision(root, E.UpdateValue);
+    const revision = readFieldNodeRevision(root, E.UpdateValue);
     const number = runtime.commitNumber ?? 0;
-    const events: SchemaNodeDelivery[] = [];
-    subscribeSchemaNode(root, (event) => events.push(event));
+    const events: FieldNodeDelivery[] = [];
+    subscribeFieldNode(root, (event) => events.push(event));
     commit(root, 'B');
     commit(root, 'C');
-    expect(readSchemaNodeRevision(root, E.UpdateValue)).toBe(revision + 2);
+    expect(readFieldNodeRevision(root, E.UpdateValue)).toBe(revision + 2);
     expect(runtime.commitNumber).toBe(number + 2);
     expect(events).toHaveLength(0);
     runDeliveryWaves(root);
@@ -82,8 +82,8 @@ describe('payload boundary differential characterization', () => {
   it('03 keeps A to B to A across commits as an announced event', () => {
     const { root } = createDispatchTree({ type: 'string' });
     dispatchSetValue(root, 'A');
-    const events: SchemaNodeDelivery[] = [];
-    subscribeSchemaNode(root, (event) => events.push(event));
+    const events: FieldNodeDelivery[] = [];
+    subscribeFieldNode(root, (event) => events.push(event));
     commit(root, 'B');
     commit(root, 'A');
     runDeliveryWaves(root);
@@ -105,13 +105,13 @@ describe('payload boundary differential characterization', () => {
       b = getDispatchChild(root, 'b');
     const seen: unknown[] = [];
     let remove = () => {};
-    subscribeSchemaNode(a, () => {
+    subscribeFieldNode(a, () => {
       remove();
-      subscribeSchemaNode(b, (event) => seen.push(['late', value(event)]));
+      subscribeFieldNode(b, (event) => seen.push(['late', value(event)]));
       dispatchSetValue(b, 'C');
     });
-    subscribeSchemaNode(b, (event) => seen.push(['kept', value(event)]));
-    remove = subscribeSchemaNode(b, () => seen.push('removed'));
+    subscribeFieldNode(b, (event) => seen.push(['kept', value(event)]));
+    remove = subscribeFieldNode(b, () => seen.push('removed'));
     dispatchSetValue(root, { a: 'B', b: 'B' });
     expect(seen).toEqual([
       ['kept', { previous: 'A', current: 'B' }],
@@ -123,21 +123,21 @@ describe('payload boundary differential characterization', () => {
   it('05 advances only committed bits independently of subscriptions', () => {
     const { root } = createDispatchTree({ type: 'string' });
     dispatchSetValue(root, 'A');
-    const valueRevision = readSchemaNodeRevision(root, E.UpdateValue);
-    const stateRevision = readSchemaNodeRevision(root, E.UpdateState);
-    const pathRevision = readSchemaNodeRevision(root, E.UpdatePath);
+    const valueRevision = readFieldNodeRevision(root, E.UpdateValue);
+    const stateRevision = readFieldNodeRevision(root, E.UpdateState);
+    const pathRevision = readFieldNodeRevision(root, E.UpdatePath);
     const ledger = root.revisionLedger;
     dispatchSetValue(root, 'B');
-    expect(readSchemaNodeRevision(root, E.UpdateValue)).toBe(valueRevision + 1);
-    expect(readSchemaNodeRevision(root, E.UpdateState)).toBe(stateRevision);
-    expect(readSchemaNodeRevision(root, E.UpdatePath)).toBe(pathRevision);
+    expect(readFieldNodeRevision(root, E.UpdateValue)).toBe(valueRevision + 1);
+    expect(readFieldNodeRevision(root, E.UpdateState)).toBe(stateRevision);
+    expect(readFieldNodeRevision(root, E.UpdatePath)).toBe(pathRevision);
     for (let bit = 1; bit <= E.UpdateDiagnostics; bit <<= 1)
       expect(root.revisionLedger[bit] ?? 0, E[bit]).toBe(
         (ledger[bit] ?? 0) +
           (bit === E.UpdateValue || bit === E.RequestRefresh ? 1 : 0),
       );
     const subscribedLedger = root.revisionLedger;
-    subscribeSchemaNode(root, () => {});
+    subscribeFieldNode(root, () => {});
     dispatchSetValue(root, 'C');
     for (let bit = 1; bit <= E.UpdateDiagnostics; bit <<= 1)
       expect(root.revisionLedger[bit] ?? 0, E[bit]).toBe(
@@ -151,8 +151,8 @@ describe('payload boundary differential characterization', () => {
     }).root;
     dispatchSetValue(array, ['a', 'b']);
     const item = array.children![1];
-    const pathEvents: SchemaNodeDelivery[] = [];
-    subscribeSchemaNode(item, (event) => pathEvents.push(event));
+    const pathEvents: FieldNodeDelivery[] = [];
+    subscribeFieldNode(item, (event) => pathEvents.push(event));
     dispatchRemove(array, 0);
     expect(pathEvents[0].payload?.[E.UpdatePath]).toEqual({
       previous: '/1',
@@ -169,9 +169,9 @@ describe('payload boundary differential characterization', () => {
     dispatchSetValue(root, { a: 'A' });
     const before = root.local,
       beforeEmit = root.emit;
-    const events: SchemaNodeDelivery[] = [];
-    subscribeSchemaNode(root, (event) => events.push(event));
-    subscribeSchemaNode(root, (event) => events.push(event));
+    const events: FieldNodeDelivery[] = [];
+    subscribeFieldNode(root, (event) => events.push(event));
+    subscribeFieldNode(root, (event) => events.push(event));
     dispatchSetValue(root, { a: 'B' });
     expect(events[0]).toBe(events[1]);
     const payload = value(events[0]);
@@ -205,14 +205,14 @@ describe('payload boundary differential characterization', () => {
   it('07 freezes the payload before the first listener and retains the existing shallow scope', () => {
     const { root } = createDispatchTree({ type: 'string' });
     let first: unknown;
-    subscribeSchemaNode(root, (event) => {
+    subscribeFieldNode(root, (event) => {
       first = value(event);
       expect(Object.isFrozen(first)).toBe(true);
       expect(() =>
         Object.assign(first as object, { current: 'broken' }),
       ).toThrow();
     });
-    subscribeSchemaNode(root, (event) => expect(value(event)).toBe(first));
+    subscribeFieldNode(root, (event) => expect(value(event)).toBe(first));
     dispatchSetValue(root, 'A');
 
     const conditional = createDispatchTree(
@@ -231,8 +231,8 @@ describe('payload boundary differential characterization', () => {
     dispatchSetValue(conditional, { enabled: false, value: 'a' });
     const child = getDispatchChild(conditional, 'value');
     const previous = child.schema.schema;
-    const events: SchemaNodeDelivery[] = [];
-    subscribeSchemaNode(child, (event) => events.push(event));
+    const events: FieldNodeDelivery[] = [];
+    subscribeFieldNode(child, (event) => events.push(event));
     dispatchSetValue(getDispatchChild(conditional, 'enabled'), true);
     const payload = events[0].payload?.[E.UpdateJsonSchema];
     expect(payload).toEqual({ previous, current: child.schema.schema });
@@ -245,7 +245,7 @@ describe('payload boundary differential characterization', () => {
     const seen: string[] = [];
     const failure = new Error('listener');
     runtime.onStateChange = () => seen.push('state-complete');
-    subscribeSchemaNode(root, (event) => {
+    subscribeFieldNode(root, (event) => {
       if (event.type & E.UpdateValue) {
         seen.push('value');
         dispatchSetState(root, { dirty: true });
@@ -254,7 +254,7 @@ describe('payload boundary differential characterization', () => {
       if (event.type & E.UpdateState) seen.push('state');
       if (event.type & E.UpdateGlobalState) seen.push('global');
     });
-    subscribeSchemaNode(root, (event) => {
+    subscribeFieldNode(root, (event) => {
       if (event.type & E.UpdateValue) seen.push('second-value');
     });
     expect(() => dispatchSetValue(root, 'B')).toThrow(failure);
@@ -271,12 +271,12 @@ describe('payload boundary differential characterization', () => {
   it('09 detects the read/subscribe gap without replay or baseline overwrite', () => {
     const { root } = createDispatchTree({ type: 'string' });
     dispatchSetValue(root, 'A');
-    const before = readSchemaNodeRevision(root, E.UpdateValue);
+    const before = readFieldNodeRevision(root, E.UpdateValue);
     commit(root, 'B');
-    const events: SchemaNodeDelivery[] = [];
-    subscribeSchemaNode(root, (event) => events.push(event));
+    const events: FieldNodeDelivery[] = [];
+    subscribeFieldNode(root, (event) => events.push(event));
     expect(events).toHaveLength(0);
-    expect(readSchemaNodeRevision(root, E.UpdateValue)).toBe(before + 1);
+    expect(readFieldNodeRevision(root, E.UpdateValue)).toBe(before + 1);
     runDeliveryWaves(root);
     expect(value(events[0])).toEqual({ previous: 'A', current: 'B' });
   });

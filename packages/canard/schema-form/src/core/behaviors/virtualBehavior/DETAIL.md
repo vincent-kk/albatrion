@@ -2,7 +2,7 @@
 
 ## Requirements
 
-- 의존 방향은 `blueprint·record·behaviors/utils < virtualBehavior < behaviors 뿌리 < SchemaNode`입니다. 정착·겉면·레거시를 가져오지 않으며 경계 예외가 없습니다(NODE-009·016, LANDING-159).
+- 의존 방향은 `blueprint·record·behaviors/utils < virtualBehavior < behaviors 뿌리 < FieldNode`입니다. 정착·겉면·레거시를 가져오지 않으며 경계 예외가 없습니다(NODE-009·016, LANDING-159).
 
 ## API Contracts
 

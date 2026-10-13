@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 
-import { SetValueOption } from '../../types/value';
-import { loadSchemaNodeAtMount, writeSchemaNode } from '../index';
+import { WriteOption } from '../../types/value';
+import { loadFieldNodeAtMount, writeFieldNode } from '../index';
 import { createTestTree } from './fixtures/createTestTree';
 
 // filid:contract settle-gates
@@ -43,7 +43,7 @@ describe('shared declaration conflicts', () => {
         },
       ],
     });
-    loadSchemaNodeAtMount(
+    loadFieldNodeAtMount(
       root,
       {
         first: false,
@@ -52,7 +52,7 @@ describe('shared declaration conflicts', () => {
         source: 'A',
         departed: 'held',
       },
-      SetValueOption.Overwrite,
+      WriteOption.Overwrite,
     );
     expect(root.runtime.diagnostics.status).toBe('stable');
     expect(root.structure?.target?.raw).toBe('A');
@@ -61,11 +61,11 @@ describe('shared declaration conflicts', () => {
 
     let caught: unknown;
     try {
-      writeSchemaNode(
+      writeFieldNode(
         root,
         { first: true, second: true, stay: false, source: 'B' },
         'callerPartial',
-        SetValueOption.Merge,
+        WriteOption.Merge,
       );
     } catch (error) {
       caught = error;
@@ -97,15 +97,15 @@ describe('shared declaration conflicts', () => {
       then: { properties: { value: { type: 'string' } } },
     });
     expect(() =>
-      writeSchemaNode(
+      writeFieldNode(
         root,
         { enabled: true, value: 3 },
         'callerReplace',
-        SetValueOption.Overwrite,
+        WriteOption.Overwrite,
       ),
     ).toThrow('Active declarations conflict');
     expect(root.raw).toBeUndefined();
-    expect(root.extras).toEqual({ enabled: true });
+    expect(root.undeclaredValues).toEqual({ enabled: true });
     expect(root.structure?.value?.raw).toBe(3);
     expect(root.runtime.diagnostics).toMatchObject({
       status: 'degraded',
@@ -129,11 +129,11 @@ describe('shared declaration conflicts', () => {
       ],
     });
     expect(() =>
-      writeSchemaNode(
+      writeFieldNode(
         root,
         { shared: 1 },
         'callerReplace',
-        SetValueOption.Overwrite,
+        WriteOption.Overwrite,
       ),
     ).toThrow('Active declarations conflict');
     expect(root.structure?.shared?.blueprintNode.kind).toBe('number');

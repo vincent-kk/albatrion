@@ -3,7 +3,7 @@ import { describe, expect, it, vi } from 'vitest';
 import { releaseValidationRoot, retainValidationRoot } from '../../../core';
 import { blueprint } from '../../../core/blueprint';
 import type { Validator } from '../../../core/validation';
-import { readSchemaNodeGuard } from '../../../core/validation';
+import { readFieldNodeGuard } from '../../../core/validation';
 import type { ValidatorPlugin } from '../../../index';
 
 describe('validator plugin contract', () => {
@@ -38,7 +38,7 @@ describe('validator plugin contract', () => {
     if (!gate) throw new Error('Expected an authored if guard');
     retainValidationRoot(validator, authored);
     expect(
-      readSchemaNodeGuard({ blueprint: analysis, validator }, gate)?.('ready'),
+      readFieldNodeGuard({ blueprint: analysis, validator }, gate)?.('ready'),
     ).toBe(true);
     expect(compile).toHaveBeenCalledTimes(1);
     expect(compileGuard).toHaveBeenCalledTimes(1);

@@ -1,6 +1,6 @@
 import { escapeSegment } from '@winglet/json/pointer';
 
-import type { SchemaNodeRecord } from '../../../record';
+import type { FieldNodeRecord } from '../../../record';
 import type { SettlementContext } from '../../type';
 
 /**
@@ -11,7 +11,7 @@ import type { SettlementContext } from '../../type';
  * @param writeOrigins - Call-ordered batch origins as flushBatchWrites recorded them
  * @returns Paths whose subtrees the batch replaces, in origin order, possibly repeated
  */
-export const collectReplacePaths = <Self extends SchemaNodeRecord<Self>>(
+export const collectReplacePaths = <Self extends FieldNodeRecord<Self>>(
   writeOrigins: NonNullable<SettlementContext<Self>['writeOrigins']>,
 ): string[] => {
   const paths: string[] = [];

@@ -26,7 +26,7 @@ export interface RendererCase {
   readonly form: readonly RendererSlot[];
   /** Slots set on the FormProvider, drawn with the marker prefix "provider". */
   readonly provider: readonly RendererSlot[];
-  /** Whether /title is drawn by a children layout of Form.Label, Form.Input and Form.Error instead of Form.Group. */
+  /** Whether /title is drawn by a children layout of Form.Label, Form.Input and Form.Error instead of Form.Field. */
   readonly composed: boolean;
   /** Markers drawn in the form once errors show. */
   readonly markers: readonly string[];

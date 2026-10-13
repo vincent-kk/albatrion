@@ -1,10 +1,10 @@
 import { INVALID_WRITE_OPTION, SchemaFormError } from '../../../../errors';
-import type { SchemaNodeRecord } from '../../../record';
-import { assertVirtualWriteShape, writeSchemaNode } from '../../../settle';
-import { SetValueOption } from '../../../types/value';
+import type { FieldNodeRecord } from '../../../record';
+import { assertVirtualWriteShape, writeFieldNode } from '../../../settle';
+import { WriteOption } from '../../../types/value';
 import { captureChainError } from '../chain/captureChainError';
-import { enterSchemaNodeChain } from '../chain/enterSchemaNodeChain';
-import { exitSchemaNodeChain } from '../chain/exitSchemaNodeChain';
+import { enterFieldNodeChain } from '../chain/enterFieldNodeChain';
+import { exitFieldNodeChain } from '../chain/exitFieldNodeChain';
 import { readBatchValue } from '../chain/readBatchValue';
 
 /**
@@ -15,16 +15,16 @@ import { readBatchValue } from '../chain/readBatchValue';
  * @param source - Binding-only origin carried independently of public flags
  * @returns Nothing; outer entry owns notification and failures
  */
-export const dispatchSetValue = <Self extends SchemaNodeRecord<Self>>(
+export const dispatchSetValue = <Self extends FieldNodeRecord<Self>>(
   node: Self,
   value: unknown,
-  option: SetValueOption = SetValueOption.Overwrite,
+  option: WriteOption = WriteOption.Overwrite,
   source?: 'input',
 ): void => {
   if (source === 'input' && (node.disposed || node.rootNode.disposed)) return;
-  if (!enterSchemaNodeChain(node)) return;
+  if (!enterFieldNodeChain(node)) return;
   try {
-    if (option & SetValueOption.Overwrite && option & SetValueOption.Merge)
+    if (option & WriteOption.Overwrite && option & WriteOption.Merge)
       throw new SchemaFormError(
         INVALID_WRITE_OPTION,
         'Overwrite and Merge cannot be combined',
@@ -41,9 +41,9 @@ export const dispatchSetValue = <Self extends SchemaNodeRecord<Self>>(
       (runtime.batchWrites ??= []).push({ node, value: input, option, source });
     } else {
       const merge =
-        (option & SetValueOption.Merge) === SetValueOption.Merge &&
-        !(option & SetValueOption.Replace);
-      writeSchemaNode(
+        (option & WriteOption.Merge) === WriteOption.Merge &&
+        !(option & WriteOption.Replace);
+      writeFieldNode(
         node,
         input,
         merge ? 'callerPartial' : 'callerReplace',
@@ -55,6 +55,6 @@ export const dispatchSetValue = <Self extends SchemaNodeRecord<Self>>(
     if (node.rootNode.runtime.batchDepth) throw error;
     captureChainError(node.rootNode.runtime, error);
   } finally {
-    exitSchemaNodeChain(node);
+    exitFieldNodeChain(node);
   }
 };

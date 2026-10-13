@@ -1,6 +1,6 @@
 import { isArray } from '@winglet/common-utils/filter';
 
-import type { SchemaNodeRecord } from '../../../record';
+import type { FieldNodeRecord } from '../../../record';
 
 /**
  * Keep undeclared array positions in slot order, including sparse positions.
@@ -8,7 +8,7 @@ import type { SchemaNodeRecord } from '../../../record';
  * @param value - Interpreted whole-array input
  * @returns Undeclared tail or undefined when every position has a blueprint
  */
-export const arrayExtras = <Self extends SchemaNodeRecord<Self>>(
+export const arrayExtras = <Self extends FieldNodeRecord<Self>>(
   node: Self,
   value: readonly unknown[],
 ): unknown[] | undefined => {

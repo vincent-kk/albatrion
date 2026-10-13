@@ -21,8 +21,8 @@ assert.equal(execFileSync('git', ['rev-parse', '--short=9', 'HEAD'],
   { cwd: repo, encoding: 'utf8' }).trim(), evidence.head);
 const reserved = ['providers/RootNodeContext/RootNodeContextProvider.tsx',
   'providers/RootNodeContext/useLiveNode.ts', 'providers/RootNodeContext/utils/applyFormErrors.ts',
-  'components/SchemaNode/SchemaNodeInput/SchemaNodeInput.tsx',
-  'components/SchemaNode/SchemaNodeInput/hooks/useFieldInputControl.ts', 'core/types/index.ts'];
+  'components/Field/FieldInputSlot/FieldInputSlot.tsx',
+  'components/Field/FieldInputSlot/hooks/useFieldInputControl.ts', 'core/types/index.ts'];
 for (const relative of reserved) {
   const file = `packages/canard/schema-form/src/${relative}`;
   assert(fs.readFileSync(path.join(repo, file)).equals(execFileSync('git', ['show', `HEAD:${file}`], { cwd: repo })));

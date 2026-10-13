@@ -1,4 +1,4 @@
-import type { SchemaNodeRecord } from '../../../record';
+import type { FieldNodeRecord } from '../../../record';
 import type { SettlementContext } from '../../type';
 
 /**
@@ -10,7 +10,7 @@ import type { SettlementContext } from '../../type';
  * @param path - Child path the host would distribute to
  * @returns Whether the host's distributed input is a write for that child
  */
-export const isWithinReplacePaths = <Self extends SchemaNodeRecord<Self>>(
+export const isWithinReplacePaths = <Self extends FieldNodeRecord<Self>>(
   context: SettlementContext<Self>,
   path: string,
 ): boolean => {

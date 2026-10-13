@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { makeSchemaNodeTree } from '../../../__tests__/makeSchemaNodeTree';
+import { makeFieldNodeTree } from '../../../__tests__/makeFieldNodeTree';
 
 const records = (runtime: object) =>
   Reflect.get(runtime, 'typeMismatchRecords');
@@ -8,7 +8,7 @@ const records = (runtime: object) =>
 // filid:contract union-raw
 describe('TEST-077 union mismatch lamp', () => {
   it('turns the lamp on when a gate narrows the effective list', () => {
-    const { root } = makeSchemaNodeTree({
+    const { root } = makeFieldNodeTree({
       type: 'object',
       properties: {
         narrow: { type: 'boolean' },
@@ -36,7 +36,7 @@ describe('TEST-077 union mismatch lamp', () => {
   });
 
   it('TEST-077 turns the lamp off when a gate widens the effective list again', () => {
-    const { root } = makeSchemaNodeTree({
+    const { root } = makeFieldNodeTree({
       type: 'object',
       properties: {
         narrow: { type: 'boolean' },
@@ -59,7 +59,7 @@ describe('TEST-077 union mismatch lamp', () => {
   });
 
   it('turns the lamp off when a later value matches the effective list', () => {
-    const { root } = makeSchemaNodeTree({ type: ['number', 'boolean'] });
+    const { root } = makeFieldNodeTree({ type: ['number', 'boolean'] });
     root.setValue('invalid');
     expect(root.typeMismatch).toBe(true);
     root.setValue(1);
@@ -68,7 +68,7 @@ describe('TEST-077 union mismatch lamp', () => {
   });
 
   it('memoizes typeMismatches until the next commit and filters by subtree', () => {
-    const { root } = makeSchemaNodeTree({
+    const { root } = makeFieldNodeTree({
       type: 'object',
       properties: {
         group: {
@@ -91,7 +91,7 @@ describe('TEST-077 union mismatch lamp', () => {
   });
 
   it('records TYPE_MISMATCH once while on and again after an off-to-on transition', () => {
-    const { root, runtime } = makeSchemaNodeTree({
+    const { root, runtime } = makeFieldNodeTree({
       type: ['number', 'boolean'],
     });
     root.setValue('unconvertible');
@@ -121,7 +121,7 @@ describe('TEST-077 union mismatch lamp', () => {
   });
 
   it('records ambiguous candidates for 0 in string-or-boolean', () => {
-    const { root, runtime } = makeSchemaNodeTree({
+    const { root, runtime } = makeFieldNodeTree({
       type: ['string', 'boolean'],
     });
     root.setValue(0);
@@ -137,7 +137,7 @@ describe('TEST-077 union mismatch lamp', () => {
   });
 
   it('resends one TYPE_MISMATCH record on each reset load', () => {
-    const { root, runtime } = makeSchemaNodeTree(
+    const { root, runtime } = makeFieldNodeTree(
       { type: ['number', 'boolean'] },
       { snapshot: 'unconvertible' },
     );

@@ -1,5 +1,5 @@
 import type { FormHandle, FormProps } from '@/schema-form/components/Form';
-import type { SchemaNode, Validator } from '@/schema-form/core';
+import type { FieldNode, Validator } from '@/schema-form/core';
 import type { FormErrorRecord } from '@/schema-form/errors';
 
 import type { FormErrorService } from '../FormErrorContext';
@@ -24,7 +24,7 @@ export type RootLoadProps = Pick<
 /** A committed or speculative root and its buffered load reports. */
 export interface RootLoad {
   /** Built root; absent when construction threw or a shared-schema conflict discarded it. */
-  root?: SchemaNode;
+  root?: FieldNode;
   /** Props this load was built from; change callbacks read them only while `ready`. */
   props: RootLoadProps;
   /** Reports raised before the first commit, delivered once by the commit or root fallback. */
@@ -46,7 +46,7 @@ export interface RootLoadStore {
   /** Current load exposed to the Form handle and React subscribers. */
   load: RootLoad;
   /** Last aggregate delivered to the consumer, absent before the first report. */
-  lastReportedErrors?: SchemaNode['globalErrors'];
+  lastReportedErrors?: FieldNode['globalErrors'];
   /** React subscribers notified when reset replaces the current load. */
   listeners: Set<() => void>;
   /** Release the active root's validation and diagnostics subscription. */
@@ -56,7 +56,7 @@ export interface RootLoadStore {
 /** Bridge exposing current root and reset to the Form handle. */
 export interface RootBinding {
   /** Root of the committed load; undefined while no root could be built. */
-  root?: SchemaNode;
+  root?: FieldNode;
   /** Start a new load from the latest committed props, keeping the root when the schema is unchanged. */
   reset: FormHandle['reset'];
 }

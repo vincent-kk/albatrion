@@ -31,16 +31,16 @@ U9 렌더 장면은 presentation 전달과 빈 입력의 undefined 방출, 가�
 
 | Scene file | Scene name | Behavior verified | Ledger evidence |
 | --- | --- | --- | --- |
-| `exit-layers.scenario.ts` | `controls.children-exit-policy-layer` | 대상이 나갈 때 children 항목의 나감 정책을 적용하고 보존한 raw 값을 비운다. | — |
+| `exit-layers.scenario.ts` | `controls.fields-exit-policy-layer` | 대상이 나갈 때 fields 항목의 나감 정책을 적용하고 보존한 raw 값을 비운다. | — |
 | `exit-layers.scenario.ts` | `controls.fragment-exit-policy-layer` | 조각이 꺼질 때 나가는 조각의 나감 정책을 적용한다. | — |
 | `exit-layers.scenario.ts` | `controls.expression-exit-previous-commit` | 직전의 살아 있는 커밋에서 나감 정책 식을 읽는다. | — |
 | `exit-layers.scenario.ts` | `controls.visible-preserves-value` | 숨겨져 있지만 활성인 선언은 쓸 수 있게 유지하고 방출 값을 보존한다. | — |
 | `scope.scenario.ts` | `controls.fragment-scope` | 조각 상태는 그 조각 안의 선언에만 적용한다. | — |
 | `scope.scenario.ts` | `controls.root-keys-do-not-inherit` | 루트의 로컬 상태 키가 자식 노드로 전달되지 않게 한다. | — |
-| `scope.scenario.ts` | `controls.children-value-layer` | children 항목의 기본값이 일반 선언 기본값을 덮어쓴다. | — |
+| `scope.scenario.ts` | `controls.fields-value-layer` | fields 항목의 기본값이 일반 선언 기본값을 덮어쓴다. | — |
 | `states.scenario.ts` | `controls.lock-or-visibility-and` | 적용되는 각 층의 readOnly·disabled는 OR로, visibility는 AND로 결합한다. | — |
 | `states.scenario.ts` | `controls.standard-read-only` | 표준 스키마 readOnly를 로컬 OR 결합에 포함한다. | — |
-| `states.scenario.ts` | `controls.children-host-expression` | 지정한 모든 대상에 대해 호스트를 기준으로 children 항목의 식을 평가한다. | — |
+| `states.scenario.ts` | `controls.fields-host-expression` | 지정한 모든 대상에 대해 호스트를 기준으로 fields 항목의 식을 평가한다. | — |
 
 ## Last Updated
 

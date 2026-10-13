@@ -1,9 +1,9 @@
-import { captureSchemaNodeChange } from '../../../record';
-import type { SchemaNodeRecord } from '../../../record';
+import { captureFieldNodeChange } from '../../../record';
+import type { FieldNodeRecord } from '../../../record';
 import type { SettlementContext } from '../../type';
-import { captureDetachedSchemaNodeReads } from '../detached/captureDetachedSchemaNodeReads';
+import { captureDetachedFieldNodeReads } from '../detached/captureDetachedFieldNodeReads';
 import { getGateRegistry } from '../gates/getGateRegistry';
-import { walkOwnedSchemaNodes } from '../walkOwnedSchemaNodes';
+import { walkOwnedFieldNodes } from '../walkOwnedFieldNodes';
 import { pruneArrayTailPaths } from './pruneArrayTailPaths';
 import { prunePerishedPaths } from './prunePerishedPaths';
 
@@ -12,15 +12,15 @@ import { prunePerishedPaths } from './prunePerishedPaths';
  * @param context - Settlement whose array selection marked perished items
  * @returns Nothing; old references retain their last committed reads
  */
-export const finalizePerished = <Self extends SchemaNodeRecord<Self>>(
+export const finalizePerished = <Self extends FieldNodeRecord<Self>>(
   context: SettlementContext<Self>,
 ): void => {
   let perishedPaths: Set<string> | undefined;
   for (const node of context.perished) {
     if (node.parent?.structure?.[node.name] === node) continue;
-    walkOwnedSchemaNodes(node, (departing) => {
+    walkOwnedFieldNodes(node, (departing) => {
       if (!departing.runtime.detachedReads?.has(departing))
-        captureDetachedSchemaNodeReads(departing, {
+        captureDetachedFieldNodeReads(departing, {
           emit: context.previousEmit,
           context: context.previousContext,
           schema:
@@ -28,7 +28,7 @@ export const finalizePerished = <Self extends SchemaNodeRecord<Self>>(
             departing.schema.schema,
         });
       departing.detached = true;
-      departing.active = captureSchemaNodeChange(departing, 'active', false);
+      departing.active = captureFieldNodeChange(departing, 'active', false);
     });
     getGateRegistry(node.runtime).remove(node);
     for (const [key, pending] of context.pendingExits)

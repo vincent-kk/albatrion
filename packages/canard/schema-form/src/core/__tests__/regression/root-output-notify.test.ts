@@ -1,11 +1,11 @@
 import { describe, expect, it } from 'vitest';
 
-import { makeSchemaNodeTree } from '../makeSchemaNodeTree';
+import { makeFieldNodeTree } from '../makeFieldNodeTree';
 
 // filid:contract factory-single-path
 describe('round18 root output notification', () => {
   it('rootOutput.test.mjs:40 sends an empty object after clearing the final field', () => {
-    const { root, runtime } = makeSchemaNodeTree({
+    const { root, runtime } = makeFieldNodeTree({
       type: 'object',
       properties: {
         a: { type: 'number' },

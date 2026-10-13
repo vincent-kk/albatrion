@@ -28,7 +28,7 @@ const production = process.argv.includes('--production');
 process.env.NODE_ENV = production ? 'production' : 'development';
 const sourceRef = process.env.PHASE_SOURCE_REF;
 const candidateFiles = {
-  i: ['core/settle/utils/compute/selectChildren.ts', 'core/settle/utils/compute/enterSchemaNode.ts'],
+  i: ['core/settle/utils/compute/selectChildren.ts', 'core/settle/utils/compute/enterFieldNode.ts'],
   ii: ['core/settle/utils/commit/commitSettlement.ts', 'core/settle/utils/controls/getControlLayers.ts', 'core/validation/utils/route/routeValidationIssues.ts'],
   iii: ['core/settle/utils/commit/markCommitDeliveries.ts'],
   iv: ['fieldInputs/FieldInputArray.tsx'],
@@ -73,7 +73,7 @@ globalThis.__phaseExit = (frame) => {
 /** Classify boundaries, without changing the operation or its arguments. */
 function phaseFor(file, name, node) {
   if (componentProbe && (file.includes('/fieldInputs/FieldInputArray.tsx') ||
-    file.endsWith('/useChildNodeComponents.tsx') || file.endsWith('/SchemaNodeInput.tsx'))) return 'react-render';
+    file.endsWith('/useChildFields.tsx') || file.endsWith('/FieldInputSlot.tsx'))) return 'react-render';
   if (name === 'nodeFromJSONSchema') return 'other';
   if (/react-dom-(client\.development|profiling\.profiling)\.js$/.test(file)) {
     if (['renderRootSync', 'renderRootConcurrent'].includes(name)) return 'react-render';
@@ -83,7 +83,7 @@ function phaseFor(file, name, node) {
   const old = file.includes('/__legacy__/');
   if (old) {
     if (file.includes('/helpers/jsonSchema/') || ['processSchema', 'resolveReferences'].includes(name)) return 'analysis';
-    if (file.endsWith('/schemaNodeFactory.ts') && ts.isArrowFunction(node) && ts.isBlock(node.body) && node.parameters[0]?.name.getText() === 'props') return 'creation';
+    if (file.endsWith('/fieldNodeFactory.ts') && ts.isArrowFunction(node) && ts.isBlock(node.body) && node.parameters[0]?.name.getText() === 'props') return 'creation';
     if (file.includes('/ValidationManager/')) return ts.isConstructorDeclaration(node) ? 'validation-registration' : /validate/i.test(name) ? 'validation-run' : undefined;
     if (file.includes('/EventCascadeManager/')) return 'delivery';
     if (file.endsWith('/afterMicrotask.ts') && name === 'callback') return 'delivery';
@@ -93,11 +93,11 @@ function phaseFor(file, name, node) {
     return undefined;
   }
   if (name === 'blueprint' || name === 'preprocessSchema') return 'analysis';
-  if (name === 'createSchemaNode') return 'creation';
-  if (['writeSchemaNode', 'loadSchemaNodeAtMount', 'commitSettlement', 'transitionSettlement', 'selectChildren', 'updateOutput', 'registerRecalculation', 'computeNode', 'isMissingRaw', 'getDependencyIndex', 'getDeriveRuleTable'].includes(name)) return 'settlement';
-  if (['readValidationEntry', 'compileEntryGuards', 'readSchemaNodeGuard', 'requestSchemaNodeValidation'].includes(name)) return 'validation-registration';
-  if (name === 'runSchemaNodeValidation') return 'validation-run';
-  if (['markCommitDeliveries', 'flushSchemaNodeEvents', 'flushQueuedEvents', 'markSchemaNodeEvent', 'captureSchemaNodeChange'].includes(name)) return 'delivery';
+  if (name === 'createFieldNode') return 'creation';
+  if (['writeFieldNode', 'loadFieldNodeAtMount', 'commitSettlement', 'transitionSettlement', 'selectChildren', 'updateOutput', 'registerRecalculation', 'computeNode', 'isMissingRaw', 'getDependencyIndex', 'getDeriveRuleTable'].includes(name)) return 'settlement';
+  if (['readValidationEntry', 'compileEntryGuards', 'readFieldNodeGuard', 'requestFieldNodeValidation'].includes(name)) return 'validation-registration';
+  if (name === 'runFieldNodeValidation') return 'validation-run';
+  if (['markCommitDeliveries', 'flushFieldNodeEvents', 'flushQueuedEvents', 'markFieldNodeEvent', 'captureFieldNodeChange'].includes(name)) return 'delivery';
   return undefined;
 }
 

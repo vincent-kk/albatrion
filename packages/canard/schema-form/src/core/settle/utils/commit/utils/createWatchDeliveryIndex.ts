@@ -1,4 +1,4 @@
-import type { SchemaNodeRuntime } from '../../../../record';
+import type { FieldNodeRuntime } from '../../../../record';
 
 /** One resolved pointer prefix in the live reverse watch index. */
 interface WatchPathNode {
@@ -104,5 +104,5 @@ class WatchDeliveryIndex {
  * @returns A fresh live reverse watch index for one tree
  */
 export const createWatchDeliveryIndex = <Self>(): NonNullable<
-  SchemaNodeRuntime<Self>['deliveryWatchIndex']
+  FieldNodeRuntime<Self>['deliveryWatchIndex']
 > => new WatchDeliveryIndex();

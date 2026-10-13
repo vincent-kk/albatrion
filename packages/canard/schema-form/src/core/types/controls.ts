@@ -23,7 +23,7 @@ export type InjectToContext<Schema> = {
   context: Dictionary;
 };
 
-/** Control keys of a `controls.children` entry and of a fragment (allOf, then, else, oneOf or anyOf branch). */
+/** Control keys of a `controls.fields` entry and of a fragment (allOf, then, else, oneOf or anyOf branch). */
 export type ChildSchemaControls = {
   /** Existence gate: a boolean or an expression; an inactive node leaves the shape and the output (default: true). */
   active?: boolean | string;
@@ -50,8 +50,8 @@ export type ChildSchemaControls = {
  * @typeParam Schema - Schema type that `injectTo` receives in its context
  */
 export type SchemaControls<Schema> = ChildSchemaControls & {
-  /** Controls addressed by name to direct children, one hop only. */
-  children?: readonly {
+  /** Controls addressed by name to direct child fields, one hop only. */
+  fields?: readonly {
     /** Names of the direct children this entry addresses. */
     targets: readonly string[];
     /** Controls applied to every target. */

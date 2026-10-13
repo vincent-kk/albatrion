@@ -1,7 +1,7 @@
 import { isArray } from '@winglet/common-utils/filter';
 
 import { getItemEntry } from '../../../blueprint';
-import type { SchemaNodeRecord } from '../../../record';
+import type { FieldNodeRecord } from '../../../record';
 import type { SettlementContext } from '../../type';
 import { HostLatent } from './HostLatent';
 import { readAbsentSlotSource } from './readAbsentSlotSource';
@@ -17,7 +17,7 @@ import { readRawTree } from './readRawTree';
  * @param context - Latent-aware source test for templated item slots
  * @returns Frozen whole-array host latent
  */
-export const captureArrayLatent = <Self extends SchemaNodeRecord<Self>>(
+export const captureArrayLatent = <Self extends FieldNodeRecord<Self>>(
   node: Self,
   context: SettlementContext<Self>,
 ): HostLatent => {
@@ -27,7 +27,9 @@ export const captureArrayLatent = <Self extends SchemaNodeRecord<Self>>(
     const entry = getItemEntry(node.blueprintNode, index);
     if (!entry) {
       slots.push(
-        isArray(node.extras) ? node.extras[index - tailStart] : undefined,
+        isArray(node.undeclaredValues)
+          ? node.undeclaredValues[index - tailStart]
+          : undefined,
       );
       continue;
     }
