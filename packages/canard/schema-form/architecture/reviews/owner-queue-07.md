@@ -39,5 +39,6 @@
 | 33 (승인 — 244라운드, 07b-2 뒤 34와 함께) | aileron production-test의 `tsc -b`가 implicit any 12건으로 실패함 — HEAD(b1da5e771)에서도 같은 12건이라 07b-2 회귀가 아님(fixy07 ②-2 보고). 고칠지, 그 패키지의 typecheck를 게이트에서 빼둘지 | aileron 패키지의 형 엄격도 결정 | 07b-2 게이트는 schema-form·플러그인 일곱 기준이며 영향 없음 | 243라운드 뒤 fixy07 보고 |
 | 34 (승인 — 244라운드, 07b-2 뒤 33과 함께) | aileron production-test의 CanardForm.ignoreAdditionalProperties.tsx·DynamicObjectFieldInputTest.tsx가 최상위 `FieldInput`을 써서 엔진이 읽지 않음(HEAD에서도 최상위 FormTypeInput이었음, fixy07 ②-2 보고). presentation.FieldInput으로 옮길지 — 옮기면 그 시험의 렌더 결과가 바뀔 수 있음 | 시험 의도 확인 | 벤치·수동 시험 전용 패키지, 공개 계약 아님 | 243라운드 뒤 fixy07 보고 |
 | 35 (승인 — 250라운드, 07b-3 새 문법 전환) | aileron production-test의 CanardForm.ignoreAdditionalProperties.tsx·DynamicObjectFieldInputTest.tsx가 지워진 옛 문법(`&if`, `terminal`)을 아직 씀(fixy07 07b-3 보고) — 런타임은 무시하므로 그 화면의 의도대로 그려지지 않을 수 있음. 새 문법(controls)으로 옮길지, 그 화면을 지울지 | 수동 시험 화면의 의도 확인 | 벤치·수동 시험 전용, 공개 계약 아님 | 249라운드 덧붙임 |
+| 36 (확인) | `options.terminal`을 blueprint가 읽어 object·array의 terminal/branch 전략을 정하지만(resolveNodeStrategy.ts:31,59, 오류 코드 TerminalOptionUnsupported) 공개 형 ObjectSchema·ArraySchema의 `options`에 선언이 없고 SPECIFICATION.md:600은 `terminal: true`로만 느슨하게 언급함(fixy07 07b-3 보고). 형에 `terminal?: boolean`을 더하고 명세에 `options.terminal` 절을 쓸지, 아니면 비공개 키로 두고 명세 문장을 고칠지 | 공개 계약(형·명세) 결정 | 색인 서명으로 지금도 컴파일되고 런타임 동작은 있음 | 250라운드 덧붙임 |
 
 (추가되는 항목은 아래에 번호를 이어 적는다.)
