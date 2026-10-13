@@ -17,3 +17,14 @@
   - 【추론】 다섯 부분에 판정된 이득도 차단 회귀도 없으면 커밋 2는 "손해 없는 정리"로 ADOPT가 맞고, 그 위에서 07b의 나머지는 측정과 무관한 정리·형·문서다.
 - 근거: fixy07의 32b 보고; 161C-01·170라운드 소유자 답(판정 절차·전례); 204C-01; 215C-02.
 - 다음: 원장 관리자가 세 세션에 알린다.
+
+## 덧붙임 (2026-10-13, 07b 마무리 ①·② 진행; 공개 API 공백 → reviewer)
+
+① 454531b7d docs: improvement-32-commit2.md(판정·변경·검증·32b 표·편차 절·번들 SHA-256), assignments 5행 "완료, ADOPT(216라운드)", #355 본문 갱신. 정정: 첫 push 9da3d8d81에 세션 링크 줄이 들어가 메시지만 고쳐 --force-with-lease로 바꿈(원장 관리자가 원격 1daf55be4..head에 세션 ID·co-author 0 확인). ② 문서 정합 진행: 예시를 src에 대고 tsc 확인 중 범위 확장 둘 — (a) README 둘·SPECIFICATION 둘·plugin-system.md가 validatorFactory를 "스키마 → 검증 함수"로 가르치고 예시가 `createValidatorFactory(customAjv)`였으나 공개 ValidatorFactory는 `{ compile, compileGuard }` 객체(LANDING-036)라 형 검사 실패 → 객체 계약과 `plugin.validator.bind(customAjv)` + registerPlugin 예시(LANDING-192 거부 포함)로; ajv8이 내보내지 않는 ajvValidatorPlugin 가져오기는 `plugin as ajvValidatorPlugin`로; ExternalFormContextProvider.tsx JSDoc 예시 주석만 수정; (b) docs/QUICK_REFERENCE.md 옛 문법 14곳 같은 커밋. 그대로 둔 것: MOBILE_PERFORMANCE_REPORT.md(옛 엔진 기록), CLAUDE.md(대기열 10), helpers/dynamicExpression(소비자 0 — 개선-38 소유자 결정 3에 이미 포함).
+
+### 216C-02 공개 API 공백 — ajv 플러그인 셋의 공개 export(`plugin`, `createValidatorFactory(ajv)` → compile 함수만)로는 LANDING-036이 정한 `{ compile, compileGuard }` 객체를 인스턴스별로 만들 수 없어 전역 bind만 가능(0.16.0의 `validatorFactory={createValidatorFactory(customAjv)}` 용법 소실). 결정된 이주의 플러그인 쪽 누락이므로 고친다 — reviewer 배정: 세 플러그인(ajv8은 default/2019/2020)에 `createValidator(ajv)`(ValidatorFactory 형 만족) 공개 export 추가, 기존 export 불변, LANDING-192 거부 검사·루트 등록소 규칙 공유, 플러그인별 시험, 버전 올림, README 한 줄; seiri 계획 → review-plan → verifier → `$TMPDIR` 임시 워크트리에서 feat/schema-form-07b-1로 PR. 새 export 이름은 소유자 대기열 18로 귀환 때 확인
+
+- 닫는 항목: LANDING-036(보충)
+- 결정:
+  - 【추론】 Form 속성이 객체 계약으로 바뀌었는데 플러그인이 그 객체를 만들어 주지 않으면 소비자는 문서가 약속한 인스턴스별 검증을 잃는다. 추가 export만이라 기존 계약은 그대로다.
+- 근거: fixy07의 ② 보고; LANDING-036; LANDING-192; ajv8 플러그인 createValidatorFactory.ts·validatorPlugin.ts 직접 확인.
