@@ -621,6 +621,7 @@
   > 반영 칸(설계서 메모 4): "게터 `typeMismatch: boolean`, 경로 목록 `typeMismatches: readonly string[]`, 경고 코드 `SCHEMA_FORM_WARNING.TYPE_MISMATCH`." (`reviews/round-18-owner-answers.md:41`)
   > 편집자 결정(199C-01): "【추론】 영역 밖 값의 표시는 원장이 비워 둔 제품 결정이고 다른 그룹에 의존하지 않으니 미루는 데 비용이 없다." (`reviews/round-199-closing.md:9`)
   > 소유자(232라운드, 대기열 9 영역 밖 값): "두 번째 방법으로 구성. 안전한 내부 기본컴포넌트로" (`reviews/round-232-owner-answers.md:7`)
+  > 편집자 결정(233C-01): "【추론】 엔진이 presentation.formType만 읽기로 정해진 뒤 내장 정의가 최상위 키를 검사하는 것은 새 범위가 아니라 전환이 남긴 어긋남이고, 고치지 않으면 내장 checkbox·radio가 공개 문법으로 쓸 수 없다. 데모 코드의 옛 문법은 문서가 가르치는 것과 돌아가는 것이 달라지는 문제라 문서 PR의 범위다." (`reviews/round-233-closing.md:11`)
 - 상태: 현행
 - 출처: `reviews/round-18-closing.md:2575-2580,2582-2618,2627-2630`(정본), `reviews/round-18-owner-answers.md:41`
 - 닫은 사람: 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-92), 소유자 답(`reviews/round-18-owner-answers.md:41` 설계서 메모 4)
