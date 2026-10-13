@@ -253,6 +253,7 @@
 | 2026-10-14 | 267라운드(소유자): 중지 없이 끝까지(PR 병합 사전 허가, 구조 변경·추가 요청 전부, 결정은 대기열) — 267C-01 계획. 보충 1줄 | `reviews/round-267-owner-answers.md` |
 | 2026-10-14 | 268라운드 소유자 지시: codex·agy 멀티에이전트 작업 재개(257라운드의 claude 직접 예외 종료, 217C-01 규칙 그대로). 보충 1줄 | `reviews/round-268-owner-answers.md` |
 | 2026-10-14 | 269라운드 소유자 답: 07b-6 결정(usage 스토리 play 단언·CLAUDE.md 문장 수정) 권장안 승인; nullable은 논의 계속. 보충 1줄 | `reviews/round-269-owner-answers.md` |
+| 2026-10-14 | 270라운드 닫기: 07b-5 #365 검증·병합(17414cd4a), fixy07 판단 셋 승인, 검증 지적 일곱은 07b-7로 이월, 07b-6·07b-7 병렬 착수. 보충 1줄 | `reviews/round-270-closing.md` |
 
 ## 2. 라운드별 요지
 
@@ -475,3 +476,4 @@
 - **233라운드(2026-10-13, 닫기).** 07b-2에 ②-b(맨 formType 105곳 → presentation.formType), ①의 README·명세 errorMessages 자리, ⑥(내장 checkbox·radio가 맨 formType을 검사해 새 문법으로 도달 불가한 결함 고침)을 더했고, #361은 데모 코드 7개와 API 이름 어긋남까지 넓혔다. 대기열 22의 진단: 첫 빈 목록 호출은 제공자 마운트 효과의 외부 오류 적용이 변경 검사 없이 발행되는 우연이고 둘째는 규칙; A·B안과 None 모드 호출 0번 수용 여부를 소유자에게 올림(reviews/round-233-closing.md).
 - **234라운드(2026-10-13, 소유자).** 대기열 22는 B안(합산이 바뀐 때만 발행), 29는 최상위 선언 다섯 삭제, 23은 반공변의 정공법을 먼저 찾고 안 되면 any, CLAUDE.md 76·138행은 승인 — 모두 07b-2에 배정(⑦·⑧, ②-a 재개); 소유자가 formType 계열 이름의 재구성에 대한 의견을 물었다(reviews/round-234-owner-answers.md).
 - **235라운드(2026-10-13, 소유자).** formType·FormTypeInput·FormTypeRenderer 계열 이름의 재구성에 동의하되, 현재 이름을 후보에 넣고 이름 쌍을 공모해 가장 적절한 이름을 구성하기로 했다(crosscheck 사용). 결정 뒤 07b-2 ②-a·②-b를 새 이름으로 진행한다(reviews/round-235-owner-answers.md).
+- **236라운드(2026-10-13, 닫기).** 이름 공모(crosscheck 셋, 수렴 한 라운드): 힌트 `widget`과 렌더러 `FieldRenderer*`·`Field{Group,Label,Input,Error}Renderer`는 합의, 입력 컴포넌트는 `Widget*`(codex·claude) 대 `FieldInput*`(antigravity)로 갈렸고 원장 관리자는 `Widget*`를 권고했다; 소유자 결정 뒤 07b-2 ②-a·②-b를 새 이름으로(reviews/round-236-closing.md).
