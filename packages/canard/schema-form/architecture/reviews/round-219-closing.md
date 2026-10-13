@@ -12,3 +12,7 @@ PR #358(reviewer; base 07b-1 1d5fa5db3, head 60389cde3, 네 커밋: 104c7afbb �
 - 결정:
   - 【추론】 도구가 돌아왔으면 정책은 바로 복귀하되, 절반 넘게 끝난 일을 되돌려 다시 시키는 것은 품질에도 시간에도 손해다. 빌드가 기준 커밋부터 깨져 있는 것은 PR 범위 밖이어도 지금 고쳐야 할 결함이다.
 - 근거: 소유자의 원인 확인; 원장 관리자 탐침 둘; 세 세션 보고; 직접 검증 결과; 217C-01·218C-01.
+
+## 덧붙임 (2026-10-13, reviewer 정정: buildTypes 실패는 저장소 결함이 아님)
+
+reviewer 정정: 219C-01 (3)의 둘째 항목(buildTypes exit 1, TS2550)은 저장소 결함이 아니라 호출 방식 문제 — `node ../../aileron/script/build/buildTypes.mjs`를 직접 불렀고 그 스크립트의 `execSync('tsc -p …')`가 PATH의 Homebrew 전역 tsc 6.0.2(/opt/homebrew/bin/tsc)를 써서 저장소의 TypeScript 5.9.2 대신 돌며 `.at`에 TS2550을 냄. 저장소 명령 `yarn workspace @canard/schema-form-ajv8-plugin build`(yarn이 node_modules/.bin을 PATH 앞에 둠)는 dc6a2e79f 워크트리에서 rolldown·tsc·tsc-alias 통과, `npx tsc -p tsconfig.declarations.json`도 세 플러그인 0 오류; tsconfig.declarations.json은 antd5·코어와 같은 모양. 따라서 둘째 항목은 고칠 것이 없어 PR 범위에서 뺀다(ajv6/7 `yarn build`는 debugger의 임시 probe 파일이 끝난 뒤 한 번 더 확인). 첫째 항목(ajv6 가드 결함)은 새 워크트리 /private/tmp/claude-501/ajv-fix(dc6a2e79f, 브랜치 feat/ajv-guard-and-build-fix)에서 debugger 진단 중. 이전 워크트리·로컬 브랜치 정리됨. 원장 관리자: 정정을 받고 219C-01 (3)을 첫째 항목만으로 읽는다 — 교훈 한 줄: 빌드 스크립트는 항상 저장소 명령(`yarn workspace <pkg> build`)으로 부른다.
