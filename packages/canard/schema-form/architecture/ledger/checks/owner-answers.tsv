@@ -359,3 +359,7 @@ reviews/round-232-owner-answers.md:7	232	대기열 9 영역 밖 값	"두 번째 
 reviews/round-232-owner-answers.md:8	232	대기열 26 퍼센트 인코딩	"어 그럼 고치시죠" (2026-10-13, 원장 세션)
 reviews/round-232-owner-answers.md:9	232	대기열 22 onValidate 두 번	"그럼 한번으로 줄이는게 낫지 않을까? 두번 호출되는게 구조적으로 필수적인지 검토해봐" (2026-10-13, 원장 세션)
 reviews/round-232-owner-answers.md:10	232	정리 명령 시점	"마지막으로 정리하는 커멘드는 다 하고 하자" (2026-10-13, 원장 세션)
+reviews/round-234-owner-answers.md:7	234	대기열 22 onValidate 두 번	"b안 적용" (2026-10-13, 원장 세션)
+reviews/round-234-owner-answers.md:8	234	대기열 29 최상위 선언 다섯	"어 제거해버려. 이제 안쓰니까" (2026-10-13, 원장 세션)
+reviews/round-234-owner-answers.md:9	234	대기열 23 슬롯 형	"가장 나은 방법을 다시 찾아봐. 이게 함수 매개변수의 역추론 과정에서 나온 문제라면 정공법을 찾아보고 안되면 any로 처리해도 무방함. 사용자에게 혼란과 괜한 as 단언을 하게 하는 것 보다 나음" (2026-10-13, 원장 세션)
+reviews/round-234-owner-answers.md:10	234	CLAUDE.md 76·138행	"승인" (2026-10-13, 원장 세션)

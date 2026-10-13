@@ -82,4 +82,4 @@
 
 | 날짜 | 무엇 | 어디 |
 | --- | --- | --- |
-| 2026-10-13 | 233라운드(닫기): 07b-2 추가(②-b formType 105곳, ① errorMessages 문서, ⑥ 내장 checkbox·radio 결함), #361 확장(데모 7·API 이름), 대기열 22 진단 결과. 보충 2줄 | `reviews/round-233-closing.md` |
+| 2026-10-13 | 234라운드(소유자): 22 B안, 29 삭제, 23 정공법 뒤 any 허용, CLAUDE.md 두 줄 승인 → 07b-2 ⑦·⑧; formType 이름 재구성 의견 요청. 보충 4줄 | `reviews/round-234-owner-answers.md` |
