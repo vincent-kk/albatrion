@@ -9,3 +9,6 @@ type Story = StoryObj<typeof FeatureStory>;
 
 /** Shared scenario `events.render-commits` with validation mode None: one commit per write. */
 export const OneCommitPerWrite: Story = createCommitStory(false);
+
+/** Shared scenario `events.render-commits` with OnChange validation: an unchanged result adds no commit (GOAL-011). */
+export const OneCommitPerWriteWithValidation: Story = createCommitStory(true);

@@ -7,6 +7,7 @@ import type { SchemaNodeRecord } from '../../../record';
 import { ValidationMode } from '../../../types/state';
 import type { ValidationIssue } from '../../../validation';
 import {
+  retainEqualValidationIssues,
   routeValidationIssues,
   runSchemaNodeValidation,
 } from '../../../validation';
@@ -19,7 +20,7 @@ import { readFormErrorCode } from '../report/readFormErrorCode';
 /**
  * Revalidate the current emitted snapshot on explicit request.
  * @param node - Root or subtree whose displayed errors should refresh.
- * @returns The fresh, unfiltered whole-schema verdict.
+ * @returns The unfiltered whole-schema verdict; the previous list when the fresh verdict deep-equals it.
  * Retired occurrences validate their frozen snapshot without publishing results.
  * @throws A structured validator compilation or execution failure.
  */
@@ -34,9 +35,9 @@ export const dispatchValidate = async <Self extends SchemaNodeRecord<Self>>(
   runtime.validationPendingTargets = undefined;
   const stamp = runtime.validationStamp;
   const commit = runtime.commitNumber ?? 0;
-  let issues: readonly ValidationIssue[] | null;
+  let result: readonly ValidationIssue[] | null;
   try {
-    issues = await runSchemaNodeValidation(node);
+    result = await runSchemaNodeValidation(node);
   } catch (failure) {
     if (node.disposed || node.rootNode.disposed) throw failure;
     const compileFailure =
@@ -72,14 +73,15 @@ export const dispatchValidate = async <Self extends SchemaNodeRecord<Self>>(
     }
     throw failure;
   }
-  if (issues === null) return [];
+  if (result === null) return [];
   if (
-    runtime.validationStamp === stamp &&
-    (runtime.commitNumber ?? 0) === commit
-  ) {
-    routeValidationIssues(node, issues);
-    runtime.validationResult = { commit, issues };
-    deliverValidationWave(node, issues, commit);
-  }
+    runtime.validationStamp !== stamp ||
+    (runtime.commitNumber ?? 0) !== commit
+  )
+    return result;
+  const issues = retainEqualValidationIssues(node, result);
+  routeValidationIssues(node, issues);
+  runtime.validationResult = { commit, issues };
+  deliverValidationWave(node, issues, commit);
   return issues;
 };

@@ -37,7 +37,7 @@ const readEventNames = (types: readonly number[]): string[] => {
   return Object.entries(SchemaNodeEventType).flatMap(([name, bit]) => (typeof bit === 'number' && union & bit ? [name] : []));
 };
 
-// it.fails passes on any throw, so a renamed or dropped commit scenario must fail loudly here instead.
+// A renamed or dropped commit scenario must fail loudly here instead of silently leaving the commit cases empty.
 if (!eventsFeatureScenarios.some((item) => item.name === 'events.render-commits')) throw new Error('Missing scenario: events.render-commits');
 
 /**
@@ -105,7 +105,7 @@ describe('features — events consumer-only', () => {
     await expectCommits(false);
   });
 
-  it.fails('Finding (round 207): an OnChange validation whose result stays empty adds a second commit instead of keeping the reference (GOAL-011)', async () => {
+  it('EVENT-046 and GOAL-011 an OnChange validation whose result stays the same adds no commit below the group', async () => {
     await expectCommits(true);
   });
 });

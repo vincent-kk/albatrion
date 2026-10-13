@@ -6,6 +6,7 @@ import { queueNonSettleEvent } from './queueNonSettleEvent';
 
 /**
  * Publish a stamped validation result through one separate non-settlement wave.
+ * The form-level error event goes out only when routing replaced the routed list.
  * @param node - Scope whose validator issues were routed.
  * @param issues - Whole-schema issues retained by the validation layer.
  * @param commit - Commit stamped before asynchronous execution.
@@ -25,10 +26,12 @@ export const deliverValidationWave = <Self extends SchemaNodeRecord<Self>>(
       runtime.validationErrors?.get(changed) ?? [],
     );
   runtime.validationChangedNodes = undefined;
-  queueNonSettleEvent(
-    node.rootNode,
-    SchemaNodeEventType.UpdateGlobalError,
-    issues,
-  );
+  if (runtime.validationListChanged)
+    queueNonSettleEvent(
+      node.rootNode,
+      SchemaNodeEventType.UpdateGlobalError,
+      issues,
+    );
+  runtime.validationListChanged = undefined;
   flushQueuedEvents(node.rootNode, false);
 };

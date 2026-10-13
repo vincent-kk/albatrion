@@ -27,6 +27,7 @@ export const clearSchemaNodeFormErrors = <Self extends SchemaNodeRecord<Self>>(
   runtime.nodeErrors?.clear();
   runtime.adoptedExternalErrors = undefined;
   runtime.validationResult = undefined;
+  runtime.validationListChanged = undefined;
   if (!((runtime.validationMode ?? 0) & ValidationMode.OnChange))
     runtime.validationStamp = (runtime.validationStamp ?? 0) + 1;
   runtime.validationPendingTargets = undefined;

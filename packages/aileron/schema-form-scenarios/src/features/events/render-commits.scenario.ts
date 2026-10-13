@@ -9,7 +9,7 @@ const commitSchema = {
 /** One public write or one batch reaches the screen in one React commit; an unchanged write commits nothing. */
 export const renderCommitsScenario: FormScenario = {
   name: 'events.render-commits',
-  description: 'EVENT-002 one write from one handler reaches every subscribed input in one React commit; EVENT-004 a batch of several writes is one notification pass and one commit; EVENT-031 a write that leaves the value unchanged commits nothing and requests no validation. With OnChange validation, EVENT-046 delivers the validation result in its own wave, and GOAL-011 a result equal to the previous one keeps the globalErrors reference and skips that wave, so a write whose result stays empty is still one commit. Finding (round 207): today the unchanged result delivers UpdateGlobalError with a new array and adds a second commit. Commit counts come from renderCommitStages.',
+  description: 'EVENT-002 one write from one handler reaches every subscribed input in one React commit; EVENT-004 a batch of several writes is one notification pass and one commit; EVENT-031 a write that leaves the value unchanged commits nothing and requests no validation. With OnChange validation, EVENT-046 delivers the validation result in its own wave, and GOAL-011 a result equal to the previous one keeps the globalErrors reference and skips that wave, so a write whose result stays empty is still one commit. Commit counts come from renderCommitStages.',
   schema: commitSchema,
   initialValue: { a: '0', b: '0', c: '0', d: '0' },
   steps: [{ action: 'batch', steps: [], expect: { outputValue: { a: '0', b: '0', c: '0', d: '0' } } }],

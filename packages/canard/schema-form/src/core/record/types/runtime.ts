@@ -319,6 +319,8 @@ export interface SchemaNodeRuntime<Self> extends SchemaNodeRootRuntimeState {
   validationQueued?: boolean;
   /** Subtree scopes merged into the next one-per-commit validation run. */
   validationPendingTargets?: Set<Self>;
+  /** True after a routing replaced the routed list, until the validation wave publishes it. */
+  validationListChanged?: boolean;
   /** Most recent result and its commit number. */
   validationResult?: {
     readonly commit: number;
