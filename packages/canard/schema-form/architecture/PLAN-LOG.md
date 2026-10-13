@@ -243,6 +243,7 @@
 | 2026-10-14 | 257라운드(소유자): 07b-4(36·37·16·18) 바로 시작, 이번에 한해 codex 위임 없이 Claude 구현; 원장 관리자는 개선-38 문서 갱신. 보충 1줄 | `reviews/round-257-owner-answers.md` |
 | 2026-10-14 | 258라운드(소유자): 개선-38 다섯 결정(core 유지, engine 수출+core 재수출, helpers 셋 삭제, helpers·components fractal, src/constants)과 후보 C 확정; 추가 논의 셋(factory 본체, components/SchemaNode 이름, SchemaNode→FieldNode). 보충 1줄 | `reviews/round-258-owner-answers.md` |
 | 2026-10-14 | 259라운드(소유자): SchemaNode → FieldNode 확정, components/Field 이름 셋, 이름 먼저 구조 다음, 레거시 제외(259C-01 대응표). 보충 1줄 | `reviews/round-259-owner-answers.md` |
+| 2026-10-14 | 260라운드(소유자): 옛 이름 누락 검사 철저(260C-01 게이트), 다른 핵심 고유명사 추가 검토 요구. 보충 1줄 | `reviews/round-260-owner-answers.md` |
 
 ## 2. 라운드별 요지
 
@@ -455,3 +456,4 @@
 - **223라운드(2026-10-13, 닫기).** 플러그인 가드 포인터 PR을 직접 검증해 07b 브랜치에 합쳤고 reviewer의 배정은 끝났다. 남은 것은 브라우저 가드 커밋, 전체 스토리 순회, 마지막 게이트와 머지다(reviews/round-223-closing.md).
 - **224라운드(2026-10-13, 소유자).** 속도 게이트는 전환 수치 수용, 개선 커밋 둘 채택(효과 작음), 둘째 라운드 회귀 없음이고, 셋째 라운드와 검증 파동 고침만 미측정이라 방향 확인을 머지 선행 조건으로 더했다. 브라우저 가드 구현과 겹쳐 돌려 시간은 더 들지 않는다(reviews/round-224-owner-answers.md).
 - **225라운드(2026-10-13, 소유자).** 어제의 측정 보류는 해제됐고, 셋째 라운드와 검증 파동 고침을 덮는 방향 확인을 지금 돌린다(reviews/round-225-owner-answers.md).
+- **226라운드(2026-10-13, 닫기).** 셋째 라운드와 검증 파동 고침을 덮는 방향 확인이 통과했다(기준 e389e28bb → 후보 c343a93b8, 여덟 행 회귀 방향 없음, 재실행 둘도 후보가 빠른 쪽). #355의 측정 선행 조건은 닫혔고, 남은 것은 fixy07 ⑤ push → fairy07 전체 순회 → ⑥ → 검증·머지⑤는 5ca91762f로 push됐고 fairy07의 전체 순회가 그 위에서 시작됐다(reviews/round-226-closing.md).

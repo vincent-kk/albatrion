@@ -82,4 +82,4 @@
 
 | 날짜 | 무엇 | 어디 |
 | --- | --- | --- |
-| 2026-10-14 | 259라운드(소유자): SchemaNode → FieldNode 확정, components/Field 이름 셋, 이름 먼저 구조 다음, 레거시 제외(259C-01 대응표). 보충 1줄 | `reviews/round-259-owner-answers.md` |
+| 2026-10-14 | 260라운드(소유자): 옛 이름 누락 검사 철저(260C-01 게이트), 다른 핵심 고유명사 추가 검토 요구. 보충 1줄 | `reviews/round-260-owner-answers.md` |
