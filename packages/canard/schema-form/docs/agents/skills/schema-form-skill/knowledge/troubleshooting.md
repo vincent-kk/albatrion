@@ -17,11 +17,11 @@ formTypeInputMap: {
 }
 ```
 
-## Computed Expressions
+## Controls Expressions
 
-**`&active` / `&visible` not reacting** — the most common cause is path syntax: `/toggle` is an absolute path from the root; a sibling is `../toggle`.
+**`controls.active` / `controls.visible` not reacting** — the most common cause is path syntax: `/toggle` is an absolute path from the root; a sibling is `../toggle`.
 
-**Expression over a collection not updating** — dependencies that aren't plain path reads need an explicit watch: `{ active: '../items.length > 0', watch: '../items' }`.
+**Expression over a collection never true** — a path followed by a property access must be parenthesized: `controls: { active: '(../items).length > 0' }`. Without the parentheses, `../items.length` is read as a property named `items.length`.
 
 **`derived` yields `NaN`/garbage on partial input** — guard operands: `'(../price ?? 0) * (../quantity ?? 1)'`.
 
@@ -43,7 +43,7 @@ Errors exist (`getErrors()` shows them) but the UI is silent:
 
 **`COMPOSITION_TYPE_REDEFINITION`** — a branch declared a `type` its parent does not allow. Omit the branch `type`, repeat the parent's, or — under a nullable object only — narrow it to `'object'` or `'null'`.
 
-**`COMPOSITION_PROPERTY_REDEFINITION` on a discriminator** — a `const`/`enum` entry inside a branch's `properties` was given a `type`. With a `type` it is a field and collides with the parent's property; without one it is the branch condition. Remove the `type`, or use `'&if'`.
+**`COMPOSITION_PROPERTY_REDEFINITION` on a discriminator** — a `const`/`enum` entry inside a branch's `properties` was given a `type`. With a `type` it is a field and collides with the parent's property; without one it is a tag for the host's `controls.discriminator`. Remove the `type`, or gate the branch with `controls.active`.
 
 **A nullable object fails validation while `null`** (warning `NULLABLE_ONE_OF_NULL_UNREACHABLE`) — branches without `type` all match `null`, and `oneOf` wants exactly one. Add one `{ type: 'null' }` branch and `type: 'object'` on the object branches, or use `anyOf` (`nullable-branch-nodes.md`).
 
@@ -63,4 +63,4 @@ Errors exist (`getErrors()` shows them) but the UI is silent:
 
 - Register the validator plugin once in the test setup file, before any render — not per test.
 - `formRef.current` is `null` on first render — `await waitFor(() => expect(formRef.current).not.toBeNull())` before driving it.
-- Value/computed propagation is batched in microtasks: flush one (e.g. `await Promise.resolve()` / testing-library `waitFor`) between `setValue()` and assertions — a synchronous read sees stale state (`event-system.md`).
+- Values and controls state settle synchronously inside `setValue()`; validation results arrive after a microtask and the DOM after React re-renders, so use testing-library `waitFor` before asserting on errors or rendered output (`event-system.md`).

@@ -13,7 +13,7 @@ formRef.current?.findNodes('/items/*'); // wildcard needs the PLURAL form
 
 - Singular `find()` does not accept `*`; use `findAll()` on a node or `findNodes()` on the `FormHandle`.
 - `find()` with no argument returns the node itself; `find('/')` returns the root.
-- `find('@')` — the bare token, nothing after it — returns the form's **context node** (the `context` prop's node representation). `@.path` expressions are still computed-only.
+- `find('@')` — the bare token, nothing after it — returns the form's **context node** (the `context` prop's node representation). `@.path` expressions are still controls-expression-only.
 
 ## Escaping
 

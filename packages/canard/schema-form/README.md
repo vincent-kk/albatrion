@@ -78,8 +78,14 @@ interface FormProps<
   formTypeInputDefinitions?: FormTypeInputDefinition[];
   /** FormTypeInput path mapping */
   formTypeInputMap?: FormTypeInputMap;
-  /** Custom form type renderer component */
-  CustomFormTypeRenderer?: ComponentType<FormTypeRendererProps>;
+  /** Group renderer component */
+  FormTypeGroupRenderer?: ComponentType<FormTypeRendererProps>;
+  /** Label renderer component */
+  FormTypeLabelRenderer?: ComponentType<FormTypeRendererProps>;
+  /** Input renderer component */
+  FormTypeInputRenderer?: ComponentType<FormTypeRendererProps>;
+  /** Error renderer component */
+  FormTypeErrorRenderer?: ComponentType<FormTypeRendererProps>;
   /** Initial validation errors, default is undefined */
   errors?: JSONSchemaError[];
   /** Custom format error function */
@@ -100,7 +106,7 @@ interface FormProps<
    *  - `ValidationMode.OnRequest`: Validate on request
    */
   validationMode?: ValidationMode;
-  /** Custom ValidatorFactory function */
+  /** Custom validator object (`compile` and `compileGuard`); Form prop > FormProvider > plugin */
   validatorFactory?: ValidatorFactory;
   /**
    * Render-level virtualization (deferred mount) for large forms (default: off)
@@ -170,7 +176,7 @@ interface FormChildrenProps<
 
 ```tsx
 import { Form, registerPlugin } from '@canard/schema-form';
-import { ajvValidatorPlugin } from '@canard/schema-form-ajv8-plugin';
+import { plugin as ajvValidatorPlugin } from '@canard/schema-form-ajv8-plugin';
 
 // Register validator plugin (once at app startup)
 registerPlugin(ajvValidatorPlugin);
@@ -216,18 +222,28 @@ export const App = () => {
 
 ### ValidatorFactory
 
-ValidatorFactory is a function that takes a JSON Schema and returns a validation function:
+ValidatorFactory is an object with two required methods, `compile` for the schema and `compileGuard` for the synchronous guard behind `if/then/else`, plus optional `release` and `dialect`:
 
 ```ts
 interface ValidatorFactory {
-  (schema: JSONSchema): ValidateFunction<any>;
+  compile(copy: BlueprintSchema): ValidateFunction;
+  compileGuard(
+    root: BlueprintSchema,
+    pointer: string,
+  ): (value: unknown) => boolean;
+  release?(root: BlueprintSchema): void;
+  readonly dialect?: string;
 }
 
-type ValidateFunction<Value = unknown> = Fn<
-  [data: Value],
-  Promise<JSONSchemaError[] | null> | JSONSchemaError[] | null
->;
+type ValidateFunction<Value = unknown> = (
+  data: Value,
+) =>
+  | Promise<readonly ValidationIssue[] | null>
+  | readonly ValidationIssue[]
+  | null;
 ```
+
+A `ValidateFunction` returns the ordered `ValidationIssue`s, or `null` when the value is valid, and must not throw. The `validatorFactory` prop of `Form` and `FormProvider` takes this object. The selection order is the Form prop, then FormProvider, then the plugin's `validator`. Keep the reference stable, because changing it rebuilds the tree.
 
 ### Validator Plugin Usage
 
@@ -235,89 +251,85 @@ type ValidateFunction<Value = unknown> = Fn<
 
 ```tsx
 import { registerPlugin } from '@canard/schema-form';
-import { ajvValidatorPlugin } from '@canard/schema-form-ajv8-plugin';
+import { plugin as ajvValidatorPlugin } from '@canard/schema-form-ajv8-plugin';
 
 // Register plugin at app startup
 registerPlugin(ajvValidatorPlugin);
 ```
 
-#### 2. Custom ValidatorFactory Usage
+#### 2. Custom AJV Instance
 
-When you want to use different validation logic for specific Forms:
+When you want to use your own AJV instance, supply it to the plugin before registering it:
 
 ```tsx
-import { Form } from '@canard/schema-form';
+import { Form, registerPlugin } from '@canard/schema-form';
 // The version of ajv must be 8.x because the plugin is based on ajv8.x
 // If you want to use ajv7.x, you can use @canard/schema-form-ajv7-plugin
 // Or if you want to use ajv6.x, you can use @canard/schema-form-ajv6-plugin
-import { createValidatorFactory } from '@canard/schema-form-ajv8-plugin';
+import { plugin } from '@canard/schema-form-ajv8-plugin';
 import Ajv from 'ajv';
 
+const customAjv = new Ajv({
+  allErrors: true,
+  strictSchema: false,
+  validateFormats: false,
+});
+
+// Add custom keywords
+customAjv.addKeyword({
+  keyword: 'isEven',
+  type: 'number',
+  validate: (schema: boolean, data: number) => {
+    if (schema === false) return true;
+    return data % 2 === 0;
+  },
+  errors: false,
+});
+
+// Supply the instance before registering the plugin
+plugin.validator.bind(customAjv);
+registerPlugin(plugin);
+
 export const CustomValidationForm = () => {
-  const validatorFactory = useMemo(() => {
-    // Create custom AJV instance
-    const customAjv = new Ajv({
-      allErrors: true,
-      strictSchema: false,
-      validateFormats: false,
-    });
-
-    // Add custom keywords
-    customAjv.addKeyword({
-      keyword: 'isEven',
-      type: 'number',
-      validate: (schema: boolean, data: number) => {
-        if (schema === false) return true;
-        return data % 2 === 0;
-      },
-      errors: false,
-    });
-
-    // Create ValidatorFactory
-    return createValidatorFactory(customAjv);
-  }, []);
-
   const jsonSchema = {
     type: 'object',
     properties: {
       name: { type: 'string', maxLength: 10 },
       evenNumber: { type: 'number', isEven: true, maximum: 100 },
     },
-  };
+  } as const;
 
-  return <Form jsonSchema={jsonSchema} validatorFactory={validatorFactory} />;
+  return <Form jsonSchema={jsonSchema} />;
 };
 ```
 
-#### 3. Global ValidatorFactory Setup via FormProvider
+An instance configured with `coerceTypes`, `useDefaults`, or `removeAdditional` is refused, because validation must not modify the value.
 
-When using the same validation logic across multiple Forms:
+#### 3. Custom ValidatorFactory for a Form or a FormProvider
+
+To replace the validator for one Form, or for every Form under a FormProvider, pass an object that declares both `compile` and `compileGuard`:
 
 ```tsx
-import { FormProvider } from '@canard/schema-form';
-// The version of ajv must be 8.x because the plugin is based on ajv8.x
-// If you want to use ajv7.x, you can use @canard/schema-form-ajv7-plugin
-// Or if you want to use ajv6.x, you can use @canard/schema-form-ajv6-plugin
-import { createValidatorFactory } from '@canard/schema-form-ajv8-plugin';
-import Ajv from 'ajv';
+import { Form, FormProvider, type ValidatorFactory } from '@canard/schema-form';
 
-export const App = () => {
-  const validatorFactory = useMemo(() => {
-    const customAjv = new Ajv({
-      allErrors: true,
-      strictSchema: false,
-    });
-
-    return createValidatorFactory(customAjv);
-  }, []);
-
-  return (
-    <FormProvider validatorFactory={validatorFactory}>
-      <MyForms />
-    </FormProvider>
-  );
+// Declared once, outside components: changing the reference rebuilds the tree.
+const validatorFactory: ValidatorFactory = {
+  compile: (copy) => compileWithMyEngine(copy),
+  compileGuard: (root, pointer) => compileGuardWithMyEngine(root, pointer),
 };
+
+export const CustomValidationForm = () => (
+  <Form jsonSchema={jsonSchema} validatorFactory={validatorFactory} />
+);
+
+export const App = () => (
+  <FormProvider validatorFactory={validatorFactory}>
+    <MyForms />
+  </FormProvider>
+);
 ```
+
+`createValidatorFactory(ajv)` from the AJV plugin returns only a compile function, so it is not a valid `validatorFactory` by itself.
 
 ### Available Validator Plugins
 
@@ -523,7 +535,7 @@ interface FormTypeInputProps<
   errors: Node['errors'];
   /** Whether to show errors for this field */
   errorVisible: boolean;
-  /** Values being watched according to the `computed.watch`(=`&watch`) property defined in JSONSchema */
+  /** Values being watched according to the `controls.watch` paths defined in JSONSchema */
   watchValues: WatchValues;
   /** Default value for the FormTypeInput Component */
   defaultValue: Value | undefined;
@@ -832,7 +844,7 @@ import { plugin as ajvValidatorPlugin } from '@canard/schema-form-ajv8-plugin';
 import { plugin as antd5Plugin } from '@canard/schema-form-antd5-plugin';
 
 registerPlugin(antd5Plugin);
-registerPlugin(AjvValidatorPlugin);
+registerPlugin(ajvValidatorPlugin);
 ```
 
 ### Available Plugins
@@ -858,13 +870,13 @@ registerPlugin(AjvValidatorPlugin);
 ```ts
 export interface SchemaFormPlugin {
   /** Form.Group Component */
-  FormGroup?: ComponentType<FormTypeRendererProps>;
+  FormTypeGroupRenderer?: ComponentType<FormTypeRendererProps>;
   /** Form.Label Component */
-  FormLabel?: ComponentType<FormTypeRendererProps>;
+  FormTypeLabelRenderer?: ComponentType<FormTypeRendererProps>;
   /** Form.Input Component */
-  FormInput?: ComponentType<FormTypeRendererProps>;
+  FormTypeInputRenderer?: ComponentType<FormTypeRendererProps>;
   /** Form.Error Component */
-  FormError?: ComponentType<FormTypeRendererProps>;
+  FormTypeErrorRenderer?: ComponentType<FormTypeRendererProps>;
   /** FormTypeInputDefinition */
   formTypeInputDefinitions?: FormTypeInputDefinition[];
   /** Validator Plugin */
@@ -875,13 +887,15 @@ export interface SchemaFormPlugin {
 
 export interface ValidatorPlugin {
   /** Inject Custom Validator Instance */
-  bind: Fn<[instance: any]>;
+  bind?: Fn<[instance: any]>;
   /** Validator Factory Function */
-  compile: ValidatorFactory;
-}
-
-export interface ValidatorFactory {
-  (schema: JSONSchema): ValidateFunction<any>;
+  compile(jsonSchema: JSONSchema): ValidateFunction;
+  /** Synchronous guard compiler for an authored schema pointer */
+  compileGuard(root: JSONSchema, pointer: string): (value: unknown) => boolean;
+  /** Release a root's validator resources */
+  release?(root: JSONSchema): void;
+  /** Declared JSON Schema dialect */
+  readonly dialect?: string;
 }
 ```
 
@@ -889,13 +903,17 @@ export interface ValidatorFactory {
 
 If multiple plugins are registered for the same property, the following priority rules apply:
 
-| Property                                           | Allowed Count      | Priority Rule                                    |
-| -------------------------------------------------- | ------------------ | ------------------------------------------------ |
-| `FormGroup`, `FormLabel`, `FormInput`, `FormError` | One only           | The last registered component is applied.        |
-| `formTypeInputDefinitions`                         | Multiple mergeable | Merged, and the last registered item is applied. |
-| `validator`, `formatError`                         | One only           | The last registered item is applied.             |
+| Property                                                                                           | Allowed Count      | Priority Rule                                    |
+| -------------------------------------------------------------------------------------------------- | ------------------ | ------------------------------------------------ |
+| `FormTypeGroupRenderer`, `FormTypeLabelRenderer`, `FormTypeInputRenderer`, `FormTypeErrorRenderer` | One only           | The last registered component is applied.        |
+| `formTypeInputDefinitions`                                                                         | Multiple mergeable | Merged, and the last registered item is applied. |
+| `validator`, `formatError`                                                                         | One only           | The last registered item is applied.             |
 
 This structure provides consistent priority and extensibility even when using multiple plugins.
+
+The default group renderer draws its own label and messages, so `FormTypeLabelRenderer` and `FormTypeErrorRenderer` appear only through the composition API (`Form.Label`, `Form.Error`) or a user group renderer that calls them.
+
+Renderer props are read once when the form mounts; replacing a renderer after mount is not guaranteed to take effect.
 
 ---
 
@@ -935,7 +953,7 @@ JSONPointer follows the RFC 6901 specification:
 **Usage Context**: Extended JSONPointer syntax is available in specific contexts:
 
 - `FormTypeInputMap` keys (with wildcard `*`)
-- `computed`(`&`) properties (with relative paths `..`, `.`)
+- `controls` expressions (with relative paths `..`, `.`)
 - Programmatic node navigation with `node.find()` method
 
 **Note**: Extended syntax is **NOT** supported in `<Form.Render path="..." />` components, which only accept standard JSONPointer paths. `node.find()` accepts relative navigation (`..`, `.`) but not wildcards — use `findNodes()` for wildcard matching.
@@ -944,7 +962,7 @@ The following extensions are supported:
 
 #### Parent Navigation (`..`)
 
-Navigate to the parent node, primarily used in computed properties:
+Navigate to the parent node, primarily used in `controls` expressions:
 
 ```tsx
 const jsonSchema = {
@@ -956,8 +974,8 @@ const jsonSchema = {
         type: { type: 'string', enum: ['admin', 'user'] },
         permissions: {
           type: 'array',
-          computed: {
-            watch: '../type', // Watch parent's type field
+          controls: {
+            watch: ['../type'], // Watch parent's type field
             active: "../type === 'admin'", // Show only for admin
           },
         },
@@ -981,9 +999,9 @@ const jsonSchema = {
   properties: {
     settings: {
       type: 'object',
-      computed: {
-        watch: '.', // Watch current node
-        // Other computed logic
+      controls: {
+        watch: ['.'], // Watch current node
+        // Other controls logic
       },
     },
   },
@@ -1031,7 +1049,7 @@ const jsonSchema = {
 
 #### Context Reference (`@`)
 
-Reference external context data passed to the Form, primarily used in computed properties.
+Reference external context data passed to the Form, primarily used in `controls` expressions.
 
 **Important:** The `@` symbol directly references the context object itself, not a JSON Pointer path. Therefore, you must use **JavaScript property accessor syntax** (dot notation or bracket notation) instead of JSON Pointer format:
 
@@ -1046,7 +1064,7 @@ Reference external context data passed to the Form, primarily used in computed p
 '@/user/role'; // This will NOT work
 ```
 
-**Usage in computed properties:**
+**Usage in `controls` expressions:**
 
 ```tsx
 const jsonSchema = {
@@ -1054,7 +1072,7 @@ const jsonSchema = {
   properties: {
     secretField: {
       type: 'string',
-      computed: {
+      controls: {
         visible: '@.userRole === "admin"', // Show only for admin users
         readOnly: '@.mode === "view"', // Read-only in view mode
         disabled: '@.permissions?.canEdit === false', // Disabled based on permissions
@@ -1062,7 +1080,7 @@ const jsonSchema = {
     },
     combinedCondition: {
       type: 'string',
-      computed: {
+      controls: {
         // Combine context (@) with form field references (..)
         active: '@.featureEnabled && ../category === "premium"',
       },
@@ -1084,9 +1102,9 @@ const jsonSchema = {
 
 **Key characteristics:**
 
-- Context values update reactively - when context changes, computed properties re-evaluate
+- Context values update reactively - when context changes, `controls` expressions re-evaluate
 - Supports optional chaining (`?.`) for safe nested access
-- Available only in `computed` properties, not in `FormTypeInputMap` or `Form.Render`
+- Available only in `controls` expressions, not in `FormTypeInputMap` or `Form.Render`
 
 > ⚠️ **Recommendation:** Since `@` references the context object which may change dynamically at runtime, we recommend using **optional chaining (`?.`)** for safe access to nested properties. This prevents runtime errors when context properties are undefined or null.
 >
@@ -1116,8 +1134,8 @@ const jsonSchema = {
             email: { type: 'string' },
             adminSettings: {
               type: 'object',
-              computed: {
-                watch: '../role',  // Watch sibling field
+              controls: {
+                watch: ['../role'],  // Watch sibling field
                 active: "../role === 'admin'"  // Show only for admin
               },
               properties: {
@@ -1136,8 +1154,8 @@ const jsonSchema = {
               city: { type: 'string' },
               isDefault: {
                 type: 'boolean',
-                computed: {
-                  watch: '../type',  // Watch sibling type
+                controls: {
+                  watch: ['../type'],  // Watch sibling type
                   active: "../type === 'home'"  // Show only for home addresses
                 }
               }
@@ -1312,6 +1330,8 @@ export const CustomLayoutForm = () => {
   );
 };
 ```
+
+**Note**: When two inputs (for example two `Form.Input` components or two `Input` slots) are bound to the same path, they do not mirror each other while typing. Typing does not issue a Refresh and each input owns its draft, so the other input keeps showing its own text until a Refresh reaches it, for example from a `setValue` that changes the value, a `reset`, or `refresh(path)` on the form handle.
 
 ### Working with Arrays
 
@@ -1604,25 +1624,22 @@ export const FormWithCustomInput = () => {
 
 #### Types of Conditional Properties
 
+Each property below is a key of the `controls` object.
+
 - `watch`: Subscribe to another node's value changes (passed as watchValues prop)
-- `derived`: Automatically calculate values based on other field references using JSONPointer expressions. Use `&derived` or `computed.derived` property
+- `derived`: Automatically calculate values based on other field references using JSONPointer expressions. Use the `controls.derived` property
 - `active`: Determines if a node should be activated. Inactive nodes are not displayed and their values are removed from the form data
 - `visible`: Determines if a node should be displayed. Hidden inputs retain their values but are not visible
-- `pristine`: Determines if a node's state should be reset. If the expression evaluates to `true`, the node's state will be reset.
+- `resetInteraction`: Resets a node's interaction state. When the expression turns from `false` to `true`, the node's `dirty` and `touched` states are cleared.
 - `readOnly`: Determines if a node should be read-only. Read-only inputs cannot be modified
 - `disabled`: Determines if a node should be disabled. Disabled inputs cannot be modified
-- `if` + `oneOf`: Display the schema definition that satisfies the if condition among oneOf definitions (ObjectNode only)
+- `active` on a `oneOf`/`anyOf` branch, or `discriminator` on the host: Select the branch to display. Give each branch a `controls.active` expression, or set `controls.discriminator` to a property name and tag each branch with `const`/`enum` on that property (ObjectNode only). Without either gate, every branch is on: all branches' fields are present, and only the validator decides which branch matches.
 
-#### Priority System
+#### Layering Rules
 
-The `active`, `visible`, `readOnly`, and `disabled` properties follow this priority order:
+`controls` can be declared on the node itself, on a parent's `controls.children` entry that targets the node, and on a fragment (such as an `allOf` entry) that declares the node. The layers combine instead of overriding each other: the standard `readOnly` and the `readOnly` / `disabled` controls combine by OR, and `visible` combines by AND.
 
-1. Root jsonSchema property (boolean)
-2. Shortcut property (`jsonSchema[{fieldName}]`, boolean)
-3. Computed property (`jsonSchema.computed[{fieldName}]`, boolean | string)
-4. Alias computed property (`jsonSchema['&{fieldName}']`, boolean | string)
-
-Higher priority values override lower priority values when multiple are defined.
+For `default`, the node's own `controls.default` wins, then the parent's `children` entry, then the fragment's `controls.default`, then the standard `default`.
 
 #### Basic Example
 
@@ -1644,8 +1661,8 @@ export const ConditionalForm = () => {
       commonField: {
         type: 'string',
         title: 'Common Field',
-        computed: {
-          watch: '../employmentType',
+        controls: {
+          watch: ['../employmentType'],
           active: '../employmentType !== null',
           visible: '../employmentType !== null',
         },
@@ -1653,8 +1670,8 @@ export const ConditionalForm = () => {
     },
     oneOf: [
       {
-        computed: {
-          if: "./employmentType === 'fulltime'",
+        controls: {
+          active: "./employmentType === 'fulltime'",
         },
         properties: {
           salary: {
@@ -1688,8 +1705,8 @@ export const ConditionalForm = () => {
         },
       },
       {
-        computed: {
-          if: "./employmentType === 'parttime'",
+        controls: {
+          active: "./employmentType === 'parttime'",
         },
         properties: {
           hourlyRate: {
@@ -1705,8 +1722,8 @@ export const ConditionalForm = () => {
         },
       },
       {
-        computed: {
-          if: "./employmentType === 'contractor'",
+        controls: {
+          active: "./employmentType === 'contractor'",
         },
         properties: {
           hourlyRate: {
@@ -1723,7 +1740,7 @@ export const ConditionalForm = () => {
             title: 'Weekly Working Hours',
             minimum: 1,
             maximum: 168,
-            computed: {
+            controls: {
               active: '../contractType === "hourly"',
             },
           },
@@ -1742,7 +1759,7 @@ The `injectTo` feature enables automatic value propagation between form fields. 
 
 #### Basic Usage
 
-Define an `injectTo` handler function in your JSON Schema that returns an object mapping target paths to values:
+Define an `injectTo` handler function inside `controls` in your JSON Schema that returns an object mapping target paths to values:
 
 ```tsx
 const jsonSchema = {
@@ -1751,9 +1768,11 @@ const jsonSchema = {
     source: {
       type: 'string',
       title: 'Source',
-      injectTo: (value: string) => ({
-        '../target': `injected: ${value}`,
-      }),
+      controls: {
+        injectTo: (value: string) => ({
+          '../target': `injected: ${value}`,
+        }),
+      },
     },
     target: {
       type: 'string',
@@ -1773,20 +1792,24 @@ const jsonSchema = {
 **Relative paths** (from current node):
 
 ```tsx
-injectTo: (value) => ({
-  '../sibling': value, // Sibling field
-  '../nested/child': value, // Nested sibling's child
-  '../../uncle': value, // Parent's sibling
-});
+controls: {
+  injectTo: (value) => ({
+    '../sibling': value, // Sibling field
+    '../nested/child': value, // Nested sibling's child
+    '../../uncle': value, // Parent's sibling
+  }),
+},
 ```
 
 **Absolute paths** (from root):
 
 ```tsx
-injectTo: (value) => ({
-  '/rootField': value, // Root level field
-  '/user/profile/name': value, // Deeply nested field
-});
+controls: {
+  injectTo: (value) => ({
+    '/rootField': value, // Root level field
+    '/user/profile/name': value, // Deeply nested field
+  }),
+},
 ```
 
 #### Multiple Targets
@@ -1799,14 +1822,16 @@ const jsonSchema = {
   properties: {
     fullName: {
       type: 'string',
-      injectTo: (value: string) => ({
-        '../displayName': value,
-        '../searchName': value.toLowerCase(),
-        '../initials': value
-          .split(' ')
-          .map((n) => n[0])
-          .join(''),
-      }),
+      controls: {
+        injectTo: (value: string) => ({
+          '../displayName': value,
+          '../searchName': value.toLowerCase(),
+          '../initials': value
+            .split(' ')
+            .map((n) => n[0])
+            .join(''),
+        }),
+      },
     },
     displayName: { type: 'string' },
     searchName: { type: 'string' },
@@ -1820,10 +1845,12 @@ const jsonSchema = {
 For dynamic paths or when order matters, use array format:
 
 ```tsx
-injectTo: (value: number) => [
-  ['/calculations/doubled', value * 2],
-  ['/calculations/squared', value * value],
-];
+controls: {
+  injectTo: (value: number) => [
+    ['/calculations/doubled', value * 2],
+    ['/calculations/squared', value * value],
+  ],
+},
 ```
 
 #### Accessing Context
@@ -1865,12 +1892,14 @@ const jsonSchema = {
   properties: {
     secretField: {
       type: 'string',
-      injectTo: (value, ctx) => {
-        // Only inject for admin users
-        if (ctx.context.userRole === 'admin') {
-          return { '/adminCopy': value };
-        }
-        return null;
+      controls: {
+        injectTo: (value, ctx) => {
+          // Only inject for admin users
+          if (ctx.context.userRole === 'admin') {
+            return { '/adminCopy': value };
+          }
+          return null;
+        },
       },
     },
   },
@@ -1880,9 +1909,9 @@ const jsonSchema = {
 <Form jsonSchema={jsonSchema} context={{ userRole: 'admin' }} />;
 ```
 
-#### Circular Reference Prevention
+#### Circular References
 
-The library automatically prevents infinite loops when fields inject to each other:
+Injection cycles are not detected. Each settlement re-runs the rules until no source value changes, up to 25 rounds:
 
 ```tsx
 const jsonSchema = {
@@ -1890,39 +1919,42 @@ const jsonSchema = {
   properties: {
     fieldA: {
       type: 'string',
-      injectTo: (value) => ({ '../fieldB': `from A: ${value}` }),
+      controls: {
+        injectTo: (value) => ({ '../fieldB': `from A: ${value}` }),
+      },
     },
     fieldB: {
       type: 'string',
-      injectTo: (value) => ({ '../fieldA': `from B: ${value}` }),
+      controls: {
+        injectTo: (value) => ({ '../fieldA': `from B: ${value}` }),
+      },
     },
   },
 };
 
 // User types in fieldA:
-// 1. fieldA → fieldB (injection succeeds)
-// 2. fieldB → fieldA (blocked - circular reference prevented)
+// 1. fieldA → fieldB, then fieldB → fieldA, and every hop produces a new value
+// 2. After 25 rounds the settlement exceeds its budget
 ```
 
-Circular reference prevention works for any chain length (A→B→C→A, etc.) within the same macrotask execution context.
+A cycle that converges (the same value comes back) stops on its own. One that keeps producing new values, like the example above, exceeds the budget: the caller's write is kept, every automatic write from that settlement is reverted, `diagnostics` becomes `degraded` with `exceededBudget: 'derive'`, and the write throws. Design injection chains as acyclic graphs.
 
 #### Error Handling
 
-Errors in `injectTo` handlers are caught and wrapped in `JSONSchemaError` with detailed context:
+When an `injectTo` handler throws, that rule is skipped for the round, the settlement becomes `degraded` with `cause: 'expression'`, and the write ends by throwing a `SchemaFormError` with code `EXPRESSION_THREW`:
 
 ```tsx
-injectTo: (value) => {
-  if (!value) {
-    throw new Error('Value is required');
-  }
-  return { '../target': value };
-};
+controls: {
+  injectTo: (value) => {
+    if (!value) {
+      throw new Error('Value is required');
+    }
+    return { '../target': value };
+  },
+},
 
-// Error includes:
-// - Source node path
-// - Target paths attempted
-// - Original error message
-// - Suggested resolution steps
+// The rule is skipped for that round, the settlement is degraded,
+// and the write throws a SchemaFormError (EXPRESSION_THREW)
 ```
 
 #### TypeScript Support
@@ -2128,6 +2160,8 @@ export const EnterSubmitForm = () => {
 };
 ```
 
+Enter submits through the Form's `form` element. With more than one text-like field, the browser submits on Enter only when the form has a submit button (implicit submission counts the fields that block it; one text field plus a checkbox still submits).
+
 #### Handling Submission Errors
 
 How to handle various errors that can occur during submission:
@@ -2293,7 +2327,7 @@ Measured with `compare-frameworks` (production React, 500 flat fields): mount dr
 > **Caveats**
 >
 > - Requires `IntersectionObserver`; when unavailable the option is silently ignored and everything mounts eagerly. Do not enable it in SSR/hydration apps — the server renders all fields while the client would gate them, causing a hydration mismatch.
-> - Placeholders occupy `estimateHeight` until revealed, so scrollbar length is approximate for unmounted regions. Fields hidden by `computed.visible` render no placeholder.
+> - Placeholders occupy `estimateHeight` until revealed, so scrollbar length is approximate for unmounted regions. Fields hidden by `controls.visible` render no placeholder.
 > - With `backfill: VirtualizationBackfill.None`, screen readers, tab order past the mounted range, and browser autofill only see fields once they are scrolled into view; the default `Idle` backfill restores the full DOM within a few idle frames.
 
 ---
@@ -2328,7 +2362,7 @@ type Value = InferValueType<typeof jsonSchema>;
 
 Two properties of that result are deliberate:
 
-- **Every field is optional, including `required` ones.** A form may drop a field from its value at runtime — an inactive `computed.active` branch, or `options.omitEmpty`. Marking it required would let `value.name.trim()` compile and then throw.
+- **Every field is optional, including `required` ones.** A form may drop a field from its value at runtime — an inactive `controls.active` branch, or `options.omitEmpty`. Marking it required would let `value.name.trim()` compile and then throw.
 - **The object stays open** unless the schema sets `additionalProperties: false`, which is the JSON Schema default. This is what keeps keys contributed by `oneOf`/`anyOf` branches, `if`/`then`/`else`, and `patternProperties` from being rejected as excess properties. Set `additionalProperties: false` and the inferred type closes, so typos are caught.
 - **Nullable schemas add `| null`.** Both the type array (`type: ['string', 'null']`) and the deprecated `nullable: true` keyword yield `T | null`, since the runtime accepts `null` for a nullable node. A type that rejected `null` would fail to compile a `setValue({ field: null })` the form accepts.
 
