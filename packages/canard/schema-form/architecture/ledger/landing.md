@@ -3202,6 +3202,7 @@
   > 소유자(269라운드, 07b-6 결정·nullable): "맞다고 생각하는 방향으로 가도록\nnullable 은 좀만 더 이야기해보자.\n남겨두는게 딱히 비용도 아니고 느려지는것도 별로 없지? ajv도 공식 허용하고. 우리가 jsonSchema 비표준 필드도 많이 쓰는 마당이라 막는 당위성도 좀 애매하네" (`reviews/round-269-owner-answers.md:7`)
   > 소유자(269라운드, nullable 공식 지원): "그래 nullable은 잔류로 결정. 별도 오류도 없다. 공식지원으로 결정하자." (`reviews/round-269-owner-answers.md:13`)
   > 편집자 결정(270C-01): "【추론】 게이트는 원장 관리자가 직접 돌렸다: unit·render·react18 3943 통과(타이밍 시험 `global-errors.timing.test.ts` 1건이 verifier·agy 동시 부하에서 41.4 ms로 40 ms 기준을 넘겼고 단독 재실행 통과 — 측정은 조용한 창에서라는 규칙의 재확인), storybook 241, typecheck 0, lint 0, build·test:production, 플러그인 일곱 build·test(130/135/334/2/15/15/5), documents build, G16 CONSUMER_BUNDLE_OK(prod 289,033 B, dev 292,330 B). verifier(opus): 공개 내보내기 92→92, 목록 밖 제거·이름 변경 0, dist 비레거시 704 파일에서 옛 식별자 0, 레이어 id `'fields'`·오류 경로 `/controls/fields` 일관, `.claude`·설정·원장 변경 0 → pass with conditions(조건은 시험 실행이었고 충족). agy: 옛 이름·옛 문법 잔존 0, propertyOrder·options.virtual 서술이 결정과 일치; "병합 차단 사유 있음" 판정은 근거 항목이 문서 수준 지적 넷뿐이어서 편집자가 차단 아님으로 뒤집음. 이월 목록은 fixy07에게 07b-7 브리프 항목으로 전했다. agy §2의 "문서 안 이주 문장 없음"은 PR 본문과 #354 본문이 이주 문장을 담고 있어 README 1.0.0 이주 절을 마무리 단계에 한 번에 쓰는 것으로 처리한다." (`reviews/round-270-closing.md:9`)
+  > 소유자(271라운드, 대기열 46): "잠깐 중간 결정 해줄게. compnents 랑 helpers 를 프렉탈이 아니게 하는 결정, 승인할게" (`reviews/round-271-owner-answers.md:7`)
 - 상태: 현행
 - 출처: `reviews/round-80-closing.md:17`(정본)
 - 닫은 사람: 편집자 결정(80라운드, `reviews/round-80-closing.md` 80C-02)

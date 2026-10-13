@@ -82,4 +82,4 @@
 
 | 날짜 | 무엇 | 어디 |
 | --- | --- | --- |
-| 2026-10-14 | 270라운드 닫기: 07b-5 #365 검증·병합(17414cd4a), fixy07 판단 셋 승인, 검증 지적 일곱은 07b-7로 이월, 07b-6·07b-7 병렬 착수. 보충 1줄 | `reviews/round-270-closing.md` |
+| 2026-10-14 | 271라운드 소유자 답: 대기열 46 승인 — helpers·components는 fractal이 아닌 compartment로(264라운드 결정 4 번복). 보충 1줄 | `reviews/round-271-owner-answers.md` |
