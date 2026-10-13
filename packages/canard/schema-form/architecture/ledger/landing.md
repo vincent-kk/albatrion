@@ -3078,6 +3078,7 @@
   > 소유자(234라운드, CLAUDE.md 76·138행): "승인" (`reviews/round-234-owner-answers.md:10`)
   > 소유자(242라운드, CLAUDE.md 치환): "어 치환 허용. docs 를 포함해서 모든 영역에 대한 수정 허용" (`reviews/round-242-owner-answers.md:7`)
   > 소유자(244라운드, 순서): "그래 다 하면 알려줘.\n파일구조 변경도 해야되니까 그 다음에" (`reviews/round-244-owner-answers.md:16`)
+  > 소유자(258라운드, 다섯 결정과 후보): "1. core 이름을 두죠.\n2.  engine 수출 + core 재수출\n3. 불필요하다면 지우세요.\n4. 프렉탈로 올리세요 \n5. 네 제안했던 구조로 갑니다.\n\n구조는 C 로 가요. \n\n다만 몇 가지 추가 요청이 있습니다.\n\n1. core 하위의 SchemaNode 가 직접 new 되는 경우보다는 factory 를 통해서 생성되는 경우가 대부분이라면, factory 가 본체 아닌지? 오히려 SchemaNode 는 구현체고, factory 가 인터페이스의 주류가 아닐까 싶은데.\n\n2. packages/canard/schema-form/src/components/SchemaNode 에서 이 디렉토리 이름이 SchemaNode 가 맞는가? 오히려 FieldProxy 나 FieldNodeProxy 같은 이름이 더 적절하지 않은지?\n\n3. SchemaNode 라는 이름이 적절할까? 오히려 Field 라고 네이밍을 바꾸면서 이것도 FieldNode 로 바꾸는게 어떤가? \n\n이들에 대해서 추가로 논해보자" (`reviews/round-258-owner-answers.md:7`)
 - 상태: 현행
 - 출처: `reviews/round-18-owner-answers.md:44`(정본, 반영 칸), `reviews/round-18-owner-answers.md:45`
 - 닫은 사람: 소유자 답(`reviews/round-18-owner-answers.md:44` 개발계획 P3·P4), 소유자 답(`reviews/round-18-owner-answers.md:45` 개발계획 1-가)

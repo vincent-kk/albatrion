@@ -82,4 +82,4 @@
 
 | 날짜 | 무엇 | 어디 |
 | --- | --- | --- |
-| 2026-10-14 | 257라운드(소유자): 07b-4(36·37·16·18) 바로 시작, 이번에 한해 codex 위임 없이 Claude 구현; 원장 관리자는 개선-38 문서 갱신. 보충 1줄 | `reviews/round-257-owner-answers.md` |
+| 2026-10-14 | 258라운드(소유자): 개선-38 다섯 결정(core 유지, engine 수출+core 재수출, helpers 셋 삭제, helpers·components fractal, src/constants)과 후보 C 확정; 추가 논의 셋(factory 본체, components/SchemaNode 이름, SchemaNode→FieldNode). 보충 1줄 | `reviews/round-258-owner-answers.md` |
