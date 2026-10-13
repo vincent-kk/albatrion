@@ -1,4 +1,4 @@
-import { type ChangeEvent, useMemo } from 'react';
+import type { ChangeEvent } from 'react';
 
 import { useHandle } from '@winglet/react-utils/hook';
 
@@ -10,7 +10,17 @@ import type {
 
 type DateFormatJSONSchema = {
   format: 'month' | 'week' | 'date' | 'date-time' | 'time';
-} & StringSchema<{ minimum?: string; maximum?: string }>;
+} & StringSchema;
+
+type FormTypeInputDateFormatProps = FormTypeInputPropsWithSchema<
+  string | null,
+  DateFormatJSONSchema
+> & {
+  /** Earliest allowed value, from `presentation.FormTypeInputProps.minimum`. */
+  minimum?: string;
+  /** Latest allowed value, from `presentation.FormTypeInputProps.maximum`. */
+  maximum?: string;
+};
 
 const FormTypeInputDateFormat = ({
   path,
@@ -22,15 +32,10 @@ const FormTypeInputDateFormat = ({
   onChange,
   style,
   className,
-}: FormTypeInputPropsWithSchema<string | null, DateFormatJSONSchema>) => {
-  const { type, max, min } = useMemo(
-    () => ({
-      type: jsonSchema.format,
-      max: jsonSchema.options?.maximum,
-      min: jsonSchema.options?.minimum,
-    }),
-    [jsonSchema],
-  );
+  minimum,
+  maximum,
+}: FormTypeInputDateFormatProps) => {
+  const type = jsonSchema.format;
   const handleChange = useHandle((event: ChangeEvent<HTMLInputElement>) => {
     onChange(event.target.value);
   });
@@ -41,8 +46,8 @@ const FormTypeInputDateFormat = ({
       name={name}
       readOnly={readOnly}
       disabled={disabled}
-      max={max}
-      min={min}
+      max={maximum}
+      min={minimum}
       defaultValue={defaultValue ?? undefined}
       onChange={handleChange}
       style={style}
