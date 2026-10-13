@@ -76,8 +76,8 @@ const FormTypeInputStringRadio = ({
 
 export const FormTypeInputStringRadioDefinition = {
   Component: FormTypeInputStringRadio,
-  test: ({ type, jsonSchema }) =>
+  test: ({ type, formType, jsonSchema }) =>
     type === 'string' &&
-    (jsonSchema.formType === 'radio' || jsonSchema.formType === 'radiogroup') &&
+    (formType === 'radio' || formType === 'radiogroup') &&
     !!jsonSchema.enum?.length,
 } satisfies FormTypeInputDefinition;
