@@ -222,6 +222,7 @@
 | 2026-10-13 | 237라운드(소유자): 입력 컴포넌트는 FieldInput*(Field 시리즈), 힌트 이름은 미정. 보충 1줄 | `reviews/round-237-owner-answers.md` |
 | 2026-10-13 | 238라운드(소유자): 힌트 inputType 잠정 결정; 필드 전체 렌더러는 FieldRenderer. 보충 1줄 | `reviews/round-238-owner-answers.md` |
 | 2026-10-13 | 239라운드(소유자): 이름 체계 확정 — inputType / FieldInput* / FieldRenderer / Form{Label,Input,Error}Renderer, 대응표. 보충 3줄 | `reviews/round-239-owner-answers.md` |
+| 2026-10-13 | 240라운드(닫기): 이름 재구성 범위(파일 119·식별자 161)와 결정 다섯; CLAUDE.md 여섯 치환은 소유자 승인 대기. 보충 1줄 | `reviews/round-240-closing.md` |
 
 ## 2. 라운드별 요지
 
@@ -414,3 +415,4 @@
 - **203라운드(2026-10-13, 닫기).** 스토리 재구성 여섯째 그룹(입력 컴포넌트)이 끝났고 제품 결함은 없었다. fairy07 세션의 검토용 verifier 실행이 종류째 거부돼 그룹별 검토는 보류하고, PR 전체 독립 검증은 원장 관리자 세션이 맡는다(reviews/round-203-closing.md).
 - **204라운드(2026-10-13, 닫기).** 리뷰 둘째 라운드가 아홉 커밋으로 끝났다. batch가 순차 쓰기와 다른 값을 내는 마지막 발견은 결함이 아니라 batch를 쓰기 하나로 세는 계약의 귀결이라 시험으로 고정한다. fixy07의 측정과 둘째 라운드 독립 검증을 시작한다(reviews/round-204-closing.md).
 - **205라운드(2026-10-13, 닫기).** 스토리 재구성 일곱째 그룹(핸들·레이아웃)이 끝났고 제품 결함은 없었다. fairy07 세션은 서브에이전트 실행이 전부 거부돼 자체 변이 탐침으로 대신한다. 07b 브랜치가 리뷰 둘째 라운드 위로 올라갔고 07c도 그 위로 옮긴다(reviews/round-205-closing.md).
+- **206라운드(2026-10-13, 닫기).** core와 SchemaNode의 관계와 패키지 전체 위계를 고찰한 문서가 완성돼 원장에 들어왔다. 권고는 core를 엔진과 겉면 두 자식으로 나누는 모양이고, 소유자 결정 다섯은 설명 문서와 함께 귀환 때 올린다(reviews/round-206-closing.md).

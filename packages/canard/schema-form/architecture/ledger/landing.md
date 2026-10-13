@@ -2734,6 +2734,7 @@
   > 소유자(239라운드, 슬롯 렌더러 이름): "FormLabelRenderer·FormInputRenderer·FormErrorRenderer\n\n이건 그대로 쓰는거야?\n\nForm{Label,Input,Error}Renderer 이건 바꿀 필욘 없는건가..." (`reviews/round-239-owner-answers.md:7`)
   > 소유자(239라운드, Renderer 접미어): "오케이 그건 좋아 근데, 매번 뒤에 renderer 를 붙이는건? 이건 필수적인거야?" (`reviews/round-239-owner-answers.md:8`)
   > 소유자(239라운드, 확정): "오케이 그럼 지금으로 확정. \n이어지는 질문 하나 더 있어" (`reviews/round-239-owner-answers.md:9`)
+  > 편집자 결정(240C-01): "【추론】 표 밖 이름은 표의 규칙을 기계적으로 넓힌 것이고, 유일하게 규칙으로 정할 수 없는 내장 배열은 "내장"을 접두어로 붙여 공개 이름과 겹치지 않게 한다. CLAUDE.md는 규칙상 소유자 승인이 먼저다." (`reviews/round-240-closing.md:9`)
 - 상태: 현행
 - 출처: `reviews/round-18-closing.md:2647`(정본)
 - 닫은 사람: 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-93)
