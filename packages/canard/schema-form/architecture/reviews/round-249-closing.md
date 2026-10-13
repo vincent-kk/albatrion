@@ -9,3 +9,7 @@
   - 【추론】 소유자 허가(248라운드)가 있었고 재검증 게이트가 모두 통과했으므로 병합했다. 남은 PR 둘은 서로 독립이라 동시에 진행한다.
 - 근거: 248라운드 소유자 답; 246라운드 덧붙임(재검증); gh pr view 362(MERGED, merge 1dbc1c1c9).
 - 다음: #361과 07b-3 보고를 받아 각각 검증하고 병합 허가를 묻는다. 둘 다 끝나면 정리 커맨드(대기열 15), #354 본문 갱신, 개선-38 문서 이름 갱신.
+
+## 덧붙임 (2026-10-14, 07b-3 범위 하나 추가와 대기열 35)
+
+fixy07 보고: implicit any 12건은 모두 CanardForm.ignoreAdditionalProperties.tsx의 최상위 FieldInput 아래 인라인 컴포넌트에서 나오므로(최상위 키는 형이 없어 매개변수가 any) presentation.FieldInput으로 옮기면 슬롯 형(C1)이 매개변수 형을 주어 244C-01의 1번과 2번이 같은 수정이 된다. 편집자 결정: production-test/src/assets/jsonSchema/oneOf.ts:34,76의 최상위 `inputType: "checkbox"`도 같은 커밋에서 presentation.inputType으로 옮긴다(같은 규칙). 두 페이지가 쓰는 옛 문법(`&if`, `terminal`)은 범위 밖이라 손대지 않고 대기열 35로 올린다.
