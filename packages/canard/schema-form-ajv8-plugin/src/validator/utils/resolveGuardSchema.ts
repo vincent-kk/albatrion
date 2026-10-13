@@ -2,7 +2,7 @@
  * Resolve a guard in the engine copy without cloning its schema.
  * @param root - The engine-owned copy containing the guard.
  * @param pointer - A JSON Pointer, optionally prefixed with a fragment marker.
- * @returns The same schema object or boolean; undefined for a missing location.
+ * @returns The same schema object or boolean; undefined when the location is missing or holds a non-schema value.
  */
 export const resolveGuardSchema = (root: object, pointer: string): object | boolean | undefined => {
   const path = pointer.startsWith('#') ? pointer.slice(1) : pointer;
@@ -13,6 +13,6 @@ export const resolveGuardSchema = (root: object, pointer: string): object | bool
       return undefined;
     schema = Reflect.get(schema, key);
   }
-  return typeof schema === 'boolean' || (typeof schema === 'object' && schema !== null)
+  return typeof schema === 'boolean' || (typeof schema === 'object' && schema !== null && !Array.isArray(schema))
     ? schema : undefined;
 };
