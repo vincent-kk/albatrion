@@ -17,7 +17,6 @@ export interface AuthoredSchema<
     | 'null'
     | 'object'
     | 'array'
-    | 'virtual'
     | readonly (
         | 'string'
         | 'number'

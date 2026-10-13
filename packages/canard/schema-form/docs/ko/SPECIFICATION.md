@@ -322,7 +322,7 @@ type AttachedFilesMap = Map<string, File[]>;
 
 - 다른 종류는 전략이 고정되어 있습니다. `string`, `number`, `integer`, `boolean`, `null`과 여러 종류를 담은 `type`은 terminal이고, `virtual`은 branch입니다. 고정된 전략과 어긋나는 `options.terminal`은 `TERMINAL_OPTION_UNSUPPORTED`를 던지고, 같은 값을 다시 적은 것은 받아들입니다.
 - 게이트 없는 선언은 `controls.active`를 지니지 않은 노드 자신의 스키마, 그 `$ref` 대상, 그 `allOf` 조각입니다. 이들 사이에서는 나중의 `options.terminal`이 이기며, `$ref` 대상은 그것을 가리키는 스키마보다 나중으로 칩니다.
-- 전략은 실행 중에 바뀔 수 없습니다. 게이트가 걸린 선언(`then` / `else`, `controls.active`를 지닌 조각, 부모의 `controls.children` 항목 중 `active`를 지닌 것이 가리키는 자식, `controls.active`나 호스트의 `controls.discriminator`로 고르는 `oneOf` / `anyOf` 분기) 때문에 노드가 어떤 경우에는 branch, 다른 경우에는 terminal이 된다면 스키마가 `TERMINAL_STRATEGY_MISMATCH`를 던집니다.
+- 전략은 실행 중에 바뀔 수 없습니다. 게이트가 걸린 선언(`then` / `else`, `controls.active`를 지닌 조각, 부모의 `controls.fields` 항목 중 `active`를 지닌 것이 가리키는 자식, `controls.active`나 호스트의 `controls.discriminator`로 고르는 `oneOf` / `anyOf` 분기) 때문에 노드가 어떤 경우에는 branch, 다른 경우에는 terminal이 된다면 스키마가 `TERMINAL_STRATEGY_MISMATCH`를 던집니다.
 - 그런 게이트가 없는 `oneOf` / `anyOf` 분기는 호스트의 전략을 정하지 않으며, 그 분기의 `options.terminal`은 무시됩니다.
 
 ### 노드 초기화
@@ -494,7 +494,7 @@ const formInputMap = {
     unsetValue: string;                  // false에서 true로 바뀌면 값을 비움
     resetInteraction: string;            // false에서 true로 바뀌면 dirty/touched를 비움
     unsetOnInactive: boolean | string;   // 노드가 형상을 떠날 때 유지된 값을 버림
-    children: { targets: string[]; controls: { /* 앞의 아홉 키 */ } }[];
+    fields: { targets: string[]; controls: { /* 앞의 아홉 키 */ } }[];
     injectTo: (value, ctx) => ...;       // 이 노드의 값이 바뀔 때마다 다른 노드로 값을 밀어 넣기
     discriminator: string;               // oneOf/anyOf 호스트: 분기 태그 속성
     watch: string[];                     // 값 구독 (경로 배열)
@@ -502,7 +502,7 @@ const formInputMap = {
 }
 ```
 
-키 목록은 닫혀 있어서 알 수 없는 키가 있으면 청사진 빌드가 코드 `UNKNOWN_GROUP_KEY`인 스키마 오류(`isJSONSchemaError`로 판별)를 던집니다. `controls.children[].controls`와 조각(`oneOf`/`anyOf`/`allOf` 분기, `then`, `else`)의 `controls` 안에서는 앞의 아홉 키(`active`부터 `unsetOnInactive`까지)만 허용되며, 나머지 네 키는 던집니다.
+키 목록은 닫혀 있어서 알 수 없는 키가 있으면 청사진 빌드가 코드 `UNKNOWN_GROUP_KEY`인 스키마 오류(`isJSONSchemaError`로 판별)를 던집니다. `controls.fields[].controls`와 조각(`oneOf`/`anyOf`/`allOf` 분기, `then`, `else`)의 `controls` 안에서는 앞의 아홉 키(`active`부터 `unsetOnInactive`까지)만 허용되며, 나머지 네 키는 던집니다.
 
 ### 중첩 controls
 
@@ -913,6 +913,28 @@ const jsonSchema = {
 - `null`은 빈 값이 아닙니다: 두 필터 모두 값이 `null`인 nullable 배열을 건드리지 않습니다 — [Nullable 객체와 배열](#nullable-객체와-배열) 참고.
 - `node.value`는 raw를 유지하고, 정제된 출력은 `node.outputValue`로 노출됩니다. validation은 정제된 값 기준이라 `minItems`는 채워진 prefix만 셉니다.
 - Reset 계열 초기화(폼 reset, 분기 재활성화)는 `minItems`만큼 빈 항목을 재충전하고, 일반 `setValue(undefined)`는 전부 비웁니다 — 배열을 빼고 부모를 교체하는 쓰기도 같습니다: `setValue({ other: 1 })`는 배열을 비우고, `SetValueOption.Merge`는 그대로 둡니다. 기본값이 `null`인 배열은 채움 없이 `null`로 reset됩니다.
+
+### 객체 옵션 (`propertyOrder` / `virtual`)
+
+객체 스키마는 `options` 아래에 키 두 개를 더 받습니다.
+
+```typescript
+{
+  type: 'object',
+  properties: {
+    name: { type: 'string' },
+    startDate: { type: 'string', format: 'date' },
+    endDate: { type: 'string', format: 'date' },
+  },
+  options: {
+    propertyOrder: ['endDate', 'startDate'], // { endDate, startDate, name } 순서로 내보냄
+    virtual: { period: { fields: ['startDate', 'endDate'] } },
+  },
+}
+```
+
+- `propertyOrder`는 내보내는 객체 값의 키 순서이며 화면 순서가 아닙니다. 나열한 키가 먼저 오고, 그다음 나머지 선언 프로퍼티가 선언 순서로, 마지막으로 선언 밖 키가 들어온 순서로 옵니다. 값에 없는 키는 건너뛰며, 정수처럼 보이는 키는 JavaScript가 항상 맨 앞에 둡니다.
+- `virtual`은 가상 필드 묶음에 이름을 붙입니다. 각 항목은 `fields`에 하나의 가상 노드로 모을 형제 프로퍼티를 나열하고, 그 노드 자신의 `presentation`·`controls` 같은 키를 함께 둘 수 있습니다. 가상 노드를 `type: 'virtual'` 스키마로 작성하는 경우는 없습니다.
 
 ### Value Injection (injectTo)
 

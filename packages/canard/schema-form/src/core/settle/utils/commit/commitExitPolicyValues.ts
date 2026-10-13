@@ -98,9 +98,9 @@ export const commitExitPolicyValues = <Self extends FieldNodeRecord<Self>>(
           candidates.add(child);
           break;
         }
-      const children: unknown = Reflect.get(controls, 'children');
-      if (!isArray(children)) continue;
-      for (const item of children) {
+      const fields: unknown = Reflect.get(controls, 'fields');
+      if (!isArray(fields)) continue;
+      for (const item of fields) {
         if (!item || typeof item !== 'object') continue;
         const itemControls: unknown = Reflect.get(item, 'controls');
         if (

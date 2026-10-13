@@ -69,7 +69,7 @@ export const buildFeatureNodeIndex = (
             )
           )
             targets.add(child.name);
-      const groups: unknown = Reflect.get(controls, 'children');
+      const groups: unknown = Reflect.get(controls, 'fields');
       if (isArray(groups))
         for (const group of groups) {
           if (

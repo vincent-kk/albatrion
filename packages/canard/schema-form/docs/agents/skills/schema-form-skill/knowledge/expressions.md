@@ -1,6 +1,6 @@
 # Expressions
 
-One expression language drives every dynamic schema behavior. The same syntax — JavaScript-like expressions over JSONPointer references — is applied through the keys of the schema's `controls` object that take expressions: `active`, `visible`, `readOnly`, `disabled`, `derived`, `unsetValue`, `resetInteraction`, `unsetOnInactive` (boolean or expression). The other keys are not expressions: `default` is a literal, `watch` an array of paths, `children` an array of `{ targets, controls }`, `injectTo` a function, `discriminator` a property name. The key list is closed and there are no aliases: an unknown key makes the blueprint build throw a schema error recognized by `isJSONSchemaError` (`UNKNOWN_GROUP_KEY`).
+One expression language drives every dynamic schema behavior. The same syntax — JavaScript-like expressions over JSONPointer references — is applied through the keys of the schema's `controls` object that take expressions: `active`, `visible`, `readOnly`, `disabled`, `derived`, `unsetValue`, `resetInteraction`, `unsetOnInactive` (boolean or expression). The other keys are not expressions: `default` is a literal, `watch` an array of paths, `fields` an array of `{ targets, controls }`, `injectTo` a function, `discriminator` a property name. The key list is closed and there are no aliases: an unknown key makes the blueprint build throw a schema error recognized by `isJSONSchemaError` (`UNKNOWN_GROUP_KEY`).
 
 ```typescript
 conditionalField: {

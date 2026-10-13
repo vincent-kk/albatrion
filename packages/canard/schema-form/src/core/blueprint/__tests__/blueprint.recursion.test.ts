@@ -71,18 +71,17 @@ describe('blueprint finite reference and shape graph', () => {
     expect(result.fragments.length).toBeLessThan(5);
   });
 
-  it('preserves conditional children rule application separately from its active condition', () => {
+  it('preserves conditional fields rule application separately from its active condition', () => {
     const result = blueprint({
       type: 'object',
       properties: { child: { $ref: '#' } },
       controls: {
         active: './rootOn',
-        children: [{ targets: ['child'], controls: { active: './childOn' } }],
+        fields: [{ targets: ['child'], controls: { active: './childOn' } }],
       },
     });
     const gate = result.root.childEntries[0].declarations[0].gates.find(
-      (item) =>
-        item.schemaPath.endsWith('/controls/children/0/controls/active'),
+      (item) => item.schemaPath.endsWith('/controls/fields/0/controls/active'),
     )!;
     expect(gate.condition).toBe('./childOn');
     expect(gate.appliesWhen?.[0].condition).toBe('./rootOn');

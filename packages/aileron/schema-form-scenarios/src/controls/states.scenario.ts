@@ -3,7 +3,7 @@ import type { FormScenario } from '../types';
 /** A parent item cannot unlock or reveal a conflicting local declaration. */
 const combinationScenario = {
   name: 'controls.lock-or-visibility-and',
-  schema: { type: 'object', controls: { children: [
+  schema: { type: 'object', controls: { fields: [
     { targets: ['locked'], controls: { readOnly: true, disabled: false } },
     { targets: ['disabled'], controls: { readOnly: false, disabled: false } },
     { targets: ['hidden'], controls: { visible: false } },
@@ -33,10 +33,10 @@ const standardReadOnlyScenario = {
       outputValue: { field: 'after' } } }],
 } satisfies FormScenario;
 
-/** A children item evaluates against its host for every addressed target. */
+/** A fields entry evaluates against its host for every addressed target. */
 const childrenExpressionScenario = {
-  name: 'controls.children-host-expression',
-  schema: { type: 'object', controls: { children: [
+  name: 'controls.fields-host-expression',
+  schema: { type: 'object', controls: { fields: [
     { targets: ['a', 'b'], controls: { disabled: './lock' } },
   ] }, properties: {
     lock: { type: 'boolean' }, a: { type: 'string' }, b: { type: 'string' },

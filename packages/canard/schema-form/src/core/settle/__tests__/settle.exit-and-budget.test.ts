@@ -41,12 +41,12 @@ describe('settle exits and budgets', () => {
     });
   });
 
-  it('SETTLE-041 counts one children active entry across its targets', () => {
+  it('SETTLE-041 counts one fields active entry across its targets', () => {
     const { root, blueprint } = createTestTree({
       type: 'object',
       properties: { a: { type: 'number' }, b: { type: 'number' } },
       controls: {
-        children: [{ targets: ['a', 'b'], controls: { active: '!./a' } }],
+        fields: [{ targets: ['a', 'b'], controls: { active: '!./a' } }],
       },
     });
     expect(getTransitionCap(blueprint)).toBe(2);

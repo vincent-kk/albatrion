@@ -103,12 +103,12 @@ controls: { active: "./type === 'A'" }
 | `unsetValue`       | `string`                  | false에서 true로 바뀌면 값을 비움            | -       |
 | `resetInteraction` | `string`                  | false에서 true로 바뀌면 dirty/touched 초기화 | -       |
 | `unsetOnInactive`  | `boolean \| string`       | 형상을 떠날 때 유지된 값을 버림              | -       |
-| `children`         | `{ targets, controls }[]` | 부모가 자식에게 앞의 아홉 키를 지정          | -       |
+| `fields`           | `{ targets, controls }[]` | 부모가 자식에게 앞의 아홉 키를 지정          | -       |
 | `injectTo`         | `(value, ctx) => 대상 맵` | 값이 바뀔 때마다 다른 노드로 주입            | -       |
 | `discriminator`    | `string`                  | oneOf/anyOf 호스트의 분기 태그 속성          | -       |
 | `watch`            | `string[]`                | 값 구독 (경로 배열만)                        | -       |
 
-`controls.children[].controls`와 조각(`oneOf`/`anyOf`/`allOf` 분기, `then`, `else`)의 `controls`에는 앞의 아홉 키(`active`부터 `unsetOnInactive`까지)만 허용됩니다.
+`controls.fields[].controls`와 조각(`oneOf`/`anyOf`/`allOf` 분기, `then`, `else`)의 `controls`에는 앞의 아홉 키(`active`부터 `unsetOnInactive`까지)만 허용됩니다.
 
 ### active vs visible 선택
 

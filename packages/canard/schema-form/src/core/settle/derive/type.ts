@@ -21,7 +21,7 @@ export interface DeriveRule {
   /** Original expression position, unique within the analysis. */
   readonly schemaPath: string;
   /** Declaration layer that chooses the addressed value target. */
-  readonly layer: 'fragment' | 'children' | 'node';
+  readonly layer: 'fragment' | 'fields' | 'node';
   /** Direct child name for a scoped rule; absent for a node's own control. */
   readonly targetName?: string;
   /** Direct child declarations contributed by this fragment. */

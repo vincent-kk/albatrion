@@ -590,7 +590,7 @@ describe('final-shape exits', () => {
         },
       },
       controls: {
-        children: [
+        fields: [
           {
             targets: ['b'],
             controls: {

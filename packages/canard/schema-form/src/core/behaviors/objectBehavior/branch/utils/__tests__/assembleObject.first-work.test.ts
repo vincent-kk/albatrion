@@ -61,7 +61,7 @@ it('keeps declaration/preferred/extras order when first-child order needs the ge
     schema: {
       schema: {
         type: 'object',
-        options: { propertyKeys: ['extra', 'second'] },
+        options: { propertyOrder: ['extra', 'second'] },
       },
       typeConflict: false,
     },

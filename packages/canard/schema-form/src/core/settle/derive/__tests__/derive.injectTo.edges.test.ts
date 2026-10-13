@@ -311,11 +311,11 @@ describe('injectTo edge boundaries', () => {
     expect(root.structure?.t?.raw).toBe('from-C');
   });
 
-  it('CONTROLS-073 reborn target kind starts its children derived edge anew', () => {
+  it('CONTROLS-073 reborn target kind starts its fields derived edge anew', () => {
     const { root } = createTestTree({
       type: 'object',
       controls: {
-        children: [{ targets: ['target'], controls: { derived: './source' } }],
+        fields: [{ targets: ['target'], controls: { derived: './source' } }],
       },
       properties: {
         enabled: { type: 'boolean' },
@@ -367,7 +367,7 @@ describe('injectTo edge boundaries', () => {
     const { root } = createTestTree({
       type: 'object',
       controls: {
-        children: [{ targets: ['target'], controls: { derived: './source' } }],
+        fields: [{ targets: ['target'], controls: { derived: './source' } }],
       },
       properties: {
         flag: { type: 'boolean' },

@@ -26,7 +26,7 @@ describe('owned-inline ownership and protection', () => {
         type: 'object',
         controls: {
           active: true,
-          children: [{ targets: ['a'], controls: { active: false } }],
+          fields: [{ targets: ['a'], controls: { active: false } }],
         },
         properties: {
           a: { type: 'string' },
@@ -50,7 +50,7 @@ describe('owned-inline ownership and protection', () => {
             },
             controls: {
               active: true,
-              children: [{ targets: ['leaf'], controls: { active: '../on' } }],
+              fields: [{ targets: ['leaf'], controls: { active: '../on' } }],
             },
           },
         },

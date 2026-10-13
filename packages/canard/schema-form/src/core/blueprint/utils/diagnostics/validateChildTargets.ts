@@ -30,7 +30,7 @@ export const validateChildTargets = (context: AnalysisContext): void => {
           );
         discriminator = controls.discriminator;
       }
-      controls?.children?.forEach(
+      controls?.fields?.forEach(
         (entry: { targets: string[] }, index: number) => {
           for (const target of entry.targets)
             if (
@@ -39,7 +39,7 @@ export const validateChildTargets = (context: AnalysisContext): void => {
             )
               throwBlueprintError(
                 BlueprintErrorCode.ChildrenTargetNotFound,
-                `${declaration.schemaPath}/controls/children/${index}`,
+                `${declaration.schemaPath}/controls/fields/${index}`,
                 { target },
                 context.options,
               );

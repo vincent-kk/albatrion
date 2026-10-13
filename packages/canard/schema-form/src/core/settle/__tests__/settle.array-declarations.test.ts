@@ -7,13 +7,13 @@ import { makeFieldNodeTree } from '../../__tests__/makeFieldNodeTree';
 
 // filid:contract settle-array
 describe('array item declarations', () => {
-  it('35C-08 CONTROLS-073 binds visible, readOnly, and children controls to each item', () => {
+  it('35C-08 CONTROLS-073 binds visible, readOnly, and fields controls to each item', () => {
     const { root } = makeFieldNodeTree({
       type: 'array',
       items: {
         type: 'object',
         controls: {
-          children: [{ targets: ['x'], controls: { disabled: './locked' } }],
+          fields: [{ targets: ['x'], controls: { disabled: './locked' } }],
         },
         properties: {
           kind: { type: 'string' },

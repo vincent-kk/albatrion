@@ -54,15 +54,13 @@ describe('array item derivation', () => {
     expect(root.find('/1/target')?.value).toBeUndefined();
   });
 
-  it('35C-08 CONTROLS-073 resolves children derived targets per item', () => {
+  it('35C-08 CONTROLS-073 resolves fields derived targets per item', () => {
     const { root } = makeFieldNodeTree({
       type: 'array',
       items: {
         type: 'object',
         controls: {
-          children: [
-            { targets: ['target'], controls: { derived: './source' } },
-          ],
+          fields: [{ targets: ['target'], controls: { derived: './source' } }],
         },
         properties: {
           source: { type: 'string' },

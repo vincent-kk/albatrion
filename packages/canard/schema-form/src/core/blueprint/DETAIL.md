@@ -18,7 +18,7 @@
 
 - 선언 수집은 소유자별 ordered sink에 기존 DFS 순서로 한 번씩 추가합니다. ID 예약·fragment 연결·capability·게이트·정적 검사는 기존 방문 위치를 유지하며 가상 노드는 수집 함수가 반환한 별도 배열을 소유합니다. 속도 비용은 O(선언 수) 추가이며 재귀 반환 flatten과 build 입력별 재복사를 제거합니다. 메모리 비용은 노드별 기존 집계 배열과 가상 소유 배열을 유지하고 재귀·일반 입력별 중간 결과 배열만 제거합니다. 기록 간 소속 배열 공유·새 보유 색인·캐시·노드 필드는 없고 실제 종단 시간은 105C-01 판정으로 확인합니다(106라운드 선언 수집).
 
-- 단일 무게이트 연언 object는 properties의 eager `Object.entries` 스냅샷을 기존 순서로 직접 자식 build에 전달합니다. children 제어 항목이 있거나 선언이 여러 개·선언 문맥·게이트 경로이면 기존 집계를 유지합니다. 기존 binding 생산·DFS·가상 자식 처리·정적 검사와 청사진의 모든 내용은 같습니다. 속도 비용은 노드당 O(1) 자격 검사와 O(자식 수) 한 순회이며 properties Map의 삽입·조회·두 번째 열거를 제거합니다. 메모리 비용은 기존 eager 스냅샷·자식 입력·binding 결과를 유지하고 적격 object당 properties Map 및 사용되지 않는 tuples Map을 만들지 않습니다. 새 보유 색인·캐시·노드 필드가 없으며 시간과 heap 바이트는 측정 대기입니다(105라운드 자식 열거).
+- 단일 무게이트 연언 object는 properties의 eager `Object.entries` 스냅샷을 기존 순서로 직접 자식 build에 전달합니다. fields 제어 항목이 있거나 선언이 여러 개·선언 문맥·게이트 경로이면 기존 집계를 유지합니다. 기존 binding 생산·DFS·가상 자식 처리·정적 검사와 청사진의 모든 내용은 같습니다. 속도 비용은 노드당 O(1) 자격 검사와 O(자식 수) 한 순회이며 properties Map의 삽입·조회·두 번째 열거를 제거합니다. 메모리 비용은 기존 eager 스냅샷·자식 입력·binding 결과를 유지하고 적격 object당 properties Map 및 사용되지 않는 tuples Map을 만들지 않습니다. 새 보유 색인·캐시·노드 필드가 없으며 시간과 heap 바이트는 측정 대기입니다(105라운드 자식 열거).
 
 - 분석 문맥은 선언마다 그 선언이 수집된 구성 입력의 인덱스(`declarationInputs`)를 기록해, 재귀 적중으로 템플릿을 다시 쓰는 연결이 가리키는 입력의 게이트를 선언별로 찾게 합니다(211C-01). 내부 template tuple은 작성 위치·문맥·최초 등장 gate 순서로 한 번 구성하고 같은 조각의 외부 문자열 표현을 host-bound 키에 조합합니다. 두 Map의 실제 키 바이트·조회 순서와 공개 schema/data 경로는 유지합니다. 속도 비용은 입력·gate·소유 경로 및 문자열 길이에 비례하며 전체 tuple 문자열의 재 JSON 인코딩과 중간 tuple/host 배열을 제거합니다. 메모리 비용은 호출 중 두 키와 인코딩 조각·중복 판정 목록이며 새 보유 캐시·노드 필드는 없습니다. 종단 시간은 105C-01과 그 최소 크기 규칙으로 확인합니다(106라운드 감도 판정).
 
@@ -45,11 +45,11 @@
 - 형 없는 칸은 BLUEPRINT-048·050·051대로 게이트 없는 oneOf·anyOf의 허용 집합을 먼저 합치고, 두 키워드가 함께 있으면 교차한 U에서 null을 뗀 F로 종류를 정합니다. F가 `{object}`·`{array}`면 variant 호스트이고, 다른 종류와 섞이면 오류입니다. 게이트 분기는 U에서 제외하며 재귀 분기·참조는 현재 경로 재진입에서 절단합니다. 분기 없는 `const`·`enum` 칸은 단일 JSON 종류의 원시 리터럴 잎이며 분기 안의 리터럴 전용 칸은 여전히 ⊤입니다. union은 터미널이고 가상 노드를 포함한 종류는 여덟입니다.
 - 게이트 없는 분기는 존재만 더합니다. 공유 노드의 제약·주석·상태·options·presentation은 그 분기가 유일한 선언일 때만 기여합니다. 정적 선언이 없는 이름을 서로 다른 fold의 무게이트 분기가 선언하면 오류입니다.
 - 명시 discriminator만 정적 const·enum을 읽습니다. 정적 allOf·참조를 따라 태그를 교차하고, 끌어올린 선언과 자기 active의 결합을 보존하며 작성 스키마는 바꾸지 않습니다.
-- controls·options와 children 항목의 허용 키는 닫힌 목록입니다. controls의 두 목록은 `core/types/controls.ts`의 `SchemaControls`·`ChildSchemaControls`와 형으로 묶여 있어 어느 쪽이 어긋나도 형 검사가 실패합니다. 닫힌 목록 밖 키는 UNKNOWN_GROUP_KEY, 목록 안 키의 값 모양 오류는 INVALID_CONTROL_SHAPE입니다. injectTo는 함수만 허용하고 정적 대상 분석은 하지 않습니다. presentation은 불투명 병합 데이터로만 취급합니다.
+- controls·options와 fields 항목의 허용 키는 닫힌 목록입니다. controls의 두 목록은 `core/types/controls.ts`의 `SchemaControls`·`ChildSchemaControls`와 형으로 묶여 있어 어느 쪽이 어긋나도 형 검사가 실패합니다. 닫힌 목록 밖 키는 UNKNOWN_GROUP_KEY, 목록 안 키의 값 모양 오류는 INVALID_CONTROL_SHAPE입니다. injectTo는 함수만 허용하고 정적 대상 분석은 하지 않습니다. presentation은 불투명 병합 데이터로만 취급합니다.
 
 ## API Contracts
 
-- 기능 정적 색인은 청사진 identity마다 한 번 만들고 재사용합니다. 상태 키는 표준 `readOnly`와 노드 `controls.visible/readOnly/disabled`를 가진 템플릿 및 조각·부모 `controls.children`이 주소 지정한 직접 자식 경계를 구별합니다. 비활성 선언도 색인에 남겨 마지막 상태 키를 기본값으로 되돌릴 수 있고, 참조 템플릿·배열 아이템은 실제 부모와 이름으로 자식 대상을 판정합니다. 감시는 유효 스키마에 `controls.watch`를 기여할 수 있는 노드/참조 에지 선언을 색인합니다. 리터럴·식은 평가하지 않으며 색인의 메모리는 O(기능 선언 템플릿 + 직접 자식 대상 수)입니다(SETTLE-017, CONTROLS-045, EVENT-064, 65C-02).
+- 기능 정적 색인은 청사진 identity마다 한 번 만들고 재사용합니다. 상태 키는 표준 `readOnly`와 노드 `controls.visible/readOnly/disabled`를 가진 템플릿 및 조각·부모 `controls.fields`이 주소 지정한 직접 자식 경계를 구별합니다. 비활성 선언도 색인에 남겨 마지막 상태 키를 기본값으로 되돌릴 수 있고, 참조 템플릿·배열 아이템은 실제 부모와 이름으로 자식 대상을 판정합니다. 감시는 유효 스키마에 `controls.watch`를 기여할 수 있는 노드/참조 에지 선언을 색인합니다. 리터럴·식은 평가하지 않으며 색인의 메모리는 O(기능 선언 템플릿 + 직접 자식 대상 수)입니다(SETTLE-017, CONTROLS-045, EVENT-064, 65C-02).
 
 - `blueprint(schema, options?)`는 작성 루트와 분석 옵션으로 청사진을 만듭니다. 옵션은 터미널 판정·원자 판정·진단 수집기를 주입합니다. 청사진 결과는 작성 때 받은 `isAtomic`·`isTerminal`의 함수 identity를 보유하여 정적 분석과 런타임 병합이 같은 판정을 사용하게 합니다. 캐시를 사용하는 호출은 호출자가 소유한 캐시를 명시적으로 전달하고, 동일 스키마와 동일 판정 조건에서 결과 참조를 재사용합니다. 캐시 키는 작성 루트와 판정 함수 둘의 identity를 구분하는 규칙을 유지합니다(REACT-003·004, 69C-04). 캐시는 진단 소비자가 나중에 붙어도 루트당 경고를 한 번 수집할 수 있어야 합니다.
 - 진입점이 이름으로 내보내는 `resolveArrayLimits`는 유효 스키마의 `schema`를 받아 `{ min, max }`를 돌려줍니다. `min`은 `minItems ?? 0`, `max`는 `maxItems ?? Infinity`와 닫힌 튜플의 `prefixItems.length` 중 작은 값입니다. 닫힌 튜플은 `prefixItems`가 배열이고 `items`가 없거나 `false`인 경우이며, 조각이 준 길이 제약도 유효 스키마를 통해 셉니다. 코어는 이 한계까지 채우거나 초과 쓰기를 막지 않고, 이름 수출의 의도한 소비자는 07·08단계 렌더 계층의 입력 구성 요소입니다. 레거시는 자기 사본을 유지합니다(NODE-009, WRITE-022, LANDING-085·094·159, 35C-04).
@@ -67,7 +67,7 @@
 - 식 기록은 선언 식별자·작성 위치·호스트·제어 키·상대 의존 경로와 컴파일된 함수를 보존하되 분석 중 실행하지 않습니다. 공유 참조의 식은 연결별 호스트에 다시 결합하며 최초 방문 위치에 고정하지 않습니다.
 - `BlueprintGate.evaluationReads`는 식이 읽는 자리의 정적 목록입니다. 절대 경로는 `#`·`(/)`의 루트 `''`, `/p`·`#/p`의 `'/p'`처럼 절대 경로 문자열로, 상대 경로는 선언 호스트에서 오르는 `..` 횟수(0 이상인 수)로 보존하며 `@`는 제외합니다. 청사진은 유한한 작성 위치마다 한 템플릿만 만들고 발생의 절대 평가 자리 L은 정하지 않습니다. 정착이 각 발생을 만들 때 그 발생 호스트와 모든 읽기 자리의 최저 공통 조상 L을 한 번 계산해 메모합니다. 단일 발생의 L은 종전 정적 규칙과 같습니다(SETTLE-045, BLUEPRINT-030, 26C-04·07).
 - 선언은 노드 범위와 조각 범위를 구분합니다. 조각의 controls는 호스트 유효 스키마에 합치지 않고 직계 선언 자식 대상 규칙으로 보존합니다. 검증 전용 분기는 병합 기여에서 제외하며, 선언 문맥에서는 유일한 선언 자체만 기여하고 그 안의 then 등 overlay 제약을 교차하지 않습니다.
-- children 항목의 active 게이트는 항목을 소유한 선언의 적용 조건을 별도로 보존합니다. 소유 선언이 꺼지면 항목 제어는 적용되지 않으며, 소유 게이트와 active를 단순 AND로 바꾸지 않습니다. 정적 순환 검사는 children 항목 게이트도 절단점으로 인정하고 실제 무한 확장의 판정은 후속 정착 계약을 따릅니다(BLUEPRINT-030).
+- fields 항목의 active 게이트는 항목을 소유한 선언의 적용 조건을 별도로 보존합니다. 소유 선언이 꺼지면 항목 제어는 적용되지 않으며, 소유 게이트와 active를 단순 AND로 바꾸지 않습니다. 정적 순환 검사는 fields 항목 게이트도 절단점으로 인정하고 실제 무한 확장의 판정은 후속 정착 계약을 따릅니다(BLUEPRINT-030).
 - 진단은 코드·schemaPath·세부 정보를 담습니다. 소비자 없는 경고 검사는 수행하지 않으며, 캐시의 늦은 수집은 루트마다 한 번입니다. 검증기 입력에서는 폼 전용 키를 스키마 위치에서만 제거하고 데이터 값 내부 키를 보존합니다.
 - 내부 참조의 URI 디코딩 또는 JSON Pointer 해석이 실패하면 작성 위치와 원인을 보존한 UNKNOWN_JSON_SCHEMA로 보고합니다.
 - 터미널 하위 예약 키 경고는 터미널 노드의 schemaPath별 한 기록에 keys·paths를 모읍니다. 같은 코드와 schemaPath의 중복을 억제하며 인라인 하위만 조사하고 참조 대상은 따라가지 않습니다(BLUEPRINT-044).
@@ -80,7 +80,7 @@
 
 ### owned-inline-memberships — 기록별 소유와 개발 보호
 
-- 59종·가상·재바인딩·validationOnly·children-control·discriminator·compiled expression·지연 slot에서 두 기록이 소속 배열을 공유하지 않습니다. 내부 기록은 개발에서만 동결하고 appliesWhen은 두 모드에서 보호합니다. EMPTY_INDEX 공유와 node-local memo를 유지합니다.
+- 59종·가상·재바인딩·validationOnly·fields-control·discriminator·compiled expression·지연 slot에서 두 기록이 소속 배열을 공유하지 않습니다. 내부 기록은 개발에서만 동결하고 appliesWhen은 두 모드에서 보호합니다. EMPTY_INDEX 공유와 node-local memo를 유지합니다.
 
 ### owned-inline-differential — 구현 전 HEAD와 동결 계수
 
@@ -96,7 +96,7 @@
 
 ### branchless-proof — 도달한 모든 선언의 분기 부재
 
-- 참조 대상·allOf·items·prefixItems·옛 additionalItems·인라인 자식·가상 선언 및 children 제어에 숨은 분기를 모두 보수적으로 판정합니다. 미사용 정의와 터미널 아래는 기존 선언 수집 및 경고 정책을 따릅니다.
+- 참조 대상·allOf·items·prefixItems·옛 additionalItems·인라인 자식·가상 선언 및 fields 제어에 숨은 분기를 모두 보수적으로 판정합니다. 미사용 정의와 터미널 아래는 기존 선언 수집 및 경고 정책을 따릅니다.
 
 ### branchless-equivalence — 정적 계약과 관측 동등성
 
@@ -159,7 +159,7 @@
 
 ### diagnostics — 닫힌 목록과 수집
 
-- ERROR-164의 현행 청사진 코드마다 사례가 있고, 보충과 폐기된 코드의 제외를 반영합니다. 값 모양 오류의 새 코드 INVALID_CONTROL_SHAPE(그룹·injectTo·children·children 항목·판별 키 모양)와 닫힌 목록 밖 키의 UNKNOWN_GROUP_KEY를 나눠 검증합니다. 터미널 하위 예약 키는 인라인 하위만 검사하고 참조를 따라가지 않습니다.
+- ERROR-164의 현행 청사진 코드마다 사례가 있고, 보충과 폐기된 코드의 제외를 반영합니다. 값 모양 오류의 새 코드 INVALID_CONTROL_SHAPE(그룹·injectTo·fields·fields 항목·판별 키 모양)와 닫힌 목록 밖 키의 UNKNOWN_GROUP_KEY를 나눠 검증합니다. 터미널 하위 예약 키는 인라인 하위만 검사하고 참조를 따라가지 않습니다.
 
 ### recursion — 유한 분석과 형상
 

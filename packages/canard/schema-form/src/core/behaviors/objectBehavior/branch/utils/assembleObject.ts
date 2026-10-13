@@ -118,7 +118,7 @@ export const assembleObject: Behavior['assemble'] = (
       return patch ?? previous;
     }
   }
-  const preferred = getStaticChoices(node.schema).propertyKeys;
+  const preferred = getStaticChoices(node.schema).propertyOrder;
   const entries = node.blueprintNode.childEntries;
   if (
     previous === undefined &&

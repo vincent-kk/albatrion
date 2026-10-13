@@ -2,6 +2,7 @@ import { describe, expectTypeOf, it } from 'vitest';
 
 import type {
   BasicSchema,
+  JSONSchema,
   NonNullableArraySchema,
   NonNullableObjectSchema,
   NullableArraySchema,
@@ -76,5 +77,38 @@ describe('schema authoring surface', () => {
     expectTypeOf<Terminal<NullableArraySchema>>().toEqualTypeOf<
       boolean | undefined
     >();
+  });
+
+  it('declares options.propertyOrder as the emitted key order on object schemas', () => {
+    type PropertyOrder<
+      Schema extends { options?: { propertyOrder?: unknown } },
+    > = NonNullable<Schema['options']>['propertyOrder'];
+    expectTypeOf<PropertyOrder<NonNullableObjectSchema>>().toEqualTypeOf<
+      readonly string[] | undefined
+    >();
+    expectTypeOf<PropertyOrder<NullableObjectSchema>>().toEqualTypeOf<
+      readonly string[] | undefined
+    >();
+  });
+
+  it('declares options.virtual groups whose entries name their fields', () => {
+    type Virtual<Schema extends { options?: { virtual?: unknown } }> =
+      NonNullable<NonNullable<Schema['options']>['virtual']>;
+    expectTypeOf<
+      Virtual<NonNullableObjectSchema>[string]['fields']
+    >().toEqualTypeOf<readonly string[]>();
+    expectTypeOf<
+      Virtual<NullableObjectSchema>[string]['fields']
+    >().toEqualTypeOf<readonly string[]>();
+  });
+
+  it('keeps the virtual node schema out of authoring', () => {
+    expectTypeOf<Extract<JSONSchema['type'], 'virtual'>>().toBeNever();
+    // @ts-expect-error VirtualNodeSchema is internal and has no export.
+    type RemovedSchema = import('../index').VirtualSchema;
+    expectTypeOf<RemovedSchema>().toBeAny();
+    // @ts-expect-error isVirtualSchema is removed from the types barrel.
+    type RemovedGuard = typeof import('../index').isVirtualSchema;
+    expectTypeOf<RemovedGuard>().toBeAny();
   });
 });

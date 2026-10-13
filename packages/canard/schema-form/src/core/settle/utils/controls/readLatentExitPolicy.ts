@@ -1,5 +1,5 @@
 /** Exit policy specificity shared by latent decisions. */
-const EXIT_LAYERS = ['node', 'children', 'fragment'] as const;
+const EXIT_LAYERS = ['node', 'fields', 'fragment'] as const;
 
 /**
  * Resolve a latent occurrence's last-live explicit decisions.
@@ -9,7 +9,7 @@ const EXIT_LAYERS = ['node', 'children', 'fragment'] as const;
  */
 export const readLatentExitPolicy = (
   decisions:
-    | readonly { layer: 'node' | 'children' | 'fragment'; clear: boolean }[]
+    | readonly { layer: 'node' | 'fields' | 'fragment'; clear: boolean }[]
     | undefined,
   inherited: boolean,
 ): boolean => {

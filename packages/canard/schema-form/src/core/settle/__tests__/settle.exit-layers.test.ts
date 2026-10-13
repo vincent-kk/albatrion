@@ -31,13 +31,11 @@ describe('settled exit policy layers', () => {
     ).toBe('held');
   });
 
-  it('WRITE-031 children layer clears a child when Form keeps it', () => {
+  it('WRITE-031 fields layer clears a child when Form keeps it', () => {
     const { root } = createTestTree({
       type: 'object',
       controls: {
-        children: [
-          { targets: ['secret'], controls: { unsetOnInactive: true } },
-        ],
+        fields: [{ targets: ['secret'], controls: { unsetOnInactive: true } }],
       },
       properties: {
         flag: { type: 'boolean' },
@@ -107,11 +105,11 @@ describe('settled exit policy layers', () => {
     ).toBe(false);
   });
 
-  it('WRITE-031 same-layer keep defeats another children item clear', () => {
+  it('WRITE-031 same-layer keep defeats another fields entry clear', () => {
     const { root } = createTestTree({
       type: 'object',
       controls: {
-        children: [
+        fields: [
           { targets: ['secret'], controls: { unsetOnInactive: true } },
           { targets: ['secret'], controls: { unsetOnInactive: false } },
         ],
@@ -179,9 +177,7 @@ describe('settled exit policy layers', () => {
     const { root } = createTestTree({
       type: 'object',
       controls: {
-        children: [
-          { targets: ['branch'], controls: { unsetOnInactive: true } },
-        ],
+        fields: [{ targets: ['branch'], controls: { unsetOnInactive: true } }],
       },
       properties: {
         flag: { type: 'boolean' },
@@ -266,13 +262,11 @@ describe('settled exit policy layers', () => {
     ).toBe('K');
   });
 
-  it('WRITE-034 latent children item keep overrides a departing parent clear', () => {
+  it('WRITE-034 latent fields entry keep overrides a departing parent clear', () => {
     const { root } = createTestTree({
       type: 'object',
       controls: {
-        children: [
-          { targets: ['branch'], controls: { unsetOnInactive: true } },
-        ],
+        fields: [{ targets: ['branch'], controls: { unsetOnInactive: true } }],
       },
       properties: {
         flag: { type: 'boolean' },
@@ -280,7 +274,7 @@ describe('settled exit policy layers', () => {
           type: 'object',
           controls: {
             active: '../flag',
-            children: [
+            fields: [
               { targets: ['keep'], controls: { unsetOnInactive: false } },
             ],
           },
@@ -312,7 +306,7 @@ describe('settled exit policy layers', () => {
     const { root } = createTestTree({
       type: 'object',
       controls: {
-        children: [
+        fields: [
           { targets: ['secret'], controls: { unsetOnInactive: './clear' } },
         ],
       },

@@ -1637,9 +1637,9 @@ export const FormWithCustomInput = () => {
 
 #### 계층 규칙
 
-`controls`는 Node 자신, 그 Node를 가리키는 부모의 `controls.children` 항목, 그 Node를 선언한 조각(예: `allOf` 항목)에 선언할 수 있습니다. 계층은 서로를 덮어쓰지 않고 합쳐집니다. 표준 `readOnly`와 `readOnly` / `disabled` 제어는 OR로, `visible`은 AND로 결합합니다.
+`controls`는 Node 자신, 그 Node를 가리키는 부모의 `controls.fields` 항목, 그 Node를 선언한 조각(예: `allOf` 항목)에 선언할 수 있습니다. 계층은 서로를 덮어쓰지 않고 합쳐집니다. 표준 `readOnly`와 `readOnly` / `disabled` 제어는 OR로, `visible`은 AND로 결합합니다.
 
-`default`는 Node 자신의 `controls.default`, 부모의 `children` 항목, 조각의 `controls.default`, 표준 `default` 순으로 우선합니다.
+`default`는 Node 자신의 `controls.default`, 부모의 `fields` 항목, 조각의 `controls.default`, 표준 `default` 순으로 우선합니다.
 
 #### 기본 예제
 

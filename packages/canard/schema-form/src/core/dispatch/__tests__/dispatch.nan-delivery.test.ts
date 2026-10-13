@@ -21,7 +21,7 @@ describe('66C-01 SETTLE-043 sameValue judges delivery changes', () => {
     const { root } = createDispatchTree({
       type: 'object',
       controls: {
-        children: [{ targets: ['c'], controls: { disabled: '#/flag' } }],
+        fields: [{ targets: ['c'], controls: { disabled: '#/flag' } }],
       },
       properties: { flag: { type: 'boolean' }, c: { type: 'number' } },
     });

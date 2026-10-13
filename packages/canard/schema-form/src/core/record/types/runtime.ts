@@ -52,7 +52,7 @@ interface LatentRawMetadata {
   readonly order: readonly number[];
   /** Last-live explicit exit decisions retained after rule baselines are pruned. */
   readonly exitLayers?: readonly {
-    readonly layer: 'node' | 'children' | 'fragment';
+    readonly layer: 'node' | 'fields' | 'fragment';
     readonly clear: boolean;
   }[];
 }

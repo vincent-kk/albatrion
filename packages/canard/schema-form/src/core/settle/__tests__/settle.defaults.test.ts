@@ -29,7 +29,7 @@ describe('settled default sources', () => {
     const { root } = createTestTree({
       type: 'object',
       controls: {
-        children: [
+        fields: [
           { targets: ['own', 'item'], controls: { default: 'item-first' } },
           { targets: ['own', 'item'], controls: { default: 'item-last' } },
         ],

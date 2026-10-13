@@ -19,7 +19,7 @@ interface LatentEntry {
   readonly order: readonly number[];
   /** Explicit decisions saved when the occurrence left the shape. */
   readonly exitLayers?: readonly {
-    layer: 'node' | 'children' | 'fragment';
+    layer: 'node' | 'fields' | 'fragment';
     clear: boolean;
   }[];
 }

@@ -131,14 +131,12 @@ describe('context change settlement', () => {
     expect(suppressed.find('/target')?.value).toBe('manual');
   });
 
-  it('SETTLE-043 children derived watches the context of its live target kind', () => {
+  it('SETTLE-043 fields derived watches the context of its live target kind', () => {
     const root = createContextTree(
       {
         type: 'object',
         controls: {
-          children: [
-            { targets: ['target'], controls: { derived: './source' } },
-          ],
+          fields: [{ targets: ['target'], controls: { derived: './source' } }],
         },
         properties: {
           source: { type: 'number' },

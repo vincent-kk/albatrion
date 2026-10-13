@@ -84,11 +84,11 @@ describe('branchless declaration reach and independent capabilities', () => {
       }
   });
 
-  it('keeps children active gates and ignores only positions collection never reaches', () => {
+  it('keeps fields active gates and ignores only positions collection never reaches', () => {
     const controlled = blueprint({
       type: 'object',
       properties: { a: { type: 'number' } },
-      controls: { children: [{ targets: ['a'], controls: { active: false } }] },
+      controls: { fields: [{ targets: ['a'], controls: { active: false } }] },
     });
     expect(Reflect.get(controlled, 'capabilities').branchless).toBe(false);
     const ignored = blueprint({

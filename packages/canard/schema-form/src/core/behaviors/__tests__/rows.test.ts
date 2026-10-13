@@ -224,7 +224,7 @@ describe('behavior rows', () => {
 
   it('assembles current object children in preferred, declaration, extras order', () => {
     const node = makeRecord(objectBehavior.branch, undefined, {
-      propertyKeys: ['second'],
+      propertyOrder: ['second'],
     });
     const children = [
       { name: 'first', emit: 1 },

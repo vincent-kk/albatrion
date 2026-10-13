@@ -21,7 +21,7 @@ const declarationIds = (node: BlueprintNode): readonly number[] => {
 
 /** Shape data needed to resolve a declaration for a live or latent occurrence. */
 export interface ControlTarget<Self> {
-  /** Decoded direct-child name used by controls.children. */
+  /** Decoded direct-child name used by controls.fields. */
   readonly name: string;
   /** Absolute occurrence path used by committed declaration IDs. */
   readonly path: string;
@@ -38,7 +38,7 @@ export interface ControlTarget<Self> {
 /** One selected declaration and the host that owns its expression paths. */
 export interface ControlLayer<Self> {
   /** Relative specificity of this declaration for its target. */
-  readonly layer: 'node' | 'children' | 'fragment';
+  readonly layer: 'node' | 'fields' | 'fragment';
   /** Authored owner used to identify a compiled expression. */
   readonly declarationId: number;
   /** Original control group address retained for expression matching. */
@@ -128,10 +128,10 @@ export const getControlLayers = <Self extends ControlTarget<Self>>(
         controls,
         host: parent,
       });
-    const children: unknown = Reflect.get(controls, 'children');
-    if (!isArray(children)) continue;
-    for (let index = 0; index < children.length; index++) {
-      const item: unknown = children[index];
+    const fields: unknown = Reflect.get(controls, 'fields');
+    if (!isArray(fields)) continue;
+    for (let index = 0; index < fields.length; index++) {
+      const item: unknown = fields[index];
       if (!item || typeof item !== 'object') continue;
       const targets: unknown = Reflect.get(item, 'targets');
       if (!isArray(targets) || !targets.includes(node.name)) continue;
@@ -142,9 +142,9 @@ export const getControlLayers = <Self extends ControlTarget<Self>>(
         !isArray(itemControls)
       )
         groups.push({
-          layer: 'children',
+          layer: 'fields',
           declarationId: declaration.id,
-          schemaPath: `${declaration.schemaPath}/controls/children/${index}/controls`,
+          schemaPath: `${declaration.schemaPath}/controls/fields/${index}/controls`,
           controls: itemControls,
           host: parent,
         });

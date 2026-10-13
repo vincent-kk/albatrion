@@ -50,7 +50,7 @@ describe('settle commit', () => {
   it('SETTLE-042 and 18C-39 serialization preserve preferred, declared, and extra key order', () => {
     const { root } = createTestTree({
       type: 'object',
-      options: { propertyKeys: ['z', 'a'] },
+      options: { propertyOrder: ['z', 'a'] },
       properties: {
         a: { type: 'string' },
         b: { type: 'string' },
@@ -102,7 +102,7 @@ describe('settle commit', () => {
       allOf: [
         {
           controls: { active: './flag' },
-          options: { propertyKeys: ['b', 'a'] },
+          options: { propertyOrder: ['b', 'a'] },
         },
       ],
     });

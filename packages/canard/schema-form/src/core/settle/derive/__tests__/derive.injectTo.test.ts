@@ -75,11 +75,11 @@ describe('injectTo and same-target settlement', () => {
     expect(root.structure?.target?.raw).toBe('second');
   });
 
-  it('SETTLE-004 layer chooses node controls over a children item', () => {
+  it('SETTLE-004 layer chooses node controls over a fields entry', () => {
     const { root } = createTestTree({
       type: 'object',
       controls: {
-        children: [
+        fields: [
           {
             targets: ['source'],
             controls: {
@@ -97,11 +97,11 @@ describe('injectTo and same-target settlement', () => {
     expect(root.structure?.source?.raw).toBe('A node');
   });
 
-  it('SETTLE-004 layer chooses a children item over a later fragment', () => {
+  it('SETTLE-004 layer chooses a fields entry over a later fragment', () => {
     const { root } = createTestTree({
       type: 'object',
       controls: {
-        children: [
+        fields: [
           {
             targets: ['target'],
             controls: {

@@ -53,7 +53,7 @@ describe('derive rule locality', () => {
           H: {
             type: 'object',
             controls: {
-              children: [{ targets: ['x'], controls: { derived: '../t' } }],
+              fields: [{ targets: ['x'], controls: { derived: '../t' } }],
             },
             properties: {
               x: {

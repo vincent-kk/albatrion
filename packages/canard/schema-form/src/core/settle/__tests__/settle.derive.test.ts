@@ -251,11 +251,11 @@ describe('settle derivation', () => {
     expect(root.runtime.settlementTrace).not.toBe(first);
   });
 
-  it('CONTROLS-073 children layer derives each named child from its parent host', () => {
+  it('CONTROLS-073 fields layer derives each named child from its parent host', () => {
     const { root } = createTestTree({
       type: 'object',
       controls: {
-        children: [{ targets: ['target'], controls: { derived: './source' } }],
+        fields: [{ targets: ['target'], controls: { derived: './source' } }],
       },
       properties: {
         source: { type: 'string' },

@@ -11,6 +11,7 @@ import { isArray } from '@winglet/common-utils/filter';
 import type { SettlementContext } from '../../../type';
 import type { ChildSelectionRuntimeNode } from './ChildSelectionRuntimeNode';
 import { normalizeSelectionObservation } from './normalizeSelectionObservation';
+import { renameControlsFields } from './renameControlsFields';
 import { renameFieldNodeNames } from './renameFieldNodeNames';
 import { rewordControlsMessages } from './rewordControlsMessages';
 import type { ChildSelectionHistory } from './runChildSelectionHistory';
@@ -154,17 +155,20 @@ export const buildChildSelectionRuntime = async (
               let contents = overrides[path]
                 ? readFileSync(overrides[path], 'utf8')
                 : revision && !path.includes('/__tests__/')
-                  ? rewordControlsMessages(
-                      renameFieldNodeNames(
-                        childProcess.execFileSync(
-                          'git',
-                          [
-                            'show',
-                            `${revision}:${pinnedPaths?.get(path) ?? path}`,
-                          ],
-                          { cwd: worktree, encoding: 'utf8', timeout: 10000 },
+                  ? renameControlsFields(
+                      rewordControlsMessages(
+                        renameFieldNodeNames(
+                          childProcess.execFileSync(
+                            'git',
+                            [
+                              'show',
+                              `${revision}:${pinnedPaths?.get(path) ?? path}`,
+                            ],
+                            { cwd: worktree, encoding: 'utf8', timeout: 10000 },
+                          ),
                         ),
                       ),
+                      path,
                     )
                   : readFileSync(args.path, 'utf8');
               if (

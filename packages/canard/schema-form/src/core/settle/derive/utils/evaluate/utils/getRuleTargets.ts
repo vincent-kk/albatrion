@@ -5,7 +5,7 @@ import type { DeriveRule, DeriveState } from '../../../type';
 import { getSelectedDeclarationIds } from './getSelectedDeclarationIds';
 
 /**
- * Resolve a node, parent children item, or fragment scope in the live shape.
+ * Resolve a node, parent fields entry, or fragment scope in the live shape.
  * @param source - Live declaration host that owns the authored control
  * @param rule - Template and direct-child selection for the control
  * @param state - Active declaration IDs for the current complete tree

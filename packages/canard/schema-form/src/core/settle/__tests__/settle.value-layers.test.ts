@@ -6,11 +6,11 @@ import { loadFieldNodeAtMount, writeFieldNode } from '../index';
 import { createTestTree } from './fixtures/createTestTree';
 
 describe('settled value rule layers', () => {
-  it('CONTROLS-073 children derived reaches each addressed target', () => {
+  it('CONTROLS-073 fields derived reaches each addressed target', () => {
     const { root } = createTestTree({
       type: 'object',
       controls: {
-        children: [{ targets: ['a', 'b'], controls: { derived: './source' } }],
+        fields: [{ targets: ['a', 'b'], controls: { derived: './source' } }],
       },
       properties: {
         source: { type: 'string' },
@@ -60,13 +60,11 @@ describe('settled value rule layers', () => {
     expect(root.structure?.outside?.raw).toBeUndefined();
   });
 
-  it('CONTROLS-073 children derived evaluates once for all targets', () => {
+  it('CONTROLS-073 fields derived evaluates once for all targets', () => {
     const { root } = createTestTree({
       type: 'object',
       controls: {
-        children: [
-          { targets: ['a', 'b'], controls: { derived: '@.derive()' } },
-        ],
+        fields: [{ targets: ['a', 'b'], controls: { derived: '@.derive()' } }],
       },
       properties: { a: { type: 'string' }, b: { type: 'string' } },
     });
@@ -80,11 +78,11 @@ describe('settled value rule layers', () => {
     ]);
   });
 
-  it('CONTROLS-073 children unsetValue evaluates one expression for all targets', () => {
+  it('CONTROLS-073 fields unsetValue evaluates one expression for all targets', () => {
     const { root } = createTestTree({
       type: 'object',
       controls: {
-        children: [
+        fields: [
           { targets: ['a', 'b'], controls: { unsetValue: '@.clear()' } },
         ],
       },
@@ -100,11 +98,11 @@ describe('settled value rule layers', () => {
     ]);
   });
 
-  it('CONTROLS-073 children resetInteraction evaluates once for all targets', () => {
+  it('CONTROLS-073 fields resetInteraction evaluates once for all targets', () => {
     const { root } = createTestTree({
       type: 'object',
       controls: {
-        children: [
+        fields: [
           {
             targets: ['a', 'b'],
             controls: { resetInteraction: './trigger && @.reset()' },

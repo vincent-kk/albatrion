@@ -72,7 +72,7 @@ it('binds parent-scoped rules and target watches without treating a path prefix 
         sink: { type: 'number', controls: { derived: '../target' } },
       },
       controls: {
-        children: [
+        fields: [
           { targets: ['target'], controls: { derived: './source + 1' } },
         ],
       },

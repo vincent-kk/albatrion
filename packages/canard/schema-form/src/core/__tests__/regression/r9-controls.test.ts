@@ -7,7 +7,7 @@ const controlsTree = () => {
     type: 'object',
     readOnly: true,
     controls: {
-      children: [
+      fields: [
         {
           targets: ['x'],
           controls: {

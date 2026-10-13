@@ -28,7 +28,7 @@ describe('settled controls', () => {
     const { root } = createTestTree({
       type: 'object',
       controls: {
-        children: [{ targets: ['field'], controls: { readOnly: true } }],
+        fields: [{ targets: ['field'], controls: { readOnly: true } }],
       },
       properties: { field: { type: 'string', controls: { readOnly: false } } },
     });
@@ -40,7 +40,7 @@ describe('settled controls', () => {
     const { root } = createTestTree({
       type: 'object',
       controls: {
-        children: [{ targets: ['field'], controls: { disabled: false } }],
+        fields: [{ targets: ['field'], controls: { disabled: false } }],
       },
       properties: { field: { type: 'string', controls: { disabled: true } } },
     });
@@ -52,7 +52,7 @@ describe('settled controls', () => {
     const { root } = createTestTree({
       type: 'object',
       controls: {
-        children: [{ targets: ['field'], controls: { visible: false } }],
+        fields: [{ targets: ['field'], controls: { visible: false } }],
       },
       properties: { field: { type: 'string', controls: { visible: true } } },
     });
@@ -75,11 +75,11 @@ describe('settled controls', () => {
     expect(root.structure?.field?.readOnly).toBe(true);
   });
 
-  it('CONTROLS-073 children item expression uses its host for every target', () => {
+  it('CONTROLS-073 fields entry expression uses its host for every target', () => {
     const { root } = createTestTree({
       type: 'object',
       controls: {
-        children: [{ targets: ['a', 'b'], controls: { disabled: './lock' } }],
+        fields: [{ targets: ['a', 'b'], controls: { disabled: './lock' } }],
       },
       properties: {
         lock: { type: 'boolean' },
@@ -100,7 +100,7 @@ describe('settled controls', () => {
     const { root } = createTestTree({
       type: 'object',
       controls: {
-        children: [{ targets: ['target'], controls: { disabled: './flag' } }],
+        fields: [{ targets: ['target'], controls: { disabled: './flag' } }],
       },
       properties: {
         flag: { type: 'boolean' },

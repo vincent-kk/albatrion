@@ -193,7 +193,7 @@ describe('derive expression failures', () => {
     const { root } = createTestTree({
       type: 'object',
       controls: {
-        children: [{ targets: ['v'], controls: { derived: './source' } }],
+        fields: [{ targets: ['v'], controls: { derived: './source' } }],
       },
       properties: { source: { type: 'string' }, real: { type: 'string' } },
       options: { virtual: { v: { fields: ['real'] } } },

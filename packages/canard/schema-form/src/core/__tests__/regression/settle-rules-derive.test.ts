@@ -50,7 +50,7 @@ describe('round18 derive settlement rules', () => {
     const nodeLayer = makeFieldNodeTree({
       type: 'object',
       controls: {
-        children: [
+        fields: [
           { targets: ['target'], controls: { derived: './source + " child"' } },
         ],
       },

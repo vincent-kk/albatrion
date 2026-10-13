@@ -4,7 +4,7 @@ import type { ControlLayer } from './getControlLayers';
 import { getExitPolicyKey } from './getExitPolicyKey';
 
 /** Exit policy specificity; each layer resolves keep before clear. */
-const EXIT_LAYERS = ['node', 'children', 'fragment'] as const;
+const EXIT_LAYERS = ['node', 'fields', 'fragment'] as const;
 
 /**
  * Resolve committed exit values for the nearest authored control layer.

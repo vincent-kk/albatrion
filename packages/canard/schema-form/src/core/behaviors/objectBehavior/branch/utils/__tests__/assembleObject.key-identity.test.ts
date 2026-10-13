@@ -110,7 +110,7 @@ it('rebuilds authored key order when schema identity changes', () => {
   node.schema = {
     schema: {
       type: 'object',
-      options: { propertyKeys: ['group', '01', '__proto__', 'constructor'] },
+      options: { propertyOrder: ['group', '01', '__proto__', 'constructor'] },
     },
     typeConflict: false,
   } as typeof node.schema;

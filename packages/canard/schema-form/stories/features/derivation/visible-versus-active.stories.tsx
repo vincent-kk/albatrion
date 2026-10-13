@@ -24,8 +24,8 @@ export const RetainInactive: Story = createFeatureStory(findScenario(exitScenari
 /** Shared scenario `LANDING-032 branch roundtrip preserves user input and excludes inactive output`. */
 export const BranchRoundTrip: Story = createFeatureStory(findScenario([branchExitScenario], 'LANDING-032 branch roundtrip preserves user input and excludes inactive output'));
 
-/** Shared scenario `controls.children-exit-policy-layer`. */
-export const ChildrenExitPolicyLayer: Story = createFeatureStory(findScenario(controlsScenarios, 'controls.children-exit-policy-layer'));
+/** Shared scenario `controls.fields-exit-policy-layer`. */
+export const ChildrenExitPolicyLayer: Story = createFeatureStory(findScenario(controlsScenarios, 'controls.fields-exit-policy-layer'));
 
 /** Shared scenario `controls.fragment-exit-policy-layer`. */
 export const FragmentExitPolicyLayer: Story = createFeatureStory(findScenario(controlsScenarios, 'controls.fragment-exit-policy-layer'));

@@ -33,7 +33,7 @@ interface BlueprintGateBase {
   readonly evaluationReads: readonly (string | number)[];
   /** Select the complementary if branch without executing it. */
   readonly negated?: boolean;
-  /** A children rule applies only while its owning declaration is active. */
+  /** A `controls.fields` rule applies only while its owning declaration is active. */
   readonly appliesWhen?: readonly BlueprintGate[];
 }
 

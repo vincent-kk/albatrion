@@ -53,7 +53,7 @@ it('keeps gated and multiple-contribution hosts on the existing aggregation path
     {
       type: 'object',
       properties: { a: { type: 'string' } },
-      controls: { children: [{ targets: ['a'], controls: { active: true } }] },
+      controls: { fields: [{ targets: ['a'], controls: { active: true } }] },
     },
     {
       type: 'object',

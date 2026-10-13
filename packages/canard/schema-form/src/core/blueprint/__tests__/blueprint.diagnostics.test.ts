@@ -12,17 +12,39 @@ import {
 
 // filid:contract diagnostics
 describe('blueprint diagnostic data and late collection', () => {
-  it('rejects unknown node, fragment, and children control keys', () => {
+  it('rejects the removed controls.children key as UNKNOWN_GROUP_KEY', () => {
+    const collect = vi.fn();
+    expect(() =>
+      blueprint(
+        {
+          type: 'object',
+          properties: { a: { type: 'string' } },
+          controls: { children: [{ targets: ['a'], controls: {} }] },
+        },
+        { collect },
+      ),
+    ).toThrow(
+      expect.objectContaining({ specific: BlueprintErrorCode.UnknownGroupKey }),
+    );
+    expect(collect).toHaveBeenCalledWith({
+      code: BlueprintErrorCode.UnknownGroupKey,
+      level: 'error',
+      schemaPath: '#/controls/children',
+      details: { group: 'controls', key: 'children' },
+    });
+  });
+  it('rejects unknown node, fragment, and fields control keys', () => {
     for (const schema of [
       { type: 'string', controls: { typo: true } },
       { type: 'object', allOf: [{ controls: { watch: [] } }] },
       {
         type: 'object',
         controls: {
-          children: [{ targets: [], controls: { injectTo: () => ({}) } }],
+          fields: [{ targets: [], controls: { injectTo: () => ({}) } }],
         },
       },
       { type: 'string', options: { unknown: true } },
+      { type: 'object', options: { propertyKeys: ['a'] } },
     ])
       expect(() => blueprint(schema)).toThrow(
         expect.objectContaining({
@@ -45,7 +67,7 @@ describe('blueprint diagnostic data and late collection', () => {
       }),
     );
   });
-  it('validates children targets after gathering conditional and virtual names', () => {
+  it('validates fields targets after gathering conditional and virtual names', () => {
     expect(() =>
       blueprint({
         type: 'object',
@@ -54,7 +76,7 @@ describe('blueprint diagnostic data and late collection', () => {
         then: { properties: { b: { type: 'string' } } },
         options: { virtual: { pair: { fields: ['a', 'b'] } } },
         controls: {
-          children: [
+          fields: [
             { targets: ['a', 'b', 'pair'], controls: { visible: true } },
           ],
         },
@@ -63,7 +85,7 @@ describe('blueprint diagnostic data and late collection', () => {
     expect(() =>
       blueprint({
         type: 'object',
-        controls: { children: [{ targets: ['missing'], controls: {} }] },
+        controls: { fields: [{ targets: ['missing'], controls: {} }] },
       }),
     ).toThrow(
       expect.objectContaining({
@@ -71,13 +93,13 @@ describe('blueprint diagnostic data and late collection', () => {
       }),
     );
   });
-  it('rejects children declarations on terminal hosts', () => {
+  it('rejects fields declarations on terminal hosts', () => {
     expect(() =>
       blueprint({
         type: 'object',
         options: { terminal: true },
         properties: { a: { type: 'string' } },
-        controls: { children: [{ targets: ['a'], controls: {} }] },
+        controls: { fields: [{ targets: ['a'], controls: {} }] },
       }),
     ).toThrow(
       expect.objectContaining({
@@ -347,18 +369,18 @@ describe('blueprint diagnostic data and late collection', () => {
       { group: 'controls', key: 'injectTo', expected: 'function' },
     ],
     [
-      'children that is not an array',
-      { type: 'object', controls: { children: {} } },
-      '#/controls/children',
-      { group: 'controls', key: 'children', expected: 'array' },
+      'fields that is not an array',
+      { type: 'object', controls: { fields: {} } },
+      '#/controls/fields',
+      { group: 'controls', key: 'fields', expected: 'array' },
     ],
     [
-      'a children entry with the wrong shape',
-      { type: 'object', controls: { children: [{ targets: 'a' }] } },
-      '#/controls/children/0',
+      'a fields entry with the wrong shape',
+      { type: 'object', controls: { fields: [{ targets: 'a' }] } },
+      '#/controls/fields/0',
       {
         group: 'controls',
-        key: 'children',
+        key: 'fields',
         expected: '{ targets: string[], controls? }',
       },
     ],

@@ -45,19 +45,19 @@ export const compileBlueprintExpressions = (
       visited.add(declaration.id);
       const controls = readSchemaObject(declaration.schema).controls;
       if (!controls) continue;
-      const children = controls.children;
+      const fields = controls.fields;
       for (
         let groupIndex = -1;
-        groupIndex < (children?.length ?? 0);
+        groupIndex < (fields?.length ?? 0);
         groupIndex++
       ) {
         const groupControls =
-          groupIndex < 0 ? controls : children[groupIndex].controls;
+          groupIndex < 0 ? controls : fields[groupIndex].controls;
         if (!groupControls) continue;
         const groupPath =
           groupIndex < 0
             ? `${declaration.schemaPath}/controls`
-            : `${declaration.schemaPath}/controls/children/${groupIndex}/controls`;
+            : `${declaration.schemaPath}/controls/fields/${groupIndex}/controls`;
         const watch = groupControls.watch;
         if (watch !== undefined) {
           const paths = isArray(watch) ? watch : [watch];

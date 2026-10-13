@@ -35,13 +35,11 @@ describe('context state keys', () => {
     }
   });
 
-  it('CONTROLS-073 evaluates a children item once for all addressed siblings', () => {
+  it('CONTROLS-073 evaluates a fields entry once for all addressed siblings', () => {
     const { root } = createTestTree({
       type: 'object',
       controls: {
-        children: [
-          { targets: ['a', 'b'], controls: { readOnly: '@.locked()' } },
-        ],
+        fields: [{ targets: ['a', 'b'], controls: { readOnly: '@.locked()' } }],
       },
       properties: { a: { type: 'string' }, b: { type: 'string' } },
     });

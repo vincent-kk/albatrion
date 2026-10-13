@@ -30,10 +30,6 @@ import type {
   VirtualNodeValue,
 } from './value';
 
-export const isVirtualSchema = (schema: {
-  type: string;
-}): schema is VirtualSchema => schema.type === 'virtual';
-
 export type JSONSchemaType = Extract<JSONSchemaWithVirtual['type'], string>;
 
 /** Schema inference for non-nullable values */
@@ -51,10 +47,10 @@ type InferNonNullableSchema<
         : Value extends ObjectValue
           ? NonNullableObjectSchema<Options>
           : Value extends VirtualNodeValue
-            ? VirtualSchema<Options>
+            ? VirtualNodeSchema<Options>
             : JSONSchemaWithVirtual<Options>;
 
-/** Schema inference for nullable values (excluding VirtualSchema - cannot be nullable) */
+/** Schema inference for nullable values (a virtual node is never nullable) */
 type InferNullableSchema<
   Value,
   Options extends Dictionary = object,
@@ -178,7 +174,7 @@ export type JSONSchemaWithVirtual<Options extends Dictionary = object> =
   | ArraySchema<Options>
   | ObjectSchema<Options>
   | NullSchema<Options>
-  | VirtualSchema<Options>;
+  | VirtualNodeSchema<Options>;
 
 /** JSON Schema type union with virtual nodes and $ref support */
 export type JSONSchemaWithRef<Options extends Dictionary = object> =
@@ -275,6 +271,10 @@ export type NonNullableObjectSchema<Options extends Dictionary = object> =
       options?: {
         /** Build the node as one input over the whole value (`true`) or as child nodes (`false`); overrides the renderer's choice (default: terminal when `presentation.FieldInput` is a component, branch otherwise) */
         terminal?: boolean;
+        /** Key order of the emitted object value, ahead of declaration order; it does not change the on-screen order */
+        propertyOrder?: readonly string[];
+        /** Virtual field groups by name; each gathers sibling properties into one virtual node */
+        virtual?: Record<string, VirtualFieldGroup>;
       };
     };
 /** Nullable object schema (type: ['object', 'null']) */
@@ -284,11 +284,21 @@ export type NullableObjectSchema<Options extends Dictionary = object> =
       options?: {
         /** Build the node as one input over the whole value (`true`) or as child nodes (`false`); overrides the renderer's choice (default: terminal when `presentation.FieldInput` is a component, branch otherwise) */
         terminal?: boolean;
+        /** Key order of the emitted object value, ahead of declaration order; it does not change the on-screen order */
+        propertyOrder?: readonly string[];
+        /** Virtual field groups by name; each gathers sibling properties into one virtual node */
+        virtual?: Record<string, VirtualFieldGroup>;
       };
     };
 
-/** Virtual node schema for a field group declared in `options.virtual` */
-export type VirtualSchema<Options extends Dictionary = object> = {
+/** One `options.virtual` entry: the grouped sibling property names plus the virtual node's own schema keys */
+type VirtualFieldGroup = BasicSchema & {
+  /** Names of the sibling properties the virtual node gathers */
+  fields: readonly string[];
+};
+
+/** Schema of a virtual node built from an `options.virtual` entry; never authored directly */
+type VirtualNodeSchema<Options extends Dictionary = object> = {
   type: 'virtual';
   /** Dependent field paths for reactivity */
   fields?: readonly string[];
@@ -305,7 +315,7 @@ export type BasicSchema = {
   /** Renderer data belongs to the binding and stays typed in per-kind schemas. */
   presentation?: SchemaPresentation;
   /** Rules and policies that change value and shape over time; any other key is a blueprint error */
-  controls?: SchemaControls<JSONSchemaWithVirtual>;
+  controls?: SchemaControls<JSONSchema>;
   /** Field options and configurations */
   options?: {
     /** Omit empty values from form data (default: true) */

@@ -1650,9 +1650,9 @@ Each property below is a key of the `controls` object.
 
 #### Layering Rules
 
-`controls` can be declared on the node itself, on a parent's `controls.children` entry that targets the node, and on a fragment (such as an `allOf` entry) that declares the node. The layers combine instead of overriding each other: the standard `readOnly` and the `readOnly` / `disabled` controls combine by OR, and `visible` combines by AND.
+`controls` can be declared on the node itself, on a parent's `controls.fields` entry that targets the node, and on a fragment (such as an `allOf` entry) that declares the node. The layers combine instead of overriding each other: the standard `readOnly` and the `readOnly` / `disabled` controls combine by OR, and `visible` combines by AND.
 
-For `default`, the node's own `controls.default` wins, then the parent's `children` entry, then the fragment's `controls.default`, then the standard `default`.
+For `default`, the node's own `controls.default` wins, then the parent's `fields` entry, then the fragment's `controls.default`, then the standard `default`.
 
 #### Basic Example
 

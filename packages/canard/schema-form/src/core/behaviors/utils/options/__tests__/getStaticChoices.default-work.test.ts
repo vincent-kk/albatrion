@@ -23,13 +23,13 @@ it('links optionless effective schemas to one frozen default while keeping each 
     omitEmpty: true,
     omitTrailing: false,
     trim: false,
-    propertyKeys: [],
+    propertyOrder: [],
   });
   expect(Object.isFrozen(left)).toBe(true);
-  expect(Object.isFrozen(left?.propertyKeys)).toBe(true);
+  expect(Object.isFrozen(left?.propertyOrder)).toBe(true);
 });
 
-it('keeps options and filtered propertyKeys independent from the default and authored arrays', () => {
+it('keeps options and filtered propertyOrder independent from the default and authored arrays', () => {
   const keys = ['second', 1, 'first'];
   const effective = {
     schema: {
@@ -38,7 +38,7 @@ it('keeps options and filtered propertyKeys independent from the default and aut
         omitEmpty: false,
         omitTrailing: true,
         trim: true,
-        propertyKeys: keys,
+        propertyOrder: keys,
       },
     },
     typeConflict: false,
@@ -48,10 +48,10 @@ it('keeps options and filtered propertyKeys independent from the default and aut
     omitEmpty: false,
     omitTrailing: true,
     trim: true,
-    propertyKeys: ['second', 'first'],
+    propertyOrder: ['second', 'first'],
   });
-  expect(result.propertyKeys).not.toBe(keys);
-  expect(Object.isFrozen(result.propertyKeys)).toBe(true);
+  expect(result.propertyOrder).not.toBe(keys);
+  expect(Object.isFrozen(result.propertyOrder)).toBe(true);
   expect(Object.isFrozen(keys)).toBe(false);
   expect(getStaticChoices(effective)).toBe(result);
   expect(getStaticChoices({ schema: true, typeConflict: false })).not.toBe(
