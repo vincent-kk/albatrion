@@ -38,3 +38,7 @@ fixy07 질문: `controls.children` → `controls.fields`에 맞춰 내부 제어
 ## 덧붙임 (2026-10-14, 8번과 7·9·5의 구체 이름)
 
 fixy07 제안을 편집자가 받음: 8번 core의 `JSONSchema` 인터페이스(core/types/jsonSchema.ts:8, Options·Presentation 제네릭)는 `AuthoredSchema`로(기존 `BlueprintSchema`는 날 스키마 형이라 통일 불가), rolled의 `JSONSchema` 합집합(types/rolled/jsonSchema.ts:100, 지금도 index.ts:76의 명시 export에 가려 닿지 않음)은 내보내지 않는 지역 형으로(안 쓰면 삭제) — `export type *`로 새 공개 이름이 생기지 않도록. 7번 내부 enum은 `WriteOption`, 미사용 `PublicSetValueOption`·`UnionSetValueOption` 삭제. 9번 core의 `FieldInputProps`는 `FieldNodeInputProps`. 5번 `FieldInputTestObject`는 Pick/Omit으로 표현되지 않아(다섯 칸에 배열 형이 더해짐) `FieldInputHint`에서 뽑는 매핑 형으로 정의하고 형 시험으로 고정.
+
+## 덧붙임 (2026-10-14, 07b-5 중간 — 이름 단계 push, 초안 PR #365)
+
+fixy07: 이름 바꾸기 다섯 커밋을 push하고 초안 PR #365(head 357ccf8f0)를 열었다. 게이트: build·typecheck 통과, lint 0, 플러그인 일곱 build·test 통과, documents en·ko 빌드 통과, G16 CONSUMER_BUNDLE_OK(prod 288,502 B·dev 291,799 B), dist·documents build 옛 이름 0(dist의 옛 이름은 dist/__legacy__뿐), 공개 d.ts 차이는 공개 이름 10개 개명과 선언 파일 46개 이동, verifier 독립 재검사 PASS(파일 쌍 631개, UNEXPECTED 0). 첫 전체 실행에서 실패한 다섯 파일(surface.test.ts export 순서, fixture JSON의 CREATE_DYNAMIC_FUNCTION 문구 셋, 고정 커밋 3a637c4cd를 git show로 읽는 selectChildren.head-differential 하네스 — 옛 원본을 읽을 때 같은 이름 규칙·문구 변경을 적용)은 각 커밋에 합쳐 단독 재실행 통과; 전체 재실행은 후속 (A)(B)(C) 뒤 한 번. bench의 round-87-measure.mjs·branchless-phase-diagnosis.mjs는 옛 커밋을 계측할 때 같은 이름 규칙이 필요(PR 본문에 적음). mui 스토리 disabled는 ②-4에 합침.
