@@ -13,6 +13,7 @@ export { assertValidationRootReady } from './utils/run/assertValidationRootReady
 export { routeValidationIssues } from './utils/route/routeValidationIssues';
 export { retainEqualValidationIssues } from './utils/route/retainEqualValidationIssues';
 export { updateSchemaNodeGlobalErrors } from './utils/route/updateSchemaNodeGlobalErrors';
+export { EMPTY_GLOBAL_ERRORS } from './utils/route/constants';
 export { readSchemaNodeErrors } from './utils/read/readSchemaNodeErrors';
 export { retainValidationRoot } from './utils/lifetime/retainValidationRoot';
 export { releaseValidationRoot } from './utils/lifetime/releaseValidationRoot';

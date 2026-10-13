@@ -40,12 +40,9 @@ import {
   readSchemaNodeWatchValues,
 } from '../settle';
 import type { NodeStateFlags } from '../types/state';
-import { readSchemaNodeErrors } from '../validation';
+import { EMPTY_GLOBAL_ERRORS, readSchemaNodeErrors } from '../validation';
 import type { ValidationIssue } from '../validation';
 import { SetValueOption } from './type';
-
-/** Shared empty whole-form issue list before a validation result exists. */
-const EMPTY_GLOBAL_ERRORS: readonly ValidationIssue[] = Object.freeze([]);
 
 /** Runtime record implementation; the public SchemaNode name denotes a union type. */
 export class SchemaNode implements SchemaNodeRecord<SchemaNode> {

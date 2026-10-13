@@ -1,7 +1,5 @@
 import type { SchemaNodeRecord } from '../../../record';
-
-/** Stable empty form list when neither error channel has issues. */
-const EMPTY_GLOBAL_ERRORS: readonly { dataPath: string }[] = Object.freeze([]);
+import { EMPTY_GLOBAL_ERRORS } from './constants';
 
 /**
  * Store the form list after either root external or routed validator issues change.
