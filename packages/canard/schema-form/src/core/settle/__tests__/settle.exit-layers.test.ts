@@ -173,7 +173,7 @@ describe('settled exit policy layers', () => {
     expect(root.structure?.addr?.undeclaredValues).toEqual({ extra: 'E' });
   });
 
-  it('WRITE-033 children subtree policy reaches exiting descendants', () => {
+  it('WRITE-033 fields subtree policy reaches exiting descendants', () => {
     const { root } = createTestTree({
       type: 'object',
       controls: {

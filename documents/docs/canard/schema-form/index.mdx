@@ -46,7 +46,7 @@ nodeFromJSONSchema()          ← builds a typed node tree
     ▼
 Plugin System
     ├── ValidatorPlugin       ← compile(jsonSchema) → ValidateFunction
-    └── SchemaFormPlugin      ← FormField / FormLabel / FormInput / FormError
+    └── SchemaFormPlugin      ← FieldRenderer / FormLabelRenderer / FormInputRenderer / FormErrorRenderer
                                  + fieldInputDefinitions
     │
     ▼
@@ -62,7 +62,7 @@ Plugins are registered globally with `registerPlugin()` and affect every
 
 <ul>
   <li><strong>Validator plugin</strong> — integrates any validation library (AJV, Zod, Yup, etc.) by implementing <code>compile(jsonSchema)</code>.</li>
-  <li><strong>UI plugin</strong> — provides <code>FormField</code>, <code>FormLabel</code>, <code>FormInput</code>, <code>FormError</code> renderer components and <code>fieldInputDefinitions</code> for per-field input components.</li>
+  <li><strong>UI plugin</strong> — provides <code>FieldRenderer</code>, <code>FormLabelRenderer</code>, <code>FormInputRenderer</code>, <code>FormErrorRenderer</code> renderer components and <code>fieldInputDefinitions</code> for per-field input components.</li>
 </ul>
 
 Official plugin packages:

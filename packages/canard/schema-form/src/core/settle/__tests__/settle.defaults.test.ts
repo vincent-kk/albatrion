@@ -25,7 +25,7 @@ describe('settled default sources', () => {
     expect(root.structure?.outside?.raw).toBeUndefined();
   });
 
-  it('CONTROLS-073 value layer orders own, children, fragment, and standard defaults', () => {
+  it('CONTROLS-073 value layer orders own, fields, fragment, and standard defaults', () => {
     const { root } = createTestTree({
       type: 'object',
       controls: {

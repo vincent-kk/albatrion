@@ -4,7 +4,9 @@ import { createDivider } from './utils/createDivider';
 import { formatBulletList } from './utils/formatBulletList';
 import { getValueType } from './utils/getValueType';
 
-type VirtualReference = NonNullable<ObjectSchema['virtual']>[string];
+type VirtualReference = NonNullable<
+  NonNullable<ObjectSchema['options']>['virtual']
+>[string];
 
 /**
  * Formats a structured error message when virtual.fields is not an array.
@@ -36,18 +38,22 @@ of properties that this virtual node references.
 How to fix:
   1. Provide an array of field names:
      {
-       "virtual": {
-         "${nodeKey}": {
-           "fields": ["field1", "field2"]
+       "options": {
+         "virtual": {
+           "${nodeKey}": {
+             "fields": ["field1", "field2"]
+           }
          }
        }
      }
 
   2. If only one field, still use an array:
      {
-       "virtual": {
-         "${nodeKey}": {
-           "fields": ["singleField"]
+       "options": {
+         "virtual": {
+           "${nodeKey}": {
+             "fields": ["singleField"]
+           }
          }
        }
      }
@@ -91,18 +97,22 @@ How to fix:
        "properties": {
 ${notFoundFields.map((f) => `         "${f}": { "type": "string" }`).join(',\n')}
        },
-       "virtual": {
-         "${nodeKey}": {
-           "fields": [${notFoundFields.map((f) => `"${f}"`).join(', ')}]
+       "options": {
+         "virtual": {
+           "${nodeKey}": {
+             "fields": [${notFoundFields.map((f) => `"${f}"`).join(', ')}]
+           }
          }
        }
      }
 
   2. Or correct the field names in virtual.fields:
      {
-       "virtual": {
-         "${nodeKey}": {
-           "fields": ["existingField1", "existingField2"]
+       "options": {
+         "virtual": {
+           "${nodeKey}": {
+             "fields": ["existingField1", "existingField2"]
+           }
          }
        }
      }

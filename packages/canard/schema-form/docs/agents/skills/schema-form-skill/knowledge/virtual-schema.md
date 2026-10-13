@@ -33,5 +33,5 @@
 
 ## Node Access
 
-- Inside the virtual `FieldInput`, reach constituent nodes via `node.children[i].node` (ordered like `fields`).
+- Inside the virtual `FieldInput`, reach constituent nodes via `node.children[i]` (ordered like `fields`).
 - From outside: `formRef.current?.findNode('/period')`, narrowed with the exported `isVirtualNode()` guard.

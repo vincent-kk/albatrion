@@ -222,7 +222,7 @@ describe('behavior rows', () => {
     ).toBe(true);
   });
 
-  it('assembles current object children in preferred, declaration, extras order', () => {
+  it('assembles current object children in propertyOrder, declaration, undeclaredValues order', () => {
     const node = makeRecord(objectBehavior.branch, undefined, {
       propertyOrder: ['second'],
     });
