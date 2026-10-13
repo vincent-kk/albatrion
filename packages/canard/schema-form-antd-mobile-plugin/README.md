@@ -80,7 +80,7 @@ This plugin provides the following Ant Design Mobile components:
 - **Applied when**:
   - `type` is `"number"` or `"integer"` and `format` is `"slider"`
   - or `type` is `"array"`, `items.type` is `"number"` or `"integer"`, and `format` is `"slider"` (range slider)
-- **Additional features**: Lazy update option, mark display, range slider support
+- **Additional features**: `presentation.FormTypeInputProps.lazy` (`false` publishes on every move), `marks` (mark display) and `range` (range slider)
 
 ### **[`FormTypeInputTextarea.tsx`](./src/formTypeInputs/FormTypeInputTextarea.tsx)**
 
@@ -107,6 +107,27 @@ This plugin provides the following Ant Design Mobile components:
 - **Additional features**: Support for `indeterminate` state for `undefined` values
 
 ---
+
+## Input Settings
+
+Per-input settings such as `lazy`, `marks` and `range` above go in `presentation.FormTypeInputProps`; the form spreads that object into the input's props.
+
+```ts
+const jsonSchema = {
+  type: 'object',
+  properties: {
+    volume: {
+      type: 'number',
+      format: 'slider',
+      presentation: {
+        FormTypeInputProps: { lazy: false, marks: { 0: '0', 100: '100' } },
+      },
+    },
+  },
+};
+```
+
+Up to 0.16.0 the Slider input read `options.range`, `marks` and `lazy`. From 1.0.0-beta `options` is a closed list, so these keys belong in `presentation.FormTypeInputProps`; under `options` they fail the schema with the blueprint error `UNKNOWN_GROUP_KEY`.
 
 ## Component Priority
 

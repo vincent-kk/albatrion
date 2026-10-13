@@ -173,15 +173,18 @@ export const NumberSlider = Template.bind({});
 NumberSlider.args = {
   jsonSchema: {
     type: 'number',
+    format: 'slider',
     multipleOf: 1,
     default: 50,
     minimum: 20,
     maximum: 80,
-    FormTypeInput: FormTypeInputSliderDefinition.Component,
-    options: {
-      lazy: false,
+    presentation: {
+      FormTypeInputProps: {
+        lazy: false,
+      },
     },
   },
+  formTypeInputDefinitions: [FormTypeInputSliderDefinition],
 };
 
 export const Array = Template.bind({});

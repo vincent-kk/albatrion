@@ -80,7 +80,7 @@ registerPlugin(plugin);
 - **적용 조건**:
   - `type`이 `"number"` 또는 `"integer"`이고 `format`이 `"slider"`인 경우
   - 또는 `type`이 `"array"`이고 `items.type`이 `"number"` 또는 `"integer"`이며 `format`이 `"slider"`인 경우 (범위 슬라이더)
-- **추가 사항**: 지연 업데이트 옵션(`lazy`), 마크 표시, 범위 슬라이더 지원
+- **추가 사항**: `presentation.FormTypeInputProps.lazy`(`false`이면 움직일 때마다 값 반영), `marks`(마크 표시), `range`(범위 슬라이더)
 
 ### **[`FormTypeInputTextarea.tsx`](./src/formTypeInputs/FormTypeInputTextarea.tsx)**
 
@@ -107,6 +107,27 @@ registerPlugin(plugin);
 - **추가 사항**: `undefined` 값에 대한 `indeterminate` 상태 지원
 
 ---
+
+## 입력 설정
+
+위의 `lazy`, `marks`, `range` 같은 입력별 설정은 `presentation.FormTypeInputProps`에 둡니다. 폼이 이 객체를 입력 props로 펼쳐 넘깁니다.
+
+```ts
+const jsonSchema = {
+  type: 'object',
+  properties: {
+    volume: {
+      type: 'number',
+      format: 'slider',
+      presentation: {
+        FormTypeInputProps: { lazy: false, marks: { 0: '0', 100: '100' } },
+      },
+    },
+  },
+};
+```
+
+0.16.0까지 슬라이더 입력은 `options.range`·`marks`·`lazy`를 읽었습니다. 1.0.0-beta부터 `options`는 닫힌 목록이고 입력별 설정은 `presentation.FormTypeInputProps`에 두면 입력 props로 펼쳐집니다. 옛 자리는 청사진 오류 `UNKNOWN_GROUP_KEY`가 됩니다.
 
 ## 컴포넌트 우선순위
 
