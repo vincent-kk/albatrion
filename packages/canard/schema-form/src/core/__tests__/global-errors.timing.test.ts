@@ -1,5 +1,7 @@
 import { describe, expect, it } from 'vitest';
 
+import { median } from '@winglet/common-utils/math';
+
 import {
   type SchemaNode,
   type ValidationIssue,
@@ -9,6 +11,8 @@ import {
 
 const FIELDS = 100;
 const ISSUES = 1000;
+/** Independent measurements per scale, each with a freshly loaded root. */
+const SAMPLES = 5;
 /** Floor for the small measurement so timer noise cannot fail the ratio (ms). */
 const NOISE_FLOOR = 5;
 /** Allowed ratio between the 4n and n timings; linear work gives 4. */
@@ -53,20 +57,23 @@ const createLoadedRoot = (
 };
 
 /**
- * Time one clearing strategy at n and 4n and return the elapsed pair.
+ * Sample one clearing strategy SAMPLES times at n and 4n, using a fresh root per sample.
  * @param clear - Clears every field of a loaded root
- * @returns Elapsed milliseconds for the n and the 4n tree
+ * @returns Median elapsed milliseconds for the n and the 4n tree
  */
 const measure = (
   clear: (root: SchemaNode, fields: SchemaNode[]) => void,
 ): { small: number; large: number } => {
   const time = (scale: number): number => {
-    const { root, fields } = createLoadedRoot(FIELDS * scale, ISSUES * scale);
-    const start = performance.now();
-    clear(root, fields);
-    const elapsed = performance.now() - start;
-    expect(root.errors).toEqual([]);
-    return elapsed;
+    const samples: number[] = [];
+    for (let sample = 0; sample < SAMPLES; sample++) {
+      const { root, fields } = createLoadedRoot(FIELDS * scale, ISSUES * scale);
+      const start = performance.now();
+      clear(root, fields);
+      samples.push(performance.now() - start);
+      expect(root.errors).toEqual([]);
+    }
+    return median(samples);
   };
   return { small: time(1), large: time(4) };
 };
