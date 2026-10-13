@@ -355,3 +355,7 @@ reviews/round-230-owner-answers.md:10	230	대기열 20 플러그인 잔여 넷	"
 reviews/round-230-owner-answers.md:11	230	대기열 22 onValidate 두 번	"그대로 둬. 아마 그거 프로덕션 리엑트에서는 1번만 나가지않아? 그랬던거같은데" (2026-10-13, 원장 세션)
 reviews/round-230-owner-answers.md:12	230	대기열 23 type 좁힘	"좁힌 채 유지. 단, 타입추론을 방해하거나 타입단언을 강제해야 한다면 고려 필요." (2026-10-13, 원장 세션)
 reviews/round-230-owner-answers.md:13	230	대기열 25·27 시험 타이밍	"변경 허용" (2026-10-13, 원장 세션)
+reviews/round-232-owner-answers.md:7	232	대기열 9 영역 밖 값	"두 번째 방법으로 구성. 안전한 내부 기본컴포넌트로" (2026-10-13, 원장 세션)
+reviews/round-232-owner-answers.md:8	232	대기열 26 퍼센트 인코딩	"어 그럼 고치시죠" (2026-10-13, 원장 세션)
+reviews/round-232-owner-answers.md:9	232	대기열 22 onValidate 두 번	"그럼 한번으로 줄이는게 낫지 않을까? 두번 호출되는게 구조적으로 필수적인지 검토해봐" (2026-10-13, 원장 세션)
+reviews/round-232-owner-answers.md:10	232	정리 명령 시점	"마지막으로 정리하는 커멘드는 다 하고 하자" (2026-10-13, 원장 세션)
