@@ -11,3 +11,7 @@
 ## 덧붙임 (2026-10-14, 대기열 41 결정과 42 보강, 43 신설)
 
 원장 관리자가 2번을 설명했다(쓰기 null 아래 자식은 빈 상태 — VALUE-036·18C-100; 로드 null은 자식 기본값 유지 — 시나리오 "VALUE-036 loaded null retains child defaults for later input promotion"; 선택지 셋: 로드 null도 빈 상태로 통일 / 지금 설계 유지하되 표시 구분 / 로드 null에서 자식 미렌더). 소유자 답: "2번에, 첫번째가 맞는거 같다. 일관된 규칙이 중요하고, 사용자는 form 만 보고 값을 믿어야 하니까 이렇게 표시와 실제가 다른건 매우 잘못된 것으로 보인다. \n\n나머지는 스토리를 어떻게 봐야하는지, 어떻게 테스트해야하는지 잘 모르겠어서 테스트를 충분히 못하겠다.\n그리고 ref 핸들을 통한 테스트도 아예 없어보이는군. \n\n스토리들에 적절한 구조화 데코레이터를 통해서 가독성과 사용성을 좀 올려달라. 사람도 보고 알 수 있어야지.\n그리고 ref 핸들러를 통한 스토리도 좀 추가해달라." → 대기열 41 결정: 로드 null도 쓰기 null과 같이 자식을 빈 상태로(기본값은 그 필드에 입력할 때만), 규칙 하나 — 공개 동작 변경이며 VALUE-036 보충과 시나리오 "loaded null retains child defaults" 수정 대상. 대기열 42 보강: 구조화 데코레이터(설명·재현 단계·현재값·기본값·오류·스키마·스토리별 설정을 페이지 안에)로 사람이 보고 알 수 있게. 대기열 43 신설: FormHandle(ref)을 통한 스토리 추가(focus·select·refresh·remount·reset·findNode·getValue·setValue·getErrors·validate·showError·submit·getState·setState·clearState·getAttachedFilesMap).
+
+## 덧붙임 (2026-10-14, 순서 확정)
+
+소유자: "그 순서로 진행해. 구조변경은 이걸 또 다 하고 해야할까?" → 순서 확정: 07b-5 병합 뒤 스토리 묶음(40·42·43, fairy07)과 41(로드 null 동작 변경, fixy07 별도 가지)을 병렬로. 원장 관리자 답: 구조 변경은 스토리 묶음을 기다릴 필요가 없다(stories/·scenarios는 src 밖이라 재배치와 겹치지 않음). 41만 src/core를 건드리므로 재배치 "실행" 전에 병합하고, 재배치 "계획"(읽기 전용)은 07b-5 병합 직후 바로 쓴다.
