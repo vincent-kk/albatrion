@@ -169,6 +169,7 @@ export default [
     files: [
       'src/core/**/*.{ts,tsx}',
       'src/app/**/*.{ts,tsx}',
+      'src/constants/**/*.{ts,tsx}',
       'src/types/**/*.{ts,tsx}',
       'src/errors/**/*.{ts,tsx}',
       'src/index.ts',
@@ -249,7 +250,7 @@ export default [
   // Friend-zone boundary for internal node members.
   // `__member__` APIs on nodes are `public @internal` (stripped from public
   // d.ts via stripInternal) so the strategy/manager friend zone (src/core,
-  // src/app) can call them with full type checking. Everything else must use
+  // src/app, src/constants) can call them with full type checking. Everything else must use
   // the public node API — this rule restores, mechanically, the enforcement
   // that the `protected` modifier used to imply for those members.
   {
@@ -280,13 +281,13 @@ export default [
           selector:
             'MemberExpression[computed=false][property.name=/^__[a-zA-Z0-9]+__$/]',
           message:
-            'Internal `__member__` access is restricted to the core friend zone (src/core, src/app). Use the public node API instead.',
+            'Internal `__member__` access is restricted to the core friend zone (src/core, src/app, src/constants). Use the public node API instead.',
         },
         {
           selector:
             'MemberExpression[computed=true][property.value=/^__[a-zA-Z0-9]+__$/]',
           message:
-            'Internal `__member__` access is restricted to the core friend zone (src/core, src/app). Use the public node API instead.',
+            'Internal `__member__` access is restricted to the core friend zone (src/core, src/app, src/constants). Use the public node API instead.',
         },
       ],
     },

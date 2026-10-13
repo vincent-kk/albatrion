@@ -3,7 +3,7 @@ import {
   BIT_FLAG_01,
   BIT_FLAG_02,
   BIT_MASK_NONE,
-} from '@/schema-form/app/constants';
+} from '@/schema-form/constants';
 
 /** Validation strategy applied to a node. */
 export enum ValidationMode {

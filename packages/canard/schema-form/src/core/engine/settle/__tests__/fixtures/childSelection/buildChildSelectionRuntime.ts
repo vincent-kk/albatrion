@@ -34,7 +34,7 @@ const PINNED_PATH_REWRITES = [
   ],
   [/\/core\/FieldNode\//g, '/core/surface/'],
   [/\/core\/nodeFromJSONSchema\.ts$/g, '/core/surface/nodeFromJSONSchema.ts'],
-  [/\/app\/constants\//g, '/app/constants/'],
+  [/\/app\/constants\//g, '/constants/'],
 ] as const;
 
 /** Map a repository-relative pinned path into the current layout without I/O. */
@@ -151,38 +151,47 @@ export const buildChildSelectionRuntime = async (
         {
           name: 'local-child-selection-observers',
           setup(builder) {
-            builder.onResolve({ filter: /^\.\.?\// }, (args) => {
-              if (!pinnedPaths || args.kind === 'entry-point') return;
-              const importer = relative(worktree, args.importer);
-              const pinnedImporter = !importer.includes('/__tests__/')
-                ? pinnedPaths.get(importer)
-                : undefined;
-              const base = resolve(
-                pinnedImporter
-                  ? dirname(resolve(worktree, pinnedImporter))
-                  : dirname(args.importer),
-                args.path,
-              );
-              for (const suffix of [
-                '',
-                '.ts',
-                '.tsx',
-                '/index.ts',
-                '/index.tsx',
-              ]) {
-                const candidate = resolve(
-                  worktree,
-                  mapPinnedPath(
-                    renameFieldNodeNames(
-                      relative(worktree, `${base}${suffix}`),
+            builder.onResolve(
+              { filter: /^(?:\.\.?\/|@\/schema-form\/)/ },
+              (args) => {
+                if (!pinnedPaths || args.kind === 'entry-point') return;
+                const importer = relative(worktree, args.importer);
+                const pinnedImporter = !importer.includes('/__tests__/')
+                  ? pinnedPaths.get(importer)
+                  : undefined;
+                const base = args.path.startsWith('@/schema-form/')
+                  ? resolve(
+                      packageRoot,
+                      'src',
+                      args.path.slice('@/schema-form/'.length),
+                    )
+                  : resolve(
+                      pinnedImporter
+                        ? dirname(resolve(worktree, pinnedImporter))
+                        : dirname(args.importer),
+                      args.path,
+                    );
+                for (const suffix of [
+                  '',
+                  '.ts',
+                  '.tsx',
+                  '/index.ts',
+                  '/index.tsx',
+                ]) {
+                  const candidate = resolve(
+                    worktree,
+                    mapPinnedPath(
+                      renameFieldNodeNames(
+                        relative(worktree, `${base}${suffix}`),
+                      ),
                     ),
-                  ),
-                );
-                if (pinnedPaths.has(relative(worktree, candidate)))
-                  return { path: candidate };
-              }
-              return;
-            });
+                  );
+                  if (pinnedPaths.has(relative(worktree, candidate)))
+                    return { path: candidate };
+                }
+                return;
+              },
+            );
             builder.onLoad({ filter: /\.(ts|tsx)$/ }, (args) => {
               const path = relative(worktree, args.path);
               if (
