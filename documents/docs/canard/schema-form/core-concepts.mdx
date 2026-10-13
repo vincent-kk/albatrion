@@ -36,7 +36,7 @@ const schema = {
 ## Node Tree
 
 Each node is a reactive object that owns its own value, validation errors,
-and interaction flags in `node.state` (keyed by `SchemaNodeState`: `Dirty`,
+and interaction flags in `node.state` (keyed by `FieldNodeState`: `Dirty`,
 `Touched`, `ShowError`).
 Changes propagate upward: when a leaf node's value changes, all ancestor nodes
 receive an `UpdateValue` event and update their aggregated value.
@@ -49,7 +49,7 @@ receive an `UpdateValue` event and update their aggregated value.
 | `outputValue`  | `unknown`                    | Emitted value after output filters                                             |
 | `defaultValue` | `unknown`                    | Value at initialization                                                        |
 | `errors`       | `readonly ValidationIssue[]` | Validation issues for this node                                                |
-| `state`        | `NodeStateFlags`             | Interaction flags keyed by `SchemaNodeState` (`Dirty`, `Touched`, `ShowError`) |
+| `state`        | `NodeStateFlags`             | Interaction flags keyed by `FieldNodeState` (`Dirty`, `Touched`, `ShowError`) |
 | `visible`      | `boolean`                    | From `controls.visible`                                                        |
 | `active`       | `boolean`                    | From `controls.active`                                                         |
 | `readOnly`     | `boolean`                    | From `controls.readOnly`, the standard `readOnly`, or inherited                |
@@ -315,7 +315,7 @@ microtask. `UpdateValue` is the exception — it fires synchronously
 (immediate mode) after initialization completes.
 
 ```ts
-// Key event types (SchemaNodeEventType enum)
+// Key event types (FieldNodeEventType enum)
 UpdateValue; // value changed — synchronous after init
 UpdateState; // interaction flags (node.state) changed
 UpdateError; // validation errors changed
@@ -331,7 +331,7 @@ RequestRemount; // external: force full component remount
 
 | Term                                                     | Definition                                                                                                               |
 | -------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------ |
-| `SchemaNode`                                             | Base interface for all nodes — the public API surface                                                                    |
+| `FieldNode`                                             | Base interface for all nodes — the public API surface                                                                    |
 | `StringNode` / `NumberNode` / `BooleanNode` / `NullNode` | Terminal nodes — no children                                                                                             |
 | `ObjectNode` / `ArrayNode`                               | Branch nodes — have children                                                                                             |
 | `VirtualNode`                                            | Groups sibling fields declared in `options.virtual` into one input                                                       |
@@ -348,7 +348,7 @@ RequestRemount; // external: force full component remount
 | `outputValue`                                            | Emitted value after output filters — what parents, validation, and `onChange` see                                        |
 | `ShowError`                                              | Enum controlling when validation errors are displayed                                                                    |
 | `ValidationMode`                                         | Enum controlling when validation runs                                                                                    |
-| `SchemaNodeEventType`                                    | Enum of all events nodes can emit                                                                                        |
+| `FieldNodeEventType`                                    | Enum of all events nodes can emit                                                                                        |
 | `SetValueOption`                                         | Bitwise options for `setValue()` — `Overwrite`, `Merge`, `DisableAutomaticWrites`, `EnableAutomaticWrites`               |
 | `FormHandle`                                             | Ref interface for imperative form control                                                                                |
 | `FormProvider`                                           | Context provider for sharing plugin config across a subtree                                                              |

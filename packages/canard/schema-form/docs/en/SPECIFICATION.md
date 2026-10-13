@@ -222,17 +222,17 @@ interface FormHandle<
   Value extends AllowedValue = InferValueType<Schema>,
 > {
   /** Root node */
-  node?: InferSchemaNode<Schema>;
+  node?: InferFieldNode<Schema>;
   /** Focus input field at specific path */
-  focus: Fn<[dataPath: SchemaNode['path']]>;
+  focus: Fn<[dataPath: FieldNode['path']]>;
   /** Select input field at specific path */
-  select: Fn<[dataPath: SchemaNode['path']]>;
+  select: Fn<[dataPath: FieldNode['path']]>;
   /** Reset form */
   reset: Fn;
   /** Find node by path */
-  findNode: Fn<[path: SchemaNode['path']], SchemaNode | null>;
+  findNode: Fn<[path: FieldNode['path']], FieldNode | null>;
   /** Find multiple nodes by path */
-  findNodes: Fn<[path: SchemaNode['path']], SchemaNode[]>;
+  findNodes: Fn<[path: FieldNode['path']], FieldNode[]>;
   /** Get current state */
   getState: Fn<[], NodeStateFlags>;
   /** Set state */
@@ -263,7 +263,7 @@ interface FormChildrenProps<
   Schema extends JSONSchema,
   Value extends AllowedValue = InferValueType<Schema>,
 > {
-  node?: InferSchemaNode<Schema>;
+  node?: InferFieldNode<Schema>;
   jsonSchema: Schema;
   defaultValue?: Value;
   value?: Value;
@@ -403,13 +403,13 @@ interface FieldInputProps<
   Context extends Dictionary = object,
   WatchValues extends Array<any> = Array<any>,
   Schema extends JSONSchemaWithVirtual = InferJSONSchema<Value>,
-  Node extends SchemaNode = InferSchemaNode<Schema>,
+  Node extends FieldNode = InferFieldNode<Schema>,
 > {
   jsonSchema: Schema; // JSON Schema for FieldInput component
   readOnly: boolean; // Read-only state
   disabled: boolean; // Disabled state
   required: boolean; // Required field
-  node: Node; // Schema node
+  node: Node; // Field node
   type: Node['schemaType']; // JSON Schema type
   name: Node['name']; // Node name
   path: Node['path']; // Node path
@@ -1021,7 +1021,7 @@ Pass `children` as a function to `Form` component to access form state and node.
 | -------- | ---------------------------- | ----------------------------------- |
 | `value`  | `InferValueType<Schema>`     | Current form value                  |
 | `errors` | `readonly ValidationIssue[]` | List of all validation errors       |
-| `node`   | `InferSchemaNode<Schema>`    | Root node (for programmatic access) |
+| `node`   | `InferFieldNode<Schema>`     | Root node (for programmatic access) |
 
 ---
 
@@ -1032,7 +1032,7 @@ Pass `children` as a function to `Form` component to access form state and node.
 ```typescript
 import {
   FormHandle,
-  InferSchemaNode,
+  InferFieldNode,
   InferValueType,
 } from '@canard/schema-form';
 
@@ -1040,7 +1040,7 @@ import {
 type FormValue = InferValueType<typeof jsonSchema>;
 
 // Infer node type from schema
-type RootNode = InferSchemaNode<typeof jsonSchema>;
+type RootNode = InferFieldNode<typeof jsonSchema>;
 
 // Type-safe form handle
 const formRef = useRef<FormHandle<typeof jsonSchema>>(null);

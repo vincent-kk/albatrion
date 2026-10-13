@@ -27,7 +27,7 @@ Knowledge base for `@canard/schema-form`. Answer questions, show usage examples,
 | `injectTo`, value propagation, auto-populate, circular injection                                                                                                                                                              | `knowledge/inject-to.md`             |
 | nullable object/array, `type: [..., 'null']`, `null` vs `{}`/`[]`, `setValue(null)`, null turns into an object, blank form, required key disappears                                                                           | `knowledge/nullable-branch-nodes.md` |
 | `virtual`, `VirtualNode`, field grouping, date range                                                                                                                                                                          | `knowledge/virtual-schema.md`        |
-| `SchemaNodeEventType`, `subscribe`, `revision`, batching, `RequestRemount`, stale reads                                                                                                                                       | `knowledge/event-system.md`          |
+| `FieldNodeEventType`, `subscribe`, `revision`, batching, `RequestRemount`, stale reads                                                                                                                                        | `knowledge/event-system.md`          |
 | errors, not working, bug, debug, unexpected behavior, testing                                                                                                                                                                 | `knowledge/troubleshooting.md`       |
 
 ## Architecture Cheat Sheet

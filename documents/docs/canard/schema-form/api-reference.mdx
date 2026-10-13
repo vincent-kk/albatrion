@@ -81,7 +81,7 @@ import { Form, VirtualizationBackfill } from '@canard/schema-form';
 | `eagerCount`     | `number`                                        | `20`     | Leading children per gated branch mounted immediately (prevents a blank first frame)                         |
 | `rootMargin`     | `VirtualizationRootMargin`                      | `'100%'` | Pre-mount distance around the viewport; only `px`/`%` units are valid (IntersectionObserver spec)            |
 | `backfill`       | `VirtualizationBackfill`                        | `Idle`   | `Idle` progressively mounts the rest during browser idle time; `None` reveals only on visibility or commands |
-| `estimateHeight` | `number \| (node: SchemaNode) => number`        | `40`     | Placeholder height in px — approximates scroll geometry until reveal                                         |
+| `estimateHeight` | `number \| (node: FieldNode) => number`        | `40`     | Placeholder height in px — approximates scroll geometry until reveal                                         |
 | `Placeholder`    | `ComponentType<VirtualizationPlaceholderProps>` | —        | Optional component rendered inside placeholders (Suspense-fallback style); receives `{ node, height }`       |
 
 **Placeholder DOM contract** — deferred fields render as
@@ -106,7 +106,7 @@ to `ref` prop. All methods are safe to call after mount.
 
 ```ts
 interface FormHandle<Schema, Value> {
-  node: InferSchemaNode<Schema> | undefined; // root node
+  node: InferFieldNode<Schema> | undefined; // root node
   getValue(): Value;
   setValue(
     value: Value | ((prev: Value) => Value),
@@ -120,8 +120,8 @@ interface FormHandle<Schema, Value> {
   showError(visible: boolean): void;
   focus(path: string): void; // focuses input at path
   select(path: string): void; // selects input at path
-  findNode(path: string): SchemaNode | null;
-  findNodes(path: string): SchemaNode[];
+  findNode(path: string): FieldNode | null;
+  findNodes(path: string): FieldNode[];
   reset(): void; // remounts the form (re-reads jsonSchema + defaultValue)
   submit: TrackableHandlerFunction; // callable + subscribe(listener) + pending
   getAttachedFilesMap(): AttachedFilesMap;
@@ -256,25 +256,25 @@ function SubmitButton({ formRef }) {
 }
 ```
 
-### `useSchemaNodeTracker`
+### `useFieldNodeTracker`
 
 ```ts
-const version = useSchemaNodeTracker(node, eventMask?);
+const version = useFieldNodeTracker(node, eventMask?);
 // Returns an incrementing number; triggers re-render on matching events.
 // Default mask: all events (BIT_MASK_ALL)
 ```
 
 ```tsx
 function PriceDisplay({ node }: { node: NumberNode }) {
-  useSchemaNodeTracker(node); // re-render whenever node emits any event
+  useFieldNodeTracker(node); // re-render whenever node emits any event
   return <span>{node.value}</span>;
 }
 ```
 
-### `useSchemaNodeSubscribe`
+### `useFieldNodeSubscribe`
 
 ```ts
-useSchemaNodeSubscribe(node, (event) => {
+useFieldNodeSubscribe(node, (event) => {
   console.log(event.type, node.value);
 });
 // Raw event subscription — does NOT trigger re-render by itself.
@@ -363,10 +363,10 @@ interface FieldInputProps<Value, Context, WatchValues, Schema, Node> {
 }
 ```
 
-## `SchemaNode` Interface
+## `FieldNode` Interface
 
 ```ts
-interface SchemaNode {
+interface FieldNode {
   // Identity
   readonly type: string; // node type ('string', 'object', etc.)
   readonly schemaType: JSONSchemaType;
@@ -377,7 +377,7 @@ interface SchemaNode {
   // Tree structure
   readonly depth: number;
   readonly isRoot: boolean;
-  readonly parentNode: SchemaNode | null;
+  readonly parentNode: FieldNode | null;
   readonly name: string;
   readonly path: string;
 
@@ -406,8 +406,8 @@ interface SchemaNode {
   validate(): Promise<JSONSchemaError[]>;
 
   // Navigation
-  find(path: string): SchemaNode | undefined;
-  findAll(path: string): SchemaNode[];
+  find(path: string): FieldNode | undefined;
+  findAll(path: string): FieldNode[];
 
   // Events
   publish(event: NodeEventType): void;
@@ -418,9 +418,9 @@ interface SchemaNode {
 ## `ArrayNode` Methods
 
 ```ts
-interface ArrayNode extends SchemaNode {
+interface ArrayNode extends FieldNode {
   readonly length: number;
-  readonly children: Array<{ node: SchemaNode }>;
+  readonly children: Array<{ node: FieldNode }>;
   push(value?: any): void; // add item (respects maxItems)
   remove(index: number): void;
   clear(): void; // remove all items (respects minItems)
@@ -436,7 +436,7 @@ import {
   isBranchNode,
   isNumberNode,
   isObjectNode,
-  isSchemaNode,
+  isFieldNode,
   isStringNode,
   isTerminalNode,
   isVirtualNode,
@@ -463,7 +463,7 @@ import {
 ```ts
 type FormatError = (
   error: JSONSchemaError,
-  node: SchemaNode,
+  node: FieldNode,
   context: Dictionary,
 ) => ReactNode;
 
@@ -518,7 +518,7 @@ children?:                 ReactNode | (props: FormChildrenProps) => ReactNode
 ref?:                      Ref<FormHandle>
 
 // ── FormHandle ──────────────────────────────────────────────────
-node?:              SchemaNode
+node?:              FieldNode
 getValue():         Value
 setValue(v, opts?): void
 getState():         NodeStateFlags
@@ -529,13 +529,13 @@ validate():         Promise<JSONSchemaError[]>
 showError(b):       void
 focus(path):        void
 select(path):       void
-findNode(path):     SchemaNode | null
-findNodes(path):    SchemaNode[]
+findNode(path):     FieldNode | null
+findNodes(path):    FieldNode[]
 reset():            void
 submit:             TrackableHandlerFunction   // .pending, .subscribe()
 getAttachedFilesMap(): AttachedFilesMap
 
-// ── SchemaNode key members ──────────────────────────────────────
+// ── FieldNode key members ──────────────────────────────────────
 node.value / node.defaultValue / node.enhancedValue
 node.setValue(input, option?)
 node.errors / node.globalErrors
@@ -554,8 +554,8 @@ arrayNode.push(value?) / arrayNode.remove(index) / arrayNode.clear()
 
 // ── Hooks ───────────────────────────────────────────────────────
 useFormSubmit(ref)                     → { submit, pending }
-useSchemaNodeTracker(node, mask?)      → version: number
-useSchemaNodeSubscribe(node, listener) → void
+useFieldNodeTracker(node, mask?)      → version: number
+useFieldNodeSubscribe(node, listener) → void
 useChildNodeComponentMap(node)         → Map<string, ChildNodeComponent>
 useChildNodeErrors(node)               → JSONSchemaError[]
 ```

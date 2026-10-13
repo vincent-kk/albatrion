@@ -219,22 +219,22 @@ const formRef = useRef<FormHandle<typeof schema>>(null);
 
 ### 메서드 요약
 
-| 메서드                  | 반환 타입            | 설명            |
-| ----------------------- | -------------------- | --------------- |
-| `getValue()`            | `Value`              | 현재 폼 값      |
-| `setValue(v)`           | `void`               | 폼 값 설정      |
-| `reset()`               | `void`               | 초기값으로 리셋 |
-| `validate()`            | `Promise<Error[]>`   | 검증 실행       |
-| `getErrors()`           | `Error[]`            | 현재 에러 목록  |
-| `showError(bool)`       | `void`               | 에러 표시 제어  |
-| `findNode(path)`        | `SchemaNode \| null` | 노드 탐색       |
-| `findNodes(path)`       | `SchemaNode[]`       | 와일드카드 탐색 |
-| `focus(path)`           | `void`               | 필드 포커스     |
-| `getState()`            | `NodeStateFlags`     | 폼 상태         |
-| `setState(s)`           | `void`               | 상태 설정       |
-| `clearState()`          | `void`               | 상태 초기화     |
-| `submit()`              | `void`               | 폼 제출         |
-| `getAttachedFilesMap()` | `Map`                | 첨부 파일       |
+| 메서드                  | 반환 타입           | 설명            |
+| ----------------------- | ------------------- | --------------- |
+| `getValue()`            | `Value`             | 현재 폼 값      |
+| `setValue(v)`           | `void`              | 폼 값 설정      |
+| `reset()`               | `void`              | 초기값으로 리셋 |
+| `validate()`            | `Promise<Error[]>`  | 검증 실행       |
+| `getErrors()`           | `Error[]`           | 현재 에러 목록  |
+| `showError(bool)`       | `void`              | 에러 표시 제어  |
+| `findNode(path)`        | `FieldNode \| null` | 노드 탐색       |
+| `findNodes(path)`       | `FieldNode[]`       | 와일드카드 탐색 |
+| `focus(path)`           | `void`              | 필드 포커스     |
+| `getState()`            | `NodeStateFlags`    | 폼 상태         |
+| `setState(s)`           | `void`              | 상태 설정       |
+| `clearState()`          | `void`              | 상태 초기화     |
+| `submit()`              | `void`              | 폼 제출         |
+| `getAttachedFilesMap()` | `Map`               | 첨부 파일       |
 
 ### 일반적인 패턴
 
@@ -294,7 +294,7 @@ const definitions: FieldInputDefinition[] = [
 | `value`               | `Value`       | 현재 값         |
 | `defaultValue`        | `Value`       | 기본값          |
 | `onChange`            | `(v) => void` | 값 변경 핸들러  |
-| `node`                | `SchemaNode`  | 스키마 노드     |
+| `node`                | `FieldNode`   | 필드 노드     |
 | `errors`              | `Error[]`     | 검증 에러       |
 | `errorVisible`        | `boolean`     | 에러 표시 여부  |
 | `readOnly`            | `boolean`     | 읽기 전용       |

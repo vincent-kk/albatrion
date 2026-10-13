@@ -14,7 +14,7 @@ These rules apply when authoring application code that imports from `@canard/sch
 ### node-tree-owns-state
 
 - Form state lives in nodes, not in external React state.
-- Reads and writes go through `FormHandle`, `useSchemaNode*` hooks, or `onChange` inside a `FieldInput`. Mirroring values into a parallel `useState` produces drift.
+- Reads and writes go through `FormHandle`, `useFieldNode*` hooks, or `onChange` inside a `FieldInput`. Mirroring values into a parallel `useState` produces drift.
 
 ### public-api-only
 

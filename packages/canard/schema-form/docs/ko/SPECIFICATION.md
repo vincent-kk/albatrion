@@ -220,17 +220,17 @@ interface FormHandle<
   Value extends AllowedValue = InferValueType<Schema>,
 > {
   /** 루트 노드 */
-  node?: InferSchemaNode<Schema>;
+  node?: InferFieldNode<Schema>;
   /** 특정 경로의 입력 필드에 포커스 */
-  focus: Fn<[dataPath: SchemaNode['path']]>;
+  focus: Fn<[dataPath: FieldNode['path']]>;
   /** 특정 경로의 입력 필드 선택 */
-  select: Fn<[dataPath: SchemaNode['path']]>;
+  select: Fn<[dataPath: FieldNode['path']]>;
   /** 폼 초기화 */
   reset: Fn;
   /** 경로로 노드 찾기 */
-  findNode: Fn<[path: SchemaNode['path']], SchemaNode | null>;
+  findNode: Fn<[path: FieldNode['path']], FieldNode | null>;
   /** 경로로 여러 노드 찾기 */
-  findNodes: Fn<[path: SchemaNode['path']], SchemaNode[]>;
+  findNodes: Fn<[path: FieldNode['path']], FieldNode[]>;
   /** 현재 상태 가져오기 */
   getState: Fn<[], NodeStateFlags>;
   /** 상태 설정 */
@@ -261,7 +261,7 @@ interface FormChildrenProps<
   Schema extends JSONSchema,
   Value extends AllowedValue = InferValueType<Schema>,
 > {
-  node?: InferSchemaNode<Schema>;
+  node?: InferFieldNode<Schema>;
   jsonSchema: Schema;
   defaultValue?: Value;
   value?: Value;
@@ -401,13 +401,13 @@ interface FieldInputProps<
   Context extends Dictionary = object,
   WatchValues extends Array<any> = Array<any>,
   Schema extends JSONSchemaWithVirtual = InferJSONSchema<Value>,
-  Node extends SchemaNode = InferSchemaNode<Schema>,
+  Node extends FieldNode = InferFieldNode<Schema>,
 > {
   jsonSchema: Schema; // FieldInput 컴포넌트의 JSON Schema
   readOnly: boolean; // 읽기 전용 상태
   disabled: boolean; // 비활성화 상태
   required: boolean; // 필수 여부
-  node: Node; // 스키마 노드
+  node: Node; // 필드 노드
   type: Node['schemaType']; // JSON Schema 타입
   name: Node['name']; // 노드 이름
   path: Node['path']; // 노드 경로
@@ -1019,7 +1019,7 @@ Enter는 Form의 `form` 요소를 통해 제출합니다. 텍스트류 필드가
 | -------- | ---------------------------- | ------------------------------- |
 | `value`  | `InferValueType<Schema>`     | 현재 폼 값                      |
 | `errors` | `readonly ValidationIssue[]` | 전체 검증 에러 목록             |
-| `node`   | `InferSchemaNode<Schema>`    | 루트 노드 (프로그래매틱 접근용) |
+| `node`   | `InferFieldNode<Schema>`     | 루트 노드 (프로그래매틱 접근용) |
 
 ---
 
@@ -1030,7 +1030,7 @@ Enter는 Form의 `form` 요소를 통해 제출합니다. 텍스트류 필드가
 ```typescript
 import {
   FormHandle,
-  InferSchemaNode,
+  InferFieldNode,
   InferValueType,
 } from '@canard/schema-form';
 
@@ -1038,7 +1038,7 @@ import {
 type FormValue = InferValueType<typeof jsonSchema>;
 
 // 스키마에서 노드 타입 추론
-type RootNode = InferSchemaNode<typeof jsonSchema>;
+type RootNode = InferFieldNode<typeof jsonSchema>;
 
 // 타입 안전한 폼 핸들
 const formRef = useRef<FormHandle<typeof jsonSchema>>(null);

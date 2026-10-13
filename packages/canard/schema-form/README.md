@@ -131,12 +131,12 @@ interface FormHandle<
   Schema extends JSONSchema,
   Value extends AllowedValue = InferValueType<Schema>,
 > {
-  node?: InferSchemaNode<Schema>;
-  focus: Fn<[dataPath: SchemaNode['path']]>;
-  select: Fn<[dataPath: SchemaNode['path']]>;
+  node?: InferFieldNode<Schema>;
+  focus: Fn<[dataPath: FieldNode['path']]>;
+  select: Fn<[dataPath: FieldNode['path']]>;
   reset: Fn;
-  findNode: Fn<[path: SchemaNode['path']], SchemaNode | null>;
-  findNodes: Fn<[path: SchemaNode['path']], SchemaNode[]>;
+  findNode: Fn<[path: FieldNode['path']], FieldNode | null>;
+  findNodes: Fn<[path: FieldNode['path']], FieldNode[]>;
   getState: Fn<[], NodeStateFlags>;
   setState: Fn<[state: NodeStateFlags]>;
   clearState: Fn;
@@ -164,7 +164,7 @@ interface FormChildrenProps<
   Schema extends JSONSchema,
   Value extends AllowedValue = InferValueType<Schema>,
 > {
-  node?: InferSchemaNode<Schema>;
+  node?: InferFieldNode<Schema>;
   jsonSchema: Schema;
   defaultValue?: Value;
   value?: Value;
@@ -516,7 +516,7 @@ interface FieldInputProps<
   Context extends Dictionary = object,
   WatchValues extends Array<any> = Array<any>,
   Schema extends JSONSchemaWithVirtual = InferJSONSchema<Value>,
-  Node extends SchemaNode = InferSchemaNode<Schema>,
+  Node extends FieldNode = InferFieldNode<Schema>,
 > {
   /** JSON Schema for the FieldInput Component */
   jsonSchema: Schema;
@@ -524,19 +524,19 @@ interface FieldInputProps<
   readOnly: boolean;
   /** disabled state for the FieldInput Component */
   disabled: boolean;
-  /** Whether the schema node assigned to the FieldInput Component is required */
+  /** Whether the field node assigned to the FieldInput Component is required */
   required: boolean;
-  /** Schema node assigned to the FieldInput Component */
+  /** Field node assigned to the FieldInput Component */
   node: Node;
   /** JSON Schema type of this field (e.g., 'string', 'number', 'object', 'array') */
   type: Node['schemaType'];
-  /** Name of the schema node assigned to the FieldInput Component */
+  /** Name of the field node assigned to the FieldInput Component */
   name: Node['name'];
-  /** Path of the schema node assigned to the FieldInput Component */
+  /** Path of the field node assigned to the FieldInput Component */
   path: Node['path'];
   /** Whether this field accepts null as a valid value (derived from schema type array including 'null') */
   nullable: Node['nullable'];
-  /** Errors of the schema node assigned to the FieldInput Component */
+  /** Errors of the field node assigned to the FieldInput Component */
   errors: Node['errors'];
   /** Whether to show errors for this field */
   errorVisible: boolean;
@@ -2354,7 +2354,7 @@ Measured with `compare-frameworks` (production React, 500 flat fields): mount dr
 `@canard/schema-form` is built with TypeScript and provides comprehensive type definitions. Key type utilities include:
 
 - `InferValueType<Schema>`: Infers the value type from a JSON Schema
-- `InferSchemaNode<Schema>`: Infers the schema node type from a JSON Schema
+- `InferFieldNode<Schema>`: Infers the field node type from a JSON Schema
 - `FormHandle<Schema, Value>`: Type for form ref handle with schema-specific methods
 
 ### What `InferValueType` guarantees

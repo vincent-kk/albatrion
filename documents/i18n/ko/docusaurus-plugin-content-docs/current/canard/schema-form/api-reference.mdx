@@ -81,7 +81,7 @@ import { Form, VirtualizationBackfill } from '@canard/schema-form';
 | `eagerCount` | `number` | `20` | 게이트된 branch에서 앞쪽 N개는 즉시 마운트 (첫 프레임 공백 방지) |
 | `rootMargin` | `VirtualizationRootMargin` | `'100%'` | 뷰포트 주변 선행 마운트 거리 — IntersectionObserver 스펙상 `px`/`%`만 유효 |
 | `backfill` | `VirtualizationBackfill` | `Idle` | `Idle`: 브라우저 idle 시간에 나머지를 점진 마운트, `None`: 가시성/명령 시에만 reveal |
-| `estimateHeight` | `number \| (node: SchemaNode) => number` | `40` | placeholder 높이(px) — reveal 전까지 스크롤 지오메트리를 근사 |
+| `estimateHeight` | `number \| (node: FieldNode) => number` | `40` | placeholder 높이(px) — reveal 전까지 스크롤 지오메트리를 근사 |
 | `Placeholder` | `ComponentType<VirtualizationPlaceholderProps>` | — | placeholder 내부에 렌더되는 커스텀 컴포넌트 (Suspense fallback 스타일), `{ node, height }` 수신 |
 
 **Placeholder DOM 계약** — 지연된 필드는
@@ -105,7 +105,7 @@ import { Form, VirtualizationBackfill } from '@canard/schema-form';
 
 ```ts
 interface FormHandle<Schema, Value> {
-  node:        InferSchemaNode<Schema> | undefined; // root node
+  node:        InferFieldNode<Schema> | undefined; // root node
   getValue():  Value;
   setValue(value: Value | ((prev: Value) => Value), options?: SetValueOption): void;
   getState():  NodeStateFlags;
@@ -116,8 +116,8 @@ interface FormHandle<Schema, Value> {
   showError(visible: boolean): void;
   focus(path: string): void;    // focuses input at path
   select(path: string): void;   // selects input at path
-  findNode(path: string):  SchemaNode | null;
-  findNodes(path: string): SchemaNode[];
+  findNode(path: string):  FieldNode | null;
+  findNodes(path: string): FieldNode[];
   reset(): void;                // remounts the form (re-reads jsonSchema + defaultValue)
   submit: TrackableHandlerFunction; // callable + subscribe(listener) + pending
   getAttachedFilesMap(): AttachedFilesMap;
@@ -252,25 +252,25 @@ function SubmitButton({ formRef }) {
 }
 ```
 
-### `useSchemaNodeTracker`
+### `useFieldNodeTracker`
 
 ```ts
-const version = useSchemaNodeTracker(node, eventMask?);
+const version = useFieldNodeTracker(node, eventMask?);
 // Returns an incrementing number; triggers re-render on matching events.
 // Default mask: all events (BIT_MASK_ALL)
 ```
 
 ```tsx
 function PriceDisplay({ node }: { node: NumberNode }) {
-  useSchemaNodeTracker(node); // re-render whenever node emits any event
+  useFieldNodeTracker(node); // re-render whenever node emits any event
   return <span>{node.value}</span>;
 }
 ```
 
-### `useSchemaNodeSubscribe`
+### `useFieldNodeSubscribe`
 
 ```ts
-useSchemaNodeSubscribe(node, (event) => {
+useFieldNodeSubscribe(node, (event) => {
   console.log(event.type, node.value);
 });
 // Raw event subscription — does NOT trigger re-render by itself.
@@ -359,10 +359,10 @@ interface FieldInputProps<Value, Context, WatchValues, Schema, Node> {
 }
 ```
 
-## `SchemaNode` Interface
+## `FieldNode` Interface
 
 ```ts
-interface SchemaNode {
+interface FieldNode {
   // Identity
   readonly type:       string;           // node type ('string', 'object', etc.)
   readonly schemaType: JSONSchemaType;
@@ -373,7 +373,7 @@ interface SchemaNode {
   // Tree structure
   readonly depth:      number;
   readonly isRoot:     boolean;
-  readonly parentNode: SchemaNode | null;
+  readonly parentNode: FieldNode | null;
   readonly name:       string;
   readonly path:       string;
 
@@ -402,8 +402,8 @@ interface SchemaNode {
   validate(): Promise<JSONSchemaError[]>;
 
   // Navigation
-  find(path: string):    SchemaNode | undefined;
-  findAll(path: string): SchemaNode[];
+  find(path: string):    FieldNode | undefined;
+  findAll(path: string): FieldNode[];
 
   // Events
   publish(event: NodeEventType): void;
@@ -414,9 +414,9 @@ interface SchemaNode {
 ## `ArrayNode` Methods
 
 ```ts
-interface ArrayNode extends SchemaNode {
+interface ArrayNode extends FieldNode {
   readonly length:   number;
-  readonly children: Array<{ node: SchemaNode }>;
+  readonly children: Array<{ node: FieldNode }>;
   push(value?: any): void;    // add item (respects maxItems)
   remove(index: number): void;
   clear(): void;              // remove all items (respects minItems)
@@ -429,7 +429,7 @@ interface ArrayNode extends SchemaNode {
 import {
   isArrayNode, isObjectNode, isStringNode, isBooleanNode,
   isNumberNode, isBranchNode, isTerminalNode, isVirtualNode,
-  isSchemaNode,
+  isFieldNode,
 } from '@canard/schema-form';
 
 if (isArrayNode(node)) {
@@ -453,7 +453,7 @@ import {
 ```ts
 type FormatError = (
   error:   JSONSchemaError,
-  node:    SchemaNode,
+  node:    FieldNode,
   context: Dictionary,
 ) => ReactNode;
 
@@ -508,7 +508,7 @@ children?:                 ReactNode | (props: FormChildrenProps) => ReactNode
 ref?:                      Ref<FormHandle>
 
 // ── FormHandle ──────────────────────────────────────────────────
-node?:              SchemaNode
+node?:              FieldNode
 getValue():         Value
 setValue(v, opts?): void
 getState():         NodeStateFlags
@@ -519,13 +519,13 @@ validate():         Promise<JSONSchemaError[]>
 showError(b):       void
 focus(path):        void
 select(path):       void
-findNode(path):     SchemaNode | null
-findNodes(path):    SchemaNode[]
+findNode(path):     FieldNode | null
+findNodes(path):    FieldNode[]
 reset():            void
 submit:             TrackableHandlerFunction   // .pending, .subscribe()
 getAttachedFilesMap(): AttachedFilesMap
 
-// ── SchemaNode key members ──────────────────────────────────────
+// ── FieldNode key members ──────────────────────────────────────
 node.value / node.defaultValue / node.enhancedValue
 node.setValue(input, option?)
 node.errors / node.globalErrors
@@ -544,8 +544,8 @@ arrayNode.push(value?) / arrayNode.remove(index) / arrayNode.clear()
 
 // ── Hooks ───────────────────────────────────────────────────────
 useFormSubmit(ref)                     → { submit, pending }
-useSchemaNodeTracker(node, mask?)      → version: number
-useSchemaNodeSubscribe(node, listener) → void
+useFieldNodeTracker(node, mask?)      → version: number
+useFieldNodeSubscribe(node, listener) → void
 useChildNodeComponentMap(node)         → Map<string, ChildNodeComponent>
 useChildNodeErrors(node)               → JSONSchemaError[]
 ```

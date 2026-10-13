@@ -515,16 +515,16 @@ function ProfileForm() {
 ## Watching Node State in Custom Components
 
 ```tsx
-import { SchemaNodeState, useSchemaNodeTracker } from '@canard/schema-form';
+import { FieldNodeState, useFieldNodeTracker } from '@canard/schema-form';
 
-function FieldStatus({ node }: { node: SchemaNode }) {
+function FieldStatus({ node }: { node: FieldNode }) {
   // Re-renders on any node event
-  useSchemaNodeTracker(node);
+  useFieldNodeTracker(node);
 
   return (
     <div>
       <span>Value: {JSON.stringify(node.value)}</span>
-      <span>Dirty: {node.state[SchemaNodeState.Dirty] ? 'yes' : 'no'}</span>
+      <span>Dirty: {node.state[FieldNodeState.Dirty] ? 'yes' : 'no'}</span>
       <span>Errors: {node.errors.length}</span>
       <span>Visible: {node.visible ? 'yes' : 'no'}</span>
     </div>

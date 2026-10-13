@@ -126,12 +126,12 @@ interface FormHandle<
   Schema extends JSONSchema,
   Value extends AllowedValue = InferValueType<Schema>,
 > {
-  node?: InferSchemaNode<Schema>;
-  focus: Fn<[dataPath: SchemaNode['path']]>;
-  select: Fn<[dataPath: SchemaNode['path']]>;
+  node?: InferFieldNode<Schema>;
+  focus: Fn<[dataPath: FieldNode['path']]>;
+  select: Fn<[dataPath: FieldNode['path']]>;
   reset: Fn;
-  findNode: Fn<[path: SchemaNode['path']], SchemaNode | null>;
-  findNodes: Fn<[path: SchemaNode['path']], SchemaNode[]>;
+  findNode: Fn<[path: FieldNode['path']], FieldNode | null>;
+  findNodes: Fn<[path: FieldNode['path']], FieldNode[]>;
   getState: Fn<[], NodeStateFlags>;
   setState: Fn<[state: NodeStateFlags]>;
   clearState: Fn;
@@ -161,7 +161,7 @@ interface FormChildrenProps<
   Schema extends JSONSchema,
   Value extends AllowedValue = InferValueType<Schema>,
 > {
-  node?: InferSchemaNode<Schema>;
+  node?: InferFieldNode<Schema>;
   jsonSchema: Schema;
   defaultValue?: Value;
   value?: Value;
@@ -505,7 +505,7 @@ interface FieldInputProps<
   Context extends Dictionary = object,
   WatchValues extends Array<any> = Array<any>,
   Schema extends JSONSchemaWithVirtual = InferJSONSchema<Value>,
-  Node extends SchemaNode = InferSchemaNode<Schema>,
+  Node extends FieldNode = InferFieldNode<Schema>,
 > {
   /** FieldInput 컴포넌트의 JSON 스키마 */
   jsonSchema: Schema;
@@ -513,19 +513,19 @@ interface FieldInputProps<
   readOnly: boolean;
   /** FieldInput 컴포넌트의 비활성화 상태 */
   disabled: boolean;
-  /** FieldInput 컴포넌트에 할당된 스키마 노드가 필수인지 여부 */
+  /** FieldInput 컴포넌트에 할당된 필드 노드가 필수인지 여부 */
   required: boolean;
-  /** FieldInput 컴포넌트에 할당된 스키마 노드 */
+  /** FieldInput 컴포넌트에 할당된 필드 노드 */
   node: Node;
   /** 이 필드의 JSON Schema 타입 (예: 'string', 'number', 'object', 'array') */
   type: Node['schemaType'];
-  /** FieldInput 컴포넌트에 할당된 스키마 노드의 이름 */
+  /** FieldInput 컴포넌트에 할당된 필드 노드의 이름 */
   name: Node['name'];
-  /** FieldInput 컴포넌트에 할당된 스키마 노드의 경로 */
+  /** FieldInput 컴포넌트에 할당된 필드 노드의 경로 */
   path: Node['path'];
   /** 이 필드가 null 값을 허용하는지 여부 (스키마 타입 배열에 'null'이 포함된 경우에서 파생) */
   nullable: Node['nullable'];
-  /** FieldInput 컴포넌트에 할당된 스키마 노드의 오류 */
+  /** FieldInput 컴포넌트에 할당된 필드 노드의 오류 */
   errors: Node['errors'];
   /** 이 필드의 에러를 표시할지 여부 */
   errorVisible: boolean;
@@ -2297,7 +2297,7 @@ const CUSTOM_INPUTS = [
 `@canard/schema-form`은 TypeScript로 구축되었으며 포괄적인 유형 정의를 제공합니다. 주요 유형 유틸리티에는 다음과 같습니다:
 
 - `InferValueType<Schema>`: JSON Schema에서 값 유형을 추론합니다
-- `InferSchemaNode<Schema>`: JSON Schema에서 스키마 노드 유형을 추론합니다
+- `InferFieldNode<Schema>`: JSON Schema에서 필드 노드 유형을 추론합니다
 - `FormHandle<Schema, Value>`: 스키마 특정 메서드를 가진 양식 참조 핸들러의 유형
 
 ### `InferValueType`이 보장하는 것
