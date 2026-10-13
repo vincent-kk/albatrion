@@ -2,9 +2,8 @@
 
 개발의 진행 상황과 다음 할 일은 `PLAN.md`가 단일 진입점으로 든다. 다음 세션이 바로 이어서 일하기 위한 문서다. 이력은 `git log`와 `reviews/`에 있으므로 여기에는 지금 상태, 다음 할 일, 일하는 법만 적는다. 소유자는 Vincent다.
 
-## 1. 지금 어디인가 (2026-10-13, 260라운드 닫힘; 07 전환 진행 중)
+## 1. 지금 어디인가 (2026-10-13, 261라운드 닫힘; 07 전환 진행 중)
 
-- **227라운드(2026-10-13, 닫기).** 221C-01 전체 스토리 에이전틱 실제 창 순회가 ⑤ head 5ca91762f에서 통과했다(241 스토리: PASS 236·SKIPPED 4·실제 FAIL 0·예상된 FAIL 1; 플러그인 스토리 6/6; CDP 전용 넷은 fixy07의 Browser Mode 실행으로 통과). #355의 선행 조건은 모두 닫혔고 fixy07에 ⑥(최종 rebase, 전체 게이트, #355 본문)을 신호했다; fairy07 배정 종료. ⑥은 rebase 없이 끝났고(de7f56499는 이미 조상) 원장 관리자의 #355 직접 검증(시험 3876+240, typecheck 0, lint 0, G16)도 통과했으나, squash 병합 명령이 자동 모드 분류기에서 거부되어 소유자 실행을 기다린다(reviews/round-227-closing.md).
 - **228라운드(2026-10-13, 소유자).** 검증을 마친 #355의 squash 병합을 소유자가 명시적으로 허가했다(reviews/round-228-owner-answers.md).
 - **229라운드(2026-10-13, 닫기).** #355를 feat/schema-form-switch에 squash 병합했다(b1da5e771). 원격 feat/schema-form-07b-1은 지웠고 #354 초안은 새 head b1da5e771로 이어지며, 07b 마무리와 세 세션의 배정은 모두 끝났다. 남은 일은 소유자 귀환 뒤 대기열 9~28 결정과 개선-38 설명 문서 검토다(reviews/round-229-closing.md).
 - **230라운드(2026-10-13, 소유자).** 대기열 결정 항목 가운데 일곱에 답했다: CLAUDE.md 절 갱신(10)·문서 사이트 PR(17)·플러그인 잔여 넷 정리(20)·시험 타이밍 둘(25·27)은 승인, 옛 키 진단(19)과 onValidate 두 번(22)은 현행 유지, type 좁힘(23)은 조건부 유지; 대기열 9와 26은 설명을 요구해 보류(reviews/round-230-owner-answers.md).
@@ -37,7 +36,8 @@
 - **257라운드(2026-10-14, 소유자).** 작은 수정 넷(07b-4: 대기열 36·37·16·18)을 바로 시작하되 이번에 한해 codex 위임 없이 fixy07이 직접 구현한다(257C-01, reviews/round-257-owner-answers.md). 원장 관리자는 개선-38 설명·근거 문서의 이름을 병합 코드 기준으로 갱신한다.
 - **258라운드(2026-10-14, 소유자).** 개선-38의 다섯 결정과 후보 C를 확정했고, 이름 논의 셋(factory가 본체인가, components/SchemaNode의 이름, SchemaNode → FieldNode)을 추가로 열었다(reviews/round-258-owner-answers.md). 원장 관리자가 코드 사실로 답한다.
 - **259라운드(2026-10-14, 소유자).** SchemaNode 계열을 FieldNode 계열로 바꾸기로 확정했고(components/SchemaNode → components/Field: FieldProxy·FieldInputSlot·DeferredFieldProxy), 이름을 먼저 바꾼 뒤 C 재배치로 간다. 레거시는 제외(259C-01 대응표, reviews/round-259-owner-answers.md). 07b-5: fairy07 사용처 목록 → fixy07 치환(07b-4 뒤).
-- **260라운드(2026-10-14, 소유자).** 이름 변경에 두 요구를 붙였다: 옛 이름이 남지 않게 검사를 철저히(260C-01 세 겹 게이트), 다른 핵심 고유명사도 바꿀 것이 있는지 검토(reviews/round-260-owner-answers.md). 원장 관리자가 공개 고유명사 전수 목록으로 후보를 올린다. 다음 라운드 번호는 261.
+- **260라운드(2026-10-14, 소유자).** 이름 변경에 두 요구를 붙였다: 옛 이름이 남지 않게 검사를 철저히(260C-01 세 겹 게이트), 다른 핵심 고유명사도 바꿀 것이 있는지 검토(reviews/round-260-owner-answers.md). 원장 관리자가 공개 고유명사 전수 목록으로 후보를 올린다.
+- **261라운드(2026-10-14, 닫기).** 핵심 고유명사 재검토의 후보 15개를 사실 확인과 함께 올렸다(261C-01, reviews/round-261-closing.md). 소유자 답을 받아 259C-01 대응표를 넓히고 07b-5 브리프를 쓴다. 다음 라운드 번호는 262.
 - **그 앞의 라운드 요지(19라운드부터)는 PLAN-LOG.md 2절에 있다.** 라운드마다 한 문단이며, 1절의 기록 표와 같은 순서다.
 - **설계의 정본은 단일 원장 `ledger/`다.** 영역 17개, 항목 1,350개(80라운드 뒤, 24라운드 뒤 1,348; 현행 1,076(부정 결정·기록 포함), 대체됨 199, 분할됨 49, 중복 24, 열림 0). 형식과 규칙은 `ledger/README.md`.
 - **옛 설계 문서(`00`–`09`, `adr/`, `open-questions.md`)는 동결됐다.** 더 고치지 않는다. 어긋남은 원장의 충돌 칸에 적는다. 원장이 인용하는 옛 문서의 `path:line`은 모두 커밋 `ba398c330` 기준 줄 번호다(그 뒤 옛 문서는 바뀌지 않았다).
@@ -398,6 +398,7 @@ node ledger/checks/doc-coverage.mjs design/*.md adr/*.md -- ledger/*.md   # 설�
 | `reviews/round-258-owner-answers.md` | 258라운드 소유자 답: 개선-38 결정 다섯·후보 C, 이름 논의 셋 |
 | `reviews/round-259-owner-answers.md` | 259라운드 소유자 답: FieldNode 확정, 대응표 259C-01 |
 | `reviews/round-260-owner-answers.md` | 260라운드 소유자 답: 옛 이름 게이트, 고유명사 재검토 |
+| `reviews/round-261-closing.md` | 261라운드 닫기: 고유명사 재검토 후보 15 |
 | reviews 아래 improvement-38-explain.html | 개선-38 소유자용 설명(seiri:explain) |
 | reviews 아래 improvement-38-fractal-map.md | 개선-38 고찰 문서(reviewer, verifier 대조판) |
 | reviews 아래 raw-improvement-38 디렉터리 | 개선-38 근거: 소비자 증거 표, filid 요약 |

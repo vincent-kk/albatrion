@@ -82,4 +82,4 @@
 
 | 날짜 | 무엇 | 어디 |
 | --- | --- | --- |
-| 2026-10-14 | 260라운드(소유자): 옛 이름 누락 검사 철저(260C-01 게이트), 다른 핵심 고유명사 추가 검토 요구. 보충 1줄 | `reviews/round-260-owner-answers.md` |
+| 2026-10-14 | 261라운드(닫기): 핵심 고유명사 재검토 후보 15(261C-01), 사실 확인 셋(extras·Form.Group·options.virtual/propertyKeys); 소유자 결정 대기. 보충 1줄 | `reviews/round-261-closing.md` |
