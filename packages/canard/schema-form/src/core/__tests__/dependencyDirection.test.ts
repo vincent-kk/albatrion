@@ -37,21 +37,6 @@ const ORDER: Readonly<Record<string, number>> = {
   surface: 6,
 };
 
-const BINDING_FORBIDDEN_ENGINE_NAMES = [
-  'readFieldNodeDefaultValue',
-  'readFieldNodeInactiveValues',
-  'readFieldNodeTypeMismatch',
-  'readFieldNodeTypeMismatches',
-  'readFieldNodeWatchValues',
-  'loadFieldNodeAtMount',
-  'resetFieldNodeForm',
-  'find',
-  'findNodes',
-  'PathKeyedMap',
-  'PathKeyedSet',
-  '*',
-];
-
 interface Edge {
   readonly source: string;
   readonly target: string;
@@ -83,6 +68,45 @@ const resolveImport = (source: string, specifier: string): string | null => {
   if (existsSync(`${base}.ts`)) return `${base}.ts`;
   if (existsSync(join(base, 'index.ts'))) return join(base, 'index.ts');
   return existsSync(base) ? base : null;
+};
+
+/** Index engine re-exports by their public name and resolved source module. */
+const ENGINE_NAME_ORIGIN = (() => {
+  const entry = join(CORE, 'engine', 'index.ts');
+  const syntax = ts.createSourceFile(
+    entry,
+    readFileSync(entry, 'utf8'),
+    ts.ScriptTarget.Latest,
+    true,
+  );
+  const origins = new Map<string, string>();
+  for (const statement of syntax.statements) {
+    if (
+      !ts.isExportDeclaration(statement) ||
+      !statement.exportClause ||
+      !ts.isNamedExports(statement.exportClause) ||
+      !statement.moduleSpecifier ||
+      !ts.isStringLiteral(statement.moduleSpecifier)
+    )
+      continue;
+    const origin = resolveImport(entry, statement.moduleSpecifier.text);
+    if (!origin) continue;
+    for (const e of statement.exportClause.elements)
+      origins.set(e.name.text, origin);
+  }
+  return origins;
+})();
+
+/** Permit bindings to use only lower engine entries and engine-owned types. */
+const bindingMayUse = (name: string): boolean => {
+  const origin = ENGINE_NAME_ORIGIN.get(name);
+  if (!origin) return false;
+  return (
+    origin.startsWith(join(CORE, 'engine', 'types') + sep) ||
+    ['blueprint', 'behaviors', 'write', 'record', 'validation'].some(
+      (entry) => origin === join(CORE, 'engine', entry, 'index.ts'),
+    )
+  );
 };
 
 /** Parse static imports and re-exports rather than matching comments or strings. */
@@ -150,7 +174,7 @@ describe('NODE-016 and NODE-045 dependency direction', () => {
         source.startsWith(binding) &&
         owner(target) !== 'surface' &&
         (target === engineEntry
-          ? names.some((name) => BINDING_FORBIDDEN_ENGINE_NAMES.includes(name))
+          ? names.some((name) => !bindingMayUse(name))
           : !target.startsWith(join(CORE, 'engine', 'types') + sep) &&
             !target.startsWith(join(CORE, '..', 'types') + sep) &&
             target !== join(CORE, '..', 'errors', 'index.ts') &&
