@@ -82,19 +82,19 @@ registerPlugin(plugin);
 
 - **역할**: URI 입력을 위한 특수 입력 필드 (프로토콜 드롭다운 포함)
 - **적용 조건**: `type`이 `"string"`이고 `format` 또는 `formType`이 `"uri"`인 경우
-- **추가 사항**: 프로토콜 선택 드롭다운, 기본 프로토콜 목록 지원 (http, https, ftp, mailto, tel), 커스텀 프로토콜 목록 설정 가능
+- **추가 사항**: 프로토콜 선택 드롭다운, 기본 프로토콜 목록 지원 (http, https, ftp, mailto, tel), `presentation.FormTypeInputProps.protocols`로 커스텀 프로토콜 목록 설정
 
 ### **[`FormTypeInputMonth.tsx`](./src/formTypeInputs/FormTypeInputMonth.tsx)**
 
 - **역할**: 월 선택을 위한 DatePicker (월 모드)
 - **적용 조건**: `type`이 `"string"`이고 `format`이 `"month"`인 경우
-- **추가 사항**: `minimum`, `maximum` 범위 제한 지원, YYYY-MM 형식
+- **추가 사항**: `presentation.FormTypeInputProps.minimum`·`maximum`(YYYY-MM)으로 선택 가능한 월 제한, YYYY-MM 형식
 
 ### **[`FormTypeInputDate.tsx`](./src/formTypeInputs/FormTypeInputDate.tsx)**
 
 - **역할**: 날짜 선택을 위한 DatePicker
 - **적용 조건**: `type`이 `"string"`이고 `format`이 `"date"`인 경우
-- **추가 사항**: `minimum`, `maximum` 날짜 범위 제한 지원, YYYY-MM-DD 형식
+- **추가 사항**: `presentation.FormTypeInputProps.minimum`·`maximum`(YYYY-MM-DD)으로 선택 가능한 날짜 제한, YYYY-MM-DD 형식
 
 ### **[`FormTypeInputTime.tsx`](./src/formTypeInputs/FormTypeInputTime.tsx)**
 
@@ -106,19 +106,19 @@ registerPlugin(plugin);
 
 - **역할**: 월 범위 선택을 위한 DatePicker RangePicker (월 모드)
 - **적용 조건**: `type`이 `"array"`이고 `format`이 `"month-range"` 또는 `formType`이 `"monthRange"`이며, `items.type`이 `"string"`인 경우
-- **추가 사항**: 월 범위 제한 지원, [시작월, 종료월] 배열 형태로 반환
+- **추가 사항**: `presentation.FormTypeInputProps.minimum`·`maximum`(YYYY-MM)으로 선택 가능한 월 제한, [시작월, 종료월] 배열 형태로 반환
 
 ### **[`FormTypeInputDateRange.tsx`](./src/formTypeInputs/FormTypeInputDateRange.tsx)**
 
 - **역할**: 날짜 범위 선택을 위한 DatePicker RangePicker
 - **적용 조건**: `type`이 `"array"`이고 `format`이 `"date-range"` 또는 `formType`이 `"dateRange"`이며, `items.type`이 `"string"`인 경우
-- **추가 사항**: 날짜 범위 제한 지원, [시작일, 종료일] 배열 형태로 반환
+- **추가 사항**: `presentation.FormTypeInputProps.minimum`·`maximum`(YYYY-MM-DD)으로 선택 가능한 날짜 제한, [시작일, 종료일] 배열 형태로 반환
 
 ### **[`FormTypeInputTimeRange.tsx`](./src/formTypeInputs/FormTypeInputTimeRange.tsx)**
 
 - **역할**: 시간 범위 선택을 위한 DatePicker RangePicker (시간 모드)
 - **적용 조건**: `type`이 `"array"`이고 `format`이 `"time-range"` 또는 `formType`이 `"timeRange"`이며, `items.type`이 `"string"`인 경우
-- **추가 사항**: 시간 범위 제한 지원, [시작시간, 종료시간] 배열 형태로 반환
+- **추가 사항**: `presentation.FormTypeInputProps.minimum`·`maximum`(HH:mm:00Z)으로 선택 가능한 시간 제한, [시작시간, 종료시간] 배열 형태로 반환
 
 ### **[`FormTypeInputRadioGroup.tsx`](./src/formTypeInputs/FormTypeInputRadioGroup.tsx)**
 
@@ -144,7 +144,7 @@ registerPlugin(plugin);
 
 - **역할**: 숫자 값을 슬라이더로 입력받기
 - **적용 조건**: `type`이 `"number"` 또는 `"integer"`이고 `formType`이 `"slider"`인 경우
-- **추가 사항**: `minimum`, `maximum`, `multipleOf` 스키마 속성 지원, 지연 업데이트 옵션(`lazy`)
+- **추가 사항**: `minimum`, `maximum`, `multipleOf` 스키마 속성 지원, `presentation.FormTypeInputProps.lazy: false`이면 놓을 때가 아니라 움직일 때마다 값 반영
 
 ### **[`FormTypeInputTextarea.tsx`](./src/formTypeInputs/FormTypeInputTextarea.tsx)**
 
@@ -171,6 +171,25 @@ registerPlugin(plugin);
 - **추가 사항**: `undefined` 값에 대한 `indeterminate` 상태 지원
 
 ---
+
+## 입력 설정
+
+위의 `protocols`, `lazy`, `minimum`, `maximum` 같은 입력별 설정은 `presentation.FormTypeInputProps`에 둡니다. 폼이 이 객체를 입력 props로 펼쳐 넘깁니다.
+
+```ts
+const jsonSchema = {
+  type: 'object',
+  properties: {
+    homepage: {
+      type: 'string',
+      format: 'uri',
+      presentation: { FormTypeInputProps: { protocols: ['https'] } },
+    },
+  },
+};
+```
+
+0.16.0까지 내장 입력은 `options.minimum`·`maximum`·`lazy`·`protocols`를 읽었습니다. 1.0.0-beta부터 `options`는 닫힌 목록이고 입력별 설정은 `presentation.FormTypeInputProps`에 두면 입력 props로 펼쳐집니다. 옛 자리는 청사진 오류 `UNKNOWN_GROUP_KEY`가 됩니다.
 
 ## 컴포넌트 우선순위
 

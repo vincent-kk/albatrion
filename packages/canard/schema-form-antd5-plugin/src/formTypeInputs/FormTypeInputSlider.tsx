@@ -8,13 +8,23 @@ import type {
   NumberSchema,
 } from '@canard/schema-form';
 
+interface FormTypeInputSliderProps
+  extends FormTypeInputPropsWithSchema<number | null, NumberSchema> {
+  /**
+   * `false` publishes on every move; otherwise only when the drag ends.
+   * From `presentation.FormTypeInputProps.lazy`.
+   */
+  lazy?: boolean;
+}
+
 const FormTypeInputSlider = ({
   path,
   jsonSchema,
   disabled,
   defaultValue,
   onChange,
-}: FormTypeInputPropsWithSchema<number | null, NumberSchema>) => {
+  lazy,
+}: FormTypeInputSliderProps) => {
   const handleChange = useCallback(
     (value: number | null) => {
       if (value === null) onChange(NaN);
@@ -28,11 +38,11 @@ const FormTypeInputSlider = ({
       min: jsonSchema.minimum,
       max: jsonSchema.maximum,
       step: jsonSchema.multipleOf,
-      ...(jsonSchema.options?.lazy === false
+      ...(lazy === false
         ? { onChange: handleChange }
         : { onChangeComplete: handleChange }),
     } as const;
-  }, [handleChange, jsonSchema]);
+  }, [handleChange, jsonSchema, lazy]);
 
   return (
     <Slider
