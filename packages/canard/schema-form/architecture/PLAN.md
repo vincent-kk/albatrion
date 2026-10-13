@@ -82,4 +82,4 @@
 
 | 날짜 | 무엇 | 어디 |
 | --- | --- | --- |
-| 2026-10-13 | 218라운드(닫기): codex 위임이 code-mode host 장애로 막혀 대체 규칙 적용(대기열 21); ④ 위험 4 설계 변경 승인. 보충 3줄 | `reviews/round-218-closing.md` |
+| 2026-10-13 | 219라운드(닫기): codex 복구, 진행 중 작업은 직접 마무리; ajv 플러그인 PR #358 검증·squash-merge(dc6a2e79f); reviewer 다음 배정 둘. 보충 2줄 | `reviews/round-219-closing.md` |
