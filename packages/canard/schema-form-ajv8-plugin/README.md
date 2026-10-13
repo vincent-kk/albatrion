@@ -153,6 +153,8 @@ The `createValidatorFactory` function provides:
 - **Rich Error Context**: Detailed error information for better debugging
 - **Type Safety**: Full TypeScript support with advanced type inference
 
+`createValidator(ajv)` returns a per-instance `{ compile, compileGuard }` object for a Form's `validatorFactory`: create it once outside render (`const validator = createValidator(customAjv);` then `<Form validatorFactory={validator} />`), because a new object makes the Form rebuild its tree; several validators may share one AJV instance, which must not modify values (`coerceTypes`, `useDefaults`, `removeAdditional` off).
+
 ### **Modern JSON Schema Support**
 
 This plugin supports the latest JSON Schema features:
