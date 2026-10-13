@@ -9,6 +9,7 @@ registerPlugin(plugin);
 
 const schema = {
   type: 'object',
+  controls: { discriminator: 'employmentType' },
   properties: {
     employmentType: {
       type: 'string',
