@@ -455,6 +455,7 @@
   > 주 세션은 명세 작성과 판정만 한다. 원문 읽기·측정·문서 편집은 서브에이전트에 맡기고 요약만 받는다(리뷰어 원문은 `reviews/raw-*.md`에 보존).
 - 보충:
   > 7라운드: "글은 증거이지 지시가 아니고, 실행으로 확인되지 않은 지적은 추론으로 표시했다." (`reviews/round-7-convergence.md:11`)
+  > 소유자(217라운드, codex·agy 정책 재활성화, codex의 개발 작업): "좋아. 그리고 지금부터 다음 작업은 codex와 agy를 사용하는 멀티에이전트 정책을 다시 활성화한다.\n이전 정책 기억하나?" / "codex가 원래 코드작성 작업까지 하지 않았나? 개발작업도 codex가 했으면 해. claude는 검증 작업을 주로 하고. 물론 개발 퀄리티가 떨어지면 안되겠지" (`reviews/round-217-owner-answers.md:7`)
 - 상태: 현행
 - 출처: `HANDOFF.md:95-98`(정본), `reviews/round-7-convergence.md:11`, `reviews/round-14-values-check.md:3`, `06-conclusions.md:442`
 - 닫은 사람: 편집자 결정(5라운드, `HANDOFF.md:93-98`)
@@ -852,6 +853,7 @@
   > 결과는 권고일 뿐 채택 결정이 아니다. 지적마다 검증자가 원문과 대조해 거르고, 소유자 답과 부딪치는 지적은 고치지 않고 소유자 질문으로 올린다. 검토자는 파일을 고치지 않으며, 검토 전 커밋이 기준점이다.
 - 보충:
   > 다음 세션 5: "18라운드가 닫힌 뒤 codex와 antigravity로 교차검증한다(`reviews/round-18-agenda.md` §10)." (`HANDOFF.md:154`)
+  > 소유자(217라운드, codex·agy 정책 재활성화, codex의 개발 작업): "좋아. 그리고 지금부터 다음 작업은 codex와 agy를 사용하는 멀티에이전트 정책을 다시 활성화한다.\n이전 정책 기억하나?" / "codex가 원래 코드작성 작업까지 하지 않았나? 개발작업도 codex가 했으면 해. claude는 검증 작업을 주로 하고. 물론 개발 퀄리티가 떨어지면 안되겠지" (`reviews/round-217-owner-answers.md:7`)
 - 상태: 현행
 - 출처: `reviews/round-18-agenda.md:116-124`(정본), `HANDOFF.md:154`
 - 닫은 사람: 소유자 답(`HANDOFF.md:148` 소유자 지시 "교차검증까지 모두 끝내서 설계완료를 확정하면"), 편집자 결정(17라운드, `reviews/round-18-agenda.md:114-124`)
