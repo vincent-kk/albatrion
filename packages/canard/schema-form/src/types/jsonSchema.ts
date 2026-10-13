@@ -19,7 +19,7 @@ import type {
 import type { Dictionary, IsNullable } from '@aileron/declare';
 
 import type { SchemaControls } from '../core/types/controls';
-import type { UnknownFormTypeInputProps } from './formTypeInput';
+import type { FormTypeInputProps } from './formTypeInput';
 import type {
   AllowedValue,
   ArrayValue,
@@ -117,14 +117,43 @@ export type InferJSONSchema<
         : InferNonNullableSchema<Value, Options>;
 
 /** Binding presentation payload; core treats these fields as opaque data. */
-export type SchemaPresentation = Pick<
-  BasicSchema,
-  | 'formType'
-  | 'FormTypeInput'
-  | 'FormTypeInputProps'
-  | 'FormTypeRendererProps'
-  | 'errorMessages'
-> & { [key: string]: unknown };
+export type SchemaPresentation = {
+  /** Custom React component for input rendering */
+  FormTypeInput?: ComponentType<
+    FormTypeInputProps<any, any, any, any, any>
+  > | null;
+  /** Props passed to FormTypeInput component */
+  FormTypeInputProps?: {
+    /** Placeholder text for input fields */
+    placeholder?: string;
+    /** Display name aliases for enum values */
+    alias?: Dictionary<ReactNode>;
+    /** CSS class name for styling */
+    className?: string;
+    /** Inline CSS styles */
+    style?: CSSProperties;
+    /** Additional custom props */
+    [alt: string]: any;
+  };
+  /** Props passed to FormTypeRenderer component */
+  FormTypeRendererProps?: {
+    /** Field label text or element */
+    label?: ReactNode;
+    /** CSS class name for styling */
+    className?: string;
+    /** Inline CSS styles */
+    style?: CSSProperties;
+    /** Additional custom props */
+    [alt: string]: any;
+  };
+  /** Form type identifier for component selection */
+  formType?: string;
+  /** Custom error messages per validation rule */
+  errorMessages?: {
+    [key: string]: string | Dictionary<string> | undefined;
+    default?: string | Dictionary<string>;
+  };
+} & { [key: string]: unknown };
 
 /** React binding of the renderer-independent core schema. */
 export type JSONSchema<Options extends Dictionary = object> =
@@ -261,39 +290,6 @@ export type BasicSchema = {
   presentation?: SchemaPresentation;
   /** Rules and policies that change value and shape over time; any other key is a blueprint error */
   controls?: SchemaControls<JSONSchemaWithVirtual>;
-  /** Custom React component for input rendering */
-  FormTypeInput?: ComponentType<UnknownFormTypeInputProps> | null;
-  /** Props passed to FormTypeInput component */
-  FormTypeInputProps?: {
-    /** Placeholder text for input fields */
-    placeholder?: string;
-    /** Display name aliases for enum values */
-    alias?: Dictionary<ReactNode>;
-    /** CSS class name for styling */
-    className?: string;
-    /** Inline CSS styles */
-    style?: CSSProperties;
-    /** Additional custom props */
-    [alt: string]: any;
-  };
-  /** Props passed to FormTypeRenderer component */
-  FormTypeRendererProps?: {
-    /** Field label text or element */
-    label?: ReactNode;
-    /** CSS class name for styling */
-    className?: string;
-    /** Inline CSS styles */
-    style?: CSSProperties;
-    /** Additional custom props */
-    [alt: string]: any;
-  };
-  /** Form type identifier for component selection */
-  formType?: string;
-  /** Custom error messages per validation rule */
-  errorMessages?: {
-    [key: string]: string | Dictionary<string> | undefined;
-    default?: string | Dictionary<string>;
-  };
   /** Field options and configurations */
   options?: {
     /** Omit empty values from form data (default: true) */

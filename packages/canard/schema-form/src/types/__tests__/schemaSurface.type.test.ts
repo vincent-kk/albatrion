@@ -15,7 +15,7 @@ type NamedKeys<Type> = keyof {
       : Key]: Type[Key];
 };
 
-/** Authoring keys that 0.16.0 declared and the controls surface replaced (CONTROLS-016, CONTROLS-051). */
+/** Schema-level authoring keys replaced by controls, options or presentation. */
 type RemovedSchemaKeys =
   | 'computed'
   | '&if'
@@ -27,7 +27,12 @@ type RemovedSchemaKeys =
   | '&watch'
   | '&derived'
   | 'injectTo'
-  | 'terminal';
+  | 'terminal'
+  | 'FormTypeInput'
+  | 'FormTypeInputProps'
+  | 'FormTypeRendererProps'
+  | 'formType'
+  | 'errorMessages';
 
 /** Object-only keys that moved under `options` (CONTROLS-051). */
 type RemovedObjectKeys = 'virtual' | 'propertyKeys';
