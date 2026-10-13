@@ -81,15 +81,18 @@ npx -p @slats/agents-assets-sync inject-agents-settings --package=@canard/schema
 4. Provider `formTypeInputDefinitions`
 5. 플러그인 제공 정의
 
-### Computed Properties
+### Controls (조건·파생 속성)
 
 ```typescript
-computed: {
+controls: {
   visible: '../category === "premium"',
   readOnly: '../locked === true',
   watch: ['../category'],   // 명시적 의존성
 }
 ```
+
+키 집합은 닫혀 있으며 `src/core/blueprint/utils/diagnostics/validateControlGroups.ts`의 `CONTROL_KEYS`가 목록(active, visible, readOnly, disabled, default, derived, unsetValue, resetInteraction, unsetOnInactive, children, injectTo, discriminator, watch)이고, 모르는 키는 `UNKNOWN_GROUP_KEY` 오류다(단 `controls.children[].controls`와 조각(oneOf·anyOf·allOf·then·else)의 controls는 앞의 9개 키만 허용).
+값의 형과 예는 `docs/en/SPECIFICATION.md`의 controls 절을 기준으로 한다.
 
 ### Validation Modes
 

@@ -409,10 +409,10 @@ interface FormTypeInputProps<
 
 FormTypeInput은 다음 우선순위로 선택됩니다 (높은 순):
 
-1. **JSON Schema의 직접 할당**
+1. **JSON Schema의 presentation.FormTypeInput 직접 할당**
 
    ```tsx
-   { type: 'string', FormTypeInput: CustomInput }
+   { type: 'string', presentation: { FormTypeInput: CustomInput } }
    ```
 
 2. **formTypeInputMap** (경로 기반)
@@ -593,7 +593,7 @@ const jsonSchema = {
 
 분기 자신의 `nullable: true` 플래그는 부모와 비교하지 않으므로 `'object'` + `nullable: true`는 어떤 객체 아래에서도 허용됩니다. 그 밖의 선언 — nullable이 아닌 객체 아래의 `'null'`·`['object', 'null']` 분기, `'string'`, `'array'` — 은 `COMPOSITION_TYPE_REDEFINITION`을 던집니다.
 
-이 규칙과 아래 두 개발 환경 경고는 객체가 자식 노드를 만드는 경우에만 실행됩니다. 객체 전체를 하나의 입력으로 다루는 경우 — `terminal: true`이거나 객체 스키마에 `FormTypeInput` 컴포넌트를 지정한 경우 — 에는 분기를 만들지 않으므로 분기 type을 검사하지 않고 두 경고도 나오지 않습니다. 검증기는 그때도 작성된 스키마를 그대로 봅니다.
+이 규칙과 아래 두 개발 환경 경고는 객체가 자식 노드를 만드는 경우에만 실행됩니다. 객체 전체를 하나의 입력으로 다루는 경우 — `terminal: true`이거나 객체 스키마에 `presentation.FormTypeInput` 컴포넌트를 지정한 경우 — 에는 분기를 만들지 않으므로 분기 type을 검사하지 않고 두 경고도 나오지 않습니다. 검증기는 그때도 작성된 스키마를 그대로 봅니다.
 
 분기의 `properties` 안에서 `type`이 **있는** 항목은 필드이고, `type` 없이 `const`나 `enum`만 가진 항목은 호스트의 `controls.discriminator`가 읽어 그 분기를 고르는 태그입니다. 이런 판별자에 `type`을 붙이면 필드가 되어 부모의 같은 이름 프로퍼티와 충돌합니다(`COMPOSITION_PROPERTY_REDEFINITION`).
 
@@ -713,9 +713,12 @@ const schema = {
     name: {
       type: 'string',
       minLength: 3,
-      errorMessages: {
-        minLength: '이름은 최소 {limit}자 이상이어야 합니다. 현재 값: {value}',
-        required: '이름은 필수 입력 항목입니다.',
+      presentation: {
+        errorMessages: {
+          minLength:
+            '이름은 최소 {limit}자 이상이어야 합니다. 현재 값: {value}',
+          required: '이름은 필수 입력 항목입니다.',
+        },
       },
     },
   },
@@ -726,10 +729,12 @@ const schema = {
 ### 다국어 지원
 
 ```typescript
-errorMessages: {
-  minLength: {
-    ko_KR: '이름은 최소 {limit}자 이상이어야 합니다.',
-    en_US: 'Name must be at least {limit} characters.',
+presentation: {
+  errorMessages: {
+    minLength: {
+      ko_KR: '이름은 최소 {limit}자 이상이어야 합니다.',
+      en_US: 'Name must be at least {limit} characters.',
+    },
   },
 }
 
@@ -883,7 +888,7 @@ const jsonSchema = {
 - `omitTrailing` (opt-in): **후행** 연속 `undefined` 항목만 제거합니다. 선행·중간 `undefined`는 보존되어 error `dataPath`와 validation index 정합이 유지됩니다 — `[1, undefined, 2]`는 그대로 방출됩니다.
 - `omitEmpty` (기본 활성): 빈 배열을 부모 전파 경로에서 `undefined`로 변환합니다. 필터 순서는 `omitTrailing → omitEmpty`라서 전부 빈 배열은 부모에서 `undefined`로 수렴합니다 (루트 폼은 `[]`를 방출).
 - `null`은 빈 값이 아닙니다: 두 필터 모두 값이 `null`인 nullable 배열을 건드리지 않습니다 — [Nullable 객체와 배열](#nullable-객체와-배열) 참고.
-- `node.value`는 raw를 유지하고, 정제된 출력은 `node.normalizedValue`로 노출됩니다. validation은 정제된 값 기준이라 `minItems`는 채워진 prefix만 셉니다.
+- `node.value`는 raw를 유지하고, 정제된 출력은 `node.outputValue`로 노출됩니다. validation은 정제된 값 기준이라 `minItems`는 채워진 prefix만 셉니다.
 - Reset 계열 초기화(폼 reset, 분기 재활성화)는 `minItems`만큼 빈 항목을 재충전하고, 일반 `setValue(undefined)`는 전부 비웁니다 — 배열을 빼고 부모를 교체하는 쓰기도 같습니다: `setValue({ other: 1 })`는 배열을 비우고, `SetValueOption.Merge`는 그대로 둡니다. 기본값이 `null`인 배열은 채움 없이 `null`로 reset됩니다.
 
 ### Value Injection (injectTo)

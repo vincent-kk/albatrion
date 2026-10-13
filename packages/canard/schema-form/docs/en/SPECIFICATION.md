@@ -411,10 +411,10 @@ interface FormTypeInputProps<
 
 FormTypeInput is selected with the following priority (highest first):
 
-1. **Directly assigned FormTypeInput in JSON Schema**
+1. **Directly assigned presentation.FormTypeInput in JSON Schema**
 
    ```tsx
-   { type: 'string', FormTypeInput: CustomInput }
+   { type: 'string', presentation: { FormTypeInput: CustomInput } }
    ```
 
 2. **formTypeInputMap** (path-based)
@@ -595,7 +595,7 @@ A branch usually omits `type` and takes its parent's. When it declares one, it m
 
 A branch's own `nullable: true` flag is not compared with the parent's, so `'object'` + `nullable: true` is accepted under any object. Anything else — a `'null'` or `['object', 'null']` branch under a non-nullable object, `'string'`, `'array'` — throws `COMPOSITION_TYPE_REDEFINITION`.
 
-This rule, and the two development warnings below, run only where the object builds child nodes. An object handled as a single input — `terminal: true`, or a `FormTypeInput` component set on the object's schema — builds no branches, so its branch types are not checked and neither warning is printed; the validator still sees the schema as written.
+This rule, and the two development warnings below, run only where the object builds child nodes. An object handled as a single input — `terminal: true`, or a `presentation.FormTypeInput` component set on the object's schema — builds no branches, so its branch types are not checked and neither warning is printed; the validator still sees the schema as written.
 
 Inside a branch's `properties`, an entry **with** a `type` is a field; an entry **without** one, carrying only `const` or `enum`, is a tag that the host's `controls.discriminator` reads to select the branch. Giving such a discriminator a `type` turns it into a field that collides with the parent's property of the same name (`COMPOSITION_PROPERTY_REDEFINITION`).
 
@@ -715,9 +715,12 @@ const schema = {
     name: {
       type: 'string',
       minLength: 3,
-      errorMessages: {
-        minLength: 'Name must be at least {limit} characters. Current: {value}',
-        required: 'Name is required.',
+      presentation: {
+        errorMessages: {
+          minLength:
+            'Name must be at least {limit} characters. Current: {value}',
+          required: 'Name is required.',
+        },
       },
     },
   },
@@ -728,10 +731,12 @@ const schema = {
 ### Multilingual Support
 
 ```typescript
-errorMessages: {
-  minLength: {
-    ko_KR: '이름은 최소 {limit}자 이상이어야 합니다.',
-    en_US: 'Name must be at least {limit} characters.',
+presentation: {
+  errorMessages: {
+    minLength: {
+      ko_KR: '이름은 최소 {limit}자 이상이어야 합니다.',
+      en_US: 'Name must be at least {limit} characters.',
+    },
   },
 }
 
@@ -885,7 +890,7 @@ const jsonSchema = {
 - `omitTrailing` (opt-in): removes **trailing** consecutive `undefined` items only. Leading and middle `undefined` items are preserved so error `dataPath`s and validation indices stay aligned — `[1, undefined, 2]` is emitted as-is.
 - `omitEmpty` (on by default): converts an empty array to `undefined` on the parent-propagation path. Filter order is `omitTrailing → omitEmpty`, so an all-empty array collapses to `undefined` under its parent (a root-level form still emits `[]`).
 - `null` is not an empty value: neither filter touches a nullable array that is `null` — see [Nullable Objects and Arrays](#nullable-objects-and-arrays).
-- `node.value` stays raw; the refined output is exposed as `node.normalizedValue`. Validation runs against the refined value, so `minItems` counts only the filled prefix.
+- `node.value` stays raw; the refined output is exposed as `node.outputValue`. Validation runs against the refined value, so `minItems` counts only the filled prefix.
 - A Reset-flagged clear (form reset, branch reactivation) refills `minItems` empty items; a plain `setValue(undefined)` clears every item — and so does a replace-style write on the parent that omits the array: `setValue({ other: 1 })` empties it, `SetValueOption.Merge` leaves it untouched. An array whose default is `null` resets to `null`, with no fill.
 
 ### Value Injection (injectTo)

@@ -351,7 +351,7 @@ Please refer to each plugin's README for detailed usage instructions.
 
 📌 Validation messages must follow the following rules:
 
-- Validation messages must be defined in the `errorMessages` property of the jsonSchema.
+- Validation messages must be defined in the `presentation.errorMessages` property of the jsonSchema.
 - Validation messages must be defined in the `{[keyword]:errorMessage}` format.
 - If you define the `default` key, it will be used as the default value when the keyword does not match.
 - Each validation message (errorMessage) can be replaced with dynamic values using the following expressions:
@@ -368,12 +368,14 @@ const schema = {
       type: 'string',
       minLength: 3,
       maxLength: 10,
-      errorMessages: {
-        minLength:
-          'Name must be at least {limit} characters long. Current value: {value}',
-        maxLength:
-          'Name must be no more than {limit} characters long. Current value: {value}',
-        required: 'Name is a required field.',
+      presentation: {
+        errorMessages: {
+          minLength:
+            'Name must be at least {limit} characters long. Current value: {value}',
+          maxLength:
+            'Name must be no more than {limit} characters long. Current value: {value}',
+          required: 'Name is a required field.',
+        },
       },
     },
   },
@@ -407,20 +409,23 @@ const schema = {
       type: 'string',
       minLength: 3,
       maxLength: 10,
-      errorMessages: {
-        minLength: {
-          ko_KR: '이름은 최소 {limit} 글자 이상이어야 합니다. 현재 값: {value}',
-          en_US:
-            'Name must be at least {limit} characters long. Current value: {value}',
-        },
-        maxLength: {
-          ko_KR: '이름은 최대 {limit} 글자 이하여야 합니다. 현재 값: {value}',
-          en_US:
-            'Name must be at most {limit} characters long. Current value: {value}',
-        },
-        required: {
-          ko_KR: '이름은 필수 입력 항목입니다.',
-          en_US: 'Name is a required field.',
+      presentation: {
+        errorMessages: {
+          minLength: {
+            ko_KR:
+              '이름은 최소 {limit} 글자 이상이어야 합니다. 현재 값: {value}',
+            en_US:
+              'Name must be at least {limit} characters long. Current value: {value}',
+          },
+          maxLength: {
+            ko_KR: '이름은 최대 {limit} 글자 이하여야 합니다. 현재 값: {value}',
+            en_US:
+              'Name must be at most {limit} characters long. Current value: {value}',
+          },
+          required: {
+            ko_KR: '이름은 필수 입력 항목입니다.',
+            en_US: 'Name is a required field.',
+          },
         },
       },
     },
@@ -578,8 +583,10 @@ const FileFormTypeInput = ({
   value,
   jsonSchema,
 }: FormTypeInputProps<any>) => {
-  const multiple: boolean = jsonSchema?.FormTypeInputProps?.multiple ?? false;
-  const accept: string | undefined = jsonSchema?.FormTypeInputProps?.accept;
+  const multiple: boolean =
+    jsonSchema?.presentation?.FormTypeInputProps?.multiple ?? false;
+  const accept: string | undefined =
+    jsonSchema?.presentation?.FormTypeInputProps?.accept;
 
   const handleChange: React.ChangeEventHandler<HTMLInputElement> = (e) => {
     const fileList = Array.from(e.target.files || []);
@@ -638,8 +645,10 @@ const schema = {
     title: { type: 'string' },
     attachment: {
       type: 'object',
-      FormTypeInput: FileFormTypeInput,
-      FormTypeInputProps: { multiple: false, accept: '*/*' },
+      presentation: {
+        FormTypeInput: FileFormTypeInput,
+        FormTypeInputProps: { multiple: false, accept: '*/*' },
+      },
       properties: {
         name: { type: 'string' },
         size: { type: 'number' },
@@ -712,12 +721,14 @@ This allows explicit assignment of components to specific paths in your JSON Sch
 
 When a form is rendered, the input component for each JSON Schema node is determined with the following priority:
 
-1. **Directly assigned FormTypeInput**: When a component is directly assigned via the `FormTypeInput` property in the JSON Schema object
+1. **Directly assigned FormTypeInput**: When a component is directly assigned via the `presentation.FormTypeInput` property in the JSON Schema object
 
    ```js
    const jsonSchema = {
      type: 'string',
-     FormTypeInput: CustomTextInput, // Highest priority
+     presentation: {
+       FormTypeInput: CustomTextInput, // Highest priority
+     },
    };
    ```
 
@@ -805,7 +816,9 @@ export const CustomizedForm = () => {
               postalCode: { type: 'string' }, // Will use PostalCodeInput (path mapping)
               country: {
                 type: 'string',
-                FormTypeInput: CountrySelector, // Will use directly assigned component (top priority)
+                presentation: {
+                  FormTypeInput: CountrySelector, // Will use directly assigned component (top priority)
+                },
               },
             },
           },
@@ -1498,7 +1511,7 @@ const jsonSchema = {
 
 - **`omitTrailing` (opt-in)**: removes **trailing** consecutive `undefined` items only. Leading and middle `undefined` items are preserved so error `dataPath`s and validation indices stay aligned — `[1, undefined, 2]` is emitted as-is.
 - **`omitEmpty` (on by default)**: converts an empty array to `undefined` on the parent-propagation path. Filter order is `omitTrailing → omitEmpty`, so an all-empty array collapses to `undefined` under its parent (a root-level form still emits `[]`).
-- **Two value channels**: `node.value` stays raw; the refined output is exposed as `node.normalizedValue`. Validation runs against the refined value, so `minItems` counts only the filled prefix.
+- **Two value channels**: `node.value` stays raw; the refined output is exposed as `node.outputValue`. Validation runs against the refined value, so `minItems` counts only the filled prefix.
 - **Reset semantics**: a Reset-flagged clear (form reset, oneOf/anyOf branch reactivation) refills `minItems` empty items; a plain `setValue(undefined)` clears every item.
 - **Custom inputs**: derive row count from `node.children` (or `ChildNodeComponents`), never from `value.length` — the emitted value is shorter than the rendered rows by design.
 

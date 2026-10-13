@@ -340,7 +340,7 @@ AJV 플러그인의 `createValidatorFactory(ajv)`는 compile 함수만 반환하
 
 📌 유효성 검증 메시지는 다음 규칙을 따르도록 정의해야 합니다:
 
-- 유효성 검증 메시지는 jsonSchema의 `errorMessages` 속성에 정의해야 합니다.
+- 유효성 검증 메시지는 jsonSchema의 `presentation.errorMessages` 속성에 정의해야 합니다.
 - 유효성 검증 메시지는 `{[keyword]:errorMessage}` 형태로 정의해야 합니다.
 - `default` 키를 정의하면 keyword가 매칭되지 않는 경우 기본값으로 사용됩니다.
 - 각각의 에러 메시지(errorMessage)는 다음과 같은 표현을 통해 동적으로 값을 치환할 수 있습니다
@@ -357,11 +357,14 @@ const schema = {
       type: 'string',
       minLength: 3,
       maxLength: 10,
-      errorMessages: {
-        minLength:
-          '이름은 최소 {limit} 글자 이상이어야 합니다. 현재 값: {value}',
-        maxLength: '이름은 최대 {limit} 글자 이하여야 합니다. 현재 값: {value}',
-        required: '이름은 필수 입력 항목입니다.',
+      presentation: {
+        errorMessages: {
+          minLength:
+            '이름은 최소 {limit} 글자 이상이어야 합니다. 현재 값: {value}',
+          maxLength:
+            '이름은 최대 {limit} 글자 이하여야 합니다. 현재 값: {value}',
+          required: '이름은 필수 입력 항목입니다.',
+        },
       },
     },
   },
@@ -395,20 +398,23 @@ const schema = {
       type: 'string',
       minLength: 3,
       maxLength: 10,
-      errorMessages: {
-        minLength: {
-          ko_KR: '이름은 최소 {limit} 글자 이상이어야 합니다. 현재 값: {value}',
-          en_US:
-            'Name must be at least {limit} characters long. Current value: {value}',
-        },
-        maxLength: {
-          ko_KR: '이름은 최대 {limit} 글자 이하여야 합니다. 현재 값: {value}',
-          en_US:
-            'Name must be at most {limit} characters long. Current value: {value}',
-        },
-        required: {
-          ko_KR: '이름은 필수 입력 항목입니다.',
-          en_US: 'Name is a required field.',
+      presentation: {
+        errorMessages: {
+          minLength: {
+            ko_KR:
+              '이름은 최소 {limit} 글자 이상이어야 합니다. 현재 값: {value}',
+            en_US:
+              'Name must be at least {limit} characters long. Current value: {value}',
+          },
+          maxLength: {
+            ko_KR: '이름은 최대 {limit} 글자 이하여야 합니다. 현재 값: {value}',
+            en_US:
+              'Name must be at most {limit} characters long. Current value: {value}',
+          },
+          required: {
+            ko_KR: '이름은 필수 입력 항목입니다.',
+            en_US: 'Name is a required field.',
+          },
         },
       },
     },
@@ -566,8 +572,10 @@ const FileFormTypeInput = ({
   value,
   jsonSchema,
 }: FormTypeInputProps<any>) => {
-  const multiple: boolean = jsonSchema?.FormTypeInputProps?.multiple ?? false;
-  const accept: string | undefined = jsonSchema?.FormTypeInputProps?.accept;
+  const multiple: boolean =
+    jsonSchema?.presentation?.FormTypeInputProps?.multiple ?? false;
+  const accept: string | undefined =
+    jsonSchema?.presentation?.FormTypeInputProps?.accept;
 
   const handleChange: React.ChangeEventHandler<HTMLInputElement> = (e) => {
     const fileList = Array.from(e.target.files || []);
@@ -626,8 +634,10 @@ const schema = {
     title: { type: 'string' },
     attachment: {
       type: 'object',
-      FormTypeInput: FileFormTypeInput,
-      FormTypeInputProps: { multiple: false, accept: '*/*' },
+      presentation: {
+        FormTypeInput: FileFormTypeInput,
+        FormTypeInputProps: { multiple: false, accept: '*/*' },
+      },
       properties: {
         name: { type: 'string' },
         size: { type: 'number' },
@@ -700,12 +710,14 @@ type FormTypeInputMap = {
 
 폼이 렌더링될 때 각 JSON 스키마 노드의 입력 컴포넌트는 다음과 같은 우선순위에 따라 결정됩니다:
 
-1. **직접 할당된 FormTypeInput**: JSON 스키마 객체의 `FormTypeInput` 속성을 통해 컴포넌트가 직접 할당된 경우
+1. **직접 할당된 FormTypeInput**: JSON 스키마 객체의 `presentation.FormTypeInput` 속성을 통해 컴포넌트가 직접 할당된 경우
 
 ```js
 const jsonSchema = {
   type: 'string',
-  FormTypeInput: CustomTextInput, // 가장 높은 우선순위
+  presentation: {
+    FormTypeInput: CustomTextInput, // 가장 높은 우선순위
+  },
 };
 ```
 
@@ -791,7 +803,9 @@ export const CustomizedForm = () => {
               postalCode: { type: 'string' }, // PostalCodeInput 사용 (경로 매핑)
               country: {
                 type: 'string',
-                FormTypeInput: CountrySelector, // 직접 할당된 컴포넌트 사용 (최우선순위)
+                presentation: {
+                  FormTypeInput: CountrySelector, // 직접 할당된 컴포넌트 사용 (최우선순위)
+                },
               },
             },
           },
@@ -1484,7 +1498,7 @@ const jsonSchema = {
 
 - **`omitTrailing` (opt-in)**: **후행** 연속 `undefined` 항목만 제거합니다. 선행·중간 `undefined`는 보존되어 error `dataPath`와 validation index 정합이 유지됩니다 — `[1, undefined, 2]`는 그대로 방출됩니다.
 - **`omitEmpty` (기본 활성)**: 빈 배열을 부모 전파 경로에서 `undefined`로 변환합니다. 필터 순서는 `omitTrailing → omitEmpty`라서 전부 빈 배열은 부모에서 `undefined`로 수렴합니다 (루트 폼은 `[]`를 방출).
-- **값 2채널**: `node.value`는 raw를 유지하고, 정제된 출력은 `node.normalizedValue`로 노출됩니다. validation은 정제된 값 기준이라 `minItems`는 채워진 prefix만 셉니다.
+- **값 2채널**: `node.value`는 raw를 유지하고, 정제된 출력은 `node.outputValue`로 노출됩니다. validation은 정제된 값 기준이라 `minItems`는 채워진 prefix만 셉니다.
 - **Reset 의미**: Reset 계열 초기화(폼 reset, oneOf/anyOf 분기 재활성화)는 `minItems`만큼 빈 항목을 재충전하고, 일반 `setValue(undefined)`는 전부 비웁니다.
 - **커스텀 입력**: 행 수는 `value.length`가 아니라 `node.children`(또는 `ChildNodeComponents`) 기준으로 세야 합니다 — 방출 값이 렌더된 행보다 짧은 것이 설계입니다.
 
