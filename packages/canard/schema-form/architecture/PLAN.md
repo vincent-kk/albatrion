@@ -82,4 +82,4 @@
 
 | 날짜 | 무엇 | 어디 |
 | --- | --- | --- |
-| 2026-10-13 | 236라운드(닫기): 이름 공모 결과 — 힌트 widget·렌더러 FieldRenderer 합의, 입력 컴포넌트 Widget* 대 FieldInput* 갈림, 권고 Widget*; 소유자 결정 대기. 보충 1줄 | `reviews/round-236-closing.md` |
+| 2026-10-13 | 237라운드(소유자): 입력 컴포넌트는 FieldInput*(Field 시리즈), 힌트 이름은 미정. 보충 1줄 | `reviews/round-237-owner-answers.md` |

@@ -364,3 +364,4 @@ reviews/round-234-owner-answers.md:8	234	대기열 29 최상위 선언 다섯	"�
 reviews/round-234-owner-answers.md:9	234	대기열 23 슬롯 형	"가장 나은 방법을 다시 찾아봐. 이게 함수 매개변수의 역추론 과정에서 나온 문제라면 정공법을 찾아보고 안되면 any로 처리해도 무방함. 사용자에게 혼란과 괜한 as 단언을 하게 하는 것 보다 나음" (2026-10-13, 원장 세션)
 reviews/round-234-owner-answers.md:10	234	CLAUDE.md 76·138행	"승인" (2026-10-13, 원장 세션)
 reviews/round-235-owner-answers.md:7	235	이름 재구성	"이름 재구성에 동의함. 단, 지금 이름을 후보로 넣고, 이름 쌍을 공모한다. 그리고 이들 중 가장 적절한 이름을 구성해보자. 이 동작에 /cennad:crosscheck 사용을 요구한다" (2026-10-13, 원장 세션)
+reviews/round-237-owner-answers.md:7	237	역할 2 이름	"widget 은 아닌거같아. fieldInput 이 더 마음에 드는구나 \n\nField~ 시리즈로 가는 게 더 난 와닿는데.\n문제는  구 formType 키워드로군... inputType 이 겹치는건 예상 못했는데... 겹치면 안될건 없지만 혼란스러우려나.... widget으로 모일건 예상 못했는데 말이야" (2026-10-13, 원장 세션)
