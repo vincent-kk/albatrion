@@ -3,6 +3,7 @@
 import type { JSONSchema } from '@canard/schema-form';
 import type Ajv from 'ajv';
 
+import { instanceIdRegistrationsOf } from './instanceIdRegistrationsOf';
 import { makeSibling, PLUGIN_KEY_PREFIX } from './makeSibling';
 
 /** Provisional cap: Ajv's code scope keeps functions after removeSchema. */
@@ -34,8 +35,10 @@ export interface SchemaRootRegistry {
   compilerBase?: Ajv;
   compilerCurrent?: Ajv;
   compilerCount: number;
-  nextId: number;
 }
+
+/** Monotonic keys stay unique across every registry that shares one instance. */
+let nextSchemaRootKey = 0;
 
 /** Registers a copy once for each bound instance and authored root identity. */
 export const registerSchemaRoot = (
@@ -54,10 +57,13 @@ export const registerSchemaRoot = (
   if (ids.length)
     for (let index = registry.active.length - 1; index >= 0; index--)
       if (!registry.active[index].deref()) registry.active.splice(index, 1);
+  const shared = ids.length ? instanceIdRegistrationsOf(baseAjv) : [];
+  for (let index = shared.length - 1; index >= 0; index--)
+    if (!shared[index].deref()) shared.splice(index, 1);
   const conflict = ids.some((id) => registry.active.some((ref) => {
     const entry = ref.deref();
     return entry?.baseAjv === baseAjv && entry.ids.includes(id);
-  }));
+  }) || shared.some((ref) => ref.deref()?.ids.includes(id)));
   if (!ids.length && registry.compilerBase !== baseAjv) {
     registry.compilerBase = baseAjv;
     registry.compilerCurrent = baseAjv;
@@ -70,7 +76,7 @@ export const registerSchemaRoot = (
   const validationAjv = conflict ? makeSibling(baseAjv, Boolean(baseAjv.opts.allErrors))
     : ids.length ? baseAjv : registry.compilerCurrent ?? baseAjv;
   if (!ids.length) registry.compilerCount++;
-  const key = `${PLUGIN_KEY_PREFIX}root/${++registry.nextId}`;
+  const key = `${PLUGIN_KEY_PREFIX}root/${++nextSchemaRootKey}`;
   const validationCopy = ids.length ? structuredClone(root) : undefined;
   const validationRefsBefore = validationCopy ? Object.keys(validationAjv.refs) : [];
   if (validationCopy) validationAjv.addSchema(validationCopy, key);
@@ -83,6 +89,10 @@ export const registerSchemaRoot = (
   registrations.push(registration);
   registry.entries.set(root, registrations);
   registry.finalizer.register(root, registration, registration);
-  if (ids.length) registry.active.push(new WeakRef(registration));
+  if (ids.length) {
+    const ref = new WeakRef(registration);
+    registry.active.push(ref);
+    shared.push(ref);
+  }
   return registration;
 };

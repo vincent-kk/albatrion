@@ -129,6 +129,8 @@ const defaultSettings: Ajv.Options = {
 - **풍부한 오류 컨텍스트**: 더 나은 디버깅을 위한 상세한 오류 정보
 - **타입 안전성**: 고급 타입 추론과 함께 완전한 TypeScript 지원
 
+`createValidator(ajv)`는 Form의 `validatorFactory`에 넘길 인스턴스별 `{ compile, compileGuard }` 객체를 돌려줍니다. 새 객체는 Form이 트리를 다시 만들게 하므로 렌더 밖에서 한 번만 만드십시오(`const validator = createValidator(customAjv);` 뒤 `<Form validatorFactory={validator} />`). 여러 객체가 AJV 인스턴스 하나를 함께 써도 되며, 인스턴스는 값을 바꾸지 않아야 합니다(`coerceTypes`, `useDefaults`, `removeAdditional` 꺼짐).
+
 ### **최신 JSON Schema 지원**
 
 이 플러그인은 최신 JSON Schema 기능을 지원합니다:

@@ -7,5 +7,4 @@ export const createSchemaRootRegistry = (): SchemaRootRegistry => ({
   active: [],
   finalizer: new FinalizationRegistry(disposeSchemaRoot),
   compilerCount: 0,
-  nextId: 0,
 });
