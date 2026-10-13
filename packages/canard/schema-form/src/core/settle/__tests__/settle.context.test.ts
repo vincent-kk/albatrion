@@ -1,14 +1,10 @@
 import { describe, expect, it, vi } from 'vitest';
 
-import {
-  SetValueOption,
-  schemaNodeFactory,
-  setContext,
-} from '../../SchemaNode';
+import { SetValueOption, fieldNodeFactory, setContext } from '../../FieldNode';
 import { blueprint } from '../../blueprint';
 import type { BlueprintSchema } from '../../blueprint';
-import type { SchemaNodeRuntime } from '../../record';
-import { SchemaNodeState } from '../../types/state';
+import type { FieldNodeRuntime } from '../../record';
+import { FieldNodeState } from '../../types/state';
 import { PathKeyedMap } from '../../utils/pathIndex/PathKeyedMap';
 import { PathKeyedSet } from '../../utils/pathIndex/PathKeyedSet';
 
@@ -17,7 +13,7 @@ const createContextTree = (
   schema: BlueprintSchema,
   context: Readonly<Record<string, unknown>> = {},
 ) =>
-  schemaNodeFactory(blueprint(schema), {
+  fieldNodeFactory(blueprint(schema), {
     context,
     diagnostics: { status: 'stable' },
     loadSnapshot: undefined,
@@ -47,10 +43,10 @@ describe('context change settlement', () => {
     const reset = root.find('/reset');
     expect(reset).not.toBeNull();
     if (!reset) return;
-    const runtime: SchemaNodeRuntime<unknown> = Reflect.get(root, 'runtime');
+    const runtime: FieldNodeRuntime<unknown> = Reflect.get(root, 'runtime');
     Reflect.set(reset, 'state', {
-      [SchemaNodeState.Dirty]: true,
-      [SchemaNodeState.Touched]: true,
+      [FieldNodeState.Dirty]: true,
+      [FieldNodeState.Touched]: true,
     });
 
     setContext(root, { show: true, label: 'new', clear: true, reset: true });
@@ -58,8 +54,8 @@ describe('context change settlement', () => {
     expect(root.find('/shown')?.active).toBe(true);
     expect(root.find('/derived')?.value).toBe('new');
     expect(root.find('/cleared')?.value).toBeUndefined();
-    expect(Reflect.get(reset, 'state')[SchemaNodeState.Dirty]).toBe(false);
-    expect(Reflect.get(reset, 'state')[SchemaNodeState.Touched]).toBe(false);
+    expect(Reflect.get(reset, 'state')[FieldNodeState.Dirty]).toBe(false);
+    expect(Reflect.get(reset, 'state')[FieldNodeState.Touched]).toBe(false);
     expect(runtime.settlementTrace?.entry.api).toBe('setContext');
   });
 
@@ -88,7 +84,7 @@ describe('context change settlement', () => {
     const original = { nested: { label: 'same' } };
     const root = createContextTree({ type: 'string' }, original);
     root.setValue('value');
-    const runtime: SchemaNodeRuntime<unknown> = Reflect.get(root, 'runtime');
+    const runtime: FieldNodeRuntime<unknown> = Reflect.get(root, 'runtime');
     const trace = runtime.settlementTrace;
     const revision = Reflect.get(root, 'revisionLedger');
     setContext(root, original);
@@ -117,7 +113,7 @@ describe('context change settlement', () => {
       { target: 'manual' },
       SetValueOption.DisableAutomaticWrites,
     );
-    const suppressedRuntime: SchemaNodeRuntime<unknown> = Reflect.get(
+    const suppressedRuntime: FieldNodeRuntime<unknown> = Reflect.get(
       suppressed,
       'runtime',
     );

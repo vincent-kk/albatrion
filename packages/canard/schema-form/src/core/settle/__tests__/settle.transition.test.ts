@@ -1,13 +1,13 @@
 import { describe, expect, it } from 'vitest';
 
-import { SchemaNodeState } from '../../types/state';
+import { FieldNodeState } from '../../types/state';
 import { SetValueOption } from '../../types/value';
 import {
-  loadSchemaNodeAtMount,
-  readSchemaNodeDefaultValue,
-  resetSchemaNodeForm,
-  resetSchemaNodeSubtree,
-  writeSchemaNode,
+  loadFieldNodeAtMount,
+  readFieldNodeDefaultValue,
+  resetFieldNodeForm,
+  resetFieldNodeSubtree,
+  writeFieldNode,
 } from '../index';
 import { createTestTree } from './fixtures/createTestTree';
 import { setTestInteractionState } from './fixtures/setTestInteractionState';
@@ -21,11 +21,11 @@ describe('settle transitions and loads', () => {
         name: { type: 'string', default: 'filled' },
       },
     });
-    loadSchemaNodeAtMount(root, {}, SetValueOption.Overwrite);
+    loadFieldNodeAtMount(root, {}, SetValueOption.Overwrite);
     expect(root.structure?.name?.raw).toBe('filled');
-    writeSchemaNode(root, {}, 'callerReplace', SetValueOption.Overwrite);
+    writeFieldNode(root, {}, 'callerReplace', SetValueOption.Overwrite);
     expect(root.structure?.name?.raw).toBeUndefined();
-    resetSchemaNodeForm(root, {}, SetValueOption.Overwrite);
+    resetFieldNodeForm(root, {}, SetValueOption.Overwrite);
     expect(root.structure?.name?.raw).toBe('filled');
   });
 
@@ -42,12 +42,12 @@ describe('settle transitions and loads', () => {
         },
       },
     });
-    loadSchemaNodeAtMount(
+    loadFieldNodeAtMount(
       root,
       { name: 'original', flag: false },
       SetValueOption.Overwrite,
     );
-    writeSchemaNode(
+    writeFieldNode(
       root,
       { flag: true },
       'callerReplace',
@@ -59,7 +59,7 @@ describe('settle transitions and loads', () => {
       name: 'original',
       flag: false,
     });
-    expect(readSchemaNodeDefaultValue(root.structure!.name)).toBe('original');
+    expect(readFieldNodeDefaultValue(root.structure!.name)).toBe('original');
   });
 
   it('TEST-069 SetValueOption Merge retains missing keys and replaces a non-object V WRITE-079', () => {
@@ -76,19 +76,19 @@ describe('settle transitions and loads', () => {
         },
       },
     });
-    loadSchemaNodeAtMount(
+    loadFieldNodeAtMount(
       root,
       { a: 'A', b: 'B', flag: false },
       SetValueOption.Overwrite,
     );
-    writeSchemaNode(
+    writeFieldNode(
       root,
       { a: 'new', flag: true },
       'callerPartial',
       SetValueOption.Merge,
     );
     expect(root.emit).toEqual({ a: 'new', b: 'B', flag: true, gated: 'new' });
-    writeSchemaNode(root, null, 'callerPartial', SetValueOption.Merge);
+    writeFieldNode(root, null, 'callerPartial', SetValueOption.Merge);
     expect(root.raw).toBeNull();
     expect(root.structure?.a?.raw).toBeUndefined();
     expect(root.runtime.typeMismatchPaths.has('')).toBe(true);
@@ -101,13 +101,13 @@ describe('settle transitions and loads', () => {
         name: { type: 'string', default: 'filled' },
       },
     });
-    loadSchemaNodeAtMount(
+    loadFieldNodeAtMount(
       root,
       {},
       SetValueOption.Overwrite | SetValueOption.DisableAutomaticWrites,
     );
     expect(root.structure?.name?.raw).toBeUndefined();
-    resetSchemaNodeForm(root, {}, SetValueOption.Overwrite);
+    resetFieldNodeForm(root, {}, SetValueOption.Overwrite);
     expect(root.structure?.name?.raw).toBe('filled');
   });
 
@@ -119,7 +119,7 @@ describe('settle transitions and loads', () => {
       },
     });
     root.runtime.disableAutomaticWrites = true;
-    loadSchemaNodeAtMount(
+    loadFieldNodeAtMount(
       root,
       {},
       SetValueOption.Overwrite | SetValueOption.EnableAutomaticWrites,
@@ -138,10 +138,10 @@ describe('settle transitions and loads', () => {
       SetValueOption.Overwrite |
       SetValueOption.DisableAutomaticWrites |
       SetValueOption.EnableAutomaticWrites;
-    loadSchemaNodeAtMount(root, {}, both);
+    loadFieldNodeAtMount(root, {}, both);
     expect(root.structure?.name?.raw).toBeUndefined();
     root.runtime.disableAutomaticWrites = true;
-    resetSchemaNodeForm(root, {}, both);
+    resetFieldNodeForm(root, {}, both);
     expect(root.structure?.name?.raw).toBeUndefined();
   });
 
@@ -156,24 +156,24 @@ describe('settle transitions and loads', () => {
         right: { type: 'string', default: 'R' },
       },
     });
-    loadSchemaNodeAtMount(
+    loadFieldNodeAtMount(
       root,
       { left: {}, right: 'given' },
       SetValueOption.Overwrite,
     );
-    writeSchemaNode(
+    writeFieldNode(
       root.structure!.left.structure!.a,
       'changed',
       'input',
       SetValueOption.Overwrite,
     );
-    writeSchemaNode(
+    writeFieldNode(
       root.structure!.right,
       'changed',
       'input',
       SetValueOption.Overwrite,
     );
-    resetSchemaNodeSubtree(root.structure!.left, SetValueOption.Overwrite);
+    resetFieldNodeSubtree(root.structure!.left, SetValueOption.Overwrite);
     expect(root.structure?.left?.structure?.a?.raw).toBe('D');
     expect(root.structure?.right?.raw).toBe('changed');
   });
@@ -185,15 +185,15 @@ describe('settle transitions and loads', () => {
         name: { type: 'string' },
       },
     });
-    loadSchemaNodeAtMount(root, { name: 'x' }, SetValueOption.Overwrite);
+    loadFieldNodeAtMount(root, { name: 'x' }, SetValueOption.Overwrite);
     root.runtime.diagnostics = {
       status: 'degraded',
       cause: 'budget',
       commit: 1,
     };
-    resetSchemaNodeSubtree(root.structure!.name, SetValueOption.Overwrite);
+    resetFieldNodeSubtree(root.structure!.name, SetValueOption.Overwrite);
     expect(root.runtime.diagnostics.status).toBe('degraded');
-    resetSchemaNodeForm(root, { name: 'y' }, SetValueOption.Overwrite);
+    resetFieldNodeForm(root, { name: 'y' }, SetValueOption.Overwrite);
     expect(root.runtime.diagnostics).toEqual({ status: 'stable' });
   });
 
@@ -207,15 +207,15 @@ describe('settle transitions and loads', () => {
         },
       },
     });
-    loadSchemaNodeAtMount(root, {}, SetValueOption.Overwrite);
-    writeSchemaNode(
+    loadFieldNodeAtMount(root, {}, SetValueOption.Overwrite);
+    writeFieldNode(
       root,
       { user: null },
       'callerReplace',
       SetValueOption.Overwrite,
     );
     expect(root.structure?.user?.structure?.name?.raw).toBeUndefined();
-    resetSchemaNodeForm(root, { user: null }, SetValueOption.Overwrite);
+    resetFieldNodeForm(root, { user: null }, SetValueOption.Overwrite);
     expect(root.structure?.user?.structure?.name?.raw).toBe('N');
     expect(root.emit).toEqual({ user: null });
   });
@@ -228,23 +228,18 @@ describe('settle transitions and loads', () => {
         secret: { type: 'string', controls: { active: '../flag' } },
       },
     });
-    loadSchemaNodeAtMount(
+    loadFieldNodeAtMount(
       root,
       { flag: false, secret: 'latent' },
       SetValueOption.Overwrite,
     );
     expect(root.runtime.latentRaw.size).toBeGreaterThan(0);
     const emitted = root.emit;
-    writeSchemaNode(root, emitted, 'callerReplace', SetValueOption.Overwrite);
+    writeFieldNode(root, emitted, 'callerReplace', SetValueOption.Overwrite);
     expect(root.runtime.latentRaw.size).toBe(0);
     expect(root.emit).toEqual(emitted);
     const afterFirst = root.emit;
-    writeSchemaNode(
-      root,
-      afterFirst,
-      'callerReplace',
-      SetValueOption.Overwrite,
-    );
+    writeFieldNode(root, afterFirst, 'callerReplace', SetValueOption.Overwrite);
     expect(root.emit).toBe(afterFirst);
     expect(root.runtime.refreshTargets?.size).toBe(0);
   });
@@ -261,9 +256,9 @@ describe('settle transitions and loads', () => {
         },
       },
     });
-    loadSchemaNodeAtMount(root, { flag: true }, SetValueOption.Overwrite);
+    loadFieldNodeAtMount(root, { flag: true }, SetValueOption.Overwrite);
     expect(root.structure?.appeared).toBeUndefined();
-    writeSchemaNode(root, undefined, 'callerReplace', SetValueOption.Overwrite);
+    writeFieldNode(root, undefined, 'callerReplace', SetValueOption.Overwrite);
     expect(root.structure?.flag?.raw).toBeUndefined();
     expect(root.structure?.appeared?.raw).toBe('A');
   });
@@ -276,26 +271,26 @@ describe('settle transitions and loads', () => {
         secret: { type: 'string', controls: { active: '../flag' } },
       },
     });
-    loadSchemaNodeAtMount(
+    loadFieldNodeAtMount(
       root,
       { flag: true, secret: 'old' },
       SetValueOption.Overwrite,
     );
     const former = root.structure!.secret;
-    writeSchemaNode(
+    writeFieldNode(
       root.structure!.flag,
       false,
       'input',
       SetValueOption.Overwrite,
     );
     const commit = root.runtime.commitNumber;
-    writeSchemaNode(former, 'new', 'input', SetValueOption.Overwrite);
+    writeFieldNode(former, 'new', 'input', SetValueOption.Overwrite);
     expect(former.raw).toBe('old');
     expect(root.runtime.commitNumber).toBe(commit);
     expect(
       root.runtime.latentRaw.get(JSON.stringify(['/secret', 'string'])),
     ).toBe('new');
-    writeSchemaNode(
+    writeFieldNode(
       root.structure!.flag,
       true,
       'input',
@@ -319,11 +314,11 @@ describe('settle transitions and loads', () => {
         },
       },
     });
-    loadSchemaNodeAtMount(root, {}, SetValueOption.Overwrite);
+    loadFieldNodeAtMount(root, {}, SetValueOption.Overwrite);
     expect(root.structure?.host?.structure?.x?.raw).toBe(3);
     expect(root.structure?.host?.structure?.y?.raw).toBe('Y');
     expect(root.structure?.host?.extras).toEqual({ extra: 'E' });
-    resetSchemaNodeForm(root, { host: {} }, SetValueOption.Overwrite);
+    resetFieldNodeForm(root, { host: {} }, SetValueOption.Overwrite);
     expect(root.structure?.host?.structure?.x?.raw).toBe(3);
   });
 
@@ -335,23 +330,23 @@ describe('settle transitions and loads', () => {
         right: { type: 'number' },
       },
     });
-    loadSchemaNodeAtMount(
+    loadFieldNodeAtMount(
       root,
       { left: 'bad', right: 'bad' },
       SetValueOption.Overwrite,
     );
     setTestInteractionState(root.structure!.left, {
-      [SchemaNodeState.Touched]: true,
+      [FieldNodeState.Touched]: true,
     });
     setTestInteractionState(root.structure!.right, {
-      [SchemaNodeState.Touched]: true,
+      [FieldNodeState.Touched]: true,
     });
-    resetSchemaNodeSubtree(root.structure!.left, SetValueOption.Overwrite);
+    resetFieldNodeSubtree(root.structure!.left, SetValueOption.Overwrite);
     expect(
-      root.structure?.left?.interactionState[SchemaNodeState.Touched],
+      root.structure?.left?.interactionState[FieldNodeState.Touched],
     ).toBeUndefined();
     expect(
-      root.structure?.right?.interactionState[SchemaNodeState.Touched],
+      root.structure?.right?.interactionState[FieldNodeState.Touched],
     ).toBe(true);
     expect([...root.runtime.typeMismatchPaths].sort()).toEqual([
       '/left',
@@ -372,14 +367,14 @@ describe('settle transitions and loads', () => {
         secret: { type: 'string', controls: { active: '../flag' } },
       },
     });
-    loadSchemaNodeAtMount(root, source, SetValueOption.Overwrite);
+    loadFieldNodeAtMount(root, source, SetValueOption.Overwrite);
     expect(
       root.runtime.latentRaw.get(JSON.stringify(['/secret', 'string'])),
     ).toBe('latent');
-    resetSchemaNodeForm(root, source, SetValueOption.Overwrite);
+    resetFieldNodeForm(root, source, SetValueOption.Overwrite);
     expect(
       root.runtime.latentRaw.get(JSON.stringify(['/secret', 'string'])),
     ).toBe('latent');
-    expect(readSchemaNodeDefaultValue(root)).toBe(source);
+    expect(readFieldNodeDefaultValue(root)).toBe(source);
   });
 });

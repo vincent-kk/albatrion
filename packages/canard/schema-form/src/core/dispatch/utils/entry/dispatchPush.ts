@@ -1,8 +1,8 @@
-import type { SchemaNodeRecord } from '../../../record';
-import { arrangeSchemaNodeItems } from '../../../settle';
+import type { FieldNodeRecord } from '../../../record';
+import { arrangeFieldNodeItems } from '../../../settle';
 import { captureChainError } from '../chain/captureChainError';
-import { enterSchemaNodeChain } from '../chain/enterSchemaNodeChain';
-import { exitSchemaNodeChain } from '../chain/exitSchemaNodeChain';
+import { enterFieldNodeChain } from '../chain/enterFieldNodeChain';
+import { exitFieldNodeChain } from '../chain/exitFieldNodeChain';
 import { markBatchArrayOperation } from '../chain/markBatchArrayOperation';
 
 /**
@@ -12,20 +12,20 @@ import { markBatchArrayOperation } from '../chain/markBatchArrayOperation';
  * @returns Length of the proposed or settled array; undefined when entry is refused
  * @throws Non-array or settlement failures at the outer chain end
  */
-export const dispatchPush = <Self extends SchemaNodeRecord<Self>>(
+export const dispatchPush = <Self extends FieldNodeRecord<Self>>(
   node: Self,
   value?: unknown,
 ): unknown => {
-  if (!enterSchemaNodeChain(node)) return;
+  if (!enterFieldNodeChain(node)) return;
   try {
     return node.rootNode.runtime.batchDepth
       ? markBatchArrayOperation(node, { kind: 'push', value })
-      : arrangeSchemaNodeItems(node, { kind: 'push', value });
+      : arrangeFieldNodeItems(node, { kind: 'push', value });
   } catch (error) {
     if (node.rootNode.runtime.batchDepth) throw error;
     captureChainError(node.rootNode.runtime, error);
   } finally {
-    exitSchemaNodeChain(node);
+    exitFieldNodeChain(node);
   }
   return undefined;
 };

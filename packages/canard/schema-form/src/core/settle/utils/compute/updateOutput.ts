@@ -1,5 +1,5 @@
-import { captureSchemaNodeChange } from '../../../record';
-import type { SchemaNodeRecord } from '../../../record';
+import { captureFieldNodeChange } from '../../../record';
+import type { FieldNodeRecord } from '../../../record';
 import type { SettlementContext } from '../../type';
 import { sameValue } from './sameValue';
 
@@ -10,7 +10,7 @@ import { sameValue } from './sameValue';
  * @param recalculated - Direct children recomputed with an unchanged host shape
  * @returns Whether either calculated value changed
  */
-export const updateOutput = <Self extends SchemaNodeRecord<Self>>(
+export const updateOutput = <Self extends FieldNodeRecord<Self>>(
   node: Self,
   context: SettlementContext<Self>,
   recalculated?: readonly Self[],
@@ -57,8 +57,8 @@ export const updateOutput = <Self extends SchemaNodeRecord<Self>>(
         ? node.emit
         : projected;
   const changed = local !== node.local || emit !== node.emit;
-  node.local = captureSchemaNodeChange(node, 'local', local);
-  node.emit = captureSchemaNodeChange(node, 'emit', emit);
+  node.local = captureFieldNodeChange(node, 'local', local);
+  node.emit = captureFieldNodeChange(node, 'emit', emit);
   if (changed) {
     context.changedNodes.add(node);
     const parent = node.parent;

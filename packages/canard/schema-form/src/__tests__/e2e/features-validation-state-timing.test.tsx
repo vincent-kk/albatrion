@@ -11,7 +11,7 @@ import {
   validationStateFeatureScenarios,
 } from '@aileron/schema-form-scenarios';
 
-import { type JSONSchema, SchemaNodeState, ValidationMode } from '@/schema-form';
+import { type JSONSchema, FieldNodeState, ValidationMode } from '@/schema-form';
 
 import { type FormHarness, renderForm } from '../renderForm';
 
@@ -44,13 +44,13 @@ const keywords = (form: FormHarness, expected: KeywordsByPath): KeywordsByPath =
 
 /**
  * Translate a global state record into flag names.
- * @param state - getState() result or onStateChange argument keyed by SchemaNodeState flags.
+ * @param state - getState() result or onStateChange argument keyed by FieldNodeState flags.
  * @returns The same state keyed by dirty, touched, and showError.
  */
 const stateNames = (state: Readonly<Record<string, boolean | undefined>>): InteractionStateNames => ({
-  ...(state[SchemaNodeState.Dirty] && { dirty: true }),
-  ...(state[SchemaNodeState.Touched] && { touched: true }),
-  ...(state[SchemaNodeState.ShowError] && { showError: true }),
+  ...(state[FieldNodeState.Dirty] && { dirty: true }),
+  ...(state[FieldNodeState.Touched] && { touched: true }),
+  ...(state[FieldNodeState.ShowError] && { showError: true }),
 });
 
 describe('features — validation-state timing and submit (consumer-only)', () => {
@@ -78,7 +78,7 @@ describe('features — validation-state timing and submit (consumer-only)', () =
         if (stage.act === 'type' || stage.act === 'returnAndType') await form.user.type(form.field('/title')!, stage.text!);
         else if (stage.act === 'blur') await form.user.tab();
         else if (stage.act === 'clearState') form.handle.clearState();
-        else if (stage.act === 'setState') form.handle.setState({ [SchemaNodeState.Touched]: true });
+        else if (stage.act === 'setState') form.handle.setState({ [FieldNodeState.Touched]: true });
         await form.flush(BLUR_FRAME_MS);
         expect(stateNames(form.handle.getState()), `state after ${stage.act}`).toEqual(stage.state);
         expect(onStateChange.mock.calls.length - before, `onStateChange calls for ${stage.act}`).toBe(stage.notifications);

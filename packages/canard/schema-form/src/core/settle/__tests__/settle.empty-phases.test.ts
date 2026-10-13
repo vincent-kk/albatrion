@@ -1,7 +1,7 @@
 import { afterEach, expect, it, vi } from 'vitest';
 
 import { SetValueOption } from '../../types/value';
-import { loadSchemaNodeAtMount, writeSchemaNode } from '../index';
+import { loadFieldNodeAtMount, writeFieldNode } from '../index';
 import * as rules from '../utils/commit/commitDeriveRules';
 import * as exitRules from '../utils/commit/commitExitPolicyValues';
 import * as trace from '../utils/commit/finalizeDeriveTrace';
@@ -22,7 +22,7 @@ it('does not enter any empty phase on first or later singleton writes', () => {
       sibling: { type: 'number', default: 3 },
     },
   });
-  loadSchemaNodeAtMount(root, { value: 'before' }, SetValueOption.Overwrite);
+  loadFieldNodeAtMount(root, { value: 'before' }, SetValueOption.Overwrite);
   const spies = [
     vi.spyOn(derive, 'runDeriveRounds'),
     vi.spyOn(transition, 'transitionSettlement'),
@@ -34,7 +34,7 @@ it('does not enter any empty phase on first or later singleton writes', () => {
     vi.spyOn(alignment, 'alignArraySnapshotSlots'),
   ];
   for (const value of ['first', 'later']) {
-    writeSchemaNode(
+    writeFieldNode(
       root.structure!.value,
       value,
       'input',
@@ -59,13 +59,13 @@ it('keeps appearance fills and array finalization when their inputs exist', () =
   const exit = vi.spyOn(exits, 'finalizeExits');
   const align = vi.spyOn(alignment, 'alignArraySnapshotSlots');
   const run = vi.spyOn(derive, 'runDeriveRounds');
-  writeSchemaNode(root, [{}], 'callerReplace', SetValueOption.Overwrite);
+  writeFieldNode(root, [{}], 'callerReplace', SetValueOption.Overwrite);
   expect(root.emit).toEqual([{ value: 'filled' }]);
   expect(fill).toHaveBeenCalledTimes(1);
   expect(exit).toHaveBeenCalledTimes(1);
   expect(align).toHaveBeenCalledTimes(1);
   const departed = root.children![0];
-  writeSchemaNode(root, [], 'callerReplace', SetValueOption.Overwrite);
+  writeFieldNode(root, [], 'callerReplace', SetValueOption.Overwrite);
   expect(root.emit).toEqual([]);
   expect(departed.detached).toBe(true);
   expect(exit).toHaveBeenCalledTimes(2);
@@ -89,13 +89,13 @@ it('does not skip gates, rule evaluation or rule commits with actual work', () =
       },
     },
   });
-  loadSchemaNodeAtMount(root, { source: 1 }, SetValueOption.Overwrite);
+  loadFieldNodeAtMount(root, { source: 1 }, SetValueOption.Overwrite);
   const run = vi.spyOn(derive, 'runDeriveRounds');
   const commit = vi.spyOn(rules, 'commitDeriveRules');
   const policy = vi.spyOn(exitRules, 'commitExitPolicyValues');
   const exit = vi.spyOn(exits, 'finalizeExits');
   const snapshot = vi.spyOn(policies, 'snapshotExitedPolicies');
-  writeSchemaNode(root.structure!.source, 0, 'input', SetValueOption.Overwrite);
+  writeFieldNode(root.structure!.source, 0, 'input', SetValueOption.Overwrite);
   expect(root.emit).toEqual({ source: 0, target: 1 });
   expect(run).toHaveBeenCalledTimes(1);
   expect(run.mock.calls[0][0].deriveRounds).toBe(1);

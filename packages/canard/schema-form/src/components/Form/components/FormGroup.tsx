@@ -9,7 +9,7 @@ import { useConstant, useReference } from '@winglet/react-utils/hook';
 
 import type { Dictionary } from '@aileron/declare';
 
-import { SchemaNodeProxy } from '@/schema-form/components/SchemaNode';
+import { FieldProxy } from '@/schema-form/components/Field';
 import type {
   AllowedValue,
   ChildNodeComponentProps,
@@ -114,7 +114,7 @@ export const FormGroup = memo(
       Wrapper,
     });
     return (
-      <SchemaNodeProxy
+      <FieldProxy
         path={path}
         overridePropsRef={overridePropsRef}
         FieldInput={constant.FieldInput}

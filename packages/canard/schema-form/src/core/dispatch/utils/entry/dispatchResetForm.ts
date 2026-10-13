@@ -1,11 +1,11 @@
-import type { SchemaNodeRecord } from '../../../record';
-import { resetSchemaNodeForm } from '../../../settle';
+import type { FieldNodeRecord } from '../../../record';
+import { resetFieldNodeForm } from '../../../settle';
 import { SetValueOption } from '../../../types/value';
 import { captureChainError } from '../chain/captureChainError';
-import { enterSchemaNodeChain } from '../chain/enterSchemaNodeChain';
-import { exitSchemaNodeChain } from '../chain/exitSchemaNodeChain';
+import { enterFieldNodeChain } from '../chain/enterFieldNodeChain';
+import { exitFieldNodeChain } from '../chain/exitFieldNodeChain';
 import { clearWarningKeys } from '../report/clearWarningKeys';
-import { clearSchemaNodeFormErrors } from './utils/clearSchemaNodeFormErrors';
+import { clearFieldNodeFormErrors } from './utils/clearFieldNodeFormErrors';
 
 /**
  * Start a new form load lifetime with a replacement root source.
@@ -14,23 +14,23 @@ import { clearSchemaNodeFormErrors } from './utils/clearSchemaNodeFormErrors';
  * @param option - Automatic-write selection for this load
  * @returns Nothing; the outer entry delivers the load
  */
-export const dispatchResetForm = <Self extends SchemaNodeRecord<Self>>(
+export const dispatchResetForm = <Self extends FieldNodeRecord<Self>>(
   root: Self,
   value: unknown,
   option: SetValueOption = SetValueOption.Overwrite,
 ): void => {
-  if (!enterSchemaNodeChain(root)) return;
+  if (!enterFieldNodeChain(root)) return;
   clearWarningKeys(root.runtime);
   root.runtime.validationUnavailable = false;
   root.runtime.validationCompileReported = false;
   root.runtime.batchWrites = undefined;
   (root.runtime.validationTargets ??= new Set()).add(root);
   try {
-    clearSchemaNodeFormErrors(root);
-    resetSchemaNodeForm(root, value, option);
+    clearFieldNodeFormErrors(root);
+    resetFieldNodeForm(root, value, option);
   } catch (error) {
     captureChainError(root.runtime, error);
   } finally {
-    exitSchemaNodeChain(root);
+    exitFieldNodeChain(root);
   }
 };

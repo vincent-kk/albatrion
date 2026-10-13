@@ -1,11 +1,11 @@
 import {
-  SchemaNodeEventType,
+  FieldNodeEventType,
   accumulateGlobalStateDeltas,
-  patchSchemaNodeInteractionState,
+  patchFieldNodeInteractionState,
   publishGlobalStateDeltas,
 } from '../../../record';
-import type { SchemaNodeRecord } from '../../../record';
-import { assertSchemaNodeWritable } from '../../../settle';
+import type { FieldNodeRecord } from '../../../record';
+import { assertFieldNodeWritable } from '../../../settle';
 import type { NodeStateFlags } from '../../../types/state';
 import { flushQueuedEvents } from '../chain/flushQueuedEvents';
 import { queueNonSettleEvent } from '../chain/queueNonSettleEvent';
@@ -18,11 +18,11 @@ import { assertNotInDelivery } from '../report/assertNotInDelivery';
  * @param state - Own-key flags applied to each occurrence
  * @returns Nothing; one wave follows the whole traversal outside an entry
  */
-export const dispatchSetSubtreeState = <Self extends SchemaNodeRecord<Self>>(
+export const dispatchSetSubtreeState = <Self extends FieldNodeRecord<Self>>(
   node: Self,
   state: NodeStateFlags,
 ): void => {
-  assertSchemaNodeWritable(node);
+  assertFieldNodeWritable(node);
   if (node.detached) return;
   const runtime = node.rootNode.runtime;
   assertNotInDelivery(runtime);
@@ -33,7 +33,7 @@ export const dispatchSetSubtreeState = <Self extends SchemaNodeRecord<Self>>(
     const current = pending.pop();
     if (!current || current.detached) continue;
     const previous = current.interactionState;
-    patchSchemaNodeInteractionState(current, state);
+    patchFieldNodeInteractionState(current, state);
     if (previous !== current.interactionState) {
       accumulateGlobalStateDeltas(
         deltas,
@@ -41,12 +41,12 @@ export const dispatchSetSubtreeState = <Self extends SchemaNodeRecord<Self>>(
         current.interactionState,
         state,
       );
-      if (current.deliveryChanges & SchemaNodeEventType.UpdateState)
+      if (current.deliveryChanges & FieldNodeEventType.UpdateState)
         current.deliveryPreviousState = current.interactionState;
       runtime.stateChanged = true;
       queueNonSettleEvent(
         current,
-        SchemaNodeEventType.UpdateState,
+        FieldNodeEventType.UpdateState,
         current.interactionState,
       );
     }

@@ -1,9 +1,9 @@
 import { describe, expect, it, vi } from 'vitest';
 
-import { SchemaNodeEventType } from '../../record';
-import { SchemaNodeState } from '../../types/state';
+import { FieldNodeEventType } from '../../record';
+import { FieldNodeState } from '../../types/state';
 import { SetValueOption } from '../../types/value';
-import { loadSchemaNodeAtMount, writeSchemaNode } from '../index';
+import { loadFieldNodeAtMount, writeFieldNode } from '../index';
 import { createTestTree } from './fixtures/createTestTree';
 import { setTestInteractionState } from './fixtures/setTestInteractionState';
 
@@ -17,7 +17,7 @@ describe('settle derivation', () => {
         target: { type: 'string', controls: { derived: '../source' } },
       },
     });
-    loadSchemaNodeAtMount(root, { source: 'A' }, SetValueOption.Overwrite);
+    loadFieldNodeAtMount(root, { source: 'A' }, SetValueOption.Overwrite);
     expect(root.structure?.target?.raw).toBe('A');
   });
 
@@ -29,21 +29,21 @@ describe('settle derivation', () => {
         target: { type: 'string', controls: { derived: '../source' } },
       },
     });
-    loadSchemaNodeAtMount(root, { source: 'A' }, SetValueOption.Overwrite);
-    writeSchemaNode(
+    loadFieldNodeAtMount(root, { source: 'A' }, SetValueOption.Overwrite);
+    writeFieldNode(
       root.structure!.target,
       'manual',
       'input',
       SetValueOption.Overwrite,
     );
-    writeSchemaNode(
+    writeFieldNode(
       root,
       { source: 'A', target: 'manual' },
       'callerReplace',
       SetValueOption.Overwrite,
     );
     expect(root.structure?.target?.raw).toBe('manual');
-    writeSchemaNode(
+    writeFieldNode(
       root.structure!.source,
       'B',
       'input',
@@ -60,7 +60,7 @@ describe('settle derivation', () => {
         target: { type: 'number', controls: { derived: '../source + 1' } },
       },
     });
-    loadSchemaNodeAtMount(root, { source: 1 }, SetValueOption.Overwrite);
+    loadFieldNodeAtMount(root, { source: 1 }, SetValueOption.Overwrite);
     expect(root.structure?.target?.raw).toBe(2);
     expect(root.runtime.diagnostics.status).toBe('stable');
   });
@@ -73,7 +73,7 @@ describe('settle derivation', () => {
         target: { type: 'string', controls: { unsetValue: '../clear' } },
       },
     });
-    loadSchemaNodeAtMount(
+    loadFieldNodeAtMount(
       root,
       { clear: true, target: 'X' },
       SetValueOption.Overwrite,
@@ -97,8 +97,8 @@ describe('settle derivation', () => {
         },
       },
     });
-    loadSchemaNodeAtMount(root, { present: false }, SetValueOption.Overwrite);
-    writeSchemaNode(
+    loadFieldNodeAtMount(root, { present: false }, SetValueOption.Overwrite);
+    writeFieldNode(
       root.structure!.present,
       true,
       'input',
@@ -116,20 +116,20 @@ describe('settle derivation', () => {
         target: { type: 'string', controls: { derived: '../source' } },
       },
     });
-    loadSchemaNodeAtMount(
+    loadFieldNodeAtMount(
       root,
       { source: 'A', target: 'manual' },
       SetValueOption.DisableAutomaticWrites,
     );
     expect(root.structure?.target?.raw).toBe('manual');
-    writeSchemaNode(
+    writeFieldNode(
       root,
       { source: 'A', target: 'manual' },
       'callerReplace',
       SetValueOption.Overwrite,
     );
     expect(root.structure?.target?.raw).toBe('manual');
-    writeSchemaNode(
+    writeFieldNode(
       root.structure!.source,
       'B',
       'input',
@@ -146,28 +146,27 @@ describe('settle derivation', () => {
         target: { type: 'string', controls: { resetInteraction: '../clear' } },
       },
     });
-    loadSchemaNodeAtMount(
+    loadFieldNodeAtMount(
       root,
       { clear: false, target: 'X' },
       SetValueOption.Overwrite,
     );
     const target = root.structure!.target;
     setTestInteractionState(target, {
-      [SchemaNodeState.Dirty]: true,
-      [SchemaNodeState.Touched]: true,
+      [FieldNodeState.Dirty]: true,
+      [FieldNodeState.Touched]: true,
     });
-    const revision =
-      target.revisionLedger[SchemaNodeEventType.UpdateState] ?? 0;
-    writeSchemaNode(
+    const revision = target.revisionLedger[FieldNodeEventType.UpdateState] ?? 0;
+    writeFieldNode(
       root.structure!.clear,
       true,
       'input',
       SetValueOption.Overwrite,
     );
-    expect(target.interactionState[SchemaNodeState.Dirty]).toBe(false);
-    expect(target.interactionState[SchemaNodeState.Touched]).toBe(false);
+    expect(target.interactionState[FieldNodeState.Dirty]).toBe(false);
+    expect(target.interactionState[FieldNodeState.Touched]).toBe(false);
     expect(
-      target.revisionLedger[SchemaNodeEventType.UpdateState],
+      target.revisionLedger[FieldNodeEventType.UpdateState],
     ).toBeGreaterThan(revision);
     expect(target.raw).toBe('X');
   });
@@ -186,28 +185,28 @@ describe('settle derivation', () => {
         },
       },
     });
-    loadSchemaNodeAtMount(
+    loadFieldNodeAtMount(
       root,
       { clear: false, target: 'before' },
       SetValueOption.Overwrite,
     );
     const target = root.structure!.target;
     setTestInteractionState(target, {
-      [SchemaNodeState.Dirty]: true,
-      [SchemaNodeState.Touched]: true,
+      [FieldNodeState.Dirty]: true,
+      [FieldNodeState.Touched]: true,
     });
-    writeSchemaNode(
+    writeFieldNode(
       root,
       { clear: true, target: 'manual' },
       'load',
       SetValueOption.DisableAutomaticWrites,
     );
     expect(root.structure?.target?.raw).toBe('manual');
+    expect(root.structure?.target?.interactionState[FieldNodeState.Dirty]).toBe(
+      false,
+    );
     expect(
-      root.structure?.target?.interactionState[SchemaNodeState.Dirty],
-    ).toBe(false);
-    expect(
-      root.structure?.target?.interactionState[SchemaNodeState.Touched],
+      root.structure?.target?.interactionState[FieldNodeState.Touched],
     ).toBe(false);
   });
 
@@ -220,7 +219,7 @@ describe('settle derivation', () => {
       },
     });
     expect(() =>
-      loadSchemaNodeAtMount(
+      loadFieldNodeAtMount(
         root,
         { left: 0, right: 0 },
         SetValueOption.Overwrite,
@@ -252,7 +251,7 @@ describe('settle derivation', () => {
         target: { type: 'string', controls: { derived: '../source' } },
       },
     });
-    loadSchemaNodeAtMount(root, { source: 'A' }, SetValueOption.Overwrite);
+    loadFieldNodeAtMount(root, { source: 'A' }, SetValueOption.Overwrite);
     const first = root.runtime.settlementTrace;
     expect(first?.entry).toMatchObject({
       api: 'load',
@@ -267,7 +266,7 @@ describe('settle derivation', () => {
         }),
       ]),
     );
-    writeSchemaNode(
+    writeFieldNode(
       root.structure!.source,
       'B',
       'input',
@@ -287,7 +286,7 @@ describe('settle derivation', () => {
         target: { type: 'string' },
       },
     });
-    loadSchemaNodeAtMount(root, { source: 'A' }, SetValueOption.Overwrite);
+    loadFieldNodeAtMount(root, { source: 'A' }, SetValueOption.Overwrite);
     expect(root.structure?.target?.raw).toBe('A');
   });
 
@@ -306,7 +305,7 @@ describe('settle derivation', () => {
         },
       ],
     });
-    loadSchemaNodeAtMount(root, { source: 'A' }, SetValueOption.Overwrite);
+    loadFieldNodeAtMount(root, { source: 'A' }, SetValueOption.Overwrite);
     expect(root.structure?.target?.raw).toBe('A');
   });
 
@@ -325,7 +324,7 @@ describe('settle derivation', () => {
         },
       },
     });
-    loadSchemaNodeAtMount(
+    loadFieldNodeAtMount(
       root,
       { source: 'A', clear: true },
       SetValueOption.Overwrite,
@@ -362,7 +361,7 @@ describe('settle derivation', () => {
         },
       },
     });
-    loadSchemaNodeAtMount(
+    loadFieldNodeAtMount(
       root,
       { source: 'off', flag: true, target: 'old' },
       SetValueOption.Overwrite,
@@ -389,7 +388,7 @@ describe('settle derivation', () => {
           target: { type: 'string', controls: { derived: '../source' } },
         },
       });
-      loadSchemaNodeAtMount(root, { source: 'A' }, SetValueOption.Overwrite);
+      loadFieldNodeAtMount(root, { source: 'A' }, SetValueOption.Overwrite);
       expect(root.structure?.target?.raw).toBe('A');
       expect('settlementTrace' in root.runtime).toBe(false);
     } finally {

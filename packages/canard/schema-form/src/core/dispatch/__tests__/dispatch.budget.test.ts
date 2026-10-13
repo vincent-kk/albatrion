@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 
-import { SchemaNodeEventType, SchemaNodeRequestType } from '../../record';
-import { SchemaNodeState } from '../../types/state';
+import { FieldNodeEventType, FieldNodeRequestType } from '../../record';
+import { FieldNodeState } from '../../types/state';
 import {
   dispatchBatch,
   dispatchClearExternalErrors,
@@ -12,8 +12,8 @@ import {
   dispatchSetState,
   dispatchSetSubtreeState,
   dispatchSetValue,
-  readSchemaNodeRevision,
-  subscribeSchemaNode,
+  readFieldNodeRevision,
+  subscribeFieldNode,
 } from '../index';
 import { createDispatchTree } from './fixtures/createDispatchTree';
 import type { DispatchTestNode } from './fixtures/createDispatchTree';
@@ -24,7 +24,7 @@ describe('dispatcher budgets', () => {
   it('EVENT-008 EVENT-021 ERROR-070 throw after the final committed feedback wave', () => {
     const { root, runtime } = createDispatchTree({ type: 'number' });
     let deliveries = 0;
-    subscribeSchemaNode(root, () => {
+    subscribeFieldNode(root, () => {
       deliveries += 1;
       if (deliveries <= 26) dispatchSetValue(root, deliveries);
     });
@@ -37,11 +37,11 @@ describe('dispatcher budgets', () => {
     const { root } = createDispatchTree({ type: 'number' });
     let feedbackCalls = 0;
     const observed: unknown[] = [];
-    subscribeSchemaNode(root, () => {
+    subscribeFieldNode(root, () => {
       feedbackCalls += 1;
       dispatchSetValue(root, feedbackCalls);
     });
-    subscribeSchemaNode(root, () => observed.push(root.emit));
+    subscribeFieldNode(root, () => observed.push(root.emit));
     expect(() => dispatchSetValue(root, 0)).toThrow();
     expect(observed.at(-1)).toBe(root.emit);
     expect(observed.length).toBe(feedbackCalls);
@@ -52,7 +52,7 @@ describe('dispatcher budgets', () => {
     const observed: unknown[] = [];
     let feedbackCalls = 0;
     let feedbackEnabled = true;
-    subscribeSchemaNode(root, () => {
+    subscribeFieldNode(root, () => {
       observed.push(root.emit);
       if (feedbackEnabled && feedbackCalls < 26)
         dispatchSetValue(root, `p${feedbackCalls++}`);
@@ -77,7 +77,7 @@ describe('dispatcher budgets', () => {
     let feedbackCalls = 0;
     let batchRan = false;
     const observed: unknown[] = [];
-    subscribeSchemaNode(root, () => {
+    subscribeFieldNode(root, () => {
       observed.push(root.emit);
       if (feedbackCalls < 25) dispatchSetValue(root, `p${feedbackCalls++}`);
       else
@@ -98,37 +98,33 @@ describe('dispatcher budgets', () => {
   it('EVENT-008 refuses state, external error, and request writes at the feedback limit', () => {
     const { root, runtime } = createDispatchTree({ type: 'string' });
     const issues = [{ dataPath: '', message: 'kept' }];
-    dispatchSetState(root, { [SchemaNodeState.Touched]: true });
+    dispatchSetState(root, { [FieldNodeState.Touched]: true });
     dispatchSetExternalErrors(root, issues);
     const observed: number[] = [];
     let feedbackCalls = 0;
-    subscribeSchemaNode(root, (event) => {
+    subscribeFieldNode(root, (event) => {
       observed.push(event.type);
-      if (!(event.type & SchemaNodeEventType.UpdateValue)) return;
+      if (!(event.type & FieldNodeEventType.UpdateValue)) return;
       if (feedbackCalls < 25) {
         dispatchSetValue(root, `p${feedbackCalls++}`);
         return;
       }
-      dispatchSetState(root, { [SchemaNodeState.Dirty]: true });
-      dispatchSetSubtreeState(root, { [SchemaNodeState.Dirty]: true });
+      dispatchSetState(root, { [FieldNodeState.Dirty]: true });
+      dispatchSetSubtreeState(root, { [FieldNodeState.Dirty]: true });
       dispatchClearSubtreeState(root);
       dispatchSetExternalErrors(root, [{ dataPath: '', message: 'blocked' }]);
       dispatchClearExternalErrors(root);
-      dispatchRequest(root, SchemaNodeRequestType.Focus);
+      dispatchRequest(root, FieldNodeRequestType.Focus);
     });
 
     expect(() => dispatchSetValue(root, 'go')).toThrow();
-    expect(root.interactionState[SchemaNodeState.Touched]).toBe(true);
-    expect(root.interactionState[SchemaNodeState.Dirty]).toBeUndefined();
+    expect(root.interactionState[FieldNodeState.Touched]).toBe(true);
+    expect(root.interactionState[FieldNodeState.Dirty]).toBeUndefined();
     expect(runtime.nodeErrors?.get(root)).toBe(issues);
     expect(observed).toHaveLength(26);
-    expect(readSchemaNodeRevision(root, SchemaNodeEventType.UpdateState)).toBe(
-      1,
-    );
-    expect(readSchemaNodeRevision(root, SchemaNodeEventType.UpdateError)).toBe(
-      1,
-    );
-    expect(readSchemaNodeRevision(root, SchemaNodeEventType.RequestFocus)).toBe(
+    expect(readFieldNodeRevision(root, FieldNodeEventType.UpdateState)).toBe(1);
+    expect(readFieldNodeRevision(root, FieldNodeEventType.UpdateError)).toBe(1);
+    expect(readFieldNodeRevision(root, FieldNodeEventType.RequestFocus)).toBe(
       0,
     );
     expect(runtime.entryDepth).toBe(0);

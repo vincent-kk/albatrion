@@ -1,8 +1,8 @@
-import { captureSchemaNodeChange } from '../../../record';
-import type { SchemaNodeRecord } from '../../../record';
+import { captureFieldNodeChange } from '../../../record';
+import type { FieldNodeRecord } from '../../../record';
 import type { SettlementContext } from '../../type';
 import { getGateRegistry } from '../gates/getGateRegistry';
-import { walkOwnedSchemaNodes } from '../walkOwnedSchemaNodes';
+import { walkOwnedFieldNodes } from '../walkOwnedFieldNodes';
 
 /**
  * Replay automatic array shapes backwards without rewinding identity keys.
@@ -10,7 +10,7 @@ import { walkOwnedSchemaNodes } from '../walkOwnedSchemaNodes';
  * @param within - Optional detached fill subtree whose own writes are withdrawn
  * @returns Nothing; each host again owns its earlier item occurrences
  */
-export const restoreArrayStructure = <Self extends SchemaNodeRecord<Self>>(
+export const restoreArrayStructure = <Self extends FieldNodeRecord<Self>>(
   context: SettlementContext<Self>,
   within?: Self,
 ): void => {
@@ -27,9 +27,9 @@ export const restoreArrayStructure = <Self extends SchemaNodeRecord<Self>>(
     for (const item of host.children ?? [])
       if (!prior.has(item)) {
         getGateRegistry(item.runtime).remove(item);
-        walkOwnedSchemaNodes(item, (current) => {
+        walkOwnedFieldNodes(item, (current) => {
           current.detached = true;
-          current.active = captureSchemaNodeChange(current, 'active', false);
+          current.active = captureFieldNodeChange(current, 'active', false);
           context.entered.delete(current);
           context.perished.delete(current);
         });
@@ -38,11 +38,11 @@ export const restoreArrayStructure = <Self extends SchemaNodeRecord<Self>>(
     for (const item of previousItems) {
       structure[item.name] = item;
       item.detached = false;
-      item.active = captureSchemaNodeChange(item, 'active', true);
+      item.active = captureFieldNodeChange(item, 'active', true);
       context.perished.delete(item);
     }
     host.structure = structure;
-    host.children = captureSchemaNodeChange(host, 'children', previousItems);
+    host.children = captureFieldNodeChange(host, 'children', previousItems);
     host.itemCount = previousItemCount;
     host.extras = previousExtras;
     context.dirtyPaths.add(host.path);

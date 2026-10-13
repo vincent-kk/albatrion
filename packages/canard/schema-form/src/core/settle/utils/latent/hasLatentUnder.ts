@@ -1,6 +1,6 @@
 import { isArray } from '@winglet/common-utils/filter';
 
-import type { SchemaNodeRecord } from '../../../record';
+import type { FieldNodeRecord } from '../../../record';
 import type { SettlementContext } from '../../type';
 
 /**
@@ -9,7 +9,7 @@ import type { SettlementContext } from '../../type';
  * @param path - Host path whose descendants may hold latent sources
  * @returns Whether a latent descendant can prevent an empty-host fill
  */
-export const hasLatentUnder = <Self extends SchemaNodeRecord<Self>>(
+export const hasLatentUnder = <Self extends FieldNodeRecord<Self>>(
   context: SettlementContext<Self>,
   path: string,
 ): boolean => {

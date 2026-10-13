@@ -1,7 +1,7 @@
 import { isArray } from '@winglet/common-utils/filter';
 
 import { getItemEntry, mergeEffectiveSchema } from '../../../../../blueprint';
-import type { SchemaNodeRecord } from '../../../../../record';
+import type { FieldNodeRecord } from '../../../../../record';
 import type { SettlementContext } from '../../../../type';
 import { getLoadValue } from '../../../load/getLoadValue';
 
@@ -16,7 +16,7 @@ const NO_ACTIVE_IDS: readonly number[] = Object.freeze([]);
  * @param prior - Structure captured before the host's selection round
  * @returns Whether every slot is proven to keep its static selection
  */
-export const canReuseArrayChildren = <Self extends SchemaNodeRecord<Self>>(
+export const canReuseArrayChildren = <Self extends FieldNodeRecord<Self>>(
   node: Self,
   context: SettlementContext<Self>,
   prior: Record<string, Self>,

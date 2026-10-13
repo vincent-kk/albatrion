@@ -10,7 +10,7 @@ import {
   subscriptionStages,
 } from '@aileron/schema-form-scenarios';
 
-import { Form, type JSONSchema, SchemaNodeEventType, ValidationMode, isArrayNode } from '@/schema-form';
+import { Form, type JSONSchema, FieldNodeEventType, ValidationMode, isArrayNode } from '@/schema-form';
 
 import { renderForm } from '../renderForm';
 
@@ -28,13 +28,13 @@ const scenarioNamed = (name: string): FormScenario => {
 };
 
 /**
- * Name every SchemaNodeEventType bit carried by the received event types.
+ * Name every FieldNodeEventType bit carried by the received event types.
  * @param types - Event type bit masks in arrival order.
  * @returns Member names of the bits present in any mask, in declaration order.
  */
 const readEventNames = (types: readonly number[]): string[] => {
   const union = types.reduce((all, type) => all | type, 0);
-  return Object.entries(SchemaNodeEventType).flatMap(([name, bit]) => (typeof bit === 'number' && union & bit ? [name] : []));
+  return Object.entries(FieldNodeEventType).flatMap(([name, bit]) => (typeof bit === 'number' && union & bit ? [name] : []));
 };
 
 // A renamed or dropped commit scenario must fail loudly here instead of silently leaving the commit cases empty.

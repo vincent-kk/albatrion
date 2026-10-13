@@ -1,5 +1,5 @@
 import type { BlueprintSchemaType, SchemaTypeName } from '../../../blueprint';
-import type { SchemaNodeRecord } from '../../../record';
+import type { FieldNodeRecord } from '../../../record';
 import { isTypeMismatch } from './isTypeMismatch';
 
 /**
@@ -8,7 +8,7 @@ import { isTypeMismatch } from './isTypeMismatch';
  * @param effective - Current gated type list
  * @returns Converted kind names in effective-list order
  */
-export const conversionCandidates = <Self extends SchemaNodeRecord<Self>>(
+export const conversionCandidates = <Self extends FieldNodeRecord<Self>>(
   node: Self,
   effective: BlueprintSchemaType,
 ): Exclude<SchemaTypeName, 'null'>[] => {

@@ -1,7 +1,7 @@
 import { describe, expect, it, vi } from 'vitest';
 
 import { SchemaFormError, WRITE_IN_OBSERVER } from '../../../errors';
-import { dispatchSetValue, subscribeSchemaNode } from '../index';
+import { dispatchSetValue, subscribeFieldNode } from '../index';
 import { reportOwnerlessError } from '../utils/report/reportOwnerlessError';
 import { createDispatchTree } from './fixtures/createDispatchTree';
 
@@ -25,7 +25,7 @@ describe('observer write boundary', () => {
         },
       },
     );
-    subscribeSchemaNode(root, () => {
+    subscribeFieldNode(root, () => {
       throw failure;
     });
     expect(() => dispatchSetValue(root, 'value')).toThrow(failure);
@@ -48,7 +48,7 @@ describe('observer write boundary', () => {
         report: () => dispatchSetValue(other.root, 'allowed'),
       },
     );
-    subscribeSchemaNode(root, () => {
+    subscribeFieldNode(root, () => {
       throw new Error('listener');
     });
     expect(() => dispatchSetValue(root, 'source')).toThrow();

@@ -1,7 +1,7 @@
 import { describe, expect, it, vi } from 'vitest';
 
 import { SetValueOption } from '../../types/value';
-import { loadSchemaNodeAtMount, writeSchemaNode } from '../index';
+import { loadFieldNodeAtMount, writeFieldNode } from '../index';
 import { createTestTree } from './fixtures/createTestTree';
 
 describe('pure gate projection baseline', () => {
@@ -16,10 +16,10 @@ describe('pure gate projection baseline', () => {
         properties: { [kind]: { type: 'string', default: kind } },
       })),
     });
-    loadSchemaNodeAtMount(root, { kind: 'a' }, SetValueOption.Overwrite);
+    loadFieldNodeAtMount(root, { kind: 'a' }, SetValueOption.Overwrite);
     expect(root.emit).toEqual({ kind: 'a', a: 'a' });
     expect(root.emit).toBe(root.emit);
-    writeSchemaNode(
+    writeFieldNode(
       root.structure!.kind,
       'b',
       'input',
@@ -27,7 +27,7 @@ describe('pure gate projection baseline', () => {
     );
     expect(root.emit).toEqual({ kind: 'b', b: 'b' });
     const emitted = root.emit;
-    writeSchemaNode(
+    writeFieldNode(
       root.structure!.kind,
       'b',
       'input',
@@ -49,7 +49,7 @@ describe('pure gate projection baseline', () => {
       ],
     });
     root.runtime.context = { gate: callback };
-    loadSchemaNodeAtMount(root, { kind: 'a' }, SetValueOption.Overwrite);
+    loadFieldNodeAtMount(root, { kind: 'a' }, SetValueOption.Overwrite);
     expect(root.emit).toEqual({ kind: 'a', payload: 'P' });
     expect(callback.mock.calls.length).toBeGreaterThan(1);
     const throwing = vi.fn(() => {
@@ -57,7 +57,7 @@ describe('pure gate projection baseline', () => {
     });
     root.runtime.context = { gate: throwing };
     expect(() =>
-      writeSchemaNode(
+      writeFieldNode(
         root,
         { kind: 'b' },
         'callerReplace',
@@ -85,12 +85,12 @@ describe('pure gate projection baseline', () => {
         },
       ],
     });
-    loadSchemaNodeAtMount(
+    loadFieldNodeAtMount(
       root,
       { kind: 'a', toggle: false },
       SetValueOption.Overwrite,
     );
-    writeSchemaNode(
+    writeFieldNode(
       root.structure!.toggle,
       true,
       'input',
@@ -118,7 +118,7 @@ describe('pure gate projection baseline', () => {
       ],
     });
     root.runtime.context = { gate: () => true };
-    loadSchemaNodeAtMount(
+    loadFieldNodeAtMount(
       root,
       { kind: 'a', toggle: false },
       SetValueOption.Overwrite,
@@ -129,7 +129,7 @@ describe('pure gate projection baseline', () => {
       },
     };
     expect(() =>
-      writeSchemaNode(
+      writeFieldNode(
         root.structure!.toggle,
         true,
         'input',
@@ -137,7 +137,7 @@ describe('pure gate projection baseline', () => {
       ),
     ).toThrow();
     root.runtime.context = { gate: () => true };
-    writeSchemaNode(
+    writeFieldNode(
       root.structure!.toggle,
       false,
       'input',

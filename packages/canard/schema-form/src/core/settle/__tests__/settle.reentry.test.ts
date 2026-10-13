@@ -2,10 +2,10 @@ import { describe, expect, it } from 'vitest';
 
 import { SetValueOption } from '../../types/value';
 import {
-  loadSchemaNodeAtMount,
-  resetSchemaNodeForm,
-  resetSchemaNodeSubtree,
-  writeSchemaNode,
+  loadFieldNodeAtMount,
+  resetFieldNodeForm,
+  resetFieldNodeSubtree,
+  writeFieldNode,
 } from '../index';
 import { createTestTree } from './fixtures/createTestTree';
 
@@ -75,7 +75,7 @@ describe('final-shape exits', () => {
     it(`WRITE-099 keeps alternate value kinds stable for ${name}`, () => {
       const { root: mounted } = createTestTree(alternateSchema);
       expect(() =>
-        loadSchemaNodeAtMount(
+        loadFieldNodeAtMount(
           mounted,
           { kind: 'b', value: 2 },
           SetValueOption.Overwrite,
@@ -90,14 +90,14 @@ describe('final-shape exits', () => {
       ).toBe(false);
 
       const { root } = createTestTree(alternateSchema);
-      loadSchemaNodeAtMount(
+      loadFieldNodeAtMount(
         root,
         { kind: 'a', value: 'first' },
         SetValueOption.Overwrite,
       );
       expect(root.structure?.value?.blueprintNode.kind).toBe('string');
       expect(() =>
-        writeSchemaNode(
+        writeFieldNode(
           root,
           { kind: 'b', value: 2 },
           'callerReplace',
@@ -106,7 +106,7 @@ describe('final-shape exits', () => {
       ).not.toThrow();
       expect(root.structure?.value?.blueprintNode.kind).toBe('number');
       expect(() =>
-        writeSchemaNode(
+        writeFieldNode(
           root,
           { kind: 'a', value: 'again' },
           'callerReplace',
@@ -119,24 +119,19 @@ describe('final-shape exits', () => {
 
   it('26C-13 keeps the exited kind raw through input writes only', () => {
     const { root } = createTestTree(alternateKinds[0].schema);
-    loadSchemaNodeAtMount(
+    loadFieldNodeAtMount(
       root,
       { kind: 'a', value: 'hello' },
       SetValueOption.Overwrite,
     );
-    writeSchemaNode(
+    writeFieldNode(
       root.structure!.kind,
       'b',
       'input',
       SetValueOption.Overwrite,
     );
     expect(root.structure?.value?.blueprintNode.kind).toBe('number');
-    writeSchemaNode(
-      root.structure!.value,
-      3,
-      'input',
-      SetValueOption.Overwrite,
-    );
+    writeFieldNode(root.structure!.value, 3, 'input', SetValueOption.Overwrite);
     expect(
       root.runtime.latentRaw.get(JSON.stringify(['/value', 'string'])),
     ).toBe('hello');
@@ -145,7 +140,7 @@ describe('final-shape exits', () => {
         .get('')
         ?.some((entry) => entry.path === '/value'),
     ).toBe(false);
-    writeSchemaNode(
+    writeFieldNode(
       root.structure!.kind,
       'a',
       'input',
@@ -158,7 +153,7 @@ describe('final-shape exits', () => {
         .get('')
         ?.some((entry) => entry.path === '/value'),
     ).toBe(false);
-    writeSchemaNode(
+    writeFieldNode(
       root.structure!.kind,
       'none',
       'input',
@@ -173,24 +168,19 @@ describe('final-shape exits', () => {
 
   it('WRITE-094 makes a whole write the only raw of every kind in its scope', () => {
     const { root } = createTestTree(alternateKinds[0].schema);
-    loadSchemaNodeAtMount(
+    loadFieldNodeAtMount(
       root,
       { kind: 'a', value: 'hello' },
       SetValueOption.Overwrite,
     );
-    writeSchemaNode(
+    writeFieldNode(
       root.structure!.kind,
       'b',
       'input',
       SetValueOption.Overwrite,
     );
-    writeSchemaNode(
-      root.structure!.value,
-      3,
-      'input',
-      SetValueOption.Overwrite,
-    );
-    writeSchemaNode(
+    writeFieldNode(root.structure!.value, 3, 'input', SetValueOption.Overwrite);
+    writeFieldNode(
       root,
       { kind: 'b', value: 4 },
       'callerReplace',
@@ -199,7 +189,7 @@ describe('final-shape exits', () => {
     expect(
       root.runtime.latentRaw.has(JSON.stringify(['/value', 'string'])),
     ).toBe(false);
-    writeSchemaNode(
+    writeFieldNode(
       root.structure!.kind,
       'a',
       'input',
@@ -211,24 +201,19 @@ describe('final-shape exits', () => {
 
   it('26C-13 replaces every kind at a path covered by a whole write', () => {
     const { root } = createTestTree(alternateKinds[0].schema);
-    loadSchemaNodeAtMount(
+    loadFieldNodeAtMount(
       root,
       { kind: 'a', value: 'hello' },
       SetValueOption.Overwrite,
     );
-    writeSchemaNode(
+    writeFieldNode(
       root.structure!.kind,
       'b',
       'input',
       SetValueOption.Overwrite,
     );
-    writeSchemaNode(
-      root.structure!.value,
-      3,
-      'input',
-      SetValueOption.Overwrite,
-    );
-    writeSchemaNode(
+    writeFieldNode(root.structure!.value, 3, 'input', SetValueOption.Overwrite);
+    writeFieldNode(
       root,
       { kind: 'a', value: 'again' },
       'callerReplace',
@@ -248,7 +233,7 @@ describe('final-shape exits', () => {
         ?.some((entry) => entry.path === '/value'),
     ).toBe(false);
     expect(root.runtime.typeMismatchPaths.has('/value')).toBe(false);
-    writeSchemaNode(
+    writeFieldNode(
       root.structure!.kind,
       'b',
       'input',
@@ -261,12 +246,12 @@ describe('final-shape exits', () => {
 
   it('VALUE-025 enters an other-kind node from its own latent or absent', () => {
     const { root } = createTestTree(alternateKinds[0].schema);
-    loadSchemaNodeAtMount(
+    loadFieldNodeAtMount(
       root,
       { kind: 'a', value: 'hello' },
       SetValueOption.Overwrite,
     );
-    writeSchemaNode(
+    writeFieldNode(
       root.structure!.kind,
       'b',
       'input',
@@ -286,7 +271,7 @@ describe('final-shape exits', () => {
     expect(
       root.runtime.latentRaw.has(JSON.stringify(['/value', 'number'])),
     ).toBe(false);
-    writeSchemaNode(
+    writeFieldNode(
       root.structure!.kind,
       'a',
       'input',
@@ -304,13 +289,13 @@ describe('final-shape exits', () => {
       type: 'object',
       properties: { outer: alternateKinds[0].schema },
     });
-    loadSchemaNodeAtMount(
+    loadFieldNodeAtMount(
       root,
       { outer: { kind: 'a', value: 'hello' } },
       SetValueOption.Overwrite,
     );
     const outer = root.structure!.outer;
-    writeSchemaNode(
+    writeFieldNode(
       outer.structure!.kind,
       'b',
       'input',
@@ -330,7 +315,7 @@ describe('final-shape exits', () => {
     expect(
       root.runtime.latentRaw.has(JSON.stringify(['/outer/value', 'number'])),
     ).toBe(false);
-    writeSchemaNode(
+    writeFieldNode(
       outer.structure!.kind,
       'a',
       'input',
@@ -364,7 +349,7 @@ describe('final-shape exits', () => {
       type: 'object',
       properties: { inside: host, outside: host },
     });
-    loadSchemaNodeAtMount(
+    loadFieldNodeAtMount(
       root,
       {
         inside: { kind: 'a', value: 'in' },
@@ -372,19 +357,19 @@ describe('final-shape exits', () => {
       },
       SetValueOption.Overwrite,
     );
-    writeSchemaNode(
+    writeFieldNode(
       root.structure!.inside.structure!.kind,
       'b',
       'input',
       SetValueOption.Overwrite,
     );
-    writeSchemaNode(
+    writeFieldNode(
       root.structure!.outside.structure!.kind,
       'b',
       'input',
       SetValueOption.Overwrite,
     );
-    writeSchemaNode(
+    writeFieldNode(
       root.structure!.inside,
       { kind: 'b', value: 4 },
       'callerReplace',
@@ -396,7 +381,7 @@ describe('final-shape exits', () => {
     expect(
       root.runtime.latentRaw.get(JSON.stringify(['/outside/value', 'string'])),
     ).toBe('out');
-    writeSchemaNode(
+    writeFieldNode(
       root.structure!.outside.structure!.kind,
       'a',
       'input',
@@ -407,7 +392,7 @@ describe('final-shape exits', () => {
 
   it('26C-13 loads one latent kind when every declaration is gated off', () => {
     const { root } = createTestTree(alternateKinds[1].schema);
-    loadSchemaNodeAtMount(
+    loadFieldNodeAtMount(
       root,
       { kind: 'none', value: 2 },
       SetValueOption.Overwrite,
@@ -442,12 +427,12 @@ describe('final-shape exits', () => {
         },
       ],
     });
-    loadSchemaNodeAtMount(
+    loadFieldNodeAtMount(
       root,
       { kind: 'a', value: 'hello' },
       SetValueOption.Overwrite,
     );
-    writeSchemaNode(
+    writeFieldNode(
       root.structure!.kind,
       'b',
       'input',
@@ -462,12 +447,12 @@ describe('final-shape exits', () => {
 
   it('26C-13 form reset replaces previous kind latents with its loaded value', () => {
     const { root } = createTestTree(alternateKinds[1].schema);
-    loadSchemaNodeAtMount(
+    loadFieldNodeAtMount(
       root,
       { kind: 'a', value: 'hello' },
       SetValueOption.Overwrite,
     );
-    writeSchemaNode(
+    writeFieldNode(
       root.structure!.kind,
       'b',
       'input',
@@ -476,16 +461,12 @@ describe('final-shape exits', () => {
     expect(
       root.runtime.latentRaw.has(JSON.stringify(['/value', 'string'])),
     ).toBe(true);
-    resetSchemaNodeForm(
-      root,
-      { kind: 'b', value: 2 },
-      SetValueOption.Overwrite,
-    );
+    resetFieldNodeForm(root, { kind: 'b', value: 2 }, SetValueOption.Overwrite);
     expect(
       root.runtime.latentRaw.has(JSON.stringify(['/value', 'string'])),
     ).toBe(false);
     expect(root.runtime.inactiveValuesMemo.get('')).toEqual([]);
-    resetSchemaNodeForm(
+    resetFieldNodeForm(
       root,
       { kind: 'none', value: 3 },
       SetValueOption.Overwrite,
@@ -528,25 +509,20 @@ describe('final-shape exits', () => {
         },
       },
     });
-    loadSchemaNodeAtMount(
+    loadFieldNodeAtMount(
       root,
       { host: { kind: 'a', value: 'hello' } },
       SetValueOption.Overwrite,
     );
     const host = root.structure!.host;
-    writeSchemaNode(
+    writeFieldNode(
       host.structure!.kind,
       'b',
       'input',
       SetValueOption.Overwrite,
     );
-    writeSchemaNode(
-      host.structure!.value,
-      2,
-      'input',
-      SetValueOption.Overwrite,
-    );
-    resetSchemaNodeSubtree(host, SetValueOption.Overwrite);
+    writeFieldNode(host.structure!.value, 2, 'input', SetValueOption.Overwrite);
+    resetFieldNodeSubtree(host, SetValueOption.Overwrite);
     expect(root.structure?.host?.structure?.value?.blueprintNode.kind).toBe(
       'string',
     );
@@ -577,14 +553,14 @@ describe('final-shape exits', () => {
   for (const unsetOnInactive of [false, true])
     it(`SETTLE-005 keeps a reopened node when unset is ${unsetOnInactive}`, () => {
       const { root } = createTestTree(schema(unsetOnInactive));
-      loadSchemaNodeAtMount(
+      loadFieldNodeAtMount(
         root,
         { g: { leaf: 'keep' } },
         SetValueOption.Overwrite,
       );
       const g = root.structure?.g;
       if (!g) throw new Error('Expected g in the previous commit');
-      writeSchemaNode(
+      writeFieldNode(
         root.structure!.t,
         true,
         'input',
@@ -616,7 +592,7 @@ describe('final-shape exits', () => {
         },
       ],
     });
-    loadSchemaNodeAtMount(
+    loadFieldNodeAtMount(
       root,
       { g: { leaf: 'keep' }, x: 'steady' },
       SetValueOption.Overwrite,
@@ -624,7 +600,7 @@ describe('final-shape exits', () => {
     const g = root.structure?.g;
     if (!g) throw new Error('Expected g in the previous commit');
     expect(() =>
-      writeSchemaNode(
+      writeFieldNode(
         root,
         { t: true, g: { leaf: 'keep' }, x: 0 },
         'callerReplace',
@@ -653,13 +629,13 @@ describe('final-shape exits', () => {
         },
       },
     });
-    loadSchemaNodeAtMount(
+    loadFieldNodeAtMount(
       root,
       { flag: true, secret: 'held' },
       SetValueOption.Overwrite,
     );
     const secret = root.structure!.secret;
-    writeSchemaNode(
+    writeFieldNode(
       root.structure!.flag,
       false,
       'input',
@@ -698,14 +674,14 @@ describe('final-shape exits', () => {
         ],
       },
     });
-    loadSchemaNodeAtMount(
+    loadFieldNodeAtMount(
       root,
       { flag: true, secret: 'held' },
       SetValueOption.Overwrite,
     );
     const secret = root.structure!.secret;
     expect(() =>
-      writeSchemaNode(
+      writeFieldNode(
         root.structure!.flag,
         false,
         'input',

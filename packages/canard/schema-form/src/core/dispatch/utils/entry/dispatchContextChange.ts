@@ -1,8 +1,8 @@
-import type { SchemaNodeRecord } from '../../../record';
-import { changeSchemaNodeContext } from '../../../settle';
+import type { FieldNodeRecord } from '../../../record';
+import { changeFieldNodeContext } from '../../../settle';
 import { captureChainError } from '../chain/captureChainError';
-import { enterSchemaNodeChain } from '../chain/enterSchemaNodeChain';
-import { exitSchemaNodeChain } from '../chain/exitSchemaNodeChain';
+import { enterFieldNodeChain } from '../chain/enterFieldNodeChain';
+import { exitFieldNodeChain } from '../chain/exitFieldNodeChain';
 
 /**
  * Settle a merged binding context through the root entry boundary.
@@ -10,16 +10,16 @@ import { exitSchemaNodeChain } from '../chain/exitSchemaNodeChain';
  * @param context - Already merged provider and Form context
  * @returns Nothing; any changed emit is delivered before returning
  */
-export const dispatchContextChange = <Self extends SchemaNodeRecord<Self>>(
+export const dispatchContextChange = <Self extends FieldNodeRecord<Self>>(
   root: Self,
   context: Readonly<Record<string, unknown>>,
 ): void => {
-  if (!enterSchemaNodeChain(root)) return;
+  if (!enterFieldNodeChain(root)) return;
   try {
-    changeSchemaNodeContext(root, context);
+    changeFieldNodeContext(root, context);
   } catch (error) {
     captureChainError(root.runtime, error);
   } finally {
-    exitSchemaNodeChain(root);
+    exitFieldNodeChain(root);
   }
 };

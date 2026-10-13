@@ -3,7 +3,7 @@ import { describe, expect, it } from 'vitest';
 import { SchemaFormError } from '../../../errors';
 import { SetValueOption } from '../../types/value';
 import { PathKeyedMap } from '../../utils/pathIndex/PathKeyedMap';
-import { arrangeSchemaNodeItems, writeSchemaNode } from '../index';
+import { arrangeFieldNodeItems, writeFieldNode } from '../index';
 import { getGateRegistry } from '../utils/gates/getGateRegistry';
 import { rekeyArrayRuntimePaths } from '../utils/structure/rekeyArrayRuntimePaths';
 import { createTestTree } from './fixtures/createTestTree';
@@ -141,7 +141,7 @@ describe('array path movement', () => {
         },
       },
     });
-    writeSchemaNode(
+    writeFieldNode(
       root,
       [
         { show: true, hidden: 'visible' },
@@ -155,7 +155,7 @@ describe('array path movement', () => {
     const newKey = JSON.stringify(['/0/hidden', 'string']);
     expect(root.runtime.latentRaw.has(oldKey)).toBe(true);
     expect(root.runtime.typeMismatchPaths.has('/1/count')).toBe(true);
-    expect(arrangeSchemaNodeItems(root, { kind: 'remove', index: 0 })).toEqual({
+    expect(arrangeFieldNodeItems(root, { kind: 'remove', index: 0 })).toEqual({
       show: true,
       hidden: 'visible',
     });
@@ -171,7 +171,7 @@ describe('array path movement', () => {
     expect(
       getGateRegistry(root.runtime).hasRegisteredPathKind('/1', 'object'),
     ).toBe(false);
-    writeSchemaNode(
+    writeFieldNode(
       shifted.structure!.show,
       true,
       'callerReplace',
@@ -185,30 +185,18 @@ describe('array path movement', () => {
       type: 'array',
       items: { type: 'string' },
     });
-    writeSchemaNode(
-      root,
-      ['a', 'b'],
-      'callerReplace',
-      SetValueOption.Overwrite,
-    );
+    writeFieldNode(root, ['a', 'b'], 'callerReplace', SetValueOption.Overwrite);
     const popped = root.children![1];
-    expect(arrangeSchemaNodeItems(root, { kind: 'pop' })).toBe('b');
-    writeSchemaNode(
-      popped,
-      'latent',
-      'callerReplace',
-      SetValueOption.Overwrite,
-    );
+    expect(arrangeFieldNodeItems(root, { kind: 'pop' })).toBe('b');
+    writeFieldNode(popped, 'latent', 'callerReplace', SetValueOption.Overwrite);
     expect(root.runtime.latentRaw.get(JSON.stringify(['/1', 'string']))).toBe(
       'latent',
     );
     const removed = root.children![0];
-    arrangeSchemaNodeItems(root, { kind: 'push', value: 'c' });
-    expect(arrangeSchemaNodeItems(root, { kind: 'remove', index: 0 })).toBe(
-      'a',
-    );
+    arrangeFieldNodeItems(root, { kind: 'push', value: 'c' });
+    expect(arrangeFieldNodeItems(root, { kind: 'remove', index: 0 })).toBe('a');
     const commit = root.runtime.commitNumber;
-    writeSchemaNode(
+    writeFieldNode(
       removed,
       'ignored',
       'callerReplace',
@@ -233,27 +221,25 @@ describe('array path movement', () => {
         },
       },
     });
-    writeSchemaNode(
+    writeFieldNode(
       root,
       { show: true, list: ['a'] },
       'callerReplace',
       SetValueOption.Overwrite,
     );
     const former = root.structure!.list;
-    writeSchemaNode(
+    writeFieldNode(
       root.structure!.show,
       false,
       'callerReplace',
       SetValueOption.Overwrite,
     );
     expect(former.detached).toBe(true);
-    expect(arrangeSchemaNodeItems(former, { kind: 'push', value: 'b' })).toBe(
-      2,
-    );
+    expect(arrangeFieldNodeItems(former, { kind: 'push', value: 'b' })).toBe(2);
     expect(
       root.runtime.latentRaw.get(JSON.stringify(['/list', 'array'])),
     ).toMatchObject({ raw: ['a', 'b'] });
-    writeSchemaNode(
+    writeFieldNode(
       root.structure!.show,
       true,
       'callerReplace',
@@ -261,7 +247,7 @@ describe('array path movement', () => {
     );
     expect(root.structure!.list.local).toEqual(['a', 'b']);
     const commit = root.runtime.commitNumber;
-    arrangeSchemaNodeItems(former, { kind: 'push', value: 'ignored' });
+    arrangeFieldNodeItems(former, { kind: 'push', value: 'ignored' });
     expect(root.runtime.commitNumber).toBe(commit);
     expect(root.structure!.list.local).toEqual(['a', 'b']);
   });
@@ -290,12 +276,7 @@ describe('array path movement', () => {
     });
     let caught: unknown;
     try {
-      writeSchemaNode(
-        root,
-        { a: 0 },
-        'callerReplace',
-        SetValueOption.Overwrite,
-      );
+      writeFieldNode(root, { a: 0 }, 'callerReplace', SetValueOption.Overwrite);
     } catch (error) {
       caught = error;
     }
@@ -307,7 +288,7 @@ describe('array path movement', () => {
     const spent = host.nextItemKey;
     expect(spent).toBeGreaterThan(0);
     root.runtime.disableAutomaticWrites = true;
-    arrangeSchemaNodeItems(host, { kind: 'push', value: 'caller' });
+    arrangeFieldNodeItems(host, { kind: 'push', value: 'caller' });
     expect(host.children![0].itemKey).toBe(spent);
     expect(host.nextItemKey).toBeGreaterThan(spent);
   });

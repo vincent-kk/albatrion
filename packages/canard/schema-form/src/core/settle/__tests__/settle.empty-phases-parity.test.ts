@@ -1,8 +1,8 @@
 import { expect, it } from 'vitest';
 
-import { SchemaNodeEventType } from '../../record';
+import { FieldNodeEventType } from '../../record';
 import { SetValueOption } from '../../types/value';
-import { loadSchemaNodeAtMount, writeSchemaNode } from '../index';
+import { loadFieldNodeAtMount, writeFieldNode } from '../index';
 import { createTestTree } from './fixtures/createTestTree';
 
 it('preserves values, errors, delivery payloads, revisions, commits and empty rounds', () => {
@@ -13,7 +13,7 @@ it('preserves values, errors, delivery payloads, revisions, commits and empty ro
       sibling: { type: 'number', default: 3 },
     },
   });
-  loadSchemaNodeAtMount(root, { value: 'before' }, SetValueOption.Overwrite);
+  loadFieldNodeAtMount(root, { value: 'before' }, SetValueOption.Overwrite);
   const leaf = root.structure!.value;
   const sibling = root.structure!.sibling;
   const siblingRevision = sibling.revisionLedger;
@@ -23,20 +23,20 @@ it('preserves values, errors, delivery payloads, revisions, commits and empty ro
       node.pendingDelivery = undefined;
     root.runtime.deliveries?.clear();
     const value = index === 0 ? 'first' : 'later';
-    const revision = leaf.revisionLedger[SchemaNodeEventType.UpdateValue] ?? 0;
+    const revision = leaf.revisionLedger[FieldNodeEventType.UpdateValue] ?? 0;
     expect(() =>
-      writeSchemaNode(leaf, value, 'input', SetValueOption.Overwrite),
+      writeFieldNode(leaf, value, 'input', SetValueOption.Overwrite),
     ).not.toThrow();
     expect(root.emit).toEqual({ value, sibling: 3 });
     expect(root.runtime.diagnostics.status).toBe('stable');
     expect(root.runtime.combinedErrors?.size ?? 0).toBe(0);
     expect(
-      leaf.pendingDelivery?.payload?.[SchemaNodeEventType.UpdateValue],
+      leaf.pendingDelivery?.payload?.[FieldNodeEventType.UpdateValue],
     ).toEqual({ previous, current: value });
     expect(
-      leaf.pendingDelivery?.options?.[SchemaNodeEventType.UpdateValue],
+      leaf.pendingDelivery?.options?.[FieldNodeEventType.UpdateValue],
     ).toEqual({ source: 'input' });
-    expect(leaf.revisionLedger[SchemaNodeEventType.UpdateValue]).toBe(
+    expect(leaf.revisionLedger[FieldNodeEventType.UpdateValue]).toBe(
       revision + 1,
     );
     expect(sibling.revisionLedger).toBe(siblingRevision);
@@ -57,23 +57,23 @@ it('preserves actual derive rounds, automatic delivery and deferred expression e
       target: { type: 'number', controls: { derived: '../source + 1' } },
     },
   });
-  loadSchemaNodeAtMount(root, { source: 1 }, SetValueOption.Overwrite);
+  loadFieldNodeAtMount(root, { source: 1 }, SetValueOption.Overwrite);
   const target = root.structure!.target;
   for (const node of root.runtime.deliveries ?? [])
     node.pendingDelivery = undefined;
   root.runtime.deliveries?.clear();
-  const revision = target.revisionLedger[SchemaNodeEventType.UpdateValue] ?? 0;
-  writeSchemaNode(root.structure!.source, 2, 'input', SetValueOption.Overwrite);
+  const revision = target.revisionLedger[FieldNodeEventType.UpdateValue] ?? 0;
+  writeFieldNode(root.structure!.source, 2, 'input', SetValueOption.Overwrite);
   expect(root.emit).toEqual({ source: 2, target: 3 });
   expect(root.runtime.commitNumber).toBe(2);
-  expect(target.revisionLedger[SchemaNodeEventType.UpdateValue]).toBe(
+  expect(target.revisionLedger[FieldNodeEventType.UpdateValue]).toBe(
     revision + 1,
   );
   expect(
-    target.pendingDelivery?.payload?.[SchemaNodeEventType.UpdateValue],
+    target.pendingDelivery?.payload?.[FieldNodeEventType.UpdateValue],
   ).toEqual({ previous: 2, current: 3 });
   expect(
-    target.pendingDelivery?.options?.[SchemaNodeEventType.UpdateValue],
+    target.pendingDelivery?.options?.[FieldNodeEventType.UpdateValue],
   ).toEqual({ source: 'automatic' });
   expect(root.runtime.settlementTrace?.rounds).toHaveLength(2);
   expect(root.runtime.settlementTrace?.rounds[0]).toEqual([
@@ -96,7 +96,7 @@ it('preserves actual derive rounds, automatic delivery and deferred expression e
     },
   }).root;
   expect(() =>
-    loadSchemaNodeAtMount(
+    loadFieldNodeAtMount(
       broken,
       { source: 1, target: 7 },
       SetValueOption.Overwrite,

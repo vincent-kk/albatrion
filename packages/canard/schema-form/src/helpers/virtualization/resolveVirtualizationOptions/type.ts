@@ -2,7 +2,7 @@ import type { ComponentType } from 'react';
 
 import type { Fn } from '@aileron/declare';
 
-import type { SchemaNode } from '@/schema-form/core';
+import type { FieldNode } from '@/schema-form/core';
 
 /** IntersectionObserver rootMargin component — the spec allows only px or % */
 type RootMarginUnit = `${number}px` | `${number}%`;
@@ -34,7 +34,7 @@ export enum VirtualizationBackfill {
 /** Props handed to a custom placeholder component while a field is deferred */
 export interface VirtualizationPlaceholderProps {
   /** Node whose subtree is not mounted yet */
-  node: SchemaNode;
+  node: FieldNode;
   /** Reserved height (px) resolved from `estimateHeight` — fill it (e.g. `height: '100%'`) */
   height: number;
 }
@@ -73,7 +73,7 @@ export interface VirtualizationOptions {
    * Placeholder height in px before reveal, or a per-node estimator (default: 40)
    *  - Approximates scroll height; replaced by the real height after reveal
    */
-  estimateHeight?: number | Fn<[node: SchemaNode], number>;
+  estimateHeight?: number | Fn<[node: FieldNode], number>;
   /**
    * Custom component rendered inside deferred placeholders (default: none — an empty box)
    *  - Purely visual (skeletons, shimmer); space reservation stays with `estimateHeight`
@@ -96,6 +96,6 @@ export interface ResolvedVirtualizationOptions {
   eagerCount: number;
   rootMargin: VirtualizationRootMargin;
   backfill: VirtualizationBackfill;
-  estimateHeight: number | Fn<[node: SchemaNode], number>;
+  estimateHeight: number | Fn<[node: FieldNode], number>;
   Placeholder: ComponentType<VirtualizationPlaceholderProps> | null;
 }

@@ -5,11 +5,11 @@ import type {
   ScenarioAdapter,
 } from '@aileron/schema-form-scenarios';
 
-import { SetValueOption, schemaNodeFactory } from '../../../SchemaNode';
-import type { SchemaNode as RuntimeSchemaNode } from '../../../SchemaNode/SchemaNode';
+import { SetValueOption, fieldNodeFactory } from '../../../FieldNode';
+import type { FieldNode as RuntimeFieldNode } from '../../../FieldNode/FieldNode';
 import { blueprint } from '../../../blueprint';
 import type { BlueprintSchema } from '../../../blueprint';
-import { loadSchemaNodeAtMount } from '../../../settle';
+import { loadFieldNodeAtMount } from '../../../settle';
 import { PathKeyedMap } from '../../../utils/pathIndex/PathKeyedMap';
 import { PathKeyedSet } from '../../../utils/pathIndex/PathKeyedSet';
 import { createTestValidator } from '../../fixtures/createTestValidator';
@@ -23,8 +23,8 @@ import { executeCoreScenarioStep } from './executeCoreScenarioStep';
  */
 export function createCoreScenarioAdapter(
   scenario: FormScenario,
-): ScenarioAdapter & { readonly root: RuntimeSchemaNode } {
-  const root = schemaNodeFactory(
+): ScenarioAdapter & { readonly root: RuntimeFieldNode } {
+  const root = fieldNodeFactory(
     blueprint(scenario.schema as BlueprintSchema),
     {
       diagnostics: { status: 'stable' },
@@ -37,28 +37,28 @@ export function createCoreScenarioAdapter(
     },
     createTestValidator(),
   );
-  loadSchemaNodeAtMount(
-    root as RuntimeSchemaNode,
+  loadFieldNodeAtMount(
+    root as RuntimeFieldNode,
     scenario.initialValue,
     SetValueOption.Overwrite,
   );
   const priorNodes = new Map<
     string,
-    { node: RuntimeSchemaNode; itemKey: number | null }
+    { node: RuntimeFieldNode; itemKey: number | null }
   >();
   let actionResult: unknown;
   return {
-    root: root as RuntimeSchemaNode,
+    root: root as RuntimeFieldNode,
     execute: (step) => {
       priorNodes.clear();
       for (const path of Object.values(step.expect?.identity ?? {})) {
-        const node = root.find(path) as RuntimeSchemaNode | null;
+        const node = root.find(path) as RuntimeFieldNode | null;
         if (!node)
           throw new Error(`Scenario identity source missing at ${path}`);
         priorNodes.set(path, { node, itemKey: node.itemKey });
       }
       actionResult = executeCoreScenarioStep(
-        root as RuntimeSchemaNode,
+        root as RuntimeFieldNode,
         scenario,
         step,
       );
@@ -73,7 +73,7 @@ export function createCoreScenarioAdapter(
         const prior = priorNodes.get(priorPath);
         expect(root.find(path), `identity ${path}`).toBe(prior?.node);
         expect(
-          (root.find(path) as RuntimeSchemaNode | null)?.itemKey,
+          (root.find(path) as RuntimeFieldNode | null)?.itemKey,
           `item key ${path}`,
         ).toBe(prior?.itemKey);
       }

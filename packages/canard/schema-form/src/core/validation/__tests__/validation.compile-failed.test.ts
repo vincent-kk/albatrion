@@ -9,7 +9,7 @@ import {
 } from '../../dispatch';
 import { createDispatchTree } from '../../dispatch/__tests__/fixtures/createDispatchTree';
 import { ValidationMode } from '../../types/state';
-import { readSchemaNodeErrors } from '../index';
+import { readFieldNodeErrors } from '../index';
 import type { Validator } from '../type';
 
 // filid:contract validation-lifetime
@@ -36,8 +36,8 @@ describe('validator failures', () => {
       expect(report.mock.calls[0][0].code).toBe(
         `SCHEMA_FORM_ERROR.${VALIDATOR_COMPILE_FAILED}`,
       );
-      expect(readSchemaNodeErrors(root)).toEqual([]);
-      expect(readSchemaNodeErrors(root.structure?.child ?? root)).toEqual([]);
+      expect(readFieldNodeErrors(root)).toEqual([]);
+      expect(readFieldNodeErrors(root.structure?.child ?? root)).toEqual([]);
       dispatchResetSubtree(root.structure?.child ?? root);
       await new Promise((resolve) => setTimeout(resolve, 0));
       expect(report).toHaveBeenCalledTimes(1);
@@ -79,7 +79,7 @@ describe('validator failures', () => {
       code: `SCHEMA_FORM_ERROR.${VALIDATOR_THREW}`,
       surface: 'rejected',
     });
-    expect(readSchemaNodeErrors(root)).toEqual([]);
+    expect(readFieldNodeErrors(root)).toEqual([]);
   });
 
   it('VALIDATE-048 compile failure preserves the original error in details', async () => {

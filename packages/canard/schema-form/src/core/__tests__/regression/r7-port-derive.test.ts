@@ -1,9 +1,9 @@
 import { describe, expect, it } from 'vitest';
 
-import { makeSchemaNodeTree } from '../makeSchemaNodeTree';
+import { makeFieldNodeTree } from '../makeFieldNodeTree';
 
 const e3Tree = () =>
-  makeSchemaNodeTree(
+  makeFieldNodeTree(
     {
       type: 'object',
       properties: {
@@ -47,7 +47,7 @@ describe('round7 derive port', () => {
     expect(root.outputValue).toEqual({ src: 'x', tgt: 'f(x)' });
   });
   it('r7-port.mjs:427 X15 discards an intermediate fragment injection', () => {
-    const { root } = makeSchemaNodeTree({
+    const { root } = makeFieldNodeTree({
       type: 'object',
       properties: {
         kind: { type: 'string', default: 'b' },
@@ -77,7 +77,7 @@ describe('round7 derive port', () => {
     expect(root.diagnostics.status).toBe('stable');
   });
   it('r7-port.mjs:444 FRAGMENT-050 29C-01 X16 keeps the birth-edge write after retracting c', () => {
-    const { root } = makeSchemaNodeTree({
+    const { root } = makeFieldNodeTree({
       type: 'object',
       properties: {
         t: { type: 'string' },
@@ -103,7 +103,7 @@ describe('round7 derive port', () => {
     expect(root.diagnostics.status).toBe('stable');
   });
   it('r7-port.mjs:463 ERROR-070 XA4 commits original B after changed-source feedback', () => {
-    const { root } = makeSchemaNodeTree({
+    const { root } = makeFieldNodeTree({
       type: 'object',
       properties: {
         n: {

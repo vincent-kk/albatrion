@@ -6,7 +6,7 @@ import {
   dispatchMount,
   dispatchResetForm,
   dispatchSetValue,
-  subscribeSchemaNode,
+  subscribeFieldNode,
 } from '../index';
 import { createDispatchTree } from './fixtures/createDispatchTree';
 
@@ -15,7 +15,7 @@ describe('dispatcher onChange', () => {
   it('EVENT-026 invokes once after the final wave with final emit', () => {
     const { root, runtime } = createDispatchTree({ type: 'string' });
     const order: string[] = [];
-    subscribeSchemaNode(root, () => order.push('listener'));
+    subscribeFieldNode(root, () => order.push('listener'));
     runtime.onChange = (value) => order.push(`change:${value}`);
     dispatchBatch(root, () => {
       dispatchSetValue(root, 'first');
@@ -50,7 +50,7 @@ describe('dispatcher onChange', () => {
     const { root, runtime } = createDispatchTree({ type: 'string' });
     const order: string[] = [];
     runtime.validationMode = ValidationMode.OnChange;
-    subscribeSchemaNode(root, () => order.push('delivery'));
+    subscribeFieldNode(root, () => order.push('delivery'));
     const before = runtime.validationStamp ?? 0;
     runtime.onChange = () => {
       expect(runtime.validationStamp).toBe(before + 1);

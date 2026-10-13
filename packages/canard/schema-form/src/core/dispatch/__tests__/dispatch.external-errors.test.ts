@@ -1,14 +1,14 @@
 import { describe, expect, it, vi } from 'vitest';
 
-import { SchemaNodeEventType } from '../../record';
+import { FieldNodeEventType } from '../../record';
 import { ValidationMode } from '../../types/state';
 import type { ValidationIssue } from '../../validation';
 import {
   dispatchBatch,
   dispatchClearExternalErrors,
   dispatchSetExternalErrors,
-  readSchemaNodeRevision,
-  subscribeSchemaNode,
+  readFieldNodeRevision,
+  subscribeFieldNode,
 } from '../index';
 import { createDispatchTree } from './fixtures/createDispatchTree';
 
@@ -22,7 +22,7 @@ describe('dispatcher external errors', () => {
     const onChange = vi.fn();
     runtime.onChange = onChange;
     runtime.validationMode = ValidationMode.OnChange;
-    subscribeSchemaNode(root, (event) => seen.push(event.type));
+    subscribeFieldNode(root, (event) => seen.push(event.type));
     const before = runtime.commitNumber;
     const validationStamp = runtime.validationStamp;
 
@@ -30,11 +30,9 @@ describe('dispatcher external errors', () => {
 
     expect(runtime.nodeErrors?.get(root)).toBe(issues);
     expect(seen).toEqual([
-      SchemaNodeEventType.UpdateError | SchemaNodeEventType.UpdateGlobalError,
+      FieldNodeEventType.UpdateError | FieldNodeEventType.UpdateGlobalError,
     ]);
-    expect(readSchemaNodeRevision(root, SchemaNodeEventType.UpdateError)).toBe(
-      1,
-    );
+    expect(readFieldNodeRevision(root, FieldNodeEventType.UpdateError)).toBe(1);
     expect(root.raw).toBeUndefined();
     expect(root.emit).toBeUndefined();
     expect(runtime.commitNumber).toBe(before);
@@ -43,22 +41,22 @@ describe('dispatcher external errors', () => {
     dispatchClearExternalErrors(root);
     expect(runtime.nodeErrors?.has(root) ?? false).toBe(false);
     expect(seen).toEqual([
-      SchemaNodeEventType.UpdateError | SchemaNodeEventType.UpdateGlobalError,
-      SchemaNodeEventType.UpdateError | SchemaNodeEventType.UpdateGlobalError,
+      FieldNodeEventType.UpdateError | FieldNodeEventType.UpdateGlobalError,
+      FieldNodeEventType.UpdateError | FieldNodeEventType.UpdateGlobalError,
     ]);
   });
 
   it('EVENT-067 31C-01 merges error updates inside one entry', () => {
     const { root, runtime } = createDispatchTree({ type: 'string' });
     const seen: number[] = [];
-    subscribeSchemaNode(root, (event) => seen.push(event.type));
+    subscribeFieldNode(root, (event) => seen.push(event.type));
     dispatchBatch(root, () => {
       dispatchSetExternalErrors(root, [{ dataPath: '', message: 'first' }]);
       dispatchSetExternalErrors(root, [{ dataPath: '', message: 'last' }]);
       expect(seen).toEqual([]);
     });
     expect(seen).toEqual([
-      SchemaNodeEventType.UpdateError | SchemaNodeEventType.UpdateGlobalError,
+      FieldNodeEventType.UpdateError | FieldNodeEventType.UpdateGlobalError,
     ]);
     expect(runtime.nodeErrors?.get(root)).toEqual([
       { dataPath: '', message: 'last' },
@@ -71,9 +69,7 @@ describe('dispatcher external errors', () => {
     dispatchSetExternalErrors(root, [{ dataPath: '', message: 'ignored' }]);
     dispatchClearExternalErrors(root);
     expect(runtime.nodeErrors?.has(root) ?? false).toBe(false);
-    expect(readSchemaNodeRevision(root, SchemaNodeEventType.UpdateError)).toBe(
-      0,
-    );
+    expect(readFieldNodeRevision(root, FieldNodeEventType.UpdateError)).toBe(0);
   });
 
   it('ERROR-029 refuses external errors during error delivery', () => {

@@ -1,8 +1,8 @@
 import { describe, expect, it, vi } from 'vitest';
 
-import { SchemaNodeState } from '../../types/state';
+import { FieldNodeState } from '../../types/state';
 import { SetValueOption } from '../../types/value';
-import { loadSchemaNodeAtMount, writeSchemaNode } from '../index';
+import { loadFieldNodeAtMount, writeFieldNode } from '../index';
 import { createTestTree } from './fixtures/createTestTree';
 
 describe('settled value rule layers', () => {
@@ -18,12 +18,12 @@ describe('settled value rule layers', () => {
         b: { type: 'string' },
       },
     });
-    loadSchemaNodeAtMount(root, { source: 'first' }, SetValueOption.Overwrite);
+    loadFieldNodeAtMount(root, { source: 'first' }, SetValueOption.Overwrite);
     expect([root.structure?.a?.raw, root.structure?.b?.raw]).toEqual([
       'first',
       'first',
     ]);
-    writeSchemaNode(
+    writeFieldNode(
       root.structure!.source,
       'second',
       'input',
@@ -51,7 +51,7 @@ describe('settled value rule layers', () => {
         },
       ],
     });
-    loadSchemaNodeAtMount(
+    loadFieldNodeAtMount(
       root,
       { source: 'from-source' },
       SetValueOption.Overwrite,
@@ -72,7 +72,7 @@ describe('settled value rule layers', () => {
     });
     const derive = vi.fn(() => 'shared');
     root.runtime.context = { derive };
-    loadSchemaNodeAtMount(root, {}, SetValueOption.Overwrite);
+    loadFieldNodeAtMount(root, {}, SetValueOption.Overwrite);
     expect(derive).toHaveBeenCalledTimes(1);
     expect([root.structure?.a?.raw, root.structure?.b?.raw]).toEqual([
       'shared',
@@ -92,7 +92,7 @@ describe('settled value rule layers', () => {
     });
     const clear = vi.fn(() => true);
     root.runtime.context = { clear };
-    loadSchemaNodeAtMount(root, { a: 'A', b: 'B' }, SetValueOption.Overwrite);
+    loadFieldNodeAtMount(root, { a: 'A', b: 'B' }, SetValueOption.Overwrite);
     expect(clear).toHaveBeenCalledTimes(2);
     expect([root.structure?.a?.raw, root.structure?.b?.raw]).toEqual([
       undefined,
@@ -119,36 +119,36 @@ describe('settled value rule layers', () => {
     });
     const reset = vi.fn(() => true);
     root.runtime.context = { reset };
-    loadSchemaNodeAtMount(
+    loadFieldNodeAtMount(
       root,
       { trigger: false, a: 'A', b: 'B' },
       SetValueOption.Overwrite,
     );
     root.structure!.a.interactionState = {
-      [SchemaNodeState.Dirty]: true,
-      [SchemaNodeState.Touched]: true,
+      [FieldNodeState.Dirty]: true,
+      [FieldNodeState.Touched]: true,
     };
     root.structure!.b.interactionState = {
-      [SchemaNodeState.Dirty]: true,
-      [SchemaNodeState.Touched]: true,
+      [FieldNodeState.Dirty]: true,
+      [FieldNodeState.Touched]: true,
     };
-    writeSchemaNode(
+    writeFieldNode(
       root.structure!.trigger,
       true,
       'input',
       SetValueOption.Overwrite,
     );
     expect(reset).toHaveBeenCalledTimes(1);
-    expect(root.structure?.a?.interactionState[SchemaNodeState.Dirty]).toBe(
+    expect(root.structure?.a?.interactionState[FieldNodeState.Dirty]).toBe(
       false,
     );
-    expect(root.structure?.a?.interactionState[SchemaNodeState.Touched]).toBe(
+    expect(root.structure?.a?.interactionState[FieldNodeState.Touched]).toBe(
       false,
     );
-    expect(root.structure?.b?.interactionState[SchemaNodeState.Dirty]).toBe(
+    expect(root.structure?.b?.interactionState[FieldNodeState.Dirty]).toBe(
       false,
     );
-    expect(root.structure?.b?.interactionState[SchemaNodeState.Touched]).toBe(
+    expect(root.structure?.b?.interactionState[FieldNodeState.Touched]).toBe(
       false,
     );
   });

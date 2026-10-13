@@ -1,11 +1,11 @@
-import { captureSchemaNodeChange } from '../../../record';
-import type { SchemaNodeRecord } from '../../../record';
+import { captureFieldNodeChange } from '../../../record';
+import type { FieldNodeRecord } from '../../../record';
 import type { SettlementContext } from '../../type';
 import { updateOutput } from '../compute/updateOutput';
-import { captureDetachedSchemaNodeReads } from '../detached/captureDetachedSchemaNodeReads';
+import { captureDetachedFieldNodeReads } from '../detached/captureDetachedFieldNodeReads';
 import { getGateRegistry } from '../gates/getGateRegistry';
 import { getLatentOrder } from '../latent/getLatentOrder';
-import { walkOwnedSchemaNodes } from '../walkOwnedSchemaNodes';
+import { walkOwnedFieldNodes } from '../walkOwnedFieldNodes';
 import { applyExitClearing } from './applyExitClearing';
 import { captureExitedRaw } from './captureExitedRaw';
 import { finalizePerished } from './finalizePerished';
@@ -17,7 +17,7 @@ import { writeLatentRaw } from './writeLatentRaw';
  * @param context - One call's temporarily absent occurrences
  * @returns Nothing; departing references retain their previous commit reads
  */
-export const finalizeExits = <Self extends SchemaNodeRecord<Self>>(
+export const finalizeExits = <Self extends FieldNodeRecord<Self>>(
   context: SettlementContext<Self>,
 ): void => {
   finalizePerished(context);
@@ -27,9 +27,9 @@ export const finalizeExits = <Self extends SchemaNodeRecord<Self>>(
     const parent = node.parent;
     if (parent?.structure?.[node.name] === node) continue;
     context.exited.add(node);
-    walkOwnedSchemaNodes(node, (departing) => {
+    walkOwnedFieldNodes(node, (departing) => {
       if (!departing.runtime.detachedReads?.has(departing))
-        captureDetachedSchemaNodeReads(departing, {
+        captureDetachedFieldNodeReads(departing, {
           emit: context.previousEmit,
           context: context.previousContext,
           schema:
@@ -37,7 +37,7 @@ export const finalizeExits = <Self extends SchemaNodeRecord<Self>>(
             departing.schema.schema,
         });
       departing.detached = true;
-      departing.active = captureSchemaNodeChange(departing, 'active', false);
+      departing.active = captureFieldNodeChange(departing, 'active', false);
     });
     getGateRegistry(node.runtime).remove(node);
     if (!mismatchIndex) {

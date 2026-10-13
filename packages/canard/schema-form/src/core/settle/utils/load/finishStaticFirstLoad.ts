@@ -1,6 +1,6 @@
 import { TYPE_MISMATCH } from '../../../../errors';
-import { indexSchemaNodeWarning } from '../../../record';
-import type { SchemaNodeRecord, TypeMismatchRecord } from '../../../record';
+import { indexFieldNodeWarning } from '../../../record';
+import type { FieldNodeRecord, TypeMismatchRecord } from '../../../record';
 import type { SetValueOption } from '../../../types/value';
 import { PathKeyedMap } from '../../../utils/pathIndex/PathKeyedMap';
 import { EMPTY_VALUES } from '../detached/emptyDetachedReads';
@@ -16,7 +16,7 @@ const EMPTY_PATHS: readonly string[] = Object.freeze([]);
  * @param warnings - Only actual warning cells, carrying their entry reservation number
  * @returns Nothing; dispatcher owns subsequent delivery and reporter calls
  */
-export const finishStaticFirstLoad = <Self extends SchemaNodeRecord<Self>>(
+export const finishStaticFirstLoad = <Self extends FieldNodeRecord<Self>>(
   root: Self,
   option: SetValueOption,
   warnings?: { order: number; warning: TypeMismatchRecord }[],
@@ -51,7 +51,7 @@ export const finishStaticFirstLoad = <Self extends SchemaNodeRecord<Self>>(
           source: warning.source,
         },
       } as const;
-      indexSchemaNodeWarning(
+      indexFieldNodeWarning(
         runtime,
         JSON.stringify([code, warning.path, commit]),
         warning.path,

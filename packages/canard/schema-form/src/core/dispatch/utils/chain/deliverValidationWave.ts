@@ -1,5 +1,5 @@
-import { SchemaNodeEventType } from '../../../record';
-import type { SchemaNodeRecord } from '../../../record';
+import { FieldNodeEventType } from '../../../record';
+import type { FieldNodeRecord } from '../../../record';
 import type { ValidationIssue } from '../../../validation';
 import { flushQueuedEvents } from './flushQueuedEvents';
 import { queueNonSettleEvent } from './queueNonSettleEvent';
@@ -12,7 +12,7 @@ import { queueNonSettleEvent } from './queueNonSettleEvent';
  * @param commit - Commit stamped before asynchronous execution.
  * @returns Nothing; subscriber failures are exposed by the dispatcher sink.
  */
-export const deliverValidationWave = <Self extends SchemaNodeRecord<Self>>(
+export const deliverValidationWave = <Self extends FieldNodeRecord<Self>>(
   node: Self,
   issues: readonly ValidationIssue[],
   commit: number,
@@ -22,14 +22,14 @@ export const deliverValidationWave = <Self extends SchemaNodeRecord<Self>>(
   for (const changed of runtime.validationChangedNodes ?? [])
     queueNonSettleEvent(
       changed,
-      SchemaNodeEventType.UpdateError,
+      FieldNodeEventType.UpdateError,
       runtime.validationErrors?.get(changed) ?? [],
     );
   runtime.validationChangedNodes = undefined;
   if (runtime.validationListChanged)
     queueNonSettleEvent(
       node.rootNode,
-      SchemaNodeEventType.UpdateGlobalError,
+      FieldNodeEventType.UpdateGlobalError,
       issues,
     );
   runtime.validationListChanged = undefined;

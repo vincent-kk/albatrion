@@ -2,7 +2,7 @@ import { describe, expect, it, vi } from 'vitest';
 
 import type { BlueprintSchema } from '../../blueprint';
 import { SetValueOption } from '../../types/value';
-import { arrangeSchemaNodeItems, writeSchemaNode } from '../index';
+import { arrangeFieldNodeItems, writeFieldNode } from '../index';
 import * as independentDefaults from '../utils/compute/utils/hasIndependentLeafDefaults';
 import { createTestTree } from './fixtures/createTestTree';
 
@@ -17,7 +17,7 @@ const loadGeneric = (
     .spyOn(independentDefaults, 'hasIndependentLeafDefaults')
     .mockReturnValue(false);
   try {
-    writeSchemaNode(root, input, 'load', option);
+    writeFieldNode(root, input, 'load', option);
   } finally {
     generic.mockRestore();
   }
@@ -113,7 +113,7 @@ describe('90C-01 같은 전이 라운드의 호스트 채움 자손', () => {
     ]);
     const first = root.children![0];
     expect(
-      arrangeSchemaNodeItems(root, { kind: 'push', value: { value: 4 } }),
+      arrangeFieldNodeItems(root, { kind: 'push', value: { value: 4 } }),
     ).toBe(2);
     expect(root.children![0]).toBe(first);
     expect(root.emit).toEqual([

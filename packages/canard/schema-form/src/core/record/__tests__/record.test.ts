@@ -4,14 +4,14 @@ import { blueprint } from '../../blueprint';
 import { PathKeyedMap } from '../../utils/pathIndex/PathKeyedMap';
 import { PathKeyedSet } from '../../utils/pathIndex/PathKeyedSet';
 import { EMPTY_REVISION_LEDGER } from '../index';
-import type { SchemaNodeRecord } from '../index';
+import type { FieldNodeRecord } from '../index';
 import {
-  SchemaNodeEventType,
-  captureSchemaNodeChange,
-  clearSchemaNodeChanges,
-  patchSchemaNodeInteractionState,
+  FieldNodeEventType,
+  captureFieldNodeChange,
+  clearFieldNodeChanges,
+  patchFieldNodeInteractionState,
   shallowPatch,
-  updateSchemaNodeNameAndPath,
+  updateFieldNodeNameAndPath,
 } from '../index';
 
 /** The smallest structural self type needed by the path operation. */
@@ -23,7 +23,7 @@ interface PathNode {
 }
 
 /** Build a plain record with all required slots and no engine implementation. */
-const makeRecord = (): SchemaNodeRecord<PathNode> => {
+const makeRecord = (): FieldNodeRecord<PathNode> => {
   const analysis = blueprint({ type: 'object' });
   const blueprintNode = analysis.root;
   return {
@@ -94,16 +94,16 @@ describe('record layout operations', () => {
     const node = makeRecord();
     node.deliveryInitialized = true;
     node.local = node.emit = 'A';
-    node.local = captureSchemaNodeChange(node, 'local', 'B');
-    node.emit = captureSchemaNodeChange(node, 'emit', 'C');
-    expect(node.deliveryChanges).toBe(SchemaNodeEventType.UpdateValue);
+    node.local = captureFieldNodeChange(node, 'local', 'B');
+    node.emit = captureFieldNodeChange(node, 'emit', 'C');
+    expect(node.deliveryChanges).toBe(FieldNodeEventType.UpdateValue);
     expect(node.deliveryPreviousLocal).toBe('A');
     expect(node.deliveryPreviousEmit).toBe('A');
-    node.local = captureSchemaNodeChange(node, 'local', 'A');
-    node.emit = captureSchemaNodeChange(node, 'emit', 'A');
+    node.local = captureFieldNodeChange(node, 'local', 'A');
+    node.emit = captureFieldNodeChange(node, 'emit', 'A');
     expect(node.deliveryPreviousLocal).toBe(node.local);
     expect(node.deliveryPreviousEmit).toBe(node.emit);
-    clearSchemaNodeChanges(node);
+    clearFieldNodeChanges(node);
     expect(node.deliveryChanges).toBe(0);
     expect(node.deliveryPreviousLocal).toBeUndefined();
     expect(node.deliveryPreviousEmit).toBeUndefined();
@@ -115,15 +115,15 @@ describe('record layout operations', () => {
     const children = node.children,
       schema = node.schema,
       state = node.interactionState;
-    node.path = captureSchemaNodeChange(node, 'path', '/next');
-    node.children = captureSchemaNodeChange(node, 'children', []);
-    node.visible = captureSchemaNodeChange(node, 'visible', false);
-    node.disabled = captureSchemaNodeChange(node, 'disabled', true);
-    node.schema = captureSchemaNodeChange(node, 'schema', {
+    node.path = captureFieldNodeChange(node, 'path', '/next');
+    node.children = captureFieldNodeChange(node, 'children', []);
+    node.visible = captureFieldNodeChange(node, 'visible', false);
+    node.disabled = captureFieldNodeChange(node, 'disabled', true);
+    node.schema = captureFieldNodeChange(node, 'schema', {
       schema: { title: 'next' },
       typeConflict: false,
     });
-    node.interactionState = captureSchemaNodeChange(node, 'interactionState', {
+    node.interactionState = captureFieldNodeChange(node, 'interactionState', {
       dirty: true,
     });
     expect(node.deliveryPreviousPath).toBe('');
@@ -131,7 +131,7 @@ describe('record layout operations', () => {
     expect(node.deliveryPreviousComputed).toBe(3);
     expect(node.deliveryPreviousSchema).toBe(schema);
     expect(node.deliveryPreviousState).toBe(state);
-    clearSchemaNodeChanges(node);
+    clearFieldNodeChanges(node);
     expect([
       node.deliveryPreviousPath,
       node.deliveryPreviousChildren,
@@ -146,11 +146,11 @@ describe('record layout operations', () => {
 
   it('allocates no change records for initialization or equal assignments', () => {
     const node = makeRecord();
-    expect(captureSchemaNodeChange(node, 'local', 'first')).toBe('first');
+    expect(captureFieldNodeChange(node, 'local', 'first')).toBe('first');
     expect(node.deliveryChanges).toBe(0);
     expect(node.local).toBeUndefined();
     node.deliveryInitialized = true;
-    expect(captureSchemaNodeChange(node, 'local', undefined)).toBeUndefined();
+    expect(captureFieldNodeChange(node, 'local', undefined)).toBeUndefined();
     expect(node.deliveryChanges).toBe(0);
     expect(node.runtime.deliveryAffectedPaths).toBeUndefined();
   });
@@ -170,7 +170,7 @@ describe('record layout operations', () => {
 
   it('escapes pointer names and derives the child path and depth', () => {
     const node = makeRecord();
-    updateSchemaNodeNameAndPath<PathNode>(node, 'a~/b', {
+    updateFieldNodeNameAndPath<PathNode>(node, 'a~/b', {
       path: '/root',
       depth: 2,
     });
@@ -184,7 +184,7 @@ describe('record layout operations', () => {
 
   it('uses an empty absolute path for the root', () => {
     const node = makeRecord();
-    updateSchemaNodeNameAndPath<PathNode>(node, '', null);
+    updateFieldNodeNameAndPath<PathNode>(node, '', null);
     expect([node.path, node.depth, node.parent]).toEqual(['', 0, null]);
   });
 
@@ -192,7 +192,7 @@ describe('record layout operations', () => {
     const node = makeRecord();
     node.detached = true;
     const state = node.interactionState;
-    patchSchemaNodeInteractionState(node, { touched: true });
+    patchFieldNodeInteractionState(node, { touched: true });
     expect(node.interactionState).toBe(state);
     expect(node.interactionState).toEqual({});
   });
@@ -201,7 +201,7 @@ describe('record layout operations', () => {
     const node = makeRecord();
     node.interactionState = { touched: true };
     const state = node.interactionState;
-    patchSchemaNodeInteractionState(node, { touched: true });
+    patchFieldNodeInteractionState(node, { touched: true });
     expect(node.interactionState).toBe(state);
   });
 });

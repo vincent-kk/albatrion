@@ -5,9 +5,9 @@ import { flushSync } from 'react-dom';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import {
+  FieldNodeEventType,
+  FieldNodeRequestType,
   Form,
-  SchemaNodeEventType,
-  SchemaNodeRequestType,
   VirtualizationBackfill,
 } from '@/schema-form';
 
@@ -74,7 +74,7 @@ describe('EVENT-063 / EVENT-073 — deferred focus spike dispositions', () => {
     const { form } = await mount();
     try {
       await act(async () => {
-        form.node('/late')!.request(SchemaNodeRequestType.Focus);
+        form.node('/late')!.request(FieldNodeRequestType.Focus);
       });
       expect(form.exists('/late')).toBe(true);
       expect(document.activeElement).toBe(form.field('/late'));
@@ -98,8 +98,8 @@ describe('EVENT-063 / EVENT-073 — deferred focus spike dispositions', () => {
   it('EVENT-073 리스너의 focus 명령 뒤 flushSync가 있어도 노출된 입력에 포커스가 도달한다', async () => {
     const { form, commitConsumer } = await mount();
     const unsubscribe = form.node('/early')!.subscribe((event) => {
-      if (event.type & SchemaNodeEventType.UpdateValue) {
-        form.node('/late')!.request(SchemaNodeRequestType.Focus);
+      if (event.type & FieldNodeEventType.UpdateValue) {
+        form.node('/late')!.request(FieldNodeRequestType.Focus);
         flushSync(commitConsumer);
       }
     });
@@ -119,7 +119,7 @@ describe('EVENT-063 / EVENT-073 — deferred focus spike dispositions', () => {
     const { form, commitConsumer } = await mount();
     const focus = vi.spyOn(HTMLElement.prototype, 'focus');
     const unsubscribe = form.node('/late')!.subscribe((event) => {
-      if (event.type & SchemaNodeEventType.RequestFocus)
+      if (event.type & FieldNodeEventType.RequestFocus)
         flushSync(commitConsumer);
     });
     try {

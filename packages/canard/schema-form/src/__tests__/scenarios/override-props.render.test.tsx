@@ -14,9 +14,9 @@ import { renderForm } from '../renderForm';
  * This is a different seam from `schema-props-renderer`, which covers schema-level
  * `jsonSchema.FieldInputProps`. Here the props come from the JSX call site:
  * `FormInput` destructures `path`/`FieldInput` and funnels every remaining prop into
- * `overridePropsRef` (`useReference(restProps)`), which `SchemaNodeInputWrapper` merges
+ * `overridePropsRef` (`useReference(restProps)`), which `FieldInputSlotWrapper` merges
  * into `useSnapshot({ ...overrideFieldInputPropsRef?.current, ...preferredOverrideProps })`
- * before `SchemaNodeInput` spreads the result into the FieldInput.
+ * before `FieldInputSlot` spreads the result into the FieldInput.
  *
  * Dropping the last such prop makes that snapshot input an empty object, which is the
  * transition `useSnapshotReference` mishandled before @winglet/react-utils 5aade140: the

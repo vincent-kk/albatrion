@@ -2,7 +2,7 @@ import { afterEach, expect, it, vi } from 'vitest';
 
 import { hasOwnProperty } from '@winglet/common-utils/lib';
 
-import type { SchemaNodeRecord } from '../../../../../record';
+import type { FieldNodeRecord } from '../../../../../record';
 import { objectKeyCounts } from '../../../utils/objectKeyCounts';
 import { assembleObject } from '../assembleObject';
 
@@ -30,7 +30,7 @@ const fixture = (numeric = true) => {
     blueprintNode: {
       childEntries: children.map((child) => ({ name: child.name })),
     },
-  } as unknown as SchemaNodeRecord<unknown>;
+  } as unknown as FieldNodeRecord<unknown>;
   const first = assembleObject(node, children) as Record<string, unknown>;
   node.local = first;
   return { node, children, first, nested };

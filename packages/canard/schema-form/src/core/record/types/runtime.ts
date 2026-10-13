@@ -9,11 +9,11 @@ import type { ValidationMode } from '../../types/state';
 import type { SetValueOption } from '../../types/value';
 import type { PathKeyedMap } from '../../utils/pathIndex/PathKeyedMap';
 import type { PathKeyedSet } from '../../utils/pathIndex/PathKeyedSet';
-import type { SchemaNodeFactory } from './behavior';
-import type { SchemaNodeDelivery } from './record';
+import type { FieldNodeFactory } from './behavior';
+import type { FieldNodeDelivery } from './record';
 
 /** Tree-local reverse watch paths used by commit delivery marking. */
-interface SchemaNodeWatchDeliveryIndex {
+interface FieldNodeWatchDeliveryIndex {
   /** Live nodes with at least one resolved watch path. */
   readonly allNodes: ReadonlySet<unknown>;
   /** Nodes whose effective watch list reads the context slot. */
@@ -27,7 +27,7 @@ interface SchemaNodeWatchDeliveryIndex {
 }
 
 /** Settlement health for the most recent or first degraded commit. */
-interface SchemaNodeDiagnostics {
+interface FieldNodeDiagnostics {
   /** Current settlement health. */
   status: 'stable' | 'degraded';
   /** Reason for a degraded commit. */
@@ -65,7 +65,7 @@ interface InactiveValueEntryMemo {
 }
 
 /** Root-owned settlement data reached through a record's runtime. */
-interface SchemaNodeRootRuntimeState {
+interface FieldNodeRootRuntimeState {
   /** Form-level load source, read at node paths. */
   loadSnapshot: unknown;
   /** Per-kind latent leaf raw or a host's own frozen raw and extras. */
@@ -83,7 +83,7 @@ interface SchemaNodeRootRuntimeState {
 }
 
 /** Last committed reads retained for one node reference after it exits. */
-interface DetachedSchemaNodeReads {
+interface DetachedFieldNodeReads {
   readonly errors: readonly { readonly dataPath: string }[];
   readonly typeMismatch: boolean;
   readonly typeMismatches: readonly string[];
@@ -195,7 +195,7 @@ export interface SettlementScratch<Self> {
 }
 
 /** Minimal per-tree slots consumed by the first settlement engine. */
-export interface SchemaNodeRuntime<Self> extends SchemaNodeRootRuntimeState {
+export interface FieldNodeRuntime<Self> extends FieldNodeRootRuntimeState {
   /** Number of current-shape nodes with a truthy value for each state key. */
   globalStateCounts: Map<string, number>;
   /** Stable aggregate of keys whose count is positive. */
@@ -205,11 +205,11 @@ export interface SchemaNodeRuntime<Self> extends SchemaNodeRootRuntimeState {
   /** Nodes with revision bits marked before the commit visitor reaches them. */
   revisionNodes?: Set<Self>;
   /** Live reverse watch dependencies, allocated on the first watched node. */
-  deliveryWatchIndex?: SchemaNodeWatchDeliveryIndex;
+  deliveryWatchIndex?: FieldNodeWatchDeliveryIndex;
   /** Paths captured at value/state mutations and consumed by commit watch lookup. */
   deliveryAffectedPaths?: Set<string>;
   /** Last diagnostics reference observed by delivery marking. */
-  deliveredDiagnostics?: SchemaNodeDiagnostics;
+  deliveredDiagnostics?: FieldNodeDiagnostics;
   /** Context reference last observed by delivery marking. */
   deliveredContext?: Readonly<Record<string, unknown>>;
   /** Public entry depth consumed by the later dispatcher. */
@@ -238,20 +238,20 @@ export interface SchemaNodeRuntime<Self> extends SchemaNodeRootRuntimeState {
   enclosingChain?: {
     readonly errors: unknown[];
     readonly occurrences: NonNullable<
-      SchemaNodeRuntime<Self>['chainOccurrences']
+      FieldNodeRuntime<Self>['chainOccurrences']
     >;
-    readonly outer?: SchemaNodeRuntime<Self>['enclosingChain'];
+    readonly outer?: FieldNodeRuntime<Self>['enclosingChain'];
   };
   /** True only while this form invokes its error reporter. */
   reportingErrors?: boolean;
   /** Schema locations supplied by a binding after reference-only reset rebuilding. */
   rebuiltReferenceSchemaPaths?: readonly string[];
   /** Per-node subscribers, allocated only for a subscribed tree. */
-  listeners?: Map<unknown, Set<(event: SchemaNodeDelivery) => void>>;
+  listeners?: Map<unknown, Set<(event: FieldNodeDelivery) => void>>;
   /** Subscriber currently producing a delivery callback. */
-  currentListener?: (event: SchemaNodeDelivery) => void;
+  currentListener?: (event: FieldNodeDelivery) => void;
   /** Feedback producers already stopped at this chain's wave budget. */
-  feedbackBlockedListeners?: Set<(event: SchemaNodeDelivery) => void>;
+  feedbackBlockedListeners?: Set<(event: FieldNodeDelivery) => void>;
   /** Whether this chain already recorded its feedback limit failure. */
   feedbackLimitReported?: boolean;
   /** Number of active nested batch callbacks. */
@@ -391,16 +391,16 @@ export interface SchemaNodeRuntime<Self> extends SchemaNodeRootRuntimeState {
     paths: readonly string[];
   }>;
   /** Frozen last-commit reads for departed references, allocated on first exit. */
-  detachedReads?: WeakMap<object, DetachedSchemaNodeReads>;
+  detachedReads?: WeakMap<object, DetachedFieldNodeReads>;
   /** Stable watch path results for each node within one completed commit. */
   watchValuesMemo?: WeakMap<
     object,
     { commit: number; values: readonly unknown[] }
   >;
   /** Settlement health retained until a form-level load. */
-  diagnostics: SchemaNodeDiagnostics;
+  diagnostics: FieldNodeDiagnostics;
   /** Single node creator used throughout this tree. */
-  nodeFactory: SchemaNodeFactory<Self>;
+  nodeFactory: FieldNodeFactory<Self>;
   /** Lazily retained work containers for non-reentrant settlement calls. */
   settlementScratch?: SettlementScratch<Self>;
 }

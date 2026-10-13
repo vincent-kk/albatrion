@@ -1,4 +1,4 @@
-import { buildSchemaNodeTree, mountSchemaNode } from '../../../../SchemaNode';
+import { buildFieldNodeTree, mountFieldNode } from '../../../../FieldNode';
 import { createTestValidator } from '../../../../__tests__/fixtures/createTestValidator';
 import type { TestGuardMode } from '../../../../__tests__/fixtures/createTestValidator';
 import type { JSONSchema } from '../../../../types/jsonSchema';
@@ -102,7 +102,7 @@ export const runChildSelectionHistory = (
     changes.length = 0;
   };
   try {
-    root = buildSchemaNodeTree({
+    root = buildFieldNodeTree({
       jsonSchema: fixture.schema,
       defaultValue: fixture.input,
       validationMode: ValidationMode.None,
@@ -126,8 +126,8 @@ export const runChildSelectionHistory = (
   };
   let failure: unknown;
   try {
-    mountSchemaNode(
-      root as unknown as Parameters<typeof mountSchemaNode>[0],
+    mountFieldNode(
+      root as unknown as Parameters<typeof mountFieldNode>[0],
       undefined,
       undefined,
       { deferValidation: true },

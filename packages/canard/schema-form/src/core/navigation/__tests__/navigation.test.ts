@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { find, findNodes, walkSchemaNodes } from '../index';
+import { find, findNodes, walkFieldNodes } from '../index';
 import { type TestNode, createNode } from './fixtures/createNode';
 
 // filid:contract navigation-shape
@@ -71,7 +71,7 @@ describe('navigation over the committed shape', () => {
     second.structure = { first };
     second.children = [first];
     const visited: TestNode[] = [];
-    walkSchemaNodes(root, (node) => visited.push(node));
+    walkFieldNodes(root, (node) => visited.push(node));
     expect(visited).toEqual([root, first, second]);
   });
 });

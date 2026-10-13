@@ -1,7 +1,7 @@
 import type { CompositeTailStep } from '@aileron/schema-form-scenarios';
 import { expect, userEvent } from 'storybook/test';
 
-import { type FormHandle, SchemaNodeState, SetValueOption } from '../../../src';
+import { type FormHandle, FieldNodeState, SetValueOption } from '../../../src';
 
 import { expectEventually } from '../../features/components/expectEventually';
 import type { HeldValidator } from './createHeldValidator';
@@ -58,8 +58,8 @@ export const runStoryTail = async (tail: readonly CompositeTailStep[], context: 
       await expectEventually(() => Object.fromEntries(Object.entries(step.states).map(([path, expected]) => {
         const target = node(path)!;
         return [path, {
-          ...('dirty' in expected && { dirty: Boolean(target.state?.[SchemaNodeState.Dirty]) }),
-          ...('touched' in expected && { touched: Boolean(target.state?.[SchemaNodeState.Touched]) }),
+          ...('dirty' in expected && { dirty: Boolean(target.state?.[FieldNodeState.Dirty]) }),
+          ...('touched' in expected && { touched: Boolean(target.state?.[FieldNodeState.Touched]) }),
           ...('readOnly' in expected && { readOnly: target.readOnly }),
           ...('visible' in expected && { visible: target.visible }),
         }];

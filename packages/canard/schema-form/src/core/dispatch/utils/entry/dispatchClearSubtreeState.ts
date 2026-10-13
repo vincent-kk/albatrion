@@ -1,10 +1,10 @@
 import {
-  SchemaNodeEventType,
+  FieldNodeEventType,
   accumulateGlobalStateDeltas,
   publishGlobalStateDeltas,
 } from '../../../record';
-import type { SchemaNodeRecord } from '../../../record';
-import { assertSchemaNodeWritable } from '../../../settle';
+import type { FieldNodeRecord } from '../../../record';
+import { assertFieldNodeWritable } from '../../../settle';
 import { flushQueuedEvents } from '../chain/flushQueuedEvents';
 import { queueNonSettleEvent } from '../chain/queueNonSettleEvent';
 import { refuseListenerFeedback } from '../chain/refuseListenerFeedback';
@@ -15,10 +15,10 @@ import { assertNotInDelivery } from '../report/assertNotInDelivery';
  * @param node - Root of the affected subtree
  * @returns Nothing; one wave follows the whole traversal outside an entry
  */
-export const dispatchClearSubtreeState = <Self extends SchemaNodeRecord<Self>>(
+export const dispatchClearSubtreeState = <Self extends FieldNodeRecord<Self>>(
   node: Self,
 ): void => {
-  assertSchemaNodeWritable(node);
+  assertFieldNodeWritable(node);
   if (node.detached) return;
   const runtime = node.rootNode.runtime;
   assertNotInDelivery(runtime);
@@ -40,12 +40,12 @@ export const dispatchClearSubtreeState = <Self extends SchemaNodeRecord<Self>>(
         current.interactionState,
         previous,
       );
-      if (current.deliveryChanges & SchemaNodeEventType.UpdateState)
+      if (current.deliveryChanges & FieldNodeEventType.UpdateState)
         current.deliveryPreviousState = current.interactionState;
       runtime.stateChanged = true;
       queueNonSettleEvent(
         current,
-        SchemaNodeEventType.UpdateState,
+        FieldNodeEventType.UpdateState,
         current.interactionState,
       );
     }

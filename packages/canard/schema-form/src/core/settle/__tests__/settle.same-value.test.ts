@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 
 import { SetValueOption } from '../../types/value';
-import { writeSchemaNode } from '../index';
+import { writeFieldNode } from '../index';
 import { sameValue } from '../utils/compute/sameValue';
 import { createTestTree } from './fixtures/createTestTree';
 
@@ -38,8 +38,8 @@ describe('settle value equivalence', () => {
   it('18C-50 keeps an equal terminal raw source reference at the write boundary', () => {
     const { root } = createTestTree({ type: 'string' });
     const first = { nested: { value: 1 } };
-    writeSchemaNode(root, first, 'callerReplace', SetValueOption.Overwrite);
-    writeSchemaNode(
+    writeFieldNode(root, first, 'callerReplace', SetValueOption.Overwrite);
+    writeFieldNode(
       root,
       { nested: { value: 1 } },
       'callerReplace',

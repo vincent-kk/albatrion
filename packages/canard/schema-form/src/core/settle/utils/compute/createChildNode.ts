@@ -1,5 +1,5 @@
 import type { BlueprintChildEntry } from '../../../blueprint';
-import type { SchemaNodeRecord } from '../../../record';
+import type { FieldNodeRecord } from '../../../record';
 
 /**
  * Create one occurrence and assign a never-reused key under an array branch.
@@ -7,7 +7,7 @@ import type { SchemaNodeRecord } from '../../../record';
  * @param entry - Declared blueprint position
  * @returns New detached-from-shape occurrence
  */
-export const createChildNode = <Self extends SchemaNodeRecord<Self>>(
+export const createChildNode = <Self extends FieldNodeRecord<Self>>(
   host: Self,
   entry: BlueprintChildEntry,
 ): Self => {

@@ -2,7 +2,7 @@ import { describe, expect, it, vi } from 'vitest';
 
 import type { BlueprintSchema } from '../../blueprint';
 import { SetValueOption } from '../../types/value';
-import { loadSchemaNodeAtMount, writeSchemaNode } from '../index';
+import { loadFieldNodeAtMount, writeFieldNode } from '../index';
 import { createTestTree } from './fixtures/createTestTree';
 
 // filid:contract settle-derive
@@ -24,27 +24,27 @@ describe('derive rule locality', () => {
         },
       ],
     });
-    loadSchemaNodeAtMount(
+    loadFieldNodeAtMount(
       root,
       { t: 'T1', flag: true, x: '' },
       SetValueOption.Overwrite,
     );
     const observed = [root.structure?.x?.raw];
-    writeSchemaNode(
+    writeFieldNode(
       root.structure!.x,
       'manual',
       'input',
       SetValueOption.Overwrite,
     );
     observed.push(root.structure?.x?.raw);
-    writeSchemaNode(
+    writeFieldNode(
       root.structure!.flag,
       false,
       'input',
       SetValueOption.Overwrite,
     );
     observed.push(root.structure?.x?.raw);
-    writeSchemaNode(
+    writeFieldNode(
       root.structure!.flag,
       true,
       'input',
@@ -80,24 +80,19 @@ describe('derive rule locality', () => {
           },
         },
       });
-      loadSchemaNodeAtMount(
+      loadFieldNodeAtMount(
         root,
         { t: 'T1', s: 'a', H: { x: '', y: '' } },
         SetValueOption.Overwrite,
       );
-      writeSchemaNode(
+      writeFieldNode(
         root.structure!.H.structure!.x,
         'manual',
         'input',
         SetValueOption.Overwrite,
       );
-      writeSchemaNode(
-        root.structure!.s,
-        'b',
-        'input',
-        SetValueOption.Overwrite,
-      );
-      writeSchemaNode(
+      writeFieldNode(root.structure!.s, 'b', 'input', SetValueOption.Overwrite);
+      writeFieldNode(
         root.structure!.H.structure!.y,
         'Y',
         'input',
@@ -121,7 +116,7 @@ describe('derive rule locality', () => {
           },
         };
       const { root } = createTestTree({ type: 'object', properties });
-      loadSchemaNodeAtMount(
+      loadFieldNodeAtMount(
         root,
         { source: 'A', changed: 'A' },
         SetValueOption.Overwrite,
@@ -129,7 +124,7 @@ describe('derive rule locality', () => {
       const baselines = root.runtime.committedRuleValues;
       const parse = vi.spyOn(JSON, 'parse');
       try {
-        writeSchemaNode(
+        writeFieldNode(
           root.structure!.changed,
           'B',
           'input',
@@ -166,7 +161,7 @@ describe('derive rule locality', () => {
         },
       },
     });
-    loadSchemaNodeAtMount(
+    loadFieldNodeAtMount(
       root,
       { left: { source: 'A' }, right: { value: 'R' } },
       SetValueOption.Overwrite,
@@ -178,7 +173,7 @@ describe('derive rule locality', () => {
         throw new Error('unrelated branch traversed');
       },
     });
-    writeSchemaNode(
+    writeFieldNode(
       root.structure!.left.structure!.source,
       'B',
       'input',

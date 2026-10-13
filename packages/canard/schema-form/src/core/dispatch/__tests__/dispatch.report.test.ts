@@ -6,7 +6,7 @@ import { SchemaFormError } from '../../../errors';
 import { createTestValidator } from '../../__tests__/fixtures/createTestValidator';
 import { blueprint } from '../../blueprint';
 import type { BlueprintDiagnostic } from '../../blueprint';
-import { dispatchMount, dispatchSetValue, subscribeSchemaNode } from '../index';
+import { dispatchMount, dispatchSetValue, subscribeFieldNode } from '../index';
 import { createFormErrorRecord } from '../utils/report/createFormErrorRecord';
 import { createDispatchTree } from './fixtures/createDispatchTree';
 
@@ -139,7 +139,7 @@ describe('chain error reporting', () => {
         report: (record) => order.push(`report:${record.error === failure}`),
       },
     );
-    subscribeSchemaNode(root, () => {
+    subscribeFieldNode(root, () => {
       order.push('listener');
       throw failure;
     });
@@ -238,13 +238,13 @@ describe('chain error reporting', () => {
     );
     const failure = new Error('listener first');
     let firstWave = true;
-    subscribeSchemaNode(root, () => {
+    subscribeFieldNode(root, () => {
       if (firstWave) {
         firstWave = false;
         throw failure;
       }
     });
-    subscribeSchemaNode(root, () => {
+    subscribeFieldNode(root, () => {
       const amount = root.structure?.amount;
       if (amount && amount.raw !== 'bad') dispatchSetValue(amount, 'bad');
     });

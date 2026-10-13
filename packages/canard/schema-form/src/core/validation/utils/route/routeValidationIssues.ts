@@ -1,13 +1,13 @@
 import { hasOwnProperty } from '@winglet/common-utils/lib';
 
-import type { SchemaNodeRecord } from '../../../record';
+import type { FieldNodeRecord } from '../../../record';
 import type { ValidationIssue } from '../../type';
 import { isOffUnionBranchIssue } from './isOffUnionBranchIssue';
 import { normalizeIssueDataPath } from './normalizeIssueDataPath';
-import { updateSchemaNodeGlobalErrors } from './updateSchemaNodeGlobalErrors';
+import { updateFieldNodeGlobalErrors } from './updateFieldNodeGlobalErrors';
 
 /** Identify a record owned by this tree without an unchecked type assertion. */
-const isOwnedNode = <Self extends SchemaNodeRecord<Self>>(
+const isOwnedNode = <Self extends FieldNodeRecord<Self>>(
   candidate: unknown,
   runtime: Self['runtime'],
 ): candidate is Self =>
@@ -21,7 +21,7 @@ const isOwnedNode = <Self extends SchemaNodeRecord<Self>>(
  * @param issues - Ordered whole-schema verdict retained at form level.
  * @returns Nodes whose displayed validator issues changed.
  */
-export const routeValidationIssues = <Self extends SchemaNodeRecord<Self>>(
+export const routeValidationIssues = <Self extends FieldNodeRecord<Self>>(
   target: Self,
   issues: readonly ValidationIssue[],
 ): Set<Self> => {
@@ -97,7 +97,7 @@ export const routeValidationIssues = <Self extends SchemaNodeRecord<Self>>(
   if (runtime.routedValidationErrors !== issues) {
     runtime.routedValidationErrors = issues;
     runtime.validationListChanged = true;
-    updateSchemaNodeGlobalErrors(root);
+    updateFieldNodeGlobalErrors(root);
   }
   for (const node of changed) runtime.combinedErrors?.delete(node);
   return changed;

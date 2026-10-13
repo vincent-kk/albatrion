@@ -1,9 +1,9 @@
 import { describe, expect, it, vi } from 'vitest';
 
-import { SchemaNode } from '../../SchemaNode/SchemaNode';
-import { makeSchemaNodeTree } from '../../__tests__/makeSchemaNodeTree';
+import { FieldNode } from '../../FieldNode/FieldNode';
+import { makeFieldNodeTree } from '../../__tests__/makeFieldNodeTree';
 import { SetValueOption } from '../../types/value';
-import { loadSchemaNodeAtMount, writeSchemaNode } from '../index';
+import { loadFieldNodeAtMount, writeFieldNode } from '../index';
 import { dirtyChildren } from '../utils/compute/dirtyChildren';
 import { createSettlementContext } from '../utils/settlement/createSettlementContext';
 import { getDependencyIndex } from '../utils/write/getDependencyIndex';
@@ -21,7 +21,7 @@ const schema = {
 const items = (count: number, key: number) =>
   Array.from({ length: count }, () => ({ key }));
 const gatedRows = (count: number) => {
-  const { root } = makeSchemaNodeTree({
+  const { root } = makeFieldNodeTree({
     type: 'object',
     properties: {
       flag: { type: 'boolean' },
@@ -36,8 +36,8 @@ const gatedRows = (count: number) => {
       },
     },
   });
-  if (!(root instanceof SchemaNode))
-    throw new Error('Expected a runtime SchemaNode');
+  if (!(root instanceof FieldNode))
+    throw new Error('Expected a runtime FieldNode');
   root.setValue({
     flag: true,
     rows: Array.from({ length: count }, (_, index) => ({
@@ -78,7 +78,7 @@ const countLatentKeyVisits = (
 describe('44C-01 array settlement scaling', () => {
   it('51C-01 SETTLE-017 bounds item-gated row assembly when rows read their own fields', () => {
     const count = 2000;
-    const { root } = makeSchemaNodeTree({
+    const { root } = makeFieldNodeTree({
       type: 'object',
       properties: {
         flag: { type: 'boolean' },
@@ -105,8 +105,8 @@ describe('44C-01 array settlement scaling', () => {
       })),
     });
     const rows = root.find('/rows');
-    if (!(rows instanceof SchemaNode))
-      throw new Error('Expected an array SchemaNode');
+    if (!(rows instanceof FieldNode))
+      throw new Error('Expected an array FieldNode');
     const behavior = rows.behavior;
     let assemblies = 0;
     Reflect.set(rows, 'behavior', {
@@ -134,7 +134,7 @@ describe('44C-01 array settlement scaling', () => {
 
   it('49C-01 SETTLE-017 bounds changed-raw visits when gated rows are rewritten', () => {
     const count = 2000;
-    const { root } = makeSchemaNodeTree({
+    const { root } = makeFieldNodeTree({
       type: 'object',
       properties: {
         flag: { type: 'boolean' },
@@ -159,8 +159,8 @@ describe('44C-01 array settlement scaling', () => {
         g: `g${index}`,
       })),
     });
-    if (!(root instanceof SchemaNode))
-      throw new Error('Expected a runtime SchemaNode');
+    if (!(root instanceof FieldNode))
+      throw new Error('Expected a runtime FieldNode');
     const scratch = getSettlementScratch(root.runtime);
     releaseSettlementScratch(scratch);
     const changedRaw = scratch.changedRaw;
@@ -193,7 +193,7 @@ describe('44C-01 array settlement scaling', () => {
 
   it('51C-01 NODE-026 SETTLE-017 bounds host-gated array assembly on a whole write', () => {
     const count = 2000;
-    const { root } = makeSchemaNodeTree({
+    const { root } = makeFieldNodeTree({
       type: 'object',
       properties: {
         flag: { type: 'boolean' },
@@ -202,8 +202,8 @@ describe('44C-01 array settlement scaling', () => {
     });
     root.setValue({ flag: true, rows: items(count, 0) });
     const rows = root.find('/rows');
-    if (!(rows instanceof SchemaNode))
-      throw new Error('Expected an array SchemaNode');
+    if (!(rows instanceof FieldNode))
+      throw new Error('Expected an array FieldNode');
     const behavior = rows.behavior;
     let assemblies = 0;
     Reflect.set(rows, 'behavior', {
@@ -258,7 +258,7 @@ describe('44C-01 array settlement scaling', () => {
       },
     });
     try {
-      loadSchemaNodeAtMount(root, value, SetValueOption.Overwrite);
+      loadFieldNodeAtMount(root, value, SetValueOption.Overwrite);
       if (process.env.SETTLE_SCALING_PROBE)
         console.info(`51C-01 object host assemblies: ${assemblies}`);
       expect(root.emit).toEqual(value);
@@ -305,7 +305,7 @@ describe('44C-01 array settlement scaling', () => {
         return true;
       },
     };
-    writeSchemaNode(
+    writeFieldNode(
       root,
       {
         first: { value: 'entered' },
@@ -326,7 +326,7 @@ describe('44C-01 array settlement scaling', () => {
 
   it('49C-01 SETTLE-017 bounds dependency owners when every row list grows', () => {
     const count = 2000;
-    const { root } = makeSchemaNodeTree({
+    const { root } = makeFieldNodeTree({
       type: 'object',
       properties: {
         rows: {
@@ -355,8 +355,8 @@ describe('44C-01 array settlement scaling', () => {
         list: [{ on: false, value: String(index) }],
       })),
     });
-    if (!(root instanceof SchemaNode))
-      throw new Error('Expected a runtime SchemaNode');
+    if (!(root instanceof FieldNode))
+      throw new Error('Expected a runtime FieldNode');
     const index = getDependencyIndex(root.runtime.blueprint);
     const affected = index.affected.bind(index);
     let owners = 0;
@@ -414,8 +414,8 @@ describe('44C-01 array settlement scaling', () => {
     const count = 2000;
     const { root } = gatedRows(count);
     const rows = root.find('/rows');
-    if (!(rows instanceof SchemaNode))
-      throw new Error('Expected an array SchemaNode');
+    if (!(rows instanceof FieldNode))
+      throw new Error('Expected an array FieldNode');
     const behavior = rows.behavior;
     let assemblies = 0;
     Reflect.set(rows, 'behavior', {
@@ -486,7 +486,7 @@ describe('44C-01 array settlement scaling', () => {
 
   it('48C-01 SETTLE-017 bounds latent key visits for exit, capture and absent writes', () => {
     const count = 250;
-    const tags = makeSchemaNodeTree({
+    const tags = makeFieldNodeTree({
       type: 'object',
       properties: {
         flag: { type: 'boolean' },
@@ -505,8 +505,8 @@ describe('44C-01 array settlement scaling', () => {
         },
       },
     }).root;
-    if (!(tags instanceof SchemaNode))
-      throw new Error('Expected a runtime SchemaNode');
+    if (!(tags instanceof FieldNode))
+      throw new Error('Expected a runtime FieldNode');
     const tagRows = Array.from({ length: count }, (_, index) => ({
       tags: [String(index)],
     }));
@@ -528,7 +528,7 @@ describe('44C-01 array settlement scaling', () => {
     expect(tags.value).toEqual({ flag: true, rows: tagRows });
     expect(tags.inactiveValues).toEqual([]);
 
-    const list = makeSchemaNodeTree({
+    const list = makeFieldNodeTree({
       type: 'object',
       properties: {
         flag: { type: 'boolean' },
@@ -554,8 +554,8 @@ describe('44C-01 array settlement scaling', () => {
         },
       },
     }).root;
-    if (!(list instanceof SchemaNode))
-      throw new Error('Expected a runtime SchemaNode');
+    if (!(list instanceof FieldNode))
+      throw new Error('Expected a runtime FieldNode');
     const listRows = Array.from({ length: count }, (_, index) => ({
       list: [{ on: false, child: String(index) }],
     }));
@@ -592,15 +592,15 @@ describe('44C-01 array settlement scaling', () => {
         },
       ]),
     );
-    const absent = makeSchemaNodeTree({
+    const absent = makeFieldNodeTree({
       type: 'object',
       properties: {
         flag: { type: 'boolean' },
         ...properties,
       },
     }).root;
-    if (!(absent instanceof SchemaNode))
-      throw new Error('Expected a runtime SchemaNode');
+    if (!(absent instanceof FieldNode))
+      throw new Error('Expected a runtime FieldNode');
     const absentRows = Object.fromEntries(
       Array.from({ length: count }, (_, index) => [
         `g${index}`,
@@ -641,7 +641,7 @@ describe('44C-01 array settlement scaling', () => {
         },
       },
     };
-    const { root } = makeSchemaNodeTree({
+    const { root } = makeFieldNodeTree({
       type: 'object',
       properties: {
         f1: { type: 'boolean' },
@@ -668,7 +668,7 @@ describe('44C-01 array settlement scaling', () => {
 
   it('44C-01 SETTLE-047 scans path stores once when nested arrays grow', () => {
     const count = 2000;
-    const { root } = makeSchemaNodeTree({
+    const { root } = makeFieldNodeTree({
       type: 'array',
       items: {
         type: 'object',
@@ -701,10 +701,10 @@ describe('44C-01 array settlement scaling', () => {
 
   it('44C-01 SETTLE-047 parses each path-keyed entry only linearly on clear', () => {
     const count = 2000;
-    const { root } = makeSchemaNodeTree(schema);
+    const { root } = makeFieldNodeTree(schema);
     root.setValue(items(count, 0));
-    if (!(root instanceof SchemaNode))
-      throw new Error('Expected a runtime SchemaNode');
+    if (!(root instanceof FieldNode))
+      throw new Error('Expected a runtime FieldNode');
     const parse = JSON.parse;
     let parses = 0;
     const spy = vi.spyOn(JSON, 'parse').mockImplementation((value) => {
@@ -721,7 +721,7 @@ describe('44C-01 array settlement scaling', () => {
 
   it('44C-01 SETTLE-047 scans rule keys only linearly on derived push', () => {
     const count = 2000;
-    const { root } = makeSchemaNodeTree({
+    const { root } = makeFieldNodeTree({
       type: 'array',
       items: {
         type: 'object',
@@ -732,8 +732,8 @@ describe('44C-01 array settlement scaling', () => {
       },
     });
     root.setValue(Array.from({ length: count }, () => ({ source: 'a' })));
-    if (!(root instanceof SchemaNode))
-      throw new Error('Expected a runtime SchemaNode');
+    if (!(root instanceof FieldNode))
+      throw new Error('Expected a runtime FieldNode');
     const iterate = Set.prototype[Symbol.iterator];
     let scannedRuleKeys = 0;
     const spy = vi
@@ -755,7 +755,7 @@ describe('44C-01 array settlement scaling', () => {
   });
 
   it('NODE-026 preserves untouched emitted items after one changed keystroke', () => {
-    const { root } = makeSchemaNodeTree(schema);
+    const { root } = makeFieldNodeTree(schema);
     root.setValue(items(3, 0));
     const before = root.value as { key: number }[];
     root.find('/1/key')!.setValue(1);
@@ -767,7 +767,7 @@ describe('44C-01 array settlement scaling', () => {
   });
 
   it('SETTLE-042 retains the root array on a same-value keystroke', () => {
-    const { root } = makeSchemaNodeTree(schema);
+    const { root } = makeFieldNodeTree(schema);
     root.setValue(items(3, 0));
     const before = root.value;
     root.find('/1/key')!.setValue(0);
@@ -775,7 +775,7 @@ describe('44C-01 array settlement scaling', () => {
   });
 
   it('NODE-026 visits only dirty item slots on a 2,000-item keystroke', () => {
-    const { root } = makeSchemaNodeTree(schema);
+    const { root } = makeFieldNodeTree(schema);
     root.setValue(items(2000, 0));
     const structure = Reflect.get(root, 'structure') as Record<string, unknown>;
     let slotReads = 0;
@@ -796,7 +796,7 @@ describe('44C-01 array settlement scaling', () => {
 
   it('SETTLE-047 does not scan all dirty paths for every branch on a whole write', () => {
     const count = 400;
-    const { root, runtime } = makeSchemaNodeTree(schema);
+    const { root, runtime } = makeFieldNodeTree(schema);
     root.setValue(items(count, 0));
     const scratch = Reflect.get(runtime, 'settlementScratch') as {
       dirtyPaths: Set<string>;
@@ -827,12 +827,7 @@ describe('44C-01 array settlement scaling', () => {
       type: 'array',
       items: { type: 'string' },
     });
-    writeSchemaNode(
-      root,
-      ['a', 'b'],
-      'callerReplace',
-      SetValueOption.Overwrite,
-    );
+    writeFieldNode(root, ['a', 'b'], 'callerReplace', SetValueOption.Overwrite);
     const scratch = getSettlementScratch(root.runtime);
     const context = createSettlementContext(
       root,
@@ -863,7 +858,7 @@ describe('44C-01 array settlement scaling', () => {
         'a/b': { type: 'string' },
       },
     });
-    writeSchemaNode(
+    writeFieldNode(
       root,
       { '': 'a', 'a/b': 'b' },
       'callerReplace',

@@ -1,9 +1,9 @@
 import { describe, expect, it } from 'vitest';
 
-import { makeSchemaNodeTree } from '../makeSchemaNodeTree';
+import { makeFieldNodeTree } from '../makeFieldNodeTree';
 
 const historyTree = () =>
-  makeSchemaNodeTree({
+  makeFieldNodeTree({
     type: 'object',
     properties: {
       kind: { type: 'string' },

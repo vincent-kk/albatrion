@@ -1,5 +1,5 @@
 import { SchemaFormError } from '../../../../errors';
-import type { SchemaNodeRecord } from '../../../record';
+import type { FieldNodeRecord } from '../../../record';
 import type { SettlementContext } from '../../type';
 import { effectiveType } from '../commit/effectiveType';
 import { computeNode } from '../compute/computeNode';
@@ -24,7 +24,7 @@ import { withdrawDetachedFills } from './withdrawDetachedFills';
  * @param context - Calculated shape and this call's original write inputs
  * @returns Nothing; the context records automatic writes for possible rollback
  */
-export const transitionSettlement = <Self extends SchemaNodeRecord<Self>>(
+export const transitionSettlement = <Self extends FieldNodeRecord<Self>>(
   context: SettlementContext<Self>,
 ): void => {
   if (context.suppressAutomaticWrites || context.exceededBudget) return;

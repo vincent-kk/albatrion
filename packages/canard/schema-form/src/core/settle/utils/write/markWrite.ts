@@ -1,6 +1,6 @@
 import { isArray } from '@winglet/common-utils/filter';
 
-import type { SchemaNodeRecord, UnionSpec } from '../../../record';
+import type { FieldNodeRecord, UnionSpec } from '../../../record';
 import type { SettlementContext } from '../../type';
 import { sameValue } from '../compute/sameValue';
 import { getDeclaredChildNames } from '../declarations/getDeclaredChildNames';
@@ -23,7 +23,7 @@ import { staticSpec } from './staticSpec';
  * @param spec - Static or narrowed type restriction used for interpretation
  * @returns Nothing; only this node's own state channels are stored here
  */
-export const markWrite = <Self extends SchemaNodeRecord<Self>>(
+export const markWrite = <Self extends FieldNodeRecord<Self>>(
   node: Self,
   input: unknown,
   context: SettlementContext<Self>,

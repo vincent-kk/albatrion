@@ -1,8 +1,8 @@
 import { describe, expect, it } from 'vitest';
 
-import { SchemaNodeEventType } from '../../record';
-import type { SchemaNodeDelivery } from '../../record';
-import { dispatchBatch, dispatchSetValue, subscribeSchemaNode } from '../index';
+import { FieldNodeEventType } from '../../record';
+import type { FieldNodeDelivery } from '../../record';
+import { dispatchBatch, dispatchSetValue, subscribeFieldNode } from '../index';
 import { deliverWave } from '../utils/chain/deliverWave';
 import { createDispatchTree } from './fixtures/createDispatchTree';
 import { getDispatchChild } from './fixtures/getDispatchChild';
@@ -24,7 +24,7 @@ describe('dispatcher delivery waves', () => {
       getDispatchChild(root, 'first'),
       getDispatchChild(root, 'second'),
     ])
-      subscribeSchemaNode(node, () => seen.push(node.path));
+      subscribeFieldNode(node, () => seen.push(node.path));
     dispatchSetValue(root, { first: 'c', second: 'd' });
     expect(seen).toEqual(['', '/first', '/second']);
   });
@@ -46,7 +46,7 @@ describe('dispatcher delivery waves', () => {
     );
     const seen: string[] = [];
     for (const node of [root, b, c, d, e])
-      subscribeSchemaNode(node, () => seen.push(node.path));
+      subscribeFieldNode(node, () => seen.push(node.path));
 
     let unobservedParentReads = 0;
     const parent = a.parent;
@@ -67,9 +67,9 @@ describe('dispatcher delivery waves', () => {
       },
     });
 
-    const pending: [typeof root, SchemaNodeDelivery][] = [];
+    const pending: [typeof root, FieldNodeDelivery][] = [];
     for (const node of [e, d, c, b, a, root])
-      pending.push([node, { type: SchemaNodeEventType.UpdateValue }]);
+      pending.push([node, { type: FieldNodeEventType.UpdateValue }]);
     deliverWave(root, pending);
 
     expect(seen).toEqual(['', '/b', '/c', '/d', '/e']);
@@ -80,8 +80,8 @@ describe('dispatcher delivery waves', () => {
   it('EVENT-008 sends a listener write in the next wave', () => {
     const { root } = createDispatchTree({ type: 'string' });
     const seen: string[] = [];
-    subscribeSchemaNode(root, (event) => {
-      if (!(event.type & SchemaNodeEventType.UpdateValue)) return;
+    subscribeFieldNode(root, (event) => {
+      if (!(event.type & FieldNodeEventType.UpdateValue)) return;
       seen.push(String(root.emit));
       if (root.emit === 'first') dispatchSetValue(root, 'second');
     });
@@ -93,12 +93,12 @@ describe('dispatcher delivery waves', () => {
     const { root } = createDispatchTree({ type: 'string' });
     const seen: string[] = [];
     let remove = () => {};
-    subscribeSchemaNode(root, () => {
+    subscribeFieldNode(root, () => {
       seen.push('first');
       remove();
-      subscribeSchemaNode(root, () => seen.push('late'));
+      subscribeFieldNode(root, () => seen.push('late'));
     });
-    remove = subscribeSchemaNode(root, () => seen.push('removed'));
+    remove = subscribeFieldNode(root, () => seen.push('removed'));
     dispatchSetValue(root, 'a');
     expect(seen).toEqual(['first']);
   });
@@ -107,10 +107,10 @@ describe('dispatcher delivery waves', () => {
     const { root } = createDispatchTree({ type: 'string' });
     const failure = new Error('listener failure');
     const seen: string[] = [];
-    subscribeSchemaNode(root, () => {
+    subscribeFieldNode(root, () => {
       throw failure;
     });
-    subscribeSchemaNode(root, () => seen.push('delivered'));
+    subscribeFieldNode(root, () => seen.push('delivered'));
     expect(() => dispatchSetValue(root, 'a')).toThrow(failure);
     expect(seen).toEqual(['delivered']);
   });
@@ -119,10 +119,10 @@ describe('dispatcher delivery waves', () => {
     const { root } = createDispatchTree({ type: 'string' });
     const first = new Error('first');
     const second = new Error('second');
-    subscribeSchemaNode(root, () => {
+    subscribeFieldNode(root, () => {
       throw first;
     });
-    subscribeSchemaNode(root, () => {
+    subscribeFieldNode(root, () => {
       throw second;
     });
     expect(() => dispatchSetValue(root, 'a')).toThrowError(
@@ -143,12 +143,12 @@ describe('dispatcher delivery waves', () => {
     dispatchSetValue(root, { child: 'a' });
     const child = getDispatchChild(root, 'child');
     let calls = 0;
-    subscribeSchemaNode(child, () => {
+    subscribeFieldNode(child, () => {
       calls += 1;
     });
     child.detached = true;
     runtime.deliveries?.add(child);
-    child.pendingDelivery = { type: SchemaNodeEventType.UpdateValue };
+    child.pendingDelivery = { type: FieldNodeEventType.UpdateValue };
     dispatchBatch(root, () => {});
     expect(calls).toBe(0);
     expect(runtime.deliveries?.has(child)).toBe(false);

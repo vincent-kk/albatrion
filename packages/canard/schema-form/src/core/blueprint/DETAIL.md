@@ -38,7 +38,7 @@
 - 분기 없음과 식·watch·state·파생 규칙 없음은 각각 독립된 capability입니다. 기능이 없으면 expressions·dependencies는 청사진마다 소유하고 정적 색인 EMPTY_INDEX는 불변 공유하며, 기능이 있으면 식 컴파일·기능 색인·SETTLE-017 역의존 표를 유지합니다. 조건 평가용 자료·동적 선언 조합 자료·gate-host 색인·게이트 역의존 trie·빈 registry만 생략합니다. 생성 시 분석 완료, 청사진 캐시 키와 if 게이트의 작성 위치당 단일 컴파일은 유지합니다. 수집 중 capability 결합은 O(S) 순회에 고정 검사만 더하고 청사진당 O(1) 기록을 보유합니다. 기능 없는 경우 후속 O(S) 분석과 O(S) 색인 할당을 제거하며, 기능 있는 경우 기존 시간·메모리 차수는 유지합니다. 실제 시간과 구조 수는 93라운드 짝 측정으로 기록합니다.
 
 - 원장은 BLUEPRINT·FRAGMENT·SCHEMA 영역 및 관련 CONTROLS·ERROR 보충을 정본으로 삼습니다. 정적 분석은 노드 생성·값 판정·게이트 평가를 하지 않습니다.
-- 의존 방향은 `blueprint < record < {종류 동작, navigation} < settle < SchemaNode`입니다. 청사진은 뒤 fractal을 가져오지 않고 그들이 소비할 선언·식·평가 자리만 내며, 식 컴파일러 organ의 기존 경계 예외는 아래에 둡니다(NODE-016, SETTLE-045).
+- 의존 방향은 `blueprint < record < {종류 동작, navigation} < settle < FieldNode`입니다. 청사진은 뒤 fractal을 가져오지 않고 그들이 소비할 선언·식·평가 자리만 내며, 식 컴파일러 organ의 기존 경계 예외는 아래에 둡니다(NODE-016, SETTLE-045).
 - 작성 위치별 분석은 한 번이며 참조 그래프는 유한합니다. 객체 프로퍼티만으로 이어지는 무게이트·비터미널 순환은 오류이고, nullable은 순환을 끊지 않습니다. 배열 아이템·게이트·터미널은 형상 확장의 경계입니다.
 - 조각 순서는 properties, allOf, if/then/else, oneOf, anyOf이며 배열 인덱스와 중첩 경로로 전순서를 정합니다. 조각 문맥은 연언과 선언을 구별하고 상속 overlay의 호스트 귀속을 보존합니다.
 - 정적 허용 형 집합은 교집합입니다. integer는 number의 부분집합이고 null은 양쪽에 있을 때만 남습니다. 종류 비교에서 integer를 number로 접지만 schemaType에는 정수 제한을 보존합니다.

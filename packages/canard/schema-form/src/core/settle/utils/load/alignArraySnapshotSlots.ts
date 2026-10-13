@@ -1,7 +1,7 @@
 import { isArray } from '@winglet/common-utils/filter';
 import { unescapeSegment } from '@winglet/json/pointer';
 
-import type { SchemaNodeRecord } from '../../../record';
+import type { FieldNodeRecord } from '../../../record';
 import { sameValue } from '../compute/sameValue';
 import { isCanonicalArrayIndex } from '../paths/isCanonicalArrayIndex';
 import { getLoadValue } from './getLoadValue';
@@ -12,7 +12,7 @@ import { setLoadValue } from './setLoadValue';
  * @param hosts - Live resized arrays in settlement registration order
  * @returns Nothing; existing slots and unrelated references are retained
  */
-export const alignArraySnapshotSlots = <Self extends SchemaNodeRecord<Self>>(
+export const alignArraySnapshotSlots = <Self extends FieldNodeRecord<Self>>(
   hosts: readonly Self[],
 ): void => {
   if (!hosts.length) return;

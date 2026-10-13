@@ -1,5 +1,5 @@
 import { find } from '../../../navigation';
-import type { SchemaNodeRecord } from '../../../record';
+import type { FieldNodeRecord } from '../../../record';
 import type { SettlementContext } from '../../type';
 
 /**
@@ -8,7 +8,7 @@ import type { SettlementContext } from '../../type';
  * @param path - Absolute path of an exiting occurrence
  * @returns True when the path lies in a replaced scope and a live node holds it
  */
-export const isReplacedLivePath = <Self extends SchemaNodeRecord<Self>>(
+export const isReplacedLivePath = <Self extends FieldNodeRecord<Self>>(
   context: SettlementContext<Self>,
   path: string,
 ): boolean => {

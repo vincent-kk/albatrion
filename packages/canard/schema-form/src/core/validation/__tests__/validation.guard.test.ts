@@ -6,7 +6,7 @@ import type { BlueprintGate, BlueprintSchema } from '../../blueprint';
 import type { Validator } from '../type';
 import { readValidationEntry } from '../utils/cache/readValidationEntry';
 import { compileEntryGuards } from '../utils/guard/compileEntryGuards';
-import { readSchemaNodeGuard } from '../utils/guard/readSchemaNodeGuard';
+import { readFieldNodeGuard } from '../utils/guard/readFieldNodeGuard';
 import { evictValidationRoot } from '../utils/lifetime/evictValidationRoot';
 
 /** Locate the authored condition instead of making a test-only gate. */
@@ -42,7 +42,7 @@ describe('schema node guards', () => {
     const validator: Validator = { compile, compileGuard, release };
     const gate = firstIfGate(schema);
     const runtime = { blueprint: analysis, validator };
-    readSchemaNodeGuard(runtime, gate);
+    readFieldNodeGuard(runtime, gate);
     const entry = readValidationEntry(validator, schema);
     compileEntryGuards(entry, validator, analysis);
     evictValidationRoot(validator, schema);
@@ -76,14 +76,14 @@ describe('schema node guards', () => {
     );
     const validator: Validator = { compile: () => () => null, compileGuard };
     const runtime = { blueprint: blueprint(schema), validator };
-    const guard = readSchemaNodeGuard(runtime, gate);
+    const guard = readFieldNodeGuard(runtime, gate);
     expect(guard?.({ enabled: true })).toBe(true);
     expect(guard?.({ enabled: false })).toBe(false);
     expect(compileGuard).toHaveBeenCalledWith(
       readValidationEntry(validator, schema).copy,
       '/if',
     );
-    expect(readSchemaNodeGuard(runtime, gate)).toBe(guard);
+    expect(readFieldNodeGuard(runtime, gate)).toBe(guard);
     expect(compileGuard).toHaveBeenCalledTimes(1);
   });
 
@@ -96,8 +96,8 @@ describe('schema node guards', () => {
     const validator: Validator = { compile: () => () => null, compileGuard };
     const runtime = { blueprint: blueprint(schema), validator };
     expect(compileGuard).not.toHaveBeenCalled();
-    expect(() => readSchemaNodeGuard(runtime, gate)).toThrow('bad guard');
-    expect(() => readSchemaNodeGuard(runtime, gate)).toThrow('bad guard');
+    expect(() => readFieldNodeGuard(runtime, gate)).toThrow('bad guard');
+    expect(() => readFieldNodeGuard(runtime, gate)).toThrow('bad guard');
     expect(compileGuard).toHaveBeenCalledTimes(1);
   });
 
@@ -131,7 +131,7 @@ describe('schema node guards', () => {
       validator,
       errorReporter: { report, hasConsumer: () => true },
     };
-    expect(readSchemaNodeGuard(runtime, gate)?.({})).toBe(true);
+    expect(readFieldNodeGuard(runtime, gate)?.({})).toBe(true);
     expect(report).not.toHaveBeenCalled();
   });
 
@@ -149,7 +149,7 @@ describe('schema node guards', () => {
       then: { properties: { guarded: { type: 'string' } } },
     };
     const gate = firstIfGate(schema);
-    const guard = readSchemaNodeGuard(
+    const guard = readFieldNodeGuard(
       { blueprint: blueprint(schema), validator: createTestValidator() },
       gate,
     );

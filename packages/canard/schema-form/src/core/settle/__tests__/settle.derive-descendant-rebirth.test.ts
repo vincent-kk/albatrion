@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 
 import { SetValueOption } from '../../types/value';
-import { loadSchemaNodeAtMount, writeSchemaNode } from '../index';
+import { loadFieldNodeAtMount, writeFieldNode } from '../index';
 import { createTestTree } from './fixtures/createTestTree';
 
 describe('settle descendant rebirth regression', () => {
@@ -20,14 +20,14 @@ describe('settle descendant rebirth regression', () => {
         },
       },
     });
-    loadSchemaNodeAtMount(
+    loadFieldNodeAtMount(
       root,
       { present: true, source: 'A', group: { target: 'manual' } },
       SetValueOption.Overwrite,
     );
     expect(root.structure?.group?.structure?.target?.raw).toBe('A');
 
-    writeSchemaNode(
+    writeFieldNode(
       root.structure!.present,
       false,
       'input',
@@ -40,7 +40,7 @@ describe('settle descendant rebirth regression', () => {
       ),
     ).toBe(false);
 
-    writeSchemaNode(
+    writeFieldNode(
       root.structure!.present,
       true,
       'input',
@@ -72,7 +72,7 @@ describe('settle descendant rebirth regression', () => {
         },
       },
     });
-    loadSchemaNodeAtMount(
+    loadFieldNodeAtMount(
       root,
       { present: true, group: { target: 'A' } },
       SetValueOption.Overwrite,
@@ -83,7 +83,7 @@ describe('settle descendant rebirth regression', () => {
       ),
     ).toBe(true);
 
-    writeSchemaNode(
+    writeFieldNode(
       root.structure!.present,
       false,
       'input',
@@ -95,7 +95,7 @@ describe('settle descendant rebirth regression', () => {
       ),
     ).toBe(false);
 
-    writeSchemaNode(
+    writeFieldNode(
       root.structure!.present,
       true,
       'input',

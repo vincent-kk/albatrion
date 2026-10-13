@@ -3,13 +3,13 @@ import {
   SchemaFormError,
   VALIDATOR_COMPILE_FAILED,
 } from '../../../../errors';
-import type { SchemaNodeRecord } from '../../../record';
+import type { FieldNodeRecord } from '../../../record';
 import { ValidationMode } from '../../../types/state';
 import type { ValidationIssue } from '../../../validation';
 import {
   retainEqualValidationIssues,
   routeValidationIssues,
-  runSchemaNodeValidation,
+  runFieldNodeValidation,
 } from '../../../validation';
 import { deliverValidationWave } from '../chain/deliverValidationWave';
 import { bundleChainErrors } from '../report/bundleChainErrors';
@@ -24,20 +24,20 @@ import { readFormErrorCode } from '../report/readFormErrorCode';
  * Retired occurrences validate their frozen snapshot without publishing results.
  * @throws A structured validator compilation or execution failure.
  */
-export const dispatchValidate = async <Self extends SchemaNodeRecord<Self>>(
+export const dispatchValidate = async <Self extends FieldNodeRecord<Self>>(
   node: Self,
 ): Promise<readonly ValidationIssue[]> => {
   const runtime = node.rootNode.runtime;
   if (runtime.validationMode === ValidationMode.None) return [];
   if (node.disposed || node.rootNode.disposed)
-    return (await runSchemaNodeValidation(node)) ?? [];
+    return (await runFieldNodeValidation(node)) ?? [];
   runtime.validationStamp = (runtime.validationStamp ?? 0) + 1;
   runtime.validationPendingTargets = undefined;
   const stamp = runtime.validationStamp;
   const commit = runtime.commitNumber ?? 0;
   let result: readonly ValidationIssue[] | null;
   try {
-    result = await runSchemaNodeValidation(node);
+    result = await runFieldNodeValidation(node);
   } catch (failure) {
     if (node.disposed || node.rootNode.disposed) throw failure;
     const compileFailure =

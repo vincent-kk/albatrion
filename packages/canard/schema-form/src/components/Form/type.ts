@@ -5,8 +5,8 @@ import type { TrackableHandlerFunction } from '@winglet/common-utils/function';
 import type { Dictionary, Fn } from '@aileron/declare';
 
 import type {
-  InferSchemaNode,
-  SchemaNode,
+  FieldNode,
+  InferFieldNode,
   SetValueOption,
   ValidationMode,
 } from '@/schema-form/core';
@@ -30,11 +30,11 @@ export interface FormChildrenProps<
   Schema extends JSONSchema,
   Value extends AllowedValue = InferValueType<Schema>,
 > {
-  node?: InferSchemaNode<Schema>;
+  node?: InferFieldNode<Schema>;
   jsonSchema: Schema;
   defaultValue?: Value;
   value?: Value;
-  errors?: SchemaNode['globalErrors'];
+  errors?: FieldNode['globalErrors'];
 }
 
 /** Public configuration consumed at load, commit, or input time as documented. */
@@ -53,15 +53,15 @@ export interface FormProps<
   /** Function called when the value of this SchemaForm changes */
   onChange?: Fn<[value: Value]>;
   /** Function called with the form error list when a validation result changes it or the external error list changes (errors prop, node-level external writes); a validation result that deep-equals the previous one does not call it */
-  onValidate?: Fn<[errors: SchemaNode['globalErrors']]>;
+  onValidate?: Fn<[errors: FieldNode['globalErrors']]>;
   /** Function called when the form is submitted */
   onSubmit?: Fn<[value: Value], Promise<void> | void>;
   /** Function called when the state of this SchemaForm changes */
-  onStateChange?: Fn<[state: SchemaNode['globalState']]>;
+  onStateChange?: Fn<[state: FieldNode['globalState']]>;
   /** Instance error records, including committed construction and render failures. */
   onError?: Fn<[record: FormErrorRecord]>;
   /** Root diagnostics after preparation; initial diagnostics remain on the handle. */
-  onDiagnosticsChange?: Fn<[diagnostics: SchemaNode['diagnostics']]>;
+  onDiagnosticsChange?: Fn<[diagnostics: FieldNode['diagnostics']]>;
   /** Default removal policy for inactive fields. */
   unsetOnInactive?: boolean;
   /** Suppress automatic writes without blocking imperative writes. */
@@ -79,7 +79,7 @@ export interface FormProps<
   /** Error renderer shared by Form.Error instances. */
   FormErrorRenderer?: ComponentType<FieldRendererProps>;
   /** Initial validation errors, default is undefined */
-  errors?: SchemaNode['globalErrors'];
+  errors?: FieldNode['globalErrors'];
   /** Custom format error function */
   formatError?: FieldRendererProps['formatError'];
   /**
@@ -126,11 +126,11 @@ export interface FormHandle<
   Schema extends JSONSchema = JSONSchema,
   Value extends AllowedValue = InferValueType<Schema>,
 > {
-  node?: InferSchemaNode<Schema>;
-  focus: Fn<[path?: SchemaNode['path']]>;
-  select: Fn<[path?: SchemaNode['path']]>;
-  refresh: Fn<[path?: SchemaNode['path']]>;
-  remount: Fn<[path?: SchemaNode['path']]>;
+  node?: InferFieldNode<Schema>;
+  focus: Fn<[path?: FieldNode['path']]>;
+  select: Fn<[path?: FieldNode['path']]>;
+  refresh: Fn<[path?: FieldNode['path']]>;
+  remount: Fn<[path?: FieldNode['path']]>;
   /** Load committed defaults; only automatic-write flags override the Form default. */
   reset: Fn<
     [
@@ -139,16 +139,16 @@ export interface FormHandle<
         | typeof SetValueOption.EnableAutomaticWrites,
     ]
   >;
-  findNode: Fn<[path: SchemaNode['path']], SchemaNode | null>;
-  findNodes: Fn<[path: SchemaNode['path']], readonly SchemaNode[]>;
-  getState: Fn<[], SchemaNode['globalState']>;
-  setState: Fn<[state: SchemaNode['state']]>;
+  findNode: Fn<[path: FieldNode['path']], FieldNode | null>;
+  findNodes: Fn<[path: FieldNode['path']], readonly FieldNode[]>;
+  getState: Fn<[], FieldNode['globalState']>;
+  setState: Fn<[state: FieldNode['state']]>;
   clearState: Fn;
   getValue: Fn<[], Value>;
   setValue: SetStateFnWithOptions<Value>;
-  getErrors: Fn<[], SchemaNode['globalErrors']>;
+  getErrors: Fn<[], FieldNode['globalErrors']>;
   getAttachedFilesMap: Fn<[], AttachedFilesMap>;
-  validate: Fn<[], Promise<SchemaNode['globalErrors']>>;
+  validate: Fn<[], Promise<FieldNode['globalErrors']>>;
   showError: Fn<[visible?: boolean]>;
   submit: TrackableHandlerFunction;
 }

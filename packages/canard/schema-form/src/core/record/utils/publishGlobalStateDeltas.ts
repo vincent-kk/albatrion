@@ -1,8 +1,8 @@
-import { SchemaNodeEventType } from '../constants/SchemaNodeEventType';
-import type { SchemaNodeRecord } from '../types/record';
+import { FieldNodeEventType } from '../constants/FieldNodeEventType';
+import type { FieldNodeRecord } from '../types/record';
 
 /** Publish net per-key count changes and queue one root event on a zero crossing. */
-export const publishGlobalStateDeltas = <Self extends SchemaNodeRecord<Self>>(
+export const publishGlobalStateDeltas = <Self extends FieldNodeRecord<Self>>(
   root: Self,
   deltas: ReadonlyMap<string, number>,
 ): void => {
@@ -25,10 +25,10 @@ export const publishGlobalStateDeltas = <Self extends SchemaNodeRecord<Self>>(
   const queued = runtime.queuedNonSettleEvents ?? new Set();
   const previous = root.pendingNonSettleDelivery;
   root.pendingNonSettleDelivery = {
-    type: (previous?.type ?? 0) | SchemaNodeEventType.UpdateGlobalState,
+    type: (previous?.type ?? 0) | FieldNodeEventType.UpdateGlobalState,
     payload: {
       ...previous?.payload,
-      [SchemaNodeEventType.UpdateGlobalState]: nextState,
+      [FieldNodeEventType.UpdateGlobalState]: nextState,
     },
   };
   queued.add(root);

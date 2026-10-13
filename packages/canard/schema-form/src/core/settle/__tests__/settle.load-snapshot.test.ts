@@ -2,9 +2,9 @@ import { describe, expect, it } from 'vitest';
 
 import { SetValueOption } from '../../types/value';
 import {
-  loadSchemaNodeAtMount,
-  readSchemaNodeDefaultValue,
-  resetSchemaNodeSubtree,
+  loadFieldNodeAtMount,
+  readFieldNodeDefaultValue,
+  resetFieldNodeSubtree,
 } from '../index';
 import { createTestTree } from './fixtures/createTestTree';
 
@@ -17,15 +17,15 @@ describe('settle load snapshot', () => {
         right: { type: 'string' },
       },
     });
-    loadSchemaNodeAtMount(
+    loadFieldNodeAtMount(
       root,
       { left: { a: 'A' }, right: 'R' },
       SetValueOption.Overwrite,
     );
-    const defaultValue = readSchemaNodeDefaultValue(root);
+    const defaultValue = readFieldNodeDefaultValue(root);
     const snapshot = root.runtime.loadSnapshot;
-    resetSchemaNodeSubtree(root.structure!.left, SetValueOption.Overwrite);
+    resetFieldNodeSubtree(root.structure!.left, SetValueOption.Overwrite);
     expect(root.runtime.loadSnapshot).toBe(snapshot);
-    expect(readSchemaNodeDefaultValue(root)).toBe(defaultValue);
+    expect(readFieldNodeDefaultValue(root)).toBe(defaultValue);
   });
 });

@@ -1,4 +1,4 @@
-import type { SchemaNodeRecord } from '../../../../../record';
+import type { FieldNodeRecord } from '../../../../../record';
 import type { DeriveRule } from '../../../type';
 import { readDeriveDependency } from './readDeriveDependency';
 
@@ -20,7 +20,7 @@ export interface ScopedExpressionResult {
  * @param cache - Results already evaluated in this round
  * @returns The shared result or thrown cause
  */
-export const evaluateScopedExpression = <Self extends SchemaNodeRecord<Self>>(
+export const evaluateScopedExpression = <Self extends FieldNodeRecord<Self>>(
   root: Self,
   host: Self,
   rule: DeriveRule,

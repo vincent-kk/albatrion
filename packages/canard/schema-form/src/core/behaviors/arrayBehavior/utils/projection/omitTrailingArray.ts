@@ -1,5 +1,5 @@
 import { getItemEntry } from '../../../../blueprint';
-import type { SchemaNodeRecord } from '../../../../record';
+import type { FieldNodeRecord } from '../../../../record';
 
 /** Reuse the most recent trimmed view while its source prefix is unchanged. */
 const TRIMMED = new WeakMap<
@@ -18,7 +18,7 @@ const TRIMMED = new WeakMap<
  */
 export const omitTrailingArray = <Self>(
   value: readonly unknown[],
-  node?: SchemaNodeRecord<Self>,
+  node?: FieldNodeRecord<Self>,
 ): readonly unknown[] => {
   let end = value.length;
   while (end > 0) {

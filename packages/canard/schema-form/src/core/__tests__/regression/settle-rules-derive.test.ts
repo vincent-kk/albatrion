@@ -1,11 +1,11 @@
 import { describe, expect, it } from 'vitest';
 
-import { makeSchemaNodeTree } from '../makeSchemaNodeTree';
+import { makeFieldNodeTree } from '../makeFieldNodeTree';
 
 // filid:contract factory-single-path
 describe('round18 derive settlement rules', () => {
   it('settleRules.test.mjs:15 SETTLE-004 later source wins an equal-rank tie', () => {
-    const { root } = makeSchemaNodeTree({
+    const { root } = makeFieldNodeTree({
       type: 'object',
       properties: {
         a: {
@@ -24,7 +24,7 @@ describe('round18 derive settlement rules', () => {
   });
 
   it('settleRules.test.mjs:25 SETTLE-004 higher kind survives a later round', () => {
-    const { root } = makeSchemaNodeTree({
+    const { root } = makeFieldNodeTree({
       type: 'object',
       properties: {
         a: {
@@ -47,7 +47,7 @@ describe('round18 derive settlement rules', () => {
   });
 
   it('settleRules.test.mjs:36 SETTLE-004 layer and fragment order break source ties', () => {
-    const nodeLayer = makeSchemaNodeTree({
+    const nodeLayer = makeFieldNodeTree({
       type: 'object',
       controls: {
         children: [
@@ -64,7 +64,7 @@ describe('round18 derive settlement rules', () => {
     }).root;
     nodeLayer.setValue({ source: 'A' });
     expect(nodeLayer.find('/target')?.raw).toBe('A node');
-    const fragmentLayer = makeSchemaNodeTree({
+    const fragmentLayer = makeFieldNodeTree({
       type: 'object',
       properties: {
         source: { type: 'string' },
@@ -85,7 +85,7 @@ describe('round18 derive settlement rules', () => {
   });
 
   it('settleRules.test.mjs:59 LANDING-064 exit edge does not inject after root replacement', () => {
-    const { root } = makeSchemaNodeTree({
+    const { root } = makeFieldNodeTree({
       type: 'object',
       properties: {
         flag: { type: 'boolean' },

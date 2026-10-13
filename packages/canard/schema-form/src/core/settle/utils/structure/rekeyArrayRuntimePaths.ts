@@ -1,8 +1,8 @@
 import { isArray } from '@winglet/common-utils/filter';
 
 import type { FormErrorRecord } from '../../../../errors';
-import type { SchemaNodeRuntime } from '../../../record';
-import { indexSchemaNodeWarning } from '../../../record';
+import type { FieldNodeRuntime } from '../../../record';
+import { indexFieldNodeWarning } from '../../../record';
 import { getRuntimePathStores } from '../pathIndex/getRuntimePathStores';
 import { prunePerishedPaths } from '../transition/prunePerishedPaths';
 import type { ArrayPathMove } from './type';
@@ -21,7 +21,7 @@ export type { ArrayPathMove } from './type';
  * @returns Nothing; affected cached views are invalidated
  */
 export const rekeyArrayRuntimePaths = <Self>(
-  runtime: SchemaNodeRuntime<Self>,
+  runtime: FieldNodeRuntime<Self>,
   hostPath: string,
   moves: readonly ArrayPathMove[],
   preservedPrefixCount: number = 0,
@@ -73,14 +73,14 @@ export const rekeyArrayRuntimePaths = <Self>(
     const path = mapPath(parts[1]);
     const record = runtime.pendingWarningRecords?.get(key);
     const remembered = runtime.warningKeys?.has(key) === true;
-    indexSchemaNodeWarning(runtime, key, parts[1], undefined, true);
+    indexFieldNodeWarning(runtime, key, parts[1], undefined, true);
     if (path === undefined) continue;
     parts[1] = path;
     warningMoves.push({ key: JSON.stringify(parts), path, record, remembered });
   }
   for (const move of warningMoves) {
     if (move.remembered) (runtime.warningKeys ??= new Set()).add(move.key);
-    indexSchemaNodeWarning(runtime, move.key, move.path, move.record);
+    indexFieldNodeWarning(runtime, move.key, move.path, move.record);
   }
   const latentChanged = changed.some(
     (move) =>

@@ -3,14 +3,14 @@ import { hasOwnProperty } from '@winglet/common-utils/lib';
 
 import { SchemaFormError } from '../../../../errors';
 import type { Blueprint, BlueprintExpression } from '../../../blueprint';
-import type { SchemaNodeRecord } from '../../../record';
+import type { FieldNodeRecord } from '../../../record';
 import type { SettlementContext } from '../../type';
 import { getControlLayers } from '../controls/getControlLayers';
 import { getExitPolicyKey } from '../controls/getExitPolicyKey';
 import { readStateDependency } from '../controls/readStateDependency';
 import { recordSettlementFailure } from '../errors/recordSettlementFailure';
 import { EXPRESSION_THREW } from '../errors/settleErrorCode';
-import { walkOwnedSchemaNodes } from '../walkOwnedSchemaNodes';
+import { walkOwnedFieldNodes } from '../walkOwnedFieldNodes';
 import { pruneCommittedRuleKeys } from './pruneCommittedRuleKeys';
 import { updateCommittedRuleValue } from './updateCommittedRuleValue';
 
@@ -47,18 +47,18 @@ const getExitExpressions = (
  * @param context - Final shape and its bounded set of calculated hosts
  * @returns Nothing; committed rule values and any deferred failure are updated
  */
-export const commitExitPolicyValues = <Self extends SchemaNodeRecord<Self>>(
+export const commitExitPolicyValues = <Self extends FieldNodeRecord<Self>>(
   context: SettlementContext<Self>,
 ): void => {
   const expressions = getExitExpressions(context.root.runtime.blueprint);
   if (expressions.size === 0) return;
   const runtime = context.root.runtime;
   for (const exited of context.exited)
-    walkOwnedSchemaNodes(exited, (node) =>
+    walkOwnedFieldNodes(exited, (node) =>
       pruneCommittedRuleKeys(runtime, node.path, 'exitPolicy'),
     );
   if (context.kind === 'load' && context.loadScope)
-    walkOwnedSchemaNodes(context.loadScope, (node) =>
+    walkOwnedFieldNodes(context.loadScope, (node) =>
       pruneCommittedRuleKeys(runtime, node.path, 'exitPolicy'),
     );
   const candidates = new Set(context.stateDirtyNodes);

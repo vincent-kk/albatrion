@@ -1,6 +1,6 @@
 import { isArray } from '@winglet/common-utils/filter';
 
-import type { SchemaNodeRecord } from '../../../../record';
+import type { FieldNodeRecord } from '../../../../record';
 import type { DeriveRoundDecision } from '../../../derive';
 import type { SettlementContext } from '../../../type';
 import { distributeLatentValue } from '../../latent/distributeLatentValue';
@@ -12,7 +12,7 @@ import { markWrite } from '../../write/markWrite';
  * @param context - Reversible settlement work list
  * @returns Nothing; marking and latent distribution are recorded for rollback
  */
-export const applyDeriveWrite = <Self extends SchemaNodeRecord<Self>>(
+export const applyDeriveWrite = <Self extends FieldNodeRecord<Self>>(
   write: DeriveRoundDecision<Self>['writes'][number],
   context: SettlementContext<Self>,
 ): void => {

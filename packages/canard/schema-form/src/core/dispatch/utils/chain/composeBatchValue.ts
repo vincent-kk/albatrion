@@ -1,6 +1,6 @@
 import { isArray } from '@winglet/common-utils/filter';
 
-import type { SchemaNodeRecord } from '../../../record';
+import type { FieldNodeRecord } from '../../../record';
 import type { SetValueOption } from '../../../types/value';
 import { replaceAtPath } from './utils/replaceAtPath';
 
@@ -12,7 +12,7 @@ import { replaceAtPath } from './utils/replaceAtPath';
  * @param writes - Call-order inputs, already resolved from updaters
  * @returns Candidate root input for one settlement
  */
-export const composeBatchValue = <Self extends SchemaNodeRecord<Self>>(
+export const composeBatchValue = <Self extends FieldNodeRecord<Self>>(
   root: Self,
   writes: readonly { node: Self; value: unknown; option: SetValueOption }[],
 ): unknown => {

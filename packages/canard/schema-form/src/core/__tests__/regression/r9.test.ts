@@ -1,10 +1,10 @@
 import { describe, expect, it } from 'vitest';
 
-import * as nodeSurface from '../../SchemaNode';
-import { makeSchemaNodeTree } from '../makeSchemaNodeTree';
+import * as nodeSurface from '../../FieldNode';
+import { makeFieldNodeTree } from '../makeFieldNodeTree';
 
 const fillTree = () => {
-  const { root } = makeSchemaNodeTree({
+  const { root } = makeFieldNodeTree({
     type: 'object',
     properties: {
       kind: { type: 'string' },
@@ -88,7 +88,7 @@ const branchTree = (keyword: 'oneOf' | 'anyOf', withElse: boolean) => {
     },
     ...(withElse ? { else: false } : {}),
   }));
-  const { root } = makeSchemaNodeTree({
+  const { root } = makeFieldNodeTree({
     type: 'object',
     properties: {
       kind: { type: 'string' },
@@ -166,7 +166,7 @@ describe('round9 P3 branch regression', () => {
     ['r9.mjs:87 pure anyOf branches both contribute defaults', 'anyOf'],
   ] as const) {
     it(name, () => {
-      const { root } = makeSchemaNodeTree({
+      const { root } = makeFieldNodeTree({
         type: 'object',
         [keyword]: [
           { properties: { a: { const: 'a', default: 'A' } } },

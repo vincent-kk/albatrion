@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 
 import { SchemaFormError } from '../../../errors';
-import { makeSchemaNodeTree } from '../../__tests__/makeSchemaNodeTree';
+import { makeFieldNodeTree } from '../../__tests__/makeFieldNodeTree';
 import { SetValueOption } from '../../types/value';
 import { getGateRegistry } from '../utils/gates/getGateRegistry';
 
@@ -17,7 +17,7 @@ const periodSchema = {
 // filid:contract settle-virtual
 describe('virtual writes and referenced siblings', () => {
   it('42C-02 NODE-034 NODE-054 reads loaded siblings through their real nodes', () => {
-    const { root } = makeSchemaNodeTree(periodSchema, {
+    const { root } = makeFieldNodeTree(periodSchema, {
       snapshot: {
         startDate: '2021-04-01',
         endDate: '2021-04-02',
@@ -34,7 +34,7 @@ describe('virtual writes and referenced siblings', () => {
   });
 
   it('42C-02 18C-21 clears both leaves without refilling an existing default', () => {
-    const { root } = makeSchemaNodeTree(
+    const { root } = makeFieldNodeTree(
       {
         ...periodSchema,
         properties: {
@@ -53,7 +53,7 @@ describe('virtual writes and referenced siblings', () => {
   });
 
   it('42C-02 splits an array and reassembles after a direct leaf write', () => {
-    const { root } = makeSchemaNodeTree(periodSchema);
+    const { root } = makeFieldNodeTree(periodSchema);
     root.resetSubtree();
     const period = root.find('/period')!;
     period.setValue(['a', 'b']);
@@ -68,7 +68,7 @@ describe('virtual writes and referenced siblings', () => {
   });
 
   it('45C-01 Merge performs a partial write at each referenced node', () => {
-    const { root } = makeSchemaNodeTree(
+    const { root } = makeFieldNodeTree(
       {
         type: 'object',
         properties: {
@@ -102,7 +102,7 @@ describe('virtual writes and referenced siblings', () => {
   });
 
   it('42C-02 keeps real siblings live when their virtual group exits', () => {
-    const { root } = makeSchemaNodeTree(
+    const { root } = makeFieldNodeTree(
       {
         ...periodSchema,
         properties: {
@@ -139,7 +139,7 @@ describe('virtual writes and referenced siblings', () => {
   });
 
   it('42C-02 keeps a real sibling gate registered when its virtual group exits', () => {
-    const { root } = makeSchemaNodeTree(
+    const { root } = makeFieldNodeTree(
       {
         type: 'object',
         properties: {
@@ -186,7 +186,7 @@ describe('virtual writes and referenced siblings', () => {
   ])(
     '42C-02 ERROR-195 rejects invalid virtual input $label before changing values',
     ({ value }) => {
-      const { root } = makeSchemaNodeTree(periodSchema, {
+      const { root } = makeFieldNodeTree(periodSchema, {
         snapshot: {
           startDate: '2021-04-01',
           endDate: '2021-04-02',

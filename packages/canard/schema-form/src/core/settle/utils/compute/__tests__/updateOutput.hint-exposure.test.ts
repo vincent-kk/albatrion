@@ -4,7 +4,7 @@ import { BEHAVIORS } from '../../../../behaviors';
 import {
   dispatchMount,
   dispatchSetValue,
-  subscribeSchemaNode,
+  subscribeFieldNode,
 } from '../../../../dispatch';
 import { SetValueOption } from '../../../../types/value';
 import type { PlainNode } from '../../../__tests__/fixtures/createPlainNode';
@@ -56,7 +56,7 @@ it('never exposes any hint through emitted values or delivered payloads', () => 
         ]);
       },
     );
-    subscribeSchemaNode(node, (event) => payloads.push(event));
+    subscribeFieldNode(node, (event) => payloads.push(event));
   };
   attach(root);
   const factory = root.runtime.nodeFactory;

@@ -2,7 +2,7 @@ import { escapeSegment, unescapeSegment } from '@winglet/json/pointer';
 
 import { BEHAVIORS, isOmittedEmpty } from '../../../behaviors';
 import type { BlueprintChildEntry, BlueprintNode } from '../../../blueprint';
-import type { SchemaNodeRecord, SchemaNodeRuntime } from '../../../record';
+import type { FieldNodeRecord, FieldNodeRuntime } from '../../../record';
 import type { SettlementContext } from '../../type';
 import { getDeclaredChildNames } from '../declarations/getDeclaredChildNames';
 import { isPlain } from '../write/isPlain';
@@ -26,8 +26,8 @@ import { setLatentRaw } from './setLatentRaw';
  * @param seen - Caller-object recursion guard
  * @returns Whether a terminal descendant would have a projected emit
  */
-export const distributeLatentValue = <Self extends SchemaNodeRecord<Self>>(
-  runtime: SchemaNodeRuntime<Self>,
+export const distributeLatentValue = <Self extends FieldNodeRecord<Self>>(
+  runtime: FieldNodeRuntime<Self>,
   context: SettlementContext<Self> | undefined,
   path: string,
   template: BlueprintNode,

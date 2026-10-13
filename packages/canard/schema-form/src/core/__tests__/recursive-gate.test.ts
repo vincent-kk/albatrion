@@ -1,8 +1,8 @@
 import { describe, expect, it } from 'vitest';
 
 import {
+  type FieldNode,
   type JSONSchema,
-  type SchemaNode,
   ValidationMode,
   nodeFromJSONSchema,
 } from '../index';
@@ -29,7 +29,7 @@ const treeSchema = {
 
 const ROOT = '/a~1b~0c';
 
-const mountTree = (value: Record<string, unknown>): SchemaNode =>
+const mountTree = (value: Record<string, unknown>): FieldNode =>
   nodeFromJSONSchema({
     jsonSchema: treeSchema as JSONSchema,
     defaultValue: value,
@@ -38,7 +38,7 @@ const mountTree = (value: Record<string, unknown>): SchemaNode =>
   });
 
 /** Names of the live children of an object node. */
-const shape = (node: SchemaNode | null): string[] =>
+const shape = (node: FieldNode | null): string[] =>
   node ? (node.children ?? []).map((child) => child.name) : [];
 
 describe('if/then/else gates inside a recursive $ref (211C-01 B)', () => {

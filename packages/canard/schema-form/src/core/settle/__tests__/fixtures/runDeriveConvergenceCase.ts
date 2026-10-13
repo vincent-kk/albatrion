@@ -4,7 +4,7 @@ import * as blueprintApi from '../../../blueprint';
 import type { Blueprint, BlueprintSchema } from '../../../blueprint';
 import { SetValueOption } from '../../../types/value';
 import * as deriveApi from '../../derive';
-import { loadSchemaNodeAtMount, writeSchemaNode } from '../../index';
+import { loadFieldNodeAtMount, writeFieldNode } from '../../index';
 import type { SettlementContext } from '../../type';
 import { deriveShadowEvaluation } from '../../utils/derivation/deriveShadowEvaluation';
 import * as settlementApi from '../../utils/settlement/createSettlementContext';
@@ -78,13 +78,13 @@ export const runDeriveConvergenceCase = (
         let error;
         try {
           if (step === -1)
-            loadSchemaNodeAtMount(root, input, SetValueOption.Overwrite);
+            loadFieldNodeAtMount(root, input, SetValueOption.Overwrite);
           else {
             const write = writes[step];
             let target = root;
             const segments = write.path.split('/').filter(Boolean);
             for (const segment of segments) target = target.structure![segment];
-            writeSchemaNode(
+            writeFieldNode(
               target,
               write.value,
               'input',

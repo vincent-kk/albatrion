@@ -2,9 +2,9 @@ import { describe, expect, it, vi } from 'vitest';
 
 import { ARRAY_METHOD_ON_NON_ARRAY } from '../../../errors';
 import type { FormErrorRecord } from '../../../errors';
-import { SchemaNodeEventType } from '../../record';
-import { readSchemaNodeErrors } from '../../validation';
-import { dispatchBatch, dispatchSetValue, subscribeSchemaNode } from '../index';
+import { FieldNodeEventType } from '../../record';
+import { readFieldNodeErrors } from '../../validation';
+import { dispatchBatch, dispatchSetValue, subscribeFieldNode } from '../index';
 import * as dispatch from '../index';
 import { createDispatchTree } from './fixtures/createDispatchTree';
 import { getDispatchChild } from './fixtures/getDispatchChild';
@@ -21,16 +21,16 @@ describe('array entry integration', () => {
     dispatch.dispatchSetExternalErrors(former, [
       { dataPath: '/0', message: 'retained' },
     ]);
-    const previous = readSchemaNodeErrors(former);
+    const previous = readFieldNodeErrors(former);
     dispatch.dispatchPop(root);
     expect(runtime.nodeErrors?.has(former)).toBe(false);
-    expect(readSchemaNodeErrors(former)).toBe(previous);
+    expect(readFieldNodeErrors(former)).toBe(previous);
     dispatch.dispatchPush(root, 2);
     dispatch.dispatchSetExternalErrors(getDispatchChild(root, '0'), [
       { dataPath: '/0', message: 'new' },
     ]);
-    expect(readSchemaNodeErrors(former)).toBe(previous);
-    expect(readSchemaNodeErrors(former)).toEqual([
+    expect(readFieldNodeErrors(former)).toBe(previous);
+    expect(readFieldNodeErrors(former)).toEqual([
       { dataPath: '/0', message: 'retained' },
     ]);
   });
@@ -222,13 +222,13 @@ describe('array entry integration', () => {
     const leaf = getDispatchChild(shifted, 'n');
     const itemEvents: unknown[] = [];
     const leafEvents: unknown[] = [];
-    subscribeSchemaNode(shifted, (event) => {
-      if (event.type & SchemaNodeEventType.UpdatePath)
-        itemEvents.push(event.payload?.[SchemaNodeEventType.UpdatePath]);
+    subscribeFieldNode(shifted, (event) => {
+      if (event.type & FieldNodeEventType.UpdatePath)
+        itemEvents.push(event.payload?.[FieldNodeEventType.UpdatePath]);
     });
-    subscribeSchemaNode(leaf, (event) => {
-      if (event.type & SchemaNodeEventType.UpdatePath)
-        leafEvents.push(event.payload?.[SchemaNodeEventType.UpdatePath]);
+    subscribeFieldNode(leaf, (event) => {
+      if (event.type & FieldNodeEventType.UpdatePath)
+        leafEvents.push(event.payload?.[FieldNodeEventType.UpdatePath]);
     });
     dispatch.dispatchRemove(root, 0);
     expect(root.children?.[0]).toBe(shifted);
@@ -246,7 +246,7 @@ describe('array entry integration', () => {
     );
     dispatchSetValue(root, [1, 2]);
     let shifted = false;
-    subscribeSchemaNode(root, () => {
+    subscribeFieldNode(root, () => {
       if (shifted) return;
       shifted = true;
       dispatch.dispatchRemove(root, 0);

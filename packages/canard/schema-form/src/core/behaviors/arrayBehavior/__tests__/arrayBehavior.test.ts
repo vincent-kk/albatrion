@@ -9,7 +9,7 @@ import { EMPTY_REVISION_LEDGER } from '../../../record';
 import type {
   ArrayOperation,
   Behavior,
-  SchemaNodeRecord,
+  FieldNodeRecord,
 } from '../../../record';
 import { PathKeyedMap } from '../../../utils/pathIndex/PathKeyedMap';
 import { PathKeyedSet } from '../../../utils/pathIndex/PathKeyedSet';
@@ -22,7 +22,7 @@ const makeRecord = (
   template: BlueprintNode,
   raw: unknown = undefined,
   options: Record<string, unknown> = {},
-): SchemaNodeRecord<unknown> => ({
+): FieldNodeRecord<unknown> => ({
   behavior,
   runtime: {
     blueprint: blueprint({ type: 'array' }),

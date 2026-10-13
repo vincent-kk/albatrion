@@ -1,7 +1,7 @@
 import { expect, it } from 'vitest';
 
 import { SetValueOption } from '../../types/value';
-import { loadSchemaNodeAtMount, writeSchemaNode } from '../index';
+import { loadFieldNodeAtMount, writeFieldNode } from '../index';
 import { createTestTree } from './fixtures/createTestTree';
 
 it('retains integer property order and untouched references across static selection', () => {
@@ -18,7 +18,7 @@ it('retains integer property order and untouched references across static select
       },
     },
   });
-  loadSchemaNodeAtMount(root, undefined, SetValueOption.Overwrite);
+  loadFieldNodeAtMount(root, undefined, SetValueOption.Overwrite);
   expect(root.children?.map((child) => child.name)).toEqual([
     '2',
     '10',
@@ -31,7 +31,7 @@ it('retains integer property order and untouched references across static select
   const value = nested.local;
   const children = root.children;
   const revision = nested.revisionLedger;
-  writeSchemaNode(
+  writeFieldNode(
     root.structure!['2'],
     'next',
     'input',

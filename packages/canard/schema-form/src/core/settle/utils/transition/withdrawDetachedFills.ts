@@ -1,6 +1,6 @@
 import { isArray } from '@winglet/common-utils/filter';
 
-import type { SchemaNodeRecord } from '../../../record';
+import type { FieldNodeRecord } from '../../../record';
 import type { SettlementContext } from '../../type';
 import { setLatentRaw } from '../latent/setLatentRaw';
 import { restoreArrayStructure } from './restoreArrayStructure';
@@ -10,7 +10,7 @@ import { restoreArrayStructure } from './restoreArrayStructure';
  * @param context - Settlement with original node and latent source logs
  * @returns Nothing; detached records retain their pre-fill sources
  */
-export const withdrawDetachedFills = <Self extends SchemaNodeRecord<Self>>(
+export const withdrawDetachedFills = <Self extends FieldNodeRecord<Self>>(
   context: SettlementContext<Self>,
 ): void => {
   for (const node of context.filledNodes) {

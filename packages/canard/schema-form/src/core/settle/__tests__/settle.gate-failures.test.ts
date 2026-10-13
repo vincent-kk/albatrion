@@ -5,7 +5,7 @@ import { isArray } from '@winglet/common-utils/filter';
 import { SchemaFormError } from '../../../errors';
 import { SetValueOption } from '../../types/value';
 import type { Validator } from '../../validation';
-import { writeSchemaNode } from '../index';
+import { writeFieldNode } from '../index';
 import { createTestTree } from './fixtures/createTestTree';
 
 describe('round 55 direct settlement regression', () => {
@@ -32,7 +32,7 @@ describe('round 55 direct settlement regression', () => {
     );
     let caught: unknown;
     try {
-      writeSchemaNode(
+      writeFieldNode(
         root,
         { left: 0, right: 0 },
         'callerReplace',
@@ -71,7 +71,7 @@ describe('round 55 direct settlement regression', () => {
     );
     let caught: unknown;
     try {
-      writeSchemaNode(
+      writeFieldNode(
         root,
         { input: 'value' },
         'callerReplace',
@@ -123,7 +123,7 @@ describe('round 55 direct settlement regression', () => {
       validator,
     );
     expect(() =>
-      writeSchemaNode(
+      writeFieldNode(
         root,
         { input: 'value' },
         'callerReplace',

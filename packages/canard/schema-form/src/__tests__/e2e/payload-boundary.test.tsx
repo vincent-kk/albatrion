@@ -2,7 +2,7 @@ import { act } from '@testing-library/react';
 import { flushSync } from 'react-dom';
 import { expect, it } from 'vitest';
 
-import { SchemaNodeEventType } from '@/schema-form';
+import { FieldNodeEventType } from '@/schema-form';
 
 import { renderForm } from '../renderForm';
 
@@ -23,17 +23,17 @@ it('EVENT-024 keeps the fixed wave payload through React flushSync and resubscri
     const seen: unknown[] = [];
     let remove = () => {};
     a.subscribe((event) => {
-      if (!(event.type & SchemaNodeEventType.UpdateValue)) return;
+      if (!(event.type & FieldNodeEventType.UpdateValue)) return;
       remove();
       b.subscribe((event) => {
-        if (event.type & SchemaNodeEventType.UpdateValue)
-          seen.push(['late', event.payload?.[SchemaNodeEventType.UpdateValue]]);
+        if (event.type & FieldNodeEventType.UpdateValue)
+          seen.push(['late', event.payload?.[FieldNodeEventType.UpdateValue]]);
       });
       flushSync(() => b.setValue('C'));
     });
     b.subscribe((event) => {
-      if (event.type & SchemaNodeEventType.UpdateValue)
-        seen.push(['kept', event.payload?.[SchemaNodeEventType.UpdateValue]]);
+      if (event.type & FieldNodeEventType.UpdateValue)
+        seen.push(['kept', event.payload?.[FieldNodeEventType.UpdateValue]]);
     });
     remove = b.subscribe(() => seen.push('removed'));
     await act(async () => {

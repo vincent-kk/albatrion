@@ -1,7 +1,7 @@
 import { isArray } from '@winglet/common-utils/filter';
 
-import type { SchemaNodeRuntime } from '../../../record';
-import { indexSchemaNodeWarning } from '../../../record';
+import type { FieldNodeRuntime } from '../../../record';
+import { indexFieldNodeWarning } from '../../../record';
 import { updateCommittedRuleValue } from '../commit/updateCommittedRuleValue';
 import { getRuntimePathStores } from '../pathIndex/getRuntimePathStores';
 
@@ -12,7 +12,7 @@ import { getRuntimePathStores } from '../pathIndex/getRuntimePathStores';
  * @returns Nothing; unrelated entries and baselines retain their identity
  */
 export const prunePerishedPaths = <Self>(
-  runtime: SchemaNodeRuntime<Self>,
+  runtime: FieldNodeRuntime<Self>,
   paths: ReadonlySet<string>,
 ): void => {
   if (paths.size === 0) return;
@@ -24,7 +24,7 @@ export const prunePerishedPaths = <Self>(
   for (const key of warningKeys) {
     const parts: unknown = JSON.parse(key);
     if (isArray(parts) && typeof parts[1] === 'string')
-      indexSchemaNodeWarning(runtime, key, parts[1], undefined, true);
+      indexFieldNodeWarning(runtime, key, parts[1], undefined, true);
   }
   for (const path of paths) {
     for (const key of stores.latent.pathIndex.under(path)) {

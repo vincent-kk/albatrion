@@ -10,7 +10,7 @@ import {
   type FormHandle,
   Form,
   type JSONSchema,
-  SchemaNodeState,
+  FieldNodeState,
   SetValueOption,
   ShowError,
   ValidationMode,
@@ -154,8 +154,8 @@ const runStep = async (step: CompositeTailStep, context: TailContext, label: str
     for (const [path, expected] of Object.entries(step.states)) {
       const target = node(path)!;
       const actual = {
-        ...('dirty' in expected && { dirty: Boolean(target.state?.[SchemaNodeState.Dirty]) }),
-        ...('touched' in expected && { touched: Boolean(target.state?.[SchemaNodeState.Touched]) }),
+        ...('dirty' in expected && { dirty: Boolean(target.state?.[FieldNodeState.Dirty]) }),
+        ...('touched' in expected && { touched: Boolean(target.state?.[FieldNodeState.Touched]) }),
         ...('readOnly' in expected && { readOnly: target.readOnly }),
         ...('visible' in expected && { visible: target.visible }),
       };

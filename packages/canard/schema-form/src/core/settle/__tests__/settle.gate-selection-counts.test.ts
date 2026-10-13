@@ -2,7 +2,7 @@ import { describe, expect, it, vi } from 'vitest';
 
 import * as compiler from '../../blueprint/utils/expressions/createDynamicFunction';
 import { SetValueOption } from '../../types/value';
-import { loadSchemaNodeAtMount, writeSchemaNode } from '../index';
+import { loadFieldNodeAtMount, writeFieldNode } from '../index';
 import { createTestTree } from './fixtures/createTestTree';
 
 // filid:contract settle-gate-selection-counts
@@ -44,7 +44,7 @@ describe('baseline fixed-width branch-axis characterization', () => {
           })),
         } as const;
         const { root } = createTestTree(schema);
-        loadSchemaNodeAtMount(
+        loadFieldNodeAtMount(
           root,
           { kind: 'kind_0' },
           SetValueOption.Overwrite,
@@ -57,7 +57,7 @@ describe('baseline fixed-width branch-axis characterization', () => {
         ];
         for (const transition of transitions) {
           evaluations = 0;
-          writeSchemaNode(
+          writeFieldNode(
             root.structure!.kind,
             transition.kind,
             'input',

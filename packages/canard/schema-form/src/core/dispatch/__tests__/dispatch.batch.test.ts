@@ -11,7 +11,7 @@ import {
   dispatchResetSubtree,
   dispatchSetValue,
   dispatchUpdate,
-  subscribeSchemaNode,
+  subscribeFieldNode,
 } from '../index';
 import {
   type DispatchTestNode,
@@ -83,7 +83,7 @@ describe('dispatcher batch', () => {
   it('EVENT-013 EVENT-014 EVENT-019 and EVENT-035 commit one outer batch', () => {
     const { root, runtime } = createDispatchTree({ type: 'string' });
     let calls = 0;
-    subscribeSchemaNode(root, () => {
+    subscribeFieldNode(root, () => {
       calls += 1;
     });
     dispatchBatch(root, () => {
@@ -182,7 +182,7 @@ describe('dispatcher batch', () => {
   it('EVENT-016 listener batch opens its own feedback batch', () => {
     const { root } = createDispatchTree({ type: 'string' });
     const seen: string[] = [];
-    subscribeSchemaNode(root, () => {
+    subscribeFieldNode(root, () => {
       seen.push(String(root.emit));
       if (root.emit === 'first')
         dispatchBatch(root, () => dispatchSetValue(root, 'second'));

@@ -2,7 +2,7 @@ import { expect } from 'vitest';
 
 import type { ScenarioExpectation } from '@aileron/schema-form-scenarios';
 
-import type { SchemaNode } from '../../../SchemaNode';
+import type { FieldNode } from '../../../FieldNode';
 
 /**
  * Compare requested observations with the settled public node surface.
@@ -11,7 +11,7 @@ import type { SchemaNode } from '../../../SchemaNode';
  * @returns Nothing; assertion failures identify the mismatched observation
  */
 export function assertCoreScenarioExpectation(
-  root: SchemaNode,
+  root: FieldNode,
   expectation: ScenarioExpectation,
 ): void {
   for (const [path, presence] of Object.entries(expectation.shape ?? {}))

@@ -1,10 +1,10 @@
 import { describe, expect, it } from 'vitest';
 
-import type { SchemaNodeRecord } from '../../../../record';
+import type { FieldNodeRecord } from '../../../../record';
 import type { SettlementContext } from '../../../type';
 import { isWithinReplacePaths } from '../isWithinReplacePaths';
 
-type TestNode = SchemaNodeRecord<TestNode>;
+type TestNode = FieldNodeRecord<TestNode>;
 
 const context = (replacePaths?: readonly string[]) =>
   ({ replacePaths }) as unknown as SettlementContext<TestNode>;

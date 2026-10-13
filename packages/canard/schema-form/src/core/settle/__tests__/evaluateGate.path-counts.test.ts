@@ -2,7 +2,7 @@ import { describe, expect, it, vi } from 'vitest';
 
 import * as compiler from '../../blueprint/utils/expressions/createDynamicFunction';
 import { SetValueOption } from '../../types/value';
-import { loadSchemaNodeAtMount, writeSchemaNode } from '../index';
+import { loadFieldNodeAtMount, writeFieldNode } from '../index';
 import * as gates from '../utils/gates/evaluateGate';
 import * as publication from '../utils/gates/flushPendingGateReads';
 import * as paths from '../utils/paths/resolveDependencyPath';
@@ -66,7 +66,7 @@ describe('gate path resolution runtime visits', () => {
       );
       try {
         const { root } = createTestTree(createFixedBranchSchema(count));
-        loadSchemaNodeAtMount(
+        loadFieldNodeAtMount(
           root,
           { kind: 'kind_0' },
           SetValueOption.Overwrite,
@@ -81,7 +81,7 @@ describe('gate path resolution runtime visits', () => {
           evaluations.fill(0);
           gateVisits.fill(0);
           total = 0;
-          writeSchemaNode(
+          writeFieldNode(
             root.structure!.kind,
             kind,
             'input',

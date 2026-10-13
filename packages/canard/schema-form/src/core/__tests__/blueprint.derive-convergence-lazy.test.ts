@@ -1,6 +1,6 @@
 import { afterEach, expect, it, vi } from 'vitest';
 
-import { mountSchemaNode, schemaNodeFactory } from '../SchemaNode';
+import { fieldNodeFactory, mountFieldNode } from '../FieldNode';
 import { blueprint } from '../blueprint';
 import type { BlueprintCacheEntry } from '../blueprint';
 import * as convergence from '../blueprint/utils/analyze/collectDeriveConvergenceTargets';
@@ -28,12 +28,12 @@ it.each([false, true])(
     const cache = new WeakMap<object, BlueprintCacheEntry[]>();
     const create = () => {
       const analysis = blueprint(schema, { cache });
-      const root = schemaNodeFactory(analysis, {
+      const root = fieldNodeFactory(analysis, {
         diagnostics: { status: 'stable' },
         loadSnapshot: { source: 0, target: 0 },
         validationMode: 0,
       });
-      mountSchemaNode(root);
+      mountFieldNode(root);
       return { root, analysis };
     };
     const { root, analysis } = create();

@@ -1,8 +1,8 @@
 import { isArray } from '@winglet/common-utils/filter';
 
 import { getItemEntry } from '../../../blueprint';
-import type { ArrayOperation, SchemaNodeRecord } from '../../../record';
-import { interpretSchemaNodeInput } from '../../../settle';
+import type { ArrayOperation, FieldNodeRecord } from '../../../record';
+import { interpretFieldNodeInput } from '../../../settle';
 import { SetValueOption } from '../../../types/value';
 import { readBatchValue } from './readBatchValue';
 
@@ -14,13 +14,13 @@ import { readBatchValue } from './readBatchValue';
  * @throws The row's non-array error, propagated as the batch callback's exception
  * @remarks Copies O(array length) slots plus the existing batch overlay cost.
  */
-export const markBatchArrayOperation = <Self extends SchemaNodeRecord<Self>>(
+export const markBatchArrayOperation = <Self extends FieldNodeRecord<Self>>(
   node: Self,
   operation: ArrayOperation,
 ): unknown => {
   const value = readBatchValue(node);
   const source = isArray(value) ? value : [];
-  const view: SchemaNodeRecord<Self> = Object.create(node, {
+  const view: FieldNodeRecord<Self> = Object.create(node, {
     raw: { value },
     itemCount: { value: source.length },
   });
@@ -51,13 +51,13 @@ export const markBatchArrayOperation = <Self extends SchemaNodeRecord<Self>>(
           ? plan.result.index
           : -1;
     const item = getItemEntry(node.blueprintNode, index);
-    return item ? interpretSchemaNodeInput(item.node, raw[index]) : raw[index];
+    return item ? interpretFieldNodeInput(item.node, raw[index]) : raw[index];
   }
   if (plan.result.source === 'removed') {
     const index = plan.result.index;
     const item = getItemEntry(node.blueprintNode, index);
     return item
-      ? interpretSchemaNodeInput(item.node, source[index])
+      ? interpretFieldNodeInput(item.node, source[index])
       : source[index];
   }
   return plan.result.source === 'length' ? raw.length : undefined;

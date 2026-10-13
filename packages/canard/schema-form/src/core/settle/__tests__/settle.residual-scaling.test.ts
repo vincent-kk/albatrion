@@ -2,7 +2,7 @@ import { afterEach, expect, it, vi } from 'vitest';
 
 import type { BlueprintSchema } from '../../blueprint';
 import { SetValueOption } from '../../types/value';
-import { loadSchemaNodeAtMount } from '../index';
+import { loadFieldNodeAtMount } from '../index';
 import type { SettlementContext } from '../type';
 import * as staticFirstLoad from '../utils/load/canLoadStaticFirstTree';
 import * as sourcePresence from '../utils/transition/isMissingRaw';
@@ -30,7 +30,7 @@ it.each([3, 5])(
     const { root } = createTestTree(schema(depth));
     const missing = vi.spyOn(sourcePresence, 'isMissingRaw');
     vi.spyOn(staticFirstLoad, 'canLoadStaticFirstTree').mockReturnValue(false);
-    loadSchemaNodeAtMount(root, undefined, SetValueOption.Overwrite);
+    loadFieldNodeAtMount(root, undefined, SetValueOption.Overwrite);
     expect(
       missing.mock.calls.filter(
         ([node]) => node.behavior.strategy === 'branch',
@@ -111,9 +111,9 @@ it('preserves parent default priority and existing descendant sources', () => {
     },
   };
   const { root } = createTestTree(definition);
-  loadSchemaNodeAtMount(root, undefined, SetValueOption.Overwrite);
+  loadFieldNodeAtMount(root, undefined, SetValueOption.Overwrite);
   expect(root.emit).toEqual({ group: { value: 'parent' } });
-  loadSchemaNodeAtMount(
+  loadFieldNodeAtMount(
     root,
     { group: { value: 'existing' } },
     SetValueOption.Overwrite,

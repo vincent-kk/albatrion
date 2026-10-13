@@ -3,9 +3,9 @@ import { afterEach, expect, it } from 'vitest';
 
 import {
   type FieldInputProps,
+  FieldNodeEventType,
   type FieldRendererProps,
   Form,
-  SchemaNodeEventType,
 } from '@/schema-form';
 
 import { type FormHarness, renderForm } from '../renderForm';
@@ -42,7 +42,7 @@ it('EVENT-002 unchanged content produces no phantom UpdateValue delivery', async
   const deliveries: string[] = [];
   const stops = ['', '/a', '/b'].map((path) =>
     form.node(path)!.subscribe((event) => {
-      if (event.type & SchemaNodeEventType.UpdateValue) deliveries.push(path);
+      if (event.type & FieldNodeEventType.UpdateValue) deliveries.push(path);
     }),
   );
   await act(async () =>
@@ -202,8 +202,8 @@ it('SETTLE-043 restoring source content makes no phantom watch or derived delive
     form.node(path)!.subscribe((event) => {
       if (
         event.type &
-        (SchemaNodeEventType.UpdateValue |
-          SchemaNodeEventType.UpdateComputedProperties)
+        (FieldNodeEventType.UpdateValue |
+          FieldNodeEventType.UpdateComputedProperties)
       )
         events.push({
           path,

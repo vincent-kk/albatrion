@@ -3,8 +3,8 @@ import { afterEach, expect, it } from 'vitest';
 
 import {
   type FieldInputProps,
+  FieldNodeEventType,
   type JSONSchema,
-  SchemaNodeEventType,
 } from '@/schema-form';
 
 import { type FormHarness, renderForm } from '../renderForm';
@@ -187,7 +187,7 @@ it('LANDING-038 effective schemas are memoized per active fragment set and notif
   const initial = node.jsonSchema;
   let deliveries = 0;
   node.subscribe((event) => {
-    if (event.type & SchemaNodeEventType.UpdateJsonSchema) deliveries++;
+    if (event.type & FieldNodeEventType.UpdateJsonSchema) deliveries++;
   });
   await form.toggle('/flag');
   const enabled = node.jsonSchema;

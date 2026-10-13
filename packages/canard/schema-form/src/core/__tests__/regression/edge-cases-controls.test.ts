@@ -1,11 +1,11 @@
 import { describe, expect, it } from 'vitest';
 
-import { makeSchemaNodeTree } from '../makeSchemaNodeTree';
+import { makeFieldNodeTree } from '../makeFieldNodeTree';
 
 // filid:contract factory-single-path
 describe('round9 edge-case controls under the current local policy', () => {
   it('edge-cases.mjs:49 CONTROLS-042 outer fragment does not lock a nested branch', () => {
-    const { root } = makeSchemaNodeTree({
+    const { root } = makeFieldNodeTree({
       type: 'object',
       properties: {
         kind: { type: 'string' },
@@ -24,7 +24,7 @@ describe('round9 edge-case controls under the current local policy', () => {
   });
 
   it('edge-cases.mjs:66 CONTROLS-045 GOAL-048 local readOnly stays true without Form lock', () => {
-    const { root } = makeSchemaNodeTree({
+    const { root } = makeFieldNodeTree({
       type: 'object',
       readOnly: true,
       properties: {
@@ -36,7 +36,7 @@ describe('round9 edge-case controls under the current local policy', () => {
   });
 
   it('edge-cases.mjs:67 CONTROLS-045 GOAL-048 root disabled does not inherit', () => {
-    const { root } = makeSchemaNodeTree({
+    const { root } = makeFieldNodeTree({
       type: 'object',
       controls: { disabled: true },
       properties: {

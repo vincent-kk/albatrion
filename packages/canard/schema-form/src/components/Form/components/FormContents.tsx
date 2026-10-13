@@ -11,7 +11,7 @@ import {
 import { getTrackableHandler } from '@winglet/common-utils/function';
 import { useHandle, useLazyConstant } from '@winglet/react-utils/hook';
 
-import { SchemaNodeRequestType } from '@/schema-form/core';
+import { FieldNodeRequestType } from '@/schema-form/core';
 import {
   FieldInputsContextProvider,
   FieldRendererContextProvider,
@@ -68,17 +68,13 @@ export const FormContents = (
         return binding.current.root;
       },
       focus: (path) =>
-        binding.current.root?.find(path)?.request(SchemaNodeRequestType.Focus),
+        binding.current.root?.find(path)?.request(FieldNodeRequestType.Focus),
       select: (path) =>
-        binding.current.root?.find(path)?.request(SchemaNodeRequestType.Select),
+        binding.current.root?.find(path)?.request(FieldNodeRequestType.Select),
       refresh: (path) =>
-        binding.current.root
-          ?.find(path)
-          ?.request(SchemaNodeRequestType.Refresh),
+        binding.current.root?.find(path)?.request(FieldNodeRequestType.Refresh),
       remount: (path) =>
-        binding.current.root
-          ?.find(path)
-          ?.request(SchemaNodeRequestType.Remount),
+        binding.current.root?.find(path)?.request(FieldNodeRequestType.Remount),
       reset: (option) => binding.current.reset(option),
       findNode: (path) => binding.current.root?.find(path) ?? null,
       findNodes: (path) => binding.current.root?.findNodes(path) ?? [],

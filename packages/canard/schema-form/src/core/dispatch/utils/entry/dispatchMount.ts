@@ -1,12 +1,12 @@
 import { VALIDATOR_MISSING } from '../../../../errors';
 import type { FormErrorRecord } from '../../../../errors';
-import type { SchemaNodeRecord } from '../../../record';
-import { loadSchemaNodeAtMount } from '../../../settle';
+import type { FieldNodeRecord } from '../../../record';
+import { loadFieldNodeAtMount } from '../../../settle';
 import { ValidationMode } from '../../../types/state';
 import { SetValueOption } from '../../../types/value';
 import { captureChainError } from '../chain/captureChainError';
-import { enterSchemaNodeChain } from '../chain/enterSchemaNodeChain';
-import { exitSchemaNodeChain } from '../chain/exitSchemaNodeChain';
+import { enterFieldNodeChain } from '../chain/enterFieldNodeChain';
+import { exitFieldNodeChain } from '../chain/exitFieldNodeChain';
 import { restoreAdoptedExternalErrors } from '../chain/restoreAdoptedExternalErrors';
 import { clearWarningKeys } from '../report/clearWarningKeys';
 
@@ -18,13 +18,13 @@ import { clearWarningKeys } from '../report/clearWarningKeys';
  * @param settings - Whether the binding will request validation after commit
  * @returns Nothing; committed events are delivered before returning
  */
-export const dispatchMount = <Self extends SchemaNodeRecord<Self>>(
+export const dispatchMount = <Self extends FieldNodeRecord<Self>>(
   root: Self,
   value: unknown = root.runtime.loadSnapshot,
   option: SetValueOption = SetValueOption.Overwrite,
   settings: { deferValidation?: boolean } = {},
 ): void => {
-  if (!enterSchemaNodeChain(root)) return;
+  if (!enterFieldNodeChain(root)) return;
   clearWarningKeys(root.runtime);
   root.runtime.validationUnavailable = false;
   root.runtime.validationCompileReported = false;
@@ -33,7 +33,7 @@ export const dispatchMount = <Self extends SchemaNodeRecord<Self>>(
     (root.runtime.validationTargets ??= new Set()).add(root);
   root.runtime.mountingGuardPass = process.env.NODE_ENV !== 'production';
   try {
-    loadSchemaNodeAtMount(root, value, option);
+    loadFieldNodeAtMount(root, value, option);
   } catch (error) {
     captureChainError(root.runtime, error);
   } finally {
@@ -59,6 +59,6 @@ export const dispatchMount = <Self extends SchemaNodeRecord<Self>>(
       runtime.chainOccurrences?.push({ kind: 'record', record });
     }
     root.runtime.mountingGuardPass = false;
-    exitSchemaNodeChain(root);
+    exitFieldNodeChain(root);
   }
 };

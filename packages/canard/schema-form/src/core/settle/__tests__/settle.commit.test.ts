@@ -1,8 +1,8 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
-import { SchemaNodeEventType } from '../../record';
+import { FieldNodeEventType } from '../../record';
 import { SetValueOption } from '../../types/value';
-import { loadSchemaNodeAtMount, writeSchemaNode } from '../index';
+import { loadFieldNodeAtMount, writeFieldNode } from '../index';
 import { createTestTree } from './fixtures/createTestTree';
 
 // filid:contract settle-write
@@ -18,7 +18,7 @@ describe('settle commit', () => {
         value: { type: ['string', 'boolean'], default: 0 },
       },
     });
-    loadSchemaNodeAtMount(root, {}, SetValueOption.Overwrite);
+    loadFieldNodeAtMount(root, {}, SetValueOption.Overwrite);
     expect(root.structure?.value?.raw).toBe(0);
     expect(root.runtime.typeMismatchRecords).toEqual([
       expect.objectContaining({
@@ -36,7 +36,7 @@ describe('settle commit', () => {
         value: { type: ['string', 'boolean'], default: 1 },
       },
     });
-    loadSchemaNodeAtMount(root, { value: 0 }, SetValueOption.Overwrite);
+    loadFieldNodeAtMount(root, { value: 0 }, SetValueOption.Overwrite);
     expect(root.structure?.value?.raw).toBe(0);
     expect(root.runtime.typeMismatchRecords).toEqual([
       expect.objectContaining({
@@ -57,7 +57,7 @@ describe('settle commit', () => {
         z: { type: 'string' },
       },
     });
-    writeSchemaNode(
+    writeFieldNode(
       root,
       { x: 1, b: 'B', a: 'A', z: 'Z' },
       'callerReplace',
@@ -75,7 +75,7 @@ describe('settle commit', () => {
         b: { type: 'string' },
       },
     });
-    writeSchemaNode(
+    writeFieldNode(
       root,
       { a: 'A', b: 'B' },
       'callerReplace',
@@ -86,7 +86,7 @@ describe('settle commit', () => {
     Reflect.deleteProperty(root.local, 'a');
     Reflect.set(root.local, 'a', 'edited');
     Reflect.set(root.local, 'ghost', true);
-    writeSchemaNode(root.structure!.a, 'A2', 'input', SetValueOption.Overwrite);
+    writeFieldNode(root.structure!.a, 'A2', 'input', SetValueOption.Overwrite);
     expect(Object.keys(root.local!)).toEqual(['a', 'b']);
     expect(root.local).toEqual({ a: 'A2', b: 'B' });
   });
@@ -106,14 +106,14 @@ describe('settle commit', () => {
         },
       ],
     });
-    writeSchemaNode(
+    writeFieldNode(
       root,
       { flag: false, a: 'A', b: 'B' },
       'callerReplace',
       SetValueOption.Overwrite,
     );
     expect(Object.keys(root.emit!)).toEqual(['flag', 'a', 'b']);
-    writeSchemaNode(
+    writeFieldNode(
       root.structure!.flag,
       true,
       'input',
@@ -130,7 +130,7 @@ describe('settle commit', () => {
         kept: { type: 'object', options: { omitEmpty: false } },
       },
     });
-    writeSchemaNode(
+    writeFieldNode(
       root,
       { hidden: {}, kept: {} },
       'callerReplace',
@@ -138,7 +138,7 @@ describe('settle commit', () => {
     );
     expect(root.emit).toEqual({ kept: {} });
     const empty = createTestTree({ type: 'object' }).root;
-    writeSchemaNode(empty, {}, 'callerReplace', SetValueOption.Overwrite);
+    writeFieldNode(empty, {}, 'callerReplace', SetValueOption.Overwrite);
     expect(empty.emit).toEqual({});
   });
 
@@ -149,11 +149,11 @@ describe('settle commit', () => {
         constructor: { type: 'string' },
       },
     });
-    writeSchemaNode(root, {}, 'callerReplace', SetValueOption.Overwrite);
+    writeFieldNode(root, {}, 'callerReplace', SetValueOption.Overwrite);
     expect(
       root.children?.find((child) => child.name === 'constructor')?.raw,
     ).toBeUndefined();
-    writeSchemaNode(
+    writeFieldNode(
       root,
       { constructor: 'own' },
       'callerReplace',
@@ -171,7 +171,7 @@ describe('settle commit', () => {
         amount: { type: 'number' },
       },
     });
-    writeSchemaNode(
+    writeFieldNode(
       root,
       { amount: 'bad' },
       'callerReplace',
@@ -191,14 +191,14 @@ describe('settle commit', () => {
         source: 'callerReplace',
       }),
     ]);
-    writeSchemaNode(
+    writeFieldNode(
       root.structure!.amount,
       2,
       'input',
       SetValueOption.Overwrite,
     );
     expect(root.runtime.typeMismatchPaths.size).toBe(0);
-    writeSchemaNode(
+    writeFieldNode(
       root.structure!.amount,
       'bad',
       'input',
@@ -220,14 +220,14 @@ describe('settle commit', () => {
       if: { properties: { enabled: { const: true } }, required: ['enabled'] },
       then: { properties: { value: { type: 'string' } } },
     });
-    writeSchemaNode(
+    writeFieldNode(
       root,
       { enabled: false, value: 7 },
       'callerReplace',
       SetValueOption.Overwrite,
     );
     expect(root.runtime.typeMismatchPaths.size).toBe(0);
-    writeSchemaNode(
+    writeFieldNode(
       root.structure!.enabled,
       true,
       'input',
@@ -238,9 +238,7 @@ describe('settle commit', () => {
     });
     expect(root.structure!.value.raw).toBe(7);
     expect(
-      root.structure!.value.revisionLedger[
-        SchemaNodeEventType.UpdateJsonSchema
-      ],
+      root.structure!.value.revisionLedger[FieldNodeEventType.UpdateJsonSchema],
     ).toBe(1);
     expect([...root.runtime.typeMismatchPaths]).toEqual(['/value']);
     expect(root.runtime.typeMismatchRecords?.[0]).toMatchObject({
@@ -252,7 +250,7 @@ describe('settle commit', () => {
 
   it('VALUE-037 records every admissible scalar conversion as ambiguous candidates', () => {
     const { root } = createTestTree({ type: ['string', 'boolean'] });
-    writeSchemaNode(root, 1, 'callerReplace', SetValueOption.Overwrite);
+    writeFieldNode(root, 1, 'callerReplace', SetValueOption.Overwrite);
     expect(root.runtime.typeMismatchRecords?.[0]).toMatchObject({
       path: '',
       reason: 'ambiguous',
@@ -268,13 +266,13 @@ describe('settle commit', () => {
         b: { type: 'string' },
       },
     });
-    writeSchemaNode(
+    writeFieldNode(
       root,
       { a: 'old', b: 'same' },
       'callerReplace',
       SetValueOption.Overwrite,
     );
-    writeSchemaNode(
+    writeFieldNode(
       root,
       { a: 'new', b: 'same' },
       'callerReplace',
@@ -283,7 +281,7 @@ describe('settle commit', () => {
     expect([...root.runtime.refreshTargets!]).toEqual(['/a']);
     expect(root.runtime.commitNumber).toBe(2);
     const revision = root.structure!.a.revisionLedger;
-    writeSchemaNode(root, root.emit, 'callerReplace', SetValueOption.Overwrite);
+    writeFieldNode(root, root.emit, 'callerReplace', SetValueOption.Overwrite);
     expect(root.runtime.refreshTargets?.size).toBe(0);
     expect(root.structure!.a.revisionLedger).toBe(revision);
   });
@@ -295,20 +293,20 @@ describe('settle commit', () => {
         a: { type: 'string' },
       },
     });
-    writeSchemaNode(
+    writeFieldNode(
       root,
       { a: 'old' },
       'callerReplace',
       SetValueOption.Overwrite,
     );
-    writeSchemaNode(
+    writeFieldNode(
       root.structure!.a,
       'caller',
       'callerReplace',
       SetValueOption.Overwrite,
     );
     expect([...root.runtime.refreshTargets!]).toEqual(['/a']);
-    writeSchemaNode(
+    writeFieldNode(
       root.structure!.a,
       'typed',
       'input',
@@ -325,13 +323,13 @@ describe('settle commit', () => {
         secret: { type: 'string', controls: { active: '../flag' } },
       },
     });
-    writeSchemaNode(
+    writeFieldNode(
       root,
       { flag: true, secret: 'held' },
       'callerReplace',
       SetValueOption.Overwrite,
     );
-    writeSchemaNode(
+    writeFieldNode(
       root.structure!.flag,
       false,
       'input',
@@ -351,7 +349,7 @@ describe('settle commit', () => {
         secret: { type: 'string', controls: { active: '../flag' } },
       },
     });
-    writeSchemaNode(
+    writeFieldNode(
       root,
       { flag: false, secret: 'latent' },
       'callerReplace',
@@ -378,7 +376,7 @@ describe('settle commit', () => {
         },
       },
     });
-    loadSchemaNodeAtMount(
+    loadFieldNodeAtMount(
       root,
       {
         flag: true,
@@ -389,7 +387,7 @@ describe('settle commit', () => {
       },
       SetValueOption.Overwrite,
     );
-    writeSchemaNode(
+    writeFieldNode(
       root.structure!.flag,
       false,
       'input',
@@ -418,14 +416,14 @@ describe('settle commit', () => {
     } as const;
     const raw = { flag: false, group: { leaf: 'a', deep: { x: 1 } } };
     const initial = createTestTree(schema).root;
-    loadSchemaNodeAtMount(initial, raw, SetValueOption.Overwrite);
+    loadFieldNodeAtMount(initial, raw, SetValueOption.Overwrite);
     const exited = createTestTree(schema).root;
-    loadSchemaNodeAtMount(
+    loadFieldNodeAtMount(
       exited,
       { ...raw, flag: true },
       SetValueOption.Overwrite,
     );
-    writeSchemaNode(
+    writeFieldNode(
       exited.structure!.flag,
       false,
       'input',
@@ -437,7 +435,7 @@ describe('settle commit', () => {
     ];
     expect(initial.runtime.inactiveValuesMemo.get('')).toEqual(expected);
     expect(exited.runtime.inactiveValuesMemo.get('')).toEqual(expected);
-    writeSchemaNode(
+    writeFieldNode(
       initial.structure!.flag,
       true,
       'input',
@@ -472,12 +470,12 @@ describe('settle commit', () => {
         },
       ],
     });
-    loadSchemaNodeAtMount(
+    loadFieldNodeAtMount(
       root,
       { kind: 'a', group: { leaf: 'kept' } },
       SetValueOption.Overwrite,
     );
-    writeSchemaNode(
+    writeFieldNode(
       root.structure!.kind,
       'b',
       'input',
@@ -490,7 +488,7 @@ describe('settle commit', () => {
     expect(root.runtime.inactiveValuesMemo.get('')).toEqual([
       { path: '/group/leaf', value: 'kept' },
     ]);
-    writeSchemaNode(
+    writeFieldNode(
       root.structure!.kind,
       'a',
       'input',
@@ -523,7 +521,7 @@ describe('settle commit', () => {
         },
       },
     });
-    loadSchemaNodeAtMount(
+    loadFieldNodeAtMount(
       root,
       { flag: false, group: { sel: 1, field: 'test' } },
       SetValueOption.Overwrite,
@@ -553,24 +551,19 @@ describe('settle commit', () => {
         },
       ],
     });
-    loadSchemaNodeAtMount(
+    loadFieldNodeAtMount(
       root,
       { kind: 'a', value: 'hello' },
       SetValueOption.Overwrite,
     );
-    writeSchemaNode(
+    writeFieldNode(
       root.structure!.kind,
       'b',
       'input',
       SetValueOption.Overwrite,
     );
-    writeSchemaNode(
-      root.structure!.value,
-      3,
-      'input',
-      SetValueOption.Overwrite,
-    );
-    writeSchemaNode(
+    writeFieldNode(root.structure!.value, 3, 'input', SetValueOption.Overwrite);
+    writeFieldNode(
       root.structure!.kind,
       'none',
       'input',
@@ -602,32 +595,32 @@ describe('settle commit', () => {
       },
     } as const;
     const { root } = createTestTree(schema);
-    loadSchemaNodeAtMount(
+    loadFieldNodeAtMount(
       root,
       { flag: true, group: { leaf: 'a', deep: { x: 1 } } },
       SetValueOption.Overwrite,
     );
     const group = root.structure!.group;
-    writeSchemaNode(
+    writeFieldNode(
       root.structure!.flag,
       false,
       'input',
       SetValueOption.Overwrite,
     );
-    writeSchemaNode(
+    writeFieldNode(
       group,
       { leaf: 'z', deep: { x: 9 } },
       'callerReplace',
       SetValueOption.Overwrite,
     );
-    writeSchemaNode(
+    writeFieldNode(
       root.structure!.flag,
       false,
       'input',
       SetValueOption.Overwrite,
     );
     const initial = createTestTree(schema).root;
-    loadSchemaNodeAtMount(
+    loadFieldNodeAtMount(
       initial,
       { flag: false, group: { leaf: 'z', deep: { x: 9 } } },
       SetValueOption.Overwrite,
@@ -640,7 +633,7 @@ describe('settle commit', () => {
     expect(root.runtime.inactiveValuesMemo.get('')).toEqual(
       initial.runtime.inactiveValuesMemo.get(''),
     );
-    writeSchemaNode(
+    writeFieldNode(
       root.structure!.flag,
       true,
       'input',
@@ -665,13 +658,13 @@ describe('settle commit', () => {
         },
       },
     });
-    loadSchemaNodeAtMount(
+    loadFieldNodeAtMount(
       root,
       { flag: true, group: { leaf: 'a', deep: { x: 1 } } },
       SetValueOption.Overwrite,
     );
     const leaf = root.structure!.group.structure!.leaf;
-    writeSchemaNode(
+    writeFieldNode(
       root.structure!.flag,
       false,
       'input',
@@ -680,8 +673,8 @@ describe('settle commit', () => {
     const unchangedX = root.runtime.inactiveValuesMemo
       .get('')
       ?.find((entry) => entry.path === '/group/deep/x');
-    writeSchemaNode(leaf, 'newer', 'callerReplace', SetValueOption.Overwrite);
-    writeSchemaNode(
+    writeFieldNode(leaf, 'newer', 'callerReplace', SetValueOption.Overwrite);
+    writeFieldNode(
       root.structure!.flag,
       false,
       'input',
@@ -696,7 +689,7 @@ describe('settle commit', () => {
         .get('')
         ?.find((entry) => entry.path === '/group/deep/x'),
     ).toBe(unchangedX);
-    writeSchemaNode(
+    writeFieldNode(
       root.structure!.flag,
       true,
       'input',
@@ -715,12 +708,12 @@ describe('settle commit', () => {
         alpha: { type: 'string', controls: { active: '../flag' } },
       },
     });
-    loadSchemaNodeAtMount(
+    loadFieldNodeAtMount(
       root,
       { flag: true, zeta: 'Z', alpha: 'A' },
       SetValueOption.Overwrite,
     );
-    writeSchemaNode(
+    writeFieldNode(
       root.structure!.flag,
       false,
       'input',
@@ -740,12 +733,12 @@ describe('settle commit', () => {
         secret: { type: 'string', controls: { active: '../flag' } },
       },
     });
-    loadSchemaNodeAtMount(
+    loadFieldNodeAtMount(
       root,
       { flag: true, other: 1, secret: 'held' },
       SetValueOption.Overwrite,
     );
-    writeSchemaNode(
+    writeFieldNode(
       root.structure!.flag,
       false,
       'input',
@@ -754,12 +747,7 @@ describe('settle commit', () => {
     const inactive = root.runtime.inactiveValuesMemo.get('');
     const entry = inactive?.[0];
     const latentIteration = vi.spyOn(root.runtime.latentRaw, Symbol.iterator);
-    writeSchemaNode(
-      root.structure!.other,
-      2,
-      'input',
-      SetValueOption.Overwrite,
-    );
+    writeFieldNode(root.structure!.other, 2, 'input', SetValueOption.Overwrite);
     expect(root.runtime.inactiveValuesMemo.get('')).toBe(inactive);
     expect(root.runtime.inactiveValuesMemo.get('')?.[0]).toBe(entry);
     expect(latentIteration).not.toHaveBeenCalled();
@@ -779,12 +767,12 @@ describe('settle commit', () => {
         },
       },
     });
-    loadSchemaNodeAtMount(
+    loadFieldNodeAtMount(
       root,
       { flag: true, group: 'wrong' },
       SetValueOption.Overwrite,
     );
-    writeSchemaNode(
+    writeFieldNode(
       root.structure!.flag,
       false,
       'input',
@@ -802,19 +790,14 @@ describe('settle commit', () => {
         value: { type: 'number' },
       },
     });
-    writeSchemaNode(
+    writeFieldNode(
       root,
       { value: 1 },
       'callerReplace',
       SetValueOption.Overwrite,
     );
     const effective = root.structure!.value.schema;
-    writeSchemaNode(
-      root.structure!.value,
-      2,
-      'input',
-      SetValueOption.Overwrite,
-    );
+    writeFieldNode(root.structure!.value, 2, 'input', SetValueOption.Overwrite);
     expect(root.structure!.value.schema).toBe(effective);
   });
 
@@ -826,7 +809,7 @@ describe('settle commit', () => {
         value: { type: 'string', controls: { active: '../flag' } },
       },
     });
-    writeSchemaNode(
+    writeFieldNode(
       root,
       { flag: true, value: 'same' },
       'callerReplace',
@@ -836,7 +819,7 @@ describe('settle commit', () => {
     const local = root.local;
     const children = root.children;
     const revision = root.structure!.value.revisionLedger;
-    writeSchemaNode(root, emit, 'callerReplace', SetValueOption.Overwrite);
+    writeFieldNode(root, emit, 'callerReplace', SetValueOption.Overwrite);
     expect(root.emit).toBe(emit);
     expect(root.local).toBe(local);
     expect(root.children).toBe(children);
@@ -852,7 +835,7 @@ describe('settle commit', () => {
         sibling: { type: 'string' },
       },
     });
-    writeSchemaNode(
+    writeFieldNode(
       root,
       { amount: NaN, sibling: 'same' },
       'callerReplace',
@@ -862,7 +845,7 @@ describe('settle commit', () => {
     const local = root.local;
     const sibling = root.structure?.sibling;
     if (!sibling) throw new Error('Expected a sibling after the initial write');
-    writeSchemaNode(sibling, 'same', 'input', SetValueOption.Overwrite);
+    writeFieldNode(sibling, 'same', 'input', SetValueOption.Overwrite);
     expect(root.emit).toBe(emit);
     expect(root.local).toBe(local);
     expect(root.behavior.assemble(root, root.children ?? [])).toBe(local);
@@ -874,7 +857,7 @@ describe('settle commit', () => {
       type: 'object',
       options: { terminal: true },
     }).root;
-    writeSchemaNode(
+    writeFieldNode(
       first,
       { bad: undefined },
       'callerReplace',
@@ -893,7 +876,7 @@ describe('settle commit', () => {
       type: 'object',
       options: { terminal: true },
     }).root;
-    writeSchemaNode(
+    writeFieldNode(
       second,
       { bad: undefined },
       'callerReplace',

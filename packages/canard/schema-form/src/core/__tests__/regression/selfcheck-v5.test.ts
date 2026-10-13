@@ -1,11 +1,11 @@
 import { describe, expect, it } from 'vitest';
 
-import { makeSchemaNodeTree } from '../makeSchemaNodeTree';
+import { makeFieldNodeTree } from '../makeFieldNodeTree';
 
 // filid:contract factory-single-path
 describe('selfcheck-v5 PR-2 regression', () => {
   const sharedDefault = () =>
-    makeSchemaNodeTree({
+    makeFieldNodeTree({
       type: 'object',
       properties: {
         a: { type: 'string' },
@@ -45,7 +45,7 @@ describe('selfcheck-v5 PR-2 regression', () => {
   });
 
   const oneFragment = () =>
-    makeSchemaNodeTree({
+    makeFieldNodeTree({
       type: 'object',
       properties: {
         a: { type: 'string' },
@@ -82,7 +82,7 @@ describe('selfcheck-v5 PR-2 regression', () => {
   });
 
   const nullHost = () =>
-    makeSchemaNodeTree({
+    makeFieldNodeTree({
       type: 'object',
       properties: {
         target: {
@@ -96,7 +96,7 @@ describe('selfcheck-v5 PR-2 regression', () => {
     }).root;
 
   it('selfcheck-v5.mjs:318 replaces a null host and revives only new child data', () => {
-    const { root } = makeSchemaNodeTree({
+    const { root } = makeFieldNodeTree({
       type: 'object',
       properties: {
         note: { type: 'string', default: 'D' },
@@ -113,7 +113,7 @@ describe('selfcheck-v5 PR-2 regression', () => {
   });
 
   it('selfcheck-v5.mjs:328 fills under null while a later partial write restores the host', () => {
-    const { root } = makeSchemaNodeTree(
+    const { root } = makeFieldNodeTree(
       {
         type: 'object',
         properties: {
@@ -137,7 +137,7 @@ describe('selfcheck-v5 PR-2 regression', () => {
   });
 
   it('selfcheck-v5.mjs:388 keeps a dormant declared key outside extras', () => {
-    const { root } = makeSchemaNodeTree({
+    const { root } = makeFieldNodeTree({
       type: 'object',
       properties: {
         kind: { type: 'string' },
@@ -167,7 +167,7 @@ describe('selfcheck-v5 PR-2 regression', () => {
     ['selfcheck-v5.mjs:405 wrong array host recovers on child write', []],
   ] as const) {
     it(name, () => {
-      const { root } = makeSchemaNodeTree({
+      const { root } = makeFieldNodeTree({
         type: 'object',
         properties: {
           note: { type: 'string' },
@@ -184,7 +184,7 @@ describe('selfcheck-v5 PR-2 regression', () => {
   }
 
   it('selfcheck-v5.mjs:444 retains both pure branch values after replacement', () => {
-    const { root } = makeSchemaNodeTree({
+    const { root } = makeFieldNodeTree({
       type: 'object',
       oneOf: [
         { properties: { a: { type: 'number' } } },
@@ -210,7 +210,7 @@ describe('selfcheck-v5 PR-2 regression', () => {
       { n: false },
     ];
     for (const input of values) {
-      const { root } = makeSchemaNodeTree({
+      const { root } = makeFieldNodeTree({
         type: 'object',
         properties: {
           n: {
@@ -226,7 +226,7 @@ describe('selfcheck-v5 PR-2 regression', () => {
   });
 
   it('selfcheck-v5.mjs:527 fills a new fragment after a partial activation', () => {
-    const { root } = makeSchemaNodeTree({
+    const { root } = makeFieldNodeTree({
       type: 'object',
       properties: {
         on: { type: 'boolean' },
@@ -261,12 +261,12 @@ describe('selfcheck-v5 PR-2 regression', () => {
       ['a', 'c', 'b', 'd'],
     ];
     const outputs = histories.map((history) => {
-      const { root } = makeSchemaNodeTree(schema);
+      const { root } = makeFieldNodeTree(schema);
       root.setValue({});
       for (const key of history) root.find(`/${key}`)?.setValue(`v${key}`);
       return JSON.stringify(root.outputValue);
     });
-    const { root } = makeSchemaNodeTree(schema);
+    const { root } = makeFieldNodeTree(schema);
     root.setValue({ d: 'vd', c: 'vc', b: 'vb', a: 'va' });
     outputs.push(JSON.stringify(root.outputValue));
     expect(outputs).toEqual(
@@ -275,7 +275,7 @@ describe('selfcheck-v5 PR-2 regression', () => {
   });
 
   it('selfcheck-v5.mjs:557 serializes extras after declarations in insertion order', () => {
-    const { root } = makeSchemaNodeTree({
+    const { root } = makeFieldNodeTree({
       type: 'object',
       properties: {
         a: { type: 'string' },

@@ -1,5 +1,5 @@
-import type { SchemaNodeRecord } from '../../../record';
-import { SchemaNodeState } from '../../../types/state';
+import type { FieldNodeRecord } from '../../../record';
+import { FieldNodeState } from '../../../types/state';
 import type { SetValueOption } from '../../../types/value';
 import { dispatchBatch } from './dispatchBatch';
 import { dispatchClearExternalErrors } from './dispatchClearExternalErrors';
@@ -13,7 +13,7 @@ import { dispatchSetValue } from './dispatchSetValue';
  * @param option - Replacement, merge, and automatic-write flags
  * @returns Nothing; retired input writes are silently discarded
  */
-export const dispatchWriteInput = <Self extends SchemaNodeRecord<Self>>(
+export const dispatchWriteInput = <Self extends FieldNodeRecord<Self>>(
   node: Self,
   value: unknown,
   option?: SetValueOption,
@@ -23,6 +23,6 @@ export const dispatchWriteInput = <Self extends SchemaNodeRecord<Self>>(
     dispatchSetValue(node, value, option, 'input');
     if (node.disposed || node.rootNode.disposed) return;
     dispatchClearExternalErrors(node);
-    dispatchSetState(node, { [SchemaNodeState.Dirty]: true });
+    dispatchSetState(node, { [FieldNodeState.Dirty]: true });
   });
 };

@@ -1,9 +1,9 @@
 import { describe, expect, it } from 'vitest';
 
-import { makeSchemaNodeTree } from '../makeSchemaNodeTree';
+import { makeFieldNodeTree } from '../makeFieldNodeTree';
 
 const finalShapeTree = (seedDefault: boolean) =>
-  makeSchemaNodeTree({
+  makeFieldNodeTree({
     type: 'object',
     properties: {
       seed: { type: 'number', ...(seedDefault ? { default: 1 } : {}) },
@@ -49,7 +49,7 @@ describe('round9b final derive shape', () => {
   });
 
   it('r9b.mjs:137 FRAGMENT-050 retracts only intermediate c before commit', () => {
-    const { root } = makeSchemaNodeTree({
+    const { root } = makeFieldNodeTree({
       type: 'object',
       properties: {
         t: { type: 'string' },

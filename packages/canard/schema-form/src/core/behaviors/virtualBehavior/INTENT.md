@@ -22,4 +22,4 @@
 ### Never do
 
 - 자체 원본을 만들거나 검증·방출에 가상 값을 끼워 넣지 않습니다(NODE-034).
-- behaviors 뿌리·settle·SchemaNode·레거시를 가져오지 않습니다(NODE-009, LANDING-159).
+- behaviors 뿌리·settle·FieldNode·레거시를 가져오지 않습니다(NODE-009, LANDING-159).

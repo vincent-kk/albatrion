@@ -1,5 +1,5 @@
 import { TYPE_MISMATCH } from '../../../../errors';
-import type { SchemaNodeRecord, TypeMismatchRecord } from '../../../record';
+import type { FieldNodeRecord, TypeMismatchRecord } from '../../../record';
 import { conversionCandidates } from '../commit/conversionCandidates';
 import { effectiveType } from '../commit/effectiveType';
 import { isTypeMismatch } from '../commit/isTypeMismatch';
@@ -11,7 +11,7 @@ import { receivedType } from '../commit/receivedType';
  * @param automatic - Whether a literal default supplied this source
  * @returns Warning data, or undefined without allocating warning storage
  */
-export const readStaticFirstWarning = <Self extends SchemaNodeRecord<Self>>(
+export const readStaticFirstWarning = <Self extends FieldNodeRecord<Self>>(
   node: Self,
   automatic: boolean,
 ): TypeMismatchRecord | undefined => {

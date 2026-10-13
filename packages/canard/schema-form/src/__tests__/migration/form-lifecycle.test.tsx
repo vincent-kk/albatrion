@@ -5,9 +5,9 @@ import { afterEach, expect, it, vi } from 'vitest';
 
 import {
   type FieldInputProps,
+  FieldNodeState,
   Form,
   type FormHandle,
-  SchemaNodeState,
   SetValueOption,
   ValidationMode,
   type ValidatorFactory,
@@ -107,9 +107,7 @@ it('LANDING-039 same-schema reset retains nodes clears state and refreshes only 
   const child = form.node('/name');
   const wrapper = form.wrapper('');
   await form.type('/name', 'edited');
-  await act(async () =>
-    form.handle.setState({ [SchemaNodeState.Dirty]: true }),
-  );
+  await act(async () => form.handle.setState({ [FieldNodeState.Dirty]: true }));
   const input = form.field('/name');
   await form.reset();
   expect(form.handle.node).toBe(root);

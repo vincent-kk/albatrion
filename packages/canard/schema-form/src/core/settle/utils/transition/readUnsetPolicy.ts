@@ -1,4 +1,4 @@
-import type { SchemaNodeRecord } from '../../../record';
+import type { FieldNodeRecord } from '../../../record';
 import { getControlLayers } from '../controls/getControlLayers';
 import { readExitLayerPolicy } from '../controls/readExitLayerPolicy';
 
@@ -8,7 +8,7 @@ import { readExitLayerPolicy } from '../controls/readExitLayerPolicy';
  * @param inherited - Nearest departing ancestor or Form policy
  * @returns The closest authored keep or clear decision
  */
-export const readUnsetPolicy = <Self extends SchemaNodeRecord<Self>>(
+export const readUnsetPolicy = <Self extends FieldNodeRecord<Self>>(
   node: Self,
   inherited: boolean,
 ): boolean =>

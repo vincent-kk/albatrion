@@ -1,7 +1,7 @@
 export { dispatchSetValue } from './utils/entry/dispatchSetValue';
 export { dispatchWriteInput } from './utils/entry/dispatchWriteInput';
 export { dispatchFinishInput } from './utils/entry/dispatchFinishInput';
-export { readSchemaNodeInteractionReset } from './utils/read/readSchemaNodeInteractionReset';
+export { readFieldNodeInteractionReset } from './utils/read/readFieldNodeInteractionReset';
 export { dispatchPush } from './utils/entry/dispatchPush';
 export { dispatchPop } from './utils/entry/dispatchPop';
 export { dispatchUpdate } from './utils/entry/dispatchUpdate';
@@ -19,8 +19,8 @@ export { dispatchSetExternalErrors } from './utils/entry/dispatchSetExternalErro
 export { dispatchClearExternalErrors } from './utils/entry/dispatchClearExternalErrors';
 export { dispatchRequest } from './utils/entry/dispatchRequest';
 export { dispatchValidate } from './utils/entry/dispatchValidate';
-export { adoptSchemaNodeChain } from './utils/chain/adoptSchemaNodeChain';
-export { readSchemaNodeRevision } from './utils/read/readSchemaNodeRevision';
-export { subscribeSchemaNode } from './utils/read/subscribeSchemaNode';
+export { adoptFieldNodeChain } from './utils/chain/adoptFieldNodeChain';
+export { readFieldNodeRevision } from './utils/read/readFieldNodeRevision';
+export { subscribeFieldNode } from './utils/read/subscribeFieldNode';
 export { createFormErrorRecord } from './utils/report/createFormErrorRecord';
-export type { SchemaNodeEvent, SchemaNodeListener } from './type';
+export type { FieldNodeEvent, FieldNodeListener } from './type';

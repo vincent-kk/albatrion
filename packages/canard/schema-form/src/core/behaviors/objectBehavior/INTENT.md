@@ -23,4 +23,4 @@
 ### Never do
 
 - branch와 terminal을 별개 종류 fractal로 나누거나 행에서 자식 생성·원본 쓰기를 하지 않습니다(NODE-006·009).
-- behaviors 뿌리·settle·SchemaNode·레거시를 가져오지 않습니다(NODE-009, LANDING-159).
+- behaviors 뿌리·settle·FieldNode·레거시를 가져오지 않습니다(NODE-009, LANDING-159).

@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 
 import { SetValueOption } from '../../types/value';
-import { loadSchemaNodeAtMount, writeSchemaNode } from '../index';
+import { loadFieldNodeAtMount, writeFieldNode } from '../index';
 import { createTestTree } from './fixtures/createTestTree';
 
 // filid:contract settle-gates
@@ -43,7 +43,7 @@ describe('shared declaration conflicts', () => {
         },
       ],
     });
-    loadSchemaNodeAtMount(
+    loadFieldNodeAtMount(
       root,
       {
         first: false,
@@ -61,7 +61,7 @@ describe('shared declaration conflicts', () => {
 
     let caught: unknown;
     try {
-      writeSchemaNode(
+      writeFieldNode(
         root,
         { first: true, second: true, stay: false, source: 'B' },
         'callerPartial',
@@ -97,7 +97,7 @@ describe('shared declaration conflicts', () => {
       then: { properties: { value: { type: 'string' } } },
     });
     expect(() =>
-      writeSchemaNode(
+      writeFieldNode(
         root,
         { enabled: true, value: 3 },
         'callerReplace',
@@ -129,7 +129,7 @@ describe('shared declaration conflicts', () => {
       ],
     });
     expect(() =>
-      writeSchemaNode(
+      writeFieldNode(
         root,
         { shared: 1 },
         'callerReplace',

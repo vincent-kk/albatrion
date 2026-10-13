@@ -23,4 +23,4 @@
 ### Never do
 
 - 행에서 원본 쓰기, 자식 생성·확정, 되돌림 또는 통지를 하지 않습니다(NODE-006).
-- 종류 fractal에서 이 뿌리, `settle`, `SchemaNode`, `dispatch`, `validation` 또는 레거시를 가져오지 않습니다(NODE-009, LANDING-159).
+- 종류 fractal에서 이 뿌리, `settle`, `FieldNode`, `dispatch`, `validation` 또는 레거시를 가져오지 않습니다(NODE-009, LANDING-159).

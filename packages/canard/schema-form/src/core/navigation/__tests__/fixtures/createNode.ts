@@ -1,11 +1,11 @@
 import { blueprint } from '../../../blueprint';
 import { EMPTY_REVISION_LEDGER } from '../../../record';
-import type { SchemaNodeRecord, SchemaNodeRuntime } from '../../../record';
+import type { FieldNodeRecord, FieldNodeRuntime } from '../../../record';
 import { PathKeyedMap } from '../../../utils/pathIndex/PathKeyedMap';
 import { PathKeyedSet } from '../../../utils/pathIndex/PathKeyedSet';
 
 /** Plain node used to exercise navigation without the later engine class. */
-export interface TestNode extends SchemaNodeRecord<TestNode> {}
+export interface TestNode extends FieldNodeRecord<TestNode> {}
 
 /** Immutable analysis template shared by navigation-only records. */
 const analysis = blueprint({ type: 'object' });
@@ -17,9 +17,9 @@ export const createNode = (
   name: string,
   parent: TestNode | null = null,
   strategy: 'branch' | 'terminal' = 'branch',
-  suppliedRuntime?: SchemaNodeRuntime<TestNode>,
+  suppliedRuntime?: FieldNodeRuntime<TestNode>,
 ): TestNode => {
-  const runtime: SchemaNodeRuntime<TestNode> = suppliedRuntime ??
+  const runtime: FieldNodeRuntime<TestNode> = suppliedRuntime ??
     parent?.runtime ?? {
       blueprint: analysis,
       diagnostics: { status: 'stable' },

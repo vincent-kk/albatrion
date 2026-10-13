@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 
 import { SetValueOption } from '../../types/value';
-import { writeSchemaNode } from '../index';
+import { writeFieldNode } from '../index';
 import { createTestTree } from './fixtures/createTestTree';
 
 // filid:contract settle-discriminator-comparison
@@ -20,7 +20,7 @@ describe('판별 게이트의 엄격 비교', () => {
         },
       ],
     });
-    writeSchemaNode(
+    writeFieldNode(
       root,
       { kind: -0, payload: '선택됨' },
       'callerReplace',
@@ -49,7 +49,7 @@ describe('판별 게이트의 엄격 비교', () => {
         },
       ],
     });
-    writeSchemaNode(
+    writeFieldNode(
       root,
       { kind: value, payload: '선택됨' },
       'callerReplace',
@@ -80,7 +80,7 @@ describe('판별 게이트의 엄격 비교', () => {
         },
       ],
     });
-    writeSchemaNode(
+    writeFieldNode(
       root,
       { kind: 1, numeric: '수', textual: '문자열' },
       'callerReplace',
@@ -89,7 +89,7 @@ describe('판별 게이트의 엄격 비교', () => {
     expect(root.structure?.numeric?.emit).toBe('수');
     expect(root.structure?.textual).toBeUndefined();
     expect(root.emit).toEqual({ kind: 1, numeric: '수' });
-    writeSchemaNode(
+    writeFieldNode(
       root,
       { kind: '1', numeric: '수', textual: '문자열' },
       'callerReplace',
@@ -121,7 +121,7 @@ describe('판별 게이트의 엄격 비교', () => {
         },
       ],
     });
-    writeSchemaNode(
+    writeFieldNode(
       root,
       { kind: NaN, nan: '숨김', finite: '숨김' },
       'callerReplace',

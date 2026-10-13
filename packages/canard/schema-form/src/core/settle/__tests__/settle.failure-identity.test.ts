@@ -5,7 +5,7 @@ import { isArray } from '@winglet/common-utils/filter';
 import { SchemaFormError } from '../../../errors';
 import type { BlueprintSchema } from '../../blueprint';
 import { SetValueOption } from '../../types/value';
-import { loadSchemaNodeAtMount } from '../index';
+import { loadFieldNodeAtMount } from '../index';
 import { createTestTree } from './fixtures/createTestTree';
 
 // filid:contract settle-failure-identity
@@ -42,7 +42,7 @@ describe('ERROR-004 58C-01 ERROR-017 ERROR-195 59C-01 shared-rule failure occurr
       const { root } = createTestTree(schema);
       let caught: unknown;
       try {
-        loadSchemaNodeAtMount(
+        loadFieldNodeAtMount(
           root,
           { a: '1', b: '2' },
           SetValueOption.Overwrite,

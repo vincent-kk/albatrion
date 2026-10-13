@@ -1,4 +1,4 @@
-import type { SchemaNodeRecord } from '../../../record';
+import type { FieldNodeRecord } from '../../../record';
 import { HostLatent } from './HostLatent';
 
 /**
@@ -7,7 +7,7 @@ import { HostLatent } from './HostLatent';
  * @param previous - Existing latent entry eligible for identity reuse
  * @returns A terminal raw, frozen host source, or no entry
  */
-export const captureOwnLatent = <Self extends SchemaNodeRecord<Self>>(
+export const captureOwnLatent = <Self extends FieldNodeRecord<Self>>(
   node: Self,
   previous: unknown,
 ): unknown => {

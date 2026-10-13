@@ -1,14 +1,14 @@
 import { describe, expect, it } from 'vitest';
 
-import { SchemaNode } from '../../SchemaNode/SchemaNode';
-import { makeSchemaNodeTree } from '../../__tests__/makeSchemaNodeTree';
+import { FieldNode } from '../../FieldNode/FieldNode';
+import { makeFieldNodeTree } from '../../__tests__/makeFieldNodeTree';
 import { SetValueOption } from '../../types/value';
 
-const makeRecordTree = (...args: Parameters<typeof makeSchemaNodeTree>) => {
-  const tree = makeSchemaNodeTree(...args);
-  if (!(tree.root instanceof SchemaNode))
-    throw new Error('Expected a runtime SchemaNode');
-  const root: SchemaNode = tree.root;
+const makeRecordTree = (...args: Parameters<typeof makeFieldNodeTree>) => {
+  const tree = makeFieldNodeTree(...args);
+  if (!(tree.root instanceof FieldNode))
+    throw new Error('Expected a runtime FieldNode');
+  const root: FieldNode = tree.root;
   return { ...tree, root };
 };
 

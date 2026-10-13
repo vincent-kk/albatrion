@@ -4,7 +4,7 @@ import { describe, expect, it, vi } from 'vitest';
 
 import { contextStages, derivationFeatureScenarios, resetInteractionStages } from '@aileron/schema-form-scenarios';
 
-import { type FormHandle, Form, type JSONSchema, SchemaNodeState } from '@/schema-form';
+import { type FormHandle, Form, type JSONSchema, FieldNodeState } from '@/schema-form';
 
 import { renderForm, setupValidatorPlugin } from '../renderForm';
 
@@ -26,12 +26,12 @@ const scenarioNamed = (name: string) => {
 
 /**
  * Read dirty and touched from one node state record.
- * @param state - Node state keyed by SchemaNodeState flags.
+ * @param state - Node state keyed by FieldNodeState flags.
  * @returns Only the flags that are true, by name.
  */
 const interaction = (state: Readonly<Record<string, boolean | undefined>> = {}) => ({
-  ...(state[SchemaNodeState.Dirty] && { dirty: true }),
-  ...(state[SchemaNodeState.Touched] && { touched: true }),
+  ...(state[FieldNodeState.Dirty] && { dirty: true }),
+  ...(state[FieldNodeState.Touched] && { touched: true }),
 });
 
 describe('features — derivation consumer-only', () => {

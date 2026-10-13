@@ -1,27 +1,25 @@
 import { describe, expect, it, vi } from 'vitest';
 
-import { SchemaNodeEventType, SchemaNodeRequestType } from '../../record';
+import { FieldNodeEventType, FieldNodeRequestType } from '../../record';
 import { ValidationMode } from '../../types/state';
 import {
   dispatchBatch,
   dispatchRequest,
   dispatchSetValue,
-  readSchemaNodeRevision,
-  subscribeSchemaNode,
+  readFieldNodeRevision,
+  subscribeFieldNode,
 } from '../index';
 import { createDispatchTree } from './fixtures/createDispatchTree';
 
 describe('dispatcher commands', () => {
   it('EVENT-037 EVENT-073 aliases all four request kinds to event bits', () => {
-    expect(SchemaNodeRequestType.Focus).toBe(SchemaNodeEventType.RequestFocus);
-    expect(SchemaNodeRequestType.Select).toBe(
-      SchemaNodeEventType.RequestSelect,
+    expect(FieldNodeRequestType.Focus).toBe(FieldNodeEventType.RequestFocus);
+    expect(FieldNodeRequestType.Select).toBe(FieldNodeEventType.RequestSelect);
+    expect(FieldNodeRequestType.Refresh).toBe(
+      FieldNodeEventType.RequestRefresh,
     );
-    expect(SchemaNodeRequestType.Refresh).toBe(
-      SchemaNodeEventType.RequestRefresh,
-    );
-    expect(SchemaNodeRequestType.Remount).toBe(
-      SchemaNodeEventType.RequestRemount,
+    expect(FieldNodeRequestType.Remount).toBe(
+      FieldNodeEventType.RequestRemount,
     );
   });
 
@@ -31,20 +29,20 @@ describe('dispatcher commands', () => {
     const onChange = vi.fn();
     runtime.onChange = onChange;
     runtime.validationMode = ValidationMode.OnChange;
-    subscribeSchemaNode(root, (event) => seen.push(event.type));
+    subscribeFieldNode(root, (event) => seen.push(event.type));
     const before = runtime.commitNumber;
     const validationStamp = runtime.validationStamp;
 
-    dispatchRequest(root, SchemaNodeRequestType.Remount);
+    dispatchRequest(root, FieldNodeRequestType.Remount);
 
-    expect(seen).toEqual([SchemaNodeEventType.RequestRemount]);
+    expect(seen).toEqual([FieldNodeEventType.RequestRemount]);
     expect(root.raw).toBeUndefined();
     expect(root.emit).toBeUndefined();
     expect(runtime.commitNumber).toBe(before);
     expect(runtime.entryDepth).toBe(0);
-    expect(
-      readSchemaNodeRevision(root, SchemaNodeEventType.RequestRemount),
-    ).toBe(1);
+    expect(readFieldNodeRevision(root, FieldNodeEventType.RequestRemount)).toBe(
+      1,
+    );
     expect(onChange).not.toHaveBeenCalled();
     expect(runtime.validationStamp).toBe(validationStamp);
   });
@@ -52,29 +50,29 @@ describe('dispatcher commands', () => {
   it('EVENT-045 EVENT-073 merges commands once per node inside one entry', () => {
     const { root } = createDispatchTree({ type: 'string' });
     const seen: number[] = [];
-    subscribeSchemaNode(root, (event) => seen.push(event.type));
+    subscribeFieldNode(root, (event) => seen.push(event.type));
     dispatchBatch(root, () => {
-      dispatchRequest(root, SchemaNodeRequestType.Focus);
-      dispatchRequest(root, SchemaNodeRequestType.Select);
-      dispatchRequest(root, SchemaNodeRequestType.Focus);
+      dispatchRequest(root, FieldNodeRequestType.Focus);
+      dispatchRequest(root, FieldNodeRequestType.Select);
+      dispatchRequest(root, FieldNodeRequestType.Focus);
       expect(seen).toEqual([]);
     });
     expect(seen).toEqual([
-      SchemaNodeEventType.RequestFocus | SchemaNodeEventType.RequestSelect,
+      FieldNodeEventType.RequestFocus | FieldNodeEventType.RequestSelect,
     ]);
-    expect(readSchemaNodeRevision(root, SchemaNodeEventType.RequestFocus)).toBe(
+    expect(readFieldNodeRevision(root, FieldNodeEventType.RequestFocus)).toBe(
       1,
     );
-    expect(
-      readSchemaNodeRevision(root, SchemaNodeEventType.RequestSelect),
-    ).toBe(1);
+    expect(readFieldNodeRevision(root, FieldNodeEventType.RequestSelect)).toBe(
+      1,
+    );
   });
 
   it('EVENT-073 ignores an OR-ed command input', () => {
     const { root } = createDispatchTree({ type: 'string' });
     const seen = vi.fn();
-    subscribeSchemaNode(root, seen);
-    const combined = SchemaNodeRequestType.Focus | SchemaNodeRequestType.Select;
+    subscribeFieldNode(root, seen);
+    const combined = FieldNodeRequestType.Focus | FieldNodeRequestType.Select;
     dispatchRequest(root, combined);
     expect(seen).not.toHaveBeenCalled();
   });
@@ -83,8 +81,8 @@ describe('dispatcher commands', () => {
     const { root } = createDispatchTree({ type: 'string' });
     root.detached = true;
     const seen = vi.fn();
-    subscribeSchemaNode(root, seen);
-    dispatchRequest(root, SchemaNodeRequestType.Focus);
+    subscribeFieldNode(root, seen);
+    dispatchRequest(root, FieldNodeRequestType.Focus);
     expect(seen).not.toHaveBeenCalled();
   });
 
@@ -92,7 +90,7 @@ describe('dispatcher commands', () => {
     const { root, runtime } = createDispatchTree({ type: 'string' });
     runtime.reportingErrors = true;
     expect(() =>
-      dispatchRequest(root, SchemaNodeRequestType.Focus),
+      dispatchRequest(root, FieldNodeRequestType.Focus),
     ).toThrowError(
       expect.objectContaining({ code: 'SCHEMA_FORM_ERROR.WRITE_IN_OBSERVER' }),
     );
@@ -102,11 +100,11 @@ describe('dispatcher commands', () => {
     const { root } = createDispatchTree({ type: 'string' });
     const failure = new Error('command listener');
     const seen = vi.fn();
-    subscribeSchemaNode(root, () => {
+    subscribeFieldNode(root, () => {
       throw failure;
     });
-    subscribeSchemaNode(root, seen);
-    expect(() => dispatchRequest(root, SchemaNodeRequestType.Focus)).toThrow(
+    subscribeFieldNode(root, seen);
+    expect(() => dispatchRequest(root, FieldNodeRequestType.Focus)).toThrow(
       failure,
     );
     expect(seen).toHaveBeenCalledTimes(1);
@@ -115,15 +113,15 @@ describe('dispatcher commands', () => {
   it('EVENT-008 delivers a value write caused by a queued command listener', () => {
     const { root } = createDispatchTree({ type: 'string' });
     const seen: string[] = [];
-    subscribeSchemaNode(root, (event) => {
-      if (event.type & SchemaNodeEventType.RequestFocus) {
+    subscribeFieldNode(root, (event) => {
+      if (event.type & FieldNodeEventType.RequestFocus) {
         seen.push('command');
         dispatchSetValue(root, 'feedback');
       }
-      if (event.type & SchemaNodeEventType.UpdateValue) seen.push('value');
+      if (event.type & FieldNodeEventType.UpdateValue) seen.push('value');
     });
     dispatchBatch(root, () =>
-      dispatchRequest(root, SchemaNodeRequestType.Focus),
+      dispatchRequest(root, FieldNodeRequestType.Focus),
     );
     expect(seen).toEqual(['command', 'value']);
   });
@@ -133,15 +131,15 @@ describe('dispatcher commands', () => {
     let active = false;
     let calls = 0;
     let reentered = false;
-    subscribeSchemaNode(root, (event) => {
-      if (!(event.type & SchemaNodeEventType.RequestFocus)) return;
+    subscribeFieldNode(root, (event) => {
+      if (!(event.type & FieldNodeEventType.RequestFocus)) return;
       if (active) reentered = true;
       active = true;
       calls += 1;
-      if (calls === 1) dispatchRequest(root, SchemaNodeRequestType.Focus);
+      if (calls === 1) dispatchRequest(root, FieldNodeRequestType.Focus);
       active = false;
     });
-    dispatchRequest(root, SchemaNodeRequestType.Focus);
+    dispatchRequest(root, FieldNodeRequestType.Focus);
     expect(calls).toBe(2);
     expect(reentered).toBe(false);
   });

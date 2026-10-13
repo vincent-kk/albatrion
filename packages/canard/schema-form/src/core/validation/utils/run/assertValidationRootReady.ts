@@ -1,5 +1,5 @@
 import { SchemaFormError, VALIDATOR_COMPILE_FAILED } from '../../../../errors';
-import type { SchemaNodeRecord } from '../../../record';
+import type { FieldNodeRecord } from '../../../record';
 import type { ValidateFunction } from '../../type';
 import { readValidationEntry } from '../cache/readValidationEntry';
 import { isValidator } from '../guard/isValidator';
@@ -11,7 +11,7 @@ import { recentReleaseList } from '../lifetime/recentReleaseList';
  * @returns Shared compiled validator, or null if none was selected.
  * @throws VALIDATOR_COMPILE_FAILED while the previous tree is still untouched.
  */
-export const assertValidationRootReady = <Self extends SchemaNodeRecord<Self>>(
+export const assertValidationRootReady = <Self extends FieldNodeRecord<Self>>(
   node: Self,
 ): ValidateFunction | null => {
   const root = node.rootNode;

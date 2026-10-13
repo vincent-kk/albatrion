@@ -23,4 +23,4 @@
 ### Never do
 
 - 선언 순서로 변환 우선순위를 정하거나 원본·경고등을 직접 쓰지 않습니다(NODE-006·056, WRITE-093).
-- behaviors 뿌리·settle·SchemaNode·레거시를 가져오지 않습니다(NODE-009, LANDING-159).
+- behaviors 뿌리·settle·FieldNode·레거시를 가져오지 않습니다(NODE-009, LANDING-159).

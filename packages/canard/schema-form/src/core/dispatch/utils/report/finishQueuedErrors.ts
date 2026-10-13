@@ -1,6 +1,6 @@
 import { SchemaFormError } from '../../../../errors';
 import type { FormErrorRecord } from '../../../../errors';
-import type { SchemaNodeRuntime } from '../../../record';
+import type { FieldNodeRuntime } from '../../../record';
 import { bundleChainErrors } from './bundleChainErrors';
 import { collectChainRecords } from './collectChainRecords';
 import { deliverChainRecords } from './deliverChainRecords';
@@ -15,11 +15,11 @@ import { deliverChainRecords } from './deliverChainRecords';
  */
 export const finishQueuedErrors = (
   runtime: Pick<
-    SchemaNodeRuntime<unknown>,
+    FieldNodeRuntime<unknown>,
     'errorReporter' | 'reportingErrors' | 'reportedGuardFailures'
   >,
   errors: readonly unknown[],
-  occurrences: NonNullable<SchemaNodeRuntime<unknown>['chainOccurrences']>,
+  occurrences: NonNullable<FieldNodeRuntime<unknown>['chainOccurrences']>,
   caller: boolean,
 ): void => {
   const original = bundleChainErrors(errors);

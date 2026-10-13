@@ -1,6 +1,6 @@
 import { isArray } from '@winglet/common-utils/filter';
 
-import type { SchemaNodeRecord } from '../../../record';
+import type { FieldNodeRecord } from '../../../record';
 import type { SettlementContext } from '../../type';
 import { markWrite } from '../write/markWrite';
 import { HostLatent } from './HostLatent';
@@ -12,7 +12,7 @@ import { HostLatent } from './HostLatent';
  * @param context - Calculation work whose dirty paths must be updated
  * @returns Nothing; descendants restore their own entries separately
  */
-export const restoreLatentState = <Self extends SchemaNodeRecord<Self>>(
+export const restoreLatentState = <Self extends FieldNodeRecord<Self>>(
   node: Self,
   value: unknown,
   context: SettlementContext<Self>,

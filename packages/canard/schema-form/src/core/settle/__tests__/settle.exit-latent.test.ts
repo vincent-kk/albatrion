@@ -2,7 +2,7 @@ import { describe, expect, it, vi } from 'vitest';
 
 import type { BlueprintSchema } from '../../blueprint';
 import { SetValueOption } from '../../types/value';
-import { loadSchemaNodeAtMount, writeSchemaNode } from '../index';
+import { loadFieldNodeAtMount, writeFieldNode } from '../index';
 import { createTestTree } from './fixtures/createTestTree';
 
 describe('latent descendant exit policies', () => {
@@ -26,14 +26,14 @@ describe('latent descendant exit policies', () => {
           },
         };
       const { root } = createTestTree({ type: 'object', properties });
-      loadSchemaNodeAtMount(
+      loadFieldNodeAtMount(
         root,
         { flag: true, secret: 'held' },
         SetValueOption.Overwrite,
       );
       const parse = vi.spyOn(JSON, 'parse');
       try {
-        writeSchemaNode(
+        writeFieldNode(
           root.structure!.flag,
           false,
           'input',
@@ -64,12 +64,12 @@ describe('latent descendant exit policies', () => {
         },
       },
     });
-    loadSchemaNodeAtMount(
+    loadFieldNodeAtMount(
       root,
       { flag: true, clear: false, secret: 'held' },
       SetValueOption.Overwrite,
     );
-    writeSchemaNode(
+    writeFieldNode(
       root,
       { flag: false, clear: true },
       'callerPartial',
@@ -96,18 +96,18 @@ describe('latent descendant exit policies', () => {
         },
       },
     });
-    loadSchemaNodeAtMount(
+    loadFieldNodeAtMount(
       root,
       { flag: true, clear: false, secret: 'held' },
       SetValueOption.Overwrite,
     );
-    writeSchemaNode(
+    writeFieldNode(
       root.structure!.clear,
       true,
       'input',
       SetValueOption.Overwrite,
     );
-    writeSchemaNode(
+    writeFieldNode(
       root.structure!.flag,
       false,
       'input',
@@ -148,12 +148,12 @@ describe('latent descendant exit policies', () => {
         },
       },
     });
-    loadSchemaNodeAtMount(
+    loadFieldNodeAtMount(
       root,
       { show: true, outer: { kind: 'a', value: 'held' } },
       SetValueOption.Overwrite,
     );
-    writeSchemaNode(
+    writeFieldNode(
       root.structure!.outer.structure!.kind,
       'b',
       'input',
@@ -162,7 +162,7 @@ describe('latent descendant exit policies', () => {
     expect(
       root.runtime.latentRaw.get(JSON.stringify(['/outer/value', 'string'])),
     ).toBe('held');
-    writeSchemaNode(
+    writeFieldNode(
       root.structure!.show,
       false,
       'input',
@@ -197,7 +197,7 @@ describe('latent descendant exit policies', () => {
         },
       },
     });
-    loadSchemaNodeAtMount(
+    loadFieldNodeAtMount(
       root,
       {
         show: true,
@@ -208,7 +208,7 @@ describe('latent descendant exit policies', () => {
       },
       SetValueOption.Overwrite,
     );
-    writeSchemaNode(
+    writeFieldNode(
       root.structure!.branch.structure!.gate,
       false,
       'input',
@@ -222,7 +222,7 @@ describe('latent descendant exit policies', () => {
         key.startsWith('["/branch/secret",'),
       ),
     ).toBe(false);
-    writeSchemaNode(
+    writeFieldNode(
       root.structure!.show,
       false,
       'input',

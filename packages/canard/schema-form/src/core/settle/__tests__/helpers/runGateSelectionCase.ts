@@ -1,7 +1,7 @@
 import type { Blueprint } from '../../../blueprint';
 import { SetValueOption } from '../../../types/value';
-import { loadSchemaNodeAtMount } from '../../utils/load/loadSchemaNodeAtMount';
-import { writeSchemaNode } from '../../utils/write/writeSchemaNode';
+import { loadFieldNodeAtMount } from '../../utils/load/loadFieldNodeAtMount';
+import { writeFieldNode } from '../../utils/write/writeFieldNode';
 import type { PlainNode } from '../fixtures/createPlainNode';
 import { createTestTree } from '../fixtures/createTestTree';
 import type { gateSelectionCases } from '../fixtures/gateSelectionCases';
@@ -58,7 +58,7 @@ export const runGateSelectionCase = (
   };
   let failure: unknown;
   try {
-    loadSchemaNodeAtMount(root, fixture.input, SetValueOption.Overwrite);
+    loadFieldNodeAtMount(root, fixture.input, SetValueOption.Overwrite);
   } catch (cause) {
     failure = cause;
   }
@@ -71,7 +71,7 @@ export const runGateSelectionCase = (
         target.structure![segment.replace(/~1/g, '/').replace(/~0/g, '~')];
     failure = undefined;
     try {
-      writeSchemaNode(
+      writeFieldNode(
         target,
         write.value,
         write.merge ? 'callerPartial' : 'callerReplace',

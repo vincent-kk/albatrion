@@ -4,12 +4,12 @@ import type { BlueprintChildEntry, BlueprintNode } from '../../../blueprint';
 import { EMPTY_REVISION_LEDGER } from '../../../record';
 import type {
   Behavior,
-  SchemaNodeRecord,
-  SchemaNodeRuntime,
+  FieldNodeRecord,
+  FieldNodeRuntime,
 } from '../../../record';
 
-/** Plain record used by settlement tests, without the later SchemaNode class. */
-export interface PlainNode extends SchemaNodeRecord<PlainNode> {}
+/** Plain record used by settlement tests, without the later FieldNode class. */
+export interface PlainNode extends FieldNodeRecord<PlainNode> {}
 
 /**
  * Create one record through the same row selection the later factory uses.
@@ -22,7 +22,7 @@ export interface PlainNode extends SchemaNodeRecord<PlainNode> {}
 export const createPlainNode = (
   entry: BlueprintChildEntry | BlueprintNode,
   parent: PlainNode | null,
-  runtime: SchemaNodeRuntime<PlainNode>,
+  runtime: FieldNodeRuntime<PlainNode>,
   visits: string[] = [],
 ): PlainNode => {
   const template = 'node' in entry ? entry.node : entry;

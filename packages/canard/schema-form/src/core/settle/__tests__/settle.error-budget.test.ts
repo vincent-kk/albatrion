@@ -4,7 +4,7 @@ import { isArray } from '@winglet/common-utils/filter';
 
 import { SchemaFormError } from '../../../errors';
 import { SetValueOption } from '../../types/value';
-import { loadSchemaNodeAtMount } from '../index';
+import { loadFieldNodeAtMount } from '../index';
 import { createTestTree } from './fixtures/createTestTree';
 
 // filid:contract settle-budget
@@ -25,7 +25,7 @@ describe('expression failures with a derive budget', () => {
     });
     let caught: unknown;
     try {
-      loadSchemaNodeAtMount(
+      loadFieldNodeAtMount(
         root,
         { left: 0, right: 0 },
         SetValueOption.Overwrite,

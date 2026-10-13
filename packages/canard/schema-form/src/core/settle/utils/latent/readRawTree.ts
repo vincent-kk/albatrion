@@ -3,7 +3,7 @@ import { hasOwnProperty } from '@winglet/common-utils/lib';
 import { escapeSegment } from '@winglet/json/pointer';
 
 import { getItemEntry } from '../../../blueprint';
-import type { SchemaNodeRecord } from '../../../record';
+import type { FieldNodeRecord } from '../../../record';
 import type { SettlementContext } from '../../type';
 import { isPlain } from '../write/isPlain';
 import { readAbsentSlotSource } from './readAbsentSlotSource';
@@ -16,7 +16,7 @@ import { readLatentSlotSource } from './readLatentSlotSource';
  * @returns Raw tree, retaining every array slot; undefined for an empty-source
  * object or leaf
  */
-export const readRawTree = <Self extends SchemaNodeRecord<Self>>(
+export const readRawTree = <Self extends FieldNodeRecord<Self>>(
   node: Self,
   context: SettlementContext<Self>,
 ): unknown => {

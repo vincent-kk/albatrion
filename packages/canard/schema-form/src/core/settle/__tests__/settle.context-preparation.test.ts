@@ -1,8 +1,8 @@
 import { afterEach, expect, it, vi } from 'vitest';
 
-import { SchemaNodeEventType } from '../../record';
+import { FieldNodeEventType } from '../../record';
 import { SetValueOption } from '../../types/value';
-import { loadSchemaNodeAtMount, writeSchemaNode } from '../index';
+import { loadFieldNodeAtMount, writeFieldNode } from '../index';
 import * as references from '../utils/compute/getVirtualReferenceIndex';
 import { createSettlementContext } from '../utils/settlement/createSettlementContext';
 import * as caps from '../utils/transition/getTransitionCap';
@@ -24,11 +24,11 @@ it('does not prepare absent gates or virtual references on first or later writes
       sibling: { type: 'number', default: 3 },
     },
   });
-  loadSchemaNodeAtMount(root, { value: 'before' }, SetValueOption.Overwrite);
+  loadFieldNodeAtMount(root, { value: 'before' }, SetValueOption.Overwrite);
   const cap = vi.spyOn(caps, 'getTransitionCap');
   const reference = vi.spyOn(references, 'getVirtualReferenceIndex');
   for (const value of ['first', 'later']) {
-    writeSchemaNode(
+    writeFieldNode(
       root.structure!.value,
       value,
       'input',
@@ -119,7 +119,7 @@ it('preserves output identity, payloads, revisions, commits and call-local flags
       sibling: { type: 'number', default: 3 },
     },
   });
-  loadSchemaNodeAtMount(root, { value: 'before' }, SetValueOption.Overwrite);
+  loadFieldNodeAtMount(root, { value: 'before' }, SetValueOption.Overwrite);
   const leaf = root.structure!.value,
     sibling = root.structure!.sibling;
   const siblingRevision = sibling.revisionLedger;
@@ -129,8 +129,8 @@ it('preserves output identity, payloads, revisions, commits and call-local flags
       node.pendingDelivery = undefined;
     root.runtime.deliveries?.clear();
     const value = index === 0 ? 'first' : 'later';
-    const revision = leaf.revisionLedger[SchemaNodeEventType.UpdateValue] ?? 0;
-    writeSchemaNode(
+    const revision = leaf.revisionLedger[FieldNodeEventType.UpdateValue] ?? 0;
+    writeFieldNode(
       leaf,
       value,
       'input',
@@ -140,12 +140,12 @@ it('preserves output identity, payloads, revisions, commits and call-local flags
     );
     expect(root.emit).toEqual({ value, sibling: 3 });
     expect(
-      leaf.pendingDelivery?.payload?.[SchemaNodeEventType.UpdateValue],
+      leaf.pendingDelivery?.payload?.[FieldNodeEventType.UpdateValue],
     ).toEqual({ previous, current: value });
     expect(
-      leaf.pendingDelivery?.options?.[SchemaNodeEventType.UpdateValue],
+      leaf.pendingDelivery?.options?.[FieldNodeEventType.UpdateValue],
     ).toEqual({ source: 'input' });
-    expect(leaf.revisionLedger[SchemaNodeEventType.UpdateValue]).toBe(
+    expect(leaf.revisionLedger[FieldNodeEventType.UpdateValue]).toBe(
       revision + 1,
     );
     expect(sibling.revisionLedger).toBe(siblingRevision);
@@ -159,7 +159,7 @@ it('preserves output identity, payloads, revisions, commits and call-local flags
     previous = value;
   }
   const emit = root.emit;
-  writeSchemaNode(leaf, previous, 'input', SetValueOption.Overwrite);
+  writeFieldNode(leaf, previous, 'input', SetValueOption.Overwrite);
   expect(root.emit).toBe(emit);
 });
 
@@ -178,16 +178,16 @@ it('retains preparation and cleanup for actual gates, derivation and errors', ()
       },
     },
   });
-  loadSchemaNodeAtMount(root, { source: 1 }, SetValueOption.Overwrite);
+  loadFieldNodeAtMount(root, { source: 1 }, SetValueOption.Overwrite);
   const cap = vi.spyOn(caps, 'getTransitionCap');
   const reference = vi.spyOn(references, 'getVirtualReferenceIndex');
   const source = root.structure!.source;
-  writeSchemaNode(source, 2, 'input', SetValueOption.Overwrite);
+  writeFieldNode(source, 2, 'input', SetValueOption.Overwrite);
   expect(root.emit).toEqual({ source: 2, derived: 3, gated: 'filled' });
   expect(cap).toHaveBeenCalled();
   expect(reference).toHaveBeenCalled();
   expect(() =>
-    writeSchemaNode(source, -1, 'input', SetValueOption.Overwrite),
+    writeFieldNode(source, -1, 'input', SetValueOption.Overwrite),
   ).toThrow();
   const scratch = root.runtime.settlementScratch!;
   expect(scratch.inUse).toBe(false);
@@ -195,7 +195,7 @@ it('retains preparation and cleanup for actual gates, derivation and errors', ()
     if (container instanceof Map || container instanceof Set)
       expect(container.size).toBe(0);
   expect(() =>
-    writeSchemaNode(source, 3, 'input', SetValueOption.Overwrite),
+    writeFieldNode(source, 3, 'input', SetValueOption.Overwrite),
   ).not.toThrow();
   expect(root.runtime.settlementScratch).toBe(scratch);
   expect(root.emit).toEqual({ source: 3, derived: 4, gated: 'filled' });

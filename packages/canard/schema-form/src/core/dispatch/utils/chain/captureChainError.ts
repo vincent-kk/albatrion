@@ -1,4 +1,4 @@
-import type { SchemaNodeRuntime } from '../../../record';
+import type { FieldNodeRuntime } from '../../../record';
 
 /**
  * Retain a failure for both final throwing and ordered record delivery.
@@ -7,7 +7,7 @@ import type { SchemaNodeRuntime } from '../../../record';
  * @returns Nothing; the chain owns the retained occurrence
  */
 export const captureChainError = <Self>(
-  runtime: SchemaNodeRuntime<Self>,
+  runtime: FieldNodeRuntime<Self>,
   error: unknown,
 ): void => {
   runtime.chainErrors?.push(error);

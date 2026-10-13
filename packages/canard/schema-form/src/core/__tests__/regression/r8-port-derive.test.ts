@@ -1,9 +1,9 @@
 import { describe, expect, it } from 'vitest';
 
-import { makeSchemaNodeTree } from '../makeSchemaNodeTree';
+import { makeFieldNodeTree } from '../makeFieldNodeTree';
 
 const derivedTree = (fragments = false) =>
-  makeSchemaNodeTree({
+  makeFieldNodeTree({
     type: 'object',
     properties: {
       a: { type: 'number' },
@@ -31,7 +31,7 @@ const derivedTree = (fragments = false) =>
   }).root;
 
 const injectionTree = () =>
-  makeSchemaNodeTree(
+  makeFieldNodeTree(
     {
       type: 'object',
       properties: {
@@ -48,7 +48,7 @@ const injectionTree = () =>
   ).root;
 
 const x16Tree = (withDefault: boolean) =>
-  makeSchemaNodeTree({
+  makeFieldNodeTree({
     type: 'object',
     properties: {
       t: { type: 'string' },
@@ -214,7 +214,7 @@ describe('round8 derive and injection observations', () => {
     });
   }
   it('r8-port.mjs:200 WRITE-090 P2 idemDefault stays empty on replacement', () => {
-    const { root } = makeSchemaNodeTree({
+    const { root } = makeFieldNodeTree({
       type: 'object',
       properties: {
         x: { type: 'string', default: 'D' },

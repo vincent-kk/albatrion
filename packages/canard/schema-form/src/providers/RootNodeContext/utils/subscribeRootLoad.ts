@@ -1,4 +1,4 @@
-import { SchemaNodeEventType } from '@/schema-form/core';
+import { FieldNodeEventType } from '@/schema-form/core';
 
 import type { RootLoad, RootLoadStore } from '../type';
 import { reportRootLoadValidation } from './reportRootLoadValidation';
@@ -15,8 +15,8 @@ export const subscribeRootLoad = (
 ): (() => void) =>
   load.root?.subscribe(({ type }) => {
     if (!load.ready || !load.root) return;
-    if (type & SchemaNodeEventType.UpdateGlobalError)
+    if (type & FieldNodeEventType.UpdateGlobalError)
       reportRootLoadValidation(load, store);
-    if (type & SchemaNodeEventType.UpdateDiagnostics)
+    if (type & FieldNodeEventType.UpdateDiagnostics)
       load.props.onDiagnosticsChange?.(load.root.diagnostics);
   }) ?? (() => {});

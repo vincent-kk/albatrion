@@ -1,5 +1,5 @@
 import type { BlueprintNode } from '../../../blueprint';
-import type { SchemaNodeRecord } from '../../../record';
+import type { FieldNodeRecord } from '../../../record';
 
 /**
  * Locate a latent occurrence in the blueprint's child order at every depth.
@@ -8,7 +8,7 @@ import type { SchemaNodeRecord } from '../../../record';
  * @param template - Child template at the first edge
  * @returns Root-to-leaf document positions for this occurrence
  */
-export const getLatentOrder = <Self extends SchemaNodeRecord<Self>>(
+export const getLatentOrder = <Self extends FieldNodeRecord<Self>>(
   parent: Self | null,
   name: string,
   template: BlueprintNode,

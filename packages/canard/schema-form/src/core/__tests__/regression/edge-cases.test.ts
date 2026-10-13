@@ -1,11 +1,11 @@
 import { describe, expect, it } from 'vitest';
 
-import { makeSchemaNodeTree } from '../makeSchemaNodeTree';
+import { makeFieldNodeTree } from '../makeFieldNodeTree';
 
 // filid:contract factory-single-path
 describe('round9 edge cases with PR-2 mechanisms', () => {
   const fragmentTree = () =>
-    makeSchemaNodeTree({
+    makeFieldNodeTree({
       type: 'object',
       properties: {
         on: { type: 'boolean' },
@@ -39,7 +39,7 @@ describe('round9 edge cases with PR-2 mechanisms', () => {
   });
 
   const elseTree = () =>
-    makeSchemaNodeTree({
+    makeFieldNodeTree({
       type: 'object',
       properties: {
         kind: { type: 'string' },
@@ -67,7 +67,7 @@ describe('round9 edge cases with PR-2 mechanisms', () => {
   });
 
   it('edge-cases.mjs:84 fills an object default before its child default', () => {
-    const { root } = makeSchemaNodeTree({
+    const { root } = makeFieldNodeTree({
       type: 'object',
       properties: {
         group: {
@@ -83,7 +83,7 @@ describe('round9 edge cases with PR-2 mechanisms', () => {
   });
 
   const overlayTree = () =>
-    makeSchemaNodeTree({
+    makeFieldNodeTree({
       type: 'object',
       properties: {
         on: { type: 'boolean' },
@@ -115,7 +115,7 @@ describe('round9 edge cases with PR-2 mechanisms', () => {
   });
 
   it('edge-cases.mjs:65 lets controls.default beat ordinary default', () => {
-    const { root } = makeSchemaNodeTree({
+    const { root } = makeFieldNodeTree({
       type: 'object',
       properties: {
         x: {
@@ -130,7 +130,7 @@ describe('round9 edge cases with PR-2 mechanisms', () => {
   });
 
   it('edge-cases.mjs:65 keeps controls.default priority under a disabled parent', () => {
-    const { root } = makeSchemaNodeTree({
+    const { root } = makeFieldNodeTree({
       type: 'object',
       disabled: true,
       properties: {

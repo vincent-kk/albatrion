@@ -3,9 +3,9 @@ import { afterEach, expect, expectTypeOf, it, vi } from 'vitest';
 import {
   type FieldInputProps,
   type FieldInputTestObject,
+  type FieldNodeType,
   Form,
   type Hint,
-  type SchemaNodeType,
 } from '@/schema-form';
 
 import { type FormHarness, renderForm } from '../renderForm';
@@ -116,7 +116,7 @@ it('LANDING-182 number selection includes integer and schemaType selects integer
 
 it('LANDING-185 test objects accept node kinds and a separate schemaType', async () => {
   expectTypeOf<NonNullable<FieldInputTestObject['type']>>().toEqualTypeOf<
-    SchemaNodeType | SchemaNodeType[]
+    FieldNodeType | FieldNodeType[]
   >();
   const Input = ({ path }: FieldInputProps) => (
     <input id={path} data-union="yes" />

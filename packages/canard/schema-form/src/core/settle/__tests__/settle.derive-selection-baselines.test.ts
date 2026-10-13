@@ -1,8 +1,8 @@
 import { describe, expect, it, vi } from 'vitest';
 
-import { SchemaNodeState } from '../../types/state';
+import { FieldNodeState } from '../../types/state';
 import { SetValueOption } from '../../types/value';
-import { loadSchemaNodeAtMount, writeSchemaNode } from '../index';
+import { loadFieldNodeAtMount, writeFieldNode } from '../index';
 import { createTestTree } from './fixtures/createTestTree';
 
 // filid:contract settle-derive
@@ -28,15 +28,15 @@ describe('newly selected declaration baselines', () => {
         },
       },
     });
-    loadSchemaNodeAtMount(
+    loadFieldNodeAtMount(
       root,
       { enabled: false, s: 'S1', t: 'T1', x: '' },
       SetValueOption.Overwrite,
     );
     const key = JSON.stringify(['/x', 'string']);
     const before = root.runtime.committedDeclarationIds?.get(key);
-    writeSchemaNode(root.structure!.x, 'm', 'input', SetValueOption.Overwrite);
-    writeSchemaNode(
+    writeFieldNode(root.structure!.x, 'm', 'input', SetValueOption.Overwrite);
+    writeFieldNode(
       root.structure!.enabled,
       true,
       'input',
@@ -46,7 +46,7 @@ describe('newly selected declaration baselines', () => {
     expect(after?.length).toBe(before?.length);
     expect(after).not.toEqual(before);
     expect(root.structure?.x?.raw).toBe('m');
-    writeSchemaNode(root.structure!.s, 'S2', 'input', SetValueOption.Overwrite);
+    writeFieldNode(root.structure!.s, 'S2', 'input', SetValueOption.Overwrite);
     expect(root.structure?.x?.raw).toBe('S2');
   });
 
@@ -65,21 +65,21 @@ describe('newly selected declaration baselines', () => {
         },
       },
     });
-    loadSchemaNodeAtMount(
+    loadFieldNodeAtMount(
       root,
       { enabled: false, s: 'S1', x: 'own' },
       SetValueOption.Overwrite,
     );
-    writeSchemaNode(
+    writeFieldNode(
       root.structure!.enabled,
       true,
       'input',
       SetValueOption.Overwrite,
     );
     expect(root.structure?.x?.raw).toBe('own');
-    writeSchemaNode(root.structure!.s, 'S2', 'input', SetValueOption.Overwrite);
+    writeFieldNode(root.structure!.s, 'S2', 'input', SetValueOption.Overwrite);
     expect(root.structure?.x?.raw).toBe('S2');
-    writeSchemaNode(root.structure!.s, 'S3', 'input', SetValueOption.Overwrite);
+    writeFieldNode(root.structure!.s, 'S3', 'input', SetValueOption.Overwrite);
     expect(root.structure?.x?.raw).toBe('S3');
   });
 
@@ -106,19 +106,19 @@ describe('newly selected declaration baselines', () => {
         },
       },
     });
-    loadSchemaNodeAtMount(
+    loadFieldNodeAtMount(
       root,
       { H: { enabled: false, s: 'S1', x: 'own' } },
       SetValueOption.Overwrite,
     );
-    writeSchemaNode(
+    writeFieldNode(
       root.structure!.H.structure!.enabled,
       true,
       'input',
       SetValueOption.Overwrite,
     );
     expect(root.structure?.H?.structure?.x?.raw).toBe('own');
-    writeSchemaNode(
+    writeFieldNode(
       root.structure!.H.structure!.s,
       'S2',
       'input',
@@ -149,19 +149,19 @@ describe('newly selected declaration baselines', () => {
         },
       ],
     });
-    loadSchemaNodeAtMount(
+    loadFieldNodeAtMount(
       root,
       { enabled: false, s: 'S1', x: 'own' },
       SetValueOption.Overwrite,
     );
-    writeSchemaNode(
+    writeFieldNode(
       root.structure!.enabled,
       true,
       'input',
       SetValueOption.Overwrite,
     );
     expect(root.structure?.x?.raw).toBe('own');
-    writeSchemaNode(root.structure!.s, 'S2', 'input', SetValueOption.Overwrite);
+    writeFieldNode(root.structure!.s, 'S2', 'input', SetValueOption.Overwrite);
     expect(root.structure?.x?.raw).toBe('S2');
   });
 
@@ -186,19 +186,19 @@ describe('newly selected declaration baselines', () => {
         { properties: { kind: { type: 'string', const: 'b' } } },
       ],
     });
-    loadSchemaNodeAtMount(
+    loadFieldNodeAtMount(
       root,
       { kind: 'b', s: 'S1', x: 'own' },
       SetValueOption.Overwrite,
     );
-    writeSchemaNode(
+    writeFieldNode(
       root.structure!.kind,
       'a',
       'input',
       SetValueOption.Overwrite,
     );
     expect(root.structure?.x?.raw).toBe('own');
-    writeSchemaNode(root.structure!.s, 'S2', 'input', SetValueOption.Overwrite);
+    writeFieldNode(root.structure!.s, 'S2', 'input', SetValueOption.Overwrite);
     expect(root.structure?.x?.raw).toBe('S2');
   });
 
@@ -217,19 +217,19 @@ describe('newly selected declaration baselines', () => {
         },
       },
     });
-    loadSchemaNodeAtMount(
+    loadFieldNodeAtMount(
       root,
       { enabled: false, c: false, x: 'keep' },
       SetValueOption.Overwrite,
     );
-    writeSchemaNode(
+    writeFieldNode(
       root.structure!.enabled,
       true,
       'input',
       SetValueOption.Overwrite,
     );
     expect(root.structure?.x?.raw).toBe('keep');
-    writeSchemaNode(root.structure!.c, true, 'input', SetValueOption.Overwrite);
+    writeFieldNode(root.structure!.c, true, 'input', SetValueOption.Overwrite);
     expect(root.structure?.x?.raw).toBeUndefined();
   });
 
@@ -248,26 +248,26 @@ describe('newly selected declaration baselines', () => {
         },
       },
     });
-    loadSchemaNodeAtMount(
+    loadFieldNodeAtMount(
       root,
       { enabled: false, c: false, x: 'keep' },
       SetValueOption.Overwrite,
     );
     const target = root.structure!.x;
     target.interactionState = {
-      [SchemaNodeState.Dirty]: true,
-      [SchemaNodeState.Touched]: true,
+      [FieldNodeState.Dirty]: true,
+      [FieldNodeState.Touched]: true,
     };
-    writeSchemaNode(
+    writeFieldNode(
       root.structure!.enabled,
       true,
       'input',
       SetValueOption.Overwrite,
     );
-    expect(target.interactionState[SchemaNodeState.Dirty]).toBe(true);
-    writeSchemaNode(root.structure!.c, true, 'input', SetValueOption.Overwrite);
-    expect(target.interactionState[SchemaNodeState.Dirty]).toBe(false);
-    expect(target.interactionState[SchemaNodeState.Touched]).toBe(false);
+    expect(target.interactionState[FieldNodeState.Dirty]).toBe(true);
+    writeFieldNode(root.structure!.c, true, 'input', SetValueOption.Overwrite);
+    expect(target.interactionState[FieldNodeState.Dirty]).toBe(false);
+    expect(target.interactionState[FieldNodeState.Touched]).toBe(false);
   });
 
   it('FRAGMENT-050 if/then shared injectTo fires on its next source edge', () => {
@@ -286,12 +286,12 @@ describe('newly selected declaration baselines', () => {
         },
       },
     });
-    loadSchemaNodeAtMount(
+    loadFieldNodeAtMount(
       root,
       { enabled: false, src: 'A', out: 'manual' },
       SetValueOption.Overwrite,
     );
-    writeSchemaNode(
+    writeFieldNode(
       root.structure!.enabled,
       true,
       'input',
@@ -299,12 +299,7 @@ describe('newly selected declaration baselines', () => {
     );
     expect(root.structure?.out?.raw).toBe('manual');
     expect(injectTo).not.toHaveBeenCalled();
-    writeSchemaNode(
-      root.structure!.src,
-      'B',
-      'input',
-      SetValueOption.Overwrite,
-    );
+    writeFieldNode(root.structure!.src, 'B', 'input', SetValueOption.Overwrite);
     expect(injectTo).toHaveBeenCalledWith('B', expect.any(Object));
     expect(root.structure?.out?.raw).toBe('from-B');
   });

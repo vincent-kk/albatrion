@@ -1,7 +1,7 @@
 import { hasOwnProperty } from '@winglet/common-utils/lib';
 import { unescapeSegment } from '@winglet/json/pointer';
 
-import type { SchemaNodeRecord } from '../../../record';
+import type { FieldNodeRecord } from '../../../record';
 import type { SettlementContext } from '../../type';
 
 /**
@@ -10,7 +10,7 @@ import type { SettlementContext } from '../../type';
  * @param context - Absolute dirty paths for this write
  * @returns Each live direct child on a dirty path once
  */
-export const dirtyChildren = <Self extends SchemaNodeRecord<Self>>(
+export const dirtyChildren = <Self extends FieldNodeRecord<Self>>(
   node: Self,
   context: SettlementContext<Self>,
 ): Self[] => {

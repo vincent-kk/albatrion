@@ -1,14 +1,14 @@
 import { describe, expect, it } from 'vitest';
 
-import { SchemaNodeEventType } from '../../record';
+import { FieldNodeEventType } from '../../record';
 import { isSameDeliveryValue } from '../../settle/utils/commit/utils/isSameDeliveryValue';
 import {
   dispatchMount,
   dispatchRemove,
   dispatchSetValue,
-  subscribeSchemaNode,
+  subscribeFieldNode,
 } from '../index';
-import { readSchemaNodeRevision } from '../utils/read/readSchemaNodeRevision';
+import { readFieldNodeRevision } from '../utils/read/readFieldNodeRevision';
 import { createDispatchTree } from './fixtures/createDispatchTree';
 import type { DispatchTestNode } from './fixtures/createDispatchTree';
 
@@ -30,15 +30,15 @@ describe('66C-01 SETTLE-043 sameValue judges delivery changes', () => {
     const flag = child(root, 'flag');
     if (!c || !flag) throw new Error('Mounted fields are missing');
     const types: number[] = [];
-    subscribeSchemaNode(c, (event) => {
+    subscribeFieldNode(c, (event) => {
       types.push(event.type);
     });
-    const before = readSchemaNodeRevision(c, SchemaNodeEventType.UpdateValue);
+    const before = readFieldNodeRevision(c, FieldNodeEventType.UpdateValue);
     dispatchSetValue(flag, true);
-    expect(types.some((type) => type & SchemaNodeEventType.UpdateValue)).toBe(
+    expect(types.some((type) => type & FieldNodeEventType.UpdateValue)).toBe(
       false,
     );
-    expect(readSchemaNodeRevision(c, SchemaNodeEventType.UpdateValue)).toBe(
+    expect(readFieldNodeRevision(c, FieldNodeEventType.UpdateValue)).toBe(
       before,
     );
   });
@@ -55,21 +55,18 @@ describe('66C-01 SETTLE-043 sameValue judges delivery changes', () => {
     const item = list?.children?.[1];
     if (!list || !item) throw new Error('Mounted item is missing');
     const types: number[] = [];
-    subscribeSchemaNode(item, (event) => {
+    subscribeFieldNode(item, (event) => {
       types.push(event.type);
     });
-    const before = readSchemaNodeRevision(
-      item,
-      SchemaNodeEventType.UpdateValue,
-    );
+    const before = readFieldNodeRevision(item, FieldNodeEventType.UpdateValue);
     dispatchRemove(list, 0);
-    expect(types.some((type) => type & SchemaNodeEventType.UpdatePath)).toBe(
+    expect(types.some((type) => type & FieldNodeEventType.UpdatePath)).toBe(
       true,
     );
-    expect(types.some((type) => type & SchemaNodeEventType.UpdateValue)).toBe(
+    expect(types.some((type) => type & FieldNodeEventType.UpdateValue)).toBe(
       false,
     );
-    expect(readSchemaNodeRevision(item, SchemaNodeEventType.UpdateValue)).toBe(
+    expect(readFieldNodeRevision(item, FieldNodeEventType.UpdateValue)).toBe(
       before,
     );
   });
@@ -87,14 +84,14 @@ describe('66C-01 SETTLE-043 sameValue judges delivery changes', () => {
     const watcher = child(root, 'w');
     if (!src || !watcher) throw new Error('Mounted fields are missing');
     const types: number[] = [];
-    subscribeSchemaNode(watcher, (event) => {
+    subscribeFieldNode(watcher, (event) => {
       types.push(event.type);
     });
     dispatchSetValue(src, 'b');
     expect(
-      types.some((type) => type & SchemaNodeEventType.UpdateComputedProperties),
+      types.some((type) => type & FieldNodeEventType.UpdateComputedProperties),
     ).toBe(true);
-    expect(types.some((type) => type & SchemaNodeEventType.UpdateValue)).toBe(
+    expect(types.some((type) => type & FieldNodeEventType.UpdateValue)).toBe(
       false,
     );
   });
@@ -130,15 +127,15 @@ describe('66C-01 SETTLE-043 sameValue judges delivery changes', () => {
     const watcher = child(rows?.children?.[1], 'w');
     if (!rows || !watcher) throw new Error('Mounted watcher is missing');
     const types: number[] = [];
-    subscribeSchemaNode(watcher, (event) => {
+    subscribeFieldNode(watcher, (event) => {
       types.push(event.type);
     });
     dispatchRemove(rows, 0);
-    expect(types.some((type) => type & SchemaNodeEventType.UpdatePath)).toBe(
+    expect(types.some((type) => type & FieldNodeEventType.UpdatePath)).toBe(
       true,
     );
     expect(
-      types.some((type) => type & SchemaNodeEventType.UpdateComputedProperties),
+      types.some((type) => type & FieldNodeEventType.UpdateComputedProperties),
     ).toBe(false);
   });
 });

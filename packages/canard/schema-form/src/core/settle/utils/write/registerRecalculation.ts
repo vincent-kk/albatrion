@@ -1,4 +1,4 @@
-import type { SchemaNodeRecord } from '../../../record';
+import type { FieldNodeRecord } from '../../../record';
 import type { SettlementContext } from '../../type';
 import { getGateRegistry } from '../gates/getGateRegistry';
 import { DirtyPathSet } from './DirtyPathSet';
@@ -9,7 +9,7 @@ import { getDependencyIndex } from './getDependencyIndex';
  * @param context - Marked write with its changed raw paths
  * @returns Nothing; extends its bounded dirty path set
  */
-export const registerRecalculation = <Self extends SchemaNodeRecord<Self>>(
+export const registerRecalculation = <Self extends FieldNodeRecord<Self>>(
   context: SettlementContext<Self>,
 ): void => {
   if (!context.hasGates && context.dirtyPaths instanceof DirtyPathSet)

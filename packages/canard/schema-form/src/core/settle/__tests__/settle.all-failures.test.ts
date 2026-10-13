@@ -6,7 +6,7 @@ import { SchemaFormError } from '../../../errors';
 import type { BlueprintSchema } from '../../blueprint';
 import { SetValueOption } from '../../types/value';
 import type { Validator } from '../../validation';
-import { writeSchemaNode } from '../index';
+import { writeFieldNode } from '../index';
 import { createTestTree } from './fixtures/createTestTree';
 
 const conflict: BlueprintSchema = {
@@ -81,7 +81,7 @@ describe('ERROR-004 ERROR-005 58C-01 all settle settlement failures', () => {
       const { root } = createTestTree(schema, validator);
       let caught: unknown;
       try {
-        writeSchemaNode(root, value, 'callerReplace', SetValueOption.Overwrite);
+        writeFieldNode(root, value, 'callerReplace', SetValueOption.Overwrite);
       } catch (error) {
         caught = error;
       }
@@ -111,7 +111,7 @@ describe('ERROR-004 ERROR-005 58C-01 all settle settlement failures', () => {
       validator,
     );
     expect(() =>
-      writeSchemaNode(
+      writeFieldNode(
         root,
         { a: { shared: 1 } },
         'callerReplace',

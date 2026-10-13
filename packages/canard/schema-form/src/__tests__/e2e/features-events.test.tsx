@@ -7,7 +7,7 @@ import {
   registerScenarioHandle,
 } from '@aileron/schema-form-scenarios';
 
-import { type JSONSchema, SchemaNodeEventType, ValidationMode } from '@/schema-form';
+import { type JSONSchema, FieldNodeEventType, ValidationMode } from '@/schema-form';
 
 import { renderForm } from '../renderForm';
 
@@ -32,7 +32,7 @@ const run = async (name: string) => {
   const paths = Array.from(form.container.querySelectorAll<HTMLElement>('[data-path]')).map((item) => item.dataset.path!);
   const stops = paths.flatMap((path) => {
     const node = form.node(path);
-    return node ? [node.subscribe((event) => { if (event.type & SchemaNodeEventType.UpdateValue) deliveries.push(path); })] : [];
+    return node ? [node.subscribe((event) => { if (event.type & FieldNodeEventType.UpdateValue) deliveries.push(path); })] : [];
   });
   const unregister = registerScenarioHandle(form.container, form.handle, {
     async execute(step) {

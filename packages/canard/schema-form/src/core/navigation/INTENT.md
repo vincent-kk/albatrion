@@ -23,4 +23,4 @@
 ### Never do
 
 - 잠복 원본을 탐색 결과의 노드로 되살리거나 정착·쓰기를 수행하지 않습니다(NODE-043·044).
-- 상위 `settle`·`SchemaNode` 또는 레거시를 가져오지 않습니다(NODE-016, LANDING-159).
+- 상위 `settle`·`FieldNode` 또는 레거시를 가져오지 않습니다(NODE-016, LANDING-159).

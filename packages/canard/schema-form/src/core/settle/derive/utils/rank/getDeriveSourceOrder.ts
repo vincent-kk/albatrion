@@ -1,4 +1,4 @@
-import type { SchemaNodeRecord } from '../../../../record';
+import type { FieldNodeRecord } from '../../../../record';
 import { getDeriveChildEntry } from './getDeriveChildEntry';
 
 /**
@@ -6,7 +6,7 @@ import { getDeriveChildEntry } from './getDeriveChildEntry';
  * @param source - Rule source in the current complete shape
  * @returns Root-to-source child positions
  */
-export const getDeriveSourceOrder = <Self extends SchemaNodeRecord<Self>>(
+export const getDeriveSourceOrder = <Self extends FieldNodeRecord<Self>>(
   source: Self,
 ): readonly number[] => {
   const order: number[] = [];

@@ -1,14 +1,14 @@
 import { describe, expect, it } from 'vitest';
 
-import { makeSchemaNodeTree } from '../../__tests__/makeSchemaNodeTree';
+import { makeFieldNodeTree } from '../../__tests__/makeFieldNodeTree';
 import { SetValueOption } from '../../types/value';
-import { writeSchemaNode } from '../index';
+import { writeFieldNode } from '../index';
 import { createTestTree } from './fixtures/createTestTree';
 
 // filid:contract settle-array
 describe('array settlement lifecycle', () => {
   it('35C-09 and WRITE-036 perish without exit latent or inactive entries', () => {
-    const { root, runtime } = makeSchemaNodeTree(
+    const { root, runtime } = makeFieldNodeTree(
       { type: 'array', items: { type: 'string' } },
       { snapshot: ['a', 'b'] },
     );
@@ -30,7 +30,7 @@ describe('array settlement lifecycle', () => {
   });
 
   it('35C-10 captures an inactive array as one host latent and recreates items', () => {
-    const { root, runtime } = makeSchemaNodeTree({
+    const { root, runtime } = makeFieldNodeTree({
       type: 'object',
       properties: {
         flag: { type: 'boolean' },
@@ -67,7 +67,7 @@ describe('array settlement lifecycle', () => {
   });
 
   it('38C-02 captures raw item trees and folds latent children into one host', () => {
-    const { root, runtime } = makeSchemaNodeTree({
+    const { root, runtime } = makeFieldNodeTree({
       type: 'object',
       properties: {
         showHost: { type: 'boolean' },
@@ -152,7 +152,7 @@ describe('array settlement lifecycle', () => {
   });
 
   it('47C-01 keeps nested array slot counts across host exit and re-entry', () => {
-    const { root } = makeSchemaNodeTree({
+    const { root } = makeFieldNodeTree({
       type: 'object',
       properties: {
         showHost: { type: 'boolean' },
@@ -181,7 +181,7 @@ describe('array settlement lifecycle', () => {
   });
 
   it('35C-09 drops latent and declaration paths below a perished item', () => {
-    const { root, runtime } = makeSchemaNodeTree(
+    const { root, runtime } = makeFieldNodeTree(
       {
         type: 'array',
         items: {
@@ -220,7 +220,7 @@ describe('array settlement lifecycle', () => {
   });
 
   it('35C-10 retains a gated-out item source when its array host exits', () => {
-    const { root } = makeSchemaNodeTree({
+    const { root } = makeFieldNodeTree({
       type: 'object',
       properties: {
         showItem: { type: 'boolean' },
@@ -243,7 +243,7 @@ describe('array settlement lifecycle', () => {
   });
 
   it('35C-10 preserves a gated-out object item through whole host latent', () => {
-    const { root } = makeSchemaNodeTree({
+    const { root } = makeFieldNodeTree({
       type: 'object',
       properties: {
         showItem: { type: 'boolean' },
@@ -271,7 +271,7 @@ describe('array settlement lifecycle', () => {
   });
 
   it('35C-10 bounds recursive item latent capture by stored source paths', () => {
-    const { root } = makeSchemaNodeTree({
+    const { root } = makeFieldNodeTree({
       type: 'object',
       $defs: {
         Node: {
@@ -333,12 +333,7 @@ describe('array settlement lifecycle', () => {
       ],
     });
     expect(() =>
-      writeSchemaNode(
-        root,
-        { a: 0 },
-        'callerReplace',
-        SetValueOption.Overwrite,
-      ),
+      writeFieldNode(root, { a: 0 }, 'callerReplace', SetValueOption.Overwrite),
     ).toThrow();
     expect(root.runtime.diagnostics).toMatchObject({
       cause: 'budget',
@@ -388,7 +383,7 @@ describe('array settlement lifecycle', () => {
         },
       ],
     });
-    writeSchemaNode(
+    writeFieldNode(
       root,
       { a: 'stable', flag: false, items: ['before'], tuple: ['kept', 'extra'] },
       'callerReplace',
@@ -400,7 +395,7 @@ describe('array settlement lifecycle', () => {
     const tupleFirst = tuple.children![0];
     const previousExtras = tuple.extras;
     expect(() =>
-      writeSchemaNode(
+      writeFieldNode(
         root,
         { a: 0, flag: true, items: ['before'], tuple: ['kept', 'extra'] },
         'callerReplace',
@@ -423,7 +418,7 @@ describe('array settlement lifecycle', () => {
   });
 
   it('35C-08 gates out an item as an exit while retaining its array slot', () => {
-    const { root, runtime } = makeSchemaNodeTree({
+    const { root, runtime } = makeFieldNodeTree({
       type: 'object',
       properties: {
         flag: { type: 'boolean' },

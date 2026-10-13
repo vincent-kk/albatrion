@@ -2,9 +2,9 @@ import { describe, expect, it, vi } from 'vitest';
 
 import { SetValueOption } from '../../types/value';
 import {
-  loadSchemaNodeAtMount,
-  resetSchemaNodeForm,
-  writeSchemaNode,
+  loadFieldNodeAtMount,
+  resetFieldNodeForm,
+  writeFieldNode,
 } from '../index';
 import { getTransitionCap } from '../utils/transition/getTransitionCap';
 import { createTestTree } from './fixtures/createTestTree';
@@ -27,7 +27,7 @@ describe('settle exits and budgets', () => {
     });
     expect(getTransitionCap(blueprint)).toBe(2);
     expect(() =>
-      writeSchemaNode(
+      writeFieldNode(
         root,
         { kind: 'a', x: 1 },
         'callerReplace',
@@ -51,7 +51,7 @@ describe('settle exits and budgets', () => {
     });
     expect(getTransitionCap(blueprint)).toBe(2);
     expect(() =>
-      writeSchemaNode(
+      writeFieldNode(
         root,
         { a: 1, b: 2 },
         'callerReplace',
@@ -73,7 +73,7 @@ describe('settle exits and budgets', () => {
     });
     expect(getTransitionCap(blueprint)).toBe(2);
     expect(() =>
-      loadSchemaNodeAtMount(root, {}, SetValueOption.Overwrite),
+      loadFieldNodeAtMount(root, {}, SetValueOption.Overwrite),
     ).toThrow();
     expect(root.runtime.diagnostics).toMatchObject({
       cause: 'budget',
@@ -96,7 +96,7 @@ describe('settle exits and budgets', () => {
         },
       },
     });
-    loadSchemaNodeAtMount(root, {}, SetValueOption.Overwrite);
+    loadFieldNodeAtMount(root, {}, SetValueOption.Overwrite);
     expect(root.structure?.toggle?.raw).toBe(true);
     expect(root.structure?.transient).toBeUndefined();
     expect(
@@ -119,13 +119,13 @@ describe('settle exits and budgets', () => {
         },
       },
     });
-    loadSchemaNodeAtMount(
+    loadFieldNodeAtMount(
       root,
       { flag: true, secret: 'held' },
       SetValueOption.Overwrite,
     );
     const former = root.structure!.secret;
-    writeSchemaNode(
+    writeFieldNode(
       root.structure!.flag,
       false,
       'input',
@@ -137,7 +137,7 @@ describe('settle exits and budgets', () => {
     expect(
       root.runtime.latentRaw.has(JSON.stringify(['/secret', 'string'])),
     ).toBe(false);
-    writeSchemaNode(
+    writeFieldNode(
       root.structure!.flag,
       true,
       'input',
@@ -170,12 +170,12 @@ describe('settle exits and budgets', () => {
         },
       ],
     });
-    loadSchemaNodeAtMount(
+    loadFieldNodeAtMount(
       root,
       { flag: true, other: false, secret: 'old' },
       SetValueOption.Overwrite,
     );
-    writeSchemaNode(
+    writeFieldNode(
       root.structure!.flag,
       false,
       'input',
@@ -202,12 +202,12 @@ describe('settle exits and budgets', () => {
       },
     });
     root.runtime.unsetOnInactive = true;
-    loadSchemaNodeAtMount(
+    loadFieldNodeAtMount(
       root,
       { flag: true, branch: { drop: 'D', keep: 'K' } },
       SetValueOption.Overwrite,
     );
-    writeSchemaNode(
+    writeFieldNode(
       root.structure!.flag,
       false,
       'input',
@@ -219,7 +219,7 @@ describe('settle exits and budgets', () => {
     expect(
       root.runtime.latentRaw.get(JSON.stringify(['/branch/keep', 'string'])),
     ).toBe('K');
-    writeSchemaNode(
+    writeFieldNode(
       root.structure!.flag,
       true,
       'input',
@@ -248,7 +248,7 @@ describe('settle exits and budgets', () => {
         },
       },
     });
-    loadSchemaNodeAtMount(
+    loadFieldNodeAtMount(
       root,
       {
         flag: true,
@@ -260,7 +260,7 @@ describe('settle exits and budgets', () => {
       },
       SetValueOption.Overwrite,
     );
-    writeSchemaNode(
+    writeFieldNode(
       root.structure!.branch.structure!.show,
       false,
       'input',
@@ -269,7 +269,7 @@ describe('settle exits and budgets', () => {
     expect(
       root.runtime.latentRaw.get(JSON.stringify(['/branch/drop', 'string'])),
     ).toBe('D');
-    writeSchemaNode(
+    writeFieldNode(
       root.structure!.flag,
       false,
       'input',
@@ -303,7 +303,7 @@ describe('settle exits and budgets', () => {
         },
       ],
     });
-    loadSchemaNodeAtMount(
+    loadFieldNodeAtMount(
       root,
       {
         flag: true,
@@ -315,7 +315,7 @@ describe('settle exits and budgets', () => {
       SetValueOption.Overwrite,
     );
     expect(root.structure?.addr?.structure?.zip?.raw).toBe('Z');
-    writeSchemaNode(
+    writeFieldNode(
       root.structure!.flag,
       false,
       'input',
@@ -340,14 +340,14 @@ describe('settle exits and budgets', () => {
         },
       },
     });
-    loadSchemaNodeAtMount(
+    loadFieldNodeAtMount(
       root,
       { flag: true, branch: { kept: 'K', extra: 'E' } },
       SetValueOption.Overwrite,
     );
     const former = root.structure!.branch;
     const extras = former.extras;
-    writeSchemaNode(
+    writeFieldNode(
       root.structure!.flag,
       false,
       'input',
@@ -375,12 +375,7 @@ describe('settle exits and budgets', () => {
       ],
     });
     expect(() =>
-      writeSchemaNode(
-        root,
-        { a: 0 },
-        'callerReplace',
-        SetValueOption.Overwrite,
-      ),
+      writeFieldNode(root, { a: 0 }, 'callerReplace', SetValueOption.Overwrite),
     ).toThrow();
     expect(root.structure?.a?.raw).toBe(0);
     expect(root.runtime.typeMismatchPaths.has('/a')).toBe(true);
@@ -391,9 +386,9 @@ describe('settle exits and budgets', () => {
       iterations: expect.any(Number),
       commit: 1,
     });
-    writeSchemaNode(root.structure!.a, 1, 'input', SetValueOption.Overwrite);
+    writeFieldNode(root.structure!.a, 1, 'input', SetValueOption.Overwrite);
     expect(root.runtime.diagnostics.status).toBe('degraded');
-    resetSchemaNodeForm(root, { a: 'x' }, SetValueOption.Overwrite);
+    resetFieldNodeForm(root, { a: 'x' }, SetValueOption.Overwrite);
     expect(root.runtime.diagnostics.status).toBe('stable');
   });
 
@@ -420,7 +415,7 @@ describe('settle exits and budgets', () => {
     };
     const { root } = createTestTree(schema);
     expect(() =>
-      writeSchemaNode(
+      writeFieldNode(
         root,
         { hasChild: true },
         'callerReplace',
@@ -443,7 +438,7 @@ describe('settle exits and budgets', () => {
       },
     });
     expect(() =>
-      writeSchemaNode(
+      writeFieldNode(
         root,
         { a: true, b: true },
         'callerReplace',
@@ -472,7 +467,7 @@ describe('settle exits and budgets', () => {
     vi.stubEnv('NODE_ENV', 'production');
     try {
       expect(() =>
-        writeSchemaNode(
+        writeFieldNode(
           root,
           { a: true, b: true },
           'callerReplace',
@@ -488,12 +483,12 @@ describe('settle exits and budgets', () => {
 
   it('SETTLE-047 reuses cleared work containers after success and failure', () => {
     const ordinary = createTestTree({ type: 'string' }).root;
-    writeSchemaNode(ordinary, 'first', 'input', SetValueOption.Overwrite);
+    writeFieldNode(ordinary, 'first', 'input', SetValueOption.Overwrite);
     const scratch = ordinary.runtime.settlementScratch;
     expect(scratch?.inUse).toBe(false);
     expect(scratch?.entered.size).toBe(0);
     expect(scratch?.writtenInputs.size).toBe(0);
-    writeSchemaNode(ordinary, 'second', 'input', SetValueOption.Overwrite);
+    writeFieldNode(ordinary, 'second', 'input', SetValueOption.Overwrite);
     expect(ordinary.runtime.settlementScratch).toBe(scratch);
 
     const unstable = createTestTree({
@@ -504,7 +499,7 @@ describe('settle exits and budgets', () => {
       },
     }).root;
     expect(() =>
-      writeSchemaNode(
+      writeFieldNode(
         unstable,
         { a: true, b: true },
         'callerReplace',

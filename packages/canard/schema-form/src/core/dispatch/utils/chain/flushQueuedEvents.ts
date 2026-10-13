@@ -1,6 +1,6 @@
 import { FEEDBACK_LIMIT_EXCEEDED, SchemaFormError } from '../../../../errors';
-import { SchemaNodeRevisionLedger } from '../../../record';
-import type { SchemaNodeDelivery, SchemaNodeRecord } from '../../../record';
+import { FieldNodeRevisionLedger } from '../../../record';
+import type { FieldNodeDelivery, FieldNodeRecord } from '../../../record';
 import { rebuildRootExternalErrors } from '../entry/utils/propagateExternalErrorsToRoot';
 import { finishQueuedErrors } from '../report/finishQueuedErrors';
 import { captureChainError } from './captureChainError';
@@ -13,7 +13,7 @@ import { runDeliveryWaves } from './runDeliveryWaves';
  * @param runtime - Runtime that owns the pending wave
  * @returns Whether the key is a live node of this tree
  */
-const isQueuedNode = <Self extends SchemaNodeRecord<Self>>(
+const isQueuedNode = <Self extends FieldNodeRecord<Self>>(
   candidate: unknown,
   runtime: Self['runtime'],
 ): candidate is Self =>
@@ -30,7 +30,7 @@ const isQueuedNode = <Self extends SchemaNodeRecord<Self>>(
  * @param caller - Whether a synchronous caller receives standalone failures
  * @returns Nothing; standalone failures are exposed after all deliveries
  */
-export const flushQueuedEvents = <Self extends SchemaNodeRecord<Self>>(
+export const flushQueuedEvents = <Self extends FieldNodeRecord<Self>>(
   root: Self,
   caller = true,
 ): void => {
@@ -78,7 +78,7 @@ export const flushQueuedEvents = <Self extends SchemaNodeRecord<Self>>(
           budgetReported = true;
           continue;
         }
-        const pending: [Self, SchemaNodeDelivery][] = [];
+        const pending: [Self, FieldNodeDelivery][] = [];
         for (const candidate of runtime.queuedNonSettleEvents) {
           const delivery = candidate.pendingNonSettleDelivery;
           candidate.pendingNonSettleDelivery = undefined;
@@ -86,7 +86,7 @@ export const flushQueuedEvents = <Self extends SchemaNodeRecord<Self>>(
           if (!isQueuedNode<Self>(candidate, runtime)) continue;
           const node = candidate;
           pending.push([node, delivery]);
-          node.revisionLedger = new SchemaNodeRevisionLedger(
+          node.revisionLedger = new FieldNodeRevisionLedger(
             node.revisionLedger,
             delivery.type,
           );

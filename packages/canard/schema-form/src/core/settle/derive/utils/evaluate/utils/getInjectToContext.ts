@@ -1,4 +1,4 @@
-import type { SchemaNodeRecord } from '../../../../../record';
+import type { FieldNodeRecord } from '../../../../../record';
 
 /**
  * Bind the eight legacy handler names to this round's emitted tree.
@@ -6,7 +6,7 @@ import type { SchemaNodeRecord } from '../../../../../record';
  * @param root - Current calculated root
  * @returns Context passed unchanged to the authored handler
  */
-export const getInjectToContext = <Self extends SchemaNodeRecord<Self>>(
+export const getInjectToContext = <Self extends FieldNodeRecord<Self>>(
   source: Self,
   root: Self,
 ) => ({

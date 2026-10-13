@@ -11,6 +11,7 @@ import { isArray } from '@winglet/common-utils/filter';
 import type { SettlementContext } from '../../../type';
 import type { ChildSelectionRuntimeNode } from './ChildSelectionRuntimeNode';
 import { normalizeSelectionObservation } from './normalizeSelectionObservation';
+import { renameFieldNodeNames } from './renameFieldNodeNames';
 import type { ChildSelectionHistory } from './runChildSelectionHistory';
 
 /** Runtime entry observed by the same authored history in both source revisions. */
@@ -87,9 +88,9 @@ export const buildChildSelectionRuntime = async (
       services.push(child);
     return child;
   }) as typeof childProcess.spawn;
-  /** Source files of the pinned revision; relative imports resolve against this list, not the working tree. */
+  /** Source files of the pinned revision under today's names, mapped to their path in that revision; relative imports resolve against this map, not the working tree. */
   const pinnedPaths = revision
-    ? new Set(
+    ? new Map(
         childProcess
           .execFileSync(
             'git',
@@ -103,7 +104,8 @@ export const buildChildSelectionRuntime = async (
             ],
             { cwd: worktree, encoding: 'utf8', timeout: 10000 },
           )
-          .split('\n'),
+          .split('\n')
+          .map((path) => [renameFieldNodeNames(path), path] as const),
       )
     : null;
   let output: string;
@@ -151,10 +153,15 @@ export const buildChildSelectionRuntime = async (
               let contents = overrides[path]
                 ? readFileSync(overrides[path], 'utf8')
                 : revision && !path.includes('/__tests__/')
-                  ? childProcess.execFileSync(
-                      'git',
-                      ['show', `${revision}:${path}`],
-                      { cwd: worktree, encoding: 'utf8', timeout: 10000 },
+                  ? renameFieldNodeNames(
+                      childProcess.execFileSync(
+                        'git',
+                        [
+                          'show',
+                          `${revision}:${pinnedPaths?.get(path) ?? path}`,
+                        ],
+                        { cwd: worktree, encoding: 'utf8', timeout: 10000 },
+                      ),
                     )
                   : readFileSync(args.path, 'utf8');
               if (

@@ -1,6 +1,6 @@
 import { isArray } from '@winglet/common-utils/filter';
 
-import type { SchemaNodeRuntime } from '../../../../record';
+import type { FieldNodeRuntime } from '../../../../record';
 import { updateCommittedRuleValue } from '../../commit/updateCommittedRuleValue';
 import { getRuntimePathStores } from '../../pathIndex/getRuntimePathStores';
 import type { ArrayPathMove } from '../type';
@@ -13,7 +13,7 @@ import type { ArrayPathMove } from '../type';
  * @returns Nothing; deletion precedes insertion to preserve chained shifts
  */
 export const rekeyCommittedRules = <Self>(
-  runtime: SchemaNodeRuntime<Self>,
+  runtime: FieldNodeRuntime<Self>,
   moves: readonly ArrayPathMove[],
   mapPath: (path: string) => string | undefined,
 ): void => {

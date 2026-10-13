@@ -2,7 +2,7 @@
 
 ## Purpose
 
-JSON Schema로부터 루트 `SchemaNode` 트리를 생성하고 Context로 공급한다. 검증 모드·외부 에러·변경/검증/상태 콜백을 연결하며, 노드 초기화 완료 시 `onReady`로 루트 노드를 Form 컴포넌트에 전달한다.
+JSON Schema로부터 루트 `FieldNode` 트리를 생성하고 Context로 공급한다. 검증 모드·외부 에러·변경/검증/상태 콜백을 연결하며, 노드 초기화 완료 시 `onReady`로 루트 노드를 Form 컴포넌트에 전달한다.
 
 ## Conventions
 
@@ -30,7 +30,7 @@ JSON Schema로부터 루트 `SchemaNode` 트리를 생성하고 Context로 공�
 
 - `nodeFromJSONSchema` 외부에서 루트 노드를 직접 생성하거나 이 Context에 주입
 - `errors` prop을 `applyFormErrors`의 경로별 묶음을 거치지 않고 `setExternalErrors()`에 직접 전달
-- `RootNodeContext`를 SchemaNode 트리 외부에서 소비 (Form 내부 전용)
+- `RootNodeContext`를 FieldNode 트리 외부에서 소비 (Form 내부 전용)
 
 ## Dependencies
 

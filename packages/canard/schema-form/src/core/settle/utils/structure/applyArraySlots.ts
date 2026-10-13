@@ -1,19 +1,19 @@
 import { isArray } from '@winglet/common-utils/filter';
 
 import { getItemEntry } from '../../../blueprint';
-import { captureSchemaNodeChange } from '../../../record';
-import type { ArrayArrangePlan, SchemaNodeRecord } from '../../../record';
-import { updateSchemaNodeNameAndPath } from '../../../record';
+import { captureFieldNodeChange } from '../../../record';
+import type { ArrayArrangePlan, FieldNodeRecord } from '../../../record';
+import { updateFieldNodeNameAndPath } from '../../../record';
 import type { SettlementContext } from '../../type';
 import { createChildNode } from '../compute/createChildNode';
-import { captureDetachedSchemaNodeReads } from '../detached/captureDetachedSchemaNodeReads';
+import { captureDetachedFieldNodeReads } from '../detached/captureDetachedFieldNodeReads';
 import { getGateRegistry } from '../gates/getGateRegistry';
 import { indexEnteredLatentKey } from '../latent/indexEnteredLatentKey';
 import { readRawTree } from '../latent/readRawTree';
 import { getLoadValue } from '../load/getLoadValue';
 import { setLoadValue } from '../load/setLoadValue';
 import { prunePerishedPaths } from '../transition/prunePerishedPaths';
-import { walkOwnedSchemaNodes } from '../walkOwnedSchemaNodes';
+import { walkOwnedFieldNodes } from '../walkOwnedFieldNodes';
 import { arrayExtras } from '../write/arrayExtras';
 import { markWrite } from '../write/markWrite';
 import { applyArrayTail } from './applyArraySlots/utils/applyArrayTail';
@@ -28,7 +28,7 @@ import type { ArrayPathMove } from './rekeyArrayRuntimePaths';
  * @param context - One settlement's entered, perished, and changed-path facts
  * @returns Last committed value of a removed position, if requested
  */
-export const applyArraySlots = <Self extends SchemaNodeRecord<Self>>(
+export const applyArraySlots = <Self extends FieldNodeRecord<Self>>(
   host: Self,
   plan: Extract<ArrayArrangePlan, { kind: 'slots' }>,
   context: SettlementContext<Self>,
@@ -90,9 +90,9 @@ export const applyArraySlots = <Self extends SchemaNodeRecord<Self>>(
     });
     if (!item || reused.has(item)) continue;
     context.perished.add(item);
-    walkOwnedSchemaNodes(item, (departing) => {
+    walkOwnedFieldNodes(item, (departing) => {
       if (!departing.runtime.detachedReads?.has(departing))
-        captureDetachedSchemaNodeReads(departing, {
+        captureDetachedFieldNodeReads(departing, {
           emit: context.previousEmit,
           context: context.previousContext,
           schema: departing.schema.schema,
@@ -107,9 +107,9 @@ export const applyArraySlots = <Self extends SchemaNodeRecord<Self>>(
 
   for (const [name, item] of Object.entries(nextItems)) {
     if (!reused.has(item) || item.name === name) continue;
-    walkOwnedSchemaNodes(item, (descendant) => {
+    walkOwnedFieldNodes(item, (descendant) => {
       const previous = descendant.path;
-      updateSchemaNodeNameAndPath(
+      updateFieldNodeNameAndPath(
         descendant,
         descendant === item ? name : descendant.name,
         descendant === item ? host : descendant.parent,
@@ -129,7 +129,7 @@ export const applyArraySlots = <Self extends SchemaNodeRecord<Self>>(
   host.raw = undefined;
   host.extras = arrayExtras(host, nextRaw);
   host.structure = nextItems;
-  host.children = captureSchemaNodeChange(
+  host.children = captureFieldNodeChange(
     host,
     'children',
     Object.values(nextItems),
@@ -146,7 +146,7 @@ export const applyArraySlots = <Self extends SchemaNodeRecord<Self>>(
   }
   if (context.hasGates)
     for (const item of host.children)
-      walkOwnedSchemaNodes(item, (node) => registry.register(node));
+      walkOwnedFieldNodes(item, (node) => registry.register(node));
   host.runtime.loadSnapshot = setLoadValue(
     host.runtime.loadSnapshot,
     host.path,

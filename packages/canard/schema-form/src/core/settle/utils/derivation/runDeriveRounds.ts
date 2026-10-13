@@ -3,7 +3,7 @@ import {
   SchemaFormError,
 } from '../../../../errors';
 import { DeriveConvergenceTargets } from '../../../blueprint';
-import type { SchemaNodeRecord } from '../../../record';
+import type { FieldNodeRecord } from '../../../record';
 import { DERIVE_ROUND_CAP, evaluateDeriveRound } from '../../derive';
 import type { DeriveRoundDecision } from '../../derive';
 import type { SettlementContext } from '../../type';
@@ -41,7 +41,7 @@ const ERROR_LABELS = {
  * Package Vitest setup owns the module-local shadow switch; passing it through
  * SettlementContext would expose test-only verification in runtime contracts.
  */
-export const runDeriveRounds = <Self extends SchemaNodeRecord<Self>>(
+export const runDeriveRounds = <Self extends FieldNodeRecord<Self>>(
   context: SettlementContext<Self>,
 ): void => {
   const state = getDeriveState(context);

@@ -2,37 +2,37 @@
 import { expectTypeOf } from 'vitest';
 
 import type { JSONSchema as CoreJSONSchema, Validator } from '../core';
-import { SchemaNodeEventType, ValidationMode, isUnionNode } from '../index';
+import { FieldNodeEventType, ValidationMode, isUnionNode } from '../index';
 import type {
   FieldInputProps,
+  FieldNode,
   Hint,
-  InferSchemaNode,
+  InferFieldNode,
   JSONSchema,
   NumberNode,
-  SchemaNode,
   UnionNode,
   ValidatorFactory,
 } from '../index';
 import type { SchemaPresentation } from '../types/jsonSchema';
 
 expectTypeOf<
-  InferSchemaNode<{ type: readonly ['string', 'number'] }>
+  InferFieldNode<{ type: readonly ['string', 'number'] }>
 >().toEqualTypeOf<UnionNode<readonly ['string', 'number'], false>>();
 expectTypeOf<
-  InferSchemaNode<{ type: readonly ['string', 'number', 'null'] }>
+  InferFieldNode<{ type: readonly ['string', 'number', 'null'] }>
 >().toEqualTypeOf<UnionNode<readonly ['string', 'number'], true>>();
 expectTypeOf<
-  Extract<SchemaNode, { type: 'union' }>
+  Extract<FieldNode, { type: 'union' }>
 >().toEqualTypeOf<UnionNode>();
 
 /** Verify that the public guard narrows a consumer's node union. */
-function checkUnion(node: SchemaNode) {
+function checkUnion(node: FieldNode) {
   if (isUnionNode(node)) expectTypeOf(node).toEqualTypeOf<UnionNode>();
 }
 void checkUnion;
 
-expectTypeOf<Hint['type']>().toEqualTypeOf<SchemaNode['type']>();
-expectTypeOf<Hint['schemaType']>().toEqualTypeOf<SchemaNode['schemaType']>();
+expectTypeOf<Hint['type']>().toEqualTypeOf<FieldNode['type']>();
+expectTypeOf<Hint['schemaType']>().toEqualTypeOf<FieldNode['schemaType']>();
 expectTypeOf<Hint['nullable']>().toEqualTypeOf<boolean>();
 expectTypeOf<Hint['typeMismatch']>().toEqualTypeOf<boolean>();
 expectTypeOf<FieldInputProps<number>['type']>().toEqualTypeOf<
@@ -46,13 +46,13 @@ expectTypeOf<
 >().toEqualTypeOf<boolean>();
 expectTypeOf<FieldInputProps<number>['nullable']>().toEqualTypeOf<boolean>();
 
-const events: SchemaNodeEventType[] = [
-  SchemaNodeEventType.UpdateValue,
-  SchemaNodeEventType.UpdateState,
-  SchemaNodeEventType.UpdateError,
-  SchemaNodeEventType.RequestFocus,
-  SchemaNodeEventType.RequestSelect,
-  SchemaNodeEventType.RequestRemount,
+const events: FieldNodeEventType[] = [
+  FieldNodeEventType.UpdateValue,
+  FieldNodeEventType.UpdateState,
+  FieldNodeEventType.UpdateError,
+  FieldNodeEventType.RequestFocus,
+  FieldNodeEventType.RequestSelect,
+  FieldNodeEventType.RequestRemount,
 ];
 const modes: ValidationMode[] = [
   ValidationMode.None,
@@ -105,8 +105,8 @@ type RemovedError = import('../index').JSONSchemaError;
 // 70C-01: host and binding channels stay outside the package's consumer surface.
 // @ts-expect-error nodeFromJSONSchema is a core-only host entry.
 type RemovedHostEntry = typeof import('../index').nodeFromJSONSchema;
-// @ts-expect-error buildSchemaNodeTree is binding-only.
-type RemovedBindingEntry = typeof import('../index').buildSchemaNodeTree;
+// @ts-expect-error buildFieldNodeTree is binding-only.
+type RemovedBindingEntry = typeof import('../index').buildFieldNodeTree;
 expectTypeOf<RemovedError>().toBeAny();
 expectTypeOf<RemovedHostEntry>().toBeAny();
 expectTypeOf<RemovedBindingEntry>().toBeAny();

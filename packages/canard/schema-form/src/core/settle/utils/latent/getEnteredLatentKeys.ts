@@ -1,4 +1,4 @@
-import type { SchemaNodeRecord } from '../../../record';
+import type { FieldNodeRecord } from '../../../record';
 import type { SettlementContext } from '../../type';
 import { indexEnteredLatentKey } from './indexEnteredLatentKey';
 
@@ -7,7 +7,7 @@ import { indexEnteredLatentKey } from './indexEnteredLatentKey';
  * @param context - Settlement owning the occurrence sets and lazy latent-key index
  * @returns Entered occurrences followed by revived occurrences under each key
  */
-export const getEnteredLatentKeys = <Self extends SchemaNodeRecord<Self>>(
+export const getEnteredLatentKeys = <Self extends FieldNodeRecord<Self>>(
   context: SettlementContext<Self>,
 ): Map<string, Self[]> => {
   if (context.enteredLatentKeys) return context.enteredLatentKeys;

@@ -1,4 +1,4 @@
-import type { SchemaNodeRecord } from '../../../record';
+import type { FieldNodeRecord } from '../../../record';
 import type { SettlementContext } from '../../type';
 import { computeNode } from '../compute/computeNode';
 import { isPlain } from './isPlain';
@@ -9,7 +9,7 @@ import { registerRecalculation } from './registerRecalculation';
  * @param context - Settlement with candidate hosts and calculated children
  * @returns Nothing; cleared hosts are recomputed before the explicit source snapshot
  */
-export const releaseWrongKindHosts = <Self extends SchemaNodeRecord<Self>>(
+export const releaseWrongKindHosts = <Self extends FieldNodeRecord<Self>>(
   context: SettlementContext<Self>,
 ): void => {
   let cleared: boolean;

@@ -1,4 +1,4 @@
-import type { FormHandle, SchemaNode } from '../../../src';
+import type { FieldNode, FormHandle } from '../../../src';
 
 /** Consumer-owned records kept separately from the pure scenario data. */
 export interface StoryObservations {
@@ -21,5 +21,5 @@ export interface StoryStepEvidence {
   errors: number;
   validationRequests: number;
   deliveries: string[];
-  priorNodes: Record<string, SchemaNode | null>;
+  priorNodes: Record<string, FieldNode | null>;
 }

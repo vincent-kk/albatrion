@@ -1,11 +1,11 @@
 import { describe, expect, it } from 'vitest';
 
-import { makeSchemaNodeTree } from '../makeSchemaNodeTree';
+import { makeFieldNodeTree } from '../makeFieldNodeTree';
 
 // filid:contract factory-single-path
 describe('selfcheck-v5 nested fragment regression', () => {
   it('selfcheck-v5.mjs:119 resolves a nested fragment after a top-level fill', () => {
-    const { root } = makeSchemaNodeTree({
+    const { root } = makeFieldNodeTree({
       type: 'object',
       properties: {
         p: { type: 'string' },
@@ -29,7 +29,7 @@ describe('selfcheck-v5 nested fragment regression', () => {
   });
 
   const nestedThen = () =>
-    makeSchemaNodeTree({
+    makeFieldNodeTree({
       type: 'object',
       properties: {
         p: { type: 'string' },
@@ -70,7 +70,7 @@ describe('selfcheck-v5 nested fragment regression', () => {
   });
 
   it('selfcheck-v5.mjs:193 reaches the negated-gate fixpoint after a competing birth', () => {
-    const { root } = makeSchemaNodeTree({
+    const { root } = makeFieldNodeTree({
       type: 'object',
       properties: {
         seed: { type: 'boolean' },
@@ -97,7 +97,7 @@ describe('selfcheck-v5 nested fragment regression', () => {
   });
 
   it('selfcheck-v5.mjs:240 leaves a value intact when a false schema declares nothing', () => {
-    const { root } = makeSchemaNodeTree({
+    const { root } = makeFieldNodeTree({
       type: 'object',
       properties: {
         a: { type: 'string' },
@@ -118,7 +118,7 @@ describe('selfcheck-v5 nested fragment regression', () => {
   });
 
   it('selfcheck-v5.mjs:247 tests a presence guard on projected empty input', () => {
-    const { root } = makeSchemaNodeTree({
+    const { root } = makeFieldNodeTree({
       type: 'object',
       properties: {
         a: { type: 'string' },
@@ -136,7 +136,7 @@ describe('selfcheck-v5 nested fragment regression', () => {
   });
 
   it('selfcheck-v5.mjs:469 chains object, child, and dependent default births', () => {
-    const { root } = makeSchemaNodeTree({
+    const { root } = makeFieldNodeTree({
       type: 'object',
       properties: {
         seed: { type: 'boolean' },

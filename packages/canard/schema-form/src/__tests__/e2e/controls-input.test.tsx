@@ -3,10 +3,10 @@ import { describe, expect, it, vi } from 'vitest';
 
 import {
   type FieldInputProps,
+  FieldNodeEventType,
+  FieldNodeState,
   type FieldRendererProps,
   Form,
-  SchemaNodeEventType,
-  SchemaNodeState,
 } from '@/schema-form';
 
 import { renderForm } from '../renderForm';
@@ -66,20 +66,20 @@ describe('TEST-020 — finishInput and consumer presentation', () => {
     });
     try {
       await form.type('/text', '  word  ');
-      const dirty = form.node('/text')!.state[SchemaNodeState.Dirty];
+      const dirty = form.node('/text')!.state[FieldNodeState.Dirty];
       await form.user.tab();
       expect([form.value('/text'), form.node('/text')?.value]).toEqual([
         'word',
         'word',
       ]);
       expect(dirty).toBe(true);
-      expect(form.node('/text')!.state[SchemaNodeState.Dirty]).toBe(dirty);
+      expect(form.node('/text')!.state[FieldNodeState.Dirty]).toBe(dirty);
       await act(async () => {
         await new Promise<void>((resolve) =>
           requestAnimationFrame(() => resolve()),
         );
       });
-      expect(form.node('/text')!.state[SchemaNodeState.Touched]).toBe(true);
+      expect(form.node('/text')!.state[FieldNodeState.Touched]).toBe(true);
     } finally {
       form.unmount();
     }
@@ -95,7 +95,7 @@ describe('TEST-020 — finishInput and consumer presentation', () => {
     );
     const valueDelivery = vi.fn();
     const unsubscribe = form.node('/text')!.subscribe((event) => {
-      if (event.type & SchemaNodeEventType.UpdateValue) valueDelivery();
+      if (event.type & FieldNodeEventType.UpdateValue) valueDelivery();
     });
     try {
       await act(async () => {

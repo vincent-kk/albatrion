@@ -1,7 +1,7 @@
 import { hasOwnProperty } from '@winglet/common-utils/lib';
 import { unescapeSegment } from '@winglet/json/pointer';
 
-import type { SchemaNodeRecord } from '../../../record';
+import type { FieldNodeRecord } from '../../../record';
 
 /**
  * Expand a template owner address over the currently live array positions.
@@ -9,7 +9,7 @@ import type { SchemaNodeRecord } from '../../../record';
  * @param templatePath - Absolute declaration path with optional array segments
  * @returns Real owner paths, including a gated-out final item slot
  */
-export const expandTemplatePaths = <Self extends SchemaNodeRecord<Self>>(
+export const expandTemplatePaths = <Self extends FieldNodeRecord<Self>>(
   root: Self,
   templatePath: string,
 ): string[] => {

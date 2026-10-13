@@ -1,7 +1,7 @@
 import { type CSSProperties, memo } from 'react';
 
 import { PluginManager } from '@/schema-form/app/plugin';
-import { SchemaNodeProxy } from '@/schema-form/components/SchemaNode';
+import { FieldProxy } from '@/schema-form/components/Field';
 import { useFieldRendererContext } from '@/schema-form/providers';
 
 export interface FormErrorProps {
@@ -65,7 +65,7 @@ export const FormError = memo(({ path, style, className }: FormErrorProps) => {
   const { FormErrorRenderer } = useFieldRendererContext();
   return (
     <span style={style} className={className}>
-      <SchemaNodeProxy
+      <FieldProxy
         path={path}
         FieldRenderer={FormErrorRenderer || PluginManager.FormErrorRenderer}
       />

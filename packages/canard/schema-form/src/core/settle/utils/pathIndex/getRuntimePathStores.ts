@@ -1,4 +1,4 @@
-import type { SchemaNodeRuntime } from '../../../record';
+import type { FieldNodeRuntime } from '../../../record';
 import { PathKeyedMap } from '../../../utils/pathIndex/PathKeyedMap';
 import type { RuntimePathStores } from './type';
 
@@ -8,7 +8,7 @@ import type { RuntimePathStores } from './type';
  * @returns The native indexed mutation and lookup surfaces, without adoption
  */
 export const getRuntimePathStores = <Self>(
-  runtime: SchemaNodeRuntime<Self>,
+  runtime: FieldNodeRuntime<Self>,
 ): RuntimePathStores<Self> => ({
   latent: runtime.latentRaw,
   metadata: (runtime.latentRawMetadata ??= new PathKeyedMap('pair')),

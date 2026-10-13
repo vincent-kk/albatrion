@@ -1,7 +1,7 @@
 import { describe, expect, it, vi } from 'vitest';
 
 import {
-  SchemaNodeEventType,
+  FieldNodeEventType,
   ValidationMode,
   isUnionNode,
   nodeFromJSONSchema,
@@ -56,12 +56,12 @@ describe('70C-01 core host entry', () => {
 
   it('SURFACE-059 retains the six public event bits', () => {
     expect([
-      SchemaNodeEventType.UpdateValue,
-      SchemaNodeEventType.UpdateState,
-      SchemaNodeEventType.UpdateError,
-      SchemaNodeEventType.RequestFocus,
-      SchemaNodeEventType.RequestSelect,
-      SchemaNodeEventType.RequestRemount,
+      FieldNodeEventType.UpdateValue,
+      FieldNodeEventType.UpdateState,
+      FieldNodeEventType.UpdateError,
+      FieldNodeEventType.RequestFocus,
+      FieldNodeEventType.RequestSelect,
+      FieldNodeEventType.RequestRemount,
     ]).toEqual([4, 8, 32, 2048, 4096, 16384]);
   });
 });

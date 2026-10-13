@@ -1,6 +1,6 @@
 import { describe, expect, it, vi } from 'vitest';
 
-import { makeSchemaNodeTree } from '../../__tests__/makeSchemaNodeTree';
+import { makeFieldNodeTree } from '../../__tests__/makeFieldNodeTree';
 import { setLoadValue } from '../utils/load/setLoadValue';
 
 const probe = (label: string, count: number): void => {
@@ -11,7 +11,7 @@ const probe = (label: string, count: number): void => {
 describe('49C-01 SETTLE-017 proportional settlement work', () => {
   it('M26 indexes mismatches without filtering all paths per ancestor', () => {
     const count = 2000;
-    const { root, runtime } = makeSchemaNodeTree({
+    const { root, runtime } = makeFieldNodeTree({
       type: 'object',
       properties: {
         name: { type: 'string' },
@@ -76,7 +76,7 @@ describe('49C-01 SETTLE-017 proportional settlement work', () => {
 
   it('M27 removes exiting mismatches without scanning the whole set per exit', () => {
     const count = 2000;
-    const { root, runtime } = makeSchemaNodeTree({
+    const { root, runtime } = makeFieldNodeTree({
       type: 'object',
       properties: {
         flag: { type: 'boolean' },
@@ -146,7 +146,7 @@ describe('49C-01 SETTLE-017 proportional settlement work', () => {
       },
     };
     const snapshot = Array.from({ length: count }, () => ({ tags: ['a'] }));
-    const { root, runtime } = makeSchemaNodeTree(schema, { snapshot });
+    const { root, runtime } = makeFieldNodeTree(schema, { snapshot });
     root.resetSubtree();
     const iterate = Array.prototype[Symbol.iterator];
     let copiedElements = 0;
@@ -185,7 +185,7 @@ describe('49C-01 SETTLE-017 proportional settlement work', () => {
       { tags: ['e'] },
       shared,
     ];
-    const { root, runtime } = makeSchemaNodeTree(
+    const { root, runtime } = makeFieldNodeTree(
       {
         type: 'array',
         items: {
@@ -229,7 +229,7 @@ describe('49C-01 SETTLE-017 proportional settlement work', () => {
         type: 'string',
         controls: { active: '#/missing' },
       };
-    const { root } = makeSchemaNodeTree({ type: 'object', properties });
+    const { root } = makeFieldNodeTree({ type: 'object', properties });
     const some = Array.prototype.some;
     let visited = 0;
     const spy = vi.spyOn(Array.prototype, 'some').mockImplementation(function (

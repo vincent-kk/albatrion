@@ -1,14 +1,14 @@
 import type { FormErrorReporter } from '../../../../errors';
-import { schemaNodeFactory } from '../../../SchemaNode';
+import { fieldNodeFactory } from '../../../FieldNode';
 import { blueprint } from '../../../blueprint';
 import type { BlueprintSchema } from '../../../blueprint';
-import type { SchemaNodeRecord } from '../../../record';
+import type { FieldNodeRecord } from '../../../record';
 import { PathKeyedMap } from '../../../utils/pathIndex/PathKeyedMap';
 import { PathKeyedSet } from '../../../utils/pathIndex/PathKeyedSet';
 import type { Validator } from '../../../validation';
 
 /** Test view of the record created by the public tree factory. */
-export interface DispatchTestNode extends SchemaNodeRecord<DispatchTestNode> {}
+export interface DispatchTestNode extends FieldNodeRecord<DispatchTestNode> {}
 
 /** Check the runtime shape without a type assertion. */
 const isDispatchTestNode = (value: unknown): value is DispatchTestNode =>
@@ -32,7 +32,7 @@ export const createDispatchTree = (
   validator?: Validator,
   errorReporter?: FormErrorReporter,
 ) => {
-  const created: unknown = schemaNodeFactory(
+  const created: unknown = fieldNodeFactory(
     blueprint(schema),
     {
       errorReporter,

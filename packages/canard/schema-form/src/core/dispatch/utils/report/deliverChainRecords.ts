@@ -1,6 +1,6 @@
 import { NON_JSON_WHOLE_VALUE } from '../../../../errors';
 import type { FormErrorRecord } from '../../../../errors';
-import type { SchemaNodeRuntime } from '../../../record';
+import type { FieldNodeRuntime } from '../../../record';
 import { reportOwnerlessError } from './reportOwnerlessError';
 
 /**
@@ -12,10 +12,7 @@ import { reportOwnerlessError } from './reportOwnerlessError';
  * @returns Handler failures in delivery order for final bundling
  */
 export const deliverChainRecords = (
-  runtime: Pick<
-    SchemaNodeRuntime<unknown>,
-    'errorReporter' | 'reportingErrors'
-  >,
+  runtime: Pick<FieldNodeRuntime<unknown>, 'errorReporter' | 'reportingErrors'>,
   records: readonly FormErrorRecord[],
   original: unknown,
   caller: boolean,

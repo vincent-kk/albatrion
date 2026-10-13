@@ -1,5 +1,5 @@
 import { MULTIPLE_ERRORS, SchemaFormError } from '../../../../errors';
-import type { SchemaNodeRecord, SettlementScratch } from '../../../record';
+import type { FieldNodeRecord, SettlementScratch } from '../../../record';
 import type { SettlementContext } from '../../type';
 import { commitSettlement } from '../commit/commitSettlement';
 import { effectiveType } from '../commit/effectiveType';
@@ -21,7 +21,7 @@ import { transitionSettlement } from '../transition/transitionSettlement';
  * @returns Nothing; committed records and runtime hold the result
  * @throws Deferred failures after commit when no dispatch chain owns them
  */
-export const finishSettlement = <Self extends SchemaNodeRecord<Self>>(
+export const finishSettlement = <Self extends FieldNodeRecord<Self>>(
   context: SettlementContext<Self>,
   scratch: SettlementScratch<Self>,
   scalarWrite = false,

@@ -7,7 +7,7 @@ import { shouldSkipUnfocusedPlay } from '../../components/play/shouldSkipUnfocus
 import { skipPlay } from '../../components/play/skipPlay';
 import { unfocusedPlayReason } from '../../components/play/unfocusedPlayReason';
 
-import { SchemaNodeState } from '../../../src';
+import { FieldNodeState } from '../../../src';
 
 import { FeatureStory } from '../components/FeatureStory';
 import { findScenario } from '../components/findScenario';
@@ -37,7 +37,7 @@ export const DirtyTouchedAndNotifications: Story = {
       if (stage.act === 'type' || stage.act === 'returnAndType') await userEvent.type(title, stage.text!);
       else if (stage.act === 'blur') await userEvent.tab();
       else if (stage.act === 'clearState') handle.clearState();
-      else if (stage.act === 'setState') handle.setState({ [SchemaNodeState.Touched]: true });
+      else if (stage.act === 'setState') handle.setState({ [FieldNodeState.Touched]: true });
       await expectEventually(
         () => ({ state: readStateNames(handle.getState()), notifications: onStateChange.mock.calls.length - before }),
         { state: stage.state, notifications: stage.notifications },

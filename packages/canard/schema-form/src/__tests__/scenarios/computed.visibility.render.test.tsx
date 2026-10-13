@@ -8,7 +8,7 @@ import { renderForm } from '../renderForm';
 /**
  * GAP-10 — Computed visibility (`computed.visible` / `&active`) proxy null-gating.
  *
- * `SchemaNodeProxy` renders `null` when `!node.enabled`
+ * `FieldProxy` renders `null` when `!node.enabled`
  * (`enabled = __scoped__ && active && visible`). A hidden child stays in the
  * parent's child-component list but self-gates to `null`, so its `[data-path]`
  * wrapper is ABSENT from the DOM.

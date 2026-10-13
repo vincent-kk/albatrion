@@ -3,7 +3,7 @@ import { describe, expect, it } from 'vitest';
 import type { FormScenario } from '@aileron/schema-form-scenarios';
 
 import type { BlueprintSchema } from '../../blueprint';
-import { loadSchemaNodeAtMount, writeSchemaNode } from '../../settle';
+import { loadFieldNodeAtMount, writeFieldNode } from '../../settle';
 import { createTestTree } from '../../settle/__tests__/fixtures/createTestTree';
 import { SetValueOption } from '../../types/value';
 import { runScenario } from './utils/runScenario';
@@ -54,7 +54,7 @@ describe('union.entry-two-step', () => {
     const result = await runScenario(scenario, {
       execute: (step) => {
         if (step.action === 'setValue')
-          writeSchemaNode(
+          writeFieldNode(
             root,
             step.value,
             'callerReplace',
@@ -74,7 +74,7 @@ describe('union.entry-two-step', () => {
     });
     expect(result.executedSteps).toBe(2);
     const loaded = createTestTree(schema).root;
-    loadSchemaNodeAtMount(
+    loadFieldNodeAtMount(
       loaded,
       { kind: 'flag', a: 0 },
       SetValueOption.Overwrite,
@@ -115,7 +115,7 @@ describe('union.entry-two-step', () => {
     const result = await runScenario(scenario, {
       execute: (step) => {
         if (step.action === 'setValue')
-          writeSchemaNode(
+          writeFieldNode(
             root,
             step.value,
             'callerReplace',
@@ -168,7 +168,7 @@ describe('union.entry-two-step', () => {
       execute: (step) => {
         if (step.action === 'setValue')
           expect(() =>
-            writeSchemaNode(
+            writeFieldNode(
               root,
               step.value,
               'callerReplace',

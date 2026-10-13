@@ -2,7 +2,7 @@ import { describe, expect, it, vi } from 'vitest';
 
 import type { BlueprintSchema } from '../../blueprint';
 import { SetValueOption } from '../../types/value';
-import { loadSchemaNodeAtMount, writeSchemaNode } from '../index';
+import { loadFieldNodeAtMount, writeFieldNode } from '../index';
 import { createTestTree } from './fixtures/createTestTree';
 
 // filid:contract settle-gates
@@ -21,7 +21,7 @@ describe('throwing gate exit isolation', () => {
     const { root, blueprint } = createTestTree({ type: 'object', properties });
     const find = vi.spyOn(Array.prototype, 'find');
     try {
-      loadSchemaNodeAtMount(root, { source: 'on' }, SetValueOption.Overwrite);
+      loadFieldNodeAtMount(root, { source: 'on' }, SetValueOption.Overwrite);
       expect(
         find.mock.contexts.filter((target) => target === blueprint.expressions),
       ).toHaveLength(0);
@@ -50,17 +50,12 @@ describe('throwing gate exit isolation', () => {
       },
     });
     root.runtime.context = { gate: () => true };
-    loadSchemaNodeAtMount(
+    loadFieldNodeAtMount(
       root,
       { k: true, h: { d: 'D', e: 'E' } },
       SetValueOption.Overwrite,
     );
-    writeSchemaNode(
-      root.structure!.k,
-      false,
-      'input',
-      SetValueOption.Overwrite,
-    );
+    writeFieldNode(root.structure!.k, false, 'input', SetValueOption.Overwrite);
     const latentKey = JSON.stringify(['/h/d', 'string']);
     expect(root.runtime.latentRaw.get(latentKey)).toBe('D');
     root.runtime.context = {
@@ -69,7 +64,7 @@ describe('throwing gate exit isolation', () => {
       },
     };
     expect(() =>
-      writeSchemaNode(root, { z: 'go' }, 'callerPartial', SetValueOption.Merge),
+      writeFieldNode(root, { z: 'go' }, 'callerPartial', SetValueOption.Merge),
     ).toThrow('Gate evaluation failed');
     expect(root.structure?.h).toBeUndefined();
     expect(root.runtime.latentRaw.get(latentKey)).toBe('D');
@@ -102,7 +97,7 @@ describe('throwing gate exit isolation', () => {
       },
     });
     root.runtime.context = { gate: () => true };
-    loadSchemaNodeAtMount(
+    loadFieldNodeAtMount(
       root,
       { flag: true, source: 'A', bad: { child: 'B' }, other: 'O' },
       SetValueOption.Overwrite,
@@ -113,7 +108,7 @@ describe('throwing gate exit isolation', () => {
       },
     };
     expect(() =>
-      writeSchemaNode(
+      writeFieldNode(
         root,
         { flag: false, source: 'C' },
         'callerPartial',

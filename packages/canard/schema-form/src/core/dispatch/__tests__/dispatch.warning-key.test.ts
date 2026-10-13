@@ -1,7 +1,7 @@
 import { describe, expect, it, vi } from 'vitest';
 
 import {
-  adoptSchemaNodeChain,
+  adoptFieldNodeChain,
   dispatchMount,
   dispatchResetForm,
   dispatchResetSubtree,
@@ -59,7 +59,7 @@ describe('structural warning keys', () => {
       report: vi.fn(),
     });
     next.runtime.rebuiltReferenceSchemaPaths = ['#/controls/active'];
-    adoptSchemaNodeChain(prior.root, next.root);
+    adoptFieldNodeChain(prior.root, next.root);
     expect([...(next.runtime.pendingWarningRecords?.values() ?? [])]).toEqual([
       expect.objectContaining({
         code: 'SCHEMA_FORM_WARNING.RESET_REBUILT_BY_REFERENCE',
@@ -73,7 +73,7 @@ describe('structural warning keys', () => {
       { hasConsumer: () => false, report: vi.fn() },
     );
     absent.runtime.rebuiltReferenceSchemaPaths = ['#/controls/active'];
-    adoptSchemaNodeChain(prior.root, absent.root);
+    adoptFieldNodeChain(prior.root, absent.root);
     expect(absent.runtime.pendingWarningRecords).toBeUndefined();
   });
 
@@ -106,7 +106,7 @@ describe('structural warning keys', () => {
       undefined,
       { hasConsumer: () => true, report: vi.fn() },
     );
-    adoptSchemaNodeChain(previous.root, next.root);
+    adoptFieldNodeChain(previous.root, next.root);
     expect([...(next.runtime.pendingWarningRecords?.values() ?? [])]).toEqual([
       expect.objectContaining({
         code: 'SCHEMA_FORM_WARNING.RESET_REBUILT_BY_REFERENCE',
@@ -131,11 +131,11 @@ describe('structural warning keys', () => {
       undefined,
       { hasConsumer: () => true, report: vi.fn() },
     );
-    adoptSchemaNodeChain(previous.root, next.root);
+    adoptFieldNodeChain(previous.root, next.root);
     expect(next.runtime.pendingWarningRecords?.size ?? 0).toBe(0);
   });
 
-  it('ERROR-024 delivers distinct collected allOf keywords on one schema node', () => {
+  it('ERROR-024 delivers distinct collected allOf keywords on one field node', () => {
     const keywords: unknown[] = [];
     const { root } = createDispatchTree(
       {

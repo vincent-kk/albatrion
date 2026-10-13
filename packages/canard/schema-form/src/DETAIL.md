@@ -8,7 +8,7 @@
 - `<Form>`은 `core/`의 새 엔진을 사용하며 노드 종류는 동작 행 계약을 따릅니다. `src/__legacy__/`는 참고용으로 보존하고, 비레거시 코드는 이 경로를 가져오지 않습니다(LANDING-067·205).
 - 플러그인 등록은 `registerPlugin()`만을 경유한다. `PluginManager`의 static 상태를 우회 변경하지 않는다.
 - 공개 검증 오류 형은 `ValidationIssue`이며 패키지 진입점은 `JSONSchemaError`를 내보내지 않습니다. 노드 형·가드도 새 엔진의 계약을 이름으로 내보냅니다(ERROR-032, 34C-02·50C-01, LANDING-067·170).
-- 상태 열거는 내부와 공개 경계에서 `SchemaNodeState` 한 이름을 사용하며 Dirty=1·Touched=2·ShowError=4를 유지합니다. `NodeState` 별칭은 내보내지 않습니다(SURFACE-056·060, LANDING-157).
+- 상태 열거는 내부와 공개 경계에서 `FieldNodeState` 한 이름을 사용하며 Dirty=1·Touched=2·ShowError=4를 유지합니다. `NodeState` 별칭은 내보내지 않습니다(SURFACE-056·060, LANDING-157).
 
 ## API Contracts
 

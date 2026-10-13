@@ -1,4 +1,4 @@
-import type { SchemaNodeRecord } from '../../../record';
+import type { FieldNodeRecord } from '../../../record';
 import type { SettlementContext } from '../../type';
 import { isPlain } from './isPlain';
 
@@ -8,7 +8,7 @@ import { isPlain } from './isPlain';
  * @param context - Settlement that owns the pending caller effect
  * @returns Nothing; candidates remain unchanged until child emits are calculated
  */
-export const markWrongKindAncestors = <Self extends SchemaNodeRecord<Self>>(
+export const markWrongKindAncestors = <Self extends FieldNodeRecord<Self>>(
   node: Self,
   context: SettlementContext<Self>,
 ): void => {

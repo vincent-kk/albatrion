@@ -35,6 +35,6 @@ ExternalFormContext/
 
 ### Never do
 
-- 이 Context에서 SchemaNode를 직접 생성하거나 조작
+- 이 Context에서 FieldNode를 직접 생성하거나 조작
 - 애플리케이션 코드에서 `useExternalFormContext`를 직접 import (`providers/index.ts` 통해 접근)
 - `ExternalFormContext` 초기값에 기본 렌더러를 하드코딩

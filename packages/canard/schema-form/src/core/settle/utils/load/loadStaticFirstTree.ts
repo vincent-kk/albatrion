@@ -3,7 +3,7 @@ import { hasOwnProperty } from '@winglet/common-utils/lib';
 
 import type { BlueprintChildEntry } from '../../../blueprint';
 import { publishGlobalStateDeltas } from '../../../record';
-import type { SchemaNodeRecord, TypeMismatchRecord } from '../../../record';
+import type { FieldNodeRecord, TypeMismatchRecord } from '../../../record';
 import { SetValueOption } from '../../../types/value';
 import { createChildNode } from '../compute/createChildNode';
 import { getDeclaredChildNames } from '../declarations/getDeclaredChildNames';
@@ -39,7 +39,7 @@ const EMPTY = Object.freeze([]);
  * @param option - Automatic-write flags interpreted exactly as the generic path
  * @returns Nothing; one reserved commit and every occurrence are eager before return
  */
-export const loadStaticFirstTree = <Self extends SchemaNodeRecord<Self>>(
+export const loadStaticFirstTree = <Self extends FieldNodeRecord<Self>>(
   root: Self,
   option: SetValueOption,
 ): void => {

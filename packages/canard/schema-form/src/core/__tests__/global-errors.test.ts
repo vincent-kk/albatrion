@@ -1,13 +1,13 @@
 import { describe, expect, it } from 'vitest';
 
 import {
-  type SchemaNode,
-  SchemaNodeEventType,
+  type FieldNode,
+  FieldNodeEventType,
   type ValidationIssue,
   ValidationMode,
-  adoptSchemaNodeTree,
+  adoptFieldNodeTree,
   nodeFromJSONSchema,
-  reloadSchemaNodeForm,
+  reloadFieldNodeForm,
 } from '../index';
 
 /**
@@ -17,7 +17,7 @@ import {
  */
 const createRoot = (
   readIssues: () => readonly ValidationIssue[] = () => [],
-): SchemaNode =>
+): FieldNode =>
   nodeFromJSONSchema({
     jsonSchema: { type: 'object', properties: { field: { type: 'string' } } },
     defaultValue: { field: 'text' },
@@ -86,10 +86,10 @@ describe('form-level external and validation errors', () => {
     let rootEvents = 0;
     let aggregateEvents = 0;
     root.subscribe(({ type, payload }) => {
-      if (type & SchemaNodeEventType.UpdateError) rootEvents++;
-      if (type & SchemaNodeEventType.UpdateGlobalError) {
+      if (type & FieldNodeEventType.UpdateError) rootEvents++;
+      if (type & FieldNodeEventType.UpdateGlobalError) {
         aggregateEvents++;
-        expect(payload?.[SchemaNodeEventType.UpdateGlobalError]).toBe(
+        expect(payload?.[FieldNodeEventType.UpdateGlobalError]).toBe(
           root.globalErrors,
         );
       }
@@ -145,10 +145,10 @@ describe('form-level external and validation errors', () => {
     expect(root.errors).toEqual([issue]);
     let aggregates = 0;
     root.subscribe(({ type }) => {
-      if (type & SchemaNodeEventType.UpdateGlobalError) aggregates++;
+      if (type & FieldNodeEventType.UpdateGlobalError) aggregates++;
     });
     field.subscribe(({ type }) => {
-      if (type & SchemaNodeEventType.UpdateValue) field.clearExternalErrors();
+      if (type & FieldNodeEventType.UpdateValue) field.clearExternalErrors();
     });
     field.setValue('next');
     expect(field.errors).toEqual([]);
@@ -166,10 +166,10 @@ describe('form-level external and validation errors', () => {
         { dataPath: '/field', message: `r${rounds++}` },
       ]);
     field.subscribe(({ type }) => {
-      if (type & SchemaNodeEventType.UpdateValue) rewrite();
+      if (type & FieldNodeEventType.UpdateValue) rewrite();
     });
     root.subscribe(({ type }) => {
-      if (type & SchemaNodeEventType.UpdateGlobalError) rewrite();
+      if (type & FieldNodeEventType.UpdateGlobalError) rewrite();
     });
     let failure: unknown;
     try {
@@ -229,7 +229,7 @@ describe('form-level external and validation errors', () => {
     root.setExternalErrors([{ dataPath: '', message: 'server' }]);
     await root.validate();
     expect(root.globalErrors).toHaveLength(2);
-    reloadSchemaNodeForm(root, { field: 'reset' });
+    reloadFieldNodeForm(root, { field: 'reset' });
     expect(root.globalErrors).toEqual([]);
     expect(root.errors).toEqual([]);
   });
@@ -240,7 +240,7 @@ describe('form-level external and validation errors', () => {
     const replacement = createRoot();
     root.batch(() => {
       root.find('/field')!.setExternalErrors([issue]);
-      adoptSchemaNodeTree(root, replacement);
+      adoptFieldNodeTree(root, replacement);
     });
     expect(replacement.errors).toEqual([issue]);
     expect(replacement.globalErrors).toEqual([issue]);
@@ -255,7 +255,7 @@ describe('form-level external and validation errors', () => {
     expect(root.errors).toEqual([]);
     let aggregates = 0;
     root.subscribe(({ type }) => {
-      if (type & SchemaNodeEventType.UpdateGlobalError) aggregates++;
+      if (type & FieldNodeEventType.UpdateGlobalError) aggregates++;
     });
     root.clearExternalErrors();
     expect(aggregates).toBe(0);
@@ -266,7 +266,7 @@ describe('form-level external and validation errors', () => {
     const external = [{ dataPath: '/field', message: 'server' }];
     root.setExternalErrors(external);
     const replacement = createRoot();
-    adoptSchemaNodeTree(root, replacement);
+    adoptFieldNodeTree(root, replacement);
     const errors = replacement.globalErrors;
     expect(errors).toEqual(external);
     expect(replacement.globalErrors).toBe(errors);

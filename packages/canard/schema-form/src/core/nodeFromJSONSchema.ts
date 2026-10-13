@@ -2,8 +2,8 @@ import type { Dictionary } from '@aileron/declare';
 
 import type { FormErrorReporter } from '../errors';
 import type { InferValueType } from '../types/value';
-import { buildSchemaNodeTree, mountSchemaNode } from './SchemaNode';
-import type { InferSchemaNode } from './SchemaNode';
+import { buildFieldNodeTree, mountFieldNode } from './FieldNode';
+import type { InferFieldNode } from './FieldNode';
 import type { BlueprintOptions } from './blueprint';
 import type { JSONSchema } from './types/jsonSchema';
 import type { ValidationMode } from './types/state';
@@ -31,9 +31,9 @@ export function nodeFromJSONSchema<Schema extends JSONSchema>(props: {
   isTerminal?: BlueprintOptions['isTerminal'];
   isAtomic?: (value: unknown) => boolean;
   deferMountValidation?: boolean;
-}): InferSchemaNode<Schema> {
-  const root = buildSchemaNodeTree<Schema>(props);
-  mountSchemaNode(root, undefined, undefined, {
+}): InferFieldNode<Schema> {
+  const root = buildFieldNodeTree<Schema>(props);
+  mountFieldNode(root, undefined, undefined, {
     deferValidation: props.deferMountValidation ?? false,
   });
   return root;

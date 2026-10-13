@@ -1,7 +1,7 @@
 import { isArray } from '@winglet/common-utils/filter';
 import { escapeSegment } from '@winglet/json/pointer';
 
-import type { SchemaNodeRecord, SchemaNodeRuntime } from '../../../record';
+import type { FieldNodeRecord, FieldNodeRuntime } from '../../../record';
 import type { SettlementContext } from '../../type';
 import { getLatentPathIndex } from '../latent/getLatentPathIndex';
 import { setLatentRaw } from '../latent/setLatentRaw';
@@ -14,8 +14,8 @@ import { setLatentRaw } from '../latent/setLatentRaw';
  * @param context - Transition whose rollback and prefix index must be updated
  * @returns Nothing; all kinds in the covered paths are removed
  */
-export const pruneLatentRaw = <Self extends SchemaNodeRecord<Self>>(
-  runtime: SchemaNodeRuntime<Self>,
+export const pruneLatentRaw = <Self extends FieldNodeRecord<Self>>(
+  runtime: FieldNodeRuntime<Self>,
   path: string,
   names?: readonly string[],
   context?: SettlementContext<Self>,

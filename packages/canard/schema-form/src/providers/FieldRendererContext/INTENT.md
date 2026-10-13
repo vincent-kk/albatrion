@@ -37,6 +37,6 @@ FieldRendererContext/
 
 ### Never do
 
-- `FieldRenderer`를 Context에서 직접 렌더링 (SchemaNodeProxy가 담당)
+- `FieldRenderer`를 Context에서 직접 렌더링 (FieldProxy가 담당)
 - `checkShowError` 함수를 Context 외부에서 재구현
 - PluginManager fallback을 제거하여 렌더러가 `undefined`가 되도록 방치

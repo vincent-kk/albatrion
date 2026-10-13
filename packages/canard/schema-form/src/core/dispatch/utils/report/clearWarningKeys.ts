@@ -1,7 +1,7 @@
 import { isArray } from '@winglet/common-utils/filter';
 
-import { indexSchemaNodeWarning } from '../../../record';
-import type { SchemaNodeRuntime } from '../../../record';
+import { indexFieldNodeWarning } from '../../../record';
+import type { FieldNodeRuntime } from '../../../record';
 
 /**
  * Start a new form warning lifetime while retaining undelivered occurrences.
@@ -10,7 +10,7 @@ import type { SchemaNodeRuntime } from '../../../record';
  * @remarks O(pending warnings × path depth), only at form-level loads.
  */
 export const clearWarningKeys = <Self>(
-  runtime: SchemaNodeRuntime<Self>,
+  runtime: FieldNodeRuntime<Self>,
 ): void => {
   runtime.warningKeys?.clear();
   runtime.warningKeysByPath?.clear();
@@ -18,6 +18,6 @@ export const clearWarningKeys = <Self>(
     if (record.path === undefined) continue;
     const parts: unknown = JSON.parse(key);
     if (isArray(parts) && typeof parts[1] === 'string')
-      indexSchemaNodeWarning(runtime, key, parts[1]);
+      indexFieldNodeWarning(runtime, key, parts[1]);
   }
 };

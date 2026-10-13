@@ -7,7 +7,7 @@ import {
   settleScenarios,
 } from '@aileron/schema-form-scenarios';
 
-import { type JSONSchema, SchemaNodeState } from '@/schema-form';
+import { FieldNodeState, type JSONSchema } from '@/schema-form';
 
 import { type FormHarness, renderForm } from '../renderForm';
 
@@ -88,7 +88,7 @@ it('LANDING-157 reset clears interaction state and remounts terminal inputs', as
   await form.type('/name', 'changed');
   await form.user.tab();
   await form.flush();
-  expect(node!.state[SchemaNodeState.Dirty]).toBe(true);
+  expect(node!.state[FieldNodeState.Dirty]).toBe(true);
   await form.reset();
   expect(form.handle.node).toBe(root);
   expect(form.node('/name')).toBe(node);
@@ -108,7 +108,7 @@ it('TEST-020 blur immediately followed by reset discards deferred touched', asyn
   await act(async () => {
     await new Promise(requestAnimationFrame);
   });
-  expect(form.handle.getState()[SchemaNodeState.Touched]).not.toBe(true);
+  expect(form.handle.getState()[FieldNodeState.Touched]).not.toBe(true);
 });
 
 it('TEST-020 blur immediately followed by clearState discards deferred touched', async () => {
@@ -122,5 +122,5 @@ it('TEST-020 blur immediately followed by clearState discards deferred touched',
   await act(async () => {
     await new Promise(requestAnimationFrame);
   });
-  expect(form.handle.getState()[SchemaNodeState.Touched]).not.toBe(true);
+  expect(form.handle.getState()[FieldNodeState.Touched]).not.toBe(true);
 });

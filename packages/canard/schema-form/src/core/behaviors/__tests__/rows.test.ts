@@ -3,7 +3,7 @@ import { describe, expect, it } from 'vitest';
 import { blueprint } from '../../blueprint';
 import type { BlueprintNode } from '../../blueprint';
 import { EMPTY_REVISION_LEDGER } from '../../record';
-import type { Behavior, SchemaNodeRecord, UnionSpec } from '../../record';
+import type { Behavior, FieldNodeRecord, UnionSpec } from '../../record';
 import { PathKeyedMap } from '../../utils/pathIndex/PathKeyedMap';
 import { PathKeyedSet } from '../../utils/pathIndex/PathKeyedSet';
 import { booleanBehavior } from '../booleanBehavior';
@@ -30,7 +30,7 @@ const makeRecord = (
   raw: unknown,
   options: Record<string, unknown> = {},
   blueprintNode: BlueprintNode = OBJECT_TEMPLATE,
-): SchemaNodeRecord<unknown> => ({
+): FieldNodeRecord<unknown> => ({
   behavior,
   runtime: {
     blueprint: OBJECT_ANALYSIS,

@@ -78,7 +78,7 @@ export default [
       'src/core/settle/**/*.ts',
       'src/core/dispatch/**',
       'src/core/validation/**',
-      'src/core/SchemaNode/**/*.ts',
+      'src/core/FieldNode/**/*.ts',
     ],
     ignores: ['**/__tests__/**'],
     rules: {
@@ -100,67 +100,66 @@ export default [
     },
   },
   {
-    files: ['src/core/SchemaNode/SchemaNode.ts'],
+    files: ['src/core/FieldNode/FieldNode.ts'],
     rules: {
       'no-restricted-syntax': [
         'error',
         ...environmentTokenRules,
         {
           selector: "PropertyDefinition[key.type='PrivateIdentifier']",
-          message:
-            'ES # private fields are forbidden in SchemaNode (NODE-010).',
+          message: 'ES # private fields are forbidden in FieldNode (NODE-010).',
         },
         {
           selector: "MethodDefinition[key.type='PrivateIdentifier']",
           message:
-            'ES # private methods are forbidden in SchemaNode (NODE-010).',
+            'ES # private methods are forbidden in FieldNode (NODE-010).',
         },
         {
           selector: 'PropertyDefinition[value!=null]',
           message:
-            'SchemaNode fields are assigned only by the constructor (NODE-010).',
+            'FieldNode fields are assigned only by the constructor (NODE-010).',
         },
         {
           selector:
             "MethodDefinition[kind='method'][value.body.body.length!=1]",
           message:
-            'SchemaNode methods contain one delegation statement (NODE-010).',
+            'FieldNode methods contain one delegation statement (NODE-010).',
         },
         {
           selector:
             "MethodDefinition[kind='get'][value.body.body.length!=1], MethodDefinition[kind='set'][value.body.body.length!=1]",
           message:
-            'SchemaNode accessors contain one storage statement (NODE-010).',
+            'FieldNode accessors contain one storage statement (NODE-010).',
         },
         {
           selector:
             "MethodDefinition[kind='constructor'] BlockStatement > :not(ExpressionStatement)",
           message:
-            'SchemaNode construction consists only of assignments (NODE-010).',
+            'FieldNode construction consists only of assignments (NODE-010).',
         },
         {
           selector:
             "MethodDefinition[kind='constructor'] BlockStatement > ExpressionStatement > :not(AssignmentExpression)",
           message:
-            'SchemaNode construction consists only of assignments (NODE-010).',
+            'FieldNode construction consists only of assignments (NODE-010).',
         },
         {
           selector:
             "MethodDefinition[kind='constructor'] BlockStatement > ExpressionStatement > AssignmentExpression[left.object.type!='ThisExpression']",
           message:
-            'SchemaNode construction assigns only its own fields (NODE-010).',
+            'FieldNode construction assigns only its own fields (NODE-010).',
         },
         {
           selector:
             "MethodDefinition[kind='constructor'] :matches(NewExpression, ObjectExpression, ArrayExpression, ArrowFunctionExpression)",
           message:
-            'SchemaNode construction only assigns precomputed fields (NODE-010).',
+            'FieldNode construction only assigns precomputed fields (NODE-010).',
         },
         {
           selector:
             'IfStatement, SwitchStatement, ForStatement, ForOfStatement, WhileStatement',
           message:
-            'SchemaNode branching belongs to its owner modules (NODE-010).',
+            'FieldNode branching belongs to its owner modules (NODE-010).',
         },
       ],
     },
@@ -174,7 +173,7 @@ export default [
       'src/errors/**/*.{ts,tsx}',
       'src/index.ts',
     ],
-    ignores: ['src/core/SchemaNode/SchemaNode.ts', '**/__tests__/**'],
+    ignores: ['src/core/FieldNode/FieldNode.ts', '**/__tests__/**'],
     rules: {
       'no-restricted-syntax': [
         'error',

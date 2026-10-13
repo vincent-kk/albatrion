@@ -1,9 +1,9 @@
 import { isArray } from '@winglet/common-utils/filter';
 
 import { find } from '../../../navigation';
-import type { SchemaNodeRecord } from '../../../record';
-import { writeSchemaNode } from '../../../settle';
-import type { SchemaNodeWriteKind } from '../../../settle';
+import type { FieldNodeRecord } from '../../../record';
+import { writeFieldNode } from '../../../settle';
+import type { FieldNodeWriteKind } from '../../../settle';
 import { SetValueOption } from '../../../types/value';
 import { captureChainError } from './captureChainError';
 import { composeBatchValue } from './composeBatchValue';
@@ -13,7 +13,7 @@ import { composeBatchValue } from './composeBatchValue';
  * @param root - Tree owning marked writes
  * @returns Nothing; settlement failures stay on the current chain
  */
-export const flushBatchWrites = <Self extends SchemaNodeRecord<Self>>(
+export const flushBatchWrites = <Self extends FieldNodeRecord<Self>>(
   root: Self,
 ): void => {
   const runtime = root.runtime;
@@ -42,7 +42,7 @@ export const flushBatchWrites = <Self extends SchemaNodeRecord<Self>>(
       write,
     ): {
       path: string;
-      source: SchemaNodeWriteKind;
+      source: FieldNodeWriteKind;
       keys?: readonly string[];
       fields?: readonly string[];
     } => {
@@ -70,7 +70,7 @@ export const flushBatchWrites = <Self extends SchemaNodeRecord<Self>>(
     },
   );
   try {
-    writeSchemaNode(
+    writeFieldNode(
       target,
       input,
       source === 'automatic'

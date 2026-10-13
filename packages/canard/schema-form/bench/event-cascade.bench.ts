@@ -1,8 +1,8 @@
 import { bench, describe } from 'vitest';
 
 import {
+  type FieldNode,
   type NumberNode,
-  type SchemaNode,
   type StringNode,
   nodeFromJSONSchema,
 } from '@/schema-form/core';
@@ -75,15 +75,15 @@ const oneOfSchema: JSONSchema = {
 const noop = () => {};
 const drain = () => new Promise<void>((r) => setTimeout(r, 0));
 
-const flatNode: SchemaNode = nodeFromJSONSchema({
+const flatNode: FieldNode = nodeFromJSONSchema({
   jsonSchema: flatSchema,
   onChange: noop,
 });
-const derivedNode: SchemaNode = nodeFromJSONSchema({
+const derivedNode: FieldNode = nodeFromJSONSchema({
   jsonSchema: derivedSchema,
   onChange: noop,
 });
-const oneOfNode: SchemaNode = nodeFromJSONSchema({
+const oneOfNode: FieldNode = nodeFromJSONSchema({
   jsonSchema: oneOfSchema,
   onChange: noop,
 });

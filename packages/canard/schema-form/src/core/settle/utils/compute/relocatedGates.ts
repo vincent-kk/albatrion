@@ -1,4 +1,4 @@
-import type { SchemaNodeRecord } from '../../../record';
+import type { FieldNodeRecord } from '../../../record';
 import { getGateRegistry } from '../gates/getGateRegistry';
 import type { GateOccurrence } from '../gates/type';
 
@@ -7,7 +7,7 @@ import type { GateOccurrence } from '../gates/type';
  * @param node - Current host in the root descent
  * @returns Distinct bound gates in blueprint document order
  */
-export const relocatedGates = <Self extends SchemaNodeRecord<Self>>(
+export const relocatedGates = <Self extends FieldNodeRecord<Self>>(
   node: Self,
 ): readonly GateOccurrence[] =>
   getGateRegistry(node.runtime).relocated(node.path);

@@ -10,9 +10,9 @@ import { renderForm } from '../renderForm';
  * form-level `readOnly` / `disabled` props.
  *
  * Load-bearing render facts (verified against src/):
- *   - `SchemaNodeInput` passes `readOnly={rootReadOnly || node.readOnly}` and
+ *   - `FieldInputSlot` passes `readOnly={rootReadOnly || node.readOnly}` and
  *     `disabled={rootDisabled || node.disabled}` FRESH on every render
- *     (`SchemaNodeInput.tsx:111-112`). These are NOT memorized off the
+ *     (`FieldInputSlot.tsx:111-112`). These are NOT memorized off the
  *     RequestRefresh `version`, so a computed flip reaches the DOM purely via the
  *     `UpdateComputedProperties` re-render (in `REACTIVE_RERENDERING_EVENTS`).
  *   - `node.readOnly` / `node.disabled` reflect ONLY the computed property

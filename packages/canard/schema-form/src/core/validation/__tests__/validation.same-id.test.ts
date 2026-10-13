@@ -2,7 +2,7 @@ import { describe, expect, it, vi } from 'vitest';
 
 import type { BlueprintSchema } from '../../blueprint';
 import {
-  adoptSchemaNodeChain,
+  adoptFieldNodeChain,
   dispatchMount,
   dispatchValidate,
 } from '../../dispatch';
@@ -97,7 +97,7 @@ describe('same schema id trees', () => {
     retainValidationRoot(validator, first);
     const next = createDispatchTree(second, undefined, validator);
     previous.runtime.entryDepth = 1;
-    expect(() => adoptSchemaNodeChain(previous.root, next.root)).toThrow(
+    expect(() => adoptFieldNodeChain(previous.root, next.root)).toThrow(
       'Whole-schema validation could not be compiled',
     );
     expect(previous.runtime.entryDepth).toBe(1);
@@ -122,7 +122,7 @@ describe('same schema id trees', () => {
     const next = createDispatchTree(second, undefined, validator);
     dispatchMount(next.root, 5);
     previous.runtime.entryDepth = 1;
-    adoptSchemaNodeChain(previous.root, next.root);
+    adoptFieldNodeChain(previous.root, next.root);
     expect(previous.runtime.adoptedRoot).toBe(next.root);
     expect(await dispatchValidate(previous.root)).toEqual([]);
     expect(await dispatchValidate(next.root)).toEqual([]);

@@ -2,10 +2,10 @@ import type { CSSProperties, ComponentType } from 'react';
 
 import type { Dictionary, Fn } from '@aileron/declare';
 
-import type { ChildNodeComponent } from '@/schema-form/components/SchemaNode';
+import type { ChildNodeComponent } from '@/schema-form/components/Field';
 import type {
-  InferSchemaNode,
-  SchemaNode,
+  FieldNode,
+  InferFieldNode,
   SetValueOption,
 } from '@/schema-form/core';
 
@@ -23,8 +23,8 @@ import type { AllowedValue } from './value';
  * - `Value`: Type of value assigned to FieldInput Component
  * - `Context`: Type of UserDefinedContext passed to Form
  * - `WatchValues`: Type of values subscribed according to watch property defined in JSONSchema
- * - `Schema`: JSONSchema type of schema node assigned to FieldInput Component
- * - `Node`: Type of schema node assigned to FieldInput Component
+ * - `Schema`: JSONSchema type of field node assigned to FieldInput Component
+ * - `Node`: Type of field node assigned to FieldInput Component
  */
 export interface FieldInputProps<
   Value extends AllowedValue = any,
@@ -33,9 +33,9 @@ export interface FieldInputProps<
   Schema extends JSONSchema | JSONSchemaWithVirtual = unknown extends Value
     ? JSONSchema
     : InferJSONSchema<Value>,
-  Node extends SchemaNode = unknown extends Value
-    ? SchemaNode
-    : InferSchemaNode<Schema>,
+  Node extends FieldNode = unknown extends Value
+    ? FieldNode
+    : InferFieldNode<Schema>,
 > {
   /** JSONSchema of FieldInput Component */
   jsonSchema: Schema;
@@ -43,9 +43,9 @@ export interface FieldInputProps<
   readOnly: boolean;
   /** Disabled state of FieldInput Component */
   disabled: boolean;
-  /** Whether the schema node assigned to FieldInput Component is required */
+  /** Whether the field node assigned to FieldInput Component is required */
   required: boolean;
-  /** Schema node assigned to FieldInput Component */
+  /** Field node assigned to FieldInput Component */
   node: Node;
   /** JSON Schema type of this field (e.g., 'string', 'number', 'object', 'array') */
   type: Node['type'];
@@ -53,13 +53,13 @@ export interface FieldInputProps<
   schemaType: Node['schemaType'];
   /** Whether the stored value mismatches the accepted kinds. */
   typeMismatch: Node['typeMismatch'];
-  /** Name of schema node assigned to FieldInput Component */
+  /** Name of field node assigned to FieldInput Component */
   name: Node['name'];
-  /** Path of schema node assigned to FieldInput Component */
+  /** Path of field node assigned to FieldInput Component */
   path: Node['path'];
   /** Whether this field accepts null as a valid value (derived from schema type array including 'null') */
   nullable: Node['nullable'];
-  /** Errors of schema node assigned to FieldInput Component */
+  /** Errors of field node assigned to FieldInput Component */
   errors: Node['errors'];
   /** Whether to show errors for this field */
   errorVisible: boolean;
@@ -91,7 +91,7 @@ export interface FieldInputProps<
  * Props that FieldInputPropsWithSchema must satisfy
  *
  * - `Value`: Type of value assigned to FieldInput Component
- * - `Schema`: JSONSchema type of schema node assigned to FieldInput Component
+ * - `Schema`: JSONSchema type of field node assigned to FieldInput Component
  * - `Context`: Type of UserDefinedContext passed to Form
  */
 export type FieldInputPropsWithSchema<
@@ -106,15 +106,15 @@ export type FieldInputPropsWithSchema<
  * Props that FieldInputPropsWithSchema must satisfy
  *
  * - `Value`: Type of value assigned to FieldInput Component
- * - `Schema`: JSONSchema type of schema node assigned to FieldInput Component
- * - `Node`: Type of schema node assigned to FieldInput Component
+ * - `Schema`: JSONSchema type of field node assigned to FieldInput Component
+ * - `Node`: Type of field node assigned to FieldInput Component
  */
 export type FieldInputPropsWithNode<
   Value extends AllowedValue = any,
   Schema extends JSONSchema | JSONSchemaWithVirtual = unknown extends Value
     ? JSONSchemaWithVirtual
     : InferJSONSchema<Value>,
-  Node extends SchemaNode = InferSchemaNode<Schema>,
+  Node extends FieldNode = InferFieldNode<Schema>,
 > = FieldInputProps<Value, Dictionary, any[], Schema, Node>;
 
 /** FieldInputProps to use when type inference is not needed */
@@ -126,8 +126,8 @@ export interface UnknownFieldInputProps {
   node: any;
   name: string;
   path: string;
-  type: SchemaNodeType;
-  schemaType: SchemaNode['schemaType'];
+  type: FieldNodeType;
+  schemaType: FieldNode['schemaType'];
   typeMismatch: boolean;
   nullable: boolean;
   errors: readonly any[];
@@ -170,20 +170,20 @@ export type OverridableFieldInputProps = Omit<
 
 export type FieldInputTestFn = Fn<[hint: Hint], boolean>;
 
-export type SchemaNodeType = SchemaNode['type'];
+export type FieldNodeType = FieldNode['type'];
 
 type OptionalString = string | undefined;
 
 export type FieldInputTestObject = Partial<{
-  /** SchemaNode['schemaType'] | Array<SchemaNode['schemaType']> */
-  type: SchemaNodeType | SchemaNodeType[];
+  /** FieldNode['schemaType'] | Array<FieldNode['schemaType']> */
+  type: FieldNodeType | FieldNodeType[];
   /** Accepted schema kinds, including integer and union member arrays. */
-  schemaType: SchemaNode['schemaType'] | SchemaNode['schemaType'][];
-  /** SchemaNode['path'] | Array<SchemaNode['path']> */
+  schemaType: FieldNode['schemaType'] | FieldNode['schemaType'][];
+  /** FieldNode['path'] | Array<FieldNode['path']> */
   path: string | string[];
-  /** SchemaNode['required'] */
+  /** FieldNode['required'] */
   required: boolean;
-  /** SchemaNode['nullable] */
+  /** FieldNode['nullable] */
   nullable: boolean;
   /** JSONSchema['format'] | Array<JSONSchema['format']> | undefined */
   format: OptionalString | OptionalString[];
@@ -192,17 +192,17 @@ export type FieldInputTestObject = Partial<{
 }>;
 
 export type Hint = {
-  /** SchemaNode['schemaType'] */
-  type: SchemaNodeType;
+  /** FieldNode['schemaType'] */
+  type: FieldNodeType;
   /** Authored accepted schema kind(s). */
-  schemaType: SchemaNode['schemaType'];
+  schemaType: FieldNode['schemaType'];
   /** Whether the stored value mismatches the accepted kinds. */
   typeMismatch: boolean;
-  /** SchemaNode['path'] */
+  /** FieldNode['path'] */
   path: string;
-  /** SchemaNode['required'] */
+  /** FieldNode['required'] */
   required: boolean;
-  /** SchemaNode['nullable] */
+  /** FieldNode['nullable] */
   nullable: boolean;
   /** JSONSchema */
   jsonSchema: JSONSchema | JSONSchemaWithVirtual;
@@ -227,4 +227,4 @@ export type SetStateFnWithOptions<S = unknown> = Fn<
   [value: S | ((prevState: S) => S), options?: SetValueOption]
 >;
 
-export type AttachedFilesMap = Map<SchemaNode['path'], File[]>;
+export type AttachedFilesMap = Map<FieldNode['path'], File[]>;

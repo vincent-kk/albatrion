@@ -14,11 +14,11 @@ import { registerScenarioHandle } from '@aileron/schema-form-scenarios';
 import {
   type FieldInputDefinition,
   type FieldInputProps,
+  type FieldNode,
   Form,
   type FormHandle,
   type FormProps,
   type JSONSchema,
-  type SchemaNode,
   type ValidationIssue,
   registerPlugin,
 } from '@/schema-form';
@@ -162,7 +162,7 @@ export interface FormHarness {
 
   // ---- node-tree queries ----
   /** Node at `path` via the form handle (null if not found). */
-  node: (path: string) => SchemaNode | null;
+  node: (path: string) => FieldNode | null;
   /** Current root value from the handle. */
   getValue: () => any;
   /** Current errors from the handle. */

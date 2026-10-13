@@ -1,5 +1,5 @@
 import type { BlueprintGate } from '../../../blueprint';
-import type { SchemaNodeRecord } from '../../../record';
+import type { FieldNodeRecord } from '../../../record';
 import type { SettlementContext } from '../../type';
 import { getHostWheelBudgetCap } from '../gates/getGateBudgetCap';
 import { dirtyChildren } from './dirtyChildren';
@@ -19,7 +19,7 @@ import { hasIndependentLeafDefaults } from './utils/hasIndependentLeafDefaults';
  * @param context - Dirty paths and current commit's deferred failure
  * @returns Nothing; the record carries its calculated values
  */
-export const computeNode = <Self extends SchemaNodeRecord<Self>>(
+export const computeNode = <Self extends FieldNodeRecord<Self>>(
   node: Self,
   context: SettlementContext<Self>,
 ): void => {

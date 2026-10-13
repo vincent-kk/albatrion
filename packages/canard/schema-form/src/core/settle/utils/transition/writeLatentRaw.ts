@@ -1,5 +1,5 @@
 import type { BlueprintNode } from '../../../blueprint';
-import type { SchemaNodeRecord } from '../../../record';
+import type { FieldNodeRecord } from '../../../record';
 import type { SettlementContext } from '../../type';
 import { setLatentRaw } from '../latent/setLatentRaw';
 
@@ -13,7 +13,7 @@ import { setLatentRaw } from '../latent/setLatentRaw';
  * @param order - Stable root-to-leaf document order
  * @returns Nothing; the root latent map is updated
  */
-export const writeLatentRaw = <Self extends SchemaNodeRecord<Self>>(
+export const writeLatentRaw = <Self extends FieldNodeRecord<Self>>(
   context: SettlementContext<Self>,
   key: string,
   present: boolean,

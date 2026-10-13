@@ -55,7 +55,7 @@ console.log(`
 | commitSettlement | 기존 경로/경고/선언 순서 유지, 배열 인덱스 for; O(N) 동일 | 기존 mismatch 결과 유지, 영구 추가 없음 |
 | markCommitDeliveries | automaticLog 한 for, watch short-circuit for; iii 되돌림으로 per-node optional 및 ordered alias 분기 제거 | 조건부 방식 대비 빈 커밋에 Set 최대 3개와 배열 1개 추가; map 임시 배열 제거; 공유 전역 Set 없음 |
 | computeNode | dirty children/선언/gate/relocation 각각 인덱스 for, 기존 wheel과 조기 반환 유지 | 새 저장소 없음, iterator 대신 기존 배열 참조 |
-| enterSchemaNode | 이미 루프 없음; 기존 빈 latent 검사 유지 | 변화 없음 |
+| enterFieldNode | 이미 루프 없음; 기존 빈 latent 검사 유지 | 변화 없음 |
 | selectChildren, staticIds, staticShape | 선언 filter→gate every→ID map을 단락 for로 융합; shape 전체 확인 뒤 계산하는 두 루프는 순서 때문에 유지 | 중간 map/callback 제거; 정적 선언/shape WeakMap 수명 동일, 정적 active 임시 배열 없음 |
 | hasIndependentLeafDefaults | 중첩 every를 조기 중단 for로 대체, O(청사진 선언 수) | blueprint당 boolean WeakMap 그대로 |
 | declarationIds, getControlLayers, selected | declaration ID/fragment 검색 인덱스 for; selected는 루프 없음 | 불변 ID 참조/약한 메모 동일, 영구 증가 없음 |

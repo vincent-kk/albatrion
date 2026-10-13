@@ -1,7 +1,7 @@
 import { hasOwnProperty } from '@winglet/common-utils/lib';
 import { unescapeSegment } from '@winglet/json/pointer';
 
-import type { SchemaNodeRecord } from '../../../record';
+import type { FieldNodeRecord } from '../../../record';
 import type { SettlementContext } from '../../type';
 
 /**
@@ -9,7 +9,7 @@ import type { SettlementContext } from '../../type';
  * @param context - Final tree and mutable per-round trace entries
  * @returns Nothing; the trace records final-shape withdrawal in place
  */
-export const finalizeDeriveTrace = <Self extends SchemaNodeRecord<Self>>(
+export const finalizeDeriveTrace = <Self extends FieldNodeRecord<Self>>(
   context: SettlementContext<Self>,
 ): void => {
   if (!context.traceRounds?.length) return;

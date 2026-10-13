@@ -1,4 +1,4 @@
-import type { SchemaNodeRecord } from '../../../record';
+import type { FieldNodeRecord } from '../../../record';
 import { composeBatchValue } from './composeBatchValue';
 
 /**
@@ -7,7 +7,7 @@ import { composeBatchValue } from './composeBatchValue';
  * @returns Last committed value with relevant call-order marks overlaid; a virtual target
  * reads its reference fields as a tuple
  */
-export const readBatchValue = <Self extends SchemaNodeRecord<Self>>(
+export const readBatchValue = <Self extends FieldNodeRecord<Self>>(
   node: Self,
 ): unknown => {
   const root = node.rootNode;

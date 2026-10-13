@@ -1,14 +1,14 @@
 import { hasOwnProperty } from '@winglet/common-utils/lib';
 
-import type { SchemaNodeRecord } from '../../../record';
-import { getSchemaNodePath } from './utils/getSchemaNodePath';
+import type { FieldNodeRecord } from '../../../record';
+import { getFieldNodePath } from './utils/getFieldNodePath';
 
 /** Resolve every current-shape match in path order, retaining each instance once. */
-export const findNodes = <Self extends SchemaNodeRecord<Self>>(
+export const findNodes = <Self extends FieldNodeRecord<Self>>(
   origin: Self,
   pointer?: string | readonly string[] | null,
 ): readonly Self[] => {
-  const path = getSchemaNodePath(pointer);
+  const path = getFieldNodePath(pointer);
   let cursors: Self[] = [path.absolute ? origin.rootNode : origin];
 
   for (const token of path.segments) {

@@ -1,6 +1,6 @@
 import { isArray } from '@winglet/common-utils/filter';
 
-import type { SchemaNodeRuntime } from '../../../record';
+import type { FieldNodeRuntime } from '../../../record';
 import { PathKeyedMap } from '../../../utils/pathIndex/PathKeyedMap';
 
 /**
@@ -12,7 +12,7 @@ import { PathKeyedMap } from '../../../utils/pathIndex/PathKeyedMap';
  * @returns Nothing; all three runtime slots stay in sync
  */
 export const updateCommittedRuleValue = <Self>(
-  runtime: SchemaNodeRuntime<Self>,
+  runtime: FieldNodeRuntime<Self>,
   key: string,
   operation: 'set' | 'delete',
   value?: unknown,

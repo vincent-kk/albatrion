@@ -1,7 +1,7 @@
 import { hasOwnProperty } from '@winglet/common-utils/lib';
 import { unescapeSegment } from '@winglet/json/pointer';
 
-import type { SchemaNodeRecord } from '../../../record';
+import type { FieldNodeRecord } from '../../../record';
 import { resolveDependencyPath } from '../paths/resolveDependencyPath';
 
 /** Emission and context retained before a settlement changes the live tree. */
@@ -20,7 +20,7 @@ export interface EmissionSnapshot {
  * @param snapshot - Optional preceding commit when a node is detaching
  * @returns The emitted value, context, or undefined for an absent path
  */
-export const readStateDependency = <Self extends SchemaNodeRecord<Self>>(
+export const readStateDependency = <Self extends FieldNodeRecord<Self>>(
   root: Self,
   hostPath: string,
   dependency: string,

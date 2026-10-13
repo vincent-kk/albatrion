@@ -7,20 +7,20 @@ import {
   dispatchSetExternalErrors,
   dispatchSetValue,
   dispatchValidate,
-  subscribeSchemaNode,
+  subscribeFieldNode,
 } from '../../dispatch';
 import {
   type DispatchTestNode,
   createDispatchTree,
 } from '../../dispatch/__tests__/fixtures/createDispatchTree';
-import { SchemaNodeEventType } from '../../record';
+import { FieldNodeEventType } from '../../record';
 import { ValidationMode } from '../../types/state';
-import { readSchemaNodeErrors, requestSchemaNodeValidation } from '../index';
+import { readFieldNodeErrors, requestFieldNodeValidation } from '../index';
 import type { ValidationIssue, Validator } from '../type';
 
 /** Error bits a validation wave may deliver. */
 const ERROR_BITS =
-  SchemaNodeEventType.UpdateError | SchemaNodeEventType.UpdateGlobalError;
+  FieldNodeEventType.UpdateError | FieldNodeEventType.UpdateGlobalError;
 
 /**
  * Build a validator whose result is produced fresh on every call, as an AJV adapter does.
@@ -41,7 +41,7 @@ const freshValidator = (
  */
 const recordErrorBits = (node: DispatchTestNode): number[] => {
   const received: number[] = [];
-  subscribeSchemaNode(node, (event) => {
+  subscribeFieldNode(node, (event) => {
     if (event.type & ERROR_BITS) received.push(event.type & ERROR_BITS);
   });
   return received;
@@ -81,13 +81,13 @@ describe('207C-01 deep-equal root results keep references and send no error wave
     dispatchSetValue(name, 'b');
     await settle();
     const globalErrors = runtime.globalErrors;
-    const nodeErrors = readSchemaNodeErrors(name);
+    const nodeErrors = readFieldNodeErrors(name);
     const rootBits = recordErrorBits(root);
     const nameBits = recordErrorBits(name);
     dispatchSetValue(name, 'c');
     await settle();
     expect(runtime.globalErrors).toBe(globalErrors);
-    expect(readSchemaNodeErrors(name)).toBe(nodeErrors);
+    expect(readFieldNodeErrors(name)).toBe(nodeErrors);
     expect(rootBits).toEqual([]);
     expect(nameBits).toEqual([]);
   });
@@ -110,7 +110,7 @@ describe('207C-01 deep-equal root results keep references and send no error wave
     dispatchSetValue(name, 'c');
     await settle();
     expect(runtime.globalErrors).not.toBe(globalErrors);
-    expect(rootBits).toContain(SchemaNodeEventType.UpdateGlobalError);
+    expect(rootBits).toContain(FieldNodeEventType.UpdateGlobalError);
   });
 
   it('keeps the merged errors of a node with external errors for the same issues', async () => {
@@ -125,11 +125,11 @@ describe('207C-01 deep-equal root results keep references and send no error wave
     dispatchSetExternalErrors(name, [{ dataPath: '/name', message: 'taken' }]);
     dispatchSetValue(name, 'b');
     await settle();
-    const merged = readSchemaNodeErrors(name);
+    const merged = readFieldNodeErrors(name);
     expect(merged).toHaveLength(2);
     dispatchSetValue(name, 'c');
     await settle();
-    expect(readSchemaNodeErrors(name)).toBe(merged);
+    expect(readFieldNodeErrors(name)).toBe(merged);
   });
 
   it('resolves a repeated explicit validate() with the same list', async () => {
@@ -156,7 +156,7 @@ describe('207C-01 deep-equal root results keep references and send no error wave
     dispatchResetForm(root, { name: 'a' });
     const rootBits = recordErrorBits(root);
     await dispatchValidate(root);
-    expect(rootBits).toContain(SchemaNodeEventType.UpdateGlobalError);
+    expect(rootBits).toContain(FieldNodeEventType.UpdateGlobalError);
   });
 
   it('keeps the list a subtree validation routed when the next root verdict is the same', async () => {
@@ -168,14 +168,14 @@ describe('207C-01 deep-equal root results keep references and send no error wave
     dispatchMount(root, { name: 'a' });
     await dispatchValidate(root);
     const name = root.structure!.name!;
-    requestSchemaNodeValidation(name, () => undefined);
+    requestFieldNodeValidation(name, () => undefined);
     await settle();
     const globalErrors = runtime.globalErrors;
-    const nodeErrors = readSchemaNodeErrors(name);
+    const nodeErrors = readFieldNodeErrors(name);
     const rootBits = recordErrorBits(root);
     await dispatchValidate(root);
     expect(runtime.globalErrors).toBe(globalErrors);
-    expect(readSchemaNodeErrors(name)).toBe(nodeErrors);
+    expect(readFieldNodeErrors(name)).toBe(nodeErrors);
     expect(rootBits).toEqual([]);
   });
 
@@ -189,15 +189,15 @@ describe('207C-01 deep-equal root results keep references and send no error wave
     await dispatchValidate(root);
     const removed = root.structure![0]!;
     const successor = root.structure![1]!;
-    expect(readSchemaNodeErrors(removed)).toHaveLength(1);
+    expect(readFieldNodeErrors(removed)).toHaveLength(1);
     dispatchRemove(root, 0);
     const successorBits = recordErrorBits(successor);
     await dispatchValidate(root);
     expect(root.structure![0]).toBe(successor);
     expect(
-      readSchemaNodeErrors(successor).map((issue) => issue.message),
+      readFieldNodeErrors(successor).map((issue) => issue.message),
     ).toEqual(['bad first item']);
-    expect(successorBits).toContain(SchemaNodeEventType.UpdateError);
+    expect(successorBits).toContain(FieldNodeEventType.UpdateError);
   });
 
   it('routes an unchanged list again after a oneOf branch switch', async () => {
@@ -223,10 +223,10 @@ describe('207C-01 deep-equal root results keep references and send no error wave
     dispatchMount(root, { kind: 'x', value: 'a' });
     await dispatchValidate(root);
     const value = root.structure!.value!;
-    expect(readSchemaNodeErrors(value)).toHaveLength(1);
+    expect(readFieldNodeErrors(value)).toHaveLength(1);
     dispatchSetValue(root.structure!.kind!, 'y');
     await dispatchValidate(root);
     expect(root.structure!.value).toBe(value);
-    expect(readSchemaNodeErrors(value)).toEqual([]);
+    expect(readFieldNodeErrors(value)).toEqual([]);
   });
 });

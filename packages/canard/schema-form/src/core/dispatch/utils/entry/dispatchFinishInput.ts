@@ -1,9 +1,9 @@
-import type { SchemaNodeRecord } from '../../../record';
-import { writeSchemaNode } from '../../../settle';
+import type { FieldNodeRecord } from '../../../record';
+import { writeFieldNode } from '../../../settle';
 import { SetValueOption } from '../../../types/value';
 import { captureChainError } from '../chain/captureChainError';
-import { enterSchemaNodeChain } from '../chain/enterSchemaNodeChain';
-import { exitSchemaNodeChain } from '../chain/exitSchemaNodeChain';
+import { enterFieldNodeChain } from '../chain/enterFieldNodeChain';
+import { exitFieldNodeChain } from '../chain/exitFieldNodeChain';
 import { readBatchValue } from '../chain/readBatchValue';
 
 /**
@@ -12,12 +12,12 @@ import { readBatchValue } from '../chain/readBatchValue';
  * @param option - Call-local automatic-write suppression or enabling flags
  * @returns Nothing; unchanged or suppressed finishes do not write
  */
-export const dispatchFinishInput = <Self extends SchemaNodeRecord<Self>>(
+export const dispatchFinishInput = <Self extends FieldNodeRecord<Self>>(
   node: Self,
   option: SetValueOption = SetValueOption.Overwrite,
 ): void => {
   if (node.disposed || node.rootNode.disposed) return;
-  if (!enterSchemaNodeChain(node)) return;
+  if (!enterFieldNodeChain(node)) return;
   try {
     const runtime = node.rootNode.runtime;
     if (
@@ -38,11 +38,11 @@ export const dispatchFinishInput = <Self extends SchemaNodeRecord<Self>>(
         option,
         source: 'automatic',
       });
-    else writeSchemaNode(node, value, 'automatic', option);
+    else writeFieldNode(node, value, 'automatic', option);
   } catch (error) {
     if (node.rootNode.runtime.batchDepth) throw error;
     captureChainError(node.rootNode.runtime, error);
   } finally {
-    exitSchemaNodeChain(node);
+    exitFieldNodeChain(node);
   }
 };

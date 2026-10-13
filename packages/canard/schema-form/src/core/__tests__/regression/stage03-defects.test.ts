@@ -1,12 +1,12 @@
 import { describe, expect, it, vi } from 'vitest';
 
-import { SetValueOption } from '../../SchemaNode';
-import { makeSchemaNodeTree } from '../makeSchemaNodeTree';
+import { SetValueOption } from '../../FieldNode';
+import { makeFieldNodeTree } from '../makeFieldNodeTree';
 
 // filid:contract factory-single-path
 describe('stage 03 ledger adjudication regressions', () => {
   const selfNegatingGate = () =>
-    makeSchemaNodeTree({
+    makeFieldNodeTree({
       type: 'object',
       if: { not: { required: ['x'] } },
       then: {
@@ -51,7 +51,7 @@ describe('stage 03 ledger adjudication regressions', () => {
   });
 
   it('selfcheck-v5.mjs:399 revives only the edited child after a wrong-kind host write', () => {
-    const { root } = makeSchemaNodeTree({
+    const { root } = makeFieldNodeTree({
       type: 'object',
       properties: {
         host: {
@@ -71,7 +71,7 @@ describe('stage 03 ledger adjudication regressions', () => {
   });
 
   it('selfcheck-v5.mjs:571 promotes a null host on a child input without refilling', () => {
-    const { root } = makeSchemaNodeTree({
+    const { root } = makeFieldNodeTree({
       type: 'object',
       properties: {
         target: {
@@ -90,7 +90,7 @@ describe('stage 03 ledger adjudication regressions', () => {
   });
 
   it('selfcheck-v5.mjs:599 fills a newly returning branch after null and child edits', () => {
-    const { root } = makeSchemaNodeTree({
+    const { root } = makeFieldNodeTree({
       type: 'object',
       properties: {
         target: {
@@ -127,7 +127,7 @@ describe('stage 03 ledger adjudication regressions', () => {
   });
 
   it('selfcheck-v5.mjs:485 does not fill on a first non-load null write', () => {
-    const { root } = makeSchemaNodeTree({
+    const { root } = makeFieldNodeTree({
       type: 'object',
       properties: {
         kind: { type: 'string', default: 'cat' },
@@ -148,7 +148,7 @@ describe('stage 03 ledger adjudication regressions', () => {
   });
 
   it('r8-port.mjs:392 preserves extras order across Merge writes', () => {
-    const { root } = makeSchemaNodeTree({
+    const { root } = makeFieldNodeTree({
       type: 'object',
       properties: {
         a: { type: 'number' },
@@ -162,7 +162,7 @@ describe('stage 03 ledger adjudication regressions', () => {
   });
 
   it('selfcheck-v5.mjs:623 commits Source B after a mutual host gate cycle', () => {
-    const { root } = makeSchemaNodeTree({
+    const { root } = makeFieldNodeTree({
       type: 'object',
       allOf: [
         {

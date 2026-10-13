@@ -1,7 +1,7 @@
 import { expect, it } from 'vitest';
 
 import { SetValueOption } from '../../types/value';
-import { loadSchemaNodeAtMount } from '../index';
+import { loadFieldNodeAtMount } from '../index';
 import { canLoadStaticFirstTree } from '../utils/load/canLoadStaticFirstTree';
 import { createTestTree } from './fixtures/createTestTree';
 
@@ -21,7 +21,7 @@ it('computes every static occurrence once without allocating generic scratch', (
     },
   });
   expect(canLoadStaticFirstTree(root, undefined)).toBe(true);
-  loadSchemaNodeAtMount(root, undefined, SetValueOption.Overwrite);
+  loadFieldNodeAtMount(root, undefined, SetValueOption.Overwrite);
   const nodes = [...(root.runtime.deliveries ?? [])];
   const assemblies = visits.filter((path) => !path.startsWith('select:'));
   expect(assemblies.length).toBe(nodes.length);

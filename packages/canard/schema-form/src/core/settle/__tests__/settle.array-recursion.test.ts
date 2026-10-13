@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 
 import { SetValueOption } from '../../types/value';
-import { arrangeSchemaNodeItems, loadSchemaNodeAtMount } from '../index';
+import { arrangeFieldNodeItems, loadFieldNodeAtMount } from '../index';
 import { createTestTree } from './fixtures/createTestTree';
 
 /** Recursive items terminate at their empty children array (BLUEPRINT-030). */
@@ -17,7 +17,7 @@ const recursiveArraySchema = {
 describe('BLUEPRINT-030 recursive array item expansion', () => {
   it('expands an empty item with referenced fields and an empty array base case', () => {
     const { root } = createTestTree(recursiveArraySchema);
-    loadSchemaNodeAtMount(root, { children: [{}] }, SetValueOption.Overwrite);
+    loadFieldNodeAtMount(root, { children: [{}] }, SetValueOption.Overwrite);
 
     const item = root.structure!.children.children![0];
     expect(item.structure!.id.path).toBe('/children/0/id');
@@ -29,11 +29,11 @@ describe('BLUEPRINT-030 recursive array item expansion', () => {
 
   it('pushes one referenced level per item without expanding empty child arrays', () => {
     const { root } = createTestTree(recursiveArraySchema);
-    loadSchemaNodeAtMount(root, { children: [] }, SetValueOption.Overwrite);
+    loadFieldNodeAtMount(root, { children: [] }, SetValueOption.Overwrite);
     const children = root.structure!.children;
     expect(children.children).toEqual([]);
 
-    expect(arrangeSchemaNodeItems(children, { kind: 'push', value: {} })).toBe(
+    expect(arrangeFieldNodeItems(children, { kind: 'push', value: {} })).toBe(
       1,
     );
     const item = children.children![0];
@@ -41,7 +41,7 @@ describe('BLUEPRINT-030 recursive array item expansion', () => {
     const nestedChildren = item.structure!.children;
     expect(nestedChildren.children).toEqual([]);
     expect(
-      arrangeSchemaNodeItems(nestedChildren, { kind: 'push', value: {} }),
+      arrangeFieldNodeItems(nestedChildren, { kind: 'push', value: {} }),
     ).toBe(1);
     const nestedItem = nestedChildren.children![0];
     expect(nestedItem.structure!.id.path).toBe('/children/0/children/0/id');
@@ -73,7 +73,7 @@ describe('BLUEPRINT-030 recursive array item expansion', () => {
       },
     });
     expect(() =>
-      loadSchemaNodeAtMount(root, [{}], SetValueOption.Overwrite),
+      loadFieldNodeAtMount(root, [{}], SetValueOption.Overwrite),
     ).toThrow(
       expect.objectContaining({
         code: 'SCHEMA_FORM_ERROR.RECURSIVE_SHAPE_DIVERGED',

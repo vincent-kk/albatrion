@@ -1,6 +1,6 @@
 import { hasOwnProperty } from '@winglet/common-utils/lib';
 
-import type { SchemaNodeRecord } from '../../../record';
+import type { FieldNodeRecord } from '../../../record';
 import type { SettlementContext } from '../../type';
 import { flushPendingOutput } from '../compute/flushPendingOutput';
 import { getDeclaredChildNames } from '../declarations/getDeclaredChildNames';
@@ -12,7 +12,7 @@ import { getGateRegistry } from './getGateRegistry';
  * @param context - Raw changes and calculated records for this settlement
  * @returns Published emission, or undefined while its changed raw is pending
  */
-const projectedEmission = <Self extends SchemaNodeRecord<Self>>(
+const projectedEmission = <Self extends FieldNodeRecord<Self>>(
   node: Self,
   context: SettlementContext<Self>,
 ): unknown =>
@@ -27,7 +27,7 @@ const projectedEmission = <Self extends SchemaNodeRecord<Self>>(
  * @param path - Absolute JSON Pointer of the requested value
  * @returns Latest projected value, or undefined when projection omits the path
  */
-export const readProjectedValue = <Self extends SchemaNodeRecord<Self>>(
+export const readProjectedValue = <Self extends FieldNodeRecord<Self>>(
   context: SettlementContext<Self>,
   path: string,
 ): unknown => {

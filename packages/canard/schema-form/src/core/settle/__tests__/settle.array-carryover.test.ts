@@ -1,11 +1,11 @@
 import { describe, expect, it } from 'vitest';
 
-import { makeSchemaNodeTree } from '../../__tests__/makeSchemaNodeTree';
+import { makeFieldNodeTree } from '../../__tests__/makeFieldNodeTree';
 
 // filid:contract settle-array
 describe('array projection carryovers', () => {
   it('26C-03 VALUE-034 keeps omitTrailing source slots after a load', () => {
-    const { root } = makeSchemaNodeTree(
+    const { root } = makeFieldNodeTree(
       {
         type: 'object',
         properties: {
@@ -29,7 +29,7 @@ describe('array projection carryovers', () => {
   });
 
   it('rootOutput:13 VALUE-034 emits an empty root array after load', () => {
-    const { root } = makeSchemaNodeTree(
+    const { root } = makeFieldNodeTree(
       { type: 'array', items: { type: 'string' } },
       { snapshot: [] },
     );
@@ -39,7 +39,7 @@ describe('array projection carryovers', () => {
   });
 
   it('rootOutput:24 VALUE-034 fills an absent leaf slot with null', () => {
-    const { root } = makeSchemaNodeTree(
+    const { root } = makeFieldNodeTree(
       { type: 'array', items: { type: 'string' } },
       { snapshot: [undefined, 'x'] },
     );
@@ -49,7 +49,7 @@ describe('array projection carryovers', () => {
   });
 
   it('rootOutput:30 VALUE-034 retains empty object item slots', () => {
-    const { root } = makeSchemaNodeTree(
+    const { root } = makeFieldNodeTree(
       {
         type: 'array',
         items: {
@@ -66,7 +66,7 @@ describe('array projection carryovers', () => {
   });
 
   it('rootOutput:30 VALUE-034 trims only the trailing empty leaf slot', () => {
-    const { root } = makeSchemaNodeTree(
+    const { root } = makeFieldNodeTree(
       {
         type: 'array',
         items: { type: 'string' },

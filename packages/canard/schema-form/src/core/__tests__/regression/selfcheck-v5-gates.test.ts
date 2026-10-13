@@ -1,9 +1,9 @@
 import { describe, expect, it } from 'vitest';
 
-import { makeSchemaNodeTree } from '../makeSchemaNodeTree';
+import { makeFieldNodeTree } from '../makeFieldNodeTree';
 
 const overlayTree = () => {
-  const { root } = makeSchemaNodeTree({
+  const { root } = makeFieldNodeTree({
     type: 'object',
     properties: {
       flag: { type: 'string' },
@@ -41,7 +41,7 @@ const overlayTree = () => {
 // filid:contract factory-single-path
 describe('selfcheck-v5 lifted and budget gates', () => {
   it('selfcheck-v5.mjs:211 exposes an active constraint without emitting a value', () => {
-    const { root } = makeSchemaNodeTree({
+    const { root } = makeFieldNodeTree({
       type: 'object',
       if: { not: { required: ['x'] } },
       then: { required: ['y'] },
@@ -52,7 +52,7 @@ describe('selfcheck-v5 lifted and budget gates', () => {
   });
 
   it('selfcheck-v5.mjs:204 lets the later birth turn the earlier negated gate off', () => {
-    const { root } = makeSchemaNodeTree({
+    const { root } = makeFieldNodeTree({
       type: 'object',
       properties: {
         mode: { type: 'string' },
@@ -92,7 +92,7 @@ describe('selfcheck-v5 lifted and budget gates', () => {
       { addr: { city: 'Seoul' } },
       { addr: { zip: '1' } },
     ]) {
-      const { root } = makeSchemaNodeTree({
+      const { root } = makeFieldNodeTree({
         type: 'object',
         properties: {
           addr: {

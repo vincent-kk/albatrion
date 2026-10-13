@@ -30,8 +30,8 @@ export type {
 } from './helpers/virtualization';
 
 export {
-  type SchemaNode,
-  type InferSchemaNode,
+  type FieldNode,
+  type InferFieldNode,
   type ArrayNode,
   type BooleanNode,
   type NullNode,
@@ -43,16 +43,16 @@ export {
   type BranchNode,
   type TerminalNode,
   ValidationMode,
-  SchemaNodeEventType,
-  SchemaNodeRequestType,
-  SchemaNodeState,
+  FieldNodeEventType,
+  FieldNodeRequestType,
+  FieldNodeState,
   SetValueOption,
   isArrayNode,
   isBooleanNode,
   isBranchNode,
   isNumberNode,
   isObjectNode,
-  isSchemaNode,
+  isFieldNode,
   isStringNode,
   isTerminalNode,
   isVirtualNode,
@@ -72,7 +72,7 @@ export type {
   FieldInputTestObject,
   FormatError,
   Hint,
-  SchemaNodeType,
+  FieldNodeType,
   JSONSchema,
   InferValueType,
   InjectToHandler,
@@ -83,9 +83,9 @@ export type {
 
 export type * from './types/rolled';
 
-export { useSchemaNodeTracker } from './hooks/useSchemaNodeTracker';
-export { useSchemaNodeSubscribe } from './hooks/useSchemaNodeSubscribe';
-export type { SchemaNodeSubscribeOptions } from './hooks/useSchemaNodeSubscribe';
+export { useFieldNodeTracker } from './hooks/useFieldNodeTracker';
+export { useFieldNodeSubscribe } from './hooks/useFieldNodeSubscribe';
+export type { FieldNodeSubscribeOptions } from './hooks/useFieldNodeSubscribe';
 export { useChildNodeComponentMap } from './hooks/useChildNodeComponentMap';
 export { useChildNodeErrors } from './hooks/useChildNodeErrors';
 export { useFormSubmit } from './hooks/useFormSubmit';

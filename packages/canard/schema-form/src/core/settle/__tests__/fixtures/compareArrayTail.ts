@@ -3,7 +3,7 @@ import { expect, vi } from 'vitest';
 import type { BlueprintSchema } from '../../../blueprint';
 import type { ArrayArrangePlan, ArrayOperation } from '../../../record';
 import { SetValueOption } from '../../../types/value';
-import { arrangeSchemaNodeItems, writeSchemaNode } from '../../index';
+import { arrangeFieldNodeItems, writeFieldNode } from '../../index';
 import * as tailModule from '../../utils/structure/applyArraySlots/utils/applyArrayTail';
 import * as eligibility from '../../utils/structure/applyArraySlots/utils/canApplyArrayTail';
 import type { PlainNode } from './createPlainNode';
@@ -32,7 +32,7 @@ export const compareArrayTail = (
   const actual = createTestTree(schema).root;
   const oracle = createTestTree(schema).root;
   for (const root of [actual, oracle]) {
-    writeSchemaNode(root, input, 'callerReplace', SetValueOption.Overwrite);
+    writeFieldNode(root, input, 'callerReplace', SetValueOption.Overwrite);
     root.runtime.loadSnapshot = input;
     prepare?.(root);
     if (plan) root.behavior.arrange = () => plan;
@@ -47,14 +47,14 @@ export const compareArrayTail = (
     .mockReturnValue(false);
   let expected: unknown;
   try {
-    expected = arrangeSchemaNodeItems(oracle, operation);
+    expected = arrangeFieldNodeItems(oracle, operation);
   } finally {
     forceGeneral.mockRestore();
   }
   const spy = vi.spyOn(tailModule, 'applyArrayTail');
   let result: unknown;
   try {
-    result = arrangeSchemaNodeItems(actual, operation);
+    result = arrangeFieldNodeItems(actual, operation);
   } finally {
     expect(spy).toHaveBeenCalledTimes(expectTail ? 1 : 0);
     spy.mockRestore();

@@ -1,4 +1,4 @@
-import type { SchemaNodeRecord } from '../../../../record';
+import type { FieldNodeRecord } from '../../../../record';
 import type {
   DeriveResetInteractionDecision,
   DeriveState,
@@ -22,7 +22,7 @@ const NO_FAILURES: readonly [] = Object.freeze([]);
  * @param state - Last commit and current settlement rule values
  * @returns Nodes to clear, optional trace, and all authored expression failures
  */
-export const evaluateResetInteraction = <Self extends SchemaNodeRecord<Self>>(
+export const evaluateResetInteraction = <Self extends FieldNodeRecord<Self>>(
   root: Self,
   state: DeriveState<Self>,
 ): DeriveResetInteractionDecision<Self> => {

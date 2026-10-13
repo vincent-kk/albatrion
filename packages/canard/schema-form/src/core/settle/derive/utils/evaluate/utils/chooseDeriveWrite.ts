@@ -1,4 +1,4 @@
-import type { SchemaNodeRecord } from '../../../../../record';
+import type { FieldNodeRecord } from '../../../../../record';
 import type { DeriveState, DeriveTraceEntry, DeriveWrite } from '../../../type';
 import { compareDeriveWrites } from '../../rank/compareDeriveWrites';
 
@@ -12,7 +12,7 @@ import { compareDeriveWrites } from '../../rank/compareDeriveWrites';
  * @param traceWinners - Trace index of each current winner
  * @returns Nothing; both outputs are updated in place
  */
-export const chooseDeriveWrite = <Self extends SchemaNodeRecord<Self>>(
+export const chooseDeriveWrite = <Self extends FieldNodeRecord<Self>>(
   candidate: DeriveWrite<Self>,
   sourcePath: string,
   state: DeriveState<Self>,

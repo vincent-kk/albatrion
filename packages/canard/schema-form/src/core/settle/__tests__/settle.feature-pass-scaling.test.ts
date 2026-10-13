@@ -1,9 +1,9 @@
 import { describe, expect, it, vi } from 'vitest';
 
-import { SchemaNode } from '../../SchemaNode/SchemaNode';
-import { makeSchemaNodeTree } from '../../__tests__/makeSchemaNodeTree';
+import { FieldNode } from '../../FieldNode/FieldNode';
+import { makeFieldNodeTree } from '../../__tests__/makeFieldNodeTree';
 import * as stateKeys from '../utils/controls/calculateStateKeys';
-import * as watchValues from '../utils/controls/readSchemaNodeWatchValues';
+import * as watchValues from '../utils/controls/readFieldNodeWatchValues';
 
 /** Large changed scope with only two independently declared feature targets. */
 const makeFeatureTree = (features: boolean) => {
@@ -20,8 +20,8 @@ const makeFeatureTree = (features: boolean) => {
     };
     properties.watched = { type: 'number', controls: { watch: ['../f0'] } };
   }
-  const { root } = makeSchemaNodeTree({ type: 'object', properties });
-  if (!(root instanceof SchemaNode)) throw new Error('Expected runtime tree');
+  const { root } = makeFieldNodeTree({ type: 'object', properties });
+  if (!(root instanceof FieldNode)) throw new Error('Expected runtime tree');
   const value = (next: number) =>
     Object.fromEntries(Object.keys(properties).map((key) => [key, next]));
   root.setValue(value(0));
@@ -43,13 +43,13 @@ describe('65C-02 feature visits intersect static declarations and changed scope'
     try {
       root.setValue(value(1));
       expect(visits, `state-key whole-write visits: ${visits}`).toBe(1);
-      expect((root.find('/controlled') as SchemaNode).disabled).toBe(true);
+      expect((root.find('/controlled') as FieldNode).disabled).toBe(true);
       visits = 0;
-      (root.find('/f1') as SchemaNode).setValue(2);
+      (root.find('/f1') as FieldNode).setValue(2);
       expect(visits, `state-key unrelated-write visits: ${visits}`).toBe(0);
-      (root.find('/f0') as SchemaNode).setValue(0);
+      (root.find('/f0') as FieldNode).setValue(0);
       expect(visits).toBe(1);
-      expect((root.find('/controlled') as SchemaNode).disabled).toBe(false);
+      expect((root.find('/controlled') as FieldNode).disabled).toBe(false);
     } finally {
       spy.mockRestore();
     }
@@ -57,7 +57,7 @@ describe('65C-02 feature visits intersect static declarations and changed scope'
 
   it('bounds candidate watch reads on whole writes and skips unrelated leaves', () => {
     const { root, value } = makeFeatureTree(true);
-    const spy = vi.spyOn(watchValues, 'readSchemaNodeWatchValues');
+    const spy = vi.spyOn(watchValues, 'readFieldNodeWatchValues');
     try {
       root.setValue(value(1));
       expect(
@@ -65,9 +65,9 @@ describe('65C-02 feature visits intersect static declarations and changed scope'
         `watch whole-write visits: ${spy.mock.calls.length}`,
       ).toBe(1);
       spy.mockClear();
-      (root.find('/f1') as SchemaNode).setValue(2);
+      (root.find('/f1') as FieldNode).setValue(2);
       expect(spy).not.toHaveBeenCalled();
-      (root.find('/f0') as SchemaNode).setValue(3);
+      (root.find('/f0') as FieldNode).setValue(3);
       expect(spy).toHaveBeenCalledTimes(1);
     } finally {
       spy.mockRestore();
@@ -77,7 +77,7 @@ describe('65C-02 feature visits intersect static declarations and changed scope'
   it('visits neither scoped pass when the blueprint declares neither feature', () => {
     const { root, value } = makeFeatureTree(false);
     const stateSpy = vi.spyOn(stateKeys, 'calculateStateKeys');
-    const watchSpy = vi.spyOn(watchValues, 'readSchemaNodeWatchValues');
+    const watchSpy = vi.spyOn(watchValues, 'readFieldNodeWatchValues');
     try {
       root.setValue(value(1));
       expect(stateSpy).not.toHaveBeenCalled();

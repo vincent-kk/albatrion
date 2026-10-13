@@ -6,8 +6,8 @@ import {
 } from 'react';
 
 import {
-  type SchemaNode,
-  SchemaNodeEventType,
+  type FieldNode,
+  FieldNodeEventType,
   type ValidationIssue,
 } from '@/schema-form/core';
 import {
@@ -17,7 +17,7 @@ import {
 
 /** Read direct-child issues and visibility, resubscribing when children or paths change. */
 export const useChildNodeErrors = (
-  node: SchemaNode,
+  node: FieldNode,
   disabled?: boolean,
 ): {
   errorMessage: ReactNode;
@@ -30,10 +30,10 @@ export const useChildNodeErrors = (
   const { formatError, checkShowError } = useFieldRendererContext();
   const { context } = useWorkspaceContext();
   const mask =
-    SchemaNodeEventType.UpdateChildren |
-    SchemaNodeEventType.UpdateState |
-    SchemaNodeEventType.UpdatePath |
-    SchemaNodeEventType.UpdateError;
+    FieldNodeEventType.UpdateChildren |
+    FieldNodeEventType.UpdateState |
+    FieldNodeEventType.UpdatePath |
+    FieldNodeEventType.UpdateError;
   const children = node.children;
   const subscribe = useCallback(
     (update: () => void) => {

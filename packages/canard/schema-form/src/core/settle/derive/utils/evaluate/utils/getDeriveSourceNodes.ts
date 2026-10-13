@@ -1,7 +1,7 @@
 import { hasOwnProperty } from '@winglet/common-utils/lib';
 import { unescapeSegment } from '@winglet/json/pointer';
 
-import type { SchemaNodeRecord } from '../../../../../record';
+import type { FieldNodeRecord } from '../../../../../record';
 import type { DeriveState } from '../../../type';
 
 /**
@@ -10,7 +10,7 @@ import type { DeriveState } from '../../../type';
  * @param state - Load-wide or indexed non-load source addresses
  * @returns Roots for a full load scan or exact affected live sources
  */
-export const getDeriveSourceNodes = <Self extends SchemaNodeRecord<Self>>(
+export const getDeriveSourceNodes = <Self extends FieldNodeRecord<Self>>(
   root: Self,
   state: Pick<DeriveState<Self>, 'sourcePaths'>,
 ): Self[] => {
