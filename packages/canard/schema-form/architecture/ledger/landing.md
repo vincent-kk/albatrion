@@ -3177,6 +3177,7 @@
   > 편집자 결정(251C-01): "【추론】 문서 사이트 PR은 코드 패키지를 건드리지 않고(47파일 모두 documents/), 빌드와 옛 이름 grep이 깨끗하며 실제 창 확인이 fairy07 쪽에서 끝났으므로 병합 조건을 채웠다." (`reviews/round-251-closing.md:9`)
   > 소유자(252라운드, #361 병합): "내가 명시적으로 허가한다. 병합해도 된다" (`reviews/round-252-owner-answers.md:7`)
   > 편집자 결정(253C-01): "【추론】 변경이 수동 시험 패키지에 한정되고 세 게이트(tsc -b·lint·build)가 통과했으며, 렌더 전후 차이가 모두 "모든 분기 동시 활성"에서 "활성 분기만"으로 바뀐 의도된 방향이므로 병합 조건을 채웠다. 내장 checkbox의 id 중복은 schema-form 쪽 결함 후보라 소유자 대기열로 올린다." (`reviews/round-253-closing.md:9`)
+  > 소유자(254라운드, #363 병합): "응 병합하자" (`reviews/round-254-owner-answers.md:7`)
 - 상태: 현행
 - 출처: `reviews/round-80-closing.md:17`(정본)
 - 닫은 사람: 편집자 결정(80라운드, `reviews/round-80-closing.md` 80C-02)
