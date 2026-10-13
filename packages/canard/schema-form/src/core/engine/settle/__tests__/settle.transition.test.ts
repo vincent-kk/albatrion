@@ -259,6 +259,21 @@ describe('settle transitions and loads', () => {
     }
   });
 
+  it('VALUE-036 a non-array raw loaded into an array leaves its items unfilled', () => {
+    const { root } = createTestTree({
+      type: 'object',
+      properties: {
+        list: {
+          type: 'array',
+          prefixItems: [{ type: 'string', default: 'P' }],
+        },
+      },
+    });
+    loadFieldNodeAtMount(root, { list: 'x' }, WriteOption.Overwrite);
+    expect(root.structure!.list!.raw).toBe('x');
+    expect(root.structure!.list!.children).toEqual([]);
+  });
+
   it('WRITE-094 whole replacement clears latent raw and is idempotent on a second call', () => {
     const { root } = createTestTree({
       type: 'object',
