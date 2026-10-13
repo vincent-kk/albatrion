@@ -3,9 +3,9 @@ import type {
   FormScenarioStep,
 } from '@aileron/schema-form-scenarios';
 
-import { SetValueOption } from '../../../FieldNode';
-import type { FieldNode as RuntimeFieldNode } from '../../../FieldNode/FieldNode';
-import { resetFieldNodeForm } from '../../../settle';
+import { resetFieldNodeForm } from '../../../engine/settle';
+import { SetValueOption } from '../../../surface';
+import type { FieldNode as RuntimeFieldNode } from '../../../surface/FieldNode';
 
 /**
  * Apply one core-observable action to the tree, including root form loads.

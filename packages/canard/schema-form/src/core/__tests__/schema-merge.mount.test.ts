@@ -1,9 +1,9 @@
 import { afterEach, beforeEach, expect, it, vi } from 'vitest';
 
-import type { mergeEffectiveSchema } from '../blueprint/utils/effectiveSchema/mergeEffectiveSchema';
-import type { mergeSchemaContributions } from '../blueprint/utils/effectiveSchema/utils/mergeSchemaContributions';
-import { nodeFromJSONSchema } from '../nodeFromJSONSchema';
-import type { AuthoredSchema } from '../types/jsonSchema';
+import type { mergeEffectiveSchema } from '../engine/blueprint/utils/effectiveSchema/mergeEffectiveSchema';
+import type { mergeSchemaContributions } from '../engine/blueprint/utils/effectiveSchema/utils/mergeSchemaContributions';
+import type { AuthoredSchema } from '../engine/types/jsonSchema';
+import { nodeFromJSONSchema } from '../surface/nodeFromJSONSchema';
 import { captureBranchlessNodeTree } from './fixtures/captureBranchlessNodeTree';
 
 const counts = vi.hoisted(() => ({
@@ -13,7 +13,7 @@ const counts = vi.hoisted(() => ({
   memo: new WeakMap(),
 }));
 vi.mock(
-  '../blueprint/utils/effectiveSchema/utils/mergeSchemaContributions',
+  '../engine/blueprint/utils/effectiveSchema/utils/mergeSchemaContributions',
   async (original) => {
     const actual = await original<{
       mergeSchemaContributions: typeof mergeSchemaContributions;
@@ -29,7 +29,7 @@ vi.mock(
   },
 );
 vi.mock(
-  '../blueprint/utils/effectiveSchema/mergeEffectiveSchema',
+  '../engine/blueprint/utils/effectiveSchema/mergeEffectiveSchema',
   async (original) => {
     const actual = await original<{
       mergeEffectiveSchema: typeof mergeEffectiveSchema;

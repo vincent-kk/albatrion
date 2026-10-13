@@ -1,4 +1,4 @@
-import type { FieldNode } from '../../FieldNode';
+import type { FieldNode } from '../../surface';
 import { captureBlueprintObservables } from './captureBlueprintObservables';
 
 /**

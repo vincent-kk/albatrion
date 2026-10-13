@@ -72,13 +72,13 @@ export default [
   },
   {
     files: [
-      'src/core/record/**/*.ts',
-      'src/core/behaviors/**/*.ts',
-      'src/core/navigation/**/*.ts',
-      'src/core/settle/**/*.ts',
-      'src/core/dispatch/**',
-      'src/core/validation/**',
-      'src/core/FieldNode/**/*.ts',
+      'src/core/engine/record/**/*.ts',
+      'src/core/engine/behaviors/**/*.ts',
+      'src/core/engine/navigation/**/*.ts',
+      'src/core/engine/settle/**/*.ts',
+      'src/core/engine/write/**',
+      'src/core/engine/validation/**',
+      'src/core/surface/**/*.ts',
     ],
     ignores: ['**/__tests__/**'],
     rules: {
@@ -90,7 +90,7 @@ export default [
     },
   },
   {
-    files: ['src/core/blueprint/**/*.ts', 'src/core/nodeFromJSONSchema.ts'],
+    files: ['src/core/engine/blueprint/**/*.ts', 'src/core/surface/nodeFromJSONSchema.ts'],
     ignores: ['**/__tests__/**'],
     rules: {
       '@typescript-eslint/consistent-type-assertions': [
@@ -100,7 +100,7 @@ export default [
     },
   },
   {
-    files: ['src/core/FieldNode/FieldNode.ts'],
+    files: ['src/core/surface/FieldNode.ts'],
     rules: {
       'no-restricted-syntax': [
         'error',
@@ -169,11 +169,12 @@ export default [
     files: [
       'src/core/**/*.{ts,tsx}',
       'src/app/**/*.{ts,tsx}',
+      'src/constants/**/*.{ts,tsx}',
       'src/types/**/*.{ts,tsx}',
       'src/errors/**/*.{ts,tsx}',
       'src/index.ts',
     ],
-    ignores: ['src/core/FieldNode/FieldNode.ts', '**/__tests__/**'],
+    ignores: ['src/core/surface/FieldNode.ts', '**/__tests__/**'],
     rules: {
       'no-restricted-syntax': [
         'error',
@@ -249,7 +250,7 @@ export default [
   // Friend-zone boundary for internal node members.
   // `__member__` APIs on nodes are `public @internal` (stripped from public
   // d.ts via stripInternal) so the strategy/manager friend zone (src/core,
-  // src/app) can call them with full type checking. Everything else must use
+  // src/app, src/constants) can call them with full type checking. Everything else must use
   // the public node API — this rule restores, mechanically, the enforcement
   // that the `protected` modifier used to imply for those members.
   {
@@ -280,13 +281,13 @@ export default [
           selector:
             'MemberExpression[computed=false][property.name=/^__[a-zA-Z0-9]+__$/]',
           message:
-            'Internal `__member__` access is restricted to the core friend zone (src/core, src/app). Use the public node API instead.',
+            'Internal `__member__` access is restricted to the core friend zone (src/core, src/app, src/constants). Use the public node API instead.',
         },
         {
           selector:
             'MemberExpression[computed=true][property.value=/^__[a-zA-Z0-9]+__$/]',
           message:
-            'Internal `__member__` access is restricted to the core friend zone (src/core, src/app). Use the public node API instead.',
+            'Internal `__member__` access is restricted to the core friend zone (src/core, src/app, src/constants). Use the public node API instead.',
         },
       ],
     },

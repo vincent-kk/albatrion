@@ -1,4 +1,3 @@
-export { nodeFromJSONSchema } from './nodeFromJSONSchema';
 export {
   fieldNodeFactory,
   setContext,
@@ -24,7 +23,16 @@ export {
   readFieldNodeInteractionReset,
   observeFieldNodeReports,
   interpretFieldNodeDraft,
-} from './FieldNode';
+  nodeFromJSONSchema,
+} from './surface';
+export {
+  FieldNodeState,
+  ValidationMode,
+  retainValidationRoot,
+  releaseValidationRoot,
+  blueprint,
+  readFieldNodeGuard,
+} from './engine';
 export type {
   FieldNode,
   StringNode,
@@ -41,8 +49,11 @@ export type {
   UnionSchemaType,
   InferFieldNode,
   FieldNodeInputProps,
-} from './FieldNode';
-export { FieldNodeState, ValidationMode } from './types/state';
-export type { AuthoredSchema } from './types/jsonSchema';
-export { retainValidationRoot, releaseValidationRoot } from './validation';
-export type { Validator, ValidationIssue } from './validation';
+} from './surface';
+export type {
+  AuthoredSchema,
+  Validator,
+  ValidationIssue,
+  SchemaControls,
+  ValidateFunction,
+} from './engine';

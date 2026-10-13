@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import * as nodeSurface from '../../FieldNode';
+import * as nodeSurface from '../../surface';
 import { makeFieldNodeTree } from '../makeFieldNodeTree';
 
 const fillTree = () => {

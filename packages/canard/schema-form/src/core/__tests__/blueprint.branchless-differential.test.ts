@@ -7,12 +7,12 @@ import {
   type BlueprintSchema,
   blueprint,
   getFeatureNodeIndex,
-} from '../blueprint';
-import type { collectSchemaCapabilities } from '../blueprint/utils/analyze/collectSchemaCapabilities';
-import { nodeFromJSONSchema } from '../nodeFromJSONSchema';
-import { getDeriveRuleTable } from '../settle/derive';
-import { getDependencyIndex } from '../settle/utils/write/getDependencyIndex';
-import type { AuthoredSchema } from '../types/jsonSchema';
+} from '../engine/blueprint';
+import type { collectSchemaCapabilities } from '../engine/blueprint/utils/analyze/collectSchemaCapabilities';
+import { getDeriveRuleTable } from '../engine/settle/derive';
+import { getDependencyIndex } from '../engine/settle/utils/write/getDependencyIndex';
+import type { AuthoredSchema } from '../engine/types/jsonSchema';
+import { nodeFromJSONSchema } from '../surface/nodeFromJSONSchema';
 import { captureBlueprintObservables } from './fixtures/captureBlueprintObservables';
 import { captureBranchlessNodeTree } from './fixtures/captureBranchlessNodeTree';
 
@@ -33,7 +33,7 @@ const { applyInteraction } = await import(interactionPath);
 
 const generic = vi.hoisted(() => ({ enabled: false }));
 vi.mock(
-  '../blueprint/utils/analyze/collectSchemaCapabilities',
+  '../engine/blueprint/utils/analyze/collectSchemaCapabilities',
   async (original) => {
     const actual = await original<{
       collectSchemaCapabilities: typeof collectSchemaCapabilities;

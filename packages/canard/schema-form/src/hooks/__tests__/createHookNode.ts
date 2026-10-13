@@ -1,5 +1,5 @@
-import { fieldNodeFactory } from '@/schema-form/core/FieldNode';
-import { blueprint } from '@/schema-form/core/blueprint';
+import { fieldNodeFactory } from '@/schema-form/core';
+import { blueprint } from '@/schema-form/core';
 
 /** Create a real new-engine node through its module entry points. */
 export const createHookNode = () =>

@@ -4,21 +4,23 @@
 
 - 청사진에서 정규화한 무조건 선언을 재사용해도 마운트와 후속 쓰기의 값·유효 스키마·노드 순서·상태·경고·리비전·통지가 같아야 합니다. 런타임 실제 병합 수는 마운트 단위로 검증하며 정적 검사 수는 줄이지 않습니다(BLUEPRINT-021, NODE-006, SETTLE-017, 100라운드).
 
-- 청사진·정착·파생이 공유하는 기능 부재 결과는 core가 소유한 불변 빈 Map/Set 조회 객체를 씁니다. 변경 메서드를 제공하지 않으며 기능 부재가 각각 증명된 경우에만 공유합니다. 영구 저장은 전체 프로세스에서 O(1)이며 청사진별 빈 Map/Set 할당을 제거합니다(89C-03).
+- 청사진·정착·파생이 공유하는 기능 부재 결과는 engine이 소유한 불변 빈 Map/Set 조회 객체를 씁니다. 변경 메서드를 제공하지 않으며 기능 부재가 각각 증명된 경우에만 공유합니다. 영구 저장은 전체 프로세스에서 O(1)이며 청사진별 빈 Map/Set 할당을 제거합니다(89C-03).
 
-- 경로 키 저장소 보조는 record의 런타임 형 선언과 생성·정착의 쓰기가 함께 소비하므로 공통 소유자인 core에 둡니다. PathKeyedMap·PathKeyedSet은 빈 색인을 생성할 때 소유하고 native Map·Set의 열거·instanceof를 유지하며 인스턴스 adoption이나 메서드 패치를 하지 않습니다. K개 항목·깊이 D에서 O(KD) 색인 키 참조와 유일 prefix 및 숫자 radix 저장량을 추가합니다(NODE-045, SETTLE-017·047, GOAL-011).
+- 경로 키 저장소 보조는 record의 런타임 형 선언과 생성·정착의 쓰기가 함께 소비하므로 공통 소유자인 engine에 둡니다. PathKeyedMap·PathKeyedSet은 빈 색인을 생성할 때 소유하고 native Map·Set의 열거·instanceof를 유지하며 인스턴스 adoption이나 메서드 패치를 하지 않습니다. K개 항목·깊이 D에서 O(KD) 색인 키 참조와 유일 prefix 및 숫자 radix 저장량을 추가합니다(NODE-045, SETTLE-017·047, GOAL-011).
 
-- `core/index.ts`가 이 fractal의 경계입니다. 새 엔진의 `FieldNode/`·`validation/` 진입점과 바인딩 전용 함수를 와일드카드 없이 이름으로 다시 내보내며, 렌더 계층은 이 경계를 사용합니다(LANDING-067·087, 69C-01).
+- `core/index.ts`가 이 fractal의 경계입니다. `surface/`의 노드·바인딩 계약과 `engine/`의 공개 실행 계약을 와일드카드 없이 이름으로 다시 내보내며, 렌더 계층은 이 경계를 사용합니다(LANDING-067·087, 69C-01).
 - 노드의 `value`는 편집 중인 계산값이고 `outputValue`는 스키마 출력 옵션이 적용된 투영 값입니다. 원본 상태는 `raw`·`undeclaredValues`에 두며 투영은 노드 트리와 편집 상태를 바꾸지 않습니다(VALUE-002·027·034, LANDING-067).
 - 루트 검증·루트 방출·`FormHandle.getValue`·제출은 `outputValue`를 읽습니다. 입력과 `UpdateValue` 관측은 `value`를 사용하며 노드 변경은 공개 쓰기 API 또는 이름 붙은 바인딩 전용 통로를 경유합니다(LANDING-067, REACT-009·010).
 - `src/__legacy__/core/`의 노드·파서·시험은 참고용으로 보존하며 비레거시 코드가 가져오지 않습니다. 새 시나리오 하네스는 새 엔진을 검증합니다(LANDING-205).
-- `nodeFromJSONSchema`는 core만 쓰는 호스트의 진입이며 `src/index.ts`는 내보내지 않습니다. `<Form>`도 같은 트리 생성 통로를 바인딩 전용 함수로 사용합니다. `contextNodeFactory`는 `src/__legacy__/`에 속하며 core·패키지 진입점이 내보내지 않습니다. `core/types`의 state·value·jsonSchema·controls는 구체 파일로 소비하며 별도 와일드카드 배럴이나 node·constructor 계약은 두지 않습니다. 사건 계약은 새 엔진의 record가 소유합니다(LANDING-087, 70C-01).
+- `nodeFromJSONSchema`는 core만 쓰는 호스트의 진입이며 `src/index.ts`는 내보내지 않습니다. `<Form>`도 같은 트리 생성 통로를 바인딩 전용 함수로 사용합니다. `contextNodeFactory`는 `src/__legacy__/`에 속하며 core·패키지 진입점이 내보내지 않습니다. `engine/types`의 state·value·jsonSchema·controls는 엔진 안에서 구체 파일로 소비하고 외부는 core·engine 진입점의 이름을 경유하며 별도 와일드카드 배럴이나 node·constructor 계약은 두지 않습니다. 사건 계약은 새 엔진의 record가 소유합니다(LANDING-087, 70C-01).
 - 공개 노드 형·가드와 `FieldNodeEventType`·`FieldNodeRequestType`·`FieldNodeState`는 패키지 진입점이 이름으로 내보냅니다. 바인딩 전용 함수는 공개하지 않으며, `Validator`는 `ValidatorFactory`라는 이름으로, `ValidateFunction`은 같은 이름으로 `src/types`를 거쳐 패키지 공개 `src/index.ts`가 내보냅니다(NODE-010, SURFACE-055·056·060, VALIDATE-044, 32C-01, 35C-07, 69C-01).
-- 새 fractal의 의존 순서는 `blueprint` < `record` < {종류 모듈, `navigation`} < `validation` < `settle/derive` < `settle` < `dispatch` < `FieldNode`다. `settle/derive`는 `settle`의 자식으로서 규칙 판정만 소유하고 settle의 라운드 실행기가 그 진입점을 소비한다. `validation`은 결과를 받은 콜백으로만 `dispatch`에 돌려주며 타입 간선도 역전시키지 않는다(NODE-016·045, LANDING-083·084, SETTLE-004).
+- 새 fractal의 의존 순서는 `blueprint` < `record` < {종류 모듈, `navigation`} < `validation` < `settle/derive` < `settle` < `write` < `surface`다. `settle/derive`는 `settle`의 자식으로서 규칙 판정만 소유하고 settle의 라운드 실행기가 그 진입점을 소비한다. `validation`은 결과를 받은 콜백으로만 `write`에 돌려주며 타입 간선도 역전시키지 않는다(NODE-016·045, LANDING-083·084, SETTLE-004).
 - 사건은 루트의 동기 진입 사슬에서 정착·파동 배달·검증 요청·`onChange` 순서로 조율합니다. 경계 린트는 `src/core/**` 전체에 적용하여 `app/plugin` 가져오기를 금지합니다(EVENT-027, CONTROLS-075, LANDING-067).
 - 자식 형상 그래프는 순환하지 않습니다. 부모·루트 참조는 노드의 탐색과 폐기 후 읽기 계약을 유지합니다(WRITE-086).
 
 ## API Contracts
+
+- surface는 engine의 진입점으로만 실행 계약을 가져오며 core 진입점은 두 자식의 계약을 이름으로 재수출합니다. SchemaControls·ValidateFunction은 바인딩 타입의 경계를 제공하고 blueprint·readFieldNodeGuard는 core 밖의 검증 시험을 위한 재수출입니다. 패키지의 src/index 공개 이름은 유지합니다(07c 계획 9.2).
 
 - 공개 쓰기 옵션은 독립 비트 `Overwrite=1`, `Merge=2`, `DisableAutomaticWrites=4`, `EnableAutomaticWrites=8`입니다. `Overwrite`와 `Merge`의 동시 지정은 쓰기 전에 `INVALID_WRITE_OPTION`으로 거부합니다(LANDING-021·141). 내부 빈 옵션과 교체 표시는 같은 네 비트 계약을 사용합니다.
 
@@ -32,9 +34,9 @@
 | `FieldNodeState` | Dirty=1·Touched=2·ErrorVisible=4를 내부와 공개 경계에서 같은 이름으로 사용하며 별칭을 두지 않습니다(SURFACE-056·060, LANDING-157). |
 | `SetValueOption` · `ValidationMode`                              | 쓰기 옵션 비트·검증 모드 열거값 |
 | `FieldNodeEventType` · `FieldNodeRequestType`                  | 새 엔진의 공개 사건·명령 열거값(EVENT-073, LANDING-067) |
-| 바인딩 전용 생성·마운트·폼 로드·인계·입력 쓰기·입력 마침·상호작용 초기화 번호 읽기 | `FieldNode/DETAIL.md`의 통로 계약을 이름으로 다시 내보내며 `src/index.ts`는 내보내지 않음(69C-01·02, 70C-01) |
+| 바인딩 전용 생성·마운트·폼 로드·인계·입력 쓰기·입력 마침·상호작용 초기화 번호 읽기 | `surface/DETAIL.md`의 통로 계약을 이름으로 다시 내보내며 `src/index.ts`는 내보내지 않음(69C-01·02, 70C-01) |
 | `setContext(root, context)`                                      | 새 엔진의 바인딩 전용 내부 통로를 이름으로 다시 내보냄. 패키지 공개 `src/index.ts`에는 노출하지 않음(NODE-010, SURFACE-055, 28C-08) |
-| `retainValidationRoot(validator, authoredRoot)` · `releaseValidationRoot(validator, authoredRoot)` | 바인딩 이펙트의 수명 증감 통로를 `validation/index.ts`에서 이름으로 다시 내보냄. 패키지 공개 `src/index.ts`에는 노출하지 않음(VALIDATE-021·045, NODE-010) |
+| `retainValidationRoot(validator, authoredRoot)` · `releaseValidationRoot(validator, authoredRoot)` | 바인딩 이펙트의 수명 증감 통로를 `engine/validation/index.ts`에서 이름으로 다시 내보냄. 패키지 공개 `src/index.ts`에는 노출하지 않음(VALIDATE-021·045, NODE-010) |
 
 `nodeFromJSONSchema`의 서명은 실행 ADR D3와 같습니다. `validator`는 `{ compile, compileGuard, release?, dialect? }` 객체이고, `deferMountValidation`의 기본값은 거짓입니다. 문서 주석은 core 호스트 진입과 `<Form>`의 동일 생성 통로를 명시합니다(70C-01, VALIDATE-010, CONTROLS-075).
 
@@ -169,15 +171,9 @@ nodeFromJSONSchema<Schema extends JSONSchema>(props: {
 
 ## Boundary Exemptions
 
-### `types` — 렌더 바인딩의 제네릭 스키마 타입 적용
-
-- **Consumers**: `**/packages/canard/schema-form/src/types/jsonSchema.ts`
-- **Direct import**: `allowed`
-- **Reason**: 렌더러와 무관한 제네릭 JSONSchema는 core의 계약 구현이며, 바인딩은 이 타입에 불투명한 presentation 형만 주입합니다. core 진입점은 FieldNode·blueprint·식 컴파일에서 오류 도우미를 거쳐 바인딩 타입 배럴에 도달하므로, 이 별칭이 core 진입점을 가져오면 타입 의존 순환이 생깁니다. core 내부의 다수 소비자와 소유권을 유지하고 이 바인딩 별칭의 JSONSchema 참조만 허용합니다. filid의 organ 판정은 개별 파일이 아닌 구획을 대상으로 하므로 구획 경로를 선언하고 소비자는 한 파일로 제한합니다.
-
 ### `__tests__/makeFieldNodeTree.ts` — 공유 시험 트리 생성
 
-- **Consumers**: `behaviors/unionBehavior/__tests__/**`
+- **Consumers**: `engine/behaviors/unionBehavior/__tests__/**`
 - **Direct import**: `allowed`
 - **Reason**: 회귀 시험과 union 시험이 같은 실제 청사진·노드 트리 생성기를 소비합니다. 제품 진입점에 시험 전용 도우미를 공개하지 않기 위해 core의 테스트 구획에 보관합니다.
 

@@ -1,23 +1,23 @@
-# core — New node engine public boundary
+# core — Node engine and surface composition boundary
 
 ## Purpose
 
-Own the new engine's public node union, per-kind types, guards, events, validator contract and mounted core-host entry. Export binding-only channels by name; the package entry does not expose them.
+Compose engine and node surface contracts for render bindings and core hosts. The engine owns execution rules; the surface owns public node types, guards and build channels.
 
 ## Conventions
 
-- Build and mount through the same channels for core hosts and React bindings.
-- Keep renderer presentation opaque and parameterized; core schema types never import React.
+- Keep only named re-exports at the entry point and leave implementation with its owning module.
+- Use the same tree construction and mounting channels for core hosts and React bindings.
 - Store raw input separately from emitted output and report type mismatches explicitly.
-- Leave settlement, dispatch, validation and navigation behavior with their owning modules.
+- Pass renderer presentation as opaque type parameters; engine schema types never import React.
 
 ## Boundaries
 
 ### Always do
 
-- Export public contracts by name through the owning module's entry point.
-- Preserve predicate references across tree construction and mounting.
-- Change node values through the public write contract and binding channels.
+- Re-export public contracts and binding-only channels by name through the entry point.
+- Preserve host predicate references across tree construction and mounting.
+- Change node values through the public write contract and named binding channels.
 
 ### Ask first
 
@@ -28,4 +28,4 @@ Own the new engine's public node union, per-kind types, guards, events, validato
 
 - Import the preserved legacy engine or the application plugin registry.
 - Expose binding-only functions through the package entry.
-- Read React presentation fields or mutate caller-owned schema data.
+- Read renderer presentation or mutate caller-owned schema data.

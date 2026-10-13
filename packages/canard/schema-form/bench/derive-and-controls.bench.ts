@@ -1,16 +1,16 @@
-import { PathKeyedMap } from '../src/core/utils/pathIndex/PathKeyedMap';
-import { PathKeyedSet } from '../src/core/utils/pathIndex/PathKeyedSet';
+import { PathKeyedMap } from '../src/core/engine';
+import { PathKeyedSet } from '../src/core/engine';
 /**
  * TEST-071: compare one changed element and a whole replacement in the 04 engine.
  * Run this script separately under Node/V8 and Bun/JSC; do not overlap runs.
  */
 import { performance } from 'node:perf_hooks';
 
-import { blueprint } from '../src/core/blueprint';
-import { fieldNodeFactory, SetValueOption } from '../src/core/FieldNode';
-import type { FieldNode } from '../src/core/FieldNode/FieldNode';
-import { loadFieldNodeAtMount } from '../src/core/settle';
-import { sameValue } from '../src/core/settle/utils/compute/sameValue';
+import { blueprint } from '../src/core';
+import { fieldNodeFactory, SetValueOption } from '../src/core';
+import type { FieldNode } from '../src/core/surface/FieldNode';
+import { loadFieldNodeAtMount } from '../src/core/engine';
+import { sameValue } from '../src/core/engine/settle/utils/compute/sameValue';
 
 const elementCount = 10_000;
 const lastKey = `item_${elementCount - 1}`;

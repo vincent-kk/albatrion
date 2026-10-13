@@ -2,10 +2,10 @@ import { describe, expect, it } from 'vitest';
 
 import type { FormScenario } from '@aileron/schema-form-scenarios';
 
-import type { BlueprintSchema } from '../../blueprint';
-import { writeFieldNode } from '../../settle';
-import { createTestTree } from '../../settle/__tests__/fixtures/createTestTree';
-import { WriteOption } from '../../types/value';
+import type { BlueprintSchema } from '../../engine/blueprint';
+import { writeFieldNode } from '../../engine/settle';
+import { createTestTree } from '../../engine/settle/__tests__/fixtures/createTestTree';
+import { WriteOption } from '../../engine/types/value';
 import { runScenario } from './utils/runScenario';
 
 // filid:contract scenario-runner
