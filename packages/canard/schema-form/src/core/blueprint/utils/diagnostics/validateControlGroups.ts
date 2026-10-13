@@ -1,5 +1,9 @@
 import { isArray } from '@winglet/common-utils/filter';
 
+import type {
+  ChildSchemaControls,
+  SchemaControls,
+} from '../../../types/controls';
 import type { BlueprintSchema } from '../../type';
 import { readSchemaObject } from '../analyze/readSchemaObject';
 import type { AnalysisContext } from '../analyze/type';
@@ -91,26 +95,30 @@ export const validateControlGroups = (
   }
 };
 
-/** Direct-child and fragment scope controls share the closed ledger vocabulary. */
-const CHILD_CONTROL_KEYS = [
-  'active',
-  'visible',
-  'readOnly',
-  'disabled',
-  'default',
-  'derived',
-  'unsetValue',
-  'resetInteraction',
-  'unsetOnInactive',
-];
+/** Direct-child and fragment scope controls; `satisfies` ties the set to the authoring type in both directions. */
+const CHILD_CONTROL_KEY_SET = {
+  active: true,
+  visible: true,
+  readOnly: true,
+  disabled: true,
+  default: true,
+  derived: true,
+  unsetValue: true,
+  resetInteraction: true,
+  unsetOnInactive: true,
+} satisfies Record<keyof ChildSchemaControls, true>;
 /** Node-owned controls add declarations and cross-node injection. */
-const CONTROL_KEYS = [
-  ...CHILD_CONTROL_KEYS,
-  'children',
-  'injectTo',
-  'discriminator',
-  'watch',
-];
+const CONTROL_KEY_SET = {
+  ...CHILD_CONTROL_KEY_SET,
+  children: true,
+  injectTo: true,
+  discriminator: true,
+  watch: true,
+} satisfies Record<keyof SchemaControls<unknown>, true>;
+const CHILD_CONTROL_KEYS: readonly string[] = Object.keys(
+  CHILD_CONTROL_KEY_SET,
+);
+const CONTROL_KEYS: readonly string[] = Object.keys(CONTROL_KEY_SET);
 /** Static shape and projection settings consumed by the corresponding owners. */
 const OPTION_KEYS = [
   'terminal',

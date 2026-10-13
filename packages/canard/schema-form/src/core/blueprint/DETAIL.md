@@ -45,7 +45,7 @@
 - 형 없는 칸은 BLUEPRINT-048·050·051대로 게이트 없는 oneOf·anyOf의 허용 집합을 먼저 합치고, 두 키워드가 함께 있으면 교차한 U에서 null을 뗀 F로 종류를 정합니다. F가 `{object}`·`{array}`면 variant 호스트이고, 다른 종류와 섞이면 오류입니다. 게이트 분기는 U에서 제외하며 재귀 분기·참조는 현재 경로 재진입에서 절단합니다. 분기 없는 `const`·`enum` 칸은 단일 JSON 종류의 원시 리터럴 잎이며 분기 안의 리터럴 전용 칸은 여전히 ⊤입니다. union은 터미널이고 가상 노드를 포함한 종류는 여덟입니다.
 - 게이트 없는 분기는 존재만 더합니다. 공유 노드의 제약·주석·상태·options·presentation은 그 분기가 유일한 선언일 때만 기여합니다. 정적 선언이 없는 이름을 서로 다른 fold의 무게이트 분기가 선언하면 오류입니다.
 - 명시 discriminator만 정적 const·enum을 읽습니다. 정적 allOf·참조를 따라 태그를 교차하고, 끌어올린 선언과 자기 active의 결합을 보존하며 작성 스키마는 바꾸지 않습니다.
-- controls·options와 children 항목의 허용 키는 닫힌 목록입니다. 닫힌 목록 밖 키는 UNKNOWN_GROUP_KEY, 목록 안 키의 값 모양 오류는 INVALID_CONTROL_SHAPE입니다. injectTo는 함수만 허용하고 정적 대상 분석은 하지 않습니다. presentation은 불투명 병합 데이터로만 취급합니다.
+- controls·options와 children 항목의 허용 키는 닫힌 목록입니다. controls의 두 목록은 `core/types/controls.ts`의 `SchemaControls`·`ChildSchemaControls`와 형으로 묶여 있어 어느 쪽이 어긋나도 형 검사가 실패합니다. 닫힌 목록 밖 키는 UNKNOWN_GROUP_KEY, 목록 안 키의 값 모양 오류는 INVALID_CONTROL_SHAPE입니다. injectTo는 함수만 허용하고 정적 대상 분석은 하지 않습니다. presentation은 불투명 병합 데이터로만 취급합니다.
 
 ## API Contracts
 

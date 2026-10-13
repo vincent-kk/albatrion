@@ -18,6 +18,7 @@ import type {
 
 import type { Dictionary, IsNullable } from '@aileron/declare';
 
+import type { SchemaControls } from '../core/types/controls';
 import type { UnknownFormTypeInputProps } from './formTypeInput';
 import type {
   AllowedValue,
@@ -258,6 +259,8 @@ export type NullSchema<Options extends Dictionary = object> = BasicSchema &
 export type BasicSchema = {
   /** Renderer data belongs to the binding and stays typed in per-kind schemas. */
   presentation?: SchemaPresentation;
+  /** Rules and policies that change value and shape over time; any other key is a blueprint error */
+  controls?: SchemaControls<JSONSchemaWithVirtual>;
   /** Custom React component for input rendering */
   FormTypeInput?: ComponentType<UnknownFormTypeInputProps> | null;
   /** Props passed to FormTypeInput component */

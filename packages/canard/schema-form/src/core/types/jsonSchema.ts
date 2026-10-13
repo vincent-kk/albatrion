@@ -2,6 +2,8 @@ import type { BasicSchema } from '@winglet/json-schema';
 
 import type { Dictionary } from '@aileron/declare';
 
+import type { SchemaControls } from './controls';
+
 /** Authored schema; the host supplies presentation data without coupling core to React. */
 export interface JSONSchema<
   Options extends Dictionary = object,
@@ -26,6 +28,8 @@ export interface JSONSchema<
         | 'array'
       )[];
   presentation?: Presentation;
+  /** Rules and policies that change value and shape over time; any other key is a blueprint error. */
+  controls?: SchemaControls<JSONSchema<Options, Presentation>>;
   /** Numeric constraints retain their standard scalar types. */
   minimum?: number;
   maximum?: number;

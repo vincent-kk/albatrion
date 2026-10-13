@@ -28,6 +28,8 @@
 
 `types/jsonSchema.ts`의 스키마 형은 0.16.0이 선언하던 `computed`, `&` 축약 여덟 개, 스키마 수준 `injectTo`, 최상위 `terminal`과 객체의 최상위 `virtual`·`propertyKeys`를 선언하지 않습니다. 제어는 `controls` 안에, 정적 설정은 `options` 안에 둡니다(CONTROLS-016·051). 끝의 `[alt: string]: any`는 검증기 키워드를 위해 남으므로 그 키를 써도 형 오류는 아니며, 런타임도 그 키를 제어로 읽지 않습니다.
 
+공개 `JSONSchema`(코어 인터페이스)와 종류별 별칭은 `controls`를 코어의 `SchemaControls` 형으로 선언합니다. 주석이나 `satisfies`로 형을 준 스키마에서 `controls` 안의 모르는 키, 배열이 아닌 `watch`, 함수가 아닌 `injectTo`, `children` 항목 안의 아홉 키 밖 키는 형 오류입니다. 조각 자리(`oneOf`/`anyOf`/`allOf` 분기, `then`, `else`)는 같은 재귀 스키마 형을 쓰므로 아홉 키 제한을 형으로 걸지 않으며, 형을 주지 않은 인라인 `jsonSchema`는 제네릭 추론 때문에 중첩된 초과 키를 검사하지 않습니다. 두 경우 모두 런타임이 청사진 오류를 던집니다. `options`의 형은 아직 열려 있습니다.
+
 ### 스키마 옵션
 
 `types/jsonSchema.ts`가 선언하는 `options` 필드. 각 옵션은 특정 스키마 타입에만 존재한다.
@@ -60,6 +62,11 @@ NODE-059의 형 없는 인라인 객체·배열 oneOf·anyOf는 분기 값 형�
 ### authoring-surface — 지워진 작성 키를 선언하지 않는다
 
 - 색인 서명을 뺀 `BasicSchema`의 선언 키에는 `computed`, `&` 축약, `injectTo`, `terminal`이 없고, 객체 스키마의 선언 키에는 `virtual`, `propertyKeys`도 없다.
+
+### controls-surface — controls는 런타임이 받는 키와 값만 형으로 받는다
+
+- 공개 `JSONSchema`와 종류별 별칭의 `controls` 키는 런타임의 열세 키와 같고, children 항목의 `controls` 키는 아홉 키와 같다.
+- 모르는 키, 문자열 `watch`, 함수가 아닌 `injectTo`는 주석·`satisfies` 리터럴에서 형 오류이고, 사용자 정의 `Options`를 넘긴 `JSONSchema`는 그대로 컴파일된다.
 
 ### option-surface — 옵션은 선언된 스키마 타입에서만 유효하다
 
