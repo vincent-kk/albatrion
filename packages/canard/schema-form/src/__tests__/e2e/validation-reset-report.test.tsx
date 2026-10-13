@@ -191,6 +191,46 @@ describe('243C-01 reset validation report', () => {
     expect(ref.current!.getErrors()).toEqual([]);
   });
 
+  it('adds no OnRequest report when a rebuild precedes the first validation', async () => {
+    setupValidatorPlugin();
+    const ref = createRef<FormHandle>();
+    const onValidate = vi.fn();
+    const view = render(
+      <Form
+        ref={ref}
+        jsonSchema={schema}
+        defaultValue="ab"
+        validationMode={ValidationMode.OnRequest}
+        onValidate={onValidate}
+      >
+        <span />
+      </Form>,
+    );
+    const root = ref.current!.node;
+    expect(onValidate).not.toHaveBeenCalled();
+    view.rerender(
+      <Form
+        ref={ref}
+        jsonSchema={replacement}
+        defaultValue="valid"
+        validationMode={ValidationMode.OnRequest}
+        onValidate={onValidate}
+      >
+        <span />
+      </Form>,
+    );
+    expect(ref.current!.node).toBe(root);
+
+    await act(async () => {
+      ref.current!.reset();
+      expect(ref.current!.node).not.toBe(root);
+      await new Promise((resolve) => setTimeout(resolve, 0));
+    });
+
+    expect(onValidate).not.toHaveBeenCalled();
+    expect(ref.current!.getErrors()).toEqual([]);
+  });
+
   it('does not report an empty list when the replacement root retains external errors', async () => {
     setupValidatorPlugin();
     const ref = createRef<FormHandle>();
@@ -275,6 +315,75 @@ describe('243C-01 reset validation report', () => {
 
     expect(ref.current!.getErrors()).toEqual([]);
     expect(onValidate.mock.calls.slice(before)).toEqual([]);
+  });
+
+  it('surfaces a replacement mount error when the empty report consumer also throws', async () => {
+    setupValidatorPlugin();
+    const ref = createRef<FormHandle>();
+    const onError = vi.fn();
+    let fail = false;
+    const onValidate = vi.fn<(errors: unknown) => void>(() => {
+      if (fail) throw new Error('consumer onValidate failed');
+    });
+    const view = render(
+      <Form
+        ref={ref}
+        jsonSchema={schema}
+        defaultValue="ab"
+        validationMode={ValidationMode.OnRequest}
+        onValidate={onValidate}
+        onError={onError}
+      >
+        <span />
+      </Form>,
+    );
+    await act(async () => {
+      await ref.current!.validate();
+    });
+    expect(onValidate.mock.lastCall?.[0]).not.toEqual([]);
+    const root = ref.current!.node;
+    const before = onValidate.mock.calls.length;
+    view.rerender(
+      <Form
+        ref={ref}
+        jsonSchema={{
+          type: 'number',
+          controls: {
+            derived:
+              '(() => { throw new Error("replacement mount failed") })()',
+          },
+        }}
+        validationMode={ValidationMode.OnRequest}
+        onValidate={onValidate}
+        onError={onError}
+      >
+        <span />
+      </Form>,
+    );
+    fail = true;
+
+    let thrown: unknown;
+    await act(async () => {
+      try {
+        ref.current!.reset();
+      } catch (error) {
+        thrown = error;
+      }
+      await new Promise((resolve) => setTimeout(resolve, 0));
+    });
+
+    expect(ref.current!.node).not.toBe(root);
+    expect(ref.current!.node!.diagnostics.status).toBe('degraded');
+    expect(ref.current!.getErrors()).toEqual([]);
+    expect(onValidate.mock.calls.slice(before)).toEqual([[[]]]);
+    expect(onError).toHaveBeenCalledWith(
+      expect.objectContaining({
+        code: 'SCHEMA_FORM_ERROR.EXPRESSION_THREW',
+        schemaPath: '#/controls/derived',
+        surface: 'thrown',
+      }),
+    );
+    expect(thrown).toBe(onError.mock.lastCall?.[0].error);
   });
 
   it('finishes a rebuild before the empty report reaches a throwing consumer', async () => {

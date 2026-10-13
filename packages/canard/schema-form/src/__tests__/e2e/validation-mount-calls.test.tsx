@@ -45,7 +45,7 @@ describe('mount onValidate calls', () => {
     expect(onValidate).toHaveBeenCalledTimes(0);
   });
 
-  it('publishes the external errors and the first validation result when mounted with errors', async () => {
+  it('publishes the external errors once when the first validation repeats their reference', async () => {
     const errors = [{ dataPath: '', message: 'server says no' }];
     const onValidate = vi.fn();
     form = await renderForm(schema, {
@@ -55,11 +55,8 @@ describe('mount onValidate calls', () => {
       onValidate,
     });
     await form.flush();
-    expect(onValidate).toHaveBeenCalledTimes(2);
-    expect(onValidate.mock.calls.map(([issues]) => issues)).toEqual([
-      errors,
-      errors,
-    ]);
+    expect(onValidate).toHaveBeenCalledTimes(1);
+    expect(onValidate.mock.calls.map(([issues]) => issues)).toEqual([errors]);
   });
 
   it.each([

@@ -100,12 +100,16 @@ export const RootNodeContextProvider = ({
     pending.current = { props: used, option };
     schedule((version) => version + 1);
     for (const listener of store.listeners) listener();
-    if (
-      store.load.root &&
-      !store.load.root.globalErrors.length &&
-      store.lastReportedErrors?.length
-    )
-      reportRootLoadValidation(store.load, store);
+    try {
+      if (
+        store.load.root &&
+        !store.load.root.globalErrors.length &&
+        store.lastReportedErrors?.length
+      )
+        reportRootLoadValidation(store.load, store);
+    } catch (error) {
+      throw store.load.error || error;
+    }
     if (store.load.error) throw store.load.error;
   });
 
