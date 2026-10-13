@@ -26,7 +26,7 @@ React 컴포넌트·정의·File 객체는 소비자가 만들고, 이 부류는
 
 | Scene file | Scene name | Behavior verified | Ledger evidence |
 | --- | --- | --- | --- |
-| `input-resolution.scenario.ts` | `input-components.input-resolution` | 인라인 → 맵 → Form 정의 → Provider 정의 → 플러그인 순서로 첫 일치가 이기고, 인라인 null은 노드를 두고 입력만 그리지 않는다. | SchemaNodeInput INTENT, REACT-033 |
+| `input-resolution.scenario.ts` | `input-components.input-resolution` | 인라인 → 맵 → Form 정의 → Provider 정의 → 플러그인 순서로 첫 일치가 이기고, 인라인 null은 노드를 두고 입력만 그리지 않는다. | FieldInputSlot INTENT, REACT-033 |
 | `input-map.scenario.ts` | `input-components.input-map` | 맵 키는 정확한 포인터, 앵커 없는 정규식, 한 칸을 맞추는 `*`로 맞으며, 동적 키는 노드가 아니라 `*`도 선언된 자식만 닿는다. | CONTROLS-080, SCHEMA-040 |
 | `trim-on-blur.scenario.ts` | `input-components.trim-on-blur` | `options.trim`은 입력 중에는 공백을 두고 blur에서만 자르며, trim이 없는 칸은 공백을 지킨다. | CONTROLS-004, CONTROLS-005, CONTROLS-006 |
 | `file-attach.scenario.ts` | `input-components.file-attach` | 첨부는 경로별 목록으로 들고, 입력이 내려가면 그 항목이 빠지며, reset은 맵을 비운다. | LANDING-148, TEST-020, TEST-023 |

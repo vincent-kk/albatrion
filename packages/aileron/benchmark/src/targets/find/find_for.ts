@@ -1,6 +1,6 @@
 import { JSONPath } from '@winglet/json/path';
 
-import type { SchemaNode } from '@/schema-form/core';
+import type { FieldNode } from '@/schema-form/core';
 
 /**
  * AbstractNode 트리에서 주어진 경로에 해당하는 노드를 찾습니다.
@@ -11,10 +11,10 @@ import type { SchemaNode } from '@/schema-form/core';
 export const find = (
   target: any | null,
   segments: string[],
-): SchemaNode | null => {
+): FieldNode | null => {
   if (!target) return null;
-  if (!segments.length) return target as SchemaNode;
-  let cursor = target as SchemaNode;
+  if (!segments.length) return target as FieldNode;
+  let cursor = target as FieldNode;
   for (let i = 0; i < segments.length; i++) {
     const segment = segments[i];
     if (segment === JSONPath.Root) {

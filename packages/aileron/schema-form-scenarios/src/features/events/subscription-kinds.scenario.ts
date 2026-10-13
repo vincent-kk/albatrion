@@ -23,9 +23,9 @@ export interface SubscriptionStage {
   readonly path: string;
   /** Value for setValue or push. */
   readonly value?: unknown;
-  /** SchemaNodeEventType member names that must appear among the received events. */
+  /** FieldNodeEventType member names that must appear among the received events. */
   readonly includes: readonly string[];
-  /** SchemaNodeEventType member names that must not appear. */
+  /** FieldNodeEventType member names that must not appear. */
   readonly excludes: readonly string[];
   /** onChange calls this stage adds. */
   readonly changes: number;
