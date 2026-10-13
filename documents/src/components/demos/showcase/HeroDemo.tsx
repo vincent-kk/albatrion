@@ -13,14 +13,14 @@ const schema = {
     name: {
       type: 'string',
       title: 'Full Name',
-      placeholder: 'e.g. Jane Smith',
+      presentation: { FieldInputProps: { placeholder: 'e.g. Jane Smith' } },
       default: 'Jane Smith',
     },
     email: {
       type: 'string',
       title: 'Email',
       format: 'email',
-      placeholder: 'e.g. jane@example.com',
+      presentation: { FieldInputProps: { placeholder: 'e.g. jane@example.com' } },
     },
     participantType: {
       type: 'string',
@@ -32,26 +32,26 @@ const schema = {
     topic: {
       type: 'string',
       title: 'Talk Topic',
-      placeholder: 'e.g. Building Scalable Forms',
+      presentation: { FieldInputProps: { placeholder: 'e.g. Building Scalable Forms' } },
       controls: { visible: "../participantType === 'speaker'" },
     },
     bio: {
       type: 'string',
       title: 'Speaker Bio',
       format: 'textarea',
-      placeholder: 'Brief introduction about the speaker...',
+      presentation: { FieldInputProps: { placeholder: 'Brief introduction about the speaker...' } },
       controls: { visible: "../participantType === 'speaker'" },
     },
     companyName: {
       type: 'string',
       title: 'Company Name',
-      placeholder: 'e.g. Acme Corp',
+      presentation: { FieldInputProps: { placeholder: 'e.g. Acme Corp' } },
       controls: { visible: "../participantType === 'sponsor'" },
     },
     sponsorTier: {
       type: 'string',
       title: 'Sponsor Tier',
-      formType: 'radio',
+      presentation: { inputType: 'radio' },
       enum: ['gold', 'silver', 'bronze'],
       default: 'silver',
       controls: { visible: "../participantType === 'sponsor'" },
@@ -81,7 +81,7 @@ const schema = {
     sessions: {
       type: 'array',
       title: 'Sessions',
-      formType: 'checkbox',
+      presentation: { inputType: 'checkbox' },
       items: {
         type: 'string',
         enum: ['morning', 'afternoon', 'evening'],
@@ -97,14 +97,14 @@ const schema = {
     newsletter: {
       type: 'boolean',
       title: 'Subscribe to newsletter',
-      formType: 'switch',
+      presentation: { inputType: 'switch' },
       default: true,
     },
     website: {
       type: 'string',
       title: 'Company Website',
       format: 'uri',
-      placeholder: 'https://example.com',
+      presentation: { FieldInputProps: { placeholder: 'https://example.com' } },
       controls: { visible: "../participantType === 'sponsor'" },
     },
   },

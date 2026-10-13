@@ -20,7 +20,7 @@ const schema = {
     commonField: {
       type: 'string',
       title: 'Employee Name',
-      placeholder: 'e.g. Jane Smith',
+      presentation: { FieldInputProps: { placeholder: 'e.g. Jane Smith' } },
       controls: {
         watch: '../employmentType',
         active: '../employmentType !== null',

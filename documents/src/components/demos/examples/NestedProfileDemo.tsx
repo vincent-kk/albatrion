@@ -20,13 +20,13 @@ const schema = {
           title: 'Name',
           maxLength: 50,
           default: 'Jane Smith',
-          placeholder: 'e.g. Jane Smith',
+          presentation: { FieldInputProps: { placeholder: 'e.g. Jane Smith' } },
         },
         email: {
           type: 'string',
           title: 'Email',
           format: 'email',
-          placeholder: 'e.g. jane@example.com',
+          presentation: { FieldInputProps: { placeholder: 'e.g. jane@example.com' } },
         },
         profile: {
           type: 'object',

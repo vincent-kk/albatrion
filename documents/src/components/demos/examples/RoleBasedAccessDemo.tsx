@@ -20,21 +20,21 @@ const schema = {
     name: {
       type: 'string',
       title: 'Name',
-      placeholder: 'e.g. Jane Smith',
+      presentation: { FieldInputProps: { placeholder: 'e.g. Jane Smith' } },
       description: 'Always required for all user types',
     },
     email: {
       type: 'string',
       format: 'email',
       title: 'Email',
-      placeholder: 'e.g. jane@example.com',
+      presentation: { FieldInputProps: { placeholder: 'e.g. jane@example.com' } },
       description: 'Visible for members and admins only',
       controls: { visible: '../userType !== "guest"' },
     },
     phoneNumber: {
       type: 'string',
       title: 'Phone',
-      placeholder: 'e.g. 010-1234-5678',
+      presentation: { FieldInputProps: { placeholder: 'e.g. 010-1234-5678' } },
       description: 'Active for members and admins only',
       controls: { active: '../userType !== "guest"' },
     },
@@ -67,7 +67,7 @@ const schema = {
     adminCode: {
       type: 'string',
       title: 'Admin Code',
-      placeholder: 'e.g. ADM-2024-001',
+      presentation: { FieldInputProps: { placeholder: 'e.g. ADM-2024-001' } },
       description: 'Active for admins only',
       controls: { active: '../userType === "admin"' },
     },

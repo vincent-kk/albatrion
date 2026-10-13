@@ -54,16 +54,16 @@ const sections = [
       },
       {
         name: 'FormTypeInputBooleanSwitch',
-        trigger: 'type: "boolean", formType: "switch"',
-        schema: { type: 'boolean', title: 'Switch', formType: 'switch' },
+        trigger: 'type: "boolean", presentation.inputType: "switch"',
+        schema: { type: 'boolean', title: 'Switch', presentation: { inputType: 'switch' } },
       },
       {
         name: 'FormTypeInputStringSwitch',
-        trigger: 'type: "string", formType: "switch", enum (2 values)',
+        trigger: 'type: "string", presentation.inputType: "switch", enum (2 values)',
         schema: {
           type: 'string',
           title: 'Toggle',
-          formType: 'switch',
+          presentation: { inputType: 'switch' },
           enum: ['ON', 'OFF'],
         },
       },
@@ -74,21 +74,21 @@ const sections = [
     items: [
       {
         name: 'FormTypeInputRadioGroup',
-        trigger: 'formType: "radio", enum',
+        trigger: 'presentation.inputType: "radio", enum',
         schema: {
           type: 'string',
           title: 'Radio Group',
-          formType: 'radio',
+          presentation: { inputType: 'radio' },
           enum: ['Small', 'Medium', 'Large'],
         },
       },
       {
         name: 'FormTypeInputStringCheckbox',
-        trigger: 'type: "array", formType: "checkbox", items.enum',
+        trigger: 'type: "array", presentation.inputType: "checkbox", items.enum',
         schema: {
           type: 'array',
           title: 'Checkbox Group',
-          formType: 'checkbox',
+          presentation: { inputType: 'checkbox' },
           items: {
             type: 'string',
             enum: ['React', 'Vue', 'Angular', 'Svelte'],

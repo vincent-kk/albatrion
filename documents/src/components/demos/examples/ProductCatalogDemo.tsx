@@ -27,7 +27,7 @@ const schema = {
             name: {
               type: 'string',
               title: 'Product Name',
-              placeholder: 'e.g. Wireless Headphones',
+              presentation: { FieldInputProps: { placeholder: 'e.g. Wireless Headphones' } },
               default: 'Wireless Headphones',
             },
             weight: {
@@ -120,7 +120,7 @@ const schema = {
             name: {
               type: 'string',
               title: 'Product Name',
-              placeholder: 'e.g. Design Templates Pack',
+              presentation: { FieldInputProps: { placeholder: 'e.g. Design Templates Pack' } },
               default: 'Design Templates Pack',
             },
             fileSize: {
@@ -134,13 +134,13 @@ const schema = {
               type: 'string',
               title: 'Format',
               default: 'ZIP',
-              placeholder: 'e.g. ZIP, PDF, MP4',
+              presentation: { FieldInputProps: { placeholder: 'e.g. ZIP, PDF, MP4' } },
             },
             downloadLink: {
               type: 'string',
               title: 'Download Link',
               format: 'uri',
-              placeholder: 'https://example.com/download',
+              presentation: { FieldInputProps: { placeholder: 'https://example.com/download' } },
             },
           },
           required: ['name', 'fileSize', 'format'],
@@ -151,7 +151,7 @@ const schema = {
             name: {
               type: 'string',
               title: 'Service Name',
-              placeholder: 'e.g. Web Development Consulting',
+              presentation: { FieldInputProps: { placeholder: 'e.g. Web Development Consulting' } },
               default: 'Web Development Consulting',
             },
             duration: {
