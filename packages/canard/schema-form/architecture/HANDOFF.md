@@ -2,9 +2,8 @@
 
 개발의 진행 상황과 다음 할 일은 `PLAN.md`가 단일 진입점으로 든다. 다음 세션이 바로 이어서 일하기 위한 문서다. 이력은 `git log`와 `reviews/`에 있으므로 여기에는 지금 상태, 다음 할 일, 일하는 법만 적는다. 소유자는 Vincent다.
 
-## 1. 지금 어디인가 (2026-10-13, 249라운드 닫힘; 07 전환 진행 중)
+## 1. 지금 어디인가 (2026-10-13, 250라운드 닫힘; 07 전환 진행 중)
 
-- **216라운드(2026-10-13, 닫기).** 네 시간 판정 세션이 끝났고 개선 커밋 2는 다섯 부분 모두 채택이다. 측정 창이 닫혀 세 세션이 다시 자유롭고, 07b 브랜치의 마무리 여섯 단계가 정해졌다(reviews/round-216-closing.md).
 - **217라운드(2026-10-13, 소유자).** codex와 agy를 쓰는 멀티에이전트 정책을 다시 켠다. 소스와 시험의 구현은 codex가 하고 Claude 세션은 계획과 검증을 맡으며 품질 게이트는 그대로다(reviews/round-217-owner-answers.md).
 - **218라운드(2026-10-13, 닫기).** codex 위임이 이 기계의 Codex CLI 장애로 세 세션 모두 막혀, 계획과 게이트는 그대로 두고 Claude 세션이 직접 구현하는 대체 규칙을 적용했다. 검증 파동 고침은 배정을 건너뛰지 않고 직전 배열로 다시 배정하는 모양으로 바꿨다(reviews/round-218-closing.md).
 - **219라운드(2026-10-13, 닫기).** codex가 복구돼 다음 작업부터 위임을 재개하고, 진행 중이던 셋은 직접 마무리한다. ajv 플러그인 PR을 직접 검증해 07b 브랜치에 합쳤고, 거기서 드러난 플러그인 결함 둘을 reviewer에게 맡겼다(reviews/round-219-closing.md).
@@ -37,7 +36,8 @@
 - **246라운드(2026-10-13, 닫기).** PR #362(07b-2, a723e2f18)를 직접 검증해 게이트가 모두 통과했고, verifier 지적 하나로 ⑨를 보강하기로 했다: 직전 보고와 같은 참조의 목록은 보고하지 않는다(errors prop 마운트 2→1, 246C-01, reviews/round-246-closing.md). fixy07의 보강 커밋 뒤 재검증하고 소유자에게 병합 허가를 묻는다.
 - **247라운드(2026-10-13, 소유자).** PR들을 정리하고 다음 작업으로 갈 준비를 하라는 지시(reviews/round-247-owner-answers.md). 순서: #362 보강 재검증·병합 → #361 재기준·병합 → 07b-3 → 정리 커맨드·#354 본문 → 개선-38 준비.
 - **248라운드(2026-10-14, 소유자).** PR #362(07b-2) 병합을 명시적으로 허가했다(reviews/round-248-owner-answers.md). 원장 관리자가 squash 병합한다.
-- **249라운드(2026-10-14, 닫기).** PR #362(07b-2)를 squash 병합했고(switch tip 1dbc1c1c9) 원격 07b-2 가지를 지웠다. fairy07은 #361 재기준·새 이름, fixy07은 07b-3(production-test)을 맡는다(249C-01, reviews/round-249-closing.md). 다음 라운드 번호는 250.
+- **249라운드(2026-10-14, 닫기).** PR #362(07b-2)를 squash 병합했고(switch tip 1dbc1c1c9) 원격 07b-2 가지를 지웠다. fairy07은 #361 재기준·새 이름, fixy07은 07b-3(production-test)을 맡는다(249C-01, reviews/round-249-closing.md).
+- **250라운드(2026-10-14, 소유자).** production-test의 지워진 옛 문법을 지금 새 문법으로 다 바꾸기로 했다(대기열 35 승인, 250C-01, reviews/round-250-owner-answers.md). fixy07이 07b-3의 별도 커밋으로 한다. 다음 라운드 번호는 251.
 - **그 앞의 라운드 요지(19라운드부터)는 PLAN-LOG.md 2절에 있다.** 라운드마다 한 문단이며, 1절의 기록 표와 같은 순서다.
 - **설계의 정본은 단일 원장 `ledger/`다.** 영역 17개, 항목 1,350개(80라운드 뒤, 24라운드 뒤 1,348; 현행 1,076(부정 결정·기록 포함), 대체됨 199, 분할됨 49, 중복 24, 열림 0). 형식과 규칙은 `ledger/README.md`.
 - **옛 설계 문서(`00`–`09`, `adr/`, `open-questions.md`)는 동결됐다.** 더 고치지 않는다. 어긋남은 원장의 충돌 칸에 적는다. 원장이 인용하는 옛 문서의 `path:line`은 모두 커밋 `ba398c330` 기준 줄 번호다(그 뒤 옛 문서는 바뀌지 않았다).
@@ -387,6 +387,7 @@ node ledger/checks/doc-coverage.mjs design/*.md adr/*.md -- ledger/*.md   # 설�
 | `reviews/round-247-owner-answers.md` | 247라운드 소유자 지시: PR 정리 뒤 다음 작업 준비 |
 | `reviews/round-248-owner-answers.md` | 248라운드 소유자 답: #362 병합 허가 |
 | `reviews/round-249-closing.md` | 249라운드 닫기: #362 병합, #361·07b-3 배분 |
+| `reviews/round-250-owner-answers.md` | 250라운드 소유자 답: 대기열 35 승인(옛 문법 전환) |
 | reviews 아래 improvement-38-explain.html | 개선-38 소유자용 설명(seiri:explain) |
 | reviews 아래 improvement-38-fractal-map.md | 개선-38 고찰 문서(reviewer, verifier 대조판) |
 | reviews 아래 raw-improvement-38 디렉터리 | 개선-38 근거: 소비자 증거 표, filid 요약 |

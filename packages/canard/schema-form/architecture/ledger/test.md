@@ -936,6 +936,7 @@
 - 보충:
   > 소유자(244라운드, 대기열 33): "질문1: 타입처리는 해결하고 가. 귀찮아서 any 로 그냥 넘어간걸거야. 7b-2 뒤에 질문2 항목과 함께 처리해. " (`reviews/round-244-owner-answers.md:7`)
   > 소유자(244라운드, 대기열 34): "질문2: 옮겨" (`reviews/round-244-owner-answers.md:8`)
+  > 소유자(250라운드, 대기열 35): "새 문법으로 다 바꿔야 하지 않을까?? 아무래도? 지금 바꾸는 중이니까" (`reviews/round-250-owner-answers.md:7`)
 - 상태: 현행(기록)
 - 출처: `09-landing-and-test-strategy.md:227,229-233`(정본)
 - 닫은 사람: 편집자 결정(16라운드 조사, `09-landing-and-test-strategy.md:227`)
