@@ -31,19 +31,19 @@ Rules of thumb:
 
 ## Terminal vs Branch Strategy
 
-Item type picks the strategy automatically; `terminal` is a schema key (not in standard JSON Schema) that overrides it.
+An array is a branch by default, whatever its item type. `options.terminal` (not in standard JSON Schema) overrides that; without it, a `presentation.FieldInput` component on the array schema makes it a terminal.
 
-| Strategy | Applies when                            | Trade-off                                                 |
-| -------- | --------------------------------------- | --------------------------------------------------------- |
-| Terminal | Primitive items (string/number/boolean) | Values only, no per-item node tree — fast, memory-light   |
-| Branch   | Object/array items                      | Per-item node tree — per-item state, validation, controls |
+| Strategy | Applies when                                                       | Trade-off                                                 |
+| -------- | ------------------------------------------------------------------ | --------------------------------------------------------- |
+| Branch   | Default, or `options.terminal: false`                              | Per-item node tree — per-item state, validation, controls |
+| Terminal | `options.terminal: true`, or a `presentation.FieldInput` component | One input owns the whole array value; no per-item nodes   |
 
 ```typescript
-{ type: 'array', terminal: false, items: { type: 'string' } }
-// primitives forced onto Branch — use when each item needs its own state tracking
+{ type: 'array', items: { type: 'string' }, options: { terminal: true } }
+// one input owns the whole array — no per-item node tree or per-item state
 ```
 
-`terminal: true` on an object/array schema is a different contract (the FieldInput owns the whole subtree value) — see the consumer rules.
+A terminal object or array is a contract: the FieldInput owns the whole subtree value — see the consumer rules.
 
 ## Tuples
 

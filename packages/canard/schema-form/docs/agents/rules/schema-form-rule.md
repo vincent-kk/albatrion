@@ -49,8 +49,8 @@ Mixing surfaces on the same path (e.g. `<Form.Input path="/x" />` inside a `<For
 
 ### terminal-is-a-contract
 
-- On object/array schemas, `terminal: true` means the `FieldInput` owns the whole subtree value; `ChildNodeComponents` is not used.
-- `terminal: false` or unset means children render via `ChildNodeComponents`.
+- On object/array schemas, `options.terminal: true` means the `FieldInput` owns the whole subtree value; `ChildNodeComponents` is not used.
+- `options.terminal: false`, or unset without a `presentation.FieldInput` component, means children render via `ChildNodeComponents`.
 - Never mix both modes in a single node.
 
 ---
