@@ -438,6 +438,7 @@
   > 스토리는 e2e의 화면 미러다. 스토리북 안의 자동화 시험은 e2e를 미러한다. 중복 코드를 최소화해 관리와 회귀 방지를 함께 얻는다. 그래서 **시나리오는 한 곳(§4.2)에 있고, 스토리는 그것을 가져와 그리며, 자동화는 그 스토리의 `play`를 돌린다.**
 - 보충:
   > "스토리는 e2e의 화면 미러이고(파일당 다섯 줄), 자동화는 그 스토리의 `play`를 `@storybook/addon-vitest`가 브라우저 모드(chromium)로 돌린다." (`reviews/round-16-owner-review.md:36`)
+  > 편집자 결정(227C-01): "【추론】 소유자가 221라운드에 요구한 것은 기계적 동작의 검증이고, 실제 창에서 클릭·입력이 모두 통과했으며 CDP가 필요한 넷은 실제 Chromium 실행으로 덮였으므로 요구가 충족됐다. 열린 질문 스토리의 실패는 스토리 자체가 선언한 결과다." (`reviews/round-227-closing.md:17`)
 - 상태: 현행
 - 출처: `09-landing-and-test-strategy.md:186`(정본), `09-landing-and-test-strategy.md:125`, `reviews/round-16-owner-review.md:36`
 - 닫은 사람: 편집자 결정(16라운드, `09-landing-and-test-strategy.md:186`), 소유자 답(`reviews/round-16-owner-answers.md:7` 답 1)
@@ -516,6 +517,7 @@
   > 편집자 결정(214C-01): "【추론】 동기 통지 규칙은 조합 중 쓰기를 배제하지 않고 오히려 요구한다(입력 이벤트마다 통지). 노드 값을 조합 끝까지 미루면 조합 중 Refresh·전환 때 입력과 노드가 어긋난다." (`reviews/round-214-closing.md:9`)
   > 편집자 결정(215C-01): "【추론】 PR의 코드 범위가 시험·스토리·시나리오뿐이고 수치가 직접 재실행과 맞으며 결함은 모두 상류에서 고쳐졌으므로 머지에 남는 위험은 없다. 최상위 virtual 형은 런타임이 무시하는 자리를 형이 허용하는 함정이라 지워야 하지만 공개 형이므로 계획을 거친다." (`reviews/round-215-closing.md:15`)
   > 소유자(221라운드, 기계적 검증 범위): "그래. 기계적 검증까지는 하도록 해. 실사는 있다가 직접 본다고 해도, 기계적 동작은 검증이 되었으면 하는군. 에이전틱 브라우저는 클릭이나 입력이 다 될테니까" (`reviews/round-221-owner-answers.md:7`)
+  > 편집자 결정(227C-01): "【추론】 소유자가 221라운드에 요구한 것은 기계적 동작의 검증이고, 실제 창에서 클릭·입력이 모두 통과했으며 CDP가 필요한 넷은 실제 Chromium 실행으로 덮였으므로 요구가 충족됐다. 열린 질문 스토리의 실패는 스토리 자체가 선언한 결과다." (`reviews/round-227-closing.md:17`)
 - 상태: 현행
 - 출처: `09-landing-and-test-strategy.md:210-212`(정본), `reviews/round-16-owner-answers.md:10`, `reviews/round-16-owner-review.md:55`
 - 닫은 사람: 소유자 답(`reviews/round-16-owner-answers.md:10` 답 4)
