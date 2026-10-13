@@ -3178,6 +3178,7 @@
   > 소유자(252라운드, #361 병합): "내가 명시적으로 허가한다. 병합해도 된다" (`reviews/round-252-owner-answers.md:7`)
   > 편집자 결정(253C-01): "【추론】 변경이 수동 시험 패키지에 한정되고 세 게이트(tsc -b·lint·build)가 통과했으며, 렌더 전후 차이가 모두 "모든 분기 동시 활성"에서 "활성 분기만"으로 바뀐 의도된 방향이므로 병합 조건을 채웠다. 내장 checkbox의 id 중복은 schema-form 쪽 결함 후보라 소유자 대기열로 올린다." (`reviews/round-253-closing.md:9`)
   > 소유자(254라운드, #363 병합): "응 병합하자" (`reviews/round-254-owner-answers.md:7`)
+  > 편집자 결정(255C-01): "【추론】 대기열 15의 원래 커맨드는 stage-07 워크트리와 07b-1 가지가 있던 때의 것이라, 지금 상태(워크트리 자동 정리, 메인 checkout 두 커밋 뒤)에 맞게 바꿨다. 소유자가 자기 터미널에서 실행한다." (`reviews/round-255-closing.md:9`)
 - 상태: 현행
 - 출처: `reviews/round-80-closing.md:17`(정본)
 - 닫은 사람: 편집자 결정(80라운드, `reviews/round-80-closing.md` 80C-02)
