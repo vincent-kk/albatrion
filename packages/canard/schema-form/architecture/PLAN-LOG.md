@@ -247,6 +247,7 @@
 | 2026-10-14 | 261라운드(닫기): 핵심 고유명사 재검토 후보 15(261C-01), 사실 확인 셋(extras·Form.Group·options.virtual/propertyKeys); 소유자 결정 대기. 보충 1줄 | `reviews/round-261-closing.md` |
 | 2026-10-14 | 262라운드(닫기): PR #364(07b-4, c711f3d17) 직접 검증 통과, 병합 허가 대기(262C-01). 보충 1줄 | `reviews/round-262-closing.md` |
 | 2026-10-14 | 263라운드(소유자): PR #364 병합 명시 허가. 보충 1줄 | `reviews/round-263-owner-answers.md` |
+| 2026-10-14 | 264라운드(소유자): 후보 15 중 11개 권고대로 승인; 2·12·13·14 추가 논의; 잔여 비표준 키 점검 요구. 보충 1줄 | `reviews/round-264-owner-answers.md` |
 
 ## 2. 라운드별 요지
 
@@ -463,3 +464,4 @@
 - **227라운드(2026-10-13, 닫기).** 221C-01 전체 스토리 에이전틱 실제 창 순회가 ⑤ head 5ca91762f에서 통과했다(241 스토리: PASS 236·SKIPPED 4·실제 FAIL 0·예상된 FAIL 1; 플러그인 스토리 6/6; CDP 전용 넷은 fixy07의 Browser Mode 실행으로 통과). #355의 선행 조건은 모두 닫혔고 fixy07에 ⑥(최종 rebase, 전체 게이트, #355 본문)을 신호했다; fairy07 배정 종료. ⑥은 rebase 없이 끝났고(de7f56499는 이미 조상) 원장 관리자의 #355 직접 검증(시험 3876+240, typecheck 0, lint 0, G16)도 통과했으나, squash 병합 명령이 자동 모드 분류기에서 거부되어 소유자 실행을 기다린다(reviews/round-227-closing.md).
 - **228라운드(2026-10-13, 소유자).** 검증을 마친 #355의 squash 병합을 소유자가 명시적으로 허가했다(reviews/round-228-owner-answers.md).
 - **229라운드(2026-10-13, 닫기).** #355를 feat/schema-form-switch에 squash 병합했다(b1da5e771). 원격 feat/schema-form-07b-1은 지웠고 #354 초안은 새 head b1da5e771로 이어지며, 07b 마무리와 세 세션의 배정은 모두 끝났다. 남은 일은 소유자 귀환 뒤 대기열 9~28 결정과 개선-38 설명 문서 검토다(reviews/round-229-closing.md).
+- **230라운드(2026-10-13, 소유자).** 대기열 결정 항목 가운데 일곱에 답했다: CLAUDE.md 절 갱신(10)·문서 사이트 PR(17)·플러그인 잔여 넷 정리(20)·시험 타이밍 둘(25·27)은 승인, 옛 키 진단(19)과 onValidate 두 번(22)은 현행 유지, type 좁힘(23)은 조건부 유지; 대기열 9와 26은 설명을 요구해 보류(reviews/round-230-owner-answers.md).
