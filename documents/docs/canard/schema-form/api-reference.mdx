@@ -29,9 +29,9 @@ node tree lifecycle. Supports both controlled and uncontrolled usage via
 | `readOnly`                 | `boolean`                                              | `false`                  | Apply `readOnly` to all inputs                                    |
 | `disabled`                 | `boolean`                                              | `false`                  | Apply `disabled` to all inputs                                    |
 | `errors`                   | `JSONSchemaError[]`                                    | `undefined`              | Inject external validation errors                                 |
-| `formTypeInputDefinitions` | `FormTypeInputDefinition[]`                            | `[]`                     | Form-level input component definitions                            |
-| `formTypeInputMap`         | `FormTypeInputMap`                                     | `{}`                     | Path-based input component overrides                              |
-| `CustomFormTypeRenderer`   | `ComponentType<FormTypeRendererProps>`                 | plugin default           | Override the entire field renderer                                |
+| `fieldInputDefinitions` | `FieldInputDefinition[]`                            | `[]`                     | Form-level input component definitions                            |
+| `fieldInputMap`         | `FieldInputMap`                                     | `{}`                     | Path-based input component overrides                              |
+| `FieldRenderer`   | `ComponentType<FieldRendererProps>`                 | plugin default           | Override the entire field renderer                                |
 | `formatError`              | `FormatError`                                          | plugin default           | Custom error message formatter                                    |
 | `virtualization`           | `boolean \| VirtualizationOptions`                     | off                      | Render-level virtualization (deferred mount) for very large forms |
 | `context`                  | `Dictionary`                                           | `{}`                     | User-defined context, available in all input components           |
@@ -160,8 +160,8 @@ Renders a complete field group: label + input + error. Wraps `Form.Label`, `Form
 ```ts
 interface FormGroupProps<Value> extends ChildNodeComponentProps {
   path?: string;
-  FormTypeInput?: ComponentType<FormTypeInputProps<Value>>;
-  FormTypeRenderer?: ComponentType<FormTypeRendererProps>;
+  FieldInput?: ComponentType<FieldInputProps<Value>>;
+  FieldRenderer?: ComponentType<FieldRendererProps>;
   Wrapper?: ComponentType<PropsWithChildren<Dictionary>>;
   // + any extra props forwarded to the input component
   className?: string;
@@ -174,7 +174,7 @@ interface FormGroupProps<Value> extends ChildNodeComponentProps {
 
 ```tsx
 <Form.Group path="/email" />
-<Form.Group path="/birthDate" FormTypeInput={DatePicker} />
+<Form.Group path="/birthDate" FieldInput={DatePicker} />
 <Form.Group path="/address" Wrapper={({ children }) => <fieldset>{children}</fieldset>} />
 ```
 
@@ -204,7 +204,7 @@ Renders only the error message using the plugin's `FormError` component.
 
 ### `Form.Render`
 
-Low-level slot for custom rendering. Passes raw `FormTypeRendererProps` to a render prop or component. Use when you need full control over how a field is presented.
+Low-level slot for custom rendering. Passes raw `FieldRendererProps` to a render prop or component. Use when you need full control over how a field is presented.
 
 ```tsx
 <Form.Render path="/status">
@@ -225,8 +225,8 @@ Context provider for sharing plugin configuration across a subtree without globa
 import { FormProvider } from '@canard/schema-form';
 
 <FormProvider
-  formTypeInputDefinitions={customDefinitions}
-  CustomFormTypeRenderer={MyRenderer}
+  fieldInputDefinitions={customDefinitions}
+  FieldRenderer={MyRenderer}
   formatError={myFormatError}
 >
   <Form jsonSchema={schema} />
@@ -285,7 +285,7 @@ useSchemaNodeSubscribe(node, (event) => {
 ```ts
 const componentMap = useChildNodeComponentMap(objectNode);
 // Returns a Map<string, ChildNodeComponent> keyed by field name.
-// Use inside custom FormTypeInput components to render child fields.
+// Use inside custom FieldInput components to render child fields.
 ```
 
 ### `useChildNodeErrors`
@@ -309,11 +309,11 @@ Call `registerPlugin(null)` to reset all plugins to system defaults.
 
 ```ts
 interface SchemaFormPlugin {
-  FormGroup?: ComponentType<FormTypeRendererProps>;
-  FormLabel?: ComponentType<FormTypeRendererProps>;
-  FormInput?: ComponentType<FormTypeRendererProps>;
-  FormError?: ComponentType<FormTypeRendererProps>;
-  formTypeInputDefinitions?: FormTypeInputDefinition[];
+  FormGroup?: ComponentType<FieldRendererProps>;
+  FormLabel?: ComponentType<FieldRendererProps>;
+  FormInput?: ComponentType<FieldRendererProps>;
+  FormError?: ComponentType<FieldRendererProps>;
+  fieldInputDefinitions?: FieldInputDefinition[];
   validator?: ValidatorPlugin;
   formatError?: FormatError;
 }
@@ -332,12 +332,12 @@ type ValidateFunction = (
 ) => JSONSchemaError[] | null | Promise<JSONSchemaError[] | null>;
 ```
 
-## `FormTypeInputProps` Interface
+## `FieldInputProps` Interface
 
-All custom input components registered via `formTypeInputDefinitions` receive these props.
+All custom input components registered via `fieldInputDefinitions` receive these props.
 
 ```ts
-interface FormTypeInputProps<Value, Context, WatchValues, Schema, Node> {
+interface FieldInputProps<Value, Context, WatchValues, Schema, Node> {
   jsonSchema: Schema;
   node: Node;
   type: JSONSchemaType; // 'string' | 'number' | 'boolean' | ...
@@ -508,9 +508,9 @@ validationMode?:           ValidationMode                  // default: OnChange|
 readOnly?:                 boolean
 disabled?:                 boolean
 errors?:                   JSONSchemaError[]
-formTypeInputDefinitions?: FormTypeInputDefinition[]
-formTypeInputMap?:         FormTypeInputMap
-CustomFormTypeRenderer?:   ComponentType<FormTypeRendererProps>
+fieldInputDefinitions?: FieldInputDefinition[]
+fieldInputMap?:         FieldInputMap
+FieldRenderer?:   ComponentType<FieldRendererProps>
 formatError?:              FormatError
 validatorFactory?:         ValidatorFactory
 context?:                  Dictionary

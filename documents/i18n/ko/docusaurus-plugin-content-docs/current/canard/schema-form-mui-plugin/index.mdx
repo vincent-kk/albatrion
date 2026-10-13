@@ -52,29 +52,29 @@ registerPlugin(plugin);
 
 Components are selected automatically based on JSON Schema properties. Priority order matches the list below (top = highest priority).
 
-| Component | type | format | formType | enum | Notes |
+| Component | type | format | inputType | enum | Notes |
 |---|---|---|---|---|---|
-| `FormTypeInputBooleanSwitch` | `boolean` | — | `"switch"` | — | MUI Switch |
-| `FormTypeInputStringCheckbox` | `array` | — | `"checkbox"` | items.enum | MUI Checkbox group; items must be string schema |
-| `FormTypeInputStringSwitch` | `string` | — | `"switch"` | 2 values | Toggle between two enum values |
-| `FormTypeInputUri` | `string` | `"uri"` or formType `"uri"` | — | — | URI input with protocol dropdown |
-| `FormTypeInputMonth` | `string` | `"month"` | — | — | MUI X MonthPicker |
-| `FormTypeInputDate` | `string` | `"date"` | — | — | MUI X DatePicker |
-| `FormTypeInputTime` | `string` | `"time"` | — | — | MUI X TimePicker (HH:mm:00Z format) |
-| `FormTypeInputRadioGroup` | `string` \| `number` \| `integer` | — | `"radio"` or `"radiogroup"` | required | MUI RadioGroup |
-| `FormTypeInputStringEnum` | `string` | — | — | required | MUI Select dropdown |
-| `FormTypeInputArray` | `array` | — | — | — | Dynamic list with add/remove |
-| `FormTypeInputSlider` | `number` \| `integer` | — | `"slider"` | — | MUI Slider |
-| `FormTypeInputTextarea` | `string` | `"textarea"` or formType `"textarea"` | — | — | MUI TextField multiline |
-| `FormTypeInputString` | `string` | — | — | — | MUI TextField (password via `format:"password"`) |
-| `FormTypeInputNumber` | `number` \| `integer` | — | — | — | MUI TextField type=number |
-| `FormTypeInputBoolean` | `boolean` | — | — | — | MUI Checkbox with indeterminate |
+| `FieldInputBooleanSwitch` | `boolean` | — | `"switch"` | — | MUI Switch |
+| `FieldInputStringCheckbox` | `array` | — | `"checkbox"` | items.enum | MUI Checkbox group; items must be string schema |
+| `FieldInputStringSwitch` | `string` | — | `"switch"` | 2 values | Toggle between two enum values |
+| `FieldInputUri` | `string` | `"uri"` or inputType `"uri"` | — | — | URI input with protocol dropdown |
+| `FieldInputMonth` | `string` | `"month"` | — | — | MUI X MonthPicker |
+| `FieldInputDate` | `string` | `"date"` | — | — | MUI X DatePicker |
+| `FieldInputTime` | `string` | `"time"` | — | — | MUI X TimePicker (HH:mm:00Z format) |
+| `FieldInputRadioGroup` | `string` \| `number` \| `integer` | — | `"radio"` or `"radiogroup"` | required | MUI RadioGroup |
+| `FieldInputStringEnum` | `string` | — | — | required | MUI Select dropdown |
+| `FieldInputArray` | `array` | — | — | — | Dynamic list with add/remove |
+| `FieldInputSlider` | `number` \| `integer` | — | `"slider"` | — | MUI Slider |
+| `FieldInputTextarea` | `string` | `"textarea"` or inputType `"textarea"` | — | — | MUI TextField multiline |
+| `FieldInputString` | `string` | — | — | — | MUI TextField (password via `format:"password"`) |
+| `FieldInputNumber` | `number` \| `integer` | — | — | — | MUI TextField type=number |
+| `FieldInputBoolean` | `boolean` | — | — | — | MUI Checkbox with indeterminate |
 
 ## Schema Extension Properties
 
 ```ts
 {
-  formType?: 'switch' | 'radio' | 'radiogroup' | 'checkbox' | 'slider' | 'textarea' | 'uri',
+  inputType?: 'switch' | 'radio' | 'radiogroup' | 'checkbox' | 'slider' | 'textarea' | 'uri',
   format?:   'date' | 'time' | 'month' | 'password' | 'uri' | 'textarea',
 }
 ```
@@ -89,11 +89,11 @@ const schema = {
   properties: {
     name:     { type: 'string' },
     age:      { type: 'integer' },
-    active:   { type: 'boolean', formType: 'switch' },
+    active:   { type: 'boolean', inputType: 'switch' },
     role:     { type: 'string', enum: ['admin', 'user', 'guest'] },
     birthday: { type: 'string', format: 'date' },
     bio:      { type: 'string', format: 'textarea' },
-    score:    { type: 'number', formType: 'slider', minimum: 0, maximum: 100 },
+    score:    { type: 'number', inputType: 'slider', minimum: 0, maximum: 100 },
   },
 };
 
@@ -152,15 +152,15 @@ import type { MuiContext } from '@canard/schema-form-mui-plugin';
 ### Component mapping (priority order, high → low)
 | Component | Trigger |
 |---|---|
-| BooleanSwitch | `boolean` + `formType: "switch"` |
-| StringCheckbox | `array` + `formType: "checkbox"` + items.enum |
-| StringSwitch | `string` + `formType: "switch"` + 2 enum values |
+| BooleanSwitch | `boolean` + `inputType: "switch"` |
+| StringCheckbox | `array` + `inputType: "checkbox"` + items.enum |
+| StringSwitch | `string` + `inputType: "switch"` + 2 enum values |
 | Uri | `string` + `format: "uri"` |
 | Month / Date / Time | `string` + `format: "month"/"date"/"time"` (MUI X pickers) |
-| RadioGroup | `string\|number` + `formType: "radio"` + enum |
+| RadioGroup | `string\|number` + `inputType: "radio"` + enum |
 | StringEnum | `string` + enum (MUI Select) |
 | Array | `array` (dynamic list) |
-| Slider | `number` + `formType: "slider"` |
+| Slider | `number` + `inputType: "slider"` |
 | Textarea | `string` + `format: "textarea"` (multiline TextField) |
 | String | `string` (TextField, password via `format: "password"`) |
 | Number | `number\|integer` (TextField type=number) |

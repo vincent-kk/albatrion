@@ -22,7 +22,7 @@ const schema = {
       description:
         'Three empty rows are offered up front; only what you filled in is emitted',
       minItems: 3,
-      items: { type: 'string', placeholder: 'tag' },
+      items: { type: 'string', presentation: { FieldInputProps: { placeholder: 'tag' } } },
       options: { omitTrailing: true },
     },
     notes: {
@@ -31,7 +31,7 @@ const schema = {
       description:
         'Same shape without the option: every offered row reaches the emitted value',
       minItems: 3,
-      items: { type: 'string', placeholder: 'note' },
+      items: { type: 'string', presentation: { FieldInputProps: { placeholder: 'note' } } },
     },
     aliases: {
       type: 'array',
@@ -39,7 +39,7 @@ const schema = {
       description:
         'Trailing rows are trimmed, but an all-empty array stays [] instead of disappearing',
       minItems: 3,
-      items: { type: 'string', placeholder: 'alias' },
+      items: { type: 'string', presentation: { FieldInputProps: { placeholder: 'alias' } } },
       options: { omitTrailing: true, omitEmpty: false },
     },
   },

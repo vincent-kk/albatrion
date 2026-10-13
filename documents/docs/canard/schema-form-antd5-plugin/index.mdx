@@ -49,33 +49,33 @@ registerPlugin(plugin);
 
 Components are selected automatically based on JSON Schema properties. Priority order matches the list below (top = highest priority).
 
-| Component | type | format | formType | enum | Notes |
+| Component | type | format | inputType | enum | Notes |
 |---|---|---|---|---|---|
-| `FormTypeInputBooleanSwitch` | `boolean` | — | `"switch"` | — | Switch toggle |
-| `FormTypeInputStringCheckbox` | `array` | — | `"checkbox"` | items.enum | Checkbox group; items must be string schema |
-| `FormTypeInputStringSwitch` | `string` | — | `"switch"` | 2 values | Toggle between two enum values |
-| `FormTypeInputUri` | `string` | `"uri"` or formType `"uri"` | — | — | URI input with protocol selector |
-| `FormTypeInputMonth` | `string` | `"month"` | — | — | Month picker |
-| `FormTypeInputDate` | `string` | `"date"` | — | — | Date picker |
-| `FormTypeInputTime` | `string` | `"time"` | — | — | Time picker |
-| `FormTypeInputMonthRange` | `array` | `"month-range"` or formType `"monthRange"` | — | — | Month range picker; items must be string schema |
-| `FormTypeInputDateRange` | `array` | `"date-range"` or formType `"dateRange"` | — | — | Date range picker; items must be string schema |
-| `FormTypeInputTimeRange` | `array` | `"time-range"` or formType `"timeRange"` | — | — | Time range picker; items must be string schema |
-| `FormTypeInputRadioGroup` | `string` \| `number` \| `integer` | — | `"radio"` or `"radiogroup"` | required | Radio button group |
-| `FormTypeInputStringEnum` | `string` | — | — | required | Select dropdown; also handles string-item arrays with enum |
-| `FormTypeInputArray` | `array` | — | — | — | Dynamic list with add/remove |
-| `FormTypeInputSlider` | `number` \| `integer` | — | `"slider"` | — | Slider input |
-| `FormTypeInputTextarea` | `string` | `"textarea"` or formType `"textarea"` | — | — | Multi-line textarea |
-| `FormTypeInputString` | `string` | — | — | — | Default text input (password supported via `format: "password"`) |
-| `FormTypeInputNumber` | `number` \| `integer` | — | — | — | Numeric input |
-| `FormTypeInputBoolean` | `boolean` | — | — | — | Checkbox |
+| `FieldInputBooleanSwitch` | `boolean` | — | `"switch"` | — | Switch toggle |
+| `FieldInputStringCheckbox` | `array` | — | `"checkbox"` | items.enum | Checkbox group; items must be string schema |
+| `FieldInputStringSwitch` | `string` | — | `"switch"` | 2 values | Toggle between two enum values |
+| `FieldInputUri` | `string` | `"uri"` or inputType `"uri"` | — | — | URI input with protocol selector |
+| `FieldInputMonth` | `string` | `"month"` | — | — | Month picker |
+| `FieldInputDate` | `string` | `"date"` | — | — | Date picker |
+| `FieldInputTime` | `string` | `"time"` | — | — | Time picker |
+| `FieldInputMonthRange` | `array` | `"month-range"` or inputType `"monthRange"` | — | — | Month range picker; items must be string schema |
+| `FieldInputDateRange` | `array` | `"date-range"` or inputType `"dateRange"` | — | — | Date range picker; items must be string schema |
+| `FieldInputTimeRange` | `array` | `"time-range"` or inputType `"timeRange"` | — | — | Time range picker; items must be string schema |
+| `FieldInputRadioGroup` | `string` \| `number` \| `integer` | — | `"radio"` or `"radiogroup"` | required | Radio button group |
+| `FieldInputStringEnum` | `string` | — | — | required | Select dropdown; also handles string-item arrays with enum |
+| `FieldInputArray` | `array` | — | — | — | Dynamic list with add/remove |
+| `FieldInputSlider` | `number` \| `integer` | — | `"slider"` | — | Slider input |
+| `FieldInputTextarea` | `string` | `"textarea"` or inputType `"textarea"` | — | — | Multi-line textarea |
+| `FieldInputString` | `string` | — | — | — | Default text input (password supported via `format: "password"`) |
+| `FieldInputNumber` | `number` \| `integer` | — | — | — | Numeric input |
+| `FieldInputBoolean` | `boolean` | — | — | — | Checkbox |
 
 ## Schema Extension Properties
 
 ```ts
 // Custom schema properties recognized by this plugin
 {
-  formType?: 'switch' | 'radio' | 'radiogroup' | 'checkbox' | 'slider' |
+  inputType?: 'switch' | 'radio' | 'radiogroup' | 'checkbox' | 'slider' |
              'textarea' | 'uri' | 'dateRange' | 'monthRange' | 'timeRange',
   // Standard JSON Schema properties also used for routing:
   format?: 'date' | 'time' | 'month' | 'password' | 'uri' |
@@ -93,11 +93,11 @@ const schema = {
   properties: {
     name:      { type: 'string' },
     age:       { type: 'integer' },
-    active:    { type: 'boolean', formType: 'switch' },
+    active:    { type: 'boolean', inputType: 'switch' },
     role:      { type: 'string', enum: ['admin', 'user', 'guest'] },
     birthday:  { type: 'string', format: 'date' },
     bio:       { type: 'string', format: 'textarea' },
-    score:     { type: 'number', formType: 'slider', minimum: 0, maximum: 100 },
+    score:     { type: 'number', inputType: 'slider', minimum: 0, maximum: 100 },
   },
 };
 
@@ -132,16 +132,16 @@ import { plugin } from '@canard/schema-form-antd5-plugin';
 ### Component mapping (priority order, high → low)
 | Component | Trigger |
 |---|---|
-| BooleanSwitch | `boolean` + `formType: "switch"` |
-| StringCheckbox | `array` + `formType: "checkbox"` + items.enum |
-| StringSwitch | `string` + `formType: "switch"` + 2 enum values |
+| BooleanSwitch | `boolean` + `inputType: "switch"` |
+| StringCheckbox | `array` + `inputType: "checkbox"` + items.enum |
+| StringSwitch | `string` + `inputType: "switch"` + 2 enum values |
 | Uri | `string` + `format: "uri"` |
 | Month / Date / Time | `string` + `format: "month"/"date"/"time"` |
 | MonthRange / DateRange / TimeRange | `array` + `format: "*-range"` |
-| RadioGroup | `string\|number` + `formType: "radio"` + enum |
+| RadioGroup | `string\|number` + `inputType: "radio"` + enum |
 | StringEnum | `string` + enum |
 | Array | `array` (dynamic list) |
-| Slider | `number` + `formType: "slider"` |
+| Slider | `number` + `inputType: "slider"` |
 | Textarea | `string` + `format: "textarea"` |
 | String | `string` (default) |
 | Number | `number\|integer` (default) |
@@ -153,6 +153,6 @@ type AntdContext = { size?: 'small' | 'middle' | 'large' };
 ```
 
 ### Schema extensions
-`formType`: `'switch' | 'radio' | 'radiogroup' | 'checkbox' | 'slider' | 'textarea' | 'uri' | 'dateRange' | 'monthRange' | 'timeRange'`
+`inputType`: `'switch' | 'radio' | 'radiogroup' | 'checkbox' | 'slider' | 'textarea' | 'uri' | 'dateRange' | 'monthRange' | 'timeRange'`
 
 </ForAI>
