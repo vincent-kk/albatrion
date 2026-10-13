@@ -1316,6 +1316,7 @@
   > 【추론】 `errorMessages`는 이미 `presentation.errorMessages`로 정해졌고(CONTROLS-051), `presentation`은 통째로 검증기 앞에서 지워진다(LANDING-031).
 - 보충:
   > 편집자 결정(216C-04): "【추론】 코어가 React를 모르는 채로 문맥을 적는 길이 있으면 제네릭을 늘리거나 any로 내리는 것보다 낫다. 런타임이 거부하는 자리에서 설정을 읽는 입력은 형 문제가 아니라 이주가 끝나지 않은 결함이고, 원장이 그 자리를 이미 정했으므로 바로 고친다." (`reviews/round-216-closing.md:57`)
+  > 편집자 결정(222C-01): "【추론】 입력 설정의 자리는 원장이 정한 대로 돌아갔고 옛 자리는 청사진 오류로 고정됐으므로, 이주 미완으로 쓸 수 없던 일곱(실제로는 열일곱) 기능이 돌아왔다." (`reviews/round-222-closing.md:9`)
 - 상태: 현행
 - 출처: `reviews/round-18-closing.md:2014-2021`(정본)
 - 닫은 사람: 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-72)
