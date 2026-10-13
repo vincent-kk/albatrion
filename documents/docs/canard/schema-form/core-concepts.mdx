@@ -36,27 +36,26 @@ const schema = {
 ## Node Tree
 
 Each node is a reactive object that owns its own value, validation errors,
-and state flags (`dirty`, `touched`, `validated`).
+and interaction flags in `node.state` (keyed by `SchemaNodeState`: `Dirty`,
+`Touched`, `ShowError`).
 Changes propagate upward: when a leaf node's value changes, all ancestor nodes
 receive an `UpdateValue` event and update their aggregated value.
 
 ### Node State Flags
 
-| Property       | Type                | Description                         |
-| -------------- | ------------------- | ----------------------------------- |
-| `value`        | `any`               | Current value                       |
-| `defaultValue` | `any`               | Value at initialization             |
-| `errors`       | `JSONSchemaError[]` | Validation errors for this node     |
-| `dirty`        | `boolean`           | Value changed since initialization  |
-| `touched`      | `boolean`           | User has interacted with this field |
-| `validated`    | `boolean`           | Validation has been run             |
-| `visible`      | `boolean`           | Computed — controls visibility      |
-| `active`       | `boolean`           | Computed — controls active state    |
-| `readOnly`     | `boolean`           | Computed or inherited               |
-| `disabled`     | `boolean`           | Computed or inherited               |
-| `initialized`  | `boolean`           | Node has completed initialization   |
-| `required`     | `boolean`           | Field is required in parent schema  |
-| `nullable`     | `boolean`           | Schema type includes `"null"`       |
+| Property       | Type                         | Description                                                                    |
+| -------------- | ---------------------------- | ------------------------------------------------------------------------------ |
+| `value`        | `any`                        | Current value                                                                  |
+| `outputValue`  | `unknown`                    | Emitted value after output filters                                             |
+| `defaultValue` | `unknown`                    | Value at initialization                                                        |
+| `errors`       | `readonly ValidationIssue[]` | Validation issues for this node                                                |
+| `state`        | `NodeStateFlags`             | Interaction flags keyed by `SchemaNodeState` (`Dirty`, `Touched`, `ShowError`) |
+| `visible`      | `boolean`                    | From `controls.visible`                                                        |
+| `active`       | `boolean`                    | From `controls.active`                                                         |
+| `readOnly`     | `boolean`                    | From `controls.readOnly`, the standard `readOnly`, or inherited                |
+| `disabled`     | `boolean`                    | From `controls.disabled` or inherited                                          |
+| `required`     | `boolean`                    | Field is required in parent schema                                             |
+| `nullable`     | `boolean`                    | Schema type includes `"null"`                                                  |
 
 ### Node Navigation
 
@@ -68,7 +67,7 @@ const node = rootNode.find('/address/street');
 const sibling = node.find('./city');
 
 // Find all matching nodes
-const allItems = rootNode.findAll('/items/*');
+const allItems = rootNode.findNodes('/items/*');
 ```
 
 ## Plugin Architecture
@@ -80,13 +79,15 @@ any validator with any UI library.
 ┌─────────────────────────────────────────────────────┐
 │                  SchemaFormPlugin                    │
 │                                                      │
-│  FormGroup   FormLabel   FormInput   FormError       │  ← UI layer
+│  FormTypeGroupRenderer   FormTypeLabelRenderer       │  ← UI layer
+│  FormTypeInputRenderer   FormTypeErrorRenderer       │
 │  formTypeInputDefinitions                            │
 ├─────────────────────────────────────────────────────┤
 │                  ValidatorPlugin                     │
 │                                                      │
-│  bind(instance)                                      │  ← Validation layer
+│  bind?(instance)                                     │  ← Validation layer
 │  compile(jsonSchema) → ValidateFunction              │
+│  compileGuard(root, pointer) → (value) => boolean    │
 └─────────────────────────────────────────────────────┘
 ```
 
@@ -94,12 +95,12 @@ any validator with any UI library.
 
 When multiple plugins are registered, the merge rules are:
 
-| Property                                           | Merge strategy               |
-| -------------------------------------------------- | ---------------------------- |
-| `FormGroup`, `FormLabel`, `FormInput`, `FormError` | Last wins                    |
-| `formTypeInputDefinitions`                         | Prepended (first match wins) |
-| `validator`                                        | Last wins                    |
-| `formatError`                                      | Last wins                    |
+| Property                                                                                           | Merge strategy               |
+| -------------------------------------------------------------------------------------------------- | ---------------------------- |
+| `FormTypeGroupRenderer`, `FormTypeLabelRenderer`, `FormTypeInputRenderer`, `FormTypeErrorRenderer` | Last wins                    |
+| `formTypeInputDefinitions`                                                                         | Prepended (first match wins) |
+| `validator`                                                                                        | Last wins                    |
+| `formatError`                                                                                      | Last wins                    |
 
 ## FormType System
 
@@ -255,7 +256,7 @@ const jsonSchema = {
   and validation indices stay aligned.
 - **`omitEmpty`** (on by default) converts an empty array to `undefined` on the
   parent-propagation path. Filter order is `omitTrailing → omitEmpty`.
-- The refined output is exposed as `node.normalizedValue`; `node.value` stays
+- The refined output is exposed as `node.outputValue`; `node.value` stays
   raw. In a custom array `FormTypeInput`, count rows from `node.children`,
   never `value.length`.
 
@@ -278,25 +279,29 @@ enum ValidationMode {
 
 ```ts
 enum ShowError {
-  Dirty        = 1,  // show when node.dirty === true
-  Touched      = 2,  // show when node.touched === true
-  DirtyTouched = 3,  // show when both dirty AND touched (default)
+  Always       = 1,   // always show
+  Never        = 2,   // never show
+  Dirty        = 4,   // show when the Dirty flag is set
+  Touched      = 8,   // show when the Touched flag is set
+  DirtyTouched = 16,  // show when both Dirty AND Touched are set (default)
 }
 
 <Form showError={ShowError.DirtyTouched} />  // default
-<Form showError={true} />                    // always show
-<Form showError={false} />                   // never show
+<Form showError={true} />                    // same as ShowError.Always
+<Form showError={false} />                   // same as ShowError.Never
 ```
 
 ### Error Structure
 
 ```ts
-interface JSONSchemaError {
-  dataPath: string; // JSONPointer to the failing field
-  keyword: string; // JSON Schema keyword (e.g., 'minLength', 'required')
-  message: string;
-  details: any; // keyword-specific details
-  source: any; // raw error from the validator library
+interface ValidationIssue {
+  dataPath: string; // JSONPointer to the failing field ('' for the root)
+  keyword?: string; // JSON Schema keyword (e.g., 'minLength', 'required')
+  message?: string;
+  schemaPath?: string; // authored schema location
+  rejectedKey?: string; // rejected property key, when there is one
+  details?: Record<string, unknown>; // keyword-specific details
+  source?: unknown; // raw error from the validator library
 }
 ```
 
@@ -308,11 +313,11 @@ microtask. `UpdateValue` is the exception — it fires synchronously
 (immediate mode) after initialization completes.
 
 ```ts
-// Key event types (NodeEventType enum)
+// Key event types (SchemaNodeEventType enum)
 UpdateValue; // value changed — synchronous after init
-UpdateState; // dirty/touched/validated changed
+UpdateState; // interaction flags (node.state) changed
 UpdateError; // validation errors changed
-UpdateComputedProperties; // computed visible/readOnly/disabled changed
+UpdateComputedProperties; // controls state or watched values changed
 UpdateChildren; // array/object children added or removed
 RequestRefresh; // internal: sync uncontrolled component
 RequestRemount; // external: force full component remount
@@ -322,30 +327,29 @@ RequestRemount; // external: force full component remount
 
 ## AI Concept Glossary
 
-| Term                                                     | Definition                                                                                                 |
-| -------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------- |
-| `SchemaNode`                                             | Base interface for all nodes — the public API surface                                                      |
-| `StringNode` / `NumberNode` / `BooleanNode` / `NullNode` | Terminal nodes — no children                                                                               |
-| `ObjectNode` / `ArrayNode`                               | Branch nodes — have children                                                                               |
-| `VirtualNode`                                            | Non-schema node created for conditional branches (`oneOf`/`anyOf`)                                         |
-| `BranchStrategy`                                         | Strategy for complex nested structures with child nodes                                                    |
-| `TerminalStrategy`                                       | Strategy for simple non-nested structures                                                                  |
-| `FormTypeInputDefinition`                                | `{ test, Component }` pair — maps a schema pattern to a React component                                    |
-| `FormTypeInputMap`                                       | `{ [jsonPointerPath]: Component }` — path-based component override                                         |
-| `FormTypeInputProps`                                     | Props interface all custom input components must satisfy                                                   |
-| `FormTypeRendererProps`                                  | Props for `FormGroup`/`FormLabel`/`FormInput`/`FormError` renderer components                              |
-| `SchemaFormPlugin`                                       | Plugin object with optional renderer components + `formTypeInputDefinitions` + `validator` + `formatError` |
-| `ValidatorPlugin`                                        | `{ bind(instance), compile(jsonSchema) → ValidateFunction }`                                               |
-| `ValidateFunction`                                       | `(value) => JSONSchemaError[] \| null \| Promise<...>`                                                     |
-| `controls`                                               | JSON Schema extension for reactive field properties (closed key list)                                      |
-| `controls.active` on a branch                            | Expression that activates a `oneOf`/`anyOf` branch                                                         |
-| `enhancedValue`                                          | Value including virtual/conditional field values — used for validation                                     |
-| `ShowError`                                              | Enum controlling when validation errors are displayed                                                      |
-| `ValidationMode`                                         | Enum controlling when validation runs                                                                      |
-| `NodeEventType`                                          | Enum of all events nodes can emit                                                                          |
-| `SetValueOption`                                         | Bitwise options for `setValue()` — `Overwrite`, `Merge`, `Isolate`                                         |
-| `FormHandle`                                             | Ref interface for imperative form control                                                                  |
-| `FormProvider`                                           | Context provider for sharing plugin config across a subtree                                                |
-| `JSONPointer`                                            | RFC 6901 path string (e.g., `/address/street`) — extended with `..`, `.`, `*`                              |
+| Term                                                     | Definition                                                                                                               |
+| -------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------ |
+| `SchemaNode`                                             | Base interface for all nodes — the public API surface                                                                    |
+| `StringNode` / `NumberNode` / `BooleanNode` / `NullNode` | Terminal nodes — no children                                                                                             |
+| `ObjectNode` / `ArrayNode`                               | Branch nodes — have children                                                                                             |
+| `VirtualNode`                                            | Groups sibling fields declared in `options.virtual` into one input                                                       |
+| `node.strategy`                                          | `'branch'` (has child nodes) or `'terminal'` (one input, `children: null`); narrowed by `BranchNode` / `TerminalNode`    |
+| `FormTypeInputDefinition`                                | `{ test, Component }` pair — maps a schema pattern to a React component                                                  |
+| `FormTypeInputMap`                                       | `{ [jsonPointerPath]: Component }` — path-based component override                                                       |
+| `FormTypeInputProps`                                     | Props interface all custom input components must satisfy                                                                 |
+| `FormTypeRendererProps`                                  | Props for the `FormTypeGroupRenderer`/`FormTypeLabelRenderer`/`FormTypeInputRenderer`/`FormTypeErrorRenderer` components |
+| `SchemaFormPlugin`                                       | Plugin object with optional renderer components + `formTypeInputDefinitions` + `validator` + `formatError`               |
+| `ValidatorPlugin`                                        | `{ bind?(instance), compile(jsonSchema) → ValidateFunction, compileGuard(root, pointer) → guard, release?(root) }`       |
+| `ValidateFunction`                                       | `(value) => ValidationIssue[] \| null \| Promise<...>`                                                                   |
+| `controls`                                               | JSON Schema extension for reactive field properties (closed key list)                                                    |
+| `controls.active` on a branch                            | Expression that activates a `oneOf`/`anyOf` branch                                                                       |
+| `outputValue`                                            | Emitted value after output filters — what parents, validation, and `onChange` see                                        |
+| `ShowError`                                              | Enum controlling when validation errors are displayed                                                                    |
+| `ValidationMode`                                         | Enum controlling when validation runs                                                                                    |
+| `SchemaNodeEventType`                                    | Enum of all events nodes can emit                                                                                        |
+| `SetValueOption`                                         | Bitwise options for `setValue()` — `Overwrite`, `Merge`, `DisableAutomaticWrites`, `EnableAutomaticWrites`               |
+| `FormHandle`                                             | Ref interface for imperative form control                                                                                |
+| `FormProvider`                                           | Context provider for sharing plugin config across a subtree                                                              |
+| `JSONPointer`                                            | RFC 6901 path string (e.g., `/address/street`) — extended with `..`, `.`, `*`                                            |
 
 </ForAI>

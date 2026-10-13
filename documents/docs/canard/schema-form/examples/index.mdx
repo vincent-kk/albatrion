@@ -476,7 +476,7 @@ formRef.current?.getValue();
 formRef.current?.setValue({ name: 'Bob' });
 
 // ── FormHandle setValue with merge ────────────────────────────
-// Merge only changed fields (deep merge)
+// Merge keeps keys you omit; each key you pass is replaced whole (shallow)
 formRef.current?.setValue({ address: { city: 'Seoul' } }, SetValueOption.Merge);
 ```
 
@@ -515,7 +515,7 @@ function ProfileForm() {
 ## Watching Node State in Custom Components
 
 ```tsx
-import { useSchemaNodeTracker } from '@canard/schema-form';
+import { SchemaNodeState, useSchemaNodeTracker } from '@canard/schema-form';
 
 function FieldStatus({ node }: { node: SchemaNode }) {
   // Re-renders on any node event
@@ -524,7 +524,7 @@ function FieldStatus({ node }: { node: SchemaNode }) {
   return (
     <div>
       <span>Value: {JSON.stringify(node.value)}</span>
-      <span>Dirty: {node.dirty ? 'yes' : 'no'}</span>
+      <span>Dirty: {node.state[SchemaNodeState.Dirty] ? 'yes' : 'no'}</span>
       <span>Errors: {node.errors.length}</span>
       <span>Visible: {node.visible ? 'yes' : 'no'}</span>
     </div>
