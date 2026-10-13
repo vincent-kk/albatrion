@@ -82,4 +82,4 @@
 
 | 날짜 | 무엇 | 어디 |
 | --- | --- | --- |
-| 2026-10-14 | 271라운드 소유자 답: 대기열 46 승인 — helpers·components는 fractal이 아닌 compartment로(264라운드 결정 4 번복). 보충 1줄 | `reviews/round-271-owner-answers.md` |
+| 2026-10-14 | 272라운드 닫기: 07b-7 #366 검증·병합(c0ddd4b51; 대기열 41·44·45, 269C-02, #365 후속 여섯), 07c 재배치 브리프 발송. 보충 2줄 | `reviews/round-272-closing.md` |
