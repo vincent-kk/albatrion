@@ -82,4 +82,4 @@
 
 | 날짜 | 무엇 | 어디 |
 | --- | --- | --- |
-| 2026-10-14 | 265라운드(소유자): ChildFields·controls.fields·options.propertyOrder·options.virtual 형·VirtualSchema 비공개·nullable: true 제거 승인(265C-01 후속 대응표). 보충 1줄 | `reviews/round-265-owner-answers.md` |
+| 2026-10-14 | 266라운드(소유자): 스토리북 관찰 셋 → 대기열 40(docs 직렬화)·41(nullable 분기 화면·값 불일치)·42(스토리 가독성). 보충 1줄 | `reviews/round-266-owner-answers.md` |

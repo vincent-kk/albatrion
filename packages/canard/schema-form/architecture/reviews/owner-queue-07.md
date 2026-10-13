@@ -43,5 +43,8 @@
 | 37 (승인 — 256라운드, 선택지별 id) | 내장 checkbox 입력(FieldInputStringCheckbox)이 선택지마다 같은 id를 씀(fixy07 07b-3 verifier 비차단 관찰; production-test oneOf platforms 화면) — label의 htmlFor가 첫 선택지로만 묶여 접근성·클릭 대상이 어긋날 수 있음. 선택지별 고유 id로 고칠지 | 내장 입력의 DOM 계약 | 수동 시험 화면 관찰, 자동 시험 미확인 | 253라운드 |
 | 38 (확인) | 필드 제목 label(FormGroupRenderer.tsx:48, FormLabel.tsx:61)의 htmlFor={path}가 checkbox·radio 필드에서는 선택지 id가 `${path}-${index}`로 바뀐 뒤 가리키는 요소가 없음(전에는 첫 선택지; fixy07 07b-4 보고). 묶음 입력의 제목은 htmlFor 없이 두거나 fieldset/legend 또는 aria-labelledby로 묶을지 | 내장 입력의 접근성 계약 | 클릭 대상이 없어졌을 뿐 폼 동작 불변 | 261라운드 |
 | 39 (확인) | 게이트 없는 oneOf 분기 둘에만 선언된 필드가 둘 다 `options.terminal: true`여도 branch로 남음(resolveNodeStrategy의 분기 셈, fixy07 07b-4 verifier 관찰; 기존 동작) — 분기 선언의 terminal 선택을 합쳐 읽을지, 지금처럼 무시할지. 36의 명세 절에는 현재 동작대로 적음 | 전략 판정 규칙(공개 동작) | 드문 작성 형태, 회귀 아님 | 261라운드 |
+| 40 (수정 — 소유자 관찰) | 스토리북 docs 페이지(예: /docs/features-derivation-contextreference--docs)에서 jsonSchema가 순환참조로 직렬화에 실패해 화면이 깨짐; composite 쪽 스토리 전부로 보이며 산발적 재현(React 노드·컴포넌트·함수가 스키마 args에 들어간 탓으로 추정). 원인 확인과 수정(args에서 직렬화 불가 값 제거 또는 docs 비활성) | 소유자 관찰 | 문서 표시 문제, 폼 동작 무관 | 266라운드 |
+| 41 (설계 판단 — 소유자 관찰) | /story/features-composition-nullablebranch--null-ancestor-promotion: 값은 {"account":null}인데 폼에는 account.kind=[a]가 보임(kind의 default는 a). null로 선언된 부모를 자식의 자동 채움이 해제하지 못해(LANDING-139·LANDING-004) 생기는 화면·값 불일치. 설계상 정상인지, 아니라면 자식 노드 값도 비어 있어야 하는지 | 공개 동작(값·화면 일치) | 소유자가 혼란을 호소함 — 우선 | 266라운드 |
+| 42 (수정 — 소유자 관찰) | 스토리 가독성: 어떤 동작을 해야 하는지, 옳은 값이 무엇인지, 현재 오류가 무엇인지 알 수 없음. 레거시 스토리를 참고해 설명·재현 단계·현재값·기본값·오류·스키마·스토리별 설정을 페이지 안에 수록(composite 우선, 전체 적용) | 소유자 관찰 | 문서·스토리 템플릿 작업 | 266라운드 |
 
 (추가되는 항목은 아래에 번호를 이어 적는다.)
