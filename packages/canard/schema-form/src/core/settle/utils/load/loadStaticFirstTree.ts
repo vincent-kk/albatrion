@@ -23,6 +23,8 @@ interface Frame<Self> {
   node: Self;
   input: unknown;
   automatic: boolean;
+  /** An object or array branch ancestor holds a wrong-kind raw, so no default fills here. */
+  blocked: boolean;
   entered: boolean;
   index: number;
   entries: readonly BlueprintChildEntry[];
@@ -55,6 +57,7 @@ export const loadStaticFirstTree = <Self extends FieldNodeRecord<Self>>(
       node: root,
       input: undefined,
       automatic: false,
+      blocked: false,
       entered: false,
       index: 0,
       entries: EMPTY,
@@ -82,6 +85,7 @@ export const loadStaticFirstTree = <Self extends FieldNodeRecord<Self>>(
           : undefined;
       let input = frame.input;
       if (
+        !frame.blocked &&
         !suppress &&
         fallback !== undefined &&
         !(
@@ -148,6 +152,9 @@ export const loadStaticFirstTree = <Self extends FieldNodeRecord<Self>>(
         node: child,
         input,
         automatic: frame.automatic,
+        blocked:
+          frame.blocked ||
+          (node.behavior.strategy === 'branch' && node.raw !== undefined),
         entered: false,
         index: 0,
         entries: EMPTY,

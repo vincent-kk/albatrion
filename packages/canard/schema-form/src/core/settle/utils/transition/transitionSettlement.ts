@@ -87,10 +87,9 @@ export const transitionSettlement = <Self extends FieldNodeRecord<Self>>(
           if (filled.has(key)) continue;
           filled.add(key);
         }
-        if (context.kind !== 'load' && hasWrongKindBranchAncestor(node))
-          continue;
         if (context.deriveState?.activeUnsetTargets.has(node)) continue;
         if (node.raw !== undefined) continue;
+        if (hasWrongKindBranchAncestor(node)) continue;
         if (
           node.behavior.type === 'array' &&
           context.distributedInputs.get(node)?.input !== undefined

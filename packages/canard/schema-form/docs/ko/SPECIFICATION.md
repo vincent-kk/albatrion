@@ -647,7 +647,7 @@ const jsonSchema = {
 ```
 
 - null 분기는 검증기를 위한 것입니다. 필드가 없고 활성 분기가 되지 않으며, 거기에 쓴 조건이나 `properties`는 무시되고 개발 환경 경고 `NULL_BRANCH_IGNORED_FOR_FORM`이 나옵니다.
-- 객체가 `null`인지는 값이 정하고, 어떤 객체 분기가 보이는지는 분기 조건이 정합니다. 값이 `null`인 동안 자식들은 조건이 고른 분기의 빈 폼을 보여 줍니다([Nullable 객체와 배열](#nullable-객체와-배열) 참고).
+- 객체가 `null`인지는 값이 정하고, 어떤 객체 분기가 보이는지는 분기 조건이 정합니다. 값이 `null`인 동안 선택된 분기의 자식 필드는 default 없이 표시됩니다([Nullable 객체와 배열](#nullable-객체와-배열) 참고). 객체·배열 필드에 종류가 맞지 않는 값이 들어 있을 때도 같습니다. 예를 들어 객체에 문자열을 로드하면, 자식에 값을 주기 전까지 자식은 default를 받지 않습니다.
 - null 분기의 위치는 상관없습니다. 사용 중인 분기의 오류는 해당 필드에 전달됩니다. 객체 값이 `oneOf`를 통과하지 못하면 null 분기도 맞지 않은 다른 분기처럼 자기 불일치("must be null")를 객체에 보고하며, 이 오류는 `oneOf` 오류와 함께 나옵니다.
 - `oneOf`가 `null`을 검증할 수 없는 nullable 객체 — 받아 주는 분기가 없거나 여러 개인 경우 — 는 개발 환경 경고 `NULLABLE_ONE_OF_NULL_UNREACHABLE`을 냅니다. `anyOf`는 이런 주의가 필요 없습니다: null 분기 하나 또는 type 없는 분기만으로 충족됩니다.
 
@@ -1134,9 +1134,9 @@ nullable 객체·배열(`type: ['object', 'null']`, `type: ['array', 'null']`)�
 
 reset은 노드가 무엇을 갖고 있든 기본값을 복원합니다: 기본값이 `null`이면 `null`로, 아니면 기본 객체로.
 
-**`null`인 동안** 출력은 스키마가 무엇을 담고 있든 — 배열, default, derived, `oneOf`/`anyOf`, controls로 게이트된 필드·virtual 필드 — `null`입니다. 객체의 자식 필드는 계속 렌더되며 빈 양식을 보여 줍니다: 이 노드에 `defaultValue`를 주지 않았을 때 폼이 자식에게 만들어 주는 상태입니다 — 노드 자신의 객체 `default`가 있으면 그것, 없으면 각 자식의 `default`이며, derived 값이 적용되고 배열 자식은 `minItems`까지 채워집니다. 어떤 경로로 `null`이 되었든 같고, `null`로 버린 데이터는 되살아나지 않습니다. 빈 양식에 속하지 않는 것이 하나 있습니다: `injectTo`로 필드에 도착한 값입니다. mount 뒤에 `null`이 된 노드는 source가 다시 바뀔 때까지 그 값을 잃습니다. 자신이 `null`인 nullable **배열**에는 아이템이 없고 `minItems` 채움도 없습니다.
+**`null`인 동안** 출력은 스키마가 무엇을 담고 있든 — 배열, default, derived, `oneOf`/`anyOf`, controls로 게이트된 필드·virtual 필드 — `null`입니다. 객체의 자식 필드는 계속 렌더되며, `null`인 동안 자식 default, 객체 default, `minItems` 채움은 나타나지 않습니다. `controls.derived`나 `injectTo`가 쓴 값은 객체를 만들지 않고 그 필드에 표시됩니다. 로드·reset·쓰기 중 어떤 경로로 `null`이 되었든 같고, `null`로 버린 데이터는 되살아나지 않습니다. 자신이 `null`인 nullable **배열**에는 아이템이 없고 `minItems` 채움도 없습니다.
 
-**무엇이 되는가:** 이 노드에 `defaultValue`를 주지 않은 폼에서 같은 쓰기가 만드는 값과 정확히 같습니다(배열은 빈 배열 기준). 그래서 값은 항상 필드가 보여 주는 것과 일치합니다. 배열에는 병합이 없습니다: `setValue([], SetValueOption.Merge)`는 대입이며 `[]`를 만듭니다.
+**무엇이 되는가:** 자식 필드에 입력하면 객체는 그 입력값을 담은 객체로 승격됩니다. 승격으로 새로 생긴 필드(예를 들어 입력값이 여는 분기의 필드)만 default를 받으며, 이미 있던 필드는 값을 채울 때까지 빈 상태를 유지합니다. 배열의 쓰기는 빈 배열을 기준으로 합니다. 배열에는 병합이 없습니다: `setValue([], SetValueOption.Merge)`는 대입이며 `[]`를 만듭니다.
 
 ```tsx
 const jsonSchema = {
@@ -1152,9 +1152,9 @@ const jsonSchema = {
   },
 };
 // <Form jsonSchema={jsonSchema} defaultValue={{ closed: null }} />
-// getValue()                     → { closed: null }   ('completed'는 보이지만 방출되지 않음)
-// note에 "done" 입력             → { closed: { reason: 'completed', note: 'done' } }
-// setValue({ closed: null })     → { closed: null }   (필드는 다시 빈 양식을 보여 줌)
+// getValue()                     → { closed: null }   (필드에 default가 표시되지 않음)
+// note에 "done" 입력             → { closed: { note: 'done' } }
+// setValue({ closed: null })     → { closed: null }   (필드에 다시 default가 표시되지 않음)
 ```
 
 - **nullable이 아닌** 객체에 `null`을 대입하면 `{}`가 됩니다.

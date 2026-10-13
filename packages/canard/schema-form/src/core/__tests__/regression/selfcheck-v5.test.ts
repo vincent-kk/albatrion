@@ -112,7 +112,7 @@ describe('selfcheck-v5 PR-2 regression', () => {
     expect(root.find('/keep')?.raw).toBeUndefined();
   });
 
-  it('selfcheck-v5.mjs:328 fills under null while a later partial write restores the host', () => {
+  it('selfcheck-v5.mjs:328 leaves children unfilled under null while a later partial write restores the host', () => {
     const { root } = makeFieldNodeTree(
       {
         type: 'object',
@@ -131,7 +131,7 @@ describe('selfcheck-v5 PR-2 regression', () => {
       { snapshot: null },
     );
     root.resetSubtree();
-    expect(root.find('/d')?.raw).toBe('D');
+    expect(root.find('/d')?.raw).toBeUndefined();
     root.find('/a')?.setValue('A');
     expect(root.outputValue).toEqual({ a: 'A' });
   });

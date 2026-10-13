@@ -81,8 +81,9 @@ export const unionRenderScenarios: readonly FormScenario[] = [
     }, oneOf: [{ controls: { active: './kind === "a"' }, properties: { name: { type: 'string', default: 'default' } } }] } } },
     initialValue: { account: null },
     steps: [
+      { action: 'batch', steps: [], expect: { outputValue: { account: null }, values: { '/account/kind': undefined }, shape: { '/account/name': 'absent' } } },
       { action: 'batch', steps: [{ action: 'setValue', path: '/account', value: null }], expect: { outputValue: { account: null }, values: { '/account/kind': undefined }, shape: { '/account/name': 'absent' } } },
-      { action: 'setValue', path: '/account/kind', value: 'a', expect: { shape: { '/account/name': 'present' }, values: { '/account/kind': 'a' } } },
+      { action: 'setValue', path: '/account/kind', value: 'a', expect: { outputValue: { account: { kind: 'a', name: 'default' } }, shape: { '/account/name': 'present' }, values: { '/account/kind': 'a' } } },
       { action: 'setValue', path: '/account/name', value: 'typed', expect: { outputValue: { account: { kind: 'a', name: 'typed' } } } },
     ],
   },

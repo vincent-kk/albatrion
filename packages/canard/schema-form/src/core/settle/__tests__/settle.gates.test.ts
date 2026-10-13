@@ -182,6 +182,12 @@ describe('settle gate calculation', () => {
       },
     });
     loadFieldNodeAtMount(root, null, WriteOption.Overwrite);
+    writeFieldNode(
+      root.structure!.child,
+      'D',
+      'automatic',
+      WriteOption.Overwrite,
+    );
     expect(root.raw).toBeNull();
     expect(root.emit).toBeNull();
     expect(root.structure?.child?.raw).toBe('D');

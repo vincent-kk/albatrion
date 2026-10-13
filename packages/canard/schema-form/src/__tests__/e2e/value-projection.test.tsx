@@ -29,7 +29,7 @@ for (const scenario of nullPromotionScenarios)
     form = await renderForm(scenario.schema as JSONSchema, {
       defaultValue: scenario.initialValue,
     });
-    expect(form.value('/first')).toBe(scenario.initialValue?.first ?? 'hidden');
+    expect(form.value('/first')).toBe(scenario.initialValue?.first ?? '');
     await playScenario(scenario, form.container);
     expect(form.value('/first')).toBe(form.node('/first')?.value ?? '');
   });
