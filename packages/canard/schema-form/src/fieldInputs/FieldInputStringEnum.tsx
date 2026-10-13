@@ -47,16 +47,17 @@ const FieldInputStringEnum = ({
     [context, jsonSchema, alias],
   );
   const initialValue = useMemo(() => {
-    if (defaultValue === undefined) return undefined;
+    if (defaultValue === undefined) return '';
     if (defaultValue === null) return '' + null;
     return defaultValue;
   }, [defaultValue]);
   const outOfDomainValue =
-    defaultValue !== undefined &&
-    defaultValue !== null &&
-    !enumOptions.some((option) => option.value === '' + defaultValue)
-      ? '' + defaultValue
-      : undefined;
+    defaultValue === undefined
+      ? ''
+      : defaultValue !== null &&
+          !enumOptions.some((option) => option.value === '' + defaultValue)
+        ? '' + defaultValue
+        : undefined;
   const handleChange = useHandle((event: ChangeEvent<HTMLSelectElement>) => {
     const rawValue = enumOptions.find(
       (option) => option.value === event.target.value,

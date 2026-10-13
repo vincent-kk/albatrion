@@ -7,6 +7,34 @@ import { Form, type FormHandle } from '@/schema-form/components/Form';
 
 afterEach(cleanup);
 
+it('shows an undefined value as a selected empty disabled option', () => {
+  const ref = createRef<FormHandle>();
+  render(
+    <Form ref={ref} jsonSchema={{ type: 'string', enum: ['KR', 'US'] }} />,
+  );
+  const select = screen.getByRole<HTMLSelectElement>('combobox');
+  expect(ref.current!.getValue()).toBeUndefined();
+  expect(select.value).toBe('');
+  expect(select.selectedOptions[0].disabled).toBe(true);
+  expect(select.selectedOptions[0].textContent).toBe('');
+  expect(select.options).toHaveLength(3);
+  fireEvent.change(select, { target: { value: 'US' } });
+  expect(ref.current!.getValue()).toBe('US');
+});
+
+it('selects the disabled empty option for undefined even when the enum contains an empty string', () => {
+  const ref = createRef<FormHandle>();
+  render(<Form ref={ref} jsonSchema={{ type: 'string', enum: ['', 'US'] }} />);
+  const select = screen.getByRole<HTMLSelectElement>('combobox');
+  expect(ref.current!.getValue()).toBeUndefined();
+  expect(select.selectedIndex).toBe(0);
+  expect(select.selectedOptions[0].disabled).toBe(true);
+  expect(select.options[1].disabled).toBe(false);
+  expect(select.options).toHaveLength(3);
+  fireEvent.change(select, { target: { value: 'US' } });
+  expect(ref.current!.getValue()).toBe('US');
+});
+
 it('shows an out-of-set default as a leading disabled option and allows an enum choice', () => {
   const ref = createRef<FormHandle>();
   render(

@@ -18,7 +18,7 @@
 - 기본 union 입력은 `schemaType`과 유효 `jsonSchema.type`의 교집합을 유효 목록으로 삼고, 같은 내부 `interpret`를 글 입력·흐림·목록 변경 시 적용합니다. 결과의 JSON 종류가 목록에 있는 경우에만 보내며 입력기 조합 중에는 보내지 않습니다. 빈 칸은 `undefined`를 보내고, 변환할 수 없는 글은 입력이 초안으로 들다가 흐림에 노드 값 표시로 되돌립니다(REACT-033, LANDING-186).
 - union의 `undefined`·nullable `null`은 빈 칸이고 다른 원시 값은 `String(value)`로 표시합니다. 객체·배열은 값 참조로 메모한 읽기 전용 표시이며 문자열화 실패는 무효 표지로 나타냅니다. `typeMismatch`가 참이면 `aria-invalid`와 무효 표지를 붙이며, 기본 입력은 객체·배열을 생성하거나 편집하지 않습니다(REACT-033).
 - 날짜 형식 입력은 `presentation.FieldInputProps`의 `minimum`·`maximum`을 입력 props로 받아 `min`·`max` 속성에 씁니다. `options`는 닫힌 목록이라 이 키를 두면 청사진 오류 `UNKNOWN_GROUP_KEY`입니다(CONTROLS-081, CONTROLS-051).
-- 문자열 enum 입력은 null·undefined가 아닌 집합 밖 기본값을 맨 앞의 비활성 옵션으로 표시하여 노드 값과 화면을 일치시킵니다.
+- 문자열 enum 입력은 undefined를 맨 앞의 빈 비활성 옵션으로 표시하며, enum에 빈 문자열이 있어도 이 옵션이 초기 선택을 차지합니다. null·undefined가 아닌 집합 밖 기본값은 맨 앞의 비활성 옵션으로 표시하고, null의 기존 선택 동작은 유지합니다. 추가 판정은 O(1)이며 undefined일 때 옵션 DOM 하나만 추가합니다.
 - 문자열 checkbox·radio 입력은 선택지마다 `${path}-${index}` 형태의 고유 id를 주고, 그 선택지를 감싼 label의 `htmlFor`를 같은 id로 맞춥니다. 색인을 쓰는 까닭은 enum 값에 공백이 올 수 있어서입니다.
 - 날짜 형식 입력은 마운트 시 기본값이 해당 HTML 입력의 값 문법에 맞지 않으면 텍스트 입력으로 원문을 표시하며, 빈 값은 날짜 형식 입력을 유지합니다.
 - 수 입력은 빈 칸을 `undefined`로 전달합니다. 브라우저 `badInput`이면 노드에 쓰지 않고 입력이 초안을 보유하며, 흐림에는 마지막 노드 값으로 표시를 되돌립니다. 체크박스는 불리언 아닌 값을 미정 상태(`indeterminate`)로 표시합니다. 치다 만 글과 입력기 조합은 노드가 아닌 입력의 초안입니다(REACT-027).
