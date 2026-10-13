@@ -27,3 +27,7 @@ fixy07(debugger 진단, tsc 재현): 플러그인 스토리의 맨 `FormTypeInpu
 ## 덧붙임 4 (2026-10-13, 07b-2 ① 커밋과 문서 잔여)
 
 fixy07 ① 커밋 cb1525858(verifier 1차 FAIL: ko README:806의 맨 FormTypeInput 하나 → 고침; CLAUDE.md 절에 "children[].controls와 조각의 controls는 앞 9개 키만" 단서; G1 CLAUDE_SECTION_ONLY, prettier 통과). ②-a의 codex 결과는 패치(scratchpad/07b-2/patch-2a.diff, git apply --check 통과)로 보관, 대기열 23 결정 뒤 적용. codex는 ③④⑤⑥ 한 묶음 진행, 커밋은 따로. 비차단: (1) 패키지 CLAUDE.md:76(스키마 내 FormTypeInput 직접 지정)과 :138(computed.active)이 승인된 절 밖에서 옛 표기 — CLAUDE.md 편집이라 소유자 승인 대기(이 라운드 보고); (2) docs/QUICK_REFERENCE.md, docs/agents/skills/schema-form-skill/SKILL.md와 그 knowledge/(virtual-schema.md·validation-and-state.md·arrays-and-scale.md), src/components/Form/INTENT.md의 옛 표기(최상위 키, normalizedValue, computed:) — 편집자 결정: ①-b 커밋으로 ①과 같은 규칙으로 정합(문서만; INTENT.md는 공개 경계 문서라 바뀐 줄을 보고).
+
+## 덧붙임 5 (2026-10-13, 07b-2 ①-b 커밋)
+
+fixy07 ①-b 커밋 fe8803409(문서만, 7 파일; verifier 조건부 PASS → knowledge/formtype-input.md:19의 맨 formType 예 하나를 `presentation: { formType: 'markdown' }`으로 고친 뒤 docs/agents·QUICK_REFERENCE 전체 grep 0건; prettier 통과). src/components/Form/INTENT.md:10의 바뀐 줄: `rootNode.normalizedValue` → `rootNode.outputValue`(근거 FormContents.tsx:88 getValue, submitForm.ts:19 제출, exitSchemaNodeChain.ts:127 root.emit의 outputValue 원천). codex는 ③④⑤⑥ 진행 중.
