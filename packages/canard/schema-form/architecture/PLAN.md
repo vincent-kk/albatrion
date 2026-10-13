@@ -82,4 +82,4 @@
 
 | 날짜 | 무엇 | 어디 |
 | --- | --- | --- |
-| 2026-10-13 | 240라운드(닫기): 이름 재구성 범위(파일 119·식별자 161)와 결정 다섯; CLAUDE.md 여섯 치환은 소유자 승인 대기. 보충 1줄 | `reviews/round-240-closing.md` |
+| 2026-10-13 | 241라운드(소유자): FieldRendererProps의 Label·Error 추가는 보류, 매개변수 재설계 검토 요청. 보충 1줄 | `reviews/round-241-owner-answers.md` |
