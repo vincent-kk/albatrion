@@ -44,7 +44,7 @@ export const restoreArrayStructure = <Self extends FieldNodeRecord<Self>>(
     host.structure = structure;
     host.children = captureFieldNodeChange(host, 'children', previousItems);
     host.itemCount = previousItemCount;
-    host.extras = previousExtras;
+    host.undeclaredValues = previousExtras;
     context.dirtyPaths.add(host.path);
     context.shapeDirtyPaths.add(host.path);
     entry.restored = true;

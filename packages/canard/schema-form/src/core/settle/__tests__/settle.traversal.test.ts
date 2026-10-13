@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 
 import { FieldNodeEventType } from '../../record';
-import { SetValueOption } from '../../types/value';
+import { WriteOption } from '../../types/value';
 import { writeFieldNode } from '../index';
 import { createTestTree } from './fixtures/createTestTree';
 
@@ -15,13 +15,13 @@ describe('bounded settlement traversal', () => {
       ]),
     );
     const { root, visits } = createTestTree({ type: 'object', properties });
-    writeFieldNode(root, {}, 'callerReplace', SetValueOption.Overwrite);
+    writeFieldNode(root, {}, 'callerReplace', WriteOption.Overwrite);
     visits.length = 0;
     writeFieldNode(
       root.structure!.field0,
       'changed',
       'input',
-      SetValueOption.Overwrite,
+      WriteOption.Overwrite,
     );
     expect(visits).toEqual(['/field0', '']);
     expect(visits.filter((visit) => visit.startsWith('select:'))).toHaveLength(
@@ -49,14 +49,14 @@ describe('bounded settlement traversal', () => {
       root,
       { flag: false },
       'callerReplace',
-      SetValueOption.Overwrite,
+      WriteOption.Overwrite,
     );
     visits.length = 0;
     writeFieldNode(
       root.structure!.field49,
       'changed',
       'input',
-      SetValueOption.Overwrite,
+      WriteOption.Overwrite,
     );
     expect(visits).toEqual(['/field49', '']);
     expect(visits.filter((visit) => visit.startsWith('select:'))).toHaveLength(
@@ -82,14 +82,14 @@ describe('bounded settlement traversal', () => {
       root,
       { left: {}, right: {} },
       'callerReplace',
-      SetValueOption.Overwrite,
+      WriteOption.Overwrite,
     );
     visits.length = 0;
     writeFieldNode(
       root.structure!.left,
       { field0: 'changed' },
       'callerReplace',
-      SetValueOption.Overwrite,
+      WriteOption.Overwrite,
     );
     expect(
       visits.some((visit) => visit === '/right' || visit.startsWith('/right/')),

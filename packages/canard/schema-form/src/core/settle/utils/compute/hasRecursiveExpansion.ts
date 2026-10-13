@@ -64,7 +64,7 @@ const hasOriginalInput = <Self extends FieldNodeRecord<Self>>(
     return true;
   if (
     !context.filledNodes.has(node) &&
-    (node.raw !== undefined || node.extras !== undefined)
+    (node.raw !== undefined || node.undeclaredValues !== undefined)
   )
     return true;
   if (hasLatentUnder(context, node.path)) {

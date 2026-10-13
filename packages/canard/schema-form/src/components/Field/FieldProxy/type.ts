@@ -4,7 +4,7 @@ import type { Dictionary } from '@aileron/declare';
 
 import type { FieldNode } from '@/schema-form/core';
 import type {
-  ChildNodeComponentProps,
+  ChildFieldProps,
   FieldInputProps,
   FieldRendererProps,
   OverridableFieldInputProps,
@@ -14,8 +14,8 @@ import type {
 export interface FieldProxyProps {
   path?: string;
   node?: FieldNode;
-  onChangeRef?: RefObject<ChildNodeComponentProps['onChange']>;
-  onFileAttachRef?: RefObject<ChildNodeComponentProps['onFileAttach']>;
+  onChangeRef?: RefObject<ChildFieldProps['onChange']>;
+  onFileAttachRef?: RefObject<ChildFieldProps['onFileAttach']>;
   overridePropsRef?: RefObject<OverridableFieldInputProps>;
   FieldInput?: ComponentType<FieldInputProps>;
   FieldRenderer?: ComponentType<FieldRendererProps>;

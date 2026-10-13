@@ -1,6 +1,6 @@
 import type { FieldNodeRecord } from '../../../record';
 import { resetFieldNodeForm } from '../../../settle';
-import { SetValueOption } from '../../../types/value';
+import { WriteOption } from '../../../types/value';
 import { captureChainError } from '../chain/captureChainError';
 import { enterFieldNodeChain } from '../chain/enterFieldNodeChain';
 import { exitFieldNodeChain } from '../chain/exitFieldNodeChain';
@@ -17,7 +17,7 @@ import { clearFieldNodeFormErrors } from './utils/clearFieldNodeFormErrors';
 export const dispatchResetForm = <Self extends FieldNodeRecord<Self>>(
   root: Self,
   value: unknown,
-  option: SetValueOption = SetValueOption.Overwrite,
+  option: WriteOption = WriteOption.Overwrite,
 ): void => {
   if (!enterFieldNodeChain(root)) return;
   clearWarningKeys(root.runtime);

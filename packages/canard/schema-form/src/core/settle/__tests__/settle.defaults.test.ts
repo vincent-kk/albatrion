@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { SetValueOption } from '../../types/value';
+import { WriteOption } from '../../types/value';
 import { loadFieldNodeAtMount } from '../index';
 import { createTestTree } from './fixtures/createTestTree';
 
@@ -20,7 +20,7 @@ describe('settled default sources', () => {
         },
       ],
     });
-    loadFieldNodeAtMount(root, {}, SetValueOption.Overwrite);
+    loadFieldNodeAtMount(root, {}, WriteOption.Overwrite);
     expect(root.structure?.inside?.raw).toBe('fragment');
     expect(root.structure?.outside?.raw).toBeUndefined();
   });
@@ -50,7 +50,7 @@ describe('settled default sources', () => {
       ],
       properties: { standard: { type: 'string', default: 'standard' } },
     });
-    loadFieldNodeAtMount(root, {}, SetValueOption.Overwrite);
+    loadFieldNodeAtMount(root, {}, WriteOption.Overwrite);
     expect(root.structure?.own?.raw).toBe('own');
     expect(root.structure?.item?.raw).toBe('item-last');
     expect(root.structure?.fragment?.raw).toBe('fragment');
@@ -75,7 +75,7 @@ describe('settled default sources', () => {
         },
       ],
     });
-    loadFieldNodeAtMount(root, {}, SetValueOption.Overwrite);
+    loadFieldNodeAtMount(root, {}, WriteOption.Overwrite);
     expect(root.structure?.field?.raw).toBe('later');
   });
 });

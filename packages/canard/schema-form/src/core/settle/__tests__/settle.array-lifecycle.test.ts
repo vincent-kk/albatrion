@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 
 import { makeFieldNodeTree } from '../../__tests__/makeFieldNodeTree';
-import { SetValueOption } from '../../types/value';
+import { WriteOption } from '../../types/value';
 import { writeFieldNode } from '../index';
 import { createTestTree } from './fixtures/createTestTree';
 
@@ -111,7 +111,7 @@ describe('array settlement lifecycle', () => {
           {},
         ],
       },
-      SetValueOption.DisableAutomaticWrites,
+      WriteOption.DisableAutomaticWrites,
     );
     root.find('/items/0/show')?.setValue(false);
     expect(root.find('/items/0/hidden')).toBeNull();
@@ -169,7 +169,7 @@ describe('array settlement lifecycle', () => {
     const items = [[{}, {}], [{ a: 'y' }]];
     root.setValue(
       { showHost: true, items },
-      SetValueOption.DisableAutomaticWrites,
+      WriteOption.DisableAutomaticWrites,
     );
     expect(root.find('/items')?.value).toEqual(items);
     root.find('/showHost')?.setValue(false);
@@ -333,7 +333,7 @@ describe('array settlement lifecycle', () => {
       ],
     });
     expect(() =>
-      writeFieldNode(root, { a: 0 }, 'callerReplace', SetValueOption.Overwrite),
+      writeFieldNode(root, { a: 0 }, 'callerReplace', WriteOption.Overwrite),
     ).toThrow();
     expect(root.runtime.diagnostics).toMatchObject({
       cause: 'budget',
@@ -387,19 +387,19 @@ describe('array settlement lifecycle', () => {
       root,
       { a: 'stable', flag: false, items: ['before'], tuple: ['kept', 'extra'] },
       'callerReplace',
-      SetValueOption.Overwrite,
+      WriteOption.Overwrite,
     );
     const host = root.structure!.items;
     const first = host.children![0];
     const tuple = root.structure!.tuple;
     const tupleFirst = tuple.children![0];
-    const previousExtras = tuple.extras;
+    const previousExtras = tuple.undeclaredValues;
     expect(() =>
       writeFieldNode(
         root,
         { a: 0, flag: true, items: ['before'], tuple: ['kept', 'extra'] },
         'callerReplace',
-        SetValueOption.Overwrite,
+        WriteOption.Overwrite,
       ),
     ).toThrow();
     expect(root.runtime.diagnostics).toMatchObject({
@@ -409,12 +409,12 @@ describe('array settlement lifecycle', () => {
     expect(host.children).toEqual([first]);
     expect(host.children![0]).toBe(first);
     expect(host.itemCount).toBe(1);
-    expect(host.extras).toBeUndefined();
+    expect(host.undeclaredValues).toBeUndefined();
     expect(host.nextItemKey).toBeGreaterThan(first.itemKey! + 1);
     expect(tuple.children![0]).toBe(tupleFirst);
     expect(tuple.itemCount).toBe(2);
-    expect(tuple.extras).toBe(previousExtras);
-    expect(tuple.extras).toEqual(['extra']);
+    expect(tuple.undeclaredValues).toBe(previousExtras);
+    expect(tuple.undeclaredValues).toEqual(['extra']);
   });
 
   it('35C-08 gates out an item as an exit while retaining its array slot', () => {

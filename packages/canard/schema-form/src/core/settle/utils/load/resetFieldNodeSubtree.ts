@@ -1,5 +1,5 @@
 import type { FieldNodeRecord } from '../../../record';
-import type { SetValueOption } from '../../../types/value';
+import type { WriteOption } from '../../../types/value';
 import { hasLivePathKind } from '../detached/hasLivePathKind';
 import { writeFieldNode } from '../write/writeFieldNode';
 import { clearSubtreeState } from './clearSubtreeState';
@@ -14,7 +14,7 @@ import { setLoadValue } from './setLoadValue';
  */
 export const resetFieldNodeSubtree = <Self extends FieldNodeRecord<Self>>(
   node: Self,
-  option: SetValueOption,
+  option: WriteOption,
 ): void => {
   if (node.detached && hasLivePathKind(node)) return;
   const value = getLoadValue(node.runtime.loadSnapshot, node.path);

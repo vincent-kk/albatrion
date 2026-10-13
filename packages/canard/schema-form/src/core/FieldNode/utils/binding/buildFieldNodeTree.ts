@@ -4,14 +4,14 @@ import type { FormErrorReporter } from '../../../../errors';
 import type { InferValueType } from '../../../../types/value';
 import { blueprint } from '../../../blueprint';
 import type { BlueprintOptions } from '../../../blueprint';
-import type { JSONSchema } from '../../../types/jsonSchema';
+import type { AuthoredSchema } from '../../../types/jsonSchema';
 import type { ValidationMode } from '../../../types/state';
 import type { Validator } from '../../../validation';
 import type { FieldNode, InferFieldNode } from '../../type';
 import { fieldNodeFactory } from '../fieldNodeFactory';
 
 /** Construction inputs shared by the binding and the core host entry. */
-type BuildFieldNodeTreeProps<Schema extends JSONSchema = JSONSchema> = {
+type BuildFieldNodeTreeProps<Schema extends AuthoredSchema = AuthoredSchema> = {
   jsonSchema: Schema;
   defaultValue?: InferValueType<Schema>;
   validator?: Validator;
@@ -32,7 +32,7 @@ type BuildFieldNodeTreeProps<Schema extends JSONSchema = JSONSchema> = {
  * @param props - Authored schema, retained default source, predicates and services
  * @returns The inferred root with its load snapshot and no committed mount
  */
-export function buildFieldNodeTree<Schema extends JSONSchema>(
+export function buildFieldNodeTree<Schema extends AuthoredSchema>(
   props: BuildFieldNodeTreeProps<Schema>,
 ): InferFieldNode<Schema>;
 export function buildFieldNodeTree(props: BuildFieldNodeTreeProps): FieldNode {

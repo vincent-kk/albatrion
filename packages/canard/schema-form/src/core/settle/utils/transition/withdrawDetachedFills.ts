@@ -22,7 +22,7 @@ export const withdrawDetachedFills = <Self extends FieldNodeRecord<Self>>(
       while (ancestor && ancestor !== node) ancestor = ancestor.parent;
       if (!ancestor) continue;
       entry.node.raw = entry.previousRaw;
-      entry.node.extras = entry.previousExtras;
+      entry.node.undeclaredValues = entry.previousExtras;
       if (entry.previousDistributed)
         context.distributedInputs.set(entry.node, entry.previousDistributed);
       else context.distributedInputs.delete(entry.node);

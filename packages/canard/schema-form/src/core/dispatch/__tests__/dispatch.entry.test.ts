@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 
 import { FieldNodeEventType } from '../../record';
-import { SetValueOption } from '../../types/value';
+import { WriteOption } from '../../types/value';
 import {
   adoptFieldNodeChain,
   dispatchContextChange,
@@ -41,7 +41,7 @@ describe('dispatcher entry chain', () => {
       {
         node: previous.root,
         value: 'pending',
-        option: SetValueOption.Overwrite,
+        option: WriteOption.Overwrite,
       },
     ];
     const failure = new Error('pending failure');
@@ -55,7 +55,7 @@ describe('dispatcher entry chain', () => {
       {
         node: previous.root,
         value: 'pending',
-        option: SetValueOption.Overwrite,
+        option: WriteOption.Overwrite,
       },
     ]);
     expect(next.runtime.chainErrors).toEqual([failure]);

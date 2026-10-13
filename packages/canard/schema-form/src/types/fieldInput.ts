@@ -2,7 +2,7 @@ import type { CSSProperties, ComponentType } from 'react';
 
 import type { Dictionary, Fn } from '@aileron/declare';
 
-import type { ChildNodeComponent } from '@/schema-form/components/Field';
+import type { ChildField } from '@/schema-form/components/Field';
 import type {
   FieldNode,
   InferFieldNode,
@@ -74,7 +74,7 @@ export interface FieldInputProps<
   /** onFileAttach handler of FieldInput Component */
   onFileAttach: Fn<[file: File | File[] | undefined]>;
   /** Child FieldInput Components of this FieldInput Component */
-  ChildNodeComponents: ChildNodeComponent[];
+  ChildFields: ChildField[];
   /** Placeholder text for input fields */
   placeholder: string | undefined;
   /** CSS class name for styling */
@@ -137,7 +137,7 @@ export interface UnknownFieldInputProps {
   value: any;
   onChange: SetStateFnWithOptions<any>;
   onFileAttach: Fn<[file: File | File[] | undefined]>;
-  ChildNodeComponents: ChildNodeComponent<any>[];
+  ChildFields: ChildField<any>[];
   placeholder: string | undefined;
   className: string | undefined;
   style: CSSProperties | undefined;
@@ -149,7 +149,7 @@ export type InferFieldInputProps<Value> = Value extends AllowedValue
   ? FieldInputProps<Value>
   : UnknownFieldInputProps;
 
-export type ChildNodeComponentProps<Value extends AllowedValue = any> = {
+export type ChildFieldProps<Value extends AllowedValue = any> = {
   required?: boolean;
   readOnly?: boolean;
   disabled?: boolean;
@@ -164,34 +164,30 @@ export type ChildNodeComponentProps<Value extends AllowedValue = any> = {
 };
 
 export type OverridableFieldInputProps = Omit<
-  ChildNodeComponentProps,
+  ChildFieldProps,
   'onChange' | 'onFileAttach' | 'FieldRenderer'
 >;
 
-export type FieldInputTestFn = Fn<[hint: Hint], boolean>;
+export type FieldInputTestFn = Fn<[hint: FieldInputHint], boolean>;
 
 export type FieldNodeType = FieldNode['type'];
 
-type OptionalString = string | undefined;
+/** FieldInputHint fields a test object matches by one value or by any value in a list. */
+type ListMatchedHintKey =
+  | 'type'
+  | 'schemaType'
+  | 'path'
+  | 'format'
+  | 'inputType';
 
-export type FieldInputTestObject = Partial<{
-  /** FieldNode['schemaType'] | Array<FieldNode['schemaType']> */
-  type: FieldNodeType | FieldNodeType[];
-  /** Accepted schema kinds, including integer and union member arrays. */
-  schemaType: FieldNode['schemaType'] | FieldNode['schemaType'][];
-  /** FieldNode['path'] | Array<FieldNode['path']> */
-  path: string | string[];
-  /** FieldNode['required'] */
-  required: boolean;
-  /** FieldNode['nullable] */
-  nullable: boolean;
-  /** JSONSchema['format'] | Array<JSONSchema['format']> | undefined */
-  format: OptionalString | OptionalString[];
-  /** JSONSchema['inputType'] | Array<JSONSchema['inputType']> | undefined */
-  inputType: OptionalString | OptionalString[];
-}>;
+/** Object form of a FieldInput test: each field narrows the FieldInputHint it accepts; an omitted field matches anything. */
+export type FieldInputTestObject = Partial<
+  {
+    [Key in ListMatchedHintKey]: FieldInputHint[Key] | FieldInputHint[Key][];
+  } & Pick<FieldInputHint, 'required' | 'nullable'>
+>;
 
-export type Hint = {
+export type FieldInputHint = {
   /** FieldNode['schemaType'] */
   type: FieldNodeType;
   /** Authored accepted schema kind(s). */

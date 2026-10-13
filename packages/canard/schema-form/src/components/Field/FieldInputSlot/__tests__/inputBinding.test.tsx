@@ -152,9 +152,9 @@ it('REACT-024 ignores deferred touched after reset and trims at blur', () => {
 });
 
 it('ERROR-202 reports terminal child access once with a frozen empty array', () => {
-  let children: FieldInputProps['ChildNodeComponents'];
+  let children: FieldInputProps['ChildFields'];
   const Input = (props: FieldInputProps) => {
-    children = props.ChildNodeComponents;
+    children = props.ChildFields;
     return <span>{children.length}</span>;
   };
   const onError = vi.fn();
@@ -175,11 +175,11 @@ it('ERROR-202 reports terminal child access once with a frozen empty array', () 
 
 it('REACT-028 preserves a branch input with mounted child proxies on refresh', () => {
   let mounts = 0;
-  const Container = ({ ChildNodeComponents }: FieldInputProps) => {
+  const Container = ({ ChildFields }: FieldInputProps) => {
     mounts++;
     return (
       <>
-        {ChildNodeComponents.map((Child) => (
+        {ChildFields.map((Child) => (
           <Child key={Child.key} />
         ))}
       </>
@@ -204,11 +204,11 @@ it('REACT-028 preserves a branch input with mounted child proxies on refresh', (
 
 it('REACT-019 ERROR-202 an unanchored input map also matches terminal descendants', () => {
   const counts = new Map<string, number>();
-  const Container = ({ path, ChildNodeComponents }: FieldInputProps) => {
-    counts.set(path, ChildNodeComponents.length);
+  const Container = ({ path, ChildFields }: FieldInputProps) => {
+    counts.set(path, ChildFields.length);
     return (
       <>
-        {ChildNodeComponents.map((Child) => (
+        {ChildFields.map((Child) => (
           <Child key={Child.key} />
         ))}
       </>
@@ -235,15 +235,11 @@ it.each(['anchored map', 'definitions'] as const)(
   'REACT-019 REACT-028 supplies child proxies to a mapped or defined container (%s)',
   (selection) => {
     let childCount = -1;
-    const Container = ({
-      value,
-      onChange,
-      ChildNodeComponents,
-    }: FieldInputProps) => {
-      childCount = ChildNodeComponents.length;
+    const Container = ({ value, onChange, ChildFields }: FieldInputProps) => {
+      childCount = ChildFields.length;
       return (
         <div data-testid="container">
-          {ChildNodeComponents.map((Child) => (
+          {ChildFields.map((Child) => (
             <Child
               key={Child.key}
               onChange={(next) => onChange({ ...value, [Child.field]: next })}

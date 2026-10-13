@@ -89,7 +89,9 @@ describe('66C-01 SETTLE-043 sameValue judges delivery changes', () => {
     });
     dispatchSetValue(src, 'b');
     expect(
-      types.some((type) => type & FieldNodeEventType.UpdateComputedProperties),
+      types.some(
+        (type) => type & FieldNodeEventType.UpdateControlledProperties,
+      ),
     ).toBe(true);
     expect(types.some((type) => type & FieldNodeEventType.UpdateValue)).toBe(
       false,
@@ -101,7 +103,7 @@ describe('66C-01 SETTLE-043 sameValue judges delivery changes', () => {
     expect(isSameDeliveryValue(NaN, NaN)).toBe(true);
   });
 
-  it('delivers no UpdateComputedProperties when a shifted watcher keeps a NaN watch tuple', () => {
+  it('delivers no UpdateControlledProperties when a shifted watcher keeps a NaN watch tuple', () => {
     const { root } = createDispatchTree({
       type: 'object',
       properties: {
@@ -135,7 +137,9 @@ describe('66C-01 SETTLE-043 sameValue judges delivery changes', () => {
       true,
     );
     expect(
-      types.some((type) => type & FieldNodeEventType.UpdateComputedProperties),
+      types.some(
+        (type) => type & FieldNodeEventType.UpdateControlledProperties,
+      ),
     ).toBe(false);
   });
 });

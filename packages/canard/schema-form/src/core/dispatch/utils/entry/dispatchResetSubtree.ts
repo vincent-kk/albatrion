@@ -1,6 +1,6 @@
 import type { FieldNodeRecord } from '../../../record';
 import { resetFieldNodeSubtree } from '../../../settle';
-import { SetValueOption } from '../../../types/value';
+import { WriteOption } from '../../../types/value';
 import { captureChainError } from '../chain/captureChainError';
 import { enterFieldNodeChain } from '../chain/enterFieldNodeChain';
 import { exitFieldNodeChain } from '../chain/exitFieldNodeChain';
@@ -13,7 +13,7 @@ import { exitFieldNodeChain } from '../chain/exitFieldNodeChain';
  */
 export const dispatchResetSubtree = <Self extends FieldNodeRecord<Self>>(
   node: Self,
-  option: SetValueOption = SetValueOption.Overwrite,
+  option: WriteOption = WriteOption.Overwrite,
 ): void => {
   if (!enterFieldNodeChain(node)) return;
   const runtime = node.rootNode.runtime;

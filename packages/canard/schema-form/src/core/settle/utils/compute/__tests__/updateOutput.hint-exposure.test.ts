@@ -6,7 +6,7 @@ import {
   dispatchSetValue,
   subscribeFieldNode,
 } from '../../../../dispatch';
-import { SetValueOption } from '../../../../types/value';
+import { WriteOption } from '../../../../types/value';
 import type { PlainNode } from '../../../__tests__/fixtures/createPlainNode';
 import { createTestTree } from '../../../__tests__/fixtures/createTestTree';
 
@@ -65,12 +65,12 @@ it('never exposes any hint through emitted values or delivered payloads', () => 
     attach(node);
     return node;
   };
-  dispatchMount(root, undefined, SetValueOption.Overwrite);
+  dispatchMount(root, undefined, WriteOption.Overwrite);
   for (const value of [3, 4, 1, 1])
     dispatchSetValue(
       root.structure!.nested.structure!.value,
       value,
-      SetValueOption.Overwrite,
+      WriteOption.Overwrite,
     );
   expect(hints.length).toBeGreaterThan(0);
   expect(payloads.length).toBeGreaterThan(0);

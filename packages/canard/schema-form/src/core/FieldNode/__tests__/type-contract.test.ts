@@ -7,8 +7,8 @@ import { isObjectNode, isTerminalNode } from '../index';
 import type { FieldNodeEventType, FieldNodeRequestType } from '../index';
 import type {
   ArrayNode,
-  FieldInputProps,
   FieldNode,
+  FieldNodeInputProps,
   InferFieldNode,
   NullNode,
   NumberNode,
@@ -34,7 +34,7 @@ type PublicKeys =
   | 'path'
   | 'children'
   | 'raw'
-  | 'extras'
+  | 'undeclaredValues'
   | 'value'
   | 'outputValue'
   | 'inactiveValues'
@@ -168,10 +168,10 @@ describe('new FieldNode public types', () => {
     >();
     expectTypeOf<Mismatched['value']>().toEqualTypeOf<unknown>();
     expectTypeOf<
-      Parameters<FieldInputProps<Types, false>['onChange']>[0]
+      Parameters<FieldNodeInputProps<Types, false>['onChange']>[0]
     >().toEqualTypeOf<string | number | undefined>();
     expectTypeOf<
-      Parameters<FieldInputProps<Types, true>['onChange']>[0]
+      Parameters<FieldNodeInputProps<Types, true>['onChange']>[0]
     >().toEqualTypeOf<string | number | null | undefined>();
   });
 

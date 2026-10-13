@@ -5,7 +5,7 @@ import type { FormScenario } from '@aileron/schema-form-scenarios';
 import type { BlueprintSchema } from '../../blueprint';
 import { loadFieldNodeAtMount, writeFieldNode } from '../../settle';
 import { createTestTree } from '../../settle/__tests__/fixtures/createTestTree';
-import { SetValueOption } from '../../types/value';
+import { WriteOption } from '../../types/value';
 import { runScenario } from './utils/runScenario';
 
 // filid:contract scenario-runner
@@ -58,7 +58,7 @@ describe('union.entry-two-step', () => {
             root,
             step.value,
             'callerReplace',
-            SetValueOption.Overwrite,
+            WriteOption.Overwrite,
           );
       },
       assert: (expected) => {
@@ -74,11 +74,7 @@ describe('union.entry-two-step', () => {
     });
     expect(result.executedSteps).toBe(2);
     const loaded = createTestTree(schema).root;
-    loadFieldNodeAtMount(
-      loaded,
-      { kind: 'flag', a: 0 },
-      SetValueOption.Overwrite,
-    );
+    loadFieldNodeAtMount(loaded, { kind: 'flag', a: 0 }, WriteOption.Overwrite);
     expect(loaded.structure?.a?.raw).toBe(false);
   });
 
@@ -119,7 +115,7 @@ describe('union.entry-two-step', () => {
             root,
             step.value,
             'callerReplace',
-            SetValueOption.Overwrite,
+            WriteOption.Overwrite,
           );
       },
       assert: (expected) => {
@@ -172,7 +168,7 @@ describe('union.entry-two-step', () => {
               root,
               step.value,
               'callerReplace',
-              SetValueOption.Overwrite,
+              WriteOption.Overwrite,
             ),
           ).toThrow();
       },

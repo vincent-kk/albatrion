@@ -1,12 +1,12 @@
 // NODE-058, SURFACE-059, REACT-032, GOAL-088: checked by the package tsc command.
 import { expectTypeOf } from 'vitest';
 
-import type { JSONSchema as CoreJSONSchema, Validator } from '../core';
+import type { AuthoredSchema, Validator } from '../core';
 import { FieldNodeEventType, ValidationMode, isUnionNode } from '../index';
 import type {
+  FieldInputHint,
   FieldInputProps,
   FieldNode,
-  Hint,
   InferFieldNode,
   JSONSchema,
   NumberNode,
@@ -31,10 +31,12 @@ function checkUnion(node: FieldNode) {
 }
 void checkUnion;
 
-expectTypeOf<Hint['type']>().toEqualTypeOf<FieldNode['type']>();
-expectTypeOf<Hint['schemaType']>().toEqualTypeOf<FieldNode['schemaType']>();
-expectTypeOf<Hint['nullable']>().toEqualTypeOf<boolean>();
-expectTypeOf<Hint['typeMismatch']>().toEqualTypeOf<boolean>();
+expectTypeOf<FieldInputHint['type']>().toEqualTypeOf<FieldNode['type']>();
+expectTypeOf<FieldInputHint['schemaType']>().toEqualTypeOf<
+  FieldNode['schemaType']
+>();
+expectTypeOf<FieldInputHint['nullable']>().toEqualTypeOf<boolean>();
+expectTypeOf<FieldInputHint['typeMismatch']>().toEqualTypeOf<boolean>();
 expectTypeOf<FieldInputProps<number>['type']>().toEqualTypeOf<
   NumberNode['type']
 >();
@@ -67,7 +69,7 @@ expectTypeOf<
 >().toEqualTypeOf<string | undefined>();
 
 expectTypeOf<JSONSchema>().toEqualTypeOf<
-  CoreJSONSchema<object, SchemaPresentation>
+  AuthoredSchema<object, SchemaPresentation>
 >();
 expectTypeOf<
   NonNullable<NonNullable<JSONSchema['properties']>[string]>['presentation']

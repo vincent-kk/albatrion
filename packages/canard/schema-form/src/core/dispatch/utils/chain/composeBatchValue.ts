@@ -1,7 +1,7 @@
 import { isArray } from '@winglet/common-utils/filter';
 
 import type { FieldNodeRecord } from '../../../record';
-import type { SetValueOption } from '../../../types/value';
+import type { WriteOption } from '../../../types/value';
 import { replaceAtPath } from './utils/replaceAtPath';
 
 /**
@@ -14,7 +14,7 @@ import { replaceAtPath } from './utils/replaceAtPath';
  */
 export const composeBatchValue = <Self extends FieldNodeRecord<Self>>(
   root: Self,
-  writes: readonly { node: Self; value: unknown; option: SetValueOption }[],
+  writes: readonly { node: Self; value: unknown; option: WriteOption }[],
 ): unknown => {
   let value = root.local;
   for (const write of writes) {

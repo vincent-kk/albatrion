@@ -8,7 +8,7 @@
 - `<Form>`은 `core/`의 새 엔진을 사용하며 노드 종류는 동작 행 계약을 따릅니다. `src/__legacy__/`는 참고용으로 보존하고, 비레거시 코드는 이 경로를 가져오지 않습니다(LANDING-067·205).
 - 플러그인 등록은 `registerPlugin()`만을 경유한다. `PluginManager`의 static 상태를 우회 변경하지 않는다.
 - 공개 검증 오류 형은 `ValidationIssue`이며 패키지 진입점은 `JSONSchemaError`를 내보내지 않습니다. 노드 형·가드도 새 엔진의 계약을 이름으로 내보냅니다(ERROR-032, 34C-02·50C-01, LANDING-067·170).
-- 상태 열거는 내부와 공개 경계에서 `FieldNodeState` 한 이름을 사용하며 Dirty=1·Touched=2·ShowError=4를 유지합니다. `NodeState` 별칭은 내보내지 않습니다(SURFACE-056·060, LANDING-157).
+- 상태 열거는 내부와 공개 경계에서 `FieldNodeState` 한 이름을 사용하며 Dirty=1·Touched=2·ErrorVisible=4를 유지합니다. `NodeState` 별칭은 내보내지 않습니다(SURFACE-056·060, LANDING-157).
 
 ## API Contracts
 
@@ -28,7 +28,7 @@
 
 `types/jsonSchema.ts`의 스키마 형은 0.16.0이 선언하던 `computed`, `&` 축약 여덟 개, 스키마 수준 `injectTo`, 최상위 `terminal`과 객체의 최상위 `virtual`·`propertyKeys`를 선언하지 않습니다. 제어는 `controls` 안에, 정적 설정은 `options` 안에 둡니다(CONTROLS-016·051). 끝의 `[alt: string]: any`는 검증기 키워드를 위해 남으므로 그 키를 써도 형 오류는 아니며, 런타임도 그 키를 제어로 읽지 않습니다.
 
-공개 `JSONSchema`(코어 인터페이스)와 종류별 별칭은 `controls`를 코어의 `SchemaControls` 형으로 선언합니다. 주석이나 `satisfies`로 형을 준 스키마에서 `controls` 안의 모르는 키, 배열이 아닌 `watch`, 함수가 아닌 `injectTo`, `children` 항목 안의 아홉 키 밖 키는 형 오류입니다. 조각 자리(`oneOf`/`anyOf`/`allOf` 분기, `then`, `else`)는 같은 재귀 스키마 형을 쓰므로 아홉 키 제한을 형으로 걸지 않으며, 형을 주지 않은 인라인 `jsonSchema`는 제네릭 추론 때문에 중첩된 초과 키를 검사하지 않습니다. 두 경우 모두 런타임이 청사진 오류를 던집니다. `options`의 형은 아직 열려 있습니다.
+공개 `JSONSchema`(코어 인터페이스 `AuthoredSchema`의 별칭)와 종류별 별칭은 `controls`를 코어의 `SchemaControls` 형으로 선언합니다. 주석이나 `satisfies`로 형을 준 스키마에서 `controls` 안의 모르는 키, 배열이 아닌 `watch`, 함수가 아닌 `injectTo`, `children` 항목 안의 아홉 키 밖 키는 형 오류입니다. 조각 자리(`oneOf`/`anyOf`/`allOf` 분기, `then`, `else`)는 같은 재귀 스키마 형을 쓰므로 아홉 키 제한을 형으로 걸지 않으며, 형을 주지 않은 인라인 `jsonSchema`는 제네릭 추론 때문에 중첩된 초과 키를 검사하지 않습니다. 두 경우 모두 런타임이 청사진 오류를 던집니다. `options`의 형은 아직 열려 있습니다.
 
 ### 스키마 옵션
 

@@ -40,9 +40,9 @@ export type {
   UnionMemberType,
   UnionSchemaType,
   InferFieldNode,
-  FieldInputProps,
+  FieldNodeInputProps,
 } from './FieldNode';
 export { FieldNodeState, ValidationMode } from './types/state';
-export type { JSONSchema } from './types/jsonSchema';
+export type { AuthoredSchema } from './types/jsonSchema';
 export { retainValidationRoot, releaseValidationRoot } from './validation';
 export type { Validator, ValidationIssue } from './validation';

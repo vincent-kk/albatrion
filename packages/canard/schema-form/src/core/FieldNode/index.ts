@@ -38,5 +38,5 @@ export type {
   UnionMemberType,
   UnionSchemaType,
   InferFieldNode,
-  FieldInputProps,
+  FieldNodeInputProps,
 } from './type';

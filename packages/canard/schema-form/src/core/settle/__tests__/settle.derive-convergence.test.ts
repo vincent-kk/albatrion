@@ -1,7 +1,7 @@
 import { afterEach, expect, it, vi } from 'vitest';
 
 import { DeriveConvergenceTargets } from '../../blueprint';
-import { SetValueOption } from '../../types/value';
+import { WriteOption } from '../../types/value';
 import { loadFieldNodeAtMount, writeFieldNode } from '../index';
 import { deriveShadowEvaluation } from '../utils/derivation/deriveShadowEvaluation';
 import { createTestTree } from './fixtures/createTestTree';
@@ -361,14 +361,9 @@ it('actually runs shadow and rejects a false proof with nonzero confirmation can
       b: { type: 'number', controls: { derived: '../a + 1' } },
     },
   });
-  loadFieldNodeAtMount(root, { source: 1 }, SetValueOption.Overwrite);
+  loadFieldNodeAtMount(root, { source: 1 }, WriteOption.Overwrite);
   DeriveConvergenceTargets.set(blueprint, new Set(['/a', '/b']));
   expect(() =>
-    writeFieldNode(
-      root.structure!.source,
-      3,
-      'input',
-      SetValueOption.Overwrite,
-    ),
+    writeFieldNode(root.structure!.source, 3, 'input', WriteOption.Overwrite),
   ).toThrow('Derive convergence proof failed: confirmation was not empty');
 });

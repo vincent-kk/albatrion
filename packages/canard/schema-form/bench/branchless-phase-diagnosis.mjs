@@ -73,7 +73,7 @@ globalThis.__phaseExit = (frame) => {
 /** Classify boundaries, without changing the operation or its arguments. */
 function phaseFor(file, name, node) {
   if (componentProbe && (file.includes('/fieldInputs/FieldInputArray.tsx') ||
-    file.endsWith('/useChildNodeComponents.tsx') || file.endsWith('/FieldInputSlot.tsx'))) return 'react-render';
+    file.endsWith('/useChildFields.tsx') || file.endsWith('/FieldInputSlot.tsx'))) return 'react-render';
   if (name === 'nodeFromJSONSchema') return 'other';
   if (/react-dom-(client\.development|profiling\.profiling)\.js$/.test(file)) {
     if (['renderRootSync', 'renderRootConcurrent'].includes(name)) return 'react-render';

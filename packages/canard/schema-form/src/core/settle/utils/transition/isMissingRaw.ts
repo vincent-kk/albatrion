@@ -14,7 +14,7 @@ export const isMissingRaw = <Self extends FieldNodeRecord<Self>>(
 ): boolean => {
   if (node.raw !== undefined) return false;
   if (node.behavior.strategy !== 'branch') return true;
-  if (node.extras !== undefined || hasLatentUnder(context, node.path))
+  if (node.undeclaredValues !== undefined || hasLatentUnder(context, node.path))
     return false;
   return (node.children ?? []).every((child) => isMissingRaw(child, context));
 };

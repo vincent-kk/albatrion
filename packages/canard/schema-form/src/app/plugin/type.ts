@@ -21,7 +21,7 @@ import type { JSONSchema } from '@/schema-form/types/jsonSchema';
  * Minimal plugin with custom components:
  * ```typescript
  * const myPlugin: SchemaFormPlugin = {
- *   FieldRenderer: CustomFormGroup,
+ *   FieldRenderer: CustomFormField,
  *   FormLabelRenderer: CustomFormLabel,
  * };
  * ```
@@ -72,7 +72,7 @@ import type { JSONSchema } from '@/schema-form/types/jsonSchema';
  * ```typescript
  * const fullPlugin: SchemaFormPlugin = {
  *   // Render components
- *   FieldRenderer: CustomFormGroup,
+ *   FieldRenderer: CustomFormField,
  *   FormLabelRenderer: CustomFormLabel,
  *   FormInputRenderer: CustomFormInput,
  *   FormErrorRenderer: CustomFormError,
@@ -109,7 +109,7 @@ import type { JSONSchema } from '@/schema-form/types/jsonSchema';
  * - When multiple plugins define the same property, the last one wins
  */
 export interface SchemaFormPlugin {
-  /** Form.Group Component */
+  /** Form.Field Component */
   FieldRenderer?: ComponentType<FieldRendererProps>;
   /** Form.Label Component */
   FormLabelRenderer?: ComponentType<FieldRendererProps>;

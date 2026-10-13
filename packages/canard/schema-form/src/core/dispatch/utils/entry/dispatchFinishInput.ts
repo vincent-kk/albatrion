@@ -1,6 +1,6 @@
 import type { FieldNodeRecord } from '../../../record';
 import { writeFieldNode } from '../../../settle';
-import { SetValueOption } from '../../../types/value';
+import { WriteOption } from '../../../types/value';
 import { captureChainError } from '../chain/captureChainError';
 import { enterFieldNodeChain } from '../chain/enterFieldNodeChain';
 import { exitFieldNodeChain } from '../chain/exitFieldNodeChain';
@@ -14,15 +14,15 @@ import { readBatchValue } from '../chain/readBatchValue';
  */
 export const dispatchFinishInput = <Self extends FieldNodeRecord<Self>>(
   node: Self,
-  option: SetValueOption = SetValueOption.Overwrite,
+  option: WriteOption = WriteOption.Overwrite,
 ): void => {
   if (node.disposed || node.rootNode.disposed) return;
   if (!enterFieldNodeChain(node)) return;
   try {
     const runtime = node.rootNode.runtime;
     if (
-      option & SetValueOption.DisableAutomaticWrites ||
-      (!(option & SetValueOption.EnableAutomaticWrites) &&
+      option & WriteOption.DisableAutomaticWrites ||
+      (!(option & WriteOption.EnableAutomaticWrites) &&
         runtime.disableAutomaticWrites)
     )
       return;

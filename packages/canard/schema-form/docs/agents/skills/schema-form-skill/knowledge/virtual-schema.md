@@ -29,7 +29,7 @@
 
 ## required Cascade
 
-`required: ['period']` (naming the virtual field) makes **every field it contains** required. Grouped error display for the tuple: `useChildNodeErrors` (`validation-and-state.md`).
+`required: ['period']` (naming the virtual field) makes **every field it contains** required. Grouped error display for the tuple: `useChildFieldErrors` (`validation-and-state.md`).
 
 ## Node Access
 

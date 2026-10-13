@@ -4,8 +4,8 @@ import { describe, expect, test } from 'vitest';
 
 import type {
   FieldInputDefinition,
+  FieldInputHint,
   FieldInputTestObject,
-  Hint,
 } from '@/schema-form/types';
 
 import { normalizeFieldInputDefinitions } from '../fieldInputDefinitions';
@@ -64,7 +64,7 @@ describe('normalizeFieldInputDefinitions', () => {
 
   describe('FieldInputTestFn을 사용한 정의', () => {
     test('함수형 테스트는 그대로 유지', () => {
-      const testFn = (hint: Hint) => hint.type === 'string';
+      const testFn = (hint: FieldInputHint) => hint.type === 'string';
       const definitions: FieldInputDefinition[] = [
         {
           test: testFn,
@@ -118,7 +118,9 @@ describe('normalizeFieldInputDefinitions', () => {
 });
 
 describe('fieldInputTestFnFactory (fieldInputTestObject를 통한 간접 테스트)', () => {
-  const createTestHint = (overrides: Partial<Hint> = {}): Hint => ({
+  const createTestHint = (
+    overrides: Partial<FieldInputHint> = {},
+  ): FieldInputHint => ({
     schemaType: 'string',
     typeMismatch: false,
     type: 'string',

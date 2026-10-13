@@ -21,9 +21,9 @@ const Controlled = ({ path, value, onChange }: FieldInputProps) => (
 );
 
 /** Render virtual branch children using the component contract, not node internals. */
-const Virtual = ({ ChildNodeComponents }: FieldInputProps) => (
+const Virtual = ({ ChildFields }: FieldInputProps) => (
   <section data-virtual>
-    {ChildNodeComponents.map((Component) => (
+    {ChildFields.map((Component) => (
       <Component key={Component.key} />
     ))}
   </section>

@@ -50,7 +50,7 @@ const expectCommits = async (validated: boolean) => {
   let commits = 0;
   const form = await renderForm(scenario.schema as JSONSchema, { defaultValue: scenario.initialValue, validator: true,
     ...(!validated && { validationMode: ValidationMode.None }),
-    children: () => <Profiler id="group" onRender={() => { commits++; }}><Form.Group /></Profiler> });
+    children: () => <Profiler id="group" onRender={() => { commits++; }}><Form.Field /></Profiler> });
   try {
     for (const stage of renderCommitStages) {
       await form.flush();

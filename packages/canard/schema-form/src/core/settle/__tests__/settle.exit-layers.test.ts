@@ -1,6 +1,6 @@
 import { describe, expect, it, vi } from 'vitest';
 
-import { SetValueOption } from '../../types/value';
+import { WriteOption } from '../../types/value';
 import { loadFieldNodeAtMount, writeFieldNode } from '../index';
 import { createTestTree } from './fixtures/createTestTree';
 
@@ -23,14 +23,9 @@ describe('settled exit policy layers', () => {
     loadFieldNodeAtMount(
       root,
       { flag: true, secret: 'held' },
-      SetValueOption.Overwrite,
+      WriteOption.Overwrite,
     );
-    writeFieldNode(
-      root.structure!.flag,
-      false,
-      'input',
-      SetValueOption.Overwrite,
-    );
+    writeFieldNode(root.structure!.flag, false, 'input', WriteOption.Overwrite);
     expect(
       root.runtime.latentRaw.get(JSON.stringify(['/secret', 'string'])),
     ).toBe('held');
@@ -55,14 +50,9 @@ describe('settled exit policy layers', () => {
     loadFieldNodeAtMount(
       root,
       { flag: true, secret: 'held' },
-      SetValueOption.Overwrite,
+      WriteOption.Overwrite,
     );
-    writeFieldNode(
-      root.structure!.flag,
-      false,
-      'input',
-      SetValueOption.Overwrite,
-    );
+    writeFieldNode(root.structure!.flag, false, 'input', WriteOption.Overwrite);
     expect(
       root.runtime.latentRaw.has(JSON.stringify(['/secret', 'string'])),
     ).toBe(false);
@@ -84,14 +74,9 @@ describe('settled exit policy layers', () => {
     loadFieldNodeAtMount(
       root,
       { flag: true, secret: 'held' },
-      SetValueOption.Overwrite,
+      WriteOption.Overwrite,
     );
-    writeFieldNode(
-      root.structure!.flag,
-      false,
-      'input',
-      SetValueOption.Overwrite,
-    );
+    writeFieldNode(root.structure!.flag, false, 'input', WriteOption.Overwrite);
     expect(
       root.runtime.latentRaw.has(JSON.stringify(['/secret', 'string'])),
     ).toBe(false);
@@ -114,14 +99,9 @@ describe('settled exit policy layers', () => {
     loadFieldNodeAtMount(
       root,
       { flag: true, secret: 'held' },
-      SetValueOption.Overwrite,
+      WriteOption.Overwrite,
     );
-    writeFieldNode(
-      root.structure!.flag,
-      false,
-      'input',
-      SetValueOption.Overwrite,
-    );
+    writeFieldNode(root.structure!.flag, false, 'input', WriteOption.Overwrite);
     expect(
       root.runtime.latentRaw.has(JSON.stringify(['/secret', 'string'])),
     ).toBe(false);
@@ -148,14 +128,9 @@ describe('settled exit policy layers', () => {
     loadFieldNodeAtMount(
       root,
       { flag: true, secret: 'held' },
-      SetValueOption.Overwrite,
+      WriteOption.Overwrite,
     );
-    writeFieldNode(
-      root.structure!.flag,
-      false,
-      'input',
-      SetValueOption.Overwrite,
-    );
+    writeFieldNode(root.structure!.flag, false, 'input', WriteOption.Overwrite);
     expect(
       root.runtime.latentRaw.get(JSON.stringify(['/secret', 'string'])),
     ).toBe('held');
@@ -190,19 +165,14 @@ describe('settled exit policy layers', () => {
     loadFieldNodeAtMount(
       root,
       { flag: true, addr: { city: 'C', zip: 'Z', extra: 'E' } },
-      SetValueOption.Overwrite,
+      WriteOption.Overwrite,
     );
-    writeFieldNode(
-      root.structure!.flag,
-      false,
-      'input',
-      SetValueOption.Overwrite,
-    );
+    writeFieldNode(root.structure!.flag, false, 'input', WriteOption.Overwrite);
     expect(root.structure?.addr?.structure?.city?.raw).toBe('C');
     expect(
       root.runtime.latentRaw.has(JSON.stringify(['/addr/zip', 'string'])),
     ).toBe(false);
-    expect(root.structure?.addr?.extras).toEqual({ extra: 'E' });
+    expect(root.structure?.addr?.undeclaredValues).toEqual({ extra: 'E' });
   });
 
   it('WRITE-033 children subtree policy reaches exiting descendants', () => {
@@ -233,14 +203,9 @@ describe('settled exit policy layers', () => {
     loadFieldNodeAtMount(
       root,
       { flag: true, branch: { drop: 'D', keep: 'K' } },
-      SetValueOption.Overwrite,
+      WriteOption.Overwrite,
     );
-    writeFieldNode(
-      root.structure!.flag,
-      false,
-      'input',
-      SetValueOption.Overwrite,
-    );
+    writeFieldNode(root.structure!.flag, false, 'input', WriteOption.Overwrite);
     expect(
       root.runtime.latentRaw.has(JSON.stringify(['/branch/drop', 'string'])),
     ).toBe(false);
@@ -284,20 +249,15 @@ describe('settled exit policy layers', () => {
           keep: 'K',
         },
       },
-      SetValueOption.Overwrite,
+      WriteOption.Overwrite,
     );
     writeFieldNode(
       root.structure!.branch.structure!.show,
       false,
       'input',
-      SetValueOption.Overwrite,
+      WriteOption.Overwrite,
     );
-    writeFieldNode(
-      root.structure!.flag,
-      false,
-      'input',
-      SetValueOption.Overwrite,
-    );
+    writeFieldNode(root.structure!.flag, false, 'input', WriteOption.Overwrite);
     expect(
       root.runtime.latentRaw.has(JSON.stringify(['/branch/drop', 'string'])),
     ).toBe(false);
@@ -334,20 +294,15 @@ describe('settled exit policy layers', () => {
     loadFieldNodeAtMount(
       root,
       { flag: true, branch: { show: true, keep: 'K' } },
-      SetValueOption.Overwrite,
+      WriteOption.Overwrite,
     );
     writeFieldNode(
       root.structure!.branch.structure!.show,
       false,
       'input',
-      SetValueOption.Overwrite,
+      WriteOption.Overwrite,
     );
-    writeFieldNode(
-      root.structure!.flag,
-      false,
-      'input',
-      SetValueOption.Overwrite,
-    );
+    writeFieldNode(root.structure!.flag, false, 'input', WriteOption.Overwrite);
     expect(
       root.runtime.latentRaw.get(JSON.stringify(['/branch/keep', 'string'])),
     ).toBe('K');
@@ -373,20 +328,10 @@ describe('settled exit policy layers', () => {
     loadFieldNodeAtMount(
       root,
       { flag: true, clear: false, secret: 'held' },
-      SetValueOption.Overwrite,
+      WriteOption.Overwrite,
     );
-    writeFieldNode(
-      root.structure!.clear,
-      true,
-      'input',
-      SetValueOption.Overwrite,
-    );
-    writeFieldNode(
-      root.structure!.flag,
-      false,
-      'input',
-      SetValueOption.Overwrite,
-    );
+    writeFieldNode(root.structure!.clear, true, 'input', WriteOption.Overwrite);
+    writeFieldNode(root.structure!.flag, false, 'input', WriteOption.Overwrite);
     expect(
       root.runtime.latentRaw.has(JSON.stringify(['/secret', 'string'])),
     ).toBe(false);
@@ -415,7 +360,7 @@ describe('settled exit policy layers', () => {
       loadFieldNodeAtMount(
         root,
         { flag: true, secret: 'held' },
-        SetValueOption.Overwrite,
+        WriteOption.Overwrite,
       ),
     ).toThrow();
     expect(root.runtime.diagnostics).toMatchObject({
@@ -424,12 +369,7 @@ describe('settled exit policy layers', () => {
       commit: 1,
     });
     const calls = explode.mock.calls.length;
-    writeFieldNode(
-      root.structure!.flag,
-      false,
-      'input',
-      SetValueOption.Overwrite,
-    );
+    writeFieldNode(root.structure!.flag, false, 'input', WriteOption.Overwrite);
     expect(explode).toHaveBeenCalledTimes(calls);
     expect(
       root.runtime.latentRaw.get(JSON.stringify(['/secret', 'string'])),
@@ -453,19 +393,14 @@ describe('settled exit policy layers', () => {
     loadFieldNodeAtMount(
       root,
       { flag: true, secret: 'held' },
-      SetValueOption.Overwrite,
+      WriteOption.Overwrite,
     );
     expect(
       [...(root.runtime.committedRuleValues?.keys() ?? [])].some((key) =>
         key.startsWith('["/secret",'),
       ),
     ).toBe(true);
-    writeFieldNode(
-      root.structure!.flag,
-      false,
-      'input',
-      SetValueOption.Overwrite,
-    );
+    writeFieldNode(root.structure!.flag, false, 'input', WriteOption.Overwrite);
     expect(
       [...(root.runtime.committedRuleValues?.keys() ?? [])].some((key) =>
         key.startsWith('["/secret",'),
@@ -489,7 +424,7 @@ describe('settled exit policy layers', () => {
         },
       },
     });
-    loadFieldNodeAtMount(root, { hidden: 'held' }, SetValueOption.Overwrite);
+    loadFieldNodeAtMount(root, { hidden: 'held' }, WriteOption.Overwrite);
     expect(root.structure?.hidden?.visible).toBe(false);
     expect(root.structure?.hidden?.raw).toBe('held');
     expect(root.runtime.latentRaw.size).toBe(0);
@@ -517,15 +452,10 @@ describe('settled exit policy layers', () => {
     loadFieldNodeAtMount(
       root,
       { flag: true, secret: 'held' },
-      SetValueOption.Overwrite,
+      WriteOption.Overwrite,
     );
     const calls = read.mock.calls.length;
-    writeFieldNode(
-      root.structure!.flag,
-      false,
-      'input',
-      SetValueOption.Overwrite,
-    );
+    writeFieldNode(root.structure!.flag, false, 'input', WriteOption.Overwrite);
     expect(read).toHaveBeenCalledTimes(calls);
     expect(
       root.runtime.latentRaw.has(JSON.stringify(['/secret', 'string'])),

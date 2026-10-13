@@ -4,7 +4,7 @@ import { createElement } from 'react';
 
 import { describe, expect, it } from 'vitest';
 
-import { type JSONSchema, nodeFromJSONSchema } from '../../index';
+import { type AuthoredSchema, nodeFromJSONSchema } from '../../index';
 import { blueprint } from '../blueprint';
 import type { BlueprintSchema } from '../type';
 import { createBlueprintGate } from '../utils/analyze/createBlueprintGate';
@@ -382,11 +382,11 @@ describe('owned-inline ownership and protection', () => {
       extension: { opaque: true },
     };
     const first = nodeFromJSONSchema({
-      jsonSchema: schema as JSONSchema,
+      jsonSchema: schema as AuthoredSchema,
       validationMode: 0,
     });
     const second = nodeFromJSONSchema({
-      jsonSchema: schema as JSONSchema,
+      jsonSchema: schema as AuthoredSchema,
       validationMode: 0,
     });
     first.find('/nested/count')!.setValue(2);

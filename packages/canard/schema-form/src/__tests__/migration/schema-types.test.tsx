@@ -52,9 +52,9 @@ it('LANDING-189 readonly type arrays infer the precise public value union', asyn
 });
 
 it('LANDING-149 inline virtual inputs remain branches with referenced children', async () => {
-  const Virtual = ({ ChildNodeComponents }: FieldInputProps) => (
+  const Virtual = ({ ChildFields }: FieldInputProps) => (
     <section data-virtual>
-      {ChildNodeComponents.map((Child) => (
+      {ChildFields.map((Child) => (
         <Child key={Child.key} />
       ))}
     </section>

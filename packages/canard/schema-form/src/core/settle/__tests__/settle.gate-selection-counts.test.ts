@@ -1,7 +1,7 @@
 import { describe, expect, it, vi } from 'vitest';
 
 import * as compiler from '../../blueprint/utils/expressions/createDynamicFunction';
-import { SetValueOption } from '../../types/value';
+import { WriteOption } from '../../types/value';
 import { loadFieldNodeAtMount, writeFieldNode } from '../index';
 import { createTestTree } from './fixtures/createTestTree';
 
@@ -44,11 +44,7 @@ describe('baseline fixed-width branch-axis characterization', () => {
           })),
         } as const;
         const { root } = createTestTree(schema);
-        loadFieldNodeAtMount(
-          root,
-          { kind: 'kind_0' },
-          SetValueOption.Overwrite,
-        );
+        loadFieldNodeAtMount(root, { kind: 'kind_0' }, WriteOption.Overwrite);
         const transitions = [
           { kind: 'kind_4', calls: 16 * count },
           { kind: 'kind_0', calls: 8 * count },
@@ -61,7 +57,7 @@ describe('baseline fixed-width branch-axis characterization', () => {
             root.structure!.kind,
             transition.kind,
             'input',
-            SetValueOption.Overwrite,
+            WriteOption.Overwrite,
           );
           expect(evaluations).toBe(transition.calls);
           expect(root.children).toHaveLength(5);

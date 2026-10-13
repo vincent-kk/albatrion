@@ -15,7 +15,7 @@ import { ValidationMode } from '@/schema-form/core';
 import { type FormHarness, renderForm } from '../renderForm';
 
 /**
- * State-management render suite — node *state* (Dirty / Touched / ShowError)
+ * State-management render suite — node *state* (Dirty / Touched / ErrorVisible)
  * vs node *value* separation, observed through the public `FormHandle` and the
  * node API, asserting BOTH the node tree AND the rendered DOM.
  *
@@ -27,14 +27,14 @@ import { type FormHarness, renderForm } from '../renderForm';
  *   - `handle.setState(s)` → `rootNode.setSubtreeState(s)`; `handle.clearState()`
  *     → `rootNode.clearSubtreeState()`; `handle.getState()` → `rootNode.globalState`.
  *   - `checkShowError` (FieldRendererProvider) evaluates the per-node
- *     `FieldNodeState.ShowError` flag FIRST: when present it overrides the form-level
+ *     `FieldNodeState.ErrorVisible` flag FIRST: when present it overrides the form-level
  *     `showError` mode. Default mode is `ShowError.DirtyTouched`, so an invalid
- *     value is hidden until dirty&touched OR an explicit `ShowError` flag.
+ *     value is hidden until dirty&touched OR an explicit `ErrorVisible` flag.
  *   - `clearState()` clears flags but KEEPS values (no remount). `reset()` bumps
  *     the form version key → full remount → uncontrolled inputs revert to
  *     defaults AND flags clear. `node.resetSubtree()` resets only that subtree's
  *     values to defaults and clears its subtree state.
- *   - `FieldNodeState.Dirty=1, Touched=2, ShowError=4`; `node.state` is keyed by these
+ *   - `FieldNodeState.Dirty=1, Touched=2, ErrorVisible=4`; `node.state` is keyed by these
  *     numeric flags. The default renderer shows NO dirty/touched indicator, so a
  *     `FieldRenderer` exposes one as `[data-indicator]` data-attributes
  *     while still rendering the uncontrolled `<Input/>` and the error `<em>`.
@@ -63,7 +63,7 @@ const StateRenderer = ({
   const state = node.state ?? {};
   const dirty = state[FieldNodeState.Dirty] === true;
   const touched = state[FieldNodeState.Touched] === true;
-  const showError = state[FieldNodeState.ShowError] === true;
+  const showError = state[FieldNodeState.ErrorVisible] === true;
   return (
     <div>
       <Input />
@@ -240,11 +240,11 @@ describe('state-management — clearState clears flags but keeps values', () => 
 });
 
 // ---------------------------------------------------------------------------
-// setState ShowError — error <em> appears without changing values
+// setState ErrorVisible — error <em> appears without changing values
 // ---------------------------------------------------------------------------
 
 describe('state-management — setState drives error visibility, not value', () => {
-  it('setState({Dirty,Touched,ShowError}) shows the error <em> without changing values', async () => {
+  it('setState({Dirty,Touched,ErrorVisible}) shows the error <em> without changing values', async () => {
     const form = await renderForm(validatedSchema, {
       validator: true,
       validationMode: ValidationMode.OnChange,
@@ -263,7 +263,7 @@ describe('state-management — setState drives error visibility, not value', () 
       form.handle.setState({
         [FieldNodeState.Dirty]: true,
         [FieldNodeState.Touched]: true,
-        [FieldNodeState.ShowError]: true,
+        [FieldNodeState.ErrorVisible]: true,
       }),
     );
 
@@ -271,10 +271,10 @@ describe('state-management — setState drives error visibility, not value', () 
     expect(form.errorTexts()).toContain('TOO_SHORT');
     expect(form.value('/name')).toBe('ab');
     expect(form.getValue()?.name).toBe('ab');
-    expect(form.node('/name')?.state[FieldNodeState.ShowError]).toBe(true);
+    expect(form.node('/name')?.state[FieldNodeState.ErrorVisible]).toBe(true);
   });
 
-  it('setState({ShowError}) alone forces the error visible regardless of dirty/touched', async () => {
+  it('setState({ErrorVisible}) alone forces the error visible regardless of dirty/touched', async () => {
     const form = await renderForm(validatedSchema, {
       validator: true,
       validationMode: ValidationMode.OnChange,
@@ -285,7 +285,7 @@ describe('state-management — setState drives error visibility, not value', () 
     expect(form.errorTexts()).not.toContain('TOO_SHORT');
 
     await runImperative(form, () =>
-      form.handle.setState({ [FieldNodeState.ShowError]: true }),
+      form.handle.setState({ [FieldNodeState.ErrorVisible]: true }),
     );
 
     expect(form.errorTexts()).toContain('TOO_SHORT');
@@ -304,7 +304,7 @@ describe('state-management — setState drives error visibility, not value', () 
     await form.flush();
 
     await runImperative(form, () =>
-      form.handle.setState({ [FieldNodeState.ShowError]: true }),
+      form.handle.setState({ [FieldNodeState.ErrorVisible]: true }),
     );
     expect(form.errorTexts()).toContain('TOO_SHORT');
 

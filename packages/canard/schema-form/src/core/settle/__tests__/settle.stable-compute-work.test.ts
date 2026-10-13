@@ -1,6 +1,6 @@
 import { afterEach, expect, it, vi } from 'vitest';
 
-import { SetValueOption } from '../../types/value';
+import { WriteOption } from '../../types/value';
 import { loadFieldNodeAtMount, writeFieldNode } from '../index';
 import { computeNode } from '../utils/compute/computeNode';
 import * as selections from '../utils/compute/selectChildren';
@@ -22,7 +22,7 @@ it('keeps dirty work and child post-order without per-node shape or appearance m
       sibling: { type: 'number', default: 3 },
     },
   });
-  loadFieldNodeAtMount(root, { value: 'before' }, SetValueOption.Overwrite);
+  loadFieldNodeAtMount(root, { value: 'before' }, WriteOption.Overwrite);
   const leaf = root.structure!.value;
   for (let index = 0; index < 2; index++) {
     const value = index === 0 ? 'first' : 'later';
@@ -30,7 +30,7 @@ it('keeps dirty work and child post-order without per-node shape or appearance m
     const context = createSettlementContext(
       leaf,
       'input',
-      SetValueOption.Overwrite,
+      WriteOption.Overwrite,
       scratch,
     );
     markWrite(leaf, value, context);
@@ -68,13 +68,13 @@ it('retains child selection and fills for a branchless shape change', () => {
       },
     },
   });
-  loadFieldNodeAtMount(root, { rows: [] }, SetValueOption.Overwrite);
+  loadFieldNodeAtMount(root, { rows: [] }, WriteOption.Overwrite);
   const select = vi.spyOn(selections, 'selectChildren');
   writeFieldNode(
     root.structure!.rows,
     [{}],
     'callerReplace',
-    SetValueOption.Overwrite,
+    WriteOption.Overwrite,
   );
   expect(select.mock.calls.length).toBeGreaterThan(0);
   expect(root.emit).toEqual({ rows: [{ value: 'filled' }] });
@@ -92,18 +92,13 @@ it('retains gate visits, appearance fills and exit when a declaration changes', 
       },
     },
   });
-  loadFieldNodeAtMount(root, { flag: false }, SetValueOption.Overwrite);
+  loadFieldNodeAtMount(root, { flag: false }, WriteOption.Overwrite);
   const select = vi.spyOn(selections, 'selectChildren');
-  writeFieldNode(root.structure!.flag, true, 'input', SetValueOption.Overwrite);
+  writeFieldNode(root.structure!.flag, true, 'input', WriteOption.Overwrite);
   expect(select.mock.calls.length).toBeGreaterThan(0);
   expect(root.emit).toEqual({ flag: true, gated: 'filled' });
   const gated = root.structure!.gated;
-  writeFieldNode(
-    root.structure!.flag,
-    false,
-    'input',
-    SetValueOption.Overwrite,
-  );
+  writeFieldNode(root.structure!.flag, false, 'input', WriteOption.Overwrite);
   expect(gated.detached).toBe(true);
   expect(root.emit).toEqual({ flag: false });
 });

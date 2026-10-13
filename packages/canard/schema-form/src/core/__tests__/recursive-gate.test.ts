@@ -1,8 +1,8 @@
 import { describe, expect, it } from 'vitest';
 
 import {
+  type AuthoredSchema,
   type FieldNode,
-  type JSONSchema,
   ValidationMode,
   nodeFromJSONSchema,
 } from '../index';
@@ -31,7 +31,7 @@ const ROOT = '/a~1b~0c';
 
 const mountTree = (value: Record<string, unknown>): FieldNode =>
   nodeFromJSONSchema({
-    jsonSchema: treeSchema as JSONSchema,
+    jsonSchema: treeSchema as AuthoredSchema,
     defaultValue: value,
     validationMode: ValidationMode.None,
     validator: createTestValidator(),

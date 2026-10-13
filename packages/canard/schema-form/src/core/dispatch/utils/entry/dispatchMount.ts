@@ -3,7 +3,7 @@ import type { FormErrorRecord } from '../../../../errors';
 import type { FieldNodeRecord } from '../../../record';
 import { loadFieldNodeAtMount } from '../../../settle';
 import { ValidationMode } from '../../../types/state';
-import { SetValueOption } from '../../../types/value';
+import { WriteOption } from '../../../types/value';
 import { captureChainError } from '../chain/captureChainError';
 import { enterFieldNodeChain } from '../chain/enterFieldNodeChain';
 import { exitFieldNodeChain } from '../chain/exitFieldNodeChain';
@@ -21,7 +21,7 @@ import { clearWarningKeys } from '../report/clearWarningKeys';
 export const dispatchMount = <Self extends FieldNodeRecord<Self>>(
   root: Self,
   value: unknown = root.runtime.loadSnapshot,
-  option: SetValueOption = SetValueOption.Overwrite,
+  option: WriteOption = WriteOption.Overwrite,
   settings: { deferValidation?: boolean } = {},
 ): void => {
   if (!enterFieldNodeChain(root)) return;

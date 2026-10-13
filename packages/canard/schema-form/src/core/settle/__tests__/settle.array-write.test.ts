@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 
 import { makeFieldNodeTree } from '../../__tests__/makeFieldNodeTree';
 import { patchFieldNodeInteractionState } from '../../record';
-import { SetValueOption } from '../../types/value';
+import { WriteOption } from '../../types/value';
 import { writeFieldNode } from '../index';
 import { createSettlementContext } from '../utils/settlement/createSettlementContext';
 import { hasWrongKindBranchAncestor } from '../utils/transition/hasWrongKindBranchAncestor';
@@ -18,7 +18,7 @@ describe('array settlement writes', () => {
       type: 'array',
       items: { type: 'string' },
     });
-    writeFieldNode(root, ['a', 'b'], 'callerReplace', SetValueOption.Overwrite);
+    writeFieldNode(root, ['a', 'b'], 'callerReplace', WriteOption.Overwrite);
     const first = root.children![0];
     const second = root.children![1];
     patchFieldNodeInteractionState(second, { touched: true, dirty: true });
@@ -26,7 +26,7 @@ describe('array settlement writes', () => {
       root,
       ['x', 'y', 'z'],
       'callerReplace',
-      SetValueOption.Overwrite,
+      WriteOption.Overwrite,
     );
     expect(root.children![0]).toBe(first);
     expect(root.children![1]).toBe(second);
@@ -83,7 +83,7 @@ describe('array settlement writes', () => {
     expect(items.children![1].defaultValue).toBeUndefined();
     items.resetSubtree();
     expect(items.value).toEqual(['a', 'fill']);
-    items.setValue(['q'], SetValueOption.Merge);
+    items.setValue(['q'], WriteOption.Merge);
     expect(items.value).toEqual(['q']);
     expect(items.children).toHaveLength(1);
   });
@@ -96,7 +96,7 @@ describe('array settlement writes', () => {
     root.setValue(['a', 'b']);
     const first = root.children![0];
     const perished = root.children![1];
-    root.setValue(['x'], SetValueOption.Merge);
+    root.setValue(['x'], WriteOption.Merge);
     expect(root.value).toEqual(['x']);
     expect(root.children).toEqual([first]);
     expect(Reflect.get(perished, 'detached')).toBe(true);
@@ -115,11 +115,11 @@ describe('array settlement writes', () => {
       root,
       ['a', 2, 'c', 'd'],
       'callerReplace',
-      SetValueOption.Overwrite,
+      WriteOption.Overwrite,
     );
     expect(root.itemCount).toBe(4);
     expect(root.children).toHaveLength(2);
-    expect(root.extras).toEqual(['c', 'd']);
+    expect(root.undeclaredValues).toEqual(['c', 'd']);
     expect(root.local).toEqual(['a', 2, 'c', 'd']);
     expect(root.children![0].schemaType).toBe(
       root.blueprintNode.prefixItems![0].schemaType,
@@ -173,20 +173,20 @@ describe('array settlement writes', () => {
       type: 'array',
       items: { type: 'string' },
     });
-    writeFieldNode(root, ['a'], 'callerReplace', SetValueOption.Overwrite);
+    writeFieldNode(root, ['a'], 'callerReplace', WriteOption.Overwrite);
     const old = root.children![0];
     writeFieldNode(
       root,
       { 0: 'wrong' },
       'callerReplace',
-      SetValueOption.Overwrite,
+      WriteOption.Overwrite,
     );
     expect(root.raw).toEqual({ 0: 'wrong' });
     expect(root.itemCount).toBe(0);
     expect(root.children).toEqual([]);
-    expect(root.extras).toBeUndefined();
+    expect(root.undeclaredValues).toBeUndefined();
     expect(old.detached).toBe(true);
-    writeFieldNode(root, ['b'], 'callerReplace', SetValueOption.Overwrite);
+    writeFieldNode(root, ['b'], 'callerReplace', WriteOption.Overwrite);
     expect(root.children![0].itemKey).toBeGreaterThan(old.itemKey!);
   });
 
@@ -209,14 +209,14 @@ describe('array settlement writes', () => {
       transient.root,
       [undefined],
       'callerReplace',
-      SetValueOption.DisableAutomaticWrites,
+      WriteOption.DisableAutomaticWrites,
     );
     const pending = transient.root.children![0];
     const scratch = getSettlementScratch(transient.root.runtime);
     const context = createSettlementContext(
       transient.root,
       'callerReplace',
-      SetValueOption.Overwrite,
+      WriteOption.Overwrite,
       scratch,
     );
     transient.root.raw = 7;

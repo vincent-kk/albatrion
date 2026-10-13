@@ -142,7 +142,7 @@ describe('LANDING-146 / LANDING-166 — committed reads and observer deliveries'
       if (event.type & FieldNodeEventType.UpdateValue) deliveries(event);
     });
     const unsubscribeWatch = form.node('/observer')!.subscribe((event) => {
-      if (event.type & FieldNodeEventType.UpdateComputedProperties)
+      if (event.type & FieldNodeEventType.UpdateControlledProperties)
         watches(event);
     });
     try {

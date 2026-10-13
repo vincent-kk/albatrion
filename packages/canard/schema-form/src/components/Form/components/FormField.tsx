@@ -12,17 +12,17 @@ import type { Dictionary } from '@aileron/declare';
 import { FieldProxy } from '@/schema-form/components/Field';
 import type {
   AllowedValue,
-  ChildNodeComponentProps,
+  ChildFieldProps,
   FieldInputProps,
   FieldRendererProps,
 } from '@/schema-form/types';
 
-export type FormGroupProps<Value extends AllowedValue> = {
+export type FormFieldProps<Value extends AllowedValue> = {
   path?: string;
   FieldInput?: ComponentType<FieldInputProps<Value>>;
   FieldRenderer?: ComponentType<FieldRendererProps>;
   Wrapper?: ComponentType<PropsWithChildren<Dictionary>>;
-} & ChildNodeComponentProps;
+} & ChildFieldProps;
 
 /**
  * Renders a complete form field group with customizable input and renderer components.
@@ -35,9 +35,9 @@ export type FormGroupProps<Value extends AllowedValue> = {
  * Basic field group with default rendering:
  * ```tsx
  * <Form jsonSchema={schema}>
- *   <Form.Group path="/email" />
- *   <Form.Group path="/password" />
- *   <Form.Group path="/rememberMe" />
+ *   <Form.Field path="/email" />
+ *   <Form.Field path="/password" />
+ *   <Form.Field path="/rememberMe" />
  * </Form>
  * ```
  *
@@ -50,7 +50,7 @@ export type FormGroupProps<Value extends AllowedValue> = {
  *   </div>
  * );
  *
- * <Form.Group
+ * <Form.Field
  *   path="/username"
  *   Wrapper={FieldWrapper}
  *   placeholder="Enter username"
@@ -71,7 +71,7 @@ export type FormGroupProps<Value extends AllowedValue> = {
  *   />
  * );
  *
- * <Form.Group
+ * <Form.Field
  *   path="/birthDate"
  *   FieldInput={DatePicker}
  *   dateFormat="yyyy-MM-dd"
@@ -93,20 +93,20 @@ export type FormGroupProps<Value extends AllowedValue> = {
  *   </div>
  * );
  *
- * <Form.Group
+ * <Form.Field
  *   path="/address"
  *   FieldRenderer={AddressRenderer}
  * />
  * ```
  */
-export const FormGroup = memo(
+export const FormField = memo(
   ({
     path,
     FieldInput,
     FieldRenderer,
     Wrapper,
     ...restProps
-  }: FormGroupProps<AllowedValue>) => {
+  }: FormFieldProps<AllowedValue>) => {
     const overridePropsRef = useReference(restProps);
     const constant = useConstant({
       FieldInput: FieldInput as ComponentType<FieldInputProps>,
@@ -124,5 +124,5 @@ export const FormGroup = memo(
     );
   },
 ) as <Value extends AllowedValue = AllowedValue>(
-  props: FormGroupProps<Value>,
+  props: FormFieldProps<Value>,
 ) => ReactNode;

@@ -6,7 +6,7 @@ import { afterEach, expect, it } from 'vitest';
 import { nodeFromJSONSchema } from '@/schema-form/core';
 import { FieldRendererContextProvider } from '@/schema-form/providers/FieldRendererContext';
 
-import { useChildNodeErrors } from '../useChildNodeErrors';
+import { useChildFieldErrors } from '../useChildFieldErrors';
 
 afterEach(cleanup);
 
@@ -18,7 +18,7 @@ it('LANDING-170 REACT-019 tracks child errors, state and reordered paths under S
   const first = root.children![0];
   const second = root.children![1];
   const issue = { dataPath: '/1', keyword: 'external', message: 'second' };
-  const { result } = renderHook(() => useChildNodeErrors(root), {
+  const { result } = renderHook(() => useChildFieldErrors(root), {
     wrapper: ({ children }: PropsWithChildren) => (
       <StrictMode>
         <FieldRendererContextProvider>{children}</FieldRendererContextProvider>

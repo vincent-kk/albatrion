@@ -13,7 +13,7 @@ import {
 import { RootNodeContext } from '@/schema-form/providers/RootNodeContext/RootNodeContext';
 import type {
   AttachedFilesMap,
-  ChildNodeComponentProps,
+  ChildFieldProps,
   FieldInputDefinition,
   FieldInputMap,
   FieldRendererProps,
@@ -197,12 +197,8 @@ export function createTrackableRef<T>(
 /**
  * Creates a ref for onChange handler with tracking
  */
-export const createOnChangeRef = (
-  handler?: ChildNodeComponentProps['onChange'],
-) => {
-  const ref = { current: handler } as RefObject<
-    ChildNodeComponentProps['onChange']
-  >;
+export const createOnChangeRef = (handler?: ChildFieldProps['onChange']) => {
+  const ref = { current: handler } as RefObject<ChildFieldProps['onChange']>;
   return ref;
 };
 
@@ -210,10 +206,10 @@ export const createOnChangeRef = (
  * Creates a ref for onFileAttach handler with tracking
  */
 export const createOnFileAttachRef = (
-  handler?: ChildNodeComponentProps['onFileAttach'],
+  handler?: ChildFieldProps['onFileAttach'],
 ) => {
   const ref = { current: handler } as RefObject<
-    ChildNodeComponentProps['onFileAttach']
+    ChildFieldProps['onFileAttach']
   >;
   return ref;
 };

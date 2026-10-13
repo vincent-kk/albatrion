@@ -9,7 +9,7 @@
 - 경로 키 저장소 보조는 record의 런타임 형 선언과 생성·정착의 쓰기가 함께 소비하므로 공통 소유자인 core에 둡니다. PathKeyedMap·PathKeyedSet은 빈 색인을 생성할 때 소유하고 native Map·Set의 열거·instanceof를 유지하며 인스턴스 adoption이나 메서드 패치를 하지 않습니다. K개 항목·깊이 D에서 O(KD) 색인 키 참조와 유일 prefix 및 숫자 radix 저장량을 추가합니다(NODE-045, SETTLE-017·047, GOAL-011).
 
 - `core/index.ts`가 이 fractal의 경계입니다. 새 엔진의 `FieldNode/`·`validation/` 진입점과 바인딩 전용 함수를 와일드카드 없이 이름으로 다시 내보내며, 렌더 계층은 이 경계를 사용합니다(LANDING-067·087, 69C-01).
-- 노드의 `value`는 편집 중인 계산값이고 `outputValue`는 스키마 출력 옵션이 적용된 투영 값입니다. 원본 상태는 `raw`·`extras`에 두며 투영은 노드 트리와 편집 상태를 바꾸지 않습니다(VALUE-002·027·034, LANDING-067).
+- 노드의 `value`는 편집 중인 계산값이고 `outputValue`는 스키마 출력 옵션이 적용된 투영 값입니다. 원본 상태는 `raw`·`undeclaredValues`에 두며 투영은 노드 트리와 편집 상태를 바꾸지 않습니다(VALUE-002·027·034, LANDING-067).
 - 루트 검증·루트 방출·`FormHandle.getValue`·제출은 `outputValue`를 읽습니다. 입력과 `UpdateValue` 관측은 `value`를 사용하며 노드 변경은 공개 쓰기 API 또는 이름 붙은 바인딩 전용 통로를 경유합니다(LANDING-067, REACT-009·010).
 - `src/__legacy__/core/`의 노드·파서·시험은 참고용으로 보존하며 비레거시 코드가 가져오지 않습니다. 새 시나리오 하네스는 새 엔진을 검증합니다(LANDING-205).
 - `nodeFromJSONSchema`는 core만 쓰는 호스트의 진입이며 `src/index.ts`는 내보내지 않습니다. `<Form>`도 같은 트리 생성 통로를 바인딩 전용 함수로 사용합니다. `contextNodeFactory`는 `src/__legacy__/`에 속하며 core·패키지 진입점이 내보내지 않습니다. `core/types`의 state·value·jsonSchema·controls는 구체 파일로 소비하며 별도 와일드카드 배럴이나 node·constructor 계약은 두지 않습니다. 사건 계약은 새 엔진의 record가 소유합니다(LANDING-087, 70C-01).
@@ -29,7 +29,7 @@
 | `nodeFromJSONSchema(props)`                                      | 같은 생성 통로의 트리 작성과 마운트를 잇고 마운트된 루트를 반환하는 core 호스트 진입(70C-01) |
 | `FieldNode` 및 타입별 노드                                      | `value`·`outputValue`·`setValue`·`validate`·`subscribe`·`find`·`revision` 등 노드 공개 표면 |
 | `isFieldNode` · `isBranchNode` · `isTerminalNode` · 타입별 가드 | 런타임 타입 판별                                                                                |
-| `FieldNodeState` | Dirty=1·Touched=2·ShowError=4를 내부와 공개 경계에서 같은 이름으로 사용하며 별칭을 두지 않습니다(SURFACE-056·060, LANDING-157). |
+| `FieldNodeState` | Dirty=1·Touched=2·ErrorVisible=4를 내부와 공개 경계에서 같은 이름으로 사용하며 별칭을 두지 않습니다(SURFACE-056·060, LANDING-157). |
 | `SetValueOption` · `ValidationMode`                              | 쓰기 옵션 비트·검증 모드 열거값 |
 | `FieldNodeEventType` · `FieldNodeRequestType`                  | 새 엔진의 공개 사건·명령 열거값(EVENT-073, LANDING-067) |
 | 바인딩 전용 생성·마운트·폼 로드·인계·입력 쓰기·입력 마침·상호작용 초기화 번호 읽기 | `FieldNode/DETAIL.md`의 통로 계약을 이름으로 다시 내보내며 `src/index.ts`는 내보내지 않음(69C-01·02, 70C-01) |

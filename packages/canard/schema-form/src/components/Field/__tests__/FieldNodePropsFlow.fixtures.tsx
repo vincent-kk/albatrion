@@ -256,7 +256,7 @@ export const HANDLE_CHANGE_OPTION = SetValueOption.Overwrite;
 export const REACTIVE_RERENDERING_EVENTS =
   FieldNodeEventType.UpdateValue |
   FieldNodeEventType.UpdateError |
-  FieldNodeEventType.UpdateComputedProperties;
+  FieldNodeEventType.UpdateControlledProperties;
 
 /**
  * Pre-configured test scenarios for common testing patterns

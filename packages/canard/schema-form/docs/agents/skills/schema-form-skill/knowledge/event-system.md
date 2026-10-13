@@ -15,7 +15,7 @@ Consequence: after `setValue()` returns, values and controls state are current a
 
 ## Event Types
 
-`FieldNodeEventType` is a bit-flag enum exported from the package (enumerate members from `dist/*.d.ts`): lifecycle (`Initialized`), value/state (`UpdateValue`, `UpdateState`, `UpdateError`, `UpdateComputedProperties`, `UpdateChildren`, `UpdatePath`, `UpdateJsonSchema`), aggregates (`UpdateGlobalState`, `UpdateGlobalError`, `UpdateDiagnostics`), focus (`Focused`, `Blurred`), commands to the input (`RequestFocus`, `RequestSelect`, `RequestRefresh`), and `RequestRemount`, which remounts the node's rendered subtree.
+`FieldNodeEventType` is a bit-flag enum exported from the package (enumerate members from `dist/*.d.ts`): lifecycle (`Initialized`), value/state (`UpdateValue`, `UpdateState`, `UpdateError`, `UpdateControlledProperties`, `UpdateChildren`, `UpdatePath`, `UpdateJsonSchema`), aggregates (`UpdateGlobalState`, `UpdateGlobalError`, `UpdateDiagnostics`), focus (`Focused`, `Blurred`), commands to the input (`RequestFocus`, `RequestSelect`, `RequestRefresh`), and `RequestRemount`, which remounts the node's rendered subtree.
 
 - `RequestRefresh` re-syncs uncontrolled inputs; the system raises it, and `formRef.current?.refresh(path)` raises it on demand.
 - `RequestRemount` is the external escape hatch for forcing a full component remount of a subtree: `formRef.current?.remount(path)`. There is no public `node.publish`.

@@ -76,11 +76,11 @@ export const readProjectedValue = <Self extends FieldNodeRecord<Self>>(
         const declared = getDeclaredChildNames(node.blueprintNode);
         if (
           !declared.has(name) &&
-          node.extras !== null &&
-          typeof node.extras === 'object' &&
-          hasOwnProperty(node.extras, name)
+          node.undeclaredValues !== null &&
+          typeof node.undeclaredValues === 'object' &&
+          hasOwnProperty(node.undeclaredValues, name)
         )
-          value = Reflect.get(node.extras, name);
+          value = Reflect.get(node.undeclaredValues, name);
         else return undefined;
       }
     }

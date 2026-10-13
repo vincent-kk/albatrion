@@ -3,20 +3,20 @@ import type { FieldNodeListener } from '../dispatch';
 import type { FieldNodeRuntime } from '../record';
 import type { FieldNodeEventType, FieldNodeRequestType } from '../record';
 import type { NodeStateFlags } from '../types/state';
-import { SetValueOption as InternalSetValueOption } from '../types/value';
+import { WriteOption } from '../types/value';
 import type { ValidationIssue } from '../validation';
 
 /** The four caller-facing flags understood by the first settlement engine. */
 export const SetValueOption: Readonly<
   Pick<
-    typeof InternalSetValueOption,
+    typeof WriteOption,
     'Overwrite' | 'Merge' | 'DisableAutomaticWrites' | 'EnableAutomaticWrites'
   >
 > = Object.freeze({
-  Overwrite: InternalSetValueOption.Overwrite,
-  Merge: InternalSetValueOption.Merge,
-  DisableAutomaticWrites: InternalSetValueOption.DisableAutomaticWrites,
-  EnableAutomaticWrites: InternalSetValueOption.EnableAutomaticWrites,
+  Overwrite: WriteOption.Overwrite,
+  Merge: WriteOption.Merge,
+  DisableAutomaticWrites: WriteOption.DisableAutomaticWrites,
+  EnableAutomaticWrites: WriteOption.EnableAutomaticWrites,
 });
 export type SetValueOption =
   (typeof SetValueOption)[keyof typeof SetValueOption];
@@ -69,7 +69,7 @@ export interface NodeSurface<
   /** Interpreted terminal source or a branch's non-plain source. */
   readonly raw: unknown;
   /** Undeclared object keys retained in incoming own-key order. */
-  readonly extras: unknown;
+  readonly undeclaredValues: unknown;
   readonly value: Value;
   readonly outputValue: unknown;
   readonly inactiveValues: readonly InactiveValue[];
@@ -232,7 +232,7 @@ export type UnionNode<
     });
 
 /** Union input sees the mismatch lamp without accepting a mismatched write. */
-export type FieldInputProps<
+export type FieldNodeInputProps<
   Types extends UnionSchemaType = UnionSchemaType,
   Nullable extends boolean = boolean,
 > =

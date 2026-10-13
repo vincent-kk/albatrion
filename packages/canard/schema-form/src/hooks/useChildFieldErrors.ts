@@ -16,7 +16,7 @@ import {
 } from '@/schema-form/providers';
 
 /** Read direct-child issues and visibility, resubscribing when children or paths change. */
-export const useChildNodeErrors = (
+export const useChildFieldErrors = (
   node: FieldNode,
   disabled?: boolean,
 ): {

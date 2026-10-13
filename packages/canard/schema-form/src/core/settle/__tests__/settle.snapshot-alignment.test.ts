@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 
 import { FieldNode } from '../../FieldNode/FieldNode';
 import { makeFieldNodeTree } from '../../__tests__/makeFieldNodeTree';
-import { SetValueOption } from '../../types/value';
+import { WriteOption } from '../../types/value';
 import { loadFieldNodeAtMount } from '../index';
 
 describe('49C-01 snapshot alignment matches sequential writes', () => {
@@ -26,11 +26,7 @@ describe('49C-01 snapshot alignment matches sequential writes', () => {
     const sparse: { x: string[] }[] = [];
     sparse[1] = { x: ['1'] };
     sparse[2] = { x: [] };
-    loadFieldNodeAtMount<FieldNode>(
-      root,
-      { a: sparse },
-      SetValueOption.Overwrite,
-    );
+    loadFieldNodeAtMount<FieldNode>(root, { a: sparse }, WriteOption.Overwrite);
     root.setValue({ a: [{ x: [] }, { x: ['1', '2'] }] });
     expect(Object.keys(root.find('/a')!.defaultValue as unknown[])).toEqual([
       '0',
@@ -51,7 +47,7 @@ describe('49C-01 snapshot alignment matches sequential writes', () => {
     });
     if (!(root instanceof FieldNode))
       throw new Error('Expected a runtime FieldNode');
-    loadFieldNodeAtMount<FieldNode>(root, [], SetValueOption.Overwrite);
+    loadFieldNodeAtMount<FieldNode>(root, [], WriteOption.Overwrite);
     root.setValue([{ tags: ['x'], sub: ['y', 'z'] }]);
     expect(
       Object.keys((root.defaultValue as Record<string, unknown>[])[0]),
@@ -76,7 +72,7 @@ describe('49C-01 snapshot alignment matches sequential writes', () => {
     });
     if (!(root instanceof FieldNode))
       throw new Error('Expected a runtime FieldNode');
-    loadFieldNodeAtMount<FieldNode>(root, [], SetValueOption.Overwrite);
+    loadFieldNodeAtMount<FieldNode>(root, [], WriteOption.Overwrite);
     root.setValue({ rows: [{ list: ['a'] }, { list: [] }] });
     root.setValue({ rows: [{ list: ['a', 'b'] }, { list: ['c'] }] });
     expect(Array.isArray(root.find('/rows')!.defaultValue)).toBe(true);
@@ -92,7 +88,7 @@ describe('49C-01 snapshot alignment matches sequential writes', () => {
     });
     if (!(root instanceof FieldNode))
       throw new Error('Expected a runtime FieldNode');
-    loadFieldNodeAtMount<FieldNode>(root, [], SetValueOption.Overwrite);
+    loadFieldNodeAtMount<FieldNode>(root, [], WriteOption.Overwrite);
     root.setValue({ rows: ['x'], xa: ['y', 'z'] });
     expect(root.find('/rows')!.defaultValue).toBeUndefined();
   });

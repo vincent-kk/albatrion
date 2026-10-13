@@ -1,5 +1,5 @@
 import type { FieldNodeRecord } from '../../../record';
-import type { SetValueOption } from '../../../types/value';
+import type { WriteOption } from '../../../types/value';
 import { writeFieldNode } from '../write/writeFieldNode';
 import { canLoadStaticFirstTree } from './canLoadStaticFirstTree';
 import { loadStaticFirstTree } from './loadStaticFirstTree';
@@ -15,7 +15,7 @@ import { setLoadValue } from './setLoadValue';
 export const loadFieldNodeAtMount = <Self extends FieldNodeRecord<Self>>(
   root: Self,
   value: unknown,
-  option: SetValueOption,
+  option: WriteOption,
 ): void => {
   const nextSnapshot = setLoadValue(root.runtime.loadSnapshot, '', value);
   root.runtime.diagnostics = { status: 'stable' };

@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 
 import { FieldNodeState } from '../../types/state';
-import { SetValueOption } from '../../types/value';
+import { WriteOption } from '../../types/value';
 import { writeFieldNode } from '../index';
 import { createTestTree } from './fixtures/createTestTree';
 
@@ -26,21 +26,21 @@ describe('EVENT-062 43C-01 settlement shape counts', () => {
       root,
       { flag: true, target: 'value' },
       'callerReplace',
-      SetValueOption.Overwrite,
+      WriteOption.Overwrite,
     );
     expect(root.runtime.globalState).toEqual({ [FieldNodeState.Dirty]: true });
     writeFieldNode(
       root.structure!.flag,
       false,
       'callerReplace',
-      SetValueOption.Overwrite,
+      WriteOption.Overwrite,
     );
     expect(root.runtime.globalState).toEqual({});
     writeFieldNode(
       root.structure!.flag,
       true,
       'callerReplace',
-      SetValueOption.Overwrite,
+      WriteOption.Overwrite,
     );
     expect(root.runtime.globalState).toEqual({ [FieldNodeState.Dirty]: true });
   });

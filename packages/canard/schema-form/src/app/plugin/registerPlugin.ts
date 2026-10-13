@@ -27,7 +27,7 @@ const getPluginKey = createFingerprintFactory();
  * import { registerPlugin } from '@canard/schema-form';
  *
  * registerPlugin({
- *   FieldRenderer: CustomFormGroup,
+ *   FieldRenderer: CustomFormField,
  *   FormLabelRenderer: CustomFormLabel,
  *   FormInputRenderer: CustomFormInput,
  *   FormErrorRenderer: CustomFormError,
@@ -111,7 +111,7 @@ const getPluginKey = createFingerprintFactory();
  * ```typescript
  * const myFormPlugin: SchemaFormPlugin = {
  *   // Custom renderer components
- *   FieldRenderer: MyFormGroup,
+ *   FieldRenderer: MyFormField,
  *   FormLabelRenderer: MyFormLabel,
  *   FormInputRenderer: MyFormInput,
  *   FormErrorRenderer: MyFormError,

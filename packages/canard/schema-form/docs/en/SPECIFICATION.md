@@ -369,7 +369,7 @@ type FieldInputDefinition<T = unknown> = {
 
 ```typescript
 // Function form
-type FieldInputTestFn = Fn<[hint: Hint], boolean>;
+type FieldInputTestFn = Fn<[hint: FieldInputHint], boolean>;
 
 // Object form
 type FieldInputTestObject = Partial<{
@@ -381,8 +381,8 @@ type FieldInputTestObject = Partial<{
   [alt: string]: any;
 }>;
 
-// Hint object
-type Hint = {
+// FieldInputHint object
+type FieldInputHint = {
   jsonSchema: JSONSchema;
   type: string;
   format: string;
@@ -421,7 +421,7 @@ interface FieldInputProps<
   value: Value | undefined;
   onChange: SetStateFnWithOptions<Value | undefined>;
   onFileAttach: Fn<[file: File | File[] | undefined]>;
-  ChildNodeComponents: ChildNodeComponent[];
+  ChildFields: ChildField[];
   placeholder: string | undefined;
   className: string | undefined;
   style: CSSProperties | undefined;

@@ -26,7 +26,7 @@ DeferredFieldProxy/
 
 ### Always do
 
-- `node.enabled === false`이면 placeholder도 렌더하지 않고 `null` 반환 (`UpdateComputedProperties` 추적)
+- `node.enabled === false`이면 placeholder도 렌더하지 않고 `null` 반환 (`UpdateControlledProperties` 추적)
 - reveal 커밋의 layout effect에서 `manager.markRevealed(node)` 호출 후 pending 명령을 `immediate` 재발행
 - placeholder 언마운트 시 `manager.unregister` 보장 (null-pattern ref)
 

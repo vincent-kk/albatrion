@@ -83,7 +83,7 @@ export class FieldNodeRevisionLedger {
     return this.counts[7];
   }
   /** Computed state counter. */
-  get [FieldNodeEventType.UpdateComputedProperties]() {
+  get [FieldNodeEventType.UpdateControlledProperties]() {
     return this.counts[8];
   }
   /** Focus entry counter. */

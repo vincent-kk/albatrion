@@ -1,5 +1,5 @@
 import type { Blueprint } from '../../../blueprint';
-import { SetValueOption } from '../../../types/value';
+import { WriteOption } from '../../../types/value';
 import { loadFieldNodeAtMount } from '../../utils/load/loadFieldNodeAtMount';
 import { writeFieldNode } from '../../utils/write/writeFieldNode';
 import type { PlainNode } from '../fixtures/createPlainNode';
@@ -30,7 +30,7 @@ export const runGateSelectionCase = (
         kind: node.blueprintNode.kind,
         schema: node.schema,
         raw: node.raw,
-        extras: node.extras,
+        undeclaredValues: node.undeclaredValues,
         local: node.local,
         emit: node.emit,
         active: node.active,
@@ -58,7 +58,7 @@ export const runGateSelectionCase = (
   };
   let failure: unknown;
   try {
-    loadFieldNodeAtMount(root, fixture.input, SetValueOption.Overwrite);
+    loadFieldNodeAtMount(root, fixture.input, WriteOption.Overwrite);
   } catch (cause) {
     failure = cause;
   }
@@ -75,7 +75,7 @@ export const runGateSelectionCase = (
         target,
         write.value,
         write.merge ? 'callerPartial' : 'callerReplace',
-        write.merge ? SetValueOption.Merge : SetValueOption.Overwrite,
+        write.merge ? WriteOption.Merge : WriteOption.Overwrite,
       );
     } catch (cause) {
       failure = cause;

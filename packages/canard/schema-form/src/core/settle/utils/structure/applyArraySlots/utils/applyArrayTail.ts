@@ -35,7 +35,7 @@ export const applyArrayTail = <Self extends FieldNodeRecord<Self>>(
   const items: Record<string, Self> = host.structure ?? Object.create(null);
   const snapshot = getLoadValue(host.runtime.loadSnapshot, host.path);
   const oldSnapshot = isArray(snapshot) ? snapshot : [];
-  const oldExtras = isArray(host.extras) ? host.extras : [];
+  const oldExtras = isArray(host.undeclaredValues) ? host.undeclaredValues : [];
   const templateCount = host.blueprintNode.prefixItems?.length ?? 0;
   const removedIndex =
     plan.result.source === 'removed' ? plan.result.index : -1;
@@ -109,7 +109,7 @@ export const applyArrayTail = <Self extends FieldNodeRecord<Self>>(
 
   host.itemCount = plan.slots.length;
   host.raw = undefined;
-  host.extras = extras.length ? extras : undefined;
+  host.undeclaredValues = extras.length ? extras : undefined;
   host.structure = items;
   host.children = captureFieldNodeChange(host, 'children', children);
   context.arrayCounts.set(host, oldCount);

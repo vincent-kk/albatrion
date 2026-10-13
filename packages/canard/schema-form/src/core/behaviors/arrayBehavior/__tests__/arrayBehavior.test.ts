@@ -53,7 +53,7 @@ const makeRecord = (
   itemCount: 0,
   nextItemKey: 0,
   raw,
-  extras: undefined,
+  undeclaredValues: undefined,
   active: true,
   visible: true,
   readOnly: false,
@@ -146,7 +146,7 @@ describe('array branch calculation', () => {
     const node = makeRecord(arrayBehavior.branch, template);
     node.itemCount = 3;
     node.structure = { '0': { emit: 'first' } };
-    node.extras = ['second', 'third'];
+    node.undeclaredValues = ['second', 'third'];
     const local = arrayBehavior.branch.assemble(node, []);
     expect(local).toEqual(['first', 'second', 'third']);
     node.local = local;
@@ -193,7 +193,7 @@ describe('array branch calculation', () => {
     node.itemCount = 4;
     const emitted = {};
     node.structure = { '0': { emit: emitted } };
-    node.extras = [null, undefined];
+    node.undeclaredValues = [null, undefined];
     const local = arrayBehavior.branch.assemble(node, []);
     expect(local).toEqual([{}, [], null, undefined]);
     const projected = arrayBehavior.branch.project(node, local);

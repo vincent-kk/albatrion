@@ -1,7 +1,7 @@
 // filid:contract owned-inline-counts
 import { afterEach, expect, it, vi } from 'vitest';
 
-import { type JSONSchema, nodeFromJSONSchema } from '../../index';
+import { type AuthoredSchema, nodeFromJSONSchema } from '../../index';
 import fixtures from './fixtures/ownedInlineMounts.json';
 
 afterEach(() => vi.restoreAllMocks());
@@ -18,7 +18,7 @@ it.each(expectations)(
   'matches the design distinct freeze count for $name',
   async (expected) => {
     const fixture = fixtures.find((row) => row.name === expected.name)!;
-    const schema = structuredClone(fixture.schema) as JSONSchema;
+    const schema = structuredClone(fixture.schema) as AuthoredSchema;
     const frozen = vi.spyOn(Object, 'freeze');
     nodeFromJSONSchema({
       jsonSchema: schema,

@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 
 import { SchemaFormError } from '../../../errors';
-import { SetValueOption } from '../../types/value';
+import { WriteOption } from '../../types/value';
 import { PathKeyedMap } from '../../utils/pathIndex/PathKeyedMap';
 import { arrangeFieldNodeItems, writeFieldNode } from '../index';
 import { getGateRegistry } from '../utils/gates/getGateRegistry';
@@ -148,7 +148,7 @@ describe('array path movement', () => {
         { show: false, hidden: 'secret', count: 'wrong' },
       ],
       'callerReplace',
-      SetValueOption.Overwrite,
+      WriteOption.Overwrite,
     );
     const shifted = root.children![1];
     const oldKey = JSON.stringify(['/1/hidden', 'string']);
@@ -175,7 +175,7 @@ describe('array path movement', () => {
       shifted.structure!.show,
       true,
       'callerReplace',
-      SetValueOption.Overwrite,
+      WriteOption.Overwrite,
     );
     expect(shifted.structure!.hidden.local).toBe('secret');
   });
@@ -185,10 +185,10 @@ describe('array path movement', () => {
       type: 'array',
       items: { type: 'string' },
     });
-    writeFieldNode(root, ['a', 'b'], 'callerReplace', SetValueOption.Overwrite);
+    writeFieldNode(root, ['a', 'b'], 'callerReplace', WriteOption.Overwrite);
     const popped = root.children![1];
     expect(arrangeFieldNodeItems(root, { kind: 'pop' })).toBe('b');
-    writeFieldNode(popped, 'latent', 'callerReplace', SetValueOption.Overwrite);
+    writeFieldNode(popped, 'latent', 'callerReplace', WriteOption.Overwrite);
     expect(root.runtime.latentRaw.get(JSON.stringify(['/1', 'string']))).toBe(
       'latent',
     );
@@ -196,12 +196,7 @@ describe('array path movement', () => {
     arrangeFieldNodeItems(root, { kind: 'push', value: 'c' });
     expect(arrangeFieldNodeItems(root, { kind: 'remove', index: 0 })).toBe('a');
     const commit = root.runtime.commitNumber;
-    writeFieldNode(
-      removed,
-      'ignored',
-      'callerReplace',
-      SetValueOption.Overwrite,
-    );
+    writeFieldNode(removed, 'ignored', 'callerReplace', WriteOption.Overwrite);
     expect(root.runtime.commitNumber).toBe(commit);
     expect(root.local).toEqual(['c']);
     expect(root.runtime.latentRaw.has(JSON.stringify(['/0', 'string']))).toBe(
@@ -225,14 +220,14 @@ describe('array path movement', () => {
       root,
       { show: true, list: ['a'] },
       'callerReplace',
-      SetValueOption.Overwrite,
+      WriteOption.Overwrite,
     );
     const former = root.structure!.list;
     writeFieldNode(
       root.structure!.show,
       false,
       'callerReplace',
-      SetValueOption.Overwrite,
+      WriteOption.Overwrite,
     );
     expect(former.detached).toBe(true);
     expect(arrangeFieldNodeItems(former, { kind: 'push', value: 'b' })).toBe(2);
@@ -243,7 +238,7 @@ describe('array path movement', () => {
       root.structure!.show,
       true,
       'callerReplace',
-      SetValueOption.Overwrite,
+      WriteOption.Overwrite,
     );
     expect(root.structure!.list.local).toEqual(['a', 'b']);
     const commit = root.runtime.commitNumber;
@@ -276,7 +271,7 @@ describe('array path movement', () => {
     });
     let caught: unknown;
     try {
-      writeFieldNode(root, { a: 0 }, 'callerReplace', SetValueOption.Overwrite);
+      writeFieldNode(root, { a: 0 }, 'callerReplace', WriteOption.Overwrite);
     } catch (error) {
       caught = error;
     }

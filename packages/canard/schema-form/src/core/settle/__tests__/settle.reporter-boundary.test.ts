@@ -1,7 +1,7 @@
 import { afterEach, expect, it, vi } from 'vitest';
 
 import { ValidationMode } from '../../types/state';
-import { SetValueOption } from '../../types/value';
+import { WriteOption } from '../../types/value';
 import { loadFieldNodeAtMount } from '../index';
 import { createTestTree } from './fixtures/createTestTree';
 
@@ -31,7 +31,7 @@ it('ERROR-019 retains missing-validator warnings without exposing intermediate s
     }),
   );
   root.runtime.errorReporter = { hasConsumer: () => true, report };
-  loadFieldNodeAtMount(root, undefined, SetValueOption.Overwrite);
+  loadFieldNodeAtMount(root, undefined, WriteOption.Overwrite);
   expect(report).not.toHaveBeenCalled();
   expect(observed).toEqual([]);
   expect(root.local).toEqual({ value: 'ready' });
@@ -52,7 +52,7 @@ it('ERROR-019 retains non-JSON whole-value warnings until the owning chain deliv
   });
   const warning = vi.spyOn(console, 'warn').mockImplementation(() => undefined);
   const value = { callback: () => undefined };
-  loadFieldNodeAtMount(root, value, SetValueOption.Overwrite);
+  loadFieldNodeAtMount(root, value, WriteOption.Overwrite);
   expect(warning).not.toHaveBeenCalled();
   expect(root.runtime.commitNumber).toBe(1);
   expect(

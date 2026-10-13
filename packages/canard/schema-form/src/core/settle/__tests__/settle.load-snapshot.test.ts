@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { SetValueOption } from '../../types/value';
+import { WriteOption } from '../../types/value';
 import {
   loadFieldNodeAtMount,
   readFieldNodeDefaultValue,
@@ -20,11 +20,11 @@ describe('settle load snapshot', () => {
     loadFieldNodeAtMount(
       root,
       { left: { a: 'A' }, right: 'R' },
-      SetValueOption.Overwrite,
+      WriteOption.Overwrite,
     );
     const defaultValue = readFieldNodeDefaultValue(root);
     const snapshot = root.runtime.loadSnapshot;
-    resetFieldNodeSubtree(root.structure!.left, SetValueOption.Overwrite);
+    resetFieldNodeSubtree(root.structure!.left, WriteOption.Overwrite);
     expect(root.runtime.loadSnapshot).toBe(snapshot);
     expect(readFieldNodeDefaultValue(root)).toBe(defaultValue);
   });

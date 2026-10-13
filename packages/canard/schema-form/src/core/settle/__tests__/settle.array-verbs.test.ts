@@ -99,7 +99,7 @@ describe('array structural verbs', () => {
     expect(root.children![0].itemKey).toBeGreaterThan(oldSecond.itemKey!);
     expect(root.children![1].value).toBe('c');
     expect(root.children![1].itemKey).toBeGreaterThan(oldSecond.itemKey!);
-    expect(root.extras).toEqual(['d']);
+    expect(root.undeclaredValues).toEqual(['d']);
   });
 
   it('NODE-052 gives a shifted value a new node when the slot template differs (41C-01)', () => {
@@ -218,7 +218,7 @@ describe('array structural verbs', () => {
     ).toBe('c');
     expect(root.value).toEqual(['a', 'c']);
     expect(root.children![0]).toBe(item);
-    expect(root.extras).toEqual(['c']);
+    expect(root.undeclaredValues).toEqual(['c']);
   });
 
   it('WRITE-085 updates a gated-out slot through the host raw tree', () => {

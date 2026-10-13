@@ -46,7 +46,7 @@ nodeFromJSONSchema()          ← builds a typed node tree
     ▼
 Plugin System
     ├── ValidatorPlugin       ← compile(jsonSchema) → ValidateFunction
-    └── SchemaFormPlugin      ← FormGroup / FormLabel / FormInput / FormError
+    └── SchemaFormPlugin      ← FormField / FormLabel / FormInput / FormError
                                  + fieldInputDefinitions
     │
     ▼
@@ -62,7 +62,7 @@ Plugins are registered globally with `registerPlugin()` and affect every
 
 <ul>
   <li><strong>Validator plugin</strong> — integrates any validation library (AJV, Zod, Yup, etc.) by implementing <code>compile(jsonSchema)</code>.</li>
-  <li><strong>UI plugin</strong> — provides <code>FormGroup</code>, <code>FormLabel</code>, <code>FormInput</code>, <code>FormError</code> renderer components and <code>fieldInputDefinitions</code> for per-field input components.</li>
+  <li><strong>UI plugin</strong> — provides <code>FormField</code>, <code>FormLabel</code>, <code>FormInput</code>, <code>FormError</code> renderer components and <code>fieldInputDefinitions</code> for per-field input components.</li>
 </ul>
 
 Official plugin packages:
@@ -89,7 +89,7 @@ Official plugin packages:
 
 When rendering a field, the library resolves which input component to use in this priority order (highest first):
 <ol>
-  <li>Direct <code>FieldInput</code> prop on <code>Form.Group</code></li>
+  <li>Direct <code>FieldInput</code> prop on <code>Form.Field</code></li>
   <li><code>fieldInputMap</code> path mapping on <code>&lt;Form&gt;</code></li>
   <li>Form-level <code>fieldInputDefinitions</code> prop</li>
   <li><code>FormProvider</code> <code>fieldInputDefinitions</code></li>

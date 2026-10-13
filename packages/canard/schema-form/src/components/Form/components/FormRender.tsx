@@ -12,7 +12,7 @@ import type { Dictionary, Fn } from '@aileron/declare';
 import { FieldProxy } from '@/schema-form/components/Field';
 import type {
   AllowedValue,
-  ChildNodeComponentProps,
+  ChildFieldProps,
   FieldInputProps,
   FieldRendererProps,
 } from '@/schema-form/types';
@@ -22,7 +22,7 @@ export type FormRenderProps<Value extends AllowedValue> = {
   FieldInput?: ComponentType<FieldInputProps<Value>>;
   children: Fn<[props: FieldRendererProps], ReactNode>;
   Wrapper?: ComponentType<PropsWithChildren<Dictionary>>;
-} & ChildNodeComponentProps;
+} & ChildFieldProps;
 
 /**
  * Renders form fields with complete control through a custom render function.

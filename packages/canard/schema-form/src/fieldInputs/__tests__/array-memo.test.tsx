@@ -92,7 +92,7 @@ it('skips list rendering for value-only props and observes style and schema prop
     className: undefined,
     style: { gap: 7 },
     context: {},
-    ChildNodeComponents: [
+    ChildFields: [
       Object.assign(child, { key: 'child', path: '/0', field: '0' }),
     ],
   } satisfies ComponentProps<typeof Component>;

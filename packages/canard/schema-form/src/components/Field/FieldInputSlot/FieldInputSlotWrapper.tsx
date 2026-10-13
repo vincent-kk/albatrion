@@ -11,7 +11,7 @@ import {
 import type { FieldNode } from '@/schema-form/core';
 import { withFieldInputErrorBoundary } from '@/schema-form/helpers/fieldInputDefinition';
 import type {
-  ChildNodeComponentProps,
+  ChildFieldProps,
   FieldInputProps,
   OverridableFieldInputProps,
 } from '@/schema-form/types';
@@ -21,22 +21,20 @@ import { FieldInputSlot } from './FieldInputSlot';
 
 export const FieldInputSlotWrapper = (
   node: FieldNode | null,
-  overrideOnChangeRef:
-    | RefObject<ChildNodeComponentProps['onChange']>
-    | undefined,
+  overrideOnChangeRef: RefObject<ChildFieldProps['onChange']> | undefined,
   overrideOnFileAttachRef:
-    | RefObject<ChildNodeComponentProps['onFileAttach']>
+    | RefObject<ChildFieldProps['onFileAttach']>
     | undefined,
   overrideFieldInputPropsRef: RefObject<OverridableFieldInputProps> | undefined,
   OverridePreferredFieldInput: ComponentType<FieldInputProps> | undefined,
   NodeProxy: ComponentType<FieldProxyProps>,
-): ComponentType<ChildNodeComponentProps> => {
+): ComponentType<ChildFieldProps> => {
   if (!node) return NULL_FUNCTION;
   return ({
     onChange: preferredOnChange,
     onFileAttach: preferredOnFileAttach,
     ...preferredOverrideProps
-  }: ChildNodeComponentProps) => {
+  }: ChildFieldProps) => {
     const onChangeRef = useReference(
       preferredOnChange || overrideOnChangeRef?.current,
     );

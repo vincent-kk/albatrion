@@ -1,7 +1,7 @@
 import { buildFieldNodeTree, mountFieldNode } from '../../../../FieldNode';
 import { createTestValidator } from '../../../../__tests__/fixtures/createTestValidator';
 import type { TestGuardMode } from '../../../../__tests__/fixtures/createTestValidator';
-import type { JSONSchema } from '../../../../types/jsonSchema';
+import type { AuthoredSchema } from '../../../../types/jsonSchema';
 import { ValidationMode } from '../../../../types/state';
 import type { ChildSelectionRuntimeNode } from './ChildSelectionRuntimeNode';
 import { normalizeSelectionObservation } from './normalizeSelectionObservation';
@@ -11,7 +11,7 @@ export interface ChildSelectionHistory {
   /** Diagnostic label included in differential failures. */
   label: string;
   /** Fresh authored input passed through the public construction boundary. */
-  schema: JSONSchema;
+  schema: AuthoredSchema;
   /** Root input used for the first mounted settlement. */
   input?: unknown;
   /** Sequential public writes; an empty path replaces the root. */
@@ -65,7 +65,7 @@ export const runChildSelectionHistory = (
         children: node.children,
         schema: node.schema,
         raw: node.raw,
-        extras: node.extras,
+        undeclaredValues: node.undeclaredValues,
         value: node.value,
         emit: node.emit,
         active: node.active,

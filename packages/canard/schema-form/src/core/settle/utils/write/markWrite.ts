@@ -48,7 +48,7 @@ export const markWrite = <Self extends FieldNodeRecord<Self>>(
     context.automaticLog.push({
       node,
       previousRaw: node.raw,
-      previousExtras: node.extras,
+      previousExtras: node.undeclaredValues,
       previousDistributed: context.distributedInputs.get(node),
     });
   const value = node.behavior.interpret(input, spec);
@@ -88,7 +88,7 @@ export const markWrite = <Self extends FieldNodeRecord<Self>>(
         host: node,
         previousItems: [...(node.children ?? [])],
         previousItemCount,
-        previousExtras: node.extras,
+        previousExtras: node.undeclaredValues,
       });
     if (!context.arrayCounts.has(node))
       context.arrayCounts.set(node, previousItemCount);
@@ -115,13 +115,13 @@ export const markWrite = <Self extends FieldNodeRecord<Self>>(
         ));
     nextRaw = isMerge ? node.raw : undefined;
     if (isMerge && nextRaw !== undefined) context.wrongKindHosts.add(node);
-    extras = nextExtras(node.extras, value, declared, isMerge);
+    extras = nextExtras(node.undeclaredValues, value, declared, isMerge);
   }
   const rawChanged = !sameValue(node.raw, nextRaw);
-  const extrasChanged = !sameValue(node.extras, extras);
+  const extrasChanged = !sameValue(node.undeclaredValues, extras);
   if (rawChanged || extrasChanged || countChanged) {
     node.raw = nextRaw;
-    node.extras = extras;
+    node.undeclaredValues = extras;
     context.changedRaw.add(node.path);
     context.changedNodes.add(node);
     if (context.automatic) context.automaticChanged = true;

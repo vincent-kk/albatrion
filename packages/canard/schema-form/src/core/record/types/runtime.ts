@@ -6,7 +6,7 @@ import type {
   EffectiveSchema,
 } from '../../blueprint';
 import type { ValidationMode } from '../../types/state';
-import type { SetValueOption } from '../../types/value';
+import type { WriteOption } from '../../types/value';
 import type { PathKeyedMap } from '../../utils/pathIndex/PathKeyedMap';
 import type { PathKeyedSet } from '../../utils/pathIndex/PathKeyedSet';
 import type { FieldNodeFactory } from './behavior';
@@ -68,7 +68,7 @@ interface InactiveValueEntryMemo {
 interface FieldNodeRootRuntimeState {
   /** Form-level load source, read at node paths. */
   loadSnapshot: unknown;
-  /** Per-kind latent leaf raw or a host's own frozen raw and extras. */
+  /** Per-kind latent leaf raw or a host's own frozen raw and undeclared values. */
   latentRaw: PathKeyedMap<unknown>;
   /** Whether latent sources changed since the last inactive-value publication. */
   latentRawDirty?: boolean;
@@ -260,7 +260,7 @@ export interface FieldNodeRuntime<Self> extends FieldNodeRootRuntimeState {
   batchWrites?: {
     node: Self;
     value: unknown;
-    option: SetValueOption;
+    option: WriteOption;
     source?: 'input' | 'automatic';
   }[];
   /** Mount defers validation until the binding's ready effect. */

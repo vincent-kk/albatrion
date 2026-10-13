@@ -17,7 +17,7 @@ const FieldInputArray = ({
   jsonSchema,
   readOnly,
   disabled,
-  ChildNodeComponents,
+  ChildFields,
   style,
 }: FieldInputProps<any[]>) => (
   <ArrayItems
@@ -25,7 +25,7 @@ const FieldInputArray = ({
     jsonSchema={jsonSchema}
     readOnly={readOnly}
     disabled={disabled}
-    ChildNodeComponents={ChildNodeComponents}
+    ChildFields={ChildFields}
     style={style}
     childCount={node.children?.length ?? 0}
   />
@@ -37,17 +37,12 @@ const ArrayItems = memo(function ArrayItems({
   jsonSchema,
   readOnly,
   disabled,
-  ChildNodeComponents,
+  ChildFields,
   style,
   childCount,
 }: Pick<
   FieldInputProps<any[]>,
-  | 'node'
-  | 'jsonSchema'
-  | 'readOnly'
-  | 'disabled'
-  | 'ChildNodeComponents'
-  | 'style'
+  'node' | 'jsonSchema' | 'readOnly' | 'disabled' | 'ChildFields' | 'style'
 > & { childCount: number }) {
   const handleClick = useCallback(() => {
     node.push();
@@ -63,16 +58,12 @@ const ArrayItems = memo(function ArrayItems({
     [node],
   );
   const rows: ReactElement[] = [];
-  for (
-    let index = 0;
-    ChildNodeComponents && index < ChildNodeComponents.length;
-    index++
-  ) {
-    const ChildNodeComponent = ChildNodeComponents[index];
-    const key = ChildNodeComponent.key;
+  for (let index = 0; ChildFields && index < ChildFields.length; index++) {
+    const ChildField = ChildFields[index];
+    const key = ChildField.key;
     rows.push(
       <div key={key} style={{ display: 'flex' }}>
-        <ChildNodeComponent key={key} />
+        <ChildField key={key} />
         {!readOnly && (
           <Button
             title="remove item"

@@ -24,8 +24,8 @@ import {
   ValidationMode,
   type ValidatorFactory,
   type VirtualizationOptions,
-  type useChildNodeComponentMap,
-  type useChildNodeErrors,
+  type useChildFieldErrors,
+  type useChildFieldMap,
   type useFieldNodeSubscribe,
   type useFieldNodeTracker,
   type useFormSubmit,
@@ -168,10 +168,10 @@ it('SURFACE-059 five public hooks retain their callable contracts', () => {
   expectTypeOf<
     Parameters<typeof useFieldNodeSubscribe<FieldNode>>[1]
   >().toEqualTypeOf<Parameters<FieldNode['subscribe']>[0]>();
-  expectTypeOf<Parameters<typeof useChildNodeErrors>>().toEqualTypeOf<
+  expectTypeOf<Parameters<typeof useChildFieldErrors>>().toEqualTypeOf<
     [node: FieldNode, disabled?: boolean]
   >();
-  expectTypeOf<ReturnType<typeof useChildNodeErrors>>().toEqualTypeOf<{
+  expectTypeOf<ReturnType<typeof useChildFieldErrors>>().toEqualTypeOf<{
     errorMessage: ReactNode;
     showError: boolean;
     formattedError: ReactNode;
@@ -179,11 +179,11 @@ it('SURFACE-059 five public hooks retain their callable contracts', () => {
     formattedErrors: ReactNode[];
     errorMatrix: (readonly ValidationIssue[])[];
   }>();
-  expectTypeOf<Parameters<typeof useChildNodeComponentMap>[0]>().toEqualTypeOf<
-    FieldInputProps['ChildNodeComponents']
+  expectTypeOf<Parameters<typeof useChildFieldMap>[0]>().toEqualTypeOf<
+    FieldInputProps['ChildFields']
   >();
   expectTypeOf<
-    keyof ReturnType<typeof useChildNodeComponentMap<{ name: string }>>
+    keyof ReturnType<typeof useChildFieldMap<{ name: string }>>
   >().toEqualTypeOf<'name'>();
   expectTypeOf<
     Parameters<typeof useFormSubmit<Schema, string>>
@@ -198,7 +198,8 @@ it('SURFACE-059 five public hooks retain their callable contracts', () => {
 
 it('SURFACE-059 Form compound component names remain available', () => {
   expectTypeOf<typeof Form>().toHaveProperty('Render');
-  expectTypeOf<typeof Form>().toHaveProperty('Group');
+  expectTypeOf<typeof Form>().toHaveProperty('Field');
+  expectTypeOf<typeof Form>().not.toHaveProperty('Group');
   expectTypeOf<typeof Form>().toHaveProperty('Label');
   expectTypeOf<typeof Form>().toHaveProperty('Input');
   expectTypeOf<typeof Form>().toHaveProperty('Error');

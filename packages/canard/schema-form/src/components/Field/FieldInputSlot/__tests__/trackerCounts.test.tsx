@@ -92,11 +92,11 @@ it('F-E retains four listeners per field and unchanged input renders with Refres
 it('F-E keeps one container render per array write through the last removal and still applies the next Refresh', () => {
   const ref = createRef<FormHandle>();
   const renders = vi.fn();
-  const Container = ({ ChildNodeComponents }: FieldInputProps) => {
+  const Container = ({ ChildFields }: FieldInputProps) => {
     renders();
     return (
       <section>
-        {ChildNodeComponents.map((Child) => (
+        {ChildFields.map((Child) => (
           <Child key={Child.key} />
         ))}
       </section>
@@ -142,12 +142,7 @@ it.each(['UpdateChildren', 'UpdateValue'] as const)(
     let deliveredRevision = 0;
     let tracking = false;
     const masks: (number | undefined)[] = [];
-    const Input = ({
-      node,
-      value,
-      onChange,
-      ChildNodeComponents,
-    }: FieldInputProps) => {
+    const Input = ({ node, value, onChange, ChildFields }: FieldInputProps) => {
       const subscribe = useMemo(() => vi.spyOn(node, 'subscribe'), [node]);
       if (!tracking) {
         tracking = true;
@@ -173,7 +168,7 @@ it.each(['UpdateChildren', 'UpdateValue'] as const)(
       }, [node, onChange, subscribe]);
       return (
         <output data-testid="snapshot">
-          {event === 'UpdateChildren' ? ChildNodeComponents.length : value}
+          {event === 'UpdateChildren' ? ChildFields.length : value}
         </output>
       );
     };
@@ -205,7 +200,7 @@ it.each(['UpdateChildren', 'UpdateValue'] as const)(
 it('F-E applies coalesced child-owned Refresh once on the next delivery after child proxies unmount', () => {
   const mounts = vi.fn();
   const unmounts = vi.fn();
-  const Container = ({ ChildNodeComponents }: FieldInputProps) => {
+  const Container = ({ ChildFields }: FieldInputProps) => {
     const [visible, setVisible] = useState(true);
     useLayoutEffect(() => {
       mounts();
@@ -216,8 +211,7 @@ it('F-E applies coalesced child-owned Refresh once on the next delivery after ch
     return (
       <section>
         <button onClick={() => setVisible(false)}>hide children</button>
-        {visible &&
-          ChildNodeComponents.map((Child) => <Child key={Child.key} />)}
+        {visible && ChildFields.map((Child) => <Child key={Child.key} />)}
       </section>
     );
   };
@@ -267,7 +261,7 @@ it('F-E applies deferred Refresh once on a parent-driven render after child prox
   const renders = vi.fn();
   const mounts = vi.fn();
   const unmounts = vi.fn();
-  const Container = ({ ChildNodeComponents, readOnly }: FieldInputProps) => {
+  const Container = ({ ChildFields, readOnly }: FieldInputProps) => {
     renders(readOnly);
     const [visible, setVisible] = useState(true);
     useLayoutEffect(() => {
@@ -279,8 +273,7 @@ it('F-E applies deferred Refresh once on a parent-driven render after child prox
     return (
       <section data-readonly={String(readOnly)}>
         <button onClick={() => setVisible(false)}>hide children</button>
-        {visible &&
-          ChildNodeComponents.map((Child) => <Child key={Child.key} />)}
+        {visible && ChildFields.map((Child) => <Child key={Child.key} />)}
       </section>
     );
   };

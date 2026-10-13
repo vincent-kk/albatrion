@@ -6,8 +6,8 @@ import { afterEach, expect, it, vi } from 'vitest';
 import { Form, type FormHandle } from '@/schema-form/components/Form';
 import type {
   FieldInputDefinition,
+  FieldInputHint,
   FieldInputProps,
-  Hint,
 } from '@/schema-form/types';
 
 afterEach(() => {
@@ -15,8 +15,8 @@ afterEach(() => {
   vi.restoreAllMocks();
 });
 
-it('REACT-012 REACT-032 passes integer kind and effective schema through Hint and input props', () => {
-  const test = vi.fn((_hint: Hint) => true);
+it('REACT-012 REACT-032 passes integer kind and effective schema through FieldInputHint and input props', () => {
+  const test = vi.fn((_hint: FieldInputHint) => true);
   const Input = vi.fn((props: FieldInputProps) => (
     <span>
       {props.type}:{String(props.schemaType)}

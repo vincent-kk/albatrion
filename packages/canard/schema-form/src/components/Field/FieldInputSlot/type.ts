@@ -4,7 +4,7 @@ import type { FieldNode } from '@/schema-form/core';
 import { FieldNodeEventType } from '@/schema-form/core';
 import type { FieldInputBindingProps } from '@/schema-form/helpers/fieldInputDefinition';
 import type {
-  ChildNodeComponentProps,
+  ChildFieldProps,
   OverridableFieldInputProps,
 } from '@/schema-form/types';
 
@@ -12,8 +12,8 @@ import type { FieldProxyProps } from '../FieldProxy';
 
 export interface FieldInputSlotProps {
   node: FieldNode;
-  onChangeRef: RefObject<ChildNodeComponentProps['onChange']>;
-  onFileAttachRef: RefObject<ChildNodeComponentProps['onFileAttach']>;
+  onChangeRef: RefObject<ChildFieldProps['onChange']>;
+  onFileAttachRef: RefObject<ChildFieldProps['onFileAttach']>;
   overrideProps: OverridableFieldInputProps;
   PreferredFieldInput: ComponentType<FieldInputBindingProps> | null;
   NodeProxy: ComponentType<FieldProxyProps>;
@@ -25,15 +25,14 @@ export type AdditionalChildNodeProperties = {
   field: string;
 };
 
-export type ChildNodeComponent<
-  Props extends ChildNodeComponentProps = ChildNodeComponentProps,
-> = ComponentType<Props> & AdditionalChildNodeProperties;
+export type ChildField<Props extends ChildFieldProps = ChildFieldProps> =
+  ComponentType<Props> & AdditionalChildNodeProperties;
 
 /** Node deliveries that refresh the props of the current input instance. */
 export const REACTIVE_RERENDERING_EVENTS =
   FieldNodeEventType.UpdateValue |
   FieldNodeEventType.UpdateState |
   FieldNodeEventType.UpdateError |
-  FieldNodeEventType.UpdateComputedProperties |
+  FieldNodeEventType.UpdateControlledProperties |
   FieldNodeEventType.UpdateJsonSchema |
   FieldNodeEventType.UpdatePath;

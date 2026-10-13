@@ -7,15 +7,11 @@ import type {
   FieldInputProps,
 } from '@/schema-form/types';
 
-const FieldInputVirtual = ({
-  ChildNodeComponents,
-}: FieldInputProps<object>) => {
+const FieldInputVirtual = ({ ChildFields }: FieldInputProps<object>) => {
   return (
     <Fragment>
-      {ChildNodeComponents &&
-        map(ChildNodeComponents, (ChildNodeComponent) => (
-          <ChildNodeComponent key={ChildNodeComponent.key} />
-        ))}
+      {ChildFields &&
+        map(ChildFields, (ChildField) => <ChildField key={ChildField.key} />)}
     </Fragment>
   );
 };

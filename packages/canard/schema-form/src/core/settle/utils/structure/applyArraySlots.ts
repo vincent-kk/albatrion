@@ -127,7 +127,7 @@ export const applyArraySlots = <Self extends FieldNodeRecord<Self>>(
   }
   host.itemCount = plan.slots.length;
   host.raw = undefined;
-  host.extras = arrayExtras(host, nextRaw);
+  host.undeclaredValues = arrayExtras(host, nextRaw);
   host.structure = nextItems;
   host.children = captureFieldNodeChange(
     host,

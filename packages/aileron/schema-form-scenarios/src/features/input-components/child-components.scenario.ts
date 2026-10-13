@@ -12,10 +12,10 @@ const childSchema = {
   },
 };
 
-/** A custom object input draws its children through ChildNodeComponents; an open object stays one node edited as a whole. */
+/** A custom object input draws its children through ChildFields; an open object stays one node edited as a whole. */
 export const childComponentsScenario: FormScenario = {
   name: 'input-components.child-components',
-  description: 'A custom object input receives ChildNodeComponents, one per child with its field name, and useChildNodeErrors gives one showErrors entry per child under the display policy; SCHEMA-040 dynamic keys never become nodes, so an open object is edited as a whole by a terminal input and its keys stay extras. Stages come from childComponentStages and mapEntryStages.',
+  description: 'A custom object input receives ChildFields, one per child with its field name, and useChildFieldErrors gives one showErrors entry per child under the display policy; SCHEMA-040 dynamic keys never become nodes, so an open object is edited as a whole by a terminal input and its keys stay extras. Stages come from childComponentStages and mapEntryStages.',
   schema: childSchema,
   initialValue: { address: { street: 'ab', zip: '123' }, labels: { a: 'A' } },
   steps: [
@@ -34,7 +34,7 @@ export interface ChildComponentStage {
   readonly text?: string;
   /** Child field names the card renders, in order. */
   readonly fields: readonly string[];
-  /** useChildNodeErrors showErrors per child under ShowError.DirtyTouched: the child's state, not whether it has issues. */
+  /** useChildFieldErrors showErrors per child under ShowError.DirtyTouched: the child's state, not whether it has issues. */
   readonly showErrors: readonly boolean[];
   /** Issue count per child from errorMatrix. */
   readonly errorCounts: readonly number[];

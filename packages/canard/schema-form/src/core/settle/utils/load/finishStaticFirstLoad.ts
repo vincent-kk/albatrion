@@ -1,7 +1,7 @@
 import { TYPE_MISMATCH } from '../../../../errors';
 import { indexFieldNodeWarning } from '../../../record';
 import type { FieldNodeRecord, TypeMismatchRecord } from '../../../record';
-import type { SetValueOption } from '../../../types/value';
+import type { WriteOption } from '../../../types/value';
 import { PathKeyedMap } from '../../../utils/pathIndex/PathKeyedMap';
 import { EMPTY_VALUES } from '../detached/emptyDetachedReads';
 
@@ -18,7 +18,7 @@ const EMPTY_PATHS: readonly string[] = Object.freeze([]);
  */
 export const finishStaticFirstLoad = <Self extends FieldNodeRecord<Self>>(
   root: Self,
-  option: SetValueOption,
+  option: WriteOption,
   warnings?: { order: number; warning: TypeMismatchRecord }[],
 ): void => {
   const runtime = root.runtime;

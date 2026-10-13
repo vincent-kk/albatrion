@@ -61,7 +61,7 @@ const makeRecord = (
   itemCount: 0,
   nextItemKey: 0,
   raw,
-  extras: undefined,
+  undeclaredValues: undefined,
   active: true,
   visible: true,
   readOnly: false,
@@ -230,7 +230,7 @@ describe('behavior rows', () => {
       { name: 'first', emit: 1 },
       { name: 'second', emit: 2 },
     ];
-    node.extras = { other: 3 };
+    node.undeclaredValues = { other: 3 };
     const local = objectBehavior.branch.assemble(node, children);
     if (local === null || typeof local !== 'object')
       throw new Error('object assembly returned a scalar');
@@ -243,7 +243,7 @@ describe('behavior rows', () => {
     expect(changed).not.toBe(local);
     expect(changed).toEqual({ second: 2, first: 4, other: 3 });
     node.local = changed;
-    node.extras = { other: 3, last: 5 };
+    node.undeclaredValues = { other: 3, last: 5 };
     const expanded = objectBehavior.branch.assemble(node, children);
     if (expanded === null || typeof expanded !== 'object')
       throw new Error('object assembly returned a scalar');

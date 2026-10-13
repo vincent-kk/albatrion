@@ -45,7 +45,7 @@ nodeFromJSONSchema()          ← builds a typed node tree
     ▼
 Plugin System
     ├── ValidatorPlugin       ← compile(jsonSchema) → ValidateFunction
-    └── SchemaFormPlugin      ← FormGroup / FormLabel / FormInput / FormError
+    └── SchemaFormPlugin      ← FormField / FormLabel / FormInput / FormError
                                  + fieldInputDefinitions
     │
     ▼
@@ -59,7 +59,7 @@ Plugin System
 플러그인은 `registerPlugin()`으로 전역 등록되며 애플리케이션의 모든 `<Form>`에 영향을 줍니다.
 
 - **Validator 플러그인** — `compile(jsonSchema)`을 구현하여 모든 검증 라이브러리(AJV, Zod, Yup 등)를 통합합니다.
-- **UI 플러그인** — `FormGroup`, `FormLabel`, `FormInput`, `FormError` 렌더러 컴포넌트와 필드별 입력 컴포넌트를 위한 `fieldInputDefinitions`를 제공합니다.
+- **UI 플러그인** — `FormField`, `FormLabel`, `FormInput`, `FormError` 렌더러 컴포넌트와 필드별 입력 컴포넌트를 위한 `fieldInputDefinitions`를 제공합니다.
 
 ## Node Types
 
@@ -77,7 +77,7 @@ Plugin System
 
 필드를 렌더링할 때, 라이브러리는 다음 우선순위로 입력 컴포넌트를 결정합니다 (높은 순):
 
-1. `Form.Group`의 직접 `FieldInput` prop
+1. `Form.Field`의 직접 `FieldInput` prop
 2. `<Form>`의 `fieldInputMap` 경로 매핑
 3. 폼 레벨 `fieldInputDefinitions` prop
 4. `FormProvider` `fieldInputDefinitions`

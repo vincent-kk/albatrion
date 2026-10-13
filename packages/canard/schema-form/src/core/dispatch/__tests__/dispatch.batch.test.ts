@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 
 import { createTestValidator } from '../../__tests__/fixtures/createTestValidator';
-import { SetValueOption } from '../../types/value';
+import { WriteOption } from '../../types/value';
 import {
   dispatchBatch,
   dispatchFinishInput,
@@ -213,7 +213,7 @@ describe('dispatcher batch', () => {
     dispatchMount(root, { left: 'old', right: 'kept' });
     const previous: unknown[] = [];
     dispatchBatch(root, () => {
-      dispatchSetValue(root, { left: 'new' }, SetValueOption.Merge);
+      dispatchSetValue(root, { left: 'new' }, WriteOption.Merge);
       dispatchSetValue(root, (value: unknown) => {
         previous.push(value);
         return { left: 'new', right: 'last' };
@@ -231,9 +231,9 @@ describe('dispatcher batch', () => {
       },
     });
     const both =
-      SetValueOption.Overwrite |
-      SetValueOption.DisableAutomaticWrites |
-      SetValueOption.EnableAutomaticWrites;
+      WriteOption.Overwrite |
+      WriteOption.DisableAutomaticWrites |
+      WriteOption.EnableAutomaticWrites;
     dispatchBatch(root, () => dispatchSetValue(root, {}, both));
     expect(root.structure?.name?.raw).toBeUndefined();
   });
@@ -332,7 +332,7 @@ describe('dispatcher batch', () => {
   it('191C-01 keeps latent raw under a shallow Merge batch', () => {
     const { root, runtime } = hideVat(noteSchema);
     dispatchBatch(root, () => {
-      dispatchSetValue(root, { note: 'z' }, SetValueOption.Merge);
+      dispatchSetValue(root, { note: 'z' }, WriteOption.Merge);
       dispatchSetValue(getDispatchChild(root, 'note'), 'w');
     });
     expect(root.emit).toEqual({ company: false, note: 'w' });
@@ -428,7 +428,7 @@ describe('dispatcher batch', () => {
     );
     dispatchMount(root, { k: 'b', value: 5 });
     dispatchSetValue(getDispatchChild(root, 'k'), 'a');
-    dispatchSetValue(root, { value: ' s ' }, SetValueOption.Merge);
+    dispatchSetValue(root, { value: ' s ' }, WriteOption.Merge);
     expect(runtime.latentRaw.has(latent('/value', 'number'))).toBe(true);
     dispatchBatch(root, () => {
       dispatchFinishInput(getDispatchChild(root, 'value'));
@@ -463,7 +463,7 @@ describe('other-kind re-entry inside a batch (R1, 195C-01 F2)', () => {
     );
     dispatchMount(root, { k: 'a', value: 's' });
     dispatchSetValue(getDispatchChild(root, 'k'), 'b');
-    dispatchSetValue(root, { value: 5 }, SetValueOption.Merge);
+    dispatchSetValue(root, { value: 5 }, WriteOption.Merge);
     expect(root.emit).toEqual({ k: 'b', value: 5 });
     dispatchSetValue(getDispatchChild(root, 'k'), 'a');
     expect(root.emit).toEqual({ k: 'a', value: 's' });
@@ -478,7 +478,7 @@ describe('other-kind re-entry inside a batch (R1, 195C-01 F2)', () => {
     );
     dispatchMount(root, { k: 'a', value: 's' });
     dispatchSetValue(getDispatchChild(root, 'k'), 'b');
-    dispatchSetValue(root, { value: 5 }, SetValueOption.Merge);
+    dispatchSetValue(root, { value: 5 }, WriteOption.Merge);
     dispatchBatch(root, () => {
       dispatchSetValue(getDispatchChild(root, 'k'), 'a');
       dispatchSetValue(getDispatchChild(root, 'other'), 'x');

@@ -86,7 +86,7 @@ describe('I9 array costs follow changed paths', () => {
       root.find('/leafWatcher') as FieldNode,
       root.find('/hostWatcher') as FieldNode,
     ];
-    const bit = FieldNodeEventType.UpdateComputedProperties;
+    const bit = FieldNodeEventType.UpdateControlledProperties;
     const before = watchers.map((watcher) => watcher.revisionLedger[bit] ?? 0);
     const allNodes = root.runtime.deliveryWatchIndex!.allNodes;
     const iterate = allNodes[Symbol.iterator].bind(allNodes);

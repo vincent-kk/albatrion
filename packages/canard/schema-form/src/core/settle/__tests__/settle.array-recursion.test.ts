@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { SetValueOption } from '../../types/value';
+import { WriteOption } from '../../types/value';
 import { arrangeFieldNodeItems, loadFieldNodeAtMount } from '../index';
 import { createTestTree } from './fixtures/createTestTree';
 
@@ -17,7 +17,7 @@ const recursiveArraySchema = {
 describe('BLUEPRINT-030 recursive array item expansion', () => {
   it('expands an empty item with referenced fields and an empty array base case', () => {
     const { root } = createTestTree(recursiveArraySchema);
-    loadFieldNodeAtMount(root, { children: [{}] }, SetValueOption.Overwrite);
+    loadFieldNodeAtMount(root, { children: [{}] }, WriteOption.Overwrite);
 
     const item = root.structure!.children.children![0];
     expect(item.structure!.id.path).toBe('/children/0/id');
@@ -29,7 +29,7 @@ describe('BLUEPRINT-030 recursive array item expansion', () => {
 
   it('pushes one referenced level per item without expanding empty child arrays', () => {
     const { root } = createTestTree(recursiveArraySchema);
-    loadFieldNodeAtMount(root, { children: [] }, SetValueOption.Overwrite);
+    loadFieldNodeAtMount(root, { children: [] }, WriteOption.Overwrite);
     const children = root.structure!.children;
     expect(children.children).toEqual([]);
 
@@ -73,7 +73,7 @@ describe('BLUEPRINT-030 recursive array item expansion', () => {
       },
     });
     expect(() =>
-      loadFieldNodeAtMount(root, [{}], SetValueOption.Overwrite),
+      loadFieldNodeAtMount(root, [{}], WriteOption.Overwrite),
     ).toThrow(
       expect.objectContaining({
         code: 'SCHEMA_FORM_ERROR.RECURSIVE_SHAPE_DIVERGED',

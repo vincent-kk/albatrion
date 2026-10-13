@@ -18,7 +18,7 @@ export const clearFieldNodeChanges = <Self>(
     node.deliveryPreviousPath = undefined;
   if (changes & FieldNodeEventType.UpdateChildren)
     node.deliveryPreviousChildren = undefined;
-  if (changes & FieldNodeEventType.UpdateComputedProperties)
+  if (changes & FieldNodeEventType.UpdateControlledProperties)
     node.deliveryPreviousComputed = undefined;
   if (changes & FieldNodeEventType.UpdateJsonSchema)
     node.deliveryPreviousSchema = undefined;

@@ -2,7 +2,7 @@ import { describe, expect, it, vi } from 'vitest';
 
 import { FieldNode } from '../../FieldNode/FieldNode';
 import { makeFieldNodeTree } from '../../__tests__/makeFieldNodeTree';
-import { SetValueOption } from '../../types/value';
+import { WriteOption } from '../../types/value';
 import { loadFieldNodeAtMount, writeFieldNode } from '../index';
 import { dirtyChildren } from '../utils/compute/dirtyChildren';
 import { createSettlementContext } from '../utils/settlement/createSettlementContext';
@@ -258,7 +258,7 @@ describe('44C-01 array settlement scaling', () => {
       },
     });
     try {
-      loadFieldNodeAtMount(root, value, SetValueOption.Overwrite);
+      loadFieldNodeAtMount(root, value, WriteOption.Overwrite);
       if (process.env.SETTLE_SCALING_PROBE)
         console.info(`51C-01 object host assemblies: ${assemblies}`);
       expect(root.emit).toEqual(value);
@@ -312,7 +312,7 @@ describe('44C-01 array settlement scaling', () => {
         current: { value: 'in-progress', primer: 'ready', reader: 'visible' },
       },
       'callerReplace',
-      SetValueOption.Overwrite,
+      WriteOption.Overwrite,
     );
     expect(observations.length).toBeGreaterThan(0);
     for (const value of observations)
@@ -827,12 +827,12 @@ describe('44C-01 array settlement scaling', () => {
       type: 'array',
       items: { type: 'string' },
     });
-    writeFieldNode(root, ['a', 'b'], 'callerReplace', SetValueOption.Overwrite);
+    writeFieldNode(root, ['a', 'b'], 'callerReplace', WriteOption.Overwrite);
     const scratch = getSettlementScratch(root.runtime);
     const context = createSettlementContext(
       root,
       'callerReplace',
-      SetValueOption.Overwrite,
+      WriteOption.Overwrite,
       scratch,
     );
     try {
@@ -862,13 +862,13 @@ describe('44C-01 array settlement scaling', () => {
       root,
       { '': 'a', 'a/b': 'b' },
       'callerReplace',
-      SetValueOption.Overwrite,
+      WriteOption.Overwrite,
     );
     const scratch = getSettlementScratch(root.runtime);
     const context = createSettlementContext(
       root,
       'callerReplace',
-      SetValueOption.Overwrite,
+      WriteOption.Overwrite,
       scratch,
     );
     try {

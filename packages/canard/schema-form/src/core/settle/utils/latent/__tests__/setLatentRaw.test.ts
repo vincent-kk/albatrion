@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { SetValueOption } from '../../../../types/value';
+import { WriteOption } from '../../../../types/value';
 import { createTestTree } from '../../../__tests__/fixtures/createTestTree';
 import { createSettlementContext } from '../../settlement/createSettlementContext';
 import { getSettlementScratch } from '../../write/getSettlementScratch';
@@ -15,7 +15,7 @@ describe('49C-01 latent path index maintenance', () => {
     const context = createSettlementContext(
       root,
       'callerReplace',
-      SetValueOption.Overwrite,
+      WriteOption.Overwrite,
       scratch,
     );
     const deleted = JSON.stringify(['/rows/0/child', 'string']);

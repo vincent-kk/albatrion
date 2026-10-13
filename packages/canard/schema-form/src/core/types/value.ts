@@ -17,7 +17,7 @@ export type HandleChange<Value = any> = Fn<
 >;
 
 /** Bit flags controlling how a value application behaves. */
-export enum SetValueOption {
+export enum WriteOption {
   /** Internal empty option accumulator. */
   None = BIT_MASK_NONE,
   /** Internal whole-replacement mark for array batch composition. */
@@ -31,17 +31,6 @@ export enum SetValueOption {
   /** Enable automatic writes even when the form suppresses them. */
   EnableAutomaticWrites = BIT_FLAG_03,
 }
-
-/** Subset of `SetValueOption` exposed to consumers of the package. */
-export enum PublicSetValueOption {
-  /** Both propagate to children and trigger a refresh */
-  Merge = SetValueOption.Merge,
-  /** Replace the value and propagate the update with refresh */
-  Overwrite = SetValueOption.Overwrite,
-}
-
-/** Union of internal and public `SetValueOption` flags. */
-export type UnionSetValueOption = SetValueOption | PublicSetValueOption;
 
 /**
  * Options for resetting a node to its initial or computed value.

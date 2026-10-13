@@ -4,7 +4,7 @@ import { createTestValidator } from '../../__tests__/fixtures/createTestValidato
 import { FieldNodeEventType as E } from '../../record';
 import type { FieldNodeDelivery } from '../../record';
 import { writeFieldNode } from '../../settle';
-import { SetValueOption } from '../../types/value';
+import { WriteOption } from '../../types/value';
 import {
   dispatchRemove,
   dispatchSetState,
@@ -19,7 +19,7 @@ import { getDispatchChild } from './fixtures/getDispatchChild';
 
 /** Commit without draining, reproducing multiple commits inside one delivery boundary. */
 const commit = (node: DispatchTestNode, value: unknown) =>
-  writeFieldNode(node, value, 'callerReplace', SetValueOption.Overwrite);
+  writeFieldNode(node, value, 'callerReplace', WriteOption.Overwrite);
 
 /** Observe the public value payload without depending on pending envelope layout. */
 const value = (event: FieldNodeDelivery) => event.payload?.[E.UpdateValue];

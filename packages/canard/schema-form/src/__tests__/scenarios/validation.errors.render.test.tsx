@@ -22,7 +22,7 @@ import { renderForm } from '../renderForm';
  * Load-bearing facts (verified against src/):
  *   - Default `validationMode` is `OnChange | OnRequest`; `ValidationMode.None`
  *     disables the validator entirely (`ValidationManager.enabled === false`).
- *   - `<em>` (FormGroupRenderer) only shows non-empty text when
+ *   - `<em>` (FormFieldRenderer) only shows non-empty text when
  *     `errorVisible` is true — every test passes `showError: true`
  *     (→ `ShowError.Always`) so the DOM mirror is observable.
  *   - The default `formatValidationError` resolves `jsonSchema.errorMessages`

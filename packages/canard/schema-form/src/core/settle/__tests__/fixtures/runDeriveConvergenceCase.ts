@@ -2,7 +2,7 @@ import { expect, vi } from 'vitest';
 
 import * as blueprintApi from '../../../blueprint';
 import type { Blueprint, BlueprintSchema } from '../../../blueprint';
-import { SetValueOption } from '../../../types/value';
+import { WriteOption } from '../../../types/value';
 import * as deriveApi from '../../derive';
 import { loadFieldNodeAtMount, writeFieldNode } from '../../index';
 import type { SettlementContext } from '../../type';
@@ -78,18 +78,13 @@ export const runDeriveConvergenceCase = (
         let error;
         try {
           if (step === -1)
-            loadFieldNodeAtMount(root, input, SetValueOption.Overwrite);
+            loadFieldNodeAtMount(root, input, WriteOption.Overwrite);
           else {
             const write = writes[step];
             let target = root;
             const segments = write.path.split('/').filter(Boolean);
             for (const segment of segments) target = target.structure![segment];
-            writeFieldNode(
-              target,
-              write.value,
-              'input',
-              SetValueOption.Overwrite,
-            );
+            writeFieldNode(target, write.value, 'input', WriteOption.Overwrite);
           }
         } catch (cause) {
           error = cause instanceof Error ? cause.message : String(cause);
@@ -103,7 +98,7 @@ export const runDeriveConvergenceCase = (
             kind: node.blueprintNode.kind,
             raw: node.raw,
             emit: node.emit,
-            extras: node.extras,
+            undeclaredValues: node.undeclaredValues,
             readOnly: node.readOnly,
             visible: node.visible,
             disabled: node.disabled,

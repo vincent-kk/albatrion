@@ -541,7 +541,7 @@ export const IterableChildren = () => {
           </Form.Render>
         </div>
         <div>
-          <Form.Group path="/gender" />
+          <Form.Field path="/gender" />
         </div>
         <div>
           name error:

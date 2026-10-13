@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { SetValueOption } from '../../types/value';
+import { WriteOption } from '../../types/value';
 import { loadFieldNodeAtMount, writeFieldNode } from '../index';
 import { createTestTree } from './fixtures/createTestTree';
 
@@ -23,7 +23,7 @@ describe('settle descendant rebirth regression', () => {
     loadFieldNodeAtMount(
       root,
       { present: true, source: 'A', group: { target: 'manual' } },
-      SetValueOption.Overwrite,
+      WriteOption.Overwrite,
     );
     expect(root.structure?.group?.structure?.target?.raw).toBe('A');
 
@@ -31,7 +31,7 @@ describe('settle descendant rebirth regression', () => {
       root.structure!.present,
       false,
       'input',
-      SetValueOption.Overwrite,
+      WriteOption.Overwrite,
     );
     expect(root.structure?.group).toBeUndefined();
     expect(
@@ -44,7 +44,7 @@ describe('settle descendant rebirth regression', () => {
       root.structure!.present,
       true,
       'input',
-      SetValueOption.Overwrite,
+      WriteOption.Overwrite,
     );
     expect(root.runtime.settlementTrace?.rounds.flat()).toEqual(
       expect.arrayContaining([
@@ -75,7 +75,7 @@ describe('settle descendant rebirth regression', () => {
     loadFieldNodeAtMount(
       root,
       { present: true, group: { target: 'A' } },
-      SetValueOption.Overwrite,
+      WriteOption.Overwrite,
     );
     expect(
       [...(root.runtime.committedRuleValues?.keys() ?? [])].some((key) =>
@@ -87,7 +87,7 @@ describe('settle descendant rebirth regression', () => {
       root.structure!.present,
       false,
       'input',
-      SetValueOption.Overwrite,
+      WriteOption.Overwrite,
     );
     expect(
       [...(root.runtime.committedRuleValues?.keys() ?? [])].some((key) =>
@@ -99,7 +99,7 @@ describe('settle descendant rebirth regression', () => {
       root.structure!.present,
       true,
       'input',
-      SetValueOption.Overwrite,
+      WriteOption.Overwrite,
     );
     expect(root.runtime.settlementTrace?.rounds.flat()).toEqual(
       expect.arrayContaining([

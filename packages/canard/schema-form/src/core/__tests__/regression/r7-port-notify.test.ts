@@ -295,7 +295,7 @@ describe('round7 dispatch and notification ports', () => {
     expect(target.visible).toBe(true);
     expect(
       delivered.some(
-        (type) => !!(type & FieldNodeEventType.UpdateComputedProperties),
+        (type) => !!(type & FieldNodeEventType.UpdateControlledProperties),
       ),
     ).toBe(true);
     expect(

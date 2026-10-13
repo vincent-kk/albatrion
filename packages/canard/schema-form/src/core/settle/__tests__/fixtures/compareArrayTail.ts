@@ -2,7 +2,7 @@ import { expect, vi } from 'vitest';
 
 import type { BlueprintSchema } from '../../../blueprint';
 import type { ArrayArrangePlan, ArrayOperation } from '../../../record';
-import { SetValueOption } from '../../../types/value';
+import { WriteOption } from '../../../types/value';
 import { arrangeFieldNodeItems, writeFieldNode } from '../../index';
 import * as tailModule from '../../utils/structure/applyArraySlots/utils/applyArrayTail';
 import * as eligibility from '../../utils/structure/applyArraySlots/utils/canApplyArrayTail';
@@ -32,7 +32,7 @@ export const compareArrayTail = (
   const actual = createTestTree(schema).root;
   const oracle = createTestTree(schema).root;
   for (const root of [actual, oracle]) {
-    writeFieldNode(root, input, 'callerReplace', SetValueOption.Overwrite);
+    writeFieldNode(root, input, 'callerReplace', WriteOption.Overwrite);
     root.runtime.loadSnapshot = input;
     prepare?.(root);
     if (plan) root.behavior.arrange = () => plan;

@@ -7,7 +7,7 @@ import {
   subscribeFieldNode,
 } from '../../dispatch';
 import { FieldNodeEventType } from '../../record';
-import { SetValueOption } from '../../types/value';
+import { WriteOption } from '../../types/value';
 import { loadFieldNodeAtMount, writeFieldNode } from '../index';
 import * as independentDefaults from '../utils/compute/utils/hasIndependentLeafDefaults';
 import * as staticFirstLoad from '../utils/load/canLoadStaticFirstTree';
@@ -32,7 +32,7 @@ const observe = (root: PlainNode) => {
     nodes.push({
       path: node.path,
       raw: node.raw,
-      extras: node.extras,
+      undeclaredValues: node.undeclaredValues,
       local: node.local,
       emit: node.emit,
       required: node.required,
@@ -73,7 +73,7 @@ const observe = (root: PlainNode) => {
 const compare = (
   schema: BlueprintSchema,
   input?: unknown,
-  option = SetValueOption.Overwrite,
+  option = WriteOption.Overwrite,
   options: BlueprintOptions = {},
 ) => {
   const oracle = createTestTree(schema, undefined, options).root;
@@ -123,13 +123,13 @@ it('matches flat defaults, integer and escaped names, required and subsequent wr
       actual.structure!['a/b'],
       value,
       'input',
-      SetValueOption.Overwrite,
+      WriteOption.Overwrite,
     );
     writeFieldNode(
       oracle.structure!['a/b'],
       value,
       'input',
-      SetValueOption.Overwrite,
+      WriteOption.Overwrite,
     );
     expect(observe(actual)).toEqual(observe(oracle));
     expect(actual.structure!['2']).toBe(sibling);
@@ -199,7 +199,7 @@ it('matches disabled automatic writes', () => {
       },
     },
     undefined,
-    SetValueOption.DisableAutomaticWrites,
+    WriteOption.DisableAutomaticWrites,
   );
 });
 
@@ -329,7 +329,7 @@ it('matches virtual and whole-value fallback', () => {
   compare(
     { type: 'object', default: { value: 'whole' } },
     undefined,
-    SetValueOption.Overwrite,
+    WriteOption.Overwrite,
     { isTerminal: () => true },
   );
 });
@@ -375,7 +375,7 @@ it('does not expose intermediate values to a synchronous reporter during first l
   );
   root.runtime.errorReporter = { hasConsumer: () => true, report };
   const warning = vi.spyOn(console, 'warn').mockImplementation(() => undefined);
-  loadFieldNodeAtMount(root, undefined, SetValueOption.Overwrite);
+  loadFieldNodeAtMount(root, undefined, WriteOption.Overwrite);
   expect(report).not.toHaveBeenCalled();
   expect(warning).not.toHaveBeenCalled();
   expect(observed).toEqual([]);
@@ -436,7 +436,7 @@ it('delivers the same listener payloads after all nodes and global state are fin
           .spyOn(staticFirstLoad, 'canLoadStaticFirstTree')
           .mockReturnValue(false)
       : undefined;
-    dispatchMount(root, undefined, SetValueOption.Overwrite, {
+    dispatchMount(root, undefined, WriteOption.Overwrite, {
       deferValidation: true,
     });
     forceGeneric?.mockRestore();
@@ -445,7 +445,7 @@ it('delivers the same listener payloads after all nodes and global state are fin
       dispatchSetValue(
         root.structure!.nested.structure!.leaf,
         value,
-        SetValueOption.Overwrite,
+        WriteOption.Overwrite,
       );
     return { delivered, observations: observe(root) };
   };

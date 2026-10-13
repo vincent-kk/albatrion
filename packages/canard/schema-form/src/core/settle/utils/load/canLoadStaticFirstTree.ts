@@ -21,7 +21,7 @@ export const canLoadStaticFirstTree = <Self extends FieldNodeRecord<Self>>(
   !root.pendingDelivery &&
   !root.pendingRevision &&
   root.raw === undefined &&
-  root.extras === undefined &&
+  root.undeclaredValues === undefined &&
   !root.runtime.deliveries?.size &&
   root.runtime.latentRaw.size === 0 &&
   root.runtime.globalStateCounts.size === 0 &&

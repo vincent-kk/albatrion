@@ -22,14 +22,15 @@ export const restoreLatentState = <Self extends FieldNodeRecord<Self>>(
     return;
   }
   const raw = value instanceof HostLatent ? value.raw : undefined;
-  const extras = value instanceof HostLatent ? value.extras : undefined;
+  const extras =
+    value instanceof HostLatent ? value.undeclaredValues : undefined;
   if (node.behavior.type === 'array' && isArray(raw)) {
     markWrite(node, raw, context);
     return;
   }
-  if (!Object.is(node.raw, raw) || !Object.is(node.extras, extras)) {
+  if (!Object.is(node.raw, raw) || !Object.is(node.undeclaredValues, extras)) {
     node.raw = raw;
-    node.extras = extras;
+    node.undeclaredValues = extras;
     context.changedRaw.add(node.path);
     context.changedNodes.add(node);
   }

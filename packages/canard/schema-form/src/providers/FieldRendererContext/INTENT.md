@@ -17,16 +17,16 @@ FieldRendererContext/
 ## Conventions
 
 - TypeScript + React
-- `checkShowError(condition?)` 함수: `NodeState.ShowError` → `ShowError.Always/Never/Dirty/Touched/DirtyTouched` 비트마스크 평가
+- `checkShowError(condition?)` 함수: `FieldNodeState.ErrorVisible` → `ShowError.Always/Never/Dirty/Touched/DirtyTouched` 비트마스크 평가
 - 기본 showError: `ShowError.DirtyTouched` (dirty AND touched 모두 충족 시 표시)
 - Form-level `CustomFieldRenderer`/`formatError` > `ExternalFormContext` 값 우선
-- `useFieldRendererContext`에서 `PluginManager.FormGroup` / `PluginManager.formatError`를 최종 fallback으로 사용
+- `useFieldRendererContext`에서 `PluginManager.FieldRenderer` / `PluginManager.formatError`를 최종 fallback으로 사용
 
 ## Boundaries
 
 ### Always do
 
-- `checkShowError`에서 `NodeState.ShowError` 명시적 플래그를 우선 평가 (override 지원)
+- `checkShowError`에서 `FieldNodeState.ErrorVisible` 명시적 플래그를 우선 평가 (override 지원)
 - `CustomFieldRenderer`와 `formatError`를 `useConstant`로 고정 (마운트 이후 변경 차단)
 - `useFieldRendererContext`에서 PluginManager fallback 유지
 

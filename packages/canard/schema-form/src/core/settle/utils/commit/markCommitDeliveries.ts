@@ -79,7 +79,10 @@ export const markCommitDeliveries = <Self extends FieldNodeRecord<Self>>(
       child.required = next;
       candidates.add(child);
       if (child.deliveryInitialized)
-        markFieldNodeEvent(child, FieldNodeEventType.UpdateComputedProperties);
+        markFieldNodeEvent(
+          child,
+          FieldNodeEventType.UpdateControlledProperties,
+        );
     }
   }
   for (const node of context.changedNodes) candidates.add(node);
@@ -237,7 +240,7 @@ export const markCommitDeliveries = <Self extends FieldNodeRecord<Self>>(
           mark(node, FieldNodeEventType.UpdateState);
       }
       if (
-        (changes & FieldNodeEventType.UpdateComputedProperties &&
+        (changes & FieldNodeEventType.UpdateControlledProperties &&
           node.deliveryPreviousComputed !==
             (+node.active |
               (+node.visible << 1) |
@@ -245,7 +248,7 @@ export const markCommitDeliveries = <Self extends FieldNodeRecord<Self>>(
               (+node.disabled << 3))) ||
         watchChanged
       )
-        mark(node, FieldNodeEventType.UpdateComputedProperties);
+        mark(node, FieldNodeEventType.UpdateControlledProperties);
       if (
         changes & FieldNodeEventType.UpdateJsonSchema &&
         node.deliveryPreviousSchema !== node.schema

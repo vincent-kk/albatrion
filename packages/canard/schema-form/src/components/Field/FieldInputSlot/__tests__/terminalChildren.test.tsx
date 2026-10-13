@@ -29,9 +29,9 @@ it('round 180 hands a production build a plain empty list even with an error han
   vi.stubEnv('NODE_ENV', 'production');
   const onError = vi.fn();
   const lists: unknown[] = [];
-  const Input = ({ ChildNodeComponents }: FieldInputProps) => {
-    lists.push(ChildNodeComponents);
-    return <input data-count={ChildNodeComponents.length} />;
+  const Input = ({ ChildFields }: FieldInputProps) => {
+    lists.push(ChildFields);
+    return <input data-count={ChildFields.length} />;
   };
   render(
     <Form
@@ -45,9 +45,9 @@ it('round 180 hands a production build a plain empty list even with an error han
   });
   vi.unstubAllEnvs();
   const plain: unknown[] = [];
-  const PlainInput = ({ ChildNodeComponents }: FieldInputProps) => {
-    plain.push(ChildNodeComponents);
-    return <input data-count={ChildNodeComponents.length} />;
+  const PlainInput = ({ ChildFields }: FieldInputProps) => {
+    plain.push(ChildFields);
+    return <input data-count={ChildFields.length} />;
   };
   render(
     <Form
@@ -65,8 +65,8 @@ it('round 180 hands a production build a plain empty list even with an error han
 
 it('round 180 hands a string node a plain empty list in development', async () => {
   const onError = vi.fn();
-  const Input = ({ ChildNodeComponents }: FieldInputProps) => (
-    <input data-count={ChildNodeComponents.length} />
+  const Input = ({ ChildFields }: FieldInputProps) => (
+    <input data-count={ChildFields.length} />
   );
   render(
     <Form
@@ -84,10 +84,10 @@ it('round 180 hands a string node a plain empty list in development', async () =
 it('ERROR-202 reports a terminal input first reading children in an event after mount', async () => {
   const onError = vi.fn();
   const warning = vi.spyOn(console, 'warn').mockImplementation(() => {});
-  const Input = ({ ChildNodeComponents }: FieldInputProps) => (
+  const Input = ({ ChildFields }: FieldInputProps) => (
     <button
       onClick={() => {
-        void ChildNodeComponents.length;
+        void ChildFields.length;
       }}
     >
       Read children
@@ -121,10 +121,10 @@ it('ERROR-202 reports a terminal input first reading children in an event after 
 
 it('ERROR-202 reports a child layout read after the initial render', () => {
   const onError = vi.fn();
-  const Input = ({ ChildNodeComponents }: FieldInputProps) => {
+  const Input = ({ ChildFields }: FieldInputProps) => {
     useLayoutEffect(() => {
-      void ChildNodeComponents[0];
-    }, [ChildNodeComponents]);
+      void ChildFields[0];
+    }, [ChildFields]);
     return <input />;
   };
   render(
@@ -142,12 +142,12 @@ it('ERROR-202 reports a child layout read after the initial render', () => {
 it('ERROR-202 keeps the terminal empty list stable across a late render read', async () => {
   const onError = vi.fn();
   const lists: unknown[] = [];
-  const Input = ({ ChildNodeComponents }: FieldInputProps) => {
+  const Input = ({ ChildFields }: FieldInputProps) => {
     const [read, setRead] = useState(false);
-    lists.push(ChildNodeComponents);
+    lists.push(ChildFields);
     return (
       <button onClick={() => setRead(true)}>
-        {read ? ChildNodeComponents.length : 'Later'}
+        {read ? ChildFields.length : 'Later'}
       </button>
     );
   };
@@ -171,8 +171,8 @@ it('ERROR-202 keeps the terminal empty list stable across a late render read', a
 it('ERROR-202 reports the first terminal child read again after a retained-root reset starts a new load', async () => {
   const ref = createRef<FormHandle>();
   const onError = vi.fn();
-  const Input = ({ ChildNodeComponents }: FieldInputProps) => (
-    <input data-count={ChildNodeComponents.length} />
+  const Input = ({ ChildFields }: FieldInputProps) => (
+    <input data-count={ChildFields.length} />
   );
   render(
     <Form

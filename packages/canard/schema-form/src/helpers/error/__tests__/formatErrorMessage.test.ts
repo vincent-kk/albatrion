@@ -427,6 +427,16 @@ describe('formatErrorMessage', () => {
       expect(result).toContain('How to fix');
     });
 
+    it('lists a plugin FieldRenderer as FormField', () => {
+      const result = formatRegisterPluginError(
+        { FieldRenderer: () => null } as SchemaFormPlugin,
+        new Error('Invalid component'),
+      );
+
+      expect(result).toContain('FormField');
+      expect(result).not.toContain('FormGroup');
+    });
+
     it('빈 플러그인도 처리해야 합니다', () => {
       const result = formatRegisterPluginError(
         {} as SchemaFormPlugin,

@@ -27,7 +27,7 @@ const RERENDERING_EVENT =
   FieldNodeEventType.UpdateValue |
   FieldNodeEventType.UpdateState |
   FieldNodeEventType.UpdateError |
-  FieldNodeEventType.UpdateComputedProperties |
+  FieldNodeEventType.UpdateControlledProperties |
   FieldNodeEventType.UpdateJsonSchema |
   FieldNodeEventType.UpdatePath;
 

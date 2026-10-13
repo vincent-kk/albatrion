@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { SetValueOption } from '../../types/value';
+import { WriteOption } from '../../types/value';
 import { loadFieldNodeAtMount } from '../index';
 import { createTestTree } from './fixtures/createTestTree';
 
@@ -25,7 +25,7 @@ const initialLoadNameReads = (count: number): number => {
   Object.defineProperty(root, 'blueprintNode', {
     value: { ...root.blueprintNode, childEntries },
   });
-  loadFieldNodeAtMount(root, value, SetValueOption.Overwrite);
+  loadFieldNodeAtMount(root, value, WriteOption.Overwrite);
   expect(root.children).toHaveLength(count);
   return reads;
 };

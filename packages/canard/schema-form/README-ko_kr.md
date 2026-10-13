@@ -471,7 +471,7 @@ type FieldInputDefinition<T = unknown> = {
 FieldInput의 조건은 함수 또는 객체를 사용하여 정의할 수 있습니다:
 
 ```ts
-type Hint = {
+type FieldInputHint = {
   jsonSchema: JSONSchema;
   type: string;
   format: string;
@@ -479,7 +479,7 @@ type Hint = {
   path: string;
   [alt: string]: any;
 };
-type FieldInputTestFn = Fn<[hint: Hint], boolean>;
+type FieldInputTestFn = Fn<[hint: FieldInputHint], boolean>;
 
 type FieldInputTestObject = Partial<{
   type: Array<string>;
@@ -492,7 +492,7 @@ type FieldInputTestObject = Partial<{
 
 inputType은 정의의 test가 해석하는 문자열 힌트이며 HTML input type과 같지 않습니다.
 
-- **FieldInputTestFn**: Hint 객체를 받아 boolean을 반환하는 함수입니다. 더 복잡한 조건을 구현하는 데 유용합니다.
+- **FieldInputTestFn**: FieldInputHint 객체를 받아 boolean을 반환하는 함수입니다. 더 복잡한 조건을 구현하는 데 유용합니다.
 - **FieldInputTestObject**: 조건을 단순히 객체로 정의할 수 있습니다. 예를 들어, `{ type: ['string'], format: ['email'] }`는 문자열 유형이고 이메일 형식인 노드를 일치시킵니다.
 
 #### FieldInput 속성
@@ -540,7 +540,7 @@ interface FieldInputProps<
   /** 파일(들)을 폼의 파일 저장소에 첨부/해제합니다 */
   onFileAttach: Fn<[file: File | File[] | undefined]>;
   /** 이 FieldInput 컴포넌트의 자식 FieldInput 컴포넌트 */
-  ChildNodeComponents: ChildNodeComponent[];
+  ChildFields: ChildField[];
   /** 입력 필드의 placeholder 텍스트 */
   placeholder: string | undefined;
   /** 스타일링을 위한 CSS 클래스 이름 */
@@ -869,7 +869,7 @@ registerPlugin(ajvValidatorPlugin);
 
 ```ts
 export interface SchemaFormPlugin {
-  /** Form.Group 컴포넌트 */
+  /** Form.Field 컴포넌트 */
   FieldRenderer?: ComponentType<FieldRendererProps>;
   /** Form.Label 컴포넌트 */
   FormLabelRenderer?: ComponentType<FieldRendererProps>;
@@ -1502,7 +1502,7 @@ const jsonSchema = {
 - **`omitEmpty` (기본 활성)**: 빈 배열을 부모 전파 경로에서 `undefined`로 변환합니다. 필터 순서는 `omitTrailing → omitEmpty`라서 전부 빈 배열은 부모에서 `undefined`로 수렴합니다 (루트 폼은 `[]`를 방출).
 - **값 2채널**: `node.value`는 raw를 유지하고, 정제된 출력은 `node.outputValue`로 노출됩니다. validation은 정제된 값 기준이라 `minItems`는 채워진 prefix만 셉니다.
 - **Reset 의미**: Reset 계열 초기화(폼 reset, oneOf/anyOf 분기 재활성화)는 `minItems`만큼 빈 항목을 재충전하고, 일반 `setValue(undefined)`는 전부 비웁니다.
-- **커스텀 입력**: 행 수는 `value.length`가 아니라 `node.children`(또는 `ChildNodeComponents`) 기준으로 세야 합니다 — 방출 값이 렌더된 행보다 짧은 것이 설계입니다.
+- **커스텀 입력**: 행 수는 `value.length`가 아니라 `node.children`(또는 `ChildFields`) 기준으로 세야 합니다 — 방출 값이 렌더된 행보다 짧은 것이 설계입니다.
 
 ### 명령형 핸들을 사용한 양식
 

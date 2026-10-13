@@ -18,20 +18,17 @@ import { DeferredFieldProxy } from '@/schema-form/components/Field/DeferredField
 import type { FieldProxyProps } from '@/schema-form/components/Field/FieldProxy';
 import { type FieldNode, isTerminalNode } from '@/schema-form/core';
 import { useVirtualizationContext } from '@/schema-form/providers';
-import type { ChildNodeComponentProps } from '@/schema-form/types';
+import type { ChildFieldProps } from '@/schema-form/types';
 
-import type {
-  AdditionalChildNodeProperties,
-  ChildNodeComponent,
-} from '../type';
+import type { AdditionalChildNodeProperties, ChildField } from '../type';
 
 /**
- * Create child node components for the given FieldNode
+ * Create child fields for the given FieldNode
  * @param node - FieldNode
  * @param NodeProxy - FieldProxy
  * @param mountedChildren - Count of committed child proxies, kept by each child's layout effect
  * @param terminalChildren - List from `useTerminalChildren`, returned as is for terminal nodes and empty branches
- * @returns ChildNodeComponent[]
+ * @returns ChildField[]
  *
  * @remarks `node.children` is read during render and kept consistent by the
  *          input's combined `useSyncExternalStore` tracker, so
@@ -39,42 +36,42 @@ import type {
  *          (concurrent mount gap) still force a resync render instead of
  *          being lost.
  */
-export const useChildNodeComponents = (
+export const useChildFields = (
   node: FieldNode,
   NodeProxy: ComponentType<FieldProxyProps>,
   mountedChildren: RefObject<number>,
-  terminalChildren: ChildNodeComponent[],
-): ChildNodeComponent[] => {
+  terminalChildren: ChildField[],
+): ChildField[] => {
   const children = node.children;
 
   const { manager } = useVirtualizationContext();
 
-  const cache = useLazyConstant(() => new Map<FieldNode, ChildNodeComponent>());
+  const cache = useLazyConstant(() => new Map<FieldNode, ChildField>());
   useOnUnmount(() => cache.clear());
 
   return useMemo(() => {
     if (isTerminalNode(node) || children === null) return terminalChildren;
     const gateManager = manager?.forBranch(children.length) ?? null;
-    const ChildNodeComponents: ChildNodeComponent[] = [];
+    const ChildFields: ChildField[] = [];
     for (const node of children) {
       const key = String(cache.size);
       const CachedComponent = cache.get(node);
       if (CachedComponent) {
         CachedComponent.path = node.path;
         CachedComponent.field = node.name;
-        ChildNodeComponents.push(CachedComponent);
+        ChildFields.push(CachedComponent);
       } else {
         // Deferrable is baked at creation so the component's hook set stays
         // static; revealed-ness itself is resolved dynamically by the gate.
         const deferredManager =
-          gateManager?.forChild(ChildNodeComponents.length, node) ?? null;
+          gateManager?.forChild(ChildFields.length, node) ?? null;
         const ChildComponent = memo(
           ({
             FieldRenderer: InputFieldRenderer,
             onChange,
             onFileAttach,
             ...restProps
-          }: ChildNodeComponentProps) => {
+          }: ChildFieldProps) => {
             useLayoutEffect(() => {
               mountedChildren.current++;
               return () => {
@@ -105,18 +102,17 @@ export const useChildNodeComponents = (
               />
             );
           },
-        ) as MemoExoticComponent<ChildNodeComponent> &
-          AdditionalChildNodeProperties;
+        ) as MemoExoticComponent<ChildField> & AdditionalChildNodeProperties;
 
         ChildComponent.key = key;
         ChildComponent.path = node.path;
         ChildComponent.field = node.name;
 
         cache.set(node, ChildComponent);
-        ChildNodeComponents.push(ChildComponent);
+        ChildFields.push(ChildComponent);
       }
     }
-    return ChildNodeComponents;
+    return ChildFields;
   }, [
     node,
     children,

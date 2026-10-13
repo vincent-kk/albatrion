@@ -102,11 +102,11 @@ it.each(INPUT_SUPPLIES)(
   'REACT-028 container holds its input generation through Refresh and value delivery (%s)',
   (supply) => {
     let mounts = 0;
-    const Container = ({ path, ChildNodeComponents }: FieldInputProps) => {
+    const Container = ({ path, ChildFields }: FieldInputProps) => {
       const [mount] = useState(() => ++mounts);
       return (
         <section data-container={path} data-mount={mount}>
-          {ChildNodeComponents.map((Child) => (
+          {ChildFields.map((Child) => (
             <Child key={Child.key} />
           ))}
         </section>

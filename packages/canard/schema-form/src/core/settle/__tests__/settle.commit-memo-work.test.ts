@@ -1,6 +1,6 @@
 import { afterEach, expect, it, vi } from 'vitest';
 
-import { SetValueOption } from '../../types/value';
+import { WriteOption } from '../../types/value';
 import { loadFieldNodeAtMount, writeFieldNode } from '../index';
 import { createTestTree } from './fixtures/createTestTree';
 
@@ -14,7 +14,7 @@ it('updates a still-empty mismatch row without clearing or reinserting the memo'
       sibling: { type: 'number', default: 3 },
     },
   });
-  loadFieldNodeAtMount(root, { value: 'before' }, SetValueOption.Overwrite);
+  loadFieldNodeAtMount(root, { value: 'before' }, WriteOption.Overwrite);
   const memo = root.runtime.typeMismatchesMemo!;
   const clear = vi.spyOn(memo, 'clear');
   const set = vi.spyOn(memo, 'set');
@@ -25,7 +25,7 @@ it('updates a still-empty mismatch row without clearing or reinserting the memo'
       root.structure!.value,
       value,
       'input',
-      SetValueOption.Overwrite,
+      WriteOption.Overwrite,
     );
     expect(root.emit).toEqual({ value, sibling: 3 });
     expect(memo.get('')).toEqual({ commit: index + 2, paths: [] });
@@ -50,10 +50,10 @@ it('clears ancestor rows on mismatch recovery and retains its warning and commit
   loadFieldNodeAtMount(
     root,
     { group: { value: 'before' } },
-    SetValueOption.Overwrite,
+    WriteOption.Overwrite,
   );
   const leaf = root.structure!.group.structure!.value;
-  writeFieldNode(leaf, { invalid: true }, 'input', SetValueOption.Overwrite);
+  writeFieldNode(leaf, { invalid: true }, 'input', WriteOption.Overwrite);
   const memo = root.runtime.typeMismatchesMemo!;
   expect(memo.get('/group')?.paths).toEqual(['/group/value']);
   expect(root.runtime.typeMismatchRecords).toEqual([
@@ -61,7 +61,7 @@ it('clears ancestor rows on mismatch recovery and retains its warning and commit
   ]);
   const clear = vi.spyOn(memo, 'clear');
   const set = vi.spyOn(memo, 'set');
-  writeFieldNode(leaf, 'recovered', 'input', SetValueOption.Overwrite);
+  writeFieldNode(leaf, 'recovered', 'input', WriteOption.Overwrite);
   expect(clear).toHaveBeenCalledTimes(1);
   expect(set).toHaveBeenCalledTimes(1);
   expect([...memo.keys()]).toEqual(['']);
@@ -78,7 +78,7 @@ it('resets additional subtree memo rows instead of keeping an older commit', () 
       value: { type: 'string' },
     },
   });
-  loadFieldNodeAtMount(root, { value: 'before' }, SetValueOption.Overwrite);
+  loadFieldNodeAtMount(root, { value: 'before' }, WriteOption.Overwrite);
   const memo = root.runtime.typeMismatchesMemo!;
   memo.set('/value', { commit: 1, paths: Object.freeze([]) });
   const clear = vi.spyOn(memo, 'clear');
@@ -87,7 +87,7 @@ it('resets additional subtree memo rows instead of keeping an older commit', () 
     root.structure!.value,
     'after',
     'input',
-    SetValueOption.Overwrite,
+    WriteOption.Overwrite,
   );
   expect(clear).toHaveBeenCalledTimes(1);
   expect(set).toHaveBeenCalledTimes(1);

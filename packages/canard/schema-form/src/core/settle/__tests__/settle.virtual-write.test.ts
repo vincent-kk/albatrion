@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 
 import { SchemaFormError } from '../../../errors';
 import { makeFieldNodeTree } from '../../__tests__/makeFieldNodeTree';
-import { SetValueOption } from '../../types/value';
+import { WriteOption } from '../../types/value';
 import { getGateRegistry } from '../utils/gates/getGateRegistry';
 
 const periodSchema = {
@@ -89,7 +89,7 @@ describe('virtual writes and referenced siblings', () => {
     expect(root.find('/group')?.value).toEqual([
       { first: 'changed', second: 'keep' },
     ]);
-    root.find('/group')!.setValue([{ first: 'new' }], SetValueOption.Merge);
+    root.find('/group')!.setValue([{ first: 'new' }], WriteOption.Merge);
     expect(root.find('/details')?.value).toEqual({
       first: 'new',
       second: 'keep',

@@ -12,7 +12,7 @@ import {
   publishGlobalStateDeltas,
   updateFieldNodeNameAndPath,
 } from '../../record';
-import { SetValueOption } from '../../types/value';
+import { WriteOption } from '../../types/value';
 import { arrangeFieldNodeItems, writeFieldNode } from '../index';
 import { markCommitDeliveries } from '../utils/commit/markCommitDeliveries';
 import { createSettlementContext } from '../utils/settlement/createSettlementContext';
@@ -54,7 +54,7 @@ describe('array integration runtime stores', () => {
         root,
         { a: 0, list: [1, 2] },
         'callerReplace',
-        SetValueOption.Overwrite,
+        WriteOption.Overwrite,
       );
     } catch (error) {
       caught = error;
@@ -87,7 +87,7 @@ describe('array integration runtime stores', () => {
       root,
       [{ n: 1 }, { n: 2 }],
       'callerReplace',
-      SetValueOption.Overwrite,
+      WriteOption.Overwrite,
     );
     for (const node of root.runtime.deliveries ?? [])
       node.pendingDelivery = undefined;
@@ -99,7 +99,7 @@ describe('array integration runtime stores', () => {
       const context = createSettlementContext(
         root,
         'callerReplace',
-        SetValueOption.Overwrite,
+        WriteOption.Overwrite,
         scratch,
       );
       for (const node of [item, leaf]) {
@@ -136,7 +136,7 @@ describe('array integration runtime stores', () => {
         root,
         [{ n: 1 }, { n: 2 }],
         'callerReplace',
-        SetValueOption.Overwrite,
+        WriteOption.Overwrite,
       );
       const item = root.children![kind === 'pop' ? 1 : 0];
       const leaf = item.structure!.n;
@@ -168,7 +168,7 @@ describe('array integration runtime stores', () => {
         properties: { n: { type: 'number', controls: { watch: ['.'] } } },
       },
     });
-    writeFieldNode(root, [{ n: 1 }], 'callerReplace', SetValueOption.Overwrite);
+    writeFieldNode(root, [{ n: 1 }], 'callerReplace', WriteOption.Overwrite);
     const item = root.children![0];
     const leaf = item.structure!.n;
     const runtime = root.runtime;
@@ -268,12 +268,7 @@ describe('array integration runtime stores', () => {
     });
     let caught: unknown;
     try {
-      writeFieldNode(
-        root,
-        [1, 2, 3],
-        'callerReplace',
-        SetValueOption.Overwrite,
-      );
+      writeFieldNode(root, [1, 2, 3], 'callerReplace', WriteOption.Overwrite);
     } catch (error) {
       caught = error;
     }

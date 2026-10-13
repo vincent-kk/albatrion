@@ -56,7 +56,7 @@ export interface FieldNodeRecord<Self> {
   /** Interpreted terminal source or a branch's non-plain source. */
   raw: unknown;
   /** Undeclared object keys retained in their incoming own-key order. */
-  extras: unknown;
+  undeclaredValues: unknown;
   /** Result of the current node gate. */
   active: boolean;
   /** Local visibility after all active state declarations are combined. */

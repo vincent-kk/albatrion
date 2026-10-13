@@ -3,7 +3,7 @@ import { isArray } from '@winglet/common-utils/filter';
 import { getItemEntry } from '../../../blueprint';
 import type { ArrayOperation, FieldNodeRecord } from '../../../record';
 import { interpretFieldNodeInput } from '../../../settle';
-import { SetValueOption } from '../../../types/value';
+import { WriteOption } from '../../../types/value';
 import { readBatchValue } from './readBatchValue';
 
 /**
@@ -41,7 +41,7 @@ export const markBatchArrayOperation = <Self extends FieldNodeRecord<Self>>(
   (node.rootNode.runtime.batchWrites ??= []).push({
     node,
     value: raw,
-    option: SetValueOption.Replace,
+    option: WriteOption.Replace,
   });
   if (plan.kind === 'update' || plan.result.source === 'updated') {
     const index =

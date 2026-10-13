@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 
 import { FieldNodeState } from '../../types/state';
-import { SetValueOption } from '../../types/value';
+import { WriteOption } from '../../types/value';
 import { loadFieldNodeAtMount, writeFieldNode } from '../index';
 import { createTestTree } from './fixtures/createTestTree';
 
@@ -26,14 +26,14 @@ describe('derive baseline alongside exit policy', () => {
     loadFieldNodeAtMount(
       root,
       { clear: true, f: true, target: 'a' },
-      SetValueOption.Overwrite,
+      WriteOption.Overwrite,
     );
     const target = root.structure!.target;
     target.interactionState = {
       [FieldNodeState.Dirty]: true,
       [FieldNodeState.Touched]: true,
     };
-    writeFieldNode(target, 'b', 'input', SetValueOption.Overwrite);
+    writeFieldNode(target, 'b', 'input', WriteOption.Overwrite);
     expect(target.raw).toBe('b');
     expect(target.interactionState[FieldNodeState.Dirty]).toBe(true);
   });

@@ -3,7 +3,7 @@ import { describe, expect, it } from 'vitest';
 import { hasOwnProperty } from '@winglet/common-utils/lib';
 
 import { blueprint } from '../../blueprint';
-import { SetValueOption } from '../../types/value';
+import { WriteOption } from '../../types/value';
 import { loadFieldNodeAtMount, writeFieldNode } from '../index';
 import { createTestTree } from './fixtures/createTestTree';
 
@@ -50,13 +50,13 @@ describe('runtime hint atomicity', () => {
     loadFieldNodeAtMount(
       root,
       { enabled: false, field: 'value' },
-      SetValueOption.Overwrite,
+      WriteOption.Overwrite,
     );
     writeFieldNode(
       root.structure!.enabled,
       true,
       'input',
-      SetValueOption.Overwrite,
+      WriteOption.Overwrite,
     );
     const effective = root.structure!.field.schema.schema;
     if (typeof effective === 'boolean')
@@ -76,7 +76,7 @@ describe('runtime hint atomicity', () => {
     loadFieldNodeAtMount(
       root,
       { enabled: true, field: 'value' },
-      SetValueOption.Overwrite,
+      WriteOption.Overwrite,
     );
     const effective = root.structure!.field.schema.schema;
     if (typeof effective === 'boolean')

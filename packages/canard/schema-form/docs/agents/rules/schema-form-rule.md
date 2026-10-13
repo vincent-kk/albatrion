@@ -49,8 +49,8 @@ Mixing surfaces on the same path (e.g. `<Form.Input path="/x" />` inside a `<For
 
 ### terminal-is-a-contract
 
-- On object/array schemas, `options.terminal: true` means the `FieldInput` owns the whole subtree value; `ChildNodeComponents` is not used.
-- `options.terminal: false`, or unset without a `presentation.FieldInput` component, means children render via `ChildNodeComponents`.
+- On object/array schemas, `options.terminal: true` means the `FieldInput` owns the whole subtree value; `ChildFields` is not used.
+- `options.terminal: false`, or unset without a `presentation.FieldInput` component, means children render via `ChildFields`.
 - Never mix both modes in a single node.
 
 ---
@@ -79,7 +79,7 @@ Each rule is a single hard requirement. Violations typically produce silent bugs
 - A custom `FieldInput` MUST honor `FieldInputProps`:
   - Use `value` (controlled) OR `defaultValue` (uncontrolled), never both.
   - Call `onChange` with the correct `SetValueOption`.
-  - Render children via `ChildNodeComponents` whenever the node is not `terminal`.
+  - Render children via `ChildFields` whenever the node is not `terminal`.
 - Why: violating any of these causes silent value loss or infinite re-render.
 
 ### onchange-semantics

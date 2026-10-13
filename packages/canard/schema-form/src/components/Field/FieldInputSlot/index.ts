@@ -1,2 +1,2 @@
 export { FieldInputSlotWrapper } from './FieldInputSlotWrapper';
-export type { ChildNodeComponent } from './type';
+export type { ChildField } from './type';

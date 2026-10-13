@@ -5,7 +5,7 @@ import type { InferValueType } from '../types/value';
 import { buildFieldNodeTree, mountFieldNode } from './FieldNode';
 import type { InferFieldNode } from './FieldNode';
 import type { BlueprintOptions } from './blueprint';
-import type { JSONSchema } from './types/jsonSchema';
+import type { AuthoredSchema } from './types/jsonSchema';
 import type { ValidationMode } from './types/state';
 import type { Validator } from './validation';
 
@@ -17,7 +17,7 @@ import type { Validator } from './validation';
  * undefined leaves earlier terminal hints intact.
  * @returns The mounted root; mount validation is requested unless explicitly deferred.
  */
-export function nodeFromJSONSchema<Schema extends JSONSchema>(props: {
+export function nodeFromJSONSchema<Schema extends AuthoredSchema>(props: {
   jsonSchema: Schema;
   defaultValue?: InferValueType<Schema>;
   validator?: Validator;

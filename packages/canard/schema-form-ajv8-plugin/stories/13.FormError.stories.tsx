@@ -51,7 +51,7 @@ export const DirtyTouched = () => {
     const {
       [FieldNodeState.Dirty]: dirty,
       [FieldNodeState.Touched]: touched,
-      [FieldNodeState.ShowError]: showError,
+      [FieldNodeState.ErrorVisible]: showError,
     } = node.state || {};
     return depth === 0 ? (
       <Input />
@@ -63,8 +63,8 @@ export const DirtyTouched = () => {
           <button
             onClick={() =>
               showError !== true
-                ? node.setState({ [FieldNodeState.ShowError]: true })
-                : node.setState({ [FieldNodeState.ShowError]: undefined })
+                ? node.setState({ [FieldNodeState.ErrorVisible]: true })
+                : node.setState({ [FieldNodeState.ErrorVisible]: undefined })
             }
           >
             Show Error
@@ -72,8 +72,8 @@ export const DirtyTouched = () => {
           <button
             onClick={() =>
               showError !== false
-                ? node.setState({ [FieldNodeState.ShowError]: false })
-                : node.setState({ [FieldNodeState.ShowError]: undefined })
+                ? node.setState({ [FieldNodeState.ErrorVisible]: false })
+                : node.setState({ [FieldNodeState.ErrorVisible]: undefined })
             }
           >
             Hide Error
@@ -398,7 +398,7 @@ export const ErrorBoundary = () => {
         onChange={setValue}
       >
         <div>
-          <Form.Group
+          <Form.Field
             path="#/name"
             FieldInput={() => {
               throw new Error('Error accord from Input');

@@ -31,7 +31,7 @@ React 컴포넌트·정의·File 객체는 소비자가 만들고, 이 부류는
 | `trim-on-blur.scenario.ts` | `input-components.trim-on-blur` | `options.trim`은 입력 중에는 공백을 두고 blur에서만 자르며, trim이 없는 칸은 공백을 지킨다. | CONTROLS-004, CONTROLS-005, CONTROLS-006 |
 | `file-attach.scenario.ts` | `input-components.file-attach` | 첨부는 경로별 목록으로 들고, 입력이 내려가면 그 항목이 빠지며, reset은 맵을 비운다. | LANDING-148, TEST-020, TEST-023 |
 | `props-flow.scenario.ts` | `input-components.props-flow` | presentation의 입력 props와 readOnly·disabled 제어가 내장 입력의 속성으로 닿는다. | CONTROLS-023, LANDING-168 |
-| `child-components.scenario.ts` | `input-components.child-components` | 사용자 객체 입력이 ChildNodeComponents로 자식을 그리고 useChildNodeErrors가 자식 상태로 showErrors를 내며, 열린 객체는 한 노드로 남아 터미널 입력이 통째로 편집한다. | LANDING-167, SCHEMA-040 |
+| `child-components.scenario.ts` | `input-components.child-components` | 사용자 객체 입력이 ChildFields로 자식을 그리고 useChildFieldErrors가 자식 상태로 showErrors를 내며, 열린 객체는 한 노드로 남아 터미널 입력이 통째로 편집한다. | LANDING-167, SCHEMA-040 |
 
 ## Last Updated
 

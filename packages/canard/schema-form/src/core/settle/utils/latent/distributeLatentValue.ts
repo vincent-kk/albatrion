@@ -96,7 +96,7 @@ export const distributeLatentValue = <Self extends FieldNodeRecord<Self>>(
   const previous = prior instanceof HostLatent ? prior : undefined;
   const declared = getDeclaredChildNames(template);
   const extras = nextExtras(
-    whole ? undefined : previous?.extras,
+    whole ? undefined : previous?.undeclaredValues,
     value,
     declared,
     !whole,
@@ -131,7 +131,7 @@ export const distributeLatentValue = <Self extends FieldNodeRecord<Self>>(
       ? undefined
       : previous &&
           Object.is(previous.raw, raw) &&
-          Object.is(previous.extras, extras)
+          Object.is(previous.undeclaredValues, extras)
         ? previous
         : new HostLatent(raw, extras);
   setLatentRaw(

@@ -12,7 +12,7 @@ const STABLE_SHAPES = new WeakMap<
   {
     children: readonly unknown[];
     schema: unknown;
-    extras: unknown;
+    undeclaredValues: unknown;
     names: readonly string[];
   }
 >();
@@ -31,7 +31,7 @@ export const assembleObject: Behavior['assemble'] = (
     hint &&
     stable?.children === children &&
     stable.schema === node.schema &&
-    stable.extras === node.extras &&
+    stable.undeclaredValues === node.undeclaredValues &&
     previous !== null &&
     typeof previous === 'object' &&
     objectKeyCounts.get(previous) === stable.names.length
@@ -71,8 +71,8 @@ export const assembleObject: Behavior['assemble'] = (
   if (
     stable?.children === children &&
     stable.schema === node.schema &&
-    stable.extras === undefined &&
-    node.extras === undefined &&
+    stable.undeclaredValues === undefined &&
+    node.undeclaredValues === undefined &&
     previous !== null &&
     typeof previous === 'object' &&
     !isArray(previous)
@@ -122,7 +122,7 @@ export const assembleObject: Behavior['assemble'] = (
   const entries = node.blueprintNode.childEntries;
   if (
     previous === undefined &&
-    node.extras === undefined &&
+    node.undeclaredValues === undefined &&
     preferred.length === 0 &&
     entries.length === children.length
   ) {
@@ -151,7 +151,7 @@ export const assembleObject: Behavior['assemble'] = (
       STABLE_SHAPES.set(node, {
         children,
         schema: node.schema,
-        extras: node.extras,
+        undeclaredValues: node.undeclaredValues,
         names,
       });
       objectKeyCounts.set(result, names.length);
@@ -168,7 +168,7 @@ export const assembleObject: Behavior['assemble'] = (
       'emit' in child
     )
       childValues.set(child.name, child.emit);
-  const extra = node.extras;
+  const extra = node.undeclaredValues;
   const extras =
     extra !== null && typeof extra === 'object' && !isArray(extra)
       ? extra
@@ -226,7 +226,7 @@ export const assembleObject: Behavior['assemble'] = (
       STABLE_SHAPES.set(node, {
         children,
         schema: node.schema,
-        extras: node.extras,
+        undeclaredValues: node.undeclaredValues,
         names,
       });
       objectKeyCounts.set(patch ?? previous, names.length);
@@ -247,7 +247,7 @@ export const assembleObject: Behavior['assemble'] = (
   STABLE_SHAPES.set(node, {
     children,
     schema: node.schema,
-    extras: node.extras,
+    undeclaredValues: node.undeclaredValues,
     names,
   });
   objectKeyCounts.set(result, names.length);

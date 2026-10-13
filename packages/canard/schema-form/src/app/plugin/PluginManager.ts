@@ -4,7 +4,7 @@ import { remainOnlyReactComponent } from '@winglet/react-utils/object';
 
 import {
   FormErrorRenderer,
-  FormGroupRenderer,
+  FormFieldRenderer,
   FormInputRenderer,
   FormLabelRenderer,
 } from '@/schema-form/components/FallbackComponents';
@@ -30,7 +30,7 @@ interface RenderKit {
 }
 
 const defaultRenderKit = {
-  FieldRenderer: FormGroupRenderer,
+  FieldRenderer: FormFieldRenderer,
   FormLabelRenderer: FormLabelRenderer,
   FormInputRenderer: FormInputRenderer,
   FormErrorRenderer: FormErrorRenderer,

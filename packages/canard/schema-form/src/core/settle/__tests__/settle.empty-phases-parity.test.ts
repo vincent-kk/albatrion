@@ -1,7 +1,7 @@
 import { expect, it } from 'vitest';
 
 import { FieldNodeEventType } from '../../record';
-import { SetValueOption } from '../../types/value';
+import { WriteOption } from '../../types/value';
 import { loadFieldNodeAtMount, writeFieldNode } from '../index';
 import { createTestTree } from './fixtures/createTestTree';
 
@@ -13,7 +13,7 @@ it('preserves values, errors, delivery payloads, revisions, commits and empty ro
       sibling: { type: 'number', default: 3 },
     },
   });
-  loadFieldNodeAtMount(root, { value: 'before' }, SetValueOption.Overwrite);
+  loadFieldNodeAtMount(root, { value: 'before' }, WriteOption.Overwrite);
   const leaf = root.structure!.value;
   const sibling = root.structure!.sibling;
   const siblingRevision = sibling.revisionLedger;
@@ -25,7 +25,7 @@ it('preserves values, errors, delivery payloads, revisions, commits and empty ro
     const value = index === 0 ? 'first' : 'later';
     const revision = leaf.revisionLedger[FieldNodeEventType.UpdateValue] ?? 0;
     expect(() =>
-      writeFieldNode(leaf, value, 'input', SetValueOption.Overwrite),
+      writeFieldNode(leaf, value, 'input', WriteOption.Overwrite),
     ).not.toThrow();
     expect(root.emit).toEqual({ value, sibling: 3 });
     expect(root.runtime.diagnostics.status).toBe('stable');
@@ -57,13 +57,13 @@ it('preserves actual derive rounds, automatic delivery and deferred expression e
       target: { type: 'number', controls: { derived: '../source + 1' } },
     },
   });
-  loadFieldNodeAtMount(root, { source: 1 }, SetValueOption.Overwrite);
+  loadFieldNodeAtMount(root, { source: 1 }, WriteOption.Overwrite);
   const target = root.structure!.target;
   for (const node of root.runtime.deliveries ?? [])
     node.pendingDelivery = undefined;
   root.runtime.deliveries?.clear();
   const revision = target.revisionLedger[FieldNodeEventType.UpdateValue] ?? 0;
-  writeFieldNode(root.structure!.source, 2, 'input', SetValueOption.Overwrite);
+  writeFieldNode(root.structure!.source, 2, 'input', WriteOption.Overwrite);
   expect(root.emit).toEqual({ source: 2, target: 3 });
   expect(root.runtime.commitNumber).toBe(2);
   expect(target.revisionLedger[FieldNodeEventType.UpdateValue]).toBe(
@@ -99,7 +99,7 @@ it('preserves actual derive rounds, automatic delivery and deferred expression e
     loadFieldNodeAtMount(
       broken,
       { source: 1, target: 7 },
-      SetValueOption.Overwrite,
+      WriteOption.Overwrite,
     ),
   ).toThrow('Derive expression failed');
   expect(broken.emit).toEqual({ source: 1, target: 7 });

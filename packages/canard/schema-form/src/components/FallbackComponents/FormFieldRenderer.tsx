@@ -2,7 +2,7 @@ import { isArraySchema } from '@winglet/json-schema/filter';
 
 import type { FieldRendererProps } from '@/schema-form/types';
 
-export const FormGroupRenderer = ({
+export const FormFieldRenderer = ({
   node,
   depth,
   path,

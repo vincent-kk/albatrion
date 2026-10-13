@@ -1,7 +1,7 @@
 import { describe, expect, it, vi } from 'vitest';
 
 import type { BlueprintSchema } from '../../blueprint';
-import { SetValueOption } from '../../types/value';
+import { WriteOption } from '../../types/value';
 import { loadFieldNodeAtMount, writeFieldNode } from '../index';
 import { createTestTree } from './fixtures/createTestTree';
 
@@ -29,7 +29,7 @@ describe('latent descendant exit policies', () => {
       loadFieldNodeAtMount(
         root,
         { flag: true, secret: 'held' },
-        SetValueOption.Overwrite,
+        WriteOption.Overwrite,
       );
       const parse = vi.spyOn(JSON, 'parse');
       try {
@@ -37,7 +37,7 @@ describe('latent descendant exit policies', () => {
           root.structure!.flag,
           false,
           'input',
-          SetValueOption.Overwrite,
+          WriteOption.Overwrite,
         );
         return parse.mock.calls.length;
       } finally {
@@ -67,13 +67,13 @@ describe('latent descendant exit policies', () => {
     loadFieldNodeAtMount(
       root,
       { flag: true, clear: false, secret: 'held' },
-      SetValueOption.Overwrite,
+      WriteOption.Overwrite,
     );
     writeFieldNode(
       root,
       { flag: false, clear: true },
       'callerPartial',
-      SetValueOption.Merge,
+      WriteOption.Merge,
     );
     expect(root.structure?.secret).toBeUndefined();
     expect(
@@ -99,20 +99,10 @@ describe('latent descendant exit policies', () => {
     loadFieldNodeAtMount(
       root,
       { flag: true, clear: false, secret: 'held' },
-      SetValueOption.Overwrite,
+      WriteOption.Overwrite,
     );
-    writeFieldNode(
-      root.structure!.clear,
-      true,
-      'input',
-      SetValueOption.Overwrite,
-    );
-    writeFieldNode(
-      root.structure!.flag,
-      false,
-      'input',
-      SetValueOption.Overwrite,
-    );
+    writeFieldNode(root.structure!.clear, true, 'input', WriteOption.Overwrite);
+    writeFieldNode(root.structure!.flag, false, 'input', WriteOption.Overwrite);
     expect(
       root.runtime.latentRaw.has(JSON.stringify(['/secret', 'string'])),
     ).toBe(false);
@@ -151,23 +141,18 @@ describe('latent descendant exit policies', () => {
     loadFieldNodeAtMount(
       root,
       { show: true, outer: { kind: 'a', value: 'held' } },
-      SetValueOption.Overwrite,
+      WriteOption.Overwrite,
     );
     writeFieldNode(
       root.structure!.outer.structure!.kind,
       'b',
       'input',
-      SetValueOption.Overwrite,
+      WriteOption.Overwrite,
     );
     expect(
       root.runtime.latentRaw.get(JSON.stringify(['/outer/value', 'string'])),
     ).toBe('held');
-    writeFieldNode(
-      root.structure!.show,
-      false,
-      'input',
-      SetValueOption.Overwrite,
-    );
+    writeFieldNode(root.structure!.show, false, 'input', WriteOption.Overwrite);
     expect(
       root.runtime.latentRaw.get(JSON.stringify(['/outer/value', 'string'])),
     ).toBe('held');
@@ -206,13 +191,13 @@ describe('latent descendant exit policies', () => {
           secret: 'held',
         },
       },
-      SetValueOption.Overwrite,
+      WriteOption.Overwrite,
     );
     writeFieldNode(
       root.structure!.branch.structure!.gate,
       false,
       'input',
-      SetValueOption.DisableAutomaticWrites,
+      WriteOption.DisableAutomaticWrites,
     );
     expect(
       root.runtime.latentRaw.get(JSON.stringify(['/branch/secret', 'string'])),
@@ -222,12 +207,7 @@ describe('latent descendant exit policies', () => {
         key.startsWith('["/branch/secret",'),
       ),
     ).toBe(false);
-    writeFieldNode(
-      root.structure!.show,
-      false,
-      'input',
-      SetValueOption.Overwrite,
-    );
+    writeFieldNode(root.structure!.show, false, 'input', WriteOption.Overwrite);
     expect(
       root.runtime.latentRaw.has(JSON.stringify(['/branch/secret', 'string'])),
     ).toBe(false);

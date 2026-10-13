@@ -29,8 +29,8 @@ export const readRawTree = <Self extends FieldNodeRecord<Self>>(
       const entry = getItemEntry(node.blueprintNode, index);
       let value: unknown;
       if (!entry)
-        value = isArray(node.extras)
-          ? node.extras[index - tailStart]
+        value = isArray(node.undeclaredValues)
+          ? node.undeclaredValues[index - tailStart]
           : undefined;
       else {
         tailStart++;
@@ -43,8 +43,8 @@ export const readRawTree = <Self extends FieldNodeRecord<Self>>(
     }
     return slots;
   }
-  const value: Record<string, unknown> = isPlain(node.extras)
-    ? { ...node.extras }
+  const value: Record<string, unknown> = isPlain(node.undeclaredValues)
+    ? { ...node.undeclaredValues }
     : {};
   let found = Object.keys(value).length > 0;
   for (const entry of node.blueprintNode.childEntries) {

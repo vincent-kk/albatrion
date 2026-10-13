@@ -64,7 +64,7 @@ export class FieldNode implements FieldNodeRecord<FieldNode> {
   itemCount: number;
   nextItemKey: number;
   private storedRaw: unknown;
-  private storedExtras: unknown;
+  private storedUndeclaredValues: unknown;
   private storedActive: boolean;
   private storedVisible: boolean;
   private storedReadOnly: boolean;
@@ -124,7 +124,7 @@ export class FieldNode implements FieldNodeRecord<FieldNode> {
     this.itemCount = 0;
     this.nextItemKey = 0;
     this.storedRaw = undefined;
-    this.storedExtras = undefined;
+    this.storedUndeclaredValues = undefined;
     this.storedActive = true;
     this.storedVisible = true;
     this.storedReadOnly = false;
@@ -233,12 +233,12 @@ export class FieldNode implements FieldNodeRecord<FieldNode> {
   set raw(value: unknown) {
     this.storedRaw = value;
   }
-  /** {@inheritDoc NodeSurface.extras} */
-  get extras() {
-    return this.storedExtras;
+  /** {@inheritDoc NodeSurface.undeclaredValues} */
+  get undeclaredValues() {
+    return this.storedUndeclaredValues;
   }
-  set extras(value: unknown) {
-    this.storedExtras = value;
+  set undeclaredValues(value: unknown) {
+    this.storedUndeclaredValues = value;
   }
   /** {@inheritDoc NodeSurface.value} */
   get value() {

@@ -22,13 +22,13 @@ export enum FieldNodeState {
   /** Node interacted with (e.g., focused/blurred) at least once. */
   Touched = BIT_FLAG_01,
   /** UI should display validation messages for this node. */
-  ShowError = BIT_FLAG_02,
+  ErrorVisible = BIT_FLAG_02,
 }
 
 /** Typed bag of boolean-like UI state flags carried by a node. */
 export type NodeStateFlags = {
   [FieldNodeState.Dirty]?: boolean;
   [FieldNodeState.Touched]?: boolean;
-  [FieldNodeState.ShowError]?: boolean;
+  [FieldNodeState.ErrorVisible]?: boolean;
   [key: string]: any;
 };

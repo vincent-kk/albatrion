@@ -94,7 +94,7 @@ it('EVENT-073 refresh remounts the addressed input and retains its node', async 
   expect(form.value('/text')).toBe('same');
 });
 
-it('TEST-020 FormGroupRenderer consumes node.strategy for branch and terminal rendering', async () => {
+it('TEST-020 FormFieldRenderer consumes node.strategy for branch and terminal rendering', async () => {
   const Group = ({ node, Input }: FieldRendererProps) => (
     <section data-strategy={node.strategy}>
       <Input />
@@ -203,7 +203,7 @@ it('SETTLE-043 restoring source content makes no phantom watch or derived delive
       if (
         event.type &
         (FieldNodeEventType.UpdateValue |
-          FieldNodeEventType.UpdateComputedProperties)
+          FieldNodeEventType.UpdateControlledProperties)
       )
         events.push({
           path,

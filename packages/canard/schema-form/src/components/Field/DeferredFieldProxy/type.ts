@@ -10,6 +10,6 @@ export interface DeferredFieldProxyProps extends Omit<FieldProxyProps, 'node'> {
   node: FieldNode;
   /** Form-level virtualization coordinator */
   manager: VirtualizationManager;
-  /** FieldProxy handed down by the ChildNodeComponent closure (avoids a circular import) */
+  /** FieldProxy handed down by the ChildField closure (avoids a circular import) */
   NodeProxy: ComponentType<FieldProxyProps>;
 }

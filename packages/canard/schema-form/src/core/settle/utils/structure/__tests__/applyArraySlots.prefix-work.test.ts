@@ -1,6 +1,6 @@
 import { afterEach, expect, it, vi } from 'vitest';
 
-import { SetValueOption } from '../../../../types/value';
+import { WriteOption } from '../../../../types/value';
 import { createTestTree } from '../../../__tests__/fixtures/createTestTree';
 import { arrangeFieldNodeItems, writeFieldNode } from '../../../index';
 import * as rawTree from '../../latent/readRawTree';
@@ -16,7 +16,7 @@ it('does not rebuild retained raw item trees for append or remove-last', () => {
     root,
     [{ value: 'a' }, { value: 'b' }],
     'callerReplace',
-    SetValueOption.Overwrite,
+    WriteOption.Overwrite,
   );
   const read = vi.spyOn(rawTree, 'readRawTree');
   expect(

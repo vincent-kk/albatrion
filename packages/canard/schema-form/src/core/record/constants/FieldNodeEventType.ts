@@ -17,7 +17,7 @@ export enum FieldNodeEventType {
   /** The direct children changed. */
   UpdateChildren = 1 << 7,
   /** Calculated state or watched values changed. */
-  UpdateComputedProperties = 1 << 8,
+  UpdateControlledProperties = 1 << 8,
   /** The input gained focus. */
   Focused = 1 << 9,
   /** The input lost focus. */

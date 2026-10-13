@@ -69,7 +69,7 @@ const makeRecord = (): FieldNodeRecord<PathNode> => {
     itemCount: 0,
     nextItemKey: 0,
     raw: undefined,
-    extras: undefined,
+    undeclaredValues: undefined,
     active: true,
     visible: true,
     readOnly: false,

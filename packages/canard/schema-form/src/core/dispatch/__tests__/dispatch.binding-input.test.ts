@@ -2,7 +2,7 @@ import { describe, expect, it, vi } from 'vitest';
 
 import { FieldNodeEventType } from '../../record';
 import { FieldNodeState, ValidationMode } from '../../types/state';
-import { SetValueOption } from '../../types/value';
+import { WriteOption } from '../../types/value';
 import * as dispatch from '../index';
 import { createDispatchTree } from './fixtures/createDispatchTree';
 import { getDispatchChild } from './fixtures/getDispatchChild';
@@ -22,11 +22,7 @@ describe('binding input entries', () => {
     dispatch.subscribeFieldNode(input, listener);
     dispatch.dispatchBatch(root, () => {
       dispatch.dispatchWriteInput(input, 'typed');
-      dispatch.dispatchSetValue(
-        root,
-        { other: 'external' },
-        SetValueOption.Merge,
-      );
+      dispatch.dispatchSetValue(root, { other: 'external' }, WriteOption.Merge);
     });
     expect(input.local).toBe('typed');
     expect(
@@ -198,7 +194,7 @@ describe('binding input entries', () => {
     dispatch.dispatchFinishInput(root);
     expect(root.local).toBe(' value ');
     runtime.disableAutomaticWrites = false;
-    dispatch.dispatchFinishInput(root, SetValueOption.DisableAutomaticWrites);
+    dispatch.dispatchFinishInput(root, WriteOption.DisableAutomaticWrites);
     expect(root.local).toBe(' value ');
     expect(runtime.commitNumber).toBe(commit);
   });

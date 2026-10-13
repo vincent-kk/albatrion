@@ -37,7 +37,8 @@ export const DeferredFieldProxy = ({
 
   useFieldNodeTracker(
     node,
-    FieldNodeEventType.UpdateComputedProperties | FieldNodeEventType.UpdatePath,
+    FieldNodeEventType.UpdateControlledProperties |
+      FieldNodeEventType.UpdatePath,
   );
 
   useFieldNodeSubscribe(revealed ? null : node, ({ type }) => {

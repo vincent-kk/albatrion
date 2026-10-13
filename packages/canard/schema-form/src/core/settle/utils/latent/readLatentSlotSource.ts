@@ -48,7 +48,9 @@ export const readLatentSlotSource = <Self extends FieldNodeRecord<Self>>(
     if (!hasDescendant) return undefined;
   }
   const value: Record<string, unknown> =
-    own instanceof HostLatent && isPlain(own.extras) ? { ...own.extras } : {};
+    own instanceof HostLatent && isPlain(own.undeclaredValues)
+      ? { ...own.undeclaredValues }
+      : {};
   let found = Object.keys(value).length > 0;
   for (const entry of template.childEntries) {
     if (hasOwnProperty(value, entry.name)) continue;

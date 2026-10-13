@@ -1,6 +1,6 @@
 import { StaticFirstLoadCapability } from '../../../blueprint';
 import type { FieldNodeRecord, SettlementScratch } from '../../../record';
-import { SetValueOption } from '../../../types/value';
+import { WriteOption } from '../../../types/value';
 import type { FieldNodeWriteKind, SettlementContext } from '../../type';
 import { getVirtualReferenceIndex } from '../compute/getVirtualReferenceIndex';
 import { getTransitionCap } from '../transition/getTransitionCap';
@@ -17,15 +17,15 @@ import { getTransitionCap } from '../transition/getTransitionCap';
 export const createSettlementContext = <Self extends FieldNodeRecord<Self>>(
   node: Self,
   kind: FieldNodeWriteKind,
-  option: SetValueOption,
+  option: WriteOption,
   scratch: SettlementScratch<Self>,
   replaces = false,
 ): SettlementContext<Self> => {
   const root = node.rootNode;
   const runtime = root.runtime;
   const blueprint = runtime.blueprint;
-  const disable = (option & SetValueOption.DisableAutomaticWrites) !== 0;
-  const enable = (option & SetValueOption.EnableAutomaticWrites) !== 0;
+  const disable = (option & WriteOption.DisableAutomaticWrites) !== 0;
+  const enable = (option & WriteOption.EnableAutomaticWrites) !== 0;
   return {
     root,
     previousEmit: root.emit,

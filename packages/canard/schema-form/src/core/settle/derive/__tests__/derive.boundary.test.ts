@@ -1,7 +1,7 @@
 import { describe, expect, it, vi } from 'vitest';
 
 import { blueprint } from '../../../blueprint';
-import { SetValueOption } from '../../../types/value';
+import { WriteOption } from '../../../types/value';
 import { createTestTree } from '../../__tests__/fixtures/createTestTree';
 import { loadFieldNodeAtMount, writeFieldNode } from '../../index';
 import { getDeriveRuleTable } from '../index';
@@ -16,7 +16,7 @@ describe('derive rule table', () => {
         'a~b': { type: 'string' },
       },
     });
-    loadFieldNodeAtMount(root, { 'a~b': 'value' }, SetValueOption.Overwrite);
+    loadFieldNodeAtMount(root, { 'a~b': 'value' }, WriteOption.Overwrite);
     const state = { sourcePaths: new Set(['/a~b', '/a~0b']) };
     expect(getDeriveSourceNodes(root, state)).toEqual([root.structure!['a~b']]);
   });
@@ -107,7 +107,7 @@ describe('derive expression failures', () => {
       },
     });
     expect(() =>
-      loadFieldNodeAtMount(root, { source: 'D' }, SetValueOption.Overwrite),
+      loadFieldNodeAtMount(root, { source: 'D' }, WriteOption.Overwrite),
     ).toThrow('Derive expression failed');
     expect(root.structure?.a?.raw).toBe('fill-a');
     expect(root.structure?.d?.raw).toBe('D');
@@ -129,7 +129,7 @@ describe('derive expression failures', () => {
       },
     });
     expect(() =>
-      loadFieldNodeAtMount(root, { trigger: 'go' }, SetValueOption.Overwrite),
+      loadFieldNodeAtMount(root, { trigger: 'go' }, WriteOption.Overwrite),
     ).toThrow('Injection target missing');
     expect(root.structure?.a?.raw).toBe('fill-a');
     expect(root.runtime.diagnostics.cause).toBe('injectTarget');
@@ -148,7 +148,7 @@ describe('derive expression failures', () => {
       },
     });
     expect(() =>
-      loadFieldNodeAtMount(root, { target: 'X' }, SetValueOption.Overwrite),
+      loadFieldNodeAtMount(root, { target: 'X' }, WriteOption.Overwrite),
     ).toThrow('Derive expression failed');
     expect(root.structure?.target?.raw).toBe('X');
     expect(root.runtime.diagnostics).toMatchObject({
@@ -161,7 +161,7 @@ describe('derive expression failures', () => {
         root.structure!.target,
         'X',
         'callerReplace',
-        SetValueOption.Overwrite,
+        WriteOption.Overwrite,
       ),
     ).not.toThrow();
   });
@@ -179,7 +179,7 @@ describe('derive expression failures', () => {
       },
     });
     expect(() =>
-      loadFieldNodeAtMount(root, { target: 'X' }, SetValueOption.Overwrite),
+      loadFieldNodeAtMount(root, { target: 'X' }, WriteOption.Overwrite),
     ).toThrow('Derive expression failed');
     expect(root.structure?.target?.raw).toBe('X');
     expect(root.runtime.diagnostics).toMatchObject({
@@ -199,7 +199,7 @@ describe('derive expression failures', () => {
       options: { virtual: { v: { fields: ['real'] } } },
     });
     expect(() =>
-      loadFieldNodeAtMount(root, { source: 'A' }, SetValueOption.Overwrite),
+      loadFieldNodeAtMount(root, { source: 'A' }, WriteOption.Overwrite),
     ).toThrow();
     expect(root.runtime.diagnostics.cause).toBe('writeShape');
     expect(root.structure?.source?.raw).toBe('A');

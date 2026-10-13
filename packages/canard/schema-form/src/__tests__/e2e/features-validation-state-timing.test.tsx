@@ -50,7 +50,7 @@ const keywords = (form: FormHarness, expected: KeywordsByPath): KeywordsByPath =
 const stateNames = (state: Readonly<Record<string, boolean | undefined>>): InteractionStateNames => ({
   ...(state[FieldNodeState.Dirty] && { dirty: true }),
   ...(state[FieldNodeState.Touched] && { touched: true }),
-  ...(state[FieldNodeState.ShowError] && { showError: true }),
+  ...(state[FieldNodeState.ErrorVisible] && { showError: true }),
 });
 
 describe('features — validation-state timing and submit (consumer-only)', () => {

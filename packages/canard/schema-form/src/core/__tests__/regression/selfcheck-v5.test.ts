@@ -153,7 +153,7 @@ describe('selfcheck-v5 PR-2 regression', () => {
     });
     root.setValue({ kind: 'a', e: 'EXTRA' });
     expect(JSON.stringify(root.outputValue)).toBe('{"kind":"a"}');
-    expect(root.extras).toBeUndefined();
+    expect(root.undeclaredValues).toBeUndefined();
     root.find('/kind')?.setValue('b');
     expect(root.outputValue).toEqual({ kind: 'b', e: 'EXTRA' });
     expect(root.find('/e')?.raw).toBe('EXTRA');

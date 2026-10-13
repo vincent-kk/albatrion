@@ -62,7 +62,7 @@ export const evaluateGate = <Self extends FieldNodeRecord<Self>>(
       }
     }
   }
-  const extra = hostNode?.extras;
+  const extra = hostNode?.undeclaredValues;
   let projectedHost = hostNode !== undefined;
   for (
     let ancestor: Self | null | undefined = hostNode;

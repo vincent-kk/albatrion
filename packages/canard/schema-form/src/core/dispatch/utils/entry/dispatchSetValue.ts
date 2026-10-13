@@ -1,7 +1,7 @@
 import { INVALID_WRITE_OPTION, SchemaFormError } from '../../../../errors';
 import type { FieldNodeRecord } from '../../../record';
 import { assertVirtualWriteShape, writeFieldNode } from '../../../settle';
-import { SetValueOption } from '../../../types/value';
+import { WriteOption } from '../../../types/value';
 import { captureChainError } from '../chain/captureChainError';
 import { enterFieldNodeChain } from '../chain/enterFieldNodeChain';
 import { exitFieldNodeChain } from '../chain/exitFieldNodeChain';
@@ -18,13 +18,13 @@ import { readBatchValue } from '../chain/readBatchValue';
 export const dispatchSetValue = <Self extends FieldNodeRecord<Self>>(
   node: Self,
   value: unknown,
-  option: SetValueOption = SetValueOption.Overwrite,
+  option: WriteOption = WriteOption.Overwrite,
   source?: 'input',
 ): void => {
   if (source === 'input' && (node.disposed || node.rootNode.disposed)) return;
   if (!enterFieldNodeChain(node)) return;
   try {
-    if (option & SetValueOption.Overwrite && option & SetValueOption.Merge)
+    if (option & WriteOption.Overwrite && option & WriteOption.Merge)
       throw new SchemaFormError(
         INVALID_WRITE_OPTION,
         'Overwrite and Merge cannot be combined',
@@ -41,8 +41,8 @@ export const dispatchSetValue = <Self extends FieldNodeRecord<Self>>(
       (runtime.batchWrites ??= []).push({ node, value: input, option, source });
     } else {
       const merge =
-        (option & SetValueOption.Merge) === SetValueOption.Merge &&
-        !(option & SetValueOption.Replace);
+        (option & WriteOption.Merge) === WriteOption.Merge &&
+        !(option & WriteOption.Replace);
       writeFieldNode(
         node,
         input,

@@ -9,7 +9,7 @@ import {
   useExternalFormContext,
   useFieldInputsContext,
 } from '@/schema-form/providers';
-import type { Hint, JSONSchema } from '@/schema-form/types';
+import type { FieldInputHint, JSONSchema } from '@/schema-form/types';
 
 /** Select an input from the effective schema and ordered definition sources. */
 export const useFieldInput = (node: FieldNode, disabled: boolean) => {
@@ -27,7 +27,7 @@ export const useFieldInput = (node: FieldNode, disabled: boolean) => {
   return useMemo(() => {
     if (disabled || inline === null) return null;
     if (Inline) return Inline;
-    const hint: Hint = {
+    const hint: FieldInputHint = {
       type: node.type,
       schemaType: node.schemaType,
       typeMismatch: node.typeMismatch,

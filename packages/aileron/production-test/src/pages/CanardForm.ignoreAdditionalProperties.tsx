@@ -29,7 +29,7 @@ const schema = {
           },
           options: { terminal: false },
           presentation: {
-            FieldInput: ({ value, ChildNodeComponents, onChange }) => {
+            FieldInput: ({ value, ChildFields, onChange }) => {
               return (
                 <div>
                   <pre>{JSON.stringify(value, null, 2)}</pre>
@@ -49,8 +49,8 @@ const schema = {
                     set
                   </button>
                   <div>
-                    {ChildNodeComponents.map((ChildNodeComponent) => (
-                      <ChildNodeComponent key={ChildNodeComponent.key} />
+                    {ChildFields.map((ChildField) => (
+                      <ChildField key={ChildField.key} />
                     ))}
                   </div>
                 </div>
@@ -107,7 +107,7 @@ const schema = {
           options: { terminal: false },
           additionalProperties: false,
           presentation: {
-            FieldInput: ({ value, ChildNodeComponents, onChange }) => {
+            FieldInput: ({ value, ChildFields, onChange }) => {
               return (
                 <div>
                   <pre>{JSON.stringify(value, null, 2)}</pre>
@@ -127,8 +127,8 @@ const schema = {
                     set
                   </button>
                   <div>
-                    {ChildNodeComponents.map((ChildNodeComponent) => (
-                      <ChildNodeComponent key={ChildNodeComponent.key} />
+                    {ChildFields.map((ChildField) => (
+                      <ChildField key={ChildField.key} />
                     ))}
                   </div>
                 </div>

@@ -155,7 +155,10 @@ export type SchemaPresentation = {
 
 /** React binding of the renderer-independent core schema. */
 export type JSONSchema<Options extends Dictionary = object> =
-  import('../core/types/jsonSchema').JSONSchema<Options, SchemaPresentation>;
+  import('../core/types/jsonSchema').AuthoredSchema<
+    Options,
+    SchemaPresentation
+  >;
 
 /** Recursive typed children shared by the per-kind schema aliases. */
 type JSONSchemaChildren<Options extends Dictionary = object> =

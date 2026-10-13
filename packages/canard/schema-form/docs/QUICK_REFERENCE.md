@@ -303,7 +303,7 @@ const definitions: FieldInputDefinition[] = [
 | `nullable`            | `boolean`     | null 허용       |
 | `watchValues`         | `any[]`       | 구독 값         |
 | `context`             | `object`      | 사용자 컨텍스트 |
-| `ChildNodeComponents` | `FC[]`        | 자식 컴포넌트   |
+| `ChildFields` | `FC[]`        | 자식 컴포넌트   |
 
 ---
 
@@ -415,7 +415,7 @@ if (isArrayNode(node)) {
 | `UpdateValue`              | 값 변경                     |
 | `UpdateState`              | 상태 변경 (dirty, touched)  |
 | `UpdateError`              | 검증 에러 변경              |
-| `UpdateComputedProperties` | controls 상태·watch 값 변경 |
+| `UpdateControlledProperties` | controls 상태·watch 값 변경 |
 | `UpdateChildren`           | 자식 노드 변경              |
 | `UpdatePath`               | 경로 변경 (배열 재정렬)     |
 | `RequestRefresh`           | UI 동기화 요청              |

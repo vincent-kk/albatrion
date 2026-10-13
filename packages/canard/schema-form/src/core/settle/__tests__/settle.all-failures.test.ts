@@ -4,7 +4,7 @@ import { isArray } from '@winglet/common-utils/filter';
 
 import { SchemaFormError } from '../../../errors';
 import type { BlueprintSchema } from '../../blueprint';
-import { SetValueOption } from '../../types/value';
+import { WriteOption } from '../../types/value';
 import type { Validator } from '../../validation';
 import { writeFieldNode } from '../index';
 import { createTestTree } from './fixtures/createTestTree';
@@ -81,7 +81,7 @@ describe('ERROR-004 ERROR-005 58C-01 all settle settlement failures', () => {
       const { root } = createTestTree(schema, validator);
       let caught: unknown;
       try {
-        writeFieldNode(root, value, 'callerReplace', SetValueOption.Overwrite);
+        writeFieldNode(root, value, 'callerReplace', WriteOption.Overwrite);
       } catch (error) {
         caught = error;
       }
@@ -115,7 +115,7 @@ describe('ERROR-004 ERROR-005 58C-01 all settle settlement failures', () => {
         root,
         { a: { shared: 1 } },
         'callerReplace',
-        SetValueOption.Overwrite,
+        WriteOption.Overwrite,
       ),
     ).toThrowError(
       expect.objectContaining({

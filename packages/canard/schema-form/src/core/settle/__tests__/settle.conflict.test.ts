@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { SetValueOption } from '../../types/value';
+import { WriteOption } from '../../types/value';
 import { loadFieldNodeAtMount, writeFieldNode } from '../index';
 import { createTestTree } from './fixtures/createTestTree';
 
@@ -52,7 +52,7 @@ describe('shared declaration conflicts', () => {
         source: 'A',
         departed: 'held',
       },
-      SetValueOption.Overwrite,
+      WriteOption.Overwrite,
     );
     expect(root.runtime.diagnostics.status).toBe('stable');
     expect(root.structure?.target?.raw).toBe('A');
@@ -65,7 +65,7 @@ describe('shared declaration conflicts', () => {
         root,
         { first: true, second: true, stay: false, source: 'B' },
         'callerPartial',
-        SetValueOption.Merge,
+        WriteOption.Merge,
       );
     } catch (error) {
       caught = error;
@@ -101,11 +101,11 @@ describe('shared declaration conflicts', () => {
         root,
         { enabled: true, value: 3 },
         'callerReplace',
-        SetValueOption.Overwrite,
+        WriteOption.Overwrite,
       ),
     ).toThrow('Active declarations conflict');
     expect(root.raw).toBeUndefined();
-    expect(root.extras).toEqual({ enabled: true });
+    expect(root.undeclaredValues).toEqual({ enabled: true });
     expect(root.structure?.value?.raw).toBe(3);
     expect(root.runtime.diagnostics).toMatchObject({
       status: 'degraded',
@@ -133,7 +133,7 @@ describe('shared declaration conflicts', () => {
         root,
         { shared: 1 },
         'callerReplace',
-        SetValueOption.Overwrite,
+        WriteOption.Overwrite,
       ),
     ).toThrow('Active declarations conflict');
     expect(root.structure?.shared?.blueprintNode.kind).toBe('number');

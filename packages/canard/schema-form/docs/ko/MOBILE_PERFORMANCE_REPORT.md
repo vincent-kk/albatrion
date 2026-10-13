@@ -37,7 +37,7 @@ FieldProxy (memo 없음)
   │
   └─ FieldInputSlot (memo) ← 실제 렌더링 비용의 대부분
        ├─ useFieldInput: useMemo 캐시
-       ├─ useChildNodeComponents: Map 캐시 + memo 래핑된 자식
+       ├─ useChildFields: Map 캐시 + memo 래핑된 자식
        ├─ useCallback: handleChange, handleFileAttach, handleFocus, handleBlur
        ├─ useFieldInputControl: ref + version
        └─ FieldInput (plugin) ← 실제 DOM 생성
@@ -112,8 +112,8 @@ FieldProxy (memo 없음)
 사용자가 price 변경
   ↓ [동기] priceNode: UpdateValue (immediate)
   ↓ [microtask] objectNode: UpdateValue
-  ↓ [microtask] finalPriceNode: UpdateComputedProperties
-  ↓ finalPriceNode의 FieldProxy re-render (RERENDERING_EVENT에 UpdateComputedProperties 포함)
+  ↓ [microtask] finalPriceNode: UpdateControlledProperties
+  ↓ finalPriceNode의 FieldProxy re-render (RERENDERING_EVENT에 UpdateControlledProperties 포함)
 ```
 
 - price, quantity, taxRate, discountRate 중 하나를 변경하면 **변경 필드 1개 + finalPrice 1개 = 총 2개 Proxy re-render**
@@ -207,7 +207,7 @@ employmentType 변경: 'full_time' → 'part_time'
   ↓ [microtask] objectNode: oneOf 조건 재평가
   ↓ full_time 분기 노드들: enabled = false → FieldProxy에서 `return null`
   ↓ part_time 분기 노드들: enabled = true → 렌더링 시작
-  ↓ commonField: UpdateComputedProperties (visible/active 재평가)
+  ↓ commonField: UpdateControlledProperties (visible/active 재평가)
 ```
 
 - 분기 전환 시 비활성 노드는 `if (!node?.enabled) return null` (`FieldProxy.tsx:85`)로 빠르게 반환
@@ -269,7 +269,7 @@ type 변경: 'game' → 'movie'
 - `genres`: enum 기반, 고정 7개 선택지
 - `actors`: string array, 동적 추가 가능
 
-배열 아이템 추가 시 `useChildNodeComponents`의 `Map` 캐시가 기존 아이템의 컴포넌트 참조를 유지하므로, 새 아이템만 생성됩니다.
+배열 아이템 추가 시 `useChildFields`의 `Map` 캐시가 기존 아이템의 컴포넌트 참조를 유지하므로, 새 아이템만 생성됩니다.
 
 **FieldProxy 비용**: 2중 oneOf 전환은 `UpdateChildren` 이벤트를 발생시키지만, `UPDATE_CHILDREN_MASK`에 `UpdateChildren`이 **포함되지 않으므로** Form-level re-render는 발생하지 않습니다. 각 Proxy는 자신의 노드 이벤트만 수신.
 
@@ -384,8 +384,8 @@ notifications.email 변경 (depth 5)
 ```
 userType 변경: 'guest' → 'admin'
   ↓ [동기] userTypeNode: UpdateValue (immediate)
-  ↓ [microtask] 6개 의존 필드: UpdateComputedProperties (동시 발행)
-  ↓ 각 필드의 FieldProxy: RERENDERING_EVENT에 UpdateComputedProperties 포함 → re-render
+  ↓ [microtask] 6개 의존 필드: UpdateControlledProperties (동시 발행)
+  ↓ 각 필드의 FieldProxy: RERENDERING_EVENT에 UpdateControlledProperties 포함 → re-render
   ↓ visible/active 상태 변경으로 일부 필드 표시/숨김 전환
 ```
 
@@ -401,9 +401,9 @@ userType 변경: 'guest' → 'admin'
 
 **RERENDERING_EVENT 4중 마스크 영향**:
 
-이 예제에서 `UpdateComputedProperties`가 6개 필드에서 동시 발생합니다. 그러나:
+이 예제에서 `UpdateControlledProperties`가 6개 필드에서 동시 발생합니다. 그러나:
 
-- 각 필드는 **자신의 노드**에서 발생한 `UpdateComputedProperties`만 수신
+- 각 필드는 **자신의 노드**에서 발생한 `UpdateControlledProperties`만 수신
 - 다른 필드의 computed 변경이 전파되지 않음
 - 4중 마스크의 "불필요한 re-render" 우려는 **단일 노드 내에서** 여러 이벤트 타입이 동시에 발생할 때만 해당
 
@@ -473,7 +473,7 @@ userType 변경: 'guest' → 'admin'
 3. **내부 memo 방어**:
    - `FieldInputSlot`: `memo` 래핑 — props 동일 시 완전 skip
    - `FieldRenderer`: `useMemorize(() => memo(withErrorBoundary(...)))` — 최초 1회만 생성
-   - `useChildNodeComponents`: `Map` 캐시 + 각 child를 `memo` 래핑
+   - `useChildFields`: `Map` 캐시 + 각 child를 `memo` 래핑
    - `FieldInputSlotWrapper` 내부: `useReference`로 ref 안정화
 
 4. **Proxy 자체의 re-render 비용이 극히 낮음**: hooks deps 비교 5-6회 + 조건부 null 반환. DOM 접근 없음.
@@ -525,7 +525,7 @@ userType 변경: 'guest' → 'admin'
 | `src/components/Field/FieldProxy/FieldProxy.tsx:85`                                                                   | `enabled=false` 시 null 반환              |
 | `src/components/Field/FieldInputSlot/FieldInputSlot.tsx:24`                                                           | FieldInputSlot `memo` 래핑                |
 | `src/components/Field/FieldInputSlot/FieldInputSlotWrapper.tsx:42-51`                                                 | `useReference` ref 안정화                 |
-| `src/components/Field/FieldInputSlot/hooks/useChildNodeComponents.tsx:45-91`                                          | `Map` 캐시 + child `memo` 래핑            |
+| `src/components/Field/FieldInputSlot/hooks/useChildFields.tsx:45-91`                                                  | `Map` 캐시 + child `memo` 래핑            |
 | `src/components/Field/FieldInputSlot/hooks/useFieldInputControl.ts:29-46`                                             | RequestRefresh/Focus/Select 구독          |
 | `src/components/Field/FieldInputSlot/type.ts:39-43`                                                                   | `REACTIVE_RERENDERING_EVENTS`             |
 | `src/hooks/useFieldNodeTracker.ts:13-26`                                                                              | 노드별 독립 구독 메커니즘                 |

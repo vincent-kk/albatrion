@@ -1,7 +1,7 @@
 import { describe, expect, it, vi } from 'vitest';
 
 import * as compiler from '../../blueprint/utils/expressions/createDynamicFunction';
-import { SetValueOption } from '../../types/value';
+import { WriteOption } from '../../types/value';
 import { loadFieldNodeAtMount, writeFieldNode } from '../index';
 import * as priming from '../utils/compute/primeHost';
 import * as selection from '../utils/compute/selectChildren';
@@ -88,17 +88,13 @@ describe('lazy child selection metadata runtime visits', () => {
           },
         });
         root.behavior.declareChildren = () => candidates;
-        loadFieldNodeAtMount(
-          root,
-          { kind: 'kind_0' },
-          SetValueOption.Overwrite,
-        );
+        loadFieldNodeAtMount(root, { kind: 'kind_0' }, WriteOption.Overwrite);
         expect(builds.plans).toHaveLength(0);
         writeFieldNode(
           root.structure!.common,
           'new common',
           'input',
-          SetValueOption.Overwrite,
+          WriteOption.Overwrite,
         );
         expect(builds.plans).toHaveLength(0);
         for (const [index, kind] of [
@@ -115,7 +111,7 @@ describe('lazy child selection metadata runtime visits', () => {
             root.structure!.kind,
             kind,
             'input',
-            SetValueOption.Overwrite,
+            WriteOption.Overwrite,
           );
           expect(builds.hosts).toEqual([root.blueprintNode]);
           expect(evaluations).toEqual(
@@ -153,8 +149,8 @@ describe('lazy child selection metadata runtime visits', () => {
           },
         });
         const option =
-          SetValueOption.Overwrite |
-          (disabled ? SetValueOption.DisableAutomaticWrites : 0);
+          WriteOption.Overwrite |
+          (disabled ? WriteOption.DisableAutomaticWrites : 0);
         loadFieldNodeAtMount(root, { kind: 'off' }, option);
         for (const kind of ['on', 'off', 'on'])
           writeFieldNode(root.structure!.kind, kind, 'input', option);
@@ -170,13 +166,13 @@ describe('lazy child selection metadata runtime visits', () => {
     const builds = observeChildSelectionPlans();
     try {
       const { root } = createTestTree(createFixedBranchSchema(1));
-      loadFieldNodeAtMount(root, { kind: 'kind_0' }, SetValueOption.Overwrite);
+      loadFieldNodeAtMount(root, { kind: 'kind_0' }, WriteOption.Overwrite);
       for (const kind of ['absent', 'kind_0', 'absent'])
         writeFieldNode(
           root.structure!.kind,
           kind,
           'input',
-          SetValueOption.Overwrite,
+          WriteOption.Overwrite,
         );
       expect(builds.plans).toHaveLength(0);
       expect(root.runtime.diagnostics.status).toBe('stable');

@@ -27,7 +27,9 @@ export const captureArrayLatent = <Self extends FieldNodeRecord<Self>>(
     const entry = getItemEntry(node.blueprintNode, index);
     if (!entry) {
       slots.push(
-        isArray(node.extras) ? node.extras[index - tailStart] : undefined,
+        isArray(node.undeclaredValues)
+          ? node.undeclaredValues[index - tailStart]
+          : undefined,
       );
       continue;
     }

@@ -26,7 +26,7 @@ Rules of thumb:
 - Leading/middle `undefined` are never removed — indices must stay aligned with error `dataPath`s and validation params.
 - Primary use case: pre-expose empty inputs (`minItems`) without polluting the submitted/validated value. Validation sees the trimmed value, so `minItems` counts only the filled prefix.
 - A Reset-flagged clear (form reset, oneOf/anyOf branch reactivation) refills `minItems` empty items; a plain `setValue(undefined)` clears every item.
-- In a custom array `FieldInput`, derive row count from `node.children` (or `ChildNodeComponents`), never from `value.length` — the emitted value is shorter than the rendered rows by design.
+- In a custom array `FieldInput`, derive row count from `node.children` (or `ChildFields`), never from `value.length` — the emitted value is shorter than the rendered rows by design.
 - `injectTo` handlers receive the **raw** source value, not the filtered one; mirror targets therefore hold the untrimmed copy.
 
 ## Terminal vs Branch Strategy
@@ -76,16 +76,13 @@ formRef.current?.setValue((prev) => ({
 
 ## Rendering Items in a Custom Input
 
-A custom array `FieldInput` renders children through `ChildNodeComponents` — omitting it makes items disappear:
+A custom array `FieldInput` renders children through `ChildFields` — omitting it makes items disappear:
 
 ```tsx
-const ArrayInput: FC<FieldInputProps<any[]>> = ({
-  node,
-  ChildNodeComponents,
-}) => (
+const ArrayInput: FC<FieldInputProps<any[]>> = ({ node, ChildFields }) => (
   <div>
     <button onClick={() => (node as ArrayNode).push()}>Add</button>
-    {ChildNodeComponents.map((Child, i) => (
+    {ChildFields.map((Child, i) => (
       <div key={i}>
         <Child />
         <button onClick={() => (node as ArrayNode).remove(i)}>Remove</button>
@@ -123,7 +120,7 @@ Contract — each point matters:
 - Placeholders carry `[data-path]` and a `[data-deferred]` marker — style via CSS attribute selector or the `Placeholder` component (`{ node, height }`). Space reservation always belongs to `estimateHeight`; `Placeholder` only fills visuals.
 - Benefit scales with form size; small forms gain nothing (hence opt-in).
 
-For a single huge array field (not a huge form), window it manually with a list-virtualization library inside a custom FieldInput, iterating `ChildNodeComponents`.
+For a single huge array field (not a huge form), window it manually with a list-virtualization library inside a custom FieldInput, iterating `ChildFields`.
 
 ## Expression Cost at Scale
 

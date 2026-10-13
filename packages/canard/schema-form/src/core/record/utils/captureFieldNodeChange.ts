@@ -7,10 +7,10 @@ const CHANGE_BITS = {
   emit: FieldNodeEventType.UpdateValue,
   path: FieldNodeEventType.UpdatePath,
   children: FieldNodeEventType.UpdateChildren,
-  active: FieldNodeEventType.UpdateComputedProperties,
-  visible: FieldNodeEventType.UpdateComputedProperties,
-  readOnly: FieldNodeEventType.UpdateComputedProperties,
-  disabled: FieldNodeEventType.UpdateComputedProperties,
+  active: FieldNodeEventType.UpdateControlledProperties,
+  visible: FieldNodeEventType.UpdateControlledProperties,
+  readOnly: FieldNodeEventType.UpdateControlledProperties,
+  disabled: FieldNodeEventType.UpdateControlledProperties,
   schema: FieldNodeEventType.UpdateJsonSchema,
   interactionState: FieldNodeEventType.UpdateState,
 };
@@ -46,7 +46,7 @@ export const captureFieldNodeChange = <
       case FieldNodeEventType.UpdateChildren:
         node.deliveryPreviousChildren = node.children;
         break;
-      case FieldNodeEventType.UpdateComputedProperties:
+      case FieldNodeEventType.UpdateControlledProperties:
         node.deliveryPreviousComputed =
           +node.active |
           (+node.visible << 1) |
@@ -65,7 +65,7 @@ export const captureFieldNodeChange = <
     node.runtime.deliveryWatchIndex?.allNodes.size &&
     (bit === FieldNodeEventType.UpdateValue ||
       bit === FieldNodeEventType.UpdateState ||
-      bit === FieldNodeEventType.UpdateComputedProperties)
+      bit === FieldNodeEventType.UpdateControlledProperties)
   )
     (node.runtime.deliveryAffectedPaths ??= new Set()).add(node.path);
   return value;

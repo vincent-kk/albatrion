@@ -1,6 +1,6 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
-import { SetValueOption } from '../../types/value';
+import { WriteOption } from '../../types/value';
 import { loadFieldNodeAtMount, writeFieldNode } from '../index';
 import * as priming from '../utils/compute/primeHost';
 import * as selection from '../utils/compute/selectChildren';
@@ -58,8 +58,8 @@ describe('child selection plan lookup runtime counts', () => {
         then: { properties: { detail: { type: 'string', default: 'shown' } } },
       });
       const option =
-        SetValueOption.Overwrite |
-        (disabled ? SetValueOption.DisableAutomaticWrites : 0);
+        WriteOption.Overwrite |
+        (disabled ? WriteOption.DisableAutomaticWrites : 0);
       const calls = countPlanCalls();
       const flushes = countFlushCalls();
       loadFieldNodeAtMount(root, { kind: 'off' }, option);
@@ -91,7 +91,7 @@ describe('child selection plan lookup runtime counts', () => {
     (count, pending) => {
       const { root } = createTestTree(createFixedBranchSchema(count));
       const calls = countFlushCalls();
-      loadFieldNodeAtMount(root, { kind: 'kind_0' }, SetValueOption.Overwrite);
+      loadFieldNodeAtMount(root, { kind: 'kind_0' }, WriteOption.Overwrite);
       expect(calls).toEqual({ empty: 0, pending });
       expect(root.children).toHaveLength(5);
       expect(root.runtime.diagnostics.status).toBe('stable');
@@ -136,7 +136,7 @@ describe('child selection plan lookup runtime counts', () => {
       });
       root.behavior.declareChildren = () => candidates;
       const calls = countPlanCalls();
-      loadFieldNodeAtMount(root, { kind: 'kind_0' }, SetValueOption.Overwrite);
+      loadFieldNodeAtMount(root, { kind: 'kind_0' }, WriteOption.Overwrite);
       const perWrite: number[] = [];
       for (const [index, kind] of [
         'kind_4',
@@ -150,7 +150,7 @@ describe('child selection plan lookup runtime counts', () => {
           root.structure!.kind,
           kind,
           'input',
-          SetValueOption.Overwrite,
+          WriteOption.Overwrite,
         );
         perWrite.push(calls.count);
         for (let branch = 0; branch < count; branch++) {

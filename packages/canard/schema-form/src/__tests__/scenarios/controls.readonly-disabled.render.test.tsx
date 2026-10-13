@@ -14,7 +14,7 @@ import { renderForm } from '../renderForm';
  *     `disabled={rootDisabled || node.disabled}` FRESH on every render
  *     (`FieldInputSlot.tsx:111-112`). These are NOT memorized off the
  *     RequestRefresh `version`, so a computed flip reaches the DOM purely via the
- *     `UpdateComputedProperties` re-render (in `REACTIVE_RERENDERING_EVENTS`).
+ *     `UpdateControlledProperties` re-render (in `REACTIVE_RERENDERING_EVENTS`).
  *   - `node.readOnly` / `node.disabled` reflect ONLY the computed property
  *     (`AbstractNode.ts:440-450`); the form-level props live in
  *     `InputControlContext`. So with a form-level prop set, the DOM attribute is

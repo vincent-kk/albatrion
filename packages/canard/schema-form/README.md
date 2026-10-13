@@ -482,7 +482,7 @@ Each definition consists of two key parts:
 The conditions for a FieldInput can be defined using a function or an object:
 
 ```ts
-type Hint = {
+type FieldInputHint = {
   jsonSchema: JSONSchema;
   type: string;
   format: string;
@@ -490,7 +490,7 @@ type Hint = {
   path: string;
   [alt: string]: any;
 };
-type FieldInputTestFn = Fn<[hint: Hint], boolean>;
+type FieldInputTestFn = Fn<[hint: FieldInputHint], boolean>;
 
 type FieldInputTestObject = Partial<{
   type: Array<string>;
@@ -503,7 +503,7 @@ type FieldInputTestObject = Partial<{
 
 inputType is a string hint that a definition's test interprets; it is not the HTML input type.
 
-- **FieldInputTestFn**: A function that receives a Hint object and returns a boolean. Useful for implementing more complex conditions.
+- **FieldInputTestFn**: A function that receives a FieldInputHint object and returns a boolean. Useful for implementing more complex conditions.
 - **FieldInputTestObject**: Allows conditions to be defined simply as an object. For example, `{ type: ['string'], format: ['email'] }` matches nodes that are both string type and email format.
 
 #### FieldInput Props
@@ -551,7 +551,7 @@ interface FieldInputProps<
   /** Attach or detach file(s) to the form's file store */
   onFileAttach: Fn<[file: File | File[] | undefined]>;
   /** Child FieldInput Components for this FieldInput Component */
-  ChildNodeComponents: ChildNodeComponent[];
+  ChildFields: ChildField[];
   /** Placeholder text for input fields */
   placeholder: string | undefined;
   /** CSS class name for styling */
@@ -882,7 +882,7 @@ registerPlugin(ajvValidatorPlugin);
 
 ```ts
 export interface SchemaFormPlugin {
-  /** Form.Group Component */
+  /** Form.Field Component */
   FieldRenderer?: ComponentType<FieldRendererProps>;
   /** Form.Label Component */
   FormLabelRenderer?: ComponentType<FieldRendererProps>;
@@ -1515,7 +1515,7 @@ const jsonSchema = {
 - **`omitEmpty` (on by default)**: converts an empty array to `undefined` on the parent-propagation path. Filter order is `omitTrailing → omitEmpty`, so an all-empty array collapses to `undefined` under its parent (a root-level form still emits `[]`).
 - **Two value channels**: `node.value` stays raw; the refined output is exposed as `node.outputValue`. Validation runs against the refined value, so `minItems` counts only the filled prefix.
 - **Reset semantics**: a Reset-flagged clear (form reset, oneOf/anyOf branch reactivation) refills `minItems` empty items; a plain `setValue(undefined)` clears every item.
-- **Custom inputs**: derive row count from `node.children` (or `ChildNodeComponents`), never from `value.length` — the emitted value is shorter than the rendered rows by design.
+- **Custom inputs**: derive row count from `node.children` (or `ChildFields`), never from `value.length` — the emitted value is shorter than the rendered rows by design.
 
 ### Form with Imperative Handle
 

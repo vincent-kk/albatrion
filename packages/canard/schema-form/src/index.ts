@@ -62,7 +62,7 @@ export {
 export { ShowError } from './types';
 
 export type {
-  ChildNodeComponentProps,
+  ChildFieldProps,
   FieldInputDefinition,
   FieldInputMap,
   FieldInputProps,
@@ -71,7 +71,7 @@ export type {
   FieldInputTestFn,
   FieldInputTestObject,
   FormatError,
-  Hint,
+  FieldInputHint,
   FieldNodeType,
   JSONSchema,
   InferValueType,
@@ -86,8 +86,8 @@ export type * from './types/rolled';
 export { useFieldNodeTracker } from './hooks/useFieldNodeTracker';
 export { useFieldNodeSubscribe } from './hooks/useFieldNodeSubscribe';
 export type { FieldNodeSubscribeOptions } from './hooks/useFieldNodeSubscribe';
-export { useChildNodeComponentMap } from './hooks/useChildNodeComponentMap';
-export { useChildNodeErrors } from './hooks/useChildNodeErrors';
+export { useChildFieldMap } from './hooks/useChildFieldMap';
+export { useChildFieldErrors } from './hooks/useChildFieldErrors';
 export { useFormSubmit } from './hooks/useFormSubmit';
 
 export {

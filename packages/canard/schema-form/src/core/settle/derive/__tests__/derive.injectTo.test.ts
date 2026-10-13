@@ -1,6 +1,6 @@
 import { describe, expect, it, vi } from 'vitest';
 
-import { SetValueOption } from '../../../types/value';
+import { WriteOption } from '../../../types/value';
 import { createTestTree } from '../../__tests__/fixtures/createTestTree';
 import {
   loadFieldNodeAtMount,
@@ -29,7 +29,7 @@ describe('injectTo and same-target settlement', () => {
     loadFieldNodeAtMount(
       root,
       { source: 'A', clear: false },
-      SetValueOption.Overwrite,
+      WriteOption.Overwrite,
     );
     expect(injectTo).toHaveBeenCalledOnce();
     expect(root.structure?.target?.raw).toBe('A derived');
@@ -37,16 +37,11 @@ describe('injectTo and same-target settlement', () => {
       root.structure!.target,
       'manual',
       'input',
-      SetValueOption.Overwrite,
+      WriteOption.Overwrite,
     );
     expect(root.structure?.target?.raw).toBe('manual');
     expect(injectTo).toHaveBeenCalledOnce();
-    writeFieldNode(
-      root.structure!.clear,
-      true,
-      'input',
-      SetValueOption.Overwrite,
-    );
+    writeFieldNode(root.structure!.clear, true, 'input', WriteOption.Overwrite);
     expect(root.structure?.target?.raw).toBeUndefined();
   });
 
@@ -68,14 +63,14 @@ describe('injectTo and same-target settlement', () => {
     loadFieldNodeAtMount(
       root,
       { first: 'A', second: 'B' },
-      SetValueOption.Overwrite,
+      WriteOption.Overwrite,
     );
     expect(root.structure?.target?.raw).toBe('second');
     writeFieldNode(
       root,
       { first: 'C', second: 'D' },
       'callerReplace',
-      SetValueOption.Overwrite,
+      WriteOption.Overwrite,
     );
     expect(root.structure?.target?.raw).toBe('second');
   });
@@ -98,7 +93,7 @@ describe('injectTo and same-target settlement', () => {
         source: { type: 'string', controls: { derived: '../seed + " node"' } },
       },
     });
-    loadFieldNodeAtMount(root, { seed: 'A' }, SetValueOption.Overwrite);
+    loadFieldNodeAtMount(root, { seed: 'A' }, WriteOption.Overwrite);
     expect(root.structure?.source?.raw).toBe('A node');
   });
 
@@ -123,7 +118,7 @@ describe('injectTo and same-target settlement', () => {
         },
       ],
     });
-    loadFieldNodeAtMount(root, { seed: 'A' }, SetValueOption.Overwrite);
+    loadFieldNodeAtMount(root, { seed: 'A' }, WriteOption.Overwrite);
     expect(root.structure?.target?.raw).toBe('A children');
   });
 
@@ -142,7 +137,7 @@ describe('injectTo and same-target settlement', () => {
       ],
       properties: { seed: { type: 'string' } },
     });
-    loadFieldNodeAtMount(root, { seed: 'A' }, SetValueOption.Overwrite);
+    loadFieldNodeAtMount(root, { seed: 'A' }, WriteOption.Overwrite);
     expect(root.structure?.target?.raw).toBe('A second');
   });
 
@@ -162,7 +157,7 @@ describe('injectTo and same-target settlement', () => {
         target: { type: 'string', controls: { derived: '../seed' } },
       },
     });
-    loadFieldNodeAtMount(root, { seed: 'A' }, SetValueOption.Overwrite);
+    loadFieldNodeAtMount(root, { seed: 'A' }, WriteOption.Overwrite);
     expect(injectTo).toHaveBeenCalled();
     expect(root.structure?.target?.raw).toBe('A');
     expect(root.runtime.diagnostics.status).toBe('stable');
@@ -192,7 +187,7 @@ describe('injectTo and same-target settlement', () => {
     });
     const context = { locale: 'ko' };
     root.runtime.context = context;
-    loadFieldNodeAtMount(root, { source: 'A' }, SetValueOption.Overwrite);
+    loadFieldNodeAtMount(root, { source: 'A' }, WriteOption.Overwrite);
     expect(injectTo).toHaveBeenCalledOnce();
     const ctx: Record<string, unknown> = injectTo.mock.calls[0][1];
     expect(ctx).toMatchObject({
@@ -225,7 +220,7 @@ describe('injectTo and same-target settlement', () => {
         target: { type: 'string' },
       },
     });
-    loadFieldNodeAtMount(root, { source: 'A' }, SetValueOption.Overwrite);
+    loadFieldNodeAtMount(root, { source: 'A' }, WriteOption.Overwrite);
     expect(root.structure?.target?.raw).toBe('last');
     expect(root.runtime.diagnostics.status).toBe('stable');
   });
@@ -239,7 +234,7 @@ describe('injectTo and same-target settlement', () => {
       },
     });
     expect(() =>
-      loadFieldNodeAtMount(root, { source: 'A' }, SetValueOption.Overwrite),
+      loadFieldNodeAtMount(root, { source: 'A' }, WriteOption.Overwrite),
     ).toThrow();
     expect(root.runtime.diagnostics).toMatchObject({
       status: 'degraded',
@@ -247,12 +242,7 @@ describe('injectTo and same-target settlement', () => {
       commit: 1,
     });
     expect(root.structure?.source?.raw).toBe('A');
-    writeFieldNode(
-      root.structure!.source,
-      'A',
-      'input',
-      SetValueOption.Overwrite,
-    );
+    writeFieldNode(root.structure!.source, 'A', 'input', WriteOption.Overwrite);
     expect(injectTo).toHaveBeenCalledOnce();
   });
 
@@ -269,14 +259,14 @@ describe('injectTo and same-target settlement', () => {
     loadFieldNodeAtMount(
       root,
       { enabled: false, source: 'A' },
-      SetValueOption.Overwrite,
+      WriteOption.Overwrite,
     );
     expect(root.structure?.target).toBeUndefined();
     writeFieldNode(
       root.structure!.enabled,
       true,
       'input',
-      SetValueOption.Overwrite,
+      WriteOption.Overwrite,
     );
     expect(root.structure?.target?.raw).toBe('latent');
     expect(injectTo).toHaveBeenCalledOnce();
@@ -298,7 +288,7 @@ describe('injectTo and same-target settlement', () => {
     loadFieldNodeAtMount(
       root,
       { enabled: false, source: 'A' },
-      SetValueOption.Overwrite,
+      WriteOption.Overwrite,
     );
     expect(injectTo).not.toHaveBeenCalled();
     expect(root.structure?.target?.raw).toBeUndefined();
@@ -306,7 +296,7 @@ describe('injectTo and same-target settlement', () => {
       root.structure!.enabled,
       true,
       'input',
-      SetValueOption.Overwrite,
+      WriteOption.Overwrite,
     );
     expect(injectTo).toHaveBeenCalledOnce();
     expect(root.structure?.target?.raw).toBe('injected');
@@ -329,15 +319,15 @@ describe('injectTo and same-target settlement', () => {
     loadFieldNodeAtMount(
       root,
       { group: { source: 'A' } },
-      SetValueOption.Overwrite,
+      WriteOption.Overwrite,
     );
     writeFieldNode(
       root.structure!.target,
       'manual',
       'input',
-      SetValueOption.Overwrite,
+      WriteOption.Overwrite,
     );
-    resetFieldNodeSubtree(root.structure!.group, SetValueOption.Overwrite);
+    resetFieldNodeSubtree(root.structure!.group, WriteOption.Overwrite);
     expect(root.structure?.target?.raw).toBe('injected');
     expect(injectTo).toHaveBeenCalledTimes(2);
   });
@@ -361,15 +351,10 @@ describe('injectTo and same-target settlement', () => {
     loadFieldNodeAtMount(
       root,
       { source: 'A', box: null },
-      SetValueOption.Overwrite,
+      WriteOption.Overwrite,
     );
     expect(root.structure?.box?.raw).toBeNull();
-    writeFieldNode(
-      root.structure!.source,
-      'B',
-      'input',
-      SetValueOption.Overwrite,
-    );
+    writeFieldNode(root.structure!.source, 'B', 'input', WriteOption.Overwrite);
     expect(root.structure?.box?.raw).toBeNull();
     expect(root.structure?.box?.structure?.target?.raw).toBe('injected');
     expect(root.emit).toEqual({ source: 'B', box: null });
@@ -390,7 +375,7 @@ describe('injectTo and same-target settlement', () => {
       options: { virtual: { v: { fields: ['real'] } } },
     });
     expect(() =>
-      loadFieldNodeAtMount(root, { source: 'A' }, SetValueOption.Overwrite),
+      loadFieldNodeAtMount(root, { source: 'A' }, WriteOption.Overwrite),
     ).toThrow();
     expect(root.runtime.diagnostics).toMatchObject({
       status: 'degraded',

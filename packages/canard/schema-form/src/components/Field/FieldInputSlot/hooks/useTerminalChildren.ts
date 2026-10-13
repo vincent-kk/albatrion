@@ -3,11 +3,11 @@ import { useMemo, useRef } from 'react';
 import type { FieldNode } from '@/schema-form/core';
 import { useFormErrorContext } from '@/schema-form/providers/FormErrorContext';
 
-import type { ChildNodeComponent } from '../type';
+import type { ChildField } from '../type';
 import { isDetectableTerminal } from './utils/isDetectableTerminal';
 
 /** Shared immutable child list for strategies that need no read detector; frozen once at module load. */
-const EMPTY_CHILDREN = Object.freeze([]) as unknown as ChildNodeComponent[];
+const EMPTY_CHILDREN = Object.freeze([]) as unknown as ChildField[];
 
 /** Read-detector state after the input's owning layout effect commits. */
 const COMMITTED = 1;
@@ -18,10 +18,7 @@ const ACCESSED = 2;
  * The input's child list and the marker its owning layout effect calls on every commit
  * where the pair changes; the marker reports a child read made before that commit.
  */
-type TerminalChildren = readonly [
-  children: ChildNodeComponent[],
-  commit: () => void,
-];
+type TerminalChildren = readonly [children: ChildField[], commit: () => void];
 
 /** Child list and commit marker of an input whose children need no read detector. */
 const UNDETECTED: TerminalChildren = [EMPTY_CHILDREN, () => {}];
@@ -86,7 +83,7 @@ export const useTerminalChildren = (node: FieldNode): TerminalChildren => {
           });
       };
       return [
-        new Proxy<ChildNodeComponent[]>(EMPTY_CHILDREN, { get }),
+        new Proxy<ChildField[]>(EMPTY_CHILDREN, { get }),
         commit,
       ] as const;
     }

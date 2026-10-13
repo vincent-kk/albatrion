@@ -158,7 +158,7 @@ describe('array prefix settlement matches the general path', () => {
       undefined,
       true,
     );
-    expect(actual.extras).toEqual([undefined]);
+    expect(actual.undeclaredValues).toEqual([undefined]);
     expect(result).toBe('tail');
     expect(Object.keys(actual.runtime.loadSnapshot!)).toEqual(['0', '1']);
   });

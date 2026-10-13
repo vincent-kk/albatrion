@@ -4,7 +4,7 @@ import { find } from '../../../navigation';
 import type { FieldNodeRecord } from '../../../record';
 import { writeFieldNode } from '../../../settle';
 import type { FieldNodeWriteKind } from '../../../settle';
-import { SetValueOption } from '../../../types/value';
+import { WriteOption } from '../../../types/value';
 import { captureChainError } from './captureChainError';
 import { composeBatchValue } from './composeBatchValue';
 
@@ -22,7 +22,7 @@ export const flushBatchWrites = <Self extends FieldNodeRecord<Self>>(
   if (!writes.length) return;
   const option = writes.reduce(
     (flags, write) => flags | write.option,
-    SetValueOption.None,
+    WriteOption.None,
   );
   const target = writes.length === 1 ? find(root, writes[0].node.path) : root;
   if (!target) return;
@@ -30,8 +30,8 @@ export const flushBatchWrites = <Self extends FieldNodeRecord<Self>>(
     writes.length === 1 ? writes[0].value : composeBatchValue(root, writes);
   const merge =
     writes.length === 1 &&
-    (option & SetValueOption.Merge) === SetValueOption.Merge &&
-    !(option & SetValueOption.Replace);
+    (option & WriteOption.Merge) === WriteOption.Merge &&
+    !(option & WriteOption.Replace);
   const source = writes.every((write) => write.source === 'input')
     ? 'input'
     : writes.every((write) => write.source === 'automatic')
@@ -47,8 +47,8 @@ export const flushBatchWrites = <Self extends FieldNodeRecord<Self>>(
       fields?: readonly string[];
     } => {
       const partial =
-        (write.option & SetValueOption.Merge) === SetValueOption.Merge &&
-        !(write.option & SetValueOption.Replace);
+        (write.option & WriteOption.Merge) === WriteOption.Merge &&
+        !(write.option & WriteOption.Replace);
       return {
         path: write.node.path,
         source: write.source ?? (partial ? 'callerPartial' : 'callerReplace'),

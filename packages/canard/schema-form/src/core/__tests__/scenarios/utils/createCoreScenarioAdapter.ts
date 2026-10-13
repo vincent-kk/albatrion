@@ -87,8 +87,13 @@ export function createCoreScenarioAdapter(
         expect(root.find(path)?.schemaType, `schemaType ${path}`).toEqual(
           value,
         );
-      for (const [path, value] of Object.entries(expectation.extras ?? {}))
-        expect(root.find(path)?.extras, `extras ${path}`).toEqual(value);
+      for (const [path, value] of Object.entries(
+        expectation.undeclaredValues ?? {},
+      ))
+        expect(
+          root.find(path)?.undeclaredValues,
+          `undeclaredValues ${path}`,
+        ).toEqual(value);
     },
   };
 }

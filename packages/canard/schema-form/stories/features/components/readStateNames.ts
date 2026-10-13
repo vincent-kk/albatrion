@@ -11,6 +11,6 @@ export function readStateNames(state: Readonly<Record<string, boolean | undefine
   return {
     ...(state[FieldNodeState.Dirty] && { dirty: true }),
     ...(state[FieldNodeState.Touched] && { touched: true }),
-    ...(state[FieldNodeState.ShowError] && { showError: true }),
+    ...(state[FieldNodeState.ErrorVisible] && { showError: true }),
   };
 }

@@ -149,12 +149,12 @@ SetValueOption.Isolate    // compute dependencies synchronously
 
 All sub-components require a `<Form>` ancestor and use its internal context.
 
-### `Form.Group`
+### `Form.Field`
 
-완전한 필드 그룹을 렌더링합니다: 레이블 + 입력 + 오류. 플러그인의 `FormGroup` 컴포넌트를 사용하여 `Form.Label`, `Form.Input`, `Form.Error`를 함께 감쌉니다.
+완전한 필드 그룹을 렌더링합니다: 레이블 + 입력 + 오류. 플러그인의 `FieldRenderer` 컴포넌트를 사용하여 `Form.Label`, `Form.Input`, `Form.Error`를 함께 감쌉니다.
 
 ```ts
-interface FormGroupProps<Value> extends ChildNodeComponentProps {
+interface FormFieldProps<Value> extends ChildFieldProps {
   path?:              string;
   FieldInput?:     ComponentType<FieldInputProps<Value>>;
   FieldRenderer?:  ComponentType<FieldRendererProps>;
@@ -169,14 +169,14 @@ interface FormGroupProps<Value> extends ChildNodeComponentProps {
 ```
 
 ```tsx
-<Form.Group path="/email" />
-<Form.Group path="/birthDate" FieldInput={DatePicker} />
-<Form.Group path="/address" Wrapper={({ children }) => <fieldset>{children}</fieldset>} />
+<Form.Field path="/email" />
+<Form.Field path="/birthDate" FieldInput={DatePicker} />
+<Form.Field path="/address" Wrapper={({ children }) => <fieldset>{children}</fieldset>} />
 ```
 
 ### `Form.Label`
 
-Renders only the label using the plugin's `FormLabel` component.
+Renders only the label using the plugin's `FormLabelRenderer` component.
 
 ```tsx
 <Form.Label path="/email" className="required-label" />
@@ -184,7 +184,7 @@ Renders only the label using the plugin's `FormLabel` component.
 
 ### `Form.Input`
 
-Renders only the input using the plugin's `FormInput` component.
+Renders only the input using the plugin's `FormInputRenderer` component.
 
 ```tsx
 <Form.Input path="/email" placeholder="user@example.com" autoComplete="email" />
@@ -192,7 +192,7 @@ Renders only the input using the plugin's `FormInput` component.
 
 ### `Form.Error`
 
-Renders only the error message using the plugin's `FormError` component.
+Renders only the error message using the plugin's `FormErrorRenderer` component.
 
 ```tsx
 <Form.Error path="/email" className="error-text" />
@@ -276,18 +276,18 @@ useFieldNodeSubscribe(node, (event) => {
 // Raw event subscription — does NOT trigger re-render by itself.
 ```
 
-### `useChildNodeComponentMap`
+### `useChildFieldMap`
 
 ```ts
-const componentMap = useChildNodeComponentMap(objectNode);
-// Returns a Map<string, ChildNodeComponent> keyed by field name.
+const componentMap = useChildFieldMap(objectNode);
+// Returns a Map<string, ChildField> keyed by field name.
 // Use inside custom FieldInput components to render child fields.
 ```
 
-### `useChildNodeErrors`
+### `useChildFieldErrors`
 
 ```ts
-const errors = useChildNodeErrors(node);
+const errors = useChildFieldErrors(node);
 // Returns flattened array of all errors from node and its descendants.
 ```
 
@@ -305,10 +305,10 @@ registerPlugin(plugin: SchemaFormPlugin | null): void
 
 ```ts
 interface SchemaFormPlugin {
-  FormGroup?:               ComponentType<FieldRendererProps>;
-  FormLabel?:               ComponentType<FieldRendererProps>;
-  FormInput?:               ComponentType<FieldRendererProps>;
-  FormError?:               ComponentType<FieldRendererProps>;
+  FieldRenderer?:           ComponentType<FieldRendererProps>;
+  FormLabelRenderer?:       ComponentType<FieldRendererProps>;
+  FormInputRenderer?:       ComponentType<FieldRendererProps>;
+  FormErrorRenderer?:       ComponentType<FieldRendererProps>;
   fieldInputDefinitions?: FieldInputDefinition[];
   validator?:               ValidatorPlugin;
   formatError?:             FormatError;
@@ -350,12 +350,12 @@ interface FieldInputProps<Value, Context, WatchValues, Schema, Node> {
   errorVisible:       boolean;
   watchValues:        WatchValues;        // values from controls.watch paths
   onFileAttach:       (file: File | File[] | undefined) => void;
-  ChildNodeComponents: ChildNodeComponent[];
+  ChildFields: ChildField[];
   placeholder?:       string;
   className?:         string;
   style?:             CSSProperties;
   context:            Context;
-  [alt: string]:      any;               // extra props from Form.Group
+  [alt: string]:      any;               // extra props from Form.Field
 }
 ```
 
@@ -546,8 +546,8 @@ arrayNode.push(value?) / arrayNode.remove(index) / arrayNode.clear()
 useFormSubmit(ref)                     → { submit, pending }
 useFieldNodeTracker(node, mask?)      → version: number
 useFieldNodeSubscribe(node, listener) → void
-useChildNodeComponentMap(node)         → Map<string, ChildNodeComponent>
-useChildNodeErrors(node)               → JSONSchemaError[]
+useChildFieldMap(node)         → Map<string, ChildField>
+useChildFieldErrors(node)               → JSONSchemaError[]
 ```
 
 </ForAI>

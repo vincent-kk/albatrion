@@ -19,7 +19,7 @@ import {
 import { useLiveNode } from '@/schema-form/providers/RootNodeContext';
 import type { JSONSchema, SetStateFnWithOptions } from '@/schema-form/types';
 
-import { useChildNodeComponents } from './hooks/useChildNodeComponents';
+import { useChildFields } from './hooks/useChildFields';
 import { useFieldInput } from './hooks/useFieldInput';
 import { useFieldInputControl } from './hooks/useFieldInputControl';
 import { useTerminalChildren } from './hooks/useTerminalChildren';
@@ -40,7 +40,7 @@ export const FieldInputSlot = memo(
     const mountedChildren = useRef(0);
     const [terminalChildren, commitTerminalChildren] =
       useTerminalChildren(node);
-    const ChildNodeComponents = useChildNodeComponents(
+    const ChildFields = useChildFields(
       node,
       NodeProxy,
       mountedChildren,
@@ -152,7 +152,7 @@ export const FieldInputSlot = memo(
           errors={node.errors}
           errorVisible={checkShowError(node.state)}
           watchValues={node.watchValues}
-          ChildNodeComponents={ChildNodeComponents}
+          ChildFields={ChildFields}
           context={context}
         />
       </div>

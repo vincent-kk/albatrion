@@ -194,7 +194,7 @@ describe('FieldNode PR-2 surface', () => {
       { value: 'loaded' },
     );
     root.setValue({ value: 'edited', extra: 1 });
-    expect(root.extras).toEqual({ extra: 1 });
+    expect(root.undeclaredValues).toEqual({ extra: 1 });
     expect(root.find('/value')?.defaultValue).toBe('loaded');
     root.find('/value')?.resetSubtree();
     expect(root.find('/value')?.value).toBe('loaded');

@@ -1,7 +1,7 @@
 import { describe, expect, it, vi } from 'vitest';
 
 import * as compiler from '../../blueprint/utils/expressions/createDynamicFunction';
-import { SetValueOption } from '../../types/value';
+import { WriteOption } from '../../types/value';
 import { loadFieldNodeAtMount } from '../index';
 import type { SettlementContext } from '../type';
 import { evaluateGate } from '../utils/gates/evaluateGate';
@@ -40,7 +40,7 @@ describe('compiled active gate workspace characterization', () => {
             { controls: { active: "./b === 'B'" } },
           ],
         });
-        loadFieldNodeAtMount(root, undefined, SetValueOption.Overwrite);
+        loadFieldNodeAtMount(root, undefined, WriteOption.Overwrite);
         const gates = root.blueprintNode.declarations.flatMap(
           (declaration) => declaration.gates,
         );

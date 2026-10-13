@@ -3,7 +3,7 @@ import { describe, expect, it } from 'vitest';
 import { isArray } from '@winglet/common-utils/filter';
 
 import { SchemaFormError } from '../../../errors';
-import { SetValueOption } from '../../types/value';
+import { WriteOption } from '../../types/value';
 import { loadFieldNodeAtMount } from '../index';
 import { createTestTree } from './fixtures/createTestTree';
 
@@ -25,11 +25,7 @@ describe('expression failures with a derive budget', () => {
     });
     let caught: unknown;
     try {
-      loadFieldNodeAtMount(
-        root,
-        { left: 0, right: 0 },
-        SetValueOption.Overwrite,
-      );
+      loadFieldNodeAtMount(root, { left: 0, right: 0 }, WriteOption.Overwrite);
     } catch (error) {
       caught = error;
     }

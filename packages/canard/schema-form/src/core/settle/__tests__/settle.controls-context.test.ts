@@ -1,7 +1,7 @@
 import { describe, expect, it, vi } from 'vitest';
 
 import type { BlueprintSchema } from '../../blueprint';
-import { SetValueOption } from '../../types/value';
+import { WriteOption } from '../../types/value';
 import { loadFieldNodeAtMount } from '../index';
 import { createTestTree } from './fixtures/createTestTree';
 
@@ -20,7 +20,7 @@ describe('context state keys', () => {
     const find = vi.spyOn(Array.prototype, 'find');
     const builds = vi.spyOn(Array.prototype, 'map');
     try {
-      loadFieldNodeAtMount(root, {}, SetValueOption.Overwrite);
+      loadFieldNodeAtMount(root, {}, WriteOption.Overwrite);
       expect(
         find.mock.contexts.filter((target) => target === blueprint.expressions),
       ).toHaveLength(0);
@@ -47,7 +47,7 @@ describe('context state keys', () => {
     });
     const locked = vi.fn(() => true);
     root.runtime.context = { locked };
-    loadFieldNodeAtMount(root, { a: 'a', b: 'b' }, SetValueOption.Overwrite);
+    loadFieldNodeAtMount(root, { a: 'a', b: 'b' }, WriteOption.Overwrite);
     expect(locked).toHaveBeenCalledTimes(1);
     expect([root.structure?.a?.readOnly, root.structure?.b?.readOnly]).toEqual([
       true,
@@ -68,7 +68,7 @@ describe('context state keys', () => {
       },
     };
     expect(() =>
-      loadFieldNodeAtMount(root, { child: 'c' }, SetValueOption.Overwrite),
+      loadFieldNodeAtMount(root, { child: 'c' }, WriteOption.Overwrite),
     ).toThrow();
     expect(root.runtime.diagnostics).toMatchObject({
       status: 'degraded',

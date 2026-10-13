@@ -1,5 +1,5 @@
 import type { FieldNodeRecord } from '../../../record';
-import { SetValueOption } from '../../../types/value';
+import { WriteOption } from '../../../types/value';
 import { computeNode } from '../compute/computeNode';
 import { sameValue } from '../compute/sameValue';
 import { getGateRegistry } from '../gates/getGateRegistry';
@@ -25,7 +25,7 @@ export const changeFieldNodeContext = <Self extends FieldNodeRecord<Self>>(
   const context = createSettlementContext(
     root,
     'automatic',
-    SetValueOption.Overwrite,
+    WriteOption.Overwrite,
     scratch,
   );
   context.entryApi = 'setContext';

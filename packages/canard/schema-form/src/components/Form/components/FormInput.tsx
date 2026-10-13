@@ -7,14 +7,14 @@ import { FieldProxy } from '@/schema-form/components/Field';
 import { useFieldRendererContext } from '@/schema-form/providers';
 import type {
   AllowedValue,
-  ChildNodeComponentProps,
+  ChildFieldProps,
   FieldInputProps,
 } from '@/schema-form/types';
 
 export type FormInputProps<Value extends AllowedValue> = {
   path?: string;
   FieldInput?: ComponentType<FieldInputProps<Value>>;
-} & ChildNodeComponentProps;
+} & ChildFieldProps;
 
 /**
  * Renders form input fields with automatic type detection from schema.

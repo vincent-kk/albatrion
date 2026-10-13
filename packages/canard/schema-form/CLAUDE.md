@@ -53,7 +53,7 @@ npx -p @slats/agents-assets-sync inject-agents-settings --package=@canard/schema
 ### Plugin System (`src/app/plugin/`)
 
 - Validator 플러그인: AJV7/AJV8 등 JSON Schema 검증
-- UI 컴포넌트 플러그인: `FormGroup`, `FormLabel`, `FormInput`, `FormError`
+- UI 컴포넌트 플러그인: `FieldRenderer`, `FormLabelRenderer`, `FormInputRenderer`, `FormErrorRenderer`
 - FieldInput 플러그인: 커스텀 입력 컴포넌트
 
 ### Error Isolation (user-injected render surfaces)
@@ -71,7 +71,7 @@ npx -p @slats/agents-assets-sync inject-agents-settings --package=@canard/schema
 - `node.validate()` / `node.errors`
 - `node.subscribe()` — 노드 이벤트 구독 (cleanup 함수 반환). 구독 전에 전달된 이벤트는 재생되지 않음 — 상태 미러는 `useFieldNodeSubscribe`의 `onSubscribe` catch-up 사용
 - `node.revision(mask?)` — 전달된 이벤트 배치의 단조 리비전 (리스너 유무 무관 집계, 늦은 구독자의 갭 감지용; `useFieldNodeTracker`가 useSyncExternalStore 스냅샷으로 사용)
-- `virtualization` prop — 초대형 폼 렌더 가상화(지연 마운트). node tree는 전량 생성 유지, branch 자식 수 ≥ `threshold`면 `eagerCount` 이후 필드를 placeholder(`[data-path][data-deferred]` — identity는 `data-path`로 통일, 마커가 상태 구분)로 지연 → IO 교차·idle backfill·RequestFocus/Select 시 마운트(defer-once). 게이트는 `useChildNodeComponents`에서 bake, 조율은 `VirtualizationManager`(helpers/virtualization). placeholder 시각은 CSS `[data-deferred]` 셀렉터 또는 `Placeholder` 컴포넌트 옵션(공간 예약은 `estimateHeight` 소유, 컴포넌트는 시각 채움만). CSR 전용 — SSR 하이드레이션에서 켜지 말 것
+- `virtualization` prop — 초대형 폼 렌더 가상화(지연 마운트). node tree는 전량 생성 유지, branch 자식 수 ≥ `threshold`면 `eagerCount` 이후 필드를 placeholder(`[data-path][data-deferred]` — identity는 `data-path`로 통일, 마커가 상태 구분)로 지연 → IO 교차·idle backfill·RequestFocus/Select 시 마운트(defer-once). 게이트는 `useChildFields`에서 bake, 조율은 `VirtualizationManager`(helpers/virtualization). placeholder 시각은 CSS `[data-deferred]` 셀렉터 또는 `Placeholder` 컴포넌트 옵션(공간 예약은 `estimateHeight` 소유, 컴포넌트는 시각 채움만). CSR 전용 — SSR 하이드레이션에서 켜지 말 것
 
 ### FieldInput 우선순위 (높음 → 낮음)
 
@@ -133,7 +133,7 @@ Identity → Tree Structure → Value Management → Computed Properties → Sta
 
 ## Key Hooks
 
-- `useFieldNodeTracker`, `useFieldNodeSubscribe`, `useChildNodeComponentMap`, `useChildNodeErrors`, `useFormSubmit` (`useFieldNode` 는 내부 전용, 공개 index 미노출)
+- `useFieldNodeTracker`, `useFieldNodeSubscribe`, `useChildFieldMap`, `useChildFieldErrors`, `useFormSubmit` (`useFieldNode` 는 내부 전용, 공개 index 미노출)
 
 ## Key Type Utilities
 

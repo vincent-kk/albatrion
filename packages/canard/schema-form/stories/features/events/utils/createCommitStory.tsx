@@ -28,7 +28,7 @@ const nextFrames = async () => {
 export const createCommitStory = (validated: boolean): StoryObj<typeof FeatureStory> => {
   const probe = createHandleProbe();
   const commits = { count: 0 };
-  const layout = () => <Profiler id="group" onRender={() => { commits.count++; }}><Form.Group /></Profiler>;
+  const layout = () => <Profiler id="group" onRender={() => { commits.count++; }}><Form.Field /></Profiler>;
   return {
     args: { scenario, layout, onHandle: probe.onHandle, ...(!validated && { formProps: { validationMode: ValidationMode.None } }) },
     parameters: { docs: { description: { story: scenario.description } } },

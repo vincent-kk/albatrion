@@ -19,7 +19,7 @@ export const restoreSourceB = <Self extends FieldNodeRecord<Self>>(
   for (let index = context.automaticLog.length - 1; index >= 0; index--) {
     const entry = context.automaticLog[index];
     entry.node.raw = entry.previousRaw;
-    entry.node.extras = entry.previousExtras;
+    entry.node.undeclaredValues = entry.previousExtras;
     if (entry.previousDistributed)
       context.distributedInputs.set(entry.node, entry.previousDistributed);
     else context.distributedInputs.delete(entry.node);

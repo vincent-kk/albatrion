@@ -1,7 +1,7 @@
 import { beforeAll, describe, expect, it } from 'vitest';
 
 import headFixture from '../../blueprint/__tests__/fixtures/ownedInlineHead.json';
-import type { JSONSchema } from '../../types/jsonSchema';
+import type { AuthoredSchema } from '../../types/jsonSchema';
 import { buildChildSelectionRuntime } from './fixtures/childSelection/buildChildSelectionRuntime';
 import { createFixedBranchSchema } from './fixtures/childSelection/createFixedBranchSchema';
 
@@ -38,7 +38,7 @@ describe('child selection against pinned HEAD', () => {
       for (const allListeners of [false, true]) {
         const fixture = {
           label: sample.label,
-          schema: sample.schema as JSONSchema,
+          schema: sample.schema as AuthoredSchema,
           input: undefined,
           writes: [
             { path: '', value: {} },
@@ -60,7 +60,7 @@ describe('child selection against pinned HEAD', () => {
     (count) => {
       const fixture = {
         label: `oneOf-${count}`,
-        schema: createFixedBranchSchema(count) as JSONSchema,
+        schema: createFixedBranchSchema(count) as AuthoredSchema,
         input: { kind: 'kind_0' },
         allListeners: true,
         writes: [
@@ -102,7 +102,7 @@ describe('child selection against pinned HEAD', () => {
             allListeners: true,
             schema: (nested
               ? { type: 'object', properties: { 'a/b~c': host } }
-              : host) as JSONSchema,
+              : host) as AuthoredSchema,
             input: nested ? { 'a/b~c': { kind: 'off' } } : { kind: 'off' },
             writes: ['on', 'off', 'on'].map((kind) => ({
               path: nested ? '/a~1b~0c/kind' : '/kind',

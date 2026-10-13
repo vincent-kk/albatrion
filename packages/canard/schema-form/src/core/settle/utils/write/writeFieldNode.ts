@@ -1,7 +1,7 @@
 import { isArray } from '@winglet/common-utils/filter';
 
 import type { FieldNodeRecord } from '../../../record';
-import type { SetValueOption } from '../../../types/value';
+import type { WriteOption } from '../../../types/value';
 import type { FieldNodeWriteKind, SettlementContext } from '../../type';
 import { computeNode } from '../compute/computeNode';
 import { hasLivePathKind } from '../detached/hasLivePathKind';
@@ -39,7 +39,7 @@ export const writeFieldNode = <Self extends FieldNodeRecord<Self>>(
   node: Self,
   input: unknown,
   kind: FieldNodeWriteKind,
-  option: SetValueOption,
+  option: WriteOption,
   source: FieldNodeWriteKind = kind,
   writeOrigins?: SettlementContext<Self>['writeOrigins'],
 ): void => {
