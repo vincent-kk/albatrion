@@ -1115,6 +1115,8 @@ const definitions = [
 ];
 ```
 
+`nullable: true` is the OpenAPI 3.0 compatible notation and is officially supported. It is equivalent to adding `'null'` to `type`: `{ type: 'string', nullable: true }` means `{ type: ['string', 'null'] }`. No warning or error is raised for this notation.
+
 ### Nullable Objects and Arrays
 
 A nullable object or array (`type: ['object', 'null']`, `type: ['array', 'null']`) has three distinct states, and the form never turns one into another by itself.
