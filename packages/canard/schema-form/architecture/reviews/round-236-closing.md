@@ -13,3 +13,7 @@
   - 【추론】 셋 가운데 둘이 수렴 뒤에도 이유를 들어 `Widget*`에 섰고, 남은 반대의 해결책은 이름을 하나 더 들여오는 것이라 비용이 크다. 공개 API 안의 혼동은 1.0.0 뒤 가장 오래 남는 비용이다.
 - 근거: 세 세션의 1차·2차 답; 235라운드 소유자 답.
 - 다음: 소유자 결정 → ②-a·②-b.
+
+## 덧붙임 (2026-10-13, 07b-2 ③④⑤⑥ 커밋 보고)
+
+fixy07 커밋(push 전): ③ 944495740 시험 전용(IME 5초 대기, timing 5표본 중앙값); ④ 2495a42f4 런타임(232라운드) enum 집합 밖 값을 비활성 선택지로, 무효 날짜를 text 입력으로, e2e it.fails → it, Findings 스토리 !test 해제; ⑤ 2796d54fe 런타임(232라운드) ajv6·7·8 `#` 접두 포인터 퍼센트 디코딩(전체 디코딩 → split → ~1 → ~0, 잘못된 시퀀스 거부, 세 파일 동일); ⑥ 2504f522b 런타임(233C-01 (3)) 내장 checkbox·radio test가 hint의 formType을 읽음. 수치: schema-form 전체(storybook 포함) 파일 654 통과·0 건너뜀, 시험 4158 통과·0 실패·1 todo(기준 4116에서 +42); ajv6 130·ajv7 135·ajv8 334; typecheck·lint(src)·eslint(stories·ajv 셋·aileron) 0; verifier 넷 PASS; 고치기 전 실패 HEAD 사본 재현(④ enum 2·날짜 5·e2e, ⑥ radio 3·checkbox 2, ⑤ ajv6 1·ajv8 3); 날짜 문법 1~4000년 전수 Date 대조 불일치 0; verifier 낮은 등급 정리 다섯 반영(해당 시험 91건 통과). 비차단 메모(결정 불필요): 연도 275760 초과 날짜는 명세상 유효해 date 입력을 유지하나 Chromium은 빈 칸으로 정리(극단값). ⑦·⑧·①-c는 codex 진행 중; ⑧ 슬롯 형은 debugger 프로브로 C1 `ComponentType<FormTypeInputProps<any, any, any, any, any>> | null` 채택(61개 정의를 단언 없이 받고 클래스·memo 허용, `{foo:string}`·`{disabled:string}`·123·'Input' 거부) — any 대체안 불필요(234라운드 소유자 답의 정공법).
