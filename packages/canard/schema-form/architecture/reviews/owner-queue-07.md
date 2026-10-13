@@ -28,5 +28,6 @@
 | 22 (귀환 때 결정) | 마운트 때 onValidate가 두 번 불림 — 새 엔진은 빈 목록 다음 결과 1건, 0.16.0은 같은 결과 1건을 두 번(fixy07 ④ G4 조사) | 횟수가 0.16.0과 같아 머지를 막지 않으나 "마운트 한 번에 한 번"으로 줄일지는 공개 동작 결정 | 검증 파동 고침(④)이 들어간 뒤 첫 통지의 빈 목록을 건너뛰는 작은 변경이면 됨; 0.16.0 비교 수치는 fixy07의 val-207 조사에 있음 | 220라운드 뒤 fixy07 보고 |
 | 23 (귀환 때 결정) | 07 전환이 `UnknownFormTypeInputProps.type`을 `any`에서 `SchemaNodeType`으로 좁혀, props가 좁은 플러그인 입력(예: StringSchema 전용)을 `presentation.FormTypeInput`에 직접 넣으면 형 오류(0.16.0에서는 가능; fairy07 216C-04 발견) | 공개 형의 변성(variance) 결정 — 넓히면 형 안전이 줄고, 두면 직접 지정 용법이 formTypeInputDefinitions·format 선택으로 바뀜 | 런타임은 정상이고 시험·스토리는 정의 목록과 format 선택으로 우회됨; 결정되면 형 한 곳의 변경 | 220라운드 뒤 fairy07 보고 |
 | 24 (귀환 때 확인) | schema-form `test --run --reporter=json --outputFile` 실행이 보고서는 success true·0 실패인데 종료 코드 1을 냄(두 번 재현; 같은 기준의 dot 실행은 0; fixy07 ④ G3) | 시험 도구 설정 문제라 제품 동작과 무관하고 CI 사용 여부는 소유자 몫 | 게이트는 dot 실행 종료 코드로 판정했으므로 영향 없음 | 222라운드 뒤 fixy07 보고 |
+| 25 (귀환 때 결정) | IME 조합 스토리의 흔들림(202C-01 (4)) — ImeComposition(browser-gates.stories.tsx:32)은 즉시 단언이라 "5초 제한 대기"를 적용하려면 제한 시간 있는 대기로 바꾸는 새 타이밍 변경이 필요(fixy07 ⑤) | 닫힌 범위 밖의 시험 타이밍 변경 | CDP 전용 스토리라 headless 게이트에서만 돌고 지금 통과하므로 머지와 무관 | 222라운드 뒤 fixy07 보고 |
 
 (추가되는 항목은 아래에 번호를 이어 적는다.)
