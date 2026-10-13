@@ -82,4 +82,4 @@
 
 | 날짜 | 무엇 | 어디 |
 | --- | --- | --- |
-| 2026-10-13 | 238라운드(소유자): 힌트 inputType 잠정 결정; 필드 전체 렌더러는 FieldRenderer. 보충 1줄 | `reviews/round-238-owner-answers.md` |
+| 2026-10-13 | 239라운드(소유자): 이름 체계 확정 — inputType / FieldInput* / FieldRenderer / Form{Label,Input,Error}Renderer, 대응표. 보충 3줄 | `reviews/round-239-owner-answers.md` |

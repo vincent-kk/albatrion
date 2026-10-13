@@ -366,3 +366,6 @@ reviews/round-234-owner-answers.md:10	234	CLAUDE.md 76·138행	"승인" (2026-10
 reviews/round-235-owner-answers.md:7	235	이름 재구성	"이름 재구성에 동의함. 단, 지금 이름을 후보로 넣고, 이름 쌍을 공모한다. 그리고 이들 중 가장 적절한 이름을 구성해보자. 이 동작에 /cennad:crosscheck 사용을 요구한다" (2026-10-13, 원장 세션)
 reviews/round-237-owner-answers.md:7	237	역할 2 이름	"widget 은 아닌거같아. fieldInput 이 더 마음에 드는구나 \n\nField~ 시리즈로 가는 게 더 난 와닿는데.\n문제는  구 formType 키워드로군... inputType 이 겹치는건 예상 못했는데... 겹치면 안될건 없지만 혼란스러우려나.... widget으로 모일건 예상 못했는데 말이야" (2026-10-13, 원장 세션)
 reviews/round-238-owner-answers.md:7	238	힌트 이름과 렌더러	"FieldInputRenderer가 아니라 FieldRenderer 아니야? input만 랜더링하는게 아닐거라서.... \ninputType으로 잠정 결정하자." (2026-10-13, 원장 세션)
+reviews/round-239-owner-answers.md:7	239	슬롯 렌더러 이름	"FormLabelRenderer·FormInputRenderer·FormErrorRenderer\n\n이건 그대로 쓰는거야?\n\nForm{Label,Input,Error}Renderer 이건 바꿀 필욘 없는건가..." (2026-10-13, 원장 세션)
+reviews/round-239-owner-answers.md:8	239	Renderer 접미어	"오케이 그건 좋아 근데, 매번 뒤에 renderer 를 붙이는건? 이건 필수적인거야?" (2026-10-13, 원장 세션)
+reviews/round-239-owner-answers.md:9	239	확정	"오케이 그럼 지금으로 확정. \n이어지는 질문 하나 더 있어" (2026-10-13, 원장 세션)

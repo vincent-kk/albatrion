@@ -2,9 +2,8 @@
 
 개발의 진행 상황과 다음 할 일은 `PLAN.md`가 단일 진입점으로 든다. 다음 세션이 바로 이어서 일하기 위한 문서다. 이력은 `git log`와 `reviews/`에 있으므로 여기에는 지금 상태, 다음 할 일, 일하는 법만 적는다. 소유자는 Vincent다.
 
-## 1. 지금 어디인가 (2026-10-13, 238라운드 닫힘; 07 전환 진행 중)
+## 1. 지금 어디인가 (2026-10-13, 239라운드 닫힘; 07 전환 진행 중)
 
-- **205라운드(2026-10-13, 닫기).** 스토리 재구성 일곱째 그룹(핸들·레이아웃)이 끝났고 제품 결함은 없었다. fairy07 세션은 서브에이전트 실행이 전부 거부돼 자체 변이 탐침으로 대신한다. 07b 브랜치가 리뷰 둘째 라운드 위로 올라갔고 07c도 그 위로 옮긴다(reviews/round-205-closing.md).
 - **206라운드(2026-10-13, 닫기).** core와 SchemaNode의 관계와 패키지 전체 위계를 고찰한 문서가 완성돼 원장에 들어왔다. 권고는 core를 엔진과 겉면 두 자식으로 나누는 모양이고, 소유자 결정 다섯은 설명 문서와 함께 귀환 때 올린다(reviews/round-206-closing.md).
 - **207라운드(2026-10-13, 닫기).** 스토리 재구성 여덟째 그룹(이벤트·통지)이 끝났고 제품 결함은 없었다. 검증 결과가 그대로여도 새 배열로 파동을 내 렌더가 두 번인 것은 07b 정리 항목으로 넘겼다. 소유자용 구조 설명 문서를 썼다(reviews/round-207-closing.md).
 - **208라운드(2026-10-13, 닫기).** 리뷰 둘째 라운드의 독립 검증이 조건부로 통과했다. 가상 노드 입력의 오류 경로가 부수 효과 없이 던지게 된 것은 새 동작으로 받고, lint 설정과 문서 문장 둘, 비차단 넷은 reviewer가 꼬리 커밋으로 고친다. 측정은 둘째 라운드 head로 진행한다(reviews/round-208-closing.md).
@@ -37,7 +36,8 @@
 - **235라운드(2026-10-13, 소유자).** formType·FormTypeInput·FormTypeRenderer 계열 이름의 재구성에 동의하되, 현재 이름을 후보에 넣고 이름 쌍을 공모해 가장 적절한 이름을 구성하기로 했다(crosscheck 사용). 결정 뒤 07b-2 ②-a·②-b를 새 이름으로 진행한다(reviews/round-235-owner-answers.md).
 - **236라운드(2026-10-13, 닫기).** 이름 공모(crosscheck 셋, 수렴 한 라운드): 힌트 `widget`과 렌더러 `FieldRenderer*`·`Field{Group,Label,Input,Error}Renderer`는 합의, 입력 컴포넌트는 `Widget*`(codex·claude) 대 `FieldInput*`(antigravity)로 갈렸고 원장 관리자는 `Widget*`를 권고했다; 소유자 결정 뒤 07b-2 ②-a·②-b를 새 이름으로(reviews/round-236-closing.md).
 - **237라운드(2026-10-13, 소유자).** 공모 결과에 대해 소유자는 `Widget*`가 아니라 Field 시리즈(`FieldInput*`·`FieldRenderer*`)를 택했고, 옛 `formType` 힌트의 새 이름(`inputType`의 겹침 여부)은 고민 중이다(reviews/round-237-owner-answers.md).
-- **238라운드(2026-10-13, 소유자).** 힌트는 `inputType`으로 잠정 결정했고, 필드 전체 렌더러(옛 FormTypeGroupRenderer)는 `FieldRenderer`여야 한다고 짚었다; 슬롯 셋은 `Form{Label,Input,Error}Renderer`로 제안해 확정 대기(reviews/round-238-owner-answers.md). 다음 라운드 번호는 239.
+- **238라운드(2026-10-13, 소유자).** 힌트는 `inputType`으로 잠정 결정했고, 필드 전체 렌더러(옛 FormTypeGroupRenderer)는 `FieldRenderer`여야 한다고 짚었다; 슬롯 셋은 `Form{Label,Input,Error}Renderer`로 제안해 확정 대기(reviews/round-238-owner-answers.md).
+- **239라운드(2026-10-13, 소유자).** 이름 체계를 확정했다: 힌트 `inputType`, 입력 `FieldInput*`, 필드 렌더러 `FieldRenderer`, 슬롯 `Form{Label,Input,Error}Renderer`, `Renderer` 접미어 유지, 별칭 없음; 대응표는 reviews/round-239-owner-answers.md. 07b-2 ②-a·②-b를 새 이름으로 재계획한다. 다음 라운드 번호는 240.
 - **그 앞의 라운드 요지(19라운드부터)는 PLAN-LOG.md 2절에 있다.** 라운드마다 한 문단이며, 1절의 기록 표와 같은 순서다.
 - **설계의 정본은 단일 원장 `ledger/`다.** 영역 17개, 항목 1,350개(80라운드 뒤, 24라운드 뒤 1,348; 현행 1,076(부정 결정·기록 포함), 대체됨 199, 분할됨 49, 중복 24, 열림 0). 형식과 규칙은 `ledger/README.md`.
 - **옛 설계 문서(`00`–`09`, `adr/`, `open-questions.md`)는 동결됐다.** 더 고치지 않는다. 어긋남은 원장의 충돌 칸에 적는다. 원장이 인용하는 옛 문서의 `path:line`은 모두 커밋 `ba398c330` 기준 줄 번호다(그 뒤 옛 문서는 바뀌지 않았다).
@@ -376,6 +376,7 @@ node ledger/checks/doc-coverage.mjs design/*.md adr/*.md -- ledger/*.md   # 설�
 | `reviews/round-236-closing.md` | 236라운드 닫기: 이름 공모 결과와 권고 |
 | `reviews/round-237-owner-answers.md` | 237라운드 소유자 답 하나: Field 시리즈 선택, 힌트 미정 |
 | `reviews/round-238-owner-answers.md` | 238라운드 소유자 답 하나: inputType 잠정, FieldRenderer |
+| `reviews/round-239-owner-answers.md` | 239라운드 소유자 답 셋: 이름 체계 확정과 대응표 |
 | reviews 아래 improvement-38-explain.html | 개선-38 소유자용 설명(seiri:explain) |
 | reviews 아래 improvement-38-fractal-map.md | 개선-38 고찰 문서(reviewer, verifier 대조판) |
 | reviews 아래 raw-improvement-38 디렉터리 | 개선-38 근거: 소비자 증거 표, filid 요약 |
