@@ -403,3 +403,4 @@ reviews/round-267-owner-answers.md:27	267	병합은 보고만	"병합도 보고�
 reviews/round-268-owner-answers.md:7	268	멀티에이전트 재개	"지금부터는 codex 와 agy 를 사용한 멀티에이전트 작업을 하도록 해.\n내가 이전에 claude 로 하자고 했던거같아서.\n이제 명시적으로 멀티에이전트 작업을 진행하도록.\n규칙은 이전과 같아.\n\n이해했으면 마무리된 작업 처리하고, 멀티에이전트 규칙을 한번 다시 말해줘" (2026-10-14, 원장 세션)
 reviews/round-268-owner-answers.md:19	268	nullable 잔류	"아 그리고 nullable는 제거가 아니라 잔류야. 가끔 이걸 쓰는 경우도 있어서. 위 계획에서 정정이 필요해" (2026-10-14, 원장 세션)
 reviews/round-269-owner-answers.md:7	269	07b-6 결정·nullable	"맞다고 생각하는 방향으로 가도록\nnullable 은 좀만 더 이야기해보자.\n남겨두는게 딱히 비용도 아니고 느려지는것도 별로 없지? ajv도 공식 허용하고. 우리가 jsonSchema 비표준 필드도 많이 쓰는 마당이라 막는 당위성도 좀 애매하네" (2026-10-14, 원장 세션)
+reviews/round-269-owner-answers.md:13	269	nullable 공식 지원	"그래 nullable은 잔류로 결정. 별도 오류도 없다. 공식지원으로 결정하자." (2026-10-14, 원장 세션)
