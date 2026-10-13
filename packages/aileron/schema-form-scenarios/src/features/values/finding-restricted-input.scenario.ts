@@ -2,14 +2,13 @@ import type { FormScenario } from '../../types';
 import { optionsSchema } from './literal-and-format.scenario';
 
 /**
- * Open question (07c G1), not a ledger defect: built-in inputs with a restricted display domain draw an
- * out-of-domain string as a valid state. The string enum select has no empty option and shows its first option;
- * the date input blanks a malformed string. REACT-027 governs only type-mismatched values and typeMismatch is
- * false here, so the ledger does not decide this; the expectations state what the screen would need to show.
+ * Built-in inputs preserve the display of strings outside their enum or date domain. The enum select adds a
+ * disabled option for the raw value, and a malformed date uses an editable text input. Validation still reports
+ * the enum violation on the node.
  */
 export const restrictedInputFindingScenario: FormScenario = {
   name: 'values.finding-restricted-input-out-of-domain',
-  description: 'Open question for the owner: the string enum select draws an out-of-set value "XL" as its first option "S", and the date input draws "not-a-date" as an empty field, so the screen disagrees with the node value. REACT-027 covers only type-mismatched values (typeMismatch is false here) and REACT-033 does not promise enum or format meaning, so the ledger does not decide it.',
+  description: 'The string enum select displays the out-of-set value "XL" in a leading disabled option, and the date input displays "not-a-date" verbatim as editable text, so both displays agree with the node values while the enum violation stays visible to validation.',
   schema: optionsSchema,
   initialValue: { version: 'v1' },
   steps: [

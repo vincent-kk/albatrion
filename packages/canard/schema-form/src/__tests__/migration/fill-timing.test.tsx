@@ -1,7 +1,7 @@
 import { act } from '@testing-library/react';
 import { afterEach, expect, it } from 'vitest';
 
-import { type FormTypeInputProps, SetValueOption } from '@/schema-form';
+import { type FieldInputProps, SetValueOption } from '@/schema-form';
 
 import { type FormHarness, renderForm } from '../renderForm';
 
@@ -34,7 +34,7 @@ it('LANDING-200 child input restores a null object without refilling its sibling
 });
 
 it('LANDING-201 input Overwrite preserves the input instance and caret', async () => {
-  const Input = ({ path, value, onChange }: FormTypeInputProps) => (
+  const Input = ({ path, value, onChange }: FieldInputProps) => (
     <input
       id={path}
       defaultValue={value ?? ''}
@@ -47,7 +47,7 @@ it('LANDING-201 input Overwrite preserves the input instance and caret', async (
     { type: 'string' },
     {
       defaultValue: '',
-      formTypeInputDefinitions: [{ test: () => true, Component: Input }],
+      fieldInputDefinitions: [{ test: () => true, Component: Input }],
     },
   );
   const field = form.field('') as HTMLInputElement;

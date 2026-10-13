@@ -18,8 +18,8 @@ import { toDefinitions } from './utils/toDefinitions';
 import { toInputMap } from './utils/toInputMap';
 import { withInlineInputs } from './utils/withInlineInputs';
 
-// Plugin definitions are global and prepend on every registration; this one matches only the probe formType of this family.
-registerPlugin({ formTypeInputDefinitions: toDefinitions([inputResolutionPluginDefinition]) });
+// Plugin definitions are global and prepend on every registration; this one matches only the probe inputType of this family.
+registerPlugin({ fieldInputDefinitions: toDefinitions([inputResolutionPluginDefinition]) });
 
 export default { title: 'Features/InputComponents/InputResolution', component: FeatureStory, tags: ['autodocs'] } satisfies Meta<typeof FeatureStory>;
 type Story = StoryObj<typeof FeatureStory>;
@@ -37,10 +37,10 @@ const resolutionStory = (label: string): Story => {
     args: {
       scenario: item.inline ? withInlineInputs(scenario, item.inline) : scenario,
       formProps: {
-        ...(item.map && { formTypeInputMap: toInputMap(item.map) }),
-        ...(item.form && { formTypeInputDefinitions: toDefinitions(item.form) }),
+        ...(item.map && { fieldInputMap: toInputMap(item.map) }),
+        ...(item.form && { fieldInputDefinitions: toDefinitions(item.form) }),
       },
-      ...(item.provider && { providerProps: { formTypeInputDefinitions: toDefinitions(item.provider) } }),
+      ...(item.provider && { providerProps: { fieldInputDefinitions: toDefinitions(item.provider) } }),
     },
     parameters: { docs: { description: { story: `${scenario.description} Case: ${label}.` } } },
     async play({ args, canvasElement, step }) {

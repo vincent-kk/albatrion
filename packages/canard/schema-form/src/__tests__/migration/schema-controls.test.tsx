@@ -2,7 +2,7 @@ import { act } from '@testing-library/react';
 import { afterEach, expect, it } from 'vitest';
 
 import {
-  type FormTypeInputProps,
+  type FieldInputProps,
   type JSONSchema,
   SchemaNodeEventType,
 } from '@/schema-form';
@@ -126,7 +126,7 @@ it('LANDING-033 flat control aliases no longer drive the input', async () => {
 });
 
 it('LANDING-132 conditional required updates the input required flag', async () => {
-  const Input = ({ path, required }: FormTypeInputProps) => (
+  const Input = ({ path, required }: FieldInputProps) => (
     <input id={path} required={required} />
   );
   form = await renderForm(
@@ -142,9 +142,7 @@ it('LANDING-132 conditional required updates the input required flag', async () 
     {
       validator: true,
       defaultValue: { flag: false },
-      formTypeInputDefinitions: [
-        { test: { type: 'string' }, Component: Input },
-      ],
+      fieldInputDefinitions: [{ test: { type: 'string' }, Component: Input }],
     },
   );
   expect(form.node('/name')?.required).toBe(false);

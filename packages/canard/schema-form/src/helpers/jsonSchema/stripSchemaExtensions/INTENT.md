@@ -2,7 +2,7 @@
 
 ## Purpose
 
-`JSONSchemaWithVirtual` 확장 필드(`FormTypeInput`, `FormTypeInputProps`, `FormTypeRendererProps`, `errorMessages`, `options`, `injectTo`)를 스키마에서 제거하여 표준 `JSONSchema`로 변환한다. 검증 라이브러리에 전달하기 전 커스텀 확장을 정리하는 데 사용된다.
+`JSONSchemaWithVirtual` 확장 필드(`FieldInput`, `FieldInputProps`, `FieldRendererProps`, `errorMessages`, `options`, `injectTo`)를 스키마에서 제거하여 표준 `JSONSchema`로 변환한다. 검증 라이브러리에 전달하기 전 커스텀 확장을 정리하는 데 사용된다.
 
 ## Conventions
 

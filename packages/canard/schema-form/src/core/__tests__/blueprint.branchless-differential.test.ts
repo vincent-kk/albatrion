@@ -160,7 +160,7 @@ describe('branchless and generic observable equivalence', () => {
       {
         type: ['object', 'string'],
         properties: {
-          a: { type: 'number', presentation: { FormTypeInput: 'ignored' } },
+          a: { type: 'number', presentation: { FieldInput: 'ignored' } },
         },
       },
       {

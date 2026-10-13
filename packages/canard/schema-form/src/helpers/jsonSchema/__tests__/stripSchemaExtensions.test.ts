@@ -86,8 +86,8 @@ describe('stripSchemaExtensions', () => {
     it('undefined 확장 속성만 있는 경우에도 원본을 반환해야 한다', () => {
       const schema: JSONSchemaWithVirtual = {
         type: 'string',
-        FormTypeInputProps: undefined,
-        FormTypeRendererProps: undefined,
+        FieldInputProps: undefined,
+        FieldRendererProps: undefined,
         errorMessages: undefined,
         options: undefined,
       };
@@ -98,11 +98,11 @@ describe('stripSchemaExtensions', () => {
     });
   });
 
-  describe('FormTypeInputProps 제거', () => {
-    it('FormTypeInputProps를 제거해야 한다', () => {
+  describe('FieldInputProps 제거', () => {
+    it('FieldInputProps를 제거해야 한다', () => {
       const schema: JSONSchemaWithVirtual = {
         type: 'string',
-        FormTypeInputProps: {
+        FieldInputProps: {
           placeholder: 'Enter name',
           className: 'custom-input',
         },
@@ -111,15 +111,15 @@ describe('stripSchemaExtensions', () => {
       const result = stripSchemaExtensions(schema);
 
       expect(result).toEqual({ type: 'string' });
-      expect(result).not.toHaveProperty('FormTypeInputProps');
+      expect(result).not.toHaveProperty('FieldInputProps');
     });
   });
 
-  describe('FormTypeRendererProps 제거', () => {
-    it('FormTypeRendererProps를 제거해야 한다', () => {
+  describe('FieldRendererProps 제거', () => {
+    it('FieldRendererProps를 제거해야 한다', () => {
       const schema: JSONSchemaWithVirtual = {
         type: 'number',
-        FormTypeRendererProps: {
+        FieldRendererProps: {
           label: 'Age',
           className: 'form-field',
         },
@@ -128,7 +128,7 @@ describe('stripSchemaExtensions', () => {
       const result = stripSchemaExtensions(schema);
 
       expect(result).toEqual({ type: 'number' });
-      expect(result).not.toHaveProperty('FormTypeRendererProps');
+      expect(result).not.toHaveProperty('FieldRendererProps');
     });
   });
 
@@ -176,10 +176,10 @@ describe('stripSchemaExtensions', () => {
         type: 'string',
         title: 'Email',
         format: 'email',
-        FormTypeInputProps: {
+        FieldInputProps: {
           placeholder: 'Enter email',
         },
-        FormTypeRendererProps: {
+        FieldRendererProps: {
           label: 'Email Address',
         },
         errorMessages: {
@@ -197,8 +197,8 @@ describe('stripSchemaExtensions', () => {
         title: 'Email',
         format: 'email',
       });
-      expect(result).not.toHaveProperty('FormTypeInputProps');
-      expect(result).not.toHaveProperty('FormTypeRendererProps');
+      expect(result).not.toHaveProperty('FieldInputProps');
+      expect(result).not.toHaveProperty('FieldRendererProps');
       expect(result).not.toHaveProperty('errorMessages');
       expect(result).not.toHaveProperty('options');
     });
@@ -211,7 +211,7 @@ describe('stripSchemaExtensions', () => {
         properties: {
           name: {
             type: 'string',
-            FormTypeInputProps: { placeholder: 'Name' },
+            FieldInputProps: { placeholder: 'Name' },
           },
           age: {
             type: 'number',
@@ -236,7 +236,7 @@ describe('stripSchemaExtensions', () => {
         type: 'array',
         items: {
           type: 'string',
-          FormTypeInputProps: { placeholder: 'Item' },
+          FieldInputProps: { placeholder: 'Item' },
           options: { trim: true },
         },
       };
@@ -252,7 +252,7 @@ describe('stripSchemaExtensions', () => {
     it('깊게 중첩된 스키마의 확장 속성을 모두 제거해야 한다', () => {
       const schema: JSONSchemaWithVirtual = {
         type: 'object',
-        FormTypeRendererProps: { label: 'User Form' },
+        FieldRendererProps: { label: 'User Form' },
         properties: {
           profile: {
             type: 'object',
@@ -266,7 +266,7 @@ describe('stripSchemaExtensions', () => {
                     email: {
                       type: 'string',
                       format: 'email',
-                      FormTypeInputProps: { placeholder: 'Email' },
+                      FieldInputProps: { placeholder: 'Email' },
                       errorMessages: { format: 'Invalid email' },
                     },
                   },
@@ -314,7 +314,7 @@ describe('stripSchemaExtensions', () => {
               type: { type: 'string', enum: ['A'] },
               fieldA: {
                 type: 'string',
-                FormTypeInputProps: { placeholder: 'Field A' },
+                FieldInputProps: { placeholder: 'Field A' },
               },
             },
           },
@@ -359,7 +359,7 @@ describe('stripSchemaExtensions', () => {
             properties: {
               name: {
                 type: 'string',
-                FormTypeInputProps: { placeholder: 'Name' },
+                FieldInputProps: { placeholder: 'Name' },
               },
             },
           },
@@ -402,7 +402,7 @@ describe('stripSchemaExtensions', () => {
             properties: {
               option2: {
                 type: 'number',
-                FormTypeRendererProps: { label: 'Option 2' },
+                FieldRendererProps: { label: 'Option 2' },
               },
             },
           },
@@ -443,7 +443,7 @@ describe('stripSchemaExtensions', () => {
           properties: {
             extra: {
               type: 'string',
-              FormTypeInputProps: { placeholder: 'Extra field' },
+              FieldInputProps: { placeholder: 'Extra field' },
             },
           },
         },
@@ -491,7 +491,7 @@ describe('stripSchemaExtensions', () => {
         maxLength: 100,
         pattern: '^[a-zA-Z]+$',
         format: 'email',
-        FormTypeInputProps: { placeholder: 'Email' },
+        FieldInputProps: { placeholder: 'Email' },
       };
 
       const result = stripSchemaExtensions(schema);
@@ -512,7 +512,7 @@ describe('stripSchemaExtensions', () => {
         description: 'User object',
         $id: 'user-schema',
         $schema: 'http://json-schema.org/draft-07/schema#',
-        FormTypeRendererProps: { label: 'User Form' },
+        FieldRendererProps: { label: 'User Form' },
       };
 
       const result = stripSchemaExtensions(schema);
@@ -580,7 +580,7 @@ describe('stripSchemaExtensions', () => {
         additionalProperties: false,
         minProperties: 1,
         maxProperties: 5,
-        FormTypeRendererProps: { label: 'Form' },
+        FieldRendererProps: { label: 'Form' },
       };
 
       const result = stripSchemaExtensions(schema);
@@ -602,8 +602,8 @@ describe('stripSchemaExtensions', () => {
     it('undefined 확장 속성은 스키마에 영향을 주지 않아야 한다', () => {
       const schema: JSONSchemaWithVirtual = {
         type: 'string',
-        FormTypeInputProps: undefined,
-        FormTypeRendererProps: undefined,
+        FieldInputProps: undefined,
+        FieldRendererProps: undefined,
         errorMessages: undefined,
         options: undefined,
       };
@@ -612,8 +612,8 @@ describe('stripSchemaExtensions', () => {
 
       expect(result).toEqual({
         type: 'string',
-        FormTypeInputProps: undefined,
-        FormTypeRendererProps: undefined,
+        FieldInputProps: undefined,
+        FieldRendererProps: undefined,
         errorMessages: undefined,
         options: undefined,
       });
@@ -622,7 +622,7 @@ describe('stripSchemaExtensions', () => {
     it('nullable 타입 스키마도 올바르게 처리해야 한다', () => {
       const schema = {
         type: ['string', 'null'] as const,
-        FormTypeInputProps: { placeholder: 'Optional' },
+        FieldInputProps: { placeholder: 'Optional' },
       } as JSONSchemaWithVirtual;
 
       const result = stripSchemaExtensions(schema);
@@ -636,7 +636,7 @@ describe('stripSchemaExtensions', () => {
       const schema: JSONSchemaWithVirtual = {
         type: 'string',
         enum: ['option1', 'option2', 'option3'],
-        FormTypeInputProps: {
+        FieldInputProps: {
           alias: {
             option1: 'First Option',
             option2: 'Second Option',
@@ -657,7 +657,7 @@ describe('stripSchemaExtensions', () => {
       const schema: JSONSchemaWithVirtual = {
         type: 'string',
         default: 'default value',
-        FormTypeInputProps: { placeholder: 'Enter value' },
+        FieldInputProps: { placeholder: 'Enter value' },
       };
 
       const result = stripSchemaExtensions(schema);
@@ -676,7 +676,7 @@ describe('stripSchemaExtensions', () => {
         },
         additionalProperties: {
           type: 'string',
-          FormTypeInputProps: { placeholder: 'Additional' },
+          FieldInputProps: { placeholder: 'Additional' },
         },
       };
 
@@ -699,7 +699,7 @@ describe('stripSchemaExtensions', () => {
       const schema: JSONSchemaWithVirtual = {
         type: 'virtual',
         fields: ['./field1', './field2'],
-        FormTypeInputProps: { className: 'virtual-field' },
+        FieldInputProps: { className: 'virtual-field' },
       };
 
       const result = stripSchemaExtensions(schema);
@@ -719,7 +719,7 @@ describe('stripSchemaExtensions', () => {
           visible: '../toggle === true',
           disabled: '../locked === true',
         },
-        FormTypeInputProps: { placeholder: 'Conditional' },
+        FieldInputProps: { placeholder: 'Conditional' },
       };
 
       const result = stripSchemaExtensions(schema);
@@ -738,7 +738,7 @@ describe('stripSchemaExtensions', () => {
         type: 'string',
         '&if': './type === "advanced"',
         '&visible': '../showAdvanced === true',
-        FormTypeRendererProps: { label: 'Advanced Field' },
+        FieldRendererProps: { label: 'Advanced Field' },
       };
 
       const result = stripSchemaExtensions(schema);
@@ -758,11 +758,11 @@ describe('stripSchemaExtensions', () => {
         properties: {
           profile: {
             type: 'object',
-            FormTypeRendererProps: { description: 'parent' },
+            FieldRendererProps: { description: 'parent' },
             properties: {
               nickname: {
                 type: 'string',
-                FormTypeRendererProps: { helperText: 'child' },
+                FieldRendererProps: { helperText: 'child' },
               },
             },
           },
@@ -775,9 +775,9 @@ describe('stripSchemaExtensions', () => {
       // 입력은 자식의 확장 속성까지 그대로 보존되어야 한다 (순수 함수).
       expect(schema).toEqual(snapshot);
       // 결과물은 모든 깊이의 확장이 제거된 별도 사본이어야 한다.
-      expect(result.properties.profile.FormTypeRendererProps).toBeUndefined();
+      expect(result.properties.profile.FieldRendererProps).toBeUndefined();
       expect(
-        result.properties.profile.properties.nickname.FormTypeRendererProps,
+        result.properties.profile.properties.nickname.FieldRendererProps,
       ).toBeUndefined();
     });
   });

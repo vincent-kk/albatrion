@@ -41,9 +41,9 @@ const mutate: JSONScannerOptions<JSONSchemaWithVirtual>['mutate'] = ({
 }) => {
   if (schema == null || !hasExtensionKeys(schema)) return;
   const {
-    FormTypeInput,
-    FormTypeInputProps,
-    FormTypeRendererProps,
+    FieldInput,
+    FieldInputProps,
+    FieldRendererProps,
     errorMessages,
     options,
     injectTo,

@@ -5,11 +5,11 @@ import type { MarkedRenderers } from './createMarkedRenderers';
 /** Renderer props a Form or FormProvider accepts, keyed by their prop names. */
 export interface RendererProps {
   /** Group renderer for every node. */
-  FormTypeGroupRenderer?: MarkedRenderers['group'];
+  FieldRenderer?: MarkedRenderers['group'];
   /** Label renderer inside the default group. */
-  FormTypeLabelRenderer?: MarkedRenderers['label'];
+  FormLabelRenderer?: MarkedRenderers['label'];
   /** Error renderer inside the default group. */
-  FormTypeErrorRenderer?: MarkedRenderers['error'];
+  FormErrorRenderer?: MarkedRenderers['error'];
 }
 
 /**
@@ -19,7 +19,7 @@ export interface RendererProps {
  * @returns Props with only the chosen slots.
  */
 export const toRendererProps = (slots: readonly RendererSlot[], renderers: MarkedRenderers): RendererProps => ({
-  ...(slots.includes('group') && { FormTypeGroupRenderer: renderers.group }),
-  ...(slots.includes('label') && { FormTypeLabelRenderer: renderers.label }),
-  ...(slots.includes('error') && { FormTypeErrorRenderer: renderers.error }),
+  ...(slots.includes('group') && { FieldRenderer: renderers.group }),
+  ...(slots.includes('label') && { FormLabelRenderer: renderers.label }),
+  ...(slots.includes('error') && { FormErrorRenderer: renderers.error }),
 });

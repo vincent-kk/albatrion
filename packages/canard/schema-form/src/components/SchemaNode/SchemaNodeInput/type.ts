@@ -2,10 +2,10 @@ import type { ComponentType, RefObject } from 'react';
 
 import type { SchemaNode } from '@/schema-form/core';
 import { SchemaNodeEventType } from '@/schema-form/core';
-import type { FormTypeInputBindingProps } from '@/schema-form/helpers/formTypeInputDefinition';
+import type { FieldInputBindingProps } from '@/schema-form/helpers/fieldInputDefinition';
 import type {
   ChildNodeComponentProps,
-  OverridableFormTypeInputProps,
+  OverridableFieldInputProps,
 } from '@/schema-form/types';
 
 import type { SchemaNodeProxyProps } from '../SchemaNodeProxy';
@@ -14,8 +14,8 @@ export interface SchemaNodeInputProps {
   node: SchemaNode;
   onChangeRef: RefObject<ChildNodeComponentProps['onChange']>;
   onFileAttachRef: RefObject<ChildNodeComponentProps['onFileAttach']>;
-  overrideProps: OverridableFormTypeInputProps;
-  PreferredFormTypeInput: ComponentType<FormTypeInputBindingProps> | null;
+  overrideProps: OverridableFieldInputProps;
+  PreferredFieldInput: ComponentType<FieldInputBindingProps> | null;
   NodeProxy: ComponentType<SchemaNodeProxyProps>;
 }
 

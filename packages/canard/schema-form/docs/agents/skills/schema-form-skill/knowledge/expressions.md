@@ -44,7 +44,7 @@ Choosing wrong causes silent data loss (`active` where `visible` was intended) o
 
 ```typescript
 total: { type: 'number', controls: { watch: ['../items'] } },
-// FormTypeInput receives watchValues[0] and computes with useMemo
+// FieldInput receives watchValues[0] and computes with useMemo
 ```
 
 ## resetInteraction
@@ -75,7 +75,7 @@ controls: {
 
 - Direct access is `@.field`. For optional chaining, wrap in parentheses: `(@).a?.b` — the parenthesized form is required and cannot be guessed.
 - When `context` changes, dependent controls expressions recompute automatically — no `watch` declaration needed.
-- `@` path expressions work only inside controls expressions — not in `node.find()` paths and not in `formTypeInputMap` keys. (`node.find('@')` — the bare token — returns the context node itself; see `jsonpointer.md`.)
+- `@` path expressions work only inside controls expressions — not in `node.find()` paths and not in `fieldInputMap` keys. (`node.find('@')` — the bare token — returns the context node itself; see `jsonpointer.md`.)
 
 ## Conditional Branches: oneOf / anyOf / allOf
 

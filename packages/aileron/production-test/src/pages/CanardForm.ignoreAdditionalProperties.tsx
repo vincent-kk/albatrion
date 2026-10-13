@@ -28,7 +28,7 @@ const schema = {
             A_value3: { type: "boolean" },
           },
           terminal: false,
-          FormTypeInput: ({ value, ChildNodeComponents, onChange }) => {
+          FieldInput: ({ value, ChildNodeComponents, onChange }) => {
             return (
               <div>
                 <pre>{JSON.stringify(value, null, 2)}</pre>
@@ -64,7 +64,7 @@ const schema = {
             A_value2: { type: "number" },
             A_value3: { type: "boolean" },
           },
-          FormTypeInput: ({ value, onChange }) => {
+          FieldInput: ({ value, onChange }) => {
             return (
               <div>
                 <pre>{JSON.stringify(value, null, 2)}</pre>
@@ -102,7 +102,7 @@ const schema = {
           },
           terminal: false,
           additionalProperties: false,
-          FormTypeInput: ({ value, ChildNodeComponents, onChange }) => {
+          FieldInput: ({ value, ChildNodeComponents, onChange }) => {
             return (
               <div>
                 <pre>{JSON.stringify(value, null, 2)}</pre>
@@ -139,7 +139,7 @@ const schema = {
             B_value3: { type: "boolean" },
           },
           additionalProperties: false,
-          FormTypeInput: ({ value, onChange }) => {
+          FieldInput: ({ value, onChange }) => {
             return (
               <div>
                 <pre>{JSON.stringify(value, null, 2)}</pre>

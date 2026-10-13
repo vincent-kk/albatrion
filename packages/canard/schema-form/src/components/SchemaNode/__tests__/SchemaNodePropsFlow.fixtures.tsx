@@ -9,7 +9,7 @@ import {
   SetValueOption,
 } from '@/schema-form/core';
 import type {
-  FormTypeInputProps,
+  FieldInputProps,
   JSONSchemaWithVirtual,
 } from '@/schema-form/types';
 
@@ -175,11 +175,11 @@ export const createArrayNode = (
 };
 
 /**
- * Mock FormTypeInput component for testing.
+ * Mock FieldInput component for testing.
  * Renders a simple input element with data-testid for easy selection.
  */
-export const MockFormTypeInput = vi.fn(
-  ({ value, onChange, name, path, disabled, readOnly }: FormTypeInputProps) => {
+export const MockFieldInput = vi.fn(
+  ({ value, onChange, name, path, disabled, readOnly }: FieldInputProps) => {
     return (
       <input
         data-testid={`input-${name}`}
@@ -191,13 +191,13 @@ export const MockFormTypeInput = vi.fn(
       />
     );
   },
-) as unknown as ComponentType<FormTypeInputProps>;
+) as unknown as ComponentType<FieldInputProps>;
 
 /**
- * Alternative MockFormTypeInput with custom styling for differentiation.
+ * Alternative MockFieldInput with custom styling for differentiation.
  */
-export const CustomFormTypeInput = vi.fn(
-  ({ value, onChange, name, path }: FormTypeInputProps) => {
+export const CustomFieldInput = vi.fn(
+  ({ value, onChange, name, path }: FieldInputProps) => {
     return (
       <input
         data-testid={`custom-input-${name}`}
@@ -208,13 +208,13 @@ export const CustomFormTypeInput = vi.fn(
       />
     );
   },
-) as unknown as ComponentType<FormTypeInputProps>;
+) as unknown as ComponentType<FieldInputProps>;
 
 /**
- * Mock FormTypeInput that captures onFileAttach calls
+ * Mock FieldInput that captures onFileAttach calls
  */
-export const FileFormTypeInput = vi.fn(
-  ({ name, path, onFileAttach }: FormTypeInputProps) => {
+export const FileFieldInput = vi.fn(
+  ({ name, path, onFileAttach }: FieldInputProps) => {
     return (
       <input
         data-testid={`file-input-${name}`}
@@ -229,12 +229,12 @@ export const FileFormTypeInput = vi.fn(
       />
     );
   },
-) as unknown as ComponentType<FormTypeInputProps>;
+) as unknown as ComponentType<FieldInputProps>;
 
 /**
- * Default FormTypeRenderer for testing
+ * Default FieldRenderer for testing
  */
-export const MockFormTypeRenderer = vi.fn(({ Input, node }) => {
+export const MockFieldRenderer = vi.fn(({ Input, node }) => {
   return (
     <div data-testid={`renderer-${node?.name}`}>
       <Input />
@@ -247,10 +247,10 @@ export const MockFormTypeRenderer = vi.fn(({ Input, node }) => {
  */
 export const resetAllMocks = () => {
   vi.clearAllMocks();
-  (MockFormTypeInput as any).mockClear();
-  (CustomFormTypeInput as any).mockClear();
-  (FileFormTypeInput as any).mockClear();
-  (MockFormTypeRenderer as any).mockClear();
+  (MockFieldInput as any).mockClear();
+  (CustomFieldInput as any).mockClear();
+  (FileFieldInput as any).mockClear();
+  (MockFieldRenderer as any).mockClear();
 };
 
 /**

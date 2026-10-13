@@ -12,7 +12,7 @@ import {
   registerScenarioHandle,
 } from '@aileron/schema-form-scenarios';
 
-import { type FormTypeInputProps, type JSONSchema, ShowError, ValidationMode, VirtualizationBackfill } from '@/schema-form';
+import { type FieldInputProps, type JSONSchema, ShowError, ValidationMode, VirtualizationBackfill } from '@/schema-form';
 
 import { renderForm } from '../renderForm';
 
@@ -26,10 +26,10 @@ afterEach(() => vi.unstubAllGlobals());
 
 /**
  * Input that throws while rendering on the CX-06 trigger value.
- * @param props - FormTypeInput props.
+ * @param props - FieldInput props.
  * @returns The text input; throws on pluginFormPlan.trigger.
  */
-const ThrowOnTrigger = ({ path, value, onChange }: FormTypeInputProps<string>): ReactNode => {
+const ThrowOnTrigger = ({ path, value, onChange }: FieldInputProps<string>): ReactNode => {
   if (value === pluginFormPlan.trigger) throw new Error(`input at ${path} threw`);
   return <input id={path} value={value ?? ''} onChange={(event) => onChange(event.target.value)} />;
 };
@@ -57,7 +57,7 @@ const run = async (item: Pick<CompositeCase, 'scenario' | 'props'>) => {
   const { scenario } = item;
   const form = await renderForm(scenario.schema as JSONSchema, {
     defaultValue: scenario.initialValue, validator: true, ...toFormProps(item.props),
-    formTypeInputMap: { '/broken': ThrowOnTrigger },
+    fieldInputMap: { '/broken': ThrowOnTrigger },
   });
   const base = findScenarioHandle(form.container).adapter;
   const unregister = registerScenarioHandle(form.container, form.handle, {

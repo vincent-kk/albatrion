@@ -2,7 +2,7 @@ import { useState } from 'react';
 
 import { afterEach, expect, it } from 'vitest';
 
-import { Form, type FormTypeInputProps } from '@/schema-form';
+import { type FieldInputProps, Form } from '@/schema-form';
 
 import { type FormHarness, renderForm } from '../renderForm';
 
@@ -10,7 +10,7 @@ let form: FormHarness;
 afterEach(() => form?.unmount());
 
 /** Render a visible marker from the override supplied by Form.Input. */
-const Badge = ({ badge }: FormTypeInputProps) => (
+const Badge = ({ badge }: FieldInputProps) => (
   <output>{badge ?? 'none'}</output>
 );
 
@@ -23,7 +23,7 @@ const Swap = ({ next }: { next?: string }) => {
       <button type="button" onClick={() => change(true)}>
         swap
       </button>
-      <Form.Input path="/name" FormTypeInput={Badge} {...props} />
+      <Form.Input path="/name" FieldInput={Badge} {...props} />
     </>
   );
 };

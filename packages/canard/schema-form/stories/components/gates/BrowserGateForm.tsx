@@ -1,12 +1,12 @@
 import { StrictMode, useLayoutEffect, useMemo, useRef } from 'react';
 
-import { Form, VirtualizationBackfill, type FormHandle, type FormTypeInputProps, type JSONSchema } from '../../../src';
+import { Form, VirtualizationBackfill, type FormHandle, type FieldInputProps, type JSONSchema } from '../../../src';
 
 import { CompositionInput } from './CompositionInput';
 import type { BrowserGateElement, BrowserGateObservations } from './types';
 
 /** Instrument actual input commits; render counts do not identify remounts. */
-function TrackedInput(props: FormTypeInputProps) {
+function TrackedInput(props: FieldInputProps) {
   const observations = props.context as unknown as BrowserGateObservations;
   const { path, ChildNodeComponents, jsonSchema } = props;
   useLayoutEffect(() => {
@@ -21,7 +21,7 @@ function TrackedInput(props: FormTypeInputProps) {
 }
 
 /** Measure repeated reads of the actual detected list against a frozen empty list. */
-function MeasuredChildren(props: FormTypeInputProps) {
+function MeasuredChildren(props: FieldInputProps) {
   const observations = props.context as unknown as BrowserGateObservations;
   useLayoutEffect(() => {
     const plain = Object.freeze([]);
@@ -49,21 +49,21 @@ export function BrowserGateForm({ mode }: { mode: 'ime' | 'number' | 'remount' |
   const observations = useMemo<BrowserGateObservations>(() => ({ mounts: {}, changes: [], warnings: [], childReads: [], inputs: {} }), []);
   const schema = useMemo<JSONSchema>(() => {
     if (mode === 'ime') return { type: 'object', properties: {
-      plain: { type: 'string', presentation: { FormTypeInput: CompositionInput } },
-      formatter: { type: 'string', format: 'caret', presentation: { FormTypeInput: CompositionInput } },
-      refresh: { type: 'string', presentation: { FormTypeInput: CompositionInput } },
+      plain: { type: 'string', presentation: { FieldInput: CompositionInput } },
+      formatter: { type: 'string', format: 'caret', presentation: { FieldInput: CompositionInput } },
+      refresh: { type: 'string', presentation: { FieldInput: CompositionInput } },
     } };
     if (mode === 'number') return { type: 'number' };
-    if (mode === 'cost') return { type: 'object', properties: { leaf: { type: 'string' } }, presentation: { FormTypeInput: MeasuredChildren } };
+    if (mode === 'cost') return { type: 'object', properties: { leaf: { type: 'string' } }, presentation: { FieldInput: MeasuredChildren } };
     return { type: 'object', format: 'children', properties: {
-      terminal: { type: 'string', presentation: { FormTypeInput: TrackedInput } },
+      terminal: { type: 'string', presentation: { FieldInput: TrackedInput } },
       branch: { type: 'object', format: 'children', properties: {
-        leaf: { type: 'string', presentation: { FormTypeInput: TrackedInput } },
+        leaf: { type: 'string', presentation: { FieldInput: TrackedInput } },
       } },
-      whole: { type: 'object', presentation: { FormTypeInput: TrackedInput }, properties: { leaf: { type: 'string' } } },
+      whole: { type: 'object', presentation: { FieldInput: TrackedInput }, properties: { leaf: { type: 'string' } } },
       empty: { type: 'array', format: 'children', items: { type: 'string' } },
-      collapsed: { type: 'object', presentation: { FormTypeInput: TrackedInput }, properties: { leaf: { type: 'string' } } },
-      virtual: { type: 'array', items: { type: 'string', presentation: { FormTypeInput: TrackedInput } } },
+      collapsed: { type: 'object', presentation: { FieldInput: TrackedInput }, properties: { leaf: { type: 'string' } } },
+      virtual: { type: 'array', items: { type: 'string', presentation: { FieldInput: TrackedInput } } },
     } };
   }, [mode]);
   useLayoutEffect(() => {
@@ -72,7 +72,7 @@ export function BrowserGateForm({ mode }: { mode: 'ime' | 'number' | 'remount' |
     return () => { delete element.gate; };
   }, [observations]);
   const form = <Form ref={handle} jsonSchema={schema} context={observations}
-    formTypeInputDefinitions={mode === 'remount' ? [
+    fieldInputDefinitions={mode === 'remount' ? [
       { test: { type: 'object', format: 'children' }, Component: TrackedInput },
       { test: { type: 'array', format: 'children' }, Component: TrackedInput },
     ] : undefined}

@@ -1,9 +1,9 @@
 import { afterEach, expect, expectTypeOf, it, vi } from 'vitest';
 
 import {
+  type FieldInputProps,
+  type FieldInputTestObject,
   Form,
-  type FormTypeInputProps,
-  type FormTypeTestObject,
   type Hint,
   type SchemaNodeType,
 } from '@/schema-form';
@@ -20,10 +20,10 @@ it('LANDING-035 named renderer props drive the retained Form compound components
   form = await renderForm(
     { type: 'string' },
     {
-      FormTypeGroupRenderer: () => <span data-renderer="group" />,
-      FormTypeLabelRenderer: () => <span data-renderer="label" />,
-      FormTypeInputRenderer: () => <span data-renderer="input" />,
-      FormTypeErrorRenderer: () => <span data-renderer="error" />,
+      FieldRenderer: () => <span data-renderer="group" />,
+      FormLabelRenderer: () => <span data-renderer="label" />,
+      FormInputRenderer: () => <span data-renderer="input" />,
+      FormErrorRenderer: () => <span data-renderer="error" />,
       children: (
         <>
           <Form.Group />
@@ -55,8 +55,8 @@ it('LANDING-129 union leaves render the default string draft input', async () =>
 
 it('LANDING-181 integer hints and input props use number plus integer schemaType', async () => {
   let hint: Hint | undefined;
-  let input: FormTypeInputProps | undefined;
-  const Input = (props: FormTypeInputProps) => {
+  let input: FieldInputProps | undefined;
+  const Input = (props: FieldInputProps) => {
     input = props;
     return <input id={props.path} defaultValue={props.value} />;
   };
@@ -64,7 +64,7 @@ it('LANDING-181 integer hints and input props use number plus integer schemaType
     { type: 'integer' },
     {
       defaultValue: 3,
-      formTypeInputDefinitions: [
+      fieldInputDefinitions: [
         {
           test: (value) => {
             hint = value;
@@ -81,10 +81,10 @@ it('LANDING-181 integer hints and input props use number plus integer schemaType
 });
 
 it('LANDING-182 number selection includes integer and schemaType selects integer alone', async () => {
-  const Integer = ({ path }: FormTypeInputProps) => (
+  const Integer = ({ path }: FieldInputProps) => (
     <input id={path} data-kind="integer" />
   );
-  const Number = ({ path }: FormTypeInputProps) => (
+  const Number = ({ path }: FieldInputProps) => (
     <input id={path} data-kind="number" />
   );
   form = await renderForm(
@@ -96,7 +96,7 @@ it('LANDING-182 number selection includes integer and schemaType selects integer
       },
     },
     {
-      formTypeInputDefinitions: [
+      fieldInputDefinitions: [
         { test: { schemaType: 'integer' }, Component: Integer },
         { test: { type: 'number' }, Component: Number },
       ],
@@ -108,26 +108,24 @@ it('LANDING-182 number selection includes integer and schemaType selects integer
   form = await renderForm(
     { type: 'integer' },
     {
-      formTypeInputDefinitions: [
-        { test: { type: 'number' }, Component: Number },
-      ],
+      fieldInputDefinitions: [{ test: { type: 'number' }, Component: Number }],
     },
   );
   expect(form.field('')?.dataset.kind).toBe('number');
 });
 
 it('LANDING-185 test objects accept node kinds and a separate schemaType', async () => {
-  expectTypeOf<NonNullable<FormTypeTestObject['type']>>().toEqualTypeOf<
+  expectTypeOf<NonNullable<FieldInputTestObject['type']>>().toEqualTypeOf<
     SchemaNodeType | SchemaNodeType[]
   >();
-  const Input = ({ path }: FormTypeInputProps) => (
+  const Input = ({ path }: FieldInputProps) => (
     <input id={path} data-union="yes" />
   );
-  const test: FormTypeTestObject = { type: 'union' };
+  const test: FieldInputTestObject = { type: 'union' };
   form = await renderForm(
     { type: ['string', 'number'] },
     {
-      formTypeInputDefinitions: [{ test, Component: Input }],
+      fieldInputDefinitions: [{ test, Component: Input }],
     },
   );
   expect(form.field('')?.dataset.union).toBe('yes');
@@ -135,18 +133,18 @@ it('LANDING-185 test objects accept node kinds and a separate schemaType', async
 
 it('LANDING-186 unknown test keys are ignored and reported in development', async () => {
   const warning = vi.spyOn(console, 'warn').mockImplementation(() => {});
-  const Input = ({ path }: FormTypeInputProps) => (
+  const Input = ({ path }: FieldInputProps) => (
     <input id={path} data-selected="yes" />
   );
   form = await renderForm(
     { type: 'string' },
     {
-      formTypeInputDefinitions: [
+      fieldInputDefinitions: [
         {
           test: {
             type: 'string',
             typo: 'would-not-match',
-          } as FormTypeTestObject,
+          } as FieldInputTestObject,
           Component: Input,
         },
       ],
@@ -173,7 +171,7 @@ it('LANDING-191 renderers receive union in the public node kind union', async ()
     { type: ['string', 'boolean'] },
     {
       defaultValue: 'text',
-      FormTypeGroupRenderer: ({ type, Input }) => (
+      FieldRenderer: ({ type, Input }) => (
         <section data-kind={type}>
           <Input />
         </section>

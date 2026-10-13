@@ -13,8 +13,8 @@ import { useHandle, useLazyConstant } from '@winglet/react-utils/hook';
 
 import { SchemaNodeRequestType } from '@/schema-form/core';
 import {
-  FormTypeInputsContextProvider,
-  FormTypeRendererContextProvider,
+  FieldInputsContextProvider,
+  FieldRendererContextProvider,
   InputControlContextProvider,
   RootNodeContextProvider,
   VirtualizationContextProvider,
@@ -106,15 +106,15 @@ export const FormContents = (
       attachedFilesMap={attachedFilesMap}
       context={props.context}
     >
-      <FormTypeInputsContextProvider
-        formTypeInputDefinitions={props.formTypeInputDefinitions}
-        formTypeInputMap={props.formTypeInputMap}
+      <FieldInputsContextProvider
+        fieldInputDefinitions={props.fieldInputDefinitions}
+        fieldInputMap={props.fieldInputMap}
       >
-        <FormTypeRendererContextProvider
-          FormTypeGroupRenderer={props.FormTypeGroupRenderer}
-          FormTypeLabelRenderer={props.FormTypeLabelRenderer}
-          FormTypeInputRenderer={props.FormTypeInputRenderer}
-          FormTypeErrorRenderer={props.FormTypeErrorRenderer}
+        <FieldRendererContextProvider
+          FieldRenderer={props.FieldRenderer}
+          FormLabelRenderer={props.FormLabelRenderer}
+          FormInputRenderer={props.FormInputRenderer}
+          FormErrorRenderer={props.FormErrorRenderer}
           formatError={props.formatError}
           showError={showError}
         >
@@ -136,8 +136,8 @@ export const FormContents = (
               </RootNodeContextProvider>
             </VirtualizationContextProvider>
           </InputControlContextProvider>
-        </FormTypeRendererContextProvider>
-      </FormTypeInputsContextProvider>
+        </FieldRendererContextProvider>
+      </FieldInputsContextProvider>
     </WorkspaceContextProvider>
   );
 };

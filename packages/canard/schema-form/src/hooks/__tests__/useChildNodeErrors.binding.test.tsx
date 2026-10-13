@@ -4,7 +4,7 @@ import { act, cleanup, renderHook } from '@testing-library/react';
 import { afterEach, expect, it } from 'vitest';
 
 import { nodeFromJSONSchema } from '@/schema-form/core';
-import { FormTypeRendererContextProvider } from '@/schema-form/providers/FormTypeRendererContext';
+import { FieldRendererContextProvider } from '@/schema-form/providers/FieldRendererContext';
 
 import { useChildNodeErrors } from '../useChildNodeErrors';
 
@@ -21,9 +21,7 @@ it('LANDING-170 REACT-019 tracks child errors, state and reordered paths under S
   const { result } = renderHook(() => useChildNodeErrors(root), {
     wrapper: ({ children }: PropsWithChildren) => (
       <StrictMode>
-        <FormTypeRendererContextProvider>
-          {children}
-        </FormTypeRendererContextProvider>
+        <FieldRendererContextProvider>{children}</FieldRendererContextProvider>
       </StrictMode>
     ),
   });

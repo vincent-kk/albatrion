@@ -3,7 +3,7 @@ import { useLayoutEffect, useRef } from 'react';
 import { fireEvent } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
 
-import type { FormTypeInputProps } from '@/schema-form';
+import type { FieldInputProps } from '@/schema-form';
 
 import { renderForm } from '../renderForm';
 
@@ -20,7 +20,7 @@ const Input = ({
   bookkeeping,
   rendered,
   compositionEnded,
-}: FormTypeInputProps) => {
+}: FieldInputProps) => {
   const ref = useRef<HTMLInputElement>(null);
   const caret = useRef<number | null>(null);
   rendered?.();
@@ -66,7 +66,7 @@ const mount = (value: string, props: Record<string, unknown> = {}) =>
       properties: {
         text: {
           type: 'string',
-          presentation: { FormTypeInput: Input, FormTypeInputProps: props },
+          presentation: { FieldInput: Input, FieldInputProps: props },
         },
       },
     },

@@ -22,7 +22,7 @@ type Story = StoryObj<typeof FeatureStory>;
 export const Case: Story = createCompositeStory('composite.cx04-amount-input', {
   cdpSkipReason: 'CDP is unavailable in ordinary Storybook; type into /price to check formatting, enter an incomplete exponent into /count to confirm the committed count is kept, and press Enter in /memo to confirm one submission; this play runs in Vitest Browser Mode (yarn workspace @canard/schema-form test --run --project storybook)',
   layout: submitButtonLayout,
-  formProps: { formTypeInputMap: { '/price': FormattedAmountInput } },
+  formProps: { fieldInputMap: { '/price': FormattedAmountInput } },
   async after({ canvasElement, handle, submitted }) {
     const price = canvasElement.querySelector<HTMLInputElement>('input[id="/price"]')!;
     await userEvent.type(price, amountInputPlan.typed);

@@ -1,14 +1,17 @@
 // Loaded by Storybook CSF; named exports are the U11 Chromium gates.
 import type { Meta, StoryObj } from '@storybook/react-vite';
-import { expect, userEvent, waitFor } from 'storybook/test';
 import type {} from '@vitest/browser/providers/playwright';
+import { expect, userEvent, waitFor } from 'storybook/test';
 
 import { BrowserGateForm } from '../components/gates/BrowserGateForm';
 import type { BrowserGateElement } from '../components/gates/types';
 import { isVitestBrowserMode } from '../components/play/isVitestBrowserMode';
 import { skipPlay } from '../components/play/skipPlay';
 
-export default { title: 'Scenarios/Browser gates', component: BrowserGateForm } satisfies Meta<typeof BrowserGateForm>;
+export default {
+  title: 'Scenarios/Browser gates',
+  component: BrowserGateForm,
+} satisfies Meta<typeof BrowserGateForm>;
 type Story = StoryObj<typeof BrowserGateForm>;
 
 /**
@@ -18,7 +21,8 @@ type Story = StoryObj<typeof BrowserGateForm>;
 const browserContext = () => import('@vitest/browser/context');
 
 /** Wait for the browser's React commit without replacing real input events. */
-const committed = () => new Promise<void>((resolve) => requestAnimationFrame(() => resolve()));
+const committed = () =>
+  new Promise<void>((resolve) => requestAnimationFrame(() => resolve()));
 
 /** Read the handle installed by the fixture's committed layout effect. */
 const fixture = (canvas: HTMLElement) => {
@@ -32,21 +36,33 @@ export const ImeComposition: Story = {
   name: 'EVENT-065 Korean IME plain, caret formatter and Refresh during composition',
   args: { mode: 'ime' },
   play: async ({ canvasElement, step }) => {
-    if (!isVitestBrowserMode()) return skipPlay(step, 'CDP is unavailable in ordinary Storybook; type Korean with an IME into /plain, /formatter and /refresh, refresh /refresh during composition, and confirm one composition-end commit with the stale refresh binding unchanged; this play runs in Vitest Browser Mode (yarn workspace @canard/schema-form test --run --project storybook)');
+    if (!isVitestBrowserMode())
+      return skipPlay(
+        step,
+        'CDP is unavailable in ordinary Storybook; type Korean with an IME into /plain, /formatter and /refresh, refresh /refresh during composition, and confirm one composition-end commit with the stale refresh binding unchanged; this play runs in Vitest Browser Mode (yarn workspace @canard/schema-form test --run --project storybook)',
+      );
     const { cdp, page: browserPage } = await browserContext();
     const { handle, observations } = fixture(canvasElement);
     const session = cdp();
     for (const path of ['/plain', '/formatter', '/refresh']) {
-      const input = canvasElement.querySelector<HTMLInputElement>(`input[id="${path}"]`)!;
+      const input = canvasElement.querySelector<HTMLInputElement>(
+        `input[id="${path}"]`,
+      )!;
       await browserPage.elementLocator(input).click();
       let composing = false;
       let setterCalls = 0;
       let ends = 0;
-      const descriptor = Object.getOwnPropertyDescriptor(input, 'value')
-        ?? Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, 'value')!;
+      const descriptor =
+        Object.getOwnPropertyDescriptor(input, 'value') ??
+        Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, 'value')!;
       const ownDescriptor = Object.getOwnPropertyDescriptor(input, 'value');
-      const start = () => { composing = true; };
-      const end = () => { composing = false; ends++; };
+      const start = () => {
+        composing = true;
+      };
+      const end = () => {
+        composing = false;
+        ends++;
+      };
       input.addEventListener('compositionstart', start);
       input.addEventListener('compositionend', end);
       Object.defineProperty(input, 'value', {
@@ -61,30 +77,59 @@ export const ImeComposition: Story = {
       const oldBinding = handle.findNode(path)!;
       try {
         for (const text of ['ㄱ', '가', '각']) {
-          await session.send('Input.imeSetComposition', { text, selectionStart: text.length, selectionEnd: text.length });
+          await session.send('Input.imeSetComposition', {
+            text,
+            selectionStart: text.length,
+            selectionEnd: text.length,
+          });
           if (path === '/refresh' && text === '가') handle.refresh(path);
           await committed();
-          await expect(input.value, JSON.stringify({ path, composing, setterCalls, ends, active: (document.activeElement as HTMLInputElement)?.id })).toBe(text);
-          await expect(input.selectionStart).toBe(text.length);
-          await expect(input.selectionEnd).toBe(text.length);
-          await expect(composing).toBe(true);
-          await expect(ends).toBe(0);
-          await expect(canvasElement.querySelector(`input[id="${path}"]`)).toBe(input);
-          await expect(setterCalls).toBe(0);
-          await expect(observations.changes.length).toBe(before);
+          await waitFor(
+            async () => {
+              await expect(
+                input.value,
+                JSON.stringify({
+                  path,
+                  composing,
+                  setterCalls,
+                  ends,
+                  active: (document.activeElement as HTMLInputElement)?.id,
+                }),
+              ).toBe(text);
+              await expect(input.selectionStart).toBe(text.length);
+              await expect(input.selectionEnd).toBe(text.length);
+              await expect(composing).toBe(true);
+              await expect(ends).toBe(0);
+              await expect(
+                canvasElement.querySelector(`input[id="${path}"]`),
+              ).toBe(input);
+              await expect(setterCalls).toBe(0);
+              await expect(observations.changes.length).toBe(before);
+            },
+            { timeout: 5000 },
+          );
         }
         await session.send('Input.insertText', { text: '각' });
         await committed();
-        await expect(ends).toBe(1);
-        if (path === '/refresh') {
-          await expect(oldBinding.value).toBe('');
-          await expect(handle.findNode(path)!.value).toBe('');
-        } else {
-          await expect(handle.findNode(path)!.value).toBe('각');
-          await expect(input.value).toBe('각');
-        }
+        await waitFor(
+          async () => {
+            await expect(ends).toBe(1);
+            if (path === '/refresh') {
+              await expect(oldBinding.value).toBe('');
+              await expect(handle.findNode(path)!.value).toBe('');
+            } else {
+              await expect(handle.findNode(path)!.value).toBe('각');
+              await expect(input.value).toBe('각');
+            }
+          },
+          { timeout: 5000 },
+        );
       } finally {
-        await session.send('Input.imeSetComposition', { text: '', selectionStart: 0, selectionEnd: 0 });
+        await session.send('Input.imeSetComposition', {
+          text: '',
+          selectionStart: 0,
+          selectionEnd: 0,
+        });
         input.removeEventListener('compositionstart', start);
         input.removeEventListener('compositionend', end);
         if (ownDescriptor) Object.defineProperty(input, 'value', ownDescriptor);
@@ -99,10 +144,16 @@ export const NumberBadInput: Story = {
   name: 'REACT-027 number badInput stays local and blur restores node display',
   args: { mode: 'number' },
   play: async ({ canvasElement, step }) => {
-    if (!isVitestBrowserMode()) return skipPlay(step, 'CDP is unavailable in ordinary Storybook; type 1 then e into the number input, confirm the incomplete exponent stays local, and blur to restore 1; this play runs in Vitest Browser Mode (yarn workspace @canard/schema-form test --run --project storybook)');
+    if (!isVitestBrowserMode())
+      return skipPlay(
+        step,
+        'CDP is unavailable in ordinary Storybook; type 1 then e into the number input, confirm the incomplete exponent stays local, and blur to restore 1; this play runs in Vitest Browser Mode (yarn workspace @canard/schema-form test --run --project storybook)',
+      );
     const { cdp } = await browserContext();
     const { handle } = fixture(canvasElement);
-    const input = canvasElement.querySelector<HTMLInputElement>('input[type="number"]')!;
+    const input = canvasElement.querySelector<HTMLInputElement>(
+      'input[type="number"]',
+    )!;
     await userEvent.clear(input);
     await expect(handle.getValue()).toBeUndefined();
     await userEvent.type(input, '1');
@@ -129,28 +180,56 @@ export const InputRemountJudgment: Story = {
     const whole = canvasElement.querySelector('input[id="/whole"]');
     const collapsed = canvasElement.querySelector('input[id="/collapsed"]');
     const empty = canvasElement.querySelector('[data-container="/empty"]');
-    const deferred = canvasElement.querySelector<HTMLElement>('[data-deferred][data-path^="/virtual/"]');
+    const deferred = canvasElement.querySelector<HTMLElement>(
+      '[data-deferred][data-path^="/virtual/"]',
+    );
     await expect(deferred).not.toBeNull();
     const virtualPath = deferred!.dataset.path!;
     handle.refresh(virtualPath);
     await committed();
-    await expect(canvasElement.querySelector(`[data-path="${virtualPath}"][data-deferred]`)).not.toBeNull();
+    await expect(
+      canvasElement.querySelector(
+        `[data-path="${virtualPath}"][data-deferred]`,
+      ),
+    ).not.toBeNull();
     handle.focus(virtualPath);
-    await waitFor(() => expect(canvasElement.querySelector(`input[id="${virtualPath}"]`)).not.toBeNull());
-    const virtualInput = canvasElement.querySelector(`input[id="${virtualPath}"]`);
+    await waitFor(() =>
+      expect(
+        canvasElement.querySelector(`input[id="${virtualPath}"]`),
+      ).not.toBeNull(),
+    );
+    const virtualInput = canvasElement.querySelector(
+      `input[id="${virtualPath}"]`,
+    );
     const before = { ...observations.mounts };
     handle.reset();
     await committed();
-    await expect(canvasElement.querySelector('[data-container=""]')).toBe(rootContainer);
-    await expect(canvasElement.querySelector('[data-container="/branch"]')).toBe(branch);
-    await expect(canvasElement.querySelector('input[id="/terminal"]')).not.toBe(terminal);
-    await expect(canvasElement.querySelector('input[id="/whole"]')).not.toBe(whole);
-    await expect(canvasElement.querySelector('input[id="/collapsed"]')).not.toBe(collapsed);
-    await expect(canvasElement.querySelector('[data-container="/empty"]')).not.toBe(empty);
-    await expect(canvasElement.querySelector(`input[id="${virtualPath}"]`)).not.toBe(virtualInput);
+    await expect(canvasElement.querySelector('[data-container=""]')).toBe(
+      rootContainer,
+    );
+    await expect(
+      canvasElement.querySelector('[data-container="/branch"]'),
+    ).toBe(branch);
+    await expect(canvasElement.querySelector('input[id="/terminal"]')).not.toBe(
+      terminal,
+    );
+    await expect(canvasElement.querySelector('input[id="/whole"]')).not.toBe(
+      whole,
+    );
+    await expect(
+      canvasElement.querySelector('input[id="/collapsed"]'),
+    ).not.toBe(collapsed);
+    await expect(
+      canvasElement.querySelector('[data-container="/empty"]'),
+    ).not.toBe(empty);
+    await expect(
+      canvasElement.querySelector(`input[id="${virtualPath}"]`),
+    ).not.toBe(virtualInput);
     await expect(observations.mounts['']).toBe(before['']);
     await expect(observations.mounts['/branch']).toBe(before['/branch']);
-    await expect(observations.mounts['/terminal']).toBeGreaterThan(before['/terminal']);
+    await expect(observations.mounts['/terminal']).toBeGreaterThan(
+      before['/terminal'],
+    );
     const stale = observations.inputs['/terminal'];
     handle.refresh('/terminal');
     stale.onChange('stale');
@@ -165,8 +244,15 @@ export const EmptyChildDetectionCost: Story = {
   args: { mode: 'cost' },
   play: async ({ canvasElement }) => {
     const { root, observations } = fixture(canvasElement);
-    await waitFor(() => expect(observations.childReads.length).toBeGreaterThan(0));
-    await expect(observations.warnings.filter((code) => code === 'SCHEMA_FORM_WARNING.CHILD_NODE_COMPONENTS_ON_TERMINAL')).toHaveLength(1);
+    await waitFor(() =>
+      expect(observations.childReads.length).toBeGreaterThan(0),
+    );
+    await expect(
+      observations.warnings.filter(
+        (code) =>
+          code === 'SCHEMA_FORM_WARNING.CHILD_NODE_COMPONENTS_ON_TERMINAL',
+      ),
+    ).toHaveLength(1);
     for (const sample of observations.childReads) {
       await expect(sample.reads).toBe(100_000);
       await expect(Number.isFinite(sample.detectedMs)).toBe(true);

@@ -73,7 +73,7 @@ it('LANDING-095 REACT-002 REACT-003 preserves presentation identities and clones
   const Input = () => <input />;
   const schema = {
     type: 'object',
-    presentation: { FormTypeInput: Input, FormTypeInputProps: { icon } },
+    presentation: { FieldInput: Input, FieldInputProps: { icon } },
   } as const;
   const source = { name: 'before' };
   render(<Form ref={ref} jsonSchema={schema} defaultValue={source} />);
@@ -82,7 +82,7 @@ it('LANDING-095 REACT-002 REACT-003 preserves presentation identities and clones
   expect(ref.current!.node!.strategy).toBe('terminal');
   expect(
     (ref.current!.node!.jsonSchema as typeof schema).presentation
-      .FormTypeInputProps.icon,
+      .FieldInputProps.icon,
   ).toBe(icon);
   act(() => ref.current!.reset());
   expect(ref.current!.getValue()).toEqual({ name: 'after' });

@@ -21,7 +21,7 @@
 | --- | --- |
 | `SUBMIT_WHILE_DEGRADED` | Form의 제출 진입이 degraded 진단에서 제출을 거부합니다. 네이티브 submit은 `onError`와 주인 없는 오류 싱크로 전달합니다(LANDING-095) |
 | `CHILD_NODE_COMPONENTS_ON_TERMINAL` | 터미널 입력이 빈 자식 구성 요소 배열을 처음 읽을 때 경고합니다. 개발 모드 또는 핸들러가 있는 경우 동결 배열의 읽기를 감지하고, 필드 커밋 뒤 로드마다 `(code, path)`로 한 번 보고합니다(ERROR-202) |
-| `FORM_TYPE_TEST_INVALID` | `useFormTypeInput`의 정의 정규화에서 모르는 객체 시험 키와 `type`의 integer를 감지하면 개발 모드에서 정의마다 한 번 경고합니다. 모르는 키는 대조에서 제외합니다(REACT-033) |
+| `FORM_TYPE_TEST_INVALID` | `useFieldInput`의 정의 정규화에서 모르는 객체 시험 키와 `type`의 integer를 감지하면 개발 모드에서 정의마다 한 번 경고합니다. 모르는 키는 대조에서 제외합니다(REACT-033) |
 | `RENDER_FAILED` | 루트·필드 경계가 렌더 예외를 fallback으로 격리하고 인스턴스 보고기로 기록과 `componentStack`을 전달합니다. 다시 던지지 않습니다(ERROR-110–117, 68C-08) |
 | `DISPOSED_NODE_WRITE` | core의 쓰기 진입이 재생성 인계로 폐기된 옛 노드의 표식 없는 쓰기를 던져 거부합니다. 입력 출처 표식이 있는 늦은 쓰기는 오류 없이 버립니다(WRITE-046·086, 69C-02) |
 

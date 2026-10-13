@@ -2,7 +2,7 @@ import { useEffect, useLayoutEffect } from 'react';
 
 import { describe, expect, it } from 'vitest';
 
-import type { FormTypeInputProps } from '@/schema-form';
+import type { FieldInputProps } from '@/schema-form';
 import {
   type FormHarness,
   renderForm,
@@ -14,7 +14,7 @@ const runFeedback = async (useFeedbackEffect: typeof useEffect) => {
   let form: FormHarness | undefined;
   const records: string[] = [];
   const watchdog = 'EVENT_070_WATCHDOG_REACHED';
-  const Field = ({ node, value, path }: FormTypeInputProps) => {
+  const Field = ({ node, value, path }: FieldInputProps) => {
     useFeedbackEffect(() => {
       writes++;
       // Continuing passive feedback must fail instead of hanging the runner.
@@ -30,8 +30,8 @@ const runFeedback = async (useFeedbackEffect: typeof useEffect) => {
       {
         type: 'object',
         properties: {
-          a: { type: 'number', presentation: { FormTypeInput: Field } },
-          b: { type: 'number', presentation: { FormTypeInput: Field } },
+          a: { type: 'number', presentation: { FieldInput: Field } },
+          b: { type: 'number', presentation: { FieldInput: Field } },
         },
       },
       {

@@ -138,9 +138,9 @@ describe('stripSchema', () => {
         controls: undefined,
         options: undefined,
         presentation: undefined,
-        FormTypeInput: 'unknown data',
+        FieldInput: 'unknown data',
       }),
-    ).toEqual({ type: 'string', FormTypeInput: 'unknown data' });
+    ).toEqual({ type: 'string', FieldInput: 'unknown data' });
   });
 
   it('visits reference siblings and nested definitions without expanding recursive refs', () => {

@@ -38,5 +38,5 @@ export type {
   UnionMemberType,
   UnionSchemaType,
   InferSchemaNode,
-  FormTypeInputProps,
+  FieldInputProps,
 } from './type';

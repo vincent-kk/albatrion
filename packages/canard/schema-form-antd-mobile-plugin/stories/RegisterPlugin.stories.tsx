@@ -1,15 +1,15 @@
 import { useMemo, useRef, useState } from 'react';
 
 import {
+  type FieldInputDefinition,
+  type FieldInputMap,
+  type FieldInputProps,
   Form,
   type FormChildrenProps,
   type FormHandle,
-  type FormTypeInputDefinition,
-  type FormTypeInputMap,
-  type FormTypeInputProps,
   type JSONSchema,
-  type ValidationIssue,
   SetValueOption,
+  type ValidationIssue,
   registerPlugin,
 } from '@canard/schema-form';
 import { plugin as ajv8Plugin } from '@canard/schema-form-ajv8-plugin';
@@ -105,25 +105,29 @@ export const StringEnum = () => {
       radio: {
         type: 'string',
         enum: ['a', 'b', 'c'],
-        formType: 'radio',
-        FormTypeInputProps: {
-          alias: {
-            a: 'a label',
-            b: 'b label',
-            c: 'c label',
+        presentation: {
+          inputType: 'radio',
+          FieldInputProps: {
+            alias: {
+              a: 'a label',
+              b: 'b label',
+              c: 'c label',
+            },
           },
         },
       },
       radioGroup: {
         type: 'string',
         enum: ['one', 'two', 'three'],
-        formType: 'radiogroup',
-        FormTypeInputProps: {
-          alias: {
-            unset: 'OFF',
-            one: 'one label',
-            two: 'two label',
-            three: 'three label',
+        presentation: {
+          inputType: 'radiogroup',
+          FieldInputProps: {
+            alias: {
+              unset: 'OFF',
+              one: 'one label',
+              two: 'two label',
+              three: 'three label',
+            },
           },
         },
       },
@@ -133,25 +137,29 @@ export const StringEnum = () => {
           type: 'string',
           enum: ['d', 'e', 'f'],
         },
-        formType: 'checkbox',
-        FormTypeInputProps: {
-          alias: {
-            d: 'd label',
-            e: 'e label',
-            f: 'f label',
+        presentation: {
+          inputType: 'checkbox',
+          FieldInputProps: {
+            alias: {
+              d: 'd label',
+              e: 'e label',
+              f: 'f label',
+            },
           },
         },
       },
       enum: {
         type: 'string',
         enum: ['', 'g', 'h', 'i'],
-        formType: 'enum',
-        FormTypeInputProps: {
-          placeholder: 'select one of item',
-          alias: {
-            g: 'g label',
-            h: 'h label',
-            i: 'i label',
+        presentation: {
+          inputType: 'enum',
+          FieldInputProps: {
+            placeholder: 'select one of item',
+            alias: {
+              g: 'g label',
+              h: 'h label',
+              i: 'i label',
+            },
           },
         },
       },
@@ -160,14 +168,18 @@ export const StringEnum = () => {
         items: {
           type: 'string',
           enum: ['', 'g', 'h', 'i'],
-          formType: 'enum',
+          presentation: {
+            inputType: 'enum',
+          },
         },
-        FormTypeInputProps: {
-          placeholder: 'select one of item',
-          alias: {
-            g: 'g label',
-            h: 'h label',
-            i: 'i label',
+        presentation: {
+          FieldInputProps: {
+            placeholder: 'select one of item',
+            alias: {
+              g: 'g label',
+              h: 'h label',
+              i: 'i label',
+            },
           },
         },
       },
@@ -416,8 +428,10 @@ export const FunctionalChildren = () => {
       gender: {
         type: 'string',
         enum: ['male', 'female'],
-        FormTypeInputProps: {
-          placeholder: 'select gender',
+        presentation: {
+          FieldInputProps: {
+            placeholder: 'select gender',
+          },
         },
       },
     },
@@ -485,8 +499,10 @@ export const IterableChildren = () => {
       gender: {
         type: 'string',
         enum: ['male', 'female'],
-        FormTypeInputProps: {
-          placeholder: 'select gender',
+        presentation: {
+          FieldInputProps: {
+            placeholder: 'select gender',
+          },
         },
       },
     },
@@ -549,21 +565,23 @@ export const Watch = () => {
       },
       greeting: {
         type: 'string',
-        formType: 'greeting',
         computed: {
           watch: ['#/profile/name', '#/profile/age', '#/profile'],
+        },
+        presentation: {
+          inputType: 'greeting',
         },
       },
     },
   } satisfies JSONSchema;
-  const formTypes = useMemo<FormTypeInputDefinition[]>(
+  const inputTypes = useMemo<FieldInputDefinition[]>(
     () => [
       {
         test: {
           type: 'string',
-          formType: 'greeting',
+          inputType: 'greeting',
         },
-        Component: ({ watchValues }: FormTypeInputProps) => {
+        Component: ({ watchValues }: FieldInputProps) => {
           return (
             <>
               <strong>
@@ -582,7 +600,7 @@ export const Watch = () => {
     <StoryLayout jsonSchema={schema} value={value}>
       <Form
         jsonSchema={schema}
-        formTypeInputDefinitions={formTypes}
+        fieldInputDefinitions={inputTypes}
         onChange={setValue}
       />
     </StoryLayout>
@@ -654,9 +672,9 @@ export const FormRefHandle = () => {
     number: 10,
   });
 
-  const formTypeMap = useMemo<FormTypeInputMap>(() => {
+  const fieldInputMap = useMemo<FieldInputMap>(() => {
     return {
-      '#/objectNode': ({ onChange }: FormTypeInputProps<{ test?: string }>) => {
+      '#/objectNode': ({ onChange }: FieldInputProps<{ test?: string }>) => {
         const handleClick = () => {
           onChange({ test: 'wow' });
         };
@@ -670,7 +688,7 @@ export const FormRefHandle = () => {
           </div>
         );
       },
-      '#/textNode': ({ onChange }: FormTypeInputProps) => {
+      '#/textNode': ({ onChange }: FieldInputProps) => {
         const handleClick = () => {
           onChange('wow');
         };
@@ -744,7 +762,7 @@ export const FormRefHandle = () => {
           ref={formHandle}
           jsonSchema={schema}
           defaultValue={defaultValue.current}
-          formTypeInputMap={formTypeMap}
+          fieldInputMap={fieldInputMap}
           onChange={handleChange}
         />
       </StoryLayout>
@@ -761,30 +779,36 @@ export const ComputedProps = () => {
       },
       name: {
         type: 'string',
-        FormTypeInputProps: {
-          placeholder: 'enter your name',
-        },
         computed: {
           readOnly: '!../prepared',
+        },
+        presentation: {
+          FieldInputProps: {
+            placeholder: 'enter your name',
+          },
         },
       },
       age: {
         type: 'number',
-        FormTypeInputProps: {
-          placeholder: 'enter your age',
-        },
         computed: {
           disabled: '(../name)===undefined||(../name).length<5',
+        },
+        presentation: {
+          FieldInputProps: {
+            placeholder: 'enter your age',
+          },
         },
       },
       nationality: {
         type: 'string',
         enum: ['', 'US', 'UK', 'JP', 'KR'],
-        FormTypeInputProps: {
-          placeholder: 'select your nationality',
-        },
         computed: {
           disabled: '(../age)===undefined||(../age<10)',
+        },
+        presentation: {
+          FieldInputProps: {
+            placeholder: 'select your nationality',
+          },
         },
       },
     },

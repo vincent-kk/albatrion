@@ -10,9 +10,9 @@ import {
   isArrayNode,
   nodeFromJSONSchema,
 } from '@/schema-form/core';
-import type { FormTypeInputProps } from '@/schema-form/types';
+import type { FieldInputProps } from '@/schema-form/types';
 
-import { useFormTypeInputControl } from '../hooks/useFormTypeInputControl';
+import { useFieldInputControl } from '../hooks/useFieldInputControl';
 import { REACTIVE_RERENDERING_EVENTS } from '../type';
 
 /** Runtime snapshot mask for the input's props, child list and applied Refresh. */
@@ -47,8 +47,8 @@ it('F-E retains four listeners per field and unchanged input renders with Refres
   });
   const ref = createRef<FormHandle>();
   const renders = vi.fn();
-  let change!: FormTypeInputProps['onChange'];
-  const Input = (props: FormTypeInputProps) => {
+  let change!: FieldInputProps['onChange'];
+  const Input = (props: FieldInputProps) => {
     renders(props.value);
     change = props.onChange;
     return <input defaultValue={props.defaultValue} id={props.path} />;
@@ -58,9 +58,7 @@ it('F-E retains four listeners per field and unchanged input renders with Refres
       ref={ref}
       jsonSchema={{ type: 'object', properties: { field: { type: 'string' } } }}
       defaultValue={{ field: 'first' }}
-      formTypeInputDefinitions={[
-        { test: { type: 'string' }, Component: Input },
-      ]}
+      fieldInputDefinitions={[{ test: { type: 'string' }, Component: Input }]}
     />,
   );
   const node = ref.current!.findNode('/field')!;
@@ -94,7 +92,7 @@ it('F-E retains four listeners per field and unchanged input renders with Refres
 it('F-E keeps one container render per array write through the last removal and still applies the next Refresh', () => {
   const ref = createRef<FormHandle>();
   const renders = vi.fn();
-  const Container = ({ ChildNodeComponents }: FormTypeInputProps) => {
+  const Container = ({ ChildNodeComponents }: FieldInputProps) => {
     renders();
     return (
       <section>
@@ -113,7 +111,7 @@ it('F-E keeps one container render per array write through the last removal and 
         properties: { items: { type: 'array', items: { type: 'string' } } },
       }}
       defaultValue={{ items: [] }}
-      formTypeInputDefinitions={[
+      fieldInputDefinitions={[
         { test: { type: 'array' }, Component: Container },
       ]}
     />,
@@ -149,7 +147,7 @@ it.each(['UpdateChildren', 'UpdateValue'] as const)(
       value,
       onChange,
       ChildNodeComponents,
-    }: FormTypeInputProps) => {
+    }: FieldInputProps) => {
       const subscribe = useMemo(() => vi.spyOn(node, 'subscribe'), [node]);
       if (!tracking) {
         tracking = true;
@@ -187,7 +185,7 @@ it.each(['UpdateChildren', 'UpdateValue'] as const)(
             ? { type: 'array', items: { type: 'string' } }
             : { type: 'string' }
         }
-        formTypeInputDefinitions={[
+        fieldInputDefinitions={[
           {
             test: { type: event === 'UpdateChildren' ? 'array' : 'string' },
             Component: Input,
@@ -207,7 +205,7 @@ it.each(['UpdateChildren', 'UpdateValue'] as const)(
 it('F-E applies coalesced child-owned Refresh once on the next delivery after child proxies unmount', () => {
   const mounts = vi.fn();
   const unmounts = vi.fn();
-  const Container = ({ ChildNodeComponents }: FormTypeInputProps) => {
+  const Container = ({ ChildNodeComponents }: FieldInputProps) => {
     const [visible, setVisible] = useState(true);
     useLayoutEffect(() => {
       mounts();
@@ -229,7 +227,7 @@ it('F-E applies coalesced child-owned Refresh once on the next delivery after ch
       ref={ref}
       validationMode={0}
       jsonSchema={{ type: 'object', properties: { name: { type: 'string' } } }}
-      formTypeInputDefinitions={[
+      fieldInputDefinitions={[
         { test: { type: 'object' }, Component: Container },
       ]}
     />,
@@ -271,7 +269,7 @@ it('F-E applies deferred Refresh once on a parent-driven render after child prox
   const renders = vi.fn();
   const mounts = vi.fn();
   const unmounts = vi.fn();
-  const Container = ({ ChildNodeComponents, readOnly }: FormTypeInputProps) => {
+  const Container = ({ ChildNodeComponents, readOnly }: FieldInputProps) => {
     renders(readOnly);
     const [visible, setVisible] = useState(true);
     useLayoutEffect(() => {
@@ -303,7 +301,7 @@ it('F-E applies deferred Refresh once on a parent-driven render after child prox
       validationMode={0}
       jsonSchema={jsonSchema}
       defaultValue={defaultValue}
-      formTypeInputDefinitions={definitions}
+      fieldInputDefinitions={definitions}
       readOnly={readOnly}
     />
   );
@@ -391,7 +389,7 @@ it('F-E defers a child-layout Refresh at subscribe without an extra caller rende
     };
     const Host = () => {
       callerRenders();
-      const [ref, generation] = useFormTypeInputControl(
+      const [ref, generation] = useFieldInputControl(
         node,
         mountedChildren,
         noTerminalChildren,

@@ -1,7 +1,7 @@
 /** A definition named by its label; the consumer builds a component that marks itself with this label. */
 export interface LabeledDefinition {
   /** Engine-free subset of the definition test object; every listed key must match the node hint. */
-  readonly test: Readonly<{ formType?: string; path?: string }>;
+  readonly test: Readonly<{ inputType?: string; path?: string }>;
   /** Label the consumer's component renders, read back as the winner. */
   readonly label: string;
 }

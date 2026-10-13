@@ -1,16 +1,16 @@
 import { act } from '@testing-library/react';
 import { afterEach, expect, it } from 'vitest';
 
-import type { FormTypeInputProps } from '@/schema-form';
+import type { FieldInputProps } from '@/schema-form';
 
 import { type FormHarness, renderForm } from '../renderForm';
 
 let form: FormHarness;
-let input: FormTypeInputProps;
+let input: FieldInputProps;
 afterEach(() => form?.unmount());
 
 /** Files cross the public consumer callback rather than a synthetic node mock. */
-const Upload = (props: FormTypeInputProps) => {
+const Upload = (props: FieldInputProps) => {
   input = props;
   return (
     <input
@@ -27,7 +27,7 @@ const Upload = (props: FormTypeInputProps) => {
 it('TEST-023 single file attachment is visible through the form handle', async () => {
   form = await renderForm({
     type: 'string',
-    presentation: { FormTypeInput: Upload },
+    presentation: { FieldInput: Upload },
   });
   const file = new File(['one'], 'one.txt', { type: 'text/plain' });
   await form.user.upload(form.field('') as HTMLInputElement, file);
@@ -37,7 +37,7 @@ it('TEST-023 single file attachment is visible through the form handle', async (
 it('TEST-023 multiple attachments retain their File identities', async () => {
   form = await renderForm({
     type: 'string',
-    presentation: { FormTypeInput: Upload },
+    presentation: { FieldInput: Upload },
   });
   const files = [new File(['a'], 'a.txt'), new File(['b'], 'b.txt')];
   await form.user.upload(form.field('') as HTMLInputElement, files);
@@ -54,7 +54,7 @@ it('LANDING-148 branch exit removes attachments and find returns null', async ()
         {
           controls: { active: './enabled' },
           properties: {
-            file: { type: 'string', presentation: { FormTypeInput: Upload } },
+            file: { type: 'string', presentation: { FieldInput: Upload } },
           },
         },
         {
@@ -78,7 +78,7 @@ it('LANDING-148 branch exit removes attachments and find returns null', async ()
 it('TEST-020 reset clears the same attachment map and rejects late attachments', async () => {
   form = await renderForm({
     type: 'string',
-    presentation: { FormTypeInput: Upload },
+    presentation: { FieldInput: Upload },
   });
   const map = form.attachedFilesMap();
   const late = input.onFileAttach;
@@ -92,7 +92,7 @@ it('TEST-020 reset clears the same attachment map and rejects late attachments',
 
 it('LANDING-042 external replacement rejects attachments from the replaced input', async () => {
   form = await renderForm(
-    { type: 'string', presentation: { FormTypeInput: Upload } },
+    { type: 'string', presentation: { FieldInput: Upload } },
     { defaultValue: 'old' },
   );
   const late = input.onFileAttach;

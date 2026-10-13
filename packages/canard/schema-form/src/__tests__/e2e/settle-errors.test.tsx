@@ -100,7 +100,7 @@ it('TEST-020 field boundary reports through the instance and preserves sibling i
   form = await renderForm({
     type: 'object',
     properties: {
-      broken: { type: 'string', presentation: { FormTypeInput: Broken } },
+      broken: { type: 'string', presentation: { FieldInput: Broken } },
       sibling: { type: 'string', default: 'kept' },
     },
   });
@@ -143,7 +143,7 @@ it('TEST-020 onError throwing in componentDidCatch reaches the sink without a ho
       },
       children: (
         <Host>
-          <Form.Input FormTypeInput={Broken} />
+          <Form.Input FieldInput={Broken} />
         </Host>
       ),
     },

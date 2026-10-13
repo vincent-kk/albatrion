@@ -11,7 +11,7 @@ import {
   validatorSourceCases,
 } from '@aileron/schema-form-scenarios';
 
-import { type FormHandle, type FormTypeRendererProps, Form, FormProvider, type JSONSchema, ValidationMode } from '@/schema-form';
+import { type FormHandle, type FieldRendererProps, Form, FormProvider, type JSONSchema, ValidationMode } from '@/schema-form';
 
 import { renderForm, setupValidatorPlugin } from '../renderForm';
 
@@ -33,7 +33,7 @@ const scenarioNamed = (name: string): FormScenario => {
  * @param source - Marker prefix.
  * @returns Renderers keyed by slot.
  */
-const markedRenderers = (source: string): Record<RendererSlot, ComponentType<FormTypeRendererProps>> => ({
+const markedRenderers = (source: string): Record<RendererSlot, ComponentType<FieldRendererProps>> => ({
   group: ({ Input, path }) => <div data-renderer={`${source}-group`} data-field={path}><Input /></div>,
   label: ({ name, path }) => <label data-renderer={`${source}-label`} htmlFor={path}>{name}</label>,
   error: ({ errorVisible, errors }) => (errorVisible && errors?.length ? <em data-renderer={`${source}-error`}>{errors.map((issue) => issue.keyword).join(',')}</em> : null),
@@ -48,9 +48,9 @@ const markedRenderers = (source: string): Record<RendererSlot, ComponentType<For
 const rendererProps = (slots: readonly RendererSlot[], source: string) => {
   const renderers = markedRenderers(source);
   return {
-    ...(slots.includes('group') && { FormTypeGroupRenderer: renderers.group }),
-    ...(slots.includes('label') && { FormTypeLabelRenderer: renderers.label }),
-    ...(slots.includes('error') && { FormTypeErrorRenderer: renderers.error }),
+    ...(slots.includes('group') && { FieldRenderer: renderers.group }),
+    ...(slots.includes('label') && { FormLabelRenderer: renderers.label }),
+    ...(slots.includes('error') && { FormErrorRenderer: renderers.error }),
   };
 };
 

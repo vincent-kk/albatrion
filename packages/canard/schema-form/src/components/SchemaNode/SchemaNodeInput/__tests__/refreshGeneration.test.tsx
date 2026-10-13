@@ -3,7 +3,7 @@ import { useState } from 'react';
 import { act, cleanup, fireEvent } from '@testing-library/react';
 import { afterEach, expect, it, vi } from 'vitest';
 
-import { type FormTypeInputProps, registerPlugin } from '@/schema-form';
+import { type FieldInputProps, registerPlugin } from '@/schema-form';
 import { SchemaNodeEventType } from '@/schema-form/core';
 
 import { INPUT_SUPPLIES, renderInputSupply } from './helpers/renderInputSupply';
@@ -18,8 +18,8 @@ it.each(INPUT_SUPPLIES)(
   'EVENT-039 Refresh remounts only the uncontrolled input and discards its caret (%s)',
   (supply) => {
     let mounts = 0;
-    let props: FormTypeInputProps;
-    const Field = (input: FormTypeInputProps) => {
+    let props: FieldInputProps;
+    const Field = (input: FieldInputProps) => {
       props = input;
       const [mount] = useState(() => ++mounts);
       return (
@@ -66,7 +66,7 @@ it.each(INPUT_SUPPLIES)(
   'EVENT-065 Refresh keys the applied generation after composition ends (%s)',
   (supply) => {
     let mounts = 0;
-    const Field = ({ path, defaultValue }: FormTypeInputProps) => {
+    const Field = ({ path, defaultValue }: FieldInputProps) => {
       useState(() => ++mounts);
       return <input id={path} defaultValue={defaultValue} />;
     };
@@ -102,7 +102,7 @@ it.each(INPUT_SUPPLIES)(
   'REACT-028 container holds its input generation through Refresh and value delivery (%s)',
   (supply) => {
     let mounts = 0;
-    const Container = ({ path, ChildNodeComponents }: FormTypeInputProps) => {
+    const Container = ({ path, ChildNodeComponents }: FieldInputProps) => {
       const [mount] = useState(() => ++mounts);
       return (
         <section data-container={path} data-mount={mount}>

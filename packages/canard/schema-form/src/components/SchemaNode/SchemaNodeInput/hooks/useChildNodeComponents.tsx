@@ -72,7 +72,7 @@ export const useChildNodeComponents = (
           gateManager?.forChild(ChildNodeComponents.length, node) ?? null;
         const ChildComponent = memo(
           ({
-            FormTypeGroupRenderer: InputFormTypeRenderer,
+            FieldRenderer: InputFieldRenderer,
             onChange,
             onFileAttach,
             ...restProps
@@ -86,7 +86,7 @@ export const useChildNodeComponents = (
             const onChangeRef = useReference(onChange);
             const onFileAttachRef = useReference(onFileAttach);
             const overridePropsRef = useReference(restProps);
-            const FormTypeGroupRenderer = useConstant(InputFormTypeRenderer);
+            const FieldRenderer = useConstant(InputFieldRenderer);
             return deferredManager !== null ? (
               <DeferrableNodeProxy
                 node={node}
@@ -95,7 +95,7 @@ export const useChildNodeComponents = (
                 onChangeRef={onChangeRef}
                 onFileAttachRef={onFileAttachRef}
                 overridePropsRef={overridePropsRef}
-                FormTypeGroupRenderer={FormTypeGroupRenderer}
+                FieldRenderer={FieldRenderer}
               />
             ) : (
               <NodeProxy
@@ -103,7 +103,7 @@ export const useChildNodeComponents = (
                 onChangeRef={onChangeRef}
                 onFileAttachRef={onFileAttachRef}
                 overridePropsRef={overridePropsRef}
-                FormTypeGroupRenderer={FormTypeGroupRenderer}
+                FieldRenderer={FieldRenderer}
               />
             );
           },

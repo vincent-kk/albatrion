@@ -89,7 +89,7 @@ const Navigation = () => {
             to="/dynamic-object-formtype"
             className={({ isActive }) => (isActive ? "active" : "")}
           >
-            Dynamic Object FormType
+            Dynamic Object FieldInput
           </NavLink>
         </li>
         <li>

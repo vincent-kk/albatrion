@@ -1,6 +1,6 @@
 # Virtual Schema
 
-`options.virtual` groups sibling fields into one synthetic field with a single `FormTypeInput`, without changing the stored data shape. Canonical case: a date-range picker over separate `startDate`/`endDate` properties.
+`options.virtual` groups sibling fields into one synthetic field with a single `FieldInput`, without changing the stored data shape. Canonical case: a date-range picker over separate `startDate`/`endDate` properties.
 
 ```typescript
 {
@@ -13,7 +13,7 @@
     virtual: {
       period: {
         fields: ['startDate', 'endDate'],
-        FormTypeInput: DateRangeInput,  // optional
+        presentation: { FieldInput: DateRangeInput },  // optional
         controls: { /* … */ },          // optional
       },
     },
@@ -33,5 +33,5 @@
 
 ## Node Access
 
-- Inside the virtual `FormTypeInput`, reach constituent nodes via `node.children[i].node` (ordered like `fields`).
+- Inside the virtual `FieldInput`, reach constituent nodes via `node.children[i].node` (ordered like `fields`).
 - From outside: `formRef.current?.findNode('/period')`, narrowed with the exported `isVirtualNode()` guard.

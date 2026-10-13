@@ -16,8 +16,8 @@ import { CardInput } from './utils/CardInput';
 import { MapEntryInput } from './utils/MapEntryInput';
 
 const childDefinitions = [
-  { test: { formType: 'input-components.card' }, Component: CardInput },
-  { test: { formType: 'input-components.map' }, Component: MapEntryInput },
+  { test: { inputType: 'input-components.card' }, Component: CardInput },
+  { test: { inputType: 'input-components.map' }, Component: MapEntryInput },
 ];
 
 export default { title: 'Features/InputComponents/ChildComponents', component: FeatureStory, tags: ['autodocs'] } satisfies Meta<typeof FeatureStory>;
@@ -27,7 +27,7 @@ const scenario = findScenario(inputComponentsFeatureScenarios, 'input-components
 
 /** Shared scenario `input-components.child-components`: a card input draws children and reports their errors. */
 export const CardWithChildErrors: Story = {
-  args: { scenario, formProps: { formTypeInputDefinitions: childDefinitions } },
+  args: { scenario, formProps: { fieldInputDefinitions: childDefinitions } },
   parameters: { docs: { description: { story: scenario.description } } },
   async play({ args, canvasElement, step }) {
     if (shouldSkipUnfocusedPlay()) return skipPlay(step, unfocusedPlayReason);
@@ -51,7 +51,7 @@ const mapProbe = createHandleProbe();
 
 /** Shared scenario `input-components.child-components`: the open object is edited as a whole through a terminal map input. */
 export const OpenObjectAsTerminal: Story = {
-  args: { scenario, formProps: { formTypeInputDefinitions: childDefinitions }, onHandle: mapProbe.onHandle },
+  args: { scenario, formProps: { fieldInputDefinitions: childDefinitions }, onHandle: mapProbe.onHandle },
   parameters: { docs: { description: { story: scenario.description } } },
   async play({ args, canvasElement, step }) {
     if (shouldSkipUnfocusedPlay()) return skipPlay(step, unfocusedPlayReason);

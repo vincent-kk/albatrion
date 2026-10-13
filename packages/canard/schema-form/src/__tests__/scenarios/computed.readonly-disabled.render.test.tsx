@@ -22,7 +22,7 @@ import { renderForm } from '../renderForm';
  *     two-layer divergence this suite pins.
  *   - Built-in string/number inputs render `readOnly` + `disabled` attributes
  *     directly; the enum `<select>` has no readonly attribute and instead renders
- *     `disabled={disabled || readOnly}` (`FormTypeInputStringEnum.tsx:65`).
+ *     `disabled={disabled || readOnly}` (`FieldInputStringEnum.tsx:65`).
  *
  * Every case asserts BOTH layers: rendered DOM (attribute presence via jest-dom)
  * AND the node tree (`node(path)?.readOnly` / `.disabled` / `getValue()`).

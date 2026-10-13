@@ -14,7 +14,7 @@ These rules apply when authoring application code that imports from `@canard/sch
 ### node-tree-owns-state
 
 - Form state lives in nodes, not in external React state.
-- Reads and writes go through `FormHandle`, `useSchemaNode*` hooks, or `onChange` inside a `FormTypeInput`. Mirroring values into a parallel `useState` produces drift.
+- Reads and writes go through `FormHandle`, `useSchemaNode*` hooks, or `onChange` inside a `FieldInput`. Mirroring values into a parallel `useState` produces drift.
 
 ### public-api-only
 
@@ -41,15 +41,15 @@ Decide which surface owns each piece of UI before writing it.
 
 | Surface                   | How it is produced                                                                                  | When to use                                                       |
 | ------------------------- | --------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------- |
-| Schema-driven auto-render | `<Form jsonSchema={…} />`                                                                           | Default. Plugin resolves a `FormTypeInput` per node.              |
+| Schema-driven auto-render | `<Form jsonSchema={…} />`                                                                           | Default. Plugin resolves a `FieldInput` per node.                 |
 | Path-scoped slots         | `<Form.Input path>`, `<Form.Label path>`, `<Form.Error path>`, `<Form.Render path>` inside `<Form>` | Custom layout that still delegates field rendering to the plugin. |
-| Per-field custom input    | `FormTypeInput` on the schema, `formTypeInputMap`, or `formTypeInputDefinitions`                    | A field needs a UI the plugin does not provide.                   |
+| Per-field custom input    | `FieldInput` on the schema, `fieldInputMap`, or `fieldInputDefinitions`                             | A field needs a UI the plugin does not provide.                   |
 
 Mixing surfaces on the same path (e.g. `<Form.Input path="/x" />` inside a `<Form>` that already auto-renders `/x`) causes duplicate rendering. Pick one.
 
 ### terminal-is-a-contract
 
-- On object/array schemas, `terminal: true` means the `FormTypeInput` owns the whole subtree value; `ChildNodeComponents` is not used.
+- On object/array schemas, `terminal: true` means the `FieldInput` owns the whole subtree value; `ChildNodeComponents` is not used.
 - `terminal: false` or unset means children render via `ChildNodeComponents`.
 - Never mix both modes in a single node.
 
@@ -62,7 +62,7 @@ Each rule is a single hard requirement. Violations typically produce silent bugs
 ### register-plugin-once
 
 - `registerPlugin(plugin)` MUST run once during app bootstrap, before the first `<Form>` renders. UI plugins register before validator plugins.
-- Why: `FormTypeInput` resolution is settled at mount; late or repeated registration causes nondeterministic picks.
+- Why: `FieldInput` resolution is settled at mount; late or repeated registration causes nondeterministic picks.
 
 ### stable-schema-reference
 
@@ -71,12 +71,12 @@ Each rule is a single hard requirement. Violations typically produce silent bugs
 
 ### stable-definitions
 
-- `formTypeInputDefinitions`, `formTypeInputMap`, `context`, and any component passed by prop MUST be defined outside render or memoized.
+- `fieldInputDefinitions`, `fieldInputMap`, `context`, and any component passed by prop MUST be defined outside render or memoized.
 - Why: new references on each render invalidate internal caches and re-resolve inputs every tick.
 
 ### form-type-input-contract
 
-- A custom `FormTypeInput` MUST honor `FormTypeInputProps`:
+- A custom `FieldInput` MUST honor `FieldInputProps`:
   - Use `value` (controlled) OR `defaultValue` (uncontrolled), never both.
   - Call `onChange` with the correct `SetValueOption`.
   - Render children via `ChildNodeComponents` whenever the node is not `terminal`.
@@ -90,7 +90,7 @@ Each rule is a single hard requirement. Violations typically produce silent bugs
 
 ### jsonpointer-is-context-sensitive
 
-- `formTypeInputMap` supports absolute paths and `*`; `controls` expressions support absolute/relative paths plus `@`; `node.find()` supports absolute/relative paths. Escape `~` as `~0` and `/` as `~1`.
+- `fieldInputMap` supports absolute paths and `*`; `controls` expressions support absolute/relative paths plus `@`; `node.find()` supports absolute/relative paths. Escape `~` as `~0` and `/` as `~1`.
 - Why: a token valid in one context silently fails to match in another.
 
 ### conditional-choice
@@ -148,7 +148,7 @@ Reject these on sight.
 - Mirroring the form value into a parallel `useState` → violates `node-tree-owns-state`.
 - `<Form.Input path="/x" />` inside a `<Form>` that already auto-renders `/x` → duplicate render; drop one surface.
 - `controls: { visible: 'A', active: 'B' }` on the same field with overlapping conditions → pick one based on value-retention intent.
-- A custom `FormTypeInput` that reads `value` and also sets `defaultValue` on the underlying DOM input → pick controlled or uncontrolled, not both.
+- A custom `FieldInput` that reads `value` and also sets `defaultValue` on the underlying DOM input → pick controlled or uncontrolled, not both.
 - Per-input `if (errors.length > 0)` branches → use `showError` / `errorVisible` instead.
 - `for` loop calling `arrayNode.push` N times → batch via a single `setValue`.
 
@@ -156,5 +156,5 @@ Reject these on sight.
 
 ## 5. Extending the Knowledge
 
-- Plugin authoring (UI renderer, validator, `FormTypeInputDefinition` bundle) → the `create-canard-plugin` / `ui-plugin-guidelines` skills. Not covered here.
+- Plugin authoring (UI renderer, validator, `FieldInputDefinition` bundle) → the `create-canard-plugin` / `ui-plugin-guidelines` skills. Not covered here.
 - Topics beyond the skill's coverage → `docs/QUICK_REFERENCE.md` or `docs/en/SPECIFICATION.md` in the installed package.

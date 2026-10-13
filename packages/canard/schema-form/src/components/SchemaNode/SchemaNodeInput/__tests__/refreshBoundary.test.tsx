@@ -3,7 +3,7 @@ import { useLayoutEffect } from 'react';
 import { act, cleanup, fireEvent } from '@testing-library/react';
 import { afterEach, expect, it, vi } from 'vitest';
 
-import { type FormTypeInputProps, registerPlugin } from '@/schema-form';
+import { type FieldInputProps, registerPlugin } from '@/schema-form';
 import { observeErrorSink } from '@/schema-form/__tests__/helpers/observeErrorSink';
 
 import { INPUT_SUPPLIES, renderInputSupply } from './helpers/renderInputSupply';
@@ -20,12 +20,12 @@ it.each(INPUT_SUPPLIES)(
     observeErrorSink();
     let fail = true;
     let renders = 0;
-    const Field = ({ path, defaultValue }: FormTypeInputProps) => {
+    const Field = ({ path, defaultValue }: FieldInputProps) => {
       renders++;
       if (fail) throw new Error('FIELD_FAILED');
       return <input id={path} defaultValue={defaultValue} />;
     };
-    const Peer = ({ node, value, onChange }: FormTypeInputProps) => {
+    const Peer = ({ node, value, onChange }: FieldInputProps) => {
       useLayoutEffect(() => {
         if (value === 'write')
           node.parentNode!.find('./field')!.setValue('committed');
@@ -65,7 +65,7 @@ it.each(INPUT_SUPPLIES)(
   (supply) => {
     observeErrorSink();
     let fail = true;
-    const Field = ({ path, defaultValue }: FormTypeInputProps) => {
+    const Field = ({ path, defaultValue }: FieldInputProps) => {
       if (fail) throw new Error('FIELD_FAILED');
       return <input id={path} defaultValue={defaultValue} />;
     };
@@ -86,7 +86,7 @@ it.each(INPUT_SUPPLIES)(
   (supply) => {
     observeErrorSink();
     let fail = true;
-    const Field = ({ path, defaultValue }: FormTypeInputProps) => {
+    const Field = ({ path, defaultValue }: FieldInputProps) => {
       if (fail) throw new Error('FIELD_FAILED');
       return <input id={path} defaultValue={defaultValue} />;
     };

@@ -13,21 +13,21 @@ import { SchemaNodeProxy } from '@/schema-form/components/SchemaNode';
 import type {
   AllowedValue,
   ChildNodeComponentProps,
-  FormTypeInputProps,
-  FormTypeRendererProps,
+  FieldInputProps,
+  FieldRendererProps,
 } from '@/schema-form/types';
 
 export type FormGroupProps<Value extends AllowedValue> = {
   path?: string;
-  FormTypeInput?: ComponentType<FormTypeInputProps<Value>>;
-  FormTypeGroupRenderer?: ComponentType<FormTypeRendererProps>;
+  FieldInput?: ComponentType<FieldInputProps<Value>>;
+  FieldRenderer?: ComponentType<FieldRendererProps>;
   Wrapper?: ComponentType<PropsWithChildren<Dictionary>>;
 } & ChildNodeComponentProps;
 
 /**
  * Renders a complete form field group with customizable input and renderer components.
  *
- * Combines FormTypeInput and FormTypeGroupRenderer to create a cohesive field experience,
+ * Combines FieldInput and FieldRenderer to create a cohesive field experience,
  * typically including label, input, error messages, and any additional UI elements.
  * Allows overriding default components for specialized field types.
  *
@@ -73,7 +73,7 @@ export type FormGroupProps<Value extends AllowedValue> = {
  *
  * <Form.Group
  *   path="/birthDate"
- *   FormTypeInput={DatePicker}
+ *   FieldInput={DatePicker}
  *   dateFormat="yyyy-MM-dd"
  *   showYearDropdown
  * />
@@ -95,30 +95,30 @@ export type FormGroupProps<Value extends AllowedValue> = {
  *
  * <Form.Group
  *   path="/address"
- *   FormTypeGroupRenderer={AddressRenderer}
+ *   FieldRenderer={AddressRenderer}
  * />
  * ```
  */
 export const FormGroup = memo(
   ({
     path,
-    FormTypeInput,
-    FormTypeGroupRenderer,
+    FieldInput,
+    FieldRenderer,
     Wrapper,
     ...restProps
   }: FormGroupProps<AllowedValue>) => {
     const overridePropsRef = useReference(restProps);
     const constant = useConstant({
-      FormTypeInput: FormTypeInput as ComponentType<FormTypeInputProps>,
-      FormTypeGroupRenderer,
+      FieldInput: FieldInput as ComponentType<FieldInputProps>,
+      FieldRenderer,
       Wrapper,
     });
     return (
       <SchemaNodeProxy
         path={path}
         overridePropsRef={overridePropsRef}
-        FormTypeInput={constant.FormTypeInput}
-        FormTypeGroupRenderer={constant.FormTypeGroupRenderer}
+        FieldInput={constant.FieldInput}
+        FieldRenderer={constant.FieldRenderer}
         Wrapper={constant.Wrapper}
       />
     );

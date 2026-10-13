@@ -4,7 +4,7 @@ import { act, cleanup, fireEvent, render } from '@testing-library/react';
 import { afterEach, expect, it, vi } from 'vitest';
 
 import { Form, type FormHandle } from '@/schema-form/components/Form';
-import type { FormTypeInputProps } from '@/schema-form/types';
+import type { FieldInputProps } from '@/schema-form/types';
 
 afterEach(() => {
   cleanup();
@@ -15,8 +15,8 @@ it('EVENT-065 REACT-024 defers Refresh until compositionend and rejects the old 
   let mounts = 0;
   let unmounts = 0;
   let compositionEnds = 0;
-  let oldChange: FormTypeInputProps['onChange'];
-  const Input = ({ value, onChange }: FormTypeInputProps) => {
+  let oldChange: FieldInputProps['onChange'];
+  const Input = ({ value, onChange }: FieldInputProps) => {
     const [draft, setDraft] = useState(String(value ?? ''));
     const composing = useRef(false);
     useEffect(() => {
@@ -52,7 +52,7 @@ it('EVENT-065 REACT-024 defers Refresh until compositionend and rejects the old 
   const view = render(
     <Form
       ref={ref}
-      jsonSchema={{ type: 'string', presentation: { FormTypeInput: Input } }}
+      jsonSchema={{ type: 'string', presentation: { FieldInput: Input } }}
       defaultValue=""
     />,
   );
@@ -92,13 +92,13 @@ it('EVENT-065 REACT-024 defers Refresh until compositionend and rejects the old 
 
 it('EVENT-065 publishes completed text without remounting when no Refresh intervenes', () => {
   const ref = createRef<FormHandle>();
-  const Input = ({ onChange }: FormTypeInputProps) => (
+  const Input = ({ onChange }: FieldInputProps) => (
     <input onCompositionEnd={(event) => onChange(event.currentTarget.value)} />
   );
   const view = render(
     <Form
       ref={ref}
-      jsonSchema={{ type: 'string', presentation: { FormTypeInput: Input } }}
+      jsonSchema={{ type: 'string', presentation: { FieldInput: Input } }}
       defaultValue=""
     />,
   );

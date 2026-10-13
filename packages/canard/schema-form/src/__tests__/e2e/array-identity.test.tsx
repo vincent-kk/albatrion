@@ -1,12 +1,12 @@
 import { act } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
 
-import type { FormTypeInputProps } from '@/schema-form';
+import type { FieldInputProps } from '@/schema-form';
 
 import { renderForm } from '../renderForm';
 
 /** Expose the stable React item key supplied to a branch input consumer. */
-const Items = ({ ChildNodeComponents }: FormTypeInputProps) => (
+const Items = ({ ChildNodeComponents }: FieldInputProps) => (
   <>
     {ChildNodeComponents.map((Child) => (
       <section
@@ -24,7 +24,7 @@ const arraySchema = {
   type: 'array',
   options: { terminal: false },
   items: { type: 'string' },
-  presentation: { FormTypeInput: Items },
+  presentation: { FieldInput: Items },
 } as const;
 
 describe('NODE-051 / VALUE-034 — array consumer observations', () => {

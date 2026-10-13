@@ -4,7 +4,7 @@ import type { FormScenario } from '../../types';
 const propsSchema = {
   type: 'object',
   properties: {
-    name: { type: 'string', presentation: { FormTypeInputProps: { placeholder: 'Your name', className: 'wide-name' } } },
+    name: { type: 'string', presentation: { FieldInputProps: { placeholder: 'Your name', className: 'wide-name' } } },
     locked: { type: 'string', controls: { readOnly: true } },
     off: { type: 'string', controls: { disabled: true } },
   },
@@ -13,7 +13,7 @@ const propsSchema = {
 /** Schema presentation props and control states flow to the rendered input. */
 export const propsFlowScenario: FormScenario = {
   name: 'input-components.props-flow',
-  description: 'presentation.FormTypeInputProps reaches the input as props (placeholder, className); controls.readOnly and controls.disabled reach it as readOnly and disabled (CONTROLS-023), and the node rejects screen writes while they hold (LANDING-168). Attributes come from propsFlowAttributes.',
+  description: 'presentation.FieldInputProps reaches the input as props (placeholder, className); controls.readOnly and controls.disabled reach it as readOnly and disabled (CONTROLS-023), and the node rejects screen writes while they hold (LANDING-168). Attributes come from propsFlowAttributes.',
   schema: propsSchema,
   initialValue: { name: 'Kim', locked: 'L', off: 'O' },
   steps: [{ action: 'batch', steps: [], expect: {

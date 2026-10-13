@@ -6,12 +6,12 @@ Symptom → cause → fix, grouped by subsystem.
 
 **UI renders wrong or plain** — plugins registered in the wrong order or too late. Register UI plugin first, then validator, both before the first `<Form>` render (`plugin-system.md`).
 
-## formTypeInputMap
+## fieldInputMap
 
 A `/items/**/name` entry never matches — the double-star wildcard is not a thing. `*` matches exactly ONE segment (array indexes and dynamic object keys alike):
 
 ```typescript
-formTypeInputMap: {
+fieldInputMap: {
   '/items/*/name': ItemNameInput,   // ✅
   '/items/**/name': ItemNameInput,  // ❌ never matches
 }

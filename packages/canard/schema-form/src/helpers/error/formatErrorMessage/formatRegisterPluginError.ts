@@ -17,12 +17,12 @@ export const formatRegisterPluginError = (
   const errorMessage = getErrorMessage(error);
 
   const pluginFeatures: string[] = [];
-  if (plugin.FormTypeErrorRenderer) pluginFeatures.push('FormError');
-  if (plugin.FormTypeGroupRenderer) pluginFeatures.push('FormGroup');
-  if (plugin.FormTypeInputRenderer) pluginFeatures.push('FormInput');
-  if (plugin.FormTypeLabelRenderer) pluginFeatures.push('FormLabel');
-  if (plugin.formTypeInputDefinitions?.length)
-    pluginFeatures.push('formTypeInputDefinitions');
+  if (plugin.FormErrorRenderer) pluginFeatures.push('FormError');
+  if (plugin.FieldRenderer) pluginFeatures.push('FormGroup');
+  if (plugin.FormInputRenderer) pluginFeatures.push('FormInput');
+  if (plugin.FormLabelRenderer) pluginFeatures.push('FormLabel');
+  if (plugin.fieldInputDefinitions?.length)
+    pluginFeatures.push('fieldInputDefinitions');
   if (plugin.validator) pluginFeatures.push('validator');
   if (plugin.formatError) pluginFeatures.push('formatError');
 
@@ -49,7 +49,7 @@ How to fix:
   1. Check that the plugin exports are correctly structured:
      {
        renderKit?: { ... },
-       formTypeInputDefinitions?: [...],
+       fieldInputDefinitions?: [...],
        validator?: ValidatorFactory,
        formatError?: ErrorFormatter
      }

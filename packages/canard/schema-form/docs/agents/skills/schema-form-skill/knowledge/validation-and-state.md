@@ -28,19 +28,21 @@ enum ShowError {
 ```
 
 2. **`FormHandle.showError(visible)`** — imperative override, e.g. force-show all errors on submit.
-3. **`errorVisible` inside a `FormTypeInput`** — the resolved per-field verdict. Render errors behind `errorVisible`, not behind ad-hoc `errors.length > 0` checks; the policy stays centralized.
+3. **`errorVisible` inside a `FieldInput`** — the resolved per-field verdict. Render errors behind `errorVisible`, not behind ad-hoc `errors.length > 0` checks; the policy stays centralized.
 
 ## Custom Error Messages
 
-`errorMessages` on a schema node maps validation keywords to messages; placeholders substitute from `error.details` plus `{value}`:
+`presentation.errorMessages` on a schema node maps validation keywords to messages; placeholders substitute from `error.details` plus `{value}`:
 
 ```typescript
 zipCode: {
   type: 'string',
   pattern: '^[0-9]{5}$',
-  errorMessages: {
-    pattern: 'must be a 5-digit zip code',
-    maxLength: 'up to {limit} characters',   // {limit} comes from error.details
+  presentation: {
+    errorMessages: {
+      pattern: 'must be a 5-digit zip code',
+      maxLength: 'up to {limit} characters',   // {limit} comes from error.details
+    },
   },
 }
 ```

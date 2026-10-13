@@ -14,7 +14,7 @@ import {
   formatConflictingConstValuesError,
   formatCreateDynamicFunctionError,
   formatEmptyEnumIntersectionError,
-  formatFormTypeInputMapError,
+  formatFieldInputMapError,
   formatInfiniteLoopError,
   formatInjectToError,
   formatInvalidRangeError,
@@ -364,14 +364,14 @@ describe('formatErrorMessage', () => {
     });
   });
 
-  describe('formatFormTypeInputMapError', () => {
-    it('FormTypeInputMap 에러 메시지를 포맷해야 합니다', () => {
-      const result = formatFormTypeInputMapError(
+  describe('formatFieldInputMapError', () => {
+    it('FieldInputMap 에러 메시지를 포맷해야 합니다', () => {
+      const result = formatFieldInputMapError(
         '/invalid[pattern',
         new SyntaxError('Invalid regular expression'),
       );
 
-      expect(result).toContain('FormTypeInputMap');
+      expect(result).toContain('FieldInputMap');
       expect(result).toContain('/invalid[pattern');
       expect(result).toContain('How to fix');
     });
@@ -417,7 +417,7 @@ describe('formatErrorMessage', () => {
   describe('formatRegisterPluginError', () => {
     it('플러그인 등록 에러 메시지를 포맷해야 합니다', () => {
       const plugin = {
-        renderKit: { FormTypeInputRenderer: () => null },
+        renderKit: { FormInputRenderer: () => null },
       } as SchemaFormPlugin;
       const error = new Error('Invalid component');
       const result = formatRegisterPluginError(plugin, error);
@@ -536,7 +536,7 @@ describe('formatErrorMessage', () => {
         formatVirtualFieldsNotInPropertiesError('key', { fields: ['f1'] }, [
           'f1',
         ]),
-        formatFormTypeInputMapError('/path', new Error()),
+        formatFieldInputMapError('/path', new Error()),
         formatSchemaValidationFailedError({}, [], { type: 'object' as const }),
         formatRegisterPluginError({} as SchemaFormPlugin, new Error()),
         formatInjectToError({
@@ -820,8 +820,8 @@ describe('formatErrorMessage', () => {
       expect(result).toMatchSnapshot();
     });
 
-    it('formatFormTypeInputMapError 스냅샷', () => {
-      const result = formatFormTypeInputMapError(
+    it('formatFieldInputMapError 스냅샷', () => {
+      const result = formatFieldInputMapError(
         '/users/*/profile/[invalid',
         new SyntaxError(
           'Invalid regular expression: /\\/users\\/.*\\/profile\\/[invalid/: Unterminated character class',
@@ -861,9 +861,9 @@ describe('formatErrorMessage', () => {
 
     it('formatRegisterPluginError 스냅샷', () => {
       const mockPlugin: SchemaFormPlugin = {
-        FormTypeInputRenderer: () => null,
-        FormTypeLabelRenderer: () => null,
-        formTypeInputDefinitions: [
+        FormInputRenderer: () => null,
+        FormLabelRenderer: () => null,
+        fieldInputDefinitions: [
           { test: { type: 'string' }, Component: () => null },
         ],
         validator: {
@@ -875,7 +875,7 @@ describe('formatErrorMessage', () => {
       const result = formatRegisterPluginError(
         mockPlugin,
         new Error(
-          'Plugin conflict: formTypeInputDefinitions[0] conflicts with existing definition',
+          'Plugin conflict: fieldInputDefinitions[0] conflicts with existing definition',
         ),
       );
       expect(result).toMatchSnapshot();

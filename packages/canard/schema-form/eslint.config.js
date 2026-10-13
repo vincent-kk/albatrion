@@ -258,7 +258,7 @@ export default [
       'src/components/**/*.{ts,tsx}',
       'src/providers/**/*.{ts,tsx}',
       'src/hooks/**/*.{ts,tsx}',
-      'src/formTypeDefinitions/**/*.{ts,tsx}',
+      'src/fieldInputs/**/*.{ts,tsx}',
       'src/helpers/**/*.{ts,tsx}',
     ],
     ignores: ['**/__tests__/**'],

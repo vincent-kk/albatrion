@@ -2,7 +2,7 @@
 
 ## Purpose
 
-애플리케이션 수준의 플러그인 시스템과 전역 상수를 관리하는 모듈. `PluginManager` 를 통해 렌더 킷, FormTypeInput 정의, 유효성 검사기를 전역 상태로 유지한다.
+애플리케이션 수준의 플러그인 시스템과 전역 상수를 관리하는 모듈. `PluginManager` 를 통해 렌더 킷, FieldInput 정의, 유효성 검사기를 전역 상태로 유지한다.
 
 ## Conventions
 
@@ -23,7 +23,7 @@
 
 - `PluginManager` 에 새로운 static 필드 추가 (전역 상태 증가)
 - 비트 플래그 값 재배치 또는 기존 플래그 삭제 (노드 상태 비트마스크에 영향)
-- 플러그인 머지 전략 변경 (render components: 마지막 우선, formTypeInputDefinitions: 선입 우선)
+- 플러그인 머지 전략 변경 (render components: 마지막 우선, fieldInputDefinitions: 선입 우선)
 
 ### Never do
 

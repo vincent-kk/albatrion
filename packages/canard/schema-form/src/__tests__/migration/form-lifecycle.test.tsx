@@ -4,9 +4,9 @@ import { act, render } from '@testing-library/react';
 import { afterEach, expect, it, vi } from 'vitest';
 
 import {
+  type FieldInputProps,
   Form,
   type FormHandle,
-  type FormTypeInputProps,
   SchemaNodeState,
   SetValueOption,
   ValidationMode,
@@ -226,7 +226,7 @@ it('LANDING-046 field render failures are isolated and reported with componentSt
   form = await renderForm({
     type: 'object',
     properties: {
-      broken: { type: 'string', presentation: { FormTypeInput: Broken } },
+      broken: { type: 'string', presentation: { FieldInput: Broken } },
       sibling: { type: 'string', default: 'kept' },
     },
   });
@@ -245,7 +245,7 @@ it('LANDING-046 field render failures are isolated and reported with componentSt
 });
 
 it('LANDING-140 input Merge retains its own DOM instance', async () => {
-  const Input = ({ path, value, onChange }: FormTypeInputProps) => (
+  const Input = ({ path, value, onChange }: FieldInputProps) => (
     <input
       id={path}
       defaultValue={value ?? ''}
@@ -255,7 +255,7 @@ it('LANDING-140 input Merge retains its own DOM instance', async () => {
   form = await renderForm(
     { type: 'string' },
     {
-      formTypeInputDefinitions: [{ test: () => true, Component: Input }],
+      fieldInputDefinitions: [{ test: () => true, Component: Input }],
     },
   );
   const field = form.field('')!;

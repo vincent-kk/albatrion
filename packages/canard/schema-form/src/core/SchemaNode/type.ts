@@ -232,7 +232,7 @@ export type UnionNode<
     });
 
 /** Union input sees the mismatch lamp without accepting a mismatched write. */
-export type FormTypeInputProps<
+export type FieldInputProps<
   Types extends UnionSchemaType = UnionSchemaType,
   Nullable extends boolean = boolean,
 > =

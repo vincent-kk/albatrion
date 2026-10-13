@@ -1,0 +1,37 @@
+# fieldInputs
+
+## Requirements
+
+사용자나 플러그인 입력 정의가 없을 때 스키마에 맞는 기본 입력을 선택합니다.
+
+## API Contracts
+
+- 기본 배열 행은 한 번의 인덱스 `for`에서 JSX 목록을 만듭니다. key·순서·memo 경계·삭제 인덱스를 유지하고 값만 바뀔 때 목록을 재생성하지 않습니다. 시간 O(행 수), 결과 메모리 O(행 수)는 같으며 map callback 호출 비용만 제거합니다(87라운드 원칙 3).
+
+- 기본 배열 입력은 값 전달과 목록 표시를 별도 memo 경계로 나눕니다. node·자식 컴포넌트 배열 identity·자식 수·readOnly·disabled·jsonSchema·style이 같으면 값만 바뀐 부모 렌더에서 행과 버튼을 재생성하지 않습니다. 구조·제어·스키마·스타일 변경과 각 자식의 독립 구독은 반영합니다. 잎 갱신의 목록 작업은 O(N)에서 O(1) 속성 비교로 줄고 배열 입력당 React memo fiber와 직전 속성 객체를 보유합니다(86C-02 iv).
+
+- 기본 배열의 Button은 내부 memo 경계이며 삭제 버튼은 현재 인덱스와 배열 전체가 공유하는 안정된 클릭 처리기를 받습니다. 인덱스는 memo 비교에서 이동한 행을 갱신하고, 처리기는 클릭한 버튼의 부모 행이 목록의 직접 자식 중 몇 번째인지 읽어 현재 항목을 삭제합니다. 행은 배열 순서대로 직접 자식이며 추가 버튼의 label은 행 다음에 있으므로 기존 DOM에 인덱스 속성을 더하지 않습니다. 행별 감싸개 컴포넌트·hook·클로저를 만들지 않습니다. push는 기존 삭제 버튼과 추가 버튼의 본문을 실행하지 않고 새 삭제 버튼만 한 번 실행합니다. DOM·문구·순서·disabled·readOnly·maxItems 동작과 공개 표면을 유지합니다. 목록 생성과 속성 비교, 삭제 클릭의 위치 조회는 O(N)입니다(F-D′).
+
+- 정의 배열의 앞쪽이 먼저 매칭되며 구체적인 형식 조건이 일반 타입 조건보다 우선합니다.
+- 매칭 조건은 입력 힌트만 판정하고 실제 입력은 공통 FieldInputProps로 값과 변경을 전달합니다.
+- 기본 정의는 열한 개이며 `{ type: 'union' }` 정의가 `FieldInputString`을 감싸 `FieldInputStringDefinition` 바로 앞에서 매칭됩니다. union 전용 우선순위 층을 더하지 않고 인라인·맵·Form·Provider·플러그인·기본 정의의 선택 순서를 유지합니다(REACT-033).
+- 기본 union 입력은 `schemaType`과 유효 `jsonSchema.type`의 교집합을 유효 목록으로 삼고, 같은 내부 `interpret`를 글 입력·흐림·목록 변경 시 적용합니다. 결과의 JSON 종류가 목록에 있는 경우에만 보내며 입력기 조합 중에는 보내지 않습니다. 빈 칸은 `undefined`를 보내고, 변환할 수 없는 글은 입력이 초안으로 들다가 흐림에 노드 값 표시로 되돌립니다(REACT-033, LANDING-186).
+- union의 `undefined`·nullable `null`은 빈 칸이고 다른 원시 값은 `String(value)`로 표시합니다. 객체·배열은 값 참조로 메모한 읽기 전용 표시이며 문자열화 실패는 무효 표지로 나타냅니다. `typeMismatch`가 참이면 `aria-invalid`와 무효 표지를 붙이며, 기본 입력은 객체·배열을 생성하거나 편집하지 않습니다(REACT-033).
+- 날짜 형식 입력은 `presentation.FieldInputProps`의 `minimum`·`maximum`을 입력 props로 받아 `min`·`max` 속성에 씁니다. `options`는 닫힌 목록이라 이 키를 두면 청사진 오류 `UNKNOWN_GROUP_KEY`입니다(CONTROLS-081, CONTROLS-051).
+- 문자열 enum 입력은 null·undefined가 아닌 집합 밖 기본값을 맨 앞의 비활성 옵션으로 표시하여 노드 값과 화면을 일치시킵니다.
+- 날짜 형식 입력은 마운트 시 기본값이 해당 HTML 입력의 값 문법에 맞지 않으면 텍스트 입력으로 원문을 표시하며, 빈 값은 날짜 형식 입력을 유지합니다.
+- 수 입력은 빈 칸을 `undefined`로 전달합니다. 브라우저 `badInput`이면 노드에 쓰지 않고 입력이 초안을 보유하며, 흐림에는 마지막 노드 값으로 표시를 되돌립니다. 체크박스는 불리언 아닌 값을 미정 상태(`indeterminate`)로 표시합니다. 치다 만 글과 입력기 조합은 노드가 아닌 입력의 초안입니다(REACT-027).
+
+## Acceptance Criteria
+
+### form-type-definitions-contract — 관찰 가능한 동작
+
+- 특수 형식에 맞는 입력이 일반 문자열·숫자 입력에 가려지지 않습니다.
+- 100개 항목의 push는 Button 본문을 한 번만 실행하며 기존 삭제 버튼을 다시 렌더하지 않습니다. 가운데 항목 삭제 후 이동한 인덱스에서 다시 삭제해도 올바른 값이 제거됩니다. 삭제 버튼의 클릭 처리기 identity는 행 전체와 push 전후에 동일합니다(F-D′).
+- 조건 판정은 부수 효과를 만들거나 외부 UI 라이브러리 등록을 수행하지 않습니다.
+- union은 유효 목록으로 해석한 허용 값만 보내고 조합 중에는 쓰지 않습니다. 수 입력의 빈 칸·badInput·흐림 복귀와 불리언 아닌 체크박스의 미정 표시가 노드 값과 초안을 구별합니다(REACT-027·033).
+- 날짜 형식 입력은 `presentation.FieldInputProps.minimum`·`maximum`을 `min`·`max` 속성으로 쓰고, `options.minimum`은 청사진 오류 `UNKNOWN_GROUP_KEY`로 폼을 막습니다(CONTROLS-081·051).
+
+## Last Updated
+
+계약 기준: REACT-027·033, LANDING-186, F-D′, CONTROLS-051·081.

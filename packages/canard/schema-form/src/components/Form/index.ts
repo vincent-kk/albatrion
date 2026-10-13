@@ -104,7 +104,7 @@ export const Form = Object.assign(BaseFrom, {
   /**
    * Renders a complete form field group with label, input, and error.
    *
-   * Combines FormTypeInput and FormTypeGroupRenderer for a complete field experience
+   * Combines FieldInput and FieldRenderer for a complete field experience
    * with customizable wrapper and override properties.
    *
    * **For comprehensive documentation and examples, see:** {@link FormGroup}

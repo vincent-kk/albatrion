@@ -10,7 +10,7 @@ import { FormError } from '../src/components/FormError';
 import { FormGroup } from '../src/components/FormGroup';
 import { FormInput } from '../src/components/FormInput';
 import { FormLabel } from '../src/components/FormLabel';
-import { formTypeInputDefinitions } from '../src/formTypeInputs';
+import { fieldInputDefinitions } from '../src/fieldInputs';
 
 registerPlugin(ajv8Plugin);
 
@@ -76,8 +76,10 @@ const bigSchema = {
               computed: {
                 active: '../age >= 18',
               },
-              FormTypeInputProps: {
-                placeholder: 'Select gender',
+              presentation: {
+                FieldInputProps: {
+                  placeholder: 'Select gender',
+                },
               },
             },
             preferences: {
@@ -87,20 +89,26 @@ const bigSchema = {
                   type: 'string',
                   enum: ['light', 'dark'],
                   default: 'light',
-                  formType: 'switch',
+                  presentation: {
+                    inputType: 'switch',
+                  },
                 },
                 notifications: {
                   type: 'object',
                   properties: {
                     email: {
                       type: 'boolean',
-                      formType: 'switch',
                       default: true,
+                      presentation: {
+                        inputType: 'switch',
+                      },
                     },
                     sms: {
                       type: 'boolean',
-                      formType: 'switch',
                       default: false,
+                      presentation: {
+                        inputType: 'switch',
+                      },
                     },
                   },
                   required: ['email', 'sms'],
@@ -137,7 +145,9 @@ const bigSchema = {
             '2FA': {
               type: 'boolean',
               default: true,
-              formType: 'switch',
+              presentation: {
+                inputType: 'switch',
+              },
             },
             backupCodes: {
               type: 'array',
@@ -160,8 +170,8 @@ const bigSchema = {
 export const FormErrorComponent = () => {
   return (
     <FormProvider
-      FormTypeErrorRenderer={FormError}
-      formTypeInputDefinitions={formTypeInputDefinitions}
+      FormErrorRenderer={FormError}
+      fieldInputDefinitions={fieldInputDefinitions}
     >
       <Form jsonSchema={jsonSchema} showError>
         <Form.Error path="username" />
@@ -173,8 +183,8 @@ export const FormErrorComponent = () => {
 export const FormInputComponent = () => {
   return (
     <FormProvider
-      FormTypeInputRenderer={FormInput}
-      formTypeInputDefinitions={formTypeInputDefinitions}
+      FormInputRenderer={FormInput}
+      fieldInputDefinitions={fieldInputDefinitions}
     >
       <Form jsonSchema={jsonSchema} showError>
         <Form.Input path="username" />
@@ -186,8 +196,8 @@ export const FormInputComponent = () => {
 export const FormLabelComponent = () => {
   return (
     <FormProvider
-      FormTypeLabelRenderer={FormLabel}
-      formTypeInputDefinitions={formTypeInputDefinitions}
+      FormLabelRenderer={FormLabel}
+      fieldInputDefinitions={fieldInputDefinitions}
     >
       <Form jsonSchema={jsonSchema} showError>
         <Form.Label path="username" />
@@ -199,8 +209,8 @@ export const FormLabelComponent = () => {
 export const FormGroupComponent = () => {
   return (
     <FormProvider
-      FormTypeGroupRenderer={FormGroup}
-      formTypeInputDefinitions={formTypeInputDefinitions}
+      FieldRenderer={FormGroup}
+      fieldInputDefinitions={fieldInputDefinitions}
     >
       <Form jsonSchema={bigSchema} showError context={{}} />
     </FormProvider>

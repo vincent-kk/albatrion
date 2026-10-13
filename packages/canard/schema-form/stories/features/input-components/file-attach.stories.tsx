@@ -19,13 +19,13 @@ type Story = StoryObj<typeof FeatureStory>;
 const scenario = findScenario(inputComponentsFeatureScenarios, 'input-components.file-attach');
 const probe = createHandleProbe();
 const fileDefinitions = [
-  { test: { formType: 'input-components.file' }, Component: SingleFileInput },
-  { test: { formType: 'input-components.files' }, Component: MultipleFileInput },
+  { test: { inputType: 'input-components.file' }, Component: SingleFileInput },
+  { test: { inputType: 'input-components.files' }, Component: MultipleFileInput },
 ];
 
 /** Shared scenario `input-components.file-attach`, driven through fileAttachStages. */
 export const AttachUnmountAndReset: Story = {
-  args: { scenario, formProps: { formTypeInputDefinitions: fileDefinitions }, onHandle: probe.onHandle },
+  args: { scenario, formProps: { fieldInputDefinitions: fileDefinitions }, onHandle: probe.onHandle },
   parameters: { docs: { description: { story: scenario.description } } },
   async play({ args, canvasElement, step }) {
     if (shouldSkipUnfocusedPlay()) return skipPlay(step, unfocusedPlayReason);

@@ -23,12 +23,12 @@
 
 - `readOnly`·`disabled`는 렌더 계층에서 노드의 로컬 잠금과 결합하는 폼 전체 잠금이며 core의 명령형 쓰기를 막지 않습니다. `unsetOnInactive`는 노드별 나감 정책이 없는 경우의 폼 기본값이고, `disableAutomaticWrites`는 자동 쓰기의 폼 기본 억제값입니다(LANDING-067, WRITE-015·031–040).
 - `onError`는 폼 인스턴스의 오류 기록을 받고 `onDiagnosticsChange`는 준비 뒤 루트 진단 변경을 받습니다. `validatorFactory`의 공개 형은 필수 `compile`·`compileGuard`를 가진 `{ compile, compileGuard }` 객체이며 선택 순서는 Form 속성 > FormProvider > 플러그인입니다. 선택 검증기 참조가 바뀌면 트리를 재생성합니다(ERROR-026, VALIDATE-044, 32C-01).
-- 렌더러 속성은 `FormTypeGroupRenderer`·`FormTypeLabelRenderer`·`FormTypeInputRenderer`·`FormTypeErrorRenderer`의 넷이며 플러그인 키와 같은 이름을 사용합니다(LANDING-035·067).
+- 렌더러 속성은 `FieldRenderer`·`FormLabelRenderer`·`FormInputRenderer`·`FormErrorRenderer`의 넷이며 플러그인 키와 같은 이름을 사용합니다(LANDING-035·067).
 - 작성 `jsonSchema`는 clone하지 않아 청사진·가드 캐시의 루트 identity를 유지합니다. `defaultValue`는 clone하여 로드하며, 스키마와 기본값은 마운트·reset 계약에 따라 읽습니다(LANDING-095, WRITE-043·044).
 
 ### 오류 경계
 
-- 폼 바깥 감싸개가 인스턴스 보고기를 소유하고 문맥으로 전달합니다. 루트 경계는 공개 `onError` 속성으로 보고하며, 필드 경계는 컴포넌트를 해석·소유하는 자리에서 한 번 둡니다. 렌더러는 `SchemaNodeProxy`가, 입력은 사설 어댑터 `withFormTypeInputErrorBoundary`가 렌더 때 `useBoundaryReporter(path)`로 보고기를 읽고 `ErrorBoundary`를 직접 렌더합니다. 지연 필드의 Placeholder만 `VirtualizationManager`가 form당 한 번 `withErrorBoundary`로 감싸고 셋째 인자 보고 훅으로 경로 문맥의 보고기를 읽습니다(68C-08, ERROR-112–117, 121C-01).
+- 폼 바깥 감싸개가 인스턴스 보고기를 소유하고 문맥으로 전달합니다. 루트 경계는 공개 `onError` 속성으로 보고하며, 필드 경계는 컴포넌트를 해석·소유하는 자리에서 한 번 둡니다. 렌더러는 `SchemaNodeProxy`가, 입력은 사설 어댑터 `withFieldInputErrorBoundary`가 렌더 때 `useBoundaryReporter(path)`로 보고기를 읽고 `ErrorBoundary`를 직접 렌더합니다. 지연 필드의 Placeholder만 `VirtualizationManager`가 form당 한 번 `withErrorBoundary`로 감싸고 셋째 인자 보고 훅으로 경로 문맥의 보고기를 읽습니다(68C-08, ERROR-112–117, 121C-01).
 - 루트·필드 렌더 오류는 fallback으로 가두고 `RENDER_FAILED` 기록과 `componentStack`을 보고하며 다시 던지지 않습니다. 보고기는 루트 fallback 이후에도 살아 있고 전달 중 표지·중복 억제·경고 집합을 소유하며, 경계는 보고기를 호출합니다. 청사진 오류는 트리 생성 자리에서 포착하여 대체 화면과 커밋 뒤 보고로 연결합니다(ERROR-110–117, LANDING-067·075·095).
 
 ### `FormHandle`

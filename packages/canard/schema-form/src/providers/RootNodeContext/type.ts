@@ -41,6 +41,18 @@ export interface RootLoad {
   reporter?: FormErrorService;
 }
 
+/** Provider-owned load and reports retained across root replacements. */
+export interface RootLoadStore {
+  /** Current load exposed to the Form handle and React subscribers. */
+  load: RootLoad;
+  /** Last aggregate delivered to the consumer, absent before the first report. */
+  lastReportedErrors?: SchemaNode['globalErrors'];
+  /** React subscribers notified when reset replaces the current load. */
+  listeners: Set<() => void>;
+  /** Release the active root's validation and diagnostics subscription. */
+  unsubscribe: () => void;
+}
+
 /** Bridge exposing current root and reset to the Form handle. */
 export interface RootBinding {
   /** Root of the committed load; undefined while no root could be built. */

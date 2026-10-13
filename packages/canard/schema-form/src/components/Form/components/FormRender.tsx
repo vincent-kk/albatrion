@@ -13,14 +13,14 @@ import { SchemaNodeProxy } from '@/schema-form/components/SchemaNode';
 import type {
   AllowedValue,
   ChildNodeComponentProps,
-  FormTypeInputProps,
-  FormTypeRendererProps,
+  FieldInputProps,
+  FieldRendererProps,
 } from '@/schema-form/types';
 
 export type FormRenderProps<Value extends AllowedValue> = {
   path?: string;
-  FormTypeInput?: ComponentType<FormTypeInputProps<Value>>;
-  children: Fn<[props: FormTypeRendererProps], ReactNode>;
+  FieldInput?: ComponentType<FieldInputProps<Value>>;
+  children: Fn<[props: FieldRendererProps], ReactNode>;
   Wrapper?: ComponentType<PropsWithChildren<Dictionary>>;
 } & ChildNodeComponentProps;
 
@@ -115,23 +115,23 @@ export type FormRenderProps<Value extends AllowedValue> = {
 export const FormRender = memo(
   ({
     path,
-    FormTypeInput,
+    FieldInput,
     Wrapper,
     children,
     ...restProps
   }: FormRenderProps<AllowedValue>) => {
     const overridePropsRef = useReference(restProps);
     const constant = useConstant({
-      FormTypeInput: FormTypeInput as ComponentType<FormTypeInputProps>,
-      FormTypeGroupRenderer: children,
+      FieldInput: FieldInput as ComponentType<FieldInputProps>,
+      FieldRenderer: children,
       Wrapper,
     });
     return (
       <SchemaNodeProxy
         path={path}
         overridePropsRef={overridePropsRef}
-        FormTypeInput={constant.FormTypeInput}
-        FormTypeGroupRenderer={constant.FormTypeGroupRenderer}
+        FieldInput={constant.FieldInput}
+        FieldRenderer={constant.FieldRenderer}
         Wrapper={constant.Wrapper}
       />
     );

@@ -9,7 +9,7 @@ const pluginSchema = {
     note: { type: 'string' },
   },
   if: { properties: { kind: { const: 'upload' } }, required: ['kind'] },
-  then: { properties: { attachment: { type: 'array', items: { type: 'string' }, presentation: { formType: 'composite.files' } } } },
+  then: { properties: { attachment: { type: 'array', items: { type: 'string' }, presentation: { inputType: 'composite.files' } } } },
 };
 
 /** Files the consumer attaches to /attachment, and the value that makes /broken's input throw. */

@@ -5,8 +5,8 @@ import { expect, vi } from 'vitest';
 import type { SchemaNode } from '@/schema-form/core';
 import {
   ExternalFormContextProvider,
-  FormTypeInputsContextProvider,
-  FormTypeRendererContextProvider,
+  FieldInputsContextProvider,
+  FieldRendererContextProvider,
   InputControlContextProvider,
   WorkspaceContextProvider,
 } from '@/schema-form/providers';
@@ -14,25 +14,25 @@ import { RootNodeContext } from '@/schema-form/providers/RootNodeContext/RootNod
 import type {
   AttachedFilesMap,
   ChildNodeComponentProps,
-  FormTypeInputDefinition,
-  FormTypeInputMap,
-  FormTypeRendererProps,
-  OverridableFormTypeInputProps,
+  FieldInputDefinition,
+  FieldInputMap,
+  FieldRendererProps,
+  OverridableFieldInputProps,
 } from '@/schema-form/types';
 
 import {
-  MockFormTypeInput,
-  MockFormTypeRenderer,
+  MockFieldInput,
+  MockFieldRenderer,
 } from './SchemaNodePropsFlow.fixtures.js';
 
 /**
  * Options for configuring the test wrapper
  */
 export interface TestWrapperOptions {
-  /** FormTypeInput definitions for custom input types */
-  formTypeInputDefinitions?: FormTypeInputDefinition[];
-  /** Path-based FormTypeInput mapping */
-  formTypeInputMap?: FormTypeInputMap;
+  /** FieldInput definitions for custom input types */
+  fieldInputDefinitions?: FieldInputDefinition[];
+  /** Path-based FieldInput mapping */
+  fieldInputMap?: FieldInputMap;
   /** Global read-only state */
   readOnly?: boolean;
   /** Global disabled state */
@@ -41,8 +41,8 @@ export interface TestWrapperOptions {
   context?: Record<string, any>;
   /** Pre-populated attached files */
   attachedFilesMap?: AttachedFilesMap;
-  /** Custom FormTypeRenderer */
-  FormTypeGroupRenderer?: React.ComponentType<FormTypeRendererProps>;
+  /** Custom FieldRenderer */
+  FieldRenderer?: React.ComponentType<FieldRendererProps>;
   /** Show error configuration */
   showError?: boolean;
   /** Root node for RootNodeContext - provides mock node with find method */
@@ -90,38 +90,37 @@ const createMockRootNode = (): SchemaNode => {
  */
 export const createTestWrapper = (options: TestWrapperOptions = {}) => {
   const {
-    formTypeInputDefinitions,
-    formTypeInputMap,
+    fieldInputDefinitions,
+    fieldInputMap,
     readOnly = false,
     disabled = false,
     context = {},
     attachedFilesMap = new Map(),
-    FormTypeGroupRenderer,
+    FieldRenderer,
     showError = true,
     rootNode = createMockRootNode(),
   } = options;
 
-  // Default FormTypeInput definition if none provided
-  const defaultDefinitions: FormTypeInputDefinition[] =
-    formTypeInputDefinitions ?? [
-      {
-        test: () => true, // Match all types
-        Component: MockFormTypeInput as any,
-      },
-    ];
+  // Default FieldInput definition if none provided
+  const defaultDefinitions: FieldInputDefinition[] = fieldInputDefinitions ?? [
+    {
+      test: () => true, // Match all types
+      Component: MockFieldInput as any,
+    },
+  ];
 
   return ({ children }: PropsWithChildren) => (
     <ExternalFormContextProvider
-      formTypeInputDefinitions={defaultDefinitions}
-      FormTypeGroupRenderer={MockFormTypeRenderer as any}
+      fieldInputDefinitions={defaultDefinitions}
+      FieldRenderer={MockFieldRenderer as any}
       showError={showError}
     >
-      <FormTypeInputsContextProvider
-        formTypeInputDefinitions={defaultDefinitions}
-        formTypeInputMap={formTypeInputMap}
+      <FieldInputsContextProvider
+        fieldInputDefinitions={defaultDefinitions}
+        fieldInputMap={fieldInputMap}
       >
-        <FormTypeRendererContextProvider
-          FormTypeGroupRenderer={FormTypeGroupRenderer as any}
+        <FieldRendererContextProvider
+          FieldRenderer={FieldRenderer as any}
           showError={showError}
         >
           <InputControlContextProvider readOnly={readOnly} disabled={disabled}>
@@ -134,8 +133,8 @@ export const createTestWrapper = (options: TestWrapperOptions = {}) => {
               </RootNodeContext.Provider>
             </WorkspaceContextProvider>
           </InputControlContextProvider>
-        </FormTypeRendererContextProvider>
-      </FormTypeInputsContextProvider>
+        </FieldRendererContextProvider>
+      </FieldInputsContextProvider>
     </ExternalFormContextProvider>
   );
 };
@@ -150,11 +149,11 @@ export const createMinimalWrapper = (
   return ({ children }: PropsWithChildren) => (
     <WorkspaceContextProvider attachedFilesMap={attachedFilesMap} context={{}}>
       <InputControlContextProvider>
-        <FormTypeInputsContextProvider>
-          <FormTypeRendererContextProvider showError={true}>
+        <FieldInputsContextProvider>
+          <FieldRendererContextProvider showError={true}>
             {children}
-          </FormTypeRendererContextProvider>
-        </FormTypeInputsContextProvider>
+          </FieldRendererContextProvider>
+        </FieldInputsContextProvider>
       </InputControlContextProvider>
     </WorkspaceContextProvider>
   );
@@ -222,10 +221,8 @@ export const createOnFileAttachRef = (
 /**
  * Creates a ref for override props with tracking
  */
-export const createOverridePropsRef = (
-  props?: OverridableFormTypeInputProps,
-) => {
-  const ref = { current: props } as RefObject<OverridableFormTypeInputProps>;
+export const createOverridePropsRef = (props?: OverridableFieldInputProps) => {
+  const ref = { current: props } as RefObject<OverridableFieldInputProps>;
   return ref;
 };
 
@@ -299,23 +296,23 @@ export const expectOnChangeCalledWith = (
 };
 
 /**
- * Helper to create FormTypeInput definition for specific type
+ * Helper to create FieldInput definition for specific type
  */
-export const createFormTypeDefinition = (
+export const createFieldInputDefinition = (
   type: string,
   Component: React.ComponentType<any>,
-): FormTypeInputDefinition => ({
+): FieldInputDefinition => ({
   test: { type: type as any },
   Component,
 });
 
 /**
- * Helper to create FormTypeInput definition with custom test function
+ * Helper to create FieldInput definition with custom test function
  */
-export const createCustomFormTypeDefinition = (
+export const createCustomFieldInputDefinition = (
   testFn: (hint: any) => boolean,
   Component: React.ComponentType<any>,
-): FormTypeInputDefinition => ({
+): FieldInputDefinition => ({
   test: testFn,
   Component,
 });

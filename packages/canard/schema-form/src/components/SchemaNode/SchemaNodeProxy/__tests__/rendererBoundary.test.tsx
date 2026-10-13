@@ -4,10 +4,7 @@ import { act, cleanup, render } from '@testing-library/react';
 import { afterEach, expect, it, vi } from 'vitest';
 
 import { Form, type FormHandle } from '@/schema-form/components/Form';
-import type {
-  FormTypeInputProps,
-  FormTypeRendererProps,
-} from '@/schema-form/types';
+import type { FieldInputProps, FieldRendererProps } from '@/schema-form/types';
 
 afterEach(() => {
   cleanup();
@@ -53,7 +50,7 @@ it.each(['renderer', 'formatError'] as const)(
     vi.stubGlobal('reportError', hostError);
     const error = new Error(source);
     const onError = vi.fn();
-    const Renderer = ({ path, Input }: FormTypeRendererProps) => {
+    const Renderer = ({ path, Input }: FieldRendererProps) => {
       if (source === 'renderer' && path === '/bad') throw error;
       return <Input />;
     };
@@ -63,7 +60,7 @@ it.each(['renderer', 'formatError'] as const)(
         onError={onError}
         showError
         errors={[{ dataPath: '/bad', keyword: 'external', message: 'bad' }]}
-        FormTypeGroupRenderer={Renderer}
+        FieldRenderer={Renderer}
         formatError={(_issue, node) => {
           if (source === 'formatError' && node.path === '/bad') throw error;
           return null;
@@ -104,7 +101,7 @@ it.each(['renderer', 'formatError'] as const)(
       .mockImplementation(() => {});
     const consoleWarn = vi.spyOn(console, 'warn').mockImplementation(() => {});
     const error = new Error(source);
-    const Renderer = ({ path, Input }: FormTypeRendererProps) => {
+    const Renderer = ({ path, Input }: FieldRendererProps) => {
       if (source === 'renderer' && path === '/bad') throw error;
       return <Input />;
     };
@@ -113,7 +110,7 @@ it.each(['renderer', 'formatError'] as const)(
         jsonSchema={schema}
         showError
         errors={[{ dataPath: '/bad', keyword: 'external', message: 'bad' }]}
-        FormTypeGroupRenderer={Renderer}
+        FieldRenderer={Renderer}
         formatError={(_issue, node) => {
           if (source === 'formatError' && node.path === '/bad') throw error;
           return null;
@@ -142,7 +139,7 @@ it.each(['renderer', 'formatError'] as const)(
 it('112C-01 EVENT-039 keeps all boundaries mounted while Refresh re-keys only its input', () => {
   const ref = createRef<FormHandle>();
   const mounts: Record<string, number> = {};
-  const Input = ({ path, defaultValue }: FormTypeInputProps) => {
+  const Input = ({ path, defaultValue }: FieldInputProps) => {
     useState(() => {
       mounts[path] = (mounts[path] ?? 0) + 1;
     });
@@ -154,9 +151,7 @@ it('112C-01 EVENT-039 keeps all boundaries mounted while Refresh re-keys only it
       jsonSchema={schema}
       onError={() => {}}
       defaultValue={{ bad: 'committed', good: 'peer' }}
-      formTypeInputDefinitions={[
-        { test: { type: 'string' }, Component: Input },
-      ]}
+      fieldInputDefinitions={[{ test: { type: 'string' }, Component: Input }]}
     />,
   );
   const initial = view.container.querySelector(
@@ -186,7 +181,7 @@ it.each(['renderer', 'formatError'] as const)(
     const ref = createRef<FormHandle>();
     const onError = vi.fn();
     let fail = true;
-    const Renderer = ({ path, Input }: FormTypeRendererProps) => {
+    const Renderer = ({ path, Input }: FieldRendererProps) => {
       if (source === 'renderer' && path === '/bad' && fail)
         throw new Error(source);
       return <Input />;
@@ -198,7 +193,7 @@ it.each(['renderer', 'formatError'] as const)(
         jsonSchema={schema}
         showError
         errors={[{ dataPath: '/bad', keyword: 'external', message: 'bad' }]}
-        FormTypeGroupRenderer={Renderer}
+        FieldRenderer={Renderer}
         formatError={(_issue, node) => {
           if (source === 'formatError' && node.path === '/bad' && fail)
             throw new Error(source);

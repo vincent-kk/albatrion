@@ -4,7 +4,7 @@ import { describe, expect, it, vi } from 'vitest';
 import { deriveScenarios, playScenario } from '@aileron/schema-form-scenarios';
 
 import {
-  type FormTypeInputProps,
+  type FieldInputProps,
   type JSONSchema,
   SchemaNodeEventType,
 } from '@/schema-form';
@@ -52,7 +52,7 @@ describe('LANDING-146 / LANDING-166 — committed reads and observer deliveries'
     const observed: unknown[] = [];
     let readParent: (() => unknown) | undefined;
     const parentReads: unknown[] = [];
-    const Watch = ({ path, watchValues }: FormTypeInputProps) => {
+    const Watch = ({ path, watchValues }: FieldInputProps) => {
       observed.push(watchValues);
       return <output id={path}>{JSON.stringify(watchValues)}</output>;
     };
@@ -76,7 +76,7 @@ describe('LANDING-146 / LANDING-166 — committed reads and observer deliveries'
           observer: {
             type: 'string',
             controls: { watch: ['../target'] },
-            presentation: { FormTypeInput: Watch },
+            presentation: { FieldInput: Watch },
           },
         },
       },
