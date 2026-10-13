@@ -8,3 +8,7 @@
 - 결정:
   - 【추론】 입력 설정의 자리는 원장이 정한 대로 돌아갔고 옛 자리는 청사진 오류로 고정됐으므로, 이주 미완으로 쓸 수 없던 일곱(실제로는 열일곱) 기능이 돌아왔다.
 - 근거: fairy07의 PR 본문·보고; 직접 검증 결과; 216C-04; 221C-01.
+
+## 덧붙임 (2026-10-13, ④ 검증 파동 고침 push)
+
+fixy07 ④ push: origin/feat/schema-form-07b-1 head ab1535d12(12aa201d9 위 fast-forward; 세션 ID·co-author 0). 내용: 깊이 같은 검증 결과는 직전 배열로 배정해 배정이 같은 노드의 errors·globalErrors·외부와 합친 errors를 같은 참조로 두고 UpdateGlobalError를 보내지 않음; 배정이 바뀐 노드(분기 전환, 항목 삭제 뒤 이동)만 UpdateError; 0.16.0의 낡은 노드 결함도 함께 고쳐짐. verifier 1차 FAIL(DETAIL 계약 문장, 남은 결함 문구 네 곳, 합친 errors 캐시 전체 비움) 반영 후 PASS(캐시 수정에는 이전 줄에서 실패하는 시험 추가). G1 고치기 전 실패(core 8 중 4, e2e 5 중 4), G2 typecheck·lint 0, G3 전체 4,116 통과·0 실패·todo 1(dot 종료 코드 0), G4 onValidate 누적 [2,2,2,2,3,3] = 0.16.0. 비차단: json reporter 실행의 종료 코드 1 → 대기열 24. 다음: storybook 프로젝트 기준 수치 → ⑤ codex.
