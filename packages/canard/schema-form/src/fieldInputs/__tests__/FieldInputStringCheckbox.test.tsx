@@ -21,6 +21,24 @@ it('selects checkbox inputs from presentation.inputType for a string enum array'
   expect(inputs.map((input) => input.checked)).toEqual([false, true]);
 });
 
+it('gives each option a unique id that its label points to', () => {
+  render(
+    <Form
+      jsonSchema={{
+        type: 'array',
+        items: { type: 'string', enum: ['S', 'M', 'L'] },
+        presentation: { inputType: 'checkbox' },
+      }}
+    />,
+  );
+  const inputs = screen.getAllByRole<HTMLInputElement>('checkbox');
+  const ids = inputs.map((input) => input.id);
+  expect(new Set(ids).size).toBe(3);
+  expect(
+    inputs.map((input) => input.closest('label')?.htmlFor),
+  ).toEqual(ids);
+});
+
 it('does not select checkbox inputs from a top-level inputType alone', () => {
   render(
     <Form

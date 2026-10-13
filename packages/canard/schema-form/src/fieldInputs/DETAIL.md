@@ -19,6 +19,7 @@
 - union의 `undefined`·nullable `null`은 빈 칸이고 다른 원시 값은 `String(value)`로 표시합니다. 객체·배열은 값 참조로 메모한 읽기 전용 표시이며 문자열화 실패는 무효 표지로 나타냅니다. `typeMismatch`가 참이면 `aria-invalid`와 무효 표지를 붙이며, 기본 입력은 객체·배열을 생성하거나 편집하지 않습니다(REACT-033).
 - 날짜 형식 입력은 `presentation.FieldInputProps`의 `minimum`·`maximum`을 입력 props로 받아 `min`·`max` 속성에 씁니다. `options`는 닫힌 목록이라 이 키를 두면 청사진 오류 `UNKNOWN_GROUP_KEY`입니다(CONTROLS-081, CONTROLS-051).
 - 문자열 enum 입력은 null·undefined가 아닌 집합 밖 기본값을 맨 앞의 비활성 옵션으로 표시하여 노드 값과 화면을 일치시킵니다.
+- 문자열 checkbox 입력은 선택지마다 `${path}-${index}` 형태의 고유 id를 주고, 그 선택지를 감싼 label의 `htmlFor`를 같은 id로 맞춥니다. 색인을 쓰는 까닭은 enum 값에 공백이 올 수 있어서입니다.
 - 날짜 형식 입력은 마운트 시 기본값이 해당 HTML 입력의 값 문법에 맞지 않으면 텍스트 입력으로 원문을 표시하며, 빈 값은 날짜 형식 입력을 유지합니다.
 - 수 입력은 빈 칸을 `undefined`로 전달합니다. 브라우저 `badInput`이면 노드에 쓰지 않고 입력이 초안을 보유하며, 흐림에는 마지막 노드 값으로 표시를 되돌립니다. 체크박스는 불리언 아닌 값을 미정 상태(`indeterminate`)로 표시합니다. 치다 만 글과 입력기 조합은 노드가 아닌 입력의 초안입니다(REACT-027).
 
@@ -31,7 +32,8 @@
 - 조건 판정은 부수 효과를 만들거나 외부 UI 라이브러리 등록을 수행하지 않습니다.
 - union은 유효 목록으로 해석한 허용 값만 보내고 조합 중에는 쓰지 않습니다. 수 입력의 빈 칸·badInput·흐림 복귀와 불리언 아닌 체크박스의 미정 표시가 노드 값과 초안을 구별합니다(REACT-027·033).
 - 날짜 형식 입력은 `presentation.FieldInputProps.minimum`·`maximum`을 `min`·`max` 속성으로 쓰고, `options.minimum`은 청사진 오류 `UNKNOWN_GROUP_KEY`로 폼을 막습니다(CONTROLS-081·051).
+- 문자열 checkbox 입력의 선택지 id는 서로 다르고, 각 선택지를 감싼 label의 `htmlFor`가 그 id와 같습니다(257C-01).
 
 ## Last Updated
 
-계약 기준: REACT-027·033, LANDING-186, F-D′, CONTROLS-051·081.
+계약 기준: REACT-027·033, LANDING-186, F-D′, CONTROLS-051·081, 257C-01.
