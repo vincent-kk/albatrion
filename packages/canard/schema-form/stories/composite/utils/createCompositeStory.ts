@@ -100,7 +100,7 @@ export const createCompositeStory = (name: string, options: CompositeStoryOption
       scenario: item.scenario, onHandle: probe.onHandle, propStages, ...(options.layout && { layout: options.layout }),
       formProps: { ...mountProps, ...(held && { validatorFactory: held.factory }), onSubmit: (value) => { submitted.push(value); }, ...options.formProps },
     },
-    parameters: { docs: { description: { story: item.scenario.description } } },
+    parameters: { docs: { description: { story: item.scenario.description } }, storyPanels: { tail: item.tail ?? [], tailStart: item.tailStart, mountProps: item.props } },
     async play({ args, canvasElement, step }) {
       if (options.cdpSkipReason && !isVitestBrowserMode()) return skipPlay(step, options.cdpSkipReason);
       if (shouldSkipUnfocusedPlay()) return skipPlay(step, unfocusedPlayReason);
