@@ -3196,6 +3196,7 @@
   > 소유자(266라운드, enum undefined 표시): "오케이. 그리고, 하나 추가하자.\nhttp://localhost:6006/?path=/story/composite-cx03profile--case 이거 보다가 나온건데, \nstring enum 같은거 할때 enum selector 를 쓰는 country 필드에서 KR / US  이거 표시할때, 최초에 값이 없는데 KR이 선택된걸로 보이거든. \n이거 이전에 enum에 없는 값(undefined 포함)인 경우에 이걸 임시로 보여주기로 했던거같은데, undefined 는 해당사항이 아닌가" (`reviews/round-266-owner-answers.md:21`)
   > 소유자(267라운드, 진행 방식): "이정도면 된거같아. \n이번에도 마찬가지로 PR 머지하면서 진행해줘.\n구조정리 및 내가 추가로 요청한거까지 전부 마무리했으면 한다. \n내 결정이 필요한건 대기열에 추가하고, 이후 한번에 처리할 수 있도록 해줘.\n이후 한번에 볼게.\n\n지금부턴 중지없이 쭉 진행했으면 해. \n\n괜찮겠어?\n괜찮겠으면 이후 계획을 한번 브리핑해줘." (`reviews/round-267-owner-answers.md:7`)
   > 소유자(267라운드, 게이트 실패·병합 허용): "게이트 통과 실패하는 경우도 문제를 파악해서 수정해보도록해. \n정 안되면 그때 나에게 대기로 넘기도록. \n병합도 직접 하도록 해.\n병합을 할 수 있도록 명시적으로 허용할게" (`reviews/round-267-owner-answers.md:23`)
+  > 소유자(267라운드, 병합은 보고만): "병합도 보고만 하고 직접 병합하도록." (`reviews/round-267-owner-answers.md:27`)
 - 상태: 현행
 - 출처: `reviews/round-80-closing.md:17`(정본)
 - 닫은 사람: 편집자 결정(80라운드, `reviews/round-80-closing.md` 80C-02)
