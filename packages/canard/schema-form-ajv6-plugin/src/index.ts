@@ -8,3 +8,4 @@ export const plugin: { validator: typeof ajvValidatorPlugin } = {
 } satisfies SchemaFormPlugin;
 
 export { createValidatorFactory } from './validator/createValidatorFactory';
+export { createValidator } from './validator/createValidator';
