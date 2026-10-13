@@ -47,5 +47,6 @@
 | 41 (승인 — 266라운드, 로드 null도 자식 빈 상태로 통일) | /story/features-composition-nullablebranch--null-ancestor-promotion: 값은 {"account":null}인데 폼에는 account.kind=[a]가 보임(kind의 default는 a). null로 선언된 부모를 자식의 자동 채움이 해제하지 못해(LANDING-139·LANDING-004) 생기는 화면·값 불일치. 설계상 정상인지, 아니라면 자식 노드 값도 비어 있어야 하는지 | 공개 동작(값·화면 일치) | 소유자가 혼란을 호소함 — 우선 | 266라운드 |
 | 42 (수정 — 소유자 관찰) | 스토리 가독성: 어떤 동작을 해야 하는지, 옳은 값이 무엇인지, 현재 오류가 무엇인지 알 수 없음. 레거시 스토리를 참고해 설명·재현 단계·현재값·기본값·오류·스키마·스토리별 설정을 페이지 안에 수록(composite 우선, 전체 적용) | 소유자 관찰 | 문서·스토리 템플릿 작업 | 266라운드 |
 | 43 (수정 — 소유자 요구) | FormHandle(ref)을 통한 스토리가 없음 — focus·select·refresh·remount·reset·findNode·findNodes·getValue·setValue·getErrors·validate·showError·submit·getState·setState·clearState·getAttachedFilesMap을 다루는 스토리 묶음 추가(각 스토리에 조작 버튼과 결과 표시) | 소유자 요구 | 스토리 추가 작업 | 266라운드 덧붙임 |
+| 44 (수정 — 소유자 관찰) | 내장 enum select(FieldInputStringEnum.tsx:54-59)가 값이 undefined일 때 영역 밖 옵션을 만들지 않아 네이티브 select가 첫 옵션(예: KR)을 선택된 것처럼 보임 — 값은 undefined(composite-cx03profile--case의 country). 07b-2 ④는 undefined·null을 제외했음. 고침: 값이 undefined면 선택 없음을 뜻하는 비활성 빈 옵션을 선택 상태로 두어 화면과 값을 맞춤(41과 같은 원칙) | 소유자 관찰, 화면·값 일치 원칙 | 내장 입력 하나, 고치기 전 실패 시험 | 266라운드 덧붙임 |
 
 (추가되는 항목은 아래에 번호를 이어 적는다.)

@@ -15,3 +15,7 @@
 ## 덧붙임 (2026-10-14, 순서 확정)
 
 소유자: "그 순서로 진행해. 구조변경은 이걸 또 다 하고 해야할까?" → 순서 확정: 07b-5 병합 뒤 스토리 묶음(40·42·43, fairy07)과 41(로드 null 동작 변경, fixy07 별도 가지)을 병렬로. 원장 관리자 답: 구조 변경은 스토리 묶음을 기다릴 필요가 없다(stories/·scenarios는 src 밖이라 재배치와 겹치지 않음). 41만 src/core를 건드리므로 재배치 "실행" 전에 병합하고, 재배치 "계획"(읽기 전용)은 07b-5 병합 직후 바로 쓴다.
+
+## 덧붙임 (2026-10-14, 대기열 44 — enum select의 undefined 표시)
+
+소유자: "오케이. 그리고, 하나 추가하자.\nhttp://localhost:6006/?path=/story/composite-cx03profile--case 이거 보다가 나온건데, \nstring enum 같은거 할때 enum selector 를 쓰는 country 필드에서 KR / US  이거 표시할때, 최초에 값이 없는데 KR이 선택된걸로 보이거든. \n이거 이전에 enum에 없는 값(undefined 포함)인 경우에 이걸 임시로 보여주기로 했던거같은데, undefined 는 해당사항이 아닌가" → 원장 관리자 확인: 07b-2 ④(대기열 9)의 구현 src/fieldInputs/FieldInputStringEnum.tsx:54-59는 `defaultValue !== undefined && defaultValue !== null`일 때만 영역 밖 옵션을 만들므로 undefined는 제외되고, 네이티브 select가 첫 옵션(KR)을 선택된 것처럼 보인다(값은 undefined). 대기열 41과 같은 종류의 화면·값 불일치. 대기열 44로 올림.
