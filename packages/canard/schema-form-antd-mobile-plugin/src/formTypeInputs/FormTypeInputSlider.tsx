@@ -1,6 +1,6 @@
 import { useCallback, useMemo } from 'react';
 
-import { Slider } from 'antd-mobile';
+import { Slider, type SliderProps } from 'antd-mobile';
 
 import { isNumberSchema } from '@winglet/json-schema/filter';
 
@@ -10,12 +10,28 @@ import type {
   NumberSchema,
 } from '@canard/schema-form';
 
+interface FormTypeInputSliderProps
+  extends FormTypeInputPropsWithSchema<
+    number | [number, number],
+    NumberSchema
+  > {
+  /** Two thumbs selecting a range, from `presentation.FormTypeInputProps.range`. */
+  range?: SliderProps['range'];
+  /** Labeled stops on the track, from `presentation.FormTypeInputProps.marks`. */
+  marks?: SliderProps['marks'];
+  /** `false` publishes on every move; otherwise only when the drag ends. */
+  lazy?: boolean;
+}
+
 const FormTypeInputSlider = ({
   jsonSchema,
   disabled,
   defaultValue,
   onChange,
-}: FormTypeInputPropsWithSchema<number | [number, number], NumberSchema>) => {
+  range,
+  marks,
+  lazy,
+}: FormTypeInputSliderProps) => {
   const handleChange = useCallback(
     (value: number | [number, number] | null) => {
       if (value === null) onChange(NaN);
@@ -25,18 +41,16 @@ const FormTypeInputSlider = ({
     [onChange],
   );
 
-  const { min, max, step, range, marks, ...changeHandler } = useMemo(() => {
+  const { min, max, step, ...changeHandler } = useMemo(() => {
     return {
       min: jsonSchema.minimum,
       max: jsonSchema.maximum,
       step: jsonSchema.multipleOf,
-      range: jsonSchema.options?.range,
-      marks: jsonSchema.options?.marks,
-      ...(jsonSchema.options?.lazy === false
+      ...(lazy === false
         ? { onChange: handleChange }
         : { onAfterChange: handleChange }),
     } as const;
-  }, [handleChange, jsonSchema]);
+  }, [handleChange, jsonSchema, lazy]);
 
   return (
     <Slider
