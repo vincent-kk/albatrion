@@ -386,9 +386,9 @@ export interface FieldNodeRuntime<Self> extends FieldNodeRootRuntimeState {
   commitNumber?: number;
   /** Changed non-load paths in the last settlement, excluding the written input. */
   refreshTargets?: Set<string>;
-  /** Newly lit mismatch records in the last committed batch. */
+  /** Newly lit misfit records in the last committed batch. */
   misfitRecords?: readonly MisfitRecord[];
-  /** Commit-scoped subtree mismatch path lists. */
+  /** Commit-scoped subtree misfit path lists. */
   misfitsMemo?: PathKeyedMap<{
     commit: number;
     paths: readonly string[];

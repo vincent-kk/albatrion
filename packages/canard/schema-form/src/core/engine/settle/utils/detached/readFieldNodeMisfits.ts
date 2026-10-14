@@ -1,7 +1,7 @@
 import type { FieldNodeRecord } from '../../../record';
 import { EMPTY_PATHS } from './emptyDetachedReads';
 
-/** Read the current or final committed mismatch paths for one reference. */
+/** Read the current or final committed misfit paths for one reference. */
 export const readFieldNodeMisfits = <Self extends FieldNodeRecord<Self>>(
   node: Self,
 ): readonly string[] =>

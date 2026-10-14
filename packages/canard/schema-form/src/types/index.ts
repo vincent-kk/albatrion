@@ -32,28 +32,13 @@ export type {
 } from './internal/injectTo';
 export type {
   JSONSchemaType,
-  BaseInferJSONSchema,
   SchemaPresentation,
   JSONSchema,
   JSONSchemaWithVirtual,
   JSONSchemaWithRef,
   PartialJSONSchema,
-  BaseNumberSchema,
-  BaseNonNullableNumberSchema,
-  BaseNullableNumberSchema,
   BaseStringSchema,
-  BaseNonNullableStringSchema,
-  BaseNullableStringSchema,
-  BaseBooleanSchema,
-  BaseNonNullableBooleanSchema,
-  BaseNullableBooleanSchema,
   BaseArraySchema,
-  BaseNonNullableArraySchema,
-  BaseNullableArraySchema,
-  BaseObjectSchema,
-  BaseNonNullableObjectSchema,
-  BaseNullableObjectSchema,
-  BaseNullSchema,
   BasicSchema,
 } from './internal/jsonSchema';
 export type {

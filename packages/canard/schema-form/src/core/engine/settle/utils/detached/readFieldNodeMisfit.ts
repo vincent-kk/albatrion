@@ -1,6 +1,6 @@
 import type { FieldNodeRecord } from '../../../record';
 
-/** Read the current or final committed mismatch lamp for one reference. */
+/** Read the current or final committed misfit lamp for one reference. */
 export const readFieldNodeMisfit = <Self extends FieldNodeRecord<Self>>(
   node: Self,
 ): boolean =>
