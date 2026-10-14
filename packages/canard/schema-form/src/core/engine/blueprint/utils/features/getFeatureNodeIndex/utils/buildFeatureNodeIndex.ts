@@ -1,6 +1,9 @@
 import { isArray } from '@winglet/common-utils/filter';
 
+import { JSONPointer as $ } from '@/schema-form/helpers/jsonPointer';
+
 import { CONTROL_KEY } from '../../../../../constants/controlKey';
+import { SCHEMA_GROUP } from '../../../../../constants/schemaGroup';
 import type { Blueprint, BlueprintFeatureNodeIndex } from '../../../../type';
 
 /** Local control groups whose declared values can differ from the default keys. */
@@ -33,7 +36,13 @@ export const buildFeatureNodeIndex = (
         declarations: child.declarations,
       })),
       ...(node.item
-        ? [{ name: '*', node: node.item, declarations: node.item.declarations }]
+        ? [
+            {
+              name: $.Wildcard,
+              node: node.item,
+              declarations: node.item.declarations,
+            },
+          ]
         : []),
     ];
     for (const declaration of node.declarations) {
@@ -76,7 +85,7 @@ export const buildFeatureNodeIndex = (
           if (
             !group ||
             typeof group !== 'object' ||
-            !hasStateKeys(Reflect.get(group, 'controls'))
+            !hasStateKeys(Reflect.get(group, SCHEMA_GROUP.controls))
           )
             continue;
           const names: unknown = Reflect.get(group, 'targets');

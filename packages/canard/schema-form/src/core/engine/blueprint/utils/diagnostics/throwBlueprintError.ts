@@ -1,5 +1,6 @@
 import { JSONSchemaError } from '@/schema-form/errors';
 import type { JSONSchemaErrorCode } from '@/schema-form/errors';
+import { JSONPointer as $ } from '@/schema-form/helpers/jsonPointer';
 
 import type { BlueprintOptions } from '../../type';
 
@@ -25,7 +26,7 @@ export const throwBlueprintError: (
   options?.collect?.({ code, level: 'error', schemaPath, details });
   throw new JSONSchemaError(
     code,
-    `${code.slice(code.indexOf('.') + 1)} at ${schemaPath || '#'}; ${details.guidance ?? 'check the authored schema'}`,
+    `${code.slice(code.indexOf('.') + 1)} at ${schemaPath || $.Fragment}; ${details.guidance ?? 'check the authored schema'}`,
     { schemaPath, ...details },
   );
 };

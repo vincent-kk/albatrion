@@ -1,5 +1,7 @@
 import { getValue } from '@winglet/json/pointer';
 
+import { JSONPointer as $ } from '@/schema-form/helpers/jsonPointer';
+
 import { FormErrorCode } from '../../../../../errors';
 import type { BlueprintSchema } from '../../type';
 import { throwBlueprintError } from '../diagnostics/throwBlueprintError';
@@ -18,7 +20,7 @@ export const resolveReference = (
   reference: string,
   schemaPath: string,
 ): { schema: BlueprintSchema; schemaPath: string } => {
-  if (!reference.startsWith('#'))
+  if (!reference.startsWith($.Fragment))
     return throwBlueprintError(
       FormErrorCode.UnknownJsonSchema,
       schemaPath,

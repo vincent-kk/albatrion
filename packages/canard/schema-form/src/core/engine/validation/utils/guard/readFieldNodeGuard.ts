@@ -1,3 +1,5 @@
+import { JSONPointer as $ } from '@/schema-form/helpers/jsonPointer';
+
 import type { Blueprint, BlueprintGate } from '../../../blueprint';
 import type { GuardFunction } from '../../type';
 import { readValidationEntry } from '../cache/readValidationEntry';
@@ -18,7 +20,7 @@ export const readFieldNodeGuard = (
   if (!isValidator(validator)) return undefined;
   const root = runtime.blueprint.schema;
   const entry = readValidationEntry(validator, root);
-  const pointer = gate.schemaPath.startsWith('#')
+  const pointer = gate.schemaPath.startsWith($.Fragment)
     ? gate.schemaPath.slice(1)
     : gate.schemaPath;
   const cached = entry.guards.get(pointer);

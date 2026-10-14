@@ -2,6 +2,7 @@ import { isArray } from '@winglet/common-utils/filter';
 import { escapeSegment } from '@winglet/json/pointer';
 
 import { FormWarningCode } from '../../../../../errors';
+import { SCHEMA_GROUP } from '../../../constants/schemaGroup';
 import type {
   BlueprintDiagnostic,
   BlueprintNode,
@@ -44,7 +45,11 @@ export const collectInlineTerminalWarnings = (
     const ancestors = [...entry.ancestors, entry.schema];
     const record = readSchemaObject(entry.schema);
     if (!entry.root)
-      for (const keyword of ['controls', 'options', 'presentation'])
+      for (const keyword of [
+        SCHEMA_GROUP.controls,
+        SCHEMA_GROUP.options,
+        SCHEMA_GROUP.presentation,
+      ])
         if (record[keyword] !== undefined) {
           if (!keys.includes(keyword)) keys.push(keyword);
           if (!paths.includes(entry.schemaPath)) paths.push(entry.schemaPath);

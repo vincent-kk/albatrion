@@ -1,6 +1,8 @@
 import { isArray } from '@winglet/common-utils/filter';
 import { hasOwnProperty } from '@winglet/common-utils/lib';
 
+import { JSONPointer as $ } from '@/schema-form/helpers/jsonPointer';
+
 import {
   FormErrorCode,
   FormWarningCode,
@@ -164,7 +166,7 @@ export const evaluateGate = <Self extends FieldNodeRecord<Self>>(
       for (let index = 0; index < expression.dependencies.length; index++) {
         const path = occurrence.watchPaths[index];
         dependencies[index] =
-          path === '@'
+          path === $.Context
             ? context.root.runtime.context
             : readProjectedValue(context, path);
       }

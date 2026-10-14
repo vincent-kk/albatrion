@@ -1,3 +1,5 @@
+import { JSONPointer as $ } from '@/schema-form/helpers/jsonPointer';
+
 import { FormErrorCode } from '../../../../../../../errors';
 import type { PropertyDeclaration } from '../../../../type';
 import { throwBlueprintError } from '../../../diagnostics/throwBlueprintError';
@@ -17,7 +19,7 @@ export const registerBlueprintDependency = (
   declaration: PropertyDeclaration,
   schemaPath: string,
 ): void => {
-  if (typeof path !== 'string' || path.split('/').includes('*'))
+  if (typeof path !== 'string' || path.split($.Separator).includes($.Wildcard))
     throwBlueprintError(
       FormErrorCode.ObservedValues,
       schemaPath,

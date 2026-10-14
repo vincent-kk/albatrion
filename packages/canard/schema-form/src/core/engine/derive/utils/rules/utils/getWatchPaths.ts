@@ -2,6 +2,7 @@ import { isArray } from '@winglet/common-utils/filter';
 
 import type { BlueprintNode } from '../../../../blueprint';
 import { CONTROL_KEY } from '../../../../constants/controlKey';
+import { SCHEMA_GROUP } from '../../../../constants/schemaGroup';
 
 /** Immutable target templates retain their authored watch union. */
 const WATCH_PATHS = new WeakMap<BlueprintNode, readonly string[]>();
@@ -19,7 +20,7 @@ export const getWatchPaths = (node: BlueprintNode): readonly string[] => {
     const schema = declaration.schema;
     const controls =
       schema && typeof schema === 'object'
-        ? Reflect.get(schema, 'controls')
+        ? Reflect.get(schema, SCHEMA_GROUP.controls)
         : undefined;
     const watch =
       controls && typeof controls === 'object'

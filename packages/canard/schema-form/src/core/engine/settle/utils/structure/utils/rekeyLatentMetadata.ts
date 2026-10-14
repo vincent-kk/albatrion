@@ -1,3 +1,5 @@
+import { JSONPointer as $ } from '@/schema-form/helpers/jsonPointer';
+
 import type { FieldNodeRuntime } from '../../../../record';
 
 /**
@@ -18,9 +20,11 @@ export const rekeyLatentMetadata = <Self>(
   previous: string,
   hostPath: string,
 ) => {
-  const position = hostPath === '' ? 0 : hostPath.split('/').length - 1;
+  const position = hostPath === '' ? 0 : hostPath.split($.Separator).length - 1;
   const order = [...metadata.order];
   if (previous !== path && order.length > position)
-    order[position] = Number(path.slice(hostPath.length + 1).split('/')[0]);
+    order[position] = Number(
+      path.slice(hostPath.length + 1).split($.Separator)[0],
+    );
   return { ...metadata, path, order };
 };

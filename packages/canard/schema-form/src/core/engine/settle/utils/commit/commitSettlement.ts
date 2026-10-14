@@ -1,3 +1,5 @@
+import { JSONPointer as $ } from '@/schema-form/helpers/jsonPointer';
+
 import { FormWarningCode } from '../../../../../errors';
 import type { FieldNodeRecord, TypeMismatchRecord } from '../../../record';
 import { indexFieldNodeWarning } from '../../../record';
@@ -213,7 +215,7 @@ export const commitSettlement = <Self extends FieldNodeRecord<Self>>(
           byAncestor.set(ancestor, paths);
         }
         paths.push(path);
-        ancestor = ancestor.slice(0, ancestor.lastIndexOf('/'));
+        ancestor = ancestor.slice(0, ancestor.lastIndexOf($.Separator));
       }
     }
     for (const [ancestor, paths] of byAncestor)

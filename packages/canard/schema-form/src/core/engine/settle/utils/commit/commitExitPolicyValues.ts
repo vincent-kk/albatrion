@@ -4,6 +4,7 @@ import { hasOwnProperty } from '@winglet/common-utils/lib';
 import { FormErrorCode, SchemaFormError } from '../../../../../errors';
 import type { Blueprint, BlueprintExpression } from '../../../blueprint';
 import { CONTROL_KEY } from '../../../constants/controlKey';
+import { SCHEMA_GROUP } from '../../../constants/schemaGroup';
 import type { FieldNodeRecord } from '../../../record';
 import type { SettlementContext } from '../../type';
 import { getControlLayers } from '../controls/getControlLayers';
@@ -78,7 +79,7 @@ export const commitExitPolicyValues = <Self extends FieldNodeRecord<Self>>(
       if (selected && !selected.includes(declaration.id)) continue;
       const schema = declaration.schema;
       if (!schema || typeof schema !== 'object') continue;
-      const controls: unknown = Reflect.get(schema, 'controls');
+      const controls: unknown = Reflect.get(schema, SCHEMA_GROUP.controls);
       if (!controls || typeof controls !== 'object' || isArray(controls))
         continue;
       if (
@@ -102,7 +103,7 @@ export const commitExitPolicyValues = <Self extends FieldNodeRecord<Self>>(
       if (!isArray(fields)) continue;
       for (const item of fields) {
         if (!item || typeof item !== 'object') continue;
-        const itemControls: unknown = Reflect.get(item, 'controls');
+        const itemControls: unknown = Reflect.get(item, SCHEMA_GROUP.controls);
         if (
           !itemControls ||
           typeof itemControls !== 'object' ||

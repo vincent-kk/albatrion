@@ -1,3 +1,5 @@
+import { JSONPointer as $ } from '@/schema-form/helpers/jsonPointer';
+
 import { getFeatureNodeIndex } from '../../../blueprint';
 import { CONTROL_KEY } from '../../../constants/controlKey';
 import type { FieldNodeRecord } from '../../../record';
@@ -72,7 +74,9 @@ export const calculateStateKeys = <Self extends FieldNodeRecord<Self>>(
           .get(node.parent.blueprintNode.id)
           ?.has(node.name) ||
         (node.parent.blueprintNode.kind === 'array' &&
-          index.stateKeyChildren.get(node.parent.blueprintNode.id)?.has('*'))
+          index.stateKeyChildren
+            .get(node.parent.blueprintNode.id)
+            ?.has($.Wildcard))
       ));
   const candidates = new Set<Self>();
   for (const node of stateDirtyNodes) if (isTarget(node)) candidates.add(node);
@@ -84,7 +88,7 @@ export const calculateStateKeys = <Self extends FieldNodeRecord<Self>>(
     for (const child of source.children)
       if (
         targets.has(child.name) ||
-        (source.blueprintNode.kind === 'array' && targets.has('*'))
+        (source.blueprintNode.kind === 'array' && targets.has($.Wildcard))
       )
         candidates.add(child);
   }

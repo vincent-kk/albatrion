@@ -1,3 +1,5 @@
+import { JSONPointer as $ } from '@/schema-form/helpers/jsonPointer';
+
 import { FormWarningCode } from '../../../../../errors';
 import { indexFieldNodeWarning } from '../../../record';
 import type { FieldNodeRecord, TypeMismatchRecord } from '../../../record';
@@ -81,7 +83,7 @@ export const finishStaticFirstLoad = <Self extends FieldNodeRecord<Self>>(
           byAncestor.set(ancestor, children);
         }
         children.push(path);
-        ancestor = ancestor.slice(0, ancestor.lastIndexOf('/'));
+        ancestor = ancestor.slice(0, ancestor.lastIndexOf($.Separator));
       }
     }
     for (const [ancestor, children] of byAncestor)

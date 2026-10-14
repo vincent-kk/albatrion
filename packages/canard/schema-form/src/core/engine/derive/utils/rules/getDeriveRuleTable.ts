@@ -2,6 +2,7 @@ import { isArray } from '@winglet/common-utils/filter';
 
 import type { Blueprint, BlueprintNode } from '../../../blueprint';
 import { CONTROL_KEY } from '../../../constants/controlKey';
+import { SCHEMA_GROUP } from '../../../constants/schemaGroup';
 import type { ControlKey } from '../../../types/controls';
 import { getControlExpression } from '../../../utils/controls/getControlExpression';
 import { emptyReadonlyMap } from '../../../utils/emptyReadonlyMap';
@@ -55,7 +56,7 @@ export const getDeriveRuleTable = (blueprint: Blueprint): DeriveRuleTable => {
       const schema = declaration.schema;
       const controls =
         schema && typeof schema === 'object'
-          ? Reflect.get(schema, 'controls')
+          ? Reflect.get(schema, SCHEMA_GROUP.controls)
           : undefined;
       if (!controls || typeof controls !== 'object' || isArray(controls))
         continue;
@@ -99,7 +100,10 @@ export const getDeriveRuleTable = (blueprint: Blueprint): DeriveRuleTable => {
         for (let index = 0; index < fields.length; index++) {
           const item: unknown = fields[index];
           if (!item || typeof item !== 'object') continue;
-          const itemControls: unknown = Reflect.get(item, 'controls');
+          const itemControls: unknown = Reflect.get(
+            item,
+            SCHEMA_GROUP.controls,
+          );
           const names: unknown = Reflect.get(item, 'targets');
           if (
             !itemControls ||

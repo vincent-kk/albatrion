@@ -1,3 +1,5 @@
+import { JSONPointer as $ } from '@/schema-form/helpers/jsonPointer';
+
 import type { Blueprint, SchemaFragment } from '../../../blueprint';
 import type { ValidationIssue } from '../../type';
 
@@ -51,7 +53,7 @@ export const isOffUnionBranchIssue = (
   if (!owner.gates.length) return false;
   const unionPath = owner.schemaPath.slice(
     0,
-    owner.schemaPath.lastIndexOf('/'),
+    owner.schemaPath.lastIndexOf($.Separator),
   );
   const siblings = blueprint.fragments.filter(
     (fragment) =>

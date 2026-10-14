@@ -9,6 +9,7 @@ import {
   intersectEnum,
 } from '@/schema-form/helpers/schemaIntersection';
 
+import { SCHEMA_GROUP } from '../../../constants/schemaGroup';
 import type { BlueprintSchema } from '../../type';
 import { throwBlueprintError } from '../diagnostics/throwBlueprintError';
 import { foldAllowedTypes } from '../types/foldAllowedTypes';
@@ -42,7 +43,11 @@ export const readDiscriminatorBranches = (
     return throwBlueprintError(
       FormErrorCode.InvalidControlShape,
       `${schemaPath}/controls/discriminator`,
-      { group: 'controls', key: 'discriminator', expected: 'string' },
+      {
+        group: SCHEMA_GROUP.controls,
+        key: 'discriminator',
+        expected: 'string',
+      },
       context.options,
     );
   for (const keyword of ['oneOf', 'anyOf'] as const) {

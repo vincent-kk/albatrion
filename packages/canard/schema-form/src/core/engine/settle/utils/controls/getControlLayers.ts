@@ -2,6 +2,7 @@ import { isArray } from '@winglet/common-utils/filter';
 
 import type { BlueprintNode } from '../../../blueprint';
 import { CONTROL_KEY } from '../../../constants/controlKey';
+import { SCHEMA_GROUP } from '../../../constants/schemaGroup';
 import { getCommittedDeclarationKey } from '../../../utils/controls/getCommittedDeclarationKey';
 
 /** Unselected static fallbacks share IDs for the immutable declaration owner. */
@@ -78,7 +79,10 @@ export const getControlLayers = <Self extends ControlTarget<Self>>(
       typeof declaration.schema !== 'object'
     )
       continue;
-    const controls: unknown = Reflect.get(declaration.schema, 'controls');
+    const controls: unknown = Reflect.get(
+      declaration.schema,
+      SCHEMA_GROUP.controls,
+    );
     if (controls && typeof controls === 'object' && !isArray(controls))
       groups.push({
         layer: 'node',
@@ -100,7 +104,10 @@ export const getControlLayers = <Self extends ControlTarget<Self>>(
       typeof declaration.schema !== 'object'
     )
       continue;
-    const controls: unknown = Reflect.get(declaration.schema, 'controls');
+    const controls: unknown = Reflect.get(
+      declaration.schema,
+      SCHEMA_GROUP.controls,
+    );
     if (!controls || typeof controls !== 'object' || isArray(controls))
       continue;
     let ownsFragment = false;
@@ -136,7 +143,7 @@ export const getControlLayers = <Self extends ControlTarget<Self>>(
       if (!item || typeof item !== 'object') continue;
       const targets: unknown = Reflect.get(item, 'targets');
       if (!isArray(targets) || !targets.includes(node.name)) continue;
-      const itemControls: unknown = Reflect.get(item, 'controls');
+      const itemControls: unknown = Reflect.get(item, SCHEMA_GROUP.controls);
       if (
         itemControls &&
         typeof itemControls === 'object' &&

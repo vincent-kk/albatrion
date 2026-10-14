@@ -1,6 +1,7 @@
 import { isArray } from '@winglet/common-utils/filter';
 
 import { FormErrorCode } from '../../../../../errors';
+import { SCHEMA_GROUP } from '../../../constants/schemaGroup';
 import type {
   ChildSchemaControls,
   SchemaControls,
@@ -25,11 +26,11 @@ export const validateControlGroups = (
   fragment: boolean,
 ): void => {
   const record = readSchemaObject(schema);
-  for (const group of ['controls', 'options'] as const) {
+  for (const group of [SCHEMA_GROUP.controls, SCHEMA_GROUP.options] as const) {
     const value = record[group];
     if (value === undefined) continue;
     const allowed =
-      group === 'options'
+      group === SCHEMA_GROUP.options
         ? OPTION_KEYS
         : fragment
           ? CHILD_CONTROL_KEYS
@@ -58,7 +59,7 @@ export const validateControlGroups = (
     throwBlueprintError(
       FormErrorCode.InvalidControlShape,
       `${schemaPath}/controls/injectTo`,
-      { group: 'controls', key: 'injectTo', expected: 'function' },
+      { group: SCHEMA_GROUP.controls, key: 'injectTo', expected: 'function' },
       context.options,
     );
   if (controls?.fields !== undefined) {
@@ -66,7 +67,7 @@ export const validateControlGroups = (
       throwBlueprintError(
         FormErrorCode.InvalidControlShape,
         `${schemaPath}/controls/fields`,
-        { group: 'controls', key: 'fields', expected: 'array' },
+        { group: SCHEMA_GROUP.controls, key: 'fields', expected: 'array' },
         context.options,
       );
     controls.fields.forEach((entry: any, index: number) => {
@@ -84,7 +85,7 @@ export const validateControlGroups = (
           FormErrorCode.InvalidControlShape,
           path,
           {
-            group: 'controls',
+            group: SCHEMA_GROUP.controls,
             key: 'fields',
             expected: '{ targets: string[], controls? }',
           },

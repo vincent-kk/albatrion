@@ -1,3 +1,5 @@
+import { JSONPointer as $ } from '@/schema-form/helpers/jsonPointer';
+
 import type { FieldNodeRecord } from '../../../../record';
 import type { FieldNodeWriteKind, SettlementContext } from '../../../type';
 
@@ -22,8 +24,8 @@ export const readSettlementSource = <Self extends FieldNodeRecord<Self>>(
       !origin.keys.includes(
         path
           .slice(origin.path.length + 1)
-          .split('/')[0]
-          .replace(/~1/g, '/')
+          .split($.Separator)[0]
+          .replace(/~1/g, $.Separator)
           .replace(/~0/g, '~'),
       )
     )

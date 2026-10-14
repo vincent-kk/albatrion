@@ -1,5 +1,6 @@
 import { isArray } from '@winglet/common-utils/filter';
 
+import { SCHEMA_GROUP } from '../../../../constants/schemaGroup';
 import type {
   EffectiveSchemaOptions,
   PropertyDeclaration,
@@ -52,14 +53,14 @@ export const applySchemaContribution = (
       CONSTRAINT_KEYS.includes(key)
     )
       continue;
-    if (key === 'options' || key === 'presentation')
+    if (key === SCHEMA_GROUP.options || key === SCHEMA_GROUP.presentation)
       state.schema[key] = mergeHintGroup(
         state.schema[key],
         value,
-        key === 'options',
+        key === SCHEMA_GROUP.options,
         options.isAtomic,
       );
-    else if (key === 'controls') {
+    else if (key === SCHEMA_GROUP.controls) {
       if (declaration.scope === 'node') applyControlHints(state.schema, value);
     } else if (key === 'readOnly')
       state.schema.readOnly = state.schema.readOnly === true || value === true;
