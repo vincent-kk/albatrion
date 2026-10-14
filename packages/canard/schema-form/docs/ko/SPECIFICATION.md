@@ -985,7 +985,7 @@ core는 채우지도 막지도 않습니다. 배열에는 로드되거나 쓰인
 - `minItems`는 항목을 만들지 않습니다. 마운트, reset, 분기 재활성화 어느 때에도 그렇습니다. `[]`로 로드된 배열은 `[]`로 남고, `minItems`보다 항목이 적은 default나 `defaultValue`는 주어진 그대로 쓰입니다.
 - `maxItems`는 쓰기를 거부하지 않습니다. `push()`는 항상 덧붙이고 새 길이를 돌려주며, 더 긴 배열을 넣는 `setValue`도 적용됩니다. `prefixItems` 뒤의 `items: false`도 push를 막지 않습니다.
 - 두 한도는 유효 스키마(`node.jsonSchema`)에 남고, 위반은 검증이 방출 값(`outputValue`) 기준으로 알립니다.
-- 기본 배열 입력은 `maxItems`에 이르면 추가 버튼을 숨깁니다. 제거 버튼은 `minItems`와 상관없이 보이고, `prefixItems`는 읽지 않습니다. 범위를 지켜야 하는 사용자 입력은 `node.jsonSchema`와 `node.children`을 읽어 자기 컨트롤을 끕니다.
+- 기본 배열 입력은 `minItems`만큼 빈 슬롯을 UI로만 그리고 값은 쓰지 않으며, 슬롯에 입력하면 그때 그 자리가 쓰입니다. `maxItems`에 이르면 추가 버튼을 숨깁니다. 제거 버튼은 `minItems`와 상관없이 보이고, `prefixItems`는 읽지 않습니다. 범위를 지켜야 하는 사용자 입력은 `node.jsonSchema`와 `node.children`을 읽어 자기 컨트롤을 끕니다.
 
 ### 배열 출력 필터 (`omitTrailing` / `omitEmpty`)
 

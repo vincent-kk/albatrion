@@ -12,6 +12,7 @@
 
 - 기본 배열의 Button은 내부 memo 경계이며 삭제 버튼은 현재 인덱스와 배열 전체가 공유하는 안정된 클릭 처리기를 받습니다. 인덱스는 memo 비교에서 이동한 행을 갱신하고, 처리기는 클릭한 버튼의 부모 행이 목록의 직접 자식 중 몇 번째인지 읽어 현재 항목을 삭제합니다. 행은 배열 순서대로 직접 자식이며 추가 버튼의 label은 행 다음에 있으므로 기존 DOM에 인덱스 속성을 더하지 않습니다. 행별 감싸개 컴포넌트·hook·클로저를 만들지 않습니다. push는 기존 삭제 버튼과 추가 버튼의 본문을 실행하지 않고 새 삭제 버튼만 한 번 실행합니다. DOM·문구·순서·disabled·readOnly·maxItems 동작과 공개 표면을 유지합니다. 목록 생성과 속성 비교, 삭제 클릭의 위치 조회는 O(N)입니다(F-D′).
 
+- 기본 배열 입력은 유효 스키마의 `minItems`(`maxItems`가 더 작으면 그 값)에서 현재 항목 수를 뺀 만큼 빈 슬롯을 UI로만 그리고 값은 쓰지 않습니다. 슬롯은 노드가 아니어서 `data-path`가 없습니다. 자리의 스키마(`prefixItems`의 그 자리, 없으면 `items`)가 문자열·수·정수·불리언이면 그 종류의 기본 입력을, 그 밖이면 채움 버튼을 그립니다. 사용자가 슬롯에 입력하거나 채움 버튼을 누를 때 그 자리까지의 배열을 통째로 한 번 씁니다. 앞쪽 빈 자리는 `undefined`이고 기존 항목은 위치로 이어집니다. 그 뒤 새 행의 첫 입력으로 초점을 옮깁니다. 게이트로 유효 스키마가 바뀌면 슬롯 수도 따라가며, readOnly·disabled에서는 슬롯을 그리되 쓰지 않습니다(304라운드 권고 2, 정돈-S).
 - 정의 배열의 앞쪽이 먼저 매칭되며 구체적인 형식 조건이 일반 타입 조건보다 우선합니다.
 - 매칭 조건은 입력 힌트만 판정하고 실제 입력은 공통 FieldInputProps로 값과 변경을 전달합니다.
 - 기본 정의는 열한 개이며 `{ type: 'union' }` 정의가 `FieldInputString`을 감싸 `FieldInputStringDefinition` 바로 앞에서 매칭됩니다. union 전용 우선순위 층을 더하지 않고 인라인·맵·Form·Provider·플러그인·기본 정의의 선택 순서를 유지합니다(REACT-033).
@@ -24,7 +25,7 @@
 - 수 입력은 비유한 숫자(NaN·무한대)를 빈 기본값으로 표시하며 노드 값은 바꾸지 않습니다. badInput 흐림 복귀도 같은 규칙으로 빈 칸을 씁니다.
 - 수 입력은 빈 칸을 `undefined`로 전달합니다. 브라우저 `badInput`이면 노드에 쓰지 않고 입력이 초안을 보유하며, 흐림에는 마지막 노드 값으로 표시를 되돌립니다. 체크박스는 불리언 아닌 값을 미정 상태(`indeterminate`)로 표시합니다. 치다 만 글과 입력기 조합은 노드가 아닌 입력의 초안입니다(REACT-027).
 
-- 기본 입력 컴포넌트 열한 개(`FieldInput*.tsx`)와 `FieldInputUnion`의 보조 칸은 `components/`에 있고 진입점 `index.tsx`가 정의 배열 `fieldInputDefinitions`를 조립합니다. 뿌리에는 문서·진입점·형 동반 파일(`type.ts`)만 둡니다(filid zero-peer-file).
+- 기본 입력 컴포넌트 열한 개(`FieldInput*.tsx`)와 `FieldInputUnion`·`FieldInputArray`의 보조 칸(빈 슬롯 컴포넌트와 슬롯 종류·쓰기 함수)은 `components/`에 있고 진입점 `index.tsx`가 정의 배열 `fieldInputDefinitions`를 조립합니다. 뿌리에는 문서·진입점·형 동반 파일(`type.ts`)만 둡니다(filid zero-peer-file).
 
 ## Acceptance Criteria
 
@@ -32,6 +33,7 @@
 
 - 특수 형식에 맞는 입력이 일반 문자열·숫자 입력에 가려지지 않습니다.
 - 100개 항목의 push는 Button 본문을 한 번만 실행하며 기존 삭제 버튼을 다시 렌더하지 않습니다. 가운데 항목 삭제 후 이동한 인덱스에서 다시 삭제해도 올바른 값이 제거됩니다. 삭제 버튼의 클릭 처리기 identity는 행 전체와 push 전후에 동일합니다(F-D′).
+- `minItems: 3`인 빈 배열은 값 없는 빈 입력 셋을 그리고 `value`는 그대로입니다. 첫 슬롯에 입력하면 그때 길이 1의 배열이 쓰이고, 게이트로 `minItems`가 바뀌면 슬롯 수가 따라갑니다(정돈-S).
 - 조건 판정은 부수 효과를 만들거나 외부 UI 라이브러리 등록을 수행하지 않습니다.
 - union은 유효 목록으로 해석한 허용 값만 보내고 조합 중에는 쓰지 않습니다. 수 입력의 빈 칸·badInput·흐림 복귀와 불리언 아닌 체크박스의 미정 표시가 노드 값과 초안을 구별합니다(REACT-027·033).
 - 날짜 형식 입력은 `presentation.FieldInputProps.minimum`·`maximum`을 `min`·`max` 속성으로 쓰고, `options.minimum`은 청사진 오류 `UNKNOWN_GROUP_KEY`로 폼을 막습니다(CONTROLS-081·051).
@@ -39,4 +41,4 @@
 
 ## Last Updated
 
-계약 기준: REACT-027·033, LANDING-186, F-D′, CONTROLS-051·081, 257C-01.
+계약 기준: REACT-027·033, LANDING-186, F-D′, CONTROLS-051·081, 257C-01, 정돈-S(2026-10-14).

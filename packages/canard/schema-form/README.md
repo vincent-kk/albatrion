@@ -1455,7 +1455,7 @@ export const ArrayForm = () => {
 
 #### Array Limits (minItems / maxItems)
 
-The core neither fills nor blocks. `minItems` creates no items at mount, on reset or on branch reactivation, and `maxItems` refuses no `push` or `setValue`. Both stay on `node.jsonSchema`, and validation reports a violation. The built-in array input hides its add button once `maxItems` is reached.
+The core neither fills nor blocks. `minItems` creates no items at mount, on reset or on branch reactivation, and `maxItems` refuses no `push` or `setValue`. Both stay on `node.jsonSchema`, and validation reports a violation. The built-in array input draws empty slots up to `minItems` in the UI only and writes no value until the user types into one, and it hides its add button once `maxItems` is reached.
 
 ```tsx
 const jsonSchema = {

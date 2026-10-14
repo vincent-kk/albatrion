@@ -987,7 +987,7 @@ The core neither fills nor blocks: an array holds exactly the items that were lo
 - `minItems` creates no items — not at mount, not on reset, not when a branch becomes active again. An array loaded as `[]` stays `[]`; a default or `defaultValue` with fewer items than `minItems` is kept as given.
 - `maxItems` refuses no write. `push()` always appends and returns the new length; `setValue` with a longer array is applied; `items: false` after `prefixItems` does not stop a push either.
 - Both limits stay on the effective schema (`node.jsonSchema`) and validation reports a violation on the emitted value (`outputValue`).
-- The built-in array input hides its add button once `maxItems` is reached. It shows the remove button whatever `minItems` says, and it does not read `prefixItems`. A custom input that must enforce a range reads `node.jsonSchema` and `node.children` and disables its own controls.
+- The built-in array input draws empty slots up to `minItems` in the UI only and writes no value; typing into a slot writes that position at that moment. It hides its add button once `maxItems` is reached. It shows the remove button whatever `minItems` says, and it does not read `prefixItems`. A custom input that must enforce a range reads `node.jsonSchema` and `node.children` and disables its own controls.
 
 ### Array Output Filters (`omitTrailing` / `omitEmpty`)
 
