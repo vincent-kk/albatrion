@@ -2,11 +2,7 @@ import { FieldNodeEventType } from '../../../../record';
 import type { FieldNodeRecord } from '../../../../record';
 import { ValidationMode } from '../../../../types/state';
 import { routeValidationIssues } from '../../../../validation';
-import type { ValidationIssue } from '../../../../validation';
 import { queueNonSettleEvent } from '../../chain/queueNonSettleEvent';
-
-/** Shared frozen verdict that routes no validator issues. */
-const NO_ISSUES: readonly ValidationIssue[] = Object.freeze([]);
 
 /**
  * Clear both error layers at a form reset boundary before loading its value.
@@ -18,7 +14,7 @@ export const clearFieldNodeFormErrors = <Self extends FieldNodeRecord<Self>>(
 ): void => {
   const runtime = root.runtime;
   const rootExternalChanged = runtime.nodeErrors?.delete(root);
-  const changed = routeValidationIssues(root, NO_ISSUES);
+  const changed = routeValidationIssues(root, []);
   if (rootExternalChanged) changed.add(root);
   const pending = [root];
   while (pending.length) {
