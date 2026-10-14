@@ -2,28 +2,28 @@
 
 ## Purpose
 
-Compile the existing expression language into a dependency-array function without reading form state.
+폼 상태를 읽지 않고, 기존 표현식 언어를 의존성 배열 함수로 컴파일한다.
 
 ## Conventions
 
-- Keep the established expression syntax and boolean coercion behavior during ownership migration.
-- Register references through the supplied path manager before generating dependency indexes.
-- Expose the compiler through a named export; keep its function type internal.
+- 소유권을 옮기는 동안 기존 표현식 문법과 boolean 강제 변환 동작을 유지한다.
+- 의존성 인덱스를 만들기 전에, 전달받은 경로 관리자에 참조를 등록한다.
+- 컴파일러는 이름 붙은 export로 노출하고, 함수 타입은 내부에 둔다.
 
 ## Boundaries
 
 ### Always do
 
-- Preserve compilation failures as JSONSchemaError diagnostics.
-- Keep generated functions independent of nodes, renderers, and legacy implementation imports.
-- Keep compiler verification within this owner.
+- 컴파일 실패는 JSONSchemaError 진단으로 보존한다.
+- 생성된 함수가 노드, 렌더러, 레거시 구현 import에 의존하지 않게 한다.
+- 컴파일러의 검증은 이 소유자 안에 둔다.
 
 ### Ask first
 
-- Change the accepted expression language or boolean coercion rules.
+- 허용하는 표현식 언어나 boolean 강제 변환 규칙을 바꿀 때
 
 ### Never do
 
-- Evaluate an expression while constructing the blueprint.
-- Swallow compilation errors or substitute an empty function.
-- Read runtime form state from the compiler.
+- 청사진을 구성하는 동안 표현식을 평가하지 않는다.
+- 컴파일 오류를 삼키거나 빈 함수로 대체하지 않는다.
+- 컴파일러에서 런타임 폼 상태를 읽지 않는다.
