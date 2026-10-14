@@ -1,0 +1,24 @@
+import { extractSchemaInfo } from '@/schema-form/__legacy__/helpers/jsonSchema';
+import type { JSONSchemaWithVirtual } from '@/schema-form/__legacy__/types';
+
+import { getEmptyValue } from '../getEmptyValue';
+
+/**
+ * Returns default value from JSON Schema's default property or based on type
+ * @param jsonSchema - JSON Schema
+ * @returns Default value
+ */
+export const getDefaultValue = <
+  Schema extends {
+    type?: JSONSchemaWithVirtual['type'];
+    default?: any;
+  },
+>(
+  jsonSchema: Schema,
+) => {
+  if (jsonSchema.default !== undefined) return jsonSchema.default;
+  if (jsonSchema.type === 'virtual') return [];
+  const schemaInfo = extractSchemaInfo(jsonSchema);
+  if (schemaInfo === null) return undefined;
+  return getEmptyValue(schemaInfo.type);
+};

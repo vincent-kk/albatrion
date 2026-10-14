@@ -1,3 +1,3 @@
 export type * from './form';
-export type * from './formTypeRenderer';
+export type * from './fieldRenderer';
 export type * from './jsonSchema';

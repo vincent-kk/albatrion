@@ -335,7 +335,10 @@ export interface BasicSchema<
   anyOf?: readonly Partial<Schema>[];
   /** Exactly one schema must be valid */
   oneOf?: readonly Partial<Schema>[];
-  /** Whether the value can be null (deprecated, use type array) */
+  /**
+   * OpenAPI 3.0 compatible notation; nullable: true is officially supported
+   * and equivalent to type: [..., 'null'].
+   */
   nullable?: boolean;
   /** Constant value constraint */
   const?: Nullable<Type>;

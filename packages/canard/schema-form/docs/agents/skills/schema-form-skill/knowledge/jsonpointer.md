@@ -13,15 +13,15 @@ formRef.current?.findNodes('/items/*'); // wildcard needs the PLURAL form
 
 - Singular `find()` does not accept `*`; use `findAll()` on a node or `findNodes()` on the `FormHandle`.
 - `find()` with no argument returns the node itself; `find('/')` returns the root.
-- `find('@')` — the bare token, nothing after it — returns the form's **context node** (the `context` prop's node representation). `@.path` expressions are still computed-only.
+- `find('@')` — the bare token, nothing after it — returns the form's **context node** (the `context` prop's node representation). `@.path` expressions are still controls-expression-only.
 
 ## Escaping
 
-`~` → `~0`, `/` → `~1` (RFC 6901) — applies everywhere a pointer names a literal key, including `formTypeInputMap` keys:
+`~` → `~0`, `/` → `~1` (RFC 6901) — applies everywhere a pointer names a literal key, including `fieldInputMap` keys:
 
 ```typescript
 // property name: 'object/Node'
-formTypeInputMap: { '/object~1Node': SpecialInput }
+fieldInputMap: { '/object~1Node': SpecialInput }
 // property name: 'tilde~here'
 rootNode.find('/tilde~0here');
 ```
@@ -30,4 +30,4 @@ rootNode.find('/tilde~0here');
 
 - `Form.Render` / `Form.Input` `path` props: standard RFC 6901 only (`imperative-and-layout.md`).
 - `getAttachedFilesMap()` keys: standard paths only.
-- Expressions cannot use `*`; `formTypeInputMap` cannot use `..`/`.`/`@` (see the SKILL.md matrix).
+- Expressions cannot use `*`; `fieldInputMap` cannot use `..`/`.`/`@` (see the SKILL.md matrix).

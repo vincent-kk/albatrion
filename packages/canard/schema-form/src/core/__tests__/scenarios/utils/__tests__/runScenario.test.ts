@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 
 import type { FormScenario } from '@aileron/schema-form-scenarios';
+
 import { runScenario } from '../runScenario';
 
 // filid:contract scenario-runner
@@ -9,7 +10,14 @@ describe('runScenario', () => {
     const calls: string[] = [];
     const result = await runScenario(
       { name: 'empty', schema: {}, steps: [] },
-      { execute: () => { calls.push('execute'); }, assert: () => { calls.push('assert'); } },
+      {
+        execute: () => {
+          calls.push('execute');
+        },
+        assert: () => {
+          calls.push('assert');
+        },
+      },
     );
     expect(result).toEqual({ executedSteps: 0 });
     expect(calls).toEqual([]);
@@ -18,28 +26,63 @@ describe('runScenario', () => {
   it('awaits actions and completion before checking expectations', async () => {
     const calls: string[] = [];
     const scenario: FormScenario = {
-      name: 'ordered', schema: {}, steps: [
-        { action: 'setValue', path: '/name', value: 'value', expect: { outputValue: { name: 'value' } } },
+      name: 'ordered',
+      schema: {},
+      steps: [
+        {
+          action: 'setValue',
+          path: '/name',
+          value: 'value',
+          expect: { outputValue: { name: 'value' } },
+        },
         { action: 'reset' },
       ],
     };
     const result = await runScenario(scenario, {
-      execute: async (step) => { await Promise.resolve(); calls.push(step.action); },
-      settle: async () => { await Promise.resolve(); calls.push('settled'); },
-      assert: () => { calls.push('assert'); },
+      execute: async (step) => {
+        await Promise.resolve();
+        calls.push(step.action);
+      },
+      settle: async () => {
+        await Promise.resolve();
+        calls.push('settled');
+      },
+      assert: () => {
+        calls.push('assert');
+      },
     });
     expect(result).toEqual({ executedSteps: 2 });
-    expect(calls).toEqual(['setValue', 'settled', 'assert', 'reset', 'settled']);
+    expect(calls).toEqual([
+      'setValue',
+      'settled',
+      'assert',
+      'reset',
+      'settled',
+    ]);
   });
 
   it('propagates an assertion failure and stops before the next action', async () => {
     const calls: string[] = [];
-    await expect(runScenario({ name: 'failure', schema: {}, steps: [
-      { action: 'submit', expect: { outputValue: {} } }, { action: 'reset' },
-    ] }, {
-      execute: (step) => { calls.push(step.action); },
-      assert: () => { throw new Error('observable mismatch'); },
-    })).rejects.toThrow('observable mismatch');
+    await expect(
+      runScenario(
+        {
+          name: 'failure',
+          schema: {},
+          steps: [
+            { action: 'submit', expect: { outputValue: {} } },
+            { action: 'reset' },
+          ],
+        },
+        {
+          execute: (step) => {
+            calls.push(step.action);
+          },
+          assert: () => {
+            throw new Error('observable mismatch');
+          },
+        },
+      ),
+    ).rejects.toThrow('observable mismatch');
     expect(calls).toEqual(['submit']);
   });
 });

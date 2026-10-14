@@ -1,4 +1,4 @@
-import type { SchemaNode } from '@/schema-form/core/types';
+import type { SchemaNode } from '@/schema-form/__legacy__/core/types';
 
 export const hasCompositionSchema = (node: SchemaNode) =>
   node.type === 'object' &&

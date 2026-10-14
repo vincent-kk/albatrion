@@ -2,7 +2,7 @@ import { isClose } from '@winglet/common-utils/math';
 
 import type { Nullish } from '@aileron/declare';
 
-import type { NumberSchema, NumberValue } from '@/schema-form/types';
+import type { NumberSchema, NumberValue } from '@/schema-form/__legacy__/types';
 
 import { parseNumber } from '../../parsers';
 import {
@@ -11,7 +11,7 @@ import {
   type SchemaNodeConstructorProps,
   SetValueOption,
   type UnionSetValueOption,
-} from '../../../../core/types';
+} from '../../types';
 import { AbstractNode } from '../AbstractNode';
 
 /**

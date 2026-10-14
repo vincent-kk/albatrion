@@ -18,8 +18,8 @@ import type {
 
 import type { Dictionary, IsNullable } from '@aileron/declare';
 
-import type { UnknownFormTypeInputProps } from './formTypeInput';
-import type { InjectToHandler } from './injectTo';
+import type { SchemaControls } from '../core';
+import type { FieldInputProps } from './fieldInput';
 import type {
   AllowedValue,
   ArrayValue,
@@ -29,10 +29,6 @@ import type {
   StringValue,
   VirtualNodeValue,
 } from './value';
-
-export const isVirtualSchema = (schema: {
-  type: string;
-}): schema is VirtualSchema => schema.type === 'virtual';
 
 export type JSONSchemaType = Extract<JSONSchemaWithVirtual['type'], string>;
 
@@ -51,10 +47,10 @@ type InferNonNullableSchema<
         : Value extends ObjectValue
           ? NonNullableObjectSchema<Options>
           : Value extends VirtualNodeValue
-            ? VirtualSchema<Options>
+            ? VirtualNodeSchema<Options>
             : JSONSchemaWithVirtual<Options>;
 
-/** Schema inference for nullable values (excluding VirtualSchema - cannot be nullable) */
+/** Schema inference for nullable values (a virtual node is never nullable) */
 type InferNullableSchema<
   Value,
   Options extends Dictionary = object,
@@ -70,8 +66,31 @@ type InferNullableSchema<
           ? NullableObjectSchema<Options>
           : NullSchema<Options>;
 
+/** Collects each admitted JSON kind once, without distributing the resulting schema. */
+type InferredKinds<Value> = readonly [
+  ...([Extract<Value, string>] extends [never] ? [] : ['string']),
+  ...([Extract<Value, number>] extends [never] ? [] : ['number']),
+  ...([Extract<Value, boolean>] extends [never] ? [] : ['boolean']),
+  ...([Extract<Value, ArrayValue>] extends [never] ? [] : ['array']),
+  ...([Extract<Exclude<Value, ArrayValue>, ObjectValue>] extends [never]
+    ? []
+    : ['object']),
+];
+
+/** A multi-kind value belongs to one terminal schema, including its nullable flag. */
+type UnionSchema<Value, Options extends Dictionary> = Omit<
+  JSONSchema<Options>,
+  'type'
+> & {
+  type: readonly [
+    ...InferredKinds<Value>,
+    ...(null extends Value ? ['null'] : []),
+  ];
+};
+
 /**
  * Infers the appropriate Schema type based on the input value.
+ * - For multiple non-null kinds, returns one union schema
  * - For nullable types (T | null), returns the corresponding Nullable schema
  * - For non-nullable types, returns the standard schema
  * - For pure null type, returns NullSchema
@@ -79,14 +98,63 @@ type InferNullableSchema<
 export type InferJSONSchema<
   Value extends AllowedValue | unknown = any,
   Options extends Dictionary = object,
-> = [Value] extends [null]
-  ? NullSchema<Options>
-  : IsNullable<Value> extends true
-    ? InferNullableSchema<Exclude<Value, null>, Options>
-    : InferNonNullableSchema<Value, Options>;
+> = unknown extends Value
+  ? JSONSchema<Options>
+  : InferredKinds<Exclude<Value, null>> extends readonly [
+        unknown,
+        unknown,
+        ...unknown[],
+      ]
+    ? UnionSchema<Value, Options>
+    : [Value] extends [null]
+      ? NullSchema<Options>
+      : IsNullable<Value> extends true
+        ? InferNullableSchema<Exclude<Value, null>, Options>
+        : InferNonNullableSchema<Value, Options>;
 
-/** Standard JSON Schema type union (without virtual nodes) */
+/** Binding presentation payload; core treats these fields as opaque data. */
+export type SchemaPresentation = {
+  /** Custom React component for input rendering */
+  FieldInput?: ComponentType<FieldInputProps<any, any, any, any, any>> | null;
+  /** Props passed to FieldInput component */
+  FieldInputProps?: {
+    /** Placeholder text for input fields */
+    placeholder?: string;
+    /** Display name aliases for enum values */
+    alias?: Dictionary<ReactNode>;
+    /** CSS class name for styling */
+    className?: string;
+    /** Inline CSS styles */
+    style?: CSSProperties;
+    /** Additional custom props */
+    [alt: string]: any;
+  };
+  /** Props passed to FieldRenderer component */
+  FieldRendererProps?: {
+    /** Field label text or element */
+    label?: ReactNode;
+    /** CSS class name for styling */
+    className?: string;
+    /** Inline CSS styles */
+    style?: CSSProperties;
+    /** Additional custom props */
+    [alt: string]: any;
+  };
+  /** Input type identifier for component selection */
+  inputType?: string;
+  /** Custom error messages per validation rule */
+  errorMessages?: {
+    [key: string]: string | Dictionary<string> | undefined;
+    default?: string | Dictionary<string>;
+  };
+} & { [key: string]: unknown };
+
+/** React binding of the renderer-independent core schema. */
 export type JSONSchema<Options extends Dictionary = object> =
+  import('../core').AuthoredSchema<Options, SchemaPresentation>;
+
+/** Recursive typed children shared by the per-kind schema aliases. */
+type JSONSchemaChildren<Options extends Dictionary = object> =
   | NumberSchema<Options>
   | StringSchema<Options>
   | BooleanSchema<Options>
@@ -103,7 +171,7 @@ export type JSONSchemaWithVirtual<Options extends Dictionary = object> =
   | ArraySchema<Options>
   | ObjectSchema<Options>
   | NullSchema<Options>
-  | VirtualSchema<Options>;
+  | VirtualNodeSchema<Options>;
 
 /** JSON Schema type union with virtual nodes and $ref support */
 export type JSONSchemaWithRef<Options extends Dictionary = object> =
@@ -121,10 +189,11 @@ export type NumberSchema<Options extends Dictionary = object> =
   | NullableNumberSchema<Options>;
 /** Non-nullable number schema */
 export type NonNullableNumberSchema<Options extends Dictionary = object> =
-  BasicSchema & BaseNonNullableNumberSchema<Options, JSONSchema<Options>>;
+  BasicSchema &
+    BaseNonNullableNumberSchema<Options, JSONSchemaChildren<Options>>;
 /** Nullable number schema (type: ['number', 'null']) */
 export type NullableNumberSchema<Options extends Dictionary = object> =
-  BasicSchema & BaseNullableNumberSchema<Options, JSONSchema<Options>>;
+  BasicSchema & BaseNullableNumberSchema<Options, JSONSchemaChildren<Options>>;
 
 /** String type schema */
 export type StringSchema<Options extends Dictionary = object> =
@@ -133,7 +202,7 @@ export type StringSchema<Options extends Dictionary = object> =
 /** Non-nullable string schema with optional trim support */
 export type NonNullableStringSchema<Options extends Dictionary = object> =
   BasicSchema &
-    BaseNonNullableStringSchema<Options, JSONSchema<Options>> & {
+    BaseNonNullableStringSchema<Options, JSONSchemaChildren<Options>> & {
       options?: {
         /** Replace the stored value with its whitespace-trimmed form when the field emits `Blurred` (default: false) */
         trim?: boolean;
@@ -142,7 +211,7 @@ export type NonNullableStringSchema<Options extends Dictionary = object> =
 /** Nullable string schema (type: ['string', 'null']) with optional trim support */
 export type NullableStringSchema<Options extends Dictionary = object> =
   BasicSchema &
-    BaseNullableStringSchema<Options, JSONSchema<Options>> & {
+    BaseNullableStringSchema<Options, JSONSchemaChildren<Options>> & {
       options?: {
         /** Replace the stored value with its whitespace-trimmed form when the field emits `Blurred` (default: false) */
         trim?: boolean;
@@ -155,10 +224,11 @@ export type BooleanSchema<Options extends Dictionary = object> =
   | NullableBooleanSchema<Options>;
 /** Non-nullable boolean schema */
 export type NonNullableBooleanSchema<Options extends Dictionary = object> =
-  BasicSchema & BaseNonNullableBooleanSchema<Options, JSONSchema<Options>>;
+  BasicSchema &
+    BaseNonNullableBooleanSchema<Options, JSONSchemaChildren<Options>>;
 /** Nullable boolean schema (type: ['boolean', 'null']) */
 export type NullableBooleanSchema<Options extends Dictionary = object> =
-  BasicSchema & BaseNullableBooleanSchema<Options, JSONSchema<Options>>;
+  BasicSchema & BaseNullableBooleanSchema<Options, JSONSchemaChildren<Options>>;
 
 /** Array type schema */
 export type ArraySchema<Options extends Dictionary = object> =
@@ -167,19 +237,23 @@ export type ArraySchema<Options extends Dictionary = object> =
 /** Non-nullable array schema */
 export type NonNullableArraySchema<Options extends Dictionary = object> =
   BasicSchema &
-    BaseNonNullableArraySchema<Options, JSONSchema<Options>> & {
+    BaseNonNullableArraySchema<Options, JSONSchemaChildren<Options>> & {
       options?: {
         /** Remove trailing `undefined` items from the array's normalized value (parent propagation, root validation, external emission); child nodes keep the raw array (default: false) */
         omitTrailing?: boolean;
+        /** Build the node as one input over the whole value (`true`) or as child nodes (`false`); overrides the renderer's choice (default: terminal when `presentation.FieldInput` is a component, branch otherwise) */
+        terminal?: boolean;
       };
     };
 /** Nullable array schema (type: ['array', 'null']) */
 export type NullableArraySchema<Options extends Dictionary = object> =
   BasicSchema &
-    BaseNullableArraySchema<Options, JSONSchema<Options>> & {
+    BaseNullableArraySchema<Options, JSONSchemaChildren<Options>> & {
       options?: {
         /** Remove trailing `undefined` items from the array's normalized value (parent propagation, root validation, external emission); child nodes keep the raw array (default: false) */
         omitTrailing?: boolean;
+        /** Build the node as one input over the whole value (`true`) or as child nodes (`false`); overrides the renderer's choice (default: terminal when `presentation.FieldInput` is a component, branch otherwise) */
+        terminal?: boolean;
       };
     };
 
@@ -187,170 +261,63 @@ export type NullableArraySchema<Options extends Dictionary = object> =
 export type ObjectSchema<Options extends Dictionary = object> =
   | NonNullableObjectSchema<Options>
   | NullableObjectSchema<Options>;
-/** Non-nullable object schema with optional property ordering and virtual properties */
+/** Non-nullable object schema */
 export type NonNullableObjectSchema<Options extends Dictionary = object> =
   BasicSchema &
-    BaseNonNullableObjectSchema<Options, JSONSchema<Options>> & {
-      /** Property keys order for rendering */
-      propertyKeys?: readonly string[];
-      /** Virtual property definitions for conditional fields */
-      virtual?: VirtualSchemaProperties;
+    BaseNonNullableObjectSchema<Options, JSONSchemaChildren<Options>> & {
+      options?: {
+        /** Build the node as one input over the whole value (`true`) or as child nodes (`false`); overrides the renderer's choice (default: terminal when `presentation.FieldInput` is a component, branch otherwise) */
+        terminal?: boolean;
+        /** Key order of the emitted object value, ahead of declaration order; it does not change the on-screen order */
+        propertyOrder?: readonly string[];
+        /** Virtual field groups by name; each gathers sibling properties into one virtual node */
+        virtual?: Record<string, VirtualFieldGroup>;
+      };
     };
-/** Nullable object schema (type: ['object', 'null']) with optional property ordering and virtual properties */
+/** Nullable object schema (type: ['object', 'null']) */
 export type NullableObjectSchema<Options extends Dictionary = object> =
   BasicSchema &
-    BaseNullableObjectSchema<Options, JSONSchema<Options>> & {
-      /** Property keys order for rendering */
-      propertyKeys?: readonly string[];
-      /** Virtual property definitions for conditional fields */
-      virtual?: VirtualSchemaProperties;
+    BaseNullableObjectSchema<Options, JSONSchemaChildren<Options>> & {
+      options?: {
+        /** Build the node as one input over the whole value (`true`) or as child nodes (`false`); overrides the renderer's choice (default: terminal when `presentation.FieldInput` is a component, branch otherwise) */
+        terminal?: boolean;
+        /** Key order of the emitted object value, ahead of declaration order; it does not change the on-screen order */
+        propertyOrder?: readonly string[];
+        /** Virtual field groups by name; each gathers sibling properties into one virtual node */
+        virtual?: Record<string, VirtualFieldGroup>;
+      };
     };
-/** Virtual schema property definitions (cannot be nullable) */
-type VirtualSchemaProperties = Dictionary<
-  { fields: readonly string[]; nullable?: never } & BasicSchema
->;
 
-/** Virtual node schema for non-schema computed fields */
-export type VirtualSchema<Options extends Dictionary = object> = {
+/** One `options.virtual` entry: the grouped sibling property names plus the virtual node's own schema keys */
+type VirtualFieldGroup = BasicSchema & {
+  /** Names of the sibling properties the virtual node gathers */
+  fields: readonly string[];
+};
+
+/** Schema of a virtual node built from an `options.virtual` entry; never authored directly */
+type VirtualNodeSchema<Options extends Dictionary = object> = {
   type: 'virtual';
   /** Dependent field paths for reactivity */
   fields?: readonly string[];
   nullable?: never;
 } & BasicSchema &
-  BaseBasicSchema<VirtualNodeValue, Options, JSONSchema<Options>>;
+  BaseBasicSchema<VirtualNodeValue, Options, JSONSchemaChildren<Options>>;
 
 /** Null type schema */
 export type NullSchema<Options extends Dictionary = object> = BasicSchema &
-  BaseNullSchema<Options, JSONSchema<Options>>;
+  BaseNullSchema<Options, JSONSchemaChildren<Options>>;
 
 /** Base schema properties for all types */
 export type BasicSchema = {
-  /** Custom React component for input rendering */
-  FormTypeInput?: ComponentType<UnknownFormTypeInputProps> | null;
-  /** Props passed to FormTypeInput component */
-  FormTypeInputProps?: {
-    /** Placeholder text for input fields */
-    placeholder?: string;
-    /** Display name aliases for enum values */
-    alias?: Dictionary<ReactNode>;
-    /** CSS class name for styling */
-    className?: string;
-    /** Inline CSS styles */
-    style?: CSSProperties;
-    /** Additional custom props */
-    [alt: string]: any;
-  };
-  /** Props passed to FormTypeRenderer component */
-  FormTypeRendererProps?: {
-    /** Field label text or element */
-    label?: ReactNode;
-    /** CSS class name for styling */
-    className?: string;
-    /** Inline CSS styles */
-    style?: CSSProperties;
-    /** Additional custom props */
-    [alt: string]: any;
-  };
-  /** Form type identifier for component selection */
-  formType?: string;
-  /** Whether node is a terminal (leaf) node (default: inferred — `object`/`array` are branch unless `FormTypeInput` is a component, every other type is terminal) */
-  terminal?: boolean;
-  /** Custom error messages per validation rule */
-  errorMessages?: {
-    [key: string]: string | Dictionary<string> | undefined;
-    default?: string | Dictionary<string>;
-  };
+  /** Renderer data belongs to the binding and stays typed in per-kind schemas. */
+  presentation?: SchemaPresentation;
+  /** Rules and policies that change value and shape over time; any other key is a blueprint error */
+  controls?: SchemaControls<JSONSchema>;
   /** Field options and configurations */
   options?: {
     /** Omit empty values from form data (default: true) */
     omitEmpty?: boolean;
     [alt: string]: any;
-  };
-  /**
-   * Handler to propagate this node's value to other nodes in the form tree.
-   *
-   * Called whenever this node's value changes. The handler receives the current value
-   * and a context object containing node info, parent info, root value, and shared context.
-   *
-   * @example
-   * ```typescript
-   * // Sync derived field when source changes
-   * injectTo: (value) => ({ '/derived/uppercase': value?.toUpperCase() })
-   *
-   * // Access root value for calculations
-   * injectTo: (value, ctx) => ({
-   *   '/total': ctx.rootValue.price * value
-   * })
-   * ```
-   *
-   * @see InjectToHandler for full documentation and examples
-   */
-  injectTo?: InjectToHandler;
-  /** Alias for computed.if */
-  '&if'?: boolean | string;
-  /** Alias for computed.active */
-  '&active'?: boolean | string;
-  /** Alias for computed.visible */
-  '&visible'?: boolean | string;
-  /** Alias for computed.pristine */
-  '&pristine'?: boolean | string;
-  /** Alias for computed.readOnly */
-  '&readOnly'?: boolean | string;
-  /** Alias for computed.disabled */
-  '&disabled'?: boolean | string;
-  /** Alias for computed.watch */
-  '&watch'?: string | readonly string[];
-  /** Alias for computed.derived */
-  '&derived'?: string;
-  /** Computed properties with JSONPointer expressions */
-  computed?: {
-    /**
-     * Conditional rendering expression
-     * @warning This expression only works with oneOf/anyOf branches in ObjectNode.
-     * @note If expression is true, the corresponding branch will be rendered.
-     * */
-    if?: boolean | string;
-    /**
-     * Active state expression (default: true)
-     * @warning When active is false, the node cannot write values and will be excluded from the final output. In this case, derived values are also not calculated.
-     * @note If expression is false, the FormTypeInput component will be hidden.
-     */
-    active?: boolean | string;
-    /**
-     * Visibility state expression (default: true)
-     * @warning Even when visible is false, the node can still write values and will be included in the final output.
-     * @note If expression is false, the FormTypeInput component will be hidden.
-     */
-    visible?: boolean | string;
-    /**
-     * Expression to initialize the node's state
-     * @note If expression is true, the node's state (dirty, touched, etc.) will be reset.
-     * */
-    pristine?: boolean | string;
-    /**
-     * Read-only state expression (default: false)
-     * @warning Even in readOnly state, values can still be changed programmatically via setValue().
-     * @note This field only passes the property to the node; each FormTypeInput must implement the readOnly behavior.
-     */
-    readOnly?: boolean | string;
-    /**
-     * Disabled state expression (default: false)
-     * @warning Even in disabled state, values can still be changed programmatically via setValue().
-     * @note This field only passes the property to the node; each FormTypeInput must implement the disabled behavior.
-     */
-    disabled?: boolean | string;
-    /**
-     * Watched field paths for reactivity
-     * @warning The watchValues passed to this field returns a new array reference even when internal values haven't changed, so do not use it directly in dependency arrays.
-     * @note If field path is changed, the node's `watchValues` will be updated.
-     */
-    watch?: string | readonly string[];
-    /**
-     * Value expression for auto update value
-     * @warning This expression can cause infinite loop if not used correctly
-     * @note Don't use this expression with circular reference
-     * */
-    derived?: string;
   };
   [alt: string]: any;
 };

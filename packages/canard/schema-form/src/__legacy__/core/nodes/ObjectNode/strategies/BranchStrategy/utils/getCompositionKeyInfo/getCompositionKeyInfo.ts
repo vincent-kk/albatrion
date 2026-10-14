@@ -1,5 +1,5 @@
-import { isNullBranch } from '@/schema-form/helpers/jsonSchema';
-import type { ObjectSchema } from '@/schema-form/types';
+import { isNullBranch } from '@/schema-form/__legacy__/helpers/jsonSchema';
+import type { ObjectSchema } from '@/schema-form/__legacy__/types';
 
 type CompositionKeyInfo = {
   unionKeySet: Set<string>;

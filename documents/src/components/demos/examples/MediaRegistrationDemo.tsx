@@ -20,7 +20,7 @@ const schema = {
     title: {
       type: 'string',
       title: 'Title',
-      placeholder: 'e.g. Epic Adventure',
+      presentation: { FieldInputProps: { placeholder: 'e.g. Epic Adventure' } },
       default: 'Stellar Odyssey',
     },
     details: {
@@ -28,7 +28,7 @@ const schema = {
       title: 'Details',
       oneOf: [
         {
-          '&if': "../type === 'game'",
+          controls: { active: "../type === 'game'" },
           properties: {
             stages: {
               type: 'array',
@@ -51,7 +51,7 @@ const schema = {
             platforms: {
               type: 'array',
               title: 'Platforms',
-              formType: 'checkbox',
+              presentation: { inputType: 'checkbox' },
               items: {
                 type: 'string',
                 enum: ['pc', 'console', 'mobile'],
@@ -88,7 +88,7 @@ const schema = {
           },
         },
         {
-          '&if': "../type === 'movie'",
+          controls: { active: "../type === 'movie'" },
           properties: {
             genres: {
               type: 'array',
@@ -111,7 +111,7 @@ const schema = {
             platforms: {
               type: 'array',
               title: 'Release Platforms',
-              formType: 'checkbox',
+              presentation: { inputType: 'checkbox' },
               items: {
                 type: 'string',
                 enum: ['theater', 'streaming'],
@@ -122,7 +122,7 @@ const schema = {
               type: 'array',
               title: 'Main Actors',
               description: 'Add main cast members',
-              items: { type: 'string', placeholder: 'Actor name' },
+              items: { type: 'string', presentation: { FieldInputProps: { placeholder: 'Actor name' } } },
             },
           },
         },
@@ -131,23 +131,23 @@ const schema = {
   },
   oneOf: [
     {
-      '&if': "./type === 'game'",
+      controls: { active: "./type === 'game'" },
       properties: {
         owner: {
           type: 'string',
           title: 'Developer',
-          placeholder: 'e.g. Studio Name',
+          presentation: { FieldInputProps: { placeholder: 'e.g. Studio Name' } },
           default: 'Nova Interactive',
         },
       },
     },
     {
-      '&if': "./type === 'movie'",
+      controls: { active: "./type === 'movie'" },
       properties: {
         owner: {
           type: 'string',
           title: 'Director',
-          placeholder: 'e.g. Director Name',
+          presentation: { FieldInputProps: { placeholder: 'e.g. Director Name' } },
           default: 'Alex Morgan',
         },
       },

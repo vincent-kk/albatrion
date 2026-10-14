@@ -1,11 +1,14 @@
+import { describe, expect, it } from 'vitest';
+
 import { arrayScenarios } from '@aileron/schema-form-scenarios';
 import type { FormScenarioStep } from '@aileron/schema-form-scenarios';
-import { describe, expect, it } from 'vitest';
 
 import { createCoreScenarioAdapter } from './utils/createCoreScenarioAdapter';
 import { runScenario } from './utils/runScenario';
 
-const scenario = arrayScenarios.find(({ name }) => name === 'array.terminal-verbs');
+const scenario = arrayScenarios.find(
+  ({ name }) => name === 'array.terminal-verbs',
+);
 if (!scenario) throw new Error('array.terminal-verbs scenario is missing');
 
 // filid:contract scenario-array-terminal
@@ -17,7 +20,9 @@ describe('terminal array verbs', () => {
       async execute(step: FormScenarioStep) {
         const previousRaw = adapter.root.raw;
         expect(Array.isArray(previousRaw)).toBe(true);
-        const previousValue = Array.isArray(previousRaw) ? [...previousRaw] : previousRaw;
+        const previousValue = Array.isArray(previousRaw)
+          ? [...previousRaw]
+          : previousRaw;
         await adapter.execute(step);
         expect(previousRaw).toEqual(previousValue);
         expect(adapter.root.raw).not.toBe(previousRaw);

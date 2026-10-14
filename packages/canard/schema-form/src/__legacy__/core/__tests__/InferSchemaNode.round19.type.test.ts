@@ -5,7 +5,7 @@ import type { NullNode } from '../nodes/NullNode';
 import type { NumberNode } from '../nodes/NumberNode';
 import type { ObjectNode } from '../nodes/ObjectNode';
 import type { StringNode } from '../nodes/StringNode';
-import type { InferSchemaNode, SchemaNode } from '../../../core/types';
+import type { InferSchemaNode, SchemaNode } from '../types';
 
 // filid:contract public-node-inference
 describe('NODE-059 public node inference', () => {

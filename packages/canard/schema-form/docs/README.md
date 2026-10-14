@@ -12,13 +12,14 @@ docs/
 │   └── SPECIFICATION.md       # 한국어 스펙 문서
 ├── en/
 │   └── SPECIFICATION.md       # 영어 스펙 문서
-├── claude/
-│   ├── commands/
-│   │   └── schema-form.md     # /schema-form 커맨드
+├── agents/                    # 에이전트 자산 원본 (@slats/agents-assets-sync가 주입)
+│   ├── rules/
+│   │   └── schema-form-rule.md  # 소비자 규칙
 │   └── skills/
-│       └── schema-form-skill/   # Claude 스킬 디렉토리
+│       └── schema-form-skill/   # 스킬 디렉토리
 │           ├── SKILL.md         # 스킬 정의
 │           └── knowledge/       # 지식 베이스
+├── QUICK_REFERENCE.md         # 빠른 참조
 └── README.md                  # 이 파일
 ```
 
@@ -33,9 +34,9 @@ docs/
 
 ### 주요 내용 (Contents)
 
-- **아키텍처**: 노드 시스템, FormTypeInput 시스템
+- **아키텍처**: 노드 시스템, FieldInput 시스템
 - **핵심 API**: FormProps, FormHandle
-- **고급 기능**: Computed Properties, 조건부 스키마, JSONPointer
+- **고급 기능**: Controls(조건·파생 속성), 조건부 스키마, JSONPointer
 - **검증 시스템**: ValidationMode, 오류 메시지 포맷팅
 - **플러그인 시스템**: Validator 플러그인, UI 플러그인
 
@@ -47,31 +48,30 @@ docs/
 
 ### 설치 방법
 
+`@slats/agents-assets-sync`의 `inject-agents-settings`가 `docs/agents/**`를 고른 에이전트 위치에 주입합니다. `--agent=claude`는 `.claude/{skills,rules}`에, `codex`는 project 범위에서 `.agents/skills`와 `AGENTS.md` 마커 블록에, user 범위에서 `~/.codex/skills`와 `~/.codex/AGENTS.md`에 씁니다.
+
 ```bash
-# 프로젝트 루트에서
-mkdir -p .claude/commands .claude/skills
+# 사용자 범위에 Claude Code용으로 주입
+npx -p @slats/agents-assets-sync inject-agents-settings --package=@canard/schema-form --agent=claude --scope=user
 
-# 커맨드 복사
-cp node_modules/@canard/schema-form/docs/claude/commands/schema-form.md .claude/commands/
-
-# 스킬 복사
-cp -r node_modules/@canard/schema-form/docs/claude/skills/schema-form-skill .claude/skills/
+# 무엇이 바뀌는지 먼저 확인
+npx -p @slats/agents-assets-sync inject-agents-settings --package=@canard/schema-form --agent=claude --scope=user --dry-run
 ```
 
 ### 사용 방법
 
-Claude Code에서 `/schema-form` 커맨드를 사용합니다:
+스킬은 질문이 FieldInput, controls, 조건부 스키마, JSONPointer, FormHandle 등을 다룰 때 불러와지며, `/schema-form-skill`로 직접 부를 수도 있습니다.
 
 ```
-/schema-form FormTypeInput 우선순위가 어떻게 되나요?
-/schema-form computed에서 형제 필드 참조하는 방법
-/schema-form oneOf에서 값 필터링 동작
+/schema-form-skill FieldInput 우선순위가 어떻게 되나요?
+/schema-form-skill controls.derived에서 형제 필드 참조하는 방법
+/schema-form-skill oneOf에서 값 필터링 동작
 ```
 
 ### 파일 설명
 
-- **commands/schema-form.md**: `/schema-form` 커맨드 정의
-- **skills/schema-form-skill/**: schema-form Claude 스킬 (지식 베이스, 응답 가이드라인)
+- **agents/rules/schema-form-rule.md**: 이 패키지를 쓰는 코드에 적용할 소비자 규칙
+- **agents/skills/schema-form-skill/**: schema-form 스킬 (지식 베이스, 응답 가이드라인)
 
 ---
 

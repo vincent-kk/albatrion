@@ -1,6 +1,6 @@
 import type { Nullish } from '@aileron/declare';
 
-import type { StringSchema, StringValue } from '@/schema-form/types';
+import type { StringSchema, StringValue } from '@/schema-form/__legacy__/types';
 
 import { parseString } from '../../parsers';
 import {
@@ -9,7 +9,7 @@ import {
   type SchemaNodeConstructorProps,
   SetValueOption,
   type UnionSetValueOption,
-} from '../../../../core/types';
+} from '../../types';
 import { AbstractNode } from '../AbstractNode';
 
 /**

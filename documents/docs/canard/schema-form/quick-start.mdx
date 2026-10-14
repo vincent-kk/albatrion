@@ -103,20 +103,20 @@ function LoginForm() {
 }
 ```
 
-## Custom Layout with Form.Group
+## Custom Layout with Form.Field
 
-Use `Form.Group`, `Form.Label`, `Form.Input`,
+Use `Form.Field`, `Form.Label`, `Form.Input`,
 and `Form.Error` sub-components to build a custom layout.
 Each takes a `path` prop (JSONPointer string).
 
 ```tsx
 <Form jsonSchema={schema} onSubmit={handleSubmit}>
   <div className="form-row">
-    <Form.Group path="/firstName" />
-    <Form.Group path="/lastName" />
+    <Form.Field path="/firstName" />
+    <Form.Field path="/lastName" />
   </div>
-  <Form.Group path="/email" />
-  <Form.Group path="/birthDate" />
+  <Form.Field path="/email" />
+  <Form.Field path="/birthDate" />
 </Form>
 ```
 
@@ -128,7 +128,7 @@ Each takes a `path` prop (JSONPointer string).
     <>
       <Form.Input path="/email" />
       <Form.Error path="/email" />
-      {value?.role === 'admin' && <Form.Group path="/permissions" />}
+      {value?.role === 'admin' && <Form.Field path="/permissions" />}
       <button disabled={(errors?.length ?? 0) > 0}>Submit</button>
     </>
   )}

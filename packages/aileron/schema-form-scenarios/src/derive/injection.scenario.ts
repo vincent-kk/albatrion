@@ -39,7 +39,7 @@ const undefinedInjectionScenario = {
   } },
   initialValue: { source: 'start' },
   steps: [
-    { action: 'setValue', path: '/source', value: 'stop',
+    { action: 'batch', steps: [{ action: 'setValue', path: '/source', value: 'stop' }],
       expect: { outputValue: { source: 'stop', target: 'start' } } },
     { action: 'setValue', path: '/source', value: 'resume',
       expect: { outputValue: { source: 'resume', target: 'resume' } } },

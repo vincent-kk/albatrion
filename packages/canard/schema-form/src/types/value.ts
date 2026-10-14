@@ -90,19 +90,22 @@ type HasMixedContainer<Kind> = 'unsupported' extends Kind
       : false;
 
 /** Only a nonempty homogeneous inline branch tuple is statically narrowed. */
-type InlineHostValue<Branches> = Branches extends readonly [unknown, ...unknown[]]
+type InlineHostValue<Branches> = Branches extends readonly [
+  unknown,
+  ...unknown[],
+]
   ? InlineBranchKind<Branches[number]> extends infer Kind
     ? HasMixedContainer<Kind> extends true
       ? unknown
       : [Kind] extends ['object' | 'null']
-      ? 'object' extends Kind
-        ? InferValueType<Branches[number]>
-        : null
-      : [Kind] extends ['array' | 'null']
-        ? 'array' extends Kind
+        ? 'object' extends Kind
           ? InferValueType<Branches[number]>
           : null
-        : BroadValue
+        : [Kind] extends ['array' | 'null']
+          ? 'array' extends Kind
+            ? InferValueType<Branches[number]>
+            : null
+          : BroadValue
     : BroadValue
   : BroadValue;
 
@@ -111,8 +114,8 @@ type LiteralValue<Schema> = Schema extends { const: infer Value }
   ? 'unsupported' extends LiteralKind<Value>
     ? unknown
     : HasSingleLiteralKind<Value> extends true
-    ? Value
-    : BroadValue
+      ? Value
+      : BroadValue
   : Schema extends { enum: infer Values }
     ? Values extends readonly [unknown, ...unknown[]]
       ? HasSingleLiteralKind<Values[number]> extends true

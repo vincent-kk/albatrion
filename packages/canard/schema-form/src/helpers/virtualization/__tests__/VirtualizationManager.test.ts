@@ -1,6 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
-import type { SchemaNode } from '@/schema-form/core';
+import type { FieldNode } from '@/schema-form/core';
 import type { ResolvedVirtualizationOptions } from '@/schema-form/helpers/virtualization';
 import {
   VirtualizationBackfill,
@@ -158,8 +158,8 @@ describe('VirtualizationManager', () => {
 
   it('hasRevealed reflects markRevealed per node instance', () => {
     const manager = createManager();
-    const revealed = {} as unknown as SchemaNode;
-    const untouched = {} as unknown as SchemaNode;
+    const revealed = {} as unknown as FieldNode;
+    const untouched = {} as unknown as FieldNode;
     expect(manager.hasRevealed(revealed)).toBe(false);
     manager.markRevealed(revealed);
     manager.markRevealed(revealed);

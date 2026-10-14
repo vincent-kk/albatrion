@@ -1,11 +1,12 @@
-import type { JSONSchemaError } from '@canard/schema-form';
+import type { ValidationIssue } from '../../../../src';
 import type { ErrorObject } from 'ajv';
 
 import { JSONPointer as $ } from '@winglet/json/pointer';
 
-export const transformErrors = (errors: ErrorObject[]): JSONSchemaError[] => {
+/** Convert AJV errors to public issues, retaining source details and escaped paths. */
+export const transformErrors = (errors: ErrorObject[]): ValidationIssue[] => {
   if (!Array.isArray(errors)) return [];
-  const result = new Array<JSONSchemaError>(errors.length);
+  const result = new Array<ValidationIssue>(errors.length);
   for (let i = 0, l = errors.length; i < l; i++) {
     const ajvError = errors[i];
     result[i] = {
@@ -26,9 +27,9 @@ const transformDataPath = (error: ErrorObject): string => {
     error.keyword === 'required' && error.params?.missingProperty;
 
   if (!instancePath)
-    return hasMissingProperty ? $.Separator + error.params.missingProperty : '';
+    return hasMissingProperty ? $.Separator + String(error.params.missingProperty).replace(/~/g, '~0').replace(/\//g, '~1') : '';
 
   return hasMissingProperty
-    ? instancePath + $.Separator + error.params.missingProperty
+    ? instancePath + $.Separator + String(error.params.missingProperty).replace(/~/g, '~0').replace(/\//g, '~1')
     : instancePath;
 };

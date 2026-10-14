@@ -1,13 +1,13 @@
 import Ajv from 'ajv/dist/2020';
 import { describe, expect, it, vi } from 'vitest';
 
-import { nodeFromJSONSchema } from '@/schema-form/core';
+import { nodeFromJSONSchema } from '@/schema-form/__legacy__/core';
 
 import type { ArrayNode } from '../nodes/ArrayNode';
 import type { NumberNode } from '../nodes/NumberNode';
 import type { ObjectNode } from '../nodes/ObjectNode';
 import type { StringNode } from '../nodes/StringNode';
-import { type SchemaNode, ValidationMode } from '../../../core/types';
+import { type SchemaNode, ValidationMode } from '../types';
 import { createValidatorFactory } from './utils/createValidatorFactory';
 
 /**

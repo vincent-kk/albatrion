@@ -1,14 +1,14 @@
 import { isArray } from '@winglet/common-utils/filter';
 
-import type { PathManager } from '@/schema-form/core/blueprint';
-import type { DynamicFunction } from '@/schema-form/core/blueprint';
-import { JSONSchemaError } from '@/schema-form/errors';
-import { formatConditionIndexError } from '@/schema-form/helpers/error';
+import type { PathManager } from '@/schema-form/__legacy__/core/blueprint';
+import type { DynamicFunction } from '@/schema-form/__legacy__/core/blueprint';
+import { JSONSchemaError } from '@/schema-form/__legacy__/errors';
+import { formatConditionIndexError } from '@/schema-form/__legacy__/helpers/error';
 import type {
   JSONSchemaType,
   JSONSchemaWithVirtual,
   PartialJSONSchema,
-} from '@/schema-form/types';
+} from '@/schema-form/__legacy__/types';
 
 import type { ConditionIndexName } from '../type';
 import { extractConditionInfo } from './utils/extractConditionInfo';

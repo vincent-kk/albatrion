@@ -3,7 +3,7 @@ import { BaseError, type ErrorDetails } from '@winglet/common-utils/error';
 /**
  * Error class for json schema errors.
  *
- * Thrown during the process of building the schema node tree from JSON Schema definitions.
+ * Thrown during the process of building the field node tree from JSON Schema definitions.
  * These errors indicate structural issues or invalid configurations in the schema.
  *
  * Common error scenarios:

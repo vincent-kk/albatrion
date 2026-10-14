@@ -3,13 +3,13 @@ import { NOOP_FUNCTION } from '@winglet/common-utils/constant';
 import { isArray } from '@winglet/common-utils/filter';
 
 import { processAllOfSchema } from '@/schema-form/__legacy__/helpers/jsonSchema/processAllOfSchema';
-import { JSONSchemaError } from '@/schema-form/errors';
-import { formatUnknownJSONSchemaError } from '@/schema-form/helpers/error';
-import { JSONPointer } from '@/schema-form/helpers/jsonPointer';
+import { JSONSchemaError } from '@/schema-form/__legacy__/errors';
+import { formatUnknownJSONSchemaError } from '@/schema-form/__legacy__/helpers/error';
+import { JSONPointer } from '@/schema-form/__legacy__/helpers/jsonPointer';
 import {
   type ResolveSchema,
   extractSchemaInfo,
-} from '@/schema-form/helpers/jsonSchema';
+} from '@/schema-form/__legacy__/helpers/jsonSchema';
 import type {
   ArraySchema,
   BooleanSchema,
@@ -25,7 +25,7 @@ import type {
   StringSchema,
   StringValue,
   VirtualSchema,
-} from '@/schema-form/types';
+} from '@/schema-form/__legacy__/types';
 
 import {
   type BranchNodeConstructorProps,
@@ -34,7 +34,7 @@ import {
   type SchemaNodeFactory,
   ValidationMode,
   type VirtualNodeConstructorProps,
-} from '../../../core/types';
+} from '../types';
 import { ArrayNode, validateArraySchema } from './ArrayNode';
 import { BooleanNode } from './BooleanNode';
 import { ContextNode } from './ContextNode';

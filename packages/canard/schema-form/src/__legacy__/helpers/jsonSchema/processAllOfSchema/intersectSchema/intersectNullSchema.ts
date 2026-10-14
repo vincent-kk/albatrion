@@ -1,4 +1,4 @@
-import type { NullSchema } from '@/schema-form/types';
+import type { NullSchema } from '@/schema-form/__legacy__/types';
 
 import { intersectConst } from './utils/intersectConst';
 import { intersectEnum } from './utils/intersectEnum';

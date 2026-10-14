@@ -1,4 +1,4 @@
-import type { ObjectValue } from '@/schema-form/types';
+import type { ObjectValue } from '@/schema-form/__legacy__/types';
 
 import type { FieldConditionMap } from '../getFieldConditionMap';
 import { requiredFactory } from './utils/requiredFactory';

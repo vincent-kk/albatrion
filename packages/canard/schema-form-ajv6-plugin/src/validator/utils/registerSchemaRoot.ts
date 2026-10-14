@@ -3,6 +3,7 @@
 import type Ajv from 'ajv';
 
 import { cloneInstance, PLUGIN_KEY_PREFIX } from './cloneInstance';
+import { instanceIdRegistrationsOf } from './instanceIdRegistrationsOf';
 
 /** Ajv instances and key retained for one authored root identity. */
 export interface SchemaRootRegistration {
@@ -10,6 +11,8 @@ export interface SchemaRootRegistration {
   readonly directGuards: (object | boolean)[];
   /** Self-containment is computed once per object in this bound profile. */
   readonly guardChecks: WeakMap<object, boolean>;
+  /** Base instance this root was registered against; `$id` conflicts are tracked per base. */
+  readonly base: Ajv.Ajv;
   readonly validation: Ajv.Ajv;
   guard?: Ajv.Ajv;
   readonly key: string;
@@ -40,7 +43,12 @@ export const registerSchemaRoot = (
   if (ids.length)
     for (let index = active.length - 1; index >= 0; index--)
       if (!active[index].deref()) active.splice(index, 1);
-  const conflict = ids.some((id) => active.some((ref) => ref.deref()?.ids.includes(id)));
+  const shared = ids.length ? instanceIdRegistrationsOf(instance) : [];
+  for (let index = shared.length - 1; index >= 0; index--)
+    if (!shared[index].deref()) shared.splice(index, 1);
+  const conflict = ids.some((id) =>
+    active.some((ref) => ref.deref()?.ids.includes(id)) ||
+    shared.some((ref) => ref.deref()?.ids.includes(id)));
   const validation = conflict ? cloneInstance(instance, Boolean(instance._opts.allErrors)) : instance;
   const key = `${PLUGIN_KEY_PREFIX}${++nextSchemaRootKey}`;
   const validationCopy: object | undefined = ids.length
@@ -48,11 +56,15 @@ export const registerSchemaRoot = (
   if (validationCopy) validation.addSchema(validationCopy, key);
   const rootId = '$id' in root && typeof root.$id === 'string' ? root.$id : key;
   const registration: SchemaRootRegistration = {
-    validation, key, rootId, ids, validationCopy,
+    base: instance, validation, key, rootId, ids, validationCopy,
     directGuards: [], guardChecks: new WeakMap(),
   };
   roots.set(root, registration);
   finalizer.register(root, registration, registration);
-  if (ids.length) active.push(new WeakRef(registration));
+  if (ids.length) {
+    const ref = new WeakRef(registration);
+    active.push(ref);
+    shared.push(ref);
+  }
   return registration;
 };

@@ -1,17 +1,17 @@
 import { Box, FormHelperText } from '@mui/material';
 
-import type { FormTypeRendererProps } from '@canard/schema-form';
+import type { FieldRendererProps } from '@canard/schema-form';
 
 export const FormGroup = ({
   node,
   depth,
   Input,
   errorMessage,
-}: FormTypeRendererProps) => {
+}: FieldRendererProps) => {
   // depth가 0이면 최상위 레벨이므로 Input만 렌더링
   if (depth === 0) return <Input />;
 
-  if (node.group === 'branch') {
+  if (node.strategy === 'branch') {
     return (
       <Box
         component="fieldset"

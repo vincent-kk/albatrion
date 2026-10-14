@@ -16,7 +16,7 @@ import ForAI from '@site/src/components/ForAI';
 ### 시작하기
 
 - [기본 폼](./basic-form) — 기본 필드 타입: 텍스트, 숫자, 날짜, 열거형, 스위치
-- [자동 계산](./auto-calculation) — computed.derived를 활용한 실시간 수식 계산
+- [자동 계산](./auto-calculation) — `controls.derived`를 활용한 실시간 수식 계산
 
 ### 고급 패턴
 
@@ -79,7 +79,7 @@ const schema = {
 } as const;
 
 // Custom input that handles null
-const NullableTextInput: FC<FormTypeInputProps<string | null>> = ({
+const NullableTextInput: FC<FieldInputProps<string | null>> = ({
   value,
   onChange,
   nullable,
@@ -131,7 +131,7 @@ function AccountForm() {
 
 ## oneOf — Exclusive Branches
 
-`&if`를 사용하여 각 브랜치 활성화를 필드 값에 바인딩합니다. 매칭되는 브랜치의 필드만 폼에 나타납니다.
+각 브랜치의 `controls.active`로 브랜치 활성화를 필드 값에 바인딩합니다. 매칭되는 브랜치의 필드만 폼에 나타납니다.
 
 ```tsx
 const schema = {
@@ -145,7 +145,7 @@ const schema = {
   },
   oneOf: [
     {
-      '&if': "./paymentMethod === 'card'",
+      controls: { active: "./paymentMethod === 'card'" },
       properties: {
         cardNumber: {
           type: 'string',
@@ -158,7 +158,7 @@ const schema = {
       required: ['cardNumber', 'expiryDate', 'cvv'],
     },
     {
-      '&if': "./paymentMethod === 'bank'",
+      controls: { active: "./paymentMethod === 'bank'" },
       properties: {
         accountNumber: { type: 'string', title: 'Account Number' },
         routingNumber: { type: 'string', title: 'Routing Number' },
@@ -166,7 +166,7 @@ const schema = {
       required: ['accountNumber', 'routingNumber'],
     },
     {
-      '&if': "./paymentMethod === 'paypal'",
+      controls: { active: "./paymentMethod === 'paypal'" },
       properties: {
         paypalEmail: { type: 'string', title: 'PayPal Email', format: 'email' },
       },
@@ -187,14 +187,14 @@ const schema = {
   },
   anyOf: [
     {
-      '&if': './notifyBySms === true',
+      controls: { active: './notifyBySms === true' },
       properties: {
         phoneNumber: { type: 'string', title: 'Phone Number', format: 'phone' },
       },
       required: ['phoneNumber'],
     },
     {
-      '&if': './notifyByEmail === true',
+      controls: { active: './notifyByEmail === true' },
       properties: {
         notificationEmail: {
           type: 'string',
@@ -277,7 +277,7 @@ function ArrayManager({ formRef }) {
 }
 ```
 
-## Computed Properties — Reactive Fields
+## Controls — Reactive Fields
 
 ```tsx
 const schema = {
@@ -289,7 +289,7 @@ const schema = {
       title: 'Discount %',
       minimum: 0,
       maximum: 100,
-      computed: {
+      controls: {
         visible: '../isPremium === true',
         readOnly: '../isPremium === false',
       },
@@ -298,7 +298,7 @@ const schema = {
       type: 'string',
       title: 'Member Since',
       format: 'date',
-      computed: {
+      controls: {
         visible: '../isPremium === true',
         watch: ['../isPremium'],
       },
@@ -307,7 +307,7 @@ const schema = {
     averageOrder: {
       type: 'number',
       title: 'Average Order Value',
-      computed: {
+      controls: {
         // visible when total orders > 0
         visible: '../totalOrders > 0',
         watch: ['../totalOrders'],
@@ -317,15 +317,15 @@ const schema = {
 } as const;
 ```
 
-## Custom FormTypeInput Component
+## Custom FieldInput Component
 
 ```tsx
 import type { FC } from 'react';
 
-import type { FormTypeInputProps } from '@canard/schema-form';
+import type { FieldInputProps } from '@canard/schema-form';
 
-// Custom rating input for { type: 'number', formType: 'rating' }
-const RatingInput: FC<FormTypeInputProps<number>> = ({
+// Custom rating input for { type: 'number', presentation: { inputType: 'rating' } }
+const RatingInput: FC<FieldInputProps<number>> = ({
   value,
   onChange,
   readOnly,
@@ -352,9 +352,9 @@ const RatingInput: FC<FormTypeInputProps<number>> = ({
 
 // Register
 registerPlugin({
-  formTypeInputDefinitions: [
+  fieldInputDefinitions: [
     {
-      test: (hint) => hint.formType === 'rating',
+      test: (hint) => hint.inputType === 'rating',
       Component: RatingInput,
     },
   ],
@@ -364,7 +364,7 @@ registerPlugin({
 const schema = {
   type: 'object',
   properties: {
-    rating: { type: 'number', formType: 'rating', minimum: 1, maximum: 5 },
+    rating: { type: 'number', presentation: { inputType: 'rating' }, minimum: 1, maximum: 5 },
   },
 };
 ```
@@ -383,10 +383,12 @@ const schema = {
       minLength: 3,
       maxLength: 20,
       pattern: '^[a-zA-Z0-9_]+$',
-      errorMessages: {
-        minLength: 'Username must be at least 3 characters',
-        maxLength: 'Username cannot exceed 20 characters',
-        pattern:   'Only letters, numbers, and underscores allowed',
+      presentation: {
+        errorMessages: {
+          minLength: 'Username must be at least 3 characters',
+          maxLength: 'Username cannot exceed 20 characters',
+          pattern:   'Only letters, numbers, and underscores allowed',
+        },
       },
     },
   },
@@ -474,17 +476,17 @@ formRef.current?.getValue();
 formRef.current?.setValue({ name: 'Bob' });
 
 // ── FormHandle setValue with merge ────────────────────────────
-// Merge only changed fields (deep merge)
+// Merge keeps keys you omit; each key you pass is replaced whole (shallow)
 formRef.current?.setValue({ address: { city: 'Seoul' } }, SetValueOption.Merge);
 ```
 
-## Custom Layout with Form.Group
+## Custom Layout with Form.Field
 
 ```tsx
 const profileSchema = {
   type: 'object',
   properties: {
-    avatar: { type: 'string', title: 'Avatar', formType: 'image-upload' },
+    avatar: { type: 'string', title: 'Avatar', presentation: { inputType: 'image-upload' } },
     firstName: { type: 'string', title: 'First Name', minLength: 1 },
     lastName: { type: 'string', title: 'Last Name', minLength: 1 },
     bio: { type: 'string', title: 'Bio', maxLength: 500 },
@@ -497,14 +499,14 @@ function ProfileForm() {
   return (
     <Form jsonSchema={profileSchema} onSubmit={handleSubmit}>
       <div className="avatar-section">
-        <Form.Group path="/avatar" />
+        <Form.Field path="/avatar" />
       </div>
       <div className="name-row">
-        <Form.Group path="/firstName" placeholder="First name" />
-        <Form.Group path="/lastName" placeholder="Last name" />
+        <Form.Field path="/firstName" placeholder="First name" />
+        <Form.Field path="/lastName" placeholder="Last name" />
       </div>
-      <Form.Group path="/bio" placeholder="Tell us about yourself" />
-      <Form.Group path="/website" placeholder="https://..." />
+      <Form.Field path="/bio" placeholder="Tell us about yourself" />
+      <Form.Field path="/website" placeholder="https://..." />
     </Form>
   );
 }
@@ -513,16 +515,16 @@ function ProfileForm() {
 ## Watching Node State in Custom Components
 
 ```tsx
-import { useSchemaNodeTracker } from '@canard/schema-form';
+import { FieldNodeState, useFieldNodeTracker } from '@canard/schema-form';
 
-function FieldStatus({ node }: { node: SchemaNode }) {
+function FieldStatus({ node }: { node: FieldNode }) {
   // Re-renders on any node event
-  useSchemaNodeTracker(node);
+  useFieldNodeTracker(node);
 
   return (
     <div>
       <span>Value: {JSON.stringify(node.value)}</span>
-      <span>Dirty: {node.dirty ? 'yes' : 'no'}</span>
+      <span>Dirty: {node.state[FieldNodeState.Dirty] ? 'yes' : 'no'}</span>
       <span>Errors: {node.errors.length}</span>
       <span>Visible: {node.visible ? 'yes' : 'no'}</span>
     </div>
@@ -618,19 +620,19 @@ const { submit, pending } = useFormSubmit(ref);
 <button onClick={submit} disabled={pending}>Submit</button>
 
 // Pattern: custom input component
-const MyInput: FC<FormTypeInputProps<string>> = ({ value, onChange, errors }) => (
+const MyInput: FC<FieldInputProps<string>> = ({ value, onChange, errors }) => (
   <input value={value ?? ''} onChange={e => onChange(e.target.value)} />
 );
-registerPlugin({ formTypeInputDefinitions: [{ test: { type: 'string' }, Component: MyInput }] });
+registerPlugin({ fieldInputDefinitions: [{ test: { type: 'string' }, Component: MyInput }] });
 
-// Pattern: conditional field (oneOf with &if)
+// Pattern: conditional field (oneOf with controls.active)
 oneOf: [
-  { '&if': "./type === 'A'", properties: { fieldA: { type: 'string' } } },
-  { '&if': "./type === 'B'", properties: { fieldB: { type: 'string' } } },
+  { controls: { active: "./type === 'A'" }, properties: { fieldA: { type: 'string' } } },
+  { controls: { active: "./type === 'B'" }, properties: { fieldB: { type: 'string' } } },
 ]
 
 // Pattern: reactive visibility
-computed: { visible: '../otherField === true' }
+controls: { visible: '../otherField === true' }
 
 // Pattern: array manipulation
 const node = ref.current?.findNode('/items');
@@ -640,7 +642,7 @@ if (isArrayNode(node)) { node.push(); node.remove(0); node.clear(); }
 <Form errors={serverErrors} showError={true} />
 
 // Pattern: path-based component override
-<Form formTypeInputMap={{ '/profile/photo': ImageUploader, '/items/*/sku': SkuInput }} />
+<Form fieldInputMap={{ '/profile/photo': ImageUploader, '/items/*/sku': SkuInput }} />
 ```
 
 </ForAI>

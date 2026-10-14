@@ -7,16 +7,15 @@ import type { FORM_ERROR_CODE_TABLE } from './formErrorCode';
 export type FormErrorCode = (typeof FORM_ERROR_CODE_TABLE)[number][0];
 
 /** Closed reason values for the ledger codes that define one. */
-export type FormErrorReason<Code extends FormErrorCode> =
-  Code extends
-    | 'SCHEMA_FORM_ERROR.VALIDATOR_COMPILE_FAILED'
-    | 'SCHEMA_FORM_ERROR.GUARD_FAILED'
-    ? 'duplicateSchemaId'
-    : Code extends 'SCHEMA_FORM_WARNING.TYPE_MISMATCH'
-      ? 'unconvertible' | 'ambiguous'
-      : Code extends 'JSON_SCHEMA_ERROR.DISCRIMINATOR_MISMATCH'
-        ? 'missing' | 'kind' | 'overlap' | 'key'
-        : never;
+export type FormErrorReason<Code extends FormErrorCode> = Code extends
+  | 'SCHEMA_FORM_ERROR.VALIDATOR_COMPILE_FAILED'
+  | 'SCHEMA_FORM_ERROR.GUARD_FAILED'
+  ? 'duplicateSchemaId'
+  : Code extends 'SCHEMA_FORM_WARNING.TYPE_MISMATCH'
+    ? 'unconvertible' | 'ambiguous'
+    : Code extends 'JSON_SCHEMA_ERROR.DISCRIMINATOR_MISMATCH'
+      ? 'missing' | 'kind' | 'overlap' | 'key'
+      : never;
 
 /**
  * Code-specific details with closed reasons and automatic-write source paths.

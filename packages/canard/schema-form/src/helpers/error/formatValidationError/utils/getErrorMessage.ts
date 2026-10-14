@@ -1,8 +1,8 @@
 import type { Dictionary } from '@aileron/declare';
 
-import type { BasicSchema } from '@/schema-form/types';
+import type { SchemaPresentation } from '@/schema-form/types';
 
-type ErrorMessages = NonNullable<BasicSchema['errorMessages']>;
+type ErrorMessages = NonNullable<SchemaPresentation['errorMessages']>;
 
 export const getErrorMessage = (
   keyword: string,

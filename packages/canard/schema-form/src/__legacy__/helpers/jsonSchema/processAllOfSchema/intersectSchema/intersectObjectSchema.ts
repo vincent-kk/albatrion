@@ -1,4 +1,4 @@
-import type { ObjectSchema, StringSchema } from '@/schema-form/types';
+import type { ObjectSchema, StringSchema } from '@/schema-form/__legacy__/types';
 
 import { intersectStringSchema } from './intersectStringSchema';
 import { distributeAllOfProperties } from './utils/distributeSubSchema';

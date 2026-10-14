@@ -44,7 +44,7 @@ const schema = {
       title: 'Final Price',
       description:
         'Auto-calculated: Price × Quantity × (1 + Tax%) × (1 − Discount%)',
-      computed: {
+      controls: {
         derived:
           '../price * ../quantity * (1 + ../taxRate / 100) * (1 - ../discountRate / 100)',
       },

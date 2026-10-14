@@ -1,10 +1,7 @@
 import { bench, describe } from 'vitest';
 
-import {
-  type NumberNode,
-  type ObjectNode,
-  nodeFromJSONSchema,
-} from '@/schema-form/core';
+import { type NumberNode, type ObjectNode } from '@/schema-form/core';
+import { nodeFromJSONSchema } from '@/schema-form/core/surface/utils/nodeFromJSONSchema';
 import type { JSONSchema } from '@/schema-form/types';
 
 /**
@@ -79,7 +76,11 @@ const repeatSameValue = (leaf: NumberNode) => async () => {
   await drain();
 };
 
-describe('object pending read', () => {
+// Core writes settle synchronously; retain the legacy batch/drain workload for comparison.
+if (!group || !field)
+  throw new Error('object-read benchmark requires mounted fields');
+
+describe('settle: object read after child write', () => {
   bench(
     `${BATCH} × (child write + 1 parent value read) + drain`,
     async () => {

@@ -4,8 +4,8 @@ import { warnDevelopmentIssue } from '../warnDevelopmentIssue';
 
 describe('warnDevelopmentIssue', () => {
   afterEach(() => {
-    vi.restoreAllMocks();
     vi.unstubAllEnvs();
+    vi.restoreAllMocks();
   });
 
   it('개발 환경에서 패키지 프리픽스 + code + message 형식으로 경고를 출력한다', () => {

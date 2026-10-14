@@ -1,5 +1,3 @@
-import type { FormTypeRendererProps } from '@/schema-form/types';
+import type { FieldRendererProps } from '@/schema-form/types';
 
-export const FormInputRenderer = ({ Input }: FormTypeRendererProps) => (
-  <Input />
-);
+export const FormInputRenderer = ({ Input }: FieldRendererProps) => <Input />;

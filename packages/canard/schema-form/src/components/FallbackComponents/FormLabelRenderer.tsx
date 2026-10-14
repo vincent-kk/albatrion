@@ -1,3 +1,3 @@
-import type { FormTypeRendererProps } from '@/schema-form/types';
+import type { FieldRendererProps } from '@/schema-form/types';
 
-export const FormLabelRenderer = ({ name }: FormTypeRendererProps) => name;
+export const FormLabelRenderer = ({ name }: FieldRendererProps) => name;

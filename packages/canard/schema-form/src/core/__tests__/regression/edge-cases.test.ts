@@ -1,14 +1,27 @@
 import { describe, expect, it } from 'vitest';
 
-import { makeSchemaNodeTree } from '../makeSchemaNodeTree';
+import { makeFieldNodeTree } from '../makeFieldNodeTree';
 
 // filid:contract factory-single-path
 describe('round9 edge cases with PR-2 mechanisms', () => {
-  const fragmentTree = () => makeSchemaNodeTree({ type: 'object', properties: {
-    on: { type: 'boolean' },
-  }, allOf: [{ controls: { active: './on === true' }, properties: {
-    group: { type: 'object', properties: { x: { type: 'string', default: 'D' } } },
-  } }] }).root;
+  const fragmentTree = () =>
+    makeFieldNodeTree({
+      type: 'object',
+      properties: {
+        on: { type: 'boolean' },
+      },
+      allOf: [
+        {
+          controls: { active: './on === true' },
+          properties: {
+            group: {
+              type: 'object',
+              properties: { x: { type: 'string', default: 'D' } },
+            },
+          },
+        },
+      ],
+    }).root;
 
   it('edge-cases.mjs:21 does not birth children of an inactive fragment', () => {
     const root = fragmentTree();
@@ -25,12 +38,20 @@ describe('round9 edge cases with PR-2 mechanisms', () => {
     expect(root.outputValue).toEqual({ on: true, group: { x: 'D' } });
   });
 
-  const elseTree = () => makeSchemaNodeTree({ type: 'object', properties: {
-    kind: { type: 'string' },
-  }, allOf: [{ if: { properties: { kind: { const: 'yes' } },
-    required: ['kind'] },
-    then: { properties: { a: { type: 'string', default: 'A' } } },
-    else: { properties: { b: { type: 'string', default: 'B' } } } }] }).root;
+  const elseTree = () =>
+    makeFieldNodeTree({
+      type: 'object',
+      properties: {
+        kind: { type: 'string' },
+      },
+      allOf: [
+        {
+          if: { properties: { kind: { const: 'yes' } }, required: ['kind'] },
+          then: { properties: { a: { type: 'string', default: 'A' } } },
+          else: { properties: { b: { type: 'string', default: 'B' } } },
+        },
+      ],
+    }).root;
 
   it('edge-cases.mjs:48 activates the else declaration inside allOf', () => {
     const root = elseTree();
@@ -46,20 +67,37 @@ describe('round9 edge cases with PR-2 mechanisms', () => {
   });
 
   it('edge-cases.mjs:84 fills an object default before its child default', () => {
-    const { root } = makeSchemaNodeTree({ type: 'object', properties: {
-      group: { type: 'object', default: { x: 'parent' },
-        properties: { x: { type: 'string', default: 'child' } } },
-    } });
+    const { root } = makeFieldNodeTree({
+      type: 'object',
+      properties: {
+        group: {
+          type: 'object',
+          default: { x: 'parent' },
+          properties: { x: { type: 'string', default: 'child' } },
+        },
+      },
+    });
     root.setValue({});
     expect(root.outputValue).toEqual({ group: { x: 'parent' } });
     expect(root.find('/group/x')?.raw).toBe('parent');
   });
 
-  const overlayTree = () => makeSchemaNodeTree({ type: 'object', properties: {
-    on: { type: 'boolean' }, x: { type: 'string', default: 'base' },
-  }, allOf: [{ controls: { active: './on === true' }, properties: {
-    x: { type: 'string', controls: { default: 'fragment' } },
-  } }] }).root;
+  const overlayTree = () =>
+    makeFieldNodeTree({
+      type: 'object',
+      properties: {
+        on: { type: 'boolean' },
+        x: { type: 'string', default: 'base' },
+      },
+      allOf: [
+        {
+          controls: { active: './on === true' },
+          properties: {
+            x: { type: 'string', controls: { default: 'fragment' } },
+          },
+        },
+      ],
+    }).root;
 
   it('edge-cases.mjs:90 lets an active overlay default beat the base default', () => {
     const root = overlayTree();
@@ -77,19 +115,32 @@ describe('round9 edge cases with PR-2 mechanisms', () => {
   });
 
   it('edge-cases.mjs:65 lets controls.default beat ordinary default', () => {
-    const { root } = makeSchemaNodeTree({ type: 'object', properties: {
-      x: { type: 'string', default: 'plain', controls: { default: 'control' } },
-    } });
+    const { root } = makeFieldNodeTree({
+      type: 'object',
+      properties: {
+        x: {
+          type: 'string',
+          default: 'plain',
+          controls: { default: 'control' },
+        },
+      },
+    });
     root.setValue({});
     expect(root.find('/x')?.raw).toBe('control');
   });
 
   it('edge-cases.mjs:65 keeps controls.default priority under a disabled parent', () => {
-    const { root } = makeSchemaNodeTree({ type: 'object', disabled: true,
+    const { root } = makeFieldNodeTree({
+      type: 'object',
+      disabled: true,
       properties: {
-        x: { type: 'string', default: 'plain',
-          controls: { default: 'control', disabled: false } },
-      } });
+        x: {
+          type: 'string',
+          default: 'plain',
+          controls: { default: 'control', disabled: false },
+        },
+      },
+    });
     root.setValue({});
     expect(root.find('/x')?.raw).toBe('control');
   });

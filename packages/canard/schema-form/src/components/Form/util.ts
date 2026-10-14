@@ -9,9 +9,7 @@ import type {
 import { FormChildrenRenderer } from './components/FormChildrenRenderer';
 import type { FormProps } from './type';
 
-/** Sentinel for "no value emitted yet" — distinct from any real value (incl. undefined). */
-export const NOT_EMITTED = Symbol('@canard/schema-form::not-emitted');
-
+/** Preserve element children or bind function children to the current root. */
 export const createChildren = <
   Schema extends JSONSchema,
   Value extends AllowedValue = InferValueType<Schema>,

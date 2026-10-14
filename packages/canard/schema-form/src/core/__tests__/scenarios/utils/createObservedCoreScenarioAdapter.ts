@@ -1,33 +1,41 @@
-import type { FormScenario, FormScenarioStep, ScenarioAdapter,
-  ScenarioExpectation } from '@aileron/schema-form-scenarios';
 import { expect } from 'vitest';
 
-import type { BlueprintSchema } from '../../../blueprint';
-import { SchemaNodeEventType, SetValueOption } from '../../../SchemaNode';
-import type { SchemaNode } from '../../../SchemaNode';
-import type { SchemaNode as RuntimeSchemaNode } from '../../../SchemaNode/SchemaNode';
-import { loadSchemaNodeAtMount } from '../../../settle';
-import { ValidationMode } from '../../../types/state';
-import { makeSchemaNodeTree } from '../../makeSchemaNodeTree';
+import type {
+  FormScenario,
+  FormScenarioStep,
+  ScenarioAdapter,
+  ScenarioExpectation,
+} from '@aileron/schema-form-scenarios';
+
+import type { BlueprintSchema } from '../../../engine/blueprint';
+import { loadFieldNodeAtMount } from '../../../engine/settle';
+import { ValidationMode } from '../../../engine/types/state';
+import { FieldNodeEventType, SetValueOption } from '../../../surface';
+import type { FieldNode } from '../../../surface';
+import type { FieldNode as RuntimeFieldNode } from '../../../surface/FieldNode';
+import { makeFieldNodeTree } from '../../makeFieldNodeTree';
 import { assertCoreScenarioExpectation } from './assertCoreScenarioExpectation';
 import { executeCoreScenarioStep } from './executeCoreScenarioStep';
 
 /** Execute batches through the public node boundary while reusing existing actions. */
-const executeStep = (root: SchemaNode, scenario: FormScenario,
-  step: FormScenarioStep): void => {
+const executeStep = (
+  root: FieldNode,
+  scenario: FormScenario,
+  step: FormScenarioStep,
+): void => {
   if (step.action === 'batch') {
     root.batch(() => {
       for (const nested of step.steps) executeStep(root, scenario, nested);
     });
     return;
   }
-  executeCoreScenarioStep(root as RuntimeSchemaNode, scenario, step);
+  executeCoreScenarioStep(root as RuntimeFieldNode, scenario, step);
 };
 
 /** Record only value deliveries; error deliveries belong to validation assertions. */
-const subscribeValueTree = (node: SchemaNode, order: string[]): void => {
+const subscribeValueTree = (node: FieldNode, order: string[]): void => {
   node.subscribe((event) => {
-    if (event.type & SchemaNodeEventType.UpdateValue) order.push(node.path);
+    if (event.type & FieldNodeEventType.UpdateValue) order.push(node.path);
   });
   for (const child of node.children ?? []) subscribeValueTree(child, order);
 };
@@ -39,23 +47,39 @@ const subscribeValueTree = (node: SchemaNode, order: string[]): void => {
  * @returns Step-local observations through the shared adapter interface
  */
 export function createObservedCoreScenarioAdapter(
-  scenario: FormScenario, family: 'notify' | 'validation',
+  scenario: FormScenario,
+  family: 'notify' | 'validation',
 ): ScenarioAdapter {
   const delivered: string[] = [];
   const reported: string[] = [];
   let onChangeCount = 0;
   let validationRequestStamp = 0;
-  const { root, runtime } = makeSchemaNodeTree(scenario.schema as BlueprintSchema, {
-    snapshot: scenario.initialValue,
-    errorReporter: { hasConsumer: () => true,
-      report: (record) => { reported.push(record.code); } },
-  });
-  loadSchemaNodeAtMount(root as RuntimeSchemaNode, scenario.initialValue,
-    SetValueOption.Overwrite);
+  const { root, runtime } = makeFieldNodeTree(
+    scenario.schema as BlueprintSchema,
+    {
+      snapshot: scenario.initialValue,
+      errorReporter: {
+        hasConsumer: () => true,
+        report: (record) => {
+          reported.push(record.code);
+        },
+      },
+    },
+  );
+  loadFieldNodeAtMount(
+    root as RuntimeFieldNode,
+    scenario.initialValue,
+    SetValueOption.Overwrite,
+  );
   subscribeValueTree(root, delivered);
-  Reflect.set(runtime, 'onChange', () => { onChangeCount += 1; });
-  Reflect.set(runtime, 'validationMode', family === 'notify'
-    ? ValidationMode.OnChange : ValidationMode.OnRequest);
+  Reflect.set(runtime, 'onChange', () => {
+    onChangeCount += 1;
+  });
+  Reflect.set(
+    runtime,
+    'validationMode',
+    family === 'notify' ? ValidationMode.OnChange : ValidationMode.OnRequest,
+  );
 
   return {
     execute: (step) => {
@@ -65,17 +89,27 @@ export function createObservedCoreScenarioAdapter(
       validationRequestStamp = Reflect.get(runtime, 'validationStamp') ?? 0;
       executeStep(root, scenario, step);
     },
-    settle: family === 'validation' ? async () => { await root.validate(); } : undefined,
+    settle:
+      family === 'validation'
+        ? async () => {
+            await root.validate();
+          }
+        : undefined,
     assert: (expectation: ScenarioExpectation) => {
-      assertCoreScenarioExpectation(root, { ...expectation, errors: undefined });
+      assertCoreScenarioExpectation(root, {
+        ...expectation,
+        errors: undefined,
+      });
       if (expectation.deliveryOrder)
         expect(delivered, 'deliveryOrder').toEqual(expectation.deliveryOrder);
       if (expectation.onChangeCount !== undefined)
         expect(onChangeCount, 'onChangeCount').toBe(expectation.onChangeCount);
       if (expectation.validationRequestCount !== undefined)
-        expect((Reflect.get(runtime, 'validationStamp') ?? 0) - validationRequestStamp,
-          'validationRequestCount')
-          .toBe(expectation.validationRequestCount);
+        expect(
+          (Reflect.get(runtime, 'validationStamp') ?? 0) -
+            validationRequestStamp,
+          'validationRequestCount',
+        ).toBe(expectation.validationRequestCount);
       if (expectation.onErrorCodes)
         expect(reported, 'onErrorCodes').toEqual(expectation.onErrorCodes);
       for (const [path, issues] of Object.entries(expectation.errors ?? {})) {

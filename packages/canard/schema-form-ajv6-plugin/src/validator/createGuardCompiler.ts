@@ -1,6 +1,7 @@
+import { GuardPointerNotSchemaError } from './utils/GuardPointerNotSchemaError';
+import { isSelfContainedGuard } from './utils/isSelfContainedGuard';
 import type { SchemaRootRegistration } from './utils/registerSchemaRoot';
 import { resolveGuardSchema } from './utils/resolveGuardSchema';
-import { isSelfContainedGuard } from './utils/isSelfContainedGuard';
 
 /**
  * Compile a synchronous guard directly when context-free, otherwise in its root.
@@ -10,6 +11,7 @@ import { isSelfContainedGuard } from './utils/isSelfContainedGuard';
  * @param directGuardCompile - Enable direct compilation of self-contained guards.
  * @param finalizer - Cleanup owner for roots whose resources cannot retain the root.
  * @returns An input-preserving predicate; asynchronous results are refused.
+ * @throws GuardPointerNotSchemaError when the pointer does not locate a schema
  */
 export const createGuardCompiler = (
   registration: SchemaRootRegistration,
@@ -21,15 +23,29 @@ export const createGuardCompiler = (
   const fragment = pointer.startsWith('#') ? pointer : `#${pointer}`;
   const guard = registration.guard;
   if (!guard) throw new Error('Ajv 6 guard root was not registered');
-  const schema = directGuardCompile ? resolveGuardSchema(root, pointer) : undefined;
-  const direct = schema !== undefined && !Object.prototype.hasOwnProperty.call(root, '$schema') && isSelfContainedGuard(schema, registration.guardChecks, guard._opts.schemaId === 'id' || guard._opts.schemaId === 'auto');
+  const rootId = '$id' in root && typeof root.$id === 'string' ? root.$id : '';
+  const located = resolveGuardSchema(root, pointer);
+  if (located === undefined)
+    throw new GuardPointerNotSchemaError(rootId, pointer);
+  const schema = directGuardCompile ? located : undefined;
+  const direct =
+    schema !== undefined &&
+    !Object.prototype.hasOwnProperty.call(root, '$schema') &&
+    isSelfContainedGuard(
+      schema,
+      registration.guardChecks,
+      guard._opts.schemaId === 'id' || guard._opts.schemaId === 'auto',
+    );
   if (direct) {
     // A direct root would retain itself through the finalizer's held value.
     // Its ID-free, dedicated guard is collected with the weak root registration.
     if (schema === root) finalizer.unregister(registration);
-    if (!registration.directGuards.includes(schema)) registration.directGuards.push(schema);
+    if (!registration.directGuards.includes(schema))
+      registration.directGuards.push(schema);
   }
-  const validate = guard.compile(direct ? schema : { $ref: `${registration.rootId}${fragment}` });
+  const validate = guard.compile(
+    direct ? schema : { $ref: `${registration.rootId}${fragment}` },
+  );
   if (direct && '$async' in validate && validate.$async === true)
     throw new Error('async schema in sync schema');
   return (value) => {

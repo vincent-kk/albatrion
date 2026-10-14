@@ -2,7 +2,7 @@
 
 ## Purpose
 
-Form 전체에서 공유하는 렌더 가상화(지연 마운트) `VirtualizationManager`를 Context로 공급한다. `Form`의 `virtualization` prop을 마운트 시점에 한 번 해석해 manager를 생성하고, 하위 `DeferrableNodeProxy`·`useChildNodeComponents`가 이를 통해 reveal 게이트를 구성한다.
+Form 전체에서 공유하는 렌더 가상화(지연 마운트) `VirtualizationManager`를 Context로 공급한다. `Form`의 `virtualization` prop을 마운트 시점에 한 번 해석해 manager를 생성하고, 하위 `DeferredFieldProxy`·`useChildFields`가 이를 통해 reveal 게이트를 구성한다.
 
 ## Conventions
 

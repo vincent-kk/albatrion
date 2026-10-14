@@ -16,8 +16,8 @@ const emittedWarnings = new Set<string>();
  * `code + formatted message + details` structure.
  *
  * @remarks
- * - Silent when `process.env.NODE_ENV === 'production'`. This expression is
- *   intentionally direct so consumer bundlers can replace it statically.
+ * - Silent when `process.env.NODE_ENV === 'production'`. The bare token is compared at
+ *   the use site so consumer bundlers can replace it statically and drop the branch.
  * - Deduplicated per session by `code + message`, so warnings raised from
  *   per-node pipelines (e.g. schema merging) cannot flood the console.
  * @param issue - The diagnostic to report, carrying code, message, and details

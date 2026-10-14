@@ -4,13 +4,13 @@ import { getEmptyObject } from '@winglet/common-utils/object';
 
 import type { Dictionary } from '@aileron/declare';
 
-import { ENHANCED_KEY } from '@/schema-form/app/constants';
+import { ENHANCED_KEY } from '@/schema-form/__legacy__/app/constants';
 import {
   type ConditionDictionary,
   convertExpression,
-} from '@/schema-form/helpers/dynamicExpression';
-import { JSONPointer as $ } from '@/schema-form/helpers/jsonPointer';
-import type { PartialJSONSchema } from '@/schema-form/types';
+} from '@/schema-form/__legacy__/helpers/dynamicExpression';
+import { JSONPointer as $ } from '@/schema-form/__legacy__/helpers/jsonPointer';
+import type { PartialJSONSchema } from '@/schema-form/__legacy__/types';
 
 /**
  * Extracts conditional expressions from a JSON Schema's properties

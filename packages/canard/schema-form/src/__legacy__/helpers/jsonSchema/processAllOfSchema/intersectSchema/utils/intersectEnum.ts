@@ -1,9 +1,9 @@
-import { JSONSchemaError } from '@/schema-form/errors';
-import { formatEmptyEnumIntersectionError } from '@/schema-form/helpers/error';
+import { JSONSchemaError } from '@/schema-form/__legacy__/errors';
+import { formatEmptyEnumIntersectionError } from '@/schema-form/__legacy__/helpers/error';
 import {
   EMPTY_INTERSECTION,
   intersectEnum as intersect,
-} from '@/schema-form/helpers/schemaIntersection';
+} from '@/schema-form/__legacy__/helpers/schemaIntersection';
 
 /**
  * Intersects two enum arrays, returning only values that exist in both arrays.

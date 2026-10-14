@@ -102,20 +102,20 @@ function LoginForm() {
 }
 ```
 
-## Custom Layout with Form.Group
+## Custom Layout with Form.Field
 
-`Form.Group`, `Form.Label`, `Form.Input`,
+`Form.Field`, `Form.Label`, `Form.Input`,
 `Form.Error` 서브 컴포넌트를 사용하여 커스텀 레이아웃을 구성합니다.
 각각 JSONPointer 문자열인 `path` prop을 받습니다.
 
 ```tsx
 <Form jsonSchema={schema} onSubmit={handleSubmit}>
   <div className="form-row">
-    <Form.Group path="/firstName" />
-    <Form.Group path="/lastName" />
+    <Form.Field path="/firstName" />
+    <Form.Field path="/lastName" />
   </div>
-  <Form.Group path="/email" />
-  <Form.Group path="/birthDate" />
+  <Form.Field path="/email" />
+  <Form.Field path="/birthDate" />
 </Form>
 ```
 
@@ -127,7 +127,7 @@ function LoginForm() {
     <>
       <Form.Input path="/email" />
       <Form.Error path="/email" />
-      {value?.role === 'admin' && <Form.Group path="/permissions" />}
+      {value?.role === 'admin' && <Form.Field path="/permissions" />}
       <button disabled={(errors?.length ?? 0) > 0}>Submit</button>
     </>
   )}

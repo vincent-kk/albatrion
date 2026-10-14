@@ -1,11 +1,11 @@
-import type { NullSchema, NullValue } from '@/schema-form/types';
+import type { NullSchema, NullValue } from '@/schema-form/__legacy__/types';
 
 import {
   NodeEventType,
   type SchemaNodeConstructorProps,
   SetValueOption,
   type UnionSetValueOption,
-} from '../../../../core/types';
+} from '../../types';
 import { AbstractNode } from '../AbstractNode';
 
 /**

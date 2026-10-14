@@ -1,15 +1,8 @@
 import { describe, expect, it } from 'vitest';
 
-import type {
-  ArraySchema,
-  BooleanSchema,
-  JSONSchema,
-  NumberSchema,
-  ObjectSchema,
-  StringSchema,
-} from '@/schema-form/types';
+import type { ArraySchema, BooleanSchema, JSONSchema, NumberSchema, ObjectSchema, StringSchema } from '@/schema-form/__legacy__/types/jsonSchema';
 
-import { nodeFromJSONSchema } from '../../../core/nodeFromJSONSchema';
+import { nodeFromJSONSchema } from '../nodeFromJSONSchema';
 import { ArrayNode } from '../nodes/ArrayNode';
 import { BooleanNode } from '../nodes/BooleanNode';
 import { NullNode } from '../nodes/NullNode';

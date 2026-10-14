@@ -2,7 +2,7 @@ import { isArray } from '@winglet/common-utils/filter';
 
 import type { Nullish } from '@aileron/declare';
 
-import type { ArrayValue } from '@/schema-form/types';
+import type { ArrayValue } from '@/schema-form/__legacy__/types';
 
 /**
  * Removes consecutive trailing `undefined` items from an array value.

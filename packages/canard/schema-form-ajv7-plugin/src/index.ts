@@ -7,3 +7,4 @@ export const plugin = {
 } satisfies SchemaFormPlugin;
 
 export { createValidatorFactory } from './validator/createValidatorFactory';
+export { createValidator } from './validator/createValidator';

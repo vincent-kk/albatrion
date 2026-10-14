@@ -14,8 +14,8 @@ import type { ReactNode } from 'react';
 import { createRoot } from 'react-dom/client';
 
 import {
+  type FieldRendererProps,
   Form,
-  type FormTypeRendererProps,
   VirtualizationBackfill,
 } from '@canard/schema-form';
 
@@ -31,7 +31,7 @@ const buildFlatSchema = (n: number) => {
   return { type: 'object', properties } as const;
 };
 
-const PassRenderer = ({ Input }: FormTypeRendererProps): ReactNode => <Input />;
+const PassRenderer = ({ Input }: FieldRendererProps): ReactNode => <Input />;
 const macrotask = (): Promise<void> => new Promise((r) => setTimeout(r, 0));
 
 type Mode = 'baseline' | 'virtualized';
@@ -55,7 +55,7 @@ async function benchMount(mode: Mode, size: number) {
   root.render(
     <Form
       jsonSchema={schema as never}
-      CustomFormTypeRenderer={PassRenderer}
+      CustomFieldRenderer={PassRenderer}
       onChange={() => {}}
       virtualization={virtualization as never}
     />,

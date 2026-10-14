@@ -1,5 +1,5 @@
-import { PathKeyedMap } from '../src/core/utils/pathIndex/PathKeyedMap';
-import { PathKeyedSet } from '../src/core/utils/pathIndex/PathKeyedSet';
+import { PathKeyedMap } from '../src/core/engine';
+import { PathKeyedSet } from '../src/core/engine';
 /**
  * U15: same-run legacy/new mount and delivery comparisons.
  * Each mount uses a fresh schema per engine; legacy timing includes onChange
@@ -10,15 +10,15 @@ import { performance } from 'node:perf_hooks';
 import Ajv from 'ajv';
 import type { AnySchema } from 'ajv';
 
-import { blueprint } from '../src/core/blueprint';
-import { nodeFromJSONSchema } from '../src/core/nodeFromJSONSchema';
-import { schemaNodeFactory, SetValueOption } from '../src/core/SchemaNode';
-import { SchemaNode } from '../src/core/SchemaNode/SchemaNode';
-import { dispatchMount } from '../src/core/dispatch';
+import { blueprint } from '../src/core';
+import { nodeFromJSONSchema } from '../src/__legacy__/core/nodeFromJSONSchema';
+import { fieldNodeFactory, SetValueOption } from '../src/core';
+import { FieldNode } from '../src/core/surface/FieldNode';
+import { dispatchMount } from '../src/core/engine';
 import { createTestValidator } from '../src/core/__tests__/fixtures/createTestValidator';
-import { ValidationMode } from '../src/core/types/state';
-import type { Validator } from '../src/core/validation';
-import type { JSONSchema } from '../src/types';
+import { ValidationMode } from '../src/core';
+import type { Validator } from '../src/core';
+import type { JSONSchema } from '../src/__legacy__/types';
 
 // Load plugin source at runtime without adding it to this composite project's files.
 const pluginSource = new URL('../../schema-form-ajv8-plugin/src/default/validatorPlugin.ts', import.meta.url);
@@ -152,12 +152,12 @@ function newMount(schema: JSONSchema, value: ReturnType<typeof conditionalValue>
     },
   };
   const start = performance.now();
-  const root: unknown = schemaNodeFactory(blueprint(schema), {
+  const root: unknown = fieldNodeFactory(blueprint(schema), {
     diagnostics: { status: 'stable' }, validationMode: ValidationMode.OnChange,
     loadSnapshot: undefined, latentRaw: new PathKeyedMap('pair'),
     typeMismatchPaths: new PathKeyedSet(), inactiveValuesMemo: new PathKeyedMap<readonly { path: string; value: unknown }[]>('path'),
   }, validator);
-  if (!(root instanceof SchemaNode)) throw new Error('New mount did not create a runtime node');
+  if (!(root instanceof FieldNode)) throw new Error('New mount did not create a runtime node');
   dispatchMount(root, value, SetValueOption.Overwrite);
   const ms = performance.now() - start;
   if (!root.find('/group_0/field') || guardCalls !== guards)
@@ -292,11 +292,11 @@ async function waveRow() {
   const schema = flatSchema();
   const oldRoot = nodeFromJSONSchema({ jsonSchema: schema, onChange: noop,
     defaultValue: waveValue(0) });
-  const newRoot: unknown = schemaNodeFactory(blueprint(schema), {
+  const newRoot: unknown = fieldNodeFactory(blueprint(schema), {
     diagnostics: { status: 'stable' }, loadSnapshot: undefined,
     latentRaw: new PathKeyedMap('pair'), typeMismatchPaths: new PathKeyedSet(), inactiveValuesMemo: new PathKeyedMap<readonly { path: string; value: unknown }[]>('path'),
   });
-  if (!(newRoot instanceof SchemaNode)) throw new Error('New wave did not create a runtime node');
+  if (!(newRoot instanceof FieldNode)) throw new Error('New wave did not create a runtime node');
   dispatchMount(newRoot, waveValue(0));
   const oldChildren = oldRoot.children?.map((child) => child.node);
   const newChildren = newRoot.children;

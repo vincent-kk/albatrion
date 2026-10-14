@@ -12,8 +12,8 @@ import {
   type SchemaNodeFactory,
   SetValueOption,
   type UnionSetValueOption,
-} from '@/schema-form/core/types';
-import type { AllowedValue, ArrayValue } from '@/schema-form/types';
+} from '@/schema-form/__legacy__/core/types';
+import type { AllowedValue, ArrayValue } from '@/schema-form/__legacy__/types';
 
 import { resolveArrayLimits } from '../../utils';
 import type { ArrayNodeStrategy } from '../types';

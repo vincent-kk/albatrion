@@ -20,7 +20,7 @@
 
 📌 플러그인의 목적은 개발 편의성을 높이는 것이므로, 모든 가능한 컴포넌트를 포함하지는 않습니다.
 
-💡 플러그인에 포함되지 않은 FormTypeInput 컴포넌트가 필요한 경우, `@canard/schema-form`의 공식 가이드를 참고하여 직접 구현하실 수 있습니다.
+💡 플러그인에 포함되지 않은 FieldInput 컴포넌트가 필요한 경우, `@canard/schema-form`의 공식 가이드를 참고하여 직접 구현하실 수 있습니다.
 
 ---
 
@@ -44,63 +44,63 @@ registerPlugin(plugin);
 
 이 플러그인은 다음과 같은 Ant Design Mobile 컴포넌트들을 제공합니다:
 
-### **[`FormTypeInputBooleanSwitch.tsx`](./src/formTypeInputs/FormTypeInputBooleanSwitch.tsx)**
+### **[`FieldInputBooleanSwitch.tsx`](./src/fieldInputs/FieldInputBooleanSwitch.tsx)**
 
 - **역할**: boolean 타입 데이터를 Switch 컴포넌트로 표시
-- **적용 조건**: `type`이 `"boolean"`이고 `formType`이 `"switch"`인 경우
+- **적용 조건**: `type`이 `"boolean"`이고 `inputType`이 `"switch"`인 경우
 - **추가 사항**: `checked`/`unchecked` 상태에 대한 커스텀 라벨 지원
 
-### **[`FormTypeInputStringCheckbox.tsx`](./src/formTypeInputs/FormTypeInputStringCheckbox.tsx)**
+### **[`FieldInputStringCheckbox.tsx`](./src/fieldInputs/FieldInputStringCheckbox.tsx)**
 
 - **역할**: string 배열을 체크박스 그룹으로 표시
-- **적용 조건**: `type`이 `"array"`이고 `formType`이 `"checkbox"`이며, `items.type`이 `"string"`이고 `enum` 값이 존재하는 경우
+- **적용 조건**: `type`이 `"array"`이고 `inputType`이 `"checkbox"`이며, `items.type`이 `"string"`이고 `enum` 값이 존재하는 경우
 - **추가 사항**: 각 체크박스 옵션에 대한 커스텀 라벨 지원
 
-### **[`FormTypeInputStringSwitch.tsx`](./src/formTypeInputs/FormTypeInputStringSwitch.tsx)**
+### **[`FieldInputStringSwitch.tsx`](./src/fieldInputs/FieldInputStringSwitch.tsx)**
 
 - **역할**: 두 개의 string 값 사이를 Switch로 토글
-- **적용 조건**: `type`이 `"string"`이고 `formType`이 `"switch"`이며, `enum` 배열에 정확히 2개의 값이 있는 경우
+- **적용 조건**: `type`이 `"string"`이고 `inputType`이 `"switch"`이며, `enum` 배열에 정확히 2개의 값이 있는 경우
 - **추가 사항**: 스위치 상태별 커스텀 라벨 지원
 
-### **[`FormTypeInputRadioGroup.tsx`](./src/formTypeInputs/FormTypeInputRadioGroup.tsx)**
+### **[`FieldInputRadioGroup.tsx`](./src/fieldInputs/FieldInputRadioGroup.tsx)**
 
 - **역할**: string 또는 number의 단일 선택을 라디오 그룹으로 표시
-- **적용 조건**: `type`이 `"string"`, `"number"`, 또는 `"integer"`이고, `formType`이 `"radio"` 또는 `"radiogroup"`이며, `enum` 값이 존재하는 경우
+- **적용 조건**: `type`이 `"string"`, `"number"`, 또는 `"integer"`이고, `inputType`이 `"radio"` 또는 `"radiogroup"`이며, `enum` 값이 존재하는 경우
 - **추가 사항**: 라디오 옵션에 대한 커스텀 라벨 지원
 
-### **[`FormTypeInputArray.tsx`](./src/formTypeInputs/FormTypeInputArray.tsx)**
+### **[`FieldInputArray.tsx`](./src/fieldInputs/FieldInputArray.tsx)**
 
 - **역할**: 배열 데이터를 동적으로 추가/삭제 가능한 리스트로 표시
 - **적용 조건**: `type`이 `"array"`인 경우
 - **추가 사항**: 읽기 전용 모드에서는 추가/삭제 버튼이 숨겨짐
 
-### **[`FormTypeInputSlider.tsx`](./src/formTypeInputs/FormTypeInputSlider.tsx)**
+### **[`FieldInputSlider.tsx`](./src/fieldInputs/FieldInputSlider.tsx)**
 
 - **역할**: 숫자 값을 슬라이더로 입력받기
 - **적용 조건**:
   - `type`이 `"number"` 또는 `"integer"`이고 `format`이 `"slider"`인 경우
   - 또는 `type`이 `"array"`이고 `items.type`이 `"number"` 또는 `"integer"`이며 `format`이 `"slider"`인 경우 (범위 슬라이더)
-- **추가 사항**: 지연 업데이트 옵션(`lazy`), 마크 표시, 범위 슬라이더 지원
+- **추가 사항**: `presentation.FieldInputProps.lazy`(`false`이면 움직일 때마다 값 반영), `marks`(마크 표시), `range`(범위 슬라이더)
 
-### **[`FormTypeInputTextarea.tsx`](./src/formTypeInputs/FormTypeInputTextarea.tsx)**
+### **[`FieldInputTextarea.tsx`](./src/fieldInputs/FieldInputTextarea.tsx)**
 
 - **역할**: 멀티라인 텍스트 입력을 위한 텍스트 영역
-- **적용 조건**: `type`이 `"string"`이고 `format` 또는 `formType`이 `"textarea"`인 경우
+- **적용 조건**: `type`이 `"string"`이고 `format` 또는 `inputType`이 `"textarea"`인 경우
 - **추가 사항**: `minRows`, `maxRows`를 통한 자동 크기 조절 지원
 
-### **[`FormTypeInputString.tsx`](./src/formTypeInputs/FormTypeInputString.tsx)**
+### **[`FieldInputString.tsx`](./src/fieldInputs/FieldInputString.tsx)**
 
 - **역할**: 기본 문자열 입력 필드
 - **적용 조건**: `type`이 `"string"`인 경우 (다른 조건에 해당하지 않는 fallback)
 - **추가 사항**: `format`이 `"password"`인 경우 비밀번호 입력 필드로 동작
 
-### **[`FormTypeInputNumber.tsx`](./src/formTypeInputs/FormTypeInputNumber.tsx)**
+### **[`FieldInputNumber.tsx`](./src/fieldInputs/FieldInputNumber.tsx)**
 
 - **역할**: 숫자 입력을 위한 스테퍼 컴포넌트
 - **적용 조건**: `type`이 `"number"` 또는 `"integer"`인 경우 (다른 조건에 해당하지 않는 fallback)
 - **추가 사항**: `minimum`, `maximum`, `multipleOf` 스키마 속성 지원
 
-### **[`FormTypeInputBoolean.tsx`](./src/formTypeInputs/FormTypeInputBoolean.tsx)**
+### **[`FieldInputBoolean.tsx`](./src/fieldInputs/FieldInputBoolean.tsx)**
 
 - **역할**: boolean 값을 체크박스로 표시
 - **적용 조건**: `type`이 `"boolean"`인 경우 (다른 조건에 해당하지 않는 fallback)
@@ -108,19 +108,40 @@ registerPlugin(plugin);
 
 ---
 
+## 입력 설정
+
+위의 `lazy`, `marks`, `range` 같은 입력별 설정은 `presentation.FieldInputProps`에 둡니다. 폼이 이 객체를 입력 props로 펼쳐 넘깁니다.
+
+```ts
+const jsonSchema = {
+  type: 'object',
+  properties: {
+    volume: {
+      type: 'number',
+      format: 'slider',
+      presentation: {
+        FieldInputProps: { lazy: false, marks: { 0: '0', 100: '100' } },
+      },
+    },
+  },
+};
+```
+
+0.16.0까지 슬라이더 입력은 `options.range`·`marks`·`lazy`를 읽었습니다. 1.0.0-beta부터 `options`는 닫힌 목록이고 입력별 설정은 `presentation.FieldInputProps`에 두면 입력 props로 펼쳐집니다. 옛 자리는 청사진 오류 `UNKNOWN_GROUP_KEY`가 됩니다.
+
 ## 컴포넌트 우선순위
 
 컴포넌트 선택은 다음 우선순위에 따라 결정됩니다:
 
-1. **In-line 컴포넌트**: 스키마에 `FormTypeInput` 속성으로 지정된 컴포넌트
-2. **FormTypeInputMap**: Path에 대해 명시적으로 매핑된 컴포넌트
-3. **FormTypeInputDefinition**: 각 컴포넌트의 `test` 조건을 통한 자동 선택
-4. **Provider FormTypeInputDefinition**: 상위 Provider에서 제공된 컴포넌트 정의
+1. **In-line 컴포넌트**: 스키마에 `FieldInput` 속성으로 지정된 컴포넌트
+2. **FieldInputMap**: Path에 대해 명시적으로 매핑된 컴포넌트
+3. **FieldInputDefinition**: 각 컴포넌트의 `test` 조건을 통한 자동 선택
+4. **Provider FieldInputDefinition**: 상위 Provider에서 제공된 컴포넌트 정의
 5. **Plugin**: 등록된 플러그인의 컴포넌트 (현재 플러그인 포함)
 6. **Fallback**: 기본 fallback 컴포넌트
 
 같은 우선순위 내에서는 배열의 앞순서가 우선합니다. 현재 플러그인의 컴포넌트는 다음 순서로 정의되어 있습니다:
-`FormTypeInputBooleanSwitch` → `FormTypeInputStringCheckbox` → `FormTypeInputStringSwitch` → `FormTypeInputRadioGroup` → `FormTypeInputArray` → `FormTypeInputSlider` → `FormTypeInputTextarea` → `FormTypeInputString` → `FormTypeInputNumber` → `FormTypeInputBoolean`
+`FieldInputBooleanSwitch` → `FieldInputStringCheckbox` → `FieldInputStringSwitch` → `FieldInputRadioGroup` → `FieldInputArray` → `FieldInputSlider` → `FieldInputTextarea` → `FieldInputString` → `FieldInputNumber` → `FieldInputBoolean`
 
 ---
 

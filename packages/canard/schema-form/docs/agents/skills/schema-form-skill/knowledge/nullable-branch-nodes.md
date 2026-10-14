@@ -18,10 +18,10 @@ The form never converts one state into another by itself. If a consumer's schema
 | --------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------ |
 | `defaultValue` / schema `default: null`, `setValue(null)` on the node or an ancestor                                              | becomes `null`                                                                       |
 | `setValue({})` / `setValue([])` on the node itself                                                                                | becomes `{}` / `[]`                                                                  |
-| `setValue({ ...keys }, SetValueOption.Merge)` on the node itself                                                                  | becomes the blank form plus the keys                                                 |
+| `setValue({ ...keys }, SetValueOption.Merge)` on the node itself                                                                  | becomes an object holding the keys                                                   |
 | user input, descendant `setValue`, array `push`, an `injectTo` the user caused — a write that **carries a value**                 | becomes an object/array                                                              |
-| confirming the value a field already shows (a select re-emitting its default)                                                     | becomes an object/array                                                              |
-| child `default`, `computed.derived`, `oneOf`/`anyOf` branch restore, `computed.active` reactivation, child restore during a reset | stays `null`                                                                         |
+| confirming the value a field already shows (re-emitting a derived or injected value the field shows)                              | becomes an object/array                                                              |
+| child `default`, `controls.derived`, `oneOf`/`anyOf` branch restore, `controls.active` reactivation, child restore during a reset | stays `null`                                                                         |
 | an `injectTo` whose source only has a `default` or a derived value                                                                | stays `null` (the target field is filled, the object is not created)                 |
 | emptying a field, `pop()`/`remove()`/`update()`/`clear()` on a null array, `setValue({}, SetValueOption.Merge)`                   | stays `null` (emptying is remembered)                                                |
 | reset                                                                                                                             | restores the default — `null` if the default is `null`, the default object otherwise |
@@ -32,21 +32,21 @@ A field is _emptied_ when its node emits `undefined`: under the default `omitEmp
 
 ## While It Is `null`
 
-- The emitted value is `null` whatever the schema holds (array children, defaults, derived values, `oneOf`/`anyOf`, computed or virtual fields), and however it became `null`.
-- An object's child fields stay rendered and show a **blank form**: what the form builds for them when it is given no `defaultValue` for this node — the node's own object `default` if it has one, otherwise each child's own `default`, derived values applied, array children filled up to `minItems`, nested objects rebuilt the same way. It does not depend on what the object held before — data discarded by `null` does not come back. A value that reached a field through `injectTo` is **not** part of the blank form: a node that becomes `null` after mount loses it until its source changes again.
-- A nullable **array** that is itself `null` has no items and no `minItems` fill.
+- The emitted value is `null` whatever the schema holds (array children, defaults, derived values, `oneOf`/`anyOf`, controls-gated or virtual fields), and however it became `null`.
+- An object's child fields stay rendered, and no child default or object default appears in them while it is `null`; a value written by `controls.derived` or `injectTo` still shows in its field without creating the object. This is the same whether it became `null` through load, reset or write. Data discarded by `null` does not come back.
+- A nullable **array** that is itself `null` has no items.
 
 ## What It Becomes
 
-Exactly what the same write produces on a form given no `defaultValue` for this node (arrays: on an empty array). With `reason: { default: 'completed' }` shown in the blank form, typing `note` yields `{ reason: 'completed', note: '…' }` — the value always matches the fields.
+Typing into a child field promotes the object to an object holding that value. Only fields created by the promotion (for example a branch the new value opens) receive their defaults; fields that already existed stay empty until filled. With `reason: { default: 'completed' }`, typing `note` yields `{ note: '…' }`. Array writes act on an empty array.
 
 ## Gotchas
 
-- A **non-nullable** object assigned `null` becomes `{}`; only `type: [..., 'null']` (or deprecated `nullable: true`) keeps `null`.
+- A **non-nullable** object assigned `null` becomes `{}`; only `type: [..., 'null']` (or `nullable: true`) keeps `null`.
 - `setValue(undefined)` is not `null`: it clears the subtree — fields and array items — without restoring child defaults.
-- The form never alters a value to make it validate. `oneOf` branches that declare no `type` all match `null`, so `null` fails such a `oneOf` in any validator. Write the null-branch pattern: `oneOf: [{ type: 'null' }, { type: 'object', '&if': …, properties: … }, …]` — one null branch, and `type: 'object'` on every object branch. `anyOf` needs neither.
-- A branch may narrow a nullable parent's type to `'object'` or `'null'`; a `'null'` branch under a non-nullable object, or any other type, throws `COMPOSITION_TYPE_REDEFINITION`.
-- That rule and the `NULL_BRANCH_IGNORED_FOR_FORM` / `NULLABLE_ONE_OF_NULL_UNREACHABLE` warnings run only where the object builds child nodes. An object handled as a single input (`terminal: true`, or a `FormTypeInput` component on its schema) builds no branches: nothing is checked or warned, and the validator still sees the schema as written.
-- The null branch is validation-only: no fields, never the active branch. A condition or `properties` on it is ignored (`NULL_BRANCH_IGNORED_FOR_FORM`). Null-ness comes from the value, the visible object branch from the branch conditions — the two are independent, so the blank form while null is the branch the conditions select.
-- A nullable object whose `oneOf` cannot validate `null` prints `NULLABLE_ONE_OF_NULL_UNREACHABLE` in development.
-- A custom `FormTypeInput` must call `onChange` to create the object; rendering a default in the blank form is not a write.
+- The form never alters a value to make it validate. `oneOf` branches that declare no `type` all match `null`, so `null` fails such a `oneOf` in any validator. Write the null-branch pattern: `oneOf: [{ type: 'null' }, { type: 'object', controls: { active: … }, properties: … }, …]` — one null branch, and `type: 'object'` on every object branch. `anyOf` needs neither.
+- The parent's own `type` decides the node's kind. A branch `type` that differs (including a `'null'` branch under a non-nullable object) is not rejected; only the validator applies it.
+- An object handled as a single input (`options.terminal: true`, or a `presentation.FieldInput` component on its schema) builds no child nodes, so branch property kinds are not compared. `DISCRIMINATOR_MISMATCH`, `EMPTY_ENUM_INTERSECTION` and the `NULL_BRANCH_IGNORED_FOR_FORM` warning still apply (`DISCRIMINATOR_BRANCH_UNREACHABLE` is not reported), and the validator still sees the schema as written.
+- The null branch is validation-only: no fields, never the active branch. A condition or `properties` on it is ignored (`NULL_BRANCH_IGNORED_FOR_FORM`). Null-ness comes from the value, the visible object branch from the branch conditions — the selected branch's child fields are shown without their defaults while null.
+- A nullable object whose `oneOf` cannot validate `null` fails validation while `null`; no warning is printed, so check the branches.
+- A custom `FieldInput` must call `onChange` with a value to create the object; rendering alone is not a write.

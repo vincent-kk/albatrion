@@ -4,7 +4,7 @@ export type {
   NodeListener,
   NodeStateFlags,
   UnionNodeEventType,
-} from '../../../core/types';
+} from '../types';
 export {
   NodeState,
   NodeEventType,
@@ -12,7 +12,7 @@ export {
   SetValueOption,
   PublicNodeEventType,
   PublicSetValueOption,
-} from '../../../core/types';
+} from '../types';
 
 export {
   createSchemaNodeFactory,

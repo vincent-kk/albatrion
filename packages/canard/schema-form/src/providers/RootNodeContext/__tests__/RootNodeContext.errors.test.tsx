@@ -1,0 +1,205 @@
+import { createRef } from 'react';
+
+import { act, cleanup, render } from '@testing-library/react';
+import { afterEach, expect, it, vi } from 'vitest';
+
+import { Form } from '@/schema-form/components/Form';
+import type { FormHandle } from '@/schema-form/components/Form';
+import { type AuthoredSchema, ValidationMode } from '@/schema-form/core';
+
+afterEach(cleanup);
+
+const schema = {
+  type: 'object',
+  properties: { field: { type: 'string' } },
+} as const;
+const external = [
+  { dataPath: '/field', message: 'field error' },
+  { dataPath: '', message: 'root error' },
+  { dataPath: '/absent', message: 'ownerless error' },
+];
+
+it('195C-01 applies a non-standard-path errors prop once per node and clears it on the next prop', () => {
+  const ref = createRef<FormHandle>();
+  const hashed = [{ dataPath: '#/field', message: 'hashed' }];
+  const view = render(
+    <Form
+      ref={ref}
+      jsonSchema={schema}
+      errors={hashed}
+      validationMode={ValidationMode.None}
+    >
+      <span />
+    </Form>,
+  );
+  expect(ref.current!.node!.errors).toEqual(hashed);
+  expect(ref.current!.findNode('/field')!.errors).toEqual(hashed);
+  expect(ref.current!.getErrors()).toEqual(hashed);
+  view.rerender(
+    <Form
+      ref={ref}
+      jsonSchema={schema}
+      errors={[]}
+      validationMode={ValidationMode.None}
+    >
+      <span />
+    </Form>,
+  );
+  expect(ref.current!.node!.errors).toEqual([]);
+  expect(ref.current!.findNode('/field')!.errors).toEqual([]);
+  expect(ref.current!.getErrors()).toEqual([]);
+});
+
+it('SURFACE-053 VALIDATE-043 79C-01 applies Form errors whole to the root and by path to each node', () => {
+  const ref = createRef<FormHandle>();
+  const view = render(
+    <Form
+      ref={ref}
+      jsonSchema={schema}
+      errors={external}
+      validationMode={ValidationMode.None}
+    >
+      <span />
+    </Form>,
+  );
+  expect(ref.current!.node!.errors).toEqual(external);
+  expect(ref.current!.findNode('/field')!.errors).toEqual([external[0]]);
+  const errors = ref.current!.getErrors();
+  expect(errors).toEqual(external);
+  expect(ref.current!.getErrors()).toBe(errors);
+  const next = [{ dataPath: '', message: 'new root error' }];
+  view.rerender(
+    <Form
+      ref={ref}
+      jsonSchema={schema}
+      errors={next}
+      validationMode={ValidationMode.None}
+    >
+      <span />
+    </Form>,
+  );
+  expect(ref.current!.node!.errors).toEqual(next);
+  expect(ref.current!.findNode('/field')!.errors).toEqual([]);
+  expect(ref.current!.getErrors()).toEqual(next);
+  expect(ref.current!.getErrors()).not.toBe(errors);
+  view.rerender(
+    <Form ref={ref} jsonSchema={schema} validationMode={ValidationMode.None}>
+      <span />
+    </Form>,
+  );
+  expect(ref.current!.node!.errors).toEqual([]);
+  expect(ref.current!.getErrors()).toEqual([]);
+});
+
+it('WRITE-045 69C-03 79C-01 reapplies whole-root and path errors before same-schema reset returns', () => {
+  const ref = createRef<FormHandle>();
+  render(
+    <Form
+      ref={ref}
+      jsonSchema={schema}
+      errors={external}
+      validationMode={ValidationMode.None}
+    >
+      <span />
+    </Form>,
+  );
+  const root = ref.current!.node!;
+  const field = ref.current!.findNode('/field')!;
+  act(() => {
+    root.setExternalErrors([
+      { dataPath: '', message: 'imperative root error' },
+    ]);
+    field.setExternalErrors([
+      { dataPath: '/field', message: 'imperative field error' },
+    ]);
+    ref.current!.reset();
+    expect(ref.current!.node).toBe(root);
+    expect(root.errors).toEqual(external);
+    expect(field.errors).toEqual([external[0]]);
+    expect(ref.current!.getErrors()).toEqual(external);
+  });
+});
+
+it('WRITE-045 69C-03 79C-01 reapplies errors by path to the replacement root before reset returns', () => {
+  const ref = createRef<FormHandle>();
+  const view = render(
+    <Form
+      ref={ref}
+      jsonSchema={schema}
+      errors={external}
+      validationMode={ValidationMode.None}
+    >
+      <span />
+    </Form>,
+  );
+  const root = ref.current!.node!;
+  const field = ref.current!.findNode('/field')!;
+  const replacement: AuthoredSchema = {
+    type: 'object',
+    properties: { field: { type: 'string', minLength: 2 } },
+  };
+  view.rerender(
+    <Form
+      ref={ref}
+      jsonSchema={replacement}
+      errors={external}
+      validationMode={ValidationMode.None}
+    >
+      <span />
+    </Form>,
+  );
+  act(() => {
+    ref.current!.reset();
+    expect(ref.current!.node).not.toBe(root);
+    expect(ref.current!.findNode('/field')).not.toBe(field);
+    expect(ref.current!.node!.errors).toEqual(external);
+    expect(ref.current!.findNode('/field')!.errors).toEqual([external[0]]);
+    expect(ref.current!.getErrors()).toEqual(external);
+  });
+});
+
+it('SURFACE-053 round 185 188C-01 drops a cleared child path from the root list and reports each aggregate change once', () => {
+  const ref = createRef<FormHandle>();
+  const onValidate = vi.fn();
+  const view = render(
+    <Form
+      ref={ref}
+      jsonSchema={schema}
+      validationMode={ValidationMode.None}
+      onValidate={onValidate}
+    >
+      <span />
+    </Form>,
+  );
+  onValidate.mockClear();
+  view.rerender(
+    <Form
+      ref={ref}
+      jsonSchema={schema}
+      errors={external}
+      validationMode={ValidationMode.None}
+      onValidate={onValidate}
+    >
+      <span />
+    </Form>,
+  );
+  expect(onValidate).toHaveBeenCalledTimes(1);
+  expect(onValidate).toHaveBeenLastCalledWith(external);
+  const field = ref.current!.findNode('/field')!;
+  act(() => field.clearExternalErrors());
+  expect(field.errors).toEqual([]);
+  expect(ref.current!.node!.errors).toEqual([external[1], external[2]]);
+  expect(ref.current!.getErrors()).toEqual([external[1], external[2]]);
+  expect(onValidate).toHaveBeenCalledTimes(2);
+  expect(onValidate).toHaveBeenLastCalledWith([external[1], external[2]]);
+  const replacement = [{ dataPath: '/field', message: 'replaced' }];
+  act(() => field.setExternalErrors(replacement));
+  expect(ref.current!.getErrors()).toEqual([
+    external[1],
+    external[2],
+    replacement[0],
+  ]);
+  expect(onValidate).toHaveBeenCalledTimes(3);
+  act(() => field.setExternalErrors(replacement));
+  expect(onValidate).toHaveBeenCalledTimes(3);
+});

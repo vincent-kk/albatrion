@@ -31,10 +31,10 @@ const rootLocalScenario = {
     }, outputValue: { child: 'edited' } } }],
 } satisfies FormScenario;
 
-/** A children item value key overrides the ordinary default. */
+/** A fields entry value key overrides the ordinary default. */
 const childrenValueLayerScenario = {
-  name: 'controls.children-value-layer',
-  schema: { type: 'object', controls: { children: [
+  name: 'controls.fields-value-layer',
+  schema: { type: 'object', controls: { fields: [
     { targets: ['field'], controls: { default: 'item' } },
   ] }, properties: { field: { type: 'string', default: 'ordinary' } } },
   initialValue: {},

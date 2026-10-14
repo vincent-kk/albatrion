@@ -3,9 +3,9 @@ import { createRef } from 'react';
 import { createRoot } from 'react-dom/client';
 
 import {
+  type FieldRendererProps,
   Form,
   type FormHandle,
-  type FormTypeRendererProps,
   type JSONSchema,
 } from '@canard/schema-form';
 
@@ -21,8 +21,8 @@ setupJsdom();
 /**
  * Render-count instrumentation for the React layer.
  *
- * A `CustomFormTypeRenderer` increments a per-path counter on every commit.
- * Because `SchemaNodeProxy` wraps the renderer in `memo`, a count only
+ * A `CustomFieldRenderer` increments a per-path counter on every commit.
+ * Because `FieldProxy` wraps the renderer in `memo`, a count only
  * increases when React actually re-renders that node — memo-skipped nodes
  * are NOT counted. So `renderCounts` is the exact set of nodes React
  * committed, keyed by JSON Pointer path.
@@ -38,7 +38,7 @@ setupJsdom();
  */
 const renderCounts = new Map<string, number>();
 
-function CountingRenderer({ path, Input }: FormTypeRendererProps) {
+function CountingRenderer({ path, Input }: FieldRendererProps) {
   renderCounts.set(path, (renderCounts.get(path) ?? 0) + 1);
   return <Input />;
 }
@@ -67,7 +67,7 @@ async function measure({ label, schema, target }: Scenario): Promise<void> {
       <Form
         ref={ref}
         jsonSchema={schema}
-        CustomFormTypeRenderer={CountingRenderer}
+        CustomFieldRenderer={CountingRenderer}
         onChange={() => {}}
         onValidate={() => {}}
       />,

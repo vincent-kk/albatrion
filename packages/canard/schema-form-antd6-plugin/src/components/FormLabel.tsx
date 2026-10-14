@@ -1,8 +1,8 @@
 import { Typography } from 'antd';
 
-import type { FormTypeRendererProps } from '@canard/schema-form';
+import type { FieldRendererProps } from '@canard/schema-form';
 
-export const FormLabel = ({ name, path, required }: FormTypeRendererProps) => (
+export const FormLabel = ({ name, path, required }: FieldRendererProps) => (
   <label htmlFor={path}>
     <Typography.Text style={{ wordBreak: 'unset' }}>{name}</Typography.Text>
     {required && (

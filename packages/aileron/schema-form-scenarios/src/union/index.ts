@@ -1,4 +1,5 @@
 import type { FormScenario } from '../types';
+import { unionRenderScenarios } from './render.scenario';
 import { entryTwoStepScenario } from './entry-two-step.scenario';
 import { gatedEffectiveListScenario } from './gated-effective-list.scenario';
 import { ruleAScenario } from './rule-a.scenario';
@@ -16,4 +17,5 @@ export const unionScenarios: readonly FormScenario[] = [
   ambiguousScenario, integerScenario, objectArrayScenario,
   omitEmptyUnionScenario, defaultFillUnionScenario,
   convergentFeedbackScenario, nonconvergentFeedbackScenario,
+  ...unionRenderScenarios,
 ];

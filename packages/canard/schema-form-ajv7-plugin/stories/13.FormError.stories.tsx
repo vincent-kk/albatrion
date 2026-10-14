@@ -3,10 +3,10 @@ import { useRef, useState } from 'react';
 import {
   Form,
   type FormHandle,
-  type FormTypeRendererProps,
+  type FieldRendererProps,
   type JSONSchema,
   type ValidationIssue,
-  NodeState,
+  FieldNodeState,
   ShowError,
   ValidationMode,
   registerPlugin,
@@ -47,11 +47,11 @@ export const DirtyTouched = () => {
     node,
     Input,
     errorMessage,
-  }: FormTypeRendererProps) => {
+  }: FieldRendererProps) => {
     const {
-      [NodeState.Dirty]: dirty,
-      [NodeState.Touched]: touched,
-      [NodeState.ShowError]: showError,
+      [FieldNodeState.Dirty]: dirty,
+      [FieldNodeState.Touched]: touched,
+      [FieldNodeState.ErrorVisible]: showError,
     } = node.state || {};
     return depth === 0 ? (
       <Input />
@@ -63,8 +63,8 @@ export const DirtyTouched = () => {
           <button
             onClick={() =>
               showError !== true
-                ? node.setState({ [NodeState.ShowError]: true })
-                : node.setState({ [NodeState.ShowError]: undefined })
+                ? node.setState({ [FieldNodeState.ErrorVisible]: true })
+                : node.setState({ [FieldNodeState.ErrorVisible]: undefined })
             }
           >
             Show Error
@@ -72,8 +72,8 @@ export const DirtyTouched = () => {
           <button
             onClick={() =>
               showError !== false
-                ? node.setState({ [NodeState.ShowError]: false })
-                : node.setState({ [NodeState.ShowError]: undefined })
+                ? node.setState({ [FieldNodeState.ErrorVisible]: false })
+                : node.setState({ [FieldNodeState.ErrorVisible]: undefined })
             }
           >
             Hide Error
@@ -229,7 +229,7 @@ export const DirtyTouched = () => {
           ref={refHandle}
           jsonSchema={jsonSchema}
           showError={showError}
-          CustomFormTypeRenderer={Renderer}
+          FieldRenderer={Renderer}
         />
       </StoryLayout>
     </div>
@@ -250,7 +250,7 @@ export const NoValidate = () => {
     setValue(val);
   };
 
-  const [errors, setErrors] = useState<ValidationIssue[]>([]);
+  const [errors, setErrors] = useState<readonly ValidationIssue[]>([]);
 
   const refHandle = useRef<FormHandle<typeof schema>>(null);
 
@@ -282,7 +282,7 @@ export const ValidateOnRequest = () => {
     setValue(val);
   };
 
-  const [errors, setErrors] = useState<ValidationIssue[]>([]);
+  const [errors, setErrors] = useState<readonly ValidationIssue[]>([]);
 
   const refHandle = useRef<FormHandle<typeof schema>>(null);
 
@@ -320,7 +320,7 @@ export const ExternalErrors = () => {
     setValue(val);
   };
 
-  const [errors, setErrors] = useState<ValidationIssue[]>([
+  const [errors, setErrors] = useState<readonly ValidationIssue[]>([
     {
       keyword: 'maxLength',
       dataPath: '/message',
@@ -331,7 +331,7 @@ export const ExternalErrors = () => {
     },
   ]);
 
-  const [_errors, _setErrors] = useState<ValidationIssue[]>([]);
+  const [_errors, _setErrors] = useState<readonly ValidationIssue[]>([]);
   const refHandle = useRef<FormHandle<typeof schema>>(null);
 
   const clearErrors = () => {
@@ -398,9 +398,9 @@ export const ErrorBoundary = () => {
         onChange={setValue}
       >
         <div>
-          <Form.Group
+          <Form.Field
             path="#/name"
-            FormTypeInput={() => {
+            FieldInput={() => {
               throw new Error('Error accord from Input');
               // eslint-disable-next-line no-unreachable
               return <div>Input</div>;

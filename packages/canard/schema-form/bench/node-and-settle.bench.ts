@@ -1,5 +1,5 @@
-import { PathKeyedMap } from '../src/core/utils/pathIndex/PathKeyedMap';
-import { PathKeyedSet } from '../src/core/utils/pathIndex/PathKeyedSet';
+import { PathKeyedMap } from '../src/core/engine';
+import { PathKeyedSet } from '../src/core/engine';
 /**
  * Standalone U9 measurements. Run once under Node/V8 and once under Bun/JSC.
  * Each timed sample receives the same schema and input in both runtimes.
@@ -7,15 +7,15 @@ import { PathKeyedSet } from '../src/core/utils/pathIndex/PathKeyedSet';
 import { performance } from 'node:perf_hooks';
 import { spawnSync } from 'node:child_process';
 
-import { blueprint } from '../src/core/blueprint';
-import type { BlueprintSchema } from '../src/core/blueprint';
-import { BEHAVIORS } from '../src/core/behaviors';
-import { schemaNodeFactory, SetValueOption } from '../src/core/SchemaNode';
-import type { SchemaNode as RuntimeSchemaNode } from '../src/core/SchemaNode/SchemaNode';
-import { loadSchemaNodeAtMount } from '../src/core/settle';
-import { getGateRegistry } from '../src/core/settle/utils/gates/getGateRegistry';
-import { nodeFromJSONSchema } from '../src/core/nodeFromJSONSchema';
-import type { JSONSchema } from '../src/types';
+import { blueprint } from '../src/core';
+import type { BlueprintSchema } from '../src/core/engine';
+import { BEHAVIORS } from '../src/core/engine';
+import { fieldNodeFactory, SetValueOption } from '../src/core';
+import type { FieldNode as RuntimeFieldNode } from '../src/core/surface/FieldNode';
+import { loadFieldNodeAtMount } from '../src/core/engine';
+import { getGateRegistry } from '../src/core/engine/settle/utils/gates/getGateRegistry';
+import { nodeFromJSONSchema } from '../src/__legacy__/core/nodeFromJSONSchema';
+import type { JSONSchema } from '../src/__legacy__/types';
 
 const noop = () => {};
 const sampleCount = 100;
@@ -37,14 +37,14 @@ function measure(run: (index: number) => void, warmups = 20): Sample {
 }
 
 function makeNew(schema: BlueprintSchema, value?: unknown) {
-  const root = schemaNodeFactory(blueprint(schema), {
+  const root = fieldNodeFactory(blueprint(schema), {
     diagnostics: { status: 'stable' },
     loadSnapshot: undefined,
     latentRaw: new PathKeyedMap('pair'),
     typeMismatchPaths: new PathKeyedSet(),
     inactiveValuesMemo: new PathKeyedMap<readonly { path: string; value: unknown }[]>('path'),
-  }) as unknown as RuntimeSchemaNode;
-  if (value !== undefined) loadSchemaNodeAtMount(root, value, SetValueOption.Overwrite);
+  }) as unknown as RuntimeFieldNode;
+  if (value !== undefined) loadFieldNodeAtMount(root, value, SetValueOption.Overwrite);
   return root;
 }
 
@@ -156,12 +156,12 @@ function b2() {
   const { schema, value } = flat(5000);
   const analysis = blueprint(schema);
   const makeTree = () => {
-    const root = schemaNodeFactory(analysis, {
+    const root = fieldNodeFactory(analysis, {
       diagnostics: { status: 'stable' },
       loadSnapshot: undefined,
       latentRaw: new PathKeyedMap('pair'), typeMismatchPaths: new PathKeyedSet(), inactiveValuesMemo: new PathKeyedMap<readonly { path: string; value: unknown }[]>('path'),
-    }) as unknown as RuntimeSchemaNode;
-    loadSchemaNodeAtMount(root, value, SetValueOption.Overwrite);
+    }) as unknown as RuntimeFieldNode;
+    loadFieldNodeAtMount(root, value, SetValueOption.Overwrite);
     return root;
   };
   return { new: heapSample(makeTree, 5001), legacy: heapSample(() => makeLegacy(schema, value), 5001) };
@@ -173,12 +173,12 @@ function heapOne(kind: 'new' | 'legacy') {
   collect();
   const before = heapUsed();
   if (analysis) {
-    const root = schemaNodeFactory(analysis, {
+    const root = fieldNodeFactory(analysis, {
       diagnostics: { status: 'stable' },
       loadSnapshot: undefined,
       latentRaw: new PathKeyedMap('pair'), typeMismatchPaths: new PathKeyedSet(), inactiveValuesMemo: new PathKeyedMap<readonly { path: string; value: unknown }[]>('path'),
-    }) as unknown as RuntimeSchemaNode;
-    loadSchemaNodeAtMount(root, value, SetValueOption.Overwrite);
+    }) as unknown as RuntimeFieldNode;
+    loadFieldNodeAtMount(root, value, SetValueOption.Overwrite);
     liveHeapRoot = root;
   } else liveHeapRoot = makeLegacy(schema, value);
   collect();
@@ -324,12 +324,12 @@ function main() {
   const large = flat(10000, true);
   const largeAnalysis = blueprint(large.schema);
   const freshLarge = () => {
-    const root = schemaNodeFactory(largeAnalysis, {
+    const root = fieldNodeFactory(largeAnalysis, {
       diagnostics: { status: 'stable' },
       loadSnapshot: undefined,
       latentRaw: new PathKeyedMap('pair'), typeMismatchPaths: new PathKeyedSet(), inactiveValuesMemo: new PathKeyedMap<readonly { path: string; value: unknown }[]>('path'),
-    }) as unknown as RuntimeSchemaNode;
-    loadSchemaNodeAtMount(root, large.value, SetValueOption.Overwrite);
+    }) as unknown as RuntimeFieldNode;
+    loadFieldNodeAtMount(root, large.value, SetValueOption.Overwrite);
     return root;
   };
   const newLarge = freshLarge();

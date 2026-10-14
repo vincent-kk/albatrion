@@ -1,6 +1,6 @@
 import type { Fn, Nullish } from '@aileron/declare';
 
-import type { ObjectValue } from '@/schema-form/types';
+import type { ObjectValue } from '@/schema-form/__legacy__/types';
 
 /**
  * Filter object value by validating each key with the provided validation function

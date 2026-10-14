@@ -1,0 +1,51 @@
+{
+  "timestamp": "2026-10-05T07:09:58.585Z",
+  "commit": "b31125119",
+  "node": "v26.10.0",
+  "react": "19.2.6",
+  "cpu": "Apple M1 Max",
+  "os": "Darwin 25.6.0 arm64",
+  "warmup": 10,
+  "count": 100,
+  "mode": "core",
+  "coreBundleDigests": {
+    "legacy": "78362ee2e5b7c0bdca5f9b80f7490c32a54ea344565e97c2b4088080a3c861b2",
+    "workspace": "62f617289cdcae8c137dddefae0883b77da809f9053f34f99d506474e3e26731"
+  },
+  "rows": [
+    {
+      "fixture": "flat-50",
+      "metric": "core-mount",
+      "old": {
+        "median": 0.5677705000002788,
+        "p99": 0.7132919999994556
+      },
+      "new": {
+        "median": 1.989812499999971,
+        "p99": 2.1957079999997404
+      },
+      "ratio": 3.504607055137584,
+      "p99Ratio": 3.0782736943655844,
+      "throughputDrop": 71.67301692824411,
+      "p": 7.43607417297712e-101,
+      "regression": true
+    },
+    {
+      "fixture": "flat-50",
+      "metric": "core-update",
+      "old": {
+        "median": 0.48949850000008155,
+        "p99": 0.7262920000000577
+      },
+      "new": {
+        "median": 0.49716649999936635,
+        "p99": 0.7144599999996899
+      },
+      "ratio": 1.0156650122508721,
+      "p99Ratio": 0.9837090316286469,
+      "throughputDrop": 0.4701365786312639,
+      "p": 0.7892757307475863,
+      "regression": false
+    }
+  ]
+}

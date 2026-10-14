@@ -1,4 +1,5 @@
 import type { FormScenario } from '../types';
+export { conditionalScreenScenarios } from './conditional-screen.scenario';
 import { gatedShapeScenario } from './gated-shape.scenario';
 import { formResetScenario } from './form-reset.scenario';
 

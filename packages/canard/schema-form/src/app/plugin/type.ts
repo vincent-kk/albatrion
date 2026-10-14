@@ -2,14 +2,13 @@ import type { ComponentType } from 'react';
 
 import type { Fn } from '@aileron/declare';
 
-import type { JSONSchema } from '@/schema-form/types/jsonSchema';
-
 import type {
-  FormTypeInputDefinition,
-  FormTypeRendererProps,
+  FieldInputDefinition,
+  FieldRendererProps,
   FormatError,
-  ValidatorFactory,
+  ValidateFunction,
 } from '@/schema-form/types';
+import type { JSONSchema } from '@/schema-form/types/jsonSchema';
 
 /**
  * Plugin configuration for extending schema-form functionality.
@@ -22,8 +21,8 @@ import type {
  * Minimal plugin with custom components:
  * ```typescript
  * const myPlugin: SchemaFormPlugin = {
- *   FormGroup: CustomFormGroup,
- *   FormLabel: CustomFormLabel,
+ *   FieldRenderer: CustomFormField,
+ *   FormLabelRenderer: CustomFormLabel,
  * };
  * ```
  *
@@ -34,17 +33,17 @@ import type {
  *
  * const antdPlugin: SchemaFormPlugin = {
  *   // Custom render components
- *   FormGroup: ({ Input, errorMessage }) => (
+ *   FieldRenderer: ({ Input, errorMessage }) => (
  *     <Form.Item help={errorMessage}>
  *       <Input />
  *     </Form.Item>
  *   ),
- *   FormLabel: ({ jsonSchema }) => (
+ *   FormLabelRenderer: ({ jsonSchema }) => (
  *     <span>{jsonSchema.title || jsonSchema.name}</span>
  *   ),
  *
  *   // Custom input types for Ant Design
- *   formTypeInputDefinitions: [
+ *   fieldInputDefinitions: [
  *     {
  *       test: { type: 'string', format: 'date' },
  *       Component: ({ value, onChange }) => (
@@ -73,13 +72,13 @@ import type {
  * ```typescript
  * const fullPlugin: SchemaFormPlugin = {
  *   // Render components
- *   FormGroup: CustomFormGroup,
- *   FormLabel: CustomFormLabel,
- *   FormInput: CustomFormInput,
- *   FormError: CustomFormError,
+ *   FieldRenderer: CustomFormField,
+ *   FormLabelRenderer: CustomFormLabel,
+ *   FormInputRenderer: CustomFormInput,
+ *   FormErrorRenderer: CustomFormError,
  *
  *   // Input type definitions
- *   formTypeInputDefinitions: [
+ *   fieldInputDefinitions: [
  *     {
  *       test: { format: 'color' },
  *       Component: ColorPickerInput,
@@ -110,16 +109,16 @@ import type {
  * - When multiple plugins define the same property, the last one wins
  */
 export interface SchemaFormPlugin {
-  /** Form.Group Component */
-  FormGroup?: ComponentType<FormTypeRendererProps>;
+  /** Form.Field Component */
+  FieldRenderer?: ComponentType<FieldRendererProps>;
   /** Form.Label Component */
-  FormLabel?: ComponentType<FormTypeRendererProps>;
+  FormLabelRenderer?: ComponentType<FieldRendererProps>;
   /** Form.Input Component */
-  FormInput?: ComponentType<FormTypeRendererProps>;
+  FormInputRenderer?: ComponentType<FieldRendererProps>;
   /** Form.Error Component */
-  FormError?: ComponentType<FormTypeRendererProps>;
-  /** FormTypeInputDefinition */
-  formTypeInputDefinitions?: FormTypeInputDefinition[];
+  FormErrorRenderer?: ComponentType<FieldRendererProps>;
+  /** FieldInputDefinition */
+  fieldInputDefinitions?: FieldInputDefinition[];
   /** Validator Plugin */
   validator?: ValidatorPlugin;
   /** Formatting Error Function */
@@ -191,7 +190,8 @@ export interface SchemaFormPlugin {
  *         return null;
  *       } catch (thrown) {
  *         if (Array.isArray(thrown?.errors)) {
- *           return transformErrors(thrown.errors);
+ *           // Map Ajv errors to ValidationIssue the way @canard/schema-form-ajv8-plugin does.
+ *           return toValidationIssues(thrown.errors);
  *         }
  *         throw thrown;
  *       }
@@ -247,14 +247,14 @@ export interface ValidatorPlugin {
    */
   bind?: Fn<[instance: any]>;
   /** Validator Factory Function */
-  compile: ValidatorFactory;
+  compile: (jsonSchema: JSONSchema) => ValidateFunction;
   /**
    * Compile a synchronous guard for an authored schema pointer in the copy.
    * @param root - The copy root previously passed to `compile`.
    * @param pointer - Authored schema location preserved in the copy.
    * @returns A boolean predicate that does not modify its input.
    */
-  compileGuard?(root: JSONSchema, pointer: string): (value: unknown) => boolean;
+  compileGuard(root: JSONSchema, pointer: string): (value: unknown) => boolean;
   /**
    * Release a root's validator resources when its cache entry is evicted.
    * @param root - The copy root previously passed to `compile`.

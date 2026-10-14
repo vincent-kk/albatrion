@@ -2,11 +2,11 @@ import { isArray } from '@winglet/common-utils/filter';
 
 import type { Dictionary } from '@aileron/declare';
 
-import { JSONSchemaError } from '@/schema-form/errors';
+import { JSONSchemaError } from '@/schema-form/__legacy__/errors';
 import {
   formatVirtualFieldsNotInPropertiesError,
   formatVirtualFieldsNotValidError,
-} from '@/schema-form/helpers/error';
+} from '@/schema-form/__legacy__/helpers/error';
 
 import type {
   VirtualReference,
