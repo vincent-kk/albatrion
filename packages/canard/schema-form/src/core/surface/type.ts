@@ -99,8 +99,9 @@ export interface NodeSurface<
    * is visited once, and nodes created during the walk may be missed. Returning `false` skips
    * that node's descendants. The walk batches like `batch`: value writes are marked and settle
    * once when it ends, so value reads during the walk see the last committed values; state and
-   * external-error changes apply at once while their events wait; a form reset still settles at
-   * once. Inside an enclosing batch, everything waits for that batch's end instead.
+   * external-error changes apply at once while their events wait; a form reset and
+   * `resetSubtree()` still settle their load at once. Inside an enclosing batch, everything waits
+   * for that batch's end instead.
    */
   visitSubtree(visitor: (node: FieldNode) => void | boolean): void;
   setValue(value: unknown, option?: SetValueOption): void;

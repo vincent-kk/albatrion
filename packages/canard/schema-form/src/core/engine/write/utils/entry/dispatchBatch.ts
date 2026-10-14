@@ -28,8 +28,9 @@ export const dispatchBatch = <Self extends FieldNodeRecord<Self>>(
   try {
     fn();
   } catch (error) {
-    if ((runtime.batchDepth ?? 0) > 1) throw error;
-    captureChainError(runtime, error);
+    const active = resolveFieldNodeChainRoot(node.rootNode).runtime;
+    if ((active.batchDepth ?? 0) > 1) throw error;
+    captureChainError(active, error);
   } finally {
     const activeRoot = resolveFieldNodeChainRoot(node.rootNode);
     const active = activeRoot.runtime;

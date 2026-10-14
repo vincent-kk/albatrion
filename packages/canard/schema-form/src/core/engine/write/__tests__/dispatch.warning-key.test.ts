@@ -72,7 +72,9 @@ describe('structural warning keys', () => {
       { hasConsumer: () => false, report: vi.fn() },
     );
     absent.runtime.rebuiltReferenceSchemaPaths = ['#/controls/active'];
-    adoptFieldNodeChain(prior.root, absent.root);
+    const secondPrior = createDispatchTree({ type: 'string' });
+    secondPrior.runtime.entryDepth = 1;
+    adoptFieldNodeChain(secondPrior.root, absent.root);
     expect(absent.runtime.pendingWarningRecords).toBeUndefined();
   });
 

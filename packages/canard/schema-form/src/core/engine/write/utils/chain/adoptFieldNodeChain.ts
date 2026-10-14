@@ -3,7 +3,7 @@ import { isArray } from '@winglet/common-utils/filter';
 import { FormWarningCode } from '../../../../../errors';
 import type { FieldNodeRecord } from '../../../record';
 import { indexFieldNodeWarning } from '../../../record';
-import { disposeFieldNodeTree } from '../../../settle';
+import { assertFieldNodeWritable, disposeFieldNodeTree } from '../../../settle';
 import { assertValidationRootReady } from '../../../validation';
 import { rebuildRootExternalErrors } from '../entry/utils/propagateExternalErrorsToRoot';
 import { dedupeWarningRecord } from '../report/dedupeWarningRecord';
@@ -15,11 +15,15 @@ import { restoreAdoptedExternalErrors } from './restoreAdoptedExternalErrors';
  * @param previousRoot - Root being retired by the binding
  * @param nextRoot - Replacement with the same authored form lifetime
  * @returns Nothing; the replacement runtime owns pending chain state
+ * @throws SchemaFormError with FormErrorCode.DisposedNodeWrite when either root is already retired,
+ *   since adopting back into a retired root would make the adoption links a cycle
  */
 export const adoptFieldNodeChain = <Self extends FieldNodeRecord<Self>>(
   previousRoot: Self,
   nextRoot: Self,
 ): void => {
+  assertFieldNodeWritable(previousRoot);
+  assertFieldNodeWritable(nextRoot);
   assertValidationRootReady(nextRoot);
   rebuildRootExternalErrors(previousRoot);
   const previous = previousRoot.runtime;
