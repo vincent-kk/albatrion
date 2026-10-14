@@ -6,11 +6,12 @@ import { describe, expect, it } from 'vitest';
 
 import { validationScenarios } from '@aileron/schema-form-scenarios';
 
-import type { BlueprintSchema } from '../../engine/blueprint';
-import { loadFieldNodeAtMount } from '../../engine/settle';
-import { ValidationMode } from '../../engine/types/state';
-import { SetValueOption } from '../../surface';
-import type { FieldNode as RuntimeFieldNode } from '../../surface/FieldNode';
+import type { BlueprintSchema } from '@/schema-form/core/engine';
+import { loadFieldNodeAtMount } from '@/schema-form/core/engine';
+import { ValidationMode } from '@/schema-form/core/engine';
+import { SetValueOption } from '@/schema-form/core/surface';
+
+import { type TestFieldNode, isTestFieldNode } from '../fixtures/testFieldNode';
 import { makeFieldNodeTree } from '../makeFieldNodeTree';
 
 const uniquePaths = (paths: string[]): string[] =>
@@ -29,8 +30,10 @@ describe('same-ajv path comparison on the core node tree', () => {
       scenario.schema as BlueprintSchema,
     );
     Reflect.set(runtime, 'validationMode', ValidationMode.OnRequest);
+    if (!isTestFieldNode(root)) throw new Error('Expected a runtime FieldNode');
+    const record: TestFieldNode = root;
     loadFieldNodeAtMount(
-      root as RuntimeFieldNode,
+      record,
       scenario.initialValue,
       SetValueOption.Overwrite,
     );

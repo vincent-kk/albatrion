@@ -4,8 +4,10 @@ import { createElement } from 'react';
 
 import { describe, expect, it } from 'vitest';
 
-import { type AuthoredSchema } from '../../../index';
-import { nodeFromJSONSchema } from '../../../surface/utils/nodeFromJSONSchema';
+import { nodeFromJSONSchema } from '@/schema-form/__tests__/fixtures/nodeFromJSONSchema';
+import { default as corpus } from '@/schema-form/core/engine/__tests__/fixtures/ownedInlineHead.json';
+import { type AuthoredSchema } from '@/schema-form/core/engine/types/jsonSchema';
+
 import { blueprint } from '../blueprint';
 import type { BlueprintSchema } from '../type';
 import { createBlueprintGate } from '../utils/analyze/createBlueprintGate';
@@ -15,7 +17,6 @@ import { getFeatureNodeIndex } from '../utils/features/getFeatureNodeIndex/getFe
 import { getItemEntry } from '../utils/itemEntry/getItemEntry';
 import { collectOwnedInlineRecords } from './fixtures/collectOwnedInlineRecords';
 import { createEffectiveFieldNode } from './fixtures/createEffectiveFieldNode';
-import corpus from './fixtures/ownedInlineHead.json';
 
 /** Module selection matches producer environment selection. */
 const DEVELOPMENT = process.env.NODE_ENV !== 'production';

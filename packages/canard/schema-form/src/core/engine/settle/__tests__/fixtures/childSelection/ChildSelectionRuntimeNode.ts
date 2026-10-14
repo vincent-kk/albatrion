@@ -1,4 +1,7 @@
-import type { FieldNodeDelivery, FieldNodeRecord } from '../../../../record';
+import type {
+  FieldNodeDelivery,
+  FieldNodeRecord,
+} from '@/schema-form/core/engine/record';
 
 /** Structural observation adapter combining the public methods with the record contract. */
 export interface ChildSelectionRuntimeNode

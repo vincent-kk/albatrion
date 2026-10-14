@@ -1,10 +1,13 @@
 import { describe, expect, it } from 'vitest';
 
-import { FieldNodeEventType } from '../../record';
-import type { FieldNodeDelivery } from '../../record';
-import { dispatchBatch, dispatchSetValue, subscribeFieldNode } from '../index';
+import { createDispatchTree } from '@/schema-form/core/engine/__tests__/fixtures/createDispatchTree';
+import { FieldNodeEventType } from '@/schema-form/core/engine/record';
+import type { FieldNodeDelivery } from '@/schema-form/core/engine/record';
+
 import { deliverWave } from '../utils/chain/deliverWave';
-import { createDispatchTree } from './fixtures/createDispatchTree';
+import { dispatchBatch } from '../utils/entry/dispatchBatch';
+import { dispatchSetValue } from '../utils/entry/dispatchSetValue';
+import { subscribeFieldNode } from '../utils/read/subscribeFieldNode';
 import { getDispatchChild } from './fixtures/getDispatchChild';
 
 // filid:contract dispatch-waves

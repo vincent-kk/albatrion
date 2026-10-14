@@ -81,7 +81,29 @@ export type {
   ValidationIssue,
 } from './types';
 
-export type * from './types/rolled';
+export type {
+  FormFieldProps,
+  FormInputProps,
+  FormRenderProps,
+  FieldRendererProps,
+  NonNullableBooleanSchema,
+  NullableBooleanSchema,
+  BooleanSchema,
+  NonNullableNumberSchema,
+  NullableNumberSchema,
+  NumberSchema,
+  NonNullableStringSchema,
+  NullableStringSchema,
+  StringSchema,
+  NonNullableArraySchema,
+  NullableArraySchema,
+  ArraySchema,
+  NonNullableObjectSchema,
+  NullableObjectSchema,
+  ObjectSchema,
+  NullSchema,
+  InferJSONSchema,
+} from './types/rolled';
 
 export { useFieldNodeTracker } from './hooks/useFieldNodeTracker';
 export { useFieldNodeSubscribe } from './hooks/useFieldNodeSubscribe';

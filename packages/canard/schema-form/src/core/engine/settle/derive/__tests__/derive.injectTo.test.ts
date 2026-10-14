@@ -1,12 +1,10 @@
 import { describe, expect, it, vi } from 'vitest';
 
-import { WriteOption } from '../../../types/value';
-import { createTestTree } from '../../__tests__/fixtures/createTestTree';
-import {
-  loadFieldNodeAtMount,
-  resetFieldNodeSubtree,
-  writeFieldNode,
-} from '../../index';
+import { createTestTree } from '@/schema-form/core/engine/settle/__tests__/fixtures/createTestTree';
+import { loadFieldNodeAtMount } from '@/schema-form/core/engine/settle/utils/load/loadFieldNodeAtMount';
+import { resetFieldNodeSubtree } from '@/schema-form/core/engine/settle/utils/load/resetFieldNodeSubtree';
+import { writeFieldNode } from '@/schema-form/core/engine/settle/utils/write/writeFieldNode';
+import { WriteOption } from '@/schema-form/core/engine/types/value';
 
 // filid:contract derive-rank
 describe('injectTo and same-target settlement', () => {

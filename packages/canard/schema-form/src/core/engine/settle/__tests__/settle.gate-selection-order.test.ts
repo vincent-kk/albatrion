@@ -1,11 +1,13 @@
 import { describe, expect, it, vi } from 'vitest';
 
-import type { BlueprintSchema } from '../../blueprint';
-import { WriteOption } from '../../types/value';
-import { loadFieldNodeAtMount, writeFieldNode } from '../index';
+import type { BlueprintSchema } from '@/schema-form/core/engine/blueprint';
+import { WriteOption } from '@/schema-form/core/engine/types/value';
+
 import type { SettlementContext } from '../type';
 import * as gateEvaluation from '../utils/gates/evaluateGate';
+import { loadFieldNodeAtMount } from '../utils/load/loadFieldNodeAtMount';
 import { resolveDependencyPath } from '../utils/paths/resolveDependencyPath';
+import { writeFieldNode } from '../utils/write/writeFieldNode';
 import type { PlainNode } from './fixtures/createPlainNode';
 import { createTestTree } from './fixtures/createTestTree';
 import { readProjectedValueWithoutPublication } from './helpers/readProjectedValueWithoutPublication';

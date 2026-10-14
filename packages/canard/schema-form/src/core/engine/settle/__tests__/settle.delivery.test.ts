@@ -5,14 +5,13 @@ import {
   FieldNodeEventType,
   FieldNodeRequestType,
   markFieldNodeEvent,
-} from '../../record';
-import { FieldNodeState } from '../../types/state';
-import { WriteOption } from '../../types/value';
-import {
-  loadFieldNodeAtMount,
-  resetFieldNodeSubtree,
-  writeFieldNode,
-} from '../index';
+} from '@/schema-form/core/engine/record';
+import { FieldNodeState } from '@/schema-form/core/engine/types/state';
+import { WriteOption } from '@/schema-form/core/engine/types/value';
+
+import { loadFieldNodeAtMount } from '../utils/load/loadFieldNodeAtMount';
+import { resetFieldNodeSubtree } from '../utils/load/resetFieldNodeSubtree';
+import { writeFieldNode } from '../utils/write/writeFieldNode';
 import { createTestTree } from './fixtures/createTestTree';
 
 // filid:contract settle-delivery

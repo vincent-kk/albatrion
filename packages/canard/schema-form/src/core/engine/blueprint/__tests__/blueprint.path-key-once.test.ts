@@ -1,12 +1,13 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
+import { default as headFixture } from '@/schema-form/core/engine/__tests__/fixtures/ownedInlineHead.json';
+
 import { blueprint } from '../blueprint';
 import type { BlueprintSchema } from '../type';
 import * as templateKeys from '../utils/analyze/getTemplateKey';
 import { captureOwnedInlineObservables } from './fixtures/captureOwnedInlineObservables';
 import { getTemplateKeysHead } from './fixtures/getTemplateKeysHead';
-import headFixture from './fixtures/ownedInlineHead.json';
-import mounts from './fixtures/ownedInlineMounts.json';
+import { default as mounts } from './fixtures/ownedInlineMounts.json';
 
 afterEach(() => vi.restoreAllMocks());
 

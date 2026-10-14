@@ -35,8 +35,5 @@ export type {
   UnionNode,
   BranchNode,
   TerminalNode,
-  UnionMemberType,
-  UnionSchemaType,
   InferFieldNode,
-  FieldNodeInputProps,
 } from './type';

@@ -1,7 +1,8 @@
 import { afterEach, expect, it, vi } from 'vitest';
 
-import { blueprint } from '../../../blueprint';
-import { getDeriveRuleTable } from '../index';
+import { blueprint } from '@/schema-form/core/engine/blueprint';
+
+import { getDeriveRuleTable } from '../utils/rules/getDeriveRuleTable';
 
 afterEach(() => vi.restoreAllMocks());
 

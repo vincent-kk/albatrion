@@ -2,19 +2,20 @@ import { describe, expect, it } from 'vitest';
 
 import { isArray } from '@winglet/common-utils/filter';
 
-import { SchemaFormError } from '../../../../../errors';
-import { blueprint } from '../../../blueprint';
-import type { BlueprintNode } from '../../../blueprint';
-import { EMPTY_REVISION_LEDGER } from '../../../record';
+import { BEHAVIORS } from '@/schema-form/core/engine/behaviors/behaviors';
+import { blueprint } from '@/schema-form/core/engine/blueprint';
+import type { BlueprintNode } from '@/schema-form/core/engine/blueprint';
+import { EMPTY_REVISION_LEDGER } from '@/schema-form/core/engine/record';
 import type {
   ArrayOperation,
   Behavior,
   FieldNodeRecord,
-} from '../../../record';
-import { PathKeyedMap } from '../../../utils/pathIndex/PathKeyedMap';
-import { PathKeyedSet } from '../../../utils/pathIndex/PathKeyedSet';
-import { BEHAVIORS } from '../../index';
-import { arrayBehavior } from '../index';
+} from '@/schema-form/core/engine/record';
+import { PathKeyedMap } from '@/schema-form/core/engine/utils/pathIndex/PathKeyedMap';
+import { PathKeyedSet } from '@/schema-form/core/engine/utils/pathIndex/PathKeyedSet';
+import { SchemaFormError } from '@/schema-form/errors';
+
+import { arrayBehavior } from '../arrayBehavior';
 
 /** Make a calculation record without constructing or settling child nodes. */
 const makeRecord = (

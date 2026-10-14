@@ -1,14 +1,15 @@
 import { describe, expect, it } from 'vitest';
 
-import { makeFieldNodeTree } from '../../../__tests__/makeFieldNodeTree';
-import { FieldNode } from '../../../surface/FieldNode';
-import { WriteOption } from '../../types/value';
+import { isTestFieldNode } from '@/schema-form/core/__tests__/fixtures/testFieldNode';
+import { makeFieldNodeTree } from '@/schema-form/core/__tests__/makeFieldNodeTree';
+import { WriteOption } from '@/schema-form/core/engine/types/value';
+import type { ArrayNode } from '@/schema-form/core/surface';
 
 const makeRecordTree = (...args: Parameters<typeof makeFieldNodeTree>) => {
   const tree = makeFieldNodeTree(...args);
-  if (!(tree.root instanceof FieldNode))
+  if (!isTestFieldNode(tree.root))
     throw new Error('Expected a runtime FieldNode');
-  const root: FieldNode = tree.root;
+  const root = tree.root;
   return { ...tree, root };
 };
 
@@ -112,7 +113,7 @@ describe('array legacy contract ports', () => {
       root.resetSubtree();
       const list = root.find('/list')!;
       expect(list.value).toEqual(['S', 'S']);
-      list.clear();
+      (list as ArrayNode).clear();
       expect(list.value).toEqual([]);
       expect(root.value).toEqual({});
       list.resetSubtree();
@@ -168,7 +169,7 @@ describe('array legacy contract ports', () => {
       type: 'array',
       items: { type: 'string' },
     });
-    expect(root.push()).toBe(1);
+    expect((root as ArrayNode).push()).toBe(1);
     expect(root.children?.map((item) => item.raw)).toEqual([undefined]);
     expect(root.value).toEqual([null]);
     expect(root.outputValue).toEqual([null]);

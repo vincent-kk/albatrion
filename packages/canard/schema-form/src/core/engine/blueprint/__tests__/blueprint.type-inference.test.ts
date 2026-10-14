@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { blueprint } from '../index';
+import { blueprint } from '../blueprint';
 import { BlueprintErrorCode } from '../utils/diagnostics/constant';
 
 // filid:contract type-inference

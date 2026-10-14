@@ -11,19 +11,20 @@ import userEvent from '@testing-library/user-event';
 
 import { registerScenarioHandle } from '@aileron/schema-form-scenarios';
 
+import { registerPlugin } from '@/schema-form/app/plugin';
 import {
-  type FieldInputDefinition,
-  type FieldInputProps,
-  type FieldNode,
   Form,
   type FormHandle,
   type FormProps,
-  type JSONSchema,
-  type ValidationIssue,
-  registerPlugin,
-} from '@/schema-form';
+} from '@/schema-form/components/Form';
+import { type FieldNode, type ValidationIssue } from '@/schema-form/core';
 import type { FormErrorRecord } from '@/schema-form/errors';
 
+import {
+  type FieldInputDefinition,
+  type FieldInputProps,
+} from '../types/fieldInput';
+import { type JSONSchema } from '../types/jsonSchema';
 import { createRenderScenarioAdapter } from './helpers/createRenderScenarioAdapter';
 import { createRenderValidator } from './helpers/createRenderValidator';
 import { observeErrorSink } from './helpers/observeErrorSink';

@@ -1,14 +1,15 @@
-import { createTestValidator } from '../../../../__tests__/fixtures/createTestValidator';
-import { blueprint } from '../../../blueprint';
+import { createTestValidator } from '@/schema-form/core/__tests__/fixtures/createTestValidator';
+import { blueprint } from '@/schema-form/core/engine/blueprint';
 import type {
   Blueprint,
   BlueprintOptions,
   BlueprintSchema,
-} from '../../../blueprint';
-import type { FieldNodeRuntime } from '../../../record';
-import { PathKeyedMap } from '../../../utils/pathIndex/PathKeyedMap';
-import { PathKeyedSet } from '../../../utils/pathIndex/PathKeyedSet';
-import type { Validator } from '../../../validation';
+} from '@/schema-form/core/engine/blueprint';
+import type { FieldNodeRuntime } from '@/schema-form/core/engine/record';
+import { PathKeyedMap } from '@/schema-form/core/engine/utils/pathIndex/PathKeyedMap';
+import { PathKeyedSet } from '@/schema-form/core/engine/utils/pathIndex/PathKeyedSet';
+import type { Validator } from '@/schema-form/core/engine/validation';
+
 import { createPlainNode } from './createPlainNode';
 import type { PlainNode } from './createPlainNode';
 

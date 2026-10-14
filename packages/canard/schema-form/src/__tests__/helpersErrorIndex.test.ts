@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import * as error from '../index';
+import * as error from '@/schema-form/helpers/error';
 
 describe('error index', () => {
   it('공유 진단 원소와 검증 메시지 포맷터만 내보내야 합니다', () => {

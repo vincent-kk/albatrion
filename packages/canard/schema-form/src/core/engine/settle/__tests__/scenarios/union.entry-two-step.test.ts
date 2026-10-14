@@ -2,11 +2,13 @@ import { describe, expect, it } from 'vitest';
 
 import type { FormScenario } from '@aileron/schema-form-scenarios';
 
-import type { BlueprintSchema } from '../../engine/blueprint';
-import { loadFieldNodeAtMount, writeFieldNode } from '../../engine/settle';
-import { createTestTree } from '../../engine/settle/__tests__/fixtures/createTestTree';
-import { WriteOption } from '../../engine/types/value';
-import { runScenario } from './utils/runScenario';
+import { runScenario } from '@/schema-form/core/__tests__/scenarios/utils/runScenario';
+import type { BlueprintSchema } from '@/schema-form/core/engine/blueprint';
+import { WriteOption } from '@/schema-form/core/engine/types/value';
+
+import { loadFieldNodeAtMount } from '../../utils/load/loadFieldNodeAtMount';
+import { writeFieldNode } from '../../utils/write/writeFieldNode';
+import { createTestTree } from '../fixtures/createTestTree';
 
 // filid:contract scenario-runner
 describe('union.entry-two-step', () => {

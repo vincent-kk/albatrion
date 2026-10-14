@@ -3,14 +3,14 @@ import { Profiler, createRef, useLayoutEffect, useMemo, useState } from 'react';
 import { act, cleanup, fireEvent, render } from '@testing-library/react';
 import { afterEach, expect, it, vi } from 'vitest';
 
+import { nodeFromJSONSchema } from '@/schema-form/__tests__/fixtures/nodeFromJSONSchema';
 import { Form, type FormHandle } from '@/schema-form/components/Form';
 import {
   FieldNodeEventType,
   FieldNodeRequestType,
   isArrayNode,
 } from '@/schema-form/core';
-import { nodeFromJSONSchema } from '@/schema-form/core/surface/utils/nodeFromJSONSchema';
-import type { FieldInputProps } from '@/schema-form/types';
+import type { FieldInputProps } from '@/schema-form/types/fieldInput';
 
 import { useFieldInputControl } from '../hooks/useFieldInputControl';
 import { REACTIVE_RERENDERING_EVENTS } from '../type';

@@ -2,9 +2,10 @@ import { describe, expect, it } from 'vitest';
 
 import { isArray } from '@winglet/common-utils/filter';
 
-import { SchemaFormError } from '../../../../errors';
-import { WriteOption } from '../../types/value';
-import { loadFieldNodeAtMount } from '../index';
+import { WriteOption } from '@/schema-form/core/engine/types/value';
+import { SchemaFormError } from '@/schema-form/errors';
+
+import { loadFieldNodeAtMount } from '../utils/load/loadFieldNodeAtMount';
 import { createTestTree } from './fixtures/createTestTree';
 
 // filid:contract settle-budget

@@ -1,8 +1,8 @@
 import { describe, expect, it } from 'vitest';
 
-import { getErrorMessage } from '../getErrorMessage';
+import { selectKeywordErrorMessage as getErrorMessage } from '../selectKeywordErrorMessage';
 
-describe('getErrorMessage', () => {
+describe('selectKeywordErrorMessage', () => {
   describe('문자열 errorMessage', () => {
     it('keyword에 해당하는 문자열 메시지를 반환해야 합니다', () => {
       const keyword = 'required';

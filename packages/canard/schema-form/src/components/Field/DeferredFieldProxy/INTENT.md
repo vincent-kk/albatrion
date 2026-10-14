@@ -10,7 +10,7 @@
 DeferredFieldProxy/
   DeferredFieldProxy.tsx   — 게이트 컴포넌트 (placeholder ↔ NodeProxy 전환)
   type.ts                 — DeferredFieldProxyProps 인터페이스
-  index.ts                — DeferredFieldProxy, DeferredFieldProxyProps re-export
+  index.ts                — DeferredFieldProxy re-export
 ```
 
 ## Conventions

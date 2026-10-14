@@ -1,11 +1,11 @@
 import { bench, describe } from 'vitest';
 
+import { nodeFromJSONSchema } from '@/schema-form/__tests__/fixtures/nodeFromJSONSchema';
 import {
   type FieldNode,
   type NumberNode,
   type StringNode,
 } from '@/schema-form/core';
-import { nodeFromJSONSchema } from '@/schema-form/core/surface/utils/nodeFromJSONSchema';
 import type { JSONSchema } from '@/schema-form/types';
 
 /**

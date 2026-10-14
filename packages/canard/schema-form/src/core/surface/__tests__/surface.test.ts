@@ -1,13 +1,19 @@
 import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 
-import { blueprint } from '../../engine';
-import type { BlueprintSchema } from '../../engine';
-import { PathKeyedMap } from '../../engine';
-import { PathKeyedSet } from '../../engine';
+import { blueprint } from '@/schema-form/core/engine';
+import type { BlueprintSchema } from '@/schema-form/core/engine';
+import { PathKeyedMap } from '@/schema-form/core/engine';
+import { PathKeyedSet } from '@/schema-form/core/engine';
+
 import { FieldNode as RuntimeFieldNode } from '../FieldNode';
-import * as surface from '../index';
-import { fieldNodeFactory } from '../index';
+import { fieldNodeFactory } from '../utils/fieldNodeFactory';
+import {
+  isArrayNode,
+  isFieldNode,
+  isObjectNode,
+  isTerminalNode,
+} from '../utils/guards';
 
 /** Create a tree with only the genuine PR-2 runtime inputs. */
 const makeTree = (schema: BlueprintSchema, snapshot: unknown = undefined) =>
@@ -78,41 +84,6 @@ describe('FieldNode PR-2 surface', () => {
     expect(target?.enabled).toBe(false);
   });
 
-  it('TEST-069 FieldNode index names the binding-only context channel', () => {
-    expect(Object.keys(surface).sort()).toEqual([
-      'FieldNodeEventType',
-      'FieldNodeRequestType',
-      'SetValueOption',
-      'adoptFieldNodeTree',
-      'buildFieldNodeTree',
-      'fieldNodeFactory',
-      'finishFieldNodeInput',
-      'interpretFieldNodeDraft',
-      'isArrayNode',
-      'isBooleanNode',
-      'isBranchNode',
-      'isFieldNode',
-      'isNumberNode',
-      'isObjectNode',
-      'isStringNode',
-      'isTerminalNode',
-      'isUnionNode',
-      'isVirtualNode',
-      'mountFieldNode',
-      'observeFieldNodeReports',
-      'readFieldNodeInteractionReset',
-      'reloadFieldNodeForm',
-      'setContext',
-      'writeFieldNodeInput',
-    ]);
-    expect(Object.keys(surface.SetValueOption)).toEqual([
-      'Overwrite',
-      'Merge',
-      'DisableAutomaticWrites',
-      'EnableAutomaticWrites',
-    ]);
-  });
-
   it('TEST-069 active getter reads the settled node gate', () => {
     const root = makeTree({
       type: 'object',
@@ -125,7 +96,7 @@ describe('FieldNode PR-2 surface', () => {
     const target = root.find('/target');
     expect(target?.active).toBe(true);
     expect(root.find('/flag')?.active).toBe(true);
-    expect(surface.isFieldNode(target)).toBe(true);
+    expect(isFieldNode(target)).toBe(true);
     root.find('/flag')?.setValue(false);
     expect(root.find('/target')).toBeNull();
     expect(target?.active).toBe(false);
@@ -157,7 +128,7 @@ describe('FieldNode PR-2 surface', () => {
 
   it('SURFACE-005 GOAL-058 delegates synchronous verbs and ERROR-197 rejects strings', () => {
     const array = makeTree({ type: 'array', items: { type: 'string' } });
-    if (!surface.isArrayNode(array)) throw new Error('Expected an array node');
+    if (!isArrayNode(array)) throw new Error('Expected an array node');
     expect(array.push('x')).toBe(1);
     expect(array.update(0, 'y')).toBe('y');
     expect(array.remove(0)).toBe('y');
@@ -177,8 +148,8 @@ describe('FieldNode PR-2 surface', () => {
     const root = makeTree({ type: 'object', options: { terminal: true } });
     root.setValue({ retained: true });
     expect(root.type).toBe('object');
-    expect(surface.isObjectNode(root)).toBe(true);
-    expect(surface.isTerminalNode(root)).toBe(true);
+    expect(isObjectNode(root)).toBe(true);
+    expect(isTerminalNode(root)).toBe(true);
     expect(root.children).toBeNull();
     expect(root.value).toEqual({ retained: true });
   });

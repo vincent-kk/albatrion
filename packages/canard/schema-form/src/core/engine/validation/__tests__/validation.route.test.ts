@@ -1,8 +1,10 @@
 import { describe, expect, it } from 'vitest';
 
-import { dispatchMount } from '../../write';
-import { createDispatchTree } from '../../write/__tests__/fixtures/createDispatchTree';
-import { readFieldNodeErrors, routeValidationIssues } from '../index';
+import { createDispatchTree } from '@/schema-form/core/engine/__tests__/fixtures/createDispatchTree';
+import { dispatchMount } from '@/schema-form/core/engine/write';
+
+import { readFieldNodeErrors } from '../utils/read/readFieldNodeErrors';
+import { routeValidationIssues } from '../utils/route/routeValidationIssues';
 
 // filid:contract validation-route
 describe('validation issue attribution', () => {

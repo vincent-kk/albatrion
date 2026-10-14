@@ -1,8 +1,10 @@
 import { describe, expect, it, vi } from 'vitest';
 
+import { WriteOption } from '@/schema-form/core/engine/types/value';
+
 import * as compiler from '../../blueprint/utils/expressions/createDynamicFunction';
-import { WriteOption } from '../../types/value';
-import { loadFieldNodeAtMount, writeFieldNode } from '../index';
+import { loadFieldNodeAtMount } from '../utils/load/loadFieldNodeAtMount';
+import { writeFieldNode } from '../utils/write/writeFieldNode';
 import { createTestTree } from './fixtures/createTestTree';
 
 // filid:contract settle-gate-selection-counts

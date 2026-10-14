@@ -15,7 +15,7 @@
 
 - **write**: adoptFieldNodeChain, createFormErrorRecord, dispatchBatch, dispatchClear, dispatchClearExternalErrors, dispatchClearSubtreeState, dispatchContextChange, dispatchFinishInput, dispatchMount, dispatchPop, dispatchPush, dispatchRemove, dispatchRequest, dispatchResetForm, dispatchResetSubtree, dispatchSetExternalErrors, dispatchSetState, dispatchSetSubtreeState, dispatchSetValue, dispatchUpdate, dispatchValidate, dispatchWriteInput, readFieldNodeInteractionReset, readFieldNodeRevision, subscribeFieldNode; 형 FieldNodeListener.
 - **blueprint**: blueprint, collectBlueprintWarnings, mergeEffectiveSchema; 형 Blueprint, BlueprintChildEntry, BlueprintNode, BlueprintOptions, BlueprintSchema, BlueprintSchemaType, EffectiveSchema, SchemaTypeName.
-- **validation**: compileEntryGuards, EMPTY_GLOBAL_ERRORS, readFieldNodeErrors, readFieldNodeGuard, readValidationEntry, retainValidationRoot, releaseValidationRoot; 형 ValidationIssue, Validator, ValidateFunction.
+- **validation**: compileEntryGuards, EMPTY_GLOBAL_ERRORS, readFieldNodeErrors, readValidationEntry, retainValidationRoot, releaseValidationRoot; 형 ValidationIssue, Validator, ValidateFunction.
 - **record**: EMPTY_REVISION_LEDGER, FieldNodeEventType, FieldNodeRequestType; 형 Behavior, FieldNodeRecord, FieldNodeRuntime.
 - **settle**: readFieldNodeDefaultValue, readFieldNodeInactiveValues, readFieldNodeTypeMismatch, readFieldNodeTypeMismatches, readFieldNodeWatchValues, loadFieldNodeAtMount, resetFieldNodeForm.
 - **types**: ValidationMode, WriteOption, FieldNodeState; 형 AuthoredSchema, NodeStateFlags, SchemaControls.
@@ -25,11 +25,18 @@
 
 ### 수출의 이유와 도달 범위
 
-- loadFieldNodeAtMount와 resetFieldNodeForm은 surface 시험이 기존 정착·로드 계약을 검증하도록 진입점으로 제공합니다. surface 제품 구현이 요구해서 추가한 통로가 아닙니다.
-- blueprint와 readFieldNodeGuard는 core 밖의 검증 시험이 내부 구현 경로에 직접 들어가지 않도록 core/index가 다시 내보냅니다. 패키지의 src/index 표면에는 추가하지 않습니다.
-- 이름 목록은 승인된 내부 계약이며 자식 모듈의 모든 수출을 대신하지 않습니다. 시험의 구체 내부 단위 검증은 기존 소유 위치와 단언을 유지합니다.
+- `loadFieldNodeAtMount`·`resetFieldNodeForm` 수출의 보유 이유: core 시나리오 실행기(`createCoreScenarioAdapter`·`createObservedCoreScenarioAdapter`·`executeCoreScenarioStep`), `core/__tests__/scenarios/differential.spec.ts`, `core/surface/__tests__/detached.test.ts`와 `bench/array.bench.ts`·`bench/derive-and-controls.bench.ts`·`bench/node-and-settle.bench.ts`가 engine index로 쓰는 적재 통로; 제품 소비자는 없음; 정돈-3에서 시험 도구의 자리와 함께 재검토.
+- `blueprint`는 bench와 `src/hooks/__tests__/createHookNode.ts`가 쓰는 생성 통로로 core index가 다시 내보내며 패키지 src/index 표면에는 추가하지 않습니다. `readFieldNodeGuard`는 validation 내부 계약이며 engine·core 집계 진입점이 재수출하지 않습니다.
+- 이름 목록은 승인된 내부 계약이며 자식 모듈의 모든 수출을 대신하지 않습니다. 시험은 검사 대상의 소유 구획에서 구체 내부 단위를 검증합니다.
+- `__tests__/fixtures`는 engine 층의 공용 시험 fixture를 소유합니다. `createDispatchTree.ts`는 write·validation 시험이 공유하는 생성 도우미이고 `ownedInlineHead.json`은 blueprint·settle 시험이 공유하는 기준 데이터이므로 이 최소 공통 소유자에 둡니다.
+- `__tests__/validation-guard-integration.test.ts`는 validation·write 두 자식 계약을 함께 검증하는 engine 통합 시험입니다.
+- `__tests__/blueprint.branchless-differential.test.ts`는 같은 스키마를 branchless 분석과 일반 분석으로 각각 실행해 관측 결과가 같은지 비교하는 engine 통합 시험입니다. 일반 분석을 강제하려면 blueprint 내부의 capability 수집 단위(`blueprint/utils/analyze/collectSchemaCapabilities`)를 `vi.mock` 경로로 바꿔야 합니다. 이 단위는 blueprint index로 나가지 않고, 스키마 입력만으로는 같은 스키마의 일반 분석을 만들 수 없습니다. 부모 수준 시험 도구가 자식 내부에 닿는 B8 사례로 선언하며, 정돈-3에서 시험 도구의 자리와 함께 재검토합니다.
 
 ## Acceptance Criteria
+
+### branchless-observables — 분기 없는 청사진의 코어 관측 동등성
+
+- BF 픽스처와 기존 청사진 시험 스키마에서 범용 분석과 분기 없는 분석의 트리·값·오류·경고·진단이 같고, 모든 BF 상호작용 뒤에도 유지됩니다.
 
 ### engine-entry — 명명한 내부 계약
 
@@ -41,4 +48,4 @@
 
 ## Last Updated
 
-계약 기준: NODE-016·045, LANDING-067·084, 07c 승인 계획 9.1·9.2·9.6.
+계약 기준: NODE-016·045, LANDING-067·084, 07c 승인 계획 9.1·9.2·9.6; 정돈-2(2026-10-14).

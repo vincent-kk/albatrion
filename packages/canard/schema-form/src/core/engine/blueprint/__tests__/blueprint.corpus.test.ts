@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 
 // @ts-expect-error The original JavaScript corpus has no TypeScript declaration.
 import { corpus } from '../../../../../architecture/spikes/guard-cost/redteam3/corpus.mjs';
-import { blueprint } from '../index';
+import { blueprint } from '../blueprint';
 
 // filid:contract corpus
 describe('original 14-schema generator corpus', () => {

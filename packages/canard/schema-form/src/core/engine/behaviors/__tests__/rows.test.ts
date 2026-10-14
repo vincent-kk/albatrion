@@ -1,20 +1,25 @@
 import { describe, expect, it } from 'vitest';
 
-import { blueprint } from '../../blueprint';
-import type { BlueprintNode } from '../../blueprint';
-import { EMPTY_REVISION_LEDGER } from '../../record';
-import type { Behavior, FieldNodeRecord, UnionSpec } from '../../record';
-import { PathKeyedMap } from '../../utils/pathIndex/PathKeyedMap';
-import { PathKeyedSet } from '../../utils/pathIndex/PathKeyedSet';
-import { booleanBehavior } from '../booleanBehavior';
-import { BEHAVIORS } from '../index';
-import { nullBehavior } from '../nullBehavior';
-import { numberBehavior } from '../numberBehavior';
-import { objectBehavior } from '../objectBehavior';
-import { stringBehavior } from '../stringBehavior';
-import { unionBehavior } from '../unionBehavior';
+import { booleanBehavior } from '@/schema-form/core/engine/behaviors/booleanBehavior';
+import { nullBehavior } from '@/schema-form/core/engine/behaviors/nullBehavior';
+import { numberBehavior } from '@/schema-form/core/engine/behaviors/numberBehavior';
+import { objectBehavior } from '@/schema-form/core/engine/behaviors/objectBehavior';
+import { stringBehavior } from '@/schema-form/core/engine/behaviors/stringBehavior';
+import { unionBehavior } from '@/schema-form/core/engine/behaviors/unionBehavior';
+import { virtualBehavior } from '@/schema-form/core/engine/behaviors/virtualBehavior';
+import { blueprint } from '@/schema-form/core/engine/blueprint';
+import type { BlueprintNode } from '@/schema-form/core/engine/blueprint';
+import { EMPTY_REVISION_LEDGER } from '@/schema-form/core/engine/record';
+import type {
+  Behavior,
+  FieldNodeRecord,
+  UnionSpec,
+} from '@/schema-form/core/engine/record';
+import { PathKeyedMap } from '@/schema-form/core/engine/utils/pathIndex/PathKeyedMap';
+import { PathKeyedSet } from '@/schema-form/core/engine/utils/pathIndex/PathKeyedSet';
+
+import { BEHAVIORS } from '../behaviors';
 import { getStaticChoices } from '../utils/options/getStaticChoices';
-import { virtualBehavior } from '../virtualBehavior';
 
 /** Stable analyzed object template for calculation-only row fixtures. */
 const OBJECT_ANALYSIS = blueprint({

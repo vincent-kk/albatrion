@@ -1,12 +1,15 @@
-import { BEHAVIORS } from '../../../behaviors';
-import { mergeEffectiveSchema } from '../../../blueprint';
-import type { BlueprintChildEntry, BlueprintNode } from '../../../blueprint';
-import { EMPTY_REVISION_LEDGER } from '../../../record';
+import { BEHAVIORS } from '@/schema-form/core/engine/behaviors';
+import { mergeEffectiveSchema } from '@/schema-form/core/engine/blueprint';
+import type {
+  BlueprintChildEntry,
+  BlueprintNode,
+} from '@/schema-form/core/engine/blueprint';
+import { EMPTY_REVISION_LEDGER } from '@/schema-form/core/engine/record';
 import type {
   Behavior,
   FieldNodeRecord,
   FieldNodeRuntime,
-} from '../../../record';
+} from '@/schema-form/core/engine/record';
 
 /** Plain record used by settlement tests, without the later FieldNode class. */
 export interface PlainNode extends FieldNodeRecord<PlainNode> {}

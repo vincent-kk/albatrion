@@ -2,7 +2,8 @@ import { afterEach, expect, it, vi } from 'vitest';
 
 import { hasOwnProperty } from '@winglet/common-utils/lib';
 
-import type { FieldNodeRecord } from '../../../../../record';
+import type { FieldNodeRecord } from '@/schema-form/core/engine/record';
+
 import { objectKeyCounts } from '../../../utils/objectKeyCounts';
 import { assembleObject } from '../assembleObject';
 

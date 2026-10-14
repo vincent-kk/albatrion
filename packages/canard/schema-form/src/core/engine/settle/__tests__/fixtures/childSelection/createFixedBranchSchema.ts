@@ -1,4 +1,4 @@
-import type { BlueprintSchema } from '../../../../blueprint';
+import type { BlueprintSchema } from '@/schema-form/core/engine/blueprint';
 
 /**
  * Keep live width and payload size fixed while varying the authored branch count.

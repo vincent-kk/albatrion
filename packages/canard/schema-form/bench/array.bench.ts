@@ -14,7 +14,7 @@ import { scheduleMacrotaskSafe } from '@winglet/common-utils/scheduler';
 import { blueprint } from '../src/core';
 import { createTestValidator } from '../src/core/__tests__/fixtures/createTestValidator';
 import { fieldNodeFactory, SetValueOption } from '../src/core';
-import type { FieldNode as RuntimeFieldNode } from '../src/core/surface/FieldNode';
+import { type TestFieldNode, isTestFieldNode } from '../src/core/__tests__/fixtures/testFieldNode';
 import { loadFieldNodeAtMount } from '../src/core/engine';
 import { nodeFromJSONSchema } from '../src/__legacy__/core/nodeFromJSONSchema';
 
@@ -55,8 +55,10 @@ function makeTree(engine: Engine, input: Item[], analysis?: ReturnType<typeof bl
     diagnostics: { status: 'stable' },
     loadSnapshot: undefined, latentRaw: new PathKeyedMap('pair'),
     typeMismatchPaths: new PathKeyedSet(), inactiveValuesMemo: new PathKeyedMap<readonly { path: string; value: unknown }[]>('path'),
-  }, createTestValidator()) as RuntimeFieldNode;
-  loadFieldNodeAtMount(root, input, SetValueOption.Overwrite);
+  }, createTestValidator());
+  if (!isTestFieldNode(root)) throw new Error('Expected a runtime FieldNode');
+  const rootRecord: TestFieldNode = root;
+  loadFieldNodeAtMount(rootRecord, input, SetValueOption.Overwrite);
   return root as unknown as BenchTree;
 }
 

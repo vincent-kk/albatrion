@@ -90,10 +90,7 @@ export default [
     },
   },
   {
-    files: [
-      'src/core/engine/blueprint/**/*.ts',
-      'src/core/surface/utils/nodeFromJSONSchema.ts',
-    ],
+    files: ['src/core/engine/blueprint/**/*.ts'],
     ignores: ['**/__tests__/**'],
     rules: {
       '@typescript-eslint/consistent-type-assertions': [
@@ -292,6 +289,15 @@ export default [
           message:
             'Internal `__member__` access is restricted to the core friend zone (src/core, src/app, src/constants). Use the public node API instead.',
         },
+      ],
+    },
+  },
+  {
+    files: ['src/__tests__/fixtures/nodeFromJSONSchema.ts'],
+    rules: {
+      '@typescript-eslint/consistent-type-assertions': [
+        'error',
+        { assertionStyle: 'never' },
       ],
     },
   },

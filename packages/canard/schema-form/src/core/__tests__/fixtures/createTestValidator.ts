@@ -1,8 +1,8 @@
 import Ajv from 'ajv';
 import type { AnySchema } from 'ajv';
 
-import type { BlueprintSchema } from '../../engine/blueprint';
-import type { GuardFunction, Validator } from '../../engine/validation';
+import type { BlueprintSchema } from '@/schema-form/core/engine';
+import type { Validator } from '@/schema-form/core/engine';
 
 /** Behavior selected for the guard error cases shared by core tests. */
 export type TestGuardMode = 'normal' | 'throw' | 'promise';
@@ -36,7 +36,10 @@ export const createTestValidator = (
         }));
       };
     },
-    compileGuard(root: BlueprintSchema, pointer: string): GuardFunction {
+    compileGuard(
+      root: BlueprintSchema,
+      pointer: string,
+    ): ReturnType<Validator['compileGuard']> {
       if (mode === 'throw')
         return () => {
           throw new Error('guard evaluation failed');

@@ -2,13 +2,16 @@ import { describe, expect, it, vi } from 'vitest';
 
 import { isArray } from '@winglet/common-utils/filter';
 
-import { SchemaFormError } from '../../../../errors';
-import { createTestValidator } from '../../../__tests__/fixtures/createTestValidator';
-import { blueprint } from '../../blueprint';
-import type { BlueprintDiagnostic } from '../../blueprint';
-import { dispatchMount, dispatchSetValue, subscribeFieldNode } from '../index';
+import { createTestValidator } from '@/schema-form/core/__tests__/fixtures/createTestValidator';
+import { createDispatchTree } from '@/schema-form/core/engine/__tests__/fixtures/createDispatchTree';
+import { blueprint } from '@/schema-form/core/engine/blueprint';
+import type { BlueprintDiagnostic } from '@/schema-form/core/engine/blueprint';
+import { SchemaFormError } from '@/schema-form/errors';
+
+import { dispatchMount } from '../utils/entry/dispatchMount';
+import { dispatchSetValue } from '../utils/entry/dispatchSetValue';
+import { subscribeFieldNode } from '../utils/read/subscribeFieldNode';
 import { createFormErrorRecord } from '../utils/report/createFormErrorRecord';
-import { createDispatchTree } from './fixtures/createDispatchTree';
 
 // filid:contract dispatch-report
 describe('chain error reporting', () => {

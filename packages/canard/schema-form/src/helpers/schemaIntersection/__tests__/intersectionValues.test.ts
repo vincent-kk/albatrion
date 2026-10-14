@@ -1,14 +1,12 @@
 import { describe, expect, it } from 'vitest';
 
-import {
-  EMPTY_INTERSECTION,
-  intersectConst,
-  intersectEnum,
-  intersectMaximum,
-  intersectMinimum,
-  intersectMultipleOf,
-  validateRange,
-} from '../index';
+import { EMPTY_INTERSECTION } from '../utils/constant';
+import { intersectConst } from '../utils/intersectConst';
+import { intersectEnum } from '../utils/intersectEnum';
+import { intersectMaximum } from '../utils/intersectMaximum';
+import { intersectMinimum } from '../utils/intersectMinimum';
+import { intersectMultipleOf } from '../utils/intersectMultipleOf';
+import { validateRange } from '../utils/validateRange';
 
 // filid:contract intersection-values
 describe('schema leaf intersections', () => {

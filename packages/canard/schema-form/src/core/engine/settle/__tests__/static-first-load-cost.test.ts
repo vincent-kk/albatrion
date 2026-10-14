@@ -1,8 +1,9 @@
 import { expect, it } from 'vitest';
 
-import { WriteOption } from '../../types/value';
-import { loadFieldNodeAtMount } from '../index';
+import { WriteOption } from '@/schema-form/core/engine/types/value';
+
 import { canLoadStaticFirstTree } from '../utils/load/canLoadStaticFirstTree';
+import { loadFieldNodeAtMount } from '../utils/load/loadFieldNodeAtMount';
 import { createTestTree } from './fixtures/createTestTree';
 
 it('computes every static occurrence once without allocating generic scratch', () => {

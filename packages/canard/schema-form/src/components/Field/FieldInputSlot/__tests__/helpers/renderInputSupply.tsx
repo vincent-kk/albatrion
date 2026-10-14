@@ -2,15 +2,15 @@ import { type ComponentType, createRef, memo } from 'react';
 
 import { render } from '@testing-library/react';
 
+import { registerPlugin } from '@/schema-form/app/plugin';
 import {
-  type FieldInputProps,
   Form,
   type FormHandle,
   type FormProps,
-  FormProvider,
-  type JSONSchema,
-  registerPlugin,
-} from '@/schema-form';
+} from '@/schema-form/components/Form';
+import { ExternalFormContextProvider as FormProvider } from '@/schema-form/providers';
+import { type FieldInputProps } from '@/schema-form/types/fieldInput';
+import { type JSONSchema } from '@/schema-form/types/jsonSchema';
 
 /** Resolution paths whose field boundaries must share the Refresh policy. */
 export const INPUT_SUPPLIES = [

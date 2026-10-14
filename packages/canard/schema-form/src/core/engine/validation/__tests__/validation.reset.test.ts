@@ -1,12 +1,12 @@
 import { describe, expect, it } from 'vitest';
 
-import { ValidationMode } from '../../types/state';
+import { createDispatchTree } from '@/schema-form/core/engine/__tests__/fixtures/createDispatchTree';
+import { ValidationMode } from '@/schema-form/core/engine/types/state';
 import {
   dispatchBatch,
   dispatchMount,
   dispatchResetSubtree,
-} from '../../write';
-import { createDispatchTree } from '../../write/__tests__/fixtures/createDispatchTree';
+} from '@/schema-form/core/engine/write';
 
 // filid:contract validation-lifetime
 describe('subtree load validation scope', () => {

@@ -1,3 +1,3 @@
 export { JSONPointer } from './enum';
 
-export * from './utils';
+export { getAbsolutePath, stripFragment } from './utils';

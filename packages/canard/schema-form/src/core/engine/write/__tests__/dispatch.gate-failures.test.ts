@@ -2,11 +2,13 @@ import { describe, expect, it, vi } from 'vitest';
 
 import { isArray } from '@winglet/common-utils/filter';
 
-import { SchemaFormError } from '../../../../errors';
-import type { BlueprintSchema } from '../../blueprint';
-import type { Validator } from '../../validation';
-import { dispatchMount, dispatchSetValue } from '../index';
-import { createDispatchTree } from './fixtures/createDispatchTree';
+import { createDispatchTree } from '@/schema-form/core/engine/__tests__/fixtures/createDispatchTree';
+import type { BlueprintSchema } from '@/schema-form/core/engine/blueprint';
+import type { Validator } from '@/schema-form/core/engine/validation';
+import { SchemaFormError } from '@/schema-form/errors';
+
+import { dispatchMount } from '../utils/entry/dispatchMount';
+import { dispatchSetValue } from '../utils/entry/dispatchSetValue';
 
 describe('round 55 gate failure regression', () => {
   it('ERROR-005 55C-01 preserves a conflict before a later guard in errors and records', () => {

@@ -2,7 +2,7 @@ import { expect } from 'vitest';
 
 import type { ScenarioExpectation } from '@aileron/schema-form-scenarios';
 
-import type { FieldNode } from '../../../surface';
+import type { FieldNode } from '@/schema-form/core/surface';
 
 /**
  * Compare requested observations with the settled public node surface.
