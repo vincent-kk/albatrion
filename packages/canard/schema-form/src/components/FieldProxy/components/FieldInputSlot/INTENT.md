@@ -2,7 +2,7 @@
 
 ## Purpose
 
-`Field`의 내부 입력 처리 레이어. 선택된 `FieldInput` 컴포넌트를 마운트하고, 사용자 이벤트(change·focus·blur·fileAttach)를 FieldNode 이벤트 시스템으로 변환하며, 포커스/선택/리프레시 명령을 처리한다.
+`FieldProxy` 본체의 내부 입력 처리 부품. 선택된 `FieldInput` 컴포넌트를 마운트하고, 사용자 이벤트(change·focus·blur·fileAttach)를 FieldNode 이벤트 시스템으로 변환하며, 포커스/선택/리프레시 명령을 처리한다.
 
 ## Conventions
 
