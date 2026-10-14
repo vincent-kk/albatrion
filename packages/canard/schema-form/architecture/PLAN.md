@@ -95,6 +95,7 @@
 | 2026-10-15 | 339라운드 닫기: 묶음 1 PR #387 병합(daadce7ab), 편집자 결정 넷, CLAUDE.md 두 줄 | `reviews/round-339-closing.md` |
 | 2026-10-15 | 340라운드 소유자: walkFieldNodes 삭제 대신 순회 한 벌로 합침(동작 불변). 보충 3줄 | `reviews/round-340-owner-answers.md` |
 | 2026-10-15 | 341라운드 소유자: 하위 방문 공개 기능 추가 → 설계 초안 walk-subtree-design.md, 판정 여섯. 보충 1줄 | `reviews/round-341-owner-answers.md` |
+| 2026-10-15 | 342라운드 소유자: visitSubtree 확정(지연 batch, 옵션 없음), SURFACE-062 신설. 보충 6줄 | `reviews/round-342-owner-answers.md` |
 | 2026-10-14 | 316라운드 소유자: constants·hooks organ(index 제거), organ 안 barrel 금지, Field를 Form처럼 components/ 아래로. 보충 2줄 | `reviews/round-316-owner-answers.md` |
 | 2026-10-14 | 317라운드 소유자: Form barrel 삭제, 병렬 진행(정돈-S 병렬), 검증 뒤 병합 위임, surface/classes → runtime, 손질은 단일 PR. 보충 4줄 | `reviews/round-317-owner-answers.md` |
 | 2026-10-14 | 318라운드 소유자: fieldInputs를 입력마다 fractal로(넷째 손질, fixy08 별도 PR), ArrayItems 래핑은 memo 경계라 유지. 보충 1줄 | `reviews/round-318-owner-answers.md` |

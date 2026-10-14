@@ -572,3 +572,4 @@
 - **339라운드(2026-10-15, 닫기/원장 관리자).** 묶음 1 #387 병합, 편집자 결정 넷, CLAUDE.md 갱신(reviews/round-339-closing.md).
 - **340라운드(2026-10-15, 소유자).** 순회 도구 한 벌로 합침(reviews/round-340-owner-answers.md).
 - **341라운드(2026-10-15, 소유자).** 하위 방문 공개 기능 설계 초안(reviews/round-341-owner-answers.md).
+- **342라운드(2026-10-15, 소유자).** visitSubtree 확정, SURFACE-062(reviews/round-342-owner-answers.md).

@@ -67,6 +67,7 @@
 | SURFACE-059 | 원장이 바꾸지 않은 오늘의 공개 표면은 그대로 — `FormProps` 열아홉 칸·`FormHandle` 열여섯 멤버·`ValidationMode`·공개 이벤트 형 여섯, PR-7 이주 점검 게이트 | 현행 | 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-87) |
 | SURFACE-060 | 안쪽 코드도 `SchemaNodeState`·`SchemaNodeEventType` 한 이름 — 공개 표면과 안쪽 코드에 함께, 한 형에 한 이름, 별칭 없음 | 현행 | 소유자 답(`reviews/round-18-owner-answers.md:25` 18C 검토 3번) |
 | SURFACE-061 | 경고등의 공개 이름 확정 — 게터 `typeMismatch: boolean`, 경로 목록 `typeMismatches: readonly string[]`, 경고 코드 `SCHEMA_FORM_WARNING.TYPE_MISMATCH`; 뜻은 VALUE-037 그대로, 주석에 `schemaType`·유효 목록 기준 한 줄, 시험 파일 이름은 그대로 | 현행 | 소유자 답(`reviews/round-18-owner-answers.md:41` 설계서 메모 4), 편집자 결정(18라운드, `reviews/round-18-owner-answers.md:41` 반영 칸; 시험 파일 이름) |
+| SURFACE-062 | 하위 방문 — `visitSubtree(visitor)`: 자기 포함 전위, `false`는 하위 건너뛰기, 형상 한정, 순회 안의 첫 쓰기에서 batch가 열려 끝에 한 번 정착(지연 batch), 내부 순회는 `visitFieldNodes` 한 벌 | 현행 | 소유자 답(`reviews/round-342-owner-answers.md:11` "좋아 그렇게 가죠"), 편집자 결정(342라운드, 반영 칸; 이름·순서·형제 정순) |
 
 ## 항목
 
@@ -998,3 +999,24 @@
 - 닫은 사람: 소유자 답(`reviews/round-18-owner-answers.md:41` 설계서 메모 4), 편집자 결정(18라운드, `reviews/round-18-owner-answers.md:41` 반영 칸; 시험 파일 이름)
 - 라운드: 18
 - 까닭: `reviews/round-18-owner-answers.md:41`
+
+### SURFACE-062 하위 방문 — `visitSubtree(visitor)`: 자기 포함 전위, `false`는 하위 건너뛰기, 형상 한정, 순회 안의 첫 쓰기에서 batch가 열려 끝에 한 번 정착(지연 batch), 내부 순회는 `visitFieldNodes` 한 벌
+
+- 결정:
+  > 【추론】 `NodeSurface`에 `visitSubtree(visitor: (node: FieldNode) => void | boolean): void`를 `find`·`findNodes` 옆에 둔다. 런타임 `FieldNode`는 write 엔진의 디스패치에 위임하고, 디스패치는 navigation의 `visitFieldNodes`로 돈다.
+  > 【추론】 자기 자신부터 전위 순서(부모 먼저, 형제는 `children` 순)로 방문한다. visitor가 `false`를 돌려주면 그 노드의 하위만 건너뛰고 형제는 계속한다. 전체 중단과 후위 순서 옵션은 두지 않는다(첫 일치는 `find`·`findNodes`의 몫).
+  > 【추론】 형상에 있는 노드만 돈다(NODE-043). 터미널은 잎이고(NODE-020), 참조로 두 번 닿는 같은 인스턴스는 한 번만 방문한다. 걷는 중 생긴 노드는 방문을 보장하지 않는다.
+  > 【추론】 지연 batch: 순회 자체는 chain에 들어가지 않는다. 순회 안에서 첫 쓰기가 chain 진입 지점에 닿는 순간 batch가 열리고, 그 뒤 쓰기는 표시만 되며, 순회가 끝날 때 루트에서 한 번 정착한다(`batch`와 같은 규칙: 읽기는 직전 커밋 값, 교체 범위는 쓰인 경로의 합). 쓰기가 없으면 아무것도 열지 않는다. 바깥 batch가 열려 있으면 거기에 합류한다. 전달 중(리스너 안)에는 쓰기가 평소처럼 거부되고 읽기 순회만 된다.
+  > 【추론】 `FormHandle`에는 두지 않는다(`handle.node`로 충분). 공개 형 이름은 더하지 않고 함수 형을 인라인으로 적어 표면 이름 수는 그대로다.
+  > 【추론】 내부 순회 셋(write의 subtree state 디스패치 둘, settle의 `walkOwnedFieldNodes`, navigation의 `walkFieldNodes`)은 navigation의 `visitFieldNodes(origin, visit, { owned?: boolean })` 한 벌로 합친다. `owned`는 `child.parent === node` 간선만 따라가며 공개하지 않는다. 형제 순서는 정순으로 통일한다 — `setSubtreeState`·`clearSubtreeState`의 역순은 스택 구현의 부산물이었고, 한 파동 안 형제 리스너가 `UpdateState`를 듣는 순서만 바뀌며 전역 상태 합계는 같다.
+- 보충:
+  > 소유자(342라운드, 이름부터 다시 숙고): "visit 이 끌리긴 하는데...\n이름부터 나머지까지 깊이 숙고해서 다시 추천해봐." (`reviews/round-342-owner-answers.md:7`)
+  > 소유자(342라운드, 순회 중 쓰기가 배치되는가): "확정하기 전에 한가지만 검토했으면 합니다.\n만약 visitSubtree 를 사용해서 "값"을 바꾼다고 할때, 이 변경은 배치처리가 됩니까?\n\n그러니까, 모든 순회가 끝난 후, 한번에 반영이 이루어집니까? 아니면 순회 중간중간 매번 값이 반영되면서 내려가게 되나요?" (`reviews/round-342-owner-answers.md:8`)
+  > 소유자(342라운드, batch를 메서드에 넣는 편이 낫지 않은가): "흠... 그런데 visit 을 사용할때 항상 batch 를 해야한다면 이걸 메소드 기능에 넣는게 좋을거같긴 한데... 권하지 않는다는거지.." (`reviews/round-342-owner-answers.md:9`)
+  > 소유자(342라운드, batch 옵션(기본 켬) 설계와 재저울질): "그럼 batch 옵션을 갖도록 하고, 기본값은 배치 사용, 읽기전용인 경우 배치를 끄고 쓰는 그런 메소드 설계는 어떤지? \n그리고 중간에 권고가 달라져서... 다시 저울질을 해보길 바람" (`reviews/round-342-owner-answers.md:10`)
+  > 소유자(342라운드, 지연 batch 확정, 배치 예산 물음): "좋아 그렇게 가죠.\n배치 예산인 몇입니까 지금?" (`reviews/round-342-owner-answers.md:11`)
+- 상태: 현행
+- 출처: `reviews/round-342-owner-answers.md:15-20`(정본), `reviews/round-342-owner-answers.md:7-11`(소유자 답), `plan/tidy-structure/walk-subtree-design.md`
+- 닫은 사람: 소유자 답(`reviews/round-342-owner-answers.md:11` "좋아 그렇게 가죠"), 편집자 결정(342라운드, 반영 칸; 이름·순서·형제 정순)
+- 라운드: 342
+- 까닭: `reviews/round-342-owner-answers.md:10`(옵션 설계 재저울질 — 엔진은 쓰기가 들어오는 순간 아니까 사용자에게 묻지 않는다)
