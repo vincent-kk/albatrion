@@ -267,6 +267,7 @@
 | 2026-10-14 | 281라운드 소유자 답: 할 일 끝내고 PR 병합 뒤 다음으로, 디렉터리·구성 다듬기는 새 단계, 7단계 비대. 보충 1줄 | `reviews/round-281-owner-answers.md` |
 | 2026-10-14 | 282라운드 소유자 메모: 08단계 씨앗(최소 export 위반, nodeFromJSONSchema root export, FormContents 이름), 시험·bench index 경유는 filid 한계 아님. 보충 1줄 | `reviews/round-282-owner-answers.md` |
 | 2026-10-14 | 283라운드 닫기: PR #370(07d) 병합 0b879e594 — 소유자 결정 다섯 반영, 39는 대기열 50. 보충 1줄 | `reviews/round-283-closing.md` |
+| 2026-10-14 | 284라운드 닫기: PR #371(07e) 병합 89898d107 — 낮은 후속 넷과 Prettier 다섯 파일. 보충 1줄 | `reviews/round-284-closing.md` |
 
 ## 2. 라운드별 요지
 
@@ -503,3 +504,4 @@
 - **247라운드(2026-10-13, 소유자).** PR들을 정리하고 다음 작업으로 갈 준비를 하라는 지시(reviews/round-247-owner-answers.md). 순서: #362 보강 재검증·병합 → #361 재기준·병합 → 07b-3 → 정리 커맨드·#354 본문 → 개선-38 준비.
 - **248라운드(2026-10-14, 소유자).** PR #362(07b-2) 병합을 명시적으로 허가했다(reviews/round-248-owner-answers.md). 원장 관리자가 squash 병합한다.
 - **249라운드(2026-10-14, 닫기).** PR #362(07b-2)를 squash 병합했고(switch tip 1dbc1c1c9) 원격 07b-2 가지를 지웠다. fairy07은 #361 재기준·새 이름, fixy07은 07b-3(production-test)을 맡는다(249C-01, reviews/round-249-closing.md).
+- **250라운드(2026-10-14, 소유자).** production-test의 지워진 옛 문법을 지금 새 문법으로 다 바꾸기로 했다(대기열 35 승인, 250C-01, reviews/round-250-owner-answers.md). fixy07이 07b-3의 별도 커밋으로 한다.
