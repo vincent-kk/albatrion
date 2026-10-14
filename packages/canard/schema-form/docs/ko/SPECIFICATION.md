@@ -504,6 +504,8 @@ const formInputMap = {
 
 키 목록은 닫혀 있어서 알 수 없는 키가 있으면 청사진 빌드가 코드 `UNKNOWN_GROUP_KEY`인 스키마 오류(`isJSONSchemaError`로 판별)를 던집니다. `controls.fields[].controls`와 조각(`oneOf`/`anyOf`/`allOf` 분기, `then`, `else`)의 `controls` 안에서는 앞의 아홉 키(`active`부터 `unsetOnInactive`까지)만 허용되며, 나머지 네 키는 던집니다.
 
+닫힌 목록은 `controls`와 `options` 안에만 적용됩니다. 세 묶음 밖에 있는 0.16의 최상위 키(`formType`, `FormTypeInput`, `FormTypeInputProps`, `FormTypeRendererProps`, `computed`, `&` 접두어 키, `injectTo`, `terminal`, `virtual`, `placeholder`, `errorMessages`, `propertyKeys`)는 아예 읽지 않으므로, 1.0.0은 이들을 오류도 경고도 없이 무시합니다. 별칭도 경고도 두지 않는 것은 의도된 설계이므로, 0.16에서 옮겨 오는 스키마는 키마다 직접 옮겨야 합니다(README의 마이그레이션 (1.0.0) 절 참고).
+
 ### 중첩 controls
 
 ```typescript
@@ -647,7 +649,7 @@ const jsonSchema = {
 ```
 
 - null 분기는 검증기를 위한 것입니다. 필드가 없고 활성 분기가 되지 않으며, 거기에 쓴 조건이나 `properties`는 무시되고 개발 환경 경고 `NULL_BRANCH_IGNORED_FOR_FORM`이 나옵니다.
-- 객체가 `null`인지는 값이 정하고, 어떤 객체 분기가 보이는지는 분기 조건이 정합니다. 값이 `null`인 동안 선택된 분기의 자식 필드는 default 없이 표시됩니다([Nullable 객체와 배열](#nullable-객체와-배열) 참고). 객체·배열 필드에 종류가 맞지 않는 값이 들어 있을 때도 같습니다. 예를 들어 객체에 문자열을 로드하면, 자식에 값을 주기 전까지 자식은 default를 받지 않습니다.
+- 객체가 `null`인지는 값이 정하고, 어떤 객체 분기가 보이는지는 분기 조건이 정합니다. 값이 `null`인 동안 선택된 분기의 자식 필드는 default 없이 표시됩니다([Nullable 객체와 배열](#nullable-객체와-배열) 참고). 객체·배열 필드에 종류가 맞지 않는 값이 들어 있을 때도, 폼 표시·노드 데이터·출력 값이 어긋나지 않게 하려는 같은 까닭으로 마찬가지입니다. 예를 들어 객체에 문자열을 로드하면, 자식에 값을 주기 전까지 자식은 default를 받지 않습니다.
 - null 분기의 위치는 상관없습니다. 사용 중인 분기의 오류는 해당 필드에 전달됩니다. 객체 값이 `oneOf`를 통과하지 못하면 null 분기도 맞지 않은 다른 분기처럼 자기 불일치("must be null")를 객체에 보고하며, 이 오류는 `oneOf` 오류와 함께 나옵니다.
 - `oneOf`가 `null`을 검증할 수 없는 nullable 객체 — 받아 주는 분기가 없거나 여러 개인 경우 — 는 개발 환경 경고 `NULLABLE_ONE_OF_NULL_UNREACHABLE`을 냅니다. `anyOf`는 이런 주의가 필요 없습니다: null 분기 하나 또는 type 없는 분기만으로 충족됩니다.
 
@@ -1136,7 +1138,7 @@ nullable 객체·배열(`type: ['object', 'null']`, `type: ['array', 'null']`)�
 
 reset은 노드가 무엇을 갖고 있든 기본값을 복원합니다: 기본값이 `null`이면 `null`로, 아니면 기본 객체로.
 
-**`null`인 동안** 출력은 스키마가 무엇을 담고 있든 — 배열, default, derived, `oneOf`/`anyOf`, controls로 게이트된 필드·virtual 필드 — `null`입니다. 객체의 자식 필드는 계속 렌더되며, `null`인 동안 자식 default, 객체 default, `minItems` 채움은 나타나지 않습니다. `controls.derived`나 `injectTo`가 쓴 값은 객체를 만들지 않고 그 필드에 표시됩니다. 로드·reset·쓰기 중 어떤 경로로 `null`이 되었든 같고, `null`로 버린 데이터는 되살아나지 않습니다. 자신이 `null`인 nullable **배열**에는 아이템이 없고 `minItems` 채움도 없습니다.
+**`null`인 동안** 출력은 스키마가 무엇을 담고 있든 — 배열, default, derived, `oneOf`/`anyOf`, controls로 게이트된 필드·virtual 필드 — `null`입니다. 객체의 자식 필드는 계속 렌더되며, `null`인 동안 자식 default, 객체 default, `minItems` 채움은 나타나지 않습니다. `controls.derived`나 `injectTo`가 쓴 값은 객체를 만들지 않고 그 필드에 표시됩니다. 로드·reset·쓰기 중 어떤 경로로 `null`이 되었든 같고, `null`로 버린 데이터는 되살아나지 않습니다. 종류가 틀린 로드 원본(`null` 포함) 아래 자식을 채우지 않는 이 규칙은 폼에 보이는 것, 노드 데이터, 출력 값이 서로 어긋나지 않게 하기 위한 것입니다. 자신이 `null`인 nullable **배열**에는 아이템이 없고 `minItems` 채움도 없습니다.
 
 **무엇이 되는가:** 자식 필드에 입력하면 객체는 그 입력값을 담은 객체로 승격됩니다. 승격으로 새로 생긴 필드(예를 들어 입력값이 여는 분기의 필드)만 default를 받으며, 이미 있던 필드는 값을 채울 때까지 빈 상태를 유지합니다. 배열의 쓰기는 빈 배열을 기준으로 합니다. 배열에는 병합이 없습니다: `setValue([], SetValueOption.Merge)`는 대입이며 `[]`를 만듭니다.
 

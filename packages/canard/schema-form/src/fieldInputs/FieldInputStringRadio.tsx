@@ -1,4 +1,4 @@
-import { type ChangeEvent, Fragment, type ReactNode, useMemo } from 'react';
+import { type ChangeEvent, type ReactNode, useMemo } from 'react';
 
 import { map } from '@winglet/common-utils/array';
 import { useHandle } from '@winglet/react-utils/hook';
@@ -54,16 +54,11 @@ const FieldInputStringRadio = ({
     onChange(rawValue);
   });
   return (
-    <Fragment>
+    <span role="group" aria-labelledby={`label:${path}`}>
       {map(radioOptions, ({ value, rawValue, label }, index) => {
         const id = `${path}-${index}`;
         return (
-          <label
-            key={value}
-            htmlFor={id}
-            style={style}
-            className={className}
-          >
+          <label key={value} htmlFor={id} style={style} className={className}>
             <input
               type="radio"
               id={id}
@@ -78,7 +73,7 @@ const FieldInputStringRadio = ({
           </label>
         );
       })}
-    </Fragment>
+    </span>
   );
 };
 

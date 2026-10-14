@@ -63,16 +63,11 @@ const FieldInputStringCheckbox = ({
       onChange((prev) => prev?.filter((option) => option !== rawValue) || []);
   });
   return (
-    <div>
+    <div role="group" aria-labelledby={`label:${path}`}>
       {map(checkboxOptions, ({ value, rawValue, label }, index) => {
         const id = `${path}-${index}`;
         return (
-          <label
-            key={value}
-            htmlFor={id}
-            style={style}
-            className={className}
-          >
+          <label key={value} htmlFor={id} style={style} className={className}>
             <input
               type="checkbox"
               id={id}

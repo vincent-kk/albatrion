@@ -14,7 +14,9 @@ export interface FormLabelProps {
  * Renders an accessible label for form fields.
  *
  * Automatically generates label text from schema title or property name,
- * with proper `for` attribute association to the corresponding input field.
+ * associated with its input through `htmlFor={path}`. Its `id="label:${path}"`
+ * also lets options groups reference the title through `aria-labelledby`.
+ * Both attributes are built from `path` as given, so pass the absolute path.
  * Supports custom styling while maintaining accessibility standards.
  *
  * @example
@@ -58,7 +60,12 @@ export interface FormLabelProps {
 export const FormLabel = memo(({ path, style, className }: FormLabelProps) => {
   const { FormLabelRenderer } = useFieldRendererContext();
   return (
-    <label style={style} className={className} htmlFor={path}>
+    <label
+      style={style}
+      className={className}
+      htmlFor={path}
+      id={path !== undefined ? `label:${path}` : undefined}
+    >
       <FieldProxy
         path={path}
         FieldRenderer={FormLabelRenderer || PluginManager.FormLabelRenderer}

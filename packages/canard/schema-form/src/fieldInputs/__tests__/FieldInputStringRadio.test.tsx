@@ -50,3 +50,23 @@ it('does not select radio inputs from a top-level inputType alone', () => {
   expect(screen.queryAllByRole('radio')).toHaveLength(0);
   expect(screen.getByRole<HTMLSelectElement>('combobox').value).toBe('M');
 });
+
+it('keeps radio options in an inline group named by the field title', () => {
+  render(
+    <Form
+      jsonSchema={{
+        type: 'object',
+        properties: {
+          Size: {
+            type: 'string',
+            enum: ['S', 'M'],
+            presentation: { inputType: 'radio' },
+          },
+        },
+      }}
+    />,
+  );
+  const group = screen.getByRole('group', { name: 'Size' });
+  expect(group.tagName).toBe('SPAN');
+  expect(group.getAttribute('aria-labelledby')).toBe('label:/Size');
+});

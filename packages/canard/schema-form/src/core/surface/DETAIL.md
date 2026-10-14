@@ -118,6 +118,12 @@
 - **Direct import**: `allowed`
 - **Reason**: settle 진입 함수가 받는 런타임 레코드 형을 위해 클래스 형만 `import type`으로 읽습니다. 진입점은 공개 합집합 형만 내보내므로 시험을 위해 넓히지 않습니다(NODE-016, 실행 ADR D7에서 벗어남 — 03 계획 로그 §4).
 
+### `FieldNode.ts` — engine 시험과 bench의 직접 import
+
+- **Consumers**: `**/src/core/engine/**/__tests__/**`, `**/bench/**`
+- **Direct import**: `allowed`
+- **Reason**: 시험과 bench(측정 도구)는 소유자 결정(276라운드, 대기열 49)으로 fractal import 규칙의 직접 import 금지에서 면제됩니다. engine 정착 시험과 bench는 노드 클래스를 직접 읽어 검증·측정하며, 이를 위해 진입점을 넓히지 않습니다.
+
 ## Last Updated
 
 계약 기준: 69C-01–05, 70C-01, NODE-010·050, REACT-009·010·024.

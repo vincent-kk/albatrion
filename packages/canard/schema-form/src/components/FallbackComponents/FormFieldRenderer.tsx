@@ -25,7 +25,7 @@ export const FormFieldRenderer = ({
         }}
         className={className}
       >
-        <legend>{node.name}</legend>
+        <legend id={`label:${path}`}>{node.name}</legend>
         <div>
           <em style={{ fontSize: '0.85em' }}>{errorMessage}</em>
         </div>
@@ -45,7 +45,7 @@ export const FormFieldRenderer = ({
         className={className}
       >
         {node.parentNode && isArraySchema(node.parentNode) === false && (
-          <label htmlFor={path} style={{ marginRight: 5 }}>
+          <label htmlFor={path} id={`label:${path}`} style={{ marginRight: 5 }}>
             {name} {required && <span style={{ color: 'red' }}>*</span>}
           </label>
         )}

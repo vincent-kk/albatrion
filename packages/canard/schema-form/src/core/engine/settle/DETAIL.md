@@ -260,6 +260,20 @@
 - I9 경로 저장소는 생성 시점부터 명시적인 PathKeyedMap·PathKeyedSet 형이며 native Map·Set의 열거와 instanceof 동작을 유지합니다. 인스턴스 메서드 패치·약한 등록·첫 쓰기의 adoption 순회는 없습니다. exact·조상·숫자 자리 radix 색인은 set·add·delete·clear와 명시적 replaceEntries 일괄 이동에서 갱신합니다. 소멸·이동은 영향 prefix만 조회하고 규칙 원천·대상을 모두 색인합니다. 일괄 이동 동안 빈 prefix를 보류하여 살아남는 마디와 숫자 radix를 재사용하며 경로와 숫자 판정을 prefix별로 보관합니다. 메모리는 경로 깊이 D의 항목 K개에 O(KD) 키 참조와 유일한 prefix 문자열·부모 연결·숫자 radix 마디를 더합니다. 값은 복제하지 않습니다. 생성은 빈 색인 O(1), 새로운 키의 쓰기·삭제는 O(D) 색인 연산과 문자열 처리이며 기존 키 값 갱신은 O(1)입니다(SETTLE-017·047, GOAL-011, 49C-01).
 - 배열 소멸은 직전 스냅숏 경로를, 이동은 previous·current 경로를 배달 감시 역색인에 넣습니다. 변경 자손의 조상을 생략해도 역색인 조회가 조상 감시를 포함하므로 배달을 잃지 않습니다. 조건 의존의 나감은 기존 전체 감시 갱신을 유지합니다. 관련 없는 watcher 수 W에 비례하는 배열 구조 배달 비용을 추가하지 않습니다(NODE-026, EVENT-064, 44C-01).
 
+## Boundary Exemptions
+
+### `utils/compute/sameValue.ts` — bench의 직접 import
+
+- **Consumers**: `**/bench/**`
+- **Direct import**: `allowed`
+- **Reason**: bench(측정 도구)는 소유자 결정(276라운드, 대기열 49)으로 fractal import 규칙의 직접 import 금지에서 면제됩니다. 값 비교 비용을 따로 재기 위해 진입점에 올리지 않고 그대로 읽습니다.
+
+### `utils/gates/getGateRegistry.ts` — bench의 직접 import
+
+- **Consumers**: `**/bench/**`
+- **Direct import**: `allowed`
+- **Reason**: bench(측정 도구)는 소유자 결정(276라운드, 대기열 49)으로 fractal import 규칙의 직접 import 금지에서 면제됩니다. 게이트 등록표 구성 비용을 따로 재기 위해 진입점에 올리지 않고 그대로 읽습니다.
+
 ## Last Updated
 
 2026-10-13. 계약 기준: 211C-01, settle-array-prefix, 191C-01, Q113, 69C-02–04, 72C-01, 82C-01, 89C-01, 90C-01, 92C-01–03, 97C-02, 98C-01, ERROR-019, WRITE-045·046·082·086·088, REACT-003·024, EVENT-039·071, SETTLE-005·049, BLUEPRINT-017·030.
