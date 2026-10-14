@@ -1,0 +1,95 @@
+diff --git a/packages/canard/schema-form/src/core/settle/DETAIL.md b/packages/canard/schema-form/src/core/settle/DETAIL.md
+--- a/packages/canard/schema-form/src/core/settle/DETAIL.md
++++ b/packages/canard/schema-form/src/core/settle/DETAIL.md
+@@ -1,6 +1,8 @@
+ # settle 계약
+ 
+ ## Requirements
++
++- 게이트 경로의 단일 선언 에지가 성공하면 기존 entry별 불변 ID 목록을 재사용합니다. gate·flush·throw·선언 선택 순서는 유지하고 활성 선언 배열과 다중 선언 경로는 기존대로 둡니다. 속도 비용은 선언 수에 대한 고정 자격 검사와 기존 게이트 평가, 첫 사용의 단일 ID 구성이며 이후 ID 배열 생성·ID push를 제거합니다. 메모리 비용은 기존 STATIC_IDS 약한 색인에 entry당 ID 한 목록을 보유하는 대신 반복 임시 ID 배열을 제거하며 새 색인·노드 칸은 없습니다. 105C-01과 0.5% 최소 크기 규칙으로 종단 시간을 판정합니다(106라운드 단일 선택).
+ 
+ - 게이트 식의 의존 값은 기존 의존 배열 순서대로 매 평가마다 classic loop에서 읽습니다. 경로 해석·실제 projected read·식 호출과 catch·gateThrowVersion·오류 발생 위치는 같습니다. 속도 비용은 O(의존 수)이며 배열 map callback 호출을 제거합니다. 메모리 비용은 기존 길이의 입력 배열 하나를 유지하고 평가별 callback closure만 제거하며 새 보유 캐시·노드 칸은 없습니다. 실제 종단 이득은 105C-01과 0.5% 최소 크기 규칙으로 판정합니다(106라운드 게이트 읽기).
+ 
+diff --git a/packages/canard/schema-form/src/core/settle/utils/compute/selectChildren.ts b/packages/canard/schema-form/src/core/settle/utils/compute/selectChildren.ts
+--- a/packages/canard/schema-form/src/core/settle/utils/compute/selectChildren.ts
++++ b/packages/canard/schema-form/src/core/settle/utils/compute/selectChildren.ts
+@@ -149,10 +149,10 @@
+       `${node.path}/${escapeSegment(entry.name)}`, context);
+     let threw = false;
+     let declarations = entry.declarations;
+-    let activeIds: number[] | undefined;
++    let activeIds: readonly number[] | undefined;
+     if (context.hasGates) {
+       const active: typeof entry.declarations[number][] = [];
+-      activeIds = [];
++      const ids: number[] | undefined = entry.declarations.length === 1 ? undefined : [];
+       for (let index = 0; index < entry.declarations.length; index++) {
+         const declaration = entry.declarations[index];
+         const version = context.gateThrowVersion;
+@@ -163,10 +163,15 @@
+             gate.schemaPath === `${declaration.schemaPath}/controls/active`
+               ? entry.name : undefined)) { admitted = false; break; }
+         }
+-        if (admitted) { active.push(declaration); activeIds.push(declaration.id); }
++        if (admitted) {
++          active.push(declaration);
++          if (ids) ids.push(declaration.id);
++          else activeIds = staticIds(entry);
++        }
+         else if (context.gateThrowVersion !== version) threw = true;
+       }
+       declarations = active;
++      if (ids) activeIds = ids;
+     }
+     if (declarations.length === 0) {
+       const priorChild = hasOwnProperty(prior, entry.name)
+diff --git a/packages/canard/schema-form/src/core/settle/__tests__/settle.single-selection-counts.test.ts b/packages/canard/schema-form/src/core/settle/__tests__/settle.single-selection-counts.test.ts
+new file mode 100644
+--- /dev/null
++++ b/packages/canard/schema-form/src/core/settle/__tests__/settle.single-selection-counts.test.ts
+@@ -0,0 +1,45 @@
++import { describe, expect, it, vi } from 'vitest';
++import { isArray } from '@winglet/common-utils/filter';
++
++import { SetValueOption } from '../../types/value';
++import { loadSchemaNodeAtMount, writeSchemaNode } from '../index';
++import { createTestTree } from './fixtures/createTestTree';
++
++describe('single declaration selection work', () => {
++  it('publishes one immutable ID list across successful gated selections', () => {
++    const { root } = createTestTree({
++      type: 'object', properties: { kind: { type: 'string' } },
++      anyOf: [{ controls: { active: '@.gate()' },
++        properties: { payload: { type: 'string', default: 'P' } } }],
++    });
++    const entry = root.blueprintNode.childEntries.find(edge => edge.name === 'payload')!;
++    expect(entry.declarations).toHaveLength(1);
++    const gate = vi.fn(() => true);
++    root.runtime.context = { gate };
++    const selected = vi.spyOn(Map.prototype, 'set');
++    const lists: (readonly number[])[] = [];
++    const unique: unknown[] = [];
++    try {
++      loadSchemaNodeAtMount(root, { kind: 'a' }, SetValueOption.Overwrite);
++      for (let index = 0; index < 3; index++)
++        writeSchemaNode(root.structure!.kind, `kind_${index}`, 'input', SetValueOption.Overwrite);
++      expect(root.emit).toEqual({ kind: 'kind_2', payload: 'P' });
++      for (let index = 0; index < selected.mock.calls.length; index++) {
++        const [key, value] = selected.mock.calls[index];
++        if (key !== null && typeof key === 'object' &&
++          'blueprintNode' in key && key.blueprintNode === entry.node &&
++          isArray(value) && value.length === 1 && value[0] === entry.declarations[0].id) {
++          lists.push(value);
++          if (!unique.includes(value)) unique.push(value);
++        }
++      }
++    } finally { selected.mockRestore(); }
++    expect(lists.length).toBeGreaterThan(0);
++    for (let index = 0; index < lists.length; index++)
++      expect(lists[index]).toEqual([entry.declarations[0].id]);
++    expect(gate.mock.calls.length).toBeGreaterThan(1);
++    console.log(`106COUNT single-selection lists=${unique.length} publications=${lists.length} evaluate=${gate.mock.calls.length}`);
++    expect(unique).toHaveLength(1);
++    expect(Object.isFrozen(unique[0])).toBe(true);
++  });
++});

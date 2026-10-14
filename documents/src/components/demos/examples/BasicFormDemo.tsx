@@ -13,14 +13,14 @@ const schema = {
     name: {
       type: 'string',
       title: 'Full Name',
-      placeholder: 'e.g. John Doe',
+      presentation: { FieldInputProps: { placeholder: 'e.g. John Doe' } },
       default: 'Jane Smith',
     },
     email: {
       type: 'string',
       title: 'Email',
       format: 'email',
-      placeholder: 'e.g. jane@example.com',
+      presentation: { FieldInputProps: { placeholder: 'e.g. jane@example.com' } },
     },
     age: {
       type: 'integer',
@@ -46,12 +46,12 @@ const schema = {
       type: 'string',
       title: 'About You',
       format: 'textarea',
-      placeholder: 'Tell us about yourself...',
+      presentation: { FieldInputProps: { placeholder: 'Tell us about yourself...' } },
     },
     active: {
       type: 'boolean',
       title: 'Active Status',
-      formType: 'switch',
+      presentation: { inputType: 'switch' },
       default: true,
       description: 'Toggle your active status',
     },

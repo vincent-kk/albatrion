@@ -5,37 +5,39 @@ import type { TrackableHandlerFunction } from '@winglet/common-utils/function';
 import type { Dictionary, Fn } from '@aileron/declare';
 
 import type {
-  InferSchemaNode,
-  SchemaNode,
+  FieldNode,
+  InferFieldNode,
+  SetValueOption,
   ValidationMode,
 } from '@/schema-form/core';
-import type { NodeStateFlags } from '@/schema-form/__legacy__/core/nodes';
+import type { FormErrorRecord } from '@/schema-form/errors';
 import type { VirtualizationOptions } from '@/schema-form/helpers/virtualization';
 import type {
   AllowedValue,
   AttachedFilesMap,
-  FormTypeInputDefinition,
-  FormTypeInputMap,
-  FormTypeRendererProps,
+  FieldInputDefinition,
+  FieldInputMap,
+  FieldRendererProps,
   InferValueType,
   JSONSchema,
-  JSONSchemaError,
   SetStateFnWithOptions,
   ShowError,
   ValidatorFactory,
 } from '@/schema-form/types';
 
+/** Live root view passed to function children. */
 export interface FormChildrenProps<
   Schema extends JSONSchema,
   Value extends AllowedValue = InferValueType<Schema>,
 > {
-  node?: InferSchemaNode<Schema>;
+  node?: InferFieldNode<Schema>;
   jsonSchema: Schema;
   defaultValue?: Value;
   value?: Value;
-  errors?: JSONSchemaError[];
+  errors?: FieldNode['globalErrors'];
 }
 
+/** Public configuration consumed at load, commit, or input time as documented. */
 export interface FormProps<
   Schema extends JSONSchema = JSONSchema,
   Value extends AllowedValue = InferValueType<Schema>,
@@ -44,28 +46,42 @@ export interface FormProps<
   jsonSchema: Schema;
   /** Default value for this SchemaForm */
   defaultValue?: Value;
-  /** Apply readOnly property to all FormTypeInputs (default: false) */
+  /** Apply readOnly property to all FieldInputs (default: false) */
   readOnly?: boolean;
-  /** Apply disabled property to all FormTypeInputs (default: false) */
+  /** Apply disabled property to all FieldInputs (default: false) */
   disabled?: boolean;
   /** Function called when the value of this SchemaForm changes */
   onChange?: Fn<[value: Value]>;
-  /** Function called when the value of this SchemaForm is validated */
-  onValidate?: Fn<[jsonSchemaError: JSONSchemaError[]]>;
+  /** Function called with the form error list when a validation result changes it or the external error list changes (errors prop, node-level external writes); a validation result that deep-equals the previous one does not call it */
+  onValidate?: Fn<[errors: FieldNode['globalErrors']]>;
   /** Function called when the form is submitted */
   onSubmit?: Fn<[value: Value], Promise<void> | void>;
   /** Function called when the state of this SchemaForm changes */
-  onStateChange?: Fn<[state: NodeStateFlags]>;
-  /** List of FormTypeInput definitions */
-  formTypeInputDefinitions?: FormTypeInputDefinition[];
-  /** FormTypeInput path mapping */
-  formTypeInputMap?: FormTypeInputMap;
-  /** Custom form type renderer component */
-  CustomFormTypeRenderer?: ComponentType<FormTypeRendererProps>;
+  onStateChange?: Fn<[state: FieldNode['globalState']]>;
+  /** Instance error records, including committed construction and render failures. */
+  onError?: Fn<[record: FormErrorRecord]>;
+  /** Root diagnostics after preparation; initial diagnostics remain on the handle. */
+  onDiagnosticsChange?: Fn<[diagnostics: FieldNode['diagnostics']]>;
+  /** Default removal policy for inactive fields. */
+  unsetOnInactive?: boolean;
+  /** Suppress automatic writes without blocking imperative writes. */
+  disableAutomaticWrites?: boolean;
+  /** List of FieldInput definitions */
+  fieldInputDefinitions?: FieldInputDefinition[];
+  /** FieldInput path mapping */
+  fieldInputMap?: FieldInputMap;
+  /** Custom field renderer component */
+  FieldRenderer?: ComponentType<FieldRendererProps>;
+  /** Label renderer shared by Form.Label instances. */
+  FormLabelRenderer?: ComponentType<FieldRendererProps>;
+  /** Input renderer shared by Form.Input instances. */
+  FormInputRenderer?: ComponentType<FieldRendererProps>;
+  /** Error renderer shared by Form.Error instances. */
+  FormErrorRenderer?: ComponentType<FieldRendererProps>;
   /** Initial validation errors, default is undefined */
-  errors?: JSONSchemaError[];
+  errors?: FieldNode['globalErrors'];
   /** Custom format error function */
-  formatError?: FormTypeRendererProps['formatError'];
+  formatError?: FieldRendererProps['formatError'];
   /**
    * Error display condition (default: ShowError.DirtyTouched)
    *   - `true`: Always show
@@ -105,24 +121,34 @@ export interface FormProps<
     | Fn<[props: FormChildrenProps<Schema, Value>], ReactNode>;
 }
 
+/** Eighteen imperative operations always addressing the current root. */
 export interface FormHandle<
   Schema extends JSONSchema = JSONSchema,
   Value extends AllowedValue = InferValueType<Schema>,
 > {
-  node?: InferSchemaNode<Schema>;
-  focus: Fn<[path: SchemaNode['path']]>;
-  select: Fn<[path: SchemaNode['path']]>;
-  reset: Fn;
-  findNode: Fn<[path: SchemaNode['path']], SchemaNode | null>;
-  findNodes: Fn<[path: SchemaNode['path']], SchemaNode[]>;
-  getState: Fn<[], NodeStateFlags>;
-  setState: Fn<[state: NodeStateFlags]>;
+  node?: InferFieldNode<Schema>;
+  focus: Fn<[path?: FieldNode['path']]>;
+  select: Fn<[path?: FieldNode['path']]>;
+  refresh: Fn<[path?: FieldNode['path']]>;
+  remount: Fn<[path?: FieldNode['path']]>;
+  /** Load committed defaults; only automatic-write flags override the Form default. */
+  reset: Fn<
+    [
+      option?:
+        | typeof SetValueOption.DisableAutomaticWrites
+        | typeof SetValueOption.EnableAutomaticWrites,
+    ]
+  >;
+  findNode: Fn<[path: FieldNode['path']], FieldNode | null>;
+  findNodes: Fn<[path: FieldNode['path']], readonly FieldNode[]>;
+  getState: Fn<[], FieldNode['globalState']>;
+  setState: Fn<[state: FieldNode['state']]>;
   clearState: Fn;
   getValue: Fn<[], Value>;
   setValue: SetStateFnWithOptions<Value>;
-  getErrors: Fn<[], JSONSchemaError[]>;
+  getErrors: Fn<[], FieldNode['globalErrors']>;
   getAttachedFilesMap: Fn<[], AttachedFilesMap>;
-  validate: Fn<[], Promise<JSONSchemaError[]>>;
-  showError: Fn<[visible: boolean]>;
+  validate: Fn<[], Promise<FieldNode['globalErrors']>>;
+  showError: Fn<[visible?: boolean]>;
   submit: TrackableHandlerFunction;
 }

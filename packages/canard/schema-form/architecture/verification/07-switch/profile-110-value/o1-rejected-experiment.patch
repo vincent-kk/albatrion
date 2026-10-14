@@ -1,0 +1,185 @@
+diff --git a/packages/canard/schema-form/src/core/settle/DETAIL.md b/packages/canard/schema-form/src/core/settle/DETAIL.md
+index cfee58ebd..66771d2c5 100644
+--- a/packages/canard/schema-form/src/core/settle/DETAIL.md
++++ b/packages/canard/schema-form/src/core/settle/DETAIL.md
+@@ -40,7 +40,7 @@
+ - dirty 경로는 일반 add/delete 색인으로 시작하고 게이트 없는 등록 경계에서 최초 descendant 순서를 유지한 직접 에지 색인으로 전환합니다. 이후 추가 시 아직 dirty가 아닌 조상까지만 닫고 직접 부모–자식 에지 하나씩 색인합니다. 실제 노드의 계산 완료가 자식 우선으로 소비하므로 생성 O(N), 잎 갱신 O(D), 색인 메모리 O(dirty 노드)이며 내부에서 만든 모든 조상을 다시 모든 접두에 색인하지 않습니다. 존재하지 않는 감시 경로가 남아 조상이 먼저 소비될 수 있어 등록의 조상 복구 루프는 유지합니다. 게이트가 있는 계산과 일반 DirtyPathSet 사용은 임의 add/delete 뒤 첫 살아 있는 descendant 순서를 보존하는 기존 색인을 씁니다(SETTLE-017·047, 82C-01).
+ - 전이 채움은 명시 raw와 기본값 부재를 먼저 제외하고 실제 기본값 후보에만 하위 원본 부재를 확인합니다. 내부 기본값 없는 N노드 트리의 채움 후보 탐색은 O(N), 추가 영구 메모리는 없으며 기존 부모 우선 채움과 잠복/자손 원본 보호는 유지합니다. 여러 층에 실제 branch 기본값이 있는 입력의 source 확인 비용은 별도입니다(SETTLE-004·005, 82C-01).
+ 
+-- 형상 불변 객체의 부분 합성도 배열과 같은 `hint.incremental` 계약으로 전체 동등 비교를 생략합니다. 행은 바뀐 자식의 값·키 존재를 검증하고 키 집합이 바뀐 경우 힌트를 켜지 않습니다. 정착은 재계산 자식만 `sameValue`로 비교하여 같은 내용의 새 하위 참조가 와도 부모의 기존 참조를 되살립니다. 비용은 힌트 객체 하나와 재계산 목록·실제 바뀐 하위 내용이며 직전 local 얕은 사본 밖 형제 전수 검사를 추가하지 않습니다(SETTLE-042·043, 65C-04, 82C-01).
++- 형상 불변 객체의 부분 합성도 배열과 같은 `hint.incremental` 계약으로 전체 동등 비교를 생략합니다. 행은 바뀐 자식의 값·키 존재를 검증하고 키 집합이 바뀐 경우 힌트를 켜지 않습니다. 정착은 재계산 자식만 `sameValue`로 비교하여 같은 내용의 새 하위 참조가 와도 부모의 기존 참조를 되살립니다. 힌트는 이 소유자 내부 WeakMap에서 정착 문맥당 하나를 재사용하고 모든 합성 직전(가상 노드 재진입·힌트 없는 합성 포함)에 전체 선언 필드를 초기화합니다. 현재 선언 필드는 incremental boolean 하나이며 새 필드 추가 시 초기화와 전체 필드 검증도 함께 확장합니다. 힌트 참조는 local·emit·배달 payload에 포함하지 않습니다. 속도 비용은 합성당 O(1) WeakMap 조회와 초기화이며 적격 조상마다 하던 객체 할당을 정착당 한 번으로 줄입니다. 메모리 비용은 정착 문맥당 약한 셀과 고정 형상 힌트 하나이며 문맥/노드의 필드나 폼 간 공유를 추가하지 않고 문맥 수명 뒤 보유하지 않습니다. 재계산 목록·실제 바뀐 하위 내용과 직전 local 얕은 사본 밖 형제 전수 검사 부재는 유지합니다(SETTLE-042·043, 65C-04, 82C-01, 107C-01 (c), 110 O1).
+ 
+ - 비순환 청사진은 첫 확인 O(V+E)의 DFS 결과를 약한 캐시에 보관하여 각 생성의 재귀 조상 탐색을 O(1)로 생략합니다. 임시 DFS 메모리는 O(V), 보유 메모리는 청사진당 boolean 하나입니다. 재계산 조상 확장은 호출당 방문 집합으로 중복을 차단하여 유일 경로·조상 수만큼만 확장하고 O(유일 경로 수)의 임시 메모리를 씁니다. 경로 문자열 해석과 dirty descendant 색인의 O(총 경로 segment 수) 비용은 별도입니다(SETTLE-017, BLUEPRINT-030, 82C-01).
+ 
+diff --git a/packages/canard/schema-form/src/core/settle/utils/compute/updateOutput.ts b/packages/canard/schema-form/src/core/settle/utils/compute/updateOutput.ts
+index ba87e3d33..af04edebd 100644
+--- a/packages/canard/schema-form/src/core/settle/utils/compute/updateOutput.ts
++++ b/packages/canard/schema-form/src/core/settle/utils/compute/updateOutput.ts
+@@ -3,6 +3,9 @@ import type { SchemaNodeRecord } from '../../../record';
+ import type { SettlementContext } from '../../type';
+ import { sameValue } from './sameValue';
+ 
++/** Call-owned fixed-shape hint; no node, emitted value or payload retains it. */
++const ASSEMBLY_HINTS = new WeakMap<object, { incremental: boolean }>();
++
+ /**
+  * Assemble and project a node once from its current child order.
+  * @param node - Live node whose row owns assembly and projection
+@@ -16,9 +19,15 @@ export const updateOutput = <Self extends SchemaNodeRecord<Self>>(
+   recalculated?: readonly Self[],
+ ): boolean => {
+   context.pendingOutputs?.delete(node);
++  let callHint = ASSEMBLY_HINTS.get(context);
++  if (!callHint) {
++    callHint = { incremental: false };
++    ASSEMBLY_HINTS.set(context, callHint);
++  }
++  callHint.incremental = false;
+   const hint = recalculated &&
+     (node.behavior.type === 'array' || node.behavior.type === 'object') &&
+-    node.behavior.strategy === 'branch' ? { incremental: false } : undefined;
++    node.behavior.strategy === 'branch' ? callHint : undefined;
+   const assembled = node.behavior.assemble(node, node.children ?? [],
+     recalculated, hint);
+   const previousLocal = node.local;
+diff --git a/packages/canard/schema-form/src/core/settle/utils/compute/__tests__/updateOutput.hint.test.ts b/packages/canard/schema-form/src/core/settle/utils/compute/__tests__/updateOutput.hint.test.ts
+new file mode 100644
+index 000000000..a854d0c05
+--- /dev/null
++++ b/packages/canard/schema-form/src/core/settle/utils/compute/__tests__/updateOutput.hint.test.ts
+@@ -0,0 +1,134 @@
++import { afterEach, expect, it, vi } from 'vitest';
++
++import { BEHAVIORS } from '../../../../behaviors';
++import { dispatchMount, dispatchSetValue, subscribeSchemaNode } from '../../../../dispatch';
++import { SetValueOption } from '../../../../types/value';
++import { createTestTree } from '../../../__tests__/fixtures/createTestTree';
++import type { PlainNode } from '../../../__tests__/fixtures/createPlainNode';
++import type { SettlementContext } from '../../../type';
++import { updateOutput } from '../updateOutput';
++
++afterEach(() => vi.restoreAllMocks());
++
++/** Minimal output-only context; these probes never enter marking or commit. */
++const contextFor = (root: PlainNode): SettlementContext<PlainNode> => ({
++  root, changedNodes: new Set<PlainNode>(),
++} as SettlementContext<PlainNode>);
++
++/** Follow value edges, including symbol keys, without visiting an object twice. */
++const containsHint = (value: unknown, hints: readonly object[]): boolean => {
++  const pending: unknown[] = [value];
++  const seen = new Set<object>();
++  while (pending.length) {
++    const current = pending.pop();
++    if (current === null || typeof current !== 'object') continue;
++    if (hints.includes(current)) return true;
++    if (seen.has(current)) continue;
++    seen.add(current);
++    for (const key of Reflect.ownKeys(current)) pending.push(Reflect.get(current, key));
++  }
++  return false;
++};
++
++it('reuses one hint across assemblies in one call and isolates other calls', () => {
++  const { root } = createTestTree({ type: 'object' });
++  const hints: object[] = [];
++  vi.spyOn(root.behavior, 'assemble').mockImplementation((_node, _children, _changed, hint) => {
++    expect(hint).toBeDefined();
++    hints.push(hint!);
++    return {};
++  });
++  const first = contextFor(root);
++  const second = contextFor(root);
++  updateOutput(root, first, []);
++  updateOutput(root, first, []);
++  updateOutput(root, second, []);
++  updateOutput(root, second, []);
++  expect(hints[1]).toBe(hints[0]);
++  expect(hints[2]).not.toBe(hints[0]);
++  expect(hints[3]).toBe(hints[2]);
++});
++
++it('resets every hint field before eligible and ineligible assemblies', () => {
++  const { root } = createTestTree({ type: 'object' });
++  let retained: { incremental: boolean } | undefined;
++  vi.spyOn(root.behavior, 'assemble').mockImplementation((_node, _children, _changed, hint) => {
++    if (retained) expect(retained).toEqual({ incremental: false });
++    if (hint) {
++      expect(Reflect.ownKeys(hint)).toEqual(['incremental']);
++      expect(hint).toEqual({ incremental: false });
++      retained = hint;
++      hint.incremental = true;
++    }
++    return {};
++  });
++  const context = contextFor(root);
++  updateOutput(root, context, []);
++  updateOutput(root, context, []);
++  updateOutput(root, context);
++  updateOutput(root, context, []);
++});
++
++it('resets the retained hint before virtual-node re-entry', () => {
++  const { root } = createTestTree({ type: 'object', properties: {
++    group: { type: 'object' },
++  }, options: { virtual: { combined: { fields: ['group'] } } } });
++  dispatchMount(root, undefined, SetValueOption.Overwrite);
++  const group = root.structure!.group;
++  const virtual = root.structure!.combined;
++  expect(virtual.behavior.type).toBe('virtual');
++  let retained: { incremental: boolean } | undefined;
++  vi.spyOn(group.behavior, 'assemble').mockImplementation((_node, _children, _changed, hint) => {
++    expect(hint).toBeDefined();
++    retained = hint;
++    hint!.incremental = true;
++    return { changed: true };
++  });
++  const virtualAssembly = vi.spyOn(virtual.behavior, 'assemble').mockImplementation(() => {
++    expect(retained).toEqual({ incremental: false });
++    return { changed: true };
++  });
++  const context = contextFor(root);
++  context.virtualReferenceIndex = new Map([[root.blueprintNode, new Map([['group', ['combined']]])]]);
++  group.local = undefined;
++  updateOutput(group, context, []);
++  expect(virtualAssembly).toHaveBeenCalledTimes(1);
++});
++
++it('never exposes any hint through emitted values or delivered payloads', () => {
++  const { root } = createTestTree({ type: 'object', properties: {
++    nested: { type: 'object', properties: { value: { type: 'number', default: 1 } } },
++    tail: { type: 'number', default: 2 },
++  }, options: { virtual: { combined: { fields: ['nested', 'tail'] } } } });
++  const hints: object[] = [];
++  const payloads: unknown[] = [];
++  const attach = (node: PlainNode) => {
++    const row = BEHAVIORS[node.behavior.type][node.behavior.strategy];
++    vi.spyOn(node.behavior, 'assemble').mockImplementation((current, children, changed, hint) => {
++      if (hint && !hints.includes(hint)) hints.push(hint);
++      return Reflect.apply(row.assemble, undefined, [current, children, changed, hint]);
++    });
++    subscribeSchemaNode(node, event => payloads.push(event));
++  };
++  attach(root);
++  const factory = root.runtime.nodeFactory;
++  root.runtime.nodeFactory = (entry, parent, runtime) => {
++    const node = factory(entry, parent, runtime);
++    attach(node);
++    return node;
++  };
++  dispatchMount(root, undefined, SetValueOption.Overwrite);
++  for (const value of [3, 4, 1, 1])
++    dispatchSetValue(root.structure!.nested.structure!.value, value, SetValueOption.Overwrite);
++  expect(hints.length).toBeGreaterThan(0);
++  expect(payloads.length).toBeGreaterThan(0);
++  const pending = [root];
++  while (pending.length) {
++    const node = pending.pop()!;
++    expect(containsHint(node.emit, hints), node.path).toBe(false);
++    expect(containsHint(node.local, hints), node.path).toBe(false);
++    expect(containsHint(node.pendingDelivery?.payload, hints), node.path).toBe(false);
++    for (const child of node.children ?? []) if (child.parent === node) pending.push(child);
++  }
++  expect(containsHint(payloads, hints)).toBe(false);
++});
+

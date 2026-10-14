@@ -3,15 +3,7 @@ import { bench, describe } from 'vitest';
 import { nodeFromJSONSchema } from '@/schema-form/core';
 import type { JSONSchema } from '@/schema-form/types';
 
-/**
- * BranchStrategy initialization cost — measured via nodeFromJSONSchema with
- * oneOf-heavy schemas. Isolates the cost of `__primeInitialBranch__()` +
- * `__processChildren__()` (the path race-fix #318 touches) as the schema's
- * branch count / branch fan-out scales.
- *
- * Use this bench to validate whether the race fix's mount overhead is
- * O(branches × children) or O(active branch only).
- */
+/** Blueprint compilation and initial settlement through the core entry, varying branch fan-out. */
 
 function makeOneOf(branchCount: number, childrenPerBranch: number): JSONSchema {
   return {
@@ -24,7 +16,7 @@ function makeOneOf(branchCount: number, childrenPerBranch: number): JSONSchema {
       },
     },
     oneOf: Array.from({ length: branchCount }, (_, i) => ({
-      '&if': `./type === 't${i}'`,
+      controls: { active: `./type === 't${i}'` },
       properties: Object.fromEntries(
         Array.from({ length: childrenPerBranch }, (_, j) => [
           `f${i}_${j}`,
@@ -48,11 +40,11 @@ function makeNestedOneOf(depth: number): JSONSchema {
       },
       oneOf: [
         {
-          '&if': "./type === 'a'",
+          controls: { active: "./type === 'a'" },
           properties: { nested: inner },
         },
         {
-          '&if': "./type === 'b'",
+          controls: { active: "./type === 'b'" },
           properties: { other: { type: 'string', default: 'other' } },
         },
       ],
@@ -70,7 +62,7 @@ const oneOf_10x10 = makeOneOf(10, 10);
 const nested_3 = makeNestedOneOf(3);
 const nested_5 = makeNestedOneOf(5);
 
-describe('BranchStrategy init (via nodeFromJSONSchema)', () => {
+describe('blueprint/load: branch initialization through core', () => {
   bench('oneOf 2 branches × 3 children', () => {
     nodeFromJSONSchema({ jsonSchema: oneOf_2x3, onChange: noop });
   });

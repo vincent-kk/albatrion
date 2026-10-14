@@ -1,4 +1,4 @@
-import type { ValidationIssue, ValidatorPlugin } from '@canard/schema-form';
+import type { ValidatorPlugin } from '@canard/schema-form';
 import Ajv, { type Options } from 'ajv';
 
 import { createValidatorFactory } from './createValidatorFactory';
@@ -96,7 +96,7 @@ export const ajvValidatorPlugin: ConfigurableValidatorPlugin &
     const validate = createValidatorFactory(
       registered.validation, registered.validationCopy ? registered.key : undefined,
     )(jsonSchema);
-    return async (value: unknown): Promise<ValidationIssue[] | null> => validate(value);
+    return async (value: unknown) => validate(value);
   },
   compileGuard: (root, pointer) => {
     if (!ajvInstance) ajvInstance = new AjvConstructor(defaultSettings);

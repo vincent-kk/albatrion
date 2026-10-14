@@ -1,6 +1,6 @@
 import type { Dictionary } from '@aileron/declare';
 
-import type { JSONSchema } from '@/schema-form/types';
+import type { JSONSchema } from '@/schema-form/__legacy__/types';
 
 /**
  * Transforms a schema condition by processing virtual field mappings in required arrays

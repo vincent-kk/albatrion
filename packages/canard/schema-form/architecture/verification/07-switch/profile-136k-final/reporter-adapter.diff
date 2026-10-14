@@ -1,0 +1,20 @@
+--- /private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/profile-122-react-report.mjs	2026-10-08 04:40:55
++++ /private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/profile-136k-react-report.mjs	2026-10-11 13:09:34
+@@ -3,7 +3,7 @@
+ import fs from 'node:fs';
+ import path from 'node:path';
+ 
+-const raw = '/private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/profile-122-raw/react';
++const raw = '/private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/session-136k';
+ const fixtures = ['sample-0', 'sample-1', 'sample-2', 'sample-3', 'flat-50', 'flat-100', 'flat-500',
+   'nested-d3-f4', 'nested-d5-f4', 'array-100', 'array-500', 'array-1000', 'array-push-100',
+   'array-replace-200', 'array-push-remove-100', 'computed-visible-derived', 'oneOf-5', 'oneOf-10', 'oneOf-20'];
+@@ -23,7 +23,7 @@
+   for (const version of ['0.16.0', 'HEAD']) {
+     const report = read(`react-${lane}-${fixture}-r${run}-${version}.json`);
+     assert.equal(report.assertions.failedWrites, 0);
+-    assert.equal(report.environment.node, 'v26.10.0');
++    assert.equal(report.environment.node, 'v26.11.1');
+     assert.equal(report.environment.warmup, 20);
+     assert.equal(report.environment.samples, 101);
+     records.push(report);

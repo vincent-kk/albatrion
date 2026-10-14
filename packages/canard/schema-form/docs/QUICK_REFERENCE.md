@@ -8,10 +8,10 @@
 
 1. [설치 및 설정](#설치-및-설정)
 2. [경로 문법 (JSONPointer)](#경로-문법-jsonpointer)
-3. [Computed Properties](#computed-properties)
+3. [Controls](#controls)
 4. [조건부 스키마](#조건부-스키마)
 5. [FormHandle API](#formhandle-api)
-6. [FormTypeInput](#formtypeinput)
+6. [FieldInput](#fieldinput)
 7. [ValidationMode](#validationmode)
 8. [Virtualization](#virtualization-대형-폼)
 9. [노드 타입](#노드-타입)
@@ -35,7 +35,7 @@ yarn add @canard/schema-form-antd5-plugin
 ```tsx
 // 앱 시작 시 플러그인 등록 (1회)
 import { registerPlugin } from '@canard/schema-form';
-import { ajvValidatorPlugin } from '@canard/schema-form-ajv8-plugin';
+import { plugin as ajvValidatorPlugin } from '@canard/schema-form-ajv8-plugin';
 
 registerPlugin(ajvValidatorPlugin);
 ```
@@ -55,11 +55,11 @@ registerPlugin(ajvValidatorPlugin);
 
 ### 특수 문법
 
-| 문법     | 의미              | 사용 가능 컨텍스트   |
-| -------- | ----------------- | -------------------- |
-| `*`      | 와일드카드        | `formTypeInputMap`만 |
-| `@.prop` | context 속성 참조 | `computed` 표현식만  |
-| `.`      | 현재 노드         | `&if` 조건문         |
+| 문법     | 의미              | 사용 가능 컨텍스트  |
+| -------- | ----------------- | ------------------- |
+| `*`      | 와일드카드        | `fieldInputMap`만   |
+| `@.prop` | context 속성 참조 | `controls` 표현식만 |
+| `.`      | 현재 노드         | `controls` 표현식   |
 
 ### 이스케이프 규칙
 
@@ -71,34 +71,44 @@ registerPlugin(ajvValidatorPlugin);
 ### 예시
 
 ```typescript
-// formTypeInputMap에서 와일드카드 사용
-formTypeInputMap: {
+// fieldInputMap에서 와일드카드 사용
+fieldInputMap: {
   '/users/*/name': UserNameInput,     // /users/0/name, /users/1/name 매칭
   '/config/*/value': ConfigValueInput, // /config/theme/value 매칭
 }
 
-// computed에서 context 참조
-'&visible': "@.userRole === 'admin'"
+// controls에서 context 참조
+controls: { visible: "@.userRole === 'admin'" }
 
 // 조건부 스키마에서 현재 노드 참조
-'&if': "./type === 'A'"
+controls: { active: "./type === 'A'" }
 ```
 
 ---
 
-## Computed Properties
+## Controls
 
 ### 속성 종류
 
-| 속성       | 타입                 | 동작          | 값 제거 |
-| ---------- | -------------------- | ------------- | ------- |
-| `active`   | `boolean \| string`  | 조건부 활성화 | ✅ Yes  |
-| `visible`  | `boolean \| string`  | 조건부 표시   | ❌ No   |
-| `readOnly` | `boolean \| string`  | 읽기 전용     | -       |
-| `disabled` | `boolean \| string`  | 비활성화      | -       |
-| `derived`  | `string`             | 파생 값 계산  | -       |
-| `watch`    | `string \| string[]` | 값 구독       | -       |
-| `pristine` | `boolean \| string`  | 상태 초기화   | -       |
+`controls` 객체의 키는 닫힌 목록이며 별칭은 없습니다. 목록 밖의 키는 청사진 빌드에서 `UNKNOWN_GROUP_KEY` 오류를 던집니다.
+
+| 속성               | 타입                      | 동작                                         | 값 제거 |
+| ------------------ | ------------------------- | -------------------------------------------- | ------- |
+| `active`           | `boolean \| string`       | 조건부 활성화                                | ✅ Yes  |
+| `visible`          | `boolean \| string`       | 조건부 표시                                  | ❌ No   |
+| `readOnly`         | `boolean \| string`       | 읽기 전용                                    | -       |
+| `disabled`         | `boolean \| string`       | 비활성화                                     | -       |
+| `default`          | 리터럴 값                 | 새로 나타난 노드의 채움 값                   | -       |
+| `derived`          | `string`                  | 파생 값 계산                                 | -       |
+| `unsetValue`       | `string`                  | false에서 true로 바뀌면 값을 비움            | -       |
+| `resetInteraction` | `string`                  | false에서 true로 바뀌면 dirty/touched 초기화 | -       |
+| `unsetOnInactive`  | `boolean \| string`       | 형상을 떠날 때 유지된 값을 버림              | -       |
+| `fields`           | `{ targets, controls }[]` | 부모가 자식에게 앞의 아홉 키를 지정          | -       |
+| `injectTo`         | `(value, ctx) => 대상 맵` | 값이 바뀔 때마다 다른 노드로 주입            | -       |
+| `discriminator`    | `string`                  | oneOf/anyOf 호스트의 분기 태그 속성          | -       |
+| `watch`            | `string[]`                | 값 구독 (경로 배열만)                        | -       |
+
+`controls.fields[].controls`와 조각(`oneOf`/`anyOf`/`allOf` 분기, `then`, `else`)의 `controls`에는 앞의 아홉 키(`active`부터 `unsetOnInactive`까지)만 허용됩니다.
 
 ### active vs visible 선택
 
@@ -117,10 +127,9 @@ formTypeInputMap: {
 ### 문법
 
 ```typescript
-// 전체 문법
 {
   type: 'string',
-  computed: {
+  controls: {
     active: '../toggle === true',
     visible: "@.userRole === 'admin'",
     derived: '(../price ?? 0) * (../quantity ?? 1)',
@@ -128,13 +137,10 @@ formTypeInputMap: {
   },
 }
 
-// 단축 문법 (별칭)
+// 값 주입: 함수는 controls 안에 둡니다
 {
   type: 'string',
-  '&active': '../toggle === true',
-  '&visible': "@.userRole === 'admin'",
-  '&derived': '../price * ../quantity',
-  '&watch': '../category',
+  controls: { injectTo: (value) => ({ '../nickname': value }) },
 }
 ```
 
@@ -144,12 +150,12 @@ formTypeInputMap: {
 
 ### 키워드 비교
 
-| 키워드         | 동작          | 다중 활성화 | 값 처리               |
-| -------------- | ------------- | ----------- | --------------------- |
-| `oneOf`        | 배타적 선택   | ❌ 하나만   | 비활성 브랜치 값 제거 |
-| `anyOf`        | 비배타적 선택 | ✅ 여러 개  | 비활성 브랜치 값 제거 |
-| `allOf`        | 스키마 병합   | ✅ 모두     | 항상 모든 값 포함     |
-| `if-then-else` | 조건부 분기   | -           | 조건에 따라           |
+| 키워드         | 동작          | 다중 활성화 | 값 처리                                                  |
+| -------------- | ------------- | ----------- | -------------------------------------------------------- |
+| `oneOf`        | 배타적 선택   | ❌ 하나만   | 비활성 브랜치 값 제거                                    |
+| `anyOf`        | 비배타적 선택 | ✅ 여러 개  | 비활성 브랜치 값 제거                                    |
+| `allOf`        | 스키마 병합   | ✅ 모두     | 항상 모든 값 포함                                        |
+| `if-then-else` | 조각 게이트   | -           | `then`은 가드 통과 시, `else`는 가드 실패 시 형상에 포함 |
 
 ### oneOf 예시
 
@@ -160,11 +166,13 @@ formTypeInputMap: {
     type: { type: 'string', enum: ['A', 'B'] },
   },
   oneOf: [
-    { '&if': "./type === 'A'", properties: { fieldA: { type: 'string' } } },
-    { '&if': "./type === 'B'", properties: { fieldB: { type: 'number' } } },
+    { controls: { active: "./type === 'A'" }, properties: { fieldA: { type: 'string' } } },
+    { controls: { active: "./type === 'B'" }, properties: { fieldB: { type: 'number' } } },
   ],
 }
 ```
+
+분기는 게이트가 통과하는 동안에만 켜집니다. 분기 객체의 `controls.active` 표현식을 쓰거나, 호스트에 `controls.discriminator: '<property>'`를 지정하고 각 분기에 그 속성의 `const`/`enum` 태그를 둡니다(`===`로 비교하고 분기의 `controls.active`와 AND). 게이트가 없으면 모든 분기가 켜집니다. `if` 가드는 검증기의 `compileGuard`로 동기 평가하며, 선택된 검증기가 없으면(Form이나 FormProvider의 `validatorFactory`도, 검증기 플러그인도 없으면) `then`과 `else` 모두 꺼진 채로 남습니다.
 
 ### anyOf 예시
 
@@ -176,8 +184,8 @@ formTypeInputMap: {
     hasFeature2: { type: 'boolean' },
   },
   anyOf: [
-    { '&if': './hasFeature1', properties: { config1: { type: 'string' } } },
-    { '&if': './hasFeature2', properties: { config2: { type: 'string' } } },
+    { controls: { active: './hasFeature1' }, properties: { config1: { type: 'string' } } },
+    { controls: { active: './hasFeature2' }, properties: { config2: { type: 'string' } } },
   ],
 }
 ```
@@ -192,8 +200,8 @@ formTypeInputMap: {
   properties: { kind: { type: 'string', enum: ['a', 'b'], default: 'a' } },
   oneOf: [
     { type: 'null' },
-    { type: 'object', '&if': "./kind === 'a'", properties: { aValue: { type: 'string' } } },
-    { type: 'object', '&if': "./kind === 'b'", properties: { bValue: { type: 'string' } } },
+    { type: 'object', controls: { active: "./kind === 'a'" }, properties: { aValue: { type: 'string' } } },
+    { type: 'object', controls: { active: "./kind === 'b'" }, properties: { bValue: { type: 'string' } } },
   ],
 }
 ```
@@ -211,22 +219,22 @@ const formRef = useRef<FormHandle<typeof schema>>(null);
 
 ### 메서드 요약
 
-| 메서드                  | 반환 타입            | 설명            |
-| ----------------------- | -------------------- | --------------- |
-| `getValue()`            | `Value`              | 현재 폼 값      |
-| `setValue(v)`           | `void`               | 폼 값 설정      |
-| `reset()`               | `void`               | 초기값으로 리셋 |
-| `validate()`            | `Promise<Error[]>`   | 검증 실행       |
-| `getErrors()`           | `Error[]`            | 현재 에러 목록  |
-| `showError(bool)`       | `void`               | 에러 표시 제어  |
-| `findNode(path)`        | `SchemaNode \| null` | 노드 탐색       |
-| `findNodes(path)`       | `SchemaNode[]`       | 와일드카드 탐색 |
-| `focus(path)`           | `void`               | 필드 포커스     |
-| `getState()`            | `NodeStateFlags`     | 폼 상태         |
-| `setState(s)`           | `void`               | 상태 설정       |
-| `clearState()`          | `void`               | 상태 초기화     |
-| `submit()`              | `void`               | 폼 제출         |
-| `getAttachedFilesMap()` | `Map`                | 첨부 파일       |
+| 메서드                  | 반환 타입           | 설명            |
+| ----------------------- | ------------------- | --------------- |
+| `getValue()`            | `Value`             | 현재 폼 값      |
+| `setValue(v)`           | `void`              | 폼 값 설정      |
+| `reset()`               | `void`              | 초기값으로 리셋 |
+| `validate()`            | `Promise<Error[]>`  | 검증 실행       |
+| `getErrors()`           | `Error[]`           | 현재 에러 목록  |
+| `showError(bool)`       | `void`              | 에러 표시 제어  |
+| `findNode(path)`        | `FieldNode \| null` | 노드 탐색       |
+| `findNodes(path)`       | `FieldNode[]`       | 와일드카드 탐색 |
+| `focus(path)`           | `void`              | 필드 포커스     |
+| `getState()`            | `NodeStateFlags`    | 폼 상태         |
+| `setState(s)`           | `void`              | 상태 설정       |
+| `clearState()`          | `void`              | 상태 초기화     |
+| `submit()`              | `void`              | 폼 제출         |
+| `getAttachedFilesMap()` | `Map`               | 첨부 파일       |
 
 ### 일반적인 패턴
 
@@ -253,49 +261,49 @@ nameNode?.setValue('Charlie');
 
 ---
 
-## FormTypeInput
+## FieldInput
 
 ### 우선순위 (높은 순)
 
-1. JSON Schema의 `FormTypeInput` 속성
-2. `formTypeInputMap` (경로 기반)
-3. Form의 `formTypeInputDefinitions`
-4. FormProvider의 `formTypeInputDefinitions`
-5. 플러그인의 `formTypeInputDefinitions`
+1. JSON Schema의 `presentation.FieldInput` 속성
+2. `fieldInputMap` (경로 기반)
+3. Form의 `fieldInputDefinitions`
+4. FormProvider의 `fieldInputDefinitions`
+5. 플러그인의 `fieldInputDefinitions`
 
 ### 정의 방법
 
 ```typescript
 // 1. 스키마에 직접 지정
-{ type: 'string', FormTypeInput: CustomInput }
+{ type: 'string', presentation: { FieldInput: CustomInput } }
 
 // 2. 경로 기반 매핑
-<Form formTypeInputMap={{ '/email': EmailInput }} />
+<Form fieldInputMap={{ '/email': EmailInput }} />
 
 // 3. 정의 배열
-const definitions: FormTypeInputDefinition[] = [
+const definitions: FieldInputDefinition[] = [
   { test: { type: 'string', format: 'email' }, Component: EmailInput },
   { test: (hint) => hint.type === 'number', Component: NumberInput },
 ];
 ```
 
-### FormTypeInputProps 주요 속성
+### FieldInputProps 주요 속성
 
-| 속성                  | 타입          | 설명            |
-| --------------------- | ------------- | --------------- |
-| `value`               | `Value`       | 현재 값         |
-| `defaultValue`        | `Value`       | 기본값          |
-| `onChange`            | `(v) => void` | 값 변경 핸들러  |
-| `node`                | `SchemaNode`  | 스키마 노드     |
-| `errors`              | `Error[]`     | 검증 에러       |
-| `errorVisible`        | `boolean`     | 에러 표시 여부  |
-| `readOnly`            | `boolean`     | 읽기 전용       |
-| `disabled`            | `boolean`     | 비활성화        |
-| `required`            | `boolean`     | 필수 여부       |
-| `nullable`            | `boolean`     | null 허용       |
-| `watchValues`         | `any[]`       | 구독 값         |
-| `context`             | `object`      | 사용자 컨텍스트 |
-| `ChildNodeComponents` | `FC[]`        | 자식 컴포넌트   |
+| 속성           | 타입          | 설명            |
+| -------------- | ------------- | --------------- |
+| `value`        | `Value`       | 현재 값         |
+| `defaultValue` | `Value`       | 기본값          |
+| `onChange`     | `(v) => void` | 값 변경 핸들러  |
+| `node`         | `FieldNode`   | 필드 노드       |
+| `errors`       | `Error[]`     | 검증 에러       |
+| `errorVisible` | `boolean`     | 에러 표시 여부  |
+| `readOnly`     | `boolean`     | 읽기 전용       |
+| `disabled`     | `boolean`     | 비활성화        |
+| `required`     | `boolean`     | 필수 여부       |
+| `nullable`     | `boolean`     | null 허용       |
+| `watchValues`  | `any[]`       | 구독 값         |
+| `context`      | `object`      | 사용자 컨텍스트 |
+| `ChildFields`  | `FC[]`        | 자식 컴포넌트   |
 
 ---
 
@@ -401,17 +409,17 @@ if (isArrayNode(node)) {
 
 ## 이벤트 타입
 
-| 이벤트                     | 설명                       |
-| -------------------------- | -------------------------- |
-| `Initialized`              | 노드 초기화 완료           |
-| `UpdateValue`              | 값 변경                    |
-| `UpdateState`              | 상태 변경 (dirty, touched) |
-| `UpdateError`              | 검증 에러 변경             |
-| `UpdateComputedProperties` | computed 재계산            |
-| `UpdateChildren`           | 자식 노드 변경             |
-| `UpdatePath`               | 경로 변경 (배열 재정렬)    |
-| `RequestRefresh`           | UI 동기화 요청             |
-| `RequestRemount`           | 컴포넌트 리마운트 요청     |
+| 이벤트                       | 설명                        |
+| ---------------------------- | --------------------------- |
+| `Initialized`                | 노드 초기화 완료            |
+| `UpdateValue`                | 값 변경                     |
+| `UpdateState`                | 상태 변경 (dirty, touched)  |
+| `UpdateError`                | 검증 에러 변경              |
+| `UpdateControlledProperties` | controls 상태·watch 값 변경 |
+| `UpdateChildren`             | 자식 노드 변경              |
+| `UpdatePath`                 | 경로 변경 (배열 재정렬)     |
+| `RequestRefresh`             | UI 동기화 요청              |
+| `RequestRemount`             | 컴포넌트 리마운트 요청      |
 
 ### 구독 패턴
 
@@ -432,18 +440,22 @@ unsubscribe();
 {
   type: 'string',
   minLength: 3,
-  errorMessages: {
-    minLength: '최소 {limit}자 이상이어야 합니다. 현재: {value}',
-    required: '필수 입력 항목입니다',
+  presentation: {
+    errorMessages: {
+      minLength: '최소 {limit}자 이상이어야 합니다. 현재: {value}',
+      required: '필수 입력 항목입니다',
+    },
   },
 }
 
 // 다국어 지원
 {
-  errorMessages: {
-    minLength: {
-      ko_KR: '최소 {limit}자 이상',
-      en_US: 'At least {limit} characters',
+  presentation: {
+    errorMessages: {
+      minLength: {
+        ko_KR: '최소 {limit}자 이상',
+        en_US: 'At least {limit} characters',
+      },
     },
   },
 }
@@ -516,4 +528,4 @@ arrayNode.children; // 자식 노드 배열
 
 - [한국어 스펙](./ko/SPECIFICATION.md)
 - [영어 스펙](./en/SPECIFICATION.md)
-- [Claude 스킬](./claude/skills/)
+- [Claude 스킬](./agents/skills/schema-form-skill/SKILL.md)

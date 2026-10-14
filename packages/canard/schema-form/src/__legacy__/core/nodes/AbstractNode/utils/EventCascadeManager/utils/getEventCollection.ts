@@ -2,7 +2,7 @@ import type {
   NodeEventCollection,
   NodeEventEntity,
   NodeEventType,
-} from '@/schema-form/core/types';
+} from '@/schema-form/__legacy__/core/types';
 
 export const getEventCollection = <Type extends NodeEventType>(
   nodeEventType: Type,

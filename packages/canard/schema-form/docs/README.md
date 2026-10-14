@@ -33,7 +33,7 @@ docs/
 
 ### 주요 내용 (Contents)
 
-- **아키텍처**: 노드 시스템, FormTypeInput 시스템
+- **아키텍처**: 노드 시스템, FieldInput 시스템
 - **핵심 API**: FormProps, FormHandle
 - **고급 기능**: Computed Properties, 조건부 스키마, JSONPointer
 - **검증 시스템**: ValidationMode, 오류 메시지 포맷팅
@@ -63,7 +63,7 @@ cp -r node_modules/@canard/schema-form/docs/claude/skills/schema-form-skill .cla
 Claude Code에서 `/schema-form` 커맨드를 사용합니다:
 
 ```
-/schema-form FormTypeInput 우선순위가 어떻게 되나요?
+/schema-form FieldInput 우선순위가 어떻게 되나요?
 /schema-form computed에서 형제 필드 참조하는 방법
 /schema-form oneOf에서 값 필터링 동작
 ```

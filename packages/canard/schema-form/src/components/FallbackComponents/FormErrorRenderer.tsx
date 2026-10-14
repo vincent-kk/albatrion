@@ -1,5 +1,5 @@
-import type { FormTypeRendererProps } from '@/schema-form/types';
+import type { FieldRendererProps } from '@/schema-form/types';
 
-export const FormErrorRenderer = ({ errorMessage }: FormTypeRendererProps) => (
+export const FormErrorRenderer = ({ errorMessage }: FieldRendererProps) => (
   <em>{errorMessage}</em>
 );

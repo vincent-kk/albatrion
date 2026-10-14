@@ -9,6 +9,7 @@ registerPlugin(plugin);
 
 const schema = {
   type: 'object',
+  controls: { discriminator: 'employmentType' },
   properties: {
     employmentType: {
       type: 'string',
@@ -20,8 +21,8 @@ const schema = {
     commonField: {
       type: 'string',
       title: 'Employee Name',
-      placeholder: 'e.g. Jane Smith',
-      computed: {
+      presentation: { FieldInputProps: { placeholder: 'e.g. Jane Smith' } },
+      controls: {
         watch: '../employmentType',
         active: '../employmentType !== null',
         visible: '../employmentType !== null',
@@ -107,7 +108,7 @@ const schema = {
           maximum: 168,
           default: 45,
           description: 'Hours per week (visible for hourly contracts)',
-          computed: {
+          controls: {
             active: '../contractType === "hourly_rate"',
           },
         },

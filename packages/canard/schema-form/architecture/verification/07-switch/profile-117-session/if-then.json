@@ -1,0 +1,16 @@
+{
+  "source": "packages/canard/schema-form/bench/branchless-phase-diagnosis.mjs: const ifSchema and fixtures.push",
+  "schema": {
+    "type": "object",
+    "properties": {
+      "kind": { "type": "string", "default": "a" },
+      "detail": { "type": "string", "default": "detail" }
+    },
+    "if": { "properties": { "kind": { "const": "b" } }, "required": ["kind"] },
+    "then": { "properties": { "detail": { "minLength": 3 } } }
+  },
+  "interactions": [
+    { "kind": "set", "path": "/kind", "value": "b" },
+    { "kind": "set", "path": "/kind", "value": "a" }
+  ]
+}

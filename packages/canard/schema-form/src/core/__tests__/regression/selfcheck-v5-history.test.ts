@@ -1,17 +1,29 @@
 import { describe, expect, it } from 'vitest';
 
-import { makeSchemaNodeTree } from '../makeSchemaNodeTree';
+import { makeFieldNodeTree } from '../makeFieldNodeTree';
 
-const historyTree = () => makeSchemaNodeTree({ type: 'object', properties: {
-  kind: { type: 'string' }, base: { type: 'string', default: 'BASE' },
-}, allOf: [
-  { controls: { active: './kind === "a"' }, properties: {
-    a: { type: 'string', default: 'A0' },
-  } },
-  { controls: { active: './kind === "b"' }, properties: {
-    b: { type: 'string' },
-  } },
-] }).root;
+const historyTree = () =>
+  makeFieldNodeTree({
+    type: 'object',
+    properties: {
+      kind: { type: 'string' },
+      base: { type: 'string', default: 'BASE' },
+    },
+    allOf: [
+      {
+        controls: { active: './kind === "a"' },
+        properties: {
+          a: { type: 'string', default: 'A0' },
+        },
+      },
+      {
+        controls: { active: './kind === "b"' },
+        properties: {
+          b: { type: 'string' },
+        },
+      },
+    ],
+  }).root;
 
 // filid:contract factory-single-path
 describe('selfcheck-v5 raw history regression', () => {
@@ -19,7 +31,9 @@ describe('selfcheck-v5 raw history regression', () => {
     const root = historyTree();
     root.setValue({ kind: 'b', b: 'SECRET' });
     root.setValue({ kind: 'a', a: 'NEW', extra: 1 });
-    expect(JSON.stringify(root.outputValue)).toBe('{"kind":"a","a":"NEW","extra":1}');
+    expect(JSON.stringify(root.outputValue)).toBe(
+      '{"kind":"a","a":"NEW","extra":1}',
+    );
     root.find('/kind')?.setValue('b');
     expect(JSON.stringify(root.outputValue)).toBe('{"kind":"b","extra":1}');
     expect(root.find('/b')?.raw).toBeUndefined();

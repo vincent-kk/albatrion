@@ -14,6 +14,7 @@
 ### virtualization-contract — 관찰 가능한 동작
 
 - 이미 노출된 노드를 값 변경 때문에 placeholder로 되돌리지 않습니다.
+- reveal 기록은 노드 identity를 따릅니다. 배열 형제 삭제 후에도 이미 노출된 노드는 마운트를 유지하며, 미노출 placeholder 역시 경로 변경 사건을 반영하여 이동한 노드의 현재 경로만 표시합니다(LANDING-087).
 - idle API가 없는 환경에서도 취소 가능한 macrotask 폴백을 사용할 수 있습니다.
 
 ## Last Updated

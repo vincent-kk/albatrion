@@ -6,6 +6,15 @@ import { compilePointer } from './utils/compileSegments';
 import { JSONPointerError } from './utils/error';
 import { getValueByPointer } from './utils/getValueByPointer';
 
+/** Object/array calls retain their generic result contract; unvalidated inputs return unknown. */
+type GetValue = {
+  <Output extends Dictionary | Array<any> = Dictionary | Array<any>>(
+    value: Dictionary | Array<any>,
+    pointer: string | (string | number)[],
+  ): Output;
+  (value: unknown, pointer: string | (string | number)[]): unknown;
+};
+
 /**
  * Extracts a value from a JSON document using JSON Pointer notation.
  *
@@ -24,20 +33,22 @@ import { getValueByPointer } from './utils/getValueByPointer';
  * - `~0` represents the literal character `~`
  * - `~1` represents the literal character `/`
  *
- * The function performs strict validation on the input object, requiring it to be
- * either a plain object or an array. This ensures type safety and prevents
- * unexpected behavior with primitive values or non-plain objects.
+ * The function accepts unvalidated input and requires a plain object or array at
+ * runtime. Primitive values and non-plain objects throw INVALID_INPUT.
+ * Object/array calls retain the generic result contract; unknown input uses an
+ * unknown-result overload that callers must narrow before use.
  *
- * @template Input - Input object type constraint (Dictionary or Array)
- * @param value - The target JSON document to extract value from.
+ * @template Output - Requested result type for the object/array overload
+ * @param value - The target JSON document; unknown input is validated at runtime.
  *                Must be a plain object or array. Other types will throw an error.
  * @param pointer - JSON Pointer specifying the location of the value to extract.
  *                  Can be provided as:
  *                  - String: JSON Pointer string following RFC 6901 format
- *                  - Array: Sequence of reference tokens as string array
+ *                  - Array: Sequence of reference tokens as strings or numbers
  *
  * @returns The value located at the specified JSON Pointer location.
  *          Returns any valid JSON value (object, array, string, number, boolean, null).
+ *          The unknown-input overload requires callers to narrow the result.
  *
  * @throws {JSONPointerError} Thrown in the following cases:
  *         - **INVALID_INPUT**: When input is not a plain object or array
@@ -124,10 +135,8 @@ import { getValueByPointer } from './utils/getValueByPointer';
  * // Returns: "POST"
  * ```
  */
-export const getValue = <
-  Output extends Dictionary | Array<any> = Dictionary | Array<any>,
->(
-  value: Dictionary | Array<any>,
+export const getValue: GetValue = <Output>(
+  value: unknown,
   pointer: string | (string | number)[],
 ): Output => {
   if (!(isPlainObject(value) || isArray(value)))

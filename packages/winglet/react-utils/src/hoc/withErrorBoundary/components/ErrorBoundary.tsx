@@ -2,9 +2,20 @@ import { Component, type ErrorInfo, type ReactNode } from 'react';
 
 import { FallbackMessage } from './FallbackMessage';
 
+/** Reports a caught render error with only React's component stack. */
+export type ErrorBoundaryReporter = (
+  error: unknown,
+  info: { componentStack?: string },
+) => void;
+
+/** Reads an optional render error reporter from the current React context. */
+export type UseErrorBoundaryReporter = () => ErrorBoundaryReporter | undefined;
+
 interface Props {
   children: ReactNode;
   fallback?: ReactNode;
+  /** Receives each caught render error after the boundary logs it. */
+  onError?: ErrorBoundaryReporter;
 }
 
 interface State {
@@ -18,6 +29,9 @@ const FALLBACK = <FallbackMessage />;
 /**
  * Error boundary component that catches JavaScript errors during component rendering and displays fallback UI.
  * Prevents the entire application from crashing when errors occur in child components.
+ * Renders `children` unchanged until a descendant throws while rendering; afterwards it renders `fallback`
+ * (the default message when `fallback` is undefined) and calls `onError` with the error and component stack.
+ * Props: `children` (required), `fallback` (optional node), `onError` (optional reporter).
  * @example
  * <ErrorBoundary fallback={<CustomErrorUI />}>
  *   <MyComponent />
@@ -51,6 +65,9 @@ export class ErrorBoundary extends Component<Props, State> {
    */
   componentDidCatch(error: Error, errorInfo: ErrorInfo): void {
     console.error('ErrorBoundary caught an error:', error, errorInfo);
+    this.props.onError?.(error, {
+      componentStack: errorInfo.componentStack ?? undefined,
+    });
   }
 
   render(): ReactNode {

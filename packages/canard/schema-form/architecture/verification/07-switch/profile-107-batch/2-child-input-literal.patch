@@ -1,0 +1,88 @@
+diff --git a/packages/canard/schema-form/src/core/blueprint/DETAIL.md b/packages/canard/schema-form/src/core/blueprint/DETAIL.md
+--- a/packages/canard/schema-form/src/core/blueprint/DETAIL.md
++++ b/packages/canard/schema-form/src/core/blueprint/DETAIL.md
+@@ -1,6 +1,8 @@
+ # Blueprint contract
+ 
+ ## Requirements
++
++- 무게이트 자식 빠른 경로의 입력은 기존 context·gates·inherited·hostPath·fragment·role·schema·schemaPath·order 순서의 literal로 만듭니다. 실제 자식 build·binding·독립 소속 배열 생산은 그대로입니다. 속도 비용은 고정 필드 직접 읽기·쓰기이며 자식마다 base spread의 범용 키 복사를 제거합니다. 메모리 비용은 기존 부모별 base와 자식별 입력·배열·두 공개 경로를 유지하며 새 보유 자료는 없습니다(107라운드 2-child-input-literal).
+ 
+ - 조각 확장 키가 없는 선언은 기존 control·type 검사, capability·ID·fragment·소유자·discriminator 기록을 완료한 뒤 반환합니다. `$ref`가 문자열이 아니고 allOf·if·oneOf·anyOf가 모두 undefined인 경우에만 visiting stack 복사와 고정 fragment keyword loop를 생략하며 공개 청사진·진단·DFS 순서는 같습니다. 속도 비용은 O(1) 고정 검사로 5개 keyword 반복과 배열 모양 검사 3회를 제거합니다. 메모리 비용은 적격 호출의 visiting 복사 배열을 제거하고 기존 declaration·fragment·소속 배열은 유지하며 새 보유 색인·캐시는 없습니다. 두 모드의 59-schema differential과 105C-01 최소 크기 판정으로 확인합니다(106라운드 빈 조각).
+ 
+diff --git a/packages/canard/schema-form/src/core/blueprint/utils/analyze/populateNodeChildren.ts b/packages/canard/schema-form/src/core/blueprint/utils/analyze/populateNodeChildren.ts
+--- a/packages/canard/schema-form/src/core/blueprint/utils/analyze/populateNodeChildren.ts
++++ b/packages/canard/schema-form/src/core/blueprint/utils/analyze/populateNodeChildren.ts
+@@ -50,7 +50,12 @@
+       for (let index = 0; index < properties.length; index++) {
+         const [name, child] = properties[index];
+         const input: SchemaInput = {
+-          ...base,
++          context: base.context,
++          gates: base.gates,
++          inherited: base.inherited,
++          hostPath: base.hostPath,
++          fragment: base.fragment,
++          role: base.role,
+           schema: child as SchemaInput['schema'],
+           schemaPath: `${declaration.schemaPath}/properties/${escapeSegment(name)}`,
+           order: [...declaration.order, 0, index],
+diff --git a/packages/canard/schema-form/src/core/blueprint/__tests__/blueprint.owned-inline-child-input-work.test.ts b/packages/canard/schema-form/src/core/blueprint/__tests__/blueprint.owned-inline-child-input-work.test.ts
+new file mode 100644
+--- /dev/null
++++ b/packages/canard/schema-form/src/core/blueprint/__tests__/blueprint.owned-inline-child-input-work.test.ts
+@@ -0,0 +1,54 @@
++/// <reference types="vite/client" />
++
++import ts from 'typescript';
++import { expect, it, vi } from 'vitest';
++
++import { blueprint } from '../blueprint';
++import source from '../utils/analyze/populateNodeChildren.ts?raw';
++
++/** Real child construction is observed at its existing recursive boundary. */
++const work = vi.hoisted(() => ({ inputs: 0, keys: [] as string[] }));
++
++vi.mock('../utils/analyze/populateNodeChildren', async (importOriginal) => {
++  const original = await importOriginal<
++    typeof import('../utils/analyze/populateNodeChildren')
++  >();
++  return {
++    populateNodeChildren: (
++      ...args: Parameters<typeof original.populateNodeChildren>
++    ) => {
++      const [context, node, build] = args;
++      return original.populateNodeChildren(context, node, (context, inputs, path) => {
++        work.inputs += inputs.length;
++        work.keys = Object.keys(inputs[0]);
++        return build(context, inputs, path);
++      });
++    },
++  };
++});
++
++it('counts zero base spreads for each real ungated child input in the original field order', () => {
++  work.inputs = 0;
++  const result = blueprint({
++    type: 'object',
++    properties: { first: { type: 'string' }, second: { type: 'number' } },
++  });
++  expect(work.inputs).toBe(2);
++  expect(result.root.childEntries.map(entry => entry.name)).toEqual(['first', 'second']);
++  expect(work.keys).toEqual([
++    'context', 'gates', 'inherited', 'hostPath', 'fragment', 'role',
++    'schema', 'schemaPath', 'order',
++  ]);
++  const tree = ts.createSourceFile('populateNodeChildren.ts', source, ts.ScriptTarget.Latest, true);
++  let input: ts.ObjectLiteralExpression | undefined;
++  const visit = (node: ts.Node): void => {
++    if (!input && ts.isVariableDeclaration(node) && node.name.getText(tree) === 'input' &&
++      node.initializer && ts.isObjectLiteralExpression(node.initializer)) input = node.initializer;
++    ts.forEachChild(node, visit);
++  };
++  visit(tree);
++  expect(input).toBeDefined();
++  const spreads = input!.properties.filter(ts.isSpreadAssignment).length;
++  console.log(`107COUNT child-input inputs=${work.inputs} base-spreads=${spreads * work.inputs}`);
++  expect(spreads * work.inputs).toBe(0);
++});

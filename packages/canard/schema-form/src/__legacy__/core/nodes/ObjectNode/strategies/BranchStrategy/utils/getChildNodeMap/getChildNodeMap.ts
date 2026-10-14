@@ -7,8 +7,8 @@ import type {
   ChildNode,
   HandleChange,
   SchemaNodeFactory,
-} from '@/schema-form/core/types';
-import type { ObjectSchema, ObjectValue } from '@/schema-form/types';
+} from '@/schema-form/__legacy__/core/types';
+import type { ObjectSchema, ObjectValue } from '@/schema-form/__legacy__/types';
 
 import type { ConditionsMap } from '../getConditionsMap';
 import type {

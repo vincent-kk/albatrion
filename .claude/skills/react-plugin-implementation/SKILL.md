@@ -739,9 +739,9 @@ const FormTypeInputStringEnum = ({
   // 3️⃣ RadioGroup 렌더링
   return (
     <FormControl error={hasError} required={required} disabled={disabled || readOnly} size={size}>
-      <FormLabel id={`${path}-label`}>{label}</FormLabel>
+      <FormLabel id={`label:${path}`}>{label}</FormLabel>
       <RadioGroup
-        aria-labelledby={`${path}-label`}
+        aria-labelledby={`label:${path}`}
         name={name}
         defaultValue={defaultValue ?? ''}
         onChange={handleChange}
@@ -826,9 +826,9 @@ const FormTypeInputStringEnumSelect = ({
 
   return (
     <FormControl error={hasError} required={required} disabled={disabled || readOnly} size={size} fullWidth>
-      <InputLabel id={`${path}-label`}>{label}</InputLabel>
+      <InputLabel id={`label:${path}`}>{label}</InputLabel>
       <Select
-        labelId={`${path}-label`}
+        labelId={`label:${path}`}
         id={path}
         name={name}
         label={label}

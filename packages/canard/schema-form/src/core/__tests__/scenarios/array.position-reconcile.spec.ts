@@ -1,10 +1,13 @@
-import { arrayScenarios } from '@aileron/schema-form-scenarios';
 import { describe, expect, it } from 'vitest';
+
+import { arrayScenarios } from '@aileron/schema-form-scenarios';
 
 import { createCoreScenarioAdapter } from './utils/createCoreScenarioAdapter';
 import { runScenario } from './utils/runScenario';
 
-const scenario = arrayScenarios.find(({ name }) => name === 'array.position-reconcile');
+const scenario = arrayScenarios.find(
+  ({ name }) => name === 'array.position-reconcile',
+);
 if (!scenario) throw new Error('array.position-reconcile scenario is missing');
 
 // filid:contract scenario-array-position
@@ -18,7 +21,8 @@ describe('array position reconciliation', () => {
     await runScenario(scenario, adapter);
 
     expect(adapter.root.find('/0')?.state).toMatchObject({
-      dirty: true, touched: true,
+      dirty: true,
+      touched: true,
     });
   });
 });

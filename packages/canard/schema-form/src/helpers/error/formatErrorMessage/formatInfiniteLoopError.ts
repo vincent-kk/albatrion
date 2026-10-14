@@ -32,7 +32,7 @@ This indicates a circular dependency where derived values reference each other
 in a loop (e.g., A depends on B, B depends on A).
 
 How to fix:
-  1. Check the 'computed.derived' expression in the node above
+  1. Check the 'controls.derived' expression in the node above
   2. Look for circular references among the listed dependencies
   3. Break the cycle by removing or restructuring one dependency
 `.trim();

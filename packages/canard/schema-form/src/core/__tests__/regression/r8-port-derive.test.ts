@@ -1,32 +1,73 @@
 import { describe, expect, it } from 'vitest';
 
-import { makeSchemaNodeTree } from '../makeSchemaNodeTree';
+import { makeFieldNodeTree } from '../makeFieldNodeTree';
 
-const derivedTree = (fragments = false) => makeSchemaNodeTree({ type: 'object', properties: {
-  a: { type: 'number' },
-  d: { type: 'string', controls: {
-    derived: '../a === undefined ? undefined : "f(" + ../a + ")"',
-  } },
-}, ...(fragments ? { allOf: [
-  { controls: { active: './d === undefined' },
-    properties: { y: { type: 'string', default: 'Y' } } },
-  { controls: { active: './d === "f(1)"' },
-    properties: { x: { type: 'string', default: 'X' } } },
-] } : {}) }).root;
+const derivedTree = (fragments = false) =>
+  makeFieldNodeTree({
+    type: 'object',
+    properties: {
+      a: { type: 'number' },
+      d: {
+        type: 'string',
+        controls: {
+          derived: '../a === undefined ? undefined : "f(" + ../a + ")"',
+        },
+      },
+    },
+    ...(fragments
+      ? {
+          allOf: [
+            {
+              controls: { active: './d === undefined' },
+              properties: { y: { type: 'string', default: 'Y' } },
+            },
+            {
+              controls: { active: './d === "f(1)"' },
+              properties: { x: { type: 'string', default: 'X' } },
+            },
+          ],
+        }
+      : {}),
+  }).root;
 
-const injectionTree = () => makeSchemaNodeTree({ type: 'object', properties: {
-  src: { type: 'string', controls: {
-    injectTo: (value: unknown) => ({ '../tgt': `f(${value})` }),
-  } }, tgt: { type: 'string' },
-} }, { snapshot: { src: 'x', tgt: 'custom' } }).root;
+const injectionTree = () =>
+  makeFieldNodeTree(
+    {
+      type: 'object',
+      properties: {
+        src: {
+          type: 'string',
+          controls: {
+            injectTo: (value: unknown) => ({ '../tgt': `f(${value})` }),
+          },
+        },
+        tgt: { type: 'string' },
+      },
+    },
+    { snapshot: { src: 'x', tgt: 'custom' } },
+  ).root;
 
-const x16Tree = (withDefault: boolean) => makeSchemaNodeTree({ type: 'object', properties: {
-  t: { type: 'string' },
-}, allOf: [{ controls: { active: './t === undefined' }, properties: {
-  c: { type: 'string', ...(withDefault ? { default: 'C' } : {}), controls: {
-    injectTo: (value: unknown) => ({ '../t': `from-${value}` }),
-  } },
-} }] }).root;
+const x16Tree = (withDefault: boolean) =>
+  makeFieldNodeTree({
+    type: 'object',
+    properties: {
+      t: { type: 'string' },
+    },
+    allOf: [
+      {
+        controls: { active: './t === undefined' },
+        properties: {
+          c: {
+            type: 'string',
+            ...(withDefault ? { default: 'C' } : {}),
+            controls: {
+              injectTo: (value: unknown) => ({ '../t': `from-${value}` }),
+            },
+          },
+        },
+      },
+    ],
+  }).root;
 
 // filid:contract factory-single-path
 describe('round8 derive and injection observations', () => {
@@ -62,8 +103,10 @@ describe('round8 derive and injection observations', () => {
   });
   for (const [name, input] of [
     ['r8-port.mjs:95 P1 iv load_a1 settles to the final fragment', { a: 1 }],
-    ['r8-port.mjs:95 P1 iv load_a1_dMine settles to the final fragment',
-      { a: 1, d: 'mine' }],
+    [
+      'r8-port.mjs:95 P1 iv load_a1_dMine settles to the final fragment',
+      { a: 1, d: 'mine' },
+    ],
   ] as const) {
     it(name, () => {
       const root = derivedTree(true);
@@ -82,7 +125,10 @@ describe('round8 derive and injection observations', () => {
     second.setValue({ a: 1 });
     second.find('/a')?.setValue(2);
     second.find('/d')?.setValue('mine');
-    expect([first.find('/d')?.raw, second.find('/d')?.raw]).toEqual(['f(2)', 'mine']);
+    expect([first.find('/d')?.raw, second.find('/d')?.raw]).toEqual([
+      'f(2)',
+      'mine',
+    ]);
   });
   it('r8-port.mjs:114 WRITE-090 P1 idem root replacement preserves output', () => {
     const root = derivedTree();
@@ -103,14 +149,26 @@ describe('round8 derive and injection observations', () => {
     expect(root.outputValue).toEqual({ src: 'x', tgt: 'f(x)' });
   });
   for (const [title, replacement, expected] of [
-    ['r8-port.mjs:152 P2 replace new source with target fires injection',
-      { src: 'w', tgt: 'given' }, 'f(w)'],
-    ['r8-port.mjs:153 WRITE-090 P2 same source with target has no edge',
-      { src: 'x', tgt: 'given' }, 'given'],
-    ['r8-port.mjs:154 P2 replace new source without target fires injection',
-      { src: 'w' }, 'f(w)'],
-    ['r8-port.mjs:155 WRITE-090 P2 same source without target has no edge',
-      { src: 'x' }, undefined],
+    [
+      'r8-port.mjs:152 P2 replace new source with target fires injection',
+      { src: 'w', tgt: 'given' },
+      'f(w)',
+    ],
+    [
+      'r8-port.mjs:153 WRITE-090 P2 same source with target has no edge',
+      { src: 'x', tgt: 'given' },
+      'given',
+    ],
+    [
+      'r8-port.mjs:154 P2 replace new source without target fires injection',
+      { src: 'w' },
+      'f(w)',
+    ],
+    [
+      'r8-port.mjs:155 WRITE-090 P2 same source without target has no edge',
+      { src: 'x' },
+      undefined,
+    ],
   ] as const) {
     it(title, () => {
       const root = injectionTree();
@@ -121,18 +179,27 @@ describe('round8 derive and injection observations', () => {
     });
   }
   for (const [title, edit] of [
-    ['r8-port.mjs:169 P2 idem fresh load has observed idempotence',
-      (root: ReturnType<typeof injectionTree>) => root],
-    ['r8-port.mjs:170 WRITE-090 P2 edited target stays idempotent',
+    [
+      'r8-port.mjs:169 P2 idem fresh load has observed idempotence',
+      (root: ReturnType<typeof injectionTree>) => root,
+    ],
+    [
+      'r8-port.mjs:170 WRITE-090 P2 edited target stays idempotent',
       (root: ReturnType<typeof injectionTree>) =>
-      root.find('/tgt')?.setValue('mine')],
-    ['r8-port.mjs:171 WRITE-090 P2 cleared target stays idempotent',
+        root.find('/tgt')?.setValue('mine'),
+    ],
+    [
+      'r8-port.mjs:171 WRITE-090 P2 cleared target stays idempotent',
       (root: ReturnType<typeof injectionTree>) =>
-      root.find('/tgt')?.setValue(undefined)],
-    ['r8-port.mjs:172 WRITE-090 P2 edited source then target stays idempotent',
+        root.find('/tgt')?.setValue(undefined),
+    ],
+    [
+      'r8-port.mjs:172 WRITE-090 P2 edited source then target stays idempotent',
       (root: ReturnType<typeof injectionTree>) => {
-      root.find('/src')?.setValue('z'); root.find('/tgt')?.setValue('mine');
-    }],
+        root.find('/src')?.setValue('z');
+        root.find('/tgt')?.setValue('mine');
+      },
+    ],
   ] as const) {
     it(title, () => {
       const root = injectionTree();
@@ -147,9 +214,12 @@ describe('round8 derive and injection observations', () => {
     });
   }
   it('r8-port.mjs:200 WRITE-090 P2 idemDefault stays empty on replacement', () => {
-    const { root } = makeSchemaNodeTree({ type: 'object', properties: {
-      x: { type: 'string', default: 'D' },
-    } });
+    const { root } = makeFieldNodeTree({
+      type: 'object',
+      properties: {
+        x: { type: 'string', default: 'D' },
+      },
+    });
     root.setValue({});
     root.find('/x')?.setValue(undefined);
     expect(root.outputValue).toEqual({});

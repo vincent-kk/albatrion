@@ -1,7 +1,7 @@
 import { Form as BaseFrom } from './Form';
 import {
   FormError,
-  FormGroup,
+  FormField,
   FormInput,
   FormLabel,
   FormRender,
@@ -10,13 +10,13 @@ import {
 export type { FormChildrenProps, FormProps, FormHandle } from './type';
 export type {
   FormErrorProps,
-  FormGroupProps,
+  FormFieldProps,
   FormInputProps,
   FormLabelProps,
   FormRenderProps,
 } from './components';
 
-export type { FormRender, FormGroup, FormLabel, FormInput, FormError };
+export type { FormRender, FormField, FormLabel, FormInput, FormError };
 
 /**
  * Schema-driven form system with JSON Schema validation and dynamic UI composition.
@@ -73,7 +73,7 @@ export type { FormRender, FormGroup, FormLabel, FormInput, FormError };
  * For detailed documentation with comprehensive examples and API details:
  * - **Form main component**: See {@link BaseFrom} export
  * - **Form.Render**: See {@link FormRender} export - Custom rendering with full control
- * - **Form.Group**: See {@link FormGroup} export - Grouped field with label and input
+ * - **Form.Field**: See {@link FormField} export - Grouped field with label and input
  * - **Form.Label**: See {@link FormLabel} export - Field label rendering
  * - **Form.Input**: See {@link FormInput} export - Field input rendering
  * - **Form.Error**: See {@link FormError} export - Field error rendering
@@ -104,15 +104,15 @@ export const Form = Object.assign(BaseFrom, {
   /**
    * Renders a complete form field group with label, input, and error.
    *
-   * Combines FormTypeInput and FormTypeRenderer for a complete field experience
+   * Combines FieldInput and FieldRenderer for a complete field experience
    * with customizable wrapper and override properties.
    *
-   * **For comprehensive documentation and examples, see:** {@link FormGroup}
+   * **For comprehensive documentation and examples, see:** {@link FormField}
    *
-   * @param props - FormGroup properties including path and customization options
+   * @param props - FormField properties including path and customization options
    * @returns Complete form field group
    */
-  Group: FormGroup,
+  Field: FormField,
 
   /**
    * Renders a form field label.

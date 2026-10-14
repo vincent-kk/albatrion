@@ -97,7 +97,7 @@ export type {
   NullSchema,
 };
 
-export type JSONSchema<Options extends Dictionary = object> =
+type RolledSchemaUnion<Options extends Dictionary = object> =
   | NumberSchema<Options>
   | StringSchema<Options>
   | BooleanSchema<Options>
@@ -120,7 +120,7 @@ type InferNonNullableSchema<
         ? NonNullableArraySchema<Options>
         : Value extends ObjectValue
           ? NonNullableObjectSchema<Options>
-          : JSONSchema<Options>;
+          : RolledSchemaUnion<Options>;
 
 /** Schema inference for nullable values */
 type InferNullableSchema<

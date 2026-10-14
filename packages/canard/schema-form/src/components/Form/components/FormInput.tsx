@@ -3,18 +3,18 @@ import { type ComponentType, type ReactNode, memo } from 'react';
 import { useConstant, useReference } from '@winglet/react-utils/hook';
 
 import { PluginManager } from '@/schema-form/app/plugin';
-import { SchemaNodeProxy } from '@/schema-form/components/SchemaNode';
-import { useExternalFormContext } from '@/schema-form/providers';
+import { FieldProxy } from '@/schema-form/components/Field';
+import { useFieldRendererContext } from '@/schema-form/providers';
 import type {
   AllowedValue,
-  ChildNodeComponentProps,
-  FormTypeInputProps,
+  ChildFieldProps,
+  FieldInputProps,
 } from '@/schema-form/types';
 
 export type FormInputProps<Value extends AllowedValue> = {
   path?: string;
-  FormTypeInput?: ComponentType<FormTypeInputProps<Value>>;
-} & ChildNodeComponentProps;
+  FieldInput?: ComponentType<FieldInputProps<Value>>;
+} & ChildFieldProps;
 
 /**
  * Renders form input fields with automatic type detection from schema.
@@ -59,7 +59,7 @@ export type FormInputProps<Value extends AllowedValue> = {
  *
  * <Form.Input
  *   path="/theme/primaryColor"
- *   FormTypeInput={ColorPicker}
+ *   FieldInput={ColorPicker}
  * />
  * ```
  *
@@ -80,20 +80,20 @@ export type FormInputProps<Value extends AllowedValue> = {
 export const FormInput = memo(
   ({
     path,
-    FormTypeInput: InputFormTypeInput,
+    FieldInput: InputFieldInput,
     ...restProps
   }: FormInputProps<AllowedValue>) => {
-    const { FormInputRenderer } = useExternalFormContext();
+    const { FormInputRenderer } = useFieldRendererContext();
     const overridePropsRef = useReference(restProps);
-    const FormTypeInput = useConstant(
-      InputFormTypeInput as ComponentType<FormTypeInputProps>,
+    const FieldInput = useConstant(
+      InputFieldInput as ComponentType<FieldInputProps>,
     );
     return (
-      <SchemaNodeProxy
+      <FieldProxy
         path={path}
         overridePropsRef={overridePropsRef}
-        FormTypeInput={FormTypeInput}
-        FormTypeRenderer={FormInputRenderer || PluginManager.FormInput}
+        FieldInput={FieldInput}
+        FieldRenderer={FormInputRenderer || PluginManager.FormInputRenderer}
       />
     );
   },

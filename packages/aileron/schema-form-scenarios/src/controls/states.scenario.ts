@@ -3,7 +3,7 @@ import type { FormScenario } from '../types';
 /** A parent item cannot unlock or reveal a conflicting local declaration. */
 const combinationScenario = {
   name: 'controls.lock-or-visibility-and',
-  schema: { type: 'object', controls: { children: [
+  schema: { type: 'object', controls: { fields: [
     { targets: ['locked'], controls: { readOnly: true, disabled: false } },
     { targets: ['disabled'], controls: { readOnly: false, disabled: false } },
     { targets: ['hidden'], controls: { visible: false } },
@@ -13,7 +13,7 @@ const combinationScenario = {
     hidden: { type: 'string', controls: { visible: true } },
   } },
   initialValue: { locked: 'L', disabled: 'D', hidden: 'H' },
-  steps: [{ action: 'setValue', path: '/locked', value: 'edited',
+  steps: [{ action: 'batch', steps: [{ action: 'setValue', path: '/locked', value: 'edited' }],
     expect: { states: {
       '/locked': { readOnly: true, disabled: false, visible: true, enabled: true },
       '/disabled': { readOnly: false, disabled: true, enabled: true },
@@ -28,15 +28,15 @@ const standardReadOnlyScenario = {
     field: { type: 'string', readOnly: true, controls: { readOnly: false } },
   } },
   initialValue: { field: 'before' },
-  steps: [{ action: 'setValue', path: '/field', value: 'after',
+  steps: [{ action: 'batch', steps: [{ action: 'setValue', path: '/field', value: 'after' }],
     expect: { states: { '/field': { readOnly: true, enabled: true } },
       outputValue: { field: 'after' } } }],
 } satisfies FormScenario;
 
-/** A children item evaluates against its host for every addressed target. */
+/** A fields entry evaluates against its host for every addressed target. */
 const childrenExpressionScenario = {
-  name: 'controls.children-host-expression',
-  schema: { type: 'object', controls: { children: [
+  name: 'controls.fields-host-expression',
+  schema: { type: 'object', controls: { fields: [
     { targets: ['a', 'b'], controls: { disabled: './lock' } },
   ] }, properties: {
     lock: { type: 'boolean' }, a: { type: 'string' }, b: { type: 'string' },

@@ -1,0 +1,168 @@
+# 136g 세션: F-B·F-C·F-F 조합 React 판정 part 3 (F-E 제외)
+
+이번 part 3의 판정은 **ADOPT**입니다. 표시 회귀 0행, 확인 회귀 0행, 면제 회귀 0행, 채택을 막는 회귀 0행이며 유의한 이득도 0행입니다. 실행 상태는 `passed`, 종료 표식은 `SESSION_131_OK`, 실행 셸의 종료 코드는 0입니다. 범위는 `array-1000/off`의 공식 판정 4행과 기록 12행에 한정합니다. 136c·136c2의 네 고침 합본에서 확인된 갱신 wall·active 회귀가 이번 F-E 제외 조합에서는 표시되지 않았으며, 당시 마운트 이득도 이번에는 유의한 이득으로 관측되지 않았습니다.
+
+## 실행 환경과 입력
+
+- 작업 트리: `/Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07`
+- D: `/Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/packages/canard/schema-form/architecture/verification/07-switch`
+- S: `/private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad`
+- Node: `v26.11.1`
+- V8: `14.6.202.34-node.37`
+- Node 실제 경로: `/Users/Vincent/.nvm/versions/node/v26.11.1/bin/node`
+- 엔진: Codex
+- 번들 매니페스트 기준 리비전: `e805074de8a9cb0c072a81284a166ab985a113be`
+
+실행 전에 `D/profile-136f-session.md`, `D/profile-136c-session.md`, `D/profile-136c2-session.md`, `D/harness-131.md`, `D/fbx-a1000-diagnosis.md`를 읽었습니다. 136C-01에 따라 마지막 문서의 “하나씩 뺀 조합 비교” 절에서 준비한 F-B·F-C·F-F 후보를 사용하였으며 F-E는 보류하였습니다. 시작 작업 트리는 `git status --short`의 빈 출력으로 확인하였습니다. 기존 `D/tools/run-session-131.mjs`를 한 번 실행하였으며 측정 코드 작성, git 쓰기, 설치, 제품 코드 변경, 번들 재빌드 및 다른 무거운 작업은 수행하지 않았습니다. 종료 후 러너 결과와 지정된 기존 측정 산출물을 읽고 이 기록과 요청된 산출물을 보관하였습니다. 측정 및 결과 확인에서 사용한 Node는 모두 위 지정 경로입니다.
+
+행 파일은 `S/rows-fb-4.json`이며 SHA-256은 `2e4b599f458fb220cd6750bb9e2c89fca2c8961996ea3195fa648a28b33c8497`입니다. 실제 선택 설정은 **`array-1000/off`** 한 개입니다. 해당 설정의 16개 열을 선택하여 공식 판정 4행과 기록 12행을 보고하였습니다. 예열은 20회, 표본은 41개, 폼 수는 프로세스당 1개입니다.
+
+기준 번들은 `S/bundles/r133-base.cjs`이고 SHA-256은 `ac0b83c954a26b15dcb9100f8d467c8169b35fefcc965da13ac89b1288b44027`입니다. 후보 번들은 `S/bundles/r136-no-fe.cjs`이고 SHA-256은 `1d0ad52295ebb91e590d12f4119e5d5e4170ec23dc61f7b08aac7cdc7b6958cb`입니다. 후보 매니페스트는 `S/bundles/r136-no-fe-manifest.json`이며 SHA-256은 `89ba062e965435726dd0dfc3570b84e275bcd93b3b4358d12c41a81c140f0172`입니다. 작업 계수는 지정된 `S/session-135-counts/react-counts.json`을 그대로 사용하였고 SHA-256은 `4115fc9db9ddfd598f29896de3227f4c954d2e402320068b1a51686f6db24391`입니다. 이번 후보용 계수를 새로 수집하지 않았습니다. A/A는 **`S/session-132c/final.json`을 재사용**하였으며 SHA-256은 `d14093e382ebbf89d9c72e0f31df1d69198622d8f4b4ab1253113c502b363604`입니다. 이번 세션에서 재빌드나 별도 A/A는 실행하지 않았습니다. 매니페스트의 기준 리비전을 현재 HEAD라고 해석하지 않습니다.
+
+재사용 A/A의 실행 상태는 `passed`, 판정은 `AA_PASS`입니다. **Q133에 따라 8블록 A/A 행이 24블록 verdict 행의 하한을 공급할 수 있습니다. 이번 공식 판정 4행 모두 그 경우에 해당합니다.** 105C-01 하한은 A/A 차이 중앙값의 절댓값과 이번 기준 중앙값의 0.5% 중 큰 값입니다. A/A 구간 폭을 하한으로 사용하지 않습니다.
+
+| 행 | A/A 블록 | A/A 중앙값 절댓값(ms) | 이번 판정 블록 | 이번 105C-01 하한(ms) |
+| --- | ---: | ---: | ---: | ---: |
+| array-1000/off/update-wall | 8 | 0.029187500 | 24 | 0.029187500 |
+| array-1000/off/update-active | 8 | 0.029374450 | 24 | 0.029374450 |
+| array-1000/off/mount-wall | 8 | 0.527083500 | 24 | 2.913846457 |
+| array-1000/off/mount-active | 8 | 0.044395506 | 24 | 2.902711767 |
+
+갱신 두 행은 A/A 절댓값이 하한을 결정하고, 마운트 두 행은 이번 기준 중앙값의 0.5%가 하한을 결정합니다. A/A 8블록 구간은 k=1, 포함률 하한 99.21875%이며 이번 판정 24블록 구간과 구별합니다.
+
+실제 실행 명령은 다음과 같습니다. stdout과 stderr를 하나의 로그로 보냈으며 셸의 백그라운드 프로세스를 `wait`로 유지하였습니다.
+
+```sh
+"$HOME/.nvm/versions/node/v26.11.1/bin/node" \
+  /Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/packages/canard/schema-form/architecture/verification/07-switch/tools/run-session-131.mjs \
+  --kind=verdict --lane=react \
+  --rows=/private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/rows-fb-4.json \
+  --watch-in-selection \
+  --base=/private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles/r133-base \
+  --candidate=/private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles/r136-no-fe \
+  --blocks=24 \
+  --touch-counts=/private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/session-135-counts/react-counts.json \
+  --aa=/private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/session-132c/final.json \
+  --node-version=v26.11.1 \
+  --out=/private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/session-136g \
+  > /private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/session-136g.log 2>&1 &
+```
+
+별도의 짧은 명령으로 폴링하였으며 최초 sleep은 2초, 이후 각 sleep은 50초입니다. 각 폴링 명령은 최종 JSON 존재 여부와 로그의 마지막 행을 포함한 진행 행을 한 줄 출력하였고, 두 번째 50초 폴링부터 원자료 파일 수도 함께 출력하였습니다. `final.json` 존재와 로그의 `SESSION_131_OK`를 함께 확인한 뒤 폴링을 종료하였으며 실행 셸의 종료 코드도 0입니다. 시작 셸은 `nice(5) failed: operation not permitted`를 출력하였지만 러너가 시작되어 사전 검사와 모든 단계를 통과하였습니다. 옵션·입력 거부나 사전 예산 거부는 없었습니다. 별도 confirm 실행은 시작하지 않았습니다.
+
+## 감시 범위와 실제 블록
+
+`--watch-in-selection`을 적용하였습니다. **이번 part 3에 포함된 고정 감시 설정은 없습니다.** `array-1000/off`는 고정 감시 설정에 속하지 않으며 `rowSelection.watchAdded=[]`이고 최종 scoping의 `reason=watch` 행도 0개입니다.
+
+고정 감시 설정인 `array-500/off`, `array-replace-200/off`, `flat-50/off`, `oneOf-20/off`, `sample-1/off`, `computed-visible-derived/off`는 모두 이번 part에 포함되지 않았습니다. 같은 F-E 제외 후보의 part 1·2 기록은 `D/profile-136e-session.md`와 `D/profile-136f-session.md`에 있으며, 136f 기록에서 part 1의 다섯 설정과 part 2의 `array-replace-200/off`가 합쳐 고정 감시 설정 6개를 포함한다고 명시하였습니다. 이번 세션은 그 감시 설정을 재측정하지 않았습니다. `sample-1/off`와 `computed-visible-derived/off`가 앞선 part에서 양수 계수의 `touched` 행으로 측정되었다는 구별도 유지합니다.
+
+처음 계획과 실제 사용 블록은 모두 **16행이 24블록**입니다. 131C-01에 따라 측정한 블록을 전부 사용하였으며 16행 모두 `scopeReason=touched`입니다. `all-measured-blocks` 승격이나 축소 행은 없습니다.
+
+| 실제 블록 | 설정 | 공식 판정 행 | 기록 행 |
+| ---: | --- | ---: | ---: |
+| 24 | array-1000/off | 4 | 12 |
+
+실제 축소 행은 **0개**입니다. 모든 공식 판정 행의 관측 상태는 “관측되지 않음”이며 기록 행은 “기록”입니다. 모든 행의 확인 블록은 null입니다.
+
+## 표시 및 확인된 회귀
+
+105C-01과 round-128의 독립 확인 규칙을 러너 결과 그대로 적용하였습니다. 표시 회귀 0행, 확인 회귀 0행, 확인 대기 회귀 0행, 채택을 막는 회귀 0행입니다. `report.flaggedRegressions=[]`, `report.blockingRegressions=[]`, `report.confirmation=null`이며 확인 원자료도 없습니다. 표시 회귀가 없어 독립 확인 대상이 생기지 않았습니다.
+
+| 구분 | 행 수 | 첫 블록 | 확인 블록 |
+| --- | ---: | --- | --- |
+| 공식 판정 행 | 4 | 모두 24 | null |
+| 표시 회귀 | 0 | 해당 없음 | 해당 없음 |
+| 확인 회귀 | 0 | 해당 없음 | 해당 없음 |
+| 확인 대기 회귀 | 0 | 해당 없음 | 해당 없음 |
+| 채택을 막는 회귀 | 0 | 해당 없음 | 해당 없음 |
+
+차이는 기준에서 후보를 뺀 값이며 음수는 손실입니다. 아래 중앙값과 구간은 블록 차이 통계입니다. 131C-01의 순서통계량 구간은 24블록, k=6, 포함률 하한 99.3389248848%입니다.
+
+| 행 | 차이 중앙값(ms) | 구간(ms) | 하한(ms) | 첫 블록 | 확인 블록 | 분류 |
+| --- | ---: | --- | ---: | ---: | --- | --- |
+| array-1000/off/update-wall | −0.022624500 | [−0.271959000, 0.019375000] | 0.029187500 | 24 | null | 유의한 변화 관측되지 않음 |
+| array-1000/off/update-active | −0.023916423 | [−0.273041010, 0.018626034] | 0.029374450 | 24 | null | 유의한 변화 관측되지 않음 |
+| array-1000/off/mount-wall | 2.646479000 | [−5.043916000, 6.750125000] | 2.913846457 | 24 | null | 유의한 변화 관측되지 않음 |
+| array-1000/off/mount-active | 3.084999998 | [−4.884624005, 6.750793002] | 2.902711767 | 24 | null | 유의한 변화 관측되지 않음 |
+
+네 구간 모두 0을 포함합니다. 갱신 손실 중앙값은 두 행 모두 하한보다 작습니다. mount-active의 양의 중앙값은 하한보다 크지만 구간이 0을 포함하여 이득 요건을 충족하지 않습니다. wall과 active는 같은 fixture의 별개 보고 열이며 독립적인 두 시나리오를 뜻하지 않습니다.
+
+## 유의한 이득
+
+유의한 이득은 **0행**입니다. `report.gains=[]`이며 공식 판정 4행 모두 `verdict.gain=false`입니다. round-128 규칙상 이득은 독립 확인 대상이 아닙니다.
+
+아래는 요청한 **136c 네 고침 합본(F-B·F-C·F-F·F-E)의 첫 측정, 136c2 독립 확인, 이번 136g F-E 제외 조합의 나란한 비교**입니다. 136c 통계는 보존된 `D/profile-136c-session/first-report.json`, 136c2 확인은 `D/profile-136c2-session/final.json`의 `report.confirmation.rows[].second`에서 읽었습니다. 각 실제 측정은 24블록입니다. 136c2는 표시 회귀였던 갱신 두 행만 확인하였으므로 마운트에는 새 확인 통계가 없습니다.
+
+| array-1000/off 행 | 136c 네 고침 첫 차이 중앙값 [구간] ms | 136c2 독립 확인 차이 중앙값 [구간] ms | 136g F-E 제외 차이 중앙값 [구간] ms |
+| --- | --- | --- | --- |
+| update-wall | −0.139729500 [−0.190249000, −0.068375000]; 회귀 표시 | −0.070583500 [−0.103125000, −0.027500000]; 회귀 확인 | −0.022624500 [−0.271959000, 0.019375000]; 유의한 변화 관측되지 않음 |
+| update-active | −0.143312544 [−0.191874921, −0.068041027]; 회귀 표시 | −0.070208013 [−0.102499962, −0.027208984]; 회귀 확인 | −0.023916423 [−0.273041010, 0.018626034]; 유의한 변화 관측되지 않음 |
+| mount-wall | 10.315750000 [5.119708000, 16.505458000]; 이득 | 미실시; 136c 첫 이득 유지 | 2.646479000 [−5.043916000, 6.750125000]; 유의한 변화 관측되지 않음 |
+| mount-active | 10.087020514 [4.888291002, 16.722499979]; 이득 | 미실시; 136c 첫 이득 유지 | 3.084999998 [−4.884624005, 6.750793002]; 유의한 변화 관측되지 않음 |
+
+**136c·136c2의 갱신 회귀 두 행은 이번 공식 판정에서 표시되지 않았고, 136c의 마운트 이득 두 행도 이번에는 유의한 이득으로 보고되지 않았습니다.** 갱신 점 추정은 약 −22.6·−23.9µs로 하한 안에 있으나 구간은 넓고 음의 값을 포함하므로 비용이 같거나 손실이 없다고 확정하지 않습니다. 마운트 점 추정은 양수지만 구간이 0을 포함하므로 당시 약 10ms의 이득을 유지한다고 기록하지 않습니다. 이득 미관측을 확인된 회귀로 분류하지 않습니다.
+
+| 행 | 136c 기준 / 후보 중앙값(ms) | 136g 기준 / 후보 중앙값(ms) |
+| --- | ---: | ---: |
+| array-1000/off/update-wall | 1.776916500 / 1.896938000 | 1.745875000 / 1.763417000 |
+| array-1000/off/update-active | 1.780562490 / 1.900458008 | 1.749000013 / 1.766812027 |
+| array-1000/off/mount-wall | 593.005021000 / 579.830041500 | 582.769291500 / 581.141874500 |
+| array-1000/off/mount-active | 591.019895997 / 578.332124997 | 580.542353487 / 578.846207497 |
+
+이 기준·후보 중앙값의 차이와 블록별 차이의 중앙값은 서로 다른 통계입니다. 세 세션은 다른 시점의 독립 측정이며 이 비교는 후보끼리 직접 짝지은 대조가 아닙니다. F-E 단독의 인과 기여를 확정하지 않습니다. 136c는 확인 예산 거부로 `CONFIRMATION_PENDING`을 남겼고, 136c2는 독립 확인에서 갱신 두 회귀를 확인하여 `REJECT`를 발행하였습니다. 이번 136g의 `ADOPT`는 새로운 세 고침 후보에 대한 별도 part 판정입니다.
+
+## 124C-01 면제와 작업 계수
+
+round-128에서 수정된 124C-01의 적용 결과, **면제된 회귀는 없습니다**. 표시 회귀 자체가 없어 면제 대상과 `report.exemption.rows`가 모두 비어 있습니다. `axisGainMs=0`, `regressionTotalMs=0`입니다. 면제 객체의 `provisional=true` 및 기록용 label은 실제 행에 면제를 부여했다는 뜻이 아닙니다.
+
+| fixture | 마운트 행의 calls | 갱신 행의 calls |
+| --- | ---: | ---: |
+| array-1000 | 28,019 | 20 |
+
+작업 계수는 공식 wall·active 열과 해당 단계의 기록·no-GC 열에 적용됩니다. 설정을 모두 24블록으로 측정하였습니다. 계수는 지정된 입력에 따른 작업 범위의 계수이고 시간이나 절감량으로 해석하지 않습니다.
+
+## part 3의 결정
+
+러너 판정은 **ADOPT**입니다. 136C-01의 F-B·F-C·F-F 후보에 대해 선택된 `array-1000/off`의 공식 판정 4행에서 채택을 막는 회귀가 표시되지 않았습니다. 유의한 이득은 0행입니다. 공식 판정 행은 모두 24블록이며 축소 측정은 없습니다. 136c·136c2 합본의 갱신 회귀는 이번에 표시되지 않았으며 136c의 마운트 wall·active 이득도 이번에는 유의한 이득으로 보고되지 않았습니다. 이번 결정은 part 3의 선택 행에 한정하며 이번에 포함한 고정 감시 설정은 없습니다. 개별 F-B·F-C·F-F의 기여로 분해하거나 다른 part를 포함한 React 전체의 별도 채택 판정을 발행하지 않습니다. F-E의 보류를 유지합니다.
+
+## 시간 분해와 예산
+
+시작 시각은 최종 JSON의 `environment.startedAt` 기준 2026-10-11 08:53:23.022 KST, 종료 시각은 10:13:16.316 KST입니다. 최종 JSON의 `time.totalMs=4793293.204709`에 따른 wall time은 **4,793.293초**, 즉 **79분 53.293초**입니다. 마지막 요약 및 해시 목록 쓰기, 이 기록 작성과 보관 비용은 러너의 wall time에서 제외됩니다.
+
+첫 통과의 사전 추정은 5,000.012초이고 확인 여유는 1,250.003초입니다. 합계 6,250.015초가 시작 시 남은 예산 7,099.959초 안에 들어가 사전 검사를 통과하였습니다. 표시 회귀가 없어 확인 직전의 추가 예산 검사는 필요하지 않았습니다. 사전 검사와 종료 로그는 다음과 같습니다.
+
+```text
+SESSION_131_ESTIMATE: first pass 5000.012s + reserve 1250.003s = 6250.015s; remaining 7099.959s
+SESSION_131_OK: /private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/session-136g/final.json; all steps passed; wall 4793.293s
+```
+
+| 세션 구간 | 시간(초) |
+| --- | ---: |
+| 첫 통과 및 나머지 세션 비용: 전체에서 확인·보고를 뺀 값 | 4,793.278 |
+| 독립 확인 구간: `time.confirmMs` | 0.000 |
+| 보고 계산: `time.reportMs` | 0.016 |
+| 전체 wall time | 4,793.293 |
+
+`time.confirmMs`의 원값 0.0039170002564787865ms는 확인 분기의 부수 비용이며 독립 확인 측정은 0개입니다. 첫 통과 worker 48개가 순차 실행되었고 worker wall time의 합은 4,793.017초입니다.
+
+| worker 단계의 기록 합 | 시간(초) |
+| --- | ---: |
+| 시작부터 준비 완료 | 10.498 |
+| 예열 | 1,563.529 |
+| 강제 GC | 92.741 |
+| 시계 밖 minor GC | 4.170 |
+| 표본 | 3,179.148 |
+| digest | 771.177 |
+| React 보정 | 35.699 |
+
+예열과 표본 시간은 GC 및 digest를 포함하므로 위 단계들을 단순 합산하지 않습니다. worker 준비 합은 프로세스 시작부터 준비 완료까지이며 세션 전체 wall time과 별도 범위입니다.
+
+## 보존한 산출물
+
+- [러너의 최종 한국어 요약](./profile-136g-session/summary.md)
+- [러너의 최종 JSON gzip](./profile-136g-session/final.json.gz)
+- [러너 원자료 및 산출물 SHA-256 목록](./profile-136g-session/raw-sha256.txt)
+
+최종 JSON 원본은 2,922,293바이트이며 136f와 같은 산출물 모양으로 gzip 보관하였습니다. 보관한 gzip은 74,136바이트, 요약은 3,931바이트, `raw-sha256.txt`는 15,518바이트이므로 모든 보관 산출물은 5MB 미만입니다. 해시 목록은 러너의 `sha256.txt`를 그대로 복사한 목록이며 경로는 원 세션 디렉터리 기준입니다. 원자료와 실행 로그 `S/session-136g.log`는 S의 원 세션에 남아 있습니다.
+
+압축을 풀어 원본 JSON과 바이트 동일성을 확인하였습니다. 요약 및 SHA-256 목록도 원본과 바이트가 같습니다. 압축 해제한 JSON의 SHA-256은 `0d8b1890d94a21a476c394c6fc3ec66c7c664e429f636f2569a05768e23b1a4c`입니다.

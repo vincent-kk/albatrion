@@ -1,0 +1,2184 @@
+{
+  "method": "100 paired samples per fixture, original first 15 plus isolated replacements of the final four; excluded original rows must not be used",
+  "original": "equivalent-82c01-render-final.json",
+  "excludedOriginalFixtures": [
+    "array-push-100",
+    "array-replace-200",
+    "array-push-remove-100",
+    "computed-visible-derived"
+  ],
+  "replacements": [
+    "equivalent-82c01-render-clean-array-push-100.json",
+    "equivalent-82c01-render-clean-array-replace-200.json",
+    "equivalent-82c01-render-clean-array-push-remove-100.json",
+    "equivalent-82c01-render-clean-computed-visible-derived.json"
+  ],
+  "rows": [
+    {
+      "fixture": "sample-0",
+      "metric": "render-mount-wall",
+      "old": {
+        "median": 3.892541999999935,
+        "p99": 5.241040999999996,
+        "count": 100
+      },
+      "new": {
+        "median": 5.444125000000099,
+        "p99": 5.800083000000086,
+        "count": 100
+      },
+      "ratio": 1.3986040484598985,
+      "p99Ratio": 1.1066662138304377,
+      "throughputDrop": 21.824432840549303,
+      "p": 5.995345154796763e-27,
+      "regression": true
+    },
+    {
+      "fixture": "sample-0",
+      "metric": "render-update-wall",
+      "old": {
+        "median": 2.2276460000001634,
+        "p99": 3.627875000000131,
+        "count": 100
+      },
+      "new": {
+        "median": 3.164645500000006,
+        "p99": 3.4920419999998558,
+        "count": 100
+      },
+      "ratio": 1.4206231600531565,
+      "p99Ratio": 0.9625585225510057,
+      "throughputDrop": 21.09222079230012,
+      "p": 1.0757512731430099e-12,
+      "regression": true
+    },
+    {
+      "fixture": "sample-0",
+      "metric": "profiler-mount",
+      "old": {
+        "median": 1.925974000000906,
+        "p99": 2.278746000002684,
+        "count": 100
+      },
+      "new": {
+        "median": 2.396018500001105,
+        "p99": 2.6617869999984123,
+        "count": 100
+      },
+      "ratio": 1.2440554753075472,
+      "p99Ratio": 1.168092889683746,
+      "throughputDrop": 19.209355488415913,
+      "p": 7.216145413330628e-60,
+      "regression": true
+    },
+    {
+      "fixture": "sample-0",
+      "metric": "profiler-update",
+      "old": {
+        "median": 0.30525249999811876,
+        "p99": 0.45995600000014747,
+        "count": 100
+      },
+      "new": {
+        "median": 0.2594575000015311,
+        "p99": 0.3923300000001291,
+        "count": 100
+      },
+      "ratio": 0.8499766586780784,
+      "p99Ratio": 0.8529728930593432,
+      "throughputDrop": -13.998321530213321,
+      "p": 1.632880648579933e-8,
+      "regression": false
+    },
+    {
+      "fixture": "sample-0",
+      "metric": "commits-mount",
+      "old": {
+        "median": 2,
+        "p99": 2,
+        "count": 100
+      },
+      "new": {
+        "median": 2,
+        "p99": 2,
+        "count": 100
+      },
+      "ratio": 1,
+      "p99Ratio": 1,
+      "throughputDrop": null,
+      "p": null,
+      "regression": false
+    },
+    {
+      "fixture": "sample-0",
+      "metric": "commits-update",
+      "old": {
+        "median": 2,
+        "p99": 2,
+        "count": 100
+      },
+      "new": {
+        "median": 1,
+        "p99": 1,
+        "count": 100
+      },
+      "ratio": 0.5,
+      "p99Ratio": 0.5,
+      "throughputDrop": null,
+      "p": null,
+      "regression": false
+    },
+    {
+      "fixture": "sample-1",
+      "metric": "render-mount-wall",
+      "old": {
+        "median": 5.922083000000384,
+        "p99": 7.349749999999403,
+        "count": 100
+      },
+      "new": {
+        "median": 6.997624999999971,
+        "p99": 7.926625000000058,
+        "count": 100
+      },
+      "ratio": 1.1816154890094444,
+      "p99Ratio": 1.0784890642539817,
+      "throughputDrop": 17.303901792895914,
+      "p": 2.1428920474041683e-25,
+      "regression": true
+    },
+    {
+      "fixture": "sample-1",
+      "metric": "render-update-wall",
+      "old": {
+        "median": 2.21012450000012,
+        "p99": 3.6148339999999735,
+        "count": 100
+      },
+      "new": {
+        "median": 3.254187500000171,
+        "p99": 3.6430419999996957,
+        "count": 100
+      },
+      "ratio": 1.4724000842486449,
+      "p99Ratio": 1.0078034012072816,
+      "throughputDrop": 22.174919898558887,
+      "p": 6.266761779904623e-14,
+      "regression": true
+    },
+    {
+      "fixture": "sample-1",
+      "metric": "profiler-mount",
+      "old": {
+        "median": 3.6224755000009736,
+        "p99": 4.119184999998652,
+        "count": 100
+      },
+      "new": {
+        "median": 4.226120500002708,
+        "p99": 4.734585999993669,
+        "count": 100
+      },
+      "ratio": 1.16663880818561,
+      "p99Ratio": 1.1493987281453053,
+      "throughputDrop": 14.588882582108342,
+      "p": 4.838430112425153e-19,
+      "regression": false
+    },
+    {
+      "fixture": "sample-1",
+      "metric": "profiler-update",
+      "old": {
+        "median": 0.3625005000026249,
+        "p99": 0.5562519999994038,
+        "count": 100
+      },
+      "new": {
+        "median": 0.3320359999993343,
+        "p99": 0.5310770000023695,
+        "count": 100
+      },
+      "ratio": 0.9159601159086126,
+      "p99Ratio": 0.9547417357653343,
+      "throughputDrop": -8.484220356521988,
+      "p": 0.03515126389648633,
+      "regression": false
+    },
+    {
+      "fixture": "sample-1",
+      "metric": "commits-mount",
+      "old": {
+        "median": 2,
+        "p99": 2,
+        "count": 100
+      },
+      "new": {
+        "median": 2,
+        "p99": 2,
+        "count": 100
+      },
+      "ratio": 1,
+      "p99Ratio": 1,
+      "throughputDrop": null,
+      "p": null,
+      "regression": false
+    },
+    {
+      "fixture": "sample-1",
+      "metric": "commits-update",
+      "old": {
+        "median": 2,
+        "p99": 2,
+        "count": 100
+      },
+      "new": {
+        "median": 1,
+        "p99": 1,
+        "count": 100
+      },
+      "ratio": 0.5,
+      "p99Ratio": 0.5,
+      "throughputDrop": null,
+      "p": null,
+      "regression": false
+    },
+    {
+      "fixture": "sample-2",
+      "metric": "render-mount-wall",
+      "old": {
+        "median": 5.626791499999854,
+        "p99": 6.47191599999951,
+        "count": 100
+      },
+      "new": {
+        "median": 6.790979000000334,
+        "p99": 7.071416999999201,
+        "count": 100
+      },
+      "ratio": 1.206900771070069,
+      "p99Ratio": 1.0926311466341245,
+      "throughputDrop": 17.726695099933355,
+      "p": 1.041982998860105e-22,
+      "regression": true
+    },
+    {
+      "fixture": "sample-2",
+      "metric": "render-update-wall",
+      "old": {
+        "median": 2.0668539999996938,
+        "p99": 3.5825839999997697,
+        "count": 100
+      },
+      "new": {
+        "median": 3.258313000000271,
+        "p99": 3.5889590000006137,
+        "count": 100
+      },
+      "ratio": 1.5764601660304762,
+      "p99Ratio": 1.0017794418779418,
+      "throughputDrop": 25.94615766124476,
+      "p": 1.6226686282888017e-21,
+      "regression": true
+    },
+    {
+      "fixture": "sample-2",
+      "metric": "profiler-mount",
+      "old": {
+        "median": 3.1048940000000584,
+        "p99": 3.3088329999909547,
+        "count": 100
+      },
+      "new": {
+        "median": 3.7521920000021964,
+        "p99": 3.9436409999925672,
+        "count": 100
+      },
+      "ratio": 1.208476682296441,
+      "p99Ratio": 1.1918525353208662,
+      "throughputDrop": 17.315042781771297,
+      "p": 2.1055454807644147e-32,
+      "regression": true
+    },
+    {
+      "fixture": "sample-2",
+      "metric": "profiler-update",
+      "old": {
+        "median": 0.3688944999958039,
+        "p99": 0.539586999997482,
+        "count": 100
+      },
+      "new": {
+        "median": 0.3348314999975628,
+        "p99": 0.4957909999975527,
+        "count": 100
+      },
+      "ratio": 0.9076619467120584,
+      "p99Ratio": 0.9188342195046698,
+      "throughputDrop": -7.398510009104253,
+      "p": 0.055388225561239464,
+      "regression": false
+    },
+    {
+      "fixture": "sample-2",
+      "metric": "commits-mount",
+      "old": {
+        "median": 2,
+        "p99": 2,
+        "count": 100
+      },
+      "new": {
+        "median": 2,
+        "p99": 2,
+        "count": 100
+      },
+      "ratio": 1,
+      "p99Ratio": 1,
+      "throughputDrop": null,
+      "p": null,
+      "regression": false
+    },
+    {
+      "fixture": "sample-2",
+      "metric": "commits-update",
+      "old": {
+        "median": 2,
+        "p99": 2,
+        "count": 100
+      },
+      "new": {
+        "median": 1,
+        "p99": 1,
+        "count": 100
+      },
+      "ratio": 0.5,
+      "p99Ratio": 0.5,
+      "throughputDrop": null,
+      "p": null,
+      "regression": false
+    },
+    {
+      "fixture": "sample-3",
+      "metric": "render-mount-wall",
+      "old": {
+        "median": 13.612146000000394,
+        "p99": 17.30304200000137,
+        "count": 100
+      },
+      "new": {
+        "median": 15.820458500000314,
+        "p99": 19.073291999999128,
+        "count": 100
+      },
+      "ratio": 1.1622310324911191,
+      "p99Ratio": 1.1023085998402835,
+      "throughputDrop": 12.762937895220594,
+      "p": 7.45814762874798e-25,
+      "regression": false
+    },
+    {
+      "fixture": "sample-3",
+      "metric": "render-update-wall",
+      "old": {
+        "median": 2.243791999999303,
+        "p99": 3.503666999999041,
+        "count": 100
+      },
+      "new": {
+        "median": 3.190562499999942,
+        "p99": 3.4725410000010015,
+        "count": 100
+      },
+      "ratio": 1.4219510988544986,
+      "p99Ratio": 0.9911161648643984,
+      "throughputDrop": 20.38816888587557,
+      "p": 7.538913881929973e-13,
+      "regression": true
+    },
+    {
+      "fixture": "sample-3",
+      "metric": "profiler-mount",
+      "old": {
+        "median": 10.167146500047238,
+        "p99": 13.639552000027834,
+        "count": 100
+      },
+      "new": {
+        "median": 11.645078000005924,
+        "p99": 14.798507000034078,
+        "count": 100
+      },
+      "ratio": 1.1453634507923949,
+      "p99Ratio": 1.0849701661758304,
+      "throughputDrop": 11.404641352646927,
+      "p": 2.9939351731293224e-15,
+      "regression": false
+    },
+    {
+      "fixture": "sample-3",
+      "metric": "profiler-update",
+      "old": {
+        "median": 0.2866055000049528,
+        "p99": 0.440080999982456,
+        "count": 100
+      },
+      "new": {
+        "median": 0.23306549999597337,
+        "p99": 0.4142489999994723,
+        "count": 100
+      },
+      "ratio": 0.8131926986465571,
+      "p99Ratio": 0.9413017149478994,
+      "throughputDrop": -15.08313728886197,
+      "p": 2.395698429578284e-7,
+      "regression": false
+    },
+    {
+      "fixture": "sample-3",
+      "metric": "commits-mount",
+      "old": {
+        "median": 2,
+        "p99": 2,
+        "count": 100
+      },
+      "new": {
+        "median": 2,
+        "p99": 2,
+        "count": 100
+      },
+      "ratio": 1,
+      "p99Ratio": 1,
+      "throughputDrop": null,
+      "p": null,
+      "regression": false
+    },
+    {
+      "fixture": "sample-3",
+      "metric": "commits-update",
+      "old": {
+        "median": 2,
+        "p99": 2,
+        "count": 100
+      },
+      "new": {
+        "median": 1,
+        "p99": 1,
+        "count": 100
+      },
+      "ratio": 0.5,
+      "p99Ratio": 0.5,
+      "throughputDrop": null,
+      "p": null,
+      "regression": false
+    },
+    {
+      "fixture": "flat-50",
+      "metric": "render-mount-wall",
+      "old": {
+        "median": 13.098541499997737,
+        "p99": 17.17933400000038,
+        "count": 100
+      },
+      "new": {
+        "median": 15.168187499999476,
+        "p99": 18.800499999997555,
+        "count": 100
+      },
+      "ratio": 1.158005835993427,
+      "p99Ratio": 1.0943672205218862,
+      "throughputDrop": 11.742700279371142,
+      "p": 1.5031273629850763e-14,
+      "regression": false
+    },
+    {
+      "fixture": "flat-50",
+      "metric": "render-update-wall",
+      "old": {
+        "median": 27.50331300000107,
+        "p99": 30.38037500000064,
+        "count": 100
+      },
+      "new": {
+        "median": 29.417437500000233,
+        "p99": 31.45354199999929,
+        "count": 100
+      },
+      "ratio": 1.069596142835559,
+      "p99Ratio": 1.0353243500120926,
+      "throughputDrop": 5.978384804501003,
+      "p": 2.264210534786147e-12,
+      "regression": false
+    },
+    {
+      "fixture": "flat-50",
+      "metric": "profiler-mount",
+      "old": {
+        "median": 9.773607000044649,
+        "p99": 13.679971000055957,
+        "count": 100
+      },
+      "new": {
+        "median": 10.987308999985544,
+        "p99": 14.723798999970313,
+        "count": 100
+      },
+      "ratio": 1.1241815841311555,
+      "p99Ratio": 1.0763033781219336,
+      "throughputDrop": 9.437975841684121,
+      "p": 2.841392716362796e-7,
+      "regression": false
+    },
+    {
+      "fixture": "flat-50",
+      "metric": "profiler-update",
+      "old": {
+        "median": 1.9488854999653995,
+        "p99": 3.0001870000269264,
+        "count": 100
+      },
+      "new": {
+        "median": 1.6403750000081345,
+        "p99": 2.583502000044973,
+        "count": 100
+      },
+      "ratio": 0.8416990120955068,
+      "p99Ratio": 0.8611136572559599,
+      "throughputDrop": -17.728762972214728,
+      "p": 2.4796585661565512e-8,
+      "regression": false
+    },
+    {
+      "fixture": "flat-50",
+      "metric": "commits-mount",
+      "old": {
+        "median": 2,
+        "p99": 2,
+        "count": 100
+      },
+      "new": {
+        "median": 2,
+        "p99": 2,
+        "count": 100
+      },
+      "ratio": 1,
+      "p99Ratio": 1,
+      "throughputDrop": null,
+      "p": null,
+      "regression": false
+    },
+    {
+      "fixture": "flat-50",
+      "metric": "commits-update",
+      "old": {
+        "median": 20,
+        "p99": 20,
+        "count": 100
+      },
+      "new": {
+        "median": 10,
+        "p99": 10,
+        "count": 100
+      },
+      "ratio": 0.5,
+      "p99Ratio": 0.5,
+      "throughputDrop": null,
+      "p": null,
+      "regression": false
+    },
+    {
+      "fixture": "flat-100",
+      "metric": "render-mount-wall",
+      "old": {
+        "median": 23.148604500000147,
+        "p99": 30.246624999999767,
+        "count": 100
+      },
+      "new": {
+        "median": 25.01122899999973,
+        "p99": 31.312959000002593,
+        "count": 100
+      },
+      "ratio": 1.0804637921045985,
+      "p99Ratio": 1.03525464411328,
+      "throughputDrop": 7.498995807349629,
+      "p": 2.011220322195807e-8,
+      "regression": false
+    },
+    {
+      "fixture": "flat-100",
+      "metric": "render-update-wall",
+      "old": {
+        "median": 26.090625000000728,
+        "p99": 29.83029200000601,
+        "count": 100
+      },
+      "new": {
+        "median": 30.12341649999871,
+        "p99": 31.98987500000294,
+        "count": 100
+      },
+      "ratio": 1.1545686046232266,
+      "p99Ratio": 1.0723956372936776,
+      "throughputDrop": 13.83692423788272,
+      "p": 3.868965127930215e-36,
+      "regression": false
+    },
+    {
+      "fixture": "flat-100",
+      "metric": "profiler-mount",
+      "old": {
+        "median": 18.0485230000686,
+        "p99": 24.991984000174853,
+        "count": 100
+      },
+      "new": {
+        "median": 19.727307500168536,
+        "p99": 26.102031999878818,
+        "count": 100
+      },
+      "ratio": 1.0930150627889914,
+      "p99Ratio": 1.044416161585899,
+      "throughputDrop": 8.494072737768665,
+      "p": 1.063765799213134e-7,
+      "regression": false
+    },
+    {
+      "fixture": "flat-100",
+      "metric": "profiler-update",
+      "old": {
+        "median": 2.056337500034715,
+        "p99": 3.15111800003433,
+        "count": 100
+      },
+      "new": {
+        "median": 1.8613339999938034,
+        "p99": 2.713374000049953,
+        "count": 100
+      },
+      "ratio": 0.9051695064464761,
+      "p99Ratio": 0.8610829553258215,
+      "throughputDrop": -11.24849197816622,
+      "p": 0.000002220641113828014,
+      "regression": false
+    },
+    {
+      "fixture": "flat-100",
+      "metric": "commits-mount",
+      "old": {
+        "median": 2,
+        "p99": 2,
+        "count": 100
+      },
+      "new": {
+        "median": 2,
+        "p99": 2,
+        "count": 100
+      },
+      "ratio": 1,
+      "p99Ratio": 1,
+      "throughputDrop": null,
+      "p": null,
+      "regression": false
+    },
+    {
+      "fixture": "flat-100",
+      "metric": "commits-update",
+      "old": {
+        "median": 20,
+        "p99": 20,
+        "count": 100
+      },
+      "new": {
+        "median": 10,
+        "p99": 10,
+        "count": 100
+      },
+      "ratio": 0.5,
+      "p99Ratio": 0.5,
+      "throughputDrop": null,
+      "p": null,
+      "regression": false
+    },
+    {
+      "fixture": "flat-500",
+      "metric": "render-mount-wall",
+      "old": {
+        "median": 109.09656250000262,
+        "p99": 140.90612499999406,
+        "count": 100
+      },
+      "new": {
+        "median": 110.14129150000372,
+        "p99": 140.09758399998827,
+        "count": 100
+      },
+      "ratio": 1.0095761862341086,
+      "p99Ratio": 0.994261846317853,
+      "throughputDrop": 0.47265146022476,
+      "p": 0.6911443817677978,
+      "regression": false
+    },
+    {
+      "fixture": "flat-500",
+      "metric": "render-update-wall",
+      "old": {
+        "median": 29.336874999997235,
+        "p99": 32.450250000008964,
+        "count": 100
+      },
+      "new": {
+        "median": 36.26543799999854,
+        "p99": 39.15983299999789,
+        "count": 100
+      },
+      "ratio": 1.236172496218563,
+      "p99Ratio": 1.2067652175248902,
+      "throughputDrop": 18.370710631746256,
+      "p": 4.541119831406852e-82,
+      "regression": true
+    },
+    {
+      "fixture": "flat-500",
+      "metric": "profiler-mount",
+      "old": {
+        "median": 87.13450599994758,
+        "p99": 120.29493899989757,
+        "count": 100
+      },
+      "new": {
+        "median": 92.43964249991404,
+        "p99": 124.19861900024989,
+        "count": 100
+      },
+      "ratio": 1.0608844502999726,
+      "p99Ratio": 1.0324509080166344,
+      "throughputDrop": 5.2554058985852965,
+      "p": 0.00022822990299735098,
+      "regression": false
+    },
+    {
+      "fixture": "flat-500",
+      "metric": "profiler-update",
+      "old": {
+        "median": 3.8980140001513064,
+        "p99": 4.984113000136858,
+        "count": 100
+      },
+      "new": {
+        "median": 2.9886855000295327,
+        "p99": 4.2033419993531425,
+        "count": 100
+      },
+      "ratio": 0.7667200528047162,
+      "p99Ratio": 0.8433480539541787,
+      "throughputDrop": -30.75985015522662,
+      "p": 3.4067570083775853e-40,
+      "regression": false
+    },
+    {
+      "fixture": "flat-500",
+      "metric": "commits-mount",
+      "old": {
+        "median": 2,
+        "p99": 2,
+        "count": 100
+      },
+      "new": {
+        "median": 2,
+        "p99": 2,
+        "count": 100
+      },
+      "ratio": 1,
+      "p99Ratio": 1,
+      "throughputDrop": null,
+      "p": null,
+      "regression": false
+    },
+    {
+      "fixture": "flat-500",
+      "metric": "commits-update",
+      "old": {
+        "median": 20,
+        "p99": 20,
+        "count": 100
+      },
+      "new": {
+        "median": 10,
+        "p99": 10,
+        "count": 100
+      },
+      "ratio": 0.5,
+      "p99Ratio": 0.5,
+      "throughputDrop": null,
+      "p": null,
+      "regression": false
+    },
+    {
+      "fixture": "nested-d3-f4",
+      "metric": "render-mount-wall",
+      "old": {
+        "median": 19.470166499995685,
+        "p99": 25.44258400000399,
+        "count": 100
+      },
+      "new": {
+        "median": 21.65562449999561,
+        "p99": 27.658125000001746,
+        "count": 100
+      },
+      "ratio": 1.1122464977379833,
+      "p99Ratio": 1.0870800308646877,
+      "throughputDrop": 9.609026506407991,
+      "p": 4.8702001296026196e-12,
+      "regression": false
+    },
+    {
+      "fixture": "nested-d3-f4",
+      "metric": "render-update-wall",
+      "old": {
+        "median": 25.978520999997272,
+        "p99": 29.714833000005456,
+        "count": 100
+      },
+      "new": {
+        "median": 30.595937999991293,
+        "p99": 33.14191700000083,
+        "count": 100
+      },
+      "ratio": 1.177739795117455,
+      "p99Ratio": 1.1153324334683201,
+      "throughputDrop": 17.31457022695758,
+      "p": 5.160480673993899e-32,
+      "regression": true
+    },
+    {
+      "fixture": "nested-d3-f4",
+      "metric": "profiler-mount",
+      "old": {
+        "median": 14.821455500205047,
+        "p99": 20.73726100017666,
+        "count": 100
+      },
+      "new": {
+        "median": 16.651026000239654,
+        "p99": 22.571434999947087,
+        "count": 100
+      },
+      "ratio": 1.123440676930096,
+      "p99Ratio": 1.0884482285174886,
+      "throughputDrop": 10.413472984561878,
+      "p": 4.3733068761038445e-10,
+      "regression": false
+    },
+    {
+      "fixture": "nested-d3-f4",
+      "metric": "profiler-update",
+      "old": {
+        "median": 2.554142000124557,
+        "p99": 4.462414999841712,
+        "count": 100
+      },
+      "new": {
+        "median": 2.4454805001732893,
+        "p99": 4.404665000271052,
+        "count": 100
+      },
+      "ratio": 0.9574567506638361,
+      "p99Ratio": 0.9870585771218704,
+      "throughputDrop": -5.936657163893244,
+      "p": 0.034017242926939605,
+      "regression": false
+    },
+    {
+      "fixture": "nested-d3-f4",
+      "metric": "commits-mount",
+      "old": {
+        "median": 2,
+        "p99": 2,
+        "count": 100
+      },
+      "new": {
+        "median": 2,
+        "p99": 2,
+        "count": 100
+      },
+      "ratio": 1,
+      "p99Ratio": 1,
+      "throughputDrop": null,
+      "p": null,
+      "regression": false
+    },
+    {
+      "fixture": "nested-d3-f4",
+      "metric": "commits-update",
+      "old": {
+        "median": 20,
+        "p99": 20,
+        "count": 100
+      },
+      "new": {
+        "median": 10,
+        "p99": 10,
+        "count": 100
+      },
+      "ratio": 0.5,
+      "p99Ratio": 0.5,
+      "throughputDrop": null,
+      "p": null,
+      "regression": false
+    },
+    {
+      "fixture": "nested-d5-f4",
+      "metric": "render-mount-wall",
+      "old": {
+        "median": 312.56950000000506,
+        "p99": 329.73420800000895,
+        "count": 100
+      },
+      "new": {
+        "median": 301.2845419999867,
+        "p99": 324.01929100000416,
+        "count": 100
+      },
+      "ratio": 0.963896163893092,
+      "p99Ratio": 0.9826681100675954,
+      "throughputDrop": -2.157656518340345,
+      "p": 0.0000024341026783264904,
+      "regression": false
+    },
+    {
+      "fixture": "nested-d5-f4",
+      "metric": "render-update-wall",
+      "old": {
+        "median": 24.19929200000479,
+        "p99": 28.079832999996142,
+        "count": 100
+      },
+      "new": {
+        "median": 34.13375000000815,
+        "p99": 37.23637500000768,
+        "count": 100
+      },
+      "ratio": 1.4105268038420873,
+      "p99Ratio": 1.3260896174137788,
+      "throughputDrop": 29.51708790599159,
+      "p": 1.0166334959146096e-67,
+      "regression": true
+    },
+    {
+      "fixture": "nested-d5-f4",
+      "metric": "profiler-mount",
+      "old": {
+        "median": 235.20527550040424,
+        "p99": 253.1192210005538,
+        "count": 100
+      },
+      "new": {
+        "median": 248.5502075011609,
+        "p99": 274.74693599902093,
+        "count": 100
+      },
+      "ratio": 1.056737383854869,
+      "p99Ratio": 1.0854447754420824,
+      "throughputDrop": 6.66294390442852,
+      "p": 6.813338091794544e-25,
+      "regression": false
+    },
+    {
+      "fixture": "nested-d5-f4",
+      "metric": "profiler-update",
+      "old": {
+        "median": 3.411096500218264,
+        "p99": 7.305967000400415,
+        "count": 100
+      },
+      "new": {
+        "median": 3.5125340000813594,
+        "p99": 6.6819799993536435,
+        "count": 100
+      },
+      "ratio": 1.0297375051853868,
+      "p99Ratio": 0.9145921407785482,
+      "throughputDrop": 1.906351672136275,
+      "p": 0.6127514988879605,
+      "regression": false
+    },
+    {
+      "fixture": "nested-d5-f4",
+      "metric": "commits-mount",
+      "old": {
+        "median": 2,
+        "p99": 2,
+        "count": 100
+      },
+      "new": {
+        "median": 2,
+        "p99": 2,
+        "count": 100
+      },
+      "ratio": 1,
+      "p99Ratio": 1,
+      "throughputDrop": null,
+      "p": null,
+      "regression": false
+    },
+    {
+      "fixture": "nested-d5-f4",
+      "metric": "commits-update",
+      "old": {
+        "median": 20,
+        "p99": 20,
+        "count": 100
+      },
+      "new": {
+        "median": 10,
+        "p99": 10,
+        "count": 100
+      },
+      "ratio": 0.5,
+      "p99Ratio": 0.5,
+      "throughputDrop": null,
+      "p": null,
+      "regression": false
+    },
+    {
+      "fixture": "array-100",
+      "metric": "render-mount-wall",
+      "old": {
+        "median": 99.1245624999865,
+        "p99": 130.4605000000156,
+        "count": 100
+      },
+      "new": {
+        "median": 95.01783299999079,
+        "p99": 127.6495419999992,
+        "count": 100
+      },
+      "ratio": 0.958570011343089,
+      "p99Ratio": 0.9784535702376117,
+      "throughputDrop": -4.477927089168965,
+      "p": 0.00010666185783346044,
+      "regression": false
+    },
+    {
+      "fixture": "array-100",
+      "metric": "render-update-wall",
+      "old": {
+        "median": 4.516666999988956,
+        "p99": 8.65062499998021,
+        "count": 100
+      },
+      "new": {
+        "median": 5.61320850001357,
+        "p99": 7.511708000005456,
+        "count": 100
+      },
+      "ratio": 1.2427766979561023,
+      "p99Ratio": 0.8683428076032241,
+      "throughputDrop": 15.657210748104411,
+      "p": 2.651768898133956e-16,
+      "regression": true
+    },
+    {
+      "fixture": "array-100",
+      "metric": "profiler-mount",
+      "old": {
+        "median": 80.49844800060964,
+        "p99": 107.97650399792474,
+        "count": 100
+      },
+      "new": {
+        "median": 77.73778699994728,
+        "p99": 111.43846099908114,
+        "count": 100
+      },
+      "ratio": 0.9657054133436032,
+      "p99Ratio": 1.0320621327138257,
+      "throughputDrop": -2.478850716247649,
+      "p": 0.05460656483335759,
+      "regression": false
+    },
+    {
+      "fixture": "array-100",
+      "metric": "profiler-update",
+      "old": {
+        "median": 1.3084700000326848,
+        "p99": 3.0714849998184945,
+        "count": 100
+      },
+      "new": {
+        "median": 1.256837499939138,
+        "p99": 2.951686000073096,
+        "count": 100
+      },
+      "ratio": 0.9605397906774653,
+      "p99Ratio": 0.9609963910771245,
+      "throughputDrop": -5.200634668671933,
+      "p": 0.05718923145375102,
+      "regression": false
+    },
+    {
+      "fixture": "array-100",
+      "metric": "commits-mount",
+      "old": {
+        "median": 2,
+        "p99": 2,
+        "count": 100
+      },
+      "new": {
+        "median": 2,
+        "p99": 2,
+        "count": 100
+      },
+      "ratio": 1,
+      "p99Ratio": 1,
+      "throughputDrop": null,
+      "p": null,
+      "regression": false
+    },
+    {
+      "fixture": "array-100",
+      "metric": "commits-update",
+      "old": {
+        "median": 2,
+        "p99": 2,
+        "count": 100
+      },
+      "new": {
+        "median": 1,
+        "p99": 1,
+        "count": 100
+      },
+      "ratio": 0.5,
+      "p99Ratio": 0.5,
+      "throughputDrop": null,
+      "p": null,
+      "regression": false
+    },
+    {
+      "fixture": "array-500",
+      "metric": "render-mount-wall",
+      "old": {
+        "median": 514.3548745000007,
+        "p99": 527.7829170000041,
+        "count": 100
+      },
+      "new": {
+        "median": 436.4222085000074,
+        "p99": 455.4078750000044,
+        "count": 100
+      },
+      "ratio": 0.8484846360681408,
+      "p99Ratio": 0.8628696767765996,
+      "throughputDrop": -17.77067116290405,
+      "p": 5.492688978299564e-149,
+      "regression": false
+    },
+    {
+      "fixture": "array-500",
+      "metric": "render-update-wall",
+      "old": {
+        "median": 13.474707999965176,
+        "p99": 14.468208000005689,
+        "count": 100
+      },
+      "new": {
+        "median": 20.95614550000755,
+        "p99": 25.990374999993946,
+        "count": 100
+      },
+      "ratio": 1.5552207513559262,
+      "p99Ratio": 1.796378307526663,
+      "throughputDrop": 32.38868425427375,
+      "p": 2.092516337672315e-45,
+      "regression": true
+    },
+    {
+      "fixture": "array-500",
+      "metric": "profiler-mount",
+      "old": {
+        "median": 401.191365499908,
+        "p99": 413.90156799874967,
+        "count": 100
+      },
+      "new": {
+        "median": 364.5526595005358,
+        "p99": 372.26192200087826,
+        "count": 100
+      },
+      "ratio": 0.9086752379286175,
+      "p99Ratio": 0.8993972257722948,
+      "throughputDrop": -9.994464044944905,
+      "p": 1.4620359237626724e-103,
+      "regression": false
+    },
+    {
+      "fixture": "array-500",
+      "metric": "profiler-update",
+      "old": {
+        "median": 4.963463999520172,
+        "p99": 5.311520000803284,
+        "count": 100
+      },
+      "new": {
+        "median": 10.462225500523346,
+        "p99": 14.80033900073613,
+        "count": 100
+      },
+      "ratio": 2.1078475640268066,
+      "p99Ratio": 2.7864601843724226,
+      "throughputDrop": 44.454007063823596,
+      "p": 6.064934108668943e-39,
+      "regression": true
+    },
+    {
+      "fixture": "array-500",
+      "metric": "commits-mount",
+      "old": {
+        "median": 2,
+        "p99": 2,
+        "count": 100
+      },
+      "new": {
+        "median": 2,
+        "p99": 2,
+        "count": 100
+      },
+      "ratio": 1,
+      "p99Ratio": 1,
+      "throughputDrop": null,
+      "p": null,
+      "regression": false
+    },
+    {
+      "fixture": "array-500",
+      "metric": "commits-update",
+      "old": {
+        "median": 2,
+        "p99": 2,
+        "count": 100
+      },
+      "new": {
+        "median": 1,
+        "p99": 1,
+        "count": 100
+      },
+      "ratio": 0.5,
+      "p99Ratio": 0.5,
+      "throughputDrop": null,
+      "p": null,
+      "regression": false
+    },
+    {
+      "fixture": "array-1000",
+      "metric": "render-mount-wall",
+      "old": {
+        "median": 959.3968960000202,
+        "p99": 977.812707999954,
+        "count": 100
+      },
+      "new": {
+        "median": 879.6648545000062,
+        "p99": 895.6666669999831,
+        "count": 100
+      },
+      "ratio": 0.916893579880821,
+      "p99Ratio": 0.9159900047034624,
+      "throughputDrop": -9.077325672852243,
+      "p": 3.2534603149656737e-149,
+      "regression": false
+    },
+    {
+      "fixture": "array-1000",
+      "metric": "render-update-wall",
+      "old": {
+        "median": 39.30547949997708,
+        "p99": 43.93237500003306,
+        "count": 100
+      },
+      "new": {
+        "median": 42.288354500051355,
+        "p99": 45.75,
+        "count": 100
+      },
+      "ratio": 1.075889546140151,
+      "p99Ratio": 1.0413732469497852,
+      "throughputDrop": 6.557289451844883,
+      "p": 3.692073929114459e-42,
+      "regression": false
+    },
+    {
+      "fixture": "array-1000",
+      "metric": "profiler-mount",
+      "old": {
+        "median": 741.8190940076311,
+        "p99": 765.1764009919716,
+        "count": 100
+      },
+      "new": {
+        "median": 730.5189940123819,
+        "p99": 747.2666610007873,
+        "count": 100
+      },
+      "ratio": 0.9847670407966973,
+      "p99Ratio": 0.9765939723598817,
+      "throughputDrop": -1.5742961639662045,
+      "p": 8.107745861682057e-27,
+      "regression": false
+    },
+    {
+      "fixture": "array-1000",
+      "metric": "profiler-update",
+      "old": {
+        "median": 22.119632999121677,
+        "p99": 24.62298500124598,
+        "count": 100
+      },
+      "new": {
+        "median": 22.066001001687255,
+        "p99": 26.163224997697398,
+        "count": 100
+      },
+      "ratio": 0.9975753667596315,
+      "p99Ratio": 1.062552935656399,
+      "throughputDrop": -0.20147337507940843,
+      "p": 0.6384451119303929,
+      "regression": false
+    },
+    {
+      "fixture": "array-1000",
+      "metric": "commits-mount",
+      "old": {
+        "median": 2,
+        "p99": 2,
+        "count": 100
+      },
+      "new": {
+        "median": 2,
+        "p99": 2,
+        "count": 100
+      },
+      "ratio": 1,
+      "p99Ratio": 1,
+      "throughputDrop": null,
+      "p": null,
+      "regression": false
+    },
+    {
+      "fixture": "array-1000",
+      "metric": "commits-update",
+      "old": {
+        "median": 2,
+        "p99": 2,
+        "count": 100
+      },
+      "new": {
+        "median": 1,
+        "p99": 1,
+        "count": 100
+      },
+      "ratio": 0.5,
+      "p99Ratio": 0.5,
+      "throughputDrop": null,
+      "p": null,
+      "regression": false
+    },
+    {
+      "fixture": "oneOf-5",
+      "metric": "render-mount-wall",
+      "old": {
+        "median": 4.679937500040978,
+        "p99": 5.215542000019923,
+        "count": 100
+      },
+      "new": {
+        "median": 6.6878334999782965,
+        "p99": 8.036874999990687,
+        "count": 100
+      },
+      "ratio": 1.4290433365658701,
+      "p99Ratio": 1.5409472304048144,
+      "throughputDrop": 29.94613096006159,
+      "p": 3.0764821419521416e-69,
+      "regression": true
+    },
+    {
+      "fixture": "oneOf-5",
+      "metric": "render-update-wall",
+      "old": {
+        "median": 6.149458499974571,
+        "p99": 7.185791000025347,
+        "count": 100
+      },
+      "new": {
+        "median": 8.761937499977648,
+        "p99": 9.595499999937601,
+        "count": 100
+      },
+      "ratio": 1.4248307391640873,
+      "p99Ratio": 1.3353435968154035,
+      "throughputDrop": 28.938134902279312,
+      "p": 1.013296027574279e-68,
+      "regression": true
+    },
+    {
+      "fixture": "oneOf-5",
+      "metric": "profiler-mount",
+      "old": {
+        "median": 2.51717349892715,
+        "p99": 3.031658001593314,
+        "count": 100
+      },
+      "new": {
+        "median": 3.713460499944631,
+        "p99": 4.769913999480195,
+        "count": 100
+      },
+      "ratio": 1.4752501174541022,
+      "p99Ratio": 1.5733681031875382,
+      "throughputDrop": 30.573766584353756,
+      "p": 4.796746276744284e-50,
+      "regression": true
+    },
+    {
+      "fixture": "oneOf-5",
+      "metric": "profiler-update",
+      "old": {
+        "median": 2.149168999574613,
+        "p99": 2.923621999216266,
+        "count": 100
+      },
+      "new": {
+        "median": 1.8758670000825077,
+        "p99": 2.23133000114467,
+        "count": 100
+      },
+      "ratio": 0.8728336396317833,
+      "p99Ratio": 0.7632074193390327,
+      "throughputDrop": -26.54580274401612,
+      "p": 2.4660659978723003e-18,
+      "regression": false
+    },
+    {
+      "fixture": "oneOf-5",
+      "metric": "commits-mount",
+      "old": {
+        "median": 3,
+        "p99": 3,
+        "count": 100
+      },
+      "new": {
+        "median": 2,
+        "p99": 2,
+        "count": 100
+      },
+      "ratio": 0.6666666666666666,
+      "p99Ratio": 0.6666666666666666,
+      "throughputDrop": null,
+      "p": null,
+      "regression": false
+    },
+    {
+      "fixture": "oneOf-5",
+      "metric": "commits-update",
+      "old": {
+        "median": 6,
+        "p99": 6,
+        "count": 100
+      },
+      "new": {
+        "median": 2,
+        "p99": 2,
+        "count": 100
+      },
+      "ratio": 0.3333333333333333,
+      "p99Ratio": 0.3333333333333333,
+      "throughputDrop": null,
+      "p": null,
+      "regression": false
+    },
+    {
+      "fixture": "oneOf-10",
+      "metric": "render-mount-wall",
+      "old": {
+        "median": 4.899457999970764,
+        "p99": 5.336999999941327,
+        "count": 100
+      },
+      "new": {
+        "median": 7.143354500003625,
+        "p99": 8.465499999932945,
+        "count": 100
+      },
+      "ratio": 1.4579887203944295,
+      "p99Ratio": 1.5861907438684677,
+      "throughputDrop": 33.67896771923044,
+      "p": 5.672638151148932e-72,
+      "regression": true
+    },
+    {
+      "fixture": "oneOf-10",
+      "metric": "render-update-wall",
+      "old": {
+        "median": 6.15677100000903,
+        "p99": 7.3125,
+        "count": 100
+      },
+      "new": {
+        "median": 9.007792000018526,
+        "p99": 9.965666999923997,
+        "count": 100
+      },
+      "ratio": 1.4630708207281566,
+      "p99Ratio": 1.3628262563998628,
+      "throughputDrop": 31.639344527921764,
+      "p": 3.623384019122692e-65,
+      "regression": true
+    },
+    {
+      "fixture": "oneOf-10",
+      "metric": "profiler-mount",
+      "old": {
+        "median": 2.788231500191614,
+        "p99": 3.182154000736773,
+        "count": 100
+      },
+      "new": {
+        "median": 4.176957500458229,
+        "p99": 5.300335999461822,
+        "count": 100
+      },
+      "ratio": 1.498066964730575,
+      "p99Ratio": 1.6656440883233874,
+      "throughputDrop": 36.05271150482575,
+      "p": 4.2599472616354954e-64,
+      "regression": true
+    },
+    {
+      "fixture": "oneOf-10",
+      "metric": "profiler-update",
+      "old": {
+        "median": 2.3330359993851744,
+        "p99": 3.090621000970714,
+        "count": 100
+      },
+      "new": {
+        "median": 1.8721400003996678,
+        "p99": 2.2702079999726266,
+        "count": 100
+      },
+      "ratio": 0.8024479694668378,
+      "p99Ratio": 0.734547522733972,
+      "throughputDrop": -25.741082654836166,
+      "p": 9.010365773801777e-17,
+      "regression": false
+    },
+    {
+      "fixture": "oneOf-10",
+      "metric": "commits-mount",
+      "old": {
+        "median": 3,
+        "p99": 3,
+        "count": 100
+      },
+      "new": {
+        "median": 2,
+        "p99": 2,
+        "count": 100
+      },
+      "ratio": 0.6666666666666666,
+      "p99Ratio": 0.6666666666666666,
+      "throughputDrop": null,
+      "p": null,
+      "regression": false
+    },
+    {
+      "fixture": "oneOf-10",
+      "metric": "commits-update",
+      "old": {
+        "median": 6,
+        "p99": 6,
+        "count": 100
+      },
+      "new": {
+        "median": 2,
+        "p99": 2,
+        "count": 100
+      },
+      "ratio": 0.3333333333333333,
+      "p99Ratio": 0.3333333333333333,
+      "throughputDrop": null,
+      "p": null,
+      "regression": false
+    },
+    {
+      "fixture": "oneOf-20",
+      "metric": "render-mount-wall",
+      "old": {
+        "median": 5.163708499982022,
+        "p99": 6.242291999980807,
+        "count": 100
+      },
+      "new": {
+        "median": 8.116916999977548,
+        "p99": 9.407665999955498,
+        "count": 100
+      },
+      "ratio": 1.57191619162968,
+      "p99Ratio": 1.5070852180552308,
+      "throughputDrop": 37.764951806735716,
+      "p": 7.185248442249285e-83,
+      "regression": true
+    },
+    {
+      "fixture": "oneOf-20",
+      "metric": "render-update-wall",
+      "old": {
+        "median": 6.207583500014152,
+        "p99": 7.338667000061832,
+        "count": 100
+      },
+      "new": {
+        "median": 9.494208500022069,
+        "p99": 10.648958000005223,
+        "count": 100
+      },
+      "ratio": 1.5294532083217927,
+      "p99Ratio": 1.4510752429447336,
+      "throughputDrop": 35.23304486195632,
+      "p": 2.9867423172967585e-71,
+      "regression": true
+    },
+    {
+      "fixture": "oneOf-20",
+      "metric": "profiler-mount",
+      "old": {
+        "median": 3.0950885009369813,
+        "p99": 3.70683699962683,
+        "count": 100
+      },
+      "new": {
+        "median": 5.322043500083964,
+        "p99": 6.390579001395963,
+        "count": 100
+      },
+      "ratio": 1.7195125433320608,
+      "p99Ratio": 1.7239978456132026,
+      "throughputDrop": 43.76351765816643,
+      "p": 3.543440901173476e-74,
+      "regression": true
+    },
+    {
+      "fixture": "oneOf-20",
+      "metric": "profiler-update",
+      "old": {
+        "median": 2.4192655005608685,
+        "p99": 3.0642790003912523,
+        "count": 100
+      },
+      "new": {
+        "median": 1.9420450009056367,
+        "p99": 2.4815149997593835,
+        "count": 100
+      },
+      "ratio": 0.8027415760921669,
+      "p99Ratio": 0.8098201891676768,
+      "throughputDrop": -23.108964213734474,
+      "p": 1.7423897107949483e-14,
+      "regression": false
+    },
+    {
+      "fixture": "oneOf-20",
+      "metric": "commits-mount",
+      "old": {
+        "median": 3,
+        "p99": 3,
+        "count": 100
+      },
+      "new": {
+        "median": 2,
+        "p99": 2,
+        "count": 100
+      },
+      "ratio": 0.6666666666666666,
+      "p99Ratio": 0.6666666666666666,
+      "throughputDrop": null,
+      "p": null,
+      "regression": false
+    },
+    {
+      "fixture": "oneOf-20",
+      "metric": "commits-update",
+      "old": {
+        "median": 6,
+        "p99": 6,
+        "count": 100
+      },
+      "new": {
+        "median": 2,
+        "p99": 2,
+        "count": 100
+      },
+      "ratio": 0.3333333333333333,
+      "p99Ratio": 0.3333333333333333,
+      "throughputDrop": null,
+      "p": null,
+      "regression": false
+    },
+    {
+      "fixture": "array-push-100",
+      "metric": "render-mount-wall",
+      "old": {
+        "median": 4.301520500004699,
+        "p99": 4.649000000004889,
+        "count": 100
+      },
+      "new": {
+        "median": 4.844250499998452,
+        "p99": 5.309291999998095,
+        "count": 100
+      },
+      "ratio": 1.1261716641808774,
+      "p99Ratio": 1.1420288234012714,
+      "throughputDrop": 18.708635525458483,
+      "p": 1.8786178992981216e-18,
+      "regression": true
+    },
+    {
+      "fixture": "array-push-100",
+      "metric": "render-update-wall",
+      "old": {
+        "median": 379.7884789999989,
+        "p99": 420.75762499999837,
+        "count": 100
+      },
+      "new": {
+        "median": 568.1346664999946,
+        "p99": 616.2998749999988,
+        "count": 100
+      },
+      "ratio": 1.4959239100562507,
+      "p99Ratio": 1.4647384583939536,
+      "throughputDrop": 33.08833216158163,
+      "p": 6.281691805174114e-91,
+      "regression": true
+    },
+    {
+      "fixture": "array-push-100",
+      "metric": "profiler-mount",
+      "old": {
+        "median": 1.435731000056876,
+        "p99": 1.6751250000306754,
+        "count": 100
+      },
+      "new": {
+        "median": 1.9384385000157636,
+        "p99": 2.390497000043979,
+        "count": 100
+      },
+      "ratio": 1.3501404510587103,
+      "p99Ratio": 1.427055891351513,
+      "throughputDrop": 25.718011013537833,
+      "p": 1.4343138066853505e-86,
+      "regression": true
+    },
+    {
+      "fixture": "array-push-100",
+      "metric": "profiler-update",
+      "old": {
+        "median": 153.66425350095142,
+        "p99": 185.23998099924938,
+        "count": 100
+      },
+      "new": {
+        "median": 182.2626195000903,
+        "p99": 210.01152600001842,
+        "count": 100
+      },
+      "ratio": 1.186109425891701,
+      "p99Ratio": 1.1337267736000762,
+      "throughputDrop": 14.881756642647282,
+      "p": 3.618627054200304e-24,
+      "regression": false
+    },
+    {
+      "fixture": "array-push-100",
+      "metric": "commits-mount",
+      "old": {
+        "median": 2,
+        "p99": 2,
+        "count": 100
+      },
+      "new": {
+        "median": 2,
+        "p99": 2,
+        "count": 100
+      },
+      "ratio": 1,
+      "p99Ratio": 1,
+      "throughputDrop": null,
+      "p": null,
+      "regression": false
+    },
+    {
+      "fixture": "array-push-100",
+      "metric": "commits-update",
+      "old": {
+        "median": 200,
+        "p99": 200,
+        "count": 100
+      },
+      "new": {
+        "median": 100,
+        "p99": 100,
+        "count": 100
+      },
+      "ratio": 0.5,
+      "p99Ratio": 0.5,
+      "throughputDrop": null,
+      "p": null,
+      "regression": false
+    },
+    {
+      "fixture": "array-replace-200",
+      "metric": "render-mount-wall",
+      "old": {
+        "median": 4.4667500000014115,
+        "p99": 5.043459000000439,
+        "count": 100
+      },
+      "new": {
+        "median": 5.107457999996768,
+        "p99": 5.57012499999928,
+        "count": 100
+      },
+      "ratio": 1.1434394134426942,
+      "p99Ratio": 1.1044255539697645,
+      "throughputDrop": 19.897646612767616,
+      "p": 5.591635867129468e-21,
+      "regression": true
+    },
+    {
+      "fixture": "array-replace-200",
+      "metric": "render-update-wall",
+      "old": {
+        "median": 154.50666699999965,
+        "p99": 185.5345840000009,
+        "count": 100
+      },
+      "new": {
+        "median": 173.7627709999988,
+        "p99": 209.77333400000134,
+        "count": 100
+      },
+      "ratio": 1.1246295993168967,
+      "p99Ratio": 1.1306427593035717,
+      "throughputDrop": 11.377883773263553,
+      "p": 1.1630350669674131e-28,
+      "regression": false
+    },
+    {
+      "fixture": "array-replace-200",
+      "metric": "profiler-mount",
+      "old": {
+        "median": 1.4852294999946025,
+        "p99": 1.8859510000111186,
+        "count": 100
+      },
+      "new": {
+        "median": 2.050166499995612,
+        "p99": 2.4542060000094352,
+        "count": 100
+      },
+      "ratio": 1.38037017174993,
+      "p99Ratio": 1.3013095250061992,
+      "throughputDrop": 25.911321324423675,
+      "p": 4.556852202560873e-64,
+      "regression": true
+    },
+    {
+      "fixture": "array-replace-200",
+      "metric": "profiler-update",
+      "old": {
+        "median": 128.73628500009636,
+        "p99": 161.9760230001193,
+        "count": 100
+      },
+      "new": {
+        "median": 139.53747749998183,
+        "p99": 171.7684539999791,
+        "count": 100
+      },
+      "ratio": 1.0839016948475513,
+      "p99Ratio": 1.0604560528063625,
+      "throughputDrop": 7.966498620685347,
+      "p": 1.2027318350400035e-12,
+      "regression": false
+    },
+    {
+      "fixture": "array-replace-200",
+      "metric": "commits-mount",
+      "old": {
+        "median": 2,
+        "p99": 2,
+        "count": 100
+      },
+      "new": {
+        "median": 2,
+        "p99": 2,
+        "count": 100
+      },
+      "ratio": 1,
+      "p99Ratio": 1,
+      "throughputDrop": null,
+      "p": null,
+      "regression": false
+    },
+    {
+      "fixture": "array-replace-200",
+      "metric": "commits-update",
+      "old": {
+        "median": 1,
+        "p99": 1,
+        "count": 100
+      },
+      "new": {
+        "median": 1,
+        "p99": 1,
+        "count": 100
+      },
+      "ratio": 1,
+      "p99Ratio": 1,
+      "throughputDrop": null,
+      "p": null,
+      "regression": false
+    },
+    {
+      "fixture": "array-push-remove-100",
+      "metric": "render-mount-wall",
+      "old": {
+        "median": 4.984832999996797,
+        "p99": 6.549542000000656,
+        "count": 100
+      },
+      "new": {
+        "median": 6.052750000002561,
+        "p99": 7.881792000000132,
+        "count": 100
+      },
+      "ratio": 1.2142332551574848,
+      "p99Ratio": 1.2034111698191023,
+      "throughputDrop": 20.06370846487536,
+      "p": 8.985614611088897e-18,
+      "regression": true
+    },
+    {
+      "fixture": "array-push-remove-100",
+      "metric": "render-update-wall",
+      "old": {
+        "median": 759.9030419999999,
+        "p99": 832.1346659999981,
+        "count": 100
+      },
+      "new": {
+        "median": 1162.7063960000014,
+        "p99": 1287.646332999997,
+        "count": 100
+      },
+      "ratio": 1.5300720377955817,
+      "p99Ratio": 1.5474013829872098,
+      "throughputDrop": 35.43426047998067,
+      "p": 4.152795440292176e-93,
+      "regression": true
+    },
+    {
+      "fixture": "array-push-remove-100",
+      "metric": "profiler-mount",
+      "old": {
+        "median": 2.2421665000329085,
+        "p99": 3.455098999940674,
+        "count": 100
+      },
+      "new": {
+        "median": 2.9947110000648536,
+        "p99": 4.439128999918466,
+        "count": 100
+      },
+      "ratio": 1.3356327462839623,
+      "p99Ratio": 1.2848051531937836,
+      "throughputDrop": 23.35172943815834,
+      "p": 3.9251644143833153e-16,
+      "regression": true
+    },
+    {
+      "fixture": "array-push-remove-100",
+      "metric": "profiler-update",
+      "old": {
+        "median": 277.0697444957914,
+        "p99": 323.24888800122426,
+        "count": 100
+      },
+      "new": {
+        "median": 326.0665365001332,
+        "p99": 379.3048999956809,
+        "count": 100
+      },
+      "ratio": 1.1768392001570063,
+      "p99Ratio": 1.173414400096078,
+      "throughputDrop": 16.9091697430235,
+      "p": 9.88364520837313e-24,
+      "regression": true
+    },
+    {
+      "fixture": "array-push-remove-100",
+      "metric": "commits-mount",
+      "old": {
+        "median": 2,
+        "p99": 2,
+        "count": 100
+      },
+      "new": {
+        "median": 2,
+        "p99": 2,
+        "count": 100
+      },
+      "ratio": 1,
+      "p99Ratio": 1,
+      "throughputDrop": null,
+      "p": null,
+      "regression": false
+    },
+    {
+      "fixture": "array-push-remove-100",
+      "metric": "commits-update",
+      "old": {
+        "median": 400,
+        "p99": 400,
+        "count": 100
+      },
+      "new": {
+        "median": 200,
+        "p99": 200,
+        "count": 100
+      },
+      "ratio": 0.5,
+      "p99Ratio": 0.5,
+      "throughputDrop": null,
+      "p": null,
+      "regression": false
+    },
+    {
+      "fixture": "computed-visible-derived",
+      "metric": "render-mount-wall",
+      "old": {
+        "median": 4.690999499999975,
+        "p99": 6.089625000000524,
+        "count": 100
+      },
+      "new": {
+        "median": 6.059499999999844,
+        "p99": 6.473958000000039,
+        "count": 100
+      },
+      "ratio": 1.291728980145889,
+      "p99Ratio": 1.0631127532482676,
+      "throughputDrop": 19.862245748550734,
+      "p": 4.069397474276971e-42,
+      "regression": true
+    },
+    {
+      "fixture": "computed-visible-derived",
+      "metric": "render-update-wall",
+      "old": {
+        "median": 7.98081250000007,
+        "p99": 9.531625000000076,
+        "count": 100
+      },
+      "new": {
+        "median": 9.787375500000053,
+        "p99": 10.582167000000027,
+        "count": 100
+      },
+      "ratio": 1.2263632932110569,
+      "p99Ratio": 1.1102164636145402,
+      "throughputDrop": 23.26725793578769,
+      "p": 4.707575148297406e-26,
+      "regression": true
+    },
+    {
+      "fixture": "computed-visible-derived",
+      "metric": "profiler-mount",
+      "old": {
+        "median": 2.6492324999956054,
+        "p99": 2.889384000000973,
+        "count": 100
+      },
+      "new": {
+        "median": 3.0282080000004044,
+        "p99": 3.3028360000007524,
+        "count": 100
+      },
+      "ratio": 1.1430510534675336,
+      "p99Ratio": 1.1430934759795306,
+      "throughputDrop": 13.909251283897216,
+      "p": 8.404715360053733e-22,
+      "regression": false
+    },
+    {
+      "fixture": "computed-visible-derived",
+      "metric": "profiler-update",
+      "old": {
+        "median": 1.1935235000005378,
+        "p99": 1.6842480000013893,
+        "count": 100
+      },
+      "new": {
+        "median": 1.0979965000017273,
+        "p99": 1.4825139999993553,
+        "count": 100
+      },
+      "ratio": 0.9199621959695243,
+      "p99Ratio": 0.8802231025348597,
+      "throughputDrop": -9.982609172000867,
+      "p": 0.0010633544059526782,
+      "regression": false
+    },
+    {
+      "fixture": "computed-visible-derived",
+      "metric": "commits-mount",
+      "old": {
+        "median": 3,
+        "p99": 3,
+        "count": 100
+      },
+      "new": {
+        "median": 2,
+        "p99": 2,
+        "count": 100
+      },
+      "ratio": 0.6666666666666666,
+      "p99Ratio": 0.6666666666666666,
+      "throughputDrop": null,
+      "p": null,
+      "regression": false
+    },
+    {
+      "fixture": "computed-visible-derived",
+      "metric": "commits-update",
+      "old": {
+        "median": 7,
+        "p99": 7,
+        "count": 100
+      },
+      "new": {
+        "median": 3,
+        "p99": 3,
+        "count": 100
+      },
+      "ratio": 0.42857142857142855,
+      "p99Ratio": 0.42857142857142855,
+      "throughputDrop": null,
+      "p": null,
+      "regression": false
+    }
+  ]
+}

@@ -18,9 +18,13 @@ export default defineConfig({
   test: {
     globals: false,
     environment: 'node',
+    fileParallelism: false,
+    maxWorkers: 1,
     include: ['bench/**/*.bench.ts'],
     benchmark: {
-      include: ['bench/**/*.bench.ts'],
+      include: [
+        'bench/{branch-strategy-init,compute-recalculate,event-cascade,find-node,nodeFromJSONSchema,object-pending-read,render-delay}.bench.ts',
+      ],
       outputJson: 'bench/.results/latest.json',
     },
   },

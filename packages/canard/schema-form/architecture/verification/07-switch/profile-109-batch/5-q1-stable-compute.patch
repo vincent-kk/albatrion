@@ -1,0 +1,148 @@
+diff --git a/packages/canard/schema-form/src/core/settle/utils/compute/computeNode.ts b/packages/canard/schema-form/src/core/settle/utils/compute/computeNode.ts
+--- a/packages/canard/schema-form/src/core/settle/utils/compute/computeNode.ts
++++ b/packages/canard/schema-form/src/core/settle/utils/compute/computeNode.ts
+@@ -11,6 +11,7 @@
+ import { updateOutput } from './updateOutput';
+ import { getHostWheelBudgetCap } from '../gates/getGateBudgetCap';
+ import { hasIndependentLeafDefaults } from './utils/hasIndependentLeafDefaults';
++import { computeStableNode } from './utils/computeStableNode';
+ 
+ /**
+  * Finish a dirty subtree with one descent and a bounded host gate wheel.
+@@ -22,6 +23,11 @@
+   node: Self,
+   context: SettlementContext<Self>,
+ ): void => {
++  if (!context.hasGates && context.root.runtime.blueprint.capabilities.branchless &&
++    context.shapeDirtyPaths.size === 0 && context.entered.size === 0) {
++    computeStableNode(node, context);
++    return;
++  }
+   if (!context.dirtyPaths.has(node.path)) return;
+   if (node === context.root && context.kind === 'load' &&
+     node.behavior.type === 'object' && node.behavior.strategy === 'branch' &&
+diff --git a/packages/canard/schema-form/src/core/settle/DETAIL.md b/packages/canard/schema-form/src/core/settle/DETAIL.md
+--- a/packages/canard/schema-form/src/core/settle/DETAIL.md
++++ b/packages/canard/schema-form/src/core/settle/DETAIL.md
+@@ -1,6 +1,8 @@
+ # settle 계약
+ 
+ ## Requirements
++
++- 계산 진입에서 branchless와 빈 shapeDirty·entered를 증명한 경우만 안정 계산 몸통으로 직접 재귀합니다. 각 노드의 dirty 확인·stateDirty 표시·자식 post-order·동일 updateOutput 인자·dirty 삭제와 터미널 루트의 schema 선택은 유지합니다. 게이트·생김·형상 변경은 기존 계산을 사용합니다. 속도 비용은 진입의 O(1) 부재 확인과 기존 O(방문 노드) 작업이며 노드마다 반복하던 gate/appearance/shape 검사·일반 shell을 제거합니다. 메모리 비용은 기존 dirtyChildren 배열과 깊이 D의 재귀 stack을 유지하고 새 heap container·노드/문맥 필드·보유 cache·폼 간 공유는 없습니다(109 갱신 Q1).
+ 
+ - 분기·파생·잠복 원본이 없고 살아 있는 비루트 scalar의 현재 원본·입력·유효 타입이 같은 경우만 쓰기 진입을 특화합니다. dispose·가상·detach·잠복 검사와 빈 wrong-kind release의 호출을 생략하되 조상 표시와 실제 wrong-kind 처리, 표시·계산·전이 조건·상태 키·커밋·배달 순서는 유지합니다. 이 증명은 빈 derive 검사와 대상 유효 타입 재해석에만 전달하며 실제 생김·이탈·배열·오류 처리는 기존 마감입니다. 속도 비용은 고정 수의 O(1) 타입·capability·size 검사이며 빈 helper·배열·sort callback 및 중복 유효 타입 해석을 제거합니다. 메모리 비용은 호출별 boolean/local만 추가하고 빈 release 임시 배열·closure를 줄이며 새 상주 메모리·문맥 필드·폼 간 공유는 없습니다(109 갱신 F1).
+ 
+diff --git a/packages/canard/schema-form/src/core/settle/utils/compute/utils/computeStableNode.ts b/packages/canard/schema-form/src/core/settle/utils/compute/utils/computeStableNode.ts
+new file mode 100644
+--- /dev/null
++++ b/packages/canard/schema-form/src/core/settle/utils/compute/utils/computeStableNode.ts
+@@ -0,0 +1,29 @@
++import type { SchemaNodeRecord } from '../../../../record';
++import type { SettlementContext } from '../../../type';
++import { dirtyChildren } from '../dirtyChildren';
++import { selectNodeSchema } from '../selectNodeSchema';
++import { updateOutput } from '../updateOutput';
++
++/**
++ * Consume a dirty frontier whose gates, appearances, and shape work are absent.
++ * @param node - Live record reached under the caller's branchless stable proof
++ * @param context - Call with empty entered and shapeDirtyPaths containers
++ * @returns Nothing; updates records in child post-order and consumes dirty paths
++ */
++export const computeStableNode = <Self extends SchemaNodeRecord<Self>>(
++  node: Self,
++  context: SettlementContext<Self>,
++): void => {
++  if (!context.dirtyPaths.has(node.path)) return;
++  context.stateDirtyNodes.add(node);
++  if (node.behavior.strategy === 'branch') {
++    const recalculated = dirtyChildren(node, context);
++    for (let index = 0; index < recalculated.length; index++)
++      computeStableNode(recalculated[index], context);
++    updateOutput(node, context, recalculated);
++  } else {
++    if (node.parent === null) selectNodeSchema(node, context);
++    updateOutput(node, context);
++  }
++  context.dirtyPaths.delete(node.path);
++};
+diff --git a/packages/canard/schema-form/src/core/settle/__tests__/settle.stable-compute-work.test.ts b/packages/canard/schema-form/src/core/settle/__tests__/settle.stable-compute-work.test.ts
+new file mode 100644
+--- /dev/null
++++ b/packages/canard/schema-form/src/core/settle/__tests__/settle.stable-compute-work.test.ts
+@@ -0,0 +1,74 @@
++import { afterEach, expect, it, vi } from 'vitest';
++
++import { SetValueOption } from '../../types/value';
++import { loadSchemaNodeAtMount, writeSchemaNode } from '../index';
++import { createSettlementContext } from '../utils/settlement/createSettlementContext';
++import { finishSettlement } from '../utils/settlement/finishSettlement';
++import { getSettlementScratch } from '../utils/write/getSettlementScratch';
++import { releaseSettlementScratch } from '../utils/write/releaseSettlementScratch';
++import { markWrite } from '../utils/write/markWrite';
++import { registerRecalculation } from '../utils/write/registerRecalculation';
++import { computeNode } from '../utils/compute/computeNode';
++import * as selections from '../utils/compute/selectChildren';
++import { createTestTree } from './fixtures/createTestTree';
++
++afterEach(() => vi.restoreAllMocks());
++
++it('keeps dirty work and child post-order without per-node shape or appearance membership checks', () => {
++  const { root, visits } = createTestTree({ type: 'object', properties: {
++    value: { type: 'string' }, sibling: { type: 'number', default: 3 },
++  } });
++  loadSchemaNodeAtMount(root, { value: 'before' }, SetValueOption.Overwrite);
++  const leaf = root.structure!.value;
++  for (let index = 0; index < 2; index++) {
++    const value = index === 0 ? 'first' : 'later';
++    const scratch = getSettlementScratch(root.runtime);
++    const context = createSettlementContext(leaf, 'input', SetValueOption.Overwrite, scratch);
++    markWrite(leaf, value, context);
++    registerRecalculation(context);
++    const shape = vi.spyOn(context.shapeDirtyPaths, 'has');
++    const entered = vi.spyOn(context.entered, 'has');
++    visits.length = 0;
++    computeNode(root, context);
++    expect(shape).not.toHaveBeenCalled();
++    expect(entered).not.toHaveBeenCalled();
++    expect(visits).toEqual(['/value', '']);
++    expect([...context.stateDirtyNodes]).toEqual([root, leaf]);
++    expect(context.dirtyPaths.size).toBe(0);
++    expect(root.emit).toEqual({ value, sibling: 3 });
++    shape.mockRestore();
++    entered.mockRestore();
++    finishSettlement(context, scratch);
++    releaseSettlementScratch(scratch);
++    expect(root.runtime.commitNumber).toBe(index + 2);
++  }
++});
++
++it('retains child selection and fills for a branchless shape change', () => {
++  const { root } = createTestTree({ type: 'object', properties: {
++    rows: { type: 'array', items: { type: 'object', properties: {
++      value: { type: 'string', default: 'filled' },
++    } } },
++  } });
++  loadSchemaNodeAtMount(root, { rows: [] }, SetValueOption.Overwrite);
++  const select = vi.spyOn(selections, 'selectChildren');
++  writeSchemaNode(root.structure!.rows, [{}], 'callerReplace', SetValueOption.Overwrite);
++  expect(select.mock.calls.length).toBeGreaterThan(0);
++  expect(root.emit).toEqual({ rows: [{ value: 'filled' }] });
++});
++
++it('retains gate visits, appearance fills and exit when a declaration changes', () => {
++  const { root } = createTestTree({ type: 'object', properties: {
++    flag: { type: 'boolean' }, gated: { type: 'string', default: 'filled',
++      controls: { active: '../flag' } },
++  } });
++  loadSchemaNodeAtMount(root, { flag: false }, SetValueOption.Overwrite);
++  const select = vi.spyOn(selections, 'selectChildren');
++  writeSchemaNode(root.structure!.flag, true, 'input', SetValueOption.Overwrite);
++  expect(select.mock.calls.length).toBeGreaterThan(0);
++  expect(root.emit).toEqual({ flag: true, gated: 'filled' });
++  const gated = root.structure!.gated;
++  writeSchemaNode(root.structure!.flag, false, 'input', SetValueOption.Overwrite);
++  expect(gated.detached).toBe(true);
++  expect(root.emit).toEqual({ flag: false });
++});

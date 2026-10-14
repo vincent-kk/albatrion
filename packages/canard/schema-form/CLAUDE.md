@@ -53,12 +53,12 @@ npx -p @slats/agents-assets-sync inject-agents-settings --package=@canard/schema
 ### Plugin System (`src/app/plugin/`)
 
 - Validator 플러그인: AJV7/AJV8 등 JSON Schema 검증
-- UI 컴포넌트 플러그인: `FormGroup`, `FormLabel`, `FormInput`, `FormError`
-- FormTypeInput 플러그인: 커스텀 입력 컴포넌트
+- UI 컴포넌트 플러그인: `FieldRenderer`, `FormLabelRenderer`, `FormInputRenderer`, `FormErrorRenderer`
+- FieldInput 플러그인: 커스텀 입력 컴포넌트
 
 ### Error Isolation (user-injected render surfaces)
 
-사용자 주입 컴포넌트(FormTypeRenderer/FormTypeInput, virtualization `Placeholder` 등)는 반드시 `@winglet/react-utils/hoc`의 `withErrorBoundary`로 감싼다 — 하나가 렌더 중 throw해도 폼 전체가 아니라 그 서브트리만 fallback으로 격리된다. 래핑은 **컴포넌트를 해석·소유하는 지점에서 1회**만: 렌더러는 `SchemaNodeProxy`/`SchemaNodeInputWrapper`가 `memo(withErrorBoundary(...))`로, `Placeholder`는 `VirtualizationManager` 생성자가 form당 1회 래핑해 모든 지연 필드가 동일 인스턴스를 공유한다. 소비처(개별 렌더 위치)마다 반복 래핑하지 말 것. (`helpers/virtualization`는 이 `Placeholder` 방어만 React 예외로 허용 — INTENT.md 참조.)
+사용자 주입 컴포넌트(FieldRenderer/FieldInput, virtualization `Placeholder` 등)는 반드시 오류 경계로 격리한다 — 하나가 렌더 중 throw해도 폼 전체가 아니라 그 서브트리만 fallback으로 격리된다. 경계는 **컴포넌트를 해석·소유하는 지점에서 1회**만 둔다: 렌더러는 `FieldProxy`가 `@winglet/react-utils/hoc`의 `ErrorBoundary`를 직접 쓰고(children이 렌더마다 새 엘리먼트라 memo로 감싸지 않음), 입력은 `fieldInputDefinition`의 사설 어댑터가 해석 지점에서 `ErrorBoundary`를 한 번 적용하며, `Placeholder`는 `VirtualizationManager` 생성자가 form당 1회 `withErrorBoundary`로 래핑해 모든 지연 필드가 동일 인스턴스를 공유한다. 소비처(개별 렌더 위치)마다 반복 래핑하지 말 것. (`helpers/virtualization`는 이 `Placeholder` 방어만 React 예외로 허용 — INTENT.md 참조.)
 
 ### Key APIs
 
@@ -67,29 +67,32 @@ npx -p @slats/agents-assets-sync inject-agents-settings --package=@canard/schema
 - `registerPlugin()` — 플러그인 전역 등록 (렌더 전 필수)
 - `node.find('/path')` — JSONPointer 노드 탐색 (`..` 부모, `*` 와일드카드는 제한적 사용)
 - `node.value` / `node.enhancedValue` (가상 필드 포함)
-- `node.normalizedValue` — 스키마 옵션으로 정제된 값. `FormHandle.getValue`/`submit`/루트 방출/부모측 hydration 스냅샷이 이 값을 읽으며, `ArrayNode`는 `options.omitTrailing` 트림을 여기에 적용 (`omitEmpty`는 부모 전파 경로 전용)
+- `node.outputValue` — 스키마 옵션으로 정제된 값. `FormHandle.getValue`/`submit`/루트 방출/부모측 hydration 스냅샷이 이 값을 읽으며, `ArrayNode`는 `options.omitTrailing` 트림을 여기에 적용 (`omitEmpty`는 부모 전파 경로 전용)
 - `node.validate()` / `node.errors`
-- `node.subscribe()` — 노드 이벤트 구독 (cleanup 함수 반환). 구독 전에 전달된 이벤트는 재생되지 않음 — 상태 미러는 `useSchemaNodeSubscribe`의 `onSubscribe` catch-up 사용
-- `node.revision(mask?)` — 전달된 이벤트 배치의 단조 리비전 (리스너 유무 무관 집계, 늦은 구독자의 갭 감지용; `useSchemaNodeTracker`가 useSyncExternalStore 스냅샷으로 사용)
-- `virtualization` prop — 초대형 폼 렌더 가상화(지연 마운트). node tree는 전량 생성 유지, branch 자식 수 ≥ `threshold`면 `eagerCount` 이후 필드를 placeholder(`[data-path][data-deferred]` — identity는 `data-path`로 통일, 마커가 상태 구분)로 지연 → IO 교차·idle backfill·RequestFocus/Select 시 마운트(defer-once). 게이트는 `useChildNodeComponents`에서 bake, 조율은 `VirtualizationManager`(helpers/virtualization). placeholder 시각은 CSS `[data-deferred]` 셀렉터 또는 `Placeholder` 컴포넌트 옵션(공간 예약은 `estimateHeight` 소유, 컴포넌트는 시각 채움만). CSR 전용 — SSR 하이드레이션에서 켜지 말 것
+- `node.subscribe()` — 노드 이벤트 구독 (cleanup 함수 반환). 구독 전에 전달된 이벤트는 재생되지 않음 — 상태 미러는 `useFieldNodeSubscribe`의 `onSubscribe` catch-up 사용
+- `node.revision(mask?)` — 전달된 이벤트 배치의 단조 리비전 (리스너 유무 무관 집계, 늦은 구독자의 갭 감지용; `useFieldNodeTracker`가 useSyncExternalStore 스냅샷으로 사용)
+- `virtualization` prop — 초대형 폼 렌더 가상화(지연 마운트). node tree는 전량 생성 유지, branch 자식 수 ≥ `threshold`면 `eagerCount` 이후 필드를 placeholder(`[data-path][data-deferred]` — identity는 `data-path`로 통일, 마커가 상태 구분)로 지연 → IO 교차·idle backfill·RequestFocus/Select 시 마운트(defer-once). 게이트는 `useChildFields`에서 bake, 조율은 `VirtualizationManager`(helpers/virtualization). placeholder 시각은 CSS `[data-deferred]` 셀렉터 또는 `Placeholder` 컴포넌트 옵션(공간 예약은 `estimateHeight` 소유, 컴포넌트는 시각 채움만). CSR 전용 — SSR 하이드레이션에서 켜지 말 것
 
-### FormTypeInput 우선순위 (높음 → 낮음)
+### FieldInput 우선순위 (높음 → 낮음)
 
-1. 스키마 내 `FormTypeInput` 직접 지정
-2. `formTypeInputMap` 경로 매핑
-3. Form 레벨 `formTypeInputDefinitions`
-4. Provider `formTypeInputDefinitions`
+1. 스키마 `presentation.FieldInput` 직접 지정
+2. `fieldInputMap` 경로 매핑
+3. Form 레벨 `fieldInputDefinitions`
+4. Provider `fieldInputDefinitions`
 5. 플러그인 제공 정의
 
-### Computed Properties
+### Controls (조건·파생 속성)
 
 ```typescript
-computed: {
+controls: {
   visible: '../category === "premium"',
   readOnly: '../locked === true',
   watch: ['../category'],   // 명시적 의존성
 }
 ```
+
+키 집합은 닫혀 있으며 `src/core/engine/blueprint/utils/diagnostics/validateControlGroups.ts`의 `CONTROL_KEYS`가 목록(active, visible, readOnly, disabled, default, derived, unsetValue, resetInteraction, unsetOnInactive, fields, injectTo, discriminator, watch)이고, 모르는 키는 `UNKNOWN_GROUP_KEY` 오류다(단 `controls.fields[].controls`와 조각(oneOf·anyOf·allOf·then·else)의 controls는 앞의 9개 키만 허용).
+값의 형과 예는 `docs/en/SPECIFICATION.md`의 controls 절을 기준으로 한다.
 
 ### Validation Modes
 
@@ -118,9 +121,8 @@ product projects. Run `yarn test --run --project <name>` to select a project.
 - The renderer registers its handle on the wrapper root or render container.
   `playScenario` searches the received element and descendants, so story and
   render contexts share the same call shape.
-- Scenario stories mirror the same data and call `playScenario` from `play`;
-  usage stories are documentation-only. New-engine stories begin at the engine
-  switch; the current stories keep rendering the legacy public entry point.
+- Scenario stories render the current public Form entry, mirror the same data,
+  and call `playScenario` from `play`; usage stories may assert their own readouts (the handle call log and what the story itself renders); behavior contracts stay in shared scenarios.
 - Final observable behavior needs a render scenario; a core test alone does not
   verify DOM behavior. Harness skeleton tests and empty families claim no engine
   behavior coverage.
@@ -131,13 +133,13 @@ Identity → Tree Structure → Value Management → Computed Properties → Sta
 
 ## Key Hooks
 
-- `useSchemaNodeTracker`, `useSchemaNodeSubscribe`, `useChildNodeComponentMap`, `useChildNodeErrors`, `useFormSubmit` (`useSchemaNode` 는 내부 전용, 공개 index 미노출)
+- `useFieldNodeTracker`, `useFieldNodeSubscribe`, `useChildFieldMap`, `useChildFieldErrors`, `useFormSubmit` (`useFieldNode` 는 내부 전용, 공개 index 미노출)
 
 ## Key Type Utilities
 
-- `InferValueType<Schema>`, `InferSchemaNode<Schema>`, `FormHandle<Schema, Value>` (모두 공개 index 노출 — README `TypeScript Support` 절이 문서화)
-- `InferValueType` 은 `as const` 스키마에서만 의미 있음(없으면 `type` 이 `string` 으로 넓어져 `any`). `properties`/`items` 를 재귀하되 **모든 키를 optional** 로 내고 `Record<string, any>` 와 교차한다 — `computed.active` false·`options.omitEmpty` 가 런타임에 키를 제거하므로 required 표기는 지킬 수 없는 약속이고, 열린 타입이라야 `oneOf` 분기 키가 초과 속성으로 거부되지 않는다(`additionalProperties: false` 면 닫힘). 정확한 형태가 필요하면 `Form<Schema, Value>` / `FormHandle<Schema, Value>` 2번째 인자로 직접 주입할 것 — `defaultValue` 에 구체 객체를 넘기면 `Value` 가 그 리터럴에서 required 키로 추론돼 `FormHandle` 의 기본 `Value` 와 어긋나므로, ref 를 함께 쓸 때는 주입이 필수다
-- nullable 스키마는 `type: [..., 'null']` 과 deprecated `nullable: true` 둘 다 값 타입에 `| null` 을 붙인다 — 런타임(`BranchStrategy`·`validateSchemaType`)이 null 을 허용하므로 타입도 같은 계약을 따른다
+- `InferValueType<Schema>`, `InferFieldNode<Schema>`, `FormHandle<Schema, Value>` (모두 공개 index 노출 — README `TypeScript Support` 절이 문서화)
+- `InferValueType` 은 `as const` 스키마에서만 의미 있음(없으면 `type` 이 `string` 으로 넓어져 `any`). `properties`/`items` 를 재귀하되 **모든 키를 optional** 로 내고 `Record<string, any>` 와 교차한다 — `controls.active` false·`options.omitEmpty` 가 런타임에 키를 제거하므로 required 표기는 지킬 수 없는 약속이고, 열린 타입이라야 `oneOf` 분기 키가 초과 속성으로 거부되지 않는다(`additionalProperties: false` 면 닫힘). 정확한 형태가 필요하면 `Form<Schema, Value>` / `FormHandle<Schema, Value>` 2번째 인자로 직접 주입할 것 — `defaultValue` 에 구체 객체를 넘기면 `Value` 가 그 리터럴에서 required 키로 추론돼 `FormHandle` 의 기본 `Value` 와 어긋나므로, ref 를 함께 쓸 때는 주입이 필수다
+- nullable 스키마는 `type: [..., 'null']` 과 `nullable: true` 둘 다 값 타입에 `| null` 을 붙인다 — 런타임(`BranchStrategy`·`validateSchemaType`)이 null 을 허용하므로 타입도 같은 계약을 따른다. `nullable: true` 는 공식 지원 표기로 `type` 배열에 `'null'` 을 더한 것과 같으며 오류·경고가 없다
 
 ## Dependencies
 
@@ -145,4 +147,4 @@ Identity → Tree Structure → Value Management → Computed Properties → Sta
 
 ## Build Output
 
-`dist/index.cjs` + `dist/index.mjs` + `dist/index.d.ts` — raw 약 240KB / gzip 약 44KB. 비압축 배포는 의도된 선택(최종 minify 는 소비자 번들러에 위임)
+`dist/index.cjs` + `dist/index.mjs` + `dist/index.d.ts`. 비압축 배포는 의도된 선택(최종 minify 는 소비자 번들러에 위임)

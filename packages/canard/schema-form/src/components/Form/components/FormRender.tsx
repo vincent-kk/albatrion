@@ -9,20 +9,20 @@ import { useConstant, useReference } from '@winglet/react-utils/hook';
 
 import type { Dictionary, Fn } from '@aileron/declare';
 
-import { SchemaNodeProxy } from '@/schema-form/components/SchemaNode';
+import { FieldProxy } from '@/schema-form/components/Field';
 import type {
   AllowedValue,
-  ChildNodeComponentProps,
-  FormTypeInputProps,
-  FormTypeRendererProps,
+  ChildFieldProps,
+  FieldInputProps,
+  FieldRendererProps,
 } from '@/schema-form/types';
 
 export type FormRenderProps<Value extends AllowedValue> = {
   path?: string;
-  FormTypeInput?: ComponentType<FormTypeInputProps<Value>>;
-  children: Fn<[props: FormTypeRendererProps], ReactNode>;
+  FieldInput?: ComponentType<FieldInputProps<Value>>;
+  children: Fn<[props: FieldRendererProps], ReactNode>;
   Wrapper?: ComponentType<PropsWithChildren<Dictionary>>;
-} & ChildNodeComponentProps;
+} & ChildFieldProps;
 
 /**
  * Renders form fields with complete control through a custom render function.
@@ -115,23 +115,23 @@ export type FormRenderProps<Value extends AllowedValue> = {
 export const FormRender = memo(
   ({
     path,
-    FormTypeInput,
+    FieldInput,
     Wrapper,
     children,
     ...restProps
   }: FormRenderProps<AllowedValue>) => {
     const overridePropsRef = useReference(restProps);
     const constant = useConstant({
-      FormTypeInput: FormTypeInput as ComponentType<FormTypeInputProps>,
-      FormTypeRenderer: children,
+      FieldInput: FieldInput as ComponentType<FieldInputProps>,
+      FieldRenderer: children,
       Wrapper,
     });
     return (
-      <SchemaNodeProxy
+      <FieldProxy
         path={path}
         overridePropsRef={overridePropsRef}
-        FormTypeInput={constant.FormTypeInput}
-        FormTypeRenderer={constant.FormTypeRenderer}
+        FieldInput={constant.FieldInput}
+        FieldRenderer={constant.FieldRenderer}
         Wrapper={constant.Wrapper}
       />
     );

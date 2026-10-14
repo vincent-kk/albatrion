@@ -1,0 +1,1971 @@
+[
+  {
+    "id": "control",
+    "classification": "control",
+    "spec": "동일한 HEAD 번들의 별도 모듈 복사본을 비교하는 잡음 대조군",
+    "coverageFunctions": [],
+    "operations": [
+      {
+        "name": "array-100",
+        "mode": "later"
+      },
+      {
+        "name": "nested-d5-f4",
+        "mode": "later"
+      },
+      {
+        "name": "oneOf-40",
+        "mode": "later"
+      },
+      {
+        "name": "oneOf-5",
+        "mode": "first"
+      },
+      {
+        "name": "computed-visible-derived",
+        "mode": "first"
+      },
+      {
+        "name": "sample-0",
+        "mode": "first"
+      },
+      {
+        "name": "nested-d5-f4",
+        "mode": "mount"
+      },
+      {
+        "name": "array-100",
+        "mode": "first"
+      },
+      {
+        "name": "oneOf-40",
+        "mode": "first"
+      },
+      {
+        "name": "oneOf-5",
+        "mode": "later"
+      },
+      {
+        "name": "flat-500",
+        "mode": "mount"
+      },
+      {
+        "name": "computed-visible-derived",
+        "mode": "later"
+      },
+      {
+        "name": "nested-d5-f4",
+        "mode": "first"
+      },
+      {
+        "name": "oneOf-20",
+        "mode": "mount"
+      },
+      {
+        "name": "sample-0",
+        "mode": "later"
+      }
+    ],
+    "edits": []
+  },
+  {
+    "id": "total-write",
+    "classification": "structural",
+    "spec": "쓰기 전체의 진단용 천장입니다. WRITE·SETTLE·EVENT의 필수 결과를 제거하므로 그대로 구현할 수 없습니다.",
+    "coverageFunctions": [
+      "dispatchSetValue",
+      "setValue",
+      "writeSchemaNode"
+    ],
+    "operations": [
+      {
+        "name": "array-100",
+        "mode": "later"
+      },
+      {
+        "name": "nested-d5-f4",
+        "mode": "later"
+      },
+      {
+        "name": "oneOf-40",
+        "mode": "later"
+      },
+      {
+        "name": "oneOf-5",
+        "mode": "first"
+      },
+      {
+        "name": "computed-visible-derived",
+        "mode": "first"
+      },
+      {
+        "name": "sample-0",
+        "mode": "first"
+      },
+      {
+        "name": "array-100",
+        "mode": "first"
+      },
+      {
+        "name": "oneOf-40",
+        "mode": "first"
+      },
+      {
+        "name": "oneOf-5",
+        "mode": "later"
+      },
+      {
+        "name": "computed-visible-derived",
+        "mode": "later"
+      },
+      {
+        "name": "nested-d5-f4",
+        "mode": "first"
+      },
+      {
+        "name": "oneOf-20",
+        "mode": "mount"
+      },
+      {
+        "name": "sample-0",
+        "mode": "later"
+      }
+    ],
+    "edits": [
+      {
+        "file": "packages/canard/schema-form/src/core/dispatch/utils/entry/dispatchSetValue.ts",
+        "name": "dispatchSetValue",
+        "body": "return;"
+      }
+    ]
+  },
+  {
+    "id": "total-mount",
+    "classification": "structural",
+    "spec": "이미 만든 루트를 돌려주는 마운트 전체 천장입니다. 새 인스턴스 소유권과 콜드 마운트 계약을 포기합니다.",
+    "coverageFunctions": [
+      "nodeFromJSONSchema"
+    ],
+    "operations": [
+      {
+        "name": "nested-d5-f4",
+        "mode": "mount"
+      },
+      {
+        "name": "flat-500",
+        "mode": "mount"
+      },
+      {
+        "name": "oneOf-20",
+        "mode": "mount"
+      }
+    ],
+    "edits": [
+      {
+        "file": "packages/canard/schema-form/src/core/nodeFromJSONSchema.ts",
+        "name": "nodeFromJSONSchema",
+        "body": "",
+        "memo": "total-mount"
+      }
+    ]
+  },
+  {
+    "id": "root-build",
+    "classification": "structural",
+    "spec": "청사진과 루트 인스턴스를 함께 재사용한 천장입니다. 청사진 재사용과 인스턴스 소유권은 구분해야 합니다.",
+    "coverageFunctions": [
+      "buildSchemaNodeTree"
+    ],
+    "operations": [
+      {
+        "name": "nested-d5-f4",
+        "mode": "mount"
+      },
+      {
+        "name": "flat-500",
+        "mode": "mount"
+      },
+      {
+        "name": "oneOf-20",
+        "mode": "mount"
+      }
+    ],
+    "edits": [
+      {
+        "file": "packages/canard/schema-form/src/core/SchemaNode/utils/binding/buildSchemaNodeTree.ts",
+        "name": "buildSchemaNodeTree",
+        "body": "",
+        "memo": "root-build"
+      }
+    ]
+  },
+  {
+    "id": "compute",
+    "classification": "structural",
+    "spec": "계산 전체를 제거한 천장입니다. SETTLE-003의 계산·조립 의무 자체를 없앨 수 없습니다.",
+    "coverageFunctions": [
+      "computeNode"
+    ],
+    "operations": [
+      {
+        "name": "array-100",
+        "mode": "later"
+      },
+      {
+        "name": "nested-d5-f4",
+        "mode": "later"
+      },
+      {
+        "name": "oneOf-40",
+        "mode": "later"
+      },
+      {
+        "name": "oneOf-5",
+        "mode": "first"
+      },
+      {
+        "name": "computed-visible-derived",
+        "mode": "first"
+      },
+      {
+        "name": "sample-0",
+        "mode": "first"
+      },
+      {
+        "name": "array-100",
+        "mode": "first"
+      },
+      {
+        "name": "oneOf-40",
+        "mode": "first"
+      },
+      {
+        "name": "oneOf-5",
+        "mode": "later"
+      },
+      {
+        "name": "computed-visible-derived",
+        "mode": "later"
+      },
+      {
+        "name": "nested-d5-f4",
+        "mode": "first"
+      },
+      {
+        "name": "oneOf-20",
+        "mode": "mount"
+      },
+      {
+        "name": "sample-0",
+        "mode": "later"
+      }
+    ],
+    "edits": [
+      {
+        "file": "packages/canard/schema-form/src/core/settle/utils/compute/computeNode.ts",
+        "name": "computeNode",
+        "body": "return;"
+      }
+    ]
+  },
+  {
+    "id": "finish",
+    "classification": "structural",
+    "spec": "전이·파생·퇴장·커밋 전체 후처리의 천장입니다. 내부 하위 작업의 상한과 겹칩니다.",
+    "coverageFunctions": [
+      "finishSettlement"
+    ],
+    "operations": [
+      {
+        "name": "array-100",
+        "mode": "later"
+      },
+      {
+        "name": "nested-d5-f4",
+        "mode": "later"
+      },
+      {
+        "name": "oneOf-40",
+        "mode": "later"
+      },
+      {
+        "name": "oneOf-5",
+        "mode": "first"
+      },
+      {
+        "name": "computed-visible-derived",
+        "mode": "first"
+      },
+      {
+        "name": "sample-0",
+        "mode": "first"
+      },
+      {
+        "name": "array-100",
+        "mode": "first"
+      },
+      {
+        "name": "oneOf-40",
+        "mode": "first"
+      },
+      {
+        "name": "oneOf-5",
+        "mode": "later"
+      },
+      {
+        "name": "computed-visible-derived",
+        "mode": "later"
+      },
+      {
+        "name": "nested-d5-f4",
+        "mode": "first"
+      },
+      {
+        "name": "oneOf-20",
+        "mode": "mount"
+      },
+      {
+        "name": "sample-0",
+        "mode": "later"
+      }
+    ],
+    "edits": [
+      {
+        "file": "packages/canard/schema-form/src/core/settle/utils/settlement/finishSettlement.ts",
+        "name": "finishSettlement",
+        "body": "return;"
+      }
+    ]
+  },
+  {
+    "id": "transition",
+    "classification": "structural",
+    "spec": "Source B와 전이 결과의 정합성에 필요한 바퀴 전체를 제거한 천장입니다. 상태·종류 전이 계약을 바꾸려면 원장 항목이 필요합니다.",
+    "coverageFunctions": [
+      "transitionSettlement"
+    ],
+    "operations": [
+      {
+        "name": "oneOf-5",
+        "mode": "first"
+      },
+      {
+        "name": "oneOf-40",
+        "mode": "first"
+      },
+      {
+        "name": "oneOf-20",
+        "mode": "mount"
+      }
+    ],
+    "edits": [
+      {
+        "file": "packages/canard/schema-form/src/core/settle/utils/transition/transitionSettlement.ts",
+        "name": "transitionSettlement",
+        "body": "return;"
+      }
+    ]
+  },
+  {
+    "id": "children",
+    "classification": "code-level",
+    "spec": "정적 게이트/엔트리 색인으로 관련 선언만 방문하고 원래 평가 위치·순서·즉시 공표를 유지합니다. 97C-01의 후보·퇴장·배열·wrong-kind·던진 게이트 차등 조건을 모두 유지해야 합니다.",
+    "coverageFunctions": [
+      "selectChildren"
+    ],
+    "operations": [
+      {
+        "name": "oneOf-40",
+        "mode": "later"
+      },
+      {
+        "name": "oneOf-5",
+        "mode": "first"
+      },
+      {
+        "name": "oneOf-40",
+        "mode": "first"
+      },
+      {
+        "name": "oneOf-5",
+        "mode": "later"
+      },
+      {
+        "name": "oneOf-20",
+        "mode": "mount"
+      }
+    ],
+    "edits": [
+      {
+        "file": "packages/canard/schema-form/src/core/settle/utils/compute/selectChildren.ts",
+        "name": "selectChildren",
+        "body": "return false;"
+      }
+    ]
+  },
+  {
+    "id": "gates",
+    "classification": "structural",
+    "spec": "게이트 전체를 항상 거짓으로 만든 천장입니다. 비교식 자체의 비용으로 해석할 수 없으며 살아 있는 출력도 줄어듭니다.",
+    "coverageFunctions": [
+      "evaluateGate"
+    ],
+    "operations": [
+      {
+        "name": "oneOf-40",
+        "mode": "later"
+      },
+      {
+        "name": "oneOf-5",
+        "mode": "first"
+      },
+      {
+        "name": "oneOf-40",
+        "mode": "first"
+      },
+      {
+        "name": "oneOf-5",
+        "mode": "later"
+      },
+      {
+        "name": "oneOf-20",
+        "mode": "mount"
+      }
+    ],
+    "edits": [
+      {
+        "file": "packages/canard/schema-form/src/core/settle/utils/gates/evaluateGate.ts",
+        "name": "evaluateGate",
+        "body": "return false;"
+      }
+    ]
+  },
+  {
+    "id": "path-resolve",
+    "classification": "code-level",
+    "spec": "바인딩된 발생의 호스트 경로와 정적 의존성으로 절대 포인터를 한 번 계산하고 재사용합니다. 배열 이동·동일 이름/다른 종류·@·#/·~ escape와 늦은 등록에 대한 무효화를 지켜야 합니다.",
+    "coverageFunctions": [
+      "resolveDependencyPath"
+    ],
+    "operations": [
+      {
+        "name": "oneOf-40",
+        "mode": "later"
+      },
+      {
+        "name": "oneOf-5",
+        "mode": "first"
+      },
+      {
+        "name": "oneOf-40",
+        "mode": "first"
+      },
+      {
+        "name": "oneOf-5",
+        "mode": "later"
+      },
+      {
+        "name": "oneOf-20",
+        "mode": "mount"
+      }
+    ],
+    "edits": [
+      {
+        "file": "packages/canard/schema-form/src/core/settle/utils/paths/resolveDependencyPath.ts",
+        "name": "resolveDependencyPath",
+        "body": "return '/kind';"
+      }
+    ]
+  },
+  {
+    "id": "projected-read",
+    "classification": "code-level",
+    "spec": "정적 포인터의 디코딩된 세그먼트를 재사용하고 경로의 직접 노드 접근을 계획합니다. 대기 출력·wrong-kind·extras·공표 위치와 97C-01의 동일성 묶음을 보존합니다.",
+    "coverageFunctions": [
+      "readProjectedValue",
+      "projectedEmission"
+    ],
+    "operations": [
+      {
+        "name": "oneOf-40",
+        "mode": "later"
+      },
+      {
+        "name": "oneOf-5",
+        "mode": "first"
+      },
+      {
+        "name": "oneOf-40",
+        "mode": "first"
+      },
+      {
+        "name": "oneOf-5",
+        "mode": "later"
+      },
+      {
+        "name": "oneOf-20",
+        "mode": "mount"
+      }
+    ],
+    "edits": [
+      {
+        "file": "packages/canard/schema-form/src/core/settle/utils/gates/readProjectedValue.ts",
+        "name": "readProjectedValue",
+        "body": "return context.root.structure?.kind?.emit;"
+      }
+    ]
+  },
+  {
+    "id": "read-flush",
+    "classification": "code-level",
+    "spec": "같은 발생/읽기 경로의 공표 준비를 정착 내 색인으로 합칩니다. 실제로 읽거나 공표할 노드의 대기가 해소됐다는 조건을 유지하며 공표 순서를 바꾸지 않습니다.",
+    "coverageFunctions": [
+      "flushPendingGateReads",
+      "flushGate",
+      "flushRead"
+    ],
+    "operations": [
+      {
+        "name": "oneOf-40",
+        "mode": "later"
+      },
+      {
+        "name": "oneOf-5",
+        "mode": "first"
+      },
+      {
+        "name": "oneOf-40",
+        "mode": "first"
+      },
+      {
+        "name": "oneOf-5",
+        "mode": "later"
+      },
+      {
+        "name": "oneOf-20",
+        "mode": "mount"
+      }
+    ],
+    "edits": [
+      {
+        "file": "packages/canard/schema-form/src/core/settle/utils/gates/flushPendingGateReads.ts",
+        "name": "flushPendingGateReads",
+        "body": "return;"
+      }
+    ]
+  },
+  {
+    "id": "gate-registry",
+    "classification": "code-level",
+    "spec": "이미 등록된 발생은 참조와 종류의 동일성이 확인되면 경로·감시 등록을 반복하지 않습니다. 퇴장·되살아남·새 배열 발생·읽기 dirty의 양방향 교차를 유지합니다.",
+    "coverageFunctions": [
+      "register",
+      "locate",
+      "add",
+      "getGateRegistry",
+      "mayChangeAt",
+      "mayChangeOwnDeclarationAt"
+    ],
+    "operations": [
+      {
+        "name": "nested-d5-f4",
+        "mode": "later"
+      },
+      {
+        "name": "oneOf-40",
+        "mode": "later"
+      },
+      {
+        "name": "oneOf-5",
+        "mode": "first"
+      },
+      {
+        "name": "oneOf-40",
+        "mode": "first"
+      },
+      {
+        "name": "oneOf-5",
+        "mode": "later"
+      }
+    ],
+    "edits": [
+      {
+        "file": "packages/canard/schema-form/src/core/settle/utils/gates/getGateRegistry.ts",
+        "name": "register",
+        "body": "return;",
+        "class": "GateRegistry"
+      },
+      {
+        "file": "packages/canard/schema-form/src/core/settle/utils/gates/getGateRegistry.ts",
+        "name": "locate",
+        "class": "GateRegistry",
+        "body": "return {hostPath: node.path, nodePath: node.path, gate};"
+      },
+      {
+        "file": "packages/canard/schema-form/src/core/settle/utils/gates/getGateRegistry.ts",
+        "name": "mayChangeAt",
+        "class": "GateRegistry",
+        "body": "return false;"
+      },
+      {
+        "file": "packages/canard/schema-form/src/core/settle/utils/gates/getGateRegistry.ts",
+        "name": "mayChangeOwnDeclarationAt",
+        "class": "GateRegistry",
+        "body": "return false;"
+      }
+    ]
+  },
+  {
+    "id": "gate-expression",
+    "classification": "code-level",
+    "spec": "게이트 발생의 정적 표현식 참조를 청사진/바인딩에 연결해 반복된 authored-path Map 조회를 줄입니다. 이 상수 빌드의 결과는 잘못되므로 이득은 천장입니다.",
+    "coverageFunctions": [
+      "getGateExpression"
+    ],
+    "operations": [
+      {
+        "name": "oneOf-40",
+        "mode": "later"
+      },
+      {
+        "name": "oneOf-5",
+        "mode": "first"
+      },
+      {
+        "name": "oneOf-40",
+        "mode": "first"
+      },
+      {
+        "name": "oneOf-5",
+        "mode": "later"
+      }
+    ],
+    "edits": [
+      {
+        "file": "packages/canard/schema-form/src/core/settle/utils/gates/getGateExpression.ts",
+        "name": "getGateExpression",
+        "body": "return { dependencies: ['./kind'], evaluate: () => false };"
+      }
+    ]
+  },
+  {
+    "id": "prime-host",
+    "classification": "structural",
+    "spec": "호스트의 기본/원본/잠복 입력 준비를 제거한 천장입니다. 복원과 자동 쓰기 계약 때문에 전체 제거는 원장 변경을 필요로 합니다.",
+    "coverageFunctions": [
+      "primeHost"
+    ],
+    "operations": [
+      {
+        "name": "oneOf-40",
+        "mode": "later"
+      },
+      {
+        "name": "oneOf-5",
+        "mode": "first"
+      },
+      {
+        "name": "oneOf-40",
+        "mode": "first"
+      },
+      {
+        "name": "oneOf-5",
+        "mode": "later"
+      }
+    ],
+    "edits": [
+      {
+        "file": "packages/canard/schema-form/src/core/settle/utils/compute/primeHost.ts",
+        "name": "primeHost",
+        "body": "return;"
+      }
+    ]
+  },
+  {
+    "id": "exits",
+    "classification": "structural",
+    "spec": "퇴장 스냅샷·Source B·잠복 원본·소유권 이동 작업의 결합 천장입니다. 필수 퇴장 보존을 제거할 수 없습니다.",
+    "coverageFunctions": [
+      "finalizeExits",
+      "applyExitClearing",
+      "captureExitedRaw",
+      "writeLatentRaw",
+      "setLatentRaw"
+    ],
+    "operations": [
+      {
+        "name": "oneOf-5",
+        "mode": "first"
+      },
+      {
+        "name": "oneOf-5",
+        "mode": "later"
+      }
+    ],
+    "edits": [
+      {
+        "file": "packages/canard/schema-form/src/core/settle/utils/transition/finalizeExits.ts",
+        "name": "finalizeExits",
+        "body": "return;"
+      }
+    ]
+  },
+  {
+    "id": "inactive-memo",
+    "classification": "code-level",
+    "spec": "실제로 변경된 잠복 소유자만 메모를 갱신하는 증분 색인을 사용합니다. 이전 커밋 읽기와 종류별 잠복 키를 유지합니다.",
+    "coverageFunctions": [
+      "updateInactiveValuesMemo"
+    ],
+    "operations": [
+      {
+        "name": "oneOf-5",
+        "mode": "later"
+      }
+    ],
+    "edits": [
+      {
+        "file": "packages/canard/schema-form/src/core/settle/utils/commit/updateInactiveValuesMemo.ts",
+        "name": "updateInactiveValuesMemo",
+        "body": "return;"
+      }
+    ]
+  },
+  {
+    "id": "latent-prune",
+    "classification": "code-level",
+    "spec": "쓰기 경로의 교차 잠복 키만 기존 경로 색인으로 찾아 제거합니다. JSON 키 파싱과 전체 스캔을 중복하지 않으며 전이 자동 로그의 복구를 유지합니다.",
+    "coverageFunctions": [
+      "pruneLatentRaw"
+    ],
+    "operations": [
+      {
+        "name": "oneOf-40",
+        "mode": "later"
+      },
+      {
+        "name": "oneOf-5",
+        "mode": "first"
+      },
+      {
+        "name": "oneOf-40",
+        "mode": "first"
+      },
+      {
+        "name": "oneOf-5",
+        "mode": "later"
+      }
+    ],
+    "edits": [
+      {
+        "file": "packages/canard/schema-form/src/core/settle/utils/write/pruneLatentRaw.ts",
+        "name": "pruneLatentRaw",
+        "body": "return;"
+      }
+    ]
+  },
+  {
+    "id": "schema-select",
+    "classification": "code-level",
+    "spec": "같은 발생의 활성 선언 ID와 유효 스키마 참조를 재사용합니다. 부모 overlay·게이트 오류·wrong-kind가 바뀌면 재선택하고 경고/공표 순서를 유지합니다.",
+    "coverageFunctions": [
+      "selectNodeSchema"
+    ],
+    "operations": [
+      {
+        "name": "oneOf-40",
+        "mode": "later"
+      },
+      {
+        "name": "oneOf-5",
+        "mode": "first"
+      },
+      {
+        "name": "computed-visible-derived",
+        "mode": "first"
+      },
+      {
+        "name": "oneOf-40",
+        "mode": "first"
+      },
+      {
+        "name": "oneOf-5",
+        "mode": "later"
+      },
+      {
+        "name": "computed-visible-derived",
+        "mode": "later"
+      },
+      {
+        "name": "oneOf-20",
+        "mode": "mount"
+      }
+    ],
+    "edits": [
+      {
+        "file": "packages/canard/schema-form/src/core/settle/utils/compute/selectNodeSchema.ts",
+        "name": "selectNodeSchema",
+        "body": "return false;"
+      }
+    ]
+  },
+  {
+    "id": "schema-merge",
+    "classification": "code-level",
+    "spec": "단일 무조건 선언의 유효 스키마를 청사진에서 한 번 정규화하고 런타임 조립에서 재병합하지 않습니다. 타입 교집합·nullable·pattern·원자 값·경고 수집·선언 순서가 있는 경우 기존 병합으로 돌아갑니다.",
+    "coverageFunctions": [
+      "mergeEffectiveSchema",
+      "mergeSchemaContributions",
+      "applySchemaContribution",
+      "ensureEffectiveSchemaCache",
+      "selectEffectiveDeclarations"
+    ],
+    "operations": [
+      {
+        "name": "oneOf-5",
+        "mode": "first"
+      },
+      {
+        "name": "nested-d5-f4",
+        "mode": "mount"
+      },
+      {
+        "name": "flat-500",
+        "mode": "mount"
+      }
+    ],
+    "edits": [
+      {
+        "file": "packages/canard/schema-form/src/core/blueprint/utils/effectiveSchema/mergeEffectiveSchema.ts",
+        "name": "mergeEffectiveSchema",
+        "body": "let value = globalThis.__profile99Effective?.get(node); if (!value) { value = { schema: node.declarations.find(d => d.gates.length === 0)?.schema ?? node.declarations[0]?.schema ?? true, typeConflict: false }; (globalThis.__profile99Effective ??= new WeakMap()).set(node, value); } return value;"
+      }
+    ]
+  },
+  {
+    "id": "blueprint",
+    "classification": "structural",
+    "spec": "동일 fixture의 완성 청사진을 상수로 재사용한 콜드 분석 천장입니다. 서로 다른 schema 객체의 분석 생략에는 공유/캐시 소유권과 옵션 동일성에 대한 원장 항목이 필요합니다.",
+    "coverageFunctions": [
+      "blueprint",
+      "buildNodes",
+      "populateNodeChildren",
+      "collectDeclarations"
+    ],
+    "operations": [
+      {
+        "name": "nested-d5-f4",
+        "mode": "mount"
+      },
+      {
+        "name": "flat-500",
+        "mode": "mount"
+      },
+      {
+        "name": "oneOf-20",
+        "mode": "mount"
+      }
+    ],
+    "edits": [
+      {
+        "file": "packages/canard/schema-form/src/core/blueprint/blueprint.ts",
+        "name": "blueprint",
+        "body": "",
+        "memo": "blueprint"
+      }
+    ]
+  },
+  {
+    "id": "static-load",
+    "classification": "structural",
+    "spec": "분기 없는 첫 트리의 노드 생성·수화·정적 커밋을 함께 제거한 천장입니다. 모든 살아 있는 노드의 즉시 존재와 인스턴스 소유권이 현재 계약입니다.",
+    "coverageFunctions": [
+      "loadStaticFirstTree",
+      "createChildNode",
+      "createSchemaNode"
+    ],
+    "operations": [
+      {
+        "name": "nested-d5-f4",
+        "mode": "mount"
+      },
+      {
+        "name": "flat-500",
+        "mode": "mount"
+      }
+    ],
+    "edits": [
+      {
+        "file": "packages/canard/schema-form/src/core/settle/utils/load/loadStaticFirstTree.ts",
+        "name": "loadStaticFirstTree",
+        "body": "return;"
+      }
+    ]
+  },
+  {
+    "id": "mount-load",
+    "classification": "structural",
+    "spec": "마운트의 전체 초기 계산/로드 천장입니다. 정적 첫 로드와 게이트 마운트를 모두 포함하며 하위 상한과 겹칩니다.",
+    "coverageFunctions": [
+      "loadSchemaNodeAtMount",
+      "mountSchemaNode",
+      "dispatchMount"
+    ],
+    "operations": [
+      {
+        "name": "nested-d5-f4",
+        "mode": "mount"
+      },
+      {
+        "name": "flat-500",
+        "mode": "mount"
+      },
+      {
+        "name": "oneOf-20",
+        "mode": "mount"
+      }
+    ],
+    "edits": [
+      {
+        "file": "packages/canard/schema-form/src/core/settle/utils/load/loadSchemaNodeAtMount.ts",
+        "name": "loadSchemaNodeAtMount",
+        "body": "return;"
+      }
+    ]
+  },
+  {
+    "id": "static-commit",
+    "classification": "code-level",
+    "spec": "무조건 첫 로드의 동일 초기 마스크에 대해 불변 리비전 스냅샷을 공유하고, 이벤트 payload는 소비자가 필요한 시점에 만듭니다. Initialized/UpdateValue/RequestRefresh와 늦은 구독 리비전을 보존합니다.",
+    "coverageFunctions": [
+      "commitStaticFirstNode"
+    ],
+    "operations": [
+      {
+        "name": "nested-d5-f4",
+        "mode": "mount"
+      },
+      {
+        "name": "flat-500",
+        "mode": "mount"
+      }
+    ],
+    "edits": [
+      {
+        "file": "packages/canard/schema-form/src/core/settle/utils/load/commitStaticFirstNode.ts",
+        "name": "commitStaticFirstNode",
+        "body": "return;"
+      }
+    ]
+  },
+  {
+    "id": "revision",
+    "classification": "code-level",
+    "spec": "이전 장부가 공유 빈 장부이고 마스크가 정적 초기 마스크이면 미리 만든 불변 초기 장부를 재사용합니다. 이후 수정은 독립 복사하며 각 비트의 단조 리비전·직접 비트 접근을 보존합니다.",
+    "coverageFunctions": [
+      "_SchemaNodeRevisionLedger"
+    ],
+    "operations": [
+      {
+        "name": "nested-d5-f4",
+        "mode": "mount"
+      },
+      {
+        "name": "flat-500",
+        "mode": "mount"
+      }
+    ],
+    "edits": [
+      {
+        "file": "packages/canard/schema-form/src/core/record/utils/SchemaNodeRevisionLedger.ts",
+        "name": "constructor",
+        "body": "this.counts = globalThis.__profile99Counts ??= Array(17).fill(0);",
+        "class": "SchemaNodeRevisionLedger"
+      }
+    ]
+  },
+  {
+    "id": "commit",
+    "classification": "structural",
+    "spec": "관측 가능한 최종 커밋 전체의 천장입니다. 리비전·상태·파생 기준값·배달 의무를 없앨 수 없습니다.",
+    "coverageFunctions": [
+      "commitSettlement"
+    ],
+    "operations": [
+      {
+        "name": "array-100",
+        "mode": "later"
+      },
+      {
+        "name": "nested-d5-f4",
+        "mode": "later"
+      },
+      {
+        "name": "oneOf-5",
+        "mode": "first"
+      },
+      {
+        "name": "computed-visible-derived",
+        "mode": "first"
+      },
+      {
+        "name": "sample-0",
+        "mode": "first"
+      },
+      {
+        "name": "array-100",
+        "mode": "first"
+      },
+      {
+        "name": "oneOf-5",
+        "mode": "later"
+      },
+      {
+        "name": "computed-visible-derived",
+        "mode": "later"
+      },
+      {
+        "name": "nested-d5-f4",
+        "mode": "first"
+      },
+      {
+        "name": "sample-0",
+        "mode": "later"
+      }
+    ],
+    "edits": [
+      {
+        "file": "packages/canard/schema-form/src/core/settle/utils/commit/commitSettlement.ts",
+        "name": "commitSettlement",
+        "body": "return;"
+      }
+    ]
+  },
+  {
+    "id": "deliveries",
+    "classification": "code-level",
+    "spec": "한 커밋의 변경 노드/조상과 마스크를 한 번 모아 장부와 배달 후보를 갱신합니다. 구독자가 없어도 리비전은 유지하고 배달 방문 순서와 root onChange를 보존합니다.",
+    "coverageFunctions": [
+      "markCommitDeliveries",
+      "mark"
+    ],
+    "operations": [
+      {
+        "name": "array-100",
+        "mode": "later"
+      },
+      {
+        "name": "nested-d5-f4",
+        "mode": "later"
+      },
+      {
+        "name": "oneOf-5",
+        "mode": "first"
+      },
+      {
+        "name": "computed-visible-derived",
+        "mode": "first"
+      },
+      {
+        "name": "sample-0",
+        "mode": "first"
+      },
+      {
+        "name": "array-100",
+        "mode": "first"
+      },
+      {
+        "name": "oneOf-5",
+        "mode": "later"
+      },
+      {
+        "name": "computed-visible-derived",
+        "mode": "later"
+      },
+      {
+        "name": "nested-d5-f4",
+        "mode": "first"
+      },
+      {
+        "name": "sample-0",
+        "mode": "later"
+      }
+    ],
+    "edits": [
+      {
+        "file": "packages/canard/schema-form/src/core/settle/utils/commit/markCommitDeliveries.ts",
+        "name": "markCommitDeliveries",
+        "body": "return;"
+      }
+    ]
+  },
+  {
+    "id": "events",
+    "classification": "code-level",
+    "spec": "소비자 없는 경로의 이벤트 payload/옵션 복사를 지연하되 비트·pendingRevision·노드별 최신 리비전은 같은 커밋에서 기록합니다. 늦은 구독 catch-up과 root onChange 결과를 보존합니다.",
+    "coverageFunctions": [
+      "markSchemaNodeEvent"
+    ],
+    "operations": [
+      {
+        "name": "array-100",
+        "mode": "later"
+      },
+      {
+        "name": "nested-d5-f4",
+        "mode": "later"
+      },
+      {
+        "name": "computed-visible-derived",
+        "mode": "first"
+      },
+      {
+        "name": "sample-0",
+        "mode": "first"
+      },
+      {
+        "name": "array-100",
+        "mode": "first"
+      },
+      {
+        "name": "nested-d5-f4",
+        "mode": "first"
+      },
+      {
+        "name": "sample-0",
+        "mode": "later"
+      }
+    ],
+    "edits": [
+      {
+        "file": "packages/canard/schema-form/src/core/record/utils/markSchemaNodeEvent.ts",
+        "name": "markSchemaNodeEvent",
+        "body": "return;"
+      }
+    ]
+  },
+  {
+    "id": "assemble",
+    "classification": "code-level",
+    "spec": "첫 마운트 조립 때 STABLE_SHAPES와 키 수 증명을 같이 저장하여 첫 갱신도 동일 children/schema/extras에서 증분 조립을 사용합니다. 없는 키·undefined·가상/공유 노드·참조 동일성의 fallback을 유지합니다.",
+    "coverageFunctions": [
+      "assembleObject"
+    ],
+    "operations": [
+      {
+        "name": "array-100",
+        "mode": "later"
+      },
+      {
+        "name": "nested-d5-f4",
+        "mode": "later"
+      },
+      {
+        "name": "sample-0",
+        "mode": "first"
+      },
+      {
+        "name": "array-100",
+        "mode": "first"
+      },
+      {
+        "name": "nested-d5-f4",
+        "mode": "first"
+      },
+      {
+        "name": "sample-0",
+        "mode": "later"
+      }
+    ],
+    "edits": [
+      {
+        "file": "packages/canard/schema-form/src/core/behaviors/objectBehavior/branch/utils/assembleObject.ts",
+        "name": "assembleObject",
+        "body": "return node.local;"
+      }
+    ]
+  },
+  {
+    "id": "output",
+    "classification": "structural",
+    "spec": "필수 부모 조립과 투영/방출 갱신을 제거한 결합 천장입니다. SETTLE-003과 VALUE의 결과/참조 계약 때문에 전체 생략은 허용되지 않습니다.",
+    "coverageFunctions": [
+      "updateOutput"
+    ],
+    "operations": [
+      {
+        "name": "array-100",
+        "mode": "later"
+      },
+      {
+        "name": "nested-d5-f4",
+        "mode": "later"
+      },
+      {
+        "name": "computed-visible-derived",
+        "mode": "first"
+      },
+      {
+        "name": "sample-0",
+        "mode": "first"
+      },
+      {
+        "name": "array-100",
+        "mode": "first"
+      },
+      {
+        "name": "computed-visible-derived",
+        "mode": "later"
+      },
+      {
+        "name": "nested-d5-f4",
+        "mode": "first"
+      },
+      {
+        "name": "sample-0",
+        "mode": "later"
+      }
+    ],
+    "edits": [
+      {
+        "file": "packages/canard/schema-form/src/core/settle/utils/compute/updateOutput.ts",
+        "name": "updateOutput",
+        "body": "context.pendingOutputs?.delete(node); return false;"
+      }
+    ]
+  },
+  {
+    "id": "same-value",
+    "classification": "code-level",
+    "spec": "증분 조립에서 실제로 바뀐 필드가 없는 경우 이미 확보된 참조/키 증명으로 전체 비교를 줄입니다. 값이 바뀐 경우 또는 구조 증명이 무효인 경우 원래 비교를 유지합니다.",
+    "coverageFunctions": [
+      "sameValue"
+    ],
+    "operations": [
+      {
+        "name": "nested-d5-f4",
+        "mode": "later"
+      }
+    ],
+    "edits": [
+      {
+        "file": "packages/canard/schema-form/src/core/settle/utils/compute/sameValue.ts",
+        "name": "sameValue",
+        "body": "return true;"
+      }
+    ]
+  },
+  {
+    "id": "dirty-begin",
+    "classification": "code-level",
+    "spec": "분기 없는 경로의 prefix 색인을 add와 beginPostOrder 양쪽에서 중복 구축하지 않습니다. 첫 자손 삽입 순서와 조상 복구·무해한 미해결 경로를 유지합니다.",
+    "coverageFunctions": [
+      "beginPostOrder"
+    ],
+    "operations": [
+      {
+        "name": "nested-d5-f4",
+        "mode": "later"
+      }
+    ],
+    "edits": [
+      {
+        "file": "packages/canard/schema-form/src/core/settle/utils/write/DirtyPathSet.ts",
+        "name": "beginPostOrder",
+        "body": "return;",
+        "class": "DirtyPathSet"
+      }
+    ]
+  },
+  {
+    "id": "dirty-add",
+    "classification": "code-level",
+    "spec": "분기 없는 정착에서 post-order rebuild가 즉시 예정된 경우 pre-order prefix 구축을 생략합니다. 게이트 있는 정착과 후속 자동 쓰기는 기존 증분 경로를 유지합니다.",
+    "coverageFunctions": [
+      "add"
+    ],
+    "operations": [
+      {
+        "name": "nested-d5-f4",
+        "mode": "later"
+      }
+    ],
+    "edits": [
+      {
+        "file": "packages/canard/schema-form/src/core/settle/utils/write/DirtyPathSet.ts",
+        "name": "add",
+        "body": "return super.add(path);",
+        "class": "DirtyPathSet"
+      }
+    ]
+  },
+  {
+    "id": "dirty-delete",
+    "classification": "code-level",
+    "spec": "현재 post-order의 직접 부모 인덱스 삭제만 수행하고 빈 프리픽스 처리를 중복하지 않습니다. 같은 prefix의 다른 dirty 자손이 유지되는지 차등 검증합니다.",
+    "coverageFunctions": [
+      "delete"
+    ],
+    "operations": [
+      {
+        "name": "array-100",
+        "mode": "later"
+      },
+      {
+        "name": "nested-d5-f4",
+        "mode": "later"
+      }
+    ],
+    "edits": [
+      {
+        "file": "packages/canard/schema-form/src/core/settle/utils/write/DirtyPathSet.ts",
+        "name": "delete",
+        "body": "return super.delete(path);",
+        "class": "DirtyPathSet"
+      }
+    ]
+  },
+  {
+    "id": "recalculation",
+    "classification": "code-level",
+    "spec": "정적 역방향 의존성과 게이트 읽기 경로를 기존 색인에 바인딩하고 쓰기별 조상 집합을 한 번 공유합니다. 루트/조상/자손 교차·새 발생·배열 이동·원래 dirty 집합을 유지합니다.",
+    "coverageFunctions": [
+      "registerRecalculation"
+    ],
+    "operations": [
+      {
+        "name": "array-100",
+        "mode": "later"
+      },
+      {
+        "name": "nested-d5-f4",
+        "mode": "later"
+      },
+      {
+        "name": "oneOf-40",
+        "mode": "later"
+      },
+      {
+        "name": "oneOf-5",
+        "mode": "first"
+      },
+      {
+        "name": "computed-visible-derived",
+        "mode": "first"
+      },
+      {
+        "name": "sample-0",
+        "mode": "first"
+      },
+      {
+        "name": "array-100",
+        "mode": "first"
+      },
+      {
+        "name": "oneOf-40",
+        "mode": "first"
+      },
+      {
+        "name": "computed-visible-derived",
+        "mode": "later"
+      },
+      {
+        "name": "nested-d5-f4",
+        "mode": "first"
+      },
+      {
+        "name": "oneOf-20",
+        "mode": "mount"
+      },
+      {
+        "name": "sample-0",
+        "mode": "later"
+      }
+    ],
+    "edits": [
+      {
+        "file": "packages/canard/schema-form/src/core/settle/utils/write/registerRecalculation.ts",
+        "name": "registerRecalculation",
+        "body": "return;"
+      }
+    ]
+  },
+  {
+    "id": "dependency-index",
+    "classification": "code-level",
+    "spec": "청사진에 이미 있는 선언 ID→소유자 대응을 의존성 색인 구축에서 다시 전수 수집하지 않습니다. 정적 읽기와 런타임 배열/동적 호스트의 바인딩을 구분하고 변화한 소유자만 돌려줍니다.",
+    "coverageFunctions": [
+      "getDependencyIndex",
+      "DependencyIndex",
+      "affected"
+    ],
+    "operations": [
+      {
+        "name": "computed-visible-derived",
+        "mode": "first"
+      },
+      {
+        "name": "oneOf-20",
+        "mode": "mount"
+      }
+    ],
+    "edits": [
+      {
+        "file": "packages/canard/schema-form/src/core/settle/utils/write/getDependencyIndex.ts",
+        "name": "constructor",
+        "body": "this.root = undefined;",
+        "class": "DependencyIndex"
+      },
+      {
+        "file": "packages/canard/schema-form/src/core/settle/utils/write/getDependencyIndex.ts",
+        "name": "affected",
+        "class": "DependencyIndex",
+        "body": "return [];"
+      }
+    ]
+  },
+  {
+    "id": "derive-rounds",
+    "classification": "structural",
+    "spec": "파생 쓰기 전체와 수렴 확인의 결합 천장입니다. 자동 쓰기/우선순위/순환/실패 처리 의무는 유지되어야 합니다.",
+    "coverageFunctions": [
+      "runDeriveRounds",
+      "getOrCollect"
+    ],
+    "operations": [
+      {
+        "name": "computed-visible-derived",
+        "mode": "first"
+      },
+      {
+        "name": "computed-visible-derived",
+        "mode": "later"
+      }
+    ],
+    "edits": [
+      {
+        "file": "packages/canard/schema-form/src/core/settle/utils/derivation/runDeriveRounds.ts",
+        "name": "runDeriveRounds",
+        "body": "return;"
+      }
+    ]
+  },
+  {
+    "id": "derive-evaluation",
+    "classification": "structural",
+    "spec": "파생 후보 계산을 빈 결정으로 바꾼 천장입니다. 실제 파생 결과를 만들지 않으므로 그대로 적용할 수 없습니다.",
+    "coverageFunctions": [
+      "evaluateDeriveRound"
+    ],
+    "operations": [
+      {
+        "name": "computed-visible-derived",
+        "mode": "first"
+      },
+      {
+        "name": "computed-visible-derived",
+        "mode": "later"
+      }
+    ],
+    "edits": [
+      {
+        "file": "packages/canard/schema-form/src/core/settle/derive/utils/evaluate/evaluateDeriveRound.ts",
+        "name": "evaluateDeriveRound",
+        "body": "return {writes: [], trace: [], failures: []};"
+      }
+    ]
+  },
+  {
+    "id": "derive-sources",
+    "classification": "code-level",
+    "spec": "역방향 의존성 소유자에 디코딩된 경로 또는 세대가 검증된 살아 있는 발생 참조를 연결합니다. 반복 경로 split/unescape/Set 구축을 줄이며 이동·퇴장·같은 이름/다른 종류에서 무효화합니다.",
+    "coverageFunctions": [
+      "getDeriveSourceNodes"
+    ],
+    "operations": [
+      {
+        "name": "computed-visible-derived",
+        "mode": "later"
+      }
+    ],
+    "edits": [
+      {
+        "file": "packages/canard/schema-form/src/core/settle/derive/utils/evaluate/utils/getDeriveSourceNodes.ts",
+        "name": "getDeriveSourceNodes",
+        "body": "return [];"
+      }
+    ]
+  },
+  {
+    "id": "derive-commit",
+    "classification": "code-level",
+    "spec": "실제로 값이 바뀐 규칙의 committed baseline과 소스/타겟 인덱스만 갱신합니다. undefined와 삭제, 이전 커밋 기준값의 관측을 유지합니다.",
+    "coverageFunctions": [
+      "commitDeriveRules"
+    ],
+    "operations": [
+      {
+        "name": "computed-visible-derived",
+        "mode": "first"
+      },
+      {
+        "name": "computed-visible-derived",
+        "mode": "later"
+      }
+    ],
+    "edits": [
+      {
+        "file": "packages/canard/schema-form/src/core/settle/utils/commit/commitDeriveRules.ts",
+        "name": "commitDeriveRules",
+        "body": "return;"
+      }
+    ]
+  },
+  {
+    "id": "rule-values",
+    "classification": "code-level",
+    "spec": "직렬화된 규칙 키를 매 커밋 JSON.parse하지 않고 생성 시 source/target 토큰을 보관합니다. 외부 키 형식·동일성·삭제 및 양쪽 경로 인덱스의 원자 갱신을 유지합니다.",
+    "coverageFunctions": [
+      "updateCommittedRuleValue"
+    ],
+    "operations": [
+      {
+        "name": "computed-visible-derived",
+        "mode": "first"
+      },
+      {
+        "name": "computed-visible-derived",
+        "mode": "later"
+      }
+    ],
+    "edits": [
+      {
+        "file": "packages/canard/schema-form/src/core/settle/utils/commit/updateCommittedRuleValue.ts",
+        "name": "updateCommittedRuleValue",
+        "body": "return;"
+      }
+    ]
+  },
+  {
+    "id": "scratch",
+    "classification": "structural",
+    "spec": "첫 정착 scratch를 전역 상수 객체로 재사용한 천장입니다. 재진입과 서로 다른 폼의 독립 소유권을 포기하므로 그대로 구현할 수 없습니다.",
+    "coverageFunctions": [
+      "getSettlementScratch"
+    ],
+    "operations": [
+      {
+        "name": "sample-0",
+        "mode": "first"
+      }
+    ],
+    "edits": [
+      {
+        "file": "packages/canard/schema-form/src/core/settle/utils/write/getSettlementScratch.ts",
+        "name": "getSettlementScratch",
+        "body": "",
+        "memo": "scratch"
+      }
+    ]
+  },
+  {
+    "id": "navigation",
+    "classification": "code-level",
+    "spec": "포인터의 토큰화 결과를 재사용하되 현재 구조에서 노드는 다시 찾습니다. 배열 이동·가상 키·부모 탐색·wildcard·~ escape와 세대 무효화를 유지합니다.",
+    "coverageFunctions": [
+      "find",
+      "findNodes",
+      "getSchemaNodePath"
+    ],
+    "operations": [
+      {
+        "name": "array-100",
+        "mode": "later"
+      },
+      {
+        "name": "nested-d5-f4",
+        "mode": "later"
+      },
+      {
+        "name": "sample-0",
+        "mode": "first"
+      },
+      {
+        "name": "array-100",
+        "mode": "first"
+      },
+      {
+        "name": "nested-d5-f4",
+        "mode": "first"
+      },
+      {
+        "name": "sample-0",
+        "mode": "later"
+      }
+    ],
+    "edits": [
+      {
+        "file": "packages/canard/schema-form/src/core/navigation/utils/query/findNodes.ts",
+        "name": "findNodes",
+        "body": "return [globalThis.__profile99Target];"
+      }
+    ]
+  },
+  {
+    "id": "mark-write",
+    "classification": "structural",
+    "spec": "쓰기 흔적/원본 변경/이벤트 시작을 제거한 천장입니다. 쓰기·정착 원장 계약 자체를 생략할 수 없습니다.",
+    "coverageFunctions": [
+      "markWrite"
+    ],
+    "operations": [
+      {
+        "name": "nested-d5-f4",
+        "mode": "first"
+      }
+    ],
+    "edits": [
+      {
+        "file": "packages/canard/schema-form/src/core/settle/utils/write/markWrite.ts",
+        "name": "markWrite",
+        "body": "return;"
+      }
+    ]
+  },
+  {
+    "id": "gate-condition",
+    "classification": "code-level",
+    "spec": "전체 gate 제거와 구분해 의존성 읽기와 등록은 그대로 두고 컴파일된 비교식만 정적 리터럴 비교로 대체합니다. 이 항목은 종단 상한이 잡음보다 큰 경우에만 97C-01 후보가 됩니다.",
+    "coverageFunctions": [],
+    "operations": [
+      {
+        "name": "oneOf-40",
+        "mode": "later"
+      },
+      {
+        "name": "oneOf-5",
+        "mode": "first"
+      },
+      {
+        "name": "oneOf-40",
+        "mode": "first"
+      },
+      {
+        "name": "oneOf-5",
+        "mode": "later"
+      },
+      {
+        "name": "oneOf-20",
+        "mode": "mount"
+      }
+    ],
+    "edits": [
+      {
+        "file": "packages/canard/schema-form/src/core/settle/utils/gates/evaluateGate.ts",
+        "replace": {
+          "before": "return Boolean(expression.evaluate(dependencies));",
+          "after": "return globalThis.__profile99Ablating ? dependencies[0] === globalThis.__profile99LiteralByPath.get(gate.schemaPath) : Boolean(expression.evaluate(dependencies));"
+        }
+      }
+    ]
+  },
+  {
+    "id": "control-layers",
+    "classification": "code-level",
+    "spec": "활성 선언 ID로 이미 정해진 controls layer를 발생별 참조로 재사용하며 overlay와 kind 및 children 제어가 변하면 무효화합니다.",
+    "coverageFunctions": [
+      "getControlLayers"
+    ],
+    "operations": [
+      {
+        "name": "oneOf-40",
+        "mode": "later"
+      },
+      {
+        "name": "oneOf-5",
+        "mode": "first"
+      },
+      {
+        "name": "oneOf-40",
+        "mode": "first"
+      },
+      {
+        "name": "oneOf-5",
+        "mode": "later"
+      },
+      {
+        "name": "oneOf-20",
+        "mode": "mount"
+      }
+    ],
+    "edits": [
+      {
+        "file": "packages/canard/schema-form/src/core/settle/utils/controls/getControlLayers.ts",
+        "name": "getControlLayers",
+        "body": "return [];"
+      }
+    ]
+  },
+  {
+    "id": "path-index",
+    "classification": "code-level",
+    "spec": "조상·자손 prefix 교차 결과를 정착 안에서 재사용합니다. 삭제와 재등록의 세대 및 Source B/잠복 키 별도 인덱스를 유지합니다.",
+    "coverageFunctions": [
+      "getPrefix"
+    ],
+    "operations": [
+      {
+        "name": "oneOf-40",
+        "mode": "later"
+      },
+      {
+        "name": "oneOf-5",
+        "mode": "first"
+      },
+      {
+        "name": "oneOf-40",
+        "mode": "first"
+      },
+      {
+        "name": "oneOf-5",
+        "mode": "later"
+      },
+      {
+        "name": "oneOf-20",
+        "mode": "mount"
+      }
+    ],
+    "edits": [
+      {
+        "file": "packages/canard/schema-form/src/core/utils/pathIndex/utils/PathStoreIndex.ts",
+        "name": "getPrefix",
+        "class": "PathStoreIndex",
+        "body": "let prefix = this.prefixes.get(path); if (!prefix) { prefix = { path, parent: undefined, segment: '', numeric: false, keys: new Set(), exact: new Set() }; this.prefixes.set(path, prefix); } return prefix;"
+      }
+    ]
+  },
+  {
+    "id": "gate-evaluation-zero",
+    "classification": "code-level",
+    "spec": "의존성 읽기·게이트 등록은 유지하고 비교식의 결과를 타이머 밖에서 미리 계산한 Boolean 조회로 대체합니다. 첫/후속 갱신의 최종 출력 동치를 확인합니다. 조회 자체의 비용을 포함한 순 상한이며, 마운트는 초기 바퀴도 변할 수 있습니다. 유의한 상한 없이는 비교식 미세 최적화를 구현하지 않습니다.",
+    "coverageFunctions": [],
+    "operations": [
+      {
+        "name": "oneOf-40",
+        "mode": "later"
+      },
+      {
+        "name": "oneOf-5",
+        "mode": "first"
+      },
+      {
+        "name": "oneOf-40",
+        "mode": "first"
+      },
+      {
+        "name": "oneOf-5",
+        "mode": "later"
+      },
+      {
+        "name": "oneOf-20",
+        "mode": "mount"
+      }
+    ],
+    "edits": [
+      {
+        "file": "packages/canard/schema-form/src/core/settle/utils/gates/evaluateGate.ts",
+        "replace": {
+          "before": "return Boolean(expression.evaluate(dependencies));",
+          "after": "return globalThis.__profile99Ablating ? globalThis.__profile99GateResultByPath.get(gate.schemaPath) : Boolean(expression.evaluate(dependencies));"
+        }
+      }
+    ]
+  },
+  {
+    "id": "api-write",
+    "classification": "structural",
+    "spec": "공개 setValue API 전체를 무동작으로 바꾼 천장입니다. 기존 total-write와의 차이는 입력 해석·옵션 분기·표시 및 작은 wrapper 비용입니다. 구현 후보가 아니며 전체 종단 비용을 검산합니다.",
+    "coverageFunctions": [
+      "setValue"
+    ],
+    "operations": [
+      {
+        "name": "array-100",
+        "mode": "later"
+      },
+      {
+        "name": "nested-d5-f4",
+        "mode": "later"
+      },
+      {
+        "name": "oneOf-40",
+        "mode": "later"
+      },
+      {
+        "name": "oneOf-5",
+        "mode": "first"
+      },
+      {
+        "name": "computed-visible-derived",
+        "mode": "first"
+      },
+      {
+        "name": "sample-0",
+        "mode": "first"
+      },
+      {
+        "name": "array-100",
+        "mode": "first"
+      },
+      {
+        "name": "oneOf-40",
+        "mode": "first"
+      },
+      {
+        "name": "oneOf-5",
+        "mode": "later"
+      },
+      {
+        "name": "computed-visible-derived",
+        "mode": "later"
+      },
+      {
+        "name": "nested-d5-f4",
+        "mode": "first"
+      },
+      {
+        "name": "oneOf-20",
+        "mode": "mount"
+      },
+      {
+        "name": "sample-0",
+        "mode": "later"
+      }
+    ],
+    "edits": [
+      {
+        "file": "packages/canard/schema-form/src/core/SchemaNode/SchemaNode.ts",
+        "name": "setValue",
+        "class": "SchemaNode",
+        "body": "return;"
+      }
+    ]
+  },
+  {
+    "id": "navigation-call",
+    "classification": "code-level",
+    "spec": "공개 find와 query find를 미리 찾은 노드로 대체한 전체 탐색 천장입니다. 제품 수정은 포인터 토큰만 재사용하고 현재 구조에서 탐색하며 배열 이동·가상 키·부모·wildcard·escape·세대 무효화를 보존합니다. 기존 findNodes 제거와 겹칩니다.",
+    "coverageFunctions": [
+      "find"
+    ],
+    "operations": [
+      { "name": "oneOf-5", "mode": "later" },
+      { "name": "oneOf-40", "mode": "later" },
+      { "name": "oneOf-5", "mode": "first" },
+      { "name": "oneOf-40", "mode": "first" },
+      {
+        "name": "array-100",
+        "mode": "later"
+      },
+      {
+        "name": "nested-d5-f4",
+        "mode": "later"
+      },
+      {
+        "name": "sample-0",
+        "mode": "first"
+      },
+      {
+        "name": "array-100",
+        "mode": "first"
+      },
+      {
+        "name": "nested-d5-f4",
+        "mode": "first"
+      },
+      {
+        "name": "sample-0",
+        "mode": "later"
+      }
+    ],
+    "edits": [
+      {
+        "file": "packages/canard/schema-form/src/core/SchemaNode/SchemaNode.ts",
+        "name": "find",
+        "class": "SchemaNode",
+        "body": "return globalThis.__profile99Target;"
+      },
+      {
+        "file": "packages/canard/schema-form/src/core/navigation/utils/query/find.ts",
+        "name": "find",
+        "body": "return globalThis.__profile99Target;"
+      }
+    ]
+  },
+  {
+    "id": "template-path",
+    "classification": "code-level",
+    "spec": "고정 fixture에서 바인딩 경로를 호출 순서별 상수로 재사용한 순 상한입니다. 제품 수정은 정적 template 토큰과 현재 occurrence 세대를 키로 삼아 올바른 경로를 캐시하며 배열 이동과 삭제/재등장을 보존합니다. 호출 순서 자체를 제품 캐시 키로 쓰지 않습니다.",
+    "coverageFunctions": [
+      "bindTemplatePath"
+    ],
+    "operations": [
+      {
+        "name": "oneOf-40",
+        "mode": "later"
+      },
+      {
+        "name": "oneOf-5",
+        "mode": "first"
+      },
+      {
+        "name": "oneOf-40",
+        "mode": "first"
+      },
+      {
+        "name": "oneOf-5",
+        "mode": "later"
+      },
+      {
+        "name": "oneOf-20",
+        "mode": "mount"
+      }
+    ],
+    "edits": [
+      {
+        "file": "packages/canard/schema-form/src/core/settle/utils/paths/bindTemplatePath.ts",
+        "name": "bindTemplatePath",
+        "memoSequence": "template-path"
+      }
+    ]
+  },
+  {
+    "id": "factory-reuse",
+    "classification": "structural",
+    "spec": "warmup의 노드 레코드를 호출 순서별 상수로 재사용한 생성 천장입니다. 별도 폼의 인스턴스·runtime 소유권을 공유하여 현재 계약에 맞지 않습니다. 모든 cold mount에서 노드를 즉시 제공하는 구조 항목으로 분리합니다.",
+    "coverageFunctions": [
+      "createSchemaNode"
+    ],
+    "operations": [
+      {
+        "name": "nested-d5-f4",
+        "mode": "mount"
+      },
+      {
+        "name": "flat-500",
+        "mode": "mount"
+      },
+      {
+        "name": "oneOf-20",
+        "mode": "mount"
+      }
+    ],
+    "edits": [
+      {
+        "file": "packages/canard/schema-form/src/core/SchemaNode/utils/schemaNodeFactory.ts",
+        "name": "createSchemaNode",
+        "memoSequence": "factory-reuse"
+      }
+    ]
+  }
+]

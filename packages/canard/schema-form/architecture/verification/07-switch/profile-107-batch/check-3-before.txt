@@ -1,0 +1,78 @@
+(node:74632) [DEP0205] DeprecationWarning: `module.register()` is deprecated. Use `module.registerHooks()` instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+│ ┌────────────────────────────────────────────────────────────────────────────┐
+│ │  Info: Found a setup file with "setProjectAnnotations".                    │
+│ │  Skipping automatic provisioning of preview annotations to avoid           │
+│ │  conflicts. Since Storybook 10.3, "@storybook/addon-vitest" applies these  │
+│ │   automatically.                                                           │
+│ │  You can safely remove the "setProjectAnnotations" call from your setup    │
+│ │  file, or remove the file entirely if you don't have custom code there.    │
+│ └────────────────────────────────────────────────────────────────────────────┘
+
+ RUN  v3.2.6 /Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/packages/canard/schema-form
+
+stdout | src/core/blueprint/__tests__/blueprint.owned-inline-path-work.test.ts > escapes each ungated name once while producing both public paths
+107COUNT path-strings fast escaping=4 names=2
+
+stdout | src/core/blueprint/__tests__/blueprint.owned-inline-path-work.test.ts > reuses one escaped segment across contributions to the same general-path name
+107COUNT path-strings general escaping=5 names=2
+
+xx
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  |unit| src/core/blueprint/__tests__/blueprint.owned-inline-path-work.test.ts > escapes each ungated name once while producing both public paths
+AssertionError: expected [ 'a/~', 'a/~', 'q"\\n', 'q"\\n' ] to deeply equal [ 'a/~', 'q"\\n' ]
+
+- Expected
++ Received
+
+  [
+    "a/~",
++   "a/~",
++   "q\"\\
++ ",
+    "q\"\\
+  ",
+  ]
+
+ ❯ src/core/blueprint/__tests__/blueprint.owned-inline-path-work.test.ts:33:22
+     31|     ]);
+     32|   console.log(`107COUNT path-strings fast escaping=${work.names.length…
+     33|   expect(work.names).toEqual(['a/~', 'q"\\\n']);
+       |                      ^
+     34| });
+     35| 
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ FAIL  |unit| src/core/blueprint/__tests__/blueprint.owned-inline-path-work.test.ts > reuses one escaped segment across contributions to the same general-path name
+AssertionError: expected [ 'a/~', 'a/~', 'second', 'a/~', …(1) ] to deeply equal [ 'a/~', 'second' ]
+
+- Expected
++ Received
+
+  [
+    "a/~",
++   "a/~",
++   "second",
++   "a/~",
+    "second",
+  ]
+
+ ❯ src/core/blueprint/__tests__/blueprint.owned-inline-path-work.test.ts:46:22
+     44|   expect(result.root.childEntries[0].declarations[0].schemaPath).toBe(…
+     45|   console.log(`107COUNT path-strings general escaping=${work.names.len…
+     46|   expect(work.names).toEqual(['a/~', 'second']);
+       |                      ^
+     47| });
+     48| 
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  2 failed (2)
+   Start at  04:51:49
+   Duration  680ms (transform 286ms, setup 0ms, collect 503ms, tests 10ms, environment 0ms, prepare 36ms)
+

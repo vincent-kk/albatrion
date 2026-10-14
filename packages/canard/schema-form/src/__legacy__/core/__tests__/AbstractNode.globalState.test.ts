@@ -1,9 +1,9 @@
 import { describe, expect, it, vi } from 'vitest';
 
-import { nodeFromJSONSchema } from '@/schema-form/core';
+import { nodeFromJSONSchema } from '@/schema-form/__legacy__/core';
 
 import type { AbstractNode } from '../nodes/AbstractNode';
-import { NodeEventType, NodeState, type SchemaNode } from '../../../core/types';
+import { NodeEventType, NodeState, type SchemaNode } from '../types';
 
 /**
  * Test helper to access private __setGlobalState__ method

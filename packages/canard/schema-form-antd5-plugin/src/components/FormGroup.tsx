@@ -2,7 +2,7 @@ import { Flex, Typography } from 'antd';
 
 import { isArraySchema } from '@winglet/json-schema/filter';
 
-import type { FormTypeRendererProps } from '@canard/schema-form';
+import type { FieldRendererProps } from '@canard/schema-form';
 
 export const FormGroup = ({
   node,
@@ -12,10 +12,10 @@ export const FormGroup = ({
   required,
   Input,
   errorMessage,
-}: FormTypeRendererProps) => {
+}: FieldRendererProps) => {
   if (depth === 0) return <Input />;
 
-  if (node.group === 'branch') {
+  if (node.strategy === 'branch') {
     return (
       <fieldset
         style={{
@@ -41,7 +41,7 @@ export const FormGroup = ({
       >
         <Flex gap={10} align="center">
           {node.parentNode && isArraySchema(node.parentNode) === false && (
-            <label htmlFor={path}>
+            <label htmlFor={path} id={`label:${path}`}>
               <Typography.Text style={{ wordBreak: 'unset' }}>
                 {name}
               </Typography.Text>

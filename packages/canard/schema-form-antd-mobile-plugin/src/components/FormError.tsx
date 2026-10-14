@@ -1,4 +1,3 @@
-import type { FormTypeRendererProps } from '@canard/schema-form';
+import type { FieldRendererProps } from '@canard/schema-form';
 
-export const FormError = ({ errorMessage }: FormTypeRendererProps) =>
-  errorMessage;
+export const FormError = ({ errorMessage }: FieldRendererProps) => errorMessage;

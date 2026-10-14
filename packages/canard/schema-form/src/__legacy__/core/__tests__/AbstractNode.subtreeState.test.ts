@@ -1,9 +1,9 @@
 import { describe, expect, it, vi } from 'vitest';
 
-import { nodeFromJSONSchema } from '@/schema-form/core';
-import type { NumberNode, ObjectNode, StringNode } from '@/schema-form/core';
+import { nodeFromJSONSchema } from '@/schema-form/__legacy__/core';
+import type { NumberNode, ObjectNode, StringNode } from '@/schema-form/__legacy__/core';
 
-import { NodeEventType, NodeState } from '../../../core/types';
+import { NodeEventType, NodeState } from '../types';
 
 const wait = (delay = 5) => {
   return new Promise((resolve) => {

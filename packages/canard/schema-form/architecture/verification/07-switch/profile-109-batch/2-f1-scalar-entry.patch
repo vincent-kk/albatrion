@@ -1,0 +1,168 @@
+diff --git a/packages/canard/schema-form/src/core/settle/utils/write/writeSchemaNode.ts b/packages/canard/schema-form/src/core/settle/utils/write/writeSchemaNode.ts
+--- a/packages/canard/schema-form/src/core/settle/utils/write/writeSchemaNode.ts
++++ b/packages/canard/schema-form/src/core/settle/utils/write/writeSchemaNode.ts
+@@ -40,12 +40,27 @@
+   source: SchemaNodeWriteKind = kind,
+   writeOrigins?: SettlementContext<Self>['writeOrigins'],
+ ): void => {
+-  if (source === 'input' && (node.disposed || node.rootNode.disposed)) return;
+-  assertSchemaNodeWritable(node);
+-  if (node.behavior.type === 'virtual' &&
+-    kind !== 'load' && kind !== 'automatic')
+-    assertVirtualWriteShape(node, input);
+-  if (node.detached) {
++  const root = node.rootNode;
++  if (source === 'input' && (node.disposed || root.disposed)) return;
++  const schema = node.schema.schema;
++  const inputType = typeof input;
++  const scalarWrite = node.parent !== null && !node.detached &&
++    !node.disposed && !root.disposed &&
++    root.runtime.blueprint.capabilities.branchless &&
++    !root.runtime.blueprint.capabilities.hasDerive &&
++    root.runtime.latentRaw.size === 0 &&
++    (kind === 'input' || kind === 'callerReplace' || kind === 'callerPartial') &&
++    (inputType === 'string' || inputType === 'boolean' || inputType === 'number') &&
++    node.schemaType === inputType && typeof node.raw === inputType &&
++    (inputType !== 'number' || Number.isFinite(input) && Number.isFinite(node.raw)) &&
++    typeof schema === 'object' && schema !== null && schema.type === node.schemaType;
++  if (!scalarWrite) {
++    assertSchemaNodeWritable(node);
++    if (node.behavior.type === 'virtual' &&
++      kind !== 'load' && kind !== 'automatic')
++      assertVirtualWriteShape(node, input);
++  }
++  if (!scalarWrite && node.detached) {
+     if (hasLivePathKind(node)) return;
+     const whole = kind !== 'callerPartial' || !isPlain(input) ||
+       node.behavior.strategy !== 'branch';
+@@ -56,8 +71,8 @@
+       whole, node.parent?.blueprintNode.childEntries ?? []);
+     return;
+   }
+-  const scratch = getSettlementScratch(node.rootNode.runtime);
+-  const replaces = kind === 'callerReplace' ||
++  const scratch = getSettlementScratch(root.runtime);
++  const replaces = scalarWrite ? kind !== 'input' : kind === 'callerReplace' ||
+     kind === 'input' && node.behavior.strategy === 'branch' ||
+     (kind === 'callerPartial' && (input === null || typeof input !== 'object' ||
+       isArray(input) || node.behavior.strategy !== 'branch'));
+@@ -66,15 +81,16 @@
+   context.writeOrigins = writeOrigins;
+   try {
+     if (context.hasGates) getGateRegistry(context.root.runtime).register(context.root);
+-    if (replaces || kind === 'load')
++    if (!scalarWrite && (replaces || kind === 'load'))
+       pruneLatentRaw(node.runtime, node.path, undefined, context);
+     markWrite(node, input, context);
+     if (kind !== 'load' && kind !== 'automatic')
+       markWrongKindAncestors(node, context);
+     registerRecalculation(context);
+     computeNode(context.root, context);
+-    releaseWrongKindHosts(context);
+-    finishSettlement(context, scratch);
++    if (!scalarWrite || context.wrongKindHosts.size > 0)
++      releaseWrongKindHosts(context);
++    finishSettlement(context, scratch, scalarWrite);
+   } finally {
+     releaseSettlementScratch(scratch);
+   }
+diff --git a/packages/canard/schema-form/src/core/settle/utils/settlement/finishSettlement.ts b/packages/canard/schema-form/src/core/settle/utils/settlement/finishSettlement.ts
+--- a/packages/canard/schema-form/src/core/settle/utils/settlement/finishSettlement.ts
++++ b/packages/canard/schema-form/src/core/settle/utils/settlement/finishSettlement.ts
+@@ -17,11 +17,12 @@
+  * Complete derivation, transition, rollback, and one commit after calculation.
+  * @param context - Calculated call with any host budget failure
+  * @param scratch - This call's explicit raw baseline container
++ * @param scalarWrite - Caller-proven live scalar with unchanged type and no derive capability
+  * @returns Nothing; committed records and runtime hold the result
+  * @throws Deferred failures after commit when no dispatch chain owns them
+  */
+ export const finishSettlement = <Self extends SchemaNodeRecord<Self>>(
+-  context: SettlementContext<Self>, scratch: SettlementScratch<Self>,
++  context: SettlementContext<Self>, scratch: SettlementScratch<Self>, scalarWrite = false,
+ ): void => {
+   for (const path of context.changedRaw) scratch.explicitRaw.add(path);
+   if (context.hostWheelExceeded && !context.exceededBudget) {
+@@ -31,13 +32,13 @@
+     context.exceededBudget = 'hostWheel';
+     context.iterations = context.hostWheelExceeded;
+   }
+-  if (!context.exceededBudget && context.root.runtime.blueprint.capabilities.hasDerive)
++  if (!scalarWrite && !context.exceededBudget && context.root.runtime.blueprint.capabilities.hasDerive)
+     runDeriveRounds(context);
+   if (!context.exceededBudget && (context.hasGates ||
+     context.entered.size > 0 || context.exited.size > 0 ||
+     context.writtenInputs.size > 1 || context.writtenInputs.size === 1 &&
+       (!context.writtenInputs.has(context.target) ||
+-        effectiveType(context.target) !== context.target.schemaType)))
++        !scalarWrite && effectiveType(context.target) !== context.target.schemaType)))
+     transitionSettlement(context);
+   if (context.exceededBudget) {
+     restoreSourceB(context, scratch.explicitRaw);
+diff --git a/packages/canard/schema-form/src/core/settle/DETAIL.md b/packages/canard/schema-form/src/core/settle/DETAIL.md
+--- a/packages/canard/schema-form/src/core/settle/DETAIL.md
++++ b/packages/canard/schema-form/src/core/settle/DETAIL.md
+@@ -1,6 +1,8 @@
+ # settle 계약
+ 
+ ## Requirements
++
++- 분기·파생·잠복 원본이 없고 살아 있는 비루트 scalar의 현재 원본·입력·유효 타입이 같은 경우만 쓰기 진입을 특화합니다. dispose·가상·detach·잠복 검사와 빈 wrong-kind release의 호출을 생략하되 조상 표시와 실제 wrong-kind 처리, 표시·계산·전이 조건·상태 키·커밋·배달 순서는 유지합니다. 이 증명은 빈 derive 검사와 대상 유효 타입 재해석에만 전달하며 실제 생김·이탈·배열·오류 처리는 기존 마감입니다. 속도 비용은 고정 수의 O(1) 타입·capability·size 검사이며 빈 helper·배열·sort callback 및 중복 유효 타입 해석을 제거합니다. 메모리 비용은 호출별 boolean/local만 추가하고 빈 release 임시 배열·closure를 줄이며 새 상주 메모리·문맥 필드·폼 간 공유는 없습니다(109 갱신 F1).
+ 
+ - 불일치 경로가 계속 비었고 메모가 루트 빈 경로 row 하나이면 커밋 번호만 갱신합니다. 최초 row와 불일치→빈 전이 및 다른 row가 있는 경우는 기존 초기화를 유지합니다. 현재 커밋 검사·경고·진단·방문·배달 순서는 같습니다. 속도 비용은 O(1) row/size 확인이며 빈 경로의 clear·색인 재생성·set을 제거합니다. 메모리 비용은 기존 폼 소유 row를 재사용하여 커밋별 row/색인 할당을 줄이고 새 보유 메모리·필드·폼 간 공유는 없습니다(109 갱신 C1).
+ 
+diff --git a/packages/canard/schema-form/src/core/settle/__tests__/settle.scalar-entry-work.test.ts b/packages/canard/schema-form/src/core/settle/__tests__/settle.scalar-entry-work.test.ts
+new file mode 100644
+--- /dev/null
++++ b/packages/canard/schema-form/src/core/settle/__tests__/settle.scalar-entry-work.test.ts
+@@ -0,0 +1,50 @@
++import { afterEach, expect, it, vi } from 'vitest';
++
++import { SetValueOption } from '../../types/value';
++import { loadSchemaNodeAtMount, writeSchemaNode } from '../index';
++import * as writable from '../utils/dispose/assertSchemaNodeWritable';
++import * as latent from '../utils/write/pruneLatentRaw';
++import * as wrongKind from '../utils/write/releaseWrongKindHosts';
++import * as types from '../utils/commit/effectiveType';
++import { createTestTree } from './fixtures/createTestTree';
++
++afterEach(() => vi.restoreAllMocks());
++
++it('removes fixed writable, latent, wrong-kind and effective-type work on normal scalar writes', () => {
++  const { root } = createTestTree({ type: 'object', properties: {
++    value: { type: 'string' }, sibling: { type: 'number', default: 3 },
++  } });
++  loadSchemaNodeAtMount(root, { value: 'before' }, SetValueOption.Overwrite);
++  const leaf = root.structure!.value;
++  const assertWritable = vi.spyOn(writable, 'assertSchemaNodeWritable');
++  const prune = vi.spyOn(latent, 'pruneLatentRaw');
++  const release = vi.spyOn(wrongKind, 'releaseWrongKindHosts');
++  const effective = vi.spyOn(types, 'effectiveType');
++  for (const value of ['first', 'later']) {
++    writeSchemaNode(leaf, value, 'callerReplace', SetValueOption.Overwrite);
++    expect(root.emit).toEqual({ value, sibling: 3 });
++  }
++  expect(assertWritable).not.toHaveBeenCalled();
++  expect(prune).not.toHaveBeenCalled();
++  expect(release).not.toHaveBeenCalled();
++  expect(effective.mock.calls.filter(([node]) => node === leaf)).toHaveLength(2);
++  expect(root.runtime.commitNumber).toBe(3);
++});
++
++it('retains general checks and derived writes when their inputs exist', () => {
++  const { root } = createTestTree({ type: 'object', properties: {
++    value: { type: 'string' }, copy: { type: 'string', controls: { derived: '../value' } },
++  } });
++  loadSchemaNodeAtMount(root, { value: 'before' }, SetValueOption.Overwrite);
++  const leaf = root.structure!.value;
++  const assertWritable = vi.spyOn(writable, 'assertSchemaNodeWritable');
++  const release = vi.spyOn(wrongKind, 'releaseWrongKindHosts');
++  writeSchemaNode(leaf, 'after', 'input', SetValueOption.Overwrite);
++  expect(assertWritable).toHaveBeenCalledTimes(1);
++  expect(release).toHaveBeenCalledTimes(1);
++  expect(root.emit).toEqual({ value: 'after', copy: 'after' });
++  leaf.disposed = true;
++  expect(() => writeSchemaNode(leaf, 'retired', 'callerReplace', SetValueOption.Overwrite))
++    .toThrow('Cannot write disposed node');
++  expect(root.emit).toEqual({ value: 'after', copy: 'after' });
++});
