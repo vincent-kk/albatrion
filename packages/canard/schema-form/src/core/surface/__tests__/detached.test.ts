@@ -289,6 +289,33 @@ describe('detached FieldNode references', () => {
     expect(root.find('/target')?.raw).toBe('y');
   });
 
+  it('26C-12 NODE-044 sends a detached write inside a batch to the latent source, never to the live node at its path', () => {
+    const { root } = makeFieldNodeTree({
+      type: 'object',
+      properties: {
+        flag: { type: 'boolean' },
+        target: { type: 'string', controls: { active: '../flag' } },
+      },
+    });
+    root.setValue({ flag: true, target: 'initial' });
+    const old = root.find('/target');
+    if (!old) throw new Error('Expected the first target');
+    root.find('/flag')?.setValue(false);
+    root.find('/flag')?.setValue(true);
+    const current = root.find('/target');
+    if (!current || current === old) throw new Error('Expected a new target');
+    root.batch(() => {
+      old.setValue('x');
+    });
+    expect(current.raw).toBe('initial');
+    root.find('/flag')?.setValue(false);
+    root.batch(() => {
+      old.setValue('y');
+    });
+    root.find('/flag')?.setValue(true);
+    expect(root.find('/target')?.raw).toBe('y');
+  });
+
   it('26C-12 ignores Merge through an old detached object while its path is live', () => {
     const { root, runtime } = groupedTree();
     root.setValue({ flag: true, group: { leaf: 'initial' } });

@@ -97,6 +97,37 @@ describe('SURFACE-062 visitSubtree order and range', () => {
     expect(collectPaths(target)).toEqual(['/target', '/target/inner']);
   });
 
+  it('sends a write in a detached subtree to the latent source, never to the live node at its path', () => {
+    const { root } = makeFieldNodeTree({
+      type: 'object',
+      properties: {
+        flag: { type: 'boolean' },
+        target: {
+          type: 'object',
+          properties: { inner: { type: 'string' } },
+          controls: { active: '../flag' },
+        },
+      },
+    });
+    root.setValue({ flag: true, target: { inner: 'v' } });
+    const old = root.find('/target');
+    if (!old) throw new Error('Expected /target');
+    const writeInner = (value: string) =>
+      old.visitSubtree((node) => {
+        if (node.path === '/target/inner') node.setValue(value);
+      });
+    root.find('/flag')?.setValue(false);
+    root.find('/flag')?.setValue(true);
+    const current = root.find('/target/inner');
+    if (!current) throw new Error('Expected a live /target/inner');
+    writeInner('x');
+    expect(current.value).toBe('v');
+    root.find('/flag')?.setValue(false);
+    writeInner('y');
+    root.find('/flag')?.setValue(true);
+    expect(root.find('/target/inner')?.value).toBe('y');
+  });
+
   it('visits a node reached again through a virtual group only once', () => {
     const { root } = makeFieldNodeTree({
       type: 'object',
