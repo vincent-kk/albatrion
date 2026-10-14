@@ -500,8 +500,8 @@ interface FieldInputProps<Value, Context, WatchValues, Schema, Node> {
   required: boolean;
   node: Node;
   type: Node['type']; // node kind: 'string', 'number', 'object', 'array', 'virtual', 'union', ...
-  schemaType: Node['schemaType']; // authored accepted kind(s), including 'integer'
-  typeMismatch: Node['typeMismatch']; // stored value mismatches the accepted kinds
+  schemaType: Node['schemaType']; // authored accepted kind(s), including 'integer'; undefined on a virtual node
+  misfit: Node['misfit']; // stored value mismatches the accepted kinds
   name: Node['name'];
   path: Node['path'];
   nullable: Node['nullable'];
@@ -545,7 +545,7 @@ interface FieldNode {
     | 'virtual'
     | 'union';
   readonly strategy: 'branch' | 'terminal'; // branch nodes own child nodes
-  readonly schemaType: string | readonly string[]; // authored kind(s), including 'integer'
+  readonly schemaType: string | readonly string[] | undefined; // authored kind(s), including 'integer'; undefined on a virtual node
   readonly jsonSchema: Readonly<Record<string, unknown>> | boolean;
   readonly required: boolean;
   readonly nullable: boolean;
@@ -575,7 +575,7 @@ interface FieldNode {
   readonly disabled: boolean;
   readonly watchValues: readonly unknown[];
   readonly context: Readonly<Record<string, unknown>>;
-  readonly typeMismatch: boolean;
+  readonly misfit: boolean; // stored value mismatches the accepted kinds
 
   // State
   state: {
@@ -599,6 +599,7 @@ interface FieldNode {
   // Navigation
   find(pointer?: string | readonly string[] | null): FieldNode | null;
   findNodes(pointer?: string | readonly string[] | null): readonly FieldNode[];
+  visitSubtree(visitor: (node: FieldNode) => void | boolean): void; // self, then preorder; false skips that node's descendants
 
   // Events and requests
   subscribe(listener: (event: { type: number }) => void): () => void; // event.type holds FieldNodeEventType bits
@@ -625,6 +626,26 @@ const unsubscribe = node.subscribe((event) => {
 node.request(FieldNodeRequestType.Focus); // also Select, Refresh, Remount
 node.setState({ [FieldNodeState.ErrorVisible]: true });
 unsubscribe();
+```
+
+`visitSubtree` calls the visitor on the node itself, then on its descendants in
+preorder with siblings in `children` order. Returning `false` skips that node's
+descendants only. From a node in the form only the current shape is visited;
+from a node that left the form, the subtree that left with it. A node reachable
+twice is visited once, and nodes created during the walk are not guaranteed to
+be visited. Value writes during the walk are applied once when it ends, so reads
+during the walk return the values from before it; state and external-error
+changes apply at once and their events wait for the end; inside an enclosing
+`batch` everything waits for that batch's end; a form `reset` or a
+`resetSubtree()` still takes effect at once. If the visitor throws outside a
+listener, the writes it made are applied and the error is rethrown. A write to a node that left the form never changes a field in
+the form. `FormHandle` has no `visitSubtree`; call it on `formRef.current?.node`.
+
+```ts
+node.visitSubtree((child) => {
+  if (child.path === '/profile/locked') return false; // skip its descendants
+  if (child.type === 'string') child.setValue(''); // applied once at the end
+});
 ```
 
 ## `ArrayNode` Methods
@@ -799,6 +820,7 @@ node.active / node.visible / node.enabled / node.readOnly / node.disabled
 node.required / node.nullable / node.type / node.strategy / node.schemaType
 node.path / node.name / node.depth / node.isRoot / node.parentNode / node.children
 node.find(path) → FieldNode | null / node.findNodes(path) → readonly FieldNode[]
+node.visitSubtree(visitor)   // self, then preorder; return false to skip descendants; writes apply once at the end
 node.validate() → Promise<readonly ValidationIssue[]>
 node.request(FieldNodeRequestType.Focus | Select | Refresh | Remount)
 node.subscribe(listener) → unsubscribe   // event.type & FieldNodeEventType.X
