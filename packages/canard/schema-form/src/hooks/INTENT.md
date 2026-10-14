@@ -6,7 +6,7 @@
 
 ## Conventions
 
-- 훅 구현은 역할 칸 hooks에 한 파일 한 훅으로 둔다. 진입점 index는 이름 목록으로만 재수출한다.
+- 훅 구현은 주제 칸에 한 파일 한 훅으로 둔다. 노드를 읽고 구독하는 훅은 `fieldNode/`, 폼 단위 훅은 `form/`이다. 진입점 index는 이름 목록으로만 재수출한다.
 - 형제 fractal(`core`·`providers`·`components/FieldProxy`·`components/Form`·`types`)은 각 관문 index로 가져오고, `src`의 organ(`constants`)은 위로 열림으로 직접 가져온다.
 - 시험은 시험 칸에 두고 훅 구현 파일을 직접 가져온다.
 
