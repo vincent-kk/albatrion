@@ -532,6 +532,6 @@ userType 변경: 'guest' → 'admin'
 | `src/components/FieldProxy/components/FieldInputSlot/type.ts`                                             | `REACTIVE_RERENDERING_EVENTS`             |
 | `src/hooks/fieldNode/useFieldNodeTracker.ts`                                                              | 노드별 독립 구독 메커니즘                 |
 | `src/core/nodes/AbstractNode/utils/EventCascadeManager/EventCascadeManager.ts:106-110` (v0.10.6에만 있음) | microtask 배칭                            |
-| `src/core/engine/blueprint/utils/expressions/createDynamicFunction/createDynamicFunction.ts`              | `new Function()` — CSP 관련               |
+| `src/core/engine/blueprint/compileBlueprintExpressions/createDynamicFunction/createDynamicFunction.ts`    | `new Function()` — CSP 관련               |
 | `rolldown.config.mjs`                                                                                     | `minify: false` 설정                      |
 | `package.json:84-93` (v0.10.6에만 있음)                                                                   | size-limit 설정 (20KB)                    |
