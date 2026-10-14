@@ -2,7 +2,7 @@
 
 개발의 진행 상황과 다음 할 일은 `PLAN.md`가 단일 진입점으로 든다. 다음 세션이 바로 이어서 일하기 위한 문서다. 이력은 `git log`와 `reviews/`에 있으므로 여기에는 지금 상태, 다음 할 일, 일하는 법만 적는다. 소유자는 Vincent다.
 
-## 1. 지금 어디인가 (2026-10-14, 326라운드 닫힘; 구조 손질 5(fixy08) 진행, 밤 루프는 소유자 결정 대기, 대기열 비어 있음)
+## 1. 지금 어디인가 (2026-10-14, 327라운드 닫힘; 정돈 단계와 구조 손질 1–5 병합, 작업자 둘 대기, 밤 루프는 소유자 결정 대기, 대기열 비어 있음)
 
 - **264라운드(2026-10-14, 소유자).** 고유명사 후보 15 중 1·3·4·5·6·7·8·9·10·11·15를 권고대로 승인했고, 2(ChildField 이름 길이)·12(controls.children 대체 이름)·13(propertyKeys 공개 자리·이름)·14(virtual을 object 전용 키로)는 추가 논의, 비표준 최상위 키의 잔여 점검을 요구했다(reviews/round-264-owner-answers.md).
 - **265라운드(2026-10-14, 소유자).** 추가 논의 넷을 닫았다: ChildFields, controls.fields, options.propertyOrder(object 전용), options.virtual 형 선언과 VirtualSchema 비공개화, nullable: true 제거(265C-01 후속 대응표, reviews/round-265-owner-answers.md). 07b-5 후속 커밋으로 fixy07에게.
@@ -64,7 +64,8 @@
 - **322라운드(2026-10-14, 닫기/원장 관리자).** 구조 손질 2·3 PR #382를 496148de7로 squash 병합(삭제는 barrel 둘, 이름 바꿈 39, 루트 index 불변, 가드 넷 0). 남은 구조 작업: fieldInputs(구조-4, fixy08), CLAUDE.md(정돈-4 — fairy08이 교차 세션 규칙으로 사양, 원장 관리자가 직접).
 - **323라운드(2026-10-14, 닫기/원장 관리자).** 정돈-4 PR #383을 3d9082f2d로 squash 병합: 루트 CLAUDE.md의 모듈 계약 원칙 여섯과 개발 흐름 7항, 패키지 CLAUDE.md의 fractal 계약 절과 Node System 교체(단일 런타임 클래스). 정돈 단계 전부와 구조 손질 1–3 완료; 남은 것은 구조-4(fixy08)와 소유자 추가 손질, 속도 계획 개정, 밤 루프.
 - **324·325라운드(2026-10-14, 소유자·닫기).** 324: 밤 루프 결정은 소유자가 작업을 본 뒤, 지금은 대기(reviews/round-324-owner-answers.md). 325: 구조-4 PR #384를 307728a6d로 squash 병합 — fieldInputs는 fieldInputDefinitions/ 아래 열한 fractal, filid 키는 organNames(규칙 문서의 additionalOrganNames와 불일치 → filid 결정 재료). 구조 손질 1–4 완료, 작업자 둘 대기.
-- **326라운드(2026-10-14, 소유자).** 구조 손질 5: components/Field의 본체는 FieldProxy이므로 fractal을 components/FieldProxy로(뿌리에 동명 구현, 부품 둘은 components/ 아래), fixy08 직접; 병합 전 전체 게이트는 약식(스토리북·플러그인·documents 생략), 문제가 생기면 자세히(reviews/round-326-owner-answers.md). 다음 라운드 번호는 327.
+- **326라운드(2026-10-14, 소유자).** 구조 손질 5: components/Field의 본체는 FieldProxy이므로 fractal을 components/FieldProxy로(뿌리에 동명 구현, 부품 둘은 components/ 아래), fixy08 직접; 병합 전 전체 게이트는 약식(스토리북·플러그인·documents 생략), 문제가 생기면 자세히(reviews/round-326-owner-answers.md).
+- **327라운드(2026-10-14, 닫기/원장 관리자).** 구조-5 PR #385를 c2d5f737e로 squash 병합(약식 전체 게이트: 시험 3841 통과, 표면 94, filid 새 지적 0). 부품의 뿌리 type.ts 위로 import는 DETAIL 예외 선언 → filid 결정 재료. 구조 손질 1–5 완료, 작업자 둘 대기, 밤 루프는 소유자 결정 대기. 다음 라운드 번호는 328.
 - **그 앞의 라운드 요지(19라운드부터)는 PLAN-LOG.md 2절에 있다.** 라운드마다 한 문단이며, 1절의 기록 표와 같은 순서다.
 - **설계의 정본은 단일 원장 `ledger/`다.** 영역 17개, 항목 1,350개(80라운드 뒤, 24라운드 뒤 1,348; 현행 1,076(부정 결정·기록 포함), 대체됨 199, 분할됨 49, 중복 24, 열림 0). 형식과 규칙은 `ledger/README.md`.
 - **옛 설계 문서(`00`–`09`, `adr/`, `open-questions.md`)는 동결됐다.** 더 고치지 않는다. 어긋남은 원장의 충돌 칸에 적는다. 원장이 인용하는 옛 문서의 `path:line`은 모두 커밋 `ba398c330` 기준 줄 번호다(그 뒤 옛 문서는 바뀌지 않았다).
@@ -485,6 +486,7 @@ node ledger/checks/doc-coverage.mjs design/*.md adr/*.md -- ledger/*.md   # 설�
 | `reviews/round-323-closing.md` | 323라운드 편집자 결정: 정돈-4 PR #383 병합, 정돈 단계 완료 |
 | `reviews/round-324-owner-answers.md`, `reviews/round-325-closing.md` | 324라운드 소유자: 밤 루프는 보고 결정, 대기; 325라운드 편집자 결정: 구조-4 PR #384 병합 |
 | `reviews/round-326-owner-answers.md` | 326라운드 소유자: Field → FieldProxy fractal, 약식 전체 게이트 |
+| `reviews/round-327-closing.md` | 327라운드 편집자 결정: 구조-5 PR #385 병합, filid 결정 재료 누적 목록 |
 | plan/tidy-structure/array-limits-review.md | 배열 한도를 core가 다룰 때의 유익·손해 비교(대기열 53 검토 메모, 권고 포함) |
 | `reviews/round-297-closing.md` | 297라운드 편집자 결정 하나: 정돈-1(#374) 병합, 정돈-2 투입 |
 | plan/tidy-structure/brief-tidy-2.md | 정돈-2 브리프(fixy08 → codex): 시험 자리 U·D·S1, 제품 위반 둘, 잉여 export, D7 예외 |
