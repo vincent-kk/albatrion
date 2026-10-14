@@ -1,6 +1,6 @@
 import { afterEach, expect, it, vi } from 'vitest';
 
-import { BlueprintErrorCode } from '../../diagnostics/constant';
+import { FormErrorCode } from '../../../../../../errors';
 import * as guards from '../../types/isBlueprintSchema';
 import { resolveReference } from '../resolveReference';
 import type { AnalysisContext } from '../type';
@@ -51,12 +51,12 @@ it('guards each resolved value once with the existing schema acceptance and diag
     collect.mockClear();
     expect(() => resolveReference(context, '#/target', '#/allOf/0')).toThrow(
       expect.objectContaining({
-        specific: BlueprintErrorCode.UnknownJsonSchema,
+        code: FormErrorCode.UnknownJsonSchema,
       }),
     );
     expect(calls).toHaveBeenCalledExactlyOnceWith(target);
     expect(collect).toHaveBeenCalledExactlyOnceWith({
-      code: BlueprintErrorCode.UnknownJsonSchema,
+      code: FormErrorCode.UnknownJsonSchema,
       level: 'error',
       schemaPath: '#/allOf/0',
       details: {
@@ -71,7 +71,7 @@ it('keeps pointer failures before the result guard', () => {
   const calls = vi.spyOn(guards, 'isBlueprintSchema');
   const context = createContext({});
   expect(() => resolveReference(context, '#/%', '#')).toThrow(
-    expect.objectContaining({ specific: BlueprintErrorCode.UnknownJsonSchema }),
+    expect.objectContaining({ code: FormErrorCode.UnknownJsonSchema }),
   );
   expect(calls).not.toHaveBeenCalled();
 });

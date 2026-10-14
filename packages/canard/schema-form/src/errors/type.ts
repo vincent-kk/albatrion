@@ -1,19 +1,44 @@
 import type { ErrorDetails } from '@winglet/common-utils/error';
 
 import type { SchemaFormError } from './classes/SchemaFormError';
-import type { FORM_ERROR_CODE_TABLE } from './codes/formErrorCode';
+import type { FormErrorCode } from './codes/FormErrorCode';
+import type { FormWarningCode } from './codes/FormWarningCode';
 
-/** Full group-qualified code from the live error ledger table. */
-export type FormErrorCode = (typeof FORM_ERROR_CODE_TABLE)[number][0];
+/** Error codes a JSONSchemaError carries. */
+export type JSONSchemaErrorCode = Extract<
+  FormErrorCode,
+  `JSON_SCHEMA_ERROR.${string}`
+>;
+
+/** Error codes a SchemaFormError carries. */
+export type SchemaFormErrorCode = Extract<
+  FormErrorCode,
+  `SCHEMA_FORM_ERROR.${string}`
+>;
+
+/** Error codes an UnhandledError carries. */
+export type UnhandledErrorCode = Extract<
+  FormErrorCode,
+  `UNHANDLED_ERROR.${string}`
+>;
+
+/** Error codes a ValidationError carries. */
+export type ValidationErrorCode = Extract<
+  FormErrorCode,
+  `VALIDATION_ERROR.${string}`
+>;
+
+/** Every code a report record carries: an error or a warning code. */
+export type FormRecordCode = FormErrorCode | FormWarningCode;
 
 /** Closed reason values for the ledger codes that define one. */
-export type FormErrorReason<Code extends FormErrorCode> = Code extends
-  | 'SCHEMA_FORM_ERROR.VALIDATOR_COMPILE_FAILED'
-  | 'SCHEMA_FORM_ERROR.GUARD_FAILED'
+export type FormErrorReason<Code extends FormRecordCode> = Code extends
+  | typeof FormErrorCode.ValidatorCompileFailed
+  | typeof FormErrorCode.GuardFailed
   ? 'duplicateSchemaId'
-  : Code extends 'SCHEMA_FORM_WARNING.TYPE_MISMATCH'
+  : Code extends typeof FormWarningCode.TypeMismatch
     ? 'unconvertible' | 'ambiguous'
-    : Code extends 'JSON_SCHEMA_ERROR.DISCRIMINATOR_MISMATCH'
+    : Code extends typeof FormErrorCode.DiscriminatorMismatch
       ? 'missing' | 'kind' | 'overlap' | 'key'
       : never;
 
@@ -22,22 +47,22 @@ export type FormErrorReason<Code extends FormErrorCode> = Code extends
  * Only injection-target and virtual-write-shape errors allow sourcePath;
  * caller-origin virtual-write-shape errors omit it.
  */
-export type FormErrorDetails<Code extends FormErrorCode> = ErrorDetails &
+export type FormErrorDetails<Code extends FormRecordCode> = ErrorDetails &
   ([FormErrorReason<Code>] extends [never]
     ? { reason?: never }
     : { reason?: FormErrorReason<Code> }) &
   (Code extends
-    | 'SCHEMA_FORM_ERROR.INJECT_TARGET_MISSING'
-    | 'SCHEMA_FORM_ERROR.INVALID_VIRTUAL_NODE_VALUES'
+    | typeof FormErrorCode.InjectTargetMissing
+    | typeof FormErrorCode.InvalidVirtualNodeValues
     ? { sourcePath?: string }
     : { sourcePath?: never });
 
 /** Observed form failure or warning; dispatch owns delivery and aggregation. */
 export interface FormErrorRecord {
   /** Severity of this occurrence. */
-  level: 'error' | 'warning';
+  level: FormErrorLevel;
   /** Full group-qualified code. */
-  code: FormErrorCode;
+  code: FormRecordCode;
   /** Message formatted once for the observer. */
   message: string;
   /** JSON Pointer to an affected data node, when owned by one. */
@@ -51,7 +76,7 @@ export interface FormErrorRecord {
   /** Actual SchemaFormError thrown for an aggregate of several failures. */
   aggregate?: SchemaFormError;
   /** External exposure path for an error occurrence. */
-  surface?: 'thrown' | 'rejected' | 'sink';
+  surface?: FormErrorSurface;
   /** React boundary stack, populated by the render layer. */
   componentStack?: string;
 }
@@ -70,3 +95,9 @@ export interface FormErrorReporter {
    */
   hasConsumer(): boolean;
 }
+
+/** Severity of a delivered record. */
+export type FormErrorLevel = 'error' | 'warning';
+
+/** How a delivered error reached the caller: thrown, rejected from a promise, or only reported. */
+export type FormErrorSurface = 'thrown' | 'rejected' | 'sink';

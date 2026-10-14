@@ -26,6 +26,7 @@ export const createNode = (
     parent?.runtime ?? {
       blueprint: analysis,
       diagnostics: { status: 'stable' },
+      context: {},
       nodeFactory: (entry, owner, treeRuntime) =>
         createNode(
           'name' in entry ? entry.name : '',

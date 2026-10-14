@@ -1,5 +1,7 @@
 import { escapeSegment } from '@winglet/json/pointer';
 
+import { JSONPointer as $ } from '@/schema-form/helpers/jsonPointer';
+
 import type { Blueprint, PropertyDeclaration } from '../../../blueprint';
 import { getDeriveRuleTable } from '../../../derive';
 import type { FieldNodeRecord } from '../../../record';
@@ -49,7 +51,7 @@ class DependencyIndex {
         const declaration = declarations.get(id);
         if (!declaration) continue;
         const watched = resolveDependencyPath(declaration.path, dependency);
-        if (watched === '@') continue;
+        if (watched === $.Context) continue;
         this.add(watched, declaration.path);
       }
     const rules = getDeriveRuleTable(blueprint);
@@ -60,7 +62,7 @@ class DependencyIndex {
           const targetPath = `${declaration.path}/${escapeSegment(rule.targetName)}`;
           for (const watch of rule.watchDependencies) {
             const watched = resolveDependencyPath(targetPath, watch);
-            if (watched !== '@') this.add(watched, declaration.path);
+            if (watched !== $.Context) this.add(watched, declaration.path);
           }
         }
     for (const node of blueprint.nodes)
@@ -70,7 +72,7 @@ class DependencyIndex {
           if (!expression) continue;
           for (const dependency of expression.dependencies) {
             const watched = resolveDependencyPath(gate.hostPath, dependency);
-            if (watched === '@') continue;
+            if (watched === $.Context) continue;
             this.add(watched, declaration.path);
           }
         }
@@ -101,13 +103,13 @@ class DependencyIndex {
       }
     };
     collect(rootIndex);
-    for (const segment of changedPath.split('/').filter(Boolean)) {
+    for (const segment of changedPath.split($.Separator).filter(Boolean)) {
       const next: DependencyNode[] = [];
       for (const node of current) {
         const exact = node.children.get(segment);
         if (exact) next.push(exact);
         if (isCanonicalArrayIndex(segment)) {
-          const wildcard = node.children.get('*');
+          const wildcard = node.children.get($.Wildcard);
           if (wildcard) next.push(wildcard);
         }
       }
@@ -127,24 +129,24 @@ class DependencyIndex {
 
   /** Insert one exact watched location into the pointer trie. */
   private add(watchedPath: string, owner: string): void {
-    const ownerParts = owner.split('/');
-    const watchedParts = watchedPath.split('/');
+    const ownerParts = owner.split($.Separator);
+    const watchedParts = watchedPath.split($.Separator);
     // A fixed read of another item depends on that array host's whole subtree.
     for (let index = 1; index < ownerParts.length; index++) {
       if (
-        ownerParts[index] === '*' &&
-        watchedParts[index] !== '*' &&
+        ownerParts[index] === $.Wildcard &&
+        watchedParts[index] !== $.Wildcard &&
         ownerParts
           .slice(1, index)
           .every((part, position) => part === watchedParts[position + 1]) &&
         watchedParts[index]
       ) {
-        watchedPath = ownerParts.slice(0, index).join('/');
+        watchedPath = ownerParts.slice(0, index).join($.Separator);
         break;
       }
     }
     let current = this.root!;
-    for (const segment of watchedPath.split('/').filter(Boolean)) {
+    for (const segment of watchedPath.split($.Separator).filter(Boolean)) {
       let child = current.children.get(segment);
       if (!child) {
         child = { owners: [], ownerPaths: new Set(), children: new Map() };
@@ -152,13 +154,14 @@ class DependencyIndex {
       }
       current = child;
     }
-    const indexedParts = watchedPath.split('/');
+    const indexedParts = watchedPath.split($.Separator);
     if (!current.ownerPaths.has(owner)) {
       current.ownerPaths.add(owner);
       current.owners.push({
         path: owner,
         bindable: ownerParts.every(
-          (part, index) => part !== '*' || indexedParts[index] === '*',
+          (part, index) =>
+            part !== $.Wildcard || indexedParts[index] === $.Wildcard,
         ),
       });
     }

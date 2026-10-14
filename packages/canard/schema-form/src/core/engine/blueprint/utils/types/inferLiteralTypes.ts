@@ -1,9 +1,9 @@
 import { isArray } from '@winglet/common-utils/filter';
 import { hasOwnProperty } from '@winglet/common-utils/lib';
 
+import { FormErrorCode } from '../../../../../errors';
 import type { BlueprintSchema, SchemaTypeName } from '../../type';
 import type { AnalysisContext } from '../analyze/type';
-import { BlueprintErrorCode } from '../diagnostics/constant';
 import { throwBlueprintError } from '../diagnostics/throwBlueprintError';
 
 /**
@@ -30,7 +30,7 @@ export const inferLiteralTypes = (
       hasLiteral = true;
       if (!isArray(part.schema.enum))
         return throwBlueprintError(
-          BlueprintErrorCode.UnknownJsonSchema,
+          FormErrorCode.UnknownJsonSchema,
           part.schemaPath,
           { guidance: 'Specify type explicitly for an invalid enum literal.' },
           context.options,
@@ -49,7 +49,7 @@ export const inferLiteralTypes = (
       type !== 'null'
     )
       return throwBlueprintError(
-        BlueprintErrorCode.UnknownJsonSchema,
+        FormErrorCode.UnknownJsonSchema,
         schemaPath,
         { guidance: 'Specify type explicitly for an object or array literal.' },
         context.options,
@@ -60,7 +60,7 @@ export const inferLiteralTypes = (
     return types;
   if (types.length === 1 && types[0] === 'null') return types;
   return throwBlueprintError(
-    BlueprintErrorCode.UnknownJsonSchema,
+    FormErrorCode.UnknownJsonSchema,
     schemaPath,
     { guidance: 'Specify type explicitly for mixed or empty literals.' },
     context.options,

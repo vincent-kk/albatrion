@@ -1,3 +1,5 @@
+import { JSONPointer as $ } from '@/schema-form/helpers/jsonPointer';
+
 import type { FormErrorRecord } from '../../../../errors';
 import type { FieldNodeRuntime } from '../types/runtime';
 
@@ -39,6 +41,6 @@ export const indexFieldNodeWarning = <Self>(
       keys.add(key);
     }
     if (!ancestor) break;
-    ancestor = ancestor.slice(0, ancestor.lastIndexOf('/'));
+    ancestor = ancestor.slice(0, ancestor.lastIndexOf($.Separator));
   }
 };

@@ -1,7 +1,15 @@
 import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 
-import { FORM_ERROR_CODE_TABLE } from '../codes/formErrorCode';
+import { FormErrorCode } from '../codes/FormErrorCode';
+import { FormWarningCode } from '../codes/FormWarningCode';
+
+/** Ledger rows retired without a producer (ERROR-162, 305C-01). */
+const RETIRED = new Set([
+  'JSON_SCHEMA_ERROR.CONDITION_INDEX',
+  'JSON_SCHEMA_ERROR.CONDITION_INDICES',
+  'SCHEMA_FORM_WARNING.PRESENTATION_KEY_SUSPECT',
+]);
 
 /**
  * Expands a live ERROR-164 row, including its abbreviated alternatives.
@@ -25,7 +33,7 @@ const expandCodeRow = (
 };
 
 describe('form error codes', () => {
-  it('ERROR-164 code table matches the live ledger rows, supplements, order and level', () => {
+  it('ERROR-164 code enums match the live ledger rows, supplements, order and level', () => {
     const ledger = readFileSync(
       new URL('../../../architecture/ledger/error.md', import.meta.url),
       'utf8',
@@ -81,6 +89,13 @@ describe('form error codes', () => {
     const expected = [...base, ...supplements];
     console.log(`ERROR-164 live code count: ${expected.length}`);
     expect(expected).toHaveLength(60);
-    expect(FORM_ERROR_CODE_TABLE).toEqual(expected);
+    const live = expected.filter(([code]) => !RETIRED.has(code));
+    expect(Object.values(FormErrorCode)).toEqual([
+      ...live.filter(([, level]) => level === 'error').map(([code]) => code),
+      'VALIDATION_ERROR.SCHEMA_VALIDATION_FAILED',
+    ]);
+    expect(Object.values(FormWarningCode)).toEqual(
+      live.filter(([, level]) => level === 'warning').map(([code]) => code),
+    );
   });
 });

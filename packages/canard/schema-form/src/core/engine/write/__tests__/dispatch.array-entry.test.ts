@@ -3,7 +3,7 @@ import { describe, expect, it, vi } from 'vitest';
 import { createDispatchTree } from '@/schema-form/core/engine/__tests__/fixtures/createDispatchTree';
 import { FieldNodeEventType } from '@/schema-form/core/engine/record';
 import { readFieldNodeErrors } from '@/schema-form/core/engine/validation';
-import { ARRAY_METHOD_ON_NON_ARRAY } from '@/schema-form/errors';
+import { FormErrorCode } from '@/schema-form/errors';
 import type { FormErrorRecord } from '@/schema-form/errors';
 
 import { dispatchBatch } from '../utils/entry/dispatchBatch';
@@ -58,7 +58,7 @@ describe('array entry integration', () => {
     expect(root.local).toEqual([]);
   });
 
-  it('33C-01 exports all five entries and refused entries return undefined', () => {
+  it('33C-01 exports all five entries; refused push returns the current length and the others undefined', () => {
     const { root, runtime } = createDispatchTree({
       type: 'array',
       items: { type: 'number' },
@@ -68,7 +68,7 @@ describe('array entry integration', () => {
     runtime.entryDepth = 1;
     runtime.feedbackBudget = 25;
     runtime.currentListener = () => {};
-    expect(dispatchPush(root, 3)).toBeUndefined();
+    expect(dispatchPush(root, 3)).toBe(2);
     expect(dispatchPop(root)).toBeUndefined();
     expect(dispatchUpdate(root, 0, 3)).toBeUndefined();
     expect(dispatchRemove(root, 0)).toBeUndefined();
@@ -175,7 +175,7 @@ describe('array entry integration', () => {
     );
     expect(() => dispatchPush(root, 1)).toThrowError(
       expect.objectContaining({
-        code: `SCHEMA_FORM_ERROR.${ARRAY_METHOD_ON_NON_ARRAY}`,
+        code: FormErrorCode.ArrayMethodOnNonArray,
       }),
     );
     expect(records).toEqual([
@@ -210,7 +210,7 @@ describe('array entry integration', () => {
       }),
     ).toThrowError(
       expect.objectContaining({
-        code: `SCHEMA_FORM_ERROR.${ARRAY_METHOD_ON_NON_ARRAY}`,
+        code: FormErrorCode.ArrayMethodOnNonArray,
       }),
     );
     expect(list.local).toEqual([2]);

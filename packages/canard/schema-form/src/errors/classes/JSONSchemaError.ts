@@ -1,5 +1,10 @@
 import { BaseError, type ErrorDetails } from '@winglet/common-utils/error';
 
+import type { JSONSchemaErrorCode } from '../type';
+
+/** Group every JSONSchemaError code carries; the code value repeats it before the bare name. */
+const GROUP = 'JSON_SCHEMA_ERROR';
+
 /**
  * Error class for json schema errors.
  *
@@ -22,8 +27,12 @@ import { BaseError, type ErrorDetails } from '@winglet/common-utils/error';
  * - notFoundFields: List of missing fields for virtual field validation
  */
 export class JSONSchemaError extends BaseError {
-  constructor(code: string, message: string, details: ErrorDetails = {}) {
-    super('JSON_SCHEMA_ERROR', code, message, details);
+  constructor(
+    code: JSONSchemaErrorCode,
+    message: string,
+    details: ErrorDetails = {},
+  ) {
+    super(GROUP, code.slice(GROUP.length + 1), message, details);
     this.name = 'JSONSchemaError';
   }
 }

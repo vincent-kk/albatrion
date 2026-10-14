@@ -1,6 +1,8 @@
 import { hasOwnProperty } from '@winglet/common-utils/lib';
 import { escapeSegment, unescapeSegment } from '@winglet/json/pointer';
 
+import { JSONPointer as $ } from '@/schema-form/helpers/jsonPointer';
+
 import type { BlueprintGate, BlueprintNode } from '../../../blueprint';
 import type { FieldNodeRecord } from '../../../record';
 import type { SettlementContext } from '../../type';
@@ -91,7 +93,7 @@ export const flushPendingGateReads = <Self extends FieldNodeRecord<Self>>(
     return;
   }
   const flushRead = (read: string): void => {
-    if (read === '@') return;
+    if (read === $.Context) return;
     const local = read === path || read.startsWith(`${path}/`);
     for (const host of context.pendingOutputs ?? []) {
       // A read inside the entry walks the entry node that the host holds before its subtree gates run.
@@ -99,7 +101,7 @@ export const flushPendingGateReads = <Self extends FieldNodeRecord<Self>>(
       if (read === host.path) flushPendingOutput(host, context);
       else if (read.startsWith(`${host.path}/`)) {
         const name = unescapeSegment(
-          read.slice(host.path.length + 1).split('/')[0],
+          read.slice(host.path.length + 1).split($.Separator)[0],
         );
         if (
           host.raw !== undefined ||

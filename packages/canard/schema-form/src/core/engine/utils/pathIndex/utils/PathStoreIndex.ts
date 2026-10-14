@@ -1,3 +1,5 @@
+import { JSONPointer as $ } from '@/schema-form/helpers/jsonPointer';
+
 import { NumericPathIndex } from './utils/NumericPathIndex';
 import { isCanonicalArraySlot } from './utils/isCanonicalArraySlot';
 
@@ -101,7 +103,7 @@ export class PathStoreIndex {
     const keys = new Set(this.under(path));
     let ancestor = path;
     while (ancestor) {
-      ancestor = ancestor.slice(0, ancestor.lastIndexOf('/'));
+      ancestor = ancestor.slice(0, ancestor.lastIndexOf($.Separator));
       for (const key of this.prefixes.get(ancestor)?.exact ?? []) keys.add(key);
     }
     return keys;
@@ -117,12 +119,12 @@ export class PathStoreIndex {
     while (!parent) {
       missing.push(cursor);
       if (!cursor) break;
-      cursor = cursor.slice(0, cursor.lastIndexOf('/'));
+      cursor = cursor.slice(0, cursor.lastIndexOf($.Separator));
       parent = this.prefixes.get(cursor);
     }
     for (let i = missing.length - 1; i >= 0; i--) {
       const current = missing[i];
-      const segment = current.slice(current.lastIndexOf('/') + 1);
+      const segment = current.slice(current.lastIndexOf($.Separator) + 1);
       const prefix: PathPrefix = {
         path: current,
         parent,

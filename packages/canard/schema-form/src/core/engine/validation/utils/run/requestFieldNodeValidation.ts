@@ -1,4 +1,4 @@
-import { VALIDATOR_COMPILE_FAILED } from '../../../../../errors';
+import { FormErrorCode } from '../../../../../errors';
 import type { FieldNodeRecord } from '../../../record';
 import { ValidationMode } from '../../../types/state';
 import type { ValidationIssue } from '../../type';
@@ -56,7 +56,7 @@ export const requestFieldNodeValidation = <Self extends FieldNodeRecord<Self>>(
           failure !== null &&
           typeof failure === 'object' &&
           'code' in failure &&
-          failure.code === `SCHEMA_FORM_ERROR.${VALIDATOR_COMPILE_FAILED}`
+          failure.code === FormErrorCode.ValidatorCompileFailed
         ) {
           runtime.validationUnavailable = true;
           if (runtime.validationCompileReported) return;

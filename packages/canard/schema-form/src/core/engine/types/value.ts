@@ -52,3 +52,11 @@ export interface ResetOptions<Value = unknown> {
   /** Fallback value used in the default value calculation logic */
   fallbackValue?: Value | null;
 }
+
+/** Origin of a write before calculation and transition phases. */
+export type FieldNodeWriteKind =
+  | 'input'
+  | 'callerPartial'
+  | 'callerReplace'
+  | 'load'
+  | 'automatic';

@@ -17,5 +17,5 @@ export const getInjectToContext = <Self extends FieldNodeRecord<Self>>(
   parentJSONSchema: source.parent ? source.parent.schema.schema : null,
   rootValue: root.emit,
   rootJSONSchema: root.schema.schema,
-  context: root.runtime.context ?? {},
+  context: root.runtime.context,
 });

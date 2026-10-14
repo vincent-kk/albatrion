@@ -2,7 +2,8 @@ import { isArray } from '@winglet/common-utils/filter';
 
 import type { FieldNodeRecord } from '../../../record';
 import type { WriteOption } from '../../../types/value';
-import type { FieldNodeWriteKind, SettlementContext } from '../../type';
+import type { FieldNodeWriteKind } from '../../../types/value';
+import type { SettlementContext } from '../../type';
 import { computeNode } from '../compute/computeNode';
 import { hasLivePathKind } from '../detached/hasLivePathKind';
 import { assertFieldNodeWritable } from '../dispose/assertFieldNodeWritable';

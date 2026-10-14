@@ -1,15 +1,14 @@
 import type { SchemaFormError } from '../../../errors';
 import type { BlueprintNode, EffectiveSchema } from '../blueprint';
 import type { DeriveState, DeriveTraceEntry } from '../derive';
-import type { Distribution, FieldNodeRecord } from '../record';
-
-/** Origin of a write before calculation and transition phases. */
-export type FieldNodeWriteKind =
-  | 'input'
-  | 'callerPartial'
-  | 'callerReplace'
-  | 'load'
-  | 'automatic';
+import type {
+  Distribution,
+  FieldNodeRecord,
+  SettlementBudget,
+  SettlementEntryApi,
+  SettlementFailureCause,
+} from '../record';
+import type { FieldNodeWriteKind } from '../types/value';
 
 /** Virtual child names indexed by their real sibling's host template and field. */
 export type VirtualReferenceIndex = ReadonlyMap<
@@ -42,7 +41,7 @@ export interface SettlementContext<Self extends FieldNodeRecord<Self>> {
   /** Public bit mask retained for the development trace entry. */
   option: number;
   /** Binding entry name when the settlement has no public write kind. */
-  entryApi?: string;
+  entryApi?: Extract<SettlementEntryApi, 'setContext'>;
   /** Declaration hosts whose context reads started this settlement. */
   contextOwners?: readonly string[];
   /** Whether this analysis contains any authored gate. */
@@ -149,16 +148,11 @@ export interface SettlementContext<Self extends FieldNodeRecord<Self>> {
   /** Recorded occurrence identities; only recomputation of one identity is merged. */
   failureKeys?: Set<string>;
   /** First failure's cause, independent of later budget exhaustion. */
-  cause?:
-    | 'expression'
-    | 'injectTarget'
-    | 'writeShape'
-    | 'sharedConflict'
-    | 'budget';
+  cause?: SettlementFailureCause;
   /** Exhausted host rounds handed to the later budget phase. */
   hostWheelExceeded?: number;
   /** The exhausted transition or recursion budget, when applicable. */
-  exceededBudget?: 'hostWheel' | 'derive' | 'transition' | 'recursion';
+  exceededBudget?: SettlementBudget;
   /** Number of rounds spent at the exhausted budget. */
   iterations?: number;
 }

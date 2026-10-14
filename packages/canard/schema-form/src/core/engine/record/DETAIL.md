@@ -22,7 +22,7 @@
 
 - 선택적 `warningKeysByPath`는 데이터 경로의 각 조상→경고 구조 키 역색인입니다. `indexFieldNodeWarning`은 경고를 대기 저장소에 넣을 때 이 색인을 함께 갱신하고 삭제 시 두 경고 저장소에서도 지웁니다. 재인덱싱과 소멸은 영향받은 아이템 접두사의 키만 조회하며 기록 객체는 발생 당시 경로를 보존합니다. 비용은 경고 등록/삭제 O(경로 깊이), 메모리 O(경고 수 × 깊이)이고 경고가 없는 트리에는 색인을 만들지 않습니다(35C-09, ERROR-017·024, NODE-045).
 
-- 진입점은 `FieldNodeRecord`, `Behavior`, `UnionSpec`, `FieldNodeRuntime`, `SettlementScratch`, `updateFieldNodeNameAndPath`, `patchFieldNodeInteractionState`, `shallowPatch`를 이름으로 내보냅니다. `FieldNodeFactory`는 내부 생성 함수 형이며 index가 내보내지 않습니다. 외부 소비자는 레코드의 진입점으로만 들어옵니다(NODE-008·016).
+- 진입점은 `FieldNodeRecord`, `Behavior`, `UnionSpec`, `FieldNodeRuntime`, `SettlementScratch`, `SettlementFailureCause`, `SettlementBudget`, `SettlementEntryApi`, `updateFieldNodeNameAndPath`, `patchFieldNodeInteractionState`, `shallowPatch`를 이름으로 내보냅니다. `FieldNodeFactory`는 내부 생성 함수 형이며 index가 내보내지 않습니다. 외부 소비자는 레코드의 진입점으로만 들어옵니다(NODE-008·016).
 - 진입점은 기존 레코드 계약과 함께 `FieldNodeEventType`, `FieldNodeRequestType`, `markFieldNodeEvent`를 이름으로 내보냅니다. 두 열거의 비트와 명령 종류는 이 모듈이 소유하고 core와 패키지 진입점이 이름으로 내보냅니다. `RequestEmitChange`·`RequestInjection`은 두지 않습니다(SURFACE-056·060, EVENT-073, LANDING-067·087·158·170).
 - 열거와 공유 빈 원장 상수는 `constants/` 구획에, 계약 형은 목적별 `types/` 구획(레코드·행·런타임)에 두고 진입점이 이름으로 내보냅니다. 두 구획은 organ이며 바깥 소비자는 진입점으로만 들어옵니다.
 - `FieldNodeEventType`은 남는 옛 비트의 자리 값을 유지하고 `UpdateJsonSchema`·`UpdateDiagnostics`를 더합니다. `FieldNodeRequestType`의 `Focus`·`Select`·`Refresh`·`Remount`는 각각 `RequestFocus`·`RequestSelect`·`RequestRefresh`·`RequestRemount` 비트와 같습니다. 한 명령 호출은 종류 하나만 받습니다(EVENT-043·064·073, SURFACE-057·060).

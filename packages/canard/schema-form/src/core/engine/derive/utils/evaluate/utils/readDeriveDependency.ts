@@ -1,6 +1,8 @@
 import { hasOwnProperty } from '@winglet/common-utils/lib';
 import { unescapeSegment } from '@winglet/json/pointer';
 
+import { JSONPointer as $ } from '@/schema-form/helpers/jsonPointer';
+
 import type { FieldNodeRecord } from '../../../../record';
 import { resolveDependencyPath } from '../../../../utils/paths/resolveDependencyPath';
 
@@ -17,9 +19,9 @@ export const readDeriveDependency = <Self extends FieldNodeRecord<Self>>(
   dependency: string,
 ): unknown => {
   const path = resolveDependencyPath(hostPath, dependency);
-  if (path === '@') return root.runtime.context ?? {};
+  if (path === $.Context) return root.runtime.context;
   let value: unknown = root.emit;
-  for (const encoded of path.split('/').slice(1)) {
+  for (const encoded of path.split($.Separator).slice(1)) {
     if (value === null || typeof value !== 'object') return undefined;
     const name = unescapeSegment(encoded);
     if (!hasOwnProperty(value, name)) return undefined;

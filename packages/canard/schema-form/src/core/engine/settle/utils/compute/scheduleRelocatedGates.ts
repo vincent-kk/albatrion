@@ -1,3 +1,5 @@
+import { JSONPointer as $ } from '@/schema-form/helpers/jsonPointer';
+
 import type { FieldNodeRecord } from '../../../record';
 import type { SettlementContext } from '../../type';
 import type { GateOccurrence } from '../gates/type';
@@ -16,7 +18,7 @@ export const scheduleRelocatedGates = <Self extends FieldNodeRecord<Self>>(
     let path = gate.hostPath;
     while (path !== gate.evaluationHostPath) {
       context.dirtyPaths.add(path);
-      path = path.slice(0, path.lastIndexOf('/'));
+      path = path.slice(0, path.lastIndexOf($.Separator));
     }
     context.dirtyPaths.add(gate.evaluationHostPath);
   }

@@ -1,9 +1,7 @@
 import { isArray } from '@winglet/common-utils/filter';
 
-import {
-  FEEDBACK_LIMIT_EXCEEDED,
-  SchemaFormError,
-} from '../../../../../errors';
+import { SchemaFormError } from '../../../../../errors';
+import { FormErrorCode } from '../../../../../errors';
 import type { FormErrorRecord } from '../../../../../errors';
 import type { FieldNodeRecord } from '../../../record';
 import { indexFieldNodeWarning } from '../../../record';
@@ -118,7 +116,7 @@ export const exitFieldNodeChain = <Self extends FieldNodeRecord<Self>>(
   if (changed && runtime.onChange) {
     if ((runtime.onChangeBudget ?? 0) >= 25) {
       const error = new SchemaFormError(
-        FEEDBACK_LIMIT_EXCEEDED,
+        FormErrorCode.FeedbackLimitExceeded,
         'onChange nesting exceeded 25 callbacks',
       );
       errors.push(error);

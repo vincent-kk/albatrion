@@ -14,7 +14,7 @@ import { ExternalFormContextProvider } from '@/schema-form/providers/ExternalFor
 import type { FieldInputProps } from '@/schema-form/types';
 
 import { FormCore, type FormHandle } from '../components/FormCore';
-import { FormError } from '../components/FormError/FormError';
+import { FormError } from '../components/FormError';
 
 afterEach(() => {
   cleanup();

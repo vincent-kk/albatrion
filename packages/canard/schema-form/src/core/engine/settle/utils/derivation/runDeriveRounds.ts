@@ -1,7 +1,4 @@
-import {
-  INVALID_VIRTUAL_NODE_VALUES,
-  SchemaFormError,
-} from '../../../../../errors';
+import { FormErrorCode, SchemaFormError } from '../../../../../errors';
 import { DeriveConvergenceTargets } from '../../../blueprint';
 import { DERIVE_ROUND_CAP, evaluateDeriveRound } from '../../../derive';
 import type { DeriveRoundDecision } from '../../../derive';
@@ -10,11 +7,6 @@ import { sameValue } from '../../../utils/compute/sameValue';
 import type { SettlementContext } from '../../type';
 import { computeNode } from '../compute/computeNode';
 import { recordSettlementFailure } from '../errors/recordSettlementFailure';
-import {
-  BUDGET_EXCEEDED,
-  EXPRESSION_THREW,
-  INJECT_TARGET_MISSING,
-} from '../errors/settleErrorCode';
 import { registerRecalculation } from '../write/registerRecalculation';
 import { collectDeriveSourcePaths } from './collectDeriveSourcePaths';
 import { deriveShadowEvaluation } from './deriveShadowEvaluation';
@@ -23,9 +15,9 @@ import { applyDeriveWrite } from './utils/applyDeriveWrite';
 
 /** Deferred error codes follow the failure's contract category. */
 const ERROR_CODES = {
-  expression: EXPRESSION_THREW,
-  injectTarget: INJECT_TARGET_MISSING,
-  writeShape: INVALID_VIRTUAL_NODE_VALUES,
+  expression: FormErrorCode.ExpressionThrew,
+  injectTarget: FormErrorCode.InjectTargetMissing,
+  writeShape: FormErrorCode.InvalidVirtualNodeValues,
 } as const;
 /** Human-readable failure labels retain the existing expression wording. */
 const ERROR_LABELS = {
@@ -100,7 +92,7 @@ export const runDeriveRounds = <Self extends FieldNodeRecord<Self>>(
         recordSettlementFailure(
           context,
           new SchemaFormError(
-            BUDGET_EXCEEDED,
+            FormErrorCode.BudgetExceeded,
             `Derive budget exceeded at ${context.target.path}`,
             { path: context.target.path },
           ),
@@ -138,7 +130,7 @@ export const runDeriveRounds = <Self extends FieldNodeRecord<Self>>(
         recordSettlementFailure(
           context,
           new SchemaFormError(
-            BUDGET_EXCEEDED,
+            FormErrorCode.BudgetExceeded,
             `Host wheel budget exceeded at ${context.target.path}`,
             { path: context.target.path },
           ),

@@ -2,9 +2,11 @@ import { isArray } from '@winglet/common-utils/filter';
 import { escapeSegment } from '@winglet/json/pointer';
 
 import {
+  JSONPointer as $,
   getAbsolutePath,
   stripFragment,
 } from '../../../../../helpers/jsonPointer';
+import { CONTROL_KEY } from '../../../constants/controlKey';
 import type {
   Blueprint,
   BlueprintExpression,
@@ -22,7 +24,9 @@ const resolveRead = (host: string, dependency: string): string =>
   stripFragment(
     getAbsolutePath(
       host,
-      dependency[0] === '/' || dependency[0] === '#' || dependency[0] === '.'
+      dependency[0] === $.Separator ||
+        dependency[0] === $.Fragment ||
+        dependency[0] === $.Current
         ? dependency
         : `./${dependency}`,
     ),
@@ -34,7 +38,7 @@ const resolveRead = (host: string, dependency: string): string =>
  * @returns True when one segment is exactly `*`
  */
 const hasWildcardSegment = (path: string): boolean =>
-  path === '*' ||
+  path === $.Wildcard ||
   path.startsWith('*/') ||
   path.endsWith('/*') ||
   path.includes('/*/');
@@ -96,7 +100,7 @@ export const collectDeriveConvergenceTargets = (
       dependency++
     ) {
       const path = expression.dependencies[dependency];
-      if (path === '@') return undefined;
+      if (path === $.Context) return undefined;
       const read = resolveRead(expression.hostPath, path);
       if (!read || hosts.has(read)) return undefined;
       reads.add(read);
@@ -105,7 +109,7 @@ export const collectDeriveConvergenceTargets = (
   const dependencies = Object.keys(blueprint.dependencies);
   for (let index = 0; index < dependencies.length; index++) {
     const dependency = dependencies[index];
-    if (dependency === '@') return undefined;
+    if (dependency === $.Context) return undefined;
     const owners = blueprint.dependencies[dependency];
     for (let owner = 0; owner < owners.length; owner++) {
       const declaration = declarations.get(owners[owner]);
@@ -124,9 +128,9 @@ export const collectDeriveConvergenceTargets = (
       const controls =
         typeof entry.schema === 'object' ? entry.schema.controls : undefined;
       if (controls && typeof controls === 'object') {
-        if (typeof Reflect.get(controls, 'injectTo') === 'function')
+        if (typeof Reflect.get(controls, CONTROL_KEY.injectTo) === 'function')
           reads.add(node.path);
-        const fields = Reflect.get(controls, 'fields');
+        const fields = Reflect.get(controls, CONTROL_KEY.fields);
         if (isArray(fields))
           for (let child = 0; child < fields.length; child++) {
             const childControls = fields[child]?.controls;
@@ -141,7 +145,10 @@ export const collectDeriveConvergenceTargets = (
             for (let target = 0; target < targets.length; target++) {
               const targetPath = `${node.path}/${escapeSegment(targets[target])}`;
               for (let watch = 0; watch < paths.length; watch++) {
-                if (typeof paths[watch] !== 'string' || paths[watch] === '@')
+                if (
+                  typeof paths[watch] !== 'string' ||
+                  paths[watch] === $.Context
+                )
                   return undefined;
                 reads.add(resolveRead(targetPath, paths[watch]));
               }

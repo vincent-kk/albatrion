@@ -1,5 +1,7 @@
 import { isArray } from '@winglet/common-utils/filter';
 
+import { FormErrorCode } from '../../../../../errors';
+import { SCHEMA_GROUP } from '../../../constants/schemaGroup';
 import type {
   ChildSchemaControls,
   SchemaControls,
@@ -7,7 +9,6 @@ import type {
 import type { BlueprintSchema } from '../../type';
 import { readSchemaObject } from '../analyze/readSchemaObject';
 import type { AnalysisContext } from '../analyze/type';
-import { BlueprintErrorCode } from './constant';
 import { throwBlueprintError } from './throwBlueprintError';
 
 /**
@@ -25,18 +26,18 @@ export const validateControlGroups = (
   fragment: boolean,
 ): void => {
   const record = readSchemaObject(schema);
-  for (const group of ['controls', 'options'] as const) {
+  for (const group of [SCHEMA_GROUP.controls, SCHEMA_GROUP.options] as const) {
     const value = record[group];
     if (value === undefined) continue;
     const allowed =
-      group === 'options'
+      group === SCHEMA_GROUP.options
         ? OPTION_KEYS
         : fragment
           ? CHILD_CONTROL_KEYS
           : CONTROL_KEYS;
     if (!value || typeof value !== 'object' || isArray(value))
       throwBlueprintError(
-        BlueprintErrorCode.InvalidControlShape,
+        FormErrorCode.InvalidControlShape,
         `${schemaPath}/${group}`,
         { group, key: group, expected: 'object' },
         context.options,
@@ -44,7 +45,7 @@ export const validateControlGroups = (
     for (const key of Object.keys(value))
       if (!allowed.includes(key))
         throwBlueprintError(
-          BlueprintErrorCode.UnknownGroupKey,
+          FormErrorCode.UnknownGroupKey,
           `${schemaPath}/${group}/${key}`,
           { group, key },
           context.options,
@@ -56,17 +57,17 @@ export const validateControlGroups = (
     typeof controls.injectTo !== 'function'
   )
     throwBlueprintError(
-      BlueprintErrorCode.InvalidControlShape,
+      FormErrorCode.InvalidControlShape,
       `${schemaPath}/controls/injectTo`,
-      { group: 'controls', key: 'injectTo', expected: 'function' },
+      { group: SCHEMA_GROUP.controls, key: 'injectTo', expected: 'function' },
       context.options,
     );
   if (controls?.fields !== undefined) {
     if (!isArray(controls.fields))
       throwBlueprintError(
-        BlueprintErrorCode.InvalidControlShape,
+        FormErrorCode.InvalidControlShape,
         `${schemaPath}/controls/fields`,
-        { group: 'controls', key: 'fields', expected: 'array' },
+        { group: SCHEMA_GROUP.controls, key: 'fields', expected: 'array' },
         context.options,
       );
     controls.fields.forEach((entry: any, index: number) => {
@@ -81,10 +82,10 @@ export const validateControlGroups = (
         entry.targets.some((name: unknown) => typeof name !== 'string')
       )
         throwBlueprintError(
-          BlueprintErrorCode.InvalidControlShape,
+          FormErrorCode.InvalidControlShape,
           path,
           {
-            group: 'controls',
+            group: SCHEMA_GROUP.controls,
             key: 'fields',
             expected: '{ targets: string[], controls? }',
           },

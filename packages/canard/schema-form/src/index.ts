@@ -18,6 +18,8 @@ export {
   isJSONSchemaError,
   isUnhandledError,
   isValidationError,
+  FormErrorCode,
+  FormWarningCode,
 } from './errors';
 
 export { JSONPointer } from './helpers/jsonPointer';

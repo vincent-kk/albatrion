@@ -1,5 +1,9 @@
+import { JSONPointer as $ } from '@/schema-form/helpers/jsonPointer';
+
 import { getFeatureNodeIndex } from '../../../blueprint';
+import { CONTROL_KEY } from '../../../constants/controlKey';
 import type { FieldNodeRecord } from '../../../record';
+import type { ChildControlKey } from '../../../types/controls';
 import { getControlExpression } from '../../../utils/controls/getControlExpression';
 import { getControlLayers } from './getControlLayers';
 import { readStateDependency } from './readStateDependency';
@@ -23,7 +27,11 @@ const STATE_KEYS = {
   },
 } as const;
 /** Fixed control key order; combination does not depend on this order. */
-const KEY_NAMES = ['visible', 'readOnly', 'disabled'] as const;
+const KEY_NAMES = [
+  CONTROL_KEY.visible,
+  CONTROL_KEY.readOnly,
+  CONTROL_KEY.disabled,
+] as const satisfies readonly ChildControlKey[];
 
 /** Pure calculation result, including the all expressions that failed. */
 export interface CalculatedStateKeys<Self> {
@@ -66,7 +74,9 @@ export const calculateStateKeys = <Self extends FieldNodeRecord<Self>>(
           .get(node.parent.blueprintNode.id)
           ?.has(node.name) ||
         (node.parent.blueprintNode.kind === 'array' &&
-          index.stateKeyChildren.get(node.parent.blueprintNode.id)?.has('*'))
+          index.stateKeyChildren
+            .get(node.parent.blueprintNode.id)
+            ?.has($.Wildcard))
       ));
   const candidates = new Set<Self>();
   for (const node of stateDirtyNodes) if (isTarget(node)) candidates.add(node);
@@ -78,7 +88,7 @@ export const calculateStateKeys = <Self extends FieldNodeRecord<Self>>(
     for (const child of source.children)
       if (
         targets.has(child.name) ||
-        (source.blueprintNode.kind === 'array' && targets.has('*'))
+        (source.blueprintNode.kind === 'array' && targets.has($.Wildcard))
       )
         candidates.add(child);
   }

@@ -1,3 +1,11 @@
+/** Native HTML input types whose value grammar this check knows. */
+export type DateInputType =
+  | 'date'
+  | 'month'
+  | 'week'
+  | 'time'
+  | 'datetime-local';
+
 /** HTML time components with optional seconds and one to three fractional digits. */
 const TIME_PATTERN =
   /^(?:[01][0-9]|2[0-3]):[0-5][0-9](?::[0-5][0-9](?:\.[0-9]{1,3})?)?$/;
@@ -6,10 +14,10 @@ const TIME_PATTERN =
  * Check whether a native HTML date input can display a value without blanking it.
  * @param type - HTML date, month, week, time, or datetime-local input type.
  * @param value - Initial value; null, undefined, and an empty string represent an empty input.
- * @returns Whether the value satisfies the type's grammar and Gregorian calendar bounds; unsupported types and non-string nonempty values return false.
+ * @returns Whether the value satisfies the type's grammar and Gregorian calendar bounds; non-string nonempty values return false.
  */
 export const isRenderableDateInputValue = (
-  type: string,
+  type: DateInputType,
   value: unknown,
 ): boolean => {
   if (value === undefined || value === null || value === '') return true;

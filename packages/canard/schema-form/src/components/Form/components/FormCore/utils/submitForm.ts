@@ -1,5 +1,9 @@
 import type { FieldNode } from '@/schema-form/core';
-import { SchemaFormError, ValidationError } from '@/schema-form/errors';
+import {
+  FormErrorCode,
+  SchemaFormError,
+  ValidationError,
+} from '@/schema-form/errors';
 
 /** Submit the emitted snapshot, rejecting degraded settlement or failed validation. */
 export const submitForm = async (
@@ -12,7 +16,7 @@ export const submitForm = async (
   try {
     if (root.diagnostics.status === 'degraded')
       throw new SchemaFormError(
-        'SUBMIT_WHILE_DEGRADED',
+        FormErrorCode.SubmitWhileDegraded,
         'Cannot submit a degraded form',
         { diagnostics: root.diagnostics },
       );
@@ -20,7 +24,7 @@ export const submitForm = async (
     const errors = await root.validate();
     if (errors.length)
       throw new ValidationError(
-        'SCHEMA_VALIDATION_FAILED',
+        FormErrorCode.SchemaValidationFailed,
         'Schema validation failed',
         { value, errors, jsonSchema: root.jsonSchema },
       );

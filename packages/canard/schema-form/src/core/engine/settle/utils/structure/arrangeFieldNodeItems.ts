@@ -16,6 +16,7 @@ import { registerRecalculation } from '../write/registerRecalculation';
 import { releaseSettlementScratch } from '../write/releaseSettlementScratch';
 import { writeFieldNode } from '../write/writeFieldNode';
 import { applyArraySlots } from './applyArraySlots';
+import { readArrayLength } from './readArrayLength';
 
 /** Synchronous result of a plan whose slot source has already been captured. */
 const resultOf = <Self extends FieldNodeRecord<Self>>(
@@ -48,13 +49,7 @@ export const arrangeFieldNodeItems = <Self extends FieldNodeRecord<Self>>(
 ): unknown => {
   const plan = node.behavior.arrange(node, operation);
   if (plan.kind === 'noop')
-    return operation.kind === 'push'
-      ? node.behavior.strategy === 'branch'
-        ? node.itemCount
-        : isArray(node.raw)
-          ? node.raw.length
-          : 0
-      : undefined;
+    return operation.kind === 'push' ? readArrayLength(node) : undefined;
   if (plan.kind === 'raw') {
     const previous =
       isArray(node.raw) && plan.result.source === 'removed'

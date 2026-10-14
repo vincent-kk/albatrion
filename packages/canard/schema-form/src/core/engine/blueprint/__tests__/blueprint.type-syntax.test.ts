@@ -2,8 +2,8 @@ import { describe, expect, it } from 'vitest';
 
 import { isArray } from '@winglet/common-utils/filter';
 
+import { FormErrorCode } from '../../../../errors';
 import { blueprint } from '../blueprint';
-import { BlueprintErrorCode } from '../utils/diagnostics/constant';
 
 // filid:contract type-syntax
 describe('blueprint explicit type syntax', () => {
@@ -78,7 +78,7 @@ describe('blueprint explicit type syntax', () => {
     for (const type of [['null', 'null'], [], ['string', 'foo']])
       expect(() => blueprint({ type })).toThrow(
         expect.objectContaining({
-          specific: BlueprintErrorCode.UnknownJsonSchema,
+          code: FormErrorCode.UnknownJsonSchema,
         }),
       );
   });
@@ -88,7 +88,7 @@ describe('blueprint explicit type syntax', () => {
       blueprint({ type: ['string', 'number'], options: { terminal: false } }),
     ).toThrow(
       expect.objectContaining({
-        specific: BlueprintErrorCode.TerminalOptionUnsupported,
+        code: FormErrorCode.TerminalOptionUnsupported,
       }),
     );
   });

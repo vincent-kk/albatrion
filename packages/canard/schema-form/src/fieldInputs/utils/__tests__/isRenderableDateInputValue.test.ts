@@ -3,7 +3,13 @@ import { expect, it } from 'vitest';
 import { isRenderableDateInputValue } from '../isRenderableDateInputValue';
 
 it('accepts empty values for each native date input type', () => {
-  for (const type of ['date', 'month', 'week', 'time', 'datetime-local'])
+  for (const type of [
+    'date',
+    'month',
+    'week',
+    'time',
+    'datetime-local',
+  ] as const)
     for (const value of ['', undefined, null])
       expect(isRenderableDateInputValue(type, value)).toBe(true);
 });
@@ -129,9 +135,6 @@ it('checks datetime-local with a T or space and rejects offsets or extra separat
     );
 });
 
-it('rejects non-string values and unsupported nonempty input formats', () => {
+it('rejects non-string nonempty values', () => {
   expect(isRenderableDateInputValue('date', 20240101)).toBe(false);
-  expect(isRenderableDateInputValue('date-time', '2024-01-01T12:00')).toBe(
-    false,
-  );
 });

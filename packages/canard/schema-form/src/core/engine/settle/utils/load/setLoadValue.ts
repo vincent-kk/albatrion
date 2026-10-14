@@ -1,6 +1,8 @@
 import { isArray } from '@winglet/common-utils/filter';
 import { unescapeSegment } from '@winglet/json/pointer';
 
+import { JSONPointer as $ } from '@/schema-form/helpers/jsonPointer';
+
 import { sameValue } from '../../../utils/compute/sameValue';
 import { getLoadValue } from './getLoadValue';
 
@@ -18,7 +20,7 @@ export const setLoadValue = (
 ): unknown => {
   if (sameValue(getLoadValue(snapshot, path), value)) return snapshot;
   if (!path) return value;
-  const segments = path.slice(1).split('/').map(unescapeSegment);
+  const segments = path.slice(1).split($.Separator).map(unescapeSegment);
   const ancestors: unknown[] = [snapshot];
   let source = snapshot;
   for (const segment of segments) {

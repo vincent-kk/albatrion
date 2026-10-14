@@ -42309,7 +42309,7 @@
           },
           "diagnostics": [
             {
-              "code": "UNKNOWN_JSON_SCHEMA",
+              "code": "JSON_SCHEMA_ERROR.UNKNOWN_JSON_SCHEMA",
               "level": "error",
               "schemaPath": "#",
               "details": {
@@ -42365,7 +42365,7 @@
           },
           "diagnostics": [
             {
-              "code": "UNKNOWN_JSON_SCHEMA",
+              "code": "JSON_SCHEMA_ERROR.UNKNOWN_JSON_SCHEMA",
               "level": "error",
               "schemaPath": "#",
               "details": {
@@ -42430,7 +42430,7 @@
           },
           "diagnostics": [
             {
-              "code": "UNKNOWN_JSON_SCHEMA",
+              "code": "JSON_SCHEMA_ERROR.UNKNOWN_JSON_SCHEMA",
               "level": "error",
               "schemaPath": "#",
               "details": {
@@ -45834,7 +45834,7 @@
           },
           "diagnostics": [
             {
-              "code": "UNKNOWN_JSON_SCHEMA",
+              "code": "JSON_SCHEMA_ERROR.UNKNOWN_JSON_SCHEMA",
               "level": "error",
               "schemaPath": "#",
               "details": {
@@ -45894,7 +45894,7 @@
           },
           "diagnostics": [
             {
-              "code": "UNKNOWN_JSON_SCHEMA",
+              "code": "JSON_SCHEMA_ERROR.UNKNOWN_JSON_SCHEMA",
               "level": "error",
               "schemaPath": "#",
               "details": {
@@ -47721,7 +47721,7 @@
           },
           "diagnostics": [
             {
-              "code": "TERMINAL_SUBTREE_KEY_IGNORED_FOR_FORM",
+              "code": "SCHEMA_FORM_WARNING.TERMINAL_SUBTREE_KEY_IGNORED_FOR_FORM",
               "level": "warning",
               "schemaPath": "#",
               "details": {
@@ -48394,7 +48394,7 @@
           },
           "diagnostics": [
             {
-              "code": "TERMINAL_SUBTREE_KEY_IGNORED_FOR_FORM",
+              "code": "SCHEMA_FORM_WARNING.TERMINAL_SUBTREE_KEY_IGNORED_FOR_FORM",
               "level": "warning",
               "schemaPath": "#",
               "details": {
@@ -48474,7 +48474,7 @@
           },
           "diagnostics": [
             {
-              "code": "ALL_OF_TYPE_REDEFINITION",
+              "code": "JSON_SCHEMA_ERROR.ALL_OF_TYPE_REDEFINITION",
               "level": "error",
               "schemaPath": "#/allOf/1/properties/a",
               "details": {
@@ -48542,7 +48542,7 @@
           },
           "diagnostics": [
             {
-              "code": "INVALID_RANGE",
+              "code": "JSON_SCHEMA_ERROR.INVALID_RANGE",
               "level": "error",
               "schemaPath": "#/allOf/0",
               "details": {
@@ -48606,7 +48606,7 @@
           },
           "diagnostics": [
             {
-              "code": "EMPTY_ENUM_INTERSECTION",
+              "code": "JSON_SCHEMA_ERROR.EMPTY_ENUM_INTERSECTION",
               "level": "error",
               "schemaPath": "#/allOf/0",
               "details": {}
@@ -48662,7 +48662,7 @@
           },
           "diagnostics": [
             {
-              "code": "RECURSIVE_SHAPE_UNBOUNDED",
+              "code": "JSON_SCHEMA_ERROR.RECURSIVE_SHAPE_UNBOUNDED",
               "level": "error",
               "schemaPath": "#",
               "details": {
@@ -48723,7 +48723,7 @@
           },
           "diagnostics": [
             {
-              "code": "RECURSIVE_SHAPE_UNBOUNDED",
+              "code": "JSON_SCHEMA_ERROR.RECURSIVE_SHAPE_UNBOUNDED",
               "level": "error",
               "schemaPath": "#",
               "details": {
@@ -49259,7 +49259,7 @@
           },
           "diagnostics": [
             {
-              "code": "INVALID_CONTROL_SHAPE",
+              "code": "JSON_SCHEMA_ERROR.INVALID_CONTROL_SHAPE",
               "level": "error",
               "schemaPath": "#/controls",
               "details": {
@@ -49319,7 +49319,7 @@
           },
           "diagnostics": [
             {
-              "code": "UNKNOWN_GROUP_KEY",
+              "code": "JSON_SCHEMA_ERROR.UNKNOWN_GROUP_KEY",
               "level": "error",
               "schemaPath": "#/controls/typo",
               "details": {
@@ -49378,7 +49378,7 @@
           },
           "diagnostics": [
             {
-              "code": "UNKNOWN_GROUP_KEY",
+              "code": "JSON_SCHEMA_ERROR.UNKNOWN_GROUP_KEY",
               "level": "error",
               "schemaPath": "#/options/unknown",
               "details": {
@@ -49439,7 +49439,7 @@
           },
           "diagnostics": [
             {
-              "code": "INVALID_CONTROL_SHAPE",
+              "code": "JSON_SCHEMA_ERROR.INVALID_CONTROL_SHAPE",
               "level": "error",
               "schemaPath": "#/controls/fields",
               "details": {
@@ -49505,7 +49505,7 @@
           },
           "diagnostics": [
             {
-              "code": "INVALID_CONTROL_SHAPE",
+              "code": "JSON_SCHEMA_ERROR.INVALID_CONTROL_SHAPE",
               "level": "error",
               "schemaPath": "#/controls/fields/0",
               "details": {
@@ -49570,7 +49570,7 @@
           },
           "diagnostics": [
             {
-              "code": "CHILDREN_TARGET_NOT_FOUND",
+              "code": "JSON_SCHEMA_ERROR.CHILDREN_TARGET_NOT_FOUND",
               "level": "error",
               "schemaPath": "#/controls/fields/0",
               "details": {
@@ -49633,7 +49633,7 @@
           },
           "diagnostics": [
             {
-              "code": "INVALID_CONTROL_SHAPE",
+              "code": "JSON_SCHEMA_ERROR.INVALID_CONTROL_SHAPE",
               "level": "error",
               "schemaPath": "#/controls/discriminator",
               "details": {
@@ -49697,7 +49697,7 @@
           },
           "diagnostics": [
             {
-              "code": "INVALID_CONTROL_SHAPE",
+              "code": "JSON_SCHEMA_ERROR.INVALID_CONTROL_SHAPE",
               "level": "error",
               "schemaPath": "#/controls/injectTo",
               "details": {
@@ -49753,7 +49753,7 @@
           },
           "diagnostics": [
             {
-              "code": "UNEXPECTED_ARRAY_SCHEMA",
+              "code": "JSON_SCHEMA_ERROR.UNEXPECTED_ARRAY_SCHEMA",
               "level": "error",
               "schemaPath": "#",
               "details": {
@@ -49813,7 +49813,7 @@
           },
           "diagnostics": [
             {
-              "code": "VIRTUAL_FIELDS_NOT_VALID",
+              "code": "JSON_SCHEMA_ERROR.VIRTUAL_FIELDS_NOT_VALID",
               "level": "error",
               "schemaPath": "#/options/virtual/bad",
               "details": {
@@ -49875,7 +49875,7 @@
           },
           "diagnostics": [
             {
-              "code": "UNKNOWN_GROUP_KEY",
+              "code": "JSON_SCHEMA_ERROR.UNKNOWN_GROUP_KEY",
               "level": "error",
               "schemaPath": "#/allOf/0/controls/watch",
               "details": {
@@ -49936,7 +49936,7 @@
           },
           "diagnostics": [
             {
-              "code": "OBSERVED_VALUES",
+              "code": "JSON_SCHEMA_ERROR.OBSERVED_VALUES",
               "level": "error",
               "schemaPath": "#/controls/watch",
               "details": {
@@ -50025,7 +50025,7 @@
           },
           "diagnostics": [
             {
-              "code": "CREATE_DYNAMIC_FUNCTION",
+              "code": "JSON_SCHEMA_ERROR.CREATE_DYNAMIC_FUNCTION",
               "level": "error",
               "schemaPath": "#/controls/visible",
               "details": {
@@ -50261,7 +50261,7 @@
           },
           "diagnostics": [
             {
-              "code": "DEPENDENT_SCHEMAS_IGNORED_FOR_FORM",
+              "code": "SCHEMA_FORM_WARNING.DEPENDENT_SCHEMAS_IGNORED_FOR_FORM",
               "level": "warning",
               "schemaPath": "#",
               "details": {
@@ -50269,7 +50269,7 @@
               }
             },
             {
-              "code": "DEPENDENT_SCHEMAS_IGNORED_FOR_FORM",
+              "code": "SCHEMA_FORM_WARNING.DEPENDENT_SCHEMAS_IGNORED_FOR_FORM",
               "level": "warning",
               "schemaPath": "#",
               "details": {
@@ -50467,7 +50467,7 @@
           },
           "diagnostics": [
             {
-              "code": "LOCK_ON_NON_TERMINAL_OBJECT",
+              "code": "SCHEMA_FORM_WARNING.LOCK_ON_NON_TERMINAL_OBJECT",
               "level": "warning",
               "schemaPath": "#",
               "details": {}
@@ -51258,7 +51258,7 @@
           },
           "diagnostics": [
             {
-              "code": "ALL_OF_KEYWORD_IGNORED_FOR_FORM",
+              "code": "SCHEMA_FORM_WARNING.ALL_OF_KEYWORD_IGNORED_FOR_FORM",
               "level": "warning",
               "schemaPath": "#/allOf/0",
               "details": {
@@ -52006,7 +52006,7 @@
           },
           "diagnostics": [
             {
-              "code": "TERMINAL_SUBTREE_KEY_IGNORED_FOR_FORM",
+              "code": "SCHEMA_FORM_WARNING.TERMINAL_SUBTREE_KEY_IGNORED_FOR_FORM",
               "level": "warning",
               "schemaPath": "#/properties/terminal",
               "details": {
@@ -52751,7 +52751,7 @@
           },
           "diagnostics": [
             {
-              "code": "SHARED_NODE_KIND_CONFLICT",
+              "code": "JSON_SCHEMA_ERROR.SHARED_NODE_KIND_CONFLICT",
               "level": "error",
               "schemaPath": "#/oneOf/1/properties/a",
               "details": {

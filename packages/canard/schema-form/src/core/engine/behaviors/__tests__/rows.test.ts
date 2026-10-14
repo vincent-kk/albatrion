@@ -40,6 +40,7 @@ const makeRecord = (
   runtime: {
     blueprint: OBJECT_ANALYSIS,
     diagnostics: { status: 'stable' },
+    context: {},
     nodeFactory: () => undefined,
     globalStateCounts: new Map(),
     globalState: {},

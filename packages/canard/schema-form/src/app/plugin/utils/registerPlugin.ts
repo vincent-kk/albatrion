@@ -1,7 +1,7 @@
 import { isPlainObject } from '@winglet/common-utils/filter';
 import { createFingerprintFactory } from '@winglet/common-utils/object';
 
-import { UnhandledError } from '@/schema-form/errors';
+import { FormErrorCode, UnhandledError } from '@/schema-form/errors';
 
 import type { SchemaFormPlugin } from '../type';
 import { PluginManager } from './PluginManager';
@@ -213,7 +213,7 @@ export const registerPlugin = (plugin: SchemaFormPlugin | null) => {
     PluginManager.appendFormatError(formatError);
   } catch (error) {
     throw new UnhandledError(
-      'REGISTER_PLUGIN',
+      FormErrorCode.RegisterPlugin,
       formatRegisterPluginError(plugin, error),
       {
         plugin,
