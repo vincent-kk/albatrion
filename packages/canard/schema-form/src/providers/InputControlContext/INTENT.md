@@ -6,9 +6,9 @@
 
 ## Conventions
 
-- `InputControlContextProvider`는 `useMemo(() => ({ readOnly, disabled }), [readOnly, disabled])`로 객체 참조를 안정화한다 — props가 바뀌지 않으면 하위 트리 리렌더 없음
-- 최종 제어값은 소비처 `FieldInputSlot`에서 `readOnly={rootReadOnly || node.readOnly}`, `disabled={rootDisabled || node.disabled}` 형태로 OR 결합한다 — Context 자체는 결합 로직을 포함하지 않는다
-- Context 기본값은 `{} as InputControlContext`이므로 `readOnly`·`disabled` 모두 `undefined`(falsy) — Provider 없이 소비해도 항상 안전하다
+- `InputControlContextProvider`는 `useMemo(() => ({ readOnly, disabled }), [readOnly, disabled])`로 객체 참조를 안정화한다. props가 바뀌지 않으면 하위 트리가 리렌더되지 않는다.
+- 최종 제어값은 소비처 `FieldInputSlot`에서 `readOnly={rootReadOnly || node.readOnly}`, `disabled={rootDisabled || node.disabled}` 형태로 OR 결합한다. Context 자체는 결합 로직을 포함하지 않는다.
+- Context 기본값은 `{} as InputControlContext`이므로 `readOnly`·`disabled` 모두 `undefined`(falsy)다. 따라서 Provider 없이 소비해도 항상 안전하다.
 
 ## Boundaries
 

@@ -6,18 +6,18 @@
 
 ## API Contracts
 
-- `ResolvedVirtualizationOptions`는 옵션 해석 자식 fractal이 소유한 형이며 이 집계 index가 재수출하지 않습니다. 매니저는 옵션 해석 진입점의 계약을 직접 소비합니다.
+- `ResolvedVirtualizationOptions`는 옵션 해석 자식 fractal이 소유한 타입이며 이 집계 index가 재수출하지 않습니다. 매니저는 옵션 해석 진입점의 계약을 직접 소비합니다.
 
 - 비활성 옵션이나 IntersectionObserver 부재는 null 매니저로 표현하여 일반 렌더링을 허용합니다.
-- 노출은 단방향이며 관찰과 idle backfill 자원은 명시적으로 정리할 수 있어야 합니다.
+- 노출은 단방향이며 관찰과 idle backfill에 쓰는 자원은 명시적으로 정리할 수 있어야 합니다.
 
 ## Acceptance Criteria
 
 ### virtualization-contract — 관찰 가능한 동작
 
 - 이미 노출된 노드를 값 변경 때문에 placeholder로 되돌리지 않습니다.
-- reveal 기록은 노드 identity를 따릅니다. 배열 형제 삭제 후에도 이미 노출된 노드는 마운트를 유지하며, 미노출 placeholder 역시 경로 변경 사건을 반영하여 이동한 노드의 현재 경로만 표시합니다(LANDING-087).
-- idle API가 없는 환경에서도 취소 가능한 macrotask 폴백을 사용할 수 있습니다.
+- 노출 기록은 노드 identity를 따릅니다. 배열 형제 삭제 후에도 이미 노출된 노드는 마운트를 유지하며, 미노출 placeholder 역시 경로 변경 사건을 반영하여 이동한 노드의 현재 경로만 표시합니다(LANDING-087).
+- idle API가 없는 환경에서도 취소할 수 있는 macrotask 폴백을 쓸 수 있습니다.
 
 ## Last Updated
 

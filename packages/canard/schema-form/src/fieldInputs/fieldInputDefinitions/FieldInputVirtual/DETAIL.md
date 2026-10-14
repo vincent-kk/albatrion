@@ -2,7 +2,7 @@
 
 ## Requirements
 
-- 부모 `fieldInputs`의 기본 입력 계약 중 가상 노드 입력 몫을 구현합니다(REACT-033).
+- 부모 `fieldInputs`의 기본 입력 계약 중 가상 노드 입력에 해당하는 부분을 구현합니다(REACT-033).
 
 ## API Contracts
 

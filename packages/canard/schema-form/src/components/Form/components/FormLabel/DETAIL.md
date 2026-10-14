@@ -6,14 +6,14 @@
 
 ## API Contracts
 
-- `FormLabel.tsx`는 `memo` 컴포넌트입니다. `<label>`에 `style`·`className`·`htmlFor={path}`를 두고 `path`가 있으면 id `label:${path}`를 둡니다. 안쪽은 렌더러 문맥의 `FormLabelRenderer`, 없으면 `PluginManager.FormLabelRenderer`로 그린 `FieldProxy`입니다.
+- `FormLabel.tsx`는 `memo` 컴포넌트입니다. `<label>`에 `style`·`className`·`htmlFor={path}`를 두고, `path`가 있으면 id `label:${path}`도 둡니다. 그 안에는 렌더러 문맥의 `FormLabelRenderer`로 그린 `FieldProxy`를 넣으며, 문맥에 없으면 `PluginManager.FormLabelRenderer`를 씁니다.
 - `type.ts`는 `FormLabelProps`(`path`·`style`·`className`)를 정의합니다.
 
 ## Acceptance Criteria
 
 ### label-ids — 제목 연결
 
-- 단일 입력은 `htmlFor`로, 묶음 입력은 `aria-labelledby`의 `label:${path}`로 같은 label에 이어집니다.
+- 단일 입력은 `htmlFor`로, 묶음 입력은 `aria-labelledby`의 `label:${path}`로 같은 label에 연결됩니다.
 
 ## Last Updated
 

@@ -2,27 +2,27 @@
 
 ## Purpose
 
-Own one compilation's ordered dependency-path registry and normalized path indexes.
+컴파일 한 번이 쓰는, 순서가 있는 의존성 경로 등록부와 정규화된 경로 인덱스를 소유한다.
 
 ## Conventions
 
-- Preserve first-registration order and the existing fragment-prefix normalization.
-- Keep registries local to their caller rather than sharing mutable state across compilations.
-- Follow the repository's small-array convention for duplicate lookup.
+- 최초 등록 순서와 기존의 fragment 접두어 정규화를 보존한다.
+- 등록부는 호출자마다 따로 두고, 컴파일끼리 변경 가능한 상태를 공유하지 않는다.
+- 중복 조회는 저장소의 작은 배열 관례를 따른다.
 
 ## Boundaries
 
 ### Always do
 
-- Use the same normalization for registration and lookup.
-- Expose the factory and its contract type through named exports.
+- 등록과 조회에 같은 정규화를 사용한다.
+- factory와 그 계약 타입을 이름 붙은 export로 노출한다.
 
 ### Ask first
 
-- Change path normalization or dependency ordering.
+- 경로 정규화나 의존성 순서를 바꿀 때
 
 ### Never do
 
-- Resolve a path against live form state.
-- Evaluate gates or expressions.
-- Mutate a registry owned by another compilation.
+- 살아 있는 폼 상태를 기준으로 경로를 해석하지 않는다.
+- 게이트나 표현식을 평가하지 않는다.
+- 다른 컴파일이 소유한 등록부를 변경하지 않는다.
