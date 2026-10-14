@@ -2,7 +2,7 @@
 
 개발의 진행 상황과 다음 할 일은 `PLAN.md`가 단일 진입점으로 든다. 다음 세션이 바로 이어서 일하기 위한 문서다. 이력은 `git log`와 `reviews/`에 있으므로 여기에는 지금 상태, 다음 할 일, 일하는 법만 적는다. 소유자는 Vincent다.
 
-## 1. 지금 어디인가 (2026-10-14, 309라운드 닫힘; 정돈-3 진행(이동은 fixy08 직접, 게이트는 PR 직전 한 번), 대기열 비어 있음)
+## 1. 지금 어디인가 (2026-10-14, 310라운드 닫힘; 정돈-3 진행(이동은 fixy08 직접, 긴 절차는 PR 직전 한 번), 대기열 비어 있음)
 
 - **261라운드(2026-10-14, 닫기).** 핵심 고유명사 재검토의 후보 15개를 사실 확인과 함께 올렸다(261C-01, reviews/round-261-closing.md). 소유자 답을 받아 259C-01 대응표를 넓히고 07b-5 브리프를 쓴다.
 - **262라운드(2026-10-14, 닫기).** PR #364(07b-4, c711f3d17)를 직접 검증해 통과했다: 시험 3936+241, typecheck·lint 0, 세션 줄 0(262C-01, reviews/round-262-closing.md). 소유자 병합 허가 대기.
@@ -52,7 +52,8 @@
 - **306라운드(2026-10-14, 닫기/원장 관리자).** fairy08의 배열 한도 문서 PR #376 병합(c40d6de8f): 304라운드 경계 문장과 배열 한도 절이 SPECIFICATION·README·QUICK_REFERENCE·docs/agents·documents에 들어갔고, documents 데모가 새 엔진에 없는 이름 대신 outputValue를 읽는다.
 - **307라운드(2026-10-14, 닫기/원장 관리자).** 정돈-2 PR #377을 fd2a56c2f로 squash 병합(verifier 독립 검증: 공개 표면 92 동일, unit·render·react18 3825 통과, 가드 시험이 옛 트리의 위반을 잡음). 정돈-2의 편집자 결정과 변용 일곱, B8 첫 실제 사례(engine DETAIL 선언, vi.mock 경로는 검사기가 못 봄 → filid 결정 재료)를 기록. fixy08에게 정돈-3 투입, fairy08은 filid 이슈 수치 갱신 뒤 ogham 등록.
 - **308라운드(2026-10-14, 닫기/원장 관리자).** fairy08이 filid 개선 요청을 ogham 이슈 #143으로 등록(289라운드 D6). 수치는 정돈-2 뒤 트리 기준(시험 쪽 위반은 D7 밖 0, index 48항목 삭제), B8 첫 사례와 mock 경로 제안, 훅 차단 사례를 더함. 소유자의 마지막 filid 결정 재료.
-- **309라운드(2026-10-14, 소유자).** 이동 작업의 소요 시간 지적 → 217C-01에 예외: 순수 이동·이름 변경·import 고침은 fixy08이 직접(새 로직만 codex), 전체 게이트는 PR 직전 한 번(중간은 typecheck만, verifier도 한 번). 정돈-3에 즉시 적용(reviews/round-309-owner-answers.md). 다음 라운드 번호는 310.
+- **309라운드(2026-10-14, 소유자).** 이동 작업의 소요 시간 지적 → 217C-01에 예외: 순수 이동·이름 변경·import 고침은 fixy08이 직접(새 로직만 codex), 전체 게이트는 PR 직전 한 번(중간은 typecheck만, verifier도 한 번). 정돈-3에 즉시 적용(reviews/round-309-owner-answers.md).
+- **310라운드(2026-10-14, 소유자).** 벤치는 게이트가 아님 — 경로 바뀐 파일만 PR 직전 시작 확인 한 번, 측정 없음. 오래 걸리는 절차는 몇 단계를 묶어 한 번(원칙은 PR 직전), 중간은 typecheck만; 정돈-E·S에도 적용(reviews/round-310-owner-answers.md). 다음 라운드 번호는 311.
 - **그 앞의 라운드 요지(19라운드부터)는 PLAN-LOG.md 2절에 있다.** 라운드마다 한 문단이며, 1절의 기록 표와 같은 순서다.
 - **설계의 정본은 단일 원장 `ledger/`다.** 영역 17개, 항목 1,350개(80라운드 뒤, 24라운드 뒤 1,348; 현행 1,076(부정 결정·기록 포함), 대체됨 199, 분할됨 49, 중복 24, 열림 0). 형식과 규칙은 `ledger/README.md`.
 - **옛 설계 문서(`00`–`09`, `adr/`, `open-questions.md`)는 동결됐다.** 더 고치지 않는다. 어긋남은 원장의 충돌 칸에 적는다. 원장이 인용하는 옛 문서의 `path:line`은 모두 커밋 `ba398c330` 기준 줄 번호다(그 뒤 옛 문서는 바뀌지 않았다).
@@ -457,6 +458,7 @@ node ledger/checks/doc-coverage.mjs design/*.md adr/*.md -- ledger/*.md   # 설�
 | `reviews/round-307-closing.md` | 307라운드 편집자 결정 셋: 정돈-2 PR #377 병합, 결정·변용 기록, B8 첫 사례 |
 | `reviews/round-308-closing.md` | 308라운드 편집자 결정: filid 이슈 #143 등록 기록 |
 | `reviews/round-309-owner-answers.md` | 309라운드 소유자: 이동 속도 지적, 이동 직접·게이트 한 번 허락 |
+| `reviews/round-310-owner-answers.md` | 310라운드 소유자: 벤치는 시작 확인만, 긴 절차는 묶어 한 번 |
 | plan/tidy-structure/array-limits-review.md | 배열 한도를 core가 다룰 때의 유익·손해 비교(대기열 53 검토 메모, 권고 포함) |
 | `reviews/round-297-closing.md` | 297라운드 편집자 결정 하나: 정돈-1(#374) 병합, 정돈-2 투입 |
 | plan/tidy-structure/brief-tidy-2.md | 정돈-2 브리프(fixy08 → codex): 시험 자리 U·D·S1, 제품 위반 둘, 잉여 export, D7 예외 |
