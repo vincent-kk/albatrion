@@ -14,8 +14,8 @@ import {
   useReference,
 } from '@winglet/react-utils/hook';
 
-import { DeferredFieldProxy } from '@/schema-form/components/Field/components/DeferredFieldProxy';
-import type { FieldProxyProps } from '@/schema-form/components/Field/components/FieldProxy';
+import { DeferredFieldProxy } from '@/schema-form/components/FieldProxy/components/DeferredFieldProxy';
+import type { FieldProxyProps } from '@/schema-form/components/FieldProxy/type';
 import { type FieldNode, isTerminalNode } from '@/schema-form/core';
 import { useVirtualizationContext } from '@/schema-form/providers';
 import type { ChildFieldProps } from '@/schema-form/types';

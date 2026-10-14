@@ -7,7 +7,7 @@
 ## Conventions
 
 - 형 파일은 역할 칸 types에 주제별로 둔다. 진입점 index는 이름 목록으로만 재수출하며 와일드카드 재수출을 쓰지 않는다.
-- 형제 fractal(`core`·`components/Field`·`components/Form`)의 형은 각 관문 index에서 `import type`으로 가져온다. 값은 `ShowError` 열거 하나뿐이다.
+- 형제 fractal(`core`·`components/FieldProxy`·`components/Form`)의 형은 각 관문 index에서 `import type`으로 가져온다. 값은 `ShowError` 열거 하나뿐이다.
 - 형 계약 시험은 시험 칸에 두고 형 파일을 직접 가져온다.
 
 ## Boundaries

@@ -4,7 +4,7 @@ import { NOOP_FUNCTION } from '@winglet/common-utils/constant';
 
 import type { Dictionary } from '@aileron/declare';
 
-import type { ChildField } from '@/schema-form/components/Field';
+import type { ChildField } from '@/schema-form/components/FieldProxy';
 import type { ChildFieldProps } from '@/schema-form/types';
 
 type ChildFieldMap<Value extends Dictionary> = {
