@@ -2,7 +2,7 @@ import { type PropsWithChildren, type SubmitEvent, memo } from 'react';
 
 import type { Fn } from '@aileron/declare';
 
-import { FieldProxy } from '@/schema-form/components/Field';
+import { FieldProxy } from '@/schema-form/components/FieldProxy';
 
 interface FormRootProxyProps {
   onSubmit: Fn<[SubmitEvent<HTMLFormElement>]>;

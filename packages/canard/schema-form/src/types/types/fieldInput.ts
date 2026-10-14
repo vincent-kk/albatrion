@@ -2,7 +2,7 @@ import type { CSSProperties, ComponentType } from 'react';
 
 import type { Dictionary, Fn } from '@aileron/declare';
 
-import type { ChildField } from '@/schema-form/components/Field';
+import type { ChildField } from '@/schema-form/components/FieldProxy';
 import type {
   FieldNode,
   InferFieldNode,

@@ -1,7 +1,7 @@
 import { memo } from 'react';
 
 import { PluginManager } from '@/schema-form/app/plugin';
-import { FieldProxy } from '@/schema-form/components/Field';
+import { FieldProxy } from '@/schema-form/components/FieldProxy';
 import { useFieldRendererContext } from '@/schema-form/providers';
 
 import type { FormLabelProps } from './type';

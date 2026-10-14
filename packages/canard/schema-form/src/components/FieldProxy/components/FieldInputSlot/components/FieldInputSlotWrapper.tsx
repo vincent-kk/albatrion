@@ -16,7 +16,7 @@ import type {
   OverridableFieldInputProps,
 } from '@/schema-form/types';
 
-import type { FieldProxyProps } from '../../FieldProxy';
+import type { FieldProxyProps } from '../../../type';
 import { FieldInputSlot } from '../FieldInputSlot';
 
 export const FieldInputSlotWrapper = (

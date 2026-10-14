@@ -1,4 +1,4 @@
-> 이름 함정: 이 `surface`는 런타임 겉면 fractal이며 렌더 디렉터리 `src/components/Field`나 공개 판별 합집합 형 `FieldNode` 자체가 아닙니다(NODE-010).
+> 이름 함정: 이 `surface`는 런타임 겉면 fractal이며 렌더 디렉터리 `src/components/FieldProxy`나 공개 판별 합집합 형 `FieldNode` 자체가 아닙니다(NODE-010).
 
 # surface — 노드 겉면 경계
 
