@@ -15,6 +15,14 @@
 
 - 단일 입력은 `htmlFor`로, 묶음 입력은 `aria-labelledby`의 `label:${path}`로 같은 label에 연결됩니다.
 
+## Boundary Exemptions
+
+### `types/` — 형 칸 유지
+
+- **Consumers**: `entry-point`
+- **Direct import**: `not allowed`
+- **Reason**: `FormLabelProps`는 이름으로 진입점에 올라 `components/Form/index.ts`를 거쳐 `src/index.ts`가 공개한다. 형은 구현이 아니므로 칸에 두고 진입점이 이름으로 내보낸다.
+
 ## Last Updated
 
 2026-10-14 — 소유자 구조 변경(Form의 조각을 fractal로 분리).

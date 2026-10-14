@@ -6,8 +6,6 @@
 
 - 폼 청사진 전체가 branchless이고 게이트·식·파생이 없을 때 배열 호스트의 구조 길이 변경 뒤, 통째 raw·호스트 분배 입력·경로 이동·이탈 대기가 없고 현재 structure가 계산 시작의 prior이면 정적 선택을 재사용할 수 있다. 모든 선언 슬롯에서 같은 청사진·정적 유효 스키마·활성 노드·부모·경로·children 순서를 확인하며 빈 선언·가상 아이템·종류 충돌·재생성 접두는 일반 선택을 유지한다. 전체 증명 뒤 기존 선언 ID를 등록하고 dirty 자식만 기존 계산 콜백으로 처리한다. 스냅숏·잠복·게이트 평가·실패 기록·state dirty·호스트 계산·전이·커밋·배달 순서는 유지한다. 속도 비용은 O(슬롯 수)의 정체성 확인(슬롯별 경로 문자열 비교 포함)과 진입당 `previousEmit` 경로 조회 O(깊이)이며 일반 선택의 구조 복제·슬롯별 잠복/이탈 조회·불변 active 캡처를 제거한다. 기존 선언 ID 메모만 재사용하며 새 보유 캐시·노드/문맥 필드·폼 간 공유는 없다.
 
-
-
 - 계산 진입에서 branchless와 빈 shapeDirty·entered를 증명한 경우만 안정 계산 몸통으로 직접 재귀한다. 각 노드의 dirty 확인·stateDirty 표시·자식 post-order·동일 updateOutput 인자·dirty 삭제와 터미널 루트의 schema 선택은 유지한다. 게이트·생김·형상 변경은 기존 계산을 사용한다. 속도 비용은 진입의 O(1) 부재 확인과 기존 O(방문 노드) 작업이며 노드마다 반복하던 gate/appearance/shape 검사·일반 shell을 제거한다. 메모리 비용은 기존 dirtyChildren 배열과 깊이 D의 재귀 stack을 유지하고 새 heap container·노드/문맥 필드·보유 cache·폼 간 공유는 없다(109 갱신 Q1).
 
 - 분기·파생·잠복 원본이 없고 살아 있는 비루트 scalar의 현재 원본·입력·유효 타입이 같은 경우만 쓰기 진입을 특화한다. dispose·가상·detach·잠복 검사와 빈 wrong-kind release의 호출을 생략하되 조상 표시와 실제 wrong-kind 처리, 표시·계산·전이 조건·상태 키·커밋·배달 순서는 유지한다. 이 증명은 빈 derive 검사와 대상 유효 타입 재해석에만 전달하며 실제 생김·이탈·배열·오류 처리는 기존 마감이다. 속도 비용은 고정 수의 O(1) 타입·capability·size 검사이며 빈 helper·배열·sort 콜백 및 중복 유효 타입 해석을 제거한다. 메모리 비용은 호출별 boolean/local만 추가하고 빈 release 임시 배열·클로저를 줄이며 새 상주 메모리·문맥 필드·폼 간 공유는 없다(109 갱신 F1).
@@ -26,7 +24,7 @@
 
 - 기능 통과는 청사진의 기능 정적 색인과 이번 재계산(변경·상태 dirty) 목록의 교집합만 방문한다. 기능 선언이 없으면 방문은 0이다. 이후 단계가 새 기능 통과를 더할 때에도 정적 색인을 두며, 전체 범위 방문이 필요하면 정적으로 범위를 알 수 없는 이유를 이 DETAIL에 명시한다. 방문 순서가 관측 결과에 드는 통과는 SETTLE-006 순서를 유지한다(65C-02, SETTLE-017).
 
-- 의존 방향은 `blueprint < record < {behaviors, navigation} < validation < derive < settle < dispatch < FieldNode`이다. derive는 settle의 형제 fractal(`engine/derive`)이며 settle의 라운드 실행기·커밋·맥락·쓰기 organ은 derive 진입점만 소비하고, derive는 settle을 가져오지 않는다. 값 동등·의존 경로·선언 층 해석은 engine의 `utils/`에서 둘이 함께 가져온다(NODE-016·045, LANDING-083·084). 살아 있는 노드의 계산은 `node.behavior`를 호출하고 형상 밖 값의 정적 해석과 빈 값 판정은 behaviors 진입점을 소비한다. `FieldNode`·`write`는 import하지 않고 `validation` 진입점의 동기 가드 읽기만 소비한다(VALIDATE-015·044, NODE-016, NODE-006, WRITE-082·098, VALUE-034).
+- 의존 방향은 `blueprint < record < {behaviors, navigation} < validation < derive < settle < dispatch < FieldNode`이다. derive는 settle의 형제 fractal(`engine/derive`)이며 settle의 라운드 실행기·커밋·의존 색인 organ과 `types/`는 derive 진입점만 소비하고, derive는 settle을 가져오지 않는다. 값 동등·의존 경로·선언 층 해석은 engine의 `utils/`에서 둘이 함께 가져온다(NODE-016·045, LANDING-083·084). 살아 있는 노드의 계산은 `node.behavior`를 호출하고 형상 밖 값의 정적 해석과 빈 값 판정은 behaviors 진입점을 소비한다. `FieldNode`·`write`는 import하지 않고 `validation` 진입점의 동기 가드 읽기만 소비한다(VALIDATE-015·044, NODE-016, NODE-006, WRITE-082·098, VALUE-034).
 - 정착의 내부 organ은 진입점에서 이름으로 제공하며, 바깥 소비자를 섬기는 칸의 유지 이유와 직접 import 예외는 Boundary Exemptions에 기록한다(NODE-016).
 - `__tests__/settle.branchless-feature-indexes.test.ts`는 분기 없는 청사진에서도 derive·watch·state 기능 색인과 역의존 색인이 만들어지는지, 그리고 빈 파생 규칙 표를 derive 부재가 capability로 증명된 경우에만 공유하는지를 검증한다. 두 사례는 일반 분석 강제(`vi.mock`)를 쓰지 않는다.
 - 한 진입은 동기적으로 표시 → 계산(호스트 바퀴) → 파생(쓰기가 나오면 표시로) → 전이(쓰기가 나오면 표시로) → 커밋한다. 전이가 재계산을 부른 뒤에도 파생을 다시 판정하며, 적용 쓰기가 있는 파생 라운드는 한 정착 전체에서 전이 뒤에도 이어 세고 상한은 25이다(SETTLE-002–006·017, EVENT-020, LANDING-063).
@@ -35,7 +33,7 @@
 
 - `types/`: 정착 문맥과 경로 저장소의 계약 형.
 - `utils/declarations/`: 선택 선언과 제어 층의 해석.
-- `utils/latentStore/`: 잠재 저장의 기본 단위: 경로·종류별 원본과 저장 메타데이터만 관리하며 분배와 복원은 맡지 않는다.
+- `utils/latentStore/`: 잠재 저장의 기본 단위: 경로·종류별 원본과 저장 메타데이터의 기본 단위를 제공한다(분배와 복원은 `latent`).
 - `utils/input/`: 호출자 입력의 해석과 쓰기 표시.
 - `utils/templatePaths/`: 템플릿 경로의 결합과 확장.
 - `utils/errors/`: 정착 실패의 수집과 식별.
@@ -70,8 +68,6 @@
 
 - 정착·자식 선택·제어 선언·배달의 배열 순회는 인덱스 `for`/`while`, 순서 집합과 맵은 `for...of`를 사용한다. 게이트는 첫 거절에서 멈추며 선언/깊이/배달 순서와 같은 값의 참조는 유지한다. 동일 자료의 filter→map과 flat 중간 배열을 제거해 O(N) 시간의 상수를 줄이고 임시 O(N) 메모리를 절감한다. 정적 shape 검증은 완전 일치 확인 뒤 계산을 시작하므로 두 루프를 유지한다(87라운드 원칙 3).
 
-
-
 - 게이트 없는 청사진의 선언 선택은 불변 선언 배열을 공유하며 커밋마다 발생 경로별 색인을 복제하지 않는다. 현재 계산의 선택이 우선이고, 게이트가 있는 트리는 기존 커밋 경로 색인과 이탈 선택을 유지한다. 제어 읽기는 선언 배열 identity별 ID 메모를 사용한다. 정적 커밋의 O(발생 수 × 경로 깊이) 색인 작업·메모리를 제거하고 O(사용된 선언 수)의 약한 캐시를 둔다(86C-02 ii, NODE-006, SETTLE-017).
 
 - 정적 자식 선택은 빈 이탈 대기·latent 저장소를 조회하기 위한 경로 직렬화를 하지 않는다. 이미 같은 선언 ID 참조를 선택했으면 재등록하지 않으며 모든 노드 생성·생김 기록·원본 분배는 유지한다. 속도는 빈 조회와 문자열 생성 횟수만큼 개선하며 새 영구 메모리는 없다(86C-02 i, NODE-006, GOAL-011).
@@ -100,7 +96,8 @@
 
 - `interpretFieldNodeInput(template, input)`는 행의 정적 해석만 적용한 원본 트리를 돌려준다. dispatch는 배치 동사의 반환 슬롯에 이 함수를 사용하며 채움·파생·투영·생성은 하지 않는다. 바뀐 하위 값이 있을 때만 그 조상 그릇을 복사하고 순환 입력은 재방문하지 않는다. 비용은 반환 슬롯의 입력 트리 크기에 비례하며 첫 객체 템플릿에서 O(선언 자식 수)의 이름 색인을 약한 참조 캐시에 만들고 재사용한다(EVENT-061, 62C-01).
 
-- 진입점은 `writeFieldNode<Self>(node: FieldNodeRecord<Self>, input: unknown, kind: FieldNodeWriteKind, option: SetValueOption): void`, `loadFieldNodeAtMount<Self>(root: FieldNodeRecord<Self>, value: unknown, option: SetValueOption): void`, `resetFieldNodeForm<Self>(root: FieldNodeRecord<Self>, value: unknown, option: SetValueOption): void`, `resetFieldNodeSubtree<Self>(node: FieldNodeRecord<Self>, option: SetValueOption): void`, `readFieldNodeDefaultValue<Self>(node: FieldNodeRecord<Self>): unknown`과 정착용 맥락 변경 함수를 이름으로 내보낸다. `readFieldNodeInactiveValues`·`readFieldNodeMisfit`·`readFieldNodeMisfits`·`readFieldNodeWatchValues`도 노드 겉면에 이름으로 제공하여 각 게터가 내부 organ 없이 한 문장으로 위임하게 한다. 각 읽기 함수는 살아 있는 참조에서는 런타임 값을, 떼어진 참조에서는 마지막 커밋의 동결 값을 읽는 해당 멤버의 계약을 따른다. `FieldNode.setValue`·`resetSubtree`·바인딩 전용 `setContext`의 조율은 `write` 진입을 경유하고, 그 진입이 이곳의 동기 정착 함수를 부른다(NODE-010·044, LANDING-064·084, WRITE-085, CONTROLS-032·080, SURFACE-055, 26C-01, 28C-03·07·08).
+- 진입점은 `writeFieldNode<Self>(node: FieldNodeRecord<Self>, input: unknown, kind: FieldNodeWriteKind, option: WriteOption): void`, `loadFieldNodeAtMount<Self>(root: FieldNodeRecord<Self>, value: unknown, option: WriteOption): void`, `resetFieldNodeForm<Self>(root: FieldNodeRecord<Self>, value: unknown, option: WriteOption): void`, `resetFieldNodeSubtree<Self>(node: FieldNodeRecord<Self>, option: WriteOption): void`, `arrangeFieldNodeItems(node, operation)`, `readFieldNodeDefaultValue<Self>(node: FieldNodeRecord<Self>): unknown`과 정착용 맥락 변경 함수를 이름으로 내보낸다. `readFieldNodeInactiveValues`·`readFieldNodeMisfit`·`readFieldNodeMisfits`·`readFieldNodeWatchValues`도 노드 겉면에 이름으로 제공하여 각 게터가 내부 organ 없이 한 문장으로 위임하게 한다. 각 읽기 함수는 살아 있는 참조에서는 런타임 값을, 떼어진 참조에서는 마지막 커밋의 동결 값을 읽는 해당 멤버의 계약을 따른다. `FieldNode.setValue`·`resetSubtree`·바인딩 전용 `setContext`의 조율은 `write` 진입을 경유하고, 그 진입이 이곳의 동기 정착 함수를 부른다(NODE-010·044, LANDING-064·084, WRITE-085, CONTROLS-032·080, SURFACE-055, 26C-01, 28C-03·07·08).
+- 배열 동사의 정착: 배치 안 동사는 정착을 호출하지 않고 표시된 원본 배열에 순수 계획을 적용하며, 배치 끝에 여러 표시를 루트 한 번 정착으로 합치되 통째 교체 범위(잠복 원본 정리, 객체 호스트의 whole 분배, 교체 나감 판정)는 표시된 경로의 합집합이고 얕은 Merge 표시는 받은 키의 자식 경로이며 덮어쓰기 가상 표시는 참조 형제 경로(`writeOrigins[].fields`, 단일 경로 `virtualReplacePaths`의 배치 대응)이다; 쓰인 배열 호스트 아래 아이템 키는 위치로 잇는다(191C-01, 26C-10, R2). 교체 범위 안의 값 결과는 합성 값의 통째 쓰기 하나와 같아 같은 쓰기들을 순차로 한 결과와 다를 수 있고(GOAL-010, 62C-01), 교체 범위 밖에서 형상에 들어오는 노드는 합성 값 대신 잠복 원본을 복원하므로 그 결과는 통째 쓰기와 다를 수 있다(R1). 커밋은 재인덱싱 경로 사실의 노드와 자손을 배달 후보에 넣어 `UpdatePath`의 `{ previous, current }`를 표시한다(NODE-010·014, SURFACE-005, 33C-01, 35C-02, 36C-01, 62C-01, 실행 ADR D1·D4).
 - 진입점은 `readArrayLength(node)`를 이름으로 내보낸다. 배열 노드의 현재 길이(branch는 `itemCount`, terminal은 `raw` 배열 길이, 그 밖은 0)이며 배치 밖 무동작 push와 write의 거부·실패 push가 같은 값을 돌려주게 한다.
 
 - `FieldNodeWriteKind`는 engine의 공유 형 compartment `types/value.ts`에 있으며 `'input' | 'callerPartial' | 'callerReplace' | 'load' | 'automatic'`이다. 마지막 종류는 채움·입력 마침 등 예약 층 쓰기이며, 기본 `setValue(V)`는 로드가 아닌 `callerReplace`이다(VALUE-032, WRITE-096). 표시 단계가 종류·옵션·원래 쓰인 값을 기록하고, 정적 `schemaType`·`nullable`로 먼저 한 번 해석하며 쓴 노드와 역의존 조상을 재계산 목록에 넣는다(WRITE-056·098, SETTLE-002·017).
@@ -159,7 +156,7 @@
 
 ## Acceptance Criteria
 
-### scenario-runner — 정착 선택과 union 진입 장면
+### scenario-runner-union-entry — 정착 선택과 union 진입 장면
 
 - 유효 목록의 정착·파생 반영과 union 진입의 두 단계 관측은 같은 코어 시나리오 실행기를 사용하며 단계별 값·형상·배달 단언을 유지한다.
 
@@ -193,10 +190,6 @@
 - B=5/10/20/40에서 `active` 식 평가 횟수를 계수한다. kind_0에서 kind_4로 가는 첫 전환은 16·B회, 이후 세 전환은 각 8·B회이다.
 - 각 전환 뒤 자식 5개, 안정 진단, emit 90바이트를 단언한다.
 
-
-
-
-
 ### settle-recursive-fill — 재귀 채움의 종료와 상한
 
 - 호출자 값의 유한 재귀 배열과 D가 명시한 `[]`는 정상 완료하며, default만 반복되는 배열 및 객체 D 안의 같은 반복은 재귀 진단으로 끊는다.
@@ -207,21 +200,9 @@
 
 - 사슬 없는 첫 로드의 검증기 부재 경고와 non-JSON whole-value 경고는 기록으로 남고 보고기·콘솔을 동기로 호출하지 않는다. 공개 사슬의 기존 전달은 기록을 소비하며 production에서는 non-JSON 개발 경고를 만들지 않는다.
 
-### settle-disposal — 재생성 트리의 폐기
-
-- 인계된 옛 트리는 통지 없이 두 번호가 동기로 오르고 리스너가 해제된다. 참조 연결과 마지막 커밋 읽기를 유지하며, 입력 출처 표식이 있는 늦은 쓰기만 조용히 버리고 나머지는 `DISPOSED_NODE_WRITE`로 거부한다(WRITE-046·086, 69C-02).
-
-### settle-form-reset-errors — 폼 로드의 오류 초기화
-
-- 같은 트리와 재생성 트리의 reset 모두 명령형 외부 오류·검증 결과를 비우고, 호출이 돌아오기 전에 바인딩이 경로 키 `errors`를 재적용한다(WRITE-045, 69C-03).
-
 ### settle-runtime-predicates — 런타임 병합의 판정 정체성
 
 - 게이트 선언의 React 요소와 ref 모양은 청사진에 전달한 원자 판정대로 병합되고, 판정 없는 core 호스트의 병합 계약은 유지된다(REACT-003, 69C-04).
-
-
-
-
 
 ### settle-failure-identity — 오류 발생 식별자
 
@@ -275,10 +256,6 @@
 - 배열 아이템 에지는 재귀 조상 탐색을 끊는다. 빈 아이템도 참조된 객체 필드와 빈 자식 배열을 만들며, 빈 배열에서는 아이템을 만들지 않는다. 배열 에지 안쪽의 객체 프로퍼티 전용 순환 보호는 유지한다(BLUEPRINT-030, 18C-01, LANDING-128).
 - 통째 쓰기는 자리의 노드·키를 잇고 새 꼬리만 만들거나 남은 꼬리를 소멸시키며, 로드와 비로드의 생김·채움을 구분한다. 구조 동사는 행 계획으로 경로 열쇠 저장소와 게이트 등록을 재배치하고 스냅숏 자리를 맞춘 뒤 한 번 정착하며, 원본 B는 자동 쓰기의 구조 로그를 역순으로 되돌리고 키 계수를 유지한다. 아이템 선언은 실제 경로에 묶이고 비활성 배열 호스트의 잠복 원본은 전체 배열 하나이다(NODE-051·052, WRITE-036·085·090·095·099, CONTROLS-080, 35C-02·05·08·09·10).
 
-
-
-
-
 ### settle-array-selection-reuse — 구조 정착 뒤 정적 아이템 선택 재사용
 
 - append·remove-last의 정적 선택 단축은 일반 선택과 값·방출·반환값·스냅숏·노드/키/경로·배달 순서·개정·진단·기록·소멸 관측이 같다. 실제 단축 경로가 실행되며 접두의 일반 선택 몸통 방문은 0회이다.
@@ -300,7 +277,7 @@
 
 ### scenario-runner-effective-list — 유효 목록 E26 장면
 
-- 공유 E26 시나리오에서 좁히지 않은 effective 목록과 scalar schemaType이 동일한지 단계별 결과를 비교한다(WRITE-099).
+- `runScenario`를 공유하는 인라인 시나리오에서 좁히지 않은 effective 목록과 scalar schemaType이 동일한지 단계별 결과를 비교한다(WRITE-099).
 
 ### settle-array-carryover — 투영된 빈 자리와 보존 원본
 
@@ -308,7 +285,7 @@
 
 ### settle-array-declarations — 아이템 경로에 결합된 선언
 
-- 각 아이템의 visible·readOnly·fields·if 게이트·나감 정책이 자기 자리에 적용되고, 아이템이 꺼져도 배열 자리가 남는지 확인한다. 다른 아이템의 절대·상대 읽기, 방출 배열 길이, 중첩 템플릿과 @ 소유자는 remove·push 뒤 새 자리에서 다시 결합되는지 확인한다(35C-08, CONTROLS-073, SETTLE-045, VALUE-034, WRITE-031, 18C-13, CONTROLS-080).
+- 각 아이템의 visible·readOnly·fields·if 게이트·나감 정책이 자기 자리에 적용되고, 아이템이 꺼져도 배열 자리가 남는지 확인한다. remove·push 뒤에는 아이템 선언과 게이트 등록이 새 자리에서 다시 결합되는지 확인하고, 다른 아이템의 절대·상대 읽기, 방출 배열 길이, 중첩 템플릿과 @ 소유자가 아이템 경로에서 풀리는지 확인한다(35C-08, CONTROLS-073, SETTLE-045, VALUE-034, WRITE-031, 18C-13, CONTROLS-080).
 
 ### settle-array-legacy-ports — 빈 배열·최소 길이·가상 자리의 원본
 
@@ -358,7 +335,6 @@
 
 - 공유 선언의 재활성화는 발화 없이 기준점만 만들고, 자식을 방문한 정착에서도 방문하지 않은 호스트의 기준점은 자기 unset 규칙 유무와 관계없이 보존되는지 확인한다. 잎 커밋은 무관한 derived 기준점을 파싱하지 않고 다른 가지의 원본·자식 값을 읽지 않는지 확인한다(FRAGMENT-050, SETTLE-004, SETTLE-017, SETTLE-047).
 
-
 ### settle-derive-selection — 선택 선언의 기준점과 다음 에지
 
 - if·then·allOf·discriminator의 공유 선언 활성화와 같은 길이의 선택 교체는 derived·unsetValue·resetInteraction·injectTo의 기준점만 갱신하고 다음 원천·조건 에지에서 발화하지만, 새로 진입한 노드의 규칙은 바로 발화하는지 확인한다. 깊이별·중첩 분기에서는 꺼진 선언이 쓰기·상태 초기화를 하지 않고 재선택과 유효 스키마·선택 결과가 새 로드와 일치하는지 확인한다(FRAGMENT-050, SETTLE-003, CONTROLS-077, SETTLE-049).
@@ -371,10 +347,9 @@
 
 - 형제 active 게이트 평가는 식 배열을 매번 검색하지 않는지 확인한다. 던진 조상·자기 게이트로 나간 값은 잠재 원본에 보존되는 한편, 무관한 나감 비움과 파생 쓰기는 끝까지 수행되는지 확인한다(SETTLE-017, ERROR-125).
 
-
 ### settle-array-fill-descendants — 같은 라운드의 배열 기본값 자손
 
-- 배열·중첩 배열·객체 기본값이 만든 아이템은 명시 값을 유지하면서 없는 자손을 같은 라운드에서 채우고, DisableAutomaticWrites와 새 아이템에 적용되는 unset·derived의 우선순위를 지키는지 확인한다. 기존 아이템을 보존하는 push, 게이트가 만든 형제의 다음 라운드 채움, 반복 기본값의 재귀 오류와 원본 조상에 닿는 상대 읽기의 유한 확장을 확인한다(90C-01, WRITE-088, BLUEPRINT-030).
+- 배열·중첩 배열·객체 기본값이 만든 아이템은 명시 값을 유지하면서 없는 자손이 채워진 최종 방출 값을 내고, 진단은 `stable`, 커밋 번호는 1인지 확인한다. DisableAutomaticWrites와 새 아이템에 적용되는 unset·derived의 우선순위, 기존 아이템을 보존하는 push, 게이트가 낸 형제의 채움, 반복 기본값의 재귀 오류와 원본 조상에 닿는 상대 읽기의 유한 확장을 확인한다(90C-01, WRITE-088, BLUEPRINT-030).
 
 ### settle-write-global-state — 형상 진입·나감의 참 상태 셈
 

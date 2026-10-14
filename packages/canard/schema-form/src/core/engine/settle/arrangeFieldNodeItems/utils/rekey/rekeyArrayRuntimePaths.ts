@@ -101,12 +101,12 @@ export const rekeyArrayRuntimePaths = <Self>(
   if (latentChanged) runtime.latentRawDirty = true;
   rekeyCommittedRules(runtime, changed, mapPath);
 
-  const mismatchKeys = new Set<string>();
+  const misfitKeys = new Set<string>();
   for (const move of changed)
     for (const path of stores.misfits.pathIndex.under(move.previous))
-      mismatchKeys.add(path);
+      misfitKeys.add(path);
   const misfits: { previous: string; current?: string }[] = [];
-  for (const path of mismatchKeys) {
+  for (const path of misfitKeys) {
     const current = mapPath(path);
     misfits.push({ previous: path, current });
   }

@@ -19,7 +19,7 @@ import { snapshotExitedPolicies } from './snapshotExitedPolicies';
 import { updateInactiveValuesMemo } from './updateInactiveValuesMemo';
 import { readSettlementSource } from './utils/readSettlementSource';
 
-/** Shared frozen empty list for inactive and mismatch projections. */
+/** Shared frozen empty list for inactive and misfit projections. */
 const EMPTY_PATHS: readonly string[] = Object.freeze([]);
 /** Shared empty warning batch. */
 const EMPTY_WARNINGS: readonly MisfitRecord[] = Object.freeze([]);
@@ -89,12 +89,12 @@ export const commitSettlement = <Self extends FieldNodeRecord<Self>>(
     const effective = effectiveType(node);
     // Only a virtual node lacks a JSON type, and it never misfits.
     if (schemaType === undefined || effective === undefined) return;
-    const mismatch = isMisfit(node.raw, effective, node.nullable);
+    const misfit = isMisfit(node.raw, effective, node.nullable);
     const wasOn = runtime.misfitPaths.has(node.path);
-    if (mismatch) runtime.misfitPaths.add(node.path);
+    if (misfit) runtime.misfitPaths.add(node.path);
     else runtime.misfitPaths.delete(node.path);
     if (
-      !(mismatch && !wasOn) &&
+      !(misfit && !wasOn) &&
       !(
         development &&
         node.behavior.strategy === 'terminal' &&
@@ -105,7 +105,7 @@ export const commitSettlement = <Self extends FieldNodeRecord<Self>>(
     )
       return;
     (warningTasks ??= new Map()).set(node, () => {
-      if (mismatch && !wasOn) {
+      if (misfit && !wasOn) {
         const candidates = conversionCandidates(node, effective);
         const ambiguous = candidates.length > 1;
         const warning: MisfitRecord = {
