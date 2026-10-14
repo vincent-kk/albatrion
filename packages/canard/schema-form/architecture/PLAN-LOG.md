@@ -276,6 +276,7 @@
 | 2026-10-14 | 300라운드 닫기: 대기열 53(원장 write 표)·50(존재만 기여 유지, fieldInputMap 안내)·52(정돈-4 PR diff로 소유자 리뷰) 닫음, 51·40은 코드 확인으로. 보충 4줄 | `reviews/round-300-closing.md` |
 | 2026-10-14 | 305라운드 닫기: 대기열 51(넷 모두 폐기 — ERROR-162가 이미 폐기)·40(재현 안 됨, #367 유효) 닫음; 옛 조건 문법 무시는 CONTROLS-001 원리; 배열 한도 문서는 fairy08 문서 PR. 보충 7줄 | `reviews/round-305-closing.md` |
 | 2026-10-14 | 306라운드 닫기: 배열 한도 문서 PR #376 병합(c40d6de8f) — 경계 문장·배열 한도 절이 공개 문서에, documents 데모의 없는 이름 교체. 보충 2줄 | `reviews/round-306-closing.md` |
+| 2026-10-14 | 307라운드 닫기: 정돈-2 PR #377 병합(fd2a56c2f; 표면 92 동일, 시험 3825, 모델 위반 0), 편집자 결정·변용 기록, B8 첫 사례. 정돈-3 투입, filid 이슈 등록 지시. 보충 3줄 | `reviews/round-307-closing.md` |
 
 ## 2. 라운드별 요지
 
@@ -535,3 +536,4 @@
 - **304라운드(2026-10-14, 소유자).** 53 확정: core는 적용 가능성에는 따르고 제약은 강제하지 않는다(WRITE-003 보충, ADR 0013); 현행 유지, 기본 배열 입력의 UI 전용 빈 슬롯은 정돈-S(reviews/round-304-owner-answers.md).
 - **257라운드(2026-10-14, 소유자).** 작은 수정 넷(07b-4: 대기열 36·37·16·18)을 바로 시작하되 이번에 한해 codex 위임 없이 fixy07이 직접 구현한다(257C-01, reviews/round-257-owner-answers.md). 원장 관리자는 개선-38 설명·근거 문서의 이름을 병합 코드 기준으로 갱신한다.
 - **258라운드(2026-10-14, 소유자).** 개선-38의 다섯 결정과 후보 C를 확정했고, 이름 논의 셋(factory가 본체인가, components/SchemaNode의 이름, SchemaNode → FieldNode)을 추가로 열었다(reviews/round-258-owner-answers.md). 원장 관리자가 코드 사실로 답한다.
+- **259라운드(2026-10-14, 소유자).** SchemaNode 계열을 FieldNode 계열로 바꾸기로 확정했고(components/SchemaNode → components/Field: FieldProxy·FieldInputSlot·DeferredFieldProxy), 이름을 먼저 바꾼 뒤 C 재배치로 간다. 레거시는 제외(259C-01 대응표, reviews/round-259-owner-answers.md). 07b-5: fairy07 사용처 목록 → fixy07 치환(07b-4 뒤).

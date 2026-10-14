@@ -2,9 +2,8 @@
 
 개발의 진행 상황과 다음 할 일은 `PLAN.md`가 단일 진입점으로 든다. 다음 세션이 바로 이어서 일하기 위한 문서다. 이력은 `git log`와 `reviews/`에 있으므로 여기에는 지금 상태, 다음 할 일, 일하는 법만 적는다. 소유자는 Vincent다.
 
-## 1. 지금 어디인가 (2026-10-14, 306라운드 닫힘; 정돈-2 진행, 대기열 비어 있음)
+## 1. 지금 어디인가 (2026-10-14, 307라운드 닫힘; 정돈-3 진행, filid 이슈 등록 중, 대기열 비어 있음)
 
-- **259라운드(2026-10-14, 소유자).** SchemaNode 계열을 FieldNode 계열로 바꾸기로 확정했고(components/SchemaNode → components/Field: FieldProxy·FieldInputSlot·DeferredFieldProxy), 이름을 먼저 바꾼 뒤 C 재배치로 간다. 레거시는 제외(259C-01 대응표, reviews/round-259-owner-answers.md). 07b-5: fairy07 사용처 목록 → fixy07 치환(07b-4 뒤).
 - **260라운드(2026-10-14, 소유자).** 이름 변경에 두 요구를 붙였다: 옛 이름이 남지 않게 검사를 철저히(260C-01 세 겹 게이트), 다른 핵심 고유명사도 바꿀 것이 있는지 검토(reviews/round-260-owner-answers.md). 원장 관리자가 공개 고유명사 전수 목록으로 후보를 올린다.
 - **261라운드(2026-10-14, 닫기).** 핵심 고유명사 재검토의 후보 15개를 사실 확인과 함께 올렸다(261C-01, reviews/round-261-closing.md). 소유자 답을 받아 259C-01 대응표를 넓히고 07b-5 브리프를 쓴다.
 - **262라운드(2026-10-14, 닫기).** PR #364(07b-4, c711f3d17)를 직접 검증해 통과했다: 시험 3936+241, typecheck·lint 0, 세션 줄 0(262C-01, reviews/round-262-closing.md). 소유자 병합 허가 대기.
@@ -51,7 +50,8 @@
 - **303라운드(2026-10-14, 소유자).** 53의 경계·일관성 물음. 답: core는 적용 가능성(효력 중인 선언)에는 따르고 제약 키워드는 강제하지 않는다 — 가려진 필드 제거와 배열 개수 비강제가 한 규칙; 제공하지 않는 쪽이 일관적(reviews/round-303-owner-answers.md).
 - **304라운드(2026-10-14, 소유자).** 53 확정 — 경계 한 줄 수용(WRITE-003 보충, ADR 0013 §3.1 문장 추가), 1.0.0은 현행, 기본 배열 입력의 UI 전용 빈 슬롯은 작은 PR(정돈-S), controls 옵트인은 새 라운드, 문서는 지금(reviews/round-304-owner-answers.md).
 - **305라운드(2026-10-14, 닫기/원장 관리자).** fairy08 코드 확인으로 대기열 51(넷 모두 폐기 — 경고 하나는 fairy08이 이식 누락으로 보았으나 ERROR-162가 17라운드에 폐기함; 정돈-E가 다섯을 지움)과 40(docs 페이지 85개 재현 안 됨, #367 방어 수정 유효) 닫음. 옛 조건 문법이 보고 없이 무시되는 것은 CONTROLS-001의 결과라 대기열에 올리지 않음. 배열 한도·경계 문장 문서는 fairy08 문서 전용 PR(documents 데모의 없는 이름 교체 포함), 원장 관리자 병합. 대기열은 비었다.
-- **306라운드(2026-10-14, 닫기/원장 관리자).** fairy08의 배열 한도 문서 PR #376 병합(c40d6de8f): 304라운드 경계 문장과 배열 한도 절이 SPECIFICATION·README·QUICK_REFERENCE·docs/agents·documents에 들어갔고, documents 데모가 새 엔진에 없는 이름 대신 outputValue를 읽는다. 다음 라운드 번호는 307.
+- **306라운드(2026-10-14, 닫기/원장 관리자).** fairy08의 배열 한도 문서 PR #376 병합(c40d6de8f): 304라운드 경계 문장과 배열 한도 절이 SPECIFICATION·README·QUICK_REFERENCE·docs/agents·documents에 들어갔고, documents 데모가 새 엔진에 없는 이름 대신 outputValue를 읽는다.
+- **307라운드(2026-10-14, 닫기/원장 관리자).** 정돈-2 PR #377을 fd2a56c2f로 squash 병합(verifier 독립 검증: 공개 표면 92 동일, unit·render·react18 3825 통과, 가드 시험이 옛 트리의 위반을 잡음). 정돈-2의 편집자 결정과 변용 일곱, B8 첫 실제 사례(engine DETAIL 선언, vi.mock 경로는 검사기가 못 봄 → filid 결정 재료)를 기록. fixy08에게 정돈-3 투입, fairy08은 filid 이슈 수치 갱신 뒤 ogham 등록. 다음 라운드 번호는 308.
 - **그 앞의 라운드 요지(19라운드부터)는 PLAN-LOG.md 2절에 있다.** 라운드마다 한 문단이며, 1절의 기록 표와 같은 순서다.
 - **설계의 정본은 단일 원장 `ledger/`다.** 영역 17개, 항목 1,350개(80라운드 뒤, 24라운드 뒤 1,348; 현행 1,076(부정 결정·기록 포함), 대체됨 199, 분할됨 49, 중복 24, 열림 0). 형식과 규칙은 `ledger/README.md`.
 - **옛 설계 문서(`00`–`09`, `adr/`, `open-questions.md`)는 동결됐다.** 더 고치지 않는다. 어긋남은 원장의 충돌 칸에 적는다. 원장이 인용하는 옛 문서의 `path:line`은 모두 커밋 `ba398c330` 기준 줄 번호다(그 뒤 옛 문서는 바뀌지 않았다).
@@ -453,6 +453,7 @@ node ledger/checks/doc-coverage.mjs design/*.md adr/*.md -- ledger/*.md   # 설�
 | `reviews/round-304-owner-answers.md` | 304라운드 소유자 답: 53 확정, 경계 문장 수용 |
 | `reviews/round-305-closing.md` | 305라운드 편집자 결정 넷: 대기열 51·40 닫음, 옛 문법 무시는 원리, 배열 한도 문서 PR |
 | `reviews/round-306-closing.md` | 306라운드 편집자 결정: 배열 한도 문서 PR #376 병합 |
+| `reviews/round-307-closing.md` | 307라운드 편집자 결정 셋: 정돈-2 PR #377 병합, 결정·변용 기록, B8 첫 사례 |
 | plan/tidy-structure/array-limits-review.md | 배열 한도를 core가 다룰 때의 유익·손해 비교(대기열 53 검토 메모, 권고 포함) |
 | `reviews/round-297-closing.md` | 297라운드 편집자 결정 하나: 정돈-1(#374) 병합, 정돈-2 투입 |
 | plan/tidy-structure/brief-tidy-2.md | 정돈-2 브리프(fixy08 → codex): 시험 자리 U·D·S1, 제품 위반 둘, 잉여 export, D7 예외 |
