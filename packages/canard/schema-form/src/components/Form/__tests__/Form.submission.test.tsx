@@ -9,8 +9,7 @@ import {
 } from '@testing-library/react';
 import { afterEach, expect, it, vi } from 'vitest';
 
-import { ErrorBoundedFormCore } from '../components/FormCore/ErrorBoundedFormCore';
-import type { FormHandle } from '../components/FormCore/type';
+import { FormCore, type FormHandle } from '../components/FormCore';
 
 afterEach(() => {
   cleanup();
@@ -22,13 +21,9 @@ it('LANDING-095 ERROR-032 rejects degraded imperative submission without deliver
   const ref = createRef<FormHandle>();
   const submit = vi.fn();
   render(
-    <ErrorBoundedFormCore
-      ref={ref}
-      jsonSchema={{ type: 'string' }}
-      onSubmit={submit}
-    >
+    <FormCore ref={ref} jsonSchema={{ type: 'string' }} onSubmit={submit}>
       <span />
-    </ErrorBoundedFormCore>,
+    </FormCore>,
   );
   vi.spyOn(ref.current!.node!, 'diagnostics', 'get').mockReturnValue({
     status: 'degraded',
@@ -46,13 +41,9 @@ it('ERROR-110 ERROR-117 reports a native submit rejection and sends the same err
   const sink = vi.fn();
   vi.stubGlobal('reportError', sink);
   const view = render(
-    <ErrorBoundedFormCore
-      ref={ref}
-      jsonSchema={{ type: 'string' }}
-      onError={report}
-    >
+    <FormCore ref={ref} jsonSchema={{ type: 'string' }} onError={report}>
       <span />
-    </ErrorBoundedFormCore>,
+    </FormCore>,
   );
   report.mockClear();
   const error = new Error('validation unavailable');
@@ -67,25 +58,25 @@ it('WRITE-043 WRITE-045 retains an equivalent authored schema and reapplies exte
   const ref = createRef<FormHandle>();
   const errors = [{ keyword: 'external', message: 'server', dataPath: '' }];
   const view = render(
-    <ErrorBoundedFormCore
+    <FormCore
       ref={ref}
       jsonSchema={{ type: 'string' }}
       defaultValue="a"
       errors={errors}
     >
       <span />
-    </ErrorBoundedFormCore>,
+    </FormCore>,
   );
   const node = ref.current!.node!;
   view.rerender(
-    <ErrorBoundedFormCore
+    <FormCore
       ref={ref}
       jsonSchema={{ type: 'string' }}
       defaultValue="b"
       errors={errors}
     >
       <span />
-    </ErrorBoundedFormCore>,
+    </FormCore>,
   );
   act(() => ref.current!.reset());
   expect(ref.current!.node).toBe(node);

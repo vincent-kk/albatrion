@@ -3,8 +3,7 @@ import { StrictMode, createRef } from 'react';
 import { act, cleanup, render } from '@testing-library/react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
-import { ErrorBoundedFormCore } from '../components/FormCore/ErrorBoundedFormCore';
-import type { FormHandle } from '../components/FormCore/type';
+import { FormCore, type FormHandle } from '../components/FormCore';
 
 afterEach(cleanup);
 
@@ -14,14 +13,14 @@ describe('Form engine binding', () => {
     const ref = createRef<FormHandle>();
     render(
       <StrictMode>
-        <ErrorBoundedFormCore
+        <FormCore
           ref={ref}
           jsonSchema={{ type: 'string' }}
           defaultValue="first"
           onChange={onChange}
         >
           <span />
-        </ErrorBoundedFormCore>
+        </FormCore>
       </StrictMode>,
     );
     expect(ref.current?.getValue()).toBe('first');
@@ -33,9 +32,9 @@ describe('Form engine binding', () => {
   it('SURFACE-059 EVENT-073 exposes exactly eighteen handle members and optional-path commands', () => {
     const ref = createRef<FormHandle>();
     render(
-      <ErrorBoundedFormCore ref={ref} jsonSchema={{ type: 'string' }}>
+      <FormCore ref={ref} jsonSchema={{ type: 'string' }}>
         <span />
-      </ErrorBoundedFormCore>,
+      </FormCore>,
     );
     expect(Object.keys(ref.current!).sort()).toEqual(
       [
@@ -75,13 +74,9 @@ describe('Form engine binding', () => {
     const ref = createRef<FormHandle>();
     const schema = { type: 'string' } as const;
     render(
-      <ErrorBoundedFormCore
-        ref={ref}
-        jsonSchema={schema}
-        defaultValue="initial"
-      >
+      <FormCore ref={ref} jsonSchema={schema} defaultValue="initial">
         <span />
-      </ErrorBoundedFormCore>,
+      </FormCore>,
     );
     const node = ref.current!.node;
     act(() => {
@@ -99,23 +94,15 @@ describe('Form engine binding', () => {
   it('WRITE-043 WRITE-046 switches the handle inside reset after a committed schema change', () => {
     const ref = createRef<FormHandle>();
     const view = render(
-      <ErrorBoundedFormCore
-        ref={ref}
-        jsonSchema={{ type: 'string' }}
-        defaultValue="first"
-      >
+      <FormCore ref={ref} jsonSchema={{ type: 'string' }} defaultValue="first">
         <span />
-      </ErrorBoundedFormCore>,
+      </FormCore>,
     );
     const previous = ref.current!.node!;
     view.rerender(
-      <ErrorBoundedFormCore
-        ref={ref}
-        jsonSchema={{ type: 'number' }}
-        defaultValue={7}
-      >
+      <FormCore ref={ref} jsonSchema={{ type: 'number' }} defaultValue={7}>
         <span />
-      </ErrorBoundedFormCore>,
+      </FormCore>,
     );
     expect(ref.current!.node).toBe(previous);
     act(() => {
@@ -132,7 +119,7 @@ describe('Form engine binding', () => {
     const ref = createRef<FormHandle>();
     const submit = vi.fn();
     render(
-      <ErrorBoundedFormCore
+      <FormCore
         ref={ref}
         jsonSchema={{
           type: 'array',
@@ -143,7 +130,7 @@ describe('Form engine binding', () => {
         onSubmit={submit}
       >
         <span />
-      </ErrorBoundedFormCore>,
+      </FormCore>,
     );
     expect(ref.current!.getValue()).toEqual(['a']);
     expect(ref.current!.node!.children).toHaveLength(2);
@@ -164,9 +151,9 @@ describe('Form engine binding', () => {
     };
     render(
       <StrictMode>
-        <ErrorBoundedFormCore jsonSchema={{ type: 'string' }} onError={onError}>
+        <FormCore jsonSchema={{ type: 'string' }} onError={onError}>
           <Broken />
-        </ErrorBoundedFormCore>
+        </FormCore>
       </StrictMode>,
     );
     expect(onError).toHaveBeenCalledTimes(1);

@@ -2,7 +2,7 @@ import { expectTypeOf, it } from 'vitest';
 
 import { SetValueOption } from '@/schema-form/core';
 
-import type { FormHandle } from '../components/FormCore/type';
+import type { FormHandle } from '../components/FormCore';
 
 it('WRITE-015 LANDING-039 reset accepts only automatic-write flags', () => {
   const check = (handle: FormHandle) => {

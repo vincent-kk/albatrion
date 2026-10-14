@@ -6,7 +6,7 @@ import { render } from '@testing-library/react';
 import { renderToString } from 'react-dom/server';
 import { describe, expect, inject, it, vi } from 'vitest';
 
-import { ErrorBoundedFormCore } from '../components/FormCore/ErrorBoundedFormCore';
+import { FormCore } from '../components/FormCore';
 
 declare module 'vitest' {
   export interface ProvidedContext {
@@ -34,7 +34,7 @@ describe('REACT-017 runtime compatibility', () => {
     const onChange = vi.fn();
     const view = render(
       <React.StrictMode>
-        <ErrorBoundedFormCore
+        <FormCore
           jsonSchema={{ type: 'string' }}
           defaultValue="ready"
           onChange={onChange}
@@ -53,7 +53,7 @@ describe('REACT-017 runtime compatibility', () => {
     const onChange = vi.fn();
     expect(() =>
       renderToString(
-        <ErrorBoundedFormCore
+        <FormCore
           jsonSchema={{ type: 'string' }}
           defaultValue="ready"
           onChange={onChange}
