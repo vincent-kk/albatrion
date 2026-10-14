@@ -7,30 +7,30 @@ import LazyDemo from '@site/src/components/LazyDemo';
 
 # Array Output Filters (omitTrailing / omitEmpty)
 
-`options.omitTrailing` lets an array offer empty rows up front while keeping them out of the value the form emits. Only **trailing** `undefined` items are dropped — leading and middle holes stay in place, so error `dataPath`s and validation indexes keep pointing at the row the user sees.
+`options.omitTrailing` lets an array keep the empty rows a user added on screen while keeping them out of the value the form emits. Only **trailing** `undefined` items are dropped — leading and middle holes stay in place, so error `dataPath`s and validation indexes keep pointing at the row the user sees.
 
 :::info Key Features
 
 - `omitTrailing: true` — opt-in; trims trailing `undefined` from the emitted value only
 - `omitEmpty` — on by default; an empty array disappears from its parent value
 - Filter order — `omitTrailing` runs first, `omitEmpty` second
-- Two channels — `node.value` (raw, what renders) vs `node.normalizedValue` (refined, what is emitted)
+- Two channels — `node.value` (raw, what renders) vs `node.outputValue` (refined, what is emitted)
   :::
 
-The demo below renders three arrays that share one shape (`minItems: 3`, string items) and differ only in their `options`. Each starts with three empty rows; the table under the form shows both channels side by side, so you can watch the rendered row count and the emitted value diverge.
+The demo below renders three arrays that share one shape (`minItems: 3`, string items) and differ only in their `options`. Each starts empty; add rows with the button and leave the last ones empty to watch the rendered row count and the emitted value diverge.
 
-| Path       | `options`                                  | Emitted at first paint        |
-| ---------- | ------------------------------------------ | ----------------------------- |
-| `/tags`    | `{ omitTrailing: true }`                   | key absent (`[]` → omitEmpty) |
-| `/notes`   | none                                       | `[null, null, null]`          |
-| `/aliases` | `{ omitTrailing: true, omitEmpty: false }` | `[]`                          |
+| Path       | `options`                                  | Emitted after adding three rows and filling none |
+| ---------- | ------------------------------------------ | ------------------------------------------------ |
+| `/tags`    | `{ omitTrailing: true }`                   | key absent (`[]` → omitEmpty)                    |
+| `/notes`   | none                                       | `[null, null, null]`                             |
+| `/aliases` | `{ omitTrailing: true, omitEmpty: false }` | `[]`                                             |
 
 :::caution minItems and validation
-Validation reads the **normalized** value. Pairing `minItems: 3` with `omitTrailing: true` means an array holding one filled row is validated as length 1, not 3. Use `minItems` to decide how many rows to offer only when the emitted contract also wants that many; otherwise leave it off and let users add rows.
+Validation reads the **emitted** value. With `omitTrailing: true`, an array holding one filled row and two empty ones is validated as length 1, so `minItems: 3` reports it.
 :::
 
 :::tip Custom array inputs
-Count rows from `node.children`, never from `value.length` — the filtered value is shorter than the rendered row count by design.
+Count rows from `node.children`, never from `value.length` — the filtered value is shorter than the rendered row count whenever trailing rows are empty.
 :::
 
 <LazyDemo

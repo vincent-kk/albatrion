@@ -6,8 +6,8 @@
 
 Obtain the node via `formRef.current?.findNode('/items') as ArrayNode`, or receive it as `node` inside a `FieldInput`. Methods: `push`, `pop`, `update`, `remove`, `clear` (shapes in `dist/*.d.ts`). Behavior the signatures do not show:
 
-- `push(data?, unlimited?)` returns `Promise<number>` resolving to the array **length after the push** — not the new item's index. When `maxItems` is reached the push is **silently ignored** and the promise resolves with the unchanged length (no error). Pass `unlimited: true` to bypass `maxItems`.
-- `clear()` removes **every** item whatever `minItems` says, like `remove`/`pop`/`setValue([])` — `minItems` is a validation constraint and a construction/reset fill, not a guard on mutations. A reset restores the fill; to stop users going below the minimum, disable the remove control in the `FieldInput`. On a nullable array that is `null`, `clear()` does nothing (`nullable-branch-nodes.md`).
+- `push(value?)` returns the array **length after the push** (a number, synchronously), not the new item's index. It is never refused: `maxItems` and `items: false` do not stop it, and validation reports the violation.
+- `clear()` removes **every** item whatever `minItems` says, like `remove`/`pop`/`setValue([])`. `minItems` is a validation constraint only: the core never fills to it, at construction, on reset or on branch reactivation. To stop users going below the minimum, disable the remove control in the `FieldInput` (the built-in array input always shows it). On a nullable array that is `null`, `clear()` does nothing (`nullable-branch-nodes.md`).
 - `remove(index)` removes one item by index.
 
 ## Array Output Filters (omitTrailing / omitEmpty)
@@ -24,8 +24,8 @@ Where the filters apply — and where they never do:
 Rules of thumb:
 
 - Leading/middle `undefined` are never removed — indices must stay aligned with error `dataPath`s and validation params.
-- Primary use case: pre-expose empty inputs (`minItems`) without polluting the submitted/validated value. Validation sees the trimmed value, so `minItems` counts only the filled prefix.
-- A Reset-flagged clear (form reset, oneOf/anyOf branch reactivation) refills `minItems` empty items; a plain `setValue(undefined)` clears every item.
+- Primary use case: let users add rows and leave the trailing ones empty without polluting the submitted/validated value. Validation sees the trimmed value, so trailing empty items do not count toward `minItems`.
+- A reset restores the loaded value and creates no items for `minItems`; a plain `setValue(undefined)` clears every item.
 - In a custom array `FieldInput`, derive row count from `node.children` (or `ChildFields`), never from `value.length` — the emitted value is shorter than the rendered rows by design.
 - `injectTo` handlers receive the **raw** source value, not the filtered one; mirror targets therefore hold the untrimmed copy.
 
@@ -65,7 +65,7 @@ Per-item `push()` in a loop fires an event per call. For N items, set the value 
 
 ```typescript
 // ❌ 100 events
-for (let i = 0; i < 100; i++) await arrayNode.push(createItem(i));
+for (let i = 0; i < 100; i++) arrayNode.push(createItem(i));
 
 // ✅ one event
 formRef.current?.setValue((prev) => ({
