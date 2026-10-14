@@ -511,3 +511,5 @@
 - **252라운드(2026-10-14, 소유자).** PR #361(문서 사이트) 병합을 명시적으로 허가했다(reviews/round-252-owner-answers.md).
 - **287라운드(2026-10-14, 소유자).** 최소 export 원칙의 까닭(계약의 기록, 복잡도 폭발 방지)과 "fractal의 1차 이미지" 전제를 적고, 가이드(CLAUDE.md 등) 보강과 fractal 전수 재검사를 지시했다(reviews/round-287-owner-answers.md).
 - **288라운드(2026-10-14, 소유자).** filid 이슈는 초안만 두고 규칙 위반/결함을 가린 뒤 등록, CLAUDE.md 자리 검토, 수정 계획을 먼저 보일 것(reviews/round-288-owner-answers.md). 계획: plan/tidy-structure/request.md.
+- **289라운드(2026-10-14, 소유자).** 정돈 결정 D1–D6 확정, filid 이슈 본문은 규칙 결함 셋·도구 결함 하나이며 정돈-2 뒤 등록(reviews/round-289-owner-answers.md). 정돈 단계 `진행`.
+- **290라운드(2026-10-14, 소유자).** 정돈 작업자 fixy08·fairy08 지정, 원장 관리자는 관리만(reviews/round-290-owner-answers.md). 정돈-1 브리프 발송.
