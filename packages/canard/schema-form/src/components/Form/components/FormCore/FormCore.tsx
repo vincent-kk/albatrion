@@ -27,13 +27,13 @@ import {
 import type { RootBinding } from '@/schema-form/providers/RootNodeContext';
 import type { AttachedFilesMap } from '@/schema-form/types';
 
-import type { FormHandle, FormProps } from '../type';
-import { createChildren } from '../utils/createChildren';
-import { submitForm } from '../utils/submitForm';
-import { FormRootProxy } from './FormRootProxy';
+import { FormRootProxy } from './components/FormRootProxy';
+import type { FormHandle, FormProps } from './type';
+import { createChildren } from './utils/createChildren';
+import { submitForm } from './utils/submitForm';
 
 /** Compose the fixed provider hierarchy and expose the current binding through the handle. */
-export const FormRoot = (props: FormProps, ref: ForwardedRef<FormHandle>) => {
+export const FormCore = (props: FormProps, ref: ForwardedRef<FormHandle>) => {
   const binding = useRef<RootBinding>({ reset: () => {} });
   const attachedFilesMap = useLazyConstant<AttachedFilesMap>(() => new Map());
   const reporter = useFormErrorContext();

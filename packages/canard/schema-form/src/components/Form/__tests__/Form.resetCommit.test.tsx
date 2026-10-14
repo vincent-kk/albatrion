@@ -3,21 +3,25 @@ import { createRef, useState } from 'react';
 import { act, cleanup, fireEvent, render } from '@testing-library/react';
 import { afterEach, expect, it, vi } from 'vitest';
 
-import { Form } from '../Form';
-import type { FormHandle } from '../type';
+import { ErrorBoundedFormCore } from '../components/FormCore/ErrorBoundedFormCore';
+import type { FormHandle } from '../components/FormCore/type';
 
 afterEach(cleanup);
 
 it('WRITE-046 ERROR-084 updates the handle even when the replacement load throws after settlement', () => {
   const ref = createRef<FormHandle>();
   const view = render(
-    <Form ref={ref} jsonSchema={{ type: 'string' }} onError={() => {}}>
+    <ErrorBoundedFormCore
+      ref={ref}
+      jsonSchema={{ type: 'string' }}
+      onError={() => {}}
+    >
       <span />
-    </Form>,
+    </ErrorBoundedFormCore>,
   );
   const previous = ref.current!.node;
   view.rerender(
-    <Form
+    <ErrorBoundedFormCore
       ref={ref}
       jsonSchema={{
         type: 'number',
@@ -26,7 +30,7 @@ it('WRITE-046 ERROR-084 updates the handle even when the replacement load throws
       onError={() => {}}
     >
       <span />
-    </Form>,
+    </ErrorBoundedFormCore>,
   );
   const caught = vi.fn();
   act(() => {
@@ -55,9 +59,13 @@ it('WRITE-043 WRITE-046 rechecks committed props after a reset in the same event
         >
           reset
         </button>
-        <Form ref={ref} jsonSchema={{ type: 'string' }} defaultValue={value}>
+        <ErrorBoundedFormCore
+          ref={ref}
+          jsonSchema={{ type: 'string' }}
+          defaultValue={value}
+        >
           <span />
-        </Form>
+        </ErrorBoundedFormCore>
       </>
     );
   };
@@ -77,7 +85,13 @@ it('LANDING-095 REACT-002 REACT-003 preserves presentation identities and clones
     presentation: { FieldInput: Input, FieldInputProps: { icon } },
   } as const;
   const source = { name: 'before' };
-  render(<Form ref={ref} jsonSchema={schema} defaultValue={source} />);
+  render(
+    <ErrorBoundedFormCore
+      ref={ref}
+      jsonSchema={schema}
+      defaultValue={source}
+    />,
+  );
   source.name = 'after';
   expect(ref.current!.getValue()).toEqual({ name: 'before' });
   expect(ref.current!.node!.strategy).toBe('terminal');

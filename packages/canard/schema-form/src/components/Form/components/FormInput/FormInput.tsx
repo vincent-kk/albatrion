@@ -5,16 +5,9 @@ import { useConstant, useReference } from '@winglet/react-utils/hook';
 import { PluginManager } from '@/schema-form/app/plugin';
 import { FieldProxy } from '@/schema-form/components/Field';
 import { useFieldRendererContext } from '@/schema-form/providers';
-import type {
-  AllowedValue,
-  ChildFieldProps,
-  FieldInputProps,
-} from '@/schema-form/types';
+import type { AllowedValue, FieldInputProps } from '@/schema-form/types';
 
-export type FormInputProps<Value extends AllowedValue> = {
-  path?: string;
-  FieldInput?: ComponentType<FieldInputProps<Value>>;
-} & ChildFieldProps;
+import type { FormInputProps } from './type';
 
 /**
  * Renders form input fields with automatic type detection from schema.

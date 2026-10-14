@@ -1,14 +1,10 @@
-import { type CSSProperties, memo } from 'react';
+import { memo } from 'react';
 
 import { PluginManager } from '@/schema-form/app/plugin';
 import { FieldProxy } from '@/schema-form/components/Field';
 import { useFieldRendererContext } from '@/schema-form/providers';
 
-export interface FormErrorProps {
-  path?: string;
-  style?: CSSProperties;
-  className?: string;
-}
+import type { FormErrorProps } from './type';
 
 /**
  * Renders validation error messages for form fields.

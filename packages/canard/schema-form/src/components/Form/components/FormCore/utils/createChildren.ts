@@ -6,7 +6,7 @@ import type {
   JSONSchema,
 } from '@/schema-form/types';
 
-import { FormChildrenRenderer } from '../root/FormChildrenRenderer';
+import { FormChildrenRenderer } from '../components/FormChildrenRenderer';
 import type { FormProps } from '../type';
 
 /** Preserve element children or bind function children to the current root. */
