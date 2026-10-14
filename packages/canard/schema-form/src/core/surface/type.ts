@@ -97,8 +97,10 @@ export interface NodeSurface<
    * From a live node only nodes in the current shape are visited; from a detached node, the
    * subtree it was detached with. Terminals are leaves, a node reached twice through a reference
    * is visited once, and nodes created during the walk may be missed. Returning `false` skips
-   * that node's descendants. Writes and state, error or request calls made inside the walk are
-   * batched and delivered once when it ends, so reads during the walk see the last committed values.
+   * that node's descendants. The walk batches like `batch`: value writes are marked and settle
+   * once when it ends, so value reads during the walk see the last committed values; state and
+   * external-error changes apply at once while their events wait; a form reset still settles at
+   * once. Inside an enclosing batch, everything waits for that batch's end instead.
    */
   visitSubtree(visitor: (node: FieldNode) => void | boolean): void;
   setValue(value: unknown, option?: SetValueOption): void;
