@@ -1,6 +1,6 @@
 import { getFeatureNodeIndex } from '../../../blueprint';
 import type { FieldNodeRecord } from '../../../record';
-import { getControlExpression } from './getControlExpression';
+import { getControlExpression } from '../../../utils/controls/getControlExpression';
 import { getControlLayers } from './getControlLayers';
 import { readStateDependency } from './readStateDependency';
 

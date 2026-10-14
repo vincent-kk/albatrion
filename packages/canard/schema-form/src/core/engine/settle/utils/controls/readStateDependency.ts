@@ -2,7 +2,7 @@ import { hasOwnProperty } from '@winglet/common-utils/lib';
 import { unescapeSegment } from '@winglet/json/pointer';
 
 import type { FieldNodeRecord } from '../../../record';
-import { resolveDependencyPath } from '../paths/resolveDependencyPath';
+import { resolveDependencyPath } from '../../../utils/paths/resolveDependencyPath';
 
 /** Emission and context retained before a settlement changes the live tree. */
 export interface EmissionSnapshot {

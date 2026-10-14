@@ -2,6 +2,7 @@ import { describe, expect, it, vi } from 'vitest';
 
 import { WriteOption } from '@/schema-form/core/engine/types/value';
 
+import { createTestTree } from '../../__tests__/fixtures/createTestTree';
 import * as compiler from '../../blueprint/utils/expressions/createDynamicFunction';
 import * as priming from '../utils/compute/primeHost';
 import * as selection from '../utils/compute/selectChildren';
@@ -11,7 +12,6 @@ import { loadFieldNodeAtMount } from '../utils/load/loadFieldNodeAtMount';
 import { writeFieldNode } from '../utils/write/writeFieldNode';
 import { createFixedBranchSchema } from './fixtures/childSelection/createFixedBranchSchema';
 import { observeChildSelectionPlans } from './fixtures/childSelection/observeChildSelectionPlans';
-import { createTestTree } from './fixtures/createTestTree';
 
 // filid:contract settle-child-selection-metadata
 describe('lazy child selection metadata runtime visits', () => {

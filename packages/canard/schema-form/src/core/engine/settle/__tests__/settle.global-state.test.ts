@@ -3,8 +3,8 @@ import { describe, expect, it } from 'vitest';
 import { FieldNodeState } from '@/schema-form/core/engine/types/state';
 import { WriteOption } from '@/schema-form/core/engine/types/value';
 
+import { createTestTree } from '../../__tests__/fixtures/createTestTree';
 import { writeFieldNode } from '../utils/write/writeFieldNode';
-import { createTestTree } from './fixtures/createTestTree';
 
 // filid:contract settle-write
 describe('EVENT-062 43C-01 settlement shape counts', () => {

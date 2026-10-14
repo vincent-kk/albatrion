@@ -1,4 +1,4 @@
-import { sameValue } from '../compute/sameValue';
+import { sameValue } from '../../../utils/compute/sameValue';
 
 /**
  * Preserve undeclared keys in received order across a whole or partial write.

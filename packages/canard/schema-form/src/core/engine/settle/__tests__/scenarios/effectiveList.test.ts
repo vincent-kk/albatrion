@@ -6,8 +6,8 @@ import { runScenario } from '@/schema-form/core/__tests__/scenarios/utils/runSce
 import type { BlueprintSchema } from '@/schema-form/core/engine/blueprint';
 import { WriteOption } from '@/schema-form/core/engine/types/value';
 
+import { createTestTree } from '../../../__tests__/fixtures/createTestTree';
 import { writeFieldNode } from '../../utils/write/writeFieldNode';
-import { createTestTree } from '../fixtures/createTestTree';
 
 // filid:contract scenario-runner
 describe('core effective-list scenario', () => {

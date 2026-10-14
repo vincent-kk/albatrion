@@ -6,7 +6,7 @@ import type {
   BlueprintNodeKind,
 } from '../../../blueprint';
 import type { FieldNodeRecord } from '../../../record';
-import { resolveDependencyPath } from '../paths/resolveDependencyPath';
+import { resolveDependencyPath } from '../../../utils/paths/resolveDependencyPath';
 import { getGateExpression } from './getGateExpression';
 import { resolveGateOccurrence } from './resolveGateOccurrence';
 import type { GateOccurrence } from './type';

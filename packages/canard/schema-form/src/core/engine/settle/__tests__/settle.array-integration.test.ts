@@ -14,6 +14,7 @@ import {
   SchemaFormError,
 } from '@/schema-form/errors';
 
+import { createTestTree } from '../../__tests__/fixtures/createTestTree';
 import { markCommitDeliveries } from '../utils/commit/markCommitDeliveries';
 import { createSettlementContext } from '../utils/settlement/createSettlementContext';
 import { arrangeFieldNodeItems } from '../utils/structure/arrangeFieldNodeItems';
@@ -22,7 +23,6 @@ import { prunePerishedPaths } from '../utils/transition/prunePerishedPaths';
 import { getSettlementScratch } from '../utils/write/getSettlementScratch';
 import { releaseSettlementScratch } from '../utils/write/releaseSettlementScratch';
 import { writeFieldNode } from '../utils/write/writeFieldNode';
-import { createTestTree } from './fixtures/createTestTree';
 
 // filid:contract settle-array-integration
 describe('array integration runtime stores', () => {

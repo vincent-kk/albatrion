@@ -1,7 +1,7 @@
 import { isArray } from '@winglet/common-utils/filter';
 
 import type { BlueprintNode } from '../../../blueprint';
-import { getCommittedDeclarationKey } from './getCommittedDeclarationKey';
+import { getCommittedDeclarationKey } from '../../../utils/controls/getCommittedDeclarationKey';
 
 /** Unselected static fallbacks share IDs for the immutable declaration owner. */
 const DECLARATION_IDS = new WeakMap<BlueprintNode, readonly number[]>();

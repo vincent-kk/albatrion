@@ -1,9 +1,9 @@
 import { NON_JSON_WHOLE_VALUE, TYPE_MISMATCH } from '../../../../../errors';
 import type { FieldNodeRecord, TypeMismatchRecord } from '../../../record';
 import { indexFieldNodeWarning } from '../../../record';
+import { getCommittedDeclarationKey } from '../../../utils/controls/getCommittedDeclarationKey';
 import { PathKeyedMap } from '../../../utils/pathIndex/PathKeyedMap';
 import type { SettlementContext } from '../../type';
-import { getCommittedDeclarationKey } from '../controls/getCommittedDeclarationKey';
 import { collectNonJsonPaths } from './collectNonJsonPaths';
 import { commitDeriveRules } from './commitDeriveRules';
 import { commitExitPolicyValues } from './commitExitPolicyValues';

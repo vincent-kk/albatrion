@@ -2,8 +2,8 @@ import { describe, expect, it } from 'vitest';
 
 import { WriteOption } from '@/schema-form/core/engine/types/value';
 
+import { createTestTree } from '../../__tests__/fixtures/createTestTree';
 import { loadFieldNodeAtMount } from '../utils/load/loadFieldNodeAtMount';
-import { createTestTree } from './fixtures/createTestTree';
 
 describe('settled default sources', () => {
   it('CONTROLS-077 fragment default fills only its directly declared children', () => {

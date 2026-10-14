@@ -10,7 +10,7 @@ import { blueprint } from '../src/core';
 import { fieldNodeFactory, SetValueOption } from '../src/core';
 import { type TestFieldNode, isTestFieldNode } from '../src/core/__tests__/fixtures/testFieldNode';
 import { loadFieldNodeAtMount } from '../src/core/engine';
-import { sameValue } from '../src/core/engine/settle/utils/compute/sameValue';
+import { sameValue } from '../src/core/engine/utils/compute/sameValue';
 
 const elementCount = 10_000;
 const lastKey = `item_${elementCount - 1}`;

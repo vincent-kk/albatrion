@@ -3,12 +3,12 @@ import { describe, expect, it } from 'vitest';
 import { FieldNodeState } from '@/schema-form/core/engine/types/state';
 import { WriteOption } from '@/schema-form/core/engine/types/value';
 
+import { createTestTree } from '../../__tests__/fixtures/createTestTree';
 import { loadFieldNodeAtMount } from '../utils/load/loadFieldNodeAtMount';
 import { readFieldNodeDefaultValue } from '../utils/load/readFieldNodeDefaultValue';
 import { resetFieldNodeForm } from '../utils/load/resetFieldNodeForm';
 import { resetFieldNodeSubtree } from '../utils/load/resetFieldNodeSubtree';
 import { writeFieldNode } from '../utils/write/writeFieldNode';
-import { createTestTree } from './fixtures/createTestTree';
 import { setTestInteractionState } from './fixtures/setTestInteractionState';
 
 // filid:contract settle-write
