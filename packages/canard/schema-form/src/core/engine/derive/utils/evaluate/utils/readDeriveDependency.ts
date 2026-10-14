@@ -17,7 +17,7 @@ export const readDeriveDependency = <Self extends FieldNodeRecord<Self>>(
   dependency: string,
 ): unknown => {
   const path = resolveDependencyPath(hostPath, dependency);
-  if (path === '@') return root.runtime.context ?? {};
+  if (path === '@') return root.runtime.context;
   let value: unknown = root.emit;
   for (const encoded of path.split('/').slice(1)) {
     if (value === null || typeof value !== 'object') return undefined;

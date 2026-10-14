@@ -16,13 +16,31 @@ import { PathKeyedSet } from '../../engine';
 import { compileEntryGuards, readValidationEntry } from '../../engine';
 import type { Validator } from '../../engine';
 import { FieldNode as RuntimeFieldNode } from '../classes/FieldNode';
-import type { FieldNode, InferFieldNode } from '../type';
+import type {
+  ArrayNode,
+  FieldNode,
+  InferFieldNode,
+  NodeSurface,
+} from '../type';
 
-/** Path-indexed stores the factory creates when the seed omits them. */
-type SeededPathStores =
+/**
+ * Kind-independent public node shape the runtime class is checked against at compile time.
+ * One class serves every kind, so the kind union and the members returning nodes are checked by `surface.test.ts` instead.
+ */
+type RuntimeNodeSurface = Omit<
+  NodeSurface<FieldNode['type'], FieldNode['strategy'], unknown, unknown, null>,
+  'rootNode' | 'parentNode' | 'children' | 'find' | 'findNodes'
+>;
+
+/** Array verbs every runtime node carries; non-array kinds reject them at call time. */
+type RuntimeArrayVerbs = Pick<ArrayNode, 'pop' | 'update' | 'remove' | 'clear'>;
+
+/** Runtime fields the factory fills when the seed omits them: path-indexed stores and an empty context. */
+type SeededRuntimeFields =
   | 'latentRaw'
   | 'typeMismatchPaths'
-  | 'inactiveValuesMemo';
+  | 'inactiveValuesMemo'
+  | 'context';
 
 /** Tree inputs before the factory attaches its analysis and real creator. */
 export type FieldNodeRuntimeSeed = PartialBy<
@@ -43,7 +61,7 @@ export type FieldNodeRuntimeSeed = PartialBy<
     | 'validationPendingTargets'
     | 'validator'
   >,
-  SeededPathStores
+  SeededRuntimeFields
 >;
 
 /** Create one record from a bound child or the root template. */
@@ -97,7 +115,7 @@ export function fieldNodeFactory(
   analysis: Blueprint,
   runtimeSeed: FieldNodeRuntimeSeed,
   validator?: Validator,
-): unknown {
+): RuntimeNodeSurface {
   const runtime: FieldNodeRuntime<RuntimeFieldNode> = {
     ...runtimeSeed,
     latentRaw: runtimeSeed.latentRaw ?? new PathKeyedMap('pair'),
@@ -169,5 +187,9 @@ export function fieldNodeFactory(
       validator,
       analysis,
     );
-  return createFieldNode(analysis.root, null, runtime);
+  return createFieldNode(
+    analysis.root,
+    null,
+    runtime,
+  ) satisfies RuntimeArrayVerbs;
 }

@@ -345,8 +345,8 @@ export interface FieldNodeRuntime<Self> extends FieldNodeRootRuntimeState {
   pendingExternalErrorNodes?: Set<unknown>;
   /** Issue references each non-root node last contributed to the root list; adoption fills it from the handed-over lists. */
   externalContributions?: Map<unknown, readonly { dataPath: string }[]>;
-  /** Form context shared by every occurrence and expression in this tree. */
-  context?: Readonly<Record<string, unknown>>;
+  /** Form context shared by every occurrence and expression in this tree; the factory supplies an empty object when none is given. */
+  context: Readonly<Record<string, unknown>>;
   /** Last committed expression inputs, keyed by live authored rule occurrence. */
   committedRuleValues?: PathKeyedMap<unknown>;
   /** Committed rule keys indexed by their source path for bounded pruning. */

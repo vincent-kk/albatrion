@@ -39,6 +39,7 @@ const makeRecord = (): FieldNodeRecord<PathNode> => {
     runtime: {
       blueprint: analysis,
       diagnostics: { status: 'stable' },
+      context: {},
       nodeFactory: (_entry, parent) => ({
         path: parent?.path ?? '',
         depth: parent?.depth ?? 0,

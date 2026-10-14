@@ -165,7 +165,7 @@ export const evaluateGate = <Self extends FieldNodeRecord<Self>>(
         const path = occurrence.watchPaths[index];
         dependencies[index] =
           path === '@'
-            ? (context.root.runtime.context ?? {})
+            ? context.root.runtime.context
             : readProjectedValue(context, path);
       }
       return Boolean(expression.evaluate(dependencies));

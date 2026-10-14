@@ -28,6 +28,7 @@ const makeRecord = (
   runtime: {
     blueprint: blueprint({ type: 'array' }),
     diagnostics: { status: 'stable' },
+    context: {},
     nodeFactory: () => undefined,
     globalStateCounts: new Map(),
     globalState: {},
