@@ -272,6 +272,7 @@
 | 2026-10-14 | 286라운드 닫기: #372(07f) 3c1a7f2c3, #354(07 전환) 1.0.0-beta 병합 9c4d4a59d — 07단계 닫힘. 보충 1줄 | `reviews/round-286-closing.md` |
 | 2026-10-14 | 292라운드 닫기: 문서 정합 PR #373 병합 0d17c3080(18건, 주석 넷), 정돈-1 편집자 결정 둘(공유 보조는 helpers/error, rolled 보존). 보충 2줄 | `reviews/round-292-closing.md` |
 | 2026-10-14 | 297라운드 닫기: 정돈-1 PR #374 병합 ae502f7bd(포맷터 27 삭제, nodeFromJSONSchema 하향, 표면 92 동일), 정돈-2 투입. 보충 1줄 | `reviews/round-297-closing.md` |
+| 2026-10-14 | 299라운드 닫기: 문서 사이트 api-reference 재작성 PR #375 병합 c2c6007b2, 대기열 53(maxItems·minItems 비강제). 보충 1줄 | `reviews/round-299-closing.md` |
 
 ## 2. 라운드별 요지
 
@@ -523,3 +524,4 @@
 - **296라운드(2026-10-14, 소유자).** 정돈-1 병합 즉시 정돈-2 투입, 끝나는 대로 보고; fairy08 유휴 확인 뒤 export 재검사 배정(reviews/round-296-owner-answers.md).
 - **254라운드(2026-10-14, 소유자).** PR #363(07b-3) 병합을 허가했다(reviews/round-254-owner-answers.md).
 - **298라운드(2026-10-14, 소유자).** 5단계(구조 리뷰) 전까지 정돈-2·3·E·4 무정지 진행, 판단은 대기열, 생성 PR 병합 허용(reviews/round-298-owner-answers.md).
+- **255라운드(2026-10-14, 닫기).** PR #363을 squash 병합해(13838752b) 07 전환의 PR 셋이 모두 들어갔다. 정리 커맨드를 현재 상태에 맞게 갱신해 소유자에게 전달했다(255C-01, reviews/round-255-closing.md). 다음은 #354 본문 갱신, 확인용 대기열 정리, 개선-38 문서 이름 갱신.

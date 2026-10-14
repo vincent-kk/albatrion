@@ -82,7 +82,7 @@
 
 | 날짜 | 무엇 | 어디 |
 | --- | --- | --- |
-| 2026-10-14 | 297라운드 닫기: 정돈-1 PR #374 병합 ae502f7bd(포맷터 27 삭제, nodeFromJSONSchema 하향, 표면 92 동일), 정돈-2 투입. 보충 1줄 | `reviews/round-297-closing.md` |
+| 2026-10-14 | 299라운드 닫기: 문서 사이트 api-reference 재작성 PR #375 병합 c2c6007b2, 대기열 53(maxItems·minItems 비강제). 보충 1줄 | `reviews/round-299-closing.md` |
 | 2026-10-14 | 298라운드 소유자: 구조 리뷰 전까지 정돈 전부 무정지 진행, 판단은 대기열, PR 병합 허용 | `reviews/round-298-owner-answers.md` |
 | 2026-10-14 | 293라운드 소유자: FCA import 멘탈모델(외부·형제·직계, 직계는 내부 모듈, 공통 부모 organ, 부모→자식 비대칭). 보충 2줄 | `reviews/round-293-owner-answers.md` |
 | 2026-10-14 | 294라운드 소유자: 보강 다섯 수용, 모델 기록(fca-import-model.md), 구조 검사 지시, filid 개선 여부는 마지막에 결정. 보충 1줄 | `reviews/round-294-owner-answers.md` |
