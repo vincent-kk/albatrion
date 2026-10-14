@@ -98,6 +98,7 @@
 | 2026-10-15 | 342라운드 소유자: visitSubtree 확정(지연 batch, 옵션 없음), SURFACE-062 신설. 보충 6줄 | `reviews/round-342-owner-answers.md` |
 | 2026-10-15 | 343라운드 소유자: 묶음 2 마무리, 전체 게이트 한 번. 보충 1줄 | `reviews/round-343-owner-answers.md` |
 | 2026-10-15 | 344라운드 소유자: 밤까지 자율 진행(원장 기반 판단, 결정 대기열, PR 병합 허용, codex·agy 분산). 보충 2줄 | `reviews/round-344-owner-answers.md` |
+| 2026-10-15 | 345라운드 소유자: 작업 끝난 브랜치 즉시 정리. 보충 1줄 | `reviews/round-345-owner-answers.md` |
 | 2026-10-14 | 316라운드 소유자: constants·hooks organ(index 제거), organ 안 barrel 금지, Field를 Form처럼 components/ 아래로. 보충 2줄 | `reviews/round-316-owner-answers.md` |
 | 2026-10-14 | 317라운드 소유자: Form barrel 삭제, 병렬 진행(정돈-S 병렬), 검증 뒤 병합 위임, surface/classes → runtime, 손질은 단일 PR. 보충 4줄 | `reviews/round-317-owner-answers.md` |
 | 2026-10-14 | 318라운드 소유자: fieldInputs를 입력마다 fractal로(넷째 손질, fixy08 별도 PR), ArrayItems 래핑은 memo 경계라 유지. 보충 1줄 | `reviews/round-318-owner-answers.md` |
