@@ -41,8 +41,8 @@ export interface FieldNodeRecord<Self> {
   required: boolean;
   /** Whether the fixed type permits null. */
   readonly nullable: boolean;
-  /** Stable type restriction retained from blueprint analysis. */
-  readonly schemaType: BlueprintSchemaType;
+  /** Stable JSON type restriction retained from blueprint analysis; undefined on virtual nodes. */
+  readonly schemaType: BlueprintSchemaType | undefined;
   /** Direct children in the last committed shape, keyed by their names. */
   structure: Record<string, Self> | null;
   /** Stored public child array for the last committed shape. */

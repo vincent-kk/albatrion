@@ -27,10 +27,7 @@ export type BlueprintNodeKind =
   | 'virtual';
 
 /** Scalar for ordinary nodes; a shared frozen non-null list for union nodes. */
-export type BlueprintSchemaType =
-  | SchemaTypeName
-  | 'virtual'
-  | readonly SchemaTypeName[];
+export type BlueprintSchemaType = SchemaTypeName | readonly SchemaTypeName[];
 
 /** Location and ownership metadata shared by every declarative gate. */
 interface BlueprintGateBase {
@@ -145,8 +142,8 @@ export interface BlueprintNode {
   readonly schemaPath: string;
   /** Stable dispatch kind independent of gate state. */
   readonly kind: BlueprintNodeKind;
-  /** Static accepted type restriction, with null represented by nullable. */
-  readonly schemaType: BlueprintSchemaType;
+  /** Static accepted JSON type restriction, with null represented by nullable; undefined on virtual nodes, which have no JSON type. */
+  readonly schemaType: BlueprintSchemaType | undefined;
   /** Whether the static accepted set contains null. */
   readonly nullable: boolean;
   /** Fixed branch or terminal strategy. */

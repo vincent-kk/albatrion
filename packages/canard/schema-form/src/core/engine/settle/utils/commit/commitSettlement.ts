@@ -84,13 +84,11 @@ export const commitSettlement = <Self extends FieldNodeRecord<Self>>(
   let warnings: MisfitRecord[] | undefined;
   let warningTasks: Map<Self, () => void> | undefined;
   markCommitDeliveries(context, (node) => {
-    if (
-      !context.changedNodes.has(node) ||
-      node.detached ||
-      node.blueprintNode.kind === 'virtual'
-    )
-      return;
+    if (!context.changedNodes.has(node) || node.detached) return;
+    const schemaType = node.schemaType;
     const effective = effectiveType(node);
+    // Only a virtual node lacks a JSON type, and it never misfits.
+    if (schemaType === undefined || effective === undefined) return;
     const mismatch = isMisfit(node.raw, effective, node.nullable);
     const wasOn = runtime.misfitPaths.has(node.path);
     if (mismatch) runtime.misfitPaths.add(node.path);
@@ -115,7 +113,7 @@ export const commitSettlement = <Self extends FieldNodeRecord<Self>>(
           code: FormWarningCode.Misfit,
           path: node.path,
           expected: {
-            schemaType: node.schemaType,
+            schemaType,
             nullable: node.nullable,
             effective,
           },

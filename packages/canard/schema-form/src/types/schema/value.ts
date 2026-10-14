@@ -152,6 +152,4 @@ export type {
   StringValue,
   ArrayValue,
   ObjectValue,
-  NullValue,
-  UndefinedValue,
 } from '@winglet/json-schema';

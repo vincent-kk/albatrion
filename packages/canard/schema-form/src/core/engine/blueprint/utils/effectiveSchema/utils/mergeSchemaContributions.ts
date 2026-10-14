@@ -28,7 +28,7 @@ export const mergeSchemaContributions = (
   const single = mergeSingleStaticContribution(node, declarations, options);
   if (single !== undefined) return single;
   const staticTypes: readonly SchemaTypeName[] | undefined =
-    node.schemaType === 'virtual'
+    node.schemaType === undefined
       ? undefined
       : isArray(node.schemaType)
         ? node.schemaType

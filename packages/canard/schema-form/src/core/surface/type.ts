@@ -211,7 +211,7 @@ export type ArrayNode<Item = unknown> =
 export type VirtualNode = NodeSurface<
   'virtual',
   'branch',
-  'virtual',
+  undefined,
   readonly unknown[] | undefined,
   readonly FieldNode[]
 >;

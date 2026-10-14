@@ -126,7 +126,7 @@ export const populateVirtualNodes = (
       path: `${host.path}/${escapeSegment(name)}`,
       schemaPath: group.declarations[0].schemaPath,
       kind: 'virtual',
-      schemaType: 'virtual',
+      schemaType: undefined,
       nullable: false,
       strategy: resolveNodeStrategy(context, 'virtual', group.declarations),
       declarations:

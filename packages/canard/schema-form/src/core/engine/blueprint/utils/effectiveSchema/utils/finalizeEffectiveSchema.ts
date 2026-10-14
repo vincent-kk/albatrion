@@ -10,7 +10,7 @@ import type { EffectiveSchemaState } from './type';
  * @param state - Completed private accumulation state.
  * @param node - Static kind and shared schemaType identity.
  * @returns A public frozen schema in a development-protected envelope; static type identity survives when not narrowed or in conflict, and static nullable stays on conflict, and an
- * empty type intersection is reported by `typeConflict` instead of an enum.
+ * empty type intersection is reported by `typeConflict` instead of an enum. A virtual node's schema carries the internal type `virtual`.
  */
 export const finalizeEffectiveSchema = (
   state: EffectiveSchemaState,
@@ -38,11 +38,13 @@ export const finalizeEffectiveSchema = (
     types?.length === staticTypes.length &&
     types.every((type, index) => type === staticTypes[index]);
   schema.type =
-    state.conflictingType || unchanged || node.kind === 'virtual'
-      ? node.schemaType
-      : types?.length === 0
-        ? 'null'
-        : types;
+    node.kind === 'virtual'
+      ? 'virtual'
+      : state.conflictingType || unchanged
+        ? node.schemaType
+        : types?.length === 0
+          ? 'null'
+          : types;
   if (schema.type === types && types !== undefined)
     OwnedSchemaValues.add(types);
   if (state.conflictingType) {

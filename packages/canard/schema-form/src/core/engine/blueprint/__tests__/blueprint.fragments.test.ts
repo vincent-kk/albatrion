@@ -131,7 +131,7 @@ describe('blueprint fragment ownership and strategies', () => {
     const pair = root.childEntries.find((edge) => edge.name === 'pair')!.node;
     expect(pair).toMatchObject({
       kind: 'virtual',
-      schemaType: 'virtual',
+      schemaType: undefined,
       strategy: 'branch',
       fields: ['b', 'a'],
     });

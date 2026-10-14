@@ -57,7 +57,7 @@ export class FieldNode implements FieldNodeRecord<FieldNode> {
   private storedDepth: number;
   private storedRequired: boolean;
   private readonly storedNullable: boolean;
-  private readonly storedSchemaType: BlueprintSchemaType;
+  private readonly storedSchemaType: BlueprintSchemaType | undefined;
   structure: Record<string, FieldNode> | null;
   private storedChildren: readonly FieldNode[] | null;
   itemKey: number | null;

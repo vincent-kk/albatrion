@@ -15,7 +15,7 @@ export const conversionCandidates = <Self extends FieldNodeRecord<Self>>(
   const kinds = typeof effective === 'string' ? [effective] : effective;
   const candidates: Exclude<SchemaTypeName, 'null'>[] = [];
   for (const kind of kinds) {
-    if (kind === 'null' || kind === 'virtual') continue;
+    if (kind === 'null') continue;
     const converted = node.behavior.interpret(node.raw, {
       kinds: kind,
       mask: 0,

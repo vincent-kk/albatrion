@@ -15,7 +15,10 @@ export const readStaticFirstWarning = <Self extends FieldNodeRecord<Self>>(
   node: Self,
   automatic: boolean,
 ): MisfitRecord | undefined => {
+  const schemaType = node.schemaType;
   const effective = effectiveType(node);
+  // Only a virtual node lacks a JSON type, and it never misfits.
+  if (schemaType === undefined || effective === undefined) return undefined;
   if (!isMisfit(node.raw, effective, node.nullable)) return undefined;
   const candidates = conversionCandidates(node, effective);
   const ambiguous = candidates.length > 1;
@@ -24,7 +27,7 @@ export const readStaticFirstWarning = <Self extends FieldNodeRecord<Self>>(
     code: FormWarningCode.Misfit,
     path: node.path,
     expected: {
-      schemaType: node.schemaType,
+      schemaType,
       nullable: node.nullable,
       effective,
     },

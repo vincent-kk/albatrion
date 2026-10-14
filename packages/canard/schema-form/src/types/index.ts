@@ -3,14 +3,11 @@ export type {
   ValidatorFactory,
   ValidateFunction,
   ValidationIssue,
-  JSONSchemaError,
 } from './error/error';
 export type {
   FieldInputProps,
   FieldInputPropsWithSchema,
   FieldInputPropsWithNode,
-  UnknownFieldInputProps,
-  InferFieldInputProps,
   ChildFieldProps,
   OverridableFieldInputProps,
   FieldInputTestFn,
@@ -23,25 +20,14 @@ export type {
   AttachedFilesMap,
 } from './field/fieldInput';
 export type { FieldRendererProps, FormatError } from './field/fieldRenderer';
-export type { InjectToHandler, InjectHandlerContext } from './schema/injectTo';
+export type { InjectToHandler } from './schema/injectTo';
 export type {
-  JSONSchemaType,
   SchemaPresentation,
   JSONSchema,
-  JSONSchemaWithVirtual,
-  JSONSchemaWithRef,
-  PartialJSONSchema,
   StringSchema,
   ArraySchema,
-  BasicSchema,
 } from './schema/jsonSchema';
-export type {
-  VirtualNodeValue,
-  AllowedValue,
-  InferValueType,
-  NullValue,
-  UndefinedValue,
-} from './schema/value';
+export type { AllowedValue, InferValueType } from './schema/value';
 export type { RolledFieldRendererProps } from './rolled/fieldRenderer';
 export type {
   RolledNonNullableBooleanSchema,
