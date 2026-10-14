@@ -2,7 +2,7 @@
 
 개발의 진행 상황과 다음 할 일은 `PLAN.md`가 단일 진입점으로 든다. 다음 세션이 바로 이어서 일하기 위한 문서다. 이력은 `git log`와 `reviews/`에 있으므로 여기에는 지금 상태, 다음 할 일, 일하는 법만 적는다. 소유자는 Vincent다.
 
-## 1. 지금 어디인가 (2026-10-15, 341라운드 닫힘; 8단계 첫 토막 구조 정리 진행(codex 없이, 소유자 감독; 묶음 1 #387 병합 daadce7ab, 묶음 2·misfit 문서 PR 진행, 공개 visitSubtree 확정(SURFACE-062, 지연 batch) → 묶음 2 구현, 묶음 3은 그 뒤) — 브랜치 feat/schema-form-08-review-and-perf, fairy08 조사·fixy08 이동 묶음 1, 둘째 토막 속도 최적화는 codex·agy, 대기열 54)
+## 1. 지금 어디인가 (2026-10-15, 341라운드 닫힘; 8단계 첫 토막 구조 정리 진행(codex 없이, 소유자 감독; 묶음 1 #387 병합 daadce7ab, 묶음 2·misfit 문서 PR 진행, 공개 visitSubtree 확정(SURFACE-062, 지연 batch) → 묶음 2 구현 중이며 전체 게이트 한 번, 묶음 3은 그 뒤) — 브랜치 feat/schema-form-08-review-and-perf, fairy08 조사·fixy08 이동 묶음 1, 둘째 토막 속도 최적화는 codex·agy, 대기열 54)
 
 - **264라운드(2026-10-14, 소유자).** 고유명사 후보 15 중 1·3·4·5·6·7·8·9·10·11·15를 권고대로 승인했고, 2(ChildField 이름 길이)·12(controls.children 대체 이름)·13(propertyKeys 공개 자리·이름)·14(virtual을 object 전용 키로)는 추가 논의, 비표준 최상위 키의 잔여 점검을 요구했다(reviews/round-264-owner-answers.md).
 - **265라운드(2026-10-14, 소유자).** 추가 논의 넷을 닫았다: ChildFields, controls.fields, options.propertyOrder(object 전용), options.virtual 형 선언과 VirtualSchema 비공개화, nullable: true 제거(265C-01 후속 대응표, reviews/round-265-owner-answers.md). 07b-5 후속 커밋으로 fixy07에게.
@@ -80,7 +80,8 @@
 - **339라운드(2026-10-15, 닫기/원장 관리자).** 묶음 1 PR #387을 daadce7ab로 squash 병합(types 칸 넷·Rolled 접두사, hooks/fieldNode·form, 한글 주석 셋, misfit 이름 전면). 편집자 결정 339C-01~04, CLAUDE.md 두 줄 갱신(336라운드 승인). fairy08 misfit 문서 PR, fixy08 묶음 2 시작(reviews/round-339-closing.md).
 - **340라운드(2026-10-15, 소유자).** walkFieldNodes는 삭제가 아니라 순회 한 벌로 합침: navigation의 walkFieldNodes를 남기고 subtree state 디스패치 둘과 settle의 walkOwnedFieldNodes 소비처가 그것을 쓴다, 동작은 이전과 같아야 함(reviews/round-340-owner-answers.md).
 - **341라운드(2026-10-15, 소유자).** 하위 노드 방문을 공개 표면에 추가; 설계 초안 plan/tidy-structure/walk-subtree-design.md(권고 walkSubtree, 자기 포함 전위, 가지치기, 형상 한정), 판정 여섯 대기(reviews/round-341-owner-answers.md).
-- **342라운드(2026-10-15, 소유자).** visitSubtree 확정: 자기 포함 전위, false는 하위 건너뛰기, 형상 한정, 순회 안의 첫 쓰기에서 batch가 열려 끝에 한 번 정착(지연 batch, 옵션 없음), FormHandle 없음, 내부 순회 visitFieldNodes 한 벌·형제 정순(SURFACE-062). batch 자체에는 예산이 없고 예산은 EVENT-020의 다섯과 재귀(reviews/round-342-owner-answers.md). 다음 라운드 번호는 343.
+- **342라운드(2026-10-15, 소유자).** visitSubtree 확정: 자기 포함 전위, false는 하위 건너뛰기, 형상 한정, 순회 안의 첫 쓰기에서 batch가 열려 끝에 한 번 정착(지연 batch, 옵션 없음), FormHandle 없음, 내부 순회 visitFieldNodes 한 벌·형제 정순(SURFACE-062). batch 자체에는 예산이 없고 예산은 EVENT-020의 다섯과 재귀(reviews/round-342-owner-answers.md).
+- **343라운드(2026-10-15, 소유자).** 묶음 2를 마무리까지, 새 로직이 들어가니 전체 게이트 한 번(약식 규칙의 예외)과 verifier(reviews/round-343-owner-answers.md). 다음 라운드 번호는 344.
 - **그 앞의 라운드 요지(19라운드부터)는 PLAN-LOG.md 2절에 있다.** 라운드마다 한 문단이며, 1절의 기록 표와 같은 순서다.
 - **설계의 정본은 단일 원장 `ledger/`다.** 영역 17개, 항목 1,350개(80라운드 뒤, 24라운드 뒤 1,348; 현행 1,076(부정 결정·기록 포함), 대체됨 199, 분할됨 49, 중복 24, 열림 0). 형식과 규칙은 `ledger/README.md`.
 - **옛 설계 문서(`00`–`09`, `adr/`, `open-questions.md`)는 동결됐다.** 더 고치지 않는다. 어긋남은 원장의 충돌 칸에 적는다. 원장이 인용하는 옛 문서의 `path:line`은 모두 커밋 `ba398c330` 기준 줄 번호다(그 뒤 옛 문서는 바뀌지 않았다).
@@ -517,6 +518,7 @@ node ledger/checks/doc-coverage.mjs design/*.md adr/*.md -- ledger/*.md   # 설�
 | `reviews/round-340-owner-answers.md` | 340라운드 소유자: walkFieldNodes 물음, 순회 한 벌로 합침 |
 | `reviews/round-341-owner-answers.md` | 341라운드 소유자: 하위 방문 공개 기능 추가 지시 |
 | `reviews/round-342-owner-answers.md` | 342라운드 소유자: visitSubtree 확정(지연 batch), 예산 물음 |
+| `reviews/round-343-owner-answers.md` | 343라운드 소유자: 묶음 2 마무리, 전체 시험 한 번 |
 | plan/tidy-structure/walk-subtree-design.md | 공개 visitSubtree 설계(342라운드 확정판) |
 | plan/tidy-structure/array-limits-review.md | 배열 한도를 core가 다룰 때의 유익·손해 비교(대기열 53 검토 메모, 권고 포함) |
 | `reviews/round-297-closing.md` | 297라운드 편집자 결정 하나: 정돈-1(#374) 병합, 정돈-2 투입 |

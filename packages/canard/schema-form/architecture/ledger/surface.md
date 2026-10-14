@@ -1015,6 +1015,7 @@
   > 소유자(342라운드, batch를 메서드에 넣는 편이 낫지 않은가): "흠... 그런데 visit 을 사용할때 항상 batch 를 해야한다면 이걸 메소드 기능에 넣는게 좋을거같긴 한데... 권하지 않는다는거지.." (`reviews/round-342-owner-answers.md:9`)
   > 소유자(342라운드, batch 옵션(기본 켬) 설계와 재저울질): "그럼 batch 옵션을 갖도록 하고, 기본값은 배치 사용, 읽기전용인 경우 배치를 끄고 쓰는 그런 메소드 설계는 어떤지? \n그리고 중간에 권고가 달라져서... 다시 저울질을 해보길 바람" (`reviews/round-342-owner-answers.md:10`)
   > 소유자(342라운드, 지연 batch 확정, 배치 예산 물음): "좋아 그렇게 가죠.\n배치 예산인 몇입니까 지금?" (`reviews/round-342-owner-answers.md:11`)
+  > 소유자(343라운드, 묶음 2 마무리와 전체 시험 한 번, 소요 시간 물음): "좋네. 개발 마무리까지 진행하고, 신규기능과 공통기능이 포함되니 테스트를 한번 거치도록 하세.\n시간이 얼마나 걸리겠나?" (`reviews/round-343-owner-answers.md:7`)
 - 상태: 현행
 - 출처: `reviews/round-342-owner-answers.md:15-20`(정본), `reviews/round-342-owner-answers.md:7-11`(소유자 답), `plan/tidy-structure/walk-subtree-design.md`
 - 닫은 사람: 소유자 답(`reviews/round-342-owner-answers.md:11` "좋아 그렇게 가죠"), 편집자 결정(342라운드, 반영 칸; 이름·순서·형제 정순)
