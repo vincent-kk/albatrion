@@ -26,7 +26,7 @@ export const FormGroup = ({
       <Space direction="vertical" block>
         <div>
           {node.parentNode && isArraySchema(node.parentNode) === false && (
-            <label htmlFor={path}>
+            <label htmlFor={path} id={`label:${path}`}>
               {name}
               {required && (
                 <span style={{ marginLeft: 4, color: 'red' }}>*</span>
