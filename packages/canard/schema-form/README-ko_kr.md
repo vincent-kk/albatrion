@@ -513,7 +513,7 @@ FieldInput의 조건은 함수 또는 객체를 사용하여 정의할 수 있�
 type FieldInputHint = {
   type: FieldNodeType;
   schemaType: FieldNode['schemaType'];
-  typeMismatch: boolean;
+  misfit: boolean;
   path: string;
   required: boolean;
   nullable: boolean;
@@ -571,7 +571,7 @@ interface FieldInputProps<
   /** 작성한 허용 종류('integer' 포함) */
   schemaType: Node['schemaType'];
   /** 저장된 값이 허용 종류와 어긋나는지 */
-  typeMismatch: Node['typeMismatch'];
+  misfit: Node['misfit'];
   /** FieldInput 컴포넌트에 할당된 필드 노드의 이름 */
   name: Node['name'];
   /** FieldInput 컴포넌트에 할당된 필드 노드의 경로 */
@@ -928,7 +928,7 @@ function ProfileForm() {
         jsonSchema={jsonSchema}
         onError={(record) => {
           if (record.code === FormErrorCode.RenderFailed) reportToMonitoring(record.error);
-          else if (record.code === FormWarningCode.TypeMismatch) console.info(record.path, record.message);
+          else if (record.code === FormWarningCode.Misfit) console.info(record.path, record.message);
         }}
       />
       <button onClick={handleSubmit} disabled={pending}>Submit</button>

@@ -466,7 +466,7 @@ type FieldInputTestObject = Partial<{
 type FieldInputHint = {
   type: FieldNodeType; // node kind: 'string', 'number', 'object', 'array', 'virtual', 'union', ...
   schemaType: FieldNode['schemaType']; // authored accepted kind(s), including 'integer'
-  typeMismatch: boolean; // the stored value mismatches the accepted kinds
+  misfit: boolean; // the stored value mismatches the accepted kinds
   path: string;
   required: boolean;
   nullable: boolean;
@@ -499,7 +499,7 @@ interface FieldInputProps<
   node: Node; // Field node
   type: Node['type']; // Node kind
   schemaType: Node['schemaType']; // Authored accepted kind(s), including 'integer'
-  typeMismatch: Node['typeMismatch']; // Stored value mismatches the accepted kinds
+  misfit: Node['misfit']; // Stored value mismatches the accepted kinds
   name: Node['name']; // Node name
   path: Node['path']; // Node path
   nullable: Node['nullable']; // Accepts null
@@ -908,7 +908,7 @@ function ProfileForm() {
         jsonSchema={jsonSchema}
         onError={(record) => {
           if (record.code === FormErrorCode.RenderFailed) reportToMonitoring(record.error);
-          else if (record.code === FormWarningCode.TypeMismatch) console.info(record.path, record.message);
+          else if (record.code === FormWarningCode.Misfit) console.info(record.path, record.message);
         }}
       />
       <button onClick={handleSubmit} disabled={pending}>Submit</button>
@@ -1001,7 +1001,7 @@ Values are the `error.code` / `record.code` strings exactly as emitted.
 | `FormWarningCode.DiscriminatorBranchUnreachable` | `'SCHEMA_FORM_WARNING.DISCRIMINATOR_BRANCH_UNREACHABLE'` | a branch discriminator literal is outside the allowed list |  |
 | `FormWarningCode.NonJsonWholeValue` | `'SCHEMA_FORM_WARNING.NON_JSON_WHOLE_VALUE'` | a development-mode whole value is not JSON-compatible |  |
 | `FormWarningCode.FormTypeTestInvalid` | `'SCHEMA_FORM_WARNING.FORM_TYPE_TEST_INVALID'` | an input definition test object has an unknown key |  |
-| `FormWarningCode.TypeMismatch` | `'SCHEMA_FORM_WARNING.TYPE_MISMATCH'` | a value cannot be converted to the active type unambiguously |  |
+| `FormWarningCode.Misfit` | `'SCHEMA_FORM_WARNING.MISFIT'` | a value cannot be converted to the active type unambiguously |  |
 | `FormWarningCode.DialectMismatch` | `'SCHEMA_FORM_WARNING.DIALECT_MISMATCH'` | a schema dialect differs from the selected validator dialect |  |
 
 ---

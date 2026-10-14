@@ -41,7 +41,7 @@ U6에서 남은 범위는 §5의 B1·B2입니다. 다른 항목을 이 결함 �
 
 - 입력 쓰기·외부 오류 제거·dirty를 binding의 한 batch로 처리하고 자기 Refresh를 제외합니다. blur의 trim·finish, 지연 touched, interaction reset stamp, 동기 Refresh revision·현재 root identity 검사를 연결했습니다. 교체된 입력의 늦은 onChange/onFileAttach는 버립니다.
 - 실제로 mount된 child proxy 수에 따라 컨테이너 입력을 보존합니다. 유효 schema 참조와 UpdateJsonSchema/UpdatePath가 입력 선택·props를 갱신합니다.
-- Hint와 입력 props에 kind/type, schemaType, nullable, typeMismatch, watchValues를 전달합니다. 알려지지 않은 시험 키는 제외하며 integer 시험과 함께 정의당 한 번 개발 경고를 냅니다. 입력 선택 우선순위와 inline null 억제를 유지합니다.
+- Hint와 입력 props에 kind/type, schemaType, nullable, misfit, watchValues를 전달합니다. 알려지지 않은 시험 키는 제외하며 integer 시험과 함께 정의당 한 번 개발 경고를 냅니다. 입력 선택 우선순위와 inline null 억제를 유지합니다.
 - focus/select 명령이 지연 입력을 드러내며 공개 publish 대신 request를 사용합니다. Refresh는 지연 상태를 강제로 해제하지 않습니다.
 - 터미널 ChildNodeComponents는 필요한 환경에서 읽기 감지되는 frozen empty array입니다. 커밋 뒤 code/path로 로드당 한 번 ERROR-202를 보고합니다.
 - useChildNodeErrors는 새 node 배열과 UpdateChildren/UpdateState/UpdatePath/오류 통지를 구독하고 ValidationIssue를 반환합니다. revision snapshot으로 commit 사이 변화를 놓치지 않습니다.

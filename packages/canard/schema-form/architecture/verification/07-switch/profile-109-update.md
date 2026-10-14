@@ -306,8 +306,8 @@ Part 1은 기존 95C-01 development 도구의 HEAD·warmup 20·data-module 경�
 
 ### C1 — 커밋 진단·메모 정리
 
-소유자: `src/core/settle`; 변경 위치: `utils/commit/commitSettlement.ts`. 수정안 하나: 불일치 경로가 계속 비어 있는 경우의 typeMismatchesMemo 갱신을 기존 빈 경로 row의 commit 갱신으로 특화합니다. 비어 있지 않은 상태에서 비는 전이는 기존 초기화를 유지하고 현재 commit 검사와 경고·진단 방문은 보존합니다.
-제거 실험: commitNumber 증가와 markCommitDeliveries만 남깁니다. 진단 방문·타입 불일치 메모·refresh/비활성 값 메모 등을 함께 제거한 포괄 상한입니다.
+소유자: `src/core/settle`; 변경 위치: `utils/commit/commitSettlement.ts`. 수정안 하나: 불일치 경로가 계속 비어 있는 경우의 misfitsMemo 갱신을 기존 빈 경로 row의 commit 갱신으로 특화합니다. 비어 있지 않은 상태에서 비는 전이는 기존 초기화를 유지하고 현재 commit 검사와 경고·진단 방문은 보존합니다.
+제거 실험: commitNumber 증가와 markCommitDeliveries만 남깁니다. 진단 방문·misfit 메모·refresh/비활성 값 메모 등을 함께 제거한 포괄 상한입니다.
 계약 표기: EVENT-007 / VALUE-012 직접 수정 없음. EVENT-007의 증가 루프와 VALUE-012의 조립은 기존 함수를 그대로 소비합니다. 진단/메모 의미를 건너뛰는 수정안은 아닙니다.
 
 ### F1 — 쓰기당 고정 진입·빈 단계 검사

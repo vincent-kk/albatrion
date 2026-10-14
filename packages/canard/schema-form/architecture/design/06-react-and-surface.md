@@ -174,7 +174,7 @@ Refresh 번호는 래퍼의 React 상태(오늘의 `useFormTypeInputControl`의 
 ### 1.8 입력 종류 판정과 union 기본 입력
 
 Hint는 `{ type: node.type, schemaType: node.schemaType, nullable: node.nullable, path, required, jsonSchema, format, formType }`이다(REACT-032).
-`FormTypeInputProps`의 `type`·`schemaType`·`nullable`은 Hint와 같은 값이고, 여기에 `typeMismatch`가 더해진다(REACT-032, SURFACE-061).
+`FormTypeInputProps`의 `type`·`schemaType`·`nullable`은 Hint와 같은 값이고, 여기에 `misfit`이 더해진다(REACT-032, SURFACE-061).
 입력은 종류뿐 아니라 스키마 자신의 형도 알 수 있다(REACT-032).
 `props.schemaType`은 `'integer'`를 보존한 계산된 허용 형이고, union이면 목록이다(REACT-032).
 `props.jsonSchema`는 저자의 선언을 담은 유효 스키마이며, `jsonSchema.type`은 켜진 선언의 교집합이다(REACT-032).
@@ -189,7 +189,7 @@ mui 수 입력의 정수 판정은 `schemaType === 'integer'`로 바꾼다(REACT
 
 【추론】 기본 입력은 친 글에 core와 같은 `interpret`를 유효 목록으로 적용하고, 결과가 목록의 한 형일 때만 그 결과를 보낸다(REACT-033).
 【추론】 그래서 `['number','string']`에서 보내는 값은 늘 문자열이고(`"42"`는 이미 멤버), 게이트가 목록을 `['number']`로 좁힌 동안에는 `42`다(REACT-033).
-【추론】 규칙 A를 미리 보는 공개 함수는 지금 내보내지 않으며, 입력은 `typeMismatch`로 결과를 보고, 함수를 나중에 더하는 것은 추가 변화다(REACT-033, SURFACE-061).
+【추론】 규칙 A를 미리 보는 공개 함수는 지금 내보내지 않으며, 입력은 `misfit`으로 결과를 보고, 함수를 나중에 더하는 것은 추가 변화다(REACT-033, SURFACE-061).
 【추론】 시험 객체를 정규화할 때 일곱 키 밖의 키는 대조에서 빼고, 정의마다 한 번 개발 모드 경고 `(가칭) SCHEMA_FORM_WARNING.FORM_TYPE_TEST_INVALID`를 낸다(REACT-033).
 【추론】 `type`에 적힌 `'integer'`도 어떤 노드와도 맞지 않으므로 같은 경고를 낸다(REACT-033).
 【추론】 시험 대조의 예는 N1 = `['string','number']`, N2 = `['string','number','null']`, N3 = `['object','string']`, N4 = `['string','null']`, N5 = `['integer','null']`로 아래와 같다(REACT-033).
@@ -217,16 +217,16 @@ mui 수 입력의 정수 판정은 `schemaType === 'integer'`로 바꾼다(REACT
 【추론】 객체·배열 값의 읽기 전용 표시(BLUEPRINT-036)에서 문자열화 결과는 값 참조로 메모하고, 문자열화가 던지면 무효 표지만 보인다(REACT-033, BLUEPRINT-036).
 【추론】 유효 목록에 원시 형이 없는 union(`['object','array']`, 또는 교집합이 `{null}`인 빈 목록)에 값이 없으면 빈 읽기 전용 상자를 보인다(REACT-033).
 【추론】 기본 입력으로는 그 값을 만들 수 없으며, 이는 문서에 적는 한계이고 편집기는 UI 플러그인이 맡는다(REACT-033).
-【추론】 `typeMismatch`가 참이면 `aria-invalid`와 무효 표지를 붙이고, 경고등이 켜진 값을 빈 칸처럼 그리지 않는다(SURFACE-052, REACT-033, REACT-027, SURFACE-061).
+【추론】 `misfit`이 참이면 `aria-invalid`와 무효 표지를 붙이고, 경고등이 켜진 값을 빈 칸처럼 그리지 않는다(SURFACE-052, REACT-033, REACT-027, SURFACE-061).
 【추론】 union 칸에 `enum`·`const`가 있어도 기본 입력은 문자열 입력이며, 기본 enum·radio 정의를 union에 열지 않는다(BLUEPRINT-042)(REACT-033).
 【추론】 그래서 `['number','string']` + `enum:[1,'a']`에서 기본 입력으로 친 `"1"`은 문자열로 남고 검증기가 기각하며, 이 사용성 빈틈은 UI 플러그인이 메운다(REACT-033).
 【추론】 `format`은 문자열 입력이 이미 하는 만큼(`password`·`email`)만 쓰며, 날짜 정의는 union에 걸리지 않는다(REACT-033).
 【추론】 기본 입력이 약속하지 않는 것은 여섯이다: `string`이 유효 목록에 있을 때 다른 원시 형을 만드는 것, 객체·배열을 만들거나 편집하는 것, 편집 모드에서 `null`을 만드는 것, 문자열 표기가 겹치는 enum 리터럴을 가르는 것, `const`·`format`·`enum`의 의미, 모양과 접근성(REACT-033).
 【추론】 `FormTypeInputProps` 주석과 플러그인 문서에 다음 계약 문구를 싣는다(REACT-033).
-union 입력은 `type === 'union'`일 때 다음을 읽는다(REACT-033). `schemaType`: 목록이며, 순서에 core의 뜻은 없다(REACT-033). `nullable`, `value`, `typeMismatch`, `required`(REACT-033, SURFACE-061). `jsonSchema`: `jsonSchema.type`은 켜진 선언의 교집합이며, 형 없는 칸에서는 없을 수 있다(REACT-033). 게이트가 좁힌 목록은 `schemaType`과 `jsonSchema.type`의 교집합이다(REACT-033).
+union 입력은 `type === 'union'`일 때 다음을 읽는다(REACT-033). `schemaType`: 목록이며, 순서에 core의 뜻은 없다(REACT-033). `nullable`, `value`, `misfit`, `required`(REACT-033, SURFACE-061). `jsonSchema`: `jsonSchema.type`은 켜진 선언의 교집합이며, 형 없는 칸에서는 없을 수 있다(REACT-033). 게이트가 좁힌 목록은 `schemaType`과 `jsonSchema.type`의 교집합이다(REACT-033).
 보내는 값은 JSON 형이 목록에 있는 값이나 `undefined`다(REACT-033). `null`은 nullable일 때 비우기 조작으로만 보내고, 빈 칸은 `undefined`로 보낸다(REACT-033). `value`는 어긋난 값일 수 있으므로 `onChange`보다 넓은 형이다(REACT-033).
 치다 만 글과 입력기 조합 중인 글은 입력이 초안으로 들고, 흐려지면 노드 값으로 되돌린다(REACT-033).
-목록 밖의 값을 보내도 오류가 아니고 버려지지도 않는다(REACT-033). core의 규칙 A가 받아서, 받아 줄 형이 정확히 하나면 그 형으로 바꾸고, 아니면 그대로 두고 경고등을 켠다(REACT-033). 게이트가 목록을 좁힌 동안에는 좁혀진 목록으로 해석한다(REACT-033). 입력은 이 결과를 다음 렌더의 `typeMismatch`로 안다(REACT-033, SURFACE-061). `typeMismatch === false`는 검증 통과가 아니다(REACT-033, SURFACE-061).
+목록 밖의 값을 보내도 오류가 아니고 버려지지도 않는다(REACT-033). core의 규칙 A가 받아서, 받아 줄 형이 정확히 하나면 그 형으로 바꾸고, 아니면 그대로 두고 경고등을 켠다(REACT-033). 게이트가 목록을 좁힌 동안에는 좁혀진 목록으로 해석한다(REACT-033). 입력은 이 결과를 다음 렌더의 `misfit`으로 안다(REACT-033, SURFACE-061). `misfit === false`는 검증 통과가 아니다(REACT-033, SURFACE-061).
 객체·배열 값은 불변으로 다룬다(REACT-033). 바꿀 때는 새 참조를 보내고, 받은 값을 제자리에서 바꾸지 마라(REACT-033). 값 안에 JSON이 아닌 것(`undefined`인 키, `Date` 등)을 넣지 마라(REACT-033).
 목록의 순서에 기대지 마라(REACT-033). core가 사용자가 뜻한 형을 골라 준다고 가정하지 마라(REACT-033).
 PR: PR-7(렌더 계층과 바인딩)(REACT-033).
@@ -354,11 +354,11 @@ UI 플러그인 넷(antd5·antd6·antd-mobile·mui)과 패키지의 기본 정�
 
 ### 2.6 값 형식 불일치의 공개 이름
 
-【추론】 공개 이름은 노드 getter `typeMismatch: boolean`이다(SURFACE-052, SURFACE-061). 【추론】 코드 `SCHEMA_FORM_WARNING.TYPE_MISMATCH`와 짝을 이뤄 검색된다(SURFACE-052, SURFACE-061). 【추론】 공개 노드 형은 이 칸을 판별자로 한 합집합이다(SURFACE-052). 【추론】 `false`이면 `value`가 그 형의 값·`undefined`·(nullable이면) `null`이고, `true`이면 `unknown`이다(SURFACE-052). 【추론】 입력 구성 요소는 `FormTypeInputProps`의 같은 이름 칸으로 받는다(SURFACE-052).
+【추론】 공개 이름은 노드 getter `misfit: boolean`이다(SURFACE-052, SURFACE-061). 【추론】 코드 `SCHEMA_FORM_WARNING.MISFIT`과 짝을 이뤄 검색된다(SURFACE-052, SURFACE-061). 【추론】 공개 노드 형은 이 칸을 판별자로 한 합집합이다(SURFACE-052). 【추론】 `false`이면 `value`가 그 형의 값·`undefined`·(nullable이면) `null`이고, `true`이면 `unknown`이다(SURFACE-052). 【추론】 입력 구성 요소는 `FormTypeInputProps`의 같은 이름 칸으로 받는다(SURFACE-052).
 
-【추론】 `typeMismatch`가 `false`인 멤버의 `value`는 `string | number | boolean | ObjectValue | ArrayValue | undefined`이고, nullable이면 `| null`이 붙는다(SURFACE-052, SURFACE-061). 【추론】 노드 형에는 제네릭을 두지 않으며, 목록 형으로 좁히는 것은 `FormTypeInputProps`가 맡는다(SURFACE-052). 【추론】 props의 `onChange`는 목록 종류의 값, `undefined`, 그리고 nullable일 때만 `null`을 받는다(SURFACE-052).
+【추론】 `misfit`이 `false`인 멤버의 `value`는 `string | number | boolean | ObjectValue | ArrayValue | undefined`이고, nullable이면 `| null`이 붙는다(SURFACE-052, SURFACE-061). 【추론】 노드 형에는 제네릭을 두지 않으며, 목록 형으로 좁히는 것은 `FormTypeInputProps`가 맡는다(SURFACE-052). 【추론】 props의 `onChange`는 목록 종류의 값, `undefined`, 그리고 nullable일 때만 `null`을 받는다(SURFACE-052).
 
-게터 `typeMismatch: boolean`, 경로 목록 `typeMismatches: readonly string[]`, 경고 코드 `SCHEMA_FORM_WARNING.TYPE_MISMATCH`다(SURFACE-061, REACT-027, REACT-032, REACT-033, SURFACE-010, SURFACE-052, SURFACE-058). `mismatch`만은 검증기의 다른 불일치와 구별되지 않아 버리고, `value` 접두는 노드 게터·props에서 군더더기라 뺐다(SURFACE-061). 뜻은 그대로다: `schemaType`(게이트가 켜진 동안은 유효 목록)과 `nullable` 기준의 값 형 불일치이며 `false`는 검증 통과가 아니다(SURFACE-061, VALUE-037). 문서 주석에 "`node.type`이 아니라 `schemaType`·유효 목록 기준"을 한 줄 적는다(SURFACE-061). 시험 파일 이름 `union.mismatch-light.test.ts`는 그대로이고, 시험이 부르는 게터·코드 이름은 확정 이름이다(SURFACE-061).
+게터 `misfit: boolean`, 경로 목록 `misfits: readonly string[]`, 경고 코드 `SCHEMA_FORM_WARNING.MISFIT`이다(SURFACE-061, REACT-027, REACT-032, REACT-033, SURFACE-010, SURFACE-052, SURFACE-058). `mismatch`만은 검증기의 다른 불일치와 구별되지 않아 버리고, `value` 접두는 노드 게터·props에서 군더더기라 뺐다(SURFACE-061). 뜻은 그대로다: `schemaType`(게이트가 켜진 동안은 유효 목록)과 `nullable` 기준의 값 형 불일치이며 `false`는 검증 통과가 아니다(SURFACE-061, VALUE-037). 문서 주석에 "`node.type`이 아니라 `schemaType`·유효 목록 기준"을 한 줄 적는다(SURFACE-061). 시험 파일 이름 `union.mismatch-light.test.ts`는 그대로이고, 시험이 부르는 게터·코드 이름은 확정 이름이다(SURFACE-061).
 
 ### 2.7 이벤트와 기존 공개 계약
 

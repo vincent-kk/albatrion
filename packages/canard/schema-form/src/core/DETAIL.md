@@ -102,7 +102,7 @@ nodeFromJSONSchema<Schema extends AuthoredSchema>(props: {
 
 ### scenario-value — 값 부류 시나리오
 
-- 공유 `value` 부류의 모든 시나리오가 코어 실행기에서 기대한 원본·방출·형 불일치 기록을 낸다(TEST-019·023).
+- 공유 `value` 부류의 모든 시나리오가 코어 실행기에서 기대한 원본·방출·misfit 기록을 낸다(TEST-019·023).
 
 ### scenario-settle — 정착 부류 시나리오
 

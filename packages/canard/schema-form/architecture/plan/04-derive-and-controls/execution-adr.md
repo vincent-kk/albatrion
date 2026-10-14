@@ -47,8 +47,8 @@
 - 결정: 레코드에 `visible`·`readOnly`·`disabled` 세 필드를 `active` 옆 고정 배치로 더한다. 생성자는 대입만 하고, 계산의 끝에서 `settle/utils/controls/`가 재계산 목록의 노드만 다시 쓴다. `SchemaNode`의 게터는 필드를 읽거나 settle의 이름 붙은 읽기 함수에 한 문장으로 위임한다(NODE-010).
   - `visible`·`readOnly`·`disabled`는 CONTROLS-082의 로컬 결합 결과다. Form 속성의 전체 잠금은 렌더 계층이 그 위에 OR하므로 게터에 들지 않는다(CONTROLS-082의 28C-02 보충).
   - `enabled`는 `active && visible`이다. 살아 있는 노드에서는 `visible`과 같고 잠금과 무관하다(LANDING-066의 28C-02 보충).
-  - 떼어진 노드: `visible`·`readOnly`·`disabled`는 `captureDetachedSchemaNodeReads`가 `typeMismatch`와 함께 떼어질 때 한 번 잡은 값이다(NODE-044의 28C-02 보충). `enabled`는 `active`가 거짓이라 거짓이다(26C-08).
-  - `watchValues`는 레코드 필드가 아니다. 유효 스키마의 `controls.watch`(나중 승)의 경로를 방출 트리에서 읽는 함수 하나를 `settle/utils/controls/`에 두고 게터가 위임한다(CONTROLS-080 (5)). 같은 커밋 안에서는 같은 참조를 돌려주도록 커밋 번호로 메모한다(03의 `typeMismatchesMemo` 선례).
+  - 떼어진 노드: `visible`·`readOnly`·`disabled`는 `captureDetachedSchemaNodeReads`가 `misfit`과 함께 떼어질 때 한 번 잡은 값이다(NODE-044의 28C-02 보충). `enabled`는 `active`가 거짓이라 거짓이다(26C-08).
+  - `watchValues`는 레코드 필드가 아니다. 유효 스키마의 `controls.watch`(나중 승)의 경로를 방출 트리에서 읽는 함수 하나를 `settle/utils/controls/`에 두고 게터가 위임한다(CONTROLS-080 (5)). 같은 커밋 안에서는 같은 참조를 돌려주도록 커밋 번호로 메모한다(03의 `misfitsMemo` 선례).
 - 까닭: `active`의 선례와 같은 모양이라 읽는 자가 추측할 것이 없다(seiri naming §1). 레코드 필드는 한 숨은 클래스를 유지하고 읽기가 단형이다(`reviews/raw-round17-node-structure.md:144`). 떼어진 노드의 마지막 커밋 읽기(NODE-044)도 필드면 그대로 남는다.
 - 버린 것:
   - 비트마스크 필드 하나: 노드당 두 칸을 아끼지만 게터에 해석이 들고 `active`의 모양과 달라진다.
