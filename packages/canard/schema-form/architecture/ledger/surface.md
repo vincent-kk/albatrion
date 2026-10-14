@@ -227,6 +227,7 @@
 - 보충:
   > "| 경로 조회 | `find(path)`, `findNodes(path)` | 터미널 노드 아래의 경로는 둘 다 노드 없음으로 답한다. 공개 API가 객체를 조용히 파괴하면 안 되기 때문이다(07 4.29) | ADR 0006 §4 |" (`02-target-overview.md:316`)
   > "| 46 | 노드 메서드 `findAll` | `findNodes`(`FormHandle`은 이미 `findNodes`다) |" (`08-design-a-to-z.md:478`)
+  > 소유자(341라운드, 하위 노드 방문을 공개 표면으로; 설계는 원장 기준, 판정은 소유자): "그리고 공개표면으로도 추가했으면 하네. \n\n자신을 기준으로 하위 모든 노드를 방문하는 공개 기능으로서. \n\n네이밍과 위치, 동작, 배치여부 등은 원장을 참고해서 추정하고 설계를 구성하라.\n판정과 판단이 필요하면 나에게 묻도록" (`reviews/round-341-owner-answers.md:7`)
 - 상태: 현행
 - 출처: `08-design-a-to-z.md:415`(정본), `02-target-overview.md:316`, `08-design-a-to-z.md:478`, `06-conclusions.md:394`, `07-conclusions.md:205-210,351`, `05-before-after.md:95` (같은 규칙: NODE-020; 형상에 없는 노드를 돌려주는지는 열림 NODE-019)
 - 닫은 사람: 원리(`06-conclusions.md:175` P2·G4; `find`), 편집자 결정(10라운드 추정 채택 규칙, `07-conclusions.md:209`; `findNodes`), 편집자 결정(17라운드, `08-design-a-to-z.md:478` 이주 행 46; `findAll`)
