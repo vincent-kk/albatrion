@@ -5,7 +5,7 @@ import { expect, it } from 'vitest';
 it('F-F runs zero layout effects for one input write', () => {
   const tool = fileURLToPath(
     new URL(
-      '../../FieldProxy/__tests__/helpers/runtimeCounts.mjs',
+      '../../../__tests__/helpers/runtimeCounts.mjs',
       import.meta.url,
     ),
   );

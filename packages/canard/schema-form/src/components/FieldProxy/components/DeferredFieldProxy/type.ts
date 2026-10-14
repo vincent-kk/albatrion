@@ -3,7 +3,7 @@ import type { ComponentType } from 'react';
 import type { FieldNode } from '@/schema-form/core';
 import type { VirtualizationManager } from '@/schema-form/helpers/virtualization';
 
-import type { FieldProxyProps } from '../FieldProxy';
+import type { FieldProxyProps } from '../../type';
 
 export interface DeferredFieldProxyProps extends Omit<FieldProxyProps, 'node'> {
   /** Node whose React subtree mount is deferred */

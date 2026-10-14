@@ -8,7 +8,7 @@ import type {
   OverridableFieldInputProps,
 } from '@/schema-form/types';
 
-import type { FieldProxyProps } from '../FieldProxy';
+import type { FieldProxyProps } from '../../type';
 
 export interface FieldInputSlotProps {
   node: FieldNode;

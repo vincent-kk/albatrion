@@ -2,7 +2,7 @@ import { type ComponentType, type ReactNode, memo } from 'react';
 
 import { useConstant, useReference } from '@winglet/react-utils/hook';
 
-import { FieldProxy } from '@/schema-form/components/Field';
+import { FieldProxy } from '@/schema-form/components/FieldProxy';
 import type { AllowedValue, FieldInputProps } from '@/schema-form/types';
 
 import type { FormFieldProps } from './type';

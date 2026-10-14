@@ -20,7 +20,7 @@ import {
 import { useBoundaryReporter } from '@/schema-form/providers/FormErrorContext';
 import type { FieldRendererProps, JSONSchema } from '@/schema-form/types';
 
-import { FieldInputSlotWrapper } from '../FieldInputSlot';
+import { FieldInputSlotWrapper } from './components/FieldInputSlot';
 import type { FieldProxyProps } from './type';
 
 const RERENDERING_EVENT =
