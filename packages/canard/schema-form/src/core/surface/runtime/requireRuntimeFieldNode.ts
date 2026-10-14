@@ -1,5 +1,5 @@
-import { FieldNode as RuntimeFieldNode } from '../classes/FieldNode';
 import type { FieldNode as PublicFieldNode } from '../type';
+import { FieldNode as RuntimeFieldNode } from './FieldNode';
 
 /**
  * Narrow the public discriminated view to the single binding runtime class.

@@ -4,8 +4,8 @@ import { blueprint } from '@/schema-form/core/engine';
 import { PathKeyedMap } from '@/schema-form/core/engine';
 import { PathKeyedSet } from '@/schema-form/core/engine';
 
+import { setContext } from '../runtime/setContext';
 import { fieldNodeFactory } from '../utils/fieldNodeFactory';
-import { setContext } from '../utils/setContext';
 
 // filid:contract surface-members
 describe('FieldNode context', () => {
