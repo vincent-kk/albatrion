@@ -92,6 +92,14 @@ export interface NodeSurface<
   readonly defaultValue: unknown;
   find(pointer?: string | readonly string[] | null): FieldNode | null;
   findNodes(pointer?: string | readonly string[] | null): readonly FieldNode[];
+  /**
+   * Call `visitor` on this node and then its descendants in preorder, siblings in order.
+   * Only nodes in the current shape are visited, terminals are leaves, a node reached twice
+   * through a reference is visited once, and nodes created during the walk may be missed.
+   * Returning `false` skips that node's descendants. Writes made inside the walk are batched
+   * and settle once when it ends, so reads during the walk see the last committed values.
+   */
+  visitSubtree(visitor: (node: FieldNode) => void | boolean): void;
   setValue(value: unknown, option?: SetValueOption): void;
   resetSubtree(option?: SetValueOption): void;
   /** Local interaction flags, patched through the dispatcher on assignment. */

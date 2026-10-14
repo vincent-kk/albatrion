@@ -20,6 +20,7 @@ export {
   dispatchSetValue,
   dispatchUpdate,
   dispatchValidate,
+  dispatchVisitSubtree,
   dispatchWriteInput,
   readFieldNodeInteractionReset,
   readFieldNodeRevision,

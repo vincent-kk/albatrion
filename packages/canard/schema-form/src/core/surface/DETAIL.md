@@ -12,7 +12,7 @@
 - `fieldNodeFactory`의 수출을 유지하는 이유는 core 수준 시험 기반 도구(makeFieldNodeTree, 시나리오 실행기, createDispatchTree)가 이 생성 통로를 쓰기 때문이다. 제품 소비자는 없으며, 정돈-3에서 시험 도구의 자리와 함께 다시 검토한다.
 - `UnionMemberType`·`UnionSchemaType`·`FieldNodeInputProps`는 내부 형이며 surface index가 내보내지 않는다. 자기 index 모양 검증은 부모 core의 시험 구획이 소유하고 surface 내부 시험은 구체 파일을 직접 가져온다.
 
-- 진입점은 클래스 이름과 겹치는 런타임 생성자를 내보내지 않고 공개 판별 합집합 `FieldNode` 타입, 종류별 노드 타입, 가드 열, `InferFieldNode`, 공개 옵션 `SetValueOption`, `fieldNodeFactory`와 `record`가 소유한 `FieldNodeEventType`·`FieldNodeRequestType`을 이름으로 내보낸다. 노드 형·가드와 사건·명령 열거는 패키지 공개 진입점에서도 이름으로 내보낸다(SURFACE-056·060, EVENT-073, LANDING-067·158). `fieldNodeFactory(schema: Blueprint, runtimeSeed: FieldNodeRuntimeSeed, validator?: Validator): FieldNode`는 팩토리가 결합하는 `nodeFactory`·`blueprint` 칸과 정착이 지연 생성하는 `settlementScratch` 칸을 제외한 트리 입력과 선택 검증기를 받는다. 경로 색인 저장소 `latentRaw`·`misfitPaths`·`inactiveValuesMemo`는 시드가 주지 않으면 팩토리가 빈 색인 저장소로 만들어, 호출자가 core 내부 클래스를 가져오지 않게 한다. 트리마다 한 번 완성한 런타임에 실제 생성 함수를 결합한다. 청사진 `kind`·`strategy`로 `BEHAVIORS[type][strategy]`를 골라 같은 클래스의 인스턴스를 만든다(NODE-008·010·045·046, WRITE-015). 빈 생성 함수 스텁을 호출자에게 요구하지 않는다. 구현은 생성한 루트를 종류와 무관한 공개 공통 모양(`NodeSurface`)과 배열 동사(`push`·`pop`·`update`·`remove`·`clear`)에 묶어 돌려주므로, 클래스와 공개 형의 멤버 이름·시그니처 불일치는 컴파일 오류가 된다. 컴파일 시점 연결은 이 공통 모양 48개 멤버까지이다. 종류별 판별 합집합과 노드를 돌려주는 자기 참조 5개(`rootNode`·`parentNode`·`children`·`find`·`findNodes`)는 런타임 시험 `surface.test.ts`(DETAIL 표 대조)가 지킨다.
+- 진입점은 클래스 이름과 겹치는 런타임 생성자를 내보내지 않고 공개 판별 합집합 `FieldNode` 타입, 종류별 노드 타입, 가드 열, `InferFieldNode`, 공개 옵션 `SetValueOption`, `fieldNodeFactory`와 `record`가 소유한 `FieldNodeEventType`·`FieldNodeRequestType`을 이름으로 내보낸다. 노드 형·가드와 사건·명령 열거는 패키지 공개 진입점에서도 이름으로 내보낸다(SURFACE-056·060, EVENT-073, LANDING-067·158). `fieldNodeFactory(schema: Blueprint, runtimeSeed: FieldNodeRuntimeSeed, validator?: Validator): FieldNode`는 팩토리가 결합하는 `nodeFactory`·`blueprint` 칸과 정착이 지연 생성하는 `settlementScratch` 칸을 제외한 트리 입력과 선택 검증기를 받는다. 경로 색인 저장소 `latentRaw`·`misfitPaths`·`inactiveValuesMemo`는 시드가 주지 않으면 팩토리가 빈 색인 저장소로 만들어, 호출자가 core 내부 클래스를 가져오지 않게 한다. 트리마다 한 번 완성한 런타임에 실제 생성 함수를 결합한다. 청사진 `kind`·`strategy`로 `BEHAVIORS[type][strategy]`를 골라 같은 클래스의 인스턴스를 만든다(NODE-008·010·045·046, WRITE-015). 빈 생성 함수 스텁을 호출자에게 요구하지 않는다. 구현은 생성한 루트를 종류와 무관한 공개 공통 모양(`NodeSurface`)과 배열 동사(`push`·`pop`·`update`·`remove`·`clear`)에 묶어 돌려주므로, 클래스와 공개 형의 멤버 이름·시그니처 불일치는 컴파일 오류가 된다. 컴파일 시점 연결은 이 공통 모양 48개 멤버까지이다. 종류별 판별 합집합과 노드를 돌려주거나 받는 자기 참조 6개(`rootNode`·`parentNode`·`children`·`find`·`findNodes`·`visitSubtree`)는 런타임 시험 `surface.test.ts`(DETAIL 표 대조)가 지킨다.
 - 아래 표의 `getter`는 필드 또는 계산 메모 읽기이며 `method`는 문장 하나의 위임이다. 구현 클래스는 `FieldNodeRecord<FieldNode>`를 구현하고 위임 메서드에서 `FieldNode` 자기 타입을 전달한다. 종류별 생성 표·`InferFieldNode` overload로 단언 없이 좁힌다(NODE-046).
 
 <!-- prettier-ignore -->
@@ -50,6 +50,7 @@
 | `defaultValue` | getter | 살아 있으면 루트 로드 스냅숏, 떼어졌으면 마지막 커밋의 자기 경로 값 | WRITE-085, NODE-044 |
 | `find(pointer)` | method | `navigation.find` | NODE-043·046·054 |
 | `findNodes(pointer)` | method | `navigation.findNodes` | NODE-043·046·054 |
+| `visitSubtree(visitor)` | method | `dispatch.dispatchVisitSubtree` | SURFACE-062, NODE-020·043 |
 | `setValue(value, option?)` | method | `dispatch.dispatchSetValue`가 정착 사슬을 조율 | NODE-010, WRITE-079·096, LANDING-064 |
 | `push(value?)` | method | `settle.arrangeFieldNodeItems`가 `behavior.arrange` 계획을 적용; 동기적으로 새 길이 반환 | NODE-010·014, SURFACE-005, GOAL-058 |
 | `pop()` | method | 같은 구조 진입; 빠진 아이템의 직전 커밋 `value` 또는 `undefined` 반환 | NODE-010·014, SURFACE-005, GOAL-058 |
@@ -105,7 +106,7 @@
 
 ### surface-members — 정확한 겉면
 
-- 멤버 목록 시험은 배열 메서드 다섯을 포함한 이 표의 39개 게터·메서드 이름과 종류를 프로토타입 및 공개 형과 대조하고 스텁이 없음을 확인한다. 클래스 파일 한정 린트와 행 칸 순서 시험도 통과한다(NODE-010·014, SURFACE-005, 26C-01, LANDING-066, 28C-07·08).
+- 멤버 목록 시험은 배열 메서드 다섯을 포함한 이 표의 40개 게터·메서드 이름과 종류를 프로토타입 및 공개 형과 대조하고 스텁이 없음을 확인한다. 클래스 파일 한정 린트와 행 칸 순서 시험도 통과한다(NODE-010·014, SURFACE-005, 26C-01, LANDING-066, 28C-07·08).
 
 ### surface-types — 판별과 참조
 
@@ -114,6 +115,11 @@
 ### surface-detached — 떼어진 참조의 고정 읽기
 
 - 이탈한 자손 전체의 옛 참조는 `active: false`·`enabled: false`이고 쓰기로 커밋 번호가 바뀌지 않는다. 마지막 커밋의 `misfit`·`misfits`·`inactiveValues`·`defaultValue`·`visible`·`readOnly`·`disabled`는 이후 트리 변경·새 인스턴스 재진입에도 같다. `diagnostics`는 이탈 후에도 살아 있는 트리의 진단을 읽는다. 같은 `(path, kind)`가 새 인스턴스로 살아 있는 동안 옛 참조의 `setValue`·`Merge`·`resetSubtree`는 오류 없이 아무 효과도 내지 않으며 살아 있는 값과 잠복 원본을 보존한다. 경로가 다시 이탈하면 두 옛 참조는 같은 잠복 원본을 쓰고 다음 재진입이 그 값을 읽는다. 이탈 객체의 전체 교체 값은 재진입 시 기존 자손 잠복 원본보다 우선하고, `Merge`는 양쪽이 키 병합 가능한 객체일 때 기존 키를 유지한다(NODE-043·044, WRITE-079·087, SETTLE-010, ERROR-131, SURFACE-007, 26C-08·12, 28C-02).
+
+### surface-visit — 하위 트리 방문
+
+- `visitSubtree`는 자기 자신부터 전위로, 형제는 `children` 순서로 방문한다. `false`를 돌려준 노드의 하위만 건너뛰고, 형상 밖 노드(꺼진 게이트의 노드)는 방문하지 않으며, 터미널은 잎이고, 참조로 두 번 닿는 같은 인스턴스는 한 번만 방문한다.
+- 순회 안에서 쓰기가 없으면 사슬에 들어가지 않는다. 첫 쓰기에 묶음이 열리고 순회가 끝날 때 루트에서 한 번 정착하며, 순회 중 읽기는 직전 커밋 값이다. 바깥 `batch` 안에서는 그 묶음에 합류해 바깥 끝에서 정착한다. 리스너 안에서도 읽기 순회는 되고 쓰기는 평소처럼 거부된다. visitor가 던지면 표시된 쓰기를 커밋한 뒤 그 오류를 다시 던진다(SURFACE-062).
 
 ## Last Updated
 

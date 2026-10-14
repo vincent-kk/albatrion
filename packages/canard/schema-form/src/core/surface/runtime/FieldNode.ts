@@ -19,6 +19,7 @@ import {
   dispatchSetValue,
   dispatchUpdate,
   dispatchValidate,
+  dispatchVisitSubtree,
   readFieldNodeRevision,
   subscribeFieldNode,
 } from '../../engine';
@@ -286,6 +287,10 @@ export class FieldNode implements FieldNodeRecord<FieldNode> {
   }
   findNodes(pointer?: string | readonly string[] | null) {
     return findNodes<FieldNode>(this, pointer);
+  }
+  /** Visit this occurrence and its current-shape subtree in preorder; writes settle once at the end. */
+  visitSubtree(visitor: (node: FieldNode) => void | boolean) {
+    return dispatchVisitSubtree<FieldNode>(this, visitor);
   }
   setValue(value: unknown, option: SetValueOption = SetValueOption.Overwrite) {
     return dispatchSetValue<FieldNode>(this, value, option);

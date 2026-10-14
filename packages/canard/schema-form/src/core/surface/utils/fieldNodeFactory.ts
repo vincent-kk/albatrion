@@ -34,7 +34,7 @@ const NO_ACTIVE_DECLARATION_IDS: readonly number[] = Object.freeze([]);
  */
 type RuntimeNodeSurface = Omit<
   NodeSurface<FieldNode['type'], FieldNode['strategy'], unknown, unknown, null>,
-  'rootNode' | 'parentNode' | 'children' | 'find' | 'findNodes'
+  'rootNode' | 'parentNode' | 'children' | 'find' | 'findNodes' | 'visitSubtree'
 >;
 
 /** Array verbs every runtime node carries; non-array kinds reject them at call time. */
@@ -59,6 +59,7 @@ export type FieldNodeRuntimeSeed = PartialBy<
     | 'settlementScratch'
     | 'chainRoot'
     | 'batchWrites'
+    | 'visitBatchEntry'
     | 'validationTargets'
     | 'validationChangedNodes'
     | 'globalStateCounts'

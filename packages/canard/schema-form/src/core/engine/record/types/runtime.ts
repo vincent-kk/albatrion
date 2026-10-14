@@ -256,6 +256,10 @@ export interface FieldNodeRuntime<Self> extends FieldNodeRootRuntimeState {
   feedbackLimitReported?: boolean;
   /** Number of active nested batch callbacks. */
   batchDepth?: number;
+  /** Number of active nested `visitSubtree` walks on this tree. */
+  visitDepth?: number;
+  /** Entry whose write opened the batch held open until the outermost walk ends. */
+  visitBatchEntry?: Self;
   /** Caller writes postponed until the outer batch callback finishes. */
   batchWrites?: {
     node: Self;

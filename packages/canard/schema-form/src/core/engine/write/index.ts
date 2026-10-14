@@ -14,6 +14,7 @@ export { dispatchBatch } from './utils/entry/dispatchBatch';
 export { dispatchContextChange } from './utils/entry/dispatchContextChange';
 export { dispatchSetState } from './utils/entry/dispatchSetState';
 export { dispatchSetSubtreeState } from './utils/entry/dispatchSetSubtreeState';
+export { dispatchVisitSubtree } from './utils/entry/dispatchVisitSubtree';
 export { dispatchClearSubtreeState } from './utils/entry/dispatchClearSubtreeState';
 export { dispatchSetExternalErrors } from './utils/entry/dispatchSetExternalErrors';
 export { dispatchClearExternalErrors } from './utils/entry/dispatchClearExternalErrors';
