@@ -22,7 +22,7 @@ describe('settle commit', () => {
     });
     loadFieldNodeAtMount(root, {}, WriteOption.Overwrite);
     expect(root.structure?.value?.raw).toBe(0);
-    expect(root.runtime.typeMismatchRecords).toEqual([
+    expect(root.runtime.misfitRecords).toEqual([
       expect.objectContaining({
         path: '/value',
         reason: 'ambiguous',
@@ -40,7 +40,7 @@ describe('settle commit', () => {
     });
     loadFieldNodeAtMount(root, { value: 0 }, WriteOption.Overwrite);
     expect(root.structure?.value?.raw).toBe(0);
-    expect(root.runtime.typeMismatchRecords).toEqual([
+    expect(root.runtime.misfitRecords).toEqual([
       expect.objectContaining({
         path: '/value',
         reason: 'ambiguous',
@@ -174,8 +174,8 @@ describe('settle commit', () => {
       'callerReplace',
       WriteOption.Overwrite,
     );
-    expect([...root.runtime.typeMismatchPaths]).toEqual(['/amount']);
-    expect(root.runtime.typeMismatchRecords).toEqual([
+    expect([...root.runtime.misfitPaths]).toEqual(['/amount']);
+    expect(root.runtime.misfitRecords).toEqual([
       expect.objectContaining({
         level: 'warning',
         path: '/amount',
@@ -189,15 +189,15 @@ describe('settle commit', () => {
       }),
     ]);
     writeFieldNode(root.structure!.amount, 2, 'input', WriteOption.Overwrite);
-    expect(root.runtime.typeMismatchPaths.size).toBe(0);
+    expect(root.runtime.misfitPaths.size).toBe(0);
     writeFieldNode(
       root.structure!.amount,
       'bad',
       'input',
       WriteOption.Overwrite,
     );
-    expect(root.runtime.typeMismatchRecords).toHaveLength(1);
-    expect(root.runtime.typeMismatchesMemo?.get('')?.paths).toEqual([
+    expect(root.runtime.misfitRecords).toHaveLength(1);
+    expect(root.runtime.misfitsMemo?.get('')?.paths).toEqual([
       '/amount',
     ]);
   });
@@ -218,7 +218,7 @@ describe('settle commit', () => {
       'callerReplace',
       WriteOption.Overwrite,
     );
-    expect(root.runtime.typeMismatchPaths.size).toBe(0);
+    expect(root.runtime.misfitPaths.size).toBe(0);
     writeFieldNode(
       root.structure!.enabled,
       true,
@@ -232,8 +232,8 @@ describe('settle commit', () => {
     expect(
       root.structure!.value.revisionLedger[FieldNodeEventType.UpdateJsonSchema],
     ).toBe(1);
-    expect([...root.runtime.typeMismatchPaths]).toEqual(['/value']);
-    expect(root.runtime.typeMismatchRecords?.[0]).toMatchObject({
+    expect([...root.runtime.misfitPaths]).toEqual(['/value']);
+    expect(root.runtime.misfitRecords?.[0]).toMatchObject({
       path: '/value',
       source: 'gate',
       expected: { effective: ['string'] },
@@ -243,7 +243,7 @@ describe('settle commit', () => {
   it('VALUE-037 records every admissible scalar conversion as ambiguous candidates', () => {
     const { root } = createTestTree({ type: ['string', 'boolean'] });
     writeFieldNode(root, 1, 'callerReplace', WriteOption.Overwrite);
-    expect(root.runtime.typeMismatchRecords?.[0]).toMatchObject({
+    expect(root.runtime.misfitRecords?.[0]).toMatchObject({
       path: '',
       reason: 'ambiguous',
       candidates: ['string', 'boolean'],

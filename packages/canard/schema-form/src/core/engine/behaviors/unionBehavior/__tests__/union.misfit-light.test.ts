@@ -3,7 +3,7 @@ import { describe, expect, it } from 'vitest';
 import { makeFieldNodeTree } from '@/schema-form/core/__tests__/makeFieldNodeTree';
 
 const records = (runtime: object) =>
-  Reflect.get(runtime, 'typeMismatchRecords');
+  Reflect.get(runtime, 'misfitRecords');
 
 // filid:contract union-raw
 describe('TEST-077 union mismatch lamp', () => {
@@ -23,12 +23,12 @@ describe('TEST-077 union mismatch lamp', () => {
     });
     root.setValue({ narrow: false, a: 'abc' });
     const a = root.find('/a');
-    expect(a?.typeMismatch).toBe(false);
+    expect(a?.misfit).toBe(false);
     expect(a?.schemaType).toEqual(['string', 'number']);
     expect(Object.isFrozen(a?.schemaType)).toBe(true);
     const fixedType = a?.schemaType;
     root.find('/narrow')?.setValue(true);
-    expect(a?.typeMismatch).toBe(true);
+    expect(a?.misfit).toBe(true);
     expect(a?.value).toBe('abc');
     expect(a?.schemaType).toBe(fixedType);
     expect(a?.jsonSchema).toMatchObject({ type: ['number'] });
@@ -51,23 +51,23 @@ describe('TEST-077 union mismatch lamp', () => {
     });
     root.setValue({ narrow: true, a: 'abc' });
     const a = root.find('/a');
-    expect(a?.typeMismatch).toBe(true);
+    expect(a?.misfit).toBe(true);
     root.find('/narrow')?.setValue(false);
-    expect(a?.typeMismatch).toBe(false);
-    expect(root.typeMismatches).toEqual([]);
+    expect(a?.misfit).toBe(false);
+    expect(root.misfits).toEqual([]);
     expect(a?.raw).toBe('abc');
   });
 
   it('turns the lamp off when a later value matches the effective list', () => {
     const { root } = makeFieldNodeTree({ type: ['number', 'boolean'] });
     root.setValue('invalid');
-    expect(root.typeMismatch).toBe(true);
+    expect(root.misfit).toBe(true);
     root.setValue(1);
-    expect(root.typeMismatch).toBe(false);
-    expect(root.typeMismatches).toEqual([]);
+    expect(root.misfit).toBe(false);
+    expect(root.misfits).toEqual([]);
   });
 
-  it('memoizes typeMismatches until the next commit and filters by subtree', () => {
+  it('memoizes misfits until the next commit and filters by subtree', () => {
     const { root } = makeFieldNodeTree({
       type: 'object',
       properties: {
@@ -81,25 +81,25 @@ describe('TEST-077 union mismatch lamp', () => {
       },
     });
     root.setValue({ group: { a: 'invalid' }, other: 'invalid' });
-    const first = root.typeMismatches;
+    const first = root.misfits;
     expect(first).toEqual(['/group/a', '/other']);
-    expect(root.typeMismatches).toBe(first);
-    expect(root.find('/group')?.typeMismatches).toEqual(['/group/a']);
+    expect(root.misfits).toBe(first);
+    expect(root.find('/group')?.misfits).toEqual(['/group/a']);
     root.find('/other')?.setValue(1);
-    expect(root.typeMismatches).toEqual(['/group/a']);
-    expect(root.typeMismatches).not.toBe(first);
+    expect(root.misfits).toEqual(['/group/a']);
+    expect(root.misfits).not.toBe(first);
   });
 
-  it('records TYPE_MISMATCH once while on and again after an off-to-on transition', () => {
+  it('records MISFIT once while on and again after an off-to-on transition', () => {
     const { root, runtime } = makeFieldNodeTree({
       type: ['number', 'boolean'],
     });
     root.setValue('unconvertible');
-    expect(root.typeMismatch).toBe(true);
+    expect(root.misfit).toBe(true);
     expect(records(runtime)).toEqual([
       expect.objectContaining({
         level: 'warning',
-        code: expect.stringMatching(/TYPE_MISMATCH$/),
+        code: expect.stringMatching(/MISFIT$/),
         path: '',
         expected: {
           schemaType: root.schemaType,
@@ -111,10 +111,10 @@ describe('TEST-077 union mismatch lamp', () => {
       }),
     ]);
     root.setValue('still invalid');
-    expect(root.typeMismatch).toBe(true);
+    expect(root.misfit).toBe(true);
     expect(records(runtime)).toEqual([]);
     root.setValue(1);
-    expect(root.typeMismatch).toBe(false);
+    expect(root.misfit).toBe(false);
     expect(records(runtime)).toEqual([]);
     root.setValue('unconvertible');
     expect(records(runtime)).toHaveLength(1);
@@ -126,17 +126,17 @@ describe('TEST-077 union mismatch lamp', () => {
     });
     root.setValue(0);
     expect(root.raw).toBe(0);
-    expect(root.typeMismatch).toBe(true);
+    expect(root.misfit).toBe(true);
     expect(records(runtime)).toEqual([
       expect.objectContaining({
-        code: expect.stringMatching(/TYPE_MISMATCH$/),
+        code: expect.stringMatching(/MISFIT$/),
         reason: 'ambiguous',
         candidates: expect.any(Array),
       }),
     ]);
   });
 
-  it('resends one TYPE_MISMATCH record on each reset load', () => {
+  it('resends one MISFIT record on each reset load', () => {
     const { root, runtime } = makeFieldNodeTree(
       { type: ['number', 'boolean'] },
       { snapshot: 'unconvertible' },

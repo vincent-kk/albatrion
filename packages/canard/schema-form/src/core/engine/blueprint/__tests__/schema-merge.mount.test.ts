@@ -152,11 +152,11 @@ it('preserves node values, schemas, revisions, warning and event order through l
   expect(captureBranchlessNodeTree(root)).toEqual(
     captureBranchlessNodeTree(oracle),
   );
-  expect(Reflect.get(root, 'runtime').typeMismatchRecords).toEqual(
-    Reflect.get(oracle, 'runtime').typeMismatchRecords,
+  expect(Reflect.get(root, 'runtime').misfitRecords).toEqual(
+    Reflect.get(oracle, 'runtime').misfitRecords,
   );
   expect(
-    Reflect.get(root, 'runtime').typeMismatchRecords.length,
+    Reflect.get(root, 'runtime').misfitRecords.length,
   ).toBeGreaterThan(0);
   expect(events[1]).toEqual(events[0]);
   for (const release of releases) release();

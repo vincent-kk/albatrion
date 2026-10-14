@@ -155,7 +155,7 @@ function newMount(schema: JSONSchema, value: ReturnType<typeof conditionalValue>
   const root = fieldNodeFactory(blueprint(schema), {
     diagnostics: { status: 'stable' }, validationMode: ValidationMode.OnChange,
     loadSnapshot: undefined, latentRaw: new PathKeyedMap('pair'),
-    typeMismatchPaths: new PathKeyedSet(), inactiveValuesMemo: new PathKeyedMap<readonly { path: string; value: unknown }[]>('path'),
+    misfitPaths: new PathKeyedSet(), inactiveValuesMemo: new PathKeyedMap<readonly { path: string; value: unknown }[]>('path'),
   }, validator);
   if (!isTestFieldNode(root)) throw new Error('New mount did not create a runtime node');
   const rootRecord: TestFieldNode = root;
@@ -295,7 +295,7 @@ async function waveRow() {
     defaultValue: waveValue(0) });
   const newRoot = fieldNodeFactory(blueprint(schema), {
     diagnostics: { status: 'stable' }, loadSnapshot: undefined,
-    latentRaw: new PathKeyedMap('pair'), typeMismatchPaths: new PathKeyedSet(), inactiveValuesMemo: new PathKeyedMap<readonly { path: string; value: unknown }[]>('path'),
+    latentRaw: new PathKeyedMap('pair'), misfitPaths: new PathKeyedSet(), inactiveValuesMemo: new PathKeyedMap<readonly { path: string; value: unknown }[]>('path'),
   });
   if (!isTestFieldNode(newRoot)) throw new Error('New wave did not create a runtime node');
   const newRootRecord: TestFieldNode = newRoot;

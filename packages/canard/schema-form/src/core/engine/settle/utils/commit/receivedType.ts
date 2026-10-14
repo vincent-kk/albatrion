@@ -1,6 +1,6 @@
 import { isArray } from '@winglet/common-utils/filter';
 
-import type { TypeMismatchRecord } from '../../../record';
+import type { MisfitRecord } from '../../../record';
 
 /**
  * Classify a raw value for structured mismatch diagnostics.
@@ -9,7 +9,7 @@ import type { TypeMismatchRecord } from '../../../record';
  */
 export const receivedType = (
   value: unknown,
-): TypeMismatchRecord['received'] => {
+): MisfitRecord['received'] => {
   if (value === null) return 'null';
   if (typeof value === 'number')
     return !Number.isFinite(value)

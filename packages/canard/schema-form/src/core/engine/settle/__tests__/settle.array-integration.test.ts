@@ -214,7 +214,7 @@ describe('array integration runtime stores', () => {
       items: { type: 'number' },
     });
     const runtime = root.runtime;
-    const code = 'SCHEMA_FORM_WARNING.TYPE_MISMATCH';
+    const code = 'SCHEMA_FORM_WARNING.MISFIT';
     const oldKey = JSON.stringify([code, '/1/n', 3]);
     const newKey = JSON.stringify([code, '/0/n', 3]);
     // The perished item's key equals the shifted item's new key; the move must replace it, not collide.

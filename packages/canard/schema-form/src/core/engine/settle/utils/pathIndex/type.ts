@@ -10,10 +10,10 @@ export interface RuntimePathStores<Self> {
   declarations: NonNullable<FieldNodeRuntime<Self>['committedDeclarationIds']>;
   /** Indexed committedRuleValues runtime field. */
   rules: NonNullable<FieldNodeRuntime<Self>['committedRuleValues']>;
-  /** Indexed typeMismatchPaths runtime field. */
-  mismatches: NonNullable<FieldNodeRuntime<Self>['typeMismatchPaths']>;
-  /** Indexed typeMismatchesMemo runtime field. */
-  mismatchMemo: NonNullable<FieldNodeRuntime<Self>['typeMismatchesMemo']>;
+  /** Indexed misfitPaths runtime field. */
+  mismatches: NonNullable<FieldNodeRuntime<Self>['misfitPaths']>;
+  /** Indexed misfitsMemo runtime field. */
+  mismatchMemo: NonNullable<FieldNodeRuntime<Self>['misfitsMemo']>;
   /** Indexed inactiveValuesMemo runtime field. */
   inactiveMemo: NonNullable<FieldNodeRuntime<Self>['inactiveValuesMemo']>;
   /** Indexed inactiveValueEntries runtime field. */

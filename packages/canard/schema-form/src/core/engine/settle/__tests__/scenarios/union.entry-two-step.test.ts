@@ -69,7 +69,7 @@ describe('union.entry-two-step', () => {
             type: ['boolean'],
           });
           expect(root.structure?.a?.raw).toBe(false);
-          expect(root.runtime.typeMismatchPaths.has('/a')).toBe(false);
+          expect(root.runtime.misfitPaths.has('/a')).toBe(false);
         }
         expect(root.emit).toEqual(expected.outputValue);
       },
@@ -126,7 +126,7 @@ describe('union.entry-two-step', () => {
           type: ['string'],
         });
         expect(root.structure?.a?.raw).toBe('0');
-        expect(root.runtime.typeMismatchPaths.has('/a')).toBe(false);
+        expect(root.runtime.misfitPaths.has('/a')).toBe(false);
       },
     });
     expect(result.executedSteps).toBe(1);
@@ -177,7 +177,7 @@ describe('union.entry-two-step', () => {
       assert: (expected) => {
         expect(root.emit).toEqual(expected.outputValue);
         expect(root.structure?.a?.raw).toBe(0);
-        expect(root.runtime.typeMismatchPaths.has('/a')).toBe(true);
+        expect(root.runtime.misfitPaths.has('/a')).toBe(true);
         expect(root.runtime.diagnostics).toMatchObject({
           status: 'degraded',
           cause: 'budget',

@@ -291,7 +291,7 @@ describe('array prefix settlement matches the general path', () => {
           JSON.stringify(['/1/hidden', 'string']),
           'obsolete',
         );
-        root.runtime.typeMismatchPaths.add('/1/hidden');
+        root.runtime.misfitPaths.add('/1/hidden');
       },
       undefined,
       true,
@@ -332,7 +332,7 @@ describe('array prefix settlement matches the general path', () => {
             'source-tail',
           ],
         ]);
-        root.runtime.typeMismatchesMemo = new PathKeyedMap('path', [
+        root.runtime.misfitsMemo = new PathKeyedMap('path', [
           ['', { commit: 1, paths: ['/1'] }],
         ]);
         root.runtime.inactiveValuesMemo.set('', [

@@ -41,7 +41,7 @@ function makeNew(schema: BlueprintSchema, value?: unknown) {
     diagnostics: { status: 'stable' },
     loadSnapshot: undefined,
     latentRaw: new PathKeyedMap('pair'),
-    typeMismatchPaths: new PathKeyedSet(),
+    misfitPaths: new PathKeyedSet(),
     inactiveValuesMemo: new PathKeyedMap<readonly { path: string; value: unknown }[]>('path'),
   });
   if (!isTestFieldNode(root)) throw new Error('Expected a runtime FieldNode');
@@ -161,7 +161,7 @@ function b2() {
     const root = fieldNodeFactory(analysis, {
       diagnostics: { status: 'stable' },
       loadSnapshot: undefined,
-      latentRaw: new PathKeyedMap('pair'), typeMismatchPaths: new PathKeyedSet(), inactiveValuesMemo: new PathKeyedMap<readonly { path: string; value: unknown }[]>('path'),
+      latentRaw: new PathKeyedMap('pair'), misfitPaths: new PathKeyedSet(), inactiveValuesMemo: new PathKeyedMap<readonly { path: string; value: unknown }[]>('path'),
     });
     if (!isTestFieldNode(root)) throw new Error('Expected a runtime FieldNode');
     const rootRecord: TestFieldNode = root;
@@ -180,7 +180,7 @@ function heapOne(kind: 'new' | 'legacy') {
     const root = fieldNodeFactory(analysis, {
       diagnostics: { status: 'stable' },
       loadSnapshot: undefined,
-      latentRaw: new PathKeyedMap('pair'), typeMismatchPaths: new PathKeyedSet(), inactiveValuesMemo: new PathKeyedMap<readonly { path: string; value: unknown }[]>('path'),
+      latentRaw: new PathKeyedMap('pair'), misfitPaths: new PathKeyedSet(), inactiveValuesMemo: new PathKeyedMap<readonly { path: string; value: unknown }[]>('path'),
     });
     if (!isTestFieldNode(root)) throw new Error('Expected a runtime FieldNode');
     const rootRecord: TestFieldNode = root;
@@ -333,7 +333,7 @@ function main() {
     const root = fieldNodeFactory(largeAnalysis, {
       diagnostics: { status: 'stable' },
       loadSnapshot: undefined,
-      latentRaw: new PathKeyedMap('pair'), typeMismatchPaths: new PathKeyedSet(), inactiveValuesMemo: new PathKeyedMap<readonly { path: string; value: unknown }[]>('path'),
+      latentRaw: new PathKeyedMap('pair'), misfitPaths: new PathKeyedSet(), inactiveValuesMemo: new PathKeyedMap<readonly { path: string; value: unknown }[]>('path'),
     });
     if (!isTestFieldNode(root)) throw new Error('Expected a runtime FieldNode');
     const rootRecord: TestFieldNode = root;

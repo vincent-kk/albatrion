@@ -86,8 +86,8 @@ export interface NodeSurface<
   readonly watchValues: readonly unknown[];
   /** Shared context reference supplied by the current Form binding. */
   readonly context: Readonly<Record<string, unknown>>;
-  readonly typeMismatch: boolean;
-  readonly typeMismatches: readonly string[];
+  readonly misfit: boolean;
+  readonly misfits: readonly string[];
   readonly diagnostics: NodeDiagnostics;
   readonly defaultValue: unknown;
   find(pointer?: string | readonly string[] | null): FieldNode | null;
@@ -229,18 +229,18 @@ export type UnionNode<
       | (Nullable extends true ? null : never),
       null,
       Nullable
-    > & { readonly typeMismatch: false })
+    > & { readonly misfit: false })
   | (NodeSurface<'union', 'terminal', Types, unknown, null, Nullable> & {
-      readonly typeMismatch: true;
+      readonly misfit: true;
     });
 
-/** Union input sees the mismatch lamp without accepting a mismatched write. */
+/** Union input sees the misfit lamp without accepting a misfitting write. */
 export type FieldNodeInputProps<
   Types extends UnionSchemaType = UnionSchemaType,
   Nullable extends boolean = boolean,
 > =
   | {
-      readonly typeMismatch: false;
+      readonly misfit: false;
       readonly value:
         | ValueForKind<Types[number]>
         | undefined
@@ -253,7 +253,7 @@ export type FieldNodeInputProps<
       ) => void;
     }
   | {
-      readonly typeMismatch: true;
+      readonly misfit: true;
       readonly value: unknown;
       readonly onChange: (
         value:

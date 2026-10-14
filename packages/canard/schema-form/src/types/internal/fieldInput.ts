@@ -52,7 +52,7 @@ export interface FieldInputProps<
   /** Authored accepted schema kind(s), including integer. */
   schemaType: Node['schemaType'];
   /** Whether the stored value mismatches the accepted kinds. */
-  typeMismatch: Node['typeMismatch'];
+  misfit: Node['misfit'];
   /** Name of field node assigned to FieldInput Component */
   name: Node['name'];
   /** Path of field node assigned to FieldInput Component */
@@ -128,7 +128,7 @@ export interface UnknownFieldInputProps {
   path: string;
   type: FieldNodeType;
   schemaType: FieldNode['schemaType'];
-  typeMismatch: boolean;
+  misfit: boolean;
   nullable: boolean;
   errors: readonly any[];
   errorVisible: boolean;
@@ -193,7 +193,7 @@ export type FieldInputHint = {
   /** Authored accepted schema kind(s). */
   schemaType: FieldNode['schemaType'];
   /** Whether the stored value mismatches the accepted kinds. */
-  typeMismatch: boolean;
+  misfit: boolean;
   /** FieldNode['path'] */
   path: string;
   /** FieldNode['required'] */

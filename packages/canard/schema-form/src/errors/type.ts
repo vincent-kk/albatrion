@@ -36,7 +36,7 @@ export type FormErrorReason<Code extends FormRecordCode> = Code extends
   | typeof FormErrorCode.ValidatorCompileFailed
   | typeof FormErrorCode.GuardFailed
   ? 'duplicateSchemaId'
-  : Code extends typeof FormWarningCode.TypeMismatch
+  : Code extends typeof FormWarningCode.Misfit
     ? 'unconvertible' | 'ambiguous'
     : Code extends typeof FormErrorCode.DiscriminatorMismatch
       ? 'missing' | 'kind' | 'overlap' | 'key'

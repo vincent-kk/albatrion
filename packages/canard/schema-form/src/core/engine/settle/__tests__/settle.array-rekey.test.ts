@@ -22,11 +22,11 @@ describe('array path movement', () => {
     root.runtime.committedDeclarationIds = new PathKeyedMap('pair', [
       [key, [1]],
     ]);
-    root.runtime.typeMismatchPaths.add('/0/hidden');
+    root.runtime.misfitPaths.add('/0/hidden');
     rekeyArrayRuntimePaths(root.runtime, '', []);
     expect(root.runtime.latentRaw.has(key)).toBe(false);
     expect(root.runtime.committedDeclarationIds.has(key)).toBe(false);
-    expect(root.runtime.typeMismatchPaths.has('/0/hidden')).toBe(false);
+    expect(root.runtime.misfitPaths.has('/0/hidden')).toBe(false);
   });
   it('35C-02 re-keys every path store in one collision-free pass', () => {
     const { root } = createTestTree({
@@ -79,8 +79,8 @@ describe('array path movement', () => {
     runtime.committedRuleKeysByTarget = new Map([
       ['/1/target', new Set([oldRule])],
     ]);
-    runtime.typeMismatchPaths.add('/1/hidden');
-    runtime.typeMismatchesMemo = new PathKeyedMap('path', [
+    runtime.misfitPaths.add('/1/hidden');
+    runtime.misfitsMemo = new PathKeyedMap('path', [
       ['', { commit: 1, paths: ['/1/hidden'] }],
     ]);
     runtime.inactiveValuesMemo.set('', [
@@ -124,9 +124,9 @@ describe('array path movement', () => {
     expect(runtime.committedRuleKeysByTarget?.get('/0/target')).toEqual(
       new Set([newRule]),
     );
-    expect(runtime.typeMismatchPaths.has('/1/hidden')).toBe(false);
-    expect(runtime.typeMismatchPaths.has('/0/hidden')).toBe(true);
-    expect(runtime.typeMismatchesMemo?.has('')).toBe(false);
+    expect(runtime.misfitPaths.has('/1/hidden')).toBe(false);
+    expect(runtime.misfitPaths.has('/0/hidden')).toBe(true);
+    expect(runtime.misfitsMemo?.has('')).toBe(false);
     expect(runtime.inactiveValuesMemo.has('')).toBe(false);
     expect(runtime.inactiveValueEntries?.has(oldLeaf)).toBe(false);
   });
@@ -156,7 +156,7 @@ describe('array path movement', () => {
     const oldKey = JSON.stringify(['/1/hidden', 'string']);
     const newKey = JSON.stringify(['/0/hidden', 'string']);
     expect(root.runtime.latentRaw.has(oldKey)).toBe(true);
-    expect(root.runtime.typeMismatchPaths.has('/1/count')).toBe(true);
+    expect(root.runtime.misfitPaths.has('/1/count')).toBe(true);
     expect(arrangeFieldNodeItems(root, { kind: 'remove', index: 0 })).toEqual({
       show: true,
       hidden: 'visible',
@@ -165,8 +165,8 @@ describe('array path movement', () => {
     expect(shifted.path).toBe('/0');
     expect(root.runtime.latentRaw.has(oldKey)).toBe(false);
     expect(root.runtime.latentRaw.get(newKey)).toBe('secret');
-    expect(root.runtime.typeMismatchPaths.has('/1/count')).toBe(false);
-    expect(root.runtime.typeMismatchPaths.has('/0/count')).toBe(true);
+    expect(root.runtime.misfitPaths.has('/1/count')).toBe(false);
+    expect(root.runtime.misfitPaths.has('/0/count')).toBe(true);
     expect(
       getGateRegistry(root.runtime).hasRegisteredPathKind('/0', 'object'),
     ).toBe(true);

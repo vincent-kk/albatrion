@@ -36,8 +36,8 @@ describe('49C-01 SETTLE-017 proportional settlement work', () => {
     });
     const rows = root.find('/rows')!;
     const first = root.find('/rows/0')!;
-    const beforeRows = rows.typeMismatches;
-    const beforeFirst = first.typeMismatches;
+    const beforeRows = rows.misfits;
+    const beforeFirst = first.misfits;
     const filter = Array.prototype.filter;
     let visited = 0;
     const spy = vi
@@ -55,11 +55,11 @@ describe('49C-01 SETTLE-017 proportional settlement work', () => {
       root.find('/name')!.setValue('after');
       probe('M26 filter visits', visited);
       expect(visited).toBeLessThan(count * 12);
-      expect(rows.typeMismatches).toEqual(beforeRows);
-      expect(first.typeMismatches).toEqual(beforeFirst);
-      expect(rows.typeMismatches).toHaveLength(count);
-      expect(first.typeMismatches).toEqual(['/rows/0/addr']);
-      const memo = Reflect.get(runtime, 'typeMismatchesMemo') as Map<
+      expect(rows.misfits).toEqual(beforeRows);
+      expect(first.misfits).toEqual(beforeFirst);
+      expect(rows.misfits).toHaveLength(count);
+      expect(first.misfits).toEqual(['/rows/0/addr']);
+      const memo = Reflect.get(runtime, 'misfitsMemo') as Map<
         string,
         unknown
       >;
@@ -101,10 +101,10 @@ describe('49C-01 SETTLE-017 proportional settlement work', () => {
       rows: Array.from({ length: count }, () => ({ child: 17 })),
     });
     const child = root.find('/rows/0/child')!;
-    const before = child.typeMismatches;
+    const before = child.misfits;
     const mismatchPaths = Reflect.get(
       runtime,
-      'typeMismatchPaths',
+      'misfitPaths',
     ) as Set<string>;
     const iterator = mismatchPaths[Symbol.iterator].bind(mismatchPaths);
     let visited = 0;
@@ -127,8 +127,8 @@ describe('49C-01 SETTLE-017 proportional settlement work', () => {
       root.find('/flag')!.setValue(false);
       probe('M27 mismatch iteration', visited);
       expect(visited).toBeLessThan(count * 12);
-      expect(child.typeMismatches).toEqual(before);
-      expect(child.typeMismatch).toBe(true);
+      expect(child.misfits).toEqual(before);
+      expect(child.misfit).toBe(true);
       expect(mismatchPaths.size).toBe(0);
     } finally {
       spy.mockRestore();

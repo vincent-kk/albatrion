@@ -79,7 +79,7 @@ describe('FieldInput - Nullable Type Matching', () => {
       const hint: FieldInputHint = {
         type: 'string',
         schemaType: 'string',
-        typeMismatch: false,
+        misfit: false,
         nullable: true,
         required: false,
         path: '/name',
@@ -99,7 +99,7 @@ describe('FieldInput - Nullable Type Matching', () => {
       const hint: FieldInputHint = {
         type: 'string',
         schemaType: 'string',
-        typeMismatch: false,
+        misfit: false,
         nullable: false,
         required: true,
         path: '/name',
@@ -119,7 +119,7 @@ describe('FieldInput - Nullable Type Matching', () => {
       const nonNullableHint: FieldInputHint = {
         type: 'string',
         schemaType: 'string',
-        typeMismatch: false,
+        misfit: false,
         nullable: false,
         required: true,
         path: '/name',
@@ -138,7 +138,7 @@ describe('FieldInput - Nullable Type Matching', () => {
       const nullableHint: FieldInputHint = {
         type: 'string',
         schemaType: 'string',
-        typeMismatch: false,
+        misfit: false,
         nullable: true,
         required: false,
         path: '/name',
@@ -148,7 +148,7 @@ describe('FieldInput - Nullable Type Matching', () => {
       const nonNullableHint: FieldInputHint = {
         type: 'string',
         schemaType: 'string',
-        typeMismatch: false,
+        misfit: false,
         nullable: false,
         required: true,
         path: '/name',
@@ -171,7 +171,7 @@ describe('FieldInput - Nullable Type Matching', () => {
       const hint: FieldInputHint = {
         type: 'number',
         schemaType: 'number',
-        typeMismatch: false,
+        misfit: false,
         nullable: true,
         required: false,
         path: '/age',
@@ -191,7 +191,7 @@ describe('FieldInput - Nullable Type Matching', () => {
       const hint: FieldInputHint = {
         type: 'number',
         schemaType: 'integer',
-        typeMismatch: false,
+        misfit: false,
         nullable: true,
         required: false,
         path: '/count',
@@ -211,7 +211,7 @@ describe('FieldInput - Nullable Type Matching', () => {
       const hint: FieldInputHint = {
         type: 'boolean',
         schemaType: 'boolean',
-        typeMismatch: false,
+        misfit: false,
         nullable: true,
         required: false,
         path: '/active',
@@ -231,7 +231,7 @@ describe('FieldInput - Nullable Type Matching', () => {
       const hint: FieldInputHint = {
         type: 'object',
         schemaType: 'object',
-        typeMismatch: false,
+        misfit: false,
         nullable: true,
         required: false,
         path: '/address',
@@ -251,7 +251,7 @@ describe('FieldInput - Nullable Type Matching', () => {
       const hint: FieldInputHint = {
         type: 'array',
         schemaType: 'array',
-        typeMismatch: false,
+        misfit: false,
         nullable: true,
         required: false,
         path: '/items',
@@ -277,7 +277,7 @@ describe('FieldInput - Nullable Type Matching', () => {
       const stringHint: FieldInputHint = {
         type: 'string',
         schemaType: 'string',
-        typeMismatch: false,
+        misfit: false,
         nullable: true,
         required: false,
         path: '/value',
@@ -287,7 +287,7 @@ describe('FieldInput - Nullable Type Matching', () => {
       const numberHint: FieldInputHint = {
         type: 'number',
         schemaType: 'number',
-        typeMismatch: false,
+        misfit: false,
         nullable: true,
         required: false,
         path: '/value',
@@ -307,7 +307,7 @@ describe('FieldInput - Nullable Type Matching', () => {
       const nonNullableHint: FieldInputHint = {
         type: 'string',
         schemaType: 'string',
-        typeMismatch: false,
+        misfit: false,
         nullable: false,
         required: true,
         path: '/value',
@@ -329,7 +329,7 @@ describe('FieldInput - Nullable Type Matching', () => {
       const hint: FieldInputHint = {
         type: 'string',
         schemaType: 'string',
-        typeMismatch: false,
+        misfit: false,
         nullable: true,
         required: false,
         path: '/email',
@@ -353,7 +353,7 @@ describe('FieldInput - Nullable Type Matching', () => {
       const hint: FieldInputHint = {
         type: 'string',
         schemaType: 'string',
-        typeMismatch: false,
+        misfit: false,
         nullable: false,
         required: true,
         path: '/email',
@@ -379,7 +379,7 @@ describe('FieldInput - Nullable Type Matching', () => {
       const hint: FieldInputHint = {
         type: 'string',
         schemaType: 'string',
-        typeMismatch: false,
+        misfit: false,
         nullable: true,
         required: false,
         path: '/user/name',
@@ -399,7 +399,7 @@ describe('FieldInput - Nullable Type Matching', () => {
       const hint: FieldInputHint = {
         type: 'string',
         schemaType: 'string',
-        typeMismatch: false,
+        misfit: false,
         nullable: true,
         required: false,
         path: '/user/email',
@@ -422,7 +422,7 @@ describe('FieldInput - Nullable Type Matching', () => {
       const hint: FieldInputHint = {
         type: 'string',
         schemaType: 'string',
-        typeMismatch: false,
+        misfit: false,
         nullable: true,
         required: false,
         path: '/user/birthdate',
@@ -440,7 +440,7 @@ describe('FieldInput - Nullable Type Matching', () => {
       const baseHint: FieldInputHint = {
         type: 'string',
         schemaType: 'string',
-        typeMismatch: false,
+        misfit: false,
         nullable: true,
         required: false,
         path: '/field',
@@ -472,7 +472,7 @@ describe('FieldInput - Nullable Type Matching', () => {
       const hint: FieldInputHint = {
         type: 'null',
         schemaType: 'null',
-        typeMismatch: false,
+        misfit: false,
         nullable: true,
         required: false,
         path: '/nullField',
@@ -498,7 +498,7 @@ describe('FieldInput - Nullable Type Matching', () => {
       const integerHint: FieldInputHint = {
         type: 'number',
         schemaType: 'integer',
-        typeMismatch: false,
+        misfit: false,
         nullable: true,
         required: false,
         path: '/count',
@@ -508,7 +508,7 @@ describe('FieldInput - Nullable Type Matching', () => {
       const numberHint: FieldInputHint = {
         type: 'number',
         schemaType: 'number',
-        typeMismatch: false,
+        misfit: false,
         nullable: true,
         required: false,
         path: '/amount',
@@ -531,7 +531,7 @@ describe('FieldInput - Nullable Type Matching', () => {
         {
           type: 'string',
           schemaType: 'string',
-          typeMismatch: false,
+          misfit: false,
           nullable: true,
           required: false,
           path: '/a',
@@ -540,7 +540,7 @@ describe('FieldInput - Nullable Type Matching', () => {
         {
           type: 'number',
           schemaType: 'number',
-          typeMismatch: false,
+          misfit: false,
           nullable: false,
           required: true,
           path: '/b',
@@ -549,7 +549,7 @@ describe('FieldInput - Nullable Type Matching', () => {
         {
           type: 'boolean',
           schemaType: 'boolean',
-          typeMismatch: false,
+          misfit: false,
           nullable: true,
           required: false,
           path: '/c',
@@ -573,7 +573,7 @@ describe('FieldInput - Nullable Type Matching', () => {
       const hint: FieldInputHint = {
         type: 'string',
         schemaType: 'string',
-        typeMismatch: false,
+        misfit: false,
         nullable: true,
         required: false,
         path: '/field',
@@ -594,7 +594,7 @@ describe('FieldInput - Nullable Type Matching', () => {
       const hint: FieldInputHint = {
         type: 'string',
         schemaType: 'string',
-        typeMismatch: false,
+        misfit: false,
         nullable: true,
         required: false,
         path: '/custom',
@@ -618,7 +618,7 @@ describe('FieldInput - Nullable Type Matching', () => {
       const nullableStringHint: FieldInputHint = {
         type: 'string',
         schemaType: 'string',
-        typeMismatch: false,
+        misfit: false,
         nullable: true,
         required: false,
         path: '/field',
@@ -628,7 +628,7 @@ describe('FieldInput - Nullable Type Matching', () => {
       const nonNullableStringHint: FieldInputHint = {
         type: 'string',
         schemaType: 'string',
-        typeMismatch: false,
+        misfit: false,
         nullable: false,
         required: true,
         path: '/field',
@@ -654,7 +654,7 @@ describe('FieldInput - Nullable Type Matching', () => {
         {
           type: 'string',
           schemaType: 'string',
-          typeMismatch: false,
+          misfit: false,
           nullable: true,
           required: false,
           path: '/email',
@@ -664,7 +664,7 @@ describe('FieldInput - Nullable Type Matching', () => {
         {
           type: 'number',
           schemaType: 'number',
-          typeMismatch: false,
+          misfit: false,
           nullable: false,
           required: true,
           path: '/age',
@@ -676,7 +676,7 @@ describe('FieldInput - Nullable Type Matching', () => {
         {
           type: 'string',
           schemaType: 'string',
-          typeMismatch: false,
+          misfit: false,
           nullable: false,
           required: true,
           path: '/email',
@@ -686,7 +686,7 @@ describe('FieldInput - Nullable Type Matching', () => {
         {
           type: 'number',
           schemaType: 'number',
-          typeMismatch: false,
+          misfit: false,
           nullable: true,
           required: false,
           path: '/age',
@@ -721,7 +721,7 @@ describe('FieldInput - Nullable Type Matching', () => {
       const requiredEmail: FieldInputHint = {
         type: 'string',
         schemaType: 'string',
-        typeMismatch: false,
+        misfit: false,
         nullable: false,
         required: true,
         path: '/contact/email',
@@ -732,7 +732,7 @@ describe('FieldInput - Nullable Type Matching', () => {
       const optionalEmail: FieldInputHint = {
         type: 'string',
         schemaType: 'string',
-        typeMismatch: false,
+        misfit: false,
         nullable: true,
         required: false,
         path: '/contact/secondaryEmail',
@@ -765,7 +765,7 @@ describe('FieldInput - Nullable Type Matching', () => {
       const requiredNumber: FieldInputHint = {
         type: 'number',
         schemaType: 'number',
-        typeMismatch: false,
+        misfit: false,
         nullable: false,
         required: true,
         path: '/settings/volume',
@@ -775,7 +775,7 @@ describe('FieldInput - Nullable Type Matching', () => {
       const optionalNumber: FieldInputHint = {
         type: 'number',
         schemaType: 'number',
-        typeMismatch: false,
+        misfit: false,
         nullable: true,
         required: false,
         path: '/settings/optionalVolume',

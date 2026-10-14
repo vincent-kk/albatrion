@@ -41,7 +41,7 @@ type RuntimeArrayVerbs = Pick<
 /** Runtime fields the factory fills when the seed omits them: path-indexed stores and an empty context. */
 type SeededRuntimeFields =
   | 'latentRaw'
-  | 'typeMismatchPaths'
+  | 'misfitPaths'
   | 'inactiveValuesMemo'
   | 'context';
 
@@ -122,7 +122,7 @@ export function fieldNodeFactory(
   const runtime: FieldNodeRuntime<RuntimeFieldNode> = {
     ...runtimeSeed,
     latentRaw: runtimeSeed.latentRaw ?? new PathKeyedMap('pair'),
-    typeMismatchPaths: runtimeSeed.typeMismatchPaths ?? new PathKeyedSet(),
+    misfitPaths: runtimeSeed.misfitPaths ?? new PathKeyedSet(),
     inactiveValuesMemo:
       runtimeSeed.inactiveValuesMemo ?? new PathKeyedMap('path'),
     globalStateCounts: new Map(),
