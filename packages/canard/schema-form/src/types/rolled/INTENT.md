@@ -9,13 +9,14 @@
 - 모든 타입은 `Roll<BaseType>` 으로 래핑하여 export
 - `type` 키워드만 사용 (`export type`, `import type`)
 - 기반 타입은 `Base*` prefix alias로 import하여 명시적으로 구분
+- 형 파일은 `types/` 칸에 두고 `index.ts`는 이름 목록으로만 재수출
 - 값(runtime) export 없음, 타입 전용 모듈
 
 ## Boundaries
 
 ### Always do
 
-- 새 공개 타입 추가 시 `Roll<T>` 래핑 후 `index.ts` 에 `export type *` 포함
+- 새 공개 타입 추가 시 `Roll<T>` 래핑 후 `index.ts`의 이름 목록과 루트 `src/index.ts`의 이름 목록에 함께 추가
 - 기반 타입 변경 시 `rolled` 타입도 함께 갱신
 - `import type` 만 사용 (런타임 import 금지)
 
