@@ -3096,6 +3096,9 @@
   > 편집자 결정(339C-02): "【추론】 rolled/form.ts를 types로 옮기면 types ↔ components/Form 형 전용 순환이 생기므로, 셋은 각 자식 fractal(FormField·FormInput·FormRender)의 types/props.ts에 `RolledFormXProps = Roll<FormXProps>`로 두고 자식 관문·Form 관문을 거쳐 src/index.ts가 rename한다. Form의 types 칸에 두는 안은 organ이 자식 fractal을 쓰게 되어(B1) 쓰지 않았다." (`reviews/round-339-closing.md:10`)
   > 편집자 결정(339C-03): "【추론】 공개 `InferJSONSchema`(작성 스키마 추론, union·virtual 없음)와 내부 추론(virtual·union을 앎)은 정의가 달라 하나로 합칠 수 없다. 내부 것은 `InferFieldInputSchema`로 types/field/에 두고 공개 추론 결과는 바꾸지 않는다. 묶음 2 (f)에서 작성 형의 type 추론에서 'virtual'을 뺄 때 이 구분이 기준이다." (`reviews/round-339-closing.md:12`)
   > 편집자 결정(339C-04): "【추론】 hooks·types처럼 역할 이름을 가진 fractal은 칸을 주제 이름으로 둔다(hooks/fieldNode·form, types/schema·field·error·rolled). 이동으로 고아가 된 값 export 다섯(BooleanValue 등)은 types/index.ts에서 지웠다(원칙 6)." (`reviews/round-339-closing.md:14`)
+  > 소유자(340라운드, walkFieldNodes 삭제 확정 여부): "walkFieldNodes 삭제는 확정이야? 기능이 없어진거냐고 물어봤는데, 무시한거같네" (`reviews/round-340-owner-answers.md:7`)
+  > 소유자(340라운드, 옛 setSubtreeState의 순회가 지금 어떻게 구현됐는지): "저게 아마.. 그 하위 서브트리에 대해서 \n\n(옛 AbstractNode의 setSubtreeState·clearSubtreeState 코드 인용) \n\n이런 기능을 할때 썼던거같은데, 이건 지금 다른 방법으로 구현되어 있다는거야?" (`reviews/round-340-owner-answers.md:8`)
+  > 소유자(340라운드, 순회를 한 벌로 합침): "한 벌로 합치기로 하지.\n속도나, 목적, 최적화 안정성이 합치는게 나을거같아.\n\n기존 나눠진 로직에서 배울 게 있으면 반영해도 좋네.\n기능은 이전과 같아야지" (`reviews/round-340-owner-answers.md:9`)
 - 상태: 현행
 - 출처: `reviews/round-18-owner-answers.md:44`(정본, 반영 칸), `reviews/round-18-owner-answers.md:45`
 - 닫은 사람: 소유자 답(`reviews/round-18-owner-answers.md:44` 개발계획 P3·P4), 소유자 답(`reviews/round-18-owner-answers.md:45` 개발계획 1-가)
