@@ -1,15 +1,16 @@
 import { describe, expect, it } from 'vitest';
 
-import { makeFieldNodeTree } from '../../../__tests__/makeFieldNodeTree';
-import { patchFieldNodeInteractionState } from '../../record';
-import { WriteOption } from '../../types/value';
-import { writeFieldNode } from '../index';
+import { makeFieldNodeTree } from '@/schema-form/core/__tests__/makeFieldNodeTree';
+import { patchFieldNodeInteractionState } from '@/schema-form/core/engine/record';
+import { WriteOption } from '@/schema-form/core/engine/types/value';
+
+import { createTestTree } from '../../__tests__/fixtures/createTestTree';
 import { createSettlementContext } from '../utils/settlement/createSettlementContext';
 import { hasWrongKindBranchAncestor } from '../utils/transition/hasWrongKindBranchAncestor';
 import { transitionSettlement } from '../utils/transition/transitionSettlement';
 import { getSettlementScratch } from '../utils/write/getSettlementScratch';
 import { releaseSettlementScratch } from '../utils/write/releaseSettlementScratch';
-import { createTestTree } from './fixtures/createTestTree';
+import { writeFieldNode } from '../utils/write/writeFieldNode';
 
 // filid:contract settle-array
 describe('array settlement writes', () => {

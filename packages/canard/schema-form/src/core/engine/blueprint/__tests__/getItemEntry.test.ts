@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 
-import { blueprint, getItemEntry } from '../index';
+import { blueprint } from '../blueprint';
+import { getItemEntry } from '../utils/itemEntry/getItemEntry';
 
 // filid:contract array-limits-and-slots
 describe('getItemEntry', () => {

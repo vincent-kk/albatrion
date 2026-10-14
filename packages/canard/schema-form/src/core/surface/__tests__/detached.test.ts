@@ -1,9 +1,13 @@
 import { describe, expect, it } from 'vitest';
 
-import { makeFieldNodeTree } from '../../__tests__/makeFieldNodeTree';
-import { loadFieldNodeAtMount, resetFieldNodeForm } from '../../engine';
-import { FieldNode } from '../FieldNode';
-import { SetValueOption } from '../index';
+import { makeFieldNodeTree } from '@/schema-form/core/__tests__/makeFieldNodeTree';
+import {
+  loadFieldNodeAtMount,
+  resetFieldNodeForm,
+} from '@/schema-form/core/engine';
+
+import { FieldNode } from '../runtime/FieldNode';
+import { SetValueOption } from '../type';
 
 // filid:contract surface-detached
 describe('detached FieldNode references', () => {

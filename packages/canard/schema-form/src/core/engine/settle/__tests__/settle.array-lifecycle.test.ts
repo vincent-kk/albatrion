@@ -1,9 +1,10 @@
 import { describe, expect, it } from 'vitest';
 
-import { makeFieldNodeTree } from '../../../__tests__/makeFieldNodeTree';
-import { WriteOption } from '../../types/value';
-import { writeFieldNode } from '../index';
-import { createTestTree } from './fixtures/createTestTree';
+import { makeFieldNodeTree } from '@/schema-form/core/__tests__/makeFieldNodeTree';
+import { WriteOption } from '@/schema-form/core/engine/types/value';
+
+import { createTestTree } from '../../__tests__/fixtures/createTestTree';
+import { writeFieldNode } from '../utils/write/writeFieldNode';
 
 // filid:contract settle-array
 describe('array settlement lifecycle', () => {

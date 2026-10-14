@@ -1,9 +1,11 @@
 import { describe, expect, it, vi } from 'vitest';
 
-import type { BlueprintSchema } from '../../blueprint';
-import { releaseValidationRoot, retainValidationRoot } from '../index';
+import type { BlueprintSchema } from '@/schema-form/core/engine/blueprint';
+
 import type { Validator } from '../type';
 import { evictValidationRoot } from '../utils/lifetime/evictValidationRoot';
+import { releaseValidationRoot } from '../utils/lifetime/releaseValidationRoot';
+import { retainValidationRoot } from '../utils/lifetime/retainValidationRoot';
 
 // filid:contract validation-lifetime
 describe('validator registration lifetime', () => {

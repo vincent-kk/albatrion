@@ -1,5 +1,7 @@
 import { isArray } from '@winglet/common-utils/filter';
 
+import { JSONPointer as $ } from '@/schema-form/helpers/jsonPointer';
+
 import { getFeatureNodeIndex } from '../../../blueprint';
 import {
   FieldNodeEventType,
@@ -53,7 +55,7 @@ export const markCommitDeliveries = <Self extends FieldNodeRecord<Self>>(
     for (const path of affectedPaths) {
       let ancestor = path;
       while (ancestor) {
-        ancestor = ancestor.slice(0, ancestor.lastIndexOf('/'));
+        ancestor = ancestor.slice(0, ancestor.lastIndexOf($.Separator));
         if (!context.changedRaw.has(ancestor)) affectedPaths.delete(ancestor);
       }
     }

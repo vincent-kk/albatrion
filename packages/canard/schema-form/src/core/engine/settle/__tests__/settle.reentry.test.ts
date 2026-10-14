@@ -1,13 +1,12 @@
 import { describe, expect, it } from 'vitest';
 
-import { WriteOption } from '../../types/value';
-import {
-  loadFieldNodeAtMount,
-  resetFieldNodeForm,
-  resetFieldNodeSubtree,
-  writeFieldNode,
-} from '../index';
-import { createTestTree } from './fixtures/createTestTree';
+import { WriteOption } from '@/schema-form/core/engine/types/value';
+
+import { createTestTree } from '../../__tests__/fixtures/createTestTree';
+import { loadFieldNodeAtMount } from '../utils/load/loadFieldNodeAtMount';
+import { resetFieldNodeForm } from '../utils/load/resetFieldNodeForm';
+import { resetFieldNodeSubtree } from '../utils/load/resetFieldNodeSubtree';
+import { writeFieldNode } from '../utils/write/writeFieldNode';
 
 // filid:contract settle-transition
 describe('final-shape exits', () => {

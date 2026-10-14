@@ -1,15 +1,13 @@
 import { hasOwnProperty } from '@winglet/common-utils/lib';
 import { escapeSegment } from '@winglet/json/pointer';
 
-import { SchemaFormError } from '../../../../../errors';
+import { FormErrorCode, SchemaFormError } from '../../../../../errors';
 import { mergeEffectiveSchema } from '../../../blueprint';
 import type { BlueprintChildEntry } from '../../../blueprint';
 import { captureFieldNodeChange } from '../../../record';
 import type { FieldNodeRecord } from '../../../record';
 import type { SettlementContext } from '../../type';
 import { recordSettlementFailure } from '../errors/recordSettlementFailure';
-import { SHARED_NODE_CONFLICT } from '../errors/settleErrorCode';
-import { RECURSIVE_SHAPE_DIVERGED } from '../errors/settleErrorCode';
 import { evaluateGate } from '../gates/evaluateGate';
 import { flushPendingGateReads } from '../gates/flushPendingGateReads';
 import { getGateRegistry } from '../gates/getGateRegistry';
@@ -243,7 +241,7 @@ export const selectChildren = <Self extends FieldNodeRecord<Self>>(
         recordSettlementFailure(
           context,
           new SchemaFormError(
-            SHARED_NODE_CONFLICT,
+            FormErrorCode.SharedNodeConflict,
             `Active declarations conflict at ${node.path}/${entry.name}`,
             { path: `${node.path}/${entry.name}` },
           ),
@@ -298,7 +296,7 @@ export const selectChildren = <Self extends FieldNodeRecord<Self>>(
         recordSettlementFailure(
           context,
           new SchemaFormError(
-            RECURSIVE_SHAPE_DIVERGED,
+            FormErrorCode.RecursiveShapeDiverged,
             `Recursive shape diverged at ${node.path}/${entry.name}`,
             { path: `${node.path}/${entry.name}` },
           ),
@@ -360,7 +358,7 @@ export const selectChildren = <Self extends FieldNodeRecord<Self>>(
       recordSettlementFailure(
         context,
         new SchemaFormError(
-          SHARED_NODE_CONFLICT,
+          FormErrorCode.SharedNodeConflict,
           `Active declarations conflict at ${child.path}`,
           { path: child.path },
         ),

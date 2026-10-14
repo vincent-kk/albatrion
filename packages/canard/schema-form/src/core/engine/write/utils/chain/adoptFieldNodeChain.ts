@@ -1,6 +1,6 @@
 import { isArray } from '@winglet/common-utils/filter';
 
-import { RESET_REBUILT_BY_REFERENCE } from '../../../../../errors';
+import { FormWarningCode } from '../../../../../errors';
 import type { FieldNodeRecord } from '../../../record';
 import { indexFieldNodeWarning } from '../../../record';
 import { disposeFieldNodeTree } from '../../../settle';
@@ -73,7 +73,7 @@ export const adoptFieldNodeChain = <Self extends FieldNodeRecord<Self>>(
         next.blueprint?.schema,
       );
     if (paths.length) {
-      const code = `SCHEMA_FORM_WARNING.${RESET_REBUILT_BY_REFERENCE}`;
+      const code = FormWarningCode.ResetRebuiltByReference;
       const record = dedupeWarningRecord(
         (next.warningKeys ??= new Set()),
         code,

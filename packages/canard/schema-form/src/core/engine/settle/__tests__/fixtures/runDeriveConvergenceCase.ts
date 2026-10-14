@@ -1,15 +1,20 @@
 import { expect, vi } from 'vitest';
 
+import type {
+  Blueprint,
+  BlueprintSchema,
+} from '@/schema-form/core/engine/blueprint';
+import { WriteOption } from '@/schema-form/core/engine/types/value';
+
+import type { PlainNode } from '../../../__tests__/fixtures/createPlainNode';
+import { createTestTree } from '../../../__tests__/fixtures/createTestTree';
 import * as blueprintApi from '../../../blueprint';
-import type { Blueprint, BlueprintSchema } from '../../../blueprint';
-import { WriteOption } from '../../../types/value';
-import * as deriveApi from '../../derive';
-import { loadFieldNodeAtMount, writeFieldNode } from '../../index';
+import * as deriveApi from '../../../derive';
 import type { SettlementContext } from '../../type';
 import { deriveShadowEvaluation } from '../../utils/derivation/deriveShadowEvaluation';
+import { loadFieldNodeAtMount } from '../../utils/load/loadFieldNodeAtMount';
 import * as settlementApi from '../../utils/settlement/createSettlementContext';
-import type { PlainNode } from './createPlainNode';
-import { createTestTree } from './createTestTree';
+import { writeFieldNode } from '../../utils/write/writeFieldNode';
 
 /** Compiler sidecar is optional until the optimization's fail-first check. */
 interface ConvergenceTargets {

@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { blueprint } from '../index';
+import { blueprint } from '../blueprint';
 
 // filid:contract array-limits-and-slots
 describe('legacy tuple additionalItems', () => {

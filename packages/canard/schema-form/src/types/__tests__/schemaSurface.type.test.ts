@@ -7,7 +7,7 @@ import type {
   NonNullableObjectSchema,
   NullableArraySchema,
   NullableObjectSchema,
-} from '../jsonSchema';
+} from '../types/jsonSchema';
 
 /** Named members of a type, without the `[alt: string]: any` index signature. */
 type NamedKeys<Type> = keyof {
@@ -115,10 +115,10 @@ describe('schema authoring surface', () => {
   it('keeps the virtual node schema out of authoring', () => {
     expectTypeOf<Extract<JSONSchema['type'], 'virtual'>>().toBeNever();
     // @ts-expect-error VirtualNodeSchema is internal and has no export.
-    type RemovedSchema = import('../index').VirtualSchema;
+    type RemovedSchema = import('../types/jsonSchema').VirtualSchema;
     expectTypeOf<RemovedSchema>().toBeAny();
-    // @ts-expect-error isVirtualSchema is removed from the types barrel.
-    type RemovedGuard = typeof import('../index').isVirtualSchema;
+    // @ts-expect-error isVirtualSchema is absent from the authoring schema types.
+    type RemovedGuard = typeof import('../types/jsonSchema').isVirtualSchema;
     expectTypeOf<RemovedGuard>().toBeAny();
   });
 });

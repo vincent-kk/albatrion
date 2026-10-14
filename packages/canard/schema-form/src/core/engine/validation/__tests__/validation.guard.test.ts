@@ -1,8 +1,12 @@
 import { describe, expect, it, vi } from 'vitest';
 
-import { createTestValidator } from '../../../__tests__/fixtures/createTestValidator';
-import { blueprint } from '../../blueprint';
-import type { BlueprintGate, BlueprintSchema } from '../../blueprint';
+import { createTestValidator } from '@/schema-form/core/__tests__/fixtures/createTestValidator';
+import { blueprint } from '@/schema-form/core/engine/blueprint';
+import type {
+  BlueprintGate,
+  BlueprintSchema,
+} from '@/schema-form/core/engine/blueprint';
+
 import type { Validator } from '../type';
 import { readValidationEntry } from '../utils/cache/readValidationEntry';
 import { compileEntryGuards } from '../utils/guard/compileEntryGuards';

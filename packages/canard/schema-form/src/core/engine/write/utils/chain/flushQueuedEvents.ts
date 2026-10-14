@@ -1,7 +1,4 @@
-import {
-  FEEDBACK_LIMIT_EXCEEDED,
-  SchemaFormError,
-} from '../../../../../errors';
+import { FormErrorCode, SchemaFormError } from '../../../../../errors';
 import { FieldNodeRevisionLedger } from '../../../record';
 import type { FieldNodeDelivery, FieldNodeRecord } from '../../../record';
 import { rebuildRootExternalErrors } from '../entry/utils/propagateExternalErrorsToRoot';
@@ -74,7 +71,7 @@ export const flushQueuedEvents = <Self extends FieldNodeRecord<Self>>(
             captureChainError(
               runtime,
               new SchemaFormError(
-                FEEDBACK_LIMIT_EXCEEDED,
+                FormErrorCode.FeedbackLimitExceeded,
                 'Non-settlement feedback exceeded 25 waves',
               ),
             );

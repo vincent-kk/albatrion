@@ -8,7 +8,7 @@ import type {
   FormatError,
   ValidateFunction,
 } from '@/schema-form/types';
-import type { JSONSchema } from '@/schema-form/types/jsonSchema';
+import type { JSONSchema } from '@/schema-form/types';
 
 /**
  * Plugin configuration for extending schema-form functionality.

@@ -1,6 +1,6 @@
 import { dispatchResetForm } from '../../../engine';
+import { requireRuntimeFieldNode } from '../../runtime/requireRuntimeFieldNode';
 import type { FieldNode, SetValueOption } from '../../type';
-import { requireRuntimeFieldNode } from '../requireRuntimeFieldNode';
 
 /**
  * Binding-only; not exported from src/index.ts.

@@ -6,7 +6,7 @@ import {
   BIT_FLAG_02,
   BIT_FLAG_03,
   BIT_MASK_NONE,
-} from '@/schema-form/constants';
+} from '@/schema-form/constants/bitmask';
 
 /**
  * Callback a node invokes to notify its parent of a value change.
@@ -52,3 +52,11 @@ export interface ResetOptions<Value = unknown> {
   /** Fallback value used in the default value calculation logic */
   fallbackValue?: Value | null;
 }
+
+/** Origin of a write before calculation and transition phases. */
+export type FieldNodeWriteKind =
+  | 'input'
+  | 'callerPartial'
+  | 'callerReplace'
+  | 'load'
+  | 'automatic';

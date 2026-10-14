@@ -1,7 +1,7 @@
 import { isArray } from '@winglet/common-utils/filter';
 import { escapeSegment } from '@winglet/json/pointer';
 
-import { BlueprintErrorCode } from '../diagnostics/constant';
+import { FormErrorCode } from '../../../../../errors';
 import { throwBlueprintError } from '../diagnostics/throwBlueprintError';
 import { createBlueprintGate } from './createBlueprintGate';
 import { appendChildEntries } from './populateNodeChildren/utils/appendChildEntries';
@@ -166,7 +166,7 @@ export const populateNodeChildren = (
       schema.prefixItems ?? (isArray(schema.items) ? schema.items : undefined);
     if (schema.prefixItems !== undefined && !isArray(schema.prefixItems))
       throwBlueprintError(
-        BlueprintErrorCode.UnexpectedArraySchema,
+        FormErrorCode.UnexpectedArraySchema,
         declaration.schemaPath,
         { prefixItems: schema.prefixItems },
         context.options,
@@ -190,7 +190,7 @@ export const populateNodeChildren = (
     ) {
       if (schema.items === null || typeof schema.items !== 'object')
         throwBlueprintError(
-          BlueprintErrorCode.UnexpectedArraySchema,
+          FormErrorCode.UnexpectedArraySchema,
           declaration.schemaPath,
           { items: schema.items },
           context.options,

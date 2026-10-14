@@ -1,4 +1,4 @@
-import type { DispatchTestNode } from './createDispatchTree';
+import type { DispatchTestNode } from '@/schema-form/core/engine/__tests__/fixtures/createDispatchTree';
 
 /**
  * Read a statically declared child from a committed test tree.

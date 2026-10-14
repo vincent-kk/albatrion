@@ -1,7 +1,7 @@
 import { captureFieldNodeChange } from '../../../record';
 import type { FieldNodeRecord } from '../../../record';
+import { sameValue } from '../../../utils/compute/sameValue';
 import type { SettlementContext } from '../../type';
-import { sameValue } from './sameValue';
 
 /**
  * Assemble and project a node once from its current child order.

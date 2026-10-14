@@ -1,3 +1,4 @@
+import { FormErrorCode } from '@canard/schema-form';
 import Ajv from 'ajv';
 import { describe, expect, it, vi } from 'vitest';
 
@@ -18,7 +19,7 @@ describe('VALIDATE-050 TEST-077 bind refusal', () => {
     try { ajvValidatorPlugin.bind!(new Ajv(options)); }
     catch (error) { thrown = error; }
     expect(thrown).toMatchObject({
-      group: 'UNHANDLED_ERROR', code: 'VALIDATOR_BIND_REFUSED',
+      group: 'UNHANDLED_ERROR', code: FormErrorCode.ValidatorBindRefused,
       name: 'ValidatorBindRefusedError', details: { options: names },
     });
     const schema = { $id: 'https://example.test/accepted-binding', type: 'string' } as const;

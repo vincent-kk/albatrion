@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { BEHAVIORS } from '../index';
+import { BEHAVIORS } from '../behaviors';
 
 /** Stable public row slot order shared by every kind and strategy. */
 const SLOT_ORDER = [

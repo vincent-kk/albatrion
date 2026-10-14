@@ -7,19 +7,25 @@ import type {
   ScenarioExpectation,
 } from '@aileron/schema-form-scenarios';
 
-import type { BlueprintSchema } from '../../../engine/blueprint';
-import { loadFieldNodeAtMount } from '../../../engine/settle';
-import { ValidationMode } from '../../../engine/types/state';
-import { FieldNodeEventType, SetValueOption } from '../../../surface';
-import type { FieldNode } from '../../../surface';
-import type { FieldNode as RuntimeFieldNode } from '../../../surface/FieldNode';
+import type { BlueprintSchema } from '@/schema-form/core/engine';
+import { loadFieldNodeAtMount } from '@/schema-form/core/engine';
+import { ValidationMode } from '@/schema-form/core/engine';
+import { FieldNodeEventType } from '@/schema-form/core/engine';
+import { SetValueOption } from '@/schema-form/core/surface';
+import type { FieldNode } from '@/schema-form/core/surface';
+
+import {
+  type TestFieldNode,
+  type TestPublicFieldNode,
+  isTestFieldNode,
+} from '../../fixtures/testFieldNode';
 import { makeFieldNodeTree } from '../../makeFieldNodeTree';
 import { assertCoreScenarioExpectation } from './assertCoreScenarioExpectation';
 import { executeCoreScenarioStep } from './executeCoreScenarioStep';
 
 /** Execute batches through the public node boundary while reusing existing actions. */
 const executeStep = (
-  root: FieldNode,
+  root: TestPublicFieldNode,
   scenario: FormScenario,
   step: FormScenarioStep,
 ): void => {
@@ -29,7 +35,7 @@ const executeStep = (
     });
     return;
   }
-  executeCoreScenarioStep(root as RuntimeFieldNode, scenario, step);
+  executeCoreScenarioStep(root, scenario, step);
 };
 
 /** Record only value deliveries; error deliveries belong to validation assertions. */
@@ -66,11 +72,9 @@ export function createObservedCoreScenarioAdapter(
       },
     },
   );
-  loadFieldNodeAtMount(
-    root as RuntimeFieldNode,
-    scenario.initialValue,
-    SetValueOption.Overwrite,
-  );
+  if (!isTestFieldNode(root)) throw new Error('Expected a runtime FieldNode');
+  const record: TestFieldNode = root;
+  loadFieldNodeAtMount(record, scenario.initialValue, SetValueOption.Overwrite);
   subscribeValueTree(root, delivered);
   Reflect.set(runtime, 'onChange', () => {
     onChangeCount += 1;

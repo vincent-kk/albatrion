@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 
-import type { FieldNodeRecord } from '../../../../record';
+import type { FieldNodeRecord } from '@/schema-form/core/engine/record';
+
 import type { SettlementContext } from '../../../type';
 import { isWithinReplacePaths } from '../isWithinReplacePaths';
 

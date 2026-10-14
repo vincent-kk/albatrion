@@ -1,4 +1,4 @@
-import { JSONPointer as $ } from '../enum';
+import { JSONPointer as $ } from '../constants/JSONPointer';
 
 /**
  * Joins a segment to a path.

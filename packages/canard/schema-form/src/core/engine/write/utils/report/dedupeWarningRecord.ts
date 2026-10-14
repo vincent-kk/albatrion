@@ -1,6 +1,6 @@
 import type { OmitPartial } from '@aileron/declare';
 
-import type { FormErrorCode, FormErrorRecord } from '../../../../../errors';
+import type { FormErrorRecord, FormRecordCode } from '../../../../../errors';
 import { createFormErrorRecord } from './createFormErrorRecord';
 
 /**
@@ -15,7 +15,7 @@ import { createFormErrorRecord } from './createFormErrorRecord';
  */
 export const dedupeWarningRecord = (
   keys: Set<string>,
-  code: FormErrorCode,
+  code: FormRecordCode,
   location: string,
   discriminator: unknown,
   format: () => string,

@@ -16,6 +16,8 @@
 - 외부 오류의 dataPath는 현재·이전 목록에서 각각 한 번만 읽어 `find()`로 찾은 노드의 표준 경로별로 묶고(`#/field`·`field`는 `/field`로) 원래 순서로 적용합니다. 이전 목록에만 남은 경로는 빈 오류로 지우며 누락 노드는 건너뜁니다(79C-01).
 - 배열이 아닌 `errors` prop과 이전 목록은 0.16.0과 같이 빈 목록으로 받습니다. `null`·객체 입력은 예외 없이 루트의 외부 오류를 비우고 비루트 노드에는 아무것도 전달하지 않습니다(178C-01).
 
+- Context 객체(`RootNodeContext`·`RootBindingContext`)와 Provider는 `components/`, 훅(`useRootNodeContext`·`useLiveNode`)은 `hooks/`에 있습니다. 뿌리에는 문서·진입점·형 동반 파일(`type.ts`)만 둡니다(filid zero-peer-file).
+
 ## Acceptance Criteria
 
 ### root-node-context-contract — 관찰 가능한 동작

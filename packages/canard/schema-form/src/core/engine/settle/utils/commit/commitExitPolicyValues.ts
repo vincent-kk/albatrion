@@ -1,15 +1,16 @@
 import { isArray } from '@winglet/common-utils/filter';
 import { hasOwnProperty } from '@winglet/common-utils/lib';
 
-import { SchemaFormError } from '../../../../../errors';
+import { FormErrorCode, SchemaFormError } from '../../../../../errors';
 import type { Blueprint, BlueprintExpression } from '../../../blueprint';
+import { CONTROL_KEY } from '../../../constants/controlKey';
+import { SCHEMA_GROUP } from '../../../constants/schemaGroup';
 import type { FieldNodeRecord } from '../../../record';
 import type { SettlementContext } from '../../type';
 import { getControlLayers } from '../controls/getControlLayers';
 import { getExitPolicyKey } from '../controls/getExitPolicyKey';
 import { readStateDependency } from '../controls/readStateDependency';
 import { recordSettlementFailure } from '../errors/recordSettlementFailure';
-import { EXPRESSION_THREW } from '../errors/settleErrorCode';
 import { walkOwnedFieldNodes } from '../walkOwnedFieldNodes';
 import { pruneCommittedRuleKeys } from './pruneCommittedRuleKeys';
 import { updateCommittedRuleValue } from './updateCommittedRuleValue';
@@ -78,12 +79,12 @@ export const commitExitPolicyValues = <Self extends FieldNodeRecord<Self>>(
       if (selected && !selected.includes(declaration.id)) continue;
       const schema = declaration.schema;
       if (!schema || typeof schema !== 'object') continue;
-      const controls: unknown = Reflect.get(schema, 'controls');
+      const controls: unknown = Reflect.get(schema, SCHEMA_GROUP.controls);
       if (!controls || typeof controls !== 'object' || isArray(controls))
         continue;
       if (
         declaration.scope === 'fragment' &&
-        typeof Reflect.get(controls, 'unsetOnInactive') === 'string'
+        typeof Reflect.get(controls, CONTROL_KEY.unsetOnInactive) === 'string'
       )
         for (const child of source.children ?? []) {
           if (
@@ -98,15 +99,16 @@ export const commitExitPolicyValues = <Self extends FieldNodeRecord<Self>>(
           candidates.add(child);
           break;
         }
-      const fields: unknown = Reflect.get(controls, 'fields');
+      const fields: unknown = Reflect.get(controls, CONTROL_KEY.fields);
       if (!isArray(fields)) continue;
       for (const item of fields) {
         if (!item || typeof item !== 'object') continue;
-        const itemControls: unknown = Reflect.get(item, 'controls');
+        const itemControls: unknown = Reflect.get(item, SCHEMA_GROUP.controls);
         if (
           !itemControls ||
           typeof itemControls !== 'object' ||
-          typeof Reflect.get(itemControls, 'unsetOnInactive') !== 'string'
+          typeof Reflect.get(itemControls, CONTROL_KEY.unsetOnInactive) !==
+            'string'
         )
           continue;
         const targets: unknown = Reflect.get(item, 'targets');
@@ -131,8 +133,9 @@ export const commitExitPolicyValues = <Self extends FieldNodeRecord<Self>>(
       context.selectedDeclarationIds,
     )) {
       if (
-        !hasOwnProperty(group.controls, 'unsetOnInactive') ||
-        typeof Reflect.get(group.controls, 'unsetOnInactive') !== 'string'
+        !hasOwnProperty(group.controls, CONTROL_KEY.unsetOnInactive) ||
+        typeof Reflect.get(group.controls, CONTROL_KEY.unsetOnInactive) !==
+          'string'
       )
         continue;
       const schemaPath = `${group.schemaPath}/unsetOnInactive`;
@@ -161,7 +164,7 @@ export const commitExitPolicyValues = <Self extends FieldNodeRecord<Self>>(
         recordSettlementFailure(
           context,
           new SchemaFormError(
-            EXPRESSION_THREW,
+            FormErrorCode.ExpressionThrew,
             `Exit policy expression failed at ${schemaPath}`,
             { path: group.host.path, schemaPath, cause },
           ),

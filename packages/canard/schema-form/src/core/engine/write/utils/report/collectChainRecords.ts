@@ -1,4 +1,10 @@
-import { JSONSchemaError, SchemaFormError } from '../../../../../errors';
+import type { FormErrorSurface } from '@/schema-form/errors';
+
+import {
+  FormErrorCode,
+  JSONSchemaError,
+  SchemaFormError,
+} from '../../../../../errors';
 import type { FormErrorRecord } from '../../../../../errors';
 import type { FieldNodeRuntime } from '../../../record';
 import { createFormErrorRecord } from './createFormErrorRecord';
@@ -17,7 +23,7 @@ export const collectChainRecords = (
   pending: FormErrorRecord[],
   occurrences: NonNullable<FieldNodeRuntime<unknown>['chainOccurrences']>,
   aggregate: SchemaFormError | undefined,
-  surface: 'thrown' | 'sink',
+  surface: Exclude<FormErrorSurface, 'rejected'>,
   reported: ReadonlySet<string> | undefined,
 ): void => {
   const created = new Set<FormErrorRecord>();
@@ -46,7 +52,7 @@ export const collectChainRecords = (
     }
     if (
       error instanceof SchemaFormError &&
-      readFormErrorCode(error) === 'SCHEMA_FORM_ERROR.GUARD_FAILED' &&
+      readFormErrorCode(error) === FormErrorCode.GuardFailed &&
       typeof error.details.schemaPath === 'string' &&
       reported?.has(error.details.schemaPath)
     )

@@ -1,7 +1,8 @@
 import { beforeAll, describe, expect, it } from 'vitest';
 
-import headFixture from '../../blueprint/__tests__/fixtures/ownedInlineHead.json';
-import type { AuthoredSchema } from '../../types/jsonSchema';
+import { default as headFixture } from '@/schema-form/core/engine/__tests__/fixtures/ownedInlineHead.json';
+import type { AuthoredSchema } from '@/schema-form/core/engine/types/jsonSchema';
+
 import { buildChildSelectionRuntime } from './fixtures/childSelection/buildChildSelectionRuntime';
 import { createFixedBranchSchema } from './fixtures/childSelection/createFixedBranchSchema';
 

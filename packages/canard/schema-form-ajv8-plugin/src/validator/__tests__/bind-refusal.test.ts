@@ -1,3 +1,4 @@
+import { FormErrorCode } from '@canard/schema-form';
 import Ajv from 'ajv';
 import Ajv2019 from 'ajv/dist/2019.js';
 import Ajv2020 from 'ajv/dist/2020.js';
@@ -12,7 +13,7 @@ describe('VALIDATE-050 bind refusal', () => {
     ['2019', () => plugin2019.bind(new Ajv2019({ useDefaults: true }))],
     ['2020', () => plugin2020.bind(new Ajv2020({ useDefaults: true }))],
   ] as const)('refuses a modifying instance in the %s entry', (_entry, bind) => {
-    expect(bind).toThrowError(expect.objectContaining({ code: 'VALIDATOR_BIND_REFUSED' }));
+    expect(bind).toThrowError(expect.objectContaining({ code: FormErrorCode.ValidatorBindRefused }));
   });
 
   it.each([
@@ -30,7 +31,7 @@ describe('VALIDATE-050 bind refusal', () => {
       expect.objectContaining({
         name: 'ValidatorBindRefusedError',
         group: 'UNHANDLED_ERROR',
-        code: 'VALIDATOR_BIND_REFUSED',
+        code: FormErrorCode.ValidatorBindRefused,
         details: { options: names },
       }),
     );

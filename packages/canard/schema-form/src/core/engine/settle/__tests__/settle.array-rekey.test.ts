@@ -1,12 +1,14 @@
 import { describe, expect, it } from 'vitest';
 
-import { SchemaFormError } from '../../../../errors';
-import { WriteOption } from '../../types/value';
-import { PathKeyedMap } from '../../utils/pathIndex/PathKeyedMap';
-import { arrangeFieldNodeItems, writeFieldNode } from '../index';
+import { WriteOption } from '@/schema-form/core/engine/types/value';
+import { PathKeyedMap } from '@/schema-form/core/engine/utils/pathIndex/PathKeyedMap';
+import { SchemaFormError } from '@/schema-form/errors';
+
+import { createTestTree } from '../../__tests__/fixtures/createTestTree';
 import { getGateRegistry } from '../utils/gates/getGateRegistry';
+import { arrangeFieldNodeItems } from '../utils/structure/arrangeFieldNodeItems';
 import { rekeyArrayRuntimePaths } from '../utils/structure/rekeyArrayRuntimePaths';
-import { createTestTree } from './fixtures/createTestTree';
+import { writeFieldNode } from '../utils/write/writeFieldNode';
 
 // filid:contract settle-array
 describe('array path movement', () => {

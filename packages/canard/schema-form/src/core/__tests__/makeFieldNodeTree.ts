@@ -1,10 +1,11 @@
-import type { FormErrorReporter } from '../../errors';
-import { blueprint } from '../engine/blueprint';
-import type { BlueprintSchema } from '../engine/blueprint';
-import { PathKeyedMap } from '../engine/utils/pathIndex/PathKeyedMap';
-import { PathKeyedSet } from '../engine/utils/pathIndex/PathKeyedSet';
-import type { Validator } from '../engine/validation';
-import { fieldNodeFactory } from '../surface';
+import { blueprint } from '@/schema-form/core/engine';
+import type { BlueprintSchema } from '@/schema-form/core/engine';
+import { PathKeyedMap } from '@/schema-form/core/engine';
+import { PathKeyedSet } from '@/schema-form/core/engine';
+import type { Validator } from '@/schema-form/core/engine';
+import { fieldNodeFactory } from '@/schema-form/core/surface';
+import type { FormErrorReporter } from '@/schema-form/errors';
+
 import { createTestValidator } from './fixtures/createTestValidator';
 
 /** Compile authored declarations and expose only the PR-2 node surface to tests. */

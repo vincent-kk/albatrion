@@ -1,6 +1,8 @@
 import { isArray } from '@winglet/common-utils/filter';
 import { hasOwnProperty } from '@winglet/common-utils/lib';
 
+import { JSONPointer as $ } from '@/schema-form/helpers/jsonPointer';
+
 /**
  * Find changed opaque references only when all JSON schema data is equal.
  * @param previous - Authored schema of the replaced root
@@ -11,7 +13,9 @@ export const readReferenceOnlySchemaPaths = (
   previous: unknown,
   next: unknown,
 ): readonly string[] => {
-  const pending = [{ previous, next, path: '#' }];
+  const pending: { previous: unknown; next: unknown; path: string }[] = [
+    { previous, next, path: $.Fragment },
+  ];
   const paths: string[] = [];
   const seen = new WeakMap<object, WeakSet<object>>();
   while (pending.length) {

@@ -1,10 +1,12 @@
 import { afterEach, expect, it, vi } from 'vitest';
 
-import { DeriveConvergenceTargets } from '../../blueprint';
-import { WriteOption } from '../../types/value';
-import { loadFieldNodeAtMount, writeFieldNode } from '../index';
+import { DeriveConvergenceTargets } from '@/schema-form/core/engine/blueprint';
+import { WriteOption } from '@/schema-form/core/engine/types/value';
+
+import { createTestTree } from '../../__tests__/fixtures/createTestTree';
 import { deriveShadowEvaluation } from '../utils/derivation/deriveShadowEvaluation';
-import { createTestTree } from './fixtures/createTestTree';
+import { loadFieldNodeAtMount } from '../utils/load/loadFieldNodeAtMount';
+import { writeFieldNode } from '../utils/write/writeFieldNode';
 
 /** Restore the package setup's switch after each consumer-mode counterexample. */
 const setupEnabled = deriveShadowEvaluation.enabled;

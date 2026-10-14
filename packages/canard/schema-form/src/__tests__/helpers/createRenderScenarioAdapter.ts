@@ -6,7 +6,7 @@ import type {
   ScenarioAdapter,
 } from '@aileron/schema-form-scenarios';
 
-import type { FieldNode } from '@/schema-form';
+import type { FieldNode } from '@/schema-form/core';
 
 import type { FormHarness } from '../renderForm';
 

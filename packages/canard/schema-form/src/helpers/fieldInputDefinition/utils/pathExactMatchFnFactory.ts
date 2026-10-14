@@ -1,4 +1,4 @@
-import { SchemaFormError } from '@/schema-form/errors';
+import { FormErrorCode, SchemaFormError } from '@/schema-form/errors';
 import { stripFragment } from '@/schema-form/helpers/jsonPointer';
 import type { FieldInputTestFn } from '@/schema-form/types';
 
@@ -18,7 +18,7 @@ export const pathExactMatchFnFactory = (
     };
   } catch (error) {
     throw new SchemaFormError(
-      'FORM_TYPE_INPUT_MAP',
+      FormErrorCode.FormTypeInputMap,
       formatFieldInputMapError(inputPath, error),
       { path: inputPath, error },
     );

@@ -1,6 +1,7 @@
 import { isArray } from '@winglet/common-utils/filter';
 
 import type { BlueprintSchema } from '../../../blueprint';
+import { CONTROL_KEY } from '../../../constants/controlKey';
 import type { FieldNodeRecord } from '../../../record';
 import { readStateDependency } from './readStateDependency';
 import type { EmissionSnapshot } from './readStateDependency';
@@ -35,7 +36,7 @@ export const readFieldNodeWatchValues = <Self extends FieldNodeRecord<Self>>(
     typeof schema === 'object' ? schema.controls : undefined;
   const watch: unknown =
     controls && typeof controls === 'object'
-      ? Reflect.get(controls, 'watch')
+      ? Reflect.get(controls, CONTROL_KEY.watch)
       : undefined;
   const paths = isArray(watch) ? watch : [];
   const values = paths.length

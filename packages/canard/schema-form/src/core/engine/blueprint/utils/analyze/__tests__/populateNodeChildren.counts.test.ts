@@ -1,6 +1,6 @@
 import { expect, it } from 'vitest';
 
-import fixtures from '../../../__tests__/fixtures/ownedInlineMounts.json';
+import { default as fixtures } from '../../../__tests__/fixtures/ownedInlineMounts.json';
 import { blueprint } from '../../../blueprint';
 import type { BlueprintSchema } from '../../../type';
 import { populateNodeChildren } from '../populateNodeChildren';

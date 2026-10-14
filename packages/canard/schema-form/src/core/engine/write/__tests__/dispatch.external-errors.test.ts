@@ -1,16 +1,15 @@
 import { describe, expect, it, vi } from 'vitest';
 
-import { FieldNodeEventType } from '../../record';
-import { ValidationMode } from '../../types/state';
-import type { ValidationIssue } from '../../validation';
-import {
-  dispatchBatch,
-  dispatchClearExternalErrors,
-  dispatchSetExternalErrors,
-  readFieldNodeRevision,
-  subscribeFieldNode,
-} from '../index';
-import { createDispatchTree } from './fixtures/createDispatchTree';
+import { createDispatchTree } from '@/schema-form/core/engine/__tests__/fixtures/createDispatchTree';
+import { FieldNodeEventType } from '@/schema-form/core/engine/record';
+import { ValidationMode } from '@/schema-form/core/engine/types/state';
+import type { ValidationIssue } from '@/schema-form/core/engine/validation';
+
+import { dispatchBatch } from '../utils/entry/dispatchBatch';
+import { dispatchClearExternalErrors } from '../utils/entry/dispatchClearExternalErrors';
+import { dispatchSetExternalErrors } from '../utils/entry/dispatchSetExternalErrors';
+import { readFieldNodeRevision } from '../utils/read/readFieldNodeRevision';
+import { subscribeFieldNode } from '../utils/read/subscribeFieldNode';
 
 describe('dispatcher external errors', () => {
   it('EVENT-045 stores errors in the runtime map and delivers synchronously', () => {

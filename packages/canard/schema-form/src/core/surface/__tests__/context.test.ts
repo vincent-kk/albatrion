@@ -1,9 +1,11 @@
 import { describe, expect, it } from 'vitest';
 
-import { blueprint } from '../../engine';
-import { PathKeyedMap } from '../../engine';
-import { PathKeyedSet } from '../../engine';
-import { fieldNodeFactory, setContext } from '../index';
+import { blueprint } from '@/schema-form/core/engine';
+import { PathKeyedMap } from '@/schema-form/core/engine';
+import { PathKeyedSet } from '@/schema-form/core/engine';
+
+import { setContext } from '../runtime/setContext';
+import { fieldNodeFactory } from '../utils/fieldNodeFactory';
 
 // filid:contract surface-members
 describe('FieldNode context', () => {

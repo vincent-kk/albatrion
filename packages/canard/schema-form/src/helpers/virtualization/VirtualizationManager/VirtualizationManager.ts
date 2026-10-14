@@ -6,10 +6,8 @@ import { withErrorBoundary } from '@winglet/react-utils/hoc';
 import type { Fn } from '@aileron/declare';
 
 import type { FieldNode } from '@/schema-form/core';
-import {
-  VIRTUALIZATION_DISABLED_FOR_FORM,
-  warnDevelopmentIssue,
-} from '@/schema-form/helpers/warning';
+import { FormWarningCode } from '@/schema-form/errors';
+import { warnDevelopmentIssue } from '@/schema-form/helpers/warning';
 import { usePlaceholderBoundaryReporter } from '@/schema-form/providers/FormErrorContext';
 
 import {
@@ -19,8 +17,8 @@ import {
   type VirtualizationPlaceholderProps,
   resolveVirtualizationOptions,
 } from '../resolveVirtualizationOptions';
-import { type IdleDeadlineLike, scheduleIdle } from './scheduleIdle';
 import { formatVirtualizationDisabledWarning } from './utils/formatVirtualizationDisabledWarning';
+import { type IdleDeadlineLike, scheduleIdle } from './utils/scheduleIdle';
 
 /** Maximum reveals per idle slice, bounding the size of a single React commit */
 const MAX_REVEALS_PER_SLICE = 25;
@@ -200,7 +198,7 @@ export class VirtualizationManager {
     if (typeof IntersectionObserver === 'undefined') {
       if (input)
         warnDevelopmentIssue({
-          code: VIRTUALIZATION_DISABLED_FOR_FORM,
+          code: FormWarningCode.VirtualizationDisabledForForm,
           message: formatVirtualizationDisabledWarning(),
         });
       return null;

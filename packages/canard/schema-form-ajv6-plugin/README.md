@@ -64,7 +64,7 @@ The plugin implements the `ValidatorPlugin` interface with validation, synchrono
 - **Benefits**: Full control over AJV settings, custom keywords, formats, and validation rules
 - **Restriction**: Instances with `coerceTypes`, `useDefaults`, or `removeAdditional` enabled are rejected immediately, before replacing the current binding. The thrown native `ValidatorBindRefusedError` lists the enabled options in `details.options`. Value-modifying custom keywords remain the consumer's responsibility.
 
-Callers discriminate the refusal by `group` (`'UNHANDLED_ERROR'`) and `code` (`'VALIDATOR_BIND_REFUSED'`); core's `isUnhandledError` does not recognize it.
+Callers discriminate the refusal by `group` (`'UNHANDLED_ERROR'`) and `code` (`'UNHANDLED_ERROR.VALIDATOR_BIND_REFUSED'`, the value of `FormErrorCode.ValidatorBindRefused`); core's `isUnhandledError` does not recognize it.
 
 #### **`configure(options: { directGuardCompile?: boolean }): void`**
 

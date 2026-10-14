@@ -1,8 +1,11 @@
-import { blueprint } from '../../../blueprint';
-import { EMPTY_REVISION_LEDGER } from '../../../record';
-import type { FieldNodeRecord, FieldNodeRuntime } from '../../../record';
-import { PathKeyedMap } from '../../../utils/pathIndex/PathKeyedMap';
-import { PathKeyedSet } from '../../../utils/pathIndex/PathKeyedSet';
+import { blueprint } from '@/schema-form/core/engine/blueprint';
+import { EMPTY_REVISION_LEDGER } from '@/schema-form/core/engine/record';
+import type {
+  FieldNodeRecord,
+  FieldNodeRuntime,
+} from '@/schema-form/core/engine/record';
+import { PathKeyedMap } from '@/schema-form/core/engine/utils/pathIndex/PathKeyedMap';
+import { PathKeyedSet } from '@/schema-form/core/engine/utils/pathIndex/PathKeyedSet';
 
 /** Plain node used to exercise navigation without the later engine class. */
 export interface TestNode extends FieldNodeRecord<TestNode> {}
@@ -23,6 +26,7 @@ export const createNode = (
     parent?.runtime ?? {
       blueprint: analysis,
       diagnostics: { status: 'stable' },
+      context: {},
       nodeFactory: (entry, owner, treeRuntime) =>
         createNode(
           'name' in entry ? entry.name : '',

@@ -1,14 +1,16 @@
 import { describe, expect, it, vi } from 'vitest';
 
-import type { BlueprintSchema } from '../../blueprint';
+import { createDispatchTree } from '@/schema-form/core/engine/__tests__/fixtures/createDispatchTree';
+import type { BlueprintSchema } from '@/schema-form/core/engine/blueprint';
 import {
   adoptFieldNodeChain,
   dispatchMount,
   dispatchValidate,
-} from '../../write';
-import { createDispatchTree } from '../../write/__tests__/fixtures/createDispatchTree';
-import { releaseValidationRoot, retainValidationRoot } from '../index';
+} from '@/schema-form/core/engine/write';
+
 import type { Validator } from '../type';
+import { releaseValidationRoot } from '../utils/lifetime/releaseValidationRoot';
+import { retainValidationRoot } from '../utils/lifetime/retainValidationRoot';
 
 // filid:contract validation-lifetime
 describe('same schema id trees', () => {

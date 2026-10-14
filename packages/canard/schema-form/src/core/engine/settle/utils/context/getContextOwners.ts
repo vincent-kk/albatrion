@@ -1,5 +1,7 @@
+import { JSONPointer as $ } from '@/schema-form/helpers/jsonPointer';
+
 import type { Blueprint } from '../../../blueprint';
-import { getDeriveRuleTable } from '../../derive';
+import { getDeriveRuleTable } from '../../../derive';
 
 /** Context readers are held apart from absolute JSON Pointer dependencies. */
 const OWNERS = new WeakMap<Blueprint, readonly string[]>();
@@ -15,7 +17,7 @@ export const getContextOwners = (blueprint: Blueprint): readonly string[] => {
   if (!blueprint.capabilities.hasDependencies) return EMPTY_OWNERS;
   const cached = OWNERS.get(blueprint);
   if (cached) return cached;
-  const ids = blueprint.dependencies['@'];
+  const ids = blueprint.dependencies[$.Context];
   if (!ids?.length) {
     OWNERS.set(blueprint, EMPTY_OWNERS);
     return EMPTY_OWNERS;
@@ -32,7 +34,7 @@ export const getContextOwners = (blueprint: Blueprint): readonly string[] => {
               (rule) =>
                 rule.kind === 'derived' &&
                 rule.targetName &&
-                rule.watchDependencies.includes('@'),
+                rule.watchDependencies.includes($.Context),
             )) &&
         !owners.includes(declaration.path)
       )

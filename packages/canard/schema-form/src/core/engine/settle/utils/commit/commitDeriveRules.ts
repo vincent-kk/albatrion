@@ -1,12 +1,11 @@
-import { SchemaFormError } from '../../../../../errors';
+import { FormErrorCode, SchemaFormError } from '../../../../../errors';
+import { evaluateResetInteraction } from '../../../derive';
 import { captureFieldNodeChange, shallowPatch } from '../../../record';
 import type { FieldNodeRecord } from '../../../record';
 import { FieldNodeState } from '../../../types/state';
-import { evaluateResetInteraction } from '../../derive';
 import type { SettlementContext } from '../../type';
 import { getDeriveState } from '../derivation/getDeriveState';
 import { recordSettlementFailure } from '../errors/recordSettlementFailure';
-import { EXPRESSION_THREW } from '../errors/settleErrorCode';
 import { walkOwnedFieldNodes } from '../walkOwnedFieldNodes';
 import { pruneCommittedRuleKeys } from './pruneCommittedRuleKeys';
 import { updateCommittedRuleValue } from './updateCommittedRuleValue';
@@ -28,7 +27,7 @@ export const commitDeriveRules = <Self extends FieldNodeRecord<Self>>(
     recordSettlementFailure(
       context,
       new SchemaFormError(
-        EXPRESSION_THREW,
+        FormErrorCode.ExpressionThrew,
         `Reset interaction expression failed at ${failure.schemaPath}`,
         {
           path: failure.sourcePath,

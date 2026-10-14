@@ -9,6 +9,8 @@
 - 폼 지정 렌더러·포맷터가 외부 설정보다 우선하며 누락된 값은 플러그인 폴백으로 보완합니다.
 - 오류 표시 판단은 명시적 `FieldNodeState.ErrorVisible` 상태를 먼저 보고 정책 비트를 평가합니다. 기본은 dirty와 touched의 동시 충족입니다.
 
+- Context 객체와 Provider는 `components/`, 소비 훅은 `hooks/`에 있습니다. 뿌리에는 문서·진입점·형 동반 파일(`type.ts`)만 둡니다(filid zero-peer-file).
+
 ## Acceptance Criteria
 
 ### form-type-renderer-context-contract — 관찰 가능한 동작

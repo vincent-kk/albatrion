@@ -1,6 +1,6 @@
 import type { JSONSchema } from '@winglet/json-schema';
 
-import { nodeFromJSONSchema } from '@/schema-form/core/surface/utils/nodeFromJSONSchema';
+import { nodeFromJSONSchema } from '@/schema-form/__tests__/fixtures/nodeFromJSONSchema';
 
 const schema = {
   type: 'object',

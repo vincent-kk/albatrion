@@ -4,12 +4,14 @@ export type {
   ArrayOperation,
   ArrayArrangePlan,
   UnionSpec,
-  FieldNodeFactory,
 } from './types/behavior';
 export type {
-  FieldNodeRuntime,
-  SettlementScratch,
   Distribution,
+  FieldNodeRuntime,
+  SettlementBudget,
+  SettlementEntryApi,
+  SettlementFailureCause,
+  SettlementScratch,
   TypeMismatchRecord,
 } from './types/runtime';
 export { EMPTY_REVISION_LEDGER } from './constants/emptyRevisionLedger';

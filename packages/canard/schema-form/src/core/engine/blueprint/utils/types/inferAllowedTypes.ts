@@ -1,9 +1,9 @@
 import { isArray } from '@winglet/common-utils/filter';
 
+import { FormErrorCode } from '../../../../../errors';
 import type { BlueprintSchema, SchemaTypeName } from '../../type';
 import { collectStaticSchemas } from '../analyze/collectStaticSchemas';
 import type { AnalysisContext } from '../analyze/type';
-import { BlueprintErrorCode } from '../diagnostics/constant';
 import { throwBlueprintError } from '../diagnostics/throwBlueprintError';
 import { foldAllowedTypes } from './foldAllowedTypes';
 import { inferLiteralTypes } from './inferLiteralTypes';
@@ -49,7 +49,7 @@ export const inferAllowedTypes = (
     );
     if (allowed?.length === 0)
       return throwBlueprintError(
-        BlueprintErrorCode.AllOfTypeRedefinition,
+        FormErrorCode.AllOfTypeRedefinition,
         part.schemaPath,
         { schema },
         context.options,
@@ -83,7 +83,7 @@ export const inferAllowedTypes = (
         );
         if (!types)
           return throwBlueprintError(
-            BlueprintErrorCode.UnknownJsonSchema,
+            FormErrorCode.UnknownJsonSchema,
             path,
             {
               guidance: 'Specify type explicitly for an unconstrained branch.',
@@ -102,7 +102,7 @@ export const inferAllowedTypes = (
     const kindMask = foldAllowedTypes(inferred);
     if ((kindMask & 24) !== 0 && kindMask !== 8 && kindMask !== 16)
       return throwBlueprintError(
-        BlueprintErrorCode.UnknownJsonSchema,
+        FormErrorCode.UnknownJsonSchema,
         schemaPath,
         {
           guidance:
@@ -118,7 +118,7 @@ export const inferAllowedTypes = (
   }
   if (allowTop && inferred === undefined) return undefined;
   return throwBlueprintError(
-    BlueprintErrorCode.UnknownJsonSchema,
+    FormErrorCode.UnknownJsonSchema,
     schemaPath,
     {
       guidance:

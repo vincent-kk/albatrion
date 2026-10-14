@@ -60,6 +60,17 @@ Precedence: repository instructions (this document, per-package CLAUDE.md) > rep
 
 Any other slash command comes from Claude Code itself or from an installed plugin (seiri, filid, and so on); this repository does not define them.
 
+## 📐 Module Contract Principles
+
+Owner principles for every package that has adopted FCA (directories with `INTENT.md`). Per the precedence above, they outrank `.claude/rules/`.
+
+1. **`index.ts` is the contract record.** It records which interface a fractal promised, and it is the strict contract that keeps internal helpers and sub-fractal trees from multiplying complexity outward. Widening it is a contract change; it lists its exports by name, never with a wildcard.
+2. **The root is the first image.** The `index.ts` and the flat files at a fractal's root are what a reader sees first, while attention is highest. A fractal root holds its documents, its `index.ts` and at most one implementation file named after the fractal; everything else sits in a role compartment (`components/`, `utils/`, `hooks/`, `types/` and the like) or in a child fractal. Every root file and every index export must have a consumer.
+3. **A consumer is product code outside the fractal**: another fractal or another package. Tests, benchmarks and stories are not consumers.
+4. **Imports follow lineage.** Upward is open: a fractal may import its ancestors' organ files and root files directly. Downward is closed: a parent reaches a child fractal only through the child's `index.ts`. Sideways is closed: a non-lineage fractal is reached only through its own `index.ts`, like an external package. An organ has no `index.ts`; its files are imported directly, and an organ never imports a child fractal of its owner. A fractal never imports its own or an ancestor's `index.ts`.
+5. **Tests verify from inside.** A test lives in the fractal it verifies (its `__tests__/`) and imports that fractal's internal files directly, never through its own `index.ts`. Public-API tests that act as an external consumer sit in the package-level `src/__tests__/` and import the package entry point. The verification-file exemption in `filid_fractal-boundaries` §5 does not lift §3.
+6. **An unused root file or export is a defect**, on par with a broken feature. The "leave pre-existing dead code" allowance of `seiri_reuse-first` §3 does not apply to it: remove it or move it below the root.
+
 ## 🎯 Quick Reference for Claude Code
 
 When working on this monorepo:
@@ -89,6 +100,7 @@ When working on this monorepo:
 4. Run yarn lint, typecheck, and tests before completing tasks
 5. Follow the project structure and naming conventions
 6. Bump the package version in its `package.json` when releasing — this repository does not use changesets or CHANGELOG files, so the commit message is the only durable record of a behavior change
+7. Before adding a root file or an `index.ts` export, name its consumer outside the fractal (see Module Contract Principles)
 
 ### 4. **Available Packages**
 

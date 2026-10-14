@@ -1,7 +1,4 @@
-import {
-  ARRAY_METHOD_ON_NON_ARRAY,
-  SchemaFormError,
-} from '../../../../../errors';
+import { FormErrorCode, SchemaFormError } from '../../../../../errors';
 import type { Behavior } from '../../../record';
 
 /**
@@ -12,7 +9,7 @@ import type { Behavior } from '../../../record';
  */
 export const rejectArrayOperation: Behavior['arrange'] = (node, operation) => {
   throw new SchemaFormError(
-    ARRAY_METHOD_ON_NON_ARRAY,
+    FormErrorCode.ArrayMethodOnNonArray,
     `Cannot ${operation.kind} non-array node at ${node.path}`,
     { path: node.path, method: operation.kind },
   );

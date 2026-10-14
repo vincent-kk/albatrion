@@ -1,14 +1,13 @@
 import { describe, expect, it, vi } from 'vitest';
 
-import {
-  adoptFieldNodeChain,
-  dispatchMount,
-  dispatchResetForm,
-  dispatchResetSubtree,
-  dispatchSetValue,
-} from '../index';
+import { createDispatchTree } from '@/schema-form/core/engine/__tests__/fixtures/createDispatchTree';
+
+import { adoptFieldNodeChain } from '../utils/chain/adoptFieldNodeChain';
+import { dispatchMount } from '../utils/entry/dispatchMount';
+import { dispatchResetForm } from '../utils/entry/dispatchResetForm';
+import { dispatchResetSubtree } from '../utils/entry/dispatchResetSubtree';
+import { dispatchSetValue } from '../utils/entry/dispatchSetValue';
 import { dedupeWarningRecord } from '../utils/report/dedupeWarningRecord';
-import { createDispatchTree } from './fixtures/createDispatchTree';
 
 // filid:contract dispatch-report
 describe('structural warning keys', () => {

@@ -2,7 +2,7 @@
 
 ## Purpose
 
-폼 필드의 렌더러 컴포넌트(`FieldRenderer`)와 에러 표시 정책(`checkShowError`, `formatError`)을 Context로 공급한다. `ExternalFormContext` 값과 Form-level props를 병합하여 최종 렌더링 동작을 결정한다.
+폼 필드의 렌더러 컴포넌트(`FieldRenderer`)와 에러 표시 정책(`checkShowError`, `formatError`)을 Context로 공급한다. `ExternalFormContext` 값과 Form 수준 props를 병합해서 최종 렌더링 동작을 정한다.
 
 ## Structure
 
@@ -16,27 +16,27 @@ FieldRendererContext/
 
 ## Conventions
 
-- TypeScript + React
-- `checkShowError(condition?)` 함수: `FieldNodeState.ErrorVisible` → `ShowError.Always/Never/Dirty/Touched/DirtyTouched` 비트마스크 평가
-- 기본 showError: `ShowError.DirtyTouched` (dirty AND touched 모두 충족 시 표시)
-- Form-level `CustomFieldRenderer`/`formatError` > `ExternalFormContext` 값 우선
-- `useFieldRendererContext`에서 `PluginManager.FieldRenderer` / `PluginManager.formatError`를 최종 fallback으로 사용
+- TypeScript와 React로 작성한다.
+- `checkShowError(condition?)` 함수는 `FieldNodeState.ErrorVisible`을 먼저 보고, 그다음 `ShowError.Always/Never/Dirty/Touched/DirtyTouched` 비트마스크를 평가한다.
+- 기본 showError는 `ShowError.DirtyTouched`다(dirty와 touched를 모두 만족할 때 표시한다).
+- Form 수준의 `CustomFieldRenderer`와 `formatError`가 `ExternalFormContext` 값보다 우선한다.
+- `useFieldRendererContext`는 `PluginManager.FieldRenderer`와 `PluginManager.formatError`를 마지막 fallback으로 쓴다.
 
 ## Boundaries
 
 ### Always do
 
-- `checkShowError`에서 `FieldNodeState.ErrorVisible` 명시적 플래그를 우선 평가 (override 지원)
-- `CustomFieldRenderer`와 `formatError`를 `useConstant`로 고정 (마운트 이후 변경 차단)
-- `useFieldRendererContext`에서 PluginManager fallback 유지
+- `checkShowError`에서는 `FieldNodeState.ErrorVisible`이라는 명시적 플래그를 먼저 평가한다(override를 지원하기 위해서다).
+- `CustomFieldRenderer`와 `formatError`는 `useConstant`로 고정해서 마운트 이후의 변경을 막는다.
+- `useFieldRendererContext`의 PluginManager fallback을 유지한다.
 
 ### Ask first
 
-- `ShowError` 열거형에 새 모드 추가 시
-- 에러 표시 우선순위 로직 변경 시
+- `ShowError` 열거형에 새 모드를 추가하는 경우
+- 에러 표시 우선순위 로직을 바꾸는 경우
 
 ### Never do
 
-- `FieldRenderer`를 Context에서 직접 렌더링 (FieldProxy가 담당)
-- `checkShowError` 함수를 Context 외부에서 재구현
-- PluginManager fallback을 제거하여 렌더러가 `undefined`가 되도록 방치
+- Context에서 `FieldRenderer`를 직접 렌더링하는 것(FieldProxy가 맡는다)
+- `checkShowError` 함수를 Context 밖에서 다시 구현하는 것
+- PluginManager fallback을 없애서 렌더러가 `undefined`가 되게 두는 것

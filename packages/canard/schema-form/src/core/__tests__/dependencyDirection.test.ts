@@ -12,6 +12,7 @@ const FRACTALS = [
   'engine/behaviors',
   'engine/navigation',
   'engine/validation',
+  'engine/derive',
   'engine/settle',
   'engine/write',
   'surface',
@@ -32,9 +33,10 @@ const ORDER: Readonly<Record<string, number>> = {
   'engine/behaviors': 2,
   'engine/navigation': 2,
   'engine/validation': 3,
-  'engine/settle': 4,
-  'engine/write': 5,
-  surface: 6,
+  'engine/derive': 4,
+  'engine/settle': 5,
+  'engine/write': 6,
+  surface: 7,
 };
 
 interface Edge {
@@ -312,34 +314,11 @@ describe('NODE-016 and NODE-045 dependency direction', () => {
   });
 
   it('keeps derive below settle without importing its orchestration or type', () => {
-    const deriveRoot = join(CORE, 'engine', 'settle', 'derive') + sep;
+    const deriveRoot = join(CORE, 'engine', 'derive') + sep;
     const settleRoot = join(CORE, 'engine', 'settle') + sep;
-    const sameValue = join(
-      CORE,
-      'engine',
-      'settle',
-      'utils',
-      'compute',
-      'sameValue.ts',
-    );
-    const resolveDependencyPath = join(
-      CORE,
-      'engine',
-      'settle',
-      'utils',
-      'paths',
-      'resolveDependencyPath.ts',
-    );
     const forbidden = edges.filter(
       ({ source, target }) =>
-        source.startsWith(deriveRoot) &&
-        target.startsWith(settleRoot) &&
-        !target.startsWith(deriveRoot) &&
-        target !== sameValue &&
-        target !== resolveDependencyPath &&
-        !target.startsWith(
-          join(CORE, 'engine', 'settle', 'utils', 'controls') + sep,
-        ),
+        source.startsWith(deriveRoot) && target.startsWith(settleRoot),
     );
     expect(
       forbidden.map(
@@ -349,12 +328,12 @@ describe('NODE-016 and NODE-045 dependency direction', () => {
   });
 
   it('routes settle organ imports of derive through its index.ts', () => {
-    const deriveRoot = join(CORE, 'engine', 'settle', 'derive') + sep;
+    const deriveRoot = join(CORE, 'engine', 'derive') + sep;
     const direct = edges.filter(
       ({ source, target }) =>
         source.startsWith(join(CORE, 'engine', 'settle', 'utils') + sep) &&
         target.startsWith(deriveRoot) &&
-        target !== join(CORE, 'engine', 'settle', 'derive', 'index.ts'),
+        target !== join(CORE, 'engine', 'derive', 'index.ts'),
     );
     expect(
       direct.map(

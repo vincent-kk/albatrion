@@ -1,22 +1,24 @@
 import { describe, expect, it } from 'vitest';
 
-import { FieldNodeEventType, FieldNodeRequestType } from '../../record';
-import { FieldNodeState } from '../../types/state';
+import { createDispatchTree } from '@/schema-form/core/engine/__tests__/fixtures/createDispatchTree';
+import type { DispatchTestNode } from '@/schema-form/core/engine/__tests__/fixtures/createDispatchTree';
 import {
-  dispatchBatch,
-  dispatchClearExternalErrors,
-  dispatchClearSubtreeState,
-  dispatchMount,
-  dispatchRequest,
-  dispatchSetExternalErrors,
-  dispatchSetState,
-  dispatchSetSubtreeState,
-  dispatchSetValue,
-  readFieldNodeRevision,
-  subscribeFieldNode,
-} from '../index';
-import { createDispatchTree } from './fixtures/createDispatchTree';
-import type { DispatchTestNode } from './fixtures/createDispatchTree';
+  FieldNodeEventType,
+  FieldNodeRequestType,
+} from '@/schema-form/core/engine/record';
+import { FieldNodeState } from '@/schema-form/core/engine/types/state';
+
+import { dispatchBatch } from '../utils/entry/dispatchBatch';
+import { dispatchClearExternalErrors } from '../utils/entry/dispatchClearExternalErrors';
+import { dispatchClearSubtreeState } from '../utils/entry/dispatchClearSubtreeState';
+import { dispatchMount } from '../utils/entry/dispatchMount';
+import { dispatchRequest } from '../utils/entry/dispatchRequest';
+import { dispatchSetExternalErrors } from '../utils/entry/dispatchSetExternalErrors';
+import { dispatchSetState } from '../utils/entry/dispatchSetState';
+import { dispatchSetSubtreeState } from '../utils/entry/dispatchSetSubtreeState';
+import { dispatchSetValue } from '../utils/entry/dispatchSetValue';
+import { readFieldNodeRevision } from '../utils/read/readFieldNodeRevision';
+import { subscribeFieldNode } from '../utils/read/subscribeFieldNode';
 import { getDispatchChild } from './fixtures/getDispatchChild';
 
 // filid:contract dispatch-budget

@@ -1,7 +1,7 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import type { FieldNode } from '@/schema-form/core';
-import { VirtualizationManager } from '@/schema-form/helpers/virtualization';
+import { VirtualizationManager } from '@/schema-form/helpers/virtualization/VirtualizationManager';
 
 /**
  * Selection API of VirtualizationManager: the static `create` factory and the

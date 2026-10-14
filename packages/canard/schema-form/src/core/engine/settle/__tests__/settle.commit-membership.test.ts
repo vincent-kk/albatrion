@@ -1,12 +1,16 @@
 import { describe, expect, it, vi } from 'vitest';
 
-import { FieldNodeEventType, markFieldNodeEvent } from '../../record';
-import { loadFieldNodeAtMount } from '../index';
+import {
+  FieldNodeEventType,
+  markFieldNodeEvent,
+} from '@/schema-form/core/engine/record';
+
+import { createTestTree } from '../../__tests__/fixtures/createTestTree';
 import { markCommitDeliveries } from '../utils/commit/markCommitDeliveries';
+import { loadFieldNodeAtMount } from '../utils/load/loadFieldNodeAtMount';
 import { createSettlementContext } from '../utils/settlement/createSettlementContext';
 import { getSettlementScratch } from '../utils/write/getSettlementScratch';
 import { releaseSettlementScratch } from '../utils/write/releaseSettlementScratch';
-import { createTestTree } from './fixtures/createTestTree';
 
 describe('commit candidate membership', () => {
   it('visits global-state candidates before extra event candidates exactly once', () => {

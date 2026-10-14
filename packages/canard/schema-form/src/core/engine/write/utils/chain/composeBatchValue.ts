@@ -1,5 +1,7 @@
 import { isArray } from '@winglet/common-utils/filter';
 
+import { JSONPointer as $ } from '@/schema-form/helpers/jsonPointer';
+
 import type { FieldNodeRecord } from '../../../record';
 import type { WriteOption } from '../../../types/value';
 import { replaceAtPath } from './utils/replaceAtPath';
@@ -21,8 +23,8 @@ export const composeBatchValue = <Self extends FieldNodeRecord<Self>>(
     const names = write.node.path
       ? write.node.path
           .slice(1)
-          .split('/')
-          .map((name) => name.replace(/~1/g, '/').replace(/~0/g, '~'))
+          .split($.Separator)
+          .map((name) => name.replace(/~1/g, $.Separator).replace(/~0/g, '~'))
       : [];
     const fields =
       write.node.behavior.type === 'virtual'

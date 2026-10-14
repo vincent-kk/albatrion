@@ -2,31 +2,31 @@
 
 ## Purpose
 
-초대형 폼의 렌더 가상화(지연 마운트) 코어(React 의존은 `Placeholder` 방어로 한정). Form당 하나의 VirtualizationManager가 공유 IntersectionObserver와 idle backfill 큐로 placeholder → 실제 컴포넌트 교체(reveal)를 조율한다.
+초대형 폼의 렌더 가상화(지연 마운트) 코어다(React 의존은 `Placeholder` 방어로 한정). Form마다 VirtualizationManager 하나가 공유 IntersectionObserver와 idle backfill 큐로, placeholder를 실제 컴포넌트로 바꾸는 일(노출, reveal)을 조율한다.
 
 ## Conventions
 
-- React 런타임 import는 `Placeholder` 방어(`withErrorBoundary`/`isReactComponent`)로 한정 — 그 외엔 type-only `ComponentType`만 허용
-- 생성은 `VirtualizationManager.create(input)` 정적 팩토리로 — 비활성/IO 부재 시 null 반환
-- 게이트 판정은 self-selecting 메서드(`forBranch`/`forChild`)로 노출 — 소비층은 옵셔널 체인으로 조합하고, 옵션 원값은 비공개
-- reveal은 단방향: 한 번 reveal된 노드는 되돌리지 않는다 (defer-once)
-- register/unregister/disconnect는 모두 멱등; disconnect 후 register로 재개 가능(StrictMode 대응)
-- requestIdleCallback 미지원 환경은 common-utils `scheduleCancelableMacrotaskSafe`로 폴백 (브라우저 setTimeout 기반 — 렌더링 창 보장)
+- React 런타임 import는 `Placeholder` 방어(`withErrorBoundary`/`isReactComponent`)에만 허용하고, 그 밖에는 type-only `ComponentType`만 허용한다.
+- 생성은 `VirtualizationManager.create(input)` 정적 팩토리로 하며, 비활성이거나 IO가 없으면 null을 반환한다.
+- 게이트 판정은 스스로 대상을 고르는 메서드(`forBranch`/`forChild`)로 노출한다. 소비층은 옵셔널 체인으로 조합하고, 옵션 원값은 공개하지 않는다.
+- reveal은 한 방향으로만 진행한다. 한 번 reveal된 노드는 되돌리지 않는다(defer-once).
+- register/unregister/disconnect는 모두 멱등이며, disconnect 뒤에도 register로 다시 시작할 수 있다(StrictMode 대응).
+- requestIdleCallback을 지원하지 않는 환경에서는 common-utils의 `scheduleCancelableMacrotaskSafe`로 폴백한다(브라우저 setTimeout 기반이라 렌더링 창을 보장한다).
 
 ## Boundaries
 
 ### Always do
 
-- 브라우저 API(IntersectionObserver/requestIdleCallback)는 부재 가능성을 전제로 접근할 것
-- reveal 시 registry 항목 제거 + unobserve + markRevealed를 함께 수행할 것
+- 브라우저 API(IntersectionObserver/requestIdleCallback)는 없을 수 있다고 가정하고 접근한다.
+- reveal할 때 registry 항목 제거, unobserve, markRevealed를 함께 수행한다.
 
 ### Ask first
 
 - 옵션 기본값(threshold/eagerCount/rootMargin/backfill/estimateHeight) 변경
-- idle slice당 reveal 상한(현재 25) 또는 deadline 정책 변경
+- idle slice마다 reveal하는 수의 상한(현재 25)이나 deadline 정책 변경
 
 ### Never do
 
-- React/컴포넌트 레이어 import — 예외: `Placeholder` 방어용 `withErrorBoundary`/`isReactComponent` (의존 방향: providers/components → helpers)
-- reveal 취소·역방향 전환 로직 추가
-- 노드 값/상태 변경 (이 모듈은 렌더 타이밍만 다룬다)
+- React/컴포넌트 레이어를 import하지 않는다. 예외는 `Placeholder` 방어용 `withErrorBoundary`/`isReactComponent`다(의존 방향: providers/components → helpers).
+- reveal 취소나 역방향 전환 로직을 추가하지 않는다.
+- 노드 값이나 상태를 변경하지 않는다(이 모듈은 렌더 타이밍만 다룬다).

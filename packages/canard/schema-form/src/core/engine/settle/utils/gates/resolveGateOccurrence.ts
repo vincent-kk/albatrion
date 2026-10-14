@@ -1,3 +1,5 @@
+import { JSONPointer as $ } from '@/schema-form/helpers/jsonPointer';
+
 import type { BlueprintGate } from '../../../blueprint';
 import { bindTemplatePath } from '../paths/bindTemplatePath';
 import { bindGateHostPath } from './bindGateHostPath';
@@ -23,14 +25,14 @@ export const resolveGateOccurrence = (
     occurrencePath,
     childHostPath,
   );
-  let common = hostPath.split('/').filter(Boolean);
+  let common = hostPath.split($.Separator).filter(Boolean);
   for (const read of gate.evaluationReads) {
     if (typeof read === 'number') {
       common = common.slice(0, Math.max(0, common.length - read));
       continue;
     }
     const target = bindTemplatePath(read, childHostPath ?? occurrencePath)
-      .split('/')
+      .split($.Separator)
       .filter(Boolean);
     let index = 0;
     while (
@@ -44,6 +46,6 @@ export const resolveGateOccurrence = (
   return {
     gate,
     hostPath,
-    evaluationHostPath: common.length ? `/${common.join('/')}` : '',
+    evaluationHostPath: common.length ? `/${common.join($.Separator)}` : '',
   };
 };

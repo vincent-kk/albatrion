@@ -1,4 +1,4 @@
-export { ExternalFormContextProvider } from './ExternalFormContextProvider';
-export { useExternalFormContext } from './useExternalFormContext';
+export { ExternalFormContextProvider } from './components/ExternalFormContextProvider';
+export { useExternalFormContext } from './hooks/useExternalFormContext';
 
-export type { ExternalFormContextProviderProps } from './ExternalFormContextProvider';
+export type { ExternalFormContextProviderProps } from './components/ExternalFormContextProvider';

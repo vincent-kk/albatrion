@@ -2,11 +2,12 @@ import { describe, expect, it } from 'vitest';
 
 import { isArray } from '@winglet/common-utils/filter';
 
-import { SchemaFormError } from '../../../../errors';
-import { WriteOption } from '../../types/value';
-import type { Validator } from '../../validation';
-import { writeFieldNode } from '../index';
-import { createTestTree } from './fixtures/createTestTree';
+import { WriteOption } from '@/schema-form/core/engine/types/value';
+import type { Validator } from '@/schema-form/core/engine/validation';
+import { SchemaFormError } from '@/schema-form/errors';
+
+import { createTestTree } from '../../__tests__/fixtures/createTestTree';
+import { writeFieldNode } from '../utils/write/writeFieldNode';
 
 describe('round 55 direct settlement regression', () => {
   it('ERROR-005 55C-01 preserves a guard before a later derive budget failure', () => {

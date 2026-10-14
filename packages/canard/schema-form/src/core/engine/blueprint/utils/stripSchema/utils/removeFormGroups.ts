@@ -1,6 +1,8 @@
 import { hasOwnProperty } from '@winglet/common-utils/lib';
 import type { JSONScannerOptions } from '@winglet/json-schema/scanner';
 
+import { SCHEMA_GROUP } from '../../../../constants/schemaGroup';
+
 /**
  * Remove reserved groups only when the schema scanner visits an actual schema.
  * @param entry - Scanner-owned entry, never a const/enum/default data object.
@@ -11,9 +13,9 @@ export const removeFormGroups: NonNullable<JSONScannerOptions['mutate']> = ({
 }) => {
   if (!schema || typeof schema !== 'object') return;
   if (
-    !hasOwnProperty(schema, 'controls') &&
-    !hasOwnProperty(schema, 'options') &&
-    !hasOwnProperty(schema, 'presentation')
+    !hasOwnProperty(schema, SCHEMA_GROUP.controls) &&
+    !hasOwnProperty(schema, SCHEMA_GROUP.options) &&
+    !hasOwnProperty(schema, SCHEMA_GROUP.presentation)
   )
     return;
   const { controls, options, presentation, ...stripped } = schema;

@@ -1,13 +1,15 @@
 import { describe, expect, it } from 'vitest';
 
-import { fieldNodeFactory } from '../../../surface';
-import { blueprint } from '../../blueprint';
-import type { BlueprintSchema } from '../../blueprint';
-import { WriteOption } from '../../types/value';
-import { PathKeyedMap } from '../../utils/pathIndex/PathKeyedMap';
-import { PathKeyedSet } from '../../utils/pathIndex/PathKeyedSet';
-import { loadFieldNodeAtMount, writeFieldNode } from '../index';
-import { createTestTree } from './fixtures/createTestTree';
+import { blueprint } from '@/schema-form/core/engine/blueprint';
+import type { BlueprintSchema } from '@/schema-form/core/engine/blueprint';
+import { WriteOption } from '@/schema-form/core/engine/types/value';
+import { PathKeyedMap } from '@/schema-form/core/engine/utils/pathIndex/PathKeyedMap';
+import { PathKeyedSet } from '@/schema-form/core/engine/utils/pathIndex/PathKeyedSet';
+import { fieldNodeFactory } from '@/schema-form/core/surface';
+
+import { createTestTree } from '../../__tests__/fixtures/createTestTree';
+import { loadFieldNodeAtMount } from '../utils/load/loadFieldNodeAtMount';
+import { writeFieldNode } from '../utils/write/writeFieldNode';
 
 /** Create a runtime surface tree for commit-scoped getter checks. */
 const createSurfaceTree = (schema: BlueprintSchema) =>

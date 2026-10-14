@@ -1,5 +1,6 @@
 import { hasOwnProperty } from '@winglet/common-utils/lib';
 
+import { CONTROL_KEY } from '../../../constants/controlKey';
 import type { FieldNodeRecord } from '../../../record';
 import type { SettlementContext } from '../../type';
 import { getControlLayers } from '../controls/getControlLayers';
@@ -19,7 +20,8 @@ export const readDepartingAncestorPolicy = <Self extends FieldNodeRecord<Self>>(
     if (ancestor.detached) continue;
     const previous = getControlLayers(ancestor, new Map());
     const departed = previous.filter((group) => {
-      if (!hasOwnProperty(group.controls, 'unsetOnInactive')) return false;
+      if (!hasOwnProperty(group.controls, CONTROL_KEY.unsetOnInactive))
+        return false;
       const key = JSON.stringify([
         group.host.path,
         group.host.blueprintNode.kind,

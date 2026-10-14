@@ -1,9 +1,10 @@
 import { describe, expect, it } from 'vitest';
 
-import { WriteOption } from '../../types/value';
-import { writeFieldNode } from '../index';
-import { sameValue } from '../utils/compute/sameValue';
-import { createTestTree } from './fixtures/createTestTree';
+import { WriteOption } from '@/schema-form/core/engine/types/value';
+
+import { createTestTree } from '../../__tests__/fixtures/createTestTree';
+import { sameValue } from '../../utils/compute/sameValue';
+import { writeFieldNode } from '../utils/write/writeFieldNode';
 
 // filid:contract settle-derive
 describe('settle value equivalence', () => {

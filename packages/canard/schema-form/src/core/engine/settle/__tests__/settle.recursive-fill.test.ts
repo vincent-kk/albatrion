@@ -1,13 +1,15 @@
 import { describe, expect, it, vi } from 'vitest';
 
-import type { BlueprintSchema } from '../../blueprint';
-import { WriteOption } from '../../types/value';
-import { arrangeFieldNodeItems, writeFieldNode } from '../index';
+import type { BlueprintSchema } from '@/schema-form/core/engine/blueprint';
+import { WriteOption } from '@/schema-form/core/engine/types/value';
+
+import { createTestTree } from '../../__tests__/fixtures/createTestTree';
 import * as calculation from '../utils/compute/computeNode';
 import * as independentDefaults from '../utils/compute/utils/hasIndependentLeafDefaults';
+import { arrangeFieldNodeItems } from '../utils/structure/arrangeFieldNodeItems';
 import * as descendants from '../utils/transition/collectFillDescendants';
 import * as transitionCap from '../utils/transition/getTransitionCap';
-import { createTestTree } from './fixtures/createTestTree';
+import { writeFieldNode } from '../utils/write/writeFieldNode';
 
 /** Load through the generic path used as the static-first-load oracle. */
 const loadGeneric = (

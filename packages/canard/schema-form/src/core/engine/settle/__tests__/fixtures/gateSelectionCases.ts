@@ -1,4 +1,4 @@
-import type { BlueprintSchema } from '../../../blueprint';
+import type { BlueprintSchema } from '@/schema-form/core/engine/blueprint';
 
 /** Baseline histories include projection, short circuit, occurrence, and fallback boundaries. */
 export const gateSelectionCases: {

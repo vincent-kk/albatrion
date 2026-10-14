@@ -1,6 +1,7 @@
 import { describe, expect, it, vi } from 'vitest';
 
-import { SetValueOption } from '../../surface';
+import { SetValueOption } from '@/schema-form/core/surface';
+
 import { makeFieldNodeTree } from '../makeFieldNodeTree';
 
 // filid:contract factory-single-path

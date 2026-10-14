@@ -1,7 +1,4 @@
-import {
-  SchemaFormError,
-  VALIDATOR_COMPILE_FAILED,
-} from '../../../../../errors';
+import { FormErrorCode, SchemaFormError } from '../../../../../errors';
 import type { FieldNodeRecord } from '../../../record';
 import type { ValidateFunction } from '../../type';
 import { readValidationEntry } from '../cache/readValidationEntry';
@@ -12,7 +9,7 @@ import { recentReleaseList } from '../lifetime/recentReleaseList';
  * Compile a replacement root before a binding transfers its old live chain.
  * @param node - New root or one of its occurrences.
  * @returns Shared compiled validator, or null if none was selected.
- * @throws VALIDATOR_COMPILE_FAILED while the previous tree is still untouched.
+ * @throws FormErrorCode.ValidatorCompileFailed while the previous tree is still untouched.
  */
 export const assertValidationRootReady = <Self extends FieldNodeRecord<Self>>(
   node: Self,
@@ -42,7 +39,7 @@ export const assertValidationRootReady = <Self extends FieldNodeRecord<Self>>(
         other.$id === id,
     );
   throw new SchemaFormError(
-    VALIDATOR_COMPILE_FAILED,
+    FormErrorCode.ValidatorCompileFailed,
     'Whole-schema validation could not be compiled',
     {
       error: entry.failure,

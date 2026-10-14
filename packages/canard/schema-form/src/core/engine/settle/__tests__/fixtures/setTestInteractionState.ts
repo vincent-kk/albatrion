@@ -1,9 +1,10 @@
 import {
   accumulateGlobalStateDeltas,
   publishGlobalStateDeltas,
-} from '../../../record';
-import type { NodeStateFlags } from '../../../types/state';
-import type { PlainNode } from './createPlainNode';
+} from '@/schema-form/core/engine/record';
+import type { NodeStateFlags } from '@/schema-form/core/engine/types/state';
+
+import type { PlainNode } from '../../../__tests__/fixtures/createPlainNode';
 
 /** Keep plain-record state setup consistent with the tree's accounted flags. */
 export const setTestInteractionState = (

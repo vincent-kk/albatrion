@@ -1,16 +1,15 @@
 import { describe, expect, it } from 'vitest';
 
-import { createTestValidator } from '../../../__tests__/fixtures/createTestValidator';
-import {
-  dispatchBatch,
-  dispatchMount,
-  dispatchPush,
-  dispatchSetValue,
-} from '../index';
+import { createTestValidator } from '@/schema-form/core/__tests__/fixtures/createTestValidator';
 import {
   type DispatchTestNode,
   createDispatchTree,
-} from './fixtures/createDispatchTree';
+} from '@/schema-form/core/engine/__tests__/fixtures/createDispatchTree';
+
+import { dispatchBatch } from '../utils/entry/dispatchBatch';
+import { dispatchMount } from '../utils/entry/dispatchMount';
+import { dispatchPush } from '../utils/entry/dispatchPush';
+import { dispatchSetValue } from '../utils/entry/dispatchSetValue';
 import { getDispatchChild } from './fixtures/getDispatchChild';
 
 /** Latent raw key for a path and kind. */

@@ -1,3 +1,5 @@
+import { JSONPointer as $ } from '@/schema-form/helpers/jsonPointer';
+
 /** Dirty paths retain descendant order or close an ungated post-order frontier. */
 export class DirtyPathSet extends Set<string> {
   /** Live descendant paths and their direct child names in insertion order. */
@@ -28,7 +30,7 @@ export class DirtyPathSet extends Set<string> {
       let current = path;
       while (current && !linked.has(current)) {
         linked.add(current);
-        const slash = current.lastIndexOf('/');
+        const slash = current.lastIndexOf($.Separator);
         const parent = current.slice(0, slash);
         super.add(parent);
         let children = this.childrenByParent.get(parent);
@@ -49,7 +51,7 @@ export class DirtyPathSet extends Set<string> {
       while (!this.has(current)) {
         super.add(current);
         if (!current) break;
-        const slash = current.lastIndexOf('/');
+        const slash = current.lastIndexOf($.Separator);
         const parent = current.slice(0, slash);
         let children = this.childrenByParent.get(parent);
         if (!children) {
@@ -64,7 +66,7 @@ export class DirtyPathSet extends Set<string> {
     super.add(path);
     let start = 1;
     while (start <= path.length) {
-      const slash = path.indexOf('/', start);
+      const slash = path.indexOf($.Separator, start);
       const end = slash < 0 ? path.length : slash;
       const parent = path.slice(0, start - 1);
       const name = path.slice(start, end);
@@ -84,7 +86,7 @@ export class DirtyPathSet extends Set<string> {
     if (!super.delete(path)) return false;
     if (this.postOrder) {
       if (path) {
-        const parent = path.slice(0, path.lastIndexOf('/'));
+        const parent = path.slice(0, path.lastIndexOf($.Separator));
         const children = this.childrenByParent.get(parent);
         children?.delete(path);
         if (children?.size === 0) this.childrenByParent.delete(parent);
@@ -93,7 +95,7 @@ export class DirtyPathSet extends Set<string> {
     }
     let start = 1;
     while (start <= path.length) {
-      const slash = path.indexOf('/', start);
+      const slash = path.indexOf($.Separator, start);
       const parent = path.slice(0, start - 1);
       const children = this.childrenByParent.get(parent)!;
       children.delete(path);

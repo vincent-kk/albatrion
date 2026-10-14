@@ -1,5 +1,7 @@
 import { describe, expect, it } from 'vitest';
 
+import { FormErrorCode } from '@/schema-form/errors';
+
 import type {
   BlueprintGate,
   BlueprintSchema,
@@ -157,9 +159,9 @@ describe('mergeEffectiveSchema', () => {
 
   it('reports static enum, const and range failures at the contributing schema path', () => {
     const cases: readonly [BlueprintSchema, BlueprintSchema, string][] = [
-      [{ enum: [1] }, { enum: [2] }, 'EMPTY_ENUM_INTERSECTION'],
-      [{ const: 1 }, { const: 2 }, 'CONFLICTING_CONST_VALUES'],
-      [{ minimum: 5 }, { maximum: 2 }, 'INVALID_RANGE'],
+      [{ enum: [1] }, { enum: [2] }, FormErrorCode.EmptyEnumIntersection],
+      [{ const: 1 }, { const: 2 }, FormErrorCode.ConflictingConstValues],
+      [{ minimum: 5 }, { maximum: 2 }, FormErrorCode.InvalidRange],
     ];
     for (const [left, right, code] of cases) {
       const diagnostics: unknown[] = [];
@@ -169,7 +171,7 @@ describe('mergeEffectiveSchema', () => {
             mode: 'static',
             collect: (d) => diagnostics.push(d),
           }).schema,
-      ).toThrow(code);
+      ).toThrow(expect.objectContaining({ code }));
       expect(diagnostics).toContainEqual(
         expect.objectContaining({ code, schemaPath: '#/allOf/1' }),
       );

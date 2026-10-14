@@ -1,3 +1,5 @@
+import { JSONPointer as $ } from '@/schema-form/helpers/jsonPointer';
+
 import type { FieldNodeRecord } from '../../../record';
 import type { SettlementContext } from '../../type';
 import { getDependencyIndex } from '../write/getDependencyIndex';
@@ -20,7 +22,7 @@ export const collectDeriveSourcePaths = <Self extends FieldNodeRecord<Self>>(
     while (true) {
       paths.add(path);
       if (!path) break;
-      path = path.slice(0, path.lastIndexOf('/'));
+      path = path.slice(0, path.lastIndexOf($.Separator));
     }
   }
   for (const node of context.entered) {

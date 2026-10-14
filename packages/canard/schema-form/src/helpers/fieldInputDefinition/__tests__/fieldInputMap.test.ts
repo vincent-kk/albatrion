@@ -4,7 +4,7 @@ import { describe, expect, test } from 'vitest';
 
 import type { FieldInputMap } from '@/schema-form/types';
 
-import { normalizeFieldInputMap } from '../fieldInputMap';
+import { normalizeFieldInputMap } from '../utils/normalizeFieldInputMap';
 
 // 테스트용 React 컴포넌트들
 const TestStringComponent = () =>

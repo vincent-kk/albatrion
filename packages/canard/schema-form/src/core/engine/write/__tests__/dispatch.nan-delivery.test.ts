@@ -1,16 +1,14 @@
 import { describe, expect, it } from 'vitest';
 
-import { FieldNodeEventType } from '../../record';
-import { isSameDeliveryValue } from '../../settle/utils/commit/utils/isSameDeliveryValue';
-import {
-  dispatchMount,
-  dispatchRemove,
-  dispatchSetValue,
-  subscribeFieldNode,
-} from '../index';
+import { createDispatchTree } from '@/schema-form/core/engine/__tests__/fixtures/createDispatchTree';
+import type { DispatchTestNode } from '@/schema-form/core/engine/__tests__/fixtures/createDispatchTree';
+import { FieldNodeEventType } from '@/schema-form/core/engine/record';
+
+import { dispatchMount } from '../utils/entry/dispatchMount';
+import { dispatchRemove } from '../utils/entry/dispatchRemove';
+import { dispatchSetValue } from '../utils/entry/dispatchSetValue';
 import { readFieldNodeRevision } from '../utils/read/readFieldNodeRevision';
-import { createDispatchTree } from './fixtures/createDispatchTree';
-import type { DispatchTestNode } from './fixtures/createDispatchTree';
+import { subscribeFieldNode } from '../utils/read/subscribeFieldNode';
 
 /** Find a direct child record by name. */
 const child = (node: DispatchTestNode | undefined, name: string) =>
@@ -96,11 +94,6 @@ describe('66C-01 SETTLE-043 sameValue judges delivery changes', () => {
     expect(types.some((type) => type & FieldNodeEventType.UpdateValue)).toBe(
       false,
     );
-  });
-
-  it('keeps identity semantics for watched objects rebuilt with equal content', () => {
-    expect(isSameDeliveryValue({ a: 1 }, { a: 1 })).toBe(false);
-    expect(isSameDeliveryValue(NaN, NaN)).toBe(true);
   });
 
   it('delivers no UpdateControlledProperties when a shifted watcher keeps a NaN watch tuple', () => {

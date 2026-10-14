@@ -1,4 +1,4 @@
-import { FieldNode as RuntimeFieldNode } from '../FieldNode';
+import { FieldNode as RuntimeFieldNode } from '../runtime/FieldNode';
 import type {
   ArrayNode,
   BooleanNode,

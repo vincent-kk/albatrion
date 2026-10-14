@@ -75,7 +75,11 @@ export default [
       'src/core/engine/record/**/*.ts',
       'src/core/engine/behaviors/**/*.ts',
       'src/core/engine/navigation/**/*.ts',
+      'src/core/engine/derive/**/*.ts',
       'src/core/engine/settle/**/*.ts',
+      'src/core/engine/utils/compute/**/*.ts',
+      'src/core/engine/utils/paths/**/*.ts',
+      'src/core/engine/utils/controls/**/*.ts',
       'src/core/engine/write/**',
       'src/core/engine/validation/**',
       'src/core/surface/**/*.ts',
@@ -90,10 +94,7 @@ export default [
     },
   },
   {
-    files: [
-      'src/core/engine/blueprint/**/*.ts',
-      'src/core/surface/utils/nodeFromJSONSchema.ts',
-    ],
+    files: ['src/core/engine/blueprint/**/*.ts'],
     ignores: ['**/__tests__/**'],
     rules: {
       '@typescript-eslint/consistent-type-assertions': [
@@ -103,7 +104,7 @@ export default [
     },
   },
   {
-    files: ['src/core/surface/FieldNode.ts'],
+    files: ['src/core/surface/classes/FieldNode.ts'],
     rules: {
       'no-restricted-syntax': [
         'error',
@@ -174,10 +175,11 @@ export default [
       'src/app/**/*.{ts,tsx}',
       'src/constants/**/*.{ts,tsx}',
       'src/types/**/*.{ts,tsx}',
+      'src/rolled/**/*.{ts,tsx}',
       'src/errors/**/*.{ts,tsx}',
       'src/index.ts',
     ],
-    ignores: ['src/core/surface/FieldNode.ts', '**/__tests__/**'],
+    ignores: ['src/core/surface/classes/FieldNode.ts', '**/__tests__/**'],
     rules: {
       'no-restricted-syntax': [
         'error',
@@ -292,6 +294,15 @@ export default [
           message:
             'Internal `__member__` access is restricted to the core friend zone (src/core, src/app, src/constants). Use the public node API instead.',
         },
+      ],
+    },
+  },
+  {
+    files: ['src/__tests__/fixtures/nodeFromJSONSchema.ts'],
+    rules: {
+      '@typescript-eslint/consistent-type-assertions': [
+        'error',
+        { assertionStyle: 'never' },
       ],
     },
   },

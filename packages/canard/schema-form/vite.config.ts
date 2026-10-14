@@ -10,7 +10,7 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 /** DOM-backed product tests run in the render project. */
 const renderTests = [
   'src/**/*.test.tsx',
-  'src/**/helpers/virtualization/__tests__/VirtualizationManager.test.ts',
+  'src/**/helpers/virtualization/VirtualizationManager/__tests__/VirtualizationManager.test.ts',
 ];
 
 const resolvePackage = createRequire(import.meta.url).resolve;

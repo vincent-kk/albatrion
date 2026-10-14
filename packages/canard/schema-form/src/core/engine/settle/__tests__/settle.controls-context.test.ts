@@ -1,9 +1,10 @@
 import { describe, expect, it, vi } from 'vitest';
 
-import type { BlueprintSchema } from '../../blueprint';
-import { WriteOption } from '../../types/value';
-import { loadFieldNodeAtMount } from '../index';
-import { createTestTree } from './fixtures/createTestTree';
+import type { BlueprintSchema } from '@/schema-form/core/engine/blueprint';
+import { WriteOption } from '@/schema-form/core/engine/types/value';
+
+import { createTestTree } from '../../__tests__/fixtures/createTestTree';
+import { loadFieldNodeAtMount } from '../utils/load/loadFieldNodeAtMount';
 
 // filid:contract settle-state-keys
 describe('context state keys', () => {

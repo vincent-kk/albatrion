@@ -2,19 +2,19 @@
 
 ## Purpose
 
-객체 노드의 branch 자식 합성과 terminal 통째 값 계산을 한 종류의 계약으로 묶습니다.
+객체 노드에서 branch의 자식 합성과 terminal의 통째 값 계산을 한 종류의 계약으로 묶는다.
 
 ## Conventions
 
-- 같은 `object` 종류 아래 `branch`·`terminal` 두 행을 둡니다(NODE-002·009).
-- 두 전략이 함께 쓰는 보조는 이 종류의 `utils/`에 둡니다(NODE-009).
+- 같은 `object` 종류 아래에 `branch`와 `terminal` 두 행을 둔다(NODE-002·009).
+- 두 전략이 함께 쓰는 보조는 이 종류의 `utils/`에 둔다(NODE-009).
 
 ## Boundaries
 
 ### Always do
 
-- branch는 현재 형상의 자식만 합성하고 terminal은 자식 없이 원본 참조를 유지합니다(NODE-043, VALUE-002).
-- 키 순서는 청사진 전순서와 `propertyOrder`·`undeclaredValues`의 계약을 지킵니다(SETTLE-042).
+- branch는 현재 형상의 자식만 합성하고, terminal은 자식 없이 원본 참조를 유지한다(NODE-043, VALUE-002).
+- 키 순서는 청사진 전순서와 `propertyOrder`·`undeclaredValues`의 계약을 지킨다(SETTLE-042).
 
 ### Ask first
 
@@ -22,5 +22,5 @@
 
 ### Never do
 
-- branch와 terminal을 별개 종류 fractal로 나누거나 행에서 자식 생성·원본 쓰기를 하지 않습니다(NODE-006·009).
-- behaviors 뿌리·settle·FieldNode·레거시를 가져오지 않습니다(NODE-009, LANDING-159).
+- branch와 terminal을 별개의 종류 fractal로 나누지 않으며, 행에서 자식 생성이나 원본 쓰기를 하지 않는다(NODE-006·009).
+- behaviors 뿌리, settle, FieldNode, 레거시를 가져오지 않는다(NODE-009, LANDING-159).

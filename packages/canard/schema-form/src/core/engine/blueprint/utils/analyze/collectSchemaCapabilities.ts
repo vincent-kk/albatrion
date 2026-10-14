@@ -1,22 +1,12 @@
 import { isArray } from '@winglet/common-utils/filter';
 import { hasOwnProperty } from '@winglet/common-utils/lib';
 
+import { CONTROL_KEY } from '../../../constants/controlKey';
 import type { BlueprintSchema } from '../../type';
+import { EXPRESSION_CONTROL_KEYS } from './constants/expressionControlKeys';
 import { isLiteralDefault } from './isLiteralDefault';
 import { readSchemaObject } from './readSchemaObject';
 import type { AnalysisContext } from './type';
-
-/** Supported string controls, matching the expression compiler's closed vocabulary. */
-const EXPRESSION_KEYS = [
-  'active',
-  'visible',
-  'readOnly',
-  'disabled',
-  'unsetOnInactive',
-  'derived',
-  'unsetValue',
-  'resetInteraction',
-] as const;
 
 /**
  * Fuse independent capability evidence into the existing declaration traversal.
@@ -56,7 +46,7 @@ export const collectSchemaCapabilities = (
     const group = index < 0 ? controls : fields[index].controls;
     if (!group) continue;
     if (
-      hasOwnProperty(group, 'default') ||
+      hasOwnProperty(group, CONTROL_KEY.default) ||
       group.unsetValue !== undefined ||
       group.injectTo !== undefined
     )
@@ -77,8 +67,8 @@ export const collectSchemaCapabilities = (
     )
       capabilities.hasDerive = true;
     if (!capabilities.hasExpressions)
-      for (let key = 0; key < EXPRESSION_KEYS.length; key++)
-        if (typeof group[EXPRESSION_KEYS[key]] === 'string') {
+      for (let key = 0; key < EXPRESSION_CONTROL_KEYS.length; key++)
+        if (typeof group[EXPRESSION_CONTROL_KEYS[key]] === 'string') {
           capabilities.hasExpressions = true;
           break;
         }

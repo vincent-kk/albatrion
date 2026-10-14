@@ -1,3 +1,5 @@
+import { JSONPointer as $ } from '@/schema-form/helpers/jsonPointer';
+
 import type { Blueprint, BlueprintOptions, BlueprintSchema } from './type';
 import { buildNodes } from './utils/analyze/buildNodes';
 import { compileBlueprintExpressions } from './utils/analyze/compileBlueprintExpressions';
@@ -57,7 +59,7 @@ export const blueprint = (
     [
       {
         schema,
-        schemaPath: '#',
+        schemaPath: $.Fragment,
         context: 'conjunction',
         role: 'declaration',
         gates: [],

@@ -2,27 +2,27 @@
 
 ## Purpose
 
-Normalize consumer input maps and definitions, and isolate each resolved input once at its ownership point.
+소비자가 넘긴 입력 맵과 정의를 정규화하고, 해석된 각 입력을 소유 지점에서 한 번만 격리한다.
 
 ## Conventions
 
-- Keep only valid React components.
-- Keep the boundary outside the raw input's applied generation key.
-- Read the current reporter with the input's explicit path during render.
-- Match wildcard paths by segment and normalize object tests into functions.
+- 유효한 React 컴포넌트만 남긴다.
+- 경계는 원본 입력의 적용 세대 key 바깥에 둔다.
+- 렌더 중에는 입력의 명시적인 path로 현재 보고기를 읽는다.
+- wildcard 경로는 세그먼트 단위로 매칭하고, 객체 형태의 테스트는 함수로 정규화한다.
 
 ## Boundaries
 
 ### Always do
 
-- Isolate every normalized input and silently skip invalid components.
-- Consume the applied generation in the input boundary wrapper and preserve Refresh behavior.
+- 정규화된 모든 입력을 격리하고, 유효하지 않은 컴포넌트는 조용히 건너뛴다.
+- 입력 경계 감싸개에서 적용 세대를 소비하고 Refresh 동작을 그대로 유지한다.
 
 ### Ask first
 
-- Changing wildcard matching or the normalized definition interface.
+- wildcard 매칭이나 정규화된 정의의 인터페이스 변경
 
 ### Never do
 
-- Accept arbitrary non-pointer map keys.
-- Render components or run hooks during normalization.
+- 포인터 형식이 아닌 임의의 맵 key를 받아들이지 않는다.
+- 정규화 중에 컴포넌트를 렌더하거나 훅을 실행하지 않는다.

@@ -1,7 +1,8 @@
 import { StaticFirstLoadCapability } from '../../../blueprint';
 import type { FieldNodeRecord, SettlementScratch } from '../../../record';
 import { WriteOption } from '../../../types/value';
-import type { FieldNodeWriteKind, SettlementContext } from '../../type';
+import type { FieldNodeWriteKind } from '../../../types/value';
+import type { SettlementContext } from '../../type';
 import { getVirtualReferenceIndex } from '../compute/getVirtualReferenceIndex';
 import { getTransitionCap } from '../transition/getTransitionCap';
 

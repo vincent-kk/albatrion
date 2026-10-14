@@ -1,4 +1,4 @@
-import { SchemaFormError } from '../../../../../errors';
+import { FormErrorCode, SchemaFormError } from '../../../../../errors';
 import type { FieldNodeRecord } from '../../../record';
 import type { SettlementContext } from '../../type';
 import { effectiveType } from '../commit/effectiveType';
@@ -6,8 +6,6 @@ import { computeNode } from '../compute/computeNode';
 import { updateOutput } from '../compute/updateOutput';
 import { runDeriveRounds } from '../derivation/runDeriveRounds';
 import { recordSettlementFailure } from '../errors/recordSettlementFailure';
-import { BUDGET_EXCEEDED } from '../errors/settleErrorCode';
-import { RECURSIVE_SHAPE_DIVERGED } from '../errors/settleErrorCode';
 import { markWrite } from '../write/markWrite';
 import { registerRecalculation } from '../write/registerRecalculation';
 import { staticSpec } from '../write/staticSpec';
@@ -102,7 +100,7 @@ export const transitionSettlement = <Self extends FieldNodeRecord<Self>>(
             recordSettlementFailure(
               context,
               new SchemaFormError(
-                RECURSIVE_SHAPE_DIVERGED,
+                FormErrorCode.RecursiveShapeDiverged,
                 `Recursive shape diverged at ${node.path}`,
                 { path: node.path },
               ),
@@ -184,7 +182,7 @@ export const transitionSettlement = <Self extends FieldNodeRecord<Self>>(
       recordSettlementFailure(
         context,
         new SchemaFormError(
-          BUDGET_EXCEEDED,
+          FormErrorCode.BudgetExceeded,
           `Transition budget exceeded at ${context.target.path}`,
           { path: context.target.path },
         ),
@@ -202,7 +200,7 @@ export const transitionSettlement = <Self extends FieldNodeRecord<Self>>(
       recordSettlementFailure(
         context,
         new SchemaFormError(
-          BUDGET_EXCEEDED,
+          FormErrorCode.BudgetExceeded,
           `Host wheel budget exceeded at ${context.target.path}`,
           { path: context.target.path },
         ),

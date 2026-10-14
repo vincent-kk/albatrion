@@ -1,6 +1,7 @@
 import { describe, expect, it, vi } from 'vitest';
 
-import { makeFieldNodeTree } from '../../../__tests__/makeFieldNodeTree';
+import { makeFieldNodeTree } from '@/schema-form/core/__tests__/makeFieldNodeTree';
+
 import { setLoadValue } from '../utils/load/setLoadValue';
 
 const probe = (label: string, count: number): void => {

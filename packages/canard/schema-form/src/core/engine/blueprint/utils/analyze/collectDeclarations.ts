@@ -1,5 +1,7 @@
 import { isArray } from '@winglet/common-utils/filter';
 
+import { JSONPointer as $ } from '@/schema-form/helpers/jsonPointer';
+
 import type { BlueprintGate, PropertyDeclaration } from '../../type';
 import { validateControlGroups } from '../diagnostics/validateControlGroups';
 import { readAllowedTypes } from '../types/readAllowedTypes';
@@ -81,7 +83,7 @@ export const collectDeclarations = (
   input.fragment?.children.push(fragment.id);
   const declaration: PropertyDeclaration = {
     id: context.declarationId++,
-    name: path.slice(path.lastIndexOf('/') + 1),
+    name: path.slice(path.lastIndexOf($.Separator) + 1),
     path,
     schemaPath: input.schemaPath,
     schema: input.schema,

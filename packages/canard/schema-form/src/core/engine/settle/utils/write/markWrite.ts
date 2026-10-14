@@ -1,8 +1,8 @@
 import { isArray } from '@winglet/common-utils/filter';
 
 import type { FieldNodeRecord, UnionSpec } from '../../../record';
+import { sameValue } from '../../../utils/compute/sameValue';
 import type { SettlementContext } from '../../type';
-import { sameValue } from '../compute/sameValue';
 import { getDeclaredChildNames } from '../declarations/getDeclaredChildNames';
 import { indexEnteredLatentKey } from '../latent/indexEnteredLatentKey';
 import { arrayExtras } from './arrayExtras';

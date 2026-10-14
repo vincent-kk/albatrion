@@ -1,12 +1,14 @@
 import { escapeSegment, unescapeSegment } from '@winglet/json/pointer';
 
+import { JSONPointer as $ } from '@/schema-form/helpers/jsonPointer';
+
 import type {
   Blueprint,
   BlueprintGate,
   BlueprintNodeKind,
 } from '../../../blueprint';
 import type { FieldNodeRecord } from '../../../record';
-import { resolveDependencyPath } from '../paths/resolveDependencyPath';
+import { resolveDependencyPath } from '../../../utils/paths/resolveDependencyPath';
 import { getGateExpression } from './getGateExpression';
 import { resolveGateOccurrence } from './resolveGateOccurrence';
 import type { GateOccurrence } from './type';
@@ -275,9 +277,9 @@ class GateRegistry {
         changedAncestors.has(watched)
       )
         return true;
-      if (watched.startsWith('/'))
+      if (watched.startsWith($.Separator))
         for (let prefix = watched; prefix; ) {
-          prefix = prefix.slice(0, prefix.lastIndexOf('/'));
+          prefix = prefix.slice(0, prefix.lastIndexOf($.Separator));
           if (changedRaw.has(prefix)) return true;
         }
     }
@@ -312,7 +314,7 @@ type GateRegistryView = Pick<
 >;
 /** Decode only pointer syntax; no lookup result can survive a shape change. */
 const decodePointerSegments = (path: string): readonly string[] => {
-  const segments = path.slice(1).split('/');
+  const segments = path.slice(1).split($.Separator);
   for (let index = 0; index < segments.length; index++)
     segments[index] = unescapeSegment(segments[index]);
   return segments;

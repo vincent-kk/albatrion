@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 
-import { getPathManager } from '../../getPathManager';
+import { getPathManager } from '@/schema-form/core/engine/blueprint/utils/expressions/getPathManager';
+
 import { createDynamicFunction } from '../createDynamicFunction';
 
 describe('createDynamicFunction', () => {

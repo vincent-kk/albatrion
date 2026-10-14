@@ -1,3 +1,5 @@
+import { JSONPointer as $ } from '@/schema-form/helpers/jsonPointer';
+
 /**
  * Keep a settlement's path lookup in step with one latent key.
  * @param index - Call-local keys grouped by their path and ancestor paths
@@ -24,6 +26,6 @@ export const indexLatentDescendant = (
       if (descendants?.size === 0) index.delete(ancestor);
     }
     if (!ancestor) break;
-    ancestor = ancestor.slice(0, ancestor.lastIndexOf('/'));
+    ancestor = ancestor.slice(0, ancestor.lastIndexOf($.Separator));
   }
 };

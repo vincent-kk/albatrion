@@ -2,28 +2,28 @@
 
 ## Purpose
 
-Provide pure leaf-constraint intersection shared by blueprint analysis and legacy schema merging.
+청사진 분석과 옛 스키마 병합이 함께 쓰는, 순수한 잎 제약 교차를 제공한다.
 
 ## Conventions
 
-- Represent impossible intersections as data; callers own error policy.
-- Compare JSON const values structurally using the existing equality utility.
-- Keep one named exported function per implementation file.
+- 불가능한 교차는 데이터로 표현하고, 오류 정책은 호출자가 정한다.
+- JSON const 값은 기존 동등성 유틸로 구조를 비교한다.
+- 구현 파일 하나에는 이름 붙은 export 함수 하나만 둔다.
 
 ## Boundaries
 
 ### Always do
 
-- Preserve input values and document identity guarantees.
-- Keep tests within this module and expose consumers through the named entry point.
+- 입력 값을 바꾸지 않고, 참조 동일성 보장을 문서에 적어 둔다.
+- 테스트는 이 모듈 안에 두고, 소비자는 이름 붙은 진입점을 통해 노출한다.
 
 ### Ask first
 
-- Change the architecture ledger's intersection semantics.
-- Expand from leaf constraints into schema traversal or runtime evaluation.
+- 아키텍처 원장의 교차 의미 변경
+- 잎 제약을 넘어 스키마 순회나 런타임 평가로 범위 확장
 
 ### Never do
 
-- Import blueprint, legacy nodes, React, or schema error formatters.
-- Merge regular expressions into a replacement regular expression.
-- Throw schema-policy errors from an intersection primitive.
+- 청사진, 옛 노드, React, 스키마 오류 포맷터를 import하지 않는다.
+- 정규식 여러 개를 하나의 대체 정규식으로 병합하지 않는다.
+- 교차 기본 연산에서 스키마 정책 오류를 던지지 않는다.

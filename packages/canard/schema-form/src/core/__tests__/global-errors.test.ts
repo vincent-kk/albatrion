@@ -1,14 +1,16 @@
 import { describe, expect, it } from 'vitest';
 
+import { nodeFromJSONSchema } from '@/schema-form/__tests__/fixtures/nodeFromJSONSchema';
 import {
-  type FieldNode,
   FieldNodeEventType,
   type ValidationIssue,
   ValidationMode,
+} from '@/schema-form/core/engine';
+import {
+  type FieldNode,
   adoptFieldNodeTree,
   reloadFieldNodeForm,
-} from '../index';
-import { nodeFromJSONSchema } from '../surface/utils/nodeFromJSONSchema';
+} from '@/schema-form/core/surface';
 
 /**
  * Build a mounted public tree without automatic validation requests.

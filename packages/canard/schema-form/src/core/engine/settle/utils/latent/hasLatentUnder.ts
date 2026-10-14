@@ -1,5 +1,7 @@
 import { isArray } from '@winglet/common-utils/filter';
 
+import { JSONPointer as $ } from '@/schema-form/helpers/jsonPointer';
+
 import type { FieldNodeRecord } from '../../../record';
 import type { SettlementContext } from '../../type';
 
@@ -28,7 +30,7 @@ export const hasLatentUnder = <Self extends FieldNodeRecord<Self>>(
       if (!isArray(identity) || typeof identity[0] !== 'string') continue;
       let ancestor = identity[0];
       while (ancestor) {
-        ancestor = ancestor.slice(0, ancestor.lastIndexOf('/'));
+        ancestor = ancestor.slice(0, ancestor.lastIndexOf($.Separator));
         prefixes.add(ancestor);
       }
     }

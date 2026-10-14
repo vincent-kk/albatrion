@@ -3,9 +3,14 @@ import type {
   FormScenarioStep,
 } from '@aileron/schema-form-scenarios';
 
-import { resetFieldNodeForm } from '../../../engine/settle';
-import { SetValueOption } from '../../../surface';
-import type { FieldNode as RuntimeFieldNode } from '../../../surface/FieldNode';
+import { resetFieldNodeForm } from '@/schema-form/core/engine';
+import type { ArrayNode } from '@/schema-form/core/surface';
+import { SetValueOption } from '@/schema-form/core/surface';
+
+import type {
+  TestFieldNode,
+  TestPublicFieldNode,
+} from '../../fixtures/testFieldNode';
 
 /**
  * Apply one core-observable action to the tree, including root form loads.
@@ -15,15 +20,16 @@ import type { FieldNode as RuntimeFieldNode } from '../../../surface/FieldNode';
  * @returns The synchronous action result after settlement
  */
 export function executeCoreScenarioStep(
-  root: RuntimeFieldNode,
+  root: TestPublicFieldNode,
   scenario: FormScenario,
   step: FormScenarioStep,
 ): unknown {
   const previousDiagnostics = root.diagnostics;
   try {
     if (step.action === 'reset') {
+      const record: TestFieldNode = root;
       resetFieldNodeForm(
-        root,
+        record,
         scenario.initialValue,
         SetValueOption.Overwrite |
           (step.automaticWrites === 'disabled'
@@ -47,10 +53,11 @@ export function executeCoreScenarioStep(
       if (step.action === 'setValue') return node.setValue(step.value);
       if (step.action === 'clear')
         return node.type === 'array' ? node.clear() : node.setValue(undefined);
-      if (step.action === 'push') return node.push(step.value);
-      if (step.action === 'pop') return node.pop();
-      if (step.action === 'remove') return node.remove(step.index);
-      return node.update(step.index, step.value);
+      const array = node as ArrayNode;
+      if (step.action === 'push') return array.push(step.value);
+      if (step.action === 'pop') return array.pop();
+      if (step.action === 'remove') return array.remove(step.index);
+      return array.update(step.index, step.value);
     } else if (step.action === 'batch') {
       for (const nested of step.steps)
         executeCoreScenarioStep(root, scenario, nested);

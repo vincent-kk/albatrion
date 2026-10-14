@@ -3,7 +3,7 @@ import { StrictMode } from 'react';
 import { act, render } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
 
-import { useFieldNodeSubscribe } from '../useFieldNodeSubscribe';
+import { useFieldNodeSubscribe } from '../hooks/useFieldNodeSubscribe';
 import { createHookNode } from './createHookNode';
 
 describe('useFieldNodeSubscribe with a new-engine node', () => {

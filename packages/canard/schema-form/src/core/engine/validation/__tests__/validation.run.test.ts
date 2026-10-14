@@ -1,16 +1,18 @@
 import { describe, expect, it, vi } from 'vitest';
 
-import { FieldNodeEventType } from '../../record';
-import { ValidationMode } from '../../types/state';
+import { createDispatchTree } from '@/schema-form/core/engine/__tests__/fixtures/createDispatchTree';
+import { FieldNodeEventType } from '@/schema-form/core/engine/record';
+import { ValidationMode } from '@/schema-form/core/engine/types/state';
 import {
   dispatchMount,
   dispatchSetValue,
   dispatchValidate,
   subscribeFieldNode,
-} from '../../write';
-import { createDispatchTree } from '../../write/__tests__/fixtures/createDispatchTree';
-import { readFieldNodeErrors, requestFieldNodeValidation } from '../index';
+} from '@/schema-form/core/engine/write';
+
 import type { ValidationIssue, Validator } from '../type';
+import { readFieldNodeErrors } from '../utils/read/readFieldNodeErrors';
+import { requestFieldNodeValidation } from '../utils/run/requestFieldNodeValidation';
 
 // filid:contract validation-lifetime
 describe('validation execution', () => {

@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 
+import { createTestTree } from '../../__tests__/fixtures/createTestTree';
 import { getContextOwners } from '../utils/context/getContextOwners';
-import { createTestTree } from './fixtures/createTestTree';
 
 // filid:contract settle-derive
 describe('context dependency owners', () => {

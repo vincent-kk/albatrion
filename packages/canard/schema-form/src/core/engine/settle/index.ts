@@ -3,6 +3,7 @@ export { writeFieldNode } from './utils/write/writeFieldNode';
 export { assertFieldNodeWritable } from './utils/dispose/assertFieldNodeWritable';
 export { disposeFieldNodeTree } from './utils/dispose/disposeFieldNodeTree';
 export { arrangeFieldNodeItems } from './utils/structure/arrangeFieldNodeItems';
+export { readArrayLength } from './utils/structure/readArrayLength';
 export { loadFieldNodeAtMount } from './utils/load/loadFieldNodeAtMount';
 export { resetFieldNodeForm } from './utils/load/resetFieldNodeForm';
 export { resetFieldNodeSubtree } from './utils/load/resetFieldNodeSubtree';
@@ -12,5 +13,4 @@ export { readFieldNodeTypeMismatch } from './utils/detached/readFieldNodeTypeMis
 export { readFieldNodeTypeMismatches } from './utils/detached/readFieldNodeTypeMismatches';
 export { readFieldNodeWatchValues } from './utils/controls/readFieldNodeWatchValues';
 export { changeFieldNodeContext } from './utils/context/changeFieldNodeContext';
-export type { FieldNodeWriteKind } from './type';
 export { interpretFieldNodeInput } from './utils/write/interpretFieldNodeInput';

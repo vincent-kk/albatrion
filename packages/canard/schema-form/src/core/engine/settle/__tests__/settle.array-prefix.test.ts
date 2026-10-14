@@ -1,7 +1,8 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
-import type { BlueprintSchema } from '../../blueprint';
-import { PathKeyedMap } from '../../utils/pathIndex/PathKeyedMap';
+import type { BlueprintSchema } from '@/schema-form/core/engine/blueprint';
+import { PathKeyedMap } from '@/schema-form/core/engine/utils/pathIndex/PathKeyedMap';
+
 import { compareArrayTail } from './fixtures/compareArrayTail';
 
 afterEach(() => vi.restoreAllMocks());

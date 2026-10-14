@@ -1,7 +1,8 @@
 import type { AnySchema } from 'ajv';
 import Ajv from 'ajv/dist/2020';
 
-import type { ValidationIssue, ValidatorPlugin } from '@/schema-form';
+import type { ValidatorPlugin } from '@/schema-form/app/plugin';
+import type { ValidationIssue } from '@/schema-form/core';
 
 /**
  * Register each copied root once so synchronous guards resolve root-local refs.

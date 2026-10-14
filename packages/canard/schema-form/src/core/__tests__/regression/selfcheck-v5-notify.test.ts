@@ -1,7 +1,9 @@
 import { describe, expect, it } from 'vitest';
 
-import { FieldNodeEventType, writeFieldNodeInput } from '../../surface';
-import type { FieldNode } from '../../surface';
+import { FieldNodeEventType } from '@/schema-form/core/engine';
+import { writeFieldNodeInput } from '@/schema-form/core/surface';
+import type { FieldNode } from '@/schema-form/core/surface';
+
 import { makeFieldNodeTree } from '../makeFieldNodeTree';
 
 const requireNode = (root: FieldNode, path: string): FieldNode => {

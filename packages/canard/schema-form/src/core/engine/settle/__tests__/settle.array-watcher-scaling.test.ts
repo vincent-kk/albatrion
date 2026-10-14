@@ -1,8 +1,10 @@
 import { describe, expect, it, vi } from 'vitest';
 
-import { makeFieldNodeTree } from '../../../__tests__/makeFieldNodeTree';
-import { FieldNode } from '../../../surface/FieldNode';
-import { FieldNodeEventType } from '../../record';
+import { isTestFieldNode } from '@/schema-form/core/__tests__/fixtures/testFieldNode';
+import { makeFieldNodeTree } from '@/schema-form/core/__tests__/makeFieldNodeTree';
+import { FieldNodeEventType } from '@/schema-form/core/engine/record';
+import type { ArrayNode } from '@/schema-form/core/surface';
+
 import * as deliveries from '../utils/commit/markCommitDeliveries';
 
 const makeWatchedTree = (count: number) => {
@@ -31,7 +33,7 @@ const makeWatchedTree = (count: number) => {
       },
     },
   });
-  if (!(root instanceof FieldNode)) throw new Error('Expected runtime tree');
+  if (!isTestFieldNode(root)) throw new Error('Expected runtime tree');
   root.setValue({
     flag: 'a',
     list: Array.from({ length: 8 }, (_, key) => ({ key, watch: 'x' })),
@@ -56,7 +58,7 @@ describe('I9 array costs follow changed paths', () => {
         return undefined;
       });
     try {
-      (root.find('/list') as FieldNode).remove(6);
+      (root.find('/list') as ArrayNode).remove(6);
       expect(visits, `whole watcher visits: ${visits}`).toBeLessThan(16);
     } finally {
       spy.mockRestore();
@@ -80,12 +82,13 @@ describe('I9 array costs follow changed paths', () => {
         hostWatcher: { type: 'string', controls: { watch: ['../list'] } },
       },
     });
-    if (!(root instanceof FieldNode)) throw new Error('Expected runtime tree');
+    if (!isTestFieldNode(root)) throw new Error('Expected runtime tree');
     root.setValue({ list: Array.from({ length: 5 }, (_, key) => ({ key })) });
-    const watchers = [
-      root.find('/leafWatcher') as FieldNode,
-      root.find('/hostWatcher') as FieldNode,
-    ];
+    const leafWatcher = root.find('/leafWatcher');
+    const hostWatcher = root.find('/hostWatcher');
+    if (!isTestFieldNode(leafWatcher) || !isTestFieldNode(hostWatcher))
+      throw new Error('Expected runtime tree');
+    const watchers = [leafWatcher, hostWatcher];
     const bit = FieldNodeEventType.UpdateControlledProperties;
     const before = watchers.map((watcher) => watcher.revisionLedger[bit] ?? 0);
     const allNodes = root.runtime.deliveryWatchIndex!.allNodes;
@@ -121,7 +124,7 @@ describe('I9 array costs follow changed paths', () => {
         mark(context);
       });
     try {
-      (root.find('/list') as FieldNode).remove(1);
+      (root.find('/list') as ArrayNode).remove(1);
       expect(outsideCandidates).toBe(2);
       expect(wholeVisits).toBe(0);
       expect(

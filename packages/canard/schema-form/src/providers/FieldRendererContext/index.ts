@@ -1,2 +1,2 @@
-export { FieldRendererContextProvider } from './FieldRendererProvider';
-export { useFieldRendererContext } from './useFieldRendererContext';
+export { FieldRendererContextProvider } from './components/FieldRendererProvider';
+export { useFieldRendererContext } from './hooks/useFieldRendererContext';

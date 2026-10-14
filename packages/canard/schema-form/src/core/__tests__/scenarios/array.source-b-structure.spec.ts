@@ -2,7 +2,9 @@ import { describe, expect, it } from 'vitest';
 
 import { arrayScenarios } from '@aileron/schema-form-scenarios';
 
-import type { FormErrorRecord } from '../../../errors';
+import type { FormErrorRecord } from '@/schema-form/errors';
+
+import { isTestFieldNode } from '../fixtures/testFieldNode';
 import { createCoreScenarioAdapter } from './utils/createCoreScenarioAdapter';
 import { runScenario } from './utils/runScenario';
 
@@ -25,6 +27,7 @@ describe('array Source-B structure rollback', () => {
     await runScenario(scenario, adapter);
 
     const host = adapter.root.find('/items');
+    if (!isTestFieldNode(host)) throw new Error('Expected a runtime FieldNode');
     expect(host?.itemCount).toBe(0);
     expect(host?.children).toEqual([]);
     expect(host?.raw).toBeUndefined();

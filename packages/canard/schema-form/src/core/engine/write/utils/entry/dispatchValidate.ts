@@ -1,7 +1,7 @@
 import {
+  FormErrorCode,
   JSONSchemaError,
   SchemaFormError,
-  VALIDATOR_COMPILE_FAILED,
 } from '../../../../../errors';
 import type { FieldNodeRecord } from '../../../record';
 import { ValidationMode } from '../../../types/state';
@@ -42,7 +42,7 @@ export const dispatchValidate = async <Self extends FieldNodeRecord<Self>>(
     if (node.disposed || node.rootNode.disposed) throw failure;
     const compileFailure =
       failure instanceof SchemaFormError &&
-      failure.code === `SCHEMA_FORM_ERROR.${VALIDATOR_COMPILE_FAILED}`;
+      failure.code === FormErrorCode.ValidatorCompileFailed;
     if (compileFailure) runtime.validationUnavailable = true;
     const firstReport = !compileFailure || !runtime.validationCompileReported;
     if (compileFailure) runtime.validationCompileReported = true;

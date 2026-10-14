@@ -1,4 +1,4 @@
-import { NON_JSON_WHOLE_VALUE } from '../../../../../errors';
+import { FormWarningCode } from '../../../../../errors';
 import type { FormErrorRecord } from '../../../../../errors';
 import type { FieldNodeRuntime } from '../../../record';
 import { reportOwnerlessError } from './reportOwnerlessError';
@@ -23,7 +23,7 @@ export const deliverChainRecords = (
     if (!reporter?.hasConsumer()) {
       if (
         process.env.NODE_ENV !== 'production' &&
-        record.code === `SCHEMA_FORM_WARNING.${NON_JSON_WHOLE_VALUE}`
+        record.code === FormWarningCode.NonJsonWholeValue
       )
         console.warn(record.code, record.message, record.details);
       continue;

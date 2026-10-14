@@ -1,16 +1,17 @@
 import { describe, expect, it, vi } from 'vitest';
 
-import { VALIDATOR_COMPILE_FAILED, VALIDATOR_THREW } from '../../../../errors';
-import { ValidationMode } from '../../types/state';
+import { createDispatchTree } from '@/schema-form/core/engine/__tests__/fixtures/createDispatchTree';
+import { ValidationMode } from '@/schema-form/core/engine/types/state';
 import {
   dispatchMount,
   dispatchResetSubtree,
   dispatchSetValue,
   dispatchValidate,
-} from '../../write';
-import { createDispatchTree } from '../../write/__tests__/fixtures/createDispatchTree';
-import { readFieldNodeErrors } from '../index';
+} from '@/schema-form/core/engine/write';
+import { FormErrorCode } from '@/schema-form/errors';
+
 import type { Validator } from '../type';
+import { readFieldNodeErrors } from '../utils/read/readFieldNodeErrors';
 
 // filid:contract validation-lifetime
 describe('validator failures', () => {
@@ -34,7 +35,7 @@ describe('validator failures', () => {
       expect(report).toHaveBeenCalledTimes(1);
       expect(sink).toHaveBeenCalledTimes(1);
       expect(report.mock.calls[0][0].code).toBe(
-        `SCHEMA_FORM_ERROR.${VALIDATOR_COMPILE_FAILED}`,
+        FormErrorCode.ValidatorCompileFailed,
       );
       expect(readFieldNodeErrors(root)).toEqual([]);
       expect(readFieldNodeErrors(root.structure?.child ?? root)).toEqual([]);
@@ -71,12 +72,12 @@ describe('validator failures', () => {
         throw error;
       }),
     ).rejects.toMatchObject({
-      code: `SCHEMA_FORM_ERROR.${VALIDATOR_THREW}`,
+      code: FormErrorCode.ValidatorThrew,
     });
     expect(order).toEqual(['report', 'reject']);
     expect(report).toHaveBeenCalledTimes(1);
     expect(report.mock.calls[0][0]).toMatchObject({
-      code: `SCHEMA_FORM_ERROR.${VALIDATOR_THREW}`,
+      code: FormErrorCode.ValidatorThrew,
       surface: 'rejected',
     });
     expect(readFieldNodeErrors(root)).toEqual([]);
@@ -117,14 +118,14 @@ describe('validator failures', () => {
       { hasConsumer: () => true, report },
     );
     await expect(dispatchValidate(root)).rejects.toMatchObject({
-      code: `SCHEMA_FORM_ERROR.${VALIDATOR_COMPILE_FAILED}`,
+      code: FormErrorCode.ValidatorCompileFailed,
     });
     expect(report.mock.calls[0][0]).toMatchObject({
-      code: `SCHEMA_FORM_ERROR.${VALIDATOR_COMPILE_FAILED}`,
+      code: FormErrorCode.ValidatorCompileFailed,
       surface: 'rejected',
     });
     await expect(dispatchValidate(root)).rejects.toMatchObject({
-      code: `SCHEMA_FORM_ERROR.${VALIDATOR_COMPILE_FAILED}`,
+      code: FormErrorCode.ValidatorCompileFailed,
     });
     expect(report).toHaveBeenCalledTimes(1);
   });

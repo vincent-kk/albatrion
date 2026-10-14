@@ -1,13 +1,18 @@
 import { expect, vi } from 'vitest';
 
-import type { BlueprintSchema } from '../../../blueprint';
-import type { ArrayArrangePlan, ArrayOperation } from '../../../record';
-import { WriteOption } from '../../../types/value';
-import { arrangeFieldNodeItems, writeFieldNode } from '../../index';
+import type { BlueprintSchema } from '@/schema-form/core/engine/blueprint';
+import type {
+  ArrayArrangePlan,
+  ArrayOperation,
+} from '@/schema-form/core/engine/record';
+import { WriteOption } from '@/schema-form/core/engine/types/value';
+
+import type { PlainNode } from '../../../__tests__/fixtures/createPlainNode';
+import { createTestTree } from '../../../__tests__/fixtures/createTestTree';
 import * as tailModule from '../../utils/structure/applyArraySlots/utils/applyArrayTail';
 import * as eligibility from '../../utils/structure/applyArraySlots/utils/canApplyArrayTail';
-import type { PlainNode } from './createPlainNode';
-import { createTestTree } from './createTestTree';
+import { arrangeFieldNodeItems } from '../../utils/structure/arrangeFieldNodeItems';
+import { writeFieldNode } from '../../utils/write/writeFieldNode';
 import { observeArraySettlement } from './observeArraySettlement';
 import { observeDetachedReads } from './observeDetachedReads';
 

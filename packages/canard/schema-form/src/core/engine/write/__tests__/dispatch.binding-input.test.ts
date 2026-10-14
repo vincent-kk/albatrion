@@ -1,10 +1,22 @@
 import { describe, expect, it, vi } from 'vitest';
 
-import { FieldNodeEventType } from '../../record';
-import { FieldNodeState, ValidationMode } from '../../types/state';
-import { WriteOption } from '../../types/value';
-import * as dispatch from '../index';
-import { createDispatchTree } from './fixtures/createDispatchTree';
+import { createDispatchTree } from '@/schema-form/core/engine/__tests__/fixtures/createDispatchTree';
+import { FieldNodeEventType } from '@/schema-form/core/engine/record';
+import {
+  FieldNodeState,
+  ValidationMode,
+} from '@/schema-form/core/engine/types/state';
+import { WriteOption } from '@/schema-form/core/engine/types/value';
+
+import { dispatchBatch } from '../utils/entry/dispatchBatch';
+import { dispatchFinishInput } from '../utils/entry/dispatchFinishInput';
+import { dispatchMount } from '../utils/entry/dispatchMount';
+import { dispatchSetExternalErrors } from '../utils/entry/dispatchSetExternalErrors';
+import { dispatchSetState } from '../utils/entry/dispatchSetState';
+import { dispatchSetValue } from '../utils/entry/dispatchSetValue';
+import { dispatchWriteInput } from '../utils/entry/dispatchWriteInput';
+import { readFieldNodeRevision } from '../utils/read/readFieldNodeRevision';
+import { subscribeFieldNode } from '../utils/read/subscribeFieldNode';
 import { getDispatchChild } from './fixtures/getDispatchChild';
 
 describe('binding input entries', () => {
@@ -16,13 +28,13 @@ describe('binding input entries', () => {
         other: { type: 'string' },
       },
     });
-    dispatch.dispatchMount(root, { input: 'old', other: 'old' });
+    dispatchMount(root, { input: 'old', other: 'old' });
     const input = getDispatchChild(root, 'input');
     const listener = vi.fn();
-    dispatch.subscribeFieldNode(input, listener);
-    dispatch.dispatchBatch(root, () => {
-      dispatch.dispatchWriteInput(input, 'typed');
-      dispatch.dispatchSetValue(root, { other: 'external' }, WriteOption.Merge);
+    subscribeFieldNode(input, listener);
+    dispatchBatch(root, () => {
+      dispatchWriteInput(input, 'typed');
+      dispatchSetValue(root, { other: 'external' }, WriteOption.Merge);
     });
     expect(input.local).toBe('typed');
     expect(
@@ -40,23 +52,23 @@ describe('binding input entries', () => {
         caller: { type: 'string' },
       },
     });
-    dispatch.dispatchMount(root, { input: 'old', caller: 'old' });
+    dispatchMount(root, { input: 'old', caller: 'old' });
     const input = getDispatchChild(root, 'input');
     const caller = getDispatchChild(root, 'caller');
     const listener = vi.fn();
-    dispatch.subscribeFieldNode(input, listener);
-    dispatch.dispatchBatch(root, () => {
-      dispatch.dispatchWriteInput(input, 'typed');
-      dispatch.dispatchSetValue(caller, 'external');
+    subscribeFieldNode(input, listener);
+    dispatchBatch(root, () => {
+      dispatchWriteInput(input, 'typed');
+      dispatchSetValue(caller, 'external');
     });
     expect(
       listener.mock.calls[0][0].options[FieldNodeEventType.UpdateValue],
     ).toEqual({ source: 'input' });
     expect(runtime.refreshTargets?.has(input.path)).toBe(false);
     expect(runtime.refreshTargets?.has(caller.path)).toBe(true);
-    dispatch.dispatchBatch(root, () => {
-      dispatch.dispatchWriteInput(input, 'typed again');
-      dispatch.dispatchSetValue(input, 'replaced');
+    dispatchBatch(root, () => {
+      dispatchWriteInput(input, 'typed again');
+      dispatchSetValue(input, 'replaced');
     });
     expect(
       listener.mock.lastCall![0].options[FieldNodeEventType.UpdateValue],
@@ -69,12 +81,12 @@ describe('binding input entries', () => {
       type: 'string',
       options: { trim: true },
     });
-    dispatch.dispatchMount(root, ' old ');
+    dispatchMount(root, ' old ');
     const listener = vi.fn();
-    dispatch.subscribeFieldNode(root, listener);
-    dispatch.dispatchBatch(root, () => {
-      dispatch.dispatchWriteInput(root, ' new ');
-      dispatch.dispatchFinishInput(root);
+    subscribeFieldNode(root, listener);
+    dispatchBatch(root, () => {
+      dispatchWriteInput(root, ' new ');
+      dispatchFinishInput(root);
     });
     expect(root.local).toBe('new');
     expect(
@@ -85,12 +97,10 @@ describe('binding input entries', () => {
 
   it('REACT-010 marked input groups value, external-error clearing and dirty in one commit', () => {
     const { root, runtime } = createDispatchTree({ type: 'string' });
-    dispatch.dispatchMount(root, 'old');
-    dispatch.dispatchSetExternalErrors(root, [
-      { dataPath: '', message: 'external' },
-    ]);
+    dispatchMount(root, 'old');
+    dispatchSetExternalErrors(root, [{ dataPath: '', message: 'external' }]);
     const before = runtime.commitNumber;
-    dispatch.dispatchWriteInput(root, 'new');
+    dispatchWriteInput(root, 'new');
     expect(root.local).toBe('new');
     expect(runtime.nodeErrors?.has(root)).toBe(false);
     expect(root.interactionState[FieldNodeState.Dirty]).toBe(true);
@@ -106,21 +116,21 @@ describe('binding input entries', () => {
         kept: { type: 'string' },
       },
     });
-    dispatch.dispatchMount(root, { input: 'old', kept: 'same' });
+    dispatchMount(root, { input: 'old', kept: 'same' });
     const input = getDispatchChild(root, 'input');
     const copy = getDispatchChild(root, 'copy');
     const listener = vi.fn();
-    dispatch.subscribeFieldNode(input, listener);
-    const refresh = dispatch.readFieldNodeRevision(
+    subscribeFieldNode(input, listener);
+    const refresh = readFieldNodeRevision(
       input,
       FieldNodeEventType.RequestRefresh,
     );
-    dispatch.dispatchWriteInput(input, 'new');
+    dispatchWriteInput(input, 'new');
     expect(
       listener.mock.calls[0][0].options[FieldNodeEventType.UpdateValue],
     ).toEqual({ source: 'input' });
     expect(
-      dispatch.readFieldNodeRevision(input, FieldNodeEventType.RequestRefresh),
+      readFieldNodeRevision(input, FieldNodeEventType.RequestRefresh),
     ).toBe(refresh);
     expect(runtime.refreshTargets?.has(input.path)).toBe(false);
     expect(runtime.refreshTargets?.has(copy.path)).toBe(true);
@@ -129,12 +139,10 @@ describe('binding input entries', () => {
 
   it('REACT-009 batch preserves input source and Refresh exclusion', () => {
     const { root, runtime } = createDispatchTree({ type: 'string' });
-    dispatch.dispatchMount(root, 'old');
+    dispatchMount(root, 'old');
     const listener = vi.fn();
-    dispatch.subscribeFieldNode(root, listener);
-    dispatch.dispatchBatch(root, () =>
-      dispatch.dispatchWriteInput(root, 'new'),
-    );
+    subscribeFieldNode(root, listener);
+    dispatchBatch(root, () => dispatchWriteInput(root, 'new'));
     expect(
       listener.mock.calls[0][0].options[FieldNodeEventType.UpdateValue],
     ).toEqual({ source: 'input' });
@@ -146,24 +154,24 @@ describe('binding input entries', () => {
       type: 'string',
       options: { trim: true },
     });
-    dispatch.dispatchMount(root, '  value  ');
+    dispatchMount(root, '  value  ');
     const errors = [{ dataPath: '', message: 'external' }];
-    dispatch.dispatchSetExternalErrors(root, errors);
-    dispatch.dispatchSetState(root, { [FieldNodeState.Dirty]: true });
+    dispatchSetExternalErrors(root, errors);
+    dispatchSetState(root, { [FieldNodeState.Dirty]: true });
     const state = root.interactionState;
     const listener = vi.fn();
-    dispatch.subscribeFieldNode(root, listener);
-    const refresh = dispatch.readFieldNodeRevision(
+    subscribeFieldNode(root, listener);
+    const refresh = readFieldNodeRevision(
       root,
       FieldNodeEventType.RequestRefresh,
     );
-    dispatch.dispatchFinishInput(root);
+    dispatchFinishInput(root);
     expect(root.local).toBe('value');
     expect(runtime.nodeErrors?.get(root)).toBe(errors);
     expect(root.interactionState).toBe(state);
-    expect(
-      dispatch.readFieldNodeRevision(root, FieldNodeEventType.RequestRefresh),
-    ).toBe(refresh + 1);
+    expect(readFieldNodeRevision(root, FieldNodeEventType.RequestRefresh)).toBe(
+      refresh + 1,
+    );
     expect(
       listener.mock.calls[0][0].options[FieldNodeEventType.UpdateValue],
     ).toEqual({ source: 'automatic' });
@@ -174,11 +182,11 @@ describe('binding input entries', () => {
       type: 'string',
       options: { trim: true },
     });
-    dispatch.dispatchMount(root, 'value');
+    dispatchMount(root, 'value');
     const commit = runtime.commitNumber;
     const listener = vi.fn();
-    dispatch.subscribeFieldNode(root, listener);
-    dispatch.dispatchFinishInput(root);
+    subscribeFieldNode(root, listener);
+    dispatchFinishInput(root);
     expect(runtime.commitNumber).toBe(commit);
     expect(listener).not.toHaveBeenCalled();
   });
@@ -188,13 +196,13 @@ describe('binding input entries', () => {
       type: 'string',
       options: { trim: true },
     });
-    dispatch.dispatchMount(root, ' value ');
+    dispatchMount(root, ' value ');
     runtime.disableAutomaticWrites = true;
     const commit = runtime.commitNumber;
-    dispatch.dispatchFinishInput(root);
+    dispatchFinishInput(root);
     expect(root.local).toBe(' value ');
     runtime.disableAutomaticWrites = false;
-    dispatch.dispatchFinishInput(root, WriteOption.DisableAutomaticWrites);
+    dispatchFinishInput(root, WriteOption.DisableAutomaticWrites);
     expect(root.local).toBe(' value ');
     expect(runtime.commitNumber).toBe(commit);
   });
@@ -211,7 +219,7 @@ describe('binding input entries', () => {
       validator,
     );
     deferred.runtime.validationMode = ValidationMode.OnChange;
-    dispatch.dispatchMount(deferred.root, 'first', undefined, {
+    dispatchMount(deferred.root, 'first', undefined, {
       deferValidation: true,
     });
     expect(deferred.runtime.validationPendingTargets).toBeUndefined();
@@ -221,7 +229,7 @@ describe('binding input entries', () => {
       validator,
     );
     immediate.runtime.validationMode = ValidationMode.OnChange;
-    dispatch.dispatchMount(immediate.root, 'second');
+    dispatchMount(immediate.root, 'second');
     expect(immediate.runtime.validationStamp).toBe(1);
     expect(
       immediate.runtime.validationPendingTargets?.has(immediate.root),
@@ -239,11 +247,11 @@ describe('binding input of a virtual node (R2)', () => {
       },
       options: { virtual: { period: { fields: ['startDate', 'endDate'] } } },
     });
-    dispatch.dispatchMount(root, { startDate: 's0', endDate: 'e0' });
+    dispatchMount(root, { startDate: 's0', endDate: 'e0' });
     const period = getDispatchChild(root, 'period');
     const issue = { dataPath: '/period', message: 'server' };
-    dispatch.dispatchSetExternalErrors(period, [issue]);
-    expect(() => dispatch.dispatchWriteInput(period, 'bad')).toThrow(
+    dispatchSetExternalErrors(period, [issue]);
+    expect(() => dispatchWriteInput(period, 'bad')).toThrow(
       'Invalid virtual node values at /period',
     );
     expect(runtime.nodeErrors?.get(period)).toEqual([issue]);

@@ -1,4 +1,4 @@
-import type { Blueprint } from '../../engine/blueprint';
+import type { Blueprint } from '@/schema-form/core/engine';
 
 /**
  * Capture finite authored structure while excluding optimization capabilities.

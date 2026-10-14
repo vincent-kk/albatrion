@@ -1,6 +1,8 @@
 import { describe, expect, it } from 'vitest';
 
-import { blueprint, mergeEffectiveSchema, resolveArrayLimits } from '../index';
+import { blueprint } from '../blueprint';
+import { mergeEffectiveSchema } from '../utils/effectiveSchema/mergeEffectiveSchema';
+import { resolveArrayLimits } from '../utils/resolveArrayLimits/resolveArrayLimits';
 
 // filid:contract array-limits-and-slots
 describe('resolveArrayLimits', () => {

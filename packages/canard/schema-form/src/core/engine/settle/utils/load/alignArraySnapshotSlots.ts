@@ -1,8 +1,10 @@
 import { isArray } from '@winglet/common-utils/filter';
 import { unescapeSegment } from '@winglet/json/pointer';
 
+import { JSONPointer as $ } from '@/schema-form/helpers/jsonPointer';
+
 import type { FieldNodeRecord } from '../../../record';
-import { sameValue } from '../compute/sameValue';
+import { sameValue } from '../../../utils/compute/sameValue';
 import { isCanonicalArrayIndex } from '../paths/isCanonicalArrayIndex';
 import { getLoadValue } from './getLoadValue';
 import { setLoadValue } from './setLoadValue';
@@ -59,7 +61,7 @@ export const alignArraySnapshotSlots = <Self extends FieldNodeRecord<Self>>(
       draft = slots;
       continue;
     }
-    const encoded = host.path.slice(1).split('/');
+    const encoded = host.path.slice(1).split($.Separator);
     const segments = encoded.map(unescapeSegment);
     let probe: unknown = draft;
     let byName = false;

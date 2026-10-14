@@ -1,0 +1,111 @@
+import { type ComponentType, type ReactNode, memo } from 'react';
+
+import { useConstant, useReference } from '@winglet/react-utils/hook';
+
+import { FieldProxy } from '@/schema-form/components/FieldProxy';
+import type { AllowedValue, FieldInputProps } from '@/schema-form/types';
+
+import type { FormFieldProps } from './type';
+
+/**
+ * Renders a complete form field group with customizable input and renderer components.
+ *
+ * Combines FieldInput and FieldRenderer to create a cohesive field experience,
+ * typically including label, input, error messages, and any additional UI elements.
+ * Allows overriding default components for specialized field types.
+ *
+ * @example
+ * Basic field group with default rendering:
+ * ```tsx
+ * <Form jsonSchema={schema}>
+ *   <Form.Field path="/email" />
+ *   <Form.Field path="/password" />
+ *   <Form.Field path="/rememberMe" />
+ * </Form>
+ * ```
+ *
+ * @example
+ * Custom wrapper for layout:
+ * ```tsx
+ * const FieldWrapper = ({ children, ...props }) => (
+ *   <div className="form-field" data-field={props.path}>
+ *     {children}
+ *   </div>
+ * );
+ *
+ * <Form.Field
+ *   path="/username"
+ *   Wrapper={FieldWrapper}
+ *   placeholder="Enter username"
+ *   autoComplete="username"
+ * />
+ * ```
+ *
+ * @example
+ * Override with custom input component:
+ * ```tsx
+ * const DatePicker = ({ value, onChange, jsonSchema, ...props }) => (
+ *   <ReactDatePicker
+ *     selected={value}
+ *     onChange={onChange}
+ *     minDate={jsonSchema.minimum}
+ *     maxDate={jsonSchema.maximum}
+ *     {...props}
+ *   />
+ * );
+ *
+ * <Form.Field
+ *   path="/birthDate"
+ *   FieldInput={DatePicker}
+ *   dateFormat="yyyy-MM-dd"
+ *   showYearDropdown
+ * />
+ * ```
+ *
+ * @example
+ * Custom renderer for complex fields:
+ * ```tsx
+ * const AddressRenderer = (props) => (
+ *   <div className="address-group">
+ *     <h4>{props.jsonSchema.title || 'Address'}</h4>
+ *     <Form.Input path={`${props.path}/street`} />
+ *     <div className="row">
+ *       <Form.Input path={`${props.path}/city`} />
+ *       <Form.Input path={`${props.path}/zipCode`} />
+ *     </div>
+ *   </div>
+ * );
+ *
+ * <Form.Field
+ *   path="/address"
+ *   FieldRenderer={AddressRenderer}
+ * />
+ * ```
+ */
+export const FormField = memo(
+  ({
+    path,
+    FieldInput,
+    FieldRenderer,
+    Wrapper,
+    ...restProps
+  }: FormFieldProps<AllowedValue>) => {
+    const overridePropsRef = useReference(restProps);
+    const constant = useConstant({
+      FieldInput: FieldInput as ComponentType<FieldInputProps>,
+      FieldRenderer,
+      Wrapper,
+    });
+    return (
+      <FieldProxy
+        path={path}
+        overridePropsRef={overridePropsRef}
+        FieldInput={constant.FieldInput}
+        FieldRenderer={constant.FieldRenderer}
+        Wrapper={constant.Wrapper}
+      />
+    );
+  },
+) as <Value extends AllowedValue = AllowedValue>(
+  props: FormFieldProps<Value>,
+) => ReactNode;

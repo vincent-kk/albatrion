@@ -2,33 +2,33 @@
 
 ## Purpose
 
-Analyze an authored schema into renderer-independent declarations and fragments before any runtime node is created.
+런타임 노드를 만들기 전에, 작성된 스키마를 렌더러와 무관한 선언과 조각으로 분석한다.
 
 ## Conventions
 
-- The architecture ledger defines schema semantics; the module owns their executable representation.
-- Use full names, including `PropertyDeclaration` and `SchemaFragment`.
-- Analysis receives renderer decisions as predicates and never imports React.
-- Keep authored schemas immutable and retain reference identity where the merge contract permits it.
-- Publish branch, feature and convergence proofs only after declaration collection has completed; include disabled declarations and keep uncertain reads on the conservative path.
+- 스키마의 의미는 아키텍처 원장이 정의하고, 이 모듈은 그 의미의 실행 가능한 표현을 소유한다.
+- `PropertyDeclaration`, `SchemaFragment`처럼 이름을 줄이지 않고 전체로 쓴다.
+- 분석은 렌더러의 판단을 predicate로 받으며 React를 가져오지 않는다.
+- 작성된 스키마는 변경하지 않고, 병합 계약이 허용하는 범위에서는 참조 동일성을 유지한다.
+- branch, feature, 수렴에 대한 증명은 선언 수집이 끝난 뒤에만 공개한다. 비활성 선언도 포함하며, 확실하지 않은 읽기는 보수적인 경로로 처리한다.
 
 ## Boundaries
 
 ### Always do
 
-- Distinguish conjunctive overlays from declaration-only branches.
-- Report static failures with schema locations and collect warnings only for an interested consumer.
-- Cross sibling boundaries through named entry-point exports.
-- Keep recursive schema references finite; runtime shape construction belongs to the node engine.
+- 결합 오버레이와 선언 전용 branch를 구분한다.
+- 정적 실패는 스키마 위치와 함께 보고하고, 경고는 관심 있는 소비자가 있을 때만 모은다.
+- 형제 경계는 이름 붙은 진입점 export를 통해 건넌다.
+- 재귀 스키마 참조는 유한하게 유지한다. 런타임 형상 구성은 노드 엔진의 몫이다.
 
 ### Ask first
 
-- Change the accepted schema language or the architecture ledger's outcome for an example.
-- Introduce value evaluation, node allocation, or renderer dependencies into analysis.
+- 허용하는 스키마 언어를 바꾸거나, 예제에 대한 아키텍처 원장의 결론을 바꿀 때
+- 분석에 값 평가, 노드 할당, 렌더러 의존을 도입할 때
 
 ### Never do
 
-- Import the legacy engine or mutate the caller's schema.
-- Infer branch selection from const or enum without an explicit discriminator.
-- Evaluate validator guards during analysis.
-- Inspect presentation values to select a renderer or terminal strategy.
+- 레거시 엔진을 가져오거나 호출자의 스키마를 변경하지 않는다.
+- 명시적인 discriminator 없이 const나 enum으로 branch 선택을 추론하지 않는다.
+- 분석 중에 validator 가드를 평가하지 않는다.
+- 렌더러나 터미널 전략을 고르려고 표현용 값을 들여다보지 않는다.

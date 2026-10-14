@@ -1,7 +1,8 @@
 import { isArray } from '@winglet/common-utils/filter';
 
+import { CONTROL_KEY } from '../../../../constants/controlKey';
 import type { FieldNodeRecord } from '../../../../record';
-import { resolveDependencyPath } from '../../paths/resolveDependencyPath';
+import { resolveDependencyPath } from '../../../../utils/paths/resolveDependencyPath';
 
 /**
  * Resolve the final effective watch list against this live occurrence.
@@ -16,7 +17,7 @@ export const getWatchDeliveryPaths = <Self extends FieldNodeRecord<Self>>(
     typeof schema === 'object' ? schema.controls : undefined;
   const watch: unknown =
     controls && typeof controls === 'object'
-      ? Reflect.get(controls, 'watch')
+      ? Reflect.get(controls, CONTROL_KEY.watch)
       : undefined;
   if (!isArray(watch)) return [];
   const paths: string[] = [];

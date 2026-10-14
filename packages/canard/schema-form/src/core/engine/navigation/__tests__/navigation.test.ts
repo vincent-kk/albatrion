@@ -1,6 +1,8 @@
 import { describe, expect, it } from 'vitest';
 
-import { find, findNodes, walkFieldNodes } from '../index';
+import { find } from '../utils/query/find';
+import { findNodes } from '../utils/query/findNodes';
+import { walkFieldNodes } from '../utils/walk/walkFieldNodes';
 import { type TestNode, createNode } from './fixtures/createNode';
 
 // filid:contract navigation-shape

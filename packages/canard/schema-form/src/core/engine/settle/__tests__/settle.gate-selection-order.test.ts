@@ -1,13 +1,15 @@
 import { describe, expect, it, vi } from 'vitest';
 
-import type { BlueprintSchema } from '../../blueprint';
-import { WriteOption } from '../../types/value';
-import { loadFieldNodeAtMount, writeFieldNode } from '../index';
+import type { BlueprintSchema } from '@/schema-form/core/engine/blueprint';
+import { WriteOption } from '@/schema-form/core/engine/types/value';
+
+import type { PlainNode } from '../../__tests__/fixtures/createPlainNode';
+import { createTestTree } from '../../__tests__/fixtures/createTestTree';
+import { resolveDependencyPath } from '../../utils/paths/resolveDependencyPath';
 import type { SettlementContext } from '../type';
 import * as gateEvaluation from '../utils/gates/evaluateGate';
-import { resolveDependencyPath } from '../utils/paths/resolveDependencyPath';
-import type { PlainNode } from './fixtures/createPlainNode';
-import { createTestTree } from './fixtures/createTestTree';
+import { loadFieldNodeAtMount } from '../utils/load/loadFieldNodeAtMount';
+import { writeFieldNode } from '../utils/write/writeFieldNode';
 import { readProjectedValueWithoutPublication } from './helpers/readProjectedValueWithoutPublication';
 
 /** Fixed live width and kind_0/kind_4 input size match the approved branch-axis row. */

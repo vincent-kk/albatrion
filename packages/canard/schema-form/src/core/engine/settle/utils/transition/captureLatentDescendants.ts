@@ -1,6 +1,9 @@
 import { isArray } from '@winglet/common-utils/filter';
 
+import { JSONPointer as $ } from '@/schema-form/helpers/jsonPointer';
+
 import type { FieldNodeRecord } from '../../../record';
+import type { DeclarationLayer } from '../../../types/controls';
 import type { SettlementContext } from '../../type';
 import { getControlLayers } from '../controls/getControlLayers';
 import { readExitLayerPolicy } from '../controls/readExitLayerPolicy';
@@ -19,7 +22,7 @@ interface LatentEntry {
   readonly order: readonly number[];
   /** Explicit decisions saved when the occurrence left the shape. */
   readonly exitLayers?: readonly {
-    layer: 'node' | 'fields' | 'fragment';
+    layer: DeclarationLayer;
     clear: boolean;
   }[];
 }
@@ -75,7 +78,7 @@ export const captureLatentDescendants = <Self extends FieldNodeRecord<Self>>(
     [node.path, [{ path: node.path, order: [], clear: inherited }]],
   ]);
   for (const entry of entries) {
-    let parentPath = entry.path.slice(0, entry.path.lastIndexOf('/'));
+    let parentPath = entry.path.slice(0, entry.path.lastIndexOf($.Separator));
     let parent: ResolvedAncestor | undefined;
     while (!parent && parentPath.length >= node.path.length) {
       parent = resolved
@@ -86,7 +89,7 @@ export const captureLatentDescendants = <Self extends FieldNodeRecord<Self>>(
           ),
         );
       if (parentPath === node.path) break;
-      parentPath = parentPath.slice(0, parentPath.lastIndexOf('/'));
+      parentPath = parentPath.slice(0, parentPath.lastIndexOf($.Separator));
     }
     const inheritedPolicy = parent?.clear ?? inherited;
     const current = live.get(entry.key);

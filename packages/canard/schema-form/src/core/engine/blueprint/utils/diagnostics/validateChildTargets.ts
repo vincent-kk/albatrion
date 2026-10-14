@@ -1,6 +1,6 @@
+import { FormErrorCode } from '../../../../../errors';
 import { readSchemaObject } from '../analyze/readSchemaObject';
 import type { AnalysisContext } from '../analyze/type';
-import { BlueprintErrorCode } from './constant';
 import { throwBlueprintError } from './throwBlueprintError';
 
 /**
@@ -19,7 +19,7 @@ export const validateChildTargets = (context: AnalysisContext): void => {
           discriminator !== controls.discriminator
         )
           throwBlueprintError(
-            BlueprintErrorCode.DiscriminatorMismatch,
+            FormErrorCode.DiscriminatorMismatch,
             declaration.schemaPath,
             {
               propertyName: discriminator,
@@ -38,7 +38,7 @@ export const validateChildTargets = (context: AnalysisContext): void => {
               !node.childEntries.some((edge) => edge.name === target)
             )
               throwBlueprintError(
-                BlueprintErrorCode.ChildrenTargetNotFound,
+                FormErrorCode.ChildrenTargetNotFound,
                 `${declaration.schemaPath}/controls/fields/${index}`,
                 { target },
                 context.options,

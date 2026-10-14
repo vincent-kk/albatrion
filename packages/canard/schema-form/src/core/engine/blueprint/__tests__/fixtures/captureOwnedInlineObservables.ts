@@ -1,4 +1,5 @@
-import { captureBlueprintObservables } from '../../../../__tests__/fixtures/captureBlueprintObservables';
+import { captureBlueprintObservables } from '@/schema-form/core/__tests__/fixtures/captureBlueprintObservables';
+
 import { blueprint } from '../../blueprint';
 import type { BlueprintDiagnostic, BlueprintSchema } from '../../type';
 import { mergeEffectiveSchema } from '../../utils/effectiveSchema/mergeEffectiveSchema';

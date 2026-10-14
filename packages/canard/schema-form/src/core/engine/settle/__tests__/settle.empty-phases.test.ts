@@ -1,16 +1,18 @@
 import { afterEach, expect, it, vi } from 'vitest';
 
-import { WriteOption } from '../../types/value';
-import { loadFieldNodeAtMount, writeFieldNode } from '../index';
+import { WriteOption } from '@/schema-form/core/engine/types/value';
+
+import { createTestTree } from '../../__tests__/fixtures/createTestTree';
 import * as rules from '../utils/commit/commitDeriveRules';
 import * as exitRules from '../utils/commit/commitExitPolicyValues';
 import * as trace from '../utils/commit/finalizeDeriveTrace';
 import * as policies from '../utils/commit/snapshotExitedPolicies';
 import * as derive from '../utils/derivation/runDeriveRounds';
 import * as alignment from '../utils/load/alignArraySnapshotSlots';
+import { loadFieldNodeAtMount } from '../utils/load/loadFieldNodeAtMount';
 import * as exits from '../utils/transition/finalizeExits';
 import * as transition from '../utils/transition/transitionSettlement';
-import { createTestTree } from './fixtures/createTestTree';
+import { writeFieldNode } from '../utils/write/writeFieldNode';
 
 afterEach(() => vi.restoreAllMocks());
 

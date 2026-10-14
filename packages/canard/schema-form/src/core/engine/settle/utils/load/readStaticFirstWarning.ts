@@ -1,4 +1,4 @@
-import { TYPE_MISMATCH } from '../../../../../errors';
+import { FormWarningCode } from '../../../../../errors';
 import type { FieldNodeRecord, TypeMismatchRecord } from '../../../record';
 import { conversionCandidates } from '../commit/conversionCandidates';
 import { effectiveType } from '../commit/effectiveType';
@@ -21,7 +21,7 @@ export const readStaticFirstWarning = <Self extends FieldNodeRecord<Self>>(
   const ambiguous = candidates.length > 1;
   return {
     level: 'warning',
-    code: TYPE_MISMATCH,
+    code: FormWarningCode.TypeMismatch,
     path: node.path,
     expected: {
       schemaType: node.schemaType,

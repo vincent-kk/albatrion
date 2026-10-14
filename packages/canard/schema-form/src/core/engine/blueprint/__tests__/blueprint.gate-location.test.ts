@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { blueprint } from '../index';
+import { blueprint } from '../blueprint';
 
 /** Return the active gate on a nested declaration for location checks. */
 const nestedGate = (active: string) =>

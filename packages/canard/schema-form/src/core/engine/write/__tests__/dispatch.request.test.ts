@@ -1,15 +1,17 @@
 import { describe, expect, it, vi } from 'vitest';
 
-import { FieldNodeEventType, FieldNodeRequestType } from '../../record';
-import { ValidationMode } from '../../types/state';
+import { createDispatchTree } from '@/schema-form/core/engine/__tests__/fixtures/createDispatchTree';
 import {
-  dispatchBatch,
-  dispatchRequest,
-  dispatchSetValue,
-  readFieldNodeRevision,
-  subscribeFieldNode,
-} from '../index';
-import { createDispatchTree } from './fixtures/createDispatchTree';
+  FieldNodeEventType,
+  FieldNodeRequestType,
+} from '@/schema-form/core/engine/record';
+import { ValidationMode } from '@/schema-form/core/engine/types/state';
+
+import { dispatchBatch } from '../utils/entry/dispatchBatch';
+import { dispatchRequest } from '../utils/entry/dispatchRequest';
+import { dispatchSetValue } from '../utils/entry/dispatchSetValue';
+import { readFieldNodeRevision } from '../utils/read/readFieldNodeRevision';
+import { subscribeFieldNode } from '../utils/read/subscribeFieldNode';
 
 describe('dispatcher commands', () => {
   it('EVENT-037 EVENT-073 aliases all four request kinds to event bits', () => {

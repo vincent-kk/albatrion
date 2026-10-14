@@ -1,6 +1,6 @@
+import { FormErrorCode } from '../../../../../errors';
 import type { PropertyDeclaration, SchemaTypeName } from '../../type';
 import type { AnalysisContext } from '../analyze/type';
-import { BlueprintErrorCode } from '../diagnostics/constant';
 import { throwBlueprintError } from '../diagnostics/throwBlueprintError';
 import { foldAllowedTypes } from './foldAllowedTypes';
 import { inferAllowedTypes } from './inferAllowedTypes';
@@ -43,7 +43,7 @@ export const resolveNodeTypes = (
       );
       if (allowed?.length === 0)
         return throwBlueprintError(
-          BlueprintErrorCode.AllOfTypeRedefinition,
+          FormErrorCode.AllOfTypeRedefinition,
           declaration.schemaPath,
           { declarations: fixed.map((item) => item.schemaPath) },
           context.options,
@@ -73,7 +73,7 @@ export const resolveNodeTypes = (
       );
       if (types && (foldAllowedTypes(types) & mask) !== foldAllowedTypes(types))
         throwBlueprintError(
-          BlueprintErrorCode.SharedNodeKindConflict,
+          FormErrorCode.SharedNodeKindConflict,
           declaration.schemaPath,
           { staticTypes: allowed, branchTypes: types },
           context.options,
@@ -98,7 +98,7 @@ export const resolveNodeTypes = (
     if (!declaration.gates.length) {
       if (ungatedMask !== undefined && ungatedMask !== mask)
         throwBlueprintError(
-          BlueprintErrorCode.SharedNodeKindConflict,
+          FormErrorCode.SharedNodeKindConflict,
           declaration.schemaPath,
           { types: allowed },
           context.options,

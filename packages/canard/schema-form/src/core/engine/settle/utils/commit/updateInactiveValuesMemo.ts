@@ -1,5 +1,7 @@
 import { isArray } from '@winglet/common-utils/filter';
 
+import { JSONPointer as $ } from '@/schema-form/helpers/jsonPointer';
+
 import { find } from '../../../navigation';
 import type { FieldNodeRecord } from '../../../record';
 import { PathKeyedMap } from '../../../utils/pathIndex/PathKeyedMap';
@@ -109,7 +111,7 @@ export const updateInactiveValuesMemo = <Self extends FieldNodeRecord<Self>>(
     let ancestor = path;
     while (ancestor) {
       affected.add(ancestor);
-      ancestor = ancestor.slice(0, ancestor.lastIndexOf('/'));
+      ancestor = ancestor.slice(0, ancestor.lastIndexOf($.Separator));
     }
   }
   const entriesByHost = new Map<string, { path: string; value: unknown }[]>();
@@ -122,7 +124,7 @@ export const updateInactiveValuesMemo = <Self extends FieldNodeRecord<Self>>(
         entriesByHost.set(ancestor, descendants);
       }
       if (!ancestor) break;
-      ancestor = ancestor.slice(0, ancestor.lastIndexOf('/'));
+      ancestor = ancestor.slice(0, ancestor.lastIndexOf($.Separator));
     }
   }
   for (const host of affected) {

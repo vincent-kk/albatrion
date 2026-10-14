@@ -5,8 +5,7 @@ import { afterEach, expect, it } from 'vitest';
 
 import { SetValueOption, ValidationMode } from '@/schema-form/core';
 
-import { Form } from '../Form';
-import type { FormHandle } from '../type';
+import { FormCore, type FormHandle } from '../components/FormCore';
 
 afterEach(cleanup);
 
@@ -44,7 +43,7 @@ it.each([
           : firstValidator
         : undefined;
       return (
-        <Form
+        <FormCore
           ref={ref}
           jsonSchema={jsonSchema}
           defaultValue={defaultValue}
@@ -52,7 +51,7 @@ it.each([
           validationMode={ValidationMode.None}
         >
           <span />
-        </Form>
+        </FormCore>
       );
     };
     render(<App />);
@@ -78,44 +77,44 @@ it.each([false, true])(
     } as const;
     const nextSchema = { ...schema, title: 'replacement' };
     const view = render(
-      <Form
+      <FormCore
         ref={ref}
         jsonSchema={schema}
         defaultValue={{}}
         validationMode={ValidationMode.None}
       >
         <span />
-      </Form>,
+      </FormCore>,
     );
     const original = ref.current!.node;
     view.rerender(
-      <Form
+      <FormCore
         ref={ref}
         jsonSchema={replacement ? nextSchema : schema}
         defaultValue={{}}
         validationMode={ValidationMode.None}
       >
         <span />
-      </Form>,
+      </FormCore>,
     );
     act(() => ref.current!.reset(SetValueOption.DisableAutomaticWrites));
     expect(ref.current!.getValue()).toEqual({});
     expect(ref.current!.node === original).toBe(!replacement);
     view.rerender(
-      <Form
+      <FormCore
         ref={ref}
         jsonSchema={schema}
         defaultValue={{}}
         validationMode={ValidationMode.None}
       >
         <span />
-      </Form>,
+      </FormCore>,
     );
     act(() => ref.current!.reset());
     expect(ref.current!.getValue()).toEqual({ filled: 'automatic' });
 
     view.rerender(
-      <Form
+      <FormCore
         ref={ref}
         jsonSchema={replacement ? nextSchema : schema}
         defaultValue={{}}
@@ -123,12 +122,12 @@ it.each([false, true])(
         validationMode={ValidationMode.None}
       >
         <span />
-      </Form>,
+      </FormCore>,
     );
     act(() => ref.current!.reset());
     expect(ref.current!.getValue()).toEqual({});
     view.rerender(
-      <Form
+      <FormCore
         ref={ref}
         jsonSchema={schema}
         defaultValue={{}}
@@ -136,20 +135,20 @@ it.each([false, true])(
         validationMode={ValidationMode.None}
       >
         <span />
-      </Form>,
+      </FormCore>,
     );
     act(() => ref.current!.reset(SetValueOption.EnableAutomaticWrites));
     expect(ref.current!.getValue()).toEqual({ filled: 'automatic' });
 
     view.rerender(
-      <Form
+      <FormCore
         ref={ref}
         jsonSchema={replacement ? nextSchema : schema}
         defaultValue={{}}
         validationMode={ValidationMode.None}
       >
         <span />
-      </Form>,
+      </FormCore>,
     );
     act(() =>
       ref.current!.reset(
@@ -159,14 +158,14 @@ it.each([false, true])(
     );
     expect(ref.current!.getValue()).toEqual({});
     view.rerender(
-      <Form
+      <FormCore
         ref={ref}
         jsonSchema={schema}
         defaultValue={{}}
         validationMode={ValidationMode.None}
       >
         <span />
-      </Form>,
+      </FormCore>,
     );
     act(() =>
       ref.current!.reset(

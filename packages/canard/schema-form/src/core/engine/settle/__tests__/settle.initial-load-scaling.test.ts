@@ -1,8 +1,9 @@
 import { describe, expect, it } from 'vitest';
 
-import { WriteOption } from '../../types/value';
-import { loadFieldNodeAtMount } from '../index';
-import { createTestTree } from './fixtures/createTestTree';
+import { WriteOption } from '@/schema-form/core/engine/types/value';
+
+import { createTestTree } from '../../__tests__/fixtures/createTestTree';
+import { loadFieldNodeAtMount } from '../utils/load/loadFieldNodeAtMount';
 
 /** Count declaration-name reads across a real mount load without a timer. */
 const initialLoadNameReads = (count: number): number => {

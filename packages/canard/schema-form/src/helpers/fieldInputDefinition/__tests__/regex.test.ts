@@ -1,6 +1,6 @@
 import { describe, expect, test } from 'vitest';
 
-import { INCLUDE_WILDCARD_REGEX } from '../regex';
+import { INCLUDE_WILDCARD_REGEX } from '../constants/regex';
 
 describe('INCLUDE_INDEX_REGEX', () => {
   // 헬퍼 함수: 정규식 테스트

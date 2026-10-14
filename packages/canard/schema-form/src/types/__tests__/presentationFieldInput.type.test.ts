@@ -2,12 +2,15 @@ import { Component, memo } from 'react';
 
 import { describe, expectTypeOf, it } from 'vitest';
 
-import type { FieldInputProps, FieldInputPropsWithSchema } from '../fieldInput';
+import type {
+  FieldInputProps,
+  FieldInputPropsWithSchema,
+} from '../types/fieldInput';
 import type {
   BooleanSchema,
   JSONSchema,
   SchemaPresentation,
-} from '../jsonSchema';
+} from '../types/jsonSchema';
 
 /** Component alternatives admitted by the schema's presentation input slot. */
 type Slot = NonNullable<SchemaPresentation['FieldInput']>;

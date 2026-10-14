@@ -1,4 +1,4 @@
-import type { PlainNode } from './createPlainNode';
+import type { PlainNode } from '../../../__tests__/fixtures/createPlainNode';
 
 /**
  * Capture array settlement results without comparing runtime object identities.

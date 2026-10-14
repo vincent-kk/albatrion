@@ -900,6 +900,62 @@ This powerful system allows developers to have fine-grained control over every a
 
 ---
 
+## Error Handling
+
+Use the four guards — `isJSONSchemaError`, `isSchemaFormError`, `isValidationError`, `isUnhandledError` — to tell error classes apart, and compare `error.code` (or `record.code` in `onError`) with the `FormErrorCode` and `FormWarningCode` constants instead of string literals. Values are group-qualified strings such as `'SCHEMA_FORM_ERROR.RENDER_FAILED'`; a constant follows any rename inside the package, a literal silently stops matching.
+
+```tsx
+import { useRef } from 'react';
+import {
+  Form,
+  FormErrorCode,
+  FormWarningCode,
+  isValidationError,
+  useFormSubmit,
+  type FormHandle,
+} from '@canard/schema-form';
+
+const jsonSchema = {
+  type: 'object',
+  properties: { name: { type: 'string' } },
+} as const;
+
+declare function reportToMonitoring(error: unknown): void;
+
+function ProfileForm() {
+  const formRef = useRef<FormHandle<typeof jsonSchema>>(null);
+  const { submit, pending } = useFormSubmit(formRef);
+
+  const handleSubmit = async () => {
+    try {
+      await submit();
+    } catch (error) {
+      if (isValidationError(error) && error.code === FormErrorCode.SchemaValidationFailed)
+        return; // field errors are already on the form; formRef.current?.getErrors() lists them
+      throw error;
+    }
+  };
+
+  return (
+    <>
+      <Form
+        ref={formRef}
+        jsonSchema={jsonSchema}
+        onError={(record) => {
+          if (record.code === FormErrorCode.RenderFailed) reportToMonitoring(record.error);
+          else if (record.code === FormWarningCode.TypeMismatch) console.info(record.path, record.message);
+        }}
+      />
+      <button onClick={handleSubmit} disabled={pending}>Submit</button>
+    </>
+  );
+}
+```
+
+`onError` receives every error and warning record of the form instance; `submit()` rejects with a `ValidationError` (`FormErrorCode.SchemaValidationFailed`) when validation fails. The full code list is in [SPECIFICATION — Error Handling](./docs/en/SPECIFICATION.md#error-handling).
+
+---
+
 ## Plugin System
 
 `@canard/schema-form` provides a plugin system that allows developers to extend the library and add custom functionality.
@@ -1455,7 +1511,7 @@ export const ArrayForm = () => {
 
 #### Array Limits (minItems / maxItems)
 
-The core neither fills nor blocks. `minItems` creates no items at mount, on reset or on branch reactivation, and `maxItems` refuses no `push` or `setValue`. Both stay on `node.jsonSchema`, and validation reports a violation. The built-in array input hides its add button once `maxItems` is reached.
+The core neither fills nor blocks. `minItems` creates no items at mount, on reset or on branch reactivation, and `maxItems` refuses no `push` or `setValue`. Both stay on `node.jsonSchema`, and validation reports a violation. The built-in array input draws empty slots up to `minItems` in the UI only and writes no value until the user types into one, and it hides its add button once `maxItems` is reached.
 
 ```tsx
 const jsonSchema = {

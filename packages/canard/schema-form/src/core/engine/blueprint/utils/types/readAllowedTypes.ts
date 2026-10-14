@@ -1,11 +1,11 @@
 import { isArray } from '@winglet/common-utils/filter';
 
+import { FormErrorCode } from '../../../../../errors';
 import type {
   BlueprintOptions,
   BlueprintSchema,
   SchemaTypeName,
 } from '../../type';
-import { BlueprintErrorCode } from '../diagnostics/constant';
 import { throwBlueprintError } from '../diagnostics/throwBlueprintError';
 import { unionAllowedTypes } from './unionAllowedTypes';
 
@@ -26,7 +26,7 @@ export const readAllowedTypes = (
   const values = isArray(schema.type) ? schema.type : [schema.type];
   if (!isAllowedTypeList(values))
     return throwBlueprintError(
-      BlueprintErrorCode.UnknownJsonSchema,
+      FormErrorCode.UnknownJsonSchema,
       schemaPath,
       {
         type: schema.type,

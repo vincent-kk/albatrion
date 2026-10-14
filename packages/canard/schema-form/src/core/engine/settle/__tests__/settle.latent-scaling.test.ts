@@ -1,6 +1,6 @@
 import { describe, expect, it, vi } from 'vitest';
 
-import { makeFieldNodeTree } from '../../../__tests__/makeFieldNodeTree';
+import { makeFieldNodeTree } from '@/schema-form/core/__tests__/makeFieldNodeTree';
 
 describe('49C-01 SETTLE-017 latent occurrence scaling', () => {
   it('bounds key encoding when an absent-slot array exits as its sibling enters', () => {

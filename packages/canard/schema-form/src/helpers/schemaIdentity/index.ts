@@ -1,3 +1,3 @@
-export { isSameSchema } from './isSameSchema';
-export { isRenderAtomic } from './isRenderAtomic';
-export { isRenderTerminal } from './isRenderTerminal';
+export { isSameSchema } from './utils/isSameSchema';
+export { isRenderAtomic } from './utils/isRenderAtomic';
+export { isRenderTerminal } from './utils/isRenderTerminal';

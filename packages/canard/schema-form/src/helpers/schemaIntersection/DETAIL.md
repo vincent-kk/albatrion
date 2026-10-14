@@ -32,7 +32,7 @@
 
 - **Consumers**: `entry-point`
 - **Direct import**: `not allowed`
-- **Reason**: Blueprint and the legacy schema merger need the same leaf algebra, while each owns a different error policy. This independent contract prevents either consumer from owning the other's implementation.
+- **Reason**: 청사진과 옛 스키마 병합기는 같은 잎 연산이 필요하지만 오류 정책은 각자 다릅니다. 이 계약을 독립시켜 두면 어느 한쪽 소비자가 다른 쪽의 구현을 소유하게 되는 일을 막을 수 있습니다.
 
 ## Last Updated
 

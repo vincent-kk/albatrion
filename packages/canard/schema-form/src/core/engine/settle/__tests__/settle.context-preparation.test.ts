@@ -1,15 +1,17 @@
 import { afterEach, expect, it, vi } from 'vitest';
 
-import { FieldNodeEventType } from '../../record';
-import { WriteOption } from '../../types/value';
-import { loadFieldNodeAtMount, writeFieldNode } from '../index';
+import { FieldNodeEventType } from '@/schema-form/core/engine/record';
+import { WriteOption } from '@/schema-form/core/engine/types/value';
+
+import { createTestTree } from '../../__tests__/fixtures/createTestTree';
 import * as references from '../utils/compute/getVirtualReferenceIndex';
+import { loadFieldNodeAtMount } from '../utils/load/loadFieldNodeAtMount';
 import { createSettlementContext } from '../utils/settlement/createSettlementContext';
 import * as caps from '../utils/transition/getTransitionCap';
 import type { DirtyPathSet } from '../utils/write/DirtyPathSet';
 import { getSettlementScratch } from '../utils/write/getSettlementScratch';
 import { releaseSettlementScratch } from '../utils/write/releaseSettlementScratch';
-import { createTestTree } from './fixtures/createTestTree';
+import { writeFieldNode } from '../utils/write/writeFieldNode';
 
 afterEach(() => {
   vi.restoreAllMocks();

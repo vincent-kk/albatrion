@@ -102,7 +102,7 @@ The plugin implements the `ValidatorPlugin` interface providing two main methods
 - **Benefits**: Custom keywords, formats, and validation settings that preserve input values
 - **Binding rule**: Instances with enabled `coerceTypes`, `useDefaults`, or `removeAdditional` are rejected immediately. The previous instance remains bound.
 
-Callers discriminate the refusal by `group` (`'UNHANDLED_ERROR'`) and `code` (`'VALIDATOR_BIND_REFUSED'`); core's `isUnhandledError` does not recognize it.
+Callers discriminate the refusal by `group` (`'UNHANDLED_ERROR'`) and `code` (`'UNHANDLED_ERROR.VALIDATOR_BIND_REFUSED'`, the value of `FormErrorCode.ValidatorBindRefused`); core's `isUnhandledError` does not recognize it.
 
 #### **`configure(options: { directGuardCompile?: boolean }): void`**
 

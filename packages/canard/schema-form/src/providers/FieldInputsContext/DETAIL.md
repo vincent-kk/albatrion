@@ -9,6 +9,8 @@
 - 맵과 정의는 마운트 시 고정하고 각 정규화 함수를 거쳐 저장합니다.
 - Context는 입력 선택을 직접 수행하지 않고 선택 훅에 정규화 결과를 제공합니다.
 
+- Context 객체와 Provider는 `components/`, 소비 훅은 `hooks/`에 있습니다. 뿌리에는 문서·진입점·형 동반 파일(`type.ts`)만 둡니다(filid zero-peer-file).
+
 ## Acceptance Criteria
 
 ### form-type-inputs-context-contract — 관찰 가능한 동작

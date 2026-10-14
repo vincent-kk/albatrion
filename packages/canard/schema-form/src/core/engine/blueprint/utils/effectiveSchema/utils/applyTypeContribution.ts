@@ -1,5 +1,5 @@
+import { FormErrorCode } from '../../../../../../errors';
 import type { BlueprintSchema, EffectiveSchemaOptions } from '../../../type';
-import { BlueprintErrorCode } from '../../diagnostics/constant';
 import { throwBlueprintError } from '../../diagnostics/throwBlueprintError';
 import { intersectAllowedTypes } from '../../types/intersectAllowedTypes';
 import { readAllowedTypes } from '../../types/readAllowedTypes';
@@ -27,7 +27,7 @@ export const applyTypeContribution = (
   if (state.allowedTypes?.length !== 0) return;
   if (options.mode === 'static')
     throwBlueprintError(
-      BlueprintErrorCode.AllOfTypeRedefinition,
+      FormErrorCode.AllOfTypeRedefinition,
       schemaPath,
       {
         guidance: 'Static type declarations must have a nonempty intersection.',

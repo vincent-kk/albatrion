@@ -1,10 +1,13 @@
 import { describe, expect, expectTypeOf, it } from 'vitest';
 
-import type { FieldNodeListener } from '../../engine';
-import type { NodeStateFlags } from '../../engine';
-import type { ValidationIssue } from '../../engine';
-import { isObjectNode, isTerminalNode } from '../index';
-import type { FieldNodeEventType, FieldNodeRequestType } from '../index';
+import type { FieldNodeListener } from '@/schema-form/core/engine';
+import type { NodeStateFlags } from '@/schema-form/core/engine';
+import type { ValidationIssue } from '@/schema-form/core/engine';
+import type {
+  FieldNodeEventType,
+  FieldNodeRequestType,
+} from '@/schema-form/core/engine';
+
 import type {
   ArrayNode,
   FieldNode,
@@ -16,7 +19,8 @@ import type {
   StringNode,
   TerminalNode,
   UnionNode,
-} from '../index';
+} from '../type';
+import { isObjectNode, isTerminalNode } from '../utils/guards';
 
 type PublicKeys =
   | 'type'

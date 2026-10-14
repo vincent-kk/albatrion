@@ -1,3 +1,5 @@
+import { JSONPointer as $ } from '@/schema-form/helpers/jsonPointer';
+
 import type { FieldNodeRuntime } from '../../../../record';
 
 /** One resolved pointer prefix in the live reverse watch index. */
@@ -37,12 +39,12 @@ class WatchDeliveryIndex {
     this.pathsByNode.set(node, unique);
     this.allNodes.add(node);
     for (const path of unique) {
-      if (path === '@') {
+      if (path === $.Context) {
         this.contextNodes.add(node);
         continue;
       }
       let current = this.root;
-      for (const segment of path.split('/').filter(Boolean)) {
+      for (const segment of path.split($.Separator).filter(Boolean)) {
         let child = current.children.get(segment);
         if (!child) {
           child = { watchers: new Set(), children: new Map() };
@@ -62,8 +64,8 @@ class WatchDeliveryIndex {
     this.allNodes.delete(node);
     this.contextNodes.delete(node);
     for (const path of paths) {
-      if (path === '@') continue;
-      const segments = path.split('/').filter(Boolean);
+      if (path === $.Context) continue;
+      const segments = path.split($.Separator).filter(Boolean);
       const parents: WatchPathNode[] = [this.root];
       for (const segment of segments) {
         const child = parents[parents.length - 1].children.get(segment);
@@ -84,7 +86,7 @@ class WatchDeliveryIndex {
   affected(path: string, candidates: Set<unknown>): void {
     let current: WatchPathNode | undefined = this.root;
     for (const watcher of current.watchers) candidates.add(watcher);
-    for (const segment of path.split('/').filter(Boolean)) {
+    for (const segment of path.split($.Separator).filter(Boolean)) {
       current = current.children.get(segment);
       if (!current) return;
       for (const watcher of current.watchers) candidates.add(watcher);

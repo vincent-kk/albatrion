@@ -1,3 +1,5 @@
+import { JSONPointer as $ } from '@/schema-form/helpers/jsonPointer';
+
 import type { FieldNodeRecord } from '../../../record';
 import type { SettlementContext } from '../../type';
 import { getGateRegistry } from '../gates/getGateRegistry';
@@ -24,7 +26,7 @@ export const registerRecalculation = <Self extends FieldNodeRecord<Self>>(
       context.dirtyPaths.add(declarationPath);
       context.dependencyOwnerPaths.add(declarationPath);
       context.shapeDirtyPaths.add(
-        declarationPath.slice(0, declarationPath.lastIndexOf('/')),
+        declarationPath.slice(0, declarationPath.lastIndexOf($.Separator)),
       );
     }
   const expanded = new Set<string>();
@@ -32,7 +34,7 @@ export const registerRecalculation = <Self extends FieldNodeRecord<Self>>(
     let ancestor = path;
     while (ancestor && !expanded.has(ancestor)) {
       expanded.add(ancestor);
-      ancestor = ancestor.slice(0, ancestor.lastIndexOf('/'));
+      ancestor = ancestor.slice(0, ancestor.lastIndexOf($.Separator));
       context.dirtyPaths.add(ancestor);
     }
   }
@@ -40,7 +42,7 @@ export const registerRecalculation = <Self extends FieldNodeRecord<Self>>(
     const changedAncestors = new Set<string>();
     for (const changed of context.changedRaw)
       for (let prefix = changed; prefix; ) {
-        prefix = prefix.slice(0, prefix.lastIndexOf('/'));
+        prefix = prefix.slice(0, prefix.lastIndexOf($.Separator));
         if (changedAncestors.has(prefix)) break;
         changedAncestors.add(prefix);
       }
@@ -56,7 +58,9 @@ export const registerRecalculation = <Self extends FieldNodeRecord<Self>>(
           changedAncestors,
         )
       )
-        context.shapeDirtyPaths.add(path.slice(0, path.lastIndexOf('/')));
+        context.shapeDirtyPaths.add(
+          path.slice(0, path.lastIndexOf($.Separator)),
+        );
     }
   }
 };

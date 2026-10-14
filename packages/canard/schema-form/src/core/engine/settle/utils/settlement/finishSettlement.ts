@@ -1,4 +1,4 @@
-import { MULTIPLE_ERRORS, SchemaFormError } from '../../../../../errors';
+import { FormErrorCode, SchemaFormError } from '../../../../../errors';
 import type { FieldNodeRecord, SettlementScratch } from '../../../record';
 import type { SettlementContext } from '../../type';
 import { commitSettlement } from '../commit/commitSettlement';
@@ -7,7 +7,6 @@ import { publishStateKeys } from '../compute/publishStateKeys';
 import { captureDeriveBaseline } from '../derivation/captureDeriveBaseline';
 import { runDeriveRounds } from '../derivation/runDeriveRounds';
 import { recordSettlementFailure } from '../errors/recordSettlementFailure';
-import { BUDGET_EXCEEDED } from '../errors/settleErrorCode';
 import { alignArraySnapshotSlots } from '../load/alignArraySnapshotSlots';
 import { finalizeExits } from '../transition/finalizeExits';
 import { restoreSourceB } from '../transition/restoreSourceB';
@@ -31,7 +30,7 @@ export const finishSettlement = <Self extends FieldNodeRecord<Self>>(
     recordSettlementFailure(
       context,
       new SchemaFormError(
-        BUDGET_EXCEEDED,
+        FormErrorCode.BudgetExceeded,
         `Host wheel budget exceeded at ${context.target.path}`,
         { path: context.target.path },
       ),
@@ -97,7 +96,11 @@ export const finishSettlement = <Self extends FieldNodeRecord<Self>>(
   if (runtime.entryDepth && runtime.chainErrors) return;
   throw failures.length === 1
     ? failures[0]
-    : new SchemaFormError(MULTIPLE_ERRORS, 'Multiple settlement errors', {
-        errors: failures,
-      });
+    : new SchemaFormError(
+        FormErrorCode.MultipleErrors,
+        'Multiple settlement errors',
+        {
+          errors: failures,
+        },
+      );
 };

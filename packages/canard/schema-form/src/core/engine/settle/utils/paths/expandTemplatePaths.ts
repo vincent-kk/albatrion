@@ -1,6 +1,8 @@
 import { hasOwnProperty } from '@winglet/common-utils/lib';
 import { unescapeSegment } from '@winglet/json/pointer';
 
+import { JSONPointer as $ } from '@/schema-form/helpers/jsonPointer';
+
 import type { FieldNodeRecord } from '../../../record';
 
 /**
@@ -14,7 +16,7 @@ export const expandTemplatePaths = <Self extends FieldNodeRecord<Self>>(
   templatePath: string,
 ): string[] => {
   if (!templatePath.includes('/*')) return [templatePath];
-  const segments = templatePath.split('/').slice(1);
+  const segments = templatePath.split($.Separator).slice(1);
   const paths: string[] = [];
   const pending: { node: Self | undefined; depth: number; path: string }[] = [
     { node: root, depth: 0, path: '' },
@@ -29,7 +31,7 @@ export const expandTemplatePaths = <Self extends FieldNodeRecord<Self>>(
     }
     if (!node) continue;
     const segment = segments[depth];
-    if (segment === '*') {
+    if (segment === $.Wildcard) {
       for (let index = node.itemCount - 1; index >= 0; index--) {
         const name = String(index);
         const child = node.structure?.[name];

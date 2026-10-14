@@ -1,6 +1,7 @@
-import type { BlueprintNodeKind } from '../../../blueprint';
-import { find } from '../../../navigation';
-import type { PlainNode } from './createPlainNode';
+import type { BlueprintNodeKind } from '@/schema-form/core/engine/blueprint';
+import { find } from '@/schema-form/core/engine/navigation';
+
+import type { PlainNode } from '../../../__tests__/fixtures/createPlainNode';
 
 /**
  * Read the source owned by a live occurrence or its kind-specific latent entry.

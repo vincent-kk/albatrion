@@ -1,4 +1,4 @@
-import { MULTIPLE_ERRORS, SchemaFormError } from '../../../../../errors';
+import { FormErrorCode, SchemaFormError } from '../../../../../errors';
 
 /**
  * Preserve one original failure or wrap several in their occurrence order.
@@ -8,6 +8,10 @@ import { MULTIPLE_ERRORS, SchemaFormError } from '../../../../../errors';
 export const bundleChainErrors = (errors: readonly unknown[]): unknown =>
   errors.length < 2
     ? errors[0]
-    : new SchemaFormError(MULTIPLE_ERRORS, 'Multiple dispatch errors', {
-        errors,
-      });
+    : new SchemaFormError(
+        FormErrorCode.MultipleErrors,
+        'Multiple dispatch errors',
+        {
+          errors,
+        },
+      );

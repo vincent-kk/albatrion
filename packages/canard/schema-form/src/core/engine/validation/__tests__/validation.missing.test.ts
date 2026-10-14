@@ -1,6 +1,6 @@
 import { describe, expect, it, vi } from 'vitest';
 
-import { makeFieldNodeTree } from '../../../__tests__/makeFieldNodeTree';
+import { makeFieldNodeTree } from '@/schema-form/core/__tests__/makeFieldNodeTree';
 
 describe('missing validator', () => {
   it('ERROR-146 ERROR-153 disables an if fragment and warns once per tree', () => {

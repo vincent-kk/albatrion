@@ -1,5 +1,7 @@
 import { escapeSegment, unescapeSegment } from '@winglet/json/pointer';
 
+import { JSONPointer as $ } from '@/schema-form/helpers/jsonPointer';
+
 import { BEHAVIORS, isOmittedEmpty } from '../../../behaviors';
 import type { BlueprintChildEntry, BlueprintNode } from '../../../blueprint';
 import type { FieldNodeRecord, FieldNodeRuntime } from '../../../record';
@@ -41,7 +43,7 @@ export const distributeLatentValue = <Self extends FieldNodeRecord<Self>>(
   if (template.kind === 'virtual') return false;
   const key = JSON.stringify([path, template.kind]);
   const log = context?.inTransition ? context.latentAutomaticLog : undefined;
-  const name = unescapeSegment(path.slice(path.lastIndexOf('/') + 1));
+  const name = unescapeSegment(path.slice(path.lastIndexOf($.Separator) + 1));
   const clearOtherKinds = (): void => {
     for (const entry of siblings)
       if (entry.name === name && entry.node.kind !== template.kind)

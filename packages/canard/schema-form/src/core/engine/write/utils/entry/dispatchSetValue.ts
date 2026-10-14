@@ -1,4 +1,4 @@
-import { INVALID_WRITE_OPTION, SchemaFormError } from '../../../../../errors';
+import { FormErrorCode, SchemaFormError } from '../../../../../errors';
 import type { FieldNodeRecord } from '../../../record';
 import { assertVirtualWriteShape, writeFieldNode } from '../../../settle';
 import { WriteOption } from '../../../types/value';
@@ -26,7 +26,7 @@ export const dispatchSetValue = <Self extends FieldNodeRecord<Self>>(
   try {
     if (option & WriteOption.Overwrite && option & WriteOption.Merge)
       throw new SchemaFormError(
-        INVALID_WRITE_OPTION,
+        FormErrorCode.InvalidWriteOption,
         'Overwrite and Merge cannot be combined',
         { path: node.path, option },
       );

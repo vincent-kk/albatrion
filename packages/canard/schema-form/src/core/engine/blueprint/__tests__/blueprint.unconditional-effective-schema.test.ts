@@ -1,5 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
+import { FormWarningCode } from '@/schema-form/errors';
+
 import { blueprint } from '../blueprint';
 import type {
   BlueprintDiagnostic,
@@ -178,8 +180,8 @@ describe('unconditional normalization and conservative fallback', () => {
         details.keyword,
       ]),
     ).toEqual([
-      ['DEPENDENT_SCHEMAS_IGNORED_FOR_FORM', '#', 'dependentSchemas'],
-      ['DEPENDENT_SCHEMAS_IGNORED_FOR_FORM', '#', 'dependencies'],
+      [FormWarningCode.DependentSchemasIgnoredForForm, '#', 'dependentSchemas'],
+      [FormWarningCode.DependentSchemasIgnoredForForm, '#', 'dependencies'],
     ]);
     const original = [...warnings];
     mergeEffectiveSchema(node, [], { collect });

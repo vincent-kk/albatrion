@@ -1,9 +1,11 @@
 import { describe, expect, it } from 'vitest';
 
-import { FieldNodeState } from '../../types/state';
-import { WriteOption } from '../../types/value';
-import { loadFieldNodeAtMount, writeFieldNode } from '../index';
-import { createTestTree } from './fixtures/createTestTree';
+import { FieldNodeState } from '@/schema-form/core/engine/types/state';
+import { WriteOption } from '@/schema-form/core/engine/types/value';
+
+import { createTestTree } from '../../__tests__/fixtures/createTestTree';
+import { loadFieldNodeAtMount } from '../utils/load/loadFieldNodeAtMount';
+import { writeFieldNode } from '../utils/write/writeFieldNode';
 
 // filid:contract settle-derive
 describe('derive baseline alongside exit policy', () => {

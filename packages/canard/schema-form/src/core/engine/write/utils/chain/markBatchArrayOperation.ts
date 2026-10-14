@@ -2,7 +2,7 @@ import { isArray } from '@winglet/common-utils/filter';
 
 import { getItemEntry } from '../../../blueprint';
 import type { ArrayOperation, FieldNodeRecord } from '../../../record';
-import { interpretFieldNodeInput } from '../../../settle';
+import { interpretFieldNodeInput, readArrayLength } from '../../../settle';
 import { WriteOption } from '../../../types/value';
 import { readBatchValue } from './readBatchValue';
 
@@ -25,7 +25,8 @@ export const markBatchArrayOperation = <Self extends FieldNodeRecord<Self>>(
     itemCount: { value: source.length },
   });
   const plan = node.behavior.arrange(view, operation);
-  if (plan.kind === 'noop') return undefined;
+  if (plan.kind === 'noop')
+    return operation.kind === 'push' ? readArrayLength(view) : undefined;
   let raw: readonly unknown[];
   if (plan.kind === 'update') {
     const copy = source.slice();

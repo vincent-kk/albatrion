@@ -2,7 +2,7 @@
 
 ## Purpose
 
-단일 `<Form>` 인스턴스에 등록된 `FieldInput` 정의 목록(`fieldInputDefinitions`)과 경로 매핑(`fieldInputMap`)을 정규화하여 Context로 공급한다. `useFieldInput` 훅이 이 값을 기반으로 노드에 적합한 입력 컴포넌트를 선택한다.
+단일 `<Form>` 인스턴스에 등록된 `FieldInput` 정의 목록(`fieldInputDefinitions`)과 경로 매핑(`fieldInputMap`)을 정규화해서 Context로 공급한다. `useFieldInput` 훅은 이 값을 바탕으로 노드에 맞는 입력 컴포넌트를 고른다.
 
 ## Structure
 
@@ -16,25 +16,25 @@ FieldInputsContext/
 
 ## Conventions
 
-- TypeScript + React, Context 초기값 `{} as FieldInputsContext`
-- `fieldInputDefinitions`와 `fieldInputMap`은 `useConstant`로 마운트 시 고정
-- 정규화: `normalizeFieldInputDefinitions()` / `normalizeFieldInputMap()` 사용
-- Context 값: `{ fromFieldInputDefinitions, fromFieldInputMap }` — 두 배열 모두 `NormalizedFieldInputDefinition[]`
-- 선택 우선순위 (높음→낮음): `fieldInputMap` → `fieldInputDefinitions` → `ExternalFormContext` → `PluginManager`
+- TypeScript와 React로 작성하며, Context 초기값은 `{} as FieldInputsContext`다.
+- `fieldInputDefinitions`와 `fieldInputMap`은 `useConstant`로 마운트 시점에 고정한다.
+- 정규화에는 `normalizeFieldInputDefinitions()`와 `normalizeFieldInputMap()`을 쓴다.
+- Context 값은 `{ fromFieldInputDefinitions, fromFieldInputMap }`이며, 두 배열 모두 `NormalizedFieldInputDefinition[]`다.
+- 선택 우선순위는 높은 쪽부터 `fieldInputMap`, `fieldInputDefinitions`, `ExternalFormContext`, `PluginManager` 순서다.
 
 ## Boundaries
 
 ### Always do
 
-- `fieldInputDefinitions`와 `fieldInputMap`을 `useConstant`로 고정 (Provider 마운트 이후 변경 불가)
-- `normalizeFieldInputDefinitions` / `normalizeFieldInputMap`으로 반드시 정규화 후 공급
+- `fieldInputDefinitions`와 `fieldInputMap`을 `useConstant`로 고정한다(Provider가 마운트된 뒤에는 바꿀 수 없다).
+- 반드시 `normalizeFieldInputDefinitions`와 `normalizeFieldInputMap`으로 정규화한 뒤에 공급한다.
 
 ### Ask first
 
-- 런타임 동적 FieldInput 등록 기능 추가 시 (현재 설계는 정적 고정)
-- `fieldInputMap`의 와일드카드(`*`) 매칭 로직 변경 시
+- 런타임에 FieldInput을 동적으로 등록하는 기능을 추가하는 경우(현재 설계는 정적 고정이다)
+- `fieldInputMap`의 와일드카드(`*`) 매칭 로직을 바꾸는 경우
 
 ### Never do
 
-- 이 Context에서 직접 FieldInput 선택 로직 실행 (`useFieldInput` 훅의 책임)
-- `fieldInputDefinitions` 배열을 정규화 없이 Context에 직접 노출
+- 이 Context에서 FieldInput 선택 로직을 직접 실행하는 것(`useFieldInput` 훅의 책임이다)
+- `fieldInputDefinitions` 배열을 정규화하지 않고 Context에 그대로 노출하는 것

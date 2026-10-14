@@ -3,10 +3,10 @@ import { type PropsWithChildren, StrictMode } from 'react';
 import { act, cleanup, renderHook } from '@testing-library/react';
 import { afterEach, expect, it } from 'vitest';
 
-import { nodeFromJSONSchema } from '@/schema-form/core/surface/utils/nodeFromJSONSchema';
-import { FieldRendererContextProvider } from '@/schema-form/providers/FieldRendererContext';
+import { FieldRendererContextProvider } from '@/schema-form/providers';
 
-import { useChildFieldErrors } from '../useChildFieldErrors';
+import { nodeFromJSONSchema } from '../../__tests__/fixtures/nodeFromJSONSchema';
+import { useChildFieldErrors } from '../hooks/useChildFieldErrors';
 
 afterEach(cleanup);
 

@@ -1,14 +1,13 @@
 import { describe, expect, it } from 'vitest';
 
-import { ValidationMode } from '../../types/state';
-import {
-  dispatchBatch,
-  dispatchMount,
-  dispatchResetForm,
-  dispatchSetValue,
-  subscribeFieldNode,
-} from '../index';
-import { createDispatchTree } from './fixtures/createDispatchTree';
+import { createDispatchTree } from '@/schema-form/core/engine/__tests__/fixtures/createDispatchTree';
+import { ValidationMode } from '@/schema-form/core/engine/types/state';
+
+import { dispatchBatch } from '../utils/entry/dispatchBatch';
+import { dispatchMount } from '../utils/entry/dispatchMount';
+import { dispatchResetForm } from '../utils/entry/dispatchResetForm';
+import { dispatchSetValue } from '../utils/entry/dispatchSetValue';
+import { subscribeFieldNode } from '../utils/read/subscribeFieldNode';
 
 // filid:contract dispatch-onchange
 describe('dispatcher onChange', () => {

@@ -1,2 +1,2 @@
-export { FieldInputsContextProvider } from './FieldInputsContextProvider';
-export { useFieldInputsContext } from './useFieldInputsContext';
+export { FieldInputsContextProvider } from './components/FieldInputsContextProvider';
+export { useFieldInputsContext } from './hooks/useFieldInputsContext';
