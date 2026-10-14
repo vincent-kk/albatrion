@@ -82,4 +82,4 @@
 
 | 날짜 | 무엇 | 어디 |
 | --- | --- | --- |
-| 2026-10-14 | 284라운드 닫기: PR #371(07e) 병합 89898d107 — 낮은 후속 넷과 Prettier 다섯 파일. 보충 1줄 | `reviews/round-284-closing.md` |
+| 2026-10-14 | 285라운드 닫기: G23 닫힘 — ego-browser 251 finished·실패 0, 자동 게이트 251. 보충 1줄 | `reviews/round-285-closing.md` |

@@ -2,9 +2,8 @@
 
 개발의 진행 상황과 다음 할 일은 `PLAN.md`가 단일 진입점으로 든다. 다음 세션이 바로 이어서 일하기 위한 문서다. 이력은 `git log`와 `reviews/`에 있으므로 여기에는 지금 상태, 다음 할 일, 일하는 법만 적는다. 소유자는 Vincent다.
 
-## 1. 지금 어디인가 (2026-10-14, 284라운드 닫힘; 07 전환 진행 중)
+## 1. 지금 어디인가 (2026-10-14, 285라운드 닫힘; 07 전환 진행 중)
 
-- **251라운드(2026-10-14, 닫기).** PR #361(문서 사이트, 53b682133)을 직접 검증해 통과했다: documents만 47파일, 세션 줄 0, 옛 이름 0, en·ko 빌드 성공(251C-01, reviews/round-251-closing.md). 소유자 병합 허가 대기.
 - **252라운드(2026-10-14, 소유자).** PR #361(문서 사이트) 병합을 명시적으로 허가했다(reviews/round-252-owner-answers.md).
 - **253라운드(2026-10-14, 닫기).** PR #363(07b-3, 3f48fe3aa)을 직접 검증해 통과했다: production-test 9파일, tsc -b·lint·build 통과, 세션 줄 0(253C-01, reviews/round-253-closing.md). 대기열 37(내장 checkbox id 중복). 소유자 병합 허가 대기.
 - **254라운드(2026-10-14, 소유자).** PR #363(07b-3) 병합을 허가했다(reviews/round-254-owner-answers.md).
@@ -37,7 +36,8 @@
 - **281라운드(2026-10-14, 소유자).** "할거 다 하고 PR을 머지하고 다음으로 가자. 7단계가 너무 비대해졌네" — #370·Prettier PR·G23을 끝낸 뒤 #354를 병합하고, 디렉터리·구성 다듬기는 새 단계(08)로(reviews/round-281-owner-answers.md).
 - **282라운드(2026-10-14, 소유자).** 08단계 씨앗 메모: fractal 최소 export 계약 위반(가장 거슬림), nodeFromJSONSchema가 root export인 이유, FormContents의 이름·위계. 시험·bench가 index를 경유하는 것은 filid의 한계가 아니라 07c·07d의 선택이었음을 원장 관리자가 export 소비자 셈으로 답함(reviews/round-282-owner-answers.md).
 - **283라운드(2026-10-14, 닫기/원장 관리자).** PR #370(07d) squash 병합(0b879e594): 47 문서 안내, CLAUDE.md:142, 38 추측 없는 label id 규약(`label:${path}`), 45 원칙 문장, 48 플러그인 시험, 49 이름 열거·면제 선언. verifier FAIL→PASS, agy 차단 없음, 직접 게이트 전부 통과(283C-01). 낮은 후속 넷은 07e로.
-- **284라운드(2026-10-14, 닫기/원장 관리자).** PR #371(07e) squash 병합(89898d107): 45 원칙 문장, 플러그인 셋 FormGroup 제목 id, 형제 충돌 시험, skills 문서 접미어, Prettier 다섯 파일(284C-01). 남은 것은 G23 보고와 #354 병합, 08단계 계획. 다음 라운드 번호는 285.
+- **284라운드(2026-10-14, 닫기/원장 관리자).** PR #371(07e) squash 병합(89898d107): 45 원칙 문장, 플러그인 셋 FormGroup 제목 id, 형제 충돌 시험, skills 문서 접미어, Prettier 다섯 파일(284C-01). 남은 것은 G23 보고와 #354 병합, 08단계 계획.
+- **285라운드(2026-10-14, 닫기/원장 관리자).** G23 닫힘: fairy07이 ego-browser(spaceId 39)로 tip 89898d107의 스토리 251개 전부 finished·실패 0, 자동 게이트 251 통과(285C-01). 첫 실행은 대기 조건 오류로 무효. NaN defaultValue 경고 세 스토리는 debugger 진단 중. 다음은 #354 병합. 다음 라운드 번호는 286.
 - **그 앞의 라운드 요지(19라운드부터)는 PLAN-LOG.md 2절에 있다.** 라운드마다 한 문단이며, 1절의 기록 표와 같은 순서다.
 - **설계의 정본은 단일 원장 `ledger/`다.** 영역 17개, 항목 1,350개(80라운드 뒤, 24라운드 뒤 1,348; 현행 1,076(부정 결정·기록 포함), 대체됨 199, 분할됨 49, 중복 24, 열림 0). 형식과 규칙은 `ledger/README.md`.
 - **옛 설계 문서(`00`–`09`, `adr/`, `open-questions.md`)는 동결됐다.** 더 고치지 않는다. 어긋남은 원장의 충돌 칸에 적는다. 원장이 인용하는 옛 문서의 `path:line`은 모두 커밋 `ba398c330` 기준 줄 번호다(그 뒤 옛 문서는 바뀌지 않았다).
@@ -422,6 +422,7 @@ node ledger/checks/doc-coverage.mjs design/*.md adr/*.md -- ledger/*.md   # 설�
 | `reviews/round-282-owner-answers.md` | 282라운드 소유자 메모: 08단계 씨앗과 filid 질문 |
 | `reviews/round-283-closing.md` | 283라운드 편집자 결정 하나: PR #370 병합 |
 | `reviews/round-284-closing.md` | 284라운드 편집자 결정 하나: PR #371 병합 |
+| `reviews/round-285-closing.md` | 285라운드 편집자 결정 하나: G23 닫힘 |
 | reviews 아래 improvement-38-explain.html | 개선-38 소유자용 설명(seiri:explain) |
 | reviews 아래 improvement-38-fractal-map.md | 개선-38 고찰 문서(reviewer, verifier 대조판) |
 | reviews 아래 raw-improvement-38 디렉터리 | 개선-38 근거: 소비자 증거 표, filid 요약 |
