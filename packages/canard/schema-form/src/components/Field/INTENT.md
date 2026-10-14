@@ -9,9 +9,10 @@ JSON Schema 노드 하나를 React 컴포넌트 트리로 변환하는 렌더링
 ```
 Field/
   index.ts                  — FieldProxy, ChildField re-export
-  FieldProxy/               — 노드를 렌더러에 연결하는 조율 레이어
-  FieldInputSlot/           — 실제 FieldInput 마운트 및 이벤트 처리 레이어
-  DeferredFieldProxy/       — 렌더 가상화 게이트 (placeholder ↔ NodeProxy 지연 전환)
+  components/               — 하위 fractal 칸 (index 없음)
+    FieldProxy/             — 노드를 렌더러에 연결하는 조율 레이어
+    FieldInputSlot/         — 실제 FieldInput 마운트 및 이벤트 처리 레이어
+    DeferredFieldProxy/     — 렌더 가상화 게이트 (placeholder ↔ NodeProxy 지연 전환)
 ```
 
 ## Conventions

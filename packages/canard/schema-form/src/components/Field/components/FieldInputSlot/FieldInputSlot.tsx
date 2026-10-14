@@ -3,7 +3,7 @@ import { memo, useCallback, useRef } from 'react';
 import { isArray } from '@winglet/common-utils/filter';
 import { useMemorize, useOnUnmount } from '@winglet/react-utils/hook';
 
-import { DISPLAY_CONTENT, NONE_ROLE } from '@/schema-form/constants';
+import { DISPLAY_CONTENT, NONE_ROLE } from '@/schema-form/constants/style';
 import {
   FieldNodeEventType,
   SetValueOption,

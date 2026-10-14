@@ -6,7 +6,7 @@ import {
   resetFieldNodeForm,
 } from '@/schema-form/core/engine';
 
-import { FieldNode } from '../classes/FieldNode';
+import { FieldNode } from '../runtime/FieldNode';
 import { SetValueOption } from '../type';
 
 // filid:contract surface-detached

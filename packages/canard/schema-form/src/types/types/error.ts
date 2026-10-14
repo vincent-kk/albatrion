@@ -4,7 +4,7 @@ import {
   BIT_FLAG_02,
   BIT_FLAG_03,
   BIT_FLAG_04,
-} from '@/schema-form/constants';
+} from '@/schema-form/constants/bitmask';
 import type { ValidationIssue } from '@/schema-form/core';
 
 export enum ShowError {

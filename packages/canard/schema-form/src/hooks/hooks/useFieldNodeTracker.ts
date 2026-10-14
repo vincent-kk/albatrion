@@ -4,7 +4,7 @@ import { NOOP_FUNCTION } from '@winglet/common-utils/constant';
 
 import type { Fn } from '@aileron/declare';
 
-import { BIT_MASK_ALL } from '@/schema-form/constants';
+import { BIT_MASK_ALL } from '@/schema-form/constants/bitmask';
 import type { FieldNode } from '@/schema-form/core';
 
 /**

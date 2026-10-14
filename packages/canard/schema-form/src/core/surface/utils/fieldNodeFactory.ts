@@ -15,7 +15,7 @@ import { PathKeyedMap } from '../../engine';
 import { PathKeyedSet } from '../../engine';
 import { compileEntryGuards, readValidationEntry } from '../../engine';
 import type { Validator } from '../../engine';
-import { FieldNode as RuntimeFieldNode } from '../classes/FieldNode';
+import { FieldNode as RuntimeFieldNode } from '../runtime/FieldNode';
 import type {
   ArrayNode,
   FieldNode,

@@ -99,7 +99,7 @@
 | `observeFieldNodeReports(root, deliver)`                      | core 오류 관찰자 범위에서 전달을 실행하고 중첩·예외에도 이전 범위를 복원합니다                                                                                            | ERROR-113, 69C-01         |
 | `interpretFieldNodeDraft(node, draft)`                        | 현재 유효 타입 목록으로 기존 순수 해석기를 호출하여 값과 멤버 여부를 쓰기 없이 돌려줍니다                                                                                 | REACT-033, 69C-01         |
 
-- 런타임 노드 클래스 `FieldNode`는 `classes/FieldNode.ts`에 있습니다. 뿌리에는 문서·진입점·형 동반 파일(`type.ts`)만 둡니다(filid zero-peer-file).
+- 위계: `runtime/`은 공개 노드 표면 뒤에서 움직이는 런타임 객체의 칸입니다. 일부러 하나만 둔 클래스라 복수형 역할 이름 classes 대신 주제 이름을 씁니다. 이 칸에는 런타임 노드 클래스 `FieldNode`(`runtime/FieldNode.ts`)와, 런타임 노드 객체에만 작용하는 `requireRuntimeFieldNode`·`setContext`가 있습니다. `utils/`에는 바인딩 통로(`utils/binding/`)·가드(`guards.ts`)·생성 통로(`fieldNodeFactory.ts`)가 남습니다. 뿌리에는 문서·진입점·형 동반 파일(`type.ts`)만 둡니다(filid zero-peer-file).
 
 ## Acceptance Criteria
 

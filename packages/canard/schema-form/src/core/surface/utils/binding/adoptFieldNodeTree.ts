@@ -1,6 +1,6 @@
 import { adoptFieldNodeChain } from '../../../engine';
+import { requireRuntimeFieldNode } from '../../runtime/requireRuntimeFieldNode';
 import type { FieldNode } from '../../type';
-import { requireRuntimeFieldNode } from '../requireRuntimeFieldNode';
 
 /**
  * Binding-only; not exported from src/index.ts.
