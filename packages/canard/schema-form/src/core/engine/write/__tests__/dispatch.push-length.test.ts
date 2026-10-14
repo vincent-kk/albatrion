@@ -27,7 +27,7 @@ describe('push returns the array length after the call', () => {
     for (const call of refused) expect(call.returned).toBe(call.length);
   });
 
-  it('returns the unchanged length when a nested push fails and the outer chain throws', () => {
+  it('returns 0 when a nested push on a non-array node fails and the outer chain throws', () => {
     const { root, runtime } = createDispatchTree({
       type: 'object',
       properties: {

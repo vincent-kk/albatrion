@@ -13,7 +13,4 @@ export type {
   FormErrorReporter,
   FormRecordCode,
   JSONSchemaErrorCode,
-  SchemaFormErrorCode,
-  UnhandledErrorCode,
-  ValidationErrorCode,
 } from './type';
