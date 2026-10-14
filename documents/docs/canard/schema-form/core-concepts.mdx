@@ -240,16 +240,16 @@ regardless of the current branch condition.
 Array schemas accept output filters under `options`. They refine only what the
 array **emits** — parent propagation, root validation, and the external
 surfaces (`onChange`, `getValue()`, `submit`) — while child nodes and the raw
-`node.value` keep every item, so pre-exposed empty inputs stay rendered.
+`node.value` keep every item, so empty rows the user added stay rendered.
 
 ```tsx
 const jsonSchema = {
   type: 'array',
-  minItems: 3, // three empty inputs render up front
   items: { type: 'string' },
   options: { omitTrailing: true },
 };
-// The user fills only the first input:
+// The user adds three rows and fills only the first one
+// node.value: ['first', undefined, undefined]
 // getValue() / onChange / validation see ['first']
 ```
 

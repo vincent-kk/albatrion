@@ -133,6 +133,10 @@ export const App = () => {
 | **Observer Pattern** | Node state change subscription                    |
 | **Plugin Pattern**   | Validation and UI component extension             |
 
+### What the core does with a schema
+
+The core follows the schema's **applicability** and never enforces its **constraints**. Applicability is which declarations are in effect — `properties`, `oneOf`/`anyOf` branches, `if`/`then`/`else`, `controls.active` and the exit policy — and the core shapes the value to it: a field whose declaration stops applying leaves the value. Constraint keywords — `type`, `minimum`, `minLength`, `minItems`, `maxItems`, `enum`, `pattern` and the like — are never enforced by rewriting or refusing a value: validation reports a violation and the input guides the user. An array with too many items is therefore a value of the right shape that breaks a constraint, the same kind of value as a string that is too long.
+
 ---
 
 ## Core API
@@ -320,10 +324,10 @@ type AttachedFilesMap = Map<string, File[]>;
 
 **Branch Nodes** (container structures):
 
-| Node         | Description                                                             |
-| ------------ | ----------------------------------------------------------------------- |
-| `ObjectNode` | Key-value structures, `required`, `additionalProperties` support        |
-| `ArrayNode`  | Ordered collections, `minItems`, `maxItems`, array manipulation methods |
+| Node         | Description                                                                                                        |
+| ------------ | ------------------------------------------------------------------------------------------------------------------ |
+| `ObjectNode` | Key-value structures, `required`, `additionalProperties` support                                                   |
+| `ArrayNode`  | Ordered collections and array manipulation methods; `minItems`/`maxItems` are reported by validation, not enforced |
 
 **Special Nodes**:
 
@@ -976,26 +980,35 @@ arrayNode.children?.length; // Current number of item nodes (null on an array re
 arrayNode.children; // Array of child nodes
 ```
 
+### Array Limits (`minItems` / `maxItems`)
+
+The core neither fills nor blocks: an array holds exactly the items that were loaded or written.
+
+- `minItems` creates no items — not at mount, not on reset, not when a branch becomes active again. An array loaded as `[]` stays `[]`; a default or `defaultValue` with fewer items than `minItems` is kept as given.
+- `maxItems` refuses no write. `push()` always appends and returns the new length; `setValue` with a longer array is applied; `items: false` after `prefixItems` does not stop a push either.
+- Both limits stay on the effective schema (`node.jsonSchema`) and validation reports a violation on the emitted value (`outputValue`).
+- The built-in array input hides its add button once `maxItems` is reached. It shows the remove button whatever `minItems` says, and it does not read `prefixItems`. A custom input that must enforce a range reads `node.jsonSchema` and `node.children` and disables its own controls.
+
 ### Array Output Filters (`omitTrailing` / `omitEmpty`)
 
-Array schemas accept output filters under `options`. They refine what the array **emits** — parent propagation, root validation, and the external surfaces (`onChange`, `getValue()`, `submit`) — while child nodes and the raw `node.value` keep every item, so pre-exposed empty inputs stay rendered.
+Array schemas accept output filters under `options`. They refine what the array **emits** — parent propagation, root validation, and the external surfaces (`onChange`, `getValue()`, `submit`) — while child nodes and the raw `node.value` keep every item, so empty rows the user added stay rendered.
 
 ```tsx
 const jsonSchema = {
   type: 'array',
-  minItems: 3, // three empty inputs are rendered up front
   items: { type: 'string' },
   options: { omitTrailing: true },
 };
-// UI renders 3 inputs; the user fills only the first one
+// The user adds three rows and fills only the first one
+// node.value: ['first', undefined, undefined]
 // getValue() / onChange / validation see: ['first']
 ```
 
 - `omitTrailing` (opt-in): removes **trailing** consecutive `undefined` items only. Leading and middle `undefined` items are preserved so error `dataPath`s and validation indices stay aligned — `[1, undefined, 2]` is emitted as-is.
 - `omitEmpty` (on by default): converts an empty array to `undefined` on the parent-propagation path. Filter order is `omitTrailing → omitEmpty`, so an all-empty array collapses to `undefined` under its parent (a root-level form still emits `[]`).
 - `null` is not an empty value: neither filter touches a nullable array that is `null` — see [Nullable Objects and Arrays](#nullable-objects-and-arrays).
-- `node.value` stays raw; the refined output is exposed as `node.outputValue`. Validation runs against the refined value, so `minItems` counts only the filled prefix.
-- A Reset-flagged clear (form reset, branch reactivation) refills `minItems` empty items; a plain `setValue(undefined)` clears every item — and so does a replace-style write on the parent that omits the array: `setValue({ other: 1 })` empties it, `SetValueOption.Merge` leaves it untouched. An array whose default is `null` resets to `null`, with no fill.
+- `node.value` stays raw; the refined output is exposed as `node.outputValue`. Validation runs against the refined value, so trailing empty items do not count toward `minItems`; leading and middle ones do.
+- A reset restores the array's loaded value and creates no items for `minItems`. A plain `setValue(undefined)` clears every item — and so does a replace-style write on the parent that omits the array: `setValue({ other: 1 })` empties it, `SetValueOption.Merge` leaves it untouched. An array whose default is `null` resets to `null`.
 
 ### Object Options (`propertyOrder` / `virtual`)
 
@@ -1219,7 +1232,7 @@ A field is _emptied_ when its node emits `undefined`. Under the default `omitEmp
 
 A reset restores the default, whatever the node holds: back to `null` when the default is `null`, to the default object otherwise.
 
-**While it is `null`**, the emitted value is `null` whatever the schema holds — arrays, defaults, derived values, `oneOf`/`anyOf`, controls-gated or virtual fields. An object's child fields stay rendered, and no child default, object default or `minItems` fill appears in them while it is `null`; a value written by `controls.derived` or `injectTo` still shows in its field without creating the object. This is the same however the object became `null` (load, reset or write); data discarded by `null` does not come back. This rule, and the same rule for a loaded value of the wrong kind, exists so that what the form shows, the node data and the emitted value never drift apart. A nullable **array** that is itself `null` has no items and no `minItems` fill.
+**While it is `null`**, the emitted value is `null` whatever the schema holds — arrays, defaults, derived values, `oneOf`/`anyOf`, controls-gated or virtual fields. An object's child fields stay rendered, and no child default or object default appears in them while it is `null`; a value written by `controls.derived` or `injectTo` still shows in its field without creating the object. This is the same however the object became `null` (load, reset or write); data discarded by `null` does not come back. This rule, and the same rule for a loaded value of the wrong kind, exists so that what the form shows, the node data and the emitted value never drift apart. A nullable **array** that is itself `null` has no items.
 
 **What it becomes:** typing into a child field promotes the object to an object holding that value. Only fields created by the promotion (for example a branch the new value opens) receive their defaults; fields that already existed stay empty until filled. For an array, the write acts on an empty array. An array has no merge semantics: `setValue([], SetValueOption.Merge)` is an assignment and creates `[]`.
 

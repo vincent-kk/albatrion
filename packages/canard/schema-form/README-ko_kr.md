@@ -1438,51 +1438,26 @@ export const ArrayForm = () => {
 };
 ```
 
-#### 배열 minItems 자동 채우기 동작
+#### 배열 한도 (minItems / maxItems)
 
-배열에 `minItems`를 사용할 때, 자동 채우기 동작은 기본값(default value) 제공 여부에 따라 달라집니다:
-
-**규칙**: `defaultValue` 또는 `schema.default`가 제공되면 minItems 자동 채우기가 **비활성화**됩니다. 제공된 기본값이 `minItems`보다 적은 항목을 가지고 있어도 그대로 사용됩니다.
+core는 채우지도 막지도 않습니다. `minItems`는 마운트·reset·분기 재활성화 때 항목을 만들지 않고, `maxItems`는 `push`나 `setValue`를 거부하지 않습니다. 두 한도는 `node.jsonSchema`에 남고, 위반은 검증이 알립니다. 기본 배열 입력은 `maxItems`에 이르면 추가 버튼을 숨깁니다.
 
 ```tsx
 const jsonSchema = {
   type: 'object',
   properties: {
-    // Case 1: 기본값 없음 → minItems 자동 채우기 활성화
-    autoFillArray: {
+    tags: {
       type: 'array',
       items: { type: 'string', default: 'item' },
       minItems: 3,
+      maxItems: 5,
     },
-    // 결과: ['item', 'item', 'item'] (minItems까지 자동 채우기)
-
-    // Case 2: schema.default 제공 → minItems 자동 채우기 비활성화
-    schemaDefaultArray: {
-      type: 'array',
-      items: { type: 'string', default: 'item' },
-      minItems: 3,
-      default: ['one'],
-    },
-    // 결과: ['one'] (기본값 사용, minItems 무시)
-
-    // Case 3: 빈 schema.default → minItems 자동 채우기 비활성화
-    emptyDefaultArray: {
-      type: 'array',
-      items: { type: 'string', default: 'item' },
-      minItems: 3,
-      default: [],
-    },
-    // 결과: [] (빈 기본값 사용, minItems 무시)
   },
 };
 
-// Form의 defaultValue prop도 minItems 자동 채우기를 제어합니다
-<Form
-  jsonSchema={jsonSchema}
-  defaultValue={{
-    partialArray: ['a', 'b'], // minItems=5여도 2개 항목만 사용
-  }}
-/>;
+// default 없음: tags는 []로 로드 — 항목이 셋이 될 때까지 검증이 minItems를 알림
+// default: ['one'] 또는 defaultValue={{ tags: ['one'] }}: tags는 ['one']으로 로드
+// push()는 ('item')을 덧붙이고 새 길이를 돌려줌 — maxItems를 넘어도 마찬가지
 ```
 
 #### 배열 prefixItems 지원 (JSON Schema 2020-12)
@@ -1521,8 +1496,7 @@ const jsonSchema = {
 
 - **위치 기반 스키마**: 각 배열 인덱스는 해당하는 `prefixItems` 스키마를 사용합니다
 - **items로 폴백**: `prefixItems.length`를 초과하는 인덱스는 `items` 스키마를 사용합니다
-- **items: false**: `prefixItems.length`를 초과하는 항목 추가를 방지합니다
-- **자동 maxItems**: `items`가 undefined이거나 `false`일 때, `maxItems`는 자동으로 `prefixItems.length`로 설정됩니다
+- **items: false**: `prefixItems.length`를 넘는 항목은 유효하지 않으며 검증이 알립니다. core는 튜플 뒤로의 push를 막지 않고, `maxItems`를 `prefixItems`에서 끌어내지 않습니다
 
 **검증 요구사항:**
 
@@ -1534,7 +1508,7 @@ const jsonSchema = {
 
 #### 배열 출력 필터 (omitTrailing / omitEmpty)
 
-배열 스키마는 `options` 아래에 출력 필터를 지정할 수 있습니다. 이 필터는 배열이 **내보내는 값** — 부모 전파, 루트 validation, 외부 표면(`onChange`, `getValue()`, `submit`) — 만 정제하며, 자식 노드와 raw `node.value`는 모든 항목을 유지하므로 미리 노출한 빈 input이 그대로 렌더링됩니다:
+배열 스키마는 `options` 아래에 출력 필터를 지정할 수 있습니다. 이 필터는 배열이 **내보내는 값** — 부모 전파, 루트 validation, 외부 표면(`onChange`, `getValue()`, `submit`) — 만 정제하며, 자식 노드와 raw `node.value`는 모든 항목을 유지하므로 사용자가 추가한 빈 행이 그대로 렌더링됩니다:
 
 ```tsx
 const jsonSchema = {
@@ -1543,25 +1517,24 @@ const jsonSchema = {
     tags: {
       type: 'array',
       title: 'Tags',
-      minItems: 3, // 빈 input 3개가 먼저 렌더링됨
       items: { type: 'string' },
       options: { omitTrailing: true },
     },
   },
 };
 
-// UI에는 input 3개가 보이고, 사용자가 첫 번째만 채우면
+// 사용자가 행 3개를 추가하고 첫 번째만 채우면
 // onChange / getValue() / validation 값은: { tags: ['first'] }
-// node.find('/tags').value 는 ['first', undefined, undefined] 유지
+// node.find('/tags').value는 ['first', undefined, undefined]로 유지
 ```
 
 **주요 동작:**
 
 - **`omitTrailing` (opt-in)**: **후행** 연속 `undefined` 항목만 제거합니다. 선행·중간 `undefined`는 보존되어 error `dataPath`와 validation index 정합이 유지됩니다 — `[1, undefined, 2]`는 그대로 방출됩니다.
 - **`omitEmpty` (기본 활성)**: 빈 배열을 부모 전파 경로에서 `undefined`로 변환합니다. 필터 순서는 `omitTrailing → omitEmpty`라서 전부 빈 배열은 부모에서 `undefined`로 수렴합니다 (루트 폼은 `[]`를 방출).
-- **값 2채널**: `node.value`는 raw를 유지하고, 정제된 출력은 `node.outputValue`로 노출됩니다. validation은 정제된 값 기준이라 `minItems`는 채워진 prefix만 셉니다.
-- **Reset 의미**: Reset 계열 초기화(폼 reset, oneOf/anyOf 분기 재활성화)는 `minItems`만큼 빈 항목을 재충전하고, 일반 `setValue(undefined)`는 전부 비웁니다.
-- **커스텀 입력**: 행 수는 `value.length`가 아니라 `node.children`(또는 `ChildFields`) 기준으로 세야 합니다 — 방출 값이 렌더된 행보다 짧은 것이 설계입니다.
+- **값 2채널**: `node.value`는 raw를 유지하고, 정제된 출력은 `node.outputValue`로 노출됩니다. validation은 정제된 값 기준이라 후행 빈 항목은 `minItems`에 세지 않고, 선행·중간 빈 항목은 셉니다.
+- **Reset 의미**: reset은 배열이 로드된 값을 되돌리며 `minItems`를 위해 항목을 만들지 않고, 일반 `setValue(undefined)`는 전부 비웁니다.
+- **커스텀 입력**: 행 수는 `value.length`가 아니라 `node.children`(또는 `ChildFields`) 기준으로 세야 합니다 — 후행 행이 비어 있으면 방출 값이 렌더된 행보다 짧습니다.
 
 ### 명령형 핸들을 사용한 양식
 

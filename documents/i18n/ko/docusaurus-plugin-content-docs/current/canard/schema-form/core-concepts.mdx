@@ -233,16 +233,16 @@ const fieldInputMap: FieldInputMap = {
 배열 스키마는 `options` 아래에 출력 필터를 지정할 수 있습니다. 이 필터는
 배열이 **내보내는 값** — 부모 전파, 루트 validation, 외부 표면(`onChange`,
 `getValue()`, `submit`) — 만 정제하며, 자식 노드와 raw `node.value`는 모든
-항목을 유지하므로 미리 노출한 빈 input이 그대로 렌더링됩니다.
+항목을 유지하므로 사용자가 추가한 빈 행이 그대로 렌더링됩니다.
 
 ```tsx
 const jsonSchema = {
   type: 'array',
-  minItems: 3, // 빈 input 3개가 먼저 렌더링됨
   items: { type: 'string' },
   options: { omitTrailing: true },
 };
-// 사용자가 첫 번째 input만 채우면:
+// 사용자가 행 3개를 추가하고 첫 번째만 채우면
+// node.value: ['first', undefined, undefined]
 // getValue() / onChange / validation 값은 ['first']
 ```
 

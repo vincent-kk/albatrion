@@ -1453,51 +1453,26 @@ export const ArrayForm = () => {
 };
 ```
 
-#### Array minItems Auto-fill Behavior
+#### Array Limits (minItems / maxItems)
 
-When using `minItems` with arrays, the auto-fill behavior depends on whether a default value is provided:
-
-**Rule**: When `defaultValue` or `schema.default` is provided, minItems auto-fill is **disabled**. The provided default value is used as-is, even if it has fewer items than `minItems`.
+The core neither fills nor blocks. `minItems` creates no items at mount, on reset or on branch reactivation, and `maxItems` refuses no `push` or `setValue`. Both stay on `node.jsonSchema`, and validation reports a violation. The built-in array input hides its add button once `maxItems` is reached.
 
 ```tsx
 const jsonSchema = {
   type: 'object',
   properties: {
-    // Case 1: No default → minItems auto-fill enabled
-    autoFillArray: {
+    tags: {
       type: 'array',
       items: { type: 'string', default: 'item' },
       minItems: 3,
+      maxItems: 5,
     },
-    // Result: ['item', 'item', 'item'] (auto-filled to minItems)
-
-    // Case 2: schema.default provided → minItems auto-fill disabled
-    schemaDefaultArray: {
-      type: 'array',
-      items: { type: 'string', default: 'item' },
-      minItems: 3,
-      default: ['one'],
-    },
-    // Result: ['one'] (uses default, ignores minItems)
-
-    // Case 3: Empty schema.default → minItems auto-fill disabled
-    emptyDefaultArray: {
-      type: 'array',
-      items: { type: 'string', default: 'item' },
-      minItems: 3,
-      default: [],
-    },
-    // Result: [] (uses empty default, ignores minItems)
   },
 };
 
-// Using Form's defaultValue prop also controls minItems auto-fill
-<Form
-  jsonSchema={jsonSchema}
-  defaultValue={{
-    partialArray: ['a', 'b'], // Only 2 items even if minItems=5
-  }}
-/>;
+// No default: tags loads as [] — validation reports minItems until three items exist
+// default: ['one'] or defaultValue={{ tags: ['one'] }}: tags loads as ['one']
+// push() appends ('item') and returns the new length, even past maxItems
 ```
 
 #### Array prefixItems Support (JSON Schema 2020-12)
@@ -1536,8 +1511,7 @@ const jsonSchema = {
 
 - **Position-based schemas**: Each array index uses its corresponding `prefixItems` schema
 - **Fallback to items**: Indices beyond `prefixItems.length` use the `items` schema
-- **items: false**: Prevents adding items beyond `prefixItems.length`
-- **Auto maxItems**: When `items` is undefined or `false`, `maxItems` is automatically set to `prefixItems.length`
+- **items: false**: no item beyond `prefixItems.length` is valid; validation reports it. The core does not block a push past the tuple, and `maxItems` is not derived from `prefixItems`
 
 **Validation requirements:**
 
@@ -1549,7 +1523,7 @@ const jsonSchema = {
 
 #### Array Output Filters (omitTrailing / omitEmpty)
 
-Array schemas accept output filters under `options`. They refine only what the array **emits** — parent propagation, root validation, and the external surfaces (`onChange`, `getValue()`, `submit`) — while child nodes and the raw `node.value` keep every item, so pre-exposed empty inputs stay rendered:
+Array schemas accept output filters under `options`. They refine only what the array **emits** — parent propagation, root validation, and the external surfaces (`onChange`, `getValue()`, `submit`) — while child nodes and the raw `node.value` keep every item, so empty rows the user added stay rendered:
 
 ```tsx
 const jsonSchema = {
@@ -1558,14 +1532,13 @@ const jsonSchema = {
     tags: {
       type: 'array',
       title: 'Tags',
-      minItems: 3, // three empty inputs render up front
       items: { type: 'string' },
       options: { omitTrailing: true },
     },
   },
 };
 
-// The UI renders 3 inputs; the user fills only the first one.
+// The user adds three rows and fills only the first one.
 // onChange / getValue() / validation see: { tags: ['first'] }
 // node.find('/tags').value stays ['first', undefined, undefined]
 ```
@@ -1574,9 +1547,9 @@ const jsonSchema = {
 
 - **`omitTrailing` (opt-in)**: removes **trailing** consecutive `undefined` items only. Leading and middle `undefined` items are preserved so error `dataPath`s and validation indices stay aligned — `[1, undefined, 2]` is emitted as-is.
 - **`omitEmpty` (on by default)**: converts an empty array to `undefined` on the parent-propagation path. Filter order is `omitTrailing → omitEmpty`, so an all-empty array collapses to `undefined` under its parent (a root-level form still emits `[]`).
-- **Two value channels**: `node.value` stays raw; the refined output is exposed as `node.outputValue`. Validation runs against the refined value, so `minItems` counts only the filled prefix.
-- **Reset semantics**: a Reset-flagged clear (form reset, oneOf/anyOf branch reactivation) refills `minItems` empty items; a plain `setValue(undefined)` clears every item.
-- **Custom inputs**: derive row count from `node.children` (or `ChildFields`), never from `value.length` — the emitted value is shorter than the rendered rows by design.
+- **Two value channels**: `node.value` stays raw; the refined output is exposed as `node.outputValue`. Validation runs against the refined value, so trailing empty items do not count toward `minItems`; leading and middle ones do.
+- **Reset semantics**: a reset restores the array's loaded value and creates no items for `minItems`; a plain `setValue(undefined)` clears every item.
+- **Custom inputs**: derive row count from `node.children` (or `ChildFields`), never from `value.length` — the emitted value is shorter than the rendered rows whenever trailing rows are empty.
 
 ### Form with Imperative Handle
 

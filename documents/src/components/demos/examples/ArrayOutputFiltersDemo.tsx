@@ -20,7 +20,7 @@ const schema = {
       type: 'array',
       title: 'Tags — omitTrailing',
       description:
-        'Three empty rows are offered up front; only what you filled in is emitted',
+        'Add rows and leave the last ones empty; only what you filled in is emitted',
       minItems: 3,
       items: { type: 'string', presentation: { FieldInputProps: { placeholder: 'tag' } } },
       options: { omitTrailing: true },
@@ -74,7 +74,7 @@ function ChannelRow({ node }: { node: FieldNode }) {
         <code>{show(node.value)}</code>
       </td>
       <td style={CELL_STYLE}>
-        <code>{show(node.normalizedValue)}</code>
+        <code>{show(node.outputValue)}</code>
       </td>
     </tr>
   );
@@ -114,7 +114,7 @@ export default function ArrayOutputFiltersDemo() {
               node.value (raw)
             </th>
             <th style={{ ...CELL_STYLE, textAlign: 'left' }}>
-              node.normalizedValue (emitted)
+              node.outputValue (emitted)
             </th>
           </tr>
         </thead>
