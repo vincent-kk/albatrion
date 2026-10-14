@@ -6,7 +6,7 @@
 
 ## API Contracts
 
-- `FormErrorReason`·`FormErrorDetails`는 코드별 상세의 내부 형이며 errors index가 내보내지 않습니다. 외부 오류 관측과 시험은 진입점의 `FormErrorRecord` 계약을 사용하며 상세 형은 이 기록에서 유도합니다.
+- `FormErrorReason`·`FormErrorDetails`는 코드별 상세의 내부 형이며 errors index가 내보내지 않습니다. 외부 오류 관측은 진입점의 `FormErrorRecord` 계약을 사용하고, 코드별 상세 형의 계약은 이 fractal의 `__tests__`가 `type.ts`를 직접 읽어 검증합니다.
 
 - 오류 코드·메시지·상세 맥락을 보관하고 클래스에 맞는 이름을 설정합니다.
 - 타입 가드는 대응하는 도메인 오류를 식별하며 오류 객체는 비즈니스 동작을 실행하지 않습니다.

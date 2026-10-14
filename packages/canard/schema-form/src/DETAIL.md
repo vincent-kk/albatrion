@@ -9,8 +9,16 @@
 - 플러그인 등록은 `registerPlugin()`만을 경유한다. `PluginManager`의 static 상태를 우회 변경하지 않는다.
 - 공개 검증 오류 형은 `ValidationIssue`이며 패키지 진입점은 `JSONSchemaError`를 내보내지 않습니다. 노드 형·가드도 새 엔진의 계약을 이름으로 내보냅니다(ERROR-032, 34C-02·50C-01, LANDING-067·170).
 - 상태 열거는 내부와 공개 경계에서 `FieldNodeState` 한 이름을 사용하며 Dirty=1·Touched=2·ErrorVisible=4를 유지합니다. `NodeState` 별칭은 내보내지 않습니다(SURFACE-056·060, LANDING-157).
+- `__tests__/e2e`·`__tests__/scenarios`·`__tests__/migration`은 외부 소비자 자격으로 루트 `index.ts`를 가져오는 공개 API 시험 구획입니다(D7). 나머지 제품·시험·fixture는 자기·조상 내부를 직접 가져오고 자기·조상 index를 거치지 않으며, 자손·혈통 밖 fractal은 관문 index로 소비하는 import 모델을 따릅니다.
 
 ## API Contracts
+
+### 경계 검증과 시험 도우미
+
+- `__tests__/importModel.test.ts`는 D7 밖 U·D·S1 위반을 막고, `__tests__/publicSurface.test.ts`는 공개 이름 92개와 값·형 구분 및 경로 없는 형 문자열의 스냅숏을 검증합니다. 두 시험은 제품 모듈을 import하지 않고 파일과 TypeScript 구문·형 정보를 읽습니다.
+- `__tests__/fixtures/nodeFromJSONSchema.ts`는 core index의 공개 생성·마운트 통로로 마운트된 루트를 만드는 시험·bench 도우미입니다. 제품 트리나 패키지 공개 표면에 속하지 않습니다.
+- `__tests__/helpersErrorIndex.test.ts`는 자식 error 관문의 이름을 검증합니다.
+- `__tests__/Form.label.test.tsx`는 Form 관문이 조립한 `Form.Label`·`Form.Input` 정적 멤버로 label 규약을 검증합니다. 관문의 조립 모양을 쓰는 시험이므로 Form 안이 아니라 부모 시험 구획에 둡니다. 공개 진입점의 이주 형 검증은 D7 migration 구획에서 루트 index를 소비합니다.
 
 ### 렌더 시험 하니스
 
@@ -103,10 +111,10 @@ NODE-059의 형 없는 인라인 객체·배열 oneOf·anyOf는 분기 값 형�
 
 ### `index.ts` — 공개 패키지 표면의 컴파일 전용 검증
 
-- **Consumers**: `**/packages/canard/schema-form/src/__tests__/switchSurface.type-test.ts`
+- **Consumers**: `**/packages/canard/schema-form/src/__tests__/migration/switchSurface.type-test.ts`
 - **Direct import**: `allowed`
 - **Reason**: 이 검증은 패키지 공개 표면의 타입·가드·열거와 비공개 심볼의 부재를 확인하므로 패키지 진입점 자체를 소비해야 합니다. 소유 경계의 검증 구획에 두고 패키지 tsc의 src 포함으로 검사합니다. 이름을 유지한 컴파일 전용 .type-test.ts는 filid adapter의 검증 파일 분류와 Vitest 런타임 시험 glob에 포함되지 않으므로, 이 파일의 공개 진입점 참조에만 예외를 선언합니다.
 
 ## Last Updated
 
-계약 기준: LANDING-067·170·205·207·208, WRITE-083, VALUE-027·034.
+계약 기준: LANDING-067·170·205·207·208, WRITE-083, VALUE-027·034; 정돈-2(2026-10-14).

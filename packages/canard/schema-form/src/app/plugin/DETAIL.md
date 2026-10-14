@@ -16,7 +16,7 @@
 - Form 속성 `validatorFactory`는 필수 `compile`·`compileGuard`를 가진 객체입니다. 검증기 선택은 Form 속성 > FormProvider > 플러그인이며 등록소는 바인딩이 읽습니다. 선택한 참조가 바뀌면 트리를 재생성하므로 참조를 안정적으로 유지합니다. 바인딩은 선택 결과나 없음을 core 생성 인자로 전달하며 core는 등록소를 가져오거나 `bind`를 부르지 않습니다(CONTROLS-075, VALIDATE-044, 32C-01).
 - 개발 모드 판정은 사용처마다 bare `process.env.NODE_ENV !== 'production'`(부정은 `=== 'production'`) 비교를 사용합니다. 소비자 번들러는 사용처의 토큰만 production define으로 접으므로 모듈 상수·함수로 추출하지 않습니다. 개발 전용 본문은 `if (process.env.NODE_ENV !== 'production' && …) { … }` 안에 두거나 함수 첫 줄의 `if (process.env.NODE_ENV === 'production') return;`로 끊습니다. 다른 문과 합쳐지는 자리(예: `useMemo` 콜백)에서는 esbuild가 조기 반환 뒤 본문을 남기므로 블록을 사용합니다. `eslint.config.js`의 `no-restricted-syntax`는 다른 비교·대입·구조 분해·단독 참조를 막습니다. define과 `process`가 없는 호스트는 CommonJS 소비자와 같이 define을 제공해야 합니다(189라운드, 196라운드, 200C-01).
 - 렌더 키트와 Form 속성은 `FieldRenderer`·`FormLabelRenderer`·`FormInputRenderer`·`FormErrorRenderer` 이름을 공유하며, 입력·그룹 props도 그룹 렌더러를 `FieldRenderer`로 부릅니다(LANDING-035·067, SURFACE-002).
-- 검증기와 플러그인 검증 계약의 구조적 일치는 `core/engine/validation/__tests__/validatorConformance.test.ts`가 검증합니다. 동기 가드 읽기는 validation 내부에서 소비하며 core·engine 집계 진입점은 재수출하지 않습니다.
+- 검증기와 플러그인 검증 계약의 구조적 일치는 `__tests__/validatorConformance.test.ts`가, 검증기의 수명 유지와 가드 읽기는 `core/engine/validation/__tests__/validation.retain-guard.test.ts`가 검증합니다. 동기 가드 읽기는 validation 내부에서 소비하며 core·engine 집계 진입점은 재수출하지 않습니다.
 
 ## Acceptance Criteria
 

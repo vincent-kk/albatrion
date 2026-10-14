@@ -28,6 +28,7 @@
 
 - 의존 방향은 `blueprint < record < {behaviors, navigation} < validation < settle/derive < settle < dispatch < FieldNode`입니다. settle의 라운드 실행기와 커밋은 derive 진입점만 소비하고, derive는 settle의 쓰기·전이·커밋 및 `settle/type.ts`를 가져오지 않습니다(NODE-016·045, LANDING-083·084). 살아 있는 노드의 계산은 `node.behavior`를 호출하고 형상 밖 값의 정적 해석과 빈 값 판정은 behaviors 진입점을 소비합니다. `FieldNode`·`write`는 import하지 않고 `validation` 진입점의 동기 가드 읽기만 소비합니다(VALIDATE-015·044, NODE-016, NODE-006, WRITE-082·098, VALUE-034).
 - 정착의 내부 organ을 외부 소비자가 직접 가져오지 않으므로 경계 예외는 없습니다(NODE-016).
+- `__tests__/blueprint.branchless-differential.test.ts`는 branchless 분석과 일반 분석의 관측 동등성을 정착 결과와 역의존 색인으로 검증하므로 settle이 소유합니다. blueprint 내부의 capability 수집은 import하지 않고 `vi.mock` 경로로만 바꿉니다.
 - 한 진입은 동기적으로 표시 → 계산(호스트 바퀴) → 파생(쓰기가 나오면 표시로) → 전이(쓰기가 나오면 표시로) → 커밋합니다. 전이가 재계산을 부른 뒤에도 파생을 다시 판정하며, 적용 쓰기가 있는 파생 라운드는 한 정착 전체에서 전이 뒤에도 이어 세고 상한은 25입니다(SETTLE-002–006·017, EVENT-020, LANDING-063).
 
 ## API Contracts

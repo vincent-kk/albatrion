@@ -16,7 +16,7 @@
 ### 이름 붙은 진입점
 
 - `FieldNodeEvent`는 내부 배달 형이며 write index가 내보내지 않습니다. 외부 구독자는 공개 `FieldNodeListener` 계약을 사용합니다. 시험 트리 생성 fixture는 engine 층의 공용 시험 구획이 소유합니다.
-- `dispatch.nan-delivery.test.ts`는 write 배달을 검증하며 watched object의 동일성 비교 단위 검증은 settle의 `isSameDeliveryValue` 소유 시험 구획이 담당합니다. `dispatch.source-path.test.ts`는 errors 진입점의 `FormErrorRecord`에서 상세 형을 유도합니다.
+- `dispatch.nan-delivery.test.ts`는 write 배달을 검증하며 watched object의 동일성 비교 단위 검증은 settle의 `isSameDeliveryValue` 소유 시험 구획이 담당합니다. `dispatch.source-path.test.ts`는 errors 진입점의 `FormErrorRecord`로 기록을 관찰하며, 코드별 상세 형의 계약은 errors의 시험 구획이 검증합니다.
 
 - `dispatchPush`·`dispatchPop`·`dispatchUpdate`·`dispatchRemove`·`dispatchClear`는 같은 공개 쓰기 사슬로 들어가며 거부 시 `undefined`를 돌려줍니다. 배치 밖에서는 배열 정착의 동기 결과를 돌려주고, 배치 안에서는 `readBatchValue`의 앞선 표시를 얹은 배열에 행의 순수 계획을 적용하여 결과 배열을 Replace로 표시합니다. push는 결과 길이, pop·remove는 표시된 자리의 원본, update는 입력 값, clear는 `undefined`입니다. 잘못된 종류 값에는 push만 `[x]`를 표시하고 나머지는 무동작입니다. 비배열 호출은 사슬 끝에서 `ARRAY_METHOD_ON_NON_ARRAY`를 `surface: 'thrown'`으로 보고하고 던집니다. 배치 끝 정착은 통째 쓰기라 아이템 키는 위치로 잇고 정착·`onChange`는 한 번입니다. 비용은 배열 계획/복사 O(배열 길이), 앞선 표시 합성 비용이며 노드별 고정 칸은 늘리지 않습니다(33C-01, 35C-01, 62C-01, EVENT-035·061).
 

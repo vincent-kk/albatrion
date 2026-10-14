@@ -29,7 +29,7 @@
 - `blueprint`는 core 수준 시험 기반 도구가 쓰는 생성 통로로 core index가 다시 내보내며 패키지 src/index 표면에는 추가하지 않습니다. `readFieldNodeGuard`는 validation 내부 계약이며 engine·core 집계 진입점이 재수출하지 않습니다.
 - 이름 목록은 승인된 내부 계약이며 자식 모듈의 모든 수출을 대신하지 않습니다. 시험은 검사 대상의 소유 구획에서 구체 내부 단위를 검증합니다.
 - `__tests__/fixtures`는 engine 층의 공용 시험 fixture를 소유합니다. `createDispatchTree.ts`는 write·validation 시험이 공유하는 생성 도우미이고 `ownedInlineHead.json`은 blueprint·settle 시험이 공유하는 기준 데이터이므로 이 최소 공통 소유자에 둡니다.
-- `__tests__/blueprint.branchless-differential.test.ts`와 `__tests__/validation-guard-integration.test.ts`는 여러 자식 계약을 함께 검증하는 engine 통합 시험입니다.
+- `__tests__/validation-guard-integration.test.ts`는 validation·write 두 자식 계약을 함께 검증하는 engine 통합 시험입니다.
 
 ## Acceptance Criteria
 
