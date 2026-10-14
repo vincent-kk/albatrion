@@ -86,6 +86,7 @@
 | 2026-10-15 | 330라운드 소유자: 중간 브랜치 삭제, 1.0.0-beta 압축(48 커밋, 백업 유지), 8단계는 feat/schema-form-08-review-and-perf에서 원장·워크트리 운영. 보충 2줄 | `reviews/round-330-owner-answers.md` |
 | 2026-10-15 | 331라운드 소유자: 08 플러그인 완료 처리(07b·07d), 미확인 셋은 대기열 54, 최적화 진행. 보충 1줄 | `reviews/round-331-owner-answers.md` |
 | 2026-10-15 | 332라운드 소유자: 8단계 리뷰 1차 열넷(구조·조사·이름·질문). 보충 1줄 | `reviews/round-332-owner-answers.md` |
+| 2026-10-15 | 333라운드 소유자: 작업자 지정, NODE_ENV는 React 방식, 칸 이름 수용, typeMismatch → misfit. 보충 1줄 | `reviews/round-333-owner-answers.md` |
 | 2026-10-14 | 316라운드 소유자: constants·hooks organ(index 제거), organ 안 barrel 금지, Field를 Form처럼 components/ 아래로. 보충 2줄 | `reviews/round-316-owner-answers.md` |
 | 2026-10-14 | 317라운드 소유자: Form barrel 삭제, 병렬 진행(정돈-S 병렬), 검증 뒤 병합 위임, surface/classes → runtime, 손질은 단일 PR. 보충 4줄 | `reviews/round-317-owner-answers.md` |
 | 2026-10-14 | 318라운드 소유자: fieldInputs를 입력마다 fractal로(넷째 손질, fixy08 별도 PR), ArrayItems 래핑은 memo 경계라 유지. 보충 1줄 | `reviews/round-318-owner-answers.md` |
