@@ -20,7 +20,7 @@ describe('child selection against pinned HEAD', () => {
     working = await buildChildSelectionRuntime(undefined, {
       ...(scratchSource
         ? {
-            'packages/canard/schema-form/src/core/engine/settle/utils/compute/selectChildren.ts':
+            'packages/canard/schema-form/src/core/engine/settle/utils/compute/childSelection/selectChildren.ts':
               scratchSource,
           }
         : {}),

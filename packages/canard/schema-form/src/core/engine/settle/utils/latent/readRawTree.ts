@@ -4,8 +4,8 @@ import { escapeSegment } from '@winglet/json/pointer';
 
 import { getItemEntry } from '../../../blueprint';
 import type { FieldNodeRecord } from '../../../record';
-import type { SettlementContext } from '../../type';
-import { isPlain } from '../write/isPlain';
+import type { SettlementContext } from '../../types/settlement';
+import { isPlain } from '../input/isPlain';
 import { readAbsentSlotSource } from './readAbsentSlotSource';
 import { readLatentSlotSource } from './readLatentSlotSource';
 

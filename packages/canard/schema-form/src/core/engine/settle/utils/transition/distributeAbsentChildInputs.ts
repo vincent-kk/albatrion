@@ -1,10 +1,10 @@
 import { escapeSegment } from '@winglet/json/pointer';
 
 import type { FieldNodeRecord } from '../../../record';
-import type { SettlementContext } from '../../type';
+import type { SettlementContext } from '../../types/settlement';
+import { hasDistributedChildInput } from '../input/hasDistributedChildInput';
+import { isWithinReplacePaths } from '../input/isWithinReplacePaths';
 import { distributeLatentValue } from '../latent/distributeLatentValue';
-import { hasDistributedChildInput } from '../write/hasDistributedChildInput';
-import { isWithinReplacePaths } from '../write/isWithinReplacePaths';
 
 /**
  * Store, as latent raw, the declared children of a departing object host that this

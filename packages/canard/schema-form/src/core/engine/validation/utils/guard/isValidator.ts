@@ -1,4 +1,4 @@
-import type { Validator } from '../../type';
+import type { Validator } from '../../types/validator';
 
 /**
  * Narrow a tree-selected runtime value to the core validator contract.

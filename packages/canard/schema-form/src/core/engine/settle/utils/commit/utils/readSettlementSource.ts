@@ -6,7 +6,7 @@ import {
 
 import type { FieldNodeRecord } from '../../../../record';
 import type { FieldNodeWriteKind } from '../../../../types/value';
-import type { SettlementContext } from '../../../type';
+import type { SettlementContext } from '../../../types/settlement';
 
 /**
  * Resolve the last marked write covering a committed path.

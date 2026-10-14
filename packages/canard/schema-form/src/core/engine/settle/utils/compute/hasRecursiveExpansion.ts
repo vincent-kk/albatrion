@@ -4,8 +4,8 @@ import type {
   EffectiveSchema,
 } from '../../../blueprint';
 import type { FieldNodeRecord } from '../../../record';
-import type { SettlementContext } from '../../type';
-import { hasLatentUnder } from '../latent/hasLatentUnder';
+import type { SettlementContext } from '../../types/settlement';
+import { hasLatentUnder } from '../latentStore/hasLatentUnder';
 import { getRecursiveRelativeSpan } from './utils/getRecursiveRelativeSpan';
 
 /** Only the cycle verdict outlives the one-time graph traversal. */

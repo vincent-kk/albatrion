@@ -2,10 +2,10 @@ import { isArray } from '@winglet/common-utils/filter';
 
 import type { BlueprintNode } from '../../../blueprint';
 import type { FieldNodeRecord } from '../../../record';
-import type { SettlementContext } from '../../type';
-import { hasDistributedChildInput } from '../write/hasDistributedChildInput';
-import { interpretFieldNodeInput } from '../write/interpretFieldNodeInput';
-import { isWithinReplacePaths } from '../write/isWithinReplacePaths';
+import type { SettlementContext } from '../../types/settlement';
+import { hasDistributedChildInput } from '../input/hasDistributedChildInput';
+import { interpretFieldNodeInput } from '../input/interpretFieldNodeInput';
+import { isWithinReplacePaths } from '../input/isWithinReplacePaths';
 import { readLatentSlotSource } from './readLatentSlotSource';
 
 /**

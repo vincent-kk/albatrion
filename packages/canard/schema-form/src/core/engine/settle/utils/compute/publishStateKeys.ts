@@ -2,7 +2,7 @@ import { FormErrorCode, SchemaFormError } from '../../../../../errors';
 import { getFeatureNodeIndex } from '../../../blueprint';
 import { captureFieldNodeChange } from '../../../record';
 import type { FieldNodeRecord } from '../../../record';
-import type { SettlementContext } from '../../type';
+import type { SettlementContext } from '../../types/settlement';
 import { calculateStateKeys } from '../controls/calculateStateKeys';
 import { recordSettlementFailure } from '../errors/recordSettlementFailure';
 

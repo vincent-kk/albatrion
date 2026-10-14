@@ -1,7 +1,7 @@
 import { JSONPointer as $ } from '@/schema-form/helpers/jsonPointer';
 
 import type { BlueprintGate } from '../../../blueprint';
-import { bindTemplatePath } from '../paths/bindTemplatePath';
+import { bindTemplatePath } from '../templatePaths/bindTemplatePath';
 import { bindGateHostPath } from './bindGateHostPath';
 import type { GateOccurrence } from './type';
 

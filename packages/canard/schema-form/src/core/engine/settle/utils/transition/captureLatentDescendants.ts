@@ -6,11 +6,11 @@ import { visitFieldNodes } from '../../../navigation';
 import type { FieldNodeRecord } from '../../../record';
 import type { DeclarationLayer } from '../../../types/controls';
 import { emptyReadonlyMap } from '../../../utils/emptyReadonlyMap';
-import type { SettlementContext } from '../../type';
+import type { SettlementContext } from '../../types/settlement';
 import { getControlLayers } from '../controls/getControlLayers';
 import { readExitLayerPolicy } from '../controls/readExitLayerPolicy';
 import { readLatentExitPolicy } from '../controls/readLatentExitPolicy';
-import { getLatentPathIndex } from '../latent/getLatentPathIndex';
+import { getLatentPathIndex } from '../latentStore/getLatentPathIndex';
 import { writeLatentRaw } from './writeLatentRaw';
 
 /** One stored source and its last-live exit decisions. */

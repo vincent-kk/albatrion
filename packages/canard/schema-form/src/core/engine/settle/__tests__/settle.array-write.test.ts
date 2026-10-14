@@ -5,14 +5,14 @@ import { patchFieldNodeInteractionState } from '@/schema-form/core/engine/record
 import { WriteOption } from '@/schema-form/core/engine/types/value';
 
 import { createTestTree } from '../../__tests__/fixtures/createTestTree';
+import { getSettlementScratch } from '../utils/scratch/getSettlementScratch';
+import { releaseSettlementScratch } from '../utils/scratch/releaseSettlementScratch';
 import { createSettlementContext } from '../utils/settlement/createSettlementContext';
 import { hasWrongKindBranchAncestor } from '../utils/transition/hasWrongKindBranchAncestor';
 import { transitionSettlement } from '../utils/transition/transitionSettlement';
-import { getSettlementScratch } from '../utils/write/getSettlementScratch';
-import { releaseSettlementScratch } from '../utils/write/releaseSettlementScratch';
 import { writeFieldNode } from '../utils/write/writeFieldNode';
 
-// filid:contract settle-array
+// filid:contract settle-array-writes
 describe('array settlement writes', () => {
   it('NODE-051 and LANDING-164 retain positions, keys, and interaction state', () => {
     const { root } = createTestTree({

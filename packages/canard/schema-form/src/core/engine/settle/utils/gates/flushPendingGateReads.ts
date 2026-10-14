@@ -5,8 +5,8 @@ import { JSONPointer as $ } from '@/schema-form/helpers/jsonPointer';
 
 import type { BlueprintGate, BlueprintNode } from '../../../blueprint';
 import type { FieldNodeRecord } from '../../../record';
-import type { SettlementContext } from '../../type';
-import { flushPendingOutput } from '../compute/flushPendingOutput';
+import type { SettlementContext } from '../../types/settlement';
+import { flushPendingOutput } from '../output/flushPendingOutput';
 import { bindGateHostPath } from './bindGateHostPath';
 import { getGateExpression } from './getGateExpression';
 import { getGateRegistry } from './getGateRegistry';

@@ -1,8 +1,8 @@
 import { JSONPointer as $ } from '@/schema-form/helpers/jsonPointer';
 
 import type { FieldNodeRecord } from '../../../record';
-import type { SettlementContext } from '../../type';
-import { getDependencyIndex } from '../write/getDependencyIndex';
+import type { SettlementContext } from '../../types/settlement';
+import { getDependencyIndex } from '../dependencies/getDependencyIndex';
 
 /**
  * Select hosts touched by raw changes, new children, or declaration selection.

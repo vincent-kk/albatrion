@@ -6,7 +6,7 @@ import { find } from '../../../navigation';
 import type { FieldNodeRecord } from '../../../record';
 import { PathKeyedMap } from '../../../utils/pathIndex/PathKeyedMap';
 import { EMPTY_VALUES } from '../detached/emptyDetachedReads';
-import { HostLatent } from '../latent/HostLatent';
+import { HostLatent } from '../latentStore/HostLatent';
 import { isMisfit } from './isMisfit';
 
 /** Compare two occurrence positions without converting them to path strings. */

@@ -3,10 +3,10 @@ import { describe, expect, it } from 'vitest';
 import { WriteOption } from '@/schema-form/core/engine/types/value';
 
 import { createTestTree } from '../../__tests__/fixtures/createTestTree';
-import { loadFieldNodeAtMount } from '../utils/load/loadFieldNodeAtMount';
+import { loadFieldNodeAtMount } from '../loadFieldNodeAtMount';
 import { writeFieldNode } from '../utils/write/writeFieldNode';
 
-// filid:contract settle-gates
+// filid:contract settle-gates-conflicts
 describe('shared declaration conflicts', () => {
   it('29C-03 shared conflict commits derive, fill, and unrelated exit clearing', () => {
     const { root } = createTestTree({

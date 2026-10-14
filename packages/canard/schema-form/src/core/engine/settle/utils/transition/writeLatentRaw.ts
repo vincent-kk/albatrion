@@ -1,7 +1,7 @@
 import type { BlueprintNode } from '../../../blueprint';
 import type { FieldNodeRecord } from '../../../record';
-import type { SettlementContext } from '../../type';
-import { setLatentRaw } from '../latent/setLatentRaw';
+import type { SettlementContext } from '../../types/settlement';
+import { setLatentRaw } from '../latentStore/setLatentRaw';
 
 /**
  * Write a latent source through the transition rollback boundary.

@@ -1,9 +1,9 @@
 import { isArray } from '@winglet/common-utils/filter';
 
 import type { FieldNodeRecord } from '../../../record';
-import type { SettlementContext } from '../../type';
-import { markWrite } from '../write/markWrite';
-import { HostLatent } from './HostLatent';
+import type { SettlementContext } from '../../types/settlement';
+import { markWrite } from '../input/markWrite';
+import { HostLatent } from '../latentStore/HostLatent';
 
 /**
  * Restore only one entering node's own latent state.

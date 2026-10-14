@@ -10,7 +10,7 @@ import {
 
 import { createTestTree } from '../../__tests__/fixtures/createTestTree';
 import * as records from '../../record';
-import { arrangeFieldNodeItems } from '../utils/structure/arrangeFieldNodeItems';
+import { arrangeFieldNodeItems } from '../arrangeFieldNodeItems';
 import { writeFieldNode } from '../utils/write/writeFieldNode';
 import { compareArraySelection } from './fixtures/compareArraySelection';
 

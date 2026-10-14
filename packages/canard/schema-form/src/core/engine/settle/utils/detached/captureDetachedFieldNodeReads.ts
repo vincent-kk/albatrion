@@ -2,7 +2,7 @@ import type { FieldNodeRecord } from '../../../record';
 import { readFieldNodeErrors } from '../../../validation';
 import { readFieldNodeWatchValues } from '../controls/readFieldNodeWatchValues';
 import type { WatchValuesSnapshot } from '../controls/readFieldNodeWatchValues';
-import { readFieldNodeDefaultValue } from '../load/readFieldNodeDefaultValue';
+import { readFieldNodeDefaultValue } from '../loadValues/readFieldNodeDefaultValue';
 import { EMPTY_PATHS, EMPTY_VALUES } from './emptyDetachedReads';
 
 /**

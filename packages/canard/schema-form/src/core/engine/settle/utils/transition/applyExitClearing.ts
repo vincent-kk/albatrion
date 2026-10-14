@@ -1,6 +1,6 @@
 import type { FieldNodeRecord } from '../../../record';
-import type { SettlementContext } from '../../type';
-import { getLatentOrder } from '../latent/getLatentOrder';
+import type { SettlementContext } from '../../types/settlement';
+import { getLatentOrder } from '../latentStore/getLatentOrder';
 import { captureExitedRaw } from './captureExitedRaw';
 import { captureLatentDescendants } from './captureLatentDescendants';
 import { readDepartingAncestorPolicy } from './readDepartingAncestorPolicy';

@@ -1,8 +1,8 @@
 import type { FieldNodeRecord } from '../../../record';
-import type { SettlementContext } from '../../type';
+import type { SettlementContext } from '../../types/settlement';
 import { computeNode } from '../compute/computeNode';
-import { setLatentRaw } from '../latent/setLatentRaw';
-import { registerRecalculation } from '../write/registerRecalculation';
+import { registerRecalculation } from '../dependencies/registerRecalculation';
+import { setLatentRaw } from '../latentStore/setLatentRaw';
 import { restoreArrayStructure } from './restoreArrayStructure';
 import { withdrawDetachedFills } from './withdrawDetachedFills';
 

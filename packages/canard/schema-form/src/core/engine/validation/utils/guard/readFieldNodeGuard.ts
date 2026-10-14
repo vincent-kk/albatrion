@@ -1,7 +1,7 @@
 import { JSONPointer as $ } from '@/schema-form/helpers/jsonPointer';
 
 import type { Blueprint, BlueprintGate } from '../../../blueprint';
-import type { GuardFunction } from '../../type';
+import type { GuardFunction } from '../../types/validator';
 import { readValidationEntry } from '../cache/readValidationEntry';
 import { isValidator } from './isValidator';
 

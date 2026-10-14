@@ -1,9 +1,9 @@
 import { hasOwnProperty } from '@winglet/common-utils/lib';
 
 import type { FieldNodeRecord } from '../../../record';
-import type { SettlementContext } from '../../type';
-import { flushPendingOutput } from '../compute/flushPendingOutput';
+import type { SettlementContext } from '../../types/settlement';
 import { getDeclaredChildNames } from '../declarations/getDeclaredChildNames';
+import { flushPendingOutput } from '../output/flushPendingOutput';
 import { getGateRegistry } from './getGateRegistry';
 
 /**

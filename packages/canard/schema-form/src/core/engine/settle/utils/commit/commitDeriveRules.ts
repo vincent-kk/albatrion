@@ -4,7 +4,7 @@ import { visitFieldNodes } from '../../../navigation';
 import { captureFieldNodeChange, shallowPatch } from '../../../record';
 import type { FieldNodeRecord } from '../../../record';
 import { FieldNodeState } from '../../../types/state';
-import type { SettlementContext } from '../../type';
+import type { SettlementContext } from '../../types/settlement';
 import { getDeriveState } from '../derivation/getDeriveState';
 import { recordSettlementFailure } from '../errors/recordSettlementFailure';
 import { pruneCommittedRuleKeys } from './pruneCommittedRuleKeys';

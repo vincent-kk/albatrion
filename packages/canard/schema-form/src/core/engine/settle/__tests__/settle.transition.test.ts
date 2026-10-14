@@ -4,10 +4,10 @@ import { FieldNodeState } from '@/schema-form/core/engine/types/state';
 import { WriteOption } from '@/schema-form/core/engine/types/value';
 
 import { createTestTree } from '../../__tests__/fixtures/createTestTree';
-import { loadFieldNodeAtMount } from '../utils/load/loadFieldNodeAtMount';
-import { readFieldNodeDefaultValue } from '../utils/load/readFieldNodeDefaultValue';
-import { resetFieldNodeForm } from '../utils/load/resetFieldNodeForm';
-import { resetFieldNodeSubtree } from '../utils/load/resetFieldNodeSubtree';
+import { loadFieldNodeAtMount } from '../loadFieldNodeAtMount';
+import { readFieldNodeDefaultValue } from '../utils/loadValues/readFieldNodeDefaultValue';
+import { resetFieldNodeForm } from '../utils/reset/resetFieldNodeForm';
+import { resetFieldNodeSubtree } from '../utils/reset/resetFieldNodeSubtree';
 import { writeFieldNode } from '../utils/write/writeFieldNode';
 import { setTestInteractionState } from './fixtures/setTestInteractionState';
 

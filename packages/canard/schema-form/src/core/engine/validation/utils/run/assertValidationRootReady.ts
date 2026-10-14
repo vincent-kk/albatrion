@@ -1,6 +1,6 @@
 import { FormErrorCode, SchemaFormError } from '../../../../../errors';
 import type { FieldNodeRecord } from '../../../record';
-import type { ValidateFunction } from '../../type';
+import type { ValidateFunction } from '../../types/validator';
 import { readValidationEntry } from '../cache/readValidationEntry';
 import { isValidator } from '../guard/isValidator';
 import { recentReleaseList } from '../lifetime/recentReleaseList';

@@ -6,7 +6,7 @@ import {
   publishGlobalStateDeltas,
 } from '../../../record';
 import type { FieldNodeRecord } from '../../../record';
-import type { SettlementContext } from '../../type';
+import type { SettlementContext } from '../../types/settlement';
 
 /**
  * Prepare ordered global-state candidates for the shared commit visitor.

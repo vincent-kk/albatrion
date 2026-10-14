@@ -1,5 +1,5 @@
 import type { BlueprintSchema } from '../../../blueprint';
-import type { Validator } from '../../type';
+import type { Validator } from '../../types/validator';
 import { evictValidationRoot } from './evictValidationRoot';
 import { recentReleaseList } from './recentReleaseList';
 

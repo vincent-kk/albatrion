@@ -6,9 +6,9 @@ import { WriteOption } from '@/schema-form/core/engine/types/value';
 import type { PlainNode } from '../../__tests__/fixtures/createPlainNode';
 import { createTestTree } from '../../__tests__/fixtures/createTestTree';
 import { resolveDependencyPath } from '../../utils/paths/resolveDependencyPath';
-import type { SettlementContext } from '../type';
+import { loadFieldNodeAtMount } from '../loadFieldNodeAtMount';
+import type { SettlementContext } from '../types/settlement';
 import * as gateEvaluation from '../utils/gates/evaluateGate';
-import { loadFieldNodeAtMount } from '../utils/load/loadFieldNodeAtMount';
 import { writeFieldNode } from '../utils/write/writeFieldNode';
 import { readProjectedValueWithoutPublication } from './helpers/readProjectedValueWithoutPublication';
 

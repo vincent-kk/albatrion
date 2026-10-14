@@ -4,7 +4,7 @@ import { createTestValidator } from '@/schema-form/core/__tests__/fixtures/creat
 import { createDispatchTree } from '@/schema-form/core/engine/__tests__/fixtures/createDispatchTree';
 import { dispatchMount } from '@/schema-form/core/engine/write';
 
-import type { ValidationIssue } from '../type';
+import type { ValidationIssue } from '../types/issue';
 import { createValidatorCopy } from '../utils/copy/createValidatorCopy';
 import { readFieldNodeErrors } from '../utils/read/readFieldNodeErrors';
 import { routeValidationIssues } from '../utils/route/routeValidationIssues';

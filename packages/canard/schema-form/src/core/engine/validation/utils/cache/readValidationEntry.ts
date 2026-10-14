@@ -1,5 +1,9 @@
 import type { BlueprintSchema } from '../../../blueprint';
-import type { GuardFunction, ValidateFunction, Validator } from '../../type';
+import type {
+  GuardFunction,
+  ValidateFunction,
+  Validator,
+} from '../../types/validator';
 import { createValidatorCopy } from '../copy/createValidatorCopy';
 import { evictValidationRoot } from '../lifetime/evictValidationRoot';
 import { recentReleaseList } from '../lifetime/recentReleaseList';

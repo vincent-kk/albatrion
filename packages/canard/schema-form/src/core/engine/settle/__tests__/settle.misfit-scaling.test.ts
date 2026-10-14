@@ -2,13 +2,13 @@ import { describe, expect, it, vi } from 'vitest';
 
 import { makeFieldNodeTree } from '@/schema-form/core/__tests__/makeFieldNodeTree';
 
-import { setLoadValue } from '../utils/load/setLoadValue';
+import { setLoadValue } from '../utils/loadValues/setLoadValue';
 
 const probe = (label: string, count: number): void => {
   if (process.env.SETTLE_SCALING_PROBE) console.info(`${label}: ${count}`);
 };
 
-// filid:contract settle-budget
+// filid:contract settle-budget-misfit-scaling
 describe('49C-01 SETTLE-017 proportional settlement work', () => {
   it('M26 indexes mismatches without filtering all paths per ancestor', () => {
     const count = 2000;

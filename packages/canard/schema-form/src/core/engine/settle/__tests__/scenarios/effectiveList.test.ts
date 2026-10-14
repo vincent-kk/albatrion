@@ -9,7 +9,7 @@ import { WriteOption } from '@/schema-form/core/engine/types/value';
 import { createTestTree } from '../../../__tests__/fixtures/createTestTree';
 import { writeFieldNode } from '../../utils/write/writeFieldNode';
 
-// filid:contract scenario-runner
+// filid:contract scenario-runner-effective-list
 describe('core effective-list scenario', () => {
   it('WRITE-099 E26 keeps the un-narrowed effective list identical to scalar schemaType', async () => {
     const schema: BlueprintSchema = {

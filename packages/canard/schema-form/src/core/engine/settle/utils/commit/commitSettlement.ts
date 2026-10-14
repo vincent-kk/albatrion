@@ -5,7 +5,7 @@ import type { FieldNodeRecord, MisfitRecord } from '../../../record';
 import { indexFieldNodeWarning } from '../../../record';
 import { getCommittedDeclarationKey } from '../../../utils/controls/getCommittedDeclarationKey';
 import { PathKeyedMap } from '../../../utils/pathIndex/PathKeyedMap';
-import type { SettlementContext } from '../../type';
+import type { SettlementContext } from '../../types/settlement';
 import { collectNonJsonPaths } from './collectNonJsonPaths';
 import { commitDeriveRules } from './commitDeriveRules';
 import { commitExitPolicyValues } from './commitExitPolicyValues';
@@ -190,21 +190,21 @@ export const commitSettlement = <Self extends FieldNodeRecord<Self>>(
   if (warningTasks)
     for (const node of context.changedNodes) warningTasks.get(node)?.();
   runtime.misfitRecords = warnings ? Object.freeze(warnings) : EMPTY_WARNINGS;
-  const mismatchMemo =
+  const misfitsMemo =
     runtime.misfitsMemo ??
     new PathKeyedMap<{ commit: number; paths: readonly string[] }>('path');
   if (runtime.misfitPaths.size === 0) {
-    const empty = mismatchMemo.get('');
-    if (mismatchMemo.size === 1 && empty?.paths.length === 0)
+    const empty = misfitsMemo.get('');
+    if (misfitsMemo.size === 1 && empty?.paths.length === 0)
       empty.commit = commit;
     else {
-      mismatchMemo.clear();
-      mismatchMemo.set('', { commit, paths: EMPTY_PATHS });
+      misfitsMemo.clear();
+      misfitsMemo.set('', { commit, paths: EMPTY_PATHS });
     }
   } else {
-    mismatchMemo.clear();
+    misfitsMemo.clear();
     const allPaths = [...runtime.misfitPaths].sort();
-    mismatchMemo.set('', { commit, paths: Object.freeze(allPaths) });
+    misfitsMemo.set('', { commit, paths: Object.freeze(allPaths) });
     const byAncestor = new Map<string, string[]>();
     for (let index = 0; index < allPaths.length; index++) {
       const path = allPaths[index];
@@ -220,9 +220,9 @@ export const commitSettlement = <Self extends FieldNodeRecord<Self>>(
       }
     }
     for (const [ancestor, paths] of byAncestor)
-      mismatchMemo.set(ancestor, { commit, paths: Object.freeze(paths) });
+      misfitsMemo.set(ancestor, { commit, paths: Object.freeze(paths) });
   }
-  runtime.misfitsMemo = mismatchMemo;
+  runtime.misfitsMemo = misfitsMemo;
   if (
     runtime.latentRaw.size > 0 &&
     (context.entered.size > 0 || context.exited.size > 0)

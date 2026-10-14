@@ -1,8 +1,8 @@
 import type { FieldNodeRecord } from '../../../../record';
-import type { SettlementContext } from '../../../type';
+import type { SettlementContext } from '../../../types/settlement';
+import { updateOutput } from '../../output/updateOutput';
 import { dirtyChildren } from '../dirtyChildren';
 import { selectNodeSchema } from '../selectNodeSchema';
-import { updateOutput } from '../updateOutput';
 
 /**
  * Consume a dirty frontier whose gates, appearances, and shape work are absent.

@@ -1,8 +1,8 @@
 import type { FieldNodeRecord } from '../../../record';
-import type { SettlementContext } from '../../type';
+import type { SettlementContext } from '../../types/settlement';
 import { computeNode } from '../compute/computeNode';
-import { isPlain } from './isPlain';
-import { registerRecalculation } from './registerRecalculation';
+import { registerRecalculation } from '../dependencies/registerRecalculation';
+import { isPlain } from '../input/isPlain';
 
 /**
  * Clear a caller-touched wrong-kind host only after a child emits.

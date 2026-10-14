@@ -9,7 +9,7 @@ import {
 
 import type { PlainNode } from '../../../__tests__/fixtures/createPlainNode';
 import { createTestTree } from '../../../__tests__/fixtures/createTestTree';
-import * as selection from '../../utils/compute/selectChildren/utils/canReuseArrayChildren';
+import * as selection from '../../utils/compute/childSelection/canReuseArrayChildren';
 import { observeArraySelection } from './observeArraySelection';
 import { observeDetachedReads } from './observeDetachedReads';
 

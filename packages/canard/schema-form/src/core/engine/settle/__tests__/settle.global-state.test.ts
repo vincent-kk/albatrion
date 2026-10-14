@@ -6,7 +6,7 @@ import { WriteOption } from '@/schema-form/core/engine/types/value';
 import { createTestTree } from '../../__tests__/fixtures/createTestTree';
 import { writeFieldNode } from '../utils/write/writeFieldNode';
 
-// filid:contract settle-write
+// filid:contract settle-write-global-state
 describe('EVENT-062 43C-01 settlement shape counts', () => {
   it('adds a true key on entry, removes it on exit, and adds it on re-entry', () => {
     const { root } = createTestTree({

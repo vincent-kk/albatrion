@@ -1,13 +1,13 @@
 import { FormErrorCode, SchemaFormError } from '../../../../../errors';
 import type { FieldNodeRecord, SettlementScratch } from '../../../record';
-import type { SettlementContext } from '../../type';
+import type { SettlementContext } from '../../types/settlement';
 import { commitSettlement } from '../commit/commitSettlement';
 import { effectiveType } from '../commit/effectiveType';
 import { publishStateKeys } from '../compute/publishStateKeys';
 import { captureDeriveBaseline } from '../derivation/captureDeriveBaseline';
 import { runDeriveRounds } from '../derivation/runDeriveRounds';
 import { recordSettlementFailure } from '../errors/recordSettlementFailure';
-import { alignArraySnapshotSlots } from '../load/alignArraySnapshotSlots';
+import { alignArraySnapshotSlots } from '../loadValues/alignArraySnapshotSlots';
 import { finalizeExits } from '../transition/finalizeExits';
 import { restoreSourceB } from '../transition/restoreSourceB';
 import { transitionSettlement } from '../transition/transitionSettlement';
