@@ -18,7 +18,7 @@ schema-form의 경로 문자열은 RFC 6901의 루트·구분자·fragment 표�
 
 `stripFragment`는 해시로 시작하는 경로에서 해시를 제거한다. 해시만 있는 입력, 해시와 슬래시만 있는 입력, 슬래시만 있는 입력은 빈 루트 문자열로 정규화한다. `joinSegment`는 기본 기준을 빈 루트로 두고 비어 있지 않은 문자열 또는 숫자 세그먼트 앞에 구분자를 붙이며, 빈 문자열 세그먼트에서는 기준 경로를 그대로 돌려준다.
 
-- `JSONPointerPrefix`는 `JSONPointer` 기호에 구분자를 붙인 두 글자 접두사 셋(`Fragment` = `#/`, `Parent` = `../`, `Current` = `./`)이며 `JSONPointer`에서 조립합니다. 이 fractal의 index가 이름으로 내보내지만 패키지 공개 진입점은 내보내지 않습니다. 경로 토큰을 비교·분해하는 engine 코드는 리터럴 대신 이 두 상수를 씁니다. 정규식 안의 토큰은 그대로 둡니다.
+- `JSONPointerPrefix`는 `JSONPointer` 기호에 구분자를 붙인 두 글자 접두사 셋(`Fragment`는 해시와 슬래시, `Parent`는 부모 표식과 슬래시, `Current`는 현재 표식과 슬래시)이며 `JSONPointer`에서 조립합니다. 이 fractal의 index가 이름으로 내보내지만 패키지 공개 진입점은 내보내지 않습니다. 경로 토큰을 비교·분해하는 engine 코드는 리터럴 대신 이 두 상수를 씁니다. 정규식 안의 토큰은 그대로 둡니다.
 - `JSONPointer` 상수 객체는 `constants/JSONPointer.ts`에 있습니다. 뿌리에는 문서·진입점·형 동반 파일(`type.ts`)만 둡니다(filid zero-peer-file).
 
 ## Acceptance Criteria
