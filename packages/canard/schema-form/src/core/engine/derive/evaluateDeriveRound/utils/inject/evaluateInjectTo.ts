@@ -2,16 +2,16 @@ import type { FieldNodeRecord } from '../../../../record';
 import { resolveDependencyPath } from '../../../../utils/paths/resolveDependencyPath';
 import type {
   DeriveRoundDecision,
-  DeriveRule,
   DeriveWrite,
-} from '../../../type';
-import { getDeriveSourceOrder } from '../../rank/getDeriveSourceOrder';
-import { KIND_RANK } from '../../rank/kindRank';
-import { LAYER_RANK } from '../../rank/layerRank';
+} from '../../../types/decisions';
+import type { DeriveRule } from '../../../types/rules';
+import { getDeriveSourceOrder } from '../rank/getDeriveSourceOrder';
+import { KIND_RANK } from '../rank/kindRank';
+import { LAYER_RANK } from '../rank/layerRank';
+import { getVirtualWriteFailure } from '../writes/getVirtualWriteFailure';
 import { getInjectEntries } from './getInjectEntries';
 import { getInjectTarget } from './getInjectTarget';
 import { getInjectToContext } from './getInjectToContext';
-import { getVirtualWriteFailure } from './getVirtualWriteFailure';
 
 /** Shared frozen result for a rule whose handler is not a function. */
 const NO_INJECT_WRITES = Object.freeze({ writes: Object.freeze([]) });

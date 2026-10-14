@@ -1,4 +1,4 @@
-import type { DeriveWrite } from '../../type';
+import type { DeriveWrite } from '../../../types/decisions';
 import { KIND_RANK } from './kindRank';
 
 /**

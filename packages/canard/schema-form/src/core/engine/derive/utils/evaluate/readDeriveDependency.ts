@@ -3,8 +3,8 @@ import { unescapeSegment } from '@winglet/json/pointer';
 
 import { JSONPointer as $ } from '@/schema-form/helpers/jsonPointer';
 
-import type { FieldNodeRecord } from '../../../../record';
-import { resolveDependencyPath } from '../../../../utils/paths/resolveDependencyPath';
+import type { FieldNodeRecord } from '../../../record';
+import { resolveDependencyPath } from '../../../utils/paths/resolveDependencyPath';
 
 /**
  * Read one authored expression dependency from the current output projection.

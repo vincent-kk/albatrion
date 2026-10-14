@@ -1,17 +1,17 @@
 import type { FieldNodeRecord } from '../../../record';
 import type {
   DeriveResetInteractionDecision,
-  DeriveState,
   DeriveTraceEntry,
-} from '../../type';
-import { getDeriveRuleKey } from '../edges/getDeriveRuleKey';
+} from '../../types/decisions';
+import type { DeriveState } from '../../types/state';
+import { getDeriveRuleKey } from '../rules/getDeriveRuleKey';
 import { getDeriveRuleTable } from '../rules/getDeriveRuleTable';
-import { addActiveRuleKey } from './utils/addActiveRuleKey';
-import { evaluateScopedExpression } from './utils/evaluateScopedExpression';
-import type { ScopedExpressionResult } from './utils/evaluateScopedExpression';
-import { getDeriveSourceNodes } from './utils/getDeriveSourceNodes';
-import { getRuleTargets } from './utils/getRuleTargets';
-import { getSelectedDeclarationIds } from './utils/getSelectedDeclarationIds';
+import { addActiveRuleKey } from './addActiveRuleKey';
+import { evaluateScopedExpression } from './evaluateScopedExpression';
+import type { ScopedExpressionResult } from './evaluateScopedExpression';
+import { getDeriveSourceNodes } from './getDeriveSourceNodes';
+import { getRuleTargets } from './getRuleTargets';
+import { getSelectedDeclarationIds } from './getSelectedDeclarationIds';
 
 /** Frozen result reused when no expression fails. */
 const NO_FAILURES: readonly [] = Object.freeze([]);

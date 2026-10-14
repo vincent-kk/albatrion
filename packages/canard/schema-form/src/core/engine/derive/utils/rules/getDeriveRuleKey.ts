@@ -1,4 +1,4 @@
-import type { DeriveRule } from '../../type';
+import type { DeriveRule } from '../../types/rules';
 
 /** Live targets receive stable IDs for their record lifetime. */
 const TARGET_IDS = new WeakMap<object, number>();

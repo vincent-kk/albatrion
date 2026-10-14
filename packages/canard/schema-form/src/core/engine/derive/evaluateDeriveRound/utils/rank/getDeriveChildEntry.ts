@@ -1,4 +1,4 @@
-import type { BlueprintNode, BlueprintNodeKind } from '../../../blueprint';
+import type { BlueprintNode, BlueprintNodeKind } from '../../../../blueprint';
 
 /** Immutable template indexes are built once when a rule first uses the host. */
 const CHILDREN = new WeakMap<
