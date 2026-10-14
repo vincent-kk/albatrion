@@ -17,7 +17,7 @@ export const readReferenceOnlySchemaPaths = (
     { previous, next, path: $.Fragment },
   ];
   const paths: string[] = [];
-  const seen = new WeakMap<object, WeakSet<object>>();
+  const seen = new Map<object, Set<object>>();
   while (pending.length) {
     const item = pending.pop();
     if (!item || Object.is(item.previous, item.next)) continue;
@@ -46,7 +46,7 @@ export const readReferenceOnlySchemaPaths = (
       }
     }
     if (seen.get(left)?.has(right)) continue;
-    const seenRight = seen.get(left) ?? new WeakSet<object>();
+    const seenRight = seen.get(left) ?? new Set<object>();
     seenRight.add(right);
     seen.set(left, seenRight);
     const leftKeys = Object.keys(left);
