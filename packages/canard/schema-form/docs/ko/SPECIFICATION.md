@@ -429,6 +429,27 @@ node.readOnly; // 읽기 전용 (스키마 `readOnly` 포함)
 node.disabled; // 비활성화 (`enabled`와 별개)
 ```
 
+### 하위 트리 방문
+
+`node.visitSubtree(visitor)`는 노드 자신과 그 아래의 모든 노드에 `visitor`를 부릅니다. 폼의 한 구역을 한 번에 읽거나 고칠 때 씁니다.
+
+```typescript
+// /profile 아래의 문자열 필드를 모두 비우되, /profile/locked와 그 아래는 그대로 둡니다.
+formRef.current?.findNode('/profile')?.visitSubtree((node) => {
+  if (node.path === '/profile/locked') return false; // 이 노드의 하위를 건너뜀
+  if (node.type === 'string') node.setValue('');
+});
+```
+
+- **순서.** 노드 자신이 먼저이고, 하위는 전위 순서로, 형제는 `children` 순서로 방문합니다. 터미널 노드는 잎입니다.
+- **건너뛰기.** `false`를 돌려주면 그 노드의 하위만 건너뛰고 다음 형제로 이어 갑니다. `undefined`를 포함한 다른 반환값은 자식으로 들어갑니다.
+- **범위.** 폼 안의 노드에서는 현재 형상만 방문하므로, 조건이 제외한 필드는 방문하지 않습니다. 두 번 닿는 노드는 한 번만 방문하고, 순회 중에 생긴 노드는 방문된다는 보장이 없습니다. 폼에서 빠진 노드(조건이나 배열 변경으로 필드가 빠지기 전에 보관한 참조)에서 부르면, 그 노드와 함께 빠진 하위 트리를 걷습니다.
+- **쓰기.** 순회 중의 값 쓰기는 순회가 끝날 때 한 번에 반영되므로, 순회 중에 읽는 값은 순회 전의 값입니다. 상태와 외부 오류의 변경(`setState`, `setSubtreeState`, `clearSubtreeState`, `setExternalErrors`, `clearExternalErrors`)은 데이터를 바로 바꾸지만, 그 이벤트는 `request`의 이벤트처럼 순회가 끝날 때 한 번 전달됩니다. 바깥 `node.batch(fn)` 안에서는 모두 그 batch의 끝까지 기다립니다. 순회 안의 폼 `reset`과 `resetSubtree()`는 그래도 바로 적용됩니다.
+- **폼에서 빠진 노드에 쓰기.** 이런 쓰기는 순회나 batch 안에서도 폼 안의 필드를 바꾸지 않습니다. 그 경로에 같은 종류의 필드가 있으면 아무 일도 하지 않고, 없으면 값을 그 경로에 맡겨 두었다가 그런 필드가 돌아올 때 불러옵니다. 그 경로에 필드가 있는지는 같은 batch나 순회 안의 앞선 변경이 아니라 마지막으로 커밋된 형상으로 판단하므로, 같은 batch나 순회가 그 필드를 막 제거했더라도 이런 쓰기는 버려집니다. 같은 batch나 순회가 제거하는 필드의 참조는 쓰는 때에 아직 폼 안에 있으므로, 그 쓰기는 다른 쓰기와 똑같이 처리됩니다.
+- **예외.** visitor가 던지면 이미 한 쓰기를 반영한 뒤 예외를 다시 던집니다. 리스너 안의 순회가 값 쓰기를 했다면, `batch`와 같이 그 예외는 `visitSubtree`를 부른 코드에 닿지 않습니다.
+- **비용.** 순회는 쓰기가 있을 때까지 아무것도 열지 않으므로, 읽기만 하는 순회는 추가 비용이 없고 리스너 안에서도 됩니다. 리스너 안의 쓰기는 다른 리스너 쓰기와 같은 규칙을 따릅니다.
+- **FormHandle.** `FormHandle`에는 `visitSubtree`가 없습니다. `formRef.current?.node`나 `findNode`로 얻은 노드에서 부르십시오.
+
 ---
 
 ## FieldInput 시스템
@@ -463,7 +484,7 @@ type FieldInputTestObject = Partial<{
 // FieldInputHint 객체
 type FieldInputHint = {
   type: FieldNodeType; // 노드 종류: 'string', 'number', 'object', 'array', 'virtual', 'union' 등
-  schemaType: FieldNode['schemaType']; // 작성한 허용 종류('integer' 포함)
+  schemaType: FieldNode['schemaType']; // 작성한 허용 종류('integer' 포함), virtual 노드는 undefined
   misfit: boolean; // 저장된 값이 허용 종류와 어긋나는지
   path: string;
   required: boolean;
@@ -496,7 +517,7 @@ interface FieldInputProps<
   required: boolean; // 필수 여부
   node: Node; // 필드 노드
   type: Node['type']; // 노드 종류
-  schemaType: Node['schemaType']; // 작성한 허용 종류('integer' 포함)
+  schemaType: Node['schemaType']; // 작성한 허용 종류('integer' 포함), virtual 노드는 undefined
   misfit: Node['misfit']; // 저장된 값이 허용 종류와 어긋나는지
   name: Node['name']; // 노드 이름
   path: Node['path']; // 노드 경로

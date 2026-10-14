@@ -431,6 +431,27 @@ node.readOnly; // read-only, including schema `readOnly`
 node.disabled; // disabled, independent of `enabled`
 ```
 
+### Walking a Subtree
+
+`node.visitSubtree(visitor)` calls `visitor` on the node itself and then on every node below it. Use it to read or update a whole section of the form in one pass.
+
+```typescript
+// Clear every string field under /profile, but leave /profile/locked and everything under it as is.
+formRef.current?.findNode('/profile')?.visitSubtree((node) => {
+  if (node.path === '/profile/locked') return false; // skip this node's descendants
+  if (node.type === 'string') node.setValue('');
+});
+```
+
+- **Order.** The node itself comes first, then its descendants in preorder, with siblings in `children` order. Terminal nodes are leaves.
+- **Skipping.** Returning `false` skips that node's descendants only, and the walk goes on with the next sibling. Any other return value, `undefined` included, continues into the children.
+- **Range.** From a node in the form, only the current shape is visited, so fields that a condition excludes are not. A node reachable twice is visited once, and a node created during the walk is not guaranteed to be visited. From a node that is no longer in the form (a reference kept after a condition or an array change took its field out), the walk covers the subtree that left the form with it.
+- **Writes.** Value writes made during the walk are applied together when the walk ends, so value reads during the walk return the values from before it. State and external-error changes (`setState`, `setSubtreeState`, `clearSubtreeState`, `setExternalErrors`, `clearExternalErrors`) change the data at once, but their events, like those of `request`, are delivered once when the walk ends. Inside an enclosing `node.batch(fn)`, everything waits for the end of that batch instead. A form `reset` or a `resetSubtree()` inside the walk still takes effect at once.
+- **Writes to a node that left the form.** Such a write never changes a field in the form, also during a walk or a batch. If a field of the same kind is at that path, the write does nothing; otherwise the value is kept for that path and loads when such a field comes back. Whether a field is at that path is judged by the last committed shape, not by changes made earlier in the same batch or walk, so such a write is still dropped when the same batch or walk has just removed that field. A reference to a field that the same batch or walk removes is still in the form when written, so its write is handled like any other write.
+- **Errors.** If the visitor throws, the writes it already made are applied and the error is rethrown. If a walk inside a listener has made a value write, the error does not reach the code that called `visitSubtree`, as with `batch`.
+- **Cost.** The walk opens nothing until something writes, so a read-only walk adds no cost and also works inside a listener. A write inside a listener follows the same rules as any other listener write.
+- **FormHandle.** `FormHandle` has no `visitSubtree`. Call it on `formRef.current?.node` or on a node from `findNode`.
+
 ---
 
 ## FieldInput System
@@ -465,7 +486,7 @@ type FieldInputTestObject = Partial<{
 // FieldInputHint object
 type FieldInputHint = {
   type: FieldNodeType; // node kind: 'string', 'number', 'object', 'array', 'virtual', 'union', ...
-  schemaType: FieldNode['schemaType']; // authored accepted kind(s), including 'integer'
+  schemaType: FieldNode['schemaType']; // authored accepted kind(s), including 'integer'; undefined on a virtual node
   misfit: boolean; // the stored value mismatches the accepted kinds
   path: string;
   required: boolean;
@@ -498,7 +519,7 @@ interface FieldInputProps<
   required: boolean; // Required field
   node: Node; // Field node
   type: Node['type']; // Node kind
-  schemaType: Node['schemaType']; // Authored accepted kind(s), including 'integer'
+  schemaType: Node['schemaType']; // Authored accepted kind(s), including 'integer'; undefined on a virtual node
   misfit: Node['misfit']; // Stored value mismatches the accepted kinds
   name: Node['name']; // Node name
   path: Node['path']; // Node path
