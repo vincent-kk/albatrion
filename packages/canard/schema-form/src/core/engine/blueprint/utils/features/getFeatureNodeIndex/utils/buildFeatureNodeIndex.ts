@@ -1,5 +1,6 @@
 import { isArray } from '@winglet/common-utils/filter';
 
+import { CONTROL_KEY } from '../../../../../constants/controlKey';
 import type { Blueprint, BlueprintFeatureNodeIndex } from '../../../../type';
 
 /** Local control groups whose declared values can differ from the default keys. */
@@ -7,9 +8,9 @@ const hasStateKeys = (controls: unknown): controls is Record<string, unknown> =>
   controls !== null &&
   typeof controls === 'object' &&
   !isArray(controls) &&
-  (Reflect.get(controls, 'visible') !== undefined ||
-    Reflect.get(controls, 'readOnly') !== undefined ||
-    Reflect.get(controls, 'disabled') !== undefined);
+  (Reflect.get(controls, CONTROL_KEY.visible) !== undefined ||
+    Reflect.get(controls, CONTROL_KEY.readOnly) !== undefined ||
+    Reflect.get(controls, CONTROL_KEY.disabled) !== undefined);
 
 /**
  * Index possible state and watch targets without selecting gates or reading values.
@@ -49,7 +50,7 @@ export const buildFeatureNodeIndex = (
         continue;
       if (
         declaration.scope === 'node' &&
-        Reflect.get(controls, 'watch') !== undefined
+        Reflect.get(controls, CONTROL_KEY.watch) !== undefined
       )
         watchNodes.add(node.id);
       if (declaration.scope === 'fragment' && hasStateKeys(controls))
@@ -69,7 +70,7 @@ export const buildFeatureNodeIndex = (
             )
           )
             targets.add(child.name);
-      const groups: unknown = Reflect.get(controls, 'fields');
+      const groups: unknown = Reflect.get(controls, CONTROL_KEY.fields);
       if (isArray(groups))
         for (const group of groups) {
           if (
@@ -98,7 +99,7 @@ export const buildFeatureNodeIndex = (
         if (
           controls &&
           typeof controls === 'object' &&
-          Reflect.get(controls, 'watch') !== undefined
+          Reflect.get(controls, CONTROL_KEY.watch) !== undefined
         )
           watchNodes.add(child.node.id);
       }

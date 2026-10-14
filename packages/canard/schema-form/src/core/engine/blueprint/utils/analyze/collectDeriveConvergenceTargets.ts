@@ -5,6 +5,7 @@ import {
   getAbsolutePath,
   stripFragment,
 } from '../../../../../helpers/jsonPointer';
+import { CONTROL_KEY } from '../../../constants/controlKey';
 import type {
   Blueprint,
   BlueprintExpression,
@@ -124,9 +125,9 @@ export const collectDeriveConvergenceTargets = (
       const controls =
         typeof entry.schema === 'object' ? entry.schema.controls : undefined;
       if (controls && typeof controls === 'object') {
-        if (typeof Reflect.get(controls, 'injectTo') === 'function')
+        if (typeof Reflect.get(controls, CONTROL_KEY.injectTo) === 'function')
           reads.add(node.path);
-        const fields = Reflect.get(controls, 'fields');
+        const fields = Reflect.get(controls, CONTROL_KEY.fields);
         if (isArray(fields))
           for (let child = 0; child < fields.length; child++) {
             const childControls = fields[child]?.controls;

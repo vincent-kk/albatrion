@@ -1,6 +1,7 @@
 import { isArray } from '@winglet/common-utils/filter';
 
 import type { BlueprintNode } from '../../../blueprint';
+import { CONTROL_KEY } from '../../../constants/controlKey';
 import { getCommittedDeclarationKey } from '../../../utils/controls/getCommittedDeclarationKey';
 
 /** Unselected static fallbacks share IDs for the immutable declaration owner. */
@@ -128,7 +129,7 @@ export const getControlLayers = <Self extends ControlTarget<Self>>(
         controls,
         host: parent,
       });
-    const fields: unknown = Reflect.get(controls, 'fields');
+    const fields: unknown = Reflect.get(controls, CONTROL_KEY.fields);
     if (!isArray(fields)) continue;
     for (let index = 0; index < fields.length; index++) {
       const item: unknown = fields[index];

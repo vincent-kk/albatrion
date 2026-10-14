@@ -1,6 +1,8 @@
 import { isArray } from '@winglet/common-utils/filter';
 
 import type { Blueprint, BlueprintNode } from '../../../blueprint';
+import { CONTROL_KEY } from '../../../constants/controlKey';
+import type { ControlKey } from '../../../types/controls';
 import { getControlExpression } from '../../../utils/controls/getControlExpression';
 import { emptyReadonlyMap } from '../../../utils/emptyReadonlyMap';
 import type { DeriveRule, DeriveRuleTable } from '../../type';
@@ -15,11 +17,11 @@ const EMPTY_TABLE: DeriveRuleTable = Object.freeze({
 });
 /** Keys whose string expression is evaluated by the first derive unit. */
 const RULE_KEYS = [
-  'derived',
-  'unsetValue',
-  'resetInteraction',
-  'injectTo',
-] as const;
+  CONTROL_KEY.derived,
+  CONTROL_KEY.unsetValue,
+  CONTROL_KEY.resetInteraction,
+  CONTROL_KEY.injectTo,
+] as const satisfies readonly ControlKey[];
 
 /** One control group and one directly addressed target. */
 interface RuleGroup {
@@ -59,10 +61,10 @@ export const getDeriveRuleTable = (blueprint: Blueprint): DeriveRuleTable => {
         continue;
       const groups: RuleGroup[] = [];
       const hasOwnRules =
-        Reflect.get(controls, 'derived') !== undefined ||
-        Reflect.get(controls, 'unsetValue') !== undefined ||
-        Reflect.get(controls, 'resetInteraction') !== undefined ||
-        Reflect.get(controls, 'injectTo') !== undefined;
+        Reflect.get(controls, CONTROL_KEY.derived) !== undefined ||
+        Reflect.get(controls, CONTROL_KEY.unsetValue) !== undefined ||
+        Reflect.get(controls, CONTROL_KEY.resetInteraction) !== undefined ||
+        Reflect.get(controls, CONTROL_KEY.injectTo) !== undefined;
       if (hasOwnRules && declaration.scope === 'fragment') {
         for (const entry of node.childEntries) {
           const selected = entry.declarations.filter(
@@ -92,7 +94,7 @@ export const getDeriveRuleTable = (blueprint: Blueprint): DeriveRuleTable => {
           layer: 'node',
           targetNodes: [node],
         });
-      const fields: unknown = Reflect.get(controls, 'fields');
+      const fields: unknown = Reflect.get(controls, CONTROL_KEY.fields);
       if (isArray(fields))
         for (let index = 0; index < fields.length; index++) {
           const item: unknown = fields[index];

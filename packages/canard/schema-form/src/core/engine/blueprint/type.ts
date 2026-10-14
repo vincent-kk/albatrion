@@ -3,6 +3,8 @@ import type {
   JSONSchemaErrorCode,
 } from '@/schema-form/errors';
 
+import type { ChildControlKey } from '../types/controls';
+
 /** Authored schema data; extension values remain opaque until their owner reads them. */
 export type BlueprintSchema = Readonly<Record<string, unknown>> | boolean;
 
@@ -237,7 +239,7 @@ export interface BlueprintExpression {
   /** Template-relative host origin, rebound through the occurrence's child edge. */
   readonly hostPath: string;
   /** Control key whose result the future settlement engine consumes. */
-  readonly key: string;
+  readonly key: ChildControlKey;
   /** Relative or absolute authored paths, without a first-host rewrite. */
   readonly dependencies: readonly string[];
   /** Pure compiled callable; execution belongs to settlement, never blueprint. */

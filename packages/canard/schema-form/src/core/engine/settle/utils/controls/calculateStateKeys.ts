@@ -1,5 +1,7 @@
 import { getFeatureNodeIndex } from '../../../blueprint';
+import { CONTROL_KEY } from '../../../constants/controlKey';
 import type { FieldNodeRecord } from '../../../record';
+import type { ChildControlKey } from '../../../types/controls';
 import { getControlExpression } from '../../../utils/controls/getControlExpression';
 import { getControlLayers } from './getControlLayers';
 import { readStateDependency } from './readStateDependency';
@@ -23,7 +25,11 @@ const STATE_KEYS = {
   },
 } as const;
 /** Fixed control key order; combination does not depend on this order. */
-const KEY_NAMES = ['visible', 'readOnly', 'disabled'] as const;
+const KEY_NAMES = [
+  CONTROL_KEY.visible,
+  CONTROL_KEY.readOnly,
+  CONTROL_KEY.disabled,
+] as const satisfies readonly ChildControlKey[];
 
 /** Pure calculation result, including the all expressions that failed. */
 export interface CalculatedStateKeys<Self> {

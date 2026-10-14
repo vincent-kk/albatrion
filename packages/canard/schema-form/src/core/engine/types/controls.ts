@@ -45,6 +45,9 @@ export type ChildSchemaControls = {
   unsetOnInactive?: boolean | string;
 };
 
+/** Key of a `controls.fields` entry or fragment `controls`. */
+export type ChildControlKey = keyof ChildSchemaControls;
+
 /**
  * Controls of a node schema: the child keys plus declarations and cross-node injection.
  * @typeParam Schema - Schema type that `injectTo` receives in its context
@@ -70,3 +73,6 @@ export type SchemaControls<Schema> = ChildSchemaControls & {
   /** Dependency paths whose values reach the input as `watchValues`, in order. */
   watch?: readonly string[];
 };
+
+/** Key of a node `controls` object. */
+export type ControlKey = keyof SchemaControls<unknown>;

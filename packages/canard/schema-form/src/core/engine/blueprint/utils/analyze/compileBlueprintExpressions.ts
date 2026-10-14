@@ -8,20 +8,9 @@ import { getPathManager } from '../expressions/getPathManager';
 import { CompleteExpressionReads } from './compileBlueprintExpressions/utils/CompleteExpressionReads';
 import { hasCompleteExpressionReads } from './compileBlueprintExpressions/utils/hasCompleteExpressionReads';
 import { registerBlueprintDependency } from './compileBlueprintExpressions/utils/registerBlueprintDependency';
+import { EXPRESSION_CONTROL_KEYS } from './constants/expressionControlKeys';
 import { readSchemaObject } from './readSchemaObject';
 import type { AnalysisContext } from './type';
-
-/** The closed control vocabulary is shared across every declaration compilation. */
-const EXPRESSION_KEYS = [
-  'active',
-  'visible',
-  'readOnly',
-  'disabled',
-  'unsetOnInactive',
-  'derived',
-  'unsetValue',
-  'resetInteraction',
-] as const;
 
 /**
  * Compile authored control expressions while preserving relative dependency paths.
@@ -69,8 +58,12 @@ export const compileBlueprintExpressions = (
               `${groupPath}/watch`,
             );
         }
-        for (let keyIndex = 0; keyIndex < EXPRESSION_KEYS.length; keyIndex++) {
-          const key = EXPRESSION_KEYS[keyIndex];
+        for (
+          let keyIndex = 0;
+          keyIndex < EXPRESSION_CONTROL_KEYS.length;
+          keyIndex++
+        ) {
+          const key = EXPRESSION_CONTROL_KEYS[keyIndex];
           const source = groupControls[key];
           if (typeof source !== 'string') continue;
           const schemaPath = `${groupPath}/${key}`;

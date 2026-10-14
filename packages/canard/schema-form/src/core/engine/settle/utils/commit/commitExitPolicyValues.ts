@@ -3,6 +3,7 @@ import { hasOwnProperty } from '@winglet/common-utils/lib';
 
 import { FormErrorCode, SchemaFormError } from '../../../../../errors';
 import type { Blueprint, BlueprintExpression } from '../../../blueprint';
+import { CONTROL_KEY } from '../../../constants/controlKey';
 import type { FieldNodeRecord } from '../../../record';
 import type { SettlementContext } from '../../type';
 import { getControlLayers } from '../controls/getControlLayers';
@@ -82,7 +83,7 @@ export const commitExitPolicyValues = <Self extends FieldNodeRecord<Self>>(
         continue;
       if (
         declaration.scope === 'fragment' &&
-        typeof Reflect.get(controls, 'unsetOnInactive') === 'string'
+        typeof Reflect.get(controls, CONTROL_KEY.unsetOnInactive) === 'string'
       )
         for (const child of source.children ?? []) {
           if (
@@ -97,7 +98,7 @@ export const commitExitPolicyValues = <Self extends FieldNodeRecord<Self>>(
           candidates.add(child);
           break;
         }
-      const fields: unknown = Reflect.get(controls, 'fields');
+      const fields: unknown = Reflect.get(controls, CONTROL_KEY.fields);
       if (!isArray(fields)) continue;
       for (const item of fields) {
         if (!item || typeof item !== 'object') continue;
@@ -105,7 +106,8 @@ export const commitExitPolicyValues = <Self extends FieldNodeRecord<Self>>(
         if (
           !itemControls ||
           typeof itemControls !== 'object' ||
-          typeof Reflect.get(itemControls, 'unsetOnInactive') !== 'string'
+          typeof Reflect.get(itemControls, CONTROL_KEY.unsetOnInactive) !==
+            'string'
         )
           continue;
         const targets: unknown = Reflect.get(item, 'targets');
@@ -130,8 +132,9 @@ export const commitExitPolicyValues = <Self extends FieldNodeRecord<Self>>(
       context.selectedDeclarationIds,
     )) {
       if (
-        !hasOwnProperty(group.controls, 'unsetOnInactive') ||
-        typeof Reflect.get(group.controls, 'unsetOnInactive') !== 'string'
+        !hasOwnProperty(group.controls, CONTROL_KEY.unsetOnInactive) ||
+        typeof Reflect.get(group.controls, CONTROL_KEY.unsetOnInactive) !==
+          'string'
       )
         continue;
       const schemaPath = `${group.schemaPath}/unsetOnInactive`;

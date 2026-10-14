@@ -1,5 +1,6 @@
 import { hasOwnProperty } from '@winglet/common-utils/lib';
 
+import { CONTROL_KEY } from '../../../constants/controlKey';
 import type { ControlLayer } from './getControlLayers';
 import { getExitPolicyKey } from './getExitPolicyKey';
 
@@ -27,11 +28,14 @@ export const readExitLayerPolicy = (
     for (const group of groups) {
       if (
         group.layer !== layer ||
-        !hasOwnProperty(group.controls, 'unsetOnInactive')
+        !hasOwnProperty(group.controls, CONTROL_KEY.unsetOnInactive)
       )
         continue;
       declared = true;
-      const literal: unknown = Reflect.get(group.controls, 'unsetOnInactive');
+      const literal: unknown = Reflect.get(
+        group.controls,
+        CONTROL_KEY.unsetOnInactive,
+      );
       const key = getExitPolicyKey(group);
       const value =
         typeof literal === 'string' ? committedRuleValues?.get(key) : literal;
