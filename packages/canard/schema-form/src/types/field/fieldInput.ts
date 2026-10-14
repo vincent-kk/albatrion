@@ -185,7 +185,7 @@ export type FieldInputTestObject = Partial<
 >;
 
 export type FieldInputHint = {
-  /** FieldNode['schemaType'] */
+  /** FieldNode['type'] */
   type: FieldNodeType;
   /** Authored accepted JSON type(s); undefined for a virtual node, which has no JSON type. */
   schemaType: FieldNode['schemaType'];
@@ -195,7 +195,7 @@ export type FieldInputHint = {
   path: string;
   /** FieldNode['required'] */
   required: boolean;
-  /** FieldNode['nullable] */
+  /** FieldNode['nullable'] */
   nullable: boolean;
   /** JSONSchema */
   jsonSchema: JSONSchema | JSONSchemaWithVirtual;
