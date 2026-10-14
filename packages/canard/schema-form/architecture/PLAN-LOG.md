@@ -539,3 +539,4 @@
 - **258라운드(2026-10-14, 소유자).** 개선-38의 다섯 결정과 후보 C를 확정했고, 이름 논의 셋(factory가 본체인가, components/SchemaNode의 이름, SchemaNode → FieldNode)을 추가로 열었다(reviews/round-258-owner-answers.md). 원장 관리자가 코드 사실로 답한다.
 - **259라운드(2026-10-14, 소유자).** SchemaNode 계열을 FieldNode 계열로 바꾸기로 확정했고(components/SchemaNode → components/Field: FieldProxy·FieldInputSlot·DeferredFieldProxy), 이름을 먼저 바꾼 뒤 C 재배치로 간다. 레거시는 제외(259C-01 대응표, reviews/round-259-owner-answers.md). 07b-5: fairy07 사용처 목록 → fixy07 치환(07b-4 뒤).
 - **260라운드(2026-10-14, 소유자).** 이름 변경에 두 요구를 붙였다: 옛 이름이 남지 않게 검사를 철저히(260C-01 세 겹 게이트), 다른 핵심 고유명사도 바꿀 것이 있는지 검토(reviews/round-260-owner-answers.md). 원장 관리자가 공개 고유명사 전수 목록으로 후보를 올린다.
+- **309라운드(2026-10-14, 소유자).** 이동 작업 속도 지적; 순수 이동은 fixy08 직접, 전체 게이트는 PR 직전 한 번(reviews/round-309-owner-answers.md).

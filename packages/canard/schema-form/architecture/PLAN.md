@@ -83,6 +83,7 @@
 | 날짜 | 무엇 | 어디 |
 | --- | --- | --- |
 | 2026-10-14 | 308라운드 닫기: filid 개선 요청을 ogham 이슈 #143으로 등록(정돈-2 뒤 수치, B8 사례·mock 경로 제안·훅 차단 사례 포함). 보충 1줄 | `reviews/round-308-closing.md` |
+| 2026-10-14 | 309라운드 소유자: 이동 속도 지적; 순수 이동은 fixy08 직접, 전체 게이트는 PR 직전 한 번 허락(217C-01 예외). 보충 2줄 | `reviews/round-309-owner-answers.md` |
 | 2026-10-14 | 301라운드 소유자: 대기열은 직접 닫기, 53은 옵션 기능으로 재검토(SPECIFICATION의 minItems 채움 문장은 코드와 어긋남), CLAUDE.md 갱신 진행. 보충 2줄 | `reviews/round-301-owner-answers.md` |
 | 2026-10-14 | 302라운드 소유자 생각: 53 유익·손해 비교 요청 → array-limits-review.md. 보충 1줄 | `reviews/round-302-owner-answers.md` |
 | 2026-10-14 | 303라운드 소유자 생각: 53 경계·일관성 → "적용 가능성에는 따르고 제약은 강제하지 않음" 한 줄. 보충 1줄 | `reviews/round-303-owner-answers.md` |
