@@ -1,3 +1,3 @@
 export { FormLabel } from './FormLabel';
 
-export type { FormLabelProps } from './type';
+export type { FormLabelProps } from './types/props';

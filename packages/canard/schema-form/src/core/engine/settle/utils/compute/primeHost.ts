@@ -4,15 +4,15 @@ import { escapeSegment } from '@winglet/json/pointer';
 import { mergeEffectiveSchema } from '../../../blueprint';
 import { captureFieldNodeChange } from '../../../record';
 import type { FieldNodeRecord } from '../../../record';
-import type { SettlementContext } from '../../type';
+import type { SettlementContext } from '../../types/settlement';
 import { getGateRegistry } from '../gates/getGateRegistry';
-import { indexEnteredLatentKey } from '../latent/indexEnteredLatentKey';
-import { createChildNode } from './createChildNode';
-import { enterFieldNode } from './enterFieldNode';
+import { indexEnteredLatentKey } from '../latentStore/indexEnteredLatentKey';
 import {
   DIRECT_CHILD_SELECTION_PLANS,
   getDirectChildSelectionPlan,
-} from './selectChildren/utils/getDirectChildSelectionPlan';
+} from './childSelection/getDirectChildSelectionPlan';
+import { createChildNode } from './createChildNode';
+import { enterFieldNode } from './enterFieldNode';
 
 /** Empty active-declaration list: only ungated contributions apply. */
 const NO_ACTIVE_DECLARATION_IDS: readonly number[] = Object.freeze([]);

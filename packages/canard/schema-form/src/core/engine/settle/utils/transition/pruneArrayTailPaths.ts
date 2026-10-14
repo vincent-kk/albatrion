@@ -3,7 +3,7 @@ import { isArray } from '@winglet/common-utils/filter';
 import { JSONPointer as $ } from '@/schema-form/helpers/jsonPointer';
 
 import type { FieldNodeRuntime } from '../../../record';
-import { getRuntimePathStores } from '../pathIndex/getRuntimePathStores';
+import { getRuntimePathStores } from '../pathStores/getRuntimePathStores';
 import { prunePerishedPaths } from './prunePerishedPaths';
 
 /**
@@ -24,7 +24,7 @@ export const pruneArrayTailPaths = <Self>(
       stores.latent,
       stores.metadata,
       stores.declarations,
-      stores.mismatches,
+      stores.misfits,
       stores.rules,
     ])
       for (const path of store.pathIndex.tail(host, count)) removed.add(path);

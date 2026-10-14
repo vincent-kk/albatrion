@@ -4,7 +4,7 @@ import type { TestFieldNode } from '@/schema-form/core/__tests__/fixtures/testFi
 import { isTestFieldNode } from '@/schema-form/core/__tests__/fixtures/testFieldNode';
 import { makeFieldNodeTree } from '@/schema-form/core/__tests__/makeFieldNodeTree';
 
-import { arrangeFieldNodeItems } from '../utils/structure/arrangeFieldNodeItems';
+import { arrangeFieldNodeItems } from '../arrangeFieldNodeItems';
 
 const makeRecordTree = (...args: Parameters<typeof makeFieldNodeTree>) => {
   const tree = makeFieldNodeTree(...args);

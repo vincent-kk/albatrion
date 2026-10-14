@@ -13,7 +13,7 @@ const makeRecordTree = (...args: Parameters<typeof makeFieldNodeTree>) => {
   return { ...tree, root };
 };
 
-// filid:contract settle-array
+// filid:contract settle-array-legacy-ports
 describe('array legacy contract ports', () => {
   it('VALUE-034 exposes an empty nested array on load before child writes', () => {
     const { root } = makeRecordTree(

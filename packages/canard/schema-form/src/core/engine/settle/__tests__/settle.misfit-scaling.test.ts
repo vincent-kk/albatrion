@@ -2,13 +2,13 @@ import { describe, expect, it, vi } from 'vitest';
 
 import { makeFieldNodeTree } from '@/schema-form/core/__tests__/makeFieldNodeTree';
 
-import { setLoadValue } from '../utils/load/setLoadValue';
+import { setLoadValue } from '../utils/loadValues/setLoadValue';
 
 const probe = (label: string, count: number): void => {
   if (process.env.SETTLE_SCALING_PROBE) console.info(`${label}: ${count}`);
 };
 
-// filid:contract settle-budget
+// filid:contract settle-budget-misfit-scaling
 describe('49C-01 SETTLE-017 proportional settlement work', () => {
   it('M26 indexes mismatches without filtering all paths per ancestor', () => {
     const count = 2000;
@@ -99,11 +99,11 @@ describe('49C-01 SETTLE-017 proportional settlement work', () => {
     });
     const child = root.find('/rows/0/child')!;
     const before = child.misfits;
-    const mismatchPaths = Reflect.get(runtime, 'misfitPaths') as Set<string>;
-    const iterator = mismatchPaths[Symbol.iterator].bind(mismatchPaths);
+    const misfitPaths = Reflect.get(runtime, 'misfitPaths') as Set<string>;
+    const iterator = misfitPaths[Symbol.iterator].bind(misfitPaths);
     let visited = 0;
     const spy = vi
-      .spyOn(mismatchPaths, Symbol.iterator)
+      .spyOn(misfitPaths, Symbol.iterator)
       .mockImplementation(() => {
         const source = iterator();
         return {
@@ -123,7 +123,7 @@ describe('49C-01 SETTLE-017 proportional settlement work', () => {
       expect(visited).toBeLessThan(count * 12);
       expect(child.misfits).toEqual(before);
       expect(child.misfit).toBe(true);
-      expect(mismatchPaths.size).toBe(0);
+      expect(misfitPaths.size).toBe(0);
     } finally {
       spy.mockRestore();
     }

@@ -2,7 +2,7 @@ import { describe, expect, it, vi } from 'vitest';
 
 import { createDispatchTree } from '@/schema-form/core/engine/__tests__/fixtures/createDispatchTree';
 
-import type { Validator } from '../type';
+import type { Validator } from '../types/validator';
 
 // filid:contract validation-guard
 describe('dialect reporting', () => {

@@ -1,7 +1,7 @@
 import { getDeriveRuleTable } from '../../../derive';
 import type { DeriveState } from '../../../derive';
 import type { FieldNodeRecord } from '../../../record';
-import type { SettlementContext } from '../../type';
+import type { SettlementContext } from '../../types/settlement';
 
 /**
  * Allocate call-local edge baselines only for analyses with authored rules.

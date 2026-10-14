@@ -7,10 +7,10 @@ import type { BlueprintSchema } from '@/schema-form/core/engine/blueprint';
 import { WriteOption } from '@/schema-form/core/engine/types/value';
 
 import { createTestTree } from '../../../__tests__/fixtures/createTestTree';
-import { loadFieldNodeAtMount } from '../../utils/load/loadFieldNodeAtMount';
+import { loadFieldNodeAtMount } from '../../loadFieldNodeAtMount';
 import { writeFieldNode } from '../../utils/write/writeFieldNode';
 
-// filid:contract scenario-runner
+// filid:contract scenario-runner-union-entry
 describe('union.entry-two-step', () => {
   it('WRITE-098 interprets original 0 under the final flag list after either prior kind', async () => {
     const schema: BlueprintSchema = {

@@ -25,4 +25,4 @@
 ### Never do
 
 - 원본에 직접 쓰거나 라운드와 커밋을 실행하지 않는다. 쓰기 적용과 예산은 소유자인 settle의 실행기가 맡는다(SETTLE-004·011·017, NODE-016).
-- `settle/type.ts`, `settle/index.ts`, 쓰기·전이·커밋·라운드 실행 organ을 값이나 타입으로 가져오지 않고, 레거시 엔진도 가져오지 않는다(NODE-016·045, LANDING-159).
+- `settle/types/`, `settle/index.ts`, 쓰기·전이·커밋·라운드 실행 organ을 값이나 타입으로 가져오지 않고, 레거시 엔진도 가져오지 않는다(NODE-016·045, LANDING-159).

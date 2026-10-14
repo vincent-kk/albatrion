@@ -1,7 +1,7 @@
 import { escapeSegment } from '@winglet/json/pointer';
 
 import type { FieldNodeRecord } from '../../../record';
-import type { SettlementContext } from '../../type';
+import type { SettlementContext } from '../../types/settlement';
 
 /**
  * Collect the whole-replacement scopes of a multi-write batch (191C-01, 26C-10).

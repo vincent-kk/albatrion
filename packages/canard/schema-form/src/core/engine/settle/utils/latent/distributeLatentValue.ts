@@ -5,14 +5,14 @@ import { JSONPointer as $ } from '@/schema-form/helpers/jsonPointer';
 import { BEHAVIORS, isOmittedEmpty } from '../../../behaviors';
 import type { BlueprintChildEntry, BlueprintNode } from '../../../blueprint';
 import type { FieldNodeRecord, FieldNodeRuntime } from '../../../record';
-import type { SettlementContext } from '../../type';
+import type { SettlementContext } from '../../types/settlement';
 import { getDeclaredChildNames } from '../declarations/getDeclaredChildNames';
-import { isPlain } from '../write/isPlain';
-import { nextExtras } from '../write/nextExtras';
-import { pruneLatentRaw } from '../write/pruneLatentRaw';
-import { staticSpec } from '../write/staticSpec';
-import { HostLatent } from './HostLatent';
-import { setLatentRaw } from './setLatentRaw';
+import { isPlain } from '../input/isPlain';
+import { nextExtras } from '../input/nextExtras';
+import { staticSpec } from '../input/staticSpec';
+import { HostLatent } from '../latentStore/HostLatent';
+import { pruneLatentRaw } from '../latentStore/pruneLatentRaw';
+import { setLatentRaw } from '../latentStore/setLatentRaw';
 
 /**
  * Distribute an absent-path write to one kind and clear other kinds (26C-14).

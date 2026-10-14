@@ -3,11 +3,11 @@ import { escapeSegment } from '@winglet/json/pointer';
 
 import type { BlueprintNode } from '../../../blueprint';
 import type { FieldNodeRecord } from '../../../record';
-import type { SettlementContext } from '../../type';
-import { isPlain } from '../write/isPlain';
-import { HostLatent } from './HostLatent';
-import { getEnteredLatentKeys } from './getEnteredLatentKeys';
-import { getLatentPathIndex } from './getLatentPathIndex';
+import type { SettlementContext } from '../../types/settlement';
+import { isPlain } from '../input/isPlain';
+import { HostLatent } from '../latentStore/HostLatent';
+import { getEnteredLatentKeys } from '../latentStore/getEnteredLatentKeys';
+import { getLatentPathIndex } from '../latentStore/getLatentPathIndex';
 
 /**
  * Recompose a gated-out item from its retained own-kind latent sources.

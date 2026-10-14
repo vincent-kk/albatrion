@@ -1,7 +1,7 @@
 import { NOOP_FUNCTION } from '@winglet/common-utils/constant';
 
 import type { FieldNodeRecord } from '../../../record';
-import type { FieldNodeListener } from '../../type';
+import type { FieldNodeListener } from '../../types/listener';
 
 /**
  * Subscribe to future deliveries for one occurrence.

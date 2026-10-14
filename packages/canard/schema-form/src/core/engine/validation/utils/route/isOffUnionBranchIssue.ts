@@ -1,7 +1,7 @@
 import { JSONPointer as $ } from '@/schema-form/helpers/jsonPointer';
 
 import type { Blueprint, SchemaFragment } from '../../../blueprint';
-import type { ValidationIssue } from '../../type';
+import type { ValidationIssue } from '../../types/issue';
 
 /** A schema path ending in a `oneOf` or `anyOf` branch index. */
 const UNION_BRANCH_FRAGMENT_PATH = /^.*\/(?:oneOf|anyOf)\/\d+$/;

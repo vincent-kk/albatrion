@@ -10,7 +10,7 @@ import {
 } from '@/schema-form/core/engine/write';
 import { FormErrorCode } from '@/schema-form/errors';
 
-import type { Validator } from '../type';
+import type { Validator } from '../types/validator';
 import { readFieldNodeErrors } from '../utils/read/readFieldNodeErrors';
 
 // filid:contract validation-lifetime

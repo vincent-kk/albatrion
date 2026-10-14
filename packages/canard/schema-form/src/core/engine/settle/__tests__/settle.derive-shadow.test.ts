@@ -4,8 +4,8 @@ import { DeriveConvergenceTargets } from '@/schema-form/core/engine/blueprint';
 import { WriteOption } from '@/schema-form/core/engine/types/value';
 
 import { createTestTree } from '../../__tests__/fixtures/createTestTree';
+import { loadFieldNodeAtMount } from '../loadFieldNodeAtMount';
 import { deriveShadowEvaluation } from '../utils/derivation/deriveShadowEvaluation';
-import { loadFieldNodeAtMount } from '../utils/load/loadFieldNodeAtMount';
 import { writeFieldNode } from '../utils/write/writeFieldNode';
 
 /** Restore the package setup's switch after each consumer-mode counterexample. */

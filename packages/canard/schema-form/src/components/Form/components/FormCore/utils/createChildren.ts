@@ -7,7 +7,7 @@ import type {
 } from '@/schema-form/types';
 
 import { FormChildrenRenderer } from '../components/FormChildrenRenderer';
-import type { FormProps } from '../type';
+import type { FormProps } from '../types/props';
 
 /** Preserve element children or bind function children to the current root. */
 export const createChildren = <

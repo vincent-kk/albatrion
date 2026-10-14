@@ -8,7 +8,7 @@ import ts from 'typescript';
 
 import { isArray } from '@winglet/common-utils/filter';
 
-import type { SettlementContext } from '../../../type';
+import type { SettlementContext } from '../../../types/settlement';
 import type { ChildSelectionRuntimeNode } from './ChildSelectionRuntimeNode';
 import { normalizeSelectionObservation } from './normalizeSelectionObservation';
 import { renameControlsFields } from './renameControlsFields';

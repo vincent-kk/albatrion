@@ -16,8 +16,8 @@
 - `GuardFunction`은 동기 가드의 내부 형이며 validation index가 내보내지 않는다. core 시험 검증기는 engine index의 `Validator['compileGuard']` 반환형에서 가드 형을 유도한다. `readFieldNodeGuard`는 settle이 소비하는 validation 진입점 이름이며, engine과 core의 집계 index는 재수출하지 않는다.
 - `__tests__/validation.retain-guard.test.ts`는 검증기 수명 유지와 동기 가드 읽기를 함께 검증하므로 validation이 소유한다. 플러그인 형이 검증기 형을 만족하는지는 app/plugin의 시험 구획이 검증한다. write와 공유하는 트리 생성 fixture는 engine의 공용 시험 구획에서 읽는다.
 
-- `interface Validator { compile(copy: BlueprintSchema): ValidateFunction; compileGuard(root: BlueprintSchema, pointer: string): GuardFunction; release?(root: BlueprintSchema): void; readonly dialect?: string }`를 `type.ts`가 선언한다. `type GuardFunction = (value: unknown) => boolean`이며 가드는 비동기 형식과 키워드를 지원하지 않는다. `type ValidateFunction<Value = unknown> = (data: Value) => Promise<readonly ValidationIssue[] | null> | readonly ValidationIssue[] | null`은 입력에 대한 판정을 돌려주고 던지지 않는 계약이다. 던지면 실행 실패이다(VALIDATE-015·016·044, ERROR-032).
-- `interface ValidationIssue<SourceError = unknown> { dataPath: string; keyword?: string; message?: string; schemaPath?: string; rejectedKey?: string; details?: Record<string, unknown>; source?: SourceError }`는 정규화된 검증 결과이다(FRAGMENT-020·053, LANDING-070, VALIDATE-043).
+- `interface Validator { compile(copy: BlueprintSchema): ValidateFunction; compileGuard(root: BlueprintSchema, pointer: string): GuardFunction; release?(root: BlueprintSchema): void; readonly dialect?: string }`를 `types/validator.ts`가 선언한다. `type GuardFunction = (value: unknown) => boolean`이며 가드는 비동기 형식과 키워드를 지원하지 않는다. `type ValidateFunction<Value = unknown> = (data: Value) => Promise<readonly ValidationIssue[] | null> | readonly ValidationIssue[] | null`은 입력에 대한 판정을 돌려주고 던지지 않는 계약이다. 던지면 실행 실패이다(VALIDATE-015·016·044, ERROR-032).
+- `interface ValidationIssue<SourceError = unknown> { dataPath: string; keyword?: string; message?: string; schemaPath?: string; rejectedKey?: string; details?: Record<string, unknown>; source?: SourceError }`는 `types/issue.ts`가 선언하는 정규화된 검증 결과이다(FRAGMENT-020·053, LANDING-070, VALIDATE-043).
 - core는 `compile` 결과와 가드에 방출 트리를 참조 그대로 건네고, 검증기는 받은 값과 스키마를 바꾸지 않는다. 값을 바꾸는 사용자 정의 키워드를 쓰지 않을 책임은 소비자에게 있다. core는 `bind`를 호출하지 않고, 선택된 검증기를 트리 생성 인자로 받는다(VALIDATE-001·044·050, CONTROLS-075).
 - `readFieldNodeGuard(runtime, gate)`는 `settle`이 쓰는 동기 가드 읽기이다. `requestFieldNodeValidation(root, deliver: (issues, commit) => void)`는 실행을 예약하고, `readFieldNodeErrors(node): readonly ValidationIssue[]`는 라우팅된 오류를 읽는다. `assertValidationRootReady(node)`는 재생성 인계 전에 새 루트의 전체 컴파일 실패를 동기로 드러내어 옛 사슬을 보존한다. `retainValidationRoot(validator, authoredRoot)`와 `releaseValidationRoot(validator, authoredRoot)`는 바인딩의 커밋 이펙트와 정리용으로 이름을 붙인 진입점이다. `EMPTY_GLOBAL_ERRORS`는 두 오류 층이 비었거나 아직 계산 전인 폼 목록이 공유하는 빈 배열이며, `FieldNode`의 `globalErrors` 읽기와 `write`의 발행 비교가 같은 참조를 쓰도록 진입점으로 내보낸다(VALIDATE-015·021·043·046·049, NODE-010).
 - `readValidationEntry`와 `compileEntryGuards`는 `FieldNode`를 생성할 때 검증기별 사본과 개발 모드 가드를 준비한다. `runFieldNodeValidation`과 `routeValidationIssues`는 `write`가 명시적 `validate()`의 판정과 오류 표시를 순서대로 연결하는 통로이다. 이들은 패키지 공개 진입점으로 다시 내보내지 않는다. 검증 사본 함수는 이 fractal 내부 구현이며, 시험은 그 파일을 직접 읽는다(NODE-010, VALIDATE-017·018·043·048, LANDING-159).
@@ -56,6 +56,14 @@
 ### validation-lifetime — 수명과 최신 결과
 
 - 해제 전에 다시 마운트하면 재컴파일하지 않고, 등록 수는 살아 있는 루트 수 + 8 이하이며, 오래된 커밋의 결과는 배달하지 않는다. 같은 `$id`를 가진 서로 다른 살아 있는 작성 루트는 각자 자기 루트로 판정하고, 재생성 reset에서 새 루트의 컴파일이 실패하면 옛 트리를 보존한다(VALIDATE-021·045·046·049, EVENT-046).
+
+## Boundary Exemptions
+
+### `types/` — 형 칸 유지
+
+- **Consumers**: `entry-point`
+- **Direct import**: `not allowed`
+- **Reason**: 형 칸의 형은 이름으로 진입점을 거쳐 write·engine·core의 집계 진입점과 플러그인 검증 계약에 제공되며, 형은 구현이 아니므로 칸에 두고 진입점이 이름으로 내보낸다.
 
 ## Last Updated
 

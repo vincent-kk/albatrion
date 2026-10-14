@@ -2,7 +2,7 @@ import type { EffectiveSchema } from '../../../blueprint';
 import { captureFieldNodeChange } from '../../../record';
 import type { FieldNodeRecord } from '../../../record';
 import { sameValue } from '../../../utils/compute/sameValue';
-import type { SettlementContext } from '../../type';
+import type { SettlementContext } from '../../types/settlement';
 
 /** Calculated identities held at entry to one bounded node computation. */
 export interface CalculatedSnapshot<Self> {

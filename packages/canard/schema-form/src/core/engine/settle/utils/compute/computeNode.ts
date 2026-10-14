@@ -1,15 +1,15 @@
 import type { BlueprintGate } from '../../../blueprint';
 import type { FieldNodeRecord } from '../../../record';
-import type { SettlementContext } from '../../type';
+import type { SettlementContext } from '../../types/settlement';
 import { getHostWheelBudgetCap } from '../gates/getGateBudgetCap';
+import { updateOutput } from '../output/updateOutput';
+import { selectChildren } from './childSelection/selectChildren';
 import { dirtyChildren } from './dirtyChildren';
 import { preserveReferences } from './preserveReferences';
 import { primeHost } from './primeHost';
 import { relocatedGates } from './relocatedGates';
 import { scheduleRelocatedGates } from './scheduleRelocatedGates';
-import { selectChildren } from './selectChildren';
 import { selectNodeSchema } from './selectNodeSchema';
-import { updateOutput } from './updateOutput';
 import { computeStableNode } from './utils/computeStableNode';
 import { hasIndependentLeafDefaults } from './utils/hasIndependentLeafDefaults';
 

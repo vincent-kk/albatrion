@@ -4,10 +4,10 @@ import type { BlueprintSchema } from '@/schema-form/core/engine/blueprint';
 import { WriteOption } from '@/schema-form/core/engine/types/value';
 
 import { createTestTree } from '../../__tests__/fixtures/createTestTree';
-import { loadFieldNodeAtMount } from '../utils/load/loadFieldNodeAtMount';
+import { loadFieldNodeAtMount } from '../loadFieldNodeAtMount';
 import { writeFieldNode } from '../utils/write/writeFieldNode';
 
-// filid:contract settle-gates
+// filid:contract settle-gates-error-exits
 describe('throwing gate exit isolation', () => {
   it('SETTLE-017 active gates do not search the expression array per sibling', () => {
     const properties: Record<string, BlueprintSchema> = {

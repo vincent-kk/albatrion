@@ -1,8 +1,8 @@
 import type { FieldNodeRecord } from '../../../record';
-import type { SettlementContext } from '../../type';
+import type { SettlementContext } from '../../types/settlement';
 import { captureArrayLatent } from '../latent/captureArrayLatent';
-import { captureOwnLatent } from '../latent/captureOwnLatent';
-import { pruneLatentRaw } from '../write/pruneLatentRaw';
+import { captureOwnLatent } from '../latentStore/captureOwnLatent';
+import { pruneLatentRaw } from '../latentStore/pruneLatentRaw';
 import { distributeAbsentChildInputs } from './distributeAbsentChildInputs';
 import { isReplacedLivePath } from './isReplacedLivePath';
 import { readUnsetPolicy } from './readUnsetPolicy';

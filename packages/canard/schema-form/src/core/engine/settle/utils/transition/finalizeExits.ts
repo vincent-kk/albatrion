@@ -3,11 +3,11 @@ import { JSONPointer as $ } from '@/schema-form/helpers/jsonPointer';
 import { visitFieldNodes } from '../../../navigation';
 import { captureFieldNodeChange } from '../../../record';
 import type { FieldNodeRecord } from '../../../record';
-import type { SettlementContext } from '../../type';
-import { updateOutput } from '../compute/updateOutput';
+import type { SettlementContext } from '../../types/settlement';
 import { captureDetachedFieldNodeReads } from '../detached/captureDetachedFieldNodeReads';
 import { getGateRegistry } from '../gates/getGateRegistry';
-import { getLatentOrder } from '../latent/getLatentOrder';
+import { getLatentOrder } from '../latentStore/getLatentOrder';
+import { updateOutput } from '../output/updateOutput';
 import { applyExitClearing } from './applyExitClearing';
 import { captureExitedRaw } from './captureExitedRaw';
 import { finalizePerished } from './finalizePerished';
@@ -23,7 +23,7 @@ export const finalizeExits = <Self extends FieldNodeRecord<Self>>(
   context: SettlementContext<Self>,
 ): void => {
   finalizePerished(context);
-  let mismatchIndex: Map<string, Set<string>> | undefined;
+  let misfitIndex: Map<string, Set<string>> | undefined;
   for (const node of context.pendingExits.values()) {
     if (node.detached) continue;
     const parent = node.parent;
@@ -46,15 +46,15 @@ export const finalizeExits = <Self extends FieldNodeRecord<Self>>(
       { owned: true },
     );
     getGateRegistry(node.runtime).remove(node);
-    if (!mismatchIndex) {
-      mismatchIndex = new Map();
+    if (!misfitIndex) {
+      misfitIndex = new Map();
       for (const path of context.root.runtime.misfitPaths) {
         let ancestor = path;
         while (true) {
-          let paths = mismatchIndex.get(ancestor);
+          let paths = misfitIndex.get(ancestor);
           if (!paths) {
             paths = new Set();
-            mismatchIndex.set(ancestor, paths);
+            misfitIndex.set(ancestor, paths);
           }
           paths.add(path);
           if (!ancestor) break;
@@ -62,11 +62,11 @@ export const finalizeExits = <Self extends FieldNodeRecord<Self>>(
         }
       }
     }
-    for (const path of [...(mismatchIndex.get(node.path) ?? [])]) {
+    for (const path of [...(misfitIndex.get(node.path) ?? [])]) {
       context.root.runtime.misfitPaths.delete(path);
       let ancestor = path;
       while (true) {
-        mismatchIndex.get(ancestor)?.delete(path);
+        misfitIndex.get(ancestor)?.delete(path);
         if (!ancestor) break;
         ancestor = ancestor.slice(0, ancestor.lastIndexOf($.Separator));
       }

@@ -74,6 +74,12 @@
 
 ## Boundary Exemptions
 
+### `types/` — 형 칸 유지
+
+- **Consumers**: `entry-point`
+- **Direct import**: `not allowed`
+- **Reason**: 형 칸의 형은 이름으로 진입점을 거쳐 behaviors·navigation·validation·derive·settle·write와 노드 겉면에 제공되며, 형은 구현이 아니므로 칸에 두고 진입점이 이름으로 내보낸다.
+
 ### `utils/` — 레코드 불변식의 공유 보조
 
 - **Consumers**: `entry-point`

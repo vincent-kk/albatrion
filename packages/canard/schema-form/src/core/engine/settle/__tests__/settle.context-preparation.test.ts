@@ -4,13 +4,13 @@ import { FieldNodeEventType } from '@/schema-form/core/engine/record';
 import { WriteOption } from '@/schema-form/core/engine/types/value';
 
 import { createTestTree } from '../../__tests__/fixtures/createTestTree';
+import { loadFieldNodeAtMount } from '../loadFieldNodeAtMount';
 import * as references from '../utils/compute/getVirtualReferenceIndex';
-import { loadFieldNodeAtMount } from '../utils/load/loadFieldNodeAtMount';
+import type { DirtyPathSet } from '../utils/scratch/DirtyPathSet';
+import { getSettlementScratch } from '../utils/scratch/getSettlementScratch';
+import { releaseSettlementScratch } from '../utils/scratch/releaseSettlementScratch';
 import { createSettlementContext } from '../utils/settlement/createSettlementContext';
 import * as caps from '../utils/transition/getTransitionCap';
-import type { DirtyPathSet } from '../utils/write/DirtyPathSet';
-import { getSettlementScratch } from '../utils/write/getSettlementScratch';
-import { releaseSettlementScratch } from '../utils/write/releaseSettlementScratch';
 import { writeFieldNode } from '../utils/write/writeFieldNode';
 
 afterEach(() => {

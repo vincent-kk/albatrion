@@ -3,7 +3,7 @@ import { isArray } from '@winglet/common-utils/filter';
 import type { FieldNodeRuntime } from '../../../record';
 import { indexFieldNodeWarning } from '../../../record';
 import { updateCommittedRuleValue } from '../commit/updateCommittedRuleValue';
-import { getRuntimePathStores } from '../pathIndex/getRuntimePathStores';
+import { getRuntimePathStores } from '../pathStores/getRuntimePathStores';
 
 /**
  * Drop only entries indexed beneath perished item roots.
@@ -33,7 +33,7 @@ export const prunePerishedPaths = <Self>(
     }
     for (const store of [
       stores.metadata,
-      stores.mismatches,
+      stores.misfits,
       stores.inactiveMemo,
       stores.declarations,
     ])

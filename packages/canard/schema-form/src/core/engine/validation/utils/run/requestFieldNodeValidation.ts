@@ -1,7 +1,7 @@
 import { FormErrorCode } from '../../../../../errors';
 import type { FieldNodeRecord } from '../../../record';
 import { ValidationMode } from '../../../types/state';
-import type { ValidationIssue } from '../../type';
+import type { ValidationIssue } from '../../types/issue';
 import { retainEqualValidationIssues } from '../route/retainEqualValidationIssues';
 import { routeValidationIssues } from '../route/routeValidationIssues';
 import { runFieldNodeValidation } from './runFieldNodeValidation';

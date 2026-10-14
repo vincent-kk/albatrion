@@ -15,6 +15,14 @@
 
 - 넘겨 준 구성 요소는 그 필드에만 쓰이며, 마운트한 뒤에 바뀐 `FieldInput`·`FieldRenderer`·`Wrapper`는 반영하지 않습니다.
 
+## Boundary Exemptions
+
+### `types/` — 형 칸 유지
+
+- **Consumers**: `entry-point`
+- **Direct import**: `not allowed`
+- **Reason**: `RolledFormFieldProps`는 이름으로 진입점에 올라 `components/Form/index.ts`를 거쳐 `src/index.ts`가 공개한다. 형은 구현이 아니므로 칸에 두고 진입점이 이름으로 내보낸다.
+
 ## Last Updated
 
 2026-10-14 — 소유자 구조 변경(Form의 조각을 fractal로 분리).

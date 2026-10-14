@@ -6,12 +6,12 @@ import { WriteOption } from '@/schema-form/core/engine/types/value';
 import type { ArrayNode } from '@/schema-form/core/surface';
 
 import { createTestTree } from '../../__tests__/fixtures/createTestTree';
+import { loadFieldNodeAtMount } from '../loadFieldNodeAtMount';
 import { dirtyChildren } from '../utils/compute/dirtyChildren';
-import { loadFieldNodeAtMount } from '../utils/load/loadFieldNodeAtMount';
+import { getDependencyIndex } from '../utils/dependencies/getDependencyIndex';
+import { getSettlementScratch } from '../utils/scratch/getSettlementScratch';
+import { releaseSettlementScratch } from '../utils/scratch/releaseSettlementScratch';
 import { createSettlementContext } from '../utils/settlement/createSettlementContext';
-import { getDependencyIndex } from '../utils/write/getDependencyIndex';
-import { getSettlementScratch } from '../utils/write/getSettlementScratch';
-import { releaseSettlementScratch } from '../utils/write/releaseSettlementScratch';
 import { writeFieldNode } from '../utils/write/writeFieldNode';
 
 const schema = {
@@ -76,7 +76,7 @@ const countLatentKeyVisits = (
   return visited;
 };
 
-// filid:contract settle-array
+// filid:contract settle-array-scaling
 describe('44C-01 array settlement scaling', () => {
   it('51C-01 SETTLE-017 bounds item-gated row assembly when rows read their own fields', () => {
     const count = 2000;

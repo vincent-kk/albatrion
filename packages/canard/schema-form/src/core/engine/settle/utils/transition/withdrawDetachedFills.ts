@@ -1,8 +1,8 @@
 import { isArray } from '@winglet/common-utils/filter';
 
 import type { FieldNodeRecord } from '../../../record';
-import type { SettlementContext } from '../../type';
-import { setLatentRaw } from '../latent/setLatentRaw';
+import type { SettlementContext } from '../../types/settlement';
+import { setLatentRaw } from '../latentStore/setLatentRaw';
 import { restoreArrayStructure } from './restoreArrayStructure';
 
 /**

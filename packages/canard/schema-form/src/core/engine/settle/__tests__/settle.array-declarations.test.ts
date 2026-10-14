@@ -6,7 +6,7 @@ import { makeFieldNodeTree } from '@/schema-form/core/__tests__/makeFieldNodeTre
 import type { ArrayNode } from '@/schema-form/core/surface';
 import { setContext } from '@/schema-form/core/surface';
 
-// filid:contract settle-array
+// filid:contract settle-array-declarations
 describe('array item declarations', () => {
   it('35C-08 CONTROLS-073 binds visible, readOnly, and fields controls to each item', () => {
     const { root } = makeFieldNodeTree({

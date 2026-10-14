@@ -2,8 +2,8 @@ import { isArray } from '@winglet/common-utils/filter';
 
 import { getItemEntry } from '../../../blueprint';
 import type { FieldNodeRecord } from '../../../record';
-import type { SettlementContext } from '../../type';
-import { HostLatent } from './HostLatent';
+import type { SettlementContext } from '../../types/settlement';
+import { HostLatent } from '../latentStore/HostLatent';
 import { readAbsentSlotSource } from './readAbsentSlotSource';
 import { readRawTree } from './readRawTree';
 

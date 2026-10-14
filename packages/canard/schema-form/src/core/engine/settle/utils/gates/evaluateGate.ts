@@ -12,7 +12,7 @@ import type { BlueprintGate } from '../../../blueprint';
 import type { FieldNodeRecord } from '../../../record';
 import { ValidationMode } from '../../../types/state';
 import { readFieldNodeGuard } from '../../../validation';
-import type { SettlementContext } from '../../type';
+import type { SettlementContext } from '../../types/settlement';
 import { recordSettlementFailure } from '../errors/recordSettlementFailure';
 import { getGateExpression } from './getGateExpression';
 import { getGateRegistry } from './getGateRegistry';

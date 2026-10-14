@@ -1,6 +1,6 @@
 import type { FieldNodeRecord } from '../../../record';
-import type { SettlementContext } from '../../type';
-import { hasLatentUnder } from '../latent/hasLatentUnder';
+import type { SettlementContext } from '../../types/settlement';
+import { hasLatentUnder } from '../latentStore/hasLatentUnder';
 
 /**
  * Recognize a branch with no own or any-kind descendant source (26C-14).

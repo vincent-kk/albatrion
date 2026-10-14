@@ -1,6 +1,6 @@
 import { FormErrorCode, SchemaFormError } from '../../../../../errors';
 import type { FieldNodeRecord } from '../../../record';
-import type { ValidationIssue } from '../../type';
+import type { ValidationIssue } from '../../types/issue';
 import { assertValidationRootReady } from './assertValidationRootReady';
 
 /**

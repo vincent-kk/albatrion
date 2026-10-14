@@ -71,6 +71,22 @@
 
 - 새 엔진이 레거시·플러그인·React를 가져오지 않고 검증 결과 배달은 콜백만으로 역방향에 닿는다(NODE-016·045, CONTROLS-075, GOAL-088, LANDING-084·159).
 
+### settle-disposal — 재생성 트리의 폐기
+
+- 인계된 옛 트리는 통지 없이 두 번호가 동기로 오르고 리스너가 해제된다. 참조 연결과 마지막 커밋 읽기를 유지하며, 입력 출처 표식이 있는 늦은 쓰기만 조용히 버리고 나머지는 `DISPOSED_NODE_WRITE`로 거부한다(WRITE-046·086, 69C-02).
+
+### settle-form-reset-errors — 폼 로드의 오류 초기화
+
+- 같은 트리와 재생성 트리의 reset 모두 명령형 외부 오류·검증 결과를 비우고, 호출이 돌아오기 전에 바인딩이 경로 키 `errors`를 재적용한다(WRITE-045, 69C-03).
+
+## Boundary Exemptions
+
+### `types/` — 형 칸 유지
+
+- **Consumers**: `entry-point`
+- **Direct import**: `not allowed`
+- **Reason**: 형 칸의 형은 이름으로 진입점을 거쳐 engine의 집계 진입점과 노드 겉면에 제공되며, 형은 구현이 아니므로 칸에 두고 진입점이 이름으로 내보낸다.
+
 ## Last Updated
 
 계약 기준: 69C-01–03·05, REACT-009–011, WRITE-045·046·083·086; 정돈-2(2026-10-14).

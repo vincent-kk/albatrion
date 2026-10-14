@@ -24,4 +24,4 @@ export { adoptFieldNodeChain } from './utils/chain/adoptFieldNodeChain';
 export { readFieldNodeRevision } from './utils/read/readFieldNodeRevision';
 export { subscribeFieldNode } from './utils/read/subscribeFieldNode';
 export { createFormErrorRecord } from './utils/report/createFormErrorRecord';
-export type { FieldNodeListener } from './type';
+export type { FieldNodeListener } from './types/listener';

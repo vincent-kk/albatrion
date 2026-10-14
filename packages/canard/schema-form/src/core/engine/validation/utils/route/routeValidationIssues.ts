@@ -7,7 +7,7 @@ import {
 } from '@/schema-form/helpers/jsonPointer';
 
 import type { FieldNodeRecord } from '../../../record';
-import type { ValidationIssue } from '../../type';
+import type { ValidationIssue } from '../../types/issue';
 import { isOffUnionBranchIssue } from './isOffUnionBranchIssue';
 import { normalizeIssueDataPath } from './normalizeIssueDataPath';
 import { updateFieldNodeGlobalErrors } from './updateFieldNodeGlobalErrors';

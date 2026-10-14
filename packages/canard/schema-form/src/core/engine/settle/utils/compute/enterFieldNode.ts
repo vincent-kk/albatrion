@@ -1,9 +1,9 @@
 import type { FieldNodeRecord } from '../../../record';
-import type { SettlementContext } from '../../type';
+import type { SettlementContext } from '../../types/settlement';
+import { hasDistributedChildInput } from '../input/hasDistributedChildInput';
+import { isWithinReplacePaths } from '../input/isWithinReplacePaths';
+import { markWrite } from '../input/markWrite';
 import { restoreLatentState } from '../latent/restoreLatentState';
-import { hasDistributedChildInput } from '../write/hasDistributedChildInput';
-import { isWithinReplacePaths } from '../write/isWithinReplacePaths';
-import { markWrite } from '../write/markWrite';
 
 /**
  * Give this settlement's distributed key priority over an entering node's latent.

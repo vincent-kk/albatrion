@@ -8,7 +8,7 @@ import {
   dispatchValidate,
 } from '@/schema-form/core/engine/write';
 
-import type { Validator } from '../type';
+import type { Validator } from '../types/validator';
 import { releaseValidationRoot } from '../utils/lifetime/releaseValidationRoot';
 import { retainValidationRoot } from '../utils/lifetime/retainValidationRoot';
 

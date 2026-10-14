@@ -5,10 +5,10 @@ import { WriteOption } from '@/schema-form/core/engine/types/value';
 import type { PlainNode } from '../../__tests__/fixtures/createPlainNode';
 import { createTestTree } from '../../__tests__/fixtures/createTestTree';
 import * as compiler from '../../blueprint/compileBlueprintExpressions/createDynamicFunction';
-import type { SettlementContext } from '../type';
+import { loadFieldNodeAtMount } from '../loadFieldNodeAtMount';
+import type { SettlementContext } from '../types/settlement';
 import { evaluateGate } from '../utils/gates/evaluateGate';
 import * as projection from '../utils/gates/readProjectedValue';
-import { loadFieldNodeAtMount } from '../utils/load/loadFieldNodeAtMount';
 
 describe('compiled active gate workspace characterization', () => {
   it.each([false, true])(

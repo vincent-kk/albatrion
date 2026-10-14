@@ -6,7 +6,7 @@ import { createTestTree } from '../../__tests__/fixtures/createTestTree';
 import { sameValue } from '../../utils/compute/sameValue';
 import { writeFieldNode } from '../utils/write/writeFieldNode';
 
-// filid:contract settle-derive
+// filid:contract settle-derive-same-value
 describe('settle value equivalence', () => {
   it('18C-50 sameValue compares nested plain values and SameValueZero primitives', () => {
     expect(sameValue(NaN, NaN)).toBe(true);
