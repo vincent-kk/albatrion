@@ -162,7 +162,7 @@ nodeFromJSONSchema<Schema extends AuthoredSchema>(props: {
 - 분기 없는 단일 리터럴 종류의 `const`·`enum` 칸은 대응 원시 노드 형으로 좁힙니다.
 - 형 수준에서 청사진 오류를 확정할 수 있는 객체·배열 리터럴, 종류가 섞인 리터럴, 혼합 인라인 분기는 `never`입니다. 정적 판정이 불가능한 모양만 넓은 노드 형을 유지합니다.
 
-- `__benchmarks__/`는 core 관문으로 재는 vitest 벤치 일곱(`branch-strategy-init`·`compute-recalculate`·`event-cascade`·`find-node`·`nodeFromJSONSchema`·`object-pending-read`·`render-delay`)을 소유합니다. `vitest.bench.config.ts`의 `benchmark.include`가 이 일곱을 이름으로 고르며, 벤치는 시험처럼 검증 organ이라 패키지 표면과 선언 빌드에 들지 않습니다.
+- `__benchmarks__/`는 core의 자식 관문(`core/engine`·`core/surface`)으로 재는 vitest 벤치 일곱(`branch-strategy-init`·`compute-recalculate`·`event-cascade`·`find-node`·`nodeFromJSONSchema`·`object-pending-read`·`render-delay`)을 소유합니다. `vitest.bench.config.ts`의 `benchmark.include`가 이 일곱을 이름으로 고르며, 벤치는 시험처럼 검증 organ이라 패키지 표면과 선언 빌드에 들지 않습니다.
 
 ## Boundary Exemptions
 

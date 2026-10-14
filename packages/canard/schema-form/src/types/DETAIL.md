@@ -8,7 +8,7 @@
 ## API Contracts
 
 - `types/jsonSchema.ts`의 스키마 형 계약은 `src/DETAIL.md`의 스키마 절이 정합니다.
-- 형제 fractal에서 오는 형은 `@/schema-form/core`·`@/schema-form/components/Field`·`@/schema-form/components/Form` 관문의 `import type`입니다. 이 형들을 쓰는 형제도 이 fractal의 index를 쓰므로 형 수준의 상호 참조가 있으나 런타임 순환은 없습니다.
+- 형제 fractal에서 오는 형은 `@/schema-form/core`·`@/schema-form/components/Field` 관문의 `import type`입니다. 이 형들을 쓰는 형제도 이 fractal의 index를 쓰므로 형 수준의 상호 참조가 있으나 런타임 순환은 없습니다.
 - `core`는 값 형 `InferValueType` 하나를 이 fractal의 index로 가져옵니다.
 
 ## Acceptance Criteria
