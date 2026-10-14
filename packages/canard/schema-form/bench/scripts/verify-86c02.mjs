@@ -6,7 +6,7 @@ import { fileURLToPath } from 'node:url';
 import { execFileSync, spawnSync } from 'node:child_process';
 import assert from 'node:assert/strict';
 
-const pkg = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
+const pkg = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..');
 const repo = path.resolve(pkg, '../../..');
 const evidence = JSON.parse(fs.readFileSync(path.join(pkg,
   'architecture/verification/07-switch/86c02-verification.json'), 'utf8'));
@@ -19,8 +19,8 @@ const added = execFileSync('git', ['ls-files', '--others', '--exclude-standard',
 assert.deepEqual([...changed, ...added].sort(), Object.keys(evidence.sourceHashes).sort());
 assert.equal(execFileSync('git', ['rev-parse', '--short=9', 'HEAD'],
   { cwd: repo, encoding: 'utf8' }).trim(), evidence.head);
-const reserved = ['providers/RootNodeContext/RootNodeContextProvider.tsx',
-  'providers/RootNodeContext/useLiveNode.ts', 'providers/RootNodeContext/utils/applyFormErrors.ts',
+const reserved = ['providers/RootNodeContext/components/RootNodeContextProvider.tsx',
+  'providers/RootNodeContext/hooks/useLiveNode.ts', 'providers/RootNodeContext/utils/applyFormErrors.ts',
   'components/Field/FieldInputSlot/FieldInputSlot.tsx',
   'components/Field/FieldInputSlot/hooks/useFieldInputControl.ts', 'core/types/index.ts'];
 for (const relative of reserved) {

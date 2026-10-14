@@ -8,7 +8,7 @@ import { fileURLToPath } from 'node:url';
 import { execFileSync } from 'node:child_process';
 import { writeMeasurement } from './measurement-output.mjs';
 
-const pkg = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
+const pkg = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..');
 const repo = path.resolve(pkg, '../../..');
 const bf = path.join(repo, 'packages/aileron/benchmark-form');
 const req = createRequire(path.join(pkg, 'package.json'));

@@ -1,5 +1,5 @@
-import { PathKeyedMap } from '../src/core/engine';
-import { PathKeyedSet } from '../src/core/engine';
+import { PathKeyedMap } from '../../src/core/engine';
+import { PathKeyedSet } from '../../src/core/engine';
 /**
  * U15: same-run legacy/new mount and delivery comparisons.
  * Each mount uses a fresh schema per engine; legacy timing includes onChange
@@ -10,15 +10,15 @@ import { performance } from 'node:perf_hooks';
 import Ajv from 'ajv';
 import type { AnySchema } from 'ajv';
 
-import { blueprint } from '../src/core';
-import { nodeFromJSONSchema } from '../src/__legacy__/core/nodeFromJSONSchema';
-import { fieldNodeFactory, SetValueOption } from '../src/core';
-import { type TestFieldNode, isTestFieldNode } from '../src/core/__tests__/fixtures/testFieldNode';
-import { dispatchMount } from '../src/core/engine';
-import { createTestValidator } from '../src/core/__tests__/fixtures/createTestValidator';
-import { ValidationMode } from '../src/core';
-import type { Validator } from '../src/core';
-import type { JSONSchema } from '../src/__legacy__/types';
+import { blueprint } from '../../src/core';
+import { nodeFromJSONSchema } from '../../src/__legacy__/core/nodeFromJSONSchema';
+import { fieldNodeFactory, SetValueOption } from '../../src/core';
+import { type TestFieldNode, isTestFieldNode } from '../../src/core/__tests__/fixtures/testFieldNode';
+import { dispatchMount } from '../../src/core/engine';
+import { createTestValidator } from '../../src/core/__tests__/fixtures/createTestValidator';
+import { ValidationMode } from '../../src/core';
+import type { Validator } from '../../src/core';
+import type { JSONSchema } from '../../src/__legacy__/types';
 
 // Load plugin source at runtime without adding it to this composite project's files.
 const pluginSource = new URL('../../schema-form-ajv8-plugin/src/default/validatorPlugin.ts', import.meta.url);

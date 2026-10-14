@@ -7,7 +7,7 @@ import { createRequire } from 'node:module';
 import { fileURLToPath } from 'node:url';
 import { execFileSync } from 'node:child_process';
 
-const pkg = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
+const pkg = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..');
 const repo = path.resolve(pkg, '../../..');
 const req = createRequire(path.join(pkg, 'package.json'));
 const { build } = req('esbuild');
@@ -67,7 +67,7 @@ globalThis.__round87 = (kind, node, context) => {
 async function engine(variant, traced = false) {
   const result = await build({
     stdin: { contents: `export { nodeFromJSONSchema } from './src/__tests__/fixtures/nodeFromJSONSchema';
-      export { createTestTree } from './src/core/engine/settle/__tests__/fixtures/createTestTree';
+      export { createTestTree } from './src/core/engine/__tests__/fixtures/createTestTree';
       export { loadFieldNodeAtMount } from './src/core/engine/settle';
       export { markCommitDeliveries } from './src/${delivery}';
       export { createSettlementContext } from './src/core/engine/settle/utils/settlement/createSettlementContext';

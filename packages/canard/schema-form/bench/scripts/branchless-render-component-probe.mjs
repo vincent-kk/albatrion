@@ -42,6 +42,6 @@ for (const name of ['array-100', 'array-500', 'array-1000']) {
   console.log(`${name}: 101 paired retained-tree component samples`);
 }
 const destination = path.resolve(path.dirname(fileURLToPath(import.meta.url)),
-  '../architecture/verification/07-switch/branchless-phase-render-components.json');
+  '../../architecture/verification/07-switch/branchless-phase-render-components.json');
 writeMeasurement(destination, { environment: { node: process.version, warmup: 12, samples: 101 }, rows: samples });
 console.log(`Saved ${path.basename(destination)}`);

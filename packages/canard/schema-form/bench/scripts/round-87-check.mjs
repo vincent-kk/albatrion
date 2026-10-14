@@ -6,11 +6,11 @@ import { createHash } from 'node:crypto';
 import { fileURLToPath } from 'node:url';
 import { execFileSync, spawnSync } from 'node:child_process';
 
-const pkg = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
+const pkg = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..');
 const repo = path.resolve(pkg, '../../..');
 const out = path.join(pkg, 'architecture/verification/07-switch');
-const reserved = ['providers/RootNodeContext/RootNodeContextProvider.tsx',
-  'providers/RootNodeContext/useLiveNode.ts', 'providers/RootNodeContext/utils/applyFormErrors.ts',
+const reserved = ['providers/RootNodeContext/components/RootNodeContextProvider.tsx',
+  'providers/RootNodeContext/hooks/useLiveNode.ts', 'providers/RootNodeContext/utils/applyFormErrors.ts',
   'components/Field/FieldInputSlot/FieldInputSlot.tsx',
   'components/Field/FieldInputSlot/hooks/useFieldInputControl.ts', 'core/types/index.ts'];
 const changed = execFileSync('git', ['diff', '--name-only'], { cwd: repo, encoding: 'utf8' }).trim().split('\n');

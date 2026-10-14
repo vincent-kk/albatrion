@@ -3,7 +3,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-const out = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../architecture/verification/07-switch');
+const out = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../../architecture/verification/07-switch');
 const final = JSON.parse(fs.readFileSync(path.join(out, 'round-87-final-summary.json')));
 const trial = JSON.parse(fs.readFileSync(path.join(out, 'round-87-summary.json')));
 const verification = JSON.parse(fs.readFileSync(path.join(out, 'round-87-verification.json')));
@@ -86,13 +86,13 @@ console.log(`
 - 검증 후 별도 작업이 예약 변경을 8955aa173으로 커밋하여 HEAD가 이동했습니다. 이 작업은 git 쓰기를 하지 않았습니다. 삭제된 core/types/index.ts의 tombstone을 기준 파일 집합에 포함하면 전체 src 해시가 검증 당시와 정확히 같으므로 해당 실행 증거를 재사용했습니다.
 
 ~~~sh
-ROUND87_OUTPUT=round-87-replay node --expose-gc packages/canard/schema-form/bench/round-87-measure.mjs
-ROUND87_OUTPUT=round-87-shared-replay ROUND87_VARIANTS=head-delivery,shared-delivery,working,revert-delivery node --expose-gc packages/canard/schema-form/bench/round-87-measure.mjs
-ROUND87_OUTPUT=round-87-array-replay ROUND87_VARIANTS=head,working ROUND87_FIXTURES=array-1000 node --expose-gc packages/canard/schema-form/bench/round-87-measure.mjs
-node packages/canard/schema-form/bench/round-87-budgets.mjs --table
-node packages/canard/schema-form/bench/round-87-report.mjs
-node packages/canard/schema-form/bench/round-87-check.mjs --run
-node packages/canard/schema-form/bench/round-87-check.mjs
+ROUND87_OUTPUT=round-87-replay node --expose-gc packages/canard/schema-form/bench/scripts/round-87-measure.mjs
+ROUND87_OUTPUT=round-87-shared-replay ROUND87_VARIANTS=head-delivery,shared-delivery,working,revert-delivery node --expose-gc packages/canard/schema-form/bench/scripts/round-87-measure.mjs
+ROUND87_OUTPUT=round-87-array-replay ROUND87_VARIANTS=head,working ROUND87_FIXTURES=array-1000 node --expose-gc packages/canard/schema-form/bench/scripts/round-87-measure.mjs
+node packages/canard/schema-form/bench/scripts/round-87-budgets.mjs --table
+node packages/canard/schema-form/bench/scripts/round-87-report.mjs
+node packages/canard/schema-form/bench/scripts/round-87-check.mjs --run
+node packages/canard/schema-form/bench/scripts/round-87-check.mjs
 ~~~
 
 측정 재현 시에도 reserved 파일은 그대로 읽습니다. 검증은 PKG에서 npx --no-install을 사용하여 설치 없이 요청한 vitest/tsc/eslint 인수를 실행합니다. 변경 중인 별도 작업의 영향을 이번 성능 개선으로 해석하지 않습니다.

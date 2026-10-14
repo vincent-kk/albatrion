@@ -4,7 +4,7 @@ import path from 'node:path';
 import assert from 'node:assert/strict';
 import { fileURLToPath } from 'node:url';
 
-const pkg = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
+const pkg = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..');
 const out = path.join(pkg, 'architecture/verification/07-switch');
 const read = name => JSON.parse(fs.readFileSync(path.join(out, fs.existsSync(path.join(out, `${name}-summary.json`)) ? `${name}-summary.json` : `${name}.json`), 'utf8'));
 const core = read('86c02-final-core-plain');
@@ -179,9 +179,9 @@ text.push('', '## 검증·재현', '',
   '- PKG의 `npx --no-install tsc --noEmit --composite false --rootDir . -p tsconfig.json`, `npx --no-install eslint "src/**/*.{ts,tsx}"` 통과. `--no-install`은 설치 금지 조건을 고정합니다.',
   '- 여섯 예약 파일은 HEAD와 동일하며 git 쓰기·설치·runtime 번들 생성은 하지 않았습니다.',
   '- [b3 설계안](./b3-payload-proposal.md)은 revision/통지 기준을 유지하는 payload 객체 생성 지연만 제안합니다. 코드에는 반영하지 않았습니다.', '',
-  '```sh', 'yarn node packages/canard/schema-form/bench/remeasure-86c02.mjs', 'yarn node packages/canard/schema-form/bench/remeasure-86c02.mjs iv', 'yarn node packages/canard/schema-form/bench/remeasure-86c02-report.mjs',
+  '```sh', 'yarn node packages/canard/schema-form/bench/scripts/remeasure-86c02.mjs', 'yarn node packages/canard/schema-form/bench/scripts/remeasure-86c02.mjs iv', 'yarn node packages/canard/schema-form/bench/scripts/remeasure-86c02-report.mjs',
   '# 단계 ii 재현: HEAD 소스에 i,ii 파일만 메모리에서 대입; git/디스크 소스 변경 없음',
-  'PHASE_SOURCE_REF=b44dc7ebf PHASE_CANDIDATES=i,ii PHASE_OUTPUT=86c02-replay-ii PHASE_FIXTURES=flat-500,nested-d5-f4,array-1000,computed-visible-derived yarn node --expose-gc packages/canard/schema-form/bench/branchless-phase-diagnosis.mjs', '```', '',
+  'PHASE_SOURCE_REF=b44dc7ebf PHASE_CANDIDATES=i,ii PHASE_OUTPUT=86c02-replay-ii PHASE_FIXTURES=flat-500,nested-d5-f4,array-1000,computed-visible-derived yarn node --expose-gc packages/canard/schema-form/bench/scripts/branchless-phase-diagnosis.mjs', '```', '',
   '측정 자료: 삭제된 원시 추적은 단계·함수별 시간/호출 수·환경 요약으로 연결합니다. 앞으로 원표본은 시간 값만, 추적 상세는 요약으로 분리합니다.', '');
 for (const name of ['86c02-final-core-plain','86c02-final-core-traced','86c02-final-render-plain-production','86c02-final-render-plain','86c02-final-render-traced-production','86c02-baseline-core-traced','86c02-i-core-traced','86c02-ii-core-traced','86c02-iii-core-traced','86c02-before-iv-render-plain-production','86c02-iv-render-plain-production']) {
   const summary = `${name}-summary.json`;

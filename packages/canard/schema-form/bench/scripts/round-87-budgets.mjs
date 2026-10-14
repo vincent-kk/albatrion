@@ -4,7 +4,7 @@ import path from 'node:path';
 import assert from 'node:assert/strict';
 import { fileURLToPath } from 'node:url';
 
-const out = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../architecture/verification/07-switch');
+const out = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../../architecture/verification/07-switch');
 const quantile = (values, q) => values.sort((a, b) => a - b)[Math.ceil(values.length * q) - 1];
 const metric = values => ({ median: quantile([...values], .5), p99: quantile([...values], .99) });
 const rows = [];

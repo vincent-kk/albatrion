@@ -3,7 +3,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-const pkg = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
+const pkg = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..');
 const out = path.join(pkg, 'architecture/verification/07-switch');
 if (fs.existsSync(path.join(out, 'branchless-phase-core-traced-summary.json'))) {
   const lines = ['# 단계별 측정 요약', '', '시간 원표본은 timing 파일에, 추적 단계·호출 수는 summary JSON에 보관합니다.', '',
@@ -85,13 +85,13 @@ add('## 환경·재현',
   '- 원 표본, 함수별 시간·호출 수, 계측 위치 목록, 환경은 아래 JSON에 보존했다. smoke 파일은 본 측정에서 제외한다.');
 add('```sh',
   '# worktree 루트에서, 반드시 순차 실행',
-  'yarn node --expose-gc packages/canard/schema-form/bench/branchless-phase-diagnosis.mjs',
-  'yarn node --expose-gc packages/canard/schema-form/bench/branchless-phase-diagnosis.mjs --render',
-  'yarn node --expose-gc packages/canard/schema-form/bench/branchless-phase-diagnosis.mjs --plain',
-  'PHASE_FIXTURES=flat-500,nested-d5-f4,array-1000,computed-visible-derived,oneOf-20,if-then yarn node --expose-gc packages/canard/schema-form/bench/branchless-phase-diagnosis.mjs --render --plain',
-  'yarn node --expose-gc packages/canard/schema-form/bench/branchless-render-component-probe.mjs',
-  'PHASE_FIXTURES=array-1000 yarn node --expose-gc packages/canard/schema-form/bench/branchless-phase-diagnosis.mjs --render --component-probe --owner-stack',
-  'yarn node packages/canard/schema-form/bench/branchless-phase-report.mjs', '```');
+  'yarn node --expose-gc packages/canard/schema-form/bench/scripts/branchless-phase-diagnosis.mjs',
+  'yarn node --expose-gc packages/canard/schema-form/bench/scripts/branchless-phase-diagnosis.mjs --render',
+  'yarn node --expose-gc packages/canard/schema-form/bench/scripts/branchless-phase-diagnosis.mjs --plain',
+  'PHASE_FIXTURES=flat-500,nested-d5-f4,array-1000,computed-visible-derived,oneOf-20,if-then yarn node --expose-gc packages/canard/schema-form/bench/scripts/branchless-phase-diagnosis.mjs --render --plain',
+  'yarn node --expose-gc packages/canard/schema-form/bench/scripts/branchless-render-component-probe.mjs',
+  'PHASE_FIXTURES=array-1000 yarn node --expose-gc packages/canard/schema-form/bench/scripts/branchless-phase-diagnosis.mjs --render --component-probe --owner-stack',
+  'yarn node packages/canard/schema-form/bench/scripts/branchless-phase-report.mjs', '```');
 add(...['core-traced', 'render-traced', 'core-plain', 'render-plain', 'render-components', 'render-components-fresh'].map(name => `- [${name} 원 표본](./branchless-phase-${name}.json)`));
 
 add('## 단계 경계',

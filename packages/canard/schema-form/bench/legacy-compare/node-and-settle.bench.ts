@@ -1,5 +1,5 @@
-import { PathKeyedMap } from '../src/core/engine';
-import { PathKeyedSet } from '../src/core/engine';
+import { PathKeyedMap } from '../../src/core/engine';
+import { PathKeyedSet } from '../../src/core/engine';
 /**
  * Standalone U9 measurements. Run once under Node/V8 and once under Bun/JSC.
  * Each timed sample receives the same schema and input in both runtimes.
@@ -7,15 +7,15 @@ import { PathKeyedSet } from '../src/core/engine';
 import { performance } from 'node:perf_hooks';
 import { spawnSync } from 'node:child_process';
 
-import { blueprint } from '../src/core';
-import type { BlueprintSchema } from '../src/core/engine';
-import { BEHAVIORS } from '../src/core/engine';
-import { fieldNodeFactory, SetValueOption } from '../src/core';
-import { type TestFieldNode, isTestFieldNode } from '../src/core/__tests__/fixtures/testFieldNode';
-import { loadFieldNodeAtMount } from '../src/core/engine';
-import { getGateRegistry } from '../src/core/engine/settle/utils/gates/getGateRegistry';
-import { nodeFromJSONSchema } from '../src/__legacy__/core/nodeFromJSONSchema';
-import type { JSONSchema } from '../src/__legacy__/types';
+import { blueprint } from '../../src/core';
+import type { BlueprintSchema } from '../../src/core/engine';
+import { BEHAVIORS } from '../../src/core/engine';
+import { fieldNodeFactory, SetValueOption } from '../../src/core';
+import { type TestFieldNode, isTestFieldNode } from '../../src/core/__tests__/fixtures/testFieldNode';
+import { loadFieldNodeAtMount } from '../../src/core/engine';
+import { getGateRegistry } from '../../src/core/engine/settle/utils/gates/getGateRegistry';
+import { nodeFromJSONSchema } from '../../src/__legacy__/core/nodeFromJSONSchema';
+import type { JSONSchema } from '../../src/__legacy__/types';
 
 const noop = () => {};
 const sampleCount = 100;
