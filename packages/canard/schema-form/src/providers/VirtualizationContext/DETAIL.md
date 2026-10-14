@@ -9,6 +9,8 @@
 - 마운트 후 virtualization prop이 바뀌어도 기존 매니저를 다시 만들지 않습니다.
 - 비활성·관찰 API 부재의 null 결과를 그대로 전달하며 정리 시 disconnect를 호출합니다.
 
+- Context 객체와 Provider는 `components/`, 소비 훅은 `hooks/`에 있습니다. 뿌리에는 문서·진입점·형 동반 파일(`type.ts`)만 둡니다(filid zero-peer-file).
+
 ## Acceptance Criteria
 
 ### virtualization-context-contract — 관찰 가능한 동작

@@ -10,6 +10,8 @@
 - 입력 컴포넌트의 동작은 전달받은 Input에 위임하며, 배열 항목의 레이블은 숨깁니다.
 - 필드 제목 label은 어떤 입력이 선택되었는지 판정하지 않고 항상 `htmlFor={path}`와 id `label:${path}`를 둘 다 가지며, branch의 legend는 같은 id를 가집니다. 단일 입력은 `htmlFor`로, 묶음 입력은 컨테이너의 `aria-labelledby`로 이 제목에 이어집니다(대기열 38, 소유자 결정).
 
+- 대체 렌더러 넷(`FormErrorRenderer`·`FormFieldRenderer`·`FormInputRenderer`·`FormLabelRenderer`)은 `components/`에 있습니다. 뿌리에는 문서·진입점·형 동반 파일(`type.ts`)만 둡니다(filid zero-peer-file).
+
 ## Acceptance Criteria
 
 ### fallback-components-contract — 관찰 가능한 동작

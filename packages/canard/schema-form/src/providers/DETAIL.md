@@ -15,6 +15,8 @@
 - reset은 호출 시점의 커밋된 속성으로 동기 로드합니다. `helpers/`의 스키마 비교는 같은 객체 또는 JSON 부분의 키 순서까지 깊은 같음과 JSON 밖 값의 참조 같음으로 판정합니다. 같은 스키마는 호출 안에서 `reloadFieldNodeForm`으로 트리·노드 identity를 유지하고, 다른 스키마는 호출 안에서 `buildFieldNodeTree` → `adoptFieldNodeTree` → `mountFieldNode`를 마쳐 옛 트리를 폐기하고 핸들을 새 루트로 바꿉니다(WRITE-042·043·046, 69C-02, 실행 ADR D7).
 - 두 reset 경로 모두 dirty·touched·첨부 파일 맵을 비우고 `showError`를 속성 값으로 돌리며 진단을 새 로드로 확정합니다. 같은 처리기의 속성 갱신은 예약된 렌더의 커밋에서 재대조하여 실제로 달라졌으면 독립된 reset 진입으로 다시 로드하고, 언마운트된 폼의 재대조는 버립니다(WRITE-044·045).
 
+- 각 Context 모듈은 Context 객체와 Provider를 `components/`, 소비 훅을 `hooks/`, 그 밖의 보조를 `utils/`에 두고 `index.ts`가 이름으로 내보냅니다(원장 결정 D3). 뿌리에는 문서·진입점·형 동반 파일(`type.ts`)만 둡니다(filid zero-peer-file).
+
 ## Acceptance Criteria
 
 ### providers-contract — 관찰 가능한 동작

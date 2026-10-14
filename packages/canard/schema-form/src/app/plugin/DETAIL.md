@@ -18,6 +18,8 @@
 - 렌더 키트와 Form 속성은 `FieldRenderer`·`FormLabelRenderer`·`FormInputRenderer`·`FormErrorRenderer` 이름을 공유하며, 입력·그룹 props도 그룹 렌더러를 `FieldRenderer`로 부릅니다(LANDING-035·067, SURFACE-002).
 - 검증기와 플러그인 검증 계약의 구조적 일치는 `__tests__/validatorConformance.test.ts`가, 검증기의 수명 유지와 가드 읽기는 `core/engine/validation/__tests__/validation.retain-guard.test.ts`가 검증합니다. 동기 가드 읽기는 validation 내부에서 소비하며 core·engine 집계 진입점은 재수출하지 않습니다.
 
+- `PluginManager`·`registerPlugin`은 `utils/`에 있습니다. 뿌리에는 문서·진입점·형 동반 파일(`type.ts`)만 둡니다(filid zero-peer-file).
+
 ## Acceptance Criteria
 
 ### plugin-contract — 관찰 가능한 동작

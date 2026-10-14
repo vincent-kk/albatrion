@@ -9,6 +9,8 @@
 - 두 제어값이 같으면 memoized Context 객체를 유지합니다.
 - Provider 없는 기본값은 제어를 강제하지 않으며 입력 소비자는 전체 값과 노드별 값을 OR로 결합합니다.
 
+- Context 객체와 Provider는 `components/`, 소비 훅은 `hooks/`에 있습니다. 뿌리에는 문서·진입점·형 동반 파일(`type.ts`)만 둡니다(filid zero-peer-file).
+
 ## Acceptance Criteria
 
 ### input-control-context-contract — 관찰 가능한 동작

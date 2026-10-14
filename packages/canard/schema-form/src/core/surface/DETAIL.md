@@ -99,6 +99,8 @@
 | `observeFieldNodeReports(root, deliver)`                      | core 오류 관찰자 범위에서 전달을 실행하고 중첩·예외에도 이전 범위를 복원합니다                                                                                            | ERROR-113, 69C-01         |
 | `interpretFieldNodeDraft(node, draft)`                        | 현재 유효 타입 목록으로 기존 순수 해석기를 호출하여 값과 멤버 여부를 쓰기 없이 돌려줍니다                                                                                 | REACT-033, 69C-01         |
 
+- 런타임 노드 클래스 `FieldNode`는 `classes/FieldNode.ts`에 있습니다. 뿌리에는 문서·진입점·형 동반 파일(`type.ts`)만 둡니다(filid zero-peer-file).
+
 ## Acceptance Criteria
 
 ### surface-members — 정확한 겉면

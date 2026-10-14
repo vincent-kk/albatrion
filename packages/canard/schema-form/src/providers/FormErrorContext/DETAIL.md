@@ -10,6 +10,8 @@ The context supplies the latest consumer, object-identity deduplication, per-loa
 
 필드 보고 훅은 path를 인자로 받고 렌더 때 현재 보고기를 읽습니다. undefined는 루트 경계이며 pendingLoad 처리도 유지합니다. 경로 문맥은 DeferredFieldProxy의 Placeholder만 사용하고 전용 훅이 이를 명시적 path 보고 훅에 연결합니다(ERROR-044·114, 121C-01). 필드마다 문맥 구독과 Provider를 보유하지 않으며 콜백은 보고기와 path가 같으면 같은 참조입니다.
 
+- Context 객체(`FormErrorContext`·`FormErrorPathContext`)와 Provider는 `components/`, 훅(`useFormErrorContext`·`useBoundaryReporter`·`usePlaceholderBoundaryReporter`)은 `hooks/`, 호스트 보고 보조 `reportErrorToHost`는 `utils/`에 있습니다. 뿌리에는 문서·진입점·형 동반 파일(`type.ts`)만 둡니다(filid zero-peer-file).
+
 ## Acceptance Criteria
 
 ### reporting — Single isolated error report

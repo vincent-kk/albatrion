@@ -44,6 +44,8 @@
 - `focus(path?)`·`select(path?)`·`refresh(path?)`·`remount(path?)`는 해당 노드의 `request(kind)`를 호출합니다. 경로가 없으면 루트이고 지정 경로의 노드가 없으면 무동작입니다(EVENT-063·073, SURFACE-059).
 - `submit`은 `getTrackableHandler`로 감싸여 진행 상태를 추적할 수 있다.
 
+- 위계: 공개 조각 다섯(`FormRender`·`FormField`·`FormLabel`·`FormInput`·`FormError`)은 `components/`, 폼 뿌리 조립(`FormRoot`·`FormRootProxy`·`FormChildrenRenderer`)은 `root/`, 보조(`createChildren`·`submitForm`)는 `utils/`에 있습니다. `Form.tsx`는 `./root/FormRoot`를 렌더합니다. 뿌리에는 문서·진입점·형 동반 파일(`type.ts`)만 둡니다(filid zero-peer-file).
+
 ## Acceptance Criteria
 
 ### reset-options — 로드별 자동 쓰기 억제

@@ -11,6 +11,8 @@
 - 인라인과 preferred 입력도 공유하는 사설 어댑터가 해석 지점에서 ErrorBoundary를 한 번 적용하고, 렌더 때 입력 props의 path로 폼 보고기를 읽습니다. memo 입력 감싸개가 적용 세대를 직접 소비하여 별도 generation 전달 컴포넌트를 만들지 않습니다. 경계의 수명은 Refresh 세대와 독립적이며, 경계의 직접 자식인 원본 입력만 바인딩이 전달한 적용 세대로 key를 변경합니다. 적용 세대는 내부 props에만 존재하며 사용자 입력과 공개 입력 타입에는 노출하지 않습니다(EVENT-039·070, 112C-01, 121C-01 F-B).
 - 객체형 테스트를 함수로 변환하며 wildcard 경로는 세그먼트 규칙으로 매칭합니다.
 
+- 정규화 함수(`normalizeFieldInputDefinitions`·`normalizeFieldInputMap`)는 `utils/`, 경로 정규식 상수는 `constants/regex.ts`에 있습니다. 뿌리에는 문서·진입점·형 동반 파일(`type.ts`)만 둡니다(filid zero-peer-file).
+
 ## Acceptance Criteria
 
 ### form-type-input-definition-contract — 관찰 가능한 동작
