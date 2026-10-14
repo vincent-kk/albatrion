@@ -1,28 +1,11 @@
-import {
-  type ComponentType,
-  type PropsWithChildren,
-  type ReactNode,
-  memo,
-} from 'react';
+import { type ComponentType, type ReactNode, memo } from 'react';
 
 import { useConstant, useReference } from '@winglet/react-utils/hook';
 
-import type { Dictionary } from '@aileron/declare';
-
 import { FieldProxy } from '@/schema-form/components/Field';
-import type {
-  AllowedValue,
-  ChildFieldProps,
-  FieldInputProps,
-  FieldRendererProps,
-} from '@/schema-form/types';
+import type { AllowedValue, FieldInputProps } from '@/schema-form/types';
 
-export type FormFieldProps<Value extends AllowedValue> = {
-  path?: string;
-  FieldInput?: ComponentType<FieldInputProps<Value>>;
-  FieldRenderer?: ComponentType<FieldRendererProps>;
-  Wrapper?: ComponentType<PropsWithChildren<Dictionary>>;
-} & ChildFieldProps;
+import type { FormFieldProps } from './type';
 
 /**
  * Renders a complete form field group with customizable input and renderer components.

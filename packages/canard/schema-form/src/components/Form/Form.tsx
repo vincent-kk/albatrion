@@ -1,39 +1,144 @@
-import { type ForwardedRef, type ReactNode, forwardRef, memo } from 'react';
-
-import { withErrorBoundaryForwardRef } from '@winglet/react-utils/hoc';
-
 import {
-  FormErrorContextProvider,
-  useBoundaryReporter,
-} from '@/schema-form/providers/FormErrorContext';
-import type {
-  AllowedValue,
-  InferValueType,
-  JSONSchema,
-} from '@/schema-form/types';
+  FormCore,
+  FormError,
+  FormField,
+  FormInput,
+  FormLabel,
+  FormRender,
+} from './components';
 
-import { FormRoot } from './root/FormRoot';
-import type { FormHandle, FormProps } from './type';
+/**
+ * Schema-driven form system with JSON Schema validation and dynamic UI composition.
+ *
+ * Provides a complete form solution including automatic field generation, validation,
+ * error handling, and flexible UI customization. Built on JSON Schema standards for
+ * universal compatibility and type safety.
+ *
+ * ### Usage Patterns
+ *
+ * **Basic Schema-Driven Form:**
+ * ```typescript
+ * const schema = {
+ *   type: 'object',
+ *   properties: {
+ *     name: { type: 'string', minLength: 2 },
+ *     age: { type: 'number', minimum: 0 }
+ *   }
+ * };
+ *
+ * <Form
+ *   jsonSchema={schema}
+ *   onChange={setValue}
+ *   onSubmit={handleSubmit}
+ * />
+ * ```
+ *
+ * **Custom Layout with Composition:**
+ * ```typescript
+ * <Form jsonSchema={schema}>
+ *   <div className="form-row">
+ *     <Form.Label path="/name" />
+ *     <Form.Input path="/name" />
+ *     <Form.Error path="/name" />
+ *   </div>
+ * </Form>
+ * ```
+ *
+ * **Dynamic UI with Function Children:**
+ * ```typescript
+ * <Form jsonSchema={schema}>
+ *   {({ value, errors }) => (
+ *     <>
+ *       <Form.Input path="/email" />
+ *       {value?.email && <Form.Input path="/password" />}
+ *       {errors?.length > 0 && <ErrorSummary errors={errors} />}
+ *     </>
+ *   )}
+ * </Form>
+ * ```
+ *
+ * ### Component References
+ *
+ * For detailed documentation with comprehensive examples and API details:
+ * - **Form main component**: See {@link BaseFrom} export
+ * - **Form.Render**: See {@link FormRender} export - Custom rendering with full control
+ * - **Form.Field**: See {@link FormField} export - Grouped field with label and input
+ * - **Form.Label**: See {@link FormLabel} export - Field label rendering
+ * - **Form.Input**: See {@link FormInput} export - Field input rendering
+ * - **Form.Error**: See {@link FormError} export - Field error rendering
+ *
+ * ### Design Philosophy
+ *
+ * This schema-driven approach provides multiple benefits:
+ * - **Type Safety**: Full TypeScript support with schema type inference
+ * - **Validation**: Built-in JSON Schema validation with customizable rules
+ * - **Flexibility**: From automatic generation to complete custom layouts
+ * - **Composition**: Mix and match components for any UI requirement
+ * - **Performance**: Optimized re-rendering with fine-grained updates
+ */
+export const Form = Object.assign(FormCore, {
+  /**
+   * Renders form fields with custom rendering function.
+   *
+   * Provides complete control over field rendering while maintaining
+   * schema validation and state management.
+   *
+   * **For comprehensive documentation and examples, see:** {@link FormRender}
+   *
+   * @param props - FormRender properties including path and render function
+   * @returns Custom rendered form field
+   */
+  Render: FormRender,
 
-/** Root boundary is inside the instance reporter so fallback does not retire reporting. */
-const BoundedForm = withErrorBoundaryForwardRef(
-  forwardRef(FormRoot),
-  undefined,
-  useBoundaryReporter,
-);
+  /**
+   * Renders a complete form field group with label, input, and error.
+   *
+   * Combines FieldInput and FieldRenderer for a complete field experience
+   * with customizable wrapper and override properties.
+   *
+   * **For comprehensive documentation and examples, see:** {@link FormField}
+   *
+   * @param props - FormField properties including path and customization options
+   * @returns Complete form field group
+   */
+  Field: FormField,
 
-/** Render a schema-driven form with an instance reporter and current-root imperative handle. */
-export const Form = memo(
-  forwardRef<FormHandle, FormProps>((props, ref) => (
-    <FormErrorContextProvider onError={props.onError}>
-      <BoundedForm {...props} ref={ref} />
-    </FormErrorContextProvider>
-  )),
-) as <
-  Schema extends JSONSchema,
-  Value extends AllowedValue = InferValueType<Schema>,
->(
-  props: FormProps<Schema, Value> & {
-    ref?: ForwardedRef<FormHandle<Schema, Value>>;
-  },
-) => ReactNode;
+  /**
+   * Renders a form field label.
+   *
+   * Automatically generates accessible labels from schema with proper
+   * for/id associations and customizable styling.
+   *
+   * **For comprehensive documentation and examples, see:** {@link FormLabel}
+   *
+   * @param props - FormLabel properties including path and styling
+   * @returns Label element for form field
+   */
+  Label: FormLabel,
+
+  /**
+   * Renders a form field input.
+   *
+   * Automatically selects appropriate input type based on schema
+   * with full validation and state management integration.
+   *
+   * **For comprehensive documentation and examples, see:** {@link FormInput}
+   *
+   * @param props - FormInput properties including path and overrides
+   * @returns Input element for form field
+   */
+  Input: FormInput,
+
+  /**
+   * Renders form field validation errors.
+   *
+   * Displays validation messages with customizable formatting
+   * and conditional visibility based on field state.
+   *
+   * **For comprehensive documentation and examples, see:** {@link FormError}
+   *
+   * @param props - FormError properties including path and styling
+   * @returns Error message element
+   */
+  Error: FormError,
+});
