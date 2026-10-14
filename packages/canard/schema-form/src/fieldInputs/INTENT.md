@@ -7,7 +7,7 @@ JSON Schema 타입과 속성에 따라 렌더링할 React 입력 컴포넌트를
 ## Conventions
 
 - 배열 순서가 매칭 우선순위: 앞쪽이 높은 우선순위 (DateFormat > Checkbox > Radio > Enum > Virtual > Array > Object > Boolean > String > Number)
-- 각 파일은 `Definition` suffix로 named export (`FieldInputStringDefinition` 등)
+- 입력마다 `fieldInputDefinitions/<이름>/` fractal 하나이며, 그 진입점 `index.ts`가 `Definition` suffix 정의(`FieldInputStringDefinition` 등)를 만들어 이름으로 내보냄. 뿌리 `index.tsx`는 그 진입점들을 순서대로 조립만 함
 - `test` 조건: 객체 형태 `{ type, format, nullable }` 또는 함수 `(hint) => boolean`
 - 컴포넌트는 `FieldInputProps` 인터페이스 구현
 
@@ -15,7 +15,7 @@ JSON Schema 타입과 속성에 따라 렌더링할 React 입력 컴포넌트를
 
 ### Always do
 
-- 새 정의 추가 시 `index.tsx` 배열에서 적절한 우선순위 위치에 삽입
+- 새 정의는 `fieldInputDefinitions/` 아래 fractal(INTENT·DETAIL·`index.ts`·컴포넌트)로 만들고 `index.tsx` 배열의 적절한 우선순위 위치에 삽입
 - `test` 조건은 최대한 구체적으로 작성하여 의도치 않은 매칭 방지
 - 각 컴포넌트는 `value`, `onChange`, `node`, `errors` props를 올바르게 처리
 
