@@ -1,7 +1,7 @@
 // NODE-058, SURFACE-059, REACT-032, GOAL-088: checked by the package tsc command.
 import { expectTypeOf } from 'vitest';
 
-import type { AuthoredSchema, Validator } from '../../core/index';
+import type { AuthoredSchema, Validator } from '../../core';
 import { FieldNodeEventType, ValidationMode, isUnionNode } from '../../index';
 import type {
   FieldInputHint,
@@ -108,7 +108,7 @@ type RemovedError = import('../../index').JSONSchemaError;
 // @ts-expect-error nodeFromJSONSchema is an internal surface helper.
 type RemovedHostEntry = typeof import('../../index').nodeFromJSONSchema;
 // @ts-expect-error nodeFromJSONSchema is not exported by core.
-type RemovedCoreEntry = typeof import('../../core/index').nodeFromJSONSchema;
+type RemovedCoreEntry = typeof import('../../core').nodeFromJSONSchema;
 // @ts-expect-error buildFieldNodeTree is binding-only.
 type RemovedBindingEntry = typeof import('../../index').buildFieldNodeTree;
 expectTypeOf<RemovedError>().toBeAny();

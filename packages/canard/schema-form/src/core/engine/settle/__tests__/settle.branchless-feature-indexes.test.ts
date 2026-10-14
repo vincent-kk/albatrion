@@ -9,7 +9,8 @@ import {
 import { getDeriveRuleTable } from '../derive';
 import { getDependencyIndex } from '../utils/write/getDependencyIndex';
 
-describe('branchless and generic observable equivalence', () => {
+// filid:contract settle-branchless-feature-indexes
+describe('branchless feature indexes and empty rule tables', () => {
   it('builds derive/watch/state and reverse dependencies independently of branch absence', () => {
     const root = nodeFromJSONSchema({
       validationMode: 0,

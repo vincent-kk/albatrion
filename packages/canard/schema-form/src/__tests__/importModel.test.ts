@@ -3,7 +3,7 @@
  * U: importing an owner's or ancestor's own index is forbidden.
  * D: descendant fractals are reached only through the topmost child fractal index.
  * S1: non-lineage fractals are reached through their own index, never internals.
- * Index retention: exported names have product consumers outside their owner's subtree.
+ * Index retention: exported names have product consumers outside their owner's subtree (stated, not asserted here).
  * D7: public-API tests under __tests__/e2e, scenarios and migration may read the root index.
  * O and deeper non-lineage index re-exports are outside these assertions.
  */
@@ -94,7 +94,7 @@ function findOwner(file: string, fractals: ReadonlySet<string>): string {
 }
 
 /**
- * Reads the four literal import forms recognized by lineage.cjs.
+ * Reads literal import/export declarations, string dynamic import() and import type nodes.
  * @param file - Existing TS or TSX file, parsed without type checking.
  * @returns Specifiers and their one-based declaration lines, including type-only edges.
  */
@@ -140,7 +140,7 @@ function readImports(file: string): { specifier: string; line: number }[] {
 }
 
 /**
- * Reproduces lineage.cjs's U, D and S1 classification for one resolved edge.
+ * Classifies one resolved edge under the U, D and S1 rules.
  * @param importer - Absolute source file path inside src.
  * @param target - Absolute resolved target inside src, including JSON fixtures.
  * @param fractals - Contract directories defining the model's owner tree.

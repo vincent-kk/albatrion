@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 
 import { isTestFieldNode } from '@/schema-form/core/__tests__/fixtures/testFieldNode';
-import type { TestFieldNode as FieldNode } from '@/schema-form/core/__tests__/fixtures/testFieldNode';
+import type { TestFieldNode } from '@/schema-form/core/__tests__/fixtures/testFieldNode';
 import { makeFieldNodeTree } from '@/schema-form/core/__tests__/makeFieldNodeTree';
 import { WriteOption } from '@/schema-form/core/engine/types/value';
 
@@ -27,7 +27,11 @@ describe('49C-01 snapshot alignment matches sequential writes', () => {
     const sparse: { x: string[] }[] = [];
     sparse[1] = { x: ['1'] };
     sparse[2] = { x: [] };
-    loadFieldNodeAtMount<FieldNode>(root, { a: sparse }, WriteOption.Overwrite);
+    loadFieldNodeAtMount<TestFieldNode>(
+      root,
+      { a: sparse },
+      WriteOption.Overwrite,
+    );
     root.setValue({ a: [{ x: [] }, { x: ['1', '2'] }] });
     expect(Object.keys(root.find('/a')!.defaultValue as unknown[])).toEqual([
       '0',
@@ -47,7 +51,7 @@ describe('49C-01 snapshot alignment matches sequential writes', () => {
       },
     });
     if (!isTestFieldNode(root)) throw new Error('Expected a runtime FieldNode');
-    loadFieldNodeAtMount<FieldNode>(root, [], WriteOption.Overwrite);
+    loadFieldNodeAtMount<TestFieldNode>(root, [], WriteOption.Overwrite);
     root.setValue([{ tags: ['x'], sub: ['y', 'z'] }]);
     expect(
       Object.keys((root.defaultValue as Record<string, unknown>[])[0]),
@@ -71,7 +75,7 @@ describe('49C-01 snapshot alignment matches sequential writes', () => {
       },
     });
     if (!isTestFieldNode(root)) throw new Error('Expected a runtime FieldNode');
-    loadFieldNodeAtMount<FieldNode>(root, [], WriteOption.Overwrite);
+    loadFieldNodeAtMount<TestFieldNode>(root, [], WriteOption.Overwrite);
     root.setValue({ rows: [{ list: ['a'] }, { list: [] }] });
     root.setValue({ rows: [{ list: ['a', 'b'] }, { list: ['c'] }] });
     expect(Array.isArray(root.find('/rows')!.defaultValue)).toBe(true);
@@ -86,7 +90,7 @@ describe('49C-01 snapshot alignment matches sequential writes', () => {
       },
     });
     if (!isTestFieldNode(root)) throw new Error('Expected a runtime FieldNode');
-    loadFieldNodeAtMount<FieldNode>(root, [], WriteOption.Overwrite);
+    loadFieldNodeAtMount<TestFieldNode>(root, [], WriteOption.Overwrite);
     root.setValue({ rows: ['x'], xa: ['y', 'z'] });
     expect(root.find('/rows')!.defaultValue).toBeUndefined();
   });
