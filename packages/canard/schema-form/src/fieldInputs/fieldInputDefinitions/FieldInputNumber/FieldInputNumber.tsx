@@ -2,12 +2,10 @@ import { type ChangeEvent } from 'react';
 
 import { useHandle } from '@winglet/react-utils/hook';
 
-import type {
-  FieldInputDefinition,
-  FieldInputProps,
-} from '@/schema-form/types';
+import type { FieldInputProps } from '@/schema-form/types';
 
-const FieldInputNumber = ({
+/** Render a number input whose empty field writes undefined and whose bad input stays a draft. */
+export const FieldInputNumber = ({
   path,
   name,
   jsonSchema,
@@ -60,8 +58,3 @@ const FieldInputNumber = ({
     />
   );
 };
-
-export const FieldInputNumberDefinition = {
-  Component: FieldInputNumber,
-  test: { type: 'number' },
-} satisfies FieldInputDefinition;

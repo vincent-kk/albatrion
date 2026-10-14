@@ -2,32 +2,11 @@ import { type ChangeEvent, useState } from 'react';
 
 import { useHandle } from '@winglet/react-utils/hook';
 
-import type {
-  FieldInputDefinition,
-  FieldInputPropsWithSchema,
-  StringSchema,
-} from '@/schema-form/types';
+import type { FieldInputDateFormatProps } from './type';
+import { isRenderableDateInputValue } from './utils/isRenderableDateInputValue';
 
-import {
-  type DateInputType,
-  isRenderableDateInputValue,
-} from './utils/isRenderableDateInputValue';
-
-type DateFormatJSONSchema = {
-  format: DateInputType;
-} & StringSchema;
-
-type FieldInputDateFormatProps = FieldInputPropsWithSchema<
-  string | null,
-  DateFormatJSONSchema
-> & {
-  /** Earliest allowed value, from `presentation.FieldInputProps.minimum`. */
-  minimum?: string;
-  /** Latest allowed value, from `presentation.FieldInputProps.maximum`. */
-  maximum?: string;
-};
-
-const FieldInputDateFormat = ({
+/** Render a native date, month, week, time or datetime-local input, falling back to text for an unrenderable default. */
+export const FieldInputDateFormat = ({
   path,
   name,
   jsonSchema,
@@ -64,11 +43,3 @@ const FieldInputDateFormat = ({
     />
   );
 };
-
-export const FieldInputDateFormatDefinition = {
-  Component: FieldInputDateFormat,
-  test: {
-    type: 'string',
-    format: ['month', 'week', 'date', 'time', 'datetime-local'],
-  },
-} satisfies FieldInputDefinition;

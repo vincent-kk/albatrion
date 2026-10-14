@@ -4,16 +4,13 @@ import { isArray } from '@winglet/common-utils/filter';
 import { useHandle } from '@winglet/react-utils/hook';
 
 import { interpretFieldNodeDraft } from '@/schema-form/core';
-import type {
-  FieldInputDefinition,
-  FieldInputProps,
-} from '@/schema-form/types';
+import type { FieldInputProps } from '@/schema-form/types';
 
-import { FieldInputString } from '../FieldInputString/FieldInputString';
+import { FieldInputString } from '../FieldInputString';
 import { readUnionDisplay } from './utils/readUnionDisplay';
 
 /** Wrap the string fallback with a local draft interpreted only against live union types. */
-const FieldInputUnion = (props: FieldInputProps) => {
+export const FieldInputUnion = (props: FieldInputProps) => {
   const { node, value, nullable, schemaType, jsonSchema, typeMismatch } = props;
   const display = useMemo(
     () => readUnionDisplay(value, nullable),
@@ -98,9 +95,3 @@ const FieldInputUnion = (props: FieldInputProps) => {
     </>
   );
 };
-
-/** Match every union at the ordinary string fallback's priority. */
-export const FieldInputUnionDefinition = {
-  Component: FieldInputUnion,
-  test: { type: 'union' },
-} satisfies FieldInputDefinition;

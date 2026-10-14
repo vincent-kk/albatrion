@@ -2,12 +2,10 @@ import { Fragment, useMemo } from 'react';
 
 import { map } from '@winglet/common-utils/array';
 
-import type {
-  FieldInputDefinition,
-  FieldInputProps,
-} from '@/schema-form/types';
+import type { FieldInputProps } from '@/schema-form/types';
 
-const FieldInputObject = ({ ChildFields }: FieldInputProps<object>) => {
+/** Render an object node's child fields in order. */
+export const FieldInputObject = ({ ChildFields }: FieldInputProps<object>) => {
   const children = useMemo(() => {
     return ChildFields
       ? map(ChildFields, (ChildField) => <ChildField key={ChildField.key} />)
@@ -16,8 +14,3 @@ const FieldInputObject = ({ ChildFields }: FieldInputProps<object>) => {
 
   return <Fragment>{children}</Fragment>;
 };
-
-export const FieldInputObjectDefinition = {
-  Component: FieldInputObject,
-  test: { type: 'object' },
-} satisfies FieldInputDefinition;

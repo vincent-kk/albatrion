@@ -7,7 +7,7 @@ import { afterEach, expect, it, vi } from 'vitest';
 import { nodeFromJSONSchema } from '@/schema-form/__tests__/fixtures/nodeFromJSONSchema';
 import { Form, type FormHandle } from '@/schema-form/components/Form';
 
-import { FieldInputArrayDefinition } from '../FieldInputArray';
+import { FieldInputArray } from '../FieldInputArray';
 
 afterEach(() => {
   cleanup();
@@ -65,7 +65,7 @@ it('rebuilds array controls for structure, disabled, readOnly and schema changes
 });
 
 it('skips list rendering for value-only props and observes style and schema props', () => {
-  const Component = FieldInputArrayDefinition.Component;
+  const Component = FieldInputArray;
   const schema = { type: 'array' as const, items: { type: 'string' as const } };
   const node = nodeFromJSONSchema({ jsonSchema: schema, defaultValue: ['a'] });
   const child = vi.fn(() => <span>child</span>);

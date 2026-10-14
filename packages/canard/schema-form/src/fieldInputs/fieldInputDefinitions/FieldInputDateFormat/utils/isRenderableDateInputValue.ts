@@ -1,10 +1,4 @@
-/** Native HTML input types whose value grammar this check knows. */
-export type DateInputType =
-  | 'date'
-  | 'month'
-  | 'week'
-  | 'time'
-  | 'datetime-local';
+import type { DateInputType } from '../type';
 
 /** HTML time components with optional seconds and one to three fractional digits. */
 const TIME_PATTERN =

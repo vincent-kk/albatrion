@@ -1,27 +1,14 @@
-import { type ChangeEvent, type ReactNode, useMemo } from 'react';
+import { type ChangeEvent, useMemo } from 'react';
 
 import { map } from '@winglet/common-utils/array';
-import { isStringSchema } from '@winglet/json-schema/filter';
 import { useHandle } from '@winglet/react-utils/hook';
 
-import type {
-  ArraySchema,
-  FieldInputDefinition,
-  FieldInputPropsWithSchema,
-  StringSchema,
-} from '@/schema-form/types';
+import type { FieldInputPropsWithSchema } from '@/schema-form/types';
 
-type StringCheckboxJSONSchema = {
-  items: StringSchema;
-} & ArraySchema;
+import type { CheckboxLabelsContext, StringCheckboxJSONSchema } from './type';
 
-type CheckboxLabelsContext = {
-  checkboxLabels?: {
-    [label: string]: ReactNode;
-  };
-};
-
-const FieldInputStringCheckbox = ({
+/** Render a checkbox per enum choice of a string-array node. */
+export const FieldInputStringCheckbox = ({
   path,
   name,
   jsonSchema,
@@ -85,12 +72,3 @@ const FieldInputStringCheckbox = ({
     </div>
   );
 };
-
-export const FieldInputStringCheckboxDefinition = {
-  Component: FieldInputStringCheckbox,
-  test: ({ type, inputType, jsonSchema }) =>
-    type === 'array' &&
-    inputType === 'checkbox' &&
-    isStringSchema(jsonSchema.items) &&
-    !!jsonSchema.items?.enum?.length,
-} satisfies FieldInputDefinition;

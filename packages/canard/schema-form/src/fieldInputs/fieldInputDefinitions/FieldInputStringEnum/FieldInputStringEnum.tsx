@@ -1,21 +1,17 @@
-import { type ChangeEvent, type ReactNode, useMemo } from 'react';
+import { type ChangeEvent, useMemo } from 'react';
 
 import { map } from '@winglet/common-utils/array';
 import { useHandle } from '@winglet/react-utils/hook';
 
 import type {
-  FieldInputDefinition,
   FieldInputPropsWithSchema,
   StringSchema,
 } from '@/schema-form/types';
 
-type EnumLabelsContext = {
-  enumLabels?: {
-    [label: string]: ReactNode;
-  };
-};
+import type { EnumLabelsContext } from './type';
 
-const FieldInputStringEnum = ({
+/** Render a select for a string enum node. */
+export const FieldInputStringEnum = ({
   path,
   name,
   jsonSchema,
@@ -88,9 +84,3 @@ const FieldInputStringEnum = ({
     </select>
   );
 };
-
-export const FieldInputStringEnumDefinition = {
-  Component: FieldInputStringEnum,
-  test: ({ type, jsonSchema }) =>
-    type === 'string' && !!jsonSchema.enum?.length,
-} satisfies FieldInputDefinition;

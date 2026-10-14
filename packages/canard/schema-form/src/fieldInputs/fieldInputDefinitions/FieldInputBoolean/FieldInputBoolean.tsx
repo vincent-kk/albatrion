@@ -2,12 +2,10 @@ import { type ChangeEvent, useLayoutEffect, useRef } from 'react';
 
 import { useHandle } from '@winglet/react-utils/hook';
 
-import type {
-  FieldInputDefinition,
-  FieldInputProps,
-} from '@/schema-form/types';
+import type { FieldInputProps } from '@/schema-form/types';
 
-const FieldInputBoolean = ({
+/** Render a boolean node as a checkbox; a non-boolean value shows as indeterminate. */
+export const FieldInputBoolean = ({
   path,
   name,
   readOnly,
@@ -39,8 +37,3 @@ const FieldInputBoolean = ({
     />
   );
 };
-
-export const FieldInputBooleanDefinition = {
-  Component: FieldInputBoolean,
-  test: { type: 'boolean' },
-} satisfies FieldInputDefinition;

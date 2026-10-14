@@ -1,21 +1,17 @@
-import { type ChangeEvent, type ReactNode, useMemo } from 'react';
+import { type ChangeEvent, useMemo } from 'react';
 
 import { map } from '@winglet/common-utils/array';
 import { useHandle } from '@winglet/react-utils/hook';
 
 import type {
-  FieldInputDefinition,
   FieldInputPropsWithSchema,
   StringSchema,
 } from '@/schema-form/types';
 
-type RadioLabelsContext = {
-  radioLabels?: {
-    [label: string]: ReactNode;
-  };
-};
+import type { RadioLabelsContext } from './type';
 
-const FieldInputStringRadio = ({
+/** Render a radio group for a string enum node. */
+export const FieldInputStringRadio = ({
   path,
   name,
   jsonSchema,
@@ -76,11 +72,3 @@ const FieldInputStringRadio = ({
     </span>
   );
 };
-
-export const FieldInputStringRadioDefinition = {
-  Component: FieldInputStringRadio,
-  test: ({ type, inputType, jsonSchema }) =>
-    type === 'string' &&
-    (inputType === 'radio' || inputType === 'radiogroup') &&
-    !!jsonSchema.enum?.length,
-} satisfies FieldInputDefinition;

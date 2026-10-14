@@ -2,12 +2,10 @@ import { Fragment } from 'react';
 
 import { map } from '@winglet/common-utils/array';
 
-import type {
-  FieldInputDefinition,
-  FieldInputProps,
-} from '@/schema-form/types';
+import type { FieldInputProps } from '@/schema-form/types';
 
-const FieldInputVirtual = ({ ChildFields }: FieldInputProps<object>) => {
+/** Render a virtual node's referenced child fields in order. */
+export const FieldInputVirtual = ({ ChildFields }: FieldInputProps<object>) => {
   return (
     <Fragment>
       {ChildFields &&
@@ -15,8 +13,3 @@ const FieldInputVirtual = ({ ChildFields }: FieldInputProps<object>) => {
     </Fragment>
   );
 };
-
-export const FieldInputVirtualDefinition = {
-  Component: FieldInputVirtual,
-  test: { type: 'virtual' },
-} satisfies FieldInputDefinition;

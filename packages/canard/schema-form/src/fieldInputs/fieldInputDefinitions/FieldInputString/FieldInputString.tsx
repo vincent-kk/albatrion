@@ -2,10 +2,7 @@ import { type ChangeEvent, type ComponentPropsWithRef, useMemo } from 'react';
 
 import { useHandle } from '@winglet/react-utils/hook';
 
-import type {
-  FieldInputDefinition,
-  FieldInputProps,
-} from '@/schema-form/types';
+import type { FieldInputProps } from '@/schema-form/types';
 
 /** Render the common string input; binding wrappers may supply native draft handlers. */
 export const FieldInputString = ({
@@ -54,9 +51,3 @@ export const FieldInputString = ({
     />
   );
 };
-
-/** Match the ordinary string fallback after more specific definitions. */
-export const FieldInputStringDefinition = {
-  Component: FieldInputString,
-  test: { type: 'string' },
-} satisfies FieldInputDefinition;
