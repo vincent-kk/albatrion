@@ -15,6 +15,9 @@
 
 ### 이름 붙은 진입점
 
+- `FieldNodeEvent`는 내부 배달 형이며 write index가 내보내지 않습니다. 외부 구독자는 공개 `FieldNodeListener` 계약을 사용합니다. 시험 트리 생성 fixture는 engine 층의 공용 시험 구획이 소유합니다.
+- `dispatch.nan-delivery.test.ts`는 write 배달을 검증하며 watched object의 동일성 비교 단위 검증은 settle의 `isSameDeliveryValue` 소유 시험 구획이 담당합니다. `dispatch.source-path.test.ts`는 errors 진입점의 `FormErrorRecord`에서 상세 형을 유도합니다.
+
 - `dispatchPush`·`dispatchPop`·`dispatchUpdate`·`dispatchRemove`·`dispatchClear`는 같은 공개 쓰기 사슬로 들어가며 거부 시 `undefined`를 돌려줍니다. 배치 밖에서는 배열 정착의 동기 결과를 돌려주고, 배치 안에서는 `readBatchValue`의 앞선 표시를 얹은 배열에 행의 순수 계획을 적용하여 결과 배열을 Replace로 표시합니다. push는 결과 길이, pop·remove는 표시된 자리의 원본, update는 입력 값, clear는 `undefined`입니다. 잘못된 종류 값에는 push만 `[x]`를 표시하고 나머지는 무동작입니다. 비배열 호출은 사슬 끝에서 `ARRAY_METHOD_ON_NON_ARRAY`를 `surface: 'thrown'`으로 보고하고 던집니다. 배치 끝 정착은 통째 쓰기라 아이템 키는 위치로 잇고 정착·`onChange`는 한 번입니다. 비용은 배열 계획/복사 O(배열 길이), 앞선 표시 합성 비용이며 노드별 고정 칸은 늘리지 않습니다(33C-01, 35C-01, 62C-01, EVENT-035·061).
 
 - `dispatchSetValue(node, value, option?)`, `dispatchResetSubtree(node, option?)`, `dispatchResetForm(root, value, option?)`, `dispatchMount(root, value?, option?, { deferValidation? })`, `dispatchBatch(node, fn: () => void)`, `dispatchContextChange(root, context)`는 공개 쓰기 사슬을 엽니다. 폼 reset의 값은 `undefined`도 그대로 로드하는 필수 인자이며 이전 스냅숏을 다시 읽는 호출자는 그 값을 명시합니다. `dispatchBatch`의 중첩은 바깥 배치가 이기고, 함수가 던져도 표시된 쓰기를 정착·배달한 뒤 그 예외를 사슬 끝에서 드러냅니다. 쓰기가 둘 이상인 배치는 루트 한 번 정착으로 합치되 통째 교체 범위(잠복 원본 정리, whole 분배, 교체 나감 판정)는 표시된 경로의 합집합이고 얕은 Merge 표시는 받은 키의 자식 경로이므로, 쓰이지 않은 경로의 잠복 비활성 원본은 남습니다. 배치 안 가상 노드 표시는 합성 때 참조 필드 키로 펼쳐지므로(호출 순서대로, 나중 필드 쓰기가 앞선 가상 쓰기를 이김) 합성 루트 입력에 가상 키가 남지 않고, 덮어쓰기 가상 표시는 참조 형제 경로를 교체 범위에 더하며, 가상 대상의 updater는 참조 필드 튜플을 읽고, 틀린 모양은 단일 쓰기처럼 표시 시점에 `INVALID_VIRTUAL_NODE_VALUES`를 던집니다; 바인딩 입력(`dispatchWriteInput`)도 배치 안 표시이므로 틀린 가상 모양은 값 표시에서 던지고, 같은 진입의 외부 오류 지우기와 Dirty 표시는 일어나지 않습니다(EVENT-013–019·035·061, LANDING-064, 191C-01, 26C-10, R2).
@@ -66,4 +69,4 @@
 
 ## Last Updated
 
-계약 기준: 69C-01–03·05, REACT-009–011, WRITE-045·046·083·086.
+계약 기준: 69C-01–03·05, REACT-009–011, WRITE-045·046·083·086; 정돈-2(2026-10-14).

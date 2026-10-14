@@ -9,7 +9,6 @@
 - `createDivider(width = 50): string`은 너비만큼 `'─'`를 반복하여 진단 상자의 구분선을 만듭니다.
 - `getErrorMessage(error: unknown): string`은 `Error`이면 `message`, 아니면 `String(error ?? 'Unknown error')`를 반환합니다.
 - `formatValidationError(error: JSONSchemaError, node: FieldNode, context: Dictionary): ReactNode`는 `FormatError` 계약에 따라 스키마의 메시지 설정을 반영한 검증 메시지를 반환합니다.
-- 이름 함정: `formatValidationError/utils/getErrorMessage.ts`는 검증 오류의 키워드와 로케일로 메시지를 선택하는 다른 함수입니다.
 
 ## Acceptance Criteria
 
@@ -19,4 +18,4 @@
 
 ## Last Updated
 
-2026-10-14 — 정돈-1; VALIDATE-010, LANDING-115.
+2026-10-14 — 정돈-1; VALIDATE-010, LANDING-115; 정돈-2(2026-10-14).

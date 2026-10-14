@@ -8,6 +8,8 @@ schema-form의 경로 문자열은 RFC 6901의 루트·구분자·fragment 표�
 
 ## API Contracts
 
+`isAbsolutePath`·`isRelativePath`·`joinSegment`는 내부 경로 보조이며 이 fractal의 index가 내보내지 않습니다. 내부 시험은 각 구현을 직접 검증합니다.
+
 `JSONPointer.Index`는 `Wildcard`와 같은 값을 가지지만 폐기 예정인 별칭이다. 새 사용처는 `Wildcard`를 선택한다.
 
 `isAbsolutePath`는 슬래시로 시작하는 문자열과 URI fragment 형식인 “#/a/b”처럼 해시 다음에 슬래시가 오는 문자열만 참으로 판별한다. `isRelativePath`는 현재 또는 부모 표식 뒤에 슬래시가 바로 오는 문자열만 참으로 판별한다. 두 함수 모두 나머지 문자열의 포인터 문법까지 검증하지 않는다.
@@ -42,4 +44,4 @@ schema-form의 경로 문자열은 RFC 6901의 루트·구분자·fragment 표�
 
 ## Last Updated
 
-2026-09-27 — 경로 판별·상대 결합·폼 전용 루트 정규화의 현재 계약 명시
+2026-09-27 — 경로 판별·상대 결합·폼 전용 루트 정규화의 현재 계약 명시; 정돈-2(2026-10-14).

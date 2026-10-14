@@ -32,6 +32,9 @@
 
 ## API Contracts
 
+- `__tests__/scenarios`의 `effectiveList.test.ts`·`union.entry-two-step.test.ts`는 정착 선택과 union 진입의 통합 장면을 이 소유 구획에서 검증합니다. 공유 owned-inline 기준 데이터는 engine 공용 시험 fixture에서 읽습니다.
+- watched object의 동일성 비교는 `utils/commit/utils/__tests__/isSameDeliveryValue.test.ts`가 비교 함수의 소유 구획에서 검증합니다. write 배달 시험은 이 내부 단위를 직접 가져오지 않습니다.
+
 - 정착·자식 선택·제어 선언·배달의 배열 순회는 인덱스 `for`/`while`, 순서 집합과 맵은 `for...of`를 사용합니다. 게이트는 첫 거절에서 멈추며 선언/깊이/배달 순서와 같은 값의 참조는 유지합니다. 동일 자료의 filter→map과 flat 중간 배열을 제거해 O(N) 시간의 상수를 줄이고 임시 O(N) 메모리를 절감합니다. 정적 shape 검증은 완전 일치 확인 뒤 계산을 시작하므로 두 루프를 유지합니다(87라운드 원칙 3).
 
 - 첫 루트 load의 정적 경로는 기존 branchless capability와 선언 수집·형상 분석에서 얻은 내부 자격 증명을 사용합니다. 게이트·식·잠복·기존 커밋이 없는 유한 객체·배열·스칼라와 literal `default`만 처리하며 `DisableAutomaticWrites`를 같은 값 선택에 적용합니다. `controls.default`·virtual·재귀 배열·whole-value 전략·`controls.unsetValue`·`injectTo` 및 아직 증명하지 않은 호출자 입력은 노드 변경과 커밋 번호 예약 전에 범용 경로로 보냅니다. 자격 확정 뒤에만 범용 경로와 같은 번호 하나를 예약합니다(89C-01·02).
@@ -122,6 +125,10 @@
 - 전이 중 잠복 원본의 변경은 건드린 키의 직전 존재 여부와 값만 기록하고 메타데이터는 유지합니다. 잠복 맵이 바뀌면 자손 접두 메모를 무효화합니다. 원본 B를 만들 때 노드 자동 쓰기 로그 뒤에 이 기록을 되돌리고, 최종 형상에서 사라진 중간 채움을 회수한 뒤 형상을 다시 계산합니다. 종료한 선언의 잠복 자손은 해당 청사진 하위 경로만 방문합니다(SETTLE-005·011·047, WRITE-034).
 
 ## Acceptance Criteria
+
+### scenario-runner — 정착 선택과 union 진입 장면
+
+- 유효 목록의 정착·파생 반영과 union 진입의 두 단계 관측은 같은 코어 시나리오 실행기를 사용하며 단계별 값·형상·배달 단언을 유지합니다.
 
 ### settle-child-selection-metadata — 지연 후보 계획의 런타임 계수 (변경 1b)
 
@@ -276,4 +283,4 @@
 
 ## Last Updated
 
-2026-10-13. 계약 기준: 211C-01, settle-array-prefix, 191C-01, Q113, 69C-02–04, 72C-01, 82C-01, 89C-01, 90C-01, 92C-01–03, 97C-02, 98C-01, ERROR-019, WRITE-045·046·082·086·088, REACT-003·024, EVENT-039·071, SETTLE-005·049, BLUEPRINT-017·030.
+2026-10-13. 계약 기준: 211C-01, settle-array-prefix, 191C-01, Q113, 69C-02–04, 72C-01, 82C-01, 89C-01, 90C-01, 92C-01–03, 97C-02, 98C-01, ERROR-019, WRITE-045·046·082·086·088, REACT-003·024, EVENT-039·071, SETTLE-005·049, BLUEPRINT-017·030; 정돈-2(2026-10-14).
