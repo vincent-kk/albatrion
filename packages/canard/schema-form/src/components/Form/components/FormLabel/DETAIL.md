@@ -7,7 +7,7 @@
 ## API Contracts
 
 - `FormLabel.tsx`는 `memo` 컴포넌트입니다. `<label>`에 `style`·`className`·`htmlFor={path}`를 두고, `path`가 있으면 id `label:${path}`도 둡니다. 그 안에는 렌더러 문맥의 `FormLabelRenderer`로 그린 `FieldProxy`를 넣으며, 문맥에 없으면 `PluginManager.FormLabelRenderer`를 씁니다.
-- `type.ts`는 `FormLabelProps`(`path`·`style`·`className`)를 정의합니다.
+- `types/props.ts`는 `FormLabelProps`(`path`·`style`·`className`)를 정의합니다.
 
 ## Acceptance Criteria
 

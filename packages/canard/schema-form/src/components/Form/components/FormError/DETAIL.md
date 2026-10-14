@@ -7,7 +7,7 @@
 ## API Contracts
 
 - `FormError.tsx`는 `memo` 컴포넌트입니다. `<span>`에 `style`·`className`을 두고, 그 안에 `FieldProxy`를 그립니다. 이때 렌더러 문맥의 `FormErrorRenderer`를 쓰고, 없으면 `PluginManager.FormErrorRenderer`를 씁니다.
-- `type.ts`는 `FormErrorProps`(`path`·`style`·`className`)를 정의합니다.
+- `types/props.ts`는 `FormErrorProps`(`path`·`style`·`className`)를 정의합니다.
 
 ## Acceptance Criteria
 
