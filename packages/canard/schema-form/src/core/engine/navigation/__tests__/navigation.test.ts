@@ -2,7 +2,8 @@ import { describe, expect, it } from 'vitest';
 
 import { find } from '../utils/query/find';
 import { findNodes } from '../utils/query/findNodes';
-import { createNode } from './fixtures/createNode';
+import { walkFieldNodes } from '../utils/walk/walkFieldNodes';
+import { type TestNode, createNode } from './fixtures/createNode';
 
 // filid:contract navigation-shape
 describe('navigation over the committed shape', () => {
@@ -63,6 +64,17 @@ describe('navigation over the committed shape', () => {
     period.children = [startDate];
     expect(find(root, '/period/startDate')).toBe(startDate);
     expect(find(root, '/period/startDate')?.path).toBe('/startDate');
+  });
+
+  it('walks parents first and does not revisit alias instances', () => {
+    const root = createNode('');
+    const first = createNode('first', root);
+    const second = createNode('second', root);
+    second.structure = { first };
+    second.children = [first];
+    const visited: TestNode[] = [];
+    walkFieldNodes(root, (node) => visited.push(node));
+    expect(visited).toEqual([root, first, second]);
   });
 });
 
