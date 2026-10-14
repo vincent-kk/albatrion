@@ -69,7 +69,12 @@ const buildInstrumentedDefinitions = (
         id={props.path}
         type="number"
         data-mount={ordinal}
-        defaultValue={props.value ?? undefined}
+        defaultValue={
+          props.value == null ||
+          (typeof props.value === 'number' && !Number.isFinite(props.value))
+            ? undefined
+            : props.value
+        }
         onChange={(e) => props.onChange?.(e.target.valueAsNumber)}
       />
     );

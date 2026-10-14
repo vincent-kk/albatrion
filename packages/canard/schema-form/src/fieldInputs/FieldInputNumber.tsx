@@ -40,11 +40,20 @@ const FieldInputNumber = ({
       readOnly={readOnly}
       disabled={disabled}
       placeholder={placeholder}
-      defaultValue={defaultValue ?? undefined}
+      defaultValue={
+        defaultValue == null ||
+        (typeof defaultValue === 'number' && !Number.isFinite(defaultValue))
+          ? undefined
+          : defaultValue
+      }
       onChange={handleChange}
       onBlur={(event) => {
         if (event.target.validity.badInput)
-          event.target.value = value == null ? '' : String(value);
+          event.target.value =
+            value == null ||
+            (typeof value === 'number' && !Number.isFinite(value))
+              ? ''
+              : String(value);
       }}
       style={style}
       className={className}
