@@ -2,7 +2,7 @@
 
 ## Purpose
 
-`@canard/schema-form`이 여러 fractal에서 함께 쓰는 형(스키마·값·입력·렌더러·오류·주입 처리기)을 소유하는 fractal. 공개 형의 `Roll` 변환은 자식 fractal `rolled`가 맡는다.
+`@canard/schema-form`이 여러 fractal에서 함께 쓰는 형(스키마·값·입력·렌더러·오류·주입 처리기)을 소유하는 fractal. 공개 형의 `Roll` 변환은 형제 fractal `rolled`(`src/rolled`)가 맡는다.
 
 ## Conventions
 

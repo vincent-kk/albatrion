@@ -3,7 +3,7 @@
 ## Requirements
 
 - 형 파일 여섯(`error`·`fieldInput`·`fieldRenderer`·`injectTo`·`jsonSchema`·`value`)은 `types/` 칸에 있고, 진입점은 그 형과 `ShowError`를 이름 목록으로 내보냅니다.
-- 루트 `src/index.ts`는 이 fractal의 index와 자식 `rolled`의 index에서 공개 형을 이름으로 재수출합니다.
+- 루트 `src/index.ts`는 이 fractal의 index와 형제 `rolled`의 index에서 공개 형을 이름으로 재수출합니다. `rolled`는 이 fractal의 기반 형을 index로 가져와 `Roll` 표현을 만듭니다.
 
 ## API Contracts
 

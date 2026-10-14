@@ -1,4 +1,4 @@
-# schema-form/src/types/rolled
+# schema-form/src/rolled
 
 ## Purpose
 
@@ -8,7 +8,7 @@
 
 - 모든 타입은 `Roll<BaseType>` 으로 래핑하여 export
 - `type` 키워드만 사용 (`export type`, `import type`)
-- 기반 타입은 `Base*` prefix alias로 import하여 명시적으로 구분
+- 기반 타입은 `@/schema-form/types` 관문에서 `Base*` prefix alias로 import하여 명시적으로 구분
 - 형 파일은 `types/` 칸에 두고 `index.ts`는 이름 목록으로만 재수출
 - 값(runtime) export 없음, 타입 전용 모듈
 
