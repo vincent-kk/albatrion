@@ -6,8 +6,8 @@
 
 ## Conventions
 
-- 기반 형 파일은 `internal/` 칸에 주제별로 둔다. 공개 이름과 겹치는 기반 형은 `Base` 접두사를 붙인다(`BaseNumberSchema`, `BaseFieldRendererProps`).
-- 공개 형은 `rolled/` 칸에서 `Roll<Base*>`으로 감싸 원래 이름으로 정의한다. `rolled/` 파일은 `internal/`의 형 파일을 직접 가져오며, 이 fractal의 index를 거치지 않는다.
+- 기반 형 파일은 내부 칸에 주제별로 둔다. 공개 이름과 겹치는 기반 형은 `Base` 접두사를 붙인다(`BaseNumberSchema`, `BaseFieldRendererProps`).
+- 공개 형은 rolled 칸에서 `Roll<Base*>`으로 감싸 원래 이름으로 정의한다. rolled 칸의 파일은 내부 칸의 형 파일을 직접 가져오며, 이 fractal의 index를 거치지 않는다.
 - 진입점 index는 두 칸의 이름을 모두 이름 목록으로 재수출하며 와일드카드 재수출을 쓰지 않는다.
 - 형제 fractal(`core`·`components/FieldProxy`·`components/Form`)의 형은 각 관문 index에서 `import type`으로 가져온다. 값은 `ShowError` 열거 하나뿐이다.
 - 형 계약 시험은 시험 칸에 두고 형 파일을 직접 가져온다.
@@ -17,7 +17,7 @@
 ### Always do
 
 - 형제 fractal에서 가져오는 것은 `import type`으로 한다(런타임 순환을 만들지 않기 위해).
-- 공개 형을 바꾸면 `rolled/`의 대응 형과 공개 표면 스냅숏을 함께 확인한다.
+- 공개 형을 바꾸면 rolled 칸의 대응 형과 공개 표면 스냅숏을 함께 확인한다.
 - 새 공개 형은 `Roll`로 감싼 뒤 index의 이름 목록과 루트 `src/index.ts`의 이름 목록에 함께 추가한다.
 
 ### Ask first
