@@ -1,4 +1,5 @@
 // Reproduction entry: source-only bundles; git is read-only and raw files contain timing samples only.
+// Cannot rerun: its source patches assert lines the current settle source no longer has, and the paths it reads from commit 0189c443b did not exist there (architecture/verification/07-switch/remeasure-86c02.md).
 import fs from 'node:fs';
 import path from 'node:path';
 import os from 'node:os';

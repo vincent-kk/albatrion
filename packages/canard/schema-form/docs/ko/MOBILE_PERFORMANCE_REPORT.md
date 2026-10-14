@@ -513,23 +513,25 @@ userType 변경: 'guest' → 'admin'
 
 ## 참조 파일
 
-| 파일                                                                                                                  | 관련 내용                                 |
-| --------------------------------------------------------------------------------------------------------------------- | ----------------------------------------- |
-| `src/components/Form/Form.tsx:53-56`                                                                                  | `UPDATE_CHILDREN_MASK` — Form 리렌더 조건 |
-| `src/components/Form/Form.tsx:92-95`                                                                                  | 스키마 전처리 (1회)                       |
-| `src/components/Form/Form.tsx:325`                                                                                    | Form `memo` 래핑                          |
-| `src/components/Field/FieldProxy/FieldProxy.tsx:19-23`                                                                | `RERENDERING_EVENT` 4중 마스크            |
-| `src/components/Field/FieldProxy/FieldProxy.tsx:25`                                                                   | Proxy `memo` 미적용                       |
-| `src/components/Field/FieldProxy/FieldProxy.tsx:38-48`                                                                | Input `useMemo` 캐시                      |
-| `src/components/Field/FieldProxy/FieldProxy.tsx:57-59`                                                                | FieldRenderer `memo` 래핑                 |
-| `src/components/Field/FieldProxy/FieldProxy.tsx:85`                                                                   | `enabled=false` 시 null 반환              |
-| `src/components/Field/FieldInputSlot/FieldInputSlot.tsx:24`                                                           | FieldInputSlot `memo` 래핑                |
-| `src/components/Field/FieldInputSlot/FieldInputSlotWrapper.tsx:42-51`                                                 | `useReference` ref 안정화                 |
-| `src/components/Field/FieldInputSlot/hooks/useChildFields.tsx:45-91`                                                  | `Map` 캐시 + child `memo` 래핑            |
-| `src/components/Field/FieldInputSlot/hooks/useFieldInputControl.ts:29-46`                                             | RequestRefresh/Focus/Select 구독          |
-| `src/components/Field/FieldInputSlot/type.ts:39-43`                                                                   | `REACTIVE_RERENDERING_EVENTS`             |
-| `src/hooks/useFieldNodeTracker.ts:13-26`                                                                              | 노드별 독립 구독 메커니즘                 |
-| `src/core/nodes/AbstractNode/utils/EventCascadeManager/EventCascadeManager.ts:106-110`                                | microtask 배칭                            |
-| `src/core/nodes/AbstractNode/utils/ComputedPropertiesManager/utils/createDynamicFunction/createDynamicFunction.ts:41` | `new Function()` — CSP 관련               |
-| `rolldown.config.mjs:21`                                                                                              | `minify: false` 설정                      |
-| `package.json:84-93`                                                                                                  | size-limit 설정 (20KB)                    |
+이 보고서는 v0.10.6을 측정했습니다. 아래 경로는 지금 저장소의 자리이고, 측정 당시의 코드와 줄 번호는 태그 `@canard/schema-form@0.10.6`에서 볼 수 있습니다. 1.0.0에 해당 코드가 없는 행은 v0.10.6의 경로와 줄 번호를 그대로 두고 표시합니다.
+
+| 파일                                                                                                      | 관련 내용                                 |
+| --------------------------------------------------------------------------------------------------------- | ----------------------------------------- |
+| `src/components/Form/Form.tsx:53-56` (v0.10.6에만 있음)                                                   | `UPDATE_CHILDREN_MASK` — Form 리렌더 조건 |
+| `src/components/Form/Form.tsx:92-95` (v0.10.6에만 있음)                                                   | 스키마 전처리 (1회)                       |
+| `src/components/Form/components/FormCore/FormCore.tsx`                                                    | Form `memo` 래핑                          |
+| `src/components/FieldProxy/FieldProxy.tsx`                                                                | `RERENDERING_EVENT` 4중 마스크            |
+| `src/components/FieldProxy/FieldProxy.tsx`                                                                | Proxy `memo` 미적용                       |
+| `src/components/FieldProxy/FieldProxy.tsx`                                                                | Input `useMemo` 캐시                      |
+| `src/components/FieldProxy/FieldProxy.tsx`                                                                | FieldRenderer `memo` 래핑                 |
+| `src/components/FieldProxy/FieldProxy.tsx`                                                                | `enabled=false` 시 null 반환              |
+| `src/components/FieldProxy/components/FieldInputSlot/FieldInputSlot.tsx`                                  | FieldInputSlot `memo` 래핑                |
+| `src/components/FieldProxy/components/FieldInputSlot/components/FieldInputSlotWrapper.tsx`                | `useReference` ref 안정화                 |
+| `src/components/FieldProxy/components/FieldInputSlot/hooks/useChildFields.tsx`                            | `Map` 캐시 + child `memo` 래핑            |
+| `src/components/FieldProxy/components/FieldInputSlot/hooks/useFieldInputControl.ts`                       | RequestRefresh/Focus/Select 구독          |
+| `src/components/FieldProxy/components/FieldInputSlot/type.ts`                                             | `REACTIVE_RERENDERING_EVENTS`             |
+| `src/hooks/fieldNode/useFieldNodeTracker.ts`                                                              | 노드별 독립 구독 메커니즘                 |
+| `src/core/nodes/AbstractNode/utils/EventCascadeManager/EventCascadeManager.ts:106-110` (v0.10.6에만 있음) | microtask 배칭                            |
+| `src/core/engine/blueprint/utils/expressions/createDynamicFunction/createDynamicFunction.ts`              | `new Function()` — CSP 관련               |
+| `rolldown.config.mjs`                                                                                     | `minify: false` 설정                      |
+| `package.json:84-93` (v0.10.6에만 있음)                                                                   | size-limit 설정 (20KB)                    |
