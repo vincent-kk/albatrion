@@ -1,8 +1,8 @@
+import { visitFieldNodes } from '../../../navigation';
 import { captureFieldNodeChange } from '../../../record';
 import type { FieldNodeRecord } from '../../../record';
 import type { SettlementContext } from '../../type';
 import { getGateRegistry } from '../gates/getGateRegistry';
-import { walkOwnedFieldNodes } from '../walkOwnedFieldNodes';
 
 /**
  * Replay automatic array shapes backwards without rewinding identity keys.
@@ -27,12 +27,16 @@ export const restoreArrayStructure = <Self extends FieldNodeRecord<Self>>(
     for (const item of host.children ?? [])
       if (!prior.has(item)) {
         getGateRegistry(item.runtime).remove(item);
-        walkOwnedFieldNodes(item, (current) => {
-          current.detached = true;
-          current.active = captureFieldNodeChange(current, 'active', false);
-          context.entered.delete(current);
-          context.perished.delete(current);
-        });
+        visitFieldNodes(
+          item,
+          (current) => {
+            current.detached = true;
+            current.active = captureFieldNodeChange(current, 'active', false);
+            context.entered.delete(current);
+            context.perished.delete(current);
+          },
+          { owned: true },
+        );
       }
     const structure: Record<string, Self> = Object.create(null);
     for (const item of previousItems) {

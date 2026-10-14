@@ -2,6 +2,7 @@ import { isArray } from '@winglet/common-utils/filter';
 
 import { JSONPointer as $ } from '@/schema-form/helpers/jsonPointer';
 
+import { visitFieldNodes } from '../../../navigation';
 import type { FieldNodeRecord } from '../../../record';
 import type { DeclarationLayer } from '../../../types/controls';
 import { emptyReadonlyMap } from '../../../utils/emptyReadonlyMap';
@@ -10,7 +11,6 @@ import { getControlLayers } from '../controls/getControlLayers';
 import { readExitLayerPolicy } from '../controls/readExitLayerPolicy';
 import { readLatentExitPolicy } from '../controls/readLatentExitPolicy';
 import { getLatentPathIndex } from '../latent/getLatentPathIndex';
-import { walkOwnedFieldNodes } from '../walkOwnedFieldNodes';
 import { writeLatentRaw } from './writeLatentRaw';
 
 /** One stored source and its last-live exit decisions. */
@@ -69,11 +69,15 @@ export const captureLatentDescendants = <Self extends FieldNodeRecord<Self>>(
   }
   entries.sort((left, right) => left.path.length - right.path.length);
   const live = new Map<string, Self>();
-  walkOwnedFieldNodes(node, (current) =>
-    live.set(
-      JSON.stringify([current.path, current.blueprintNode.kind]),
-      current,
-    ),
+  visitFieldNodes(
+    node,
+    (current) => {
+      live.set(
+        JSON.stringify([current.path, current.blueprintNode.kind]),
+        current,
+      );
+    },
+    { owned: true },
   );
   const resolved = new Map<string, ResolvedAncestor[]>([
     [node.path, [{ path: node.path, order: [], clear: inherited }]],

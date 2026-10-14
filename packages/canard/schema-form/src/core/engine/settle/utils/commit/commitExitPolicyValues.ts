@@ -5,13 +5,13 @@ import { FormErrorCode, SchemaFormError } from '../../../../../errors';
 import type { Blueprint, BlueprintExpression } from '../../../blueprint';
 import { CONTROL_KEY } from '../../../constants/controlKey';
 import { SCHEMA_GROUP } from '../../../constants/schemaGroup';
+import { visitFieldNodes } from '../../../navigation';
 import type { FieldNodeRecord } from '../../../record';
 import type { SettlementContext } from '../../type';
 import { getControlLayers } from '../controls/getControlLayers';
 import { getExitPolicyKey } from '../controls/getExitPolicyKey';
 import { readStateDependency } from '../controls/readStateDependency';
 import { recordSettlementFailure } from '../errors/recordSettlementFailure';
-import { walkOwnedFieldNodes } from '../walkOwnedFieldNodes';
 import { pruneCommittedRuleKeys } from './pruneCommittedRuleKeys';
 import { updateCommittedRuleValue } from './updateCommittedRuleValue';
 
@@ -55,12 +55,20 @@ export const commitExitPolicyValues = <Self extends FieldNodeRecord<Self>>(
   if (expressions.size === 0) return;
   const runtime = context.root.runtime;
   for (const exited of context.exited)
-    walkOwnedFieldNodes(exited, (node) =>
-      pruneCommittedRuleKeys(runtime, node.path, 'exitPolicy'),
+    visitFieldNodes(
+      exited,
+      (node) => {
+        pruneCommittedRuleKeys(runtime, node.path, 'exitPolicy');
+      },
+      { owned: true },
     );
   if (context.kind === 'load' && context.loadScope)
-    walkOwnedFieldNodes(context.loadScope, (node) =>
-      pruneCommittedRuleKeys(runtime, node.path, 'exitPolicy'),
+    visitFieldNodes(
+      context.loadScope,
+      (node) => {
+        pruneCommittedRuleKeys(runtime, node.path, 'exitPolicy');
+      },
+      { owned: true },
     );
   const candidates = new Set(context.stateDirtyNodes);
   for (const source of context.stateDirtyNodes) {

@@ -1,3 +1,4 @@
+import { visitFieldNodes } from '../../../navigation';
 import {
   FieldNodeEventType,
   accumulateGlobalStateDeltas,
@@ -24,12 +25,8 @@ export const dispatchClearSubtreeState = <Self extends FieldNodeRecord<Self>>(
   assertNotInDelivery(runtime);
   if (refuseListenerFeedback(runtime)) return;
   const deltas = new Map<string, number>();
-  const pending = [node];
-  const visited = new Set<Self>();
-  while (pending.length) {
-    const current = pending.pop();
-    if (!current || current.detached || visited.has(current)) continue;
-    visited.add(current);
+  visitFieldNodes(node, (current) => {
+    if (current.detached) return false;
     current.interactionReset += 1;
     if (Object.keys(current.interactionState).length) {
       const previous = current.interactionState;
@@ -49,8 +46,8 @@ export const dispatchClearSubtreeState = <Self extends FieldNodeRecord<Self>>(
         current.interactionState,
       );
     }
-    for (const child of current.children ?? []) pending.push(child);
-  }
+    return true;
+  });
   publishGlobalStateDeltas(node.rootNode, deltas);
   if (!runtime.entryDepth) flushQueuedEvents(node.rootNode);
 };

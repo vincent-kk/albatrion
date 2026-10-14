@@ -1,9 +1,9 @@
+import { visitFieldNodes } from '../../../navigation';
 import { captureFieldNodeChange } from '../../../record';
 import type { FieldNodeRecord } from '../../../record';
 import type { SettlementContext } from '../../type';
 import { captureDetachedFieldNodeReads } from '../detached/captureDetachedFieldNodeReads';
 import { getGateRegistry } from '../gates/getGateRegistry';
-import { walkOwnedFieldNodes } from '../walkOwnedFieldNodes';
 import { pruneArrayTailPaths } from './pruneArrayTailPaths';
 import { prunePerishedPaths } from './prunePerishedPaths';
 
@@ -18,18 +18,22 @@ export const finalizePerished = <Self extends FieldNodeRecord<Self>>(
   let perishedPaths: Set<string> | undefined;
   for (const node of context.perished) {
     if (node.parent?.structure?.[node.name] === node) continue;
-    walkOwnedFieldNodes(node, (departing) => {
-      if (!departing.runtime.detachedReads?.has(departing))
-        captureDetachedFieldNodeReads(departing, {
-          emit: context.previousEmit,
-          context: context.previousContext,
-          schema:
-            context.originalSchemas.get(departing.path)?.schema ??
-            departing.schema.schema,
-        });
-      departing.detached = true;
-      departing.active = captureFieldNodeChange(departing, 'active', false);
-    });
+    visitFieldNodes(
+      node,
+      (departing) => {
+        if (!departing.runtime.detachedReads?.has(departing))
+          captureDetachedFieldNodeReads(departing, {
+            emit: context.previousEmit,
+            context: context.previousContext,
+            schema:
+              context.originalSchemas.get(departing.path)?.schema ??
+              departing.schema.schema,
+          });
+        departing.detached = true;
+        departing.active = captureFieldNodeChange(departing, 'active', false);
+      },
+      { owned: true },
+    );
     getGateRegistry(node.runtime).remove(node);
     for (const [key, pending] of context.pendingExits)
       if (

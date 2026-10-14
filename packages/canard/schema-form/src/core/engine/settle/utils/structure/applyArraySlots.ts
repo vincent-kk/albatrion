@@ -1,6 +1,7 @@
 import { isArray } from '@winglet/common-utils/filter';
 
 import { getItemEntry } from '../../../blueprint';
+import { visitFieldNodes } from '../../../navigation';
 import { captureFieldNodeChange } from '../../../record';
 import type { ArrayArrangePlan, FieldNodeRecord } from '../../../record';
 import { updateFieldNodeNameAndPath } from '../../../record';
@@ -13,7 +14,6 @@ import { readRawTree } from '../latent/readRawTree';
 import { getLoadValue } from '../load/getLoadValue';
 import { setLoadValue } from '../load/setLoadValue';
 import { prunePerishedPaths } from '../transition/prunePerishedPaths';
-import { walkOwnedFieldNodes } from '../walkOwnedFieldNodes';
 import { arrayExtras } from '../write/arrayExtras';
 import { markWrite } from '../write/markWrite';
 import { applyArrayTail } from './applyArraySlots/utils/applyArrayTail';
@@ -90,14 +90,18 @@ export const applyArraySlots = <Self extends FieldNodeRecord<Self>>(
     });
     if (!item || reused.has(item)) continue;
     context.perished.add(item);
-    walkOwnedFieldNodes(item, (departing) => {
-      if (!departing.runtime.detachedReads?.has(departing))
-        captureDetachedFieldNodeReads(departing, {
-          emit: context.previousEmit,
-          context: context.previousContext,
-          schema: departing.schema.schema,
-        });
-    });
+    visitFieldNodes(
+      item,
+      (departing) => {
+        if (!departing.runtime.detachedReads?.has(departing))
+          captureDetachedFieldNodeReads(departing, {
+            emit: context.previousEmit,
+            context: context.previousContext,
+            schema: departing.schema.schema,
+          });
+      },
+      { owned: true },
+    );
     (perishedPaths ??= new Set()).add(item.path);
   }
   if (perishedPaths) prunePerishedPaths(host.runtime, perishedPaths);
@@ -107,23 +111,27 @@ export const applyArraySlots = <Self extends FieldNodeRecord<Self>>(
 
   for (const [name, item] of Object.entries(nextItems)) {
     if (!reused.has(item) || item.name === name) continue;
-    walkOwnedFieldNodes(item, (descendant) => {
-      const previous = descendant.path;
-      updateFieldNodeNameAndPath(
-        descendant,
-        descendant === item ? name : descendant.name,
-        descendant === item ? host : descendant.parent,
-      );
-      context.pathChanges.push({
-        node: descendant,
-        previous,
-        current: descendant.path,
-      });
-      context.dirtyPaths.add(descendant.path);
-      if (descendant.behavior.strategy === 'branch')
-        context.shapeDirtyPaths.add(descendant.path);
-      context.changedNodes.add(descendant);
-    });
+    visitFieldNodes(
+      item,
+      (descendant) => {
+        const previous = descendant.path;
+        updateFieldNodeNameAndPath(
+          descendant,
+          descendant === item ? name : descendant.name,
+          descendant === item ? host : descendant.parent,
+        );
+        context.pathChanges.push({
+          node: descendant,
+          previous,
+          current: descendant.path,
+        });
+        context.dirtyPaths.add(descendant.path);
+        if (descendant.behavior.strategy === 'branch')
+          context.shapeDirtyPaths.add(descendant.path);
+        context.changedNodes.add(descendant);
+      },
+      { owned: true },
+    );
   }
   host.itemCount = plan.slots.length;
   host.raw = undefined;
@@ -146,7 +154,13 @@ export const applyArraySlots = <Self extends FieldNodeRecord<Self>>(
   }
   if (context.hasGates)
     for (const item of host.children)
-      walkOwnedFieldNodes(item, (node) => registry.register(node));
+      visitFieldNodes(
+        item,
+        (node) => {
+          registry.register(node);
+        },
+        { owned: true },
+      );
   host.runtime.loadSnapshot = setLoadValue(
     host.runtime.loadSnapshot,
     host.path,
