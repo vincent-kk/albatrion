@@ -133,6 +133,10 @@ export const App = () => {
 | **Observer Pattern** | 노드 상태 변경 구독                      |
 | **Plugin Pattern**   | 검증 및 UI 컴포넌트 확장                 |
 
+### core가 스키마로 하는 일
+
+core는 스키마의 **적용 가능성**에는 따르고 **제약**은 강제하지 않습니다. 적용 가능성은 어느 선언이 효력 중인가 — `properties`, `oneOf`/`anyOf` 분기, `if`/`then`/`else`, `controls.active`, 나감 정책 — 이며, core는 값의 모양을 여기에 맞춥니다. 선언이 효력을 잃은 필드는 값에서 빠집니다. 제약 키워드 — `type`, `minimum`, `minLength`, `minItems`, `maxItems`, `enum`, `pattern` 등 — 는 값을 고치거나 거부하는 방식으로 강제하지 않으며, 검증이 위반을 알리고 입력이 사용자를 안내합니다. 그래서 항목이 너무 많은 배열은 모양은 맞되 제약을 어긴 값이며, 너무 긴 문자열과 같은 부류입니다.
+
 ---
 
 ## 핵심 API
@@ -318,10 +322,10 @@ type AttachedFilesMap = Map<string, File[]>;
 
 **Branch Nodes** (컨테이너 구조):
 
-| 노드         | 설명                                                         |
-| ------------ | ------------------------------------------------------------ |
-| `ObjectNode` | 키-값 구조, `required`, `additionalProperties` 지원          |
-| `ArrayNode`  | 순서가 있는 컬렉션, `minItems`, `maxItems`, 배열 조작 메서드 |
+| 노드         | 설명                                                                                       |
+| ------------ | ------------------------------------------------------------------------------------------ |
+| `ObjectNode` | 키-값 구조, `required`, `additionalProperties` 지원                                        |
+| `ArrayNode`  | 순서가 있는 컬렉션과 배열 조작 메서드. `minItems`/`maxItems`는 검증이 알리며 강제하지 않음 |
 
 **Special Nodes**:
 
@@ -974,26 +978,35 @@ arrayNode.children?.length; // 현재 항목 노드 수 (하나의 입력으로 
 arrayNode.children; // 자식 노드 배열
 ```
 
+### 배열 한도 (`minItems` / `maxItems`)
+
+core는 채우지도 막지도 않습니다. 배열에는 로드되거나 쓰인 항목만 있습니다.
+
+- `minItems`는 항목을 만들지 않습니다. 마운트, reset, 분기 재활성화 어느 때에도 그렇습니다. `[]`로 로드된 배열은 `[]`로 남고, `minItems`보다 항목이 적은 default나 `defaultValue`는 주어진 그대로 쓰입니다.
+- `maxItems`는 쓰기를 거부하지 않습니다. `push()`는 항상 덧붙이고 새 길이를 돌려주며, 더 긴 배열을 넣는 `setValue`도 적용됩니다. `prefixItems` 뒤의 `items: false`도 push를 막지 않습니다.
+- 두 한도는 유효 스키마(`node.jsonSchema`)에 남고, 위반은 검증이 방출 값(`outputValue`) 기준으로 알립니다.
+- 기본 배열 입력은 `maxItems`에 이르면 추가 버튼을 숨깁니다. 제거 버튼은 `minItems`와 상관없이 보이고, `prefixItems`는 읽지 않습니다. 범위를 지켜야 하는 사용자 입력은 `node.jsonSchema`와 `node.children`을 읽어 자기 컨트롤을 끕니다.
+
 ### 배열 출력 필터 (`omitTrailing` / `omitEmpty`)
 
-배열 스키마는 `options` 아래에 출력 필터를 지정할 수 있습니다. 이 필터는 배열이 **내보내는 값** — 부모 전파, 루트 validation, 외부 표면(`onChange`, `getValue()`, `submit`) — 만 정제하며, 자식 노드와 raw `node.value`는 모든 항목을 유지하므로 미리 노출한 빈 input이 그대로 렌더링됩니다.
+배열 스키마는 `options` 아래에 출력 필터를 지정할 수 있습니다. 이 필터는 배열이 **내보내는 값** — 부모 전파, 루트 validation, 외부 표면(`onChange`, `getValue()`, `submit`) — 만 정제하며, 자식 노드와 raw `node.value`는 모든 항목을 유지하므로 사용자가 추가한 빈 행이 그대로 렌더링됩니다.
 
 ```tsx
 const jsonSchema = {
   type: 'array',
-  minItems: 3, // 빈 input 3개가 먼저 렌더링됨
   items: { type: 'string' },
   options: { omitTrailing: true },
 };
-// UI에는 input 3개가 보이고, 사용자가 첫 번째만 채우면
+// 사용자가 행 3개를 추가하고 첫 번째만 채우면
+// node.value: ['first', undefined, undefined]
 // getValue() / onChange / validation 값은: ['first']
 ```
 
 - `omitTrailing` (opt-in): **후행** 연속 `undefined` 항목만 제거합니다. 선행·중간 `undefined`는 보존되어 error `dataPath`와 validation index 정합이 유지됩니다 — `[1, undefined, 2]`는 그대로 방출됩니다.
 - `omitEmpty` (기본 활성): 빈 배열을 부모 전파 경로에서 `undefined`로 변환합니다. 필터 순서는 `omitTrailing → omitEmpty`라서 전부 빈 배열은 부모에서 `undefined`로 수렴합니다 (루트 폼은 `[]`를 방출).
 - `null`은 빈 값이 아닙니다: 두 필터 모두 값이 `null`인 nullable 배열을 건드리지 않습니다 — [Nullable 객체와 배열](#nullable-객체와-배열) 참고.
-- `node.value`는 raw를 유지하고, 정제된 출력은 `node.outputValue`로 노출됩니다. validation은 정제된 값 기준이라 `minItems`는 채워진 prefix만 셉니다.
-- Reset 계열 초기화(폼 reset, 분기 재활성화)는 `minItems`만큼 빈 항목을 재충전하고, 일반 `setValue(undefined)`는 전부 비웁니다 — 배열을 빼고 부모를 교체하는 쓰기도 같습니다: `setValue({ other: 1 })`는 배열을 비우고, `SetValueOption.Merge`는 그대로 둡니다. 기본값이 `null`인 배열은 채움 없이 `null`로 reset됩니다.
+- `node.value`는 raw를 유지하고, 정제된 출력은 `node.outputValue`로 노출됩니다. validation은 정제된 값 기준이라 후행 빈 항목은 `minItems`에 세지 않고, 선행·중간 빈 항목은 셉니다.
+- reset은 배열이 로드된 값을 되돌리며 `minItems`를 위해 항목을 만들지 않습니다. 일반 `setValue(undefined)`는 전부 비웁니다 — 배열을 빼고 부모를 교체하는 쓰기도 같습니다: `setValue({ other: 1 })`는 배열을 비우고, `SetValueOption.Merge`는 그대로 둡니다. 기본값이 `null`인 배열은 `null`로 reset됩니다.
 
 ### 객체 옵션 (`propertyOrder` / `virtual`)
 
@@ -1217,7 +1230,7 @@ nullable 객체·배열(`type: ['object', 'null']`, `type: ['array', 'null']`)�
 
 reset은 노드가 무엇을 갖고 있든 기본값을 복원합니다: 기본값이 `null`이면 `null`로, 아니면 기본 객체로.
 
-**`null`인 동안** 출력은 스키마가 무엇을 담고 있든 — 배열, default, derived, `oneOf`/`anyOf`, controls로 게이트된 필드·virtual 필드 — `null`입니다. 객체의 자식 필드는 계속 렌더되며, `null`인 동안 자식 default, 객체 default, `minItems` 채움은 나타나지 않습니다. `controls.derived`나 `injectTo`가 쓴 값은 객체를 만들지 않고 그 필드에 표시됩니다. 로드·reset·쓰기 중 어떤 경로로 `null`이 되었든 같고, `null`로 버린 데이터는 되살아나지 않습니다. 이 규칙과, 종류가 틀린 값을 로드했을 때의 같은 규칙은 폼에 보이는 것, 노드 데이터, 출력 값이 서로 어긋나지 않게 하기 위한 것입니다. 자신이 `null`인 nullable **배열**에는 아이템이 없고 `minItems` 채움도 없습니다.
+**`null`인 동안** 출력은 스키마가 무엇을 담고 있든 — 배열, default, derived, `oneOf`/`anyOf`, controls로 게이트된 필드·virtual 필드 — `null`입니다. 객체의 자식 필드는 계속 렌더되며, `null`인 동안 자식 default나 객체 default는 나타나지 않습니다. `controls.derived`나 `injectTo`가 쓴 값은 객체를 만들지 않고 그 필드에 표시됩니다. 로드·reset·쓰기 중 어떤 경로로 `null`이 되었든 같고, `null`로 버린 데이터는 되살아나지 않습니다. 이 규칙과, 종류가 틀린 값을 로드했을 때의 같은 규칙은 폼에 보이는 것, 노드 데이터, 출력 값이 서로 어긋나지 않게 하기 위한 것입니다. 자신이 `null`인 nullable **배열**에는 아이템이 없습니다.
 
 **무엇이 되는가:** 자식 필드에 입력하면 객체는 그 입력값을 담은 객체로 승격됩니다. 승격으로 새로 생긴 필드(예를 들어 입력값이 여는 분기의 필드)만 default를 받으며, 이미 있던 필드는 값을 채울 때까지 빈 상태를 유지합니다. 배열의 쓰기는 빈 배열을 기준으로 합니다. 배열에는 병합이 없습니다: `setValue([], SetValueOption.Merge)`는 대입이며 `[]`를 만듭니다.
 

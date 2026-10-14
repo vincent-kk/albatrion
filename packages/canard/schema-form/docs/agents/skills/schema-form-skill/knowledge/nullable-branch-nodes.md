@@ -33,8 +33,8 @@ A field is _emptied_ when its node emits `undefined`: under the default `omitEmp
 ## While It Is `null`
 
 - The emitted value is `null` whatever the schema holds (array children, defaults, derived values, `oneOf`/`anyOf`, controls-gated or virtual fields), and however it became `null`.
-- An object's child fields stay rendered, and no child default, object default or `minItems` fill appears in them while it is `null`; a value written by `controls.derived` or `injectTo` still shows in its field without creating the object. This is the same whether it became `null` through load, reset or write. Data discarded by `null` does not come back.
-- A nullable **array** that is itself `null` has no items and no `minItems` fill.
+- An object's child fields stay rendered, and no child default or object default appears in them while it is `null`; a value written by `controls.derived` or `injectTo` still shows in its field without creating the object. This is the same whether it became `null` through load, reset or write. Data discarded by `null` does not come back.
+- A nullable **array** that is itself `null` has no items.
 
 ## What It Becomes
 
