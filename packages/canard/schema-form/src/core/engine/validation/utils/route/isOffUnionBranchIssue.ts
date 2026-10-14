@@ -25,7 +25,7 @@ export const isOffUnionBranchIssue = (
   const matches = blueprint.fragments.filter(
     (fragment) =>
       issue.schemaPath === fragment.schemaPath ||
-      issue.schemaPath?.startsWith(`${fragment.schemaPath}/`),
+      issue.schemaPath?.startsWith(fragment.schemaPath + '/'),
   );
   if (!matches.length) return false;
   const longest = Math.max(
@@ -65,7 +65,7 @@ export const isOffUnionBranchIssue = (
     (fragment) =>
       fragment.id !== owner.id &&
       NUMERIC_KEY.test(fragment.schemaPath.slice(unionPath.length + 1)) &&
-      fragment.schemaPath.startsWith(`${unionPath}/`),
+      fragment.schemaPath.startsWith(unionPath + '/'),
   );
   const isActive = (fragment: SchemaFragment): boolean =>
     fragment.declares.some((id) => activeIds.has(id)) ||

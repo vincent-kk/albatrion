@@ -31,7 +31,7 @@ export const pruneArrayTailPaths = <Self>(
     for (const key of runtime.warningKeysByPath?.get(host) ?? []) {
       const parts: unknown = JSON.parse(key);
       if (!isArray(parts) || typeof parts[1] !== 'string') continue;
-      const prefix = `${host}/`;
+      const prefix = host + '/';
       const segment = parts[1].slice(prefix.length).split($.Separator)[0];
       const index = Number(segment);
       if (

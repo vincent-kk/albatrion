@@ -35,7 +35,7 @@ export const readSettlementSource = <Self extends FieldNodeRecord<Self>>(
       )
     )
       continue;
-    if (path === origin.path || path.startsWith(`${origin.path}/`))
+    if (path === origin.path || path.startsWith(origin.path + '/'))
       return !exact || path === origin.path ? origin.source : undefined;
   }
   return !exact || path === context.target.path

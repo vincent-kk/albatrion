@@ -69,7 +69,7 @@ export const readReferenceOnlySchemaPaths = (
       pending.push({
         previous: Reflect.get(left, key),
         next: Reflect.get(right, key),
-        path: `${item.path}/${escaped}`,
+        path: item.path + '/' + escaped,
       });
     }
   }

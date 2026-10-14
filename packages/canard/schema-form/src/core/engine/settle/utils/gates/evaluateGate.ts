@@ -203,7 +203,7 @@ export const evaluateGate = <Self extends FieldNodeRecord<Self>>(
       const record = {
         level: 'error' as const,
         code: FormErrorCode.GuardFailed,
-        message: `Gate evaluation failed at ${gate.schemaPath}`,
+        message: 'Gate evaluation failed at ' + gate.schemaPath,
         schemaPath: gate.schemaPath,
         path: hostPath,
         details: { cause },

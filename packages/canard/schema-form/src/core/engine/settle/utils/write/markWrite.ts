@@ -111,7 +111,7 @@ export const markWrite = <Self extends FieldNodeRecord<Self>>(
       !isMerge &&
       (context.replacePaths === undefined ||
         context.replacePaths.some(
-          (path) => node.path === path || node.path.startsWith(`${path}/`),
+          (path) => node.path === path || node.path.startsWith(path + '/'),
         ));
     nextRaw = isMerge ? node.raw : undefined;
     if (isMerge && nextRaw !== undefined) context.wrongKindHosts.add(node);

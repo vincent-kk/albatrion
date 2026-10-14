@@ -85,8 +85,8 @@ export const applyArraySlots = <Self extends FieldNodeRecord<Self>>(
     const item = oldItems[String(index)];
     const current = destinations.get(index);
     moves.push({
-      previous: `${host.path}/${index}`,
-      current: current === undefined ? undefined : `${host.path}/${current}`,
+      previous: host.path + '/' + index,
+      current: current === undefined ? undefined : host.path + '/' + current,
     });
     if (!item || reused.has(item)) continue;
     context.perished.add(item);

@@ -73,7 +73,7 @@ export const commitSettlement = <Self extends FieldNodeRecord<Self>>(
   const refreshTargets = runtime.refreshTargets ?? new Set<string>();
   refreshTargets.clear();
   const loadScope = context.kind === 'load' ? context.loadScope : undefined;
-  const loadPrefix = loadScope ? `${loadScope.path}/` : '';
+  const loadPrefix = loadScope ? loadScope.path + '/' : '';
   for (const path of context.changedRaw) {
     if (loadScope && (path === loadScope.path || path.startsWith(loadPrefix)))
       continue;
@@ -136,7 +136,12 @@ export const commitSettlement = <Self extends FieldNodeRecord<Self>>(
             level: 'warning',
             code,
             path: node.path,
-            message: `Value does not fit the schema type at ${node.path} (commit ${commit})`,
+            message:
+              'Value does not fit the schema type at ' +
+              node.path +
+              ' (commit ' +
+              commit +
+              ')',
             details: {
               path: node.path,
               expected: warning.expected,

@@ -59,7 +59,7 @@ export const canReuseArrayChildren = <Self extends FieldNodeRecord<Self>>(
       child.blueprintNode !== entry.node ||
       child.name !== entry.name ||
       child.parent !== node ||
-      child.path !== `${node.path}/${entry.name}` ||
+      child.path !== node.path + '/' + entry.name ||
       child.schema !== schema ||
       !child.active ||
       child.detached ||

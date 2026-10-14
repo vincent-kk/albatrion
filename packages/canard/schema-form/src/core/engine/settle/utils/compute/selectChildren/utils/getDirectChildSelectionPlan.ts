@@ -97,7 +97,7 @@ export const getDirectChildSelectionPlan = (
         gate.kind !== 'active' ||
         gate.appliesWhen?.length ||
         gate.hostPath !== host.path ||
-        gate.schemaPath === `${declaration.schemaPath}/controls/active` ||
+        gate.schemaPath === declaration.schemaPath + '/controls/active' ||
         !expression ||
         expression.dependencies.length !== 1
       ) {

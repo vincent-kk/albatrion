@@ -84,7 +84,7 @@ export const alignArraySnapshotSlots = <Self extends FieldNodeRecord<Self>>(
     let parentPath = '';
     for (let index = 0; index < segments.length - 1; index++) {
       const segment = segments[index];
-      parentPath += `/${encoded[index]}`;
+      parentPath += '/' + encoded[index];
       const child = draftCopy(Reflect.get(parent, segment), parentPath);
       if (isArray(parent) && Number(segment) > parent.length) holey.add(parent);
       Reflect.set(parent, segment, child);

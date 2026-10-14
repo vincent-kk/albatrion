@@ -32,14 +32,15 @@ export const populateVirtualNodes = (
     if (!virtual || typeof virtual !== 'object' || isArray(virtual))
       throwBlueprintError(
         FormErrorCode.VirtualFieldsNotValid,
-        `${declaration.schemaPath}/options/virtual`,
+        declaration.schemaPath + '/options/virtual',
         {},
         context.options,
       );
     for (const [name, value] of Object.entries(virtual)) {
       // eslint-disable-next-line @typescript-eslint/consistent-type-assertions -- Virtual entries are authored values read before shape validation; callables and primitives reach the fields check, so a guard would narrow what is accepted.
       const schema = readSchemaObject(value as Record<string, unknown>);
-      const schemaPath = `${declaration.schemaPath}/options/virtual/${escapeSegment(name)}`;
+      const schemaPath =
+        declaration.schemaPath + '/options/virtual/' + escapeSegment(name);
       const fields = schema.fields;
       if (
         !isArray(fields) ||
@@ -93,7 +94,7 @@ export const populateVirtualNodes = (
           hostPath: host.path,
           fragment: context.fragments[declaration.fragmentId],
         },
-        `${host.path}/${escapeSegment(name)}`,
+        host.path + '/' + escapeSegment(name),
       );
       if (group) group.declarations.push(...declarations);
       else
@@ -123,7 +124,7 @@ export const populateVirtualNodes = (
     }
     const node: MutableNode = {
       id: context.nodes.length,
-      path: `${host.path}/${escapeSegment(name)}`,
+      path: host.path + '/' + escapeSegment(name),
       schemaPath: group.declarations[0].schemaPath,
       kind: 'virtual',
       schemaType: undefined,

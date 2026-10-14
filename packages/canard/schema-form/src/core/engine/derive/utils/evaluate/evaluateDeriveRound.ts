@@ -93,7 +93,7 @@ export const evaluateDeriveRound = <Self extends FieldNodeRecord<Self>>(
           Boolean(
             state.loadScope &&
               (node.path === state.loadScope.path ||
-                node.path.startsWith(`${state.loadScope.path}/`)),
+                node.path.startsWith(state.loadScope.path + '/')),
           );
         const appeared =
           !consumed &&
@@ -104,7 +104,7 @@ export const evaluateDeriveRound = <Self extends FieldNodeRecord<Self>>(
           if (
             state.loadScope &&
             node.path !== state.loadScope.path &&
-            !node.path.startsWith(`${state.loadScope.path}/`)
+            !node.path.startsWith(state.loadScope.path + '/')
           )
             continue;
           if (!appeared && (!priorExists || sameValue(prior, current)))

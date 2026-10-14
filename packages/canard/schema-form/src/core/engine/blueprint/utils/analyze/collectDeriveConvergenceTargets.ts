@@ -28,7 +28,7 @@ const resolveRead = (host: string, dependency: string): string =>
         dependency[0] === $.Fragment ||
         dependency[0] === $.Current
         ? dependency
-        : `./${dependency}`,
+        : './' + dependency,
     ),
   );
 
@@ -67,7 +67,7 @@ export const collectDeriveConvergenceTargets = (
       hosts.add(node.path);
     for (let child = 0; child < node.childEntries.length; child++) {
       const entry = node.childEntries[child];
-      if (entry.node.path !== `${node.path}/${escapeSegment(entry.name)}`)
+      if (entry.node.path !== node.path + '/' + escapeSegment(entry.name))
         return undefined;
     }
     for (
@@ -143,7 +143,8 @@ export const collectDeriveConvergenceTargets = (
             const targets = fields[child].targets;
             if (!isArray(targets)) return undefined;
             for (let target = 0; target < targets.length; target++) {
-              const targetPath = `${node.path}/${escapeSegment(targets[target])}`;
+              const targetPath =
+                node.path + '/' + escapeSegment(targets[target]);
               for (let watch = 0; watch < paths.length; watch++) {
                 if (
                   typeof paths[watch] !== 'string' ||
@@ -183,8 +184,8 @@ export const collectDeriveConvergenceTargets = (
       if (
         !path ||
         path === node.path ||
-        path.startsWith(`${node.path}/`) ||
-        node.path.startsWith(`${path}/`)
+        path.startsWith(node.path + '/') ||
+        node.path.startsWith(path + '/')
       ) {
         terminal = false;
         break;

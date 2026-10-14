@@ -41,7 +41,7 @@ export const validateControlGroups = (
     if (!value || typeof value !== 'object' || isArray(value))
       throwBlueprintError(
         FormErrorCode.InvalidControlShape,
-        `${schemaPath}/${group}`,
+        schemaPath + '/' + group,
         { group, key: group, expected: 'object' },
         context.options,
       );
@@ -49,7 +49,7 @@ export const validateControlGroups = (
       if (!allowed.includes(key))
         throwBlueprintError(
           FormErrorCode.UnknownGroupKey,
-          `${schemaPath}/${group}/${key}`,
+          schemaPath + '/' + group + '/' + key,
           { group, key },
           context.options,
         );
@@ -61,7 +61,7 @@ export const validateControlGroups = (
   )
     throwBlueprintError(
       FormErrorCode.InvalidControlShape,
-      `${schemaPath}/controls/injectTo`,
+      schemaPath + '/controls/injectTo',
       { group: SCHEMA_GROUP.controls, key: 'injectTo', expected: 'function' },
       context.options,
     );
@@ -69,12 +69,12 @@ export const validateControlGroups = (
     if (!isArray(controls.fields))
       throwBlueprintError(
         FormErrorCode.InvalidControlShape,
-        `${schemaPath}/controls/fields`,
+        schemaPath + '/controls/fields',
         { group: SCHEMA_GROUP.controls, key: 'fields', expected: 'array' },
         context.options,
       );
     controls.fields.forEach((entry: any, index: number) => {
-      const path = `${schemaPath}/controls/fields/${index}`;
+      const path = schemaPath + '/controls/fields/' + index;
       if (
         !entry ||
         typeof entry !== 'object' ||

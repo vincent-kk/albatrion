@@ -107,7 +107,7 @@ class GateRegistry {
           node,
           gate,
           memo,
-          gate.schemaPath === `${node.blueprintNode.schemaPath}/controls/active`
+          gate.schemaPath === node.blueprintNode.schemaPath + '/controls/active'
             ? node.path
             : undefined,
         );
@@ -120,12 +120,12 @@ class GateRegistry {
       }
       for (const declaration of entry.declarations)
         for (const gate of declaration.gates)
-          if (gate.schemaPath === `${declaration.schemaPath}/controls/active`)
+          if (gate.schemaPath === declaration.schemaPath + '/controls/active')
             this.add(
               node,
               gate,
               edgeMemo,
-              `${node.path}/${escapeSegment(entry.name)}`,
+              node.path + '/' + escapeSegment(entry.name),
             );
           else this.add(node, gate, memo);
     }
@@ -252,7 +252,7 @@ class GateRegistry {
       typeof gate.condition.propertyName === 'string'
     )
       return [
-        `${location.hostPath}/${escapeSegment(gate.condition.propertyName)}`,
+        location.hostPath + '/' + escapeSegment(gate.condition.propertyName),
       ];
     const expression = getGateExpression(this.blueprint, gate.schemaPath);
     return expression

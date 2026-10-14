@@ -51,7 +51,7 @@ export const collectStaticSchemas = (
           ...collectStaticSchemas(
             context,
             part,
-            `${schemaPath}/allOf/${index}`,
+            schemaPath + '/allOf/' + index,
             stack,
             cycle,
           ),

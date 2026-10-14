@@ -74,7 +74,7 @@ export const finalizeExits = <Self extends FieldNodeRecord<Self>>(
     scope !== undefined &&
     (!scope.path ||
       node.path === scope.path ||
-      node.path.startsWith(`${scope.path}/`));
+      node.path.startsWith(scope.path + '/'));
   const applyPolicy =
     !context.suppressAutomaticWrites && !context.exceededBudget;
   if (applyPolicy)

@@ -17,7 +17,7 @@ export const updateFieldNodeNameAndPath = <
   node.path = captureFieldNodeChange(
     node,
     'path',
-    parent === null ? '' : `${parent.path}/${node.escapedName}`,
+    parent === null ? '' : parent.path + '/' + node.escapedName,
   );
   node.depth = parent === null ? 0 : parent.depth + 1;
 };

@@ -104,7 +104,7 @@ export const ArrayItems = memo(function ArrayItems({
   for (let index = childCount; index < slotEnd; index++)
     rows.push(
       <EmptySlot
-        key={`slot:${index}`}
+        key={'slot:' + index}
         index={index}
         kind={readSlotKind(jsonSchema, index)}
         readOnly={readOnly}

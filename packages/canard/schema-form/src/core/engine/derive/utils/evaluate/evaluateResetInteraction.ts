@@ -76,7 +76,7 @@ export const evaluateResetInteraction = <Self extends FieldNodeRecord<Self>>(
         const load =
           state.loadScope &&
           (node.path === state.loadScope.path ||
-            node.path.startsWith(`${state.loadScope.path}/`));
+            node.path.startsWith(state.loadScope.path + '/'));
         if (
           !current ||
           !(

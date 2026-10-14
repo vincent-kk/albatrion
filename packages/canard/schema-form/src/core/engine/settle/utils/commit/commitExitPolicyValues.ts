@@ -138,7 +138,7 @@ export const commitExitPolicyValues = <Self extends FieldNodeRecord<Self>>(
           'string'
       )
         continue;
-      const schemaPath = `${group.schemaPath}/unsetOnInactive`;
+      const schemaPath = group.schemaPath + '/unsetOnInactive';
       const key = getExitPolicyKey(group);
       if (evaluated.has(key)) continue;
       evaluated.add(key);

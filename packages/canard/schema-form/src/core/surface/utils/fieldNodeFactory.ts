@@ -83,7 +83,7 @@ const createFieldNode = (
   const escapedName = name
     .replace(TILDE_REGEX, '~0')
     .replace(SLASH_REGEX, '~1');
-  const path = parent ? `${parent.path}/${escapedName}` : '';
+  const path = parent ? parent.path + '/' + escapedName : '';
   const depth = parent ? parent.depth + 1 : 0;
   const row = BEHAVIORS[template.kind]?.[template.strategy];
   if (!row)

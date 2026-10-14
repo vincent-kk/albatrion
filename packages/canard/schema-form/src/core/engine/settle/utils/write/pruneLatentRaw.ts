@@ -20,7 +20,7 @@ export const pruneLatentRaw = <Self extends FieldNodeRecord<Self>>(
   names?: readonly string[],
   context?: SettlementContext<Self>,
 ): void => {
-  const childPaths = names?.map((name) => `${path}/${escapeSegment(name)}`);
+  const childPaths = names?.map((name) => path + '/' + escapeSegment(name));
   if (context) {
     const index = getLatentPathIndex(context);
     const paths = childPaths ?? [path];
@@ -46,9 +46,9 @@ export const pruneLatentRaw = <Self extends FieldNodeRecord<Self>>(
         ? childPaths.some(
             (childPath) =>
               identity[0] === childPath ||
-              identity[0].startsWith(`${childPath}/`),
+              identity[0].startsWith(childPath + '/'),
           )
-        : !path || identity[0] === path || identity[0].startsWith(`${path}/`)
+        : !path || identity[0] === path || identity[0].startsWith(path + '/')
     )
       setLatentRaw(runtime, undefined, key, false, undefined);
   }

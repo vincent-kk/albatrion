@@ -89,7 +89,8 @@ export const collectInlineTerminalWarnings = (
         for (const [name, child] of Object.entries(record[keyword]))
           pending.push({
             schema: child as BlueprintSchema,
-            schemaPath: `${entry.schemaPath}/${keyword}/${escapeSegment(name)}`,
+            schemaPath:
+              entry.schemaPath + '/' + keyword + '/' + escapeSegment(name),
             root: false,
             ancestors,
           });
@@ -99,7 +100,7 @@ export const collectInlineTerminalWarnings = (
         record[keyword].forEach((child: BlueprintSchema, index: number) =>
           pending.push({
             schema: child,
-            schemaPath: `${entry.schemaPath}/${keyword}/${index}`,
+            schemaPath: entry.schemaPath + '/' + keyword + '/' + index,
             root: false,
             ancestors,
           }),
@@ -110,7 +111,7 @@ export const collectInlineTerminalWarnings = (
         child.forEach((item: BlueprintSchema, index: number) =>
           pending.push({
             schema: item,
-            schemaPath: `${entry.schemaPath}/${keyword}/${index}`,
+            schemaPath: entry.schemaPath + '/' + keyword + '/' + index,
             root: false,
             ancestors,
           }),
@@ -121,7 +122,7 @@ export const collectInlineTerminalWarnings = (
       )
         pending.push({
           schema: child,
-          schemaPath: `${entry.schemaPath}/${keyword}`,
+          schemaPath: entry.schemaPath + '/' + keyword,
           root: false,
           ancestors,
         });

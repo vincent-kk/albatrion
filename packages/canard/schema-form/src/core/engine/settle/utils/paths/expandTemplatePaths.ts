@@ -39,7 +39,7 @@ export const expandTemplatePaths = <Self extends FieldNodeRecord<Self>>(
           pending.push({
             node: child,
             depth: depth + 1,
-            path: `${path}/${name}`,
+            path: path + '/' + name,
           });
       }
       continue;
@@ -54,7 +54,7 @@ export const expandTemplatePaths = <Self extends FieldNodeRecord<Self>>(
       pending.push({
         node: child,
         depth: depth + 1,
-        path: `${path}/${segment}`,
+        path: path + '/' + segment,
       });
   }
   return paths;

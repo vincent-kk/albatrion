@@ -44,7 +44,7 @@ export const rekeyArrayRuntimePaths = <Self>(
       unaddressed.add(path);
   prunePerishedPaths(runtime, unaddressed);
   const changed = moves.filter((move) => move.previous !== move.current);
-  const prefix = `${hostPath}/`;
+  const prefix = hostPath + '/';
   const moveByPath = new Map(
     moves.map((move) => [move.previous, move.current]),
   );

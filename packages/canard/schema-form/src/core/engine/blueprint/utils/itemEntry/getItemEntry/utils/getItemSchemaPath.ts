@@ -20,16 +20,16 @@ export const getItemSchemaPath = (
     if (typeof schema !== 'object') continue;
     if (prefix) {
       if (isArray(schema.prefixItems) && index < schema.prefixItems.length)
-        return `${declaration.schemaPath}/prefixItems/${index}`;
+        return declaration.schemaPath + '/prefixItems/' + index;
       if (isArray(schema.items) && index < schema.items.length)
-        return `${declaration.schemaPath}/items/${index}`;
+        return declaration.schemaPath + '/items/' + index;
     } else {
       if (
         schema.items !== null &&
         typeof schema.items === 'object' &&
         !isArray(schema.items)
       )
-        return `${declaration.schemaPath}/items`;
+        return declaration.schemaPath + '/items';
       if (
         isArray(schema.items) &&
         schema.prefixItems === undefined &&
@@ -37,7 +37,7 @@ export const getItemSchemaPath = (
         typeof schema.additionalItems === 'object' &&
         !isArray(schema.additionalItems)
       )
-        return `${declaration.schemaPath}/additionalItems`;
+        return declaration.schemaPath + '/additionalItems';
     }
   }
   return node.schemaPath;

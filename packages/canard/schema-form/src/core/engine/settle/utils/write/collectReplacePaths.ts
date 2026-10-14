@@ -20,7 +20,7 @@ export const collectReplacePaths = <Self extends FieldNodeRecord<Self>>(
     if (origin.source === 'automatic') continue;
     if (origin.keys)
       for (let key = 0; key < origin.keys.length; key++)
-        paths.push(`${origin.path}/${escapeSegment(origin.keys[key])}`);
+        paths.push(origin.path + '/' + escapeSegment(origin.keys[key]));
     else paths.push(origin.path);
     if (origin.fields) paths.push(...origin.fields);
   }

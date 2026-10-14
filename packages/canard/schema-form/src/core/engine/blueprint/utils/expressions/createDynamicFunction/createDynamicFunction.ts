@@ -29,7 +29,7 @@ export const createDynamicFunction: CreateDynamicFunction = (
   const processedExpression = expression
     .replace(JSON_POINTER_PATH_REGEX, (path) => {
       pathManager.set(path);
-      return `dependencies[${pathManager.findIndex(path)}]`;
+      return 'dependencies[' + pathManager.findIndex(path) + ']';
     })
     .trim()
     .replace(TRAILING_SEMICOLON, '');

@@ -34,7 +34,7 @@ export const finalizePerished = <Self extends FieldNodeRecord<Self>>(
     for (const [key, pending] of context.pendingExits)
       if (
         pending.path === node.path ||
-        pending.path.startsWith(`${node.path}/`)
+        pending.path.startsWith(node.path + '/')
       )
         context.pendingExits.delete(key);
     if (!node.parent?.structure?.[node.name])

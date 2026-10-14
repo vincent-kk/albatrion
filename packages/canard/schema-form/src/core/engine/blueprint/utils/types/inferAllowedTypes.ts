@@ -78,7 +78,7 @@ export const inferAllowedTypes = (
       const branches = part.schema[keyword];
       if (!isArray(branches)) continue;
       branches.forEach((branch, index) => {
-        const path = `${part.schemaPath}/${keyword}/${index}`;
+        const path = part.schemaPath + '/' + keyword + '/' + index;
         if (
           branch?.controls?.active !== undefined ||
           context.discriminatorBranches?.has(path)

@@ -12,6 +12,6 @@ export const getExitPolicyKey = (
     group.host.path,
     group.host.blueprintNode.kind,
     group.declarationId,
-    `${group.schemaPath}/unsetOnInactive`,
+    group.schemaPath + '/unsetOnInactive',
     undefined,
   ]);

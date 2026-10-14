@@ -44,7 +44,7 @@ export const routeValidationIssues = <Self extends FieldNodeRecord<Self>>(
         activeIds.add(ids[index]);
   }
   const inScope = (node: Self): boolean =>
-    node === target || node.path.startsWith(`${target.path}/`);
+    node === target || node.path.startsWith(target.path + '/');
   for (const node of before.keys())
     if (isOwnedNode<Self>(node, runtime) && inScope(node)) next.delete(node);
   for (let index = 0; index < issues.length; index++) {

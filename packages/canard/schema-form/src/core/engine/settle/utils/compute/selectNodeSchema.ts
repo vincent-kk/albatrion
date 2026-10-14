@@ -34,7 +34,7 @@ export const selectNodeSchema = <Self extends FieldNodeRecord<Self>>(
       if (
         !match ||
         !declaration.gates.some((gate) =>
-          gate.schemaPath.startsWith(`${match[1]}/${match[2]}/`),
+          gate.schemaPath.startsWith(match[1] + '/' + match[2] + '/'),
         )
       )
         continue;
@@ -54,7 +54,7 @@ export const selectNodeSchema = <Self extends FieldNodeRecord<Self>>(
         code,
         path: node.path,
         schemaPath,
-        message: `Multiple gated oneOf branches are active at ${schemaPath}`,
+        message: 'Multiple gated oneOf branches are active at ' + schemaPath,
         details: { branches: selected },
       } as const;
       indexFieldNodeWarning(node.runtime, key, node.path, record);

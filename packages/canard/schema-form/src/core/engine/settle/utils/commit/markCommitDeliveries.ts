@@ -34,7 +34,7 @@ export const markCommitDeliveries = <Self extends FieldNodeRecord<Self>>(
   const runtime = context.root.runtime;
   const refreshTargets = runtime.refreshTargets;
   const loadScope = context.kind === 'load' ? context.loadScope : undefined;
-  const loadPrefix = loadScope ? `${loadScope.path}/` : '';
+  const loadPrefix = loadScope ? loadScope.path + '/' : '';
   const automaticNodes = new Set<Self>();
   for (let index = 0; index < context.automaticLog.length; index++)
     automaticNodes.add(context.automaticLog[index].node);

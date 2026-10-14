@@ -58,7 +58,7 @@ export const primeHost = <Self extends FieldNodeRecord<Self>>(
       ? prior[entry.name]
       : undefined;
     const key = JSON.stringify([
-      `${node.path}/${escapeSegment(entry.name)}`,
+      node.path + '/' + escapeSegment(entry.name),
       entry.node.kind,
     ]);
     const pending = context.pendingExits.get(key);

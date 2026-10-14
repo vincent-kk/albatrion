@@ -59,7 +59,8 @@ class DependencyIndex {
       for (const declaration of node.declarations)
         for (const rule of rules.byDeclaration.get(declaration.id) ?? []) {
           if (rule.kind !== 'derived' || !rule.targetName) continue;
-          const targetPath = `${declaration.path}/${escapeSegment(rule.targetName)}`;
+          const targetPath =
+            declaration.path + '/' + escapeSegment(rule.targetName);
           for (const watch of rule.watchDependencies) {
             const watched = resolveDependencyPath(targetPath, watch);
             if (watched !== $.Context) this.add(watched, declaration.path);

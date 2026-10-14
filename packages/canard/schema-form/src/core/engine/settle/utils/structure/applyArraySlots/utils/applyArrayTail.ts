@@ -52,7 +52,7 @@ export const applyArrayTail = <Self extends FieldNodeRecord<Self>>(
         : removedEntry
           ? readLatentSlotSource(
               context,
-              `${host.path}/${removedIndex}`,
+              host.path + '/' + removedIndex,
               removedEntry.node,
             )
           : oldExtras[removedIndex - templateCount];
@@ -88,7 +88,7 @@ export const applyArrayTail = <Self extends FieldNodeRecord<Self>>(
   let perishedPaths: Set<string> | undefined;
   for (let index = prefixCount; index < oldCount; index++) {
     const item = items[String(index)];
-    moves.push({ previous: `${host.path}/${index}` });
+    moves.push({ previous: host.path + '/' + index });
     if (!item) continue;
     context.perished.add(item);
     walkOwnedFieldNodes(item, (departing) => {

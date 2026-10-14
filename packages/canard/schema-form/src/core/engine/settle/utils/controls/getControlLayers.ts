@@ -88,7 +88,7 @@ export const getControlLayers = <Self extends ControlTarget<Self>>(
       groups.push({
         layer: 'node',
         declarationId: declaration.id,
-        schemaPath: `${declaration.schemaPath}/controls`,
+        schemaPath: declaration.schemaPath + '/controls',
         controls,
         host: node,
       });
@@ -118,11 +118,11 @@ export const getControlLayers = <Self extends ControlTarget<Self>>(
         if (
           nodeIds.includes(child.id) &&
           (child.schemaPath.startsWith(
-            `${declaration.schemaPath}/properties/`,
+            declaration.schemaPath + '/properties/',
           ) ||
-            child.schemaPath.startsWith(`${declaration.schemaPath}/items/`) ||
+            child.schemaPath.startsWith(declaration.schemaPath + '/items/') ||
             child.schemaPath.startsWith(
-              `${declaration.schemaPath}/prefixItems/`,
+              declaration.schemaPath + '/prefixItems/',
             ))
         ) {
           ownsFragment = true;
@@ -133,7 +133,7 @@ export const getControlLayers = <Self extends ControlTarget<Self>>(
       groups.push({
         layer: 'fragment',
         declarationId: declaration.id,
-        schemaPath: `${declaration.schemaPath}/controls`,
+        schemaPath: declaration.schemaPath + '/controls',
         controls,
         host: parent,
       });
@@ -153,7 +153,8 @@ export const getControlLayers = <Self extends ControlTarget<Self>>(
         groups.push({
           layer: 'fields',
           declarationId: declaration.id,
-          schemaPath: `${declaration.schemaPath}/controls/fields/${index}/controls`,
+          schemaPath:
+            declaration.schemaPath + '/controls/fields/' + index + '/controls',
           controls: itemControls,
           host: parent,
         });
