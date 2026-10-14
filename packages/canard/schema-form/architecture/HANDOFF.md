@@ -2,9 +2,8 @@
 
 개발의 진행 상황과 다음 할 일은 `PLAN.md`가 단일 진입점으로 든다. 다음 세션이 바로 이어서 일하기 위한 문서다. 이력은 `git log`와 `reviews/`에 있으므로 여기에는 지금 상태, 다음 할 일, 일하는 법만 적는다. 소유자는 Vincent다.
 
-## 1. 지금 어디인가 (2026-10-14, 311라운드 닫힘; 정돈-3 진행, 병합 즉시 소유자 구조 리뷰, 오늘 밤 속도 루프)
+## 1. 지금 어디인가 (2026-10-14, 314라운드 닫힘; 정돈-E 진행, 소유자 구조 리뷰 시작(Form 재구성 PR은 fairy08), 대기열 비어 있음)
 
-- **261라운드(2026-10-14, 닫기).** 핵심 고유명사 재검토의 후보 15개를 사실 확인과 함께 올렸다(261C-01, reviews/round-261-closing.md). 소유자 답을 받아 259C-01 대응표를 넓히고 07b-5 브리프를 쓴다.
 - **262라운드(2026-10-14, 닫기).** PR #364(07b-4, c711f3d17)를 직접 검증해 통과했다: 시험 3936+241, typecheck·lint 0, 세션 줄 0(262C-01, reviews/round-262-closing.md). 소유자 병합 허가 대기.
 - **263라운드(2026-10-14, 소유자).** PR #364(07b-4) 병합을 명시적으로 허가했다(reviews/round-263-owner-answers.md).
 - **264라운드(2026-10-14, 소유자).** 고유명사 후보 15 중 1·3·4·5·6·7·8·9·10·11·15를 권고대로 승인했고, 2(ChildField 이름 길이)·12(controls.children 대체 이름)·13(propertyKeys 공개 자리·이름)·14(virtual을 object 전용 키로)는 추가 논의, 비표준 최상위 키의 잔여 점검을 요구했다(reviews/round-264-owner-answers.md).
@@ -54,7 +53,10 @@
 - **308라운드(2026-10-14, 닫기/원장 관리자).** fairy08이 filid 개선 요청을 ogham 이슈 #143으로 등록(289라운드 D6). 수치는 정돈-2 뒤 트리 기준(시험 쪽 위반은 D7 밖 0, index 48항목 삭제), B8 첫 사례와 mock 경로 제안, 훅 차단 사례를 더함. 소유자의 마지막 filid 결정 재료.
 - **309라운드(2026-10-14, 소유자).** 이동 작업의 소요 시간 지적 → 217C-01에 예외: 순수 이동·이름 변경·import 고침은 fixy08이 직접(새 로직만 codex), 전체 게이트는 PR 직전 한 번(중간은 typecheck만, verifier도 한 번). 정돈-3에 즉시 적용(reviews/round-309-owner-answers.md).
 - **310라운드(2026-10-14, 소유자).** 벤치는 게이트가 아님 — 경로 바뀐 파일만 PR 직전 시작 확인 한 번, 측정 없음. 오래 걸리는 절차는 몇 단계를 묶어 한 번(원칙은 PR 직전), 중간은 typecheck만; 정돈-E·S에도 적용(reviews/round-310-owner-answers.md).
-- **311라운드(2026-10-14, 소유자).** 정돈-3이 구조 리뷰 전 마지막; 리뷰하며 구조를 더 잡고 오늘 밤 속도 측정·개선 루프. 리뷰 동안 E·S·4를 끝내고 밤에는 측정만(조용한 창), 속도 계획 점검은 fairy08(reviews/round-311-owner-answers.md). 다음 라운드 번호는 312.
+- **311라운드(2026-10-14, 소유자).** 정돈-3이 구조 리뷰 전 마지막; 리뷰하며 구조를 더 잡고 오늘 밤 속도 측정·개선 루프. 리뷰 동안 E·S·4를 끝내고 밤에는 측정만(조용한 창), 속도 계획 점검은 fairy08(reviews/round-311-owner-answers.md).
+- **312라운드(2026-10-14, 닫기/원장 관리자).** 정돈-3 PR #378을 eeb1bd374로 squash 병합(verifier: 표면 92 동일, 3826 통과, 이동 147건 이력 유지, 비이동 편집은 B1에 따른 둘뿐). 결정 D1–D6과 선택 여섯 기록(rolled는 src/rolled, 형 전용 순환 하나는 리뷰 항목, round-87 스크립트는 돌지 않음). 구조 이동 끝 → 소유자 구조 리뷰(5단계) 시작 가능. fixy08은 정돈-E.
+- **313라운드(2026-10-14, 소유자).** 정돈-E·S도 codex 없이 fixy08이 직접(진행 중 codex 작업은 멈춤). 소유자는 E·S·4가 모두 병합된 뒤 구조를 직접 손보고 원장 관리자가 diff를 읽어 모델 기준으로 짚는다(소유자 편집이 정돈-E 작업과 부딪혀 되돌림)(reviews/round-313-owner-answers.md).
+- **314라운드(2026-10-14, 소유자).** 구조 리뷰 첫 손질: Form fractal 재구성(뿌리는 문서·index·Form.tsx만, FormCore와 Form.* 다섯은 components/ 아래 fractal 여섯, 오류 바운더리 래핑은 FormCore로). 여섯은 fractal(INTENT·DETAIL 한국어), 이름 함정(FormCore.tsx의 FormRoot, 별칭)은 오타로 수정, 문서화·정리는 fairy08 위임 → 워크트리 stage-form-fractals, PR은 원장 관리자 병합(reviews/round-314-owner-answers.md). 다음 라운드 번호는 315.
 - **그 앞의 라운드 요지(19라운드부터)는 PLAN-LOG.md 2절에 있다.** 라운드마다 한 문단이며, 1절의 기록 표와 같은 순서다.
 - **설계의 정본은 단일 원장 `ledger/`다.** 영역 17개, 항목 1,350개(80라운드 뒤, 24라운드 뒤 1,348; 현행 1,076(부정 결정·기록 포함), 대체됨 199, 분할됨 49, 중복 24, 열림 0). 형식과 규칙은 `ledger/README.md`.
 - **옛 설계 문서(`00`–`09`, `adr/`, `open-questions.md`)는 동결됐다.** 더 고치지 않는다. 어긋남은 원장의 충돌 칸에 적는다. 원장이 인용하는 옛 문서의 `path:line`은 모두 커밋 `ba398c330` 기준 줄 번호다(그 뒤 옛 문서는 바뀌지 않았다).
@@ -461,6 +463,9 @@ node ledger/checks/doc-coverage.mjs design/*.md adr/*.md -- ledger/*.md   # 설�
 | `reviews/round-309-owner-answers.md` | 309라운드 소유자: 이동 속도 지적, 이동 직접·게이트 한 번 허락 |
 | `reviews/round-310-owner-answers.md` | 310라운드 소유자: 벤치는 시작 확인만, 긴 절차는 묶어 한 번 |
 | `reviews/round-311-owner-answers.md` | 311라운드 소유자: 정돈-3이 리뷰 전 마지막, 밤의 속도 루프 |
+| `reviews/round-312-closing.md` | 312라운드 편집자 결정 둘: 정돈-3 PR #378 병합, 결정·선택 기록 |
+| `reviews/round-313-owner-answers.md` | 313라운드 소유자: 정돈-E도 codex 없이 직접 |
+| `reviews/round-314-owner-answers.md` | 314라운드 소유자: Form 재구성 — 여섯은 fractal, 문서 위임, INTENT는 한국어 |
 | plan/tidy-structure/array-limits-review.md | 배열 한도를 core가 다룰 때의 유익·손해 비교(대기열 53 검토 메모, 권고 포함) |
 | `reviews/round-297-closing.md` | 297라운드 편집자 결정 하나: 정돈-1(#374) 병합, 정돈-2 투입 |
 | plan/tidy-structure/brief-tidy-2.md | 정돈-2 브리프(fixy08 → codex): 시험 자리 U·D·S1, 제품 위반 둘, 잉여 export, D7 예외 |
