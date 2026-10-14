@@ -44,7 +44,7 @@
 - `focus(path?)`·`select(path?)`·`refresh(path?)`·`remount(path?)`는 해당 노드의 `request(kind)`를 호출합니다. 경로가 없으면 루트이고 지정 경로의 노드가 없으면 무동작입니다(EVENT-063·073, SURFACE-059).
 - `submit`은 `getTrackableHandler`로 감싸여 진행 상태를 추적할 수 있다.
 
-- 위계: 공개 조각 다섯(`FormRender`·`FormField`·`FormLabel`·`FormInput`·`FormError`)은 `components/`, 폼 뿌리 조립(`FormRoot`·`FormRootProxy`·`FormChildrenRenderer`)은 `root/`, 보조(`createChildren`·`submitForm`)는 `utils/`에 있습니다. `Form.tsx`는 `./root/FormRoot`를 렌더합니다. 뿌리에는 문서·진입점·형 동반 파일(`type.ts`)만 둡니다(filid zero-peer-file).
+- 위계: `components/`에 fractal 여섯이 있습니다. `components/FormCore/`는 Provider 조립·핸들·오류 경계를 소유하며, 경계를 입힌 바깥 `FormCore`와 경계 없는 안쪽 `FormRoot`를 둡니다. 공개 조각 다섯(`FormRender`·`FormField`·`FormLabel`·`FormInput`·`FormError`)도 각자의 fractal입니다. `components/index.ts`는 여섯 진입점을 이름으로 다시 내보내고, `Form.tsx`는 `FormCore`에 정적 멤버 다섯을 붙여 `Form`을 만듭니다. 뿌리에는 문서·진입점·`Form.tsx`만 둡니다(filid zero-peer-file).
 
 ## Acceptance Criteria
 
@@ -72,4 +72,4 @@
 
 ## Last Updated
 
-계약 기준: LANDING-067·095, WRITE-042–046, EVENT-063·073, 68C-08, 69C-01–05; 정돈-2(2026-10-14).
+계약 기준: LANDING-067·095, WRITE-042–046, EVENT-063·073, 68C-08, 69C-01–05; 정돈-2·Form 조각 fractal 분리(2026-10-14).

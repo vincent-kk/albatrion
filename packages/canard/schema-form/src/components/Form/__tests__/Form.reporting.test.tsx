@@ -11,8 +11,7 @@ import { afterEach, expect, it, vi } from 'vitest';
 
 import { ValidationMode } from '@/schema-form/core';
 
-import { Form } from '../Form';
-import type { FormHandle } from '../type';
+import { FormCore, type FormHandle } from '../components/FormCore';
 
 afterEach(() => {
   cleanup();
@@ -30,14 +29,14 @@ it('ERROR-026 excludes schema-validation submission results from onError', async
     compileGuard: () => () => true,
   };
   const view = render(
-    <Form
+    <FormCore
       jsonSchema={{ type: 'string' }}
       validatorFactory={validatorFactory}
       validationMode={ValidationMode.OnRequest}
       onError={onError}
     >
       <span />
-    </Form>,
+    </FormCore>,
   );
   fireEvent.submit(view.container.querySelector('form')!);
   await waitFor(() => expect(sink).toHaveBeenCalledOnce());
@@ -50,7 +49,7 @@ it('ERROR-028 propagates a core observer exception at the caller boundary', () =
   const observerError = new Error('observer');
   const ref = createRef<FormHandle>();
   render(
-    <Form
+    <FormCore
       ref={ref}
       jsonSchema={{ type: 'number' }}
       validationMode={ValidationMode.None}
@@ -59,7 +58,7 @@ it('ERROR-028 propagates a core observer exception at the caller boundary', () =
       }}
     >
       <span />
-    </Form>,
+    </FormCore>,
   );
   expect(() => act(() => ref.current!.setValue('invalid'))).toThrow(
     observerError,
