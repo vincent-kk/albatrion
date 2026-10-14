@@ -1,8 +1,8 @@
 import { beforeEach, describe, expect, it } from 'vitest';
 
-import { PluginManager } from '../PluginManager';
-import { registerPlugin } from '../registerPlugin';
 import type { SchemaFormPlugin } from '../type';
+import { PluginManager } from '../utils/PluginManager';
+import { registerPlugin } from '../utils/registerPlugin';
 
 const plugin: SchemaFormPlugin = {
   fieldInputDefinitions: [

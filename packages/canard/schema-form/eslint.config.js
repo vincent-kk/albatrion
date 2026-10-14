@@ -100,7 +100,7 @@ export default [
     },
   },
   {
-    files: ['src/core/surface/FieldNode.ts'],
+    files: ['src/core/surface/classes/FieldNode.ts'],
     rules: {
       'no-restricted-syntax': [
         'error',
@@ -174,7 +174,7 @@ export default [
       'src/errors/**/*.{ts,tsx}',
       'src/index.ts',
     ],
-    ignores: ['src/core/surface/FieldNode.ts', '**/__tests__/**'],
+    ignores: ['src/core/surface/classes/FieldNode.ts', '**/__tests__/**'],
     rules: {
       'no-restricted-syntax': [
         'error',

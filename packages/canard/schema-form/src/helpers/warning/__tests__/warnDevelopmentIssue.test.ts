@@ -1,6 +1,6 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
-import { warnDevelopmentIssue } from '../warnDevelopmentIssue';
+import { warnDevelopmentIssue } from '../utils/warnDevelopmentIssue';
 
 describe('warnDevelopmentIssue', () => {
   afterEach(() => {

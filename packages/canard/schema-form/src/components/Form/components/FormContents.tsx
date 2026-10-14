@@ -28,7 +28,7 @@ import type { RootBinding } from '@/schema-form/providers/RootNodeContext';
 import type { AttachedFilesMap } from '@/schema-form/types';
 
 import type { FormHandle, FormProps } from '../type';
-import { createChildren } from '../util';
+import { createChildren } from '../utils/createChildren';
 import { submitForm } from '../utils/submitForm';
 import { FormRootProxy } from './FormRootProxy';
 

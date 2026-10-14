@@ -31,7 +31,7 @@ const candidateFiles = {
   i: ['core/engine/settle/utils/compute/selectChildren.ts', 'core/engine/settle/utils/compute/enterFieldNode.ts'],
   ii: ['core/engine/settle/utils/commit/commitSettlement.ts', 'core/engine/settle/utils/controls/getControlLayers.ts', 'core/engine/validation/utils/route/routeValidationIssues.ts'],
   iii: ['core/engine/settle/utils/commit/markCommitDeliveries.ts'],
-  iv: ['fieldInputs/FieldInputArray.tsx'],
+  iv: ['fieldInputs/components/FieldInputArray.tsx'],
   v: ['core/engine/settle/type.ts', 'core/engine/settle/utils/compute/computeNode.ts',
     'core/engine/settle/utils/compute/utils/hasIndependentLeafDefaults.ts', 'core/engine/settle/utils/transition/transitionSettlement.ts'],
 };
@@ -72,7 +72,7 @@ globalThis.__phaseExit = (frame) => {
 
 /** Classify boundaries, without changing the operation or its arguments. */
 function phaseFor(file, name, node) {
-  if (componentProbe && (file.includes('/fieldInputs/FieldInputArray.tsx') ||
+  if (componentProbe && (file.includes('/fieldInputs/components/FieldInputArray.tsx') ||
     file.endsWith('/useChildFields.tsx') || file.endsWith('/FieldInputSlot.tsx'))) return 'react-render';
   if (name === 'nodeFromJSONSchema') return 'other';
   if (/react-dom-(client\.development|profiling\.profiling)\.js$/.test(file)) {

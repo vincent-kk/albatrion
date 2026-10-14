@@ -1,7 +1,7 @@
 import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 
-import { FORM_ERROR_CODE_TABLE } from '../formErrorCode';
+import { FORM_ERROR_CODE_TABLE } from '../codes/formErrorCode';
 
 /**
  * Expands a live ERROR-164 row, including its abbreviated alternatives.

@@ -1,8 +1,8 @@
 import { observeFieldNodeReports } from '@/schema-form/core';
 import type { FormErrorRecord } from '@/schema-form/errors';
 
-import { reportErrorToHost } from '../reportErrorToHost';
 import type { FormErrorService } from '../type';
+import { reportErrorToHost } from './reportErrorToHost';
 
 /** Create an instance reporter; React supplies the current callback through onError. */
 export const createFormErrorService = (): FormErrorService => {

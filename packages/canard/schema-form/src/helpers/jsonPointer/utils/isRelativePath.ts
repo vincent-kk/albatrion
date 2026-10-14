@@ -1,4 +1,4 @@
-import { JSONPointer as $ } from '../enum';
+import { JSONPointer as $ } from '../constants/JSONPointer';
 
 /**
  * Checks if a JSON Pointer path is a relative path.

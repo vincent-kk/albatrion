@@ -5,7 +5,7 @@ import type { ResolvedVirtualizationOptions } from '@/schema-form/helpers/virtua
 import { VirtualizationBackfill } from '@/schema-form/helpers/virtualization/resolveVirtualizationOptions';
 
 import { VirtualizationManager } from '../VirtualizationManager';
-import type { IdleDeadlineLike } from '../scheduleIdle';
+import type { IdleDeadlineLike } from '../utils/scheduleIdle';
 
 class MockIntersectionObserver {
   public static instances: MockIntersectionObserver[] = [];
