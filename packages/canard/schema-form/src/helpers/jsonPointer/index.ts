@@ -1,3 +1,4 @@
-export { JSONPointer } from './enum';
+export { JSONPointer } from './constants/JSONPointer';
+export { JSONPointerPrefix } from './constants/JSONPointerPrefix';
 
-export * from './utils';
+export { getAbsolutePath, stripFragment } from './utils';

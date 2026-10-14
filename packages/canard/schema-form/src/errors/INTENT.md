@@ -2,33 +2,35 @@
 
 ## Purpose
 
-schema-form 도메인 에러 클래스 모음. 모든 에러는 `@winglet/common-utils/error` 의 `BaseError` 를 상속하여 일관된 에러 구조를 제공한다.
+schema-form 도메인 에러 클래스와 패키지 전체의 오류·경고 코드 enum과 기록 형을 소유한다. 모든 에러 클래스는 `@winglet/common-utils/error`의 `BaseError`를 상속하여 일관된 에러 구조를 제공한다(ERROR-017·031·164).
 
 ## Conventions
 
-- 각 에러 클래스는 `(code: string, message: string, details: ErrorDetails)` 생성자 패턴
-- 각 에러 클래스와 함께 `is*Error(error): error is XxxError` 타입 가드 함수 제공
-- `this.name` 을 클래스명으로 명시적 설정 (`this.name = 'JSONSchemaError'` 등)
-- `details` 에 디버깅에 필요한 컨텍스트 정보 포함 (jsonSchema, path, plugin 등)
+- 각 에러 클래스는 `(code: <클래스>Code, message: string, details: ErrorDetails)` 생성자 패턴을 따르며, `code`는 `FormErrorCode` 중 그 클래스 그룹의 그룹 한정 값만 받는다(`SchemaFormErrorCode` 등)
+- 오류·경고 코드의 정본은 `codes/`의 object enum `FormErrorCode`·`FormWarningCode` 둘이며 키는 맨 이름의 PascalCase, 값은 실제로 발생하는 그룹 한정 문자열
+- 각 에러 클래스와 함께 `is*Error(error): error is XxxError` 타입 가드 함수를 제공한다
+- `this.name` 을 클래스명으로 명시적으로 설정한다 (`this.name = 'JSONSchemaError'` 등)
+- `details` 에 디버깅에 필요한 컨텍스트 정보(jsonSchema, path, plugin 등)를 담는다
 
 ## Boundaries
 
 ### Always do
 
-- 새 에러 클래스 추가 시 `BaseError` 상속 및 `is*Error` 타입 가드 함께 제공
-- `index.ts` 에 `export *` 로 새 에러 포함
-- `details` 객체에 에러 재현에 필요한 충분한 컨텍스트 포함
+- 새 에러 클래스를 추가할 때는 `BaseError`를 상속하고 `is*Error` 타입 가드를 함께 제공한다
+- `index.ts` 에 새 에러를 이름으로 나열해 넣는다
+- `details` 객체에 에러를 재현하는 데 필요한 컨텍스트를 충분히 담는다
+- 코드 enum과 기록·보고기 형은 데이터로만 두고 사슬 끝 전달·묶음은 `engine/write`가 맡는다(ERROR-004·005·029, LANDING-084).
 
 ### Ask first
 
-- 기존 에러 클래스의 `code` 문자열 변경 (외부에서 에러 코드를 문자열로 비교하는 코드에 영향)
-- `BaseError` 상속 구조 이외의 에러 클래스 도입
+- 기존 코드의 값 문자열을 바꾸는 경우 (외부에서 `error.code`를 비교하는 코드에 영향)
+- `BaseError` 상속 구조를 따르지 않는 에러 클래스를 도입하는 경우
 
 ### Never do
 
-- 에러 클래스에 비즈니스 로직 추가 (순수 에러 데이터 컨테이너여야 함)
-- `details` 에 민감한 사용자 데이터 포함
-- `Error` 를 직접 상속하여 새 에러 생성 (`BaseError` 를 반드시 거쳐야 함)
+- 에러 클래스에 비즈니스 로직을 추가하지 않는다 (순수한 에러 데이터 컨테이너여야 한다)
+- `details` 에 민감한 사용자 데이터를 담지 않는다
+- `Error` 를 직접 상속해 새 에러를 만들지 않는다 (반드시 `BaseError` 를 거쳐야 한다)
 
 ## Dependencies
 

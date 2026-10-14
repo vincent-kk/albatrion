@@ -1,0 +1,87 @@
+diff --git a/packages/canard/schema-form/src/core/settle/DETAIL.md b/packages/canard/schema-form/src/core/settle/DETAIL.md
+--- a/packages/canard/schema-form/src/core/settle/DETAIL.md
++++ b/packages/canard/schema-form/src/core/settle/DETAIL.md
+@@ -1,6 +1,8 @@
+ # settle 계약
+ 
+ ## Requirements
++
++- 게이트 식의 의존 값은 기존 의존 배열 순서대로 매 평가마다 classic loop에서 읽습니다. 경로 해석·실제 projected read·식 호출과 catch·gateThrowVersion·오류 발생 위치는 같습니다. 속도 비용은 O(의존 수)이며 배열 map callback 호출을 제거합니다. 메모리 비용은 기존 길이의 입력 배열 하나를 유지하고 평가별 callback closure만 제거하며 새 보유 캐시·노드 칸은 없습니다. 실제 종단 이득은 105C-01과 0.5% 최소 크기 규칙으로 판정합니다(106라운드 게이트 읽기).
+ 
+ - 빈 단계는 입력 부재가 기존 불변 capability 또는 이번 작업 집합의 크기·단일 대상 확인으로 O(1)에 증명될 때만 호출을 생략합니다. 파생 규칙이 없으면 파생 실행·기준 커밋을, 식이 없으면 이탈 식 커밋을, 이탈·소멸·생김·되살림·채움·배열 작업이 모두 없으면 이탈 마감을 생략합니다. 게이트·생김·이탈이 없고 쓰기 입력이 비었거나 유효 타입이 정적 타입과 같은 원래 대상 하나뿐이면 전이를 생략합니다. 빈 이탈 스냅숏·trace 마감·배열 정렬도 진입하지 않습니다. 값·오류·배달·revision·커밋 번호·논리 단계 순서와 실제 적용 라운드는 유지하며 일을 다른 단계나 다음 호출로 옮기지 않습니다. 속도 비용은 고정 수의 O(1) 부재 검사이며 빈 helper의 호출·반복자·임시 그릇을 제거합니다. 새 영구 메모리·노드/문맥 shape·색인은 없고 실제 작업이 있는 경로의 시간·메모리 차수는 유지합니다(96C-01, 98라운드 A1).
+ 
+diff --git a/packages/canard/schema-form/src/core/settle/utils/gates/evaluateGate.ts b/packages/canard/schema-form/src/core/settle/utils/gates/evaluateGate.ts
+--- a/packages/canard/schema-form/src/core/settle/utils/gates/evaluateGate.ts
++++ b/packages/canard/schema-form/src/core/settle/utils/gates/evaluateGate.ts
+@@ -108,11 +108,12 @@
+     const expression = blueprint ? getGateExpression(blueprint, gate.schemaPath) :
+       undefined;
+     if (expression) {
+-      const dependencies = expression.dependencies.map((dependency) => {
+-        const path = resolveDependencyPath(hostPath, dependency);
+-        return path === '@' ? context.root.runtime.context ?? {} :
++      const dependencies = new Array<unknown>(expression.dependencies.length);
++      for (let index = 0; index < expression.dependencies.length; index++) {
++        const path = resolveDependencyPath(hostPath, expression.dependencies[index]);
++        dependencies[index] = path === '@' ? context.root.runtime.context ?? {} :
+           readProjectedValue(context, path);
+-      });
++      }
+       return Boolean(expression.evaluate(dependencies));
+     }
+     return gate.condition === true;
+diff --git a/packages/canard/schema-form/src/core/settle/__tests__/settle.gate-read-counts.test.ts b/packages/canard/schema-form/src/core/settle/__tests__/settle.gate-read-counts.test.ts
+new file mode 100644
+--- /dev/null
++++ b/packages/canard/schema-form/src/core/settle/__tests__/settle.gate-read-counts.test.ts
+@@ -0,0 +1,50 @@
++import { describe, expect, it, vi } from 'vitest';
++
++import { SetValueOption } from '../../types/value';
++import { loadSchemaNodeAtMount, writeSchemaNode } from '../index';
++import { getGateExpression } from '../utils/gates/getGateExpression';
++import * as reads from '../utils/gates/readProjectedValue';
++import { createTestTree } from './fixtures/createTestTree';
++
++describe('gate dependency read work', () => {
++  it('reads every dependency in order without invoking its array map', () => {
++    const { root, blueprint } = createTestTree({
++      type: 'object',
++      properties: { a: { type: 'string' }, b: { type: 'string' } },
++      anyOf: [{ controls: { active: "@.gate() && ./a === 'A' && ./b === 'B'" },
++        properties: { payload: { type: 'string', default: 'P' } } }],
++    });
++    const expression = getGateExpression(blueprint, '#/anyOf/0/controls/active');
++    expect(expression).toBeDefined();
++    const gate = vi.fn(() => true);
++    root.runtime.context = { gate };
++    let mapCalls = 0;
++    const nativeMap = Array.prototype.map;
++    const mapped = vi.spyOn(Array.prototype, 'map').mockImplementation(function (
++      this: unknown[], callback, thisArg,
++    ) {
++      if (this === expression!.dependencies &&
++        new Error().stack?.includes('evaluateGate.ts')) mapCalls++;
++      return Reflect.apply(nativeMap, this, [callback, thisArg]);
++    });
++    const projected = vi.spyOn(reads, 'readProjectedValue');
++    const order: string[] = [];
++    try {
++      loadSchemaNodeAtMount(root, { a: 'A', b: 'B' }, SetValueOption.Overwrite);
++      expect(root.emit).toEqual({ a: 'A', b: 'B', payload: 'P' });
++      writeSchemaNode(root.structure!.a, 'other', 'input', SetValueOption.Overwrite);
++      expect(root.emit).toEqual({ a: 'other', b: 'B' });
++      for (const [, path] of projected.mock.calls)
++        if (path === '/a' || path === '/b') order.push(path);
++    } finally {
++      mapped.mockRestore();
++      projected.mockRestore();
++    }
++    expect(order.length).toBeGreaterThan(0);
++    for (let index = 0; index < order.length; index++)
++      expect(order[index]).toBe(index % 2 === 0 ? '/a' : '/b');
++    expect(gate.mock.calls.length).toBeGreaterThan(1);
++    console.log(`106COUNT gate-read map=${mapCalls} projected=${order.length} evaluate=${gate.mock.calls.length}`);
++    expect(mapCalls).toBe(0);
++  });
++});

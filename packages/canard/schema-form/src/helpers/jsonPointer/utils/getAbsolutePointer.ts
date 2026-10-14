@@ -1,4 +1,4 @@
-import { JSONPointer as $ } from '../enum';
+import { JSONPointer as $ } from '../constants/JSONPointer';
 import { isAbsolutePath } from './isAbsolutePath';
 
 /**

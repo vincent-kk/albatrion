@@ -1,0 +1,3 @@
+src/core/blueprint/__tests__/blueprint.type-inference.test.ts(3,27): error TS2307: Cannot find module '../index' or its corresponding type declarations.
+src/core/blueprint/__tests__/blueprint.type-static-intersection.test.ts(3,27): error TS2307: Cannot find module '../index' or its corresponding type declarations.
+src/core/blueprint/__tests__/blueprint.type-syntax.test.ts(3,27): error TS2307: Cannot find module '../index' or its corresponding type declarations.

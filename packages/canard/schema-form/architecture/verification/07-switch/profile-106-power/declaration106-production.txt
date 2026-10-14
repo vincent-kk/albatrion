@@ -1,0 +1,20 @@
+(node:91220) [DEP0205] DeprecationWarning: `module.register()` is deprecated. Use `module.registerHooks()` instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+│ ┌────────────────────────────────────────────────────────────────────────────┐
+│ │  Info: Found a setup file with "setProjectAnnotations".                    │
+│ │  Skipping automatic provisioning of preview annotations to avoid           │
+│ │  conflicts. Since Storybook 10.3, "@storybook/addon-vitest" applies these  │
+│ │   automatically.                                                           │
+│ │  You can safely remove the "setProjectAnnotations" call from your setup    │
+│ │  file, or remove the file entirely if you don't have custom code there.    │
+│ └────────────────────────────────────────────────────────────────────────────┘
+
+ RUN  v3.2.6 /Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/packages/canard/schema-form
+
+···············
+
+ Test Files  5 passed (5)
+      Tests  15 passed (15)
+   Start at  02:43:19
+   Duration  3.97s (transform 1.09s, setup 0ms, collect 2.25s, tests 210ms, environment 748ms, prepare 171ms)
+

@@ -1,36 +1,31 @@
-# schema-form/src/core
+# core — Node engine and surface composition boundary
 
 ## Purpose
 
-JSON Schema를 노드 트리로 변환하고 폼 상태를 관리하는 핵심 엔진. `nodeFromJSONSchema()` 팩토리로 스키마를 파싱하여 타입별 노드(StringNode, NumberNode, ObjectNode 등) 트리를 생성한다.
+렌더 바인딩과 core 호스트가 쓸 수 있도록 engine과 node surface 계약을 하나로 묶는다. 실행 규칙은 engine이 소유하고, 공개 node 타입과 가드, 빌드 채널은 surface가 소유한다.
 
 ## Conventions
 
-- 클래스는 Domain-First 멤버 순서: Identity → Tree → Value → Computed → State → Validation → Events → Injection → Lifecycle → Constructor
-- 내부 필드/메서드는 `__name__` 이중 언더스코어
-- 이벤트는 `EventCascade` 를 통해 마이크로태스크 배칭
-- `UpdateValue` 는 즉시(synchronous) 발행, 나머지는 배칭
-- 노드 타입 가드: `isStringNode`, `isArrayNode`, `isObjectNode` 등
+- 진입점에는 이름을 붙인 re-export만 두고, 구현은 그것을 소유한 모듈에 남겨 둔다.
+- core 호스트와 React 바인딩은 같은 트리 구성 채널과 마운트 채널을 쓴다.
+- 입력 원본은 내보내는 출력과 따로 저장하고, 타입이 맞지 않으면 명시적으로 보고한다.
+- 렌더러 표현은 불투명한 타입 매개변수로 넘기며, engine 스키마 타입은 React를 import하지 않는다.
 
 ## Boundaries
 
 ### Always do
 
-- 새 노드 타입 추가 시 `AbstractNode` 상속 및 `nodes/index.ts` export 포함
-- 노드 값 변경은 반드시 `setValue()` 공개 API 사용
-- 파서 함수는 순수 함수로 유지 (사이드 이펙트 없음)
-- 노드 상태 변경 시 관련 이벤트 발행
+- 공개 계약과 바인딩 전용 채널은 진입점에서 이름을 붙여 re-export한다.
+- 트리를 구성하고 마운트하는 동안 호스트 predicate 참조를 그대로 유지한다.
+- node 값은 공개 write 계약과 이름이 붙은 바인딩 채널로 바꾼다.
 
 ### Ask first
 
-- `EventCascade` 배칭 메커니즘 변경 (이벤트 타이밍 회귀 위험)
-- `SetValueOption` 비트 플래그 추가 또는 변경
-- `AbstractNode` 에 새 공개 메서드 추가 (모든 노드 타입에 영향)
-- `BranchStrategy` / `TerminalStrategy` 분기 조건 수정
+- 이벤트 전달 시점이나 공개 옵션 비트를 바꾸려는 경우.
+- 공개 node 멤버나 바인딩 전용 연산을 추가하려는 경우.
 
 ### Never do
 
-- 노드의 `__value__` 등 private 필드에 외부에서 직접 접근
-- `__tests__/` 파일을 수정하지 않고 명세 동작 변경
-- 파서 함수에 JSON Schema 검증 로직 추가 (파서는 값 변환만 담당)
-- 노드 트리를 순환 참조 구조로 구성
+- 보존된 레거시 engine이나 애플리케이션 플러그인 레지스트리를 import하지 않는다.
+- 바인딩 전용 함수를 패키지 진입점으로 노출하지 않는다.
+- 렌더러 표현을 읽거나 호출자가 소유한 스키마 데이터를 변경하지 않는다.

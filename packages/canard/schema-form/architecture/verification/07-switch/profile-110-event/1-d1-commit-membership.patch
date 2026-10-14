@@ -1,0 +1,101 @@
+diff --git a/packages/canard/schema-form/src/core/settle/utils/commit/markCommitDeliveries.ts b/packages/canard/schema-form/src/core/settle/utils/commit/markCommitDeliveries.ts
+--- a/packages/canard/schema-form/src/core/settle/utils/commit/markCommitDeliveries.ts
++++ b/packages/canard/schema-form/src/core/settle/utils/commit/markCommitDeliveries.ts
+@@ -98,9 +98,19 @@
+     mark(context.root, SchemaNodeEventType.UpdateDiagnostics);
+   runtime.deliveredDiagnostics = runtime.diagnostics;
+   const globalState = commitGlobalState(context);
+-  const ordered = new Set<unknown>(globalState.nodes);
+-  for (const node of candidates) ordered.add(node);
+-  for (const candidate of ordered) {
++  const globalNodes: ReadonlySet<unknown> = globalState.nodes;
++  let iterator: Iterator<unknown> = globalState.nodes.values();
++  let additional = false;
++  while (true) {
++    const next = iterator.next();
++    if (next.done) {
++      if (additional) break;
++      additional = true;
++      iterator = candidates.values();
++      continue;
++    }
++    const candidate = next.value;
++    if (additional && globalNodes.has(candidate)) continue;
+     if (!isTreeNode(candidate)) continue;
+     const node = candidate;
+     visit?.(node);
+diff --git a/packages/canard/schema-form/src/core/settle/DETAIL.md b/packages/canard/schema-form/src/core/settle/DETAIL.md
+--- a/packages/canard/schema-form/src/core/settle/DETAIL.md
++++ b/packages/canard/schema-form/src/core/settle/DETAIL.md
+@@ -35,7 +35,7 @@
+ - 게이트 없는 청사진의 선언 선택은 불변 선언 배열을 공유하며 커밋마다 발생 경로별 색인을 복제하지 않습니다. 현재 계산의 선택이 우선이고, 게이트가 있는 트리는 기존 커밋 경로 색인과 이탈 선택을 유지합니다. 제어 읽기는 선언 배열 identity별 ID 메모를 사용합니다. 정적 커밋의 O(발생 수 × 경로 깊이) 색인 작업·메모리를 제거하고 O(사용된 선언 수)의 약한 캐시를 둡니다(86C-02 ii, NODE-006, SETTLE-017).
+ 
+ - 정적 자식 선택은 빈 pending exit·latent 저장소를 조회하기 위한 경로 직렬화를 하지 않습니다. 이미 같은 선언 ID 참조를 선택했으면 재등록하지 않으며 모든 노드 생성·생김 기록·원본 분배는 유지합니다. 속도는 빈 조회와 문자열 생성 횟수만큼 개선하며 새 영구 메모리는 없습니다(86C-02 i, NODE-006, GOAL-011).
+-- 커밋 배달은 automatic 작업 색인·순서 집합·소멸 방문 집합을 같은 형태로 생성합니다. automatic 색인은 중간 map 배열 없이 한 루프로 채웁니다. 빈 커밋은 조건부 방식보다 Set 최대 세 개와 빈 배열 한 개를 더 사용하지만 per-node optional 분기와 순서 집합의 두 형태를 없앱니다. 모든 영향 노드의 revision과 payload, 방문 순서는 유지합니다. 조건부 할당과 공유 빈 집합은 재측정에서 속도 이득을 입증하지 못해 채택하지 않습니다(87라운드, EVENT-001·007·024, SETTLE-006).
++- 커밋 배달은 global-state 후보를 먼저 방문하고 그 기존 membership에 없는 추가 후보를 삽입 순서대로 한 번씩 방문합니다. 후보 합치기의 속도 비용은 O(G+C) 순회와 추가 후보당 membership 확인이며 두 번째 ordered Set의 복사·삽입을 제거합니다. 메모리 비용은 커밋당 임시 Set 하나와 합집합 원소 보관을 줄이고 두 Set iterator만 사용하며 새 상주 칸·캐시·노드 필드는 없습니다. automatic 작업 색인과 소멸 방문 집합은 같은 형태로 생성하고 automatic 색인은 중간 map 배열 없이 한 루프로 채웁니다. 모든 영향 노드의 revision·payload·방문 순서와 모든 revision 증가 뒤 배달을 유지합니다(EVENT-001·007·024, SETTLE-006, 107C-01 (b), 110 D1).
+ 
+ - dirty 경로는 일반 add/delete 색인으로 시작하고 게이트 없는 등록 경계에서 최초 descendant 순서를 유지한 직접 에지 색인으로 전환합니다. 이후 추가 시 아직 dirty가 아닌 조상까지만 닫고 직접 부모–자식 에지 하나씩 색인합니다. 실제 노드의 계산 완료가 자식 우선으로 소비하므로 생성 O(N), 잎 갱신 O(D), 색인 메모리 O(dirty 노드)이며 내부에서 만든 모든 조상을 다시 모든 접두에 색인하지 않습니다. 존재하지 않는 감시 경로가 남아 조상이 먼저 소비될 수 있어 등록의 조상 복구 루프는 유지합니다. 게이트가 있는 계산과 일반 DirtyPathSet 사용은 임의 add/delete 뒤 첫 살아 있는 descendant 순서를 보존하는 기존 색인을 씁니다(SETTLE-017·047, 82C-01).
+ - 전이 채움은 명시 raw와 기본값 부재를 먼저 제외하고 실제 기본값 후보에만 하위 원본 부재를 확인합니다. 내부 기본값 없는 N노드 트리의 채움 후보 탐색은 O(N), 추가 영구 메모리는 없으며 기존 부모 우선 채움과 잠복/자손 원본 보호는 유지합니다. 여러 층에 실제 branch 기본값이 있는 입력의 source 확인 비용은 별도입니다(SETTLE-004·005, 82C-01).
+diff --git a/packages/canard/schema-form/src/core/settle/__tests__/settle.commit-membership.test.ts b/packages/canard/schema-form/src/core/settle/__tests__/settle.commit-membership.test.ts
+new file mode 100644
+--- /dev/null
++++ b/packages/canard/schema-form/src/core/settle/__tests__/settle.commit-membership.test.ts
+@@ -0,0 +1,58 @@
++import { describe, expect, it, vi } from 'vitest';
++
++import { markSchemaNodeEvent, SchemaNodeEventType } from '../../record';
++import { loadSchemaNodeAtMount } from '../index';
++import { markCommitDeliveries } from '../utils/commit/markCommitDeliveries';
++import { createSettlementContext } from '../utils/settlement/createSettlementContext';
++import { getSettlementScratch } from '../utils/write/getSettlementScratch';
++import { releaseSettlementScratch } from '../utils/write/releaseSettlementScratch';
++import { createTestTree } from './fixtures/createTestTree';
++
++describe('commit candidate membership', () => {
++  it('visits global-state candidates before extra event candidates exactly once', () => {
++    const { root } = createTestTree({ type: 'object', properties: {
++      a: { type: 'string' }, b: { type: 'string' }, extra: { type: 'string' },
++    } });
++    loadSchemaNodeAtMount(root, { a: 'a', b: 'b', extra: 'x' }, 0);
++    const a = root.structure!.a, b = root.structure!.b, extra = root.structure!.extra;
++    const scratch = getSettlementScratch(root.runtime);
++    const context = createSettlementContext(root, 'callerReplace', 0, scratch);
++    context.changedNodes.add(b);
++    context.changedNodes.add(root);
++    context.stateDirtyNodes.add(a);
++    for (const node of [extra, b, a, root])
++      markSchemaNodeEvent(node, SchemaNodeEventType.RequestFocus);
++    const order: string[] = [];
++    try {
++      markCommitDeliveries(context, node => order.push(node.path));
++      expect(order).toEqual(['/b', '', '/a', '/extra']);
++      for (const node of [extra, b, a, root]) {
++        expect(node.pendingRevision).toBe(0);
++        expect(node.revisionLedger[SchemaNodeEventType.RequestFocus]).toBe(1);
++      }
++    } finally { releaseSettlementScratch(scratch); }
++  });
++
++  it('allocates no nonempty Set copy while merging candidate membership', () => {
++    const { root } = createTestTree({ type: 'string' });
++    loadSchemaNodeAtMount(root, 'before', 0);
++    const scratch = getSettlementScratch(root.runtime);
++    const context = createSettlementContext(root, 'callerReplace', 0, scratch);
++    context.changedNodes.add(root);
++    const NativeSet = Set;
++    let copies = 0;
++    vi.stubGlobal('Set', new Proxy(NativeSet, {
++      construct(target, args) {
++        if (args[0] instanceof NativeSet && args[0].size > 0) copies++;
++        return Reflect.construct(target, args);
++      },
++    }));
++    try {
++      markCommitDeliveries(context);
++      expect(copies).toBe(0);
++    } finally {
++      vi.unstubAllGlobals();
++      releaseSettlementScratch(scratch);
++    }
++  });
++});

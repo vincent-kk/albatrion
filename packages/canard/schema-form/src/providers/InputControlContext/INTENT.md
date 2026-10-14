@@ -2,20 +2,20 @@
 
 ## Purpose
 
-폼 전체의 `readOnly`와 `disabled` 상태를 Context로 공급하는 단순 제어 레이어. `SchemaNodeInput`이 이 값과 개별 노드 속성을 OR 결합하여 최종 입력 제어 상태를 결정한다.
+폼 전체의 `readOnly`와 `disabled` 상태를 Context로 공급하는 단순 제어 레이어. `FieldInputSlot`이 이 값과 개별 노드 속성을 OR 결합하여 최종 입력 제어 상태를 결정한다.
 
 ## Conventions
 
-- `InputControlContextProvider`는 `useMemo(() => ({ readOnly, disabled }), [readOnly, disabled])`로 객체 참조를 안정화한다 — props가 바뀌지 않으면 하위 트리 리렌더 없음
-- 최종 제어값은 소비처 `SchemaNodeInput`에서 `readOnly={rootReadOnly || node.readOnly}`, `disabled={rootDisabled || node.disabled}` 형태로 OR 결합한다 — Context 자체는 결합 로직을 포함하지 않는다
-- Context 기본값은 `{} as InputControlContext`이므로 `readOnly`·`disabled` 모두 `undefined`(falsy) — Provider 없이 소비해도 항상 안전하다
+- `InputControlContextProvider`는 `useMemo(() => ({ readOnly, disabled }), [readOnly, disabled])`로 객체 참조를 안정화한다. props가 바뀌지 않으면 하위 트리가 리렌더되지 않는다.
+- 최종 제어값은 소비처 `FieldInputSlot`에서 `readOnly={rootReadOnly || node.readOnly}`, `disabled={rootDisabled || node.disabled}` 형태로 OR 결합한다. Context 자체는 결합 로직을 포함하지 않는다.
+- Context 기본값은 `{} as InputControlContext`이므로 `readOnly`·`disabled` 모두 `undefined`(falsy)다. 따라서 Provider 없이 소비해도 항상 안전하다.
 
 ## Boundaries
 
 ### Always do
 
 - `readOnly`와 `disabled` 두 prop을 `useMemo`로 묶어 Context 값으로 제공
-- OR 결합(`rootReadOnly || node.readOnly`)은 반드시 소비 측(`SchemaNodeInput`)에서 수행
+- OR 결합(`rootReadOnly || node.readOnly`)은 반드시 소비 측(`FieldInputSlot`)에서 수행
 
 ### Ask first
 
@@ -25,7 +25,7 @@
 ### Never do
 
 - 이 Context에서 노드별 `readOnly`/`disabled` 계산 로직 수행
-- `SchemaNodeInput` 외 컴포넌트에서 Context 값을 직접 변형하여 전달
+- `FieldInputSlot` 외 컴포넌트에서 Context 값을 직접 변형하여 전달
 
 ## Dependencies
 

@@ -1,0 +1,29 @@
+(node:61462) [DEP0205] DeprecationWarning: `module.register()` is deprecated. Use `module.registerHooks()` instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+│ ┌────────────────────────────────────────────────────────────────────────────┐
+│ │  Info: Found a setup file with "setProjectAnnotations".                    │
+│ │  Skipping automatic provisioning of preview annotations to avoid           │
+│ │  conflicts. Since Storybook 10.3, "@storybook/addon-vitest" applies these  │
+│ │   automatically.                                                           │
+│ │  You can safely remove the "setProjectAnnotations" call from your setup    │
+│ │  file, or remove the file entirely if you don't have custom code there.    │
+│ └────────────────────────────────────────────────────────────────────────────┘
+
+ RUN  v3.2.6 /Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/packages/canard/schema-form
+
+········stdout | src/core/blueprint/__tests__/blueprint.path-key-once.test.ts > tuple key construction > counts tuple constructions and whole-key re-encoding against HEAD per node
+PATH105 {"fixture":"nested-d5-f4","nodes":1365,"tupleTraversalsBefore":1365,"tupleTraversalsAfter":1365,"wholeKeyEncodingsBefore":2730,"wholeKeyEncodingsAfter":0,"hostKeyReencodingsBefore":1365,"hostKeyReencodingsAfter":0,"producedKeysBefore":2730,"producedKeysAfter":2730}
+PATH105 {"fixture":"flat-500","nodes":501,"tupleTraversalsBefore":501,"tupleTraversalsAfter":501,"wholeKeyEncodingsBefore":1002,"wholeKeyEncodingsAfter":0,"hostKeyReencodingsBefore":501,"hostKeyReencodingsAfter":0,"producedKeysBefore":1002,"producedKeysAfter":1002}
+PATH105 {"fixture":"oneOf-20","nodes":63,"tupleTraversalsBefore":63,"tupleTraversalsAfter":63,"wholeKeyEncodingsBefore":126,"wholeKeyEncodingsAfter":0,"hostKeyReencodingsBefore":63,"hostKeyReencodingsAfter":0,"producedKeysBefore":126,"producedKeysAfter":126}
+PATH105 {"fixture":"sample-0","nodes":3,"tupleTraversalsBefore":3,"tupleTraversalsAfter":3,"wholeKeyEncodingsBefore":6,"wholeKeyEncodingsAfter":0,"hostKeyReencodingsBefore":3,"hostKeyReencodingsAfter":0,"producedKeysBefore":6,"producedKeysAfter":6}
+
+··stdout | src/core/blueprint/__tests__/blueprint.owned-inline-build-own-work.test.ts > copies two separate single-conjunction memberships without membership push work
+107COUNT build-own slices=2 membership-pushes=0
+
+······
+
+ Test Files  5 passed (5)
+      Tests  16 passed (16)
+   Start at  04:39:40
+   Duration  2.81s (transform 832ms, setup 0ms, collect 1.77s, tests 242ms, environment 0ms, prepare 176ms)
+

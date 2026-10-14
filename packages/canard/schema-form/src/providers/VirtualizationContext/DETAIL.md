@@ -9,12 +9,14 @@
 - 마운트 후 virtualization prop이 바뀌어도 기존 매니저를 다시 만들지 않습니다.
 - 비활성·관찰 API 부재의 null 결과를 그대로 전달하며 정리 시 disconnect를 호출합니다.
 
+- Context 객체와 Provider는 `components/`, 소비 훅은 `hooks/`에 있습니다. 뿌리에는 문서·진입점·형 동반 파일(`type.ts`)만 둡니다(filid zero-peer-file).
+
 ## Acceptance Criteria
 
 ### virtualization-context-contract — 관찰 가능한 동작
 
 - null 매니저 때문에 하위 노드가 예외를 던지지 않고 일반 렌더링을 계속할 수 있습니다.
-- Provider 언마운트 시 관찰자와 idle 작업이 남지 않습니다.
+- Provider 언마운트 시 관찰자와 유휴 시간 작업이 남지 않습니다.
 
 ## Last Updated
 

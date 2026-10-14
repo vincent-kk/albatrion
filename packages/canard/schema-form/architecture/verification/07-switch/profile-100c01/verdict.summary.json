@@ -1,0 +1,1415 @@
+{
+  "head": "0fdb6660ba07b94bafe3ff20e95b0025154ca490",
+  "job": "children",
+  "adopted": false,
+  "productRestored": true,
+  "restored": [
+    {
+      "file": "src/core/blueprint/utils/analyze/populateNodeChildren.ts",
+      "headSha256": "f4b6db4cde93445e31df06e9abe494a769fa0be712ce10c8b821c855afd9ecb1",
+      "finalSha256": "f4b6db4cde93445e31df06e9abe494a769fa0be712ce10c8b821c855afd9ecb1",
+      "identical": true
+    },
+    {
+      "file": "src/core/blueprint/DETAIL.md",
+      "headSha256": "9c2834d103c0f05373828ec466c7482e195491761eda07ef0c34a6ee5f538641",
+      "finalSha256": "9c2834d103c0f05373828ec466c7482e195491761eda07ef0c34a6ee5f538641",
+      "identical": true
+    }
+  ],
+  "comparisons": [
+    {
+      "id": "working",
+      "name": "nested-d5-f4",
+      "mode": "mount",
+      "headMedianMs": 10.450896500000624,
+      "variantMedianMs": 10.382896500000413,
+      "medianBoundMs": 0.068000000000211,
+      "spreadMs": [
+        -0.4494590000001608,
+        0.23004100000025574
+      ],
+      "pairedMedianMs": 0.5502079999996567,
+      "noiseMs": 0.8410830000002534,
+      "aboveNoise": false,
+      "regressionAboveNoise": false,
+      "strictEveryRunWithinNoise": true,
+      "resultChanged": false,
+      "runs": [
+        {
+          "run": 1,
+          "started": "2026-10-06T01:26:30.304Z",
+          "ended": "2026-10-06T01:26:34.696Z",
+          "head": {
+            "median": 10.574436999999904,
+            "p10": 9.588520999999815,
+            "p90": 11.705020999999903,
+            "p99": 11.899103999999767,
+            "n": 101
+          },
+          "variant": {
+            "median": 10.344395999999648,
+            "p10": 9.706479999999743,
+            "p90": 11.594353999999527,
+            "p99": 11.993645999999814,
+            "n": 101
+          },
+          "boundMs": 0.23004100000025574,
+          "pairedDelta": {
+            "median": 0.5502079999996567,
+            "p10": -1.8856249999998909,
+            "p90": 1.8464579999999842,
+            "p99": 2.0859580000001188,
+            "n": 101
+          },
+          "medianIntervalMs": [
+            -1.027541999999812,
+            0.9516669999998157
+          ],
+          "emptyBefore": {
+            "median": 0.017125000000021373,
+            "p10": 0.01141699999999446,
+            "p90": 0.07533300000000054,
+            "p99": 0.24100000000001387,
+            "n": 101
+          },
+          "emptyAfter": {
+            "median": 0.01633300000048621,
+            "p10": 0.01587500000005093,
+            "p90": 0.020375000000058208,
+            "p99": 0.04487500000050204,
+            "n": 101
+          },
+          "subtractedEmptyMs": 0.01672900000025379,
+          "observations": {
+            "head": {
+              "sha256": "264faa6616a1c88ca4566f0ba761ba1a6c7fbe9b115da26c62c53f8d433350a5",
+              "bytes": 14669,
+              "liveWidth": 4
+            },
+            "working": {
+              "sha256": "264faa6616a1c88ca4566f0ba761ba1a6c7fbe9b115da26c62c53f8d433350a5",
+              "bytes": 14669,
+              "liveWidth": 4
+            }
+          },
+          "resultChanged": false,
+          "artifact": "profile-99c01-paired-working-nested-d5-f4-mount-r1.json",
+          "summary": "profile-99c01-paired-working-nested-d5-f4-mount-r1.summary.json"
+        },
+        {
+          "run": 2,
+          "started": "2026-10-06T01:26:34.901Z",
+          "ended": "2026-10-06T01:26:39.284Z",
+          "head": {
+            "median": 10.22114549999985,
+            "p10": 9.493436500000072,
+            "p90": 11.608395500000071,
+            "p99": 12.091062500000064,
+            "n": 101
+          },
+          "variant": {
+            "median": 10.67060450000001,
+            "p10": 9.600812500000004,
+            "p90": 11.745979500000132,
+            "p99": 12.20643649999981,
+            "n": 101
+          },
+          "boundMs": -0.4494590000001608,
+          "pairedDelta": {
+            "median": -0.7559989999999743,
+            "p10": -2.1602499999999054,
+            "p90": 1.855209000000059,
+            "p99": 2.2024160000000848,
+            "n": 101
+          },
+          "medianIntervalMs": [
+            -1.281956999999693,
+            0.9062909999997828
+          ],
+          "emptyBefore": {
+            "median": 0.01712499999999295,
+            "p10": 0.011083999999982552,
+            "p90": 0.07370799999998212,
+            "p99": 0.23416600000001608,
+            "n": 101
+          },
+          "emptyAfter": {
+            "median": 0.01658399999996618,
+            "p10": 0.015917000000627013,
+            "p90": 0.01970800000071904,
+            "p99": 0.04991700000027777,
+            "n": 101
+          },
+          "subtractedEmptyMs": 0.016854499999979566,
+          "observations": {
+            "head": {
+              "sha256": "264faa6616a1c88ca4566f0ba761ba1a6c7fbe9b115da26c62c53f8d433350a5",
+              "bytes": 14669,
+              "liveWidth": 4
+            },
+            "working": {
+              "sha256": "264faa6616a1c88ca4566f0ba761ba1a6c7fbe9b115da26c62c53f8d433350a5",
+              "bytes": 14669,
+              "liveWidth": 4
+            }
+          },
+          "resultChanged": false,
+          "artifact": "profile-99c01-paired-working-nested-d5-f4-mount-r2.json",
+          "summary": "profile-99c01-paired-working-nested-d5-f4-mount-r2.summary.json"
+        },
+        {
+          "run": 3,
+          "started": "2026-10-06T01:26:39.494Z",
+          "ended": "2026-10-06T01:26:43.872Z",
+          "head": {
+            "median": 10.450896500000624,
+            "p10": 9.535937500000443,
+            "p90": 11.776312500000301,
+            "p99": 12.128020500000446,
+            "n": 101
+          },
+          "variant": {
+            "median": 10.382896500000413,
+            "p10": 9.809604500000376,
+            "p90": 11.884978500000386,
+            "p99": 12.028479500000401,
+            "n": 101
+          },
+          "boundMs": 0.068000000000211,
+          "pairedDelta": {
+            "median": 0.5790840000008757,
+            "p10": -2.143166999999835,
+            "p90": 1.7252089999999498,
+            "p99": 2.2932080000000497,
+            "n": 101
+          },
+          "medianIntervalMs": [
+            -1.2919589999996788,
+            0.8804159999999683
+          ],
+          "emptyBefore": {
+            "median": 0.019499999999993634,
+            "p10": 0.012915999999989936,
+            "p90": 0.071124999999995,
+            "p99": 0.25362499999999955,
+            "n": 101
+          },
+          "emptyAfter": {
+            "median": 0.0163749999992433,
+            "p10": 0.01604200000019773,
+            "p90": 0.020249999999577994,
+            "p99": 0.04554100000041217,
+            "n": 101
+          },
+          "subtractedEmptyMs": 0.017937499999618467,
+          "observations": {
+            "head": {
+              "sha256": "264faa6616a1c88ca4566f0ba761ba1a6c7fbe9b115da26c62c53f8d433350a5",
+              "bytes": 14669,
+              "liveWidth": 4
+            },
+            "working": {
+              "sha256": "264faa6616a1c88ca4566f0ba761ba1a6c7fbe9b115da26c62c53f8d433350a5",
+              "bytes": 14669,
+              "liveWidth": 4
+            }
+          },
+          "resultChanged": false,
+          "artifact": "profile-99c01-paired-working-nested-d5-f4-mount-r3.json",
+          "summary": "profile-99c01-paired-working-nested-d5-f4-mount-r3.summary.json"
+        }
+      ]
+    },
+    {
+      "id": "working",
+      "name": "flat-500",
+      "mode": "mount",
+      "headMedianMs": 3.958480000000094,
+      "variantMedianMs": 4.059438000000085,
+      "medianBoundMs": -0.10095799999999144,
+      "spreadMs": [
+        -0.12604099999998652,
+        -0.021165999999766427
+      ],
+      "pairedMedianMs": -0.10704199999963748,
+      "noiseMs": 0.05945799999994961,
+      "aboveNoise": false,
+      "regressionAboveNoise": false,
+      "strictEveryRunWithinNoise": false,
+      "resultChanged": false,
+      "runs": [
+        {
+          "run": 1,
+          "started": "2026-10-06T01:26:44.077Z",
+          "ended": "2026-10-06T01:26:46.257Z",
+          "head": {
+            "median": 3.955542499999936,
+            "p10": 3.7935834999999116,
+            "p90": 4.131500499999973,
+            "p99": 4.303500499999998,
+            "n": 101
+          },
+          "variant": {
+            "median": 4.0815834999999225,
+            "p10": 3.893542500000038,
+            "p90": 4.201500499999909,
+            "p99": 4.633208499999981,
+            "n": 101
+          },
+          "boundMs": -0.12604099999998652,
+          "pairedDelta": {
+            "median": -0.13533400000005713,
+            "p10": -0.3366670000002614,
+            "p90": 0.1972920000000613,
+            "p99": 0.2859170000001541,
+            "n": 101
+          },
+          "medianIntervalMs": [
+            -0.204166999999984,
+            -0.07591600000000653
+          ],
+          "emptyBefore": {
+            "median": 0.016958000000016682,
+            "p10": 0.011249999999989768,
+            "p90": 0.07058399999999665,
+            "p99": 0.2494999999999834,
+            "n": 101
+          },
+          "emptyAfter": {
+            "median": 0.017041000000062922,
+            "p10": 0.015874999999596184,
+            "p90": 0.02187499999990905,
+            "p99": 0.05095800000026429,
+            "n": 101
+          },
+          "subtractedEmptyMs": 0.016999500000039802,
+          "observations": {
+            "head": {
+              "sha256": "bcb7d4de2c2fe77ce08eeb261447ace91b02d5de9d8711daf048f20645c7a895",
+              "bytes": 11891,
+              "liveWidth": 500
+            },
+            "working": {
+              "sha256": "bcb7d4de2c2fe77ce08eeb261447ace91b02d5de9d8711daf048f20645c7a895",
+              "bytes": 11891,
+              "liveWidth": 500
+            }
+          },
+          "resultChanged": false,
+          "artifact": "profile-99c01-paired-working-flat-500-mount-r1.json",
+          "summary": "profile-99c01-paired-working-flat-500-mount-r1.summary.json"
+        },
+        {
+          "run": 2,
+          "started": "2026-10-06T01:26:46.466Z",
+          "ended": "2026-10-06T01:26:48.678Z",
+          "head": {
+            "median": 3.958480000000094,
+            "p10": 3.775105000000252,
+            "p90": 4.155479000000099,
+            "p99": 4.313813000000181,
+            "n": 101
+          },
+          "variant": {
+            "median": 4.059438000000085,
+            "p10": 3.867272000000156,
+            "p90": 4.186772000000104,
+            "p99": 4.381729000000263,
+            "n": 101
+          },
+          "boundMs": -0.10095799999999144,
+          "pairedDelta": {
+            "median": -0.10704199999963748,
+            "p10": -0.3344159999999192,
+            "p90": 0.21549899999990885,
+            "p99": 0.3128740000000789,
+            "n": 101
+          },
+          "medianIntervalMs": [
+            -0.17020799999977498,
+            -0.0006670000000212895
+          ],
+          "emptyBefore": {
+            "median": 0.01695799999998826,
+            "p10": 0.011249999999989768,
+            "p90": 0.0782079999999894,
+            "p99": 0.23358299999998167,
+            "n": 101
+          },
+          "emptyAfter": {
+            "median": 0.01716599999963364,
+            "p10": 0.015917000000172266,
+            "p90": 0.021666000000095664,
+            "p99": 0.04874999999992724,
+            "n": 101
+          },
+          "subtractedEmptyMs": 0.01706199999981095,
+          "observations": {
+            "head": {
+              "sha256": "bcb7d4de2c2fe77ce08eeb261447ace91b02d5de9d8711daf048f20645c7a895",
+              "bytes": 11891,
+              "liveWidth": 500
+            },
+            "working": {
+              "sha256": "bcb7d4de2c2fe77ce08eeb261447ace91b02d5de9d8711daf048f20645c7a895",
+              "bytes": 11891,
+              "liveWidth": 500
+            }
+          },
+          "resultChanged": false,
+          "artifact": "profile-99c01-paired-working-flat-500-mount-r2.json",
+          "summary": "profile-99c01-paired-working-flat-500-mount-r2.summary.json"
+        },
+        {
+          "run": 3,
+          "started": "2026-10-06T01:26:48.882Z",
+          "ended": "2026-10-06T01:26:51.071Z",
+          "head": {
+            "median": 3.99200100000013,
+            "p10": 3.8230000000001496,
+            "p90": 4.204251000000056,
+            "p99": 4.361709000000076,
+            "n": 101
+          },
+          "variant": {
+            "median": 4.013166999999896,
+            "p10": 3.8176260000003026,
+            "p90": 4.186334000000045,
+            "p99": 4.349000000000103,
+            "n": 101
+          },
+          "boundMs": -0.021165999999766427,
+          "pairedDelta": {
+            "median": -0.017999000000145315,
+            "p10": -0.2787500000001728,
+            "p90": 0.26604100000031394,
+            "p99": 0.42683400000009897,
+            "n": 101
+          },
+          "medianIntervalMs": [
+            -0.0812909999999647,
+            0.03691700000001674
+          ],
+          "emptyBefore": {
+            "median": 0.016833000000019638,
+            "p10": 0.011625000000009322,
+            "p90": 0.07133300000000986,
+            "p99": 0.23904200000001197,
+            "n": 101
+          },
+          "emptyAfter": {
+            "median": 0.01733299999978044,
+            "p10": 0.01608299999998053,
+            "p90": 0.02029099999981554,
+            "p99": 0.04679200000009587,
+            "n": 101
+          },
+          "subtractedEmptyMs": 0.01708299999990004,
+          "observations": {
+            "head": {
+              "sha256": "bcb7d4de2c2fe77ce08eeb261447ace91b02d5de9d8711daf048f20645c7a895",
+              "bytes": 11891,
+              "liveWidth": 500
+            },
+            "working": {
+              "sha256": "bcb7d4de2c2fe77ce08eeb261447ace91b02d5de9d8711daf048f20645c7a895",
+              "bytes": 11891,
+              "liveWidth": 500
+            }
+          },
+          "resultChanged": false,
+          "artifact": "profile-99c01-paired-working-flat-500-mount-r3.json",
+          "summary": "profile-99c01-paired-working-flat-500-mount-r3.summary.json"
+        }
+      ]
+    },
+    {
+      "id": "working",
+      "name": "oneOf-20",
+      "mode": "mount",
+      "headMedianMs": 2.339645500000131,
+      "variantMedianMs": 2.3556874999999025,
+      "medianBoundMs": -0.01941699999974844,
+      "spreadMs": [
+        -0.02791700000000219,
+        0.0068740000000389045
+      ],
+      "pairedMedianMs": -0.03220800000008239,
+      "noiseMs": 0.04129100000000108,
+      "aboveNoise": false,
+      "regressionAboveNoise": false,
+      "strictEveryRunWithinNoise": true,
+      "resultChanged": false,
+      "runs": [
+        {
+          "run": 1,
+          "started": "2026-10-06T01:26:51.274Z",
+          "ended": "2026-10-06T01:26:52.897Z",
+          "head": {
+            "median": 2.3277704999999003,
+            "p10": 2.147520500000013,
+            "p90": 2.4220204999998884,
+            "p99": 2.4749794999999892,
+            "n": 101
+          },
+          "variant": {
+            "median": 2.3556874999999025,
+            "p10": 2.2217285000000118,
+            "p90": 2.4750204999998857,
+            "p99": 2.552187499999917,
+            "n": 101
+          },
+          "boundMs": -0.02791700000000219,
+          "pairedDelta": {
+            "median": -0.03304199999990942,
+            "p10": -0.19487500000002456,
+            "p90": 0.09637499999985266,
+            "p99": 0.2185420000000704,
+            "n": 101
+          },
+          "medianIntervalMs": [
+            -0.061958000000004176,
+            -0.0019579999999450592
+          ],
+          "emptyBefore": {
+            "median": 0.017083000000013726,
+            "p10": 0.009499999999974307,
+            "p90": 0.0689999999999884,
+            "p99": 0.22112500000000068,
+            "n": 101
+          },
+          "emptyAfter": {
+            "median": 0.017792000000099506,
+            "p10": 0.01691700000014862,
+            "p90": 0.021625000000085493,
+            "p99": 0.05375000000003638,
+            "n": 101
+          },
+          "subtractedEmptyMs": 0.017437500000056616,
+          "observations": {
+            "head": {
+              "sha256": "0dab1516af88193530f8e44693db2dd2fb9d4c721b0de5c72fdb688315c07092",
+              "bytes": 90,
+              "liveWidth": 5
+            },
+            "working": {
+              "sha256": "0dab1516af88193530f8e44693db2dd2fb9d4c721b0de5c72fdb688315c07092",
+              "bytes": 90,
+              "liveWidth": 5
+            }
+          },
+          "resultChanged": false,
+          "artifact": "profile-99c01-paired-working-oneOf-20-mount-r1.json",
+          "summary": "profile-99c01-paired-working-oneOf-20-mount-r1.summary.json"
+        },
+        {
+          "run": 2,
+          "started": "2026-10-06T01:26:53.098Z",
+          "ended": "2026-10-06T01:26:54.710Z",
+          "head": {
+            "median": 2.35118650000004,
+            "p10": 2.185270500000115,
+            "p90": 2.473895500000026,
+            "p99": 2.554770500000018,
+            "n": 101
+          },
+          "variant": {
+            "median": 2.344312500000001,
+            "p10": 2.2103125000001,
+            "p90": 2.453186500000129,
+            "p99": 2.5346455000000105,
+            "n": 101
+          },
+          "boundMs": 0.0068740000000389045,
+          "pairedDelta": {
+            "median": 0.01099900000008347,
+            "p10": -0.1009590000001026,
+            "p90": 0.09908399999994799,
+            "p99": 0.2272499999999127,
+            "n": 101
+          },
+          "medianIntervalMs": [
+            -0.012582999999949607,
+            0.02704200000016499
+          ],
+          "emptyBefore": {
+            "median": 0.016875000000027285,
+            "p10": 0.01216600000000767,
+            "p90": 0.07312500000000455,
+            "p99": 0.2277920000000222,
+            "n": 101
+          },
+          "emptyAfter": {
+            "median": 0.017333999999891603,
+            "p10": 0.016083999999864318,
+            "p90": 0.021625000000085493,
+            "p99": 0.05529100000012477,
+            "n": 101
+          },
+          "subtractedEmptyMs": 0.017104499999959444,
+          "observations": {
+            "head": {
+              "sha256": "0dab1516af88193530f8e44693db2dd2fb9d4c721b0de5c72fdb688315c07092",
+              "bytes": 90,
+              "liveWidth": 5
+            },
+            "working": {
+              "sha256": "0dab1516af88193530f8e44693db2dd2fb9d4c721b0de5c72fdb688315c07092",
+              "bytes": 90,
+              "liveWidth": 5
+            }
+          },
+          "resultChanged": false,
+          "artifact": "profile-99c01-paired-working-oneOf-20-mount-r2.json",
+          "summary": "profile-99c01-paired-working-oneOf-20-mount-r2.summary.json"
+        },
+        {
+          "run": 3,
+          "started": "2026-10-06T01:26:54.914Z",
+          "ended": "2026-10-06T01:26:56.543Z",
+          "head": {
+            "median": 2.339645500000131,
+            "p10": 2.156937500000083,
+            "p90": 2.444853500000079,
+            "p99": 2.5426045000000954,
+            "n": 101
+          },
+          "variant": {
+            "median": 2.3590624999998795,
+            "p10": 2.2038965000000985,
+            "p90": 2.498395500000072,
+            "p99": 2.5899795000001973,
+            "n": 101
+          },
+          "boundMs": -0.01941699999974844,
+          "pairedDelta": {
+            "median": -0.03220800000008239,
+            "p10": -0.17775000000006003,
+            "p90": 0.12066700000002584,
+            "p99": 0.2615000000000691,
+            "n": 101
+          },
+          "medianIntervalMs": [
+            -0.04866700000002311,
+            -0.008209000000078959
+          ],
+          "emptyBefore": {
+            "median": 0.016792000000009466,
+            "p10": 0.011334000000005062,
+            "p90": 0.07245899999998073,
+            "p99": 0.21895900000001234,
+            "n": 101
+          },
+          "emptyAfter": {
+            "median": 0.017582999999831372,
+            "p10": 0.016666999999870313,
+            "p90": 0.02183300000001509,
+            "p99": 0.048792000000048574,
+            "n": 101
+          },
+          "subtractedEmptyMs": 0.01718749999992042,
+          "observations": {
+            "head": {
+              "sha256": "0dab1516af88193530f8e44693db2dd2fb9d4c721b0de5c72fdb688315c07092",
+              "bytes": 90,
+              "liveWidth": 5
+            },
+            "working": {
+              "sha256": "0dab1516af88193530f8e44693db2dd2fb9d4c721b0de5c72fdb688315c07092",
+              "bytes": 90,
+              "liveWidth": 5
+            }
+          },
+          "resultChanged": false,
+          "artifact": "profile-99c01-paired-working-oneOf-20-mount-r3.json",
+          "summary": "profile-99c01-paired-working-oneOf-20-mount-r3.summary.json"
+        }
+      ]
+    },
+    {
+      "id": "working",
+      "name": "sample-0",
+      "mode": "mount",
+      "headMedianMs": 0.18908349999996688,
+      "variantMedianMs": 0.18841650000005927,
+      "medianBoundMs": 0.00020799999998644125,
+      "spreadMs": [
+        -0.00012500000002546585,
+        0.0006669999999076026
+      ],
+      "pairedMedianMs": 0.0019999999999527063,
+      "noiseMs": 0.005957999999964159,
+      "aboveNoise": false,
+      "regressionAboveNoise": false,
+      "strictEveryRunWithinNoise": true,
+      "resultChanged": false,
+      "runs": [
+        {
+          "run": 1,
+          "started": "2026-10-06T01:26:56.747Z",
+          "ended": "2026-10-06T01:26:57.780Z",
+          "head": {
+            "median": 0.18683299999990766,
+            "p10": 0.17541599999985635,
+            "p90": 0.20104199999995842,
+            "p99": 0.22320899999992605,
+            "n": 101
+          },
+          "variant": {
+            "median": 0.18662499999992122,
+            "p10": 0.17495899999998699,
+            "p90": 0.20341699999993068,
+            "p99": 0.2159169999999193,
+            "n": 101
+          },
+          "boundMs": 0.00020799999998644125,
+          "pairedDelta": {
+            "median": 0.0006670000000212895,
+            "p10": -0.013293000000089705,
+            "p90": 0.01412500000003547,
+            "p99": 0.02779099999997925,
+            "n": 101
+          },
+          "medianIntervalMs": [
+            -0.001375999999936539,
+            0.003417000000013104
+          ],
+          "emptyBefore": {
+            "median": 0.01712499999999295,
+            "p10": 0.011124999999992724,
+            "p90": 0.09404200000000174,
+            "p99": 0.25012499999999704,
+            "n": 101
+          },
+          "emptyAfter": {
+            "median": 0.017375000000129148,
+            "p10": 0.01633300000003146,
+            "p90": 0.022875000000112777,
+            "p99": 0.04904199999987213,
+            "n": 101
+          },
+          "subtractedEmptyMs": 0.01725000000006105,
+          "observations": {
+            "head": {
+              "sha256": "72c43d9d80f43ae8fddcafd0cb1e33e0faddf95bd32459d24622dda3fbc7a8aa",
+              "bytes": 50,
+              "liveWidth": 2
+            },
+            "working": {
+              "sha256": "72c43d9d80f43ae8fddcafd0cb1e33e0faddf95bd32459d24622dda3fbc7a8aa",
+              "bytes": 50,
+              "liveWidth": 2
+            }
+          },
+          "resultChanged": false,
+          "artifact": "profile-99c01-paired-working-sample-0-mount-r1.json",
+          "summary": "profile-99c01-paired-working-sample-0-mount-r1.summary.json"
+        },
+        {
+          "run": 2,
+          "started": "2026-10-06T01:26:57.984Z",
+          "ended": "2026-10-06T01:26:59.012Z",
+          "head": {
+            "median": 0.18908349999996688,
+            "p10": 0.1766254999999859,
+            "p90": 0.21225050000002454,
+            "p99": 0.2361245000000025,
+            "n": 101
+          },
+          "variant": {
+            "median": 0.18841650000005927,
+            "p10": 0.17349950000009073,
+            "p90": 0.2032495000001262,
+            "p99": 0.22858349999994232,
+            "n": 101
+          },
+          "boundMs": 0.0006669999999076026,
+          "pairedDelta": {
+            "median": 0.002500999999938358,
+            "p10": -0.010041000000001077,
+            "p90": 0.015540999999984706,
+            "p99": 0.04462599999988015,
+            "n": 101
+          },
+          "medianIntervalMs": [
+            0.0007079999999177744,
+            0.005792000000042208
+          ],
+          "emptyBefore": {
+            "median": 0.0187079999999753,
+            "p10": 0.012833000000000538,
+            "p90": 0.07208299999999213,
+            "p99": 0.2190419999999733,
+            "n": 101
+          },
+          "emptyAfter": {
+            "median": 0.016624999999976353,
+            "p10": 0.015958000000182437,
+            "p90": 0.01883300000008603,
+            "p99": 0.0599170000000413,
+            "n": 101
+          },
+          "subtractedEmptyMs": 0.017666499999975827,
+          "observations": {
+            "head": {
+              "sha256": "72c43d9d80f43ae8fddcafd0cb1e33e0faddf95bd32459d24622dda3fbc7a8aa",
+              "bytes": 50,
+              "liveWidth": 2
+            },
+            "working": {
+              "sha256": "72c43d9d80f43ae8fddcafd0cb1e33e0faddf95bd32459d24622dda3fbc7a8aa",
+              "bytes": 50,
+              "liveWidth": 2
+            }
+          },
+          "resultChanged": false,
+          "artifact": "profile-99c01-paired-working-sample-0-mount-r2.json",
+          "summary": "profile-99c01-paired-working-sample-0-mount-r2.summary.json"
+        },
+        {
+          "run": 3,
+          "started": "2026-10-06T01:26:59.213Z",
+          "ended": "2026-10-06T01:27:00.233Z",
+          "head": {
+            "median": 0.1912079999999179,
+            "p10": 0.17704199999998593,
+            "p90": 0.2149579999999247,
+            "p99": 0.2351249999998828,
+            "n": 101
+          },
+          "variant": {
+            "median": 0.19133299999994335,
+            "p10": 0.1766249999999019,
+            "p90": 0.2168329999999088,
+            "p99": 0.26212499999992644,
+            "n": 101
+          },
+          "boundMs": -0.00012500000002546585,
+          "pairedDelta": {
+            "median": 0.0019999999999527063,
+            "p10": -0.01779300000009698,
+            "p90": 0.01587500000005093,
+            "p99": 0.025790999999912856,
+            "n": 101
+          },
+          "medianIntervalMs": [
+            -0.0008329999998295534,
+            0.003958000000011452
+          ],
+          "emptyBefore": {
+            "median": 0.015124999999983402,
+            "p10": 0.006000000000000227,
+            "p90": 0.09333300000000122,
+            "p99": 0.25312500000001137,
+            "n": 101
+          },
+          "emptyAfter": {
+            "median": 0.016625000000203727,
+            "p10": 0.016000000000076398,
+            "p90": 0.019624999999905413,
+            "p99": 0.05858299999999872,
+            "n": 101
+          },
+          "subtractedEmptyMs": 0.015875000000093564,
+          "observations": {
+            "head": {
+              "sha256": "72c43d9d80f43ae8fddcafd0cb1e33e0faddf95bd32459d24622dda3fbc7a8aa",
+              "bytes": 50,
+              "liveWidth": 2
+            },
+            "working": {
+              "sha256": "72c43d9d80f43ae8fddcafd0cb1e33e0faddf95bd32459d24622dda3fbc7a8aa",
+              "bytes": 50,
+              "liveWidth": 2
+            }
+          },
+          "resultChanged": false,
+          "artifact": "profile-99c01-paired-working-sample-0-mount-r3.json",
+          "summary": "profile-99c01-paired-working-sample-0-mount-r3.summary.json"
+        }
+      ]
+    },
+    {
+      "id": "working",
+      "name": "sample-0",
+      "mode": "later",
+      "headMedianMs": 0.11743799999989335,
+      "variantMedianMs": 0.1180625000001072,
+      "medianBoundMs": 0.0007920000000467553,
+      "spreadMs": [
+        -0.00212399999986701,
+        0.0010839999998779604
+      ],
+      "pairedMedianMs": -0.0009590000000230248,
+      "noiseMs": 0.00204200000007404,
+      "aboveNoise": false,
+      "regressionAboveNoise": false,
+      "strictEveryRunWithinNoise": false,
+      "resultChanged": false,
+      "runs": [
+        {
+          "run": 1,
+          "started": "2026-10-06T01:27:04.088Z",
+          "ended": "2026-10-06T01:27:05.094Z",
+          "head": {
+            "median": 0.11914649999998517,
+            "p10": 0.11214650000003701,
+            "p90": 0.13306249999997988,
+            "p99": 0.14239649999994697,
+            "n": 101
+          },
+          "variant": {
+            "median": 0.1180625000001072,
+            "p10": 0.11077049999998678,
+            "p90": 0.1319375000000349,
+            "p99": 0.1491045000001776,
+            "n": 101
+          },
+          "boundMs": 0.0010839999998779604,
+          "pairedDelta": {
+            "median": 0.0005830000000628388,
+            "p10": -0.005999000000088017,
+            "p90": 0.009624999999914507,
+            "p99": 0.015874000000053456,
+            "n": 101
+          },
+          "medianIntervalMs": [
+            -0.0009159999999610591,
+            0.0024160000000392756
+          ],
+          "emptyBefore": {
+            "median": 0.018375000000020236,
+            "p10": 0.0161250000000166,
+            "p90": 0.023875000000003865,
+            "p99": 0.04720900000000938,
+            "n": 101
+          },
+          "emptyAfter": {
+            "median": 0.016499999999950887,
+            "p10": 0.01604100000008657,
+            "p90": 0.01908299999990959,
+            "p99": 0.055000000000063665,
+            "n": 101
+          },
+          "subtractedEmptyMs": 0.017437499999985562,
+          "observations": {
+            "head": {
+              "sha256": "e0e0bb3f37f79e35c78e8270498958d9ef65e9f3a27353dea5bf017f18997ddb",
+              "bytes": 55,
+              "liveWidth": 2
+            },
+            "working": {
+              "sha256": "e0e0bb3f37f79e35c78e8270498958d9ef65e9f3a27353dea5bf017f18997ddb",
+              "bytes": 55,
+              "liveWidth": 2
+            }
+          },
+          "resultChanged": false,
+          "artifact": "profile-99c01-paired-working-sample-0-later-r1.json",
+          "summary": "profile-99c01-paired-working-sample-0-later-r1.summary.json"
+        },
+        {
+          "run": 2,
+          "started": "2026-10-06T01:27:05.302Z",
+          "ended": "2026-10-06T01:27:06.308Z",
+          "head": {
+            "median": 0.11743799999989335,
+            "p10": 0.11022899999990443,
+            "p90": 0.13231199999985677,
+            "p99": 0.14547899999992353,
+            "n": 101
+          },
+          "variant": {
+            "median": 0.11956199999976036,
+            "p10": 0.11256299999992336,
+            "p90": 0.13464599999998939,
+            "p99": 0.1438949999999437,
+            "n": 101
+          },
+          "boundMs": -0.00212399999986701,
+          "pairedDelta": {
+            "median": -0.0018330000000332802,
+            "p10": -0.011166999999886684,
+            "p90": 0.008791000000201166,
+            "p99": 0.027125000000012278,
+            "n": 101
+          },
+          "medianIntervalMs": [
+            -0.003457999999909589,
+            -0.0007920000000467553
+          ],
+          "emptyBefore": {
+            "median": 0.018541999999996506,
+            "p10": 0.01620900000000347,
+            "p90": 0.025166999999981954,
+            "p99": 0.06616700000000719,
+            "n": 101
+          },
+          "emptyAfter": {
+            "median": 0.01650000000017826,
+            "p10": 0.01612499999987449,
+            "p90": 0.01929199999995035,
+            "p99": 0.046291999999994005,
+            "n": 101
+          },
+          "subtractedEmptyMs": 0.017521000000087383,
+          "observations": {
+            "head": {
+              "sha256": "e0e0bb3f37f79e35c78e8270498958d9ef65e9f3a27353dea5bf017f18997ddb",
+              "bytes": 55,
+              "liveWidth": 2
+            },
+            "working": {
+              "sha256": "e0e0bb3f37f79e35c78e8270498958d9ef65e9f3a27353dea5bf017f18997ddb",
+              "bytes": 55,
+              "liveWidth": 2
+            }
+          },
+          "resultChanged": false,
+          "artifact": "profile-99c01-paired-working-sample-0-later-r2.json",
+          "summary": "profile-99c01-paired-working-sample-0-later-r2.summary.json"
+        },
+        {
+          "run": 3,
+          "started": "2026-10-06T01:27:06.522Z",
+          "ended": "2026-10-06T01:27:07.554Z",
+          "head": {
+            "median": 0.11743750000003672,
+            "p10": 0.10981249999996123,
+            "p90": 0.13331249999997397,
+            "p99": 0.14206250000005127,
+            "n": 101
+          },
+          "variant": {
+            "median": 0.11664549999998997,
+            "p10": 0.10885449999999253,
+            "p90": 0.13135349999991774,
+            "p99": 0.14910349999995276,
+            "n": 101
+          },
+          "boundMs": 0.0007920000000467553,
+          "pairedDelta": {
+            "median": -0.0009590000000230248,
+            "p10": -0.00874999999996362,
+            "p90": 0.012042000000064945,
+            "p99": 0.02316700000005767,
+            "n": 101
+          },
+          "medianIntervalMs": [
+            -0.002958000000262473,
+            0.002165999999988344
+          ],
+          "emptyBefore": {
+            "median": 0.01816699999997695,
+            "p10": 0.016124999999988177,
+            "p90": 0.026333000000022366,
+            "p99": 0.06683300000000258,
+            "n": 101
+          },
+          "emptyAfter": {
+            "median": 0.01654200000007222,
+            "p10": 0.016000000000076398,
+            "p90": 0.018667000000050393,
+            "p99": 0.05075000000010732,
+            "n": 101
+          },
+          "subtractedEmptyMs": 0.017354500000024586,
+          "observations": {
+            "head": {
+              "sha256": "e0e0bb3f37f79e35c78e8270498958d9ef65e9f3a27353dea5bf017f18997ddb",
+              "bytes": 55,
+              "liveWidth": 2
+            },
+            "working": {
+              "sha256": "e0e0bb3f37f79e35c78e8270498958d9ef65e9f3a27353dea5bf017f18997ddb",
+              "bytes": 55,
+              "liveWidth": 2
+            }
+          },
+          "resultChanged": false,
+          "artifact": "profile-99c01-paired-working-sample-0-later-r3.json",
+          "summary": "profile-99c01-paired-working-sample-0-later-r3.summary.json"
+        }
+      ]
+    },
+    {
+      "id": "working",
+      "name": "nested-d5-f4",
+      "mode": "later",
+      "headMedianMs": 0.14522949999992818,
+      "variantMedianMs": 0.14602000000003557,
+      "medianBoundMs": -0.001207999999905951,
+      "spreadMs": [
+        -0.004249000000072556,
+        -0.0007079999999177744
+      ],
+      "pairedMedianMs": -0.0010419999999840002,
+      "noiseMs": 0.003416999999899417,
+      "aboveNoise": false,
+      "regressionAboveNoise": false,
+      "strictEveryRunWithinNoise": false,
+      "resultChanged": false,
+      "runs": [
+        {
+          "run": 1,
+          "started": "2026-10-06T01:27:12.825Z",
+          "ended": "2026-10-06T01:27:14.195Z",
+          "head": {
+            "median": 0.14535549999997954,
+            "p10": 0.13556350000003192,
+            "p90": 0.16822949999998116,
+            "p99": 0.20614649999997425,
+            "n": 101
+          },
+          "variant": {
+            "median": 0.1496045000000521,
+            "p10": 0.13943849999991187,
+            "p90": 0.16493850000010468,
+            "p99": 0.19102150000007612,
+            "n": 101
+          },
+          "boundMs": -0.004249000000072556,
+          "pairedDelta": {
+            "median": -0.0028340000000071086,
+            "p10": -0.014126000000032946,
+            "p90": 0.010209000000031665,
+            "p99": 0.05520800000010695,
+            "n": 101
+          },
+          "medianIntervalMs": [
+            -0.005001000000049771,
+            0.00041600000008656934
+          ],
+          "emptyBefore": {
+            "median": 0.017166000000003123,
+            "p10": 0.01670900000002007,
+            "p90": 0.01866699999999355,
+            "p99": 0.020749999999992497,
+            "n": 101
+          },
+          "emptyAfter": {
+            "median": 0.01654099999996106,
+            "p10": 0.015833999999813386,
+            "p90": 0.01841699999999946,
+            "p99": 0.07158400000002985,
+            "n": 101
+          },
+          "subtractedEmptyMs": 0.01685349999998209,
+          "observations": {
+            "head": {
+              "sha256": "004449a8011a0c0797a157cbea0be170faab1ef0972efae9d5f5a3d2b89df85c",
+              "bytes": 14725,
+              "liveWidth": 4
+            },
+            "working": {
+              "sha256": "004449a8011a0c0797a157cbea0be170faab1ef0972efae9d5f5a3d2b89df85c",
+              "bytes": 14725,
+              "liveWidth": 4
+            }
+          },
+          "resultChanged": false,
+          "artifact": "profile-99c01-paired-working-nested-d5-f4-later-r1.json",
+          "summary": "profile-99c01-paired-working-nested-d5-f4-later-r1.summary.json"
+        },
+        {
+          "run": 2,
+          "started": "2026-10-06T01:27:14.460Z",
+          "ended": "2026-10-06T01:27:15.842Z",
+          "head": {
+            "median": 0.14522949999992818,
+            "p10": 0.13681249999980594,
+            "p90": 0.16481249999982595,
+            "p99": 0.1949374999999378,
+            "n": 101
+          },
+          "variant": {
+            "median": 0.14593749999984595,
+            "p10": 0.13856249999993508,
+            "p90": 0.16535449999982177,
+            "p99": 0.18822949999993455,
+            "n": 101
+          },
+          "boundMs": -0.0007079999999177744,
+          "pairedDelta": {
+            "median": -0.00100000000009004,
+            "p10": -0.010374999999839929,
+            "p90": 0.009208000000171523,
+            "p99": 0.021457999999938693,
+            "n": 101
+          },
+          "medianIntervalMs": [
+            -0.0038329999999859865,
+            0.0009579999999687061
+          ],
+          "emptyBefore": {
+            "median": 0.016916000000009035,
+            "p10": 0.016416999999989912,
+            "p90": 0.01966600000000085,
+            "p99": 0.02924999999999045,
+            "n": 101
+          },
+          "emptyAfter": {
+            "median": 0.01645900000016809,
+            "p10": 0.01583400000004076,
+            "p90": 0.022040999999944688,
+            "p99": 0.06283300000018244,
+            "n": 101
+          },
+          "subtractedEmptyMs": 0.016687500000088562,
+          "observations": {
+            "head": {
+              "sha256": "004449a8011a0c0797a157cbea0be170faab1ef0972efae9d5f5a3d2b89df85c",
+              "bytes": 14725,
+              "liveWidth": 4
+            },
+            "working": {
+              "sha256": "004449a8011a0c0797a157cbea0be170faab1ef0972efae9d5f5a3d2b89df85c",
+              "bytes": 14725,
+              "liveWidth": 4
+            }
+          },
+          "resultChanged": false,
+          "artifact": "profile-99c01-paired-working-nested-d5-f4-later-r2.json",
+          "summary": "profile-99c01-paired-working-nested-d5-f4-later-r2.summary.json"
+        },
+        {
+          "run": 3,
+          "started": "2026-10-06T01:27:16.103Z",
+          "ended": "2026-10-06T01:27:17.463Z",
+          "head": {
+            "median": 0.14481200000012961,
+            "p10": 0.13647899999990898,
+            "p90": 0.16406199999995863,
+            "p99": 0.2094370000001078,
+            "n": 101
+          },
+          "variant": {
+            "median": 0.14602000000003557,
+            "p10": 0.1338950000000665,
+            "p90": 0.16327000000002556,
+            "p99": 0.18639600000007306,
+            "n": 101
+          },
+          "boundMs": -0.001207999999905951,
+          "pairedDelta": {
+            "median": -0.0010419999999840002,
+            "p10": -0.012708999999972548,
+            "p90": 0.014415999999982887,
+            "p99": 0.03837500000008731,
+            "n": 101
+          },
+          "medianIntervalMs": [
+            -0.0027919999999994616,
+            0.001917000000275948
+          ],
+          "emptyBefore": {
+            "median": 0.016417000000018334,
+            "p10": 0.01633300000000304,
+            "p90": 0.018332999999984168,
+            "p99": 0.025334000000015067,
+            "n": 101
+          },
+          "emptyAfter": {
+            "median": 0.016458999999940715,
+            "p10": 0.01587500000005093,
+            "p90": 0.01954099999989012,
+            "p99": 0.03904199999988123,
+            "n": 101
+          },
+          "subtractedEmptyMs": 0.016437999999979525,
+          "observations": {
+            "head": {
+              "sha256": "004449a8011a0c0797a157cbea0be170faab1ef0972efae9d5f5a3d2b89df85c",
+              "bytes": 14725,
+              "liveWidth": 4
+            },
+            "working": {
+              "sha256": "004449a8011a0c0797a157cbea0be170faab1ef0972efae9d5f5a3d2b89df85c",
+              "bytes": 14725,
+              "liveWidth": 4
+            }
+          },
+          "resultChanged": false,
+          "artifact": "profile-99c01-paired-working-nested-d5-f4-later-r3.json",
+          "summary": "profile-99c01-paired-working-nested-d5-f4-later-r3.summary.json"
+        }
+      ]
+    }
+  ],
+  "counts": [
+    {
+      "head": "0fdb6660ba07b94bafe3ff20e95b0025154ca490",
+      "variant": "head",
+      "name": "nested-d5-f4",
+      "nodes": 1365,
+      "declarationRecords": 2729,
+      "freezeCalls": 23205,
+      "reusedEntryArrays": 0,
+      "scope": "separate count-only worker, never used for CPU sampling or timing"
+    },
+    {
+      "head": "0fdb6660ba07b94bafe3ff20e95b0025154ca490",
+      "variant": "head",
+      "name": "flat-500",
+      "nodes": 501,
+      "declarationRecords": 1001,
+      "freezeCalls": 8517,
+      "reusedEntryArrays": 0,
+      "scope": "separate count-only worker, never used for CPU sampling or timing"
+    },
+    {
+      "head": "0fdb6660ba07b94bafe3ff20e95b0025154ca490",
+      "variant": "head",
+      "name": "oneOf-20",
+      "nodes": 63,
+      "declarationRecords": 145,
+      "freezeCalls": 1314,
+      "reusedEntryArrays": 0,
+      "scope": "separate count-only worker, never used for CPU sampling or timing"
+    },
+    {
+      "head": "0fdb6660ba07b94bafe3ff20e95b0025154ca490",
+      "variant": "head",
+      "name": "sample-0",
+      "nodes": 3,
+      "declarationRecords": 5,
+      "freezeCalls": 51,
+      "reusedEntryArrays": 0,
+      "scope": "separate count-only worker, never used for CPU sampling or timing"
+    },
+    {
+      "head": "0fdb6660ba07b94bafe3ff20e95b0025154ca490",
+      "variant": "working",
+      "name": "nested-d5-f4",
+      "nodes": 1365,
+      "declarationRecords": 1365,
+      "freezeCalls": 19113,
+      "reusedEntryArrays": 1364,
+      "scope": "separate count-only worker, never used for CPU sampling or timing"
+    },
+    {
+      "head": "0fdb6660ba07b94bafe3ff20e95b0025154ca490",
+      "variant": "working",
+      "name": "flat-500",
+      "nodes": 501,
+      "declarationRecords": 501,
+      "freezeCalls": 7017,
+      "reusedEntryArrays": 500,
+      "scope": "separate count-only worker, never used for CPU sampling or timing"
+    },
+    {
+      "head": "0fdb6660ba07b94bafe3ff20e95b0025154ca490",
+      "variant": "working",
+      "name": "oneOf-20",
+      "nodes": 63,
+      "declarationRecords": 83,
+      "freezeCalls": 1128,
+      "reusedEntryArrays": 62,
+      "scope": "separate count-only worker, never used for CPU sampling or timing"
+    },
+    {
+      "head": "0fdb6660ba07b94bafe3ff20e95b0025154ca490",
+      "variant": "working",
+      "name": "sample-0",
+      "nodes": 3,
+      "declarationRecords": 3,
+      "freezeCalls": 45,
+      "reusedEntryArrays": 2,
+      "scope": "separate count-only worker, never used for CPU sampling or timing"
+    }
+  ],
+  "verification": {
+    "head": "0fdb6660ba07b94bafe3ff20e95b0025154ca490",
+    "sequential": true,
+    "noInstalls": true,
+    "checks": [
+      {
+        "id": "vitest",
+        "command": "npx vitest run --project unit --project render --project react18 --reporter=dot",
+        "exitCode": 1,
+        "signal": null,
+        "bytes": 76304,
+        "failures": [
+          " FAIL  |render| src/components/Form/__tests__/Form.effectFeedback.test.tsx > EVENT-070 cross-entry feedback > EVENT-070 React stops two fields writing back through useLayoutEffect",
+          " FAIL  |render| src/components/Form/__tests__/Form.effectFeedback.test.tsx > EVENT-070 cross-entry feedback > EVENT-070 React stops two fields writing back through useEffect",
+          " FAIL  |react18| src/components/Form/__tests__/Form.effectFeedback.test.tsx > EVENT-070 cross-entry feedback > EVENT-070 React stops two fields writing back through useLayoutEffect",
+          " FAIL  |react18| src/components/Form/__tests__/Form.effectFeedback.test.tsx > EVENT-070 cross-entry feedback > EVENT-070 React stops two fields writing back through useEffect"
+        ],
+        "summary": [
+          " Test Files  2 failed | 425 passed (427)",
+          "      Tests  4 failed | 3207 passed | 1 todo (3212)",
+          "   Duration  65.08s (transform 8.41s, setup 0ms, collect 213.52s, tests 166.37s, environment 31.32s, prepare 19.12s)",
+          "⎯⎯⎯⎯⎯⎯⎯ Failed Tests 4 ⎯⎯⎯⎯⎯⎯⎯"
+        ],
+        "sourceRestored": true
+      },
+      {
+        "id": "tsc",
+        "command": "npx tsc --noEmit --composite false --rootDir . -p tsconfig.json",
+        "exitCode": 0,
+        "signal": null,
+        "bytes": 112,
+        "failures": [],
+        "summary": [],
+        "sourceRestored": true
+      },
+      {
+        "id": "eslint",
+        "command": "npx eslint \"src/**/*.{ts,tsx}\"",
+        "exitCode": 0,
+        "signal": null,
+        "bytes": 77,
+        "failures": [],
+        "summary": [],
+        "sourceRestored": true
+      },
+      {
+        "id": "isolation",
+        "command": "node architecture/verification/07-switch/tools/check-legacy-isolation.mjs",
+        "exitCode": 0,
+        "signal": null,
+        "bytes": 36,
+        "failures": [],
+        "summary": [
+          "LEGACY_ISOLATED: 1625 files checked"
+        ],
+        "sourceRestored": true
+      }
+    ]
+  },
+  "differential": {
+    "cases": 59,
+    "corpus": 14,
+    "edges": 45,
+    "staticErrors": 24,
+    "warningCases": 6,
+    "errorsInclude": [
+      "name",
+      "message",
+      "code",
+      "specific",
+      "details",
+      "diagnostics"
+    ],
+    "excluded": [
+      "stack addresses"
+    ],
+    "fixture": "src/core/blueprint/__tests__/fixtures/coldBindingHead.json",
+    "sha256": "a682a8e5ef537b8b6e9ce5f5cd9ff8d7a0d26d2899f66d1dce2e608a2ed3e605"
+  },
+  "tests": {
+    "before": "1 failed | 2 passed; count 51 versus 26",
+    "attempt": "8 passed",
+    "restored": "8 passed",
+    "retainedCount": "reachable record count and frozen declarations; passes HEAD after rejecting the stricter speed target"
+  },
+  "attempt": {
+    "file": "src/core/blueprint/utils/analyze/populateNodeChildren.ts",
+    "line": 163,
+    "diff": "attempt.diff",
+    "bundleSha256": "f39f81997c1a3748c1feb88e74a588184e8e6d974a901fc9a6c2c937344684d1",
+    "spec": "같은 호스트 선언·게이트·배열 재사용; 다른 호스트만 lazy copy",
+    "memory": "추가 색인 없음. nested에서 선언 기록 1,364개와 배열 2,728개를 제거했으나 종단 속도 이득이 잡음을 넘지 못해 제품에 남기지 않았습니다."
+  }
+}

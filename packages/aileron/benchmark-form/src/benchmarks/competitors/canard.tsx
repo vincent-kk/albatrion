@@ -3,10 +3,10 @@ import { createRef } from 'react';
 import { createRoot } from 'react-dom/client';
 
 import {
+  type FieldRendererProps,
   Form,
   type FormHandle,
   type FormProps,
-  type FormTypeRendererProps,
   type JSONSchema,
   VirtualizationBackfill,
 } from '@canard/schema-form';
@@ -25,7 +25,7 @@ const createCanardAdapter = (
     let renders = 0;
     // Count leaf-field commits only (depth 0 is the root object container,
     // which has no counterpart in RHF/Formik/TanStack).
-    const Renderer = ({ depth, Input }: FormTypeRendererProps) => {
+    const Renderer = ({ depth, Input }: FieldRendererProps) => {
       if (depth > 0) renders++;
       return <Input />;
     };
@@ -35,7 +35,7 @@ const createCanardAdapter = (
       <Form
         ref={ref}
         jsonSchema={buildFlatSchema(fieldCount)}
-        CustomFormTypeRenderer={Renderer}
+        CustomFieldRenderer={Renderer}
         onChange={() => {}}
         virtualization={virtualization}
       />,

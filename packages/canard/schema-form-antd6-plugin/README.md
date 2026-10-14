@@ -36,7 +36,7 @@ If you're using Ant Design v5, please use [`@canard/schema-form-antd5-plugin`](.
 
 📌 As the plugin's purpose is to enhance development convenience, it does not include every possible component.
 
-💡 If you need FormTypeInput components not included in this plugin, you can freely implement them following the official `@canard/schema-form` guidelines.
+💡 If you need FieldInput components not included in this plugin, you can freely implement them following the official `@canard/schema-form` guidelines.
 
 ---
 
@@ -81,73 +81,73 @@ Update your imports:
 
 This plugin provides the following Ant Design v6 components:
 
-### **[`FormTypeInputBooleanSwitch.tsx`](./src/formTypeInputs/FormTypeInputBooleanSwitch.tsx)**
+### **[`FieldInputBooleanSwitch.tsx`](./src/fieldInputs/FieldInputBooleanSwitch.tsx)**
 
 - **Role**: Display boolean type data as a Switch component
-- **Applied when**: `type` is `"boolean"` and `formType` is `"switch"`
+- **Applied when**: `type` is `"boolean"` and `inputType` is `"switch"`
 - **Additional features**: Support for custom labels for `checked`/`unchecked` states, adjustable switch size
 
-### **[`FormTypeInputStringCheckbox.tsx`](./src/formTypeInputs/FormTypeInputStringCheckbox.tsx)**
+### **[`FieldInputStringCheckbox.tsx`](./src/fieldInputs/FieldInputStringCheckbox.tsx)**
 
 - **Role**: Display string arrays as checkbox groups
-- **Applied when**: `type` is `"array"`, `formType` is `"checkbox"`, `items.type` is `"string"`, and `enum` values exist
+- **Applied when**: `type` is `"array"`, `inputType` is `"checkbox"`, `items.type` is `"string"`, and `enum` values exist
 - **Additional features**: Support for custom labels for each checkbox option
 
-### **[`FormTypeInputStringSwitch.tsx`](./src/formTypeInputs/FormTypeInputStringSwitch.tsx)**
+### **[`FieldInputStringSwitch.tsx`](./src/fieldInputs/FieldInputStringSwitch.tsx)**
 
 - **Role**: Toggle between two string values using a Switch
-- **Applied when**: `type` is `"string"`, `formType` is `"switch"`, and the `enum` array has exactly 2 values
+- **Applied when**: `type` is `"string"`, `inputType` is `"switch"`, and the `enum` array has exactly 2 values
 - **Additional features**: Support for custom labels per switch state, adjustable switch size
 
-### **[`FormTypeInputUri.tsx`](./src/formTypeInputs/FormTypeInputUri.tsx)**
+### **[`FieldInputUri.tsx`](./src/fieldInputs/FieldInputUri.tsx)**
 
 - **Role**: Special input field for URI entry (with protocol dropdown)
-- **Applied when**: `type` is `"string"` and `format` or `formType` is `"uri"`
-- **Additional features**: Protocol selection dropdown, default protocol list support (http, https, ftp, mailto, tel), configurable custom protocol list
+- **Applied when**: `type` is `"string"` and `format` or `inputType` is `"uri"`
+- **Additional features**: Protocol selection dropdown, default protocol list support (http, https, ftp, mailto, tel), custom protocol list via `presentation.FieldInputProps.protocols`
 
-### **[`FormTypeInputMonth.tsx`](./src/formTypeInputs/FormTypeInputMonth.tsx)**
+### **[`FieldInputMonth.tsx`](./src/fieldInputs/FieldInputMonth.tsx)**
 
 - **Role**: DatePicker for month selection (month mode)
 - **Applied when**: `type` is `"string"` and `format` is `"month"`
-- **Additional features**: Support for `minimum`, `maximum` range limits, YYYY-MM format
+- **Additional features**: `presentation.FieldInputProps.minimum` and `maximum` (YYYY-MM) limit the selectable months, YYYY-MM format
 
-### **[`FormTypeInputDate.tsx`](./src/formTypeInputs/FormTypeInputDate.tsx)**
+### **[`FieldInputDate.tsx`](./src/fieldInputs/FieldInputDate.tsx)**
 
 - **Role**: DatePicker for date selection
 - **Applied when**: `type` is `"string"` and `format` is `"date"`
-- **Additional features**: Support for `minimum`, `maximum` date range limits, YYYY-MM-DD format
+- **Additional features**: `presentation.FieldInputProps.minimum` and `maximum` (YYYY-MM-DD) limit the selectable dates, YYYY-MM-DD format
 
-### **[`FormTypeInputTime.tsx`](./src/formTypeInputs/FormTypeInputTime.tsx)**
+### **[`FieldInputTime.tsx`](./src/fieldInputs/FieldInputTime.tsx)**
 
 - **Role**: TimePicker for time selection
 - **Applied when**: `type` is `"string"` and `format` is `"time"`
 - **Additional features**: Time stored in HH:mm:00Z format
 
-### **[`FormTypeInputMonthRange.tsx`](./src/formTypeInputs/FormTypeInputMonthRange.tsx)**
+### **[`FieldInputMonthRange.tsx`](./src/fieldInputs/FieldInputMonthRange.tsx)**
 
 - **Role**: DatePicker RangePicker for month range selection (month mode)
-- **Applied when**: `type` is `"array"`, `format` is `"month-range"` or `formType` is `"monthRange"`, and `items.type` is `"string"`
-- **Additional features**: Support for month range limits, returns array in [start month, end month] format
+- **Applied when**: `type` is `"array"`, `format` is `"month-range"` or `inputType` is `"monthRange"`, and `items.type` is `"string"`
+- **Additional features**: `presentation.FieldInputProps.minimum` and `maximum` (YYYY-MM) limit the selectable months, returns array in [start month, end month] format
 
-### **[`FormTypeInputDateRange.tsx`](./src/formTypeInputs/FormTypeInputDateRange.tsx)**
+### **[`FieldInputDateRange.tsx`](./src/fieldInputs/FieldInputDateRange.tsx)**
 
 - **Role**: DatePicker RangePicker for date range selection
-- **Applied when**: `type` is `"array"`, `format` is `"date-range"` or `formType` is `"dateRange"`, and `items.type` is `"string"`
-- **Additional features**: Support for date range limits, returns array in [start date, end date] format
+- **Applied when**: `type` is `"array"`, `format` is `"date-range"` or `inputType` is `"dateRange"`, and `items.type` is `"string"`
+- **Additional features**: `presentation.FieldInputProps.minimum` and `maximum` (YYYY-MM-DD) limit the selectable dates, returns array in [start date, end date] format
 
-### **[`FormTypeInputTimeRange.tsx`](./src/formTypeInputs/FormTypeInputTimeRange.tsx)**
+### **[`FieldInputTimeRange.tsx`](./src/fieldInputs/FieldInputTimeRange.tsx)**
 
 - **Role**: DatePicker RangePicker for time range selection (time mode)
-- **Applied when**: `type` is `"array"`, `format` is `"time-range"` or `formType` is `"timeRange"`, and `items.type` is `"string"`
-- **Additional features**: Support for time range limits, returns array in [start time, end time] format
+- **Applied when**: `type` is `"array"`, `format` is `"time-range"` or `inputType` is `"timeRange"`, and `items.type` is `"string"`
+- **Additional features**: `presentation.FieldInputProps.minimum` and `maximum` (HH:mm:00Z) limit the selectable times, returns array in [start time, end time] format
 
-### **[`FormTypeInputRadioGroup.tsx`](./src/formTypeInputs/FormTypeInputRadioGroup.tsx)**
+### **[`FieldInputRadioGroup.tsx`](./src/fieldInputs/FieldInputRadioGroup.tsx)**
 
 - **Role**: Display single selection of string or number as radio group
-- **Applied when**: `type` is `"string"`, `"number"`, or `"integer"`, `formType` is `"radio"` or `"radiogroup"`, and `enum` values exist
+- **Applied when**: `type` is `"string"`, `"number"`, or `"integer"`, `inputType` is `"radio"` or `"radiogroup"`, and `enum` values exist
 - **Additional features**: Support for custom labels for radio options, adjustable radio group size
 
-### **[`FormTypeInputStringEnum.tsx`](./src/formTypeInputs/FormTypeInputStringEnum.tsx)**
+### **[`FieldInputStringEnum.tsx`](./src/fieldInputs/FieldInputStringEnum.tsx)**
 
 - **Role**: Display string or string array selection as Select dropdown
 - **Applied when**:
@@ -155,37 +155,37 @@ This plugin provides the following Ant Design v6 components:
   - or `type` is `"array"`, `items.type` is `"string"`, and `items.enum` values exist
 - **Additional features**: Automatic single/multiple selection detection, support for custom labels per option
 
-### **[`FormTypeInputArray.tsx`](./src/formTypeInputs/FormTypeInputArray.tsx)**
+### **[`FieldInputArray.tsx`](./src/fieldInputs/FieldInputArray.tsx)**
 
 - **Role**: Display array data as a list with dynamic add/remove capabilities
 - **Applied when**: `type` is `"array"`
 - **Additional features**: Add/Remove buttons with Ant Design icons, add/remove buttons hidden in read-only mode
 
-### **[`FormTypeInputSlider.tsx`](./src/formTypeInputs/FormTypeInputSlider.tsx)**
+### **[`FieldInputSlider.tsx`](./src/fieldInputs/FieldInputSlider.tsx)**
 
 - **Role**: Input numeric values using a slider
-- **Applied when**: `type` is `"number"` or `"integer"` and `formType` is `"slider"`
-- **Additional features**: Support for `minimum`, `maximum`, `multipleOf` schema properties, lazy update option
+- **Applied when**: `type` is `"number"` or `"integer"` and `inputType` is `"slider"`
+- **Additional features**: Support for `minimum`, `maximum`, `multipleOf` schema properties; `presentation.FieldInputProps.lazy: false` publishes on every move instead of on release
 
-### **[`FormTypeInputTextarea.tsx`](./src/formTypeInputs/FormTypeInputTextarea.tsx)**
+### **[`FieldInputTextarea.tsx`](./src/fieldInputs/FieldInputTextarea.tsx)**
 
 - **Role**: Text area for multiline text input
-- **Applied when**: `type` is `"string"` and `format` or `formType` is `"textarea"`
+- **Applied when**: `type` is `"string"` and `format` or `inputType` is `"textarea"`
 - **Additional features**: Support for automatic resizing via `minRows`, `maxRows`
 
-### **[`FormTypeInputString.tsx`](./src/formTypeInputs/FormTypeInputString.tsx)**
+### **[`FieldInputString.tsx`](./src/fieldInputs/FieldInputString.tsx)**
 
 - **Role**: Default string input field
 - **Applied when**: `type` is `"string"` (fallback when other conditions don't match)
 - **Additional features**: Operates as password input field when `format` is `"password"`, adjustable input field size
 
-### **[`FormTypeInputNumber.tsx`](./src/formTypeInputs/FormTypeInputNumber.tsx)**
+### **[`FieldInputNumber.tsx`](./src/fieldInputs/FieldInputNumber.tsx)**
 
 - **Role**: InputNumber component for numeric input
 - **Applied when**: `type` is `"number"` or `"integer"` (fallback when other conditions don't match)
 - **Additional features**: Support for `minimum`, `maximum`, `multipleOf` schema properties, support for custom formatter/parser
 
-### **[`FormTypeInputBoolean.tsx`](./src/formTypeInputs/FormTypeInputBoolean.tsx)**
+### **[`FieldInputBoolean.tsx`](./src/fieldInputs/FieldInputBoolean.tsx)**
 
 - **Role**: Display boolean values as checkboxes
 - **Applied when**: `type` is `"boolean"` (fallback when other conditions don't match)
@@ -193,19 +193,38 @@ This plugin provides the following Ant Design v6 components:
 
 ---
 
+## Input Settings
+
+Per-input settings such as `protocols`, `lazy`, `minimum` and `maximum` above go in `presentation.FieldInputProps`; the form spreads that object into the input's props.
+
+```ts
+const jsonSchema = {
+  type: 'object',
+  properties: {
+    homepage: {
+      type: 'string',
+      format: 'uri',
+      presentation: { FieldInputProps: { protocols: ['https'] } },
+    },
+  },
+};
+```
+
+Up to 0.16.0 the built-in inputs read `options.minimum`, `maximum`, `lazy` and `protocols`. From 1.0.0-beta `options` is a closed list, so these keys belong in `presentation.FieldInputProps`; under `options` they fail the schema with the blueprint error `UNKNOWN_GROUP_KEY`.
+
 ## Component Priority
 
 Component selection is determined by the following priority order:
 
-1. **In-line component**: Component specified as `FormTypeInput` property in the schema
-2. **FormTypeInputMap**: Component explicitly mapped to a path
-3. **FormTypeInputDefinition**: Automatic selection through each component's `test` condition
-4. **Provider FormTypeInputDefinition**: Component definitions provided by parent Provider
+1. **In-line component**: Component specified as `FieldInput` property in the schema
+2. **FieldInputMap**: Component explicitly mapped to a path
+3. **FieldInputDefinition**: Automatic selection through each component's `test` condition
+4. **Provider FieldInputDefinition**: Component definitions provided by parent Provider
 5. **Plugin**: Components from registered plugins (including this plugin)
 6. **Fallback**: Default fallback components
 
 Within the same priority level, earlier items in the array take precedence. Components in this plugin are defined in the following order:
-`FormTypeInputBooleanSwitch` → `FormTypeInputStringCheckbox` → `FormTypeInputStringSwitch` → `FormTypeInputUri` → `FormTypeInputMonth` → `FormTypeInputDate` → `FormTypeInputTime` → `FormTypeInputMonthRange` → `FormTypeInputDateRange` → `FormTypeInputTimeRange` → `FormTypeInputRadioGroup` → `FormTypeInputStringEnum` → `FormTypeInputArray` → `FormTypeInputSlider` → `FormTypeInputTextarea` → `FormTypeInputString` → `FormTypeInputNumber` → `FormTypeInputBoolean`
+`FieldInputBooleanSwitch` → `FieldInputStringCheckbox` → `FieldInputStringSwitch` → `FieldInputUri` → `FieldInputMonth` → `FieldInputDate` → `FieldInputTime` → `FieldInputMonthRange` → `FieldInputDateRange` → `FieldInputTimeRange` → `FieldInputRadioGroup` → `FieldInputStringEnum` → `FieldInputArray` → `FieldInputSlider` → `FieldInputTextarea` → `FieldInputString` → `FieldInputNumber` → `FieldInputBoolean`
 
 ---
 

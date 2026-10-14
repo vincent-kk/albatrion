@@ -7,46 +7,61 @@ import ForAI from '@site/src/components/ForAI';
 
 # API Reference
 
+Everything on this page is exported from `@canard/schema-form`, unless a type is
+marked as shown for reference only.
+
 ## `<Form>`
 
-Main schema-driven form component. Accepts a JSON Schema and manages the full
-node tree lifecycle. Supports both controlled and uncontrolled usage via
-`defaultValue` / `onChange` or imperative `ref` API.
+Main schema-driven form component. It takes a JSON Schema, builds the node tree
+from `jsonSchema` and `defaultValue`, and renders it. There is no `value` prop:
+read values through `onChange`, the `children` function, or the imperative `ref`
+API.
 
 ### Props
 
-| Prop                       | Type                                                   | Default                  | Description                                                       |
-| -------------------------- | ------------------------------------------------------ | ------------------------ | ----------------------------------------------------------------- |
-| `jsonSchema`               | `JSONSchema`                                           | —                        | **Required.** JSON Schema defining the form structure             |
-| `defaultValue`             | `Value`                                                | `undefined`              | Initial form value                                                |
-| `onChange`                 | `(value: Value) => void`                               | —                        | Called when any field value changes                               |
-| `onSubmit`                 | `(value: Value) => Promise<void> \| void`              | —                        | Called on valid form submit (after validation passes)             |
-| `onValidate`               | `(errors: JSONSchemaError[]) => void`                  | —                        | Called after each validation run                                  |
-| `onStateChange`            | `(state: NodeStateFlags) => void`                      | —                        | Called when dirty/touched/validated state changes                 |
-| `showError`                | `boolean \| ShowError`                                 | `ShowError.DirtyTouched` | When to display validation errors                                 |
-| `validationMode`           | `ValidationMode`                                       | `OnChange \| OnRequest`  | When validation runs                                              |
-| `validatorFactory`         | `ValidatorFactory`                                     | plugin default           | Override validator factory per form                               |
-| `readOnly`                 | `boolean`                                              | `false`                  | Apply `readOnly` to all inputs                                    |
-| `disabled`                 | `boolean`                                              | `false`                  | Apply `disabled` to all inputs                                    |
-| `errors`                   | `JSONSchemaError[]`                                    | `undefined`              | Inject external validation errors                                 |
-| `formTypeInputDefinitions` | `FormTypeInputDefinition[]`                            | `[]`                     | Form-level input component definitions                            |
-| `formTypeInputMap`         | `FormTypeInputMap`                                     | `{}`                     | Path-based input component overrides                              |
-| `CustomFormTypeRenderer`   | `ComponentType<FormTypeRendererProps>`                 | plugin default           | Override the entire field renderer                                |
-| `formatError`              | `FormatError`                                          | plugin default           | Custom error message formatter                                    |
-| `virtualization`           | `boolean \| VirtualizationOptions`                     | off                      | Render-level virtualization (deferred mount) for very large forms |
-| `context`                  | `Dictionary`                                           | `{}`                     | User-defined context, available in all input components           |
-| `children`                 | `ReactNode \| (props: FormChildrenProps) => ReactNode` | —                        | Custom layout or render prop                                      |
-| `ref`                      | `Ref<FormHandle>`                                      | —                        | Imperative handle                                                 |
+| Prop                     | Type                                                   | Default                  | Description                                                                                                                                   |
+| ------------------------ | ------------------------------------------------------ | ------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------- |
+| `jsonSchema`             | `JSONSchema`                                           | —                        | **Required.** JSON Schema defining the form structure                                                                                         |
+| `defaultValue`           | `Value`                                                | `undefined`              | Initial form value                                                                                                                            |
+| `onChange`               | `(value: Value) => void`                               | —                        | Called when the form value changes                                                                                                            |
+| `onSubmit`               | `(value: Value) => Promise<void> \| void`              | —                        | Called by `submit()` after validation passes                                                                                                  |
+| `onValidate`             | `(errors: FieldNode['globalErrors']) => void`          | —                        | Called with the form error list when a validation result or the external error list changes it; a result equal to the previous one is skipped |
+| `onStateChange`          | `(state: FieldNode['globalState']) => void`            | —                        | Called when the form's interaction flags (dirty, touched) change                                                                              |
+| `onError`                | `(record: FormErrorRecord) => void`                    | —                        | Called with each error record of this form instance, including construction and render failures                                               |
+| `onDiagnosticsChange`    | `(diagnostics: FieldNode['diagnostics']) => void`      | —                        | Called when the root diagnostics change after preparation                                                                                     |
+| `showError`              | `boolean \| ShowError`                                 | `ShowError.DirtyTouched` | When to display validation errors                                                                                                             |
+| `validationMode`         | `ValidationMode`                                       | `OnChange \| OnRequest`  | When validation runs                                                                                                                          |
+| `validatorFactory`       | `ValidatorFactory`                                     | plugin validator         | Validator object (`compile` and `compileGuard`); Form prop, then `FormProvider`, then plugin                                                  |
+| `readOnly`               | `boolean`                                              | `false`                  | Apply `readOnly` to all inputs                                                                                                                |
+| `disabled`               | `boolean`                                              | `false`                  | Apply `disabled` to all inputs                                                                                                                |
+| `unsetOnInactive`        | `boolean`                                              | —                        | Form default for `controls.unsetOnInactive`: drop a field's value when it leaves the shape (a node's own policy wins)                         |
+| `disableAutomaticWrites` | `boolean`                                              | —                        | Suppress automatic writes without blocking imperative writes                                                                                  |
+| `errors`                 | `FieldNode['globalErrors']`                            | `undefined`              | External validation errors; applied after mount and re-applied whenever the array reference changes or the form resets                        |
+| `fieldInputDefinitions`  | `FieldInputDefinition[]`                               | —                        | Form-level input component definitions                                                                                                        |
+| `fieldInputMap`          | `FieldInputMap`                                        | —                        | Path-based input component overrides                                                                                                          |
+| `FieldRenderer`          | `ComponentType<FieldRendererProps>`                    | plugin renderer          | Group renderer used by every field and `Form.Field`                                                                                           |
+| `FormLabelRenderer`      | `ComponentType<FieldRendererProps>`                    | plugin renderer          | Renderer used by `Form.Label`                                                                                                                 |
+| `FormInputRenderer`      | `ComponentType<FieldRendererProps>`                    | plugin renderer          | Renderer used by `Form.Input`                                                                                                                 |
+| `FormErrorRenderer`      | `ComponentType<FieldRendererProps>`                    | plugin renderer          | Renderer used by `Form.Error`                                                                                                                 |
+| `formatError`            | `FormatError`                                          | plugin formatter         | Custom error message formatter                                                                                                                |
+| `virtualization`         | `boolean \| VirtualizationOptions`                     | off                      | Render-level virtualization (deferred mount) for very large forms                                                                             |
+| `context`                | `Dictionary`                                           | —                        | User-defined context, available in all input components; merged over the `FormProvider` context                                               |
+| `children`               | `ReactNode \| (props: FormChildrenProps) => ReactNode` | —                        | Custom layout, or a function that receives `{ node, jsonSchema, defaultValue, value, errors }`                                                |
+| `ref`                    | `Ref<FormHandle>`                                      | —                        | Imperative handle                                                                                                                             |
+
+`FormErrorRecord` is shown for reference only; it is not exported. `Dictionary` (`Record<string, any>`) is not exported either.
 
 ### ShowError Values
 
 ```ts
 import { ShowError } from '@canard/schema-form';
 
-ShowError.Dirty; // show when node.dirty === true
-ShowError.Touched; // show when node.touched === true
+ShowError.Always; // always show (same as true)
+ShowError.Never; // never show (same as false)
+ShowError.Dirty; // show when node.state[FieldNodeState.Dirty] is true
+ShowError.Touched; // show when node.state[FieldNodeState.Touched] is true
 ShowError.DirtyTouched; // show when dirty AND touched (default)
-// Also accepts: true (always show), false (never show)
+// A node's own node.state[FieldNodeState.ErrorVisible] overrides this policy.
 ```
 
 ### ValidationMode Values
@@ -55,8 +70,8 @@ ShowError.DirtyTouched; // show when dirty AND touched (default)
 import { ValidationMode } from '@canard/schema-form';
 
 ValidationMode.None; // disable validation
-ValidationMode.OnChange; // validate on every value change
-ValidationMode.OnRequest; // validate only when validate() called explicitly
+ValidationMode.OnChange; // validate when the value changes
+ValidationMode.OnRequest; // validate only on request; validate() and submit() validate under every mode except None
 // Combine with bitwise OR: ValidationMode.OnChange | ValidationMode.OnRequest
 ```
 
@@ -73,6 +88,10 @@ for defaults or a `VirtualizationOptions` object.
 import { Form, VirtualizationBackfill } from '@canard/schema-form';
 
 <Form jsonSchema={largeSchema} virtualization />;
+<Form
+  jsonSchema={largeSchema}
+  virtualization={{ threshold: 50, backfill: VirtualizationBackfill.None }}
+/>;
 ```
 
 | Option           | Type                                            | Default  | Description                                                                                                  |
@@ -81,7 +100,7 @@ import { Form, VirtualizationBackfill } from '@canard/schema-form';
 | `eagerCount`     | `number`                                        | `20`     | Leading children per gated branch mounted immediately (prevents a blank first frame)                         |
 | `rootMargin`     | `VirtualizationRootMargin`                      | `'100%'` | Pre-mount distance around the viewport; only `px`/`%` units are valid (IntersectionObserver spec)            |
 | `backfill`       | `VirtualizationBackfill`                        | `Idle`   | `Idle` progressively mounts the rest during browser idle time; `None` reveals only on visibility or commands |
-| `estimateHeight` | `number \| (node: SchemaNode) => number`        | `40`     | Placeholder height in px — approximates scroll geometry until reveal                                         |
+| `estimateHeight` | `number \| (node: FieldNode) => number`         | `40`     | Placeholder height in px — approximates scroll geometry until reveal                                         |
 | `Placeholder`    | `ComponentType<VirtualizationPlaceholderProps>` | —        | Optional component rendered inside placeholders (Suspense-fallback style); receives `{ node, height }`       |
 
 **Placeholder DOM contract** — deferred fields render as
@@ -91,8 +110,7 @@ state. Style skeletons with a plain CSS attribute selector
 (`[data-deferred] { … }`) or the `Placeholder` component.
 
 :::warning SSR / hydration
-Requires `IntersectionObserver`; when unavailable the option is silently
-ignored and everything mounts eagerly. Do not enable it in SSR/hydration apps —
+Requires `IntersectionObserver`; when unavailable the option is ignored (with a development-mode warning) and everything mounts eagerly. Do not enable it in SSR/hydration apps —
 the server renders all fields while the client would gate them, causing a
 hydration mismatch.
 :::
@@ -101,40 +119,75 @@ See the [Virtualized Form example](./examples/virtualized-form) for a live demo.
 
 ## `FormHandle` (ref API)
 
-Obtained via `useRef<FormHandle<typeof schema>>(null)` and passed
-to `ref` prop. All methods are safe to call after mount.
+Obtained via `useRef<FormHandle<typeof schema>>(null)` and passed to the `ref`
+prop. Every member except `getAttachedFilesMap` and `showError` addresses the
+form's current root node; when the form rebuilds its tree, the handle follows
+the new root.
 
 ```ts
 interface FormHandle<Schema, Value> {
-  node: InferSchemaNode<Schema> | undefined; // root node
-  getValue(): Value;
+  node?: InferFieldNode<Schema>; // current root node (undefined before the first mount)
+  focus(path?: string): void; // focus the input at path (root when omitted)
+  select(path?: string): void; // select the input's value at path (root when omitted)
+  refresh(path?: string): void; // make the input at path re-read its committed value
+  remount(path?: string): void; // remount the rendered subtree at path
+  reset(
+    option?:
+      | typeof SetValueOption.DisableAutomaticWrites
+      | typeof SetValueOption.EnableAutomaticWrites,
+  ): void; // reload the committed defaults (re-reads jsonSchema and defaultValue)
+  findNode(path: string): FieldNode | null;
+  findNodes(path: string): readonly FieldNode[];
+  getState(): FieldNode['globalState']; // flags true on at least one node
+  setState(state: FieldNode['state']): void; // patch flags on every node
+  clearState(): void; // clear flags on every node
+  getValue(): Value; // current output value
   setValue(
     value: Value | ((prev: Value) => Value),
     options?: SetValueOption,
   ): void;
-  getState(): NodeStateFlags;
-  setState(state: NodeStateFlags): void;
-  clearState(): void;
-  getErrors(): JSONSchemaError[];
-  validate(): Promise<JSONSchemaError[]>;
-  showError(visible: boolean): void;
-  focus(path: string): void; // focuses input at path
-  select(path: string): void; // selects input at path
-  findNode(path: string): SchemaNode | null;
-  findNodes(path: string): SchemaNode[];
-  reset(): void; // remounts the form (re-reads jsonSchema + defaultValue)
+  getErrors(): FieldNode['globalErrors'];
+  getAttachedFilesMap(): AttachedFilesMap; // Map<path, File[]>
+  validate(): Promise<FieldNode['globalErrors']>;
+  showError(visible?: boolean): void; // true (default) shows every error; false returns to the showError prop
   submit: TrackableHandlerFunction; // callable + subscribe(listener) + pending
-  getAttachedFilesMap(): AttachedFilesMap;
 }
 ```
 
+- A `path` that matches no node makes `focus`, `select`, `refresh` and
+  `remount` do nothing.
+- Before the first mount, queries do not throw: `findNode` returns `null`,
+  `findNodes`, `getErrors` and `validate` return an empty array, and
+  `getState` returns an empty object.
+- `reset()` also empties the attached-files map and drops a `showError(true)`
+  override.
+- `submit()` validates first and rejects with a `ValidationError` when
+  validation fails; `onSubmit` runs only after validation passes. It also rejects with a `SchemaFormError` (`SUBMIT_WHILE_DEGRADED`) when the form's diagnostics are degraded.
+- `AttachedFilesMap` and `TrackableHandlerFunction` are shown for reference
+  only; they are not exported.
+
 ```ts
-// Usage
+import { useRef } from 'react';
+
+import type { FormHandle } from '@canard/schema-form';
+
+const schema = {
+  type: 'object',
+  properties: {
+    name: { type: 'string' },
+    email: { type: 'string', format: 'email' },
+  },
+} as const;
+
 const formRef = useRef<FormHandle<typeof schema>>(null);
 
-const errors = await formRef.current?.validate();
+async function save() {
+  const errors = await formRef.current?.validate();
+  if (errors?.length) formRef.current?.focus('/email');
+}
+
 formRef.current?.setValue({ name: 'Alice' });
-formRef.current?.focus('/email');
+formRef.current?.setValue((prev) => ({ ...prev, name: 'Bob' }));
 formRef.current?.reset();
 ```
 
@@ -143,44 +196,62 @@ formRef.current?.reset();
 ```ts
 import { SetValueOption } from '@canard/schema-form';
 
-// Bitwise flags (can be combined)
-SetValueOption.Overwrite; // replace entire value (default)
-SetValueOption.Merge; // deep merge with current value
-SetValueOption.Isolate; // compute dependencies synchronously
+// Bit flags
+SetValueOption.Overwrite; // replace the addressed value (default)
+SetValueOption.Merge; // keep omitted object keys, replace the supplied ones
+SetValueOption.DisableAutomaticWrites; // suppress automatic writes caused by this call
+SetValueOption.EnableAutomaticWrites; // allow automatic writes even when the form suppresses them
+// Overwrite and Merge cannot be combined.
 ```
 
 ## Form Sub-Components
 
-All sub-components require a `<Form>` ancestor and use its internal context.
+All `Form.*` sub-components require a `<Form>` ancestor and use its internal context.
+For renderers, the `<Form>` prop wins over `FormProvider`, which wins over the
+registered plugin.
 
-### `Form.Group`
+### `Form.Field`
 
-Renders a complete field group: label + input + error. Wraps `Form.Label`, `Form.Input`, and `Form.Error` together using the plugin's `FormGroup` component.
+Renders a complete field group (label, input and error) through the group
+renderer (`FieldRenderer`).
 
 ```ts
-interface FormGroupProps<Value> extends ChildNodeComponentProps {
+type FormFieldProps<Value> = {
   path?: string;
-  FormTypeInput?: ComponentType<FormTypeInputProps<Value>>;
-  FormTypeRenderer?: ComponentType<FormTypeRendererProps>;
+  FieldInput?: ComponentType<FieldInputProps<Value>>;
+  FieldRenderer?: ComponentType<FieldRendererProps>;
   Wrapper?: ComponentType<PropsWithChildren<Dictionary>>;
-  // + any extra props forwarded to the input component
-  className?: string;
-  style?: CSSProperties;
-  placeholder?: string;
+} & ChildFieldProps;
+
+type ChildFieldProps<Value> = {
+  required?: boolean;
   readOnly?: boolean;
   disabled?: boolean;
-}
+  defaultValue?: Value;
+  value?: Value;
+  onChange?: (
+    value: Value | ((prev: Value) => Value),
+    options?: SetValueOption,
+  ) => void;
+  onFileAttach?: (file: File | File[] | undefined) => void;
+  FieldRenderer?: ComponentType<FieldRendererProps>;
+  className?: string;
+  style?: CSSProperties;
+  [alt: string]: any; // extra props forwarded to the input component
+};
 ```
 
 ```tsx
-<Form.Group path="/email" />
-<Form.Group path="/birthDate" FormTypeInput={DatePicker} />
-<Form.Group path="/address" Wrapper={({ children }) => <fieldset>{children}</fieldset>} />
+<Form.Field path="/email" />
+<Form.Field path="/birthDate" FieldInput={DatePicker} />
+<Form.Field path="/address" Wrapper={({ children }) => <fieldset>{children}</fieldset>} />
 ```
 
 ### `Form.Label`
 
-Renders only the label using the plugin's `FormLabel` component.
+Renders only the label through `FormLabelRenderer`, inside
+`<label htmlFor={path} id={'label:' + path}>`. Accepts `path`, `className` and
+`style`.
 
 ```tsx
 <Form.Label path="/email" className="required-label" />
@@ -188,7 +259,9 @@ Renders only the label using the plugin's `FormLabel` component.
 
 ### `Form.Input`
 
-Renders only the input using the plugin's `FormInput` component.
+Renders only the input through `FormInputRenderer`. Accepts `path`,
+`FieldInput` and the `ChildFieldProps` above; extra props are forwarded to the
+input component.
 
 ```tsx
 <Form.Input path="/email" placeholder="user@example.com" autoComplete="email" />
@@ -196,7 +269,8 @@ Renders only the input using the plugin's `FormInput` component.
 
 ### `Form.Error`
 
-Renders only the error message using the plugin's `FormError` component.
+Renders only the error message through `FormErrorRenderer`, inside a `<span>`.
+Accepts `path`, `className` and `style`.
 
 ```tsx
 <Form.Error path="/email" className="error-text" />
@@ -204,7 +278,9 @@ Renders only the error message using the plugin's `FormError` component.
 
 ### `Form.Render`
 
-Low-level slot for custom rendering. Passes raw `FormTypeRendererProps` to a render prop or component. Use when you need full control over how a field is presented.
+Low-level slot for custom rendering. Its child is a function that receives the
+field's `FieldRendererProps` and returns what to render. It also accepts
+`path`, `FieldInput`, `Wrapper` and the `ChildFieldProps` above.
 
 ```tsx
 <Form.Render path="/status">
@@ -219,14 +295,26 @@ Low-level slot for custom rendering. Passes raw `FormTypeRendererProps` to a ren
 
 ### `FormProvider`
 
-Context provider for sharing plugin configuration across a subtree without global registration. Useful when multiple form instances in the same app need different plugins.
+Context provider for sharing configuration across a subtree without global
+registration. Useful when forms in the same app need different configuration.
+Props set on a `<Form>` take precedence over the provider.
+
+| Prop                                                                           | Description                                                                                 |
+| ------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------- |
+| `fieldInputDefinitions`                                                        | Input definitions, ranked below the Form's own definitions and above the plugin definitions |
+| `FieldRenderer`, `FormLabelRenderer`, `FormInputRenderer`, `FormErrorRenderer` | Renderers for every form in the subtree                                                     |
+| `formatError`                                                                  | Error message formatter                                                                     |
+| `showError`                                                                    | Error display condition                                                                     |
+| `validationMode`                                                               | When validation runs                                                                        |
+| `validatorFactory`                                                             | Validator object                                                                            |
+| `context`                                                                      | Context merged under each Form's `context`                                                  |
 
 ```tsx
-import { FormProvider } from '@canard/schema-form';
+import { Form, FormProvider } from '@canard/schema-form';
 
 <FormProvider
-  formTypeInputDefinitions={customDefinitions}
-  CustomFormTypeRenderer={MyRenderer}
+  fieldInputDefinitions={customDefinitions}
+  FieldRenderer={MyRenderer}
   formatError={myFormatError}
 >
   <Form jsonSchema={schema} />
@@ -243,10 +331,15 @@ const { submit, pending } = useFormSubmit(formRef);
 // pending: boolean | undefined
 ```
 
-Synchronizes with the form's internal submit handler via `useSyncExternalStore`. `pending` is `true` while the `onSubmit` promise is in flight.
+Synchronizes with the form's `submit` handler via `useSyncExternalStore`.
+`pending` is `true` while the submission is in flight.
 
 ```tsx
-function SubmitButton({ formRef }) {
+import type { RefObject } from 'react';
+
+import { type FormHandle, useFormSubmit } from '@canard/schema-form';
+
+function SubmitButton({ formRef }: { formRef: RefObject<FormHandle | null> }) {
   const { submit, pending } = useFormSubmit(formRef);
   return (
     <button onClick={submit} disabled={pending}>
@@ -256,44 +349,85 @@ function SubmitButton({ formRef }) {
 }
 ```
 
-### `useSchemaNodeTracker`
+### `useFieldNodeTracker`
 
 ```ts
-const version = useSchemaNodeTracker(node, eventMask?);
-// Returns an incrementing number; triggers re-render on matching events.
-// Default mask: all events (BIT_MASK_ALL)
+const revision = useFieldNodeTracker(node, tracking?);
+// node: FieldNode | null (null tracks nothing)
+// tracking: FieldNodeEventType bitmask; default: all events
+// Returns a revision number that changes with every matching event and re-renders the component.
 ```
 
 ```tsx
+import {
+  FieldNodeEventType,
+  type NumberNode,
+  useFieldNodeTracker,
+} from '@canard/schema-form';
+
 function PriceDisplay({ node }: { node: NumberNode }) {
-  useSchemaNodeTracker(node); // re-render whenever node emits any event
+  useFieldNodeTracker(node, FieldNodeEventType.UpdateValue);
   return <span>{node.value}</span>;
 }
 ```
 
-### `useSchemaNodeSubscribe`
+### `useFieldNodeSubscribe`
 
 ```ts
-useSchemaNodeSubscribe(node, (event) => {
-  console.log(event.type, node.value);
-});
+useFieldNodeSubscribe(
+  node,
+  (event) => {
+    console.log(event.type, node.value);
+  },
+  { onSubscribe: (node) => console.log(node.value) }, // optional catch-up
+);
 // Raw event subscription — does NOT trigger re-render by itself.
 ```
 
-### `useChildNodeComponentMap`
+The listener only sees events delivered after the subscription attaches at
+commit. If it mirrors node state, pass `onSubscribe` to re-read the current
+state at attach time, or use `useFieldNodeTracker` instead.
+
+### `useChildFieldMap`
 
 ```ts
-const componentMap = useChildNodeComponentMap(objectNode);
-// Returns a Map<string, ChildNodeComponent> keyed by field name.
-// Use inside custom FormTypeInput components to render child fields.
+const fields = useChildFieldMap<Value>(ChildFields);
+// Takes the ChildFields prop of a FieldInput and returns an object keyed by field name.
+// A name with no child field returns a component that renders nothing.
 ```
 
-### `useChildNodeErrors`
+```tsx
+import { type FieldInputProps, useChildFieldMap } from '@canard/schema-form';
+
+function AddressInput({ ChildFields }: FieldInputProps) {
+  const fields = useChildFieldMap<{ street: string; city: string }>(
+    ChildFields,
+  );
+  return (
+    <div>
+      <fields.street />
+      <fields.city />
+    </div>
+  );
+}
+```
+
+### `useChildFieldErrors`
 
 ```ts
-const errors = useChildNodeErrors(node);
-// Returns flattened array of all errors from node and its descendants.
+const {
+  errorMessage, // formattedError when showError is true, otherwise null
+  showError, // the node itself or any direct child passes the showError policy
+  formattedError, // first formatted error among the direct children
+  showErrors, // showError policy result per direct child
+  formattedErrors, // first error of each direct child, formatted with formatError
+  errorMatrix, // errors of each direct child
+} = useChildFieldErrors(node, disabled?);
 ```
+
+Reads the errors of `node`'s direct children and re-renders when their
+children, state, paths or errors change. With `disabled` set, every child's
+error list is empty and every show flag is `false`.
 
 ## `registerPlugin`
 
@@ -301,7 +435,10 @@ const errors = useChildNodeErrors(node);
 registerPlugin(plugin: SchemaFormPlugin | null): void
 ```
 
-Globally registers a plugin. Deduplicated by stable content hash — calling with the same plugin object twice is a no-op.
+Globally registers a plugin. A plugin whose content fingerprint is already
+registered is skipped, so calling with the same plugin object twice is a no-op.
+Later registrations override earlier renderers, validator and `formatError`;
+their input definitions are ranked ahead of earlier ones.
 
 Call `registerPlugin(null)` to reset all plugins to system defaults.
 
@@ -309,11 +446,11 @@ Call `registerPlugin(null)` to reset all plugins to system defaults.
 
 ```ts
 interface SchemaFormPlugin {
-  FormGroup?: ComponentType<FormTypeRendererProps>;
-  FormLabel?: ComponentType<FormTypeRendererProps>;
-  FormInput?: ComponentType<FormTypeRendererProps>;
-  FormError?: ComponentType<FormTypeRendererProps>;
-  formTypeInputDefinitions?: FormTypeInputDefinition[];
+  FieldRenderer?: ComponentType<FieldRendererProps>;
+  FormLabelRenderer?: ComponentType<FieldRendererProps>;
+  FormInputRenderer?: ComponentType<FieldRendererProps>;
+  FormErrorRenderer?: ComponentType<FieldRendererProps>;
+  fieldInputDefinitions?: FieldInputDefinition[];
   validator?: ValidatorPlugin;
   formatError?: FormatError;
 }
@@ -323,109 +460,190 @@ interface SchemaFormPlugin {
 
 ```ts
 interface ValidatorPlugin {
-  bind(instance: any): void;
+  bind?(instance: any): void; // never called by the core; call it yourself before registerPlugin
   compile(jsonSchema: JSONSchema): ValidateFunction;
+  compileGuard(root: JSONSchema, pointer: string): (value: unknown) => boolean;
+  release?(root: JSONSchema): void; // release a root's resources when its cache entry is evicted
+  readonly dialect?: string;
 }
 
 type ValidateFunction = (
-  value: any,
-) => JSONSchemaError[] | null | Promise<JSONSchemaError[] | null>;
-```
+  data: unknown,
+) =>
+  | readonly ValidationIssue[]
+  | null
+  | Promise<readonly ValidationIssue[] | null>;
 
-## `FormTypeInputProps` Interface
-
-All custom input components registered via `formTypeInputDefinitions` receive these props.
-
-```ts
-interface FormTypeInputProps<Value, Context, WatchValues, Schema, Node> {
-  jsonSchema: Schema;
-  node: Node;
-  type: JSONSchemaType; // 'string' | 'number' | 'boolean' | ...
-  name: string;
-  path: string;
-  required: boolean;
-  nullable: boolean;
-  readOnly: boolean;
-  disabled: boolean;
-  value: Value | undefined;
-  defaultValue: Value | undefined;
-  onChange: SetStateFnWithOptions<Value | undefined>;
-  errors: JSONSchemaError[];
-  errorVisible: boolean;
-  watchValues: WatchValues; // values from computed.watch paths
-  onFileAttach: (file: File | File[] | undefined) => void;
-  ChildNodeComponents: ChildNodeComponent[];
-  placeholder?: string;
-  className?: string;
-  style?: CSSProperties;
-  context: Context;
-  [alt: string]: any; // extra props from Form.Group
+interface ValidationIssue {
+  dataPath: string; // JSON Pointer of the rejected value ('' for the root)
+  keyword?: string;
+  message?: string;
+  schemaPath?: string;
+  rejectedKey?: string;
+  details?: Record<string, unknown>;
+  source?: unknown; // the validator's original issue
 }
 ```
 
-## `SchemaNode` Interface
+A validator returns `null` for valid data. Guards are synchronous; asynchronous
+formats and keywords are not supported in guards.
+
+## `FieldInputProps` Interface
+
+All custom input components registered via `fieldInputDefinitions` receive these props.
 
 ```ts
-interface SchemaNode {
+interface FieldInputProps<Value, Context, WatchValues, Schema, Node> {
+  jsonSchema: Schema;
+  readOnly: boolean;
+  disabled: boolean;
+  required: boolean;
+  node: Node;
+  type: Node['type']; // node kind: 'string', 'number', 'object', 'array', 'virtual', 'union', ...
+  schemaType: Node['schemaType']; // authored accepted kind(s), including 'integer'
+  typeMismatch: Node['typeMismatch']; // stored value mismatches the accepted kinds
+  name: Node['name'];
+  path: Node['path'];
+  nullable: Node['nullable'];
+  errors: Node['errors'];
+  errorVisible: boolean;
+  watchValues: WatchValues; // values read from the controls.watch paths
+  defaultValue: Value | undefined;
+  value: Value | undefined;
+  onChange: (
+    value: Value | undefined | ((prev: Value | undefined) => Value | undefined),
+    options?: SetValueOption,
+  ) => void;
+  onFileAttach: (file: File | File[] | undefined) => void;
+  ChildFields: ChildField[];
+  placeholder: string | undefined;
+  className: string | undefined;
+  style: CSSProperties | undefined;
+  context: Context;
+  [alt: string]: any; // extra props from Form.Field / Form.Input
+}
+```
+
+`ChildField` is shown for reference only; it is not exported. It is a component type carrying `key`, `path` and `field`; type it as `FieldInputProps['ChildFields'][number]`.
+
+## `FieldNode` Interface
+
+`FieldNode` is the union of the node types (`StringNode`, `NumberNode`,
+`BooleanNode`, `NullNode`, `ObjectNode`, `ArrayNode`, `VirtualNode`,
+`UnionNode`). Every node type shares the members below (abridged).
+
+```ts
+interface FieldNode {
   // Identity
-  readonly type: string; // node type ('string', 'object', etc.)
-  readonly schemaType: JSONSchemaType;
-  readonly jsonSchema: JSONSchema;
+  readonly type:
+    | 'string'
+    | 'number'
+    | 'boolean'
+    | 'null'
+    | 'object'
+    | 'array'
+    | 'virtual'
+    | 'union';
+  readonly strategy: 'branch' | 'terminal'; // branch nodes own child nodes
+  readonly schemaType: string | readonly string[]; // authored kind(s), including 'integer'
+  readonly jsonSchema: Readonly<Record<string, unknown>> | boolean;
   readonly required: boolean;
   readonly nullable: boolean;
 
   // Tree structure
   readonly depth: number;
   readonly isRoot: boolean;
-  readonly parentNode: SchemaNode | null;
+  readonly rootNode: FieldNode;
+  readonly parentNode: FieldNode | null;
   readonly name: string;
+  readonly escapedName: string;
   readonly path: string;
+  readonly children: readonly FieldNode[] | null; // null on terminal nodes
 
   // Value
-  readonly value: any;
-  readonly defaultValue: any;
-  readonly enhancedValue: any; // includes virtual field values
-  setValue(input: any | ((prev: any) => any), option?: SetValueOption): void;
+  readonly value: unknown; // typed per node kind
+  readonly outputValue: unknown; // emitted value (getValue()): '', [] and {} are omitted unless options.omitEmpty is false
+  readonly defaultValue: unknown;
+  setValue(value: unknown, option?: SetValueOption): void;
+  resetSubtree(option?: SetValueOption): void;
 
   // Computed properties
+  readonly active: boolean; // false while a condition excludes the field
   readonly visible: boolean;
-  readonly active: boolean;
+  readonly enabled: boolean; // active and visible
   readonly readOnly: boolean;
   readonly disabled: boolean;
+  readonly watchValues: readonly unknown[];
+  readonly context: Readonly<Record<string, unknown>>;
+  readonly typeMismatch: boolean;
 
   // State
-  readonly dirty: boolean;
-  readonly touched: boolean;
-  readonly validated: boolean;
-  readonly initialized: boolean;
-  readonly errors: JSONSchemaError[];
-  readonly globalErrors: JSONSchemaError[];
-  readonly globalState: NodeStateFlags;
+  state: {
+    [FieldNodeState.Dirty]?: boolean; // set on every user input write
+    [FieldNodeState.Touched]?: boolean; // set on blur
+    [FieldNodeState.ErrorVisible]?: boolean; // overrides the showError policy
+    [key: string]: any; // your own flags
+  };
+  setState(state: FieldNode['state']): void;
+  readonly globalState: Readonly<Record<string, boolean | undefined>>; // flags true on at least one node
+  setSubtreeState(state: FieldNode['state']): void;
+  clearSubtreeState(): void;
 
-  // Validation
-  validate(): Promise<JSONSchemaError[]>;
+  // Errors and validation
+  readonly errors: readonly ValidationIssue[]; // displayed validator and external issues
+  readonly globalErrors: readonly ValidationIssue[]; // root external issues, then whole-tree validator issues
+  setExternalErrors(errors: readonly ValidationIssue[]): void;
+  clearExternalErrors(): void;
+  validate(): Promise<readonly ValidationIssue[]>;
 
   // Navigation
-  find(path: string): SchemaNode | undefined;
-  findAll(path: string): SchemaNode[];
+  find(pointer?: string | readonly string[] | null): FieldNode | null;
+  findNodes(pointer?: string | readonly string[] | null): readonly FieldNode[];
 
-  // Events
-  publish(event: NodeEventType): void;
-  subscribe(listener: NodeListener): () => void;
+  // Events and requests
+  subscribe(listener: (event: { type: number }) => void): () => void; // event.type holds FieldNodeEventType bits
+  revision(mask?: FieldNodeEventType): number;
+  request(kind: FieldNodeRequestType): void;
+  batch(fn: () => void): void; // group synchronous writes into one delivery
 }
+```
+
+Events and requests use separate enums: `subscribe` delivers
+`FieldNodeEventType` bits, and `request` asks the renderer for one action.
+
+```ts
+import {
+  FieldNodeEventType,
+  FieldNodeRequestType,
+  FieldNodeState,
+} from '@canard/schema-form';
+
+const unsubscribe = node.subscribe((event) => {
+  if (event.type & FieldNodeEventType.UpdateValue) console.log(node.value);
+});
+
+node.request(FieldNodeRequestType.Focus); // also Select, Refresh, Remount
+node.setState({ [FieldNodeState.ErrorVisible]: true });
+unsubscribe();
 ```
 
 ## `ArrayNode` Methods
 
 ```ts
-interface ArrayNode extends SchemaNode {
-  readonly length: number;
-  readonly children: Array<{ node: SchemaNode }>;
-  push(value?: any): void; // add item (respects maxItems)
-  remove(index: number): void;
-  clear(): void; // remove all items (respects minItems)
+// ArrayNode = FieldNode members + these methods
+interface ArrayNodeMethods<Item> {
+  push(value?: Item): number; // append an item; returns the new length
+  pop(): Item | undefined; // remove the last item; returns its value
+  update(index: number, value: Item): Item | undefined; // replace one position
+  remove(index: number): Item | undefined; // remove one position; returns its value
+  clear(): void; // remove every item
 }
 ```
+
+`ArrayNodeMethods` is an illustrative name, not an export; use `ArrayNode`. `arrayNode.children` is the list of item nodes on a branch array and `null` on
+an array rendered as a single input, so read the count as
+`arrayNode.children?.length`. These methods do not enforce `minItems` or
+`maxItems`; validation reports them.
 
 ## Node Type Guards
 
@@ -434,18 +652,24 @@ import {
   isArrayNode,
   isBooleanNode,
   isBranchNode,
+  isFieldNode,
   isNumberNode,
   isObjectNode,
-  isSchemaNode,
   isStringNode,
   isTerminalNode,
+  isUnionNode,
   isVirtualNode,
 } from '@canard/schema-form';
 
-if (isArrayNode(node)) {
-  node.push(); // TypeScript knows it's ArrayNode here
+const items = formRef.current?.findNode('/items');
+if (items && isArrayNode(items)) {
+  items.push(); // TypeScript knows it's ArrayNode here
+  items.children?.length;
 }
 ```
+
+`isFieldNode(value: unknown)` checks any value; the other guards take a
+`FieldNode`.
 
 ## Error Guards
 
@@ -456,21 +680,32 @@ import {
   isUnhandledError,
   isValidationError,
 } from '@canard/schema-form';
+
+try {
+  await formRef.current?.submit();
+} catch (error) {
+  if (isValidationError(error)) console.log('validation failed');
+}
 ```
 
 ## `FormatError` Function
 
 ```ts
 type FormatError = (
-  error: JSONSchemaError,
-  node: SchemaNode,
+  error: ValidationIssue, // plus an internal `key` for array items
+  node: FieldNode,
   context: Dictionary,
 ) => ReactNode;
+```
 
-// Example
-const formatError: FormatError = (error, node, context) => {
-  if (error.keyword === 'required')
-    return `${node.jsonSchema.title ?? node.name} is required`;
+The default formatter reads `presentation.errorMessages` from the schema and
+falls back to `error.message`.
+
+```ts
+import type { FormatError } from '@canard/schema-form';
+
+const formatError: FormatError = (error, node) => {
+  if (error.keyword === 'required') return `${node.name} is required`;
   if (error.keyword === 'minLength')
     return `Minimum ${error.details?.limit} characters required`;
   return error.message;
@@ -479,13 +714,23 @@ const formatError: FormatError = (error, node, context) => {
 
 ## `JSONPointer`
 
+A constant object holding the path symbols used in node paths, `find()` and
+`controls` expressions.
+
 ```ts
 import { JSONPointer } from '@canard/schema-form';
 
-// Static utilities for RFC 6901 JSONPointer strings
-JSONPointer.escape('path/with/slashes'); // → 'path~1with~1slashes'
-JSONPointer.unescape('path~1with~1slashes'); // → 'path/with/slashes'
+JSONPointer.Root; // '' — the whole document
+JSONPointer.Fragment; // '#'
+JSONPointer.Separator; // '/'
+JSONPointer.Parent; // '..' (extended syntax)
+JSONPointer.Current; // '.' (extended syntax)
+JSONPointer.Wildcard; // '*' (extended syntax; matches every child in findNodes())
+JSONPointer.Context; // '@' (extended syntax)
 ```
+
+Escape a key the RFC 6901 way: `~0` for `~` and `~1` for `/`, as in
+`node.find('/field~1with~0special')`.
 
 <ForAI>
 
@@ -497,67 +742,79 @@ registerPlugin(plugin: SchemaFormPlugin | null): void
 // null → reset all plugins
 
 // ── Form props (all optional except jsonSchema) ─────────────────
-jsonSchema:                Schema                           // required
-defaultValue?:             Value
-onChange?:                 (value: Value) => void
-onSubmit?:                 (value: Value) => Promise<void> | void
-onValidate?:               (errors: JSONSchemaError[]) => void
-onStateChange?:            (state: NodeStateFlags) => void
-showError?:                boolean | ShowError              // default: DirtyTouched
-validationMode?:           ValidationMode                  // default: OnChange|OnRequest
-readOnly?:                 boolean
-disabled?:                 boolean
-errors?:                   JSONSchemaError[]
-formTypeInputDefinitions?: FormTypeInputDefinition[]
-formTypeInputMap?:         FormTypeInputMap
-CustomFormTypeRenderer?:   ComponentType<FormTypeRendererProps>
-formatError?:              FormatError
-validatorFactory?:         ValidatorFactory
-context?:                  Dictionary
-children?:                 ReactNode | (props: FormChildrenProps) => ReactNode
-ref?:                      Ref<FormHandle>
+jsonSchema:             Schema                           // required
+defaultValue?:          Value
+onChange?:              (value: Value) => void
+onSubmit?:              (value: Value) => Promise<void> | void
+onValidate?:            (errors: FieldNode['globalErrors']) => void
+onStateChange?:         (state: FieldNode['globalState']) => void
+onError?:               (record: FormErrorRecord) => void
+onDiagnosticsChange?:   (diagnostics: FieldNode['diagnostics']) => void
+showError?:             boolean | ShowError              // default: DirtyTouched
+validationMode?:        ValidationMode                   // default: OnChange|OnRequest
+validatorFactory?:      ValidatorFactory
+readOnly?:              boolean
+disabled?:              boolean
+unsetOnInactive?:       boolean
+disableAutomaticWrites?: boolean
+errors?:                FieldNode['globalErrors']
+fieldInputDefinitions?: FieldInputDefinition[]
+fieldInputMap?:         FieldInputMap
+FieldRenderer?:         ComponentType<FieldRendererProps>
+FormLabelRenderer?:     ComponentType<FieldRendererProps>
+FormInputRenderer?:     ComponentType<FieldRendererProps>
+FormErrorRenderer?:     ComponentType<FieldRendererProps>
+formatError?:           FormatError
+virtualization?:        boolean | VirtualizationOptions
+context?:               Dictionary
+children?:              ReactNode | (props: FormChildrenProps) => ReactNode
+ref?:                   Ref<FormHandle>
 
 // ── FormHandle ──────────────────────────────────────────────────
-node?:              SchemaNode
-getValue():         Value
-setValue(v, opts?): void
-getState():         NodeStateFlags
-setState(s):        void
-clearState():       void
-getErrors():        JSONSchemaError[]
-validate():         Promise<JSONSchemaError[]>
-showError(b):       void
-focus(path):        void
-select(path):       void
-findNode(path):     SchemaNode | null
-findNodes(path):    SchemaNode[]
-reset():            void
-submit:             TrackableHandlerFunction   // .pending, .subscribe()
+node?:                 FieldNode
+getValue():            Value
+setValue(v | (prev) => v, opts?): void
+getState():            FieldNode['globalState']
+setState(s):           void
+clearState():          void
+getErrors():           FieldNode['globalErrors']
+validate():            Promise<FieldNode['globalErrors']>
+showError(b?):         void
+focus(path?):          void
+select(path?):         void
+refresh(path?):        void
+remount(path?):        void
+findNode(path):        FieldNode | null
+findNodes(path):       readonly FieldNode[]
+reset(opts?):          void
+submit:                TrackableHandlerFunction   // .pending, .subscribe()
 getAttachedFilesMap(): AttachedFilesMap
 
-// ── SchemaNode key members ──────────────────────────────────────
-node.value / node.defaultValue / node.enhancedValue
-node.setValue(input, option?)
-node.errors / node.globalErrors
-node.dirty / node.touched / node.validated / node.initialized
-node.visible / node.active / node.readOnly / node.disabled
-node.required / node.nullable
-node.path / node.name / node.depth / node.isRoot
-node.find(path) / node.findAll(path)
-node.validate()
-node.publish(NodeEventType.RequestRemount)
-node.subscribe(listener) → unsubscribe
+// ── FieldNode key members ──────────────────────────────────────
+node.value / node.outputValue / node.defaultValue
+node.setValue(value, option?)
+node.errors / node.globalErrors / node.setExternalErrors(list) / node.clearExternalErrors()
+node.state[FieldNodeState.Dirty | Touched | ErrorVisible] / node.setState(s) / node.rootNode.globalState
+node.active / node.visible / node.enabled / node.readOnly / node.disabled
+node.required / node.nullable / node.type / node.strategy / node.schemaType
+node.path / node.name / node.depth / node.isRoot / node.parentNode / node.children
+node.find(path) → FieldNode | null / node.findNodes(path) → readonly FieldNode[]
+node.validate() → Promise<readonly ValidationIssue[]>
+node.request(FieldNodeRequestType.Focus | Select | Refresh | Remount)
+node.subscribe(listener) → unsubscribe   // event.type & FieldNodeEventType.X
+node.revision(mask?) / node.batch(fn)
 
 // ── ArrayNode additional ────────────────────────────────────────
-arrayNode.length / arrayNode.children
-arrayNode.push(value?) / arrayNode.remove(index) / arrayNode.clear()
+arrayNode.children?.length / arrayNode.children   // children is null on an array rendered as a single input
+arrayNode.push(value?) → length / arrayNode.pop() / arrayNode.update(index, value)
+arrayNode.remove(index) / arrayNode.clear()
 
 // ── Hooks ───────────────────────────────────────────────────────
-useFormSubmit(ref)                     → { submit, pending }
-useSchemaNodeTracker(node, mask?)      → version: number
-useSchemaNodeSubscribe(node, listener) → void
-useChildNodeComponentMap(node)         → Map<string, ChildNodeComponent>
-useChildNodeErrors(node)               → JSONSchemaError[]
+useFormSubmit(ref)                              → { submit, pending }
+useFieldNodeTracker(node, mask?)                → revision: number
+useFieldNodeSubscribe(node, listener, options?) → void
+useChildFieldMap(ChildFields)                   → { [field]: ChildField }
+useChildFieldErrors(node, disabled?)            → { errorMessage, showError, formattedError, showErrors, formattedErrors, errorMatrix }
 ```
 
 </ForAI>

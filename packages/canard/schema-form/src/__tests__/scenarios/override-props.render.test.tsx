@@ -4,7 +4,7 @@ import '@testing-library/jest-dom';
 import { screen } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
 
-import { Form, type FormTypeInputProps } from '@/schema-form';
+import { type FieldInputProps, Form } from '@/schema-form';
 
 import { renderForm } from '../renderForm';
 
@@ -12,11 +12,11 @@ import { renderForm } from '../renderForm';
  * Component-level override props on `Form.Input` / `Form.Render`.
  *
  * This is a different seam from `schema-props-renderer`, which covers schema-level
- * `jsonSchema.FormTypeInputProps`. Here the props come from the JSX call site:
- * `FormInput` destructures `path`/`FormTypeInput` and funnels every remaining prop into
- * `overridePropsRef` (`useReference(restProps)`), which `SchemaNodeInputWrapper` merges
- * into `useSnapshot({ ...overrideFormTypeInputPropsRef?.current, ...preferredOverrideProps })`
- * before `SchemaNodeInput` spreads the result into the FormTypeInput.
+ * `jsonSchema.FieldInputProps`. Here the props come from the JSX call site:
+ * `FormInput` destructures `path`/`FieldInput` and funnels every remaining prop into
+ * `overridePropsRef` (`useReference(restProps)`), which `FieldInputSlotWrapper` merges
+ * into `useSnapshot({ ...overrideFieldInputPropsRef?.current, ...preferredOverrideProps })`
+ * before `FieldInputSlot` spreads the result into the FieldInput.
  *
  * Dropping the last such prop makes that snapshot input an empty object, which is the
  * transition `useSnapshotReference` mishandled before @winglet/react-utils 5aade140: the
@@ -30,7 +30,7 @@ const SCHEMA = {
   properties: { name: { type: 'string' } },
 } as const;
 
-type ProbeProps = FormTypeInputProps<string> & { badge?: string };
+type ProbeProps = FieldInputProps<string> & { badge?: string };
 
 /** Renders whichever override props arrived, so their absence is observable in the DOM. */
 const Probe = ({ badge }: ProbeProps) => (
@@ -50,9 +50,9 @@ const ToggleBadge = ({ next }: { next?: string }) => {
         swap
       </button>
       {badge === undefined ? (
-        <Form.Input path="/name" FormTypeInput={Probe} />
+        <Form.Input path="/name" FieldInput={Probe} />
       ) : (
-        <Form.Input path="/name" FormTypeInput={Probe} badge={badge} />
+        <Form.Input path="/name" FieldInput={Probe} badge={badge} />
       )}
     </>
   );

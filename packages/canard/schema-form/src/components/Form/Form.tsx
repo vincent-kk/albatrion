@@ -1,320 +1,142 @@
-import {
-  type ForwardedRef,
-  type ReactNode,
-  type SubmitEvent,
-  forwardRef,
-  memo,
-  useCallback,
-  useImperativeHandle,
-  useMemo,
-  useRef,
-  useState,
-} from 'react';
-
-import { getTrackableHandler } from '@winglet/common-utils/function';
-import { clone } from '@winglet/common-utils/object';
-import { withErrorBoundaryForwardRef } from '@winglet/react-utils/hoc';
-import {
-  useHandle,
-  useLazyConstant,
-  useMemorize,
-  useVersion,
-} from '@winglet/react-utils/hook';
-
-import type { Fn, Parameter } from '@aileron/declare';
-
-import {
-  type InferSchemaNode,
-  NodeEventType,
-  type SchemaNode,
-} from '@/schema-form/core';
-import { ValidationError } from '@/schema-form/errors';
-import { formatSchemaValidationFailedError } from '@/schema-form/helpers/error';
-import { preprocessSchema } from '@/schema-form/helpers/jsonSchema';
-import {
-  FormTypeInputsContextProvider,
-  FormTypeRendererContextProvider,
-  InputControlContextProvider,
-  RootNodeContextProvider,
-  VirtualizationContextProvider,
-  WorkspaceContextProvider,
-} from '@/schema-form/providers';
-import type {
-  AllowedValue,
-  AttachedFilesMap,
-  InferValueType,
-  JSONSchema,
-} from '@/schema-form/types';
-
-import { FormRootProxy } from './components/FormRootProxy';
-import type { FormHandle, FormProps } from './type';
-import { NOT_EMITTED, createChildren } from './util';
-
-const FormInner = <
-  Schema extends JSONSchema,
-  Value extends AllowedValue = InferValueType<Schema>,
->(
-  {
-    jsonSchema: inputJSONSchema,
-    defaultValue: inputDefaultValue,
-    readOnly,
-    disabled,
-    onChange,
-    onValidate,
-    onSubmit: inputOnSubmit,
-    onStateChange,
-    formTypeInputDefinitions,
-    formTypeInputMap,
-    CustomFormTypeRenderer,
-    errors,
-    formatError,
-    showError: inputShowError,
-    validationMode,
-    validatorFactory,
-    virtualization,
-    context,
-    children: ChildComponent,
-  }: FormProps<Schema, Value>,
-  ref: ForwardedRef<FormHandle<Schema, Value>>,
-) => {
-  type Node = InferSchemaNode<Schema>;
-  const ready = useRef(false);
-  const emittedValueRef = useRef<Value | typeof NOT_EMITTED>(NOT_EMITTED);
-  const attachedFilesMap = useLazyConstant<AttachedFilesMap>(() => new Map());
-  const [version, update] = useVersion(() => {
-    ready.current = false;
-    emittedValueRef.current = NOT_EMITTED;
-    attachedFilesMap.clear();
-  });
-
-  const jsonSchema = useMemorize(
-    () => preprocessSchema(clone(inputJSONSchema)),
-    [version],
-  );
-  const defaultValue = useMemorize(() => clone(inputDefaultValue), [version]);
-
-  const [rootNode, setRootNode] = useState<Node>();
-  const children = useMemo(
-    () => createChildren(ChildComponent, jsonSchema),
-    [ChildComponent, jsonSchema],
-  );
-  const [showError, setShowError] = useState(inputShowError);
-
-  const handleChange = useHandle((input: Parameter<typeof onChange>) => {
-    if (!ready.current) return;
-    if (input === emittedValueRef.current) return;
-    emittedValueRef.current = input;
-    onChange?.(input);
-  });
-
-  const handleValidate = useHandle(onValidate);
-
-  const handleStateChange = useHandle(onStateChange);
-
-  const onSubmit = useHandle(async () => {
-    if (!ready.current || !rootNode || inputOnSubmit === undefined) return;
-    const value = rootNode.normalizedValue as Value;
-    const errors = await rootNode.validate();
-    if (errors.length > 0)
-      throw new ValidationError(
-        'SCHEMA_VALIDATION_FAILED',
-        formatSchemaValidationFailedError(value, errors, jsonSchema),
-        { value, errors, jsonSchema },
-      );
-    await inputOnSubmit(value);
-  });
-  const handleSubmit = useMemo(() => getTrackableHandler(onSubmit), [onSubmit]);
-  const handleFormSubmit = useCallback(
-    async (event: SubmitEvent<HTMLFormElement>) => {
-      event.preventDefault();
-      await handleSubmit();
-    },
-    [handleSubmit],
-  );
-
-  const handleReady = useHandle((rootNode: Node) => {
-    ready.current = true;
-    setRootNode(rootNode);
-    handleChange(rootNode.normalizedValue as Value);
-    rootNode.validate().then((errors) => handleValidate(errors));
-  }) as Fn<[SchemaNode], void>;
-
-  useImperativeHandle(
-    ref,
-    () =>
-      ({
-        node: rootNode,
-        focus: (path) =>
-          rootNode?.find(path)?.publish(NodeEventType.RequestFocus),
-        select: (path) =>
-          rootNode?.find(path)?.publish(NodeEventType.RequestSelect),
-        reset: update,
-        findNode: (path) => rootNode?.find(path) || null,
-        findNodes: (path) => rootNode?.findAll(path) || [],
-        getValue: () => rootNode?.normalizedValue as Value,
-        setValue: (value, options) => rootNode?.setValue(value as any, options),
-        getState: () => rootNode?.globalState || {},
-        setState: (state) => rootNode?.setSubtreeState(state),
-        clearState: () => rootNode?.clearSubtreeState(),
-        getErrors: () => rootNode?.globalErrors || [],
-        getAttachedFilesMap: () => attachedFilesMap,
-        validate: async () => (await rootNode?.validate()) || [],
-        showError: (visible = true) =>
-          visible ? setShowError(true) : setShowError(inputShowError),
-        submit: handleSubmit,
-      }) satisfies FormHandle<Schema, Value>,
-    [rootNode, handleSubmit, update, inputShowError, attachedFilesMap],
-  );
-
-  return (
-    <WorkspaceContextProvider
-      attachedFilesMap={attachedFilesMap}
-      context={context}
-    >
-      <FormTypeInputsContextProvider
-        formTypeInputDefinitions={formTypeInputDefinitions}
-        formTypeInputMap={formTypeInputMap}
-      >
-        <FormTypeRendererContextProvider
-          CustomFormTypeRenderer={CustomFormTypeRenderer}
-          formatError={formatError}
-          showError={showError}
-        >
-          <InputControlContextProvider readOnly={readOnly} disabled={disabled}>
-            <VirtualizationContextProvider virtualization={virtualization}>
-              <RootNodeContextProvider
-                key={version}
-                jsonSchema={jsonSchema}
-                defaultValue={defaultValue}
-                errors={errors}
-                onChange={handleChange}
-                onValidate={handleValidate}
-                onStateChange={handleStateChange}
-                onReady={handleReady}
-                validationMode={validationMode}
-                validatorFactory={validatorFactory}
-              >
-                <FormRootProxy onSubmit={handleFormSubmit}>
-                  {children}
-                </FormRootProxy>
-              </RootNodeContextProvider>
-            </VirtualizationContextProvider>
-          </InputControlContextProvider>
-        </FormTypeRendererContextProvider>
-      </FormTypeInputsContextProvider>
-    </WorkspaceContextProvider>
-  );
-};
+import { FormCore } from './components/FormCore';
+import { FormError } from './components/FormError';
+import { FormField } from './components/FormField';
+import { FormInput } from './components/FormInput';
+import { FormLabel } from './components/FormLabel';
+import { FormRender } from './components/FormRender';
 
 /**
- * Schema-driven form component that generates and manages forms based on JSON Schema.
+ * Schema-driven form system with JSON Schema validation and dynamic UI composition.
  *
- * @typeParam Schema - The JSON Schema type that defines form structure
- * @typeParam Value - The inferred value type from the schema
+ * Provides a complete form solution including automatic field generation, validation,
+ * error handling, and flexible UI customization. Built on JSON Schema standards for
+ * universal compatibility and type safety.
  *
- * @example
- * Basic usage with automatic field generation:
- * ```tsx
+ * ### Usage Patterns
+ *
+ * **Basic Schema-Driven Form:**
+ * ```typescript
  * const schema = {
  *   type: 'object',
  *   properties: {
- *     username: { type: 'string', minLength: 3 },
- *     email: { type: 'string', format: 'email' },
- *     age: { type: 'number', minimum: 18 }
- *   },
- *   required: ['username', 'email']
+ *     name: { type: 'string', minLength: 2 },
+ *     age: { type: 'number', minimum: 0 }
+ *   }
  * };
  *
- * function MyForm() {
- *   const [value, setValue] = useState({});
- *   const formRef = useRef<FormHandle>();
- *
- *   const handleSubmit = async (data) => {
- *     await api.saveUser(data);
- *   };
- *
- *   return (
- *     <Form
- *       ref={formRef}
- *       jsonSchema={schema}
- *       onChange={setValue}
- *       onSubmit={handleSubmit}
- *       showError={ShowError.Touched}
- *     />
- *   );
- * }
+ * <Form
+ *   jsonSchema={schema}
+ *   onChange={setValue}
+ *   onSubmit={handleSubmit}
+ * />
  * ```
  *
- * @example
- * Custom layout with composition:
- * ```tsx
- * <Form jsonSchema={schema} defaultValue={initialData}>
- *   <div className="form-section">
- *     <h3>Account Information</h3>
- *     <Form.Group path="/username" />
- *     <Form.Group path="/email" />
- *   </div>
- *   <div className="form-section">
- *     <h3>Personal Details</h3>
- *     <Form.Label path="/age" className="required" />
- *     <Form.Input path="/age" min={18} max={100} />
- *     <Form.Error path="/age" className="error-text" />
+ * **Custom Layout with Composition:**
+ * ```typescript
+ * <Form jsonSchema={schema}>
+ *   <div className="form-row">
+ *     <Form.Label path="/name" />
+ *     <Form.Input path="/name" />
+ *     <Form.Error path="/name" />
  *   </div>
  * </Form>
  * ```
  *
- * @example
- * Dynamic form with conditional fields:
- * ```tsx
+ * **Dynamic UI with Function Children:**
+ * ```typescript
  * <Form jsonSchema={schema}>
- *   {({ value, errors, node }) => (
+ *   {({ value, errors }) => (
  *     <>
- *       <Form.Input path="/accountType" />
- *       {value?.accountType === 'business' && (
- *         <>
- *           <Form.Input path="/companyName" />
- *           <Form.Input path="/taxId" />
- *         </>
- *       )}
- *       <button
- *         onClick={() => node?.validate()}
- *         disabled={errors?.length > 0}
- *       >
- *         Submit
- *       </button>
+ *       <Form.Input path="/email" />
+ *       {value?.email && <Form.Input path="/password" />}
+ *       {errors?.length > 0 && <ErrorSummary errors={errors} />}
  *     </>
  *   )}
  * </Form>
  * ```
  *
- * @example
- * Using ref for imperative actions:
- * ```tsx
- * const formRef = useRef<FormHandle>();
+ * ### Component References
  *
- * // Focus specific field
- * formRef.current?.focus('/email');
+ * For detailed documentation with comprehensive examples and API details:
+ * - **Form main component**: See {@link BaseFrom} export
+ * - **Form.Render**: See {@link FormRender} export - Custom rendering with full control
+ * - **Form.Field**: See {@link FormField} export - Grouped field with label and input
+ * - **Form.Label**: See {@link FormLabel} export - Field label rendering
+ * - **Form.Input**: See {@link FormInput} export - Field input rendering
+ * - **Form.Error**: See {@link FormError} export - Field error rendering
  *
- * // Validate programmatically
- * const errors = await formRef.current?.validate();
+ * ### Design Philosophy
  *
- * // Set value with options
- * formRef.current?.setValue(
- *   { email: 'new@email.com' },
- *   { merge: true, validate: true }
- * );
- *
- * // Submit form programmatically
- * await formRef.current?.submit();
- * ```
+ * This schema-driven approach provides multiple benefits:
+ * - **Type Safety**: Full TypeScript support with schema type inference
+ * - **Validation**: Built-in JSON Schema validation with customizable rules
+ * - **Flexibility**: From automatic generation to complete custom layouts
+ * - **Composition**: Mix and match components for any UI requirement
+ * - **Performance**: Optimized re-rendering with fine-grained updates
  */
-export const Form = memo(
-  withErrorBoundaryForwardRef(forwardRef(FormInner)),
-) as <
-  Schema extends JSONSchema,
-  Value extends AllowedValue = InferValueType<Schema>,
->(
-  props: FormProps<Schema, Value> & {
-    ref?: ForwardedRef<FormHandle<Schema, Value>>;
-  },
-) => ReactNode;
+export const Form = Object.assign(FormCore, {
+  /**
+   * Renders form fields with custom rendering function.
+   *
+   * Provides complete control over field rendering while maintaining
+   * schema validation and state management.
+   *
+   * **For comprehensive documentation and examples, see:** {@link FormRender}
+   *
+   * @param props - FormRender properties including path and render function
+   * @returns Custom rendered form field
+   */
+  Render: FormRender,
+
+  /**
+   * Renders a complete form field group with label, input, and error.
+   *
+   * Combines FieldInput and FieldRenderer for a complete field experience
+   * with customizable wrapper and override properties.
+   *
+   * **For comprehensive documentation and examples, see:** {@link FormField}
+   *
+   * @param props - FormField properties including path and customization options
+   * @returns Complete form field group
+   */
+  Field: FormField,
+
+  /**
+   * Renders a form field label.
+   *
+   * Automatically generates accessible labels from schema with proper
+   * for/id associations and customizable styling.
+   *
+   * **For comprehensive documentation and examples, see:** {@link FormLabel}
+   *
+   * @param props - FormLabel properties including path and styling
+   * @returns Label element for form field
+   */
+  Label: FormLabel,
+
+  /**
+   * Renders a form field input.
+   *
+   * Automatically selects appropriate input type based on schema
+   * with full validation and state management integration.
+   *
+   * **For comprehensive documentation and examples, see:** {@link FormInput}
+   *
+   * @param props - FormInput properties including path and overrides
+   * @returns Input element for form field
+   */
+  Input: FormInput,
+
+  /**
+   * Renders form field validation errors.
+   *
+   * Displays validation messages with customizable formatting
+   * and conditional visibility based on field state.
+   *
+   * **For comprehensive documentation and examples, see:** {@link FormError}
+   *
+   * @param props - FormError properties including path and styling
+   * @returns Error message element
+   */
+  Error: FormError,
+});

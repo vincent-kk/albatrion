@@ -1,21 +1,23 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
-import { warnDevelopmentIssue } from '../warnDevelopmentIssue';
+import { FormWarningCode } from '@/schema-form/errors';
+
+import { warnDevelopmentIssue } from '../utils/warnDevelopmentIssue';
 
 describe('warnDevelopmentIssue', () => {
   afterEach(() => {
-    vi.restoreAllMocks();
     vi.unstubAllEnvs();
+    vi.restoreAllMocks();
   });
 
   it('개발 환경에서 패키지 프리픽스 + code + message 형식으로 경고를 출력한다', () => {
     const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
     warnDevelopmentIssue({
-      code: 'SCHEMA_FORM_WARNING.WARN_SPEC_PREFIX',
+      code: FormWarningCode.VirtualizationDisabledForForm,
       message: 'prefix check message',
     });
     expect(warn.mock.calls[0][0]).toContain(
-      '[@canard/schema-form] SCHEMA_FORM_WARNING.WARN_SPEC_PREFIX',
+      `[@canard/schema-form] ${FormWarningCode.VirtualizationDisabledForForm}`,
     );
     expect(warn.mock.calls[0][0]).toContain('prefix check message');
   });
@@ -24,7 +26,7 @@ describe('warnDevelopmentIssue', () => {
     const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
     const details = { keyword: 'if' };
     warnDevelopmentIssue({
-      code: 'SCHEMA_FORM_WARNING.WARN_SPEC_DETAILS',
+      code: FormWarningCode.VirtualizationDisabledForForm,
       message: 'details check',
       details,
     });
@@ -36,7 +38,7 @@ describe('warnDevelopmentIssue', () => {
   it('동일한 code + message는 세션당 1회만 출력한다', () => {
     const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
     const issue = {
-      code: 'SCHEMA_FORM_WARNING.WARN_SPEC_DEDUPE',
+      code: FormWarningCode.VirtualizationDisabledForForm,
       message: 'same',
     };
     warnDevelopmentIssue(issue);
@@ -48,7 +50,7 @@ describe('warnDevelopmentIssue', () => {
     const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
     vi.stubEnv('NODE_ENV', 'production');
     warnDevelopmentIssue({
-      code: 'SCHEMA_FORM_WARNING.WARN_SPEC_PROD',
+      code: FormWarningCode.VirtualizationDisabledForForm,
       message: 'silent',
     });
     expect(warn).not.toHaveBeenCalled();

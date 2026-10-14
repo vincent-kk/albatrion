@@ -1,0 +1,45 @@
+(node:95024) [DEP0205] DeprecationWarning: `module.register()` is deprecated. Use `module.registerHooks()` instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+│ ┌────────────────────────────────────────────────────────────────────────────┐
+│ │  Info: Found a setup file with "setProjectAnnotations".                    │
+│ │  Skipping automatic provisioning of preview annotations to avoid           │
+│ │  conflicts. Since Storybook 10.3, "@storybook/addon-vitest" applies these  │
+│ │   automatically.                                                           │
+│ │  You can safely remove the "setProjectAnnotations" call from your setup    │
+│ │  file, or remove the file entirely if you don't have custom code there.    │
+│ └────────────────────────────────────────────────────────────────────────────┘
+
+ RUN  v3.2.6 /Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/packages/canard/schema-form
+
+stdout | src/core/blueprint/__tests__/blueprint.owned-inline-child-input-work.test.ts > counts zero base spreads for each real ungated child input in the original field order
+107COUNT child-input inputs=2 base-spreads=2
+
+x
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  |unit| src/core/blueprint/__tests__/blueprint.owned-inline-child-input-work.test.ts > counts zero base spreads for each real ungated child input in the original field order
+AssertionError: expected 2 to be +0 // Object.is equality
+
+- Expected
++ Received
+
+- 0
++ 2
+
+ ❯ src/core/blueprint/__tests__/blueprint.owned-inline-child-input-work.test.ts:53:33
+     51|   const spreads = input!.properties.filter(ts.isSpreadAssignment).leng…
+     52|   console.log(`107COUNT child-input inputs=${work.inputs} base-spreads…
+     53|   expect(spreads * work.inputs).toBe(0);
+       |                                 ^
+     54| });
+     55| 
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed (1)
+   Start at  05:12:10
+   Duration  886ms (transform 294ms, setup 0ms, collect 697ms, tests 18ms, environment 0ms, prepare 37ms)
+

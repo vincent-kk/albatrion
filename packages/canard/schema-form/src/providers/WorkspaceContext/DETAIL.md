@@ -9,6 +9,8 @@
 - 외부 context를 기반으로 폼 수준 context를 덮어쓰며, 입력 context는 내용 기준으로 안정화합니다.
 - 첨부 파일 맵은 폼에서 받은 동일 인스턴스를 사용하고 Context 안에서 새로 만들지 않습니다.
 
+- Context 객체와 Provider는 `components/`, 소비 훅은 `hooks/`에 있습니다. 뿌리에는 문서·진입점·형 동반 파일(`type.ts`)만 둡니다(filid zero-peer-file).
+
 ## Acceptance Criteria
 
 ### workspace-context-contract — 관찰 가능한 동작

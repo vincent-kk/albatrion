@@ -1,0 +1,100 @@
+import { describe, expect, it } from 'vitest';
+
+import { delay } from '@winglet/common-utils';
+
+import { nodeFromJSONSchema } from '@/schema-form/__legacy__/core';
+import type { JSONSchema } from '@/schema-form/__legacy__/types/jsonSchema';
+
+import type { NumberNode } from '../nodes/NumberNode';
+import type { ObjectNode } from '../nodes/ObjectNode';
+import type { StringNode } from '../nodes/StringNode';
+
+type CompositionScope = 'oneOf' | 'anyOf';
+
+const createNestedSchema = (innerScope: CompositionScope): JSONSchema => ({
+  type: 'object',
+  properties: {
+    variant: {
+      type: 'string',
+      enum: ['primary', 'secondary'],
+      default: 'primary',
+    },
+  },
+  oneOf: [
+    {
+      '&if': "./variant === 'primary'",
+      properties: {
+        config: {
+          type: 'object',
+          properties: {
+            mode: { type: 'string', default: 'standard' },
+          },
+          [innerScope]: [
+            {
+              '&if': "./mode === 'standard'",
+              properties: {
+                cost: { type: 'number', default: 5.99 },
+                days: { type: 'number', default: 7 },
+              },
+            },
+          ],
+        },
+      },
+    },
+    {
+      '&if': "./variant === 'secondary'",
+      properties: {
+        note: { type: 'string', default: 'secondary' },
+      },
+    },
+  ],
+});
+
+const expectedValue = {
+  variant: 'primary',
+  config: { mode: 'standard', cost: 5.99, days: 7 },
+};
+
+describe('BranchStrategy oneOf - nested defaults', () => {
+  it.each(['oneOf', 'anyOf'] as const satisfies readonly CompositionScope[])(
+    'preserves defaults from a nested %s during initial activation',
+    async (innerScope) => {
+      const node = nodeFromJSONSchema({
+        jsonSchema: createNestedSchema(innerScope),
+        onChange: () => {},
+      }) as ObjectNode;
+
+      await delay();
+
+      expect(node.value).toEqual(expectedValue);
+    },
+  );
+
+  it.each(['oneOf', 'anyOf'] as const satisfies readonly CompositionScope[])(
+    'restores nested %s defaults after reactivation',
+    async (innerScope) => {
+      const node = nodeFromJSONSchema({
+        jsonSchema: createNestedSchema(innerScope),
+        onChange: () => {},
+      }) as ObjectNode;
+
+      await delay();
+      (node.find('config/cost') as NumberNode | null)?.setValue(99);
+      await delay();
+      expect(node.value?.config?.cost).toBe(99);
+
+      const variantNode = node.find('variant') as StringNode;
+      variantNode.setValue('secondary');
+      await delay();
+      expect(node.value).toEqual({
+        variant: 'secondary',
+        note: 'secondary',
+      });
+
+      variantNode.setValue('primary');
+      await delay();
+
+      expect(node.value).toEqual(expectedValue);
+    },
+  );
+});

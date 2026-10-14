@@ -1,0 +1,239 @@
+{
+  "node": "v26.10.0",
+  "scannerOnly": true,
+  "results": [
+    {
+      "id": "pydantic-2.9 discriminated Literal",
+      "visited": 14,
+      "milliseconds": 0.9266670000000019,
+      "references": [
+        {
+          "path": "#/properties/pet/oneOf/0",
+          "referencePath": "#/$defs/Cat",
+          "referenceResolved": true
+        },
+        {
+          "path": "#/properties/pet/oneOf/1",
+          "referencePath": "#/$defs/Dog",
+          "referenceResolved": true
+        }
+      ]
+    },
+    {
+      "id": "pydantic-2.9 Optional[Union[Cat,Dog]]",
+      "visited": 15,
+      "milliseconds": 0.0988749999999996,
+      "references": [
+        {
+          "path": "#/properties/pet/anyOf/0",
+          "referencePath": "#/$defs/Cat",
+          "referenceResolved": true
+        },
+        {
+          "path": "#/properties/pet/anyOf/1",
+          "referencePath": "#/$defs/Dog",
+          "referenceResolved": true
+        }
+      ]
+    },
+    {
+      "id": "pydantic-2.9 Optional[discriminated]",
+      "visited": 16,
+      "milliseconds": 0.07950000000000301,
+      "references": [
+        {
+          "path": "#/properties/pet/anyOf/0/oneOf/0",
+          "referencePath": "#/$defs/Cat",
+          "referenceResolved": true
+        },
+        {
+          "path": "#/properties/pet/anyOf/0/oneOf/1",
+          "referencePath": "#/$defs/Dog",
+          "referenceResolved": true
+        }
+      ]
+    },
+    {
+      "id": "pydantic-2.x const+enum (추론)",
+      "visited": 14,
+      "milliseconds": 0.06195799999999707,
+      "references": [
+        {
+          "path": "#/properties/pet/oneOf/0",
+          "referencePath": "#/$defs/Cat",
+          "referenceResolved": true
+        },
+        {
+          "path": "#/properties/pet/oneOf/1",
+          "referencePath": "#/$defs/Dog",
+          "referenceResolved": true
+        }
+      ]
+    },
+    {
+      "id": "OpenAPI-3.0 petstore mapping-only",
+      "visited": 25,
+      "milliseconds": 0.11191700000000537,
+      "references": [
+        {
+          "path": "#/definitions/Cat/allOf/0",
+          "referenceSkipped": "definition"
+        },
+        {
+          "path": "#/definitions/Dog/allOf/0",
+          "referenceSkipped": "definition"
+        },
+        {
+          "path": "#/properties/pet/oneOf/0/allOf/0",
+          "referencePath": "#/definitions/Pet",
+          "referenceResolved": true
+        },
+        {
+          "path": "#/properties/pet/oneOf/0",
+          "referencePath": "#/definitions/Cat",
+          "referenceResolved": true
+        },
+        {
+          "path": "#/properties/pet/oneOf/1/allOf/0",
+          "referencePath": "#/definitions/Pet",
+          "referenceResolved": true
+        },
+        {
+          "path": "#/properties/pet/oneOf/1",
+          "referencePath": "#/definitions/Dog",
+          "referenceResolved": true
+        }
+      ]
+    },
+    {
+      "id": "OpenAPI-3.0 nullable branch",
+      "visited": 14,
+      "milliseconds": 0.057250000000003354,
+      "references": [
+        {
+          "path": "#/properties/pet/oneOf/0",
+          "referencePath": "#/definitions/Cat",
+          "referenceResolved": true
+        },
+        {
+          "path": "#/properties/pet/oneOf/1",
+          "referencePath": "#/definitions/Dog",
+          "referenceResolved": true
+        }
+      ]
+    },
+    {
+      "id": "OpenAPI-3.1 two-level allOf inheritance (TypeSpec style, 추론)",
+      "visited": 18,
+      "milliseconds": 0.08987499999999926,
+      "references": [
+        {
+          "path": "#/properties/pet/oneOf/0/allOf/0/allOf/0",
+          "referencePath": "#/components/schemas/Pet",
+          "referenceResolved": true
+        },
+        {
+          "path": "#/properties/pet/oneOf/0/allOf/0",
+          "referencePath": "#/components/schemas/Cat",
+          "referenceResolved": true
+        },
+        {
+          "path": "#/properties/pet/oneOf/0",
+          "referencePath": "#/components/schemas/Persian",
+          "referenceResolved": true
+        },
+        {
+          "path": "#/properties/pet/oneOf/1/allOf/0",
+          "referencePath": "#/components/schemas/Pet",
+          "referenceResolved": true
+        },
+        {
+          "path": "#/properties/pet/oneOf/1",
+          "referencePath": "#/components/schemas/Dog",
+          "referenceResolved": true
+        }
+      ]
+    },
+    {
+      "id": "OpenAPI-3.1 type:[object,null] branch",
+      "visited": 14,
+      "milliseconds": 0.03737500000000438,
+      "references": [
+        {
+          "path": "#/properties/pet/oneOf/0",
+          "referencePath": "#/$defs/Cat",
+          "referenceResolved": true
+        },
+        {
+          "path": "#/properties/pet/oneOf/1",
+          "referencePath": "#/$defs/Dog",
+          "referenceResolved": true
+        }
+      ]
+    },
+    {
+      "id": "zod-to-json-schema-3.23 discriminatedUnion",
+      "visited": 8,
+      "milliseconds": 0.025833999999996138,
+      "references": []
+    },
+    {
+      "id": "zod-to-json-schema-3.23 discriminatedUnion with z.enum tag",
+      "visited": 8,
+      "milliseconds": 0.010666999999997984,
+      "references": []
+    },
+    {
+      "id": "TypeBox-0.32 Union of Object+Literal",
+      "visited": 8,
+      "milliseconds": 0.007916999999999064,
+      "references": []
+    },
+    {
+      "id": "typescript-json-schema-0.64 two literal keys per member",
+      "visited": 10,
+      "milliseconds": 0.009791999999997358,
+      "references": []
+    },
+    {
+      "id": "hand anyOf overlapping tag values",
+      "visited": 12,
+      "milliseconds": 0.01620799999999889,
+      "references": []
+    },
+    {
+      "id": "pydantic-2.9 recursive tree union",
+      "visited": 21,
+      "milliseconds": 0.12408300000000594,
+      "references": [
+        {
+          "path": "#/$defs/Node/properties/children/items/anyOf/0",
+          "referenceSkipped": "definition"
+        },
+        {
+          "path": "#/$defs/Node/properties/children/items/anyOf/1",
+          "referenceSkipped": "definition"
+        },
+        {
+          "path": "#/anyOf/0",
+          "referencePath": "#/$defs/Leaf",
+          "referenceResolved": true
+        },
+        {
+          "path": "#/anyOf/1/properties/children/items/anyOf/0",
+          "referencePath": "#/$defs/Leaf",
+          "referenceResolved": true
+        },
+        {
+          "path": "#/anyOf/1/properties/children/items/anyOf/1",
+          "referenceSkipped": "cycle"
+        },
+        {
+          "path": "#/anyOf/1",
+          "referencePath": "#/$defs/Node",
+          "referenceResolved": true
+        }
+      ]
+    }
+  ]
+}

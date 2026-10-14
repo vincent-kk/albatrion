@@ -1,0 +1,106 @@
+import { afterEach, expect, it, vi } from 'vitest';
+
+import { WriteOption } from '@/schema-form/core/engine/types/value';
+
+import { createTestTree } from '../../__tests__/fixtures/createTestTree';
+import { computeNode } from '../utils/compute/computeNode';
+import * as selections from '../utils/compute/selectChildren';
+import { loadFieldNodeAtMount } from '../utils/load/loadFieldNodeAtMount';
+import { createSettlementContext } from '../utils/settlement/createSettlementContext';
+import { finishSettlement } from '../utils/settlement/finishSettlement';
+import { getSettlementScratch } from '../utils/write/getSettlementScratch';
+import { markWrite } from '../utils/write/markWrite';
+import { registerRecalculation } from '../utils/write/registerRecalculation';
+import { releaseSettlementScratch } from '../utils/write/releaseSettlementScratch';
+import { writeFieldNode } from '../utils/write/writeFieldNode';
+
+afterEach(() => vi.restoreAllMocks());
+
+it('keeps dirty work and child post-order without per-node shape or appearance membership checks', () => {
+  const { root, visits } = createTestTree({
+    type: 'object',
+    properties: {
+      value: { type: 'string' },
+      sibling: { type: 'number', default: 3 },
+    },
+  });
+  loadFieldNodeAtMount(root, { value: 'before' }, WriteOption.Overwrite);
+  const leaf = root.structure!.value;
+  for (let index = 0; index < 2; index++) {
+    const value = index === 0 ? 'first' : 'later';
+    const scratch = getSettlementScratch(root.runtime);
+    const context = createSettlementContext(
+      leaf,
+      'input',
+      WriteOption.Overwrite,
+      scratch,
+    );
+    markWrite(leaf, value, context);
+    registerRecalculation(context);
+    const shape = vi.spyOn(context.shapeDirtyPaths, 'has');
+    const entered = vi.spyOn(context.entered, 'has');
+    visits.length = 0;
+    computeNode(root, context);
+    expect(shape).not.toHaveBeenCalled();
+    expect(entered).not.toHaveBeenCalled();
+    expect(visits).toEqual(['/value', '']);
+    expect([...context.stateDirtyNodes]).toEqual([root, leaf]);
+    expect(context.dirtyPaths.size).toBe(0);
+    expect(root.emit).toEqual({ value, sibling: 3 });
+    shape.mockRestore();
+    entered.mockRestore();
+    finishSettlement(context, scratch);
+    releaseSettlementScratch(scratch);
+    expect(root.runtime.commitNumber).toBe(index + 2);
+  }
+});
+
+it('retains child selection and fills for a branchless shape change', () => {
+  const { root } = createTestTree({
+    type: 'object',
+    properties: {
+      rows: {
+        type: 'array',
+        items: {
+          type: 'object',
+          properties: {
+            value: { type: 'string', default: 'filled' },
+          },
+        },
+      },
+    },
+  });
+  loadFieldNodeAtMount(root, { rows: [] }, WriteOption.Overwrite);
+  const select = vi.spyOn(selections, 'selectChildren');
+  writeFieldNode(
+    root.structure!.rows,
+    [{}],
+    'callerReplace',
+    WriteOption.Overwrite,
+  );
+  expect(select.mock.calls.length).toBeGreaterThan(0);
+  expect(root.emit).toEqual({ rows: [{ value: 'filled' }] });
+});
+
+it('retains gate visits, appearance fills and exit when a declaration changes', () => {
+  const { root } = createTestTree({
+    type: 'object',
+    properties: {
+      flag: { type: 'boolean' },
+      gated: {
+        type: 'string',
+        default: 'filled',
+        controls: { active: '../flag' },
+      },
+    },
+  });
+  loadFieldNodeAtMount(root, { flag: false }, WriteOption.Overwrite);
+  const select = vi.spyOn(selections, 'selectChildren');
+  writeFieldNode(root.structure!.flag, true, 'input', WriteOption.Overwrite);
+  expect(select.mock.calls.length).toBeGreaterThan(0);
+  expect(root.emit).toEqual({ flag: true, gated: 'filled' });
+  const gated = root.structure!.gated;
+  writeFieldNode(root.structure!.flag, false, 'input', WriteOption.Overwrite);
+  expect(gated.detached).toBe(true);
+  expect(root.emit).toEqual({ flag: false });
+});

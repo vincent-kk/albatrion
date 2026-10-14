@@ -1,0 +1,49 @@
+# 29라운드 닫기 — 04 구현 중의 원장 해석 넷: 태어난 노드의 파생 규칙과 `undefined` 원천, 식이 던진 정착의 채움·나감 비움, 공유 충돌이 난 정착의 진행, 조각 `controls`의 `injectTo`
+
+2026-10-01. 04 작업자(브랜치 `feat/schema-form-derive-and-controls`)가 회귀 이식 넷(`selfcheck-v5` A4b, `r8-port`·`r7-port` X16, X16_noDefault)에서 프로토타입 v7의 기대와 엔진의 결과가 다른 것을 발견하고 물었다: 생긴·로드된 노드의 `controls.injectTo`·`controls.derived`는 원천의 방출 값이 아직 `undefined`일 때(채움 전) 발화하는가. v7은 모형 선택(`spikes/round18/proto/utils/operations/fires.mjs:10-21`: 로드에서는 원천이 비어 있으면 발화하지 않고, 런타임 생김은 값 비교로 걸러짐)으로 채움 뒤에만 발화했다. 현행 항목에서 유도되므로 원장 관리자가 닫는다(PROCESS-066). 소유자가 뒤집으면 그 답이 이긴다. 결정 글은 고치지 않고 보충 줄만 더한다.
+
+### 29C-01 태어난·로드된 노드의 규칙은 원천이 `undefined`여도 거짓→참 에지로 발화한다 — 채움 뒤의 값 변화는 새 에지, v7의 모형 선택은 원장이 아니다
+
+- 닫는 항목: WRITE-029(보충), FRAGMENT-050(보충), CONTROLS-027(보충), CONTROLS-084(보충), CONTROLS-079(보충), SETTLE-004(보충), SETTLE-005(보충), SETTLE-010(보충), SETTLE-046(보충), TEST-069(보충)
+- 결정:
+  - 【추론】 생긴 노드와 로드된 노드의 `controls.derived`·`controls.injectTo`는 원천의 방출 값이 `undefined`여도(채움 전) 거짓→참 에지로 발화한다: WRITE-029·FRAGMENT-050 (2)·CONTROLS-027은 에지의 조건을 "직전 값이 없다"로만 두고 원천 값의 유무를 조건으로 두지 않으며, CONTROLS-079의 `value`는 원천의 방출 값이라 방출이 없으면 `undefined`다.
+  - 【추론】 그 `undefined`를 어떻게 다룰지는 작성자 함수의 몫이다: 원천은 런타임에도 언제든 `undefined`가 될 수 있으므로 함수는 어차피 그 입력을 다뤄야 하고, 없는 원천을 씨앗으로 쓰는 것도 작성자의 표현이다(G2).
+  - 【추론】 생긴 노드의 규칙을 채움 전에 평가하는 것은 설계다: SETTLE-005는 채움을 전이 단계(파생 뒤)에 두고, SETTLE-004의 순위 `controls.unsetValue` > `controls.derived` > `controls.injectTo` > 채움과 "생긴 노드의 `controls.unsetValue`가 참이면 채우지 않는다"는 그 순서에서만 성립한다.
+  - 【추론】 채움 뒤에는 새 에지가 있다: 채움 쓰기는 SETTLE-005 전이 행의 "→ 표시로"와 SETTLE-010(파생과 전이는 둘 다 표시로 돌아간다)에 따라 표시·계산·파생을 다시 지나고, 기준점은 그 규칙이 마지막으로 소비한 원천 값(`undefined`)이므로 채움 값으로의 변화는 SETTLE-004의 "원천이 다른 값으로 다시 바뀌면 새 에지"다.
+  - 【추론】 그래서 게이트가 뒤집히지 않는 보통의 경우 결과는 채움 값으로 발화한 것과 같고(v7의 기대와 같다), 단순 복사 `(value) => ({ '../t': value })`의 첫 발화는 `undefined` 항목이라 쓰지 않으므로(CONTROLS-079) 대상은 채움 값으로만 씌워져 CONTROLS-084가 지키는 것("오늘 코드도 마운트에서 원천의 `default`로 대상을 채우므로")이 성립한다.
+  - 【추론】 첫 발화의 쓰기가 게이트를 뒤집어 원천 노드가 채움 전에 나가면 결과는 첫 발화의 값이며, FRAGMENT-050 (3)대로 그 쓰기는 되돌리지 않는다; 그런 사례의 v7 기대(`REPORT-v7.md:47,51`의 A4b·X16과 그 변형 X16_noDefault)는 원장과 다르므로 이식하지 않고 원장의 값으로 바꾸며, TEST-069 (라)의 배분과 04 실행 계획의 "기대값은 `round18/proto/REPORT-v7.md`의 기대 치환을 따른다"(`plan/04-derive-and-controls/execution-plan.md:346`)는 v7의 모형이 원장과 다른 자리에는 미치지 않는다(03이 `plan/03-node-and-settle/log.md` §4에 남긴 선례와 같다).
+  - 【추론】 원장에 "원천이 없으면 태어날 때 발화하지 않는다"는 문장을 더하지 않는다: 그 규칙은 CONTROLS-084가 지운 `skip`의 부분 복원이고 G2에 걸리며, 현행 항목 어디에도 근거가 없다.
+  - 【추론】 04는 "→ 표시로"가 구현에 있음을 게이트가 뒤집히지 않는 변형(결과가 채움 값으로 발화한 것)으로 단언한다; 그것이 없으면 마운트에서 원천의 `default`가 대상에 실리지 않아 CONTROLS-084에 어긋난다.
+- 근거: WRITE-029 "노드가 (다시) 생기면 그 노드의 `controls.unsetValue`·`controls.derived`·`controls.injectTo`의 에지는 거짓→참으로 본다(직전 값이 없다)"; FRAGMENT-050 "(2) 조각이 켜지는 정착에서 그 조각이 새로 들인 노드의 규칙 에지는 거짓→참이다(WRITE-029)", "그래서 `unsetValue`·`resetInteraction`은 식이 참이면 발화하고, `derived`·`injectTo`는 발화한다", "앞 라운드에 적용된 파생 쓰기는 뒤 라운드에서 조각이 꺼져도 되돌리지 않는다"; CONTROLS-027 "로드에는 직전 값이 없으므로 발화한다"; CONTROLS-084 "**지워진 선택지.** `skip`(로드 때는 발화하지 않음)은 `{ source: 'A' }`만 로드했을 때 초기 복사조차 없어 원천이 다시 바뀔 때까지 대상이 빈다. 공개 문서가 `injectTo`의 용도를 "Initial copy, default seeding"이라 적고 오늘 코드도 마운트에서 원천의 `default`로 대상을 채우므로 G2(표현력은 줄지 않는다)에 걸린다"; CONTROLS-079 "`value`는 원천의 방출 값이다"와 제목의 "`undefined` 항목과 `null`·`undefined` 반환은 쓰지 않음"; SETTLE-004 "순위는 `controls.unsetValue` > `controls.derived` > `controls.injectTo` > 채움이고", "기준점은 그 규칙이 이 정착에서 마지막으로 소비한 원천 값이다. 원천이 다른 값으로 다시 바뀌면 새 에지이고"; SETTLE-005 전이 행 "생긴 노드의 `controls.unsetValue`가 참이면 채우지 않는다(순위는 단계를 가로지른다, 원장 §4)", "→ 표시로"; TEST-069 "(라) 프로토타입 회귀의 배분: 한 사례는 그것이 건드리는 기제가 모두 있는 가장 이른 PR로 간다"; `plan/03-node-and-settle/log.md:99`의 "프로토타입 기대가 현행 원장과 달라(원장 관리자 확인) 이식하지 않는" 선례; SETTLE-010 "원본을 쓰는 것은 파생과 전이뿐이고 둘 다 표시로 돌아간다"; SETTLE-046 "`controls.injectTo`는 직전 값이 없으므로 발화한다(`fire`, 소유자 동의)".
+
+### 29C-02 식이 던져도 정착은 자리별 값으로 마친다 — 채움·나감 비움·다른 규칙은 진행, 예외는 ERROR-125의 범위뿐, 자동 쓰기 전체 제거는 예산 초과의 처분
+
+- 닫는 항목: ERROR-121(보충), ERROR-122(보충), ERROR-125(보충), SETTLE-011(보충), SETTLE-005(보충)
+- 결정:
+  - 【추론】 식이나 가드가 던진 정착은 ERROR-121대로 그 자리마다 정의된 값으로 마치며, 던짐이 정착의 단계(파생 라운드, 전이의 채움과 나감 비움)를 끊는다는 문장은 원장에 없다; 트리 전체에 미치는 효과는 `degraded` 표식(ERROR-126)과 사슬 끝 throw뿐이다.
+  - 【추론】 파생 규칙이 던지면 ERROR-122대로 그 규칙만 그 라운드의 후보에서 빠지고 에지를 소비하며, 같은 정착의 다른 규칙·다음 파생 라운드·채움·나감 비움은 평소대로 진행한다; 무관한 `controls.derived` 하나가 던져 로드의 채움이 빠지는 것은 결함이다.
+  - 【추론】 게이트가 던지면 그 게이트만 거짓이고, ERROR-125가 막는 것은 그 게이트로 나간 노드(WRITE-033대로 함께 나가는 하위 트리 포함)의 나감 비움뿐이다; 무관한 노드의 채움·나감 비움과 무관한 파생은 진행한다.
+  - 【추론】 상태 키의 식이 던지면 그 선언만 없는 것이고, 상태 키는 형상과 값을 바꾸지 않으므로(CONTROLS-022·023) 같은 정착의 채움·나감 비움에 영향이 없다.
+  - 【추론】 정착의 자동 쓰기를 모두 뺀 원본 B를 커밋하는 것은 SETTLE-011의 예산 초과 처분이며, 식·가드의 throw에는 적용하지 않는다.
+  - 【추론】 03(PR-2)이 계산 단계의 실패 하나로 그 정착의 전이(채움)와 나감 비움 전체를 건너뛴 것(`src/core/settle/utils/settlement/finishSettlement.ts:32-33`, `src/core/settle/utils/transition/finalizeExits.ts:46`; 파생 쪽도 같다 — `src/core/settle/utils/derivation/runDeriveRounds.ts`의 `context.failure` 조기 반환 두 곳이 실패 하나로 뒤 파생 라운드를 끊는다)은 ERROR-125보다 넓은 근사이고 03의 기록에 결정으로 남아 있지 않으므로 결함이다; 04가 ERROR-125의 범위(그 게이트로 나간 노드)로 좁혀 고치고 `plan/04-derive-and-controls/log.md` §4에 03의 이탈로 적는다(28C-03의 `@` 사례와 같은 처리).
+- 근거: ERROR-121 "던지면 그 자리마다 정의된 값으로 정착을 마치고, 사슬의 끝에서 모든 환경에서 throw한다(R17-1 나, 가칭 코드 `SCHEMA_FORM_ERROR.EXPRESSION_THREW`, 원래 예외는 `details.error`)."; ERROR-122 표 "| 게이트(`if` 게이트 함수와 그 가드, `controls.active`) | 그 게이트는 거짓이다 |", "| 상태 키(`controls.visible`·`controls.readOnly`·`controls.disabled`, 조각과 `controls.children`의 `controls`) | 그 선언은 없는 것이다 |", "| 파생 규칙(`controls.derived`·`controls.injectTo`·`controls.unsetValue`), 동적으로만 아는 `controls.injectTo` 대상이 없음 | 그 규칙을 그 라운드의 후보에서 빼고 에지를 소비한다 |"; ERROR-125 "식이나 가드가 던져 거짓이 된 게이트로 나간 노드에는 나감 비움을 적용하지 않는다(작성자의 잘못으로 커밋된 값을 잃지 않는다)."; ERROR-126 "어느 자리든 식이나 가드가 던지면 그 커밋은 `degraded`다(§5)."; SETTLE-011 "정착의 세 예산(호스트 바퀴, 파생 라운드, 전이 라운드) 가운데 하나라도 상한을 넘기면, 그 정착의 자동 쓰기 — 채움, `controls.derived`, `controls.injectTo`, `controls.unsetValue`, 나감의 비움 — 를 모두 뺀 **원본 B**를 커밋한다."; CONTROLS-022 제목 "숨기기만, 방출은 그대로"; CONTROLS-023 "잠금. 그 노드에만 걸린다. 값·형상·방출을 바꾸지 않는다"; SETTLE-005 전이 행의 채움·나감 비움 규칙(던짐을 조건으로 두지 않는다).
+
+### 29C-03 공유 충돌이 난 정착도 파생·채움·나감 비움을 진행한다 — 커밋은 앞선 종류를 살린 계산 결과와 자동 쓰기, 원본 B는 예산 초과에만
+
+- 닫는 항목: BLUEPRINT-012(보충), ERROR-159(보충), ERROR-164(보충), ERROR-070(보충), SETTLE-011(보충)
+- 결정:
+  - 【추론】 `SHARED_NODE_CONFLICT`가 난 정착의 자리별 값은 "전순서에서 앞선 종류의 노드를 살린 형상"이다(BLUEPRINT-012, ERROR-159·164): 게이트 선언끼리의 충돌에서는 충돌한 이름의 다른 종류 노드 하나가 형상에서 빠지고, 한 노드 안의 형 충돌(`typeConflict`, 26C-05·BLUEPRINT-041)에서는 노드가 정적 `schemaType`으로 남으며, 어느 쪽이든 형상은 정해진다.
+  - 【추론】 형상이 정해졌으므로 그 뒤의 파생 라운드·전이(채움과 나감 비움)는 29C-02대로 평소처럼 돌고, 커밋되는 것은 그 계산 결과와 그 정착의 자동 쓰기다; 자동 쓰기를 뺀 원본 B는 SETTLE-011의 예산 초과 처분이라 공유 충돌에는 쓰지 않는다.
+  - 【추론】 마운트의 공유 충돌도 커밋은 한다(ERROR-070 "공유 충돌은 모든 환경에서 커밋·통지 뒤 사슬 끝에서 던진다"; ERROR-164의 "커밋 뒤 싱크"는 렌더 계층의 커밋 뒤 이펙트다, ERROR-079); 폼이 서지 않는 것은 렌더 계층이 그리는 대체 화면이지 코어가 커밋을 멈추는 것이 아니다.
+  - 【추론】 그래서 계산 단계 뒤의 진행을 막는 조건은 예산 초과(`cause: 'budget'`) 하나이고, 나머지 정착 오류(`'expression'`·`'injectTarget'`·`'sharedConflict'`)는 계산 결과로 커밋한다; 03(PR-2)이 공유 충돌에서 전이 전체를 건너뛴 것은 29C-02의 것과 같은 결함이며 04가 함께 고치고 `plan/04-derive-and-controls/log.md` §4에 적는다.
+- 근거: BLUEPRINT-012 "게이트에 달린 선언이 실제로 동시에 켜지면 정착 오류다: 마운트에서는 모든 환경에서 폼이 서지 않고 폼 자리에 대체 화면을 그리며(14라운드 O-10), 마운트 뒤에는 전순서에서 앞선 종류의 노드를 살려 커밋하고 통지 뒤 사슬 끝에서 던지며 `degraded`(`cause`는 공유 충돌)가 다음 로드까지 남아 그 동안 제출을 거부한다(17라운드 소유자 답 R17-1 나, ADR 0014 4판)"; ERROR-159 정착 오류 행 "게이트에 달린 선언이 실제로 동시에 켜짐(작성자가 선언한 노드 하나가 형상에서 빠진다, P1′. 전순서에서 앞선 종류로 커밋한 뒤 throw)"과 그 드러남 "커밋·통지 뒤 사슬의 끝에서 throw, 모든 환경"; ERROR-164 `SHARED_NODE_CONFLICT` 행 "마운트: 모든 환경에서 폼이 서지 않고 대체 화면을 그린 뒤 커밋 뒤 싱크. 마운트 뒤: 앞선 종류로 커밋, 통지 뒤 사슬 끝 throw, degraded"; ERROR-070 "작성자 스키마·호출자 데이터에서 온 정착 오류(예산 초과, `controls` 식·가드 실패, `controls.injectTo` 대상 없음)와 공유 충돌은 모든 환경에서 커밋·통지 뒤 사슬 끝에서 던진다(R17-1 나, 17라운드 소유자 답: "나 허용. 망가진 값을 올리는게 더 위험하겠다")"; 26C-05 "정착은 활성 집합의 유효 스키마를 계산한 뒤 `typeConflict`가 참인 노드마다 정착 오류 `SHARED_NODE_CONFLICT`를 내고, `diagnostics.cause`는 `'sharedConflict'`이며, 드러남은 정착 오류 규칙대로 모든 환경에서 커밋·통지 뒤 사슬 끝이다(PR-2에서 사슬은 `settle` 호출 하나)"; SETTLE-011 "정착의 세 예산(호스트 바퀴, 파생 라운드, 전이 라운드) 가운데 하나라도 상한을 넘기면, 그 정착의 자동 쓰기 — 채움, `controls.derived`, `controls.injectTo`, `controls.unsetValue`, 나감의 비움 — 를 모두 뺀 **원본 B**를 커밋한다."; 29C-02.
+
+### 29C-04 조각 `controls`에 `injectTo`는 들지 않는다 — CONTROLS-077의 닫힌 목록이 FRAGMENT-050의 열거를 이긴다
+
+- 닫는 항목: FRAGMENT-050(보충), CONTROLS-077(보충), CONTROLS-030(보충)
+- 결정:
+  - 【추론】 조각 객체의 `controls`에 둘 수 있는 키는 CONTROLS-077의 닫힌 목록(`active` `visible` `readOnly` `disabled` `default` `derived` `unsetValue` `resetInteraction` `unsetOnInactive`)이고 `injectTo`는 청사진 오류다; `controls.children` 항목의 안쪽 `controls`도 같다(CONTROLS-030).
+  - 【추론】 FRAGMENT-050의 "조각의 `controls`에 둔 에지 규칙(`unsetValue`·`derived`·`resetInteraction`·`injectTo`)"에서 `injectTo`는 18C-51이 지나가며 적은 열거이며, 같은 18라운드의 뒤 블록 18C-60이 허용 키 집합을 명시적으로 닫았으므로 CONTROLS-077이 이긴다; 조각 층의 에지 규칙은 `unsetValue`·`derived`·`resetInteraction` 셋으로 읽는다.
+  - 【추론】 `controls.injectTo`는 노드 자신의 `controls`에만 있고, 조각이 선언한 노드의 `injectTo`가 그 조각이 켜져 있는 동안만 후보인 것은 WRITE-029("형상에 없는 노드의 규칙은 평가하지 않는다")에서 나온다.
+  - 【추론】 02(PR-1) 청사진이 조각과 `controls.children` 항목의 `controls`에 `injectTo`를 모르는 키로 거부하는 것(`src/core/blueprint/utils/diagnostics/validateControlGroups.ts:27-46,95-113`의 키 목록과 모르는 키 거부, 조각 여부는 `src/core/blueprint/utils/diagnostics/collectDeclarations.ts:30-35,89`)은 원장과 맞으며 고칠 것이 없다.
+- 근거: CONTROLS-077 "조각 객체(`allOf` 항목, 분기, `then`/`else`)의 `controls`에 둘 수 있는 키는 `controls.children` 항목의 닫힌 목록과 같다: `active` `visible` `readOnly` `disabled` `default` `derived` `unsetValue` `resetInteraction` `unsetOnInactive`.", "`children`·`injectTo`·`discriminator`·`watch`는 청사진 오류다.", "새 오류 코드는 없다(기존 청사진 오류의 모르는 키 부류)."; CONTROLS-030 "안쪽 `controls`는 닫힌 목록이며 `children`·`injectTo`·`discriminator`·`watch`는 들지 않는다"; FRAGMENT-050 "조각의 `controls`에 둔 에지 규칙(`unsetValue`·`derived`·`resetInteraction`·`injectTo`)은 그 조각이 켜져 있는 동안만 후보다."(정본 `reviews/round-18-closing.md:1421-1432`, 18C-51); CONTROLS-077의 정본 `reviews/round-18-closing.md:1704-1720`(18C-60); WRITE-029 "**형상에 없는 노드의 규칙은 평가하지 않는다**(P4: 형상 변화는 쓰기가 아니다)".

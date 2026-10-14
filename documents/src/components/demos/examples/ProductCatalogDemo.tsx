@@ -22,12 +22,12 @@ const schema = {
       title: 'Product Details',
       oneOf: [
         {
-          computed: { if: "../productType === 'physical'" },
+          controls: { active: "../productType === 'physical'" },
           properties: {
             name: {
               type: 'string',
               title: 'Product Name',
-              placeholder: 'e.g. Wireless Headphones',
+              presentation: { FieldInputProps: { placeholder: 'e.g. Wireless Headphones' } },
               default: 'Wireless Headphones',
             },
             weight: {
@@ -74,7 +74,7 @@ const schema = {
               },
               oneOf: [
                 {
-                  computed: { if: "./method === 'standard'" },
+                  controls: { active: "./method === 'standard'" },
                   properties: {
                     cost: {
                       type: 'number',
@@ -92,7 +92,7 @@ const schema = {
                   },
                 },
                 {
-                  computed: { if: "./method === 'express'" },
+                  controls: { active: "./method === 'express'" },
                   properties: {
                     cost: {
                       type: 'number',
@@ -115,12 +115,12 @@ const schema = {
           required: ['name', 'weight'],
         },
         {
-          computed: { if: "../productType === 'digital'" },
+          controls: { active: "../productType === 'digital'" },
           properties: {
             name: {
               type: 'string',
               title: 'Product Name',
-              placeholder: 'e.g. Design Templates Pack',
+              presentation: { FieldInputProps: { placeholder: 'e.g. Design Templates Pack' } },
               default: 'Design Templates Pack',
             },
             fileSize: {
@@ -134,24 +134,24 @@ const schema = {
               type: 'string',
               title: 'Format',
               default: 'ZIP',
-              placeholder: 'e.g. ZIP, PDF, MP4',
+              presentation: { FieldInputProps: { placeholder: 'e.g. ZIP, PDF, MP4' } },
             },
             downloadLink: {
               type: 'string',
               title: 'Download Link',
               format: 'uri',
-              placeholder: 'https://example.com/download',
+              presentation: { FieldInputProps: { placeholder: 'https://example.com/download' } },
             },
           },
           required: ['name', 'fileSize', 'format'],
         },
         {
-          computed: { if: "../productType === 'service'" },
+          controls: { active: "../productType === 'service'" },
           properties: {
             name: {
               type: 'string',
               title: 'Service Name',
-              placeholder: 'e.g. Web Development Consulting',
+              presentation: { FieldInputProps: { placeholder: 'e.g. Web Development Consulting' } },
               default: 'Web Development Consulting',
             },
             duration: {

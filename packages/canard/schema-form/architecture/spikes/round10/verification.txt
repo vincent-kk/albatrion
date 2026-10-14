@@ -1,0 +1,82 @@
+{
+  "generation": {
+    "exactEdits": 8,
+    "baseline": "round9/loop-v5",
+    "generated": [
+      "loop-v6.mjs",
+      "build-v6.mjs"
+    ]
+  },
+  "generatedByteIdentical": true,
+  "matrixByteIdentical": true,
+  "matrixSha256": "639907369a23b449cb80af6e291b01e8756277e642aabdf0aae69d1acf062dad",
+  "matrix": {
+    "scope": "all",
+    "combinations": 48,
+    "checks": 376,
+    "outcomes": 2904,
+    "budgetExceeded": 96,
+    "silentWriteLosses": 0,
+    "explainedWriteLosses": 7104,
+    "scheduleComparable": 1152,
+    "scheduleDependent": 864,
+    "declarationComparable": 288,
+    "declarationDependent": 24,
+    "orderDependent": 864,
+    "p7FinalRawExceptions": 4
+  },
+  "layerChecks": 12,
+  "compatibility": {
+    "r9": "byte-identical output with EXPERIMENT=false",
+    "r9b": "byte-identical output with EXPERIMENT=false"
+  },
+  "round9": {
+    "command": "node ../round9/regress/run.mjs",
+    "exit": 0,
+    "invocations": 1,
+    "writesRedirectedTo": "round9-run/",
+    "filesUnchanged": 31,
+    "results": {
+      "modelRegeneration": "byte-identical",
+      "precheck": "expected failure",
+      "selfcheck": {
+        "new": {
+          "baselineFailures": 3,
+          "passed": 63,
+          "failures": 0
+        },
+        "old": {
+          "baselineFailures": 0,
+          "passed": 63,
+          "failures": 0
+        }
+      },
+      "r7": {
+        "new": {
+          "changedRows": 12
+        },
+        "old": {
+          "changedRows": 2
+        }
+      },
+      "r8": {
+        "configurations": 31,
+        "rows": 181,
+        "summaries": 41,
+        "changedSummaries": 17
+      },
+      "q8": {
+        "checks": 108,
+        "rows": 21,
+        "passed": true
+      },
+      "corrections": {
+        "checks": 52,
+        "probes": 13,
+        "failures": 0,
+        "passed": true
+      },
+      "edgeCases": 26
+    }
+  }
+}

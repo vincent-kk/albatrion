@@ -2,28 +2,24 @@
 
 ## Purpose
 
-schema-form 내부에서 발생하는 에러 메시지 포맷팅과 검증 에러 변환을 담당하는 헬퍼 모음.
+개발자 진단 상자의 공유 원소(`createDivider`, `getErrorMessage`)와 사용자 검증 메시지 포맷터(`formatValidationError`)를 제공합니다. 이 셋을 `index.ts`가 이름으로 내보내는 계약으로 둡니다.
 
 ## Conventions
 
-- `formatErrorMessage` 포맷터는 개발자 콘솔용 멀티라인 ASCII 박스 형식 사용
+- 공유 원소는 개발자 콘솔용 멀티라인 진단 상자에 사용
 - `formatValidationError`는 `FormatError` 타입 시그니처 준수
-- `transformErrors`는 입력 배열을 직접 변형(`@warning THIS FUNCTION CHANGE INPUT ERRORS`)
-- `sequence` 카운터는 모듈 수준 변수 (키 할당 시 단조 증가)
 
 ## Boundaries
 
 ### Always do
 
-- 새 스키마 에러 포맷터는 `formatErrorMessage/` 하위에 개별 파일로 추가하고 `index.ts`에 export
+- 개별 진단 포맷터는 그 소비자 fractal의 `utils/`에 소유
 - `formatValidationError`는 `FormatError` 인터페이스 시그니처를 반드시 준수
 
 ### Ask first
 
-- `transformErrors`의 `ENHANCED_KEY` 필터 조건 변경
-- `sequence` 카운터 초기화 또는 리셋 로직 추가
+- `formatValidationError`의 `FormatError` 시그니처나 진단 박스 형식을 바꿀 때
 
 ### Never do
 
-- `transformErrors` 호출 후 원본 에러 배열이 변경됨을 가정하지 않는 코드 작성
-- `formatErrorMessage` 포맷터에서 에러를 throw하거나 외부 상태 변경
+- 공유 원소와 검증 메시지 포맷터에서 외부 상태 변경

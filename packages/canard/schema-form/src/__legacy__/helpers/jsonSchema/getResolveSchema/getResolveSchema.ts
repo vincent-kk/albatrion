@@ -1,0 +1,33 @@
+import type { Fn } from '@aileron/declare';
+
+import type {
+  JSONSchema,
+  JSONSchemaWithRef,
+  JSONSchemaWithVirtual,
+} from '@/schema-form/__legacy__/types';
+
+import { getReferenceTable } from './utils/getReferenceTable';
+import { getResolveSchemaScanner } from './utils/getResolveSchemaScanner';
+
+/**
+ * Creates a function to resolve $ref references in JSON Schema.
+ * @param jsonSchema - Original JSON Schema
+ * @param maxDepth - Maximum depth for reference resolution (default: 1)
+ * @returns Function that can resolve references or null
+ */
+export const getResolveSchema = (
+  jsonSchema: JSONSchema,
+  maxDepth: number = 1,
+): ResolveSchema | null => {
+  const table = getReferenceTable(jsonSchema);
+  const scanner = table ? getResolveSchemaScanner(table, maxDepth) : null;
+  return scanner
+    ? (schema: JSONSchemaWithRef | undefined) =>
+        schema !== undefined ? scanner.scan(schema).getValue() : undefined
+    : null;
+};
+
+export type ResolveSchema = Fn<
+  [schema: JSONSchemaWithRef],
+  JSONSchemaWithVirtual | undefined
+>;

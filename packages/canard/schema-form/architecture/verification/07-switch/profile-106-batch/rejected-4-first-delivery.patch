@@ -1,0 +1,89 @@
+diff --git a/packages/canard/schema-form/src/core/record/DETAIL.md b/packages/canard/schema-form/src/core/record/DETAIL.md
+--- a/packages/canard/schema-form/src/core/record/DETAIL.md
++++ b/packages/canard/schema-form/src/core/record/DETAIL.md
+@@ -1,6 +1,8 @@
+ # record 계약
+ 
+ ## Requirements
++
++- 공유 EMPTY 이전 원장과 정확한 UpdateValue|RequestRefresh 첫 mask는 각 원장 소유의 counter literal에서 두 비트를 1로 직접 초기화합니다. 배달하지 않은 비트의 undefined 읽기, 다음 원장의 복사·증가, plain 이전 원장 및 다른 mask·unknown bit 처리는 같습니다. 속도 비용은 O(1) mask 검사로 첫 mask의 bit 탐색·증가 2회를 제거합니다. 메모리 비용은 기존 private counter 배열 하나와 새 원장 참조를 유지하되 첫 mask 배열의 14개 슬롯을 명시해 hole 12개를 undefined로 바꿉니다. 공유 배열·노드 shape·배달 순서 변경은 없으며 105C-01 최소 크기 규칙으로 종단 시간을 판정합니다(106라운드 첫 배달 counter).
+ 
+ - 경로 키 런타임 칸은 명시적인 PathKeyedMap·PathKeyedSet 형으로 선언하고 생성자가 색인을 소유합니다. record와 settle의 공통 소유자 core의 보조 형을 소비하여 settle 역의존을 만들지 않습니다. native Map·Set의 조회·열거 계약을 유지하고 값은 복제하지 않습니다. 메모리 비용은 K개 항목과 경로 깊이 D에 O(KD) 키 참조, 유일한 prefix 문자열·부모 연결·숫자 radix 마디입니다(NODE-045, SETTLE-017·047).
+ 
+diff --git a/packages/canard/schema-form/src/core/record/utils/SchemaNodeRevisionLedger.ts b/packages/canard/schema-form/src/core/record/utils/SchemaNodeRevisionLedger.ts
+--- a/packages/canard/schema-form/src/core/record/utils/SchemaNodeRevisionLedger.ts
++++ b/packages/canard/schema-form/src/core/record/utils/SchemaNodeRevisionLedger.ts
+@@ -3,6 +3,9 @@
+ 
+ /** Known event bits occupy consecutive slots rather than sparse numeric elements. */
+ const KNOWN_BITS = (SchemaNodeEventType.UpdateDiagnostics << 1) - 1;
++
++/** The common first value delivery owns only the value and refresh counters. */
++const FIRST_VALUE_MASK = SchemaNodeEventType.UpdateValue | SchemaNodeEventType.RequestRefresh;
+ 
+ /** Immutable per-bit counters with compatibility accessors for direct bit reads. */
+ export class SchemaNodeRevisionLedger {
+@@ -17,11 +20,15 @@
+    * @param mask - Delivery bits committed together before listener invocation
+    */
+   constructor(previous: Readonly<Record<number, number>>, mask: number) {
+-    // The shared empty ledger has no counters, so a first delivery starts empty.
+-    const counts: number[] = previous === EMPTY_REVISION_LEDGER ? [] :
++    const firstValue = previous === EMPTY_REVISION_LEDGER && mask === FIRST_VALUE_MASK;
++    // Undelivered bits keep undefined through the existing numeric accessors.
++    const counts: number[] = previous === EMPTY_REVISION_LEDGER ? firstValue ? [
++      undefined, undefined, 1, undefined, undefined, undefined, undefined,
++      undefined, undefined, undefined, undefined, undefined, undefined, 1,
++    ] as number[] : [] :
+       previous instanceof SchemaNodeRevisionLedger ? previous.counts.slice() :
+         Array.from({ length: 17 }, (_, index) => previous[1 << index]);
+-    let remaining = mask & KNOWN_BITS;
++    let remaining = firstValue ? 0 : mask & KNOWN_BITS;
+     while (remaining) {
+       const bit = remaining & -remaining;
+       const index = 31 - Math.clz32(bit);
+diff --git a/packages/canard/schema-form/src/core/record/utils/__tests__/SchemaNodeRevisionLedger.first-value-counts.test.ts b/packages/canard/schema-form/src/core/record/utils/__tests__/SchemaNodeRevisionLedger.first-value-counts.test.ts
+new file mode 100644
+--- /dev/null
++++ b/packages/canard/schema-form/src/core/record/utils/__tests__/SchemaNodeRevisionLedger.first-value-counts.test.ts
+@@ -0,0 +1,40 @@
++import { describe, expect, it, vi } from 'vitest';
++
++import { SchemaNodeEventType } from '../../SchemaNodeEventType';
++import { EMPTY_REVISION_LEDGER } from '../../type';
++import { SchemaNodeRevisionLedger } from '../SchemaNodeRevisionLedger';
++
++/** This exact first delivery owns the value and refresh counters only. */
++const FIRST_VALUE_MASK = SchemaNodeEventType.UpdateValue | SchemaNodeEventType.RequestRefresh;
++
++describe('first value delivery counter work', () => {
++  it('initializes private counters without per-bit index calculations', () => {
++    const index = vi.spyOn(Math, 'clz32');
++    const ledgers: SchemaNodeRevisionLedger[] = [];
++    let calculations: number;
++    try {
++      for (let node = 0; node < 8; node++)
++        ledgers.push(new SchemaNodeRevisionLedger(EMPTY_REVISION_LEDGER, FIRST_VALUE_MASK));
++      calculations = index.mock.calls.length;
++    } finally { index.mockRestore(); }
++    for (let node = 0; node < ledgers.length; node++) {
++      const ledger = ledgers[node];
++      expect(ledger.read(-1)).toBe(2);
++      for (let bitIndex = 0; bitIndex < 17; bitIndex++)
++        expect(ledger[1 << bitIndex]).toBe(bitIndex === 2 || bitIndex === 13 ? 1 : undefined);
++      for (let prior = 0; prior < node; prior++) expect(ledger).not.toBe(ledgers[prior]);
++    }
++    const previous = ledgers[0];
++    const laterIndex = vi.spyOn(Math, 'clz32');
++    let next: SchemaNodeRevisionLedger;
++    try {
++      next = new SchemaNodeRevisionLedger(previous, FIRST_VALUE_MASK);
++      expect(laterIndex.mock.calls.length).toBe(2);
++    } finally { laterIndex.mockRestore(); }
++    expect(next![SchemaNodeEventType.UpdateValue]).toBe(2);
++    expect(next![SchemaNodeEventType.RequestRefresh]).toBe(2);
++    expect(previous[SchemaNodeEventType.UpdateValue]).toBe(1);
++    console.log(`106COUNT first-value bit-index=${calculations!} ledgers=${ledgers.length}`);
++    expect(calculations!).toBe(0);
++  });
++});

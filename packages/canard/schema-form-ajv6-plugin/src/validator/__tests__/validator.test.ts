@@ -186,7 +186,7 @@ describe('createValidatorFactory', () => {
 describe('ajvValidatorPlugin', () => {
   beforeEach(() => {
     // 각 테스트 전에 ajvInstance를 리셋
-    ajvValidatorPlugin.bind!(null as any);
+    ajvValidatorPlugin.bind!(new Ajv({ allErrors: true, nullable: true, verbose: true, format: false }));
   });
 
   it('should bind ajv instance correctly', () => {
@@ -201,10 +201,12 @@ describe('ajvValidatorPlugin', () => {
     expect(typeof validator).toBe('function');
   });
 
-  it('should create default ajv instance when none is bound', () => {
+  it('should create default ajv instance when none is bound', async () => {
+    vi.resetModules();
+    const { ajvValidatorPlugin: fresh } = await import('../validatorPlugin');
     const schema = { type: 'string' } as any;
 
-    const validator = ajvValidatorPlugin.compile(schema);
+    const validator = fresh.compile(schema);
 
     expect(typeof validator).toBe('function');
   });

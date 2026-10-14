@@ -1,0 +1,111 @@
+ajv version: 8.17.1
+A | v1 | 2020 | valid=false | errors=[(root) oneOf]
+A | v2 | 2020 | valid=true
+A | v3 | 2020 | valid=false | errors=[(root) oneOf]
+A | v4 | 2020 | valid=false | errors=[(root) oneOf]
+A | v5 | 2020 | valid=false | errors=[(root) oneOf]
+A | v6 | 2020 | valid=false | errors=[(root) oneOf]
+A | v7 | 2020 | valid=false | errors=[(root) oneOf]
+A | v1 | draft07 | valid=false | errors=[(root) oneOf]
+A | v2 | draft07 | valid=true
+A | v3 | draft07 | valid=false | errors=[(root) oneOf]
+A | v4 | draft07 | valid=false | errors=[(root) oneOf]
+A | v5 | draft07 | valid=false | errors=[(root) oneOf]
+A | v6 | draft07 | valid=false | errors=[(root) oneOf]
+A | v7 | draft07 | valid=false | errors=[(root) oneOf]
+B | v1 | 2020 | valid=true
+B | v2 | 2020 | valid=false | errors=[(root) required; (root) if; (root) false schema; (root) if; (root) oneOf]
+B | v3 | 2020 | valid=true
+B | v4 | 2020 | valid=true
+B | v5 | 2020 | valid=false | errors=[(root) false schema; (root) if; (root) false schema; (root) if; (root) oneOf]
+B | v6 | 2020 | valid=false | errors=[(root) false schema; (root) if; (root) false schema; (root) if; (root) oneOf]
+B | v7 | 2020 | valid=false | errors=[(root) false schema; (root) if; (root) false schema; (root) if; (root) oneOf]
+B | v1 | draft07 | valid=true
+B | v2 | draft07 | valid=false | errors=[(root) required; (root) if; (root) false schema; (root) if; (root) oneOf]
+B | v3 | draft07 | valid=true
+B | v4 | draft07 | valid=true
+B | v5 | draft07 | valid=false | errors=[(root) false schema; (root) if; (root) false schema; (root) if; (root) oneOf]
+B | v6 | draft07 | valid=false | errors=[(root) false schema; (root) if; (root) false schema; (root) if; (root) oneOf]
+B | v7 | draft07 | valid=false | errors=[(root) false schema; (root) if; (root) false schema; (root) if; (root) oneOf]
+C | v1 | 2020 | valid=true
+C | v2 | 2020 | valid=true
+C | v3 | 2020 | valid=true
+C | v4 | 2020 | valid=true
+C | v5 | 2020 | valid=true
+C | v6 | 2020 | valid=true
+C | v7 | 2020 | valid=true
+C | v1 | draft07 | valid=true
+C | v2 | draft07 | valid=true
+C | v3 | draft07 | valid=true
+C | v4 | draft07 | valid=true
+C | v5 | draft07 | valid=true
+C | v6 | draft07 | valid=true
+C | v7 | draft07 | valid=true
+D | v1 | 2020 | valid=true
+D | v2 | 2020 | valid=false | errors=[(root) required; (root) if; (root) false schema; (root) if; (root) anyOf]
+D | v3 | 2020 | valid=true
+D | v4 | 2020 | valid=true
+D | v5 | 2020 | valid=false | errors=[(root) false schema; (root) if; (root) false schema; (root) if; (root) anyOf]
+D | v6 | 2020 | valid=false | errors=[(root) false schema; (root) if; (root) false schema; (root) if; (root) anyOf]
+D | v7 | 2020 | valid=false | errors=[(root) false schema; (root) if; (root) false schema; (root) if; (root) anyOf]
+D | v1 | draft07 | valid=true
+D | v2 | draft07 | valid=false | errors=[(root) required; (root) if; (root) false schema; (root) if; (root) anyOf]
+D | v3 | draft07 | valid=true
+D | v4 | draft07 | valid=true
+D | v5 | draft07 | valid=false | errors=[(root) false schema; (root) if; (root) false schema; (root) if; (root) anyOf]
+D | v6 | draft07 | valid=false | errors=[(root) false schema; (root) if; (root) false schema; (root) if; (root) anyOf]
+D | v7 | draft07 | valid=false | errors=[(root) false schema; (root) if; (root) false schema; (root) if; (root) anyOf]
+E | v1 | 2020 | valid=true
+E | v2 | 2020 | valid=false | errors=[(root) required; (root) required; /kind const; (root) oneOf]
+E | v3 | 2020 | valid=true
+E | v4 | 2020 | valid=true
+E | v5 | 2020 | valid=false | errors=[(root) required; /kind const; (root) required; /kind const; (root) oneOf]
+E | v6 | 2020 | valid=false | errors=[(root) required; (root) required; (root) required; (root) required; (root) oneOf]
+E | v7 | 2020 | valid=false | errors=[(root) required; (root) required; (root) required; (root) oneOf]
+E | v1 | draft07 | valid=true
+E | v2 | draft07 | valid=false | errors=[(root) required; (root) required; /kind const; (root) oneOf]
+E | v3 | draft07 | valid=true
+E | v4 | draft07 | valid=true
+E | v5 | draft07 | valid=false | errors=[(root) required; /kind const; (root) required; /kind const; (root) oneOf]
+E | v6 | draft07 | valid=false | errors=[(root) required; (root) required; (root) required; (root) required; (root) oneOf]
+E | v7 | draft07 | valid=false | errors=[(root) required; (root) required; (root) required; (root) oneOf]
+F | v1 | 2020 | valid=true
+F | v2 | 2020 | valid=false | errors=[(root) required; (root) if]
+F | v3 | 2020 | valid=true
+F | v4 | 2020 | valid=true
+F | v5 | 2020 | valid=true
+F | v6 | 2020 | valid=true
+F | v7 | 2020 | valid=true
+F | v1 | draft07 | valid=true
+F | v2 | draft07 | valid=false | errors=[(root) required; (root) if]
+F | v3 | draft07 | valid=true
+F | v4 | draft07 | valid=true
+F | v5 | draft07 | valid=true
+F | v6 | draft07 | valid=true
+F | v7 | draft07 | valid=true
+G | v1 | 2020 | valid=true
+G | v2 | 2020 | valid=false | errors=[(root) required; (root) if]
+G | v3 | 2020 | valid=true
+G | v4 | 2020 | valid=true
+G | v5 | 2020 | valid=true
+G | v6 | 2020 | valid=true
+G | v7 | 2020 | valid=true
+G | v1 | draft07 | valid=true
+G | v2 | draft07 | valid=false | errors=[(root) required; (root) if]
+G | v3 | draft07 | valid=true
+G | v4 | draft07 | valid=true
+G | v5 | draft07 | valid=true
+G | v6 | draft07 | valid=true
+G | v7 | draft07 | valid=true
+
+--- branch-level check: how many branches individually accept v1 ---
+A | 2020 | branch-pass-count(v1)=2 | perBranch=[branch0=true, branch1=true]
+A | draft07 | branch-pass-count(v1)=2 | perBranch=[branch0=true, branch1=true]
+B | 2020 | branch-pass-count(v1)=1 | perBranch=[branch0=true, branch1=false]
+B | draft07 | branch-pass-count(v1)=1 | perBranch=[branch0=true, branch1=false]
+C | 2020 | branch-pass-count(v1)=2 | perBranch=[branch0=true, branch1=true]
+C | draft07 | branch-pass-count(v1)=2 | perBranch=[branch0=true, branch1=true]
+D | 2020 | branch-pass-count(v1)=1 | perBranch=[branch0=true, branch1=false]
+D | draft07 | branch-pass-count(v1)=1 | perBranch=[branch0=true, branch1=false]
+E | 2020 | branch-pass-count(v1)=1 | perBranch=[branch0=true, branch1=false]
+E | draft07 | branch-pass-count(v1)=1 | perBranch=[branch0=true, branch1=false]

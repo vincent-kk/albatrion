@@ -1,0 +1,81 @@
+Planning method: seiri:write-plan default; user-scoped executable design spike.
+검토: grounded-only. 외부 리뷰 위임 없이 명세 §3/Q8과 기존 코드에 대조했습니다.
+
+범위: round9 새 파일만 작성합니다. 기존 REPORT.txt, oneof-if* 파일은 보존합니다.
+loop-v4e의 정확 치환으로 loop-v5를 생성합니다. compute/commit/dispatch,
+raw/extras, 배열, 부분/전체 쓰기와 기존 validator(AJV) 연결을 재사용합니다.
+selection 상태와 API/점수/동점 코드는 제거합니다.
+
+순서와 검증
+1. v4e에서 selection 부재 단언이 실패하는 것을 기록합니다.
+2. make-v5와 schema builder를 작성합니다. node --check로 구문 검사합니다.
+3. r9에서 Q8의 각 항목을 실제 값/상태 단언으로 확인하고 출력합니다.
+4. round8 selfcheck와 r7-port를 파생하여 실행합니다. 바뀐 기대값은
+   원래 단언과 새 단언, 이유를 대응시킵니다. 기존 실패도 별도로 구분합니다.
+5. 재생성 바이트 일치, 전체 프로브/회귀 재실행, 범위와 줄 번호를 확인하고
+   REPORT-proto.txt에 표로 기록합니다.
+
+모델 선택: DERIVE_ORDER 기본 derived/injectTo/clearValue, WRITE_CONFLICT last.
+동일 단계 입력은 계산 완료 스냅샷이며 승자를 결정한 뒤 쓰기를 적용합니다.
+CONTROL_COMBINE and-or 또는 nearest. 우선순위는 Form, root, ancestor,
+fragment, children, local 순서입니다. 채움은 전이 단계에서 생성당 한 번이며
+clearValue가 같은 정착에서 지운 대상은 채우지 않습니다.
+예산 기본 25; 기본 COMMIT_ON_BUDGET base, 비교용 lastRound를 유지합니다.
+
+절차 조정: 사용자 제한에 따라 .seiri/gates.md 및 ADR은 만들지 않습니다.
+제품 코드·배포 경계 변경이 아니므로 제품 빌드 대신 지정된 Node spike
+하니스가 수정 산출물을 검증합니다. 새 패키지 설치는 하지 않습니다.
+
+최초 구현 실행 기록 (아래 검증 뒤 수정 기록 이전)
+- node regress/run.mjs: exit 0.
+- model regeneration: byte-identical; 56 checked substitutions.
+- Q8: 108 assertions / 21 observation rows; edge cases: 26 assertions.
+- v5 selfcheck: new 63 PASS, old 63 PASS; original v4e new has 3 known failures.
+- r7 changed observation rows: new 12 / old 2.
+- r8 additional port: 31 configurations, 181 R8 rows, 41 summaries, 26 changed summaries.
+- New files: 26, Markdown files under round9: 0. Tracked git diff: empty.
+- Scope limits and reviewer handoff: REPORT-proto.txt section 4.
+
+검증 뒤 수정 계획 (round-9-spec §7)
+검토: grounded-only. wantedDefaults의 조각별 born, controls를 제외한 existsInShape,
+첫 선언 schema 보존을 코드와 검증 보고서에 대조했습니다.
+1. r9b.mjs에서 a1–a4, node-gate shape/raw, union-hint를 단언하고 수정 전 실패를 기록합니다.
+2. 직전 커밋의 노드 존재 메모와 현재 존재를 비교합니다. NODE_GATE_UNIT 기본 shape,
+   비교 raw를 추가하고, 호출자 load의 새 생성 수명 및 원본 보존을 유지합니다.
+3. 게이트 없는 union의 공유 노드에 branch 제약을 생략한 effectiveSchema 힌트를 노출합니다.
+4. make-v5 재생성 후 regress/run 전체를 실행합니다. 바뀐 단언과 이유를 보고합니다.
+5. 기존 출력의 시간값만 바뀐 경우 원래 바이트를 복원하며 의미 있는 결과만 갱신합니다.
+전체 수정·출력 범위는 round9입니다. 기존 .txt 원장 예외와 Node 검증 방식을 유지합니다.
+
+검증 뒤 수정 완료 기록
+- 수정 전 r9b: 9개 프로브 중 6개가 기대값 불일치로 실패했습니다.
+- node regress/run.mjs: exit 0; generator 57 checked substitutions, byte-identical.
+- r9b: 36 assertions, 9 probes, 0 failures. Q8: 108 assertions; edge cases: 26.
+- v5 selfcheck new/old: 각 63 PASS. v4e new의 기존 3 FAIL은 비교 기준입니다.
+- r7 출력 변화 없음; r8은 기존 round9 대비 R8 6행 및 SUMMARY 6행이 변경되었습니다.
+- round8 대비 r8 SUMMARY 차이는 26에서 28로 변경되었습니다.
+- 시간만 바뀐 v4e 출력은 복원하고, v5 출력은 새 스위치 표시만 반영했습니다.
+- Q4 전체 병합은 범위 밖입니다. 코드 위치·결과·변경 이유는 REPORT-proto.txt §5입니다.
+
+최종 shape 채움 수정 계획
+Planning method: seiri:write-plan default; grounded-only self-review.
+재현: r9b의 final-shape-after-derived 및 final-shape-after-fill-dependency가
+raw.x P !== undefined로 실패했습니다. 기존 9개 프로브는 통과합니다.
+1. make-v5의 settle에서 파생이 안정된 후 채움 후보를 계산합니다.
+2. 중간 채움은 autoLog의 커밋 전 후보입니다. 최종 shape에서 빠진 후보를
+   철회하고 재계산하여, 후보값과 shape 모두 수렴한 후 생성 목록을 한 번 확정합니다.
+3. 사용자 원본 및 직전 커밋의 inactive raw는 보존합니다. clearValue 우선과
+   동일 대상 파생 경합을 유지합니다. 비수렴은 기존 예산 커밋 정책으로 처리합니다.
+4. node r9b.mjs --check-only, node regress/run.mjs, 생성본 바이트 일치를 검증합니다.
+5. 기존 transient fill 보존을 기대한 회귀는 명세 정정과 충돌하는지 각각 대조하여
+   실제 관찰값과 이유를 보고합니다. 시간값만 바뀐 출력은 복원합니다.
+범위는 round9 내부입니다. .txt 원장 예외를 유지하고 제품 소스/의존성은 변경하지 않습니다.
+
+최종 shape 수정 완료 기록
+- 지정된 재현 및 fill 의존성 재현에서 수정 전 raw.x=P 실패를 확인했습니다.
+- 수렴 전에는 후보를 stage하고, shape 밖 후보를 철회한 뒤 최종 born을 한 번 확정합니다.
+- node regress/run.mjs: exit 0. generator 59 checked edits, byte-identical.
+- r9b 52 assertions/13 probes, r9 108 assertions, edge-cases 26 assertions PASS.
+- selfcheck-v5 new/old 각 63 PASS. A4b만 기대값을 명세 정정에 맞춰 갱신했습니다.
+- r8 SUMMARY 차이 17; 이전 중간 채움 보존에 의존한 관측 변경은 REPORT §5에 기록했습니다.
+- 비수렴에는 birthsAtCommit을 확정하지 않으며 기본 base 예산 정책을 유지합니다.

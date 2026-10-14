@@ -1,7 +1,7 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
-import type { SchemaNode } from '@/schema-form/core';
-import { VirtualizationManager } from '@/schema-form/helpers/virtualization';
+import type { FieldNode } from '@/schema-form/core';
+import { VirtualizationManager } from '@/schema-form/helpers/virtualization/VirtualizationManager';
 
 /**
  * Selection API of VirtualizationManager: the static `create` factory and the
@@ -40,7 +40,7 @@ describe('VirtualizationManager selection API', () => {
     expect(manager).toBeInstanceOf(VirtualizationManager);
     expect(manager?.forBranch(29)).toBeNull();
     expect(manager?.forBranch(30)).toBe(manager);
-    const node = {} as unknown as SchemaNode;
+    const node = {} as unknown as FieldNode;
     expect(manager?.forChild(19, node)).toBeNull();
     expect(manager?.forChild(20, node)).toBe(manager);
     expect(manager?.estimateHeight(node)).toBe(40);
@@ -59,7 +59,7 @@ describe('VirtualizationManager selection API', () => {
   it('create merges partial options over the defaults', () => {
     const manager = VirtualizationManager.create({ threshold: 5 });
     expect(manager?.forBranch(5)).toBe(manager);
-    const node = {} as unknown as SchemaNode;
+    const node = {} as unknown as FieldNode;
     expect(manager?.forChild(20, node)).toBe(manager);
     expect(manager?.forChild(19, node)).toBeNull();
   });
@@ -69,7 +69,7 @@ describe('VirtualizationManager selection API', () => {
       threshold: 1,
       eagerCount: 0,
     });
-    const node = {} as unknown as SchemaNode;
+    const node = {} as unknown as FieldNode;
     expect(manager?.forChild(0, node)).toBe(manager);
     manager?.markRevealed(node);
     expect(manager?.forChild(0, node)).toBeNull();
@@ -79,8 +79,8 @@ describe('VirtualizationManager selection API', () => {
     const manager = VirtualizationManager.create({
       estimateHeight: (node) => (node.path === '/tall' ? 120 : 32),
     });
-    const tall = { path: '/tall' } as unknown as SchemaNode;
-    const short = { path: '/short' } as unknown as SchemaNode;
+    const tall = { path: '/tall' } as unknown as FieldNode;
+    const short = { path: '/short' } as unknown as FieldNode;
     expect(manager?.estimateHeight(tall)).toBe(120);
     expect(manager?.estimateHeight(short)).toBe(32);
   });

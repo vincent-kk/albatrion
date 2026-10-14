@@ -54,19 +54,45 @@ registerPlugin(ajvValidatorPlugin);
 
 ### **Plugin Interface**
 
-The plugin implements the `ValidatorPlugin` interface providing two main methods:
+The plugin implements `ValidatorPlugin` with validation, synchronous guards, and root release:
 
 #### **`bind(instance: Ajv.Ajv)`**
 
 - **Purpose**: Allows you to provide a custom AJV instance with your preferred configuration
 - **Usage**: Optional - if not called, a default AJV instance will be created automatically
 - **Benefits**: Full control over AJV settings, custom keywords, formats, and validation rules
+- **Refusal**: An instance with `coerceTypes`, `useDefaults`, or `removeAdditional` enabled is rejected immediately. The previous binding stays active. Callers discriminate the refusal by `group` (`'UNHANDLED_ERROR'`) and `code` (`'UNHANDLED_ERROR.VALIDATOR_BIND_REFUSED'`, the value of `FormErrorCode.ValidatorBindRefused`); core's `isUnhandledError` does not recognize it.
+
+#### **`configure(options: { directGuardCompile?: boolean }): void`**
+
+Self-contained guards compile their original copy subschema directly by default.
+Set `directGuardCompile: false` to use the registered root-pointer path for later
+compiles; existing predicates are unchanged and omitted options keep their value.
+Reference and identifier keys anywhere inside a guard always require the root path;
+a root declaring its own `$schema` or a guard containing `$schema` also uses the root pointer.
+A compile error that only appears when another part of the root is compiled, such as an
+unresolved `$ref`, makes full validation report `VALIDATOR_COMPILE_FAILED`. It also fails
+every guard compiled at a root pointer, which is a limitation of that path; a self-contained
+guard compiled directly still evaluates, because a guard compile failure belongs to its own
+gate only.
+The guard instance retains the bound dialect, formats and keywords with
+`allErrors: false`. `release(root)` also removes its directly compiled guards.
 
 #### **`compile(jsonSchema)`**
 
 - **Purpose**: Creates a validator function from the provided JSON Schema
 - **Returns**: A validator factory function that can validate data against the schema
 - **Features**: Automatic error transformation, detailed validation messages, performance optimization
+
+#### **`compileGuard(root, pointer)` and `release(root)`**
+
+- `compileGuard` returns a synchronous boolean guard for a pointer in the registered root.
+- `compileGuard` throws a native `GuardPointerNotSchemaError` when the pointer does not locate a schema (an object or boolean): a missing location, or a value such as `/type` or `/required`. Callers discriminate it by `group` (`'UNHANDLED_ERROR'`) and `code` (`'GUARD_POINTER_NOT_SCHEMA'`); `details` carries the root's `$id` (or `''`) and the pointer.
+- `compile`, `compileGuard`, and `release` share one registration when given the same engine-owned copy object.
+- `release` removes that registration and its compiled functions. A second live root with the same `$id` remains independent.
+- VALIDATE-047 case (iv), one schema location reached from several dynamic scopes through `$dynamicRef` or `$recursiveRef`, is unsupported. There is one guard per location, and it answers for the first-compiled dynamic scope.
+
+Strict options on a bound instance, such as `strictTypes` and `strictRequired`, may make some `if` guards fail to compile. The affected gate becomes false and produces a `GUARD_FAILED` `onError` record. The plugin does not override the consumer's options, and strict mode is not the plugin default (VALIDATE-003, VALIDATE-005, VALIDATE-033, ERROR-041).
 
 ### **Default Configuration**
 
@@ -88,6 +114,8 @@ The `createValidatorFactory` function provides:
 - **Performance Optimization**: Caches compiled validators for reuse
 - **Detailed Error Messages**: Rich error information for better user experience
 - **Type Safety**: Full TypeScript support with proper type inference
+
+`createValidator(ajv)` returns a per-instance `{ compile, compileGuard }` object for a Form's `validatorFactory`: create it once outside render (`const validator = createValidator(customAjv);` then `<Form validatorFactory={validator} />`), because a new object makes the Form rebuild its tree; several validators may share one AJV instance, which must not modify values (`coerceTypes`, `useDefaults`, `removeAdditional` off).
 
 ---
 

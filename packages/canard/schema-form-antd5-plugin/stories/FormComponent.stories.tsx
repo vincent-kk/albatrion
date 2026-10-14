@@ -10,7 +10,7 @@ import { FormError } from '../src/components/FormError';
 import { FormGroup } from '../src/components/FormGroup';
 import { FormInput } from '../src/components/FormInput';
 import { FormLabel } from '../src/components/FormLabel';
-import { formTypeInputDefinitions } from '../src/formTypeInputs';
+import { fieldInputDefinitions } from '../src/fieldInputs';
 
 registerPlugin(ajv8Plugin);
 
@@ -73,11 +73,13 @@ const bigSchema = {
             gender: {
               type: 'string',
               enum: ['male', 'female', 'other'],
-              computed: {
+              controls: {
                 active: '../age >= 18',
               },
-              FormTypeInputProps: {
-                placeholder: 'Select gender',
+              presentation: {
+                FieldInputProps: {
+                  placeholder: 'Select gender',
+                },
               },
             },
             preferences: {
@@ -87,20 +89,26 @@ const bigSchema = {
                   type: 'string',
                   enum: ['light', 'dark'],
                   default: 'light',
-                  formType: 'switch',
+                  presentation: {
+                    inputType: 'switch',
+                  },
                 },
                 notifications: {
                   type: 'object',
                   properties: {
                     email: {
                       type: 'boolean',
-                      formType: 'switch',
                       default: true,
+                      presentation: {
+                        inputType: 'switch',
+                      },
                     },
                     sms: {
                       type: 'boolean',
-                      formType: 'switch',
                       default: false,
+                      presentation: {
+                        inputType: 'switch',
+                      },
                     },
                   },
                   required: ['email', 'sms'],
@@ -137,7 +145,9 @@ const bigSchema = {
             '2FA': {
               type: 'boolean',
               default: true,
-              formType: 'switch',
+              presentation: {
+                inputType: 'switch',
+              },
             },
             backupCodes: {
               type: 'array',
@@ -161,7 +171,7 @@ export const FormErrorComponent = () => {
   return (
     <FormProvider
       FormErrorRenderer={FormError}
-      formTypeInputDefinitions={formTypeInputDefinitions}
+      fieldInputDefinitions={fieldInputDefinitions}
     >
       <Form jsonSchema={jsonSchema} showError>
         <Form.Error path="username" />
@@ -174,7 +184,7 @@ export const FormInputComponent = () => {
   return (
     <FormProvider
       FormInputRenderer={FormInput}
-      formTypeInputDefinitions={formTypeInputDefinitions}
+      fieldInputDefinitions={fieldInputDefinitions}
     >
       <Form jsonSchema={jsonSchema} showError>
         <Form.Input path="username" />
@@ -187,7 +197,7 @@ export const FormLabelComponent = () => {
   return (
     <FormProvider
       FormLabelRenderer={FormLabel}
-      formTypeInputDefinitions={formTypeInputDefinitions}
+      fieldInputDefinitions={fieldInputDefinitions}
     >
       <Form jsonSchema={jsonSchema} showError>
         <Form.Label path="username" />
@@ -199,8 +209,8 @@ export const FormLabelComponent = () => {
 export const FormGroupComponent = () => {
   return (
     <FormProvider
-      FormGroupRenderer={FormGroup}
-      formTypeInputDefinitions={formTypeInputDefinitions}
+      FieldRenderer={FormGroup}
+      fieldInputDefinitions={fieldInputDefinitions}
     >
       <Form jsonSchema={bigSchema} showError context={{}} />
     </FormProvider>

@@ -1,0 +1,1 @@
+export { booleanBehavior } from './booleanBehavior';

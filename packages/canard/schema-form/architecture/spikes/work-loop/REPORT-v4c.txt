@@ -1,0 +1,196 @@
+================================================================================
+SPIKE v4c: root onChange ONCE PER OUTERMOST SYNCHRONOUS ENTRY (D-10 (c) / F31)
+Answers round-5 C-8, C-9, C-10 (reviews/round-5-decisions.md §11).
+Throwaway prototype. loop-v4.mjs is untouched; loop-v4c.mjs is derived from it
+by onchange-entry/make-v4c.mjs (14 exact-string edits = the whole diff).
+================================================================================
+
+ENVIRONMENT
+  Node v24.20.0, darwin arm64 (Apple M1 Max per reviews/round-1.md §2).
+  React 19.2.6 + jsdom 26.1.0 + vitest 3.2.6 + @testing-library/react 16.3.0,
+  all resolved from the repository's node_modules. Nothing was installed.
+  Timing method = harness.mjs (reviews/round-1.md §2): calibrated ~25 ms batch,
+  2 s warm-up, 11 samples, median with p25-p75 spread, EVERY case in its OWN
+  process (onchange-entry/run-all.sh). Correctness gate: proto/selfcheck-v4c.mjs
+  = the v4 self-checks pointed at loop-v4c.mjs, ALL PASSING (its g3 already
+  expects "two batches -> two onChange", which is two entries).
+
+FILES
+  proto/loop-v4c.mjs            the prototype (v4 + entry depth)
+  proto/selfcheck-v4c.mjs       v4 self-checks against v4c (sed of selfcheck-v4)
+  proto/build-v4c.mjs           v4 builders against v4c (sed of build-v4)
+  onchange-entry/make-v4c.mjs   derives loop-v4c.mjs from loop-v4.mjs
+  onchange-entry/x5.mjs         devil's X5 + C-8/C-9/C-10 cases, `node x5.mjs v4|v4c`
+  onchange-entry/measure.mjs    timing, one case per process, `node measure.mjs <case> v4|v4c`
+  onchange-entry/run-all.sh     drives everything; writes results.jsonl + output-x5.txt
+  ../events/entry-binding.tsx   React 19 binding of v4c (uSES over revision)
+  ../events/entry.spike.test.tsx  C-10 test (layout effect / passive effect)
+  ../events/vitest.entry.config.mjs, ../events/output-entry.txt
+
+
+1. DEFINITION OF "ENTRY" AS IMPLEMENTED (loop-v4c.mjs header + enter/leave)
+--------------------------------------------------------------------------------
+
+  ENTRY = one call of a PUBLIC WRITE API made while no other public write API
+  of the same root is on the call stack. Public write APIs = the exported
+  functions that stage or structure a value: setValue, write, select,
+  removeKey, push, remove, batch (reset and prime call setValue and are
+  therefore entries through it). Reads, subscribe, attach, declare* are not
+  entries.
+
+  Mechanism: `root.entryDepth`. Each public write API does
+  `enter(node)` (depth 0 -> 1 records root.emit and root.commitNumber)
+  ... body (settle + dispatch as in v4) ... `leave(root, ok)` in `finally`.
+  At depth 1 -> 0, once:
+    (i)  if root.emit !== emit-at-entry:   root.onValidate(root.commitNumber)
+    (ii) if root.emit !== emit-at-entry:   root.onChange(finalEmit,
+             {previous, current, commit: root.commitNumber})
+  Order: validation request first, then onChange (so a write inside onChange,
+  which is a newer entry, produces a newer stamp that supersedes it — F28).
+  `root.commitNumber` (F28) rises once per settle of that root.
+  `lastEntry` exports the facts of the last completed entry (settles, waves,
+  onChange, validation, commit, onChangeDepth, onChangeCapExceeded, aborted).
+
+  Consequences of the definition:
+  - A listener write during a wave runs at depth >= 2 (setValue inside
+    dispatch inside the outer write): it settles and commits immediately
+    (v4 behavior kept) but fires NO onChange; the outer entry fires one with
+    the final emit after the last wave.
+  - `batch(fn)`: one entry; the writes inside sit at depth 2.
+  - A write whose emit reference does not change (equal value rewrite) is an
+    entry with no onChange and no validation request.
+  - A write made INSIDE root.onChange finds depth 0 -> NEW ENTRY -> its own
+    onChange, nested on the stack (the outer onChange has not returned).
+    Cap: root.onChangeDepth >= WAVE_CAP (25) -> the 26th nested entry still
+    APPLIES its write and requests validation but its onChange is skipped,
+    settle.status = 'onchange-cap-exceeded'; dev mode throws
+    `onChange cap exceeded: depth=25` out of the outermost write (the error
+    carries a marker so the outer leave()s rethrow it instead of swallowing
+    it as a listener error).
+  - If the body throws (dev-mode budget throw), leave() only restores the
+    depth (lastEntry.aborted = true): no onChange, no validation for that
+    entry. The commit and the waves already happened (v4 semantics).
+  - onChange errors are isolated (lastSettle.errors), like listener errors.
+  - Depth is per root; two forms written in one handler are two entries.
+
+
+2. X5 BEFORE / AFTER (onchange-entry/output-x5.txt)
+--------------------------------------------------------------------------------
+
+  case                                    v4 (per wave)              v4c (per entry)
+  ------------------------------------------------------------------------------------------
+  X5-seq   3 setValue, no batch (C-8)     onChange=3                 onChange=3 validations=3 entries=3
+  X5-batch 3 setValue in batch(fn)        onChange=1                 onChange=1 validations=1 entries=1
+  X5-feedback listener writes b (C-9)     onChange=2 waves=2         onChange=1 validations=1 waves=2 settles=2
+                                          emits [{a:7},{a:7,b:99}]   emits [{a:7,b:99}] commit=3
+  X5-chain 4 chained listeners            onChange=5 waves=5         onChange=1 validations=1 waves=5 settles=5
+  X5-same  rewrite equal value            onChange +0                onChange +0 validations +0
+  X5-reentry onChange writes b once       onChange=2                 onChange=2 validations=2 entries=2
+                                                                     emits [{a:x},{a:x,b:from-onChange}] commits [2,3]
+  X5-loop  onChange ALWAYS writes         unbounded: the wave cap    capped at 25 nested onChange:
+           (writer self-stops at 200      only RECORDS; 201 waves,   onChange=25 validations=26 writes=25
+           in the script)                 onChange=201; without the  status=onchange-cap-exceeded, waves=1;
+                                          self-stop v4 ran to OOM    dev throws "onChange cap exceeded: depth=25"
+                                          (4 GB heap) — observed
+
+  C-9 is answered: the same "listener writes back" keystroke gives
+  onChange=1, validation=1, waves=2 on v4c (v4: onChange=2, waves=2).
+  C-8 stands as stated: three un-batched setValue calls = three entries =
+  three onChange and three validation requests (today: one, macrotask
+  debounce). batch(fn) collapses them to one. Nothing in (c) merges
+  sibling entries; only the batch API does.
+
+  Note on v4 (per wave): an onChange that writes forms a wave chain that the
+  wave cap records but does not stop (the cap drops nothing, by design B3-4),
+  so an always-writing onChange is an infinite loop in v4 — the OOM above.
+  v4c's onChange nesting cap turns it into a bounded chain of 25.
+
+
+3. TIMING (onchange-entry/results.jsonl; flat 1,000 leaves; per keystroke)
+--------------------------------------------------------------------------------
+
+  case                                 v4         v4c        v4 onChange/op  v4c onChange/op  v4c validations/op
+  keystroke  write f500, no listener   1.36 us    1.37 us    1               1                1
+  feedback   listener writes f501      2.97 us    2.95 us    2               1                1      (2 waves, 2 settles)
+  seq3       3 un-batched writes       4.36 us    4.44 us    3               3                3      (C-8)
+  batch3     same 3 in batch(fn)       1.73 us    1.72 us    1               1                1
+  spreads 3.0-4.4% (p25-p75 / median). The entry counter costs nothing
+  measurable (keystroke +0.01 us, within spread). seq3 vs batch3: three
+  entries cost 2.5x one batch — that is three settles, not the counter.
+
+
+4. REACT CASE (C-10) — ../events/entry.spike.test.tsx, 7/7 passing
+--------------------------------------------------------------------------------
+
+  Setup: v4c root {a, b}. <LeafInput a> (uSES over a.revision, onChange ->
+  write(a, value)). <DerivedField> (uSES over a and b) whose useLayoutEffect
+  (variant 'layout') or useEffect (variant 'passive') writes
+  setValue(b, 'derived:' + a) when a's committed value changed. One
+  keystroke 'x' into a, delivered (i) through RTL fireEvent (act) and (ii) as
+  a native `input` event outside act. Counted via counters.entries,
+  root.onChange, root.onValidate, the DevTools commit hook (commit-counter.ts).
+
+  variant            entries  onChange  validations  React commits  all synchronous?  DOM/emit consistent  1st onChange stale?
+  layout  / act      2        2         2            2              yes (during dispatch)   yes            yes
+  layout  / native   2        2         2            2              yes                     yes            yes
+  passive / act      2        2         2            2              yes                     yes            yes
+  passive / native   2        2         2            2              yes                     yes            yes
+  control: no effect writer      1     1   1   1
+  store listener writes b (not React)  1  1  1  1 commit, 2 settles, 2 waves, effect never ran, DOM b = derived:x
+
+  onChange payloads per keystroke (both variants, both delivery modes):
+    #1 emit {a:'x'}                 commit 2   phase during-dispatch
+    #2 emit {a:'x', b:'derived:x'}  commit 3   phase during-dispatch
+  validation stamps [2, 3].
+
+  Reading:
+  - A React effect that writes after the commit is a NEW entry (entryDepth
+    was 0 when the effect ran — logged). So under (c), "once per edit" is
+    "twice per keystroke" whenever a component derives a value in an effect:
+    2 onChange, 2 validation requests, 2 React commits. This holds for
+    useEffect too: React 19 flushes passive effects of a discrete-event
+    render synchronously at the end of the commit, so both effect kinds land
+    inside the same dispatch call, before the event handler's macrotask ends.
+  - Observable to a consumer: YES. The first onChange carries {a:'x'}
+    without b — an intermediate value the DOM never shows in that state
+    (the layout effect's write commits before paint). A consumer that saves
+    on every onChange saves twice per keystroke and the first save is stale.
+    Validation is requested twice; F28's stamp discards the first result
+    (commit 2 < 3), so correctness holds but the request count does not drop.
+  - The DOM, the emit and the final onChange agree at the end in every
+    variant (no tearing; commits=2 because the effect's write is a second
+    sync render).
+  - The store-listener variant (a v4c listener, not a React effect) is the
+    (c) success case: 1 entry, 1 onChange, 1 commit, 2 waves — the derived
+    write is merged into the keystroke's entry and the DOM shows the final
+    value after one commit.
+
+
+5. AMBIGUITIES (decisions this implementation made; the spec does not say)
+--------------------------------------------------------------------------------
+
+  A1 Validation request condition: "emit reference changed" (same test as
+     onChange), not "a commit happened". A settle that changes only
+     settle.status or a same-value rewrite requests nothing.
+  A2 Order at entry end: validation request BEFORE onChange. If onChange
+     writes, the nested entry's stamp is newer and supersedes.
+  A3 Writes inside onChange = new entry (nested onChange while the outer one
+     is still on the stack). Alternative not implemented: queue them into
+     the current entry (would merge the two saves in C-10 only if the
+     effect ran inside onChange — it does not; it runs after React's commit,
+     outside any entry, so no queueing definition reaches it).
+  A4 Cap for the onChange -> write chain reuses WAVE_CAP (25) as a NESTING
+     depth, distinct from the wave cap (which counts waves inside one
+     dispatch). The capped entry's write is still applied; only its onChange
+     is skipped. v4 has no cap on this chain (OOM observed).
+  A5 A dev-mode budget/wave throw inside an entry aborts that entry's
+     onChange and validation request (lastEntry.aborted); the commit stands.
+  A6 Entry depth is per root. Nothing merges entries across roots or across
+     sibling calls in one event handler — C-8 is a consequence of (c) itself,
+     not of this implementation. Only batch(fn) merges sibling writes.
+  A7 The React "twice per keystroke" cannot be closed by any definition of
+     entry that is synchronous-stack based: React's commit runs after
+     write() returned. Closing it needs either the effect to write through
+     a batch that spans React's commit (React does not expose that seam), a
+     store-level listener instead of an effect (the [listener] variant), or
+     a debounce — which D-10 (c) removed.

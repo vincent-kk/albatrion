@@ -1,0 +1,13 @@
+import { describe, it } from 'vitest';
+
+import { valueScenarios } from '@aileron/schema-form-scenarios';
+
+import { createCoreScenarioAdapter } from './utils/createCoreScenarioAdapter';
+import { runScenario } from './utils/runScenario';
+
+// filid:contract scenario-value
+describe('value scenarios on the core node tree', () => {
+  it.each(valueScenarios)('$name', async (scenario) => {
+    await runScenario(scenario, createCoreScenarioAdapter(scenario));
+  });
+});
