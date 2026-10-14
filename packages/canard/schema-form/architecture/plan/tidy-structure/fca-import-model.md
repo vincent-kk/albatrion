@@ -54,3 +54,12 @@
 - 정돈-2: 시험 import 재작성의 기준을 "자기 index 경유 금지"에서 "어떤 조상의 index도 경유 금지"(B3)로 넓힌다. `surface/FieldNode`를 읽는 settle·core 시험 13건은 B2(삼촌 내부 금지)로 처리한다 — surface index의 공개 이름으로 바꾸거나 시험을 surface로 옮긴다.
 - 정돈-3: 벤치 `bench/*.bench.ts`를 각 대상 fractal의 `__benchmarks__`로 옮기고(B5) DETAIL의 벤치 면제 선언 넷을 지운다. `request.md` §2 F7의 "면제 유지" 결정은 뒤집힌다. `.filid/config.json`의 schema-form `zero-peer-file` 면제를 지운다.
 - 정돈-2 또는 별도: B1 위반(부모 organ이 자식 index·내부를 가져오는 곳)이 있으면 organ을 본체로 옮기거나 organ에서 자식 참조를 걷어낸다. 검사 결과는 `lineage-audit.md`.
+
+## 5. 검사 뒤의 정밀화 제안 (lineage-audit.md §3·§4, 소유자 결정 D8 대기)
+
+| 번호 | 제안 | 까닭 |
+| --- | --- | --- |
+| B6 | 혈통 밖 fractal C가 다른 fractal P 안에 깊이 있을 때, 밖에서는 P의 index로 C의 기능을 쓰고 P의 index가 그것을 재수출할지는 P가 정한다. 밖에서 `P/…/C/index.ts`를 직접 가져오지 않는다 | 서브트리 밖이 쓰는 기능은 서브트리 루트의 index가 방출한다는 소유자 원문의 대우. 직접 가져오면 P의 내부 구조가 밖에 노출된다. filid §3의 "shared parent barrel 금지"는 **자기 조상의** barrel(= B3)에만 적용된다 |
+| B7 | B1의 "자식"은 fractal의 직계 자식 fractal(organ과 같은 층)이다. organ 안에 중첩된 fractal은 그 organ의 내부이므로 같은 organ의 다른 칸이 가져올 수 있다. 검증 organ(`__tests__`·`__benchmarks__`)은 B1의 대상이 아니다 — 아무도 가져오지 않아 순환을 만들 수 없고, 부모 층 통합 시험이 자식 index를 쓰는 것은 "아래로 닫힘"의 허용 경로다 | blueprint의 `utils/analyze`가 `utils/expressions/*` 중첩 fractal을 쓰는 모양과, 시험 O 87을 위반으로 세지 않기 위함 |
+
+검사가 B1의 실제 사례를 하나 찾았다: settle의 organ(`utils/derivation`·`commit`·`context`·`write`)이 자식 `settle/derive`의 index를 가져오고, derive는 settle의 organ 넷을 가져온다 — 층 순환. 해법은 모델대로 derive를 settle의 형제(`engine/derive`)로 올리고 공유 보조 넷을 engine의 organ으로 올리는 것이다(정돈-3).
