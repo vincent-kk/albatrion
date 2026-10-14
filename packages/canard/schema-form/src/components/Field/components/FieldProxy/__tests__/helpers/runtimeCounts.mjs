@@ -5,10 +5,10 @@ import { tmpdir } from 'node:os';
 import { join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-import { prepareReactBundles } from '../../../../../../architecture/verification/07-switch/tools/prepare-react-bundles.mjs';
+import { prepareReactBundles } from '../../../../../../../architecture/verification/07-switch/tools/prepare-react-bundles.mjs';
 
 const packageRoot = fileURLToPath(
-  new URL('../../../../../../', import.meta.url),
+  new URL('../../../../../../../', import.meta.url),
 );
 const tool = resolve(
   packageRoot,

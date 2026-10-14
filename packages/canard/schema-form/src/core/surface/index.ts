@@ -8,7 +8,7 @@ export { finishFieldNodeInput } from './utils/binding/finishFieldNodeInput';
 export { readFieldNodeInteractionReset } from './utils/binding/readFieldNodeInteractionReset';
 export { observeFieldNodeReports } from './utils/binding/observeFieldNodeReports';
 export { interpretFieldNodeDraft } from './utils/binding/interpretFieldNodeDraft';
-export { setContext } from './utils/setContext';
+export { setContext } from './runtime/setContext';
 export { SetValueOption } from './type';
 export { FieldNodeEventType, FieldNodeRequestType } from '../engine';
 export {

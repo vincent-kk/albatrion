@@ -9,7 +9,7 @@ import {
   useReference,
 } from '@winglet/react-utils/hook';
 
-import { DISPLAY_CONTENT, NONE_ROLE } from '@/schema-form/constants';
+import { DISPLAY_CONTENT, NONE_ROLE } from '@/schema-form/constants/style';
 import { FieldNodeEventType } from '@/schema-form/core';
 import { useFieldNode } from '@/schema-form/hooks';
 import { useFieldNodeTracker } from '@/schema-form/hooks';

@@ -1,11 +1,9 @@
-import {
-  FormCore,
-  FormError,
-  FormField,
-  FormInput,
-  FormLabel,
-  FormRender,
-} from './components';
+import { FormCore } from './components/FormCore';
+import { FormError } from './components/FormError';
+import { FormField } from './components/FormField';
+import { FormInput } from './components/FormInput';
+import { FormLabel } from './components/FormLabel';
+import { FormRender } from './components/FormRender';
 
 /**
  * Schema-driven form system with JSON Schema validation and dynamic UI composition.
