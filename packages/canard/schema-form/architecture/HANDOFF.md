@@ -2,9 +2,8 @@
 
 개발의 진행 상황과 다음 할 일은 `PLAN.md`가 단일 진입점으로 든다. 다음 세션이 바로 이어서 일하기 위한 문서다. 이력은 `git log`와 `reviews/`에 있으므로 여기에는 지금 상태, 다음 할 일, 일하는 법만 적는다. 소유자는 Vincent다.
 
-## 1. 지금 어디인가 (2026-10-14, 280라운드 닫힘; 07 전환 진행 중)
+## 1. 지금 어디인가 (2026-10-14, 281라운드 닫힘; 07 전환 진행 중)
 
-- **247라운드(2026-10-13, 소유자).** PR들을 정리하고 다음 작업으로 갈 준비를 하라는 지시(reviews/round-247-owner-answers.md). 순서: #362 보강 재검증·병합 → #361 재기준·병합 → 07b-3 → 정리 커맨드·#354 본문 → 개선-38 준비.
 - **248라운드(2026-10-14, 소유자).** PR #362(07b-2) 병합을 명시적으로 허가했다(reviews/round-248-owner-answers.md). 원장 관리자가 squash 병합한다.
 - **249라운드(2026-10-14, 닫기).** PR #362(07b-2)를 squash 병합했고(switch tip 1dbc1c1c9) 원격 07b-2 가지를 지웠다. fairy07은 #361 재기준·새 이름, fixy07은 07b-3(production-test)을 맡는다(249C-01, reviews/round-249-closing.md).
 - **250라운드(2026-10-14, 소유자).** production-test의 지워진 옛 문법을 지금 새 문법으로 다 바꾸기로 했다(대기열 35 승인, 250C-01, reviews/round-250-owner-answers.md). fixy07이 07b-3의 별도 커밋으로 한다.
@@ -37,7 +36,8 @@
 - **277라운드(2026-10-14, 소유자).** G23 실행 주체 교정: "스토리 도는건 너 말고 다른애 시켜. 넌 관리해야지" — 원장 관리자의 ego-browser 실행을 멈추고 fairy07에게 발주(스토리북 6007, 스크립트 scratchpad/g23-run-all-stories.js). 대기열 39 oneOf 터미널 이유는 원장 관리자가 소유자에게 직접 답함(reviews/round-277-owner-answers.md).
 - **278라운드(2026-10-14, 소유자).** 대기열 40 내용 질문에 답했고, 39의 고침 방향을 소유자 지적대로 명세의 덮어쓰기 규칙(게이트 없는 분기 선언도 전체 순서에서 나중 승)으로 정정해 fixy07의 07d 브리프를 고침(reviews/round-278-owner-answers.md).
 - **279라운드(2026-10-14, 소유자).** "좋아 쭉 작업해 다시" — 39 세부 결정(분기가 호스트 자신에 단 terminal은 무시) 승인으로 읽고 07d·G23을 기다려 병합·보고(reviews/round-279-owner-answers.md).
-- **280라운드(2026-10-14, 소유자).** 38의 verifier 결함(스키마 모양 판정과 입력 선출의 어긋남)에 소유자가 "자유도를 해치지 않고 사용 방식에 따라 맞추게" 답해, 라벨은 항상 htmlFor와 id를 갖고 묶음은 aria-labelledby로 제목을 가리키는 추측 없는 규약으로 바꿔 fixy07에게 보냄(reviews/round-280-owner-answers.md). alias 자리는 문제없음. 다음 라운드 번호는 281.
+- **280라운드(2026-10-14, 소유자).** 38의 verifier 결함(스키마 모양 판정과 입력 선출의 어긋남)에 소유자가 "자유도를 해치지 않고 사용 방식에 따라 맞추게" 답해, 라벨은 항상 htmlFor와 id를 갖고 묶음은 aria-labelledby로 제목을 가리키는 추측 없는 규약으로 바꿔 fixy07에게 보냄(reviews/round-280-owner-answers.md). alias 자리는 문제없음.
+- **281라운드(2026-10-14, 소유자).** "할거 다 하고 PR을 머지하고 다음으로 가자. 7단계가 너무 비대해졌네" — #370·Prettier PR·G23을 끝낸 뒤 #354를 병합하고, 디렉터리·구성 다듬기는 새 단계(08)로(reviews/round-281-owner-answers.md). 다음 라운드 번호는 282.
 - **그 앞의 라운드 요지(19라운드부터)는 PLAN-LOG.md 2절에 있다.** 라운드마다 한 문단이며, 1절의 기록 표와 같은 순서다.
 - **설계의 정본은 단일 원장 `ledger/`다.** 영역 17개, 항목 1,350개(80라운드 뒤, 24라운드 뒤 1,348; 현행 1,076(부정 결정·기록 포함), 대체됨 199, 분할됨 49, 중복 24, 열림 0). 형식과 규칙은 `ledger/README.md`.
 - **옛 설계 문서(`00`–`09`, `adr/`, `open-questions.md`)는 동결됐다.** 더 고치지 않는다. 어긋남은 원장의 충돌 칸에 적는다. 원장이 인용하는 옛 문서의 `path:line`은 모두 커밋 `ba398c330` 기준 줄 번호다(그 뒤 옛 문서는 바뀌지 않았다).
@@ -418,6 +418,7 @@ node ledger/checks/doc-coverage.mjs design/*.md adr/*.md -- ledger/*.md   # 설�
 | `reviews/round-278-owner-answers.md` | 278라운드 소유자 물음: 대기열 40 내용, 39 덮어쓰기 규칙 정정 |
 | `reviews/round-279-owner-answers.md` | 279라운드 소유자 답: 계속 진행 |
 | `reviews/round-280-owner-answers.md` | 280라운드 소유자 답: 38 자유도 유지 규약, alias 자리 확인 |
+| `reviews/round-281-owner-answers.md` | 281라운드 소유자 답: 다음 단계 방향 |
 | reviews 아래 improvement-38-explain.html | 개선-38 소유자용 설명(seiri:explain) |
 | reviews 아래 improvement-38-fractal-map.md | 개선-38 고찰 문서(reviewer, verifier 대조판) |
 | reviews 아래 raw-improvement-38 디렉터리 | 개선-38 근거: 소비자 증거 표, filid 요약 |
