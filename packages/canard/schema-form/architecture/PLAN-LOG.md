@@ -569,3 +569,4 @@
 - **336라운드(2026-10-15, 소유자).** 결정 여덟 확정(reviews/round-336-owner-answers.md).
 - **337라운드(2026-10-15, 소유자).** Roll을 정의 자리에서, rolled 칸 제거(reviews/round-337-owner-answers.md).
 - **338라운드(2026-10-15, 소유자).** Roll 실험 실패, rolled 칸 유지·Rolled 접두사(reviews/round-338-owner-answers.md).
+- **339라운드(2026-10-15, 닫기/원장 관리자).** 묶음 1 #387 병합, 편집자 결정 넷, CLAUDE.md 갱신(reviews/round-339-closing.md).
