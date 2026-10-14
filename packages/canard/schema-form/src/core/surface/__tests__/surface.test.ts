@@ -99,7 +99,6 @@ describe('FieldNode PR-2 surface', () => {
       'isUnionNode',
       'isVirtualNode',
       'mountFieldNode',
-      'nodeFromJSONSchema',
       'observeFieldNodeReports',
       'readFieldNodeInteractionReset',
       'reloadFieldNodeForm',

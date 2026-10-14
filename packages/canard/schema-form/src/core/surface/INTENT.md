@@ -4,7 +4,7 @@
 
 ## Purpose
 
-단일 런타임 클래스, 공개 노드 형·가드와 트리 생성·마운트 통로를 조합합니다. nodeFromJSONSchema도 같은 생성 통로를 사용하는 core 호스트 진입입니다.
+단일 런타임 클래스, 공개 노드 형·가드와 트리 생성·마운트 통로를 조합합니다. `utils/nodeFromJSONSchema`는 같은 생성 통로를 잇는 내부 도우미이며 진입점이 내보내지 않습니다.
 
 ## Conventions
 

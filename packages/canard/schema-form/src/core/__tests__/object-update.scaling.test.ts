@@ -1,6 +1,6 @@
 import { afterEach, expect, it, vi } from 'vitest';
 
-import { nodeFromJSONSchema } from '../index';
+import { nodeFromJSONSchema } from '../surface/utils/nodeFromJSONSchema';
 
 afterEach(() => vi.restoreAllMocks());
 

@@ -37,7 +37,7 @@ Each form above is rendered with the [antd6-plugin](../schema-form-antd6-plugin/
 JSON Schema
     │
     ▼
-nodeFromJSONSchema()          ← builds a typed node tree
+<Form jsonSchema>             ← builds a typed node tree
     │
     ├── StringNode / NumberNode / BooleanNode / NullNode   (terminal)
     ├── ObjectNode / ArrayNode                             (branch)
@@ -168,7 +168,7 @@ import { JSONPointer } from '@canard/schema-form';
 
 ### Architecture
 - No default validator or UI — both via plugins: `registerPlugin(plugin)`
-- Node tree: JSON Schema → nodeFromJSONSchema() → typed node tree
+- Node tree: JSON Schema → `<Form>` → typed node tree
 - Input resolution: Direct prop > fieldInputMap > form-level > FormProvider > plugin
 
 </ForAI>

@@ -4,7 +4,8 @@ import { createElement } from 'react';
 
 import { describe, expect, it } from 'vitest';
 
-import { type AuthoredSchema, nodeFromJSONSchema } from '../../../index';
+import { type AuthoredSchema } from '../../../index';
+import { nodeFromJSONSchema } from '../../../surface/utils/nodeFromJSONSchema';
 import { blueprint } from '../blueprint';
 import type { BlueprintSchema } from '../type';
 import { createBlueprintGate } from '../utils/analyze/createBlueprintGate';

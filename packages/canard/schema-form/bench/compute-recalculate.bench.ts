@@ -1,6 +1,7 @@
 import { bench, describe } from 'vitest';
 
-import { type AuthoredSchema, nodeFromJSONSchema } from '@/schema-form/core';
+import { type AuthoredSchema } from '@/schema-form/core';
+import { nodeFromJSONSchema } from '@/schema-form/core/surface/utils/nodeFromJSONSchema';
 
 /** Creates a public-core write/settle lane; includes dispatch unlike the legacy evaluator-only lane. */
 function createRecalculation(schema: AuthoredSchema) {

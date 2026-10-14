@@ -1,11 +1,7 @@
 import { describe, expect, it } from 'vitest';
 
-import {
-  type AuthoredSchema,
-  type FieldNode,
-  ValidationMode,
-  nodeFromJSONSchema,
-} from '../index';
+import { type AuthoredSchema, type FieldNode, ValidationMode } from '../index';
+import { nodeFromJSONSchema } from '../surface/utils/nodeFromJSONSchema';
 import { createTestValidator } from './fixtures/createTestValidator';
 
 /** A recursive file tree under a root key containing "/" and "~" (07c composite.finding-recursive-nested-gate). */

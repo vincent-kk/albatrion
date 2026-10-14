@@ -2,7 +2,8 @@ import { bench, describe } from 'vitest';
 
 import { clone } from '@winglet/common-utils/object';
 
-import { ValidationMode, nodeFromJSONSchema } from '@/schema-form/core';
+import { ValidationMode } from '@/schema-form/core';
+import { nodeFromJSONSchema } from '@/schema-form/core/surface/utils/nodeFromJSONSchema';
 import type { JSONSchema } from '@/schema-form/types';
 
 /**
@@ -15,7 +16,7 @@ import type { JSONSchema } from '@/schema-form/types';
  *   git checkout <recent-version> && yarn bench:baseline   # snapshot the baseline
  *   git checkout <new-version>    && yarn bench:compare     # diff against baseline
  *
- * "Render delay" here is the node-tree mount through the core entry, without
+ * "Render delay" here is the node-tree mount through the internal nodeFromJSONSchema helper, without
  * React or JSDOM. React Profiler measurements live in benchmark-form.
  *
  * Two layers are tracked so a regression points at its cause:

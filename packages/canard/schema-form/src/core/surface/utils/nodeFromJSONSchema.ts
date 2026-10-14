@@ -1,19 +1,20 @@
 import type { Dictionary } from '@aileron/declare';
 
-import type { FormErrorReporter } from '../../errors';
-import type { InferValueType } from '../../types/value';
+import type { FormErrorReporter } from '../../../errors';
+import type { InferValueType } from '../../../types/value';
 import type {
   AuthoredSchema,
   BlueprintOptions,
   ValidationMode,
   Validator,
-} from '../engine';
-import type { InferFieldNode } from './type';
-import { buildFieldNodeTree } from './utils/binding/buildFieldNodeTree';
-import { mountFieldNode } from './utils/binding/mountFieldNode';
+} from '../../engine';
+import type { InferFieldNode } from '../type';
+import { buildFieldNodeTree } from './binding/buildFieldNodeTree';
+import { mountFieldNode } from './binding/mountFieldNode';
 
 /**
- * Core-only host entry; <Form> calls the same build channel through binding-only functions.
+ * Internal surface helper imported by file path by tests, bench and aileron benchmarks.
+ * <Form> calls the same build channel through binding-only functions.
  * @param props - Authored schema, initial value, services and host predicates;
  * invalid schemas fail during construction, before mounting.
  * @param props.isTerminal - Renderer predicate accepting raw object or boolean schemas;

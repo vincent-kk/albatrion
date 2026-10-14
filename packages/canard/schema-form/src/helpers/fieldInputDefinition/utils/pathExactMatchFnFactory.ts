@@ -1,7 +1,8 @@
 import { SchemaFormError } from '@/schema-form/errors';
-import { formatFieldInputMapError } from '@/schema-form/helpers/error';
 import { stripFragment } from '@/schema-form/helpers/jsonPointer';
 import type { FieldInputTestFn } from '@/schema-form/types';
+
+import { formatFieldInputMapError } from './formatFieldInputMapError';
 
 /** Compile an exact or regular-expression path matcher; reject invalid patterns. */
 export const pathExactMatchFnFactory = (

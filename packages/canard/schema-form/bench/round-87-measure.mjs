@@ -66,7 +66,7 @@ globalThis.__round87 = (kind, node, context) => {
 /** Compile variants in isolation, replacing only specified source in memory. */
 async function engine(variant, traced = false) {
   const result = await build({
-    stdin: { contents: `export { nodeFromJSONSchema } from './src/core/surface/nodeFromJSONSchema';
+    stdin: { contents: `export { nodeFromJSONSchema } from './src/core/surface/utils/nodeFromJSONSchema';
       export { createTestTree } from './src/core/engine/settle/__tests__/fixtures/createTestTree';
       export { loadFieldNodeAtMount } from './src/core/engine/settle';
       export { markCommitDeliveries } from './src/${delivery}';
