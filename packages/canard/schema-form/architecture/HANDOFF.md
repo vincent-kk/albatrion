@@ -2,7 +2,7 @@
 
 개발의 진행 상황과 다음 할 일은 `PLAN.md`가 단일 진입점으로 든다. 다음 세션이 바로 이어서 일하기 위한 문서다. 이력은 `git log`와 `reviews/`에 있으므로 여기에는 지금 상태, 다음 할 일, 일하는 법만 적는다. 소유자는 Vincent다.
 
-## 1. 지금 어디인가 (2026-10-15, 346라운드 닫힘(묶음 2 #389 병합 085676f77, 결정 55·56, NODE-049 대체); 8단계 첫 토막 구조 정리를 밤까지 자율 진행 — 원장 기반 판단, 결정 대기열 54–56, PR 검토·병합 허용, codex·agy 분산; 묶음 1 #387·묶음 2 #389·misfit 문서 #388 병합, 인계 결함 PR 진행, 묶음 3 셋과 visitSubtree 문서 뒤 속도 루프는 소유자가 — 브랜치 feat/schema-form-08-review-and-perf)
+## 1. 지금 어디인가 (2026-10-15, 347라운드 닫힘(인계 결함 #391·visitSubtree 문서 #390·속도 계획 #392 병합, 끝 42811f452); 8단계 첫 토막 구조 정리를 밤까지 자율 진행 — 원장 기반 판단, 결정 대기열 54–56, PR 검토·병합 허용, codex·agy 분산; 묶음 1 #387·묶음 2 #389·misfit 문서 #388 병합, 묶음 3 blueprint PR 진행, 묶음 3 셋과 visitSubtree 문서 뒤 속도 루프는 소유자가 — 브랜치 feat/schema-form-08-review-and-perf)
 
 - **264라운드(2026-10-14, 소유자).** 고유명사 후보 15 중 1·3·4·5·6·7·8·9·10·11·15를 권고대로 승인했고, 2(ChildField 이름 길이)·12(controls.children 대체 이름)·13(propertyKeys 공개 자리·이름)·14(virtual을 object 전용 키로)는 추가 논의, 비표준 최상위 키의 잔여 점검을 요구했다(reviews/round-264-owner-answers.md).
 - **265라운드(2026-10-14, 소유자).** 추가 논의 넷을 닫았다: ChildFields, controls.fields, options.propertyOrder(object 전용), options.virtual 형 선언과 VirtualSchema 비공개화, nullable: true 제거(265C-01 후속 대응표, reviews/round-265-owner-answers.md). 07b-5 후속 커밋으로 fixy07에게.
@@ -84,7 +84,8 @@
 - **343라운드(2026-10-15, 소유자).** 묶음 2를 마무리까지, 새 로직이 들어가니 전체 게이트 한 번(약식 규칙의 예외)과 verifier(reviews/round-343-owner-answers.md).
 - **344라운드(2026-10-15, 소유자).** 밤까지 속도 루프 전 작업 자율 진행: 원장 기반 판단으로 fixy08·fairy08을 이끌고, PR 검토·병합 허용, 꼭 필요한 결정만 대기열(진행 차단 금지), codex·agy 멀티에이전트로 사용량 분산(334라운드 대체). 목표는 소유자 복귀 때 검증·검토 끝난 feat/schema-form-08-review-and-perf(reviews/round-344-owner-answers.md).
 - **345라운드(2026-10-15, 소유자).** 작업이 끝난 브랜치는 바로 정리해 불필요하게 늘어나지 않게 한다: PR squash 병합 때 원격 가지 삭제, 작업자는 병합 통지 즉시 로컬 가지 삭제와 워크트리 분리 HEAD 이동. misfit 문서 PR #388은 병합(509f0ae3b)(reviews/round-345-owner-answers.md).
-- **346라운드(2026-10-15, 닫기/원장 관리자).** 묶음 2 PR #389를 검증 다섯 번(verifier 둘·codex·agy·원장 관리자 verifier) 뒤 squash 병합(085676f77): WeakMap→Map·Set, inheritDoc 정리, 정규식·상수 끌어올리기, 템플릿 리터럴 연결, schemaType JSON 형 한정, 순회 한 벌과 공개 visitSubtree. 편집자 결정 일곱(346C-01 떼어진 시작 노드는 함께 떼어진 하위를 걷음, 346C-02 순회 안 정착 밖 진입은 끝에 한 번, 346C-03 떼어진 쓰기는 batch 안에서도 표시하지 않고 생사 판정은 직전 커밋 형상, 346C-04·05 SURFACE-062 문장 정정 둘, 346C-06 NODE-049 inheritDoc 관례 대체, 346C-07 병합 기록과 후속 둘)(reviews/round-346-closing.md). 다음 라운드 번호는 347.
+- **346라운드(2026-10-15, 닫기/원장 관리자).** 묶음 2 PR #389를 검증 다섯 번(verifier 둘·codex·agy·원장 관리자 verifier) 뒤 squash 병합(085676f77): WeakMap→Map·Set, inheritDoc 정리, 정규식·상수 끌어올리기, 템플릿 리터럴 연결, schemaType JSON 형 한정, 순회 한 벌과 공개 visitSubtree. 편집자 결정 일곱(346C-01 떼어진 시작 노드는 함께 떼어진 하위를 걷음, 346C-02 순회 안 정착 밖 진입은 끝에 한 번, 346C-03 떼어진 쓰기는 batch 안에서도 표시하지 않고 생사 판정은 직전 커밋 형상, 346C-04·05 SURFACE-062 문장 정정 둘, 346C-06 NODE-049 inheritDoc 관례 대체, 346C-07 병합 기록과 후속 둘)(reviews/round-346-closing.md).
+- **347라운드(2026-10-15, 닫기/원장 관리자).** PR 셋 병합: visitSubtree 공개 문서 #390(6b4934bf9), 속도 계획 개정 #392(d403d1658, 루프 base는 이 가지, 대기열 55·56 인용, bench 스크립트는 재실행 불가 사유를 적어 보존), 전달 중 인계 결함 수정 #391(42811f452; debugger·codex 둘·verifier·production 게이트). 편집자 결정 셋(347C-01 인계는 새 런타임에서 사슬을 끝내고 지나간 런타임을 모두 되돌림, 347C-02 물러난 루트로의 인계는 DISPOSED_NODE_WRITE로 거부, 347C-03 문서 PR 기록과 후속 둘)(reviews/round-347-closing.md). 다음 라운드 번호는 348.
 - **그 앞의 라운드 요지(19라운드부터)는 PLAN-LOG.md 2절에 있다.** 라운드마다 한 문단이며, 1절의 기록 표와 같은 순서다.
 - **설계의 정본은 단일 원장 `ledger/`다.** 영역 17개, 항목 1,350개(80라운드 뒤, 24라운드 뒤 1,348; 현행 1,076(부정 결정·기록 포함), 대체됨 199, 분할됨 49, 중복 24, 열림 0). 형식과 규칙은 `ledger/README.md`.
 - **옛 설계 문서(`00`–`09`, `adr/`, `open-questions.md`)는 동결됐다.** 더 고치지 않는다. 어긋남은 원장의 충돌 칸에 적는다. 원장이 인용하는 옛 문서의 `path:line`은 모두 커밋 `ba398c330` 기준 줄 번호다(그 뒤 옛 문서는 바뀌지 않았다).
@@ -525,6 +526,7 @@ node ledger/checks/doc-coverage.mjs design/*.md adr/*.md -- ledger/*.md   # 설�
 | `reviews/round-344-owner-answers.md` | 344라운드 소유자: 밤까지 자율 진행, 결정 대기열, PR 병합 허용, codex·agy |
 | `reviews/round-345-owner-answers.md` | 345라운드 소유자: 작업 끝난 브랜치 즉시 정리 |
 | `reviews/round-346-closing.md` | 346라운드 닫기: 묶음 2 #389 병합, 결정 55·56, batch 안 떼어진 쓰기, 문장 정정 둘, NODE-049 대체 |
+| `reviews/round-347-closing.md` | 347라운드 닫기: 인계 결함 #391, 문서 #390·#392 병합, 물러난 루트 인계 거부 |
 | plan/tidy-structure/walk-subtree-design.md | 공개 visitSubtree 설계(342라운드 확정판) |
 | plan/tidy-structure/array-limits-review.md | 배열 한도를 core가 다룰 때의 유익·손해 비교(대기열 53 검토 메모, 권고 포함) |
 | `reviews/round-297-closing.md` | 297라운드 편집자 결정 하나: 정돈-1(#374) 병합, 정돈-2 투입 |
