@@ -4,12 +4,18 @@ import {
   type ReactElement,
   memo,
   useCallback,
+  useLayoutEffect,
+  useRef,
 } from 'react';
 
 import type {
   FieldInputDefinition,
   FieldInputProps,
 } from '@/schema-form/types';
+
+import { EmptySlot } from './FieldInputArray/components/EmptySlot';
+import { fillArraySlot } from './FieldInputArray/utils/fillArraySlot';
+import { readSlotKind } from './FieldInputArray/utils/readSlotKind';
 
 /** Forward list-affecting props while each child retains its own value subscription. */
 const FieldInputArray = ({
@@ -19,6 +25,7 @@ const FieldInputArray = ({
   disabled,
   ChildFields,
   style,
+  onChange,
 }: FieldInputProps<any[]>) => (
   <ArrayItems
     node={node}
@@ -27,6 +34,7 @@ const FieldInputArray = ({
     disabled={disabled}
     ChildFields={ChildFields}
     style={style}
+    onChange={onChange}
     childCount={node.children?.length ?? 0}
   />
 );
@@ -39,10 +47,17 @@ const ArrayItems = memo(function ArrayItems({
   disabled,
   ChildFields,
   style,
+  onChange,
   childCount,
 }: Pick<
   FieldInputProps<any[]>,
-  'node' | 'jsonSchema' | 'readOnly' | 'disabled' | 'ChildFields' | 'style'
+  | 'node'
+  | 'jsonSchema'
+  | 'readOnly'
+  | 'disabled'
+  | 'ChildFields'
+  | 'style'
+  | 'onChange'
 > & { childCount: number }) {
   const handleClick = useCallback(() => {
     node.push();
@@ -57,6 +72,22 @@ const ArrayItems = memo(function ArrayItems({
     },
     [node],
   );
+  const container = useRef<HTMLDivElement>(null);
+  const focusRow = useRef<number | null>(null);
+  /** Write a slot position as input, then let the commit that mounts its row take focus. */
+  const handleSlotWrite = useCallback(
+    (index: number, value: unknown) => {
+      focusRow.current = index;
+      onChange(fillArraySlot(node.value, index, value));
+    },
+    [node, onChange],
+  );
+  useLayoutEffect(() => {
+    if (focusRow.current === null || focusRow.current >= childCount) return;
+    const row = container.current?.children[focusRow.current];
+    focusRow.current = null;
+    row?.querySelector<HTMLElement>('input, select, textarea, button')?.focus();
+  });
   const rows: ReactElement[] = [];
   for (let index = 0; ChildFields && index < ChildFields.length; index++) {
     const ChildField = ChildFields[index];
@@ -76,8 +107,26 @@ const ArrayItems = memo(function ArrayItems({
       </div>,
     );
   }
+  const slotEnd = Math.min(
+    jsonSchema.minItems ?? 0,
+    jsonSchema.maxItems ?? Infinity,
+  );
+  for (let index = childCount; index < slotEnd; index++)
+    rows.push(
+      <EmptySlot
+        key={`slot:${index}`}
+        index={index}
+        kind={readSlotKind(jsonSchema, index)}
+        readOnly={readOnly}
+        disabled={disabled}
+        onWrite={handleSlotWrite}
+      />,
+    );
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: 5, ...style }}>
+    <div
+      ref={container}
+      style={{ display: 'flex', flexDirection: 'column', gap: 5, ...style }}
+    >
       {rows}
       {!readOnly && (jsonSchema.maxItems ?? Infinity) > childCount && (
         <label
