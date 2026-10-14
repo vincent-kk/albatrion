@@ -513,3 +513,4 @@
 - **288라운드(2026-10-14, 소유자).** filid 이슈는 초안만 두고 규칙 위반/결함을 가린 뒤 등록, CLAUDE.md 자리 검토, 수정 계획을 먼저 보일 것(reviews/round-288-owner-answers.md). 계획: plan/tidy-structure/request.md.
 - **289라운드(2026-10-14, 소유자).** 정돈 결정 D1–D6 확정, filid 이슈 본문은 규칙 결함 셋·도구 결함 하나이며 정돈-2 뒤 등록(reviews/round-289-owner-answers.md). 정돈 단계 `진행`.
 - **290라운드(2026-10-14, 소유자).** 정돈 작업자 fixy08·fairy08 지정, 원장 관리자는 관리만(reviews/round-290-owner-answers.md). 정돈-1 브리프 발송.
+- **291라운드(2026-10-14, 소유자).** 문자열 리터럴 규약 금지 원칙, 정돈 → 구조 리뷰 → 최적화 순서(reviews/round-291-owner-answers.md). 전수 판정 plan/tidy-structure/string-literal-audit.md.

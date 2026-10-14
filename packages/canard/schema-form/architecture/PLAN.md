@@ -87,3 +87,4 @@
 | 2026-10-14 | 288라운드 소유자 지시: filid 이슈는 초안만(규칙 위반/결함 가린 뒤 등록), CLAUDE.md 자리 검토, 수정 계획 제시 → `plan/tidy-structure/request.md`. 보충 1줄 | `reviews/round-288-owner-answers.md` |
 | 2026-10-14 | 289라운드 소유자 답: 정돈 D1–D6 확정(진행, nodeFromJSONSchema 하향·문서 삭제, providers organ 둘, 오류 코드 object enum root export, 가이드 자리, 이슈는 정돈-2 뒤). 보충 1줄 | `reviews/round-289-owner-answers.md` |
 | 2026-10-14 | 290라운드 소유자 지시: 작업자 fixy08·fairy08, 원장 관리자는 관리만. 정돈-1 브리프 발송 | `reviews/round-290-owner-answers.md` |
+| 2026-10-14 | 291라운드 소유자: 리터럴 규약 금지(JSON Schema type 제외), 순서 정돈 → 구조 리뷰 → 최적화. 전수 판정 string-literal-audit.md, 정돈-E E1–E5 | `reviews/round-291-owner-answers.md` |
