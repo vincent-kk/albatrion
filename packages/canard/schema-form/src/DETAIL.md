@@ -95,7 +95,7 @@ NODE-059의 형 없는 인라인 객체·배열 oneOf·anyOf는 분기 값 형�
 ### union-input-types — 읽기 전용 종류 튜플은 값 합집합을 보존한다
 
 - 실제 공개 `InferValueType`과 `FieldInputProps`를 사용한 시험에서 선언한 종류의 값은 허용하고 목록 밖 값은 타입 오류로 거부한다.
-- `InferJSONSchema`는 서로 다른 비-null 종류의 값 합집합을 하나의 type 튜플로 추론하며, 이에 대응하는 입력 노드는 `UnionNode`이다(LANDING-190). 같은 종류의 리터럴 합집합과 nullable 단일 종류는 기존 종류 노드를 유지한다.
+- `FieldInputProps`가 쓰는 내부 `InferFieldInputSchema`는 서로 다른 비-null 종류의 값 합집합을 하나의 type 튜플로 추론하며, 이에 대응하는 입력 노드는 `UnionNode`이다(LANDING-190). 같은 종류의 리터럴 합집합과 nullable 단일 종류는 기존 종류 노드를 유지한다.
 - 정규화는 튜플 원소와 원래 type 프로퍼티의 필수·선택 여부를 보존한다.
 
 ### public-value-inference — 형 없는 스키마의 공개 값 형

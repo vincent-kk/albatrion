@@ -39,11 +39,6 @@ export type {
   VirtualNodeValue,
   AllowedValue,
   InferValueType,
-  BooleanValue,
-  NumberValue,
-  StringValue,
-  ArrayValue,
-  ObjectValue,
   NullValue,
   UndefinedValue,
 } from './schema/value';

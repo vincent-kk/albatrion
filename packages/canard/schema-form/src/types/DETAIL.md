@@ -29,7 +29,7 @@
 - 공개 형이 내부 형의 변경을 반영하면서 `Roll` 변환을 유지합니다.
 - 공개 형을 참조해도 런타임 초기화나 상태가 생기지 않습니다.
 
-## Decisions
+## History
 
 - 2026-10-15(8단계 소유자 리뷰 1차, 332·337·338라운드): 형제 fractal `src/rolled`를 이 fractal의 `rolled/` 칸으로 강등해 합쳤습니다. 이전 역할 칸 `types/types`는 관심사별 칸 `schema/`·`field/`·`error/`로 나뉘었습니다. `rolled`가 형제였던 이유는 공개 이름 열여덟이 내부 형과 같아 한 관문에 함께 실을 수 없었기 때문이며, 공개 쪽에 `Rolled` 접두사를 붙이고 루트 index에서 이름을 바꿔 그 충돌을 없앴습니다. 정의 자리에서 `Roll`로 펴는 안은 스키마 형의 재귀 때문에 성립하지 않았습니다. `rolled`의 `form.ts`(Form 조각 형 셋)는 `components/Form`의 각 자식 fractal `types/` 칸으로 옮겼습니다.
 
