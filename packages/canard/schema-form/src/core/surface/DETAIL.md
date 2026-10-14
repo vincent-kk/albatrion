@@ -13,6 +13,7 @@
 - 진입점은 클래스 이름과 겹치는 런타임 생성자를 내보내지 않고 공개 판별 합집합 `FieldNode` 타입, 종류별 노드 타입, 가드 열, `InferFieldNode`, 공개 옵션 `SetValueOption`, `fieldNodeFactory`와 `record`가 소유한 `FieldNodeEventType`·`FieldNodeRequestType`을 이름으로 내보냅니다. 노드 형·가드와 사건·명령 열거는 패키지 공개 진입점에서도 이름으로 내보냅니다(SURFACE-056·060, EVENT-073, LANDING-067·158). `fieldNodeFactory(schema: Blueprint, runtimeSeed: FieldNodeRuntimeSeed, validator?: Validator): FieldNode`는 팩토리가 결합하는 `nodeFactory`·`blueprint` 칸과 정착이 지연 생성하는 `settlementScratch` 칸을 제외한 트리 입력과 선택 검증기를 받습니다. 경로 색인 저장소 `latentRaw`·`typeMismatchPaths`·`inactiveValuesMemo`는 시드가 주지 않으면 팩토리가 빈 색인 저장소로 만들어, 호출자가 core 내부 클래스를 가져오지 않게 합니다. 트리마다 한 번 완성한 런타임에 실제 생성 함수를 결합합니다. 청사진 `kind`·`strategy`로 `BEHAVIORS[type][strategy]`를 골라 같은 클래스의 인스턴스를 만듭니다(NODE-008·010·045·046, WRITE-015). 빈 생성 함수 스텁을 호출자에게 요구하지 않습니다.
 - 아래 표의 `getter`는 필드 또는 계산 메모 읽기이며 `method`는 문장 하나의 위임입니다. 구현 클래스는 `FieldNodeRecord<FieldNode>`를 구현하고 위임 메서드에서 `FieldNode` 자기 타입을 전달합니다. 종류별 생성 표·`InferFieldNode` overload로 단언 없이 좁힙니다(NODE-046).
 
+<!-- prettier-ignore -->
 | 멤버 | 종류 | 위임·읽기 대상 | 원장 |
 | --- | --- | --- | --- |
 | `type` | getter | `behavior.type` | NODE-002 |
@@ -84,17 +85,17 @@
 
 통로의 몸은 `engine/write/`의 진입 함수가 소유합니다. `surface/index.ts`의 겉면은 공개 `FieldNode` 형을 받는 이름 있는 함수이며, `core/index.ts`가 와일드카드 없이 이름으로 다시 내보내고 `src/index.ts`는 내보내지 않습니다. 각 함수의 문서 주석은 `binding-only; not exported from src/index.ts`를 명시합니다(69C-01, LANDING-064, 실행 ADR D2).
 
-| 함수 | 계약 | 원장 |
-| --- | --- | --- |
-| `buildFieldNodeTree(props)` | 청사진 작성과 팩토리 결합으로 트리를 만들며 마운트하지 않습니다 | 70C-01, VALIDATE-010 |
-| `mountFieldNode(root, value?, option?, { deferValidation? })` | 루트 로드를 마운트하고 검증 요청의 미룸 선택을 받습니다 | 69C-01·05, LANDING-041 |
-| `reloadFieldNodeForm(root, value, option?)` | 명시적인 `undefined`를 포함한 필수 로드 값으로 트리는 유지한 채 폼 수준 reset을 수행하고 외부 오류와 검증 결과를 비웁니다. 선택적 자동 쓰기 비트는 그 로드에만 적용됩니다 | WRITE-015·043·045, 69C-03 |
-| `adoptFieldNodeTree(previousRoot, nextRoot)` | 재생성 트리로 사슬과 경로 키 외부 오류를 인계하고 옛 트리를 폐기합니다 | 69C-02·03, WRITE-046 |
-| `writeFieldNodeInput(node, value, option)` | 입력 출처 표식을 실은 쓰기로 `handleChange` 진입 전체를 구별합니다 | REACT-009·010, 69C-01 |
-| `finishFieldNodeInput(node)` | 입력 마침을 동작 행의 `finishInput`으로 보내 자동 쓰기 계약을 적용합니다 | WRITE-083, 69C-01 |
-| `readFieldNodeInteractionReset(node)` | 사건 개정과 별개인 노드의 상호작용 초기화 번호를 읽습니다 | REACT-024, 69C-02 |
-| `observeFieldNodeReports(root, deliver)` | core 오류 관찰자 범위에서 전달을 실행하고 중첩·예외에도 이전 범위를 복원합니다 | ERROR-113, 69C-01 |
-| `interpretFieldNodeDraft(node, draft)` | 현재 유효 타입 목록으로 기존 순수 해석기를 호출하여 값과 멤버 여부를 쓰기 없이 돌려줍니다 | REACT-033, 69C-01 |
+| 함수                                                          | 계약                                                                                                                                                                      | 원장                      |
+| ------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------- |
+| `buildFieldNodeTree(props)`                                   | 청사진 작성과 팩토리 결합으로 트리를 만들며 마운트하지 않습니다                                                                                                           | 70C-01, VALIDATE-010      |
+| `mountFieldNode(root, value?, option?, { deferValidation? })` | 루트 로드를 마운트하고 검증 요청의 미룸 선택을 받습니다                                                                                                                   | 69C-01·05, LANDING-041    |
+| `reloadFieldNodeForm(root, value, option?)`                   | 명시적인 `undefined`를 포함한 필수 로드 값으로 트리는 유지한 채 폼 수준 reset을 수행하고 외부 오류와 검증 결과를 비웁니다. 선택적 자동 쓰기 비트는 그 로드에만 적용됩니다 | WRITE-015·043·045, 69C-03 |
+| `adoptFieldNodeTree(previousRoot, nextRoot)`                  | 재생성 트리로 사슬과 경로 키 외부 오류를 인계하고 옛 트리를 폐기합니다                                                                                                    | 69C-02·03, WRITE-046      |
+| `writeFieldNodeInput(node, value, option)`                    | 입력 출처 표식을 실은 쓰기로 `handleChange` 진입 전체를 구별합니다                                                                                                        | REACT-009·010, 69C-01     |
+| `finishFieldNodeInput(node)`                                  | 입력 마침을 동작 행의 `finishInput`으로 보내 자동 쓰기 계약을 적용합니다                                                                                                  | WRITE-083, 69C-01         |
+| `readFieldNodeInteractionReset(node)`                         | 사건 개정과 별개인 노드의 상호작용 초기화 번호를 읽습니다                                                                                                                 | REACT-024, 69C-02         |
+| `observeFieldNodeReports(root, deliver)`                      | core 오류 관찰자 범위에서 전달을 실행하고 중첩·예외에도 이전 범위를 복원합니다                                                                                            | ERROR-113, 69C-01         |
+| `interpretFieldNodeDraft(node, draft)`                        | 현재 유효 타입 목록으로 기존 순수 해석기를 호출하여 값과 멤버 여부를 쓰기 없이 돌려줍니다                                                                                 | REACT-033, 69C-01         |
 
 ## Acceptance Criteria
 
