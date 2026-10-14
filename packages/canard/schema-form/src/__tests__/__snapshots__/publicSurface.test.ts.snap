@@ -21,20 +21,20 @@ FieldNodeRequestType	value+type	typeof FieldNodeRequestType
 FieldNodeState	value+type	typeof FieldNodeState
 FieldNodeSubscribeOptions	type	FieldNodeSubscribeOptions<Node>
 FieldNodeType	type	"string" | "number" | "boolean" | "object" | "union" | "array" | "null" | "virtual"
-FieldRendererProps	type	Roll<FieldRendererProps>
-Form	value	(<Schema extends JSONSchema, Value extends AllowedValue = InferValueType<Schema>>(props: FormProps<Schema, Value> & { ref?: ForwardedRef<FormHandle<Schema, Value>> | undefined; }) => ReactNode) & { Render: <Value extends AllowedValue = AllowedValue>(props: FormRenderProps<Value>) => ReactNode; Field: <Value extends AllowedValue = AllowedValue>(props: FormFieldProps<Value>) => ReactNode; Label: MemoExoticComponent<({ path, style, className }: FormLabelProps) => Element>; Input: <Value extends AllowedValue = AllowedValue>(props: FormInputProps<Value>) => ReactNode; Error: MemoExoticComponent<({ path, style, className }: FormErrorProps) => Element>; }
+FieldRendererProps	type	Roll<BaseFieldRendererProps>
+Form	value	(<Schema extends JSONSchema, Value extends AllowedValue = InferValueType<Schema>>(props: FormProps<Schema, Value> & { ref?: ForwardedRef<FormHandle<Schema, Value>> | undefined; }) => ReactNode) & { Render: <Value extends AllowedValue = AllowedValue>(props: BaseFormRenderProps<Value>) => ReactNode; Field: <Value extends AllowedValue = AllowedValue>(props: BaseFormFieldProps<Value>) => ReactNode; Label: MemoExoticComponent<({ path, style, className }: FormLabelProps) => Element>; Input: <Value extends AllowedValue = AllowedValue>(props: BaseFormInputProps<Value>) => ReactNode; Error: MemoExoticComponent<({ path, style, className }: FormErrorProps) => Element>; }
 FormChildrenProps	type	FormChildrenProps<Schema, Value>
 FormErrorCode	value+type	{ readonly UnknownJsonSchema: "JSON_SCHEMA_ERROR.UNKNOWN_JSON_SCHEMA"; readonly UnexpectedArraySchema: "JSON_SCHEMA_ERROR.UNEXPECTED_ARRAY_SCHEMA"; readonly AllOfTypeRedefinition: "JSON_SCHEMA_ERROR.ALL_OF_TYPE_REDEFINITION"; readonly ConflictingConstValues: "JSON_SCHEMA_ERROR.CONFLICTING_CONST_VALUES"; readonly InvalidRange: "JSON_SCHEMA_ERROR.INVALID_RANGE"; readonly EmptyEnumIntersection: "JSON_SCHEMA_ERROR.EMPTY_ENUM_INTERSECTION"; readonly VirtualFieldsNotValid: "JSON_SCHEMA_ERROR.VIRTUAL_FIELDS_NOT_VALID"; readonly VirtualFieldsNotInProperties: "JSON_SCHEMA_ERROR.VIRTUAL_FIELDS_NOT_IN_PROPERTIES"; readonly CreateDynamicFunction: "JSON_SCHEMA_ERROR.CREATE_DYNAMIC_FUNCTION"; readonly ObservedValues: "JSON_SCHEMA_ERROR.OBSERVED_VALUES"; readonly UnknownGroupKey: "JSON_SCHEMA_ERROR.UNKNOWN_GROUP_KEY"; readonly DiscriminatorMismatch: "JSON_SCHEMA_ERROR.DISCRIMINATOR_MISMATCH"; readonly SharedNodeKindConflict: "JSON_SCHEMA_ERROR.SHARED_NODE_KIND_CONFLICT"; readonly TerminalStrategyMismatch: "JSON_SCHEMA_ERROR.TERMINAL_STRATEGY_MISMATCH"; readonly SharedNodeConflict: "SCHEMA_FORM_ERROR.SHARED_NODE_CONFLICT"; readonly BudgetExceeded: "SCHEMA_FORM_ERROR.BUDGET_EXCEEDED"; readonly ExpressionThrew: "SCHEMA_FORM_ERROR.EXPRESSION_THREW"; readonly GuardFailed: "SCHEMA_FORM_ERROR.GUARD_FAILED"; readonly InjectTargetMissing: "SCHEMA_FORM_ERROR.INJECT_TARGET_MISSING"; readonly FeedbackLimitExceeded: "SCHEMA_FORM_ERROR.FEEDBACK_LIMIT_EXCEEDED"; readonly ListenerThrew: "SCHEMA_FORM_ERROR.LISTENER_THREW"; readonly MultipleErrors: "SCHEMA_FORM_ERROR.MULTIPLE_ERRORS"; readonly FormTypeInputMap: "SCHEMA_FORM_ERROR.FORM_TYPE_INPUT_MAP"; readonly RegisterPlugin: "UNHANDLED_ERROR.REGISTER_PLUGIN"; readonly InvalidWriteOption: "SCHEMA_FORM_ERROR.INVALID_WRITE_OPTION"; readonly DisposedNodeWrite: "SCHEMA_FORM_ERROR.DISPOSED_NODE_WRITE"; readonly WriteInObserver: "SCHEMA_FORM_ERROR.WRITE_IN_OBSERVER"; readonly SubmitWhileDegraded: "SCHEMA_FORM_ERROR.SUBMIT_WHILE_DEGRADED"; readonly ValidatorCompileFailed: "SCHEMA_FORM_ERROR.VALIDATOR_COMPILE_FAILED"; readonly ValidatorThrew: "SCHEMA_FORM_ERROR.VALIDATOR_THREW"; readonly RenderFailed: "SCHEMA_FORM_ERROR.RENDER_FAILED"; readonly InvalidVirtualNodeValues: "SCHEMA_FORM_ERROR.INVALID_VIRTUAL_NODE_VALUES"; readonly ArrayMethodOnNonArray: "SCHEMA_FORM_ERROR.ARRAY_METHOD_ON_NON_ARRAY"; readonly RecursiveShapeUnbounded: "JSON_SCHEMA_ERROR.RECURSIVE_SHAPE_UNBOUNDED"; readonly RecursiveShapeDiverged: "SCHEMA_FORM_ERROR.RECURSIVE_SHAPE_DIVERGED"; readonly VirtualFieldsMismatch: "JSON_SCHEMA_ERROR.VIRTUAL_FIELDS_MISMATCH"; readonly ChildrenTargetNotFound: "JSON_SCHEMA_ERROR.CHILDREN_TARGET_NOT_FOUND"; readonly TerminalOptionUnsupported: "JSON_SCHEMA_ERROR.TERMINAL_OPTION_UNSUPPORTED"; readonly ValidatorBindRefused: "UNHANDLED_ERROR.VALIDATOR_BIND_REFUSED"; readonly InvalidControlShape: "JSON_SCHEMA_ERROR.INVALID_CONTROL_SHAPE"; readonly SchemaValidationFailed: "VALIDATION_ERROR.SCHEMA_VALIDATION_FAILED"; }
 FormErrorProps	type	FormErrorProps
-FormFieldProps	type	Roll<FormFieldProps<Value>>
+FormFieldProps	type	Roll<BaseFormFieldProps<Value>>
 FormHandle	type	FormHandle<Schema, Value>
-FormInputProps	type	Roll<FormInputProps<Value>>
+FormInputProps	type	Roll<BaseFormInputProps<Value>>
 FormLabelProps	type	FormLabelProps
 FormProps	type	FormProps<Schema, Value>
 FormProvider	value	({ fieldInputDefinitions, FieldRenderer, FormLabelRenderer, FormInputRenderer, FormErrorRenderer, formatError, showError, validationMode, context: inputContext, validatorFactory, children, }: PropsWithChildren<ExternalFormContextProviderProps>) => Element
 FormProviderProps	type	ExternalFormContextProviderProps
-FormRenderProps	type	Roll<FormRenderProps<Value>>
-FormWarningCode	value+type	{ readonly AllOfKeywordIgnoredForForm: "SCHEMA_FORM_WARNING.ALL_OF_KEYWORD_IGNORED_FOR_FORM"; readonly NullBranchIgnoredForForm: "SCHEMA_FORM_WARNING.NULL_BRANCH_IGNORED_FOR_FORM"; readonly VirtualizationDisabledForForm: "SCHEMA_FORM_WARNING.VIRTUALIZATION_DISABLED_FOR_FORM"; readonly IfWithoutElseFalse: "SCHEMA_FORM_WARNING.IF_WITHOUT_ELSE_FALSE"; readonly LockOnNonTerminalObject: "SCHEMA_FORM_WARNING.LOCK_ON_NON_TERMINAL_OBJECT"; readonly ConditionalSchemaWithoutValidator: "SCHEMA_FORM_WARNING.CONDITIONAL_SCHEMA_WITHOUT_VALIDATOR"; readonly ValidatorMissing: "SCHEMA_FORM_WARNING.VALIDATOR_MISSING"; readonly MultipleGatedBranchesActive: "SCHEMA_FORM_WARNING.MULTIPLE_GATED_BRANCHES_ACTIVE"; readonly ResetRebuiltByReference: "SCHEMA_FORM_WARNING.RESET_REBUILT_BY_REFERENCE"; readonly DependentSchemasIgnoredForForm: "SCHEMA_FORM_WARNING.DEPENDENT_SCHEMAS_IGNORED_FOR_FORM"; readonly ChildNodeComponentsOnTerminal: "SCHEMA_FORM_WARNING.CHILD_NODE_COMPONENTS_ON_TERMINAL"; readonly TerminalSubtreeKeyIgnoredForForm: "SCHEMA_FORM_WARNING.TERMINAL_SUBTREE_KEY_IGNORED_FOR_FORM"; readonly DiscriminatorBranchUnreachable: "SCHEMA_FORM_WARNING.DISCRIMINATOR_BRANCH_UNREACHABLE"; readonly NonJsonWholeValue: "SCHEMA_FORM_WARNING.NON_JSON_WHOLE_VALUE"; readonly FormTypeTestInvalid: "SCHEMA_FORM_WARNING.FORM_TYPE_TEST_INVALID"; readonly TypeMismatch: "SCHEMA_FORM_WARNING.TYPE_MISMATCH"; readonly DialectMismatch: "SCHEMA_FORM_WARNING.DIALECT_MISMATCH"; }
+FormRenderProps	type	Roll<BaseFormRenderProps<Value>>
+FormWarningCode	value+type	{ readonly AllOfKeywordIgnoredForForm: "SCHEMA_FORM_WARNING.ALL_OF_KEYWORD_IGNORED_FOR_FORM"; readonly NullBranchIgnoredForForm: "SCHEMA_FORM_WARNING.NULL_BRANCH_IGNORED_FOR_FORM"; readonly VirtualizationDisabledForForm: "SCHEMA_FORM_WARNING.VIRTUALIZATION_DISABLED_FOR_FORM"; readonly IfWithoutElseFalse: "SCHEMA_FORM_WARNING.IF_WITHOUT_ELSE_FALSE"; readonly LockOnNonTerminalObject: "SCHEMA_FORM_WARNING.LOCK_ON_NON_TERMINAL_OBJECT"; readonly ConditionalSchemaWithoutValidator: "SCHEMA_FORM_WARNING.CONDITIONAL_SCHEMA_WITHOUT_VALIDATOR"; readonly ValidatorMissing: "SCHEMA_FORM_WARNING.VALIDATOR_MISSING"; readonly MultipleGatedBranchesActive: "SCHEMA_FORM_WARNING.MULTIPLE_GATED_BRANCHES_ACTIVE"; readonly ResetRebuiltByReference: "SCHEMA_FORM_WARNING.RESET_REBUILT_BY_REFERENCE"; readonly DependentSchemasIgnoredForForm: "SCHEMA_FORM_WARNING.DEPENDENT_SCHEMAS_IGNORED_FOR_FORM"; readonly ChildNodeComponentsOnTerminal: "SCHEMA_FORM_WARNING.CHILD_NODE_COMPONENTS_ON_TERMINAL"; readonly TerminalSubtreeKeyIgnoredForForm: "SCHEMA_FORM_WARNING.TERMINAL_SUBTREE_KEY_IGNORED_FOR_FORM"; readonly DiscriminatorBranchUnreachable: "SCHEMA_FORM_WARNING.DISCRIMINATOR_BRANCH_UNREACHABLE"; readonly NonJsonWholeValue: "SCHEMA_FORM_WARNING.NON_JSON_WHOLE_VALUE"; readonly FormTypeTestInvalid: "SCHEMA_FORM_WARNING.FORM_TYPE_TEST_INVALID"; readonly Misfit: "SCHEMA_FORM_WARNING.MISFIT"; readonly DialectMismatch: "SCHEMA_FORM_WARNING.DIALECT_MISMATCH"; }
 FormatError	type	FormatError
 InferFieldNode	type	InferFieldNode<Schema>
 InferJSONSchema	type	InferJSONSchema<Value, Options>
@@ -42,18 +42,18 @@ InferValueType	type	InferValueType<T>
 InjectToHandler	type	InjectToHandler<Value, ParentValue, RootValue, Context>
 JSONPointer	value+type	{ readonly Root: ""; readonly Fragment: "#"; readonly Separator: "/"; readonly Parent: ".."; readonly Current: "."; readonly Wildcard: "*"; readonly Index: "*"; readonly Context: "@"; }
 JSONSchema	type	AuthoredSchema<Options, SchemaPresentation>
-NonNullableArraySchema	type	Roll<NonNullableArraySchema<Options>>
-NonNullableBooleanSchema	type	Roll<NonNullableBooleanSchema<Options>>
-NonNullableNumberSchema	type	Roll<NonNullableNumberSchema<Options>>
-NonNullableObjectSchema	type	Roll<NonNullableObjectSchema<Options>>
-NonNullableStringSchema	type	Roll<NonNullableStringSchema<Options>>
+NonNullableArraySchema	type	Roll<BaseNonNullableArraySchema<Options>>
+NonNullableBooleanSchema	type	Roll<BaseNonNullableBooleanSchema<Options>>
+NonNullableNumberSchema	type	Roll<BaseNonNullableNumberSchema<Options>>
+NonNullableObjectSchema	type	Roll<BaseNonNullableObjectSchema<Options>>
+NonNullableStringSchema	type	Roll<BaseNonNullableStringSchema<Options>>
 NullNode	type	NullNode
-NullSchema	type	Roll<NullSchema<Options>>
-NullableArraySchema	type	Roll<NullableArraySchema<Options>>
-NullableBooleanSchema	type	Roll<NullableBooleanSchema<Options>>
-NullableNumberSchema	type	Roll<NullableNumberSchema<Options>>
-NullableObjectSchema	type	Roll<NullableObjectSchema<Options>>
-NullableStringSchema	type	Roll<NullableStringSchema<Options>>
+NullSchema	type	Roll<BaseNullSchema<Options>>
+NullableArraySchema	type	Roll<BaseNullableArraySchema<Options>>
+NullableBooleanSchema	type	Roll<BaseNullableBooleanSchema<Options>>
+NullableNumberSchema	type	Roll<BaseNullableNumberSchema<Options>>
+NullableObjectSchema	type	Roll<BaseNullableObjectSchema<Options>>
+NullableStringSchema	type	Roll<BaseNullableStringSchema<Options>>
 NumberNode	type	NumberNode
 NumberSchema	type	NumberSchema<Options>
 ObjectNode	type	ObjectNode
