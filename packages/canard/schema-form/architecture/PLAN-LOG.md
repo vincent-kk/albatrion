@@ -519,3 +519,4 @@
 - **293라운드(2026-10-14, 소유자).** FCA import 멘탈모델을 말함: 형제는 index로만, 직계 서브트리는 내부 모듈, 시험·벤치는 fractal 안, 공유 기능은 공통 부모 organ, 부모는 자식 내부에 못 닿음(reviews/round-293-owner-answers.md).
 - **294라운드(2026-10-14, 소유자).** FCA 모델 보강 다섯 수용, 모델 기록, 구조 검사 지시, filid 개선 여부는 마지막에 모두 포함해 결정(reviews/round-294-owner-answers.md).
 - **295라운드(2026-10-14, 소유자).** D7·D8 허용, 모델 안에서의 변용 허용(핵심은 가독성·계약·폭발 반경 억제), filid는 언어 중립(reviews/round-295-owner-answers.md).
+- **296라운드(2026-10-14, 소유자).** 정돈-1 병합 즉시 정돈-2 투입, 끝나는 대로 보고; fairy08 유휴 확인 뒤 export 재검사 배정(reviews/round-296-owner-answers.md).
