@@ -3278,6 +3278,7 @@
   > 소유자(317라운드, 검증 뒤 병합 위임): "아 오케이. 그럼 다 오면 확인해서 문제없으면 머지까지 해줘." (`reviews/round-317-owner-answers.md:8`)
   > 소유자(317라운드, surface/classes의 이름): "한가지 그럼 더. /Users/Vincent/Workspace/albatrion/packages/canard/schema-form/src/core/surface/classes 이거 이렇게 나눈건 좋은데 classes 로 클래스가 늘어날 가능성은 없지않니? 단일 클래스로 구성을 바꿔버린거니까.\n차라리 그럼 runtime 이나 그런게 낫지 않을까? 어떻게 생각하니?" (`reviews/round-317-owner-answers.md:9`)
   > 소유자(317라운드, 셋째 손질: surface runtime, 단일 PR): "그래 셋째 손질로 fairy08에게 넘겨줘. \n\n손질수가 늘어난다고 느려지진 않겠지? 단일 PR로 잘 모아줘" (`reviews/round-317-owner-answers.md:10`)
+  > 소유자(318라운드, fieldInputs를 입력마다 fractal로; ArrayItems 래핑 이유): "하나 더. \n/Users/Vincent/Workspace/albatrion/packages/canard/schema-form/src/fieldInputs 여기 하위 보면 \nutils 나 FieldInput 들이 어지러히 널려있다.\n\n이거 개별 FieldInput 마다 디렉토리로 묶어서 개별 프랙탈로 만들어줘. \n지금 보기도 좀 어렵고 그렇네.\nutils / type 등 organ 을 분리해주고, 개별 프렉탈의 index.ts 에 Definition 을 정의하면 좋을거같아. \n\n그리고 /Users/Vincent/Workspace/albatrion/packages/canard/schema-form/src/fieldInputs/components/FieldInputArray.tsx 이거 있잖아. FieldInputArray 이거 ArrayItems 이 컴포넌트를 래핑한 이유가 뭐야?? 기존 인터페이스 유지하려고 그런거야?" (`reviews/round-318-owner-answers.md:7`)
 - 상태: 현행
 - 출처: `reviews/round-80-closing.md:17`(정본)
 - 닫은 사람: 편집자 결정(80라운드, `reviews/round-80-closing.md` 80C-02)
