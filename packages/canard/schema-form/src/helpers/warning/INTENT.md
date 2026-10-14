@@ -8,7 +8,7 @@
 
 - 패키지 내 모든 dev 전용 경고는 반드시 이 모듈을 경유 (개별 `console.warn` 직접 호출 금지)
 - 경고도 에러와 동일한 `code + formatted message + details` 구조 사용
-- 메시지는 `formatAllOfIgnoredKeywordWarning` 같은 전용 포매터로 생성
+- 메시지는 `formatVirtualizationDisabledWarning`처럼 경고를 내는 fractal의 `utils/`에 둔 전용 포매터로 생성
 - `code + message` 단위로 세션당 1회만 출력 (per-node 파이프라인의 콘솔 폭주 방지)
 - 스키마 작성자가 조치할 수 있는 내용만 경고 (내부 디버깅 로그 금지)
 
