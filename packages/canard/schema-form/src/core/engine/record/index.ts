@@ -4,7 +4,6 @@ export type {
   ArrayOperation,
   ArrayArrangePlan,
   UnionSpec,
-  FieldNodeFactory,
 } from './types/behavior';
 export type {
   FieldNodeRuntime,

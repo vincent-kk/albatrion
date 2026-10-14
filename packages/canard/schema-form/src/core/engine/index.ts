@@ -34,7 +34,6 @@ export {
   compileEntryGuards,
   EMPTY_GLOBAL_ERRORS,
   readFieldNodeErrors,
-  readFieldNodeGuard,
   readValidationEntry,
   retainValidationRoot,
   releaseValidationRoot,
