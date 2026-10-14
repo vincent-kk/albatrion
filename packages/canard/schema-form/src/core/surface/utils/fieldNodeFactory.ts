@@ -1,5 +1,7 @@
 import type { PartialBy } from '@aileron/declare';
 
+import { SLASH_REGEX, TILDE_REGEX } from '@/schema-form/helpers/jsonPointer';
+
 import { FormWarningCode } from '../../../errors';
 import { BEHAVIORS } from '../../engine';
 import { collectBlueprintWarnings, mergeEffectiveSchema } from '../../engine';
@@ -23,13 +25,16 @@ import type {
   NodeSurface,
 } from '../type';
 
+/** Empty active-declaration list: only ungated contributions apply. */
+const NO_ACTIVE_DECLARATION_IDS: readonly number[] = Object.freeze([]);
+
 /**
  * Kind-independent public node shape the runtime class is checked against at compile time.
  * One class serves every kind, so the kind union and the members returning nodes are checked by `surface.test.ts` instead.
  */
 type RuntimeNodeSurface = Omit<
   NodeSurface<FieldNode['type'], FieldNode['strategy'], unknown, unknown, null>,
-  'rootNode' | 'parentNode' | 'children' | 'find' | 'findNodes'
+  'rootNode' | 'parentNode' | 'children' | 'find' | 'findNodes' | 'visitSubtree'
 >;
 
 /** Array verbs every runtime node carries; non-array kinds reject them at call time. */
@@ -54,6 +59,7 @@ export type FieldNodeRuntimeSeed = PartialBy<
     | 'settlementScratch'
     | 'chainRoot'
     | 'batchWrites'
+    | 'visitBatchEntry'
     | 'validationTargets'
     | 'validationChangedNodes'
     | 'globalStateCounts'
@@ -75,8 +81,10 @@ const createFieldNode = (
 ): RuntimeFieldNode => {
   const template = 'node' in entry ? entry.node : entry;
   const name = 'node' in entry ? entry.name : '';
-  const escapedName = name.replace(/~/g, '~0').replace(/\//g, '~1');
-  const path = parent ? `${parent.path}/${escapedName}` : '';
+  const escapedName = name
+    .replace(TILDE_REGEX, '~0')
+    .replace(SLASH_REGEX, '~1');
+  const path = parent ? parent.path + '/' + escapedName : '';
   const depth = parent ? parent.depth + 1 : 0;
   const row = BEHAVIORS[template.kind]?.[template.strategy];
   if (!row)
@@ -95,7 +103,7 @@ const createFieldNode = (
     depth,
     template.strategy === 'branch' ? {} : null,
     template.strategy === 'branch' ? [] : null,
-    mergeEffectiveSchema(template, [], {
+    mergeEffectiveSchema(template, NO_ACTIVE_DECLARATION_IDS, {
       mode: 'runtime',
       isAtomic: runtime.blueprint?.isAtomic,
     }),

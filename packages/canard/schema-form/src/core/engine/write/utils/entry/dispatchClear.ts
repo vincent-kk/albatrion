@@ -1,9 +1,13 @@
-import type { FieldNodeRecord } from '../../../record';
+import type { ArrayOperation, FieldNodeRecord } from '../../../record';
 import { arrangeFieldNodeItems } from '../../../settle';
 import { captureChainError } from '../chain/captureChainError';
 import { enterFieldNodeChain } from '../chain/enterFieldNodeChain';
 import { exitFieldNodeChain } from '../chain/exitFieldNodeChain';
+import { isBatchMarking } from '../chain/isBatchMarking';
 import { markBatchArrayOperation } from '../chain/markBatchArrayOperation';
+
+/** Array operation that empties the array. */
+const CLEAR_OPERATION: ArrayOperation = { kind: 'clear' };
 
 /**
  * Clear an array within the public entry chain; refused feedback does no work.
@@ -16,9 +20,9 @@ export const dispatchClear = <Self extends FieldNodeRecord<Self>>(
 ): unknown => {
   if (!enterFieldNodeChain(node)) return;
   try {
-    return node.rootNode.runtime.batchDepth
-      ? markBatchArrayOperation(node, { kind: 'clear' })
-      : arrangeFieldNodeItems(node, { kind: 'clear' });
+    return isBatchMarking(node)
+      ? markBatchArrayOperation(node, CLEAR_OPERATION)
+      : arrangeFieldNodeItems(node, CLEAR_OPERATION);
   } catch (error) {
     if (node.rootNode.runtime.batchDepth) throw error;
     captureChainError(node.rootNode.runtime, error);

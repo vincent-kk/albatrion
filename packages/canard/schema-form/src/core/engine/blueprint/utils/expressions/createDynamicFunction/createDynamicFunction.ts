@@ -6,6 +6,9 @@ import type { CreateDynamicFunction, DynamicFunction } from './type';
 import { formatCreateDynamicFunctionError } from './utils/formatCreateDynamicFunctionError';
 import { getFunctionBody } from './utils/getFunctionBody';
 
+/** One semicolon at the end of an expression. */
+const TRAILING_SEMICOLON = /;$/;
+
 /**
  * Create a dynamic function that takes dependency array and returns a value based on the expression.
  * @param pathManager - Path manager to resolve dependency paths
@@ -26,10 +29,10 @@ export const createDynamicFunction: CreateDynamicFunction = (
   const processedExpression = expression
     .replace(JSON_POINTER_PATH_REGEX, (path) => {
       pathManager.set(path);
-      return `dependencies[${pathManager.findIndex(path)}]`;
+      return 'dependencies[' + pathManager.findIndex(path) + ']';
     })
     .trim()
-    .replace(/;$/, '');
+    .replace(TRAILING_SEMICOLON, '');
 
   if (processedExpression.length === 0) return;
 

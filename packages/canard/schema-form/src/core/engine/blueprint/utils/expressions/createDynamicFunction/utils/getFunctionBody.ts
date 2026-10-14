@@ -15,5 +15,7 @@ export const getFunctionBody = (
     if (coerceToBoolean) return wrapReturnStatements(functionBody);
     return functionBody;
   }
-  return coerceToBoolean ? `return !!(${expression})` : `return ${expression}`;
+  return coerceToBoolean
+    ? 'return !!(' + expression + ')'
+    : 'return ' + expression;
 };

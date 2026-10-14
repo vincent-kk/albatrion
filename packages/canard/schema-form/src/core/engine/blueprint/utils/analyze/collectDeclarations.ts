@@ -12,6 +12,9 @@ import { readSchemaObject } from './readSchemaObject';
 import { resolveReference } from './resolveReference';
 import type { AnalysisContext, MutableFragment, SchemaInput } from './type';
 
+/** Shared frozen empty expansion path. */
+const NO_VISITING: readonly string[] = Object.freeze([]);
+
 /** Keyword ranks form the authored total order, independent of object insertion order. */
 const FRAGMENT_KEYWORDS = [
   ['allOf', 1],
@@ -35,7 +38,7 @@ export const collectDeclarations = (
   context: AnalysisContext,
   input: SchemaInput,
   path: string,
-  visiting: readonly string[] = [],
+  visiting: readonly string[] = NO_VISITING,
   ownerId?: number,
   result: PropertyDeclaration[] = [],
 ): PropertyDeclaration[] => {
@@ -55,13 +58,13 @@ export const collectDeclarations = (
   if (
     schema.controls?.active !== undefined &&
     !gates.some(
-      (gate) => gate.schemaPath === `${input.schemaPath}/controls/active`,
+      (gate) => gate.schemaPath === input.schemaPath + '/controls/active',
     )
   )
     gates.push(
       createBlueprintGate({
         kind: 'active',
-        schemaPath: `${input.schemaPath}/controls/active`,
+        schemaPath: input.schemaPath + '/controls/active',
         hostPath: path,
         condition: schema.controls.active,
       }),
@@ -164,7 +167,11 @@ export const collectDeclarations = (
     for (let index = 0; index < values.length; index++) {
       const child = values[index];
       if (child === undefined || child === false) continue;
-      const childPath = `${input.schemaPath}/${keyword}${keyword === 'then' || keyword === 'else' ? '' : `/${index}`}`;
+      const childPath =
+        input.schemaPath +
+        '/' +
+        keyword +
+        (keyword === 'then' || keyword === 'else' ? '' : '/' + index);
       const nestedGates = [...gates];
       const discriminator = discriminators?.get(childPath);
       if (discriminator)
@@ -180,7 +187,7 @@ export const collectDeclarations = (
         nestedGates.push(
           createBlueprintGate({
             kind: 'if',
-            schemaPath: `${input.schemaPath}/if`,
+            schemaPath: input.schemaPath + '/if',
             hostPath: path,
             condition: schema.if,
             negated: keyword === 'else',

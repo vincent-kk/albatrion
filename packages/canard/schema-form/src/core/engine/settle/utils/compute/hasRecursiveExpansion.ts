@@ -73,7 +73,7 @@ const hasOriginalInput = <Self extends FieldNodeRecord<Self>>(
       const previous = context.latentAutomaticLog.get(key);
       if ((previous && !previous.present) || value === undefined) continue;
       const path: string = JSON.parse(key)[0];
-      if (path.startsWith(`${node.path}/`)) return true;
+      if (path.startsWith(node.path + '/')) return true;
     }
   }
   const children = node.children;

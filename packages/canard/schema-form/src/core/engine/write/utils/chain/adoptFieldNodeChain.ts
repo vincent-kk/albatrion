@@ -38,6 +38,8 @@ export const adoptFieldNodeChain = <Self extends FieldNodeRecord<Self>>(
   next.onChangeBudget = previous.onChangeBudget;
   next.batchDepth = previous.batchDepth;
   next.batchWrites = previous.batchWrites;
+  next.visitDepth = previous.visitDepth;
+  next.visitBatchEntry = previous.visitBatchEntry;
   next.validationTargets = previous.validationTargets?.size
     ? new Set([nextRoot])
     : undefined;
@@ -96,6 +98,8 @@ export const adoptFieldNodeChain = <Self extends FieldNodeRecord<Self>>(
   previous.entryDepth = 0;
   previous.batchDepth = 0;
   previous.batchWrites = undefined;
+  previous.visitDepth = 0;
+  previous.visitBatchEntry = undefined;
   previous.deliveries = undefined;
   previous.queuedNonSettleEvents = undefined;
   previous.stateChanged = undefined;

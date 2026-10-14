@@ -54,7 +54,7 @@ export const readRawTree = <Self extends FieldNodeRecord<Self>>(
       ? readRawTree(child, context)
       : readLatentSlotSource(
           context,
-          `${node.path}/${escapeSegment(entry.name)}`,
+          node.path + '/' + escapeSegment(entry.name),
           entry.node,
         );
     if (source === undefined) continue;

@@ -70,7 +70,14 @@ export const getTemplateKey = (
           if (owners.indexOf(path) === -1) owners.push(path);
         }
       }
-      const descriptor = `${gate.kind}:${gate.schemaPath}:${Boolean(gate.negated)}:${owners.join(',')}`;
+      const descriptor =
+        gate.kind +
+        ':' +
+        gate.schemaPath +
+        ':' +
+        Boolean(gate.negated) +
+        ':' +
+        owners.join(',');
       if (gates.indexOf(descriptor) !== -1) continue;
       const encodedGate = encodeLeaf(descriptor);
       if (gates.length > 0) {

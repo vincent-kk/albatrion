@@ -86,7 +86,7 @@ export const finishSettlement = <Self extends FieldNodeRecord<Self>>(
       if (
         !context.target.path ||
         path === context.target.path ||
-        path.startsWith(`${context.target.path}/`)
+        path.startsWith(context.target.path + '/')
       )
         context.target.runtime.misfitPaths.delete(path);
   commitSettlement(context);

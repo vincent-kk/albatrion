@@ -46,6 +46,6 @@ export const resolveGateOccurrence = (
   return {
     gate,
     hostPath,
-    evaluationHostPath: common.length ? `/${common.join($.Separator)}` : '',
+    evaluationHostPath: common.length ? '/' + common.join($.Separator) : '',
   };
 };

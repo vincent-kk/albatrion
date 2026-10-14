@@ -40,19 +40,19 @@ const getIndex = (blueprint: Blueprint): GateBudgetIndex => {
   const collect = (declaration: PropertyDeclaration): void => {
     if (declaration.scope === 'fragment' && declaration.gates.length > 0)
       for (const gate of declaration.gates)
-        add(gate, `fragment:${declaration.fragmentId}`);
+        add(gate, 'fragment:' + declaration.fragmentId);
     for (const gate of declaration.gates) {
       if (gate.kind !== 'active') continue;
       if (
         gate.schemaPath.includes('/controls/fields/') &&
         gate.schemaPath.endsWith('/controls/active')
       )
-        add(gate, `node:${gate.schemaPath}`);
+        add(gate, 'node:' + gate.schemaPath);
       else if (
         declaration.scope === 'node' &&
-        gate.schemaPath === `${declaration.schemaPath}/controls/active`
+        gate.schemaPath === declaration.schemaPath + '/controls/active'
       )
-        add(gate, `node:${gate.schemaPath}`);
+        add(gate, 'node:' + gate.schemaPath);
     }
   };
   for (const node of blueprint.nodes) {

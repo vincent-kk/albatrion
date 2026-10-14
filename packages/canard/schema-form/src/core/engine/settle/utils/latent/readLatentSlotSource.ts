@@ -56,7 +56,7 @@ export const readLatentSlotSource = <Self extends FieldNodeRecord<Self>>(
     if (hasOwnProperty(value, entry.name)) continue;
     const child = readLatentSlotSource(
       context,
-      `${path}/${escapeSegment(entry.name)}`,
+      path + '/' + escapeSegment(entry.name),
       entry.node,
     );
     if (child === undefined) continue;

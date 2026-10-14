@@ -54,5 +54,5 @@ export const resolveReference = (
       { reference, guidance: 'The reference must identify a schema.' },
       context.options,
     );
-  return { schema, schemaPath: `#${pointer}` };
+  return { schema, schemaPath: '#' + pointer };
 };

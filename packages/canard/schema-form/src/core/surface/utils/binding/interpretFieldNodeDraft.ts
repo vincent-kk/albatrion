@@ -28,7 +28,7 @@ export const interpretFieldNodeDraft = (
       : [type];
   const kinds = authored.filter(
     (kind): kind is Exclude<SchemaTypeName, 'null'> =>
-      kind !== 'virtual' && kind !== 'null' && effective.includes(kind),
+      kind !== undefined && kind !== 'null' && effective.includes(kind),
   );
   const value = interpret(draft, { kinds, mask: 0, nullable: node.nullable });
   return {

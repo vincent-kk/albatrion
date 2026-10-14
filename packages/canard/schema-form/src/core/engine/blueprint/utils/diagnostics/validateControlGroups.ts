@@ -11,6 +11,9 @@ import { readSchemaObject } from '../analyze/readSchemaObject';
 import type { AnalysisContext } from '../analyze/type';
 import { throwBlueprintError } from './throwBlueprintError';
 
+/** Extension groups validated at every authored position. */
+const CONTROL_GROUPS = [SCHEMA_GROUP.controls, SCHEMA_GROUP.options] as const;
+
 /**
  * Validate closed extension namespaces at an authored schema position.
  * @param context - Error collector and authored root
@@ -26,7 +29,7 @@ export const validateControlGroups = (
   fragment: boolean,
 ): void => {
   const record = readSchemaObject(schema);
-  for (const group of [SCHEMA_GROUP.controls, SCHEMA_GROUP.options] as const) {
+  for (const group of CONTROL_GROUPS) {
     const value = record[group];
     if (value === undefined) continue;
     const allowed =
@@ -38,7 +41,7 @@ export const validateControlGroups = (
     if (!value || typeof value !== 'object' || isArray(value))
       throwBlueprintError(
         FormErrorCode.InvalidControlShape,
-        `${schemaPath}/${group}`,
+        schemaPath + '/' + group,
         { group, key: group, expected: 'object' },
         context.options,
       );
@@ -46,7 +49,7 @@ export const validateControlGroups = (
       if (!allowed.includes(key))
         throwBlueprintError(
           FormErrorCode.UnknownGroupKey,
-          `${schemaPath}/${group}/${key}`,
+          schemaPath + '/' + group + '/' + key,
           { group, key },
           context.options,
         );
@@ -58,7 +61,7 @@ export const validateControlGroups = (
   )
     throwBlueprintError(
       FormErrorCode.InvalidControlShape,
-      `${schemaPath}/controls/injectTo`,
+      schemaPath + '/controls/injectTo',
       { group: SCHEMA_GROUP.controls, key: 'injectTo', expected: 'function' },
       context.options,
     );
@@ -66,12 +69,12 @@ export const validateControlGroups = (
     if (!isArray(controls.fields))
       throwBlueprintError(
         FormErrorCode.InvalidControlShape,
-        `${schemaPath}/controls/fields`,
+        schemaPath + '/controls/fields',
         { group: SCHEMA_GROUP.controls, key: 'fields', expected: 'array' },
         context.options,
       );
     controls.fields.forEach((entry: any, index: number) => {
-      const path = `${schemaPath}/controls/fields/${index}`;
+      const path = schemaPath + '/controls/fields/' + index;
       if (
         !entry ||
         typeof entry !== 'object' ||

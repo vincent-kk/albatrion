@@ -33,7 +33,7 @@ export const withdrawDetachedFills = <Self extends FieldNodeRecord<Self>>(
       if (
         !isArray(identity) ||
         typeof identity[0] !== 'string' ||
-        (identity[0] !== node.path && !identity[0].startsWith(`${node.path}/`))
+        (identity[0] !== node.path && !identity[0].startsWith(node.path + '/'))
       )
         continue;
       setLatentRaw(

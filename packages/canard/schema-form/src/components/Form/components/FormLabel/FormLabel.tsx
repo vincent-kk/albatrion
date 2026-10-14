@@ -60,7 +60,7 @@ export const FormLabel = memo(({ path, style, className }: FormLabelProps) => {
       style={style}
       className={className}
       htmlFor={path}
-      id={path !== undefined ? `label:${path}` : undefined}
+      id={path !== undefined ? 'label:' + path : undefined}
     >
       <FieldProxy
         path={path}

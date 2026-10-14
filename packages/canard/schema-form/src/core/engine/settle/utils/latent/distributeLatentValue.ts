@@ -115,7 +115,7 @@ export const distributeLatentValue = <Self extends FieldNodeRecord<Self>>(
       distributeLatentValue(
         runtime,
         context,
-        `${path}/${escapeSegment(name)}`,
+        path + '/' + escapeSegment(name),
         entry.node,
         Reflect.get(value, name),
         [...order, index],

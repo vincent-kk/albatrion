@@ -3,6 +3,7 @@ import { arrangeFieldNodeItems, readArrayLength } from '../../../settle';
 import { captureChainError } from '../chain/captureChainError';
 import { enterFieldNodeChain } from '../chain/enterFieldNodeChain';
 import { exitFieldNodeChain } from '../chain/exitFieldNodeChain';
+import { isBatchMarking } from '../chain/isBatchMarking';
 import { markBatchArrayOperation } from '../chain/markBatchArrayOperation';
 
 /**
@@ -18,7 +19,7 @@ export const dispatchPush = <Self extends FieldNodeRecord<Self>>(
 ): number => {
   if (!enterFieldNodeChain(node)) return readArrayLength(node);
   try {
-    const length = node.rootNode.runtime.batchDepth
+    const length = isBatchMarking(node)
       ? markBatchArrayOperation(node, { kind: 'push', value })
       : arrangeFieldNodeItems(node, { kind: 'push', value });
     if (typeof length === 'number') return length;

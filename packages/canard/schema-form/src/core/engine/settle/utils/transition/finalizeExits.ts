@@ -1,5 +1,6 @@
 import { JSONPointer as $ } from '@/schema-form/helpers/jsonPointer';
 
+import { visitFieldNodes } from '../../../navigation';
 import { captureFieldNodeChange } from '../../../record';
 import type { FieldNodeRecord } from '../../../record';
 import type { SettlementContext } from '../../type';
@@ -7,7 +8,6 @@ import { updateOutput } from '../compute/updateOutput';
 import { captureDetachedFieldNodeReads } from '../detached/captureDetachedFieldNodeReads';
 import { getGateRegistry } from '../gates/getGateRegistry';
 import { getLatentOrder } from '../latent/getLatentOrder';
-import { walkOwnedFieldNodes } from '../walkOwnedFieldNodes';
 import { applyExitClearing } from './applyExitClearing';
 import { captureExitedRaw } from './captureExitedRaw';
 import { finalizePerished } from './finalizePerished';
@@ -29,18 +29,22 @@ export const finalizeExits = <Self extends FieldNodeRecord<Self>>(
     const parent = node.parent;
     if (parent?.structure?.[node.name] === node) continue;
     context.exited.add(node);
-    walkOwnedFieldNodes(node, (departing) => {
-      if (!departing.runtime.detachedReads?.has(departing))
-        captureDetachedFieldNodeReads(departing, {
-          emit: context.previousEmit,
-          context: context.previousContext,
-          schema:
-            context.originalSchemas.get(departing.path)?.schema ??
-            departing.schema.schema,
-        });
-      departing.detached = true;
-      departing.active = captureFieldNodeChange(departing, 'active', false);
-    });
+    visitFieldNodes(
+      node,
+      (departing) => {
+        if (!departing.runtime.detachedReads?.has(departing))
+          captureDetachedFieldNodeReads(departing, {
+            emit: context.previousEmit,
+            context: context.previousContext,
+            schema:
+              context.originalSchemas.get(departing.path)?.schema ??
+              departing.schema.schema,
+          });
+        departing.detached = true;
+        departing.active = captureFieldNodeChange(departing, 'active', false);
+      },
+      { owned: true },
+    );
     getGateRegistry(node.runtime).remove(node);
     if (!mismatchIndex) {
       mismatchIndex = new Map();
@@ -74,7 +78,7 @@ export const finalizeExits = <Self extends FieldNodeRecord<Self>>(
     scope !== undefined &&
     (!scope.path ||
       node.path === scope.path ||
-      node.path.startsWith(`${scope.path}/`));
+      node.path.startsWith(scope.path + '/'));
   const applyPolicy =
     !context.suppressAutomaticWrites && !context.exceededBudget;
   if (applyPolicy)

@@ -39,7 +39,7 @@ export const validateChildTargets = (context: AnalysisContext): void => {
             )
               throwBlueprintError(
                 FormErrorCode.ChildrenTargetNotFound,
-                `${declaration.schemaPath}/controls/fields/${index}`,
+                declaration.schemaPath + '/controls/fields/' + index,
                 { target },
                 context.options,
               );

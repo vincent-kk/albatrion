@@ -43,7 +43,12 @@ export const finishStaticFirstLoad = <Self extends FieldNodeRecord<Self>>(
         level: 'warning',
         code,
         path: warning.path,
-        message: `Value does not fit the schema type at ${warning.path} (commit ${commit})`,
+        message:
+          'Value does not fit the schema type at ' +
+          warning.path +
+          ' (commit ' +
+          commit +
+          ')',
         details: {
           path: warning.path,
           expected: warning.expected,

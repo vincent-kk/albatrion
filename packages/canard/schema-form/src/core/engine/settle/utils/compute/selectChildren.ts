@@ -152,7 +152,7 @@ export const selectChildren = <Self extends FieldNodeRecord<Self>>(
     if (flushReads && context.pendingOutputs?.size)
       flushPendingGateReads(
         entry.node,
-        `${node.path}/${escapeSegment(entry.name)}`,
+        node.path + '/' + escapeSegment(entry.name),
         context,
       );
     let threw = false;
@@ -182,7 +182,7 @@ export const selectChildren = <Self extends FieldNodeRecord<Self>>(
               gate,
               context,
               node,
-              gate.schemaPath === `${declaration.schemaPath}/controls/active`
+              gate.schemaPath === declaration.schemaPath + '/controls/active'
                 ? entry.name
                 : undefined,
             )
@@ -208,7 +208,7 @@ export const selectChildren = <Self extends FieldNodeRecord<Self>>(
           ? priorChild
           : context.pendingExits.get(
               JSON.stringify([
-                `${node.path}/${escapeSegment(entry.name)}`,
+                node.path + '/' + escapeSegment(entry.name),
                 entry.node.kind,
               ]),
             );
@@ -262,7 +262,7 @@ export const selectChildren = <Self extends FieldNodeRecord<Self>>(
         : undefined;
     const distribution =
       context.replacePaths === undefined ||
-      isWithinReplacePaths(context, `${node.path}/${escapeSegment(entry.name)}`)
+      isWithinReplacePaths(context, node.path + '/' + escapeSegment(entry.name))
         ? context.distributedInputs.get(node)
         : undefined;
     const ownsInput =
@@ -276,7 +276,7 @@ export const selectChildren = <Self extends FieldNodeRecord<Self>>(
     const latentKey =
       latent.size > 0 && !priorChild
         ? JSON.stringify([
-            `${node.path}/${escapeSegment(entry.name)}`,
+            node.path + '/' + escapeSegment(entry.name),
             entry.node.kind,
           ])
         : undefined;
@@ -309,7 +309,7 @@ export const selectChildren = <Self extends FieldNodeRecord<Self>>(
     const key =
       context.pendingExits.size > 0
         ? JSON.stringify([
-            `${node.path}/${escapeSegment(entry.name)}`,
+            node.path + '/' + escapeSegment(entry.name),
             entry.node.kind,
           ])
         : undefined;
@@ -396,7 +396,7 @@ export const selectChildren = <Self extends FieldNodeRecord<Self>>(
     seen.add(entry.name);
     const distribution =
       context.replacePaths === undefined ||
-      isWithinReplacePaths(context, `${node.path}/${escapeSegment(entry.name)}`)
+      isWithinReplacePaths(context, node.path + '/' + escapeSegment(entry.name))
         ? context.distributedInputs.get(node)
         : undefined;
     if (
@@ -411,7 +411,7 @@ export const selectChildren = <Self extends FieldNodeRecord<Self>>(
     distributeLatentValue(
       node.runtime,
       context,
-      `${node.path}/${escapeSegment(entry.name)}`,
+      node.path + '/' + escapeSegment(entry.name),
       entry.node,
       Reflect.get(distribution.input, entry.name),
       getLatentOrder(node, entry.name, entry.node),

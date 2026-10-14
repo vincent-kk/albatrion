@@ -27,7 +27,7 @@ export const distributeAbsentChildInputs = <Self extends FieldNodeRecord<Self>>(
   for (let index = 0; index < entries.length; index++) {
     const entry = entries[index];
     if (node.structure?.[entry.name] !== undefined) continue;
-    const path = `${node.path}/${escapeSegment(entry.name)}`;
+    const path = node.path + '/' + escapeSegment(entry.name);
     const distribution = isWithinReplacePaths(context, path)
       ? context.distributedInputs.get(node)
       : undefined;

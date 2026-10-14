@@ -6,11 +6,11 @@ import type { FieldNodeRecord } from '../../../record';
 /**
  * Read an active schema's type restriction with the static list as fallback.
  * @param node - Node whose effective schema was chosen in the host wheel
- * @returns Current declared JSON types in their authored representation
+ * @returns Current declared JSON types in their authored representation; undefined for a virtual node
  */
 export const effectiveType = <Self extends FieldNodeRecord<Self>>(
   node: Self,
-): BlueprintSchemaType => {
+): BlueprintSchemaType | undefined => {
   const schema = node.schema.schema;
   const candidate =
     typeof schema === 'object' && schema !== null ? schema.type : undefined;

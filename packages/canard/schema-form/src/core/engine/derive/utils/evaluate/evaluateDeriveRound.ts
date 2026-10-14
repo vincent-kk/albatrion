@@ -26,6 +26,13 @@ import { readDeriveDependency } from './utils/readDeriveDependency';
 /** Frozen result reused when no expression fails. */
 const NO_FAILURES: readonly [] = Object.freeze([]);
 
+/** Shared frozen decision for a blueprint without derive rules. */
+const EMPTY_DECISION: DeriveRoundDecision<never> = Object.freeze({
+  writes: Object.freeze([]),
+  trace: Object.freeze([]),
+  failures: NO_FAILURES,
+});
+
 /**
  * Consume active derived and unsetValue edges in the completed current shape.
  * @param root - Live calculated root whose projected output is current
@@ -37,8 +44,7 @@ export const evaluateDeriveRound = <Self extends FieldNodeRecord<Self>>(
   state: DeriveState<Self>,
 ): DeriveRoundDecision<Self> => {
   const table = getDeriveRuleTable(root.runtime.blueprint);
-  if (table.rules.length === 0)
-    return { writes: [], trace: [], failures: NO_FAILURES };
+  if (table.rules.length === 0) return EMPTY_DECISION;
   const pending = getDeriveSourceNodes(root, state);
   const winners = new Map<string, DeriveWrite<Self>>();
   const trace: DeriveTraceEntry[] = [];
@@ -87,7 +93,7 @@ export const evaluateDeriveRound = <Self extends FieldNodeRecord<Self>>(
           Boolean(
             state.loadScope &&
               (node.path === state.loadScope.path ||
-                node.path.startsWith(`${state.loadScope.path}/`)),
+                node.path.startsWith(state.loadScope.path + '/')),
           );
         const appeared =
           !consumed &&
@@ -98,7 +104,7 @@ export const evaluateDeriveRound = <Self extends FieldNodeRecord<Self>>(
           if (
             state.loadScope &&
             node.path !== state.loadScope.path &&
-            !node.path.startsWith(`${state.loadScope.path}/`)
+            !node.path.startsWith(state.loadScope.path + '/')
           )
             continue;
           if (!appeared && (!priorExists || sameValue(prior, current)))

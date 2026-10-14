@@ -23,8 +23,6 @@ import type { SchemaControls } from '@/schema-form/core';
 import type { FieldInputProps } from '../field/fieldInput';
 import type { VirtualNodeValue } from './value';
 
-export type JSONSchemaType = Extract<JSONSchemaWithVirtual['type'], string>;
-
 /** Binding presentation payload; core treats these fields as opaque data. */
 export type SchemaPresentation = {
   /** Custom React component for input rendering */
@@ -85,16 +83,6 @@ export type JSONSchemaWithVirtual<Options extends Dictionary = object> =
   | ObjectSchema<Options>
   | NullSchema<Options>
   | VirtualNodeSchema<Options>;
-
-/** JSON Schema type union with virtual nodes and $ref support */
-export type JSONSchemaWithRef<Options extends Dictionary = object> =
-  | JSONSchemaWithVirtual<Options>
-  | RefSchema;
-
-/** Partial version of JSON Schema with virtual nodes */
-export type PartialJSONSchema<Options extends Dictionary = object> = Partial<
-  JSONSchemaWithVirtual<Options>
->;
 
 /** Number type schema (numeric or integer values) */
 export type NumberSchema<Options extends Dictionary = object> =

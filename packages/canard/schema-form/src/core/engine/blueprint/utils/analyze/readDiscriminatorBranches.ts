@@ -20,6 +20,9 @@ import { collectStaticSchemas } from './collectStaticSchemas';
 import { readSchemaObject } from './readSchemaObject';
 import type { AnalysisContext } from './type';
 
+/** Union keywords whose branches are checked for a shared discriminator. */
+const UNION_KEYWORDS = ['oneOf', 'anyOf'] as const;
+
 /**
  * Read explicit discriminator tags from each branch's static conjunction.
  * @param context - Authored references and diagnostic collector
@@ -42,7 +45,7 @@ export const readDiscriminatorBranches = (
   if (typeof propertyName !== 'string' || !propertyName.length)
     return throwBlueprintError(
       FormErrorCode.InvalidControlShape,
-      `${schemaPath}/controls/discriminator`,
+      schemaPath + '/controls/discriminator',
       {
         group: SCHEMA_GROUP.controls,
         key: 'discriminator',
@@ -50,13 +53,13 @@ export const readDiscriminatorBranches = (
       },
       context.options,
     );
-  for (const keyword of ['oneOf', 'anyOf'] as const) {
+  for (const keyword of UNION_KEYWORDS) {
     if (!isArray(host[keyword])) continue;
     let previousMask: number | undefined;
     const previousValues: unknown[] = [];
     for (let index = 0; index < host[keyword].length; index++) {
       const branch = host[keyword][index];
-      const branchPath = `${schemaPath}/${keyword}/${index}`;
+      const branchPath = schemaPath + '/' + keyword + '/' + index;
       const parts = collectStaticSchemas(context, branch, branchPath);
       let branchTypes: ReturnType<typeof readAllowedTypes>;
       for (const part of parts)
@@ -72,7 +75,8 @@ export const readDiscriminatorBranches = (
           propertyName
         ];
         if (property === undefined) continue;
-        const propertyPath = `${part.schemaPath}/properties/${escapeSegment(propertyName)}`;
+        const propertyPath =
+          part.schemaPath + '/properties/' + escapeSegment(propertyName);
         const types = inferAllowedTypes(context, property, propertyPath, true);
         if (types) mask = foldAllowedTypes(types);
         for (const tag of collectStaticSchemas(

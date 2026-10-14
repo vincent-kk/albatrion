@@ -1,7 +1,14 @@
 import { isArray } from '@winglet/common-utils/filter';
 import { hasOwnProperty } from '@winglet/common-utils/lib';
 
-import { JSONPointer as $ } from '@/schema-form/helpers/jsonPointer';
+import {
+  JSONPointer as $,
+  SLASH_REGEX,
+  TILDE_REGEX,
+} from '@/schema-form/helpers/jsonPointer';
+
+/** Shared frozen result when no reference-only change is found. */
+const NO_PATHS: readonly string[] = Object.freeze([]);
 
 /**
  * Find changed opaque references only when all JSON schema data is equal.
@@ -17,14 +24,14 @@ export const readReferenceOnlySchemaPaths = (
     { previous, next, path: $.Fragment },
   ];
   const paths: string[] = [];
-  const seen = new WeakMap<object, WeakSet<object>>();
+  const seen = new Map<object, Set<object>>();
   while (pending.length) {
     const item = pending.pop();
     if (!item || Object.is(item.previous, item.next)) continue;
     const left = item.previous;
     const right = item.next;
     if (typeof left !== typeof right || left === null || right === null)
-      return [];
+      return NO_PATHS;
     if (
       typeof left === 'function' ||
       typeof left === 'symbol' ||
@@ -33,20 +40,20 @@ export const readReferenceOnlySchemaPaths = (
       paths.push(item.path);
       continue;
     }
-    if (typeof left !== 'object' || typeof right !== 'object') return [];
+    if (typeof left !== 'object' || typeof right !== 'object') return NO_PATHS;
     const leftArray = isArray(left);
-    if (leftArray !== isArray(right)) return [];
+    if (leftArray !== isArray(right)) return NO_PATHS;
     if (!leftArray) {
       const leftPrototype = Object.getPrototypeOf(left);
       const rightPrototype = Object.getPrototypeOf(right);
-      if (leftPrototype !== rightPrototype) return [];
+      if (leftPrototype !== rightPrototype) return NO_PATHS;
       if (leftPrototype !== Object.prototype && leftPrototype !== null) {
         paths.push(item.path);
         continue;
       }
     }
     if (seen.get(left)?.has(right)) continue;
-    const seenRight = seen.get(left) ?? new WeakSet<object>();
+    const seenRight = seen.get(left) ?? new Set<object>();
     seenRight.add(right);
     seen.set(left, seenRight);
     const leftKeys = Object.keys(left);
@@ -55,14 +62,14 @@ export const readReferenceOnlySchemaPaths = (
       leftKeys.length !== rightKeys.length ||
       leftKeys.some((key) => !hasOwnProperty(right, key))
     )
-      return [];
+      return NO_PATHS;
     for (let index = leftKeys.length - 1; index >= 0; index -= 1) {
       const key = leftKeys[index];
-      const escaped = key.replace(/~/g, '~0').replace(/\//g, '~1');
+      const escaped = key.replace(TILDE_REGEX, '~0').replace(SLASH_REGEX, '~1');
       pending.push({
         previous: Reflect.get(left, key),
         next: Reflect.get(right, key),
-        path: `${item.path}/${escaped}`,
+        path: item.path + '/' + escaped,
       });
     }
   }

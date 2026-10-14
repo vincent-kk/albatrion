@@ -1,6 +1,7 @@
 import { isArray } from '@winglet/common-utils/filter';
 
 import { getItemEntry } from '../../../../../blueprint';
+import { visitFieldNodes } from '../../../../../navigation';
 import { captureFieldNodeChange } from '../../../../../record';
 import type { ArrayArrangePlan, FieldNodeRecord } from '../../../../../record';
 import type { SettlementContext } from '../../../../type';
@@ -12,7 +13,6 @@ import { readLatentSlotSource } from '../../../latent/readLatentSlotSource';
 import { getLoadValue } from '../../../load/getLoadValue';
 import { setLoadValue } from '../../../load/setLoadValue';
 import { prunePerishedPaths } from '../../../transition/prunePerishedPaths';
-import { walkOwnedFieldNodes } from '../../../walkOwnedFieldNodes';
 import { markWrite } from '../../../write/markWrite';
 import { rekeyArrayRuntimePaths } from '../../rekeyArrayRuntimePaths';
 import type { ArrayPathMove } from '../../type';
@@ -52,7 +52,7 @@ export const applyArrayTail = <Self extends FieldNodeRecord<Self>>(
         : removedEntry
           ? readLatentSlotSource(
               context,
-              `${host.path}/${removedIndex}`,
+              host.path + '/' + removedIndex,
               removedEntry.node,
             )
           : oldExtras[removedIndex - templateCount];
@@ -88,17 +88,21 @@ export const applyArrayTail = <Self extends FieldNodeRecord<Self>>(
   let perishedPaths: Set<string> | undefined;
   for (let index = prefixCount; index < oldCount; index++) {
     const item = items[String(index)];
-    moves.push({ previous: `${host.path}/${index}` });
+    moves.push({ previous: host.path + '/' + index });
     if (!item) continue;
     context.perished.add(item);
-    walkOwnedFieldNodes(item, (departing) => {
-      if (!departing.runtime.detachedReads?.has(departing))
-        captureDetachedFieldNodeReads(departing, {
-          emit: context.previousEmit,
-          context: context.previousContext,
-          schema: departing.schema.schema,
-        });
-    });
+    visitFieldNodes(
+      item,
+      (departing) => {
+        if (!departing.runtime.detachedReads?.has(departing))
+          captureDetachedFieldNodeReads(departing, {
+            emit: context.previousEmit,
+            context: context.previousContext,
+            schema: departing.schema.schema,
+          });
+      },
+      { owned: true },
+    );
     (perishedPaths ??= new Set()).add(item.path);
     delete items[String(index)];
   }
@@ -124,7 +128,13 @@ export const applyArrayTail = <Self extends FieldNodeRecord<Self>>(
   }
   if (context.hasGates)
     for (const item of host.children)
-      walkOwnedFieldNodes(item, (node) => registry.register(node));
+      visitFieldNodes(
+        item,
+        (node) => {
+          registry.register(node);
+        },
+        { owned: true },
+      );
   host.runtime.loadSnapshot = setLoadValue(
     host.runtime.loadSnapshot,
     host.path,

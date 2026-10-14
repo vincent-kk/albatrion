@@ -1,7 +1,13 @@
 import { isArray } from '@winglet/common-utils/filter';
 
-import type { Behavior } from '../../../../record';
+import type { ArrayArrangePlan, Behavior } from '../../../../record';
 import { isValidArrayIndex } from './isValidArrayIndex';
+
+/** Shared plan for an array verb that changes nothing. */
+const NOOP_PLAN: ArrayArrangePlan = { kind: 'noop' };
+
+/** Shared result reporting the array length after a push. */
+const LENGTH_RESULT = { source: 'length' } as const;
 
 /**
  * Propose a copied whole-array raw value for a terminal verb.
@@ -12,18 +18,18 @@ import { isValidArrayIndex } from './isValidArrayIndex';
 export const arrangeTerminalArray: Behavior['arrange'] = (node, operation) => {
   const raw = node.raw;
   if (!isArray(raw) && raw !== undefined && operation.kind !== 'push')
-    return { kind: 'noop' };
+    return NOOP_PLAN;
   const source = isArray(raw) ? raw : [];
   const length = source.length;
   if (operation.kind === 'push')
     return {
       kind: 'raw',
       raw: [...source, operation.value],
-      result: { source: 'length' },
+      result: LENGTH_RESULT,
     };
   if (operation.kind === 'clear')
     return length === 0
-      ? { kind: 'noop' }
+      ? NOOP_PLAN
       : {
           kind: 'raw',
           raw: [],
@@ -31,13 +37,13 @@ export const arrangeTerminalArray: Behavior['arrange'] = (node, operation) => {
         };
   if (operation.kind === 'pop')
     return length === 0
-      ? { kind: 'noop' }
+      ? NOOP_PLAN
       : {
           kind: 'raw',
           raw: source.slice(0, -1),
           result: { source: 'removed', index: length - 1 },
         };
-  if (!isValidArrayIndex(operation.index, length)) return { kind: 'noop' };
+  if (!isValidArrayIndex(operation.index, length)) return NOOP_PLAN;
   const copy = source.slice();
   if (operation.kind === 'remove') {
     copy.splice(operation.index, 1);

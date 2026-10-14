@@ -28,7 +28,7 @@ export const readAbsentSlotSource = <Self extends FieldNodeRecord<Self>>(
   template: BlueprintNode,
   context: SettlementContext<Self>,
 ): unknown => {
-  const path = `${host.path}/${index}`;
+  const path = host.path + '/' + index;
   const distribution = isWithinReplacePaths(context, path)
     ? context.distributedInputs.get(host)
     : undefined;

@@ -57,11 +57,11 @@ export const populateNodeChildren = (
           fragment: base.fragment,
           role: base.role,
           schema: child,
-          schemaPath: `${declaration.schemaPath}/properties/${escapedName}`,
+          schemaPath: declaration.schemaPath + '/properties/' + escapedName,
           order: [...declaration.order, 0, index],
         };
         input.gates = [];
-        const path = `${node.path}/${escapedName}`;
+        const path = node.path + '/' + escapedName;
         appendChildEntries(
           node,
           name,
@@ -94,7 +94,11 @@ export const populateNodeChildren = (
             ? undefined
             : createBlueprintGate({
                 kind: 'active' as const,
-                schemaPath: `${owner.schemaPath}/controls/fields/${index}/controls/active`,
+                schemaPath:
+                  owner.schemaPath +
+                  '/controls/fields/' +
+                  index +
+                  '/controls/active',
                 hostPath: node.path,
                 condition: entry.controls.active,
                 ...(owner.gates.length ? { appliesWhen: owner.gates } : {}),
@@ -132,7 +136,7 @@ export const populateNodeChildren = (
         const input: SchemaInput = {
           ...base,
           schema: child,
-          schemaPath: `${declaration.schemaPath}/properties/${escapedName}`,
+          schemaPath: declaration.schemaPath + '/properties/' + escapedName,
           order: [...declaration.order, 0, index],
         };
         const entryGates = fieldControls
@@ -146,7 +150,7 @@ export const populateNodeChildren = (
         else
           properties.set(name, {
             escapedName,
-            path: `${node.path}/${escapedName}`,
+            path: node.path + '/' + escapedName,
             inputs: [input],
           });
         const discriminatorIndex = input.gates.findIndex(
@@ -176,7 +180,12 @@ export const populateNodeChildren = (
         const input: SchemaInput = {
           ...base,
           schema: child,
-          schemaPath: `${declaration.schemaPath}/${schema.prefixItems ? 'prefixItems' : 'items'}/${index}`,
+          schemaPath:
+            declaration.schemaPath +
+            '/' +
+            (schema.prefixItems ? 'prefixItems' : 'items') +
+            '/' +
+            index,
           order: [...declaration.order, 0, index],
         };
         const existing = tuples.get(index);
@@ -198,7 +207,7 @@ export const populateNodeChildren = (
       itemInputs.push({
         ...base,
         schema: schema.items,
-        schemaPath: `${declaration.schemaPath}/items`,
+        schemaPath: declaration.schemaPath + '/items',
         order: [...declaration.order, 0, 0],
       });
     }
@@ -214,7 +223,7 @@ export const populateNodeChildren = (
       itemInputs.push({
         ...base,
         schema: additionalItems,
-        schemaPath: `${declaration.schemaPath}/additionalItems`,
+        schemaPath: declaration.schemaPath + '/additionalItems',
         order: [...declaration.order, 0, schema.items.length],
       });
   }
@@ -232,12 +241,12 @@ export const populateNodeChildren = (
     );
   }
   if (itemInputs.length)
-    node.item = build(context, itemInputs, `${node.path}/*`)[0];
+    node.item = build(context, itemInputs, node.path + '/*')[0];
   if (tuples.size)
     node.prefixItems = [...tuples]
       .sort(([a], [b]) => a - b)
       .map(
-        ([index, inputs]) => build(context, inputs, `${node.path}/${index}`)[0],
+        ([index, inputs]) => build(context, inputs, node.path + '/' + index)[0],
       );
   if (process.env.NODE_ENV !== 'production' && node.prefixItems)
     Object.freeze(node.prefixItems);

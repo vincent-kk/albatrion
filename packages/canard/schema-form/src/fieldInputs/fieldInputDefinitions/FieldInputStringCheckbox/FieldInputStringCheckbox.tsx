@@ -50,9 +50,9 @@ export const FieldInputStringCheckbox = ({
       onChange((prev) => prev?.filter((option) => option !== rawValue) || []);
   });
   return (
-    <div role="group" aria-labelledby={`label:${path}`}>
+    <div role="group" aria-labelledby={'label:' + path}>
       {map(checkboxOptions, ({ value, rawValue, label }, index) => {
-        const id = `${path}-${index}`;
+        const id = path + '-' + index;
         return (
           <label key={value} htmlFor={id} style={style} className={className}>
             <input

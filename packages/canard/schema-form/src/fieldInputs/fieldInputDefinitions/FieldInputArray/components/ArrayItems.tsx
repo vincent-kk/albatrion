@@ -1,4 +1,5 @@
 import {
+  type CSSProperties,
   type ReactElement,
   memo,
   useCallback,
@@ -12,6 +13,21 @@ import { fillArraySlot } from '../utils/fillArraySlot';
 import { readSlotKind } from '../utils/readSlotKind';
 import { Button } from './Button';
 import { EmptySlot } from './EmptySlot';
+
+/** One array row laid out horizontally. */
+const FLEX_ROW_STYLE: CSSProperties = { display: 'flex' };
+
+/** Right-aligned clickable row holding the add-item button. */
+const ADD_BUTTON_ROW_STYLE: CSSProperties = {
+  display: 'flex',
+  justifyContent: 'flex-end',
+  alignItems: 'center',
+  cursor: 'pointer',
+  marginBottom: 5,
+};
+
+/** Space between the add-item text and its button. */
+const ADD_LABEL_STYLE: CSSProperties = { marginRight: 10 };
 
 /** Rebuild rows only when their identity, structure or presentation changes. */
 export const ArrayItems = memo(function ArrayItems({
@@ -67,7 +83,7 @@ export const ArrayItems = memo(function ArrayItems({
     const ChildField = ChildFields[index];
     const key = ChildField.key;
     rows.push(
-      <div key={key} style={{ display: 'flex' }}>
+      <div key={key} style={FLEX_ROW_STYLE}>
         <ChildField key={key} />
         {!readOnly && (
           <Button
@@ -88,7 +104,7 @@ export const ArrayItems = memo(function ArrayItems({
   for (let index = childCount; index < slotEnd; index++)
     rows.push(
       <EmptySlot
-        key={`slot:${index}`}
+        key={'slot:' + index}
         index={index}
         kind={readSlotKind(jsonSchema, index)}
         readOnly={readOnly}
@@ -103,16 +119,8 @@ export const ArrayItems = memo(function ArrayItems({
     >
       {rows}
       {!readOnly && (jsonSchema.maxItems ?? Infinity) > childCount && (
-        <label
-          style={{
-            display: 'flex',
-            justifyContent: 'flex-end',
-            alignItems: 'center',
-            cursor: 'pointer',
-            marginBottom: 5,
-          }}
-        >
-          <div style={{ marginRight: 10 }}>Add New Item</div>
+        <label style={ADD_BUTTON_ROW_STYLE}>
+          <div style={ADD_LABEL_STYLE}>Add New Item</div>
           <Button
             title="add item"
             label="+"

@@ -7,6 +7,9 @@ import { useFormErrorContext } from '@/schema-form/providers/FormErrorContext';
 import type { ChildField } from '../type';
 import { isDetectableTerminal } from './utils/isDetectableTerminal';
 
+/** A property key made only of digits, as an array index read. */
+const NUMERIC_KEY = /^\d+$/;
+
 /** Shared immutable child list for strategies that need no read detector; frozen once at module load. */
 const EMPTY_CHILDREN = Object.freeze([]) as unknown as ChildField[];
 
@@ -14,6 +17,8 @@ const EMPTY_CHILDREN = Object.freeze([]) as unknown as ChildField[];
 const COMMITTED = 1;
 /** Read-detector state after the first observable empty-list access. */
 const ACCESSED = 2;
+/** Mask that clears the accessed bit from the read-detector state. */
+const CLEAR_ACCESSED_MASK = ~ACCESSED;
 
 /**
  * The input's child list and the marker its owning layout effect calls on every commit
@@ -51,7 +56,7 @@ export const useTerminalChildren = (node: FieldNode): TerminalChildren => {
       ): unknown => {
         if (readLoad !== reporter.load) {
           readLoad = reporter.load;
-          accessed.current &= ~ACCESSED;
+          accessed.current &= CLEAR_ACCESSED_MASK;
         }
         if (key === undefined) {
           reporter.report({
@@ -66,7 +71,7 @@ export const useTerminalChildren = (node: FieldNode): TerminalChildren => {
           !(accessed.current & ACCESSED) &&
           (key === 'length' ||
             key === Symbol.iterator ||
-            (typeof key === 'string' && /^\d+$/.test(key)))
+            (typeof key === 'string' && NUMERIC_KEY.test(key)))
         ) {
           accessed.current |= ACCESSED;
           if (accessed.current & COMMITTED) queueMicrotask(get);

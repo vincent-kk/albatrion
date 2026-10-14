@@ -13,7 +13,7 @@ import { JSONPointer as $ } from '@/schema-form/helpers/jsonPointer';
 const IDENTIFIER_CHARS = 'a-zA-Z0-9_';
 
 /** Path prefix chars: `#` `.` `/` `@` */
-const PATH_PREFIX_CHARS = `${$.Fragment}${$.Current}${$.Separator}${$.Context}`;
+const PATH_PREFIX_CHARS = $.Fragment + $.Current + $.Separator + $.Context;
 
 /**
  * Lookbehind: blocks match after identifiers, path chars, quotes, backslash.
@@ -85,13 +85,14 @@ const CONTEXT_INVALID_PRECEDING_CHARS = `${IDENTIFIER_CHARS}${PATH_PREFIX_CHARS}
  * '(../price) / 100'     → ['../price']
  */
 export const JSON_POINTER_PATH_REGEX = new RegExp(
-  `${NOT_PRECEDED_BY_IDENTIFIER_OR_PATH_CHAR}` +
+  NOT_PRECEDED_BY_IDENTIFIER_OR_PATH_CHAR +
     `(?:` +
     // Pattern 1: #/ or ./ with optional path
     `${FRAGMENT_OR_CURRENT_PREFIX}\\${$.Separator}${OPTIONAL_PATH}` +
     `|` +
     // Pattern 2: ../ (one or more) with optional path
-    `${PARENT_REFERENCES}${OPTIONAL_PATH}` +
+    PARENT_REFERENCES +
+    OPTIONAL_PATH +
     `|` +
     // Pattern 3: /path (requires path, lone / is division)
     `\\${$.Separator}${MULTI_LEVEL_PATH}` +

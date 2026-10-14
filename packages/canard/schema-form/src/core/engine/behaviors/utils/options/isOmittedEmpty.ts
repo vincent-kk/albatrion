@@ -4,6 +4,12 @@ import { mergeEffectiveSchema } from '../../../blueprint';
 import type { BlueprintNode } from '../../../blueprint';
 import { getStaticChoices } from './getStaticChoices';
 
+/** Empty active-declaration list: only ungated contributions apply. */
+const NO_ACTIVE_DECLARATION_IDS: readonly number[] = Object.freeze([]);
+
+/** Merge options selecting the runtime effective schema. */
+const RUNTIME_MERGE_OPTIONS = { mode: 'runtime' } as const;
+
 /**
  * Decide whether a latent leaf can emit under static omitEmpty (26C-14).
  * @param template - Declaration whose ungated static choices govern the value
@@ -15,8 +21,13 @@ export const isOmittedEmpty = (
   value: unknown,
 ): boolean => {
   if (
-    !getStaticChoices(mergeEffectiveSchema(template, [], { mode: 'runtime' }))
-      .omitEmpty
+    !getStaticChoices(
+      mergeEffectiveSchema(
+        template,
+        NO_ACTIVE_DECLARATION_IDS,
+        RUNTIME_MERGE_OPTIONS,
+      ),
+    ).omitEmpty
   )
     return false;
   if (value === '') return true;

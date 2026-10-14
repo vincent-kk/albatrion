@@ -11,17 +11,28 @@ export interface FieldNodePath {
   readonly segments: readonly string[];
 }
 
+/** Shared empty path from the current node; callers only read it. */
+const RELATIVE_EMPTY_PATH: FieldNodePath = Object.freeze({
+  absolute: false,
+  segments: Object.freeze([]),
+});
+
+/** Shared empty path at the live root; callers only read it. */
+const ABSOLUTE_EMPTY_PATH: FieldNodePath = Object.freeze({
+  absolute: true,
+  segments: Object.freeze([]),
+});
+
 /** Parse a node pointer without looking at the tree or changing node state. */
 export const getFieldNodePath = (
   pointer?: string | readonly string[] | null,
 ): FieldNodePath => {
-  if (pointer == null || pointer === '')
-    return { absolute: false, segments: [] };
+  if (pointer == null || pointer === '') return RELATIVE_EMPTY_PATH;
   if (typeof pointer !== 'string') {
     const absolute = pointer[0] === $.Fragment;
     return { absolute, segments: absolute ? pointer.slice(1) : pointer };
   }
-  if (pointer === $.Fragment) return { absolute: true, segments: [] };
+  if (pointer === $.Fragment) return ABSOLUTE_EMPTY_PATH;
   if (pointer.startsWith(JSONPointerPrefix.Fragment))
     return { absolute: true, segments: pointer.slice(2).split($.Separator) };
   if (pointer.startsWith($.Separator))

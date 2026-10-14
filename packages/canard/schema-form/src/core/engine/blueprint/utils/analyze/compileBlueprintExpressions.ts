@@ -45,8 +45,11 @@ export const compileBlueprintExpressions = (
         if (!groupControls) continue;
         const groupPath =
           groupIndex < 0
-            ? `${declaration.schemaPath}/controls`
-            : `${declaration.schemaPath}/controls/fields/${groupIndex}/controls`;
+            ? declaration.schemaPath + '/controls'
+            : declaration.schemaPath +
+              '/controls/fields/' +
+              groupIndex +
+              '/controls';
         const watch = groupControls.watch;
         if (watch !== undefined) {
           const paths = isArray(watch) ? watch : [watch];
@@ -55,7 +58,7 @@ export const compileBlueprintExpressions = (
               context,
               paths[path],
               declaration,
-              `${groupPath}/watch`,
+              groupPath + '/watch',
             );
         }
         for (
@@ -66,7 +69,7 @@ export const compileBlueprintExpressions = (
           const key = EXPRESSION_CONTROL_KEYS[keyIndex];
           const source = groupControls[key];
           if (typeof source !== 'string') continue;
-          const schemaPath = `${groupPath}/${key}`;
+          const schemaPath = groupPath + '/' + key;
           const manager = getPathManager();
           let evaluate;
           try {

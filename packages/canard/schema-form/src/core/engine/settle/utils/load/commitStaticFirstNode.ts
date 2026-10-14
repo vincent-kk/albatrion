@@ -1,6 +1,10 @@
 import { FieldNodeEventType, FieldNodeRevisionLedger } from '../../../record';
 import type { FieldNodeRecord } from '../../../record';
 
+/** Delivery type of a static first load: a value update plus a refresh request. */
+const STATIC_FIRST_DELIVERY_TYPE =
+  FieldNodeEventType.UpdateValue | FieldNodeEventType.RequestRefresh;
+
 /**
  * Finalize one reserved first-load delivery after its children complete.
  * @param node - Occurrence with final local/emit, schema and required state
@@ -16,8 +20,7 @@ export const commitStaticFirstNode = <Self extends FieldNodeRecord<Self>>(
       ? { local: node.local, emit: node.emit }
       : node.local;
   const payload = { previous: undefined, current };
-  const type =
-    FieldNodeEventType.UpdateValue | FieldNodeEventType.RequestRefresh;
+  const type = STATIC_FIRST_DELIVERY_TYPE;
   node.pendingDelivery = {
     type,
     payload: {

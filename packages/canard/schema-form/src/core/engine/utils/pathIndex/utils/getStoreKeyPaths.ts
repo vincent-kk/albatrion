@@ -1,5 +1,8 @@
 import { isArray } from '@winglet/common-utils/filter';
 
+/** Shared frozen result for a key that addresses no path. */
+const NO_PATHS: readonly string[] = Object.freeze([]);
+
 /**
  * Decode a key once when it enters a managed store.
  * @param key - Native store key in the selected identity format
@@ -12,7 +15,7 @@ export const getStoreKeyPaths = (
 ): readonly string[] => {
   if (mode === 'path') return [key];
   const parts: unknown = JSON.parse(key);
-  if (!isArray(parts) || typeof parts[0] !== 'string') return [];
+  if (!isArray(parts) || typeof parts[0] !== 'string') return NO_PATHS;
   return mode === 'rule' &&
     typeof parts[5] === 'string' &&
     parts[5] !== parts[0]

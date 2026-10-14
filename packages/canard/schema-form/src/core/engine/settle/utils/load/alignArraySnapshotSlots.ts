@@ -20,9 +20,9 @@ export const alignArraySnapshotSlots = <Self extends FieldNodeRecord<Self>>(
   if (!hosts.length) return;
   const runtime = hosts[0].runtime;
   let draft = runtime.loadSnapshot;
-  const copies = new WeakMap<object, Map<string, object>>();
-  const draftContainers = new WeakSet<object>();
-  const holey = new WeakSet<object>();
+  const copies = new Map<object, Map<string, object>>();
+  const draftContainers = new Set<object>();
+  const holey = new Set<object>();
   const draftCopy = (source: unknown, path: string): object => {
     if (source !== null && typeof source === 'object') {
       if (draftContainers.has(source)) {
@@ -84,7 +84,7 @@ export const alignArraySnapshotSlots = <Self extends FieldNodeRecord<Self>>(
     let parentPath = '';
     for (let index = 0; index < segments.length - 1; index++) {
       const segment = segments[index];
-      parentPath += `/${encoded[index]}`;
+      parentPath += '/' + encoded[index];
       const child = draftCopy(Reflect.get(parent, segment), parentPath);
       if (isArray(parent) && Number(segment) > parent.length) holey.add(parent);
       Reflect.set(parent, segment, child);

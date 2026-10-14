@@ -2,6 +2,7 @@ import { hasOwnProperty } from '@winglet/common-utils/lib';
 
 import { CONTROL_KEY } from '../../../constants/controlKey';
 import type { FieldNodeRecord } from '../../../record';
+import { emptyReadonlyMap } from '../../../utils/emptyReadonlyMap';
 import type { SettlementContext } from '../../type';
 import { getControlLayers } from '../controls/getControlLayers';
 import { readExitLayerPolicy } from '../controls/readExitLayerPolicy';
@@ -18,7 +19,7 @@ export const readDepartingAncestorPolicy = <Self extends FieldNodeRecord<Self>>(
 ): boolean => {
   for (let ancestor = node.parent; ancestor; ancestor = ancestor.parent) {
     if (ancestor.detached) continue;
-    const previous = getControlLayers(ancestor, new Map());
+    const previous = getControlLayers(ancestor, emptyReadonlyMap);
     const departed = previous.filter((group) => {
       if (!hasOwnProperty(group.controls, CONTROL_KEY.unsetOnInactive))
         return false;

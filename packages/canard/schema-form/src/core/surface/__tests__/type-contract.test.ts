@@ -70,7 +70,8 @@ type PublicKeys =
   | 'subscribe'
   | 'revision'
   | 'validate'
-  | 'batch';
+  | 'batch'
+  | 'visitSubtree';
 
 describe('new FieldNode public types', () => {
   it('TEST-069 public type keys include the context getter', () => {

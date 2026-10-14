@@ -38,7 +38,7 @@ describe('FieldNode PR-2 surface', () => {
         /^\| `([^`]+)` \| (getter|setter|getter\/setter|method) \|/gm,
       ),
     ].map((match) => ({ name: match[1].replace(/\(.*/, ''), kind: match[2] }));
-    expect(rows).toHaveLength(53);
+    expect(rows).toHaveLength(54);
     const prototype = RuntimeFieldNode.prototype;
     expect(
       Object.getOwnPropertyNames(prototype)

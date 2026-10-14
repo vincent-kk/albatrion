@@ -3,6 +3,7 @@ import { arrangeFieldNodeItems } from '../../../settle';
 import { captureChainError } from '../chain/captureChainError';
 import { enterFieldNodeChain } from '../chain/enterFieldNodeChain';
 import { exitFieldNodeChain } from '../chain/exitFieldNodeChain';
+import { isBatchMarking } from '../chain/isBatchMarking';
 import { markBatchArrayOperation } from '../chain/markBatchArrayOperation';
 
 /**
@@ -18,7 +19,7 @@ export const dispatchRemove = <Self extends FieldNodeRecord<Self>>(
 ): unknown => {
   if (!enterFieldNodeChain(node)) return;
   try {
-    return node.rootNode.runtime.batchDepth
+    return isBatchMarking(node)
       ? markBatchArrayOperation(node, { kind: 'remove', index })
       : arrangeFieldNodeItems(node, { kind: 'remove', index });
   } catch (error) {

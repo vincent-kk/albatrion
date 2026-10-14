@@ -92,6 +92,17 @@ export interface NodeSurface<
   readonly defaultValue: unknown;
   find(pointer?: string | readonly string[] | null): FieldNode | null;
   findNodes(pointer?: string | readonly string[] | null): readonly FieldNode[];
+  /**
+   * Call `visitor` on this node and then its descendants in preorder, siblings in order.
+   * From a live node only nodes in the current shape are visited; from a detached node, the
+   * subtree it was detached with. Terminals are leaves, a node reached twice through a reference
+   * is visited once, and nodes created during the walk may be missed. Returning `false` skips
+   * that node's descendants. The walk batches like `batch`: value writes are marked and settle
+   * once when it ends, so value reads during the walk see the last committed values; state and
+   * external-error changes apply at once while their events wait; a form reset still settles at
+   * once. Inside an enclosing batch, everything waits for that batch's end instead.
+   */
+  visitSubtree(visitor: (node: FieldNode) => void | boolean): void;
   setValue(value: unknown, option?: SetValueOption): void;
   resetSubtree(option?: SetValueOption): void;
   /** Local interaction flags, patched through the dispatcher on assignment. */
@@ -211,7 +222,7 @@ export type ArrayNode<Item = unknown> =
 export type VirtualNode = NodeSurface<
   'virtual',
   'branch',
-  'virtual',
+  undefined,
   readonly unknown[] | undefined,
   readonly FieldNode[]
 >;

@@ -20,8 +20,8 @@ export const isWithinReplacePaths = <Self extends FieldNodeRecord<Self>>(
     const written = paths[index];
     if (
       path === written ||
-      path.startsWith(`${written}/`) ||
-      written.startsWith(`${path}/`)
+      path.startsWith(written + '/') ||
+      written.startsWith(path + '/')
     )
       return true;
   }

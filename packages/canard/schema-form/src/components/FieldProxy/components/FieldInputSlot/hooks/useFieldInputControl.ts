@@ -23,6 +23,8 @@ const INPUT_TRACKING_EVENTS_WITHOUT_REFRESH =
 
 /** Refresh waits while the raw input owns an active IME composition. */
 const COMPOSING = 1;
+/** Mask that clears the composing bit from the refresh deferral state. */
+const CLEAR_COMPOSING_MASK = ~COMPOSING;
 /** Refresh waits for the child ownership observed by render, subscribe or delivery. */
 const MOUNTED_CHILDREN = 2;
 
@@ -91,7 +93,7 @@ export const useFieldInputControl = <Node extends FieldNode>(
     refreshDeferral.current |= COMPOSING;
   }, []);
   const handleCompositionEnd = useCallback(() => {
-    refreshDeferral.current &= ~COMPOSING;
+    refreshDeferral.current &= CLEAR_COMPOSING_MASK;
     if (
       mountedChildren.current === 0 &&
       generation.current !== node.revision(FieldNodeEventType.RequestRefresh)

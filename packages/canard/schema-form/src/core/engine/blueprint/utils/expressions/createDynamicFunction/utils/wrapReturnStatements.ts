@@ -7,7 +7,7 @@
  */
 export const wrapReturnStatements = (body: string): string =>
   body.replace(RETURN_PATTERN, (_, __, ___, expression) =>
-    expression ? `return !!(${expression.trim()})` : 'return false',
+    expression ? 'return !!(' + expression.trim() + ')' : 'return false',
   );
 
 const RETURN_PATTERN = /\breturn([ \t]*)(?:([ \t]+)(.+?))?(?=;|\n|$)/g;

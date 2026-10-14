@@ -68,13 +68,13 @@ export const buildFeatureNodeIndex = (
             child.node.declarations.some(
               (entry) =>
                 entry.schemaPath.startsWith(
-                  `${declaration.schemaPath}/properties/`,
+                  declaration.schemaPath + '/properties/',
                 ) ||
                 entry.schemaPath.startsWith(
-                  `${declaration.schemaPath}/items/`,
+                  declaration.schemaPath + '/items/',
                 ) ||
                 entry.schemaPath.startsWith(
-                  `${declaration.schemaPath}/prefixItems/`,
+                  declaration.schemaPath + '/prefixItems/',
                 ),
             )
           )
