@@ -25,8 +25,8 @@
 
 ### 수출의 이유와 도달 범위
 
-- `loadFieldNodeAtMount`·`resetFieldNodeForm` 수출의 보유 이유: core 수준 시험 기반 도구(makeFieldNodeTree·시나리오 실행기·createDispatchTree)가 쓰는 생성·적재 통로; 제품 소비자는 없음; 정돈-3에서 시험 도구의 자리와 함께 재검토.
-- `blueprint`는 core 수준 시험 기반 도구가 쓰는 생성 통로로 core index가 다시 내보내며 패키지 src/index 표면에는 추가하지 않습니다. `readFieldNodeGuard`는 validation 내부 계약이며 engine·core 집계 진입점이 재수출하지 않습니다.
+- `loadFieldNodeAtMount`·`resetFieldNodeForm` 수출의 보유 이유: core 시나리오 실행기(`createCoreScenarioAdapter`·`createObservedCoreScenarioAdapter`·`executeCoreScenarioStep`), `core/__tests__/scenarios/differential.spec.ts`, `core/surface/__tests__/detached.test.ts`와 `bench/array.bench.ts`·`bench/derive-and-controls.bench.ts`·`bench/node-and-settle.bench.ts`가 engine index로 쓰는 적재 통로; 제품 소비자는 없음; 정돈-3에서 시험 도구의 자리와 함께 재검토.
+- `blueprint`는 bench와 `src/hooks/__tests__/createHookNode.ts`가 쓰는 생성 통로로 core index가 다시 내보내며 패키지 src/index 표면에는 추가하지 않습니다. `readFieldNodeGuard`는 validation 내부 계약이며 engine·core 집계 진입점이 재수출하지 않습니다.
 - 이름 목록은 승인된 내부 계약이며 자식 모듈의 모든 수출을 대신하지 않습니다. 시험은 검사 대상의 소유 구획에서 구체 내부 단위를 검증합니다.
 - `__tests__/fixtures`는 engine 층의 공용 시험 fixture를 소유합니다. `createDispatchTree.ts`는 write·validation 시험이 공유하는 생성 도우미이고 `ownedInlineHead.json`은 blueprint·settle 시험이 공유하는 기준 데이터이므로 이 최소 공통 소유자에 둡니다.
 - `__tests__/validation-guard-integration.test.ts`는 validation·write 두 자식 계약을 함께 검증하는 engine 통합 시험입니다.
@@ -37,7 +37,6 @@
 ### branchless-observables — 분기 없는 청사진의 코어 관측 동등성
 
 - BF 픽스처와 기존 청사진 시험 스키마에서 범용 분석과 분기 없는 분석의 트리·값·오류·경고·진단이 같고, 모든 BF 상호작용 뒤에도 유지됩니다.
-- derive·watch·state·역의존 기능이 선언되면 코어 정착에 필요한 색인이 남습니다. 빈 파생 식처럼 규칙이 없어도 부재 증명이 없는 경우에는 청사진 사이에서 빈 표를 공유하지 않습니다.
 
 ### engine-entry — 명명한 내부 계약
 
