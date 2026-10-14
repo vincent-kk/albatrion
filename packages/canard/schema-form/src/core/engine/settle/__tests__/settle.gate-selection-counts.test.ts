@@ -3,7 +3,7 @@ import { describe, expect, it, vi } from 'vitest';
 import { WriteOption } from '@/schema-form/core/engine/types/value';
 
 import { createTestTree } from '../../__tests__/fixtures/createTestTree';
-import * as compiler from '../../blueprint/utils/expressions/createDynamicFunction';
+import * as compiler from '../../blueprint/compileBlueprintExpressions/createDynamicFunction';
 import { loadFieldNodeAtMount } from '../utils/load/loadFieldNodeAtMount';
 import { writeFieldNode } from '../utils/write/writeFieldNode';
 

@@ -3,7 +3,7 @@ import { describe, expect, it, vi } from 'vitest';
 import { WriteOption } from '@/schema-form/core/engine/types/value';
 
 import { createTestTree } from '../../__tests__/fixtures/createTestTree';
-import * as compiler from '../../blueprint/utils/expressions/createDynamicFunction';
+import * as compiler from '../../blueprint/compileBlueprintExpressions/createDynamicFunction';
 import * as priming from '../utils/compute/primeHost';
 import * as selection from '../utils/compute/selectChildren';
 import * as gates from '../utils/gates/evaluateGate';

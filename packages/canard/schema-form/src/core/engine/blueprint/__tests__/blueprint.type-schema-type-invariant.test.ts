@@ -5,7 +5,7 @@ import { isArray } from '@winglet/common-utils/filter';
 // @ts-expect-error The original JavaScript corpus has no TypeScript declaration.
 import { corpus } from '../../../../../architecture/spikes/guard-cost/redteam3/corpus.mjs';
 import { blueprint } from '../blueprint';
-import type { BlueprintSchema } from '../type';
+import type { BlueprintSchema } from '../types/schema';
 
 /** Every E1–E42 schema that constructs; the erroring cells (E10, E14, E15, E23, E28) have no nodes. */
 const TYPE_CELLS: readonly (readonly [string, BlueprintSchema])[] = [

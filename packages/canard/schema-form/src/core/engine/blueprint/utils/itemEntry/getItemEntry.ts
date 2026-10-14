@@ -1,5 +1,5 @@
-import type { BlueprintChildEntry, BlueprintNode } from '../../type';
-import { getItemSchemaPath } from './getItemEntry/utils/getItemSchemaPath';
+import type { BlueprintChildEntry, BlueprintNode } from '../../types/node';
+import { getItemSchemaPath } from './getItemSchemaPath';
 
 /** Entries belong to immutable templates and are allocated only for requested slots. */
 const ENTRIES = new WeakMap<

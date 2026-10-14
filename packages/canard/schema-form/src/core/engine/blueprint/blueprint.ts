@@ -1,13 +1,14 @@
 import { JSONPointer as $ } from '@/schema-form/helpers/jsonPointer';
 
-import type { Blueprint, BlueprintOptions, BlueprintSchema } from './type';
-import { buildNodes } from './utils/analyze/buildNodes';
-import { compileBlueprintExpressions } from './utils/analyze/compileBlueprintExpressions';
-import type { AnalysisContext } from './utils/analyze/type';
-import { validateShape } from './utils/analyze/validateShape';
-import { collectBlueprintWarnings } from './utils/diagnostics/collectBlueprintWarnings';
-import { validateChildTargets } from './utils/diagnostics/validateChildTargets';
-import { StaticFirstLoadCapability } from './utils/features/StaticFirstLoadCapability';
+import { StaticFirstLoadCapability } from './StaticFirstLoadCapability';
+import { buildNodes } from './buildNodes';
+import { collectBlueprintWarnings } from './collectBlueprintWarnings';
+import { compileBlueprintExpressions } from './compileBlueprintExpressions';
+import type { AnalysisContext } from './types/analysis';
+import type { Blueprint, BlueprintOptions } from './types/blueprint';
+import type { BlueprintSchema } from './types/schema';
+import { validateChildTargets } from './validateChildTargets';
+import { validateShape } from './validateShape';
 
 /** Shared options for a build without injected predicates, collector, or cache. */
 const DEFAULT_BLUEPRINT_OPTIONS: BlueprintOptions = {};

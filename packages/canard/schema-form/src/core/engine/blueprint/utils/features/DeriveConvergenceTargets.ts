@@ -1,5 +1,5 @@
-import type { Blueprint } from '../../type';
-import { collectDeriveConvergenceTargets } from '../analyze/collectDeriveConvergenceTargets';
+import type { Blueprint } from '../../types/blueprint';
+import { collectDeriveConvergenceTargets } from './collectDeriveConvergenceTargets';
 
 /** First-write proof consumed by settle; no public Blueprint slots are added. */
 export class DeriveConvergenceTargets {

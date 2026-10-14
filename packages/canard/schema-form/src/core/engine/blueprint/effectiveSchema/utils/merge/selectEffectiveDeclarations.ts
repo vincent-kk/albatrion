@@ -1,0 +1,57 @@
+import type { BlueprintNode, PropertyDeclaration } from '../../../types/node';
+
+/**
+ * Select effective contributions without executing their gate descriptions.
+ * @param node - Owner of declarations and overlays.
+ * @param activeIds - Gated IDs selected by the settlement caller.
+ * @param staticConjunctions - Optional one-shot conjunctive sequence from static construction.
+ * @returns Contributions in authored total order, omitting shared disjunctive hints.
+ */
+export const selectEffectiveDeclarations = (
+  node: BlueprintNode,
+  activeIds: readonly number[],
+  staticConjunctions?: readonly PropertyDeclaration[],
+): PropertyDeclaration[] => {
+  if (staticConjunctions !== undefined) {
+    const selected: PropertyDeclaration[] = [];
+    for (let index = 0; index < staticConjunctions.length; index++) {
+      const entry = staticConjunctions[index];
+      if (!entry.validationOnly && entry.gates.length === 0)
+        selected.push(entry);
+    }
+    return selected.sort(compareDeclarations);
+  }
+  const active = node.declarations.filter(
+    (entry) =>
+      !entry.validationOnly &&
+      (entry.gates.length === 0 || activeIds.includes(entry.id)),
+  );
+  const declarations = active.filter((entry) => entry.role === 'declaration');
+  return active
+    .filter(
+      (entry) =>
+        entry.context === 'conjunction' ||
+        (declarations.length === 1 &&
+          declarations[0].context === 'declaration' &&
+          entry === declarations[0]),
+    )
+    .sort(compareDeclarations);
+};
+
+/**
+ * Compare keyword/index paths independently of object insertion order.
+ * @param left - Earlier candidate in the sort comparison.
+ * @param right - Later candidate in the sort comparison.
+ * @returns Signed ordering, using declaration IDs only for equal paths.
+ */
+function compareDeclarations(
+  left: PropertyDeclaration,
+  right: PropertyDeclaration,
+): number {
+  const length = Math.min(left.order.length, right.order.length);
+  for (let index = 0; index < length; index++) {
+    const difference = left.order[index] - right.order[index];
+    if (difference) return difference;
+  }
+  return left.order.length - right.order.length || left.id - right.id;
+}

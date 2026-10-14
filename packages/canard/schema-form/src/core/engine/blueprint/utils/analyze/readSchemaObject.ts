@@ -1,4 +1,4 @@
-import type { BlueprintSchema } from '../../type';
+import type { BlueprintSchema } from '../../types/schema';
 
 /**
  * Read shape syntax from an object schema without interpreting boolean constraints.
