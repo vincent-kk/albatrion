@@ -57,7 +57,7 @@
 | 06 | 배열 | 머지 | [#353](https://github.com/vincent-kk/albatrion/pull/353) | 브랜치 `feat/schema-form-array`. 2026-10-02 머지(`07a083c18`). 05를 통합해 그 "06에 넘길 목록"을 맡음. P-23은 64·65라운드대로 진단·개선해 R-22 해결(65C-01 표본, 통째 쓰기 Node 1.39–1.42×·Bun 2.09–2.11×), P-14의 54라운드 수용 유지. 07이 이어받는 열림 행 P-24·P-25(03 코드, 수용 대상 아님), 속도 문제는 [대장](verification/performance-issues.md). 실행 기록은 [log](plan/06-array/log.md) |
 | 07 | 전환 | 리뷰 | [#354](https://github.com/vincent-kk/albatrion/pull/354) | 브랜치 `feat/schema-form-switch`(2026-10-02 착수, 2026-10-11 `1.0.0-beta` `351ece24e` 위에 다시 세움). 원샷. 착수 물음은 68라운드로 닫힘. G23·G26·G27이 소유자 답([질의 목록](reviews/owner-queue-07.md))으로 닫힐 때까지 머지하지 않음. 측정 원자료는 `archive/stage-07-verification-raw`(140라운드). 실행 계획은 [execution-plan](plan/07-switch/execution-plan.md), 기록은 [log](plan/07-switch/log.md) |
 | 08 | 플러그인 | 대기 | — | 07 뒤 |
-| 정돈 | 코드 정돈 | 진행 | — | 07 뒤·08 앞(287라운드), 최적화 앞. 계획 [request](plan/tidy-structure/request.md), 결정 D1–D6 확정(289라운드). 정돈-1부터 PR 넷. 소유자가 코드를 직접 보며 파일 구성·함수 이름·함수 로직을 손질한다(76라운드 소유자 답, `reviews/round-76-owner-answers.md`). fractal 경계와 공개 인터페이스는 바꾸지 않는다. 원칙을 소유자 라운드로 먼저 적고 작업 세션이 한 번에 적용, 동작 불변은 차등 시험·기존 스위트·벤치로 보임. P-24·P-25를 함께 처리할 수 있음 |
+| 정돈 | 코드 정돈 | 진행 | — | 07 뒤·08 앞(287라운드), 최적화 앞. 계획 [request](plan/tidy-structure/request.md), 결정 D1–D6 확정(289라운드). 정돈-1부터 PR 넷. 정돈-1 #374 병합 ae502f7bd(297라운드), 정돈-2 진행. 소유자가 코드를 직접 보며 파일 구성·함수 이름·함수 로직을 손질한다(76라운드 소유자 답, `reviews/round-76-owner-answers.md`). fractal 경계와 공개 인터페이스는 바꾸지 않는다. 원칙을 소유자 라운드로 먼저 적고 작업 세션이 한 번에 적용, 동작 불변은 차등 시험·기존 스위트·벤치로 보임. P-24·P-25를 함께 처리할 수 있음 |
 | 최적화 | 성능 최적화 | 대기 | — | 정돈 뒤 착수(76라운드 소유자 답), 09 전에 끝냄. 묶음(M2)마다 PR 하나. 출발점은 [대장](verification/performance-issues.md), 계획은 [request](plan/perf-optimization/request.md) |
 | 09 | 정리·릴리스 | 대기 | — | 08·최적화와 릴리스 전환 PR 뒤. 머지되면 우산을 `master`로 |
 | 별도 | 릴리스 전환 | 대기 | — | 시점은 소유자가 정한다(LANDING-204) |
@@ -82,7 +82,7 @@
 
 | 날짜 | 무엇 | 어디 |
 | --- | --- | --- |
-| 2026-10-14 | 292라운드 닫기: 문서 정합 PR #373 병합 0d17c3080(18건, 주석 넷), 정돈-1 편집자 결정 둘(공유 보조는 helpers/error, rolled 보존). 보충 2줄 | `reviews/round-292-closing.md` |
+| 2026-10-14 | 297라운드 닫기: 정돈-1 PR #374 병합 ae502f7bd(포맷터 27 삭제, nodeFromJSONSchema 하향, 표면 92 동일), 정돈-2 투입. 보충 1줄 | `reviews/round-297-closing.md` |
 | 2026-10-14 | 293라운드 소유자: FCA import 멘탈모델(외부·형제·직계, 직계는 내부 모듈, 공통 부모 organ, 부모→자식 비대칭). 보충 2줄 | `reviews/round-293-owner-answers.md` |
 | 2026-10-14 | 294라운드 소유자: 보강 다섯 수용, 모델 기록(fca-import-model.md), 구조 검사 지시, filid 개선 여부는 마지막에 결정. 보충 1줄 | `reviews/round-294-owner-answers.md` |
 | 2026-10-14 | 295라운드 소유자: D7(공개 API 시험은 외부)·D8(B6·B7) 허용, 모델 안 변용 허용, filid 언어 중립. 보충 1줄 | `reviews/round-295-owner-answers.md` |
