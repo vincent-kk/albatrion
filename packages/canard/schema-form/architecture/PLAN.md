@@ -82,4 +82,4 @@
 
 | 날짜 | 무엇 | 어디 |
 | --- | --- | --- |
-| 2026-10-14 | 282라운드 소유자 메모: 08단계 씨앗(최소 export 위반, nodeFromJSONSchema root export, FormContents 이름), 시험·bench index 경유는 filid 한계 아님. 보충 1줄 | `reviews/round-282-owner-answers.md` |
+| 2026-10-14 | 283라운드 닫기: PR #370(07d) 병합 0b879e594 — 소유자 결정 다섯 반영, 39는 대기열 50. 보충 1줄 | `reviews/round-283-closing.md` |
