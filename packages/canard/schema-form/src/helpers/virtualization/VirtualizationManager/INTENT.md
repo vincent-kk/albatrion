@@ -33,4 +33,4 @@ Form마다 하나씩 존재하며 상태를 가진 가상화 조율자다. 공�
 
 ## Dependencies
 
-idle callback을 제공하지 않는 환경에서도 백필을 진행할 수 있도록 취소 가능한 macrotask 폴백을 사용합니다. 옵션의 의미는 resolveVirtualizationOptions가 소유하며, 형제 프랙탈의 진입점을 통해 타입과 값을 소비합니다.
+idle callback을 제공하지 않는 환경에서도 백필을 진행할 수 있도록 취소 가능한 macrotask 폴백을 사용한다. 옵션의 의미는 resolveVirtualizationOptions가 소유하며, 형제 프랙탈의 진입점을 통해 타입과 값을 소비한다.
