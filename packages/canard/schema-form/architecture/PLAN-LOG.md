@@ -271,6 +271,7 @@
 | 2026-10-14 | 285라운드 닫기: G23 닫힘 — ego-browser 251 finished·실패 0, 자동 게이트 251. 보충 1줄 | `reviews/round-285-closing.md` |
 | 2026-10-14 | 286라운드 닫기: #372(07f) 3c1a7f2c3, #354(07 전환) 1.0.0-beta 병합 9c4d4a59d — 07단계 닫힘. 보충 1줄 | `reviews/round-286-closing.md` |
 | 2026-10-14 | 292라운드 닫기: 문서 정합 PR #373 병합 0d17c3080(18건, 주석 넷), 정돈-1 편집자 결정 둘(공유 보조는 helpers/error, rolled 보존). 보충 2줄 | `reviews/round-292-closing.md` |
+| 2026-10-14 | 297라운드 닫기: 정돈-1 PR #374 병합 ae502f7bd(포맷터 27 삭제, nodeFromJSONSchema 하향, 표면 92 동일), 정돈-2 투입. 보충 1줄 | `reviews/round-297-closing.md` |
 
 ## 2. 라운드별 요지
 
@@ -520,3 +521,5 @@
 - **294라운드(2026-10-14, 소유자).** FCA 모델 보강 다섯 수용, 모델 기록, 구조 검사 지시, filid 개선 여부는 마지막에 모두 포함해 결정(reviews/round-294-owner-answers.md).
 - **295라운드(2026-10-14, 소유자).** D7·D8 허용, 모델 안에서의 변용 허용(핵심은 가독성·계약·폭발 반경 억제), filid는 언어 중립(reviews/round-295-owner-answers.md).
 - **296라운드(2026-10-14, 소유자).** 정돈-1 병합 즉시 정돈-2 투입, 끝나는 대로 보고; fairy08 유휴 확인 뒤 export 재검사 배정(reviews/round-296-owner-answers.md).
+- **254라운드(2026-10-14, 소유자).** PR #363(07b-3) 병합을 허가했다(reviews/round-254-owner-answers.md).
+- **298라운드(2026-10-14, 소유자).** 5단계(구조 리뷰) 전까지 정돈-2·3·E·4 무정지 진행, 판단은 대기열, 생성 PR 병합 허용(reviews/round-298-owner-answers.md).
