@@ -90,7 +90,10 @@ export default [
     },
   },
   {
-    files: ['src/core/engine/blueprint/**/*.ts', 'src/core/surface/nodeFromJSONSchema.ts'],
+    files: [
+      'src/core/engine/blueprint/**/*.ts',
+      'src/core/surface/utils/nodeFromJSONSchema.ts',
+    ],
     ignores: ['**/__tests__/**'],
     rules: {
       '@typescript-eslint/consistent-type-assertions': [

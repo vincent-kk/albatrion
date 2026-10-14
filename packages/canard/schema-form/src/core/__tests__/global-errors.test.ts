@@ -6,9 +6,9 @@ import {
   type ValidationIssue,
   ValidationMode,
   adoptFieldNodeTree,
-  nodeFromJSONSchema,
   reloadFieldNodeForm,
 } from '../index';
+import { nodeFromJSONSchema } from '../surface/utils/nodeFromJSONSchema';
 
 /**
  * Build a mounted public tree without automatic validation requests.

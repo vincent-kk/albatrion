@@ -3,7 +3,7 @@ import { type PropsWithChildren, StrictMode } from 'react';
 import { act, cleanup, renderHook } from '@testing-library/react';
 import { afterEach, expect, it } from 'vitest';
 
-import { nodeFromJSONSchema } from '@/schema-form/core';
+import { nodeFromJSONSchema } from '@/schema-form/core/surface/utils/nodeFromJSONSchema';
 import { FieldRendererContextProvider } from '@/schema-form/providers/FieldRendererContext';
 
 import { useChildFieldErrors } from '../useChildFieldErrors';

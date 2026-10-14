@@ -1,7 +1,8 @@
 // filid:contract owned-inline-counts
 import { afterEach, expect, it, vi } from 'vitest';
 
-import { type AuthoredSchema, nodeFromJSONSchema } from '../../../index';
+import { type AuthoredSchema } from '../../../index';
+import { nodeFromJSONSchema } from '../../../surface/utils/nodeFromJSONSchema';
 import fixtures from './fixtures/ownedInlineMounts.json';
 
 afterEach(() => vi.restoreAllMocks());

@@ -1,4 +1,3 @@
-export { nodeFromJSONSchema } from './nodeFromJSONSchema';
 export { fieldNodeFactory } from './utils/fieldNodeFactory';
 export { buildFieldNodeTree } from './utils/binding/buildFieldNodeTree';
 export { mountFieldNode } from './utils/binding/mountFieldNode';

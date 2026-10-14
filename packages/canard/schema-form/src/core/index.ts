@@ -23,7 +23,6 @@ export {
   readFieldNodeInteractionReset,
   observeFieldNodeReports,
   interpretFieldNodeDraft,
-  nodeFromJSONSchema,
 } from './surface';
 export {
   FieldNodeState,

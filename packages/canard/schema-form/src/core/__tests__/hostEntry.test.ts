@@ -1,11 +1,7 @@
 import { describe, expect, it, vi } from 'vitest';
 
-import {
-  FieldNodeEventType,
-  ValidationMode,
-  isUnionNode,
-  nodeFromJSONSchema,
-} from '../index';
+import { FieldNodeEventType, ValidationMode, isUnionNode } from '../index';
+import { nodeFromJSONSchema } from '../surface/utils/nodeFromJSONSchema';
 
 describe('70C-01 core host entry', () => {
   it.each([
