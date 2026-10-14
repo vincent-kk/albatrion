@@ -2,7 +2,7 @@
 
 ## Requirements
 
-도메인 오류는 공통 오류 구조와 타입 판별 가능성을 제공합니다. 새 엔진의 `onError` 코드 표와 기록·보고기 형도 이 fractal의 데이터 계약입니다(ERROR-013·017·031·164, LANDING-084).
+도메인 오류는 공통 오류 구조와 타입 판별 가능성을 제공합니다. 새 엔진의 `onError` 코드 enum과 기록·보고기 형도 이 fractal의 데이터 계약입니다(ERROR-013·017·031·164, LANDING-084).
 
 ## API Contracts
 
@@ -18,7 +18,7 @@
 - `interface FormErrorReporter { report(record: FormErrorRecord): void; hasConsumer(): boolean }`은 core가 트리 생성 인자로 받는 형입니다. `hasConsumer()`가 거짓이면 일반 경고의 판정·서식·키 할당을 하지 않고, true이면 같은 사건의 code·level·details·surface를 환경에 따라 바꾸지 않습니다. `NON_JSON_WHOLE_VALUE`의 깊이 점검과 보고만은 `hasConsumer()`와 무관하게 개발 모드에서만 합니다(ERROR-013·021·030, WRITE-099, 31C-02).
 - 코드별 `reason`은 닫힌 값만 둡니다. `VALIDATOR_COMPILE_FAILED`·`GUARD_FAILED`에는 `'duplicateSchemaId'`, `TYPE_MISMATCH`에는 `'unconvertible' | 'ambiguous'`, `DISCRIMINATOR_MISMATCH`에는 `'missing' | 'kind' | 'overlap' | 'key'`를 씁니다. 원장이 이름 붙이지 않은 원인에는 `reason`을 만들지 않습니다(ERROR-201, VALUE-037, 31C-03).
 - `FormErrorDetails<Code>`의 `sourcePath?: string`은 `SCHEMA_FORM_ERROR.INJECT_TARGET_MISSING`·`SCHEMA_FORM_ERROR.INVALID_VIRTUAL_NODE_VALUES`에만 허용합니다. 자동 쓰기 실패의 `details.sourcePath`는 쓰기를 낸 `controls.injectTo` 선언 노드의 데이터 경로이며, `details.path`와 기록의 `path`는 대상 경로로 유지합니다. 쓰기 모양 오류의 `expectedLength`·`received`는 보존하고 호출자 경로의 쓰기 모양 오류에는 `sourcePath`를 넣지 않습니다. 오류 기록의 `details`는 이 필드를 포함한 `error.details`와 같은 참조입니다(ERROR-017·195, 59C-01).
-- 코드 표는 패키지 전체의 공개 데이터입니다. 기록 생성·사슬 끝 전달·묶음·경고 중복 키와 전달 중 쓰기 거부는 `engine/write`가 소유하며 이 fractal의 클래스·상수·형에는 넣지 않습니다(ERROR-004·005·024·029·164, NODE-016).
+- 코드 enum은 패키지 전체의 공개 데이터입니다. 기록 생성·사슬 끝 전달·묶음·경고 중복 키와 전달 중 쓰기 거부는 `engine/write`가 소유하며 이 fractal의 클래스·상수·형에는 넣지 않습니다(ERROR-004·005·024·029·164, NODE-016).
 
 렌더·바인딩과 재생성 트리의 쓰기 거부는 다음 코드의 실제 발생 계약을 따릅니다(LANDING-067·095, ERROR-164·202, 68C-08, 69C-02).
 

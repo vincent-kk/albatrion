@@ -2,7 +2,7 @@
 
 ## Purpose
 
-schema-form 도메인 에러 클래스와 패키지 전체의 오류 코드 표·기록 형을 소유합니다. 모든 에러 클래스는 `@winglet/common-utils/error`의 `BaseError`를 상속하여 일관된 에러 구조를 제공합니다(ERROR-017·031·164).
+schema-form 도메인 에러 클래스와 패키지 전체의 오류·경고 코드 enum과 기록 형을 소유합니다. 모든 에러 클래스는 `@winglet/common-utils/error`의 `BaseError`를 상속하여 일관된 에러 구조를 제공합니다(ERROR-017·031·164).
 
 ## Conventions
 
@@ -19,7 +19,7 @@ schema-form 도메인 에러 클래스와 패키지 전체의 오류 코드 표�
 - 새 에러 클래스 추가 시 `BaseError` 상속 및 `is*Error` 타입 가드 함께 제공
 - `index.ts` 에 새 에러를 이름 목록으로 포함
 - `details` 객체에 에러 재현에 필요한 충분한 컨텍스트 포함
-- 코드 표와 기록·보고기 형은 데이터로만 두고 사슬 끝 전달·묶음은 `engine/write`가 맡습니다(ERROR-004·005·029, LANDING-084).
+- 코드 enum과 기록·보고기 형은 데이터로만 두고 사슬 끝 전달·묶음은 `engine/write`가 맡습니다(ERROR-004·005·029, LANDING-084).
 
 ### Ask first
 
