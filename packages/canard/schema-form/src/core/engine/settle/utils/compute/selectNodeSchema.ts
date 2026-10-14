@@ -1,5 +1,6 @@
 import {
-  MULTIPLE_GATED_BRANCHES_ACTIVE,
+  FormErrorCode,
+  FormWarningCode,
   SchemaFormError,
 } from '../../../../../errors';
 import { mergeEffectiveSchema } from '../../../blueprint';
@@ -8,7 +9,6 @@ import type { FieldNodeRecord } from '../../../record';
 import { indexFieldNodeWarning } from '../../../record';
 import type { SettlementContext } from '../../type';
 import { recordSettlementFailure } from '../errors/recordSettlementFailure';
-import { SHARED_NODE_CONFLICT } from '../errors/settleErrorCode';
 import { evaluateGate } from '../gates/evaluateGate';
 
 /**
@@ -42,8 +42,7 @@ export const selectNodeSchema = <Self extends FieldNodeRecord<Self>>(
     }
     for (const [schemaPath, selected] of branches) {
       if (selected.length < 2) continue;
-      const code =
-        `SCHEMA_FORM_WARNING.${MULTIPLE_GATED_BRANCHES_ACTIVE}` as const;
+      const code = FormWarningCode.MultipleGatedBranchesActive;
       const key = JSON.stringify([code, node.path, schemaPath]);
       if (node.runtime.warningKeys?.has(key)) continue;
       (node.runtime.warningKeys ??= new Set()).add(key);
@@ -72,7 +71,7 @@ export const selectNodeSchema = <Self extends FieldNodeRecord<Self>>(
     recordSettlementFailure(
       context,
       new SchemaFormError(
-        SHARED_NODE_CONFLICT,
+        FormErrorCode.SharedNodeConflict,
         `Active declarations conflict at ${node.path}`,
         { path: node.path },
       ),

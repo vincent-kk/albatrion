@@ -1,9 +1,9 @@
 import { isArray } from '@winglet/common-utils/filter';
 import { escapeSegment } from '@winglet/json/pointer';
 
+import { FormErrorCode } from '../../../../../errors';
 import type { BlueprintChildEntry, PropertyDeclaration } from '../../type';
 import { copyBlueprintDeclarations } from '../declarations/copyBlueprintDeclarations';
-import { BlueprintErrorCode } from '../diagnostics/constant';
 import { throwBlueprintError } from '../diagnostics/throwBlueprintError';
 import { resolveNodeStrategy } from '../types/resolveNodeStrategy';
 import { collectDeclarations } from './collectDeclarations';
@@ -31,7 +31,7 @@ export const populateVirtualNodes = (
     if (virtual === undefined) continue;
     if (!virtual || typeof virtual !== 'object' || isArray(virtual))
       throwBlueprintError(
-        BlueprintErrorCode.VirtualFieldsNotValid,
+        FormErrorCode.VirtualFieldsNotValid,
         `${declaration.schemaPath}/options/virtual`,
         {},
         context.options,
@@ -47,7 +47,7 @@ export const populateVirtualNodes = (
         fields.some((field, index) => fields.indexOf(field) !== index)
       )
         throwBlueprintError(
-          BlueprintErrorCode.VirtualFieldsNotValid,
+          FormErrorCode.VirtualFieldsNotValid,
           schemaPath,
           { fields },
           context.options,
@@ -59,7 +59,7 @@ export const populateVirtualNodes = (
           )
         )
           throwBlueprintError(
-            BlueprintErrorCode.VirtualFieldsNotInProperties,
+            FormErrorCode.VirtualFieldsNotInProperties,
             schemaPath,
             { field },
             context.options,
@@ -71,7 +71,7 @@ export const populateVirtualNodes = (
           group.fields.some((field, index) => field !== fields[index]))
       )
         throwBlueprintError(
-          BlueprintErrorCode.VirtualFieldsMismatch,
+          FormErrorCode.VirtualFieldsMismatch,
           schemaPath,
           { name, fields, previous: group.fields },
           context.options,

@@ -1,11 +1,8 @@
 import { describe, expect, it, vi } from 'vitest';
 
+import { FormErrorCode, FormWarningCode } from '../../../../errors';
 import { blueprint } from '../blueprint';
 import { type BlueprintCacheEntry, type BlueprintDiagnostic } from '../type';
-import {
-  BlueprintErrorCode,
-  BlueprintWarningCode,
-} from '../utils/diagnostics/constant';
 
 // filid:contract diagnostics
 describe('blueprint diagnostic data and late collection', () => {
@@ -20,11 +17,9 @@ describe('blueprint diagnostic data and late collection', () => {
         },
         { collect },
       ),
-    ).toThrow(
-      expect.objectContaining({ specific: BlueprintErrorCode.UnknownGroupKey }),
-    );
+    ).toThrow(expect.objectContaining({ code: FormErrorCode.UnknownGroupKey }));
     expect(collect).toHaveBeenCalledWith({
-      code: BlueprintErrorCode.UnknownGroupKey,
+      code: FormErrorCode.UnknownGroupKey,
       level: 'error',
       schemaPath: '#/controls/children',
       details: { group: 'controls', key: 'children' },
@@ -45,7 +40,7 @@ describe('blueprint diagnostic data and late collection', () => {
     ])
       expect(() => blueprint(schema)).toThrow(
         expect.objectContaining({
-          specific: BlueprintErrorCode.UnknownGroupKey,
+          code: FormErrorCode.UnknownGroupKey,
         }),
       );
   });
@@ -60,7 +55,7 @@ describe('blueprint diagnostic data and late collection', () => {
       blueprint({ type: 'string', controls: { injectTo: { '/missing': 1 } } }),
     ).toThrow(
       expect.objectContaining({
-        specific: BlueprintErrorCode.InvalidControlShape,
+        code: FormErrorCode.InvalidControlShape,
       }),
     );
   });
@@ -86,7 +81,7 @@ describe('blueprint diagnostic data and late collection', () => {
       }),
     ).toThrow(
       expect.objectContaining({
-        specific: BlueprintErrorCode.ChildrenTargetNotFound,
+        code: FormErrorCode.ChildrenTargetNotFound,
       }),
     );
   });
@@ -100,14 +95,14 @@ describe('blueprint diagnostic data and late collection', () => {
       }),
     ).toThrow(
       expect.objectContaining({
-        specific: BlueprintErrorCode.ChildrenTargetNotFound,
+        code: FormErrorCode.ChildrenTargetNotFound,
       }),
     );
   });
   it('reports invalid array and virtual declarations with domain codes', () => {
     expect(() => blueprint({ type: 'array', items: 'string' })).toThrow(
       expect.objectContaining({
-        specific: BlueprintErrorCode.UnexpectedArraySchema,
+        code: FormErrorCode.UnexpectedArraySchema,
       }),
     );
     expect(() =>
@@ -117,7 +112,7 @@ describe('blueprint diagnostic data and late collection', () => {
       }),
     ).toThrow(
       expect.objectContaining({
-        specific: BlueprintErrorCode.VirtualFieldsNotValid,
+        code: FormErrorCode.VirtualFieldsNotValid,
       }),
     );
   });
@@ -131,7 +126,7 @@ describe('blueprint diagnostic data and late collection', () => {
     ).toThrow();
     expect(collect).toHaveBeenCalledWith(
       expect.objectContaining({
-        code: BlueprintErrorCode.UnknownJsonSchema,
+        code: FormErrorCode.UnknownJsonSchema,
         level: 'error',
         schemaPath: '#/properties/a',
       }),
@@ -154,8 +149,7 @@ describe('blueprint diagnostic data and late collection', () => {
     expect(
       diagnostics.every(
         (diagnostic) =>
-          diagnostic.code ===
-          BlueprintWarningCode.DependentSchemasIgnoredForForm,
+          diagnostic.code === FormWarningCode.DependentSchemasIgnoredForForm,
       ),
     ).toBe(true);
   });
@@ -173,13 +167,13 @@ describe('blueprint diagnostic data and late collection', () => {
     );
     expect(collect).toHaveBeenCalledWith(
       expect.objectContaining({
-        code: BlueprintWarningCode.IfWithoutElseFalse,
+        code: FormWarningCode.IfWithoutElseFalse,
         schemaPath: '#/oneOf/0',
       }),
     );
     expect(collect).toHaveBeenCalledWith(
       expect.objectContaining({
-        code: BlueprintWarningCode.NullBranchIgnoredForForm,
+        code: FormWarningCode.NullBranchIgnoredForForm,
         schemaPath: '#/oneOf/1',
       }),
     );
@@ -189,7 +183,7 @@ describe('blueprint diagnostic data and late collection', () => {
     blueprint({ type: 'object', readOnly: true }, { collect });
     expect(collect).toHaveBeenCalledWith(
       expect.objectContaining({
-        code: BlueprintWarningCode.LockOnNonTerminalObject,
+        code: FormWarningCode.LockOnNonTerminalObject,
       }),
     );
   });
@@ -227,8 +221,7 @@ describe('blueprint diagnostic data and late collection', () => {
       .map(([diagnostic]) => diagnostic)
       .filter(
         (diagnostic) =>
-          diagnostic.code ===
-          BlueprintWarningCode.TerminalSubtreeKeyIgnoredForForm,
+          diagnostic.code === FormWarningCode.TerminalSubtreeKeyIgnoredForForm,
       );
     expect(warnings).toEqual([
       expect.objectContaining({
@@ -284,7 +277,7 @@ describe('blueprint diagnostic data and late collection', () => {
     );
     expect(collect).toHaveBeenCalledWith(
       expect.objectContaining({
-        code: BlueprintWarningCode.DiscriminatorBranchUnreachable,
+        code: FormWarningCode.DiscriminatorBranchUnreachable,
       }),
     );
   });
@@ -320,8 +313,7 @@ describe('blueprint diagnostic data and late collection', () => {
       .map(([diagnostic]) => diagnostic)
       .filter(
         (diagnostic) =>
-          diagnostic.code ===
-          BlueprintWarningCode.DiscriminatorBranchUnreachable,
+          diagnostic.code === FormWarningCode.DiscriminatorBranchUnreachable,
       );
     expect(warnings).toHaveLength(1);
     expect(warnings[0].details.propertyName).toBe('kind/name');
@@ -346,7 +338,7 @@ describe('blueprint diagnostic data and late collection', () => {
       .map(([diagnostic]) => diagnostic)
       .filter(
         (diagnostic) =>
-          diagnostic.code === BlueprintWarningCode.AllOfKeywordIgnoredForForm,
+          diagnostic.code === FormWarningCode.AllOfKeywordIgnoredForForm,
       );
     expect(warnings.map((diagnostic) => diagnostic.details.keyword)).toEqual([
       'not',
@@ -393,11 +385,11 @@ describe('blueprint diagnostic data and late collection', () => {
       const collect = vi.fn();
       expect(() => blueprint(schema, { collect })).toThrow(
         expect.objectContaining({
-          specific: BlueprintErrorCode.InvalidControlShape,
+          code: FormErrorCode.InvalidControlShape,
         }),
       );
       expect(collect).toHaveBeenCalledWith({
-        code: BlueprintErrorCode.InvalidControlShape,
+        code: FormErrorCode.InvalidControlShape,
         level: 'error',
         schemaPath,
         details,
@@ -408,11 +400,9 @@ describe('blueprint diagnostic data and late collection', () => {
     const collect = vi.fn();
     expect(() =>
       blueprint({ type: 'string', options: { unknown: true } }, { collect }),
-    ).toThrow(
-      expect.objectContaining({ specific: BlueprintErrorCode.UnknownGroupKey }),
-    );
+    ).toThrow(expect.objectContaining({ code: FormErrorCode.UnknownGroupKey }));
     expect(collect).toHaveBeenCalledWith({
-      code: BlueprintErrorCode.UnknownGroupKey,
+      code: FormErrorCode.UnknownGroupKey,
       level: 'error',
       schemaPath: '#/options/unknown',
       details: { group: 'options', key: 'unknown' },
@@ -440,8 +430,7 @@ describe('blueprint diagnostic data and late collection', () => {
       .map(([diagnostic]) => diagnostic)
       .filter(
         (diagnostic) =>
-          diagnostic.code ===
-          BlueprintWarningCode.TerminalSubtreeKeyIgnoredForForm,
+          diagnostic.code === FormWarningCode.TerminalSubtreeKeyIgnoredForForm,
       );
     expect(warnings).toHaveLength(1);
     expect(warnings[0].schemaPath).toBe('#/properties/value');

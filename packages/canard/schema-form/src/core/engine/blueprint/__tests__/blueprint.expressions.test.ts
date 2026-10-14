@@ -1,7 +1,7 @@
 import { describe, expect, it, vi } from 'vitest';
 
+import { FormErrorCode } from '../../../../errors';
 import { blueprint } from '../blueprint';
-import { BlueprintErrorCode } from '../utils/diagnostics/constant';
 
 // filid:contract expressions
 describe('blueprint expression compilation', () => {
@@ -78,7 +78,7 @@ describe('blueprint expression compilation', () => {
     for (const watch of ['./rows/*/value', [12]])
       expect(() => blueprint({ type: 'number', controls: { watch } })).toThrow(
         expect.objectContaining({
-          specific: BlueprintErrorCode.ObservedValues,
+          code: FormErrorCode.ObservedValues,
         }),
       );
   });
@@ -109,13 +109,13 @@ describe('blueprint expression compilation', () => {
       blueprint({ type: 'number', controls: { derived: '(()' } }, { collect }),
     ).toThrow(
       expect.objectContaining({
-        specific: BlueprintErrorCode.CreateDynamicFunction,
+        code: FormErrorCode.CreateDynamicFunction,
         details: expect.objectContaining({ schemaPath: '#/controls/derived' }),
       }),
     );
     expect(collect).toHaveBeenCalledWith(
       expect.objectContaining({
-        code: BlueprintErrorCode.CreateDynamicFunction,
+        code: FormErrorCode.CreateDynamicFunction,
       }),
     );
   });

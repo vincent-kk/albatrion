@@ -1,6 +1,6 @@
 import { expect, it } from 'vitest';
 
-import { BlueprintErrorCode } from '../../diagnostics/constant';
+import { FormErrorCode } from '../../../../../../errors';
 import { readAllowedTypes } from '../readAllowedTypes';
 
 it('validates the seven names, duplicates and empty lists before copying the authored types', () => {
@@ -34,7 +34,7 @@ it('validates the seven names, duplicates and empty lists before copying the aut
   ])
     expect(() => readAllowedTypes({ type }, '#/properties/a')).toThrow(
       expect.objectContaining({
-        specific: BlueprintErrorCode.UnknownJsonSchema,
+        code: FormErrorCode.UnknownJsonSchema,
       }),
     );
 });

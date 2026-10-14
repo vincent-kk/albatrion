@@ -2,8 +2,10 @@ import { printWarning } from '@winglet/common-utils/console';
 import type { ErrorDetails } from '@winglet/common-utils/error';
 import { isEmptyObject } from '@winglet/common-utils/filter';
 
+import type { FormWarningCode } from '@/schema-form/errors';
+
 export interface DevelopmentIssue {
-  code: string;
+  code: FormWarningCode;
   message: string;
   details?: ErrorDetails;
 }

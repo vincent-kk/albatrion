@@ -1,7 +1,7 @@
 import { describe, expect, it, vi } from 'vitest';
 
 import { createDispatchTree } from '@/schema-form/core/engine/__tests__/fixtures/createDispatchTree';
-import { MULTIPLE_ERRORS, SchemaFormError } from '@/schema-form/errors';
+import { FormErrorCode, SchemaFormError } from '@/schema-form/errors';
 
 import { dispatchSetValue } from '../utils/entry/dispatchSetValue';
 import { subscribeFieldNode } from '../utils/read/subscribeFieldNode';
@@ -17,7 +17,7 @@ describe('chain failure bundles', () => {
     expect(result).toBeInstanceOf(SchemaFormError);
     if (!(result instanceof SchemaFormError))
       throw new Error('Expected aggregate');
-    expect(result.code).toBe(`SCHEMA_FORM_ERROR.${MULTIPLE_ERRORS}`);
+    expect(result.code).toBe(FormErrorCode.MultipleErrors);
     expect(result.details.errors).toEqual([first, second]);
     expect(bundleChainErrors([first])).toBe(first);
   });
@@ -131,7 +131,9 @@ describe('chain failure bundles', () => {
   });
 
   it('ERROR-017 ERROR-023 puts the actual aggregate on each component record', () => {
-    const first = new SchemaFormError('GUARD_FAILED', 'first', { path: '/a' });
+    const first = new SchemaFormError(FormErrorCode.GuardFailed, 'first', {
+      path: '/a',
+    });
     const second = new Error('second');
     const records: {
       error?: unknown;

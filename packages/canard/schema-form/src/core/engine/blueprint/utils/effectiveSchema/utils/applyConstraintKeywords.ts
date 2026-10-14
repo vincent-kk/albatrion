@@ -1,5 +1,6 @@
 import { isArray } from '@winglet/common-utils/filter';
 
+import { FormErrorCode } from '@/schema-form/errors';
 import {
   EMPTY_INTERSECTION,
   intersectConst,
@@ -11,7 +12,6 @@ import {
 } from '@/schema-form/helpers/schemaIntersection';
 
 import type { EffectiveSchemaOptions } from '../../../type';
-import { BlueprintErrorCode } from '../../diagnostics/constant';
 import { throwBlueprintError } from '../../diagnostics/throwBlueprintError';
 import { OwnedSchemaValues } from './OwnedSchemaValues';
 import type { EffectiveSchemaState } from './type';
@@ -75,7 +75,7 @@ export const applyConstraintKeywords = (
       validateRange(minimum, maximum) === EMPTY_INTERSECTION
     )
       throwBlueprintError(
-        BlueprintErrorCode.InvalidRange,
+        FormErrorCode.InvalidRange,
         schemaPath,
         { lower, upper, minimum, maximum },
         options,
@@ -94,7 +94,7 @@ export const applyConstraintKeywords = (
   if (enumeration === EMPTY_INTERSECTION) {
     if (options.mode === 'static')
       throwBlueprintError(
-        BlueprintErrorCode.EmptyEnumIntersection,
+        FormErrorCode.EmptyEnumIntersection,
         schemaPath,
         {},
         options,
@@ -110,7 +110,7 @@ export const applyConstraintKeywords = (
   if (constant === EMPTY_INTERSECTION) {
     if (options.mode === 'static')
       throwBlueprintError(
-        BlueprintErrorCode.ConflictingConstValues,
+        FormErrorCode.ConflictingConstValues,
         schemaPath,
         {},
         options,

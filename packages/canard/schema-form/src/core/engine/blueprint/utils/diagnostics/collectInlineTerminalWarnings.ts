@@ -1,13 +1,13 @@
 import { isArray } from '@winglet/common-utils/filter';
 import { escapeSegment } from '@winglet/json/pointer';
 
+import { FormWarningCode } from '../../../../../errors';
 import type {
   BlueprintDiagnostic,
   BlueprintNode,
   BlueprintSchema,
 } from '../../type';
 import { readSchemaObject } from '../analyze/readSchemaObject';
-import { BlueprintWarningCode } from './constant';
 
 /**
  * Find ignored form groups below a terminal without following reference targets.
@@ -112,7 +112,7 @@ export const collectInlineTerminalWarnings = (
   }
   if (keys.length)
     emit({
-      code: BlueprintWarningCode.TerminalSubtreeKeyIgnoredForForm,
+      code: FormWarningCode.TerminalSubtreeKeyIgnoredForForm,
       level: 'warning',
       schemaPath: node.schemaPath,
       details: {

@@ -8,11 +8,7 @@ import {
   updateFieldNodeNameAndPath,
 } from '@/schema-form/core/engine/record';
 import { WriteOption } from '@/schema-form/core/engine/types/value';
-import {
-  INJECT_TARGET_MISSING,
-  MULTIPLE_ERRORS,
-  SchemaFormError,
-} from '@/schema-form/errors';
+import { FormErrorCode, SchemaFormError } from '@/schema-form/errors';
 
 import { createTestTree } from '../../__tests__/fixtures/createTestTree';
 import { markCommitDeliveries } from '../utils/commit/markCommitDeliveries';
@@ -277,20 +273,20 @@ describe('array integration runtime stores', () => {
     expect(caught).toBeInstanceOf(SchemaFormError);
     if (!(caught instanceof SchemaFormError))
       throw new Error('Missing settlement error');
-    expect(caught.code).toBe(`SCHEMA_FORM_ERROR.${MULTIPLE_ERRORS}`);
+    expect(caught.code).toBe(FormErrorCode.MultipleErrors);
     expect(caught.details.errors).toHaveLength(3);
     expect(caught.details.errors).toEqual(
       expect.arrayContaining([
         expect.objectContaining({
-          code: `SCHEMA_FORM_ERROR.${INJECT_TARGET_MISSING}`,
+          code: FormErrorCode.InjectTargetMissing,
           details: expect.objectContaining({ sourcePath: '/2' }),
         }),
         expect.objectContaining({
-          code: `SCHEMA_FORM_ERROR.${INJECT_TARGET_MISSING}`,
+          code: FormErrorCode.InjectTargetMissing,
           details: expect.objectContaining({ sourcePath: '/1' }),
         }),
         expect.objectContaining({
-          code: `SCHEMA_FORM_ERROR.${INJECT_TARGET_MISSING}`,
+          code: FormErrorCode.InjectTargetMissing,
           details: expect.objectContaining({ sourcePath: '/0' }),
         }),
       ]),

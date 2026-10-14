@@ -1,5 +1,6 @@
 import { isArray } from '@winglet/common-utils/filter';
 
+import { FormWarningCode } from '../../../../../errors';
 import type {
   Blueprint,
   BlueprintDiagnostic,
@@ -7,7 +8,6 @@ import type {
 } from '../../type';
 import { readSchemaObject } from '../analyze/readSchemaObject';
 import { collectInlineTerminalWarnings } from './collectInlineTerminalWarnings';
-import { BlueprintWarningCode } from './constant';
 
 /**
  * Collect advisory records only when a consumer explicitly requests diagnostics.
@@ -36,7 +36,7 @@ export const collectBlueprintWarnings = (
     for (const declaration of node.declarations) {
       const schema = readSchemaObject(declaration.schema);
       const warning = (
-        code: string,
+        code: FormWarningCode,
         details: Record<string, unknown> = {},
       ): void =>
         emit({
@@ -47,7 +47,7 @@ export const collectBlueprintWarnings = (
         });
       for (const keyword of ['dependentSchemas', 'dependencies'])
         if (schema[keyword] !== undefined)
-          warning(BlueprintWarningCode.DependentSchemasIgnoredForForm, {
+          warning(FormWarningCode.DependentSchemasIgnoredForForm, {
             keyword,
           });
       if (/\/allOf\/\d+$/.test(declaration.schemaPath))
@@ -61,7 +61,7 @@ export const collectBlueprintWarnings = (
           'contains',
         ])
           if (schema[keyword] !== undefined)
-            warning(BlueprintWarningCode.AllOfKeywordIgnoredForForm, {
+            warning(FormWarningCode.AllOfKeywordIgnoredForForm, {
               keyword,
             });
       if (
@@ -71,10 +71,10 @@ export const collectBlueprintWarnings = (
           schema.controls?.readOnly !== undefined ||
           schema.controls?.disabled !== undefined)
       )
-        warning(BlueprintWarningCode.LockOnNonTerminalObject);
+        warning(FormWarningCode.LockOnNonTerminalObject);
       if (/\/(oneOf|anyOf)\/\d+$/.test(declaration.schemaPath)) {
         if (schema.if !== undefined && schema.else !== false)
-          warning(BlueprintWarningCode.IfWithoutElseFalse);
+          warning(FormWarningCode.IfWithoutElseFalse);
         if (
           (schema.type === 'null' ||
             (isArray(schema.type) &&
@@ -83,7 +83,7 @@ export const collectBlueprintWarnings = (
           (schema.properties !== undefined ||
             schema.controls?.active !== undefined)
         )
-          warning(BlueprintWarningCode.NullBranchIgnoredForForm);
+          warning(FormWarningCode.NullBranchIgnoredForForm);
       }
       for (const gate of declaration.gates) {
         if (gate.kind !== 'discriminator') continue;
@@ -111,7 +111,7 @@ export const collectBlueprintWarnings = (
           )
         )
           emit({
-            code: BlueprintWarningCode.DiscriminatorBranchUnreachable,
+            code: FormWarningCode.DiscriminatorBranchUnreachable,
             level: 'warning',
             schemaPath: gate.schemaPath,
             details: { propertyName: descriptor.propertyName },

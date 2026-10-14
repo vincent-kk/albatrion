@@ -1,4 +1,8 @@
-import { JSONSchemaError, SchemaFormError } from '../../../../../errors';
+import {
+  FormErrorCode,
+  JSONSchemaError,
+  SchemaFormError,
+} from '../../../../../errors';
 import type { FormErrorRecord } from '../../../../../errors';
 import type { FieldNodeRuntime } from '../../../record';
 import { createFormErrorRecord } from './createFormErrorRecord';
@@ -46,7 +50,7 @@ export const collectChainRecords = (
     }
     if (
       error instanceof SchemaFormError &&
-      readFormErrorCode(error) === 'SCHEMA_FORM_ERROR.GUARD_FAILED' &&
+      readFormErrorCode(error) === FormErrorCode.GuardFailed &&
       typeof error.details.schemaPath === 'string' &&
       reported?.has(error.details.schemaPath)
     )

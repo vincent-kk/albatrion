@@ -1,7 +1,7 @@
+import { FormErrorCode } from '../../../../../errors';
 import type { BlueprintNodeKind, PropertyDeclaration } from '../../type';
 import { readSchemaObject } from '../analyze/readSchemaObject';
 import type { AnalysisContext } from '../analyze/type';
-import { BlueprintErrorCode } from '../diagnostics/constant';
 import { throwBlueprintError } from '../diagnostics/throwBlueprintError';
 
 /**
@@ -31,7 +31,7 @@ export const resolveNodeStrategy = (
       const value = readSchemaObject(declaration.schema).options?.terminal;
       if (value !== undefined && value !== terminal)
         throwBlueprintError(
-          BlueprintErrorCode.TerminalOptionUnsupported,
+          FormErrorCode.TerminalOptionUnsupported,
           declaration.schemaPath,
           { type: kind, value },
           context.options,
@@ -72,7 +72,7 @@ export const resolveNodeStrategy = (
         current.explicit?.value ?? current.renderer?.value ?? false;
       if (strategy !== undefined && strategy !== terminal)
         throwBlueprintError(
-          BlueprintErrorCode.TerminalStrategyMismatch,
+          FormErrorCode.TerminalStrategyMismatch,
           current.schemaPath,
           { type: kind },
           context.options,

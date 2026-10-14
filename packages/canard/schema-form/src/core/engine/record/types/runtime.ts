@@ -1,4 +1,8 @@
-import type { FormErrorRecord, FormErrorReporter } from '../../../../errors';
+import type {
+  FormErrorRecord,
+  FormErrorReporter,
+  FormWarningCode,
+} from '../../../../errors';
 import type {
   Blueprint,
   BlueprintNode,
@@ -97,7 +101,7 @@ interface DetachedFieldNodeReads {
 /** Structured warning emitted when a committed raw value misses its effective type. */
 export interface TypeMismatchRecord {
   readonly level: 'warning';
-  readonly code: string;
+  readonly code: typeof FormWarningCode.TypeMismatch;
   readonly path: string;
   readonly expected: {
     readonly schemaType: BlueprintSchemaType;

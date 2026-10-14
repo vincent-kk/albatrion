@@ -1,5 +1,6 @@
 import { isArray } from '@winglet/common-utils/filter';
 
+import { FormErrorCode } from '../../../../../errors';
 import type {
   ChildSchemaControls,
   SchemaControls,
@@ -7,7 +8,6 @@ import type {
 import type { BlueprintSchema } from '../../type';
 import { readSchemaObject } from '../analyze/readSchemaObject';
 import type { AnalysisContext } from '../analyze/type';
-import { BlueprintErrorCode } from './constant';
 import { throwBlueprintError } from './throwBlueprintError';
 
 /**
@@ -36,7 +36,7 @@ export const validateControlGroups = (
           : CONTROL_KEYS;
     if (!value || typeof value !== 'object' || isArray(value))
       throwBlueprintError(
-        BlueprintErrorCode.InvalidControlShape,
+        FormErrorCode.InvalidControlShape,
         `${schemaPath}/${group}`,
         { group, key: group, expected: 'object' },
         context.options,
@@ -44,7 +44,7 @@ export const validateControlGroups = (
     for (const key of Object.keys(value))
       if (!allowed.includes(key))
         throwBlueprintError(
-          BlueprintErrorCode.UnknownGroupKey,
+          FormErrorCode.UnknownGroupKey,
           `${schemaPath}/${group}/${key}`,
           { group, key },
           context.options,
@@ -56,7 +56,7 @@ export const validateControlGroups = (
     typeof controls.injectTo !== 'function'
   )
     throwBlueprintError(
-      BlueprintErrorCode.InvalidControlShape,
+      FormErrorCode.InvalidControlShape,
       `${schemaPath}/controls/injectTo`,
       { group: 'controls', key: 'injectTo', expected: 'function' },
       context.options,
@@ -64,7 +64,7 @@ export const validateControlGroups = (
   if (controls?.fields !== undefined) {
     if (!isArray(controls.fields))
       throwBlueprintError(
-        BlueprintErrorCode.InvalidControlShape,
+        FormErrorCode.InvalidControlShape,
         `${schemaPath}/controls/fields`,
         { group: 'controls', key: 'fields', expected: 'array' },
         context.options,
@@ -81,7 +81,7 @@ export const validateControlGroups = (
         entry.targets.some((name: unknown) => typeof name !== 'string')
       )
         throwBlueprintError(
-          BlueprintErrorCode.InvalidControlShape,
+          FormErrorCode.InvalidControlShape,
           path,
           {
             group: 'controls',

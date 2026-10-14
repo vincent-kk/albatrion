@@ -2,9 +2,9 @@ import { isArray } from '@winglet/common-utils/filter';
 import { hasOwnProperty } from '@winglet/common-utils/lib';
 
 import {
-  CONDITIONAL_SCHEMA_WITHOUT_VALIDATOR,
+  FormErrorCode,
+  FormWarningCode,
   SchemaFormError,
-  VALIDATOR_MISSING,
 } from '../../../../../errors';
 import type { BlueprintGate } from '../../../blueprint';
 import type { FieldNodeRecord } from '../../../record';
@@ -12,7 +12,6 @@ import { ValidationMode } from '../../../types/state';
 import { readFieldNodeGuard } from '../../../validation';
 import type { SettlementContext } from '../../type';
 import { recordSettlementFailure } from '../errors/recordSettlementFailure';
-import { EXPRESSION_THREW, GUARD_FAILED } from '../errors/settleErrorCode';
 import { getGateExpression } from './getGateExpression';
 import { getGateRegistry } from './getGateRegistry';
 import { readProjectedValue } from './readProjectedValue';
@@ -116,30 +115,33 @@ export const evaluateGate = <Self extends FieldNodeRecord<Self>>(
         if (
           runtime.validationMode !== ValidationMode.None &&
           keys &&
-          !keys.has(VALIDATOR_MISSING)
+          !keys.has(FormWarningCode.ValidatorMissing)
         ) {
-          keys.add(VALIDATOR_MISSING);
+          keys.add(FormWarningCode.ValidatorMissing);
           const record = {
             level: 'warning' as const,
-            code: `SCHEMA_FORM_WARNING.${VALIDATOR_MISSING}` as const,
+            code: FormWarningCode.ValidatorMissing,
             message: 'Validation is disabled because no validator was selected',
           };
           (runtime.pendingWarningRecords ??= new Map()).set(
-            VALIDATOR_MISSING,
+            FormWarningCode.ValidatorMissing,
             record,
           );
           runtime.chainOccurrences?.push({ kind: 'record', record });
         }
-        if (keys && !keys.has(CONDITIONAL_SCHEMA_WITHOUT_VALIDATOR)) {
-          keys.add(CONDITIONAL_SCHEMA_WITHOUT_VALIDATOR);
+        if (
+          keys &&
+          !keys.has(FormWarningCode.ConditionalSchemaWithoutValidator)
+        ) {
+          keys.add(FormWarningCode.ConditionalSchemaWithoutValidator);
           const record = {
             level: 'warning' as const,
-            code: `SCHEMA_FORM_WARNING.${CONDITIONAL_SCHEMA_WITHOUT_VALIDATOR}` as const,
+            code: FormWarningCode.ConditionalSchemaWithoutValidator,
             message: 'Conditional schema is inactive without a validator',
             schemaPath: gate.schemaPath,
           };
           (runtime.pendingWarningRecords ??= new Map()).set(
-            CONDITIONAL_SCHEMA_WITHOUT_VALIDATOR,
+            FormWarningCode.ConditionalSchemaWithoutValidator,
             record,
           );
           runtime.chainOccurrences?.push({ kind: 'record', record });
@@ -172,10 +174,13 @@ export const evaluateGate = <Self extends FieldNodeRecord<Self>>(
   } catch (cause) {
     const runtime = context.root.runtime;
     context.gateThrowVersion = (context.gateThrowVersion ?? 0) + 1;
-    const code = gate.kind === 'if' ? GUARD_FAILED : EXPRESSION_THREW;
+    const code =
+      gate.kind === 'if'
+        ? FormErrorCode.GuardFailed
+        : FormErrorCode.ExpressionThrew;
     const repeated = context.failures?.some(
       (error) =>
-        error.code === `SCHEMA_FORM_ERROR.${code}` &&
+        error.code === code &&
         error.details.path === hostPath &&
         error.details.schemaPath === gate.schemaPath,
     );
@@ -195,7 +200,7 @@ export const evaluateGate = <Self extends FieldNodeRecord<Self>>(
     ) {
       const record = {
         level: 'error' as const,
-        code: 'SCHEMA_FORM_ERROR.GUARD_FAILED' as const,
+        code: FormErrorCode.GuardFailed,
         message: `Gate evaluation failed at ${gate.schemaPath}`,
         schemaPath: gate.schemaPath,
         path: hostPath,

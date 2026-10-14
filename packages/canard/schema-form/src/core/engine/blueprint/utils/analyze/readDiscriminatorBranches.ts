@@ -3,13 +3,13 @@ import { hasOwnProperty } from '@winglet/common-utils/lib';
 import { equals } from '@winglet/common-utils/object';
 import { escapeSegment } from '@winglet/json/pointer';
 
+import { FormErrorCode } from '@/schema-form/errors';
 import {
   EMPTY_INTERSECTION,
   intersectEnum,
 } from '@/schema-form/helpers/schemaIntersection';
 
 import type { BlueprintSchema } from '../../type';
-import { BlueprintErrorCode } from '../diagnostics/constant';
 import { throwBlueprintError } from '../diagnostics/throwBlueprintError';
 import { foldAllowedTypes } from '../types/foldAllowedTypes';
 import { inferAllowedTypes } from '../types/inferAllowedTypes';
@@ -40,7 +40,7 @@ export const readDiscriminatorBranches = (
   if (propertyName === undefined) return result;
   if (typeof propertyName !== 'string' || !propertyName.length)
     return throwBlueprintError(
-      BlueprintErrorCode.InvalidControlShape,
+      FormErrorCode.InvalidControlShape,
       `${schemaPath}/controls/discriminator`,
       { group: 'controls', key: 'discriminator', expected: 'string' },
       context.options,
@@ -88,7 +88,7 @@ export const readDiscriminatorBranches = (
               intersection?.length === 0
             )
               return throwBlueprintError(
-                BlueprintErrorCode.EmptyEnumIntersection,
+                FormErrorCode.EmptyEnumIntersection,
                 tag.schemaPath,
                 { propertyName },
                 context.options,
@@ -104,7 +104,7 @@ export const readDiscriminatorBranches = (
         mask !== previousMask
       )
         return throwBlueprintError(
-          BlueprintErrorCode.DiscriminatorMismatch,
+          FormErrorCode.DiscriminatorMismatch,
           branchPath,
           { propertyName, reason: 'kind' },
           context.options,
@@ -115,7 +115,7 @@ export const readDiscriminatorBranches = (
         )
       )
         return throwBlueprintError(
-          BlueprintErrorCode.DiscriminatorMismatch,
+          FormErrorCode.DiscriminatorMismatch,
           branchPath,
           { propertyName, reason: 'overlap' },
           context.options,
@@ -130,7 +130,7 @@ export const readDiscriminatorBranches = (
   }
   if (!result.size)
     return throwBlueprintError(
-      BlueprintErrorCode.DiscriminatorMismatch,
+      FormErrorCode.DiscriminatorMismatch,
       schemaPath,
       { propertyName, reason: 'missing' },
       context.options,

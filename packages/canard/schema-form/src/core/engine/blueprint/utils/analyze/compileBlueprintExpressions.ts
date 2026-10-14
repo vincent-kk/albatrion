@@ -1,7 +1,7 @@
 import { isArray } from '@winglet/common-utils/filter';
 
+import { FormErrorCode } from '../../../../../errors';
 import type { BlueprintExpression } from '../../type';
-import { BlueprintErrorCode } from '../diagnostics/constant';
 import { throwBlueprintError } from '../diagnostics/throwBlueprintError';
 import { createDynamicFunction } from '../expressions/createDynamicFunction';
 import { getPathManager } from '../expressions/getPathManager';
@@ -83,7 +83,7 @@ export const compileBlueprintExpressions = (
                 : createDynamicFunction(manager, key, source, true);
           } catch (cause) {
             throwBlueprintError(
-              BlueprintErrorCode.CreateDynamicFunction,
+              FormErrorCode.CreateDynamicFunction,
               schemaPath,
               { cause, expression: source },
               context.options,

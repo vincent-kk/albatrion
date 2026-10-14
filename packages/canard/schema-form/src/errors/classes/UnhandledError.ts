@@ -1,5 +1,10 @@
 import { BaseError, type ErrorDetails } from '@winglet/common-utils/error';
 
+import type { UnhandledErrorCode } from '../type';
+
+/** Group every UnhandledError code carries; the code value repeats it before the bare name. */
+const GROUP = 'UNHANDLED_ERROR';
+
 /**
  * Error class for unexpected or undefined errors.
  *
@@ -15,8 +20,12 @@ import { BaseError, type ErrorDetails } from '@winglet/common-utils/error';
  * - error: The original error that occurred
  */
 export class UnhandledError extends BaseError {
-  constructor(code: string, message: string, details: ErrorDetails = {}) {
-    super('UNHANDLED_ERROR', code, message, details);
+  constructor(
+    code: UnhandledErrorCode,
+    message: string,
+    details: ErrorDetails = {},
+  ) {
+    super(GROUP, code.slice(GROUP.length + 1), message, details);
     this.name = 'UnhandledError';
   }
 }

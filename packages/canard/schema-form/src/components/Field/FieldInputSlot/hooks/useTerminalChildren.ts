@@ -1,6 +1,7 @@
 import { useMemo, useRef } from 'react';
 
 import type { FieldNode } from '@/schema-form/core';
+import { FormWarningCode } from '@/schema-form/errors';
 import { useFormErrorContext } from '@/schema-form/providers/FormErrorContext';
 
 import type { ChildField } from '../type';
@@ -55,7 +56,7 @@ export const useTerminalChildren = (node: FieldNode): TerminalChildren => {
         if (key === undefined) {
           reporter.report({
             level: 'warning',
-            code: 'SCHEMA_FORM_WARNING.CHILD_NODE_COMPONENTS_ON_TERMINAL',
+            code: FormWarningCode.ChildNodeComponentsOnTerminal,
             message: 'Terminal inputs have no child components',
             path: node.path,
           });
@@ -77,7 +78,7 @@ export const useTerminalChildren = (node: FieldNode): TerminalChildren => {
         if (accessed.current & ACCESSED)
           reporter.report({
             level: 'warning',
-            code: 'SCHEMA_FORM_WARNING.CHILD_NODE_COMPONENTS_ON_TERMINAL',
+            code: FormWarningCode.ChildNodeComponentsOnTerminal,
             message: 'Terminal inputs have no child components',
             path: node.path,
           });

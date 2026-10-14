@@ -1,6 +1,6 @@
 import type { PartialBy } from '@aileron/declare';
 
-import { DIALECT_MISMATCH } from '../../../errors';
+import { FormWarningCode } from '../../../errors';
 import { BEHAVIORS } from '../../engine';
 import { collectBlueprintWarnings, mergeEffectiveSchema } from '../../engine';
 import type {
@@ -140,7 +140,7 @@ export function fieldNodeFactory(
   ) {
     const record = createFormErrorRecord(
       true,
-      `SCHEMA_FORM_WARNING.${DIALECT_MISMATCH}`,
+      FormWarningCode.DialectMismatch,
       'warning',
       () =>
         `Validator dialect ${validator.dialect} differs from schema ${authoredSchema.$schema}`,

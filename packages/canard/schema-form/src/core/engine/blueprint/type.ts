@@ -1,3 +1,8 @@
+import type {
+  FormWarningCode,
+  JSONSchemaErrorCode,
+} from '@/schema-form/errors';
+
 /** Authored schema data; extension values remain opaque until their owner reads them. */
 export type BlueprintSchema = Readonly<Record<string, unknown>> | boolean;
 
@@ -168,8 +173,8 @@ export interface BlueprintChildEntry {
 
 /** Renderer-independent diagnostic data suitable for an optional collector. */
 export interface BlueprintDiagnostic {
-  /** Stable domain code without presentation formatting. */
-  readonly code: string;
+  /** Group-qualified error or warning code. */
+  readonly code: JSONSchemaErrorCode | FormWarningCode;
   /** Whether the record prevents construction or advises a consumer. */
   readonly level: 'error' | 'warning';
   /** Authored offending location. */

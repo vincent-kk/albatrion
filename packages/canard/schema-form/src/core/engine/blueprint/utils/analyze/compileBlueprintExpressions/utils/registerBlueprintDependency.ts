@@ -1,5 +1,5 @@
+import { FormErrorCode } from '../../../../../../../errors';
 import type { PropertyDeclaration } from '../../../../type';
-import { BlueprintErrorCode } from '../../../diagnostics/constant';
 import { throwBlueprintError } from '../../../diagnostics/throwBlueprintError';
 import type { AnalysisContext } from '../../type';
 
@@ -19,7 +19,7 @@ export const registerBlueprintDependency = (
 ): void => {
   if (typeof path !== 'string' || path.split('/').includes('*'))
     throwBlueprintError(
-      BlueprintErrorCode.ObservedValues,
+      FormErrorCode.ObservedValues,
       schemaPath,
       {
         path,

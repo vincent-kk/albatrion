@@ -1,7 +1,7 @@
 import { describe, expect, it, vi } from 'vitest';
 
+import { FormErrorCode } from '../../../../errors';
 import { blueprint } from '../blueprint';
-import { BlueprintErrorCode } from '../utils/diagnostics/constant';
 import { mergeEffectiveSchema } from '../utils/effectiveSchema/mergeEffectiveSchema';
 
 // filid:contract fragment-declarations
@@ -116,7 +116,7 @@ describe('blueprint fragment ownership and strategies', () => {
       }),
     ).toThrow(
       expect.objectContaining({
-        specific: BlueprintErrorCode.TerminalStrategyMismatch,
+        code: FormErrorCode.TerminalStrategyMismatch,
       }),
     );
   });
@@ -152,7 +152,7 @@ describe('blueprint fragment ownership and strategies', () => {
       }),
     ).toThrow(
       expect.objectContaining({
-        specific: BlueprintErrorCode.VirtualFieldsMismatch,
+        code: FormErrorCode.VirtualFieldsMismatch,
       }),
     );
   });
@@ -167,7 +167,7 @@ describe('blueprint fragment ownership and strategies', () => {
       }),
     ).toThrow(
       expect.objectContaining({
-        specific: BlueprintErrorCode.TerminalOptionUnsupported,
+        code: FormErrorCode.TerminalOptionUnsupported,
       }),
     );
     expect(() =>
@@ -177,7 +177,7 @@ describe('blueprint fragment ownership and strategies', () => {
       }),
     ).toThrow(
       expect.objectContaining({
-        specific: BlueprintErrorCode.VirtualFieldsNotInProperties,
+        code: FormErrorCode.VirtualFieldsNotInProperties,
       }),
     );
   });

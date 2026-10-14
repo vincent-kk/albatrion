@@ -3,7 +3,7 @@ import { describe, expect, it, vi } from 'vitest';
 import { createDispatchTree } from '@/schema-form/core/engine/__tests__/fixtures/createDispatchTree';
 import { FieldNodeEventType } from '@/schema-form/core/engine/record';
 import { readFieldNodeErrors } from '@/schema-form/core/engine/validation';
-import { ARRAY_METHOD_ON_NON_ARRAY } from '@/schema-form/errors';
+import { FormErrorCode } from '@/schema-form/errors';
 import type { FormErrorRecord } from '@/schema-form/errors';
 
 import { dispatchBatch } from '../utils/entry/dispatchBatch';
@@ -175,7 +175,7 @@ describe('array entry integration', () => {
     );
     expect(() => dispatchPush(root, 1)).toThrowError(
       expect.objectContaining({
-        code: `SCHEMA_FORM_ERROR.${ARRAY_METHOD_ON_NON_ARRAY}`,
+        code: FormErrorCode.ArrayMethodOnNonArray,
       }),
     );
     expect(records).toEqual([
@@ -210,7 +210,7 @@ describe('array entry integration', () => {
       }),
     ).toThrowError(
       expect.objectContaining({
-        code: `SCHEMA_FORM_ERROR.${ARRAY_METHOD_ON_NON_ARRAY}`,
+        code: FormErrorCode.ArrayMethodOnNonArray,
       }),
     );
     expect(list.local).toEqual([2]);

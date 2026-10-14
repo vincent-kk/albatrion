@@ -1,7 +1,7 @@
 import { getValue } from '@winglet/json/pointer';
 
+import { FormErrorCode } from '../../../../../errors';
 import type { BlueprintSchema } from '../../type';
-import { BlueprintErrorCode } from '../diagnostics/constant';
 import { throwBlueprintError } from '../diagnostics/throwBlueprintError';
 import { isBlueprintSchema } from '../types/isBlueprintSchema';
 import type { AnalysisContext } from './type';
@@ -20,7 +20,7 @@ export const resolveReference = (
 ): { schema: BlueprintSchema; schemaPath: string } => {
   if (!reference.startsWith('#'))
     return throwBlueprintError(
-      BlueprintErrorCode.UnknownJsonSchema,
+      FormErrorCode.UnknownJsonSchema,
       schemaPath,
       {
         reference,
@@ -35,7 +35,7 @@ export const resolveReference = (
     schema = getValue(context.schema, pointer);
   } catch (cause) {
     return throwBlueprintError(
-      BlueprintErrorCode.UnknownJsonSchema,
+      FormErrorCode.UnknownJsonSchema,
       schemaPath,
       {
         reference,
@@ -47,7 +47,7 @@ export const resolveReference = (
   }
   if (!isBlueprintSchema(schema))
     return throwBlueprintError(
-      BlueprintErrorCode.UnknownJsonSchema,
+      FormErrorCode.UnknownJsonSchema,
       schemaPath,
       { reference, guidance: 'The reference must identify a schema.' },
       context.options,

@@ -1,7 +1,7 @@
 import { describe, expect, it, vi } from 'vitest';
 
+import { FormErrorCode } from '../../../../errors';
 import { blueprint } from '../blueprint';
-import { BlueprintErrorCode } from '../utils/diagnostics/constant';
 
 // filid:contract discriminator
 describe('blueprint explicit discriminators', () => {
@@ -110,7 +110,7 @@ describe('blueprint explicit discriminators', () => {
       blueprint({ ...tagged, oneOf: [tagged.oneOf[0], tagged.oneOf[0]] }),
     ).toThrow(
       expect.objectContaining({
-        specific: BlueprintErrorCode.DiscriminatorMismatch,
+        code: FormErrorCode.DiscriminatorMismatch,
       }),
     );
   });
@@ -140,7 +140,7 @@ describe('blueprint explicit discriminators', () => {
       }),
     ).toThrow(
       expect.objectContaining({
-        specific: BlueprintErrorCode.DiscriminatorMismatch,
+        code: FormErrorCode.DiscriminatorMismatch,
       }),
     );
   });
@@ -175,11 +175,11 @@ describe('blueprint explicit discriminators', () => {
       ),
     ).toThrow(
       expect.objectContaining({
-        specific: BlueprintErrorCode.DiscriminatorMismatch,
+        code: FormErrorCode.DiscriminatorMismatch,
       }),
     );
     expect(collect).toHaveBeenCalledWith({
-      code: BlueprintErrorCode.DiscriminatorMismatch,
+      code: FormErrorCode.DiscriminatorMismatch,
       level: 'error',
       schemaPath: '#/oneOf/0/properties/a',
       details: { propertyName: 'k', other: 'j', reason: 'key' },
@@ -196,7 +196,7 @@ describe('blueprint explicit discriminators', () => {
       }),
     ).toThrow(
       expect.objectContaining({
-        specific: BlueprintErrorCode.DiscriminatorMismatch,
+        code: FormErrorCode.DiscriminatorMismatch,
       }),
     );
     expect(() =>
@@ -212,7 +212,7 @@ describe('blueprint explicit discriminators', () => {
       }),
     ).toThrow(
       expect.objectContaining({
-        specific: BlueprintErrorCode.EmptyEnumIntersection,
+        code: FormErrorCode.EmptyEnumIntersection,
       }),
     );
   });

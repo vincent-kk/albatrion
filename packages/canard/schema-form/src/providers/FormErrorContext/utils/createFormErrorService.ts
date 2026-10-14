@@ -1,5 +1,6 @@
 import { observeFieldNodeReports } from '@/schema-form/core';
 import type { FormErrorRecord } from '@/schema-form/errors';
+import { FormErrorCode } from '@/schema-form/errors';
 
 import type { FormErrorService } from '../type';
 import { reportErrorToHost } from './reportErrorToHost';
@@ -54,8 +55,8 @@ export const createFormErrorService = (): FormErrorService => {
           level: 'error',
           code:
             componentStack !== undefined
-              ? 'SCHEMA_FORM_ERROR.RENDER_FAILED'
-              : (domain?.code ?? 'SCHEMA_FORM_ERROR.RENDER_FAILED'),
+              ? FormErrorCode.RenderFailed
+              : (domain?.code ?? FormErrorCode.RenderFailed),
           message: domain?.message ?? String(error),
           error,
           ...(path !== undefined ? { path } : {}),

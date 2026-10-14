@@ -1,7 +1,7 @@
 import { isArray } from '@winglet/common-utils/filter';
 import { hasOwnProperty } from '@winglet/common-utils/lib';
 
-import { SchemaFormError } from '../../../../../errors';
+import { FormErrorCode, SchemaFormError } from '../../../../../errors';
 import type { Blueprint, BlueprintExpression } from '../../../blueprint';
 import type { FieldNodeRecord } from '../../../record';
 import type { SettlementContext } from '../../type';
@@ -9,7 +9,6 @@ import { getControlLayers } from '../controls/getControlLayers';
 import { getExitPolicyKey } from '../controls/getExitPolicyKey';
 import { readStateDependency } from '../controls/readStateDependency';
 import { recordSettlementFailure } from '../errors/recordSettlementFailure';
-import { EXPRESSION_THREW } from '../errors/settleErrorCode';
 import { walkOwnedFieldNodes } from '../walkOwnedFieldNodes';
 import { pruneCommittedRuleKeys } from './pruneCommittedRuleKeys';
 import { updateCommittedRuleValue } from './updateCommittedRuleValue';
@@ -161,7 +160,7 @@ export const commitExitPolicyValues = <Self extends FieldNodeRecord<Self>>(
         recordSettlementFailure(
           context,
           new SchemaFormError(
-            EXPRESSION_THREW,
+            FormErrorCode.ExpressionThrew,
             `Exit policy expression failed at ${schemaPath}`,
             { path: group.host.path, schemaPath, cause },
           ),
