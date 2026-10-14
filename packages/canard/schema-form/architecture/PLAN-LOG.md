@@ -281,6 +281,7 @@
 | 2026-10-14 | 312라운드 닫기: 정돈-3 PR #378 병합(eeb1bd374; 표면 92 동일, 시험 3826, filid 면제 한 줄 제거), 결정 여섯·선택 여섯 기록. 구조 리뷰 시작 가능, 정돈-E 투입. 보충 2줄 | `reviews/round-312-closing.md` |
 | 2026-10-14 | 315라운드 닫기: 소유자 Form 재구성 PR #379 병합(여섯 fractal 문서, 이름 함정 해소, 표준 틀 확정). 보충 1줄 | `reviews/round-315-closing.md` |
 | 2026-10-14 | 319라운드 닫기: 정돈-E PR #380 병합(8f4dce4ab; 표면 +2, 시험 3835, 코드 58, push는 호출 뒤 길이). 보충 3줄 | `reviews/round-319-closing.md` |
+| 2026-10-14 | 320라운드 소유자: fieldInputs 자식은 fieldInputDefinitions/ 아래. 321라운드 닫기: 정돈-S PR #381 병합(a8277781f). 보충 4줄 | `reviews/round-320-owner-answers.md`, `reviews/round-321-closing.md` |
 
 ## 2. 라운드별 요지
 

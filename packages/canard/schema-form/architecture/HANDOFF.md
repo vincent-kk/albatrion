@@ -2,7 +2,7 @@
 
 개발의 진행 상황과 다음 할 일은 `PLAN.md`가 단일 진입점으로 든다. 다음 세션이 바로 이어서 일하기 위한 문서다. 이력은 `git log`와 `reviews/`에 있으므로 여기에는 지금 상태, 다음 할 일, 일하는 법만 적는다. 소유자는 Vincent다.
 
-## 1. 지금 어디인가 (2026-10-14, 319라운드 닫힘; 정돈-E 병합, 정돈-S·구조 손질 2·3 PR 병합 대기, 구조-4는 fixy08, 대기열 비어 있음)
+## 1. 지금 어디인가 (2026-10-14, 321라운드 닫힘; 정돈-E·S 병합, 구조 손질 2·3 PR #382 검증 중, 구조-4는 fixy08, 대기열 비어 있음)
 
 - **264라운드(2026-10-14, 소유자).** 고유명사 후보 15 중 1·3·4·5·6·7·8·9·10·11·15를 권고대로 승인했고, 2(ChildField 이름 길이)·12(controls.children 대체 이름)·13(propertyKeys 공개 자리·이름)·14(virtual을 object 전용 키로)는 추가 논의, 비표준 최상위 키의 잔여 점검을 요구했다(reviews/round-264-owner-answers.md).
 - **265라운드(2026-10-14, 소유자).** 추가 논의 넷을 닫았다: ChildFields, controls.fields, options.propertyOrder(object 전용), options.virtual 형 선언과 VirtualSchema 비공개화, nullable: true 제거(265C-01 후속 대응표, reviews/round-265-owner-answers.md). 07b-5 후속 커밋으로 fixy07에게.
@@ -59,7 +59,8 @@
 - **316라운드(2026-10-14, 소유자).** Form 재구성의 뜻은 컴포지션의 독립 컴포넌트(같은 위계). 구조 지도(fractal 59·organ 125) 뒤 결정: constants·hooks는 organ(index 제거, 직접 import), types·rolled는 fractal 그대로, organ 안의 barrel은 두지 않음(Form/components/index.ts도 제거), Field는 Form처럼 자식 셋을 components/ 아래로. fairy08 PR, 정돈-E 뒤 rebase(reviews/round-316-owner-answers.md).
 - **317라운드(2026-10-14, 소유자).** Form barrel 삭제 확정; 개발은 병렬·병합만 직렬, 정돈-S는 fairy08이 병렬 시작; PR 셋과 정돈-4는 원장 관리자가 검증 뒤 병합; surface/classes는 단일 클래스라 runtime/으로(보조 둘 동반), 손질은 같은 PR에 모음(reviews/round-317-owner-answers.md). hooks는 B1 때문에 organ이 아니라 fractal 유지(fairy08 지적, 편집자 결정 A).
 - **318라운드(2026-10-14, 소유자).** 넷째 손질: fieldInputs를 내장 입력 열한 개의 fractal로(components/ 아래, index.ts에 Definition, 보조는 각자 아래, 한국어 문서), fixy08이 정돈-E 뒤 별도 PR(정돈-S 병합 뒤 base). ArrayItems 래핑은 memo 경계(설계 의도)라 유지(reviews/round-318-owner-answers.md).
-- **319라운드(2026-10-14, 닫기/원장 관리자).** 정돈-E PR #380을 8f4dce4ab로 squash 병합(직접 검증: 표면 92→94는 정확히 FormErrorCode·FormWarningCode, 시험 3835 통과, 리터럴 발화 0, 플러그인은 32C-02대로 group·code). 결정 묶음 열 기록; 남는 항목은 타이밍 시험 한도와 클래스의 공개 형 매개변수화. 다음 라운드 번호는 320.
+- **319라운드(2026-10-14, 닫기/원장 관리자).** 정돈-E PR #380을 8f4dce4ab로 squash 병합(직접 검증: 표면 92→94는 정확히 FormErrorCode·FormWarningCode, 시험 3835 통과, 리터럴 발화 0, 플러그인은 32C-02대로 group·code). 결정 묶음 열 기록; 남는 항목은 타이밍 시험 한도와 클래스의 공개 형 매개변수화.
+- **320·321라운드(2026-10-14, 소유자·닫기).** 320: fieldInputs의 열한 fractal은 컴포넌트가 아니라 FieldInputDefinition이므로 components/가 아니라 fieldInputDefinitions/ 아래(additionalOrganNames에 추가), 뿌리 이름은 고민 중(reviews/round-320-owner-answers.md). 321: 정돈-S PR #381을 a8277781f로 squash 병합 — 기본 배열 입력의 UI 전용 빈 슬롯, core 불변, 입력 기원 쓰기만. 다음 라운드 번호는 322.
 - **그 앞의 라운드 요지(19라운드부터)는 PLAN-LOG.md 2절에 있다.** 라운드마다 한 문단이며, 1절의 기록 표와 같은 순서다.
 - **설계의 정본은 단일 원장 `ledger/`다.** 영역 17개, 항목 1,350개(80라운드 뒤, 24라운드 뒤 1,348; 현행 1,076(부정 결정·기록 포함), 대체됨 199, 분할됨 49, 중복 24, 열림 0). 형식과 규칙은 `ledger/README.md`.
 - **옛 설계 문서(`00`–`09`, `adr/`, `open-questions.md`)는 동결됐다.** 더 고치지 않는다. 어긋남은 원장의 충돌 칸에 적는다. 원장이 인용하는 옛 문서의 `path:line`은 모두 커밋 `ba398c330` 기준 줄 번호다(그 뒤 옛 문서는 바뀌지 않았다).
@@ -474,6 +475,8 @@ node ledger/checks/doc-coverage.mjs design/*.md adr/*.md -- ledger/*.md   # 설�
 | `reviews/round-317-owner-answers.md` | 317라운드 소유자: barrel 삭제, 병렬, 병합 위임, surface runtime, 단일 PR |
 | `reviews/round-318-owner-answers.md` | 318라운드 소유자: fieldInputs 입력마다 fractal, ArrayItems 래핑 이유 |
 | `reviews/round-319-closing.md` | 319라운드 편집자 결정: 정돈-E PR #380 병합 |
+| `reviews/round-320-owner-answers.md` | 320라운드 소유자: fieldInputDefinitions 구획 |
+| `reviews/round-321-closing.md` | 321라운드 편집자 결정: 정돈-S PR #381 병합 |
 | plan/tidy-structure/array-limits-review.md | 배열 한도를 core가 다룰 때의 유익·손해 비교(대기열 53 검토 메모, 권고 포함) |
 | `reviews/round-297-closing.md` | 297라운드 편집자 결정 하나: 정돈-1(#374) 병합, 정돈-2 투입 |
 | plan/tidy-structure/brief-tidy-2.md | 정돈-2 브리프(fixy08 → codex): 시험 자리 U·D·S1, 제품 위반 둘, 잉여 export, D7 예외 |
