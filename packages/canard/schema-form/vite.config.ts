@@ -107,7 +107,7 @@ export default defineConfig({
           name: 'production',
           environment: 'jsdom',
           transformMode: { ssr: [/\.ts$/], web: [/\.tsx$/] },
-          include: ['src/core/engine/blueprint/__tests__/*.owned-inline*.test.{ts,tsx}'],
+          include: ['src/core/engine/blueprint/**/__tests__/*.owned-inline*.test.{ts,tsx}'],
           provide: { reactMajor: '19' },
         },
       },
