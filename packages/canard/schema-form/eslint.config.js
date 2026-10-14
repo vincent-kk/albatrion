@@ -175,7 +175,6 @@ export default [
       'src/app/**/*.{ts,tsx}',
       'src/constants/**/*.{ts,tsx}',
       'src/types/**/*.{ts,tsx}',
-      'src/rolled/**/*.{ts,tsx}',
       'src/errors/**/*.{ts,tsx}',
       'src/index.ts',
     ],

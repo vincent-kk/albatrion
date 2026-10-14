@@ -11,7 +11,7 @@ import { readUnionDisplay } from './utils/readUnionDisplay';
 
 /** Wrap the string fallback with a local draft interpreted only against live union types. */
 export const FieldInputUnion = (props: FieldInputProps) => {
-  const { node, value, nullable, schemaType, jsonSchema, typeMismatch } = props;
+  const { node, value, nullable, schemaType, jsonSchema, misfit } = props;
   const display = useMemo(
     () => readUnionDisplay(value, nullable),
     [value, nullable],
@@ -61,7 +61,7 @@ export const FieldInputUnion = (props: FieldInputProps) => {
   useEffect(() => {
     if (draft.current !== undefined) publish(draft.current);
   }, [effectiveKey, publish]);
-  const invalid = typeMismatch || display.invalid;
+  const invalid = misfit || display.invalid;
   return (
     <>
       <FieldInputString

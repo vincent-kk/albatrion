@@ -35,8 +35,8 @@ import type {
 import {
   readFieldNodeDefaultValue,
   readFieldNodeInactiveValues,
-  readFieldNodeTypeMismatch,
-  readFieldNodeTypeMismatches,
+  readFieldNodeMisfit,
+  readFieldNodeMisfits,
   readFieldNodeWatchValues,
 } from '../../engine';
 import type { NodeStateFlags } from '../../engine';
@@ -292,13 +292,13 @@ export class FieldNode implements FieldNodeRecord<FieldNode> {
   get context() {
     return this.runtime.context;
   }
-  /** {@inheritDoc NodeSurface.typeMismatch} */
-  get typeMismatch() {
-    return readFieldNodeTypeMismatch<FieldNode>(this);
+  /** {@inheritDoc NodeSurface.misfit} */
+  get misfit() {
+    return readFieldNodeMisfit<FieldNode>(this);
   }
-  /** {@inheritDoc NodeSurface.typeMismatches} */
-  get typeMismatches() {
-    return readFieldNodeTypeMismatches<FieldNode>(this);
+  /** {@inheritDoc NodeSurface.misfits} */
+  get misfits() {
+    return readFieldNodeMisfits<FieldNode>(this);
   }
   /** {@inheritDoc NodeSurface.diagnostics} */
   get diagnostics(): FieldNodeRuntime<FieldNode>['diagnostics'] {

@@ -1,8 +1,8 @@
 import { FormWarningCode } from '../../../../../errors';
-import type { FieldNodeRecord, TypeMismatchRecord } from '../../../record';
+import type { FieldNodeRecord, MisfitRecord } from '../../../record';
 import { conversionCandidates } from '../commit/conversionCandidates';
 import { effectiveType } from '../commit/effectiveType';
-import { isTypeMismatch } from '../commit/isTypeMismatch';
+import { isMisfit } from '../commit/isMisfit';
 import { receivedType } from '../commit/receivedType';
 
 /**
@@ -14,14 +14,14 @@ import { receivedType } from '../commit/receivedType';
 export const readStaticFirstWarning = <Self extends FieldNodeRecord<Self>>(
   node: Self,
   automatic: boolean,
-): TypeMismatchRecord | undefined => {
+): MisfitRecord | undefined => {
   const effective = effectiveType(node);
-  if (!isTypeMismatch(node.raw, effective, node.nullable)) return undefined;
+  if (!isMisfit(node.raw, effective, node.nullable)) return undefined;
   const candidates = conversionCandidates(node, effective);
   const ambiguous = candidates.length > 1;
   return {
     level: 'warning',
-    code: FormWarningCode.TypeMismatch,
+    code: FormWarningCode.Misfit,
     path: node.path,
     expected: {
       schemaType: node.schemaType,

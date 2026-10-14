@@ -2,13 +2,13 @@ import { JSONPointer as $ } from '@/schema-form/helpers/jsonPointer';
 
 import { FormWarningCode } from '../../../../../errors';
 import { indexFieldNodeWarning } from '../../../record';
-import type { FieldNodeRecord, TypeMismatchRecord } from '../../../record';
+import type { FieldNodeRecord, MisfitRecord } from '../../../record';
 import type { WriteOption } from '../../../types/value';
 import { PathKeyedMap } from '../../../utils/pathIndex/PathKeyedMap';
 import { EMPTY_VALUES } from '../detached/emptyDetachedReads';
 
 /** Empty committed projections are shared without a per-load empty output list. */
-const EMPTY_WARNINGS: readonly TypeMismatchRecord[] = Object.freeze([]);
+const EMPTY_WARNINGS: readonly MisfitRecord[] = Object.freeze([]);
 const EMPTY_PATHS: readonly string[] = Object.freeze([]);
 
 /**
@@ -21,7 +21,7 @@ const EMPTY_PATHS: readonly string[] = Object.freeze([]);
 export const finishStaticFirstLoad = <Self extends FieldNodeRecord<Self>>(
   root: Self,
   option: WriteOption,
-  warnings?: { order: number; warning: TypeMismatchRecord }[],
+  warnings?: { order: number; warning: MisfitRecord }[],
 ): void => {
   const runtime = root.runtime;
   const commit = runtime.commitNumber!;
@@ -30,20 +30,20 @@ export const finishStaticFirstLoad = <Self extends FieldNodeRecord<Self>>(
   else delete runtime.settlementTrace;
   runtime.refreshTargets ??= new Set();
   runtime.refreshTargets.clear();
-  const records: TypeMismatchRecord[] | undefined = warnings ? [] : undefined;
+  const records: MisfitRecord[] | undefined = warnings ? [] : undefined;
   if (warnings) {
     warnings.sort((left, right) => left.order - right.order);
     for (let index = 0; index < warnings.length; index++) {
       const warning = warnings[index].warning;
       records!.push(warning);
-      runtime.typeMismatchPaths.add(warning.path);
+      runtime.misfitPaths.add(warning.path);
       if (!runtime.errorReporter?.hasConsumer()) continue;
-      const code = FormWarningCode.TypeMismatch;
+      const code = FormWarningCode.Misfit;
       const record = {
         level: 'warning',
         code,
         path: warning.path,
-        message: `Type mismatch at ${warning.path} (commit ${commit})`,
+        message: `Value does not fit the schema type at ${warning.path} (commit ${commit})`,
         details: {
           path: warning.path,
           expected: warning.expected,
@@ -62,15 +62,12 @@ export const finishStaticFirstLoad = <Self extends FieldNodeRecord<Self>>(
       runtime.chainOccurrences?.push({ kind: 'record', record });
     }
   }
-  runtime.typeMismatchRecords = records
-    ? Object.freeze(records)
-    : EMPTY_WARNINGS;
-  const memo = (runtime.typeMismatchesMemo ??= new PathKeyedMap('path'));
+  runtime.misfitRecords = records ? Object.freeze(records) : EMPTY_WARNINGS;
+  const memo = (runtime.misfitsMemo ??= new PathKeyedMap('path'));
   memo.clear();
-  if (!runtime.typeMismatchPaths.size)
-    memo.set('', { commit, paths: EMPTY_PATHS });
+  if (!runtime.misfitPaths.size) memo.set('', { commit, paths: EMPTY_PATHS });
   else {
-    const paths = [...runtime.typeMismatchPaths].sort();
+    const paths = [...runtime.misfitPaths].sort();
     memo.set('', { commit, paths: Object.freeze(paths) });
     const byAncestor = new Map<string, string[]>();
     for (let index = 0; index < paths.length; index++) {

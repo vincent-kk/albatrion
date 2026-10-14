@@ -9,13 +9,10 @@ import type {
   SetValueOption,
 } from '@/schema-form/core';
 
+import type { JSONSchema, JSONSchemaWithVirtual } from '../schema/jsonSchema';
+import type { AllowedValue } from '../schema/value';
 import type { FieldRendererProps } from './fieldRenderer';
-import type {
-  InferJSONSchema,
-  JSONSchema,
-  JSONSchemaWithVirtual,
-} from './jsonSchema';
-import type { AllowedValue } from './value';
+import type { InferFieldInputSchema } from './inferFieldInputSchema';
 
 /**
  * Props that FieldInput Input Component must satisfy
@@ -32,7 +29,7 @@ export interface FieldInputProps<
   WatchValues extends ReadonlyArray<any> = ReadonlyArray<any>,
   Schema extends JSONSchema | JSONSchemaWithVirtual = unknown extends Value
     ? JSONSchema
-    : InferJSONSchema<Value>,
+    : InferFieldInputSchema<Value>,
   Node extends FieldNode = unknown extends Value
     ? FieldNode
     : InferFieldNode<Schema>,
@@ -52,7 +49,7 @@ export interface FieldInputProps<
   /** Authored accepted schema kind(s), including integer. */
   schemaType: Node['schemaType'];
   /** Whether the stored value mismatches the accepted kinds. */
-  typeMismatch: Node['typeMismatch'];
+  misfit: Node['misfit'];
   /** Name of field node assigned to FieldInput Component */
   name: Node['name'];
   /** Path of field node assigned to FieldInput Component */
@@ -98,7 +95,7 @@ export type FieldInputPropsWithSchema<
   Value extends AllowedValue = any,
   Schema extends JSONSchema | JSONSchemaWithVirtual = unknown extends Value
     ? JSONSchemaWithVirtual
-    : InferJSONSchema<Value>,
+    : InferFieldInputSchema<Value>,
   Context extends Dictionary = object,
 > = FieldInputProps<Value, Context, any[], Schema>;
 
@@ -113,7 +110,7 @@ export type FieldInputPropsWithNode<
   Value extends AllowedValue = any,
   Schema extends JSONSchema | JSONSchemaWithVirtual = unknown extends Value
     ? JSONSchemaWithVirtual
-    : InferJSONSchema<Value>,
+    : InferFieldInputSchema<Value>,
   Node extends FieldNode = InferFieldNode<Schema>,
 > = FieldInputProps<Value, Dictionary, any[], Schema, Node>;
 
@@ -128,7 +125,7 @@ export interface UnknownFieldInputProps {
   path: string;
   type: FieldNodeType;
   schemaType: FieldNode['schemaType'];
-  typeMismatch: boolean;
+  misfit: boolean;
   nullable: boolean;
   errors: readonly any[];
   errorVisible: boolean;
@@ -193,7 +190,7 @@ export type FieldInputHint = {
   /** Authored accepted schema kind(s). */
   schemaType: FieldNode['schemaType'];
   /** Whether the stored value mismatches the accepted kinds. */
-  typeMismatch: boolean;
+  misfit: boolean;
   /** FieldNode['path'] */
   path: string;
   /** FieldNode['required'] */

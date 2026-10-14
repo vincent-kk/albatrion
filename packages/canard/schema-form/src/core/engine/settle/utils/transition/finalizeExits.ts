@@ -44,7 +44,7 @@ export const finalizeExits = <Self extends FieldNodeRecord<Self>>(
     getGateRegistry(node.runtime).remove(node);
     if (!mismatchIndex) {
       mismatchIndex = new Map();
-      for (const path of context.root.runtime.typeMismatchPaths) {
+      for (const path of context.root.runtime.misfitPaths) {
         let ancestor = path;
         while (true) {
           let paths = mismatchIndex.get(ancestor);
@@ -59,7 +59,7 @@ export const finalizeExits = <Self extends FieldNodeRecord<Self>>(
       }
     }
     for (const path of [...(mismatchIndex.get(node.path) ?? [])]) {
-      context.root.runtime.typeMismatchPaths.delete(path);
+      context.root.runtime.misfitPaths.delete(path);
       let ancestor = path;
       while (true) {
         mismatchIndex.get(ancestor)?.delete(path);

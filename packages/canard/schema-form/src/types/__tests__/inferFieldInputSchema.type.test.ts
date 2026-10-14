@@ -1,9 +1,9 @@
 import { describe, expectTypeOf, it } from 'vitest';
 
+import type { InferFieldInputSchema } from '../field/inferFieldInputSchema';
 import type {
   ArraySchema,
   BooleanSchema,
-  InferJSONSchema,
   JSONSchema,
   NullSchema,
   NullableArraySchema,
@@ -14,25 +14,25 @@ import type {
   NumberSchema,
   ObjectSchema,
   StringSchema,
-} from '../types/jsonSchema';
+} from '../schema/jsonSchema';
 
-describe('InferJSONSchema type inference tests', () => {
+describe('InferFieldInputSchema type inference tests', () => {
   describe('Non-nullable types', () => {
     it('string → StringSchema', () => {
-      expectTypeOf<InferJSONSchema<string>>().toExtend<StringSchema>();
+      expectTypeOf<InferFieldInputSchema<string>>().toExtend<StringSchema>();
     });
     it('number → NumberSchema', () => {
-      expectTypeOf<InferJSONSchema<number>>().toExtend<NumberSchema>();
+      expectTypeOf<InferFieldInputSchema<number>>().toExtend<NumberSchema>();
     });
     it('boolean → BooleanSchema', () => {
-      expectTypeOf<InferJSONSchema<boolean>>().toExtend<BooleanSchema>();
+      expectTypeOf<InferFieldInputSchema<boolean>>().toExtend<BooleanSchema>();
     });
     it('array → ArraySchema', () => {
-      expectTypeOf<InferJSONSchema<any[]>>().toExtend<ArraySchema>();
+      expectTypeOf<InferFieldInputSchema<any[]>>().toExtend<ArraySchema>();
     });
     it('object → ObjectSchema', () => {
       expectTypeOf<
-        InferJSONSchema<Record<string, any>>
+        InferFieldInputSchema<Record<string, any>>
       >().toExtend<ObjectSchema>();
     });
   });
@@ -40,43 +40,43 @@ describe('InferJSONSchema type inference tests', () => {
   describe('Nullable types', () => {
     it('string | null → StringNullableSchema', () => {
       expectTypeOf<
-        InferJSONSchema<string | null>
+        InferFieldInputSchema<string | null>
       >().toExtend<NullableStringSchema>();
     });
     it('number | null → NumberNullableSchema', () => {
       expectTypeOf<
-        InferJSONSchema<number | null>
+        InferFieldInputSchema<number | null>
       >().toExtend<NullableNumberSchema>();
     });
     it('boolean | null → BooleanNullableSchema', () => {
       expectTypeOf<
-        InferJSONSchema<boolean | null>
+        InferFieldInputSchema<boolean | null>
       >().toExtend<NullableBooleanSchema>();
     });
     it('array | null → ArrayNullableSchema', () => {
       expectTypeOf<
-        InferJSONSchema<any[] | null>
+        InferFieldInputSchema<any[] | null>
       >().toExtend<NullableArraySchema>();
     });
     it('object | null → ObjectNullableSchema', () => {
       expectTypeOf<
-        InferJSONSchema<Record<string, any> | null>
+        InferFieldInputSchema<Record<string, any> | null>
       >().toExtend<NullableObjectSchema>();
     });
   });
 
   describe('Pure null type', () => {
     it('null → NullSchema', () => {
-      expectTypeOf<InferJSONSchema<null>>().toExtend<NullSchema>();
+      expectTypeOf<InferFieldInputSchema<null>>().toExtend<NullSchema>();
     });
   });
 
   describe('Edge cases', () => {
     it('unknown → JSONSchema', () => {
-      expectTypeOf<InferJSONSchema<unknown>>().toExtend<JSONSchema>();
+      expectTypeOf<InferFieldInputSchema<unknown>>().toExtend<JSONSchema>();
     });
     it('any → JSONSchema', () => {
-      expectTypeOf<InferJSONSchema<any>>().toExtend<JSONSchema>();
+      expectTypeOf<InferFieldInputSchema<any>>().toExtend<JSONSchema>();
     });
   });
 });

@@ -29,15 +29,15 @@ describe('detached FieldNode references', () => {
     );
     const target = root.find('/target');
     if (!target) throw new Error('Expected the loaded target');
-    expect(target.typeMismatch).toBe(true);
+    expect(target.misfit).toBe(true);
     resetFieldNodeForm(
       runtimeRoot,
       { flag: false, target: 'other' },
       SetValueOption.Overwrite,
     );
     expect(Reflect.get(target, 'detached')).toBe(true);
-    expect(target.typeMismatch).toBe(true);
-    expect(target.typeMismatches).toEqual(['/target']);
+    expect(target.misfit).toBe(true);
+    expect(target.misfits).toEqual(['/target']);
     expect(target.defaultValue).toBe('bad');
   });
 
@@ -202,26 +202,26 @@ describe('detached FieldNode references', () => {
     const target = root.find('/group/target');
     if (!target) throw new Error('Expected the active target');
     const before = {
-      typeMismatch: target.typeMismatch,
-      typeMismatches: target.typeMismatches,
+      misfit: target.misfit,
+      misfits: target.misfits,
       inactiveValues: target.inactiveValues,
       defaultValue: target.defaultValue,
     };
-    expect(before.typeMismatch).toBe(true);
-    expect(before.typeMismatches).toContain('/group/target');
+    expect(before.misfit).toBe(true);
+    expect(before.misfits).toContain('/group/target');
     root.find('/flag')?.setValue(false);
-    expect(target.typeMismatch).toBe(before.typeMismatch);
-    expect(target.typeMismatches).toBe(before.typeMismatches);
+    expect(target.misfit).toBe(before.misfit);
+    expect(target.misfits).toBe(before.misfits);
     Reflect.set(runtime, 'loadSnapshot', {
       group: { target: { seed: 'changed' } },
     });
     root.setValue({ flag: true, group: { target: { updated: true } } });
     const current = root.find('/group/target');
     expect(current).not.toBe(target);
-    expect(current?.typeMismatch).toBe(false);
+    expect(current?.misfit).toBe(false);
     expect(current?.defaultValue).toEqual({ seed: 'changed' });
-    expect(target.typeMismatch).toBe(before.typeMismatch);
-    expect(target.typeMismatches).toBe(before.typeMismatches);
+    expect(target.misfit).toBe(before.misfit);
+    expect(target.misfits).toBe(before.misfits);
     expect(target.inactiveValues).toBe(before.inactiveValues);
     expect(target.defaultValue).toBe(before.defaultValue);
   });

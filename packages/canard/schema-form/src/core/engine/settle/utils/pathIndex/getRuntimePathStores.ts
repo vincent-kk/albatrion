@@ -14,8 +14,8 @@ export const getRuntimePathStores = <Self>(
   metadata: (runtime.latentRawMetadata ??= new PathKeyedMap('pair')),
   declarations: (runtime.committedDeclarationIds ??= new PathKeyedMap('pair')),
   rules: (runtime.committedRuleValues ??= new PathKeyedMap('rule')),
-  mismatches: runtime.typeMismatchPaths,
-  mismatchMemo: (runtime.typeMismatchesMemo ??= new PathKeyedMap('path')),
+  mismatches: runtime.misfitPaths,
+  mismatchMemo: (runtime.misfitsMemo ??= new PathKeyedMap('path')),
   inactiveMemo: runtime.inactiveValuesMemo,
   inactiveEntries: (runtime.inactiveValueEntries ??= new PathKeyedMap('pair')),
 });

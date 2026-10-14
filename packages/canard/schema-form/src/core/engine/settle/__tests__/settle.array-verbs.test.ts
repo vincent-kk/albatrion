@@ -308,7 +308,7 @@ describe('array structural verbs', () => {
     });
     const record: TestFieldNode = root;
     root.setValue(17);
-    expect(root.typeMismatch).toBe(true);
+    expect(root.misfit).toBe(true);
     const commit = Reflect.get(runtime, 'commitNumber');
     expect(arrangeFieldNodeItems(record, { kind: 'clear' })).toBeUndefined();
     expect(arrangeFieldNodeItems(record, { kind: 'pop' })).toBeUndefined();
@@ -316,7 +316,7 @@ describe('array structural verbs', () => {
     expect(Reflect.get(runtime, 'commitNumber')).toBe(commit);
     expect(arrangeFieldNodeItems(record, { kind: 'push', value: 'x' })).toBe(1);
     expect(root.raw).toEqual(['x']);
-    expect(root.typeMismatch).toBe(false);
+    expect(root.misfit).toBe(false);
   });
 
   it('47C-01 keeps nested array slots and live identity on a tuple tail update', () => {

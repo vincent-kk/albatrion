@@ -21,7 +21,7 @@ const makeTree = (schema: BlueprintSchema, snapshot: unknown = undefined) =>
     diagnostics: { status: 'stable' },
     loadSnapshot: snapshot,
     latentRaw: new PathKeyedMap('pair'),
-    typeMismatchPaths: new PathKeyedSet(),
+    misfitPaths: new PathKeyedSet(),
     inactiveValuesMemo: new PathKeyedMap<
       readonly { path: string; value: unknown }[]
     >('path'),

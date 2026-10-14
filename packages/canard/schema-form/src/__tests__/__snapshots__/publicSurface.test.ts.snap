@@ -2,9 +2,9 @@
 
 exports[`preserves the 94-name package public surface 1`] = `
 "ArrayNode	type	ArrayNode<Item>
-ArraySchema	type	ArraySchema<Options>
+ArraySchema	type	RolledArraySchema<Options>
 BooleanNode	type	BooleanNode
-BooleanSchema	type	BooleanSchema<Options>
+BooleanSchema	type	RolledBooleanSchema<Options>
 BranchNode	type	BranchNode
 ChildFieldProps	type	ChildFieldProps<Value>
 FieldInputDefinition	type	FieldInputDefinition<T>
@@ -34,10 +34,10 @@ FormProps	type	FormProps<Schema, Value>
 FormProvider	value	({ fieldInputDefinitions, FieldRenderer, FormLabelRenderer, FormInputRenderer, FormErrorRenderer, formatError, showError, validationMode, context: inputContext, validatorFactory, children, }: PropsWithChildren<ExternalFormContextProviderProps>) => Element
 FormProviderProps	type	ExternalFormContextProviderProps
 FormRenderProps	type	Roll<FormRenderProps<Value>>
-FormWarningCode	value+type	{ readonly AllOfKeywordIgnoredForForm: "SCHEMA_FORM_WARNING.ALL_OF_KEYWORD_IGNORED_FOR_FORM"; readonly NullBranchIgnoredForForm: "SCHEMA_FORM_WARNING.NULL_BRANCH_IGNORED_FOR_FORM"; readonly VirtualizationDisabledForForm: "SCHEMA_FORM_WARNING.VIRTUALIZATION_DISABLED_FOR_FORM"; readonly IfWithoutElseFalse: "SCHEMA_FORM_WARNING.IF_WITHOUT_ELSE_FALSE"; readonly LockOnNonTerminalObject: "SCHEMA_FORM_WARNING.LOCK_ON_NON_TERMINAL_OBJECT"; readonly ConditionalSchemaWithoutValidator: "SCHEMA_FORM_WARNING.CONDITIONAL_SCHEMA_WITHOUT_VALIDATOR"; readonly ValidatorMissing: "SCHEMA_FORM_WARNING.VALIDATOR_MISSING"; readonly MultipleGatedBranchesActive: "SCHEMA_FORM_WARNING.MULTIPLE_GATED_BRANCHES_ACTIVE"; readonly ResetRebuiltByReference: "SCHEMA_FORM_WARNING.RESET_REBUILT_BY_REFERENCE"; readonly DependentSchemasIgnoredForForm: "SCHEMA_FORM_WARNING.DEPENDENT_SCHEMAS_IGNORED_FOR_FORM"; readonly ChildNodeComponentsOnTerminal: "SCHEMA_FORM_WARNING.CHILD_NODE_COMPONENTS_ON_TERMINAL"; readonly TerminalSubtreeKeyIgnoredForForm: "SCHEMA_FORM_WARNING.TERMINAL_SUBTREE_KEY_IGNORED_FOR_FORM"; readonly DiscriminatorBranchUnreachable: "SCHEMA_FORM_WARNING.DISCRIMINATOR_BRANCH_UNREACHABLE"; readonly NonJsonWholeValue: "SCHEMA_FORM_WARNING.NON_JSON_WHOLE_VALUE"; readonly FormTypeTestInvalid: "SCHEMA_FORM_WARNING.FORM_TYPE_TEST_INVALID"; readonly TypeMismatch: "SCHEMA_FORM_WARNING.TYPE_MISMATCH"; readonly DialectMismatch: "SCHEMA_FORM_WARNING.DIALECT_MISMATCH"; }
+FormWarningCode	value+type	{ readonly AllOfKeywordIgnoredForForm: "SCHEMA_FORM_WARNING.ALL_OF_KEYWORD_IGNORED_FOR_FORM"; readonly NullBranchIgnoredForForm: "SCHEMA_FORM_WARNING.NULL_BRANCH_IGNORED_FOR_FORM"; readonly VirtualizationDisabledForForm: "SCHEMA_FORM_WARNING.VIRTUALIZATION_DISABLED_FOR_FORM"; readonly IfWithoutElseFalse: "SCHEMA_FORM_WARNING.IF_WITHOUT_ELSE_FALSE"; readonly LockOnNonTerminalObject: "SCHEMA_FORM_WARNING.LOCK_ON_NON_TERMINAL_OBJECT"; readonly ConditionalSchemaWithoutValidator: "SCHEMA_FORM_WARNING.CONDITIONAL_SCHEMA_WITHOUT_VALIDATOR"; readonly ValidatorMissing: "SCHEMA_FORM_WARNING.VALIDATOR_MISSING"; readonly MultipleGatedBranchesActive: "SCHEMA_FORM_WARNING.MULTIPLE_GATED_BRANCHES_ACTIVE"; readonly ResetRebuiltByReference: "SCHEMA_FORM_WARNING.RESET_REBUILT_BY_REFERENCE"; readonly DependentSchemasIgnoredForForm: "SCHEMA_FORM_WARNING.DEPENDENT_SCHEMAS_IGNORED_FOR_FORM"; readonly ChildNodeComponentsOnTerminal: "SCHEMA_FORM_WARNING.CHILD_NODE_COMPONENTS_ON_TERMINAL"; readonly TerminalSubtreeKeyIgnoredForForm: "SCHEMA_FORM_WARNING.TERMINAL_SUBTREE_KEY_IGNORED_FOR_FORM"; readonly DiscriminatorBranchUnreachable: "SCHEMA_FORM_WARNING.DISCRIMINATOR_BRANCH_UNREACHABLE"; readonly NonJsonWholeValue: "SCHEMA_FORM_WARNING.NON_JSON_WHOLE_VALUE"; readonly FormTypeTestInvalid: "SCHEMA_FORM_WARNING.FORM_TYPE_TEST_INVALID"; readonly Misfit: "SCHEMA_FORM_WARNING.MISFIT"; readonly DialectMismatch: "SCHEMA_FORM_WARNING.DIALECT_MISMATCH"; }
 FormatError	type	FormatError
 InferFieldNode	type	InferFieldNode<Schema>
-InferJSONSchema	type	InferJSONSchema<Value, Options>
+InferJSONSchema	type	RolledInferJSONSchema<Value, Options>
 InferValueType	type	InferValueType<T>
 InjectToHandler	type	InjectToHandler<Value, ParentValue, RootValue, Context>
 JSONPointer	value+type	{ readonly Root: ""; readonly Fragment: "#"; readonly Separator: "/"; readonly Parent: ".."; readonly Current: "."; readonly Wildcard: "*"; readonly Index: "*"; readonly Context: "@"; }
@@ -55,14 +55,14 @@ NullableNumberSchema	type	Roll<NullableNumberSchema<Options>>
 NullableObjectSchema	type	Roll<NullableObjectSchema<Options>>
 NullableStringSchema	type	Roll<NullableStringSchema<Options>>
 NumberNode	type	NumberNode
-NumberSchema	type	NumberSchema<Options>
+NumberSchema	type	RolledNumberSchema<Options>
 ObjectNode	type	ObjectNode
-ObjectSchema	type	ObjectSchema<Options>
+ObjectSchema	type	RolledObjectSchema<Options>
 SchemaFormPlugin	type	SchemaFormPlugin
 SetValueOption	value+type	Readonly<Pick<typeof WriteOption, "Overwrite" | "Merge" | "DisableAutomaticWrites" | "EnableAutomaticWrites">>
 ShowError	value+type	typeof ShowError
 StringNode	type	StringNode
-StringSchema	type	StringSchema<Options>
+StringSchema	type	RolledStringSchema<Options>
 TerminalNode	type	TerminalNode
 UnionNode	type	UnionNode<Types, Nullable>
 ValidateFunction	type	ValidateFunction<Value>

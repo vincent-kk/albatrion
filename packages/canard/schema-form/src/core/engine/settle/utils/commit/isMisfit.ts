@@ -7,9 +7,9 @@ import type { BlueprintSchemaType } from '../../../blueprint';
  * @param value - Committed original input
  * @param effective - Current scalar or ordered list of accepted types
  * @param nullable - Static null permission for this node
- * @returns Whether the mismatch lamp must be on
+ * @returns Whether the misfit lamp must be on
  */
-export const isTypeMismatch = (
+export const isMisfit = (
   value: unknown,
   effective: BlueprintSchemaType,
   nullable: boolean,

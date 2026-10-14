@@ -46,8 +46,8 @@ export {
 export {
   readFieldNodeDefaultValue,
   readFieldNodeInactiveValues,
-  readFieldNodeTypeMismatch,
-  readFieldNodeTypeMismatches,
+  readFieldNodeMisfit,
+  readFieldNodeMisfits,
   readFieldNodeWatchValues,
   loadFieldNodeAtMount,
   resetFieldNodeForm,

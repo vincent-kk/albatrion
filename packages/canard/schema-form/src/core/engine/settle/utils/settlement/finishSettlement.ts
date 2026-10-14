@@ -82,13 +82,13 @@ export const finishSettlement = <Self extends FieldNodeRecord<Self>>(
     alignArraySnapshotSlots(resized);
   }
   if (context.kind === 'load')
-    for (const path of context.target.runtime.typeMismatchPaths)
+    for (const path of context.target.runtime.misfitPaths)
       if (
         !context.target.path ||
         path === context.target.path ||
         path.startsWith(`${context.target.path}/`)
       )
-        context.target.runtime.typeMismatchPaths.delete(path);
+        context.target.runtime.misfitPaths.delete(path);
   commitSettlement(context);
   const failures = context.failures;
   if (!failures?.length) return;

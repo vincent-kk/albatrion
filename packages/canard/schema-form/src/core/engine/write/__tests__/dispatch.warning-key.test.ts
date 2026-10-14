@@ -76,7 +76,7 @@ describe('structural warning keys', () => {
     expect(absent.runtime.pendingWarningRecords).toBeUndefined();
   });
 
-  it('VALUE-037 resends TYPE_MISMATCH after the lamp turns off and on', () => {
+  it('VALUE-037 resends MISFIT after the lamp turns off and on', () => {
     const seen: string[] = [];
     const { root } = createDispatchTree(
       { type: 'number' },
@@ -89,7 +89,7 @@ describe('structural warning keys', () => {
     dispatchSetValue(root, 2);
     dispatchSetValue(root, 'wrong again');
     expect(
-      seen.filter((code) => code === 'SCHEMA_FORM_WARNING.TYPE_MISMATCH'),
+      seen.filter((code) => code === 'SCHEMA_FORM_WARNING.MISFIT'),
     ).toHaveLength(2);
   });
 

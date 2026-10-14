@@ -7,7 +7,7 @@
 ## API Contracts
 
 - `FormField.tsx`는 `memo` 컴포넌트입니다. `FieldInput`·`FieldRenderer`·`Wrapper`는 `useConstant`로 첫 렌더 값에 고정하고, 나머지 속성은 `useReference`로 `overridePropsRef`에 담아 `FieldProxy`에 넘깁니다. 렌더러 문맥은 읽지 않습니다.
-- `type.ts`는 `FormFieldProps<Value>`를 정의합니다. `ChildFieldProps`의 덧붙임 속성을 받습니다.
+- `types/props.ts`는 `FormFieldProps<Value>`와 그 `Roll` 표현인 `RolledFormFieldProps<Value>`를 정의합니다. `FormFieldProps`는 `ChildFieldProps`의 덧붙임 속성을 받고 구현이 씁니다. 관문은 `RolledFormFieldProps`만 내보냅니다.
 
 ## Acceptance Criteria
 

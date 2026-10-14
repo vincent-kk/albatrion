@@ -337,7 +337,7 @@ describe('settle exits and budgets', () => {
       writeFieldNode(root, { a: 0 }, 'callerReplace', WriteOption.Overwrite),
     ).toThrow();
     expect(root.structure?.a?.raw).toBe(0);
-    expect(root.runtime.typeMismatchPaths.has('/a')).toBe(true);
+    expect(root.runtime.misfitPaths.has('/a')).toBe(true);
     expect(root.runtime.diagnostics).toMatchObject({
       status: 'degraded',
       cause: 'budget',

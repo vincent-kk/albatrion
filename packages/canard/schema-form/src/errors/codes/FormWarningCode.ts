@@ -42,7 +42,7 @@ export const FormWarningCode = {
   /** Class: warning record; when: an input definition test object has an unknown key. */
   FormTypeTestInvalid: 'SCHEMA_FORM_WARNING.FORM_TYPE_TEST_INVALID',
   /** Class: warning record; when: a value cannot be converted to the active type unambiguously. */
-  TypeMismatch: 'SCHEMA_FORM_WARNING.TYPE_MISMATCH',
+  Misfit: 'SCHEMA_FORM_WARNING.MISFIT',
   /** Class: warning record; when: a schema dialect differs from the selected validator dialect. */
   DialectMismatch: 'SCHEMA_FORM_WARNING.DIALECT_MISMATCH',
 } as const;

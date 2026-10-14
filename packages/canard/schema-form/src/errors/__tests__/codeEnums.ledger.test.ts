@@ -11,6 +11,11 @@ const RETIRED = new Set([
   'SCHEMA_FORM_WARNING.PRESENTATION_KEY_SUSPECT',
 ]);
 
+/** Ledger codes renamed after the quoted rows were recorded (333rd round). */
+const RENAMED = new Map([
+  ['SCHEMA_FORM_WARNING.TYPE_MISMATCH', 'SCHEMA_FORM_WARNING.MISFIT'],
+]);
+
 /**
  * Expands a live ERROR-164 row, including its abbreviated alternatives.
  * @param row - A table row with a code cell and an error or warning level.
@@ -86,7 +91,9 @@ describe('form error codes', () => {
     )?.[1];
     expect(dialect).toBeDefined();
     if (dialect) supplements.push([dialect, 'warning']);
-    const expected = [...base, ...supplements];
+    const expected = [...base, ...supplements].map(
+      ([code, level]) => [RENAMED.get(code) ?? code, level] as const,
+    );
     console.log(`ERROR-164 live code count: ${expected.length}`);
     expect(expected).toHaveLength(60);
     const live = expected.filter(([code]) => !RETIRED.has(code));

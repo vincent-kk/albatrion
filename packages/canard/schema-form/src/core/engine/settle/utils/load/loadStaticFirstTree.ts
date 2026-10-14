@@ -3,7 +3,7 @@ import { hasOwnProperty } from '@winglet/common-utils/lib';
 
 import type { BlueprintChildEntry } from '../../../blueprint';
 import { publishGlobalStateDeltas } from '../../../record';
-import type { FieldNodeRecord, TypeMismatchRecord } from '../../../record';
+import type { FieldNodeRecord, MisfitRecord } from '../../../record';
 import { WriteOption } from '../../../types/value';
 import { createChildNode } from '../compute/createChildNode';
 import { getDeclaredChildNames } from '../declarations/getDeclaredChildNames';
@@ -67,7 +67,7 @@ export const loadStaticFirstTree = <Self extends FieldNodeRecord<Self>>(
     },
   ];
   let deltas: Map<string, number> | undefined;
-  let warnings: { order: number; warning: TypeMismatchRecord }[] | undefined;
+  let warnings: { order: number; warning: MisfitRecord }[] | undefined;
   let order = 0;
   while (stack.length) {
     const frame = stack[stack.length - 1];

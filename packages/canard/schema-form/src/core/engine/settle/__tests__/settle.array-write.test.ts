@@ -151,7 +151,7 @@ describe('array settlement writes', () => {
     expect(root.outputValue).toBeNull();
     expect(Reflect.get(root, 'itemCount')).toBe(0);
     expect(root.children).toEqual([]);
-    expect(root.typeMismatch).toBe(true);
+    expect(root.misfit).toBe(true);
   });
 
   it('39C-01 emits a wrong-kind object item raw instead of an object hole', () => {

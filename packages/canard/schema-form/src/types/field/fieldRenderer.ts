@@ -4,7 +4,7 @@ import type { Dictionary, Fn } from '@aileron/declare';
 
 import type { FieldNode } from '@/schema-form/core';
 
-import type { JSONSchemaError } from './error';
+import type { JSONSchemaError } from '../error/error';
 import type { ChildFieldProps } from './fieldInput';
 
 /** Props that FieldRenderer Component must satisfy */

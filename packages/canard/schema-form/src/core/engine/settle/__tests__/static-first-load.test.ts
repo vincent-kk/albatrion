@@ -35,7 +35,7 @@ it('assembles independent leaf defaults once while keeping authored and delivery
   expect([...(root.runtime.deliveries ?? [])].map((node) => node.path)).toEqual(
     ['', '/nested', '/nested/b', '/nested/a', '/last'],
   );
-  expect(root.runtime.typeMismatchRecords).toEqual([]);
+  expect(root.runtime.misfitRecords).toEqual([]);
   expect(visits.filter((path) => !path.startsWith('select:'))).toEqual([
     '/nested/b',
     '/nested/a',

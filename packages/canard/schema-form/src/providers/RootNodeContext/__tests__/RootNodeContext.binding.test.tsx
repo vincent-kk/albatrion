@@ -51,7 +51,5 @@ it('ERROR-026 LANDING-075 buffers construction warnings until commit and deliver
     </StrictMode>,
   );
   expect(onError).toHaveBeenCalledTimes(1);
-  expect(onError.mock.calls[0][0].code).toBe(
-    'SCHEMA_FORM_WARNING.TYPE_MISMATCH',
-  );
+  expect(onError.mock.calls[0][0].code).toBe('SCHEMA_FORM_WARNING.MISFIT');
 });
