@@ -287,6 +287,7 @@
 | 2026-10-14 | 324라운드 소유자: 밤 루프는 보고 결정, 대기. 325라운드 닫기: 구조-4 PR #384 병합(307728a6d; fieldInputDefinitions 아래 열한 fractal). 보충 2줄 | `reviews/round-324-owner-answers.md`, `reviews/round-325-closing.md` |
 | 2026-10-14 | 326라운드 소유자: Field fractal을 FieldProxy로(본체 이름), 부품 둘은 그 아래; 병합 전 약식 전체 게이트. 보충 2줄 | `reviews/round-326-owner-answers.md` |
 | 2026-10-14 | 327라운드 닫기: 구조-5 PR #385 병합(c2d5f737e; Field → FieldProxy fractal, 약식 전체 게이트 통과). 보충 1줄 | `reviews/round-327-closing.md` |
+| 2026-10-14 | 328라운드 소유자: INTENT·DETAIL 문서 전부 한국어로(humanizer, sonnet·agy 병렬), fairy08 문서 PR. 보충 1줄 | `reviews/round-328-owner-answers.md` |
 
 ## 2. 라운드별 요지
 
