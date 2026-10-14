@@ -139,8 +139,9 @@
 
 - 결정:
   > **제약을 입력 단계에서 강제하는 일은 입력 컴포넌트에 위임한다.** core는 제약을 유효 스키마로 노출하고(`node.jsonSchema`) 위반은 검증이 알린다.
-- 보충: 없음
+- 보충:
   > 소유자(304라운드, 53 확정: 적용 가능성/제약 경계): "그래 이걸로 정하자. 제안을 수용한다" (`reviews/round-304-owner-answers.md:7`)
+  > 편집자 결정(306C-01): "【추론】 검증: 변경 파일 13개가 모두 문서(SPECIFICATION en·ko, README en·ko, QUICK_REFERENCE, docs/agents 셋, documents core-concepts·array-output-filters en·ko)와 데모 `ArrayOutputFiltersDemo.tsx`뿐이고 src·DETAIL·시험은 0개라 진행 중인 정돈-2와 겹치지 않는다; 커밋에 세션·공동 저자 줄 0; 데모의 `node.normalizedValue`는 공개 형 `FieldNode`의 `readonly outputValue`(`src/core/surface/type.ts:74`)로 바뀌었고 그 이름은 SPECIFICATION의 Array Output Filters 절과 같다; SPECIFICATION en·ko에 "What the core does with a schema"(136행)와 "Array Limits"(983행) 절이 새로 들어갔다; documents 빌드 en·ko는 브랜치 워크트리에서 통과했다(본 체크아웃에는 변경이 없으므로 워크트리가 맞는 자리). 지시 밖 변경 하나 — 데모 스키마의 `description` 문자열 "Three empty rows are offered up front"를 "Add rows and leave the last ones empty"로 바꾼 것 — 은 옛 전제(minItems 채움)를 화면에 적는 문구였으므로 받아들인다. prettier는 base에서 이미 통과하지 않던 셋(core-concepts.mdx en·ko, 데모)을 다시 포맷하지 않았고 이는 변경 범위를 지킨 것이다. 병합 결과 1.0.0-beta는 c40d6de8f." (`reviews/round-306-closing.md:9`)
 - 상태: 현행
 - 출처: `adr/0013-core-does-not-rewrite-values.md:31`(정본), `adr/0013-core-does-not-rewrite-values.md:17`
 - 닫은 사람: 소유자 답(`reviews/round-2.md:119` 새 원칙), 소유자 답(`reviews/round-5-derivations.md:7` P1')

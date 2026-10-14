@@ -82,7 +82,7 @@
 
 | 날짜 | 무엇 | 어디 |
 | --- | --- | --- |
-| 2026-10-14 | 305라운드 닫기: 대기열 51(넷 모두 폐기 — ERROR-162가 이미 폐기)·40(재현 안 됨, #367 유효) 닫음; 옛 조건 문법 무시는 CONTROLS-001 원리; 배열 한도 문서는 fairy08 문서 PR. 보충 7줄 | `reviews/round-305-closing.md` |
+| 2026-10-14 | 306라운드 닫기: 배열 한도 문서 PR #376 병합(c40d6de8f) — 경계 문장·배열 한도 절이 공개 문서에, documents 데모의 없는 이름 교체. 보충 2줄 | `reviews/round-306-closing.md` |
 | 2026-10-14 | 301라운드 소유자: 대기열은 직접 닫기, 53은 옵션 기능으로 재검토(SPECIFICATION의 minItems 채움 문장은 코드와 어긋남), CLAUDE.md 갱신 진행. 보충 2줄 | `reviews/round-301-owner-answers.md` |
 | 2026-10-14 | 302라운드 소유자 생각: 53 유익·손해 비교 요청 → array-limits-review.md. 보충 1줄 | `reviews/round-302-owner-answers.md` |
 | 2026-10-14 | 303라운드 소유자 생각: 53 경계·일관성 → "적용 가능성에는 따르고 제약은 강제하지 않음" 한 줄. 보충 1줄 | `reviews/round-303-owner-answers.md` |
