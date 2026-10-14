@@ -262,11 +262,17 @@
 
 ## Boundary Exemptions
 
-### 정착 계산 단위 — bench의 직접 import
+### `utils/compute/sameValue.ts` — bench의 직접 import
 
 - **Consumers**: `**/bench/**`
 - **Direct import**: `allowed`
-- **Reason**: bench(측정 도구)는 소유자 결정(276라운드, 대기열 49)으로 fractal import 규칙의 직접 import 금지에서 면제됩니다. 측정 대상인 `utils/compute/sameValue`, `utils/gates/getGateRegistry`를 진입점에 올리지 않고 그대로 읽습니다.
+- **Reason**: bench(측정 도구)는 소유자 결정(276라운드, 대기열 49)으로 fractal import 규칙의 직접 import 금지에서 면제됩니다. 값 비교 비용을 따로 재기 위해 진입점에 올리지 않고 그대로 읽습니다.
+
+### `utils/gates/getGateRegistry.ts` — bench의 직접 import
+
+- **Consumers**: `**/bench/**`
+- **Direct import**: `allowed`
+- **Reason**: bench(측정 도구)는 소유자 결정(276라운드, 대기열 49)으로 fractal import 규칙의 직접 import 금지에서 면제됩니다. 게이트 등록표 구성 비용을 따로 재기 위해 진입점에 올리지 않고 그대로 읽습니다.
 
 ## Last Updated
 

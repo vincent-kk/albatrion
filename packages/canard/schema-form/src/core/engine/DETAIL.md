@@ -39,14 +39,6 @@
 
 - 기존 청사진·동작 행·정착·쓰기·검증 시험의 값·형상·오류·사건 단언이 같은 결과를 냅니다. 고정 리비전 대조 시험은 옛 경로를 현재 배치로 해석합니다.
 
-## Boundary Exemptions
-
-### engine 내부 단위 — bench의 직접 import
-
-- **Consumers**: `**/bench/**`
-- **Direct import**: `allowed`
-- **Reason**: bench(측정 도구)는 소유자 결정(276라운드, 대기열 49)으로 fractal import 규칙의 직접 import 금지에서 면제됩니다. 측정 대상인 engine 내부 단위를 진입점에 올리지 않고 그대로 읽습니다. 하위 fractal의 내부 단위는 그 fractal의 DETAIL이 같은 면제를 선언합니다(settle).
-
 ## Last Updated
 
 계약 기준: NODE-016·045, LANDING-067·084, 07c 승인 계획 9.1·9.2·9.6.
