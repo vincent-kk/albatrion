@@ -509,3 +509,4 @@
 - **250라운드(2026-10-14, 소유자).** production-test의 지워진 옛 문법을 지금 새 문법으로 다 바꾸기로 했다(대기열 35 승인, 250C-01, reviews/round-250-owner-answers.md). fixy07이 07b-3의 별도 커밋으로 한다.
 - **251라운드(2026-10-14, 닫기).** PR #361(문서 사이트, 53b682133)을 직접 검증해 통과했다: documents만 47파일, 세션 줄 0, 옛 이름 0, en·ko 빌드 성공(251C-01, reviews/round-251-closing.md). 소유자 병합 허가 대기.
 - **252라운드(2026-10-14, 소유자).** PR #361(문서 사이트) 병합을 명시적으로 허가했다(reviews/round-252-owner-answers.md).
+- **287라운드(2026-10-14, 소유자).** 최소 export 원칙의 까닭(계약의 기록, 복잡도 폭발 방지)과 "fractal의 1차 이미지" 전제를 적고, 가이드(CLAUDE.md 등) 보강과 fractal 전수 재검사를 지시했다(reviews/round-287-owner-answers.md).
