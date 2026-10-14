@@ -1496,7 +1496,7 @@ export const ArrayForm = () => {
 
 #### 배열 한도 (minItems / maxItems)
 
-core는 채우지도 막지도 않습니다. `minItems`는 마운트·reset·분기 재활성화 때 항목을 만들지 않고, `maxItems`는 `push`나 `setValue`를 거부하지 않습니다. 두 한도는 `node.jsonSchema`에 남고, 위반은 검증이 알립니다. 기본 배열 입력은 `maxItems`에 이르면 추가 버튼을 숨깁니다.
+core는 채우지도 막지도 않습니다. `minItems`는 마운트·reset·분기 재활성화 때 항목을 만들지 않고, `maxItems`는 `push`나 `setValue`를 거부하지 않습니다. 두 한도는 `node.jsonSchema`에 남고, 위반은 검증이 알립니다. 기본 배열 입력은 `minItems`만큼 빈 슬롯을 UI로만 그리고 사용자가 입력하기 전에는 값을 쓰지 않으며, `maxItems`에 이르면 추가 버튼을 숨깁니다.
 
 ```tsx
 const jsonSchema = {
