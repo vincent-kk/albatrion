@@ -21,7 +21,7 @@ import type { Validator } from '../../src/core';
 import type { JSONSchema } from '../../src/__legacy__/types';
 
 // Load plugin source at runtime without adding it to this composite project's files.
-const pluginSource = new URL('../../schema-form-ajv8-plugin/src/default/validatorPlugin.ts', import.meta.url);
+const pluginSource = new URL('../../../schema-form-ajv8-plugin/src/default/validatorPlugin.ts', import.meta.url);
 const { ajvValidatorPlugin }: { ajvValidatorPlugin: Validator & {
   bind(instance: Ajv): void;
   configure(options: { directGuardCompile?: boolean }): void;

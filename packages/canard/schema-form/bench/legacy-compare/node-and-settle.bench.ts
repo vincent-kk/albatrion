@@ -145,7 +145,7 @@ function b2() {
       const samples: number[] = [];
       for (let index = 0; index < 7; index++) {
         const child = spawnSync(process.execPath,
-          ['bench/node-and-settle.bench.ts', `--heap-one=${kind}`],
+          ['bench/legacy-compare/node-and-settle.bench.ts', `--heap-one=${kind}`],
           { encoding: 'utf8', cwd: process.cwd() });
         if (child.status !== 0) throw new Error(`B2 ${kind} child failed: ${child.stderr}`);
         samples.push(Number(child.stdout.trim()));
@@ -360,7 +360,7 @@ function main() {
   if (Reflect.get(globalThis, 'Bun')) B2 = b2();
   else {
     const child = spawnSync(process.execPath,
-      ['--expose-gc', '--import', 'tsx', 'bench/node-and-settle.bench.ts', '--heap-child'],
+      ['--expose-gc', '--import', 'tsx', 'bench/legacy-compare/node-and-settle.bench.ts', '--heap-child'],
       { encoding: 'utf8', cwd: process.cwd(), maxBuffer: 1024 * 1024 * 4 });
     if (child.status !== 0) throw new Error(`B2 child failed: ${child.stderr}`);
     B2 = JSON.parse(child.stdout) as ReturnType<typeof b2>;
@@ -369,7 +369,7 @@ function main() {
   if (!Reflect.get(globalThis, 'Bun')) {
     const child = spawnSync(process.execPath,
       ['--allow-natives-syntax', '--import', 'tsx',
-        'bench/node-and-settle.bench.ts', '--map-child'],
+        'bench/legacy-compare/node-and-settle.bench.ts', '--map-child'],
       { encoding: 'utf8', cwd: process.cwd() });
     if (child.status !== 0) throw new Error(`B3 child failed: ${child.stderr}`);
     B3 = JSON.parse(child.stdout) as ReturnType<typeof b3>;

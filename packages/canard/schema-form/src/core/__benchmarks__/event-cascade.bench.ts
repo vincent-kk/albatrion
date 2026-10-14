@@ -5,7 +5,7 @@ import {
   type FieldNode,
   type NumberNode,
   type StringNode,
-} from '@/schema-form/core';
+} from '@/schema-form/core/surface';
 import type { JSONSchema } from '@/schema-form/types';
 
 /**

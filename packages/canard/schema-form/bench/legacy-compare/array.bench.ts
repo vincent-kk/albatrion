@@ -221,8 +221,8 @@ function heapOne(engine: Engine): void {
 
 function heapSamples(engine: Engine) {
   const bun = Boolean(Reflect.get(globalThis, 'Bun'));
-  const args = bun ? ['bench/array.bench.ts', `--heap-one=${engine}`] :
-    ['--expose-gc', '--import', 'tsx', 'bench/array.bench.ts', `--heap-one=${engine}`];
+  const args = bun ? ['bench/legacy-compare/array.bench.ts', `--heap-one=${engine}`] :
+    ['--expose-gc', '--import', 'tsx', 'bench/legacy-compare/array.bench.ts', `--heap-one=${engine}`];
   const samples: number[] = [];
   for (let index = 0; index < memorySamples; index++) {
     const child = spawnSync(process.execPath, args,
