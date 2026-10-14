@@ -1,5 +1,6 @@
 import type { FieldNodeDelivery, FieldNodeRecord } from '../../../record';
 import { captureChainError } from './captureChainError';
+import { resolveFieldNodeChainRoot } from './resolveFieldNodeChainRoot';
 import { compareDocumentOrder } from './utils/compareDocumentOrder';
 
 /**
@@ -54,9 +55,10 @@ export const deliverWave = <Self extends FieldNodeRecord<Self>>(
       try {
         listener(event);
       } catch (error) {
-        captureChainError(runtime, error);
+        captureChainError(resolveFieldNodeChainRoot(root).runtime, error);
       } finally {
         runtime.currentListener = undefined;
+        resolveFieldNodeChainRoot(root).runtime.currentListener = undefined;
       }
     }
   }
