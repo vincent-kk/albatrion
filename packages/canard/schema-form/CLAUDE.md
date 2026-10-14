@@ -44,11 +44,11 @@ npx -p @slats/agents-assets-sync inject-agents-settings --package=@canard/schema
 
 ### Node System
 
-- **AbstractNode** — 모든 노드의 기반 클래스
-- **Terminal Nodes**: `StringNode`, `NumberNode`, `BooleanNode`, `NullNode`
-- **Branch Nodes**: `ObjectNode`, `ArrayNode` (각각 `BranchStrategy` / `TerminalStrategy`)
-- **Special**: `VirtualNode` (조건부 필드, 계산 값)
-- 노드 생성: `nodeFromJSONSchema()`
+- **런타임 클래스는 `FieldNode` 하나** (`src/core/surface/runtime/FieldNode.ts`). 종류별 노드는 클래스가 아니라 `type`으로 가르는 공개 판별 합집합 형이다(`src/core/surface/type.ts`).
+- **Terminal**: `StringNode`, `NumberNode`, `BooleanNode`, `NullNode`, `UnionNode`(여러 종류를 담은 `type`)
+- **Branch**: `ObjectNode`, `ArrayNode`, `VirtualNode`(`options.virtual`로 묶은 형제 필드). `object`·`array`는 `options.terminal: true`면 terminal이 된다. 판정은 스키마에서 한 번 정하고 실행 중 바뀌지 않는다.
+- **판별**: `isStringNode` 등 가드와 `node.strategy`(`'branch'` | `'terminal'`)로 가른다.
+- 노드 생성: `<Form>`이 `jsonSchema`·`defaultValue`로 트리를 만들고 마운트한다. 외부 접근은 `FormHandle.node`·`findNode`·`findNodes`, `children` 함수의 `node`, FieldInput의 `node` prop. 트리를 직접 만드는 통로는 공개하지 않는다(시험·벤치는 `src/__tests__/fixtures/nodeFromJSONSchema.ts`를 쓴다).
 
 ### Plugin System (`src/app/plugin/`)
 
@@ -97,6 +97,18 @@ controls: {
 ### Validation Modes
 
 `OnChange` | `OnRequest` | `None`
+
+## Fractal Contracts in This Package
+
+Applies the root `Module Contract Principles` to this package.
+
+- `src/index.ts` is the only public surface (`exports` has `"."` alone) and lists every export by name. Docs, README and agent skills show only names reachable from it. Adding a name is a contract change: enumerate the built `dist/index.d.ts` and compare before merging.
+- Standard fractal shape: the root holds `INTENT.md`, `DETAIL.md`, `index.ts` and at most one implementation file named after the fractal (`components/Form/Form.tsx`). Child fractals sit under a role compartment (`components/Form/components/FormCore/`, `components/Field/components/FieldProxy/`), each with `index.ts`, `type.ts` when it declares types, its documents, and its own `components/`·`utils/` for helpers only it uses. Compartments are organs: no `index.ts` inside them, files are imported directly (`src/constants/bitmask`, not `src/constants`).
+- A directory promoted to a fractal keeps its implementation in a compartment, not at its root (`src/hooks/hooks/`, `src/types/types/`). `src/hooks` stays a fractal because it composes `core`, `providers` and `components`; an organ may not import its owner's child fractals (model B1, guarded by `src/__tests__/importModel.test.ts`).
+- Tests live in each fractal's `__tests__/` and import that fractal's internal files directly (`../runtime/FieldNode`, not `..` or `@/schema-form/core`). A test that needs another fractal's internals moves into that fractal; a fixture shared by two fractals sits in the `__tests__/fixtures/` of their lowest common fractal. `src/__tests__/e2e`, `scenarios` and `migration` are external consumers and import the root `index.ts`. A parent-level test that must reach a child fractal's internals (for example through `vi.mock`) is declared in the parent's `DETAIL.md` (see `src/core/engine/DETAIL.md`).
+- Benchmarks live inside the nearest fractal's `__benchmarks__/` and import internals directly. The standalone legacy-comparison scripts in `bench/legacy-compare/` read internals under a scoped `.filid/config.json` exemption; `bench/` and `stories/` are ignored by filid, so reviewers check those imports by hand. A bench never justifies adding a name to an `index.ts`.
+- Error codes come from one place: `FormErrorCode` and `FormWarningCode` (`src/errors/`), exported from the root. Product code emits codes through these constants, never as string literals.
+- `src/__legacy__` is frozen and is deleted in stage 09. Do not extend it, and do not count its imports as consumers.
 
 ## Render-Level Test Harness (`src/__tests__/`)
 
