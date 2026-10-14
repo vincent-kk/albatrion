@@ -3221,6 +3221,8 @@
   > 소유자(277라운드, 대기열 39): "5번에 대해서도 답변 해줘. oneof 터미널" (`reviews/round-277-owner-answers.md:8`)
   > 소유자(278라운드, 대기열 40·39): "40번은 뭐야? 그리고 oneOf 같은 브랜치 노드들은 그렇게 겹치는 속성들에 대해서 덮어쓰기가 좀 되지않나..? 그랬언거같은데" (`reviews/round-278-owner-answers.md:7`)
   > 소유자(279라운드, 진행): "좋아 쭉 작업해 다시" (`reviews/round-279-owner-answers.md:7`)
+  > 소유자(280라운드, 대기열 38): "아하.... 1번은 접근성의 문제로 봐야할까? 가능하면 자유도를 해치길 원치는 않는데... 이게 input이랑 라벨을 그리는 곳이 다르다보니까 말이야.. 그리고 실제 상황에서는 사람들이 FieldInput과 FieldRenderer 를 커스텀해서 쓸테니까 사용방식에 따라 올바름 매칭을 하도록 하는게 좋지 않을까 싶기도 하네. 라벨 그리릴땐 인풋이 선출됬는지 알 수가 없으니까" (`reviews/round-280-owner-answers.md:7`)
+  > 소유자(280라운드, alias 자리): "2번은 내가 수정했었구나 그럼 문제없어." (`reviews/round-280-owner-answers.md:8`)
 - 상태: 현행
 - 출처: `reviews/round-80-closing.md:17`(정본)
 - 닫은 사람: 편집자 결정(80라운드, `reviews/round-80-closing.md` 80C-02)
