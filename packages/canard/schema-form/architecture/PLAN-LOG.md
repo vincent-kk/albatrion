@@ -549,3 +549,4 @@
 - **314라운드(2026-10-14, 소유자).** Form 재구성: 여섯은 fractal, 이름 함정 수정, 문서화 위임(reviews/round-314-owner-answers.md).
 - **262라운드(2026-10-14, 닫기).** PR #364(07b-4, c711f3d17)를 직접 검증해 통과했다: 시험 3936+241, typecheck·lint 0, 세션 줄 0(262C-01, reviews/round-262-closing.md). 소유자 병합 허가 대기.
 - **316라운드(2026-10-14, 소유자).** constants·hooks organ, organ 안 barrel 금지, Field 재구성(reviews/round-316-owner-answers.md).
+- **317라운드(2026-10-14, 소유자).** barrel 삭제, 병렬, 병합 위임, surface runtime, 단일 PR(reviews/round-317-owner-answers.md).
