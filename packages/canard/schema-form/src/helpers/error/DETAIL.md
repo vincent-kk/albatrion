@@ -2,18 +2,21 @@
 
 ## Requirements
 
-개발자 진단 문자열과 사용자 검증 메시지의 책임을 구분합니다.
+개발자 진단 상자의 공유 원소와 사용자 검증 메시지의 책임을 구분합니다. 개별 진단 문자열 포맷터는 소비자 fractal이 소유합니다.
 
 ## API Contracts
 
-- 진단 포맷터는 문자열을 반환하되 원시 JSON 미리보기의 직렬화 오류를 전파할 수 있고, 검증 포맷터는 스키마의 메시지 설정을 반영합니다.
+- `createDivider(width = 50): string`은 너비만큼 `'─'`를 반복하여 진단 상자의 구분선을 만듭니다.
+- `getErrorMessage(error: unknown): string`은 `Error`이면 `message`, 아니면 `String(error ?? 'Unknown error')`를 반환합니다.
+- `formatValidationError(error: JSONSchemaError, node: FieldNode, context: Dictionary): ReactNode`는 `FormatError` 계약에 따라 스키마의 메시지 설정을 반영한 검증 메시지를 반환합니다.
+- 이름 함정: `formatValidationError/utils/getErrorMessage.ts`는 검증 오류의 키워드와 로케일로 메시지를 선택하는 다른 함수입니다.
 
 ## Acceptance Criteria
 
 ### error-contract — 관찰 가능한 동작
 
-- 표시용 포맷팅은 외부 상태를 변경하지 않지만, 순환 참조 등 JSON으로 직렬화할 수 없는 진단 입력은 예외를 발생시킬 수 있습니다.
+- 공유 원소와 검증 메시지 포맷터는 외부 상태를 변경하지 않습니다.
 
 ## Last Updated
 
-2026-10-13 — 177라운드(VALIDATE-010, LANDING-115).
+2026-10-14 — 정돈-1; VALIDATE-010, LANDING-115.

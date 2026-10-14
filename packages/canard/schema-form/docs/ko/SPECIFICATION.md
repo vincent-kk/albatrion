@@ -327,14 +327,43 @@ type AttachedFilesMap = Map<string, File[]>;
 
 ### 노드 초기화
 
-```typescript
-const node = nodeFromJSONSchema({
-  jsonSchema: { type: 'object', properties: { name: { type: 'string' } } },
-  onChange: (value) => console.log('Form value changed:', value),
-});
+`<Form>`은 `jsonSchema`와 `defaultValue`로 노드 트리를 만들고 렌더 중에 마운트합니다. 그래서 기다려야 할 초기화 단계가 없습니다. 패키지는 노드를 따로 만드는 팩터리를 내보내지 않으며, 노드는 폼을 통해 얻습니다.
 
-await delay(); // 초기화 완료 대기
+```tsx
+import { useEffect, useRef } from 'react';
+
+import { Form, type FormHandle } from '@canard/schema-form';
+
+const jsonSchema = {
+  type: 'object',
+  properties: { name: { type: 'string' } },
+} as const;
+
+function ProfileForm() {
+  const formRef = useRef<FormHandle<typeof jsonSchema>>(null);
+
+  useEffect(() => {
+    const root = formRef.current?.node; // 마운트된 트리의 루트 노드
+    formRef.current?.findNode('/name')?.setValue('Ada'); // JSONPointer 경로의 노드
+  }, []);
+
+  return (
+    <Form
+      ref={formRef}
+      jsonSchema={jsonSchema}
+      onChange={(value) => console.log('Form value changed:', value)}
+    />
+  );
+}
 ```
+
+| 있는 자리          | 노드를 얻는 법                                                 |
+| ------------------ | -------------------------------------------------------------- |
+| 폼 밖, ref를 통해  | `formRef.current.node`, `findNode(path)`, `findNodes(path)`    |
+| `children` 함수 안 | 인자의 `node` ([children 함수 사용](#children-함수-사용) 참고) |
+| FieldInput 안      | `node` prop ([FieldInputProps](#fieldinputprops) 참고)         |
+
+`jsonSchema`나 `defaultValue` 속성만 바뀌면 폼은 지금 트리를 그대로 두고, 두 값은 `reset`이 다시 읽습니다. 폼은 검증기가 바뀔 때와 `reset`이 다른 `jsonSchema`로 실행될 때 트리를 새로 만들고, 같은 스키마의 `reset`은 기존 트리에 값을 다시 불러옵니다. 재생성 전에 보관한 노드는 버려진 트리에 속하므로, 참조를 들고 있지 말고 노드가 필요한 순간에 `formRef.current.node`를 읽거나 `findNode`를 부르십시오.
 
 ### 노드 상태 플래그
 

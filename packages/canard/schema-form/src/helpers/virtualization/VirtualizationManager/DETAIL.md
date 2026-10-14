@@ -6,6 +6,7 @@
 
 ## API Contracts
 
+- 이 fractal은 진단 문자열 포맷터 `formatVirtualizationDisabledWarning`을 `utils/`에 소유하며 상자 원소는 `helpers/error` 진입점에서 가져옵니다.
 - 옵션과 backfill 값의 계약은 resolveVirtualizationOptions 진입점에서 소비하며 부모의 집계 진입점이나 호환 타입 파일을 역참조하지 않습니다.
 - create는 비활성 또는 관찰 API 부재 시 null입니다. forBranch와 forChild는 설정에 맞는 대상일 때만 매니저를 반환합니다.
 - 노출은 등록 삭제와 unobserve 후 콜백 실행으로 이어집니다. idle backfill은 지정된 모드에서만 시작합니다.
@@ -20,4 +21,4 @@
 
 ## Last Updated
 
-2026-10-08 — ERROR-090·114, 121C-01 F-A.
+2026-10-14 — 정돈-1; ERROR-090·114, 121C-01 F-A.

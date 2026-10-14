@@ -3,12 +3,12 @@
 ## Requirements
 
 - 의존 방향의 마지막은 `record < {behaviors 종류, navigation} < validation < settle/derive < settle < write < surface`입니다. 이 fractal만 행 선택과 단일 클래스 생성을 함께 압니다. 쓰기·상태·검증·구독은 engine의 write 계약, 읽기는 `settle`·`validation`·`navigation`의 진입점에 위임합니다(NODE-010·016, LANDING-084).
-- 제품 코드는 내부 구현을 진입점 밖에서 직접 소비하지 않습니다(NODE-016). 경계 예외는 하나입니다: core 시나리오 러너 도우미(`src/core/__tests__/scenarios/utils/`)는 settle 진입 함수가 받는 런타임 레코드 형을 위해 `surface/FieldNode.ts`의 클래스 형만 `import type`으로 직접 읽습니다. 진입점은 공개 합집합 형만 내보내므로 시험을 위해 넓히지 않습니다(filid 경계 규칙 §5. 실행 ADR D7에서 벗어남 — 계획 로그 §4).
+- 제품 코드는 내부 구현을 진입점 밖에서 직접 소비하지 않습니다(NODE-016). 직접 import의 범위와 이유는 Boundary Exemptions에 선언합니다. core 시나리오 러너 도우미(`src/core/__tests__/scenarios/utils/`)는 settle 진입 함수가 받는 런타임 레코드 형을 위해 `surface/FieldNode.ts`의 클래스 형만 `import type`으로 직접 읽습니다. 진입점은 공개 합집합 형만 내보내므로 시험을 위해 넓히지 않습니다(filid 경계 규칙 §5. 실행 ADR D7에서 벗어남 — 계획 로그 §4).
 - 아래 멤버 표가 클래스 프로토타입과 공개 형의 정확한 목록입니다. 기제가 들어오는 단계에서 멤버 표·멤버 목록 시험·공개 형을 함께 갱신하며 스텁·시험 전용 주입 자리를 두지 않습니다(26C-01, NODE-010, LANDING-066, 28C-07·08).
 
 ## API Contracts
 
-- surface의 엔진 참조는 engine/index를 통해서만 도달하며 내부 엔진 파일을 직접 가져오지 않습니다. nodeFromJSONSchema는 같은 buildFieldNodeTree·mountFieldNode 통로를 잇는 core 호스트 진입으로 이 진입점에서 내보내며 패키지 src/index는 내보내지 않습니다(07c 계획 9.2·9.3).
+- surface의 엔진 참조는 engine/index를 통해서만 도달하며 내부 엔진 파일을 직접 가져오지 않습니다. `utils/nodeFromJSONSchema`는 같은 `buildFieldNodeTree`·`mountFieldNode` 통로를 잇는 내부 도우미이며 surface·core·패키지 진입점이 내보내지 않습니다(07c 계획 9.2·9.3).
 
 - 진입점은 클래스 이름과 겹치는 런타임 생성자를 내보내지 않고 공개 판별 합집합 `FieldNode` 타입, 종류별 노드 타입, 가드 열, `InferFieldNode`, 공개 옵션 `SetValueOption`, `fieldNodeFactory`와 `record`가 소유한 `FieldNodeEventType`·`FieldNodeRequestType`을 이름으로 내보냅니다. 노드 형·가드와 사건·명령 열거는 패키지 공개 진입점에서도 이름으로 내보냅니다(SURFACE-056·060, EVENT-073, LANDING-067·158). `fieldNodeFactory(schema: Blueprint, runtimeSeed: FieldNodeRuntimeSeed, validator?: Validator): FieldNode`는 팩토리가 결합하는 `nodeFactory`·`blueprint` 칸과 정착이 지연 생성하는 `settlementScratch` 칸을 제외한 트리 입력과 선택 검증기를 받습니다. 경로 색인 저장소 `latentRaw`·`typeMismatchPaths`·`inactiveValuesMemo`는 시드가 주지 않으면 팩토리가 빈 색인 저장소로 만들어, 호출자가 core 내부 클래스를 가져오지 않게 합니다. 트리마다 한 번 완성한 런타임에 실제 생성 함수를 결합합니다. 청사진 `kind`·`strategy`로 `BEHAVIORS[type][strategy]`를 골라 같은 클래스의 인스턴스를 만듭니다(NODE-008·010·045·046, WRITE-015). 빈 생성 함수 스텁을 호출자에게 요구하지 않습니다.
 - 아래 표의 `getter`는 필드 또는 계산 메모 읽기이며 `method`는 문장 하나의 위임입니다. 구현 클래스는 `FieldNodeRecord<FieldNode>`를 구현하고 위임 메서드에서 `FieldNode` 자기 타입을 전달합니다. 종류별 생성 표·`InferFieldNode` overload로 단언 없이 좁힙니다(NODE-046).
@@ -125,6 +125,12 @@
 - **Direct import**: `allowed`
 - **Reason**: 시험과 bench(측정 도구)는 소유자 결정(276라운드, 대기열 49)으로 fractal import 규칙의 직접 import 금지에서 면제됩니다. engine 정착 시험과 bench는 노드 클래스를 직접 읽어 검증·측정하며, 이를 위해 진입점을 넓히지 않습니다.
 
+### `utils/nodeFromJSONSchema.ts` — 시험·bench·aileron 벤치마크의 직접 import
+
+- **Consumers**: `**/src/**/__tests__/**`, `**/bench/**`, `**/packages/aileron/benchmark/**`, `**/packages/aileron/benchmark-form/**`
+- **Direct import**: `allowed`
+- **Reason**: 진입점이 내보내지 않는 내부 생성 도우미다. 벤치와 aileron 벤치마크는 `src` 밖이라 진입점 없이 내부를 읽고, 시험의 자리 재검토는 정돈-2(F6)에서 한다. 소유자 결정 D2(289라운드).
+
 ## Last Updated
 
-계약 기준: 69C-01–05, 70C-01, NODE-010·050, REACT-009·010·024.
+계약 기준: 69C-01–05, 70C-01, NODE-010·050, REACT-009·010·024, 정돈-1(2026-10-14).
