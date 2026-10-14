@@ -33,10 +33,7 @@ import { submitForm } from '../utils/submitForm';
 import { FormRootProxy } from './FormRootProxy';
 
 /** Compose the fixed provider hierarchy and expose the current binding through the handle. */
-export const FormContents = (
-  props: FormProps,
-  ref: ForwardedRef<FormHandle>,
-) => {
+export const FormRoot = (props: FormProps, ref: ForwardedRef<FormHandle>) => {
   const binding = useRef<RootBinding>({ reset: () => {} });
   const attachedFilesMap = useLazyConstant<AttachedFilesMap>(() => new Map());
   const reporter = useFormErrorContext();
