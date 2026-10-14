@@ -2,7 +2,7 @@
 
 ## Requirements
 
-- `derive`는 `settle`의 자식 fractal이며, 완성된 형상에 걸린 규칙을 판정한다. 쓰기 적용, 재계산, 파생 라운드 셈, 원본 B 복원, 커밋은 settle이 맡는다(LANDING-063·083, SETTLE-004·011·017, NODE-016).
+- `derive`는 완성된 형상에 걸린 규칙을 판정한다. 쓰기 적용, 재계산, 파생 라운드 셈, 원본 B 복원, 커밋은 settle이 맡는다(LANDING-063·083, SETTLE-004·011·017, NODE-016).
 - derive는 engine의 자식 fractal(`engine/derive`)로, settle과는 형제 관계다. 의존은 `blueprint`·`record`의 진입점과, engine organ의 순수 `sameValue`·경로 해석·선언 층 해석으로만 향한다. settle의 어느 파일도(`settle/type.ts`, `settle/index.ts`, 쓰기·전이·커밋·파생 라운드 실행 organ) `import type`으로도 가져오지 않는다(NODE-016·045, SETTLE-043, CONTROLS-080).
 - 청사진은 식, 선언, 역의존 표를 제공하고, derive가 규칙 발생 템플릿 표를 청사진마다 한 번 만들어 약한 맵에 둔다. 규칙이 없는 청사진은 빈 표를 공유하며 파생 단계를 건너뛴다(SETTLE-017·043, LANDING-083, CONTROLS-032·079).
 
@@ -17,28 +17,17 @@
 - 규칙 표의 발생 하나는 선언 ID, 종류, 원천 발생 경로, 선언 층, 조각 전순서, 식 기록 또는 `injectTo` 함수, `watch` 경로로 구별된다. `derived`의 의존 집합은 그 식의 경로와, 같은 노드에 있는 모든 선언의 `controls.watch` 경로를 합친 집합이다. 같은 노드의 다른 식 경로는 포함하지 않는다(SETTLE-043, CONTROLS-032·079·080).
 - 문자열 식은 청사진의 `BlueprintExpression.evaluate(dependencies)`를 호출하며, 인자로는 선언 호스트 기준 경로의 방출 값을 넘긴다. `controls.injectTo`는 컴파일하지 않은 함수 `(value, ctx)`를 호출한다. 이때 value에는 원천의 방출 값을, ctx에는 이번 라운드 트리의 `dataPath`, `schemaPath`, `jsonSchema`, `parentValue`, `parentJSONSchema`, `rootValue`, `rootJSONSchema`, `context`를 넘긴다(LANDING-083, CONTROLS-079·080, SETTLE-043).
 
-| 종류 순위    |  값 | 판정                                                                                 |
-| ------------ | --: | ------------------------------------------------------------------------------------ |
-| `unsetValue` |   4 | 참으로 바뀌면 없음 쓰기 후보가 된다(SETTLE-004·028).                                 |
-| `derived`    |   3 | 의존 값 튜플이 바뀌고 평가 결과가 `undefined`가 아니면 후보가 된다(SETTLE-004·043).  |
-| `injectTo`   |   2 | 원천 방출 값이 바뀌면 함수 결과에 따른 대상별 후보가 된다(SETTLE-004·028, CONTROLS-079). |
-| 채움         |   1 | 전이 단계의 후보이며, 새로 생긴 노드의 참인 `unsetValue`보다 순위가 낮다(SETTLE-004·005). |
-
-| 선언 층 순위                |  값 | 판정                                                     |
-| --------------------------- | --: | -------------------------------------------------------- |
-| 조각 `controls`             |   1 | 그 조각이 직접 선언한 노드에 걸린다(CONTROLS-073·077).   |
-| 부모 `controls.fields` 항목 |   2 | 항목이 가리키는 자식에 걸린다(CONTROLS-073·077).         |
-| 노드 자신                   |   3 | 그 노드의 선언이 가장 세부적인 층이다(CONTROLS-073·077). |
-
-- 같은 대상에서는 종류 순위가 높은 규칙이 이기고, 종류가 같으면 원천 선언 노드가 트리 전위 문서 순서에서 뒤에 오는 쪽이 이긴다. 같은 노드의 선언끼리는 층이 높은 쪽이 이긴다. 층도 같으면 조각 전순서가 뒤인 쪽이, 같은 `fields` 배열 안에서는 뒤 항목이, 한 `injectTo`가 반환한 대상 중에서는 뒤 대상(객체 키 삽입 순서, 배열 차례)이 이긴다. 순위는 정착 전체에 걸쳐 유지되므로, 앞 라운드에서 높은 순위로 적용된 값을 뒤 라운드의 낮은 순위가 덮어쓰지 못한다. 진 규칙의 에지도 소비하며 충돌 경고는 내지 않는다(SETTLE-004·005, FRAGMENT-049, CONTROLS-073·079).
 - `sameValue`는 원시 값은 SameValueZero로, 배열은 길이와 차례로, 평범한 객체는 자기 열거 키 목록의 순서와 값으로, 그 밖의 객체는 참조로 비교한다. 같은 참조라면 그 아래로는 내려가지 않는다. 비교 대상은 `injectTo`의 원천 방출 값, `derived`의 의존 값 튜플, `unsetValue`·`resetInteraction`의 식 값이다(SETTLE-043).
 - 정착을 시작할 때의 기준점은 직전 커밋이고, 정착 안에서는 규칙이 마지막으로 소비한 값이다. 로드는 범위 안의 기준을 비워서 규칙을 발화시키고, `resetSubtree()`는 원천이 하위 트리 안에 있는 규칙의 기준만 비운다. 로드가 아닌 쓰기에서는 `setValue(V)`도 직전 커밋을 사용한다. 형상 밖에 있는 발생은 평가하지 않으며, 다시 형상 안으로 들어오면 거짓에서 참으로 바뀐 것으로 본다. 조각이 켜지면서 새로 들어온 노드만 거짓에서 참이 되고, 공유 노드는 기준만 잡는다. 선언 선택이 바뀐 호스트는 게이트에 식이 없어도 그 정착에서 방문해 기준점을 잡는다(SETTLE-004·028·046·048·049, FRAGMENT-050, CONTROLS-080).
-- `unsetValue`는 거짓에서 참이 될 때 값을 지우고, 참에서 거짓이 될 때는 쓰지 않으며, 이미 참인 새 노드는 채우지 않는다. 식이나 `injectTo` 함수가 예외를 던지거나, 동적으로만 알 수 있는 `injectTo` 대상이 없으면 그 규칙을 해당 라운드의 후보에서 빼고 에지를 소비한다. 이때 정착은 `degraded`이고 `cause: 'expression'`이며, 대상이 없는 경우에는 `cause: 'injectTarget'`이다(SETTLE-004·005·028, CONTROLS-079, ERROR-122·132).
 - `DeriveResetInteractionDecision<Self>`는 최종 트리에서 로드된 값이나 거짓에서 참으로 바뀐 에지 때문에 참인 노드, 소비할 에지, 개발 모드 기록 항목을 돌려준다. 커밋은 결과 노드의 `dirty`와 `touched`를 비우고 `revision`을 올린다. 로드가 억제된 경우에도 이 판정은 실행하되 원본은 쓰지 않는다(SETTLE-006, CONTROLS-029, EVENT-012·066, 28C-04).
 - `@`는 런타임 맥락 칸의 객체를 읽는다. 맥락이 바뀌면 직전 커밋을 기준으로, `@`를 읽는 `derived`, `unsetValue`, `resetInteraction`에 에지를 낸다. 원천 방출 값이 그대로인 `injectTo`는 맥락 변경만으로는 발화하지 않는다(CONTROLS-080, SURFACE-055, SETTLE-048, 28C-03·08).
 - 개발 모드 여부는 사용하는 곳에서 `process.env.NODE_ENV !== 'production'`을 비교해 판정한다. `DeriveTraceEntry`에는 단계, 규칙 종류, 원천 경로, 대상 경로, 이전 값, 이후 값, 결과를 담는다. 결과는 적용, 승자에게 짐, `undefined`라 후보가 아님, 억제, 최종 형상 밖이라 철회 중 하나다. 라운드 실행기는 공개 API와 옵션 비트가 남긴 진입 기록, 라운드별 항목, 예산을 넘긴 마지막 라운드의 규칙 목록을 모으고, 커밋이 이를 런타임의 마지막 정착 기록 하나로 바꾼다. 프로덕션에서는 항목과 칸을 만들지 않으며, 콘솔, `onError`, 공개 멤버로도 내보내지 않는다(ERROR-030·159, LANDING-063, NODE-004·045, TEST-016, 28C-01).
 
 - 파생과 상호작용 초기화 판정은 첫 실패 하나만 반환하지 않고, 모든 규칙의 실패를 발생 순서대로 `failures` 목록에 담아 반환한다. 같은 규칙과 호스트의 재계산은 정착 수집기가 중복을 없애고, 서로 다른 규칙의 실패는 모두 남긴다. 진단 원인은 정착의 첫 실패가 정하므로, 뒤에 나온 파생 실패가 앞선 실패의 원인을 바꾸지 않는다(ERROR-004·005·034, 58C-01).
+
+## Structure
+
+- 자식 fractal `evaluateDeriveRound`가 라운드 판정과 그 전용 보조(`utils/rank`, `utils/inject`, `utils/writes`)를 소유한다. derive의 `utils/rules/`는 규칙 표와 규칙 키·watch 경로를, `utils/evaluate/`는 상호작용 초기화 판정과 두 판정이 함께 쓰는 기준점·식 평가·선택 선언 보조를, `constants/`는 라운드 상한을, `types/`는 판정 형을 소유한다. 상호작용 초기화 판정과 규칙 표 생성은 전용 파일이 하나뿐이라 fractal로 올리지 않는다.
 
 ## Acceptance Criteria
 
@@ -46,18 +35,36 @@
 
 - 파생 오류의 원천 경로는 공유 규칙의 발생을 구별하는 식별자에 포함된다. 파생, 상호작용 초기화, 상태 키 판정은 오류가 없으면 호출 간에 재사용하는 동결된 읽기 전용 빈 실패 배열을 반환하며, 실패 배열은 첫 오류가 났을 때만 할당한다(ERROR-004, 58C-01).
 
-### derive-edge — 기준점과 에지 소비
-
-- 로드는 범위 안의 규칙을 발화시키고, 같은 값을 쓰는 일반 쓰기는 발화시키지 않는다. 진 규칙은 다음 라운드에 다시 발화하지 않는다(SETTLE-004·028·046·048·049).
-
-### derive-rank — 대상별 승자
-
-- 한 대상의 승자는 종류, 문서 순서, 선언 층, 조각 순서로 이루어진 표에 따라 정해지며, 정착 안에서 순위가 더 낮은 후속 후보는 적용되지 않는다(SETTLE-004·005, CONTROLS-073·079).
-
 ### derive-boundary — 판정과 기록
 
 - derive는 쓰기 organ 없이 판정 결과만 돌려주며, 개발 모드 항목은 마지막 정착의 런타임 기록에만 남는다(NODE-016·045, ERROR-159, 28C-01).
 
+## Boundary Exemptions
+
+### `utils/rules/getDeriveRuleTable.ts` — 규칙 표 함수 유지
+
+- **Consumers**: `entry-point`
+- **Direct import**: `not allowed`
+- **Reason**: 이름으로 진입점에 올라 settle이 쓴다. 전용 파일이 하나뿐이고 라운드 판정도 같은 표를 위쪽으로 읽으므로, fractal로 올리지 않고 진입점을 거쳐 바깥 소비자를 섬기는 organ에 둔다.
+
+### `utils/evaluate/evaluateResetInteraction.ts` — 상호작용 초기화 판정 유지
+
+- **Consumers**: `entry-point`
+- **Direct import**: `not allowed`
+- **Reason**: 이름으로 진입점에 올라 settle의 커밋이 쓴다. 전용 파일이 없고 라운드 판정과 보조를 함께 쓰므로, 그 보조와 같은 칸에 두고 진입점이 이름으로 내보낸다.
+
+### `constants/` — 라운드 상한 유지
+
+- **Consumers**: `entry-point`
+- **Direct import**: `not allowed`
+- **Reason**: `DERIVE_ROUND_CAP`은 이름으로 진입점에 올라 settle의 라운드 실행기가 쓴다. 값은 구현이 아니므로 상수 칸에 두고 진입점이 이름으로 내보낸다.
+
+### `types/` — 형 칸 유지
+
+- **Consumers**: `entry-point`
+- **Direct import**: `not allowed`
+- **Reason**: `types/` 칸의 형은 이름으로 진입점에 올라 settle이 쓴다. 형은 구현이 아니므로 칸에 두고 진입점이 이름으로 내보낸다.
+
 ## Last Updated
 
-2026-10-03; 정돈-2(2026-10-14).
+2026-10-03; 정돈-2(2026-10-14); 정돈-3 derive 재구성(2026-10-15).
