@@ -2,18 +2,18 @@
 
 ## Purpose
 
-Compare authored schemas for Form reset without rebuilding equal trees.
+동등한 트리를 다시 만들지 않도록, Form 초기화 때 작성된 스키마끼리 비교한다.
 
 ## Boundaries
 
 ### Always do
 
-- Preserve object key order and compare non-JSON values by reference.
+- 객체 key 순서를 유지하고, JSON이 아닌 값은 참조로 비교한다.
 
 ### Ask first
 
-- Changing equality for authored schemas.
+- 작성된 스키마의 동등성 기준 변경
 
 ### Never do
 
-- Mutate or clone a schema during comparison.
+- 비교하는 동안 스키마를 변경하거나 복제하지 않는다.

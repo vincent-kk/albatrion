@@ -13,7 +13,7 @@
 
 ### field-group — 구성 요소 교체
 
-- 준 구성 요소는 그 필드에만 쓰이고, 마운트 뒤 바뀐 `FieldInput`·`FieldRenderer`·`Wrapper`는 반영하지 않습니다.
+- 넘겨 준 구성 요소는 그 필드에만 쓰이며, 마운트한 뒤에 바뀐 `FieldInput`·`FieldRenderer`·`Wrapper`는 반영하지 않습니다.
 
 ## Last Updated
 

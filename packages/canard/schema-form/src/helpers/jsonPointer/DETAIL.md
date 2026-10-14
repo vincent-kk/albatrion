@@ -2,48 +2,48 @@
 
 ## Requirements
 
-schema-form의 경로 문자열은 RFC 6901의 루트·구분자·fragment 표기와 폼 탐색용 현재·부모·와일드카드·컨텍스트 심볼을 함께 사용한다. 이 모듈은 경로를 문자열로 판별·결합·정규화하며, 필드 노드를 탐색하거나 포인터 대상 값을 읽지 않는다.
+schema-form의 경로 문자열은 RFC 6901의 루트, 구분자, fragment 표기에 더해 폼 탐색용 현재, 부모, 와일드카드, 컨텍스트 심볼을 함께 쓴다. 이 모듈은 경로를 문자열 수준에서 판별, 결합, 정규화하며, 필드 노드를 탐색하거나 포인터가 가리키는 값을 읽지 않는다.
 
-`stripFragment`는 폼 내부의 루트 표기를 위해 슬래시 한 글자도 빈 문자열로 정규화한다. RFC 6901에서 슬래시 한 글자가 빈 이름의 멤버를 가리키는 것과 다른 의도적인 동작이다.
+`stripFragment`는 폼 내부의 루트 표기에 맞추려고 슬래시 한 글자도 빈 문자열로 정규화한다. RFC 6901에서는 슬래시 한 글자가 빈 이름의 멤버를 가리키며, 이 동작은 그와 의도적으로 다르다.
 
 ## API Contracts
 
-`isAbsolutePath`·`isRelativePath`·`joinSegment`는 내부 경로 보조이며 이 fractal의 index가 내보내지 않습니다. `utils/__tests__`는 `isAbsolutePath`·`isRelativePath` 구현 파일을 직접 검증하며, `joinSegment`는 현재 소비자와 시험이 없습니다.
+`isAbsolutePath`·`isRelativePath`·`joinSegment`는 내부 경로 보조 함수이며 이 fractal의 index가 내보내지 않습니다. `utils/__tests__`는 `isAbsolutePath`·`isRelativePath` 구현 파일을 직접 검증하고, `joinSegment`는 현재 소비자도 테스트도 없습니다.
 
-`JSONPointer.Index`는 `Wildcard`와 같은 값을 가지지만 폐기 예정인 별칭이다. 새 사용처는 `Wildcard`를 선택한다.
+`JSONPointer.Index`는 `Wildcard`와 같은 값을 가지지만 폐기 예정인 별칭이다. 새로 쓸 때는 `Wildcard`를 고른다.
 
-`isAbsolutePath`는 슬래시로 시작하는 문자열과 URI fragment 형식인 “#/a/b”처럼 해시 다음에 슬래시가 오는 문자열만 참으로 판별한다. `isRelativePath`는 현재 또는 부모 표식 뒤에 슬래시가 바로 오는 문자열만 참으로 판별한다. 두 함수 모두 나머지 문자열의 포인터 문법까지 검증하지 않는다.
+`isAbsolutePath`는 슬래시로 시작하는 문자열과, “#/a/b”처럼 해시 다음에 슬래시가 오는 URI fragment 형식의 문자열만 참으로 판별한다. `isRelativePath`는 현재 또는 부모 표식 바로 뒤에 슬래시가 오는 문자열만 참으로 판별한다. 두 함수 모두 나머지 문자열이 포인터 문법에 맞는지는 검증하지 않는다.
 
-`getAbsolutePath(basePath, currentPath)`는 절대 경로와 URI fragment 입력을 그대로 반환한다. 현재 표식으로 시작하면 기준 경로에 덧붙이고, 연속된 부모 표식으로 시작하면 기준 경로에서 그만큼 올라가되 루트보다 더 올라가지 않는다. 그 외 문자열은 그대로 반환한다. fragment 입력을 받기 전에 `stripFragment`를 호출할 필요는 없다.
+`getAbsolutePath(basePath, currentPath)`는 절대 경로와 URI fragment 입력을 그대로 반환한다. 현재 표식으로 시작하면 기준 경로에 덧붙이고, 연속된 부모 표식으로 시작하면 그 수만큼 기준 경로에서 올라가되 루트보다 위로는 올라가지 않는다. 그 밖의 문자열은 그대로 반환한다. fragment 입력을 넘기기 전에 `stripFragment`를 호출할 필요는 없다.
 
-`stripFragment`는 해시로 시작하는 경로에서 해시를 제거한다. 해시만 있는 입력, 해시와 슬래시만 있는 입력, 슬래시만 있는 입력은 빈 루트 문자열로 정규화한다. `joinSegment`는 기본 기준을 빈 루트로 두고 비어 있지 않은 문자열 또는 숫자 세그먼트 앞에 구분자를 붙이며, 빈 문자열 세그먼트에서는 기준 경로를 그대로 돌려준다.
+`stripFragment`는 해시로 시작하는 경로에서 해시를 제거한다. 해시만 있는 입력, 해시와 슬래시만 있는 입력, 슬래시만 있는 입력은 빈 루트 문자열로 정규화한다. `joinSegment`는 기준 경로의 기본값을 빈 루트로 두고, 비어 있지 않은 문자열이나 숫자 세그먼트 앞에는 구분자를 붙인다. 빈 문자열 세그먼트에서는 기준 경로를 그대로 돌려준다.
 
-- `JSONPointerPrefix`는 `JSONPointer` 기호에 구분자를 붙인 두 글자 접두사 셋(`Fragment`는 해시와 슬래시, `Parent`는 부모 표식과 슬래시, `Current`는 현재 표식과 슬래시)이며 `JSONPointer`에서 조립합니다. 이 fractal의 index가 이름으로 내보내지만 패키지 공개 진입점은 내보내지 않습니다. 경로 토큰을 비교·분해하는 engine 코드는 리터럴 대신 이 두 상수를 씁니다. 정규식 안의 토큰은 그대로 둡니다.
-- `JSONPointer` 상수 객체는 `constants/JSONPointer.ts`에 있습니다. 뿌리에는 문서·진입점·형 동반 파일(`type.ts`)만 둡니다(filid zero-peer-file).
+- `JSONPointerPrefix`는 `JSONPointer` 기호에 구분자를 붙인 두 글자 접두사 세 개(`Fragment`는 해시와 슬래시, `Parent`는 부모 표식과 슬래시, `Current`는 현재 표식과 슬래시)로 이루어져 있으며 `JSONPointer`에서 조립합니다. 이 fractal의 index가 이름으로 내보내지만 패키지 공개 진입점은 내보내지 않습니다. 경로 토큰을 비교하고 분해하는 engine 코드는 리터럴 대신 이 상수 두 개를 씁니다. 정규식 안의 토큰은 그대로 둡니다.
+- `JSONPointer` 상수 객체는 `constants/JSONPointer.ts`에 있습니다. 뿌리에는 문서, 진입점, 타입 동반 파일(`type.ts`)만 둡니다(filid zero-peer-file).
 
 ## Acceptance Criteria
 
 ### pointer-symbols — 확장 심볼 경계
 
-- 루트·fragment·구분자 표기와 현재·부모·와일드카드·컨텍스트 확장 심볼의 값이 유지된다.
-- 폐기 예정인 Index 별칭은 Wildcard와 같은 값을 유지하며 신규 사용의 기준은 Wildcard다.
+- 루트, fragment, 구분자 표기와 현재, 부모, 와일드카드, 컨텍스트 확장 심볼의 값이 유지된다.
+- 폐기 예정인 Index 별칭은 Wildcard와 같은 값을 유지하며, 새로 쓸 때의 기준은 Wildcard다.
 
 ### pointer-classification — 경로 접두사 판별
 
-- 절대 판별은 슬래시 또는 URI fragment의 해시·슬래시 접두사만 인식한다.
-- 상대 판별은 현재 또는 부모 표식 뒤에 구분자가 있는 경우만 인식한다.
+- 절대 경로 판별은 슬래시, 또는 URI fragment의 해시와 슬래시 접두사만 인식한다.
+- 상대 경로 판별은 현재 또는 부모 표식 뒤에 구분자가 있는 경우만 인식한다.
 
 ### pointer-resolution — 상대 경로 결합
 
-- 절대 및 URI fragment 입력은 변형하지 않고 반환한다.
-- 현재 경로는 기준 경로에 결합하고, 반복된 부모 경로는 루트에서 멈춘다.
+- 절대 경로와 URI fragment 입력은 바꾸지 않고 그대로 반환한다.
+- 현재 경로는 기준 경로에 결합하고, 부모 경로가 반복되면 루트에서 멈춘다.
 - 인식하지 않는 상대 형식은 입력을 그대로 반환한다.
 
 ### pointer-normalization — fragment와 루트 표기
 
 - 해시 접두사가 있는 비루트 경로는 해시만 제거한다.
-- 해시 단독, 해시·슬래시, 슬래시 단독은 빈 루트로 정규화한다. 슬래시 단독의 정규화는 RFC 6901과 다른 폼 내부 규칙이다.
-- 빈 세그먼트 결합은 기준을 유지하고, 다른 세그먼트는 구분자 뒤에 붙인다.
+- 해시만 있는 경우, 해시와 슬래시, 슬래시만 있는 경우는 빈 루트로 정규화한다. 슬래시만 있는 입력의 정규화는 RFC 6901과 다른 폼 내부 규칙이다.
+- 빈 세그먼트를 결합하면 기준 경로가 유지되고, 다른 세그먼트는 구분자 뒤에 붙는다.
 
 ## Last Updated
 

@@ -7,7 +7,7 @@ enum을 가진 문자열 노드에 radio 묶음을 그립니다.
 ## Conventions
 
 - 진입점 `index.ts`가 정의 `FieldInputStringRadioDefinition`(`{ Component, test }`)을 이곳에서 만들고 이름으로 내보냅니다. 부모 `fieldInputs`의 정의 배열이 이 진입점을 가리킵니다.
-- 매칭 조건은 함수 — `type === 'string'`이고 `inputType`이 `radio` 또는 `radiogroup`이며 enum이 비어 있지 않음입니다.
+- 매칭 조건은 함수이며, `type === 'string'`이고 `inputType`이 `radio` 또는 `radiogroup`이며 enum이 비어 있지 않을 때 참이다.
 
 ## Boundaries
 

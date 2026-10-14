@@ -40,9 +40,9 @@
 
 `reset(option?)`은 같은 스키마면 `reloadFieldNodeForm`으로 트리를 유지하고, 다르면 같은 호출 안에서 작성·인계·마운트·옛 트리 폐기·핸들 교체를 끝냅니다. 옵션은 공개 `SetValueOption.DisableAutomaticWrites`·`EnableAutomaticWrites`만 받으며 그 로드에서 Form `disableAutomaticWrites` 속성보다 우선합니다. 생략하면 속성을 따르고 둘 다 주면 억제가 이깁니다. 캐스트로 전달된 다른 비트는 무시하며 로드 의미는 바뀌지 않습니다(WRITE-015, LANDING-039, ADR 0013). 외부 오류와 검증 결과를 비우고 경로 키 `errors`를 재적용하며, 커밋된 속성 재대조는 Provider의 로드 계약을 따릅니다(WRITE-042–046, 69C-02·03).
 
-- `rootNode`가 아직 없으면 조회 계열은 예외를 던지지 않는다. `findNode`는 `null`, `findNodes`·`getErrors`·`validate`는 빈 배열, `getState`는 빈 객체, `getValue`는 런타임에서 `undefined`를 반환한다.
+- `rootNode`가 아직 없어도 조회 계열은 예외를 던지지 않는다. `findNode`는 `null`을, `findNodes`·`getErrors`·`validate`는 빈 배열을, `getState`는 빈 객체를 반환하고, `getValue`는 런타임에서 `undefined`를 반환한다.
 - `focus(path?)`·`select(path?)`·`refresh(path?)`·`remount(path?)`는 해당 노드의 `request(kind)`를 호출합니다. 경로가 없으면 루트이고 지정 경로의 노드가 없으면 무동작입니다(EVENT-063·073, SURFACE-059).
-- `submit`은 `getTrackableHandler`로 감싸여 진행 상태를 추적할 수 있다.
+- `submit`은 `getTrackableHandler`로 감싸므로 진행 상태를 추적할 수 있다.
 
 - 위계: `components/`에 fractal 여섯이 있습니다. `components/FormCore/`는 Provider 조립·핸들·오류 경계를 소유하며, 경계를 입힌 바깥 `FormCore`와 경계 없는 안쪽 `FormRoot`를 둡니다. 공개 조각 다섯(`FormRender`·`FormField`·`FormLabel`·`FormInput`·`FormError`)도 각자의 fractal입니다. `components/`에는 index를 두지 않으며, `Form.tsx`와 `index.ts`가 여섯 자식의 진입점(`./components/FormCore` 등)을 직접 가리킵니다. `Form.tsx`는 `FormCore`에 정적 멤버 다섯을 붙여 `Form`을 만듭니다. 뿌리에는 문서·진입점·`Form.tsx`만 둡니다(filid zero-peer-file).
 
@@ -57,12 +57,12 @@
 
 - `options.omitTrailing`이 켜진 배열을 가진 폼에서 `getValue()`와 `onSubmit` 인자에 후행 빈 항목이 없다.
 - 같은 폼의 최초 `onChange` 방출도 정제 값을 전달한다.
-- 같은 폼에서 렌더된 배열 입력 개수는 줄지 않는다 — 정제는 방출에만 적용되고 노드 트리나 DOM을 지우지 않는다.
+- 같은 폼에서 렌더된 배열 입력 개수는 줄지 않는다. 정제는 방출에만 적용되며 노드 트리나 DOM을 지우지 않는다.
 
 ### submit-gate — 검증 실패는 제출을 막는다
 
-- 검증 에러가 있는 상태에서 `submit()`을 호출하면 `inputOnSubmit`이 호출되지 않고 `ValidationError`가 던져진다.
-- 던져진 에러의 `details`에 `value`·`errors`·`jsonSchema`가 들어 있다.
+- 검증 오류가 있는 상태에서 `submit()`을 호출하면 `inputOnSubmit`이 호출되지 않고 `ValidationError`가 던져진다.
+- 던져진 오류의 `details`에 `value`·`errors`·`jsonSchema`가 들어 있다.
 - `degraded`와 활성 검증 모드의 검증 불가는 모든 환경에서 제출을 거부하고, 네이티브 submit의 거부도 `onError`와 싱크로 보고합니다(LANDING-025·095).
 
 ### emit-dedupe — 동일 값 재방출 억제

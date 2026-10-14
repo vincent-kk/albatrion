@@ -17,7 +17,7 @@
 ### 경계 검증과 시험 도우미
 
 - `__tests__/importModel.test.ts`는 D7 밖 U·D·S1 위반을 막고, `__tests__/publicSurface.test.ts`는 공개 이름 92개와 값·형 구분 및 경로 없는 형 문자열의 스냅숏을 검증합니다. 두 시험은 제품 모듈을 import하지 않고 파일과 TypeScript 구문·형 정보를 읽습니다.
-- `__tests__/fixtures/nodeFromJSONSchema.ts`는 core index의 공개 생성·마운트 통로로 마운트된 루트를 만드는 시험·bench 도우미입니다. 제품 트리나 패키지 공개 표면에 속하지 않습니다. vitest 벤치는 재는 대상 fractal의 벤치 칸(지금은 `core/__benchmarks__`)에 있어 이 도우미를 위로 열림으로 가져옵니다. src 밖의 `bench/legacy-compare/`(레거시 비교 독립 스크립트)·`bench/scripts/`(진단 스크립트)와 aileron 벤치마크의 find 대상 데이터·`loadCoreBenchmark`는 측정 도구라서 이 파일을 경로로 가져옵니다.
+- `__tests__/fixtures/nodeFromJSONSchema.ts`는 core index의 공개 생성·마운트 통로로 마운트된 루트를 만드는 시험·bench 도우미입니다. 제품 트리나 패키지 공개 표면에 속하지 않습니다. vitest 벤치는 재는 대상 fractal의 벤치 칸(지금은 `core/__benchmarks__`)에 있어 이 도우미를 상위 방향으로 열린 경로로 가져옵니다. src 밖의 `bench/legacy-compare/`(레거시 비교 독립 스크립트)·`bench/scripts/`(진단 스크립트)와 aileron 벤치마크의 find 대상 데이터·`loadCoreBenchmark`는 측정 도구라서 이 파일을 경로로 가져옵니다.
 - `__tests__/helpersErrorIndex.test.ts`는 자식 error 관문의 이름을 검증합니다.
 - `__tests__/Form.label.test.tsx`는 Form 관문이 조립한 `Form.Label`·`Form.Input` 정적 멤버로 label 규약을 검증합니다. 관문의 조립 모양을 쓰는 시험이므로 Form 안이 아니라 부모 시험 구획에 둡니다. 공개 진입점의 이주 형 검증은 D7 migration 구획에서 루트 index를 소비합니다.
 
@@ -50,7 +50,7 @@
 | `omitEmpty?: boolean`    | 객체 스키마                                        | 부모로 전파되는 값에서 빈 항목을 제거한다                                                                                                                                                                                                    |
 | `terminal?: boolean`     | 객체·배열 스키마 네 형(Nullable·NonNullable)       | 노드를 값 전체를 다루는 입력 하나(`true`)로 둘지 자식 노드(`false`)로 둘지 정한다. 렌더러 판정보다 우선하며, 없으면 `presentation.FieldInput` 컴포넌트일 때 terminal, 그 밖에는 branch다. 형 선언만 있고 판정은 `resolveNodeStrategy`가 한다 |
 
-`trim`과 `omitTrailing`의 차이가 이 표의 요점이다 — `trim`은 **저장 값을 교체**하는 옵션이고, `omitTrailing`은 **방출 값만 걸러내는** 옵션이다. 후자는 raw 상태를 보존하므로 되돌릴 수 있고, 전자는 그렇지 않다.
+`trim`과 `omitTrailing`의 차이가 이 표의 요점이다. `trim`은 **저장 값을 교체**하는 옵션이고, `omitTrailing`은 **방출 값만 걸러내는** 옵션이다. 후자는 raw 상태를 보존하므로 되돌릴 수 있지만, 전자는 되돌릴 수 없다.
 
 `omitTrailing`과 `omitEmpty`는 새 엔진의 동작 행에서 투영에 적용합니다. 부모도 자식의 `outputValue`를 사용하며, 배열의 두 필터 결합은 배열 행의 투영 계약을 따릅니다(VALUE-027·034, LANDING-085).
 
@@ -86,11 +86,11 @@ NODE-059의 형 없는 인라인 객체·배열 oneOf·anyOf는 분기 값 형�
 ### refine-not-destroy — 정제는 상태를 지우지 않는다
 
 - `omitTrailing`이 켜진 배열에서 `getValue()` 결과에는 후행 빈 항목이 없고, 같은 시점의 `node.value`와 렌더된 입력 개수에는 남아 있다.
-- 후행 빈 항목에 값을 입력하면 그 항목이 다시 `getValue()` 결과에 나타난다 — 정제가 항목을 영구히 제거하지 않았음이 관찰된다.
+- 후행 빈 항목에 값을 입력하면 그 항목이 다시 `getValue()` 결과에 나타난다. 정제가 항목을 영구히 제거하지 않았음을 이 동작으로 확인할 수 있다.
 
 ### trim-replaces — trim은 저장 값을 바꾼다
 
-- `trim`이 켜진 문자열 필드에서 `Blurred` 이후 `node.value`가 트림된 값으로 바뀐다 — `omitTrailing`과 달리 raw 채널에도 반영된다.
+- `trim`이 켜진 문자열 필드에서 `Blurred` 이후 `node.value`가 트림된 값으로 바뀐다. `omitTrailing`과 달리 raw 채널에도 반영된다.
 
 ### union-input-types — 읽기 전용 종류 튜플은 값 합집합을 보존한다
 
