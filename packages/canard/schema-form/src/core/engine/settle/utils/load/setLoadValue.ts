@@ -1,7 +1,7 @@
 import { isArray } from '@winglet/common-utils/filter';
 import { unescapeSegment } from '@winglet/json/pointer';
 
-import { sameValue } from '../compute/sameValue';
+import { sameValue } from '../../../utils/compute/sameValue';
 import { getLoadValue } from './getLoadValue';
 
 /**

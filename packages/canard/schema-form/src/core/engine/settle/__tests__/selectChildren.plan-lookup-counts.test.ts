@@ -2,6 +2,7 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 
 import { WriteOption } from '@/schema-form/core/engine/types/value';
 
+import { createTestTree } from '../../__tests__/fixtures/createTestTree';
 import * as priming from '../utils/compute/primeHost';
 import * as selection from '../utils/compute/selectChildren';
 import * as planning from '../utils/compute/selectChildren/utils/getDirectChildSelectionPlan';
@@ -9,7 +10,6 @@ import * as publication from '../utils/gates/flushPendingGateReads';
 import { loadFieldNodeAtMount } from '../utils/load/loadFieldNodeAtMount';
 import { writeFieldNode } from '../utils/write/writeFieldNode';
 import { createFixedBranchSchema } from './fixtures/childSelection/createFixedBranchSchema';
-import { createTestTree } from './fixtures/createTestTree';
 
 /**
  * Count every runtime entry into the plan function, cache hits included.

@@ -5,7 +5,7 @@ import { describe, expect, it, vi } from 'vitest';
 
 import { FieldNodeEventType } from '@/schema-form/core';
 
-import { useFieldNodeTracker } from '../useFieldNodeTracker';
+import { useFieldNodeTracker } from '../hooks/useFieldNodeTracker';
 import { createHookNode } from './createHookNode';
 
 describe('useFieldNodeTracker with a new-engine node', () => {

@@ -1,6 +1,8 @@
 // NODE-058, SURFACE-059, REACT-032, GOAL-088: checked by the package tsc command.
 import { expectTypeOf } from 'vitest';
 
+import type { SchemaPresentation } from '@/schema-form/types';
+
 import type { AuthoredSchema, Validator } from '../../core';
 import { FieldNodeEventType, ValidationMode, isUnionNode } from '../../index';
 import type {
@@ -13,7 +15,6 @@ import type {
   UnionNode,
   ValidatorFactory,
 } from '../../index';
-import type { SchemaPresentation } from '../../types/jsonSchema';
 
 expectTypeOf<
   InferFieldNode<{ type: readonly ['string', 'number'] }>

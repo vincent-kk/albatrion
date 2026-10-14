@@ -2,9 +2,9 @@ import { describe, expect, it } from 'vitest';
 
 import { WriteOption } from '@/schema-form/core/engine/types/value';
 
+import { createTestTree } from '../../__tests__/fixtures/createTestTree';
 import { loadFieldNodeAtMount } from '../utils/load/loadFieldNodeAtMount';
 import { getTransitionCap } from '../utils/transition/getTransitionCap';
-import { createTestTree } from './fixtures/createTestTree';
 
 describe('settle status parity regressions', () => {
   it('SETTLE-029 gives same-shape loads the same status', () => {

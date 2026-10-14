@@ -18,6 +18,8 @@ schema-form의 경로 문자열은 RFC 6901의 루트·구분자·fragment 표�
 
 `stripFragment`는 해시로 시작하는 경로에서 해시를 제거한다. 해시만 있는 입력, 해시와 슬래시만 있는 입력, 슬래시만 있는 입력은 빈 루트 문자열로 정규화한다. `joinSegment`는 기본 기준을 빈 루트로 두고 비어 있지 않은 문자열 또는 숫자 세그먼트 앞에 구분자를 붙이며, 빈 문자열 세그먼트에서는 기준 경로를 그대로 돌려준다.
 
+- `JSONPointer` 상수 객체는 `constants/JSONPointer.ts`에 있습니다. 뿌리에는 문서·진입점·형 동반 파일(`type.ts`)만 둡니다(filid zero-peer-file).
+
 ## Acceptance Criteria
 
 ### pointer-symbols — 확장 심볼 경계

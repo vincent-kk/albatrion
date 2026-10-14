@@ -3,10 +3,10 @@ import { describe, expect, it } from 'vitest';
 import { createTestValidator } from '@/schema-form/core/__tests__/fixtures/createTestValidator';
 import { WriteOption } from '@/schema-form/core/engine/types/value';
 
+import { createTestTree } from '../../__tests__/fixtures/createTestTree';
 import { getGateRegistry } from '../utils/gates/getGateRegistry';
 import { loadFieldNodeAtMount } from '../utils/load/loadFieldNodeAtMount';
 import { writeFieldNode } from '../utils/write/writeFieldNode';
-import { createTestTree } from './fixtures/createTestTree';
 
 // filid:contract settle-gates
 describe('settle gate calculation', () => {

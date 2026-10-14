@@ -5,9 +5,9 @@ import { hasOwnProperty } from '@winglet/common-utils/lib';
 import { blueprint } from '@/schema-form/core/engine/blueprint';
 import { WriteOption } from '@/schema-form/core/engine/types/value';
 
+import { createTestTree } from '../../__tests__/fixtures/createTestTree';
 import { loadFieldNodeAtMount } from '../utils/load/loadFieldNodeAtMount';
 import { writeFieldNode } from '../utils/write/writeFieldNode';
-import { createTestTree } from './fixtures/createTestTree';
 
 const isAtomic = (value: unknown): boolean =>
   value !== null &&

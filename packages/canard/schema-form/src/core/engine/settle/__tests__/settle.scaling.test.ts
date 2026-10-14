@@ -3,6 +3,7 @@ import { afterEach, expect, it, vi } from 'vitest';
 import { blueprint } from '@/schema-form/core/engine/blueprint';
 import { WriteOption } from '@/schema-form/core/engine/types/value';
 
+import { createTestTree } from '../../__tests__/fixtures/createTestTree';
 import type { SettlementContext } from '../type';
 import { hasRecursiveExpansion } from '../utils/compute/hasRecursiveExpansion';
 import { updateOutput } from '../utils/compute/updateOutput';
@@ -10,7 +11,6 @@ import { loadFieldNodeAtMount } from '../utils/load/loadFieldNodeAtMount';
 import { DirtyPathSet } from '../utils/write/DirtyPathSet';
 import { getDependencyIndex } from '../utils/write/getDependencyIndex';
 import { registerRecalculation } from '../utils/write/registerRecalculation';
-import { createTestTree } from './fixtures/createTestTree';
 
 afterEach(() => vi.restoreAllMocks());
 

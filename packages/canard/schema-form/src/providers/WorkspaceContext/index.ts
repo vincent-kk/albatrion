@@ -1,2 +1,2 @@
-export { WorkspaceContextProvider } from './WorkspaceContextProvider';
-export { useWorkspaceContext } from './useWorkspaceContext';
+export { WorkspaceContextProvider } from './components/WorkspaceContextProvider';
+export { useWorkspaceContext } from './hooks/useWorkspaceContext';

@@ -19,8 +19,8 @@ import {
   type VirtualizationPlaceholderProps,
   resolveVirtualizationOptions,
 } from '../resolveVirtualizationOptions';
-import { type IdleDeadlineLike, scheduleIdle } from './scheduleIdle';
 import { formatVirtualizationDisabledWarning } from './utils/formatVirtualizationDisabledWarning';
+import { type IdleDeadlineLike, scheduleIdle } from './utils/scheduleIdle';
 
 /** Maximum reveals per idle slice, bounding the size of a single React commit */
 const MAX_REVEALS_PER_SLICE = 25;

@@ -3,6 +3,7 @@
  * U: importing an owner's or ancestor's own index is forbidden.
  * D: descendant fractals are reached only through the topmost child fractal index.
  * S1: non-lineage fractals are reached through their own index, never internals.
+ * B1: organs do not import their owner's direct child fractals, subject to B7.
  * Index retention: exported names have product consumers outside their owner's subtree (stated, not asserted here).
  * D7: public-API tests under __tests__/e2e, scenarios and migration may read the root index.
  * O and deeper non-lineage index re-exports are outside these assertions.
@@ -221,4 +222,63 @@ it('keeps U outside D7, D and S1 import-model edges at zero', () => {
     ...edges.sort(),
   ].join('\n');
   expect(counts, message).toEqual({ U: 0, D: 0, S1: 0 });
+}, 60000);
+
+/**
+ * B1: organ files cannot import their owner's direct child fractals, including internals.
+ * B7: verification organs and child fractals within the importer's top organ are exempt.
+ */
+it('B1: organ files do not import a direct child fractal of their owner', () => {
+  const files = walkFiles(sourceRoot);
+  const fractals = new Set([
+    sourceRoot,
+    ...files
+      .filter((file) => /^(INTENT|DETAIL)\.md$/.test(basename(file)))
+      .map((file) => dirname(file)),
+  ]);
+  const violations: Pick<ImportViolation, 'importer' | 'line' | 'target'>[] =
+    [];
+  for (const importer of files.filter((file) => /\.tsx?$/.test(file))) {
+    const importerPath = relative(sourceRoot, importer).split(sep).join('/');
+    if (
+      importerPath
+        .split('/')
+        .some((segment) =>
+          ['__tests__', '__benchmarks__', 'fixtures'].includes(segment),
+        )
+    )
+      continue;
+    const owner = findOwner(importer, fractals);
+    if (dirname(importer) === owner) continue;
+    const importerOrgan = relative(owner, importer).split(sep)[0];
+    const children = [...fractals].filter(
+      (fractal) =>
+        fractal !== sourceRoot && findOwner(fractal, fractals) === owner,
+    );
+    for (const { specifier, line } of readImports(importer)) {
+      const target = resolveImport(specifier, importer);
+      if (
+        !target ||
+        !isWithin(target, sourceRoot) ||
+        target.includes('__legacy__')
+      )
+        continue;
+      const child = children.find((fractal) => isWithin(target, fractal));
+      if (!child || relative(owner, child).split(sep)[0] === importerOrgan)
+        continue;
+      violations.push({
+        importer: importerPath,
+        line,
+        target: relative(sourceRoot, target).split(sep).join('/'),
+      });
+    }
+  }
+  const edges = violations.map(
+    (edge) => `${edge.importer}:${edge.line} -> ${edge.target}`,
+  );
+  const message = [
+    `Import model: B1=${violations.length}`,
+    ...edges.sort(),
+  ].join('\n');
+  expect(violations, message).toEqual([]);
 }, 60000);

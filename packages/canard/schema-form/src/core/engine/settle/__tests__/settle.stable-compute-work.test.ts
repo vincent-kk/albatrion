@@ -2,6 +2,7 @@ import { afterEach, expect, it, vi } from 'vitest';
 
 import { WriteOption } from '@/schema-form/core/engine/types/value';
 
+import { createTestTree } from '../../__tests__/fixtures/createTestTree';
 import { computeNode } from '../utils/compute/computeNode';
 import * as selections from '../utils/compute/selectChildren';
 import { loadFieldNodeAtMount } from '../utils/load/loadFieldNodeAtMount';
@@ -12,7 +13,6 @@ import { markWrite } from '../utils/write/markWrite';
 import { registerRecalculation } from '../utils/write/registerRecalculation';
 import { releaseSettlementScratch } from '../utils/write/releaseSettlementScratch';
 import { writeFieldNode } from '../utils/write/writeFieldNode';
-import { createTestTree } from './fixtures/createTestTree';
 
 afterEach(() => vi.restoreAllMocks());
 

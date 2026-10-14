@@ -9,6 +9,8 @@
 - 입력 정의는 마운트 시 고정하고 사용자 context는 내용 기준으로 안정화합니다.
 - 외부 설정은 폼 수준 props보다 낮은 우선순위이며 기본 Context는 빈 설정입니다.
 
+- Context 객체와 Provider는 `components/`, 소비 훅은 `hooks/`에 있습니다. 뿌리에는 문서·진입점·형 동반 파일(`type.ts`)만 둡니다(filid zero-peer-file).
+
 ## Acceptance Criteria
 
 ### external-form-context-contract — 관찰 가능한 동작

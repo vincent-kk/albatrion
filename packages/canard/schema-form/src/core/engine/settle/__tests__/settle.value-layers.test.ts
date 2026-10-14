@@ -3,9 +3,9 @@ import { describe, expect, it, vi } from 'vitest';
 import { FieldNodeState } from '@/schema-form/core/engine/types/state';
 import { WriteOption } from '@/schema-form/core/engine/types/value';
 
+import { createTestTree } from '../../__tests__/fixtures/createTestTree';
 import { loadFieldNodeAtMount } from '../utils/load/loadFieldNodeAtMount';
 import { writeFieldNode } from '../utils/write/writeFieldNode';
-import { createTestTree } from './fixtures/createTestTree';
 
 describe('settled value rule layers', () => {
   it('CONTROLS-073 fields derived reaches each addressed target', () => {

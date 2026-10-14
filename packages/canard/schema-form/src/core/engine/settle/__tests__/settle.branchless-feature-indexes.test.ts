@@ -6,7 +6,7 @@ import {
   getFeatureNodeIndex,
 } from '@/schema-form/core/engine/blueprint';
 
-import { getDeriveRuleTable } from '../derive';
+import { getDeriveRuleTable } from '../../derive';
 import { getDependencyIndex } from '../utils/write/getDependencyIndex';
 
 // filid:contract settle-branchless-feature-indexes

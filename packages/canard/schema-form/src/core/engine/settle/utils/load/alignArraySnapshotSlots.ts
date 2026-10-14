@@ -2,7 +2,7 @@ import { isArray } from '@winglet/common-utils/filter';
 import { unescapeSegment } from '@winglet/json/pointer';
 
 import type { FieldNodeRecord } from '../../../record';
-import { sameValue } from '../compute/sameValue';
+import { sameValue } from '../../../utils/compute/sameValue';
 import { isCanonicalArrayIndex } from '../paths/isCanonicalArrayIndex';
 import { getLoadValue } from './getLoadValue';
 import { setLoadValue } from './setLoadValue';

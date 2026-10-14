@@ -5,6 +5,7 @@ import { makeFieldNodeTree } from '@/schema-form/core/__tests__/makeFieldNodeTre
 import { WriteOption } from '@/schema-form/core/engine/types/value';
 import type { ArrayNode } from '@/schema-form/core/surface';
 
+import { createTestTree } from '../../__tests__/fixtures/createTestTree';
 import { dirtyChildren } from '../utils/compute/dirtyChildren';
 import { loadFieldNodeAtMount } from '../utils/load/loadFieldNodeAtMount';
 import { createSettlementContext } from '../utils/settlement/createSettlementContext';
@@ -12,7 +13,6 @@ import { getDependencyIndex } from '../utils/write/getDependencyIndex';
 import { getSettlementScratch } from '../utils/write/getSettlementScratch';
 import { releaseSettlementScratch } from '../utils/write/releaseSettlementScratch';
 import { writeFieldNode } from '../utils/write/writeFieldNode';
-import { createTestTree } from './fixtures/createTestTree';
 
 const schema = {
   type: 'array' as const,

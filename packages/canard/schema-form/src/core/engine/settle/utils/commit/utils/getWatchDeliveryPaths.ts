@@ -1,7 +1,7 @@
 import { isArray } from '@winglet/common-utils/filter';
 
 import type { FieldNodeRecord } from '../../../../record';
-import { resolveDependencyPath } from '../../paths/resolveDependencyPath';
+import { resolveDependencyPath } from '../../../../utils/paths/resolveDependencyPath';
 
 /**
  * Resolve the final effective watch list against this live occurrence.

@@ -2,7 +2,7 @@ import { afterEach, expect, it, vi } from 'vitest';
 
 import { WriteOption } from '@/schema-form/core/engine/types/value';
 
-import { createTestTree } from '../../../__tests__/fixtures/createTestTree';
+import { createTestTree } from '../../../../__tests__/fixtures/createTestTree';
 import * as rawTree from '../../latent/readRawTree';
 import { writeFieldNode } from '../../write/writeFieldNode';
 import { arrangeFieldNodeItems } from '../arrangeFieldNodeItems';

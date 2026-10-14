@@ -13,6 +13,8 @@
 - 노출은 등록 삭제와 unobserve 후 콜백 실행으로 이어집니다. idle backfill은 지정된 모드에서만 시작합니다.
 - Placeholder 경계는 폼마다 한 번 감싸고 전용 보고 훅으로 DeferredFieldProxy가 제공하는 경로 문맥을 읽습니다. 경로 문맥은 이 Placeholder 용도로만 유지하며, 일반 필드는 path를 명시적으로 전달합니다(ERROR-090·114, 121C-01 F-A). Placeholder의 fiber와 보고 비용은 바뀌지 않습니다.
 
+- 유휴 예약 보조 `scheduleIdle`은 `utils/`에 있습니다. 뿌리에는 문서·진입점·형 동반 파일(`type.ts`)만 둡니다(filid zero-peer-file).
+
 ## Acceptance Criteria
 
 ### virtualization-manager-contract — 관찰 가능한 동작

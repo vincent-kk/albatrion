@@ -12,12 +12,12 @@ import type {
   JSONSchema,
 } from '@/schema-form/types';
 
-import { FormContents } from './components/FormContents';
+import { FormRoot } from './root/FormRoot';
 import type { FormHandle, FormProps } from './type';
 
 /** Root boundary is inside the instance reporter so fallback does not retire reporting. */
 const BoundedForm = withErrorBoundaryForwardRef(
-  forwardRef(FormContents),
+  forwardRef(FormRoot),
   undefined,
   useBoundaryReporter,
 );

@@ -14,7 +14,7 @@ import type {
   NumberSchema,
   ObjectSchema,
   StringSchema,
-} from '../jsonSchema';
+} from '../types/jsonSchema';
 
 describe('InferJSONSchema type inference tests', () => {
   describe('Non-nullable types', () => {

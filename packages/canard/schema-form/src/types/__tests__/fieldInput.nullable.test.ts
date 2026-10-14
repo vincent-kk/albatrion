@@ -6,7 +6,7 @@ import type {
   FieldInputHint,
   FieldInputTestFn,
   FieldInputTestObject,
-} from '../fieldInput';
+} from '../types/fieldInput';
 
 /**
  * Test utility to check if a FieldInputTestObject matches a FieldInputHint

@@ -5,10 +5,10 @@ import { FieldNodeEventType } from '@/schema-form/core/engine/record';
 import { FieldNodeState } from '@/schema-form/core/engine/types/state';
 import { WriteOption } from '@/schema-form/core/engine/types/value';
 
+import { createTestTree } from '../../__tests__/fixtures/createTestTree';
 import { changeFieldNodeContext } from '../utils/context/changeFieldNodeContext';
 import { resetFieldNodeSubtree } from '../utils/load/resetFieldNodeSubtree';
 import { writeFieldNode } from '../utils/write/writeFieldNode';
-import { createTestTree } from './fixtures/createTestTree';
 
 // filid:contract settle-delivery
 describe('44C-01 EVENT-064 watch delivery candidates', () => {

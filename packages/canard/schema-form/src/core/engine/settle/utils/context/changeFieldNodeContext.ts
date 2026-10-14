@@ -1,7 +1,7 @@
 import type { FieldNodeRecord } from '../../../record';
 import { WriteOption } from '../../../types/value';
+import { sameValue } from '../../../utils/compute/sameValue';
 import { computeNode } from '../compute/computeNode';
-import { sameValue } from '../compute/sameValue';
 import { getGateRegistry } from '../gates/getGateRegistry';
 import { expandTemplatePaths } from '../paths/expandTemplatePaths';
 import { createSettlementContext } from '../settlement/createSettlementContext';

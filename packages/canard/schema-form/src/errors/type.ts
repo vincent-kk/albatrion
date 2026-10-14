@@ -1,7 +1,7 @@
 import type { ErrorDetails } from '@winglet/common-utils/error';
 
-import type { SchemaFormError } from './SchemaFormError';
-import type { FORM_ERROR_CODE_TABLE } from './formErrorCode';
+import type { SchemaFormError } from './classes/SchemaFormError';
+import type { FORM_ERROR_CODE_TABLE } from './codes/formErrorCode';
 
 /** Full group-qualified code from the live error ledger table. */
 export type FormErrorCode = (typeof FORM_ERROR_CODE_TABLE)[number][0];

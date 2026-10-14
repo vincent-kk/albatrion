@@ -6,9 +6,9 @@ import type {
   FieldInputDefinition,
   FieldInputHint,
   FieldInputTestObject,
-} from '@/schema-form/types/fieldInput';
+} from '@/schema-form/types';
 
-import { normalizeFieldInputDefinitions } from '../fieldInputDefinitions';
+import { normalizeFieldInputDefinitions } from '../utils/normalizeFieldInputDefinitions';
 
 // 테스트용 React 컴포넌트들
 const TestStringComponent = () =>
