@@ -3,7 +3,7 @@ import { bench, describe } from 'vitest';
 import { nodeFromJSONSchema } from '@/schema-form/core/surface/utils/nodeFromJSONSchema';
 import type { JSONSchema } from '@/schema-form/types';
 
-/** Blueprint compilation and initial settlement through the core entry, varying branch fan-out. */
+/** Blueprint compilation and initial settlement through the internal nodeFromJSONSchema helper, varying branch fan-out. */
 
 function makeOneOf(branchCount: number, childrenPerBranch: number): JSONSchema {
   return {
