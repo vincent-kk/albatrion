@@ -289,21 +289,21 @@ const definitions: FieldInputDefinition[] = [
 
 ### FieldInputProps 주요 속성
 
-| 속성                  | 타입          | 설명            |
-| --------------------- | ------------- | --------------- |
-| `value`               | `Value`       | 현재 값         |
-| `defaultValue`        | `Value`       | 기본값          |
-| `onChange`            | `(v) => void` | 값 변경 핸들러  |
-| `node`                | `FieldNode`   | 필드 노드     |
-| `errors`              | `Error[]`     | 검증 에러       |
-| `errorVisible`        | `boolean`     | 에러 표시 여부  |
-| `readOnly`            | `boolean`     | 읽기 전용       |
-| `disabled`            | `boolean`     | 비활성화        |
-| `required`            | `boolean`     | 필수 여부       |
-| `nullable`            | `boolean`     | null 허용       |
-| `watchValues`         | `any[]`       | 구독 값         |
-| `context`             | `object`      | 사용자 컨텍스트 |
-| `ChildFields` | `FC[]`        | 자식 컴포넌트   |
+| 속성           | 타입          | 설명            |
+| -------------- | ------------- | --------------- |
+| `value`        | `Value`       | 현재 값         |
+| `defaultValue` | `Value`       | 기본값          |
+| `onChange`     | `(v) => void` | 값 변경 핸들러  |
+| `node`         | `FieldNode`   | 필드 노드       |
+| `errors`       | `Error[]`     | 검증 에러       |
+| `errorVisible` | `boolean`     | 에러 표시 여부  |
+| `readOnly`     | `boolean`     | 읽기 전용       |
+| `disabled`     | `boolean`     | 비활성화        |
+| `required`     | `boolean`     | 필수 여부       |
+| `nullable`     | `boolean`     | null 허용       |
+| `watchValues`  | `any[]`       | 구독 값         |
+| `context`      | `object`      | 사용자 컨텍스트 |
+| `ChildFields`  | `FC[]`        | 자식 컴포넌트   |
 
 ---
 
@@ -409,17 +409,17 @@ if (isArrayNode(node)) {
 
 ## 이벤트 타입
 
-| 이벤트                     | 설명                        |
-| -------------------------- | --------------------------- |
-| `Initialized`              | 노드 초기화 완료            |
-| `UpdateValue`              | 값 변경                     |
-| `UpdateState`              | 상태 변경 (dirty, touched)  |
-| `UpdateError`              | 검증 에러 변경              |
+| 이벤트                       | 설명                        |
+| ---------------------------- | --------------------------- |
+| `Initialized`                | 노드 초기화 완료            |
+| `UpdateValue`                | 값 변경                     |
+| `UpdateState`                | 상태 변경 (dirty, touched)  |
+| `UpdateError`                | 검증 에러 변경              |
 | `UpdateControlledProperties` | controls 상태·watch 값 변경 |
-| `UpdateChildren`           | 자식 노드 변경              |
-| `UpdatePath`               | 경로 변경 (배열 재정렬)     |
-| `RequestRefresh`           | UI 동기화 요청              |
-| `RequestRemount`           | 컴포넌트 리마운트 요청      |
+| `UpdateChildren`             | 자식 노드 변경              |
+| `UpdatePath`                 | 경로 변경 (배열 재정렬)     |
+| `RequestRefresh`             | UI 동기화 요청              |
+| `RequestRemount`             | 컴포넌트 리마운트 요청      |
 
 ### 구독 패턴
 

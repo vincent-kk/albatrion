@@ -34,11 +34,11 @@
 
 `types/jsonSchema.ts`가 선언하는 `options` 필드. 각 옵션은 특정 스키마 타입에만 존재한다.
 
-| 옵션                     | 적용 스키마                                        | 계약                                                                                                                                              |
-| ------------------------ | -------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `trim?: boolean`         | `NonNullableStringSchema` · `NullableStringSchema` | 입력 마침 통로가 문자열 행의 `finishInput`을 적용해 저장 값을 자른 값으로 **교체**한다. 자동 쓰기 억제를 따르며 외부 오류와 dirty는 유지한다(WRITE-083) |
-| `omitTrailing?: boolean` | `NonNullableArraySchema` · `NullableArraySchema`   | 배열의 `outputValue`에서 후행 `undefined` 항목을 제거한다. 적용 범위는 부모 투영·루트 검증·외부 방출이며, **편집 값과 자식 노드는 유지**한다 |
-| `omitEmpty?: boolean`    | 객체 스키마                                        | 부모로 전파되는 값에서 빈 항목을 제거한다                                                                                                         |
+| 옵션                     | 적용 스키마                                        | 계약                                                                                                                                                                                                                                         |
+| ------------------------ | -------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `trim?: boolean`         | `NonNullableStringSchema` · `NullableStringSchema` | 입력 마침 통로가 문자열 행의 `finishInput`을 적용해 저장 값을 자른 값으로 **교체**한다. 자동 쓰기 억제를 따르며 외부 오류와 dirty는 유지한다(WRITE-083)                                                                                      |
+| `omitTrailing?: boolean` | `NonNullableArraySchema` · `NullableArraySchema`   | 배열의 `outputValue`에서 후행 `undefined` 항목을 제거한다. 적용 범위는 부모 투영·루트 검증·외부 방출이며, **편집 값과 자식 노드는 유지**한다                                                                                                 |
+| `omitEmpty?: boolean`    | 객체 스키마                                        | 부모로 전파되는 값에서 빈 항목을 제거한다                                                                                                                                                                                                    |
 | `terminal?: boolean`     | 객체·배열 스키마 네 형(Nullable·NonNullable)       | 노드를 값 전체를 다루는 입력 하나(`true`)로 둘지 자식 노드(`false`)로 둘지 정한다. 렌더러 판정보다 우선하며, 없으면 `presentation.FieldInput` 컴포넌트일 때 terminal, 그 밖에는 branch다. 형 선언만 있고 판정은 `resolveNodeStrategy`가 한다 |
 
 `trim`과 `omitTrailing`의 차이가 이 표의 요점이다 — `trim`은 **저장 값을 교체**하는 옵션이고, `omitTrailing`은 **방출 값만 걸러내는** 옵션이다. 후자는 raw 상태를 보존하므로 되돌릴 수 있고, 전자는 그렇지 않다.
@@ -51,12 +51,12 @@
 
 NODE-059의 형 없는 인라인 객체·배열 oneOf·anyOf는 분기 값 형의 합으로, null 분기가 있으면 null까지 포함해 추론합니다. `$ref`, 게이트 분기, 두 키워드의 동시 사용, 본체 `allOf`는 넓은 값 형을 유지합니다. 분기 없는 `const`·`enum` 칸은 리터럴 또는 enum 원소의 합을 보존합니다. 형 추론은 작성 스키마를 바꾸지 않습니다.
 
-| 표면                                                      | 채널                     |
-| --------------------------------------------------------- | ------------------------ |
+| 표면                                                      | 채널                 |
+| --------------------------------------------------------- | -------------------- |
 | `FormHandle.getValue()` · `submit` · 루트 `onChange` 방출 | 투영 (`outputValue`) |
-| `FormHandle.setValue()`                                   | raw                      |
-| `node.value` · `UpdateValue` 이벤트 payload               | 편집 중 계산 값          |
-| `node.outputValue`                                        | 투영                     |
+| `FormHandle.setValue()`                                   | raw                  |
+| `node.value` · `UpdateValue` 이벤트 payload               | 편집 중 계산 값      |
+| `node.outputValue`                                        | 투영                 |
 
 ## Acceptance Criteria
 

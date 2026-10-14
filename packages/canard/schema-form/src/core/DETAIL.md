@@ -26,16 +26,16 @@
 
 ### 진입점 표면
 
-| 심볼                                                             | 계약                                                                                            |
-| ---------------------------------------------------------------- | ----------------------------------------------------------------------------------------------- |
-| `nodeFromJSONSchema(props)`                                      | 같은 생성 통로의 트리 작성과 마운트를 잇고 마운트된 루트를 반환하는 core 호스트 진입(70C-01) |
-| `FieldNode` 및 타입별 노드                                      | `value`·`outputValue`·`setValue`·`validate`·`subscribe`·`find`·`revision` 등 노드 공개 표면 |
-| `isFieldNode` · `isBranchNode` · `isTerminalNode` · 타입별 가드 | 런타임 타입 판별                                                                                |
-| `FieldNodeState` | Dirty=1·Touched=2·ErrorVisible=4를 내부와 공개 경계에서 같은 이름으로 사용하며 별칭을 두지 않습니다(SURFACE-056·060, LANDING-157). |
-| `SetValueOption` · `ValidationMode`                              | 쓰기 옵션 비트·검증 모드 열거값 |
-| `FieldNodeEventType` · `FieldNodeRequestType`                  | 새 엔진의 공개 사건·명령 열거값(EVENT-073, LANDING-067) |
-| 바인딩 전용 생성·마운트·폼 로드·인계·입력 쓰기·입력 마침·상호작용 초기화 번호 읽기 | `surface/DETAIL.md`의 통로 계약을 이름으로 다시 내보내며 `src/index.ts`는 내보내지 않음(69C-01·02, 70C-01) |
-| `setContext(root, context)`                                      | 새 엔진의 바인딩 전용 내부 통로를 이름으로 다시 내보냄. 패키지 공개 `src/index.ts`에는 노출하지 않음(NODE-010, SURFACE-055, 28C-08) |
+| 심볼                                                                                               | 계약                                                                                                                                                             |
+| -------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `nodeFromJSONSchema(props)`                                                                        | 같은 생성 통로의 트리 작성과 마운트를 잇고 마운트된 루트를 반환하는 core 호스트 진입(70C-01)                                                                     |
+| `FieldNode` 및 타입별 노드                                                                         | `value`·`outputValue`·`setValue`·`validate`·`subscribe`·`find`·`revision` 등 노드 공개 표면                                                                      |
+| `isFieldNode` · `isBranchNode` · `isTerminalNode` · 타입별 가드                                    | 런타임 타입 판별                                                                                                                                                 |
+| `FieldNodeState`                                                                                   | Dirty=1·Touched=2·ErrorVisible=4를 내부와 공개 경계에서 같은 이름으로 사용하며 별칭을 두지 않습니다(SURFACE-056·060, LANDING-157).                               |
+| `SetValueOption` · `ValidationMode`                                                                | 쓰기 옵션 비트·검증 모드 열거값                                                                                                                                  |
+| `FieldNodeEventType` · `FieldNodeRequestType`                                                      | 새 엔진의 공개 사건·명령 열거값(EVENT-073, LANDING-067)                                                                                                          |
+| 바인딩 전용 생성·마운트·폼 로드·인계·입력 쓰기·입력 마침·상호작용 초기화 번호 읽기                 | `surface/DETAIL.md`의 통로 계약을 이름으로 다시 내보내며 `src/index.ts`는 내보내지 않음(69C-01·02, 70C-01)                                                       |
+| `setContext(root, context)`                                                                        | 새 엔진의 바인딩 전용 내부 통로를 이름으로 다시 내보냄. 패키지 공개 `src/index.ts`에는 노출하지 않음(NODE-010, SURFACE-055, 28C-08)                              |
 | `retainValidationRoot(validator, authoredRoot)` · `releaseValidationRoot(validator, authoredRoot)` | 바인딩 이펙트의 수명 증감 통로를 `engine/validation/index.ts`에서 이름으로 다시 내보냄. 패키지 공개 `src/index.ts`에는 노출하지 않음(VALIDATE-021·045, NODE-010) |
 
 `nodeFromJSONSchema`의 서명은 실행 ADR D3와 같습니다. `validator`는 `{ compile, compileGuard, release?, dialect? }` 객체이고, `deferMountValidation`의 기본값은 거짓입니다. 문서 주석은 core 호스트 진입과 `<Form>`의 동일 생성 통로를 명시합니다(70C-01, VALIDATE-010, CONTROLS-075).
@@ -62,10 +62,10 @@ nodeFromJSONSchema<Schema extends JSONSchema>(props: {
 
 생성 입력의 기본값은 `InferValueType<Schema>` 계약을 따르며, 청사진과 동작 행이 원본 해석·계산·투영을 구분합니다(VALUE-002·027, 70C-01).
 
-| 채널                     | 읽는 곳                                                          | 특성                               |
-| ------------------------ | ---------------------------------------------------------------- | ---------------------------------- |
-| `value` (계산)           | `UpdateValue` payload, 입력 props, 편집 상태 관측 | 원본을 해석·조립한 편집 값 |
-| `outputValue` (투영)     | 루트 검증, 루트 방출, `FormHandle.getValue`·제출 | 스키마 출력 옵션 적용 |
+| 채널                 | 읽는 곳                                           | 특성                       |
+| -------------------- | ------------------------------------------------- | -------------------------- |
+| `value` (계산)       | `UpdateValue` payload, 입력 props, 편집 상태 관측 | 원본을 해석·조립한 편집 값 |
+| `outputValue` (투영) | 루트 검증, 루트 방출, `FormHandle.getValue`·제출  | 스키마 출력 옵션 적용      |
 
 두 채널을 섞으면 편집 중인 화면이 정제 때문에 접히거나, 반대로 정제되지 않은 값이 폼 밖으로 나간다. 새 소비 지점을 추가할 때는 그 값이 밖으로 나가는지 안에 머무는지를 먼저 정하고 채널을 고른다.
 

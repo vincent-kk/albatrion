@@ -41,7 +41,7 @@ export const FormGroup = ({
       >
         <Flex gap={10} align="center">
           {node.parentNode && isArraySchema(node.parentNode) === false && (
-            <label htmlFor={path}>
+            <label htmlFor={path} id={`label:${path}`}>
               <Typography.Text style={{ wordBreak: 'unset' }}>
                 {name}
               </Typography.Text>

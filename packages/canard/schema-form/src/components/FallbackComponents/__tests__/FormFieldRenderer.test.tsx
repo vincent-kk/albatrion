@@ -104,3 +104,27 @@ it('avoids title id collisions with sibling input paths', () => {
     inputs[1],
   );
 });
+
+it('keeps a sibling textbox associated when the button field is a radio group', () => {
+  const view = render(
+    <Form
+      jsonSchema={{
+        type: 'object',
+        properties: {
+          button: {
+            type: 'string',
+            enum: ['S', 'M'],
+            presentation: { inputType: 'radio' },
+          },
+          'button-label': { type: 'string' },
+        },
+      }}
+    />,
+  );
+  const ids = Array.from(view.container.querySelectorAll('[id]'), (el) => el.id);
+  expect(ids.filter((id, index) => ids.indexOf(id) !== index)).toEqual([]);
+  expect(screen.getAllByRole('radio')).toHaveLength(2);
+  const input = screen.getByRole<HTMLInputElement>('textbox');
+  expect(input.id).toBe('/button-label');
+  expect(screen.getByText('button-label').closest('label')!.control).toBe(input);
+});
