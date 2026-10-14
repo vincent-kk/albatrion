@@ -2,7 +2,7 @@
 
 개발의 진행 상황과 다음 할 일은 `PLAN.md`가 단일 진입점으로 든다. 다음 세션이 바로 이어서 일하기 위한 문서다. 이력은 `git log`와 `reviews/`에 있으므로 여기에는 지금 상태, 다음 할 일, 일하는 법만 적는다. 소유자는 Vincent다.
 
-## 1. 지금 어디인가 (2026-10-15, 336라운드 닫힘; 8단계 첫 토막 구조 정리 진행(codex 없이, 소유자 감독; 조사 열 끝, 결정 여덟 확정 — 이동 묶음 1 PR 대기, 묶음 2·engine 재구조화 브리프 발송) — 브랜치 feat/schema-form-08-review-and-perf, fairy08 조사·fixy08 이동 묶음 1, 둘째 토막 속도 최적화는 codex·agy, 대기열 54)
+## 1. 지금 어디인가 (2026-10-15, 337라운드 닫힘; 8단계 첫 토막 구조 정리 진행(codex 없이, 소유자 감독; 묶음 1 PR #387 열림 — Roll을 정의 자리에서 펴고 rolled 칸 제거 실험 중, 묶음 2·3 브리프 발송) — 브랜치 feat/schema-form-08-review-and-perf, fairy08 조사·fixy08 이동 묶음 1, 둘째 토막 속도 최적화는 codex·agy, 대기열 54)
 
 - **264라운드(2026-10-14, 소유자).** 고유명사 후보 15 중 1·3·4·5·6·7·8·9·10·11·15를 권고대로 승인했고, 2(ChildField 이름 길이)·12(controls.children 대체 이름)·13(propertyKeys 공개 자리·이름)·14(virtual을 object 전용 키로)는 추가 논의, 비표준 최상위 키의 잔여 점검을 요구했다(reviews/round-264-owner-answers.md).
 - **265라운드(2026-10-14, 소유자).** 추가 논의 넷을 닫았다: ChildFields, controls.fields, options.propertyOrder(object 전용), options.virtual 형 선언과 VirtualSchema 비공개화, nullable: true 제거(265C-01 후속 대응표, reviews/round-265-owner-answers.md). 07b-5 후속 커밋으로 fixy07에게.
@@ -74,7 +74,8 @@
 - **333라운드(2026-10-15, 소유자).** 작업자 fixy08·fairy08. WeakMap은 memo(측정은 밤 루프). NODE_ENV는 React의 배포 방식을 fairy08이 확인해 따른다. types/internal·rolled, hooks/fieldNode·form 수용. typeMismatch → misfit(drift는 과정의 말, misfit은 상태의 말)(reviews/round-333-owner-answers.md).
 - **334라운드(2026-10-15, 소유자).** 구조 정리를 먼저 빠르게 codex 없이 소유자 감독으로, 그 뒤 속도 최적화부터 codex·agy 사용(reviews/round-334-owner-answers.md).
 - **335라운드(2026-10-15, 소유자).** WeakMap은 측정으로; schemaType은 integer 구분·플러그인 시험 계약 때문에 안 1 유지(배제는 나중); stringify 키는 control.ts 구분자로 속도 토막에서, 되읽는 키만 예외; blueprint 등 engine 재구조화 수용(reviews/round-335-owner-answers.md).
-- **336라운드(2026-10-15, 소유자).** NODE_ENV 현행 유지; misfit은 히스토리 문서까지; virtual type은 내부 jsonSchema에 유지하되 입력 스키마 추론에는 없게; CLAUDE.md 한 줄 승인; settle fractal 2개, 순환은 지금 푼다; 형은 types/ 칸으로 관심사별 분할; walkFieldNodes 삭제; organ 안 파일·디렉토리 혼재 금지(reviews/round-336-owner-answers.md). 다음 라운드 번호는 337.
+- **336라운드(2026-10-15, 소유자).** NODE_ENV 현행 유지; misfit은 히스토리 문서까지; virtual type은 내부 jsonSchema에 유지하되 입력 스키마 추론에는 없게; CLAUDE.md 한 줄 승인; settle fractal 2개, 순환은 지금 푼다; 형은 types/ 칸으로 관심사별 분할; walkFieldNodes 삭제; organ 안 파일·디렉토리 혼재 금지(reviews/round-336-owner-answers.md).
+- **337라운드(2026-10-15, 소유자).** PR #387의 Base* 접두사 물음 → Roll의 가치 검토 → 둘째 안: 내부 형 정의 자체를 Roll로 펴고 rolled 칸·Base 접두사 제거(공개 이름 = 내부 이름), fixy08이 #387 위에서 typecheck로 확인(reviews/round-337-owner-answers.md). 다음 라운드 번호는 338.
 - **그 앞의 라운드 요지(19라운드부터)는 PLAN-LOG.md 2절에 있다.** 라운드마다 한 문단이며, 1절의 기록 표와 같은 순서다.
 - **설계의 정본은 단일 원장 `ledger/`다.** 영역 17개, 항목 1,350개(80라운드 뒤, 24라운드 뒤 1,348; 현행 1,076(부정 결정·기록 포함), 대체됨 199, 분할됨 49, 중복 24, 열림 0). 형식과 규칙은 `ledger/README.md`.
 - **옛 설계 문서(`00`–`09`, `adr/`, `open-questions.md`)는 동결됐다.** 더 고치지 않는다. 어긋남은 원장의 충돌 칸에 적는다. 원장이 인용하는 옛 문서의 `path:line`은 모두 커밋 `ba398c330` 기준 줄 번호다(그 뒤 옛 문서는 바뀌지 않았다).
@@ -144,7 +145,7 @@
 2. 원칙으로 정해지지 않고, 서열 없는 가치가 부딪치며, 사용자에게 보이는 결과가 갈리는 것만 소유자에게 간다. 나머지는 편집자나 스웜이 정하고, 닫은 사람에 그렇게 적는다.
 3. 오류는 삼키지 않는다.
 
-**라운드를 닫는 절차(68라운드부터의 관례, 89라운드까지 그대로).** 단계 세션의 물음이 오면 관련 원장 항목을 읽고 reviews 디렉토리에 round-NN-closing.md를 쓴다. 머리글은 날짜·누가 무엇을 물었는가·편집자 결정으로 닫는다는 선언이고, 결정 블록은 NNC-kk 제목, 닫는 항목, 결정(추론 표지 한 줄), 근거다. 소유자의 직접 말은 round-NN-owner-answers.md의 표(확인, 물음 요지, 답 원문, 반영)에 적고 owner-answers.tsv에 행을 더한다. 보충은 sup-insert.mjs가 결정 줄을 글자 그대로 인용해 항목에 넣고, round-close.mjs가 PLAN 5절·PLAN-LOG 1절·HANDOFF 1절(최신 라운드 셋만, 가장 오래된 것은 PLAN-LOG 2절로)·HANDOFF 5절 지도를 갱신한다. 그다음 4절의 검사를 모두 돌린다(토큰 잔여는 사백칠십구에서 변하지 않아야 하고, HANDOFF의 새 글은 역따옴표 파일 이름과 숫자 표기를 피한다). 커밋은 바뀐 파일을 경로로 지정해 하고(원장 관리자는 ledger, reviews, HANDOFF, PLAN 5절과 소유자가 청한 절, PLAN-LOG, ledger/checks만 고친다), 커밋 전에 현재 가지가 1.0.0-beta인지 확인하며, 커밋마다 밀어 올린다. 단계 세션에는 결정 요지와 다음 라운드 번호를 보낸다. 단계 세션의 허가 차단을 대신 풀어 주지 않는다 — 원장 판단만 주고 허가는 소유자에게 돌린다.
+**라운드를 닫는 절차(68라운드부터의 관례, 89라운드까지 그대로).** 단계 세션의 물음이 오면 관련 원장 항목을 읽고 reviews 디렉토리에 round-NN-closing.md를 쓴다. 머리글은 날짜·누가 무엇을 물었는가·편집자 결정으로 닫는다는 선언이고, 결정 블록은 NNC-kk 제목, 닫는 항목, 결정(추론 표지 한 줄), 근거다. 소유자의 직접 말은 round-NN-owner-answers.md의 표(확인, 물음 요지, 답 원문, 반영)에 적고 owner-answers.tsv에 행을 더한다. 보충은 sup-insert.mjs가 결정 줄을 글자 그대로 인용해 항목에 넣고, round-close.mjs가 PLAN 5절·PLAN-LOG 1절·HANDOFF 1절(최신 라운드 셋만, 가장 오래된 것은 PLAN-LOG 2절로)·HANDOFF 5절 지도를 갱신한다. 그다음 4절의 검사를 모두 돌린다(토큰 잔여는 475에서 변하지 않아야 하고, HANDOFF의 새 글은 역따옴표 파일 이름과 숫자 표기를 피한다). 커밋은 바뀐 파일을 경로로 지정해 하고(원장 관리자는 ledger, reviews, HANDOFF, PLAN 5절과 소유자가 청한 절, PLAN-LOG, ledger/checks만 고친다), 커밋 전에 현재 가지가 1.0.0-beta인지 확인하며, 커밋마다 밀어 올린다. 단계 세션에는 결정 요지와 다음 라운드 번호를 보낸다. 단계 세션의 허가 차단을 대신 풀어 주지 않는다 — 원장 판단만 주고 허가는 소유자에게 돌린다.
 
 ## 4. 검사 명령 (`architecture/`에서, 모두 문제 0이어야 한다)
 
@@ -505,6 +506,7 @@ node ledger/checks/doc-coverage.mjs design/*.md adr/*.md -- ledger/*.md   # 설�
 | `reviews/round-334-owner-answers.md` | 334라운드 소유자: 구조 정리 먼저(codex 없이, 감독), 속도 최적화부터 codex·agy |
 | `reviews/round-335-owner-answers.md` | 335라운드 소유자: WeakMap 측정, schemaType 배제 물음, stringify 구분자, engine 재구조화 수용 |
 | `reviews/round-336-owner-answers.md` | 336라운드 소유자: 결정 여덟(NODE_ENV·misfit·virtual·CLAUDE.md·settle·types/·walkFieldNodes·혼재 금지) |
+| `reviews/round-337-owner-answers.md` | 337라운드 소유자: Roll을 정의 자리에서, rolled 칸 제거 |
 | plan/tidy-structure/array-limits-review.md | 배열 한도를 core가 다룰 때의 유익·손해 비교(대기열 53 검토 메모, 권고 포함) |
 | `reviews/round-297-closing.md` | 297라운드 편집자 결정 하나: 정돈-1(#374) 병합, 정돈-2 투입 |
 | plan/tidy-structure/brief-tidy-2.md | 정돈-2 브리프(fixy08 → codex): 시험 자리 U·D·S1, 제품 위반 둘, 잉여 export, D7 예외 |

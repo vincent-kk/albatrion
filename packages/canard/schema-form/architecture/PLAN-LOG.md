@@ -567,3 +567,4 @@
 - **334라운드(2026-10-15, 소유자).** 구조 정리 먼저(codex 없이, 소유자 감독), 속도 최적화부터 codex·agy(reviews/round-334-owner-answers.md).
 - **335라운드(2026-10-15, 소유자).** WeakMap 측정, schemaType 안 1, stringify 구분자·속도 토막, engine 재구조화 수용(reviews/round-335-owner-answers.md).
 - **336라운드(2026-10-15, 소유자).** 결정 여덟 확정(reviews/round-336-owner-answers.md).
+- **337라운드(2026-10-15, 소유자).** Roll을 정의 자리에서, rolled 칸 제거(reviews/round-337-owner-answers.md).
