@@ -3,7 +3,7 @@
 ## Requirements
 
 - 청사진에서 쓰기까지의 실행 규칙과 원본·계산·투영 채널을 보존합니다. 재배치로 노드 형상·값·오류·리비전·경고·통지가 달라지지 않습니다.
-- 의존 순서는 blueprint < record < {behaviors, navigation} < validation < settle/derive < settle < write입니다. 검증은 결과 콜백으로 쓰기에 돌려주며 타입 간선도 역전시키지 않습니다(NODE-016·045).
+- 의존 순서는 blueprint < record < {behaviors, navigation} < validation < derive < settle < write입니다. `derive`와 `settle`은 형제이며 settle이 derive 진입점을 소비합니다. 둘이 함께 쓰는 순수 보조 넷은 engine의 `utils/compute/sameValue.ts`·`utils/paths/resolveDependencyPath.ts`·`utils/controls/getCommittedDeclarationKey.ts`·`utils/controls/getControlExpression.ts`에 있고 두 자식이 위로 열림으로 직접 가져옵니다. 검증은 결과 콜백으로 쓰기에 돌려주며 타입 간선도 역전시키지 않습니다(NODE-016·045).
 - surface는 이 진입점만 경유해 엔진 계약을 소비합니다. 자식 엔진 모듈은 형제의 진입점을 직접 소비합니다.
 - 경로 색인 보조는 레코드 형과 정착·생성의 공통 소비를 위해 engine의 utils 구획에 둡니다. 기존 native Map·Set 및 prefix 색인 계약을 유지합니다.
 
@@ -45,6 +45,14 @@
 ### engine-observables — 재배치의 관측 보존
 
 - 기존 청사진·동작 행·정착·쓰기·검증 시험의 값·형상·오류·사건 단언이 같은 결과를 냅니다. 고정 리비전 대조 시험은 옛 경로를 현재 배치로 해석합니다.
+
+## Boundary Exemptions
+
+### `utils/compute/sameValue.ts` — bench의 직접 import
+
+- **Consumers**: `**/bench/**`
+- **Direct import**: `allowed`
+- **Reason**: bench(측정 도구)는 소유자 결정(276라운드, 대기열 49)으로 fractal import 규칙의 직접 import 금지에서 면제됩니다. 값 비교 비용을 따로 재기 위해 진입점에 올리지 않고 그대로 읽습니다.
 
 ## Last Updated
 

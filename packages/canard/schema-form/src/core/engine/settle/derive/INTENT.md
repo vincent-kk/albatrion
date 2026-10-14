@@ -9,7 +9,7 @@
 ## Conventions
 
 - `index.ts`는 판정 함수·규칙 표 함수·상한·형을 이름으로 내보내고, 규칙 표는 청사진마다 한 번 만들어 재사용합니다(NODE-016, LANDING-083, SETTLE-017·043).
-- 값 동등은 settle의 `sameValue`를, 선언 층은 settle의 순수 `utils/controls/` 해석을 공유합니다(SETTLE-043, CONTROLS-073·082).
+- 값 동등은 engine의 `utils/compute/sameValue`를, 선언 층은 engine의 순수 `utils/controls/` 해석을 settle과 함께 씁니다(SETTLE-043, CONTROLS-073·082).
 
 ## Boundaries
 

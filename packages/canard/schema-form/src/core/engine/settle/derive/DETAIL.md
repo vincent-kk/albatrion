@@ -3,7 +3,7 @@
 ## Requirements
 
 - `derive`는 `settle`의 자식 fractal이며 완성된 형상의 규칙을 판정합니다. 쓰기 적용·재계산·파생 라운드 셈·원본 B 복원·커밋은 settle이 맡습니다(LANDING-063·083, SETTLE-004·011·017, NODE-016).
-- 의존 방향은 `blueprint`·`record`의 진입점과 settle 안의 순수 `sameValue`·경로 해석·선언 층 해석으로만 향합니다. `settle/type.ts`, `settle/index.ts`, 쓰기·전이·커밋·파생 라운드 실행 organ은 `import type`까지 금지합니다(NODE-016·045, SETTLE-043, CONTROLS-080).
+- derive는 engine의 자식 fractal(`engine/derive`)로 settle의 형제입니다. 의존 방향은 `blueprint`·`record`의 진입점과 engine organ의 순수 `sameValue`·경로 해석·선언 층 해석으로만 향합니다. settle의 어느 파일도(`settle/type.ts`, `settle/index.ts`, 쓰기·전이·커밋·파생 라운드 실행 organ) `import type`까지 가져오지 않습니다(NODE-016·045, SETTLE-043, CONTROLS-080).
 - 청사진은 식·선언·역의존 표를 제공하고 규칙 발생 템플릿 표는 derive가 청사진마다 한 번 만들어 약한 맵에 둡니다. 규칙이 없는 청사진은 빈 표를 공유하고 파생 단계를 건너뜁니다(SETTLE-017·043, LANDING-083, CONTROLS-032·079).
 
 ## API Contracts
