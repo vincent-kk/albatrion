@@ -740,7 +740,8 @@
 
 - 결정:
   > - **흡수된다:** `&if`와 `computed.if`는 조각 범위의 `controls.active`로 흡수된다. 분기 객체에 `&if`를 쓰던 스키마는 같은 식을 그 분기 객체의 `controls.active`로 옮긴다. 기준점은 둘 다 호스트라 식은 그대로다. JSON의 `if`가 이미 조각 게이트이므로 `&if`를 두면 같은 게이트의 셋째 철자가 되어 G4에 걸린다.
-- 보충: 없음
+- 보충:
+  > 편집자 결정(305C-03): "【추론】 fairy08의 별도 발견(옛 문법 `computed.if`·`&if`가 든 스키마는 오류나 경고 없이 키가 무시됨)은 새 설계의 원칙 그대로다: 폼은 그룹 객체 셋(`controls`·`options`·`presentation`) 안의 키만 읽고(CONTROLS-001), 맨 키는 JSON Schema 층의 모르는 키로 검증기에 간다(CONTROLS-078·CONTROLS-081이 같은 원리로 `virtualRequired`·`placeholder`를 처리). `computed`와 `&` 접두 키는 CONTROLS-049의 이주 항목이고, 이주 진단을 넣으면 폼이 맨 키를 읽게 되어 원칙을 어기므로 넣지 않는다. 이주 안내는 README 1.0.0 이주 절(270C-01, 마무리 단계에 한 번에 씀)이 CONTROLS-049의 이주 항목 목록으로 적는다. 소유자 결정이 필요한 공개 동작 변경이 아니므로 대기열에 올리지 않는다." (`reviews/round-305-closing.md:25`)
 - 상태: 현행
 - 출처: `adr/0003-group-namespace.md:137`(정본)
 - 닫은 사람: 편집자 결정(10라운드, ADR 0003 5차 본문 `adr/0003-group-namespace.md:10`), 소유자 답(`reviews/round-15-decisions.md:9` 1)

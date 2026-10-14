@@ -2,9 +2,8 @@
 
 개발의 진행 상황과 다음 할 일은 `PLAN.md`가 단일 진입점으로 든다. 다음 세션이 바로 이어서 일하기 위한 문서다. 이력은 `git log`와 `reviews/`에 있으므로 여기에는 지금 상태, 다음 할 일, 일하는 법만 적는다. 소유자는 Vincent다.
 
-## 1. 지금 어디인가 (2026-10-14, 304라운드 닫힘; 정돈-2 진행, 대기열은 51·40 코드 확인만)
+## 1. 지금 어디인가 (2026-10-14, 305라운드 닫힘; 07 전환 진행 중)
 
-- **257라운드(2026-10-14, 소유자).** 작은 수정 넷(07b-4: 대기열 36·37·16·18)을 바로 시작하되 이번에 한해 codex 위임 없이 fixy07이 직접 구현한다(257C-01, reviews/round-257-owner-answers.md). 원장 관리자는 개선-38 설명·근거 문서의 이름을 병합 코드 기준으로 갱신한다.
 - **258라운드(2026-10-14, 소유자).** 개선-38의 다섯 결정과 후보 C를 확정했고, 이름 논의 셋(factory가 본체인가, components/SchemaNode의 이름, SchemaNode → FieldNode)을 추가로 열었다(reviews/round-258-owner-answers.md). 원장 관리자가 코드 사실로 답한다.
 - **259라운드(2026-10-14, 소유자).** SchemaNode 계열을 FieldNode 계열로 바꾸기로 확정했고(components/SchemaNode → components/Field: FieldProxy·FieldInputSlot·DeferredFieldProxy), 이름을 먼저 바꾼 뒤 C 재배치로 간다. 레거시는 제외(259C-01 대응표, reviews/round-259-owner-answers.md). 07b-5: fairy07 사용처 목록 → fixy07 치환(07b-4 뒤).
 - **260라운드(2026-10-14, 소유자).** 이름 변경에 두 요구를 붙였다: 옛 이름이 남지 않게 검사를 철저히(260C-01 세 겹 게이트), 다른 핵심 고유명사도 바꿀 것이 있는지 검토(reviews/round-260-owner-answers.md). 원장 관리자가 공개 고유명사 전수 목록으로 후보를 올린다.
@@ -51,7 +50,8 @@
 - **301라운드(2026-10-14, 소유자).** 대기열은 원장 원리·코드 확인으로 직접 닫을 것. 53은 "core는 값을 조작·제어하지 않는다" 원칙의 산물이나 옵션 기능으로 재검토(레거시는 maxItems push 차단·minItems 채움 지원, 새 엔진은 둘 다 안 함을 시험이 고정; SPECIFICATION 986·998행이 코드와 어긋남 → 정돈-E 문서). CLAUDE.md 갱신은 필요하면 진행 → 정돈-4 PR, 원장 관리자 병합(reviews/round-301-owner-answers.md).
 - **302라운드(2026-10-14, 소유자).** 53의 유익·손해 비교 요청(controls 어휘, 입력 컴포넌트의 일인지, 타입 불일치 값과의 유비). 답은 plan/tidy-structure/array-limits-review.md(권고: 1.0.0은 현행, UX는 입력의 UI 전용 빈 슬롯, 제어는 controls 옵트인으로 별도 라운드)(reviews/round-302-owner-answers.md).
 - **303라운드(2026-10-14, 소유자).** 53의 경계·일관성 물음. 답: core는 적용 가능성(효력 중인 선언)에는 따르고 제약 키워드는 강제하지 않는다 — 가려진 필드 제거와 배열 개수 비강제가 한 규칙; 제공하지 않는 쪽이 일관적(reviews/round-303-owner-answers.md).
-- **304라운드(2026-10-14, 소유자).** 53 확정 — 경계 한 줄 수용(WRITE-003 보충, ADR 0013 §3.1 문장 추가), 1.0.0은 현행, 기본 배열 입력의 UI 전용 빈 슬롯은 작은 PR(정돈-S), controls 옵트인은 새 라운드, 문서는 지금(reviews/round-304-owner-answers.md). 다음 라운드 번호는 305.
+- **304라운드(2026-10-14, 소유자).** 53 확정 — 경계 한 줄 수용(WRITE-003 보충, ADR 0013 §3.1 문장 추가), 1.0.0은 현행, 기본 배열 입력의 UI 전용 빈 슬롯은 작은 PR(정돈-S), controls 옵트인은 새 라운드, 문서는 지금(reviews/round-304-owner-answers.md).
+- **305라운드(2026-10-14, 닫기/원장 관리자).** fairy08 코드 확인으로 대기열 51(넷 모두 폐기 — 경고 하나는 fairy08이 이식 누락으로 보았으나 ERROR-162가 17라운드에 폐기함; 정돈-E가 다섯을 지움)과 40(docs 페이지 85개 재현 안 됨, #367 방어 수정 유효) 닫음. 옛 조건 문법이 보고 없이 무시되는 것은 CONTROLS-001의 결과라 대기열에 올리지 않음. 배열 한도·경계 문장 문서는 fairy08 문서 전용 PR(documents 데모의 없는 이름 교체 포함), 원장 관리자 병합. 대기열은 비었다. 다음 라운드 번호는 306.
 - **그 앞의 라운드 요지(19라운드부터)는 PLAN-LOG.md 2절에 있다.** 라운드마다 한 문단이며, 1절의 기록 표와 같은 순서다.
 - **설계의 정본은 단일 원장 `ledger/`다.** 영역 17개, 항목 1,350개(80라운드 뒤, 24라운드 뒤 1,348; 현행 1,076(부정 결정·기록 포함), 대체됨 199, 분할됨 49, 중복 24, 열림 0). 형식과 규칙은 `ledger/README.md`.
 - **옛 설계 문서(`00`–`09`, `adr/`, `open-questions.md`)는 동결됐다.** 더 고치지 않는다. 어긋남은 원장의 충돌 칸에 적는다. 원장이 인용하는 옛 문서의 `path:line`은 모두 커밋 `ba398c330` 기준 줄 번호다(그 뒤 옛 문서는 바뀌지 않았다).
@@ -451,6 +451,7 @@ node ledger/checks/doc-coverage.mjs design/*.md adr/*.md -- ledger/*.md   # 설�
 | `reviews/round-302-owner-answers.md` | 302라운드 소유자 생각: 53 유익·손해 비교 요청 |
 | `reviews/round-303-owner-answers.md` | 303라운드 소유자 생각: 53 경계·일관성; 답은 "적용 가능성에는 따르고 제약은 강제하지 않음" |
 | `reviews/round-304-owner-answers.md` | 304라운드 소유자 답: 53 확정, 경계 문장 수용 |
+| `reviews/round-305-closing.md` | 305라운드 편집자 결정 넷: 대기열 51·40 닫음, 옛 문법 무시는 원리, 배열 한도 문서 PR |
 | plan/tidy-structure/array-limits-review.md | 배열 한도를 core가 다룰 때의 유익·손해 비교(대기열 53 검토 메모, 권고 포함) |
 | `reviews/round-297-closing.md` | 297라운드 편집자 결정 하나: 정돈-1(#374) 병합, 정돈-2 투입 |
 | plan/tidy-structure/brief-tidy-2.md | 정돈-2 브리프(fixy08 → codex): 시험 자리 U·D·S1, 제품 위반 둘, 잉여 export, D7 예외 |

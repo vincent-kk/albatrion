@@ -274,6 +274,7 @@
 | 2026-10-14 | 297라운드 닫기: 정돈-1 PR #374 병합 ae502f7bd(포맷터 27 삭제, nodeFromJSONSchema 하향, 표면 92 동일), 정돈-2 투입. 보충 1줄 | `reviews/round-297-closing.md` |
 | 2026-10-14 | 299라운드 닫기: 문서 사이트 api-reference 재작성 PR #375 병합 c2c6007b2, 대기열 53(maxItems·minItems 비강제). 보충 1줄 | `reviews/round-299-closing.md` |
 | 2026-10-14 | 300라운드 닫기: 대기열 53(원장 write 표)·50(존재만 기여 유지, fieldInputMap 안내)·52(정돈-4 PR diff로 소유자 리뷰) 닫음, 51·40은 코드 확인으로. 보충 4줄 | `reviews/round-300-closing.md` |
+| 2026-10-14 | 305라운드 닫기: 대기열 51(넷 모두 폐기 — ERROR-162가 이미 폐기)·40(재현 안 됨, #367 유효) 닫음; 옛 조건 문법 무시는 CONTROLS-001 원리; 배열 한도 문서는 fairy08 문서 PR. 보충 7줄 | `reviews/round-305-closing.md` |
 
 ## 2. 라운드별 요지
 
@@ -531,3 +532,4 @@
 - **302라운드(2026-10-14, 소유자).** 53 배열 한도의 유익·손해 비교 요청; 답은 plan/tidy-structure/array-limits-review.md(reviews/round-302-owner-answers.md).
 - **303라운드(2026-10-14, 소유자).** 53의 경계·일관성 물음; 답은 적용 가능성/제약의 선(reviews/round-303-owner-answers.md).
 - **304라운드(2026-10-14, 소유자).** 53 확정: core는 적용 가능성에는 따르고 제약은 강제하지 않는다(WRITE-003 보충, ADR 0013); 현행 유지, 기본 배열 입력의 UI 전용 빈 슬롯은 정돈-S(reviews/round-304-owner-answers.md).
+- **257라운드(2026-10-14, 소유자).** 작은 수정 넷(07b-4: 대기열 36·37·16·18)을 바로 시작하되 이번에 한해 codex 위임 없이 fixy07이 직접 구현한다(257C-01, reviews/round-257-owner-answers.md). 원장 관리자는 개선-38 설명·근거 문서의 이름을 병합 코드 기준으로 갱신한다.

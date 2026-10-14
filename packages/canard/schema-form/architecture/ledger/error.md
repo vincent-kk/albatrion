@@ -967,6 +967,7 @@
 - 보충:
   > "입력 컴포넌트가 래퍼를 거치지 않고 `FormTypeInputProps`의 `node`로 한 쓰기도 표식이 없으므로 이 옛 노드 참조에 들며, 재생성 reset 뒤 타이머나 언마운트 정리에서 하면 던진다(문서화, 열여섯째)." (`09-landing-and-test-strategy.md:87`)
   > "입력 컴포넌트의 늦은 쓰기는 `node`가 아니라 `onChange`로 한다는 것(재생성 reset 뒤 `node`로 한 늦은 쓰기는 `SchemaFormError`)" (`09-landing-and-test-strategy.md:96`)
+  > 편집자 결정(305C-01): "【추론】 fairy08의 코드 확인은 넷 중 셋(`NESTED_COMPOSITION_IGNORED_FOR_FORM`은 중첩 합성을 재귀로 펼쳐 지원, `CONDITION_INDEX`·`CONDITION_INDICES`는 분기 `controls.active`의 컴파일 실패가 `CREATE_DYNAMIC_FUNCTION`으로 `#/oneOf/<i>/controls/active`에 나고 `const`·`enum` 선택은 코드를 만들지 않는 판별자 게이트)을 폐기로, `NULLABLE_ONE_OF_NULL_UNREACHABLE`을 이식 누락으로 판정했다. 그러나 원장 ERROR-162(17라운드, `adr/0014-error-policy.md:385`)가 그 경고를 "분기 내용을 읽으므로 폐기"로 이미 정했고, 시험 `src/__tests__/scenarios/nullable.object-validation.render.test.tsx:4-14`의 머리글도 "아무것도 이 경고를 내지 않는다"를 그 결정대로 고정하고 있다. 코드 확인이 원장 결정과 어긋날 때는 원장이 이기므로 넷 모두 폐기이며, 정돈-E E1은 `PRESENTATION_KEY_SUSPECT`와 함께 다섯을 지우고 `BlueprintErrorCode`의 죽은 항목 둘(`ConditionIndex`·`ConditionIndices`)과 `src/helpers/warning/warningCode.ts`의 소비자 없는 상수도 함께 지운다. ADR 0014 코드 표의 "CONDITION_INDEX 또는 CONDITION_INDICES" 행은 레거시 이름의 열거라 새 엔진의 코드는 `CREATE_DYNAMIC_FUNCTION` 하나임을 이 보충으로 적는다." (`reviews/round-305-closing.md:9`)
 - 상태: 분할됨(→ ERROR-164, ERROR-165)
 - 출처: `adr/0014-error-policy.md:246-301`(정본)
 - 닫은 사람: 편집자 결정(17라운드, ADR 0014 4판 채택), 게이트 R17G-9·R17G-2
@@ -2443,7 +2444,8 @@
 
 - 결정:
   > 오늘의 경고 `NULLABLE_ONE_OF_NULL_UNREACHABLE`은 분기 내용을 읽으므로 폐기하고, `VIRTUALIZATION_DISABLED_FOR_FORM`은 렌더 계층 경고로 옮긴다.
-- 보충: 없음
+- 보충:
+  > 편집자 결정(305C-01): "【추론】 fairy08의 코드 확인은 넷 중 셋(`NESTED_COMPOSITION_IGNORED_FOR_FORM`은 중첩 합성을 재귀로 펼쳐 지원, `CONDITION_INDEX`·`CONDITION_INDICES`는 분기 `controls.active`의 컴파일 실패가 `CREATE_DYNAMIC_FUNCTION`으로 `#/oneOf/<i>/controls/active`에 나고 `const`·`enum` 선택은 코드를 만들지 않는 판별자 게이트)을 폐기로, `NULLABLE_ONE_OF_NULL_UNREACHABLE`을 이식 누락으로 판정했다. 그러나 원장 ERROR-162(17라운드, `adr/0014-error-policy.md:385`)가 그 경고를 "분기 내용을 읽으므로 폐기"로 이미 정했고, 시험 `src/__tests__/scenarios/nullable.object-validation.render.test.tsx:4-14`의 머리글도 "아무것도 이 경고를 내지 않는다"를 그 결정대로 고정하고 있다. 코드 확인이 원장 결정과 어긋날 때는 원장이 이기므로 넷 모두 폐기이며, 정돈-E E1은 `PRESENTATION_KEY_SUSPECT`와 함께 다섯을 지우고 `BlueprintErrorCode`의 죽은 항목 둘(`ConditionIndex`·`ConditionIndices`)과 `src/helpers/warning/warningCode.ts`의 소비자 없는 상수도 함께 지운다. ADR 0014 코드 표의 "CONDITION_INDEX 또는 CONDITION_INDICES" 행은 레거시 이름의 열거라 새 엔진의 코드는 `CREATE_DYNAMIC_FUNCTION` 하나임을 이 보충으로 적는다." (`reviews/round-305-closing.md:9`)
 - 상태: 현행
 - 출처: `adr/0014-error-policy.md:244#3`(정본, ERROR-043에서 분할)
 - 닫은 사람: 편집자 결정(17라운드, `adr/0014-error-policy.md:244`)
