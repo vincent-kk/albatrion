@@ -456,3 +456,5 @@ reviews/round-318-owner-answers.md:7	318	fieldInputs를 입력마다 fractal로;
 reviews/round-320-owner-answers.md:7	320	fieldInputs 자식은 components가 아니다	"components/ 하위가 아니라 fieldInputs/ 하위에 개별 프렉탈이 있어야 한다.\n그래서 /Users/Vincent/Workspace/albatrion/packages/canard/schema-form/src/fieldInputs 이 이름도 적당하게 다른 이름이 되어야 하지 않나 싶다.. 기본 input 정의들이라.. \n\n디렉토리가 components 가 아닌 이유는 이게 컴포넌트가 아니라 FieldInputDefinition 이기 때문이다" (2026-10-14, 원장 세션)
 reviews/round-320-owner-answers.md:8	320	구획 이름은 fieldInputDefinitions	"fieldInputs/fieldInputDefinitions\n하위에 프랙탈을 만들어도 되겠네 그럼" (2026-10-14, 원장 세션)
 reviews/round-324-owner-answers.md:7	324	밤 루프는 보고 결정, 대기	"오늘 밤 루프는 작업 보고 있다가 결정할거에요. 지금은 일단 대기.\n아직 안끝난거죠? /Users/Vincent/Workspace/albatrion/packages/canard/schema-form/src/fieldInputs 이게 아주 엉망이군요" (2026-10-14, 원장 세션)
+reviews/round-326-owner-answers.md:7	326	Field의 본체는 FieldProxy	"아.. 근데 Form 처럼, 출력되는게 FieldProxy 하나면 Field가 아니라 FieldProxy 로 해야하는거 아닌가? 프렉탈의 본체가 FieldProxy잖아" (2026-10-14, 원장 세션)
+reviews/round-326-owner-answers.md:8	326	다섯째 손질 진행, 약식 전체 게이트	"음 응 진행시켜봐. 이거까지 머지하고 전체 게이트를 한번 돌려.\n게이트는 너무 오래걸리지 않게 약식으로 돌리고, 문제가 생기면 그때 자세히 하도록" (2026-10-14, 원장 세션)

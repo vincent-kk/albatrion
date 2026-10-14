@@ -284,6 +284,7 @@
 | 2026-10-14 | 320라운드 소유자: fieldInputs 자식은 fieldInputDefinitions/ 아래. 321라운드 닫기: 정돈-S PR #381 병합(a8277781f). 보충 4줄 | `reviews/round-320-owner-answers.md`, `reviews/round-321-closing.md` |
 | 2026-10-14 | 322라운드 닫기: 구조 손질 2·3 PR #382 병합(496148de7; constants organ, barrel 제거, Field 모양, surface runtime). 보충 1줄 | `reviews/round-322-closing.md` |
 | 2026-10-14 | 323라운드 닫기: 정돈-4 PR #383 병합(3d9082f2d; CLAUDE.md 둘). 정돈 단계 전부 완료. 보충 1줄 | `reviews/round-323-closing.md` |
+| 2026-10-14 | 324라운드 소유자: 밤 루프는 보고 결정, 대기. 325라운드 닫기: 구조-4 PR #384 병합(307728a6d; fieldInputDefinitions 아래 열한 fractal). 보충 2줄 | `reviews/round-324-owner-answers.md`, `reviews/round-325-closing.md` |
 
 ## 2. 라운드별 요지
 
