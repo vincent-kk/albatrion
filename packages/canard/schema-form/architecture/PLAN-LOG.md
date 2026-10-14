@@ -280,6 +280,7 @@
 | 2026-10-14 | 308라운드 닫기: filid 개선 요청을 ogham 이슈 #143으로 등록(정돈-2 뒤 수치, B8 사례·mock 경로 제안·훅 차단 사례 포함). 보충 1줄 | `reviews/round-308-closing.md` |
 | 2026-10-14 | 312라운드 닫기: 정돈-3 PR #378 병합(eeb1bd374; 표면 92 동일, 시험 3826, filid 면제 한 줄 제거), 결정 여섯·선택 여섯 기록. 구조 리뷰 시작 가능, 정돈-E 투입. 보충 2줄 | `reviews/round-312-closing.md` |
 | 2026-10-14 | 315라운드 닫기: 소유자 Form 재구성 PR #379 병합(여섯 fractal 문서, 이름 함정 해소, 표준 틀 확정). 보충 1줄 | `reviews/round-315-closing.md` |
+| 2026-10-14 | 319라운드 닫기: 정돈-E PR #380 병합(8f4dce4ab; 표면 +2, 시험 3835, 코드 58, push는 호출 뒤 길이). 보충 3줄 | `reviews/round-319-closing.md` |
 
 ## 2. 라운드별 요지
 
@@ -551,3 +552,4 @@
 - **316라운드(2026-10-14, 소유자).** constants·hooks organ, organ 안 barrel 금지, Field 재구성(reviews/round-316-owner-answers.md).
 - **317라운드(2026-10-14, 소유자).** barrel 삭제, 병렬, 병합 위임, surface runtime, 단일 PR(reviews/round-317-owner-answers.md).
 - **318라운드(2026-10-14, 소유자).** fieldInputs 입력마다 fractal(넷째 손질), ArrayItems 래핑 유지(reviews/round-318-owner-answers.md).
+- **263라운드(2026-10-14, 소유자).** PR #364(07b-4) 병합을 명시적으로 허가했다(reviews/round-263-owner-answers.md).
