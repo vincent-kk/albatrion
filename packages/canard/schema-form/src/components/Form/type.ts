@@ -87,7 +87,7 @@ export interface FormProps<
    *   - `true`: Always show
    *   - `false`: Never show
    *   - `ShowError.Dirty`: Show when value has changed
-   *   - `ShowError.Touched`: Show when input has been focused
+   *   - `ShowError.Touched`: Show after the input has lost focus once
    *   - `ShowError.DirtyTouched`: Show when both Dirty and Touched states are met
    */
   showError?: boolean | ShowError;

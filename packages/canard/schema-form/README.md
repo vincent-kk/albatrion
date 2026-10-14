@@ -67,13 +67,21 @@ interface FormProps<
   /** Apply disabled property to all FieldInput components */
   disabled?: boolean;
   /** Function called when the value of this SchemaForm changes */
-  onChange?: SetStateFn<Value>;
-  /** Function called when this SchemaForm is validated */
-  onValidate?: Fn<[errors: readonly ValidationIssue[]]>;
+  onChange?: Fn<[value: Value]>;
+  /** Function called with the form error list when a validation result or the external error list changes it */
+  onValidate?: Fn<[errors: FieldNode['globalErrors']]>;
   /** Function called when the form is submitted */
   onSubmit?: Fn<[value: Value], Promise<void> | void>;
   /** Function called when the state of this SchemaForm changes */
-  onStateChange?: Fn<[state: NodeStateFlags]>;
+  onStateChange?: Fn<[state: FieldNode['globalState']]>;
+  /** Function called with each error record of this form instance, including construction and render failures */
+  onError?: Fn<[record: FormErrorRecord]>;
+  /** Function called when the root diagnostics change after preparation */
+  onDiagnosticsChange?: Fn<[diagnostics: FieldNode['diagnostics']]>;
+  /** Form default for `controls.unsetOnInactive`: drop a field's value when it leaves the shape (a node's own policy wins) */
+  unsetOnInactive?: boolean;
+  /** Form default that suppresses automatic writes without blocking imperative writes */
+  disableAutomaticWrites?: boolean;
   /** FieldInput definition list */
   fieldInputDefinitions?: FieldInputDefinition[];
   /** FieldInput path mapping */
@@ -87,7 +95,7 @@ interface FormProps<
   /** Error renderer component */
   FormErrorRenderer?: ComponentType<FieldRendererProps>;
   /** Initial validation errors, default is undefined */
-  errors?: readonly ValidationIssue[];
+  errors?: FieldNode['globalErrors'];
   /** Custom format error function */
   formatError?: FieldRendererProps['formatError'];
   /**
@@ -95,7 +103,7 @@ interface FormProps<
    *   - `true`: Always show
    *   - `false`: Never show
    *   - `ShowError.Dirty`: Show when value has changed
-   *   - `ShowError.Touched`: Show when input has been focused
+   *   - `ShowError.Touched`: Show after the input has lost focus once
    *   - `ShowError.DirtyTouched`: Show when both Dirty and Touched conditions are met
    */
   showError?: boolean | ShowError;
@@ -126,29 +134,61 @@ interface FormProps<
 
 #### FormHandle
 
-```ts
+Every member except `getAttachedFilesMap` and `showError` addresses the form's current root node. When the form rebuilds its tree, the handle follows the new root.
+
+```typescript
 interface FormHandle<
-  Schema extends JSONSchema,
+  Schema extends JSONSchema = JSONSchema,
   Value extends AllowedValue = InferValueType<Schema>,
 > {
+  /** Current root node (undefined before the first mount) */
   node?: InferFieldNode<Schema>;
-  focus: Fn<[dataPath: FieldNode['path']]>;
-  select: Fn<[dataPath: FieldNode['path']]>;
-  reset: Fn;
+  /** Focus the input at `path` (root when omitted) */
+  focus: Fn<[path?: FieldNode['path']]>;
+  /** Select the value of the input at `path` (root when omitted) */
+  select: Fn<[path?: FieldNode['path']]>;
+  /** Ask the input at `path` to re-read its committed value (root when omitted) */
+  refresh: Fn<[path?: FieldNode['path']]>;
+  /** Remount the rendered subtree at `path` (root when omitted) */
+  remount: Fn<[path?: FieldNode['path']]>;
+  /** Reload the committed defaults; only the automatic-write options are accepted */
+  reset: Fn<
+    [
+      option?:
+        | typeof SetValueOption.DisableAutomaticWrites
+        | typeof SetValueOption.EnableAutomaticWrites,
+    ]
+  >;
+  /** Find the node at a JSONPointer path */
   findNode: Fn<[path: FieldNode['path']], FieldNode | null>;
-  findNodes: Fn<[path: FieldNode['path']], FieldNode[]>;
-  getState: Fn<[], NodeStateFlags>;
-  setState: Fn<[state: NodeStateFlags]>;
+  /** Find every node matching a JSONPointer path */
+  findNodes: Fn<[path: FieldNode['path']], readonly FieldNode[]>;
+  /** Interaction flags that are true on at least one node */
+  getState: Fn<[], FieldNode['globalState']>;
+  /** Patch interaction flags on every node */
+  setState: Fn<[state: FieldNode['state']]>;
+  /** Clear interaction flags on every node */
   clearState: Fn;
+  /** Current output value (array output filters applied) */
   getValue: Fn<[], Value>;
+  /** Set the value */
   setValue: SetStateFnWithOptions<Value>;
-  getErrors: Fn<[], readonly ValidationIssue[]>;
+  /** All current errors */
+  getErrors: Fn<[], FieldNode['globalErrors']>;
+  /** Attached files map */
   getAttachedFilesMap: Fn<[], AttachedFilesMap>;
-  validate: Fn<[], Promise<readonly ValidationIssue[]>>;
-  showError: Fn<[visible: boolean]>;
-  submit: TrackableHandlerFunction<[], void, { loading: boolean }>;
+  /** Run validation and return the errors */
+  validate: Fn<[], Promise<FieldNode['globalErrors']>>;
+  /** `true` (default) shows every error; `false` returns to the `showError` prop */
+  showError: Fn<[visible?: boolean]>;
+  /** Submit the form; `useFormSubmit` reads its pending state */
+  submit: TrackableHandlerFunction;
 }
 ```
+
+- A `path` that matches no node makes `focus`, `select`, `refresh` and `remount` do nothing.
+- Before the first mount, queries do not throw: `findNode` returns `null`, `findNodes`, `getErrors` and `validate` return an empty array, and `getState` returns an empty object.
+- `showError(false)` does not hide errors; it hands control back to the Form's `showError` prop.
 
 #### AttachedFilesMap
 
@@ -168,7 +208,7 @@ interface FormChildrenProps<
   jsonSchema: Schema;
   defaultValue?: Value;
   value?: Value;
-  errors?: readonly ValidationIssue[];
+  errors?: FieldNode['globalErrors'];
 }
 ```
 
@@ -483,21 +523,27 @@ The conditions for a FieldInput can be defined using a function or an object:
 
 ```ts
 type FieldInputHint = {
-  jsonSchema: JSONSchema;
-  type: string;
-  format: string;
-  inputType: string;
+  type: FieldNodeType;
+  schemaType: FieldNode['schemaType'];
+  typeMismatch: boolean;
   path: string;
-  [alt: string]: any;
+  required: boolean;
+  nullable: boolean;
+  jsonSchema: JSONSchema | JSONSchemaWithVirtual;
+  format?: string;
+  inputType?: string;
 };
 type FieldInputTestFn = Fn<[hint: FieldInputHint], boolean>;
 
+// type, schemaType, path, format and inputType match one value or any value in a list
 type FieldInputTestObject = Partial<{
-  type: Array<string>;
-  jsonSchema: JSONSchema;
-  format: Array<string>;
-  inputType: Array<string>;
-  [alt: string]: any;
+  type: FieldNodeType | FieldNodeType[];
+  schemaType: FieldNode['schemaType'] | FieldNode['schemaType'][];
+  path: string | string[];
+  format: string | string[];
+  inputType: string | string[];
+  required: boolean;
+  nullable: boolean;
 }>;
 ```
 
@@ -514,9 +560,13 @@ The selected component will receive the following props:
 interface FieldInputProps<
   Value extends AllowedValue = any,
   Context extends Dictionary = object,
-  WatchValues extends Array<any> = Array<any>,
-  Schema extends JSONSchemaWithVirtual = InferJSONSchema<Value>,
-  Node extends FieldNode = InferFieldNode<Schema>,
+  WatchValues extends ReadonlyArray<any> = ReadonlyArray<any>,
+  Schema extends JSONSchema | JSONSchemaWithVirtual = unknown extends Value
+    ? JSONSchema
+    : InferJSONSchema<Value>,
+  Node extends FieldNode = unknown extends Value
+    ? FieldNode
+    : InferFieldNode<Schema>,
 > {
   /** JSON Schema for the FieldInput Component */
   jsonSchema: Schema;
@@ -528,8 +578,12 @@ interface FieldInputProps<
   required: boolean;
   /** Field node assigned to the FieldInput Component */
   node: Node;
-  /** JSON Schema type of this field (e.g., 'string', 'number', 'object', 'array') */
-  type: Node['schemaType'];
+  /** Node kind (e.g., 'string', 'number', 'object', 'array') */
+  type: Node['type'];
+  /** Authored accepted kind(s), including 'integer' */
+  schemaType: Node['schemaType'];
+  /** Whether the stored value mismatches the accepted kinds */
+  typeMismatch: Node['typeMismatch'];
   /** Name of the field node assigned to the FieldInput Component */
   name: Node['name'];
   /** Path of the field node assigned to the FieldInput Component */
@@ -1370,7 +1424,7 @@ export const ArrayForm = () => {
         },
       },
     },
-  };
+  } as const;
 
   return (
     <Form jsonSchema={jsonSchema}>
@@ -1378,8 +1432,14 @@ export const ArrayForm = () => {
         <div className="array-form">
           <h3>Users</h3>
 
-          {node && isArrayNode(node.find('/users')) && (
-            <button onClick={() => node.find('/users').push()} type="button">
+          {node?.find('/users')?.type === 'array' && (
+            <button
+              onClick={() => {
+                const users = node.find('/users');
+                if (users && isArrayNode(users)) users.push();
+              }}
+              type="button"
+            >
               Add User
             </button>
           )}
@@ -2094,7 +2154,7 @@ export const AdvancedSubmitForm = () => {
   };
 
   // Submission state management
-  const { submit, loading } = useFormSubmit(formRef);
+  const { submit, pending } = useFormSubmit(formRef);
 
   const onSubmitClick = async () => {
     setErrors([]); // Clear previous errors
@@ -2123,21 +2183,21 @@ export const AdvancedSubmitForm = () => {
 
       <button
         onClick={onSubmitClick}
-        disabled={loading}
+        disabled={pending}
         style={{
           marginTop: '16px',
           padding: '8px 16px',
-          backgroundColor: loading ? '#ccc' : '#1890ff',
+          backgroundColor: pending ? '#ccc' : '#1890ff',
           color: 'white',
           border: 'none',
           borderRadius: '4px',
-          cursor: loading ? 'not-allowed' : 'pointer',
+          cursor: pending ? 'not-allowed' : 'pointer',
         }}
       >
-        {loading ? 'Submitting...' : 'Submit'}
+        {pending ? 'Submitting...' : 'Submit'}
       </button>
 
-      {loading && (
+      {pending && (
         <div style={{ marginTop: '8px', color: '#666' }}>
           Processing... Please wait.
         </div>
@@ -2223,7 +2283,7 @@ export const ErrorHandlingForm = () => {
     return response.json();
   };
 
-  const { submit, loading } = useFormSubmit(formRef);
+  const { submit, pending } = useFormSubmit(formRef);
 
   const onSubmitClick = async () => {
     setSubmitError(''); // Clear previous errors
@@ -2268,10 +2328,10 @@ export const ErrorHandlingForm = () => {
 
       <button
         onClick={onSubmitClick}
-        disabled={loading}
+        disabled={pending}
         style={{ marginTop: '16px' }}
       >
-        {loading ? 'Logging in...' : 'Login'}
+        {pending ? 'Logging in...' : 'Login'}
       </button>
     </div>
   );

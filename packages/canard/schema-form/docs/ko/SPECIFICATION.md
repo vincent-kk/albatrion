@@ -153,13 +153,21 @@ interface FormProps<
   /** 모든 FieldInput 컴포넌트에 disabled 속성 적용 */
   disabled?: boolean;
   /** 이 SchemaForm의 값이 변경될 때 호출되는 함수 */
-  onChange?: SetStateFn<Value>;
-  /** 이 SchemaForm이 검증될 때 호출되는 함수 */
-  onValidate?: Fn<[errors: readonly ValidationIssue[]]>;
+  onChange?: Fn<[value: Value]>;
+  /** 검증 결과나 외부 오류 목록이 폼 오류 목록을 바꿀 때 호출되는 함수 */
+  onValidate?: Fn<[errors: FieldNode['globalErrors']]>;
   /** 폼이 제출될 때 호출되는 함수 */
   onSubmit?: Fn<[value: Value], Promise<void> | void>;
   /** 이 SchemaForm의 상태가 변경될 때 호출되는 함수 */
-  onStateChange?: Fn<[state: NodeStateFlags]>;
+  onStateChange?: Fn<[state: FieldNode['globalState']]>;
+  /** 이 폼 인스턴스의 오류 기록(생성·렌더 실패 포함)마다 호출되는 함수 */
+  onError?: Fn<[record: FormErrorRecord]>;
+  /** 준비가 끝난 뒤 루트 진단이 바뀔 때 호출되는 함수 */
+  onDiagnosticsChange?: Fn<[diagnostics: FieldNode['diagnostics']]>;
+  /** `controls.unsetOnInactive`의 폼 기본값: 형상에서 빠진 필드의 값을 지움 (노드 자신의 정책이 우선) */
+  unsetOnInactive?: boolean;
+  /** 명령형 쓰기는 막지 않고 자동 쓰기만 억제하는 폼 기본값 */
+  disableAutomaticWrites?: boolean;
   /** FieldInput 정의 목록 */
   fieldInputDefinitions?: FieldInputDefinition[];
   /** FieldInput 경로 매핑 */
@@ -173,7 +181,7 @@ interface FormProps<
   /** 오류 렌더러 컴포넌트 */
   FormErrorRenderer?: ComponentType<FieldRendererProps>;
   /** 초기 검증 오류, 기본값은 undefined */
-  errors?: readonly ValidationIssue[];
+  errors?: FieldNode['globalErrors'];
   /** 커스텀 오류 포맷 함수 */
   formatError?: FieldRendererProps['formatError'];
   /**
@@ -181,7 +189,7 @@ interface FormProps<
    *   - `true`: 항상 표시
    *   - `false`: 표시 안함
    *   - `ShowError.Dirty`: 값이 변경되었을 때 표시
-   *   - `ShowError.Touched`: 입력에 포커스가 있었을 때 표시
+   *   - `ShowError.Touched`: 입력에서 포커스가 한 번 빠진 뒤 표시
    *   - `ShowError.DirtyTouched`: Dirty와 Touched 조건 모두 충족 시 표시
    */
   showError?: boolean | ShowError;
@@ -214,45 +222,61 @@ interface FormProps<
 
 ### FormHandle
 
+`getAttachedFilesMap`과 `showError`를 뺀 모든 멤버는 폼의 현재 루트 노드를 대상으로 합니다. 폼이 트리를 새로 만들면 핸들도 새 루트를 따릅니다.
+
 ```typescript
 interface FormHandle<
-  Schema extends JSONSchema,
+  Schema extends JSONSchema = JSONSchema,
   Value extends AllowedValue = InferValueType<Schema>,
 > {
-  /** 루트 노드 */
+  /** 현재 루트 노드 (첫 마운트 전에는 undefined) */
   node?: InferFieldNode<Schema>;
-  /** 특정 경로의 입력 필드에 포커스 */
-  focus: Fn<[dataPath: FieldNode['path']]>;
-  /** 특정 경로의 입력 필드 선택 */
-  select: Fn<[dataPath: FieldNode['path']]>;
-  /** 폼 초기화 */
-  reset: Fn;
-  /** 경로로 노드 찾기 */
+  /** `path`의 입력에 포커스 (생략하면 루트) */
+  focus: Fn<[path?: FieldNode['path']]>;
+  /** `path`의 입력 값을 선택 (생략하면 루트) */
+  select: Fn<[path?: FieldNode['path']]>;
+  /** `path`의 입력이 커밋된 값을 다시 읽게 함 (생략하면 루트) */
+  refresh: Fn<[path?: FieldNode['path']]>;
+  /** `path`에 렌더된 하위 트리를 다시 마운트 (생략하면 루트) */
+  remount: Fn<[path?: FieldNode['path']]>;
+  /** 커밋된 기본값을 다시 불러옴; 자동 쓰기 옵션만 받음 */
+  reset: Fn<
+    [
+      option?:
+        | typeof SetValueOption.DisableAutomaticWrites
+        | typeof SetValueOption.EnableAutomaticWrites,
+    ]
+  >;
+  /** JSONPointer 경로의 노드 찾기 */
   findNode: Fn<[path: FieldNode['path']], FieldNode | null>;
-  /** 경로로 여러 노드 찾기 */
-  findNodes: Fn<[path: FieldNode['path']], FieldNode[]>;
-  /** 현재 상태 가져오기 */
-  getState: Fn<[], NodeStateFlags>;
-  /** 상태 설정 */
-  setState: Fn<[state: NodeStateFlags]>;
-  /** 상태 초기화 */
+  /** JSONPointer 경로에 맞는 모든 노드 찾기 */
+  findNodes: Fn<[path: FieldNode['path']], readonly FieldNode[]>;
+  /** 하나 이상의 노드에서 참인 상호작용 플래그 */
+  getState: Fn<[], FieldNode['globalState']>;
+  /** 모든 노드의 상호작용 플래그 패치 */
+  setState: Fn<[state: FieldNode['state']]>;
+  /** 모든 노드의 상호작용 플래그 지우기 */
   clearState: Fn;
-  /** 현재 값 가져오기 */
+  /** 현재 출력 값 (배열 출력 필터 적용) */
   getValue: Fn<[], Value>;
   /** 값 설정 */
   setValue: SetStateFnWithOptions<Value>;
-  /** 현재 오류 가져오기 */
-  getErrors: Fn<[], readonly ValidationIssue[]>;
-  /** 첨부 파일 맵 가져오기 */
+  /** 현재 오류 전체 */
+  getErrors: Fn<[], FieldNode['globalErrors']>;
+  /** 첨부 파일 맵 */
   getAttachedFilesMap: Fn<[], AttachedFilesMap>;
-  /** 검증 실행 */
-  validate: Fn<[], Promise<readonly ValidationIssue[]>>;
-  /** 오류 표시 설정 */
-  showError: Fn<[visible: boolean]>;
-  /** 폼 제출 */
-  submit: TrackableHandlerFunction<[], void, { loading: boolean }>;
+  /** 검증을 실행하고 오류를 반환 */
+  validate: Fn<[], Promise<FieldNode['globalErrors']>>;
+  /** `true`(기본)는 모든 오류 표시, `false`는 `showError` prop으로 되돌림 */
+  showError: Fn<[visible?: boolean]>;
+  /** 폼 제출; `useFormSubmit`이 진행 상태를 읽음 */
+  submit: TrackableHandlerFunction;
 }
 ```
+
+- 노드가 없는 `path`를 주면 `focus`, `select`, `refresh`, `remount`는 아무것도 하지 않습니다.
+- 첫 마운트 전에도 조회는 예외를 던지지 않습니다. `findNode`는 `null`, `findNodes`·`getErrors`·`validate`는 빈 배열, `getState`는 빈 객체를 반환합니다.
+- `showError(false)`는 오류를 숨기지 않습니다. 표시 여부를 Form의 `showError` prop에 되돌려 줍니다.
 
 ### FormChildrenProps
 
@@ -265,7 +289,7 @@ interface FormChildrenProps<
   jsonSchema: Schema;
   defaultValue?: Value;
   value?: Value;
-  errors?: readonly ValidationIssue[];
+  errors?: FieldNode['globalErrors'];
 }
 ```
 
@@ -338,16 +362,36 @@ await delay(); // 초기화 완료 대기
 
 ### 노드 상태 플래그
 
+노드의 상호작용 플래그는 `node.state`에 있으며 키는 `FieldNodeState` enum입니다. 직접 정한 키를 더 둘 수도 있습니다.
+
 ```typescript
-node.dirty; // 초기화 이후 값이 변경되었는가?
-node.touched; // 사용자가 이 필드와 상호작용했는가?
-node.validated; // 검증이 실행되었는가?
-node.errors; // 현재 검증 오류
-node.visible; // 필드가 보이는가?
-node.active; // 필드가 활성 상태인가?
-node.readOnly; // 필드가 읽기 전용인가?
-node.disabled; // 필드가 비활성화되었는가?
-node.initialized; // 노드가 초기화를 완료했는가?
+import { FieldNodeState } from '@canard/schema-form';
+
+node.state[FieldNodeState.Dirty]; // 사용자가 이 필드의 값을 바꾼 뒤 true
+node.state[FieldNodeState.Touched]; // 사용자가 이 필드를 떠난(blur) 뒤 true
+node.state[FieldNodeState.ErrorVisible]; // 오류 표시를 직접 지정한 값(지정했을 때만)
+
+node.setState({ [FieldNodeState.ErrorVisible]: true }); // 이 노드의 플래그 패치
+node.rootNode.globalState; // 하나 이상의 노드에서 참인 플래그
+```
+
+| 플래그         | 켜는 곳                       | 효과                                                   |
+| -------------- | ----------------------------- | ------------------------------------------------------ |
+| `Dirty`        | 사용자 입력이 값을 쓸 때마다  | `ShowError.Dirty`, `ShowError.DirtyTouched`가 사용     |
+| `Touched`      | blur, 한 애니메이션 프레임 뒤 | `ShowError.Touched`, `ShowError.DirtyTouched`가 사용   |
+| `ErrorVisible` | 사용자가 `setState`로         | `true`나 `false`가 그 노드의 `showError` 정책보다 우선 |
+
+`controls.resetInteraction` 규칙은 조건이 false에서 true로 바뀔 때, 또는 조건이 true인 채로 필드가 로드되거나 형상에 들어올 때 `Dirty`와 `Touched`를 지웁니다. `FormHandle.setState`는 모든 노드를 패치하고, `FormHandle.reset()`과 `clearState()`는 직접 정한 키를 포함해 모든 플래그를 지웁니다.
+
+다른 노드 속성은 필드의 현재 상태를 알려 줍니다.
+
+```typescript
+node.errors; // 이 필드에 표시되는 오류 (검증 오류와 외부 오류)
+node.active; // 조건(`controls.active`, if/then/else, oneOf)이 필드를 제외하는 동안 false
+node.visible; // 모든 active 선언을 합친 뒤의 표시 여부
+node.enabled; // active이면서 visible
+node.readOnly; // 읽기 전용 (스키마 `readOnly` 포함)
+node.disabled; // 비활성화 (`enabled`와 별개)
 ```
 
 ---
@@ -369,25 +413,29 @@ type FieldInputDefinition<T = unknown> = {
 // 함수 형태
 type FieldInputTestFn = Fn<[hint: FieldInputHint], boolean>;
 
-// 객체 형태
+// 객체 형태: 각 필드가 받아들일 힌트를 좁히며, 생략한 필드는 무엇이든 맞습니다.
+// type, schemaType, path, format, inputType은 값 하나 또는 목록 중 아무 값과 맞습니다.
 type FieldInputTestObject = Partial<{
-  type: Array<string>;
-  jsonSchema: JSONSchema;
-  format: Array<string>;
-  inputType: Array<string>;
+  type: FieldNodeType | FieldNodeType[];
+  schemaType: FieldNode['schemaType'] | FieldNode['schemaType'][];
+  path: string | string[];
+  format: string | string[];
+  inputType: string | string[];
+  required: boolean;
   nullable: boolean;
-  [alt: string]: any;
 }>;
 
 // FieldInputHint 객체
 type FieldInputHint = {
-  jsonSchema: JSONSchema;
-  type: string;
-  format: string;
-  inputType: string;
+  type: FieldNodeType; // 노드 종류: 'string', 'number', 'object', 'array', 'virtual', 'union' 등
+  schemaType: FieldNode['schemaType']; // 작성한 허용 종류('integer' 포함)
+  typeMismatch: boolean; // 저장된 값이 허용 종류와 어긋나는지
   path: string;
+  required: boolean;
   nullable: boolean;
-  [alt: string]: any;
+  jsonSchema: JSONSchema | JSONSchemaWithVirtual;
+  format?: string;
+  inputType?: string;
 };
 ```
 
@@ -399,16 +447,22 @@ inputType은 정의의 test가 해석하는 문자열 힌트이며 HTML input ty
 interface FieldInputProps<
   Value extends AllowedValue = any,
   Context extends Dictionary = object,
-  WatchValues extends Array<any> = Array<any>,
-  Schema extends JSONSchemaWithVirtual = InferJSONSchema<Value>,
-  Node extends FieldNode = InferFieldNode<Schema>,
+  WatchValues extends ReadonlyArray<any> = ReadonlyArray<any>,
+  Schema extends JSONSchema | JSONSchemaWithVirtual = unknown extends Value
+    ? JSONSchema
+    : InferJSONSchema<Value>,
+  Node extends FieldNode = unknown extends Value
+    ? FieldNode
+    : InferFieldNode<Schema>,
 > {
   jsonSchema: Schema; // FieldInput 컴포넌트의 JSON Schema
   readOnly: boolean; // 읽기 전용 상태
   disabled: boolean; // 비활성화 상태
   required: boolean; // 필수 여부
   node: Node; // 필드 노드
-  type: Node['schemaType']; // JSON Schema 타입
+  type: Node['type']; // 노드 종류
+  schemaType: Node['schemaType']; // 작성한 허용 종류('integer' 포함)
+  typeMismatch: Node['typeMismatch']; // 저장된 값이 허용 종류와 어긋나는지
   name: Node['name']; // 노드 이름
   path: Node['path']; // 노드 경로
   nullable: Node['nullable']; // null 허용 여부
@@ -491,8 +545,8 @@ const formInputMap = {
     disabled: boolean | string;          // 비활성화
     default: any;                        // 새로 나타난 노드의 채움 값
     derived: string;                     // 파생 값
-    unsetValue: string;                  // false에서 true로 바뀌면 값을 비움
-    resetInteraction: string;            // false에서 true로 바뀌면 dirty/touched를 비움
+    unsetValue: boolean | string;        // false에서 true로 바뀌면 값을 비움
+    resetInteraction: boolean | string;  // false에서 true로 바뀌면 dirty/touched를 비움
     unsetOnInactive: boolean | string;   // 노드가 형상을 떠날 때 유지된 값을 버림
     fields: { targets: string[]; controls: { /* 앞의 아홉 키 */ } }[];
     injectTo: (value, ctx) => ...;       // 이 노드의 값이 바뀔 때마다 다른 노드로 값을 밀어 넣기
@@ -609,18 +663,13 @@ const jsonSchema = {
 
 ### oneOf / anyOf 분기의 type
 
-분기는 보통 `type`을 생략하고 부모의 타입을 따릅니다. 선언한다면 부모가 허용하는 것보다 넓게 말할 수 없습니다.
+분기는 보통 `type`을 생략하고 부모의 타입을 따릅니다. 노드의 종류는 부모 자신의 `type`이 정하며, 분기의 `type`은 이를 바꾸지 않습니다.
 
-| 부모 `type`                                             | 허용되는 분기 `type`                         |
-| ------------------------------------------------------- | -------------------------------------------- |
-| `'object'`                                              | 생략, `'object'`, `['object']`               |
-| `['object', 'null']` 또는 `'object'` + `nullable: true` | 생략, 부모와 같은 타입, `'object'`, `'null'` |
+- 부모와 다른 `type`을 선언한 분기도 스키마를 불러올 때 거부되지 않습니다. 폼은 부모의 종류를 유지하고 검증기는 그 분기를 작성된 `type` 그대로 평가하므로, 그 분기는 자기 `type`의 값에만 맞습니다.
+- 부모가 선언한 프로퍼티를 게이트 없는 분기(`controls.active`가 없고 `controls.discriminator`가 고르지 않는 분기)가 다시 선언하면 부모 프로퍼티의 `type` 안에 있어야 합니다. 더 좁은 `type`은 허용되고 부모의 것이 이기며, 그 밖의 `type`은 `SHARED_NODE_KIND_CONFLICT`를 던집니다. 게이트 없는 분기들만 선언한 프로퍼티는 종류가 서로 같아야 하며, 다르면 같은 오류를 던집니다. 게이트가 걸린 분기의 프로퍼티는 비교하지 않습니다. 부모가 선언한 프로퍼티면 부모의 `type`이 이기고, 아니면 그 분기의 필드가 자기 종류를 가집니다.
+- 판별 태그에는 `kind: { type: 'string', const: 'cat' }`처럼 `type`을 붙여도 됩니다. 분기마다 태그의 종류가 다르거나 태그 값이 겹치면 `DISCRIMINATOR_MISMATCH`, 태그의 `const` / `enum` 값에 공통 값이 없으면 `EMPTY_ENUM_INTERSECTION`을 던지고, 태그 자신의 `type` 밖에 있는 태그 값은 경고 `DISCRIMINATOR_BRANCH_UNREACHABLE`을 냅니다.
 
-분기 자신의 `nullable: true` 플래그는 부모와 비교하지 않으므로 `'object'` + `nullable: true`는 어떤 객체 아래에서도 허용됩니다. 그 밖의 선언 — nullable이 아닌 객체 아래의 `'null'`·`['object', 'null']` 분기, `'string'`, `'array'` — 은 `COMPOSITION_TYPE_REDEFINITION`을 던집니다.
-
-이 규칙과 아래 두 개발 환경 경고는 객체가 자식 노드를 만드는 경우에만 실행됩니다. 객체 전체를 하나의 입력으로 다루는 경우 — `options.terminal: true`이거나 객체 스키마에 `presentation.FieldInput` 컴포넌트를 지정한 경우 — 에는 분기를 만들지 않으므로 분기 type을 검사하지 않고 두 경고도 나오지 않습니다. 검증기는 그때도 작성된 스키마를 그대로 봅니다.
-
-분기의 `properties` 안에서 `type`이 **있는** 항목은 필드이고, `type` 없이 `const`나 `enum`만 가진 항목은 호스트의 `controls.discriminator`가 읽어 그 분기를 고르는 태그입니다. 이런 판별자에 `type`을 붙이면 필드가 되어 부모의 같은 이름 프로퍼티와 충돌합니다(`COMPOSITION_PROPERTY_REDEFINITION`).
+이 오류들은 스키마 오류입니다(`isJSONSchemaError`로 판별). 객체 전체를 하나의 입력으로 다루는 경우 — `options.terminal: true`이거나 객체 스키마에 `presentation.FieldInput` 컴포넌트를 지정한 경우 — 에는 자식 노드를 만들지 않으므로 위의 프로퍼티 검사는 그 분기들에 대해 실행되지 않습니다. `DISCRIMINATOR_MISMATCH`, `EMPTY_ENUM_INTERSECTION`과 아래의 `NULL_BRANCH_IGNORED_FOR_FORM` 경고는 그대로 적용되고, `DISCRIMINATOR_BRANCH_UNREACHABLE`은 객체가 만들지 않는 자식 필드를 기준으로 판정하므로 보고되지 않으며, 검증기는 작성된 스키마를 그대로 봅니다.
 
 #### null 분기 패턴
 
@@ -651,7 +700,7 @@ const jsonSchema = {
 - null 분기는 검증기를 위한 것입니다. 필드가 없고 활성 분기가 되지 않으며, 거기에 쓴 조건이나 `properties`는 무시되고 개발 환경 경고 `NULL_BRANCH_IGNORED_FOR_FORM`이 나옵니다.
 - 객체가 `null`인지는 값이 정하고, 어떤 객체 분기가 보이는지는 분기 조건이 정합니다. 값이 `null`인 동안 선택된 분기의 자식 필드는 default 없이 표시됩니다([Nullable 객체와 배열](#nullable-객체와-배열) 참고). 객체·배열 필드에 종류가 맞지 않는 값이 들어 있을 때도, 폼 표시·노드 데이터·출력 값이 어긋나지 않게 하려는 같은 까닭으로 마찬가지입니다. 예를 들어 객체에 문자열을 로드하면, 자식에 값을 주기 전까지 자식은 default를 받지 않습니다.
 - null 분기의 위치는 상관없습니다. 사용 중인 분기의 오류는 해당 필드에 전달됩니다. 객체 값이 `oneOf`를 통과하지 못하면 null 분기도 맞지 않은 다른 분기처럼 자기 불일치("must be null")를 객체에 보고하며, 이 오류는 `oneOf` 오류와 함께 나옵니다.
-- `oneOf`가 `null`을 검증할 수 없는 nullable 객체 — 받아 주는 분기가 없거나 여러 개인 경우 — 는 개발 환경 경고 `NULLABLE_ONE_OF_NULL_UNREACHABLE`을 냅니다. `anyOf`는 이런 주의가 필요 없습니다: null 분기 하나 또는 type 없는 분기만으로 충족됩니다.
+- `oneOf`가 `null`을 검증할 수 없는 nullable 객체 — 받아 주는 분기가 없거나 여러 개인 경우 — 는 값이 `null`일 때마다 검증에서 실패합니다. 폼은 이를 경고하지 않으므로 스키마를 쓸 때 분기를 확인하십시오. `anyOf`는 이런 주의가 필요 없습니다: null 분기 하나 또는 type 없는 분기만으로 충족됩니다.
 
 ### if-then-else
 
@@ -891,7 +940,7 @@ arrayNode.push('custom'); // 커스텀 값으로 항목 추가
 arrayNode.remove(index); // 인덱스의 항목 제거
 arrayNode.clear(); // 모든 항목 제거
 
-arrayNode.length; // 현재 항목 수
+arrayNode.children?.length; // 현재 항목 노드 수 (하나의 입력으로 렌더된 배열은 children이 null)
 arrayNode.children; // 자식 노드 배열
 ```
 
@@ -981,9 +1030,9 @@ const files = formRef.current.getAttachedFilesMap();
 ### 폼 제출
 
 ```tsx
-import { useFormSubmit } from '@canard/schema-form';
+import { isValidationError, useFormSubmit } from '@canard/schema-form';
 
-const { submit, loading } = useFormSubmit(formRef);
+const { submit, pending } = useFormSubmit(formRef);
 
 const handleClick = async () => {
   try {
@@ -1110,8 +1159,8 @@ const schema = {
 
 // FieldInput에서 nullable 조건
 const definitions = [
-  { test: { type: 'string', nullable: true }, component: NullableInput },
-  { test: { type: 'string', nullable: false }, component: RequiredInput },
+  { test: { type: 'string', nullable: true }, Component: NullableInput },
+  { test: { type: 'string', nullable: false }, Component: RequiredInput },
 ];
 ```
 

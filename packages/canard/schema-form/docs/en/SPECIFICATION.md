@@ -153,13 +153,21 @@ interface FormProps<
   /** Apply disabled property to all FieldInput components */
   disabled?: boolean;
   /** Function called when the value of this SchemaForm changes */
-  onChange?: SetStateFn<Value>;
-  /** Function called when this SchemaForm is validated */
-  onValidate?: Fn<[errors: readonly ValidationIssue[]]>;
+  onChange?: Fn<[value: Value]>;
+  /** Function called with the form error list when a validation result or the external error list changes it */
+  onValidate?: Fn<[errors: FieldNode['globalErrors']]>;
   /** Function called when the form is submitted */
   onSubmit?: Fn<[value: Value], Promise<void> | void>;
   /** Function called when the state of this SchemaForm changes */
-  onStateChange?: Fn<[state: NodeStateFlags]>;
+  onStateChange?: Fn<[state: FieldNode['globalState']]>;
+  /** Function called with each error record of this form instance, including construction and render failures */
+  onError?: Fn<[record: FormErrorRecord]>;
+  /** Function called when the root diagnostics change after preparation */
+  onDiagnosticsChange?: Fn<[diagnostics: FieldNode['diagnostics']]>;
+  /** Form default for `controls.unsetOnInactive`: drop a field's value when it leaves the shape (a node's own policy wins) */
+  unsetOnInactive?: boolean;
+  /** Form default that suppresses automatic writes without blocking imperative writes */
+  disableAutomaticWrites?: boolean;
   /** FieldInput definition list */
   fieldInputDefinitions?: FieldInputDefinition[];
   /** FieldInput path mapping */
@@ -173,7 +181,7 @@ interface FormProps<
   /** Error renderer component */
   FormErrorRenderer?: ComponentType<FieldRendererProps>;
   /** Initial validation errors, default is undefined */
-  errors?: readonly ValidationIssue[];
+  errors?: FieldNode['globalErrors'];
   /** Custom format error function */
   formatError?: FieldRendererProps['formatError'];
   /**
@@ -181,7 +189,7 @@ interface FormProps<
    *   - `true`: Always show
    *   - `false`: Never show
    *   - `ShowError.Dirty`: Show when value has changed
-   *   - `ShowError.Touched`: Show when input has been focused
+   *   - `ShowError.Touched`: Show after the input has lost focus once
    *   - `ShowError.DirtyTouched`: Show when both Dirty and Touched conditions are met
    */
   showError?: boolean | ShowError;
@@ -216,45 +224,61 @@ interface FormProps<
 
 ### FormHandle
 
+Every member except `getAttachedFilesMap` and `showError` addresses the form's current root node. When the form rebuilds its tree, the handle follows the new root.
+
 ```typescript
 interface FormHandle<
-  Schema extends JSONSchema,
+  Schema extends JSONSchema = JSONSchema,
   Value extends AllowedValue = InferValueType<Schema>,
 > {
-  /** Root node */
+  /** Current root node (undefined before the first mount) */
   node?: InferFieldNode<Schema>;
-  /** Focus input field at specific path */
-  focus: Fn<[dataPath: FieldNode['path']]>;
-  /** Select input field at specific path */
-  select: Fn<[dataPath: FieldNode['path']]>;
-  /** Reset form */
-  reset: Fn;
-  /** Find node by path */
+  /** Focus the input at `path` (root when omitted) */
+  focus: Fn<[path?: FieldNode['path']]>;
+  /** Select the value of the input at `path` (root when omitted) */
+  select: Fn<[path?: FieldNode['path']]>;
+  /** Ask the input at `path` to re-read its committed value (root when omitted) */
+  refresh: Fn<[path?: FieldNode['path']]>;
+  /** Remount the rendered subtree at `path` (root when omitted) */
+  remount: Fn<[path?: FieldNode['path']]>;
+  /** Reload the committed defaults; only the automatic-write options are accepted */
+  reset: Fn<
+    [
+      option?:
+        | typeof SetValueOption.DisableAutomaticWrites
+        | typeof SetValueOption.EnableAutomaticWrites,
+    ]
+  >;
+  /** Find the node at a JSONPointer path */
   findNode: Fn<[path: FieldNode['path']], FieldNode | null>;
-  /** Find multiple nodes by path */
-  findNodes: Fn<[path: FieldNode['path']], FieldNode[]>;
-  /** Get current state */
-  getState: Fn<[], NodeStateFlags>;
-  /** Set state */
-  setState: Fn<[state: NodeStateFlags]>;
-  /** Clear state */
+  /** Find every node matching a JSONPointer path */
+  findNodes: Fn<[path: FieldNode['path']], readonly FieldNode[]>;
+  /** Interaction flags that are true on at least one node */
+  getState: Fn<[], FieldNode['globalState']>;
+  /** Patch interaction flags on every node */
+  setState: Fn<[state: FieldNode['state']]>;
+  /** Clear interaction flags on every node */
   clearState: Fn;
-  /** Get current value */
+  /** Current output value (array output filters applied) */
   getValue: Fn<[], Value>;
-  /** Set value */
+  /** Set the value */
   setValue: SetStateFnWithOptions<Value>;
-  /** Get current errors */
-  getErrors: Fn<[], readonly ValidationIssue[]>;
-  /** Get attached files map */
+  /** All current errors */
+  getErrors: Fn<[], FieldNode['globalErrors']>;
+  /** Attached files map */
   getAttachedFilesMap: Fn<[], AttachedFilesMap>;
-  /** Run validation */
-  validate: Fn<[], Promise<readonly ValidationIssue[]>>;
-  /** Set error visibility */
-  showError: Fn<[visible: boolean]>;
-  /** Submit form */
-  submit: TrackableHandlerFunction<[], void, { loading: boolean }>;
+  /** Run validation and return the errors */
+  validate: Fn<[], Promise<FieldNode['globalErrors']>>;
+  /** `true` (default) shows every error; `false` returns to the `showError` prop */
+  showError: Fn<[visible?: boolean]>;
+  /** Submit the form; `useFormSubmit` reads its pending state */
+  submit: TrackableHandlerFunction;
 }
 ```
+
+- A `path` that matches no node makes `focus`, `select`, `refresh` and `remount` do nothing.
+- Before the first mount, queries do not throw: `findNode` returns `null`, `findNodes`, `getErrors` and `validate` return an empty array, and `getState` returns an empty object.
+- `showError(false)` does not hide errors; it hands control back to the Form's `showError` prop.
 
 ### FormChildrenProps
 
@@ -267,7 +291,7 @@ interface FormChildrenProps<
   jsonSchema: Schema;
   defaultValue?: Value;
   value?: Value;
-  errors?: readonly ValidationIssue[];
+  errors?: FieldNode['globalErrors'];
 }
 ```
 
@@ -340,16 +364,36 @@ await delay(); // Wait for initialization to complete
 
 ### Node State Flags
 
+A node's interaction flags live in `node.state`, keyed by the `FieldNodeState` enum. Other keys are allowed for your own flags.
+
 ```typescript
-node.dirty; // Has value changed since initialization?
-node.touched; // Has user interacted with this field?
-node.validated; // Has validation been run?
-node.errors; // Current validation errors
-node.visible; // Is field visible?
-node.active; // Is field active?
-node.readOnly; // Is field read-only?
-node.disabled; // Is field disabled?
-node.initialized; // Has node completed initialization?
+import { FieldNodeState } from '@canard/schema-form';
+
+node.state[FieldNodeState.Dirty]; // true after the user changed this field's value
+node.state[FieldNodeState.Touched]; // true after the user left (blurred) this field
+node.state[FieldNodeState.ErrorVisible]; // explicit error display override, if set
+
+node.setState({ [FieldNodeState.ErrorVisible]: true }); // patch this node's flags
+node.rootNode.globalState; // flags that are true on at least one node
+```
+
+| Flag           | Set by                          | Effect                                                           |
+| -------------- | ------------------------------- | ---------------------------------------------------------------- |
+| `Dirty`        | every user input write          | used by `ShowError.Dirty` and `ShowError.DirtyTouched`           |
+| `Touched`      | blur, one animation frame later | used by `ShowError.Touched` and `ShowError.DirtyTouched`         |
+| `ErrorVisible` | you, through `setState`         | `true` or `false` overrides the `showError` policy for that node |
+
+A `controls.resetInteraction` rule clears `Dirty` and `Touched` when its condition turns from false to true, or when the field loads or enters the form while the condition is true. `FormHandle.setState` patches every node, and `FormHandle.reset()` and `clearState()` remove every flag, including your own keys.
+
+Other node properties report the field's current condition:
+
+```typescript
+node.errors; // errors displayed for this field (validation and external)
+node.active; // false while a condition (`controls.active`, if/then/else, oneOf) excludes the field
+node.visible; // visibility after every active declaration is combined
+node.enabled; // active and visible
+node.readOnly; // read-only, including schema `readOnly`
+node.disabled; // disabled, independent of `enabled`
 ```
 
 ---
@@ -371,25 +415,29 @@ type FieldInputDefinition<T = unknown> = {
 // Function form
 type FieldInputTestFn = Fn<[hint: FieldInputHint], boolean>;
 
-// Object form
+// Object form: each field narrows the hint it accepts; an omitted field matches anything.
+// type, schemaType, path, format and inputType match one value or any value in a list.
 type FieldInputTestObject = Partial<{
-  type: Array<string>;
-  jsonSchema: JSONSchema;
-  format: Array<string>;
-  inputType: Array<string>;
+  type: FieldNodeType | FieldNodeType[];
+  schemaType: FieldNode['schemaType'] | FieldNode['schemaType'][];
+  path: string | string[];
+  format: string | string[];
+  inputType: string | string[];
+  required: boolean;
   nullable: boolean;
-  [alt: string]: any;
 }>;
 
 // FieldInputHint object
 type FieldInputHint = {
-  jsonSchema: JSONSchema;
-  type: string;
-  format: string;
-  inputType: string;
+  type: FieldNodeType; // node kind: 'string', 'number', 'object', 'array', 'virtual', 'union', ...
+  schemaType: FieldNode['schemaType']; // authored accepted kind(s), including 'integer'
+  typeMismatch: boolean; // the stored value mismatches the accepted kinds
   path: string;
+  required: boolean;
   nullable: boolean;
-  [alt: string]: any;
+  jsonSchema: JSONSchema | JSONSchemaWithVirtual;
+  format?: string;
+  inputType?: string;
 };
 ```
 
@@ -401,16 +449,22 @@ inputType is a string hint that a definition's test interprets; it is not the HT
 interface FieldInputProps<
   Value extends AllowedValue = any,
   Context extends Dictionary = object,
-  WatchValues extends Array<any> = Array<any>,
-  Schema extends JSONSchemaWithVirtual = InferJSONSchema<Value>,
-  Node extends FieldNode = InferFieldNode<Schema>,
+  WatchValues extends ReadonlyArray<any> = ReadonlyArray<any>,
+  Schema extends JSONSchema | JSONSchemaWithVirtual = unknown extends Value
+    ? JSONSchema
+    : InferJSONSchema<Value>,
+  Node extends FieldNode = unknown extends Value
+    ? FieldNode
+    : InferFieldNode<Schema>,
 > {
   jsonSchema: Schema; // JSON Schema for FieldInput component
   readOnly: boolean; // Read-only state
   disabled: boolean; // Disabled state
   required: boolean; // Required field
   node: Node; // Field node
-  type: Node['schemaType']; // JSON Schema type
+  type: Node['type']; // Node kind
+  schemaType: Node['schemaType']; // Authored accepted kind(s), including 'integer'
+  typeMismatch: Node['typeMismatch']; // Stored value mismatches the accepted kinds
   name: Node['name']; // Node name
   path: Node['path']; // Node path
   nullable: Node['nullable']; // Accepts null
@@ -493,8 +547,8 @@ const formInputMap = {
     disabled: boolean | string;          // Disabled
     default: any;                        // Fill value for an appearing node
     derived: string;                     // Derived value
-    unsetValue: string;                  // Clears the value when it turns from false to true
-    resetInteraction: string;            // Clears dirty/touched when it turns from false to true
+    unsetValue: boolean | string;        // Clears the value when it turns from false to true
+    resetInteraction: boolean | string;  // Clears dirty/touched when it turns from false to true
     unsetOnInactive: boolean | string;   // Drops the retained value when the node leaves the shape
     fields: { targets: string[]; controls: { /* first nine keys */ } }[];
     injectTo: (value, ctx) => ...;       // Pushes values to other nodes whenever this node's value changes
@@ -611,18 +665,13 @@ A branch takes part only while its gate passes. Gate a branch with a `controls.a
 
 ### Branch Types in oneOf / anyOf
 
-A branch usually omits `type` and takes its parent's. When it declares one, it must not say more than the parent allows:
+A branch usually omits `type` and takes its parent's. The parent's own `type` decides the node's kind; a branch `type` never changes it.
 
-| Parent `type`                                         | Branch `type` accepted                               |
-| ----------------------------------------------------- | ---------------------------------------------------- |
-| `'object'`                                            | omitted, `'object'`, `['object']`                    |
-| `['object', 'null']` or `'object'` + `nullable: true` | omitted, the parent's own type, `'object'`, `'null'` |
+- A branch whose `type` differs from the parent's is not rejected when the schema loads. The form keeps the parent's kind, and the validator still evaluates the branch with its own `type`, so the branch matches only values of that type.
+- A property declared by the parent and again by an ungated branch (one without `controls.active` that `controls.discriminator` does not select) must stay within the parent property's `type`. A narrower `type` is accepted and the parent's wins; a `type` outside it throws `SHARED_NODE_KIND_CONFLICT`. When only ungated branches declare a property, they must agree on its kind, or the same error is thrown. A property in a gated branch is not compared: when the parent declares it, the parent's `type` wins; otherwise the gated branch's field keeps its own kind.
+- Discriminator tags may carry a `type`, as in `kind: { type: 'string', const: 'cat' }`. Tags of different kinds across branches, or overlapping tag values, throw `DISCRIMINATOR_MISMATCH`; tag `const` / `enum` values with nothing in common throw `EMPTY_ENUM_INTERSECTION`; a tag value outside the tag's own `type` gives the warning `DISCRIMINATOR_BRANCH_UNREACHABLE`.
 
-A branch's own `nullable: true` flag is not compared with the parent's, so `'object'` + `nullable: true` is accepted under any object. Anything else — a `'null'` or `['object', 'null']` branch under a non-nullable object, `'string'`, `'array'` — throws `COMPOSITION_TYPE_REDEFINITION`.
-
-This rule, and the two development warnings below, run only where the object builds child nodes. An object handled as a single input — `options.terminal: true`, or a `presentation.FieldInput` component set on the object's schema — builds no branches, so its branch types are not checked and neither warning is printed; the validator still sees the schema as written.
-
-Inside a branch's `properties`, an entry **with** a `type` is a field; an entry **without** one, carrying only `const` or `enum`, is a tag that the host's `controls.discriminator` reads to select the branch. Giving such a discriminator a `type` turns it into a field that collides with the parent's property of the same name (`COMPOSITION_PROPERTY_REDEFINITION`).
+These errors are schema errors (recognized by `isJSONSchemaError`). An object handled as a single input — `options.terminal: true`, or a `presentation.FieldInput` component set on the object's schema — builds no child nodes, so the property check above does not run for its branches. `DISCRIMINATOR_MISMATCH`, `EMPTY_ENUM_INTERSECTION` and the `NULL_BRANCH_IGNORED_FOR_FORM` warning below still apply; `DISCRIMINATOR_BRANCH_UNREACHABLE` is not reported, because it is checked against a child field the object does not build, and the validator still sees the schema as written.
 
 #### The null-branch pattern
 
@@ -653,7 +702,7 @@ Inside a branch's `properties`, an entry **with** a `type` is a field; an entry 
 - The null branch is for the validator only. It has no fields and is never the active branch; a condition or `properties` on it is ignored with the development warning `NULL_BRANCH_IGNORED_FOR_FORM`.
 - Whether the object is `null` is decided by its value, and which object branch is shown by the branch conditions. While the value is `null`, the children of the selected branch are shown without their defaults (see [Nullable Objects and Arrays](#nullable-objects-and-arrays)). The same holds, for the same reason (the form display, the node data and the emitted value must not drift apart), while an object or array field holds a value of the wrong kind, for example a string loaded into an object: its children receive no defaults until a child is given a value.
 - Where the null branch sits does not matter; errors of the branch in use reach their fields. When the object value fails its `oneOf`, the null branch reports its own mismatch ("must be null") on the object like any other branch that did not match, next to the `oneOf` error.
-- A nullable object whose `oneOf` cannot validate `null` — no branch accepts it, or several do — prints the development warning `NULLABLE_ONE_OF_NULL_UNREACHABLE`. `anyOf` needs no such care: one null branch, or untyped branches, already satisfy it.
+- A nullable object whose `oneOf` cannot validate `null` — no branch accepts it, or several do — fails validation whenever its value is `null`. The form does not warn about this, so check the branches when you write the schema. `anyOf` needs no such care: one null branch, or untyped branches, already satisfy it.
 
 ### if-then-else
 
@@ -893,7 +942,7 @@ arrayNode.push('custom'); // Add item with custom value
 arrayNode.remove(index); // Remove item at index
 arrayNode.clear(); // Remove all items
 
-arrayNode.length; // Current number of items
+arrayNode.children?.length; // Current number of item nodes (null on an array rendered as a single input)
 arrayNode.children; // Array of child nodes
 ```
 
@@ -983,9 +1032,9 @@ const files = formRef.current.getAttachedFilesMap();
 ### Form Submission
 
 ```tsx
-import { useFormSubmit } from '@canard/schema-form';
+import { isValidationError, useFormSubmit } from '@canard/schema-form';
 
-const { submit, loading } = useFormSubmit(formRef);
+const { submit, pending } = useFormSubmit(formRef);
 
 const handleClick = async () => {
   try {
@@ -1112,8 +1161,8 @@ const schema = {
 
 // Nullable condition in FieldInput
 const definitions = [
-  { test: { type: 'string', nullable: true }, component: NullableInput },
-  { test: { type: 'string', nullable: false }, component: RequiredInput },
+  { test: { type: 'string', nullable: true }, Component: NullableInput },
+  { test: { type: 'string', nullable: false }, Component: RequiredInput },
 ];
 ```
 

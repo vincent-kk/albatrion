@@ -25,7 +25,7 @@ interface FieldRendererContextProviderProps {
    *   - `true`: Always show errors
    *   - `false`: Never show errors
    *   - `ShowError.Dirty`: Show errors when value has changed
-   *   - `ShowError.Touched`: Show errors when input has been focused
+   *   - `ShowError.Touched`: Show errors after the input has lost focus once
    *   - `ShowError.DirtyTouched`: Show errors when both Dirty and Touched states are met
    */
   showError?: FormProps['showError'];
