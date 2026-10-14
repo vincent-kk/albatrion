@@ -1,3 +1,5 @@
+import type { ControlKey } from '../../types/controls';
+
 /** Authored control expression positions indexed once per immutable analysis. */
 const CONTROL_EXPRESSIONS = new WeakMap<object, ReadonlyMap<string, number>>();
 
@@ -14,13 +16,13 @@ export const getControlExpression = <
   Expression extends {
     readonly declarationId: number;
     readonly schemaPath: string;
-    readonly key: string;
+    readonly key: ControlKey;
   },
 >(
   blueprint: { readonly expressions: readonly Expression[] },
   declarationId: number,
   schemaPath: string,
-  key: string,
+  key: ControlKey,
 ): Expression | undefined => {
   let expressions = CONTROL_EXPRESSIONS.get(blueprint);
   if (!expressions) {
