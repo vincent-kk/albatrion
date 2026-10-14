@@ -6,7 +6,7 @@ import {
   BIT_FLAG_02,
   BIT_FLAG_03,
   BIT_MASK_NONE,
-} from '@/schema-form/constants';
+} from '@/schema-form/constants/bitmask';
 
 /**
  * Callback a node invokes to notify its parent of a value change.

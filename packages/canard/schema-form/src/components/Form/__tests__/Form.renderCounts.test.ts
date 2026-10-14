@@ -5,7 +5,7 @@ import { expect, it } from 'vitest';
 it('F-C keeps Form rerenders at eleven component calls with a stable submit handler', () => {
   const tool = fileURLToPath(
     new URL(
-      '../../Field/FieldProxy/__tests__/helpers/runtimeCounts.mjs',
+      '../../Field/components/FieldProxy/__tests__/helpers/runtimeCounts.mjs',
       import.meta.url,
     ),
   );
