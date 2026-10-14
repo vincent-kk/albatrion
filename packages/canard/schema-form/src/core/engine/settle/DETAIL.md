@@ -274,11 +274,11 @@
 
 ## Boundary Exemptions
 
-### `utils/gates/getGateRegistry.ts` — bench의 직접 import
+### `utils/gates/getGateRegistry.ts` — 레거시 비교 스크립트의 직접 import
 
-- **Consumers**: `**/bench/**`
+- **Consumers**: `**/bench/legacy-compare/**`
 - **Direct import**: `allowed`
-- **Reason**: bench(측정 도구)는 소유자 결정(276라운드, 대기열 49)으로 fractal import 규칙의 직접 import 금지에서 면제됩니다. 게이트 등록표 구성 비용을 따로 재기 위해 진입점에 올리지 않고 그대로 읽습니다.
+- **Reason**: `bench/legacy-compare/`는 src 밖에서 레거시 코어와 새 코어를 나란히 재는 독립 스크립트 넷(`array`·`derive-and-controls`·`dispatch-and-validation`·`node-and-settle`)의 자리이며 레거시와 함께 지웁니다. 그때까지 소유자 결정(276라운드, 대기열 49)으로 fractal import 규칙의 직접 import 금지에서 면제됩니다. 게이트 등록표 구성 비용을 따로 재기 위해 진입점에 올리지 않고 그대로 읽습니다.
 
 ## Last Updated
 

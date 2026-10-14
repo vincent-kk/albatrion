@@ -25,7 +25,7 @@
 
 ### 수출의 이유와 도달 범위
 
-- `loadFieldNodeAtMount`·`resetFieldNodeForm` 수출의 보유 이유: core 시나리오 실행기(`createCoreScenarioAdapter`·`createObservedCoreScenarioAdapter`·`executeCoreScenarioStep`), `core/__tests__/scenarios/differential.spec.ts`, `core/surface/__tests__/detached.test.ts`와 `bench/array.bench.ts`·`bench/derive-and-controls.bench.ts`·`bench/node-and-settle.bench.ts`가 engine index로 쓰는 적재 통로; 제품 소비자는 없음; 정돈-3에서 시험 도구의 자리와 함께 재검토.
+- `loadFieldNodeAtMount`·`resetFieldNodeForm` 수출의 보유 이유: core 시나리오 실행기(`createCoreScenarioAdapter`·`createObservedCoreScenarioAdapter`·`executeCoreScenarioStep`), `core/__tests__/scenarios/differential.spec.ts`, `core/surface/__tests__/detached.test.ts`와 `bench/legacy-compare/`의 독립 비교 스크립트(`array`·`derive-and-controls`·`node-and-settle`)가 engine index로 쓰는 적재 통로; 제품 소비자는 없음.
 - `blueprint`는 bench와 `src/hooks/__tests__/createHookNode.ts`가 쓰는 생성 통로로 core index가 다시 내보내며 패키지 src/index 표면에는 추가하지 않습니다. `readFieldNodeGuard`는 validation 내부 계약이며 engine·core 집계 진입점이 재수출하지 않습니다.
 - 이름 목록은 승인된 내부 계약이며 자식 모듈의 모든 수출을 대신하지 않습니다. 시험은 검사 대상의 소유 구획에서 구체 내부 단위를 검증합니다.
 - `__tests__/fixtures`는 engine 층의 공용 시험 fixture를 소유합니다. `createDispatchTree.ts`는 write·validation 시험이 공유하는 생성 도우미, `createTestTree.ts`·`createPlainNode.ts`는 settle·derive 시험이 공유하는 트리 도우미, `ownedInlineHead.json`은 blueprint·settle 시험이 공유하는 기준 데이터이므로 이 최소 공통 소유자에 둡니다.
@@ -48,11 +48,11 @@
 
 ## Boundary Exemptions
 
-### `utils/compute/sameValue.ts` — bench의 직접 import
+### `utils/compute/sameValue.ts` — 레거시 비교 스크립트의 직접 import
 
-- **Consumers**: `**/bench/**`
+- **Consumers**: `**/bench/legacy-compare/**`
 - **Direct import**: `allowed`
-- **Reason**: bench(측정 도구)는 소유자 결정(276라운드, 대기열 49)으로 fractal import 규칙의 직접 import 금지에서 면제됩니다. 값 비교 비용을 따로 재기 위해 진입점에 올리지 않고 그대로 읽습니다.
+- **Reason**: `bench/legacy-compare/`는 src 밖에서 레거시 코어와 새 코어를 나란히 재는 독립 스크립트 넷(`array`·`derive-and-controls`·`dispatch-and-validation`·`node-and-settle`)의 자리이며 레거시와 함께 지웁니다. 그때까지 소유자 결정(276라운드, 대기열 49)으로 fractal import 규칙의 직접 import 금지에서 면제됩니다. 값 비교 비용을 따로 재기 위해 진입점에 올리지 않고 그대로 읽습니다.
 
 ## Last Updated
 

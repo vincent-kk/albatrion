@@ -21,8 +21,8 @@
 ## API Contracts
 
 - surface는 engine의 진입점으로만 실행 계약을 가져오며 core 진입점은 두 자식의 계약을 이름으로 재수출합니다. SchemaControls·ValidateFunction은 바인딩 타입의 경계를 제공합니다. `readFieldNodeGuard`·`UnionMemberType`·`UnionSchemaType`·`FieldNodeInputProps`는 core index가 재수출하지 않습니다. 패키지의 src/index 공개 이름은 유지합니다(07c 계획 9.2).
-- `fieldNodeFactory`·`blueprint` 재수출의 보유 이유: core 밖 시험·측정 도구(`bench/array.bench.ts`·`bench/derive-and-controls.bench.ts`·`bench/dispatch-and-validation.bench.ts`·`bench/node-and-settle.bench.ts`, `src/hooks/__tests__/createHookNode.ts`)가 core index로 쓰는 생성 통로; 제품 소비자는 없음; 정돈-3에서 시험 도구의 자리와 함께 재검토.
-- `__tests__/fixtures/testFieldNode.ts`는 engine index의 `FieldNodeRecord`를 바탕으로 시험용 자기 형과 구조 판정 좁히기를 제공합니다. core 시나리오 러너, engine 시험과 bench 네 파일(`array`·`derive-and-controls`·`dispatch-and-validation`·`node-and-settle`)은 클래스 identity 대신 레코드 칸으로 판정하고 공개 노드 동작은 surface 관문의 공개 노드 형으로 호출하며, `surface/classes/FieldNode.ts` 클래스를 직접 가져오지 않습니다.
+- `fieldNodeFactory`·`blueprint` 재수출의 보유 이유: core 밖 시험·측정 도구(`bench/legacy-compare/`의 네 파일, `src/hooks/__tests__/createHookNode.ts`)가 core index로 쓰는 생성 통로; 제품 소비자는 없음.
+- `__tests__/fixtures/testFieldNode.ts`는 engine index의 `FieldNodeRecord`를 바탕으로 시험용 자기 형과 구조 판정 좁히기를 제공합니다. core 시나리오 러너,  engine 시험과 `bench/legacy-compare/`의 독립 비교 스크립트넷은 클래스 identity 대신 레코드 칸으로 판정하고 공개 노드 동작은 surface 관문의 공개 노드 형으로 호출하며, `surface/classes/FieldNode.ts` 클래스를 직접 가져오지 않습니다.
 - 자식 index 모양 검증은 `__tests__/surfaceIndex.test.ts`가 surface 관문을 소비하여 수행합니다. 청사진 내부 검증은 blueprint 시험 구획이, 청사진과 검증·정착을 함께 쓰는 통합 검증은 engine 시험 구획이 소유합니다.
 
 - 공개 쓰기 옵션은 독립 비트 `Overwrite=1`, `Merge=2`, `DisableAutomaticWrites=4`, `EnableAutomaticWrites=8`입니다. `Overwrite`와 `Merge`의 동시 지정은 쓰기 전에 `INVALID_WRITE_OPTION`으로 거부합니다(LANDING-021·141). 내부 빈 옵션과 교체 표시는 같은 네 비트 계약을 사용합니다.
@@ -162,13 +162,15 @@ nodeFromJSONSchema<Schema extends AuthoredSchema>(props: {
 - 분기 없는 단일 리터럴 종류의 `const`·`enum` 칸은 대응 원시 노드 형으로 좁힙니다.
 - 형 수준에서 청사진 오류를 확정할 수 있는 객체·배열 리터럴, 종류가 섞인 리터럴, 혼합 인라인 분기는 `never`입니다. 정적 판정이 불가능한 모양만 넓은 노드 형을 유지합니다.
 
+- `__benchmarks__/`는 core 관문으로 재는 vitest 벤치 일곱(`branch-strategy-init`·`compute-recalculate`·`event-cascade`·`find-node`·`nodeFromJSONSchema`·`object-pending-read`·`render-delay`)을 소유합니다. `vitest.bench.config.ts`의 `benchmark.include`가 이 일곱을 이름으로 고르며, 벤치는 시험처럼 검증 organ이라 패키지 표면과 선언 빌드에 들지 않습니다.
+
 ## Boundary Exemptions
 
-### `__tests__/fixtures/createTestValidator.ts` — bench의 시험 검증기
+### `__tests__/fixtures/createTestValidator.ts` — 레거시 비교 스크립트의 시험 검증기
 
-- **Consumers**: `**/bench/**`
+- **Consumers**: `**/bench/legacy-compare/**`
 - **Direct import**: `allowed`
-- **Reason**: bench(측정 도구)는 소유자 결정(276라운드, 대기열 49)으로 fractal import 규칙의 직접 import 금지에서 면제됩니다. 측정에 쓰는 시험 검증기를 제품 진입점에 공개하지 않고 그대로 읽습니다.
+- **Reason**: `bench/legacy-compare/`는 src 밖에서 레거시 코어와 새 코어를 나란히 재는 독립 스크립트 넷(`array`·`derive-and-controls`·`dispatch-and-validation`·`node-and-settle`)의 자리이며 레거시와 함께 지웁니다. 그때까지 소유자 결정(276라운드, 대기열 49)으로 fractal import 규칙의 직접 import 금지에서 면제됩니다. 측정에 쓰는 시험 검증기를 제품 진입점에 공개하지 않고 그대로 읽습니다.
 
 ## Last Updated
 
