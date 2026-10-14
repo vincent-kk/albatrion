@@ -1,9 +1,9 @@
 import { JSONSchemaError } from '@/schema-form/errors';
-import { formatCreateDynamicFunctionError } from '@/schema-form/helpers/error';
 
 import type { PathManager } from '../getPathManager';
 import { JSON_POINTER_PATH_REGEX } from '../regex';
 import type { CreateDynamicFunction, DynamicFunction } from './type';
+import { formatCreateDynamicFunctionError } from './utils/formatCreateDynamicFunctionError';
 import { getFunctionBody } from './utils/getFunctionBody';
 
 /**

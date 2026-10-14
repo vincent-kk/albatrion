@@ -1,4 +1,4 @@
-import { createDivider } from './utils/createDivider';
+import { createDivider } from '@/schema-form/helpers/error';
 
 /**
  * Formats a development warning for when `virtualization` is enabled but

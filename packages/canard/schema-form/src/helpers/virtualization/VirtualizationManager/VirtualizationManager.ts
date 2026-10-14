@@ -6,7 +6,6 @@ import { withErrorBoundary } from '@winglet/react-utils/hoc';
 import type { Fn } from '@aileron/declare';
 
 import type { FieldNode } from '@/schema-form/core';
-import { formatVirtualizationDisabledWarning } from '@/schema-form/helpers/error';
 import {
   VIRTUALIZATION_DISABLED_FOR_FORM,
   warnDevelopmentIssue,
@@ -21,6 +20,7 @@ import {
   resolveVirtualizationOptions,
 } from '../resolveVirtualizationOptions';
 import { type IdleDeadlineLike, scheduleIdle } from './scheduleIdle';
+import { formatVirtualizationDisabledWarning } from './utils/formatVirtualizationDisabledWarning';
 
 /** Maximum reveals per idle slice, bounding the size of a single React commit */
 const MAX_REVEALS_PER_SLICE = 25;

@@ -1,5 +1,4 @@
-import { createDivider } from './utils/createDivider';
-import { getErrorMessage } from './utils/getErrorMessage';
+import { createDivider, getErrorMessage } from '@/schema-form/helpers/error';
 
 /**
  * Formats a structured error message for FieldInputMap invalid key pattern errors.

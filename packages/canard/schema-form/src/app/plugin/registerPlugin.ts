@@ -3,9 +3,9 @@ import { createFingerprintFactory } from '@winglet/common-utils/object';
 
 import type { SchemaFormPlugin } from '@/schema-form';
 import { UnhandledError } from '@/schema-form/errors';
-import { formatRegisterPluginError } from '@/schema-form/helpers/error';
 
 import { PluginManager } from './PluginManager';
+import { formatRegisterPluginError } from './utils/formatRegisterPluginError';
 
 const RegisteredPlugin = new Set<string>();
 /** Identity scope shared by plugin registrations; mutable content is recomputed. */

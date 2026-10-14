@@ -1,4 +1,7 @@
-import { DEFAULT_DIVIDER_WIDTH } from './constants';
+/**
+ * Default divider width for error message boxes.
+ */
+const DEFAULT_DIVIDER_WIDTH = 50;
 
 /**
  * Creates a horizontal divider line.
