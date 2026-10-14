@@ -2,7 +2,7 @@
 
 개발의 진행 상황과 다음 할 일은 `PLAN.md`가 단일 진입점으로 든다. 다음 세션이 바로 이어서 일하기 위한 문서다. 이력은 `git log`와 `reviews/`에 있으므로 여기에는 지금 상태, 다음 할 일, 일하는 법만 적는다. 소유자는 Vincent다.
 
-## 1. 지금 어디인가 (2026-10-15, 349라운드 닫힘(묶음 3 derive #394 병합 fa674d5fa; navigation 무변경); 8단계 첫 토막 구조 정리를 밤까지 자율 진행 — 원장 기반 판단, 결정 대기열 54–57, PR 검토·병합 허용, codex·agy 분산; 묶음 1 #387·묶음 2 #389·misfit 문서 #388 병합, 묶음 3 settle PR 진행, 묶음 3 셋과 visitSubtree 문서 뒤 속도 루프는 소유자가 — 브랜치 feat/schema-form-08-review-and-perf)
+## 1. 지금 어디인가 (2026-10-15, 350라운드 닫힘(묶음 3 settle #395 병합 90527e29b, 묶음 3 완료); 8단계 첫 토막 구조 정리를 밤까지 자율 진행 — 원장 기반 판단, 결정 대기열 54–57, PR 검토·병합 허용, codex·agy 분산; 묶음 1 #387·묶음 2 #389·misfit 문서 #388 병합, 속도 계획 최종 경로 PR 진행, 묶음 3 셋과 visitSubtree 문서 뒤 속도 루프는 소유자가 — 브랜치 feat/schema-form-08-review-and-perf)
 
 - **264라운드(2026-10-14, 소유자).** 고유명사 후보 15 중 1·3·4·5·6·7·8·9·10·11·15를 권고대로 승인했고, 2(ChildField 이름 길이)·12(controls.children 대체 이름)·13(propertyKeys 공개 자리·이름)·14(virtual을 object 전용 키로)는 추가 논의, 비표준 최상위 키의 잔여 점검을 요구했다(reviews/round-264-owner-answers.md).
 - **265라운드(2026-10-14, 소유자).** 추가 논의 넷을 닫았다: ChildFields, controls.fields, options.propertyOrder(object 전용), options.virtual 형 선언과 VirtualSchema 비공개화, nullable: true 제거(265C-01 후속 대응표, reviews/round-265-owner-answers.md). 07b-5 후속 커밋으로 fixy07에게.
@@ -87,7 +87,8 @@
 - **346라운드(2026-10-15, 닫기/원장 관리자).** 묶음 2 PR #389를 검증 다섯 번(verifier 둘·codex·agy·원장 관리자 verifier) 뒤 squash 병합(085676f77): WeakMap→Map·Set, inheritDoc 정리, 정규식·상수 끌어올리기, 템플릿 리터럴 연결, schemaType JSON 형 한정, 순회 한 벌과 공개 visitSubtree. 편집자 결정 일곱(346C-01 떼어진 시작 노드는 함께 떼어진 하위를 걷음, 346C-02 순회 안 정착 밖 진입은 끝에 한 번, 346C-03 떼어진 쓰기는 batch 안에서도 표시하지 않고 생사 판정은 직전 커밋 형상, 346C-04·05 SURFACE-062 문장 정정 둘, 346C-06 NODE-049 inheritDoc 관례 대체, 346C-07 병합 기록과 후속 둘)(reviews/round-346-closing.md).
 - **347라운드(2026-10-15, 닫기/원장 관리자).** PR 셋 병합: visitSubtree 공개 문서 #390(6b4934bf9), 속도 계획 개정 #392(d403d1658, 루프 base는 이 가지, 대기열 55·56 인용, bench 스크립트는 재실행 불가 사유를 적어 보존), 전달 중 인계 결함 수정 #391(42811f452; debugger·codex 둘·verifier·production 게이트). 편집자 결정 셋(347C-01 인계는 새 런타임에서 사슬을 끝내고 지나간 런타임을 모두 되돌림, 347C-02 물러난 루트로의 인계는 DISPOSED_NODE_WRITE로 거부, 347C-03 문서 PR 기록과 후속 둘)(reviews/round-347-closing.md).
 - **348라운드(2026-10-15, 닫기/원장 관리자).** 묶음 3 blueprint PR #393 병합(36c661f49): 자식 fractal 일곱·주제 organ 여섯·types/ 칸, stripSchema·resolveArrayLimits 삭제, 동작 변경 없음(옮긴 선언 모두 본문 동치). 검증은 agy·fairy08 문서 대조·verifier이고, verifier가 production 프로젝트 glob이 옮긴 owned-inline 시험 넷을 놓친 것을 잡아 고쳤다. 편집자 결정 셋(348C-01 이동 PR의 설정 glob 점검과 production 게이트, 348C-02 진입점이 내보내는 형 칸의 유지 이유 한 줄, 348C-03 CLAUDE.md 경로 한 줄은 대기열 57)(reviews/round-348-closing.md).
-- **349라운드(2026-10-15, 닫기/원장 관리자).** 묶음 3 derive PR #394 병합(fa674d5fa): evaluateDeriveRound 자식 fractal, utils/evaluate·rules 평탄화, constants·types 칸, DETAIL 5-6 모순 삭제, 동작 변경 없음. 검증은 codex·fairy08 대조·verifier이고 보완 넷(판정 출력 형의 자리, 의존 목록, derive-failures 시험, 계약 id 겹침)을 같은 PR에서. navigation은 바꿀 것이 없어 묶음 3은 PR 셋으로 끝난다(349C-01). 계약 id는 시험 파일 하나에 하나, 표지 없는 절은 시험을 얻는다(349C-02)(reviews/round-349-closing.md). 다음 라운드 번호는 350.
+- **349라운드(2026-10-15, 닫기/원장 관리자).** 묶음 3 derive PR #394 병합(fa674d5fa): evaluateDeriveRound 자식 fractal, utils/evaluate·rules 평탄화, constants·types 칸, DETAIL 5-6 모순 삭제, 동작 변경 없음. 검증은 codex·fairy08 대조·verifier이고 보완 넷(판정 출력 형의 자리, 의존 목록, derive-failures 시험, 계약 id 겹침)을 같은 PR에서. navigation은 바꿀 것이 없어 묶음 3은 PR 셋으로 끝난다(349C-01). 계약 id는 시험 파일 하나에 하나, 표지 없는 절은 시험을 얻는다(349C-02)(reviews/round-349-closing.md).
+- **350라운드(2026-10-15, 닫기/원장 관리자).** 묶음 3 settle PR #395 병합(90527e29b): 칸 열하나의 순환을 층이 진 organ으로, 자식 fractal 둘, pathStores·templatePaths, type.ts → types/ 칸(settle·write·validation·Form 조각 셋), misfits 저장소 키, 시험 네 쌍 병합, 형 칸 유지 이유. 검증은 agy·fairy08 대조·verifier이고 보완 열한 가지를 같은 PR에서. 편집자 결정 셋(350C-01 층 순서와 이름, 350C-02 자식 DETAIL은 자기 구현의 계약만, 350C-03 후속 셋)(reviews/round-350-closing.md). 묶음 3이 끝났다. 다음 라운드 번호는 351.
 - **그 앞의 라운드 요지(19라운드부터)는 PLAN-LOG.md 2절에 있다.** 라운드마다 한 문단이며, 1절의 기록 표와 같은 순서다.
 - **설계의 정본은 단일 원장 `ledger/`다.** 영역 17개, 항목 1,350개(80라운드 뒤, 24라운드 뒤 1,348; 현행 1,076(부정 결정·기록 포함), 대체됨 199, 분할됨 49, 중복 24, 열림 0). 형식과 규칙은 `ledger/README.md`.
 - **옛 설계 문서(`00`–`09`, `adr/`, `open-questions.md`)는 동결됐다.** 더 고치지 않는다. 어긋남은 원장의 충돌 칸에 적는다. 원장이 인용하는 옛 문서의 `path:line`은 모두 커밋 `ba398c330` 기준 줄 번호다(그 뒤 옛 문서는 바뀌지 않았다).
@@ -531,6 +532,7 @@ node ledger/checks/doc-coverage.mjs design/*.md adr/*.md -- ledger/*.md   # 설�
 | `reviews/round-347-closing.md` | 347라운드 닫기: 인계 결함 #391, 문서 #390·#392 병합, 물러난 루트 인계 거부 |
 | `reviews/round-348-closing.md` | 348라운드 닫기: 묶음 3 blueprint #393 병합, 설정 glob 점검 규칙, 형 칸 유지 이유, 대기열 57 |
 | `reviews/round-349-closing.md` | 349라운드 닫기: 묶음 3 derive #394 병합, navigation 무변경, 계약 id 규칙 |
+| `reviews/round-350-closing.md` | 350라운드 닫기: 묶음 3 settle #395 병합, settle 층 순서, 자식 DETAIL의 범위, 후속 셋 |
 | plan/tidy-structure/walk-subtree-design.md | 공개 visitSubtree 설계(342라운드 확정판) |
 | plan/tidy-structure/array-limits-review.md | 배열 한도를 core가 다룰 때의 유익·손해 비교(대기열 53 검토 메모, 권고 포함) |
 | `reviews/round-297-closing.md` | 297라운드 편집자 결정 하나: 정돈-1(#374) 병합, 정돈-2 투입 |

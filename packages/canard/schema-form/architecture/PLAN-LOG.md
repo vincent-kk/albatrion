@@ -580,3 +580,4 @@
 - **347라운드(2026-10-15, 닫기/원장 관리자).** 인계 결함 #391, 문서 #390·#392 병합, 물러난 루트 인계 거부(reviews/round-347-closing.md).
 - **348라운드(2026-10-15, 닫기/원장 관리자).** 묶음 3 blueprint #393 병합, 설정 glob 점검, 대기열 57(reviews/round-348-closing.md).
 - **349라운드(2026-10-15, 닫기/원장 관리자).** 묶음 3 derive #394 병합, navigation 무변경, 계약 id 규칙(reviews/round-349-closing.md).
+- **350라운드(2026-10-15, 닫기/원장 관리자).** 묶음 3 settle #395 병합, 묶음 3 완료, 후속 셋(reviews/round-350-closing.md).
