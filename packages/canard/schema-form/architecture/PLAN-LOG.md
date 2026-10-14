@@ -560,3 +560,4 @@
 - **317라운드(2026-10-14, 소유자).** barrel 삭제, 병렬, 병합 위임, surface runtime, 단일 PR(reviews/round-317-owner-answers.md).
 - **318라운드(2026-10-14, 소유자).** fieldInputs 입력마다 fractal(넷째 손질), ArrayItems 래핑 유지(reviews/round-318-owner-answers.md).
 - **263라운드(2026-10-14, 소유자).** PR #364(07b-4) 병합을 명시적으로 허가했다(reviews/round-263-owner-answers.md).
+- **330라운드(2026-10-15, 소유자).** 중간 브랜치 삭제·1.0.0-beta 이력 압축(백업 유지), 8단계(소유자 리뷰·속도)는 전용 브랜치에서 원장·워크트리 운영(reviews/round-330-owner-answers.md).
