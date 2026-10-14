@@ -13,6 +13,9 @@
 
 ### 계약 형과 진입점
 
+- `GuardFunction`은 동기 가드의 내부 형이며 validation index가 내보내지 않습니다. core 시험 검증기는 engine index의 `Validator['compileGuard']` 반환형으로 가드 형을 유도합니다. `readFieldNodeGuard`는 settle이 소비하는 validation 진입점 이름이며 engine·core 집계 index는 재수출하지 않습니다.
+- `__tests__/validation.retain-guard.test.ts`는 검증기 수명 유지와 동기 가드 읽기를 함께 검증하므로 validation이 소유합니다. 플러그인 형이 검증기 형을 만족하는지는 app/plugin의 시험 구획이 검증합니다. write와 공유하는 트리 생성 fixture는 engine의 공용 시험 구획에서 읽습니다.
+
 - `interface Validator { compile(copy: BlueprintSchema): ValidateFunction; compileGuard(root: BlueprintSchema, pointer: string): GuardFunction; release?(root: BlueprintSchema): void; readonly dialect?: string }`를 `type.ts`가 선언합니다. `type GuardFunction = (value: unknown) => boolean`이며 가드는 비동기 형식·키워드를 지원하지 않습니다. `type ValidateFunction<Value = unknown> = (data: Value) => Promise<readonly ValidationIssue[] | null> | readonly ValidationIssue[] | null`은 입력 판정을 돌려주고 던지지 않는 계약입니다. 던짐은 실행 실패입니다(VALIDATE-015·016·044, ERROR-032).
 - `interface ValidationIssue<SourceError = unknown> { dataPath: string; keyword?: string; message?: string; schemaPath?: string; rejectedKey?: string; details?: Record<string, unknown>; source?: SourceError }`는 정규화된 검증 결과입니다(FRAGMENT-020·053, LANDING-070, VALIDATE-043).
 - core는 `compile` 결과와 가드에 방출 트리를 참조 그대로 건네고 검증기는 받은 값과 스키마를 바꾸지 않습니다. 값을 바꾸는 사용자 정의 키워드를 쓰지 않을 책임은 소비자에게 있습니다. core는 `bind`를 부르지 않고 선택된 검증기를 트리 생성 인자로 받습니다(VALIDATE-001·044·050, CONTROLS-075).
@@ -56,4 +59,4 @@
 
 ## Last Updated
 
-2026-10-03
+2026-10-03; 정돈-2(2026-10-14).

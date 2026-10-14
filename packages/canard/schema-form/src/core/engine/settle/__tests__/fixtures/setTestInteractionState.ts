@@ -1,8 +1,9 @@
 import {
   accumulateGlobalStateDeltas,
   publishGlobalStateDeltas,
-} from '../../../record';
-import type { NodeStateFlags } from '../../../types/state';
+} from '@/schema-form/core/engine/record';
+import type { NodeStateFlags } from '@/schema-form/core/engine/types/state';
+
 import type { PlainNode } from './createPlainNode';
 
 /** Keep plain-record state setup consistent with the tree's accounted flags. */

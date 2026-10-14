@@ -1,12 +1,16 @@
 import { describe, expect, it, vi } from 'vitest';
 
-import { SetValueOption, fieldNodeFactory, setContext } from '../../../surface';
-import { blueprint } from '../../blueprint';
-import type { BlueprintSchema } from '../../blueprint';
-import type { FieldNodeRuntime } from '../../record';
-import { FieldNodeState } from '../../types/state';
-import { PathKeyedMap } from '../../utils/pathIndex/PathKeyedMap';
-import { PathKeyedSet } from '../../utils/pathIndex/PathKeyedSet';
+import { blueprint } from '@/schema-form/core/engine/blueprint';
+import type { BlueprintSchema } from '@/schema-form/core/engine/blueprint';
+import type { FieldNodeRuntime } from '@/schema-form/core/engine/record';
+import { FieldNodeState } from '@/schema-form/core/engine/types/state';
+import { PathKeyedMap } from '@/schema-form/core/engine/utils/pathIndex/PathKeyedMap';
+import { PathKeyedSet } from '@/schema-form/core/engine/utils/pathIndex/PathKeyedSet';
+import {
+  SetValueOption,
+  fieldNodeFactory,
+  setContext,
+} from '@/schema-form/core/surface';
 
 /** Build one runtime tree with the already merged binding context. */
 const createContextTree = (

@@ -1,8 +1,8 @@
 // NODE-058, SURFACE-059, REACT-032, GOAL-088: checked by the package tsc command.
 import { expectTypeOf } from 'vitest';
 
-import type { AuthoredSchema, Validator } from '../core';
-import { FieldNodeEventType, ValidationMode, isUnionNode } from '../index';
+import type { AuthoredSchema, Validator } from '../../core';
+import { FieldNodeEventType, ValidationMode, isUnionNode } from '../../index';
 import type {
   FieldInputHint,
   FieldInputProps,
@@ -12,8 +12,8 @@ import type {
   NumberNode,
   UnionNode,
   ValidatorFactory,
-} from '../index';
-import type { SchemaPresentation } from '../types/jsonSchema';
+} from '../../index';
+import type { SchemaPresentation } from '../../types/jsonSchema';
 
 expectTypeOf<
   InferFieldNode<{ type: readonly ['string', 'number'] }>
@@ -90,7 +90,7 @@ const invalidNestedPresentation: JSONSchema = {
     },
   },
 };
-const invalidStringPresentation: import('../index').StringSchema = {
+const invalidStringPresentation: import('../../index').StringSchema = {
   type: 'string',
   presentation: {
     // @ts-expect-error Per-kind public aliases retain the same presentation shape.
@@ -103,14 +103,14 @@ void invalidStringPresentation;
 
 // I12: the removed legacy error name must not return to the package entry.
 // @ts-expect-error JSONSchemaError is preserved only for legacy implementation consumers.
-type RemovedError = import('../index').JSONSchemaError;
+type RemovedError = import('../../index').JSONSchemaError;
 // 70C-01: host and binding channels stay outside the package's consumer surface.
 // @ts-expect-error nodeFromJSONSchema is an internal surface helper.
-type RemovedHostEntry = typeof import('../index').nodeFromJSONSchema;
+type RemovedHostEntry = typeof import('../../index').nodeFromJSONSchema;
 // @ts-expect-error nodeFromJSONSchema is not exported by core.
-type RemovedCoreEntry = typeof import('../core').nodeFromJSONSchema;
+type RemovedCoreEntry = typeof import('../../core').nodeFromJSONSchema;
 // @ts-expect-error buildFieldNodeTree is binding-only.
-type RemovedBindingEntry = typeof import('../index').buildFieldNodeTree;
+type RemovedBindingEntry = typeof import('../../index').buildFieldNodeTree;
 expectTypeOf<RemovedError>().toBeAny();
 expectTypeOf<RemovedHostEntry>().toBeAny();
 expectTypeOf<RemovedCoreEntry>().toBeAny();

@@ -21,7 +21,7 @@ JSON Schema 검증 에러를 스키마의 `errorMessages` 프로퍼티에 정의
 ### Ask first
 
 - 패턴 치환 문법(`replacePattern`) 변경 — 스키마 작성자가 사용하는 메시지 포맷 계약에 영향
-- `getErrorMessage`의 `context.locale` 우선순위 로직 변경
+- `selectKeywordErrorMessage`의 `context.locale` 우선순위 로직 변경
 
 ### Never do
 

@@ -1,6 +1,6 @@
 import { describe, expectTypeOf, it } from 'vitest';
 
-import type { ValidationIssue } from '../../index';
+import type { ValidationIssue } from '@/schema-form/core';
 
 describe('public validation error types', () => {
   it('50C-01 publishes normalized issues with a generic validator source', () => {

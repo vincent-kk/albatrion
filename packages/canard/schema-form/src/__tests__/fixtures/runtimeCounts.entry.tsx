@@ -6,7 +6,7 @@ import { createRef, useState } from 'react';
 import { flushSync } from 'react-dom';
 import { createRoot } from 'react-dom/profiling';
 
-import { Form } from '../../index';
+import { Form } from '@/schema-form/components/Form';
 
 export const registry = new Map<string, (value: unknown) => void>();
 

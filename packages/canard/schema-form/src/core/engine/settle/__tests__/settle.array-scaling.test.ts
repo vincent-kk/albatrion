@@ -1,14 +1,17 @@
 import { describe, expect, it, vi } from 'vitest';
 
-import { makeFieldNodeTree } from '../../../__tests__/makeFieldNodeTree';
-import { FieldNode } from '../../../surface/FieldNode';
-import { WriteOption } from '../../types/value';
-import { loadFieldNodeAtMount, writeFieldNode } from '../index';
+import { isTestFieldNode } from '@/schema-form/core/__tests__/fixtures/testFieldNode';
+import { makeFieldNodeTree } from '@/schema-form/core/__tests__/makeFieldNodeTree';
+import { WriteOption } from '@/schema-form/core/engine/types/value';
+import type { ArrayNode } from '@/schema-form/core/surface';
+
 import { dirtyChildren } from '../utils/compute/dirtyChildren';
+import { loadFieldNodeAtMount } from '../utils/load/loadFieldNodeAtMount';
 import { createSettlementContext } from '../utils/settlement/createSettlementContext';
 import { getDependencyIndex } from '../utils/write/getDependencyIndex';
 import { getSettlementScratch } from '../utils/write/getSettlementScratch';
 import { releaseSettlementScratch } from '../utils/write/releaseSettlementScratch';
+import { writeFieldNode } from '../utils/write/writeFieldNode';
 import { createTestTree } from './fixtures/createTestTree';
 
 const schema = {
@@ -36,8 +39,7 @@ const gatedRows = (count: number) => {
       },
     },
   });
-  if (!(root instanceof FieldNode))
-    throw new Error('Expected a runtime FieldNode');
+  if (!isTestFieldNode(root)) throw new Error('Expected a runtime FieldNode');
   root.setValue({
     flag: true,
     rows: Array.from({ length: count }, (_, index) => ({
@@ -105,8 +107,7 @@ describe('44C-01 array settlement scaling', () => {
       })),
     });
     const rows = root.find('/rows');
-    if (!(rows instanceof FieldNode))
-      throw new Error('Expected an array FieldNode');
+    if (!isTestFieldNode(rows)) throw new Error('Expected an array FieldNode');
     const behavior = rows.behavior;
     let assemblies = 0;
     Reflect.set(rows, 'behavior', {
@@ -159,8 +160,7 @@ describe('44C-01 array settlement scaling', () => {
         g: `g${index}`,
       })),
     });
-    if (!(root instanceof FieldNode))
-      throw new Error('Expected a runtime FieldNode');
+    if (!isTestFieldNode(root)) throw new Error('Expected a runtime FieldNode');
     const scratch = getSettlementScratch(root.runtime);
     releaseSettlementScratch(scratch);
     const changedRaw = scratch.changedRaw;
@@ -202,8 +202,7 @@ describe('44C-01 array settlement scaling', () => {
     });
     root.setValue({ flag: true, rows: items(count, 0) });
     const rows = root.find('/rows');
-    if (!(rows instanceof FieldNode))
-      throw new Error('Expected an array FieldNode');
+    if (!isTestFieldNode(rows)) throw new Error('Expected an array FieldNode');
     const behavior = rows.behavior;
     let assemblies = 0;
     Reflect.set(rows, 'behavior', {
@@ -355,8 +354,7 @@ describe('44C-01 array settlement scaling', () => {
         list: [{ on: false, value: String(index) }],
       })),
     });
-    if (!(root instanceof FieldNode))
-      throw new Error('Expected a runtime FieldNode');
+    if (!isTestFieldNode(root)) throw new Error('Expected a runtime FieldNode');
     const index = getDependencyIndex(root.runtime.blueprint);
     const affected = index.affected.bind(index);
     let owners = 0;
@@ -414,8 +412,7 @@ describe('44C-01 array settlement scaling', () => {
     const count = 2000;
     const { root } = gatedRows(count);
     const rows = root.find('/rows');
-    if (!(rows instanceof FieldNode))
-      throw new Error('Expected an array FieldNode');
+    if (!isTestFieldNode(rows)) throw new Error('Expected an array FieldNode');
     const behavior = rows.behavior;
     let assemblies = 0;
     Reflect.set(rows, 'behavior', {
@@ -505,8 +502,7 @@ describe('44C-01 array settlement scaling', () => {
         },
       },
     }).root;
-    if (!(tags instanceof FieldNode))
-      throw new Error('Expected a runtime FieldNode');
+    if (!isTestFieldNode(tags)) throw new Error('Expected a runtime FieldNode');
     const tagRows = Array.from({ length: count }, (_, index) => ({
       tags: [String(index)],
     }));
@@ -554,8 +550,7 @@ describe('44C-01 array settlement scaling', () => {
         },
       },
     }).root;
-    if (!(list instanceof FieldNode))
-      throw new Error('Expected a runtime FieldNode');
+    if (!isTestFieldNode(list)) throw new Error('Expected a runtime FieldNode');
     const listRows = Array.from({ length: count }, (_, index) => ({
       list: [{ on: false, child: String(index) }],
     }));
@@ -599,7 +594,7 @@ describe('44C-01 array settlement scaling', () => {
         ...properties,
       },
     }).root;
-    if (!(absent instanceof FieldNode))
+    if (!isTestFieldNode(absent))
       throw new Error('Expected a runtime FieldNode');
     const absentRows = Object.fromEntries(
       Array.from({ length: count }, (_, index) => [
@@ -703,8 +698,7 @@ describe('44C-01 array settlement scaling', () => {
     const count = 2000;
     const { root } = makeFieldNodeTree(schema);
     root.setValue(items(count, 0));
-    if (!(root instanceof FieldNode))
-      throw new Error('Expected a runtime FieldNode');
+    if (!isTestFieldNode(root)) throw new Error('Expected a runtime FieldNode');
     const parse = JSON.parse;
     let parses = 0;
     const spy = vi.spyOn(JSON, 'parse').mockImplementation((value) => {
@@ -712,7 +706,7 @@ describe('44C-01 array settlement scaling', () => {
       return parse(value);
     });
     try {
-      root.clear();
+      (root as ArrayNode).clear();
       expect(parses).toBeLessThan(count * 20);
     } finally {
       spy.mockRestore();
@@ -732,8 +726,7 @@ describe('44C-01 array settlement scaling', () => {
       },
     });
     root.setValue(Array.from({ length: count }, () => ({ source: 'a' })));
-    if (!(root instanceof FieldNode))
-      throw new Error('Expected a runtime FieldNode');
+    if (!isTestFieldNode(root)) throw new Error('Expected a runtime FieldNode');
     const iterate = Set.prototype[Symbol.iterator];
     let scannedRuleKeys = 0;
     const spy = vi
@@ -747,7 +740,7 @@ describe('44C-01 array settlement scaling', () => {
         return undefined;
       });
     try {
-      root.push({ source: 'b' });
+      (root as ArrayNode).push({ source: 'b' });
       expect(scannedRuleKeys).toBeLessThan(count * 20);
     } finally {
       spy.mockRestore();

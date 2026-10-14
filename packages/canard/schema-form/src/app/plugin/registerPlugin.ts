@@ -1,10 +1,10 @@
 import { isPlainObject } from '@winglet/common-utils/filter';
 import { createFingerprintFactory } from '@winglet/common-utils/object';
 
-import type { SchemaFormPlugin } from '@/schema-form';
 import { UnhandledError } from '@/schema-form/errors';
 
 import { PluginManager } from './PluginManager';
+import type { SchemaFormPlugin } from './type';
 import { formatRegisterPluginError } from './utils/formatRegisterPluginError';
 
 const RegisteredPlugin = new Set<string>();

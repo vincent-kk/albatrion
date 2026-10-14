@@ -30,7 +30,6 @@ export {
   retainValidationRoot,
   releaseValidationRoot,
   blueprint,
-  readFieldNodeGuard,
 } from './engine';
 export type {
   FieldNode,
@@ -44,10 +43,7 @@ export type {
   UnionNode,
   BranchNode,
   TerminalNode,
-  UnionMemberType,
-  UnionSchemaType,
   InferFieldNode,
-  FieldNodeInputProps,
 } from './surface';
 export type {
   AuthoredSchema,

@@ -1,7 +1,9 @@
 import { describe, expect, it } from 'vitest';
 
-import { WriteOption } from '../../types/value';
-import { arrangeFieldNodeItems, loadFieldNodeAtMount } from '../index';
+import { WriteOption } from '@/schema-form/core/engine/types/value';
+
+import { loadFieldNodeAtMount } from '../utils/load/loadFieldNodeAtMount';
+import { arrangeFieldNodeItems } from '../utils/structure/arrangeFieldNodeItems';
 import { createTestTree } from './fixtures/createTestTree';
 
 /** Recursive items terminate at their empty children array (BLUEPRINT-030). */

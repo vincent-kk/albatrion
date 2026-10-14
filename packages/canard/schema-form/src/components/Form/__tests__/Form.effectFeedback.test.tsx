@@ -2,11 +2,11 @@ import { useEffect, useLayoutEffect } from 'react';
 
 import { describe, expect, it } from 'vitest';
 
-import type { FieldInputProps } from '@/schema-form';
 import {
   type FormHarness,
   renderForm,
 } from '@/schema-form/__tests__/renderForm';
+import type { FieldInputProps } from '@/schema-form/types/fieldInput';
 
 /** EVENT-070: preserve the design spike's watchdog and React-stop assertions. */
 const runFeedback = async (useFeedbackEffect: typeof useEffect) => {

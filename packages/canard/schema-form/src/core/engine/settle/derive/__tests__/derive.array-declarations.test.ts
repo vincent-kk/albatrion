@@ -1,7 +1,8 @@
 import { describe, expect, it } from 'vitest';
 
-import { makeFieldNodeTree } from '../../../../__tests__/makeFieldNodeTree';
-import { FieldNode } from '../../../../surface/FieldNode';
+import { isTestFieldNode } from '@/schema-form/core/__tests__/fixtures/testFieldNode';
+import { makeFieldNodeTree } from '@/schema-form/core/__tests__/makeFieldNodeTree';
+import type { ArrayNode } from '@/schema-form/core/surface';
 
 // filid:contract derive-rank
 describe('array item derivation', () => {
@@ -16,9 +17,8 @@ describe('array item derivation', () => {
         },
       },
     });
-    if (!(root instanceof FieldNode))
-      throw new Error('Expected a runtime FieldNode');
-    const array = root;
+    if (!isTestFieldNode(root)) throw new Error('Expected a runtime FieldNode');
+    const array = root as ArrayNode;
     root.setValue([{ source: 'A' }, { source: 'B' }]);
     expect(root.value).toEqual([
       { source: 'A', target: 'A' },

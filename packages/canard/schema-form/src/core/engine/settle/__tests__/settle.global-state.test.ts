@@ -1,8 +1,9 @@
 import { describe, expect, it } from 'vitest';
 
-import { FieldNodeState } from '../../types/state';
-import { WriteOption } from '../../types/value';
-import { writeFieldNode } from '../index';
+import { FieldNodeState } from '@/schema-form/core/engine/types/state';
+import { WriteOption } from '@/schema-form/core/engine/types/value';
+
+import { writeFieldNode } from '../utils/write/writeFieldNode';
 import { createTestTree } from './fixtures/createTestTree';
 
 // filid:contract settle-write

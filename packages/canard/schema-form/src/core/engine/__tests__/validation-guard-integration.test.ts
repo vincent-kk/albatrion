@@ -1,10 +1,14 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
-import { ValidationMode } from '../engine/types/state';
-import type { Validator } from '../engine/validation';
-import { dispatchMount, dispatchSetValue } from '../engine/write';
-import { createDispatchTree } from '../engine/write/__tests__/fixtures/createDispatchTree';
-import { createTestValidator } from './fixtures/createTestValidator';
+import { createTestValidator } from '@/schema-form/core/__tests__/fixtures/createTestValidator';
+import type { Validator } from '@/schema-form/core/engine/validation';
+import {
+  dispatchMount,
+  dispatchSetValue,
+} from '@/schema-form/core/engine/write';
+
+import { ValidationMode } from '../types/state';
+import { createDispatchTree } from './fixtures/createDispatchTree';
 
 /** One conditional tree whose guard can be evaluated at mount or later. */
 const schema = {

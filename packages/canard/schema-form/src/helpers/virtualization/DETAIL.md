@@ -6,6 +6,8 @@
 
 ## API Contracts
 
+- `ResolvedVirtualizationOptions`는 옵션 해석 자식 fractal이 소유한 형이며 이 집계 index가 재수출하지 않습니다. 매니저는 옵션 해석 진입점의 계약을 직접 소비합니다.
+
 - 비활성 옵션이나 IntersectionObserver 부재는 null 매니저로 표현하여 일반 렌더링을 허용합니다.
 - 노출은 단방향이며 관찰과 idle backfill 자원은 명시적으로 정리할 수 있어야 합니다.
 
@@ -19,4 +21,4 @@
 
 ## Last Updated
 
-2026-09-16
+2026-09-16; 정돈-2(2026-10-14).

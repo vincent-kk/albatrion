@@ -1,8 +1,9 @@
 import { describe, expect, it } from 'vitest';
 
-import { makeFieldNodeTree } from '../../../__tests__/makeFieldNodeTree';
-import { WriteOption } from '../../types/value';
-import { writeFieldNode } from '../index';
+import { makeFieldNodeTree } from '@/schema-form/core/__tests__/makeFieldNodeTree';
+import { WriteOption } from '@/schema-form/core/engine/types/value';
+
+import { writeFieldNode } from '../utils/write/writeFieldNode';
 import { createTestTree } from './fixtures/createTestTree';
 
 // filid:contract settle-array

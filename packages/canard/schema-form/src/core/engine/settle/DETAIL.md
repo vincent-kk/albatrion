@@ -28,9 +28,13 @@
 
 - 의존 방향은 `blueprint < record < {behaviors, navigation} < validation < settle/derive < settle < dispatch < FieldNode`입니다. settle의 라운드 실행기와 커밋은 derive 진입점만 소비하고, derive는 settle의 쓰기·전이·커밋 및 `settle/type.ts`를 가져오지 않습니다(NODE-016·045, LANDING-083·084). 살아 있는 노드의 계산은 `node.behavior`를 호출하고 형상 밖 값의 정적 해석과 빈 값 판정은 behaviors 진입점을 소비합니다. `FieldNode`·`write`는 import하지 않고 `validation` 진입점의 동기 가드 읽기만 소비합니다(VALIDATE-015·044, NODE-016, NODE-006, WRITE-082·098, VALUE-034).
 - 정착의 내부 organ을 외부 소비자가 직접 가져오지 않으므로 경계 예외는 없습니다(NODE-016).
+- `__tests__/settle.branchless-feature-indexes.test.ts`는 분기 없는 청사진에서도 derive·watch·state 기능 색인과 역의존 색인이 만들어지는지, 그리고 빈 파생 규칙 표를 derive 부재가 capability로 증명된 경우에만 공유하는지를 검증합니다. 두 사례는 일반 분석 강제(`vi.mock`)를 쓰지 않습니다.
 - 한 진입은 동기적으로 표시 → 계산(호스트 바퀴) → 파생(쓰기가 나오면 표시로) → 전이(쓰기가 나오면 표시로) → 커밋합니다. 전이가 재계산을 부른 뒤에도 파생을 다시 판정하며, 적용 쓰기가 있는 파생 라운드는 한 정착 전체에서 전이 뒤에도 이어 세고 상한은 25입니다(SETTLE-002–006·017, EVENT-020, LANDING-063).
 
 ## API Contracts
+
+- `__tests__/scenarios`의 `effectiveList.test.ts`·`union.entry-two-step.test.ts`는 정착 선택과 union 진입의 통합 장면을 이 소유 구획에서 검증합니다. 공유 owned-inline 기준 데이터는 engine 공용 시험 fixture에서 읽습니다.
+- watched object의 동일성 비교는 `utils/commit/utils/__tests__/isSameDeliveryValue.test.ts`가 비교 함수의 소유 구획에서 검증합니다. write 배달 시험은 이 내부 단위를 직접 가져오지 않습니다.
 
 - 정착·자식 선택·제어 선언·배달의 배열 순회는 인덱스 `for`/`while`, 순서 집합과 맵은 `for...of`를 사용합니다. 게이트는 첫 거절에서 멈추며 선언/깊이/배달 순서와 같은 값의 참조는 유지합니다. 동일 자료의 filter→map과 flat 중간 배열을 제거해 O(N) 시간의 상수를 줄이고 임시 O(N) 메모리를 절감합니다. 정적 shape 검증은 완전 일치 확인 뒤 계산을 시작하므로 두 루프를 유지합니다(87라운드 원칙 3).
 
@@ -122,6 +126,14 @@
 - 전이 중 잠복 원본의 변경은 건드린 키의 직전 존재 여부와 값만 기록하고 메타데이터는 유지합니다. 잠복 맵이 바뀌면 자손 접두 메모를 무효화합니다. 원본 B를 만들 때 노드 자동 쓰기 로그 뒤에 이 기록을 되돌리고, 최종 형상에서 사라진 중간 채움을 회수한 뒤 형상을 다시 계산합니다. 종료한 선언의 잠복 자손은 해당 청사진 하위 경로만 방문합니다(SETTLE-005·011·047, WRITE-034).
 
 ## Acceptance Criteria
+
+### scenario-runner — 정착 선택과 union 진입 장면
+
+- 유효 목록의 정착·파생 반영과 union 진입의 두 단계 관측은 같은 코어 시나리오 실행기를 사용하며 단계별 값·형상·배달 단언을 유지합니다.
+
+### settle-branchless-feature-indexes — 분기 없는 청사진의 기능 색인과 빈 규칙 표
+
+- derive·watch·state·역의존 기능이 선언되면 코어 정착에 필요한 색인이 남습니다. 빈 파생 식처럼 규칙이 없어도 부재 증명이 없는 경우에는 청사진 사이에서 빈 표를 공유하지 않습니다.
 
 ### settle-child-selection-metadata — 지연 후보 계획의 런타임 계수 (변경 1b)
 
@@ -276,4 +288,4 @@
 
 ## Last Updated
 
-2026-10-13. 계약 기준: 211C-01, settle-array-prefix, 191C-01, Q113, 69C-02–04, 72C-01, 82C-01, 89C-01, 90C-01, 92C-01–03, 97C-02, 98C-01, ERROR-019, WRITE-045·046·082·086·088, REACT-003·024, EVENT-039·071, SETTLE-005·049, BLUEPRINT-017·030.
+2026-10-13. 계약 기준: 211C-01, settle-array-prefix, 191C-01, Q113, 69C-02–04, 72C-01, 82C-01, 89C-01, 90C-01, 92C-01–03, 97C-02, 98C-01, ERROR-019, WRITE-045·046·082·086·088, REACT-003·024, EVENT-039·071, SETTLE-005·049, BLUEPRINT-017·030; 정돈-2(2026-10-14).

@@ -1,9 +1,10 @@
 import { describe, expect, it } from 'vitest';
 
-import { createTestValidator } from '../../../__tests__/fixtures/createTestValidator';
-import { makeFieldNodeTree } from '../../../__tests__/makeFieldNodeTree';
-import { setContext } from '../../../surface';
-import { FieldNode } from '../../../surface/FieldNode';
+import { createTestValidator } from '@/schema-form/core/__tests__/fixtures/createTestValidator';
+import { isTestFieldNode } from '@/schema-form/core/__tests__/fixtures/testFieldNode';
+import { makeFieldNodeTree } from '@/schema-form/core/__tests__/makeFieldNodeTree';
+import type { ArrayNode } from '@/schema-form/core/surface';
+import { setContext } from '@/schema-form/core/surface';
 
 // filid:contract settle-array
 describe('array item declarations', () => {
@@ -213,9 +214,8 @@ describe('array item declarations', () => {
         },
       },
     });
-    if (!(root instanceof FieldNode))
-      throw new Error('Expected a runtime FieldNode');
-    const array = root;
+    if (!isTestFieldNode(root)) throw new Error('Expected a runtime FieldNode');
+    const array = root as ArrayNode;
     root.setValue([{ marker: 'a' }, { marker: 'b' }]);
     expect(root.find('/0/marker')?.visible).toBe(true);
     array.push({ marker: 'c' });
@@ -234,9 +234,8 @@ describe('array item declarations', () => {
         },
       },
     });
-    if (!(root instanceof FieldNode))
-      throw new Error('Expected a runtime FieldNode');
-    const array = root;
+    if (!isTestFieldNode(root)) throw new Error('Expected a runtime FieldNode');
+    const array = root as ArrayNode;
     root.setValue([
       { kind: 'hide', x: 'A' },
       { kind: 'show', x: 'B' },
@@ -291,9 +290,8 @@ describe('array item declarations', () => {
         },
       },
     });
-    if (!(root instanceof FieldNode))
-      throw new Error('Expected a runtime FieldNode');
-    const array = root;
+    if (!isTestFieldNode(root)) throw new Error('Expected a runtime FieldNode');
+    const array = root as ArrayNode;
     root.setValue([
       { kind: 'off', gated: 'A' },
       { kind: 'on', gated: 'B' },

@@ -1,10 +1,11 @@
 import { afterEach, beforeEach, expect, it, vi } from 'vitest';
 
-import type { mergeEffectiveSchema } from '../engine/blueprint/utils/effectiveSchema/mergeEffectiveSchema';
-import type { mergeSchemaContributions } from '../engine/blueprint/utils/effectiveSchema/utils/mergeSchemaContributions';
-import type { AuthoredSchema } from '../engine/types/jsonSchema';
-import { nodeFromJSONSchema } from '../surface/utils/nodeFromJSONSchema';
-import { captureBranchlessNodeTree } from './fixtures/captureBranchlessNodeTree';
+import { nodeFromJSONSchema } from '@/schema-form/__tests__/fixtures/nodeFromJSONSchema';
+import { captureBranchlessNodeTree } from '@/schema-form/core/__tests__/fixtures/captureBranchlessNodeTree';
+import type { AuthoredSchema } from '@/schema-form/core/engine/types/jsonSchema';
+
+import type { mergeEffectiveSchema } from '../utils/effectiveSchema/mergeEffectiveSchema';
+import type { mergeSchemaContributions } from '../utils/effectiveSchema/utils/mergeSchemaContributions';
 
 const counts = vi.hoisted(() => ({
   runtime: 0,
@@ -13,7 +14,7 @@ const counts = vi.hoisted(() => ({
   memo: new WeakMap(),
 }));
 vi.mock(
-  '../engine/blueprint/utils/effectiveSchema/utils/mergeSchemaContributions',
+  '../utils/effectiveSchema/utils/mergeSchemaContributions',
   async (original) => {
     const actual = await original<{
       mergeSchemaContributions: typeof mergeSchemaContributions;
@@ -28,23 +29,19 @@ vi.mock(
     };
   },
 );
-vi.mock(
-  '../engine/blueprint/utils/effectiveSchema/mergeEffectiveSchema',
-  async (original) => {
-    const actual = await original<{
-      mergeEffectiveSchema: typeof mergeEffectiveSchema;
-    }>();
-    return {
-      mergeEffectiveSchema: (
-        ...args: Parameters<typeof mergeEffectiveSchema>
-      ) => {
-        if (counts.fallback && args[2]?.mode !== 'static')
-          args[3] = counts.memo;
-        return actual.mergeEffectiveSchema(...args);
-      },
-    };
-  },
-);
+vi.mock('../utils/effectiveSchema/mergeEffectiveSchema', async (original) => {
+  const actual = await original<{
+    mergeEffectiveSchema: typeof mergeEffectiveSchema;
+  }>();
+  return {
+    mergeEffectiveSchema: (
+      ...args: Parameters<typeof mergeEffectiveSchema>
+    ) => {
+      if (counts.fallback && args[2]?.mode !== 'static') args[3] = counts.memo;
+      return actual.mergeEffectiveSchema(...args);
+    },
+  };
+});
 beforeEach(() => {
   counts.runtime = 0;
   counts.static = 0;

@@ -13,7 +13,7 @@ import type { AnySchema } from 'ajv';
 import { blueprint } from '../src/core';
 import { nodeFromJSONSchema } from '../src/__legacy__/core/nodeFromJSONSchema';
 import { fieldNodeFactory, SetValueOption } from '../src/core';
-import { FieldNode } from '../src/core/surface/FieldNode';
+import { type TestFieldNode, isTestFieldNode } from '../src/core/__tests__/fixtures/testFieldNode';
 import { dispatchMount } from '../src/core/engine';
 import { createTestValidator } from '../src/core/__tests__/fixtures/createTestValidator';
 import { ValidationMode } from '../src/core';
@@ -152,13 +152,14 @@ function newMount(schema: JSONSchema, value: ReturnType<typeof conditionalValue>
     },
   };
   const start = performance.now();
-  const root: unknown = fieldNodeFactory(blueprint(schema), {
+  const root = fieldNodeFactory(blueprint(schema), {
     diagnostics: { status: 'stable' }, validationMode: ValidationMode.OnChange,
     loadSnapshot: undefined, latentRaw: new PathKeyedMap('pair'),
     typeMismatchPaths: new PathKeyedSet(), inactiveValuesMemo: new PathKeyedMap<readonly { path: string; value: unknown }[]>('path'),
   }, validator);
-  if (!(root instanceof FieldNode)) throw new Error('New mount did not create a runtime node');
-  dispatchMount(root, value, SetValueOption.Overwrite);
+  if (!isTestFieldNode(root)) throw new Error('New mount did not create a runtime node');
+  const rootRecord: TestFieldNode = root;
+  dispatchMount(rootRecord, value, SetValueOption.Overwrite);
   const ms = performance.now() - start;
   if (!root.find('/group_0/field') || guardCalls !== guards)
     throw new Error(`New conditional fixture: field or guards missing (${guardCalls})`);
@@ -292,12 +293,13 @@ async function waveRow() {
   const schema = flatSchema();
   const oldRoot = nodeFromJSONSchema({ jsonSchema: schema, onChange: noop,
     defaultValue: waveValue(0) });
-  const newRoot: unknown = fieldNodeFactory(blueprint(schema), {
+  const newRoot = fieldNodeFactory(blueprint(schema), {
     diagnostics: { status: 'stable' }, loadSnapshot: undefined,
     latentRaw: new PathKeyedMap('pair'), typeMismatchPaths: new PathKeyedSet(), inactiveValuesMemo: new PathKeyedMap<readonly { path: string; value: unknown }[]>('path'),
   });
-  if (!(newRoot instanceof FieldNode)) throw new Error('New wave did not create a runtime node');
-  dispatchMount(newRoot, waveValue(0));
+  if (!isTestFieldNode(newRoot)) throw new Error('New wave did not create a runtime node');
+  const newRootRecord: TestFieldNode = newRoot;
+  dispatchMount(newRootRecord, waveValue(0));
   const oldChildren = oldRoot.children?.map((child) => child.node);
   const newChildren = newRoot.children;
   if (oldChildren?.length !== waveWidth || newChildren?.length !== waveWidth)

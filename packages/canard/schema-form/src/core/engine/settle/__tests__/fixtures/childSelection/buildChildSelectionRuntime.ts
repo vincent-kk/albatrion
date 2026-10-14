@@ -35,7 +35,7 @@ const PINNED_PATH_REWRITES = [
   [/\/core\/FieldNode\//g, '/core/surface/'],
   [
     /\/core\/(?:surface\/)?nodeFromJSONSchema\.ts$/g,
-    '/core/surface/utils/nodeFromJSONSchema.ts',
+    '/__tests__/fixtures/nodeFromJSONSchema.ts',
   ],
   [/\/app\/constants\//g, '/constants/'],
 ] as const;

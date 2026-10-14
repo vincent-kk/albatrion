@@ -3,6 +3,7 @@
 ## Requirements
 
 폼 단위로 관찰·대기열·노출 기록을 관리하고 중복 노출을 방지합니다.
+`__tests__/VirtualizationManager.test.ts`는 이 소유 구획에서 내부 조율을 검증하며 Vitest render·react18 프로젝트가 DOM 환경으로 실행합니다.
 
 ## API Contracts
 
@@ -21,4 +22,4 @@
 
 ## Last Updated
 
-2026-10-14 — 정돈-1; ERROR-090·114, 121C-01 F-A.
+2026-10-14 — 정돈-1; ERROR-090·114, 121C-01 F-A; 정돈-2(2026-10-14).

@@ -1,7 +1,9 @@
 import { describe, expect, it, vi } from 'vitest';
 
-import { makeFieldNodeTree } from '../../../__tests__/makeFieldNodeTree';
-import { FieldNode } from '../../../surface/FieldNode';
+import { isTestFieldNode } from '@/schema-form/core/__tests__/fixtures/testFieldNode';
+import { makeFieldNodeTree } from '@/schema-form/core/__tests__/makeFieldNodeTree';
+import type { NumberNode } from '@/schema-form/core/surface';
+
 import * as stateKeys from '../utils/controls/calculateStateKeys';
 import * as watchValues from '../utils/controls/readFieldNodeWatchValues';
 
@@ -21,7 +23,7 @@ const makeFeatureTree = (features: boolean) => {
     properties.watched = { type: 'number', controls: { watch: ['../f0'] } };
   }
   const { root } = makeFieldNodeTree({ type: 'object', properties });
-  if (!(root instanceof FieldNode)) throw new Error('Expected runtime tree');
+  if (!isTestFieldNode(root)) throw new Error('Expected runtime tree');
   const value = (next: number) =>
     Object.fromEntries(Object.keys(properties).map((key) => [key, next]));
   root.setValue(value(0));
@@ -43,13 +45,13 @@ describe('65C-02 feature visits intersect static declarations and changed scope'
     try {
       root.setValue(value(1));
       expect(visits, `state-key whole-write visits: ${visits}`).toBe(1);
-      expect((root.find('/controlled') as FieldNode).disabled).toBe(true);
+      expect((root.find('/controlled') as NumberNode).disabled).toBe(true);
       visits = 0;
-      (root.find('/f1') as FieldNode).setValue(2);
+      (root.find('/f1') as NumberNode).setValue(2);
       expect(visits, `state-key unrelated-write visits: ${visits}`).toBe(0);
-      (root.find('/f0') as FieldNode).setValue(0);
+      (root.find('/f0') as NumberNode).setValue(0);
       expect(visits).toBe(1);
-      expect((root.find('/controlled') as FieldNode).disabled).toBe(false);
+      expect((root.find('/controlled') as NumberNode).disabled).toBe(false);
     } finally {
       spy.mockRestore();
     }
@@ -65,9 +67,9 @@ describe('65C-02 feature visits intersect static declarations and changed scope'
         `watch whole-write visits: ${spy.mock.calls.length}`,
       ).toBe(1);
       spy.mockClear();
-      (root.find('/f1') as FieldNode).setValue(2);
+      (root.find('/f1') as NumberNode).setValue(2);
       expect(spy).not.toHaveBeenCalled();
-      (root.find('/f0') as FieldNode).setValue(3);
+      (root.find('/f0') as NumberNode).setValue(3);
       expect(spy).toHaveBeenCalledTimes(1);
     } finally {
       spy.mockRestore();

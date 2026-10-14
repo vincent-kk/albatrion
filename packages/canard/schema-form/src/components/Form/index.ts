@@ -16,8 +16,6 @@ export type {
   FormRenderProps,
 } from './components';
 
-export type { FormRender, FormField, FormLabel, FormInput, FormError };
-
 /**
  * Schema-driven form system with JSON Schema validation and dynamic UI composition.
  *

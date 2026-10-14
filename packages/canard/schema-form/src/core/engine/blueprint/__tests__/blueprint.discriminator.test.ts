@@ -1,6 +1,6 @@
 import { describe, expect, it, vi } from 'vitest';
 
-import { blueprint } from '../index';
+import { blueprint } from '../blueprint';
 import { BlueprintErrorCode } from '../utils/diagnostics/constant';
 
 // filid:contract discriminator

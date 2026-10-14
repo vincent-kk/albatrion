@@ -1,18 +1,17 @@
 import { describe, expect, it } from 'vitest';
 
-import { blueprint } from '../../blueprint';
-import { PathKeyedMap } from '../../utils/pathIndex/PathKeyedMap';
-import { PathKeyedSet } from '../../utils/pathIndex/PathKeyedSet';
-import { EMPTY_REVISION_LEDGER } from '../index';
-import type { FieldNodeRecord } from '../index';
-import {
-  FieldNodeEventType,
-  captureFieldNodeChange,
-  clearFieldNodeChanges,
-  patchFieldNodeInteractionState,
-  shallowPatch,
-  updateFieldNodeNameAndPath,
-} from '../index';
+import { blueprint } from '@/schema-form/core/engine/blueprint';
+import { PathKeyedMap } from '@/schema-form/core/engine/utils/pathIndex/PathKeyedMap';
+import { PathKeyedSet } from '@/schema-form/core/engine/utils/pathIndex/PathKeyedSet';
+
+import { FieldNodeEventType } from '../constants/FieldNodeEventType';
+import { EMPTY_REVISION_LEDGER } from '../constants/emptyRevisionLedger';
+import type { FieldNodeRecord } from '../types/record';
+import { captureFieldNodeChange } from '../utils/captureFieldNodeChange';
+import { clearFieldNodeChanges } from '../utils/clearFieldNodeChanges';
+import { patchFieldNodeInteractionState } from '../utils/patchFieldNodeInteractionState';
+import { shallowPatch } from '../utils/shallowPatch';
+import { updateFieldNodeNameAndPath } from '../utils/updateFieldNodeNameAndPath';
 
 /** The smallest structural self type needed by the path operation. */
 interface PathNode {

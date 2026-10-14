@@ -12,7 +12,7 @@ export async function loadCoreBenchmark(version: string) {
       entryPoints: [
         fileURLToPath(
           new URL(
-            '../../../../canard/schema-form/src/core/surface/utils/nodeFromJSONSchema.ts',
+            '../../../../canard/schema-form/src/__tests__/fixtures/nodeFromJSONSchema.ts',
             import.meta.url,
           ),
         ),

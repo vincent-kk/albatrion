@@ -1,12 +1,14 @@
 import { describe, expect, it, vi } from 'vitest';
 
+import { WriteOption } from '@/schema-form/core/engine/types/value';
+
 import * as compiler from '../../blueprint/utils/expressions/createDynamicFunction';
-import { WriteOption } from '../../types/value';
-import { loadFieldNodeAtMount, writeFieldNode } from '../index';
 import * as priming from '../utils/compute/primeHost';
 import * as selection from '../utils/compute/selectChildren';
 import * as gates from '../utils/gates/evaluateGate';
 import * as publication from '../utils/gates/flushPendingGateReads';
+import { loadFieldNodeAtMount } from '../utils/load/loadFieldNodeAtMount';
+import { writeFieldNode } from '../utils/write/writeFieldNode';
 import { createFixedBranchSchema } from './fixtures/childSelection/createFixedBranchSchema';
 import { observeChildSelectionPlans } from './fixtures/childSelection/observeChildSelectionPlans';
 import { createTestTree } from './fixtures/createTestTree';

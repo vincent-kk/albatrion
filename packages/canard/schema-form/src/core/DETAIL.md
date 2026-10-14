@@ -12,7 +12,7 @@
 - 노드의 `value`는 편집 중인 계산값이고 `outputValue`는 스키마 출력 옵션이 적용된 투영 값입니다. 원본 상태는 `raw`·`undeclaredValues`에 두며 투영은 노드 트리와 편집 상태를 바꾸지 않습니다(VALUE-002·027·034, LANDING-067).
 - 루트 검증·루트 방출·`FormHandle.getValue`·제출은 `outputValue`를 읽습니다. 입력과 `UpdateValue` 관측은 `value`를 사용하며 노드 변경은 공개 쓰기 API 또는 이름 붙은 바인딩 전용 통로를 경유합니다(LANDING-067, REACT-009·010).
 - `src/__legacy__/core/`의 노드·파서·시험은 참고용으로 보존하며 비레거시 코드가 가져오지 않습니다. 새 시나리오 하네스는 새 엔진을 검증합니다(LANDING-205).
-- `nodeFromJSONSchema`는 `surface/utils/`의 내부 생성 도우미로 core·패키지 진입점이 내보내지 않으며, 시험·bench·aileron 벤치마크가 파일 경로로 직접 읽습니다. `<Form>`은 `buildFieldNodeTree`·`mountFieldNode` 바인딩 통로를 씁니다. `contextNodeFactory`는 `src/__legacy__/`에 속하며 core·패키지 진입점이 내보내지 않습니다. `engine/types`의 state·value·jsonSchema·controls는 엔진 안에서 구체 파일로 소비하고 외부는 core·engine 진입점의 이름을 경유하며 별도 와일드카드 배럴이나 node·constructor 계약은 두지 않습니다. 사건 계약은 새 엔진의 record가 소유합니다(LANDING-087, 70C-01).
+- `nodeFromJSONSchema`는 `src/__tests__/fixtures/`의 시험·측정 도우미이며 core index의 공개 생성·마운트 통로만 사용합니다. core·패키지 진입점은 이 도우미를 내보내지 않으며 시험·bench·aileron 벤치마크가 파일 경로로 읽습니다. `<Form>`은 `buildFieldNodeTree`·`mountFieldNode` 바인딩 통로를 씁니다. `contextNodeFactory`는 `src/__legacy__/`에 속하며 core·패키지 진입점이 내보내지 않습니다. `engine/types`의 state·value·jsonSchema·controls는 엔진 안에서 구체 파일로 소비하고 외부는 core·engine 진입점의 이름을 경유하며 별도 와일드카드 배럴이나 node·constructor 계약은 두지 않습니다. 사건 계약은 새 엔진의 record가 소유합니다(LANDING-087, 70C-01).
 - 공개 노드 형·가드와 `FieldNodeEventType`·`FieldNodeRequestType`·`FieldNodeState`는 패키지 진입점이 이름으로 내보냅니다. 바인딩 전용 함수는 공개하지 않으며, `Validator`는 `ValidatorFactory`라는 이름으로, `ValidateFunction`은 같은 이름으로 `src/types`를 거쳐 패키지 공개 `src/index.ts`가 내보냅니다(NODE-010, SURFACE-055·056·060, VALIDATE-044, 32C-01, 35C-07, 69C-01).
 - 새 fractal의 의존 순서는 `blueprint` < `record` < {종류 모듈, `navigation`} < `validation` < `settle/derive` < `settle` < `write` < `surface`다. `settle/derive`는 `settle`의 자식으로서 규칙 판정만 소유하고 settle의 라운드 실행기가 그 진입점을 소비한다. `validation`은 결과를 받은 콜백으로만 `write`에 돌려주며 타입 간선도 역전시키지 않는다(NODE-016·045, LANDING-083·084, SETTLE-004).
 - 사건은 루트의 동기 진입 사슬에서 정착·파동 배달·검증 요청·`onChange` 순서로 조율합니다. 경계 린트는 `src/core/**` 전체에 적용하여 `app/plugin` 가져오기를 금지합니다(EVENT-027, CONTROLS-075, LANDING-067).
@@ -20,7 +20,10 @@
 
 ## API Contracts
 
-- surface는 engine의 진입점으로만 실행 계약을 가져오며 core 진입점은 두 자식의 계약을 이름으로 재수출합니다. SchemaControls·ValidateFunction은 바인딩 타입의 경계를 제공하고 blueprint·readFieldNodeGuard는 core 밖의 검증 시험을 위한 재수출입니다. 패키지의 src/index 공개 이름은 유지합니다(07c 계획 9.2).
+- surface는 engine의 진입점으로만 실행 계약을 가져오며 core 진입점은 두 자식의 계약을 이름으로 재수출합니다. SchemaControls·ValidateFunction은 바인딩 타입의 경계를 제공합니다. `readFieldNodeGuard`·`UnionMemberType`·`UnionSchemaType`·`FieldNodeInputProps`는 core index가 재수출하지 않습니다. 패키지의 src/index 공개 이름은 유지합니다(07c 계획 9.2).
+- `fieldNodeFactory`·`blueprint` 재수출의 보유 이유: core 밖 시험·측정 도구(`bench/array.bench.ts`·`bench/derive-and-controls.bench.ts`·`bench/dispatch-and-validation.bench.ts`·`bench/node-and-settle.bench.ts`, `src/hooks/__tests__/createHookNode.ts`)가 core index로 쓰는 생성 통로; 제품 소비자는 없음; 정돈-3에서 시험 도구의 자리와 함께 재검토.
+- `__tests__/fixtures/testFieldNode.ts`는 engine index의 `FieldNodeRecord`를 바탕으로 시험용 자기 형과 구조 판정 좁히기를 제공합니다. core 시나리오 러너, engine 시험과 bench 네 파일(`array`·`derive-and-controls`·`dispatch-and-validation`·`node-and-settle`)은 클래스 identity 대신 레코드 칸으로 판정하고 공개 노드 동작은 surface 관문의 공개 노드 형으로 호출하며, `surface/FieldNode.ts` 클래스를 직접 가져오지 않습니다.
+- 자식 index 모양 검증은 `__tests__/surfaceIndex.test.ts`가 surface 관문을 소비하여 수행합니다. 청사진 내부 검증은 blueprint 시험 구획이, 청사진과 검증·정착을 함께 쓰는 통합 검증은 engine 시험 구획이 소유합니다.
 
 - 공개 쓰기 옵션은 독립 비트 `Overwrite=1`, `Merge=2`, `DisableAutomaticWrites=4`, `EnableAutomaticWrites=8`입니다. `Overwrite`와 `Merge`의 동시 지정은 쓰기 전에 `INVALID_WRITE_OPTION`으로 거부합니다(LANDING-021·141). 내부 빈 옵션과 교체 표시는 같은 네 비트 계약을 사용합니다.
 
@@ -37,10 +40,10 @@
 | `setContext(root, context)`                                                                        | 새 엔진의 바인딩 전용 내부 통로를 이름으로 다시 내보냄. 패키지 공개 `src/index.ts`에는 노출하지 않음(NODE-010, SURFACE-055, 28C-08)                              |
 | `retainValidationRoot(validator, authoredRoot)` · `releaseValidationRoot(validator, authoredRoot)` | 바인딩 이펙트의 수명 증감 통로를 `engine/validation/index.ts`에서 이름으로 다시 내보냄. 패키지 공개 `src/index.ts`에는 노출하지 않음(VALIDATE-021·045, NODE-010) |
 
-내부 도우미 서명: `nodeFromJSONSchema`는 `buildFieldNodeTree`·`mountFieldNode` 통로를 이어 마운트된 루트를 반환합니다. `validator`는 `{ compile, compileGuard, release?, dialect? }` 객체이고, `deferMountValidation`의 기본값은 거짓입니다(70C-01, VALIDATE-010, CONTROLS-075).
+시험·측정 도우미 서명: `src/__tests__/fixtures/nodeFromJSONSchema.ts`는 core index의 `buildFieldNodeTree`·`mountFieldNode` 통로를 이어 마운트된 루트를 반환합니다. `validator`는 `{ compile, compileGuard, release?, dialect? }` 객체이고, `deferMountValidation`의 기본값은 거짓입니다(70C-01, VALIDATE-010, CONTROLS-075).
 
 ```ts
-nodeFromJSONSchema<Schema extends JSONSchema>(props: {
+nodeFromJSONSchema<Schema extends AuthoredSchema>(props: {
   jsonSchema: Schema;
   defaultValue?: InferValueType<Schema>;
   validator?: Validator;
@@ -51,7 +54,7 @@ nodeFromJSONSchema<Schema extends JSONSchema>(props: {
   errorReporter?: FormErrorReporter;
   unsetOnInactive?: boolean;
   disableAutomaticWrites?: boolean;
-  isTerminal?: (schema: JSONSchema) => boolean | undefined;
+  isTerminal?: BlueprintOptions['isTerminal'];
   isAtomic?: (value: unknown) => boolean;
   deferMountValidation?: boolean;
 }): InferFieldNode<Schema>
@@ -70,20 +73,11 @@ nodeFromJSONSchema<Schema extends JSONSchema>(props: {
 
 ### 노드 타입 추가
 
-노드 종류는 청사진과 동작 행으로 정의하고 단일 런타임 겉면 계약을 따릅니다. 내부 도우미 `nodeFromJSONSchema`와 `<Form>`은 같은 새 엔진 생성 통로를 사용하며 `AbstractNode` 상속을 요구하지 않습니다(NODE-010, LANDING-067, 70C-01).
+노드 종류는 청사진과 동작 행으로 정의하고 단일 런타임 겉면 계약을 따릅니다. 시험·측정 도우미 `nodeFromJSONSchema`와 `<Form>`은 같은 새 엔진 생성 통로를 사용하며 `AbstractNode` 상속을 요구하지 않습니다(NODE-010, LANDING-067, 70C-01).
 
 공개 `InferFieldNode`는 NODE-059에 따라 형 없는 `oneOf`·`anyOf`의 모든 분기가 인라인 객체 또는 인라인 배열 스키마일 때만 각각 `ObjectNode`·`ArrayNode`로 좁힙니다. `$ref`, 게이트 분기, 두 키워드의 동시 사용, 본체 `allOf`는 넓은 `FieldNode`를 유지합니다. 형 없는 분기 없는 `const`·`enum` 칸은 리터럴의 JSON 종류에 맞는 원시 노드로 좁힙니다.
 
 ## Acceptance Criteria
-
-### schema-merge-mount — 정규화 재사용의 노드 관측과 병합 수
-
-- 기존 런타임 병합을 강제한 대조군과 마운트·후속 쓰기의 트리·값·유효 스키마·리비전·경고·통지를 비교합니다. 마운트마다 실제 정적/런타임 병합을 별도로 세고 적격 선언의 런타임 재병합 제거를 확인합니다.
-
-### branchless-observables — 분기 없는 청사진의 코어 관측 동등성
-
-- BF 픽스처와 기존 청사진 시험 스키마에서 범용 분석과 분기 없는 분석의 트리·값·오류·경고·진단이 같고, 모든 BF 상호작용 뒤에도 유지됩니다.
-- derive·watch·state·역의존 기능이 선언되면 코어 정착에 필요한 색인이 남습니다. 빈 파생 식처럼 규칙이 없어도 부재 증명이 없는 경우에는 청사진 사이에서 빈 표를 공유하지 않습니다.
 
 ### two-channel — 두 채널이 분리되어 있다
 
@@ -97,7 +91,7 @@ nodeFromJSONSchema<Schema extends JSONSchema>(props: {
 
 ### factory-single-path — 트리 생성 경로는 하나다
 
-- `nodeFromJSONSchema`(내부 도우미)와 `<Form>`이 같은 `buildFieldNodeTree` 통로를 사용하고, 마운트된 루트는 스키마 종류에 맞는 공개 노드 형·가드 계약을 만족합니다(70C-01, VALIDATE-010).
+- `nodeFromJSONSchema`(시험·측정 도우미)와 `<Form>`이 같은 `buildFieldNodeTree` 통로를 사용하고, 마운트된 루트는 스키마 종류에 맞는 공개 노드 형·가드 계약을 만족합니다(70C-01, VALIDATE-010).
 
 ### scenario-runner — 코어 시나리오 실행 소유
 
@@ -170,12 +164,6 @@ nodeFromJSONSchema<Schema extends JSONSchema>(props: {
 
 ## Boundary Exemptions
 
-### `__tests__/makeFieldNodeTree.ts` — 공유 시험 트리 생성
-
-- **Consumers**: `engine/behaviors/unionBehavior/__tests__/**`
-- **Direct import**: `allowed`
-- **Reason**: 회귀 시험과 union 시험이 같은 실제 청사진·노드 트리 생성기를 소비합니다. 제품 진입점에 시험 전용 도우미를 공개하지 않기 위해 core의 테스트 구획에 보관합니다.
-
 ### `__tests__/fixtures/createTestValidator.ts` — bench의 시험 검증기
 
 - **Consumers**: `**/bench/**`
@@ -184,4 +172,4 @@ nodeFromJSONSchema<Schema extends JSONSchema>(props: {
 
 ## Last Updated
 
-계약 기준: LANDING-067·087·205, CONTROLS-075, 69C-01–05, 70C-01, 100라운드, 정돈-1(2026-10-14).
+계약 기준: LANDING-067·087·205, CONTROLS-075, 69C-01–05, 70C-01, 100라운드, 정돈-1(2026-10-14); 정돈-2(2026-10-14).

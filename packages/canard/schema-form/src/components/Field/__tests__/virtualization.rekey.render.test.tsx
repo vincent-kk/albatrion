@@ -1,8 +1,8 @@
 import { act, cleanup } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { VirtualizationBackfill } from '@/schema-form';
 import { renderForm } from '@/schema-form/__tests__/renderForm';
+import { VirtualizationBackfill } from '@/schema-form/helpers/virtualization';
 
 // filid:contract field-contract
 // Browser observer delivery is injected through jsdom's global API.

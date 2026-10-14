@@ -1,6 +1,7 @@
 import { describe, expect, it, vi } from 'vitest';
 
-import { createDispatchTree } from '../../write/__tests__/fixtures/createDispatchTree';
+import { createDispatchTree } from '@/schema-form/core/engine/__tests__/fixtures/createDispatchTree';
+
 import type { Validator } from '../type';
 
 // filid:contract validation-guard

@@ -1,7 +1,11 @@
 import { describe, expect, it } from 'vitest';
 
-import { FieldNodeEventType } from '../../record';
-import { ValidationMode } from '../../types/state';
+import {
+  type DispatchTestNode,
+  createDispatchTree,
+} from '@/schema-form/core/engine/__tests__/fixtures/createDispatchTree';
+import { FieldNodeEventType } from '@/schema-form/core/engine/record';
+import { ValidationMode } from '@/schema-form/core/engine/types/state';
 import {
   dispatchMount,
   dispatchRemove,
@@ -10,13 +14,11 @@ import {
   dispatchSetValue,
   dispatchValidate,
   subscribeFieldNode,
-} from '../../write';
-import {
-  type DispatchTestNode,
-  createDispatchTree,
-} from '../../write/__tests__/fixtures/createDispatchTree';
-import { readFieldNodeErrors, requestFieldNodeValidation } from '../index';
+} from '@/schema-form/core/engine/write';
+
 import type { ValidationIssue, Validator } from '../type';
+import { readFieldNodeErrors } from '../utils/read/readFieldNodeErrors';
+import { requestFieldNodeValidation } from '../utils/run/requestFieldNodeValidation';
 
 /** Error bits a validation wave may deliver. */
 const ERROR_BITS =

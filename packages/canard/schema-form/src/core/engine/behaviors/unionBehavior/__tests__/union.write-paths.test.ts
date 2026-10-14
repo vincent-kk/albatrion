@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 
-import { makeFieldNodeTree } from '../../../../__tests__/makeFieldNodeTree';
-import { SetValueOption, isUnionNode } from '../../../../surface';
+import { makeFieldNodeTree } from '@/schema-form/core/__tests__/makeFieldNodeTree';
+import { SetValueOption, isUnionNode } from '@/schema-form/core/surface';
 
 // filid:contract union-rule-a
 describe('TEST-077 union write paths', () => {

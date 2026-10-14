@@ -1,8 +1,10 @@
 import { describe, expect, it } from 'vitest';
 
-import { FieldNodeState, ValidationMode } from '../../engine/types/state';
-import { FieldNodeEventType, SetValueOption } from '../../surface';
-import type { FieldNode } from '../../surface';
+import { FieldNodeState, ValidationMode } from '@/schema-form/core/engine';
+import { FieldNodeEventType } from '@/schema-form/core/engine';
+import { SetValueOption } from '@/schema-form/core/surface';
+import type { FieldNode } from '@/schema-form/core/surface';
+
 import { makeFieldNodeTree } from '../makeFieldNodeTree';
 
 const requireNode = (root: FieldNode, path: string): FieldNode => {

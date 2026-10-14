@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 
-import { blueprint, mergeEffectiveSchema } from '../index';
+import { blueprint } from '../blueprint';
+import { mergeEffectiveSchema } from '../utils/effectiveSchema/mergeEffectiveSchema';
 
 describe('declaration-only strategy regression', () => {
   it('does not apply branch overlay terminal hints to a static host', () => {

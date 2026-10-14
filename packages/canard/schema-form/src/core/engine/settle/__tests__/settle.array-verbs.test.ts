@@ -1,14 +1,16 @@
 import { describe, expect, it } from 'vitest';
 
-import { makeFieldNodeTree } from '../../../__tests__/makeFieldNodeTree';
-import { FieldNode } from '../../../surface/FieldNode';
-import { arrangeFieldNodeItems } from '../index';
+import type { TestFieldNode } from '@/schema-form/core/__tests__/fixtures/testFieldNode';
+import { isTestFieldNode } from '@/schema-form/core/__tests__/fixtures/testFieldNode';
+import { makeFieldNodeTree } from '@/schema-form/core/__tests__/makeFieldNodeTree';
+
+import { arrangeFieldNodeItems } from '../utils/structure/arrangeFieldNodeItems';
 
 const makeRecordTree = (...args: Parameters<typeof makeFieldNodeTree>) => {
   const tree = makeFieldNodeTree(...args);
-  if (!(tree.root instanceof FieldNode))
+  if (!isTestFieldNode(tree.root))
     throw new Error('Expected a runtime FieldNode');
-  const root: FieldNode = tree.root;
+  const root = tree.root;
   return { ...tree, root };
 };
 
@@ -19,9 +21,10 @@ describe('array structural verbs', () => {
       { type: 'array', items: { type: 'string' } },
       { snapshot: ['a'] },
     );
+    const record: TestFieldNode = root;
     root.resetSubtree();
     const first = root.children![0];
-    expect(arrangeFieldNodeItems(root, { kind: 'push', value: 'x' })).toBe(2);
+    expect(arrangeFieldNodeItems(record, { kind: 'push', value: 'x' })).toBe(2);
     expect(root.value).toEqual(['a', 'x']);
     expect(root.children![0]).toBe(first);
     const added = root.children![1];
@@ -43,8 +46,9 @@ describe('array structural verbs', () => {
         },
       },
     });
+    const record: TestFieldNode = root;
     expect(
-      arrangeFieldNodeItems(root, {
+      arrangeFieldNodeItems(record, {
         kind: 'push',
         value: { supplied: 'caller' },
       }),
@@ -63,14 +67,17 @@ describe('array structural verbs', () => {
       },
       { snapshot: [{ name: 's0' }, { name: 's1' }, { name: 's2' }] },
     );
+    const record: TestFieldNode = root;
     root.setValue([{ name: 'a' }, { name: 'b' }, { name: 'c' }]);
     const first = root.children![0];
     const second = root.children![1];
     const grandchild = second.children![0];
     second.state = { ...second.state, dirty: true, touched: true };
-    expect(arrangeFieldNodeItems(root, { kind: 'remove', index: 0 })).toEqual({
-      name: 'a',
-    });
+    expect(arrangeFieldNodeItems(record, { kind: 'remove', index: 0 })).toEqual(
+      {
+        name: 'a',
+      },
+    );
     expect(first.detached).toBe(true);
     expect(root.children![0]).toBe(second);
     expect(second).toMatchObject({ name: '0', path: '/0', itemKey: 1 });
@@ -90,9 +97,12 @@ describe('array structural verbs', () => {
       prefixItems: [{ type: 'string' }, { type: 'string' }],
       items: false,
     });
+    const record: TestFieldNode = root;
     root.setValue(['a', 'b', 'c', 'd']);
     const oldSecond = root.children![1];
-    expect(arrangeFieldNodeItems(root, { kind: 'remove', index: 0 })).toBe('a');
+    expect(arrangeFieldNodeItems(record, { kind: 'remove', index: 0 })).toBe(
+      'a',
+    );
     expect(root.value).toEqual(['b', 'c', 'd']);
     expect(oldSecond.detached).toBe(true);
     expect(root.children![0].value).toBe('b');
@@ -111,11 +121,12 @@ describe('array structural verbs', () => {
       ],
       items: false,
     });
+    const record: TestFieldNode = root;
     root.setValue(['first', 'b']);
     const firstBlueprint = root.children![0].blueprintNode;
     const moved = root.children![1];
     expect(moved.blueprintNode).not.toBe(firstBlueprint);
-    expect(arrangeFieldNodeItems(root, { kind: 'remove', index: 0 })).toBe(
+    expect(arrangeFieldNodeItems(record, { kind: 'remove', index: 0 })).toBe(
       'first',
     );
     expect(root.value).toEqual(['b']);
@@ -129,36 +140,37 @@ describe('array structural verbs', () => {
       type: 'array',
       items: { type: 'string' },
     });
+    const record: TestFieldNode = root;
     root.setValue(['a']);
     const commit = Reflect.get(runtime, 'commitNumber');
     for (const index of [-1, 1, 0.5, NaN]) {
       expect(
-        arrangeFieldNodeItems(root, { kind: 'remove', index }),
+        arrangeFieldNodeItems(record, { kind: 'remove', index }),
       ).toBeUndefined();
       expect(
-        arrangeFieldNodeItems(root, { kind: 'update', index, value: 'x' }),
+        arrangeFieldNodeItems(record, { kind: 'update', index, value: 'x' }),
       ).toBeUndefined();
     }
     expect(Reflect.get(runtime, 'commitNumber')).toBe(commit);
     const former = root.children![0];
     root.setValue(null);
     const nullCommit = Reflect.get(runtime, 'commitNumber');
-    expect(arrangeFieldNodeItems(root, { kind: 'pop' })).toBeUndefined();
+    expect(arrangeFieldNodeItems(record, { kind: 'pop' })).toBeUndefined();
     expect(
-      arrangeFieldNodeItems(root, { kind: 'update', index: 0, value: 'x' }),
+      arrangeFieldNodeItems(record, { kind: 'update', index: 0, value: 'x' }),
     ).toBeUndefined();
     expect(
-      arrangeFieldNodeItems(root, { kind: 'remove', index: 0 }),
+      arrangeFieldNodeItems(record, { kind: 'remove', index: 0 }),
     ).toBeUndefined();
-    expect(arrangeFieldNodeItems(root, { kind: 'clear' })).toBeUndefined();
+    expect(arrangeFieldNodeItems(record, { kind: 'clear' })).toBeUndefined();
     expect(root.outputValue).toBeNull();
     expect(Reflect.get(runtime, 'commitNumber')).toBe(nullCommit);
-    expect(arrangeFieldNodeItems(root, { kind: 'push', value: 'x' })).toBe(1);
+    expect(arrangeFieldNodeItems(record, { kind: 'push', value: 'x' })).toBe(1);
     expect(root.value).toEqual(['x']);
     expect(root.children![0].itemKey).toBeGreaterThan(former.itemKey!);
     expect(Reflect.get(runtime, 'commitNumber')).toBeGreaterThan(nullCommit);
     root.setValue(17);
-    expect(arrangeFieldNodeItems(root, { kind: 'push', value: 'y' })).toBe(1);
+    expect(arrangeFieldNodeItems(record, { kind: 'push', value: 'y' })).toBe(1);
     expect(root.value).toEqual(['y']);
   });
 
@@ -167,20 +179,23 @@ describe('array structural verbs', () => {
       type: 'array',
       options: { terminal: true },
     });
+    const record: TestFieldNode = root;
     const original = ['a', 'b'];
     root.setValue(original);
     expect(
-      arrangeFieldNodeItems(root, { kind: 'update', index: 0, value: 'x' }),
+      arrangeFieldNodeItems(record, { kind: 'update', index: 0, value: 'x' }),
     ).toBe('x');
     expect(original).toEqual(['a', 'b']);
     expect(root.raw).not.toBe(original);
-    expect(arrangeFieldNodeItems(root, { kind: 'pop' })).toBe('b');
-    expect(arrangeFieldNodeItems(root, { kind: 'push', value: 'z' })).toBe(2);
+    expect(arrangeFieldNodeItems(record, { kind: 'pop' })).toBe('b');
+    expect(arrangeFieldNodeItems(record, { kind: 'push', value: 'z' })).toBe(2);
     const beforeRemove = root.raw;
-    expect(arrangeFieldNodeItems(root, { kind: 'remove', index: 0 })).toBe('x');
+    expect(arrangeFieldNodeItems(record, { kind: 'remove', index: 0 })).toBe(
+      'x',
+    );
     expect(root.raw).not.toBe(beforeRemove);
     expect(root.value).toEqual(['z']);
-    expect(arrangeFieldNodeItems(root, { kind: 'clear' })).toBeUndefined();
+    expect(arrangeFieldNodeItems(record, { kind: 'clear' })).toBeUndefined();
     expect(root.value).toEqual([]);
   });
 
@@ -189,11 +204,12 @@ describe('array structural verbs', () => {
       { type: 'array', items: { type: 'string' } },
       { snapshot: ['snapshot'] },
     );
+    const record: TestFieldNode = root;
     root.resetSubtree();
     const item = root.children![0];
     const key = item.itemKey;
     expect(
-      arrangeFieldNodeItems(root, {
+      arrangeFieldNodeItems(record, {
         kind: 'update',
         index: 0,
         value: 'updated',
@@ -211,10 +227,11 @@ describe('array structural verbs', () => {
       prefixItems: [{ type: 'string' }],
       items: false,
     });
+    const record: TestFieldNode = root;
     root.setValue(['a', 'b']);
     const item = root.children![0];
     expect(
-      arrangeFieldNodeItems(root, { kind: 'update', index: 1, value: 'c' }),
+      arrangeFieldNodeItems(record, { kind: 'update', index: 1, value: 'c' }),
     ).toBe('c');
     expect(root.value).toEqual(['a', 'c']);
     expect(root.children![0]).toBe(item);
@@ -226,10 +243,11 @@ describe('array structural verbs', () => {
       type: 'array',
       items: { type: 'string', controls: { active: 'false' } },
     });
+    const record: TestFieldNode = root;
     root.setValue(['a']);
     expect(root.children).toEqual([]);
     expect(
-      arrangeFieldNodeItems(root, { kind: 'update', index: 0, value: 'b' }),
+      arrangeFieldNodeItems(record, { kind: 'update', index: 0, value: 'b' }),
     ).toBe('b');
     const latent: Map<string, unknown> = Reflect.get(runtime, 'latentRaw');
     expect(latent.get(JSON.stringify(['/0', 'string']))).toBe('b');
@@ -240,16 +258,17 @@ describe('array structural verbs', () => {
       type: 'array',
       items: { type: 'string' },
     });
+    const record: TestFieldNode = root;
     root.setValue(['a']);
     const first = root.children![0];
-    arrangeFieldNodeItems(root, { kind: 'push', value: 'b' });
+    arrangeFieldNodeItems(record, { kind: 'push', value: 'b' });
     const second = root.children![1];
-    expect(arrangeFieldNodeItems(root, { kind: 'pop' })).toBe('b');
+    expect(arrangeFieldNodeItems(record, { kind: 'pop' })).toBe('b');
     expect(second.detached).toBe(true);
-    arrangeFieldNodeItems(root, { kind: 'push', value: 'c' });
+    arrangeFieldNodeItems(record, { kind: 'push', value: 'c' });
     const third = root.children![1];
     expect(third.itemKey).toBeGreaterThan(second.itemKey!);
-    expect(arrangeFieldNodeItems(root, { kind: 'clear' })).toBeUndefined();
+    expect(arrangeFieldNodeItems(record, { kind: 'clear' })).toBeUndefined();
     expect(first.detached).toBe(true);
     expect(third.detached).toBe(true);
     expect(root.children).toEqual([]);
@@ -261,23 +280,24 @@ describe('array structural verbs', () => {
       type: 'array',
       options: { terminal: true },
     });
-    expect(arrangeFieldNodeItems(root, { kind: 'pop' })).toBeUndefined();
+    const record: TestFieldNode = root;
+    expect(arrangeFieldNodeItems(record, { kind: 'pop' })).toBeUndefined();
     root.setValue(null);
     const commit = Reflect.get(runtime, 'commitNumber');
-    expect(arrangeFieldNodeItems(root, { kind: 'pop' })).toBeUndefined();
+    expect(arrangeFieldNodeItems(record, { kind: 'pop' })).toBeUndefined();
     expect(
-      arrangeFieldNodeItems(root, { kind: 'update', index: 0, value: 'x' }),
+      arrangeFieldNodeItems(record, { kind: 'update', index: 0, value: 'x' }),
     ).toBeUndefined();
     expect(
-      arrangeFieldNodeItems(root, { kind: 'remove', index: 0 }),
+      arrangeFieldNodeItems(record, { kind: 'remove', index: 0 }),
     ).toBeUndefined();
-    expect(arrangeFieldNodeItems(root, { kind: 'clear' })).toBeUndefined();
+    expect(arrangeFieldNodeItems(record, { kind: 'clear' })).toBeUndefined();
     expect(root.raw).toBeNull();
     expect(Reflect.get(runtime, 'commitNumber')).toBe(commit);
-    expect(arrangeFieldNodeItems(root, { kind: 'push', value: 'x' })).toBe(1);
+    expect(arrangeFieldNodeItems(record, { kind: 'push', value: 'x' })).toBe(1);
     expect(root.raw).toEqual(['x']);
     root.setValue(undefined);
-    expect(arrangeFieldNodeItems(root, { kind: 'push', value: 'y' })).toBe(1);
+    expect(arrangeFieldNodeItems(record, { kind: 'push', value: 'y' })).toBe(1);
     expect(root.raw).toEqual(['y']);
   });
 
@@ -286,14 +306,15 @@ describe('array structural verbs', () => {
       type: 'array',
       options: { terminal: true },
     });
+    const record: TestFieldNode = root;
     root.setValue(17);
     expect(root.typeMismatch).toBe(true);
     const commit = Reflect.get(runtime, 'commitNumber');
-    expect(arrangeFieldNodeItems(root, { kind: 'clear' })).toBeUndefined();
-    expect(arrangeFieldNodeItems(root, { kind: 'pop' })).toBeUndefined();
+    expect(arrangeFieldNodeItems(record, { kind: 'clear' })).toBeUndefined();
+    expect(arrangeFieldNodeItems(record, { kind: 'pop' })).toBeUndefined();
     expect(root.raw).toBe(17);
     expect(Reflect.get(runtime, 'commitNumber')).toBe(commit);
-    expect(arrangeFieldNodeItems(root, { kind: 'push', value: 'x' })).toBe(1);
+    expect(arrangeFieldNodeItems(record, { kind: 'push', value: 'x' })).toBe(1);
     expect(root.raw).toEqual(['x']);
     expect(root.typeMismatch).toBe(false);
   });
@@ -309,11 +330,12 @@ describe('array structural verbs', () => {
       ],
       items: false,
     });
+    const record: TestFieldNode = root;
     root.setValue([[{}, {}], 'b']);
     const nested = root.find('/0/1');
     expect(nested).not.toBeNull();
     expect(
-      arrangeFieldNodeItems(root, { kind: 'update', index: 1, value: 'c' }),
+      arrangeFieldNodeItems(record, { kind: 'update', index: 1, value: 'c' }),
     ).toBe('c');
     expect(root.value).toEqual([[{}, {}], 'c']);
     expect(root.find('/0/1')).toBe(nested);
@@ -331,11 +353,12 @@ describe('array structural verbs', () => {
       ],
       items: false,
     });
+    const record: TestFieldNode = root;
     root.setValue([[{}, {}], 'b']);
     const nested = root.find('/0/1');
     expect(root.find('/1')).toBeNull();
     expect(
-      arrangeFieldNodeItems(root, { kind: 'update', index: 1, value: 'c' }),
+      arrangeFieldNodeItems(record, { kind: 'update', index: 1, value: 'c' }),
     ).toBe('c');
     expect(root.value).toEqual([[{}, {}], null]);
     expect(root.find('/0/1')).toBe(nested);

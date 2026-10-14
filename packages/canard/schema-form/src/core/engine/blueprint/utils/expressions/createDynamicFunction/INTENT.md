@@ -8,7 +8,7 @@ Compile the existing expression language into a dependency-array function withou
 
 - Keep the established expression syntax and boolean coercion behavior during ownership migration.
 - Register references through the supplied path manager before generating dependency indexes.
-- Expose the compiler and its function types through named exports.
+- Expose the compiler through a named export; keep its function type internal.
 
 ## Boundaries
 

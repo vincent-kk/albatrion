@@ -6,6 +6,8 @@
 
 ## API Contracts
 
+- `FormErrorReason`·`FormErrorDetails`는 코드별 상세의 내부 형이며 errors index가 내보내지 않습니다. 외부 오류 관측은 진입점의 `FormErrorRecord` 계약을 사용하고, 코드별 상세 형의 계약은 이 fractal의 `__tests__`가 `type.ts`를 직접 읽어 검증합니다.
+
 - 오류 코드·메시지·상세 맥락을 보관하고 클래스에 맞는 이름을 설정합니다.
 - 타입 가드는 대응하는 도메인 오류를 식별하며 오류 객체는 비즈니스 동작을 실행하지 않습니다.
 - `formErrorCode.ts`는 ERROR-164의 살아 있는 새 설계 행과 후속 보충(ERROR-188–203, 25C-05)을 원장 순서로 싣고, 코드 상수마다 level·부류·발생 시점의 문서 주석을 둡니다. `FormErrorCode`는 그 상수의 닫힌 문자열 합집합이며 `index.ts`가 상수와 형을 저장소 관례인 `export *`로 내보냅니다. `SCHEMA_FORM_WARNING.TYPE_MISMATCH`가 경고등 코드이고 `VALUE_TYPE_MISMATCH`는 아니며, `JSON_SCHEMA_ERROR.INJECT_TARGET_NOT_FOUND`는 코드 표에서 뺍니다(ERROR-031·164·188·198, SURFACE-061, CONTROLS-079).
@@ -37,4 +39,4 @@
 
 ## Last Updated
 
-계약 기준: LANDING-067·095, REACT-033, ERROR-110–119·164·202, 68C-08, 69C-02.
+계약 기준: LANDING-067·095, REACT-033, ERROR-110–119·164·202, 68C-08, 69C-02; 정돈-2(2026-10-14).

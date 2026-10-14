@@ -1,14 +1,13 @@
 import { describe, expect, it } from 'vitest';
 
-import type { BlueprintSchema } from '../../blueprint';
-import { FieldNodeEventType } from '../../record';
-import { FieldNodeState } from '../../types/state';
-import { WriteOption } from '../../types/value';
-import {
-  changeFieldNodeContext,
-  resetFieldNodeSubtree,
-  writeFieldNode,
-} from '../index';
+import type { BlueprintSchema } from '@/schema-form/core/engine/blueprint';
+import { FieldNodeEventType } from '@/schema-form/core/engine/record';
+import { FieldNodeState } from '@/schema-form/core/engine/types/state';
+import { WriteOption } from '@/schema-form/core/engine/types/value';
+
+import { changeFieldNodeContext } from '../utils/context/changeFieldNodeContext';
+import { resetFieldNodeSubtree } from '../utils/load/resetFieldNodeSubtree';
+import { writeFieldNode } from '../utils/write/writeFieldNode';
 import { createTestTree } from './fixtures/createTestTree';
 
 // filid:contract settle-delivery

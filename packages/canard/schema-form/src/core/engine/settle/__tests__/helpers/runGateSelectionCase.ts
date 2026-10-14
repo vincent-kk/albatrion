@@ -1,5 +1,6 @@
-import type { Blueprint } from '../../../blueprint';
-import { WriteOption } from '../../../types/value';
+import type { Blueprint } from '@/schema-form/core/engine/blueprint';
+import { WriteOption } from '@/schema-form/core/engine/types/value';
+
 import { loadFieldNodeAtMount } from '../../utils/load/loadFieldNodeAtMount';
 import { writeFieldNode } from '../../utils/write/writeFieldNode';
 import type { PlainNode } from '../fixtures/createPlainNode';

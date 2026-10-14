@@ -1,8 +1,9 @@
 import { describe, expect, it } from 'vitest';
 
-import { makeFieldNodeTree } from '../../__tests__/makeFieldNodeTree';
-import { FieldNodeEventType } from '../../engine';
-import { FieldNodeState } from '../../engine';
+import { makeFieldNodeTree } from '@/schema-form/core/__tests__/makeFieldNodeTree';
+import { FieldNodeEventType } from '@/schema-form/core/engine';
+import { FieldNodeState } from '@/schema-form/core/engine';
+
 import type { FieldNode } from '../type';
 
 // filid:contract surface-members

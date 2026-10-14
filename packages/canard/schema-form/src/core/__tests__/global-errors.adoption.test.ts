@@ -1,7 +1,8 @@
 import { describe, expect, it } from 'vitest';
 
-import { type FieldNode, ValidationMode, adoptFieldNodeTree } from '../index';
-import { nodeFromJSONSchema } from '../surface/utils/nodeFromJSONSchema';
+import { nodeFromJSONSchema } from '@/schema-form/__tests__/fixtures/nodeFromJSONSchema';
+import { ValidationMode } from '@/schema-form/core/engine';
+import { type FieldNode, adoptFieldNodeTree } from '@/schema-form/core/surface';
 
 const createRoot = (): FieldNode =>
   nodeFromJSONSchema({

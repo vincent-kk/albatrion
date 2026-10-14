@@ -1,11 +1,12 @@
 import { afterEach, expect, it, vi } from 'vitest';
 
-import { blueprint } from '../../blueprint';
-import { WriteOption } from '../../types/value';
-import { loadFieldNodeAtMount } from '../index';
+import { blueprint } from '@/schema-form/core/engine/blueprint';
+import { WriteOption } from '@/schema-form/core/engine/types/value';
+
 import type { SettlementContext } from '../type';
 import { hasRecursiveExpansion } from '../utils/compute/hasRecursiveExpansion';
 import { updateOutput } from '../utils/compute/updateOutput';
+import { loadFieldNodeAtMount } from '../utils/load/loadFieldNodeAtMount';
 import { DirtyPathSet } from '../utils/write/DirtyPathSet';
 import { getDependencyIndex } from '../utils/write/getDependencyIndex';
 import { registerRecalculation } from '../utils/write/registerRecalculation';

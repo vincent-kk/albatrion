@@ -11,7 +11,7 @@ import { blueprint } from '../src/core';
 import type { BlueprintSchema } from '../src/core/engine';
 import { BEHAVIORS } from '../src/core/engine';
 import { fieldNodeFactory, SetValueOption } from '../src/core';
-import type { FieldNode as RuntimeFieldNode } from '../src/core/surface/FieldNode';
+import { type TestFieldNode, isTestFieldNode } from '../src/core/__tests__/fixtures/testFieldNode';
 import { loadFieldNodeAtMount } from '../src/core/engine';
 import { getGateRegistry } from '../src/core/engine/settle/utils/gates/getGateRegistry';
 import { nodeFromJSONSchema } from '../src/__legacy__/core/nodeFromJSONSchema';
@@ -43,8 +43,10 @@ function makeNew(schema: BlueprintSchema, value?: unknown) {
     latentRaw: new PathKeyedMap('pair'),
     typeMismatchPaths: new PathKeyedSet(),
     inactiveValuesMemo: new PathKeyedMap<readonly { path: string; value: unknown }[]>('path'),
-  }) as unknown as RuntimeFieldNode;
-  if (value !== undefined) loadFieldNodeAtMount(root, value, SetValueOption.Overwrite);
+  });
+  if (!isTestFieldNode(root)) throw new Error('Expected a runtime FieldNode');
+  const rootRecord: TestFieldNode = root;
+  if (value !== undefined) loadFieldNodeAtMount(rootRecord, value, SetValueOption.Overwrite);
   return root;
 }
 
@@ -160,8 +162,10 @@ function b2() {
       diagnostics: { status: 'stable' },
       loadSnapshot: undefined,
       latentRaw: new PathKeyedMap('pair'), typeMismatchPaths: new PathKeyedSet(), inactiveValuesMemo: new PathKeyedMap<readonly { path: string; value: unknown }[]>('path'),
-    }) as unknown as RuntimeFieldNode;
-    loadFieldNodeAtMount(root, value, SetValueOption.Overwrite);
+    });
+    if (!isTestFieldNode(root)) throw new Error('Expected a runtime FieldNode');
+    const rootRecord: TestFieldNode = root;
+    loadFieldNodeAtMount(rootRecord, value, SetValueOption.Overwrite);
     return root;
   };
   return { new: heapSample(makeTree, 5001), legacy: heapSample(() => makeLegacy(schema, value), 5001) };
@@ -177,8 +181,10 @@ function heapOne(kind: 'new' | 'legacy') {
       diagnostics: { status: 'stable' },
       loadSnapshot: undefined,
       latentRaw: new PathKeyedMap('pair'), typeMismatchPaths: new PathKeyedSet(), inactiveValuesMemo: new PathKeyedMap<readonly { path: string; value: unknown }[]>('path'),
-    }) as unknown as RuntimeFieldNode;
-    loadFieldNodeAtMount(root, value, SetValueOption.Overwrite);
+    });
+    if (!isTestFieldNode(root)) throw new Error('Expected a runtime FieldNode');
+    const rootRecord: TestFieldNode = root;
+    loadFieldNodeAtMount(rootRecord, value, SetValueOption.Overwrite);
     liveHeapRoot = root;
   } else liveHeapRoot = makeLegacy(schema, value);
   collect();
@@ -200,7 +206,7 @@ function b3() {
     options: { virtual: { pair: { fields: ['source'] } } },
   }, { source: 'value' });
   const virtual = virtualRoot.find('/pair');
-  if (!virtual) throw new Error('B3 virtual fixture is missing');
+  if (!virtual || !isTestFieldNode(virtual)) throw new Error('B3 virtual fixture is missing');
   nodes.push(virtual);
   const first = nodes[0];
   const ownKeys = Object.getOwnPropertyNames(first).join(',');
@@ -328,8 +334,10 @@ function main() {
       diagnostics: { status: 'stable' },
       loadSnapshot: undefined,
       latentRaw: new PathKeyedMap('pair'), typeMismatchPaths: new PathKeyedSet(), inactiveValuesMemo: new PathKeyedMap<readonly { path: string; value: unknown }[]>('path'),
-    }) as unknown as RuntimeFieldNode;
-    loadFieldNodeAtMount(root, large.value, SetValueOption.Overwrite);
+    });
+    if (!isTestFieldNode(root)) throw new Error('Expected a runtime FieldNode');
+    const rootRecord: TestFieldNode = root;
+    loadFieldNodeAtMount(rootRecord, large.value, SetValueOption.Overwrite);
     return root;
   };
   const newLarge = freshLarge();

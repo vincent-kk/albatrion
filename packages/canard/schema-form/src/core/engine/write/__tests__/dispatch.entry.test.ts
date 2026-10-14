@@ -1,18 +1,17 @@
 import { describe, expect, it } from 'vitest';
 
-import { FieldNodeEventType } from '../../record';
-import { WriteOption } from '../../types/value';
-import {
-  adoptFieldNodeChain,
-  dispatchContextChange,
-  dispatchMount,
-  dispatchResetForm,
-  dispatchResetSubtree,
-  dispatchSetValue,
-  readFieldNodeRevision,
-  subscribeFieldNode,
-} from '../index';
-import { createDispatchTree } from './fixtures/createDispatchTree';
+import { createDispatchTree } from '@/schema-form/core/engine/__tests__/fixtures/createDispatchTree';
+import { FieldNodeEventType } from '@/schema-form/core/engine/record';
+import { WriteOption } from '@/schema-form/core/engine/types/value';
+
+import { adoptFieldNodeChain } from '../utils/chain/adoptFieldNodeChain';
+import { dispatchContextChange } from '../utils/entry/dispatchContextChange';
+import { dispatchMount } from '../utils/entry/dispatchMount';
+import { dispatchResetForm } from '../utils/entry/dispatchResetForm';
+import { dispatchResetSubtree } from '../utils/entry/dispatchResetSubtree';
+import { dispatchSetValue } from '../utils/entry/dispatchSetValue';
+import { readFieldNodeRevision } from '../utils/read/readFieldNodeRevision';
+import { subscribeFieldNode } from '../utils/read/subscribeFieldNode';
 import { getDispatchChild } from './fixtures/getDispatchChild';
 
 // filid:contract dispatch-entry

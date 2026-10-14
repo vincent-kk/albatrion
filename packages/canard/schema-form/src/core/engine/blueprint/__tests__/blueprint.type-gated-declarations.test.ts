@@ -2,8 +2,9 @@ import { describe, expect, it } from 'vitest';
 
 import { isArray } from '@winglet/common-utils/filter';
 
-import { blueprint, mergeEffectiveSchema } from '../index';
+import { blueprint } from '../blueprint';
 import { BlueprintErrorCode } from '../utils/diagnostics/constant';
+import { mergeEffectiveSchema } from '../utils/effectiveSchema/mergeEffectiveSchema';
 
 // filid:contract type-gated-declarations
 describe('blueprint gated and declaration-only types', () => {

@@ -2,8 +2,12 @@ import { describe, expect, it } from 'vitest';
 
 import { median } from '@winglet/common-utils/math';
 
-import { type FieldNode, type ValidationIssue, ValidationMode } from '../index';
-import { nodeFromJSONSchema } from '../surface/utils/nodeFromJSONSchema';
+import { nodeFromJSONSchema } from '@/schema-form/__tests__/fixtures/nodeFromJSONSchema';
+import {
+  type ValidationIssue,
+  ValidationMode,
+} from '@/schema-form/core/engine';
+import { type FieldNode } from '@/schema-form/core/surface';
 
 const FIELDS = 100;
 const ISSUES = 1000;

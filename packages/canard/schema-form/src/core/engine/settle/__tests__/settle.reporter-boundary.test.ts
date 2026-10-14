@@ -1,8 +1,9 @@
 import { afterEach, expect, it, vi } from 'vitest';
 
-import { ValidationMode } from '../../types/state';
-import { WriteOption } from '../../types/value';
-import { loadFieldNodeAtMount } from '../index';
+import { ValidationMode } from '@/schema-form/core/engine/types/state';
+import { WriteOption } from '@/schema-form/core/engine/types/value';
+
+import { loadFieldNodeAtMount } from '../utils/load/loadFieldNodeAtMount';
 import { createTestTree } from './fixtures/createTestTree';
 
 afterEach(() => vi.restoreAllMocks());

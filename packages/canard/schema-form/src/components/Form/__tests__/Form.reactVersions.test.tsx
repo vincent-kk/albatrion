@@ -6,7 +6,7 @@ import { render } from '@testing-library/react';
 import { renderToString } from 'react-dom/server';
 import { describe, expect, inject, it, vi } from 'vitest';
 
-import { Form } from '@/schema-form';
+import { Form } from '../Form';
 
 declare module 'vitest' {
   export interface ProvidedContext {

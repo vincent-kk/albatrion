@@ -1,8 +1,10 @@
 import { expect, it } from 'vitest';
 
-import { FieldNodeEventType } from '../../record';
-import { WriteOption } from '../../types/value';
-import { loadFieldNodeAtMount, writeFieldNode } from '../index';
+import { FieldNodeEventType } from '@/schema-form/core/engine/record';
+import { WriteOption } from '@/schema-form/core/engine/types/value';
+
+import { loadFieldNodeAtMount } from '../utils/load/loadFieldNodeAtMount';
+import { writeFieldNode } from '../utils/write/writeFieldNode';
 import { createTestTree } from './fixtures/createTestTree';
 
 it('preserves values, errors, delivery payloads, revisions, commits and empty rounds', () => {

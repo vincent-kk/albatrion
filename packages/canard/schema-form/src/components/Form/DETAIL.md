@@ -11,6 +11,8 @@
 
 ## API Contracts
 
+- 보조 렌더링 컴포넌트는 `Form.Render`·`Form.Field`·`Form.Label`·`Form.Input`·`Form.Error` 정적 멤버로 제공합니다. `FormRender`·`FormField`·`FormLabel`·`FormInput`·`FormError`는 내부 구현이며 이 fractal의 index가 별도 이름으로 내보내지 않습니다.
+
 - 기본값·스키마 변경과 같은 React 배치에서 호출한 `reset(option?)`은 커밋 재대조에도 원래 자동 쓰기 억제 옵션을 전달하여 최신 기본값을 자동 채움 없이 읽습니다(WRITE-044).
 
 ### 값 채널
@@ -68,4 +70,4 @@
 
 ## Last Updated
 
-계약 기준: LANDING-067·095, WRITE-042–046, EVENT-063·073, 68C-08, 69C-01–05.
+계약 기준: LANDING-067·095, WRITE-042–046, EVENT-063·073, 68C-08, 69C-01–05; 정돈-2(2026-10-14).
