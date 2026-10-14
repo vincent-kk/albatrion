@@ -4,7 +4,6 @@
 
 ## 1. 지금 어디인가 (2026-10-14, 314라운드 닫힘; 정돈-E 진행, 소유자 구조 리뷰 시작(Form 재구성 PR은 fairy08), 대기열 비어 있음)
 
-- **262라운드(2026-10-14, 닫기).** PR #364(07b-4, c711f3d17)를 직접 검증해 통과했다: 시험 3936+241, typecheck·lint 0, 세션 줄 0(262C-01, reviews/round-262-closing.md). 소유자 병합 허가 대기.
 - **263라운드(2026-10-14, 소유자).** PR #364(07b-4) 병합을 명시적으로 허가했다(reviews/round-263-owner-answers.md).
 - **264라운드(2026-10-14, 소유자).** 고유명사 후보 15 중 1·3·4·5·6·7·8·9·10·11·15를 권고대로 승인했고, 2(ChildField 이름 길이)·12(controls.children 대체 이름)·13(propertyKeys 공개 자리·이름)·14(virtual을 object 전용 키로)는 추가 논의, 비표준 최상위 키의 잔여 점검을 요구했다(reviews/round-264-owner-answers.md).
 - **265라운드(2026-10-14, 소유자).** 추가 논의 넷을 닫았다: ChildFields, controls.fields, options.propertyOrder(object 전용), options.virtual 형 선언과 VirtualSchema 비공개화, nullable: true 제거(265C-01 후속 대응표, reviews/round-265-owner-answers.md). 07b-5 후속 커밋으로 fixy07에게.
@@ -56,7 +55,8 @@
 - **311라운드(2026-10-14, 소유자).** 정돈-3이 구조 리뷰 전 마지막; 리뷰하며 구조를 더 잡고 오늘 밤 속도 측정·개선 루프. 리뷰 동안 E·S·4를 끝내고 밤에는 측정만(조용한 창), 속도 계획 점검은 fairy08(reviews/round-311-owner-answers.md).
 - **312라운드(2026-10-14, 닫기/원장 관리자).** 정돈-3 PR #378을 eeb1bd374로 squash 병합(verifier: 표면 92 동일, 3826 통과, 이동 147건 이력 유지, 비이동 편집은 B1에 따른 둘뿐). 결정 D1–D6과 선택 여섯 기록(rolled는 src/rolled, 형 전용 순환 하나는 리뷰 항목, round-87 스크립트는 돌지 않음). 구조 이동 끝 → 소유자 구조 리뷰(5단계) 시작 가능. fixy08은 정돈-E.
 - **313라운드(2026-10-14, 소유자).** 정돈-E·S도 codex 없이 fixy08이 직접(진행 중 codex 작업은 멈춤). 소유자는 E·S·4가 모두 병합된 뒤 구조를 직접 손보고 원장 관리자가 diff를 읽어 모델 기준으로 짚는다(소유자 편집이 정돈-E 작업과 부딪혀 되돌림)(reviews/round-313-owner-answers.md).
-- **314라운드(2026-10-14, 소유자).** 구조 리뷰 첫 손질: Form fractal 재구성(뿌리는 문서·index·Form.tsx만, FormCore와 Form.* 다섯은 components/ 아래 fractal 여섯, 오류 바운더리 래핑은 FormCore로). 여섯은 fractal(INTENT·DETAIL 한국어), 이름 함정(FormCore.tsx의 FormRoot, 별칭)은 오타로 수정, 문서화·정리는 fairy08 위임 → 워크트리 stage-form-fractals, PR은 원장 관리자 병합(reviews/round-314-owner-answers.md). 다음 라운드 번호는 315.
+- **314라운드(2026-10-14, 소유자).** 구조 리뷰 첫 손질: Form fractal 재구성(뿌리는 문서·index·Form.tsx만, FormCore와 Form.* 다섯은 components/ 아래 fractal 여섯, 오류 바운더리 래핑은 FormCore로). 여섯은 fractal(INTENT·DETAIL 한국어), 이름 함정(FormCore.tsx의 FormRoot, 별칭)은 오타로 수정, 문서화·정리는 fairy08 위임 → 워크트리 stage-form-fractals, PR은 원장 관리자 병합(reviews/round-314-owner-answers.md).
+- **315라운드(2026-10-14, 닫기/원장 관리자).** 소유자 Form 재구성 PR #379 병합: FormCore·Form.* 다섯이 components/ 아래 fractal로 INTENT·DETAIL(한국어)과 함께, 이름 함정 해소(바깥 FormCore, 안쪽 FormRoot), 공개 export 불변. 이 모양을 구조 리뷰의 표준 틀로. 남은 리뷰 항목: FieldInputSlot↔FieldProxy 형 전용 순환, getAbsolutePointer 시험 상한. 다음 라운드 번호는 316.
 - **그 앞의 라운드 요지(19라운드부터)는 PLAN-LOG.md 2절에 있다.** 라운드마다 한 문단이며, 1절의 기록 표와 같은 순서다.
 - **설계의 정본은 단일 원장 `ledger/`다.** 영역 17개, 항목 1,350개(80라운드 뒤, 24라운드 뒤 1,348; 현행 1,076(부정 결정·기록 포함), 대체됨 199, 분할됨 49, 중복 24, 열림 0). 형식과 규칙은 `ledger/README.md`.
 - **옛 설계 문서(`00`–`09`, `adr/`, `open-questions.md`)는 동결됐다.** 더 고치지 않는다. 어긋남은 원장의 충돌 칸에 적는다. 원장이 인용하는 옛 문서의 `path:line`은 모두 커밋 `ba398c330` 기준 줄 번호다(그 뒤 옛 문서는 바뀌지 않았다).
@@ -466,6 +466,7 @@ node ledger/checks/doc-coverage.mjs design/*.md adr/*.md -- ledger/*.md   # 설�
 | `reviews/round-312-closing.md` | 312라운드 편집자 결정 둘: 정돈-3 PR #378 병합, 결정·선택 기록 |
 | `reviews/round-313-owner-answers.md` | 313라운드 소유자: 정돈-E도 codex 없이 직접 |
 | `reviews/round-314-owner-answers.md` | 314라운드 소유자: Form 재구성 — 여섯은 fractal, 문서 위임, INTENT는 한국어 |
+| `reviews/round-315-closing.md` | 315라운드 편집자 결정: Form 재구성 PR #379 병합, 표준 틀 |
 | plan/tidy-structure/array-limits-review.md | 배열 한도를 core가 다룰 때의 유익·손해 비교(대기열 53 검토 메모, 권고 포함) |
 | `reviews/round-297-closing.md` | 297라운드 편집자 결정 하나: 정돈-1(#374) 병합, 정돈-2 투입 |
 | plan/tidy-structure/brief-tidy-2.md | 정돈-2 브리프(fixy08 → codex): 시험 자리 U·D·S1, 제품 위반 둘, 잉여 export, D7 예외 |

@@ -82,7 +82,7 @@
 
 | 날짜 | 무엇 | 어디 |
 | --- | --- | --- |
-| 2026-10-14 | 312라운드 닫기: 정돈-3 PR #378 병합(eeb1bd374; 표면 92 동일, 시험 3826, filid 면제 한 줄 제거), 결정 여섯·선택 여섯 기록. 구조 리뷰 시작 가능, 정돈-E 투입. 보충 2줄 | `reviews/round-312-closing.md` |
+| 2026-10-14 | 315라운드 닫기: 소유자 Form 재구성 PR #379 병합(여섯 fractal 문서, 이름 함정 해소, 표준 틀 확정). 보충 1줄 | `reviews/round-315-closing.md` |
 | 2026-10-14 | 313라운드 소유자: 정돈-E·S도 codex 없이 fixy08 직접. 보충 1줄 | `reviews/round-313-owner-answers.md` |
 | 2026-10-14 | 314라운드 소유자: Form 재구성(FormCore·Form.* 다섯은 fractal), 이름 함정 수정, 문서화는 fairy08 위임, INTENT 한국어. 보충 1줄 | `reviews/round-314-owner-answers.md` |
 | 2026-10-14 | 309라운드 소유자: 이동 속도 지적; 순수 이동은 fixy08 직접, 전체 게이트는 PR 직전 한 번 허락(217C-01 예외). 보충 2줄 | `reviews/round-309-owner-answers.md` |
