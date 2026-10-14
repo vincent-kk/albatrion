@@ -2,9 +2,8 @@
 
 개발의 진행 상황과 다음 할 일은 `PLAN.md`가 단일 진입점으로 든다. 다음 세션이 바로 이어서 일하기 위한 문서다. 이력은 `git log`와 `reviews/`에 있으므로 여기에는 지금 상태, 다음 할 일, 일하는 법만 적는다. 소유자는 Vincent다.
 
-## 1. 지금 어디인가 (2026-10-14, 291라운드 닫힘; 07 전환 병합됨, 정돈-1 진행)
+## 1. 지금 어디인가 (2026-10-14, 296라운드 닫힘; 07 전환 병합됨, 정돈-1 진행, 정돈-2 대기)
 
-- **253라운드(2026-10-14, 닫기).** PR #363(07b-3, 3f48fe3aa)을 직접 검증해 통과했다: production-test 9파일, tsc -b·lint·build 통과, 세션 줄 0(253C-01, reviews/round-253-closing.md). 대기열 37(내장 checkbox id 중복). 소유자 병합 허가 대기.
 - **254라운드(2026-10-14, 소유자).** PR #363(07b-3) 병합을 허가했다(reviews/round-254-owner-answers.md).
 - **255라운드(2026-10-14, 닫기).** PR #363을 squash 병합해(13838752b) 07 전환의 PR 셋이 모두 들어갔다. 정리 커맨드를 현재 상태에 맞게 갱신해 소유자에게 전달했다(255C-01, reviews/round-255-closing.md). 다음은 #354 본문 갱신, 확인용 대기열 정리, 개선-38 문서 이름 갱신.
 - **256라운드(2026-10-14, 소유자).** 확인용 대기열 열한 개를 닫았다: 36·37·16·18 승인(권고대로), 11 확인, 12·21·13·14·24·28 확인(reviews/round-256-owner-answers.md). 명세와 동작이 어긋날 수 있는 항목은 설명을 요구했다.
@@ -42,7 +41,12 @@
 - **288라운드(2026-10-14, 소유자).** 전수 검사 보고에 답: 뿌리·최소 export 문제는 filid 플러그인 원칙 문제라 ogham에 이슈 하나를 남기되 바로 등록하지 말고 "구현 위반인지 규칙 결함인지"를 진행하며 가릴 것, CLAUDE.md 자리(루트/패키지)는 검토할 것, 수정 계획을 먼저 보일 것(reviews/round-288-owner-answers.md). 계획은 plan/tidy-structure/request.md(발견 F1–F8의 판정표, PR 넷, 결정 D1–D6).
 - **289라운드(2026-10-14, 소유자).** 정돈 결정: D1 진행, D2 nodeFromJSONSchema는 문서에서 지우고 뿌리에서 아래로 옮김, D3 providers organ은 components·hooks 둘, D4 잉여 export는 지우되 오류 코드 상수는 object enum으로 root export(발화 가능한 오류의 일람, 안전한 상수 사용 계약), D5 가이드는 루트에 원칙·패키지에 적용, D6 filid 이슈(규칙 결함 셋·도구 결함 하나)는 정돈-2 뒤 등록(reviews/round-289-owner-answers.md).
 - **290라운드(2026-10-14, 소유자).** 정돈 작업자는 fixy08(구현)·fairy08(문서), 원장 관리자는 관리만(reviews/round-290-owner-answers.md). 정돈-1 브리프 plan/tidy-structure/brief-tidy-1.md를 fixy08에게 보냄.
-- **291라운드(2026-10-14, 소유자).** 문자열 리터럴 규약은 JSON Schema type 외에 금지(변경 표면), 추가 사례·method·event dispatch 안전 여부 물음, 순서는 정돈 → 구조 리뷰 → 속도 개선(reviews/round-291-owner-answers.md). 전수 판정은 plan/tidy-structure/string-literal-audit.md(dispatch·메서드 안전, 누수는 오류 코드 생성자·controls 키·FieldNode 형 미연결·경로 토큰). 정돈-E 범위 E1–E5. 다음 라운드 번호는 292.
+- **291라운드(2026-10-14, 소유자).** 문자열 리터럴 규약은 JSON Schema type 외에 금지(변경 표면), 추가 사례·method·event dispatch 안전 여부 물음, 순서는 정돈 → 구조 리뷰 → 속도 개선(reviews/round-291-owner-answers.md). 전수 판정은 plan/tidy-structure/string-literal-audit.md(dispatch·메서드 안전, 누수는 오류 코드 생성자·controls 키·FieldNode 형 미연결·경로 토큰). 정돈-E 범위 E1–E5.
+- **292라운드(2026-10-14, 닫기/원장 관리자).** fairy08의 문서 정합 PR #373을 0d17c3080으로 squash 병합(SPECIFICATION·README·QUICK_REFERENCE·api-reference 18건, 소스는 주석 넷). 정돈-1 편집자 결정 둘(292C-02). 대기열 51(NULLABLE_ONE_OF_NULL_UNREACHABLE 이식 누락 여부) 개설.
+- **293라운드(2026-10-14, 소유자).** FCA import 멘탈모델: import는 외부·형제·직계 셋, 형제는 index로만(외부 패키지에 준하는 최소 계약), 직계 서브트리는 index 없이 "내부 모듈", 시험·벤치는 fractal 안에서 가장 가까운 곳, 공유 기능은 공통 부모 organ, 부모는 자식의 비방출 내부에 못 닿음(비대칭). 재구성·헛점 지적 요청(reviews/round-293-owner-answers.md).
+- **294라운드(2026-10-14, 소유자).** 보강 다섯(부모 organ은 자식을 모른다, 삼촌·사촌은 혈통 밖, 조상 index 경유 금지, organ은 맨 위만, 벤치도 안에) 수용. 모델은 plan/tidy-structure/fca-import-model.md, 모델 기준 구조 검사는 lineage-audit.md. **마지막에 이 모두를 포함해 filid 개선 여부를 소유자가 결정한다 — 잊지 말 것**(reviews/round-294-owner-answers.md).
+- **295라운드(2026-10-14, 소유자).** D7 허용(src/__tests__/e2e·scenarios·migration의 공개 API 시험은 외부 소비자, 루트 index 경유), D8 허용(B6·B7). 모델 안에서의 약간의 변용 허용 — 핵심은 가독성·인터페이스 계약·폭발 반경 억제. filid는 언어 중립이라 alias 처리는 어댑터 층(reviews/round-295-owner-answers.md). 검사 결과는 plan/tidy-structure/lineage-audit.md(제품 위반 2, 시험 326, settle↔derive 층 순환).
+- **296라운드(2026-10-14, 소유자).** 정돈-1 병합 즉시 정돈-2 투입, 끝나는 대로 보고. fairy08은 유휴 → export 재검사(와일드카드 재수출 추적) 배정(reviews/round-296-owner-answers.md). 다음 라운드 번호는 297.
 - **그 앞의 라운드 요지(19라운드부터)는 PLAN-LOG.md 2절에 있다.** 라운드마다 한 문단이며, 1절의 기록 표와 같은 순서다.
 - **설계의 정본은 단일 원장 `ledger/`다.** 영역 17개, 항목 1,350개(80라운드 뒤, 24라운드 뒤 1,348; 현행 1,076(부정 결정·기록 포함), 대체됨 199, 분할됨 49, 중복 24, 열림 0). 형식과 규칙은 `ledger/README.md`.
 - **옛 설계 문서(`00`–`09`, `adr/`, `open-questions.md`)는 동결됐다.** 더 고치지 않는다. 어긋남은 원장의 충돌 칸에 적는다. 원장이 인용하는 옛 문서의 `path:line`은 모두 커밋 `ba398c330` 기준 줄 번호다(그 뒤 옛 문서는 바뀌지 않았다).
@@ -430,6 +434,14 @@ node ledger/checks/doc-coverage.mjs design/*.md adr/*.md -- ledger/*.md   # 설�
 | `reviews/round-289-owner-answers.md` | 289라운드 소유자 답: 정돈 결정 D1–D6, filid 이슈 본문은 규칙 결함 셋·도구 결함 하나 |
 | `reviews/round-290-owner-answers.md` | 290라운드 소유자 지시: 작업자 fixy08·fairy08, 원장 관리자는 관리만 |
 | `reviews/round-291-owner-answers.md` | 291라운드 소유자: 리터럴 규약 금지 원칙, 안전 여부 물음, 정돈 → 구조 리뷰 → 최적화 순서 |
+| `reviews/round-292-closing.md` | 292라운드 편집자 결정 둘: #373 병합, 정돈-1 결정(공유 보조·rolled) |
+| `reviews/round-293-owner-answers.md` | 293라운드 소유자: FCA import 멘탈모델(세 종류, 직계 내부 모듈, 공통 부모 organ, 비대칭) |
+| `reviews/round-294-owner-answers.md` | 294라운드 소유자: 보강 다섯 수용, 구조 검사 지시, filid 개선 여부는 마지막에 결정 |
+| `reviews/round-295-owner-answers.md` | 295라운드 소유자: D7·D8 허용, 모델 안의 변용 허용(가독성·계약·폭발 반경), filid 언어 중립 |
+| `reviews/round-296-owner-answers.md` | 296라운드 소유자: 정돈-2 즉시 투입, fairy08 상태 |
+| plan/tidy-structure/brief-tidy-2.md | 정돈-2 브리프(fixy08 → codex): 시험 자리 U·D·S1, 제품 위반 둘, 잉여 export, D7 예외 |
+| plan/tidy-structure/lineage-audit.md | 모델 기준 import 전수 검사(3811변): 제품 위반 2, 시험 326, organ→자식 넷, settle↔derive 층 순환, B6·B7 |
+| plan/tidy-structure/fca-import-model.md | FCA import 모델(293)과 보강 다섯(294), filid 원문 대조표, 정돈 계획 변경 — filid 개선 결정의 재료 |
 | plan/tidy-structure/string-literal-audit.md | 문자열 리터럴 규약 전수 판정(SAFE·WEAK·UNGUARDED)과 정돈-E 범위 E1–E5 |
 | plan/tidy-structure/brief-tidy-1.md | 정돈-1 브리프(fixy08 → codex): 죽은 포맷터 삭제, nodeFromJSONSchema 하향, 미사용 형 삭제, 게이트 |
 | plan/tidy-structure/request.md | 정돈 단계 수정 계획(소유자 검토용): 발견 F1–F8 판정표, 조치, PR 넷, 가이드 자리, filid 이슈 초안, 결정 D1–D6 |

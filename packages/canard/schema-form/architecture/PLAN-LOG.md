@@ -270,6 +270,7 @@
 | 2026-10-14 | 284라운드 닫기: PR #371(07e) 병합 89898d107 — 낮은 후속 넷과 Prettier 다섯 파일. 보충 1줄 | `reviews/round-284-closing.md` |
 | 2026-10-14 | 285라운드 닫기: G23 닫힘 — ego-browser 251 finished·실패 0, 자동 게이트 251. 보충 1줄 | `reviews/round-285-closing.md` |
 | 2026-10-14 | 286라운드 닫기: #372(07f) 3c1a7f2c3, #354(07 전환) 1.0.0-beta 병합 9c4d4a59d — 07단계 닫힘. 보충 1줄 | `reviews/round-286-closing.md` |
+| 2026-10-14 | 292라운드 닫기: 문서 정합 PR #373 병합 0d17c3080(18건, 주석 넷), 정돈-1 편집자 결정 둘(공유 보조는 helpers/error, rolled 보존). 보충 2줄 | `reviews/round-292-closing.md` |
 
 ## 2. 라운드별 요지
 
@@ -514,3 +515,8 @@
 - **289라운드(2026-10-14, 소유자).** 정돈 결정 D1–D6 확정, filid 이슈 본문은 규칙 결함 셋·도구 결함 하나이며 정돈-2 뒤 등록(reviews/round-289-owner-answers.md). 정돈 단계 `진행`.
 - **290라운드(2026-10-14, 소유자).** 정돈 작업자 fixy08·fairy08 지정, 원장 관리자는 관리만(reviews/round-290-owner-answers.md). 정돈-1 브리프 발송.
 - **291라운드(2026-10-14, 소유자).** 문자열 리터럴 규약 금지 원칙, 정돈 → 구조 리뷰 → 최적화 순서(reviews/round-291-owner-answers.md). 전수 판정 plan/tidy-structure/string-literal-audit.md.
+- **253라운드(2026-10-14, 닫기).** PR #363(07b-3, 3f48fe3aa)을 직접 검증해 통과했다: production-test 9파일, tsc -b·lint·build 통과, 세션 줄 0(253C-01, reviews/round-253-closing.md). 대기열 37(내장 checkbox id 중복). 소유자 병합 허가 대기.
+- **293라운드(2026-10-14, 소유자).** FCA import 멘탈모델을 말함: 형제는 index로만, 직계 서브트리는 내부 모듈, 시험·벤치는 fractal 안, 공유 기능은 공통 부모 organ, 부모는 자식 내부에 못 닿음(reviews/round-293-owner-answers.md).
+- **294라운드(2026-10-14, 소유자).** FCA 모델 보강 다섯 수용, 모델 기록, 구조 검사 지시, filid 개선 여부는 마지막에 모두 포함해 결정(reviews/round-294-owner-answers.md).
+- **295라운드(2026-10-14, 소유자).** D7·D8 허용, 모델 안에서의 변용 허용(핵심은 가독성·계약·폭발 반경 억제), filid는 언어 중립(reviews/round-295-owner-answers.md).
+- **296라운드(2026-10-14, 소유자).** 정돈-1 병합 즉시 정돈-2 투입, 끝나는 대로 보고; fairy08 유휴 확인 뒤 export 재검사 배정(reviews/round-296-owner-answers.md).
