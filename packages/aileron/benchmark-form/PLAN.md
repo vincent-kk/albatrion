@@ -1,5 +1,12 @@
 # schema-form 성능 측정 인프라 보강 계획
 
+## Stage 07 U13 측정 계약
+
+- `--equivalent`는 registry 0.16.0과 workspace를 동일 fixture 및 상호작용으로 비교한다. 기존 시나리오의 mount, flat/nested 입력, array push/replace/remove와 조건·파생 문법 이주를 포함한다.
+- `fixtures/equivalent/`의 두 문법과 상호작용을 검증과 측정이 함께 사용한다. 매 단계의 실제 `[data-path]:not([data-deferred])` 집합은 비어 있지 않고 두 판에서 같아야 한다.
+- 코어는 workspace의 core 진입점 `nodeFromJSONSchema`를 번들하고, 배포 판은 설치된 번들의 같은 팩터리에 측정용 수출만 덧붙인다(배포 표면에 core 수출이 없음). 렌더는 두 설치 판의 Form과 React 19 Profiler를 사용한다. 각 표본은 새 루트에서 시작하며 초기화와 상호작용을 분리한다. 워밍업 10회, 표본 100회 이상, 표본 사이 GC, 중앙값·p99 및 원본 표본을 기록한다.
+- 처리량 평균 15% 초과 감소와 Welch p<0.05를 함께 판정한다. 기존 회귀 검사와 같은 선이며 수용 여부는 별도 소유자 결정이다.
+
 > **Resume hint**: 이 파일을 그대로 Claude 입력으로 던지면 진행 상태(체크박스)를 보고 다음 미완료 Phase 부터 이어 작업한다.
 >
 > 시작 명령 예시:

@@ -1,11 +1,11 @@
-import { JSONSchemaError } from '@/schema-form/errors';
+import { JSONSchemaError } from '@/schema-form/__legacy__/errors';
 import {
   formatItemsFalseWithoutPrefixItemsError,
   formatMaxItemsExceedsPrefixItemsError,
   formatMinItemsExceedsPrefixItemsError,
   formatMissingItemsAndPrefixItemsError,
-} from '@/schema-form/helpers/error';
-import type { ArraySchema } from '@/schema-form/types';
+} from '@/schema-form/__legacy__/helpers/error';
+import type { ArraySchema } from '@/schema-form/__legacy__/types';
 
 /**
  * Validates an array schema to ensure it has a valid structure for ArrayNode creation.

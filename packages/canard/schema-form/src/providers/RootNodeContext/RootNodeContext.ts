@@ -1,5 +1,5 @@
 import { createContext } from 'react';
 
-import type { SchemaNode } from '@/schema-form/core';
+import type { FieldNode } from '@/schema-form/core';
 
-export const RootNodeContext = createContext<SchemaNode>({} as SchemaNode);
+export const RootNodeContext = createContext<FieldNode>({} as FieldNode);

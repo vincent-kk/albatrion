@@ -1,4 +1,4 @@
-import type { SchemaFormPlugin } from '@/schema-form/app/plugin/type';
+import type { SchemaFormPlugin } from '@/schema-form/app/plugin';
 
 import { createDivider } from './utils/createDivider';
 import { formatBulletList } from './utils/formatBulletList';
@@ -17,12 +17,12 @@ export const formatRegisterPluginError = (
   const errorMessage = getErrorMessage(error);
 
   const pluginFeatures: string[] = [];
-  if (plugin.FormError) pluginFeatures.push('FormError');
-  if (plugin.FormGroup) pluginFeatures.push('FormGroup');
-  if (plugin.FormInput) pluginFeatures.push('FormInput');
-  if (plugin.FormLabel) pluginFeatures.push('FormLabel');
-  if (plugin.formTypeInputDefinitions?.length)
-    pluginFeatures.push('formTypeInputDefinitions');
+  if (plugin.FormErrorRenderer) pluginFeatures.push('FormError');
+  if (plugin.FieldRenderer) pluginFeatures.push('FormField');
+  if (plugin.FormInputRenderer) pluginFeatures.push('FormInput');
+  if (plugin.FormLabelRenderer) pluginFeatures.push('FormLabel');
+  if (plugin.fieldInputDefinitions?.length)
+    pluginFeatures.push('fieldInputDefinitions');
   if (plugin.validator) pluginFeatures.push('validator');
   if (plugin.formatError) pluginFeatures.push('formatError');
 
@@ -49,7 +49,7 @@ How to fix:
   1. Check that the plugin exports are correctly structured:
      {
        renderKit?: { ... },
-       formTypeInputDefinitions?: [...],
+       fieldInputDefinitions?: [...],
        validator?: ValidatorFactory,
        formatError?: ErrorFormatter
      }

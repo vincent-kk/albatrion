@@ -1,0 +1,119 @@
+diff --git a/packages/canard/schema-form/src/core/behaviors/objectBehavior/DETAIL.md b/packages/canard/schema-form/src/core/behaviors/objectBehavior/DETAIL.md
+--- a/packages/canard/schema-form/src/core/behaviors/objectBehavior/DETAIL.md
++++ b/packages/canard/schema-form/src/core/behaviors/objectBehavior/DETAIL.md
+@@ -1,6 +1,8 @@
+ # objectBehavior 계약
+ 
+ ## Requirements
++
++- local/extras가 없고 propertyKeys가 비었으며 entries와 children의 길이·순서·이름이 같은 최초 합성은 classic loop 한 번에서 값 객체·names·stable shape·키 수를 생산합니다. 불일치는 기존 순서 합성으로 처리하고 undefined 방출·예약 키의 의미와 같은 값의 참조 재사용을 보존합니다. 속도 비용은 자식 수에 비례하는 직접 검사·쓰기이며 적격 호출의 Map/Set 구축과 중복 조회를 제거합니다. 메모리 비용은 기존 결과·names·stable shape를 유지하고 일시 Map/Set 두 객체와 그 원소 저장을 제거합니다. 불일치 도중 만들어진 일시 결과·names는 보유하지 않습니다(batch2 3-object-assembly).
+ 
+ - 의존 방향은 `blueprint·record·behaviors 공유 보조 < objectBehavior < behaviors 뿌리 < SchemaNode`입니다. `branch/`와 `terminal/`은 내부 organ입니다. 모두 이 종류 안에서 소비하므로 경계 예외가 없습니다(NODE-009·016).
+ - 두 전략은 청사진이 정한 고정 선택입니다. 렌더 입력을 이 행에서 검사하지 않습니다(NODE-028·042).
+@@ -27,4 +29,4 @@
+ 
+ ## Last Updated
+ 
+-2026-10-03
++2026-10-07
+diff --git a/packages/canard/schema-form/src/core/behaviors/objectBehavior/branch/utils/assembleObject.ts b/packages/canard/schema-form/src/core/behaviors/objectBehavior/branch/utils/assembleObject.ts
+--- a/packages/canard/schema-form/src/core/behaviors/objectBehavior/branch/utils/assembleObject.ts
++++ b/packages/canard/schema-form/src/core/behaviors/objectBehavior/branch/utils/assembleObject.ts
+@@ -82,6 +82,33 @@
+       return patch ?? previous;
+     }
+   }
++  const preferred = getStaticChoices(node.schema).propertyKeys;
++  const entries = node.blueprintNode.childEntries;
++  if (previous === undefined && node.extras === undefined &&
++    preferred.length === 0 && entries.length === children.length) {
++    const result: Record<string, unknown> = {};
++    const names: string[] = [];
++    let aligned = true;
++    for (let index = 0; index < children.length; index++) {
++      const child = children[index];
++      if (child === null || typeof child !== 'object' ||
++        !('name' in child) || typeof child.name !== 'string' || !('emit' in child) ||
++        entries[index].name !== child.name) {
++        aligned = false;
++        break;
++      }
++      if (child.emit !== undefined) {
++        names.push(child.name);
++        writeObjectKey(result, child.name, child.emit);
++      }
++    }
++    if (aligned) {
++      STABLE_SHAPES.set(node, { children, schema: node.schema, extras: node.extras,
++        names });
++      objectKeyCounts.set(result, names.length);
++      return result;
++    }
++  }
+   const childValues = new Map<string, unknown>();
+   for (const child of children)
+     if (child !== null && typeof child === 'object' &&
+@@ -93,7 +120,6 @@
+     : undefined;
+   const names: string[] = [];
+   const seen = new Set<string>();
+-  const preferred = getStaticChoices(node.schema).propertyKeys;
+ 
+   for (const name of preferred) {
+     if (childValues.has(name)) {
+diff --git a/packages/canard/schema-form/src/core/behaviors/objectBehavior/branch/utils/__tests__/assembleObject.first-work.test.ts b/packages/canard/schema-form/src/core/behaviors/objectBehavior/branch/utils/__tests__/assembleObject.first-work.test.ts
+new file mode 100644
+--- /dev/null
++++ b/packages/canard/schema-form/src/core/behaviors/objectBehavior/branch/utils/__tests__/assembleObject.first-work.test.ts
+@@ -0,0 +1,51 @@
++import { expect, it, vi } from 'vitest';
++
++import { objectKeyCounts } from '../../../utils/objectKeyCounts';
++import { assembleObject } from '../assembleObject';
++
++it('assembles aligned first children without Map or Set allocation and preserves omitted/prototype keys', () => {
++  const children = [{ name: 'first', emit: 1 }, { name: 'empty', emit: undefined }, { name: '__proto__', emit: 2 }];
++  const node = {
++    local: undefined, extras: undefined,
++    schema: { schema: { type: 'object' }, typeConflict: false },
++    blueprintNode: { childEntries: children.map(child => ({ name: child.name })) },
++  } as unknown as Parameters<typeof assembleObject>[0];
++  const NativeMap = Map, NativeSet = Set;
++  const maps = vi.spyOn(globalThis, 'Map').mockImplementation(function (...args: ConstructorParameters<typeof Map>) {
++    return new NativeMap(...args);
++  });
++  const sets = vi.spyOn(globalThis, 'Set').mockImplementation(function (...args: ConstructorParameters<typeof Set>) {
++    return new NativeSet(...args);
++  });
++  let result;
++  let mapCalls = 0, setCalls = 0;
++  try {
++    result = assembleObject(node, children);
++    mapCalls = maps.mock.calls.length;
++    setCalls = sets.mock.calls.length;
++  } finally {
++    maps.mockRestore();
++    sets.mockRestore();
++  }
++  expect(mapCalls).toBe(0);
++  expect(setCalls).toBe(0);
++  expect(Object.keys(result as object)).toEqual(['first', '__proto__']);
++  expect(Object.getPrototypeOf(result)).toBe(Object.prototype);
++  expect((result as Record<string, unknown>).__proto__).toBe(2);
++  expect(objectKeyCounts.get(result as object)).toBe(2);
++  node.local = result;
++  expect(assembleObject(node, children)).toBe(result);
++});
++
++it('keeps declaration/preferred/extras order when first-child order needs the generic assembly', () => {
++  const children = [{ name: 'second', emit: 2 }, { name: 'first', emit: 1 }];
++  const node = {
++    local: undefined, extras: { extra: 3 },
++    schema: { schema: { type: 'object', options: { propertyKeys: ['extra', 'second'] } }, typeConflict: false },
++    blueprintNode: { childEntries: [{ name: 'first' }, { name: 'second' }] },
++  } as unknown as Parameters<typeof assembleObject>[0];
++  expect(Object.keys(assembleObject(node, children) as object)).toEqual(['extra', 'second', 'first']);
++  node.extras = undefined;
++  node.schema = { schema: { type: 'object' }, typeConflict: false };
++  expect(Object.keys(assembleObject(node, children) as object)).toEqual(['first', 'second']);
++});

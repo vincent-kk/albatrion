@@ -5,10 +5,10 @@ import { useConstant, useSnapshot } from '@winglet/react-utils/hook';
 import type { Dictionary } from '@aileron/declare';
 
 import type { ValidationMode } from '@/schema-form/core';
-import { normalizeFormTypeInputDefinitions } from '@/schema-form/helpers/formTypeInputDefinition';
+import { normalizeFieldInputDefinitions } from '@/schema-form/helpers/fieldInputDefinition';
 import type {
-  FormTypeInputDefinition,
-  FormTypeRendererProps,
+  FieldInputDefinition,
+  FieldRendererProps,
   FormatError,
   ShowError,
   ValidatorFactory,
@@ -17,16 +17,16 @@ import type {
 import { ExternalFormContext } from './ExternalFormContext';
 
 export interface ExternalFormContextProviderProps {
-  /** List of FormTypeInputDefinition declared externally */
-  formTypeInputDefinitions?: FormTypeInputDefinition[];
-  /** FormGroupRenderer component declared externally */
-  FormGroupRenderer?: ComponentType<FormTypeRendererProps>;
+  /** List of FieldInputDefinition declared externally */
+  fieldInputDefinitions?: FieldInputDefinition[];
+  /** FieldRenderer component declared externally */
+  FieldRenderer?: ComponentType<FieldRendererProps>;
   /** FormLabelRenderer component declared externally */
-  FormLabelRenderer?: ComponentType<FormTypeRendererProps>;
+  FormLabelRenderer?: ComponentType<FieldRendererProps>;
   /** FormInputRenderer component declared externally */
-  FormInputRenderer?: ComponentType<FormTypeRendererProps>;
+  FormInputRenderer?: ComponentType<FieldRendererProps>;
   /** FormErrorRenderer component declared externally */
-  FormErrorRenderer?: ComponentType<FormTypeRendererProps>;
+  FormErrorRenderer?: ComponentType<FieldRendererProps>;
   /** FormatError function declared externally */
   formatError?: FormatError;
   /**
@@ -76,9 +76,9 @@ export interface ExternalFormContextProviderProps {
  * ```
  *
  * @example
- * Custom form type definitions:
+ * Custom field input definitions:
  * ```tsx
- * const customFormTypes = [
+ * const customInputTypes = [
  *   {
  *     test: { type: 'string', format: 'phone' },
  *     Component: PhoneInput,
@@ -90,7 +90,7 @@ export interface ExternalFormContextProviderProps {
  * ];
  *
  * <FormProvider
- *   formTypeInputDefinitions={customFormTypes}
+ *   fieldInputDefinitions={customInputTypes}
  * >
  *   <Form jsonSchema={schema} />
  * </FormProvider>
@@ -125,24 +125,11 @@ export interface ExternalFormContextProviderProps {
  * @example
  * Custom validation with external validator:
  * ```tsx
- * import Ajv from 'ajv';
- * import addFormats from 'ajv-formats';
- *
- * const ajv = new Ajv({ allErrors: true });
- * addFormats(ajv);
- *
- * const validatorFactory = (jsonSchema) => {
- *   const validate = ajv.compile(jsonSchema);
- *   return (value) => {
- *     validate(value);
- *     return validate.errors?.map(err => ({
- *       dataPath: err.instancePath,
- *       keyword: err.keyword,
- *       message: err.message,
- *       details: err.params,
- *       source: err,
- *     })) || [];
- *   };
+ * // A validator object declares both `compile` and `compileGuard`.
+ * // Declare it once outside components: changing the reference rebuilds the tree.
+ * const validatorFactory: ValidatorFactory = {
+ *   compile: (copy) => compileWithMyEngine(copy),
+ *   compileGuard: (root, pointer) => compileGuardWithMyEngine(root, pointer),
  * };
  *
  * <FormProvider
@@ -158,13 +145,13 @@ export interface ExternalFormContextProviderProps {
  * ```tsx
  * <FormProvider
  *   // Custom renderers
- *   FormGroupRenderer={MyFormGroup}
+ *   FieldRenderer={MyFormField}
  *   FormLabelRenderer={MyFormLabel}
  *   FormInputRenderer={MyFormInput}
  *   FormErrorRenderer={MyFormError}
  *
  *   // Custom input types
- *   formTypeInputDefinitions={[
+ *   fieldInputDefinitions={[
  *     { test: { format: 'date' }, Component: DatePicker },
  *     { test: { format: 'time' }, Component: TimePicker },
  *   ]}
@@ -195,8 +182,8 @@ export interface ExternalFormContextProviderProps {
  * - This provider is ideal for section-specific or feature-specific configuration
  */
 export const ExternalFormContextProvider = ({
-  formTypeInputDefinitions,
-  FormGroupRenderer,
+  fieldInputDefinitions,
+  FieldRenderer,
   FormLabelRenderer,
   FormInputRenderer,
   FormErrorRenderer,
@@ -208,8 +195,8 @@ export const ExternalFormContextProvider = ({
   children,
 }: PropsWithChildren<ExternalFormContextProviderProps>) => {
   const constant = useConstant({
-    formTypeInputDefinitions,
-    FormGroupRenderer,
+    fieldInputDefinitions,
+    FieldRenderer,
     FormLabelRenderer,
     FormInputRenderer,
     FormErrorRenderer,
@@ -218,10 +205,10 @@ export const ExternalFormContextProvider = ({
   const context = useSnapshot(inputContext);
   const value = useMemo(
     () => ({
-      fromExternalFormTypeInputDefinitions: constant.formTypeInputDefinitions
-        ? normalizeFormTypeInputDefinitions(constant.formTypeInputDefinitions)
+      fromExternalFieldInputDefinitions: constant.fieldInputDefinitions
+        ? normalizeFieldInputDefinitions(constant.fieldInputDefinitions)
         : undefined,
-      FormGroupRenderer: constant.FormGroupRenderer,
+      FieldRenderer: constant.FieldRenderer,
       FormLabelRenderer: constant.FormLabelRenderer,
       FormInputRenderer: constant.FormInputRenderer,
       FormErrorRenderer: constant.FormErrorRenderer,

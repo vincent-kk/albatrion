@@ -21,9 +21,7 @@ describe('NODE-059 public value inference', () => {
         },
       ];
     }>;
-    expectTypeOf<Value>().toEqualTypeOf<
-      { cat?: string } | { dog?: number }
-    >();
+    expectTypeOf<Value>().toEqualTypeOf<{ cat?: string } | { dog?: number }>();
   });
 
   it('retains an explicit null branch and array item values', () => {
@@ -76,9 +74,7 @@ describe('NODE-059 public value inference', () => {
   it('keeps statically rejected literal and mixed container values unknown', () => {
     expectTypeOf<InferValueType<{ const: { id: 1 } }>>().toBeUnknown();
     expectTypeOf<InferValueType<{ const: [] }>>().toBeUnknown();
-    expectTypeOf<
-      InferValueType<{ enum: readonly ['cat', 1] }>
-    >().toBeUnknown();
+    expectTypeOf<InferValueType<{ enum: readonly ['cat', 1] }>>().toBeUnknown();
     expectTypeOf<
       InferValueType<{
         oneOf: [{ type: 'object' }, { type: 'array' }];

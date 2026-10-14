@@ -1,0 +1,44 @@
+│ ┌────────────────────────────────────────────────────────────────────────────┐
+│ │  Info: Found a setup file with "setProjectAnnotations".                    │
+│ │  Skipping automatic provisioning of preview annotations to avoid           │
+│ │  conflicts. Since Storybook 10.3, "@storybook/addon-vitest" applies these  │
+│ │   automatically.                                                           │
+│ │  You can safely remove the "setProjectAnnotations" call from your setup    │
+│ │  file, or remove the file entirely if you don't have custom code there.    │
+│ └────────────────────────────────────────────────────────────────────────────┘
+
+ RUN  v3.2.6 /Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/packages/canard/schema-form
+
+x
+
+ Test Files  1 failed (1)
+      Tests  1 failed (1)
+   Start at  03:15:23
+   Duration  1.35s (transform 696ms, setup 0ms, collect 1.16s, tests 16ms, environment 0ms, prepare 36ms)
+
+(node:28770) [DEP0205] DeprecationWarning: `module.register()` is deprecated. Use `module.registerHooks()` instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  |unit| src/core/settle/__tests__/settle.single-selection-counts.test.ts > single declaration selection work > publishes one immutable ID list across successful gated selections
+AssertionError: expected undefined to deeply equal [ 3 ]
+
+- Expected: 
+[
+  3,
+]
+
++ Received: 
+undefined
+
+ ❯ src/core/settle/__tests__/settle.single-selection-counts.test.ts:37:28
+     35|     expect(lists.length).toBeGreaterThan(1);
+     36|     for (let index = 0; index < lists.length; index++)
+     37|       expect(lists[index]).toEqual([entry.declarations[0].id]);
+       |                            ^
+     38|     expect(gate.mock.calls.length).toBeGreaterThan(1);
+     39|     console.log(`106COUNT single-selection lists=${unique.length} publ…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+

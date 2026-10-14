@@ -129,6 +129,8 @@ The guard instance retains the bound dialect, formats and keywords with
 
 Guards are synchronous and use a JSON Pointer into the authored root. Release removes that root's AJV registrations. VALIDATE-047 case (iv), one schema location reached from several dynamic scopes through `$dynamicRef` or `$recursiveRef`, is unsupported by `compileGuard`: there is one guard per location, and it answers for the first-compiled dynamic scope.
 
+`compileGuard` throws a native `GuardPointerNotSchemaError` when the pointer does not locate a schema (an object or boolean): a missing location, or a value such as `/type` or `/required`. Callers discriminate it by `group` (`'UNHANDLED_ERROR'`) and `code` (`'GUARD_POINTER_NOT_SCHEMA'`); `details` carries the root's `$id` (or `''`) and the pointer.
+
 Strict options on a bound instance, such as `strictTypes` and `strictRequired`, may make some `if` guards fail to compile. The affected gate becomes false and produces a `GUARD_FAILED` `onError` record. The plugin does not override the consumer's options, and strict mode is not the plugin default (VALIDATE-003, VALIDATE-005, VALIDATE-033, ERROR-041).
 
 ### **Default Configuration**
@@ -152,6 +154,8 @@ The `createValidatorFactory` function provides:
 - **Performance Optimization**: Improved caching and validation speed
 - **Rich Error Context**: Detailed error information for better debugging
 - **Type Safety**: Full TypeScript support with advanced type inference
+
+`createValidator(ajv)` returns a per-instance `{ compile, compileGuard }` object for a Form's `validatorFactory`: create it once outside render (`const validator = createValidator(customAjv);` then `<Form validatorFactory={validator} />`), because a new object makes the Form rebuild its tree; several validators may share one AJV instance, which must not modify values (`coerceTypes`, `useDefaults`, `removeAdditional` off).
 
 ### **Modern JSON Schema Support**
 

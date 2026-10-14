@@ -1,4 +1,4 @@
-import type { SchemaNode } from '../../../../core/types';
+import type { SchemaNode } from '../../types';
 import { AbstractNode } from './AbstractNode';
 
 /**

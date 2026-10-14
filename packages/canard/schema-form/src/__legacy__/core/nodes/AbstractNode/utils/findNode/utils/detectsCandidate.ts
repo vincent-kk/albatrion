@@ -1,4 +1,4 @@
-import type { SchemaNode } from '@/schema-form/core/types';
+import type { SchemaNode } from '@/schema-form/__legacy__/core/types';
 
 /**
  * Determines if a target node is a valid candidate during traversal based on variant matching.

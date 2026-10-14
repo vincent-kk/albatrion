@@ -11,14 +11,14 @@ export const ifThenElseSchema = {
     openingDate: {
       type: "string",
       format: "date",
-      computed: {
+      controls: {
         active: '../title === "wow"',
       },
     },
     releaseDate: {
       type: "string",
       format: "date",
-      computed: {
+      controls: {
         active: '../title === "wow"',
       },
       default: "2025-01-01",

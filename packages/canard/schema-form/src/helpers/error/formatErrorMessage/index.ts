@@ -35,7 +35,7 @@ export {
   formatVirtualFieldsNotValidError,
   formatVirtualFieldsNotInPropertiesError,
 } from './formatVirtualFieldsError';
-export { formatFormTypeInputMapError } from './formatFormTypeInputMapError';
+export { formatFieldInputMapError } from './formatFieldInputMapError';
 export { formatSchemaValidationFailedError } from './formatSchemaValidationFailedError';
 export { formatRegisterPluginError } from './formatRegisterPluginError';
 export { formatInjectToError } from './formatInjectToError';

@@ -1,4 +1,8 @@
-import type { FormScenario, ScenarioAdapter, ScenarioResult } from '@aileron/schema-form-scenarios';
+import type {
+  FormScenario,
+  ScenarioAdapter,
+  ScenarioResult,
+} from '@aileron/schema-form-scenarios';
 
 /**
  * Execute shared data through the core test's injected engine adapter.

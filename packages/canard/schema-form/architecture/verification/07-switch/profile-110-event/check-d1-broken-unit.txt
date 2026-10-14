@@ -1,0 +1,49 @@
+npm notice run albatrion@0.0.0 npx
+npm notice run 'vitest' run --reporter=dot --configLoader runner --cache false --maxWorkers=1 --no-file-parallelism --project unit src/core/settle/__tests__/settle.commit-membership.test.ts
+│ ┌────────────────────────────────────────────────────────────────────────────┐
+│ │  Info: Found a setup file with "setProjectAnnotations".                    │
+│ │  Skipping automatic provisioning of preview annotations to avoid           │
+│ │  conflicts. Since Storybook 10.3, "@storybook/addon-vitest" applies these  │
+│ │   automatically.                                                           │
+│ │  You can safely remove the "setProjectAnnotations" call from your setup    │
+│ │  file, or remove the file entirely if you don't have custom code there.    │
+│ └────────────────────────────────────────────────────────────────────────────┘
+
+ RUN  v3.2.6 /Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/packages/canard/schema-form
+
+x·
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  |unit| src/core/settle/__tests__/settle.commit-membership.test.ts > commit candidate membership > visits global-state candidates before extra event candidates exactly once
+AssertionError: expected [ Array(7) ] to deeply equal [ '/b', '', '/a', '/extra' ]
+
+- Expected
++ Received
+
+  [
+    "/b",
+    "",
+    "/a",
++   "/b",
++   "",
++   "/a",
+    "/extra",
+  ]
+
+ ❯ src/core/settle/__tests__/settle.commit-membership.test.ts:28:21
+     26|     try {
+     27|       markCommitDeliveries(context, node => order.push(node.path));
+     28|       expect(order).toEqual(['/b', '', '/a', '/extra']);
+       |                     ^
+     29|       for (const node of [extra, b, a, root]) {
+     30|         expect(node.pendingRevision).toBe(0);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 1 passed (2)
+   Start at  09:27:59
+   Duration  1.43s (transform 766ms, setup 0ms, collect 1.27s, tests 13ms, environment 0ms, prepare 35ms)
+

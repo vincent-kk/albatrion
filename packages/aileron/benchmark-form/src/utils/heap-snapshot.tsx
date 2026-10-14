@@ -5,7 +5,7 @@ import path from 'node:path';
 import v8 from 'node:v8';
 import { createRoot } from 'react-dom/client';
 
-import { Form, type FormHandle, type SchemaNode } from '@canard/schema-form';
+import { type FieldNode, Form, type FormHandle } from '@canard/schema-form';
 
 import {
   ARRAY_CASES,
@@ -72,9 +72,9 @@ function firstKey(sc: ScaleCase): string {
 }
 
 /** Count every node in the tree via the full `subnodes` walk. */
-function countNodes(root: SchemaNode): number {
+function countNodes(root: FieldNode): number {
   let count = 1;
-  const stack: SchemaNode[] = [root];
+  const stack: FieldNode[] = [root];
   while (stack.length) {
     const n = stack.pop()!;
     const subs = n.subnodes;
@@ -118,7 +118,7 @@ async function measureOnce(sc: ScaleCase | null): Promise<{
     );
     const key = firstKey(sc);
     await drainUntilReady(() => ref.current?.findNode(`/${key}`) != null);
-    const anyNode = ref.current!.findNode(`/${key}`) as SchemaNode;
+    const anyNode = ref.current!.findNode(`/${key}`) as FieldNode;
     nodeCount = countNodes(anyNode.rootNode);
   }
 

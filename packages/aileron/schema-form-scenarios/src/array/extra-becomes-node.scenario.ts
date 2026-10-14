@@ -9,7 +9,7 @@ export const extraBecomesNodeScenario = {
   initialValue: ['a', 'b', 'c', 'd'],
   steps: [{ action: 'remove', path: '', index: 0, expect: {
     result: 'a', shape: { '/0': 'present', '/1': 'present', '/2': 'absent' },
-    values: { '/0': 'b', '/1': 'c' }, extras: { '': ['d'] },
+    values: { '/0': 'b', '/1': 'c' }, undeclaredValues: { '': ['d'] },
     outputValue: ['b', 'c', 'd'],
   } }],
 } satisfies FormScenario;

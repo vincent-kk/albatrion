@@ -1,5 +1,5 @@
-import { PathKeyedMap } from '../src/core/utils/pathIndex/PathKeyedMap';
-import { PathKeyedSet } from '../src/core/utils/pathIndex/PathKeyedSet';
+import { PathKeyedMap } from '../src/core/engine';
+import { PathKeyedSet } from '../src/core/engine';
 /**
  * TEST-032: compare array input, whole writes, and retained heap with the legacy engine.
  * Run under Node/V8 and Bun/JSC without overlapping other benchmarks.
@@ -11,12 +11,12 @@ import { performance } from 'node:perf_hooks';
 
 import { scheduleMacrotaskSafe } from '@winglet/common-utils/scheduler';
 
-import { blueprint } from '../src/core/blueprint';
+import { blueprint } from '../src/core';
 import { createTestValidator } from '../src/core/__tests__/fixtures/createTestValidator';
-import { schemaNodeFactory, SetValueOption } from '../src/core/SchemaNode';
-import type { SchemaNode as RuntimeSchemaNode } from '../src/core/SchemaNode/SchemaNode';
-import { loadSchemaNodeAtMount } from '../src/core/settle';
-import { nodeFromJSONSchema } from '../src/core/nodeFromJSONSchema';
+import { fieldNodeFactory, SetValueOption } from '../src/core';
+import type { FieldNode as RuntimeFieldNode } from '../src/core/surface/FieldNode';
+import { loadFieldNodeAtMount } from '../src/core/engine';
+import { nodeFromJSONSchema } from '../src/__legacy__/core/nodeFromJSONSchema';
 
 const schema = { type: 'array' as const, items: {
   type: 'object' as const, properties: { key: { type: 'number' as const } },
@@ -51,12 +51,12 @@ function makeTree(engine: Engine, input: Item[], analysis?: ReturnType<typeof bl
   if (engine === 'legacy')
     return nodeFromJSONSchema({ jsonSchema: schema, defaultValue: input,
       onChange }) as unknown as BenchTree;
-  const root = schemaNodeFactory(analysis ?? blueprint(schema), {
+  const root = fieldNodeFactory(analysis ?? blueprint(schema), {
     diagnostics: { status: 'stable' },
     loadSnapshot: undefined, latentRaw: new PathKeyedMap('pair'),
     typeMismatchPaths: new PathKeyedSet(), inactiveValuesMemo: new PathKeyedMap<readonly { path: string; value: unknown }[]>('path'),
-  }, createTestValidator()) as RuntimeSchemaNode;
-  loadSchemaNodeAtMount(root, input, SetValueOption.Overwrite);
+  }, createTestValidator()) as RuntimeFieldNode;
+  loadFieldNodeAtMount(root, input, SetValueOption.Overwrite);
   return root as unknown as BenchTree;
 }
 

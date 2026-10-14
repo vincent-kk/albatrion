@@ -14,7 +14,7 @@
 
 JSON Schema validation is supported through a plugin system, allowing the use of various validator plugins.
 
-By defining various `FormTypeInput` components, it offers the flexibility to accommodate complex requirements with ease.
+By defining various `FieldInput` components, it offers the flexibility to accommodate complex requirements with ease.
 
 ---
 
@@ -62,28 +62,34 @@ interface FormProps<
   jsonSchema: Schema;
   /** Default value for this SchemaForm */
   defaultValue?: Value;
-  /** Apply readOnly property to all FormTypeInput components */
+  /** Apply readOnly property to all FieldInput components */
   readOnly?: boolean;
-  /** Apply disabled property to all FormTypeInput components */
+  /** Apply disabled property to all FieldInput components */
   disabled?: boolean;
   /** Function called when the value of this SchemaForm changes */
   onChange?: SetStateFn<Value>;
   /** Function called when this SchemaForm is validated */
-  onValidate?: Fn<[jsonSchemaError: JSONSchemaError[]]>;
+  onValidate?: Fn<[errors: readonly ValidationIssue[]]>;
   /** Function called when the form is submitted */
   onSubmit?: Fn<[value: Value], Promise<void> | void>;
   /** Function called when the state of this SchemaForm changes */
   onStateChange?: Fn<[state: NodeStateFlags]>;
-  /** FormTypeInput definition list */
-  formTypeInputDefinitions?: FormTypeInputDefinition[];
-  /** FormTypeInput path mapping */
-  formTypeInputMap?: FormTypeInputMap;
-  /** Custom form type renderer component */
-  CustomFormTypeRenderer?: ComponentType<FormTypeRendererProps>;
+  /** FieldInput definition list */
+  fieldInputDefinitions?: FieldInputDefinition[];
+  /** FieldInput path mapping */
+  fieldInputMap?: FieldInputMap;
+  /** Group renderer component */
+  FieldRenderer?: ComponentType<FieldRendererProps>;
+  /** Label renderer component */
+  FormLabelRenderer?: ComponentType<FieldRendererProps>;
+  /** Input renderer component */
+  FormInputRenderer?: ComponentType<FieldRendererProps>;
+  /** Error renderer component */
+  FormErrorRenderer?: ComponentType<FieldRendererProps>;
   /** Initial validation errors, default is undefined */
-  errors?: JSONSchemaError[];
+  errors?: readonly ValidationIssue[];
   /** Custom format error function */
-  formatError?: FormTypeRendererProps['formatError'];
+  formatError?: FieldRendererProps['formatError'];
   /**
    * Error display condition (default: ShowError.DirtyTouched)
    *   - `true`: Always show
@@ -100,7 +106,7 @@ interface FormProps<
    *  - `ValidationMode.OnRequest`: Validate on request
    */
   validationMode?: ValidationMode;
-  /** Custom ValidatorFactory function */
+  /** Custom validator object (`compile` and `compileGuard`); Form prop > FormProvider > plugin */
   validatorFactory?: ValidatorFactory;
   /**
    * Render-level virtualization (deferred mount) for large forms (default: off)
@@ -125,20 +131,20 @@ interface FormHandle<
   Schema extends JSONSchema,
   Value extends AllowedValue = InferValueType<Schema>,
 > {
-  node?: InferSchemaNode<Schema>;
-  focus: Fn<[dataPath: SchemaNode['path']]>;
-  select: Fn<[dataPath: SchemaNode['path']]>;
+  node?: InferFieldNode<Schema>;
+  focus: Fn<[dataPath: FieldNode['path']]>;
+  select: Fn<[dataPath: FieldNode['path']]>;
   reset: Fn;
-  findNode: Fn<[path: SchemaNode['path']], SchemaNode | null>;
-  findNodes: Fn<[path: SchemaNode['path']], SchemaNode[]>;
+  findNode: Fn<[path: FieldNode['path']], FieldNode | null>;
+  findNodes: Fn<[path: FieldNode['path']], FieldNode[]>;
   getState: Fn<[], NodeStateFlags>;
   setState: Fn<[state: NodeStateFlags]>;
   clearState: Fn;
   getValue: Fn<[], Value>;
   setValue: SetStateFnWithOptions<Value>;
-  getErrors: Fn<[], JSONSchemaError[]>;
+  getErrors: Fn<[], readonly ValidationIssue[]>;
   getAttachedFilesMap: Fn<[], AttachedFilesMap>;
-  validate: Fn<[], Promise<JSONSchemaError[]>>;
+  validate: Fn<[], Promise<readonly ValidationIssue[]>>;
   showError: Fn<[visible: boolean]>;
   submit: TrackableHandlerFunction<[], void, { loading: boolean }>;
 }
@@ -158,11 +164,11 @@ interface FormChildrenProps<
   Schema extends JSONSchema,
   Value extends AllowedValue = InferValueType<Schema>,
 > {
-  node?: InferSchemaNode<Schema>;
+  node?: InferFieldNode<Schema>;
   jsonSchema: Schema;
   defaultValue?: Value;
   value?: Value;
-  errors?: JSONSchemaError[];
+  errors?: readonly ValidationIssue[];
 }
 ```
 
@@ -170,7 +176,7 @@ interface FormChildrenProps<
 
 ```tsx
 import { Form, registerPlugin } from '@canard/schema-form';
-import { ajvValidatorPlugin } from '@canard/schema-form-ajv8-plugin';
+import { plugin as ajvValidatorPlugin } from '@canard/schema-form-ajv8-plugin';
 
 // Register validator plugin (once at app startup)
 registerPlugin(ajvValidatorPlugin);
@@ -216,18 +222,26 @@ export const App = () => {
 
 ### ValidatorFactory
 
-ValidatorFactory is a function that takes a JSON Schema and returns a validation function:
+ValidatorFactory is an object with two required methods, `compile` for the schema and `compileGuard` for the synchronous guard behind `if/then/else`, plus optional `release` and `dialect`:
 
 ```ts
+// The engine passes its own copy of the schema; it is typed as JSONSchema here.
 interface ValidatorFactory {
-  (schema: JSONSchema): ValidateFunction<any>;
+  compile(copy: JSONSchema): ValidateFunction;
+  compileGuard(root: JSONSchema, pointer: string): (value: unknown) => boolean;
+  release?(root: JSONSchema): void;
+  readonly dialect?: string;
 }
 
-type ValidateFunction<Value = unknown> = Fn<
-  [data: Value],
-  Promise<JSONSchemaError[] | null> | JSONSchemaError[] | null
->;
+type ValidateFunction<Value = unknown> = (
+  data: Value,
+) =>
+  | Promise<readonly ValidationIssue[] | null>
+  | readonly ValidationIssue[]
+  | null;
 ```
+
+A `ValidateFunction` returns the ordered `ValidationIssue`s, or `null` when the value is valid, and must not throw. The `validatorFactory` prop of `Form` and `FormProvider` takes this object. The selection order is the Form prop, then FormProvider, then the plugin's `validator`. Keep the reference stable, because changing it rebuilds the tree.
 
 ### Validator Plugin Usage
 
@@ -235,89 +249,85 @@ type ValidateFunction<Value = unknown> = Fn<
 
 ```tsx
 import { registerPlugin } from '@canard/schema-form';
-import { ajvValidatorPlugin } from '@canard/schema-form-ajv8-plugin';
+import { plugin as ajvValidatorPlugin } from '@canard/schema-form-ajv8-plugin';
 
 // Register plugin at app startup
 registerPlugin(ajvValidatorPlugin);
 ```
 
-#### 2. Custom ValidatorFactory Usage
+#### 2. Custom AJV Instance
 
-When you want to use different validation logic for specific Forms:
+When you want to use your own AJV instance, supply it to the plugin before registering it:
 
 ```tsx
-import { Form } from '@canard/schema-form';
+import { Form, registerPlugin } from '@canard/schema-form';
 // The version of ajv must be 8.x because the plugin is based on ajv8.x
 // If you want to use ajv7.x, you can use @canard/schema-form-ajv7-plugin
 // Or if you want to use ajv6.x, you can use @canard/schema-form-ajv6-plugin
-import { createValidatorFactory } from '@canard/schema-form-ajv8-plugin';
+import { plugin } from '@canard/schema-form-ajv8-plugin';
 import Ajv from 'ajv';
 
+const customAjv = new Ajv({
+  allErrors: true,
+  strictSchema: false,
+  validateFormats: false,
+});
+
+// Add custom keywords
+customAjv.addKeyword({
+  keyword: 'isEven',
+  type: 'number',
+  validate: (schema: boolean, data: number) => {
+    if (schema === false) return true;
+    return data % 2 === 0;
+  },
+  errors: false,
+});
+
+// Supply the instance before registering the plugin
+plugin.validator.bind(customAjv);
+registerPlugin(plugin);
+
 export const CustomValidationForm = () => {
-  const validatorFactory = useMemo(() => {
-    // Create custom AJV instance
-    const customAjv = new Ajv({
-      allErrors: true,
-      strictSchema: false,
-      validateFormats: false,
-    });
-
-    // Add custom keywords
-    customAjv.addKeyword({
-      keyword: 'isEven',
-      type: 'number',
-      validate: (schema: boolean, data: number) => {
-        if (schema === false) return true;
-        return data % 2 === 0;
-      },
-      errors: false,
-    });
-
-    // Create ValidatorFactory
-    return createValidatorFactory(customAjv);
-  }, []);
-
   const jsonSchema = {
     type: 'object',
     properties: {
       name: { type: 'string', maxLength: 10 },
       evenNumber: { type: 'number', isEven: true, maximum: 100 },
     },
-  };
+  } as const;
 
-  return <Form jsonSchema={jsonSchema} validatorFactory={validatorFactory} />;
+  return <Form jsonSchema={jsonSchema} />;
 };
 ```
 
-#### 3. Global ValidatorFactory Setup via FormProvider
+An instance configured with `coerceTypes`, `useDefaults`, or `removeAdditional` is refused, because validation must not modify the value.
 
-When using the same validation logic across multiple Forms:
+#### 3. Custom ValidatorFactory for a Form or a FormProvider
+
+To replace the validator for one Form, or for every Form under a FormProvider, pass an object that declares both `compile` and `compileGuard`:
 
 ```tsx
-import { FormProvider } from '@canard/schema-form';
-// The version of ajv must be 8.x because the plugin is based on ajv8.x
-// If you want to use ajv7.x, you can use @canard/schema-form-ajv7-plugin
-// Or if you want to use ajv6.x, you can use @canard/schema-form-ajv6-plugin
-import { createValidatorFactory } from '@canard/schema-form-ajv8-plugin';
-import Ajv from 'ajv';
+import { Form, FormProvider, type ValidatorFactory } from '@canard/schema-form';
 
-export const App = () => {
-  const validatorFactory = useMemo(() => {
-    const customAjv = new Ajv({
-      allErrors: true,
-      strictSchema: false,
-    });
-
-    return createValidatorFactory(customAjv);
-  }, []);
-
-  return (
-    <FormProvider validatorFactory={validatorFactory}>
-      <MyForms />
-    </FormProvider>
-  );
+// Declared once, outside components: changing the reference rebuilds the tree.
+const validatorFactory: ValidatorFactory = {
+  compile: (copy) => compileWithMyEngine(copy),
+  compileGuard: (root, pointer) => compileGuardWithMyEngine(root, pointer),
 };
+
+export const CustomValidationForm = () => (
+  <Form jsonSchema={jsonSchema} validatorFactory={validatorFactory} />
+);
+
+export const App = () => (
+  <FormProvider validatorFactory={validatorFactory}>
+    <MyForms />
+  </FormProvider>
+);
 ```
+
+`createValidatorFactory(ajv)` from the AJV plugin returns only a compile function, so it is not a valid `validatorFactory` by itself.
 
 ### Available Validator Plugins
 
@@ -341,7 +351,7 @@ Please refer to each plugin's README for detailed usage instructions.
 
 📌 Validation messages must follow the following rules:
 
-- Validation messages must be defined in the `errorMessages` property of the jsonSchema.
+- Validation messages must be defined in the `presentation.errorMessages` property of the jsonSchema.
 - Validation messages must be defined in the `{[keyword]:errorMessage}` format.
 - If you define the `default` key, it will be used as the default value when the keyword does not match.
 - Each validation message (errorMessage) can be replaced with dynamic values using the following expressions:
@@ -358,12 +368,14 @@ const schema = {
       type: 'string',
       minLength: 3,
       maxLength: 10,
-      errorMessages: {
-        minLength:
-          'Name must be at least {limit} characters long. Current value: {value}',
-        maxLength:
-          'Name must be no more than {limit} characters long. Current value: {value}',
-        required: 'Name is a required field.',
+      presentation: {
+        errorMessages: {
+          minLength:
+            'Name must be at least {limit} characters long. Current value: {value}',
+          maxLength:
+            'Name must be no more than {limit} characters long. Current value: {value}',
+          required: 'Name is a required field.',
+        },
       },
     },
   },
@@ -397,20 +409,23 @@ const schema = {
       type: 'string',
       minLength: 3,
       maxLength: 10,
-      errorMessages: {
-        minLength: {
-          ko_KR: '이름은 최소 {limit} 글자 이상이어야 합니다. 현재 값: {value}',
-          en_US:
-            'Name must be at least {limit} characters long. Current value: {value}',
-        },
-        maxLength: {
-          ko_KR: '이름은 최대 {limit} 글자 이하여야 합니다. 현재 값: {value}',
-          en_US:
-            'Name must be at most {limit} characters long. Current value: {value}',
-        },
-        required: {
-          ko_KR: '이름은 필수 입력 항목입니다.',
-          en_US: 'Name is a required field.',
+      presentation: {
+        errorMessages: {
+          minLength: {
+            ko_KR:
+              '이름은 최소 {limit} 글자 이상이어야 합니다. 현재 값: {value}',
+            en_US:
+              'Name must be at least {limit} characters long. Current value: {value}',
+          },
+          maxLength: {
+            ko_KR: '이름은 최대 {limit} 글자 이하여야 합니다. 현재 값: {value}',
+            en_US:
+              'Name must be at most {limit} characters long. Current value: {value}',
+          },
+          required: {
+            ko_KR: '이름은 필수 입력 항목입니다.',
+            en_US: 'Name is a required field.',
+          },
         },
       },
     },
@@ -442,18 +457,18 @@ const value = 'AB';
 
 ---
 
-## FormTypeInput System
+## FieldInput System
 
-`@canard/schema-form` provides a powerful and flexible FormTypeInput system. This system allows users to precisely control which input component should be used for each JSON Schema node.
+`@canard/schema-form` provides a powerful and flexible FieldInput system. This system allows users to precisely control which input component should be used for each JSON Schema node.
 
-### FormTypeInputDefinition
+### FieldInputDefinition
 
-FormTypeInputDefinition defines an input component to be used for JSON Schema nodes that match specific conditions:
+FieldInputDefinition defines an input component to be used for JSON Schema nodes that match specific conditions:
 
 ```ts
-type FormTypeInputDefinition<T = unknown> = {
-  test: FormTypeTestFn | FormTypeTestObject;
-  Component: ComponentType<InferFormTypeInputProps<T>>;
+type FieldInputDefinition<T = unknown> = {
+  test: FieldInputTestFn | FieldInputTestObject;
+  Component: ComponentType<InferFieldInputProps<T>>;
 };
 ```
 
@@ -464,82 +479,84 @@ Each definition consists of two key parts:
 
 #### Test Function or Test Object
 
-The conditions for a FormTypeInput can be defined using a function or an object:
+The conditions for a FieldInput can be defined using a function or an object:
 
 ```ts
-type Hint = {
+type FieldInputHint = {
   jsonSchema: JSONSchema;
   type: string;
   format: string;
-  formType: string;
+  inputType: string;
   path: string;
   [alt: string]: any;
 };
-type FormTypeTestFn = Fn<[hint: Hint], boolean>;
+type FieldInputTestFn = Fn<[hint: FieldInputHint], boolean>;
 
-type FormTypeTestObject = Partial<{
+type FieldInputTestObject = Partial<{
   type: Array<string>;
   jsonSchema: JSONSchema;
   format: Array<string>;
-  formType: Array<string>;
+  inputType: Array<string>;
   [alt: string]: any;
 }>;
 ```
 
-- **FormTypeTestFn**: A function that receives a Hint object and returns a boolean. Useful for implementing more complex conditions.
-- **FormTypeTestObject**: Allows conditions to be defined simply as an object. For example, `{ type: ['string'], format: ['email'] }` matches nodes that are both string type and email format.
+inputType is a string hint that a definition's test interprets; it is not the HTML input type.
 
-#### FormTypeInput Props
+- **FieldInputTestFn**: A function that receives a FieldInputHint object and returns a boolean. Useful for implementing more complex conditions.
+- **FieldInputTestObject**: Allows conditions to be defined simply as an object. For example, `{ type: ['string'], format: ['email'] }` matches nodes that are both string type and email format.
+
+#### FieldInput Props
 
 The selected component will receive the following props:
 
 ```ts
-interface FormTypeInputProps<
+interface FieldInputProps<
   Value extends AllowedValue = any,
   Context extends Dictionary = object,
   WatchValues extends Array<any> = Array<any>,
   Schema extends JSONSchemaWithVirtual = InferJSONSchema<Value>,
-  Node extends SchemaNode = InferSchemaNode<Schema>,
+  Node extends FieldNode = InferFieldNode<Schema>,
 > {
-  /** JSON Schema for the FormTypeInput Component */
+  /** JSON Schema for the FieldInput Component */
   jsonSchema: Schema;
-  /** readOnly state for the FormTypeInput Component */
+  /** readOnly state for the FieldInput Component */
   readOnly: boolean;
-  /** disabled state for the FormTypeInput Component */
+  /** disabled state for the FieldInput Component */
   disabled: boolean;
-  /** Whether the schema node assigned to the FormTypeInput Component is required */
+  /** Whether the field node assigned to the FieldInput Component is required */
   required: boolean;
-  /** Schema node assigned to the FormTypeInput Component */
+  /** Field node assigned to the FieldInput Component */
   node: Node;
   /** JSON Schema type of this field (e.g., 'string', 'number', 'object', 'array') */
   type: Node['schemaType'];
-  /** Name of the schema node assigned to the FormTypeInput Component */
+  /** Name of the field node assigned to the FieldInput Component */
   name: Node['name'];
-  /** Path of the schema node assigned to the FormTypeInput Component */
+  /** Path of the field node assigned to the FieldInput Component */
   path: Node['path'];
   /** Whether this field accepts null as a valid value (derived from schema type array including 'null') */
   nullable: Node['nullable'];
-  /** Errors of the schema node assigned to the FormTypeInput Component */
+  /** Errors of the field node assigned to the FieldInput Component */
   errors: Node['errors'];
   /** Whether to show errors for this field */
   errorVisible: boolean;
-  /** Values being watched according to the `computed.watch`(=`&watch`) property defined in JSONSchema */
+  /** Values being watched according to the `controls.watch` paths defined in JSONSchema */
   watchValues: WatchValues;
-  /** Default value for the FormTypeInput Component */
+  /** Default value for the FieldInput Component */
   defaultValue: Value | undefined;
-  /** Value for the FormTypeInput Component */
+  /** Value for the FieldInput Component */
   value: Value | undefined;
-  /** onChange handler for the FormTypeInput Component */
+  /** onChange handler for the FieldInput Component */
   onChange: SetStateFnWithOptions<Value | undefined>;
   /** Attach or detach file(s) to the form's file store */
   onFileAttach: Fn<[file: File | File[] | undefined]>;
-  /** Child FormTypeInput Components for this FormTypeInput Component */
-  ChildNodeComponents: ChildNodeComponent[];
+  /** Child FieldInput Components for this FieldInput Component */
+  ChildFields: ChildField[];
   /** Placeholder text for input fields */
   placeholder: string | undefined;
   /** CSS class name for styling */
   className: string | undefined;
-  /** Style for the FormTypeInput Component */
+  /** Style for the FieldInput Component */
   style: CSSProperties | undefined;
   /** UserDefinedContext passed to the Form */
   context: Context;
@@ -550,26 +567,28 @@ interface FormTypeInputProps<
 
 ### File Management (onFileAttach)
 
-`@canard/schema-form` keeps the actual File objects in a dedicated store and writes only file metadata (name, size, type, lastModified) into the schema value. Use `onFileAttach` in your `FormTypeInput` to attach files, and then call `FormHandle.getAttachedFilesMap()` on submit to send files to your API.
+`@canard/schema-form` keeps the actual File objects in a dedicated store and writes only file metadata (name, size, type, lastModified) into the schema value. Use `onFileAttach` in your `FieldInput` to attach files, and then call `FormHandle.getAttachedFilesMap()` on submit to send files to your API.
 
 - **Storage**: `getAttachedFilesMap()` returns `Map<string, File[]>` where the key is the input's standard JSONPointer path (`node.path`). Keys must be standard RFC 6901 JSONPointer only; extended syntax (`..`, `.`, `*`) is not used for keys.
 - **Automatic cleanup**:
   - When the form is re-initialized or a node is removed (including unmount), files at that path are deleted.
   - Conditional schemas (e.g., `if/then/else`, `oneOf`) that remove fields also trigger file cleanup.
 
-#### Single/Multiple File FormTypeInput example
+#### Single/Multiple File FieldInput example
 
 ```tsx
-const FileFormTypeInput = ({
+const FileFieldInput = ({
   onFileAttach,
   onChange,
   readOnly,
   disabled,
   value,
   jsonSchema,
-}: FormTypeInputProps<any>) => {
-  const multiple: boolean = jsonSchema?.FormTypeInputProps?.multiple ?? false;
-  const accept: string | undefined = jsonSchema?.FormTypeInputProps?.accept;
+}: FieldInputProps<any>) => {
+  const multiple: boolean =
+    jsonSchema?.presentation?.FieldInputProps?.multiple ?? false;
+  const accept: string | undefined =
+    jsonSchema?.presentation?.FieldInputProps?.accept;
 
   const handleChange: React.ChangeEventHandler<HTMLInputElement> = (e) => {
     const fileList = Array.from(e.target.files || []);
@@ -628,8 +647,10 @@ const schema = {
     title: { type: 'string' },
     attachment: {
       type: 'object',
-      FormTypeInput: FileFormTypeInput,
-      FormTypeInputProps: { multiple: false, accept: '*/*' },
+      presentation: {
+        FieldInput: FileFieldInput,
+        FieldInputProps: { multiple: false, accept: '*/*' },
+      },
       properties: {
         name: { type: 'string' },
         size: { type: 'number' },
@@ -686,60 +707,62 @@ Recommendations:
 - Use standard JSONPointer-style keys (e.g., "/0", "/1") for array files; do not use bracket notation `[]`.
 - For large files, consider progress/abort handling and chunked uploads.
 
-### FormTypeInputMap
+### FieldInputMap
 
 You can also directly map components to specific fields based on their path:
 
 ```ts
-type FormTypeInputMap = {
-  [path: string]: ComponentType<FormTypeInputProps>;
+type FieldInputMap = {
+  [path: string]: ComponentType<FieldInputProps>;
 };
 ```
 
 This allows explicit assignment of components to specific paths in your JSON Schema.
 
-### FormTypeInput Selection Process and Priority
+### FieldInput Selection Process and Priority
 
 When a form is rendered, the input component for each JSON Schema node is determined with the following priority:
 
-1. **Directly assigned FormTypeInput**: When a component is directly assigned via the `FormTypeInput` property in the JSON Schema object
+1. **Directly assigned FieldInput**: When a component is directly assigned via the `presentation.FieldInput` property in the JSON Schema object
 
    ```js
    const jsonSchema = {
      type: 'string',
-     FormTypeInput: CustomTextInput, // Highest priority
+     presentation: {
+       FieldInput: CustomTextInput, // Highest priority
+     },
    };
    ```
 
-2. **FormTypeInputMap**: When there's a matching path in the `formTypeInputMap` passed to the `Form` component
+2. **FieldInputMap**: When there's a matching path in the `fieldInputMap` passed to the `Form` component
 
    ```jsx
    <Form
      jsonSchema={jsonSchema}
-     formTypeInputMap={{
+     fieldInputMap={{
        '/user/email': EmailInput,
        '/user/profile/avatar': AvatarUploader,
      }}
    />
    ```
 
-3. **Form's FormTypeInputDefinitions**: The first definition in the `formTypeInputDefinitions` array passed to the `Form` component that satisfies the test conditions
+3. **Form's FieldInputDefinitions**: The first definition in the `fieldInputDefinitions` array passed to the `Form` component that satisfies the test conditions
 
    ```jsx
    <Form
      jsonSchema={jsonSchema}
-     formTypeInputDefinitions={[
+     fieldInputDefinitions={[
        { test: { type: ['string'], format: ['email'] }, Component: EmailInput },
        { test: { type: ['string'], format: ['date'] }, Component: DatePicker },
      ]}
    />
    ```
 
-4. **FormProvider's FormTypeInputDefinitions**: The `formTypeInputDefinitions` provided globally through `FormProvider`
+4. **FormProvider's FieldInputDefinitions**: The `fieldInputDefinitions` provided globally through `FormProvider`
 
-5. **Plugin's FormTypeInputDefinitions**: The `formTypeInputDefinitions` provided by registered plugins
+5. **Plugin's FieldInputDefinitions**: The `fieldInputDefinitions` provided by registered plugins
 
-**Important**: If multiple FormTypeInputs satisfy the same conditions, the one found first according to the priority above will be used. When provided as an array, definitions are evaluated in the order they appear in the array.
+**Important**: If multiple FieldInputs satisfy the same conditions, the one found first according to the priority above will be used. When provided as an array, definitions are evaluated in the order they appear in the array.
 
 This powerful mechanism enables **high levels of customization**:
 
@@ -758,7 +781,7 @@ import { plugin as antd5Plugin } from '@canard/schema-form-antd5-plugin';
 registerPlugin(antd5Plugin);
 
 export const CustomizedForm = () => {
-  // Global FormTypeInput definitions (medium priority)
+  // Global FieldInput definitions (medium priority)
   const globalDefinitions = [
     {
       test: { type: ['string'] },
@@ -766,7 +789,7 @@ export const CustomizedForm = () => {
     },
   ];
 
-  // Form-specific FormTypeInput definitions (higher priority)
+  // Form-specific FieldInput definitions (higher priority)
   const formDefinitions = [
     {
       test: { type: ['string'], format: ['email'] },
@@ -795,7 +818,9 @@ export const CustomizedForm = () => {
               postalCode: { type: 'string' }, // Will use PostalCodeInput (path mapping)
               country: {
                 type: 'string',
-                FormTypeInput: CountrySelector, // Will use directly assigned component (top priority)
+                presentation: {
+                  FieldInput: CountrySelector, // Will use directly assigned component (top priority)
+                },
               },
             },
           },
@@ -805,11 +830,11 @@ export const CustomizedForm = () => {
   };
 
   return (
-    <FormProvider formTypeInputDefinitions={globalDefinitions}>
+    <FormProvider fieldInputDefinitions={globalDefinitions}>
       <Form
         jsonSchema={jsonSchema}
-        formTypeInputDefinitions={formDefinitions}
-        formTypeInputMap={formInputMap}
+        fieldInputDefinitions={formDefinitions}
+        fieldInputMap={formInputMap}
       />
     </FormProvider>
   );
@@ -832,7 +857,7 @@ import { plugin as ajvValidatorPlugin } from '@canard/schema-form-ajv8-plugin';
 import { plugin as antd5Plugin } from '@canard/schema-form-antd5-plugin';
 
 registerPlugin(antd5Plugin);
-registerPlugin(AjvValidatorPlugin);
+registerPlugin(ajvValidatorPlugin);
 ```
 
 ### Available Plugins
@@ -857,16 +882,16 @@ registerPlugin(AjvValidatorPlugin);
 
 ```ts
 export interface SchemaFormPlugin {
-  /** Form.Group Component */
-  FormGroup?: ComponentType<FormTypeRendererProps>;
+  /** Form.Field Component */
+  FieldRenderer?: ComponentType<FieldRendererProps>;
   /** Form.Label Component */
-  FormLabel?: ComponentType<FormTypeRendererProps>;
+  FormLabelRenderer?: ComponentType<FieldRendererProps>;
   /** Form.Input Component */
-  FormInput?: ComponentType<FormTypeRendererProps>;
+  FormInputRenderer?: ComponentType<FieldRendererProps>;
   /** Form.Error Component */
-  FormError?: ComponentType<FormTypeRendererProps>;
-  /** FormTypeInputDefinition */
-  formTypeInputDefinitions?: FormTypeInputDefinition[];
+  FormErrorRenderer?: ComponentType<FieldRendererProps>;
+  /** FieldInputDefinition */
+  fieldInputDefinitions?: FieldInputDefinition[];
   /** Validator Plugin */
   validator?: ValidatorPlugin;
   /** Formatting Error Function */
@@ -875,13 +900,15 @@ export interface SchemaFormPlugin {
 
 export interface ValidatorPlugin {
   /** Inject Custom Validator Instance */
-  bind: Fn<[instance: any]>;
+  bind?: Fn<[instance: any]>;
   /** Validator Factory Function */
-  compile: ValidatorFactory;
-}
-
-export interface ValidatorFactory {
-  (schema: JSONSchema): ValidateFunction<any>;
+  compile(jsonSchema: JSONSchema): ValidateFunction;
+  /** Synchronous guard compiler for an authored schema pointer */
+  compileGuard(root: JSONSchema, pointer: string): (value: unknown) => boolean;
+  /** Release a root's validator resources */
+  release?(root: JSONSchema): void;
+  /** Declared JSON Schema dialect */
+  readonly dialect?: string;
 }
 ```
 
@@ -889,13 +916,17 @@ export interface ValidatorFactory {
 
 If multiple plugins are registered for the same property, the following priority rules apply:
 
-| Property                                           | Allowed Count      | Priority Rule                                    |
-| -------------------------------------------------- | ------------------ | ------------------------------------------------ |
-| `FormGroup`, `FormLabel`, `FormInput`, `FormError` | One only           | The last registered component is applied.        |
-| `formTypeInputDefinitions`                         | Multiple mergeable | Merged, and the last registered item is applied. |
-| `validator`, `formatError`                         | One only           | The last registered item is applied.             |
+| Property                                                                       | Allowed Count      | Priority Rule                                    |
+| ------------------------------------------------------------------------------ | ------------------ | ------------------------------------------------ |
+| `FieldRenderer`, `FormLabelRenderer`, `FormInputRenderer`, `FormErrorRenderer` | One only           | The last registered component is applied.        |
+| `fieldInputDefinitions`                                                        | Multiple mergeable | Merged, and the last registered item is applied. |
+| `validator`, `formatError`                                                     | One only           | The last registered item is applied.             |
 
 This structure provides consistent priority and extensibility even when using multiple plugins.
+
+The default group renderer draws its own label and messages, so `FormLabelRenderer` and `FormErrorRenderer` appear only through the composition API (`Form.Label`, `Form.Error`) or a user group renderer that calls them.
+
+Renderer props are read once when the form mounts; replacing a renderer after mount is not guaranteed to take effect.
 
 ---
 
@@ -934,8 +965,8 @@ JSONPointer follows the RFC 6901 specification:
 
 **Usage Context**: Extended JSONPointer syntax is available in specific contexts:
 
-- `FormTypeInputMap` keys (with wildcard `*`)
-- `computed`(`&`) properties (with relative paths `..`, `.`)
+- `FieldInputMap` keys (with wildcard `*`)
+- `controls` expressions (with relative paths `..`, `.`)
 - Programmatic node navigation with `node.find()` method
 
 **Note**: Extended syntax is **NOT** supported in `<Form.Render path="..." />` components, which only accept standard JSONPointer paths. `node.find()` accepts relative navigation (`..`, `.`) but not wildcards — use `findNodes()` for wildcard matching.
@@ -944,7 +975,7 @@ The following extensions are supported:
 
 #### Parent Navigation (`..`)
 
-Navigate to the parent node, primarily used in computed properties:
+Navigate to the parent node, primarily used in `controls` expressions:
 
 ```tsx
 const jsonSchema = {
@@ -956,8 +987,8 @@ const jsonSchema = {
         type: { type: 'string', enum: ['admin', 'user'] },
         permissions: {
           type: 'array',
-          computed: {
-            watch: '../type', // Watch parent's type field
+          controls: {
+            watch: ['../type'], // Watch parent's type field
             active: "../type === 'admin'", // Show only for admin
           },
         },
@@ -981,9 +1012,9 @@ const jsonSchema = {
   properties: {
     settings: {
       type: 'object',
-      computed: {
-        watch: '.', // Watch current node
-        // Other computed logic
+      controls: {
+        watch: ['.'], // Watch current node
+        // Other controls logic
       },
     },
   },
@@ -995,7 +1026,7 @@ const currentNode = node.find('.'); // Reference current node
 
 #### Wildcard (`*`)
 
-Match any segment in a path, primarily used in FormTypeInputMap. The wildcard matches both array indices and dynamic object keys (e.g., `additionalProperties`):
+Match any segment in a path, primarily used in FieldInputMap. The wildcard matches both array indices and dynamic object keys (e.g., `additionalProperties`):
 
 ```tsx
 const formInputMap = {
@@ -1027,11 +1058,11 @@ const jsonSchema = {
 // '/config/*/value' matches: /config/theme/value, /config/language/value, etc.
 ```
 
-**Note**: Wildcard `*` is available in `FormTypeInputMap` keys and in the plural `findNodes()` method. It is NOT supported in `<Form.Render path="..." />` or the singular `node.find()` method.
+**Note**: Wildcard `*` is available in `FieldInputMap` keys and in the plural `findNodes()` method. It is NOT supported in `<Form.Render path="..." />` or the singular `node.find()` method.
 
 #### Context Reference (`@`)
 
-Reference external context data passed to the Form, primarily used in computed properties.
+Reference external context data passed to the Form, primarily used in `controls` expressions.
 
 **Important:** The `@` symbol directly references the context object itself, not a JSON Pointer path. Therefore, you must use **JavaScript property accessor syntax** (dot notation or bracket notation) instead of JSON Pointer format:
 
@@ -1046,7 +1077,7 @@ Reference external context data passed to the Form, primarily used in computed p
 '@/user/role'; // This will NOT work
 ```
 
-**Usage in computed properties:**
+**Usage in `controls` expressions:**
 
 ```tsx
 const jsonSchema = {
@@ -1054,7 +1085,7 @@ const jsonSchema = {
   properties: {
     secretField: {
       type: 'string',
-      computed: {
+      controls: {
         visible: '@.userRole === "admin"', // Show only for admin users
         readOnly: '@.mode === "view"', // Read-only in view mode
         disabled: '@.permissions?.canEdit === false', // Disabled based on permissions
@@ -1062,7 +1093,7 @@ const jsonSchema = {
     },
     combinedCondition: {
       type: 'string',
-      computed: {
+      controls: {
         // Combine context (@) with form field references (..)
         active: '@.featureEnabled && ../category === "premium"',
       },
@@ -1084,9 +1115,9 @@ const jsonSchema = {
 
 **Key characteristics:**
 
-- Context values update reactively - when context changes, computed properties re-evaluate
+- Context values update reactively - when context changes, `controls` expressions re-evaluate
 - Supports optional chaining (`?.`) for safe nested access
-- Available only in `computed` properties, not in `FormTypeInputMap` or `Form.Render`
+- Available only in `controls` expressions, not in `FieldInputMap` or `Form.Render`
 
 > ⚠️ **Recommendation:** Since `@` references the context object which may change dynamically at runtime, we recommend using **optional chaining (`?.`)** for safe access to nested properties. This prevents runtime errors when context properties are undefined or null.
 >
@@ -1116,8 +1147,8 @@ const jsonSchema = {
             email: { type: 'string' },
             adminSettings: {
               type: 'object',
-              computed: {
-                watch: '../role',  // Watch sibling field
+              controls: {
+                watch: ['../role'],  // Watch sibling field
                 active: "../role === 'admin'"  // Show only for admin
               },
               properties: {
@@ -1136,8 +1167,8 @@ const jsonSchema = {
               city: { type: 'string' },
               isDefault: {
                 type: 'boolean',
-                computed: {
-                  watch: '../type',  // Watch sibling type
+                controls: {
+                  watch: ['../type'],  // Watch sibling type
                   active: "../type === 'home'"  // Show only for home addresses
                 }
               }
@@ -1149,7 +1180,7 @@ const jsonSchema = {
   }
 };
 
-// FormTypeInputMap with wildcard
+// FieldInputMap with wildcard
 const formInputMap = {
   '/user/profile/name': CustomNameInput,
   '/user/addresses/*/street': AddressInput,      // All address streets
@@ -1179,9 +1210,9 @@ JSONPointer requires special characters to be escaped according to RFC 6901:
 <Form.Render path="/field~1with~0special" />
 ```
 
-### FormTypeInputMap with Extended Paths
+### FieldInputMap with Extended Paths
 
-When using `FormTypeInputMap`, you can use wildcard syntax to match any path segment (array indices or dynamic object keys):
+When using `FieldInputMap`, you can use wildcard syntax to match any path segment (array indices or dynamic object keys):
 
 ```tsx
 const formInputMap = {
@@ -1197,7 +1228,7 @@ const formInputMap = {
   '/features/*/*': FeatureInput, // ✅ Nested wildcards supported
 };
 
-<Form jsonSchema={jsonSchema} formTypeInputMap={formInputMap} />;
+<Form jsonSchema={jsonSchema} fieldInputMap={formInputMap} />;
 ```
 
 **Wildcard matching examples:**
@@ -1312,6 +1343,8 @@ export const CustomLayoutForm = () => {
   );
 };
 ```
+
+**Note**: When two inputs (for example two `Form.Input` components or two `Input` slots) are bound to the same path, they do not mirror each other while typing. Typing does not issue a Refresh and each input owns its draft, so the other input keeps showing its own text until a Refresh reaches it, for example from a `setValue` that changes the value, a `reset`, or `refresh(path)` on the form handle.
 
 ### Working with Arrays
 
@@ -1480,9 +1513,9 @@ const jsonSchema = {
 
 - **`omitTrailing` (opt-in)**: removes **trailing** consecutive `undefined` items only. Leading and middle `undefined` items are preserved so error `dataPath`s and validation indices stay aligned — `[1, undefined, 2]` is emitted as-is.
 - **`omitEmpty` (on by default)**: converts an empty array to `undefined` on the parent-propagation path. Filter order is `omitTrailing → omitEmpty`, so an all-empty array collapses to `undefined` under its parent (a root-level form still emits `[]`).
-- **Two value channels**: `node.value` stays raw; the refined output is exposed as `node.normalizedValue`. Validation runs against the refined value, so `minItems` counts only the filled prefix.
+- **Two value channels**: `node.value` stays raw; the refined output is exposed as `node.outputValue`. Validation runs against the refined value, so `minItems` counts only the filled prefix.
 - **Reset semantics**: a Reset-flagged clear (form reset, oneOf/anyOf branch reactivation) refills `minItems` empty items; a plain `setValue(undefined)` clears every item.
-- **Custom inputs**: derive row count from `node.children` (or `ChildNodeComponents`), never from `value.length` — the emitted value is shorter than the rendered rows by design.
+- **Custom inputs**: derive row count from `node.children` (or `ChildFields`), never from `value.length` — the emitted value is shorter than the rendered rows by design.
 
 ### Form with Imperative Handle
 
@@ -1547,14 +1580,14 @@ export const ImperativeForm = () => {
 };
 ```
 
-### Custom Form Type Input Components
+### Custom FieldInput Components
 
 You can extend the form capabilities by creating custom input components:
 
 ```tsx
 import React from 'react';
 
-import { Form, FormTypeInputDefinition } from '@canard/schema-form';
+import { FieldInputDefinition, Form } from '@canard/schema-form';
 
 // Custom date picker component
 const DatePickerInput = (props) => {
@@ -1573,8 +1606,8 @@ const DatePickerInput = (props) => {
   );
 };
 
-// FormTypeInput definition
-const datePickerDefinition: FormTypeInputDefinition = {
+// FieldInput definition
+const datePickerDefinition: FieldInputDefinition = {
   test: { format: ['date'] },
   Component: DatePickerInput,
 };
@@ -1594,7 +1627,7 @@ export const FormWithCustomInput = () => {
   return (
     <Form
       jsonSchema={jsonSchema}
-      formTypeInputDefinitions={[datePickerDefinition]}
+      fieldInputDefinitions={[datePickerDefinition]}
     />
   );
 };
@@ -1604,25 +1637,22 @@ export const FormWithCustomInput = () => {
 
 #### Types of Conditional Properties
 
+Each property below is a key of the `controls` object.
+
 - `watch`: Subscribe to another node's value changes (passed as watchValues prop)
-- `derived`: Automatically calculate values based on other field references using JSONPointer expressions. Use `&derived` or `computed.derived` property
+- `derived`: Automatically calculate values based on other field references using JSONPointer expressions. Use the `controls.derived` property
 - `active`: Determines if a node should be activated. Inactive nodes are not displayed and their values are removed from the form data
 - `visible`: Determines if a node should be displayed. Hidden inputs retain their values but are not visible
-- `pristine`: Determines if a node's state should be reset. If the expression evaluates to `true`, the node's state will be reset.
+- `resetInteraction`: Resets a node's interaction state. When the expression turns from `false` to `true`, the node's `dirty` and `touched` states are cleared.
 - `readOnly`: Determines if a node should be read-only. Read-only inputs cannot be modified
 - `disabled`: Determines if a node should be disabled. Disabled inputs cannot be modified
-- `if` + `oneOf`: Display the schema definition that satisfies the if condition among oneOf definitions (ObjectNode only)
+- `active` on a `oneOf`/`anyOf` branch, or `discriminator` on the host: Select the branch to display. Give each branch a `controls.active` expression, or set `controls.discriminator` to a property name and tag each branch with `const`/`enum` on that property (ObjectNode only). Without either gate, every branch is on: all branches' fields are present, and only the validator decides which branch matches.
 
-#### Priority System
+#### Layering Rules
 
-The `active`, `visible`, `readOnly`, and `disabled` properties follow this priority order:
+`controls` can be declared on the node itself, on a parent's `controls.fields` entry that targets the node, and on a fragment (such as an `allOf` entry) that declares the node. The layers combine instead of overriding each other: the standard `readOnly` and the `readOnly` / `disabled` controls combine by OR, and `visible` combines by AND.
 
-1. Root jsonSchema property (boolean)
-2. Shortcut property (`jsonSchema[{fieldName}]`, boolean)
-3. Computed property (`jsonSchema.computed[{fieldName}]`, boolean | string)
-4. Alias computed property (`jsonSchema['&{fieldName}']`, boolean | string)
-
-Higher priority values override lower priority values when multiple are defined.
+For `default`, the node's own `controls.default` wins, then the parent's `fields` entry, then the fragment's `controls.default`, then the standard `default`.
 
 #### Basic Example
 
@@ -1644,8 +1674,8 @@ export const ConditionalForm = () => {
       commonField: {
         type: 'string',
         title: 'Common Field',
-        computed: {
-          watch: '../employmentType',
+        controls: {
+          watch: ['../employmentType'],
           active: '../employmentType !== null',
           visible: '../employmentType !== null',
         },
@@ -1653,8 +1683,8 @@ export const ConditionalForm = () => {
     },
     oneOf: [
       {
-        computed: {
-          if: "./employmentType === 'fulltime'",
+        controls: {
+          active: "./employmentType === 'fulltime'",
         },
         properties: {
           salary: {
@@ -1688,8 +1718,8 @@ export const ConditionalForm = () => {
         },
       },
       {
-        computed: {
-          if: "./employmentType === 'parttime'",
+        controls: {
+          active: "./employmentType === 'parttime'",
         },
         properties: {
           hourlyRate: {
@@ -1705,8 +1735,8 @@ export const ConditionalForm = () => {
         },
       },
       {
-        computed: {
-          if: "./employmentType === 'contractor'",
+        controls: {
+          active: "./employmentType === 'contractor'",
         },
         properties: {
           hourlyRate: {
@@ -1723,7 +1753,7 @@ export const ConditionalForm = () => {
             title: 'Weekly Working Hours',
             minimum: 1,
             maximum: 168,
-            computed: {
+            controls: {
               active: '../contractType === "hourly"',
             },
           },
@@ -1742,7 +1772,7 @@ The `injectTo` feature enables automatic value propagation between form fields. 
 
 #### Basic Usage
 
-Define an `injectTo` handler function in your JSON Schema that returns an object mapping target paths to values:
+Define an `injectTo` handler function inside `controls` in your JSON Schema that returns an object mapping target paths to values:
 
 ```tsx
 const jsonSchema = {
@@ -1751,9 +1781,11 @@ const jsonSchema = {
     source: {
       type: 'string',
       title: 'Source',
-      injectTo: (value: string) => ({
-        '../target': `injected: ${value}`,
-      }),
+      controls: {
+        injectTo: (value: string) => ({
+          '../target': `injected: ${value}`,
+        }),
+      },
     },
     target: {
       type: 'string',
@@ -1773,20 +1805,24 @@ const jsonSchema = {
 **Relative paths** (from current node):
 
 ```tsx
-injectTo: (value) => ({
-  '../sibling': value, // Sibling field
-  '../nested/child': value, // Nested sibling's child
-  '../../uncle': value, // Parent's sibling
-});
+controls: {
+  injectTo: (value) => ({
+    '../sibling': value, // Sibling field
+    '../nested/child': value, // Nested sibling's child
+    '../../uncle': value, // Parent's sibling
+  }),
+},
 ```
 
 **Absolute paths** (from root):
 
 ```tsx
-injectTo: (value) => ({
-  '/rootField': value, // Root level field
-  '/user/profile/name': value, // Deeply nested field
-});
+controls: {
+  injectTo: (value) => ({
+    '/rootField': value, // Root level field
+    '/user/profile/name': value, // Deeply nested field
+  }),
+},
 ```
 
 #### Multiple Targets
@@ -1799,14 +1835,16 @@ const jsonSchema = {
   properties: {
     fullName: {
       type: 'string',
-      injectTo: (value: string) => ({
-        '../displayName': value,
-        '../searchName': value.toLowerCase(),
-        '../initials': value
-          .split(' ')
-          .map((n) => n[0])
-          .join(''),
-      }),
+      controls: {
+        injectTo: (value: string) => ({
+          '../displayName': value,
+          '../searchName': value.toLowerCase(),
+          '../initials': value
+            .split(' ')
+            .map((n) => n[0])
+            .join(''),
+        }),
+      },
     },
     displayName: { type: 'string' },
     searchName: { type: 'string' },
@@ -1820,10 +1858,12 @@ const jsonSchema = {
 For dynamic paths or when order matters, use array format:
 
 ```tsx
-injectTo: (value: number) => [
-  ['/calculations/doubled', value * 2],
-  ['/calculations/squared', value * value],
-];
+controls: {
+  injectTo: (value: number) => [
+    ['/calculations/doubled', value * 2],
+    ['/calculations/squared', value * value],
+  ],
+},
 ```
 
 #### Accessing Context
@@ -1865,12 +1905,14 @@ const jsonSchema = {
   properties: {
     secretField: {
       type: 'string',
-      injectTo: (value, ctx) => {
-        // Only inject for admin users
-        if (ctx.context.userRole === 'admin') {
-          return { '/adminCopy': value };
-        }
-        return null;
+      controls: {
+        injectTo: (value, ctx) => {
+          // Only inject for admin users
+          if (ctx.context.userRole === 'admin') {
+            return { '/adminCopy': value };
+          }
+          return null;
+        },
       },
     },
   },
@@ -1880,9 +1922,9 @@ const jsonSchema = {
 <Form jsonSchema={jsonSchema} context={{ userRole: 'admin' }} />;
 ```
 
-#### Circular Reference Prevention
+#### Circular References
 
-The library automatically prevents infinite loops when fields inject to each other:
+Injection cycles are not detected. Each settlement re-runs the rules until no source value changes, up to 25 rounds:
 
 ```tsx
 const jsonSchema = {
@@ -1890,39 +1932,42 @@ const jsonSchema = {
   properties: {
     fieldA: {
       type: 'string',
-      injectTo: (value) => ({ '../fieldB': `from A: ${value}` }),
+      controls: {
+        injectTo: (value) => ({ '../fieldB': `from A: ${value}` }),
+      },
     },
     fieldB: {
       type: 'string',
-      injectTo: (value) => ({ '../fieldA': `from B: ${value}` }),
+      controls: {
+        injectTo: (value) => ({ '../fieldA': `from B: ${value}` }),
+      },
     },
   },
 };
 
 // User types in fieldA:
-// 1. fieldA → fieldB (injection succeeds)
-// 2. fieldB → fieldA (blocked - circular reference prevented)
+// 1. fieldA → fieldB, then fieldB → fieldA, and every hop produces a new value
+// 2. After 25 rounds the settlement exceeds its budget
 ```
 
-Circular reference prevention works for any chain length (A→B→C→A, etc.) within the same macrotask execution context.
+A cycle that converges (the same value comes back) stops on its own. One that keeps producing new values, like the example above, exceeds the budget: the caller's write is kept, every automatic write from that settlement is reverted, `diagnostics` becomes `degraded` with `exceededBudget: 'derive'`, and the write throws. Design injection chains as acyclic graphs.
 
 #### Error Handling
 
-Errors in `injectTo` handlers are caught and wrapped in `JSONSchemaError` with detailed context:
+When an `injectTo` handler throws, that rule is skipped for the round, the settlement becomes `degraded` with `cause: 'expression'`, and the write ends by throwing a `SchemaFormError` with code `EXPRESSION_THREW`:
 
 ```tsx
-injectTo: (value) => {
-  if (!value) {
-    throw new Error('Value is required');
-  }
-  return { '../target': value };
-};
+controls: {
+  injectTo: (value) => {
+    if (!value) {
+      throw new Error('Value is required');
+    }
+    return { '../target': value };
+  },
+},
 
-// Error includes:
-// - Source node path
-// - Target paths attempted
-// - Original error message
-// - Suggested resolution steps
+// The rule is skipped for that round, the settlement is degraded,
+// and the write throws a SchemaFormError (EXPRESSION_THREW)
 ```
 
 #### TypeScript Support
@@ -1964,7 +2009,11 @@ You can define form submission logic using the `onSubmit` prop:
 ```tsx
 import React, { useState } from 'react';
 
-import { Form, JSONSchemaError, isValidationError } from '@canard/schema-form';
+import {
+  Form,
+  type ValidationIssue,
+  isValidationError,
+} from '@canard/schema-form';
 
 export const FormWithSubmit = () => {
   const jsonSchema = {
@@ -1976,7 +2025,7 @@ export const FormWithSubmit = () => {
     required: ['name', 'email'],
   };
 
-  const [errors, setErrors] = useState<JSONSchemaError[]>([]);
+  const [errors, setErrors] = useState<readonly ValidationIssue[]>([]);
 
   const handleSubmit = async (value: any) => {
     try {
@@ -2018,7 +2067,7 @@ import React, { useRef, useState } from 'react';
 import {
   Form,
   FormHandle,
-  JSONSchemaError,
+  type ValidationIssue,
   isValidationError,
   useFormSubmit,
 } from '@canard/schema-form';
@@ -2035,7 +2084,7 @@ export const AdvancedSubmitForm = () => {
   };
 
   const formRef = useRef<FormHandle<typeof jsonSchema>>(null);
-  const [errors, setErrors] = useState<JSONSchemaError[]>([]);
+  const [errors, setErrors] = useState<readonly ValidationIssue[]>([]);
 
   // Async submission handler
   const handleSubmit = async (value: any) => {
@@ -2127,6 +2176,8 @@ export const EnterSubmitForm = () => {
   );
 };
 ```
+
+Enter submits through the Form's `form` element. With more than one text-like field, the browser submits on Enter only when the form has a submit button (implicit submission counts the fields that block it; one text field plus a checkbox still submits).
 
 #### Handling Submission Errors
 
@@ -2248,8 +2299,8 @@ The library is optimized for performance with features like:
    <Form jsonSchema={jsonSchema} validationMode={ValidationMode.OnRequest} />
    ```
 
-2. **Caching FormTypeInputs**:
-   Define frequently used custom FormTypeInputs outside components to prevent unnecessary recreation.
+2. **Caching FieldInputs**:
+   Define frequently used custom FieldInputs outside components to prevent unnecessary recreation.
 
    ```jsx
    // Define once globally
@@ -2258,14 +2309,14 @@ The library is optimized for performance with features like:
    ];
 
    // Reuse within component
-   <Form jsonSchema={jsonSchema} formTypeInputDefinitions={CUSTOM_INPUTS} />;
+   <Form jsonSchema={jsonSchema} fieldInputDefinitions={CUSTOM_INPUTS} />;
    ```
 
 ### Virtualization for Very Large Forms
 
 For forms with hundreds of fields, the initial React mount is the dominant cost — the node tree itself is cheap. The `virtualization` prop defers mounting of off-screen fields: they render as lightweight placeholders and are replaced by the real components when they approach the viewport, during browser idle time (backfill), or when focused programmatically. Once mounted, a field never returns to a placeholder.
 
-The node tree is always fully built, so values, validation, `getValue()`/`setValue()` and submit behave identically whether a field is mounted or still deferred. Works with every FormTypeInput plugin — the gate sits below the layout, so custom layouts need no changes.
+The node tree is always fully built, so values, validation, `getValue()`/`setValue()` and submit behave identically whether a field is mounted or still deferred. Works with every FieldInput plugin — the gate sits below the layout, so custom layouts need no changes.
 
 ```tsx
 // Defaults: threshold 30, eagerCount 20, rootMargin '100%',
@@ -2293,7 +2344,7 @@ Measured with `compare-frameworks` (production React, 500 flat fields): mount dr
 > **Caveats**
 >
 > - Requires `IntersectionObserver`; when unavailable the option is silently ignored and everything mounts eagerly. Do not enable it in SSR/hydration apps — the server renders all fields while the client would gate them, causing a hydration mismatch.
-> - Placeholders occupy `estimateHeight` until revealed, so scrollbar length is approximate for unmounted regions. Fields hidden by `computed.visible` render no placeholder.
+> - Placeholders occupy `estimateHeight` until revealed, so scrollbar length is approximate for unmounted regions. Fields hidden by `controls.visible` render no placeholder.
 > - With `backfill: VirtualizationBackfill.None`, screen readers, tab order past the mounted range, and browser autofill only see fields once they are scrolled into view; the default `Idle` backfill restores the full DOM within a few idle frames.
 
 ---
@@ -2303,7 +2354,7 @@ Measured with `compare-frameworks` (production React, 500 flat fields): mount dr
 `@canard/schema-form` is built with TypeScript and provides comprehensive type definitions. Key type utilities include:
 
 - `InferValueType<Schema>`: Infers the value type from a JSON Schema
-- `InferSchemaNode<Schema>`: Infers the schema node type from a JSON Schema
+- `InferFieldNode<Schema>`: Infers the field node type from a JSON Schema
 - `FormHandle<Schema, Value>`: Type for form ref handle with schema-specific methods
 
 ### What `InferValueType` guarantees
@@ -2328,9 +2379,11 @@ type Value = InferValueType<typeof jsonSchema>;
 
 Two properties of that result are deliberate:
 
-- **Every field is optional, including `required` ones.** A form may drop a field from its value at runtime — an inactive `computed.active` branch, or `options.omitEmpty`. Marking it required would let `value.name.trim()` compile and then throw.
+- **Every field is optional, including `required` ones.** A form may drop a field from its value at runtime — an inactive `controls.active` branch, or `options.omitEmpty`. Marking it required would let `value.name.trim()` compile and then throw.
 - **The object stays open** unless the schema sets `additionalProperties: false`, which is the JSON Schema default. This is what keeps keys contributed by `oneOf`/`anyOf` branches, `if`/`then`/`else`, and `patternProperties` from being rejected as excess properties. Set `additionalProperties: false` and the inferred type closes, so typos are caught.
-- **Nullable schemas add `| null`.** Both the type array (`type: ['string', 'null']`) and the deprecated `nullable: true` keyword yield `T | null`, since the runtime accepts `null` for a nullable node. A type that rejected `null` would fail to compile a `setValue({ field: null })` the form accepts.
+- **Nullable schemas add `| null`.** Both the type array (`type: ['string', 'null']`) and the `nullable: true` keyword yield `T | null`, since the runtime accepts `null` for a nullable node. A type that rejected `null` would fail to compile a `setValue({ field: null })` the form accepts.
+
+`nullable: true` is the OpenAPI 3.0 compatible notation and is officially supported. It is equivalent to adding `'null'` to `type`: `{ type: 'string', nullable: true }` means `{ type: ['string', 'null'] }`. No warning or error is raised for this notation.
 
 ### Declaring the value type yourself
 
@@ -2351,6 +2404,106 @@ const formRef = useRef<FormHandle<typeof jsonSchema, SignUpValue>>(null);
 ```
 
 Passing `defaultValue` infers `Value` from it as well, so an explicit type argument is not always necessary.
+
+---
+
+## Migration (1.0.0)
+
+1.0.0 moves every schema setting into three groups (`presentation`, `controls`, `options`), renames the public API around "field", and replaces the node engine. No old name is kept as an alias. Update in this order: schemas, then component and type imports, then any code that reads node state or validation errors.
+
+> **Old schema keys fail silently.** The removed top-level keys (`formType`, `FormTypeInput`, `FormTypeInputProps`, `FormTypeRendererProps`, `computed`, the `&`-prefixed keys, `terminal`, `virtual`, `propertyKeys`, `injectTo`, `errorMessages`, `placeholder`) are ignored with no error or warning. This is deliberate: 1.0.0 is a clean break from 0.16, so there is no alias and no development warning for these keys, and you have to move each one yourself. A schema that still uses them renders, but its conditions, derived values and input choices do nothing, so search your schemas for each key in the table below. Inside the new groups the rule differs: an unknown key in `controls` or `options` throws `UNKNOWN_GROUP_KEY` when the form builds, while `presentation` is open and accepts any key.
+
+### Schema keys
+
+| 0.16                                                                   | 1.0.0                                                                                |
+| ---------------------------------------------------------------------- | ------------------------------------------------------------------------------------ |
+| `formType`                                                             | `presentation.inputType`                                                             |
+| `FormTypeInput`                                                        | `presentation.FieldInput`                                                            |
+| `FormTypeInputProps` (`placeholder`, `alias`, `className`, `style`, …) | `presentation.FieldInputProps`                                                       |
+| `FormTypeRendererProps` (`label`, `className`, `style`, …)             | `presentation.FieldRendererProps`                                                    |
+| `errorMessages`                                                        | `presentation.errorMessages`                                                         |
+| `computed.active` / `&active`                                          | `controls.active`                                                                    |
+| `computed.visible` / `&visible`                                        | `controls.visible`                                                                   |
+| `computed.readOnly` / `&readOnly`                                      | `controls.readOnly`                                                                  |
+| `computed.disabled` / `&disabled`                                      | `controls.disabled`                                                                  |
+| `computed.derived` / `&derived`                                        | `controls.derived`                                                                   |
+| `computed.watch` / `&watch` (string or array)                          | `controls.watch` (array only)                                                        |
+| `computed.pristine` / `&pristine`                                      | `controls.resetInteraction` (resets dirty and touched when the condition turns true) |
+| `computed.if` / `&if` on a `oneOf` / `anyOf` branch                    | `controls.active` on that branch                                                     |
+| `injectTo`                                                             | `controls.injectTo` (same handler shape)                                             |
+| `terminal`                                                             | `options.terminal` (object and array schemas)                                        |
+| `propertyKeys` (object)                                                | `options.propertyOrder` (order of keys in the emitted value)                         |
+| `virtual` (object) and `type: 'virtual'`                               | `options.virtual: { <name>: { fields: [...] } }` (object schemas)                    |
+
+```ts
+// 0.16
+{
+  type: 'object',
+  properties: {
+    kind: { type: 'string', enum: ['a', 'b'], formType: 'radio' },
+    note: {
+      type: 'string',
+      FormTypeInputProps: { placeholder: 'Note' },
+      computed: { visible: '../kind === "b"' },
+    },
+  },
+}
+
+// 1.0.0
+{
+  type: 'object',
+  properties: {
+    kind: { type: 'string', enum: ['a', 'b'], presentation: { inputType: 'radio' } },
+    note: {
+      type: 'string',
+      presentation: { FieldInputProps: { placeholder: 'Note' } },
+      controls: { visible: '../kind === "b"' },
+    },
+  },
+}
+```
+
+- `controls` also adds keys that had no 0.16 form: `default`, `unsetValue`, `unsetOnInactive`, `fields` (controls for named descendants) and `discriminator`.
+- `options` accepts only `omitEmpty`, `trim` (string), `omitTrailing` (array), `terminal` (object and array), `propertyOrder` and `virtual` (object). Keep input settings such as `min` and `max` in `presentation.FieldInputProps`.
+
+### Renamed API
+
+| 0.16                                                                                                                                                                      | 1.0.0                                                                                                                                                          |
+| ------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Form prop `formTypeInputDefinitions`                                                                                                                                      | `fieldInputDefinitions`                                                                                                                                        |
+| Form prop `formTypeInputMap`                                                                                                                                              | `fieldInputMap`                                                                                                                                                |
+| Form prop `CustomFormTypeRenderer`                                                                                                                                        | `FieldRenderer` (Form also takes `FormLabelRenderer`, `FormInputRenderer`, `FormErrorRenderer`)                                                                |
+| Plugin keys `FormGroup`, `FormLabel`, `FormInput`, `FormError`                                                                                                            | `FieldRenderer`, `FormLabelRenderer`, `FormInputRenderer`, `FormErrorRenderer`                                                                                 |
+| Plugin key `formTypeInputDefinitions`                                                                                                                                     | `fieldInputDefinitions`                                                                                                                                        |
+| `Form.Group`, `FormGroupProps`                                                                                                                                            | `Form.Field`, `FormFieldProps`                                                                                                                                 |
+| `FormTypeInputDefinition`, `FormTypeInputMap`, `FormTypeInputProps`, `FormTypeInputPropsWithNode`, `FormTypeInputPropsWithSchema`, `FormTypeTestFn`, `FormTypeTestObject` | `FieldInputDefinition`, `FieldInputMap`, `FieldInputProps`, `FieldInputPropsWithNode`, `FieldInputPropsWithSchema`, `FieldInputTestFn`, `FieldInputTestObject` |
+| `FormTypeRendererProps`                                                                                                                                                   | `FieldRendererProps`                                                                                                                                           |
+| `Hint`                                                                                                                                                                    | `FieldInputHint` (its key is `inputType`)                                                                                                                      |
+| `FormTypeInputProps.FormTypeRenderer`                                                                                                                                     | `FieldInputProps.FieldRenderer`                                                                                                                                |
+| `FormTypeInputProps.ChildNodeComponents`                                                                                                                                  | `FieldInputProps.ChildFields` (each item is a `ChildField`)                                                                                                    |
+| `ChildNodeComponentProps`, `useChildNodeComponentMap`, `useChildNodeErrors`                                                                                               | `ChildFieldProps`, `useChildFieldMap`, `useChildFieldErrors`                                                                                                   |
+| `SchemaNode`, `InferSchemaNode`, `isSchemaNode`                                                                                                                           | `FieldNode`, `InferFieldNode`, `isFieldNode`                                                                                                                   |
+| `NodeState`                                                                                                                                                               | `FieldNodeState`                                                                                                                                               |
+| `NodeState.ShowError`                                                                                                                                                     | `FieldNodeState.ErrorVisible` (same bit)                                                                                                                       |
+| `NodeEventType`                                                                                                                                                           | `FieldNodeEventType` (keeps `UpdateValue`, `UpdateState`, `UpdateError`, `RequestFocus`, `RequestSelect`, `RequestRemount`, and exposes more events)           |
+| `useSchemaNodeTracker`, `useSchemaNodeSubscribe`, `SchemaNodeSubscribeOptions`                                                                                            | `useFieldNodeTracker`, `useFieldNodeSubscribe`, `FieldNodeSubscribeOptions`                                                                                    |
+| type `JSONSchemaError` (the `errors` prop and `onValidate` payload)                                                                                                       | `ValidationIssue` (same fields, plus optional `rejectedKey`; `isJSONSchemaError` stays)                                                                        |
+
+- Only the node-state bit was renamed. The `ShowError` policy enum (`Dirty`, `Touched`, `DirtyTouched`, …), the Form `showError` prop and `FormHandle.showError()` keep their names.
+
+### Behavior changes
+
+- **A loaded `null` or wrong-kind value leaves child fields unfilled.** When an object or array field receives `null`, or a value of the wrong kind (for example a string for an object), from `defaultValue`, a load, `reset` or `resetSubtree`, its child fields get no defaults, exactly as when you write `null`. Typing into a child promotes the parent to an object, and only the fields that the promotion creates receive their defaults. `derived` and `injectTo` values still show. To keep defaults, load the object with values instead of `null`, or give the object its own `default`. The same applies to `<Form defaultValue={null}>` on an object schema.
+- **Enum select shows `undefined` as no selection.** The built-in string enum select shows a leading, selected, empty and disabled option when the value is `undefined`, also when the enum contains `''`. A value outside the enum keeps its leading disabled option.
+- **Checkbox and radio option ids include the index.** Each option's `id` is now `${path}-${index}`, with a matching `htmlFor` on its label. Selectors that targeted `#<path>` on these inputs must change. The default renderer's label and `Form.Label` always carry both `htmlFor={path}` and `id="label:${path}"` (the branch legend carries the id; the `label:` prefix keeps it from ever matching an input id, which is the empty string at the root and starts with `/` everywhere else), because the place that draws the label does not know which input was chosen. The builtin checkbox and radio options containers have `role="group"` with `aria-labelledby="label:${path}"`, so the group is found by its title (`getByRole('group', { name })`); for these groups `htmlFor` points at no element, which is harmless. Custom `FieldInput` and `FieldRenderer` components follow the same convention: put `id={path}` on a single input to connect it with the title, and reference `label:${path}` with `aria-labelledby` on a group container. In the default renderer a checkbox array is also a fieldset named by the same legend, so query inside that fieldset. Where no title with `id="label:${path}"` is drawn (the root, array items, `Form.Input` without `Form.Label`, a custom or plugin renderer that omits that id) leaves the group container's `aria-labelledby` without a target, so the renderer must name the group itself. `Form.Label` builds both attributes from its `path` prop as given, so pass the absolute path (`/size`, not `size` or `./size`) for them to match the input and the group.
+- **`oneOf` / `anyOf` branches are no longer chosen from `const` tags.** When branches differ only by a `const` tag, declare `controls.discriminator: '<property>'` on the host, or `controls.active` on each branch. Without either, every branch stays active.
+- **Custom validator plugins must implement `compileGuard`.** A `ValidatorPlugin` now needs `compileGuard(root, pointer)` next to `compile`; `release(root)` is optional. The official ajv6, ajv7 and ajv8 plugins already implement it.
+
+`onValidate` behaves as in 0.16: it fires when the reported error list or the `errors` prop changes, and a re-validation with the same result does not fire it.
+
+### `nullable: true`
+
+`nullable: true` is officially supported. It is the OpenAPI 3.0 notation and is equivalent to adding `'null'` to `type` (`type: ['string', 'null']`). It raises no warning.
 
 ---
 

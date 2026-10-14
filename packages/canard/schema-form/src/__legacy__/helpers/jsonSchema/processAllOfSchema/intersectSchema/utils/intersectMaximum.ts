@@ -1,4 +1,4 @@
-import { intersectMaximum as intersect } from '@/schema-form/helpers/schemaIntersection';
+import { intersectMaximum as intersect } from '@/schema-form/__legacy__/helpers/schemaIntersection';
 
 /**
  * Intersects maximum constraints by selecting the smaller (more restrictive) value.

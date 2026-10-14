@@ -1,36 +1,59 @@
-export { nodeFromJSONSchema, contextNodeFactory } from './nodeFromJSONSchema';
-export { setContext } from './SchemaNode';
-export { SchemaNodeEventType, SchemaNodeRequestType } from './SchemaNode';
-export { retainValidationRoot, releaseValidationRoot } from './validation';
-
-export type {
-  ArrayNode,
-  BooleanNode,
-  NullNode,
-  NumberNode,
-  ObjectNode,
-  StringNode,
-  VirtualNode,
-  InferSchemaNode,
-  SchemaNode,
-  NodeListener,
-  UnionNodeEventType,
-} from '../__legacy__/core/nodes';
-
 export {
-  NodeState,
-  NodeEventType,
-  ValidationMode,
+  fieldNodeFactory,
+  setContext,
   SetValueOption,
-  PublicSetValueOption,
-  PublicNodeEventType,
-  isSchemaNode,
-  isBooleanNode,
-  isNumberNode,
-  isObjectNode,
+  FieldNodeEventType,
+  FieldNodeRequestType,
+  isFieldNode,
   isStringNode,
-  isVirtualNode,
+  isNumberNode,
+  isBooleanNode,
+  isObjectNode,
   isArrayNode,
+  isVirtualNode,
+  isUnionNode,
   isBranchNode,
   isTerminalNode,
-} from '../__legacy__/core/nodes';
+  buildFieldNodeTree,
+  mountFieldNode,
+  reloadFieldNodeForm,
+  adoptFieldNodeTree,
+  writeFieldNodeInput,
+  finishFieldNodeInput,
+  readFieldNodeInteractionReset,
+  observeFieldNodeReports,
+  interpretFieldNodeDraft,
+  nodeFromJSONSchema,
+} from './surface';
+export {
+  FieldNodeState,
+  ValidationMode,
+  retainValidationRoot,
+  releaseValidationRoot,
+  blueprint,
+  readFieldNodeGuard,
+} from './engine';
+export type {
+  FieldNode,
+  StringNode,
+  NumberNode,
+  BooleanNode,
+  NullNode,
+  ObjectNode,
+  ArrayNode,
+  VirtualNode,
+  UnionNode,
+  BranchNode,
+  TerminalNode,
+  UnionMemberType,
+  UnionSchemaType,
+  InferFieldNode,
+  FieldNodeInputProps,
+} from './surface';
+export type {
+  AuthoredSchema,
+  Validator,
+  ValidationIssue,
+  SchemaControls,
+  ValidateFunction,
+} from './engine';

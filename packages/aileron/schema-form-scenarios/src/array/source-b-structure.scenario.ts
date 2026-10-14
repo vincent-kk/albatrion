@@ -18,7 +18,7 @@ export const sourceBStructureScenario = {
     { action: 'setValue', path: '', value: { flag: true, a: 0 }, expect: {
       diagnostics: { status: 'degraded', cause: 'budget' },
       shape: { '/items/0': 'absent' },
-      values: { '/items': [] }, extras: { '/items': undefined },
+      values: { '/items': [] }, undeclaredValues: { '/items': undefined },
       outputValue: { flag: true, a: 0 },
     } },
   ],

@@ -1,0 +1,45 @@
+│ ┌────────────────────────────────────────────────────────────────────────────┐
+│ │  Info: Found a setup file with "setProjectAnnotations".                    │
+│ │  Skipping automatic provisioning of preview annotations to avoid           │
+│ │  conflicts. Since Storybook 10.3, "@storybook/addon-vitest" applies these  │
+│ │   automatically.                                                           │
+│ │  You can safely remove the "setProjectAnnotations" call from your setup    │
+│ │  file, or remove the file entirely if you don't have custom code there.    │
+│ └────────────────────────────────────────────────────────────────────────────┘
+
+ RUN  v3.2.6 /Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/packages/canard/schema-form
+
+stdout | src/core/settle/__tests__/settle.single-selection-counts.test.ts > single declaration selection work > publishes one immutable ID list across successful gated selections
+106COUNT single-selection lists=4 publications=4 evaluate=8
+
+x
+
+ Test Files  1 failed (1)
+      Tests  1 failed (1)
+   Start at  03:15:39
+   Duration  1.35s (transform 698ms, setup 0ms, collect 1.17s, tests 17ms, environment 0ms, prepare 35ms)
+
+(node:28981) [DEP0205] DeprecationWarning: `module.register()` is deprecated. Use `module.registerHooks()` instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  |unit| src/core/settle/__tests__/settle.single-selection-counts.test.ts > single declaration selection work > publishes one immutable ID list across successful gated selections
+AssertionError: expected [ [ 3 ], [ 3 ], [ 3 ], [ 3 ] ] to have a length of 1 but got 4
+
+- Expected
++ Received
+
+- 1
++ 4
+
+ ❯ src/core/settle/__tests__/settle.single-selection-counts.test.ts:42:20
+     40|     expect(gate.mock.calls.length).toBeGreaterThan(1);
+     41|     console.log(`106COUNT single-selection lists=${unique.length} publ…
+     42|     expect(unique).toHaveLength(1);
+       |                    ^
+     43|     expect(Object.isFrozen(unique[0])).toBe(true);
+     44|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+

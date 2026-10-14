@@ -2,14 +2,12 @@
 
 ## Purpose
 
-schema-form 내부에서 발생하는 에러 메시지 포맷팅과 검증 에러 변환을 담당하는 헬퍼 모음.
+schema-form 내부에서 발생하는 에러 메시지 포맷팅을 담당하는 헬퍼 모음.
 
 ## Conventions
 
 - `formatErrorMessage` 포맷터는 개발자 콘솔용 멀티라인 ASCII 박스 형식 사용
 - `formatValidationError`는 `FormatError` 타입 시그니처 준수
-- `transformErrors`는 입력 배열을 직접 변형(`@warning THIS FUNCTION CHANGE INPUT ERRORS`)
-- `sequence` 카운터는 모듈 수준 변수 (키 할당 시 단조 증가)
 
 ## Boundaries
 
@@ -20,10 +18,8 @@ schema-form 내부에서 발생하는 에러 메시지 포맷팅과 검증 에�
 
 ### Ask first
 
-- `transformErrors`의 `ENHANCED_KEY` 필터 조건 변경
-- `sequence` 카운터 초기화 또는 리셋 로직 추가
+- `formatValidationError`의 `FormatError` 시그니처나 진단 박스 형식을 바꿀 때
 
 ### Never do
 
-- `transformErrors` 호출 후 원본 에러 배열이 변경됨을 가정하지 않는 코드 작성
 - `formatErrorMessage` 포맷터에서 에러를 throw하거나 외부 상태 변경

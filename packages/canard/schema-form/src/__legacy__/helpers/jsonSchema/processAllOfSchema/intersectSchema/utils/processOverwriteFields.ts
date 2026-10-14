@@ -1,4 +1,4 @@
-import type { JSONSchema } from '@/schema-form/types';
+import type { JSONSchema } from '@/schema-form/__legacy__/types';
 
 import { EXCLUDE_FIELDS } from './constants';
 

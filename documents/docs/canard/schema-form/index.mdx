@@ -46,8 +46,8 @@ nodeFromJSONSchema()          ← builds a typed node tree
     ▼
 Plugin System
     ├── ValidatorPlugin       ← compile(jsonSchema) → ValidateFunction
-    └── SchemaFormPlugin      ← FormGroup / FormLabel / FormInput / FormError
-                                 + formTypeInputDefinitions
+    └── SchemaFormPlugin      ← FieldRenderer / FormLabelRenderer / FormInputRenderer / FormErrorRenderer
+                                 + fieldInputDefinitions
     │
     ▼
 <Form>  →  React component tree
@@ -62,7 +62,7 @@ Plugins are registered globally with `registerPlugin()` and affect every
 
 <ul>
   <li><strong>Validator plugin</strong> — integrates any validation library (AJV, Zod, Yup, etc.) by implementing <code>compile(jsonSchema)</code>.</li>
-  <li><strong>UI plugin</strong> — provides <code>FormGroup</code>, <code>FormLabel</code>, <code>FormInput</code>, <code>FormError</code> renderer components and <code>formTypeInputDefinitions</code> for per-field input components.</li>
+  <li><strong>UI plugin</strong> — provides <code>FieldRenderer</code>, <code>FormLabelRenderer</code>, <code>FormInputRenderer</code>, <code>FormErrorRenderer</code> renderer components and <code>fieldInputDefinitions</code> for per-field input components.</li>
 </ul>
 
 Official plugin packages:
@@ -85,15 +85,15 @@ Official plugin packages:
 | `ArrayNode` | `"array"` | branch (BranchStrategy or TerminalStrategy) |
 | `VirtualNode` | conditional / oneOf / anyOf branches | special |
 
-## FormTypeInput Resolution Order
+## FieldInput Resolution Order
 
 When rendering a field, the library resolves which input component to use in this priority order (highest first):
 <ol>
-  <li>Direct <code>FormTypeInput</code> prop on <code>Form.Group</code></li>
-  <li><code>formTypeInputMap</code> path mapping on <code>&lt;Form&gt;</code></li>
-  <li>Form-level <code>formTypeInputDefinitions</code> prop</li>
-  <li><code>FormProvider</code> <code>formTypeInputDefinitions</code></li>
-  <li>Plugin-provided <code>formTypeInputDefinitions</code></li>
+  <li>Direct <code>FieldInput</code> prop on <code>Form.Field</code></li>
+  <li><code>fieldInputMap</code> path mapping on <code>&lt;Form&gt;</code></li>
+  <li>Form-level <code>fieldInputDefinitions</code> prop</li>
+  <li><code>FormProvider</code> <code>fieldInputDefinitions</code></li>
+  <li>Plugin-provided <code>fieldInputDefinitions</code></li>
 </ol>
 
 ## Claude Code Integration
@@ -145,7 +145,7 @@ import type { FormErrorProps } from '@canard/schema-form';
 
 ### Node types
 ```ts
-import type { SchemaNode } from '@canard/schema-form';
+import type { FieldNode } from '@canard/schema-form';
 import type { StringNode, NumberNode, BooleanNode, NullNode } from '@canard/schema-form';  // terminal
 import type { ObjectNode, ArrayNode } from '@canard/schema-form';                          // branch
 import type { VirtualNode } from '@canard/schema-form';                                    // conditional
@@ -169,6 +169,6 @@ import { JSONPointer } from '@canard/schema-form';
 ### Architecture
 - No default validator or UI — both via plugins: `registerPlugin(plugin)`
 - Node tree: JSON Schema → nodeFromJSONSchema() → typed node tree
-- Input resolution: Direct prop > formTypeInputMap > form-level > FormProvider > plugin
+- Input resolution: Direct prop > fieldInputMap > form-level > FormProvider > plugin
 
 </ForAI>

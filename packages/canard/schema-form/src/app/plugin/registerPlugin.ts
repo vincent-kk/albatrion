@@ -27,15 +27,15 @@ const getPluginKey = createFingerprintFactory();
  * import { registerPlugin } from '@canard/schema-form';
  *
  * registerPlugin({
- *   FormGroup: CustomFormGroup,
- *   FormLabel: CustomFormLabel,
- *   FormInput: CustomFormInput,
- *   FormError: CustomFormError,
+ *   FieldRenderer: CustomFormField,
+ *   FormLabelRenderer: CustomFormLabel,
+ *   FormInputRenderer: CustomFormInput,
+ *   FormErrorRenderer: CustomFormError,
  * });
  * ```
  *
  * @example
- * Register custom form type definitions:
+ * Register custom field input definitions:
  * ```typescript
  * const datePickerDefinition = {
  *   test: { type: 'string', format: 'date' },
@@ -48,7 +48,7 @@ const getPluginKey = createFingerprintFactory();
  * };
  *
  * registerPlugin({
- *   formTypeInputDefinitions: [
+ *   fieldInputDefinitions: [
  *     datePickerDefinition,
  *     colorPickerDefinition,
  *   ],
@@ -111,13 +111,13 @@ const getPluginKey = createFingerprintFactory();
  * ```typescript
  * const myFormPlugin: SchemaFormPlugin = {
  *   // Custom renderer components
- *   FormGroup: MyFormGroup,
- *   FormLabel: MyFormLabel,
- *   FormInput: MyFormInput,
- *   FormError: MyFormError,
+ *   FieldRenderer: MyFormField,
+ *   FormLabelRenderer: MyFormLabel,
+ *   FormInputRenderer: MyFormInput,
+ *   FormErrorRenderer: MyFormError,
  *
  *   // Custom input types
- *   formTypeInputDefinitions: [
+ *   fieldInputDefinitions: [
  *     {
  *       test: { type: 'string', format: 'phone' },
  *       Component: PhoneNumberInput,
@@ -155,17 +155,17 @@ const getPluginKey = createFingerprintFactory();
  * ```typescript
  * // First plugin
  * registerPlugin({
- *   FormLabel: CustomLabel1,
- *   formTypeInputDefinitions: [
+ *   FormLabelRenderer: CustomLabel1,
+ *   fieldInputDefinitions: [
  *     { test: { format: 'date' }, Component: DatePicker1 }
  *   ],
  * });
  *
  * // Second plugin - behavior differs by property:
  * registerPlugin({
- *   FormLabel: CustomLabel2, // REPLACES CustomLabel1
- *   FormInput: CustomInput,  // ADDS to render kit
- *   formTypeInputDefinitions: [
+ *   FormLabelRenderer: CustomLabel2, // REPLACES CustomLabel1
+ *   FormInputRenderer: CustomInput,  // ADDS to render kit
+ *   fieldInputDefinitions: [
  *     { test: { format: 'date' }, Component: DatePicker2 }, // PREPENDED (takes precedence)
  *     { test: { format: 'time' }, Component: TimePicker }   // ADDED
  *   ],
@@ -184,8 +184,8 @@ const getPluginKey = createFingerprintFactory();
  * @remarks
  * ### Plugin Merge Behavior
  * When multiple plugins are registered:
- * - **Render components** (FormGroup, FormLabel, FormInput, FormError): Last one wins (replacement)
- * - **formTypeInputDefinitions**: Prepended to list (first match wins), allowing overrides
+ * - **Render components** (FieldRenderer, FormLabelRenderer, FormInputRenderer, FormErrorRenderer): Last one wins (replacement)
+ * - **fieldInputDefinitions**: Prepended to list (first match wins), allowing overrides
  * - **validator**: Last one wins (complete replacement)
  * - **formatError**: Last one wins (complete replacement)
  *
@@ -205,10 +205,10 @@ export const registerPlugin = (plugin: SchemaFormPlugin | null) => {
   const hash = getPluginKey(plugin);
   if (RegisteredPlugin.has(hash)) return;
   try {
-    const { formTypeInputDefinitions, validator, formatError, ...renderKit } =
+    const { fieldInputDefinitions, validator, formatError, ...renderKit } =
       plugin;
     PluginManager.appendRenderKit(renderKit);
-    PluginManager.appendFormTypeInputDefinitions(formTypeInputDefinitions);
+    PluginManager.appendFieldInputDefinitions(fieldInputDefinitions);
     PluginManager.appendValidator(validator);
     PluginManager.appendFormatError(formatError);
   } catch (error) {

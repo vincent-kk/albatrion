@@ -4,10 +4,10 @@
 
 ## ArrayNode Mutations
 
-Obtain the node via `formRef.current?.findNode('/items') as ArrayNode`, or receive it as `node` inside a `FormTypeInput`. Methods: `push`, `pop`, `update`, `remove`, `clear` (shapes in `dist/*.d.ts`). Behavior the signatures do not show:
+Obtain the node via `formRef.current?.findNode('/items') as ArrayNode`, or receive it as `node` inside a `FieldInput`. Methods: `push`, `pop`, `update`, `remove`, `clear` (shapes in `dist/*.d.ts`). Behavior the signatures do not show:
 
 - `push(data?, unlimited?)` returns `Promise<number>` resolving to the array **length after the push** — not the new item's index. When `maxItems` is reached the push is **silently ignored** and the promise resolves with the unchanged length (no error). Pass `unlimited: true` to bypass `maxItems`.
-- `clear()` removes **every** item whatever `minItems` says, like `remove`/`pop`/`setValue([])` — `minItems` is a validation constraint and a construction/reset fill, not a guard on mutations. A reset restores the fill; to stop users going below the minimum, disable the remove control in the `FormTypeInput`. On a nullable array that is `null`, `clear()` does nothing (`nullable-branch-nodes.md`).
+- `clear()` removes **every** item whatever `minItems` says, like `remove`/`pop`/`setValue([])` — `minItems` is a validation constraint and a construction/reset fill, not a guard on mutations. A reset restores the fill; to stop users going below the minimum, disable the remove control in the `FieldInput`. On a nullable array that is `null`, `clear()` does nothing (`nullable-branch-nodes.md`).
 - `remove(index)` removes one item by index.
 
 ## Array Output Filters (omitTrailing / omitEmpty)
@@ -16,34 +16,34 @@ Obtain the node via `formRef.current?.findNode('/items') as ArrayNode`, or recei
 
 Where the filters apply — and where they never do:
 
-| Surface                                                                   | Value                             |
-| ------------------------------------------------------------------------- | --------------------------------- |
-| Parent propagation, root validation, `getValue()` / `submit` / `onChange` | filtered (`node.normalizedValue`) |
-| `node.value`, `node.children`, rendered inputs                            | raw — every item node stays       |
+| Surface                                                                   | Value                         |
+| ------------------------------------------------------------------------- | ----------------------------- |
+| Parent propagation, root validation, `getValue()` / `submit` / `onChange` | filtered (`node.outputValue`) |
+| `node.value`, `node.children`, rendered inputs                            | raw — every item node stays   |
 
 Rules of thumb:
 
 - Leading/middle `undefined` are never removed — indices must stay aligned with error `dataPath`s and validation params.
 - Primary use case: pre-expose empty inputs (`minItems`) without polluting the submitted/validated value. Validation sees the trimmed value, so `minItems` counts only the filled prefix.
 - A Reset-flagged clear (form reset, oneOf/anyOf branch reactivation) refills `minItems` empty items; a plain `setValue(undefined)` clears every item.
-- In a custom array `FormTypeInput`, derive row count from `node.children` (or `ChildNodeComponents`), never from `value.length` — the emitted value is shorter than the rendered rows by design.
+- In a custom array `FieldInput`, derive row count from `node.children` (or `ChildFields`), never from `value.length` — the emitted value is shorter than the rendered rows by design.
 - `injectTo` handlers receive the **raw** source value, not the filtered one; mirror targets therefore hold the untrimmed copy.
 
 ## Terminal vs Branch Strategy
 
-Item type picks the strategy automatically; `terminal` is a schema key (not in standard JSON Schema) that overrides it.
+An array is a branch by default, whatever its item type. `options.terminal` (not in standard JSON Schema) overrides that; without it, a `presentation.FieldInput` component on the array schema makes it a terminal.
 
-| Strategy | Applies when                            | Trade-off                                                 |
-| -------- | --------------------------------------- | --------------------------------------------------------- |
-| Terminal | Primitive items (string/number/boolean) | Values only, no per-item node tree — fast, memory-light   |
-| Branch   | Object/array items                      | Per-item node tree — per-item state, validation, computed |
+| Strategy | Applies when                                                       | Trade-off                                                 |
+| -------- | ------------------------------------------------------------------ | --------------------------------------------------------- |
+| Branch   | Default, or `options.terminal: false`                              | Per-item node tree — per-item state, validation, controls |
+| Terminal | `options.terminal: true`, or a `presentation.FieldInput` component | One input owns the whole array value; no per-item nodes   |
 
 ```typescript
-{ type: 'array', terminal: false, items: { type: 'string' } }
-// primitives forced onto Branch — use when each item needs its own state tracking
+{ type: 'array', items: { type: 'string' }, options: { terminal: true } }
+// one input owns the whole array — no per-item node tree or per-item state
 ```
 
-`terminal: true` on an object/array schema is a different contract (the FormTypeInput owns the whole subtree value) — see the consumer rules.
+A terminal object or array is a contract: the FieldInput owns the whole subtree value — see the consumer rules.
 
 ## Tuples
 
@@ -76,16 +76,13 @@ formRef.current?.setValue((prev) => ({
 
 ## Rendering Items in a Custom Input
 
-A custom array `FormTypeInput` renders children through `ChildNodeComponents` — omitting it makes items disappear:
+A custom array `FieldInput` renders children through `ChildFields` — omitting it makes items disappear:
 
 ```tsx
-const ArrayInput: FC<FormTypeInputProps<any[]>> = ({
-  node,
-  ChildNodeComponents,
-}) => (
+const ArrayInput: FC<FieldInputProps<any[]>> = ({ node, ChildFields }) => (
   <div>
     <button onClick={() => (node as ArrayNode).push()}>Add</button>
-    {ChildNodeComponents.map((Child, i) => (
+    {ChildFields.map((Child, i) => (
       <div key={i}>
         <Child />
         <button onClick={() => (node as ArrayNode).remove(i)}>Remove</button>
@@ -123,8 +120,8 @@ Contract — each point matters:
 - Placeholders carry `[data-path]` and a `[data-deferred]` marker — style via CSS attribute selector or the `Placeholder` component (`{ node, height }`). Space reservation always belongs to `estimateHeight`; `Placeholder` only fills visuals.
 - Benefit scales with form size; small forms gain nothing (hence opt-in).
 
-For a single huge array field (not a huge form), window it manually with a list-virtualization library inside a custom FormTypeInput, iterating `ChildNodeComponents`.
+For a single huge array field (not a huge form), window it manually with a list-virtualization library inside a custom FieldInput, iterating `ChildFields`.
 
 ## Expression Cost at Scale
 
-Heavy computed expressions run on every dependency tick. Move reductions out of expressions: watch the source array and compute inside the component (`expressions.md` § watch and derived), and keep `watch` lists down to the paths the expression actually reads.
+Heavy controls expressions run on every dependency tick. Move reductions out of expressions: watch the source array and compute inside the component (`expressions.md` § watch and derived), and keep `watch` lists down to the paths the expression actually reads.

@@ -15,18 +15,14 @@ import type { JSONSchema } from '@/schema-form/types';
  *   git checkout <recent-version> && yarn bench:baseline   # snapshot the baseline
  *   git checkout <new-version>    && yarn bench:compare     # diff against baseline
  *
- * "Render delay" here is the node-tree mount — the dominant cost of the first
- * paint (React reconciliation is over-render-free; the bottleneck is building
- * the node tree). It is measured WITHOUT JSDOM so the number is React-mount
- * independent, matching `nodeFromJSONSchema.bench.ts`.
+ * "Render delay" here is the node-tree mount through the core entry, without
+ * React or JSDOM. React Profiler measurements live in benchmark-form.
  *
  * Two layers are tracked so a regression points at its cause:
  *   [mount] full node-tree construction (the headline render delay)
  *           - validation off: pure tree build
- *           - validation on : default mode, so the per-mount validator guards
- *             (stripSchemaExtensions → clone(schema)) are on the hot path
- *   [guard] the isolated cost of the per-mount safety clones, so their share of
- *           the mount can be read directly and watched across versions
+ *           - validation on : mode flag only; neither lane supplies a validator
+ *   [guard] historical standalone clone controls, not new-engine cost
  *
  * Sizes span the realistic range (5 → 150 terminals) so a regression that only
  * shows up on large schemas is still caught.
@@ -105,14 +101,13 @@ const cases = [
 ] as const;
 
 for (const { name, schema, value } of cases) {
-  describe(`render-delay: ${name}`, () => {
+  describe(`load/render-delay: ${name}`, () => {
     // Headline render delay — node-tree mount with validation off.
     bench('[mount] nodeFromJSONSchema (validation off)', () => {
       nodeFromJSONSchema({ jsonSchema: schema, onChange: noop });
     });
 
-    // Realistic render delay — default validationMode puts the per-mount
-    // validator guards (stripSchemaExtensions clone) on the hot path.
+    // Mode-flag control: no validator is supplied, so this does not measure validator compilation.
     bench('[mount] nodeFromJSONSchema (validation on)', () => {
       nodeFromJSONSchema({
         jsonSchema: schema,
@@ -121,8 +116,7 @@ for (const { name, schema, value } of cases) {
       });
     });
 
-    // Safety-clone cost #1: stripSchemaExtensions deep-clones the root schema
-    // once per mount (root ValidationManager) to isolate the validator's strip.
+    // Historical clone controls are retained separately from the new-engine mount rows.
     bench('[guard] clone(schema)', () => {
       clone(schema);
     });

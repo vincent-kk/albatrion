@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { getPathManager } from '@/schema-form/core/blueprint';
+import { getPathManager } from '@/schema-form/__legacy__/core/blueprint';
 
 import { getObservedValuesFactory } from '../getObservedValuesFactory';
 

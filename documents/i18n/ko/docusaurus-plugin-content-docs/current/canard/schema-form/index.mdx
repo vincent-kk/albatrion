@@ -45,8 +45,8 @@ nodeFromJSONSchema()          ← builds a typed node tree
     ▼
 Plugin System
     ├── ValidatorPlugin       ← compile(jsonSchema) → ValidateFunction
-    └── SchemaFormPlugin      ← FormGroup / FormLabel / FormInput / FormError
-                                 + formTypeInputDefinitions
+    └── SchemaFormPlugin      ← FieldRenderer / FormLabelRenderer / FormInputRenderer / FormErrorRenderer
+                                 + fieldInputDefinitions
     │
     ▼
 <Form>  →  React component tree
@@ -59,7 +59,7 @@ Plugin System
 플러그인은 `registerPlugin()`으로 전역 등록되며 애플리케이션의 모든 `<Form>`에 영향을 줍니다.
 
 - **Validator 플러그인** — `compile(jsonSchema)`을 구현하여 모든 검증 라이브러리(AJV, Zod, Yup 등)를 통합합니다.
-- **UI 플러그인** — `FormGroup`, `FormLabel`, `FormInput`, `FormError` 렌더러 컴포넌트와 필드별 입력 컴포넌트를 위한 `formTypeInputDefinitions`를 제공합니다.
+- **UI 플러그인** — `FieldRenderer`, `FormLabelRenderer`, `FormInputRenderer`, `FormErrorRenderer` 렌더러 컴포넌트와 필드별 입력 컴포넌트를 위한 `fieldInputDefinitions`를 제공합니다.
 
 ## Node Types
 
@@ -73,15 +73,15 @@ Plugin System
 | `ArrayNode` | `"array"` | branch (BranchStrategy or TerminalStrategy) |
 | `VirtualNode` | conditional / oneOf / anyOf branches | special |
 
-## FormTypeInput Resolution Order
+## FieldInput Resolution Order
 
 필드를 렌더링할 때, 라이브러리는 다음 우선순위로 입력 컴포넌트를 결정합니다 (높은 순):
 
-1. `Form.Group`의 직접 `FormTypeInput` prop
-2. `<Form>`의 `formTypeInputMap` 경로 매핑
-3. 폼 레벨 `formTypeInputDefinitions` prop
-4. `FormProvider` `formTypeInputDefinitions`
-5. 플러그인 제공 `formTypeInputDefinitions`
+1. `Form.Field`의 직접 `FieldInput` prop
+2. `<Form>`의 `fieldInputMap` 경로 매핑
+3. 폼 레벨 `fieldInputDefinitions` prop
+4. `FormProvider` `fieldInputDefinitions`
+5. 플러그인 제공 `fieldInputDefinitions`
 
 <ForAI>
 
@@ -109,7 +109,7 @@ import type { FormErrorProps } from '@canard/schema-form';
 
 ### Node types
 ```ts
-import type { SchemaNode } from '@canard/schema-form';
+import type { FieldNode } from '@canard/schema-form';
 import type { StringNode, NumberNode, BooleanNode, NullNode } from '@canard/schema-form';  // terminal
 import type { ObjectNode, ArrayNode } from '@canard/schema-form';                          // branch
 import type { VirtualNode } from '@canard/schema-form';                                    // conditional
@@ -133,6 +133,6 @@ import { JSONPointer } from '@canard/schema-form';
 ### Architecture
 - No default validator or UI — both via plugins: `registerPlugin(plugin)`
 - Node tree: JSON Schema → nodeFromJSONSchema() → typed node tree
-- Input resolution: Direct prop > formTypeInputMap > form-level > FormProvider > plugin
+- Input resolution: Direct prop > fieldInputMap > form-level > FormProvider > plugin
 
 </ForAI>

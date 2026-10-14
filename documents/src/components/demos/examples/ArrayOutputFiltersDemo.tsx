@@ -3,9 +3,9 @@ import React, { useEffect, useRef, useState } from 'react';
 import {
   Form,
   type FormHandle,
-  type SchemaNode,
+  type FieldNode,
   registerPlugin,
-  useSchemaNodeTracker,
+  useFieldNodeTracker,
 } from '@canard/schema-form';
 import { plugin } from '@canard/schema-form-antd6-plugin';
 
@@ -22,7 +22,7 @@ const schema = {
       description:
         'Three empty rows are offered up front; only what you filled in is emitted',
       minItems: 3,
-      items: { type: 'string', placeholder: 'tag' },
+      items: { type: 'string', presentation: { FieldInputProps: { placeholder: 'tag' } } },
       options: { omitTrailing: true },
     },
     notes: {
@@ -31,7 +31,7 @@ const schema = {
       description:
         'Same shape without the option: every offered row reaches the emitted value',
       minItems: 3,
-      items: { type: 'string', placeholder: 'note' },
+      items: { type: 'string', presentation: { FieldInputProps: { placeholder: 'note' } } },
     },
     aliases: {
       type: 'array',
@@ -39,7 +39,7 @@ const schema = {
       description:
         'Trailing rows are trimmed, but an all-empty array stays [] instead of disappearing',
       minItems: 3,
-      items: { type: 'string', placeholder: 'alias' },
+      items: { type: 'string', presentation: { FieldInputProps: { placeholder: 'alias' } } },
       options: { omitTrailing: true, omitEmpty: false },
     },
   },
@@ -60,8 +60,8 @@ const show = (value: unknown) => JSON.stringify(value) ?? 'undefined';
  * @remarks Each array node is tracked on its own: adding an empty row leaves the
  *          filtered root value untouched, so a root-level tracker would miss it.
  */
-function ChannelRow({ node }: { node: SchemaNode }) {
-  useSchemaNodeTracker(node);
+function ChannelRow({ node }: { node: FieldNode }) {
+  useFieldNodeTracker(node);
   return (
     <tr>
       <td style={CELL_STYLE}>
@@ -83,14 +83,14 @@ function ChannelRow({ node }: { node: SchemaNode }) {
 export default function ArrayOutputFiltersDemo() {
   const [values, setValues] = useState<unknown>({});
   const formRef = useRef<FormHandle>(null);
-  const [nodes, setNodes] = useState<SchemaNode[]>([]);
+  const [nodes, setNodes] = useState<FieldNode[]>([]);
 
   useEffect(() => {
     const handle = formRef.current;
     if (!handle) return;
     setNodes(
       TRACKED_PATHS.map((path) => handle.findNode(path)).filter(
-        (node): node is SchemaNode => node !== null,
+        (node): node is FieldNode => node !== null,
       ),
     );
   }, []);

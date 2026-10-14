@@ -14,7 +14,7 @@ import {
   formatConflictingConstValuesError,
   formatCreateDynamicFunctionError,
   formatEmptyEnumIntersectionError,
-  formatFormTypeInputMapError,
+  formatFieldInputMapError,
   formatInfiniteLoopError,
   formatInjectToError,
   formatInvalidRangeError,
@@ -364,14 +364,14 @@ describe('formatErrorMessage', () => {
     });
   });
 
-  describe('formatFormTypeInputMapError', () => {
-    it('FormTypeInputMap 에러 메시지를 포맷해야 합니다', () => {
-      const result = formatFormTypeInputMapError(
+  describe('formatFieldInputMapError', () => {
+    it('FieldInputMap 에러 메시지를 포맷해야 합니다', () => {
+      const result = formatFieldInputMapError(
         '/invalid[pattern',
         new SyntaxError('Invalid regular expression'),
       );
 
-      expect(result).toContain('FormTypeInputMap');
+      expect(result).toContain('FieldInputMap');
       expect(result).toContain('/invalid[pattern');
       expect(result).toContain('How to fix');
     });
@@ -417,7 +417,7 @@ describe('formatErrorMessage', () => {
   describe('formatRegisterPluginError', () => {
     it('플러그인 등록 에러 메시지를 포맷해야 합니다', () => {
       const plugin = {
-        renderKit: { FormInput: () => null },
+        renderKit: { FormInputRenderer: () => null },
       } as SchemaFormPlugin;
       const error = new Error('Invalid component');
       const result = formatRegisterPluginError(plugin, error);
@@ -425,6 +425,16 @@ describe('formatErrorMessage', () => {
       expect(result).toContain('Failed to register');
       expect(result).toContain('Invalid component');
       expect(result).toContain('How to fix');
+    });
+
+    it('lists a plugin FieldRenderer as FormField', () => {
+      const result = formatRegisterPluginError(
+        { FieldRenderer: () => null } as SchemaFormPlugin,
+        new Error('Invalid component'),
+      );
+
+      expect(result).toContain('FormField');
+      expect(result).not.toContain('FormGroup');
     });
 
     it('빈 플러그인도 처리해야 합니다', () => {
@@ -536,7 +546,7 @@ describe('formatErrorMessage', () => {
         formatVirtualFieldsNotInPropertiesError('key', { fields: ['f1'] }, [
           'f1',
         ]),
-        formatFormTypeInputMapError('/path', new Error()),
+        formatFieldInputMapError('/path', new Error()),
         formatSchemaValidationFailedError({}, [], { type: 'object' as const }),
         formatRegisterPluginError({} as SchemaFormPlugin, new Error()),
         formatInjectToError({
@@ -608,7 +618,7 @@ describe('formatErrorMessage', () => {
 
     it('formatCreateDynamicFunctionError 스냅샷', () => {
       const result = formatCreateDynamicFunctionError(
-        'computed.visible',
+        'controls.visible',
         "../category === 'premium' && ../price > 100",
         "return values[0] === 'premium' && values[1] > 100",
         new SyntaxError("Unexpected token '>'"),
@@ -820,8 +830,8 @@ describe('formatErrorMessage', () => {
       expect(result).toMatchSnapshot();
     });
 
-    it('formatFormTypeInputMapError 스냅샷', () => {
-      const result = formatFormTypeInputMapError(
+    it('formatFieldInputMapError 스냅샷', () => {
+      const result = formatFieldInputMapError(
         '/users/*/profile/[invalid',
         new SyntaxError(
           'Invalid regular expression: /\\/users\\/.*\\/profile\\/[invalid/: Unterminated character class',
@@ -861,20 +871,21 @@ describe('formatErrorMessage', () => {
 
     it('formatRegisterPluginError 스냅샷', () => {
       const mockPlugin: SchemaFormPlugin = {
-        FormInput: () => null,
-        FormLabel: () => null,
-        formTypeInputDefinitions: [
+        FormInputRenderer: () => null,
+        FormLabelRenderer: () => null,
+        fieldInputDefinitions: [
           { test: { type: 'string' }, Component: () => null },
         ],
         validator: {
           bind: () => {},
           compile: () => () => null,
+          compileGuard: () => () => true,
         },
       };
       const result = formatRegisterPluginError(
         mockPlugin,
         new Error(
-          'Plugin conflict: formTypeInputDefinitions[0] conflicts with existing definition',
+          'Plugin conflict: fieldInputDefinitions[0] conflicts with existing definition',
         ),
       );
       expect(result).toMatchSnapshot();
@@ -888,7 +899,9 @@ describe('formatErrorMessage', () => {
         jsonSchema: {
           type: 'string',
           title: 'Source Field',
-          injectTo: () => ({ '/targetField': 'injected-value' }),
+          controls: {
+            injectTo: () => ({ '/targetField': 'injected-value' }),
+          },
         },
         parentValue: {
           sourceField: 'current-value',

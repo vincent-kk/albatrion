@@ -1,9 +1,9 @@
-import { JSONSchemaError } from '@/schema-form/errors';
-import { formatConflictingConstValuesError } from '@/schema-form/helpers/error';
+import { JSONSchemaError } from '@/schema-form/__legacy__/errors';
+import { formatConflictingConstValuesError } from '@/schema-form/__legacy__/helpers/error';
 import {
   EMPTY_INTERSECTION,
   intersectConst as intersect,
-} from '@/schema-form/helpers/schemaIntersection';
+} from '@/schema-form/__legacy__/helpers/schemaIntersection';
 
 /**
  * Intersects two optional const values, ensuring they are structurally equal or throwing an error.

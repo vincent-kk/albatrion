@@ -1,11 +1,15 @@
 import type { JSONSchema } from '@canard/schema-form';
 import type Ajv from 'ajv';
 
-import { registerSchemaRoot, type SchemaRootRegistry } from './utils/registerSchemaRoot';
-import { registerSchemaGuard } from './utils/registerSchemaGuard';
+import { GuardPointerNotSchemaError } from './utils/GuardPointerNotSchemaError';
 import { createSchemaRootRegistry } from './utils/createSchemaRootRegistry';
-import { resolveGuardSchema } from './utils/resolveGuardSchema';
 import { isSelfContainedGuard } from './utils/isSelfContainedGuard';
+import { registerSchemaGuard } from './utils/registerSchemaGuard';
+import {
+  type SchemaRootRegistry,
+  registerSchemaRoot,
+} from './utils/registerSchemaRoot';
+import { resolveGuardSchema } from './utils/resolveGuardSchema';
 
 /**
  * Compiles a synchronous guard at a location in its registered root.
@@ -15,6 +19,7 @@ import { isSelfContainedGuard } from './utils/isSelfContainedGuard';
  * @param pointer - An unfragmented JSON Pointer to the guard schema.
  * @param directGuardCompile - Compile self-contained guards directly when enabled.
  * @returns A boolean predicate evaluated without changing its input.
+ * @throws GuardPointerNotSchemaError when the pointer does not locate a schema
  */
 export const createGuardCompiler = (
   ajv: Ajv,
@@ -25,19 +30,36 @@ export const createGuardCompiler = (
 ): ((value: unknown) => boolean) => {
   const registration = registerSchemaRoot(registry, ajv, root);
   const guard = registerSchemaGuard(ajv, root, registration);
-  const schema = directGuardCompile ? resolveGuardSchema(root, pointer) : undefined;
-  if (schema !== undefined && !Object.prototype.hasOwnProperty.call(root, '$schema') && isSelfContainedGuard(schema, registration.guardChecks)) {
+  const rootId = typeof root.$id === 'string' ? root.$id : '';
+  const located = resolveGuardSchema(root, pointer);
+  if (located === undefined)
+    throw new GuardPointerNotSchemaError(rootId, pointer);
+  const schema = directGuardCompile ? located : undefined;
+  if (
+    schema !== undefined &&
+    !Object.prototype.hasOwnProperty.call(root, '$schema') &&
+    isSelfContainedGuard(schema, registration.guardChecks)
+  ) {
     // A direct root would retain itself through the finalizer's held value.
     // Its ID-free, dedicated guard is collected with the weak root registration.
     if (schema === root) registry.finalizer.unregister(registration);
-    if (!registration.directGuards.includes(schema)) registration.directGuards.push(schema);
+    if (!registration.directGuards.includes(schema))
+      registration.directGuards.push(schema);
     const validate = guard.compile(schema);
     if ('$async' in validate && validate.$async === true)
       throw new Error('async schema in sync schema');
     return (value) => Boolean(validate(value));
   }
-  if (pointer === '/if' && ('$dynamicAnchor' in root || '$recursiveAnchor' in root)) {
-    const probe = { ...structuredClone(root), then: false, else: true } as JSONSchema;
+  if (
+    pointer === '/if' &&
+    ('$dynamicAnchor' in root || '$recursiveAnchor' in root)
+  ) {
+    // Boolean subschemas are valid JSON Schema but not expressible in the public JSONSchema type.
+    const probe = {
+      ...structuredClone(root),
+      then: false,
+      else: true,
+    } as unknown as JSONSchema;
     const probeRegistry = createSchemaRootRegistry();
     probeRegistry.active.push(new WeakRef(registration));
     const probeRegistration = registerSchemaRoot(probeRegistry, ajv, probe);

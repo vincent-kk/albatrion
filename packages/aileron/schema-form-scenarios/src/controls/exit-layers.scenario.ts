@@ -1,9 +1,9 @@
 import type { FormScenario } from '../types';
 
-/** The children item policy clears an exiting target's retained raw. */
+/** The fields entry policy clears an exiting target's retained raw. */
 const childrenExitScenario = {
-  name: 'controls.children-exit-policy-layer',
-  schema: { type: 'object', controls: { children: [
+  name: 'controls.fields-exit-policy-layer',
+  schema: { type: 'object', controls: { fields: [
     { targets: ['secret'], controls: { unsetOnInactive: true } },
   ] }, properties: {
     shown: { type: 'boolean' },

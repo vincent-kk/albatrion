@@ -1,4 +1,4 @@
-import type { ArraySchema, JSONSchema } from '@/schema-form/types';
+import type { ArraySchema, JSONSchema } from '@/schema-form/__legacy__/types';
 
 /**
  * Retrieves the appropriate JSON Schema for an array child at a given index.

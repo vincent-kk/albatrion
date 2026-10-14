@@ -1,0 +1,19 @@
+--- /private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/measure-react-122.mjs	2026-10-08 03:23:30
++++ /private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/measure-react-136k.mjs	2026-10-11 13:09:34
+@@ -31,13 +31,13 @@
+ const pkgRequire = createRequire(path.join(pkg, 'package.json'));
+ const head = execFileSync('git', ['rev-parse', 'HEAD'], { cwd: repo, encoding: 'utf8' }).trim();
+ assert.equal(repo, '/Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07');
+-assert.equal(head, '439fda3219ec6b42efbef4d7fa0f02a40111453f');
++assert.equal(head, 'aa1433cba6a22898867fda0dd73692aadd1ce875');
+ const started = performance.now();
+ const lane = process.argv.includes('--old-wait') ? 'record' : 'immediate';
+ const prepareOnly = process.argv.includes('--prepare');
+ const calibrationOnly = process.argv.includes('--calibrate-all');
+-const rawDirectory = "/private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/profile-122-raw/react";
+-const bundleFile = "/private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles/react-122-head.cjs";
++const rawDirectory = "/private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/session-136k";
++const bundleFile = "/private/tmp/claude-501/-Users-Vincent-Workspace-albatrion/c8aaf054-1ea7-43d3-b3c1-a4196f8407e1/scratchpad/bundles/react-136k-head.cjs";
+ fs.mkdirSync(rawDirectory, { recursive: true });
+ const fixtureName = process.argv[3];
+ const run = Number(process.argv[4]);

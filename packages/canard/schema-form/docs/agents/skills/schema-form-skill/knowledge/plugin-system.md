@@ -4,7 +4,7 @@ Plugins supply the pieces the core does not ship: UI component sets and validato
 
 ```typescript
 import { registerPlugin } from '@canard/schema-form';
-import { ajvValidatorPlugin } from '@canard/schema-form-ajv8-plugin';
+import { plugin as ajvValidatorPlugin } from '@canard/schema-form-ajv8-plugin';
 import { antd5Plugin } from '@canard/schema-form-antd5-plugin';
 
 registerPlugin(antd5Plugin); // 1. UI
@@ -19,40 +19,48 @@ Every property is optional — a plugin customizes only what it needs:
 
 ```typescript
 interface SchemaFormPlugin {
-  FormGroup?: ComponentType<FormTypeRendererProps>;
-  FormLabel?: ComponentType<FormTypeRendererProps>;
-  FormInput?: ComponentType<FormTypeRendererProps>;
-  FormError?: ComponentType<FormTypeRendererProps>;
-  formTypeInputDefinitions?: FormTypeInputDefinition[];
+  FieldRenderer?: ComponentType<FieldRendererProps>;
+  FormLabelRenderer?: ComponentType<FieldRendererProps>;
+  FormInputRenderer?: ComponentType<FieldRendererProps>;
+  FormErrorRenderer?: ComponentType<FieldRendererProps>;
+  fieldInputDefinitions?: FieldInputDefinition[];
   validator?: ValidatorPlugin;
   formatError?: FormatError;
 }
 ```
 
 - When multiple registered plugins define the same property, **the last one wins**.
-- Plugin-provided `formTypeInputDefinitions` sit at the BOTTOM of the resolution priority — `Form`/`FormProvider` props always override them (see SKILL.md's priority list).
+- Plugin-provided `fieldInputDefinitions` sit at the BOTTOM of the resolution priority — `Form`/`FormProvider` props always override them (see SKILL.md's priority list).
 - Plugins can also be applied locally (per-subtree) via `ExternalFormContextProvider` instead of globally.
 
 ## Custom Validator
 
-The validator contract is a factory that returns a validate function directly:
+The plugin `validator` member is an object with a schema compiler and a synchronous guard compiler:
 
 ```typescript
-import type { SchemaFormPlugin, ValidatorFactory } from '@canard/schema-form';
-
-const factory: ValidatorFactory = (schema) => {
-  // compile once per schema; return the validate function
-  return async (data) => {
-    const errors = collectErrors(schema, data);
-    return errors.length > 0 ? errors : null; // null = valid
-  };
-};
+import {
+  type SchemaFormPlugin,
+  type ValidateFunction,
+  type ValidationIssue,
+} from '@canard/schema-form';
 
 const customValidatorPlugin: SchemaFormPlugin = {
-  validator: { compile: factory },
+  validator: {
+    // compile once per schema; return the validate function
+    compile:
+      (schema): ValidateFunction =>
+      async (data) => {
+        const issues: ValidationIssue[] = collectIssues(schema, data);
+        return issues.length > 0 ? issues : null; // null = valid
+      },
+    // Required: a synchronous predicate for an authored `if` schema at `pointer`.
+    compileGuard: (root, pointer) => (value) =>
+      checkGuard(root, pointer, value),
+  },
 };
 ```
 
-- `ValidatorFactory` is `(schema: JSONSchema) => ValidateFunction` — the factory returns the function itself, not an object wrapping one.
-- A `ValidateFunction` may be sync or async and returns `JSONSchemaError[] | null` (`null` when valid).
-- `ValidatorPlugin.bind?(instance)` is a consumer-facing hook for supplying a custom validator instance (e.g. a preconfigured AJV) — call it on the plugin object before `registerPlugin()`; the core never calls it.
+- `ValidatorPlugin` has a required `compile(jsonSchema) => ValidateFunction` and a required `compileGuard(root, pointer)`, plus optional `bind?`, `release?(root)` and `readonly dialect?`.
+- A `ValidateFunction` may be sync or async, returns `readonly ValidationIssue[] | null` (`null` when valid), and must not throw.
+- The `validatorFactory` prop of `Form` and `FormProvider` takes the same object shape (`ValidatorFactory`). Selection order is Form prop, then FormProvider, then plugin; keep the reference stable, because changing it rebuilds the tree. `createValidatorFactory(ajv)` from the AJV plugin returns only a compile function, so it is not a valid `validatorFactory` by itself.
+- To use a custom AJV instance, call `plugin.validator.bind(customAjv)` on the AJV plugin before `registerPlugin(plugin)`; an instance with `coerceTypes`, `useDefaults` or `removeAdditional` is refused.

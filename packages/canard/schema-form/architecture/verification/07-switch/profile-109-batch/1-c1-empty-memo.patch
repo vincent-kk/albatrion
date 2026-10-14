@@ -1,0 +1,110 @@
+diff --git a/packages/canard/schema-form/src/core/settle/utils/commit/commitSettlement.ts b/packages/canard/schema-form/src/core/settle/utils/commit/commitSettlement.ts
+--- a/packages/canard/schema-form/src/core/settle/utils/commit/commitSettlement.ts
++++ b/packages/canard/schema-form/src/core/settle/utils/commit/commitSettlement.ts
+@@ -136,10 +136,16 @@
+   runtime.typeMismatchRecords = warnings ? Object.freeze(warnings) : EMPTY_WARNINGS;
+   const mismatchMemo = runtime.typeMismatchesMemo ??
+     new PathKeyedMap<{ commit: number; paths: readonly string[] }>('path');
+-  mismatchMemo.clear();
+-  if (runtime.typeMismatchPaths.size === 0)
+-    mismatchMemo.set('', { commit, paths: EMPTY_PATHS });
+-  else {
++  if (runtime.typeMismatchPaths.size === 0) {
++    const empty = mismatchMemo.get('');
++    if (mismatchMemo.size === 1 && empty?.paths.length === 0)
++      empty.commit = commit;
++    else {
++      mismatchMemo.clear();
++      mismatchMemo.set('', { commit, paths: EMPTY_PATHS });
++    }
++  } else {
++    mismatchMemo.clear();
+     const allPaths = [...runtime.typeMismatchPaths].sort();
+     mismatchMemo.set('', { commit, paths: Object.freeze(allPaths) });
+     const byAncestor = new Map<string, string[]>();
+diff --git a/packages/canard/schema-form/src/core/settle/DETAIL.md b/packages/canard/schema-form/src/core/settle/DETAIL.md
+--- a/packages/canard/schema-form/src/core/settle/DETAIL.md
++++ b/packages/canard/schema-form/src/core/settle/DETAIL.md
+@@ -1,6 +1,8 @@
+ # settle 계약
+ 
+ ## Requirements
++
++- 불일치 경로가 계속 비었고 메모가 루트 빈 경로 row 하나이면 커밋 번호만 갱신합니다. 최초 row와 불일치→빈 전이 및 다른 row가 있는 경우는 기존 초기화를 유지합니다. 현재 커밋 검사·경고·진단·방문·배달 순서는 같습니다. 속도 비용은 O(1) row/size 확인이며 빈 경로의 clear·색인 재생성·set을 제거합니다. 메모리 비용은 기존 폼 소유 row를 재사용하여 커밋별 row/색인 할당을 줄이고 새 보유 메모리·필드·폼 간 공유는 없습니다(109 갱신 C1).
+ 
+ - 게이트 식의 의존 값은 기존 의존 배열 순서대로 매 평가마다 classic loop에서 읽습니다. 경로 해석·실제 projected read·식 호출과 catch·gateThrowVersion·오류 발생 위치는 같습니다. 속도 비용은 O(의존 수)이며 배열 map callback 호출을 제거합니다. 메모리 비용은 기존 길이의 입력 배열 하나를 유지하고 평가별 callback closure만 제거하며 새 보유 캐시·노드 칸은 없습니다. 실제 종단 이득은 105C-01과 0.5% 최소 크기 규칙으로 판정합니다(106라운드 게이트 읽기).
+ 
+diff --git a/packages/canard/schema-form/src/core/settle/__tests__/settle.commit-memo-work.test.ts b/packages/canard/schema-form/src/core/settle/__tests__/settle.commit-memo-work.test.ts
+new file mode 100644
+--- /dev/null
++++ b/packages/canard/schema-form/src/core/settle/__tests__/settle.commit-memo-work.test.ts
+@@ -0,0 +1,69 @@
++import { afterEach, expect, it, vi } from 'vitest';
++
++import { SetValueOption } from '../../types/value';
++import { loadSchemaNodeAtMount, writeSchemaNode } from '../index';
++import { createTestTree } from './fixtures/createTestTree';
++
++afterEach(() => vi.restoreAllMocks());
++
++it('updates a still-empty mismatch row without clearing or reinserting the memo', () => {
++  const { root } = createTestTree({ type: 'object', properties: {
++    value: { type: 'string' }, sibling: { type: 'number', default: 3 },
++  } });
++  loadSchemaNodeAtMount(root, { value: 'before' }, SetValueOption.Overwrite);
++  const memo = root.runtime.typeMismatchesMemo!;
++  const clear = vi.spyOn(memo, 'clear');
++  const set = vi.spyOn(memo, 'set');
++  const paths = memo.get('')!.paths;
++  for (let index = 0; index < 2; index++) {
++    const value = index === 0 ? 'first' : 'later';
++    writeSchemaNode(root.structure!.value, value, 'input', SetValueOption.Overwrite);
++    expect(root.emit).toEqual({ value, sibling: 3 });
++    expect(memo.get('')).toEqual({ commit: index + 2, paths: [] });
++    expect(memo.get('')!.paths).toBe(paths);
++    expect(root.runtime.typeMismatchRecords).toEqual([]);
++    expect(root.runtime.diagnostics.status).toBe('stable');
++  }
++  expect(clear).not.toHaveBeenCalled();
++  expect(set).not.toHaveBeenCalled();
++});
++
++it('clears ancestor rows on mismatch recovery and retains its warning and commit', () => {
++  const { root } = createTestTree({ type: 'object', properties: {
++    group: { type: 'object', properties: { value: { type: ['string', 'boolean'] } } },
++  } });
++  loadSchemaNodeAtMount(root, { group: { value: 'before' } }, SetValueOption.Overwrite);
++  const leaf = root.structure!.group.structure!.value;
++  writeSchemaNode(leaf, { invalid: true }, 'input', SetValueOption.Overwrite);
++  const memo = root.runtime.typeMismatchesMemo!;
++  expect(memo.get('/group')?.paths).toEqual(['/group/value']);
++  expect(root.runtime.typeMismatchRecords).toEqual([
++    expect.objectContaining({ path: '/group/value', source: 'input' }),
++  ]);
++  const clear = vi.spyOn(memo, 'clear');
++  const set = vi.spyOn(memo, 'set');
++  writeSchemaNode(leaf, 'recovered', 'input', SetValueOption.Overwrite);
++  expect(clear).toHaveBeenCalledTimes(1);
++  expect(set).toHaveBeenCalledTimes(1);
++  expect([...memo.keys()]).toEqual(['']);
++  expect(memo.get('')).toEqual({ commit: 3, paths: [] });
++  expect(root.runtime.typeMismatchRecords).toEqual([]);
++  expect(root.runtime.typeMismatchPaths.size).toBe(0);
++  expect(root.emit).toEqual({ group: { value: 'recovered' } });
++});
++
++it('resets additional subtree memo rows instead of keeping an older commit', () => {
++  const { root } = createTestTree({ type: 'object', properties: {
++    value: { type: 'string' },
++  } });
++  loadSchemaNodeAtMount(root, { value: 'before' }, SetValueOption.Overwrite);
++  const memo = root.runtime.typeMismatchesMemo!;
++  memo.set('/value', { commit: 1, paths: Object.freeze([]) });
++  const clear = vi.spyOn(memo, 'clear');
++  const set = vi.spyOn(memo, 'set');
++  writeSchemaNode(root.structure!.value, 'after', 'input', SetValueOption.Overwrite);
++  expect(clear).toHaveBeenCalledTimes(1);
++  expect(set).toHaveBeenCalledTimes(1);
++  expect([...memo.keys()]).toEqual(['']);
++  expect(memo.get('')).toEqual({ commit: 2, paths: [] });
++});

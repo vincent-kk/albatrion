@@ -8,8 +8,8 @@
 
 - **JSON Schema based rendering**: Automatic form generation from JSON Schema
 - **Plugin-based validation**: Flexible validation system through AJV 6/7/8 plugins
-- **FormTypeInput system**: Priority-based component selection
-- **Computed Properties**: Conditional fields, derived values, reactive logic
+- **FieldInput system**: Priority-based component selection
+- **Controls**: Conditional fields, derived values, reactive logic
 - **Conditional schemas**: oneOf, anyOf, allOf, if-then-else support
 - **TypeScript support**: Full type inference and type safety
 
@@ -24,8 +24,8 @@
    - [FormProps](#formprops)
    - [FormHandle](#formhandle)
 5. [Node System](#node-system)
-6. [FormTypeInput System](#formtypeinput-system)
-7. [Computed Properties](#computed-properties)
+6. [FieldInput System](#fieldinput-system)
+7. [Controls](#controls)
 8. [Conditional Schemas](#conditional-schemas)
 9. [JSONPointer System](#jsonpointer-system)
 10. [Validation System](#validation-system)
@@ -67,7 +67,7 @@ yarn add @canard/schema-form-ajv6-plugin
 
 ```tsx
 import { registerPlugin } from '@canard/schema-form';
-import { ajvValidatorPlugin } from '@canard/schema-form-ajv8-plugin';
+import { plugin as ajvValidatorPlugin } from '@canard/schema-form-ajv8-plugin';
 
 // Register once at app startup
 registerPlugin(ajvValidatorPlugin);
@@ -113,9 +113,9 @@ export const App = () => {
 │  Node System                                                │
 │  ├── Terminal Nodes (String, Number, Boolean, Null)         │
 │  ├── Branch Nodes (Object, Array)                           │
-│  └── Virtual Node (conditional/computed fields)              │
+│  └── Virtual Node (options.virtual field groups)             │
 ├─────────────────────────────────────────────────────────────┤
-│  FormTypeInput System                                       │
+│  FieldInput System                                       │
 │  └── Priority-based component selection                      │
 ├─────────────────────────────────────────────────────────────┤
 │  Plugin System                                              │
@@ -148,28 +148,34 @@ interface FormProps<
   jsonSchema: Schema;
   /** Default value for this SchemaForm */
   defaultValue?: Value;
-  /** Apply readOnly property to all FormTypeInput components */
+  /** Apply readOnly property to all FieldInput components */
   readOnly?: boolean;
-  /** Apply disabled property to all FormTypeInput components */
+  /** Apply disabled property to all FieldInput components */
   disabled?: boolean;
   /** Function called when the value of this SchemaForm changes */
   onChange?: SetStateFn<Value>;
   /** Function called when this SchemaForm is validated */
-  onValidate?: Fn<[jsonSchemaError: JSONSchemaError[]]>;
+  onValidate?: Fn<[errors: readonly ValidationIssue[]]>;
   /** Function called when the form is submitted */
   onSubmit?: Fn<[value: Value], Promise<void> | void>;
   /** Function called when the state of this SchemaForm changes */
   onStateChange?: Fn<[state: NodeStateFlags]>;
-  /** FormTypeInput definition list */
-  formTypeInputDefinitions?: FormTypeInputDefinition[];
-  /** FormTypeInput path mapping */
-  formTypeInputMap?: FormTypeInputMap;
-  /** Custom form type renderer component */
-  CustomFormTypeRenderer?: ComponentType<FormTypeRendererProps>;
+  /** FieldInput definition list */
+  fieldInputDefinitions?: FieldInputDefinition[];
+  /** FieldInput path mapping */
+  fieldInputMap?: FieldInputMap;
+  /** Group renderer component */
+  FieldRenderer?: ComponentType<FieldRendererProps>;
+  /** Label renderer component */
+  FormLabelRenderer?: ComponentType<FieldRendererProps>;
+  /** Input renderer component */
+  FormInputRenderer?: ComponentType<FieldRendererProps>;
+  /** Error renderer component */
+  FormErrorRenderer?: ComponentType<FieldRendererProps>;
   /** Initial validation errors, default is undefined */
-  errors?: JSONSchemaError[];
+  errors?: readonly ValidationIssue[];
   /** Custom format error function */
-  formatError?: FormTypeRendererProps['formatError'];
+  formatError?: FieldRendererProps['formatError'];
   /**
    * Error display condition (default: ShowError.DirtyTouched)
    *   - `true`: Always show
@@ -186,7 +192,7 @@ interface FormProps<
    *  - `ValidationMode.OnRequest`: Validate on request
    */
   validationMode?: ValidationMode;
-  /** Custom ValidatorFactory function */
+  /** Custom validator object (`compile` and `compileGuard`); Form prop > FormProvider > plugin */
   validatorFactory?: ValidatorFactory;
   /**
    * Render-level virtualization (deferred mount) for large forms (default: off)
@@ -216,17 +222,17 @@ interface FormHandle<
   Value extends AllowedValue = InferValueType<Schema>,
 > {
   /** Root node */
-  node?: InferSchemaNode<Schema>;
+  node?: InferFieldNode<Schema>;
   /** Focus input field at specific path */
-  focus: Fn<[dataPath: SchemaNode['path']]>;
+  focus: Fn<[dataPath: FieldNode['path']]>;
   /** Select input field at specific path */
-  select: Fn<[dataPath: SchemaNode['path']]>;
+  select: Fn<[dataPath: FieldNode['path']]>;
   /** Reset form */
   reset: Fn;
   /** Find node by path */
-  findNode: Fn<[path: SchemaNode['path']], SchemaNode | null>;
+  findNode: Fn<[path: FieldNode['path']], FieldNode | null>;
   /** Find multiple nodes by path */
-  findNodes: Fn<[path: SchemaNode['path']], SchemaNode[]>;
+  findNodes: Fn<[path: FieldNode['path']], FieldNode[]>;
   /** Get current state */
   getState: Fn<[], NodeStateFlags>;
   /** Set state */
@@ -238,11 +244,11 @@ interface FormHandle<
   /** Set value */
   setValue: SetStateFnWithOptions<Value>;
   /** Get current errors */
-  getErrors: Fn<[], JSONSchemaError[]>;
+  getErrors: Fn<[], readonly ValidationIssue[]>;
   /** Get attached files map */
   getAttachedFilesMap: Fn<[], AttachedFilesMap>;
   /** Run validation */
-  validate: Fn<[], Promise<JSONSchemaError[]>>;
+  validate: Fn<[], Promise<readonly ValidationIssue[]>>;
   /** Set error visibility */
   showError: Fn<[visible: boolean]>;
   /** Submit form */
@@ -257,11 +263,11 @@ interface FormChildrenProps<
   Schema extends JSONSchema,
   Value extends AllowedValue = InferValueType<Schema>,
 > {
-  node?: InferSchemaNode<Schema>;
+  node?: InferFieldNode<Schema>;
   jsonSchema: Schema;
   defaultValue?: Value;
   value?: Value;
-  errors?: JSONSchemaError[];
+  errors?: readonly ValidationIssue[];
 }
 ```
 
@@ -296,9 +302,30 @@ type AttachedFilesMap = Map<string, File[]>;
 
 **Special Nodes**:
 
-| Node          | Description                                                 |
-| ------------- | ----------------------------------------------------------- |
-| `VirtualNode` | Non-schema nodes for conditional fields and computed values |
+| Node          | Description                                                              |
+| ------------- | ------------------------------------------------------------------------ |
+| `VirtualNode` | Non-schema node that groups sibling fields declared in `options.virtual` |
+
+### Branch or Terminal (`options.terminal`)
+
+An `object` or `array` node is a branch by default: it builds a child node for each property or item. With `options.terminal: true` it is a terminal instead: one input reads and writes the whole value, and no child nodes are built. The strategy is decided once, from the schema, in this order:
+
+1. `options.terminal`, `true` or `false`, overrides everything below.
+2. A `presentation.FieldInput` component on the schema makes the node a terminal.
+3. Otherwise the node is a branch.
+
+```typescript
+{
+  type: 'object',
+  properties: { lat: { type: 'number' }, lng: { type: 'number' } },
+  options: { terminal: true }, // one map picker writes { lat, lng }
+}
+```
+
+- Every other kind has a fixed strategy: `string`, `number`, `integer`, `boolean`, `null` and a multi-kind `type` are terminals, and `virtual` is a branch. An `options.terminal` that contradicts the fixed strategy throws `TERMINAL_OPTION_UNSUPPORTED`; one that restates it is accepted.
+- Ungated declarations are the node's own schema, its `$ref` target and its `allOf` parts, as long as they carry no `controls.active`. Among them the later `options.terminal` wins, and a `$ref` target counts as later than the schema that refers to it.
+- The strategy cannot change at run time. When gated declarations (`then` / `else`, any part carrying `controls.active`, a parent's `controls.fields` entry with `active` for the children it targets, or a `oneOf` / `anyOf` branch selected by `controls.active` or the host's `controls.discriminator`) would make the node a branch in one case and a terminal in another, the schema throws `TERMINAL_STRATEGY_MISMATCH`.
+- A `oneOf` / `anyOf` branch without such a gate does not set its host's strategy; its `options.terminal` is ignored.
 
 ### Node Initialization
 
@@ -318,23 +345,23 @@ node.dirty; // Has value changed since initialization?
 node.touched; // Has user interacted with this field?
 node.validated; // Has validation been run?
 node.errors; // Current validation errors
-node.visible; // Is field visible? (computed property)
-node.active; // Is field active? (computed property)
-node.readOnly; // Is field read-only? (computed property)
-node.disabled; // Is field disabled? (computed property)
+node.visible; // Is field visible?
+node.active; // Is field active?
+node.readOnly; // Is field read-only?
+node.disabled; // Is field disabled?
 node.initialized; // Has node completed initialization?
 ```
 
 ---
 
-## FormTypeInput System
+## FieldInput System
 
-### FormTypeInputDefinition
+### FieldInputDefinition
 
 ```typescript
-type FormTypeInputDefinition<T = unknown> = {
-  test: FormTypeTestFn | FormTypeTestObject;
-  Component: ComponentType<InferFormTypeInputProps<T>>;
+type FieldInputDefinition<T = unknown> = {
+  test: FieldInputTestFn | FieldInputTestObject;
+  Component: ComponentType<InferFieldInputProps<T>>;
 };
 ```
 
@@ -342,57 +369,59 @@ type FormTypeInputDefinition<T = unknown> = {
 
 ```typescript
 // Function form
-type FormTypeTestFn = Fn<[hint: Hint], boolean>;
+type FieldInputTestFn = Fn<[hint: FieldInputHint], boolean>;
 
 // Object form
-type FormTypeTestObject = Partial<{
+type FieldInputTestObject = Partial<{
   type: Array<string>;
   jsonSchema: JSONSchema;
   format: Array<string>;
-  formType: Array<string>;
+  inputType: Array<string>;
   nullable: boolean;
   [alt: string]: any;
 }>;
 
-// Hint object
-type Hint = {
+// FieldInputHint object
+type FieldInputHint = {
   jsonSchema: JSONSchema;
   type: string;
   format: string;
-  formType: string;
+  inputType: string;
   path: string;
   nullable: boolean;
   [alt: string]: any;
 };
 ```
 
-### FormTypeInputProps
+inputType is a string hint that a definition's test interprets; it is not the HTML input type.
+
+### FieldInputProps
 
 ```typescript
-interface FormTypeInputProps<
+interface FieldInputProps<
   Value extends AllowedValue = any,
   Context extends Dictionary = object,
   WatchValues extends Array<any> = Array<any>,
   Schema extends JSONSchemaWithVirtual = InferJSONSchema<Value>,
-  Node extends SchemaNode = InferSchemaNode<Schema>,
+  Node extends FieldNode = InferFieldNode<Schema>,
 > {
-  jsonSchema: Schema; // JSON Schema for FormTypeInput component
+  jsonSchema: Schema; // JSON Schema for FieldInput component
   readOnly: boolean; // Read-only state
   disabled: boolean; // Disabled state
   required: boolean; // Required field
-  node: Node; // Schema node
+  node: Node; // Field node
   type: Node['schemaType']; // JSON Schema type
   name: Node['name']; // Node name
   path: Node['path']; // Node path
   nullable: Node['nullable']; // Accepts null
   errors: Node['errors']; // Validation errors
   errorVisible: boolean; // Error visibility
-  watchValues: WatchValues; // Values subscribed via computed.watch
+  watchValues: WatchValues; // Values read from the controls.watch paths
   defaultValue: Value | undefined;
   value: Value | undefined;
   onChange: SetStateFnWithOptions<Value | undefined>;
   onFileAttach: Fn<[file: File | File[] | undefined]>;
-  ChildNodeComponents: ChildNodeComponent[];
+  ChildFields: ChildField[];
   placeholder: string | undefined;
   className: string | undefined;
   style: CSSProperties | undefined;
@@ -403,42 +432,42 @@ interface FormTypeInputProps<
 
 ### Selection Priority
 
-FormTypeInput is selected with the following priority (highest first):
+FieldInput is selected with the following priority (highest first):
 
-1. **Directly assigned FormTypeInput in JSON Schema**
-
-   ```tsx
-   { type: 'string', FormTypeInput: CustomInput }
-   ```
-
-2. **formTypeInputMap** (path-based)
+1. **Directly assigned presentation.FieldInput in JSON Schema**
 
    ```tsx
-   <Form formTypeInputMap={{ '/email': EmailInput }} />
+   { type: 'string', presentation: { FieldInput: CustomInput } }
    ```
 
-3. **Form's formTypeInputDefinitions**
+2. **fieldInputMap** (path-based)
 
    ```tsx
-   <Form formTypeInputDefinitions={[...]} />
+   <Form fieldInputMap={{ '/email': EmailInput }} />
    ```
 
-4. **FormProvider's formTypeInputDefinitions**
+3. **Form's fieldInputDefinitions**
 
    ```tsx
-   <FormProvider formTypeInputDefinitions={[...]} />
+   <Form fieldInputDefinitions={[...]} />
    ```
 
-5. **Plugin's formTypeInputDefinitions**
+4. **FormProvider's fieldInputDefinitions**
+
    ```tsx
-   registerPlugin({ formTypeInputDefinitions: [...] })
+   <FormProvider fieldInputDefinitions={[...]} />
    ```
 
-### FormTypeInputMap
+5. **Plugin's fieldInputDefinitions**
+   ```tsx
+   registerPlugin({ fieldInputDefinitions: [...] })
+   ```
+
+### FieldInputMap
 
 ```typescript
-type FormTypeInputMap = {
-  [path: string]: ComponentType<FormTypeInputProps>;
+type FieldInputMap = {
+  [path: string]: ComponentType<FieldInputProps>;
 };
 
 // Wildcard support
@@ -450,34 +479,46 @@ const formInputMap = {
 
 ---
 
-## Computed Properties
+## Controls
 
 ### Property Types
 
 ```typescript
 {
   type: 'string',
-  computed: {
-    watch: string | string[];     // Value subscription
-    active: boolean | string;     // Activation (false removes value)
-    visible: boolean | string;    // Visibility (false retains value)
-    readOnly: boolean | string;   // Read-only
-    disabled: boolean | string;   // Disabled
-    pristine: boolean | string;   // State reset
-    derived: string;              // Derived value
+  controls: {
+    active: boolean | string;            // Activation (false removes value)
+    visible: boolean | string;           // Visibility (false retains value)
+    readOnly: boolean | string;          // Read-only
+    disabled: boolean | string;          // Disabled
+    default: any;                        // Fill value for an appearing node
+    derived: string;                     // Derived value
+    unsetValue: string;                  // Clears the value when it turns from false to true
+    resetInteraction: string;            // Clears dirty/touched when it turns from false to true
+    unsetOnInactive: boolean | string;   // Drops the retained value when the node leaves the shape
+    fields: { targets: string[]; controls: { /* first nine keys */ } }[];
+    injectTo: (value, ctx) => ...;       // Pushes values to other nodes whenever this node's value changes
+    discriminator: string;               // oneOf/anyOf host: branch tag property
+    watch: string[];                     // Value subscription (array of paths)
   }
 }
 ```
 
-### Shortcut Syntax
+The key list is closed: an unknown key makes the blueprint build throw a schema error (recognized by `isJSONSchemaError`) with code `UNKNOWN_GROUP_KEY`. Inside `controls.fields[].controls` and on the `controls` of a fragment (`oneOf`/`anyOf`/`allOf` branches, `then`, `else`), only the first nine keys (`active` through `unsetOnInactive`) are allowed; any of the other four throws.
+
+The closed list applies inside `controls` and `options`. Outside the three groups, the top-level keys of 0.16 (`formType`, `FormTypeInput`, `FormTypeInputProps`, `FormTypeRendererProps`, `computed`, the `&`-prefixed keys, `injectTo`, `terminal`, `virtual`, `placeholder`, `errorMessages`, `propertyKeys`) are not read at all: 1.0.0 ignores them with no error or warning. There is no alias and no warning for them by design, so a schema migrated from 0.16 must move each key itself (see Migration (1.0.0) in the README).
+
+### Nested Controls
 
 ```typescript
 {
   type: 'string',
-  '&active': '../toggle === true',
-  '&visible': "@.userRole === 'admin'",
-  '&derived': '(../price ?? 0) * (../quantity ?? 0)',
-  '&watch': ['../category', '../price'],
+  controls: {
+    active: '../toggle === true',
+    visible: "@.userRole === 'admin'",
+    derived: '(../price ?? 0) * (../quantity ?? 0)',
+    watch: ['../category', '../price'],
+  },
 }
 ```
 
@@ -503,9 +544,9 @@ const jsonSchema = {
     },
     premiumFeatures: {
       type: 'object',
-      computed: {
+      controls: {
         active: "../category === 'premium'",
-        watch: '../category',
+        watch: ['../category'],
       },
       properties: {
         // premium-only fields
@@ -513,7 +554,7 @@ const jsonSchema = {
     },
     total: {
       type: 'number',
-      '&derived': '(../price ?? 0) * (../quantity ?? 1)',
+      controls: { derived: '(../price ?? 0) * (../quantity ?? 1)' },
     },
   },
 };
@@ -533,16 +574,18 @@ const jsonSchema = {
   },
   oneOf: [
     {
-      '&if': "./type === 'A'",
+      controls: { active: "./type === 'A'" },
       properties: { fieldA: { type: 'string' } }
     },
     {
-      '&if': "./type === 'B'",
+      controls: { active: "./type === 'B'" },
       properties: { fieldB: { type: 'string' } }
     }
   ]
 }
 ```
+
+A branch takes part only while its gate passes. Gate a branch with a `controls.active` expression on the branch object, or set `controls.discriminator: '<property>'` on the host and tag each branch with `const`/`enum` on that property; the tag is compared with `===` and AND-ed with the branch's own `controls.active`. Without a gate, every branch is on: all branches' fields are present, and only the validator decides which branch matches.
 
 ### anyOf (Non-exclusive Choice)
 
@@ -555,11 +598,11 @@ const jsonSchema = {
   },
   anyOf: [
     {
-      '&if': './hasFeature1 === true',
+      controls: { active: './hasFeature1 === true' },
       properties: { config1: { type: 'string' } }
     },
     {
-      '&if': './hasFeature2 === true',
+      controls: { active: './hasFeature2 === true' },
       properties: { config2: { type: 'string' } }
     }
   ]
@@ -577,9 +620,9 @@ A branch usually omits `type` and takes its parent's. When it declares one, it m
 
 A branch's own `nullable: true` flag is not compared with the parent's, so `'object'` + `nullable: true` is accepted under any object. Anything else — a `'null'` or `['object', 'null']` branch under a non-nullable object, `'string'`, `'array'` — throws `COMPOSITION_TYPE_REDEFINITION`.
 
-This rule, and the two development warnings below, run only where the object builds child nodes. An object handled as a single input — `terminal: true`, or a `FormTypeInput` component set on the object's schema — builds no branches, so its branch types are not checked and neither warning is printed; the validator still sees the schema as written.
+This rule, and the two development warnings below, run only where the object builds child nodes. An object handled as a single input — `options.terminal: true`, or a `presentation.FieldInput` component set on the object's schema — builds no branches, so its branch types are not checked and neither warning is printed; the validator still sees the schema as written.
 
-Inside a branch's `properties`, an entry **with** a `type` is a field; an entry **without** one, carrying only `const` or `enum`, is a condition that selects the branch. Giving such a discriminator a `type` turns it into a field that collides with the parent's property of the same name (`COMPOSITION_PROPERTY_REDEFINITION`).
+Inside a branch's `properties`, an entry **with** a `type` is a field; an entry **without** one, carrying only `const` or `enum`, is a tag that the host's `controls.discriminator` reads to select the branch. Giving such a discriminator a `type` turns it into a field that collides with the parent's property of the same name (`COMPOSITION_PROPERTY_REDEFINITION`).
 
 #### The null-branch pattern
 
@@ -595,12 +638,12 @@ Inside a branch's `properties`, an entry **with** a `type` is a field; an entry 
     { type: 'null' },
     {
       type: 'object',
-      '&if': "./kind === 'a'",
+      controls: { active: "./kind === 'a'" },
       properties: { aValue: { type: 'string' } }
     },
     {
       type: 'object',
-      '&if': "./kind === 'b'",
+      controls: { active: "./kind === 'b'" },
       properties: { bValue: { type: 'string' } }
     }
   ]
@@ -608,7 +651,7 @@ Inside a branch's `properties`, an entry **with** a `type` is a field; an entry 
 ```
 
 - The null branch is for the validator only. It has no fields and is never the active branch; a condition or `properties` on it is ignored with the development warning `NULL_BRANCH_IGNORED_FOR_FORM`.
-- Whether the object is `null` is decided by its value, and which object branch is shown by the branch conditions. While the value is `null` the children show the blank form of the branch the conditions select (see [Nullable Objects and Arrays](#nullable-objects-and-arrays)).
+- Whether the object is `null` is decided by its value, and which object branch is shown by the branch conditions. While the value is `null`, the children of the selected branch are shown without their defaults (see [Nullable Objects and Arrays](#nullable-objects-and-arrays)). The same holds, for the same reason (the form display, the node data and the emitted value must not drift apart), while an object or array field holds a value of the wrong kind, for example a string loaded into an object: its children receive no defaults until a child is given a value.
 - Where the null branch sits does not matter; errors of the branch in use reach their fields. When the object value fails its `oneOf`, the null branch reports its own mismatch ("must be null") on the object like any other branch that did not match, next to the `oneOf` error.
 - A nullable object whose `oneOf` cannot validate `null` — no branch accepts it, or several do — prints the development warning `NULLABLE_ONE_OF_NULL_UNREACHABLE`. `anyOf` needs no such care: one null branch, or untyped branches, already satisfy it.
 
@@ -625,6 +668,8 @@ Inside a branch's `properties`, an entry **with** a `type` is a field; an entry 
   else: { properties: { phone: { pattern: '^\\+' } } }
 }
 ```
+
+The `then` properties belong to the shape only while the `if` guard passes, and the `else` properties only while it fails. The guard is evaluated synchronously through the validator's guard entry point; with no validator selected (no `validatorFactory` on the Form or a FormProvider, and no validator plugin), both `then` and `else` stay off.
 
 ### allOf (Composition)
 
@@ -652,12 +697,12 @@ node.find('./childField'); // Relative path from current node
 
 ### Extended Syntax
 
-| Syntax | Meaning           | Available Context                |
-| ------ | ----------------- | -------------------------------- |
-| `..`   | Parent navigation | computed properties, node.find() |
-| `.`    | Current node      | computed properties, node.find() |
-| `*`    | Wildcard          | FormTypeInputMap only            |
-| `@`    | Context reference | computed properties only         |
+| Syntax | Meaning           | Available Context                 |
+| ------ | ----------------- | --------------------------------- |
+| `..`   | Parent navigation | controls expressions, node.find() |
+| `.`    | Current node      | controls expressions, node.find() |
+| `*`    | Wildcard          | FieldInputMap only                |
+| `@`    | Context reference | controls expressions only         |
 
 ### Escape Rules
 
@@ -695,9 +740,12 @@ const schema = {
     name: {
       type: 'string',
       minLength: 3,
-      errorMessages: {
-        minLength: 'Name must be at least {limit} characters. Current: {value}',
-        required: 'Name is required.',
+      presentation: {
+        errorMessages: {
+          minLength:
+            'Name must be at least {limit} characters. Current: {value}',
+          required: 'Name is required.',
+        },
       },
     },
   },
@@ -708,10 +756,12 @@ const schema = {
 ### Multilingual Support
 
 ```typescript
-errorMessages: {
-  minLength: {
-    ko_KR: '이름은 최소 {limit}자 이상이어야 합니다.',
-    en_US: 'Name must be at least {limit} characters.',
+presentation: {
+  errorMessages: {
+    minLength: {
+      ko_KR: '이름은 최소 {limit}자 이상이어야 합니다.',
+      en_US: 'Name must be at least {limit} characters.',
+    },
   },
 }
 
@@ -753,20 +803,27 @@ registerPlugin(ajvValidatorPlugin);
 
 ```typescript
 interface SchemaFormPlugin {
-  FormGroup?: ComponentType<FormTypeRendererProps>;
-  FormLabel?: ComponentType<FormTypeRendererProps>;
-  FormInput?: ComponentType<FormTypeRendererProps>;
-  FormError?: ComponentType<FormTypeRendererProps>;
-  formTypeInputDefinitions?: FormTypeInputDefinition[];
+  FieldRenderer?: ComponentType<FieldRendererProps>;
+  FormLabelRenderer?: ComponentType<FieldRendererProps>;
+  FormInputRenderer?: ComponentType<FieldRendererProps>;
+  FormErrorRenderer?: ComponentType<FieldRendererProps>;
+  fieldInputDefinitions?: FieldInputDefinition[];
   validator?: ValidatorPlugin;
   formatError?: FormatError;
 }
 
 interface ValidatorPlugin {
-  bind: Fn<[instance: any]>;
-  compile: ValidatorFactory;
+  bind?: Fn<[instance: any]>;
+  compile(jsonSchema: JSONSchema): ValidateFunction;
+  compileGuard(root: JSONSchema, pointer: string): (value: unknown) => boolean;
+  release?(root: JSONSchema): void;
+  readonly dialect?: string;
 }
 ```
+
+The default group renderer draws its own label and messages, so `FormLabelRenderer` and `FormErrorRenderer` appear only through the composition API (`Form.Label`, `Form.Error`) or a user group renderer that calls them.
+
+Renderer props are read once when the form mounts; replacing a renderer after mount is not guaranteed to take effect.
 
 ---
 
@@ -774,7 +831,7 @@ interface ValidatorPlugin {
 
 ### Render-Level Virtualization
 
-For forms with hundreds of fields the initial React mount is the dominant cost (the node tree itself is cheap). The `virtualization` prop defers mounting of off-screen fields — they render as lightweight placeholders and are replaced by the real components when they approach the viewport, during browser idle time, or on focus/select commands (once revealed, a field never returns to a placeholder — defer-once). The node tree is always fully built, so `value`, validation, `getValue()`/`setValue()` and submit behave identically regardless of mount state. Works with every FormTypeInput plugin (the gate sits below the layout).
+For forms with hundreds of fields the initial React mount is the dominant cost (the node tree itself is cheap). The `virtualization` prop defers mounting of off-screen fields — they render as lightweight placeholders and are replaced by the real components when they approach the viewport, during browser idle time, or on focus/select commands (once revealed, a field never returns to a placeholder — defer-once). The node tree is always fully built, so `value`, validation, `getValue()`/`setValue()` and submit behave identically regardless of mount state. Works with every FieldInput plugin (the gate sits below the layout).
 
 ```tsx
 import { Form, VirtualizationBackfill } from '@canard/schema-form';
@@ -824,6 +881,8 @@ import { Form, VirtualizationBackfill } from '@canard/schema-form';
 </Form>
 ```
 
+Two inputs (for example two `Form.Input` components or two `Input` slots) bound to the same path do not mirror each other while typing. Typing does not issue a Refresh and each input owns its draft, so the other input keeps showing its own text until a Refresh reaches it, for example from a `setValue` that changes the value, a `reset`, or `refresh(path)` on the form handle.
+
 ### Array Manipulation
 
 ```tsx
@@ -856,8 +915,30 @@ const jsonSchema = {
 - `omitTrailing` (opt-in): removes **trailing** consecutive `undefined` items only. Leading and middle `undefined` items are preserved so error `dataPath`s and validation indices stay aligned — `[1, undefined, 2]` is emitted as-is.
 - `omitEmpty` (on by default): converts an empty array to `undefined` on the parent-propagation path. Filter order is `omitTrailing → omitEmpty`, so an all-empty array collapses to `undefined` under its parent (a root-level form still emits `[]`).
 - `null` is not an empty value: neither filter touches a nullable array that is `null` — see [Nullable Objects and Arrays](#nullable-objects-and-arrays).
-- `node.value` stays raw; the refined output is exposed as `node.normalizedValue`. Validation runs against the refined value, so `minItems` counts only the filled prefix.
+- `node.value` stays raw; the refined output is exposed as `node.outputValue`. Validation runs against the refined value, so `minItems` counts only the filled prefix.
 - A Reset-flagged clear (form reset, branch reactivation) refills `minItems` empty items; a plain `setValue(undefined)` clears every item — and so does a replace-style write on the parent that omits the array: `setValue({ other: 1 })` empties it, `SetValueOption.Merge` leaves it untouched. An array whose default is `null` resets to `null`, with no fill.
+
+### Object Options (`propertyOrder` / `virtual`)
+
+Object schemas accept two more keys under `options`.
+
+```typescript
+{
+  type: 'object',
+  properties: {
+    name: { type: 'string' },
+    startDate: { type: 'string', format: 'date' },
+    endDate: { type: 'string', format: 'date' },
+  },
+  options: {
+    propertyOrder: ['endDate', 'startDate'], // emitted as { endDate, startDate, name }
+    virtual: { period: { fields: ['startDate', 'endDate'] } },
+  },
+}
+```
+
+- `propertyOrder` is the key order of the emitted object value, not the on-screen order. Listed keys come first, then the other declared properties in declaration order, then undeclared keys in the order they arrived. Listed keys the value does not hold are skipped, and JavaScript always puts integer-like keys first.
+- `virtual` names virtual field groups. Each entry lists in `fields` the sibling properties it gathers into one virtual node, and may carry that node's own keys such as `presentation` and `controls`. A virtual node is never authored as a schema with `type: 'virtual'`.
 
 ### Value Injection (injectTo)
 
@@ -867,9 +948,11 @@ const jsonSchema = {
   properties: {
     source: {
       type: 'string',
-      injectTo: (value: string) => ({
-        '../target': `injected: ${value}`,
-      }),
+      controls: {
+        injectTo: (value: string) => ({
+          '../target': `injected: ${value}`,
+        }),
+      },
     },
     target: { type: 'string' },
   },
@@ -916,6 +999,8 @@ const handleClick = async () => {
 };
 ```
 
+Enter submits through the Form's `form` element. With more than one text-like field, the browser submits on Enter only when the form has a submit button (implicit submission counts the fields that block it; one text field plus a checkbox still submits).
+
 ### Using children as a Function
 
 Pass `children` as a function to `Form` component to access form state and node.
@@ -956,11 +1041,11 @@ Pass `children` as a function to `Form` component to access form state and node.
 
 **children function props:**
 
-| prop     | Type                      | Description                         |
-| -------- | ------------------------- | ----------------------------------- |
-| `value`  | `InferValueType<Schema>`  | Current form value                  |
-| `errors` | `JSONSchemaError[]`       | List of all validation errors       |
-| `node`   | `InferSchemaNode<Schema>` | Root node (for programmatic access) |
+| prop     | Type                         | Description                         |
+| -------- | ---------------------------- | ----------------------------------- |
+| `value`  | `InferValueType<Schema>`     | Current form value                  |
+| `errors` | `readonly ValidationIssue[]` | List of all validation errors       |
+| `node`   | `InferFieldNode<Schema>`     | Root node (for programmatic access) |
 
 ---
 
@@ -971,7 +1056,7 @@ Pass `children` as a function to `Form` component to access form state and node.
 ```typescript
 import {
   FormHandle,
-  InferSchemaNode,
+  InferFieldNode,
   InferValueType,
 } from '@canard/schema-form';
 
@@ -979,7 +1064,7 @@ import {
 type FormValue = InferValueType<typeof jsonSchema>;
 
 // Infer node type from schema
-type RootNode = InferSchemaNode<typeof jsonSchema>;
+type RootNode = InferFieldNode<typeof jsonSchema>;
 
 // Type-safe form handle
 const formRef = useRef<FormHandle<typeof jsonSchema>>(null);
@@ -998,7 +1083,7 @@ type FormValue = InferValueType<typeof jsonSchema>;
 // { name?: string } & Record<string, any>
 ```
 
-- Fields stay optional even when listed in `required`, because a form may drop them at runtime (`computed.active` false, `options.omitEmpty`).
+- Fields stay optional even when listed in `required`, because a form may drop them at runtime (`controls.active` false, `options.omitEmpty`).
 - The object stays open — the JSON Schema default — so keys contributed by `oneOf`/`anyOf`, `if`/`then`/`else`, or `patternProperties` are not rejected. Setting `additionalProperties: false` closes the inferred type.
 
 When the exact shape is known, declare it and pass it as the second type argument:
@@ -1025,12 +1110,14 @@ const schema = {
   },
 };
 
-// Nullable condition in FormTypeInput
+// Nullable condition in FieldInput
 const definitions = [
   { test: { type: 'string', nullable: true }, component: NullableInput },
   { test: { type: 'string', nullable: false }, component: RequiredInput },
 ];
 ```
+
+`nullable: true` is the OpenAPI 3.0 compatible notation and is officially supported. It is equivalent to adding `'null'` to `type`: `{ type: 'string', nullable: true }` means `{ type: ['string', 'null'] }`. No warning or error is raised for this notation.
 
 ### Nullable Objects and Arrays
 
@@ -1046,16 +1133,16 @@ A nullable object or array (`type: ['object', 'null']`, `type: ['array', 'null']
 
 - It becomes `null` through `defaultValue` / schema `default: null`, or `setValue(null)` on the node or through an ancestor.
 - It becomes an object/array when one is assigned to the node itself — `setValue({})`, `setValue([])`, or `setValue({ ... }, SetValueOption.Merge)` with keys — or when a write **that carries a value** reaches an active descendant: user input, `setValue`, array `push`, or an `injectTo` the user caused. Confirming the value a field already shows counts.
-- It stays `null` for values the form produces by itself: a child's `default`, `computed.derived`, `oneOf`/`anyOf` branch restore, reactivation by `computed.active`, the restore of a child during a reset, and an `injectTo` triggered only by such values (a source that merely has a `default` or a derived value).
+- It stays `null` for values the form produces by itself: a child's `default`, `controls.derived`, `oneOf`/`anyOf` branch restore, reactivation by `controls.active`, the restore of a child during a reset, and an `injectTo` triggered only by such values (a source that merely has a `default` or a derived value).
 - It stays `null` for a write without a value: emptying a field, `pop()`/`remove()`/`update()`/`clear()` on a null array, and `setValue({}, SetValueOption.Merge)`. An emptied field is remembered and honored once the node is created.
 
 A field is _emptied_ when its node emits `undefined`. Under the default `omitEmpty` an empty string is emptying; `false`, `0` and `null` are values. With `options: { omitEmpty: false }` an empty string is a value too. A write into an inactive field reaches nobody.
 
 A reset restores the default, whatever the node holds: back to `null` when the default is `null`, to the default object otherwise.
 
-**While it is `null`**, the emitted value is `null` whatever the schema holds — arrays, defaults, derived values, `oneOf`/`anyOf`, computed or virtual fields. An object's child fields stay rendered and show a blank form: what the form builds for them when it is given no `defaultValue` for this node — the node's own object `default` if it has one, otherwise each child's own `default`, with derived values applied and array children filled up to their `minItems`. It is identical whichever way the object became `null`, and data discarded by `null` does not come back. One thing is not part of the blank form: a value that reached a field through `injectTo`. A node that becomes `null` after mount loses it until its source changes again. A nullable **array** that is itself `null` has no items and no `minItems` fill.
+**While it is `null`**, the emitted value is `null` whatever the schema holds — arrays, defaults, derived values, `oneOf`/`anyOf`, controls-gated or virtual fields. An object's child fields stay rendered, and no child default, object default or `minItems` fill appears in them while it is `null`; a value written by `controls.derived` or `injectTo` still shows in its field without creating the object. This is the same however the object became `null` (load, reset or write); data discarded by `null` does not come back. This rule, and the same rule for a loaded value of the wrong kind, exists so that what the form shows, the node data and the emitted value never drift apart. A nullable **array** that is itself `null` has no items and no `minItems` fill.
 
-**What it becomes** is exactly what the same write produces on a form given no `defaultValue` for this node (for an array: on an empty array), so the value always matches what the fields show. An array has no merge semantics: `setValue([], SetValueOption.Merge)` is an assignment and creates `[]`.
+**What it becomes:** typing into a child field promotes the object to an object holding that value. Only fields created by the promotion (for example a branch the new value opens) receive their defaults; fields that already existed stay empty until filled. For an array, the write acts on an empty array. An array has no merge semantics: `setValue([], SetValueOption.Merge)` is an assignment and creates `[]`.
 
 ```tsx
 const jsonSchema = {
@@ -1071,9 +1158,9 @@ const jsonSchema = {
   },
 };
 // <Form jsonSchema={jsonSchema} defaultValue={{ closed: null }} />
-// getValue()                     → { closed: null }   ('completed' is shown, not emitted)
-// user types "done" into note    → { closed: { reason: 'completed', note: 'done' } }
-// setValue({ closed: null })     → { closed: null }   (the fields show the blank form again)
+// getValue()                     → { closed: null }   (the fields show no defaults)
+// user types "done" into note    → { closed: { note: 'done' } }
+// setValue({ closed: null })     → { closed: null }   (the fields show no defaults again)
 ```
 
 - A **non-nullable** object assigned `null` becomes `{}`.
@@ -1095,10 +1182,10 @@ if (isArrayNode(node)) {
 ## Best Practices
 
 1. **Register plugins at app startup** - Once at the top level
-2. **Cache FormTypeInputDefinitions** - Define outside components
+2. **Cache FieldInputDefinitions** - Define outside components
 3. **Optimize ValidationMode** - Choose OnChange or OnRequest based on needs
 4. **Use TypeScript as const** - For schema type inference
-5. **Leverage computed.watch** - Implement reactive form logic
+5. **Leverage controls.watch** - Implement reactive form logic
 6. **Use Form.Render for custom layouts** - Meet complex UI requirements
 
 ---

@@ -1,4 +1,4 @@
-import { intersectMinimum as intersect } from '@/schema-form/helpers/schemaIntersection';
+import { intersectMinimum as intersect } from '@/schema-form/__legacy__/helpers/schemaIntersection';
 
 /**
  * Intersects minimum constraints by selecting the larger (more restrictive) value.

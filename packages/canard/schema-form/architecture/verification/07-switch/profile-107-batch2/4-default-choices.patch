@@ -1,0 +1,119 @@
+diff --git a/packages/canard/schema-form/src/core/behaviors/DETAIL.md b/packages/canard/schema-form/src/core/behaviors/DETAIL.md
+--- a/packages/canard/schema-form/src/core/behaviors/DETAIL.md
++++ b/packages/canard/schema-form/src/core/behaviors/DETAIL.md
+@@ -1,6 +1,8 @@
+ # behaviors 계약
+ 
+ ## Requirements
++
++- options가 없는 effective의 선택은 생성 때 동결한 기본 choices 한 객체에 연결합니다. effective별 WeakMap 조회·등록과 options/propertyKeys의 해석·독립 동결 배열은 유지하며 schema 결과를 공유하지 않습니다. 속도 비용은 기본 분기의 WeakMap 등록과 상수 반환으로 effective별 네 필드 객체 생산·freeze를 제거합니다. 메모리 비용은 기존 WeakMap 항목 수를 유지하고 적격 effective별 choices 객체를 모듈 상수 하나로 대체합니다(batch2 4-default-choices).
+ 
+ - `record < 종류 fractal < behaviors 뿌리 < settle < SchemaNode`이며 종류 fractal과 `navigation`은 서로 의존하지 않습니다. `settle`은 살아 있는 노드의 행을 `node.behavior`로 호출하고 형상 밖 노드의 정적 해석과 빈 값 판정에는 이 fractal의 진입점을 소비합니다(NODE-016, WRITE-082·098).
+ - `utils/parse/`는 독립 공개 계약이 아니라 행과 기본 union 입력의 내부 변환입니다. 그 문서 계약은 이 fractal의 DETAIL이 소유합니다(LANDING-150, NODE-056).
+@@ -32,4 +34,4 @@
+ 
+ ## Last Updated
+ 
+-2026-10-01
++2026-10-07
+diff --git a/packages/canard/schema-form/src/core/behaviors/utils/options/getStaticChoices.ts b/packages/canard/schema-form/src/core/behaviors/utils/options/getStaticChoices.ts
+--- a/packages/canard/schema-form/src/core/behaviors/utils/options/getStaticChoices.ts
++++ b/packages/canard/schema-form/src/core/behaviors/utils/options/getStaticChoices.ts
+@@ -18,6 +18,13 @@
+ const CHOICES = new WeakMap<EffectiveSchema, StaticChoices>();
+ /** Shared empty order for schemas without a propertyKeys hint. */
+ const NO_KEYS: readonly string[] = Object.freeze([]);
++/** Optionless schemas link to this producer-frozen default selection. */
++const DEFAULT_CHOICES: StaticChoices = Object.freeze({
++  omitEmpty: true,
++  omitTrailing: false,
++  trim: false,
++  propertyKeys: NO_KEYS,
++});
+ 
+ /** Read static options once for the lifetime of a merged effective schema. */
+ export const getStaticChoices = (effective: EffectiveSchema): StaticChoices => {
+@@ -25,6 +32,10 @@
+   if (cached) return cached;
+   const schema = effective.schema;
+   const options = typeof schema === 'object' && schema !== null ? schema.options : undefined;
++  if (options === undefined) {
++    CHOICES.set(effective, DEFAULT_CHOICES);
++    return DEFAULT_CHOICES;
++  }
+   const hints = typeof options === 'object' && options !== null && !isArray(options)
+     ? options
+     : undefined;
+diff --git a/packages/canard/schema-form/src/core/blueprint/DETAIL.md b/packages/canard/schema-form/src/core/blueprint/DETAIL.md
+--- a/packages/canard/schema-form/src/core/blueprint/DETAIL.md
++++ b/packages/canard/schema-form/src/core/blueprint/DETAIL.md
+@@ -82,7 +82,7 @@
+ 
+ ### owned-inline-counts — core mount 동결 계수
+ 
+-- module 초기화 상수를 제외한 core mount distinct 동결 수(운영/개발)는 nested 3,071/30,372, flat 1,003/11,024, oneOf-20 116/1,569, sample-0 8/69이며 재동결·primitive 호출은 0입니다.
++- module 초기화 상수를 제외한 core mount distinct 동결 수(운영/개발)는 nested 1,706/29,007, flat 502/10,523, oneOf-20 111/1,564, sample-0 5/66이며 재동결·primitive 호출은 0입니다. options 없는 choices의 생성 지점 동결을 모듈 상수로 옮겨 제거되는 호출은 각각 1,365·501·5·3이고 기록별 소속 배열의 보호는 같습니다(batch2 4-default-choices).
+ 
+ ### owned-inline-render — 렌더 중 작성된 React 값
+ 
+diff --git a/packages/canard/schema-form/src/core/blueprint/__tests__/blueprint.owned-inline-counts.test.ts b/packages/canard/schema-form/src/core/blueprint/__tests__/blueprint.owned-inline-counts.test.ts
+--- a/packages/canard/schema-form/src/core/blueprint/__tests__/blueprint.owned-inline-counts.test.ts
++++ b/packages/canard/schema-form/src/core/blueprint/__tests__/blueprint.owned-inline-counts.test.ts
+@@ -8,10 +8,10 @@
+ 
+ /** Expected distinct mount freezes exclude module initialization and include settlement. */
+ const expectations = [
+-  { name: 'nested-d5-f4', nodes: 1365, production: 3071, development: 30372 },
+-  { name: 'flat-500', nodes: 501, production: 1003, development: 11024 },
+-  { name: 'oneOf-20', nodes: 63, production: 116, development: 1569 },
+-  { name: 'sample-0', nodes: 3, production: 8, development: 69 },
++  { name: 'nested-d5-f4', nodes: 1365, production: 1706, development: 29007 },
++  { name: 'flat-500', nodes: 501, production: 502, development: 10523 },
++  { name: 'oneOf-20', nodes: 63, production: 111, development: 1564 },
++  { name: 'sample-0', nodes: 3, production: 5, development: 66 },
+ ];
+ 
+ it.each(expectations)(
+diff --git a/packages/canard/schema-form/src/core/behaviors/utils/options/__tests__/getStaticChoices.default-work.test.ts b/packages/canard/schema-form/src/core/behaviors/utils/options/__tests__/getStaticChoices.default-work.test.ts
+new file mode 100644
+--- /dev/null
++++ b/packages/canard/schema-form/src/core/behaviors/utils/options/__tests__/getStaticChoices.default-work.test.ts
+@@ -0,0 +1,38 @@
++import { expect, it, vi } from 'vitest';
++
++import { getStaticChoices } from '../getStaticChoices';
++
++it('links optionless effective schemas to one frozen default while keeping each memo lookup', () => {
++  const first = { schema: { type: 'string' as const }, typeConflict: false };
++  const second = { schema: { type: 'number' as const }, typeConflict: false };
++  const freeze = vi.spyOn(Object, 'freeze');
++  let left, right, repeated;
++  let calls = 0;
++  try {
++    left = getStaticChoices(first);
++    right = getStaticChoices(second);
++    repeated = getStaticChoices(first);
++    calls = freeze.mock.calls.length;
++  } finally {
++    freeze.mockRestore();
++  }
++  expect(calls).toBe(0);
++  expect(left).toBe(right);
++  expect(repeated).toBe(left);
++  expect(left).toEqual({ omitEmpty: true, omitTrailing: false, trim: false, propertyKeys: [] });
++  expect(Object.isFrozen(left)).toBe(true);
++  expect(Object.isFrozen(left?.propertyKeys)).toBe(true);
++});
++
++it('keeps options and filtered propertyKeys independent from the default and authored arrays', () => {
++  const keys = ['second', 1, 'first'];
++  const effective = { schema: { type: 'object' as const,
++    options: { omitEmpty: false, omitTrailing: true, trim: true, propertyKeys: keys } }, typeConflict: false };
++  const result = getStaticChoices(effective);
++  expect(result).toEqual({ omitEmpty: false, omitTrailing: true, trim: true, propertyKeys: ['second', 'first'] });
++  expect(result.propertyKeys).not.toBe(keys);
++  expect(Object.isFrozen(result.propertyKeys)).toBe(true);
++  expect(Object.isFrozen(keys)).toBe(false);
++  expect(getStaticChoices(effective)).toBe(result);
++  expect(getStaticChoices({ schema: true, typeConflict: false })).not.toBe(result);
++});

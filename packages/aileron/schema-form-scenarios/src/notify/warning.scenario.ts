@@ -5,7 +5,7 @@ export const warningScenario = {
   name: 'notify.warning-record',
   schema: { type: 'number' },
   steps: [
-    { action: 'setValue', path: '', value: 'not a number',
+    { action: 'batch', steps: [{ action: 'setValue', path: '', value: 'not a number' }],
       expect: { onErrorCodes: ['SCHEMA_FORM_WARNING.TYPE_MISMATCH'] } },
   ],
 } satisfies FormScenario;

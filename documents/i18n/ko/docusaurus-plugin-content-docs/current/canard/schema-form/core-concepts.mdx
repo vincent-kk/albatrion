@@ -34,27 +34,25 @@ const schema = {
 
 ## Node Tree
 
-각 노드는 자체 값, 검증 오류, 상태 플래그(`dirty`, `touched`, `validated`)를
-소유하는 반응형 객체입니다. 변경 사항은 위로 전파됩니다: 리프 노드의 값이 변경되면
+각 노드는 자체 값, 검증 오류, `node.state`의 상호작용 플래그(`FieldNodeState`
+키: `Dirty`, `Touched`, `ErrorVisible`)를 소유하는 반응형 객체입니다. 변경 사항은 위로 전파됩니다: 리프 노드의 값이 변경되면
 모든 상위 노드가 `UpdateValue` 이벤트를 받고 집계된 값을 업데이트합니다.
 
 ### Node State Flags
 
-| Property       | Type                | Description                         |
-| -------------- | ------------------- | ----------------------------------- |
-| `value`        | `any`               | Current value                       |
-| `defaultValue` | `any`               | Value at initialization             |
-| `errors`       | `JSONSchemaError[]` | Validation errors for this node     |
-| `dirty`        | `boolean`           | Value changed since initialization  |
-| `touched`      | `boolean`           | User has interacted with this field |
-| `validated`    | `boolean`           | Validation has been run             |
-| `visible`      | `boolean`           | Computed — controls visibility      |
-| `active`       | `boolean`           | Computed — controls active state    |
-| `readOnly`     | `boolean`           | Computed or inherited               |
-| `disabled`     | `boolean`           | Computed or inherited               |
-| `initialized`  | `boolean`           | Node has completed initialization   |
-| `required`     | `boolean`           | Field is required in parent schema  |
-| `nullable`     | `boolean`           | Schema type includes `"null"`       |
+| Property       | Type                         | Description                                                                    |
+| -------------- | ---------------------------- | ------------------------------------------------------------------------------ |
+| `value`        | `any`                        | Current value                                                                  |
+| `outputValue`  | `unknown`                    | Emitted value after output filters                                             |
+| `defaultValue` | `unknown`                    | Value at initialization                                                        |
+| `errors`       | `readonly ValidationIssue[]` | Validation issues for this node                                                |
+| `state`        | `NodeStateFlags`             | Interaction flags keyed by `FieldNodeState` (`Dirty`, `Touched`, `ErrorVisible`) |
+| `visible`      | `boolean`                    | From `controls.visible`                                                        |
+| `active`       | `boolean`                    | From `controls.active`                                                         |
+| `readOnly`     | `boolean`                    | From `controls.readOnly`, the standard `readOnly`, or inherited                |
+| `disabled`     | `boolean`                    | From `controls.disabled` or inherited                                          |
+| `required`     | `boolean`                    | Field is required in parent schema                                             |
+| `nullable`     | `boolean`                    | Schema type includes `"null"`                                                  |
 
 ### Node Navigation
 
@@ -66,7 +64,7 @@ const node = rootNode.find('/address/street');
 const sibling = node.find('./city');
 
 // Find all matching nodes
-const allItems = rootNode.findAll('/items/*');
+const allItems = rootNode.findNodes('/items/*');
 ```
 
 ## Plugin Architecture
@@ -78,13 +76,15 @@ const allItems = rootNode.findAll('/items/*');
 ┌─────────────────────────────────────────────────────┐
 │                  SchemaFormPlugin                    │
 │                                                      │
-│  FormGroup   FormLabel   FormInput   FormError       │  ← UI layer
-│  formTypeInputDefinitions                            │
+│  FieldRenderer   FormLabelRenderer       │  ← UI layer
+│  FormInputRenderer   FormErrorRenderer       │
+│  fieldInputDefinitions                            │
 ├─────────────────────────────────────────────────────┤
 │                  ValidatorPlugin                     │
 │                                                      │
-│  bind(instance)                                      │  ← Validation layer
+│  bind?(instance)                                     │  ← Validation layer
 │  compile(jsonSchema) → ValidateFunction              │
+│  compileGuard(root, pointer) → (value) => boolean    │
 └─────────────────────────────────────────────────────┘
 ```
 
@@ -92,61 +92,63 @@ const allItems = rootNode.findAll('/items/*');
 
 When multiple plugins are registered, the merge rules are:
 
-| Property                                           | Merge strategy               |
-| -------------------------------------------------- | ---------------------------- |
-| `FormGroup`, `FormLabel`, `FormInput`, `FormError` | Last wins                    |
-| `formTypeInputDefinitions`                         | Prepended (first match wins) |
-| `validator`                                        | Last wins                    |
-| `formatError`                                      | Last wins                    |
+| Property                                                                                           | Merge strategy               |
+| -------------------------------------------------------------------------------------------------- | ---------------------------- |
+| `FieldRenderer`, `FormLabelRenderer`, `FormInputRenderer`, `FormErrorRenderer` | Last wins                    |
+| `fieldInputDefinitions`                                                                         | Prepended (first match wins) |
+| `validator`                                                                                        | Last wins                    |
+| `formatError`                                                                                      | Last wins                    |
 
-## FormType System
+## FieldInput System
 
-`FormTypeInputDefinition`은 **테스트 조건**과
+`FieldInputDefinition`은 **테스트 조건**과
 **React 컴포넌트**를 쌍으로 연결합니다. 라이브러리는 등록된 모든 정의를
 우선순위 순서로 평가하고, 첫 번째 매칭 컴포넌트를 사용하여 필드를 렌더링합니다.
 
 ```ts
 // Object test — declarative
-const definition: FormTypeInputDefinition = {
+const definition: FieldInputDefinition = {
   test: { type: 'string', format: 'date' },  // matches date fields
   Component: DatePickerInput,
 };
 
 // Function test — imperative
-const definition: FormTypeInputDefinition = {
+const definition: FieldInputDefinition = {
   test: (hint) => hint.jsonSchema.widget === 'richtext',
   Component: RichTextEditor,
 };
 
-// Hint object available in test function:
-type Hint = {
+// FieldInputHint object available in test function:
+type FieldInputHint = {
   type: JSONSchemaType;       // 'string' | 'number' | 'boolean' | ...
   path: string;               // JSONPointer path
   required: boolean;
   nullable: boolean;
   jsonSchema: JSONSchema;
   format?: string;
-  formType?: string;          // custom jsonSchema.formType field
+  inputType?: string;         // jsonSchema.presentation.inputType
 };
 ```
 
-### FormTypeInputMap (path-based override)
+inputType은 정의의 test가 해석하는 문자열 힌트이며 HTML input type과 같지 않습니다.
+
+### FieldInputMap (path-based override)
 
 ```ts
 // Map specific paths to specific components
-const formTypeInputMap: FormTypeInputMap = {
+const fieldInputMap: FieldInputMap = {
   '/user/avatar':     AvatarUploader,
   '/items/*/price':   CurrencyInput,   // * matches any segment
 };
 
-<Form jsonSchema={schema} formTypeInputMap={formTypeInputMap} />
+<Form jsonSchema={schema} fieldInputMap={fieldInputMap} />
 ```
 
-## Computed Properties
+## Controls
 
-필드는 `computed` (또는 `&computed`) 키의 JSONPointer 표현식을 사용하여
-형제 또는 부모 값에 반응할 수 있습니다. 의존성은 표현식에서 자동으로 추적되거나,
-`watch`를 통해 명시적으로 선언됩니다.
+필드는 `controls` 키의 JSONPointer 표현식을 사용하여
+형제 또는 부모 값에 반응할 수 있습니다. 의존성은 각 표현식의 경로에서 자동으로
+추적되며, `watch`는 다른 값을 구독해 입력에 `watchValues` prop으로 전달합니다.
 
 ```ts
 {
@@ -155,32 +157,35 @@ const formTypeInputMap: FormTypeInputMap = {
     isPremium: { type: 'boolean' },
     discount: {
       type: 'number',
-      computed: {
+      controls: {
         visible:  '../isPremium === true',   // show only for premium
         readOnly: '../isPremium === false',  // lock if not premium
-        watch: ['../isPremium'],             // explicit dep (optional)
+        watch: ['../isPremium'],             // passed as watchValues (optional)
       },
     },
   },
 }
 ```
 
-Supported computed keys: `visible`, `active`, `readOnly`, `disabled`, `watch`.
+자주 쓰는 `controls` 키: `active`, `visible`, `readOnly`, `disabled`, `derived`,
+`watch`. 키 목록은 닫혀 있어서, 모르는 키가 있으면 스키마가 스키마 오류
+`UNKNOWN_GROUP_KEY`로 실패합니다.
 
-### JSONPointer Extensions (computed scope only)
+### JSONPointer Extensions (controls expressions)
 
 | Syntax     | Meaning                                        |
 | ---------- | ---------------------------------------------- |
 | `../field` | Parent node's `field`                          |
 | `./field`  | Current node's `field` (relative)              |
 | `..`       | Navigate to parent                             |
-| `*`        | Wildcard — any segment (FormTypeInputMap only) |
+| `*`        | Wildcard — any segment (FieldInputMap only) |
 
 ## Schema Composition
 
 라이브러리는 모든 표준 JSON Schema 구성 키워드를 지원합니다.
-`oneOf`와 `anyOf` 브랜치는 커스텀 `&if` 표현식을
-사용하여 활성화를 필드 값에 바인딩할 수 있습니다.
+`oneOf`와 `anyOf` 브랜치는 게이트를 통과하는 동안에만 참여합니다. 게이트는
+브랜치의 `controls.active` 표현식이거나, 호스트의 `controls.discriminator`와
+각 브랜치의 `const`/`enum` 태그입니다. 게이트가 없으면 모든 브랜치가 켜집니다.
 
 ```ts
 // Standard if/then/else
@@ -190,19 +195,19 @@ Supported computed keys: `visible`, `active`, `readOnly`, `disabled`, `watch`.
   else: { properties: { version:     { type: 'string' } } },
 }
 
-// oneOf with &if expression (exclusive branches)
+// oneOf with controls.active (exclusive branches)
 {
   oneOf: [
-    { '&if': "./type === 'movie'", properties: { director: { type: 'string' } } },
-    { '&if': "./type === 'game'",  properties: { platform: { type: 'string' } } },
+    { controls: { active: "./type === 'movie'" }, properties: { director: { type: 'string' } } },
+    { controls: { active: "./type === 'game'" },  properties: { platform: { type: 'string' } } },
   ],
 }
 
-// anyOf with &if (non-exclusive, multiple can be active)
+// anyOf with controls.active (non-exclusive, multiple can be active)
 {
   anyOf: [
-    { '&if': './flag1 === true', properties: { field1: { type: 'string' } } },
-    { '&if': './flag2 === true', properties: { field2: { type: 'string' } } },
+    { controls: { active: './flag1 === true' }, properties: { field1: { type: 'string' } } },
+    { controls: { active: './flag2 === true' }, properties: { field2: { type: 'string' } } },
   ],
 }
 
@@ -246,8 +251,8 @@ const jsonSchema = {
   정합이 유지됩니다.
 - **`omitEmpty`** (기본 활성)는 빈 배열을 부모 전파 경로에서 `undefined`로
   변환합니다. 필터 순서는 `omitTrailing → omitEmpty`입니다.
-- 정제된 출력은 `node.normalizedValue`로 노출되고 `node.value`는 raw를
-  유지합니다. 커스텀 배열 `FormTypeInput`에서는 행 수를 `value.length`가
+- 정제된 출력은 `node.outputValue`로 노출되고 `node.value`는 raw를
+  유지합니다. 커스텀 배열 `FieldInput`에서는 행 수를 `value.length`가
   아니라 `node.children` 기준으로 세야 합니다.
 
 ## Validation System
@@ -269,25 +274,29 @@ enum ValidationMode {
 
 ```ts
 enum ShowError {
-  Dirty        = 1,  // show when node.dirty === true
-  Touched      = 2,  // show when node.touched === true
-  DirtyTouched = 3,  // show when both dirty AND touched (default)
+  Always       = 1,   // always show
+  Never        = 2,   // never show
+  Dirty        = 4,   // show when the Dirty flag is set
+  Touched      = 8,   // show when the Touched flag is set
+  DirtyTouched = 16,  // show when both Dirty AND Touched are set (default)
 }
 
 <Form showError={ShowError.DirtyTouched} />  // default
-<Form showError={true} />                    // always show
-<Form showError={false} />                   // never show
+<Form showError={true} />                    // same as ShowError.Always
+<Form showError={false} />                   // same as ShowError.Never
 ```
 
 ### Error Structure
 
 ```ts
-interface JSONSchemaError {
-  dataPath: string; // JSONPointer to the failing field
-  keyword: string; // JSON Schema keyword (e.g., 'minLength', 'required')
-  message: string;
-  details: any; // keyword-specific details
-  source: any; // raw error from the validator library
+interface ValidationIssue {
+  dataPath: string; // JSONPointer to the failing field ('' for the root)
+  keyword?: string; // JSON Schema keyword (e.g., 'minLength', 'required')
+  message?: string;
+  schemaPath?: string; // authored schema location
+  rejectedKey?: string; // rejected property key, when there is one
+  details?: Record<string, unknown>; // keyword-specific details
+  source?: unknown; // raw error from the validator library
 }
 ```
 
@@ -298,11 +307,11 @@ interface JSONSchemaError {
 예외로, 초기화 완료 후 동기적으로 발생합니다(즉시 모드).
 
 ```ts
-// Key event types (NodeEventType enum)
+// Key event types (FieldNodeEventType enum)
 UpdateValue; // value changed — synchronous after init
-UpdateState; // dirty/touched/validated changed
+UpdateState; // interaction flags (node.state) changed
 UpdateError; // validation errors changed
-UpdateComputedProperties; // computed visible/readOnly/disabled changed
+UpdateControlledProperties; // controls state or watched values changed
 UpdateChildren; // array/object children added or removed
 RequestRefresh; // internal: sync uncontrolled component
 RequestRemount; // external: force full component remount
@@ -312,30 +321,29 @@ RequestRemount; // external: force full component remount
 
 ## AI Concept Glossary
 
-| Term                                                     | Definition                                                                                                 |
-| -------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------- |
-| `SchemaNode`                                             | Base interface for all nodes — the public API surface                                                      |
-| `StringNode` / `NumberNode` / `BooleanNode` / `NullNode` | Terminal nodes — no children                                                                               |
-| `ObjectNode` / `ArrayNode`                               | Branch nodes — have children                                                                               |
-| `VirtualNode`                                            | Non-schema node created for conditional branches (`oneOf`/`anyOf`)                                         |
-| `BranchStrategy`                                         | Strategy for complex nested structures with child nodes                                                    |
-| `TerminalStrategy`                                       | Strategy for simple non-nested structures                                                                  |
-| `FormTypeInputDefinition`                                | `{ test, Component }` pair — maps a schema pattern to a React component                                    |
-| `FormTypeInputMap`                                       | `{ [jsonPointerPath]: Component }` — path-based component override                                         |
-| `FormTypeInputProps`                                     | Props interface all custom input components must satisfy                                                   |
-| `FormTypeRendererProps`                                  | Props for `FormGroup`/`FormLabel`/`FormInput`/`FormError` renderer components                              |
-| `SchemaFormPlugin`                                       | Plugin object with optional renderer components + `formTypeInputDefinitions` + `validator` + `formatError` |
-| `ValidatorPlugin`                                        | `{ bind(instance), compile(jsonSchema) → ValidateFunction }`                                               |
-| `ValidateFunction`                                       | `(value) => JSONSchemaError[] \| null \| Promise<...>`                                                     |
-| `computed` / `&computed`                                 | JSON Schema extension for reactive field properties                                                        |
-| `&if`                                                    | JSON Schema extension — expression to activate a `oneOf`/`anyOf` branch                                    |
-| `enhancedValue`                                          | Value including virtual/conditional field values — used for validation                                     |
-| `ShowError`                                              | Enum controlling when validation errors are displayed                                                      |
-| `ValidationMode`                                         | Enum controlling when validation runs                                                                      |
-| `NodeEventType`                                          | Enum of all events nodes can emit                                                                          |
-| `SetValueOption`                                         | Bitwise options for `setValue()` — `Overwrite`, `Merge`, `Isolate`                                         |
-| `FormHandle`                                             | Ref interface for imperative form control                                                                  |
-| `FormProvider`                                           | Context provider for sharing plugin config across a subtree                                                |
-| `JSONPointer`                                            | RFC 6901 path string (e.g., `/address/street`) — extended with `..`, `.`, `*`                              |
+| Term                                                     | Definition                                                                                                               |
+| -------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------ |
+| `FieldNode`                                             | Base interface for all nodes — the public API surface                                                                    |
+| `StringNode` / `NumberNode` / `BooleanNode` / `NullNode` | Terminal nodes — no children                                                                                             |
+| `ObjectNode` / `ArrayNode`                               | Branch nodes — have children                                                                                             |
+| `VirtualNode`                                            | Groups sibling fields declared in `options.virtual` into one input                                                       |
+| `node.strategy`                                          | `'branch'` (has child nodes) or `'terminal'` (one input, `children: null`); narrowed by `BranchNode` / `TerminalNode`    |
+| `FieldInputDefinition`                                | `{ test, Component }` pair — maps a schema pattern to a React component                                                  |
+| `FieldInputMap`                                       | `{ [jsonPointerPath]: Component }` — path-based component override                                                       |
+| `FieldInputProps`                                     | Props interface all custom input components must satisfy                                                                 |
+| `FieldRendererProps`                                  | Props for the `FieldRenderer`/`FormLabelRenderer`/`FormInputRenderer`/`FormErrorRenderer` components |
+| `SchemaFormPlugin`                                       | Plugin object with optional renderer components + `fieldInputDefinitions` + `validator` + `formatError`               |
+| `ValidatorPlugin`                                        | `{ bind?(instance), compile(jsonSchema) → ValidateFunction, compileGuard(root, pointer) → guard, release?(root) }`       |
+| `ValidateFunction`                                       | `(value) => ValidationIssue[] \| null \| Promise<...>`                                                                   |
+| `controls`                                               | JSON Schema extension for reactive field properties (closed key list)                                                    |
+| `controls.active` on a branch                            | Expression that activates a `oneOf`/`anyOf` branch                                                                       |
+| `outputValue`                                            | Emitted value after output filters — what parents, validation, and `onChange` see                                        |
+| `ShowError`                                              | Enum controlling when validation errors are displayed                                                                    |
+| `ValidationMode`                                         | Enum controlling when validation runs                                                                                    |
+| `FieldNodeEventType`                                    | Enum of all events nodes can emit                                                                                        |
+| `SetValueOption`                                         | Bitwise options for `setValue()` — `Overwrite`, `Merge`, `DisableAutomaticWrites`, `EnableAutomaticWrites`               |
+| `FormHandle`                                             | Ref interface for imperative form control                                                                                |
+| `FormProvider`                                           | Context provider for sharing plugin config across a subtree                                                              |
+| `JSONPointer`                                            | RFC 6901 path string (e.g., `/address/street`) — extended with `..`, `.`, `*`                                            |
 
 </ForAI>

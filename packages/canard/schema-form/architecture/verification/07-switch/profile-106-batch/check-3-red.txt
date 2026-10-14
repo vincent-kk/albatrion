@@ -1,0 +1,45 @@
+│ ┌────────────────────────────────────────────────────────────────────────────┐
+│ │  Info: Found a setup file with "setProjectAnnotations".                    │
+│ │  Skipping automatic provisioning of preview annotations to avoid           │
+│ │  conflicts. Since Storybook 10.3, "@storybook/addon-vitest" applies these  │
+│ │   automatically.                                                           │
+│ │  You can safely remove the "setProjectAnnotations" call from your setup    │
+│ │  file, or remove the file entirely if you don't have custom code there.    │
+│ └────────────────────────────────────────────────────────────────────────────┘
+
+ RUN  v3.2.6 /Users/Vincent/Workspace/albatrion/.claude/worktrees/stage-07/packages/canard/schema-form
+
+stdout | src/core/blueprint/__tests__/blueprint.owned-inline-fragment-work.test.ts > empty fragment work > keeps the plain declaration and fragment without checking keyword arrays
+106COUNT empty-fragment keyword-array-check=3
+
+x
+
+ Test Files  1 failed (1)
+      Tests  1 failed (1)
+   Start at  03:21:13
+   Duration  685ms (transform 292ms, setup 0ms, collect 511ms, tests 8ms, environment 0ms, prepare 36ms)
+
+(node:33256) [DEP0205] DeprecationWarning: `module.register()` is deprecated. Use `module.registerHooks()` instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  |unit| src/core/blueprint/__tests__/blueprint.owned-inline-fragment-work.test.ts > empty fragment work > keeps the plain declaration and fragment without checking keyword arrays
+AssertionError: expected 3 to be +0 // Object.is equality
+
+- Expected
++ Received
+
+- 0
++ 3
+
+ ❯ src/core/blueprint/__tests__/blueprint.owned-inline-fragment-work.test.ts:31:32
+     29|     expect(result.capabilities.branchless).toBe(true);
+     30|     console.log(`106COUNT empty-fragment keyword-array-check=${work.ke…
+     31|     expect(work.keywordChecks).toBe(0);
+       |                                ^
+     32|   });
+     33| });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+

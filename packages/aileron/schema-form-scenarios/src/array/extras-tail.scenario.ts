@@ -9,10 +9,10 @@ export const extrasTailScenario = {
   steps: [
     { action: 'push', path: '', value: 'd', expect: {
       result: 4, shape: { '/1': 'absent', '/3': 'absent' },
-      extras: { '': ['b', 'c', 'd'] }, outputValue: ['a', 'b', 'c', 'd'],
+      undeclaredValues: { '': ['b', 'c', 'd'] }, outputValue: ['a', 'b', 'c', 'd'],
     } },
     { action: 'pop', path: '', expect: {
-      result: 'd', extras: { '': ['b', 'c'] }, outputValue: ['a', 'b', 'c'],
+      result: 'd', undeclaredValues: { '': ['b', 'c'] }, outputValue: ['a', 'b', 'c'],
     } },
   ],
 } satisfies FormScenario;

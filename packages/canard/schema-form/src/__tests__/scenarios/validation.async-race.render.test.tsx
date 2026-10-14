@@ -4,7 +4,7 @@ import { describe, expect, it } from 'vitest';
 
 import type { JSONSchema } from '@winglet/json-schema';
 
-import type { JSONSchemaError, ValidatorFactory } from '@/schema-form';
+import type { ValidationIssue, ValidatorFactory } from '@/schema-form';
 import { ValidationMode } from '@/schema-form/core';
 
 import { renderForm } from '../renderForm';
@@ -31,17 +31,19 @@ import { renderForm } from '../renderForm';
  * validator can't exercise this (it resolves on a microtask), so this uses a
  * custom delayed `validatorFactory`.
  */
-const racyValidatorFactory: ValidatorFactory = () =>
-  (async (data: any) => {
+const racyValidatorFactory: ValidatorFactory = {
+  compileGuard: () => () => true,
+  compile: () => async (data: any) => {
     const name = typeof data?.name === 'string' ? data.name : '';
     const tooShort = name.length < 3;
     await new Promise((r) => setTimeout(r, tooShort ? 60 : 5));
     return tooShort
       ? ([
           { dataPath: '/name', keyword: 'minLength', message: 'TOO_SHORT' },
-        ] as JSONSchemaError[])
+        ] as ValidationIssue[])
       : null;
-  }) as ReturnType<ValidatorFactory>;
+  },
+};
 
 // Valid default → the initial mount validation is fast and error-free, so the
 // race under test is purely between the two edits below.

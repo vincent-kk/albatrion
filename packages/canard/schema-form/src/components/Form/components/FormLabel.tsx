@@ -1,8 +1,8 @@
 import { type CSSProperties, memo } from 'react';
 
 import { PluginManager } from '@/schema-form/app/plugin';
-import { SchemaNodeProxy } from '@/schema-form/components/SchemaNode';
-import { useExternalFormContext } from '@/schema-form/providers';
+import { FieldProxy } from '@/schema-form/components/Field';
+import { useFieldRendererContext } from '@/schema-form/providers';
 
 export interface FormLabelProps {
   path?: string;
@@ -14,7 +14,9 @@ export interface FormLabelProps {
  * Renders an accessible label for form fields.
  *
  * Automatically generates label text from schema title or property name,
- * with proper `for` attribute association to the corresponding input field.
+ * associated with its input through `htmlFor={path}`. Its `id="label:${path}"`
+ * also lets options groups reference the title through `aria-labelledby`.
+ * Both attributes are built from `path` as given, so pass the absolute path.
  * Supports custom styling while maintaining accessibility standards.
  *
  * @example
@@ -56,12 +58,17 @@ export interface FormLabelProps {
  * ```
  */
 export const FormLabel = memo(({ path, style, className }: FormLabelProps) => {
-  const { FormLabelRenderer } = useExternalFormContext();
+  const { FormLabelRenderer } = useFieldRendererContext();
   return (
-    <label style={style} className={className} htmlFor={path}>
-      <SchemaNodeProxy
+    <label
+      style={style}
+      className={className}
+      htmlFor={path}
+      id={path !== undefined ? `label:${path}` : undefined}
+    >
+      <FieldProxy
         path={path}
-        FormTypeRenderer={FormLabelRenderer || PluginManager.FormLabel}
+        FieldRenderer={FormLabelRenderer || PluginManager.FormLabelRenderer}
       />
     </label>
   );
