@@ -13,9 +13,13 @@
     "**/bench",
     "**/benchmarks",
     "**/__benchmarks__",
-    "**/benchmark-form/results",
     "**/.storybook",
-    "**/stories"
+    "**/stories",
+    "documents",
+    "**/aileron/benchmark",
+    "**/aileron/benchmark-form",
+    "**/aileron/development-helper",
+    "**/aileron/production-test"
   ],
   "adapters": {
     "mode": "auto",
@@ -25,6 +29,16 @@
   },
   "rules": {
     "organ-no-intentmd": "error",
+    "intent-document-contract": {
+      "exempt": [
+        "**/canard/schema-form-*-plugin/**"
+      ]
+    },
+    "detail-document-contract": {
+      "exempt": [
+        "**/canard/schema-form-*-plugin/**"
+      ]
+    },
     "module-entry-point": {
       "exempt": [
         "**/canard/schema-form/src/app"
@@ -33,6 +47,7 @@
     "zero-peer-file": {
       "exempt": [
         "**/aileron/schema-form-scenarios/src/**",
+        "**/canard/schema-form-*-plugin/**",
         "**/lerx/promise-modal/**",
         "**/winglet/common-utils/**",
         "**/winglet/json/**",
