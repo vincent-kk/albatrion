@@ -41,11 +41,13 @@ Errors exist (`getErrors()` shows them) but the UI is silent:
 
 ## Composition (oneOf / anyOf)
 
-**`COMPOSITION_TYPE_REDEFINITION`** — a branch declared a `type` its parent does not allow. Omit the branch `type`, repeat the parent's, or — under a nullable object only — narrow it to `'object'` or `'null'`.
+**A branch `type` seems ignored** — the parent's own `type` decides the node's kind; a branch `type` that differs is not rejected and only the validator applies it. Omit the branch `type` or repeat the parent's.
 
-**`COMPOSITION_PROPERTY_REDEFINITION` on a discriminator** — a `const`/`enum` entry inside a branch's `properties` was given a `type`. With a `type` it is a field and collides with the parent's property; without one it is a tag for the host's `controls.discriminator`. Remove the `type`, or gate the branch with `controls.active`.
+**`SHARED_NODE_KIND_CONFLICT`** — an ungated branch (no `controls.active`, not selected by `controls.discriminator`) redeclares a parent property with a `type` outside the parent's, or ungated branches disagree on a property's kind. Narrow the branch `type` to the parent's, drop it, or gate the branch.
 
-**A nullable object fails validation while `null`** (warning `NULLABLE_ONE_OF_NULL_UNREACHABLE`) — branches without `type` all match `null`, and `oneOf` wants exactly one. Add one `{ type: 'null' }` branch and `type: 'object'` on the object branches, or use `anyOf` (`nullable-branch-nodes.md`).
+**`DISCRIMINATOR_MISMATCH` / `EMPTY_ENUM_INTERSECTION`** — discriminator tags differ in kind across branches or overlap (`DISCRIMINATOR_MISMATCH`), or a tag's `const`/`enum` values have nothing in common (`EMPTY_ENUM_INTERSECTION`). Typed tags (`{ type: 'string', const: 'cat' }`) are fine.
+
+**A nullable object fails validation while `null`** (no warning is printed) — branches without `type` all match `null`, and `oneOf` wants exactly one. Add one `{ type: 'null' }` branch and `type: 'object'` on the object branches, or use `anyOf` (`nullable-branch-nodes.md`).
 
 **Warning `NULL_BRANCH_IGNORED_FOR_FORM`** — a `{ type: 'null' }` branch carries a condition or `properties`. The form reads neither; keep the null branch bare.
 

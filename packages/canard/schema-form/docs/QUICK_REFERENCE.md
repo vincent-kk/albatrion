@@ -100,8 +100,8 @@ controls: { active: "./type === 'A'" }
 | `disabled`         | `boolean \| string`       | 비활성화                                     | -       |
 | `default`          | 리터럴 값                 | 새로 나타난 노드의 채움 값                   | -       |
 | `derived`          | `string`                  | 파생 값 계산                                 | -       |
-| `unsetValue`       | `string`                  | false에서 true로 바뀌면 값을 비움            | -       |
-| `resetInteraction` | `string`                  | false에서 true로 바뀌면 dirty/touched 초기화 | -       |
+| `unsetValue`       | `boolean \| string`       | false에서 true로 바뀌면 값을 비움            | -       |
+| `resetInteraction` | `boolean \| string`       | false에서 true로 바뀌면 dirty/touched 초기화 | -       |
 | `unsetOnInactive`  | `boolean \| string`       | 형상을 떠날 때 유지된 값을 버림              | -       |
 | `fields`           | `{ targets, controls }[]` | 부모가 자식에게 앞의 아홉 키를 지정          | -       |
 | `injectTo`         | `(value, ctx) => 대상 맵` | 값이 바뀔 때마다 다른 노드로 주입            | -       |
@@ -219,22 +219,28 @@ const formRef = useRef<FormHandle<typeof schema>>(null);
 
 ### 메서드 요약
 
-| 메서드                  | 반환 타입           | 설명            |
-| ----------------------- | ------------------- | --------------- |
-| `getValue()`            | `Value`             | 현재 폼 값      |
-| `setValue(v)`           | `void`              | 폼 값 설정      |
-| `reset()`               | `void`              | 초기값으로 리셋 |
-| `validate()`            | `Promise<Error[]>`  | 검증 실행       |
-| `getErrors()`           | `Error[]`           | 현재 에러 목록  |
-| `showError(bool)`       | `void`              | 에러 표시 제어  |
-| `findNode(path)`        | `FieldNode \| null` | 노드 탐색       |
-| `findNodes(path)`       | `FieldNode[]`       | 와일드카드 탐색 |
-| `focus(path)`           | `void`              | 필드 포커스     |
-| `getState()`            | `NodeStateFlags`    | 폼 상태         |
-| `setState(s)`           | `void`              | 상태 설정       |
-| `clearState()`          | `void`              | 상태 초기화     |
-| `submit()`              | `void`              | 폼 제출         |
-| `getAttachedFilesMap()` | `Map`               | 첨부 파일       |
+`getAttachedFilesMap()`과 `showError()`를 뺀 모든 메서드는 폼의 현재 루트 노드를 대상으로 합니다.
+
+| 메서드                  | 반환 타입                    | 설명                                                     |
+| ----------------------- | ---------------------------- | -------------------------------------------------------- |
+| `node`                  | `FieldNode \| undefined`     | 현재 루트 노드                                           |
+| `getValue()`            | `Value`                      | 현재 출력 값                                             |
+| `setValue(v, option?)`  | `void`                       | 폼 값 설정                                               |
+| `reset(option?)`        | `void`                       | 커밋된 기본값 다시 불러오기 (자동 쓰기 옵션만 받음)      |
+| `validate()`            | `Promise<ValidationIssue[]>` | 검증 실행                                                |
+| `getErrors()`           | `ValidationIssue[]`          | 현재 오류 전체                                           |
+| `showError(visible?)`   | `void`                       | `true`(기본)는 모든 오류 표시, `false`는 prop으로 되돌림 |
+| `findNode(path)`        | `FieldNode \| null`          | 노드 탐색                                                |
+| `findNodes(path)`       | `readonly FieldNode[]`       | 와일드카드 탐색                                          |
+| `focus(path?)`          | `void`                       | 필드 포커스 (생략하면 루트)                              |
+| `select(path?)`         | `void`                       | 필드 값 선택 (생략하면 루트)                             |
+| `refresh(path?)`        | `void`                       | 입력이 커밋된 값을 다시 읽게 함                          |
+| `remount(path?)`        | `void`                       | 렌더된 하위 트리 다시 마운트                             |
+| `getState()`            | `globalState`                | 하나 이상의 노드에서 참인 상호작용 플래그                |
+| `setState(s)`           | `void`                       | 모든 노드의 플래그 패치                                  |
+| `clearState()`          | `void`                       | 모든 노드의 플래그 지우기                                |
+| `submit()`              | `Promise<void>`              | 폼 제출                                                  |
+| `getAttachedFilesMap()` | `Map<string, File[]>`        | 첨부 파일                                                |
 
 ### 일반적인 패턴
 
@@ -409,17 +415,25 @@ if (isArrayNode(node)) {
 
 ## 이벤트 타입
 
-| 이벤트                       | 설명                        |
-| ---------------------------- | --------------------------- |
-| `Initialized`                | 노드 초기화 완료            |
-| `UpdateValue`                | 값 변경                     |
-| `UpdateState`                | 상태 변경 (dirty, touched)  |
-| `UpdateError`                | 검증 에러 변경              |
-| `UpdateControlledProperties` | controls 상태·watch 값 변경 |
-| `UpdateChildren`             | 자식 노드 변경              |
-| `UpdatePath`                 | 경로 변경 (배열 재정렬)     |
-| `RequestRefresh`             | UI 동기화 요청              |
-| `RequestRemount`             | 컴포넌트 리마운트 요청      |
+| 이벤트                       | 설명                                  |
+| ---------------------------- | ------------------------------------- |
+| `Initialized`                | 노드 초기화 완료                      |
+| `UpdatePath`                 | 경로 변경 (배열 재정렬)               |
+| `UpdateValue`                | 값 변경                               |
+| `UpdateState`                | 상호작용 플래그 변경 (dirty, touched) |
+| `UpdateGlobalState`          | 트리 전체 상호작용 플래그 변경        |
+| `UpdateError`                | 검증 오류 변경                        |
+| `UpdateGlobalError`          | 트리 전체 검증 오류 변경              |
+| `UpdateChildren`             | 직속 자식 변경                        |
+| `UpdateControlledProperties` | controls 상태·watch 값 변경           |
+| `Focused`                    | 입력이 포커스를 얻음                  |
+| `Blurred`                    | 입력이 포커스를 잃음                  |
+| `RequestFocus`               | 포커스 요청                           |
+| `RequestSelect`              | 값 선택 요청                          |
+| `RequestRefresh`             | 커밋된 값 다시 읽기 요청              |
+| `RequestRemount`             | 하위 트리 리마운트 요청               |
+| `UpdateJsonSchema`           | 유효 스키마 참조 변경                 |
+| `UpdateDiagnostics`          | 루트 정착 진단 변경                   |
 
 ### 구독 패턴
 
@@ -475,7 +489,7 @@ arrayNode.push(); // 기본값으로 아이템 추가
 arrayNode.push('custom'); // 특정 값으로 추가
 arrayNode.remove(0); // 인덱스 0 삭제
 arrayNode.clear(); // 전체 삭제 (minItems와 무관 — 채움은 reset이 복원)
-arrayNode.length; // 현재 아이템 수
+arrayNode.children?.length; // 현재 항목 노드 수 (하나의 입력으로 렌더된 배열은 children이 null)
 arrayNode.children; // 자식 노드 배열
 ```
 

@@ -10,8 +10,8 @@ import { renderForm } from '../renderForm';
  * `null` is valid is the schema's decision. These cases pin what a validator
  * says about `null` next to a composition keyword whose branches declare no
  * `type`; `nullable.object-null-branch.render` covers the pattern that validates.
- * The `oneOf` schema here is one the form warns about in development
- * (`NULLABLE_ONE_OF_NULL_UNREACHABLE`): that warning describes this very failure.
+ * The form prints no warning for the `oneOf` schema here (nothing emits
+ * `NULLABLE_ONE_OF_NULL_UNREACHABLE`), so this failure shows only in validation.
  */
 describe('nullable.object-validation.render — validity of a preserved null is the schema’s decision', () => {
   const branches = [
