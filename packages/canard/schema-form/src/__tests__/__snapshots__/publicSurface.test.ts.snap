@@ -14,7 +14,7 @@ FieldInputProps	type	FieldInputProps<Value, Context, WatchValues, Schema, Node>
 FieldInputPropsWithNode	type	FieldInputPropsWithNode<Value, Schema, Node>
 FieldInputPropsWithSchema	type	FieldInputPropsWithSchema<Value, Schema, Context>
 FieldInputTestFn	type	FieldInputTestFn
-FieldInputTestObject	type	Partial<{ path: string | string[]; type: "string" | "number" | "boolean" | "object" | "union" | "array" | "null" | "virtual" | ("string" | "number" | "boolean" | "object" | "union" | "array" | "null" | "virtual")[]; schemaType: "string" | "number" | "boolean" | "object" | UnionSchemaType | "array" | "integer" | "null" | "virtual" | ("string" | "number" | "boolean" | "object" | UnionSchemaType | "array" | "integer" | "null" | "virtual")[]; format: string | (string | undefined)[] | undefined; inputType: string | (string | undefined)[] | undefined; } & Pick<FieldInputHint, "required" | "nullable">>
+FieldInputTestObject	type	Partial<{ path: string | string[]; type: "string" | "number" | "boolean" | "object" | "union" | "array" | "null" | "virtual" | ("string" | "number" | "boolean" | "object" | "union" | "array" | "null" | "virtual")[]; schemaType: "string" | "number" | "boolean" | "object" | UnionSchemaType | "array" | "integer" | "null" | ("string" | "number" | "boolean" | "object" | UnionSchemaType | "array" | "integer" | "null" | undefined)[] | undefined; format: string | (string | undefined)[] | undefined; inputType: string | (string | undefined)[] | undefined; } & Pick<FieldInputHint, "required" | "nullable">>
 FieldNode	type	FieldNode
 FieldNodeEventType	value+type	typeof FieldNodeEventType
 FieldNodeRequestType	value+type	typeof FieldNodeRequestType

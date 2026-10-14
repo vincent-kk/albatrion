@@ -187,7 +187,7 @@ export type FieldInputTestObject = Partial<
 export type FieldInputHint = {
   /** FieldNode['schemaType'] */
   type: FieldNodeType;
-  /** Authored accepted schema kind(s). */
+  /** Authored accepted JSON type(s); undefined for a virtual node, which has no JSON type. */
   schemaType: FieldNode['schemaType'];
   /** Whether the stored value mismatches the accepted kinds. */
   misfit: boolean;
