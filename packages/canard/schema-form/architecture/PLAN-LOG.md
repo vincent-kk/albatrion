@@ -269,6 +269,7 @@
 | 2026-10-14 | 283라운드 닫기: PR #370(07d) 병합 0b879e594 — 소유자 결정 다섯 반영, 39는 대기열 50. 보충 1줄 | `reviews/round-283-closing.md` |
 | 2026-10-14 | 284라운드 닫기: PR #371(07e) 병합 89898d107 — 낮은 후속 넷과 Prettier 다섯 파일. 보충 1줄 | `reviews/round-284-closing.md` |
 | 2026-10-14 | 285라운드 닫기: G23 닫힘 — ego-browser 251 finished·실패 0, 자동 게이트 251. 보충 1줄 | `reviews/round-285-closing.md` |
+| 2026-10-14 | 286라운드 닫기: #372(07f) 3c1a7f2c3, #354(07 전환) 1.0.0-beta 병합 9c4d4a59d — 07단계 닫힘. 보충 1줄 | `reviews/round-286-closing.md` |
 
 ## 2. 라운드별 요지
 
@@ -507,3 +508,4 @@
 - **249라운드(2026-10-14, 닫기).** PR #362(07b-2)를 squash 병합했고(switch tip 1dbc1c1c9) 원격 07b-2 가지를 지웠다. fairy07은 #361 재기준·새 이름, fixy07은 07b-3(production-test)을 맡는다(249C-01, reviews/round-249-closing.md).
 - **250라운드(2026-10-14, 소유자).** production-test의 지워진 옛 문법을 지금 새 문법으로 다 바꾸기로 했다(대기열 35 승인, 250C-01, reviews/round-250-owner-answers.md). fixy07이 07b-3의 별도 커밋으로 한다.
 - **251라운드(2026-10-14, 닫기).** PR #361(문서 사이트, 53b682133)을 직접 검증해 통과했다: documents만 47파일, 세션 줄 0, 옛 이름 0, en·ko 빌드 성공(251C-01, reviews/round-251-closing.md). 소유자 병합 허가 대기.
+- **252라운드(2026-10-14, 소유자).** PR #361(문서 사이트) 병합을 명시적으로 허가했다(reviews/round-252-owner-answers.md).
