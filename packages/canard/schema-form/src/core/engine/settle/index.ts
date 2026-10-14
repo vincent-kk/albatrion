@@ -3,6 +3,7 @@ export { writeFieldNode } from './utils/write/writeFieldNode';
 export { assertFieldNodeWritable } from './utils/dispose/assertFieldNodeWritable';
 export { disposeFieldNodeTree } from './utils/dispose/disposeFieldNodeTree';
 export { arrangeFieldNodeItems } from './utils/structure/arrangeFieldNodeItems';
+export { readArrayLength } from './utils/structure/readArrayLength';
 export { loadFieldNodeAtMount } from './utils/load/loadFieldNodeAtMount';
 export { resetFieldNodeForm } from './utils/load/resetFieldNodeForm';
 export { resetFieldNodeSubtree } from './utils/load/resetFieldNodeSubtree';

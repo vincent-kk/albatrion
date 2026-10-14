@@ -33,7 +33,10 @@ type RuntimeNodeSurface = Omit<
 >;
 
 /** Array verbs every runtime node carries; non-array kinds reject them at call time. */
-type RuntimeArrayVerbs = Pick<ArrayNode, 'pop' | 'update' | 'remove' | 'clear'>;
+type RuntimeArrayVerbs = Pick<
+  ArrayNode,
+  'push' | 'pop' | 'update' | 'remove' | 'clear'
+>;
 
 /** Runtime fields the factory fills when the seed omits them: path-indexed stores and an empty context. */
 type SeededRuntimeFields =

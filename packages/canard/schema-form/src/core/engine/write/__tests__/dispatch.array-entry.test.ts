@@ -58,7 +58,7 @@ describe('array entry integration', () => {
     expect(root.local).toEqual([]);
   });
 
-  it('33C-01 exports all five entries and refused entries return undefined', () => {
+  it('33C-01 exports all five entries; refused push returns the current length and the others undefined', () => {
     const { root, runtime } = createDispatchTree({
       type: 'array',
       items: { type: 'number' },
@@ -68,7 +68,7 @@ describe('array entry integration', () => {
     runtime.entryDepth = 1;
     runtime.feedbackBudget = 25;
     runtime.currentListener = () => {};
-    expect(dispatchPush(root, 3)).toBeUndefined();
+    expect(dispatchPush(root, 3)).toBe(2);
     expect(dispatchPop(root)).toBeUndefined();
     expect(dispatchUpdate(root, 0, 3)).toBeUndefined();
     expect(dispatchRemove(root, 0)).toBeUndefined();
