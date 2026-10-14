@@ -69,13 +69,21 @@ interface FormProps<
   /** 모든 FieldInput 구성 요소에 disabled 속성을 적용합니다 */
   disabled?: boolean;
   /** 이 SchemaForm의 값이 변경될 때 호출되는 함수 */
-  onChange?: SetStateFn<Value>;
-  /** 이 SchemaForm이 유효성 검사를 통과했을 때 호출되는 함수 */
-  onValidate?: Fn<[errors: readonly ValidationIssue[]]>;
+  onChange?: Fn<[value: Value]>;
+  /** 검증 결과나 외부 오류 목록이 폼 오류 목록을 바꿀 때 호출되는 함수 */
+  onValidate?: Fn<[errors: FieldNode['globalErrors']]>;
   /** 폼이 제출될 때 호출되는 함수 (검증 통과 후 실행) */
   onSubmit?: Fn<[value: Value], Promise<void> | void>;
   /** 이 SchemaForm의 상태가 변경될 때 호출되는 함수 */
-  onStateChange?: Fn<[state: NodeStateFlags]>;
+  onStateChange?: Fn<[state: FieldNode['globalState']]>;
+  /** 이 폼 인스턴스의 오류 기록(생성·렌더 실패 포함)마다 호출되는 함수 */
+  onError?: Fn<[record: FormErrorRecord]>;
+  /** 준비가 끝난 뒤 루트 진단이 바뀔 때 호출되는 함수 */
+  onDiagnosticsChange?: Fn<[diagnostics: FieldNode['diagnostics']]>;
+  /** `controls.unsetOnInactive`의 폼 기본값: 형상에서 빠진 필드의 값을 지움 (노드 자신의 정책이 우선) */
+  unsetOnInactive?: boolean;
+  /** 명령형 쓰기는 막지 않고 자동 쓰기만 억제하는 폼 기본값 */
+  disableAutomaticWrites?: boolean;
   /** FieldInput 정의 목록 */
   fieldInputDefinitions?: FieldInputDefinition[];
   /** FieldInput 경로 매핑 */
@@ -89,7 +97,7 @@ interface FormProps<
   /** 오류 렌더러 컴포넌트 */
   FormErrorRenderer?: ComponentType<FieldRendererProps>;
   /** 초기 검증 오류, 기본값은 undefined */
-  errors?: readonly ValidationIssue[];
+  errors?: FieldNode['globalErrors'];
   /** 사용자 정의 오류 형식 함수 */
   formatError?: FieldRendererProps['formatError'];
   /**
@@ -97,7 +105,7 @@ interface FormProps<
    *   - `true`: 항상 표시
    *   - `false`: 절대 표시하지 않음
    *   - `ShowError.Dirty`: 값이 변경되었을 때 표시
-   *   - `ShowError.Touched`: 입력 필드가 초점 받았을 때 표시
+   *   - `ShowError.Touched`: 입력에서 포커스가 한 번 빠진 뒤 표시
    *   - `ShowError.DirtyTouched`: Dirty 및 Touched 조건이 모두 충족되었을 때 표시
    */
   showError?: boolean | ShowError;
@@ -121,31 +129,62 @@ interface FormProps<
 
 #### FormHandle
 
-```ts
+`getAttachedFilesMap`과 `showError`를 뺀 모든 멤버는 폼의 현재 루트 노드를 대상으로 합니다. 폼이 트리를 새로 만들면 핸들도 새 루트를 따릅니다.
+
+```typescript
 interface FormHandle<
-  Schema extends JSONSchema,
+  Schema extends JSONSchema = JSONSchema,
   Value extends AllowedValue = InferValueType<Schema>,
 > {
+  /** 현재 루트 노드 (첫 마운트 전에는 undefined) */
   node?: InferFieldNode<Schema>;
-  focus: Fn<[dataPath: FieldNode['path']]>;
-  select: Fn<[dataPath: FieldNode['path']]>;
-  reset: Fn;
+  /** `path`의 입력에 포커스 (생략하면 루트) */
+  focus: Fn<[path?: FieldNode['path']]>;
+  /** `path`의 입력 값을 선택 (생략하면 루트) */
+  select: Fn<[path?: FieldNode['path']]>;
+  /** `path`의 입력이 커밋된 값을 다시 읽게 함 (생략하면 루트) */
+  refresh: Fn<[path?: FieldNode['path']]>;
+  /** `path`에 렌더된 하위 트리를 다시 마운트 (생략하면 루트) */
+  remount: Fn<[path?: FieldNode['path']]>;
+  /** 커밋된 기본값을 다시 불러옴; 자동 쓰기 옵션만 받음 */
+  reset: Fn<
+    [
+      option?:
+        | typeof SetValueOption.DisableAutomaticWrites
+        | typeof SetValueOption.EnableAutomaticWrites,
+    ]
+  >;
+  /** JSONPointer 경로의 노드 찾기 */
   findNode: Fn<[path: FieldNode['path']], FieldNode | null>;
-  findNodes: Fn<[path: FieldNode['path']], FieldNode[]>;
-  getState: Fn<[], NodeStateFlags>;
-  setState: Fn<[state: NodeStateFlags]>;
+  /** JSONPointer 경로에 맞는 모든 노드 찾기 */
+  findNodes: Fn<[path: FieldNode['path']], readonly FieldNode[]>;
+  /** 하나 이상의 노드에서 참인 상호작용 플래그 */
+  getState: Fn<[], FieldNode['globalState']>;
+  /** 모든 노드의 상호작용 플래그 패치 */
+  setState: Fn<[state: FieldNode['state']]>;
+  /** 모든 노드의 상호작용 플래그 지우기 */
   clearState: Fn;
+  /** 현재 출력 값 (배열 출력 필터 적용) */
   getValue: Fn<[], Value>;
+  /** 값 설정 */
   setValue: SetStateFnWithOptions<Value>;
-  /** 폼 전역 오류를 반환합니다 */
-  getErrors: Fn<[], readonly ValidationIssue[]>;
-  /** onFileAttach로 첨부된 파일 맵을 반환합니다 */
+  /** 현재 오류 전체 */
+  getErrors: Fn<[], FieldNode['globalErrors']>;
+  /** 첨부 파일 맵 */
   getAttachedFilesMap: Fn<[], AttachedFilesMap>;
-  validate: Fn<[], Promise<readonly ValidationIssue[]>>;
-  showError: Fn<[visible: boolean]>;
-  submit: TrackableHandlerFunction<[], void, { loading: boolean }>;
+  /** 검증을 실행하고 오류를 반환 */
+  validate: Fn<[], Promise<FieldNode['globalErrors']>>;
+  /** `true`(기본)는 모든 오류 표시, `false`는 `showError` prop으로 되돌림 */
+  showError: Fn<[visible?: boolean]>;
+  /** 폼 제출; `useFormSubmit`이 진행 상태를 읽음 */
+  submit: TrackableHandlerFunction;
 }
 ```
+
+- 노드가 없는 `path`를 주면 `focus`, `select`, `refresh`, `remount`는 아무것도 하지 않습니다.
+- 첫 마운트 전에도 조회는 예외를 던지지 않습니다. `findNode`는 `null`, `findNodes`·`getErrors`·`validate`는 빈 배열, `getState`는 빈 객체를 반환합니다.
+- `showError(false)`는 오류를 숨기지 않습니다. 표시 여부를 Form의 `showError` prop에 되돌려 줍니다.
+- `reset()`은 첨부 파일 맵도 비우고 `showError(true)`로 켠 표시도 풀어, 오류 표시가 다시 `showError` prop을 따르게 합니다.
 
 #### AttachedFilesMap
 
@@ -165,7 +204,7 @@ interface FormChildrenProps<
   jsonSchema: Schema;
   defaultValue?: Value;
   value?: Value;
-  errors?: readonly ValidationIssue[];
+  errors?: FieldNode['globalErrors'];
 }
 ```
 
@@ -472,21 +511,27 @@ FieldInput의 조건은 함수 또는 객체를 사용하여 정의할 수 있�
 
 ```ts
 type FieldInputHint = {
-  jsonSchema: JSONSchema;
-  type: string;
-  format: string;
-  inputType: string;
+  type: FieldNodeType;
+  schemaType: FieldNode['schemaType'];
+  typeMismatch: boolean;
   path: string;
-  [alt: string]: any;
+  required: boolean;
+  nullable: boolean;
+  jsonSchema: JSONSchema | JSONSchemaWithVirtual;
+  format?: string;
+  inputType?: string;
 };
 type FieldInputTestFn = Fn<[hint: FieldInputHint], boolean>;
 
+// type, schemaType, path, format, inputType은 값 하나 또는 목록 중 아무 값과 맞음
 type FieldInputTestObject = Partial<{
-  type: Array<string>;
-  jsonSchema: JSONSchema;
-  format: Array<string>;
-  inputType: Array<string>;
-  [alt: string]: any;
+  type: FieldNodeType | FieldNodeType[];
+  schemaType: FieldNode['schemaType'] | FieldNode['schemaType'][];
+  path: string | string[];
+  format: string | string[];
+  inputType: string | string[];
+  required: boolean;
+  nullable: boolean;
 }>;
 ```
 
@@ -503,9 +548,13 @@ inputType은 정의의 test가 해석하는 문자열 힌트이며 HTML input ty
 interface FieldInputProps<
   Value extends AllowedValue = any,
   Context extends Dictionary = object,
-  WatchValues extends Array<any> = Array<any>,
-  Schema extends JSONSchemaWithVirtual = InferJSONSchema<Value>,
-  Node extends FieldNode = InferFieldNode<Schema>,
+  WatchValues extends ReadonlyArray<any> = ReadonlyArray<any>,
+  Schema extends JSONSchema | JSONSchemaWithVirtual = unknown extends Value
+    ? JSONSchema
+    : InferJSONSchema<Value>,
+  Node extends FieldNode = unknown extends Value
+    ? FieldNode
+    : InferFieldNode<Schema>,
 > {
   /** FieldInput 컴포넌트의 JSON 스키마 */
   jsonSchema: Schema;
@@ -517,8 +566,12 @@ interface FieldInputProps<
   required: boolean;
   /** FieldInput 컴포넌트에 할당된 필드 노드 */
   node: Node;
-  /** 이 필드의 JSON Schema 타입 (예: 'string', 'number', 'object', 'array') */
-  type: Node['schemaType'];
+  /** 노드 종류 (예: 'string', 'number', 'object', 'array') */
+  type: Node['type'];
+  /** 작성한 허용 종류('integer' 포함) */
+  schemaType: Node['schemaType'];
+  /** 저장된 값이 허용 종류와 어긋나는지 */
+  typeMismatch: Node['typeMismatch'];
   /** FieldInput 컴포넌트에 할당된 필드 노드의 이름 */
   name: Node['name'];
   /** FieldInput 컴포넌트에 할당된 필드 노드의 경로 */
@@ -1357,7 +1410,7 @@ export const ArrayForm = () => {
         },
       },
     },
-  };
+  } as const;
 
   return (
     <Form jsonSchema={jsonSchema}>
@@ -1365,8 +1418,14 @@ export const ArrayForm = () => {
         <div className="array-form">
           <h3>사용자</h3>
 
-          {node && isArrayNode(node.find('/users')) && (
-            <button onClick={() => node.find('/users').push()} type="button">
+          {node?.find('/users')?.type === 'array' && (
+            <button
+              onClick={() => {
+                const users = node.find('/users');
+                if (users && isArrayNode(users)) users.push();
+              }}
+              type="button"
+            >
               사용자 추가
             </button>
           )}
@@ -2081,7 +2140,7 @@ export const AdvancedSubmitForm = () => {
   };
 
   // 제출 상태 관리
-  const { submit, loading } = useFormSubmit(formRef);
+  const { submit, pending } = useFormSubmit(formRef);
 
   const onSubmitClick = async () => {
     try {
@@ -2109,13 +2168,13 @@ export const AdvancedSubmitForm = () => {
 
       <button
         onClick={onSubmitClick}
-        disabled={loading}
+        disabled={pending}
         style={{ marginTop: '16px' }}
       >
-        {loading ? '제출 중...' : '제출'}
+        {pending ? '제출 중...' : '제출'}
       </button>
 
-      {loading && (
+      {pending && (
         <div style={{ marginTop: '8px', color: '#666' }}>
           처리 중입니다. 잠시만 기다려주세요...
         </div>
@@ -2201,7 +2260,7 @@ export const ErrorHandlingForm = () => {
     return response.json();
   };
 
-  const { submit, loading } = useFormSubmit(formRef);
+  const { submit, pending } = useFormSubmit(formRef);
 
   const onSubmitClick = async () => {
     setSubmitError(''); // 이전 오류 초기화
@@ -2246,10 +2305,10 @@ export const ErrorHandlingForm = () => {
 
       <button
         onClick={onSubmitClick}
-        disabled={loading}
+        disabled={pending}
         style={{ marginTop: '16px' }}
       >
-        {loading ? '로그인 중...' : '로그인'}
+        {pending ? '로그인 중...' : '로그인'}
       </button>
     </div>
   );
