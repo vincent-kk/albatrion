@@ -57,8 +57,9 @@ export const deliverWave = <Self extends FieldNodeRecord<Self>>(
       } catch (error) {
         captureChainError(resolveFieldNodeChainRoot(root).runtime, error);
       } finally {
-        runtime.currentListener = undefined;
-        resolveFieldNodeChainRoot(root).runtime.currentListener = undefined;
+        const passed = new Set([runtime]);
+        resolveFieldNodeChainRoot(root, passed);
+        for (const owner of passed) owner.currentListener = undefined;
       }
     }
   }

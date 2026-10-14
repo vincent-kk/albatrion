@@ -44,6 +44,7 @@ const expectResting = (...trees: Tree[]): void => {
       'enclosingChain',
       'batchWrites',
       'chainRoot',
+      'currentListener',
     ])
       expect(Reflect.get(runtime, key), key).toBeUndefined();
     expect(Reflect.get(runtime, 'flushingQueuedEvents') ?? false).toBe(false);
@@ -372,5 +373,41 @@ describe('two adoptions in a row', () => {
     });
     previous.root.find('/second')?.setValue('c');
     expectResting(previous, middle, last);
+  });
+});
+
+describe('adoption limits', () => {
+  it('a listener loop that moves to the new root keeps one 25-wave feedback budget', () => {
+    const previous = createTree();
+    const next = createTree();
+    let calls = 0;
+    const writeSecond = (tree: Tree) => {
+      calls += 1;
+      tree.root.find('/second')?.setValue(String(calls));
+    };
+    previous.root.subscribe((event) => {
+      if (!(event.type & FieldNodeEventType.UpdateValue)) return;
+      if (calls === 4) {
+        calls += 1;
+        adoptFieldNodeTree(previous.root, next.root);
+        next.root.find('/second')?.setValue('adopted');
+        return;
+      }
+      writeSecond(previous);
+    });
+    next.root.subscribe((event) => {
+      if (event.type & FieldNodeEventType.UpdateValue) writeSecond(next);
+    });
+    let thrown: unknown;
+    try {
+      previous.root.find('/second')?.setValue('start');
+    } catch (error) {
+      thrown = error;
+    }
+    expect(Reflect.get(Object(thrown), 'code')).toBe(
+      FormErrorCode.FeedbackLimitExceeded,
+    );
+    expect(calls).toBeLessThanOrEqual(26);
+    expectResting(previous, next);
   });
 });
