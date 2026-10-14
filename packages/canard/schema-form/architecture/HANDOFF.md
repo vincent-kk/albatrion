@@ -2,35 +2,42 @@
 
 개발의 진행 상황과 다음 할 일은 `PLAN.md`가 단일 진입점으로 든다. 다음 세션이 바로 이어서 일하기 위한 문서다. 이력은 `git log`와 `reviews/`에 있으므로 여기에는 지금 상태, 다음 할 일, 일하는 법만 적는다. 소유자는 Vincent다.
 
-## 1. 지금 어디인가 (2026-10-12, 184라운드 닫힘; 07 전환 진행 중)
+## 1. 지금 어디인가 (2026-10-14, 285라운드 닫힘; 07 전환 진행 중)
 
-- **159라운드(2026-10-12, 소유자).** G23은 소유자가 권한을 줄 때까지 후순위다. 07b를 PR #354의 브랜치 위에 쌓은 브랜치의 PR로 지금 시작하며, 순서는 개선-34(helper 분할, 번들 바이트 동일로 검증) → 개선 항목 배정과 개선-30 형 추론 감사 → 개선-32(React 렌더, 판정 세션 필요, 보류 중이던 F-E를 푼다)다. 07b는 fixy07이 쌓은 PR로 진행하고 소유자가 리뷰한다(reviews/round-159-owner-answers.md).
-- **160라운드(2026-10-12, 닫기).** 파일 분할 같은 구조 변경은 번들러의 경로 주석과 이름 번호 때문에 바이트 동일이 원리상 불가능하므로, 핀포인트 검증 기준을 정규화 동치로 바꾼다. 정규화 뒤 남는 차이가 적재 때 한 번 도는 상수·초기화뿐이고 전체 시험이 통과하면 판정 세션 없이 커밋한다. 개선-34는 이 기준으로 커밋한다(reviews/round-160-closing.md).
-- **161라운드(2026-10-12, 닫기).** 개선-32의 변경 범위를 확정했다. 커밋 1은 F-E 재구현에 단일 revision 읽기를 함께 넣고, 커밋 2는 layout effect 축소이며, 판정 세션은 커밋마다 따로 돌린다. 코어 settle 쪽 길은 이번 범위에서 뺀다(reviews/round-161-closing.md).
-- **162라운드(2026-10-12, 소유자).** 개선 항목 배정을 확정했다. 07b에 시험 기록 파일 분할, wildcard re-export 정리, 계수 도구 명시 옵션, 계수 시험 scratch 경로 제거, 배열 선택 재사용 시험 민감도가 가고(도구 둘은 개선-32 앞), 성능 개선 단계에 쓰기당 할당량 차이, 마운트 보유 잔차, 판정 번들 빌드 재현성이 가며, 정리 단계에 계약별 역방향 색인이 간다(reviews/round-162-owner-answers.md).
-- **163라운드(2026-10-12, 닫기).** 공개 형 추론 감사가 끝났다. 네 경로의 핵심 값 추론은 두 판 모두 정확하고, 차이 아홉 가운데 여섯은 새 판이 더 정확하거나 엄격해 유지하며, formatError의 값 형이 넓어진 하나는 옛 판대로 되돌린다. 핸들러 안의 쓰기를 막는 둘은 소유자 결정으로 올린다(reviews/round-163-closing.md).
-- **164라운드(2026-10-12, 닫기).** 앞 라운드의 formatError 되돌림 결정을 뒤집었다. 새 엔진은 해석할 수 없는 입력을 보존하므로 오류 노드의 값 형은 unknown이 사실과 맞고, 옛 판의 넓은 union은 런타임이 보장한 적 없는 약속이었다. 감사 차이 아홉의 최종 처분은 새 판 유지 일곱과 소유자 결정 둘이며 코드 고침은 없다(reviews/round-164-closing.md).
-- **165라운드(2026-10-12, 닫기).** 개선-32 커밋 1은 독립 리뷰를 통과했고 계약 여섯이 모두 유지된다. 입력 제어 훅이 구독 셋을 하나의 스냅숏으로 합치려고 useSyncExternalStore를 직접 쓰는 것은 그대로 두고, SchemaNode INTENT의 구독 규약에 그 훅을 예외로 적는다(reviews/round-165-closing.md).
-- **166라운드(2026-10-12, 소유자).** onValidate의 오류 배열은 readonly로 두고, onStateChange의 state flag는 false도 유효값이므로 세 값을 모두 내도록 형과 런타임을 옛 판 의미로 맞춘다. INTENT 예외는 문제없다(reviews/round-166-owner-answers.md).
-- **167라운드(2026-10-12, 닫기).** global state flag는 두 판 모두 런타임이 false를 쓴 적이 없으므로 형만 옛 판과 같게 되돌린다. 꺼진 flag의 키가 사라지는 시점은 새 판(마지막 노드가 끄면 바로)을 유지하며 소유자에게 보고한다(reviews/round-167-closing.md).
-- **168라운드(2026-10-12, 닫기).** 판정 세션 32a에서 배열 천 개 갱신 행이 136라운드와 같은 크기의 손실로 표시되었고 확인 측정은 예산 초과로 멈췄다. 표시된 두 행만 따로 확인 측정하고, F-E와 단일 읽기를 가르는 세션은 돌리지 않으며, 회귀가 확정되면 커밋 하나를 채택하지 않고 갱신 손실 대 마운트 이득의 맞바꿈을 소유자에게 보고한다(reviews/round-168-closing.md).
-- **169라운드(2026-10-12, 소유자).** 판정 세션 32a의 남은 두 부분까지만 돌리고 멈춘다. 배열 천 개 두 행의 확인 측정은 지금 돌리지 않고, 재개할 때 짧게 하거나 생략할지 정한다. 소유자가 브라우저 검토와 코드 리뷰를 한다(reviews/round-169-owner-answers.md).
-- **170라운드(2026-10-12, 소유자).** 개선-32의 첫 커밋을 소유자 수용으로 채택한다. 배열 천 개 갱신의 작은 손실을 받아들이고 마운트와 통째 교체의 이득을 취한다. 확인 측정은 블록 수를 줄여 두 행의 추세만 기록하고 멈춘다(reviews/round-170-owner-answers.md).
-- **171라운드(2026-10-12, 소유자).** 리뷰는 07 PR #354부터 하고, 그 결과에 맞춰 07b PR #355를 한 번 맞춘 뒤 07b의 남은 일을 이어 간다. 리뷰는 소유자가 다른 세션과 진행해 원장 세션에 보고한다(reviews/round-171-owner-answers.md).
-- **172라운드(2026-10-12, 소유자).** G23 브라우저 게이트를 연다. 브라우저 직접 테스트는 에이전틱 브라우저 세션 fairy07이 수행하고 원장 관리자가 확인 목록을 지시하며 결과로 닫힘 여부를 올린다(reviews/round-172-owner-answers.md).
-- **173라운드(2026-10-12, 소유자).** 주 에이전트는 Claude다. codex 프록시는 쓰지 않고 codex·antigravity는 교차확인과 리뷰에만 쓴다. codex를 쓰는 멀티에이전트 작업은 소유자가 지시할 때부터 한다(reviews/round-173-owner-answers.md).
-- **174라운드(2026-10-12, 닫기).** G23 첫 실행에서 자동 게이트는 네 스토리 모두 통과했으나 일반 스토리북에서 스토리가 렌더되지 않아 수동 확인이 막혔다. 스토리 파일만 고치는 커밋을 07 브랜치에 더해 다시 확인하고, 실제 IME 세 행은 소유자가 직접 친다(reviews/round-174-closing.md).
-- **175라운드(2026-10-12, 소유자).** reviewer 세션이 07 브랜치에 리뷰 고침을 직접 커밋한다는 것을 소유자가 확인했다. 스토리 고침을 먼저 올리고 그 위에서 하나씩 고치며, 리뷰가 끝나면 재확인을 한 번 더 한다(reviews/round-175-owner-answers.md).
-- **176라운드(2026-10-12, 닫기).** 고친 스토리로 G23을 다시 돌려 실제 Chrome 창에서 IME 세 행, 숫자 입력, 재마운트 기록이 모두 기대값과 맞았다. 남은 것은 소유자가 실제 한국어 IME로 두 입력을 눈으로 보는 것과 감지 비용 수치의 수용이다(reviews/round-176-closing.md).
-- **177라운드(2026-10-12, 소유자).** 새 엔진 쪽의 ENHANCED_KEY와 transformErrors는 옛 엔진의 잔재로 제거 가능하다고 소유자가 정했고 reviewer 세션이 제거한다(reviews/round-177-owner-answers.md).
-- **178라운드(2026-10-12, 닫기).** errors prop에서 배열이 아닌 입력은 옛 판처럼 빈 배열로 받도록 가드를 더하고, 외부 오류 객체에 순번 key를 찍던 변형은 새 판대로 두기로 정했다(reviews/round-178-closing.md).
-- **179라운드(2026-10-12, 소유자).** 지원 종료로 표시된 타입은 모두 호환되는 최신 타입으로 바꾼다. fixy07이 07b 브랜치에 별도 커밋으로 하며 공개 표면은 React 두 버전에서 뜻이 같을 때만 바꾼다(reviews/round-179-owner-answers.md).
-- **180라운드(2026-10-12, 소유자).** G23 브라우저 게이트가 닫혔다. 소유자가 실제 한국어 IME로 직접 확인했고 Safari는 생략했다. 빈 자식 목록 읽기 감지기는 개발 모드에서만, 브랜치가 될 수 있는 스키마 노드가 터미널이 된 경우에만 두며 reviewer가 이번 PR에서 고친다(reviews/round-180-owner-answers.md).
-- **181라운드(2026-10-13, 소유자).** 소유자가 reviewer 세션과 원장 세션을 직접 보며, 한쪽에 준 지시는 다른 쪽이 재확인 없이 따른다. 예외는 권한·설정 변경과 파괴적 조치뿐이다(reviews/round-181-owner-answers.md).
-- **182라운드(2026-10-13, 닫기).** 177라운드에서 PR-4 표를 제거 근거로 잘못 인용한 것을 바로잡았다. ESM 번들에 개발 분기가 접혀 들어가는 저장소 빌드 결함은 옛 배포본부터 같았고 판정에는 영향이 없으며 고침은 소유자가 정한다(reviews/round-182-closing.md).
-- **183라운드(2026-10-13, 소유자).** ESM 번들의 개발 분기 접힘은 큰 버그이므로 고친다. 패키지는 개발 모드 판정을 읽는 순간 평가하는 방식으로, 빌드 스크립트는 접지 않도록 바꾼다. 스토리는 기능별 그룹과 복합 사례로 새로 구성하며 원장 관리자가 요구사항을 먼저 검토해 올린다(reviews/round-183-owner-answers.md).
-- **184라운드(2026-10-13, 닫기).** 스토리 재구성 검토안을 올렸다. 기능 그룹 열 개에 그룹별 스토리 테스트와 복합 사례 일곱을 두고, 새 디렉토리에만 쓰므로 리뷰 작업과 병렬이 가능하며, 소유자 결정 여섯을 묻는다(reviews/round-184-closing.md).
-- **185라운드(2026-10-13, 소유자).** 외부 주입 오류를 자식 노드가 지우거나 쓰면 key 식별자 없이 경로로 루트 집계에 반영한다. 옛 판의 의도를 잠재 버그 없이 복원하는 것이며 reviewer가 구현한다(reviews/round-185-owner-answers.md). 다음 라운드 번호는 186.
+- **252라운드(2026-10-14, 소유자).** PR #361(문서 사이트) 병합을 명시적으로 허가했다(reviews/round-252-owner-answers.md).
+- **253라운드(2026-10-14, 닫기).** PR #363(07b-3, 3f48fe3aa)을 직접 검증해 통과했다: production-test 9파일, tsc -b·lint·build 통과, 세션 줄 0(253C-01, reviews/round-253-closing.md). 대기열 37(내장 checkbox id 중복). 소유자 병합 허가 대기.
+- **254라운드(2026-10-14, 소유자).** PR #363(07b-3) 병합을 허가했다(reviews/round-254-owner-answers.md).
+- **255라운드(2026-10-14, 닫기).** PR #363을 squash 병합해(13838752b) 07 전환의 PR 셋이 모두 들어갔다. 정리 커맨드를 현재 상태에 맞게 갱신해 소유자에게 전달했다(255C-01, reviews/round-255-closing.md). 다음은 #354 본문 갱신, 확인용 대기열 정리, 개선-38 문서 이름 갱신.
+- **256라운드(2026-10-14, 소유자).** 확인용 대기열 열한 개를 닫았다: 36·37·16·18 승인(권고대로), 11 확인, 12·21·13·14·24·28 확인(reviews/round-256-owner-answers.md). 명세와 동작이 어긋날 수 있는 항목은 설명을 요구했다.
+- **257라운드(2026-10-14, 소유자).** 작은 수정 넷(07b-4: 대기열 36·37·16·18)을 바로 시작하되 이번에 한해 codex 위임 없이 fixy07이 직접 구현한다(257C-01, reviews/round-257-owner-answers.md). 원장 관리자는 개선-38 설명·근거 문서의 이름을 병합 코드 기준으로 갱신한다.
+- **258라운드(2026-10-14, 소유자).** 개선-38의 다섯 결정과 후보 C를 확정했고, 이름 논의 셋(factory가 본체인가, components/SchemaNode의 이름, SchemaNode → FieldNode)을 추가로 열었다(reviews/round-258-owner-answers.md). 원장 관리자가 코드 사실로 답한다.
+- **259라운드(2026-10-14, 소유자).** SchemaNode 계열을 FieldNode 계열로 바꾸기로 확정했고(components/SchemaNode → components/Field: FieldProxy·FieldInputSlot·DeferredFieldProxy), 이름을 먼저 바꾼 뒤 C 재배치로 간다. 레거시는 제외(259C-01 대응표, reviews/round-259-owner-answers.md). 07b-5: fairy07 사용처 목록 → fixy07 치환(07b-4 뒤).
+- **260라운드(2026-10-14, 소유자).** 이름 변경에 두 요구를 붙였다: 옛 이름이 남지 않게 검사를 철저히(260C-01 세 겹 게이트), 다른 핵심 고유명사도 바꿀 것이 있는지 검토(reviews/round-260-owner-answers.md). 원장 관리자가 공개 고유명사 전수 목록으로 후보를 올린다.
+- **261라운드(2026-10-14, 닫기).** 핵심 고유명사 재검토의 후보 15개를 사실 확인과 함께 올렸다(261C-01, reviews/round-261-closing.md). 소유자 답을 받아 259C-01 대응표를 넓히고 07b-5 브리프를 쓴다.
+- **262라운드(2026-10-14, 닫기).** PR #364(07b-4, c711f3d17)를 직접 검증해 통과했다: 시험 3936+241, typecheck·lint 0, 세션 줄 0(262C-01, reviews/round-262-closing.md). 소유자 병합 허가 대기.
+- **263라운드(2026-10-14, 소유자).** PR #364(07b-4) 병합을 명시적으로 허가했다(reviews/round-263-owner-answers.md).
+- **264라운드(2026-10-14, 소유자).** 고유명사 후보 15 중 1·3·4·5·6·7·8·9·10·11·15를 권고대로 승인했고, 2(ChildField 이름 길이)·12(controls.children 대체 이름)·13(propertyKeys 공개 자리·이름)·14(virtual을 object 전용 키로)는 추가 논의, 비표준 최상위 키의 잔여 점검을 요구했다(reviews/round-264-owner-answers.md).
+- **265라운드(2026-10-14, 소유자).** 추가 논의 넷을 닫았다: ChildFields, controls.fields, options.propertyOrder(object 전용), options.virtual 형 선언과 VirtualSchema 비공개화, nullable: true 제거(265C-01 후속 대응표, reviews/round-265-owner-answers.md). 07b-5 후속 커밋으로 fixy07에게.
+- **266라운드(2026-10-14, 소유자).** 스토리북 관찰 셋을 기록해 대기열 40·41·42로 올렸다: docs 페이지의 jsonSchema 순환참조 직렬화 오류, nullable 분기 스토리의 화면·값 불일치(설계 판단 필요), 스토리 가독성(설명·값·오류·스키마·설정 수록)(reviews/round-266-owner-answers.md).
+- **267라운드(2026-10-14, 소유자).** 중지 없이 끝까지 진행하라는 지시: PR 병합 포함, C 재배치와 스토리·런타임 묶음까지, 결정은 대기열에 모아 끝에 한 번에(267C-01 계획, reviews/round-267-owner-answers.md).
+- **268라운드(2026-10-14, 소유자).** codex·agy 멀티에이전트 작업 재개(덧붙임: `nullable: true`는 잔류, 265C-01의 제거 항목 취소): 257라운드의 "이번에 한해 claude 직접" 예외를 끝내고 217C-01 규칙으로 복귀(268C-01, reviews/round-268-owner-answers.md); 07b-5 후속은 fixy07이 마무리, 07b-6·07b-7·07c부터 codex 구현.
+- **269라운드(2026-10-14, 소유자).** 07b-6 스토리 설계의 결정: usage 스토리에 play 단언을 두고 패키지 CLAUDE.md의 "documentation-only" 문장을 고치는 권장안 승인(269C-01, reviews/round-269-owner-answers.md); nullable은 잔류·공식 지원으로 확정(269C-02, 오류 없음; 07b-7에서 형·문서 보강).
+- **270라운드(2026-10-14, 닫기/원장 관리자).** 07b-5 #365를 직접 검증(시험 3943·storybook 241·typecheck·lint·플러그인 일곱·documents·G16·verifier·agy)하고 squash 병합(17414cd4a); fixy07 판단 셋 승인; 지적 일곱은 07b-7로 이월(270C-01, reviews/round-270-closing.md); fairy07 07b-6·fixy07 07b-7을 17414cd4a에서 병렬 착수(codex 구현).
+- **271라운드(2026-10-14, 소유자).** 대기열 46 승인: `src/helpers`·`src/components`는 INTENT/DETAIL/index 없는 compartment로 두고 자식 fractal은 그대로(271C-01, reviews/round-271-owner-answers.md; 264라운드 결정 4 번복). 07c 계획 확정.
+- **272라운드(2026-10-14, 닫기/원장 관리자).** 07b-7 #366을 직접 검증(시험 3950·storybook 241·typecheck·lint·json-schema·플러그인 일곱·documents·G16·verifier·agy)하고 squash 병합(c0ddd4b51): 로드 null·종류 틀린 원본 아래 자식 미채움(41·45), enum select undefined 표시(44), nullable 공식 지원 문구(269C-02), #365 후속 여섯(272C-01, reviews/round-272-closing.md). 07c 재배치 브리프를 fixy07에게 발송(codex 구현), 07b-6은 c0ddd4b51에 rebase 뒤 PR.
+- **273라운드(2026-10-14, 닫기/원장 관리자).** 07b-6 #367을 직접 검증(storybook 251·시험 3949·typecheck·lint·documents·verifier)하고 squash 병합(beff4b5ec): 패널 데코레이터(42), FormHandle 스토리 10개(43), docs 직렬화 방어 수정(40, 재현 불가로 소유자 재확인), CLAUDE.md:125 문장 확정(273C-01, reviews/round-273-closing.md). fairy07은 README 1.0.0 이주 절 초안, fixy07은 07c 재배치 진행 중.
+- **274라운드(2026-10-14, 닫기/원장 관리자).** README 두 파일의 Migration (1.0.0) 절 #368을 agy·직접 대조로 검증하고 squash 병합(e5f7f9fa3)(274C-01, reviews/round-274-closing.md); 옛 최상위 키 조용한 무시의 개발 빌드 경고는 대기열 47; fairy07은 #354 본문 갱신 초안, fixy07은 07c 재배치 진행 중.
+- **275라운드(2026-10-14, 닫기/원장 관리자).** 07c 재배치 #369를 직접 검증(시험 3840·storybook 251·typecheck·lint·플러그인 일곱·documents·G16·d.ts 바이트 동일·verifier·agy)하고 squash 병합(4da9567ea): core/{engine, surface}, 미사용 helpers 셋 삭제, src/constants, helpers·components는 compartment(275C-01, reviews/round-275-closing.md). 267C-01 1~4 완료, 5(마무리) 진행: 설명 문서 갱신(fairy07), #354 본문 갱신 완료, 워크트리 정리·대기열 총정리는 소유자 보고.
+- **276라운드(2026-10-14, 소유자).** 대기 결정 일괄 답(reviews/round-276-owner-answers.md): 47은 경고 없이 문서 안내만("과거와의 결별"), 패키지 CLAUDE.md:142 수정 승인, G23은 ego-browser로 원장 관리자가 직접 실행, 38(접근성 묶음)·39(분기 terminal 합쳐 읽기)·48(플러그인 셋 enum select)·49(constants 이름 열거; 시험·bench 직접 import는 소유자 면제)는 후속 PR 07d로 fixy07 발주, 45 넓은 해석 확정, 40 소유자 추후 확인. 버전 올리기는 최종 단계로 미룸.
+- **277라운드(2026-10-14, 소유자).** G23 실행 주체 교정: "스토리 도는건 너 말고 다른애 시켜. 넌 관리해야지" — 원장 관리자의 ego-browser 실행을 멈추고 fairy07에게 발주(스토리북 6007, 스크립트 scratchpad/g23-run-all-stories.js). 대기열 39 oneOf 터미널 이유는 원장 관리자가 소유자에게 직접 답함(reviews/round-277-owner-answers.md).
+- **278라운드(2026-10-14, 소유자).** 대기열 40 내용 질문에 답했고, 39의 고침 방향을 소유자 지적대로 명세의 덮어쓰기 규칙(게이트 없는 분기 선언도 전체 순서에서 나중 승)으로 정정해 fixy07의 07d 브리프를 고침(reviews/round-278-owner-answers.md).
+- **279라운드(2026-10-14, 소유자).** "좋아 쭉 작업해 다시" — 39 세부 결정(분기가 호스트 자신에 단 terminal은 무시) 승인으로 읽고 07d·G23을 기다려 병합·보고(reviews/round-279-owner-answers.md).
+- **280라운드(2026-10-14, 소유자).** 38의 verifier 결함(스키마 모양 판정과 입력 선출의 어긋남)에 소유자가 "자유도를 해치지 않고 사용 방식에 따라 맞추게" 답해, 라벨은 항상 htmlFor와 id를 갖고 묶음은 aria-labelledby로 제목을 가리키는 추측 없는 규약으로 바꿔 fixy07에게 보냄(reviews/round-280-owner-answers.md). alias 자리는 문제없음.
+- **281라운드(2026-10-14, 소유자).** "할거 다 하고 PR을 머지하고 다음으로 가자. 7단계가 너무 비대해졌네" — #370·Prettier PR·G23을 끝낸 뒤 #354를 병합하고, 디렉터리·구성 다듬기는 새 단계(08)로(reviews/round-281-owner-answers.md).
+- **282라운드(2026-10-14, 소유자).** 08단계 씨앗 메모: fractal 최소 export 계약 위반(가장 거슬림), nodeFromJSONSchema가 root export인 이유, FormContents의 이름·위계. 시험·bench가 index를 경유하는 것은 filid의 한계가 아니라 07c·07d의 선택이었음을 원장 관리자가 export 소비자 셈으로 답함(reviews/round-282-owner-answers.md).
+- **283라운드(2026-10-14, 닫기/원장 관리자).** PR #370(07d) squash 병합(0b879e594): 47 문서 안내, CLAUDE.md:142, 38 추측 없는 label id 규약(`label:${path}`), 45 원칙 문장, 48 플러그인 시험, 49 이름 열거·면제 선언. verifier FAIL→PASS, agy 차단 없음, 직접 게이트 전부 통과(283C-01). 낮은 후속 넷은 07e로.
+- **284라운드(2026-10-14, 닫기/원장 관리자).** PR #371(07e) squash 병합(89898d107): 45 원칙 문장, 플러그인 셋 FormGroup 제목 id, 형제 충돌 시험, skills 문서 접미어, Prettier 다섯 파일(284C-01). 남은 것은 G23 보고와 #354 병합, 08단계 계획.
+- **285라운드(2026-10-14, 닫기/원장 관리자).** G23 닫힘: fairy07이 ego-browser(spaceId 39)로 tip 89898d107의 스토리 251개 전부 finished·실패 0, 자동 게이트 251 통과(285C-01). 첫 실행은 대기 조건 오류로 무효. NaN defaultValue 경고 세 스토리는 debugger 진단 중. 다음은 #354 병합. 다음 라운드 번호는 286.
 - **그 앞의 라운드 요지(19라운드부터)는 PLAN-LOG.md 2절에 있다.** 라운드마다 한 문단이며, 1절의 기록 표와 같은 순서다.
 - **설계의 정본은 단일 원장 `ledger/`다.** 영역 17개, 항목 1,350개(80라운드 뒤, 24라운드 뒤 1,348; 현행 1,076(부정 결정·기록 포함), 대체됨 199, 분할됨 49, 중복 24, 열림 0). 형식과 규칙은 `ledger/README.md`.
 - **옛 설계 문서(`00`–`09`, `adr/`, `open-questions.md`)는 동결됐다.** 더 고치지 않는다. 어긋남은 원장의 충돌 칸에 적는다. 원장이 인용하는 옛 문서의 `path:line`은 모두 커밋 `ba398c330` 기준 줄 번호다(그 뒤 옛 문서는 바뀌지 않았다).
@@ -316,6 +323,109 @@ node ledger/checks/doc-coverage.mjs design/*.md adr/*.md -- ledger/*.md   # 설�
 | `reviews/round-183-owner-answers.md` | 183라운드 소유자 답 하나: ESM NODE_ENV 고침, 스토리 재구성 검토 |
 | `reviews/round-184-closing.md` | 184라운드 편집자 결정 하나: 스토리 재구성 검토안 제출(검토안은 같은 디렉토리의 story-regroup-proposal 문서) |
 | `reviews/round-185-owner-answers.md` | 185라운드 소유자 답 하나: 자식 외부 오류의 루트 전파를 경로로 |
+| `reviews/round-186-owner-answers.md` | 186라운드 소유자 답 하나: 스토리 재구성 검토안 수용과 시작 |
+| `reviews/round-187-closing.md` | 187라운드 편집자 결정 하나: 07c G3의 플러그인 alias 허용, 문서 정합 항목, 검증기 분기 범위 |
+| `reviews/round-188-closing.md` | 188라운드 편집자 결정 하나: 외부 오류 변경의 onValidate 통지 복원 |
+| `reviews/round-189-owner-answers.md` | 189라운드 소유자 답 하나: bare NODE_ENV 토큰 유지 |
+| `reviews/round-190-owner-answers.md` | 190라운드 소유자 답 하나: 제한된 unknown 단언 허용, 동결 상수 한 줄 |
+| `reviews/round-191-closing.md` | 191라운드 편집자 결정 하나: G3 완료, batch 가지치기 결함 배정, 복합 설계 결정 |
+| `reviews/round-192-owner-answers.md` | 192라운드 소유자 답 하나: 복합 설계 수용, 측정 시점, 07c 위임, 역할 |
+| `reviews/round-193-owner-answers.md` | 193라운드 소유자 답 하나: inheritDoc 주석 고침, core·SchemaNode 위계 재설계(개선-38) |
+| `reviews/round-194-closing.md` | 194라운드 편집자 결정 하나: G2 완료, 62C-01 범위 |
+| `reviews/round-195-closing.md` | 195라운드 편집자 결정 하나: 1라운드 독립 검증 결과와 2라운드 고침 사양 |
+| `reviews/round-196-owner-answers.md` | 196라운드 소유자 답 하나: isDevelopment를 모듈 상수로 |
+| `reviews/round-197-closing.md` | 197라운드 편집자 결정 하나: 잔여 batch 결함 둘의 배정 |
+| `reviews/round-198-owner-answers.md` | 198라운드 소유자 답 하나: 부재 중 운영과 부속 PR 머지, 최종 상태 |
+| `reviews/round-199-closing.md` | 199라운드 편집자 결정 하나: G1 완료, 소유자 질의 9번 |
+| `reviews/round-200-closing.md` | 200라운드 편집자 결정 하나: 개발 모드 토큰을 사용처마다 |
+| `reviews/round-201-closing.md` | 201라운드 편집자 결정 하나: G5 완료, submit 거부의 길 |
+| `reviews/round-202-closing.md` | 202라운드 편집자 결정 하나: G4 verifier 거부 처리 |
+| `reviews/round-203-closing.md` | 203라운드 편집자 결정 하나: G6 완료, verifier 거부의 처리 |
+| `reviews/round-204-closing.md` | 204라운드 편집자 결정 하나: 2라운드 완료, R3 판정, 측정·검증 시작 |
+| `reviews/round-205-closing.md` | 205라운드 편집자 결정 하나: G7 완료, 서브에이전트 거부 대체, 07c rebase |
+| `reviews/round-206-closing.md` | 206라운드 편집자 결정 하나: 개선-38 문서 수용과 권고 |
+| `reviews/round-207-closing.md` | 207라운드 편집자 결정 하나: 이벤트 그룹 완료, 경고 중복·검증 파동 |
+| `reviews/round-208-closing.md` | 208라운드 편집자 결정 하나: 2라운드 검증 결과와 꼬리 항목 |
+| `reviews/round-209-closing.md` | 209라운드 편집자 결정 하나: 꼬리 재검증, G8 완료 |
+| `reviews/round-210-closing.md` | 210라운드 편집자 결정 하나: 규모 그룹 완료, 열 그룹 마감 |
+| `reviews/round-211-closing.md` | 211라운드 편집자 결정 하나: 복합 결함 둘 배정, R1 읽기 |
+| `reviews/round-212-closing.md` | 212라운드 편집자 결정 하나: 방향 확인 결과와 32b 시점 |
+| `reviews/round-213-closing.md` | 213라운드 편집자 결정 하나: 3라운드 수용, rebase 사슬 |
+| `reviews/round-214-closing.md` | 214라운드 편집자 결정 하나: 복합 완료, 조합 중 쓰기 |
+| `reviews/round-215-closing.md` | 215라운드 편집자 결정 하나: 07c 머지, 32b 시작, 문서 발견 셋 |
+| `reviews/round-216-closing.md` | 216라운드 편집자 결정 하나: 32b 판정 수용, 07b 마무리 순서 |
+| `reviews/round-217-owner-answers.md` | 217라운드 소유자 답 하나: codex·agy 정책 재활성화와 운영 규칙 |
+| `reviews/round-218-closing.md` | 218라운드 편집자 결정 둘: codex 장애 대체 규칙, ④ 설계 변경 |
+| `reviews/round-219-closing.md` | 219라운드 편집자 결정 하나: codex 복구, #358 머지, reviewer 다음 배정 |
+| `reviews/round-220-owner-answers.md` | 220라운드 소유자 물음 하나: 통제와 꼬리, 새 범위 닫음 |
+| `reviews/round-221-owner-answers.md` | 221라운드 소유자 답 하나: 기계적 검증 범위 |
+| `reviews/round-222-closing.md` | 222라운드 편집자 결정 하나: #359 머지, 남은 순서 |
+| `reviews/round-223-closing.md` | 223라운드 편집자 결정 하나: #360 머지, reviewer 종료 |
+| `reviews/round-224-owner-answers.md` | 224라운드 소유자 물음 둘: 속도 현황, 추가 측정 시간 |
+| `reviews/round-225-owner-answers.md` | 225라운드 소유자 답 하나: 방향 확인 실행 |
+| `reviews/round-226-closing.md` | 226라운드 닫기: 방향 확인 통과(3라운드·④) |
+| `reviews/round-227-closing.md` | 227라운드 닫기: 전체 스토리 순회 통과, ⑥ 신호 |
+| `reviews/round-228-owner-answers.md` | 228라운드 소유자 답 하나: #355 병합 허가 |
+| `reviews/round-229-closing.md` | 229라운드 닫기: #355 병합, 07b 마무리 끝 |
+| `reviews/round-230-owner-answers.md` | 230라운드 소유자 답 일곱: 대기열 10·17·19·20·22·23·25·27 |
+| `reviews/round-231-closing.md` | 231라운드 닫기: 230 답 배분(07b-2, 문서 PR) |
+| `reviews/round-232-owner-answers.md` | 232라운드 소유자 답 넷: 대기열 9·26 고침, 22 검토, 정리 시점 |
+| `reviews/round-233-closing.md` | 233라운드 닫기: 07b-2 추가 셋, #361 확장, 22 진단 |
+| `reviews/round-234-owner-answers.md` | 234라운드 소유자 답 넷과 이름 재구성 의견 요청 |
+| `reviews/round-235-owner-answers.md` | 235라운드 소유자 답 하나: 이름 재구성 동의, 공모 |
+| `reviews/round-236-closing.md` | 236라운드 닫기: 이름 공모 결과와 권고 |
+| `reviews/round-237-owner-answers.md` | 237라운드 소유자 답 하나: Field 시리즈 선택, 힌트 미정 |
+| `reviews/round-238-owner-answers.md` | 238라운드 소유자 답 하나: inputType 잠정, FieldRenderer |
+| `reviews/round-239-owner-answers.md` | 239라운드 소유자 답 셋: 이름 체계 확정과 대응표 |
+| `reviews/round-240-closing.md` | 240라운드 닫기: 이름 재구성 범위와 결정 다섯 |
+| `reviews/round-241-owner-answers.md` | 241라운드 소유자 답 하나: Label·Error 보류, 재설계 검토 |
+| `reviews/round-242-owner-answers.md` | 242라운드 소유자 답 하나: 이름 치환 전 영역 허용 |
+| `reviews/round-243-owner-answers.md` | 243라운드 소유자 답 둘: 31 닫힘, 32 설명 요구 |
+| `reviews/round-244-owner-answers.md` | 244라운드 소유자 답 둘: 33·34 승인, 07b-2 뒤 함께 |
+| `reviews/round-245-closing.md` | 245라운드 닫기: ②-3 확인, ⑨ 통지 규칙 (가) |
+| `reviews/round-246-closing.md` | 246라운드 닫기: #362 직접 검증, ⑨ 보강 246C-01 |
+| `reviews/round-247-owner-answers.md` | 247라운드 소유자 지시: PR 정리 뒤 다음 작업 준비 |
+| `reviews/round-248-owner-answers.md` | 248라운드 소유자 답: #362 병합 허가 |
+| `reviews/round-249-closing.md` | 249라운드 닫기: #362 병합, #361·07b-3 배분 |
+| `reviews/round-250-owner-answers.md` | 250라운드 소유자 답: 대기열 35 승인(옛 문법 전환) |
+| `reviews/round-251-closing.md` | 251라운드 닫기: #361 검증 통과 |
+| `reviews/round-252-owner-answers.md` | 252라운드 소유자 답: #361 병합 허가 |
+| `reviews/round-253-closing.md` | 253라운드 닫기: #363 검증 통과 |
+| `reviews/round-254-owner-answers.md` | 254라운드 소유자 답: #363 병합 허가 |
+| `reviews/round-255-closing.md` | 255라운드 닫기: #363 병합, 정리 커맨드 갱신 |
+| `reviews/round-256-owner-answers.md` | 256라운드 소유자 답: 대기열 열한 개 정리 |
+| `reviews/round-257-owner-answers.md` | 257라운드 소유자 답: 07b-4 시작, Claude 직접 구현 |
+| `reviews/round-258-owner-answers.md` | 258라운드 소유자 답: 개선-38 결정 다섯·후보 C, 이름 논의 셋 |
+| `reviews/round-259-owner-answers.md` | 259라운드 소유자 답: FieldNode 확정, 대응표 259C-01 |
+| `reviews/round-260-owner-answers.md` | 260라운드 소유자 답: 옛 이름 게이트, 고유명사 재검토 |
+| `reviews/round-261-closing.md` | 261라운드 닫기: 고유명사 재검토 후보 15 |
+| `reviews/round-262-closing.md` | 262라운드 닫기: #364 검증 통과 |
+| `reviews/round-263-owner-answers.md` | 263라운드 소유자 답: #364 병합 허가 |
+| `reviews/round-264-owner-answers.md` | 264라운드 소유자 답: 후보 15 결정과 추가 논의 넷 |
+| `reviews/round-265-owner-answers.md` | 265라운드 소유자 답: 후속 대응표 265C-01 |
+| `reviews/round-266-owner-answers.md` | 266라운드 소유자 관찰: 스토리북 문제 셋 |
+| `reviews/round-267-owner-answers.md` | 267라운드 소유자 지시: 중지 없이 진행, 계획 267C-01 |
+| `reviews/round-268-owner-answers.md` | 268라운드 소유자 지시: codex·agy 멀티에이전트 작업 재개(217C-01 복귀) |
+| `reviews/round-269-owner-answers.md` | 269라운드 소유자 답: 07b-6 결정 승인, nullable 논의 계속 |
+| `reviews/round-270-closing.md` | 270라운드 닫기: #365 병합(17414cd4a), 07b-6·07b-7 착수 |
+| `reviews/round-271-owner-answers.md` | 271라운드 소유자 답: 대기열 46 승인(helpers·components는 compartment) |
+| `reviews/round-272-closing.md` | 272라운드 닫기: #366 병합(c0ddd4b51), 07c 착수 |
+| `reviews/round-273-closing.md` | 273라운드 닫기: #367 병합(beff4b5ec), README 이주 절 조사 배정 |
+| `reviews/round-274-closing.md` | 274라운드 닫기: #368 병합(e5f7f9fa3), 대기열 47 |
+| `reviews/round-275-closing.md` | 275라운드 닫기: #369 병합(4da9567ea), 07c 완료 |
+| `reviews/round-276-owner-answers.md` | 276라운드 소유자 답: 대기열 일괄 답(47·CLAUDE.md:142·G23·38·39·45·48·49·40) |
+| `reviews/round-277-owner-answers.md` | 277라운드 소유자 답: G23 주체는 fairy07, 대기열 39 답변 요구 |
+| `reviews/round-278-owner-answers.md` | 278라운드 소유자 물음: 대기열 40 내용, 39 덮어쓰기 규칙 정정 |
+| `reviews/round-279-owner-answers.md` | 279라운드 소유자 답: 계속 진행 |
+| `reviews/round-280-owner-answers.md` | 280라운드 소유자 답: 38 자유도 유지 규약, alias 자리 확인 |
+| `reviews/round-281-owner-answers.md` | 281라운드 소유자 답: 다음 단계 방향 |
+| `reviews/round-282-owner-answers.md` | 282라운드 소유자 메모: 08단계 씨앗과 filid 질문 |
+| `reviews/round-283-closing.md` | 283라운드 편집자 결정 하나: PR #370 병합 |
+| `reviews/round-284-closing.md` | 284라운드 편집자 결정 하나: PR #371 병합 |
+| `reviews/round-285-closing.md` | 285라운드 편집자 결정 하나: G23 닫힘 |
+| reviews 아래 improvement-38-explain.html | 개선-38 소유자용 설명(seiri:explain) |
+| reviews 아래 improvement-38-fractal-map.md | 개선-38 고찰 문서(reviewer, verifier 대조판) |
+| reviews 아래 raw-improvement-38 디렉터리 | 개선-38 근거: 소비자 증거 표, filid 요약 |
 | reviews/raw-round97-gate-selection/ | 97라운드 원자료: 게이트 선택 설계안의 독립 검증 보고 |
 | `reviews/round-28-closing.md` | 28라운드 편집자 결정의 정본(28C-01~08: 04(PR-3+PR-6) 실행 계획 초안의 해석 일곱 건과 후속 둘 — 개발 모드 정착 기록의 자리, `enabled`와 떼어진 노드의 상태 게터, `@` 맥락과 `setContext`의 PR, 억제 비트와 `resetInteraction`, `unsetOnInactive` 식의 throw, TEST-071의 값 크기, `watchValues`의 PR, `node.context`의 PR과 맥락 변경 정착). 보충 줄만 |
 | `reviews/round-29-closing.md` | 29라운드 편집자 결정의 정본(29C-01~04: 생긴·로드된 노드의 파생 규칙은 원천이 `undefined`여도 발화, 채움 뒤의 값 변화는 새 에지, v7의 모형 선택은 이식하지 않음; 식이 던진 정착의 채움·나감 비움은 진행, 03의 전이 전체 생략은 결함; 공유 충돌 정착도 진행하고 원본 B는 예산 초과에만; 조각 `controls`의 `injectTo`는 불허). 보충 줄만 |

@@ -46,7 +46,7 @@ flowchart LR
 | 05 | [05-dispatch-and-validation/](05-dispatch-and-validation/) | PR-4(LANDING-064·084·093), ajv6·7·8 포함 | 03 | 04·06과 병렬 |
 | 06 | [06-array/](06-array/) | PR-5(LANDING-065·085·094) | 03 | 04·05와 병렬 |
 | 07 | [07-switch/](07-switch/) | PR-7(LANDING-067·087·095), 레거시 보존 — PR #354 리뷰 중(2026-10-11; 142·143라운드 답으로 G26은 157라운드 답으로 닫힘(세 행 수용, replace-200은 개선-32로 이월), G27은 158라운드로 닫힘(제거 11, 이유 적힌 단언 3), G23은 180라운드 답으로 닫힘(게이트 36개 모두 충족); 175라운드 답으로 reviewer 세션이 리뷰 고침을 직접 커밋 중이며 그 재확인 뒤 소유자가 머지 — `../reviews/owner-queue-07.md`) | 02–06 전부 | 원샷 |
-| 07b | (디렉토리는 소유자가 열 때 만든다) | 소유자의 이해와 인터페이스 확정, 내부 코드 스타일링 — 159라운드 답으로 07 병합 전에 feat/schema-form-switch 위에 쌓은 브랜치의 PR로 시작, fixy07이 진행하고 소유자가 리뷰(개선-34 → 배정·감사 → 개선-32) | 07 PR #354 위에 쌓음 | — |
+| 07b·07c | (디렉토리는 소유자가 열 때 만든다; 07c는 186라운드 답으로 연 스토리 재구성 — fairy07, `feat/schema-form-07c-stories`, `../reviews/story-regroup-proposal-184.md`) | 소유자의 이해와 인터페이스 확정, 내부 코드 스타일링 — 159라운드 답으로 07 병합 전에 feat/schema-form-switch 위에 쌓은 브랜치의 PR로 시작, fixy07이 진행하고 소유자가 리뷰(개선-34 → 배정·감사 → 개선-32) | 07 PR #354 위에 쌓음 | — |
 | 08 | [08-plugins/](08-plugins/) | UI 플러그인 넷(LANDING-206) | 07b | 최적화와 병렬 |
 | 최적화 | [perf-optimization/](perf-optimization/) | 원장 PR 없음 — 27라운드 소유자 답(TEST-027 보충)의 "구현 완료 뒤 별도 작업". 대장 `../verification/performance-issues.md`의 열림 행 | 07 | 08과 병렬, 09 전 |
 | 09 | [09-release-and-cleanup/](09-release-and-cleanup/) | PR-8(LANDING-068·096) + `src/__legacy__/` 삭제(LANDING-205) | 08, 릴리스 전환 PR | — |

@@ -292,7 +292,8 @@
 
 - 결정:
   > - 제어 키는 `controls` 안에만 적는다. 평면 `&키` 축약과 `computed` 별칭은 없다(15라운드). 그룹이 "이 키는 폼의 것"이라는 표시를 하므로 `&`가 하던 둘째 일은 사라졌고, 남은 평평한 철자 하나를 위해 우선순위 규칙·이중 타입·이중 문서를 치르는 것은 G4(하나의 개념에 하나의 장치)에 걸린다. 서버 스키마에 넘길 때는 그룹 셋을 지우면 끝이고, 서버 스키마와 클라이언트 스키마를 합칠 때는 그룹 셋만 덧붙이면 된다.
-- 보충: 없음
+- 보충:
+  > 편집자 결정(216C-03): "【추론】 형은 런타임이 받는 것만 광고해야 하고, 런타임이 옛 키를 조용히 무시하는 것은 원장이 정한 "맨 키는 검증기로"의 결과이므로 형 삭제와 별개의 제품 질문이다." (`reviews/round-216-closing.md:42`)
 - 상태: 현행
 - 출처: `adr/0003-group-namespace.md:50`(정본), `08-design-a-to-z.md:93`, `08-design-a-to-z.md:338`, `03-mental-model.md:53`, `02-target-overview.md:319#3`(SURFACE-021의 정본 위치), `02-target-overview.md:319#4`(SURFACE-022의 정본 위치)
 - 닫은 사람: 소유자 답(`reviews/round-15-decisions.md:12` 4), 소유자 답(`reviews/round-15-decisions.md:13` 5), 소유자 답(`reviews/round-15-apply-spec.md:46` 숏컷 폐지), 소유자 답(`reviews/round-15-apply-spec.md:79` 숏컷 폐지), 소유자 답(`03-mental-model.md:37` 숏컷 폐지)
@@ -484,6 +485,7 @@
   > "| `resetInteraction` | 동사 | 노드 | 커밋 | 식이 참이 되면 `dirty`·`touched`를 초기화한다. 값은 건드리지 않는다 | `unsetValue`와 같은 시점 규칙 | 같음 |" (`08-design-a-to-z.md:111`)
   > 편집자 결정(28C-04): "【추론】 `DisableAutomaticWrites`로 억제한 로드(`FormHandle.reset(DisableAutomaticWrites)` 등)에서도 `controls.resetInteraction`은 커밋 단계에서 로드된 값으로 판정하고 참이면 `dirty`·`touched`를 비운다." (`reviews/round-28-closing.md:47`)
   > 편집자 결정(28C-04): "【추론】 억제 비트의 범위는 그 호출이 일으킨 예약 층의 자동 쓰기(채움, `controls.derived`, `controls.injectTo`, `controls.unsetValue`, 나감의 비움)이고, `controls.resetInteraction`은 원본 쓰기도 예약 층의 자동 쓰기도 아니므로(EVENT-012) 그 범위 밖이다; 포커스 아웃 `trim`은 호출 비트가 아니라 Form 속성 `disableAutomaticWrites`만이 억제한다(21C-01, WRITE-100)." (`reviews/round-28-closing.md:48`)
+  > 편집자 결정(202C-01): "【추론】 소유자는 멈춤 없이, 권한 문제는 미루라고 했다. G4의 품질 증거는 이미 셋이고 PR 최종 검증이 남아 있으니 verifier 하나를 뒤로 미뤄도 위험이 작다." (`reviews/round-202-closing.md:9`)
 - 상태: 현행
 - 출처: `adr/0003-group-namespace.md:80,81,90`(정본), `08-design-a-to-z.md:111`, `07-conclusions.md:127`
 - 닫은 사람: 소유자 답(`reviews/round-12-owner-answers.md:15` 7 "input을 초기화"), 소유자 답(`reviews/round-12-owner-answers.md:13` 5 `&clearValue` 두 문장), 소유자 답(`reviews/round-9-spec.md:68` pristine 정정), 소유자 답(`reviews/round-10-owner-answers.md:32` E-5)
@@ -760,7 +762,9 @@
 
 - 결정:
   > - **이주 항목:** `computed` → `controls`(별칭 없음), `&X` → `controls.X`, `&if`·`computed.if` → 분기 객체의 `controls.active`, 판별식 자동 감지 → `controls.discriminator` 또는 분기별 `controls.active`, `&pristine`·맨 키 `pristine` → `controls.resetInteraction`, `injectTo` → `controls.injectTo`, 맨 키 `disabled`·`visible`·`active` → `controls.*`, 루트 스키마 키 다섯의 특수 처리 제거, 맨 키 `terminal`·`virtual`·`propertyKeys` → `options.*`, 맨 키 `formType`·`FormTypeInput`·`FormTypeInputProps`·`FormTypeRendererProps`·`errorMessages`와 `options`의 플러그인 자유 칸 → `presentation.*`, `options.trim`은 `options`에 남고 포커스 아웃 때 문자열 동작 행이 자른다(17라운드 소유자 답 R17-3), 자식의 식을 `controls.children`으로 옮길 때 `../x` → `./x`, 플러그인 키 `FormGroup`·`FormLabel`·`FormInput`·`FormError` → `FormTypeGroupRenderer`·`FormTypeLabelRenderer`·`FormTypeInputRenderer`·`FormTypeErrorRenderer`, Form 속성 `CustomFormTypeRenderer` → `FormTypeGroupRenderer`(같은 이름의 Form 속성 셋이 새로 생긴다), `ChildNodeComponentProps`와 `FormGroupProps`의 prop `FormTypeRenderer`(와 `OverridableFormTypeInputProps`의 Omit 목록) → `FormTypeGroupRenderer`.
-- 보충: 없음
+- 보충:
+  > 편집자 결정(216C-03): "【추론】 형은 런타임이 받는 것만 광고해야 하고, 런타임이 옛 키를 조용히 무시하는 것은 원장이 정한 "맨 키는 검증기로"의 결과이므로 형 삭제와 별개의 제품 질문이다." (`reviews/round-216-closing.md:42`)
+  > 편집자 결정(216C-04): "【추론】 코어가 React를 모르는 채로 문맥을 적는 길이 있으면 제네릭을 늘리거나 any로 내리는 것보다 낫다. 런타임이 거부하는 자리에서 설정을 읽는 입력은 형 문제가 아니라 이주가 끝나지 않은 결함이고, 원장이 그 자리를 이미 정했으므로 바로 고친다." (`reviews/round-216-closing.md:57`)
 - 상태: 현행
 - 출처: `adr/0003-group-namespace.md:139`(정본), `08-design-a-to-z.md:130`, `03-mental-model.md:53`, `adr/0003-group-namespace.md:125`
 - 닫은 사람: 소유자 답(`reviews/round-15-decisions.md:13` 5), 소유자 답(`reviews/round-15-decisions.md:21` 8), 소유자 답(`reviews/round-10-owner-answers.md:32` E-5), 소유자 답(`reviews/round-13-owner-answers.md:7` 1 잠금 규칙), 소유자 답(`reviews/round-17-owner-answers.md:11` R17-3)
@@ -1168,7 +1172,8 @@
   > 【추론】 새 설계는 재작성을 하지 않고(LANDING-019), 만드는 쪽과 읽는 쪽을 모두 PR-1에서 걷어 낸다(LANDING-081).
   > 【추론】 따라서 `options`의 닫힌 목록에 넣지 않는다.
   > 【추론】 작성자가 맨 키로 적은 `virtualRequired`는 JSON Schema 층의 모르는 키로 검증기에 가며, 폼은 읽지 않는다(CONTROLS-001).
-- 보충: 없음
+- 보충:
+  > 소유자(230라운드, 대기열 19 옛 키 진단): "아냐 따로 하지마. 조용히 무시(커스텀 키 무시)" (`reviews/round-230-owner-answers.md:9`)
 - 상태: 현행(부정 결정)
 - 출처: `reviews/round-18-closing.md:1982-1986`(정본)
 - 닫은 사람: 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-70)
@@ -1310,7 +1315,12 @@
   > 【추론】 맨 키 `placeholder`는 JSON Schema 층의 모르는 키로 검증기에 가고 폼은 읽지 않는다.
   > 【추론】 그래서 `placeholder`가 검증기에 간다고 적은 `adr/0003-group-namespace.md:125`는 맨 키로 적었을 때의 사실로 읽으며, `reviews/round-14-owner-review.md:55`와 어긋나지 않는다.
   > 【추론】 `errorMessages`는 이미 `presentation.errorMessages`로 정해졌고(CONTROLS-051), `presentation`은 통째로 검증기 앞에서 지워진다(LANDING-031).
-- 보충: 없음
+- 보충:
+  > 편집자 결정(216C-04): "【추론】 코어가 React를 모르는 채로 문맥을 적는 길이 있으면 제네릭을 늘리거나 any로 내리는 것보다 낫다. 런타임이 거부하는 자리에서 설정을 읽는 입력은 형 문제가 아니라 이주가 끝나지 않은 결함이고, 원장이 그 자리를 이미 정했으므로 바로 고친다." (`reviews/round-216-closing.md:57`)
+  > 편집자 결정(222C-01): "【추론】 입력 설정의 자리는 원장이 정한 대로 돌아갔고 옛 자리는 청사진 오류로 고정됐으므로, 이주 미완으로 쓸 수 없던 일곱(실제로는 열일곱) 기능이 돌아왔다." (`reviews/round-222-closing.md:9`)
+  > 소유자(230라운드, 대기열 20 플러그인 잔여 넷): "일관성 맞춰주렴" (`reviews/round-230-owner-answers.md:10`)
+  > 편집자 결정(231C-01): "【추론】 승인된 다섯 변경은 모두 패키지 안의 문서·스토리·플러그인 형·시험이라 한 PR로 묶어도 검증 비용이 작고, 문서 사이트는 패키지 밖이라 따로 둔다." (`reviews/round-231-closing.md:9`)
+  > 편집자 결정(233C-01): "【추론】 엔진이 presentation.formType만 읽기로 정해진 뒤 내장 정의가 최상위 키를 검사하는 것은 새 범위가 아니라 전환이 남긴 어긋남이고, 고치지 않으면 내장 checkbox·radio가 공개 문법으로 쓸 수 없다. 데모 코드의 옛 문법은 문서가 가르치는 것과 돌아가는 것이 달라지는 문제라 문서 PR의 범위다." (`reviews/round-233-closing.md:11`)
 - 상태: 현행
 - 출처: `reviews/round-18-closing.md:2014-2021`(정본)
 - 닫은 사람: 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-72)

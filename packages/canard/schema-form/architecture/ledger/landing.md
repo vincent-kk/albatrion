@@ -449,7 +449,11 @@
   > | # | 오늘 | 새 설계 |
   > | --- | --- | --- |
   > | 15 | 조각이 꺼지면 원본을 지우고 켜지면 노드가 생성될 때의 값(없으면 `default`)으로 복원 | 기본 유지(방출에서만 빠짐). 비움은 `unsetOnInactive` |
-- 보충: 없음
+- 보충:
+  > 편집자 결정(191C-01): "【추론】 batch 결함은 소유자가 복합 동작에 힘을 실으라고 한 바로 그 종류이고, 단일 쓰기에서는 보이지 않으니 지금까지의 시험이 놓친 것이다. 원장 계약을 어기는 제품 결함은 머지 전에 고쳐야 하고, 고칠 자리(dispatch)는 reviewer가 지금 쥔 브랜치라 그쪽에 두는 것이 가장 빠르다. 복합 설계의 공통 결정 넷은 시나리오 패키지의 경계(형을 넓히면 모든 소비자에 닿음)를 지키는 쪽이 맞고 소유자가 정할 성격이 아니다. 사례 목록은 소유자가 "치밀하게"를 요구했으니 소유자가 본다." (`reviews/round-191-closing.md:9`)
+  > 편집자 결정(197C-01): "【추론】 둘 다 고침 후보와 재현이 이미 손에 있고 같은 파일 군이라 지금 고치는 비용이 가장 낮다. 2라운드가 길어지지만 소유자가 복합 동작의 정확성을 우선했다." (`reviews/round-197-closing.md:9`)
+  > 편집자 결정(211C-01): "【추론】 A는 대조군이 명확해(순차는 되고 통째·batch만 안 됨) 잠복 기록 시점의 결함이고, B는 평평한 경우와 단일 $ref가 되는데 재귀 중첩만 안 되니 전개 쪽 결함이다. 둘 다 소비자가 바로 만나는 모양이라 머지 전에 고친다." (`reviews/round-211-closing.md:9`)
+  > 편집자 결정(213C-01): "【추론】 세 고침은 떠나는 노드의 잠복 캡처와 청사진 간선 게이트라는 좁은 seam에 있고 측정 경로를 건드리지 않았으며 직접 재검증으로 사양 일치를 봤다. 이제 rebase 사슬(switch → 07b-1 → 07c)을 한 번에 돌리는 것이 가장 싸다." (`reviews/round-213-closing.md:9`)
 - 상태: 현행
 - 출처: `08-design-a-to-z.md:447`(정본), `07-conclusions.md:423`, `08-design-a-to-z.md:305`, `02-target-overview.md:355`
 - 닫은 사람: 소유자 답(`reviews/round-13-owner-answers.md:8` 2 나감 비움 기본값), 소유자 답(`reviews/round-13-owner-answers.md:17` 나감 정책 키 이름)
@@ -641,7 +645,8 @@
   > | # | 오늘 | 새 설계 |
   > | --- | --- | --- |
   > | 29 | 꺼졌다 켜질 때 노드 생성 시점의 값으로 복원, `oneOf` 전환에서 같은 이름·같은 타입 값을 이음 | 원본은 그대로 남는다(기본). 잇기 장치는 없고 노드 공유가 대신한다 |
-- 보충: 없음
+- 보충:
+  > 편집자 결정(191C-01): "【추론】 batch 결함은 소유자가 복합 동작에 힘을 실으라고 한 바로 그 종류이고, 단일 쓰기에서는 보이지 않으니 지금까지의 시험이 놓친 것이다. 원장 계약을 어기는 제품 결함은 머지 전에 고쳐야 하고, 고칠 자리(dispatch)는 reviewer가 지금 쥔 브랜치라 그쪽에 두는 것이 가장 빠르다. 복합 설계의 공통 결정 넷은 시나리오 패키지의 경계(형을 넓히면 모든 소비자에 닿음)를 지키는 쪽이 맞고 소유자가 정할 성격이 아니다. 사례 목록은 소유자가 "치밀하게"를 요구했으니 소유자가 본다." (`reviews/round-191-closing.md:9`)
 - 상태: 현행
 - 출처: `08-design-a-to-z.md:461`(정본), `05-before-after.md:154`
 - 닫은 사람: 소유자 답(`reviews/round-13-owner-answers.md:8` 2 나감 비움 기본값), 편집자 결정(노드 공유, `05-before-after.md:154` 근거 `adr/0005:103`)
@@ -695,6 +700,8 @@
   > | 33 | Form 속성 `validatorFactory`는 함수 하나 | `{ compile, compileGuard }` 객체. 플러그인과 같은 계약(§11) |
 - 보충:
   > 편집자 결정(32C-01): "【추론】 Form 속성 `validatorFactory`가 함수 하나에서 `{ compile, compileGuard }` 객체로 바뀌는 것(LANDING-036 이주 33)은 공개 겉면의 변경이고, LANDING-159 규칙 3대로 `src/index.ts`는 PR-7까지 옛 엔진을 가리키며 LANDING-064의 PR-7 행이 Form 속성 `validatorFactory`의 연결을 전환 PR에 두므로, 공개 속성의 형과 동작은 PR-7에서 바뀐다; PR-4 전에는 공개 동작 변경이 없다." (`reviews/round-32-closing.md:10`)
+  > 편집자 결정(216C-02): "【추론】 Form 속성이 객체 계약으로 바뀌었는데 플러그인이 그 객체를 만들어 주지 않으면 소비자는 문서가 약속한 인스턴스별 검증을 잃는다. 추가 export만이라 기존 계약은 그대로다." (`reviews/round-216-closing.md:29`)
+  > 편집자 결정(219C-01): "【추론】 도구가 돌아왔으면 정책은 바로 복귀하되, 절반 넘게 끝난 일을 되돌려 다시 시키는 것은 품질에도 시간에도 손해다. 빌드가 기준 커밋부터 깨져 있는 것은 PR 범위 밖이어도 지금 고쳐야 할 결함이다." (`reviews/round-219-closing.md:13`)
 - 상태: 현행
 - 출처: `08-design-a-to-z.md:465`(정본), `08-design-a-to-z.md:574`
 - 닫은 사람: 소유자 답(`reviews/round-14-owner-answers.md:13` O-7), 편집자 결정(16라운드 정착 검토, `09-landing-and-test-strategy.md:19`)
@@ -1432,6 +1439,8 @@
   > 편집자 결정(34C-01): "【추론】 LANDING-084는 PR-4의 새 fractal 칸에 "`app/plugin/type.ts` 개정"을 적었고 VALIDATE-044는 플러그인이 `Validator`에 소비자 훅 `bind?`만 더 가진다고 했으므로, 플러그인이 구현하고 가져오는 계약 형은 오늘도 공개 index가 내보내는 `ValidatorPlugin`이며 그 개정은 PR-4의 몫이다; 32C-01의 "새 계약 형은 공개 index가 아닌 새 엔진 쪽 모듈에서 내보낸다"는 코어가 받는 계약 형 `Validator`(가칭)와 Form 속성 `validatorFactory`의 공개 형에 한한 말이고, 플러그인용 `ValidatorPlugin`에는 미치지 않는다." (`reviews/round-34-closing.md:9`)
   > 편집자 결정(34C-01): "【추론】 PR-4의 `ValidatorPlugin` 개정은 더하기만 한다: `compileGuard?(root, pointer)`·`release?(root)`를 선택 멤버로 더하고, `compile` 결과 함수의 에러 정규화에 `rejectedKey`를 더한다; 선택으로 두는 까닭은 옛 엔진이 PR-7까지 공개 진입점을 섬기는 동안(LANDING-159 규칙 3) 소비자의 사용자 정의 플러그인이 형 검사에서 깨지지 않게 하는 것이며, 필수로 좁히는 것은 Form 속성이 `{ compile, compileGuard }` 객체가 되는 PR-7(LANDING-036 이주 33)에서 이주 항목과 함께 한다." (`reviews/round-34-closing.md:10`)
   > 편집자 결정(182C-01): "【추론】 인용 오류는 원장의 신뢰를 깎으므로 발견 즉시 바로잡는다. 빌드 결함은 제품 코드가 아니라 저장소의 빌드 도구에 있고 옛 배포본부터 같았으므로 07의 게이트를 다시 열 이유는 없지만, 1.0.0 배포 전에는 고쳐야 ESM 소비자가 개발 전용 비용을 지지 않는다 — 그래서 소유자 결정으로 올린다." (`reviews/round-182-closing.md:9`)
+  > 소유자(193라운드, 주석 고침, core·SchemaNode 위계 재고찰, 현 구조 불수용): "가도 되는데, core 와 schemaNode 의 관계, 그리고 위계에 대해서 충분히 고찰을 하고 고치도록 해. filid 구조검사만으론 통과가 가능할 수도 있는데, 난 지금 구조는 용납하지 않아" (`reviews/round-193-owner-answers.md:7`) — SchemaNode 클래스의 inheritDoc 주석은 reviewer 2라운드에서 직접 문장으로; src/core의 평평한 구조는 소유자가 받아들이지 않으므로 core와 SchemaNode의 관계·위계를 고찰한 문서를 먼저 쓰고 07 머지 뒤 재배치(개선-38)(원장 관리자, 2026-10-13).
+  > 편집자 결정(206C-01): "【추론】 소비자 증거가 "겉면이 엔진의 유일한 출구"를 보여 주니 트리가 그 관계를 말하게 하는 것이 목표이고, C는 그것을 가장 적은 이동(진입점 하나와 이름표 67개)으로 이룬다. B는 겉면 루트를 비대하게 하고 D는 묶음 사이 상호 의존을 만든다." (`reviews/round-206-closing.md:9`)
 - 상태: 현행
 - 출처: `09-landing-and-test-strategy.md:35`(정본), `08-design-a-to-z.md:574`, `05-before-after.md:159`
 - 닫은 사람: 편집자 결정(16라운드 정착 검토), 17라운드 스웜 수렴(편집자 결정, 진입 사슬은 `dispatch`가 소유)
@@ -2714,7 +2723,21 @@
 
 - 결정:
   > 이주(LANDING-181): `Hint.type`·`FormTypeInputProps.type`은 오늘 `node.schemaType`이고(`src/components/SchemaNode/SchemaNodeInput/hooks/useFormTypeInput.ts:70`, `src/components/SchemaNode/SchemaNodeInput/SchemaNodeInput.tsx:124`), 새 설계에서는 `node.type`이며 정수 노드는 `'integer'`에서 `'number'`로 바뀌고 새 칸 `schemaType`이 생긴다(`reviews/round-18-owner-answers.md:36`).
-- 보충: 없음
+- 보충:
+  > 소유자(230라운드, 대기열 23 type 좁힘): "좁힌 채 유지. 단, 타입추론을 방해하거나 타입단언을 강제해야 한다면 고려 필요." (`reviews/round-230-owner-answers.md:12`)
+  > 소유자(234라운드, 대기열 29 최상위 선언 다섯): "어 제거해버려. 이제 안쓰니까" (`reviews/round-234-owner-answers.md:8`)
+  > 소유자(234라운드, 대기열 23 슬롯 형): "가장 나은 방법을 다시 찾아봐. 이게 함수 매개변수의 역추론 과정에서 나온 문제라면 정공법을 찾아보고 안되면 any로 처리해도 무방함. 사용자에게 혼란과 괜한 as 단언을 하게 하는 것 보다 나음" (`reviews/round-234-owner-answers.md:9`)
+  > 소유자(235라운드, 이름 재구성): "이름 재구성에 동의함. 단, 지금 이름을 후보로 넣고, 이름 쌍을 공모한다. 그리고 이들 중 가장 적절한 이름을 구성해보자. 이 동작에 /cennad:crosscheck 사용을 요구한다" (`reviews/round-235-owner-answers.md:7`)
+  > 편집자 결정(236C-01): "【추론】 셋 가운데 둘이 수렴 뒤에도 이유를 들어 `Widget*`에 섰고, 남은 반대의 해결책은 이름을 하나 더 들여오는 것이라 비용이 크다. 공개 API 안의 혼동은 1.0.0 뒤 가장 오래 남는 비용이다." (`reviews/round-236-closing.md:13`)
+  > 소유자(237라운드, 역할 2 이름): "widget 은 아닌거같아. fieldInput 이 더 마음에 드는구나 \n\nField~ 시리즈로 가는 게 더 난 와닿는데.\n문제는  구 formType 키워드로군... inputType 이 겹치는건 예상 못했는데... 겹치면 안될건 없지만 혼란스러우려나.... widget으로 모일건 예상 못했는데 말이야" (`reviews/round-237-owner-answers.md:7`)
+  > 소유자(238라운드, 힌트 이름과 렌더러): "FieldInputRenderer가 아니라 FieldRenderer 아니야? input만 랜더링하는게 아닐거라서.... \ninputType으로 잠정 결정하자." (`reviews/round-238-owner-answers.md:7`)
+  > 소유자(239라운드, 슬롯 렌더러 이름): "FormLabelRenderer·FormInputRenderer·FormErrorRenderer\n\n이건 그대로 쓰는거야?\n\nForm{Label,Input,Error}Renderer 이건 바꿀 필욘 없는건가..." (`reviews/round-239-owner-answers.md:7`)
+  > 소유자(239라운드, Renderer 접미어): "오케이 그건 좋아 근데, 매번 뒤에 renderer 를 붙이는건? 이건 필수적인거야?" (`reviews/round-239-owner-answers.md:8`)
+  > 소유자(239라운드, 확정): "오케이 그럼 지금으로 확정. \n이어지는 질문 하나 더 있어" (`reviews/round-239-owner-answers.md:9`)
+  > 편집자 결정(240C-01): "【추론】 표 밖 이름은 표의 규칙을 기계적으로 넓힌 것이고, 유일하게 규칙으로 정할 수 없는 내장 배열은 "내장"을 접두어로 붙여 공개 이름과 겹치지 않게 한다. CLAUDE.md는 규칙상 소유자 승인이 먼저다." (`reviews/round-240-closing.md:9`)
+  > 소유자(241라운드, Label·Error 전달): "열린 질문은 바로 적용하지 말고 좀 더 고려해 보자.\n이게 Label Error 같은게 Input이랑 좀 다르게 목적에 따라 다른 값이 들어가야돼. 예컨대 Label은 name 일 수도, 아니면 다국어 변환이나 툴팁 등이 있을 수 있으니까. error도 그렇고. 그러니까 기존 설정을 그대로 쓸게 아니라 Label, Error 매개변수 등을 재설계해야 할 수도 있어. 이건 어떻게 생각해? 지금은 어떤 패턴으로 전달받니?" (`reviews/round-241-owner-answers.md:7`)
+  > 소유자(241라운드, 설계 초안 시점): "끝난 다음에 하자." (`reviews/round-241-owner-answers.md:13`)
+  > 소유자(243라운드, 대기열 31): "아 저건 괜찮아. 스키마가 열린 타입이라 그래. 저정도면 무방하다" (`reviews/round-243-owner-answers.md:7`)
 - 상태: 현행
 - 출처: `reviews/round-18-closing.md:2647`(정본)
 - 닫은 사람: 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-93)
@@ -3032,6 +3055,32 @@
   > 소유자(183라운드, ESM NODE_ENV 고침, 스토리 재구성 검토): "어떤 방향이든 고치시죠. 기존 버그도 버그이고, 제 입장에선 꽤 큰 버그로 보이는군요.\nesm 으로 많이 쓰게되니, 적절한 방법으로 수정해주세요. \n해당 값을 상수가 아니라 get 함수로 처리하거나, lazy calc 같은 기법으로 읽는 순간 그 값을 기록하거나.\n\n---\n기존 스키마를 그대로 쓸 수는 없죠.\n우리가 만든 기능들별로 스토리 그룹을 만들고,\n각 그룹별로 기능들에 대한 스토리 테스트,\n그리고 이들을 복합해서 사용하는 스토리 테스트를 구성했으면 합니다.\n\n이건 복잡한 작업이니, 당신이 기능별로 정리해서 요구사항을 처리해보세요.\n\n리뷰어에게 추가 작업을 적층하기 전에, 지금 작업을 마무리한 다음 이어서 하도록 하고싶어요. \n아니면 스토리 디렉토리만 잘 나눠서 처리할 자신 있으면 병렬로 처리해도 됩니다. \n일단 검토부터 해보죠." (`reviews/round-183-owner-answers.md:7`) — ESM 번들의 NODE_ENV 접힘을 두 겹(패키지의 lazy 평가, 빌드 스크립트)으로 고친다; 스토리는 기능별 그룹·기능 스토리 테스트·복합 스토리 테스트로 새로 구성하며 원장 관리자가 기능별 요구사항을 먼저 검토해 올린다(원장 관리자, 2026-10-13).
   > 편집자 결정(184C-01): "【추론】 소유자가 원한 것은 옛 카탈로그의 복원이 아니라 "기능별로 설계된 검증 가능한 스토리"이므로, 그룹은 코드 영역이 아니라 소비자 문서의 기능 경계로 자르고 모든 스토리에 단언을 붙이는 것이 맞다. 옛 사례는 데이터로 복사하지 않되 그룹마다 후보로 적어 두면 걱정한 구성(중첩 oneOf, oneOf+anyOf, $ref 트리)이 빠지지 않는다. 새 디렉토리에만 쓰면 src를 고치는 reviewer와 충돌할 곳이 글롭 한 줄과 export 한 줄뿐이라 병렬로 가도 안전하다." (`reviews/round-184-closing.md:9`)
   > 소유자(185라운드, 자식 외부 오류의 루트 전파를 경로로): "경로로 같은 효과 내는 쪽으로 리뷰어한테 넘겨줘." (`reviews/round-185-owner-answers.md:7`) — 자식 노드의 clearExternalErrors/setExternalErrors가 key 없이 dataPath로 루트 집계(globalErrors·onValidate)에 반영되게 한다(0.16.0 동작의 복원, 잠재 버그 없이); reviewer가 PR #354에서 구현(원장 관리자, 2026-10-13).
+  > 소유자(186라운드, 검토안 수용, 복합 강조, 검증기 분기, 워크트리·PR): "다 제안대로 가자. fairy07한테 지금 병렬로 시작시켜.\n복합 사례는 다양한 사례가 가능한 만큼 치밀하게 구성해야해.\n단일 동작은 테스트도 쉽지만, 발견도 쉽고, 문제 가능성도 비교적 낮아.\n복합 동작에서 대부분 회귀와 타이밍 이슈가 생겼으니 복합동작과 중첩동작에 힘을 싫도록.\n\najv 등을 이용한 검증기 기반 분기 제어도 이번 스토리에 추가하도록. \n\ncomposeStories 는 필요하면 쓰도록 해. \n\n@fairy07 한테 지시하고, 브라우저 테스트까지 하라고 해.\n\n커밋은 지금 리뷰어 작업이랑 충돌할 수도 있으니까 워크트리 나누고, 작업한 다음에 pr로 머지하자. \n그게 안전하겠지?" (`reviews/round-186-owner-answers.md:7`) — 스토리 재구성은 184라운드 검토안대로 fairy07이 별도 워크트리·PR로 지금 시작하며 복합·중첩 동작과 검증기 기반 분기 제어에 힘을 싣는다(원장 관리자, 2026-10-13).
+  > 편집자 결정(188C-01): "【추론】 onValidate는 "폼의 오류 집계가 바뀌었다"를 알리는 통로이고 0.16.0에서 외부 오류도 그 집계에 들어가 통지됐다. 새 판이 검증 결과에만 통지하면 errors prop으로 서버 오류를 넣는 소비자가 다음 검증까지 집계를 못 보게 되어 옛 판보다 좁아진다. 185라운드가 자식 전파까지 루트 집계에 넣기로 했으므로 통지도 같은 자리에서 함께 나가야 일관된다." (`reviews/round-188-closing.md:9`)
+  > 소유자(189라운드, bare NODE_ENV 토큰 유지): "그렇게 해. 리뷰어한테 전해줘" (`reviews/round-189-owner-answers.md:7`) — 개발 모드 판정 함수는 bare process.env.NODE_ENV를 읽고 첫 읽기 결과를 캐시한다(소비자 번들러 치환 유지); reviewer가 183·180 작업을 진행(원장 관리자, 2026-10-13).
+  > 소유자(190라운드, 제한된 `as unknown as` 허용, 한 줄 정리): "이거 말이야. … 이렇게 하지 않은 이유가 있어? 불필요하게 두줄을 쓴거같은데.\n필요하면 제한적인 범위 내에서 unkown 을 써도 돼. 남용하는게 싫은거지 적절하게 쓰는거면 문제없어." / "그래 리뷰어한테 전해줘. 한 줄로 정리하라고." (`reviews/round-190-owner-answers.md:7`) — 150라운드 원칙 3의 예외: 공개 형이 readonly를 허용하지 않는 동결 상수처럼 제한된 자리의 `as unknown as T`는 이유를 적고 허용; EMPTY_CHILDREN은 한 줄로(원장 관리자, 2026-10-13).
+  > 소유자(192라운드, 복합 설계 수용, 측정 시점, 07c 위임, 역할): "복합사례 예정대로 하자. \n측정은 지금 작업들 끝나는대로 픽시한테 지시해. \n\n스토리 복원은 별도 pr 로 올려. \n검증과 측정까지 페어리에게 위임한다.\n너는 관리 및 관제, 기록을 담당하렴. \n\n리뷰어 작업 끝나면 진행하는거지? \n리뷰어는 지금 문제점 발견 후 수정중인거같은데" (`reviews/round-192-owner-answers.md:7`) — 복합 사례 24건 설계안대로; 측정은 리뷰 작업이 끝나는 대로 fixy07; 07c는 별도 PR로 검증·측정까지 fairy07; 원장 관리자는 관리·관제·기록(원장 관리자, 2026-10-13).
+  > 소유자(193라운드, 주석 고침, core·SchemaNode 위계 재고찰, 현 구조 불수용): "가도 되는데, core 와 schemaNode 의 관계, 그리고 위계에 대해서 충분히 고찰을 하고 고치도록 해. filid 구조검사만으론 통과가 가능할 수도 있는데, 난 지금 구조는 용납하지 않아" (`reviews/round-193-owner-answers.md:7`) — SchemaNode 클래스의 inheritDoc 주석은 reviewer 2라운드에서 직접 문장으로; src/core의 평평한 구조는 소유자가 받아들이지 않으므로 core와 SchemaNode의 관계·위계를 고찰한 문서를 먼저 쓰고 07 머지 뒤 재배치(개선-38)(원장 관리자, 2026-10-13).
+  > 소유자(193라운드, 위계 고찰 범위를 패키지 전체로): "그래. 그리고 위계에 대해 고찰하여 fca 구조를 재구성할때, 이 core 뿐만 아니라 다른 프랙탈이나 organ 도 검토를 하도록 해라.\n지금 보니까 위계 구조에 문제가 좀 있어보이는군" (`reviews/round-193-owner-answers.md:13`) — 개선-38의 고찰은 src/core만이 아니라 패키지 전체의 fractal과 organ을 전수로 본다(원장 관리자, 2026-10-13).
+  > 소유자(198라운드, 회귀 시험, explain 문서, 부재 중 운영, 부속 PR 머지, 최종 상태): "좋아 알았어. 지금 문제를 찾는건 한 편으론 또 다행이네.\n다만, 고칠때 적절한 테스트를 구축해서 회귀를 막도록.\n\n구조 고찰을 마무리하면 /seiri:explain 을 써서 전체 프랙탈 구조에 대한 설명을 작성해줘.\n그걸 보고 최종 검증을 하도록 할게.\n\n다만, 나는 잠시 자리를 비울테니까, 내 응답이나 결정이 필요한건 되도록 미루고,\nPR도 feat/schema-form-switch 를 제외하면 알아서 정리하고 머지했으면 해. \n\n최종적으론 feat/schema-form-switch 브랜치 1개만 draft로 열려있고, 나머지 부속 pr들은 전부 마무리 및 검증을 한 다음 합쳐줬으면 해.\n\n그 과정에서 발견되는 문제나 회귀는 바로바로 고치고.\n\n그 상태에서 나는 explain 으로 작성된 프렉탈 소유 도표와 근거 문서를 보고, 그 문서를 리뷰해서 해당 구조로 최종적으로 바꾸는걸 진행하고싶어.\n\n내 말이 이해가 되었니?" (`reviews/round-198-owner-answers.md:7`) — 고침마다 회귀 시험; 소유자 부재 중 결정은 미루고 부속 PR(#355, 07c)은 검증 뒤 원장 관리자가 머지; feat/schema-form-switch만 draft로 남김; 구조 고찰 뒤 seiri:explain 문서를 소유자가 보고 재배치(원장 관리자, 2026-10-13).
+  > 소유자(198라운드, 멈춤 없이, 머지 때 워크트리 정리): "좋아. 그럼 잘 부탁할게. \n내가 돌아왔을때 작업이 멈춰있거나 권한문제에 걸려서 중지되어있지 않길 바라. \npr을 머지할때면 적절하게 워크트리도 정리해줘." (`reviews/round-198-owner-answers.md:13`) — 거부된 항목은 기록하고 다음으로; 부속 PR 머지 때 해당 워크트리와 브랜치를 정리(원장 관리자, 2026-10-13).
+  > 편집자 결정(212C-01): "【추론】 방향 확인은 판정이 아니라 "회귀 방향이 없다"를 보는 문턱이고 그 문턱을 넘었다. rebase를 두 번 하지 않도록 3라운드 push를 먼저 기다리는 것이 싸다." (`reviews/round-212-closing.md:13`)
+  > 편집자 결정(216C-01): "【추론】 다섯 부분에 판정된 이득도 차단 회귀도 없으면 커밋 2는 "손해 없는 정리"로 ADOPT가 맞고, 그 위에서 07b의 나머지는 측정과 무관한 정리·형·문서다." (`reviews/round-216-closing.md:17`)
+  > 편집자 결정(222C-01): "【추론】 입력 설정의 자리는 원장이 정한 대로 돌아갔고 옛 자리는 청사진 오류로 고정됐으므로, 이주 미완으로 쓸 수 없던 일곱(실제로는 열일곱) 기능이 돌아왔다." (`reviews/round-222-closing.md:9`)
+  > 소유자(224라운드, 속도 게이트 현황과 추가 측정의 시간): "그러고보니 속도 게이트는 어떻게됬어? 측정 및 개선 다 했어?" / "그래 좋긴 한데 시간이 엄청 더 걸리는거 아닌가 그럼?? 좀 걱정인데" (`reviews/round-224-owner-answers.md:7`)
+  > 편집자 결정(226C-01): "【추론】 방향 확인은 "회귀 방향이 없다"를 보는 문턱이고, 같은 부호 행이 모두 후보가 빠른 쪽이면 문턱을 넘은 것이다. 순회를 ⑤ head 위에서 하는 것이 ⑥ 뒤 재순회를 피하는 길이다." (`reviews/round-226-closing.md:11`)
+  > 소유자(228라운드, #355 병합 허가): "내가 명시적으로 허가한다. 병합을 해도 된다" (`reviews/round-228-owner-answers.md:7`)
+  > 편집자 결정(229C-01): "【추론】 220라운드가 닫은 범위(진행 중 셋만 마무리)는 이 병합으로 다 채워졌고, 그 뒤의 일은 모두 소유자 결정이 먼저다." (`reviews/round-229-closing.md:9`)
+  > 소유자(230라운드, 대기열 10 CLAUDE.md): "업데이트 승인" (`reviews/round-230-owner-answers.md:7`)
+  > 소유자(230라운드, 대기열 17 문서 사이트): "승인" (`reviews/round-230-owner-answers.md:8`)
+  > 편집자 결정(231C-01): "【추론】 승인된 다섯 변경은 모두 패키지 안의 문서·스토리·플러그인 형·시험이라 한 PR로 묶어도 검증 비용이 작고, 문서 사이트는 패키지 밖이라 따로 둔다." (`reviews/round-231-closing.md:9`)
+  > 소유자(232라운드, 정리 명령 시점): "마지막으로 정리하는 커멘드는 다 하고 하자" (`reviews/round-232-owner-answers.md:10`)
+  > 소유자(234라운드, CLAUDE.md 76·138행): "승인" (`reviews/round-234-owner-answers.md:10`)
+  > 소유자(242라운드, CLAUDE.md 치환): "어 치환 허용. docs 를 포함해서 모든 영역에 대한 수정 허용" (`reviews/round-242-owner-answers.md:7`)
+  > 소유자(244라운드, 순서): "그래 다 하면 알려줘.\n파일구조 변경도 해야되니까 그 다음에" (`reviews/round-244-owner-answers.md:16`)
+  > 소유자(258라운드, 다섯 결정과 후보): "1. core 이름을 두죠.\n2.  engine 수출 + core 재수출\n3. 불필요하다면 지우세요.\n4. 프렉탈로 올리세요 \n5. 네 제안했던 구조로 갑니다.\n\n구조는 C 로 가요. \n\n다만 몇 가지 추가 요청이 있습니다.\n\n1. core 하위의 SchemaNode 가 직접 new 되는 경우보다는 factory 를 통해서 생성되는 경우가 대부분이라면, factory 가 본체 아닌지? 오히려 SchemaNode 는 구현체고, factory 가 인터페이스의 주류가 아닐까 싶은데.\n\n2. packages/canard/schema-form/src/components/SchemaNode 에서 이 디렉토리 이름이 SchemaNode 가 맞는가? 오히려 FieldProxy 나 FieldNodeProxy 같은 이름이 더 적절하지 않은지?\n\n3. SchemaNode 라는 이름이 적절할까? 오히려 Field 라고 네이밍을 바꾸면서 이것도 FieldNode 로 바꾸는게 어떤가? \n\n이들에 대해서 추가로 논해보자" (`reviews/round-258-owner-answers.md:7`)
+  > 소유자(259라운드, FieldNode·이름 셋·순서·범위): "FieldNode로 가자. 이름 셋도 제안대로. 이름 먼저, 구조 다음.  \n관련된 이름과 문서를 모두 바꿔야 한다. 레거시는 건들이지 말고." (`reviews/round-259-owner-answers.md:7`)
+  > 소유자(260라운드, 이름 변경의 범위와 검사): "좋아. 이번에 사실상 레거시 이름을 거의 다 바꾸고 있어.\n이로서 우리가 전체 시스템을 구성하는 주요 명칭을 바꾸게 되었는데,\n이때 \n1. 레거시 이름이 누락되어 남지 않게 검사를 철저히 하고 \n2. 다른 핵심 고유명사 중 변경이 필요한게 추가로 있을지 검토해봐 \n\n이번에 바꾸는김에 핵심 시스템 구성 이름을 다 바꾸고 가고싶어서 그래. \n방향은 이해했지?" (`reviews/round-260-owner-answers.md:7`)
 - 상태: 현행
 - 출처: `reviews/round-18-owner-answers.md:44`(정본, 반영 칸), `reviews/round-18-owner-answers.md:45`
 - 닫은 사람: 소유자 답(`reviews/round-18-owner-answers.md:44` 개발계획 P3·P4), 소유자 답(`reviews/round-18-owner-answers.md:45` 개발계획 1-가)
@@ -3117,7 +3166,68 @@
 
 - 결정:
   > 【추론】 이주(LANDING-210): 공개 표면의 배열(`FormProps.errors`와 `onValidate`의 인자, `FormHandle.getErrors()`·`validate()`·`findNodes()`의 반환, `useChildNodeErrors`의 `errorMatrix` 안 배열)은 오늘 변경 가능한 배열 형이고, 새 설계에서는 `readonly` 배열이다 — 돌려준 배열은 코어가 같은 값을 같은 참조로 드는 것이라 소비자가 제자리에서 고치면 안 되며, 받는 배열은 `readonly`가 더 넓은 형이라 오늘의 호출이 그대로 컴파일된다; 옛 배열을 제자리에서 고치거나 변경 가능한 형에 대입하던 소비자는 형 오류를 보며 복사(`[...arr]`)로 고친다.
-- 보충: 없음
+- 보충:
+  > 소유자(230라운드, 대기열 22 onValidate 두 번): "그대로 둬. 아마 그거 프로덕션 리엑트에서는 1번만 나가지않아? 그랬던거같은데" (`reviews/round-230-owner-answers.md:11`)
+  > 소유자(232라운드, 대기열 22 onValidate 두 번): "그럼 한번으로 줄이는게 낫지 않을까? 두번 호출되는게 구조적으로 필수적인지 검토해봐" (`reviews/round-232-owner-answers.md:9`)
+  > 소유자(234라운드, 대기열 22 onValidate 두 번): "b안 적용" (`reviews/round-234-owner-answers.md:7`)
+  > 소유자(243라운드, 대기열 32): "대기열32는 무슨 소리야? 리셋 하면 이전 에러가 남으면 안 되지 않을까..?? 무슨 오류상황이지" (`reviews/round-243-owner-answers.md:8`)
+  > 소유자(243라운드, 대기열 32 결정): "응 그렇게 해줘 reset 을 할때 한번 다시 확인하도록. 무슨 상황인지는 알겠는데 onRequest 모드에서도 reset 할때 초기화는 해줘야할거같구나" (`reviews/round-243-owner-answers.md:14`)
+  > 편집자 결정(245C-01): "【추론】 소유자가 234라운드에서 대기열 22에 고른 B안("합산이 바뀔 때만 통지")과 243C-01(reset 때 빈 목록을 한 번 통지)은 같은 규칙의 두 면이고, (가)는 그 규칙을 한 문장으로 만든다. Form/type.ts의 JSDoc("결과가 목록을 바꿀 때 호출")과도 맞는다. 잃는 호출 둘은 모두 소비자가 이미 `[]`를 받은 뒤의 반복이며, validate()는 반환값으로 결과를 돌려주므로 정보 손실이 없다. (나)는 OnChange의 비동기 검증 때문에 reset 구간을 따로 정의해야 해 설계가 커진다." (`reviews/round-245-closing.md:9`)
+  > 편집자 결정(246C-01): "【추론】 245C-01의 규칙("보고된 목록이 바뀔 때만")을 구현이 절반만 따른 것이고, 소유자가 대기열 22에서 바란 것은 같은 결과의 중복 호출을 없애는 것이다. 참조 비교 한 줄이 규칙을 그대로 코드로 옮기며, 바뀌는 관찰 가능 동작은 errors prop 마운트의 중복 호출 하나뿐이다." (`reviews/round-246-closing.md:9`)
+  > 소유자(247라운드, 다음 순서): "마무리 되면 pr 들 정리하고 다음 작업으로 갈 준비 하거라.\n\n지금까지 상황을 알려다오" (`reviews/round-247-owner-answers.md:7`)
+  > 소유자(248라운드, #362 병합): "내가 명시적으로 허가한다. 병합해도 된다" (`reviews/round-248-owner-answers.md:7`)
+  > 편집자 결정(249C-01): "【추론】 소유자 허가(248라운드)가 있었고 재검증 게이트가 모두 통과했으므로 병합했다. 남은 PR 둘은 서로 독립이라 동시에 진행한다." (`reviews/round-249-closing.md:9`)
+  > 편집자 결정(251C-01): "【추론】 문서 사이트 PR은 코드 패키지를 건드리지 않고(47파일 모두 documents/), 빌드와 옛 이름 grep이 깨끗하며 실제 창 확인이 fairy07 쪽에서 끝났으므로 병합 조건을 채웠다." (`reviews/round-251-closing.md:9`)
+  > 소유자(252라운드, #361 병합): "내가 명시적으로 허가한다. 병합해도 된다" (`reviews/round-252-owner-answers.md:7`)
+  > 편집자 결정(253C-01): "【추론】 변경이 수동 시험 패키지에 한정되고 세 게이트(tsc -b·lint·build)가 통과했으며, 렌더 전후 차이가 모두 "모든 분기 동시 활성"에서 "활성 분기만"으로 바뀐 의도된 방향이므로 병합 조건을 채웠다. 내장 checkbox의 id 중복은 schema-form 쪽 결함 후보라 소유자 대기열로 올린다." (`reviews/round-253-closing.md:9`)
+  > 소유자(254라운드, #363 병합): "응 병합하자" (`reviews/round-254-owner-answers.md:7`)
+  > 편집자 결정(255C-01): "【추론】 대기열 15의 원래 커맨드는 stage-07 워크트리와 07b-1 가지가 있던 때의 것이라, 지금 상태(워크트리 자동 정리, 메인 checkout 두 커밋 뒤)에 맞게 바꿨다. 소유자가 자기 터미널에서 실행한다." (`reviews/round-255-closing.md:9`)
+  > 소유자(256라운드, 대기열 열한 개): "1~5 전부 권고대로 승인. 나머지는 확인했음.\n\n다만, \"스팩\"과 \"동작\"이 달라질 수 있는 부분은 한번 더 설명 요구" (`reviews/round-256-owner-answers.md:7`)
+  > 소유자(256라운드, 설명 확인): "오케이 문제 없다. 그럼 구조변경을 위한 모든 준비가 끝난건가?" (`reviews/round-256-owner-answers.md:13`)
+  > 소유자(257라운드, 시작·구현 주체): "그래 바로 시작하자. \n이번에 한해서는 codex 위임 없이 claude 로 하도록 해. 좀 느리거든" (`reviews/round-257-owner-answers.md:7`)
+  > 편집자 결정(261C-01): "【추론】 소유자가 "핵심 시스템 구성 이름을 다 바꾸고 가고 싶다"고 했으므로 옛 낱말이 남은 것(1), 새 어휘와 섞이는 것(2·11), 한 이름이 여러 뜻인 것(3·7·8·9), 뜻을 말하지 않는 것(4·5·6)을 후보로 올리고, 뜻이 읽히는 이름(14·15)과 작성 API(12)는 유지를 권한다." (`reviews/round-261-closing.md:27`)
+  > 편집자 결정(262C-01): "【추론】 범위가 승인된 36·37과 그 주변 문서에 한정되고 게이트가 모두 통과했으며, 런타임 변경 둘은 고치기 전 실패하는 시험을 동반한다." (`reviews/round-262-closing.md:9`)
+  > 소유자(263라운드, #364 병합): "내가 명시적으로 허가한다. 병합해도 된다." (`reviews/round-263-owner-answers.md:7`)
+  > 소유자(264라운드, 후보 15): "나머지는 권고대로.\n\n2. 이건 명확하게, 현재 노드의 자식 노드라는 의미라, ChildFieldNodes 가 맞긴 한데, 너무 길어지지 않겠나? 어떻게 바꾸는걸 고려하는가?\n\n12. 지당한 지적이다. 변경을 할 수 있겠나? 근데 마땅한 이름이 없어서 이렇게 하긴 했는데... 추천해보거라. 원장에도 고민의 흔적이 있을거다. \n\n13. 공개해야지. 그리고 이건 options 보단 presentation 에 있어야 할 수도 있다. propertyKeyOrder 이런 이름이 더 적절하려나? 그리고 이건 object 타입 노드에만 존재해야 하는거고... \n\n14. 그말은 지당하다. 그래서 form 외부에 jsonSchema 같은 곳에서는 virtual 같은 키가 노출되지 않기를 바란다. 실제로 object 타입 노드의 특수 키로 정의하는 구조일 것이라. \n\n추가로 jsonSchema 에서도 jsonSchema 공식 문법이 아닌 form 전용 키들은 options / controls / presentation 같은 객체 내부로 이동했다. \n혹시 남은 잔여 설정이 있지는 않은가? \n예컨대 object 타입에서 virtual 은 이제 어떻게 선언하게 되는가?" (`reviews/round-264-owner-answers.md:7`)
+  > 소유자(265라운드, 2·12·13·14·nullable): "11, 12 제안대로.  13은 나머지는 모두 수용, 필드 이름만 한번 더 고민을 해줘. propertyOrder 같이 하거나 할 수는 없나? 너무 안예쁘군. \n\nnullable: true 는 수용, 14번 전부 제안대로." (`reviews/round-265-owner-answers.md:7`)
+  > 소유자(265라운드, 다음 단계 확인): "그래 다 끝나면 알려줘. \n그 다음 구조변경을 하는거지?\n답은 내가 다 해줬으니 그대로 할 수 있나?" (`reviews/round-265-owner-answers.md:32`)
+  > 소유자(266라운드, 관찰 1·2·3): "1. 스토리북의 docs 에서 jsonSchema 가 순환참조 오류로 직렬화 실패. 화면이 깨져서 표시됨. 리엑트 노드나 컴포넌트나 함수 등에 의한 이유로 추정, 산발적으로 재현되는 듯. 확인요청. http://localhost:6006/?path=/docs/features-derivation-contextreference--docs \ncomposite 쪽 스토리들이 전부 그런듯.\n\n2. http://localhost:6006/?path=/story/features-composition-nullablebranch--null-ancestor-promotion \n\n\n<pasted_content id=\"f11b\">\nnullable.object-null-branch: LANDING-139 null descendants are unfilled; LANDING-004 explicit activation.\n\n\n</pasted_content id=\"f11b\">\n\n 이슈에서, \n값은 {\"account\":null}, 스키마도 정상이나, form 에는 account.kind [a] 로 표시됨. 이때, kind 의 defualt 는 a 가 맞음. 이 부분이 설계상 정상인가? 화면에 보이는 것과 실제 값이 다르니 나조차 햇갈린다. 이건 null로 선언된 부모객체를 자식객체의 자동채움이 해제할 수 없다는 것 때문에 발생한 문제같은데, 만약 그렇다면 자식 노드의 값도 최소한 비어있어야 하지 않나 싶음. 정말 햇갈림 \n\n3. 스토리들의 가독성이 상당이 낮음. 어떤 동작을 해야할지, 어떤게 옳은 값일지, 현재 오류가 무엇인지 등을 전혀 알 수 없음. 이것은 레거시 스토리를 참고해서 설명과 재현, 그리고 현재값과 기본값, error, 스키마, 그리고 스토리별 설정정보를 페이지 내에 수록해주었으면 함. 지금은 어떤 테스트인지, 어떤게 정상동작인지 등을 파악하기 어려움. 다른것도 마찬가지이나 composite 쪽이 특히 그렇다." (`reviews/round-266-owner-answers.md:7`)
+  > 소유자(266라운드, 순서 확정): "그 순서로 진행해. 구조변경은 이걸 또 다 하고 해야할까?" (`reviews/round-266-owner-answers.md:17`)
+  > 소유자(266라운드, enum undefined 표시): "오케이. 그리고, 하나 추가하자.\nhttp://localhost:6006/?path=/story/composite-cx03profile--case 이거 보다가 나온건데, \nstring enum 같은거 할때 enum selector 를 쓰는 country 필드에서 KR / US  이거 표시할때, 최초에 값이 없는데 KR이 선택된걸로 보이거든. \n이거 이전에 enum에 없는 값(undefined 포함)인 경우에 이걸 임시로 보여주기로 했던거같은데, undefined 는 해당사항이 아닌가" (`reviews/round-266-owner-answers.md:21`)
+  > 소유자(267라운드, 진행 방식): "이정도면 된거같아. \n이번에도 마찬가지로 PR 머지하면서 진행해줘.\n구조정리 및 내가 추가로 요청한거까지 전부 마무리했으면 한다. \n내 결정이 필요한건 대기열에 추가하고, 이후 한번에 처리할 수 있도록 해줘.\n이후 한번에 볼게.\n\n지금부턴 중지없이 쭉 진행했으면 해. \n\n괜찮겠어?\n괜찮겠으면 이후 계획을 한번 브리핑해줘." (`reviews/round-267-owner-answers.md:7`)
+  > 소유자(267라운드, 게이트 실패·병합 허용): "게이트 통과 실패하는 경우도 문제를 파악해서 수정해보도록해. \n정 안되면 그때 나에게 대기로 넘기도록. \n병합도 직접 하도록 해.\n병합을 할 수 있도록 명시적으로 허용할게" (`reviews/round-267-owner-answers.md:23`)
+  > 소유자(267라운드, 병합은 보고만): "병합도 보고만 하고 직접 병합하도록." (`reviews/round-267-owner-answers.md:27`)
+  > 소유자(268라운드, 멀티에이전트 재개): "지금부터는 codex 와 agy 를 사용한 멀티에이전트 작업을 하도록 해.\n내가 이전에 claude 로 하자고 했던거같아서.\n이제 명시적으로 멀티에이전트 작업을 진행하도록.\n규칙은 이전과 같아.\n\n이해했으면 마무리된 작업 처리하고, 멀티에이전트 규칙을 한번 다시 말해줘" (`reviews/round-268-owner-answers.md:7`)
+  > 소유자(268라운드, nullable 잔류): "아 그리고 nullable는 제거가 아니라 잔류야. 가끔 이걸 쓰는 경우도 있어서. 위 계획에서 정정이 필요해" (`reviews/round-268-owner-answers.md:19`)
+  > 소유자(269라운드, 07b-6 결정·nullable): "맞다고 생각하는 방향으로 가도록\nnullable 은 좀만 더 이야기해보자.\n남겨두는게 딱히 비용도 아니고 느려지는것도 별로 없지? ajv도 공식 허용하고. 우리가 jsonSchema 비표준 필드도 많이 쓰는 마당이라 막는 당위성도 좀 애매하네" (`reviews/round-269-owner-answers.md:7`)
+  > 소유자(269라운드, nullable 공식 지원): "그래 nullable은 잔류로 결정. 별도 오류도 없다. 공식지원으로 결정하자." (`reviews/round-269-owner-answers.md:13`)
+  > 편집자 결정(270C-01): "【추론】 게이트는 원장 관리자가 직접 돌렸다: unit·render·react18 3943 통과(타이밍 시험 `global-errors.timing.test.ts` 1건이 verifier·agy 동시 부하에서 41.4 ms로 40 ms 기준을 넘겼고 단독 재실행 통과 — 측정은 조용한 창에서라는 규칙의 재확인), storybook 241, typecheck 0, lint 0, build·test:production, 플러그인 일곱 build·test(130/135/334/2/15/15/5), documents build, G16 CONSUMER_BUNDLE_OK(prod 289,033 B, dev 292,330 B). verifier(opus): 공개 내보내기 92→92, 목록 밖 제거·이름 변경 0, dist 비레거시 704 파일에서 옛 식별자 0, 레이어 id `'fields'`·오류 경로 `/controls/fields` 일관, `.claude`·설정·원장 변경 0 → pass with conditions(조건은 시험 실행이었고 충족). agy: 옛 이름·옛 문법 잔존 0, propertyOrder·options.virtual 서술이 결정과 일치; "병합 차단 사유 있음" 판정은 근거 항목이 문서 수준 지적 넷뿐이어서 편집자가 차단 아님으로 뒤집음. 이월 목록은 fixy07에게 07b-7 브리프 항목으로 전했다. agy §2의 "문서 안 이주 문장 없음"은 PR 본문과 #354 본문이 이주 문장을 담고 있어 README 1.0.0 이주 절을 마무리 단계에 한 번에 쓰는 것으로 처리한다." (`reviews/round-270-closing.md:9`)
+  > 소유자(271라운드, 대기열 46): "잠깐 중간 결정 해줄게. compnents 랑 helpers 를 프렉탈이 아니게 하는 결정, 승인할게" (`reviews/round-271-owner-answers.md:7`)
+  > 편집자 결정(272C-01): "【추론】 게이트는 원장 관리자가 직접 돌렸다: unit·render·react18 3950 통과, storybook 241, typecheck 0, lint 0, build·test:production 20, json-schema 392, 플러그인 일곱(130/135/334/2/15/15/5), documents build, G16 CONSUMER_BUNDLE_OK(prod 289,111 B, dev 292,408 B). verifier(opus): 2b132db02의 런타임 변경은 세 파일뿐(transitionSettlement.ts:90-92의 `context.kind !== 'load'` 제거, loadStaticFirstTree.ts의 동등 처리, hasWrongKindBranchAncestor.ts JSDoc), derive·injectTo 경로(가드 호출처 한 곳)·reset 셋('load' 종류) 확인, 공개 export 변화 0, 금지 경로 0 → pass with conditions(조건은 시험 실행이었고 충족). agy(session 9fb65fe5): 명세 en·ko 문단·예시, 시나리오 둘(VALUE-036 loaded null leaves children unfilled until input promotion; union.null-ancestor-input-promotion 로드 직후 kind undefined·승격 뒤 name만 default), nullable-branch-nodes.md가 결정과 일치, 옛 서술 잔존 0 → 차단 사유 없음. 대기열 45의 넓은 해석은 소유자가 좁히지 않아 그대로 병합했으며, 좁히는 답이 오면 후속 PR로 처리한다. 07c 브리프: 계획 1~8절 + 9절(verifier 대조) + 9.6절(helpers·components는 compartment), 이동 뒤 깨질 시험 둘(buildChildSelectionRuntime 경로 매퍼, dependencyDirection 재작성)과 해석기 사후 조건 포함." (`reviews/round-272-closing.md:9`)
+  > 편집자 결정(273C-01): "【추론】 게이트는 원장 관리자가 직접 돌렸다: storybook 251(단독 실행), unit·render·react18 3949(+todo 1), typecheck 0, lint 0, documents en·ko build. verifier(opus): src 변경 0, 삭제·개명된 export·title 0, 데코레이터는 외부 스토어를 `useSyncExternalStore`로 구독해 Form 재렌더 경로 없음(새 `onValidate` prop은 보고 전용), play 18개 멤버 전부 실질 단언, 옛 이름 0, 금지 경로 0 → pass with conditions(조건은 CLAUDE.md 문안과 시험 실행; 둘 다 충족). 수정 둘(CLAUDE.md 문안, 패널 stage schema `unknown` 선언으로 캐스트 제거)과 선택 하나(`submitOutcomes` 상수 공유)를 같은 PR 커밋 b1a60b0a0으로 반영한 뒤 typecheck·lint·storybook 251을 다시 돌려 통과. 대기열 40의 소유자 관찰은 재현되지 않았으므로 방어 수정이 원인을 잡았다는 보장은 없다. 소유자가 다시 보면 콘솔 문구와 순서를 받아 다시 연다." (`reviews/round-273-closing.md:9`)
+  > 편집자 결정(274C-01): "【추론】 문서만 바꾸는 PR이라 217C-01의 codex 위임 대상이 아니며 fairy07이 직접 편집했다. 검증: agy(session 2d64ed5e)가 표 행마다 0.16·1.0.0 양쪽 path:line을 확인, 원장 관리자가 diff 전문과 `validateControlGroups.ts`의 CONTROL_KEY_SET·OPTION_KEYS를 대조(README의 controls 추가 키 다섯과 options 여섯이 코드와 같음). 영어·한국어 절은 표 39행·목록 8개·소제목 4개·예시 동일. pristine→resetInteraction·injectTo context 8개는 변경 없음으로 확인." (`reviews/round-274-closing.md:9`)
+  > 편집자 결정(275C-01): "【추론】 게이트는 원장 관리자가 직접 돌렸다: unit·render·react18 3840 통과·todo 1(07b-7 대비 −109 = 삭제 helpers 시험 112 − 신규 3; FieldNode 시험 45는 surface로 이동해 통과), storybook 251, typecheck 0, lint 0, build·test:production 20, 플러그인 일곱(130/135/334/2/15/15/5), documents build, G16 CONSUMER_BUNDLE_OK(prod 289,111 B·dev 292,408 B, 07b-7과 바이트 동일), dist/index.d.ts를 07b-7 빌드와 cmp로 바이트 동일 확인. verifier(opus, 1899파일·7733간선 해석): 이동 표·진입점 73·경계(core 밖→core 내부 0, surface→engine 내부 0, engine→surface·index 0)·옛 경로(면제 4 + __legacy__ 6 외 0)·설정·하위 d.ts(1085 동일, 삭제 25는 helpers, 추가 1은 engine/index) 통과; 지적 셋(REACT-009가 이름 금지 목록으로 약해짐 → 이름→출처 맵으로 강화하고 임시 settle 재수출로 실패 확인; 문서 산문의 `dispatch` 네 곳; 검증 도구 진입 파일의 옛 경로 둘)을 같은 PR 커밋 셋(b747da234·3abb74dad·309934660)으로 반영한 뒤 원장 관리자가 typecheck·lint·해당 시험 파일 셋 28건을 다시 돌려 통과. agy(session def33340): engine·surface INTENT/DETAIL 필수 절 구비·내용 일치(surface 멤버 표 53행, 시험 전용 수출 둘의 사유), 옛 경로 잔존 0, 이력 서술 주석 0, 커밋 메시지 다섯 근거 있음·세션 ID 없음 → 차단 없음. filid validate는 fixy07 실행 59건(기준 69건), 순환·경계 위반 0, 새 것은 engine/index 진입 사실 없음 1(indeterminate, 사실 보고). #354 본문에 #369 줄을 더해 갱신." (`reviews/round-275-closing.md:9`)
+  > 소유자(276라운드, 대기열 47): "아니. 그대로 무시한다. 문서로 안내하고 우리는 이걸 고려하지 않는다. 과거와의 결별이다" (`reviews/round-276-owner-answers.md:7`)
+  > 소유자(276라운드, CLAUDE.md:142): "고쳐라" (`reviews/round-276-owner-answers.md:8`)
+  > 소유자(276라운드, G23): "ego 브라우저로 직접 한번 돌려라" (`reviews/round-276-owner-answers.md:9`)
+  > 소유자(276라운드, 대기열 38): "적절한 방향을 제안하여 수정하라" (`reviews/round-276-owner-answers.md:10`)
+  > 소유자(276라운드, 대기열 39): "해당 경우 터미널로 만들지 못하는 이유가 있나? 있다면 어쩔 수 없는데 이유는 모르겠군. " (`reviews/round-276-owner-answers.md:11`)
+  > 소유자(276라운드, 대기열 45): "맞다. form과 노드 데이터와 출력 데이터를 일치시키기 위함이다. 이게 이격이 나면 안된다" (`reviews/round-276-owner-answers.md:12`)
+  > 소유자(276라운드, 대기열 48): "함께 고쳐라 일관되게" (`reviews/round-276-owner-answers.md:13`)
+  > 소유자(276라운드, 대기열 49): "배치 와 테스트 도구는 프렉탈  import 규칙에서 일부 면제된다." (`reviews/round-276-owner-answers.md:14`)
+  > 소유자(276라운드, 대기열 40): "추후 확인해보겠다." (`reviews/round-276-owner-answers.md:15`)
+  > 소유자(276라운드, 발주): "한번 정리 발주하고, 추가내용 설명하라" (`reviews/round-276-owner-answers.md:16`)
+  > 소유자(277라운드, G23 주체): "스토리 도는건 너 말고 다른애 시켜. 넌 관리해야지" (`reviews/round-277-owner-answers.md:7`)
+  > 소유자(277라운드, 대기열 39): "5번에 대해서도 답변 해줘. oneof 터미널" (`reviews/round-277-owner-answers.md:8`)
+  > 소유자(278라운드, 대기열 40·39): "40번은 뭐야? 그리고 oneOf 같은 브랜치 노드들은 그렇게 겹치는 속성들에 대해서 덮어쓰기가 좀 되지않나..? 그랬언거같은데" (`reviews/round-278-owner-answers.md:7`)
+  > 소유자(279라운드, 진행): "좋아 쭉 작업해 다시" (`reviews/round-279-owner-answers.md:7`)
+  > 소유자(280라운드, 대기열 38): "아하.... 1번은 접근성의 문제로 봐야할까? 가능하면 자유도를 해치길 원치는 않는데... 이게 input이랑 라벨을 그리는 곳이 다르다보니까 말이야.. 그리고 실제 상황에서는 사람들이 FieldInput과 FieldRenderer 를 커스텀해서 쓸테니까 사용방식에 따라 올바름 매칭을 하도록 하는게 좋지 않을까 싶기도 하네. 라벨 그리릴땐 인풋이 선출됬는지 알 수가 없으니까" (`reviews/round-280-owner-answers.md:7`)
+  > 소유자(280라운드, alias 자리): "2번은 내가 수정했었구나 그럼 문제없어." (`reviews/round-280-owner-answers.md:8`)
+  > 소유자(281라운드, 다음 단계): "지금 하는 작업 다 하고 나서, 다시 좀 더 디렉토리랑 구성을 다듬어야겠다. 아직 이상한게 좀 있네. \n\n일단 할거 다 하고 PR을 머지하고 다음으로 가자.\n7단계가 너무 비대해졌네." (`reviews/round-281-owner-answers.md:7`)
+  > 소유자(282라운드, 08 씨앗): "아 그래. 그럼 그냥 적어둘게.\n\n1. core 의 표면 외부에서 nodeFromJSONSchema 를 쓰는 곳이 없는거같은데, 왜 이게 root export 인가? 사실 node 에 대한건 node 자체를 만드는 브랜치노드와 root 노드를 만드는 RootNode provider 를 제외하면 몇가지 유틸리티 함수와 타입만 있을텐데. export 구조가 지나치게 복잡하고 최소 export 원칙을 지키지 못하는 것 같아서 점검이 필요해보인다. 밴치마크나 test 는 import 규칙 등에서 면제인 이유는 보조함수가 본 코드의 가독성을 해치는 것을 막기 위함인데, 이게 좀 그런 느낌이 드는군 \n\n2. 이전에 FormInner 로 Form 본체 역할을 하던 컴포논트가 Form/components/FormContents.tsx  로 이름이 변경된거같은데. FormRoot 나 FormCore 나 좀 명확하게 다른 항목(FromInput / Group / Label / Error)과 위계구분이 되어야 하지 않을까 싶다. 지금은 약간 햇갈리는군?\n\n\n\n지금으로서는 가장 거슬리는건 프렉탈들의 최소 export 계약 위반이야.\n이래서 test 들이나 벤치마크를 프렉탈 내부에 두고, 프렉탈 index 를 경유해서 테스트나 벤치마크를 구성하지 않게 한건데, 지금 보니까 테스트나 벤치마크 등도 전부 프렉탈 index 를 경유하는 계약인거같군. 하지만 이건 문제가 있어. 이렇게 되면 사실상 프렉탈 내에 모든 기능코드가 다 index 로 export 되는데 이럼 어떤 함수가 외부계약인지 파악이 어렵잖아.\n\n이건 filid 플러그인의 한계인건가?" (`reviews/round-282-owner-answers.md:7`)
+  > 편집자 결정(283C-01): "【추론】 게이트는 원장 관리자가 직접 돌렸다: unit·render·react18 3867(통과 3866·todo 1), storybook 251, test:production 20, typecheck 0, lint 0, build, G16 CONSUMER_BUNDLE_OK prod 289,269 B·dev 292,566 B(07c 대비 +158 B, label id 규약), 공개 index.d.ts 07c와 바이트 동일, dist의 옛 이름 `__legacy__` 밖 0, `${path}-label` 잔존 0. 플러그인 일곱은 fixy07 수치(130·135·334·17·17·7·2). verifier(opus)는 첫 head에서 FAIL 둘을 찾아 고치게 했고 새 head에서 PASS; agy(session 264b398c)는 문서 en·ko 대조 차단 없음. 38의 최종 규약: 제목 label은 항상 `htmlFor={path}`와 `id="label:${path}"`(루트 `label:`, path 없으면 id 없음), 내장 checkbox·radio 묶음은 `role="group" aria-labelledby="label:${path}"`, 사용자 정의 FieldInput·FieldRenderer는 같은 규약으로 스스로 맞춘다. 39(게이트 없는 oneOf 분기 terminal)는 verifier가 반쪽 규칙임을 보여 대기열 50의 소유자 결정으로 미뤘다." (`reviews/round-283-closing.md:9`)
+  > 편집자 결정(284C-01): "【추론】 범위가 문서·시험·플러그인 label id 한 줄씩이라 verifier·agy 없이 원장 관리자가 diff 전문을 읽었다. 편차 둘을 받아들였다: surface DETAIL의 멤버 표는 Prettier 정렬이 `surface.test.ts`의 53행 셈을 깨뜨려 `<!-- prettier-ignore -->`로 표만 지켰고(정규식 완화는 다음 후보), antd-mobile은 자체 checkbox·radio 정의가 있어 내장 radio를 `FieldRenderer={FormGroup}`로 그려 묶음 이름만 확인했다. 게이트(70656e1e6, 범위): schema-form typecheck·lint, render+react18 1442, surface unit 45, 플러그인 build·lint·test(antd5 18, antd6 18, antd-mobile 3), documents en·ko." (`reviews/round-284-closing.md:9`)
+  > 편집자 결정(285C-01): "【추론】 G23의 정의는 "실제 브라우저에서 돌린다"였고 소유자가 실행 주체를 ego-browser를 쓰는 에이전트로 정했으므로(276·277라운드) 이 결과로 닫는다. 결과 파일: fairy07 scratchpad `g23/results-tip.json`(ego 251건)과 tasks `b1k1pxl83.output`(자동 게이트). 관찰 하나는 열어 둔다: React 경고 "Received NaN for the `defaultValue` attribute"가 세 스토리(features/derivation/derived-and-watch > Derived Chain Manual Edits, scenarios/derive > watch-values, composite/cx10-inject-chain-in-batch > Case)에서 나오며 시험은 통과한다 — 원장 관리자가 debugger에게 원인을 맡겼고 결함이면 1.0.0-beta 위 후속 PR로 고친다. 첫 실행의 대기 조건 오류는 원장 관리자의 스크립트 잘못이다." (`reviews/round-285-closing.md:9`)
 - 상태: 현행
 - 출처: `reviews/round-80-closing.md:17`(정본)
 - 닫은 사람: 편집자 결정(80라운드, `reviews/round-80-closing.md` 80C-02)

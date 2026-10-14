@@ -259,7 +259,10 @@
   > compile(schema):      (value) => Promise<Errors | null> | Errors | null  // 전체 검증, 에러 수집
   > compileGuard(root, pointer): (value) => boolean                           // 동기, 첫 실패에서 중단
   > ```
-- 보충: 없음
+- 보충:
+  > 편집자 결정(219C-02): "【추론】 플러그인 계약 `compileGuard(root, pointer)`의 pointer는 스키마 위치를 뜻하므로, 스키마가 아닌 곳을 가리키는 호출은 계약 위반이고 세 플러그인이 같은 방식으로 거부해야 호출자 버그가 보인다." (`reviews/round-219-closing.md:28`)
+  > 편집자 결정(223C-01): "【추론】 세 플러그인이 같은 코드로 같은 자리에서 거부하므로 호출자 버그가 세 플러그인에서 같은 모양으로 보인다." (`reviews/round-223-closing.md:9`)
+  > 소유자(232라운드, 대기열 26 퍼센트 인코딩): "어 그럼 고치시죠" (`reviews/round-232-owner-answers.md:8`)
 - 상태: 현행
 - 출처: `adr/0004-validator-plugin-compile-guard.md:27-30`(정본), `adr/0004-validator-plugin-compile-guard.md:10,25`, `08-design-a-to-z.md:345,419,466`, `02-target-overview.md:175`
 - 닫은 사람: 편집자 결정(16라운드, `09-landing-and-test-strategy.md:19` 조건 1)
@@ -291,6 +294,7 @@
   > 소유자(52라운드, 05 가드 컴파일 방식): "최초 로드에 대한 이야기인거지? 동작중을 말하는게 아니라?  그런거라면 납득 가능한데. 동작 자체가 그게 안정적이라면 수용한다. 다만, ajv 의 옵션 조절같은건 어차피 우리 플러그인의 기능으로 풀어낼 수 있으니, 수정 가능하게 하던가 하자. 기존 플러그인의 ajv 인스턴스에게 추가 작업을 시키는거라 플러그인 개편이 동반될 수도 있긴 한데... 어떻게 나누면 좋을까? 일단 이대로 하고 후속 플러그인 작업때 같이 봐야하나? 그런데 그럼 form 완성과 plugin 수정이 의존적이 될텐데" (`reviews/round-52-owner-answers.md:8`) — 46C-01 A안(자족한 `if` 부분 스키마의 직접 컴파일, 아니면 루트 위치)을 PR-4에서 조건부로 받아들였다: 최초 로드(마운트) 비용임을 확인했고, 동작이 안정적이어야 하며(가드 시험 전부·차등 시험으로 루트 위치 컴파일과 같은 결과), 플러그인 옵션(기본 켜짐)으로 끌 수 있어야 한다. 변경은 플러그인 `compileGuard` 안에 머물고 코어 계약은 그대로이며, ajv 플러그인 셋의 `compileGuard`는 이미 PR-4의 범위라 따로 나누지 않는다(원장 관리자, 2026-10-01).
   > 편집자 결정(53C-01): "【추론】 ERROR-041은 "어느 환경이든 컴파일 실패는 그 게이트의 가드 실패다(게이트는 거짓, … 정착 오류)"라고 적어 실패의 단위를 게이트 하나로 두었고, ADR 0004 §78은 "가드 컴파일의 실패는 폼 생성의 실패가 아니라 그 게이트의 가드 실패(정착 오류)이고, 전체 스키마 컴파일의 실패는 검증 불가다"라고 둘을 갈랐다; 그러므로 루트의 다른 곳에 있는 컴파일 오류는 그 루트의 전체 검증을 검증 불가(`VALIDATOR_COMPILE_FAILED`)로 만들 뿐이고, 그 오류와 무관하게 자족한 가드가 올바로 평가되는 직접 경로의 동작이 원장이 적은 동작이다. 루트 위치 경로에서 모든 가드가 실패하던 것은 "가드 인스턴스가 위치를 풀며 루트 전체를 컴파일한다"는 방식에서 생긴 한계이지 원장이 요구한 동작이 아니며, 52라운드 조건 (1)의 "같은 판정"은 컴파일되는 루트에서의 판정 일치를 뜻한다(verifier가 확인). 그래서 직접 경로는 F2를 재현하지 않고, 05는 이 차이를 플러그인 README·`CLAUDE.md`·실행 기록과 PR의 소유자 묶음에 "루트 위치 경로의 한계"로 적는다; `$schema`가 있는 루트·가드를 루트 위치 경로로 돌리는 수정은 자족 조건의 보강으로 맞다. 옵션 이름 `configure({ directGuardCompile?: boolean })`은 31C-05의 가칭 목록에 든다." (`reviews/round-53-closing.md:9`)
   > 편집자 결정(55C-03): "【추론】 31C-05대로 가칭의 확정은 PR-4의 몫이고 소유자가 정한 이름이 이기므로, 05가 보낸 넷 가운데 `SchemaNodeRequestType`의 멤버 `Focus`·`Select`·`Refresh`·`Remount`는 30라운드 소유자 답(D-1, EVENT-073)이 정한 이름이라 그대로 확정이고, `ValidatorBindRefusedError`(VALIDATE-050의 가칭 `VALIDATOR_BIND_REFUSED`의 오류 클래스, 35C-07의 플러그인별 Error 하위 클래스 규칙)와 플러그인의 `configure({ directGuardCompile?: boolean })`(52라운드 소유자 답의 "수정 가능하게")은 05의 확정으로 받아 원장에 적는다; `JSONSchemaError`는 새 이름이 아니라 50C-01이 정한 옛 이름의 호환 확장이라 가칭 목록의 항목이 아니다. 나머지 가칭(`INVALID_VIRTUAL_NODE_VALUES`, `MULTIPLE_ERRORS`, `ARRAY_METHOD_ON_NON_ARRAY` 등)은 05가 PR 본문의 최종 목록으로 보내면 같은 방식으로 적는다." (`reviews/round-55-closing.md:24`)
+  > 편집자 결정(219C-02): "【추론】 플러그인 계약 `compileGuard(root, pointer)`의 pointer는 스키마 위치를 뜻하므로, 스키마가 아닌 곳을 가리키는 호출은 계약 위반이고 세 플러그인이 같은 방식으로 거부해야 호출자 버그가 보인다." (`reviews/round-219-closing.md:28`)
 - 상태: 현행
 - 출처: `adr/0004-validator-plugin-compile-guard.md:33`(정본), `adr/0004-validator-plugin-compile-guard.md:46,73`, `08-design-a-to-z.md:345`, `02-target-overview.md:175`, `09-landing-and-test-strategy.md:19`
 - 닫은 사람: 편집자 결정(16라운드, `09-landing-and-test-strategy.md:19` 조건 1)

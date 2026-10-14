@@ -451,7 +451,8 @@
 
 - 결정:
   > 같은 제출 거부라도 `degraded`는 기록되고 검증 실패는 기록되지 않는다. 앞의 것은 폼의 약속이 깨진 사건이고 뒤의 것은 검증 결과이기 때문이다.
-- 보충: 없음
+- 보충:
+  > 편집자 결정(201C-01): "【추론】 ERROR-139는 "어디로 드러나는가"를 적었고 ERROR-016·019는 "무엇이 기록되는가"를 적어 둘을 합치면 검증 거부는 싱크만이다. 제품이 이미 그렇고 스토리가 고정하니 문서 한 문장만 맞추면 된다." (`reviews/round-201-closing.md:9`)
 - 상태: 현행
 - 출처: `adr/0014-error-policy.md:104`(정본), `08-design-a-to-z.md:358`
 - 닫은 사람: 편집자 결정(17라운드, ADR 0014 4판 채택)
@@ -2118,7 +2119,8 @@
 
 - 결정:
   > `FormHandle.submit`과 `useFormSubmit`은 그 프로미스를 거부하고, 부른 쪽이 기다리지 않는 네이티브 submit은 `onError` 뒤 싱크로 보낸다.
-- 보충: 없음
+- 보충:
+  > 편집자 결정(201C-01): "【추론】 ERROR-139는 "어디로 드러나는가"를 적었고 ERROR-016·019는 "무엇이 기록되는가"를 적어 둘을 합치면 검증 거부는 싱크만이다. 제품이 이미 그렇고 스토리가 고정하니 문서 한 문장만 맞추면 된다." (`reviews/round-201-closing.md:9`)
 - 상태: 현행
 - 출처: `adr/0014-error-policy.md:203#5`(정본, ERROR-034에서 분할)
 - 닫은 사람: 편집자 결정(17라운드, `adr/0014-error-policy.md:203`)
@@ -2818,6 +2820,7 @@
   > 편집자 결정(18C-91): "【추론】 `source`는 EVENT-060의 쓰기 출처 값에 `'gate'`를 더한 것이다." (`reviews/round-18-closing.md:2531`)
   > 반영 칸(설계서 메모 4): "게터 `typeMismatch: boolean`, 경로 목록 `typeMismatches: readonly string[]`, 경고 코드 `SCHEMA_FORM_WARNING.TYPE_MISMATCH`." (`reviews/round-18-owner-answers.md:41`)
   > 편집자 결정(61C-01): "【추론】 삭제·대체는 열이다: `JSON_SCHEMA_ERROR.INJECT_TARGET_NOT_FOUND` 삭제(`injectTo` 대상은 정적으로 알 수 없고 동적 실패는 `SCHEMA_FORM_ERROR.INJECT_TARGET_MISSING`, CONTROLS-079); `JSON_SCHEMA_ERROR.INVALID_VIRTUAL_NODE_VALUES` 삭제 → `SCHEMA_FORM_ERROR.INVALID_VIRTUAL_NODE_VALUES`(쓰기 오류로 부류 이동, ERROR-195); `SCHEMA_FORM_WARNING.VALUE_TYPE_MISMATCH` 삭제 → `SCHEMA_FORM_WARNING.TYPE_MISMATCH`(소유자 확정, SURFACE-061); `SCHEMA_FORM_WARNING.UNSET_ON_INACTIVE_ON_OBJECT` 삭제(소유자 판정으로 코드 행 제거); `NodeState` → `SchemaNodeState`, `NodeEventType` → `SchemaNodeEventType`(SURFACE-056, 옛 소비자 이주는 07); `valueTypeMismatch`·`valueTypeMismatches` → `typeMismatch`·`typeMismatches`(SURFACE-061); `latent` → `getInactiveValues(path)`(SURFACE-006); 옛 Form 속성 `onListenerError`와 `throwOnBudgetExceeded` 삭제(기록은 `onError`가 받고, 모든 환경에서 사슬 끝에 던진다). 원장에서 이 옛 이름을 가진 문장은 옛 글로 남고 이 보충이 이긴다." (`reviews/round-61-closing.md:10`)
+  > 편집자 결정(207C-01): "【추론】 (a)는 두 항목이 서로 다른 층(발생·전달)을 적은 것이라 모순이 아니다. (b)는 설계 가치가 분명히 정한 방향(같은 값은 같은 참조)이고 성능에 직접 닿으므로 07b가 맞는 자리다." (`reviews/round-207-closing.md:9`)
 - 상태: 현행
 - 출처: `reviews/round-18-owner-answers.md:9`(정본, S1 셋째의 반영 칸. 표 행이라 조각 번호로 나눌 수 없다. ERROR-182에서 분할), `reviews/round-18-owner-answers.md:17`, `reviews/round-18-closing.md:2527-2528,2531`, `reviews/round-18-owner-answers.md:41`
 - 닫은 사람: 편집자 결정(18라운드, `reviews/round-18-owner-answers.md:9` 반영 칸), 소유자 답(`reviews/round-18-owner-answers.md:17` 12-7; level `warning`), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-91), 소유자 답(`reviews/round-18-owner-answers.md:41` 설계서 메모 4)
@@ -3092,6 +3095,8 @@
   > 편집자 결정(18C-98): "【추론】 `setValue(V)`와 `resetSubtree()`는 초기화하지 않는다." (`reviews/round-18-closing.md:2798`)
   > 편집자 결정(139C-01): "【추론】 105C-01의 "변경 하나에 판정 하나"는 변경의 크기로 면제되지 않는다 — 정수 비교 하나와 형 변경만이라는 근거로 측정을 건너뛰면 규칙은 그때그때의 설명에 따라 달라진다(137C-01·138C-01과 같은 자리). 반면 A/A는 측정기 조건의 소음이라 작은 코드 변경에 무관하다는 134C-01의 전제가 136i(0/68행)로 방금 확인되었으므로 새 A/A는 비용만 더한다; 판정 세션은 main 행 집합 하나로 족한데, B4의 추가 비용은 reset 경로의 정수 비교 하나이고 측정 행(mount·update·BF)은 reset을 돌리지 않으며 array-1000·nested-d5 부분이 더 보는 것은 큰 폼의 같은 경로이기 때문이다 — 번들 차분을 먼저 실어 "그 둘 외의 차이가 없다"를 보이는 것이 이 축소의 조건이다. G27의 코어 형 단언 14개는 작업 공간 규칙(명시적 사용자 승인)에 따라 소유자만 닫을 수 있고 132라운드가 그런 결정을 PR 시점에 묻도록 했으므로 138C-01과 같이 게이트를 정직하게 열어 둔다. B4는 구조 검증이 잡은 실제 회귀이고 F-F의 "소비자가 있을 때만 보고"가 로드 경계를 넘어 상태를 남긴 것이므로, 고침은 상태를 로드 번호에 묶어 F-F의 조건을 지키면서 경계를 되살리는 것이 맞고, 두 React 판에서 고치기 전 실패·고친 뒤 통과하는 시험이 그 증거다." (`reviews/round-139-closing.md:9`)
   > 소유자(180라운드, G23 닫힘, 18C-73 개발 모드·브랜치 노드 한정): "1. 네 확인했습니다. 입력기를 쓰는 부분이라고 해서 직접 진행했죠.\n2. 저도 동의합니다. 개발모드에서만 켜고, object / array 처럼 브랜치 노드에 대해서만 처리했으면 해요. 나머지는 터미널만 가능하니까요. \n리뷰어는 지금 제 요구사항 처리중이긴 한데, 추가로 잘 이야기해줘요" (`reviews/round-180-owner-answers.md:7`) — G23 닫힘(소유자의 실제 IME 확인, Safari 생략); 빈 ChildNodeComponents 읽기 감지기는 개발 모드에서만, object·array 스키마 노드가 터미널이 된 경우에만 둔다; reviewer가 PR #354에서 처리(원장 관리자, 2026-10-12).
+  > 소유자(196라운드, isDevelopment 형태): "2안으로 가자. 리뷰어한테 전해줘." (`reviews/round-196-owner-answers.md:7`) — 개발 모드 판정은 캐시 함수가 아니라 소비자 번들러가 지울 수 있는 모듈 상수 `DEVELOPMENT`로 되돌린다; 늦은 평가를 요구한 183라운드의 이유(ESM 빌드의 접힘)는 PR #356이 해결했다(원장 관리자, 2026-10-13).
+  > 편집자 결정(200C-01): "【추론】 소유자는 1안(캐시 함수 유지)과 2안(번들러가 지우는 상수) 가운데 번들러 제거를 골랐고, 그 제거가 상수로는 안 되고 사용처 토큰으로는 된다는 사실만 새로 드러났다. 목적을 지키는 쪽이 소유자 뜻에 가깝고, 상수로 두면 196라운드가 얻으려던 것이 없다. 토큰 산포의 유지 비용은 lint로 막을 수 있다." (`reviews/round-200-closing.md:9`)
 - 상태: 현행
 - 출처: `reviews/round-18-closing.md:2031-2040,2046-2047`(정본), `reviews/round-18-closing.md:2797-2798`
 - 닫은 사람: 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-73), 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-98)

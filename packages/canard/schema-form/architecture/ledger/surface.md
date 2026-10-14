@@ -111,6 +111,7 @@
   > | 합성 API | `Form.Group`·`Form.Label`·`Form.Input`·`Form.Error`·`Form.Render`와 props `FormGroupProps`·`FormLabelProps`·`FormInputProps`·`FormErrorProps`·`FormRenderProps`. `path`를 받아 그 노드의 일부를 그리며 `Form.Group`·`Form.Label`·`Form.Input`·`Form.Error`는 같은 이름의 `FormTypeXRenderer`를 부르고 `Form.Render`는 소비자가 직접 그린다 | 그대로 |
 - 보충:
   > "이름 없는 형 `FormGroup`·`FormLabel`·`FormInput`·`FormError`·`FormRender`는 합성 구성 요소만 가리키게 된다(플러그인 키가 옮겨 가므로 충돌이 사라진다)." (`reviews/round-15-decisions.md:38`)
+  > 편집자 결정(209C-01): "【추론】 꼬리는 전부 사양대로이고 측정 경로와 독립이라 다시 전체 시험을 돌려 측정을 흔들 이유가 없다. verifier 거부는 세션 공통이라 직접 검증으로 대체하되 그 사실을 적어 둔다." (`reviews/round-209-closing.md:9`)
 - 상태: 현행
 - 출처: `08-design-a-to-z.md:409`(정본), `reviews/round-15-decisions.md:38`
 - 닫은 사람: 소유자 답(`reviews/round-15-decisions.md:21` 8)
@@ -403,6 +404,7 @@
   > 평면 `&` 축약과 `computed` 별칭은 없다(15라운드).
 - 보충:
   > 소유자(15라운드 5): "숏컷을 모두 없애고 중첩 객체로 하는 게 빼기도 편하고 나중에 서버 스키마랑 클라이언트 스키마를 병합하기도 편하겠지" (`reviews/round-15-decisions.md:13`)
+  > 편집자 결정(187C-01): "【추론】 alias와 paths는 스토리북 실행 설정이지 제품 코드가 아니고 lockfile을 건드리지 않으므로 07c의 공유 파일 한계 안에 둘 수 있다. 문서가 옛 문법을 가르치는 것은 스토리 작업의 범위 밖이지만 소비자가 보는 계약이라 정리 항목으로 남기고 소유자가 알아야 한다. 작성 표면 변경이 의도된 것임을 reviewer 개괄에서 빠뜨린 것은 원장 관리자의 누락이다." (`reviews/round-187-closing.md:9`)
 - 상태: 중복(→ CONTROLS-016)
 - 출처: `02-target-overview.md:319#4`(정본), `reviews/round-15-decisions.md:13`, `reviews/round-15-apply-spec.md:46,79`, `03-mental-model.md:37` (같은 규칙: CONTROLS-016)
 - 닫은 사람: 소유자 답(`reviews/round-15-decisions.md:13` 5)
@@ -836,6 +838,10 @@
   > 편집자 결정(79C-01): "【추론】 SURFACE-053은 `globalErrors` 게터를 "트리 전체의 값을 든 런타임을 읽는 문장 하나, 어느 노드에서 읽어도 같다(오늘과 같음)"로 두었고 `FormHandle.getErrors`는 루트에 위임하며, VALIDATE-043 (1)의 "모든 에러는 순서대로 폼 수준 목록에 남는다"는 검증기가 낸 에러의 라우팅이 판정을 바꾸지 않는다는 뜻이지 외부 오류의 포함 여부를 정한 문장이 아니다. 원장이 `globalErrors`의 내용을 바꾸는 이주 행을 두지 않았으므로 내용은 오늘과 같다: 옛 엔진의 `globalErrors`는 루트의 외부 오류를 앞에, 검증의 전역 목록을 뒤에 합친 것이고, Form `errors` 속성은 변환한 목록을 통째로 루트에 걸고 경로마다 해당 노드에도 걸므로 `errors` 속성으로 준 오류는 `getErrors()`에 나오며, 루트 아닌 노드에 `node.setExternalErrors`로 직접 건 외부 오류는 그 노드의 `errors`에만 남고 `getErrors()`에는 나오지 않는다. 그러므로 (가)도 (나)도 아니다: 코어는 런타임의 폼 수준 목록을 "루트의 외부 오류 + 라우팅 목록"으로 만들되 읽을 때가 아니라 둘 가운데 하나가 바뀔 때(루트의 `setExternalErrors`·`clearExternalErrors`, 검증 라우팅) 합친 배열을 다시 만들어 같은 값은 같은 참조로 돌려주고(패키지의 "같은 값을 두 번 읽으면 같은 참조" 규칙), 바인딩은 오늘처럼 `errors` 속성을 루트에 통째로, 경로마다 노드에도 건다(69C-03의 경로 키 재적용은 노드 쪽이고 루트에 거는 것이 함께 간다). 07의 세 사례는 외부 오류를 Form `errors` 속성(또는 루트)으로 걸었으면 `getErrors()` 포함을 단언하고, 루트 아닌 노드에 직접 걸었으면 그 노드의 `errors`만 단언하며 `getErrors()` 단언은 지운다; 사례마다 어느 쪽인지 머리에 적는다. 이주 점검표에는 "`globalErrors`·`getErrors()`의 내용: 변경 없음(루트 외부 오류 + 검증 목록)"으로 한 줄 적어 소비자가 확인할 수 있게 한다." (`reviews/round-79-closing.md:9`)
   > 편집자 결정(178C-01): "【추론】 (1)은 형 표면 밖이지만 0.16.0 JavaScript 사용자가 null을 넘겨도 폼이 서 있었는데 새 판은 던지므로, 비용 한 줄로 옛 관용을 되찾는 편이 전환의 약속(소비자가 보는 동작 동일)에 맞다. (2)는 반대로 옛 판의 부작용(소비자 객체 변형)이고 문서가 의존하지 말라고 한 내부 값이라 되살릴 이유가 없다. 둘 다 "옛 판이 내던 것을 새 판이 못 내는" 종류라 166라운드 규칙대로 편집자가 정한다." (`reviews/round-178-closing.md:9`)
   > 소유자(185라운드, 자식 외부 오류의 루트 전파를 경로로): "경로로 같은 효과 내는 쪽으로 리뷰어한테 넘겨줘." (`reviews/round-185-owner-answers.md:7`) — 자식 노드의 clearExternalErrors/setExternalErrors가 key 없이 dataPath로 루트 집계(globalErrors·onValidate)에 반영되게 한다(0.16.0 동작의 복원, 잠재 버그 없이); reviewer가 PR #354에서 구현(원장 관리자, 2026-10-13).
+  > 편집자 결정(188C-01): "【추론】 onValidate는 "폼의 오류 집계가 바뀌었다"를 알리는 통로이고 0.16.0에서 외부 오류도 그 집계에 들어가 통지됐다. 새 판이 검증 결과에만 통지하면 errors prop으로 서버 오류를 넣는 소비자가 다음 검증까지 집계를 못 보게 되어 옛 판보다 좁아진다. 185라운드가 자식 전파까지 루트 집계에 넣기로 했으므로 통지도 같은 자리에서 함께 나가야 일관된다." (`reviews/round-188-closing.md:9`)
+  > 편집자 결정(195C-01): "【추론】 (1)은 소비자가 가장 흔히 쓰는 모양(값 바뀌면 서버 오류 지우기)에서 루트 목록이 틀리는 회귀라 차단이 맞다. (2)는 소유자가 직접 지시한 변화라 허용 목록에 빠진 것은 내 기록 누락이다. (4)·(5)는 "경로"를 문자열로 읽은 데서 온 것이고 노드 경로로 통일하면 둘 다 사라진다. (3)은 속도와 늦은 평가의 교환이라 소유자 몫이지만, 늦은 평가를 요구한 이유가 사라졌으므로 2안을 추천한다." (`reviews/round-195-closing.md:9`)
+  > 편집자 결정(208C-01): "【추론】 (1)은 오류 경로의 원자성이라 새 동작이 옳고 소비자에게 더 안전하다. 꼬리는 전부 외부 오류 채널과 설정·문서라 쓰기 경로 측정과 독립이다." (`reviews/round-208-closing.md:9`)
+  > 편집자 결정(215C-01): "【추론】 PR의 코드 범위가 시험·스토리·시나리오뿐이고 수치가 직접 재실행과 맞으며 결함은 모두 상류에서 고쳐졌으므로 머지에 남는 위험은 없다. 최상위 virtual 형은 런타임이 무시하는 자리를 형이 허용하는 함정이라 지워야 하지만 공개 형이므로 계획을 거친다." (`reviews/round-215-closing.md:15`)
 - 상태: 현행
 - 출처: `reviews/round-18-closing.md:1155-1159`(정본)
 - 닫은 사람: 편집자 결정(18라운드, `reviews/round-18-closing.md` 18C-41)
