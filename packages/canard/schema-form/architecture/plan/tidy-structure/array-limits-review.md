@@ -13,7 +13,7 @@
 | 항목 | 레거시(0.16) | 새 엔진(1.0.0-beta) |
 | --- | --- | --- |
 | `maxItems` 초과 `push` | 막음(`push(data?, unlimited?)`, `unlimited`로 우회) | 막지 않음. 기본 입력이 `maxItems`에서 추가 버튼만 숨김(`FieldInputArray.tsx:82`) |
-| `minItems` 채움 | 생성·reset 때 아이템 기본값으로 채움. 예외가 많았다: null 배열·derived 배열은 안 채움, reset 플래그 전체 일치 때만 재충전, 채움이 `injectTo`를 발동하지 않게 `PreventInjection`(레거시 ArrayNode DETAIL 9–15·58–69행) | 채우지 않음(시험 고정: VALUE-034·WRITE-022·LANDING-155(시험 이름의 LANDING-116은 WRITE-022로 합쳐진 옛 ID)) |
+| `minItems` 채움 | 생성·reset 때 아이템 기본값으로 채움. 예외가 많았다: null 배열·derived 배열은 안 채움, reset 플래그 전체 일치 때만 재충전, 채움이 `injectTo`를 발동하지 않게 `PreventInjection`(레거시 ArrayNode DETAIL 9–15·58–69행) | 채우지 않음(시험 고정: VALUE-034·WRITE-022·LANDING-155(시험 이름에 남은 옛 ID 하나는 WRITE-022로 합쳐짐)) |
 | 한도의 출처 | 정적 스키마 | 유효 스키마(게이트 분기 `then`/`else`의 기여를 셈, `resolveArrayLimits`) — 런타임에 바뀔 수 있음 |
 | 문서 | — | SPECIFICATION en 986·998행이 아직 "미리 채움·reset 재충전"을 약속(결함, 정돈-E 문서) |
 
