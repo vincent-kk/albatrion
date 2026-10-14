@@ -68,7 +68,7 @@
       "tsconfig.json",
       "tsconfig.declarations.json"
     ],
-    "additionalOrganNames": [
+    "organNames": [
       "fieldInputDefinitions"
     ]
   }
