@@ -39,7 +39,7 @@ const CONTINUING_BRACKET = `[\\[\\]\\{\\}](?=[^\\s\\(\\)\\[\\]\\{\\}\\${$.Separa
 
 /**
  * Path segment: chars except `\s()[]{}~/`, or `~0` `~1`, or balanced/continuing brackets.
- * Valid: `prop` `123` `한글` `field~0name` `items[0]` `config{env}` `weird}key`
+ * Valid: `prop` `123` `café` `field~0name` `items[0]` `config{env}` `weird}key`
  */
 const SINGLE_PATH_SEGMENT = `(?:[^\\s\\(\\)\\[\\]\\{\\}\\${$.Separator}~]|~[01]|${BALANCED_BRACKETS}|${BALANCED_BRACES}|${CONTINUING_BRACKET})+`;
 
