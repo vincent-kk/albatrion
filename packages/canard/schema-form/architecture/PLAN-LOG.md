@@ -530,3 +530,4 @@
 - **301라운드(2026-10-14, 소유자).** 대기열은 원장 원리·코드 확인으로 직접 닫을 것; 53은 값 비조작 원칙의 산물이나 옵션 기능으로 재검토; CLAUDE.md 갱신 진행(reviews/round-301-owner-answers.md).
 - **302라운드(2026-10-14, 소유자).** 53 배열 한도의 유익·손해 비교 요청; 답은 plan/tidy-structure/array-limits-review.md(reviews/round-302-owner-answers.md).
 - **303라운드(2026-10-14, 소유자).** 53의 경계·일관성 물음; 답은 적용 가능성/제약의 선(reviews/round-303-owner-answers.md).
+- **304라운드(2026-10-14, 소유자).** 53 확정: core는 적용 가능성에는 따르고 제약은 강제하지 않는다(WRITE-003 보충, ADR 0013); 현행 유지, 기본 배열 입력의 UI 전용 빈 슬롯은 정돈-S(reviews/round-304-owner-answers.md).

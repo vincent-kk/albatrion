@@ -86,6 +86,7 @@
 | 2026-10-14 | 301라운드 소유자: 대기열은 직접 닫기, 53은 옵션 기능으로 재검토(SPECIFICATION의 minItems 채움 문장은 코드와 어긋남), CLAUDE.md 갱신 진행. 보충 2줄 | `reviews/round-301-owner-answers.md` |
 | 2026-10-14 | 302라운드 소유자 생각: 53 유익·손해 비교 요청 → array-limits-review.md. 보충 1줄 | `reviews/round-302-owner-answers.md` |
 | 2026-10-14 | 303라운드 소유자 생각: 53 경계·일관성 → "적용 가능성에는 따르고 제약은 강제하지 않음" 한 줄. 보충 1줄 | `reviews/round-303-owner-answers.md` |
+| 2026-10-14 | 304라운드 소유자 답: 53 확정(경계 문장 수용, 현행 유지, UI 전용 빈 슬롯 작은 PR, controls 옵트인은 새 라운드). 보충 2줄 | `reviews/round-304-owner-answers.md` |
 | 2026-10-14 | 298라운드 소유자: 구조 리뷰 전까지 정돈 전부 무정지 진행, 판단은 대기열, PR 병합 허용 | `reviews/round-298-owner-answers.md` |
 | 2026-10-14 | 293라운드 소유자: FCA import 멘탈모델(외부·형제·직계, 직계는 내부 모듈, 공통 부모 organ, 부모→자식 비대칭). 보충 2줄 | `reviews/round-293-owner-answers.md` |
 | 2026-10-14 | 294라운드 소유자: 보강 다섯 수용, 모델 기록(fca-import-model.md), 구조 검사 지시, filid 개선 여부는 마지막에 결정. 보충 1줄 | `reviews/round-294-owner-answers.md` |

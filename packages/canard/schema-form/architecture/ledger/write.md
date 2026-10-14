@@ -140,6 +140,7 @@
 - 결정:
   > **제약을 입력 단계에서 강제하는 일은 입력 컴포넌트에 위임한다.** core는 제약을 유효 스키마로 노출하고(`node.jsonSchema`) 위반은 검증이 알린다.
 - 보충: 없음
+  > 소유자(304라운드, 53 확정: 적용 가능성/제약 경계): "그래 이걸로 정하자. 제안을 수용한다" (`reviews/round-304-owner-answers.md:7`)
 - 상태: 현행
 - 출처: `adr/0013-core-does-not-rewrite-values.md:31`(정본), `adr/0013-core-does-not-rewrite-values.md:17`
 - 닫은 사람: 소유자 답(`reviews/round-2.md:119` 새 원칙), 소유자 답(`reviews/round-5-derivations.md:7` P1')
