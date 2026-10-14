@@ -1,13 +1,13 @@
 import { describe, expectTypeOf, it } from 'vitest';
 
 import type {
-  BaseNonNullableArraySchema,
-  BaseNonNullableObjectSchema,
-  BaseNullableArraySchema,
-  BaseNullableObjectSchema,
   BasicSchema,
   JSONSchema,
-} from '../internal/jsonSchema';
+  NonNullableArraySchema,
+  NonNullableObjectSchema,
+  NullableArraySchema,
+  NullableObjectSchema,
+} from '../schema/jsonSchema';
 
 /** Named members of a type, without the `[alt: string]: any` index signature. */
 type NamedKeys<Type> = keyof {
@@ -42,10 +42,10 @@ type RemovedObjectKeys = 'virtual' | 'propertyKeys';
 
 describe('schema authoring surface', () => {
   it('declares nullable as a boolean on object schemas and JSONSchema', () => {
-    expectTypeOf<BaseNonNullableObjectSchema['nullable']>().toEqualTypeOf<
+    expectTypeOf<NonNullableObjectSchema['nullable']>().toEqualTypeOf<
       boolean | undefined
     >();
-    expectTypeOf<BaseNullableObjectSchema['nullable']>().toEqualTypeOf<
+    expectTypeOf<NullableObjectSchema['nullable']>().toEqualTypeOf<
       boolean | undefined
     >();
     expectTypeOf<JSONSchema['nullable']>().toEqualTypeOf<boolean | undefined>();
@@ -60,13 +60,13 @@ describe('schema authoring surface', () => {
   it('declares no top-level virtual or propertyKeys on object schemas', () => {
     expectTypeOf<
       Extract<
-        NamedKeys<BaseNonNullableObjectSchema>,
+        NamedKeys<NonNullableObjectSchema>,
         RemovedSchemaKeys | RemovedObjectKeys
       >
     >().toBeNever();
     expectTypeOf<
       Extract<
-        NamedKeys<BaseNullableObjectSchema>,
+        NamedKeys<NullableObjectSchema>,
         RemovedSchemaKeys | RemovedObjectKeys
       >
     >().toBeNever();
@@ -75,16 +75,16 @@ describe('schema authoring surface', () => {
   it('declares options.terminal as a boolean on object and array schemas', () => {
     type Terminal<Schema extends { options?: { terminal?: unknown } }> =
       NonNullable<Schema['options']>['terminal'];
-    expectTypeOf<Terminal<BaseNonNullableObjectSchema>>().toEqualTypeOf<
+    expectTypeOf<Terminal<NonNullableObjectSchema>>().toEqualTypeOf<
       boolean | undefined
     >();
-    expectTypeOf<Terminal<BaseNullableObjectSchema>>().toEqualTypeOf<
+    expectTypeOf<Terminal<NullableObjectSchema>>().toEqualTypeOf<
       boolean | undefined
     >();
-    expectTypeOf<Terminal<BaseNonNullableArraySchema>>().toEqualTypeOf<
+    expectTypeOf<Terminal<NonNullableArraySchema>>().toEqualTypeOf<
       boolean | undefined
     >();
-    expectTypeOf<Terminal<BaseNullableArraySchema>>().toEqualTypeOf<
+    expectTypeOf<Terminal<NullableArraySchema>>().toEqualTypeOf<
       boolean | undefined
     >();
   });
@@ -93,10 +93,10 @@ describe('schema authoring surface', () => {
     type PropertyOrder<
       Schema extends { options?: { propertyOrder?: unknown } },
     > = NonNullable<Schema['options']>['propertyOrder'];
-    expectTypeOf<PropertyOrder<BaseNonNullableObjectSchema>>().toEqualTypeOf<
+    expectTypeOf<PropertyOrder<NonNullableObjectSchema>>().toEqualTypeOf<
       readonly string[] | undefined
     >();
-    expectTypeOf<PropertyOrder<BaseNullableObjectSchema>>().toEqualTypeOf<
+    expectTypeOf<PropertyOrder<NullableObjectSchema>>().toEqualTypeOf<
       readonly string[] | undefined
     >();
   });
@@ -105,20 +105,20 @@ describe('schema authoring surface', () => {
     type Virtual<Schema extends { options?: { virtual?: unknown } }> =
       NonNullable<NonNullable<Schema['options']>['virtual']>;
     expectTypeOf<
-      Virtual<BaseNonNullableObjectSchema>[string]['fields']
+      Virtual<NonNullableObjectSchema>[string]['fields']
     >().toEqualTypeOf<readonly string[]>();
     expectTypeOf<
-      Virtual<BaseNullableObjectSchema>[string]['fields']
+      Virtual<NullableObjectSchema>[string]['fields']
     >().toEqualTypeOf<readonly string[]>();
   });
 
   it('keeps the virtual node schema out of authoring', () => {
     expectTypeOf<Extract<JSONSchema['type'], 'virtual'>>().toBeNever();
     // @ts-expect-error VirtualNodeSchema is internal and has no export.
-    type RemovedSchema = import('../internal/jsonSchema').VirtualSchema;
+    type RemovedSchema = import('../schema/jsonSchema').VirtualSchema;
     expectTypeOf<RemovedSchema>().toBeAny();
     // @ts-expect-error isVirtualSchema is absent from the authoring schema types.
-    type RemovedGuard = typeof import('../internal/jsonSchema').isVirtualSchema;
+    type RemovedGuard = typeof import('../schema/jsonSchema').isVirtualSchema;
     expectTypeOf<RemovedGuard>().toBeAny();
   });
 });

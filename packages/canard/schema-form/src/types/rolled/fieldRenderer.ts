@@ -1,7 +1,7 @@
 import type { Roll } from '@aileron/declare';
 
-import type { BaseFieldRendererProps } from '../internal/fieldRenderer';
+import type { FieldRendererProps } from '../field/fieldRenderer';
 
-type FieldRendererProps = Roll<BaseFieldRendererProps>;
+type RolledFieldRendererProps = Roll<FieldRendererProps>;
 
-export type { FieldRendererProps };
+export type { RolledFieldRendererProps };

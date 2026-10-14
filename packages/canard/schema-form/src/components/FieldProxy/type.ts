@@ -4,9 +4,9 @@ import type { Dictionary } from '@aileron/declare';
 
 import type { FieldNode } from '@/schema-form/core';
 import type {
-  BaseFieldRendererProps,
   ChildFieldProps,
   FieldInputProps,
+  FieldRendererProps,
   OverridableFieldInputProps,
 } from '@/schema-form/types';
 
@@ -18,6 +18,6 @@ export interface FieldProxyProps {
   onFileAttachRef?: RefObject<ChildFieldProps['onFileAttach']>;
   overridePropsRef?: RefObject<OverridableFieldInputProps>;
   FieldInput?: ComponentType<FieldInputProps>;
-  FieldRenderer?: ComponentType<BaseFieldRendererProps>;
+  FieldRenderer?: ComponentType<FieldRendererProps>;
   Wrapper?: ComponentType<PropsWithChildren<Dictionary>>;
 }

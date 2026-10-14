@@ -5,7 +5,7 @@ import { afterEach, expect, it, vi } from 'vitest';
 
 import { Form, type FormHandle } from '@/schema-form/components/Form';
 import type { FieldInputProps } from '@/schema-form/types';
-import type { BaseFieldRendererProps } from '@/schema-form/types';
+import type { FieldRendererProps } from '@/schema-form/types';
 
 afterEach(() => {
   cleanup();
@@ -51,7 +51,7 @@ it.each(['renderer', 'formatError'] as const)(
     vi.stubGlobal('reportError', hostError);
     const error = new Error(source);
     const onError = vi.fn();
-    const Renderer = ({ path, Input }: BaseFieldRendererProps) => {
+    const Renderer = ({ path, Input }: FieldRendererProps) => {
       if (source === 'renderer' && path === '/bad') throw error;
       return <Input />;
     };
@@ -102,7 +102,7 @@ it.each(['renderer', 'formatError'] as const)(
       .mockImplementation(() => {});
     const consoleWarn = vi.spyOn(console, 'warn').mockImplementation(() => {});
     const error = new Error(source);
-    const Renderer = ({ path, Input }: BaseFieldRendererProps) => {
+    const Renderer = ({ path, Input }: FieldRendererProps) => {
       if (source === 'renderer' && path === '/bad') throw error;
       return <Input />;
     };
@@ -182,7 +182,7 @@ it.each(['renderer', 'formatError'] as const)(
     const ref = createRef<FormHandle>();
     const onError = vi.fn();
     let fail = true;
-    const Renderer = ({ path, Input }: BaseFieldRendererProps) => {
+    const Renderer = ({ path, Input }: FieldRendererProps) => {
       if (source === 'renderer' && path === '/bad' && fail)
         throw new Error(source);
       return <Input />;

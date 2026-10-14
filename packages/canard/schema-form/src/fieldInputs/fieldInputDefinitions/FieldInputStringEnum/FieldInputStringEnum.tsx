@@ -4,8 +4,8 @@ import { map } from '@winglet/common-utils/array';
 import { useHandle } from '@winglet/react-utils/hook';
 
 import type {
-  BaseStringSchema,
   FieldInputPropsWithSchema,
+  StringSchema,
 } from '@/schema-form/types';
 
 import type { EnumLabelsContext } from './type';
@@ -25,7 +25,7 @@ export const FieldInputStringEnum = ({
   className,
 }: FieldInputPropsWithSchema<
   string | null,
-  BaseStringSchema,
+  StringSchema,
   EnumLabelsContext
 >) => {
   const enumOptions = useMemo(

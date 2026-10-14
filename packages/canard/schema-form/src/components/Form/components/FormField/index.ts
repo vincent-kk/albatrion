@@ -1,3 +1,3 @@
 export { FormField } from './FormField';
 
-export type { FormFieldProps } from './type';
+export type { RolledFormFieldProps } from './types/props';

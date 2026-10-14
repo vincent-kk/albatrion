@@ -5,7 +5,7 @@ import { useConstant, useReference } from '@winglet/react-utils/hook';
 import { FieldProxy } from '@/schema-form/components/FieldProxy';
 import type { AllowedValue, FieldInputProps } from '@/schema-form/types';
 
-import type { BaseFormRenderProps } from './type';
+import type { FormRenderProps } from './types/props';
 
 /**
  * Renders form fields with complete control through a custom render function.
@@ -102,7 +102,7 @@ export const FormRender = memo(
     Wrapper,
     children,
     ...restProps
-  }: BaseFormRenderProps<AllowedValue>) => {
+  }: FormRenderProps<AllowedValue>) => {
     const overridePropsRef = useReference(restProps);
     const constant = useConstant({
       FieldInput: FieldInput as ComponentType<FieldInputProps>,
@@ -120,5 +120,5 @@ export const FormRender = memo(
     );
   },
 ) as <Value extends AllowedValue = AllowedValue>(
-  props: BaseFormRenderProps<Value>,
+  props: FormRenderProps<Value>,
 ) => ReactNode;

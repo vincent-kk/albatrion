@@ -15,9 +15,9 @@ import type { VirtualizationOptions } from '@/schema-form/helpers/virtualization
 import type {
   AllowedValue,
   AttachedFilesMap,
-  BaseFieldRendererProps,
   FieldInputDefinition,
   FieldInputMap,
+  FieldRendererProps,
   InferValueType,
   JSONSchema,
   SetStateFnWithOptions,
@@ -71,17 +71,17 @@ export interface FormProps<
   /** FieldInput path mapping */
   fieldInputMap?: FieldInputMap;
   /** Custom field renderer component */
-  FieldRenderer?: ComponentType<BaseFieldRendererProps>;
+  FieldRenderer?: ComponentType<FieldRendererProps>;
   /** Label renderer shared by Form.Label instances. */
-  FormLabelRenderer?: ComponentType<BaseFieldRendererProps>;
+  FormLabelRenderer?: ComponentType<FieldRendererProps>;
   /** Input renderer shared by Form.Input instances. */
-  FormInputRenderer?: ComponentType<BaseFieldRendererProps>;
+  FormInputRenderer?: ComponentType<FieldRendererProps>;
   /** Error renderer shared by Form.Error instances. */
-  FormErrorRenderer?: ComponentType<BaseFieldRendererProps>;
+  FormErrorRenderer?: ComponentType<FieldRendererProps>;
   /** Initial validation errors, default is undefined */
   errors?: FieldNode['globalErrors'];
   /** Custom format error function */
-  formatError?: BaseFieldRendererProps['formatError'];
+  formatError?: FieldRendererProps['formatError'];
   /**
    * Error display condition (default: ShowError.DirtyTouched)
    *   - `true`: Always show

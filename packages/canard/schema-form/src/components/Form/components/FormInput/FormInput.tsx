@@ -7,7 +7,7 @@ import { FieldProxy } from '@/schema-form/components/FieldProxy';
 import { useFieldRendererContext } from '@/schema-form/providers';
 import type { AllowedValue, FieldInputProps } from '@/schema-form/types';
 
-import type { BaseFormInputProps } from './type';
+import type { FormInputProps } from './types/props';
 
 /**
  * Renders form input fields with automatic type detection from schema.
@@ -75,7 +75,7 @@ export const FormInput = memo(
     path,
     FieldInput: InputFieldInput,
     ...restProps
-  }: BaseFormInputProps<AllowedValue>) => {
+  }: FormInputProps<AllowedValue>) => {
     const { FormInputRenderer } = useFieldRendererContext();
     const overridePropsRef = useReference(restProps);
     const FieldInput = useConstant(
@@ -91,5 +91,5 @@ export const FormInput = memo(
     );
   },
 ) as <Value extends AllowedValue = AllowedValue>(
-  props: BaseFormInputProps<Value>,
+  props: FormInputProps<Value>,
 ) => ReactNode;

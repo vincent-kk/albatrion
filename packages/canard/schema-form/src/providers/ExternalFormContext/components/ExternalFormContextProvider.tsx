@@ -7,8 +7,8 @@ import type { Dictionary } from '@aileron/declare';
 import type { ValidationMode } from '@/schema-form/core';
 import { normalizeFieldInputDefinitions } from '@/schema-form/helpers/fieldInputDefinition';
 import type {
-  BaseFieldRendererProps,
   FieldInputDefinition,
+  FieldRendererProps,
   FormatError,
   ShowError,
   ValidatorFactory,
@@ -20,13 +20,13 @@ export interface ExternalFormContextProviderProps {
   /** List of FieldInputDefinition declared externally */
   fieldInputDefinitions?: FieldInputDefinition[];
   /** FieldRenderer component declared externally */
-  FieldRenderer?: ComponentType<BaseFieldRendererProps>;
+  FieldRenderer?: ComponentType<FieldRendererProps>;
   /** FormLabelRenderer component declared externally */
-  FormLabelRenderer?: ComponentType<BaseFieldRendererProps>;
+  FormLabelRenderer?: ComponentType<FieldRendererProps>;
   /** FormInputRenderer component declared externally */
-  FormInputRenderer?: ComponentType<BaseFieldRendererProps>;
+  FormInputRenderer?: ComponentType<FieldRendererProps>;
   /** FormErrorRenderer component declared externally */
-  FormErrorRenderer?: ComponentType<BaseFieldRendererProps>;
+  FormErrorRenderer?: ComponentType<FieldRendererProps>;
   /** FormatError function declared externally */
   formatError?: FormatError;
   /**

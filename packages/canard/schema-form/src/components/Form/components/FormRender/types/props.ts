@@ -4,18 +4,18 @@ import type { Dictionary, Fn, Roll } from '@aileron/declare';
 
 import type {
   AllowedValue,
-  BaseFieldRendererProps,
   ChildFieldProps,
   FieldInputProps,
+  FieldRendererProps,
 } from '@/schema-form/types';
 
-export type BaseFormRenderProps<Value extends AllowedValue> = {
+export type FormRenderProps<Value extends AllowedValue> = {
   path?: string;
   FieldInput?: ComponentType<FieldInputProps<Value>>;
-  children: Fn<[props: BaseFieldRendererProps], ReactNode>;
+  children: Fn<[props: FieldRendererProps], ReactNode>;
   Wrapper?: ComponentType<PropsWithChildren<Dictionary>>;
 } & ChildFieldProps;
 
-export type FormRenderProps<Value extends AllowedValue> = Roll<
-  BaseFormRenderProps<Value>
+export type RolledFormRenderProps<Value extends AllowedValue> = Roll<
+  FormRenderProps<Value>
 >;

@@ -8,11 +8,11 @@ import type {
   FieldInputProps,
 } from '@/schema-form/types';
 
-export type BaseFormInputProps<Value extends AllowedValue> = {
+export type FormInputProps<Value extends AllowedValue> = {
   path?: string;
   FieldInput?: ComponentType<FieldInputProps<Value>>;
 } & ChildFieldProps;
 
-export type FormInputProps<Value extends AllowedValue> = Roll<
-  BaseFormInputProps<Value>
+export type RolledFormInputProps<Value extends AllowedValue> = Roll<
+  FormInputProps<Value>
 >;

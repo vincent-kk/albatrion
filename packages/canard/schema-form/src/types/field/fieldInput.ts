@@ -9,13 +9,10 @@ import type {
   SetValueOption,
 } from '@/schema-form/core';
 
-import type { BaseFieldRendererProps } from './fieldRenderer';
-import type {
-  BaseInferJSONSchema,
-  JSONSchema,
-  JSONSchemaWithVirtual,
-} from './jsonSchema';
-import type { AllowedValue } from './value';
+import type { JSONSchema, JSONSchemaWithVirtual } from '../schema/jsonSchema';
+import type { AllowedValue } from '../schema/value';
+import type { FieldRendererProps } from './fieldRenderer';
+import type { InferFieldInputSchema } from './inferFieldInputSchema';
 
 /**
  * Props that FieldInput Input Component must satisfy
@@ -32,7 +29,7 @@ export interface FieldInputProps<
   WatchValues extends ReadonlyArray<any> = ReadonlyArray<any>,
   Schema extends JSONSchema | JSONSchemaWithVirtual = unknown extends Value
     ? JSONSchema
-    : BaseInferJSONSchema<Value>,
+    : InferFieldInputSchema<Value>,
   Node extends FieldNode = unknown extends Value
     ? FieldNode
     : InferFieldNode<Schema>,
@@ -98,7 +95,7 @@ export type FieldInputPropsWithSchema<
   Value extends AllowedValue = any,
   Schema extends JSONSchema | JSONSchemaWithVirtual = unknown extends Value
     ? JSONSchemaWithVirtual
-    : BaseInferJSONSchema<Value>,
+    : InferFieldInputSchema<Value>,
   Context extends Dictionary = object,
 > = FieldInputProps<Value, Context, any[], Schema>;
 
@@ -113,7 +110,7 @@ export type FieldInputPropsWithNode<
   Value extends AllowedValue = any,
   Schema extends JSONSchema | JSONSchemaWithVirtual = unknown extends Value
     ? JSONSchemaWithVirtual
-    : BaseInferJSONSchema<Value>,
+    : InferFieldInputSchema<Value>,
   Node extends FieldNode = InferFieldNode<Schema>,
 > = FieldInputProps<Value, Dictionary, any[], Schema, Node>;
 
@@ -157,7 +154,7 @@ export type ChildFieldProps<Value extends AllowedValue = any> = {
   value?: Value;
   onChange?: SetStateFnWithOptions<Value>;
   onFileAttach?: Fn<[file: File | File[] | undefined]>;
-  FieldRenderer?: ComponentType<BaseFieldRendererProps>;
+  FieldRenderer?: ComponentType<FieldRendererProps>;
   className?: string;
   style?: CSSProperties;
   [alt: string]: any;

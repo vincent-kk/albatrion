@@ -1,10 +1,10 @@
-export { ShowError } from './internal/error';
+export { ShowError } from './error/error';
 export type {
   ValidatorFactory,
   ValidateFunction,
   ValidationIssue,
   JSONSchemaError,
-} from './internal/error';
+} from './error/error';
 export type {
   FieldInputProps,
   FieldInputPropsWithSchema,
@@ -21,15 +21,9 @@ export type {
   FieldInputMap,
   SetStateFnWithOptions,
   AttachedFilesMap,
-} from './internal/fieldInput';
-export type {
-  BaseFieldRendererProps,
-  FormatError,
-} from './internal/fieldRenderer';
-export type {
-  InjectToHandler,
-  InjectHandlerContext,
-} from './internal/injectTo';
+} from './field/fieldInput';
+export type { FieldRendererProps, FormatError } from './field/fieldRenderer';
+export type { InjectToHandler, InjectHandlerContext } from './schema/injectTo';
 export type {
   JSONSchemaType,
   SchemaPresentation,
@@ -37,10 +31,10 @@ export type {
   JSONSchemaWithVirtual,
   JSONSchemaWithRef,
   PartialJSONSchema,
-  BaseStringSchema,
-  BaseArraySchema,
+  StringSchema,
+  ArraySchema,
   BasicSchema,
-} from './internal/jsonSchema';
+} from './schema/jsonSchema';
 export type {
   VirtualNodeValue,
   AllowedValue,
@@ -52,24 +46,24 @@ export type {
   ObjectValue,
   NullValue,
   UndefinedValue,
-} from './internal/value';
-export type { FieldRendererProps } from './rolled/fieldRenderer';
+} from './schema/value';
+export type { RolledFieldRendererProps } from './rolled/fieldRenderer';
 export type {
-  NonNullableBooleanSchema,
-  NullableBooleanSchema,
-  BooleanSchema,
-  NonNullableNumberSchema,
-  NullableNumberSchema,
-  NumberSchema,
-  NonNullableStringSchema,
-  NullableStringSchema,
-  StringSchema,
-  NonNullableArraySchema,
-  NullableArraySchema,
-  ArraySchema,
-  NonNullableObjectSchema,
-  NullableObjectSchema,
-  ObjectSchema,
-  NullSchema,
-  InferJSONSchema,
+  RolledNonNullableBooleanSchema,
+  RolledNullableBooleanSchema,
+  RolledBooleanSchema,
+  RolledNonNullableNumberSchema,
+  RolledNullableNumberSchema,
+  RolledNumberSchema,
+  RolledNonNullableStringSchema,
+  RolledNullableStringSchema,
+  RolledStringSchema,
+  RolledNonNullableArraySchema,
+  RolledNullableArraySchema,
+  RolledArraySchema,
+  RolledNonNullableObjectSchema,
+  RolledNullableObjectSchema,
+  RolledObjectSchema,
+  RolledNullSchema,
+  RolledInferJSONSchema,
 } from './rolled/jsonSchema';

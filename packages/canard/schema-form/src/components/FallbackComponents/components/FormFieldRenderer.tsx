@@ -1,6 +1,6 @@
 import { isArraySchema } from '@winglet/json-schema/filter';
 
-import type { BaseFieldRendererProps } from '@/schema-form/types';
+import type { FieldRendererProps } from '@/schema-form/types';
 
 export const FormFieldRenderer = ({
   node,
@@ -12,7 +12,7 @@ export const FormFieldRenderer = ({
   errorMessage,
   style,
   className,
-}: BaseFieldRendererProps) => {
+}: FieldRendererProps) => {
   if (depth === 0) return <Input />;
 
   if (node.strategy === 'branch') {

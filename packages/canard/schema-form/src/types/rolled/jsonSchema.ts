@@ -3,18 +3,18 @@ import type { RefSchema } from '@winglet/json-schema';
 import type { Dictionary, IsNullable, Roll } from '@aileron/declare';
 
 import type {
-  BaseNonNullableArraySchema,
-  BaseNonNullableBooleanSchema,
-  BaseNonNullableNumberSchema,
-  BaseNonNullableObjectSchema,
-  BaseNonNullableStringSchema,
-  BaseNullSchema,
-  BaseNullableArraySchema,
-  BaseNullableBooleanSchema,
-  BaseNullableNumberSchema,
-  BaseNullableObjectSchema,
-  BaseNullableStringSchema,
-} from '../internal/jsonSchema';
+  NonNullableArraySchema,
+  NonNullableBooleanSchema,
+  NonNullableNumberSchema,
+  NonNullableObjectSchema,
+  NonNullableStringSchema,
+  NullSchema,
+  NullableArraySchema,
+  NullableBooleanSchema,
+  NullableNumberSchema,
+  NullableObjectSchema,
+  NullableStringSchema,
+} from '../schema/jsonSchema';
 import type {
   AllowedValue,
   ArrayValue,
@@ -22,88 +22,88 @@ import type {
   NumberValue,
   ObjectValue,
   StringValue,
-} from '../internal/value';
+} from '../schema/value';
 
-type NonNullableBooleanSchema<Options extends object = object> = Roll<
-  BaseNonNullableBooleanSchema<Options>
+type RolledNonNullableBooleanSchema<Options extends object = object> = Roll<
+  NonNullableBooleanSchema<Options>
 >;
-type NullableBooleanSchema<Options extends object = object> = Roll<
-  BaseNullableBooleanSchema<Options>
+type RolledNullableBooleanSchema<Options extends object = object> = Roll<
+  NullableBooleanSchema<Options>
 >;
-type BooleanSchema<Options extends object = object> =
-  | NonNullableBooleanSchema<Options>
-  | NullableBooleanSchema<Options>;
+type RolledBooleanSchema<Options extends object = object> =
+  | RolledNonNullableBooleanSchema<Options>
+  | RolledNullableBooleanSchema<Options>;
 
-type NonNullableNumberSchema<Options extends object = object> = Roll<
-  BaseNonNullableNumberSchema<Options>
+type RolledNonNullableNumberSchema<Options extends object = object> = Roll<
+  NonNullableNumberSchema<Options>
 >;
-type NullableNumberSchema<Options extends object = object> = Roll<
-  BaseNullableNumberSchema<Options>
+type RolledNullableNumberSchema<Options extends object = object> = Roll<
+  NullableNumberSchema<Options>
 >;
-type NumberSchema<Options extends object = object> =
-  | NonNullableNumberSchema<Options>
-  | NullableNumberSchema<Options>;
+type RolledNumberSchema<Options extends object = object> =
+  | RolledNonNullableNumberSchema<Options>
+  | RolledNullableNumberSchema<Options>;
 
-type NonNullableStringSchema<Options extends object = object> = Roll<
-  BaseNonNullableStringSchema<Options>
+type RolledNonNullableStringSchema<Options extends object = object> = Roll<
+  NonNullableStringSchema<Options>
 >;
-type NullableStringSchema<Options extends object = object> = Roll<
-  BaseNullableStringSchema<Options>
+type RolledNullableStringSchema<Options extends object = object> = Roll<
+  NullableStringSchema<Options>
 >;
-type StringSchema<Options extends object = object> =
-  | NonNullableStringSchema<Options>
-  | NullableStringSchema<Options>;
+type RolledStringSchema<Options extends object = object> =
+  | RolledNonNullableStringSchema<Options>
+  | RolledNullableStringSchema<Options>;
 
-type NonNullableArraySchema<Options extends object = object> = Roll<
-  BaseNonNullableArraySchema<Options>
+type RolledNonNullableArraySchema<Options extends object = object> = Roll<
+  NonNullableArraySchema<Options>
 >;
-type NullableArraySchema<Options extends object = object> = Roll<
-  BaseNullableArraySchema<Options>
+type RolledNullableArraySchema<Options extends object = object> = Roll<
+  NullableArraySchema<Options>
 >;
-type ArraySchema<Options extends object = object> =
-  | NonNullableArraySchema<Options>
-  | NullableArraySchema<Options>;
+type RolledArraySchema<Options extends object = object> =
+  | RolledNonNullableArraySchema<Options>
+  | RolledNullableArraySchema<Options>;
 
-type NonNullableObjectSchema<Options extends object = object> = Roll<
-  BaseNonNullableObjectSchema<Options>
+type RolledNonNullableObjectSchema<Options extends object = object> = Roll<
+  NonNullableObjectSchema<Options>
 >;
-type NullableObjectSchema<Options extends object = object> = Roll<
-  BaseNullableObjectSchema<Options>
+type RolledNullableObjectSchema<Options extends object = object> = Roll<
+  NullableObjectSchema<Options>
 >;
-type ObjectSchema<Options extends object = object> =
-  | NonNullableObjectSchema<Options>
-  | NullableObjectSchema<Options>;
+type RolledObjectSchema<Options extends object = object> =
+  | RolledNonNullableObjectSchema<Options>
+  | RolledNullableObjectSchema<Options>;
 
-type NullSchema<Options extends object = object> = Roll<
-  BaseNullSchema<Options>
+type RolledNullSchema<Options extends object = object> = Roll<
+  NullSchema<Options>
 >;
 
 export type {
-  NonNullableBooleanSchema,
-  NullableBooleanSchema,
-  BooleanSchema,
-  NonNullableNumberSchema,
-  NullableNumberSchema,
-  NumberSchema,
-  NonNullableStringSchema,
-  NullableStringSchema,
-  StringSchema,
-  NonNullableArraySchema,
-  NullableArraySchema,
-  ArraySchema,
-  NonNullableObjectSchema,
-  NullableObjectSchema,
-  ObjectSchema,
-  NullSchema,
+  RolledNonNullableBooleanSchema,
+  RolledNullableBooleanSchema,
+  RolledBooleanSchema,
+  RolledNonNullableNumberSchema,
+  RolledNullableNumberSchema,
+  RolledNumberSchema,
+  RolledNonNullableStringSchema,
+  RolledNullableStringSchema,
+  RolledStringSchema,
+  RolledNonNullableArraySchema,
+  RolledNullableArraySchema,
+  RolledArraySchema,
+  RolledNonNullableObjectSchema,
+  RolledNullableObjectSchema,
+  RolledObjectSchema,
+  RolledNullSchema,
 };
 
 type RolledSchemaUnion<Options extends Dictionary = object> =
-  | NumberSchema<Options>
-  | StringSchema<Options>
-  | BooleanSchema<Options>
-  | ArraySchema<Options>
-  | ObjectSchema<Options>
-  | NullSchema<Options>
+  | RolledNumberSchema<Options>
+  | RolledStringSchema<Options>
+  | RolledBooleanSchema<Options>
+  | RolledArraySchema<Options>
+  | RolledObjectSchema<Options>
+  | RolledNullSchema<Options>
   | RefSchema;
 
 /** Schema inference for non-nullable values */
@@ -111,15 +111,15 @@ type InferNonNullableSchema<
   Value,
   Options extends Dictionary = object,
 > = Value extends NumberValue
-  ? NonNullableNumberSchema<Options>
+  ? RolledNonNullableNumberSchema<Options>
   : Value extends StringValue
-    ? NonNullableStringSchema<Options>
+    ? RolledNonNullableStringSchema<Options>
     : Value extends BooleanValue
-      ? NonNullableBooleanSchema<Options>
+      ? RolledNonNullableBooleanSchema<Options>
       : Value extends ArrayValue
-        ? NonNullableArraySchema<Options>
+        ? RolledNonNullableArraySchema<Options>
         : Value extends ObjectValue
-          ? NonNullableObjectSchema<Options>
+          ? RolledNonNullableObjectSchema<Options>
           : RolledSchemaUnion<Options>;
 
 /** Schema inference for nullable values */
@@ -127,28 +127,28 @@ type InferNullableSchema<
   Value,
   Options extends Dictionary = object,
 > = Value extends NumberValue
-  ? NullableNumberSchema<Options>
+  ? RolledNullableNumberSchema<Options>
   : Value extends StringValue
-    ? NullableStringSchema<Options>
+    ? RolledNullableStringSchema<Options>
     : Value extends BooleanValue
-      ? NullableBooleanSchema<Options>
+      ? RolledNullableBooleanSchema<Options>
       : Value extends ArrayValue
-        ? NullableArraySchema<Options>
+        ? RolledNullableArraySchema<Options>
         : Value extends ObjectValue
-          ? NullableObjectSchema<Options>
-          : NullSchema<Options>;
+          ? RolledNullableObjectSchema<Options>
+          : RolledNullSchema<Options>;
 
 /**
  * Infers the appropriate Schema type based on the input value.
  * - For nullable types (T | null), returns the corresponding Nullable schema
  * - For non-nullable types, returns the standard schema
- * - For pure null type, returns NullSchema
+ * - For pure null type, returns RolledNullSchema
  */
-export type InferJSONSchema<
+export type RolledInferJSONSchema<
   Value extends AllowedValue | unknown = any,
   Options extends Dictionary = object,
 > = [Value] extends [null]
-  ? NullSchema<Options>
+  ? RolledNullSchema<Options>
   : IsNullable<Value> extends true
     ? InferNullableSchema<Exclude<Value, null>, Options>
     : InferNonNullableSchema<Value, Options>;

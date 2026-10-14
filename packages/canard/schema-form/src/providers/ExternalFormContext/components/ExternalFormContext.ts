@@ -5,7 +5,7 @@ import type { Dictionary } from '@aileron/declare';
 import type { ValidationMode } from '@/schema-form/core';
 import type { NormalizedFieldInputDefinition } from '@/schema-form/helpers/fieldInputDefinition';
 import type {
-  BaseFieldRendererProps,
+  FieldRendererProps,
   FormatError,
   ShowError,
   ValidatorFactory,
@@ -15,13 +15,13 @@ export interface ExternalFormContext {
   /** List of FieldInputDefinition declared externally */
   fromExternalFieldInputDefinitions?: NormalizedFieldInputDefinition[];
   /** FieldRenderer component declared externally */
-  FieldRenderer?: ComponentType<BaseFieldRendererProps>;
+  FieldRenderer?: ComponentType<FieldRendererProps>;
   /** FormLabelRenderer component declared externally */
-  FormLabelRenderer?: ComponentType<BaseFieldRendererProps>;
+  FormLabelRenderer?: ComponentType<FieldRendererProps>;
   /** FormInputRenderer component declared externally */
-  FormInputRenderer?: ComponentType<BaseFieldRendererProps>;
+  FormInputRenderer?: ComponentType<FieldRendererProps>;
   /** FormErrorRenderer component declared externally */
-  FormErrorRenderer?: ComponentType<BaseFieldRendererProps>;
+  FormErrorRenderer?: ComponentType<FieldRendererProps>;
   /** FormatError function declared externally */
   formatError?: FormatError;
   /** Error display condition (default: ShowError.DirtyTouched) */

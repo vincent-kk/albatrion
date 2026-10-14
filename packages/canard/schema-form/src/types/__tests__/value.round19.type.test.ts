@@ -2,7 +2,7 @@ import { describe, expectTypeOf, it } from 'vitest';
 
 import type { ObjectValue } from '@winglet/json-schema';
 
-import type { InferValueType } from '../internal/value';
+import type { InferValueType } from '../schema/value';
 
 // filid:contract public-value-inference
 describe('NODE-059 public value inference', () => {

@@ -5,12 +5,12 @@ import { describe, expectTypeOf, it } from 'vitest';
 import type {
   FieldInputProps,
   FieldInputPropsWithSchema,
-} from '../internal/fieldInput';
+} from '../field/fieldInput';
 import type {
-  BaseBooleanSchema,
+  BooleanSchema,
   JSONSchema,
   SchemaPresentation,
-} from '../internal/jsonSchema';
+} from '../schema/jsonSchema';
 
 /** Component alternatives admitted by the schema's presentation input slot. */
 type Slot = NonNullable<SchemaPresentation['FieldInput']>;
@@ -19,9 +19,8 @@ type Slot = NonNullable<SchemaPresentation['FieldInput']>;
  * @param _ - Binding props with a boolean value and its matching schema.
  * @returns No rendered content; the test checks the component signature.
  */
-const NarrowInput = (
-  _: FieldInputPropsWithSchema<boolean, BaseBooleanSchema>,
-) => null;
+const NarrowInput = (_: FieldInputPropsWithSchema<boolean, BooleanSchema>) =>
+  null;
 /** Class component using the binding's default input props. */
 class ClassInput extends Component<FieldInputProps> {
   /** @returns No rendered content; the test checks class component compatibility. */

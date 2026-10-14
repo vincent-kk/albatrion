@@ -4,11 +4,11 @@ import type { Dictionary, Fn } from '@aileron/declare';
 
 import type { FieldNode } from '@/schema-form/core';
 
-import type { JSONSchemaError } from './error';
+import type { JSONSchemaError } from '../error/error';
 import type { ChildFieldProps } from './fieldInput';
 
 /** Props that FieldRenderer Component must satisfy */
-export interface BaseFieldRendererProps extends ChildFieldProps {
+export interface FieldRendererProps extends ChildFieldProps {
   /** Whether the field node assigned to FieldRenderer Component is the root node */
   isRoot: boolean;
   /** Depth of the field node assigned to FieldRenderer Component */
