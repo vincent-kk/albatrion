@@ -410,4 +410,36 @@ describe('adoption limits', () => {
     expect(calls).toBeLessThanOrEqual(26);
     expectResting(previous, next);
   });
+
+  it.each([
+    [
+      'back into the retired root',
+      (previous: Tree, next: Tree) => [next, previous],
+    ],
+    [
+      'again from the retired root',
+      (previous: Tree, next: Tree) => [previous, next],
+    ],
+  ] as const)(
+    'an adoption %s is refused before it can link the roots in a cycle',
+    (_, pick) => {
+      const previous = createTree();
+      const next = createTree();
+      adoptFieldNodeTree(previous.root, next.root);
+      const [from, to] = pick(previous, next);
+      let thrown: unknown;
+      try {
+        adoptFieldNodeTree(from.root, to.root);
+      } catch (error) {
+        thrown = error;
+      }
+      expect(thrown).toBeInstanceOf(SchemaFormError);
+      expect(Reflect.get(Object(thrown), 'code')).toBe(
+        FormErrorCode.DisposedNodeWrite,
+      );
+      next.root.find('/first')?.setValue('still works');
+      expect(next.root.value).toEqual({ first: 'still works', second: 'b' });
+      expectResting(previous, next);
+    },
+  );
 });
