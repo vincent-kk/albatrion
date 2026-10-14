@@ -177,6 +177,12 @@ nodeFromJSONSchema<Schema extends JSONSchema>(props: {
 - **Direct import**: `allowed`
 - **Reason**: 회귀 시험과 union 시험이 같은 실제 청사진·노드 트리 생성기를 소비합니다. 제품 진입점에 시험 전용 도우미를 공개하지 않기 위해 core의 테스트 구획에 보관합니다.
 
+### `__tests__/fixtures/createTestValidator.ts` — bench의 시험 검증기
+
+- **Consumers**: `**/bench/**`
+- **Direct import**: `allowed`
+- **Reason**: bench(측정 도구)는 소유자 결정(276라운드, 대기열 49)으로 fractal import 규칙의 직접 import 금지에서 면제됩니다. 측정에 쓰는 시험 검증기를 제품 진입점에 공개하지 않고 그대로 읽습니다.
+
 ## Last Updated
 
 계약 기준: LANDING-067·087·205, CONTROLS-075, 69C-01–05, 70C-01, 100라운드.
