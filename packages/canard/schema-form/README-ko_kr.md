@@ -2438,7 +2438,7 @@ const formRef = useRef<FormHandle<typeof jsonSchema, SignUpValue>>(null);
 
 - **불러온 `null`이나 종류가 다른 값 아래의 자식 필드는 채워지지 않습니다.** 객체나 배열 필드가 `defaultValue`, 불러오기, `reset`, `resetSubtree`로 `null`이나 종류가 다른 값(예: 객체 자리에 문자열)을 받으면, 직접 `null`을 쓸 때와 똑같이 자식 필드에 기본값이 채워지지 않습니다. 자식에 입력하면 부모가 객체로 승격되고, 그 승격으로 새로 생긴 필드만 기본값을 받습니다. `derived`와 `injectTo` 값은 그대로 보입니다. 기본값이 필요하면 `null` 대신 값이 든 객체를 불러오거나 객체 자체에 `default`를 주세요. 객체 스키마에 `<Form defaultValue={null}>`을 줄 때도 같습니다.
 - **enum select는 `undefined`를 선택 없음으로 보여 줍니다.** 기본 문자열 enum select는 값이 `undefined`이면 맨 앞에 선택된 빈 비활성 선택지를 보여 주며, enum에 `''`가 있어도 같습니다. enum 밖의 값은 지금처럼 맨 앞 비활성 선택지로 보입니다.
-- **체크박스와 라디오 선택지 id에 순번이 붙습니다.** 각 선택지의 `id`는 이제 `${path}-${index}`이고, 레이블의 `htmlFor`도 같이 바뀝니다. 이 입력을 `#<path>`로 찾던 선택자는 고쳐야 합니다.
+- **체크박스와 라디오 선택지 id에 순번이 붙습니다.** 각 선택지의 `id`는 이제 `${path}-${index}`이고, 레이블의 `htmlFor`도 같이 바뀝니다. 이 입력을 `#<path>`로 찾던 선택자는 고쳐야 합니다. 이런 묶음 입력의 필드 제목(기본 렌더러와 `Form.Label`)에는 이제 `htmlFor`가 없고 `id="${path}-label"`이 있으며, 선택지 컨테이너는 `role="group"`과 이 id를 가리키는 `aria-labelledby`를 가지므로 묶음을 제목으로 찾을 수 있습니다(`getByRole('group', { name })`). 기본 렌더러에서 checkbox 배열은 같은 legend로 이름 붙은 fieldset이기도 하므로, 그 fieldset 안에서 찾으세요.
 - **`oneOf` / `anyOf` 분기를 더 이상 `const` 태그로 고르지 않습니다.** 분기끼리 `const` 태그만 다르면 호스트에 `controls.discriminator: '<속성>'`을 선언하거나 각 분기에 `controls.active`를 선언하세요. 둘 다 없으면 모든 분기가 활성 상태로 남습니다.
 - **직접 만든 검증기 플러그인은 `compileGuard`를 구현해야 합니다.** `ValidatorPlugin`은 이제 `compile` 옆에 `compileGuard(root, pointer)`가 필요하고, `release(root)`는 선택입니다. 공식 ajv6·ajv7·ajv8 플러그인은 이미 구현되어 있습니다.
 

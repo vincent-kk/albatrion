@@ -2,6 +2,10 @@ import { type CSSProperties, memo } from 'react';
 
 import { PluginManager } from '@/schema-form/app/plugin';
 import { FieldProxy } from '@/schema-form/components/Field';
+import { FieldNodeEventType } from '@/schema-form/core';
+import { isFieldInputGroup } from '@/schema-form/helpers/fieldInputGroup';
+import { useFieldNode } from '@/schema-form/hooks/useFieldNode';
+import { useFieldNodeTracker } from '@/schema-form/hooks/useFieldNodeTracker';
 import { useFieldRendererContext } from '@/schema-form/providers';
 
 export interface FormLabelProps {
@@ -14,7 +18,9 @@ export interface FormLabelProps {
  * Renders an accessible label for form fields.
  *
  * Automatically generates label text from schema title or property name,
- * with proper `for` attribute association to the corresponding input field.
+ * associated with its input through `htmlFor={path}`. For a builtin checkbox
+ * or radio group it carries `id="${path}-label"` instead, which the options
+ * group references with `aria-labelledby`.
  * Supports custom styling while maintaining accessibility standards.
  *
  * @example
@@ -57,8 +63,19 @@ export interface FormLabelProps {
  */
 export const FormLabel = memo(({ path, style, className }: FormLabelProps) => {
   const { FormLabelRenderer } = useFieldRendererContext();
+  const node = useFieldNode(path);
+  useFieldNodeTracker(
+    node,
+    FieldNodeEventType.UpdateJsonSchema | FieldNodeEventType.UpdatePath,
+  );
+  const isGroup = node && isFieldInputGroup(node.jsonSchema);
   return (
-    <label style={style} className={className} htmlFor={path}>
+    <label
+      style={style}
+      className={className}
+      htmlFor={isGroup ? undefined : path}
+      id={isGroup ? `${node.path}-label` : undefined}
+    >
       <FieldProxy
         path={path}
         FieldRenderer={FormLabelRenderer || PluginManager.FormLabelRenderer}

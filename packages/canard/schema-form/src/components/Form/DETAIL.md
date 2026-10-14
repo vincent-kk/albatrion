@@ -25,6 +25,7 @@
 - `onError`는 폼 인스턴스의 오류 기록을 받고 `onDiagnosticsChange`는 준비 뒤 루트 진단 변경을 받습니다. `validatorFactory`의 공개 형은 필수 `compile`·`compileGuard`를 가진 `{ compile, compileGuard }` 객체이며 선택 순서는 Form 속성 > FormProvider > 플러그인입니다. 선택 검증기 참조가 바뀌면 트리를 재생성합니다(ERROR-026, VALIDATE-044, 32C-01).
 - 렌더러 속성은 `FieldRenderer`·`FormLabelRenderer`·`FormInputRenderer`·`FormErrorRenderer`의 넷이며 플러그인 키와 같은 이름을 사용합니다(LANDING-035·067).
 - 작성 `jsonSchema`는 clone하지 않아 청사진·가드 캐시의 루트 identity를 유지합니다. `defaultValue`는 clone하여 로드하며, 스키마와 기본값은 마운트·reset 계약에 따라 읽습니다(LANDING-095, WRITE-043·044).
+- `Form.Label`은 단일 입력이면 `htmlFor={path}`인 label을 그립니다. 경로의 노드 스키마가 내장 checkbox·radio 묶음 입력이 받는 모양(`helpers/fieldInputGroup`의 판정)이면 `htmlFor` 없이 id `${path}-label`을 달아 선택지 묶음의 `aria-labelledby` 대상이 됩니다. 판정은 노드의 스키마·경로 변경을 구독해 따라갑니다(대기열 38).
 
 ### 오류 경계
 
