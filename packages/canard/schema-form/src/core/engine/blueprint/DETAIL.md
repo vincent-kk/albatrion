@@ -50,7 +50,7 @@
 
 - 청사진은 `PropertyDeclaration`, `SchemaFragment`와 노드별 선언, 종류, schemaType, nullable, 전략을 노출한다. schemaType은 JSON 형만 담는다. virtual 노드의 schemaType은 `undefined`이고 판별은 `kind`로 하며, 그 유효 스키마의 `type`은 내부 값 `'virtual'`이다(336라운드 3번). 형이 없는 variant의 schemaType은 추정한 `'object'` 또는 `'array'`이고, nullable은 null을 포함한 U에서 정한다. 조각은 schemaPath, 게이트 기술, 선언 문맥, 선언·제약·상속 overlay, 자식 조각을 보존한다. 게이트 기술에는 실제 평가 결과를 저장하지 않는다.
 
-- `JSON_POINTER_PATH_REGEX`는 이름으로 공개하는 식 경로 인식 규칙이다. 청사진의 식 컴파일과 기존 조건 분기 추출이 같은 정규식을 사용해서 의존 경로 해석이 갈라지지 않게 한다.
+- `JSON_POINTER_PATH_REGEX`는 이름으로 공개하는 식 경로 인식 규칙이다. 식 컴파일(`compileBlueprintExpressions`)과 게이트 평가 읽기 수집(`buildNodes`)이 같은 정규식을 써서 의존 경로 해석이 갈라지지 않게 한다.
 
 - 선언은 노드 범위와 조각 범위를 구분한다. 조각의 controls는 호스트 유효 스키마에 합치지 않고, 직계 선언 자식을 대상으로 하는 규칙으로 보존한다. 검증 전용 분기는 병합 기여에서 제외한다. 선언 문맥에서는 유일한 선언 자체만 기여하고, 그 안의 then 같은 overlay 제약은 교차하지 않는다.
 
@@ -62,7 +62,7 @@
 
 ## Structure
 
-- 자식 프랙탈은 `buildNodes`(선언과 노드 구성), `compileBlueprintExpressions`(식과 의존 컴파일), `validateShape`(유한 형상 검증), `collectBlueprintWarnings`(예약 키 경고 수집), `validateChildTargets`(자식 대상 검증), `StaticFirstLoadCapability`(첫 로드 자격 보관), `effectiveSchema`(활성 선언 병합)이다. `types/`는 공용 형을, `utils/<topic>/`는 자식들이 공유하는 보조를 소유한다.
+- 자식 프랙탈은 `buildNodes`(선언과 노드 구성), `compileBlueprintExpressions`(식과 의존 컴파일), `validateShape`(유한 형상 검증), `collectBlueprintWarnings`(예약 키 경고 수집), `validateChildTargets`(자식 대상 검증), `StaticFirstLoadCapability`(첫 로드 자격 보관), `effectiveSchema`(활성 선언 병합)이다. `types/`는 공용 형을, `utils/<topic>/`는 자식이 위쪽으로 가져다 쓰는 보조와 진입점을 거쳐 바깥 소비자를 섬기는 보조(`features`, `itemEntry`)를 소유한다.
 
 ## Acceptance Criteria
 
@@ -127,7 +127,7 @@
 
 - TEST-067(b)·TEST-079에 따라 생성기 코퍼스 14종을 수정 없이 각각 청사진으로 수용하고, 실패한 표본의 ID를 식별한다.
 
-### array-limits-and-slots — 길이 한계와 아이템 자리
+### array-slots — 아이템 자리
 
 - 같은 템플릿과 색인의 자리 항목은 같은 참조이고, 선언 경로는 템플릿 경로를 유지하며, 청사진이 없는 자리에는 항목이 없다. 옛 표기에서 스키마 객체인 `additionalItems`는 꼬리 자리의 템플릿이 되고, `false`·`true`·없음은 청사진이 없는 꼬리다(NODE-009·052, WRITE-022, 35C-04·08, 36C-02).
 
@@ -137,19 +137,25 @@
 
 - **Consumers**: `entry-point`
 - **Direct import**: `not allowed`
-- **Reason**: 청사진 identity와 선언 구조에 종속된 색인 조회 보조이므로 독립 프랙탈로 분리하지 않고 청사진의 공용 organ에 유지한다.
+- **Reason**: 청사진 identity와 선언 구조에 종속된 색인 조회 보조이므로 독립 프랙탈로 분리하지 않고, 진입점을 거쳐 바깥 소비자를 섬기는 organ에 유지한다.
 
 ### `utils/features/DeriveConvergenceTargets.ts` — 수렴 증명 보조 유지
 
 - **Consumers**: `entry-point`
 - **Direct import**: `not allowed`
-- **Reason**: 청사진 전체의 선언과 식을 함께 읽는 수렴 증명의 지연 sidecar이므로 별도 계약 경계를 만들지 않고 공용 organ에 유지한다.
+- **Reason**: 청사진 전체의 선언과 식을 함께 읽는 수렴 증명의 지연 sidecar이므로 별도 계약 경계를 만들지 않고, 진입점을 거쳐 바깥 소비자를 섬기는 organ에 유지한다.
 
 ### `utils/itemEntry/getItemEntry.ts` — 아이템 자리 보조 유지
 
 - **Consumers**: `entry-point`
 - **Direct import**: `not allowed`
-- **Reason**: 이미 구성된 청사진 배열 템플릿의 지연 자리 메모만 소유하므로 독립 분석 프랙탈로 만들지 않고 청사진 organ에 유지한다.
+- **Reason**: 이미 구성된 청사진 배열 템플릿의 지연 자리 메모만 소유하므로 독립 분석 프랙탈로 만들지 않고, 진입점을 거쳐 바깥 소비자를 섬기는 organ에 유지한다.
+
+### `types/` — 형 칸 유지
+
+- **Consumers**: `entry-point`
+- **Direct import**: `not allowed`
+- **Reason**: `types/` 칸의 형은 이름으로 진입점에 올라 record, settle, validation, derive, behaviors, write가 쓴다. 형은 구현이 아니므로 칸에 두고 진입점이 이름으로 내보낸다.
 
 ## Verification Placement
 

@@ -6,6 +6,8 @@
 
 ## API Contracts
 
+- `index.ts`는 `mergeEffectiveSchema` 말고도 `buildNodes`가 쓰는 셋을 이름으로 내보낸다. 선언 기여를 하나로 합치는 `mergeSchemaContributions`, 활성 선언 집합을 고르는 `selectEffectiveDeclarations`, 기본 런타임 메모인 변경 가능한 `WeakMap` `DEFAULT_NO_ACTIVE`이다. `buildNodes`는 증명된 무조건 정적 정규화의 결과로 이 메모를 미리 채운다(`buildNodes/buildNodes.ts`).
+
 - 유효 스키마 병합은 활성 선언을 전순서로 받아 결과 기록 `EffectiveSchema { schema, typeConflict }`를 돌려준다. 정적 모드에서 둘 이상의 기여를 교차한 결과가 공집합이면 경로가 있는 JSONSchemaError다. 선언 하나 안에서 범위가 뒤집힌 경우와 리터럴 `enum: []`은 검증기 몫이므로 그대로 둔다. 런타임에서 enum·const가 공집합이 되면 enum 빈 배열로 표시하고, 충돌한 const는 제거한다. 형 교집합이 비면 enum 빈 배열을 적지 않고 `typeConflict`로 드러내며, 형과 nullable은 정적 선언대로 남긴다(BLUEPRINT-041). 이를 정착 오류로 던지는 일은 후속 정착 계약의 몫이다. 서로 다른 키워드 사이의 모순은 판정하지 않는다.
 
 - options와 presentation은 주입된 원자 판정과 common-utils merge의 선택 인자로 병합한다. 한쪽에만 있는 값은 참조를 옮기고, 양쪽이 plain object이면 쓸 때 복사하며, 배열은 교체하고, 뒤쪽의 undefined는 앞쪽 값을 지우지 않는다. 활성 집합이 같으면 결과 기록 참조도 같다.
@@ -44,6 +46,20 @@
 - 일회성 정적 정규화도 같은 선택 순서와 병합 정책을 사용한다. 59개 HEAD 스키마와 89C-03 차등에서 정적 오류, 경고, 필드, 공개 schema의 동결을 보존한다.
 - 증명된 단일 정적 기여를 직접 구성해도 모든 노드의 HEAD 유효 스키마와 키 순서가 같으며, 줄어드는 것은 범용 제약 순회 횟수뿐이다. invalid, multiple, gated, collect, isAtomic 경로의 검증·진단과 기존 메모 참조 조건은 유지한다.
 
+
+## Boundary Exemptions
+
+### `utils/merge/` — 병합 함수 유지
+
+- **Consumers**: `entry-point`
+- **Direct import**: `not allowed`
+- **Reason**: `mergeEffectiveSchema`, `mergeSchemaContributions`, `selectEffectiveDeclarations`는 이름으로 진입점에 올라 blueprint 진입점과 `buildNodes`가 쓴다. 이 fractal은 뿌리에 구현 파일을 두지 않으므로 병합 구현은 `utils/merge/` 칸에 두고 진입점이 이름으로 내보낸다.
+
+### `constants/defaults.ts` — 기본 메모 유지
+
+- **Consumers**: `entry-point`
+- **Direct import**: `not allowed`
+- **Reason**: `DEFAULT_NO_ACTIVE`는 이름으로 진입점에 올라 `buildNodes`가 미리 채운다. 값은 구현이 아니라 공유 메모이므로 상수 칸에 두고 진입점이 이름으로 내보낸다.
 
 ## Last Updated
 

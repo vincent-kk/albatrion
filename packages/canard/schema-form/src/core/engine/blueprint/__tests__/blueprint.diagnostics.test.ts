@@ -85,6 +85,10 @@ describe('blueprint diagnostic data and late collection', () => {
     ).toThrow(
       expect.objectContaining({
         code: FormErrorCode.ChildrenTargetNotFound,
+        details: expect.objectContaining({
+          schemaPath: '#/controls/fields/0',
+          target: 'missing',
+        }),
       }),
     );
   });
