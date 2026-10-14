@@ -82,4 +82,4 @@
 
 | 날짜 | 무엇 | 어디 |
 | --- | --- | --- |
-| 2026-10-14 | 281라운드 소유자 답: 할 일 끝내고 PR 병합 뒤 다음으로, 디렉터리·구성 다듬기는 새 단계, 7단계 비대. 보충 1줄 | `reviews/round-281-owner-answers.md` |
+| 2026-10-14 | 282라운드 소유자 메모: 08단계 씨앗(최소 export 위반, nodeFromJSONSchema root export, FormContents 이름), 시험·bench index 경유는 filid 한계 아님. 보충 1줄 | `reviews/round-282-owner-answers.md` |

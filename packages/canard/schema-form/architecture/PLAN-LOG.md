@@ -265,6 +265,7 @@
 | 2026-10-14 | 279라운드 소유자 답: 계속 진행(07d·G23 대기). 보충 1줄 | `reviews/round-279-owner-answers.md` |
 | 2026-10-14 | 280라운드 소유자 답: 38은 자유도 유지(라벨은 선출을 추측하지 않음), alias 자리 문제없음. 보충 2줄 | `reviews/round-280-owner-answers.md` |
 | 2026-10-14 | 281라운드 소유자 답: 할 일 끝내고 PR 병합 뒤 다음으로, 디렉터리·구성 다듬기는 새 단계, 7단계 비대. 보충 1줄 | `reviews/round-281-owner-answers.md` |
+| 2026-10-14 | 282라운드 소유자 메모: 08단계 씨앗(최소 export 위반, nodeFromJSONSchema root export, FormContents 이름), 시험·bench index 경유는 filid 한계 아님. 보충 1줄 | `reviews/round-282-owner-answers.md` |
 
 ## 2. 라운드별 요지
 
@@ -499,3 +500,4 @@
 - **245라운드(2026-10-13, 닫기).** ②-3 9bbabf211(문서·CLAUDE.md 다섯·스토리 제목)을 확인했고, ⑨의 통지 규칙을 (가)로 정했다: onValidate는 보고된 목록이 바뀔 때만 불린다(245C-01, reviews/round-245-closing.md). fixy07은 ⑨ 커밋 → 전체 게이트 → push → PR.
 - **246라운드(2026-10-13, 닫기).** PR #362(07b-2, a723e2f18)를 직접 검증해 게이트가 모두 통과했고, verifier 지적 하나로 ⑨를 보강하기로 했다: 직전 보고와 같은 참조의 목록은 보고하지 않는다(errors prop 마운트 2→1, 246C-01, reviews/round-246-closing.md). fixy07의 보강 커밋 뒤 재검증하고 소유자에게 병합 허가를 묻는다.
 - **247라운드(2026-10-13, 소유자).** PR들을 정리하고 다음 작업으로 갈 준비를 하라는 지시(reviews/round-247-owner-answers.md). 순서: #362 보강 재검증·병합 → #361 재기준·병합 → 07b-3 → 정리 커맨드·#354 본문 → 개선-38 준비.
+- **248라운드(2026-10-14, 소유자).** PR #362(07b-2) 병합을 명시적으로 허가했다(reviews/round-248-owner-answers.md). 원장 관리자가 squash 병합한다.
