@@ -58,7 +58,7 @@
 
 ## 5. filid 이슈 초안 (등록은 소유자 허가 뒤; 288라운드 "바로 등록하지 말 것")
 
-제목(안): `filid: a fractal root's first image — root files and index exports need an outside consumer; tests are not consumers; validate does not check §4`
+제목(안): `filid: a fractal root's first image — root files and index exports need an outside consumer; tests are not consumers; config exemptions pass silently`. 등록 직전 초안은 fairy08 scratchpad `tidy-docs/03-filid-issue.md`(모델 표, 언어 중립 규칙 문장 다섯과 충돌 하나, B8 질문, 어댑터·설정 층 셋, 측정치; 정돈-2 병합 뒤 시험 위반 326과 export 53 수치를 갱신해 등록).
 
 본문에 담을 것(영문으로 쓸 예정):
 

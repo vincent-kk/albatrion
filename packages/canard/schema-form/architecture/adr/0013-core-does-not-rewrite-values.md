@@ -106,6 +106,8 @@
 
 **제약을 입력 단계에서 강제하는 일은 입력 컴포넌트에 위임한다.**(WRITE-003) core는 제약을 유효 스키마로 노출하고(`node.jsonSchema`) 위반은 검증이 알린다(WRITE-003).
 
+304라운드 반영(경계 문장): **core는 스키마의 적용 가능성에는 따르고 제약은 강제하지 않는다**(WRITE-003) — 어느 선언이 효력 중인지(`properties`·`oneOf`·`if`/`then`/`else`·`controls.active`·나감 정책)에 따라 값의 모양을 맞추고, 제약 키워드(`type`·`minimum`·`minLength`·`minItems`·`maxItems`·`enum`·`pattern`)는 강제하지 않으며 검증이 알리고 입력이 안내한다(WRITE-003). 가려진 필드의 값 제거는 그 선언이 효력을 잃은 것이고, 개수가 넘친 배열은 모양은 맞되 제약을 어긴 값이라 긴 문자열과 같은 부류다(WRITE-003).
+
 형상 계산이 수렴하지 않을 때도 값은 받아들인다(SETTLE-011, WRITE-004).
 
 원본에 쓰는 주체는 사용자 입력, 호출자의 `setValue`·`reset`, 그리고 작성자가 선언한 규칙뿐이다(WRITE-005). 규칙은 노드가 생길 때의 채움과 그 원천 `controls.default`·`default`, 예약 층의 `controls.derived`·`controls.injectTo`·`controls.unsetValue`, 정책이 참으로 정해진 노드의 나감 비움, 그리고 포커스 아웃 `trim`이 자른 값의 쓰기다(WRITE-005, WRITE-078). 포커스 아웃 `trim`이 자른 값의 쓰기도 core의 자동 쓰기(여섯째)이며 작성자가 선언한 `options.trim`의 규칙이다(WRITE-005, WRITE-078). core가 스스로 원본을 "고치는" 일은 없다(WRITE-005).
