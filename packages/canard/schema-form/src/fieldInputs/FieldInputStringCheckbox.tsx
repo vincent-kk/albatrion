@@ -63,7 +63,7 @@ const FieldInputStringCheckbox = ({
       onChange((prev) => prev?.filter((option) => option !== rawValue) || []);
   });
   return (
-    <div role="group" aria-labelledby={`${path}-label`}>
+    <div role="group" aria-labelledby={`label:${path}`}>
       {map(checkboxOptions, ({ value, rawValue, label }, index) => {
         const id = `${path}-${index}`;
         return (

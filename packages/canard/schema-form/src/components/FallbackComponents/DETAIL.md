@@ -8,7 +8,7 @@
 
 - 그룹 렌더러는 루트에서 Input만 렌더하고, 하위에서는 노드 그룹에 맞는 래퍼를 제공합니다.
 - 입력 컴포넌트의 동작은 전달받은 Input에 위임하며, 배열 항목의 레이블은 숨깁니다.
-- 필드 제목은 단일 입력이면 `htmlFor={path}`인 label입니다. 내장 checkbox·radio 묶음 입력이 받는 스키마(`helpers/fieldInputGroup`의 판정)이면 제목은 `htmlFor` 없이 id `${path}-label`을 가지며(branch의 legend도 같은 id), 선택지 묶음의 `aria-labelledby`가 이 id를 가리킵니다(대기열 38).
+- 필드 제목 label은 어떤 입력이 선택되었는지 판정하지 않고 항상 `htmlFor={path}`와 id `label:${path}`를 둘 다 가지며, branch의 legend는 같은 id를 가집니다. 단일 입력은 `htmlFor`로, 묶음 입력은 컨테이너의 `aria-labelledby`로 이 제목에 이어집니다(대기열 38, 소유자 결정).
 
 ## Acceptance Criteria
 

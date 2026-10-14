@@ -54,7 +54,7 @@ const FieldInputStringRadio = ({
     onChange(rawValue);
   });
   return (
-    <span role="group" aria-labelledby={`${path}-label`}>
+    <span role="group" aria-labelledby={`label:${path}`}>
       {map(radioOptions, ({ value, rawValue, label }, index) => {
         const id = `${path}-${index}`;
         return (

@@ -1,6 +1,5 @@
 import { isArraySchema } from '@winglet/json-schema/filter';
 
-import { isFieldInputGroup } from '@/schema-form/helpers/fieldInputGroup';
 import type { FieldRendererProps } from '@/schema-form/types';
 
 export const FormFieldRenderer = ({
@@ -16,7 +15,6 @@ export const FormFieldRenderer = ({
 }: FieldRendererProps) => {
   if (depth === 0) return <Input />;
 
-  const isGroup = isFieldInputGroup(node.jsonSchema);
   if (node.strategy === 'branch') {
     return (
       <fieldset
@@ -27,7 +25,7 @@ export const FormFieldRenderer = ({
         }}
         className={className}
       >
-        <legend id={isGroup ? `${path}-label` : undefined}>{node.name}</legend>
+        <legend id={`label:${path}`}>{node.name}</legend>
         <div>
           <em style={{ fontSize: '0.85em' }}>{errorMessage}</em>
         </div>
@@ -47,11 +45,7 @@ export const FormFieldRenderer = ({
         className={className}
       >
         {node.parentNode && isArraySchema(node.parentNode) === false && (
-          <label
-            htmlFor={isGroup ? undefined : path}
-            id={isGroup ? `${path}-label` : undefined}
-            style={{ marginRight: 5 }}
-          >
+          <label htmlFor={path} id={`label:${path}`} style={{ marginRight: 5 }}>
             {name} {required && <span style={{ color: 'red' }}>*</span>}
           </label>
         )}
