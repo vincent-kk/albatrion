@@ -1,16 +1,16 @@
 import type { FieldInputDefinition } from '@/schema-form/types';
 
-import { FieldInputArrayDefinition } from './components/FieldInputArray';
-import { FieldInputBooleanDefinition } from './components/FieldInputBoolean';
-import { FieldInputDateFormatDefinition } from './components/FieldInputDateFormat';
-import { FieldInputNumberDefinition } from './components/FieldInputNumber';
-import { FieldInputObjectDefinition } from './components/FieldInputObject';
-import { FieldInputStringDefinition } from './components/FieldInputString';
-import { FieldInputStringCheckboxDefinition } from './components/FieldInputStringCheckbox';
-import { FieldInputStringEnumDefinition } from './components/FieldInputStringEnum';
-import { FieldInputStringRadioDefinition } from './components/FieldInputStringRadio';
-import { FieldInputUnionDefinition } from './components/FieldInputUnion';
-import { FieldInputVirtualDefinition } from './components/FieldInputVirtual';
+import { FieldInputArrayDefinition } from './fieldInputDefinitions/FieldInputArray/FieldInputArray';
+import { FieldInputBooleanDefinition } from './fieldInputDefinitions/FieldInputBoolean/FieldInputBoolean';
+import { FieldInputDateFormatDefinition } from './fieldInputDefinitions/FieldInputDateFormat/FieldInputDateFormat';
+import { FieldInputNumberDefinition } from './fieldInputDefinitions/FieldInputNumber/FieldInputNumber';
+import { FieldInputObjectDefinition } from './fieldInputDefinitions/FieldInputObject/FieldInputObject';
+import { FieldInputStringDefinition } from './fieldInputDefinitions/FieldInputString/FieldInputString';
+import { FieldInputStringCheckboxDefinition } from './fieldInputDefinitions/FieldInputStringCheckbox/FieldInputStringCheckbox';
+import { FieldInputStringEnumDefinition } from './fieldInputDefinitions/FieldInputStringEnum/FieldInputStringEnum';
+import { FieldInputStringRadioDefinition } from './fieldInputDefinitions/FieldInputStringRadio/FieldInputStringRadio';
+import { FieldInputUnionDefinition } from './fieldInputDefinitions/FieldInputUnion/FieldInputUnion';
+import { FieldInputVirtualDefinition } from './fieldInputDefinitions/FieldInputVirtual/FieldInputVirtual';
 
 /** Ordered default input fallbacks; union precedes the ordinary string definition. */
 export const builtinFieldInputDefinitions = [

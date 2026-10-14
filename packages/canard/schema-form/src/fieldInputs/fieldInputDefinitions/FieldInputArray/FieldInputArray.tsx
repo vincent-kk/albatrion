@@ -13,9 +13,9 @@ import type {
   FieldInputProps,
 } from '@/schema-form/types';
 
-import { EmptySlot } from './FieldInputArray/components/EmptySlot';
-import { fillArraySlot } from './FieldInputArray/utils/fillArraySlot';
-import { readSlotKind } from './FieldInputArray/utils/readSlotKind';
+import { EmptySlot } from './components/EmptySlot';
+import { fillArraySlot } from './utils/fillArraySlot';
+import { readSlotKind } from './utils/readSlotKind';
 
 /** Forward list-affecting props while each child retains its own value subscription. */
 const FieldInputArray = ({

@@ -9,8 +9,8 @@ import type {
   FieldInputProps,
 } from '@/schema-form/types';
 
-import { FieldInputString } from './FieldInputString';
-import { readUnionDisplay } from './FieldInputUnion/utils/readUnionDisplay';
+import { FieldInputString } from '../FieldInputString/FieldInputString';
+import { readUnionDisplay } from './utils/readUnionDisplay';
 
 /** Wrap the string fallback with a local draft interpreted only against live union types. */
 const FieldInputUnion = (props: FieldInputProps) => {

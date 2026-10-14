@@ -7,7 +7,7 @@ import { afterEach, expect, it, vi } from 'vitest';
 import { nodeFromJSONSchema } from '@/schema-form/__tests__/fixtures/nodeFromJSONSchema';
 import { Form, type FormHandle } from '@/schema-form/components/Form';
 
-import { FieldInputArrayDefinition } from '../components/FieldInputArray';
+import { FieldInputArrayDefinition } from '../FieldInputArray';
 
 afterEach(() => {
   cleanup();

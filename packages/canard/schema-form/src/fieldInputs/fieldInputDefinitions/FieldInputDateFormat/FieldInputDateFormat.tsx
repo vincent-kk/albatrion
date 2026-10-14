@@ -11,7 +11,7 @@ import type {
 import {
   type DateInputType,
   isRenderableDateInputValue,
-} from '../utils/isRenderableDateInputValue';
+} from './utils/isRenderableDateInputValue';
 
 type DateFormatJSONSchema = {
   format: DateInputType;
