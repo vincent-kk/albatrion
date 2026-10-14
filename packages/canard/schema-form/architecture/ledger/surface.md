@@ -1016,6 +1016,10 @@
   > 소유자(342라운드, batch 옵션(기본 켬) 설계와 재저울질): "그럼 batch 옵션을 갖도록 하고, 기본값은 배치 사용, 읽기전용인 경우 배치를 끄고 쓰는 그런 메소드 설계는 어떤지? \n그리고 중간에 권고가 달라져서... 다시 저울질을 해보길 바람" (`reviews/round-342-owner-answers.md:10`)
   > 소유자(342라운드, 지연 batch 확정, 배치 예산 물음): "좋아 그렇게 가죠.\n배치 예산인 몇입니까 지금?" (`reviews/round-342-owner-answers.md:11`)
   > 소유자(343라운드, 묶음 2 마무리와 전체 시험 한 번, 소요 시간 물음): "좋네. 개발 마무리까지 진행하고, 신규기능과 공통기능이 포함되니 테스트를 한번 거치도록 하세.\n시간이 얼마나 걸리겠나?" (`reviews/round-343-owner-answers.md:7`)
+  > 편집자 결정(346C-01): "【추론】 떼어진 노드에서 부른 `visitSubtree`는 NODE-044의 구조 읽기 규칙을 따라 그 노드와 함께 떼어진 하위 트리(마지막 커밋의 형상)를 걷는다. SURFACE-062의 "형상에 있는 노드만 돈다"는 살아 있는 시작 노드에 대한 문장이다. 무동작은 명령과 상태 진입에만 정해진 것이므로 `dispatchSetSubtreeState`의 방식을 유추하지 않는다." (`reviews/round-346-closing.md:8`)
+  > 편집자 결정(346C-02): "【추론】 순회 안의 정착 밖 진입 여섯(`setState`·`setSubtreeState`·`clearSubtreeState`·`setExternalErrors`·`clearExternalErrors`·`request`)은 즉시 전달하지 않고 순회의 묶음을 열어 순회 끝에 한 번 전달한다(`batch` 안과 같은 규칙, EVENT-013). 열린 진입도 순회도 없으면 전과 같이 바로 전달하고, 쓰기도 진입도 없는 순회는 아무것도 열지 않는다. 상태와 외부 오류의 데이터는 즉시 바뀌고 사건만 미뤄진다." (`reviews/round-346-closing.md:10`)
+  > 편집자 결정(346C-04): "【추론】 SURFACE-062 결정의 "전달 중(리스너 안)에는 쓰기가 평소처럼 거부되고 읽기 순회만 된다"는 틀렸다. 전달 중의 쓰기는 거부되지 않고 평소 규칙대로 리스너 되먹임으로 세어지며(EVENT-016, EVENT-020), 오류 관찰자 안의 쓰기만 `WriteInObserver`로 거부된다. 리스너 안의 순회에서 쓰기가 묶음을 열면 visitor의 예외는 순회를 부른 쪽에 닿지 않는다(`batch`와 같음)." (`reviews/round-346-closing.md:14`)
+  > 편집자 결정(346C-05): "【추론】 SURFACE-062 결정의 "한 파동 안 형제 리스너가 `UpdateState`를 듣는 순서만 바뀌며"는 일어나지 않는다. `deliverWave`가 파동을 문서 순서로 정렬하므로 방문 순서가 정순으로 바뀌어도 전달 순서는 그대로이고 리스너는 아무 차이도 관찰할 수 없다. 두 번 닿는 노드는 한 번만 패치되며 전에는 둘째 패치가 무동작이었다." (`reviews/round-346-closing.md:16`)
 - 상태: 현행
 - 출처: `reviews/round-342-owner-answers.md:15-20`(정본), `reviews/round-342-owner-answers.md:7-11`(소유자 답), `plan/tidy-structure/walk-subtree-design.md`
 - 닫은 사람: 소유자 답(`reviews/round-342-owner-answers.md:11` "좋아 그렇게 가죠"), 편집자 결정(342라운드, 반영 칸; 이름·순서·형제 정순)

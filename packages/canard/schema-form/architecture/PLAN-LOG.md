@@ -576,3 +576,4 @@
 - **343라운드(2026-10-15, 소유자).** 묶음 2 마무리, 전체 게이트 한 번(reviews/round-343-owner-answers.md).
 - **344라운드(2026-10-15, 소유자).** 밤까지 자율 진행, 결정 대기열, PR 병합 허용, codex·agy(reviews/round-344-owner-answers.md).
 - **345라운드(2026-10-15, 소유자).** 작업 끝난 브랜치 즉시 정리(reviews/round-345-owner-answers.md).
+- **346라운드(2026-10-15, 닫기/원장 관리자).** 묶음 2 #389 병합, 결정 55·56, NODE-049 대체(reviews/round-346-closing.md).
