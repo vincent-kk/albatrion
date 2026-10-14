@@ -1,4 +1,4 @@
-import { JSONPointer as $ } from '../enum';
+import { JSONPointer as $ } from '../constants/JSONPointer';
 
 /**
  * Strips the fragment from the path and normalizes root representations.

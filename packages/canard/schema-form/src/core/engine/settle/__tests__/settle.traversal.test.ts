@@ -3,8 +3,8 @@ import { describe, expect, it } from 'vitest';
 import { FieldNodeEventType } from '@/schema-form/core/engine/record';
 import { WriteOption } from '@/schema-form/core/engine/types/value';
 
+import { createTestTree } from '../../__tests__/fixtures/createTestTree';
 import { writeFieldNode } from '../utils/write/writeFieldNode';
-import { createTestTree } from './fixtures/createTestTree';
 
 // filid:contract settle-write
 describe('bounded settlement traversal', () => {

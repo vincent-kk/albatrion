@@ -8,8 +8,8 @@ import { expect, it } from 'vitest';
 import { hasOwnProperty } from '@winglet/common-utils/lib';
 
 import { Form } from '@/schema-form/components/Form';
-import { type FieldInputProps } from '@/schema-form/types/fieldInput';
-import { type FieldRendererProps } from '@/schema-form/types/rolled';
+import { type FieldRendererProps } from '@/schema-form/rolled';
+import { type FieldInputProps } from '@/schema-form/types';
 
 it('loads the selected React build and renders authored lazy input and inline JSX labels', async () => {
   const production = process.env.NODE_ENV === 'production';

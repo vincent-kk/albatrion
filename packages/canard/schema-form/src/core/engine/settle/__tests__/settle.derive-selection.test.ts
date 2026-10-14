@@ -4,9 +4,9 @@ import type { BlueprintSchema } from '@/schema-form/core/engine/blueprint';
 import { FieldNodeState } from '@/schema-form/core/engine/types/state';
 import { WriteOption } from '@/schema-form/core/engine/types/value';
 
+import { createTestTree } from '../../__tests__/fixtures/createTestTree';
 import { loadFieldNodeAtMount } from '../utils/load/loadFieldNodeAtMount';
 import { writeFieldNode } from '../utils/write/writeFieldNode';
-import { createTestTree } from './fixtures/createTestTree';
 
 // filid:contract settle-derive
 describe('active derive declarations', () => {

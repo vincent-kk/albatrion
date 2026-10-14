@@ -9,8 +9,7 @@ import {
 } from '@aileron/schema-form-scenarios';
 
 import { Form, type FormHandle } from '@/schema-form/components/Form';
-
-import { type JSONSchema } from '../types/jsonSchema';
+import { type JSONSchema } from '@/schema-form/types';
 
 describe('scenario harness with the public Form', () => {
   afterEach(cleanup);

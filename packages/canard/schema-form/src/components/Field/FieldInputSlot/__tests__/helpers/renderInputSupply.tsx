@@ -9,8 +9,8 @@ import {
   type FormProps,
 } from '@/schema-form/components/Form';
 import { ExternalFormContextProvider as FormProvider } from '@/schema-form/providers';
-import { type FieldInputProps } from '@/schema-form/types/fieldInput';
-import { type JSONSchema } from '@/schema-form/types/jsonSchema';
+import { type FieldInputProps } from '@/schema-form/types';
+import { type JSONSchema } from '@/schema-form/types';
 
 /** Resolution paths whose field boundaries must share the Refresh policy. */
 export const INPUT_SUPPLIES = [

@@ -6,8 +6,8 @@ import type { BlueprintSchema } from '@/schema-form/core/engine/blueprint';
 import { WriteOption } from '@/schema-form/core/engine/types/value';
 import { SchemaFormError } from '@/schema-form/errors';
 
+import { createTestTree } from '../../__tests__/fixtures/createTestTree';
 import { loadFieldNodeAtMount } from '../utils/load/loadFieldNodeAtMount';
-import { createTestTree } from './fixtures/createTestTree';
 
 // filid:contract settle-failure-identity
 describe('ERROR-004 58C-01 ERROR-017 ERROR-195 59C-01 shared-rule failure occurrence identity', () => {

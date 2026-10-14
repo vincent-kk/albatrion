@@ -2,14 +2,14 @@ import { describe, expect, it, vi } from 'vitest';
 
 import { WriteOption } from '@/schema-form/core/engine/types/value';
 
+import { createTestTree } from '../../__tests__/fixtures/createTestTree';
 import * as compiler from '../../blueprint/utils/expressions/createDynamicFunction';
+import * as paths from '../../utils/paths/resolveDependencyPath';
 import * as gates from '../utils/gates/evaluateGate';
 import * as publication from '../utils/gates/flushPendingGateReads';
 import { loadFieldNodeAtMount } from '../utils/load/loadFieldNodeAtMount';
-import * as paths from '../utils/paths/resolveDependencyPath';
 import { writeFieldNode } from '../utils/write/writeFieldNode';
 import { createFixedBranchSchema } from './fixtures/childSelection/createFixedBranchSchema';
-import { createTestTree } from './fixtures/createTestTree';
 
 // filid:contract settle-gate-path-resolution
 describe('gate path resolution runtime visits', () => {

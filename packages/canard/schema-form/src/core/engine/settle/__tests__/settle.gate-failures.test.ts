@@ -6,8 +6,8 @@ import { WriteOption } from '@/schema-form/core/engine/types/value';
 import type { Validator } from '@/schema-form/core/engine/validation';
 import { SchemaFormError } from '@/schema-form/errors';
 
+import { createTestTree } from '../../__tests__/fixtures/createTestTree';
 import { writeFieldNode } from '../utils/write/writeFieldNode';
-import { createTestTree } from './fixtures/createTestTree';
 
 describe('round 55 direct settlement regression', () => {
   it('ERROR-005 55C-01 preserves a guard before a later derive budget failure', () => {

@@ -1,5 +1,5 @@
 import type { Blueprint } from '../../../blueprint';
-import { getDeriveRuleTable } from '../../derive';
+import { getDeriveRuleTable } from '../../../derive';
 
 /** Context readers are held apart from absolute JSON Pointer dependencies. */
 const OWNERS = new WeakMap<Blueprint, readonly string[]>();

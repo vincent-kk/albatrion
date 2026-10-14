@@ -1,7 +1,7 @@
 import type { SchemaFormError } from '../../../errors';
 import type { BlueprintNode, EffectiveSchema } from '../blueprint';
+import type { DeriveState, DeriveTraceEntry } from '../derive';
 import type { Distribution, FieldNodeRecord } from '../record';
-import type { DeriveState, DeriveTraceEntry } from './derive';
 
 /** Origin of a write before calculation and transition phases. */
 export type FieldNodeWriteKind =

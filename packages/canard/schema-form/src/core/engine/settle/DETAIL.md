@@ -26,7 +26,7 @@
 
 - 기능 통과는 청사진의 기능 정적 색인과 이번 재계산(변경·상태 dirty) 목록의 교집합만 방문합니다. 기능 선언이 없으면 방문은 0입니다. 이후 단계가 새 기능 통과를 더할 때에도 정적 색인을 두며, 전체 범위 방문이 필요하면 정적으로 범위를 알 수 없는 이유를 이 DETAIL에 명시합니다. 방문 순서가 관측 결과에 드는 통과는 SETTLE-006 순서를 유지합니다(65C-02, SETTLE-017).
 
-- 의존 방향은 `blueprint < record < {behaviors, navigation} < validation < settle/derive < settle < dispatch < FieldNode`입니다. settle의 라운드 실행기와 커밋은 derive 진입점만 소비하고, derive는 settle의 쓰기·전이·커밋 및 `settle/type.ts`를 가져오지 않습니다(NODE-016·045, LANDING-083·084). 살아 있는 노드의 계산은 `node.behavior`를 호출하고 형상 밖 값의 정적 해석과 빈 값 판정은 behaviors 진입점을 소비합니다. `FieldNode`·`write`는 import하지 않고 `validation` 진입점의 동기 가드 읽기만 소비합니다(VALIDATE-015·044, NODE-016, NODE-006, WRITE-082·098, VALUE-034).
+- 의존 방향은 `blueprint < record < {behaviors, navigation} < validation < derive < settle < dispatch < FieldNode`입니다. derive는 settle의 형제 fractal(`engine/derive`)이며 settle의 라운드 실행기·커밋·맥락·쓰기 organ은 derive 진입점만 소비하고, derive는 settle을 가져오지 않습니다. 값 동등·의존 경로·선언 층 해석은 engine의 `utils/`에서 둘이 함께 가져옵니다(NODE-016·045, LANDING-083·084). 살아 있는 노드의 계산은 `node.behavior`를 호출하고 형상 밖 값의 정적 해석과 빈 값 판정은 behaviors 진입점을 소비합니다. `FieldNode`·`write`는 import하지 않고 `validation` 진입점의 동기 가드 읽기만 소비합니다(VALIDATE-015·044, NODE-016, NODE-006, WRITE-082·098, VALUE-034).
 - 정착의 내부 organ을 외부 소비자가 직접 가져오지 않으므로 경계 예외는 없습니다(NODE-016).
 - `__tests__/settle.branchless-feature-indexes.test.ts`는 분기 없는 청사진에서도 derive·watch·state 기능 색인과 역의존 색인이 만들어지는지, 그리고 빈 파생 규칙 표를 derive 부재가 capability로 증명된 경우에만 공유하는지를 검증합니다. 두 사례는 일반 분석 강제(`vi.mock`)를 쓰지 않습니다.
 - 한 진입은 동기적으로 표시 → 계산(호스트 바퀴) → 파생(쓰기가 나오면 표시로) → 전이(쓰기가 나오면 표시로) → 커밋합니다. 전이가 재계산을 부른 뒤에도 파생을 다시 판정하며, 적용 쓰기가 있는 파생 라운드는 한 정착 전체에서 전이 뒤에도 이어 세고 상한은 25입니다(SETTLE-002–006·017, EVENT-020, LANDING-063).
@@ -102,7 +102,7 @@
 - `diagnostics`는 `{ status: 'stable' | 'degraded', cause?: 'budget' | 'expression' | 'injectTarget' | 'writeShape' | 'sharedConflict', exceededBudget?: 'hostWheel' | 'derive' | 'transition' | 'recursion', iterations?: number, commit?: number }`입니다. 파생 상한 25를 넘기면 `degraded`와 첫 실패의 `cause`(선행 실패가 없으면 `'budget'`)·`exceededBudget: 'derive'`·`iterations: 25`로 원본 B를 커밋합니다. 모든 칸은 `commit`의 커밋을 설명하며 최초 손상 커밋을 유지하고 폼 수준 로드에서만 `stable`로 초기화합니다(ERROR-070·130–133·190·195·204, SETTLE-011·013·017, 26C-02).
 - 재귀 발생에서 같은 청사진 템플릿이 자신의 `raw`·`undeclaredValues`·분배 입력·잠복 자손·살아 있는 자손 어디에도 원본이 없는 조상과 다시 만나 계속 확장하려 하면 더 만들지 않고 `recursion`으로 기록합니다. 명시 원본의 유한 깊이는 이 판정으로 잘리지 않습니다(TEST-067 (c′), ERROR-190).
 - 정착 오류는 기존 `src/errors/`의 `SchemaFormError`와 그곳의 이름 붙은 코드 표 상수를 씁니다. `BUDGET_EXCEEDED`·`RECURSIVE_SHAPE_DIVERGED`·`EXPRESSION_THREW`·`GUARD_FAILED`·`SHARED_NODE_CONFLICT`·`INJECT_TARGET_MISSING`·`INVALID_VIRTUAL_NODE_VALUES`의 분류를 이곳에서 적용하지만 목록을 다시 소유하지 않습니다. 동적 `injectTo` 대상이 없으면 후보에서 빼고 `cause: 'injectTarget'`, 가상 노드 자동 쓰기 모양이 틀리면 `cause: 'writeShape'`로 커밋한 뒤 사슬 끝에 던집니다. 버린 트리의 노드 쓰기에만 남는 `DISPOSED_NODE_WRITE`도 같은 오류 클래스와 표의 코드를 쓰며 단순히 형상을 떠난 참조의 쓰기는 오류가 아닙니다(NODE-044, CONTROLS-079, ERROR-070·122·132·164·195·198).
-- 기존 경고 이름공간 `SCHEMA_FORM_WARNING`의 `TYPE_MISMATCH`·`NON_JSON_WHOLE_VALUE`는 `helpers/warning/warningCode.ts`에 이름 붙인 문자열 상수로 둡니다. 기존 경고와 같은 접두를 재사용하고 개발 모드의 통째 값 검사만 후자 코드를 냅니다(VALUE-037, ERROR-070·133).
+- 기존 경고 이름공간 `SCHEMA_FORM_WARNING`의 `TYPE_MISMATCH`·`NON_JSON_WHOLE_VALUE`는 `helpers/warning/constants/warningCode.ts`에 이름 붙인 문자열 상수로 둡니다. 기존 경고와 같은 접두를 재사용하고 개발 모드의 통째 값 검사만 후자 코드를 냅니다(VALUE-037, ERROR-070·133).
 - 커밋은 `record.markFieldNodeEvent`로 값·경로·자식 형상·유효 스키마 `UpdateJsonSchema`·계산 상태·상호작용 상태·Refresh 대상·루트 진단을 배달 표에 합치고, 집합 전체의 해당 `revisionLedger` 비트를 한 번에 올립니다. `write`는 그 표를 재계산하지 않고 배달합니다. 커밋 번호와 Refresh 대상·잠복 원본 열거 메모·정합 경고등도 확정합니다(EVENT-004·006·007·043·064·066·071, SETTLE-007). 루트의 잠복 원본은 `(절대 path, kind)`로, `typeMismatchPaths`는 현재 형상의 경로로 보관합니다. `inactiveValues`는 경로마다 형상 밖 잎·터미널 및 잘못된 종류의 `raw`를 든 호스트 중 전순서상 첫 원본을 골라 얼린 `{ path, value }` 항목을 청사진 문서 전순서로 열거합니다. 커밋은 잠복 집합·원본이 바뀐 경로의 조상 배열만 다시 만들고 변경 없는 배열·항목 참조는 재사용하며 빈 배열 하나를 공유합니다. `typeMismatch`는 현재 유효 목록과 원본의 함수이고, `typeMismatches`는 커밋 번호로 메모한 하위 경로 목록입니다(VALUE-029·030·037, WRITE-087, SURFACE-061).
 - 커밋은 `record.markFieldNodeEvent`로 값·경로·자식 형상·유효 스키마 `UpdateJsonSchema`·계산 상태·상호작용 상태·Refresh 대상·루트 진단을 배달 표에 합치고, 집합 전체의 해당 `revisionLedger` 비트를 한 번에 올립니다. `write`는 그 표를 재계산하지 않고 배달합니다. 최종 형상에 든 노드의 참인 `interactionState` 키는 더하고 떠난 노드의 키는 빼며, 살아 있는 노드의 정착 중 상태 변경도 이전 커밋 값과 비교해 셈에 반영합니다. 순변화에서 0↔1 경계가 생겼을 때만 루트의 `UpdateGlobalState`를 정착 밖 사건 대기열에 합칩니다(EVENT-062, 43C-01). 커밋 번호와 Refresh 대상·잠복 원본 열거 메모·정합 경고등도 확정합니다(EVENT-004·006·007·043·064·066·071, SETTLE-007). 루트의 잠복 원본은 `(절대 path, kind)`로, `typeMismatchPaths`는 현재 형상의 경로로 보관합니다. `inactiveValues`는 경로마다 형상 밖 잎·터미널 및 잘못된 종류의 `raw`를 든 호스트 중 전순서상 첫 원본을 골라 얼린 `{ path, value }` 항목을 청사진 문서 전순서로 열거합니다. 커밋은 잠복 집합·원본이 바뀐 경로의 조상 배열만 다시 만들고 변경 없는 배열·항목 참조는 재사용하며 빈 배열 하나를 공유합니다. `typeMismatch`는 현재 유효 목록과 원본의 함수이고, `typeMismatches`는 커밋 번호로 메모한 하위 경로 목록입니다(VALUE-029·030·037, WRITE-087, SURFACE-061).
 - 배달 표시는 자동 쓰기 노드를 커밋당 한 번 색인하고, 유효 `controls.watch`는 해석된 경로→살아 있는 감시 노드의 역색인으로 관리합니다. 변경된 방출 경로와 상태 변경 경로가 감시 경로의 조상 또는 자손이면 감시 값을 다시 읽고, `@` 감시는 마지막 배달에서 본 맥락 참조와 현재 참조가 다른 커밋에서만 후보에 넣습니다. 형상 진입은 현재 경로, 배열 소멸은 직전 커밋 경로, 이동은 옛·새 경로로 조회합니다. 조건 의존의 형상 이탈에서만 모든 감시 노드를 다시 읽습니다. 자손이 조상 변화를 설명하여 조상 경로를 생략해도 자손 경로 조회가 조상 감시를 포함합니다. 역색인 메모리는 O(감시 에지), 일반·배열 구조 커밋 조회는 O(영향 경로 수 × 깊이 + 일치 감시 노드 수)이며 조건 의존의 형상 이탈 시에는 O(전체 감시 노드 수)입니다(EVENT-064, CONTROLS-019, 28C-07, SETTLE-017·047, 44C-01).
@@ -274,17 +274,11 @@
 
 ## Boundary Exemptions
 
-### `utils/compute/sameValue.ts` — bench의 직접 import
+### `utils/gates/getGateRegistry.ts` — 레거시 비교 스크립트의 직접 import
 
-- **Consumers**: `**/bench/**`
+- **Consumers**: `**/bench/legacy-compare/**`
 - **Direct import**: `allowed`
-- **Reason**: bench(측정 도구)는 소유자 결정(276라운드, 대기열 49)으로 fractal import 규칙의 직접 import 금지에서 면제됩니다. 값 비교 비용을 따로 재기 위해 진입점에 올리지 않고 그대로 읽습니다.
-
-### `utils/gates/getGateRegistry.ts` — bench의 직접 import
-
-- **Consumers**: `**/bench/**`
-- **Direct import**: `allowed`
-- **Reason**: bench(측정 도구)는 소유자 결정(276라운드, 대기열 49)으로 fractal import 규칙의 직접 import 금지에서 면제됩니다. 게이트 등록표 구성 비용을 따로 재기 위해 진입점에 올리지 않고 그대로 읽습니다.
+- **Reason**: `bench/legacy-compare/`는 src 밖에서 레거시 코어와 새 코어를 나란히 재는 독립 스크립트 넷(`array`·`derive-and-controls`·`dispatch-and-validation`·`node-and-settle`)의 자리이며 레거시와 함께 지웁니다. 그때까지 소유자 결정(276라운드, 대기열 49)으로 fractal import 규칙의 직접 import 금지에서 면제됩니다. 게이트 등록표 구성 비용을 따로 재기 위해 진입점에 올리지 않고 그대로 읽습니다.
 
 ## Last Updated
 

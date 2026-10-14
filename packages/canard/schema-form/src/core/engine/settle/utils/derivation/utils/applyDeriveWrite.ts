@@ -1,7 +1,7 @@
 import { isArray } from '@winglet/common-utils/filter';
 
+import type { DeriveRoundDecision } from '../../../../derive';
 import type { FieldNodeRecord } from '../../../../record';
-import type { DeriveRoundDecision } from '../../../derive';
 import type { SettlementContext } from '../../../type';
 import { distributeLatentValue } from '../../latent/distributeLatentValue';
 import { markWrite } from '../../write/markWrite';

@@ -14,15 +14,15 @@
 - `src/__legacy__/core/`의 노드·파서·시험은 참고용으로 보존하며 비레거시 코드가 가져오지 않습니다. 새 시나리오 하네스는 새 엔진을 검증합니다(LANDING-205).
 - `nodeFromJSONSchema`는 `src/__tests__/fixtures/`의 시험·측정 도우미이며 core index의 공개 생성·마운트 통로만 사용합니다. core·패키지 진입점은 이 도우미를 내보내지 않으며 시험·bench·aileron 벤치마크가 파일 경로로 읽습니다. `<Form>`은 `buildFieldNodeTree`·`mountFieldNode` 바인딩 통로를 씁니다. `contextNodeFactory`는 `src/__legacy__/`에 속하며 core·패키지 진입점이 내보내지 않습니다. `engine/types`의 state·value·jsonSchema·controls는 엔진 안에서 구체 파일로 소비하고 외부는 core·engine 진입점의 이름을 경유하며 별도 와일드카드 배럴이나 node·constructor 계약은 두지 않습니다. 사건 계약은 새 엔진의 record가 소유합니다(LANDING-087, 70C-01).
 - 공개 노드 형·가드와 `FieldNodeEventType`·`FieldNodeRequestType`·`FieldNodeState`는 패키지 진입점이 이름으로 내보냅니다. 바인딩 전용 함수는 공개하지 않으며, `Validator`는 `ValidatorFactory`라는 이름으로, `ValidateFunction`은 같은 이름으로 `src/types`를 거쳐 패키지 공개 `src/index.ts`가 내보냅니다(NODE-010, SURFACE-055·056·060, VALIDATE-044, 32C-01, 35C-07, 69C-01).
-- 새 fractal의 의존 순서는 `blueprint` < `record` < {종류 모듈, `navigation`} < `validation` < `settle/derive` < `settle` < `write` < `surface`다. `settle/derive`는 `settle`의 자식으로서 규칙 판정만 소유하고 settle의 라운드 실행기가 그 진입점을 소비한다. `validation`은 결과를 받은 콜백으로만 `write`에 돌려주며 타입 간선도 역전시키지 않는다(NODE-016·045, LANDING-083·084, SETTLE-004).
+- 새 fractal의 의존 순서는 `blueprint` < `record` < {종류 모듈, `navigation`} < `validation` < `derive` < `settle` < `write` < `surface`다. `engine/derive`는 `settle`의 형제로서 규칙 판정만 소유하고 settle의 라운드 실행기·커밋·맥락·쓰기 organ이 그 진입점을 소비한다. 두 fractal이 함께 쓰는 순수 보조(`sameValue`·`resolveDependencyPath`·`getCommittedDeclarationKey`·`getControlExpression`)는 최소 공통 fractal인 engine의 organ `engine/utils`에 둔다. `validation`은 결과를 받은 콜백으로만 `write`에 돌려주며 타입 간선도 역전시키지 않는다(NODE-016·045, LANDING-083·084, SETTLE-004).
 - 사건은 루트의 동기 진입 사슬에서 정착·파동 배달·검증 요청·`onChange` 순서로 조율합니다. 경계 린트는 `src/core/**` 전체에 적용하여 `app/plugin` 가져오기를 금지합니다(EVENT-027, CONTROLS-075, LANDING-067).
 - 자식 형상 그래프는 순환하지 않습니다. 부모·루트 참조는 노드의 탐색과 폐기 후 읽기 계약을 유지합니다(WRITE-086).
 
 ## API Contracts
 
 - surface는 engine의 진입점으로만 실행 계약을 가져오며 core 진입점은 두 자식의 계약을 이름으로 재수출합니다. SchemaControls·ValidateFunction은 바인딩 타입의 경계를 제공합니다. `readFieldNodeGuard`·`UnionMemberType`·`UnionSchemaType`·`FieldNodeInputProps`는 core index가 재수출하지 않습니다. 패키지의 src/index 공개 이름은 유지합니다(07c 계획 9.2).
-- `fieldNodeFactory`·`blueprint` 재수출의 보유 이유: core 밖 시험·측정 도구(`bench/array.bench.ts`·`bench/derive-and-controls.bench.ts`·`bench/dispatch-and-validation.bench.ts`·`bench/node-and-settle.bench.ts`, `src/hooks/__tests__/createHookNode.ts`)가 core index로 쓰는 생성 통로; 제품 소비자는 없음; 정돈-3에서 시험 도구의 자리와 함께 재검토.
-- `__tests__/fixtures/testFieldNode.ts`는 engine index의 `FieldNodeRecord`를 바탕으로 시험용 자기 형과 구조 판정 좁히기를 제공합니다. core 시나리오 러너, engine 시험과 bench 네 파일(`array`·`derive-and-controls`·`dispatch-and-validation`·`node-and-settle`)은 클래스 identity 대신 레코드 칸으로 판정하고 공개 노드 동작은 surface 관문의 공개 노드 형으로 호출하며, `surface/FieldNode.ts` 클래스를 직접 가져오지 않습니다.
+- `fieldNodeFactory`·`blueprint` 재수출의 보유 이유: core 밖 시험·측정 도구(`bench/legacy-compare/`의 네 파일, `src/hooks/__tests__/createHookNode.ts`)가 core index로 쓰는 생성 통로; 제품 소비자는 없음.
+- `__tests__/fixtures/testFieldNode.ts`는 engine index의 `FieldNodeRecord`를 바탕으로 시험용 자기 형과 구조 판정 좁히기를 제공합니다. core 시나리오 러너,  engine 시험과 `bench/legacy-compare/`의 독립 비교 스크립트넷은 클래스 identity 대신 레코드 칸으로 판정하고 공개 노드 동작은 surface 관문의 공개 노드 형으로 호출하며, `surface/classes/FieldNode.ts` 클래스를 직접 가져오지 않습니다.
 - 자식 index 모양 검증은 `__tests__/surfaceIndex.test.ts`가 surface 관문을 소비하여 수행합니다. 청사진 내부 검증은 blueprint 시험 구획이, 청사진과 검증·정착을 함께 쓰는 통합 검증은 engine 시험 구획이 소유합니다.
 
 - 공개 쓰기 옵션은 독립 비트 `Overwrite=1`, `Merge=2`, `DisableAutomaticWrites=4`, `EnableAutomaticWrites=8`입니다. `Overwrite`와 `Merge`의 동시 지정은 쓰기 전에 `INVALID_WRITE_OPTION`으로 거부합니다(LANDING-021·141). 내부 빈 옵션과 교체 표시는 같은 네 비트 계약을 사용합니다.
@@ -162,13 +162,15 @@ nodeFromJSONSchema<Schema extends AuthoredSchema>(props: {
 - 분기 없는 단일 리터럴 종류의 `const`·`enum` 칸은 대응 원시 노드 형으로 좁힙니다.
 - 형 수준에서 청사진 오류를 확정할 수 있는 객체·배열 리터럴, 종류가 섞인 리터럴, 혼합 인라인 분기는 `never`입니다. 정적 판정이 불가능한 모양만 넓은 노드 형을 유지합니다.
 
+- `__benchmarks__/`는 core의 자식 관문(`core/engine`·`core/surface`)으로 재는 vitest 벤치 일곱(`branch-strategy-init`·`compute-recalculate`·`event-cascade`·`find-node`·`nodeFromJSONSchema`·`object-pending-read`·`render-delay`)을 소유합니다. `vitest.bench.config.ts`의 `benchmark.include`가 이 일곱을 이름으로 고르며, 벤치는 시험처럼 검증 organ이라 패키지 표면과 선언 빌드에 들지 않습니다.
+
 ## Boundary Exemptions
 
-### `__tests__/fixtures/createTestValidator.ts` — bench의 시험 검증기
+### `__tests__/fixtures/createTestValidator.ts` — 레거시 비교 스크립트의 시험 검증기
 
-- **Consumers**: `**/bench/**`
+- **Consumers**: `**/bench/legacy-compare/**`
 - **Direct import**: `allowed`
-- **Reason**: bench(측정 도구)는 소유자 결정(276라운드, 대기열 49)으로 fractal import 규칙의 직접 import 금지에서 면제됩니다. 측정에 쓰는 시험 검증기를 제품 진입점에 공개하지 않고 그대로 읽습니다.
+- **Reason**: `bench/legacy-compare/`는 src 밖에서 레거시 코어와 새 코어를 나란히 재는 독립 스크립트 넷(`array`·`derive-and-controls`·`dispatch-and-validation`·`node-and-settle`)의 자리이며 레거시와 함께 지웁니다. 그때까지 소유자 결정(276라운드, 대기열 49)으로 fractal import 규칙의 직접 import 금지에서 면제됩니다. 측정에 쓰는 시험 검증기를 제품 진입점에 공개하지 않고 그대로 읽습니다.
 
 ## Last Updated
 

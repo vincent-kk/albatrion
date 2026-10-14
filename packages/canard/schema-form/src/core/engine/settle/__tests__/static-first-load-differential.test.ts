@@ -12,12 +12,12 @@ import {
   subscribeFieldNode,
 } from '@/schema-form/core/engine/write';
 
+import type { PlainNode } from '../../__tests__/fixtures/createPlainNode';
+import { createTestTree } from '../../__tests__/fixtures/createTestTree';
 import * as independentDefaults from '../utils/compute/utils/hasIndependentLeafDefaults';
 import * as staticFirstLoad from '../utils/load/canLoadStaticFirstTree';
 import { loadFieldNodeAtMount } from '../utils/load/loadFieldNodeAtMount';
 import { writeFieldNode } from '../utils/write/writeFieldNode';
-import type { PlainNode } from './fixtures/createPlainNode';
-import { createTestTree } from './fixtures/createTestTree';
 
 afterEach(() => vi.restoreAllMocks());
 const genericFirstLoad = process.env.STATIC_FIRST_LOAD_GENERIC === '1';

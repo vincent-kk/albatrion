@@ -1,4 +1,4 @@
-import type { PlainNode } from './createPlainNode';
+import type { PlainNode } from '../../../__tests__/fixtures/createPlainNode';
 
 /**
  * Capture the departure facts of former children without comparing node identities.

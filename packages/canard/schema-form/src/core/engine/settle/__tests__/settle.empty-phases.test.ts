@@ -2,6 +2,7 @@ import { afterEach, expect, it, vi } from 'vitest';
 
 import { WriteOption } from '@/schema-form/core/engine/types/value';
 
+import { createTestTree } from '../../__tests__/fixtures/createTestTree';
 import * as rules from '../utils/commit/commitDeriveRules';
 import * as exitRules from '../utils/commit/commitExitPolicyValues';
 import * as trace from '../utils/commit/finalizeDeriveTrace';
@@ -12,7 +13,6 @@ import { loadFieldNodeAtMount } from '../utils/load/loadFieldNodeAtMount';
 import * as exits from '../utils/transition/finalizeExits';
 import * as transition from '../utils/transition/transitionSettlement';
 import { writeFieldNode } from '../utils/write/writeFieldNode';
-import { createTestTree } from './fixtures/createTestTree';
 
 afterEach(() => vi.restoreAllMocks());
 

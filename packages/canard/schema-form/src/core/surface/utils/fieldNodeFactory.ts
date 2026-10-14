@@ -15,7 +15,7 @@ import { PathKeyedMap } from '../../engine';
 import { PathKeyedSet } from '../../engine';
 import { compileEntryGuards, readValidationEntry } from '../../engine';
 import type { Validator } from '../../engine';
-import { FieldNode as RuntimeFieldNode } from '../FieldNode';
+import { FieldNode as RuntimeFieldNode } from '../classes/FieldNode';
 import type { FieldNode, InferFieldNode } from '../type';
 
 /** Path-indexed stores the factory creates when the seed omits them. */

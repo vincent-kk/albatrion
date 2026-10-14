@@ -8,8 +8,8 @@ import {
   FieldNodeEventType,
   SetValueOption,
 } from '@/schema-form/core';
-import type { FieldInputProps } from '@/schema-form/types/fieldInput';
-import type { JSONSchemaWithVirtual } from '@/schema-form/types/jsonSchema';
+import type { FieldInputProps } from '@/schema-form/types';
+import type { JSONSchemaWithVirtual } from '@/schema-form/types';
 
 /**
  * Type for mock node overrides.

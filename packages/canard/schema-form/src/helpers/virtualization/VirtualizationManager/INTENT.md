@@ -21,7 +21,7 @@ Form당 하나씩 존재하는 상태형 가상화 조율자. 공유 Intersectio
 
 ### Ask first
 
-- idle 슬라이스 예산(`MAX_REVEALS_PER_SLICE`, `MIN_IDLE_BUDGET_MS`) 또는 폴백 예산(`scheduleIdle.ts`의 `FALLBACK_BUDGET_MS`) 변경
+- idle 슬라이스 예산(`MAX_REVEALS_PER_SLICE`, `MIN_IDLE_BUDGET_MS`) 또는 폴백 예산(`utils/scheduleIdle.ts`의 `FALLBACK_BUDGET_MS`) 변경
 - `options`(threshold/eagerCount/rootMargin/backfill/estimateHeight) 해석 방식 변경 — 값 정의는 `resolveVirtualizationOptions` 소유
 - reveal 정책(defer-once) 자체를 되돌리는 방향의 변경
 

@@ -24,6 +24,8 @@
 - 수 입력은 비유한 숫자(NaN·무한대)를 빈 기본값으로 표시하며 노드 값은 바꾸지 않습니다. badInput 흐림 복귀도 같은 규칙으로 빈 칸을 씁니다.
 - 수 입력은 빈 칸을 `undefined`로 전달합니다. 브라우저 `badInput`이면 노드에 쓰지 않고 입력이 초안을 보유하며, 흐림에는 마지막 노드 값으로 표시를 되돌립니다. 체크박스는 불리언 아닌 값을 미정 상태(`indeterminate`)로 표시합니다. 치다 만 글과 입력기 조합은 노드가 아닌 입력의 초안입니다(REACT-027).
 
+- 기본 입력 컴포넌트 열한 개(`FieldInput*.tsx`)와 `FieldInputUnion`의 보조 칸은 `components/`에 있고 진입점 `index.tsx`가 정의 배열 `fieldInputDefinitions`를 조립합니다. 뿌리에는 문서·진입점·형 동반 파일(`type.ts`)만 둡니다(filid zero-peer-file).
+
 ## Acceptance Criteria
 
 ### form-type-definitions-contract — 관찰 가능한 동작

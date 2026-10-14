@@ -5,7 +5,7 @@ import { afterEach, expect, it, vi } from 'vitest';
 
 import { observeErrorSink } from '@/schema-form/__tests__/helpers/observeErrorSink';
 import { registerPlugin } from '@/schema-form/app/plugin';
-import { type FieldInputProps } from '@/schema-form/types/fieldInput';
+import { type FieldInputProps } from '@/schema-form/types';
 
 import { INPUT_SUPPLIES, renderInputSupply } from './helpers/renderInputSupply';
 

@@ -6,7 +6,7 @@ import type { BlueprintSchema } from '@/schema-form/core/engine';
 import { PathKeyedMap } from '@/schema-form/core/engine';
 import { PathKeyedSet } from '@/schema-form/core/engine';
 
-import { FieldNode as RuntimeFieldNode } from '../FieldNode';
+import { FieldNode as RuntimeFieldNode } from '../classes/FieldNode';
 import { fieldNodeFactory } from '../utils/fieldNodeFactory';
 import {
   isArrayNode,

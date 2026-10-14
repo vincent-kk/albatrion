@@ -1,0 +1,225 @@
+import { isPlainObject } from '@winglet/common-utils/filter';
+import { createFingerprintFactory } from '@winglet/common-utils/object';
+
+import { UnhandledError } from '@/schema-form/errors';
+
+import type { SchemaFormPlugin } from '../type';
+import { PluginManager } from './PluginManager';
+import { formatRegisterPluginError } from './formatRegisterPluginError';
+
+const RegisteredPlugin = new Set<string>();
+/** Identity scope shared by plugin registrations; mutable content is recomputed. */
+const getPluginKey = createFingerprintFactory();
+
+/**
+ * Registers a schema form plugin to extend or customize form functionality globally.
+ *
+ * Provides a centralized way to register custom components, validators, and formatters
+ * that will be used throughout the application. Plugins are deduplicated by content hash
+ * to prevent duplicate registrations.
+ *
+ * @param plugin - Plugin configuration object or null to reset all plugins to defaults
+ * @throws {UnhandledError} When plugin registration fails
+ *
+ * @example
+ * Basic plugin registration with custom components:
+ * ```typescript
+ * import { registerPlugin } from '@canard/schema-form';
+ *
+ * registerPlugin({
+ *   FieldRenderer: CustomFormField,
+ *   FormLabelRenderer: CustomFormLabel,
+ *   FormInputRenderer: CustomFormInput,
+ *   FormErrorRenderer: CustomFormError,
+ * });
+ * ```
+ *
+ * @example
+ * Register custom field input definitions:
+ * ```typescript
+ * const datePickerDefinition = {
+ *   test: { type: 'string', format: 'date' },
+ *   Component: DatePickerInput,
+ * };
+ *
+ * const colorPickerDefinition = {
+ *   test: { type: 'string', format: 'color' },
+ *   Component: ColorPickerInput,
+ * };
+ *
+ * registerPlugin({
+ *   fieldInputDefinitions: [
+ *     datePickerDefinition,
+ *     colorPickerDefinition,
+ *   ],
+ * });
+ * ```
+ *
+ * @example
+ * Register custom validator with Ajv:
+ * ```typescript
+ * import Ajv from 'ajv';
+ * import addFormats from 'ajv-formats';
+ *
+ * const ajv = new Ajv({ allErrors: true });
+ * addFormats(ajv);
+ *
+ * // `bind` is optional and NEVER called by core — invoke it yourself on the
+ * // plugin object before registerPlugin() if a custom instance is required.
+ * registerPlugin({
+ *   validator: {
+ *     bind: (instance) => {
+ *       // Consumer-invoked only; not a core lifecycle hook
+ *       console.log('Validator bound:', instance);
+ *     },
+ *     compile: (jsonSchema) => {
+ *       const validate = ajv.compile(jsonSchema);
+ *       return (value) => {
+ *         validate(value);
+ *         return validate.errors?.map(err => ({
+ *           dataPath: err.instancePath,
+ *           keyword: err.keyword,
+ *           message: err.message,
+ *           details: err.params,
+ *           source: err,
+ *         })) || [];
+ *       };
+ *     },
+ *   },
+ * });
+ * ```
+ *
+ * @example
+ * Register custom error formatter:
+ * ```typescript
+ * registerPlugin({
+ *   formatError: (error, node, context) => {
+ *     // Custom error formatting logic
+ *     if (error.keyword === 'required') {
+ *       return `${node.name} is required`;
+ *     }
+ *     if (error.keyword === 'minLength') {
+ *       return `${node.name} must be at least ${error.details?.limit} characters`;
+ *     }
+ *     return error.message || 'Invalid value';
+ *   },
+ * });
+ * ```
+ *
+ * @example
+ * Complete plugin example with all options:
+ * ```typescript
+ * const myFormPlugin: SchemaFormPlugin = {
+ *   // Custom renderer components
+ *   FieldRenderer: MyFormField,
+ *   FormLabelRenderer: MyFormLabel,
+ *   FormInputRenderer: MyFormInput,
+ *   FormErrorRenderer: MyFormError,
+ *
+ *   // Custom input types
+ *   fieldInputDefinitions: [
+ *     {
+ *       test: { type: 'string', format: 'phone' },
+ *       Component: PhoneNumberInput,
+ *     },
+ *     {
+ *       test: (hint) => hint.jsonSchema.customType === 'address',
+ *       Component: AddressInput,
+ *     },
+ *   ],
+ *
+ *   // Custom validator
+ *   validator: {
+ *     bind: (instance) => console.log('Validator ready'),
+ *     compile: (jsonSchema) => {
+ *       const validate = customValidate(jsonSchema);
+ *       return async (value) => {
+ *         const errors = await validate(value);
+ *         return errors;
+ *       };
+ *     },
+ *   },
+ *
+ *   // Custom error formatter
+ *   formatError: (error, node) => {
+ *     const fieldName = node.jsonSchema.title || node.name;
+ *     return `${fieldName}: ${error.message}`;
+ *   },
+ * };
+ *
+ * registerPlugin(myFormPlugin);
+ * ```
+ *
+ * @example
+ * Multiple plugins with merge behavior:
+ * ```typescript
+ * // First plugin
+ * registerPlugin({
+ *   FormLabelRenderer: CustomLabel1,
+ *   fieldInputDefinitions: [
+ *     { test: { format: 'date' }, Component: DatePicker1 }
+ *   ],
+ * });
+ *
+ * // Second plugin - behavior differs by property:
+ * registerPlugin({
+ *   FormLabelRenderer: CustomLabel2, // REPLACES CustomLabel1
+ *   FormInputRenderer: CustomInput,  // ADDS to render kit
+ *   fieldInputDefinitions: [
+ *     { test: { format: 'date' }, Component: DatePicker2 }, // PREPENDED (takes precedence)
+ *     { test: { format: 'time' }, Component: TimePicker }   // ADDED
+ *   ],
+ *   validator: myValidator,    // REPLACES any previous validator
+ *   formatError: myFormatter,  // REPLACES any previous formatter
+ * });
+ * ```
+ *
+ * @example
+ * Reset all plugins to defaults:
+ * ```typescript
+ * // Remove ALL custom plugins and restore defaults
+ * registerPlugin(null);
+ * ```
+ *
+ * @remarks
+ * ### Plugin Merge Behavior
+ * When multiple plugins are registered:
+ * - **Render components** (FieldRenderer, FormLabelRenderer, FormInputRenderer, FormErrorRenderer): Last one wins (replacement)
+ * - **fieldInputDefinitions**: Prepended to list (first match wins), allowing overrides
+ * - **validator**: Last one wins (complete replacement)
+ * - **formatError**: Last one wins (complete replacement)
+ *
+ * ### Important Notes
+ * - Plugins are applied globally and affect all forms in the application
+ * - Plugins are deduplicated by content hash to prevent duplicate registrations
+ * - Use `null` parameter to reset ALL plugins to system defaults
+ * - After reset, previously registered plugins need to be re-registered
+ */
+export const registerPlugin = (plugin: SchemaFormPlugin | null) => {
+  if (plugin === null) {
+    PluginManager.reset();
+    RegisteredPlugin.clear();
+    return;
+  }
+  if (!isPlainObject(plugin)) return;
+  const hash = getPluginKey(plugin);
+  if (RegisteredPlugin.has(hash)) return;
+  try {
+    const { fieldInputDefinitions, validator, formatError, ...renderKit } =
+      plugin;
+    PluginManager.appendRenderKit(renderKit);
+    PluginManager.appendFieldInputDefinitions(fieldInputDefinitions);
+    PluginManager.appendValidator(validator);
+    PluginManager.appendFormatError(formatError);
+  } catch (error) {
+    throw new UnhandledError(
+      'REGISTER_PLUGIN',
+      formatRegisterPluginError(plugin, error),
+      {
+        plugin,
+        error,
+      },
+    );
+  }
+  RegisteredPlugin.add(hash);
+};

@@ -1,7 +1,7 @@
-export { FormErrorContextProvider } from './FormErrorContextProvider';
-export { useFormErrorContext } from './useFormErrorContext';
-export { useBoundaryReporter } from './useBoundaryReporter';
-export { usePlaceholderBoundaryReporter } from './usePlaceholderBoundaryReporter';
+export { FormErrorContextProvider } from './components/FormErrorContextProvider';
+export { useFormErrorContext } from './hooks/useFormErrorContext';
+export { useBoundaryReporter } from './hooks/useBoundaryReporter';
+export { usePlaceholderBoundaryReporter } from './hooks/usePlaceholderBoundaryReporter';
 export type { FormErrorService } from './type';
-export { reportErrorToHost } from './reportErrorToHost';
-export { FormErrorPathContext } from './FormErrorPathContext';
+export { reportErrorToHost } from './utils/reportErrorToHost';
+export { FormErrorPathContext } from './components/FormErrorPathContext';

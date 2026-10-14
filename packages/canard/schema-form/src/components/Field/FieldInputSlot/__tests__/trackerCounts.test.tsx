@@ -10,7 +10,7 @@ import {
   FieldNodeRequestType,
   isArrayNode,
 } from '@/schema-form/core';
-import type { FieldInputProps } from '@/schema-form/types/fieldInput';
+import type { FieldInputProps } from '@/schema-form/types';
 
 import { useFieldInputControl } from '../hooks/useFieldInputControl';
 import { REACTIVE_RERENDERING_EVENTS } from '../type';

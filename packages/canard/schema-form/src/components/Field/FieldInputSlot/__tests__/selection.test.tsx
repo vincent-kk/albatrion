@@ -8,7 +8,7 @@ import type {
   FieldInputDefinition,
   FieldInputHint,
   FieldInputProps,
-} from '@/schema-form/types/fieldInput';
+} from '@/schema-form/types';
 
 afterEach(() => {
   cleanup();

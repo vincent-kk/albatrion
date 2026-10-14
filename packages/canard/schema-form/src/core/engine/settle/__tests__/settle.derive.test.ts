@@ -4,9 +4,9 @@ import { FieldNodeEventType } from '@/schema-form/core/engine/record';
 import { FieldNodeState } from '@/schema-form/core/engine/types/state';
 import { WriteOption } from '@/schema-form/core/engine/types/value';
 
+import { createTestTree } from '../../__tests__/fixtures/createTestTree';
 import { loadFieldNodeAtMount } from '../utils/load/loadFieldNodeAtMount';
 import { writeFieldNode } from '../utils/write/writeFieldNode';
-import { createTestTree } from './fixtures/createTestTree';
 import { setTestInteractionState } from './fixtures/setTestInteractionState';
 
 // filid:contract settle-derive

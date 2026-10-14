@@ -8,8 +8,8 @@ import {
   subscribeFieldNode,
 } from '@/schema-form/core/engine/write';
 
-import type { PlainNode } from '../../../__tests__/fixtures/createPlainNode';
-import { createTestTree } from '../../../__tests__/fixtures/createTestTree';
+import type { PlainNode } from '../../../../__tests__/fixtures/createPlainNode';
+import { createTestTree } from '../../../../__tests__/fixtures/createTestTree';
 
 afterEach(() => vi.restoreAllMocks());
 

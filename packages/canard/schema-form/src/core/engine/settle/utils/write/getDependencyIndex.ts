@@ -1,14 +1,14 @@
 import { escapeSegment } from '@winglet/json/pointer';
 
 import type { Blueprint, PropertyDeclaration } from '../../../blueprint';
+import { getDeriveRuleTable } from '../../../derive';
 import type { FieldNodeRecord } from '../../../record';
-import { getDeriveRuleTable } from '../../derive';
+import { resolveDependencyPath } from '../../../utils/paths/resolveDependencyPath';
 import { getContextOwners } from '../context/getContextOwners';
 import { getGateExpression } from '../gates/getGateExpression';
 import { bindTemplatePath } from '../paths/bindTemplatePath';
 import { expandTemplatePaths } from '../paths/expandTemplatePaths';
 import { isCanonicalArrayIndex } from '../paths/isCanonicalArrayIndex';
-import { resolveDependencyPath } from '../paths/resolveDependencyPath';
 
 /** No reverse dependency owners for a gate-free input path. */
 const NO_OWNERS: readonly string[] = Object.freeze([]);

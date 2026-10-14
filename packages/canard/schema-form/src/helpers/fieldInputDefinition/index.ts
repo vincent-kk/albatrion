@@ -1,5 +1,5 @@
-export { normalizeFieldInputMap } from './fieldInputMap';
-export { normalizeFieldInputDefinitions } from './fieldInputDefinitions';
+export { normalizeFieldInputMap } from './utils/normalizeFieldInputMap';
+export { normalizeFieldInputDefinitions } from './utils/normalizeFieldInputDefinitions';
 export { withFieldInputErrorBoundary } from './utils/withFieldInputErrorBoundary';
 
 export type {

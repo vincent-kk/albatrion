@@ -2,7 +2,7 @@
 
 ## Requirements
 
-- 의존 방향의 마지막은 `record < {behaviors 종류, navigation} < validation < settle/derive < settle < write < surface`입니다. 이 fractal만 행 선택과 단일 클래스 생성을 함께 압니다. 쓰기·상태·검증·구독은 engine의 write 계약, 읽기는 `settle`·`validation`·`navigation`의 진입점에 위임합니다(NODE-010·016, LANDING-084).
+- 의존 방향의 마지막은 `record < {behaviors 종류, navigation} < validation < derive < settle < write < surface`입니다. 이 fractal만 행 선택과 단일 클래스 생성을 함께 압니다. 쓰기·상태·검증·구독은 engine의 write 계약, 읽기는 `settle`·`validation`·`navigation`의 진입점에 위임합니다(NODE-010·016, LANDING-084).
 - 제품 코드는 내부 구현을 진입점 밖에서 직접 소비하지 않습니다(NODE-016). core 시나리오 러너와 engine 시험은 core 소유 시험 fixture의 `FieldNodeRecord` 기반 형을 사용하며 구현 클래스를 직접 가져오지 않습니다. 진입점은 공개 합집합 형만 내보내므로 시험을 위해 넓히지 않습니다(filid 경계 규칙 §5).
 - 아래 멤버 표가 클래스 프로토타입과 공개 형의 정확한 목록입니다. 기제가 들어오는 단계에서 멤버 표·멤버 목록 시험·공개 형을 함께 갱신하며 스텁·시험 전용 주입 자리를 두지 않습니다(26C-01, NODE-010, LANDING-066, 28C-07·08).
 
@@ -98,6 +98,8 @@
 | `readFieldNodeInteractionReset(node)`                         | 사건 개정과 별개인 노드의 상호작용 초기화 번호를 읽습니다                                                                                                                 | REACT-024, 69C-02         |
 | `observeFieldNodeReports(root, deliver)`                      | core 오류 관찰자 범위에서 전달을 실행하고 중첩·예외에도 이전 범위를 복원합니다                                                                                            | ERROR-113, 69C-01         |
 | `interpretFieldNodeDraft(node, draft)`                        | 현재 유효 타입 목록으로 기존 순수 해석기를 호출하여 값과 멤버 여부를 쓰기 없이 돌려줍니다                                                                                 | REACT-033, 69C-01         |
+
+- 런타임 노드 클래스 `FieldNode`는 `classes/FieldNode.ts`에 있습니다. 뿌리에는 문서·진입점·형 동반 파일(`type.ts`)만 둡니다(filid zero-peer-file).
 
 ## Acceptance Criteria
 

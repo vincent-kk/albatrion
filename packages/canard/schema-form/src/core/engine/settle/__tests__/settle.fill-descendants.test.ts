@@ -3,10 +3,10 @@ import { describe, expect, it, vi } from 'vitest';
 import type { BlueprintSchema } from '@/schema-form/core/engine/blueprint';
 import { WriteOption } from '@/schema-form/core/engine/types/value';
 
+import { createTestTree } from '../../__tests__/fixtures/createTestTree';
 import * as independentDefaults from '../utils/compute/utils/hasIndependentLeafDefaults';
 import { arrangeFieldNodeItems } from '../utils/structure/arrangeFieldNodeItems';
 import { writeFieldNode } from '../utils/write/writeFieldNode';
-import { createTestTree } from './fixtures/createTestTree';
 
 /** Load through the generic path used as the static-first-load oracle. */
 const loadGeneric = (

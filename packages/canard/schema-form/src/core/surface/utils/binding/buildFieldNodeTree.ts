@@ -1,7 +1,8 @@
 import type { Dictionary } from '@aileron/declare';
 
+import type { InferValueType } from '@/schema-form/types';
+
 import type { FormErrorReporter } from '../../../../errors';
-import type { InferValueType } from '../../../../types/value';
 import { blueprint } from '../../../engine';
 import type { BlueprintOptions } from '../../../engine';
 import type { AuthoredSchema } from '../../../engine';

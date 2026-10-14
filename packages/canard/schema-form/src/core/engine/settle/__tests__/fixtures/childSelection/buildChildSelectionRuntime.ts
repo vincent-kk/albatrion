@@ -38,6 +38,15 @@ const PINNED_PATH_REWRITES = [
     '/__tests__/fixtures/nodeFromJSONSchema.ts',
   ],
   [/\/app\/constants\//g, '/constants/'],
+  [/\/core\/engine\/settle\/derive\//g, '/core/engine/derive/'],
+  [
+    /\/core\/engine\/settle\/(utils\/(?:compute\/sameValue|paths\/resolveDependencyPath|controls\/(?:getCommittedDeclarationKey|getControlExpression))\.ts)$/g,
+    '/core/engine/$1',
+  ],
+  [
+    /\/core\/engine\/settle\/__tests__\/fixtures\/(createTestTree|createPlainNode)\.ts$/g,
+    '/core/engine/__tests__/fixtures/$1.ts',
+  ],
 ] as const;
 
 /** Map a repository-relative pinned path into the current layout without I/O. */

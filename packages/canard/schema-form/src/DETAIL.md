@@ -10,13 +10,14 @@
 - 공개 검증 오류 형은 `ValidationIssue`이며 패키지 진입점은 `JSONSchemaError`를 내보내지 않습니다. 노드 형·가드도 새 엔진의 계약을 이름으로 내보냅니다(ERROR-032, 34C-02·50C-01, LANDING-067·170).
 - 상태 열거는 내부와 공개 경계에서 `FieldNodeState` 한 이름을 사용하며 Dirty=1·Touched=2·ErrorVisible=4를 유지합니다. `NodeState` 별칭은 내보내지 않습니다(SURFACE-056·060, LANDING-157).
 - `__tests__/e2e`·`__tests__/scenarios`·`__tests__/migration`은 외부 소비자 자격으로 루트 `index.ts`를 가져오는 공개 API 시험 구획입니다(D7). 나머지 제품·시험·fixture는 자기·조상 내부를 직접 가져오고 자기·조상 index를 거치지 않으며, 자손·혈통 밖 fractal은 관문 index로 소비하는 import 모델을 따릅니다.
+- `hooks`·`types`·`rolled`는 `src`의 자식 fractal입니다. 루트 `index.ts`는 공개 훅을 `./hooks` 관문으로, 공개 형을 `./types`·`./rolled` 관문으로 재수출합니다. `rolled`의 공개 이름 열여덟 개가 `types`의 기반 형과 같은 이름이라 한 관문에 함께 실을 수 없으므로 `rolled`는 `types`의 자식이 아니라 형제입니다. `src`의 organ(`constants`·`helpers` 칸)은 자식 fractal을 가져오지 않습니다(모델 B1).
 
 ## API Contracts
 
 ### 경계 검증과 시험 도우미
 
 - `__tests__/importModel.test.ts`는 D7 밖 U·D·S1 위반을 막고, `__tests__/publicSurface.test.ts`는 공개 이름 92개와 값·형 구분 및 경로 없는 형 문자열의 스냅숏을 검증합니다. 두 시험은 제품 모듈을 import하지 않고 파일과 TypeScript 구문·형 정보를 읽습니다.
-- `__tests__/fixtures/nodeFromJSONSchema.ts`는 core index의 공개 생성·마운트 통로로 마운트된 루트를 만드는 시험·bench 도우미입니다. 제품 트리나 패키지 공개 표면에 속하지 않습니다. `bench/`와 aileron 벤치마크(`benchmark/src/targets/find/data.ts`, `benchmark-form/src/utils/loadCoreBenchmark.ts`)는 src 밖 측정 도구라서 이 파일을 경로로 가져옵니다. bench의 자리는 정돈-3에서 정합니다.
+- `__tests__/fixtures/nodeFromJSONSchema.ts`는 core index의 공개 생성·마운트 통로로 마운트된 루트를 만드는 시험·bench 도우미입니다. 제품 트리나 패키지 공개 표면에 속하지 않습니다. vitest 벤치는 재는 대상 fractal의 벤치 칸(지금은 `core/__benchmarks__`)에 있어 이 도우미를 위로 열림으로 가져옵니다. src 밖의 `bench/legacy-compare/`(레거시 비교 독립 스크립트)·`bench/scripts/`(진단 스크립트)와 aileron 벤치마크의 find 대상 데이터·`loadCoreBenchmark`는 측정 도구라서 이 파일을 경로로 가져옵니다.
 - `__tests__/helpersErrorIndex.test.ts`는 자식 error 관문의 이름을 검증합니다.
 - `__tests__/Form.label.test.tsx`는 Form 관문이 조립한 `Form.Label`·`Form.Input` 정적 멤버로 label 규약을 검증합니다. 관문의 조립 모양을 쓰는 시험이므로 Form 안이 아니라 부모 시험 구획에 둡니다. 공개 진입점의 이주 형 검증은 D7 migration 구획에서 루트 index를 소비합니다.
 
@@ -34,13 +35,13 @@
 
 ### 작성 표면
 
-`types/jsonSchema.ts`의 스키마 형은 0.16.0이 선언하던 `computed`, `&` 축약 여덟 개, 스키마 수준 `injectTo`, 최상위 `terminal`과 객체의 최상위 `virtual`·`propertyKeys`를 선언하지 않습니다. 제어는 `controls` 안에, 정적 설정은 `options` 안에 둡니다(CONTROLS-016·051). 객체 스키마의 `options`는 내보내는 값의 키 순서 `propertyOrder`와 가상 필드 묶음 `virtual`을 선언합니다. 끝의 `[alt: string]: any`는 검증기 키워드를 위해 남으므로 그 키를 써도 형 오류는 아니며, 런타임도 그 키를 제어로 읽지 않습니다.
+`types/types/jsonSchema.ts`의 스키마 형은 0.16.0이 선언하던 `computed`, `&` 축약 여덟 개, 스키마 수준 `injectTo`, 최상위 `terminal`과 객체의 최상위 `virtual`·`propertyKeys`를 선언하지 않습니다. 제어는 `controls` 안에, 정적 설정은 `options` 안에 둡니다(CONTROLS-016·051). 객체 스키마의 `options`는 내보내는 값의 키 순서 `propertyOrder`와 가상 필드 묶음 `virtual`을 선언합니다. 끝의 `[alt: string]: any`는 검증기 키워드를 위해 남으므로 그 키를 써도 형 오류는 아니며, 런타임도 그 키를 제어로 읽지 않습니다.
 
 공개 `JSONSchema`(코어 인터페이스 `AuthoredSchema`의 별칭)와 종류별 별칭은 `controls`를 코어의 `SchemaControls` 형으로 선언합니다. 주석이나 `satisfies`로 형을 준 스키마에서 `controls` 안의 모르는 키, 배열이 아닌 `watch`, 함수가 아닌 `injectTo`, `fields` 항목 안의 아홉 키 밖 키는 형 오류입니다. 조각 자리(`oneOf`/`anyOf`/`allOf` 분기, `then`, `else`)는 같은 재귀 스키마 형을 쓰므로 아홉 키 제한을 형으로 걸지 않으며, 형을 주지 않은 인라인 `jsonSchema`는 제네릭 추론 때문에 중첩된 초과 키를 검사하지 않습니다. 두 경우 모두 런타임이 청사진 오류를 던집니다. `options`의 형은 아직 열려 있습니다.
 
 ### 스키마 옵션
 
-`types/jsonSchema.ts`가 선언하는 `options` 필드. 각 옵션은 특정 스키마 타입에만 존재한다.
+`types/types/jsonSchema.ts`가 선언하는 `options` 필드. 각 옵션은 특정 스키마 타입에만 존재한다.
 
 | 옵션                     | 적용 스키마                                        | 계약                                                                                                                                                                                                                                         |
 | ------------------------ | -------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |

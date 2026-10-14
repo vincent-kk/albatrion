@@ -1,4 +1,4 @@
-import { FieldNode as RuntimeFieldNode } from '../FieldNode';
+import { FieldNode as RuntimeFieldNode } from '../classes/FieldNode';
 import type { FieldNode as PublicFieldNode } from '../type';
 
 /**

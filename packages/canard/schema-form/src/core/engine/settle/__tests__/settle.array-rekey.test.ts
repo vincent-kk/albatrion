@@ -4,11 +4,11 @@ import { WriteOption } from '@/schema-form/core/engine/types/value';
 import { PathKeyedMap } from '@/schema-form/core/engine/utils/pathIndex/PathKeyedMap';
 import { SchemaFormError } from '@/schema-form/errors';
 
+import { createTestTree } from '../../__tests__/fixtures/createTestTree';
 import { getGateRegistry } from '../utils/gates/getGateRegistry';
 import { arrangeFieldNodeItems } from '../utils/structure/arrangeFieldNodeItems';
 import { rekeyArrayRuntimePaths } from '../utils/structure/rekeyArrayRuntimePaths';
 import { writeFieldNode } from '../utils/write/writeFieldNode';
-import { createTestTree } from './fixtures/createTestTree';
 
 // filid:contract settle-array
 describe('array path movement', () => {

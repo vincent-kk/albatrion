@@ -1,7 +1,7 @@
 import { describe, expectTypeOf, it } from 'vitest';
 
-import type { InjectToHandler } from '../injectTo';
-import type { JSONSchema, ObjectSchema } from '../jsonSchema';
+import type { InjectToHandler } from '../types/injectTo';
+import type { JSONSchema, ObjectSchema } from '../types/jsonSchema';
 
 /** The thirteen node-level keys the blueprint accepts (validateControlGroups.ts). */
 type ControlKey =

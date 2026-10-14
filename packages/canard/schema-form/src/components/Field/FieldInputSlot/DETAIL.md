@@ -23,6 +23,8 @@
 - 같은 브랜치에 매칭한 입력 맵과 정의 목록의 입력은 같은 ChildFields를 받으며 부모 입력 인스턴스를 유지합니다. 맵의 정규식이 터미널 자식에도 매칭하면 그 자식의 동일 컴포넌트 호출에는 빈 ChildFields를 전달합니다(REACT-019·028, ERROR-202).
 - 재귀 NodeProxy의 props는 `FieldProxy`가 소유한 `FieldProxyProps` 계약을 타입 전용 import로 읽으며, 입력 계층은 FieldProxy 구현을 값으로 의존하지 않습니다.
 
+- `FieldInputSlotWrapper`는 `components/`에 있고 동명 구현 `FieldInputSlot.tsx`만 뿌리에 둡니다. 뿌리에는 문서·진입점·형 동반 파일(`type.ts`)만 둡니다(filid zero-peer-file).
+
 ## Acceptance Criteria
 
 ### field-input-slot-contract — 관찰 가능한 동작
