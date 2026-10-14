@@ -2354,7 +2354,7 @@ const formRef = useRef<FormHandle<typeof jsonSchema, SignUpValue>>(null);
 
 1.0.0은 스키마 설정을 `presentation`·`controls`·`options` 세 묶음으로 옮기고, 공개 API 이름을 "field" 중심으로 다시 짓고, 노드 엔진을 교체합니다. 옛 이름은 별칭으로도 남지 않습니다. 스키마, 컴포넌트와 형 import, 노드 상태나 검증 오류를 읽는 코드 순서로 고치세요.
 
-> **옛 스키마 키는 오류 없이 무시됩니다.** 제거된 최상위 키(`formType`, `FormTypeInput`, `FormTypeInputProps`, `FormTypeRendererProps`, `computed`, `&` 접두어 키, `terminal`, `virtual`, `propertyKeys`, `injectTo`, `errorMessages`, `placeholder`)는 오류도 경고도 없이 무시됩니다. 이런 키가 남은 스키마도 화면은 그려지지만 조건, 파생 값, 입력 선택이 동작하지 않으니, 아래 표의 키를 스키마에서 모두 찾아 바꾸세요. 새 묶음 안에서는 규칙이 다릅니다. `controls`와 `options` 안의 모르는 키는 폼을 만들 때 `UNKNOWN_GROUP_KEY`를 던지고, `presentation`은 어떤 키든 받는 열린 묶음입니다.
+> **옛 스키마 키는 오류 없이 무시됩니다.** 제거된 최상위 키(`formType`, `FormTypeInput`, `FormTypeInputProps`, `FormTypeRendererProps`, `computed`, `&` 접두어 키, `terminal`, `virtual`, `propertyKeys`, `injectTo`, `errorMessages`, `placeholder`)는 오류도 경고도 없이 무시됩니다. 이는 의도된 것입니다. 1.0.0은 0.16과의 단절이므로 이 키들에는 별칭도 개발 경고도 두지 않으며, 이주할 때 키마다 직접 옮겨야 합니다. 이런 키가 남은 스키마도 화면은 그려지지만 조건, 파생 값, 입력 선택이 동작하지 않으니, 아래 표의 키를 스키마에서 모두 찾아 바꾸세요. 새 묶음 안에서는 규칙이 다릅니다. `controls`와 `options` 안의 모르는 키는 폼을 만들 때 `UNKNOWN_GROUP_KEY`를 던지고, `presentation`은 어떤 키든 받는 열린 묶음입니다.
 
 ### 스키마 키
 

@@ -506,6 +506,8 @@ const formInputMap = {
 
 The key list is closed: an unknown key makes the blueprint build throw a schema error (recognized by `isJSONSchemaError`) with code `UNKNOWN_GROUP_KEY`. Inside `controls.fields[].controls` and on the `controls` of a fragment (`oneOf`/`anyOf`/`allOf` branches, `then`, `else`), only the first nine keys (`active` through `unsetOnInactive`) are allowed; any of the other four throws.
 
+The closed list applies inside `controls` and `options`. Outside the three groups, the top-level keys of 0.16 (`formType`, `FormTypeInput`, `FormTypeInputProps`, `FormTypeRendererProps`, `computed`, the `&`-prefixed keys, `injectTo`, `terminal`, `virtual`, `placeholder`, `errorMessages`, `propertyKeys`) are not read at all: 1.0.0 ignores them with no error or warning. There is no alias and no warning for them by design, so a schema migrated from 0.16 must move each key itself (see Migration (1.0.0) in the README).
+
 ### Nested Controls
 
 ```typescript
@@ -1138,7 +1140,7 @@ A field is _emptied_ when its node emits `undefined`. Under the default `omitEmp
 
 A reset restores the default, whatever the node holds: back to `null` when the default is `null`, to the default object otherwise.
 
-**While it is `null`**, the emitted value is `null` whatever the schema holds — arrays, defaults, derived values, `oneOf`/`anyOf`, controls-gated or virtual fields. An object's child fields stay rendered, and no child default, object default or `minItems` fill appears in them while it is `null`; a value written by `controls.derived` or `injectTo` still shows in its field without creating the object. This is the same however the object became `null` (load, reset or write); data discarded by `null` does not come back. A nullable **array** that is itself `null` has no items and no `minItems` fill.
+**While it is `null`**, the emitted value is `null` whatever the schema holds — arrays, defaults, derived values, `oneOf`/`anyOf`, controls-gated or virtual fields. An object's child fields stay rendered, and no child default, object default or `minItems` fill appears in them while it is `null`; a value written by `controls.derived` or `injectTo` still shows in its field without creating the object. This is the same however the object became `null` (load, reset or write); data discarded by `null` does not come back. The rule exists so that what the form shows, the node data and the emitted value never drift apart. A nullable **array** that is itself `null` has no items and no `minItems` fill.
 
 **What it becomes:** typing into a child field promotes the object to an object holding that value. Only fields created by the promotion (for example a branch the new value opens) receive their defaults; fields that already existed stay empty until filled. For an array, the write acts on an empty array. An array has no merge semantics: `setValue([], SetValueOption.Merge)` is an assignment and creates `[]`.
 
