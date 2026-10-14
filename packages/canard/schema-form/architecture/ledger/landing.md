@@ -3091,6 +3091,7 @@
   > 소유자(337라운드, rolled 접두사 물음): "내부에서 쓰는 타입에 전부 Base 를 붙이기보다는 외부용 타입에 Rolled 를 붙이고, 외부로 export 할때 rename 하는게 낫지 않나?" (`reviews/round-337-owner-answers.md:7`)
   > 소유자(337라운드, Roll 형을 둘 가치): "일단 그럼 rolled 를 유지할지부터 정해보자. 해당 처리를 한 type 을 만들 가치가 있어?" (`reviews/round-337-owner-answers.md:8`)
   > 소유자(337라운드, 둘째 안 채택): "둘째 안으로 가보죠. 그게 낫겠네요" (`reviews/round-337-owner-answers.md:9`)
+  > 소유자(338라운드, Roll 실험 실패 뒤: rolled 칸 유지, 공개 형은 Rolled 접두사·export 때 rename): "가. 로 가죠. 외부 노출을 Rolled 를 붙이는 이전 방식으로 해주세요" (`reviews/round-338-owner-answers.md:7`)
 - 상태: 현행
 - 출처: `reviews/round-18-owner-answers.md:44`(정본, 반영 칸), `reviews/round-18-owner-answers.md:45`
 - 닫은 사람: 소유자 답(`reviews/round-18-owner-answers.md:44` 개발계획 P3·P4), 소유자 답(`reviews/round-18-owner-answers.md:45` 개발계획 1-가)

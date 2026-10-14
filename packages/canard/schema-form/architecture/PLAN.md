@@ -91,6 +91,7 @@
 | 2026-10-15 | 335라운드 소유자: WeakMap 측정, schemaType 안 1 유지, stringify는 control.ts 구분자로 속도 토막, engine 재구조화 수용. 보충 1줄 | `reviews/round-335-owner-answers.md` |
 | 2026-10-15 | 336라운드 소유자: 결정 여덟(NODE_ENV 현행, misfit 전면, virtual 유지, CLAUDE.md 승인, settle 2개·순환 지금, types/ 분할, walkFieldNodes 삭제, 혼재 금지). 보충 1줄 | `reviews/round-336-owner-answers.md` |
 | 2026-10-15 | 337라운드 소유자: Roll을 정의 자리에서 한 번 펴고 rolled 칸·Base 접두사 제거. 보충 3줄 | `reviews/round-337-owner-answers.md` |
+| 2026-10-15 | 338라운드 소유자: Roll 실험 실패(재귀 스키마 형) → rolled 칸 유지, Rolled 접두사·export rename. 보충 1줄 | `reviews/round-338-owner-answers.md` |
 | 2026-10-14 | 316라운드 소유자: constants·hooks organ(index 제거), organ 안 barrel 금지, Field를 Form처럼 components/ 아래로. 보충 2줄 | `reviews/round-316-owner-answers.md` |
 | 2026-10-14 | 317라운드 소유자: Form barrel 삭제, 병렬 진행(정돈-S 병렬), 검증 뒤 병합 위임, surface/classes → runtime, 손질은 단일 PR. 보충 4줄 | `reviews/round-317-owner-answers.md` |
 | 2026-10-14 | 318라운드 소유자: fieldInputs를 입력마다 fractal로(넷째 손질, fixy08 별도 PR), ArrayItems 래핑은 memo 경계라 유지. 보충 1줄 | `reviews/round-318-owner-answers.md` |

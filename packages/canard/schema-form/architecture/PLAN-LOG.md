@@ -568,3 +568,4 @@
 - **335라운드(2026-10-15, 소유자).** WeakMap 측정, schemaType 안 1, stringify 구분자·속도 토막, engine 재구조화 수용(reviews/round-335-owner-answers.md).
 - **336라운드(2026-10-15, 소유자).** 결정 여덟 확정(reviews/round-336-owner-answers.md).
 - **337라운드(2026-10-15, 소유자).** Roll을 정의 자리에서, rolled 칸 제거(reviews/round-337-owner-answers.md).
+- **338라운드(2026-10-15, 소유자).** Roll 실험 실패, rolled 칸 유지·Rolled 접두사(reviews/round-338-owner-answers.md).
