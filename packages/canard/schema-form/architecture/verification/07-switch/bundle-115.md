@@ -414,7 +414,7 @@ M4 대조군 80,368 B에서 신규 운반체 14,515 B를 제거하면 65,853 B�
 | `core/settle/commit` | `src/core/settle/utils/commit/commitDeriveRules.ts` | 742 |
 | `core/settle/commit` | `src/core/settle/utils/commit/collectNonJsonPaths.ts` | 675 |
 | `core/settle/commit` | `src/core/settle/utils/commit/finalizeDeriveTrace.ts` | 404 |
-| `core/settle/commit` | `src/core/settle/utils/commit/isTypeMismatch.ts` | 403 |
+| `core/settle/commit` | `src/core/settle/utils/commit/isMisfit.ts` | 403 |
 | `core/settle/commit` | `src/core/settle/utils/commit/snapshotExitedPolicies.ts` | 397 |
 | `core/settle/commit` | `src/core/settle/utils/commit/pruneCommittedRuleKeys.ts` | 293 |
 | `core/settle/commit` | `src/core/settle/utils/commit/effectiveType.ts` | 260 |

@@ -526,7 +526,7 @@ The conditions for a FieldInput can be defined using a function or an object:
 type FieldInputHint = {
   type: FieldNodeType;
   schemaType: FieldNode['schemaType'];
-  typeMismatch: boolean;
+  misfit: boolean;
   path: string;
   required: boolean;
   nullable: boolean;
@@ -584,7 +584,7 @@ interface FieldInputProps<
   /** Authored accepted kind(s), including 'integer' */
   schemaType: Node['schemaType'];
   /** Whether the stored value mismatches the accepted kinds */
-  typeMismatch: Node['typeMismatch'];
+  misfit: Node['misfit'];
   /** Name of the field node assigned to the FieldInput Component */
   name: Node['name'];
   /** Path of the field node assigned to the FieldInput Component */
@@ -943,7 +943,7 @@ function ProfileForm() {
         jsonSchema={jsonSchema}
         onError={(record) => {
           if (record.code === FormErrorCode.RenderFailed) reportToMonitoring(record.error);
-          else if (record.code === FormWarningCode.TypeMismatch) console.info(record.path, record.message);
+          else if (record.code === FormWarningCode.Misfit) console.info(record.path, record.message);
         }}
       />
       <button onClick={handleSubmit} disabled={pending}>Submit</button>

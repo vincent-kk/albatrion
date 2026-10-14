@@ -14,7 +14,7 @@ Planning method: 저장소 지침 — `PLAN.md` §2(한 PR의 순서)와 `plan/p
 | --- | --- | --- |
 | 새 fractal 다섯과 문서(INTENT·DETAIL), 겉면 기계 검사 셋 | U2, U7 | 문서 선행 커밋 검사(G4), 멤버 목록 시험·행 칸 순서 시험·클래스 파일 린트(G17) |
 | 규칙 A·U7·정착 루프·예산·원본 B·diagnostics 구현과 시험 | U4, U5, U6, U8 | 단위 시험과 게이트 추적표(§5)의 모든 행이 초록 |
-| `typeMismatch`·`typeMismatches`·`TYPE_MISMATCH` 기록 | U5, U8 | `union.mismatch-light` 시험, 경고 기록 모양 시험 |
+| `misfit`·`misfits`·`MISFIT` 기록 | U5, U8 | `union.mismatch-light` 시험, 경고 기록 모양 시험 |
 | 레거시 이동과 벤치 기준선 대조 보고 | U1, U9 | 옛 주소 파일 0, 이동 전후 시험 수 같음, 벤치 보고 |
 | `tsc --strict` 공개 형 시험, 벤치 게이트 통과(또는 소유자 수용) | U7, U9 | 형 시험과 단언 금지 검사, 벤치 표와 수용 기록 |
 | `verification.md`의 게이트 전부 통과 | U10 | 게이트 원장 전부 met, 리뷰 체크리스트 |
@@ -66,7 +66,7 @@ Planning method: 저장소 지침 — `PLAN.md` §2(한 PR의 순서)와 `plan/p
 - `BlueprintGate`: `kind: 'if'|'active'|'discriminator'`, `condition`, `negated?`, `appliesWhen?`; PR-2가 평가 자리 L 칸과 계산을 더한다.
 - `Blueprint.dependencies`, `Blueprint.expressions`, `mergeEffectiveSchema`, `EffectiveSchema { schema, typeConflict }`.
 
-`schemaType` 배열은 청사진 칸마다 얼린 참조 하나다(NODE-057). 청사진 오류 코드는 `blueprint/utils/diagnostics/constant.ts`에 있다. 정착 오류·경고 코드(`SHARED_NODE_CONFLICT`, `SCHEMA_FORM_WARNING.TYPE_MISMATCH`, `NON_JSON_WHOLE_VALUE`, `DISPOSED_NODE_WRITE`)는 U2가 자리를 정한다. 기존 `src/helpers/warning/warningCode.ts`와 `src/errors/`를 먼저 재사용한다.
+`schemaType` 배열은 청사진 칸마다 얼린 참조 하나다(NODE-057). 청사진 오류 코드는 `blueprint/utils/diagnostics/constant.ts`에 있다. 정착 오류·경고 코드(`SHARED_NODE_CONFLICT`, `SCHEMA_FORM_WARNING.MISFIT`, `NON_JSON_WHOLE_VALUE`, `DISPOSED_NODE_WRITE`)는 U2가 자리를 정한다. 기존 `src/helpers/warning/warningCode.ts`와 `src/errors/`를 먼저 재사용한다.
 
 ## 4. 작업 단위
 
@@ -181,8 +181,8 @@ codex는 저장소 작업 트리에 쓴다(`workspace-write`). U4의 행 계약 
 - 커밋:
   - `sameValue`와 참조 유지(SETTLE-043, VALUE-012).
   - 배달 집합에 대한 `revision` 일괄 증가와 커밋 번호.
-  - 경고등과 루트 경로 집합, `typeMismatches` 메모.
-  - `TYPE_MISMATCH` 기록 `{ level, code, path, expected, received, reason, candidates?, source }`와 1회·재발송 규칙.
+  - 경고등과 루트 경로 집합, `misfits` 메모.
+  - `MISFIT` 기록 `{ level, code, path, expected, received, reason, candidates?, source }`와 1회·재발송 규칙.
   - 개발 모드의 `NON_JSON_WHOLE_VALUE`(VALUE-037).
   - 잠복 원본 열거 메모(WRITE-087).
   - Refresh 대상 집합(EVENT-071).
@@ -225,7 +225,7 @@ codex는 저장소 작업 트리에 쓴다(`workspace-write`). U4의 행 계약 
   - 필드 집합 고정. 생성자는 대입만 한다.
   - 게터와 문장 하나짜리 위임만 둔다. `{@inheritDoc}` 관례(NODE-049)를 따른다.
   - `schemaNodeFactory`가 트리마다 하나다. `SchemaNodeRuntime`은 `if` 술어·진단·예산·`nodeFactory`에 필요한 최소 칸만 가진다. 뒤 PR용 스텁 멤버나 시험 전용 주입 자리는 만들지 않는다(26C-01).
-- 공개 형: 판별 합집합, `UnionNode`의 `typeMismatch` 판별 두 멤버, 종류별 `schemaType` 좁힘, 가드 열, `InferSchemaNode` 사상(overload).
+- 공개 형: 판별 합집합, `UnionNode`의 `misfit` 판별 두 멤버, 종류별 `schemaType` 좁힘, 가드 열, `InferSchemaNode` 사상(overload).
 - 겉면 기계 검사 셋:
   - 클래스 파일 한정 ESLint(`PKG/eslint.config.js`에 NODE-010 규칙 블록, 저장소의 `#` 비공개 금지 선택자를 함께 다시 적는다).
   - 멤버 목록 시험(`DETAIL.md` 목록과 프로토타입 멤버 이름).

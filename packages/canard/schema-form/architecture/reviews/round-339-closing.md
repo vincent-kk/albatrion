@@ -1,6 +1,6 @@
 # 339라운드 — 닫기 (이동 묶음 1 PR #387 병합 daadce7ab; 편집자 결정 넷; CLAUDE.md 두 줄 갱신)
 
-2026-10-15. 소유자가 PR #387을 보고 병합을 지시했다("머지하도록. 그리고 다음단계로."). 원장 관리자가 `feat/schema-form-08-review-and-perf`에 squash 병합했다(daadce7ab). 내용: src/rolled를 src/types로 합침(칸 넷 schema·field·error·rolled, 공개 Roll 형 18개는 Rolled 접두사로 두고 src/index.ts에서 rename — 338라운드), hooks/hooks를 hooks/fieldNode·hooks/form으로, 제품 코드 한글 주석 셋 영문화, typeMismatch 계열 16가지 418회를 misfit으로(경고 코드 값 SCHEMA_FORM_WARNING.MISFIT 포함). 게이트: typecheck·lint 0, unit 2390, render·react18 725, 시나리오 45, 공개 표면 94 이름 동일(d.ts 표기 7행 변경), filid 새 지적 없음, verifier 지적 여섯 반영.
+2026-10-15. 소유자가 PR #387을 보고 병합을 지시했다("머지하도록. 그리고 다음단계로."). 원장 관리자가 `feat/schema-form-08-review-and-perf`에 squash 병합했다(daadce7ab). 내용: src/rolled를 src/types로 합침(칸 넷 schema·field·error·rolled, 공개 Roll 형 18개는 Rolled 접두사로 두고 src/index.ts에서 rename — 338라운드), hooks/hooks를 hooks/fieldNode·hooks/form으로, 제품 코드 한글 주석 셋 영문화, misfit 계열 16가지 418회를 misfit으로(경고 코드 값 SCHEMA_FORM_WARNING.MISFIT 포함). 게이트: typecheck·lint 0, unit 2390, render·react18 725, 시나리오 45, 공개 표면 94 이름 동일(d.ts 표기 7행 변경), filid 새 지적 없음, verifier 지적 여섯 반영.
 
 ## 편집자 결정
 

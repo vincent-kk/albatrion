@@ -464,7 +464,7 @@ type FieldInputTestObject = Partial<{
 type FieldInputHint = {
   type: FieldNodeType; // 노드 종류: 'string', 'number', 'object', 'array', 'virtual', 'union' 등
   schemaType: FieldNode['schemaType']; // 작성한 허용 종류('integer' 포함)
-  typeMismatch: boolean; // 저장된 값이 허용 종류와 어긋나는지
+  misfit: boolean; // 저장된 값이 허용 종류와 어긋나는지
   path: string;
   required: boolean;
   nullable: boolean;
@@ -497,7 +497,7 @@ interface FieldInputProps<
   node: Node; // 필드 노드
   type: Node['type']; // 노드 종류
   schemaType: Node['schemaType']; // 작성한 허용 종류('integer' 포함)
-  typeMismatch: Node['typeMismatch']; // 저장된 값이 허용 종류와 어긋나는지
+  misfit: Node['misfit']; // 저장된 값이 허용 종류와 어긋나는지
   name: Node['name']; // 노드 이름
   path: Node['path']; // 노드 경로
   nullable: Node['nullable']; // null 허용 여부
@@ -906,7 +906,7 @@ function ProfileForm() {
         jsonSchema={jsonSchema}
         onError={(record) => {
           if (record.code === FormErrorCode.RenderFailed) reportToMonitoring(record.error);
-          else if (record.code === FormWarningCode.TypeMismatch) console.info(record.path, record.message);
+          else if (record.code === FormWarningCode.Misfit) console.info(record.path, record.message);
         }}
       />
       <button onClick={handleSubmit} disabled={pending}>Submit</button>
@@ -999,7 +999,7 @@ function ProfileForm() {
 | `FormWarningCode.DiscriminatorBranchUnreachable` | `'SCHEMA_FORM_WARNING.DISCRIMINATOR_BRANCH_UNREACHABLE'` | 판별자 태그 값이 허용 목록 밖 |  |
 | `FormWarningCode.NonJsonWholeValue` | `'SCHEMA_FORM_WARNING.NON_JSON_WHOLE_VALUE'` | 개발 모드에서 통째 값이 JSON과 호환되지 않음 |  |
 | `FormWarningCode.FormTypeTestInvalid` | `'SCHEMA_FORM_WARNING.FORM_TYPE_TEST_INVALID'` | 입력 정의의 test 객체에 모르는 키가 있음 |  |
-| `FormWarningCode.TypeMismatch` | `'SCHEMA_FORM_WARNING.TYPE_MISMATCH'` | 값을 활성 type으로 모호함 없이 바꿀 수 없음 |  |
+| `FormWarningCode.Misfit` | `'SCHEMA_FORM_WARNING.MISFIT'` | 값을 활성 type으로 모호함 없이 바꿀 수 없음 |  |
 | `FormWarningCode.DialectMismatch` | `'SCHEMA_FORM_WARNING.DIALECT_MISMATCH'` | 스키마 dialect가 선택된 검증기의 dialect와 다름 |  |
 
 ---
