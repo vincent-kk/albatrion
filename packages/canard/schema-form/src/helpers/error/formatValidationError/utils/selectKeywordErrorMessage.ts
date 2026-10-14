@@ -4,7 +4,7 @@ import type { SchemaPresentation } from '@/schema-form/types';
 
 type ErrorMessages = NonNullable<SchemaPresentation['errorMessages']>;
 
-export const getErrorMessage = (
+export const selectKeywordErrorMessage = (
   keyword: string,
   errorMessages: ErrorMessages,
   context: Dictionary,
