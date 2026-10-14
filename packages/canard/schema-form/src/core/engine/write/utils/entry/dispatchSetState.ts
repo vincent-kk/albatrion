@@ -7,7 +7,7 @@ import {
 import type { FieldNodeRecord } from '../../../record';
 import { assertFieldNodeWritable } from '../../../settle';
 import type { NodeStateFlags } from '../../../types/state';
-import { flushQueuedEvents } from '../chain/flushQueuedEvents';
+import { closeNonSettleEntry } from '../chain/closeNonSettleEntry';
 import { queueNonSettleEvent } from '../chain/queueNonSettleEvent';
 import { refuseListenerFeedback } from '../chain/refuseListenerFeedback';
 import { assertNotInDelivery } from '../report/assertNotInDelivery';
@@ -41,5 +41,5 @@ export const dispatchSetState = <Self extends FieldNodeRecord<Self>>(
     FieldNodeEventType.UpdateState,
     node.interactionState,
   );
-  if (!runtime.entryDepth) flushQueuedEvents(node.rootNode);
+  closeNonSettleEntry(node);
 };

@@ -1,7 +1,9 @@
 import type { FieldNodeRecord } from '../../../record';
 import { assertFieldNodeWritable } from '../../../settle';
 import { assertNotInDelivery } from '../report/assertNotInDelivery';
+import { openVisitBatch } from './openVisitBatch';
 import { refuseListenerFeedback } from './refuseListenerFeedback';
+import { startFieldNodeChain } from './startFieldNodeChain';
 
 /**
  * Enter one public write on the tree shared by a record.
@@ -16,29 +18,9 @@ export const enterFieldNodeChain = <Self extends FieldNodeRecord<Self>>(
   assertFieldNodeWritable(node);
   const runtime = node.rootNode.runtime;
   assertNotInDelivery(runtime);
-  if (!runtime.entryDepth) {
-    runtime.enclosingChain =
-      runtime.chainErrors && runtime.chainOccurrences
-        ? {
-            errors: runtime.chainErrors,
-            occurrences: runtime.chainOccurrences,
-            outer: runtime.enclosingChain,
-          }
-        : undefined;
-    runtime.chainRoot = node.rootNode;
-    runtime.chainInitialEmit = node.rootNode.emit;
-    runtime.chainErrors = [];
-    runtime.chainOccurrences = [];
-    runtime.feedbackBudget = 0;
-    runtime.feedbackBlockedListeners = undefined;
-    runtime.feedbackLimitReported = false;
-  }
+  if (!runtime.entryDepth) startFieldNodeChain(node.rootNode);
   if (refuseListenerFeedback(runtime)) return false;
-  if (runtime.visitDepth && !runtime.batchDepth) {
-    runtime.entryDepth = (runtime.entryDepth ?? 0) + 1;
-    runtime.batchDepth = 1;
-    runtime.visitBatchEntry = node;
-  }
+  if (runtime.visitDepth && !runtime.batchDepth) openVisitBatch(node);
   runtime.entryDepth = (runtime.entryDepth ?? 0) + 1;
   return true;
 };

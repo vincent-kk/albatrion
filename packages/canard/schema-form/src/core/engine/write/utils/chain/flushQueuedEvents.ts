@@ -5,6 +5,7 @@ import { rebuildRootExternalErrors } from '../entry/utils/propagateExternalError
 import { finishQueuedErrors } from '../report/finishQueuedErrors';
 import { captureChainError } from './captureChainError';
 import { deliverWave } from './deliverWave';
+import { resolveFieldNodeChainRoot } from './resolveFieldNodeChainRoot';
 import { runDeliveryWaves } from './runDeliveryWaves';
 
 /**
@@ -37,6 +38,10 @@ export const flushQueuedEvents = <Self extends FieldNodeRecord<Self>>(
   const runtime = root.runtime;
   if (runtime.flushingQueuedEvents) return;
   runtime.flushingQueuedEvents = true;
+  // A delivery that starts inside a walk is its own scope: a listener write settles as a
+  // nested chain here instead of opening the walk's batch, which would outlive this flush.
+  const visitDepth = runtime.visitDepth;
+  runtime.visitDepth = 0;
   const standalone = !runtime.entryDepth && !runtime.chainErrors;
   const previousErrors = runtime.chainErrors;
   const previousOccurrences = runtime.chainOccurrences;
@@ -111,6 +116,7 @@ export const flushQueuedEvents = <Self extends FieldNodeRecord<Self>>(
       );
   } finally {
     runtime.flushingQueuedEvents = false;
+    resolveFieldNodeChainRoot(root).runtime.visitDepth = visitDepth;
     if (standalone) {
       runtime.chainErrors = previousErrors;
       runtime.chainOccurrences = previousOccurrences;

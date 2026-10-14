@@ -8,7 +8,7 @@ import {
 import type { FieldNodeRecord } from '../../../record';
 import { assertFieldNodeWritable } from '../../../settle';
 import type { NodeStateFlags } from '../../../types/state';
-import { flushQueuedEvents } from '../chain/flushQueuedEvents';
+import { closeNonSettleEntry } from '../chain/closeNonSettleEntry';
 import { queueNonSettleEvent } from '../chain/queueNonSettleEvent';
 import { refuseListenerFeedback } from '../chain/refuseListenerFeedback';
 import { assertNotInDelivery } from '../report/assertNotInDelivery';
@@ -52,5 +52,5 @@ export const dispatchSetSubtreeState = <Self extends FieldNodeRecord<Self>>(
     return true;
   });
   publishGlobalStateDeltas(node.rootNode, deltas);
-  if (!runtime.entryDepth) flushQueuedEvents(node.rootNode);
+  closeNonSettleEntry(node);
 };

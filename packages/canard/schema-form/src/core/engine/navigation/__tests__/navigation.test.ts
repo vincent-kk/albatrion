@@ -92,7 +92,7 @@ describe('navigation over the committed shape', () => {
     expect(visited).toEqual([root, first, second]);
   });
 
-  it('follows only owned edges, detached ones included, when owned', () => {
+  it('follows only owned edges, detached ones included, when owned, while the default walk follows every child edge', () => {
     const root = createNode('');
     const first = createNode('first', root);
     const second = createNode('second', root);
@@ -104,6 +104,9 @@ describe('navigation over the committed shape', () => {
     };
     visitFieldNodes(second, record, { owned: true });
     expect(visited).toEqual([second]);
+    visited.length = 0;
+    visitFieldNodes(second, record);
+    expect(visited).toEqual([second, first]);
     visited.length = 0;
     visitFieldNodes(root, record, { owned: true });
     expect(visited).toEqual([root, first, second]);
