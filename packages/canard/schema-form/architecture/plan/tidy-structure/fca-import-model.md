@@ -63,3 +63,10 @@
 | B7 | B1의 "자식"은 fractal의 직계 자식 fractal(organ과 같은 층)이다. organ 안에 중첩된 fractal은 그 organ의 내부이므로 같은 organ의 다른 칸이 가져올 수 있다. 검증 organ(`__tests__`·`__benchmarks__`)은 B1의 대상이 아니다 — 아무도 가져오지 않아 순환을 만들 수 없고, 부모 층 통합 시험이 자식 index를 쓰는 것은 "아래로 닫힘"의 허용 경로다 | blueprint의 `utils/analyze`가 `utils/expressions/*` 중첩 fractal을 쓰는 모양과, 시험 O 87을 위반으로 세지 않기 위함 |
 
 검사가 B1의 실제 사례를 하나 찾았다: settle의 organ(`utils/derivation`·`commit`·`context`·`write`)이 자식 `settle/derive`의 index를 가져오고, derive는 settle의 organ 넷을 가져온다 — 층 순환. 해법은 모델대로 derive를 settle의 형제(`engine/derive`)로 올리고 공유 보조 넷을 engine의 organ으로 올리는 것이다(정돈-3).
+
+## 6. 295라운드 확정 — D7·D8과 모델의 성격
+
+- **D7 확정.** `src/__tests__/e2e`·`src/__tests__/scenarios`·`src/__tests__/migration`의 공개 API 시험은 외부 소비자 자격이며 루트 `src/index.ts`를 가져온다. 이 세 디렉터리만 명시하고, 그 밖의 시험은 B3(조상 index 경유 금지)을 따른다.
+- **D8 확정.** B6(깊은 fractal의 기능은 서브트리 루트 index로, 재수출은 루트가 정함)과 B7(B1의 자식은 직계 자식 fractal, organ 안 중첩 fractal과 검증 organ은 제외)을 모델에 넣는다. 따라서 검사의 S2 124변과 시험 O 87변은 위반이 아니다.
+- **모델의 성격.** 구조를 만드는 강력한 규칙이지만, 모델 규칙 안에 있는 한 약간의 변용은 허용한다. 핵심은 셋 — 가독성, 인터페이스 계약, 폭발 반경 억제. 그래서 엄격한 정적 규칙으로 박지 않는다. 정돈에서 어떤 변용을 택했는지는 그 PR 본문과 해당 fractal의 DETAIL에 "모델의 어느 조항 안에서 어떤 까닭으로"를 적는다.
+- **filid 개선 결정 때의 가름.** filid는 언어 중립 플러그인이라 자바스크립트 진영의 alias 처리를 핵심에 넣기 어렵다. §3의 "없음" 항목은 언어 중립 규칙 문장으로 제안하고, alias·와일드카드 재수출 추적·`zero-peer-file` 면제의 "건너뜀" 표시 같은 것은 ecmascript 어댑터 또는 설정 층의 일로 가른다.

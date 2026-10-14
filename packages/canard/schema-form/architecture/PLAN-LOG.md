@@ -518,3 +518,4 @@
 - **253라운드(2026-10-14, 닫기).** PR #363(07b-3, 3f48fe3aa)을 직접 검증해 통과했다: production-test 9파일, tsc -b·lint·build 통과, 세션 줄 0(253C-01, reviews/round-253-closing.md). 대기열 37(내장 checkbox id 중복). 소유자 병합 허가 대기.
 - **293라운드(2026-10-14, 소유자).** FCA import 멘탈모델을 말함: 형제는 index로만, 직계 서브트리는 내부 모듈, 시험·벤치는 fractal 안, 공유 기능은 공통 부모 organ, 부모는 자식 내부에 못 닿음(reviews/round-293-owner-answers.md).
 - **294라운드(2026-10-14, 소유자).** FCA 모델 보강 다섯 수용, 모델 기록, 구조 검사 지시, filid 개선 여부는 마지막에 모두 포함해 결정(reviews/round-294-owner-answers.md).
+- **295라운드(2026-10-14, 소유자).** D7·D8 허용, 모델 안에서의 변용 허용(핵심은 가독성·계약·폭발 반경 억제), filid는 언어 중립(reviews/round-295-owner-answers.md).
