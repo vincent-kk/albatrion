@@ -1,6 +1,9 @@
 import { isArray } from '@winglet/common-utils/filter';
 
 import type { BlueprintNode } from '../../../blueprint';
+import { CONTROL_KEY } from '../../../constants/controlKey';
+import { SCHEMA_GROUP } from '../../../constants/schemaGroup';
+import type { DeclarationLayer } from '../../../types/controls';
 import { getCommittedDeclarationKey } from '../../../utils/controls/getCommittedDeclarationKey';
 
 /** Unselected static fallbacks share IDs for the immutable declaration owner. */
@@ -38,7 +41,7 @@ export interface ControlTarget<Self> {
 /** One selected declaration and the host that owns its expression paths. */
 export interface ControlLayer<Self> {
   /** Relative specificity of this declaration for its target. */
-  readonly layer: 'node' | 'fields' | 'fragment';
+  readonly layer: DeclarationLayer;
   /** Authored owner used to identify a compiled expression. */
   readonly declarationId: number;
   /** Original control group address retained for expression matching. */
@@ -77,7 +80,10 @@ export const getControlLayers = <Self extends ControlTarget<Self>>(
       typeof declaration.schema !== 'object'
     )
       continue;
-    const controls: unknown = Reflect.get(declaration.schema, 'controls');
+    const controls: unknown = Reflect.get(
+      declaration.schema,
+      SCHEMA_GROUP.controls,
+    );
     if (controls && typeof controls === 'object' && !isArray(controls))
       groups.push({
         layer: 'node',
@@ -99,7 +105,10 @@ export const getControlLayers = <Self extends ControlTarget<Self>>(
       typeof declaration.schema !== 'object'
     )
       continue;
-    const controls: unknown = Reflect.get(declaration.schema, 'controls');
+    const controls: unknown = Reflect.get(
+      declaration.schema,
+      SCHEMA_GROUP.controls,
+    );
     if (!controls || typeof controls !== 'object' || isArray(controls))
       continue;
     let ownsFragment = false;
@@ -128,14 +137,14 @@ export const getControlLayers = <Self extends ControlTarget<Self>>(
         controls,
         host: parent,
       });
-    const fields: unknown = Reflect.get(controls, 'fields');
+    const fields: unknown = Reflect.get(controls, CONTROL_KEY.fields);
     if (!isArray(fields)) continue;
     for (let index = 0; index < fields.length; index++) {
       const item: unknown = fields[index];
       if (!item || typeof item !== 'object') continue;
       const targets: unknown = Reflect.get(item, 'targets');
       if (!isArray(targets) || !targets.includes(node.name)) continue;
-      const itemControls: unknown = Reflect.get(item, 'controls');
+      const itemControls: unknown = Reflect.get(item, SCHEMA_GROUP.controls);
       if (
         itemControls &&
         typeof itemControls === 'object' &&

@@ -1,5 +1,7 @@
 import { isArray } from '@winglet/common-utils/filter';
 
+import { JSONPointer as $ } from '@/schema-form/helpers/jsonPointer';
+
 import type { FormErrorRecord } from '../../../../../errors';
 import type { FieldNodeRuntime } from '../../../record';
 import { indexFieldNodeWarning } from '../../../record';
@@ -48,7 +50,7 @@ export const rekeyArrayRuntimePaths = <Self>(
   );
   const mapPath = (path: string): string | undefined => {
     if (!path.startsWith(prefix)) return path;
-    const slash = path.indexOf('/', prefix.length);
+    const slash = path.indexOf($.Separator, prefix.length);
     const itemPath = slash < 0 ? path : path.slice(0, slash);
     const position = Number(itemPath.slice(prefix.length));
     if (position >= 0 && position < preservedPrefixCount) return path;

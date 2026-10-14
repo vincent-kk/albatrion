@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 
+import { FormErrorCode } from '../../../../errors';
 import { blueprint } from '../blueprint';
-import { BlueprintErrorCode } from '../utils/diagnostics/constant';
 
 // filid:contract type-inference-round19
 describe('round 19 untyped host inference', () => {
@@ -48,7 +48,7 @@ describe('round 19 untyped host inference', () => {
       }),
     ).toThrow(
       expect.objectContaining({
-        specific: BlueprintErrorCode.UnknownJsonSchema,
+        code: FormErrorCode.UnknownJsonSchema,
       }),
     );
   });
@@ -70,7 +70,7 @@ describe('round 19 untyped host inference', () => {
       }),
     ).toThrow(
       expect.objectContaining({
-        specific: BlueprintErrorCode.UnknownJsonSchema,
+        code: FormErrorCode.UnknownJsonSchema,
       }),
     );
   });
@@ -80,7 +80,7 @@ describe('round 19 untyped host inference', () => {
       blueprint({ anyOf: [{ type: 'object' }, { type: 'array' }] }),
     ).toThrow(
       expect.objectContaining({
-        specific: BlueprintErrorCode.UnknownJsonSchema,
+        code: FormErrorCode.UnknownJsonSchema,
       }),
     );
   });
@@ -90,7 +90,7 @@ describe('round 19 untyped host inference', () => {
       blueprint({ anyOf: [{ const: 'cat' }, { type: 'object' }] }),
     ).toThrow(
       expect.objectContaining({
-        specific: BlueprintErrorCode.UnknownJsonSchema,
+        code: FormErrorCode.UnknownJsonSchema,
         details: expect.objectContaining({
           schemaPath: '#/anyOf/0',
           guidance: expect.stringContaining('type'),
@@ -117,7 +117,7 @@ describe('round 19 untyped host inference', () => {
   it('reports an empty union after cutting its only recursive branch', () => {
     expect(() => blueprint({ anyOf: [{ $ref: '#' }] })).toThrow(
       expect.objectContaining({
-        specific: BlueprintErrorCode.UnknownJsonSchema,
+        code: FormErrorCode.UnknownJsonSchema,
       }),
     );
   });
@@ -143,7 +143,7 @@ describe('round 19 untyped host inference', () => {
     (schema) => {
       expect(() => blueprint(schema)).toThrow(
         expect.objectContaining({
-          specific: BlueprintErrorCode.UnknownJsonSchema,
+          code: FormErrorCode.UnknownJsonSchema,
         }),
       );
     },

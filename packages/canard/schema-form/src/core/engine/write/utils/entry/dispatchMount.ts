@@ -1,4 +1,4 @@
-import { VALIDATOR_MISSING } from '../../../../../errors';
+import { FormWarningCode } from '../../../../../errors';
 import type { FormErrorRecord } from '../../../../../errors';
 import type { FieldNodeRecord } from '../../../record';
 import { loadFieldNodeAtMount } from '../../../settle';
@@ -44,16 +44,16 @@ export const dispatchMount = <Self extends FieldNodeRecord<Self>>(
       runtime.errorReporter?.hasConsumer() &&
       !runtime.validator &&
       runtime.validationMode !== ValidationMode.None &&
-      !runtime.warningKeys?.has(VALIDATOR_MISSING)
+      !runtime.warningKeys?.has(FormWarningCode.ValidatorMissing)
     ) {
-      (runtime.warningKeys ??= new Set()).add(VALIDATOR_MISSING);
+      (runtime.warningKeys ??= new Set()).add(FormWarningCode.ValidatorMissing);
       const record: FormErrorRecord = {
         level: 'warning',
-        code: 'SCHEMA_FORM_WARNING.VALIDATOR_MISSING',
+        code: FormWarningCode.ValidatorMissing,
         message: 'Validation is disabled because no validator was selected',
       };
       (runtime.pendingWarningRecords ??= new Map()).set(
-        VALIDATOR_MISSING,
+        FormWarningCode.ValidatorMissing,
         record,
       );
       runtime.chainOccurrences?.push({ kind: 'record', record });

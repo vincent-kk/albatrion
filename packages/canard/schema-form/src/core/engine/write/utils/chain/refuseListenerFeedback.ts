@@ -1,7 +1,4 @@
-import {
-  FEEDBACK_LIMIT_EXCEEDED,
-  SchemaFormError,
-} from '../../../../../errors';
+import { FormErrorCode, SchemaFormError } from '../../../../../errors';
 import type { FieldNodeRuntime } from '../../../record';
 import { captureChainError } from './captureChainError';
 
@@ -24,7 +21,7 @@ export const refuseListenerFeedback = <Self>(
     captureChainError(
       runtime,
       new SchemaFormError(
-        FEEDBACK_LIMIT_EXCEEDED,
+        FormErrorCode.FeedbackLimitExceeded,
         'Listener feedback exceeded 25 waves',
       ),
     );

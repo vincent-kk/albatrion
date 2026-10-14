@@ -1,7 +1,11 @@
 import type { OmitPartial } from '@aileron/declare';
 
-import { FORM_ERROR_CODE_TABLE, JSONSchemaError } from '../../../../../errors';
-import type { FormErrorCode, FormErrorRecord } from '../../../../../errors';
+import {
+  JSONSchemaError,
+  isFormErrorCode,
+  isFormWarningCode,
+} from '../../../../../errors';
+import type { FormErrorRecord, FormRecordCode } from '../../../../../errors';
 import type { BlueprintDiagnostic } from '../../../blueprint';
 
 /**
@@ -15,7 +19,7 @@ import type { BlueprintDiagnostic } from '../../../blueprint';
  */
 export function createFormErrorRecord(
   consumed: boolean,
-  code: FormErrorCode,
+  code: FormRecordCode,
   level: FormErrorRecord['level'],
   format: () => string,
   fields?: OmitPartial<FormErrorRecord, 'code' | 'level' | 'message'>,
@@ -34,7 +38,7 @@ export function createFormErrorRecord(
 ): FormErrorRecord | undefined;
 export function createFormErrorRecord(
   consumed: boolean,
-  code: FormErrorCode | BlueprintDiagnostic,
+  code: FormRecordCode | BlueprintDiagnostic,
   levelOrError?: FormErrorRecord['level'] | unknown,
   format?: () => string,
   fields?: OmitPartial<FormErrorRecord, 'code' | 'level' | 'message'>,
@@ -45,23 +49,22 @@ export function createFormErrorRecord(
       return undefined;
     return { level: levelOrError, code, message: format(), ...fields };
   }
-  const fullCode = FORM_ERROR_CODE_TABLE.find(
-    ([candidate]) =>
-      candidate ===
-      `${code.level === 'error' ? 'JSON_SCHEMA_ERROR' : 'SCHEMA_FORM_WARNING'}.${code.code}`,
-  )?.[0];
-  if (!fullCode) return undefined;
+  const known =
+    code.level === 'error'
+      ? isFormErrorCode(code.code)
+      : isFormWarningCode(code.code);
+  if (!known) return undefined;
   const error = levelOrError;
   const message =
     error instanceof Error
       ? error.message
-      : `${code.code} at ${code.schemaPath}`;
+      : `${code.code.slice(code.code.indexOf('.') + 1)} at ${code.schemaPath}`;
   const details =
     error instanceof JSONSchemaError ? error.details : { ...code.details };
   if (code.level === 'error')
     return {
       level: 'error',
-      code: fullCode,
+      code: code.code,
       message,
       schemaPath: code.schemaPath,
       details,
@@ -70,7 +73,7 @@ export function createFormErrorRecord(
     };
   return {
     level: 'warning',
-    code: fullCode,
+    code: code.code,
     message,
     schemaPath: code.schemaPath,
     details,

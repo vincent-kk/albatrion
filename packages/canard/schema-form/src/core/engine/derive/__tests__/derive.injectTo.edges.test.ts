@@ -5,10 +5,7 @@ import { loadFieldNodeAtMount } from '@/schema-form/core/engine/settle';
 import { resetFieldNodeSubtree } from '@/schema-form/core/engine/settle';
 import { writeFieldNode } from '@/schema-form/core/engine/settle';
 import { WriteOption } from '@/schema-form/core/engine/types/value';
-import {
-  INJECT_TARGET_MISSING,
-  INVALID_VIRTUAL_NODE_VALUES,
-} from '@/schema-form/errors';
+import { FormErrorCode } from '@/schema-form/errors';
 
 // filid:contract derive-edge
 describe('injectTo edge boundaries', () => {
@@ -54,7 +51,7 @@ describe('injectTo edge boundaries', () => {
       caught = error;
     }
     expect(caught).toMatchObject({
-      code: `SCHEMA_FORM_ERROR.${INJECT_TARGET_MISSING}`,
+      code: FormErrorCode.InjectTargetMissing,
     });
     expect(root.runtime.diagnostics.cause).toBe('injectTarget');
   });
@@ -287,7 +284,7 @@ describe('injectTo edge boundaries', () => {
       caught = error;
     }
     expect(caught).toMatchObject({
-      code: `SCHEMA_FORM_ERROR.${INVALID_VIRTUAL_NODE_VALUES}`,
+      code: FormErrorCode.InvalidVirtualNodeValues,
     });
     expect(root.runtime.diagnostics.cause).toBe('writeShape');
   });

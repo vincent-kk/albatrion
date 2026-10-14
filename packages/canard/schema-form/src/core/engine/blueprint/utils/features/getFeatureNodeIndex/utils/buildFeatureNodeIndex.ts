@@ -1,5 +1,9 @@
 import { isArray } from '@winglet/common-utils/filter';
 
+import { JSONPointer as $ } from '@/schema-form/helpers/jsonPointer';
+
+import { CONTROL_KEY } from '../../../../../constants/controlKey';
+import { SCHEMA_GROUP } from '../../../../../constants/schemaGroup';
 import type { Blueprint, BlueprintFeatureNodeIndex } from '../../../../type';
 
 /** Local control groups whose declared values can differ from the default keys. */
@@ -7,9 +11,9 @@ const hasStateKeys = (controls: unknown): controls is Record<string, unknown> =>
   controls !== null &&
   typeof controls === 'object' &&
   !isArray(controls) &&
-  (Reflect.get(controls, 'visible') !== undefined ||
-    Reflect.get(controls, 'readOnly') !== undefined ||
-    Reflect.get(controls, 'disabled') !== undefined);
+  (Reflect.get(controls, CONTROL_KEY.visible) !== undefined ||
+    Reflect.get(controls, CONTROL_KEY.readOnly) !== undefined ||
+    Reflect.get(controls, CONTROL_KEY.disabled) !== undefined);
 
 /**
  * Index possible state and watch targets without selecting gates or reading values.
@@ -32,7 +36,13 @@ export const buildFeatureNodeIndex = (
         declarations: child.declarations,
       })),
       ...(node.item
-        ? [{ name: '*', node: node.item, declarations: node.item.declarations }]
+        ? [
+            {
+              name: $.Wildcard,
+              node: node.item,
+              declarations: node.item.declarations,
+            },
+          ]
         : []),
     ];
     for (const declaration of node.declarations) {
@@ -49,7 +59,7 @@ export const buildFeatureNodeIndex = (
         continue;
       if (
         declaration.scope === 'node' &&
-        Reflect.get(controls, 'watch') !== undefined
+        Reflect.get(controls, CONTROL_KEY.watch) !== undefined
       )
         watchNodes.add(node.id);
       if (declaration.scope === 'fragment' && hasStateKeys(controls))
@@ -69,13 +79,13 @@ export const buildFeatureNodeIndex = (
             )
           )
             targets.add(child.name);
-      const groups: unknown = Reflect.get(controls, 'fields');
+      const groups: unknown = Reflect.get(controls, CONTROL_KEY.fields);
       if (isArray(groups))
         for (const group of groups) {
           if (
             !group ||
             typeof group !== 'object' ||
-            !hasStateKeys(Reflect.get(group, 'controls'))
+            !hasStateKeys(Reflect.get(group, SCHEMA_GROUP.controls))
           )
             continue;
           const names: unknown = Reflect.get(group, 'targets');
@@ -98,7 +108,7 @@ export const buildFeatureNodeIndex = (
         if (
           controls &&
           typeof controls === 'object' &&
-          Reflect.get(controls, 'watch') !== undefined
+          Reflect.get(controls, CONTROL_KEY.watch) !== undefined
         )
           watchNodes.add(child.node.id);
       }

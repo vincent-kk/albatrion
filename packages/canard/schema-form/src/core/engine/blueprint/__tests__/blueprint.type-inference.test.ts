@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 
+import { FormErrorCode } from '../../../../errors';
 import { blueprint } from '../blueprint';
-import { BlueprintErrorCode } from '../utils/diagnostics/constant';
 
 // filid:contract type-inference
 describe('blueprint untyped primitive branches', () => {
@@ -94,7 +94,7 @@ describe('blueprint untyped primitive branches', () => {
   ] as const)('%s requires explicit type guidance', (_id, schema) => {
     expect(() => blueprint(schema)).toThrow(
       expect.objectContaining({
-        specific: BlueprintErrorCode.UnknownJsonSchema,
+        code: FormErrorCode.UnknownJsonSchema,
       }),
     );
   });

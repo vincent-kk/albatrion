@@ -1,7 +1,7 @@
 import { describe, expect, it, vi } from 'vitest';
 
 import { createDispatchTree } from '@/schema-form/core/engine/__tests__/fixtures/createDispatchTree';
-import { SchemaFormError, WRITE_IN_OBSERVER } from '@/schema-form/errors';
+import { FormErrorCode, SchemaFormError } from '@/schema-form/errors';
 
 import { dispatchSetValue } from '../utils/entry/dispatchSetValue';
 import { subscribeFieldNode } from '../utils/read/subscribeFieldNode';
@@ -35,7 +35,7 @@ describe('observer write boundary', () => {
     expect(seen[0]).toBeInstanceOf(SchemaFormError);
     if (!(seen[0] instanceof SchemaFormError))
       throw new Error('Expected write failure');
-    expect(seen[0].code).toBe(`SCHEMA_FORM_ERROR.${WRITE_IN_OBSERVER}`);
+    expect(seen[0].code).toBe(FormErrorCode.WriteInObserver);
     expect(root.emit).toBe('value');
   });
 

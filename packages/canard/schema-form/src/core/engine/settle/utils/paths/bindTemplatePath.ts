@@ -1,3 +1,5 @@
+import { JSONPointer as $ } from '@/schema-form/helpers/jsonPointer';
+
 /**
  * Replace array template segments with the corresponding live path segments.
  * @param templatePath - Absolute declaration or read path with optional `*` segments
@@ -14,13 +16,16 @@ export const bindTemplatePath = (
   let copiedThrough = 0;
   let bound = '';
   while (templateStart < templatePath.length) {
-    const templateSlash = templatePath.indexOf('/', templateStart + 1);
+    const templateSlash = templatePath.indexOf($.Separator, templateStart + 1);
     const templateEnd = templateSlash < 0 ? templatePath.length : templateSlash;
-    const occurrenceSlash = occurrencePath.indexOf('/', occurrenceStart + 1);
+    const occurrenceSlash = occurrencePath.indexOf(
+      $.Separator,
+      occurrenceStart + 1,
+    );
     const occurrenceEnd =
       occurrenceSlash < 0 ? occurrencePath.length : occurrenceSlash;
     if (
-      templatePath.slice(templateStart + 1, templateEnd) === '*' &&
+      templatePath.slice(templateStart + 1, templateEnd) === $.Wildcard &&
       occurrenceStart < occurrencePath.length
     ) {
       bound += templatePath.slice(copiedThrough, templateStart + 1);

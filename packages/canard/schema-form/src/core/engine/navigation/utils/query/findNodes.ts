@@ -1,5 +1,7 @@
 import { hasOwnProperty } from '@winglet/common-utils/lib';
 
+import { JSONPointer as $ } from '@/schema-form/helpers/jsonPointer';
+
 import type { FieldNodeRecord } from '../../../record';
 import { getFieldNodePath } from './utils/getFieldNodePath';
 
@@ -13,11 +15,11 @@ export const findNodes = <Self extends FieldNodeRecord<Self>>(
 
   for (const token of path.segments) {
     const next: Self[] = [];
-    if (token === '@') return [];
+    if (token === $.Context) return [];
     for (const cursor of cursors) {
-      if (token === '.') {
+      if (token === $.Current) {
         if (!next.includes(cursor)) next.push(cursor);
-      } else if (token === '..') {
+      } else if (token === $.Parent) {
         const parent = cursor.parent;
         if (
           parent !== null &&
@@ -26,11 +28,11 @@ export const findNodes = <Self extends FieldNodeRecord<Self>>(
         )
           next.push(parent);
       } else if (cursor.structure !== null) {
-        if (token === '*') {
+        if (token === $.Wildcard) {
           for (const child of Object.values(cursor.structure))
             if (!next.includes(child)) next.push(child);
         } else {
-          const name = token.replace(/~1/g, '/').replace(/~0/g, '~');
+          const name = token.replace(/~1/g, $.Separator).replace(/~0/g, '~');
           if (hasOwnProperty(cursor.structure, name)) {
             const child = cursor.structure[name];
             if (child !== undefined && !next.includes(child)) next.push(child);

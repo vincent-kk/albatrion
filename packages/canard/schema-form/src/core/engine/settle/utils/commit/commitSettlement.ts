@@ -1,4 +1,6 @@
-import { NON_JSON_WHOLE_VALUE, TYPE_MISMATCH } from '../../../../../errors';
+import { JSONPointer as $ } from '@/schema-form/helpers/jsonPointer';
+
+import { FormWarningCode } from '../../../../../errors';
 import type { FieldNodeRecord, TypeMismatchRecord } from '../../../record';
 import { indexFieldNodeWarning } from '../../../record';
 import { getCommittedDeclarationKey } from '../../../utils/controls/getCommittedDeclarationKey';
@@ -110,7 +112,7 @@ export const commitSettlement = <Self extends FieldNodeRecord<Self>>(
         const ambiguous = candidates.length > 1;
         const warning: TypeMismatchRecord = {
           level: 'warning',
-          code: TYPE_MISMATCH,
+          code: FormWarningCode.TypeMismatch,
           path: node.path,
           expected: {
             schemaType: node.schemaType,
@@ -131,7 +133,7 @@ export const commitSettlement = <Self extends FieldNodeRecord<Self>>(
         if (!warnings) warnings = [];
         warnings.push(warning);
         if (runtime.errorReporter?.hasConsumer()) {
-          const code = `SCHEMA_FORM_WARNING.${TYPE_MISMATCH}` as const;
+          const code = FormWarningCode.TypeMismatch;
           const record = {
             level: 'warning',
             code,
@@ -164,7 +166,7 @@ export const commitSettlement = <Self extends FieldNodeRecord<Self>>(
       ) {
         const innerPaths = collectNonJsonPaths(node.raw, node.path);
         if (innerPaths.length) {
-          const code = `SCHEMA_FORM_WARNING.${NON_JSON_WHOLE_VALUE}` as const;
+          const code = FormWarningCode.NonJsonWholeValue;
           const key = JSON.stringify([code, node.path]);
           if (!runtime.warningKeys?.has(key)) {
             (runtime.warningKeys ??= new Set()).add(key);
@@ -213,7 +215,7 @@ export const commitSettlement = <Self extends FieldNodeRecord<Self>>(
           byAncestor.set(ancestor, paths);
         }
         paths.push(path);
-        ancestor = ancestor.slice(0, ancestor.lastIndexOf('/'));
+        ancestor = ancestor.slice(0, ancestor.lastIndexOf($.Separator));
       }
     }
     for (const [ancestor, paths] of byAncestor)

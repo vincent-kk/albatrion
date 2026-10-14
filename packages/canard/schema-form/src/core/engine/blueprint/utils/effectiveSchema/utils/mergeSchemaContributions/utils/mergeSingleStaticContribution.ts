@@ -1,5 +1,6 @@
 import { isArray } from '@winglet/common-utils/filter';
 
+import { SCHEMA_GROUP } from '../../../../../../constants/schemaGroup';
 import type {
   BlueprintNode,
   EffectiveSchema,
@@ -47,7 +48,7 @@ export const mergeSingleStaticContribution = (
     source.type !== node.schemaType ||
     'nullable' in source ||
     'pattern' in source ||
-    'options' in source ||
+    SCHEMA_GROUP.options in source ||
     'enum' in source ||
     'const' in source ||
     'multipleOf' in source ||
@@ -69,7 +70,7 @@ export const mergeSingleStaticContribution = (
     const key = keys[index];
     const value = source[key];
     if (value === undefined || key === 'type') continue;
-    if (key === 'controls') {
+    if (key === SCHEMA_GROUP.controls) {
       applyControlHints(schema, value);
     } else if (key === 'readOnly') schema.readOnly = value === true;
     else if (key === 'required' && isArray(value)) {

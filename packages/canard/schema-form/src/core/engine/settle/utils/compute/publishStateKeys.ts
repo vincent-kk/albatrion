@@ -1,11 +1,10 @@
-import { SchemaFormError } from '../../../../../errors';
+import { FormErrorCode, SchemaFormError } from '../../../../../errors';
 import { getFeatureNodeIndex } from '../../../blueprint';
 import { captureFieldNodeChange } from '../../../record';
 import type { FieldNodeRecord } from '../../../record';
 import type { SettlementContext } from '../../type';
 import { calculateStateKeys } from '../controls/calculateStateKeys';
 import { recordSettlementFailure } from '../errors/recordSettlementFailure';
-import { EXPRESSION_THREW } from '../errors/settleErrorCode';
 
 /**
  * Write final local controls and defer all failed expressions until commit.
@@ -42,7 +41,7 @@ export const publishStateKeys = <Self extends FieldNodeRecord<Self>>(
     recordSettlementFailure(
       context,
       new SchemaFormError(
-        EXPRESSION_THREW,
+        FormErrorCode.ExpressionThrew,
         `State key expression failed at ${schemaPath}`,
         { path, schemaPath, cause },
       ),

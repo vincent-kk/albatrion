@@ -1,5 +1,7 @@
 import { isArray } from '@winglet/common-utils/filter';
 
+import { JSONPointer as $ } from '@/schema-form/helpers/jsonPointer';
+
 import type { FieldNodeRuntime } from '../../../record';
 import { getRuntimePathStores } from '../pathIndex/getRuntimePathStores';
 import { prunePerishedPaths } from './prunePerishedPaths';
@@ -30,7 +32,7 @@ export const pruneArrayTailPaths = <Self>(
       const parts: unknown = JSON.parse(key);
       if (!isArray(parts) || typeof parts[1] !== 'string') continue;
       const prefix = `${host}/`;
-      const segment = parts[1].slice(prefix.length).split('/')[0];
+      const segment = parts[1].slice(prefix.length).split($.Separator)[0];
       const index = Number(segment);
       if (
         parts[1].startsWith(prefix) &&

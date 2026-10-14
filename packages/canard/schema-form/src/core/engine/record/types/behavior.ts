@@ -4,6 +4,7 @@ import type {
   BlueprintNodeKind,
   SchemaTypeName,
 } from '../../blueprint';
+import type { NodeStrategy } from '../../types/strategy';
 import type { FieldNodeRecord } from './record';
 import type { FieldNodeRuntime } from './runtime';
 
@@ -77,7 +78,7 @@ export interface Behavior<Self = unknown> {
   /** Stable dispatch kind of this row. */
   readonly type: BlueprintNodeKind;
   /** Fixed branch or terminal shape of this row. */
-  readonly strategy: 'branch' | 'terminal';
+  readonly strategy: NodeStrategy;
 }
 
 /** Per-tree creation callback supplied by the composition root. */

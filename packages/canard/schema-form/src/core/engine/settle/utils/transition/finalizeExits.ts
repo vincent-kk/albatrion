@@ -1,3 +1,5 @@
+import { JSONPointer as $ } from '@/schema-form/helpers/jsonPointer';
+
 import { captureFieldNodeChange } from '../../../record';
 import type { FieldNodeRecord } from '../../../record';
 import type { SettlementContext } from '../../type';
@@ -52,7 +54,7 @@ export const finalizeExits = <Self extends FieldNodeRecord<Self>>(
           }
           paths.add(path);
           if (!ancestor) break;
-          ancestor = ancestor.slice(0, ancestor.lastIndexOf('/'));
+          ancestor = ancestor.slice(0, ancestor.lastIndexOf($.Separator));
         }
       }
     }
@@ -62,7 +64,7 @@ export const finalizeExits = <Self extends FieldNodeRecord<Self>>(
       while (true) {
         mismatchIndex.get(ancestor)?.delete(path);
         if (!ancestor) break;
-        ancestor = ancestor.slice(0, ancestor.lastIndexOf('/'));
+        ancestor = ancestor.slice(0, ancestor.lastIndexOf($.Separator));
       }
     }
   }

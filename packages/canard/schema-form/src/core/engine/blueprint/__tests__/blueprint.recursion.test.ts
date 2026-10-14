@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 
+import { FormErrorCode } from '../../../../errors';
 import { blueprint } from '../blueprint';
-import { BlueprintErrorCode } from '../utils/diagnostics/constant';
 
 // filid:contract recursion
 describe('blueprint finite reference and shape graph', () => {
@@ -11,7 +11,7 @@ describe('blueprint finite reference and shape graph', () => {
         blueprint({ type, properties: { next: { $ref: '#' } } }),
       ).toThrow(
         expect.objectContaining({
-          specific: BlueprintErrorCode.RecursiveShapeUnbounded,
+          code: FormErrorCode.RecursiveShapeUnbounded,
         }),
       );
   });
@@ -31,7 +31,7 @@ describe('blueprint finite reference and shape graph', () => {
     };
     expect(() => blueprint(schema)).toThrow(
       expect.objectContaining({
-        specific: BlueprintErrorCode.RecursiveShapeUnbounded,
+        code: FormErrorCode.RecursiveShapeUnbounded,
       }),
     );
   });
@@ -111,7 +111,7 @@ describe('blueprint finite reference and shape graph', () => {
       blueprint({ type: 'object', properties: { value: { $ref: '#/%' } } }),
     ).toThrow(
       expect.objectContaining({
-        specific: BlueprintErrorCode.UnknownJsonSchema,
+        code: FormErrorCode.UnknownJsonSchema,
         details: expect.objectContaining({
           schemaPath: '#/properties/value',
           reference: '#/%',
@@ -128,7 +128,7 @@ describe('blueprint finite reference and shape graph', () => {
     };
     expect(() => blueprint(schema)).toThrow(
       expect.objectContaining({
-        specific: BlueprintErrorCode.UnknownJsonSchema,
+        code: FormErrorCode.UnknownJsonSchema,
         details: expect.objectContaining({
           schemaPath: '#/properties/value',
           reference: '#invalid',

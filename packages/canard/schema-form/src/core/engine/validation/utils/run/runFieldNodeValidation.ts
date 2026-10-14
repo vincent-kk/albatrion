@@ -1,4 +1,4 @@
-import { SchemaFormError, VALIDATOR_THREW } from '../../../../../errors';
+import { FormErrorCode, SchemaFormError } from '../../../../../errors';
 import type { FieldNodeRecord } from '../../../record';
 import type { ValidationIssue } from '../../type';
 import { assertValidationRootReady } from './assertValidationRootReady';
@@ -20,7 +20,7 @@ export const runFieldNodeValidation = async <
     return (await validate(node.rootNode.emit)) ?? [];
   } catch (error) {
     throw new SchemaFormError(
-      VALIDATOR_THREW,
+      FormErrorCode.ValidatorThrew,
       'Whole-schema validator threw while checking the emitted value',
       { error },
     );

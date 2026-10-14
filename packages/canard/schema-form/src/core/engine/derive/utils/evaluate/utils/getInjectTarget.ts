@@ -1,6 +1,8 @@
 import { hasOwnProperty } from '@winglet/common-utils/lib';
 import { unescapeSegment } from '@winglet/json/pointer';
 
+import { JSONPointer as $ } from '@/schema-form/helpers/jsonPointer';
+
 import { getItemEntry } from '../../../../blueprint';
 import type { FieldNodeRecord } from '../../../../record';
 import { getDeriveChildEntry } from '../../rank/getDeriveChildEntry';
@@ -15,12 +17,12 @@ export const getInjectTarget = <Self extends FieldNodeRecord<Self>>(
   root: Self,
   path: string,
 ) => {
-  if (path === '@') return undefined;
+  if (path === $.Context) return undefined;
   let template = root.blueprintNode;
   let live: Self | undefined = root;
   let siblings = template.childEntries;
   const order: number[] = [];
-  for (const encoded of path.split('/').slice(1)) {
+  for (const encoded of path.split($.Separator).slice(1)) {
     if (template.strategy !== 'branch') return undefined;
     const name = unescapeSegment(encoded);
     siblings = template.childEntries;

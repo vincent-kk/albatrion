@@ -76,5 +76,6 @@ export type {
 } from './validation';
 export type { Behavior, FieldNodeRecord, FieldNodeRuntime } from './record';
 export type { NodeStateFlags } from './types/state';
+export type { NodeStrategy } from './types/strategy';
 export type { AuthoredSchema } from './types/jsonSchema';
 export type { SchemaControls } from './types/controls';

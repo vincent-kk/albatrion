@@ -1,3 +1,5 @@
+import { JSONPointer as $ } from '@/schema-form/helpers/jsonPointer';
+
 import type { FieldNodeRecord } from '../../../record';
 import { WriteOption } from '../../../types/value';
 import { sameValue } from '../../../utils/compute/sameValue';
@@ -40,10 +42,12 @@ export const changeFieldNodeContext = <Self extends FieldNodeRecord<Self>>(
     for (const owner of context.contextOwners) {
       context.dirtyPaths.add(owner);
       context.dependencyOwnerPaths.add(owner);
-      context.shapeDirtyPaths.add(owner.slice(0, owner.lastIndexOf('/')));
+      context.shapeDirtyPaths.add(
+        owner.slice(0, owner.lastIndexOf($.Separator)),
+      );
       let ancestor = owner;
       while (ancestor) {
-        ancestor = ancestor.slice(0, ancestor.lastIndexOf('/'));
+        ancestor = ancestor.slice(0, ancestor.lastIndexOf($.Separator));
         context.dirtyPaths.add(ancestor);
       }
     }

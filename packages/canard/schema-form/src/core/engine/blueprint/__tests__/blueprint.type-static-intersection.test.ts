@@ -2,8 +2,8 @@ import { describe, expect, it } from 'vitest';
 
 import { isArray } from '@winglet/common-utils/filter';
 
+import { FormErrorCode } from '../../../../errors';
 import { blueprint } from '../blueprint';
-import { BlueprintErrorCode } from '../utils/diagnostics/constant';
 
 // filid:contract type-static-intersection
 describe('blueprint static type conjunction', () => {
@@ -102,7 +102,7 @@ describe('blueprint static type conjunction', () => {
       blueprint({ type: 'string', allOf: [{ type: 'number' }] }),
     ).toThrow(
       expect.objectContaining({
-        specific: BlueprintErrorCode.AllOfTypeRedefinition,
+        code: FormErrorCode.AllOfTypeRedefinition,
       }),
     );
   });
@@ -153,7 +153,7 @@ describe('blueprint static type conjunction', () => {
           schemaType: isArray(schemaType) ? [...schemaType].sort() : schemaType,
         };
       } catch (error: any) {
-        return { error: error.specific };
+        return { error: error.code };
       }
     };
     for (const [id, left, right] of pairs) {
@@ -161,7 +161,7 @@ describe('blueprint static type conjunction', () => {
       expect(outcome(right, left), id).toEqual(forward);
       if (id === 'E23')
         expect(forward).toEqual({
-          error: BlueprintErrorCode.AllOfTypeRedefinition,
+          error: FormErrorCode.AllOfTypeRedefinition,
         });
       else expect(forward, id).not.toHaveProperty('error');
     }

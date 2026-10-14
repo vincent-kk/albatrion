@@ -1,5 +1,10 @@
 import { BaseError, type ErrorDetails } from '@winglet/common-utils/error';
 
+import type { SchemaFormErrorCode } from '../type';
+
+/** Group every SchemaFormError code carries; the code value repeats it before the bare name. */
+const GROUP = 'SCHEMA_FORM_ERROR';
+
 /**
  * Error class for schema form construction errors.
  *
@@ -15,8 +20,12 @@ import { BaseError, type ErrorDetails } from '@winglet/common-utils/error';
  * - error: The underlying error that occurred
  */
 export class SchemaFormError extends BaseError {
-  constructor(code: string, message: string, details: ErrorDetails = {}) {
-    super('SCHEMA_FORM_ERROR', code, message, details);
+  constructor(
+    code: SchemaFormErrorCode,
+    message: string,
+    details: ErrorDetails = {},
+  ) {
+    super(GROUP, code.slice(GROUP.length + 1), message, details);
     this.name = 'SchemaFormError';
   }
 }

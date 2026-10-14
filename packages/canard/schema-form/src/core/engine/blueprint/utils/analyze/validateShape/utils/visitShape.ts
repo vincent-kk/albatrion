@@ -1,5 +1,5 @@
+import { FormErrorCode } from '../../../../../../../errors';
 import type { BlueprintNode } from '../../../../type';
-import { BlueprintErrorCode } from '../../../diagnostics/constant';
 import { throwBlueprintError } from '../../../diagnostics/throwBlueprintError';
 import type { AnalysisContext } from '../../type';
 
@@ -25,7 +25,7 @@ export const visitShape = (
     return;
   if (active.has(node))
     throwBlueprintError(
-      BlueprintErrorCode.RecursiveShapeUnbounded,
+      FormErrorCode.RecursiveShapeUnbounded,
       node.schemaPath,
       { path: node.path },
       context.options,

@@ -1,4 +1,6 @@
-import { TYPE_MISMATCH } from '../../../../../errors';
+import { JSONPointer as $ } from '@/schema-form/helpers/jsonPointer';
+
+import { FormWarningCode } from '../../../../../errors';
 import { indexFieldNodeWarning } from '../../../record';
 import type { FieldNodeRecord, TypeMismatchRecord } from '../../../record';
 import type { WriteOption } from '../../../types/value';
@@ -36,7 +38,7 @@ export const finishStaticFirstLoad = <Self extends FieldNodeRecord<Self>>(
       records!.push(warning);
       runtime.typeMismatchPaths.add(warning.path);
       if (!runtime.errorReporter?.hasConsumer()) continue;
-      const code = `SCHEMA_FORM_WARNING.${TYPE_MISMATCH}` as const;
+      const code = FormWarningCode.TypeMismatch;
       const record = {
         level: 'warning',
         code,
@@ -81,7 +83,7 @@ export const finishStaticFirstLoad = <Self extends FieldNodeRecord<Self>>(
           byAncestor.set(ancestor, children);
         }
         children.push(path);
-        ancestor = ancestor.slice(0, ancestor.lastIndexOf('/'));
+        ancestor = ancestor.slice(0, ancestor.lastIndexOf($.Separator));
       }
     }
     for (const [ancestor, children] of byAncestor)

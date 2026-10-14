@@ -29,9 +29,10 @@
 8. [Conditional Schemas](#conditional-schemas)
 9. [JSONPointer System](#jsonpointer-system)
 10. [Validation System](#validation-system)
-11. [Plugin System](#plugin-system)
-12. [Advanced Features](#advanced-features)
-13. [Type Definitions](#type-definitions)
+11. [Error Handling](#error-handling)
+12. [Plugin System](#plugin-system)
+13. [Advanced Features](#advanced-features)
+14. [Type Definitions](#type-definitions)
 
 ---
 
@@ -851,6 +852,157 @@ presentation: {
 // Set context.locale in Form
 <Form jsonSchema={schema} context={{ locale: 'en_US' }} />
 ```
+
+---
+
+## Error Handling
+
+Errors from `@canard/schema-form` reach you in three places:
+
+| Where | What arrives |
+| --- | --- |
+| `onError` prop of `<Form>` | Every error **and** warning record of that form instance: `level` (`'error'` or `'warning'`), `code`, `message`, and, when known, `path`, `schemaPath`, `details` and the `error` itself |
+| `submit()` (`FormHandle.submit`, `useFormSubmit`) | Rejects with a `ValidationError` (`FormErrorCode.SchemaValidationFailed`) when validation fails, and with a `SchemaFormError` (`FormErrorCode.SubmitWhileDegraded`) when the form's diagnostics are degraded |
+| `registerPlugin` | Throws an `UnhandledError` (`FormErrorCode.RegisterPlugin`) |
+
+Four error classes, each with its own guard: `isJSONSchemaError` (the schema cannot become a form), `isSchemaFormError` (runtime failures of a form instance), `isValidationError` (submission rejected by validation), `isUnhandledError` (failures outside a form instance). The classes are siblings checked with `instanceof`, so at most one guard matches; an error thrown by your own code or a plugin matches none. Every error carries `code` (`'<GROUP>.<CODE>'`, for example `'SCHEMA_FORM_ERROR.RENDER_FAILED'`), `group`, `specific` and `details`.
+
+**Compare `code` with the `FormErrorCode` and `FormWarningCode` constants, not with string literals.** The constants are the only supply path for these values: if a code is renamed inside the package, a handler that uses the constant follows the change or fails to compile, while a literal keeps compiling and silently never matches again. Both are object enums with a matching union type, so `FormErrorCode` also types a variable that holds any error code.
+
+```tsx
+import { useRef } from 'react';
+import {
+  Form,
+  FormErrorCode,
+  FormWarningCode,
+  isValidationError,
+  useFormSubmit,
+  type FormHandle,
+} from '@canard/schema-form';
+
+const jsonSchema = {
+  type: 'object',
+  properties: { name: { type: 'string' } },
+} as const;
+
+declare function reportToMonitoring(error: unknown): void;
+
+function ProfileForm() {
+  const formRef = useRef<FormHandle<typeof jsonSchema>>(null);
+  const { submit, pending } = useFormSubmit(formRef);
+
+  const handleSubmit = async () => {
+    try {
+      await submit();
+    } catch (error) {
+      if (isValidationError(error) && error.code === FormErrorCode.SchemaValidationFailed)
+        return; // field errors are already on the form; formRef.current?.getErrors() lists them
+      throw error;
+    }
+  };
+
+  return (
+    <>
+      <Form
+        ref={formRef}
+        jsonSchema={jsonSchema}
+        onError={(record) => {
+          if (record.code === FormErrorCode.RenderFailed) reportToMonitoring(record.error);
+          else if (record.code === FormWarningCode.TypeMismatch) console.info(record.path, record.message);
+        }}
+      />
+      <button onClick={handleSubmit} disabled={pending}>Submit</button>
+    </>
+  );
+}
+```
+
+### Code list
+
+Values are the `error.code` / `record.code` strings exactly as emitted.
+
+#### Schema errors — the schema cannot become a form (`isJSONSchemaError`)
+
+| Constant | `error.code` value | When | Note |
+| --- | --- | --- | --- |
+| `FormErrorCode.UnknownJsonSchema` | `'JSON_SCHEMA_ERROR.UNKNOWN_JSON_SCHEMA'` | schema analysis cannot determine a supported shape |  |
+| `FormErrorCode.UnexpectedArraySchema` | `'JSON_SCHEMA_ERROR.UNEXPECTED_ARRAY_SCHEMA'` | schema analysis finds an invalid array declaration |  |
+| `FormErrorCode.AllOfTypeRedefinition` | `'JSON_SCHEMA_ERROR.ALL_OF_TYPE_REDEFINITION'` | static allOf types have an empty intersection |  |
+| `FormErrorCode.ConflictingConstValues` | `'JSON_SCHEMA_ERROR.CONFLICTING_CONST_VALUES'` | static allOf constants conflict |  |
+| `FormErrorCode.InvalidRange` | `'JSON_SCHEMA_ERROR.INVALID_RANGE'` | static allOf range intersection is empty |  |
+| `FormErrorCode.EmptyEnumIntersection` | `'JSON_SCHEMA_ERROR.EMPTY_ENUM_INTERSECTION'` | static allOf enum intersection is empty |  |
+| `FormErrorCode.VirtualFieldsNotValid` | `'JSON_SCHEMA_ERROR.VIRTUAL_FIELDS_NOT_VALID'` | virtual field references are invalid |  |
+| `FormErrorCode.VirtualFieldsNotInProperties` | `'JSON_SCHEMA_ERROR.VIRTUAL_FIELDS_NOT_IN_PROPERTIES'` | virtual fields are absent from declared properties |  |
+| `FormErrorCode.CreateDynamicFunction` | `'JSON_SCHEMA_ERROR.CREATE_DYNAMIC_FUNCTION'` | a controls expression cannot be compiled |  |
+| `FormErrorCode.ObservedValues` | `'JSON_SCHEMA_ERROR.OBSERVED_VALUES'` | observed-value expression analysis fails |  |
+| `FormErrorCode.UnknownGroupKey` | `'JSON_SCHEMA_ERROR.UNKNOWN_GROUP_KEY'` | a controls, options, or child controls key is outside its closed list |  |
+| `FormErrorCode.DiscriminatorMismatch` | `'JSON_SCHEMA_ERROR.DISCRIMINATOR_MISMATCH'` | a discriminator key or branch value is inconsistent |  |
+| `FormErrorCode.SharedNodeKindConflict` | `'JSON_SCHEMA_ERROR.SHARED_NODE_KIND_CONFLICT'` | static and ungated branch node kinds conflict |  |
+| `FormErrorCode.TerminalStrategyMismatch` | `'JSON_SCHEMA_ERROR.TERMINAL_STRATEGY_MISMATCH'` | declarations disagree on a node's terminal strategy |  |
+| `FormErrorCode.RecursiveShapeUnbounded` | `'JSON_SCHEMA_ERROR.RECURSIVE_SHAPE_UNBOUNDED'` | schema analysis finds an unbounded recursive shape |  |
+| `FormErrorCode.VirtualFieldsMismatch` | `'JSON_SCHEMA_ERROR.VIRTUAL_FIELDS_MISMATCH'` | declarations disagree on virtual fields |  |
+| `FormErrorCode.ChildrenTargetNotFound` | `'JSON_SCHEMA_ERROR.CHILDREN_TARGET_NOT_FOUND'` | a declared child name is absent from the schema |  |
+| `FormErrorCode.TerminalOptionUnsupported` | `'JSON_SCHEMA_ERROR.TERMINAL_OPTION_UNSUPPORTED'` | a single-row kind declares a different terminal option |  |
+| `FormErrorCode.InvalidControlShape` | `'JSON_SCHEMA_ERROR.INVALID_CONTROL_SHAPE'` | a known controls, options, or child controls key has the wrong shape |  |
+
+#### Form errors — runtime failures of a form instance (`isSchemaFormError`)
+
+| Constant | `error.code` value | When | Note |
+| --- | --- | --- | --- |
+| `FormErrorCode.SharedNodeConflict` | `'SCHEMA_FORM_ERROR.SHARED_NODE_CONFLICT'` | active declarations cannot share one node kind |  |
+| `FormErrorCode.BudgetExceeded` | `'SCHEMA_FORM_ERROR.BUDGET_EXCEEDED'` | settlement exceeds its host, derive, or transition budget |  |
+| `FormErrorCode.ExpressionThrew` | `'SCHEMA_FORM_ERROR.EXPRESSION_THREW'` | an active controls expression throws during settlement |  |
+| `FormErrorCode.GuardFailed` | `'SCHEMA_FORM_ERROR.GUARD_FAILED'` | guard compilation or synchronous evaluation fails |  |
+| `FormErrorCode.InjectTargetMissing` | `'SCHEMA_FORM_ERROR.INJECT_TARGET_MISSING'` | a dynamic injection has no target |  |
+| `FormErrorCode.FeedbackLimitExceeded` | `'SCHEMA_FORM_ERROR.FEEDBACK_LIMIT_EXCEEDED'` | listener feedback or onChange nesting exceeds its budget |  |
+| `FormErrorCode.ListenerThrew` | `'SCHEMA_FORM_ERROR.LISTENER_THREW'` | a subscriber or form callback throws |  |
+| `FormErrorCode.MultipleErrors` | `'SCHEMA_FORM_ERROR.MULTIPLE_ERRORS'` | a dispatch chain or observer produces multiple errors |  |
+| `FormErrorCode.FormTypeInputMap` | `'SCHEMA_FORM_ERROR.FORM_TYPE_INPUT_MAP'` | render input-map normalization fails |  |
+| `FormErrorCode.InvalidWriteOption` | `'SCHEMA_FORM_ERROR.INVALID_WRITE_OPTION'` | a public write combines incompatible options |  |
+| `FormErrorCode.DisposedNodeWrite` | `'SCHEMA_FORM_ERROR.DISPOSED_NODE_WRITE'` | a caller writes through a disposed node reference |  |
+| `FormErrorCode.WriteInObserver` | `'SCHEMA_FORM_ERROR.WRITE_IN_OBSERVER'` | onError tries to write to its own form |  |
+| `FormErrorCode.SubmitWhileDegraded` | `'SCHEMA_FORM_ERROR.SUBMIT_WHILE_DEGRADED'` | submission is attempted while diagnostics are degraded |  |
+| `FormErrorCode.ValidatorCompileFailed` | `'SCHEMA_FORM_ERROR.VALIDATOR_COMPILE_FAILED'` | whole-schema compilation fails on the first validation request |  |
+| `FormErrorCode.ValidatorThrew` | `'SCHEMA_FORM_ERROR.VALIDATOR_THREW'` | a compiled validator throws during validation |  |
+| `FormErrorCode.RenderFailed` | `'SCHEMA_FORM_ERROR.RENDER_FAILED'` | an injected renderer or root render throws |  |
+| `FormErrorCode.InvalidVirtualNodeValues` | `'SCHEMA_FORM_ERROR.INVALID_VIRTUAL_NODE_VALUES'` | a virtual node receives values with the wrong shape |  |
+| `FormErrorCode.ArrayMethodOnNonArray` | `'SCHEMA_FORM_ERROR.ARRAY_METHOD_ON_NON_ARRAY'` | an array-only command is called on another node kind |  |
+| `FormErrorCode.RecursiveShapeDiverged` | `'SCHEMA_FORM_ERROR.RECURSIVE_SHAPE_DIVERGED'` | recursive shape expansion exceeds the settlement budget |  |
+
+#### Validation errors — submission rejected by validation (`isValidationError`)
+
+| Constant | `error.code` value | When | Note |
+| --- | --- | --- | --- |
+| `FormErrorCode.SchemaValidationFailed` | `'VALIDATION_ERROR.SCHEMA_VALIDATION_FAILED'` | schema validation fails on submit | emitted by `submit()` |
+
+#### Unhandled errors — failures outside a form instance (`isUnhandledError`)
+
+| Constant | `error.code` value | When | Note |
+| --- | --- | --- | --- |
+| `FormErrorCode.RegisterPlugin` | `'UNHANDLED_ERROR.REGISTER_PLUGIN'` | global plugin registration fails outside a form instance |  |
+| `FormErrorCode.ValidatorBindRefused` | `'UNHANDLED_ERROR.VALIDATOR_BIND_REFUSED'` | a plugin refuses a bound validator instance outside a form | thrown by the AJV plugins as their own error carrying this `group` and `code`; `isUnhandledError` does not recognize it, so compare `error.code` |
+
+#### Warnings — reported, never thrown
+
+| Constant | `error.code` value | When | Note |
+| --- | --- | --- | --- |
+| `FormWarningCode.AllOfKeywordIgnoredForForm` | `'SCHEMA_FORM_WARNING.ALL_OF_KEYWORD_IGNORED_FOR_FORM'` | schema analysis ignores an allOf keyword for rendering |  |
+| `FormWarningCode.NullBranchIgnoredForForm` | `'SCHEMA_FORM_WARNING.NULL_BRANCH_IGNORED_FOR_FORM'` | schema analysis ignores a null branch for rendering |  |
+| `FormWarningCode.VirtualizationDisabledForForm` | `'SCHEMA_FORM_WARNING.VIRTUALIZATION_DISABLED_FOR_FORM'` | render virtualization lacks IntersectionObserver |  |
+| `FormWarningCode.IfWithoutElseFalse` | `'SCHEMA_FORM_WARNING.IF_WITHOUT_ELSE_FALSE'` | a conditional branch has if without else false |  |
+| `FormWarningCode.LockOnNonTerminalObject` | `'SCHEMA_FORM_WARNING.LOCK_ON_NON_TERMINAL_OBJECT'` | a nonterminal object declares a lock |  |
+| `FormWarningCode.ConditionalSchemaWithoutValidator` | `'SCHEMA_FORM_WARNING.CONDITIONAL_SCHEMA_WITHOUT_VALIDATOR'` | an if gate exists without a validator |  |
+| `FormWarningCode.ValidatorMissing` | `'SCHEMA_FORM_WARNING.VALIDATOR_MISSING'` | a tree requests validation but no validator is selected |  |
+| `FormWarningCode.MultipleGatedBranchesActive` | `'SCHEMA_FORM_WARNING.MULTIPLE_GATED_BRANCHES_ACTIVE'` | multiple gated oneOf branches become active |  |
+| `FormWarningCode.ResetRebuiltByReference` | `'SCHEMA_FORM_WARNING.RESET_REBUILT_BY_REFERENCE'` | a reset rebuilds a tree because the schema reference changes |  |
+| `FormWarningCode.DependentSchemasIgnoredForForm` | `'SCHEMA_FORM_WARNING.DEPENDENT_SCHEMAS_IGNORED_FOR_FORM'` | dependentSchemas is unsupported for form shape |  |
+| `FormWarningCode.ChildNodeComponentsOnTerminal` | `'SCHEMA_FORM_WARNING.CHILD_NODE_COMPONENTS_ON_TERMINAL'` | a terminal input reads empty child-node components |  |
+| `FormWarningCode.TerminalSubtreeKeyIgnoredForForm` | `'SCHEMA_FORM_WARNING.TERMINAL_SUBTREE_KEY_IGNORED_FOR_FORM'` | a terminal subtree declares a reserved key ignored by the form |  |
+| `FormWarningCode.DiscriminatorBranchUnreachable` | `'SCHEMA_FORM_WARNING.DISCRIMINATOR_BRANCH_UNREACHABLE'` | a branch discriminator literal is outside the allowed list |  |
+| `FormWarningCode.NonJsonWholeValue` | `'SCHEMA_FORM_WARNING.NON_JSON_WHOLE_VALUE'` | a development-mode whole value is not JSON-compatible |  |
+| `FormWarningCode.FormTypeTestInvalid` | `'SCHEMA_FORM_WARNING.FORM_TYPE_TEST_INVALID'` | an input definition test object has an unknown key |  |
+| `FormWarningCode.TypeMismatch` | `'SCHEMA_FORM_WARNING.TYPE_MISMATCH'` | a value cannot be converted to the active type unambiguously |  |
+| `FormWarningCode.DialectMismatch` | `'SCHEMA_FORM_WARNING.DIALECT_MISMATCH'` | a schema dialect differs from the selected validator dialect |  |
 
 ---
 

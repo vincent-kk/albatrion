@@ -1,5 +1,10 @@
 import { BaseError, type ErrorDetails } from '@winglet/common-utils/error';
 
+import type { ValidationErrorCode } from '../type';
+
+/** Group every ValidationError code carries; the code value repeats it before the bare name. */
+const GROUP = 'VALIDATION_ERROR';
+
 /**
  * Error class for form submission validation errors.
  *
@@ -17,8 +22,12 @@ import { BaseError, type ErrorDetails } from '@winglet/common-utils/error';
  * - jsonSchema: The schema used for validation
  */
 export class ValidationError extends BaseError {
-  constructor(code: string, message: string, details: ErrorDetails = {}) {
-    super('VALIDATION_ERROR', code, message, details);
+  constructor(
+    code: ValidationErrorCode,
+    message: string,
+    details: ErrorDetails = {},
+  ) {
+    super(GROUP, code.slice(GROUP.length + 1), message, details);
     this.name = 'ValidationError';
   }
 }

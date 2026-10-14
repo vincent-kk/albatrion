@@ -2,7 +2,7 @@ import { describe, expect, it, vi } from 'vitest';
 
 import { isArray } from '@winglet/common-utils/filter';
 
-import { SchemaFormError } from '../../../../errors';
+import { FormErrorCode, SchemaFormError } from '../../../../errors';
 import type { FormErrorRecord } from '../../../../errors';
 import { createTestValidator } from '../../../__tests__/fixtures/createTestValidator';
 import { createDispatchTree } from '../../__tests__/fixtures/createDispatchTree';
@@ -116,7 +116,7 @@ describe('ERROR-017 ERROR-195 59C-01 automatic write source details', () => {
     report.mockClear();
     const details = { path: '/v', expectedLength: 1, received: null };
     const failure = new SchemaFormError(
-      'INVALID_VIRTUAL_NODE_VALUES',
+      FormErrorCode.InvalidVirtualNodeValues,
       'Invalid caller virtual node values',
       details,
     );

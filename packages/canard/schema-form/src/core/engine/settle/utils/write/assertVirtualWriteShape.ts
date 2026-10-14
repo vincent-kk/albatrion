@@ -1,9 +1,6 @@
 import { isArray } from '@winglet/common-utils/filter';
 
-import {
-  INVALID_VIRTUAL_NODE_VALUES,
-  SchemaFormError,
-} from '../../../../../errors';
+import { FormErrorCode, SchemaFormError } from '../../../../../errors';
 import type { FieldNodeRecord } from '../../../record';
 
 /**
@@ -22,7 +19,7 @@ export const assertVirtualWriteShape = <Self extends FieldNodeRecord<Self>>(
     (!isArray(input) || input.length !== fields.length)
   )
     throw new SchemaFormError(
-      INVALID_VIRTUAL_NODE_VALUES,
+      FormErrorCode.InvalidVirtualNodeValues,
       `Invalid virtual node values at ${node.path}`,
       { path: node.path, expected: fields.length, received: input },
     );

@@ -1,5 +1,6 @@
 import { hasOwnProperty } from '@winglet/common-utils/lib';
 
+import { CONTROL_KEY } from '../../../constants/controlKey';
 import type { FieldNodeRecord } from '../../../record';
 import { getControlLayers } from '../controls/getControlLayers';
 
@@ -20,8 +21,11 @@ export const readDefault = <Self extends FieldNodeRecord<Self>>(
   for (const layer of DEFAULT_LAYERS)
     for (let index = groups.length - 1; index >= 0; index--) {
       const group = groups[index];
-      if (group.layer === layer && hasOwnProperty(group.controls, 'default'))
-        return Reflect.get(group.controls, 'default');
+      if (
+        group.layer === layer &&
+        hasOwnProperty(group.controls, CONTROL_KEY.default)
+      )
+        return Reflect.get(group.controls, CONTROL_KEY.default);
     }
   const schema = node.schema.schema;
   if (schema === null || typeof schema !== 'object') return undefined;

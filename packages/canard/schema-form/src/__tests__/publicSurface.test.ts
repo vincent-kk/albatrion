@@ -70,7 +70,7 @@ function describeExport(
   return `${exported.getName()}\t${kind}\t${typeText}`;
 }
 
-it('preserves the 92-name package public surface', () => {
+it('preserves the 94-name package public surface', () => {
   const entryPath = join(packageRoot, 'src/index.ts');
   const program = ts.createProgram([entryPath], readCompilerOptions());
   const checker = program.getTypeChecker();
@@ -82,6 +82,6 @@ it('preserves the 92-name package public surface', () => {
     .getExportsOfModule(module)
     .map((symbol) => describeExport(symbol, checker, entry))
     .sort();
-  expect(lines).toHaveLength(92);
+  expect(lines).toHaveLength(94);
   expect(lines.join('\n')).toMatchSnapshot();
 }, 60000);

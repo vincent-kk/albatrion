@@ -1,5 +1,7 @@
 import { hasOwnProperty } from '@winglet/common-utils/lib';
 
+import { JSONPointer as $ } from '@/schema-form/helpers/jsonPointer';
+
 import type { FieldNodeRecord } from '../../../record';
 import type { ValidationIssue } from '../../type';
 import { isOffUnionBranchIssue } from './isOffUnionBranchIssue';
@@ -47,8 +49,8 @@ export const routeValidationIssues = <Self extends FieldNodeRecord<Self>>(
     const path = normalizeIssueDataPath(issue.dataPath);
     let node = root;
     if (path) {
-      if (!path.startsWith('/')) continue;
-      const segments = path.slice(1).split('/');
+      if (!path.startsWith($.Separator)) continue;
+      const segments = path.slice(1).split($.Separator);
       for (
         let segmentIndex = 0;
         segmentIndex < segments.length;
@@ -56,7 +58,7 @@ export const routeValidationIssues = <Self extends FieldNodeRecord<Self>>(
       ) {
         const encoded = segments[segmentIndex];
         if (node.structure === null) break;
-        const key = encoded.replace(/~1/g, '/').replace(/~0/g, '~');
+        const key = encoded.replace(/~1/g, $.Separator).replace(/~0/g, '~');
         if (!hasOwnProperty(node.structure, key)) {
           node = root;
           break;

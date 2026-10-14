@@ -1,6 +1,7 @@
 import { isArray } from '@winglet/common-utils/filter';
 
 import type { BlueprintSchema } from '../../../blueprint';
+import { SCHEMA_GROUP } from '../../../constants/schemaGroup';
 
 /** Schema-valued keyword slots traversed as schemas rather than annotation data. */
 const SCHEMA_KEYS = new Set([
@@ -53,7 +54,9 @@ export const createValidatorCopy = (
     for (const [key, value] of Object.entries(current.source)) {
       if (
         current.kind === 'schema' &&
-        (key === 'controls' || key === 'options' || key === 'presentation')
+        (key === SCHEMA_GROUP.controls ||
+          key === SCHEMA_GROUP.options ||
+          key === SCHEMA_GROUP.presentation)
       )
         continue;
       const childKind =

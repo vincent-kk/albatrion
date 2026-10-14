@@ -6,10 +6,8 @@ import { withErrorBoundary } from '@winglet/react-utils/hoc';
 import type { Fn } from '@aileron/declare';
 
 import type { FieldNode } from '@/schema-form/core';
-import {
-  VIRTUALIZATION_DISABLED_FOR_FORM,
-  warnDevelopmentIssue,
-} from '@/schema-form/helpers/warning';
+import { FormWarningCode } from '@/schema-form/errors';
+import { warnDevelopmentIssue } from '@/schema-form/helpers/warning';
 import { usePlaceholderBoundaryReporter } from '@/schema-form/providers/FormErrorContext';
 
 import {
@@ -200,7 +198,7 @@ export class VirtualizationManager {
     if (typeof IntersectionObserver === 'undefined') {
       if (input)
         warnDevelopmentIssue({
-          code: VIRTUALIZATION_DISABLED_FOR_FORM,
+          code: FormWarningCode.VirtualizationDisabledForForm,
           message: formatVirtualizationDisabledWarning(),
         });
       return null;
