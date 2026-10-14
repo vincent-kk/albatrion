@@ -574,3 +574,4 @@
 - **341라운드(2026-10-15, 소유자).** 하위 방문 공개 기능 설계 초안(reviews/round-341-owner-answers.md).
 - **342라운드(2026-10-15, 소유자).** visitSubtree 확정, SURFACE-062(reviews/round-342-owner-answers.md).
 - **343라운드(2026-10-15, 소유자).** 묶음 2 마무리, 전체 게이트 한 번(reviews/round-343-owner-answers.md).
+- **344라운드(2026-10-15, 소유자).** 밤까지 자율 진행, 결정 대기열, PR 병합 허용, codex·agy(reviews/round-344-owner-answers.md).
