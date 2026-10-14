@@ -1,9 +1,10 @@
 import { afterEach, expect, it, vi } from 'vitest';
 
-import { blueprint } from '../engine/blueprint';
-import type { BlueprintCacheEntry } from '../engine/blueprint';
-import * as convergence from '../engine/blueprint/utils/analyze/collectDeriveConvergenceTargets';
-import { fieldNodeFactory, mountFieldNode } from '../surface';
+import { fieldNodeFactory, mountFieldNode } from '@/schema-form/core/surface';
+
+import { blueprint } from '../blueprint';
+import type { BlueprintCacheEntry } from '../type';
+import * as convergence from '../utils/analyze/collectDeriveConvergenceTargets';
 
 afterEach(() => vi.restoreAllMocks());
 

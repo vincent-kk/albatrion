@@ -1,7 +1,7 @@
 import { cleanup, render, screen } from '@testing-library/react';
 import { afterEach, expect, it } from 'vitest';
 
-import { Form } from '../index';
+import { Form } from '../components/Form';
 
 afterEach(cleanup);
 

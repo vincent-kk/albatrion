@@ -1,11 +1,13 @@
 import { describe, expect, it } from 'vitest';
 
-import { createTestValidator } from '../../../__tests__/fixtures/createTestValidator';
-import { dispatchMount } from '../../write';
-import { createDispatchTree } from '../../write/__tests__/fixtures/createDispatchTree';
-import { readFieldNodeErrors, routeValidationIssues } from '../index';
+import { createTestValidator } from '@/schema-form/core/__tests__/fixtures/createTestValidator';
+import { createDispatchTree } from '@/schema-form/core/engine/__tests__/fixtures/createDispatchTree';
+import { dispatchMount } from '@/schema-form/core/engine/write';
+
 import type { ValidationIssue } from '../type';
 import { createValidatorCopy } from '../utils/copy/createValidatorCopy';
+import { readFieldNodeErrors } from '../utils/read/readFieldNodeErrors';
+import { routeValidationIssues } from '../utils/route/routeValidationIssues';
 
 /** Branches use separate reference targets so each target has one owner. */
 const schema = {

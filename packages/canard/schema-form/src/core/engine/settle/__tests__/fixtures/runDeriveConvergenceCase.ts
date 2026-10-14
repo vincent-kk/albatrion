@@ -1,13 +1,18 @@
 import { expect, vi } from 'vitest';
 
+import type {
+  Blueprint,
+  BlueprintSchema,
+} from '@/schema-form/core/engine/blueprint';
+import { WriteOption } from '@/schema-form/core/engine/types/value';
+
 import * as blueprintApi from '../../../blueprint';
-import type { Blueprint, BlueprintSchema } from '../../../blueprint';
-import { WriteOption } from '../../../types/value';
 import * as deriveApi from '../../derive';
-import { loadFieldNodeAtMount, writeFieldNode } from '../../index';
 import type { SettlementContext } from '../../type';
 import { deriveShadowEvaluation } from '../../utils/derivation/deriveShadowEvaluation';
+import { loadFieldNodeAtMount } from '../../utils/load/loadFieldNodeAtMount';
 import * as settlementApi from '../../utils/settlement/createSettlementContext';
+import { writeFieldNode } from '../../utils/write/writeFieldNode';
 import type { PlainNode } from './createPlainNode';
 import { createTestTree } from './createTestTree';
 

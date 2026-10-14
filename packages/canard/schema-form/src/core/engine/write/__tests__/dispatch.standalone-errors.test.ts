@@ -1,17 +1,22 @@
 import { describe, expect, it, vi } from 'vitest';
 
-import { createTestValidator } from '../../../__tests__/fixtures/createTestValidator';
-import { FieldNodeEventType, FieldNodeRequestType } from '../../record';
-import { FieldNodeState, ValidationMode } from '../../types/state';
-import type { Validator } from '../../validation';
+import { createTestValidator } from '@/schema-form/core/__tests__/fixtures/createTestValidator';
+import { createDispatchTree } from '@/schema-form/core/engine/__tests__/fixtures/createDispatchTree';
 import {
-  dispatchMount,
-  dispatchRequest,
-  dispatchSetState,
-  dispatchSetValue,
-  subscribeFieldNode,
-} from '../index';
-import { createDispatchTree } from './fixtures/createDispatchTree';
+  FieldNodeEventType,
+  FieldNodeRequestType,
+} from '@/schema-form/core/engine/record';
+import {
+  FieldNodeState,
+  ValidationMode,
+} from '@/schema-form/core/engine/types/state';
+import type { Validator } from '@/schema-form/core/engine/validation';
+
+import { dispatchMount } from '../utils/entry/dispatchMount';
+import { dispatchRequest } from '../utils/entry/dispatchRequest';
+import { dispatchSetState } from '../utils/entry/dispatchSetState';
+import { dispatchSetValue } from '../utils/entry/dispatchSetValue';
+import { subscribeFieldNode } from '../utils/read/subscribeFieldNode';
 import { getDispatchChild } from './fixtures/getDispatchChild';
 
 // filid:contract dispatch-observers

@@ -4,8 +4,8 @@ import type { ComponentProps } from 'react';
 import { act, cleanup, fireEvent, render } from '@testing-library/react';
 import { afterEach, expect, it, vi } from 'vitest';
 
+import { nodeFromJSONSchema } from '@/schema-form/__tests__/fixtures/nodeFromJSONSchema';
 import { Form, type FormHandle } from '@/schema-form/components/Form';
-import { nodeFromJSONSchema } from '@/schema-form/core/surface/utils/nodeFromJSONSchema';
 
 import { FieldInputArrayDefinition } from '../FieldInputArray';
 

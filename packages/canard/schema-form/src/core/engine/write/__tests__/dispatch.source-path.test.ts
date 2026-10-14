@@ -1,13 +1,14 @@
-import { describe, expect, expectTypeOf, it, vi } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 
 import { isArray } from '@winglet/common-utils/filter';
 
 import { SchemaFormError } from '../../../../errors';
-import type { FormErrorDetails, FormErrorRecord } from '../../../../errors';
+import type { FormErrorRecord } from '../../../../errors';
 import { createTestValidator } from '../../../__tests__/fixtures/createTestValidator';
+import { createDispatchTree } from '../../__tests__/fixtures/createDispatchTree';
 import type { BlueprintSchema } from '../../blueprint';
-import { dispatchMount, dispatchSetValue } from '../index';
-import { createDispatchTree } from './fixtures/createDispatchTree';
+import { dispatchMount } from '../utils/entry/dispatchMount';
+import { dispatchSetValue } from '../utils/entry/dispatchSetValue';
 import { getDispatchChild } from './fixtures/getDispatchChild';
 
 // filid:contract dispatch-source-details
@@ -113,12 +114,7 @@ describe('ERROR-017 ERROR-195 59C-01 automatic write source details', () => {
     );
     dispatchMount(root, { real: 'initial' });
     report.mockClear();
-    const details: FormErrorDetails<'SCHEMA_FORM_ERROR.INVALID_VIRTUAL_NODE_VALUES'> =
-      {
-        path: '/v',
-        expectedLength: 1,
-        received: null,
-      };
+    const details = { path: '/v', expectedLength: 1, received: null };
     const failure = new SchemaFormError(
       'INVALID_VIRTUAL_NODE_VALUES',
       'Invalid caller virtual node values',
@@ -136,20 +132,5 @@ describe('ERROR-017 ERROR-195 59C-01 automatic write source details', () => {
     expect(record.details).toBe(failure.details);
     expect(failure.details).not.toHaveProperty('sourcePath');
     expect(record.details).not.toHaveProperty('sourcePath');
-  });
-
-  it('ERROR-017 59C-01 restricts sourcePath typing to the two automatic-write error codes', () => {
-    expectTypeOf<
-      FormErrorDetails<'SCHEMA_FORM_ERROR.INJECT_TARGET_MISSING'>['sourcePath']
-    >().toEqualTypeOf<string | undefined>();
-    expectTypeOf<
-      FormErrorDetails<'SCHEMA_FORM_ERROR.INVALID_VIRTUAL_NODE_VALUES'>['sourcePath']
-    >().toEqualTypeOf<string | undefined>();
-    expectTypeOf<
-      FormErrorDetails<'SCHEMA_FORM_ERROR.EXPRESSION_THREW'>['sourcePath']
-    >().toEqualTypeOf<undefined>();
-    expectTypeOf<
-      FormErrorDetails<'SCHEMA_FORM_ERROR.GUARD_FAILED'>['reason']
-    >().toEqualTypeOf<'duplicateSchemaId' | undefined>();
   });
 });

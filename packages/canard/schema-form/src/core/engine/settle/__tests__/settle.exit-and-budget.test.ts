@@ -1,12 +1,11 @@
 import { describe, expect, it, vi } from 'vitest';
 
-import { WriteOption } from '../../types/value';
-import {
-  loadFieldNodeAtMount,
-  resetFieldNodeForm,
-  writeFieldNode,
-} from '../index';
+import { WriteOption } from '@/schema-form/core/engine/types/value';
+
+import { loadFieldNodeAtMount } from '../utils/load/loadFieldNodeAtMount';
+import { resetFieldNodeForm } from '../utils/load/resetFieldNodeForm';
 import { getTransitionCap } from '../utils/transition/getTransitionCap';
+import { writeFieldNode } from '../utils/write/writeFieldNode';
 import { createTestTree } from './fixtures/createTestTree';
 
 // filid:contract settle-budget

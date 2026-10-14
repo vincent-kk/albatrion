@@ -1,4 +1,5 @@
-import type { FieldNode } from '../../surface';
+import type { FieldNode } from '@/schema-form/core/surface';
+
 import { captureBlueprintObservables } from './captureBlueprintObservables';
 
 /**

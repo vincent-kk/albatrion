@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { makeFieldNodeTree } from '../../../../__tests__/makeFieldNodeTree';
+import { makeFieldNodeTree } from '@/schema-form/core/__tests__/makeFieldNodeTree';
 
 const records = (runtime: object) =>
   Reflect.get(runtime, 'typeMismatchRecords');

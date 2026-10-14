@@ -1,13 +1,11 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import type { FieldNode } from '@/schema-form/core';
-import type { ResolvedVirtualizationOptions } from '@/schema-form/helpers/virtualization';
-import {
-  VirtualizationBackfill,
-  VirtualizationManager,
-} from '@/schema-form/helpers/virtualization';
+import type { ResolvedVirtualizationOptions } from '@/schema-form/helpers/virtualization/resolveVirtualizationOptions';
+import { VirtualizationBackfill } from '@/schema-form/helpers/virtualization/resolveVirtualizationOptions';
 
-import type { IdleDeadlineLike } from '../VirtualizationManager/scheduleIdle';
+import { VirtualizationManager } from '../VirtualizationManager';
+import type { IdleDeadlineLike } from '../scheduleIdle';
 
 class MockIntersectionObserver {
   public static instances: MockIntersectionObserver[] = [];

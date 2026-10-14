@@ -1,12 +1,20 @@
 import { describe, expect, it, vi } from 'vitest';
 
-import { ARRAY_METHOD_ON_NON_ARRAY } from '../../../../errors';
-import type { FormErrorRecord } from '../../../../errors';
-import { FieldNodeEventType } from '../../record';
-import { readFieldNodeErrors } from '../../validation';
-import { dispatchBatch, dispatchSetValue, subscribeFieldNode } from '../index';
-import * as dispatch from '../index';
-import { createDispatchTree } from './fixtures/createDispatchTree';
+import { createDispatchTree } from '@/schema-form/core/engine/__tests__/fixtures/createDispatchTree';
+import { FieldNodeEventType } from '@/schema-form/core/engine/record';
+import { readFieldNodeErrors } from '@/schema-form/core/engine/validation';
+import { ARRAY_METHOD_ON_NON_ARRAY } from '@/schema-form/errors';
+import type { FormErrorRecord } from '@/schema-form/errors';
+
+import { dispatchBatch } from '../utils/entry/dispatchBatch';
+import { dispatchClear } from '../utils/entry/dispatchClear';
+import { dispatchPop } from '../utils/entry/dispatchPop';
+import { dispatchPush } from '../utils/entry/dispatchPush';
+import { dispatchRemove } from '../utils/entry/dispatchRemove';
+import { dispatchSetExternalErrors } from '../utils/entry/dispatchSetExternalErrors';
+import { dispatchSetValue } from '../utils/entry/dispatchSetValue';
+import { dispatchUpdate } from '../utils/entry/dispatchUpdate';
+import { subscribeFieldNode } from '../utils/read/subscribeFieldNode';
 import { getDispatchChild } from './fixtures/getDispatchChild';
 
 // filid:contract dispatch-array-entry
@@ -18,15 +26,15 @@ describe('array entry integration', () => {
     });
     dispatchSetValue(root, [1]);
     const former = getDispatchChild(root, '0');
-    dispatch.dispatchSetExternalErrors(former, [
+    dispatchSetExternalErrors(former, [
       { dataPath: '/0', message: 'retained' },
     ]);
     const previous = readFieldNodeErrors(former);
-    dispatch.dispatchPop(root);
+    dispatchPop(root);
     expect(runtime.nodeErrors?.has(former)).toBe(false);
     expect(readFieldNodeErrors(former)).toBe(previous);
-    dispatch.dispatchPush(root, 2);
-    dispatch.dispatchSetExternalErrors(getDispatchChild(root, '0'), [
+    dispatchPush(root, 2);
+    dispatchSetExternalErrors(getDispatchChild(root, '0'), [
       { dataPath: '/0', message: 'new' },
     ]);
     expect(readFieldNodeErrors(former)).toBe(previous);
@@ -41,12 +49,12 @@ describe('array entry integration', () => {
       items: { type: 'number' },
     });
     dispatchSetValue(root, [1, 2]);
-    expect(dispatch.dispatchPush(root, 3)).toBe(3);
-    expect(dispatch.dispatchPop(root)).toBe(3);
-    expect(dispatch.dispatchUpdate(root, 0, '7')).toBe(7);
-    expect(dispatch.dispatchRemove(root, 0)).toBe(7);
+    expect(dispatchPush(root, 3)).toBe(3);
+    expect(dispatchPop(root)).toBe(3);
+    expect(dispatchUpdate(root, 0, '7')).toBe(7);
+    expect(dispatchRemove(root, 0)).toBe(7);
     expect(root.local).toEqual([2]);
-    expect(dispatch.dispatchClear(root)).toBeUndefined();
+    expect(dispatchClear(root)).toBeUndefined();
     expect(root.local).toEqual([]);
   });
 
@@ -60,11 +68,11 @@ describe('array entry integration', () => {
     runtime.entryDepth = 1;
     runtime.feedbackBudget = 25;
     runtime.currentListener = () => {};
-    expect(dispatch.dispatchPush(root, 3)).toBeUndefined();
-    expect(dispatch.dispatchPop(root)).toBeUndefined();
-    expect(dispatch.dispatchUpdate(root, 0, 3)).toBeUndefined();
-    expect(dispatch.dispatchRemove(root, 0)).toBeUndefined();
-    expect(dispatch.dispatchClear(root)).toBeUndefined();
+    expect(dispatchPush(root, 3)).toBeUndefined();
+    expect(dispatchPop(root)).toBeUndefined();
+    expect(dispatchUpdate(root, 0, 3)).toBeUndefined();
+    expect(dispatchRemove(root, 0)).toBeUndefined();
+    expect(dispatchClear(root)).toBeUndefined();
     expect(runtime.commitNumber).toBe(commit);
     expect(runtime.entryDepth).toBe(1);
     expect(root.local).toEqual([1, 2]);
@@ -80,7 +88,7 @@ describe('array entry integration', () => {
     runtime.onChange = vi.fn();
     dispatchBatch(root, () => {
       dispatchSetValue(root, [1, 2]);
-      expect(dispatch.dispatchPush(root, 3)).toBe(3);
+      expect(dispatchPush(root, 3)).toBe(3);
       expect(root.local).toEqual([0]);
       expect(runtime.commitNumber).toBe(commit);
     });
@@ -96,7 +104,7 @@ describe('array entry integration', () => {
     });
     dispatchSetValue(root, [1]);
     dispatchBatch(root, () => {
-      expect(dispatch.dispatchPush(root, 2)).toBe(2);
+      expect(dispatchPush(root, 2)).toBe(2);
       dispatchSetValue(root, [9]);
     });
     expect(root.local).toEqual([9]);
@@ -114,9 +122,9 @@ describe('array entry integration', () => {
     const first = getDispatchChild(root, '0');
     dispatchBatch(root, () => {
       dispatchSetValue(getDispatchChild(first, 'n'), '7');
-      expect(dispatch.dispatchRemove(root, 0)).toEqual({ n: 7 });
+      expect(dispatchRemove(root, 0)).toEqual({ n: 7 });
       dispatchSetValue(root, [{ n: '8' }, { n: '9' }]);
-      expect(dispatch.dispatchPop(root)).toEqual({ n: 9 });
+      expect(dispatchPop(root)).toEqual({ n: 9 });
     });
     expect(root.local).toEqual([{ n: 8 }]);
   });
@@ -129,10 +137,10 @@ describe('array entry integration', () => {
       const { root } = createDispatchTree(schema);
       dispatchSetValue(root, [1, 2]);
       dispatchBatch(root, () => {
-        expect(dispatch.dispatchUpdate(root, 0, 7)).toBe(7);
-        expect(dispatch.dispatchPop(root)).toBe(2);
-        expect(dispatch.dispatchClear(root)).toBeUndefined();
-        expect(dispatch.dispatchPush(root, 9)).toBe(1);
+        expect(dispatchUpdate(root, 0, 7)).toBe(7);
+        expect(dispatchPop(root)).toBe(2);
+        expect(dispatchClear(root)).toBeUndefined();
+        expect(dispatchPush(root, 9)).toBe(1);
       });
       expect(root.local).toEqual([9]);
     }
@@ -147,12 +155,12 @@ describe('array entry integration', () => {
     dispatchBatch(root, () => {
       dispatchSetValue(root, null);
       const marks = runtime.batchWrites?.length;
-      expect(dispatch.dispatchPop(root)).toBeUndefined();
-      expect(dispatch.dispatchRemove(root, 0)).toBeUndefined();
-      expect(dispatch.dispatchUpdate(root, 0, 7)).toBeUndefined();
-      expect(dispatch.dispatchClear(root)).toBeUndefined();
+      expect(dispatchPop(root)).toBeUndefined();
+      expect(dispatchRemove(root, 0)).toBeUndefined();
+      expect(dispatchUpdate(root, 0, 7)).toBeUndefined();
+      expect(dispatchClear(root)).toBeUndefined();
       expect(runtime.batchWrites?.length).toBe(marks);
-      expect(dispatch.dispatchPush(root, 3)).toBe(1);
+      expect(dispatchPush(root, 3)).toBe(1);
     });
     expect(root.local).toEqual([3]);
   });
@@ -165,7 +173,7 @@ describe('array entry integration', () => {
       undefined,
       { hasConsumer: () => true, report: (record) => records.push(record) },
     );
-    expect(() => dispatch.dispatchPush(root, 1)).toThrowError(
+    expect(() => dispatchPush(root, 1)).toThrowError(
       expect.objectContaining({
         code: `SCHEMA_FORM_ERROR.${ARRAY_METHOD_ON_NON_ARRAY}`,
       }),
@@ -197,7 +205,7 @@ describe('array entry integration', () => {
     expect(() =>
       dispatchBatch(root, () => {
         dispatchSetValue(list, [2]);
-        dispatch.dispatchPop(getDispatchChild(root, 'bad'));
+        dispatchPop(getDispatchChild(root, 'bad'));
         order.push('unreachable');
       }),
     ).toThrowError(
@@ -230,7 +238,7 @@ describe('array entry integration', () => {
       if (event.type & FieldNodeEventType.UpdatePath)
         leafEvents.push(event.payload?.[FieldNodeEventType.UpdatePath]);
     });
-    dispatch.dispatchRemove(root, 0);
+    dispatchRemove(root, 0);
     expect(root.children?.[0]).toBe(shifted);
     expect(itemEvents).toEqual([{ previous: '/1', current: '/0' }]);
     expect(leafEvents).toEqual([{ previous: '/1/n', current: '/0/n' }]);
@@ -249,22 +257,22 @@ describe('array entry integration', () => {
     subscribeFieldNode(root, () => {
       if (shifted) return;
       shifted = true;
-      dispatch.dispatchRemove(root, 0);
+      dispatchRemove(root, 0);
     });
-    dispatch.dispatchUpdate(root, 1, { callback: () => {} });
+    dispatchUpdate(root, 1, { callback: () => {} });
     const nonJsonCode = 'SCHEMA_FORM_WARNING.NON_JSON_WHOLE_VALUE';
     expect(
       records.filter((record) => record.code === nonJsonCode),
     ).toHaveLength(1);
     expect(runtime.warningKeysByPath?.has('/1')).toBe(false);
     expect(runtime.warningKeysByPath?.has('/0')).toBe(true);
-    dispatch.dispatchUpdate(root, 0, { callback: () => {} });
+    dispatchUpdate(root, 0, { callback: () => {} });
     expect(
       records.filter((record) => record.code === nonJsonCode),
     ).toHaveLength(1);
-    dispatch.dispatchPop(root);
+    dispatchPop(root);
     expect(runtime.warningKeysByPath?.has('/0')).toBe(false);
-    dispatch.dispatchPush(root, { callback: () => {} });
+    dispatchPush(root, { callback: () => {} });
     expect(
       records.filter((record) => record.code === nonJsonCode),
     ).toHaveLength(2);

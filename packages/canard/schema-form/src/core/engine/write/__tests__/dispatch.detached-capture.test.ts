@@ -1,7 +1,10 @@
 import { describe, expect, it } from 'vitest';
 
-import { dispatchClear, dispatchMount, dispatchResetSubtree } from '../index';
-import { createDispatchTree } from './fixtures/createDispatchTree';
+import { createDispatchTree } from '@/schema-form/core/engine/__tests__/fixtures/createDispatchTree';
+
+import { dispatchClear } from '../utils/entry/dispatchClear';
+import { dispatchMount } from '../utils/entry/dispatchMount';
+import { dispatchResetSubtree } from '../utils/entry/dispatchResetSubtree';
 
 describe('65C-03 detached nodes keep no delivery capture', () => {
   it('resetSubtree on a perished item records no change fact and no affected path', () => {

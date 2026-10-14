@@ -1,11 +1,10 @@
 import { describe, expect, it } from 'vitest';
 
-import { WriteOption } from '../../types/value';
-import {
-  loadFieldNodeAtMount,
-  readFieldNodeDefaultValue,
-  resetFieldNodeSubtree,
-} from '../index';
+import { WriteOption } from '@/schema-form/core/engine/types/value';
+
+import { loadFieldNodeAtMount } from '../utils/load/loadFieldNodeAtMount';
+import { readFieldNodeDefaultValue } from '../utils/load/readFieldNodeDefaultValue';
+import { resetFieldNodeSubtree } from '../utils/load/resetFieldNodeSubtree';
 import { createTestTree } from './fixtures/createTestTree';
 
 describe('settle load snapshot', () => {

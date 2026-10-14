@@ -4,7 +4,7 @@ import { cleanup, render } from '@testing-library/react';
 import { afterEach, expect, it, vi } from 'vitest';
 
 import { Form } from '@/schema-form/components/Form';
-import type { FieldInputProps } from '@/schema-form/types';
+import type { FieldInputProps } from '@/schema-form/types/fieldInput';
 
 /** Layout-effect runs of every module that imports `useLayoutEffect` from React in this file's graph. */
 const layoutRuns = vi.hoisted(() => ({ count: 0 }));

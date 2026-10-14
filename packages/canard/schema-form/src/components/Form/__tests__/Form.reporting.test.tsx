@@ -9,8 +9,10 @@ import {
 } from '@testing-library/react';
 import { afterEach, expect, it, vi } from 'vitest';
 
-import { Form, type FormHandle } from '@/schema-form/components/Form';
 import { ValidationMode } from '@/schema-form/core';
+
+import { Form } from '../Form';
+import type { FormHandle } from '../type';
 
 afterEach(() => {
   cleanup();

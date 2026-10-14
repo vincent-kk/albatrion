@@ -1,12 +1,13 @@
 import { afterEach, expect, it, vi } from 'vitest';
 
-import { BEHAVIORS } from '../../../../behaviors';
-import { WriteOption } from '../../../../types/value';
+import { BEHAVIORS } from '@/schema-form/core/engine/behaviors';
+import { WriteOption } from '@/schema-form/core/engine/types/value';
 import {
   dispatchMount,
   dispatchSetValue,
   subscribeFieldNode,
-} from '../../../../write';
+} from '@/schema-form/core/engine/write';
+
 import type { PlainNode } from '../../../__tests__/fixtures/createPlainNode';
 import { createTestTree } from '../../../__tests__/fixtures/createTestTree';
 

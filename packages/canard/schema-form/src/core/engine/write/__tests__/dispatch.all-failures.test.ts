@@ -2,11 +2,12 @@ import { describe, expect, it, vi } from 'vitest';
 
 import { isArray } from '@winglet/common-utils/filter';
 
-import { SchemaFormError } from '../../../../errors';
-import type { BlueprintSchema } from '../../blueprint';
-import type { Validator } from '../../validation';
-import { dispatchSetValue } from '../index';
-import { createDispatchTree } from './fixtures/createDispatchTree';
+import { createDispatchTree } from '@/schema-form/core/engine/__tests__/fixtures/createDispatchTree';
+import type { BlueprintSchema } from '@/schema-form/core/engine/blueprint';
+import type { Validator } from '@/schema-form/core/engine/validation';
+import { SchemaFormError } from '@/schema-form/errors';
+
+import { dispatchSetValue } from '../utils/entry/dispatchSetValue';
 
 const conflict: BlueprintSchema = {
   type: 'object',

@@ -92,7 +92,7 @@ export default [
   {
     files: [
       'src/core/engine/blueprint/**/*.ts',
-      'src/core/surface/utils/nodeFromJSONSchema.ts',
+      'src/__tests__/fixtures/nodeFromJSONSchema.ts',
     ],
     ignores: ['**/__tests__/**'],
     rules: {

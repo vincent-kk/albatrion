@@ -2,9 +2,11 @@ import { describe, expect, it } from 'vitest';
 
 import { hasOwnProperty } from '@winglet/common-utils/lib';
 
-import { blueprint } from '../../blueprint';
-import { WriteOption } from '../../types/value';
-import { loadFieldNodeAtMount, writeFieldNode } from '../index';
+import { blueprint } from '@/schema-form/core/engine/blueprint';
+import { WriteOption } from '@/schema-form/core/engine/types/value';
+
+import { loadFieldNodeAtMount } from '../utils/load/loadFieldNodeAtMount';
+import { writeFieldNode } from '../utils/write/writeFieldNode';
 import { createTestTree } from './fixtures/createTestTree';
 
 const isAtomic = (value: unknown): boolean =>

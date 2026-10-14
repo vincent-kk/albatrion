@@ -2,7 +2,8 @@ import { readFileSync } from 'node:fs';
 import ts from 'typescript';
 import { describe, expect, it } from 'vitest';
 
-import type { UnionSpec } from '../../../../record';
+import type { UnionSpec } from '@/schema-form/core/engine/record';
+
 import { convert } from '../convert';
 import { interpret } from '../interpret';
 import { isMember } from '../isMember';

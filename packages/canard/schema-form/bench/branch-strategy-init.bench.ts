@@ -1,6 +1,6 @@
 import { bench, describe } from 'vitest';
 
-import { nodeFromJSONSchema } from '@/schema-form/core/surface/utils/nodeFromJSONSchema';
+import { nodeFromJSONSchema } from '@/schema-form/__tests__/fixtures/nodeFromJSONSchema';
 import type { JSONSchema } from '@/schema-form/types';
 
 /** Blueprint compilation and initial settlement through the internal nodeFromJSONSchema helper, varying branch fan-out. */

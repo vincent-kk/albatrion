@@ -1,8 +1,9 @@
-import { createTestValidator } from '../../../../../__tests__/fixtures/createTestValidator';
-import type { TestGuardMode } from '../../../../../__tests__/fixtures/createTestValidator';
-import { buildFieldNodeTree, mountFieldNode } from '../../../../../surface';
-import type { AuthoredSchema } from '../../../../types/jsonSchema';
-import { ValidationMode } from '../../../../types/state';
+import { createTestValidator } from '@/schema-form/core/__tests__/fixtures/createTestValidator';
+import type { TestGuardMode } from '@/schema-form/core/__tests__/fixtures/createTestValidator';
+import type { AuthoredSchema } from '@/schema-form/core/engine/types/jsonSchema';
+import { ValidationMode } from '@/schema-form/core/engine/types/state';
+import { buildFieldNodeTree, mountFieldNode } from '@/schema-form/core/surface';
+
 import type { ChildSelectionRuntimeNode } from './ChildSelectionRuntimeNode';
 import { normalizeSelectionObservation } from './normalizeSelectionObservation';
 

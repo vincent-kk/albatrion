@@ -1,16 +1,21 @@
 import { afterEach, beforeEach, expect, it, vi } from 'vitest';
 
-import type { BlueprintOptions, BlueprintSchema } from '../../blueprint';
-import { FieldNodeEventType } from '../../record';
-import { WriteOption } from '../../types/value';
+import type {
+  BlueprintOptions,
+  BlueprintSchema,
+} from '@/schema-form/core/engine/blueprint';
+import { FieldNodeEventType } from '@/schema-form/core/engine/record';
+import { WriteOption } from '@/schema-form/core/engine/types/value';
 import {
   dispatchMount,
   dispatchSetValue,
   subscribeFieldNode,
-} from '../../write';
-import { loadFieldNodeAtMount, writeFieldNode } from '../index';
+} from '@/schema-form/core/engine/write';
+
 import * as independentDefaults from '../utils/compute/utils/hasIndependentLeafDefaults';
 import * as staticFirstLoad from '../utils/load/canLoadStaticFirstTree';
+import { loadFieldNodeAtMount } from '../utils/load/loadFieldNodeAtMount';
+import { writeFieldNode } from '../utils/write/writeFieldNode';
 import type { PlainNode } from './fixtures/createPlainNode';
 import { createTestTree } from './fixtures/createTestTree';
 

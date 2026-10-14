@@ -1,11 +1,13 @@
 import { describe, expect, it, vi } from 'vitest';
 
-import { blueprint } from '../../../blueprint';
-import { WriteOption } from '../../../types/value';
-import { createTestTree } from '../../__tests__/fixtures/createTestTree';
-import { loadFieldNodeAtMount, writeFieldNode } from '../../index';
-import { getDeriveRuleTable } from '../index';
+import { blueprint } from '@/schema-form/core/engine/blueprint';
+import { createTestTree } from '@/schema-form/core/engine/settle/__tests__/fixtures/createTestTree';
+import { loadFieldNodeAtMount } from '@/schema-form/core/engine/settle/utils/load/loadFieldNodeAtMount';
+import { writeFieldNode } from '@/schema-form/core/engine/settle/utils/write/writeFieldNode';
+import { WriteOption } from '@/schema-form/core/engine/types/value';
+
 import { getDeriveSourceNodes } from '../utils/evaluate/utils/getDeriveSourceNodes';
+import { getDeriveRuleTable } from '../utils/rules/getDeriveRuleTable';
 
 // filid:contract derive-boundary
 describe('derive rule table', () => {

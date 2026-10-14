@@ -2,7 +2,7 @@ import { afterEach, expect, it, vi } from 'vitest';
 
 import { blueprint } from '../blueprint';
 import type { BlueprintSchema, PropertyDeclaration } from '../type';
-import fixtures from './fixtures/ownedInlineMounts.json';
+import { default as fixtures } from './fixtures/ownedInlineMounts.json';
 
 /** Mock only the external collection boundary; recursive analysis remains real. */
 const counts = vi.hoisted(() => ({

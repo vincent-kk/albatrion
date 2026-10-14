@@ -1,9 +1,11 @@
 import { afterEach, expect, it, vi } from 'vitest';
 
-import { WriteOption } from '../../../../types/value';
+import { WriteOption } from '@/schema-form/core/engine/types/value';
+
 import { createTestTree } from '../../../__tests__/fixtures/createTestTree';
-import { arrangeFieldNodeItems, writeFieldNode } from '../../../index';
 import * as rawTree from '../../latent/readRawTree';
+import { writeFieldNode } from '../../write/writeFieldNode';
+import { arrangeFieldNodeItems } from '../arrangeFieldNodeItems';
 
 afterEach(() => vi.restoreAllMocks());
 

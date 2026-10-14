@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 
-import type { BlueprintNodeKind } from '../../../../blueprint';
+import type { BlueprintNodeKind } from '@/schema-form/core/engine/blueprint';
+
 import { getCommittedDeclarationKey } from '../getCommittedDeclarationKey';
 
 describe('getCommittedDeclarationKey identity', () => {

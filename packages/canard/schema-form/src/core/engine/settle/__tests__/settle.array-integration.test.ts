@@ -1,25 +1,27 @@
 import { describe, expect, it } from 'vitest';
 
 import {
-  INJECT_TARGET_MISSING,
-  MULTIPLE_ERRORS,
-  SchemaFormError,
-} from '../../../../errors';
-import {
   FieldNodeEventType,
   accumulateGlobalStateDeltas,
   indexFieldNodeWarning,
   publishGlobalStateDeltas,
   updateFieldNodeNameAndPath,
-} from '../../record';
-import { WriteOption } from '../../types/value';
-import { arrangeFieldNodeItems, writeFieldNode } from '../index';
+} from '@/schema-form/core/engine/record';
+import { WriteOption } from '@/schema-form/core/engine/types/value';
+import {
+  INJECT_TARGET_MISSING,
+  MULTIPLE_ERRORS,
+  SchemaFormError,
+} from '@/schema-form/errors';
+
 import { markCommitDeliveries } from '../utils/commit/markCommitDeliveries';
 import { createSettlementContext } from '../utils/settlement/createSettlementContext';
+import { arrangeFieldNodeItems } from '../utils/structure/arrangeFieldNodeItems';
 import { rekeyArrayRuntimePaths } from '../utils/structure/rekeyArrayRuntimePaths';
 import { prunePerishedPaths } from '../utils/transition/prunePerishedPaths';
 import { getSettlementScratch } from '../utils/write/getSettlementScratch';
 import { releaseSettlementScratch } from '../utils/write/releaseSettlementScratch';
+import { writeFieldNode } from '../utils/write/writeFieldNode';
 import { createTestTree } from './fixtures/createTestTree';
 
 // filid:contract settle-array-integration

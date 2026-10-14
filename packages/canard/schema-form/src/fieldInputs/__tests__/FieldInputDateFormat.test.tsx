@@ -3,10 +3,9 @@ import { createRef } from 'react';
 import { cleanup, fireEvent, render, screen } from '@testing-library/react';
 import { afterEach, expect, it, vi } from 'vitest';
 
+import { observeErrorSink } from '@/schema-form/__tests__/helpers/observeErrorSink';
 import { Form, type FormHandle } from '@/schema-form/components/Form';
 import type { FormErrorRecord } from '@/schema-form/errors';
-
-import { observeErrorSink } from '../../__tests__/helpers/observeErrorSink';
 
 afterEach(cleanup);
 

@@ -1,20 +1,19 @@
 import { describe, expect, it } from 'vitest';
 
-import { createTestValidator } from '../../../__tests__/fixtures/createTestValidator';
-import { FieldNodeEventType as E } from '../../record';
-import type { FieldNodeDelivery } from '../../record';
-import { writeFieldNode } from '../../settle';
-import { WriteOption } from '../../types/value';
-import {
-  dispatchRemove,
-  dispatchSetState,
-  dispatchSetValue,
-  readFieldNodeRevision,
-  subscribeFieldNode,
-} from '../index';
+import { createTestValidator } from '@/schema-form/core/__tests__/fixtures/createTestValidator';
+import { createDispatchTree } from '@/schema-form/core/engine/__tests__/fixtures/createDispatchTree';
+import type { DispatchTestNode } from '@/schema-form/core/engine/__tests__/fixtures/createDispatchTree';
+import { FieldNodeEventType as E } from '@/schema-form/core/engine/record';
+import type { FieldNodeDelivery } from '@/schema-form/core/engine/record';
+import { writeFieldNode } from '@/schema-form/core/engine/settle';
+import { WriteOption } from '@/schema-form/core/engine/types/value';
+
 import { runDeliveryWaves } from '../utils/chain/runDeliveryWaves';
-import { createDispatchTree } from './fixtures/createDispatchTree';
-import type { DispatchTestNode } from './fixtures/createDispatchTree';
+import { dispatchRemove } from '../utils/entry/dispatchRemove';
+import { dispatchSetState } from '../utils/entry/dispatchSetState';
+import { dispatchSetValue } from '../utils/entry/dispatchSetValue';
+import { readFieldNodeRevision } from '../utils/read/readFieldNodeRevision';
+import { subscribeFieldNode } from '../utils/read/subscribeFieldNode';
 import { getDispatchChild } from './fixtures/getDispatchChild';
 
 /** Commit without draining, reproducing multiple commits inside one delivery boundary. */

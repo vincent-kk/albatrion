@@ -1,16 +1,20 @@
 import { describe, expect, it, vi } from 'vitest';
 
-import { VALIDATOR_COMPILE_FAILED, VALIDATOR_THREW } from '../../../../errors';
-import { ValidationMode } from '../../types/state';
+import { createDispatchTree } from '@/schema-form/core/engine/__tests__/fixtures/createDispatchTree';
+import { ValidationMode } from '@/schema-form/core/engine/types/state';
 import {
   dispatchMount,
   dispatchResetSubtree,
   dispatchSetValue,
   dispatchValidate,
-} from '../../write';
-import { createDispatchTree } from '../../write/__tests__/fixtures/createDispatchTree';
-import { readFieldNodeErrors } from '../index';
+} from '@/schema-form/core/engine/write';
+import {
+  VALIDATOR_COMPILE_FAILED,
+  VALIDATOR_THREW,
+} from '@/schema-form/errors';
+
 import type { Validator } from '../type';
+import { readFieldNodeErrors } from '../utils/read/readFieldNodeErrors';
 
 // filid:contract validation-lifetime
 describe('validator failures', () => {

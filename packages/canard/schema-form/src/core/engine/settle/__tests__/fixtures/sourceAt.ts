@@ -1,5 +1,6 @@
-import type { BlueprintNodeKind } from '../../../blueprint';
-import { find } from '../../../navigation';
+import type { BlueprintNodeKind } from '@/schema-form/core/engine/blueprint';
+import { find } from '@/schema-form/core/engine/navigation';
+
 import type { PlainNode } from './createPlainNode';
 
 /**

@@ -1,8 +1,9 @@
 import { describe, expect, it } from 'vitest';
 
-import { WriteOption } from '../../types/value';
-import { writeFieldNode } from '../index';
+import { WriteOption } from '@/schema-form/core/engine/types/value';
+
 import { sameValue } from '../utils/compute/sameValue';
+import { writeFieldNode } from '../utils/write/writeFieldNode';
 import { createTestTree } from './fixtures/createTestTree';
 
 // filid:contract settle-derive

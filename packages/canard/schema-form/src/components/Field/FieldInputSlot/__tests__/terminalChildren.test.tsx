@@ -9,7 +9,8 @@ import { act, cleanup, fireEvent, render } from '@testing-library/react';
 import { afterEach, expect, it, vi } from 'vitest';
 
 import { Form, type FormHandle } from '@/schema-form/components/Form';
-import type { FieldInputProps, JSONSchema } from '@/schema-form/types';
+import type { FieldInputProps } from '@/schema-form/types/fieldInput';
+import type { JSONSchema } from '@/schema-form/types/jsonSchema';
 
 /** An object made terminal by an inline input: the one shape whose empty child list is a mistake to read (round 180). */
 const detectable = (Input: ComponentType<FieldInputProps>) =>

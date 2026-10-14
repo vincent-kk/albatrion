@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 
 import { isArray } from '@winglet/common-utils/filter';
 
-import { blueprint } from '../index';
+import { blueprint } from '../blueprint';
 import { BlueprintErrorCode } from '../utils/diagnostics/constant';
 
 // filid:contract type-static-intersection

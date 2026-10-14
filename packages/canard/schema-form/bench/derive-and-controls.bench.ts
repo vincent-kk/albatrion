@@ -8,7 +8,7 @@ import { performance } from 'node:perf_hooks';
 
 import { blueprint } from '../src/core';
 import { fieldNodeFactory, SetValueOption } from '../src/core';
-import type { FieldNode } from '../src/core/surface/FieldNode';
+import { type TestFieldNode, isTestFieldNode } from '../src/core/__tests__/fixtures/testFieldNode';
 import { loadFieldNodeAtMount } from '../src/core/engine';
 import { sameValue } from '../src/core/engine/settle/utils/compute/sameValue';
 
@@ -74,8 +74,10 @@ function makeTree(kind: Kind, initial: SourceValue) {
     diagnostics: { status: 'stable' },
     loadSnapshot: undefined, latentRaw: new PathKeyedMap('pair'),
     typeMismatchPaths: new PathKeyedSet(), inactiveValuesMemo: new PathKeyedMap<readonly { path: string; value: unknown }[]>('path'),
-  }) as FieldNode;
-  loadFieldNodeAtMount(root, { source: initial }, SetValueOption.Overwrite);
+  });
+  if (!isTestFieldNode(root)) throw new Error('Expected a runtime FieldNode');
+  const rootRecord: TestFieldNode = root;
+  loadFieldNodeAtMount(rootRecord, { source: initial }, SetValueOption.Overwrite);
   const source = root.find('/source');
   const target = root.find('/target');
   if (!source || !target || markerOf(source.value, kind) !== 1 ||

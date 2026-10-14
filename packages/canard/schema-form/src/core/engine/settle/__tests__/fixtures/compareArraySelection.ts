@@ -1,8 +1,12 @@
 import { expect, vi } from 'vitest';
 
-import type { BlueprintSchema } from '../../../blueprint';
-import { WriteOption } from '../../../types/value';
-import { dispatchMount, subscribeFieldNode } from '../../../write';
+import type { BlueprintSchema } from '@/schema-form/core/engine/blueprint';
+import { WriteOption } from '@/schema-form/core/engine/types/value';
+import {
+  dispatchMount,
+  subscribeFieldNode,
+} from '@/schema-form/core/engine/write';
+
 import * as selection from '../../utils/compute/selectChildren/utils/canReuseArrayChildren';
 import type { PlainNode } from './createPlainNode';
 import { createTestTree } from './createTestTree';

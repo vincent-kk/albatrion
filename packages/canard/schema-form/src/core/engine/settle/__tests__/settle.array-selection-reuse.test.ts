@@ -1,14 +1,16 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
-import * as records from '../../record';
-import { WriteOption } from '../../types/value';
+import { WriteOption } from '@/schema-form/core/engine/types/value';
 import {
   dispatchPop,
   dispatchPush,
   dispatchRemove,
   dispatchSetValue,
-} from '../../write';
-import { arrangeFieldNodeItems, writeFieldNode } from '../index';
+} from '@/schema-form/core/engine/write';
+
+import * as records from '../../record';
+import { arrangeFieldNodeItems } from '../utils/structure/arrangeFieldNodeItems';
+import { writeFieldNode } from '../utils/write/writeFieldNode';
 import { compareArraySelection } from './fixtures/compareArraySelection';
 import { createTestTree } from './fixtures/createTestTree';
 

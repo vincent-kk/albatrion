@@ -4,7 +4,7 @@ import { expect, expectTypeOf, it } from 'vitest';
 
 import type { TrackableHandlerFunction } from '@winglet/common-utils/function';
 
-import type { FormErrorRecord } from '../../errors';
+import type { FormErrorRecord } from '../../errors/index';
 import {
   type FieldInputDefinition,
   type FieldInputMap,

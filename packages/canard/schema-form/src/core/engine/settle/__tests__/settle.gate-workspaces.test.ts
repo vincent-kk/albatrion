@@ -1,11 +1,12 @@
 import { describe, expect, it, vi } from 'vitest';
 
+import { WriteOption } from '@/schema-form/core/engine/types/value';
+
 import * as compiler from '../../blueprint/utils/expressions/createDynamicFunction';
-import { WriteOption } from '../../types/value';
-import { loadFieldNodeAtMount } from '../index';
 import type { SettlementContext } from '../type';
 import { evaluateGate } from '../utils/gates/evaluateGate';
 import * as projection from '../utils/gates/readProjectedValue';
+import { loadFieldNodeAtMount } from '../utils/load/loadFieldNodeAtMount';
 import type { PlainNode } from './fixtures/createPlainNode';
 import { createTestTree } from './fixtures/createTestTree';
 

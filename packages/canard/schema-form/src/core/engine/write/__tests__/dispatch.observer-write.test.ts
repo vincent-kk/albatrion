@@ -1,9 +1,11 @@
 import { describe, expect, it, vi } from 'vitest';
 
-import { SchemaFormError, WRITE_IN_OBSERVER } from '../../../../errors';
-import { dispatchSetValue, subscribeFieldNode } from '../index';
+import { createDispatchTree } from '@/schema-form/core/engine/__tests__/fixtures/createDispatchTree';
+import { SchemaFormError, WRITE_IN_OBSERVER } from '@/schema-form/errors';
+
+import { dispatchSetValue } from '../utils/entry/dispatchSetValue';
+import { subscribeFieldNode } from '../utils/read/subscribeFieldNode';
 import { reportOwnerlessError } from '../utils/report/reportOwnerlessError';
-import { createDispatchTree } from './fixtures/createDispatchTree';
 
 // filid:contract dispatch-report
 describe('observer write boundary', () => {

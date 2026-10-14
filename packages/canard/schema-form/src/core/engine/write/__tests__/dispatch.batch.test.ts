@@ -1,22 +1,21 @@
 import { describe, expect, it } from 'vitest';
 
-import { createTestValidator } from '../../../__tests__/fixtures/createTestValidator';
-import { WriteOption } from '../../types/value';
-import {
-  dispatchBatch,
-  dispatchFinishInput,
-  dispatchMount,
-  dispatchPush,
-  dispatchRemove,
-  dispatchResetSubtree,
-  dispatchSetValue,
-  dispatchUpdate,
-  subscribeFieldNode,
-} from '../index';
+import { createTestValidator } from '@/schema-form/core/__tests__/fixtures/createTestValidator';
 import {
   type DispatchTestNode,
   createDispatchTree,
-} from './fixtures/createDispatchTree';
+} from '@/schema-form/core/engine/__tests__/fixtures/createDispatchTree';
+import { WriteOption } from '@/schema-form/core/engine/types/value';
+
+import { dispatchBatch } from '../utils/entry/dispatchBatch';
+import { dispatchFinishInput } from '../utils/entry/dispatchFinishInput';
+import { dispatchMount } from '../utils/entry/dispatchMount';
+import { dispatchPush } from '../utils/entry/dispatchPush';
+import { dispatchRemove } from '../utils/entry/dispatchRemove';
+import { dispatchResetSubtree } from '../utils/entry/dispatchResetSubtree';
+import { dispatchSetValue } from '../utils/entry/dispatchSetValue';
+import { dispatchUpdate } from '../utils/entry/dispatchUpdate';
+import { subscribeFieldNode } from '../utils/read/subscribeFieldNode';
 import { getDispatchChild } from './fixtures/getDispatchChild';
 
 /** A guarded then branch plus an unrelated field, mirrored from the 07c finding scenario. */

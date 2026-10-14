@@ -145,7 +145,7 @@ function localResolve(base) {
 
 /** Build source-only engines and fixtures; generated JS is evaluated without a disk bundle. */
 async function bundle(version) {
-  const core = version === 'old' ? 'src/__legacy__/core/nodeFromJSONSchema.ts' : 'src/core/surface/utils/nodeFromJSONSchema.ts';
+  const core = version === 'old' ? 'src/__legacy__/core/nodeFromJSONSchema.ts' : 'src/__tests__/fixtures/nodeFromJSONSchema.ts';
   const result = await build({
     stdin: { contents: `export {nodeFromJSONSchema} from ${JSON.stringify(path.join(pkg, core))};
       export {equivalentFixtures} from ${JSON.stringify(path.join(bf, 'fixtures/equivalent/index.ts'))};

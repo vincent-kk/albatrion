@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 
-import { WriteOption } from '../../../../types/value';
+import { WriteOption } from '@/schema-form/core/engine/types/value';
+
 import { createTestTree } from '../../../__tests__/fixtures/createTestTree';
 import { createSettlementContext } from '../../settlement/createSettlementContext';
 import { getSettlementScratch } from '../../write/getSettlementScratch';

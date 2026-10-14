@@ -5,14 +5,19 @@ import type {
   ScenarioAdapter,
 } from '@aileron/schema-form-scenarios';
 
-import { blueprint } from '../../../engine/blueprint';
-import type { BlueprintSchema } from '../../../engine/blueprint';
-import { loadFieldNodeAtMount } from '../../../engine/settle';
-import { PathKeyedMap } from '../../../engine/utils/pathIndex/PathKeyedMap';
-import { PathKeyedSet } from '../../../engine/utils/pathIndex/PathKeyedSet';
-import { SetValueOption, fieldNodeFactory } from '../../../surface';
-import type { FieldNode as RuntimeFieldNode } from '../../../surface/FieldNode';
+import { blueprint } from '@/schema-form/core/engine';
+import type { BlueprintSchema } from '@/schema-form/core/engine';
+import { loadFieldNodeAtMount } from '@/schema-form/core/engine';
+import { PathKeyedMap } from '@/schema-form/core/engine';
+import { PathKeyedSet } from '@/schema-form/core/engine';
+import { SetValueOption, fieldNodeFactory } from '@/schema-form/core/surface';
+
 import { createTestValidator } from '../../fixtures/createTestValidator';
+import type {
+  TestFieldNode,
+  TestPublicFieldNode,
+} from '../../fixtures/testFieldNode';
+import { isTestFieldNode } from '../../fixtures/testFieldNode';
 import { assertCoreScenarioExpectation } from './assertCoreScenarioExpectation';
 import { executeCoreScenarioStep } from './executeCoreScenarioStep';
 
@@ -23,7 +28,7 @@ import { executeCoreScenarioStep } from './executeCoreScenarioStep';
  */
 export function createCoreScenarioAdapter(
   scenario: FormScenario,
-): ScenarioAdapter & { readonly root: RuntimeFieldNode } {
+): ScenarioAdapter & { readonly root: TestPublicFieldNode } {
   const root = fieldNodeFactory(
     blueprint(scenario.schema as BlueprintSchema),
     {
@@ -37,31 +42,25 @@ export function createCoreScenarioAdapter(
     },
     createTestValidator(),
   );
-  loadFieldNodeAtMount(
-    root as RuntimeFieldNode,
-    scenario.initialValue,
-    SetValueOption.Overwrite,
-  );
+  if (!isTestFieldNode(root)) throw new Error('Expected a runtime FieldNode');
+  const record: TestFieldNode = root;
+  loadFieldNodeAtMount(record, scenario.initialValue, SetValueOption.Overwrite);
   const priorNodes = new Map<
     string,
-    { node: RuntimeFieldNode; itemKey: number | null }
+    { node: TestPublicFieldNode; itemKey: number | null }
   >();
   let actionResult: unknown;
   return {
-    root: root as RuntimeFieldNode,
+    root,
     execute: (step) => {
       priorNodes.clear();
       for (const path of Object.values(step.expect?.identity ?? {})) {
-        const node = root.find(path) as RuntimeFieldNode | null;
-        if (!node)
+        const node = root.find(path);
+        if (!node || !isTestFieldNode(node))
           throw new Error(`Scenario identity source missing at ${path}`);
         priorNodes.set(path, { node, itemKey: node.itemKey });
       }
-      actionResult = executeCoreScenarioStep(
-        root as RuntimeFieldNode,
-        scenario,
-        step,
-      );
+      actionResult = executeCoreScenarioStep(root, scenario, step);
     },
     assert: (expectation) => {
       assertCoreScenarioExpectation(root, expectation);
@@ -71,9 +70,10 @@ export function createCoreScenarioAdapter(
         expectation.identity ?? {},
       )) {
         const prior = priorNodes.get(priorPath);
+        const current = root.find(path);
         expect(root.find(path), `identity ${path}`).toBe(prior?.node);
         expect(
-          (root.find(path) as RuntimeFieldNode | null)?.itemKey,
+          isTestFieldNode(current) ? current.itemKey : undefined,
           `item key ${path}`,
         ).toBe(prior?.itemKey);
       }

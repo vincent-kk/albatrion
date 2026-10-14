@@ -2,10 +2,11 @@ import { describe, expect, it } from 'vitest';
 
 import { isArray } from '@winglet/common-utils/filter';
 
-import { SchemaFormError } from '../../../../errors';
-import { WriteOption } from '../../types/value';
-import type { Validator } from '../../validation';
-import { writeFieldNode } from '../index';
+import { WriteOption } from '@/schema-form/core/engine/types/value';
+import type { Validator } from '@/schema-form/core/engine/validation';
+import { SchemaFormError } from '@/schema-form/errors';
+
+import { writeFieldNode } from '../utils/write/writeFieldNode';
 import { createTestTree } from './fixtures/createTestTree';
 
 describe('round 55 direct settlement regression', () => {

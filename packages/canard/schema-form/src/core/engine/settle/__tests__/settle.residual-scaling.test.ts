@@ -1,10 +1,11 @@
 import { afterEach, expect, it, vi } from 'vitest';
 
-import type { BlueprintSchema } from '../../blueprint';
-import { WriteOption } from '../../types/value';
-import { loadFieldNodeAtMount } from '../index';
+import type { BlueprintSchema } from '@/schema-form/core/engine/blueprint';
+import { WriteOption } from '@/schema-form/core/engine/types/value';
+
 import type { SettlementContext } from '../type';
 import * as staticFirstLoad from '../utils/load/canLoadStaticFirstTree';
+import { loadFieldNodeAtMount } from '../utils/load/loadFieldNodeAtMount';
 import * as sourcePresence from '../utils/transition/isMissingRaw';
 import { DirtyPathSet } from '../utils/write/DirtyPathSet';
 import { registerRecalculation } from '../utils/write/registerRecalculation';

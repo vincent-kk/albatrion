@@ -1,18 +1,20 @@
 import { describe, expect, it, vi } from 'vitest';
 
-import { FieldNodeEventType } from '../../record';
-import { FieldNodeState, ValidationMode } from '../../types/state';
+import { createDispatchTree } from '@/schema-form/core/engine/__tests__/fixtures/createDispatchTree';
+import { FieldNodeEventType } from '@/schema-form/core/engine/record';
 import {
-  dispatchBatch,
-  dispatchClearSubtreeState,
-  dispatchResetSubtree,
-  dispatchSetState,
-  dispatchSetSubtreeState,
-  dispatchSetValue,
-  readFieldNodeRevision,
-  subscribeFieldNode,
-} from '../index';
-import { createDispatchTree } from './fixtures/createDispatchTree';
+  FieldNodeState,
+  ValidationMode,
+} from '@/schema-form/core/engine/types/state';
+
+import { dispatchBatch } from '../utils/entry/dispatchBatch';
+import { dispatchClearSubtreeState } from '../utils/entry/dispatchClearSubtreeState';
+import { dispatchResetSubtree } from '../utils/entry/dispatchResetSubtree';
+import { dispatchSetState } from '../utils/entry/dispatchSetState';
+import { dispatchSetSubtreeState } from '../utils/entry/dispatchSetSubtreeState';
+import { dispatchSetValue } from '../utils/entry/dispatchSetValue';
+import { readFieldNodeRevision } from '../utils/read/readFieldNodeRevision';
+import { subscribeFieldNode } from '../utils/read/subscribeFieldNode';
 import { getDispatchChild } from './fixtures/getDispatchChild';
 
 // filid:contract dispatch-observers

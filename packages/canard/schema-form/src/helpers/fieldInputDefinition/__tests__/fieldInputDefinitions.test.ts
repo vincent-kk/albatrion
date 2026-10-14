@@ -6,7 +6,7 @@ import type {
   FieldInputDefinition,
   FieldInputHint,
   FieldInputTestObject,
-} from '@/schema-form/types';
+} from '@/schema-form/types/fieldInput';
 
 import { normalizeFieldInputDefinitions } from '../fieldInputDefinitions';
 

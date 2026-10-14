@@ -1,10 +1,7 @@
 import { describe, expect, it, vi } from 'vitest';
 
-import {
-  type BlueprintCacheEntry,
-  type BlueprintDiagnostic,
-  blueprint,
-} from '../index';
+import { blueprint } from '../blueprint';
+import { type BlueprintCacheEntry, type BlueprintDiagnostic } from '../type';
 import {
   BlueprintErrorCode,
   BlueprintWarningCode,

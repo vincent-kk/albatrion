@@ -1,7 +1,8 @@
 import { describe, expect, it, vi } from 'vitest';
 
-import { blueprint, mergeEffectiveSchema } from '../index';
+import { blueprint } from '../blueprint';
 import { BlueprintErrorCode } from '../utils/diagnostics/constant';
+import { mergeEffectiveSchema } from '../utils/effectiveSchema/mergeEffectiveSchema';
 
 // filid:contract fragment-declarations
 describe('blueprint fragment ownership and strategies', () => {

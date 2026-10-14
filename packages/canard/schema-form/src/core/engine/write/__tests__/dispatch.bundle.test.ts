@@ -1,10 +1,12 @@
 import { describe, expect, it, vi } from 'vitest';
 
-import { MULTIPLE_ERRORS, SchemaFormError } from '../../../../errors';
-import { dispatchSetValue, subscribeFieldNode } from '../index';
+import { createDispatchTree } from '@/schema-form/core/engine/__tests__/fixtures/createDispatchTree';
+import { MULTIPLE_ERRORS, SchemaFormError } from '@/schema-form/errors';
+
+import { dispatchSetValue } from '../utils/entry/dispatchSetValue';
+import { subscribeFieldNode } from '../utils/read/subscribeFieldNode';
 import { bundleChainErrors } from '../utils/report/bundleChainErrors';
 import { deliverChainRecords } from '../utils/report/deliverChainRecords';
-import { createDispatchTree } from './fixtures/createDispatchTree';
 
 // filid:contract dispatch-report
 describe('chain failure bundles', () => {
