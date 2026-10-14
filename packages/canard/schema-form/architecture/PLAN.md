@@ -83,6 +83,7 @@
 | 날짜 | 무엇 | 어디 |
 | --- | --- | --- |
 | 2026-10-14 | 292라운드 닫기: 문서 정합 PR #373 병합 0d17c3080(18건, 주석 넷), 정돈-1 편집자 결정 둘(공유 보조는 helpers/error, rolled 보존). 보충 2줄 | `reviews/round-292-closing.md` |
+| 2026-10-14 | 293라운드 소유자: FCA import 멘탈모델(외부·형제·직계, 직계는 내부 모듈, 공통 부모 organ, 부모→자식 비대칭). 보충 2줄 | `reviews/round-293-owner-answers.md` |
 | 2026-10-14 | 287라운드 소유자 지시: 최소 export 원칙의 까닭·전제를 가이드에 적고 fractal 뿌리·index를 전수 재검사. 보충 1줄 | `reviews/round-287-owner-answers.md` |
 | 2026-10-14 | 288라운드 소유자 지시: filid 이슈는 초안만(규칙 위반/결함 가린 뒤 등록), CLAUDE.md 자리 검토, 수정 계획 제시 → `plan/tidy-structure/request.md`. 보충 1줄 | `reviews/round-288-owner-answers.md` |
 | 2026-10-14 | 289라운드 소유자 답: 정돈 D1–D6 확정(진행, nodeFromJSONSchema 하향·문서 삭제, providers organ 둘, 오류 코드 object enum root export, 가이드 자리, 이슈는 정돈-2 뒤). 보충 1줄 | `reviews/round-289-owner-answers.md` |

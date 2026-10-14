@@ -516,3 +516,4 @@
 - **290라운드(2026-10-14, 소유자).** 정돈 작업자 fixy08·fairy08 지정, 원장 관리자는 관리만(reviews/round-290-owner-answers.md). 정돈-1 브리프 발송.
 - **291라운드(2026-10-14, 소유자).** 문자열 리터럴 규약 금지 원칙, 정돈 → 구조 리뷰 → 최적화 순서(reviews/round-291-owner-answers.md). 전수 판정 plan/tidy-structure/string-literal-audit.md.
 - **253라운드(2026-10-14, 닫기).** PR #363(07b-3, 3f48fe3aa)을 직접 검증해 통과했다: production-test 9파일, tsc -b·lint·build 통과, 세션 줄 0(253C-01, reviews/round-253-closing.md). 대기열 37(내장 checkbox id 중복). 소유자 병합 허가 대기.
+- **293라운드(2026-10-14, 소유자).** FCA import 멘탈모델을 말함: 형제는 index로만, 직계 서브트리는 내부 모듈, 시험·벤치는 fractal 안, 공유 기능은 공통 부모 organ, 부모는 자식 내부에 못 닿음(reviews/round-293-owner-answers.md).
