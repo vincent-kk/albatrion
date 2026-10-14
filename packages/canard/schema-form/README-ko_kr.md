@@ -184,6 +184,7 @@ interface FormHandle<
 - 노드가 없는 `path`를 주면 `focus`, `select`, `refresh`, `remount`는 아무것도 하지 않습니다.
 - 첫 마운트 전에도 조회는 예외를 던지지 않습니다. `findNode`는 `null`, `findNodes`·`getErrors`·`validate`는 빈 배열, `getState`는 빈 객체를 반환합니다.
 - `showError(false)`는 오류를 숨기지 않습니다. 표시 여부를 Form의 `showError` prop에 되돌려 줍니다.
+- `reset()`은 첨부 파일 맵도 비우고 `showError(true)`로 켠 표시도 풀어, 오류 표시가 다시 `showError` prop을 따르게 합니다.
 
 #### AttachedFilesMap
 

@@ -279,6 +279,7 @@ interface FormHandle<
 - A `path` that matches no node makes `focus`, `select`, `refresh` and `remount` do nothing.
 - Before the first mount, queries do not throw: `findNode` returns `null`, `findNodes`, `getErrors` and `validate` return an empty array, and `getState` returns an empty object.
 - `showError(false)` does not hide errors; it hands control back to the Form's `showError` prop.
+- `reset()` also empties the attached-files map and drops a `showError(true)` override, so error display follows the `showError` prop again.
 
 ### FormChildrenProps
 

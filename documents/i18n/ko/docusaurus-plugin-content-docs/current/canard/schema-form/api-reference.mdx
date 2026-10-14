@@ -22,7 +22,7 @@ import ForAI from '@site/src/components/ForAI';
 | `onChange` | `(value: Value) => void` | — | Called when any field value changes |
 | `onSubmit` | `(value: Value) => Promise<void> \| void` | — | Called on valid form submit (after validation passes) |
 | `onValidate` | `(errors: JSONSchemaError[]) => void` | — | Called after each validation run |
-| `onStateChange` | `(state: NodeStateFlags) => void` | — | Called when dirty/touched/validated state changes |
+| `onStateChange` | `(state: FieldNode['globalState']) => void` | — | Called when the form's interaction flags (dirty, touched) change |
 | `showError` | `boolean \| ShowError` | `ShowError.DirtyTouched` | When to display validation errors |
 | `validationMode` | `ValidationMode` | `OnChange \| OnRequest` | When validation runs |
 | `validatorFactory` | `ValidatorFactory` | plugin default | Override validator factory per form |
@@ -43,8 +43,8 @@ import ForAI from '@site/src/components/ForAI';
 ```ts
 import { ShowError } from '@canard/schema-form';
 
-ShowError.Dirty        // show when node.dirty === true
-ShowError.Touched      // show when node.touched === true
+ShowError.Dirty        // show when node.state[FieldNodeState.Dirty] is true
+ShowError.Touched      // show when node.state[FieldNodeState.Touched] is true
 ShowError.DirtyTouched // show when dirty AND touched (default)
 // Also accepts: true (always show), false (never show)
 ```
@@ -108,8 +108,8 @@ interface FormHandle<Schema, Value> {
   node:        InferFieldNode<Schema> | undefined; // root node
   getValue():  Value;
   setValue(value: Value | ((prev: Value) => Value), options?: SetValueOption): void;
-  getState():  NodeStateFlags;
-  setState(state: NodeStateFlags): void;
+  getState():  FieldNode['globalState'];
+  setState(state: FieldNode['state']): void;
   clearState(): void;
   getErrors(): JSONSchemaError[];
   validate():  Promise<JSONSchemaError[]>;
@@ -390,13 +390,15 @@ interface FieldNode {
   readonly disabled:  boolean;
 
   // State
-  readonly dirty:      boolean;
-  readonly touched:    boolean;
-  readonly validated:  boolean;
-  readonly initialized: boolean;
+  state: {
+    [FieldNodeState.Dirty]?: boolean; // set on every user input write
+    [FieldNodeState.Touched]?: boolean; // set on blur
+    [FieldNodeState.ErrorVisible]?: boolean; // overrides the showError policy
+    [key: string]: any; // your own flags
+  };
   readonly errors:     JSONSchemaError[];
   readonly globalErrors: JSONSchemaError[];
-  readonly globalState:  NodeStateFlags;
+  readonly globalState:  Readonly<Record<string, boolean | undefined>>; // flags true on at least one node
 
   // Validation
   validate(): Promise<JSONSchemaError[]>;
@@ -492,7 +494,7 @@ defaultValue?:             Value
 onChange?:                 (value: Value) => void
 onSubmit?:                 (value: Value) => Promise<void> | void
 onValidate?:               (errors: JSONSchemaError[]) => void
-onStateChange?:            (state: NodeStateFlags) => void
+onStateChange?:            (state: FieldNode['globalState']) => void
 showError?:                boolean | ShowError              // default: DirtyTouched
 validationMode?:           ValidationMode                  // default: OnChange|OnRequest
 readOnly?:                 boolean
@@ -511,7 +513,7 @@ ref?:                      Ref<FormHandle>
 node?:              FieldNode
 getValue():         Value
 setValue(v, opts?): void
-getState():         NodeStateFlags
+getState():         FieldNode['globalState']
 setState(s):        void
 clearState():       void
 getErrors():        JSONSchemaError[]
@@ -529,7 +531,7 @@ getAttachedFilesMap(): AttachedFilesMap
 node.value / node.defaultValue / node.enhancedValue
 node.setValue(input, option?)
 node.errors / node.globalErrors
-node.dirty / node.touched / node.validated / node.initialized
+node.state[FieldNodeState.Dirty | Touched | ErrorVisible] / node.rootNode.globalState
 node.visible / node.active / node.readOnly / node.disabled
 node.required / node.nullable
 node.path / node.name / node.depth / node.isRoot
@@ -539,7 +541,7 @@ node.publish(NodeEventType.RequestRemount)
 node.subscribe(listener) → unsubscribe
 
 // ── ArrayNode additional ────────────────────────────────────────
-arrayNode.length / arrayNode.children
+arrayNode.children?.length / arrayNode.children   // children is null on an array rendered as a single input
 arrayNode.push(value?) / arrayNode.remove(index) / arrayNode.clear()
 
 // ── Hooks ───────────────────────────────────────────────────────
