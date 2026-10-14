@@ -11,6 +11,9 @@ import { readSchemaObject } from '../analyze/readSchemaObject';
 import type { AnalysisContext } from '../analyze/type';
 import { throwBlueprintError } from './throwBlueprintError';
 
+/** Extension groups validated at every authored position. */
+const CONTROL_GROUPS = [SCHEMA_GROUP.controls, SCHEMA_GROUP.options] as const;
+
 /**
  * Validate closed extension namespaces at an authored schema position.
  * @param context - Error collector and authored root
@@ -26,7 +29,7 @@ export const validateControlGroups = (
   fragment: boolean,
 ): void => {
   const record = readSchemaObject(schema);
-  for (const group of [SCHEMA_GROUP.controls, SCHEMA_GROUP.options] as const) {
+  for (const group of CONTROL_GROUPS) {
     const value = record[group];
     if (value === undefined) continue;
     const allowed =

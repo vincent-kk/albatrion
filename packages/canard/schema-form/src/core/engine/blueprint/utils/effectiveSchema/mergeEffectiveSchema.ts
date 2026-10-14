@@ -9,6 +9,9 @@ import { ensureEffectiveSchemaCache } from './utils/ensureEffectiveSchemaCache';
 import { mergeSchemaContributions } from './utils/mergeSchemaContributions';
 import { selectEffectiveDeclarations } from './utils/selectEffectiveDeclarations';
 
+/** Shared options for a merge with the runtime policy and no predicate or collector. */
+const DEFAULT_MERGE_OPTIONS: EffectiveSchemaOptions = {};
+
 /** Default memo is weak by node lifetime; callers can isolate a separate memo. */
 const DEFAULT_MEMO: EffectiveSchemaMemo = new WeakMap();
 
@@ -25,7 +28,7 @@ const DEFAULT_MEMO: EffectiveSchemaMemo = new WeakMap();
 export const mergeEffectiveSchema = (
   node: BlueprintNode,
   activeDeclarationIds: readonly number[],
-  options: EffectiveSchemaOptions = {},
+  options: EffectiveSchemaOptions = DEFAULT_MERGE_OPTIONS,
   memo: EffectiveSchemaMemo = DEFAULT_MEMO,
 ): EffectiveSchema => {
   const defaultNoActive =

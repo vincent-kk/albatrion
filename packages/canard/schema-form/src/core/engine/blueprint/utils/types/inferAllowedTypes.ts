@@ -11,6 +11,12 @@ import { intersectAllowedTypes } from './intersectAllowedTypes';
 import { readAllowedTypes } from './readAllowedTypes';
 import { unionAllowedTypes } from './unionAllowedTypes';
 
+/** Shared frozen result for a branch cut by recursion. */
+const NO_TYPES: readonly SchemaTypeName[] = Object.freeze([]);
+
+/** Shared frozen empty inference path. */
+const NO_VISITING: readonly string[] = Object.freeze([]);
+
 /** Authored disjunctions examined in S3 order without per-call allocation. */
 const BRANCH_KEYWORDS = ['oneOf', 'anyOf'] as const;
 
@@ -29,17 +35,23 @@ export const inferAllowedTypes = (
   schema: BlueprintSchema,
   schemaPath: string,
   allowTop = false,
-  visiting: readonly string[] = [],
+  visiting: readonly string[] = NO_VISITING,
   isBranch = false,
 ): readonly SchemaTypeName[] | undefined => {
-  if (visiting.includes(schemaPath)) return [];
+  if (visiting.includes(schemaPath)) return NO_TYPES;
   const cycle = isBranch ? { found: false } : undefined;
-  const parts = collectStaticSchemas(context, schema, schemaPath, [], cycle);
+  const parts = collectStaticSchemas(
+    context,
+    schema,
+    schemaPath,
+    NO_VISITING,
+    cycle,
+  );
   if (
     (isBranch && cycle?.found) ||
     parts.some((part) => visiting.includes(part.schemaPath))
   )
-    return [];
+    return NO_TYPES;
   const stack = [...visiting, ...parts.map((part) => part.schemaPath)];
   let allowed: readonly SchemaTypeName[] | undefined;
   for (const part of parts) {

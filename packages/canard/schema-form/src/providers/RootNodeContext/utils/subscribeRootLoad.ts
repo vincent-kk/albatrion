@@ -1,3 +1,5 @@
+import { NOOP_FUNCTION } from '@winglet/common-utils/constant';
+
 import { FieldNodeEventType } from '@/schema-form/core';
 
 import type { RootLoad, RootLoadStore } from '../type';
@@ -19,4 +21,4 @@ export const subscribeRootLoad = (
       reportRootLoadValidation(load, store);
     if (type & FieldNodeEventType.UpdateDiagnostics)
       load.props.onDiagnosticsChange?.(load.root.diagnostics);
-  }) ?? (() => {});
+  }) ?? NOOP_FUNCTION;

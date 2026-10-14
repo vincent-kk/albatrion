@@ -4,6 +4,9 @@ import type { BlueprintSchema } from '../../type';
 import { resolveReference } from './resolveReference';
 import type { AnalysisContext } from './type';
 
+/** Shared frozen empty expansion path. */
+const NO_VISITING: readonly string[] = Object.freeze([]);
+
 /**
  * Collect a slot's static conjunction, cutting reference cycles within the slot.
  * @param context - Authored root and analysis dependencies
@@ -17,7 +20,7 @@ export const collectStaticSchemas = (
   context: AnalysisContext,
   schema: BlueprintSchema,
   schemaPath: string,
-  visiting: readonly string[] = [],
+  visiting: readonly string[] = NO_VISITING,
   cycle?: { found: boolean },
 ): { schema: BlueprintSchema; schemaPath: string }[] => {
   if (visiting.includes(schemaPath)) {

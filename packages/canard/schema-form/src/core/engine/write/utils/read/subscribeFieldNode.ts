@@ -1,3 +1,5 @@
+import { NOOP_FUNCTION } from '@winglet/common-utils/constant';
+
 import type { FieldNodeRecord } from '../../../record';
 import type { FieldNodeListener } from '../../type';
 
@@ -11,7 +13,7 @@ export const subscribeFieldNode = <Self extends FieldNodeRecord<Self>>(
   node: Self,
   listener: FieldNodeListener,
 ): (() => void) => {
-  if (node.disposed || node.rootNode.disposed) return () => {};
+  if (node.disposed || node.rootNode.disposed) return NOOP_FUNCTION;
   const runtime = node.rootNode.runtime;
   const listeners = runtime.listeners ?? new Map();
   const subscriptions = listeners.get(node) ?? new Set();

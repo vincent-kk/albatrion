@@ -2,6 +2,7 @@ import { hasOwnProperty } from '@winglet/common-utils/lib';
 
 import { CONTROL_KEY } from '../../../constants/controlKey';
 import type { FieldNodeRecord } from '../../../record';
+import { emptyReadonlyMap } from '../../../utils/emptyReadonlyMap';
 import type { SettlementContext } from '../../type';
 import { getControlLayers } from '../controls/getControlLayers';
 import { readExitLayerPolicy } from '../controls/readExitLayerPolicy';
@@ -22,7 +23,7 @@ export const snapshotExitedPolicies = <Self extends FieldNodeRecord<Self>>(
       if (!runtime.latentRaw.has(key)) return;
       const metadata = runtime.latentRawMetadata?.get(key);
       if (!metadata) return;
-      const exitLayers = getControlLayers(node, new Map())
+      const exitLayers = getControlLayers(node, emptyReadonlyMap)
         .filter((group) =>
           hasOwnProperty(group.controls, CONTROL_KEY.unsetOnInactive),
         )

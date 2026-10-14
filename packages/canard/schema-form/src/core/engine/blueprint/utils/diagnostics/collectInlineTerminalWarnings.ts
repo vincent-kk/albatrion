@@ -10,6 +10,39 @@ import type {
 } from '../../type';
 import { readSchemaObject } from '../analyze/readSchemaObject';
 
+/** Form-only groups that a terminal ignores. */
+const FORM_GROUP_KEYS = [
+  SCHEMA_GROUP.controls,
+  SCHEMA_GROUP.options,
+  SCHEMA_GROUP.presentation,
+];
+
+/** Keywords whose value maps names to child schemas. */
+const SCHEMA_MAP_KEYWORDS = [
+  'properties',
+  'patternProperties',
+  '$defs',
+  'definitions',
+  'dependentSchemas',
+];
+
+/** Keywords whose value lists child schemas. */
+const SCHEMA_LIST_KEYWORDS = ['allOf', 'oneOf', 'anyOf', 'prefixItems'];
+
+/** Keywords whose value is one child schema or a tuple of them. */
+const SCHEMA_SINGLE_KEYWORDS = [
+  'items',
+  'additionalItems',
+  'additionalProperties',
+  'contains',
+  'not',
+  'if',
+  'then',
+  'else',
+  'unevaluatedProperties',
+  'unevaluatedItems',
+];
+
 /**
  * Find ignored form groups below a terminal without following reference targets.
  * @param node - Terminal node whose authored contributions are inspected
@@ -45,23 +78,13 @@ export const collectInlineTerminalWarnings = (
     const ancestors = [...entry.ancestors, entry.schema];
     const record = readSchemaObject(entry.schema);
     if (!entry.root)
-      for (const keyword of [
-        SCHEMA_GROUP.controls,
-        SCHEMA_GROUP.options,
-        SCHEMA_GROUP.presentation,
-      ])
+      for (const keyword of FORM_GROUP_KEYS)
         if (record[keyword] !== undefined) {
           if (!keys.includes(keyword)) keys.push(keyword);
           if (!paths.includes(entry.schemaPath)) paths.push(entry.schemaPath);
         }
     /* eslint-disable @typescript-eslint/consistent-type-assertions -- Map-keyword children are unvalidated authored values the warning walk reads as schemas; a guard would change which values it visits. */
-    for (const keyword of [
-      'properties',
-      'patternProperties',
-      '$defs',
-      'definitions',
-      'dependentSchemas',
-    ])
+    for (const keyword of SCHEMA_MAP_KEYWORDS)
       if (record[keyword] && typeof record[keyword] === 'object')
         for (const [name, child] of Object.entries(record[keyword]))
           pending.push({
@@ -71,7 +94,7 @@ export const collectInlineTerminalWarnings = (
             ancestors,
           });
     /* eslint-enable @typescript-eslint/consistent-type-assertions */
-    for (const keyword of ['allOf', 'oneOf', 'anyOf', 'prefixItems'])
+    for (const keyword of SCHEMA_LIST_KEYWORDS)
       if (isArray(record[keyword]))
         record[keyword].forEach((child: BlueprintSchema, index: number) =>
           pending.push({
@@ -81,18 +104,7 @@ export const collectInlineTerminalWarnings = (
             ancestors,
           }),
         );
-    for (const keyword of [
-      'items',
-      'additionalItems',
-      'additionalProperties',
-      'contains',
-      'not',
-      'if',
-      'then',
-      'else',
-      'unevaluatedProperties',
-      'unevaluatedItems',
-    ]) {
+    for (const keyword of SCHEMA_SINGLE_KEYWORDS) {
       const child = record[keyword];
       if (isArray(child))
         child.forEach((item: BlueprintSchema, index: number) =>

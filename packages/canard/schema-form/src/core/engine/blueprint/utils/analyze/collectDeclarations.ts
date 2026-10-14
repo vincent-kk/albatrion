@@ -12,6 +12,9 @@ import { readSchemaObject } from './readSchemaObject';
 import { resolveReference } from './resolveReference';
 import type { AnalysisContext, MutableFragment, SchemaInput } from './type';
 
+/** Shared frozen empty expansion path. */
+const NO_VISITING: readonly string[] = Object.freeze([]);
+
 /** Keyword ranks form the authored total order, independent of object insertion order. */
 const FRAGMENT_KEYWORDS = [
   ['allOf', 1],
@@ -35,7 +38,7 @@ export const collectDeclarations = (
   context: AnalysisContext,
   input: SchemaInput,
   path: string,
-  visiting: readonly string[] = [],
+  visiting: readonly string[] = NO_VISITING,
   ownerId?: number,
   result: PropertyDeclaration[] = [],
 ): PropertyDeclaration[] => {

@@ -1,13 +1,14 @@
 import {
   type ForwardedRef,
+  type RefObject,
   type SyntheticEvent,
   useCallback,
   useImperativeHandle,
   useMemo,
-  useRef,
   useState,
 } from 'react';
 
+import { NOOP_FUNCTION } from '@winglet/common-utils/constant';
 import { getTrackableHandler } from '@winglet/common-utils/function';
 import { useHandle, useLazyConstant } from '@winglet/react-utils/hook';
 
@@ -34,7 +35,9 @@ import { FormRootProxy } from './FormRootProxy';
 
 /** Compose the fixed provider hierarchy and expose the current binding through the handle. */
 export const FormRoot = (props: FormProps, ref: ForwardedRef<FormHandle>) => {
-  const binding = useRef<RootBinding>({ reset: () => {} });
+  const binding = useLazyConstant<RefObject<RootBinding>>(() => ({
+    current: { reset: NOOP_FUNCTION },
+  }));
   const attachedFilesMap = useLazyConstant<AttachedFilesMap>(() => new Map());
   const reporter = useFormErrorContext();
   const [showError, setShowError] = useState(props.showError);
@@ -88,7 +91,7 @@ export const FormRoot = (props: FormProps, ref: ForwardedRef<FormHandle>) => {
         setShowError(visible ? true : props.showError),
       submit: handleSubmit,
     }),
-    [attachedFilesMap, handleSubmit, props.showError],
+    [attachedFilesMap, binding, handleSubmit, props.showError],
   );
   const children = useMemo(
     () => createChildren(props.children, props.jsonSchema),

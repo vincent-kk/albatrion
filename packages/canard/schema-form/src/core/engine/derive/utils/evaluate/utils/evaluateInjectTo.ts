@@ -13,6 +13,9 @@ import { getInjectTarget } from './getInjectTarget';
 import { getInjectToContext } from './getInjectToContext';
 import { getVirtualWriteFailure } from './getVirtualWriteFailure';
 
+/** Shared frozen result for a rule whose handler is not a function. */
+const NO_INJECT_WRITES = Object.freeze({ writes: Object.freeze([]) });
+
 /**
  * Evaluate one fired handler without writing raw or latent state.
  * @param source - Live rule source
@@ -28,7 +31,7 @@ export const evaluateInjectTo = <Self extends FieldNodeRecord<Self>>(
   writes: readonly DeriveWrite<Self>[];
   failure?: DeriveRoundDecision<Self>['failures'][number];
 } => {
-  if (typeof rule.literal !== 'function') return { writes: [] };
+  if (typeof rule.literal !== 'function') return NO_INJECT_WRITES;
   let result: unknown;
   try {
     result = rule.literal(source.emit, getInjectToContext(source, root));

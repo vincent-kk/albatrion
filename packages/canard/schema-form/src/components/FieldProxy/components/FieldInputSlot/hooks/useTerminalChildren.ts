@@ -17,6 +17,8 @@ const EMPTY_CHILDREN = Object.freeze([]) as unknown as ChildField[];
 const COMMITTED = 1;
 /** Read-detector state after the first observable empty-list access. */
 const ACCESSED = 2;
+/** Mask that clears the accessed bit from the read-detector state. */
+const CLEAR_ACCESSED_MASK = ~ACCESSED;
 
 /**
  * The input's child list and the marker its owning layout effect calls on every commit
@@ -54,7 +56,7 @@ export const useTerminalChildren = (node: FieldNode): TerminalChildren => {
       ): unknown => {
         if (readLoad !== reporter.load) {
           readLoad = reporter.load;
-          accessed.current &= ~ACCESSED;
+          accessed.current &= CLEAR_ACCESSED_MASK;
         }
         if (key === undefined) {
           reporter.report({

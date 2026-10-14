@@ -9,6 +9,20 @@ import type {
 import { readSchemaObject } from '../analyze/readSchemaObject';
 import { collectInlineTerminalWarnings } from './collectInlineTerminalWarnings';
 
+/** Dependency keywords the form ignores on any declaration. */
+const IGNORED_DEPENDENCY_KEYWORDS = ['dependentSchemas', 'dependencies'];
+
+/** Keywords the form ignores inside an `allOf` branch. */
+const ALL_OF_IGNORED_KEYWORDS = [
+  'not',
+  'dependencies',
+  'dependentRequired',
+  'dependentSchemas',
+  'unevaluatedProperties',
+  'unevaluatedItems',
+  'contains',
+];
+
 /** A schema path ending in an `allOf` branch index. */
 const ALL_OF_BRANCH_PATH = /\/allOf\/\d+$/;
 
@@ -51,21 +65,13 @@ export const collectBlueprintWarnings = (
           schemaPath: declaration.schemaPath,
           details,
         });
-      for (const keyword of ['dependentSchemas', 'dependencies'])
+      for (const keyword of IGNORED_DEPENDENCY_KEYWORDS)
         if (schema[keyword] !== undefined)
           warning(FormWarningCode.DependentSchemasIgnoredForForm, {
             keyword,
           });
       if (ALL_OF_BRANCH_PATH.test(declaration.schemaPath))
-        for (const keyword of [
-          'not',
-          'dependencies',
-          'dependentRequired',
-          'dependentSchemas',
-          'unevaluatedProperties',
-          'unevaluatedItems',
-          'contains',
-        ])
+        for (const keyword of ALL_OF_IGNORED_KEYWORDS)
           if (schema[keyword] !== undefined)
             warning(FormWarningCode.AllOfKeywordIgnoredForForm, {
               keyword,

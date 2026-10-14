@@ -7,6 +7,13 @@ import type { Dictionary } from '@aileron/declare';
 import type { ChildField } from '@/schema-form/components/FieldProxy';
 import type { ChildFieldProps } from '@/schema-form/types';
 
+/** Proxy handler that answers a missing child field with a no-op function. */
+const CHILD_FIELD_MAP_HANDLER: ProxyHandler<Dictionary> = {
+  get(target, key) {
+    return target[key as keyof typeof target] ?? NOOP_FUNCTION;
+  },
+};
+
 type ChildFieldMap<Value extends Dictionary> = {
   [key in keyof Value]: ChildField<ChildFieldProps<Value[key]>>;
 };
@@ -16,7 +23,7 @@ export const useChildFieldMap = <Value extends Dictionary>(
 ) =>
   useMemo(
     () =>
-      new Proxy(
+      new Proxy<ChildFieldMap<Required<Value>>>(
         ChildFields.reduce(
           (accumulator, ChildField) => {
             const field = ChildField.field as keyof Value;
@@ -25,11 +32,7 @@ export const useChildFieldMap = <Value extends Dictionary>(
           },
           {} as ChildFieldMap<Required<Value>>,
         ),
-        {
-          get(target, key) {
-            return target[key as keyof typeof target] ?? NOOP_FUNCTION;
-          },
-        },
+        CHILD_FIELD_MAP_HANDLER,
       ),
     [ChildFields],
   );

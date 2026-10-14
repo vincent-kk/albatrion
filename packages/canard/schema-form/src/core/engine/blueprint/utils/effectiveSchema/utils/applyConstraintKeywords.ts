@@ -16,6 +16,12 @@ import { throwBlueprintError } from '../../diagnostics/throwBlueprintError';
 import { OwnedSchemaValues } from './OwnedSchemaValues';
 import type { EffectiveSchemaState } from './type';
 
+/** Bound keyword paired with its boolean exclusive counterpart. */
+const BOUND_KEYWORD_PAIRS = [
+  ['minimum', 'exclusiveMinimum'],
+  ['maximum', 'exclusiveMaximum'],
+] as const;
+
 /** Paired monotone bounds; each pair is checked independently, never across keywords. */
 const RANGES = [
   ['minimum', 'maximum'],
@@ -41,10 +47,7 @@ export const applyConstraintKeywords = (
   options: EffectiveSchemaOptions,
 ): void => {
   const target = state.schema;
-  for (const [bound, exclusive] of [
-    ['minimum', 'exclusiveMinimum'],
-    ['maximum', 'exclusiveMaximum'],
-  ] as const) {
+  for (const [bound, exclusive] of BOUND_KEYWORD_PAIRS) {
     if (typeof source[exclusive] !== 'boolean') continue;
     const clause = {
       [exclusive]: source[exclusive],

@@ -14,6 +14,9 @@ import {
   getDirectChildSelectionPlan,
 } from './selectChildren/utils/getDirectChildSelectionPlan';
 
+/** Empty active-declaration list: only ungated contributions apply. */
+const NO_ACTIVE_DECLARATION_IDS: readonly number[] = Object.freeze([]);
+
 /**
  * Start a gate wheel with only ungated children and their static overlays.
  * @param node - Branch host starting one bounded calculation wheel
@@ -75,10 +78,14 @@ export const primeHost = <Self extends FieldNodeRecord<Self>>(
       if (child.behavior.strategy === 'branch')
         context.shapeDirtyPaths.add(child.path);
     }
-    const schema = mergeEffectiveSchema(child.blueprintNode, [], {
-      mode: 'runtime',
-      isAtomic: node.runtime.blueprint?.isAtomic,
-    });
+    const schema = mergeEffectiveSchema(
+      child.blueprintNode,
+      NO_ACTIVE_DECLARATION_IDS,
+      {
+        mode: 'runtime',
+        isAtomic: node.runtime.blueprint?.isAtomic,
+      },
+    );
     if (child.schema !== schema) {
       if (!context.originalSchemas.has(child.path))
         context.originalSchemas.set(child.path, child.schema);

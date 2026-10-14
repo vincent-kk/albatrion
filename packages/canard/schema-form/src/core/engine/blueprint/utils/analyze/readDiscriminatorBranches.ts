@@ -20,6 +20,9 @@ import { collectStaticSchemas } from './collectStaticSchemas';
 import { readSchemaObject } from './readSchemaObject';
 import type { AnalysisContext } from './type';
 
+/** Union keywords whose branches are checked for a shared discriminator. */
+const UNION_KEYWORDS = ['oneOf', 'anyOf'] as const;
+
 /**
  * Read explicit discriminator tags from each branch's static conjunction.
  * @param context - Authored references and diagnostic collector
@@ -50,7 +53,7 @@ export const readDiscriminatorBranches = (
       },
       context.options,
     );
-  for (const keyword of ['oneOf', 'anyOf'] as const) {
+  for (const keyword of UNION_KEYWORDS) {
     if (!isArray(host[keyword])) continue;
     let previousMask: number | undefined;
     const previousValues: unknown[] = [];

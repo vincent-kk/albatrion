@@ -25,6 +25,9 @@ import type {
   NodeSurface,
 } from '../type';
 
+/** Empty active-declaration list: only ungated contributions apply. */
+const NO_ACTIVE_DECLARATION_IDS: readonly number[] = Object.freeze([]);
+
 /**
  * Kind-independent public node shape the runtime class is checked against at compile time.
  * One class serves every kind, so the kind union and the members returning nodes are checked by `surface.test.ts` instead.
@@ -99,7 +102,7 @@ const createFieldNode = (
     depth,
     template.strategy === 'branch' ? {} : null,
     template.strategy === 'branch' ? [] : null,
-    mergeEffectiveSchema(template, [], {
+    mergeEffectiveSchema(template, NO_ACTIVE_DECLARATION_IDS, {
       mode: 'runtime',
       isAtomic: runtime.blueprint?.isAtomic,
     }),

@@ -10,6 +10,12 @@ import { walkOwnedFieldNodes } from '../walkOwnedFieldNodes';
 import { pruneCommittedRuleKeys } from './pruneCommittedRuleKeys';
 import { updateCommittedRuleValue } from './updateCommittedRuleValue';
 
+/** State patch that clears the dirty and touched flags of a reset occurrence. */
+const CLEAN_STATE_PATCH = {
+  [FieldNodeState.Dirty]: false,
+  [FieldNodeState.Touched]: false,
+};
+
 /**
  * Publish final rule baselines and clear interaction flags before revision bumps.
  * @param context - Final calculated shape and call-local consumed edge values
@@ -44,10 +50,7 @@ export const commitDeriveRules = <Self extends FieldNodeRecord<Self>>(
     node.interactionState = captureFieldNodeChange(
       node,
       'interactionState',
-      shallowPatch(node.interactionState, {
-        [FieldNodeState.Dirty]: false,
-        [FieldNodeState.Touched]: false,
-      }),
+      shallowPatch(node.interactionState, CLEAN_STATE_PATCH),
     );
     if (node.interactionState !== previous) context.changedNodes.add(node);
   }

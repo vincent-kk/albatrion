@@ -8,7 +8,8 @@ import {
   useSyncExternalStore,
 } from 'react';
 
-import { useHandle } from '@winglet/react-utils/hook';
+import { NOOP_FUNCTION } from '@winglet/common-utils/constant';
+import { useHandle, useLazyConstant } from '@winglet/react-utils/hook';
 
 import { PluginManager } from '@/schema-form/app/plugin';
 import type { FormProps } from '@/schema-form/components/Form';
@@ -32,6 +33,10 @@ import { resetRootLoad } from '../utils/resetRootLoad';
 import { subscribeRootLoad } from '../utils/subscribeRootLoad';
 import { RootBindingContext } from './RootBindingContext';
 import { RootNodeContext } from './RootNodeContext';
+
+/** Validation mode applied when neither props nor the external form set one. */
+const DEFAULT_VALIDATION_MODE =
+  ValidationMode.OnChange | ValidationMode.OnRequest;
 
 /** Own root construction, committed load lifetimes, and synchronous handle replacement. */
 export const RootNodeContextProvider = ({
@@ -58,17 +63,17 @@ export const RootNodeContextProvider = ({
     validationMode:
       props.validationMode ??
       external.validationMode ??
-      ValidationMode.OnChange | ValidationMode.OnRequest,
+      DEFAULT_VALIDATION_MODE,
   };
   const committed = useRef(current);
   // Construction belongs to the speculative render; only committed loads are prepared.
   // eslint-disable-next-line react-hooks/exhaustive-deps -- Schema/default props are consumed again only by reset.
   const initial = useMemo(() => createRootLoad(current, reporter), []);
-  const store = useRef<RootLoadStore>({
+  const store = useLazyConstant<RootLoadStore>(() => ({
     load: initial,
     listeners: new Set<() => void>(),
-    unsubscribe: () => {},
-  }).current;
+    unsubscribe: NOOP_FUNCTION,
+  }));
   const subscribe = useMemo(
     () => (listener: () => void) => {
       store.listeners.add(listener);

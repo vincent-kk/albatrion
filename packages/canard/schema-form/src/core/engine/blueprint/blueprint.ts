@@ -9,6 +9,9 @@ import { collectBlueprintWarnings } from './utils/diagnostics/collectBlueprintWa
 import { validateChildTargets } from './utils/diagnostics/validateChildTargets';
 import { StaticFirstLoadCapability } from './utils/features/StaticFirstLoadCapability';
 
+/** Shared options for a build without injected predicates, collector, or cache. */
+const DEFAULT_BLUEPRINT_OPTIONS: BlueprintOptions = {};
+
 /**
  * Analyze authored schema data into an immutable, finite declaration graph.
  * @param schema - Authored root, retained by reference and never mutated
@@ -17,7 +20,7 @@ import { StaticFirstLoadCapability } from './utils/features/StaticFirstLoadCapab
  */
 export const blueprint = (
   schema: BlueprintSchema,
-  options: BlueprintOptions = {},
+  options: BlueprintOptions = DEFAULT_BLUEPRINT_OPTIONS,
 ): Blueprint => {
   const entries =
     typeof schema === 'object' ? options.cache?.get(schema) : undefined;

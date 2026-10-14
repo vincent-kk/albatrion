@@ -4,6 +4,9 @@ import type { FieldNodeRecord } from '../../../../record';
 import type { DeriveRule, DeriveState } from '../../../type';
 import { getSelectedDeclarationIds } from './getSelectedDeclarationIds';
 
+/** Shared frozen result when a rule resolves to no target. */
+const NO_TARGETS: readonly never[] = Object.freeze([]);
+
 /**
  * Resolve a node, parent fields entry, or fragment scope in the live shape.
  * @param source - Live declaration host that owns the authored control
@@ -18,9 +21,10 @@ export const getRuleTargets = <Self extends FieldNodeRecord<Self>>(
 ): readonly Self[] => {
   if (!rule.targetName) return [source];
   const children = source.structure;
-  if (!children || !hasOwnProperty(children, rule.targetName)) return [];
+  if (!children || !hasOwnProperty(children, rule.targetName))
+    return NO_TARGETS;
   const target = children[rule.targetName];
-  if (target.detached) return [];
+  if (target.detached) return NO_TARGETS;
   if (
     rule.layer === 'fragment' &&
     rule.targetDeclarationIds &&
@@ -28,6 +32,6 @@ export const getRuleTargets = <Self extends FieldNodeRecord<Self>>(
       getSelectedDeclarationIds(target, state).includes(id),
     )
   )
-    return [];
+    return NO_TARGETS;
   return [target];
 };
