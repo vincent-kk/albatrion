@@ -15,8 +15,8 @@ import {
   normalizeFieldInputDefinitions,
 } from '@/schema-form/helpers/fieldInputDefinition';
 import type {
-  FieldInputDefinition,
   BaseFieldRendererProps,
+  FieldInputDefinition,
   FormatError,
 } from '@/schema-form/types';
 

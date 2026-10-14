@@ -2,8 +2,7 @@ import { describe, expect, it } from 'vitest';
 
 import { makeFieldNodeTree } from '@/schema-form/core/__tests__/makeFieldNodeTree';
 
-const records = (runtime: object) =>
-  Reflect.get(runtime, 'misfitRecords');
+const records = (runtime: object) => Reflect.get(runtime, 'misfitRecords');
 
 // filid:contract union-raw
 describe('TEST-077 union mismatch lamp', () => {

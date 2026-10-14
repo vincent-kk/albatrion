@@ -22,8 +22,14 @@ export type {
   SetStateFnWithOptions,
   AttachedFilesMap,
 } from './internal/fieldInput';
-export type { BaseFieldRendererProps, FormatError } from './internal/fieldRenderer';
-export type { InjectToHandler, InjectHandlerContext } from './internal/injectTo';
+export type {
+  BaseFieldRendererProps,
+  FormatError,
+} from './internal/fieldRenderer';
+export type {
+  InjectToHandler,
+  InjectHandlerContext,
+} from './internal/injectTo';
 export type {
   JSONSchemaType,
   BaseInferJSONSchema,

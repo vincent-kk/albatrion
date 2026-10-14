@@ -4,9 +4,9 @@ import type { Dictionary } from '@aileron/declare';
 
 import type { FieldNode } from '@/schema-form/core';
 import type {
+  BaseFieldRendererProps,
   ChildFieldProps,
   FieldInputProps,
-  BaseFieldRendererProps,
   OverridableFieldInputProps,
 } from '@/schema-form/types';
 

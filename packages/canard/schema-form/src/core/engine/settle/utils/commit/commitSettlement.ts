@@ -186,9 +186,7 @@ export const commitSettlement = <Self extends FieldNodeRecord<Self>>(
   });
   if (warningTasks)
     for (const node of context.changedNodes) warningTasks.get(node)?.();
-  runtime.misfitRecords = warnings
-    ? Object.freeze(warnings)
-    : EMPTY_WARNINGS;
+  runtime.misfitRecords = warnings ? Object.freeze(warnings) : EMPTY_WARNINGS;
   const mismatchMemo =
     runtime.misfitsMemo ??
     new PathKeyedMap<{ commit: number; paths: readonly string[] }>('path');

@@ -4,8 +4,8 @@ import { map } from '@winglet/common-utils/array';
 import { useHandle } from '@winglet/react-utils/hook';
 
 import type {
-  FieldInputPropsWithSchema,
   BaseStringSchema,
+  FieldInputPropsWithSchema,
 } from '@/schema-form/types';
 
 import type { RadioLabelsContext } from './type';

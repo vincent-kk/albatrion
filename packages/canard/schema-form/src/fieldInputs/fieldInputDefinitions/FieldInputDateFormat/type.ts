@@ -1,6 +1,6 @@
 import type {
-  FieldInputPropsWithSchema,
   BaseStringSchema,
+  FieldInputPropsWithSchema,
 } from '@/schema-form/types';
 
 /** Native HTML input types whose value grammar this check knows. */

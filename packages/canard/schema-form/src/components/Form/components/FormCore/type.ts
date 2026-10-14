@@ -15,9 +15,9 @@ import type { VirtualizationOptions } from '@/schema-form/helpers/virtualization
 import type {
   AllowedValue,
   AttachedFilesMap,
+  BaseFieldRendererProps,
   FieldInputDefinition,
   FieldInputMap,
-  BaseFieldRendererProps,
   InferValueType,
   JSONSchema,
   SetStateFnWithOptions,

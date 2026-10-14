@@ -44,9 +44,7 @@ expectTypeOf<FieldInputProps<number>['type']>().toEqualTypeOf<
 expectTypeOf<FieldInputProps<number>['schemaType']>().toEqualTypeOf<
   NumberNode['schemaType']
 >();
-expectTypeOf<
-  FieldInputProps<number>['misfit']
->().toEqualTypeOf<boolean>();
+expectTypeOf<FieldInputProps<number>['misfit']>().toEqualTypeOf<boolean>();
 expectTypeOf<FieldInputProps<number>['nullable']>().toEqualTypeOf<boolean>();
 
 const events: FieldNodeEventType[] = [

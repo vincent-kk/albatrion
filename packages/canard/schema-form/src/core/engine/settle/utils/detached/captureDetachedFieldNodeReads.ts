@@ -23,8 +23,7 @@ export const captureDetachedFieldNodeReads = <
   const reads = Object.freeze({
     errors: readFieldNodeErrors(node),
     misfit: runtime.misfitPaths.has(node.path),
-    misfits:
-      runtime.misfitsMemo?.get(node.path)?.paths ?? EMPTY_PATHS,
+    misfits: runtime.misfitsMemo?.get(node.path)?.paths ?? EMPTY_PATHS,
     inactiveValues: runtime.inactiveValuesMemo.get(node.path) ?? EMPTY_VALUES,
     defaultValue: readFieldNodeDefaultValue(node),
     visible: node.visible,

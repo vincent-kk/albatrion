@@ -50,11 +50,7 @@ export const updateInactiveValuesMemo = <Self extends FieldNodeRecord<Self>>(
             ((template.kind === 'array' &&
               template.strategy === 'branch' &&
               isArray(source.raw)) ||
-              isMisfit(
-                source.raw,
-                template.schemaType,
-                template.nullable,
-              ))
+              isMisfit(source.raw, template.schemaType, template.nullable))
           ? source.raw
           : undefined;
     if (value !== undefined)

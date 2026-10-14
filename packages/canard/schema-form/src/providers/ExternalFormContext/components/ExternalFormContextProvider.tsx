@@ -7,8 +7,8 @@ import type { Dictionary } from '@aileron/declare';
 import type { ValidationMode } from '@/schema-form/core';
 import { normalizeFieldInputDefinitions } from '@/schema-form/helpers/fieldInputDefinition';
 import type {
-  FieldInputDefinition,
   BaseFieldRendererProps,
+  FieldInputDefinition,
   FormatError,
   ShowError,
   ValidatorFactory,

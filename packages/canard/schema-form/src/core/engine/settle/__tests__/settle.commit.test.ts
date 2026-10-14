@@ -197,9 +197,7 @@ describe('settle commit', () => {
       WriteOption.Overwrite,
     );
     expect(root.runtime.misfitRecords).toHaveLength(1);
-    expect(root.runtime.misfitsMemo?.get('')?.paths).toEqual([
-      '/amount',
-    ]);
+    expect(root.runtime.misfitsMemo?.get('')?.paths).toEqual(['/amount']);
   });
 
   it('VALUE-037 reports a gate-only narrowing with source gate', () => {

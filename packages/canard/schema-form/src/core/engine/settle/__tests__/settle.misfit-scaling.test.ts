@@ -59,10 +59,7 @@ describe('49C-01 SETTLE-017 proportional settlement work', () => {
       expect(first.misfits).toEqual(beforeFirst);
       expect(rows.misfits).toHaveLength(count);
       expect(first.misfits).toEqual(['/rows/0/addr']);
-      const memo = Reflect.get(runtime, 'misfitsMemo') as Map<
-        string,
-        unknown
-      >;
+      const memo = Reflect.get(runtime, 'misfitsMemo') as Map<string, unknown>;
       expect([...memo.keys()].slice(0, 5)).toEqual([
         '',
         '/rows/0/addr',
@@ -102,10 +99,7 @@ describe('49C-01 SETTLE-017 proportional settlement work', () => {
     });
     const child = root.find('/rows/0/child')!;
     const before = child.misfits;
-    const mismatchPaths = Reflect.get(
-      runtime,
-      'misfitPaths',
-    ) as Set<string>;
+    const mismatchPaths = Reflect.get(runtime, 'misfitPaths') as Set<string>;
     const iterator = mismatchPaths[Symbol.iterator].bind(mismatchPaths);
     let visited = 0;
     const spy = vi

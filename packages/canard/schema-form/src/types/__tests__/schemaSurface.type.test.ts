@@ -1,12 +1,12 @@
 import { describe, expectTypeOf, it } from 'vitest';
 
 import type {
-  BasicSchema,
-  JSONSchema,
   BaseNonNullableArraySchema,
   BaseNonNullableObjectSchema,
   BaseNullableArraySchema,
   BaseNullableObjectSchema,
+  BasicSchema,
+  JSONSchema,
 } from '../internal/jsonSchema';
 
 /** Named members of a type, without the `[alt: string]: any` index signature. */

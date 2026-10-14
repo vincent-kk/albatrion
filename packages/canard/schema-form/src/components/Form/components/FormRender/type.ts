@@ -4,9 +4,9 @@ import type { Dictionary, Fn, Roll } from '@aileron/declare';
 
 import type {
   AllowedValue,
+  BaseFieldRendererProps,
   ChildFieldProps,
   FieldInputProps,
-  BaseFieldRendererProps,
 } from '@/schema-form/types';
 
 export type BaseFormRenderProps<Value extends AllowedValue> = {

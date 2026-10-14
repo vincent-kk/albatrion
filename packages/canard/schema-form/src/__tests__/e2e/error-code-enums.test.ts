@@ -14,9 +14,7 @@ describe('root error and warning code enums', () => {
     expect(FormErrorCode.SchemaValidationFailed).toBe(
       'VALIDATION_ERROR.SCHEMA_VALIDATION_FAILED',
     );
-    expect(FormWarningCode.Misfit).toBe(
-      'SCHEMA_FORM_WARNING.MISFIT',
-    );
+    expect(FormWarningCode.Misfit).toBe('SCHEMA_FORM_WARNING.MISFIT');
     expect(Object.keys(FormErrorCode)).toHaveLength(41);
     expect(Object.keys(FormWarningCode)).toHaveLength(17);
   });

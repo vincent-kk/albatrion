@@ -155,9 +155,7 @@ it('preserves node values, schemas, revisions, warning and event order through l
   expect(Reflect.get(root, 'runtime').misfitRecords).toEqual(
     Reflect.get(oracle, 'runtime').misfitRecords,
   );
-  expect(
-    Reflect.get(root, 'runtime').misfitRecords.length,
-  ).toBeGreaterThan(0);
+  expect(Reflect.get(root, 'runtime').misfitRecords.length).toBeGreaterThan(0);
   expect(events[1]).toEqual(events[0]);
   for (const release of releases) release();
 });

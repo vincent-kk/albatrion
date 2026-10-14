@@ -1,6 +1,7 @@
 import type { CSSProperties, ComponentType, ReactNode } from 'react';
 
 import type {
+  RefSchema,
   BasicSchema as WingletBasicSchema,
   NonNullableArraySchema as WingletNonNullableArraySchema,
   NonNullableBooleanSchema as WingletNonNullableBooleanSchema,
@@ -13,7 +14,6 @@ import type {
   NullableNumberSchema as WingletNullableNumberSchema,
   NullableObjectSchema as WingletNullableObjectSchema,
   NullableStringSchema as WingletNullableStringSchema,
-  RefSchema,
 } from '@winglet/json-schema';
 
 import type { Dictionary, IsNullable } from '@aileron/declare';
@@ -194,7 +194,8 @@ export type BaseNonNullableNumberSchema<Options extends Dictionary = object> =
     WingletNonNullableNumberSchema<Options, JSONSchemaChildren<Options>>;
 /** Nullable number schema (type: ['number', 'null']) */
 export type BaseNullableNumberSchema<Options extends Dictionary = object> =
-  BasicSchema & WingletNullableNumberSchema<Options, JSONSchemaChildren<Options>>;
+  BasicSchema &
+    WingletNullableNumberSchema<Options, JSONSchemaChildren<Options>>;
 
 /** String type schema */
 export type BaseStringSchema<Options extends Dictionary = object> =
@@ -229,7 +230,8 @@ export type BaseNonNullableBooleanSchema<Options extends Dictionary = object> =
     WingletNonNullableBooleanSchema<Options, JSONSchemaChildren<Options>>;
 /** Nullable boolean schema (type: ['boolean', 'null']) */
 export type BaseNullableBooleanSchema<Options extends Dictionary = object> =
-  BasicSchema & WingletNullableBooleanSchema<Options, JSONSchemaChildren<Options>>;
+  BasicSchema &
+    WingletNullableBooleanSchema<Options, JSONSchemaChildren<Options>>;
 
 /** Array type schema */
 export type BaseArraySchema<Options extends Dictionary = object> =

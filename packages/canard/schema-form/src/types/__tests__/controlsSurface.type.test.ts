@@ -1,7 +1,7 @@
 import { describe, expectTypeOf, it } from 'vitest';
 
 import type { InjectToHandler } from '../internal/injectTo';
-import type { JSONSchema, BaseObjectSchema } from '../internal/jsonSchema';
+import type { BaseObjectSchema, JSONSchema } from '../internal/jsonSchema';
 
 /** The thirteen node-level keys the blueprint accepts (validateControlGroups.ts). */
 type ControlKey =
@@ -38,7 +38,9 @@ describe('controls authoring surface', () => {
 
   it('gives the per-kind aliases the same controls keys', () => {
     expectTypeOf<
-      keyof NonNullable<Extract<BaseObjectSchema, { type: 'object' }>['controls']>
+      keyof NonNullable<
+        Extract<BaseObjectSchema, { type: 'object' }>['controls']
+      >
     >().toEqualTypeOf<ControlKey>();
   });
 

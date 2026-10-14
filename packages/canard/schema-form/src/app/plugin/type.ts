@@ -3,8 +3,8 @@ import type { ComponentType } from 'react';
 import type { Fn } from '@aileron/declare';
 
 import type {
-  FieldInputDefinition,
   BaseFieldRendererProps,
+  FieldInputDefinition,
   FormatError,
   ValidateFunction,
 } from '@/schema-form/types';

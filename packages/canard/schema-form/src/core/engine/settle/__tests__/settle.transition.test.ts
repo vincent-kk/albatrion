@@ -391,13 +391,10 @@ describe('settle transitions and loads', () => {
     expect(
       root.structure?.right?.interactionState[FieldNodeState.Touched],
     ).toBe(true);
-    expect([...root.runtime.misfitPaths].sort()).toEqual([
+    expect([...root.runtime.misfitPaths].sort()).toEqual(['/left', '/right']);
+    expect(root.runtime.misfitRecords?.map((record) => record.path)).toEqual([
       '/left',
-      '/right',
     ]);
-    expect(
-      root.runtime.misfitRecords?.map((record) => record.path),
-    ).toEqual(['/left']);
     expect(root.runtime.misfitRecords?.[0]?.source).toBe('load');
   });
 

@@ -4,7 +4,6 @@ import type {
   BaseArraySchema,
   BaseBooleanSchema,
   BaseInferJSONSchema,
-  JSONSchema,
   BaseNullSchema,
   BaseNullableArraySchema,
   BaseNullableBooleanSchema,
@@ -14,6 +13,7 @@ import type {
   BaseNumberSchema,
   BaseObjectSchema,
   BaseStringSchema,
+  JSONSchema,
 } from '../internal/jsonSchema';
 
 describe('BaseInferJSONSchema type inference tests', () => {
@@ -25,7 +25,9 @@ describe('BaseInferJSONSchema type inference tests', () => {
       expectTypeOf<BaseInferJSONSchema<number>>().toExtend<BaseNumberSchema>();
     });
     it('boolean → BaseBooleanSchema', () => {
-      expectTypeOf<BaseInferJSONSchema<boolean>>().toExtend<BaseBooleanSchema>();
+      expectTypeOf<
+        BaseInferJSONSchema<boolean>
+      >().toExtend<BaseBooleanSchema>();
     });
     it('array → BaseArraySchema', () => {
       expectTypeOf<BaseInferJSONSchema<any[]>>().toExtend<BaseArraySchema>();

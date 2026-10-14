@@ -7,9 +7,7 @@ import type { MisfitRecord } from '../../../record';
  * @param value - Original input after static interpretation
  * @returns Stable JSON kind name or the exceptional numeric/other case
  */
-export const receivedType = (
-  value: unknown,
-): MisfitRecord['received'] => {
+export const receivedType = (value: unknown): MisfitRecord['received'] => {
   if (value === null) return 'null';
   if (typeof value === 'number')
     return !Number.isFinite(value)
