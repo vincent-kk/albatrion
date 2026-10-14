@@ -261,6 +261,7 @@
 | 2026-10-14 | 275라운드 닫기: 07c 재배치 #369 검증·병합(4da9567ea), 267C-01 구현 작업 완료, 대기열 48·49 추가. 보충 1줄 | `reviews/round-275-closing.md` |
 | 2026-10-14 | 276라운드 소유자 답: 대기열 일괄 — 47 경고 없음(문서 안내), CLAUDE.md:142 수정 승인, G23 ego-browser 실행, 38·39·48·49 후속 PR 07d, 45 확정, 40 추후. 보충 10줄 | `reviews/round-276-owner-answers.md` |
 | 2026-10-14 | 277라운드 소유자 답: G23은 원장 관리자가 아니라 fairy07이 돌린다(관리자는 관리만); 대기열 39 oneOf 터미널 이유 답변. 보충 2줄 | `reviews/round-277-owner-answers.md` |
+| 2026-10-14 | 278라운드 소유자 물음: 대기열 40 내용, 39는 덮어쓰기 규칙으로 정정(나중 선언 승). 보충 1줄 | `reviews/round-278-owner-answers.md` |
 
 ## 2. 라운드별 요지
 
@@ -491,3 +492,4 @@
 - **241라운드(2026-10-13, 소유자).** `FieldRendererProps`에 Label·Error를 더하는 안은 바로 적용하지 않고, Label·Error가 목적에 따라 다른 값(이름·다국어·툴팁, 오류 형식)을 받아야 하므로 매개변수 재설계를 검토하기로 했다; 원장 관리자가 현재 패턴과 의견을 보고한다(reviews/round-241-owner-answers.md).
 - **242라운드(2026-10-13, 소유자).** 239라운드 대응표에 따른 이름 치환을 패키지 CLAUDE.md 여섯 파일과 docs·문서 사이트를 포함한 모든 영역에서 허용했다(이름 치환에 한함); 07b-2 ②-3의 grep 게이트에서 CLAUDE.md 제외를 해제한다(reviews/round-242-owner-answers.md).
 - **243라운드(2026-10-13, 소유자).** 대기열 31(색인 서명으로 최상위 옛 키가 컴파일됨)은 열린 형이라 무방하다고 닫았고, 대기열 32(reset 뒤 onValidate 값 잔류)는 상황 설명을 요구했다(reviews/round-243-owner-answers.md).
+- **244라운드(2026-10-13, 소유자).** 대기열 33(production-test의 implicit any 12건)은 any로 덮지 않고 고치고, 34(두 시험 파일의 최상위 FieldInput)는 presentation.FieldInput으로 옮기기로 승인했다. 둘 다 07b-2 병합 뒤 한 작업으로 fixy07이 맡는다(244C-01, reviews/round-244-owner-answers.md).

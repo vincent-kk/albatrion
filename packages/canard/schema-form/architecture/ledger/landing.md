@@ -3219,6 +3219,7 @@
   > 소유자(276라운드, 발주): "한번 정리 발주하고, 추가내용 설명하라" (`reviews/round-276-owner-answers.md:16`)
   > 소유자(277라운드, G23 주체): "스토리 도는건 너 말고 다른애 시켜. 넌 관리해야지" (`reviews/round-277-owner-answers.md:7`)
   > 소유자(277라운드, 대기열 39): "5번에 대해서도 답변 해줘. oneof 터미널" (`reviews/round-277-owner-answers.md:8`)
+  > 소유자(278라운드, 대기열 40·39): "40번은 뭐야? 그리고 oneOf 같은 브랜치 노드들은 그렇게 겹치는 속성들에 대해서 덮어쓰기가 좀 되지않나..? 그랬언거같은데" (`reviews/round-278-owner-answers.md:7`)
 - 상태: 현행
 - 출처: `reviews/round-80-closing.md:17`(정본)
 - 닫은 사람: 편집자 결정(80라운드, `reviews/round-80-closing.md` 80C-02)
