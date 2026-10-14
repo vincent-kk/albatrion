@@ -1,7 +1,8 @@
 import { JSONPointer as $ } from '@/schema-form/helpers/jsonPointer';
 
 import type { FieldNodeRecord } from '../../../../record';
-import type { FieldNodeWriteKind, SettlementContext } from '../../../type';
+import type { FieldNodeWriteKind } from '../../../../types/value';
+import type { SettlementContext } from '../../../type';
 
 /**
  * Resolve the last marked write covering a committed path.

@@ -1,9 +1,11 @@
 import type {
+  FormErrorLevel,
   FormWarningCode,
   JSONSchemaErrorCode,
 } from '@/schema-form/errors';
 
 import type { ChildControlKey } from '../types/controls';
+import type { NodeStrategy } from '../types/strategy';
 
 /** Authored schema data; extension values remain opaque until their owner reads them. */
 export type BlueprintSchema = Readonly<Record<string, unknown>> | boolean;
@@ -148,7 +150,7 @@ export interface BlueprintNode {
   /** Whether the static accepted set contains null. */
   readonly nullable: boolean;
   /** Fixed branch or terminal strategy. */
-  readonly strategy: 'branch' | 'terminal';
+  readonly strategy: NodeStrategy;
   /** All authored contributions in total order. */
   readonly declarations: readonly PropertyDeclaration[];
   /** Canonical named edges; host bindings stay separate from reusable templates. */
@@ -178,7 +180,7 @@ export interface BlueprintDiagnostic {
   /** Group-qualified error or warning code. */
   readonly code: JSONSchemaErrorCode | FormWarningCode;
   /** Whether the record prevents construction or advises a consumer. */
-  readonly level: 'error' | 'warning';
+  readonly level: FormErrorLevel;
   /** Authored offending location. */
   readonly schemaPath: string;
   /** Code-specific discriminating values. */
@@ -273,7 +275,7 @@ export interface BlueprintOptions {
 /** Effective-schema merge policies, independent of blueprint construction caching. */
 export interface EffectiveSchemaOptions {
   /** Static conjunction failures throw; runtime conflicts remain schema data. */
-  readonly mode?: 'static' | 'runtime';
+  readonly mode?: EffectiveSchemaMode;
   /** Renderer-supplied opaque-value predicate used by group object merging. */
   readonly isAtomic?: BlueprintOptions['isAtomic'];
   /** Optional collector for path-aware static errors. */
@@ -297,9 +299,12 @@ export interface EffectiveSchema {
 /** Separate memo contexts prevent runtime conflicts from bypassing static validation. */
 export interface EffectiveSchemaCacheEntry {
   /** Error behavior belonging to this memo context. */
-  readonly mode: 'static' | 'runtime';
+  readonly mode: EffectiveSchemaMode;
   /** Renderer atomicity predicate identity belonging to this context. */
   readonly isAtomic: BlueprintOptions['isAtomic'];
   /** Normalized active declaration sets mapped to immutable result records. */
   readonly schemas: Map<string, EffectiveSchema>;
 }
+
+/** Merge mode: `static` rejects empty intersections with a path; `runtime` marks them in the result. */
+export type EffectiveSchemaMode = 'static' | 'runtime';

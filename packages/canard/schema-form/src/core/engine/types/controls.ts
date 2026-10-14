@@ -45,6 +45,9 @@ export type ChildSchemaControls = {
   unsetOnInactive?: boolean | string;
 };
 
+/** Specificity layer of a control declaration: the node itself, a parent `controls.fields` entry, or a fragment. */
+export type DeclarationLayer = 'node' | 'fields' | 'fragment';
+
 /** Key of a `controls.fields` entry or fragment `controls`. */
 export type ChildControlKey = keyof ChildSchemaControls;
 

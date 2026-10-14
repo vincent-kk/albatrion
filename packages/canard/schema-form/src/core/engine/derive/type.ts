@@ -3,7 +3,8 @@ import type {
   BlueprintExpression,
   BlueprintNode,
 } from '../blueprint';
-import type { FieldNodeRecord } from '../record';
+import type { FieldNodeRecord, SettlementFailureCause } from '../record';
+import type { DeclarationLayer } from '../types/controls';
 
 /** Authored automatic rule kinds, including the later injection rule. */
 export type DeriveRuleKind =
@@ -21,7 +22,7 @@ export interface DeriveRule {
   /** Original expression position, unique within the analysis. */
   readonly schemaPath: string;
   /** Declaration layer that chooses the addressed value target. */
-  readonly layer: 'fragment' | 'fields' | 'node';
+  readonly layer: DeclarationLayer;
   /** Direct child name for a scoped rule; absent for a node's own control. */
   readonly targetName?: string;
   /** Direct child declarations contributed by this fragment. */
@@ -142,7 +143,7 @@ export interface DeriveRoundDecision<Self> {
     readonly sourcePath: string;
     readonly schemaPath: string;
     readonly cause: unknown;
-    readonly kind: 'expression' | 'injectTarget' | 'writeShape';
+    readonly kind: Exclude<SettlementFailureCause, 'budget' | 'sharedConflict'>;
     readonly targetPath?: string;
     readonly expectedLength?: number;
   }[];

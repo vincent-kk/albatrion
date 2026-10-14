@@ -3,6 +3,7 @@ import {
   isFunction,
   isPlainObject,
 } from '@winglet/common-utils/filter';
+import { hasOwnProperty } from '@winglet/common-utils/lib';
 import { isReactComponent } from '@winglet/react-utils/filter';
 
 import { FormWarningCode } from '@/schema-form/errors';
@@ -29,7 +30,9 @@ const testKeys = [
   'nullable',
   'format',
   'inputType',
-];
+] as const satisfies readonly (keyof FieldInputTestObject)[];
+/** Membership view of `testKeys` for checking arbitrary authored keys. */
+const testKeySet: ReadonlySet<string> = new Set(testKeys);
 
 /** Normalize definitions in priority order, warning once for invalid object-test keys. */
 export const normalizeFieldInputDefinitions = (
@@ -48,9 +51,7 @@ export const normalizeFieldInputDefinitions = (
     )
       continue;
     if (!isFunction(test)) {
-      const invalid = Object.keys(test).filter(
-        (key) => !testKeys.includes(key),
-      );
+      const invalid = Object.keys(test).filter((key) => !testKeySet.has(key));
       const types: readonly unknown[] = isArray(test.type)
         ? test.type
         : [test.type];
@@ -74,9 +75,7 @@ export const normalizeFieldInputDefinitions = (
 const fieldInputTestFnFactory = (
   test: FieldInputTestObject,
 ): FieldInputTestFn => {
-  const keys = Object.keys(test).filter((key) =>
-    testKeys.includes(key),
-  ) as (keyof FieldInputTestObject)[];
+  const keys = testKeys.filter((key) => hasOwnProperty(test, key));
   return (hint) =>
     keys.every((key) => {
       const reference: unknown = test[key],

@@ -60,7 +60,7 @@ export type FormErrorDetails<Code extends FormRecordCode> = ErrorDetails &
 /** Observed form failure or warning; dispatch owns delivery and aggregation. */
 export interface FormErrorRecord {
   /** Severity of this occurrence. */
-  level: 'error' | 'warning';
+  level: FormErrorLevel;
   /** Full group-qualified code. */
   code: FormRecordCode;
   /** Message formatted once for the observer. */
@@ -76,7 +76,7 @@ export interface FormErrorRecord {
   /** Actual SchemaFormError thrown for an aggregate of several failures. */
   aggregate?: SchemaFormError;
   /** External exposure path for an error occurrence. */
-  surface?: 'thrown' | 'rejected' | 'sink';
+  surface?: FormErrorSurface;
   /** React boundary stack, populated by the render layer. */
   componentStack?: string;
 }
@@ -95,3 +95,9 @@ export interface FormErrorReporter {
    */
   hasConsumer(): boolean;
 }
+
+/** Severity of a delivered record. */
+export type FormErrorLevel = 'error' | 'warning';
+
+/** How a delivered error reached the caller: thrown, rejected from a promise, or only reported. */
+export type FormErrorSurface = 'thrown' | 'rejected' | 'sink';

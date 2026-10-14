@@ -1,4 +1,5 @@
 import { FormErrorCode } from '../../../../../errors';
+import type { NodeStrategy } from '../../../types/strategy';
 import type { BlueprintNodeKind, PropertyDeclaration } from '../../type';
 import { readSchemaObject } from '../analyze/readSchemaObject';
 import type { AnalysisContext } from '../analyze/type';
@@ -15,7 +16,7 @@ export const resolveNodeStrategy = (
   context: AnalysisContext,
   kind: BlueprintNodeKind,
   declarations: readonly PropertyDeclaration[],
-): 'branch' | 'terminal' => {
+): NodeStrategy => {
   const count = declarations.filter(
     (declaration) => declaration.role === 'declaration',
   ).length;

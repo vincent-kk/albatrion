@@ -3,7 +3,7 @@ import { isArray } from '@winglet/common-utils/filter';
 import { find } from '../../../navigation';
 import type { FieldNodeRecord } from '../../../record';
 import { writeFieldNode } from '../../../settle';
-import type { FieldNodeWriteKind } from '../../../settle';
+import type { FieldNodeWriteKind } from '../../../types/value';
 import { WriteOption } from '../../../types/value';
 import { captureChainError } from './captureChainError';
 import { composeBatchValue } from './composeBatchValue';

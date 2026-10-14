@@ -1,3 +1,5 @@
+import type { FormErrorSurface } from '@/schema-form/errors';
+
 import {
   FormErrorCode,
   JSONSchemaError,
@@ -21,7 +23,7 @@ export const collectChainRecords = (
   pending: FormErrorRecord[],
   occurrences: NonNullable<FieldNodeRuntime<unknown>['chainOccurrences']>,
   aggregate: SchemaFormError | undefined,
-  surface: 'thrown' | 'sink',
+  surface: Exclude<FormErrorSurface, 'rejected'>,
   reported: ReadonlySet<string> | undefined,
 ): void => {
   const created = new Set<FormErrorRecord>();

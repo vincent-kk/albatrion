@@ -1,5 +1,9 @@
 import type { FieldNode } from '@/schema-form/core';
-import type { FormErrorRecord, FormErrorReporter } from '@/schema-form/errors';
+import type {
+  FormErrorRecord,
+  FormErrorReporter,
+  FormErrorSurface,
+} from '@/schema-form/errors';
 
 /** Mutable instance service retained outside the root boundary. */
 export interface FormErrorService extends FormErrorReporter {
@@ -17,7 +21,7 @@ export interface FormErrorService extends FormErrorReporter {
   capture(
     error: unknown,
     componentStack?: string,
-    surface?: 'sink' | 'rejected' | 'thrown',
+    surface?: FormErrorSurface,
     path?: string,
   ): void;
 }

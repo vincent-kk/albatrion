@@ -9,8 +9,9 @@ import type {
   BlueprintSchemaType,
   EffectiveSchema,
 } from '../../blueprint';
+import type { DeclarationLayer } from '../../types/controls';
 import type { ValidationMode } from '../../types/state';
-import type { WriteOption } from '../../types/value';
+import type { FieldNodeWriteKind, WriteOption } from '../../types/value';
 import type { PathKeyedMap } from '../../utils/pathIndex/PathKeyedMap';
 import type { PathKeyedSet } from '../../utils/pathIndex/PathKeyedSet';
 import type { FieldNodeFactory } from './behavior';
@@ -35,14 +36,9 @@ interface FieldNodeDiagnostics {
   /** Current settlement health. */
   status: 'stable' | 'degraded';
   /** Reason for a degraded commit. */
-  cause?:
-    | 'budget'
-    | 'expression'
-    | 'injectTarget'
-    | 'writeShape'
-    | 'sharedConflict';
+  cause?: SettlementFailureCause;
   /** Budget whose limit stopped settlement. */
-  exceededBudget?: 'hostWheel' | 'derive' | 'transition' | 'recursion';
+  exceededBudget?: SettlementBudget;
   /** Number of iterations at the exceeded limit. */
   iterations?: number;
   /** Commit at which degradation was first recorded. */
@@ -56,7 +52,7 @@ interface LatentRawMetadata {
   readonly order: readonly number[];
   /** Last-live explicit exit decisions retained after rule baselines are pruned. */
   readonly exitLayers?: readonly {
-    readonly layer: 'node' | 'fields' | 'fragment';
+    readonly layer: DeclarationLayer;
     readonly clear: boolean;
   }[];
 }
@@ -120,7 +116,7 @@ export interface TypeMismatchRecord {
     | 'other';
   readonly reason: 'unconvertible' | 'ambiguous';
   readonly candidates?: readonly string[];
-  readonly source: string;
+  readonly source: TypeMismatchSource;
 }
 
 /** One host write's input and replacement mode for child distribution. */
@@ -356,7 +352,10 @@ export interface FieldNodeRuntime<Self> extends FieldNodeRootRuntimeState {
   /** Last development settlement, replaced rather than accumulated. */
   settlementTrace?: {
     /** Entry API and public write option bits. */
-    readonly entry: { readonly api: string; readonly option: number };
+    readonly entry: {
+      readonly api: SettlementEntryApi;
+      readonly option: number;
+    };
     /** Rule decisions grouped by evaluation round. */
     readonly rounds: readonly (readonly {
       readonly phase: string;
@@ -408,3 +407,24 @@ export interface FieldNodeRuntime<Self> extends FieldNodeRootRuntimeState {
   /** Lazily retained work containers for non-reentrant settlement calls. */
   settlementScratch?: SettlementScratch<Self>;
 }
+
+/** First failure that degraded a settlement, independent of a later budget exhaustion. */
+export type SettlementFailureCause =
+  | 'budget'
+  | 'expression'
+  | 'injectTarget'
+  | 'writeShape'
+  | 'sharedConflict';
+
+/** Budget whose limit stopped a settlement. */
+export type SettlementBudget =
+  | 'hostWheel'
+  | 'derive'
+  | 'transition'
+  | 'recursion';
+
+/** Entry that started a settlement: a write kind, or a binding entry without one. */
+export type SettlementEntryApi = FieldNodeWriteKind | 'setContext';
+
+/** Write that produced a type mismatch: a write kind, an automatic fill, or a gate change that re-read the raw. */
+export type TypeMismatchSource = FieldNodeWriteKind | 'fill' | 'gate';

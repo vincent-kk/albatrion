@@ -8,10 +8,13 @@ import type {
   StringSchema,
 } from '@/schema-form/types';
 
-import { isRenderableDateInputValue } from '../utils/isRenderableDateInputValue';
+import {
+  type DateInputType,
+  isRenderableDateInputValue,
+} from '../utils/isRenderableDateInputValue';
 
 type DateFormatJSONSchema = {
-  format: 'month' | 'week' | 'date' | 'datetime-local' | 'time';
+  format: DateInputType;
 } & StringSchema;
 
 type FieldInputDateFormatProps = FieldInputPropsWithSchema<

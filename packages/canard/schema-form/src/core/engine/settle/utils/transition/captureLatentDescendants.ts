@@ -3,6 +3,7 @@ import { isArray } from '@winglet/common-utils/filter';
 import { JSONPointer as $ } from '@/schema-form/helpers/jsonPointer';
 
 import type { FieldNodeRecord } from '../../../record';
+import type { DeclarationLayer } from '../../../types/controls';
 import type { SettlementContext } from '../../type';
 import { getControlLayers } from '../controls/getControlLayers';
 import { readExitLayerPolicy } from '../controls/readExitLayerPolicy';
@@ -21,7 +22,7 @@ interface LatentEntry {
   readonly order: readonly number[];
   /** Explicit decisions saved when the occurrence left the shape. */
   readonly exitLayers?: readonly {
-    layer: 'node' | 'fields' | 'fragment';
+    layer: DeclarationLayer;
     clear: boolean;
   }[];
 }

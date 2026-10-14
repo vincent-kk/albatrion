@@ -3,6 +3,7 @@ import { isArray } from '@winglet/common-utils/filter';
 import type { BlueprintNode } from '../../../blueprint';
 import { CONTROL_KEY } from '../../../constants/controlKey';
 import { SCHEMA_GROUP } from '../../../constants/schemaGroup';
+import type { DeclarationLayer } from '../../../types/controls';
 import { getCommittedDeclarationKey } from '../../../utils/controls/getCommittedDeclarationKey';
 
 /** Unselected static fallbacks share IDs for the immutable declaration owner. */
@@ -40,7 +41,7 @@ export interface ControlTarget<Self> {
 /** One selected declaration and the host that owns its expression paths. */
 export interface ControlLayer<Self> {
   /** Relative specificity of this declaration for its target. */
-  readonly layer: 'node' | 'fields' | 'fragment';
+  readonly layer: DeclarationLayer;
   /** Authored owner used to identify a compiled expression. */
   readonly declarationId: number;
   /** Original control group address retained for expression matching. */

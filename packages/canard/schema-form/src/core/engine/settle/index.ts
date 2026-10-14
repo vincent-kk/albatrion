@@ -13,5 +13,4 @@ export { readFieldNodeTypeMismatch } from './utils/detached/readFieldNodeTypeMis
 export { readFieldNodeTypeMismatches } from './utils/detached/readFieldNodeTypeMismatches';
 export { readFieldNodeWatchValues } from './utils/controls/readFieldNodeWatchValues';
 export { changeFieldNodeContext } from './utils/context/changeFieldNodeContext';
-export type { FieldNodeWriteKind } from './type';
 export { interpretFieldNodeInput } from './utils/write/interpretFieldNodeInput';

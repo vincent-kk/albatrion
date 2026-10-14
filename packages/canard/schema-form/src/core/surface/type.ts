@@ -1,4 +1,4 @@
-import type { BlueprintSchema, SchemaTypeName } from '../engine';
+import type { BlueprintSchema, NodeStrategy, SchemaTypeName } from '../engine';
 import type { FieldNodeListener } from '../engine';
 import type { FieldNodeRuntime } from '../engine';
 import type { FieldNodeEventType, FieldNodeRequestType } from '../engine';
@@ -46,7 +46,7 @@ export type ValueForKind<Kind extends UnionMemberType> = Kind extends 'string'
 /** Shared PR-2 surface; record storage remains behind the runtime class. */
 export interface NodeSurface<
   Kind extends string,
-  Strategy extends 'branch' | 'terminal',
+  Strategy extends NodeStrategy,
   SchemaType,
   Value,
   Children,

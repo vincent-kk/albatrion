@@ -7,7 +7,9 @@ export { FormWarningCode } from './codes/FormWarningCode';
 export { isFormErrorCode } from './codes/isFormErrorCode';
 export { isFormWarningCode } from './codes/isFormWarningCode';
 export type {
+  FormErrorLevel,
   FormErrorRecord,
+  FormErrorSurface,
   FormErrorReporter,
   FormRecordCode,
   JSONSchemaErrorCode,
