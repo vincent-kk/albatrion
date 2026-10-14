@@ -29,9 +29,10 @@
 8. [조건부 스키마](#조건부-스키마)
 9. [JSONPointer 시스템](#jsonpointer-시스템)
 10. [검증 시스템](#검증-시스템)
-11. [플러그인 시스템](#플러그인-시스템)
-12. [고급 기능](#고급-기능)
-13. [타입 정의](#타입-정의)
+11. [오류 처리](#오류-처리)
+12. [플러그인 시스템](#플러그인-시스템)
+13. [고급 기능](#고급-기능)
+14. [타입 정의](#타입-정의)
 
 ---
 
@@ -849,6 +850,157 @@ presentation: {
 // Form에서 context.locale 설정
 <Form jsonSchema={schema} context={{ locale: 'ko_KR' }} />
 ```
+
+---
+
+## 오류 처리
+
+`@canard/schema-form`의 오류는 세 곳으로 전달됩니다.
+
+| 받는 곳 | 전달되는 것 |
+| --- | --- |
+| `<Form>`의 `onError` prop | 그 폼 인스턴스의 모든 오류 **와** 경고 기록: `level`(`'error'` 또는 `'warning'`), `code`, `message`, 그리고 알 수 있으면 `path`, `schemaPath`, `details`, `error` 자체 |
+| `submit()`(`FormHandle.submit`, `useFormSubmit`) | 검증이 실패하면 `ValidationError`(`FormErrorCode.SchemaValidationFailed`)로, 폼 진단이 degraded이면 `SchemaFormError`(`FormErrorCode.SubmitWhileDegraded`)로 거부 |
+| `registerPlugin` | `UnhandledError`(`FormErrorCode.RegisterPlugin`)를 던짐 |
+
+오류 클래스는 넷이며 각자 가드가 있습니다: `isJSONSchemaError`(스키마로 폼을 만들 수 없음), `isSchemaFormError`(폼 인스턴스의 실행 중 실패), `isValidationError`(검증이 제출을 거부), `isUnhandledError`(폼 인스턴스 밖의 실패). 네 클래스는 서로 형제이고 가드는 `instanceof`로 판정하므로 맞는 가드는 많아야 하나이며, 사용자 코드나 플러그인이 던진 오류에는 아무것도 맞지 않습니다. 모든 오류는 `code`(`'<GROUP>.<CODE>'`, 예: `'SCHEMA_FORM_ERROR.RENDER_FAILED'`), `group`, `specific`, `details`를 가집니다.
+
+**`code`는 문자열 리터럴이 아니라 `FormErrorCode`·`FormWarningCode` 상수와 비교하십시오.** 이 값들은 상수로만 조달됩니다. 패키지 안에서 코드 이름이 바뀌면 상수를 쓴 처리기는 함께 바뀌거나 컴파일 오류로 알려 주지만, 리터럴은 계속 컴파일되면서 조용히 더는 맞지 않게 됩니다. 둘 다 같은 이름의 union 형을 가진 object enum이므로, `FormErrorCode`는 아무 오류 코드나 담는 변수의 형으로도 쓸 수 있습니다.
+
+```tsx
+import { useRef } from 'react';
+import {
+  Form,
+  FormErrorCode,
+  FormWarningCode,
+  isValidationError,
+  useFormSubmit,
+  type FormHandle,
+} from '@canard/schema-form';
+
+const jsonSchema = {
+  type: 'object',
+  properties: { name: { type: 'string' } },
+} as const;
+
+declare function reportToMonitoring(error: unknown): void;
+
+function ProfileForm() {
+  const formRef = useRef<FormHandle<typeof jsonSchema>>(null);
+  const { submit, pending } = useFormSubmit(formRef);
+
+  const handleSubmit = async () => {
+    try {
+      await submit();
+    } catch (error) {
+      if (isValidationError(error) && error.code === FormErrorCode.SchemaValidationFailed)
+        return; // field errors are already on the form; formRef.current?.getErrors() lists them
+      throw error;
+    }
+  };
+
+  return (
+    <>
+      <Form
+        ref={formRef}
+        jsonSchema={jsonSchema}
+        onError={(record) => {
+          if (record.code === FormErrorCode.RenderFailed) reportToMonitoring(record.error);
+          else if (record.code === FormWarningCode.TypeMismatch) console.info(record.path, record.message);
+        }}
+      />
+      <button onClick={handleSubmit} disabled={pending}>Submit</button>
+    </>
+  );
+}
+```
+
+### 코드 일람
+
+값은 발생하는 `error.code` / `record.code` 문자열 그대로입니다.
+
+#### 스키마 오류 — 스키마로 폼을 만들 수 없음 (`isJSONSchemaError`)
+
+| 상수 | `error.code` 값 | 발생 조건 | 비고 |
+| --- | --- | --- | --- |
+| `FormErrorCode.UnknownJsonSchema` | `'JSON_SCHEMA_ERROR.UNKNOWN_JSON_SCHEMA'` | 스키마 분석이 지원하는 형태를 정하지 못함 |  |
+| `FormErrorCode.UnexpectedArraySchema` | `'JSON_SCHEMA_ERROR.UNEXPECTED_ARRAY_SCHEMA'` | 스키마 분석이 잘못된 배열 선언을 찾음 |  |
+| `FormErrorCode.AllOfTypeRedefinition` | `'JSON_SCHEMA_ERROR.ALL_OF_TYPE_REDEFINITION'` | 정적 allOf의 type 교집합이 빔 |  |
+| `FormErrorCode.ConflictingConstValues` | `'JSON_SCHEMA_ERROR.CONFLICTING_CONST_VALUES'` | 정적 allOf의 const가 충돌 |  |
+| `FormErrorCode.InvalidRange` | `'JSON_SCHEMA_ERROR.INVALID_RANGE'` | 정적 allOf의 범위 교집합이 빔 |  |
+| `FormErrorCode.EmptyEnumIntersection` | `'JSON_SCHEMA_ERROR.EMPTY_ENUM_INTERSECTION'` | enum·const 교집합이 빔 |  |
+| `FormErrorCode.VirtualFieldsNotValid` | `'JSON_SCHEMA_ERROR.VIRTUAL_FIELDS_NOT_VALID'` | virtual 필드 참조가 잘못됨 |  |
+| `FormErrorCode.VirtualFieldsNotInProperties` | `'JSON_SCHEMA_ERROR.VIRTUAL_FIELDS_NOT_IN_PROPERTIES'` | virtual 필드가 선언된 properties에 없음 |  |
+| `FormErrorCode.CreateDynamicFunction` | `'JSON_SCHEMA_ERROR.CREATE_DYNAMIC_FUNCTION'` | controls 식을 컴파일할 수 없음 |  |
+| `FormErrorCode.ObservedValues` | `'JSON_SCHEMA_ERROR.OBSERVED_VALUES'` | 관찰 값 식 분석이 실패 |  |
+| `FormErrorCode.UnknownGroupKey` | `'JSON_SCHEMA_ERROR.UNKNOWN_GROUP_KEY'` | controls·options·자식 controls 키가 닫힌 목록 밖 |  |
+| `FormErrorCode.DiscriminatorMismatch` | `'JSON_SCHEMA_ERROR.DISCRIMINATOR_MISMATCH'` | 판별자 키나 분기 값이 어긋남 |  |
+| `FormErrorCode.SharedNodeKindConflict` | `'JSON_SCHEMA_ERROR.SHARED_NODE_KIND_CONFLICT'` | 정적 선언과 게이트 없는 분기의 노드 종류가 충돌 |  |
+| `FormErrorCode.TerminalStrategyMismatch` | `'JSON_SCHEMA_ERROR.TERMINAL_STRATEGY_MISMATCH'` | 선언들이 노드의 terminal 전략에서 어긋남 |  |
+| `FormErrorCode.RecursiveShapeUnbounded` | `'JSON_SCHEMA_ERROR.RECURSIVE_SHAPE_UNBOUNDED'` | 스키마 분석이 끝없는 재귀 형상을 찾음 |  |
+| `FormErrorCode.VirtualFieldsMismatch` | `'JSON_SCHEMA_ERROR.VIRTUAL_FIELDS_MISMATCH'` | 선언들이 virtual 필드에서 어긋남 |  |
+| `FormErrorCode.ChildrenTargetNotFound` | `'JSON_SCHEMA_ERROR.CHILDREN_TARGET_NOT_FOUND'` | 선언한 자식 이름이 스키마에 없음 |  |
+| `FormErrorCode.TerminalOptionUnsupported` | `'JSON_SCHEMA_ERROR.TERMINAL_OPTION_UNSUPPORTED'` | 전략이 고정된 종류가 다른 terminal 옵션을 선언 |  |
+| `FormErrorCode.InvalidControlShape` | `'JSON_SCHEMA_ERROR.INVALID_CONTROL_SHAPE'` | 알려진 controls·options·자식 controls 키의 모양이 잘못됨 |  |
+
+#### 폼 오류 — 폼 인스턴스의 실행 중 실패 (`isSchemaFormError`)
+
+| 상수 | `error.code` 값 | 발생 조건 | 비고 |
+| --- | --- | --- | --- |
+| `FormErrorCode.SharedNodeConflict` | `'SCHEMA_FORM_ERROR.SHARED_NODE_CONFLICT'` | 활성 선언들이 한 노드 종류를 공유할 수 없음 |  |
+| `FormErrorCode.BudgetExceeded` | `'SCHEMA_FORM_ERROR.BUDGET_EXCEEDED'` | 정착이 호스트·파생·전이 예산을 넘음 |  |
+| `FormErrorCode.ExpressionThrew` | `'SCHEMA_FORM_ERROR.EXPRESSION_THREW'` | 활성 controls 식이 정착 중 예외를 던짐 |  |
+| `FormErrorCode.GuardFailed` | `'SCHEMA_FORM_ERROR.GUARD_FAILED'` | 가드 컴파일이나 동기 평가가 실패 |  |
+| `FormErrorCode.InjectTargetMissing` | `'SCHEMA_FORM_ERROR.INJECT_TARGET_MISSING'` | 동적 주입의 대상이 없음 |  |
+| `FormErrorCode.FeedbackLimitExceeded` | `'SCHEMA_FORM_ERROR.FEEDBACK_LIMIT_EXCEEDED'` | 리스너 되먹임이나 onChange 중첩이 예산을 넘음 |  |
+| `FormErrorCode.ListenerThrew` | `'SCHEMA_FORM_ERROR.LISTENER_THREW'` | 구독자나 폼 콜백이 예외를 던짐 |  |
+| `FormErrorCode.MultipleErrors` | `'SCHEMA_FORM_ERROR.MULTIPLE_ERRORS'` | 한 디스패치 체인이나 관찰자가 오류를 여럿 냄 |  |
+| `FormErrorCode.FormTypeInputMap` | `'SCHEMA_FORM_ERROR.FORM_TYPE_INPUT_MAP'` | 렌더 입력 맵 정규화가 실패 |  |
+| `FormErrorCode.InvalidWriteOption` | `'SCHEMA_FORM_ERROR.INVALID_WRITE_OPTION'` | 공개 쓰기가 함께 쓸 수 없는 옵션을 조합 |  |
+| `FormErrorCode.DisposedNodeWrite` | `'SCHEMA_FORM_ERROR.DISPOSED_NODE_WRITE'` | 폐기된 노드 참조로 씀 |  |
+| `FormErrorCode.WriteInObserver` | `'SCHEMA_FORM_ERROR.WRITE_IN_OBSERVER'` | onError가 자기 폼에 쓰려 함 |  |
+| `FormErrorCode.SubmitWhileDegraded` | `'SCHEMA_FORM_ERROR.SUBMIT_WHILE_DEGRADED'` | 진단이 degraded인데 제출을 시도 |  |
+| `FormErrorCode.ValidatorCompileFailed` | `'SCHEMA_FORM_ERROR.VALIDATOR_COMPILE_FAILED'` | 첫 검증 요청에서 전체 스키마 컴파일이 실패 |  |
+| `FormErrorCode.ValidatorThrew` | `'SCHEMA_FORM_ERROR.VALIDATOR_THREW'` | 컴파일된 검증기가 검증 중 예외를 던짐 |  |
+| `FormErrorCode.RenderFailed` | `'SCHEMA_FORM_ERROR.RENDER_FAILED'` | 주입한 렌더러나 루트 렌더가 예외를 던짐 |  |
+| `FormErrorCode.InvalidVirtualNodeValues` | `'SCHEMA_FORM_ERROR.INVALID_VIRTUAL_NODE_VALUES'` | virtual 노드가 모양이 다른 값을 받음 |  |
+| `FormErrorCode.ArrayMethodOnNonArray` | `'SCHEMA_FORM_ERROR.ARRAY_METHOD_ON_NON_ARRAY'` | 배열 전용 명령을 다른 종류의 노드에 호출 |  |
+| `FormErrorCode.RecursiveShapeDiverged` | `'SCHEMA_FORM_ERROR.RECURSIVE_SHAPE_DIVERGED'` | 재귀 형상 전개가 정착 예산을 넘음 |  |
+
+#### 검증 오류 — 검증이 제출을 거부 (`isValidationError`)
+
+| 상수 | `error.code` 값 | 발생 조건 | 비고 |
+| --- | --- | --- | --- |
+| `FormErrorCode.SchemaValidationFailed` | `'VALIDATION_ERROR.SCHEMA_VALIDATION_FAILED'` | 제출 때 스키마 검증이 실패 | `submit()`이 냄 |
+
+#### 처리되지 않은 오류 — 폼 인스턴스 밖의 실패 (`isUnhandledError`)
+
+| 상수 | `error.code` 값 | 발생 조건 | 비고 |
+| --- | --- | --- | --- |
+| `FormErrorCode.RegisterPlugin` | `'UNHANDLED_ERROR.REGISTER_PLUGIN'` | 폼 인스턴스 밖의 전역 플러그인 등록이 실패 |  |
+| `FormErrorCode.ValidatorBindRefused` | `'UNHANDLED_ERROR.VALIDATOR_BIND_REFUSED'` | 플러그인이 폼 밖에서 묶인 검증기 인스턴스를 거부 | AJV 플러그인이 이 `group`·`code`를 단 자체 오류로 던짐; `isUnhandledError`는 알아보지 못하므로 `error.code`로 비교 |
+
+#### 경고 — 보고만 하고 던지지 않음
+
+| 상수 | `error.code` 값 | 발생 조건 | 비고 |
+| --- | --- | --- | --- |
+| `FormWarningCode.AllOfKeywordIgnoredForForm` | `'SCHEMA_FORM_WARNING.ALL_OF_KEYWORD_IGNORED_FOR_FORM'` | 렌더링에서 allOf 키워드를 무시함 |  |
+| `FormWarningCode.NullBranchIgnoredForForm` | `'SCHEMA_FORM_WARNING.NULL_BRANCH_IGNORED_FOR_FORM'` | 렌더링에서 null 분기의 조건·properties를 무시함 |  |
+| `FormWarningCode.VirtualizationDisabledForForm` | `'SCHEMA_FORM_WARNING.VIRTUALIZATION_DISABLED_FOR_FORM'` | IntersectionObserver가 없어 가상화를 끔 |  |
+| `FormWarningCode.IfWithoutElseFalse` | `'SCHEMA_FORM_WARNING.IF_WITHOUT_ELSE_FALSE'` | 조건 분기에 else: false 없는 if가 있음 |  |
+| `FormWarningCode.LockOnNonTerminalObject` | `'SCHEMA_FORM_WARNING.LOCK_ON_NON_TERMINAL_OBJECT'` | terminal이 아닌 객체가 잠금을 선언 |  |
+| `FormWarningCode.ConditionalSchemaWithoutValidator` | `'SCHEMA_FORM_WARNING.CONDITIONAL_SCHEMA_WITHOUT_VALIDATOR'` | 검증기 없이 if 게이트가 있음 |  |
+| `FormWarningCode.ValidatorMissing` | `'SCHEMA_FORM_WARNING.VALIDATOR_MISSING'` | 검증을 요청했으나 검증기가 선택되지 않음 |  |
+| `FormWarningCode.MultipleGatedBranchesActive` | `'SCHEMA_FORM_WARNING.MULTIPLE_GATED_BRANCHES_ACTIVE'` | 게이트가 걸린 oneOf 분기가 여럿 활성 |  |
+| `FormWarningCode.ResetRebuiltByReference` | `'SCHEMA_FORM_WARNING.RESET_REBUILT_BY_REFERENCE'` | 스키마 참조가 바뀌어 reset이 트리를 새로 만듦 |  |
+| `FormWarningCode.DependentSchemasIgnoredForForm` | `'SCHEMA_FORM_WARNING.DEPENDENT_SCHEMAS_IGNORED_FOR_FORM'` | 폼 형상에서 dependentSchemas를 지원하지 않음 |  |
+| `FormWarningCode.ChildNodeComponentsOnTerminal` | `'SCHEMA_FORM_WARNING.CHILD_NODE_COMPONENTS_ON_TERMINAL'` | terminal 입력이 빈 자식 노드 컴포넌트를 읽음 |  |
+| `FormWarningCode.TerminalSubtreeKeyIgnoredForForm` | `'SCHEMA_FORM_WARNING.TERMINAL_SUBTREE_KEY_IGNORED_FOR_FORM'` | terminal 하위 트리가 폼이 무시하는 예약 키를 선언 |  |
+| `FormWarningCode.DiscriminatorBranchUnreachable` | `'SCHEMA_FORM_WARNING.DISCRIMINATOR_BRANCH_UNREACHABLE'` | 판별자 태그 값이 허용 목록 밖 |  |
+| `FormWarningCode.NonJsonWholeValue` | `'SCHEMA_FORM_WARNING.NON_JSON_WHOLE_VALUE'` | 개발 모드에서 통째 값이 JSON과 호환되지 않음 |  |
+| `FormWarningCode.FormTypeTestInvalid` | `'SCHEMA_FORM_WARNING.FORM_TYPE_TEST_INVALID'` | 입력 정의의 test 객체에 모르는 키가 있음 |  |
+| `FormWarningCode.TypeMismatch` | `'SCHEMA_FORM_WARNING.TYPE_MISMATCH'` | 값을 활성 type으로 모호함 없이 바꿀 수 없음 |  |
+| `FormWarningCode.DialectMismatch` | `'SCHEMA_FORM_WARNING.DIALECT_MISMATCH'` | 스키마 dialect가 선택된 검증기의 dialect와 다름 |  |
 
 ---
 

@@ -885,6 +885,62 @@ export const CustomizedForm = () => {
 
 ---
 
+## 오류 처리
+
+오류 클래스는 네 가드 `isJSONSchemaError`, `isSchemaFormError`, `isValidationError`, `isUnhandledError`로 가르고, `error.code`(`onError`에서는 `record.code`)는 문자열 리터럴 대신 `FormErrorCode`·`FormWarningCode` 상수와 비교하십시오. 값은 `'SCHEMA_FORM_ERROR.RENDER_FAILED'` 같은 그룹 한정 문자열입니다. 상수는 패키지 안의 이름 변경을 따라가지만, 리터럴은 조용히 더는 맞지 않게 됩니다.
+
+```tsx
+import { useRef } from 'react';
+import {
+  Form,
+  FormErrorCode,
+  FormWarningCode,
+  isValidationError,
+  useFormSubmit,
+  type FormHandle,
+} from '@canard/schema-form';
+
+const jsonSchema = {
+  type: 'object',
+  properties: { name: { type: 'string' } },
+} as const;
+
+declare function reportToMonitoring(error: unknown): void;
+
+function ProfileForm() {
+  const formRef = useRef<FormHandle<typeof jsonSchema>>(null);
+  const { submit, pending } = useFormSubmit(formRef);
+
+  const handleSubmit = async () => {
+    try {
+      await submit();
+    } catch (error) {
+      if (isValidationError(error) && error.code === FormErrorCode.SchemaValidationFailed)
+        return; // field errors are already on the form; formRef.current?.getErrors() lists them
+      throw error;
+    }
+  };
+
+  return (
+    <>
+      <Form
+        ref={formRef}
+        jsonSchema={jsonSchema}
+        onError={(record) => {
+          if (record.code === FormErrorCode.RenderFailed) reportToMonitoring(record.error);
+          else if (record.code === FormWarningCode.TypeMismatch) console.info(record.path, record.message);
+        }}
+      />
+      <button onClick={handleSubmit} disabled={pending}>Submit</button>
+    </>
+  );
+}
+```
+
+`onError`는 그 폼 인스턴스의 모든 오류와 경고 기록을 받고, `submit()`은 검증이 실패하면 `ValidationError`(`FormErrorCode.SchemaValidationFailed`)로 거부합니다. 전체 코드 일람은 [SPECIFICATION — 오류 처리](./docs/ko/SPECIFICATION.md#오류-처리)에 있습니다.
+
+---
+
 ## Plugin System
 
 `@canard/schema-form`은 개발자가 라이브러리를 확장하고 사용자 정의 기능을 추가할 수 있는 플러그인 시스템을 제공합니다.
