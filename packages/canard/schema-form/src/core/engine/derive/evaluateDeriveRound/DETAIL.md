@@ -3,7 +3,7 @@
 ## Requirements
 
 - 한 파생 라운드에서 `unsetValue`, `derived`, `injectTo` 규칙의 에지를 판정하고, 대상마다 승자 하나만 남긴 쓰기 후보와 소비할 에지, 개발 모드 기록 항목을 `DeriveRoundDecision`으로 돌려준다. 원본은 바꾸지 않는다(SETTLE-004·028·048·049, ERROR-159).
-- 의존은 부모 derive의 `utils/rules/`·`utils/evaluate/`·`types/`와, `blueprint`·`record` 진입점, engine organ의 `sameValue`·경로 해석으로만 향한다. 상호작용 초기화 판정은 가져오지 않는다(NODE-016).
+- 의존은 부모 derive의 `utils/rules/`·`utils/evaluate/`·`types/`와, `blueprint`·`record` 진입점, engine organ의 `sameValue`·경로 해석, `@/schema-form/helpers/jsonPointer`로만 향한다. 상호작용 초기화 판정은 가져오지 않는다(NODE-016).
 
 ## API Contracts
 
@@ -35,6 +35,14 @@
 ### derive-rank — 대상별 승자
 
 - 한 대상의 승자는 종류, 문서 순서, 선언 층, 조각 순서로 이루어진 표에 따라 정해지며, 정착 안에서 순위가 더 낮은 후속 후보는 적용되지 않는다(SETTLE-004·005, CONTROLS-073·079).
+
+### derive-inject-to — injectTo 판정
+
+- `injectTo`의 ctx는 이번 라운드 트리의 이름 있는 칸 여덟 개를 건네고, `undefined` 항목은 건너뛰며, 대상이 없으면 에지를 소비하고 커밋 뒤 정착을 `degraded`로 둔다. 잠재 대상은 활성 전에 주입을 받고, 비활성 원천은 함수를 부르지 않으며, 초기화 범위는 원천을 따른다. null 조상은 사용자가 촉발한 주입 뒤에도 null로 남고, 모양이 틀린 자동 가상 쓰기는 정착을 `degraded`로 둔다(SETTLE-049, CONTROLS-053·054·079, VALUE-032, ERROR-195).
+
+### derive-array-items — 배열 아이템별 판정
+
+- 배열 아이템의 규칙은 아이템마다 자기 형제와 새 경로에서 판정한다. 참으로 바뀐 아이템의 `unsetValue`만 그 아이템을 지우고, `fields`의 `derived` 대상과 `injectTo` 대상은 아이템 자리를 거쳐 푼다(35C-08, SETTLE-017, WRITE-028, CONTROLS-073·079).
 
 ## Last Updated
 

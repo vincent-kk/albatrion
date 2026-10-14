@@ -4,7 +4,7 @@ import { isTestFieldNode } from '@/schema-form/core/__tests__/fixtures/testField
 import { makeFieldNodeTree } from '@/schema-form/core/__tests__/makeFieldNodeTree';
 import type { ArrayNode } from '@/schema-form/core/surface';
 
-// filid:contract derive-rank
+// filid:contract derive-array-items
 describe('array item derivation', () => {
   it('35C-08 SETTLE-017 derives each item from its own sibling and new path', () => {
     const { root } = makeFieldNodeTree({

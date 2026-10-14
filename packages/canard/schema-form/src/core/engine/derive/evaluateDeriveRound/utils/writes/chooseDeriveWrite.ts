@@ -1,6 +1,6 @@
 import type { FieldNodeRecord } from '../../../../record';
-import type { DeriveWrite } from '../../../types/decisions';
-import type { DeriveState, DeriveTraceEntry } from '../../../types/state';
+import type { DeriveTraceEntry, DeriveWrite } from '../../../types/decisions';
+import type { DeriveState } from '../../../types/state';
 import { compareDeriveWrites } from '../rank/compareDeriveWrites';
 
 /**

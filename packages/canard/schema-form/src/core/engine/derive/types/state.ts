@@ -1,28 +1,4 @@
 import type { FieldNodeRecord } from '../../record';
-import type { DeriveRuleKind } from './rules';
-
-/** One development-only account of a rule decision. */
-export interface DeriveTraceEntry {
-  /** Settlement phase that made the decision. */
-  readonly phase: 'derive' | 'commit';
-  /** Kind of authored control. */
-  readonly kind: DeriveRuleKind;
-  /** Live source occurrence. */
-  readonly sourcePath: string;
-  /** Live value target. */
-  readonly targetPath: string;
-  /** Value before the decision. */
-  readonly previousValue: unknown;
-  /** Candidate value after evaluation. */
-  readonly nextValue: unknown;
-  /** Why the candidate did or did not write. */
-  readonly result:
-    | 'applied'
-    | 'lost'
-    | 'undefined'
-    | 'suppressed'
-    | 'withdrawn';
-}
 
 /** Tree and edge baselines supplied by settle without a reverse dependency. */
 export interface DeriveState<Self extends FieldNodeRecord<Self>> {

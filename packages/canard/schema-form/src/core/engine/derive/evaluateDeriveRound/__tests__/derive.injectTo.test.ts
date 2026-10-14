@@ -6,7 +6,7 @@ import { resetFieldNodeSubtree } from '@/schema-form/core/engine/settle';
 import { writeFieldNode } from '@/schema-form/core/engine/settle';
 import { WriteOption } from '@/schema-form/core/engine/types/value';
 
-// filid:contract derive-rank
+// filid:contract derive-rank derive-inject-to
 describe('injectTo and same-target settlement', () => {
   it('SETTLE-004 kind rank prefers unsetValue, then derived, then injectTo', () => {
     const injectTo = vi.fn(() => ({ '../target': 'injected' }));

@@ -1,6 +1,9 @@
 import type { FieldNodeRecord } from '../../../record';
-import type { DeriveResetInteractionDecision } from '../../types/decisions';
-import type { DeriveState, DeriveTraceEntry } from '../../types/state';
+import type {
+  DeriveResetInteractionDecision,
+  DeriveTraceEntry,
+} from '../../types/decisions';
+import type { DeriveState } from '../../types/state';
 import { getDeriveRuleKey } from '../rules/getDeriveRuleKey';
 import { getDeriveRuleTable } from '../rules/getDeriveRuleTable';
 import { addActiveRuleKey } from './addActiveRuleKey';

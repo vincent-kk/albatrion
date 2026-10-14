@@ -1,6 +1,29 @@
 import type { BlueprintChildEntry, BlueprintNode } from '../../blueprint';
 import type { SettlementFailureCause } from '../../record';
-import type { DeriveTraceEntry } from './state';
+import type { DeriveRuleKind } from './rules';
+
+/** One development-only account of a rule decision. */
+export interface DeriveTraceEntry {
+  /** Settlement phase that made the decision. */
+  readonly phase: 'derive' | 'commit';
+  /** Kind of authored control. */
+  readonly kind: DeriveRuleKind;
+  /** Live source occurrence. */
+  readonly sourcePath: string;
+  /** Live value target. */
+  readonly targetPath: string;
+  /** Value before the decision. */
+  readonly previousValue: unknown;
+  /** Candidate value after evaluation. */
+  readonly nextValue: unknown;
+  /** Why the candidate did or did not write. */
+  readonly result:
+    | 'applied'
+    | 'lost'
+    | 'undefined'
+    | 'suppressed'
+    | 'withdrawn';
+}
 
 /** Candidate for one automatic write after an edge has been consumed. */
 export interface DeriveWrite<Self> {

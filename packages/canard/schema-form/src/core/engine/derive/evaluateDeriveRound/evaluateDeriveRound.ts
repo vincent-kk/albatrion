@@ -1,7 +1,11 @@
 import type { FieldNodeRecord } from '../../record';
 import { sameValue } from '../../utils/compute/sameValue';
-import type { DeriveRoundDecision, DeriveWrite } from '../types/decisions';
-import type { DeriveState, DeriveTraceEntry } from '../types/state';
+import type {
+  DeriveRoundDecision,
+  DeriveTraceEntry,
+  DeriveWrite,
+} from '../types/decisions';
+import type { DeriveState } from '../types/state';
 import { addActiveRuleKey } from '../utils/evaluate/addActiveRuleKey';
 import { evaluateScopedExpression } from '../utils/evaluate/evaluateScopedExpression';
 import type { ScopedExpressionResult } from '../utils/evaluate/evaluateScopedExpression';
