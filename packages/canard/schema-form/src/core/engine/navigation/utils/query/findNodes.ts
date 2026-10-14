@@ -1,6 +1,10 @@
 import { hasOwnProperty } from '@winglet/common-utils/lib';
 
-import { JSONPointer as $ } from '@/schema-form/helpers/jsonPointer';
+import {
+  JSONPointer as $,
+  ESCAPED_SLASH_REGEX,
+  ESCAPED_TILDE_REGEX,
+} from '@/schema-form/helpers/jsonPointer';
 
 import type { FieldNodeRecord } from '../../../record';
 import { getFieldNodePath } from './utils/getFieldNodePath';
@@ -32,7 +36,9 @@ export const findNodes = <Self extends FieldNodeRecord<Self>>(
           for (const child of Object.values(cursor.structure))
             if (!next.includes(child)) next.push(child);
         } else {
-          const name = token.replace(/~1/g, $.Separator).replace(/~0/g, '~');
+          const name = token
+            .replace(ESCAPED_SLASH_REGEX, $.Separator)
+            .replace(ESCAPED_TILDE_REGEX, '~');
           if (hasOwnProperty(cursor.structure, name)) {
             const child = cursor.structure[name];
             if (child !== undefined && !next.includes(child)) next.push(child);

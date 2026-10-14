@@ -1,6 +1,10 @@
 import { hasOwnProperty } from '@winglet/common-utils/lib';
 
-import { JSONPointer as $ } from '@/schema-form/helpers/jsonPointer';
+import {
+  JSONPointer as $,
+  ESCAPED_SLASH_REGEX,
+  ESCAPED_TILDE_REGEX,
+} from '@/schema-form/helpers/jsonPointer';
 
 import type { FieldNodeRecord } from '../../../record';
 import type { ValidationIssue } from '../../type';
@@ -58,7 +62,9 @@ export const routeValidationIssues = <Self extends FieldNodeRecord<Self>>(
       ) {
         const encoded = segments[segmentIndex];
         if (node.structure === null) break;
-        const key = encoded.replace(/~1/g, $.Separator).replace(/~0/g, '~');
+        const key = encoded
+          .replace(ESCAPED_SLASH_REGEX, $.Separator)
+          .replace(ESCAPED_TILDE_REGEX, '~');
         if (!hasOwnProperty(node.structure, key)) {
           node = root;
           break;

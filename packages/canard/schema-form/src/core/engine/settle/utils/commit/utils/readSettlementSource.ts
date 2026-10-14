@@ -1,4 +1,8 @@
-import { JSONPointer as $ } from '@/schema-form/helpers/jsonPointer';
+import {
+  JSONPointer as $,
+  ESCAPED_SLASH_REGEX,
+  ESCAPED_TILDE_REGEX,
+} from '@/schema-form/helpers/jsonPointer';
 
 import type { FieldNodeRecord } from '../../../../record';
 import type { FieldNodeWriteKind } from '../../../../types/value';
@@ -26,8 +30,8 @@ export const readSettlementSource = <Self extends FieldNodeRecord<Self>>(
         path
           .slice(origin.path.length + 1)
           .split($.Separator)[0]
-          .replace(/~1/g, $.Separator)
-          .replace(/~0/g, '~'),
+          .replace(ESCAPED_SLASH_REGEX, $.Separator)
+          .replace(ESCAPED_TILDE_REGEX, '~'),
       )
     )
       continue;

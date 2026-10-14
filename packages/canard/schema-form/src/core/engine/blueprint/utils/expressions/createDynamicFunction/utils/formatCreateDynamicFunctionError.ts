@@ -1,5 +1,8 @@
 import { createDivider, getErrorMessage } from '@/schema-form/helpers/error';
 
+/** Every newline character; `replace`-only because of the `g` flag. */
+const NEWLINE = /\n/g;
+
 /**
  * Formats a structured error message for dynamic function creation failures.
  * @param fieldName - Field name where the function creation failed
@@ -47,4 +50,4 @@ How to fix:
  * @returns Formatted multi-line string
  */
 const formatMultiLine = (text: string, prefix = '\n  │    '): string =>
-  text.replace(/\n/g, prefix);
+  text.replace(NEWLINE, prefix);

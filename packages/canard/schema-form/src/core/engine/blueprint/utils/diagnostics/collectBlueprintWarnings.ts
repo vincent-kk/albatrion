@@ -9,6 +9,12 @@ import type {
 import { readSchemaObject } from '../analyze/readSchemaObject';
 import { collectInlineTerminalWarnings } from './collectInlineTerminalWarnings';
 
+/** A schema path ending in an `allOf` branch index. */
+const ALL_OF_BRANCH_PATH = /\/allOf\/\d+$/;
+
+/** A schema path ending in a `oneOf` or `anyOf` branch index. */
+const UNION_BRANCH_PATH = /\/(oneOf|anyOf)\/\d+$/;
+
 /**
  * Collect advisory records only when a consumer explicitly requests diagnostics.
  * @param blueprint - Completed immutable graph retaining original declarations
@@ -50,7 +56,7 @@ export const collectBlueprintWarnings = (
           warning(FormWarningCode.DependentSchemasIgnoredForForm, {
             keyword,
           });
-      if (/\/allOf\/\d+$/.test(declaration.schemaPath))
+      if (ALL_OF_BRANCH_PATH.test(declaration.schemaPath))
         for (const keyword of [
           'not',
           'dependencies',
@@ -72,7 +78,7 @@ export const collectBlueprintWarnings = (
           schema.controls?.disabled !== undefined)
       )
         warning(FormWarningCode.LockOnNonTerminalObject);
-      if (/\/(oneOf|anyOf)\/\d+$/.test(declaration.schemaPath)) {
+      if (UNION_BRANCH_PATH.test(declaration.schemaPath)) {
         if (schema.if !== undefined && schema.else !== false)
           warning(FormWarningCode.IfWithoutElseFalse);
         if (

@@ -11,6 +11,9 @@ import type { SettlementContext } from '../../type';
 import { recordSettlementFailure } from '../errors/recordSettlementFailure';
 import { evaluateGate } from '../gates/evaluateGate';
 
+/** A schema path through a `oneOf` branch; captures the `oneOf` prefix and the branch index. */
+const ONE_OF_BRANCH_PREFIX = /^(.*\/oneOf)\/(\d+)(?:\/|$)/;
+
 /**
  * Recompute one node's active overlays and effective schema in a host round.
  * @param node - Current occurrence whose declarations may have changed gates
@@ -27,7 +30,7 @@ export const selectNodeSchema = <Self extends FieldNodeRecord<Self>>(
   if (node.runtime.errorReporter?.hasConsumer()) {
     const branches = new Map<string, number[]>();
     for (const declaration of active) {
-      const match = /^(.*\/oneOf)\/(\d+)(?:\/|$)/.exec(declaration.schemaPath);
+      const match = ONE_OF_BRANCH_PREFIX.exec(declaration.schemaPath);
       if (
         !match ||
         !declaration.gates.some((gate) =>

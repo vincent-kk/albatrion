@@ -4,6 +4,18 @@ import type { DateInputType } from '../type';
 const TIME_PATTERN =
   /^(?:[01][0-9]|2[0-3]):[0-5][0-9](?::[0-5][0-9](?:\.[0-9]{1,3})?)?$/;
 
+/** The separator between the date and time parts of a datetime-local value. */
+const DATE_TIME_SEPARATOR = /[T ]/;
+
+/** HTML month value: year and two-digit month. */
+const MONTH_PATTERN = /^([0-9]{4,})-([0-9]{2})$/;
+
+/** HTML week value: year and two-digit week number. */
+const WEEK_PATTERN = /^([0-9]{4,})-W([0-9]{2})$/;
+
+/** HTML date value: year, two-digit month and two-digit day. */
+const DATE_PATTERN = /^([0-9]{4,})-([0-9]{2})-([0-9]{2})$/;
+
 /**
  * Check whether a native HTML date input can display a value without blanking it.
  * @param type - HTML date, month, week, time, or datetime-local input type.
@@ -17,7 +29,8 @@ export const isRenderableDateInputValue = (
   if (value === undefined || value === null || value === '') return true;
   if (typeof value !== 'string') return false;
   if (type === 'time') return TIME_PATTERN.test(value);
-  const parts = type === 'datetime-local' ? value.split(/[T ]/) : [value];
+  const parts =
+    type === 'datetime-local' ? value.split(DATE_TIME_SEPARATOR) : [value];
   if (
     type === 'datetime-local' &&
     (parts.length !== 2 || !TIME_PATTERN.test(parts[1]))
@@ -25,11 +38,11 @@ export const isRenderableDateInputValue = (
     return false;
   const pattern =
     type === 'month'
-      ? /^([0-9]{4,})-([0-9]{2})$/
+      ? MONTH_PATTERN
       : type === 'week'
-        ? /^([0-9]{4,})-W([0-9]{2})$/
+        ? WEEK_PATTERN
         : type === 'date' || type === 'datetime-local'
-          ? /^([0-9]{4,})-([0-9]{2})-([0-9]{2})$/
+          ? DATE_PATTERN
           : undefined;
   const match = pattern?.exec(parts[0]);
   if (!match) return false;

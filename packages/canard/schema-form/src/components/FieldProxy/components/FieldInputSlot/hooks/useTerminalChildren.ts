@@ -7,6 +7,9 @@ import { useFormErrorContext } from '@/schema-form/providers/FormErrorContext';
 import type { ChildField } from '../type';
 import { isDetectableTerminal } from './utils/isDetectableTerminal';
 
+/** A property key made only of digits, as an array index read. */
+const NUMERIC_KEY = /^\d+$/;
+
 /** Shared immutable child list for strategies that need no read detector; frozen once at module load. */
 const EMPTY_CHILDREN = Object.freeze([]) as unknown as ChildField[];
 
@@ -66,7 +69,7 @@ export const useTerminalChildren = (node: FieldNode): TerminalChildren => {
           !(accessed.current & ACCESSED) &&
           (key === 'length' ||
             key === Symbol.iterator ||
-            (typeof key === 'string' && /^\d+$/.test(key)))
+            (typeof key === 'string' && NUMERIC_KEY.test(key)))
         ) {
           accessed.current |= ACCESSED;
           if (accessed.current & COMMITTED) queueMicrotask(get);

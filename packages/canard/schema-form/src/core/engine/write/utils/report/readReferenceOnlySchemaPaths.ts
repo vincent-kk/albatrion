@@ -1,7 +1,11 @@
 import { isArray } from '@winglet/common-utils/filter';
 import { hasOwnProperty } from '@winglet/common-utils/lib';
 
-import { JSONPointer as $ } from '@/schema-form/helpers/jsonPointer';
+import {
+  JSONPointer as $,
+  SLASH_REGEX,
+  TILDE_REGEX,
+} from '@/schema-form/helpers/jsonPointer';
 
 /**
  * Find changed opaque references only when all JSON schema data is equal.
@@ -58,7 +62,7 @@ export const readReferenceOnlySchemaPaths = (
       return [];
     for (let index = leftKeys.length - 1; index >= 0; index -= 1) {
       const key = leftKeys[index];
-      const escaped = key.replace(/~/g, '~0').replace(/\//g, '~1');
+      const escaped = key.replace(TILDE_REGEX, '~0').replace(SLASH_REGEX, '~1');
       pending.push({
         previous: Reflect.get(left, key),
         next: Reflect.get(right, key),

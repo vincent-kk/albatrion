@@ -1,5 +1,7 @@
 import type { PartialBy } from '@aileron/declare';
 
+import { SLASH_REGEX, TILDE_REGEX } from '@/schema-form/helpers/jsonPointer';
+
 import { FormWarningCode } from '../../../errors';
 import { BEHAVIORS } from '../../engine';
 import { collectBlueprintWarnings, mergeEffectiveSchema } from '../../engine';
@@ -75,7 +77,9 @@ const createFieldNode = (
 ): RuntimeFieldNode => {
   const template = 'node' in entry ? entry.node : entry;
   const name = 'node' in entry ? entry.name : '';
-  const escapedName = name.replace(/~/g, '~0').replace(/\//g, '~1');
+  const escapedName = name
+    .replace(TILDE_REGEX, '~0')
+    .replace(SLASH_REGEX, '~1');
   const path = parent ? `${parent.path}/${escapedName}` : '';
   const depth = parent ? parent.depth + 1 : 0;
   const row = BEHAVIORS[template.kind]?.[template.strategy];
