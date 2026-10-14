@@ -28,7 +28,8 @@ export const exitFieldNodeChain = <Self extends FieldNodeRecord<Self>>(
   node: Self,
   failure?: unknown,
 ): void => {
-  const activeRoot = resolveFieldNodeChainRoot(node.rootNode);
+  const passed = new Set<Self['runtime']>();
+  const activeRoot = resolveFieldNodeChainRoot(node.rootNode, passed);
   let runtime = activeRoot.runtime;
   if (failure !== undefined) captureChainError(runtime, failure);
   if ((runtime.entryDepth ?? 0) > 1) {
@@ -38,8 +39,8 @@ export const exitFieldNodeChain = <Self extends FieldNodeRecord<Self>>(
   let root = runtime.chainRoot ?? activeRoot;
   rebuildRootExternalErrors(root);
   runDeliveryWaves(root);
-  flushQueuedEvents(resolveFieldNodeChainRoot(root));
-  root = resolveFieldNodeChainRoot(root);
+  flushQueuedEvents(resolveFieldNodeChainRoot(root, passed));
+  root = resolveFieldNodeChainRoot(root, passed);
   runtime = root.runtime;
   const occurrences = runtime.chainOccurrences ?? [];
   const pending: FormErrorRecord[] = [];
@@ -112,7 +113,7 @@ export const exitFieldNodeChain = <Self extends FieldNodeRecord<Self>>(
       if (runtime.errorReporter?.hasConsumer())
         occurrences.push({ kind: 'error', error });
     }
-    root = resolveFieldNodeChainRoot(root);
+    root = resolveFieldNodeChainRoot(root, passed);
     runtime = root.runtime;
     runtime.chainErrors = errors;
     runtime.chainOccurrences = occurrences;
@@ -135,11 +136,12 @@ export const exitFieldNodeChain = <Self extends FieldNodeRecord<Self>>(
         if (runtime.errorReporter?.hasConsumer())
           occurrences.push({ kind: 'error', error });
       } finally {
-        runtime.onChangeBudget -= 1;
-        root = resolveFieldNodeChainRoot(root);
-        if (root.runtime !== runtime) {
-          runtime = root.runtime;
-          runtime.onChangeBudget = (runtime.onChangeBudget ?? 1) - 1;
+        const raised = new Set<Self['runtime']>();
+        root = resolveFieldNodeChainRoot(root, raised);
+        runtime = root.runtime;
+        for (const owner of raised) {
+          owner.onChangeBudget = (owner.onChangeBudget ?? 1) - 1;
+          passed.add(owner);
         }
       }
     }
@@ -152,10 +154,10 @@ export const exitFieldNodeChain = <Self extends FieldNodeRecord<Self>>(
   runtime.feedbackBlockedListeners = undefined;
   runtime.feedbackLimitReported = false;
   runtime.chainOccurrences = enclosing?.occurrences;
-  // An adoption during delivery left the entry runtime pointing at this chain's
-  // shared error list; return it to the enclosing state as well.
-  const stale = node.rootNode.runtime;
-  if (stale !== runtime) {
+  // Adoptions during this chain left every runtime it passed through pointing at the
+  // chain's shared error list; return them to the enclosing state as well.
+  for (const stale of passed) {
+    if (stale === runtime) continue;
     stale.chainErrors = runtime.chainErrors;
     stale.chainRoot = undefined;
   }

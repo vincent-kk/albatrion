@@ -3,6 +3,7 @@ import { describe, expect, it } from 'vitest';
 import { makeFieldNodeTree } from '@/schema-form/core/__tests__/makeFieldNodeTree';
 import { FieldNodeEventType, FieldNodeState } from '@/schema-form/core/engine';
 import { adoptFieldNodeTree } from '@/schema-form/core/surface';
+import { FormErrorCode, SchemaFormError } from '@/schema-form/errors';
 
 const PAIR_SCHEMA = {
   type: 'object',
@@ -11,23 +12,46 @@ const PAIR_SCHEMA = {
 
 type Tree = ReturnType<typeof makeFieldNodeTree>;
 
-const createTree = (): Tree => {
-  const tree = makeFieldNodeTree(PAIR_SCHEMA);
+const createTree = (reported: unknown[] = []): Tree => {
+  const tree = makeFieldNodeTree(PAIR_SCHEMA, {
+    errorReporter: {
+      hasConsumer: () => true,
+      report: (record) => {
+        reported.push(Reflect.get(record, 'error'));
+      },
+    },
+  });
   tree.root.setValue({ first: 'a', second: 'b' });
   return tree;
 };
 
-const expectResting = (runtime: object): void => {
-  for (const key of ['entryDepth', 'batchDepth', 'visitDepth'])
-    expect(Reflect.get(runtime, key) ?? 0, key).toBe(0);
-  for (const key of [
-    'visitBatchEntry',
-    'chainErrors',
-    'chainOccurrences',
-    'enclosingChain',
-    'batchWrites',
-  ])
-    expect(Reflect.get(runtime, key), key).toBeUndefined();
+const countReported = (reported: unknown[], error: unknown): number =>
+  reported.filter((entry) => entry === error).length;
+
+const expectResting = (...trees: Tree[]): void => {
+  for (const { runtime } of trees) {
+    for (const key of [
+      'entryDepth',
+      'batchDepth',
+      'visitDepth',
+      'onChangeBudget',
+    ])
+      expect(Reflect.get(runtime, key) ?? 0, key).toBe(0);
+    for (const key of [
+      'visitBatchEntry',
+      'chainErrors',
+      'chainOccurrences',
+      'enclosingChain',
+      'batchWrites',
+      'chainRoot',
+    ])
+      expect(Reflect.get(runtime, key), key).toBeUndefined();
+    expect(Reflect.get(runtime, 'flushingQueuedEvents') ?? false).toBe(false);
+  }
+};
+
+const touchFirst = (tree: Tree): void => {
+  tree.root.find('/first')?.setState({ [FieldNodeState.Touched]: true });
 };
 
 const adoptAndFeed = (previous: Tree, next: Tree): void => {
@@ -56,8 +80,7 @@ describe('adoption during an event delivery', () => {
     });
     previous.root.find('/first')?.setState({ [FieldNodeState.Touched]: true });
     expect(next.root.value).toEqual({ first: 'fed', second: 'b' });
-    expectResting(previous.runtime);
-    expectResting(next.runtime);
+    expectResting(previous, next);
     expectLaterFailureThrown(next);
   });
 
@@ -91,8 +114,7 @@ describe('adoption during an event delivery', () => {
       });
       write(previous);
       expect(delivered).toEqual([{ first: 'fed', second: 'b' }]);
-      expectResting(previous.runtime);
-      expectResting(next.runtime);
+      expectResting(previous, next);
       expectLaterFailureThrown(next);
     },
   );
@@ -130,9 +152,225 @@ describe('adoption during an event delivery', () => {
       });
       trigger(previous);
       expect(next.root.value).toEqual({ first: 'fed', second: 'b' });
-      expectResting(previous.runtime);
-      expectResting(next.runtime);
+      expectResting(previous, next);
       expectLaterFailureThrown(next);
     },
   );
+});
+
+const CALLBACK_ADOPTIONS: readonly [
+  string,
+  (previous: Tree, next: Tree) => void,
+][] = [
+  [
+    'onChange',
+    (previous, next) => {
+      Reflect.set(previous.runtime, 'onChange', () =>
+        adoptFieldNodeTree(previous.root, next.root),
+      );
+      previous.root.find('/second')?.setValue('c');
+    },
+  ],
+  [
+    'onChange through a batch, as a form reset does',
+    (previous, next) => {
+      Reflect.set(previous.runtime, 'onChange', () =>
+        previous.root.batch(() => adoptAndFeed(previous, next)),
+      );
+      previous.root.find('/second')?.setValue('c');
+    },
+  ],
+  [
+    'onStateChange at a chain exit',
+    (previous, next) => {
+      Reflect.set(previous.runtime, 'onStateChange', () =>
+        adoptFieldNodeTree(previous.root, next.root),
+      );
+      previous.root.batch(() => touchFirst(previous));
+    },
+  ],
+  [
+    'onStateChange in a standalone delivery',
+    (previous, next) => {
+      Reflect.set(previous.runtime, 'onStateChange', () =>
+        adoptFieldNodeTree(previous.root, next.root),
+      );
+      touchFirst(previous);
+    },
+  ],
+];
+
+describe('adoption from a form callback or a nested chain', () => {
+  it.each(CALLBACK_ADOPTIONS)(
+    'adoption from %s leaves both runtimes resting',
+    (_, run) => {
+      const previous = createTree();
+      const next = createTree();
+      run(previous, next);
+      expectResting(previous, next);
+      const failure = new Error('later listener failed');
+      next.root.subscribe(() => {
+        throw failure;
+      });
+      expect(() => next.root.find('/second')?.setValue('later')).toThrow(
+        failure,
+      );
+      expectResting(previous, next);
+    },
+  );
+
+  it('a nested batch that adopts and throws hands the failure to its own caller', () => {
+    const previous = createTree();
+    const next = createTree();
+    const failure = new Error('inner batch failed');
+    let handled: unknown;
+    expect(() =>
+      previous.root.batch(() => {
+        try {
+          previous.root.batch(() => {
+            adoptFieldNodeTree(previous.root, next.root);
+            throw failure;
+          });
+        } catch (error) {
+          handled = error;
+        }
+      }),
+    ).not.toThrow();
+    expect(handled).toBe(failure);
+    expectResting(previous, next);
+  });
+
+  it('a standalone onStateChange that adopts and throws is thrown and reported once', () => {
+    const reported: unknown[] = [];
+    const previous = createTree(reported);
+    const next = createTree(reported);
+    const failure = new Error('state callback failed');
+    Reflect.set(previous.runtime, 'onStateChange', () => {
+      adoptFieldNodeTree(previous.root, next.root);
+      throw failure;
+    });
+    expect(() => touchFirst(previous)).toThrow(failure);
+    expect(countReported(reported, failure)).toBe(1);
+    expectResting(previous, next);
+  });
+
+  it('listener failures before and after an adoption are thrown together and each reported once', () => {
+    const reported: unknown[] = [];
+    const previous = createTree(reported);
+    const next = createTree(reported);
+    const before = new Error('before adoption');
+    const after = new Error('after adoption');
+    previous.root.subscribe(() => {
+      throw before;
+    });
+    previous.root.subscribe(() => {
+      adoptFieldNodeTree(previous.root, next.root);
+      throw after;
+    });
+    let thrown: unknown;
+    try {
+      previous.root.find('/second')?.setValue('c');
+    } catch (error) {
+      thrown = error;
+    }
+    expect(thrown).toBeInstanceOf(SchemaFormError);
+    expect(
+      Reflect.get(Reflect.get(Object(thrown), 'details'), 'errors'),
+    ).toEqual([before, after]);
+    expect(countReported(reported, before)).toBe(1);
+    expect(countReported(reported, after)).toBe(1);
+    expectResting(previous, next);
+  });
+
+  it('an adoption inside a nested onChange batch returns the enclosing chain its own errors', () => {
+    const reported: unknown[] = [];
+    const previous = createTree(reported);
+    const next = createTree(reported);
+    const failure = new Error('outer listener failed');
+    let called = false;
+    Reflect.set(previous.runtime, 'onChange', () =>
+      previous.root.batch(() => adoptAndFeed(previous, next)),
+    );
+    previous.root.find('/first')?.subscribe(() => {
+      if (called) return;
+      called = true;
+      const outer = Reflect.get(previous.runtime, 'chainErrors');
+      previous.root.find('/second')?.setValue('c');
+      expect(Reflect.get(previous.runtime, 'chainErrors')).toBe(outer);
+      throw failure;
+    });
+    expect(() => touchFirst(previous)).toThrow(failure);
+    expect(countReported(reported, failure)).toBe(1);
+    expectResting(previous, next);
+  });
+
+  it('an adoption inside nested onChange calls keeps the 25-call limit', () => {
+    const reported: unknown[] = [];
+    const previous = createTree(reported);
+    const next = createTree(reported);
+    let calls = 0;
+    let active = previous;
+    const change = () => {
+      calls += 1;
+      if (calls === 5) {
+        adoptFieldNodeTree(previous.root, next.root);
+        active = next;
+        expect(Reflect.get(next.runtime, 'onChangeBudget')).toBe(5);
+      }
+      active.root.find('/second')?.setValue(String(calls));
+    };
+    Reflect.set(previous.runtime, 'onChange', change);
+    Reflect.set(next.runtime, 'onChange', change);
+    let thrown: unknown;
+    try {
+      previous.root.find('/second')?.setValue('start');
+    } catch (error) {
+      thrown = error;
+    }
+    expect(calls).toBe(25);
+    expect(Reflect.get(Object(thrown), 'code')).toBe(
+      FormErrorCode.FeedbackLimitExceeded,
+    );
+    expect(countReported(reported, thrown)).toBe(1);
+    expectResting(previous, next);
+  });
+});
+
+describe('two adoptions in a row', () => {
+  it('two chain-exit listeners that adopt in turn leave all three runtimes resting', () => {
+    const previous = createTree();
+    const middle = createTree();
+    const last = createTree();
+    previous.root.subscribe(() => adoptAndFeed(previous, middle));
+    middle.root.subscribe(() => {
+      adoptFieldNodeTree(middle.root, last.root);
+      last.root.find('/first')?.setValue('last');
+    });
+    previous.root.find('/second')?.setValue('c');
+    expectResting(previous, middle, last);
+  });
+
+  it('a standalone delivery that adopts twice leaves all three runtimes resting', () => {
+    const previous = createTree();
+    const middle = createTree();
+    const last = createTree();
+    previous.root.find('/first')?.subscribe(() => {
+      adoptFieldNodeTree(previous.root, middle.root);
+      adoptFieldNodeTree(middle.root, last.root);
+    });
+    touchFirst(previous);
+    expectResting(previous, middle, last);
+  });
+
+  it('an onChange that adopts twice lowers the budget on every runtime it passed', () => {
+    const previous = createTree();
+    const middle = createTree();
+    const last = createTree();
+    Reflect.set(previous.runtime, 'onChange', () => {
+      adoptFieldNodeTree(previous.root, middle.root);
+      adoptFieldNodeTree(middle.root, last.root);
+    });
+    previous.root.find('/second')?.setValue('c');
+    expectResting(previous, middle, last);
+  });
 });

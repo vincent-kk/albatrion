@@ -52,10 +52,9 @@ export const flushQueuedEvents = <Self extends FieldNodeRecord<Self>>(
   let runtime = entryRuntime;
   try {
     for (;;) {
-      active = resolveFieldNodeChainRoot(active);
+      active = resolveFieldNodeChainRoot(active, owners);
       runtime = active.runtime;
       runtime.flushingQueuedEvents = true;
-      owners.add(runtime);
       if (
         !runtime.pendingExternalErrorNodes?.size &&
         !runtime.queuedNonSettleEvents?.size &&
@@ -109,7 +108,10 @@ export const flushQueuedEvents = <Self extends FieldNodeRecord<Self>>(
       try {
         runtime.onStateChange?.();
       } catch (error) {
-        captureChainError(runtime, error);
+        captureChainError(
+          resolveFieldNodeChainRoot(active, owners).runtime,
+          error,
+        );
       }
     }
     if (standalone)
