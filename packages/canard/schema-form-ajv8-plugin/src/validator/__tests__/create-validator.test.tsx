@@ -2,6 +2,7 @@ import { act } from 'react';
 
 import {
   Form,
+  FormErrorCode,
   type FormHandle,
   type JSONSchema,
   ValidationMode,
@@ -135,7 +136,7 @@ describe.each(entries)(
           expect.objectContaining({
             name: 'ValidatorBindRefusedError',
             group: 'UNHANDLED_ERROR',
-            code: 'VALIDATOR_BIND_REFUSED',
+            code: FormErrorCode.ValidatorBindRefused,
             details: { options: names },
           }),
         );

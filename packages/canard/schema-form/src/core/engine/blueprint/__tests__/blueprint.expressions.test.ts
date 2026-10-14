@@ -82,6 +82,27 @@ describe('blueprint expression compilation', () => {
         }),
       );
   });
+  it('reports a branch controls.active compile failure as CREATE_DYNAMIC_FUNCTION at the branch', () => {
+    expect(() =>
+      blueprint({
+        type: 'object',
+        properties: { kind: { type: 'string' } },
+        oneOf: [
+          {
+            controls: { active: '(()' },
+            properties: { extra: { type: 'string' } },
+          },
+        ],
+      }),
+    ).toThrow(
+      expect.objectContaining({
+        code: 'JSON_SCHEMA_ERROR.CREATE_DYNAMIC_FUNCTION',
+        details: expect.objectContaining({
+          schemaPath: '#/oneOf/0/controls/active',
+        }),
+      }),
+    );
+  });
   it('adds the authored location to compile errors', () => {
     const collect = vi.fn();
     expect(() =>
