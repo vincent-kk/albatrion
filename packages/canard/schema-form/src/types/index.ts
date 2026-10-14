@@ -1,10 +1,10 @@
-export { ShowError } from './types/error';
+export { ShowError } from './internal/error';
 export type {
   ValidatorFactory,
   ValidateFunction,
   ValidationIssue,
   JSONSchemaError,
-} from './types/error';
+} from './internal/error';
 export type {
   FieldInputProps,
   FieldInputPropsWithSchema,
@@ -21,35 +21,35 @@ export type {
   FieldInputMap,
   SetStateFnWithOptions,
   AttachedFilesMap,
-} from './types/fieldInput';
-export type { FieldRendererProps, FormatError } from './types/fieldRenderer';
-export type { InjectToHandler, InjectHandlerContext } from './types/injectTo';
+} from './internal/fieldInput';
+export type { BaseFieldRendererProps, FormatError } from './internal/fieldRenderer';
+export type { InjectToHandler, InjectHandlerContext } from './internal/injectTo';
 export type {
   JSONSchemaType,
-  InferJSONSchema,
+  BaseInferJSONSchema,
   SchemaPresentation,
   JSONSchema,
   JSONSchemaWithVirtual,
   JSONSchemaWithRef,
   PartialJSONSchema,
-  NumberSchema,
-  NonNullableNumberSchema,
-  NullableNumberSchema,
-  StringSchema,
-  NonNullableStringSchema,
-  NullableStringSchema,
-  BooleanSchema,
-  NonNullableBooleanSchema,
-  NullableBooleanSchema,
-  ArraySchema,
-  NonNullableArraySchema,
-  NullableArraySchema,
-  ObjectSchema,
-  NonNullableObjectSchema,
-  NullableObjectSchema,
-  NullSchema,
+  BaseNumberSchema,
+  BaseNonNullableNumberSchema,
+  BaseNullableNumberSchema,
+  BaseStringSchema,
+  BaseNonNullableStringSchema,
+  BaseNullableStringSchema,
+  BaseBooleanSchema,
+  BaseNonNullableBooleanSchema,
+  BaseNullableBooleanSchema,
+  BaseArraySchema,
+  BaseNonNullableArraySchema,
+  BaseNullableArraySchema,
+  BaseObjectSchema,
+  BaseNonNullableObjectSchema,
+  BaseNullableObjectSchema,
+  BaseNullSchema,
   BasicSchema,
-} from './types/jsonSchema';
+} from './internal/jsonSchema';
 export type {
   VirtualNodeValue,
   AllowedValue,
@@ -61,4 +61,24 @@ export type {
   ObjectValue,
   NullValue,
   UndefinedValue,
-} from './types/value';
+} from './internal/value';
+export type { FieldRendererProps } from './rolled/fieldRenderer';
+export type {
+  NonNullableBooleanSchema,
+  NullableBooleanSchema,
+  BooleanSchema,
+  NonNullableNumberSchema,
+  NullableNumberSchema,
+  NumberSchema,
+  NonNullableStringSchema,
+  NullableStringSchema,
+  StringSchema,
+  NonNullableArraySchema,
+  NullableArraySchema,
+  ArraySchema,
+  NonNullableObjectSchema,
+  NullableObjectSchema,
+  ObjectSchema,
+  NullSchema,
+  InferJSONSchema,
+} from './rolled/jsonSchema';

@@ -1,82 +1,82 @@
 import { describe, expectTypeOf, it } from 'vitest';
 
 import type {
-  ArraySchema,
-  BooleanSchema,
-  InferJSONSchema,
+  BaseArraySchema,
+  BaseBooleanSchema,
+  BaseInferJSONSchema,
   JSONSchema,
-  NullSchema,
-  NullableArraySchema,
-  NullableBooleanSchema,
-  NullableNumberSchema,
-  NullableObjectSchema,
-  NullableStringSchema,
-  NumberSchema,
-  ObjectSchema,
-  StringSchema,
-} from '../types/jsonSchema';
+  BaseNullSchema,
+  BaseNullableArraySchema,
+  BaseNullableBooleanSchema,
+  BaseNullableNumberSchema,
+  BaseNullableObjectSchema,
+  BaseNullableStringSchema,
+  BaseNumberSchema,
+  BaseObjectSchema,
+  BaseStringSchema,
+} from '../internal/jsonSchema';
 
-describe('InferJSONSchema type inference tests', () => {
+describe('BaseInferJSONSchema type inference tests', () => {
   describe('Non-nullable types', () => {
-    it('string → StringSchema', () => {
-      expectTypeOf<InferJSONSchema<string>>().toExtend<StringSchema>();
+    it('string → BaseStringSchema', () => {
+      expectTypeOf<BaseInferJSONSchema<string>>().toExtend<BaseStringSchema>();
     });
-    it('number → NumberSchema', () => {
-      expectTypeOf<InferJSONSchema<number>>().toExtend<NumberSchema>();
+    it('number → BaseNumberSchema', () => {
+      expectTypeOf<BaseInferJSONSchema<number>>().toExtend<BaseNumberSchema>();
     });
-    it('boolean → BooleanSchema', () => {
-      expectTypeOf<InferJSONSchema<boolean>>().toExtend<BooleanSchema>();
+    it('boolean → BaseBooleanSchema', () => {
+      expectTypeOf<BaseInferJSONSchema<boolean>>().toExtend<BaseBooleanSchema>();
     });
-    it('array → ArraySchema', () => {
-      expectTypeOf<InferJSONSchema<any[]>>().toExtend<ArraySchema>();
+    it('array → BaseArraySchema', () => {
+      expectTypeOf<BaseInferJSONSchema<any[]>>().toExtend<BaseArraySchema>();
     });
-    it('object → ObjectSchema', () => {
+    it('object → BaseObjectSchema', () => {
       expectTypeOf<
-        InferJSONSchema<Record<string, any>>
-      >().toExtend<ObjectSchema>();
+        BaseInferJSONSchema<Record<string, any>>
+      >().toExtend<BaseObjectSchema>();
     });
   });
 
   describe('Nullable types', () => {
     it('string | null → StringNullableSchema', () => {
       expectTypeOf<
-        InferJSONSchema<string | null>
-      >().toExtend<NullableStringSchema>();
+        BaseInferJSONSchema<string | null>
+      >().toExtend<BaseNullableStringSchema>();
     });
     it('number | null → NumberNullableSchema', () => {
       expectTypeOf<
-        InferJSONSchema<number | null>
-      >().toExtend<NullableNumberSchema>();
+        BaseInferJSONSchema<number | null>
+      >().toExtend<BaseNullableNumberSchema>();
     });
     it('boolean | null → BooleanNullableSchema', () => {
       expectTypeOf<
-        InferJSONSchema<boolean | null>
-      >().toExtend<NullableBooleanSchema>();
+        BaseInferJSONSchema<boolean | null>
+      >().toExtend<BaseNullableBooleanSchema>();
     });
     it('array | null → ArrayNullableSchema', () => {
       expectTypeOf<
-        InferJSONSchema<any[] | null>
-      >().toExtend<NullableArraySchema>();
+        BaseInferJSONSchema<any[] | null>
+      >().toExtend<BaseNullableArraySchema>();
     });
     it('object | null → ObjectNullableSchema', () => {
       expectTypeOf<
-        InferJSONSchema<Record<string, any> | null>
-      >().toExtend<NullableObjectSchema>();
+        BaseInferJSONSchema<Record<string, any> | null>
+      >().toExtend<BaseNullableObjectSchema>();
     });
   });
 
   describe('Pure null type', () => {
-    it('null → NullSchema', () => {
-      expectTypeOf<InferJSONSchema<null>>().toExtend<NullSchema>();
+    it('null → BaseNullSchema', () => {
+      expectTypeOf<BaseInferJSONSchema<null>>().toExtend<BaseNullSchema>();
     });
   });
 
   describe('Edge cases', () => {
     it('unknown → JSONSchema', () => {
-      expectTypeOf<InferJSONSchema<unknown>>().toExtend<JSONSchema>();
+      expectTypeOf<BaseInferJSONSchema<unknown>>().toExtend<JSONSchema>();
     });
     it('any → JSONSchema', () => {
-      expectTypeOf<InferJSONSchema<any>>().toExtend<JSONSchema>();
+      expectTypeOf<BaseInferJSONSchema<any>>().toExtend<JSONSchema>();
     });
   });
 });

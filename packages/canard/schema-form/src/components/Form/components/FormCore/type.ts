@@ -17,7 +17,7 @@ import type {
   AttachedFilesMap,
   FieldInputDefinition,
   FieldInputMap,
-  FieldRendererProps,
+  BaseFieldRendererProps,
   InferValueType,
   JSONSchema,
   SetStateFnWithOptions,
@@ -71,17 +71,17 @@ export interface FormProps<
   /** FieldInput path mapping */
   fieldInputMap?: FieldInputMap;
   /** Custom field renderer component */
-  FieldRenderer?: ComponentType<FieldRendererProps>;
+  FieldRenderer?: ComponentType<BaseFieldRendererProps>;
   /** Label renderer shared by Form.Label instances. */
-  FormLabelRenderer?: ComponentType<FieldRendererProps>;
+  FormLabelRenderer?: ComponentType<BaseFieldRendererProps>;
   /** Input renderer shared by Form.Input instances. */
-  FormInputRenderer?: ComponentType<FieldRendererProps>;
+  FormInputRenderer?: ComponentType<BaseFieldRendererProps>;
   /** Error renderer shared by Form.Error instances. */
-  FormErrorRenderer?: ComponentType<FieldRendererProps>;
+  FormErrorRenderer?: ComponentType<BaseFieldRendererProps>;
   /** Initial validation errors, default is undefined */
   errors?: FieldNode['globalErrors'];
   /** Custom format error function */
-  formatError?: FieldRendererProps['formatError'];
+  formatError?: BaseFieldRendererProps['formatError'];
   /**
    * Error display condition (default: ShowError.DirtyTouched)
    *   - `true`: Always show

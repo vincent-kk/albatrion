@@ -5,7 +5,7 @@ import { useConstant, useReference } from '@winglet/react-utils/hook';
 import { FieldProxy } from '@/schema-form/components/FieldProxy';
 import type { AllowedValue, FieldInputProps } from '@/schema-form/types';
 
-import type { FormFieldProps } from './type';
+import type { BaseFormFieldProps } from './type';
 
 /**
  * Renders a complete form field group with customizable input and renderer components.
@@ -89,7 +89,7 @@ export const FormField = memo(
     FieldRenderer,
     Wrapper,
     ...restProps
-  }: FormFieldProps<AllowedValue>) => {
+  }: BaseFormFieldProps<AllowedValue>) => {
     const overridePropsRef = useReference(restProps);
     const constant = useConstant({
       FieldInput: FieldInput as ComponentType<FieldInputProps>,
@@ -107,5 +107,5 @@ export const FormField = memo(
     );
   },
 ) as <Value extends AllowedValue = AllowedValue>(
-  props: FormFieldProps<Value>,
+  props: BaseFormFieldProps<Value>,
 ) => ReactNode;

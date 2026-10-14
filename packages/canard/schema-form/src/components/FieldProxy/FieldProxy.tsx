@@ -18,7 +18,7 @@ import {
   useWorkspaceContext,
 } from '@/schema-form/providers';
 import { useBoundaryReporter } from '@/schema-form/providers/FormErrorContext';
-import type { FieldRendererProps, JSONSchema } from '@/schema-form/types';
+import type { BaseFieldRendererProps, JSONSchema } from '@/schema-form/types';
 
 import { FieldInputSlotWrapper } from './components/FieldInputSlot';
 import type { FieldProxyProps } from './type';
@@ -47,7 +47,7 @@ export const FieldProxy = ({
   const refreshRef = useReference(refresh);
   const onError = useBoundaryReporter(node?.path);
 
-  const Input = useMemo<FieldRendererProps['Input']>(
+  const Input = useMemo<BaseFieldRendererProps['Input']>(
     () =>
       FieldInputSlotWrapper(
         node,
@@ -71,7 +71,7 @@ export const FieldProxy = ({
     const Renderer = isMemoComponent(Component) ? Component : memo(Component);
     /** Compute the message below the owning boundary without leaking extra props to the renderer. */
     return function RendererWithErrorMessage(
-      props: Omit<FieldRendererProps, 'errorMessage'>,
+      props: Omit<BaseFieldRendererProps, 'errorMessage'>,
     ) {
       const { node, context, formatError } = props;
       const errorMessage = useMemo(() => {

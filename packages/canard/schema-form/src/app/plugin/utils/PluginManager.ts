@@ -16,17 +16,17 @@ import {
 } from '@/schema-form/helpers/fieldInputDefinition';
 import type {
   FieldInputDefinition,
-  FieldRendererProps,
+  BaseFieldRendererProps,
   FormatError,
 } from '@/schema-form/types';
 
 import type { ValidatorPlugin } from '../type';
 
 interface RenderKit {
-  FieldRenderer: ComponentType<FieldRendererProps>;
-  FormLabelRenderer: ComponentType<FieldRendererProps>;
-  FormInputRenderer: ComponentType<FieldRendererProps>;
-  FormErrorRenderer: ComponentType<FieldRendererProps>;
+  FieldRenderer: ComponentType<BaseFieldRendererProps>;
+  FormLabelRenderer: ComponentType<BaseFieldRendererProps>;
+  FormInputRenderer: ComponentType<BaseFieldRendererProps>;
+  FormErrorRenderer: ComponentType<BaseFieldRendererProps>;
 }
 
 const defaultRenderKit = {

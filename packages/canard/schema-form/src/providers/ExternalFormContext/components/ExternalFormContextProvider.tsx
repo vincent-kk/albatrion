@@ -8,7 +8,7 @@ import type { ValidationMode } from '@/schema-form/core';
 import { normalizeFieldInputDefinitions } from '@/schema-form/helpers/fieldInputDefinition';
 import type {
   FieldInputDefinition,
-  FieldRendererProps,
+  BaseFieldRendererProps,
   FormatError,
   ShowError,
   ValidatorFactory,
@@ -20,13 +20,13 @@ export interface ExternalFormContextProviderProps {
   /** List of FieldInputDefinition declared externally */
   fieldInputDefinitions?: FieldInputDefinition[];
   /** FieldRenderer component declared externally */
-  FieldRenderer?: ComponentType<FieldRendererProps>;
+  FieldRenderer?: ComponentType<BaseFieldRendererProps>;
   /** FormLabelRenderer component declared externally */
-  FormLabelRenderer?: ComponentType<FieldRendererProps>;
+  FormLabelRenderer?: ComponentType<BaseFieldRendererProps>;
   /** FormInputRenderer component declared externally */
-  FormInputRenderer?: ComponentType<FieldRendererProps>;
+  FormInputRenderer?: ComponentType<BaseFieldRendererProps>;
   /** FormErrorRenderer component declared externally */
-  FormErrorRenderer?: ComponentType<FieldRendererProps>;
+  FormErrorRenderer?: ComponentType<BaseFieldRendererProps>;
   /** FormatError function declared externally */
   formatError?: FormatError;
   /**

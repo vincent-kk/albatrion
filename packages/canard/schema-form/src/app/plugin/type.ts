@@ -4,7 +4,7 @@ import type { Fn } from '@aileron/declare';
 
 import type {
   FieldInputDefinition,
-  FieldRendererProps,
+  BaseFieldRendererProps,
   FormatError,
   ValidateFunction,
 } from '@/schema-form/types';
@@ -110,13 +110,13 @@ import type { JSONSchema } from '@/schema-form/types';
  */
 export interface SchemaFormPlugin {
   /** Form.Field Component */
-  FieldRenderer?: ComponentType<FieldRendererProps>;
+  FieldRenderer?: ComponentType<BaseFieldRendererProps>;
   /** Form.Label Component */
-  FormLabelRenderer?: ComponentType<FieldRendererProps>;
+  FormLabelRenderer?: ComponentType<BaseFieldRendererProps>;
   /** Form.Input Component */
-  FormInputRenderer?: ComponentType<FieldRendererProps>;
+  FormInputRenderer?: ComponentType<BaseFieldRendererProps>;
   /** Form.Error Component */
-  FormErrorRenderer?: ComponentType<FieldRendererProps>;
+  FormErrorRenderer?: ComponentType<BaseFieldRendererProps>;
   /** FieldInputDefinition */
   fieldInputDefinitions?: FieldInputDefinition[];
   /** Validator Plugin */

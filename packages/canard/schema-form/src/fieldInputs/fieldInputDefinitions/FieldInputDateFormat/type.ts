@@ -1,6 +1,6 @@
 import type {
   FieldInputPropsWithSchema,
-  StringSchema,
+  BaseStringSchema,
 } from '@/schema-form/types';
 
 /** Native HTML input types whose value grammar this check knows. */
@@ -14,7 +14,7 @@ export type DateInputType =
 /** String schema whose format is a native date input type. */
 export type DateFormatJSONSchema = {
   format: DateInputType;
-} & StringSchema;
+} & BaseStringSchema;
 
 /** Props of the date input, including the presentation range bounds. */
 export type FieldInputDateFormatProps = FieldInputPropsWithSchema<

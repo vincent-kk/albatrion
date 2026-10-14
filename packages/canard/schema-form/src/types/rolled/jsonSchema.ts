@@ -3,18 +3,18 @@ import type { RefSchema } from '@winglet/json-schema';
 import type { Dictionary, IsNullable, Roll } from '@aileron/declare';
 
 import type {
-  NonNullableArraySchema as BaseNonNullableArraySchema,
-  NonNullableBooleanSchema as BaseNonNullableBooleanSchema,
-  NonNullableNumberSchema as BaseNonNullableNumberSchema,
-  NonNullableObjectSchema as BaseNonNullableObjectSchema,
-  NonNullableStringSchema as BaseNonNullableStringSchema,
-  NullSchema as BaseNullSchema,
-  NullableArraySchema as BaseNullableArraySchema,
-  NullableBooleanSchema as BaseNullableBooleanSchema,
-  NullableNumberSchema as BaseNullableNumberSchema,
-  NullableObjectSchema as BaseNullableObjectSchema,
-  NullableStringSchema as BaseNullableStringSchema,
-} from '@/schema-form/types';
+  BaseNonNullableArraySchema,
+  BaseNonNullableBooleanSchema,
+  BaseNonNullableNumberSchema,
+  BaseNonNullableObjectSchema,
+  BaseNonNullableStringSchema,
+  BaseNullSchema,
+  BaseNullableArraySchema,
+  BaseNullableBooleanSchema,
+  BaseNullableNumberSchema,
+  BaseNullableObjectSchema,
+  BaseNullableStringSchema,
+} from '../internal/jsonSchema';
 import type {
   AllowedValue,
   ArrayValue,
@@ -22,7 +22,7 @@ import type {
   NumberValue,
   ObjectValue,
   StringValue,
-} from '@/schema-form/types';
+} from '../internal/value';
 
 type NonNullableBooleanSchema<Options extends object = object> = Roll<
   BaseNonNullableBooleanSchema<Options>

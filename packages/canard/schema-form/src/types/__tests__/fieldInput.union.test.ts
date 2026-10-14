@@ -1,7 +1,7 @@
 import { describe, expectTypeOf, it } from 'vitest';
 
-import type { FieldInputProps } from '../types/fieldInput';
-import type { InferValueType } from '../types/value';
+import type { FieldInputProps } from '../internal/fieldInput';
+import type { InferValueType } from '../internal/value';
 
 // filid:contract union-input-types
 describe('public union input typing', () => {

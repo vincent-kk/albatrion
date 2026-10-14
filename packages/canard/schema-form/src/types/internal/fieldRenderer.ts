@@ -8,7 +8,7 @@ import type { JSONSchemaError } from './error';
 import type { ChildFieldProps } from './fieldInput';
 
 /** Props that FieldRenderer Component must satisfy */
-export interface FieldRendererProps extends ChildFieldProps {
+export interface BaseFieldRendererProps extends ChildFieldProps {
   /** Whether the field node assigned to FieldRenderer Component is the root node */
   isRoot: boolean;
   /** Depth of the field node assigned to FieldRenderer Component */

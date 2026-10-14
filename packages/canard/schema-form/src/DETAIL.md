@@ -10,7 +10,7 @@
 - 공개 검증 오류 형은 `ValidationIssue`이며 패키지 진입점은 `JSONSchemaError`를 내보내지 않는다. 오류·경고 코드는 `FormErrorCode`·`FormWarningCode`(값과 형)로 공개하며 오류 클래스는 가드 넷으로만 가른다(289라운드 D4, 32C-02). 노드 형·가드도 새 엔진의 계약을 이름으로 내보낸다(ERROR-032, 34C-02·50C-01, LANDING-067·170).
 - 상태 열거는 내부와 공개 경계에서 `FieldNodeState` 한 이름을 사용하며 Dirty=1·Touched=2·ErrorVisible=4를 유지한다. `NodeState` 별칭은 내보내지 않는다(SURFACE-056·060, LANDING-157).
 - `__tests__/e2e`·`__tests__/scenarios`·`__tests__/migration`은 외부 소비자 자격으로 루트 `index.ts`를 가져오는 공개 API 시험 구획이다(D7). 나머지 제품·시험·fixture는 자기·조상 내부를 직접 가져오고 자기·조상 index를 거치지 않으며, 자손·혈통 밖 fractal은 관문 index로 소비하는 import 모델을 따른다.
-- `hooks`·`types`·`rolled`는 `src`의 자식 fractal이다. 루트 `index.ts`는 공개 훅을 `./hooks` 관문으로, 공개 형을 `./types`·`./rolled` 관문으로 재수출한다. `rolled`의 공개 이름 열여덟 개가 `types`의 기반 형과 같은 이름이라 한 관문에 함께 실을 수 없으므로 `rolled`는 `types`의 자식이 아니라 형제이다. `src`의 organ(`constants`·`helpers` 칸)은 자식 fractal을 가져오지 않는다(모델 B1). `constants`에는 index가 없어 소비자가 `constants/bitmask`·`constants/control`·`constants/style` 파일을 직접 가져온다.
+- `hooks`·`types`는 `src`의 자식 fractal이다. 루트 `index.ts`는 공개 훅을 `./hooks` 관문으로, 공개 형을 `./types` 관문으로, 공개 Form 조각 형을 `./components/Form` 관문으로 재수출한다. `types`는 기반 형을 `internal/` 칸에, 공개 `Roll` 형을 `rolled/` 칸에 두며 공개 이름과 겹치는 기반 형은 `Base` 접두사를 가진다. `src`의 organ(`constants`·`helpers` 칸)은 자식 fractal을 가져오지 않는다(모델 B1). `constants`에는 index가 없어 소비자가 `constants/bitmask`·`constants/control`·`constants/style` 파일을 직접 가져온다.
 
 ## API Contracts
 
@@ -35,13 +35,13 @@
 
 ### 작성 표면
 
-`types/types/jsonSchema.ts`의 스키마 형은 0.16.0이 선언하던 `computed`, `&` 축약 여덟 개, 스키마 수준 `injectTo`, 최상위 `terminal`과 객체의 최상위 `virtual`·`propertyKeys`를 선언하지 않는다. 제어는 `controls` 안에, 정적 설정은 `options` 안에 둔다(CONTROLS-016·051). 객체 스키마의 `options`는 내보내는 값의 키 순서 `propertyOrder`와 가상 필드 묶음 `virtual`을 선언한다. 끝의 `[alt: string]: any`는 검증기 키워드를 위해 남으므로 그 키를 써도 형 오류는 아니며, 런타임도 그 키를 제어로 읽지 않는다.
+`types/internal/jsonSchema.ts`의 스키마 형은 0.16.0이 선언하던 `computed`, `&` 축약 여덟 개, 스키마 수준 `injectTo`, 최상위 `terminal`과 객체의 최상위 `virtual`·`propertyKeys`를 선언하지 않는다. 제어는 `controls` 안에, 정적 설정은 `options` 안에 둔다(CONTROLS-016·051). 객체 스키마의 `options`는 내보내는 값의 키 순서 `propertyOrder`와 가상 필드 묶음 `virtual`을 선언한다. 끝의 `[alt: string]: any`는 검증기 키워드를 위해 남으므로 그 키를 써도 형 오류는 아니며, 런타임도 그 키를 제어로 읽지 않는다.
 
 공개 `JSONSchema`(코어 인터페이스 `AuthoredSchema`의 별칭)와 종류별 별칭은 `controls`를 코어의 `SchemaControls` 형으로 선언한다. 주석이나 `satisfies`로 형을 준 스키마에서 `controls` 안의 모르는 키, 배열이 아닌 `watch`, 함수가 아닌 `injectTo`, `fields` 항목 안의 아홉 키 밖 키는 형 오류이다. 조각 자리(`oneOf`/`anyOf`/`allOf` 분기, `then`, `else`)는 같은 재귀 스키마 형을 쓰므로 아홉 키 제한을 형으로 걸지 않으며, 형을 주지 않은 인라인 `jsonSchema`는 제네릭 추론 때문에 중첩된 초과 키를 검사하지 않는다. 두 경우 모두 런타임이 청사진 오류를 던진다. `options`의 형은 아직 열려 있다.
 
 ### 스키마 옵션
 
-`types/types/jsonSchema.ts`가 선언하는 `options` 필드. 각 옵션은 특정 스키마 타입에만 존재한다.
+`types/internal/jsonSchema.ts`가 선언하는 `options` 필드. 각 옵션은 특정 스키마 타입에만 존재한다.
 
 | 옵션                     | 적용 스키마                                        | 계약                                                                                                                                                                                                                                         |
 | ------------------------ | -------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |

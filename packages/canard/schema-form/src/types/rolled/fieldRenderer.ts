@@ -1,6 +1,6 @@
 import type { Roll } from '@aileron/declare';
 
-import type { FieldRendererProps as BaseFieldRendererProps } from '@/schema-form/types';
+import type { BaseFieldRendererProps } from '../internal/fieldRenderer';
 
 type FieldRendererProps = Roll<BaseFieldRendererProps>;
 

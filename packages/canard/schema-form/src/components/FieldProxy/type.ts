@@ -6,7 +6,7 @@ import type { FieldNode } from '@/schema-form/core';
 import type {
   ChildFieldProps,
   FieldInputProps,
-  FieldRendererProps,
+  BaseFieldRendererProps,
   OverridableFieldInputProps,
 } from '@/schema-form/types';
 
@@ -18,6 +18,6 @@ export interface FieldProxyProps {
   onFileAttachRef?: RefObject<ChildFieldProps['onFileAttach']>;
   overridePropsRef?: RefObject<OverridableFieldInputProps>;
   FieldInput?: ComponentType<FieldInputProps>;
-  FieldRenderer?: ComponentType<FieldRendererProps>;
+  FieldRenderer?: ComponentType<BaseFieldRendererProps>;
   Wrapper?: ComponentType<PropsWithChildren<Dictionary>>;
 }

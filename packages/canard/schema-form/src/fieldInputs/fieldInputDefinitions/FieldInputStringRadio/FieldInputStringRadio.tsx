@@ -5,7 +5,7 @@ import { useHandle } from '@winglet/react-utils/hook';
 
 import type {
   FieldInputPropsWithSchema,
-  StringSchema,
+  BaseStringSchema,
 } from '@/schema-form/types';
 
 import type { RadioLabelsContext } from './type';
@@ -25,7 +25,7 @@ export const FieldInputStringRadio = ({
   className,
 }: FieldInputPropsWithSchema<
   string | null,
-  StringSchema,
+  BaseStringSchema,
   RadioLabelsContext
 >) => {
   const radioOptions = useMemo(

@@ -8,9 +8,12 @@ export {
   Form,
   type FormChildrenProps,
   type FormErrorProps,
+  type FormFieldProps,
   type FormHandle,
+  type FormInputProps,
   type FormLabelProps,
   type FormProps,
+  type FormRenderProps,
 } from './components/Form';
 
 export {
@@ -84,9 +87,6 @@ export type {
 } from './types';
 
 export type {
-  FormFieldProps,
-  FormInputProps,
-  FormRenderProps,
   FieldRendererProps,
   NonNullableBooleanSchema,
   NullableBooleanSchema,
@@ -105,7 +105,7 @@ export type {
   ObjectSchema,
   NullSchema,
   InferJSONSchema,
-} from './rolled';
+} from './types';
 
 export { useFieldNodeTracker } from './hooks';
 export { useFieldNodeSubscribe } from './hooks';

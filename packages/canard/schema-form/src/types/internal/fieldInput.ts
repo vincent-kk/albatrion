@@ -9,9 +9,9 @@ import type {
   SetValueOption,
 } from '@/schema-form/core';
 
-import type { FieldRendererProps } from './fieldRenderer';
+import type { BaseFieldRendererProps } from './fieldRenderer';
 import type {
-  InferJSONSchema,
+  BaseInferJSONSchema,
   JSONSchema,
   JSONSchemaWithVirtual,
 } from './jsonSchema';
@@ -32,7 +32,7 @@ export interface FieldInputProps<
   WatchValues extends ReadonlyArray<any> = ReadonlyArray<any>,
   Schema extends JSONSchema | JSONSchemaWithVirtual = unknown extends Value
     ? JSONSchema
-    : InferJSONSchema<Value>,
+    : BaseInferJSONSchema<Value>,
   Node extends FieldNode = unknown extends Value
     ? FieldNode
     : InferFieldNode<Schema>,
@@ -98,7 +98,7 @@ export type FieldInputPropsWithSchema<
   Value extends AllowedValue = any,
   Schema extends JSONSchema | JSONSchemaWithVirtual = unknown extends Value
     ? JSONSchemaWithVirtual
-    : InferJSONSchema<Value>,
+    : BaseInferJSONSchema<Value>,
   Context extends Dictionary = object,
 > = FieldInputProps<Value, Context, any[], Schema>;
 
@@ -113,7 +113,7 @@ export type FieldInputPropsWithNode<
   Value extends AllowedValue = any,
   Schema extends JSONSchema | JSONSchemaWithVirtual = unknown extends Value
     ? JSONSchemaWithVirtual
-    : InferJSONSchema<Value>,
+    : BaseInferJSONSchema<Value>,
   Node extends FieldNode = InferFieldNode<Schema>,
 > = FieldInputProps<Value, Dictionary, any[], Schema, Node>;
 
@@ -157,7 +157,7 @@ export type ChildFieldProps<Value extends AllowedValue = any> = {
   value?: Value;
   onChange?: SetStateFnWithOptions<Value>;
   onFileAttach?: Fn<[file: File | File[] | undefined]>;
-  FieldRenderer?: ComponentType<FieldRendererProps>;
+  FieldRenderer?: ComponentType<BaseFieldRendererProps>;
   className?: string;
   style?: CSSProperties;
   [alt: string]: any;
