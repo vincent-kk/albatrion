@@ -30,6 +30,7 @@
 - 이름 목록은 승인된 내부 계약이며 자식 모듈의 모든 수출을 대신하지 않습니다. 시험은 검사 대상의 소유 구획에서 구체 내부 단위를 검증합니다.
 - `__tests__/fixtures`는 engine 층의 공용 시험 fixture를 소유합니다. `createDispatchTree.ts`는 write·validation 시험이 공유하는 생성 도우미이고 `ownedInlineHead.json`은 blueprint·settle 시험이 공유하는 기준 데이터이므로 이 최소 공통 소유자에 둡니다.
 - `__tests__/validation-guard-integration.test.ts`는 validation·write 두 자식 계약을 함께 검증하는 engine 통합 시험입니다.
+- `__tests__/blueprint.branchless-differential.test.ts`는 같은 스키마를 branchless 분석과 일반 분석으로 각각 실행해 관측 결과가 같은지 비교하는 engine 통합 시험입니다. 일반 분석을 강제하려면 blueprint 내부의 capability 수집 단위(`blueprint/utils/analyze/collectSchemaCapabilities`)를 `vi.mock` 경로로 바꿔야 합니다. 이 단위는 blueprint index로 나가지 않고, 스키마 입력만으로는 같은 스키마의 일반 분석을 만들 수 없습니다. 부모 수준 시험 도구가 자식 내부에 닿는 B8 사례로 선언하며, 정돈-3에서 시험 도구의 자리와 함께 재검토합니다.
 
 ## Acceptance Criteria
 
