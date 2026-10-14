@@ -11,8 +11,8 @@ import {
 
 import { DISPLAY_CONTENT, NONE_ROLE } from '@/schema-form/constants';
 import { FieldNodeEventType } from '@/schema-form/core';
-import { useFieldNode } from '@/schema-form/hooks/useFieldNode';
-import { useFieldNodeTracker } from '@/schema-form/hooks/useFieldNodeTracker';
+import { useFieldNode } from '@/schema-form/hooks';
+import { useFieldNodeTracker } from '@/schema-form/hooks';
 import {
   useFieldRendererContext,
   useWorkspaceContext,

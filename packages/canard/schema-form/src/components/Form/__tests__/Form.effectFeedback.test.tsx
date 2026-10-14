@@ -6,7 +6,7 @@ import {
   type FormHarness,
   renderForm,
 } from '@/schema-form/__tests__/renderForm';
-import type { FieldInputProps } from '@/schema-form/types/fieldInput';
+import type { FieldInputProps } from '@/schema-form/types';
 
 /** EVENT-070: preserve the design spike's watchdog and React-stop assertions. */
 const runFeedback = async (useFeedbackEffect: typeof useEffect) => {

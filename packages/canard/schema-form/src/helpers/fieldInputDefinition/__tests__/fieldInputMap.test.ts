@@ -2,7 +2,7 @@ import React from 'react';
 
 import { describe, expect, test } from 'vitest';
 
-import type { FieldInputMap } from '@/schema-form/types/fieldInput';
+import type { FieldInputMap } from '@/schema-form/types';
 
 import { normalizeFieldInputMap } from '../fieldInputMap';
 

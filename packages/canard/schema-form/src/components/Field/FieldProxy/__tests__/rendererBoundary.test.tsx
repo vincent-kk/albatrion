@@ -4,8 +4,8 @@ import { act, cleanup, render } from '@testing-library/react';
 import { afterEach, expect, it, vi } from 'vitest';
 
 import { Form, type FormHandle } from '@/schema-form/components/Form';
-import type { FieldInputProps } from '@/schema-form/types/fieldInput';
-import type { FieldRendererProps } from '@/schema-form/types/fieldRenderer';
+import type { FieldInputProps } from '@/schema-form/types';
+import type { FieldRendererProps } from '@/schema-form/types';
 
 afterEach(() => {
   cleanup();

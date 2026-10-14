@@ -6,7 +6,7 @@ import { afterEach, expect, it } from 'vitest';
 import { FieldRendererContextProvider } from '@/schema-form/providers';
 
 import { nodeFromJSONSchema } from '../../__tests__/fixtures/nodeFromJSONSchema';
-import { useChildFieldErrors } from '../useChildFieldErrors';
+import { useChildFieldErrors } from '../hooks/useChildFieldErrors';
 
 afterEach(cleanup);
 

@@ -103,14 +103,14 @@ export type {
   ObjectSchema,
   NullSchema,
   InferJSONSchema,
-} from './types/rolled';
+} from './rolled';
 
-export { useFieldNodeTracker } from './hooks/useFieldNodeTracker';
-export { useFieldNodeSubscribe } from './hooks/useFieldNodeSubscribe';
-export type { FieldNodeSubscribeOptions } from './hooks/useFieldNodeSubscribe';
-export { useChildFieldMap } from './hooks/useChildFieldMap';
-export { useChildFieldErrors } from './hooks/useChildFieldErrors';
-export { useFormSubmit } from './hooks/useFormSubmit';
+export { useFieldNodeTracker } from './hooks';
+export { useFieldNodeSubscribe } from './hooks';
+export type { FieldNodeSubscribeOptions } from './hooks';
+export { useChildFieldMap } from './hooks';
+export { useChildFieldErrors } from './hooks';
+export { useFormSubmit } from './hooks';
 
 export {
   ExternalFormContextProvider as FormProvider,

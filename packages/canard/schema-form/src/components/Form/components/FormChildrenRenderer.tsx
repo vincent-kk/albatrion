@@ -3,7 +3,7 @@ import { type ReactNode, memo } from 'react';
 import type { Fn } from '@aileron/declare';
 
 import { FieldNodeEventType } from '@/schema-form/core';
-import { useFieldNodeTracker } from '@/schema-form/hooks/useFieldNodeTracker';
+import { useFieldNodeTracker } from '@/schema-form/hooks';
 import { useRootNodeContext } from '@/schema-form/providers';
 import type {
   AllowedValue,

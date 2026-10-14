@@ -18,7 +18,8 @@ import type {
 
 import type { Dictionary, IsNullable } from '@aileron/declare';
 
-import type { SchemaControls } from '../core';
+import type { SchemaControls } from '@/schema-form/core';
+
 import type { FieldInputProps } from './fieldInput';
 import type {
   AllowedValue,
@@ -151,7 +152,7 @@ export type SchemaPresentation = {
 
 /** React binding of the renderer-independent core schema. */
 export type JSONSchema<Options extends Dictionary = object> =
-  import('../core').AuthoredSchema<Options, SchemaPresentation>;
+  import('@/schema-form/core').AuthoredSchema<Options, SchemaPresentation>;
 
 /** Recursive typed children shared by the per-kind schema aliases. */
 type JSONSchemaChildren<Options extends Dictionary = object> =

@@ -14,7 +14,7 @@ import type {
   NullableNumberSchema as BaseNullableNumberSchema,
   NullableObjectSchema as BaseNullableObjectSchema,
   NullableStringSchema as BaseNullableStringSchema,
-} from '../jsonSchema';
+} from '@/schema-form/types';
 import type {
   AllowedValue,
   ArrayValue,
@@ -22,7 +22,7 @@ import type {
   NumberValue,
   ObjectValue,
   StringValue,
-} from '../value';
+} from '@/schema-form/types';
 
 type NonNullableBooleanSchema<Options extends object = object> = Roll<
   BaseNonNullableBooleanSchema<Options>
