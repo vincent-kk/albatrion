@@ -2,7 +2,7 @@
 
 개발의 진행 상황과 다음 할 일은 `PLAN.md`가 단일 진입점으로 든다. 다음 세션이 바로 이어서 일하기 위한 문서다. 이력은 `git log`와 `reviews/`에 있으므로 여기에는 지금 상태, 다음 할 일, 일하는 법만 적는다. 소유자는 Vincent다.
 
-## 1. 지금 어디인가 (2026-10-15, 335라운드 닫힘; 8단계 첫 토막 구조 정리 진행(codex 없이, 소유자 감독; 조사 A·B·C·D·E·F·G·I·J·H1 끝, engine 재구조화 수용) — 브랜치 feat/schema-form-08-review-and-perf, fairy08 조사·fixy08 이동 묶음 1, 둘째 토막 속도 최적화는 codex·agy, 대기열 54)
+## 1. 지금 어디인가 (2026-10-15, 336라운드 닫힘; 8단계 첫 토막 구조 정리 진행(codex 없이, 소유자 감독; 조사 열 끝, 결정 여덟 확정 — 이동 묶음 1 PR 대기, 묶음 2·engine 재구조화 브리프 발송) — 브랜치 feat/schema-form-08-review-and-perf, fairy08 조사·fixy08 이동 묶음 1, 둘째 토막 속도 최적화는 codex·agy, 대기열 54)
 
 - **264라운드(2026-10-14, 소유자).** 고유명사 후보 15 중 1·3·4·5·6·7·8·9·10·11·15를 권고대로 승인했고, 2(ChildField 이름 길이)·12(controls.children 대체 이름)·13(propertyKeys 공개 자리·이름)·14(virtual을 object 전용 키로)는 추가 논의, 비표준 최상위 키의 잔여 점검을 요구했다(reviews/round-264-owner-answers.md).
 - **265라운드(2026-10-14, 소유자).** 추가 논의 넷을 닫았다: ChildFields, controls.fields, options.propertyOrder(object 전용), options.virtual 형 선언과 VirtualSchema 비공개화, nullable: true 제거(265C-01 후속 대응표, reviews/round-265-owner-answers.md). 07b-5 후속 커밋으로 fixy07에게.
@@ -73,7 +73,8 @@
 - **332라운드(2026-10-15, 소유자).** 리뷰 1차 열넷: rolled·types 병합(types/ 아래 두 칸 병존), schemaType의 virtual·union 정리, 한글 주석 영문화, typeMismatch 이름 공모, 입력을 아는 JSON.stringify와 템플릿 리터럴을 문자열 연결로, WeakMap 54곳 이유, NODE_ENV 판정의 한곳 모음 여부, 함수 안 정규식 상수화, engine 하위(blueprint·derive·navigation·record·settle) utils의 fractal 승격과 미묘한 디렉토리 재구조화(재검증 필요), hooks/hooks 해소, 훅 안 상수 끌어올림, @inheritDoc 54곳 제거. 배분은 reviews/round-332-owner-answers.md.
 - **333라운드(2026-10-15, 소유자).** 작업자 fixy08·fairy08. WeakMap은 memo(측정은 밤 루프). NODE_ENV는 React의 배포 방식을 fairy08이 확인해 따른다. types/internal·rolled, hooks/fieldNode·form 수용. typeMismatch → misfit(drift는 과정의 말, misfit은 상태의 말)(reviews/round-333-owner-answers.md).
 - **334라운드(2026-10-15, 소유자).** 구조 정리를 먼저 빠르게 codex 없이 소유자 감독으로, 그 뒤 속도 최적화부터 codex·agy 사용(reviews/round-334-owner-answers.md).
-- **335라운드(2026-10-15, 소유자).** WeakMap은 측정으로; schemaType은 integer 구분·플러그인 시험 계약 때문에 안 1 유지(배제는 나중); stringify 키는 control.ts 구분자로 속도 토막에서, 되읽는 키만 예외; blueprint 등 engine 재구조화 수용(reviews/round-335-owner-answers.md). 다음 라운드 번호는 336.
+- **335라운드(2026-10-15, 소유자).** WeakMap은 측정으로; schemaType은 integer 구분·플러그인 시험 계약 때문에 안 1 유지(배제는 나중); stringify 키는 control.ts 구분자로 속도 토막에서, 되읽는 키만 예외; blueprint 등 engine 재구조화 수용(reviews/round-335-owner-answers.md).
+- **336라운드(2026-10-15, 소유자).** NODE_ENV 현행 유지; misfit은 히스토리 문서까지; virtual type은 내부 jsonSchema에 유지하되 입력 스키마 추론에는 없게; CLAUDE.md 한 줄 승인; settle fractal 2개, 순환은 지금 푼다; 형은 types/ 칸으로 관심사별 분할; walkFieldNodes 삭제; organ 안 파일·디렉토리 혼재 금지(reviews/round-336-owner-answers.md). 다음 라운드 번호는 337.
 - **그 앞의 라운드 요지(19라운드부터)는 PLAN-LOG.md 2절에 있다.** 라운드마다 한 문단이며, 1절의 기록 표와 같은 순서다.
 - **설계의 정본은 단일 원장 `ledger/`다.** 영역 17개, 항목 1,350개(80라운드 뒤, 24라운드 뒤 1,348; 현행 1,076(부정 결정·기록 포함), 대체됨 199, 분할됨 49, 중복 24, 열림 0). 형식과 규칙은 `ledger/README.md`.
 - **옛 설계 문서(`00`–`09`, `adr/`, `open-questions.md`)는 동결됐다.** 더 고치지 않는다. 어긋남은 원장의 충돌 칸에 적는다. 원장이 인용하는 옛 문서의 `path:line`은 모두 커밋 `ba398c330` 기준 줄 번호다(그 뒤 옛 문서는 바뀌지 않았다).
@@ -503,6 +504,7 @@ node ledger/checks/doc-coverage.mjs design/*.md adr/*.md -- ledger/*.md   # 설�
 | `reviews/round-333-owner-answers.md` | 333라운드 소유자: 작업자, WeakMap, NODE_ENV React 방식, 칸 이름, misfit |
 | `reviews/round-334-owner-answers.md` | 334라운드 소유자: 구조 정리 먼저(codex 없이, 감독), 속도 최적화부터 codex·agy |
 | `reviews/round-335-owner-answers.md` | 335라운드 소유자: WeakMap 측정, schemaType 배제 물음, stringify 구분자, engine 재구조화 수용 |
+| `reviews/round-336-owner-answers.md` | 336라운드 소유자: 결정 여덟(NODE_ENV·misfit·virtual·CLAUDE.md·settle·types/·walkFieldNodes·혼재 금지) |
 | plan/tidy-structure/array-limits-review.md | 배열 한도를 core가 다룰 때의 유익·손해 비교(대기열 53 검토 메모, 권고 포함) |
 | `reviews/round-297-closing.md` | 297라운드 편집자 결정 하나: 정돈-1(#374) 병합, 정돈-2 투입 |
 | plan/tidy-structure/brief-tidy-2.md | 정돈-2 브리프(fixy08 → codex): 시험 자리 U·D·S1, 제품 위반 둘, 잉여 export, D7 예외 |
