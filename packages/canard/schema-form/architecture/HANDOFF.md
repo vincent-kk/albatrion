@@ -2,9 +2,8 @@
 
 개발의 진행 상황과 다음 할 일은 `PLAN.md`가 단일 진입점으로 든다. 다음 세션이 바로 이어서 일하기 위한 문서다. 이력은 `git log`와 `reviews/`에 있으므로 여기에는 지금 상태, 다음 할 일, 일하는 법만 적는다. 소유자는 Vincent다.
 
-## 1. 지금 어디인가 (2026-10-14, 276라운드 닫힘; 07 전환 진행 중)
+## 1. 지금 어디인가 (2026-10-14, 277라운드 닫힘; 07 전환 진행 중)
 
-- **243라운드(2026-10-13, 소유자).** 대기열 31(색인 서명으로 최상위 옛 키가 컴파일됨)은 열린 형이라 무방하다고 닫았고, 대기열 32(reset 뒤 onValidate 값 잔류)는 상황 설명을 요구했다(reviews/round-243-owner-answers.md).
 - **244라운드(2026-10-13, 소유자).** 대기열 33(production-test의 implicit any 12건)은 any로 덮지 않고 고치고, 34(두 시험 파일의 최상위 FieldInput)는 presentation.FieldInput으로 옮기기로 승인했다. 둘 다 07b-2 병합 뒤 한 작업으로 fixy07이 맡는다(244C-01, reviews/round-244-owner-answers.md).
 - **245라운드(2026-10-13, 닫기).** ②-3 9bbabf211(문서·CLAUDE.md 다섯·스토리 제목)을 확인했고, ⑨의 통지 규칙을 (가)로 정했다: onValidate는 보고된 목록이 바뀔 때만 불린다(245C-01, reviews/round-245-closing.md). fixy07은 ⑨ 커밋 → 전체 게이트 → push → PR.
 - **246라운드(2026-10-13, 닫기).** PR #362(07b-2, a723e2f18)를 직접 검증해 게이트가 모두 통과했고, verifier 지적 하나로 ⑨를 보강하기로 했다: 직전 보고와 같은 참조의 목록은 보고하지 않는다(errors prop 마운트 2→1, 246C-01, reviews/round-246-closing.md). fixy07의 보강 커밋 뒤 재검증하고 소유자에게 병합 허가를 묻는다.
@@ -37,7 +36,8 @@
 - **273라운드(2026-10-14, 닫기/원장 관리자).** 07b-6 #367을 직접 검증(storybook 251·시험 3949·typecheck·lint·documents·verifier)하고 squash 병합(beff4b5ec): 패널 데코레이터(42), FormHandle 스토리 10개(43), docs 직렬화 방어 수정(40, 재현 불가로 소유자 재확인), CLAUDE.md:125 문장 확정(273C-01, reviews/round-273-closing.md). fairy07은 README 1.0.0 이주 절 초안, fixy07은 07c 재배치 진행 중.
 - **274라운드(2026-10-14, 닫기/원장 관리자).** README 두 파일의 Migration (1.0.0) 절 #368을 agy·직접 대조로 검증하고 squash 병합(e5f7f9fa3)(274C-01, reviews/round-274-closing.md); 옛 최상위 키 조용한 무시의 개발 빌드 경고는 대기열 47; fairy07은 #354 본문 갱신 초안, fixy07은 07c 재배치 진행 중.
 - **275라운드(2026-10-14, 닫기/원장 관리자).** 07c 재배치 #369를 직접 검증(시험 3840·storybook 251·typecheck·lint·플러그인 일곱·documents·G16·d.ts 바이트 동일·verifier·agy)하고 squash 병합(4da9567ea): core/{engine, surface}, 미사용 helpers 셋 삭제, src/constants, helpers·components는 compartment(275C-01, reviews/round-275-closing.md). 267C-01 1~4 완료, 5(마무리) 진행: 설명 문서 갱신(fairy07), #354 본문 갱신 완료, 워크트리 정리·대기열 총정리는 소유자 보고.
-- **276라운드(2026-10-14, 소유자).** 대기 결정 일괄 답(reviews/round-276-owner-answers.md): 47은 경고 없이 문서 안내만("과거와의 결별"), 패키지 CLAUDE.md:142 수정 승인, G23은 ego-browser로 원장 관리자가 직접 실행, 38(접근성 묶음)·39(분기 terminal 합쳐 읽기)·48(플러그인 셋 enum select)·49(constants 이름 열거; 시험·bench 직접 import는 소유자 면제)는 후속 PR 07d로 fixy07 발주, 45 넓은 해석 확정, 40 소유자 추후 확인. 버전 올리기는 최종 단계로 미룸. 다음 라운드 번호는 277.
+- **276라운드(2026-10-14, 소유자).** 대기 결정 일괄 답(reviews/round-276-owner-answers.md): 47은 경고 없이 문서 안내만("과거와의 결별"), 패키지 CLAUDE.md:142 수정 승인, G23은 ego-browser로 원장 관리자가 직접 실행, 38(접근성 묶음)·39(분기 terminal 합쳐 읽기)·48(플러그인 셋 enum select)·49(constants 이름 열거; 시험·bench 직접 import는 소유자 면제)는 후속 PR 07d로 fixy07 발주, 45 넓은 해석 확정, 40 소유자 추후 확인. 버전 올리기는 최종 단계로 미룸.
+- **277라운드(2026-10-14, 소유자).** G23 실행 주체 교정: "스토리 도는건 너 말고 다른애 시켜. 넌 관리해야지" — 원장 관리자의 ego-browser 실행을 멈추고 fairy07에게 발주(스토리북 6007, 스크립트 scratchpad/g23-run-all-stories.js). 대기열 39 oneOf 터미널 이유는 원장 관리자가 소유자에게 직접 답함(reviews/round-277-owner-answers.md). 다음 라운드 번호는 278.
 - **그 앞의 라운드 요지(19라운드부터)는 PLAN-LOG.md 2절에 있다.** 라운드마다 한 문단이며, 1절의 기록 표와 같은 순서다.
 - **설계의 정본은 단일 원장 `ledger/`다.** 영역 17개, 항목 1,350개(80라운드 뒤, 24라운드 뒤 1,348; 현행 1,076(부정 결정·기록 포함), 대체됨 199, 분할됨 49, 중복 24, 열림 0). 형식과 규칙은 `ledger/README.md`.
 - **옛 설계 문서(`00`–`09`, `adr/`, `open-questions.md`)는 동결됐다.** 더 고치지 않는다. 어긋남은 원장의 충돌 칸에 적는다. 원장이 인용하는 옛 문서의 `path:line`은 모두 커밋 `ba398c330` 기준 줄 번호다(그 뒤 옛 문서는 바뀌지 않았다).
@@ -414,6 +414,7 @@ node ledger/checks/doc-coverage.mjs design/*.md adr/*.md -- ledger/*.md   # 설�
 | `reviews/round-274-closing.md` | 274라운드 닫기: #368 병합(e5f7f9fa3), 대기열 47 |
 | `reviews/round-275-closing.md` | 275라운드 닫기: #369 병합(4da9567ea), 07c 완료 |
 | `reviews/round-276-owner-answers.md` | 276라운드 소유자 답: 대기열 일괄 답(47·CLAUDE.md:142·G23·38·39·45·48·49·40) |
+| `reviews/round-277-owner-answers.md` | 277라운드 소유자 답: G23 주체는 fairy07, 대기열 39 답변 요구 |
 | reviews 아래 improvement-38-explain.html | 개선-38 소유자용 설명(seiri:explain) |
 | reviews 아래 improvement-38-fractal-map.md | 개선-38 고찰 문서(reviewer, verifier 대조판) |
 | reviews 아래 raw-improvement-38 디렉터리 | 개선-38 근거: 소비자 증거 표, filid 요약 |

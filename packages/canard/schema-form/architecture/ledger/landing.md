@@ -3217,6 +3217,8 @@
   > 소유자(276라운드, 대기열 49): "배치 와 테스트 도구는 프렉탈  import 규칙에서 일부 면제된다." (`reviews/round-276-owner-answers.md:14`)
   > 소유자(276라운드, 대기열 40): "추후 확인해보겠다." (`reviews/round-276-owner-answers.md:15`)
   > 소유자(276라운드, 발주): "한번 정리 발주하고, 추가내용 설명하라" (`reviews/round-276-owner-answers.md:16`)
+  > 소유자(277라운드, G23 주체): "스토리 도는건 너 말고 다른애 시켜. 넌 관리해야지" (`reviews/round-277-owner-answers.md:7`)
+  > 소유자(277라운드, 대기열 39): "5번에 대해서도 답변 해줘. oneof 터미널" (`reviews/round-277-owner-answers.md:8`)
 - 상태: 현행
 - 출처: `reviews/round-80-closing.md:17`(정본)
 - 닫은 사람: 편집자 결정(80라운드, `reviews/round-80-closing.md` 80C-02)
