@@ -3,7 +3,7 @@ import { afterEach, beforeEach, expect, it, vi } from 'vitest';
 import type { mergeEffectiveSchema } from '../engine/blueprint/utils/effectiveSchema/mergeEffectiveSchema';
 import type { mergeSchemaContributions } from '../engine/blueprint/utils/effectiveSchema/utils/mergeSchemaContributions';
 import type { AuthoredSchema } from '../engine/types/jsonSchema';
-import { nodeFromJSONSchema } from '../surface/nodeFromJSONSchema';
+import { nodeFromJSONSchema } from '../surface/utils/nodeFromJSONSchema';
 import { captureBranchlessNodeTree } from './fixtures/captureBranchlessNodeTree';
 
 const counts = vi.hoisted(() => ({

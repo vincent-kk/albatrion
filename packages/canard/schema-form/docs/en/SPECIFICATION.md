@@ -354,14 +354,43 @@ An `object` or `array` node is a branch by default: it builds a child node for e
 
 ### Node Initialization
 
-```typescript
-const node = nodeFromJSONSchema({
-  jsonSchema: { type: 'object', properties: { name: { type: 'string' } } },
-  onChange: (value) => console.log('Form value changed:', value),
-});
+`<Form>` builds the node tree from `jsonSchema` and `defaultValue` and mounts it while it renders, so there is no initialization step to wait for. The package has no standalone node factory: reach nodes through the form.
 
-await delay(); // Wait for initialization to complete
+```tsx
+import { useEffect, useRef } from 'react';
+
+import { Form, type FormHandle } from '@canard/schema-form';
+
+const jsonSchema = {
+  type: 'object',
+  properties: { name: { type: 'string' } },
+} as const;
+
+function ProfileForm() {
+  const formRef = useRef<FormHandle<typeof jsonSchema>>(null);
+
+  useEffect(() => {
+    const root = formRef.current?.node; // root node of the mounted tree
+    formRef.current?.findNode('/name')?.setValue('Ada'); // node at a JSONPointer path
+  }, []);
+
+  return (
+    <Form
+      ref={formRef}
+      jsonSchema={jsonSchema}
+      onChange={(value) => console.log('Form value changed:', value)}
+    />
+  );
+}
 ```
+
+| Where you are               | How to get a node                                                                       |
+| --------------------------- | --------------------------------------------------------------------------------------- |
+| Outside the form, via a ref | `formRef.current.node`, `findNode(path)`, `findNodes(path)`                             |
+| In a `children` function    | the `node` argument (see [Using children as a Function](#using-children-as-a-function)) |
+| Inside a FieldInput         | the `node` prop (see [FieldInputProps](#fieldinputprops))                               |
+
+Changing the `jsonSchema` or `defaultValue` prop alone keeps the current tree; `reset` reads both again. The form builds a new tree when the validator changes and when `reset` runs with a different `jsonSchema`, while a `reset` with the same schema reloads values into the existing tree. A node you stored before a rebuild belongs to the discarded tree, so read `formRef.current.node` or call `findNode` at the moment you need a node instead of keeping a reference.
 
 ### Node State Flags
 

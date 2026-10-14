@@ -105,10 +105,13 @@ void invalidStringPresentation;
 // @ts-expect-error JSONSchemaError is preserved only for legacy implementation consumers.
 type RemovedError = import('../index').JSONSchemaError;
 // 70C-01: host and binding channels stay outside the package's consumer surface.
-// @ts-expect-error nodeFromJSONSchema is a core-only host entry.
+// @ts-expect-error nodeFromJSONSchema is an internal surface helper.
 type RemovedHostEntry = typeof import('../index').nodeFromJSONSchema;
+// @ts-expect-error nodeFromJSONSchema is not exported by core.
+type RemovedCoreEntry = typeof import('../core').nodeFromJSONSchema;
 // @ts-expect-error buildFieldNodeTree is binding-only.
 type RemovedBindingEntry = typeof import('../index').buildFieldNodeTree;
 expectTypeOf<RemovedError>().toBeAny();
 expectTypeOf<RemovedHostEntry>().toBeAny();
+expectTypeOf<RemovedCoreEntry>().toBeAny();
 expectTypeOf<RemovedBindingEntry>().toBeAny();

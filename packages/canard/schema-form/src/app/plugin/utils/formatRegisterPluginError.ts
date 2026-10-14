@@ -1,8 +1,6 @@
-import type { SchemaFormPlugin } from '@/schema-form/app/plugin';
+import { createDivider, getErrorMessage } from '@/schema-form/helpers/error';
 
-import { createDivider } from './utils/createDivider';
-import { formatBulletList } from './utils/formatBulletList';
-import { getErrorMessage } from './utils/getErrorMessage';
+import type { SchemaFormPlugin } from '../type';
 
 /**
  * Formats a structured error message for plugin registration failures.
@@ -60,4 +58,20 @@ How to fix:
 
   4. Check the error message above for specific details
 `.trim();
+};
+
+/**
+ * Creates a bullet list from items.
+ * @param items - Items to list
+ * @param prefix - Prefix for each line (default: the box line prefix `'  │    '`)
+ * @param emptyMessage - Message when list is empty
+ * @returns Formatted bullet list string
+ */
+const formatBulletList = (
+  items: readonly (string | number)[],
+  prefix = '  │    ',
+  emptyMessage = '(none)',
+): string => {
+  if (items.length === 0) return `${prefix}${emptyMessage}`;
+  return items.map((item) => `${prefix}• ${item}`).join('\n');
 };

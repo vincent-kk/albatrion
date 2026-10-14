@@ -8,8 +8,8 @@ import {
   FieldNodeEventType,
   FieldNodeRequestType,
   isArrayNode,
-  nodeFromJSONSchema,
 } from '@/schema-form/core';
+import { nodeFromJSONSchema } from '@/schema-form/core/surface/utils/nodeFromJSONSchema';
 import type { FieldInputProps } from '@/schema-form/types';
 
 import { useFieldInputControl } from '../hooks/useFieldInputControl';

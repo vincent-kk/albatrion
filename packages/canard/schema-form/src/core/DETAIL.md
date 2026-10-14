@@ -12,7 +12,7 @@
 - 노드의 `value`는 편집 중인 계산값이고 `outputValue`는 스키마 출력 옵션이 적용된 투영 값입니다. 원본 상태는 `raw`·`undeclaredValues`에 두며 투영은 노드 트리와 편집 상태를 바꾸지 않습니다(VALUE-002·027·034, LANDING-067).
 - 루트 검증·루트 방출·`FormHandle.getValue`·제출은 `outputValue`를 읽습니다. 입력과 `UpdateValue` 관측은 `value`를 사용하며 노드 변경은 공개 쓰기 API 또는 이름 붙은 바인딩 전용 통로를 경유합니다(LANDING-067, REACT-009·010).
 - `src/__legacy__/core/`의 노드·파서·시험은 참고용으로 보존하며 비레거시 코드가 가져오지 않습니다. 새 시나리오 하네스는 새 엔진을 검증합니다(LANDING-205).
-- `nodeFromJSONSchema`는 core만 쓰는 호스트의 진입이며 `src/index.ts`는 내보내지 않습니다. `<Form>`도 같은 트리 생성 통로를 바인딩 전용 함수로 사용합니다. `contextNodeFactory`는 `src/__legacy__/`에 속하며 core·패키지 진입점이 내보내지 않습니다. `engine/types`의 state·value·jsonSchema·controls는 엔진 안에서 구체 파일로 소비하고 외부는 core·engine 진입점의 이름을 경유하며 별도 와일드카드 배럴이나 node·constructor 계약은 두지 않습니다. 사건 계약은 새 엔진의 record가 소유합니다(LANDING-087, 70C-01).
+- `nodeFromJSONSchema`는 `surface/utils/`의 내부 생성 도우미로 core·패키지 진입점이 내보내지 않으며, 시험·bench·aileron 벤치마크가 파일 경로로 직접 읽습니다. `<Form>`은 `buildFieldNodeTree`·`mountFieldNode` 바인딩 통로를 씁니다. `contextNodeFactory`는 `src/__legacy__/`에 속하며 core·패키지 진입점이 내보내지 않습니다. `engine/types`의 state·value·jsonSchema·controls는 엔진 안에서 구체 파일로 소비하고 외부는 core·engine 진입점의 이름을 경유하며 별도 와일드카드 배럴이나 node·constructor 계약은 두지 않습니다. 사건 계약은 새 엔진의 record가 소유합니다(LANDING-087, 70C-01).
 - 공개 노드 형·가드와 `FieldNodeEventType`·`FieldNodeRequestType`·`FieldNodeState`는 패키지 진입점이 이름으로 내보냅니다. 바인딩 전용 함수는 공개하지 않으며, `Validator`는 `ValidatorFactory`라는 이름으로, `ValidateFunction`은 같은 이름으로 `src/types`를 거쳐 패키지 공개 `src/index.ts`가 내보냅니다(NODE-010, SURFACE-055·056·060, VALIDATE-044, 32C-01, 35C-07, 69C-01).
 - 새 fractal의 의존 순서는 `blueprint` < `record` < {종류 모듈, `navigation`} < `validation` < `settle/derive` < `settle` < `write` < `surface`다. `settle/derive`는 `settle`의 자식으로서 규칙 판정만 소유하고 settle의 라운드 실행기가 그 진입점을 소비한다. `validation`은 결과를 받은 콜백으로만 `write`에 돌려주며 타입 간선도 역전시키지 않는다(NODE-016·045, LANDING-083·084, SETTLE-004).
 - 사건은 루트의 동기 진입 사슬에서 정착·파동 배달·검증 요청·`onChange` 순서로 조율합니다. 경계 린트는 `src/core/**` 전체에 적용하여 `app/plugin` 가져오기를 금지합니다(EVENT-027, CONTROLS-075, LANDING-067).
@@ -28,7 +28,6 @@
 
 | 심볼                                                                                               | 계약                                                                                                                                                             |
 | -------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `nodeFromJSONSchema(props)`                                                                        | 같은 생성 통로의 트리 작성과 마운트를 잇고 마운트된 루트를 반환하는 core 호스트 진입(70C-01)                                                                     |
 | `FieldNode` 및 타입별 노드                                                                         | `value`·`outputValue`·`setValue`·`validate`·`subscribe`·`find`·`revision` 등 노드 공개 표면                                                                      |
 | `isFieldNode` · `isBranchNode` · `isTerminalNode` · 타입별 가드                                    | 런타임 타입 판별                                                                                                                                                 |
 | `FieldNodeState`                                                                                   | Dirty=1·Touched=2·ErrorVisible=4를 내부와 공개 경계에서 같은 이름으로 사용하며 별칭을 두지 않습니다(SURFACE-056·060, LANDING-157).                               |
@@ -38,7 +37,7 @@
 | `setContext(root, context)`                                                                        | 새 엔진의 바인딩 전용 내부 통로를 이름으로 다시 내보냄. 패키지 공개 `src/index.ts`에는 노출하지 않음(NODE-010, SURFACE-055, 28C-08)                              |
 | `retainValidationRoot(validator, authoredRoot)` · `releaseValidationRoot(validator, authoredRoot)` | 바인딩 이펙트의 수명 증감 통로를 `engine/validation/index.ts`에서 이름으로 다시 내보냄. 패키지 공개 `src/index.ts`에는 노출하지 않음(VALIDATE-021·045, NODE-010) |
 
-`nodeFromJSONSchema`의 서명은 실행 ADR D3와 같습니다. `validator`는 `{ compile, compileGuard, release?, dialect? }` 객체이고, `deferMountValidation`의 기본값은 거짓입니다. 문서 주석은 core 호스트 진입과 `<Form>`의 동일 생성 통로를 명시합니다(70C-01, VALIDATE-010, CONTROLS-075).
+내부 도우미 서명: `nodeFromJSONSchema`는 `buildFieldNodeTree`·`mountFieldNode` 통로를 이어 마운트된 루트를 반환합니다. `validator`는 `{ compile, compileGuard, release?, dialect? }` 객체이고, `deferMountValidation`의 기본값은 거짓입니다(70C-01, VALIDATE-010, CONTROLS-075).
 
 ```ts
 nodeFromJSONSchema<Schema extends JSONSchema>(props: {
@@ -71,7 +70,7 @@ nodeFromJSONSchema<Schema extends JSONSchema>(props: {
 
 ### 노드 타입 추가
 
-노드 종류는 청사진과 동작 행으로 정의하고 단일 런타임 겉면 계약을 따릅니다. 공개 팩토리와 `<Form>`은 같은 새 엔진 생성 통로를 사용하며 `AbstractNode` 상속을 요구하지 않습니다(NODE-010, LANDING-067, 70C-01).
+노드 종류는 청사진과 동작 행으로 정의하고 단일 런타임 겉면 계약을 따릅니다. 내부 도우미 `nodeFromJSONSchema`와 `<Form>`은 같은 새 엔진 생성 통로를 사용하며 `AbstractNode` 상속을 요구하지 않습니다(NODE-010, LANDING-067, 70C-01).
 
 공개 `InferFieldNode`는 NODE-059에 따라 형 없는 `oneOf`·`anyOf`의 모든 분기가 인라인 객체 또는 인라인 배열 스키마일 때만 각각 `ObjectNode`·`ArrayNode`로 좁힙니다. `$ref`, 게이트 분기, 두 키워드의 동시 사용, 본체 `allOf`는 넓은 `FieldNode`를 유지합니다. 형 없는 분기 없는 `const`·`enum` 칸은 리터럴의 JSON 종류에 맞는 원시 노드로 좁힙니다.
 
@@ -98,7 +97,7 @@ nodeFromJSONSchema<Schema extends JSONSchema>(props: {
 
 ### factory-single-path — 트리 생성 경로는 하나다
 
-- `nodeFromJSONSchema()`와 `<Form>`이 같은 `buildFieldNodeTree` 통로를 사용하고, 마운트된 루트는 스키마 종류에 맞는 공개 노드 형·가드 계약을 만족합니다(70C-01, VALIDATE-010).
+- `nodeFromJSONSchema`(내부 도우미)와 `<Form>`이 같은 `buildFieldNodeTree` 통로를 사용하고, 마운트된 루트는 스키마 종류에 맞는 공개 노드 형·가드 계약을 만족합니다(70C-01, VALIDATE-010).
 
 ### scenario-runner — 코어 시나리오 실행 소유
 
@@ -185,4 +184,4 @@ nodeFromJSONSchema<Schema extends JSONSchema>(props: {
 
 ## Last Updated
 
-계약 기준: LANDING-067·087·205, CONTROLS-075, 69C-01–05, 70C-01, 100라운드.
+계약 기준: LANDING-067·087·205, CONTROLS-075, 69C-01–05, 70C-01, 100라운드, 정돈-1(2026-10-14).

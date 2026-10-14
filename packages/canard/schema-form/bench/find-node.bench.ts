@@ -1,6 +1,6 @@
 import { bench, describe } from 'vitest';
 
-import { nodeFromJSONSchema } from '@/schema-form/core';
+import { nodeFromJSONSchema } from '@/schema-form/core/surface/utils/nodeFromJSONSchema';
 import type { JSONSchema } from '@/schema-form/types';
 
 /**

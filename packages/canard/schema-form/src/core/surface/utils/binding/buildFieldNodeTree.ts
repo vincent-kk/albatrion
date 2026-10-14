@@ -10,7 +10,7 @@ import type { Validator } from '../../../engine';
 import type { FieldNode, InferFieldNode } from '../../type';
 import { fieldNodeFactory } from '../fieldNodeFactory';
 
-/** Construction inputs shared by the binding and the core host entry. */
+/** Construction inputs shared by the binding and the internal nodeFromJSONSchema helper. */
 type BuildFieldNodeTreeProps<Schema extends AuthoredSchema = AuthoredSchema> = {
   jsonSchema: Schema;
   defaultValue?: InferValueType<Schema>;

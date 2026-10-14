@@ -1,5 +1,6 @@
 /**
  * Extracts error message from an error object.
+ * Not the keyword message selector in `formatValidationError/utils/getErrorMessage.ts`.
  * @param error - The error object or any value
  * @returns Formatted error message string
  */

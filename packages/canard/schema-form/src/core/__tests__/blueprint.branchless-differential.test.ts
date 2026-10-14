@@ -12,7 +12,7 @@ import type { collectSchemaCapabilities } from '../engine/blueprint/utils/analyz
 import { getDeriveRuleTable } from '../engine/settle/derive';
 import { getDependencyIndex } from '../engine/settle/utils/write/getDependencyIndex';
 import type { AuthoredSchema } from '../engine/types/jsonSchema';
-import { nodeFromJSONSchema } from '../surface/nodeFromJSONSchema';
+import { nodeFromJSONSchema } from '../surface/utils/nodeFromJSONSchema';
 import { captureBlueprintObservables } from './fixtures/captureBlueprintObservables';
 import { captureBranchlessNodeTree } from './fixtures/captureBranchlessNodeTree';
 

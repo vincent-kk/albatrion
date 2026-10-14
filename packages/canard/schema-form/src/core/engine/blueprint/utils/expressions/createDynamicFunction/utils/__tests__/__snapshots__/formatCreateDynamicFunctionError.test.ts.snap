@@ -1,0 +1,24 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`formatCreateDynamicFunctionError > 에러 메시지 스냅샷 > formatCreateDynamicFunctionError 스냅샷 1`] = `
+"Failed to create dynamic function for a controls expression.
+
+  ╭──────────────────────────────────────────────────
+  │  Field:       controls.visible
+  │  Expression:  '../category === 'premium' && ../price > 100'
+  ├──────────────────────────────────────────────────
+  │  Generated Function Body:
+  │    return values[0] === 'premium' && values[1] > 100
+  ├──────────────────────────────────────────────────
+  │  Error: Unexpected token '>'
+  ╰──────────────────────────────────────────────────
+
+The expression could not be compiled into a valid JavaScript function.
+This usually indicates a syntax error in the controls expression.
+
+How to fix:
+  1. Check the expression syntax for typos or invalid JavaScript
+  2. Ensure all JSONPointer paths (e.g., '../fieldName') are valid
+  3. Verify that the expression returns a valid value
+  4. Check for unbalanced parentheses or brackets"
+`;
