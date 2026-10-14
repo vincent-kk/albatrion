@@ -1,6 +1,6 @@
-import type { FieldNodeRecord } from '../../../../record';
-import { getCommittedDeclarationKey } from '../../../../utils/controls/getCommittedDeclarationKey';
-import type { DeriveState } from '../../../type';
+import type { FieldNodeRecord } from '../../../record';
+import { getCommittedDeclarationKey } from '../../../utils/controls/getCommittedDeclarationKey';
+import type { DeriveState } from '../../types/state';
 
 /**
  * Read the active declarations for a live occurrence across settlement calls.

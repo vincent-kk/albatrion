@@ -1,7 +1,8 @@
 import { hasOwnProperty } from '@winglet/common-utils/lib';
 
-import type { FieldNodeRecord } from '../../../../record';
-import type { DeriveRule, DeriveState } from '../../../type';
+import type { FieldNodeRecord } from '../../../record';
+import type { DeriveRule } from '../../types/rules';
+import type { DeriveState } from '../../types/state';
 import { getSelectedDeclarationIds } from './getSelectedDeclarationIds';
 
 /** Shared frozen result when a rule resolves to no target. */

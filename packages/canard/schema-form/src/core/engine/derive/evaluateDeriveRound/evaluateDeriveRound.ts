@@ -1,27 +1,23 @@
-import type { FieldNodeRecord } from '../../../record';
-import { sameValue } from '../../../utils/compute/sameValue';
-import type {
-  DeriveRoundDecision,
-  DeriveState,
-  DeriveTraceEntry,
-  DeriveWrite,
-} from '../../type';
-import { getDeriveRuleKey } from '../edges/getDeriveRuleKey';
-import { getDeriveSourceOrder } from '../rank/getDeriveSourceOrder';
-import { KIND_RANK } from '../rank/kindRank';
-import { LAYER_RANK } from '../rank/layerRank';
-import { getDeriveRuleTable } from '../rules/getDeriveRuleTable';
-import { getWatchPaths } from '../rules/utils/getWatchPaths';
-import { addActiveRuleKey } from './utils/addActiveRuleKey';
-import { chooseDeriveWrite } from './utils/chooseDeriveWrite';
-import { evaluateInjectTo } from './utils/evaluateInjectTo';
-import { evaluateScopedExpression } from './utils/evaluateScopedExpression';
-import type { ScopedExpressionResult } from './utils/evaluateScopedExpression';
-import { getDeriveSourceNodes } from './utils/getDeriveSourceNodes';
-import { getRuleTargets } from './utils/getRuleTargets';
-import { getSelectedDeclarationIds } from './utils/getSelectedDeclarationIds';
-import { getVirtualWriteFailure } from './utils/getVirtualWriteFailure';
-import { readDeriveDependency } from './utils/readDeriveDependency';
+import type { FieldNodeRecord } from '../../record';
+import { sameValue } from '../../utils/compute/sameValue';
+import type { DeriveRoundDecision, DeriveWrite } from '../types/decisions';
+import type { DeriveState, DeriveTraceEntry } from '../types/state';
+import { addActiveRuleKey } from '../utils/evaluate/addActiveRuleKey';
+import { evaluateScopedExpression } from '../utils/evaluate/evaluateScopedExpression';
+import type { ScopedExpressionResult } from '../utils/evaluate/evaluateScopedExpression';
+import { getDeriveSourceNodes } from '../utils/evaluate/getDeriveSourceNodes';
+import { getRuleTargets } from '../utils/evaluate/getRuleTargets';
+import { getSelectedDeclarationIds } from '../utils/evaluate/getSelectedDeclarationIds';
+import { readDeriveDependency } from '../utils/evaluate/readDeriveDependency';
+import { getDeriveRuleKey } from '../utils/rules/getDeriveRuleKey';
+import { getDeriveRuleTable } from '../utils/rules/getDeriveRuleTable';
+import { getWatchPaths } from '../utils/rules/getWatchPaths';
+import { evaluateInjectTo } from './utils/inject/evaluateInjectTo';
+import { getDeriveSourceOrder } from './utils/rank/getDeriveSourceOrder';
+import { KIND_RANK } from './utils/rank/kindRank';
+import { LAYER_RANK } from './utils/rank/layerRank';
+import { chooseDeriveWrite } from './utils/writes/chooseDeriveWrite';
+import { getVirtualWriteFailure } from './utils/writes/getVirtualWriteFailure';
 
 /** Frozen result reused when no expression fails. */
 const NO_FAILURES: readonly [] = Object.freeze([]);

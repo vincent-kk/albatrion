@@ -6,8 +6,8 @@ import { SCHEMA_GROUP } from '../../../constants/schemaGroup';
 import type { ControlKey } from '../../../types/controls';
 import { getControlExpression } from '../../../utils/controls/getControlExpression';
 import { emptyReadonlyMap } from '../../../utils/emptyReadonlyMap';
-import type { DeriveRule, DeriveRuleTable } from '../../type';
-import { getWatchPaths } from './utils/getWatchPaths';
+import type { DeriveRule, DeriveRuleTable } from '../../types/rules';
+import { getWatchPaths } from './getWatchPaths';
 
 /** Rule tables follow the immutable analysis lifetime. */
 const TABLES = new WeakMap<Blueprint, DeriveRuleTable>();

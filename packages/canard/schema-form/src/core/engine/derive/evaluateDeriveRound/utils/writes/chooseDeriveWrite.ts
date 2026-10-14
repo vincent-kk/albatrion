@@ -1,6 +1,7 @@
 import type { FieldNodeRecord } from '../../../../record';
-import type { DeriveState, DeriveTraceEntry, DeriveWrite } from '../../../type';
-import { compareDeriveWrites } from '../../rank/compareDeriveWrites';
+import type { DeriveWrite } from '../../../types/decisions';
+import type { DeriveState, DeriveTraceEntry } from '../../../types/state';
+import { compareDeriveWrites } from '../rank/compareDeriveWrites';
 
 /**
  * Keep one winner per path while recording every consumed candidate.

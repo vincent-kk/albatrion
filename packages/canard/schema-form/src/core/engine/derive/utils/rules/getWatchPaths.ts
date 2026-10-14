@@ -1,8 +1,8 @@
 import { isArray } from '@winglet/common-utils/filter';
 
-import type { BlueprintNode } from '../../../../blueprint';
-import { CONTROL_KEY } from '../../../../constants/controlKey';
-import { SCHEMA_GROUP } from '../../../../constants/schemaGroup';
+import type { BlueprintNode } from '../../../blueprint';
+import { CONTROL_KEY } from '../../../constants/controlKey';
+import { SCHEMA_GROUP } from '../../../constants/schemaGroup';
 
 /** Immutable target templates retain their authored watch union. */
 const WATCH_PATHS = new WeakMap<BlueprintNode, readonly string[]>();

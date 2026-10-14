@@ -1,5 +1,5 @@
-import type { FieldNodeRecord } from '../../../../record';
-import type { DeriveRule } from '../../../type';
+import type { FieldNodeRecord } from '../../../record';
+import type { DeriveRule } from '../../types/rules';
 import { readDeriveDependency } from './readDeriveDependency';
 
 /** One evaluation shared by every target of a host-scoped control item. */

@@ -1,5 +1,5 @@
-import type { FieldNodeRecord } from '../../../../record';
-import type { DeriveState } from '../../../type';
+import type { FieldNodeRecord } from '../../../record';
+import type { DeriveState } from '../../types/state';
 
 /**
  * Index a live rule key under the source occurrence that owns it.

@@ -5,7 +5,7 @@ import { JSONPointer as $ } from '@/schema-form/helpers/jsonPointer';
 
 import { getItemEntry } from '../../../../blueprint';
 import type { FieldNodeRecord } from '../../../../record';
-import { getDeriveChildEntry } from '../../rank/getDeriveChildEntry';
+import { getDeriveChildEntry } from '../rank/getDeriveChildEntry';
 
 /**
  * Resolve a dynamic path through declared templates and the current shape.

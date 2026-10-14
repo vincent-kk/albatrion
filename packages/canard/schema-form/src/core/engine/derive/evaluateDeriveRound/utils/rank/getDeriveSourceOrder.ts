@@ -1,4 +1,4 @@
-import type { FieldNodeRecord } from '../../../record';
+import type { FieldNodeRecord } from '../../../../record';
 import { getDeriveChildEntry } from './getDeriveChildEntry';
 
 /**

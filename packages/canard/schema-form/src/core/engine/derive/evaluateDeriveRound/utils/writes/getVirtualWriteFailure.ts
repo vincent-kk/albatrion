@@ -1,7 +1,7 @@
 import { isArray } from '@winglet/common-utils/filter';
 
 import type { BlueprintNode } from '../../../../blueprint';
-import type { DeriveRoundDecision } from '../../../type';
+import type { DeriveRoundDecision } from '../../../types/decisions';
 
 /**
  * Reject an automatic virtual replacement that cannot fan out to its fields.

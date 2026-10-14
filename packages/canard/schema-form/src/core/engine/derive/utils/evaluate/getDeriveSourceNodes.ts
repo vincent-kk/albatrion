@@ -3,8 +3,8 @@ import { unescapeSegment } from '@winglet/json/pointer';
 
 import { JSONPointer as $ } from '@/schema-form/helpers/jsonPointer';
 
-import type { FieldNodeRecord } from '../../../../record';
-import type { DeriveState } from '../../../type';
+import type { FieldNodeRecord } from '../../../record';
+import type { DeriveState } from '../../types/state';
 
 /**
  * Resolve affected declaration hosts without descending unrelated branches.
