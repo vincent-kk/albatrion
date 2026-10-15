@@ -16,6 +16,7 @@ import { prunePerishedPaths } from '../../../utils/transition/prunePerishedPaths
 import * as bulk from '../../utils/rekey/clearArrayRuntimePaths';
 import { rekeyArrayRuntimePaths } from '../../utils/rekey/rekeyArrayRuntimePaths';
 import { normalizeRuleIds } from './normalizeRuleIds';
+import { observeGateRegistry } from './observeGateRegistry';
 import { observePathStores } from './observePathStores';
 import { slotsOf } from './slotsOf';
 
@@ -46,8 +47,8 @@ const subtreesOf = (nodes: readonly DispatchTestNode[]): DispatchTestNode[] => {
  * Run identical public writes with the host-prefix cleanup and positional detached reads, and with their predecessors.
  * The oracle replaces the host-prefix cleanup with the perished-path prune followed by a re-key of every old position,
  * and reads every detached defaultValue by its path. After each step it compares results, delivered events in order,
- * the full settlement observation (revisions, stores, snapshot), path-store lookups, latent dirtiness
- * and the detached reads of every removed node and descendant; rule keys compare without their per-tree occurrence number.
+ * the full settlement observation (revisions, stores, snapshot), path-store lookups, latent dirtiness, the gate registry by path
+ * (no departed node may stay registered) and the detached reads of every removed node and descendant; rule keys compare without their per-tree occurrence number.
  * @param schema - Authored declarations for two independently owned trees
  * @param input - Source mounted through the public chain before the history
  * @param steps - Writes and whether each must take the host-prefix cleanup
@@ -83,6 +84,7 @@ export const compareArrayClear = (
       deferValidation: true,
     });
     const history: unknown[] = [];
+    const departed = new Set<DispatchTestNode>();
     const cleanup = vi.spyOn(bulk, 'clearArrayRuntimePaths');
     const reads = vi.spyOn(detached, 'captureDetachedFieldNodeReads');
     if (oracle) {
@@ -117,11 +119,18 @@ export const compareArrayClear = (
             `bulk cleanup at step ${index}`,
           ).toBe(step.bulk ? 1 : 0);
         const current = select(root);
+        for (const node of former) if (node.detached) departed.add(node);
+        const gates = observeGateRegistry(root, departed);
+        expect(
+          gates?.stale ?? [],
+          `registered departed nodes at step ${index}`,
+        ).toEqual([]);
         history.push({
           result: slotsOf(result),
           delivered: [...delivered],
           settlement: observeArraySettlement(root),
           stores: observePathStores(root.runtime, current.path),
+          gates,
           departed: observeDetachedReads(root, former),
           formerPaths: former.map((node) => [node.path, node.active]),
         });

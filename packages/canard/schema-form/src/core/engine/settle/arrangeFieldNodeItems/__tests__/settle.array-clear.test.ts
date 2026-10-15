@@ -12,6 +12,7 @@ import {
   dispatchMount,
   dispatchPop,
   dispatchPush,
+  dispatchRemove,
   subscribeFieldNode,
 } from '@/schema-form/core/engine/write';
 
@@ -41,7 +42,7 @@ const itemsWith = (controls: Record<string, unknown>): BlueprintSchema => ({
   },
 });
 
-/** Clear, refill, clear again, then pop a single item: every step empties the host. */
+/** Clear, refill, clear again, pop a single item and remove(0) of a single item: every emptying step takes the length-0 path. */
 const EMPTYING: readonly ClearStep[] = [
   { apply: (root) => dispatchClear(root), bulk: true },
   { apply: (root) => dispatchClear(root), bulk: false },
@@ -50,6 +51,11 @@ const EMPTYING: readonly ClearStep[] = [
   { apply: (root) => dispatchClear(root), bulk: true },
   { apply: (root) => dispatchPush(root, { key: 9, field: 4 }), bulk: false },
   { apply: (root) => dispatchPop(root), bulk: true },
+  {
+    apply: (root) => dispatchPush(root, { flag: false, field: 5 }),
+    bulk: false,
+  },
+  { apply: (root) => dispatchRemove(root, 0), bulk: true },
 ];
 
 /** Object items with values, latent gated fields, misfits and nested arrays. */
