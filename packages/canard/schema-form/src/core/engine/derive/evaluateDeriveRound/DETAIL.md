@@ -9,6 +9,8 @@
 
 - `index.ts`는 `evaluateDeriveRound<Self>(root: FieldNodeRecord<Self>, state: DeriveState<Self>): DeriveRoundDecision<Self>`를 이름으로 내보낸다. 부모 derive의 진입점이 이를 다시 내보내고, settle의 파생 라운드 실행기가 쓴다(SETTLE-004·017).
 
+- 배열 조각의 대상은 부모 derive가 공유 `getFragmentOwnerPaths`로 수집한 한 스키마 아이템·추가 아이템·튜플·prefixItems 자리의 현재 발생 전부이다. 식은 호스트에서 라운드마다 한 번 평가한 값을 함께 쓰고, 각 아이템의 기준점·쓰기 후보·에지는 따로 판정한다(CONTROLS-077, FRAGMENT-050, 377C-01).
+
 | 종류 순위    |  값 | 판정                                                                                 |
 | ------------ | --: | ------------------------------------------------------------------------------------ |
 | `unsetValue` |   4 | 참으로 바뀌면 없음 쓰기 후보가 된다(SETTLE-004·028).                                 |
@@ -43,6 +45,14 @@
 ### derive-array-items — 배열 아이템별 판정
 
 - 배열 아이템의 규칙은 아이템마다 자기 형제와 새 경로에서 판정한다. 참으로 바뀐 아이템의 `unsetValue`만 그 아이템을 지우고, `fields`의 `derived` 대상과 `injectTo` 대상은 아이템 자리를 거쳐 푼다(35C-08, SETTLE-017, WRITE-028, CONTROLS-073·079).
+
+### derive-fragment-array-derived — 배열 조각의 모든 파생 대상
+
+derived는 한 스키마 아이템·옛 튜플·추가 아이템·prefixItems의 직접 선언 경계와 중첩 배열을 따른다. push는 새 아이템만 새 에지로 묶고 remove는 사라진 아이템의 에지를 지우며, 켜진 조각의 호스트 값 하나를 각 아이템에 쓴다(CONTROLS-077, FRAGMENT-050, 377C-01).
+
+### derive-fragment-array-unset — 배열 조각의 아이템별 값 비움
+
+unsetValue는 한 스키마 아이템·옛 튜플·추가 아이템·prefixItems의 직접 선언 경계와 중첩 배열에서 참으로 바뀐 아이템의 값만 비운다. push·remove와 조각 선택 뒤에도 대상별 에지를 유지하고, 이미 소비한 참 에지는 기존 아이템에 다시 쓰지 않는다(CONTROLS-077, FRAGMENT-050, 377C-01).
 
 ## Last Updated
 
